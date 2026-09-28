@@ -86,5 +86,31 @@ steps:
           if apt-cache show libasound2t64 >/dev/null 2>&1; then
             alsaPackage="libasound2t64"
           fi
-          sudo apt-get install -y xvfb libgbm-dev libgtk-3-0 libnss3 "$alsaPackage" libxss1 libatk-bridge2.0-0 libatk1.0-0
-        displayName: Install Linux display dependencies
+          icuPackage="libicu70"
+          if ! apt-cache show "$icuPackage" >/dev/null 2>&1; then
+            icuPackage="$(apt-cache search --names-only '^libicu[0-9]+$' | awk '{print $1}' | sort -V | tail -n 1)"
+          fi
+          if [ -z "$icuPackage" ]; then
+            echo "Unable to find a libicu package for the Linux .NET runtime dependency set."
+            exit 1
+          fi
+          sudo apt-get install -y \
+            xvfb \
+            libgbm-dev \
+            libgtk-3-0 \
+            libnss3 \
+            "$alsaPackage" \
+            libxss1 \
+            libatk-bridge2.0-0 \
+            libatk1.0-0 \
+            libc6 \
+            libgcc-s1 \
+            libgssapi-krb5-2 \
+            "$icuPackage" \
+            libssl3 \
+            libstdc++6 \
+            libunwind8 \
+            zlib1g
+          dotnet --info
+          dotnet --list-runtimes
+        displayName: Install Linux display and .NET runtime dependencies

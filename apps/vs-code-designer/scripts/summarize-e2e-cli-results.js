@@ -185,7 +185,9 @@ function buildJUnitXml(result, options = {}) {
         testcaseAttachments.length > 0
           ? [
               '      <system-out>',
-              escapeXml(testcaseAttachments.map((attachment) => `[[ATTACHMENT|${attachment.screenshotPath}]]`).join('\n')),
+              escapeXml(
+                testcaseAttachments.map((attachment) => `[[ATTACHMENT|${formatAttachmentPath(attachment.screenshotPath)}]]`).join('\n')
+              ),
               '      </system-out>',
             ].join('\n')
           : '';
@@ -284,6 +286,10 @@ function attachmentMatchesTest(attachment, testName) {
 
 function normalizeTestName(value) {
   return String(value).replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
+function formatAttachmentPath(value) {
+  return String(value).replace(/\\/g, '/');
 }
 
 function buildFailureExcerpt(logText) {
