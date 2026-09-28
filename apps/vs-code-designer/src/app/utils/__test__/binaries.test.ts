@@ -26,6 +26,7 @@ import {
   removeWithLockWait,
   mkdirWithLockWait,
   ensureRuntimeDependenciesDir,
+  setFuncCoreToolsExecutablePermissions,
 } from '../binaries';
 import { DownloadIntegrityError } from '../integrity';
 import { ext } from '../../../extensionVariables';
@@ -275,6 +276,71 @@ describe('binaries', () => {
       );
       expect(axios.get).toHaveBeenCalledTimes(3);
     }, 10000);
+  });
+
+  describe('setFuncCoreToolsExecutablePermissions', () => {
+    it('sets permissions for optional gozip and in-proc6 files when Linux packages include them', () => {
+      const targetFolder = path.join('binariesLocation', funcDependencyName);
+      const optionalGozip = path.join(targetFolder, 'gozip');
+      const optionalInProc6 = path.join(targetFolder, 'in-proc6', 'func');
+
+      (fs.existsSync as Mock).mockReturnValue(true);
+
+      setFuncCoreToolsExecutablePermissions(targetFolder, Platform.linux);
+
+      expect(fs.chmodSync).toHaveBeenCalledWith(optionalGozip, 0o755);
+      expect(fs.chmodSync).toHaveBeenCalledWith(optionalInProc6, 0o755);
+    });
+
+    it('does not require optional gozip or in-proc6 files on Linux packages', () => {
+      const targetFolder = path.join('binariesLocation', funcDependencyName);
+      const requiredLauncher = path.join(targetFolder, 'func');
+      const optionalGozip = path.join(targetFolder, 'gozip');
+      const requiredInProc8 = path.join(targetFolder, 'in-proc8', 'func');
+      const optionalInProc6 = path.join(targetFolder, 'in-proc6', 'func');
+
+      (fs.existsSync as Mock).mockImplementation((filePath: string) =>
+        filePath === optionalGozip || filePath === optionalInProc6 ? false : true
+      );
+
+      expect(() => setFuncCoreToolsExecutablePermissions(targetFolder, Platform.linux)).not.toThrow();
+      expect(fs.chmodSync).toHaveBeenCalledWith(requiredLauncher, 0o755);
+      expect(fs.chmodSync).toHaveBeenCalledWith(requiredInProc8, 0o755);
+      expect(fs.chmodSync).not.toHaveBeenCalledWith(optionalGozip, 0o755);
+      expect(fs.chmodSync).not.toHaveBeenCalledWith(optionalInProc6, 0o755);
+    });
+
+    it('still requires the launcher func binary on Linux packages', () => {
+      const targetFolder = path.join('binariesLocation', funcDependencyName);
+      const requiredLauncher = path.join(targetFolder, 'func');
+
+      (fs.chmodSync as Mock).mockImplementation((filePath: string) => {
+        if (filePath === requiredLauncher) {
+          throw new Error('missing launcher');
+        }
+      });
+
+      expect(() => setFuncCoreToolsExecutablePermissions(targetFolder, Platform.linux)).toThrow('missing launcher');
+    });
+
+    it('still requires the in-proc8 func binary on Linux packages', () => {
+      const targetFolder = path.join('binariesLocation', funcDependencyName);
+      const requiredInProc8 = path.join(targetFolder, 'in-proc8', 'func');
+
+      (fs.chmodSync as Mock).mockImplementation((filePath: string) => {
+        if (filePath === requiredInProc8) {
+          throw new Error('missing in-proc8');
+        }
+      });
+
+      expect(() => setFuncCoreToolsExecutablePermissions(targetFolder, Platform.linux)).toThrow('missing in-proc8');
+    });
+
+    it('skips permission repair on Windows packages', () => {
+      setFuncCoreToolsExecutablePermissions(path.join('binariesLocation', funcDependencyName), Platform.windows);
+
+      expect(fs.chmodSync).not.toHaveBeenCalled();
+    });
   });
 
   describe('binariesExist', () => {
