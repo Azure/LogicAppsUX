@@ -188,6 +188,7 @@ async function runWorkspaceLifecycle(visibleDelayMs) {
     await runVscodeTest(['--label', 'workspaceLifecycle'], {
       visibleDelayMs,
       extraEnv: {
+        LA_E2E_CLI_WORKSPACE_PARENT: workspaceParent,
         LA_E2E_CLI_INCLUDE_WORKSPACE_LIFECYCLE: '1',
         LA_E2E_CLI_USER_DATA_SUFFIX: `workspace-lifecycle-${sanitizeEnvSegment(entry.label)}-${Date.now()}`,
         LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
@@ -228,6 +229,7 @@ async function runNugetConversionLifecycle(visibleDelayMs) {
   await runVscodeTest(['--label', 'nugetConversionLifecycle'], {
     visibleDelayMs,
     extraEnv: {
+      LA_E2E_CLI_WORKSPACE_PARENT: workspaceParent,
       LA_E2E_CLI_INCLUDE_NUGET_CONVERSION_LIFECYCLE: '1',
       LA_E2E_CLI_USER_DATA_SUFFIX: `nuget-conversion-run-${Date.now()}`,
       LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
@@ -271,22 +273,27 @@ async function runCodefulDebugTasks(visibleDelayMs) {
   for (const entry of manifest) {
     await runVscodeTest(['--label', 'codefulDebugTasks'], {
       visibleDelayMs,
-      extraEnv: {
-        LA_E2E_CLI_INCLUDE_CODEFUL_DEBUG_TASKS: '1',
-        LA_E2E_CLI_USER_DATA_SUFFIX: `codeful-debug-run-${sanitizeEnvSegment(entry.label)}-${Date.now()}`,
-        LA_E2E_CLI_AUTO_START_DESIGN_TIME: '1',
-        LA_E2E_CLI_VALIDATE_DEPENDENCIES: '1',
-        LA_E2E_CLI_CODEFUL_EVIDENCE_NOT_BEFORE: String(Date.now() - 1000),
-        LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
-        LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '1',
-        LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'codeful-run',
-        LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE: JSON.stringify(entry),
-        LA_E2E_CLI_STARTUP_RESOURCE: entry.workspaceFilePath,
-      },
+      extraEnv: getCodefulDebugTasksRunExtraEnv({ workspaceParent, entry }),
     });
   }
 
   await cleanupOwnedWorkspaceParent(workspaceParent, 'codeful debug task lifecycle');
+}
+
+function getCodefulDebugTasksRunExtraEnv({ workspaceParent, entry, now = Date.now() }) {
+  return {
+    LA_E2E_CLI_WORKSPACE_PARENT: workspaceParent,
+    LA_E2E_CLI_INCLUDE_CODEFUL_DEBUG_TASKS: '1',
+    LA_E2E_CLI_USER_DATA_SUFFIX: `codeful-debug-run-${sanitizeEnvSegment(entry.label)}-${now}`,
+    LA_E2E_CLI_AUTO_START_DESIGN_TIME: '1',
+    LA_E2E_CLI_VALIDATE_DEPENDENCIES: '1',
+    LA_E2E_CLI_CODEFUL_EVIDENCE_NOT_BEFORE: String(now - 1000),
+    LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
+    LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '1',
+    LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'codeful-run',
+    LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE: JSON.stringify(entry),
+    LA_E2E_CLI_STARTUP_RESOURCE: entry.workspaceFilePath,
+  };
 }
 
 async function runMsnWeatherLifecycle(visibleDelayMs) {
@@ -1006,6 +1013,10 @@ function captureGeneratedWorkspaceDiagnostics({ env, label, outcome, ownedRoots 
     skipped.push({ source: '<none>', reason });
   }
 
+  const rejectedSources = skipped.filter((entry) => entry.reason === 'source is outside wrapper-created owned roots');
+  const isRunPhase = phase.toLowerCase().includes('run') || (env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE || '').toLowerCase().includes('run');
+  const hasOnlyRejectedDiscoveredRunSources = isRunPhase && snapshots.length === 0 && sources.length > 0 && rejectedSources.length > 0;
+
   const metadata = {
     capturedAt: new Date().toISOString(),
     label: label || '',
@@ -1028,6 +1039,16 @@ function captureGeneratedWorkspaceDiagnostics({ env, label, outcome, ownedRoots 
   writeGeneratedWorkspaceSnapshotIndex(snapshotRoot, metadata);
   appendGeneratedWorkspaceRootIndex(destinationRoot, snapshotName, metadata);
   console.log(`[generated-workspace-diagnostics] Captured ${snapshots.length} workspace snapshot(s): ${snapshotRoot}`);
+  if (hasOnlyRejectedDiscoveredRunSources) {
+    markOwnedWorkspaceParentsWithDiagnosticFailure(env, ownedRoots);
+    throw new Error(
+      [
+        'Generated workspace diagnostics rejected discovered workspace source(s) outside wrapper-created owned roots.',
+        'The run phase must carry LA_E2E_CLI_WORKSPACE_PARENT/LA_E2E_CLI_CREATE_WORKSPACE_PARENT from the create phase; manifest or case paths alone are not trusted.',
+        `Rejected sources: ${rejectedSources.map((entry) => entry.source).join(', ')}`,
+      ].join(' ')
+    );
+  }
 }
 
 function getNoGeneratedWorkspaceSnapshotReason({ env, label, trustedRootRecords, sources = [], skipped = [] }) {
@@ -1757,8 +1778,10 @@ module.exports = {
     createOwnedWorkspaceParent,
     createIsolatedRuntimeDependenciesRoot,
     findAzureLogicAppsChannelLogs,
+    getCodefulDebugTasksRunExtraEnv,
     getMsnWeatherAzureTargetEnv,
     getMsnWeatherLifecycleRunExtraEnv,
+    hasOwnedWorkspaceParentDiagnosticFailure,
     getNoGeneratedWorkspaceSnapshotReason,
     getGeneratedWorkspaceSnapshotRoot,
     getFuncCoreToolsCandidatePaths,
@@ -1952,6 +1975,10 @@ function markOwnedWorkspaceParentsWithDiagnosticFailure(env, ownedRoots = []) {
   )) {
     workspaceParentsWithDiagnosticFailures.add(path.resolve(root));
   }
+}
+
+function hasOwnedWorkspaceParentDiagnosticFailure(workspaceParent) {
+  return workspaceParentsWithDiagnosticFailures.has(path.resolve(workspaceParent));
 }
 
 function delay(ms) {

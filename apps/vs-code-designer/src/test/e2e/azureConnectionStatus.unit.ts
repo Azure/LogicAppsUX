@@ -154,13 +154,15 @@ function testActualDomExtractionIgnoresTransparentConnectionStatus(): void {
 function testActualDomExtractionDoesNotPromoteEditableErrorText(): void {
   const result = runConnectionStatusDomScript(
     new FakeElement('body', {}, [
-      new FakeElement('div', { class: 'msla-node-details-panel parameters-content' }, [
+      new FakeElement('div', { class: 'msla-node-details-panel' }, [
         new FakeElement('h2', {}, [], 'Get current weather'),
-        new FakeElement('label', {}, [], 'Location *'),
-        new FakeElement('div', { contenteditable: 'true', class: 'editor-input' }, [], 'unauthorized'),
-        new FakeElement('div', { class: 'msla-connection-display' }, [
-          new FakeElement('span', {}, [], 'Connected to MSN Weather.'),
-          new FakeElement('a', {}, [], 'Change connection'),
+        new FakeElement('div', { class: 'parameters-content' }, [
+          new FakeElement('label', {}, [], 'Location *'),
+          new FakeElement('div', { contenteditable: 'true', class: 'editor-input' }, [], 'unauthorized'),
+          new FakeElement('div', { class: 'msla-connection-display' }, [
+            new FakeElement('span', {}, [], 'Connected to MSN Weather.'),
+            new FakeElement('a', {}, [], 'Change connection'),
+          ]),
         ]),
       ]),
     ])
@@ -172,11 +174,13 @@ function testActualDomExtractionDoesNotPromoteEditableErrorText(): void {
 function testActualDomExtractionDoesNotPromoteEditableConnectedText(): void {
   const result = runConnectionStatusDomScript(
     new FakeElement('body', {}, [
-      new FakeElement('div', { class: 'msla-node-details-panel parameters-content' }, [
+      new FakeElement('div', { class: 'msla-node-details-panel' }, [
         new FakeElement('h2', {}, [], 'Get current weather'),
-        new FakeElement('label', {}, [], 'Location *'),
-        new FakeElement('div', { contenteditable: 'true', class: 'editor-input' }, [], 'Connected'),
-        new FakeElement('div', { class: 'msla-connection-display' }, [new FakeElement('span', {}, [], 'Select a connection')]),
+        new FakeElement('div', { class: 'parameters-content' }, [
+          new FakeElement('label', {}, [], 'Location *'),
+          new FakeElement('div', { contenteditable: 'true', class: 'editor-input' }, [], 'Connected'),
+          new FakeElement('div', { class: 'msla-connection-display' }, [new FakeElement('span', {}, [], 'Select a connection')]),
+        ]),
       ]),
     ])
   );

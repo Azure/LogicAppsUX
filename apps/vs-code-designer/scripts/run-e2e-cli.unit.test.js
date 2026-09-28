@@ -15,8 +15,10 @@ const {
     copyAzureLogicAppsChannelLogs,
     createIsolatedRuntimeDependenciesRoot,
     findAzureLogicAppsChannelLogs,
+    getCodefulDebugTasksRunExtraEnv,
     getFuncCoreToolsCandidatePaths,
     getFuncCoreToolsBinaryPath,
+    hasOwnedWorkspaceParentDiagnosticFailure,
     getMsnWeatherLifecycleRunExtraEnv,
     getMsnWeatherAzureTargetEnv,
     getNoGeneratedWorkspaceSnapshotReason,
@@ -43,8 +45,10 @@ try {
   testGeneratedWorkspaceSnapshotOmitsUnparseableJsonWithArbitrarySecrets();
   testGeneratedWorkspaceSnapshotHandlesOwnedRootFiles();
   testGeneratedWorkspaceSnapshotCapturesRunCaseWhenOwnedRootCarriesAcrossPhases();
+  testGeneratedWorkspaceSnapshotFailsAndPreservesRejectedRunCaseWithOwnedRoot();
   testGeneratedWorkspaceSnapshotExplainsRejectedRunCaseWithoutOwnedRoot();
   testMsnWeatherLifecycleRunEnvCarriesOwnedRoot();
+  testCodefulDebugTasksRunEnvCarriesOwnedRoot();
   testGeneratedWorkspaceSnapshotFallsBackToOwnedRootForPartialManifest();
   testGeneratedWorkspaceSnapshotSourcesSupportLifecycleAndManifestShapes();
   testGeneratedWorkspaceSnapshotWritesNoWorkspaceMarker();
@@ -365,20 +369,56 @@ function testGeneratedWorkspaceSnapshotExplainsRejectedRunCaseWithoutOwnedRoot()
   const artifactRoot = path.join(tempRoot, 'generated-artifacts-rejected-run-case');
 
   withEnvironment({ LA_E2E_CLI_GENERATED_WORKSPACE_ARTIFACT_DIR: artifactRoot }, () => {
-    captureGeneratedWorkspaceDiagnostics({
-      env: {
-        LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE: JSON.stringify({ label: 'standard', workspaceDir: workspace }),
-        LA_E2E_CLI_PROFILE_PHASE: 'msn-weather-run',
-      },
-      label: 'msnWeatherLifecycle',
-      outcome: 'failure',
-    });
+    assert.throws(
+      () =>
+        captureGeneratedWorkspaceDiagnostics({
+          env: {
+            LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE: JSON.stringify({ label: 'standard', workspaceDir: workspace }),
+            LA_E2E_CLI_PROFILE_PHASE: 'msn-weather-run',
+          },
+          label: 'msnWeatherLifecycle',
+          outcome: 'failure',
+        }),
+      /rejected discovered workspace source/
+    );
   });
 
   const marker = findFileByName(artifactRoot, 'no-workspace-created.txt');
   assert.ok(marker, 'rejected run case should still publish an explicit marker');
   assert.match(fs.readFileSync(marker, 'utf-8'), /discovered but rejected/);
   assert.match(fs.readFileSync(marker, 'utf-8'), /manifest or case paths alone are not trusted/);
+}
+
+function testGeneratedWorkspaceSnapshotFailsAndPreservesRejectedRunCaseWithOwnedRoot() {
+  const ownedRoot = path.join(tempRoot, 'owned-root-rejected-run-case');
+  fs.mkdirSync(ownedRoot, { recursive: true });
+  const workspace = createSyntheticGeneratedWorkspace('workspace-rejected-owned-run-case', path.join(tempRoot, 'outside-owned-run-parent'));
+  const artifactRoot = path.join(tempRoot, 'generated-artifacts-rejected-owned-run-case');
+
+  withEnvironment({ LA_E2E_CLI_GENERATED_WORKSPACE_ARTIFACT_DIR: artifactRoot }, () => {
+    assert.throws(
+      () =>
+        captureGeneratedWorkspaceDiagnostics({
+          env: {
+            LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE: JSON.stringify({ label: 'standard', workspaceDir: workspace }),
+            LA_E2E_CLI_WORKSPACE_PARENT: ownedRoot,
+            LA_E2E_CLI_PROFILE_PHASE: 'msn-weather-run',
+          },
+          label: 'msnWeatherLifecycle',
+          outcome: 'failure',
+        }),
+      /rejected discovered workspace source/
+    );
+  });
+
+  const marker = findFileByName(artifactRoot, 'no-workspace-created.txt');
+  assert.ok(marker, 'rejected owned run case should still publish an explicit marker');
+  assert.match(fs.readFileSync(marker, 'utf-8'), /discovered but rejected/);
+  assert.strictEqual(
+    hasOwnedWorkspaceParentDiagnosticFailure(ownedRoot),
+    true,
+    'owned parent should be marked for preservation when run-case discovered sources are rejected'
+  );
 }
 
 function testMsnWeatherLifecycleRunEnvCarriesOwnedRoot() {
@@ -406,6 +446,26 @@ function testMsnWeatherLifecycleRunEnvCarriesOwnedRoot() {
   assert.deepStrictEqual(JSON.parse(env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE), entry);
   assert.strictEqual(env.LA_E2E_CLI_STARTUP_RESOURCE, entry.workspaceFilePath);
   assert.strictEqual(env.LA_E2E_CLI_AZURE_SUBSCRIPTION_ID, 'sub');
+}
+
+function testCodefulDebugTasksRunEnvCarriesOwnedRoot() {
+  const workspaceParent = path.join(tempRoot, 'codeful-run-parent');
+  const entry = {
+    label: 'codeful-modern',
+    workspaceFilePath: path.join(workspaceParent, 'workspace.code-workspace'),
+    workspaceDir: path.join(workspaceParent, 'workspace'),
+  };
+  const env = getCodefulDebugTasksRunExtraEnv({
+    workspaceParent,
+    entry,
+    now: 12345,
+  });
+
+  assert.strictEqual(env.LA_E2E_CLI_WORKSPACE_PARENT, workspaceParent);
+  assert.strictEqual(env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE, 'codeful-run');
+  assert.deepStrictEqual(JSON.parse(env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE), entry);
+  assert.strictEqual(env.LA_E2E_CLI_STARTUP_RESOURCE, entry.workspaceFilePath);
+  assert.strictEqual(env.LA_E2E_CLI_CODEFUL_EVIDENCE_NOT_BEFORE, '11345');
 }
 
 function testGeneratedWorkspaceSnapshotFallsBackToOwnedRootForPartialManifest() {
