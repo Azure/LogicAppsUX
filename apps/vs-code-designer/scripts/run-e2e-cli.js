@@ -348,19 +348,7 @@ async function runMsnWeatherLifecycle(visibleDelayMs) {
 
     await runVscodeTest(['--label', 'msnWeatherLifecycle'], {
       visibleDelayMs,
-      extraEnv: {
-        ...commonEnv,
-        LA_E2E_CLI_INCLUDE_MSN_WEATHER_LIFECYCLE: '1',
-        LA_E2E_CLI_WORKSPACE_PARENT: workspaceParent,
-        LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
-        LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '1',
-        LA_E2E_CLI_PROFILE_PHASE: 'msn-weather-run',
-        LA_E2E_CLI_USER_DATA_SUFFIX: `msn-weather-run-${lifecycleRunId}`,
-        LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'msn-weather-run',
-        LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE: JSON.stringify(entry),
-        LA_E2E_CLI_STARTUP_RESOURCE: entry.workspaceFilePath,
-        ...azureEnv,
-      },
+      extraEnv: getMsnWeatherLifecycleRunExtraEnv({ commonEnv, workspaceParent, lifecycleRunId, entry, azureEnv }),
     });
 
     lifecycleSucceeded = true;
@@ -370,6 +358,22 @@ async function runMsnWeatherLifecycle(visibleDelayMs) {
       await cleanupRuntimeDependenciesRoot(runtimeDependenciesRoot);
     }
   }
+}
+
+function getMsnWeatherLifecycleRunExtraEnv({ commonEnv, workspaceParent, lifecycleRunId, entry, azureEnv }) {
+  return {
+    ...commonEnv,
+    LA_E2E_CLI_INCLUDE_MSN_WEATHER_LIFECYCLE: '1',
+    LA_E2E_CLI_WORKSPACE_PARENT: workspaceParent,
+    LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
+    LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '1',
+    LA_E2E_CLI_PROFILE_PHASE: 'msn-weather-run',
+    LA_E2E_CLI_USER_DATA_SUFFIX: `msn-weather-run-${lifecycleRunId}`,
+    LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'msn-weather-run',
+    LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE: JSON.stringify(entry),
+    LA_E2E_CLI_STARTUP_RESOURCE: entry.workspaceFilePath,
+    ...azureEnv,
+  };
 }
 
 function ensureMsnWeatherProfile() {
@@ -997,7 +1001,7 @@ function captureGeneratedWorkspaceDiagnostics({ env, label, outcome, ownedRoots 
   }
 
   if (snapshots.length === 0) {
-    const reason = getNoGeneratedWorkspaceSnapshotReason({ env, label, trustedRootRecords });
+    const reason = getNoGeneratedWorkspaceSnapshotReason({ env, label, trustedRootRecords, sources, skipped });
     fs.writeFileSync(path.join(snapshotRoot, 'no-workspace-created.txt'), `${reason}\n`);
     skipped.push({ source: '<none>', reason });
   }
@@ -1026,11 +1030,20 @@ function captureGeneratedWorkspaceDiagnostics({ env, label, outcome, ownedRoots 
   console.log(`[generated-workspace-diagnostics] Captured ${snapshots.length} workspace snapshot(s): ${snapshotRoot}`);
 }
 
-function getNoGeneratedWorkspaceSnapshotReason({ env, label, trustedRootRecords }) {
+function getNoGeneratedWorkspaceSnapshotReason({ env, label, trustedRootRecords, sources = [], skipped = [] }) {
   if (label === 'createWorkspaceBehavior') {
     return [
       'createWorkspaceBehavior intentionally validates Create Workspace wizard content, field validation, review/back, and app-type cleanup without clicking Create.',
       'No generated Logic App project/workspace is expected for this label.',
+    ].join(' ');
+  }
+
+  const rejectedSources = skipped.filter((entry) => entry.reason === 'source is outside wrapper-created owned roots');
+  if (sources.length > 0 && rejectedSources.length > 0) {
+    return [
+      'generated workspace source(s) were discovered but rejected because no matching wrapper-created owned root was registered for this phase.',
+      'This usually means the run phase did not carry LA_E2E_CLI_WORKSPACE_PARENT/LA_E2E_CLI_CREATE_WORKSPACE_PARENT from the create phase; manifest or case paths alone are not trusted.',
+      `Rejected sources: ${rejectedSources.map((entry) => entry.source).join(', ')}`,
     ].join(' ');
   }
 
@@ -1745,6 +1758,7 @@ module.exports = {
     createIsolatedRuntimeDependenciesRoot,
     findAzureLogicAppsChannelLogs,
     getMsnWeatherAzureTargetEnv,
+    getMsnWeatherLifecycleRunExtraEnv,
     getNoGeneratedWorkspaceSnapshotReason,
     getGeneratedWorkspaceSnapshotRoot,
     getFuncCoreToolsCandidatePaths,
