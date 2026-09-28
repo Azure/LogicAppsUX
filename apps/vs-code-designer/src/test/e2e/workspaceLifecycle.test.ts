@@ -975,11 +975,12 @@ async function addMsnWeatherActionThroughDesigner(cdp: CdpEvaluator, contextId: 
   );
   await fillDesignerParameter(cdp, contextId, ['Location', 'location'], msnWeatherLocation, `${label} MSN Weather Location`);
   await captureLifecycleScreenshot(`workspace-lifecycle-${label}-msn-weather-action-configured`);
-  await tryClickDesignerElement(cdp, contextId, ['button', '[role="button"]', '[aria-label="Close"]'], 'Close', { useLastMatch: true });
+  await closeDesignerDetailsPanelThroughDesigner(cdp, contextId, `${label} MSN Weather action panel`);
 }
 
 async function openActionDiscoveryPanelThroughDesigner(cdp: CdpEvaluator, contextId: number, label: string): Promise<void> {
   console.log(`[workspace-lifecycle] ${label}: clicking Add an action`);
+  await closeDesignerDetailsPanelThroughDesigner(cdp, contextId, `${label} existing details panel`);
   let actionPanelOpened = false;
   for (let attempt = 1; attempt <= 3; attempt++) {
     await clickDesignerElement(
@@ -996,7 +997,7 @@ async function openActionDiscoveryPanelThroughDesigner(cdp: CdpEvaluator, contex
       { requireTextMatch: false, useLastMatch: true }
     );
 
-    if (await waitForOptionalDiscoveryPanelThroughDesigner(cdp, contextId, 2500)) {
+    if (await waitForOptionalDiscoveryPanelThroughDesigner(cdp, contextId, 7500)) {
       actionPanelOpened = true;
       break;
     }
@@ -1008,7 +1009,7 @@ async function openActionDiscoveryPanelThroughDesigner(cdp: CdpEvaluator, contex
       'Add an action'
     );
     if (clickedMenuItem) {
-      if (await waitForOptionalDiscoveryPanelThroughDesigner(cdp, contextId, 2500)) {
+      if (await waitForOptionalDiscoveryPanelThroughDesigner(cdp, contextId, 7500)) {
         actionPanelOpened = true;
         break;
       }
@@ -1019,6 +1020,42 @@ async function openActionDiscoveryPanelThroughDesigner(cdp: CdpEvaluator, contex
   assert.ok(actionPanelOpened, `${label} Add Action panel should open`);
   await waitForDiscoveryPanelThroughDesigner(cdp, contextId, 60000, `${label} action discovery panel`);
   await captureLifecycleScreenshot(`workspace-lifecycle-${label}-action-panel-open`);
+}
+
+async function closeDesignerDetailsPanelThroughDesigner(cdp: CdpEvaluator, contextId: number, description: string): Promise<void> {
+  if (!(await hasDesignerDetailsPanelThroughDesigner(cdp, contextId))) {
+    console.log(`[workspace-lifecycle] ${description}: details panel was already closed`);
+    return;
+  }
+
+  const clicked = await tryClickDesignerElement(
+    cdp,
+    contextId,
+    ['[data-automation-id="msla-panel-header-close-nav"]', 'button[aria-label="Close"]'],
+    'Close',
+    {
+      requireTextMatch: false,
+      useLastMatch: true,
+    }
+  );
+  assert.ok(clicked, `${description} Close button should be clickable before adding another operation`);
+
+  await waitUntil(
+    async () => !(await hasDesignerDetailsPanelThroughDesigner(cdp, contextId)),
+    15000,
+    `${description} to close before adding another operation`
+  );
+  await new Promise((resolve) => setTimeout(resolve, 750));
+}
+
+async function hasDesignerDetailsPanelThroughDesigner(cdp: CdpEvaluator, contextId: number): Promise<boolean> {
+  return cdp.evaluate<boolean>(
+    contextId,
+    `(() => {
+      const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
+      return Array.from(document.querySelectorAll('[id^="msla-node-details-panel"], .msla-panel-container')).some(isVisible);
+    })()`
+  );
 }
 
 async function handleMsnWeatherConnectionThroughDesigner(cdp: CdpEvaluator, contextId: number, label: string): Promise<void> {
@@ -1863,10 +1900,8 @@ async function hasDiscoveryPanelThroughDesigner(cdp: CdpEvaluator, contextId: nu
       const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
       return [
         '.msla-panel-root-Discovery',
-        '[class*="panel-root"]',
         '[data-automation-id="msla-search-box"]',
         '.msla-search-box',
-        'input[placeholder*="Search"]',
       ].some((selector) => Array.from(document.querySelectorAll(selector)).some(isVisible));
     })()`
   );
