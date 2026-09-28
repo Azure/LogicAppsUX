@@ -17,6 +17,11 @@ async function main(): Promise<void> {
   testActualDomExtractionRejectsUnrelatedEditableConnected();
   testActualDomExtractionAcceptsProductConnectionStatus();
   testActualDomExtractionAcceptsNodeDetailsPanelConnectionDisplay();
+  testActualDomExtractionAcceptsNodeDetailsPanelIdWithoutTitleText();
+  testActualDomExtractionAcceptsOuterPanelWithSingleNodeIdentity();
+  testActualDomExtractionRejectsWrongNodeDetailsPanelIdWithoutTitleText();
+  testActualDomExtractionRejectsWrongNodeDetailsPanelIdWithEditableTitleText();
+  testActualDomExtractionRejectsOuterPanelWithMultipleNodeIdentities();
   testActualDomExtractionIgnoresHiddenConnectionStatus();
   testActualDomExtractionIgnoresTransparentConnectionStatus();
   testActualDomExtractionDoesNotPromoteEditableErrorText();
@@ -119,6 +124,103 @@ function testActualDomExtractionAcceptsNodeDetailsPanelConnectionDisplay(): void
   assert.strictEqual(result.scopedPanelFound, true);
   assert.match(result.panelText, /Get current weather/);
   assert.strictEqual(getAzureConnectionStatus(result.candidates).kind, 'connected');
+}
+
+function testActualDomExtractionAcceptsNodeDetailsPanelIdWithoutTitleText(): void {
+  const result = runConnectionStatusDomScript(
+    new FakeElement('body', {}, [
+      new FakeElement('div', { id: 'msla-node-details-panel-Get_current_weather', class: 'msla-node-details-panel' }, [
+        new FakeElement('button', {}, [], 'Parameters'),
+        new FakeElement('button', {}, [], 'Settings'),
+        new FakeElement('label', {}, [], 'Location *'),
+        new FakeElement('div', { contenteditable: 'true', class: 'editor-input' }, [], '98058'),
+        new FakeElement('label', {}, [], 'Units *'),
+        new FakeElement('div', { class: 'msla-connection-display' }, [
+          new FakeElement('span', {}, [], 'Connected to MSN Weather.'),
+          new FakeElement('a', {}, [], 'Change connection'),
+        ]),
+      ]),
+    ])
+  );
+  assert.strictEqual(result.scopedPanelFound, true);
+  assert.doesNotMatch(result.panelText, /Get current weather/);
+  assert.strictEqual(getAzureConnectionStatus(result.candidates).kind, 'connected');
+}
+
+function testActualDomExtractionAcceptsOuterPanelWithSingleNodeIdentity(): void {
+  const result = runConnectionStatusDomScript(
+    new FakeElement('body', {}, [
+      new FakeElement('div', { class: 'msla-panel-container' }, [
+        new FakeElement('div', { id: 'msla-node-details-panel-Get_current_weather', class: 'msla-node-details-panel' }, [
+          new FakeElement('label', {}, [], 'Location *'),
+          new FakeElement('div', { contenteditable: 'true', class: 'editor-input' }, [], '98058'),
+          new FakeElement('div', { class: 'msla-connection-display' }, [
+            new FakeElement('span', {}, [], 'Connected to MSN Weather.'),
+            new FakeElement('a', {}, [], 'Change connection'),
+          ]),
+        ]),
+      ]),
+    ])
+  );
+  assert.strictEqual(result.scopedPanelFound, true);
+  assert.strictEqual(getAzureConnectionStatus(result.candidates).kind, 'connected');
+}
+
+function testActualDomExtractionRejectsWrongNodeDetailsPanelIdWithoutTitleText(): void {
+  const result = runConnectionStatusDomScript(
+    new FakeElement('body', {}, [
+      new FakeElement('div', { id: 'msla-node-details-panel-Response', class: 'msla-node-details-panel' }, [
+        new FakeElement('label', {}, [], 'Location *'),
+        new FakeElement('div', { contenteditable: 'true', class: 'editor-input' }, [], '98058'),
+        new FakeElement('div', { class: 'msla-connection-display' }, [
+          new FakeElement('span', {}, [], 'Connected to MSN Weather.'),
+          new FakeElement('a', {}, [], 'Change connection'),
+        ]),
+      ]),
+    ])
+  );
+  assert.strictEqual(result.scopedPanelFound, false);
+  assert.strictEqual(result.candidates.length, 0);
+  assert.strictEqual(getAzureConnectionStatus(result.candidates).kind, 'missing');
+}
+
+function testActualDomExtractionRejectsWrongNodeDetailsPanelIdWithEditableTitleText(): void {
+  const result = runConnectionStatusDomScript(
+    new FakeElement('body', {}, [
+      new FakeElement('div', { id: 'msla-node-details-panel-Send_an_email', class: 'msla-node-details-panel' }, [
+        new FakeElement('label', {}, [], 'Location *'),
+        new FakeElement('div', { contenteditable: 'true', class: 'editor-input' }, [], 'Get current weather'),
+        new FakeElement('div', { class: 'msla-connection-display' }, [
+          new FakeElement('span', {}, [], 'Connected to MSN Weather.'),
+          new FakeElement('a', {}, [], 'Change connection'),
+        ]),
+      ]),
+    ])
+  );
+  assert.strictEqual(result.scopedPanelFound, false);
+  assert.strictEqual(result.candidates.length, 0);
+  assert.strictEqual(getAzureConnectionStatus(result.candidates).kind, 'missing');
+}
+
+function testActualDomExtractionRejectsOuterPanelWithMultipleNodeIdentities(): void {
+  const result = runConnectionStatusDomScript(
+    new FakeElement('body', {}, [
+      new FakeElement('div', { class: 'msla-panel-container' }, [
+        new FakeElement('div', { id: 'msla-node-details-panel-Get_current_weather', class: 'msla-node-details-panel' }, [
+          new FakeElement('label', {}, [], 'Location *'),
+          new FakeElement('div', { contenteditable: 'true', class: 'editor-input' }, [], '98058'),
+        ]),
+        new FakeElement('div', { id: 'msla-node-details-panel-Send_an_email', class: 'msla-node-details-panel' }, [
+          new FakeElement('div', { class: 'msla-connection-display' }, [
+            new FakeElement('span', {}, [], 'Connected to MSN Weather.'),
+            new FakeElement('a', {}, [], 'Change connection'),
+          ]),
+        ]),
+      ]),
+    ])
+  );
+  assert.strictEqual(result.scopedPanelFound, true);
+  assert.strictEqual(getAzureConnectionStatus(result.candidates).kind, 'missing');
 }
 
 function testActualDomExtractionIgnoresHiddenConnectionStatus(): void {
@@ -419,6 +521,9 @@ function matchesSimpleSelector(element: FakeElement, selector: string): boolean 
   }
   if (selector === '[id^="msla-node-details-panel"]') {
     return element.id.startsWith('msla-node-details-panel');
+  }
+  if (selector === '[id^="msla-node-details-panel-"]') {
+    return element.id.startsWith('msla-node-details-panel-');
   }
   if (selector === '[contenteditable="true"], textarea, input, .editor-input') {
     return (

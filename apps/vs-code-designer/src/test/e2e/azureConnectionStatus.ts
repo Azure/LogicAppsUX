@@ -37,6 +37,7 @@ export const azureConnectionStatusDomScript = `
 (() => {
   const actionTitle = __ACTION_TITLE__;
   const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim();
+  const normalizeIdentifier = (value) => normalize(value).toLowerCase().replace(/[^a-z0-9]+/g, '');
   const hasVisibleStyle = (element) => {
     let current = element;
     while (current instanceof HTMLElement) {
@@ -151,6 +152,23 @@ export const azureConnectionStatusDomScript = `
     }
     return false;
   };
+  const getPanelNodeIdentities = (panel) => {
+    const idPrefix = 'msla-node-details-panel-';
+    if (panel.id?.startsWith(idPrefix)) {
+      return [panel.id.slice(idPrefix.length)];
+    }
+    return Array.from(panel.querySelectorAll?.('[id^="msla-node-details-panel-"]') || [])
+      .map((nestedPanel) => (nestedPanel.id?.startsWith(idPrefix) ? nestedPanel.id.slice(idPrefix.length) : ''))
+      .filter((value, index, all) => value && all.indexOf(value) === index);
+  };
+  const panelMatchesAction = (panel, text) => {
+    const normalizedActionTitle = normalizeIdentifier(actionTitle);
+    const nodeIdentities = getPanelNodeIdentities(panel);
+    if (nodeIdentities.length > 0) {
+      return nodeIdentities.length === 1 && normalizeIdentifier(nodeIdentities[0]) === normalizedActionTitle;
+    }
+    return text.toLowerCase().includes(actionTitle);
+  };
   const panelSelectors = '[id^="msla-node-details-panel"], .msla-node-details-panel, .msla-panel-container, [class*="node-details-panel"]';
   const rawPanels = Array.from(document.querySelectorAll(panelSelectors));
   const panelDebug = rawPanels.slice(0, 30).map((panel) => {
@@ -163,8 +181,8 @@ export const azureConnectionStatusDomScript = `
       ? 'not visible'
       : rect.width <= 250 || rect.height <= 200
         ? 'too small'
-        : !text.toLowerCase().includes(actionTitle)
-          ? 'missing action title'
+        : !panelMatchesAction(panel, text)
+          ? 'operation identity mismatch'
           : 'candidate';
     return summarizeElement(panel, reason);
   });
@@ -192,7 +210,7 @@ export const azureConnectionStatusDomScript = `
       const rect = panel.getBoundingClientRect();
       return { panel, text, rect };
     })
-    .filter(({ text, rect }) => rect.width > 250 && rect.height > 200 && text.toLowerCase().includes(actionTitle))
+    .filter(({ panel, text, rect }) => rect.width > 250 && rect.height > 200 && panelMatchesAction(panel, text))
     .sort((a, b) => a.rect.left - b.rect.left);
   const panelSummaries = panels.map(({ text, rect }) => Math.round(rect.left) + ',' + Math.round(rect.top) + ' ' + text.slice(0, 240));
   const scopedPanel = panels.at(-1)?.panel;
