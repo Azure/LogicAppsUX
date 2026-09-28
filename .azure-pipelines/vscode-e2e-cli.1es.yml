@@ -93,7 +93,7 @@ parameters:
   - name: testNodeVersion
     displayName: E2E runner Node.js version
     type: string
-    default: '20.x'
+    default: '22.x'
 
   - name: dotnetVersion
     displayName: .NET SDK version

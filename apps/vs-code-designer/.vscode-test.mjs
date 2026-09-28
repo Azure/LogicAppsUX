@@ -12,8 +12,10 @@ const remoteDebuggingPort =
 const userDataSuffix = process.env.LA_E2E_CLI_USER_DATA_SUFFIX;
 const nonWindowsUserDataSuffix = userDataSuffix ?? String(process.pid);
 const userDataDirOverride = process.env.LA_E2E_CLI_USER_DATA_DIR;
+const userDataParent = process.env.LA_E2E_CLI_USER_DATA_PARENT;
 const userDataDir =
   userDataDirOverride ??
+  (userDataParent ? path.join(userDataParent, userDataSuffix ? `user-data-${userDataSuffix}` : `user-data-${process.pid}`) : undefined) ??
   (process.platform === 'win32'
     ? path.join(__dirname, '.vscode-test', userDataSuffix ? `user-data-${userDataSuffix}` : 'user-data')
     : path.join(tmpdir(), `la-vscode-test-${checkoutHash}-${nonWindowsUserDataSuffix}`));
@@ -29,15 +31,18 @@ const includeMsnWeatherLifecycle =
 const includeRuntimeDependencyBootstrap =
   process.env.LA_E2E_CLI_INCLUDE_RUNTIME_DEPENDENCY_BOOTSTRAP === '1' || process.argv.includes('runtimeDependencyBootstrap');
 const includeAzureAuthWarmup = process.env.LA_E2E_CLI_INCLUDE_AZURE_AUTH_WARMUP === '1' || process.argv.includes('azureAuthWarmup');
+const vscodeVersion = process.env.LA_E2E_CLI_VSCODE_VERSION || 'stable';
 const dependencyRoot =
   process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT ??
-  path.join(process.env.USERPROFILE ?? process.env.HOME ?? '', '.azurelogicapps', 'dependencies');
+  (process.env.LA_E2E_CLI_BATCH_MODE === '1'
+    ? failBatchRuntimeDependencyRoot()
+    : path.join(process.env.USERPROFILE ?? process.env.HOME ?? '', '.azurelogicapps', 'dependencies'));
 const dotnetExecutablePath = findExecutable('dotnet') ?? 'dotnet';
 
 prepareUserSettings(userDataDir);
 
 const baseConfig = {
-  version: 'stable',
+  version: vscodeVersion,
   extensionDevelopmentPath,
   ...(startupResource ? { workspaceFolder: startupResource } : {}),
   env: {
@@ -103,7 +108,8 @@ const configs = [
   {
     label: 'createWorkspaceFixturesManifest',
     ...createWorkspaceConfig('fixtures-manifest', 700000, {
-      LA_E2E_CLI_CREATE_WORKSPACE_FIXTURE_MANIFEST: path.join(tmpdir(), 'la-e2e-test', 'created-workspaces.json'),
+      LA_E2E_CLI_CREATE_WORKSPACE_FIXTURE_MANIFEST:
+        process.env.LA_E2E_CLI_CREATE_WORKSPACE_FIXTURE_MANIFEST ?? path.join(tmpdir(), 'la-e2e-test', 'created-workspaces.json'),
     }),
   },
 ];
@@ -208,6 +214,7 @@ function getForwardedTestEnvironment() {
     'LA_E2E_CLI_AZURE_LOCATION_NAME',
     'LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL',
     'LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT',
+    'LA_E2E_CLI_CREATE_WORKSPACE_FIXTURE_MANIFEST',
     'LA_E2E_CLI_EXPECT_EMPTY_RUNTIME_DEPENDENCIES_ROOT',
     'LA_E2E_CLI_EMPTY_RUNTIME_DEPENDENCIES_ROOT_CONFIRMED',
     'LA_E2E_CLI_VALIDATE_DEPENDENCIES',
@@ -220,6 +227,12 @@ function getForwardedTestEnvironment() {
     'WORKFLOWS_MANAGEMENT_BASE_URI',
   ];
   return Object.fromEntries(names.flatMap((name) => (process.env[name] ? [[name, process.env[name]]] : [])));
+}
+
+function failBatchRuntimeDependencyRoot() {
+  throw new Error(
+    'LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT is required in --suites batch mode; refusing to fall back to the user home dependency cache.'
+  );
 }
 
 function prepareUserSettings(userDataPath) {

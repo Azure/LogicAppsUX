@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-/* global __dirname, console, module, process, require, setTimeout */
+/* global __dirname, __filename, clearTimeout, console, module, process, require, setTimeout */
 const { execFileSync, spawn } = require('child_process');
 const { Buffer } = require('buffer');
 const { createHash } = require('crypto');
@@ -10,6 +10,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { URL } = require('url');
+const { createBatchRoot, normalizeSuiteSelection, runBatchSuites } = require('./e2e-cli-batch');
 
 const forbiddenOutputPatterns = [
   {
@@ -57,6 +58,9 @@ const generatedWorkspaceSnapshotSafeTextExtensions = new Set([
   '.yaml',
   '.yml',
 ]);
+const vscodeProfileLogMaxFileBytes = 1024 * 1024;
+const vscodeProfileLogSafeExtensions = new Set(['', '.json', '.jsonl', '.log', '.md', '.txt']);
+const vscodeProfileLogSafeFileNames = new Set(['telemetry.log', 'exthost.log', 'renderer.log', 'main.log', 'sharedprocess.log']);
 const generatedWorkspaceSnapshotDangerousExtensions = new Set([
   '.cer',
   '.crt',
@@ -85,11 +89,27 @@ function main() {
     createWorkspaceFull,
     msnWeatherLifecycle,
     nugetConversionLifecycle,
+    suites,
     visibleDelayMs,
     workspaceLifecycle,
   } = parseArgs(process.argv.slice(2));
 
-  if (azureAuthWarmup) {
+  if (
+    suites !== undefined &&
+    (azureAuthWarmup ||
+      codefulDebugTasks ||
+      createWorkspaceFull ||
+      msnWeatherLifecycle ||
+      nugetConversionLifecycle ||
+      workspaceLifecycle ||
+      args.length > 0)
+  ) {
+    exitWithError(new Error('--suites cannot be combined with --label or lifecycle flags; select registered logical suite ids only.'));
+  } else if (suites !== undefined) {
+    runSuitesBatch(suites, visibleDelayMs)
+      .then((code) => process.exit(code))
+      .catch(exitWithError);
+  } else if (azureAuthWarmup) {
     runAzureAuthWarmup(visibleDelayMs)
       .then((code) => process.exit(code))
       .catch(exitWithError);
@@ -117,6 +137,364 @@ function main() {
 function exitWithError(error) {
   console.error(error instanceof Error ? error.message : String(error));
   process.exit(1);
+}
+
+async function runSuitesBatch(suitesValue, visibleDelayMs) {
+  const suites = normalizeSuiteSelection(suitesValue, { platform: process.platform });
+  const batchRoot = createBatchRoot({ batchRoot: process.env.LA_E2E_CLI_BATCH_ROOT });
+  const resultsDir = path.resolve(process.env.LA_E2E_CLI_BATCH_RESULTS_DIR || path.join(batchRoot, 'results'));
+  const seedDir = path.resolve(process.env.LA_E2E_CLI_PREPARED_EXTENSIONS_DIR || path.join(__dirname, '..', '.vscode-test', 'extensions'));
+  fs.mkdirSync(resultsDir, { recursive: true });
+
+  console.log(`[batch] Starting ${suites.length} suite(s) on ${process.platform}: ${suites.map((suite) => suite.id).join(', ')}`);
+  console.log(`[batch] Batch root: ${batchRoot}`);
+  console.log(`[batch] Prepared extensions seed: ${seedDir}`);
+
+  const aggregate = await runBatchSuites({
+    suites,
+    batchRoot,
+    seedDir,
+    diagnosticOnly: isEnabledEnv(process.env.LA_E2E_CLI_BATCH_DIAGNOSTIC_ONLY),
+    trustedFullExecution: isEnabledEnv(process.env.LA_E2E_CLI_BATCH_TRUSTED_FULL_EXECUTION),
+    admissionContext: readJsonIfExists(process.env.LA_E2E_CLI_ADMISSION_CONTEXT_PATH),
+    runSuite: ({ suite, context, env, timeoutMs }) => runSuiteWrapperProcess({ suite, context, env, visibleDelayMs, timeoutMs }),
+  });
+  fs.writeFileSync(path.join(resultsDir, 'e2e-cli-batch-result.json'), `${JSON.stringify(aggregate, null, 2)}\n`);
+  writeBatchJUnitResults(resultsDir, aggregate);
+  console.log(`[batch] Wrote aggregate result: ${path.join(resultsDir, 'e2e-cli-batch-result.json')}`);
+
+  if (aggregate.aggregateOutcome !== 'success') {
+    console.error(
+      `[batch] Failed. failedSuites=${aggregate.failedSuites.join(',') || '<none>'} blockedSuites=${
+        aggregate.blockedSuites.join(',') || '<none>'
+      } complete=${aggregate.complete} fullRollup=${aggregate.fullRollup}`
+    );
+    return 1;
+  }
+
+  function isEnabledEnv(value) {
+    return value === '1' || String(value).toLowerCase() === 'true';
+  }
+
+  console.log('[batch] All expected suites completed successfully.');
+  return 0;
+}
+
+function writeBatchJUnitResults(resultsDir, aggregate) {
+  const suiteResults = Array.isArray(aggregate.suites) ? aggregate.suites : [];
+  for (const suite of suiteResults) {
+    fs.writeFileSync(path.join(resultsDir, `${sanitizeEnvSegment(suite.id)}.junit.xml`), buildBatchSuiteJUnitXml(suite));
+  }
+  fs.writeFileSync(path.join(resultsDir, 'e2e-cli-batch-result.junit.xml'), buildBatchAggregateJUnitXml(aggregate));
+}
+
+function buildBatchSuiteJUnitXml(suite) {
+  const failed = suite.finalOutcome !== 'success';
+  const failure = failed
+    ? [
+        `    <failure message="${escapeXml(suite.reason ?? suite.finalOutcome ?? 'suite failed')}">`,
+        escapeXml(JSON.stringify(suite, null, 2)),
+        '    </failure>',
+      ]
+    : [];
+  return [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    `<testsuite name="${escapeXml(suite.id)}" tests="1" failures="${failed ? 1 : 0}" skipped="${suite.finalOutcome === 'blocked' ? 1 : 0}">`,
+    `  <testcase classname="@vscode/test-cli.batch" name="${escapeXml(suite.id)}">`,
+    ...failure,
+    '  </testcase>',
+    '</testsuite>',
+    '',
+  ].join('\n');
+}
+
+function buildBatchAggregateJUnitXml(aggregate) {
+  const suites = Array.isArray(aggregate.suites) ? aggregate.suites : [];
+  const failures =
+    suites.filter((suite) => suite.finalOutcome !== 'success').length + (aggregate.fullRollup ? 0 : aggregate.diagnosticOnly ? 0 : 0);
+  return [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    `<testsuites name="@vscode/test-cli batch" tests="${suites.length}" failures="${failures}">`,
+    ...suites.map((suite) => buildBatchSuiteJUnitXml(suite).split('\n').slice(1, -2).join('\n')),
+    '</testsuites>',
+    '',
+  ].join('\n');
+}
+
+function escapeXml(value) {
+  return String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+}
+
+function runSuiteWrapperProcess({ suite, context, env, visibleDelayMs, timeoutMs, scriptPath = __filename }) {
+  const childArgs = [scriptPath, ...suite.args, ...(visibleDelayMs ? ['--visible-delay-ms', String(visibleDelayMs)] : [])];
+  console.log(`[batch] Running suite ${suite.id}: ${process.execPath} ${childArgs.map((arg) => JSON.stringify(arg)).join(' ')}`);
+  const child = spawn(process.execPath, childArgs, {
+    env: {
+      ...env,
+      LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH: context.terminalResultPath,
+      LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH: context.cleanupLedgerPath,
+      LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH: context.phaseResultsPath,
+    },
+    cwd: path.resolve(__dirname, '..'),
+  });
+
+  let output = '';
+  let timedOut = false;
+  let settled = false;
+  const timeout = setTimeout(() => {
+    timedOut = true;
+    terminateProcessTree(child, 'SIGTERM')
+      .then(() => delay(5000))
+      .then(() => terminateProcessTree(child, 'SIGKILL'))
+      .catch((error) => {
+        appendOutput(`\n[batch] Failed to terminate timed-out process tree: ${error instanceof Error ? error.message : String(error)}\n`);
+      });
+  }, timeoutMs).unref();
+
+  const forwardSignal = (signal) => {
+    if (settled) {
+      return;
+    }
+    appendOutput(`\n[batch] Parent received ${signal}; terminating suite process tree.\n`);
+    terminateProcessTree(child, 'SIGTERM')
+      .then(() => delay(5000))
+      .then(() => terminateProcessTree(child, 'SIGKILL'))
+      .finally(() => process.exit(1));
+  };
+  process.once('SIGINT', forwardSignal);
+  process.once('SIGTERM', forwardSignal);
+
+  const appendOutput = (text) => {
+    output += text;
+    if (output.length > 2 * 1024 * 1024) {
+      output = output.slice(-2 * 1024 * 1024);
+    }
+  };
+
+  child.stdout.on('data', (data) => {
+    const text = data.toString();
+    appendOutput(text);
+    process.stdout.write(`[${suite.id}] ${text}`);
+  });
+  child.stderr.on('data', (data) => {
+    const text = data.toString();
+    appendOutput(text);
+    process.stderr.write(`[${suite.id}] ${text}`);
+  });
+
+  return new Promise((resolve) => {
+    child.on('error', (error) => {
+      clearTimeout(timeout);
+      settled = true;
+      process.off('SIGINT', forwardSignal);
+      process.off('SIGTERM', forwardSignal);
+      writeSuiteFinalEvidence({
+        context,
+        suite,
+        exitCode: null,
+        signal: null,
+        output,
+        error,
+        processCleanup: { verified: false, error: error.message },
+      });
+      resolve({ exitCode: null, signal: null, error, output });
+    });
+    child.on('close', async (exitCode, signal) => {
+      clearTimeout(timeout);
+      settled = true;
+      process.off('SIGINT', forwardSignal);
+      process.off('SIGTERM', forwardSignal);
+      const processCleanup = await verifyNoOwnedDescendants(child.pid);
+      const error = timedOut
+        ? new Error(`suite timed out after ${timeoutMs}ms`)
+        : processCleanup.error
+          ? new Error(processCleanup.error)
+          : undefined;
+      writeSuiteFinalEvidence({ context, suite, exitCode, signal, output, error, processCleanup });
+      resolve({ exitCode, signal, output, error });
+    });
+  });
+}
+
+function readJsonIfExists(filePath) {
+  if (!filePath || !fs.existsSync(filePath)) {
+    return undefined;
+  }
+  return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+}
+
+function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, processCleanup }) {
+  const phaseResults = readJsonLinesIfExists(context.phaseResultsPath);
+  const observedPhaseIds = phaseResults.map((phase) => phase.phaseId).filter(Boolean);
+  const expectedPhaseIds = context.expectedPhaseIds ?? [];
+  const missingPhaseIds = expectedPhaseIds.filter((phaseId) => !observedPhaseIds.includes(phaseId));
+  const unexpectedPhaseIds = observedPhaseIds.filter((phaseId) => !expectedPhaseIds.includes(phaseId));
+  const duplicatePhaseIds = getDuplicateValues(observedPhaseIds);
+  const blockedPhaseIds = exitCode === 0 ? [] : missingPhaseIds;
+  const phaseDiagnosticsErrors = phaseResults
+    .map((phase) => phase.diagnosticsError)
+    .filter((diagnosticsError) => typeof diagnosticsError === 'string' && diagnosticsError.trim());
+  const phaseCleanupVerified = phaseResults.every((phase) => phase.cleanupVerified === true);
+  const phaseCompleteness =
+    unexpectedPhaseIds.length === 0 &&
+    duplicatePhaseIds.length === 0 &&
+    (missingPhaseIds.length === 0 || blockedPhaseIds.length > 0) &&
+    phaseResults.length > 0;
+  const cleanupLedger = {
+    schemaVersion: 1,
+    generatedAt: new Date().toISOString(),
+    suiteId: suite.id,
+    expectedPhaseIds,
+    observedPhaseIds,
+    missingPhaseIds,
+    unexpectedPhaseIds,
+    duplicatePhaseIds,
+    blockedPhaseIds,
+    phaseCleanupVerified,
+    processTreeVerified: processCleanup.verified === true,
+    processCleanup,
+    verified: phaseCompleteness && phaseCleanupVerified && processCleanup.verified === true,
+    phases: phaseResults,
+  };
+  const terminalResult = {
+    suiteId: suite.id,
+    exitCode,
+    signal,
+    cleanupVerified: cleanupLedger.verified,
+    diagnosticsError: [error instanceof Error ? error.message : String(error || ''), ...phaseDiagnosticsErrors].filter(Boolean).join('\n'),
+    expectedPhaseIds,
+    observedPhaseIds,
+    missingPhaseIds,
+    unexpectedPhaseIds,
+    duplicatePhaseIds,
+    blockedPhaseIds,
+    phaseCompleteness,
+    complete: phaseCompleteness && cleanupLedger.verified === true && !error && phaseDiagnosticsErrors.length === 0,
+  };
+  writeSuiteCleanupLedger({ LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH: context.cleanupLedgerPath }, cleanupLedger);
+  writeSuiteTerminalResult({ LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH: context.terminalResultPath }, terminalResult);
+}
+
+function getDuplicateValues(values) {
+  const seen = new Set();
+  const duplicates = new Set();
+  for (const value of values) {
+    if (seen.has(value)) {
+      duplicates.add(value);
+    }
+    seen.add(value);
+  }
+  return [...duplicates];
+}
+
+function readJsonLinesIfExists(filePath) {
+  if (!filePath || !fs.existsSync(filePath)) {
+    return [];
+  }
+  return fs
+    .readFileSync(filePath, 'utf8')
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => JSON.parse(line));
+}
+
+function terminateProcessTree(child, signal) {
+  return getProcessTreePids(child.pid).then((pids) => {
+    for (const pid of [...pids].reverse()) {
+      if (pid !== process.pid && isPidAlive(pid)) {
+        try {
+          process.kill(pid, signal);
+        } catch {
+          // Process already exited.
+        }
+      }
+    }
+  });
+}
+
+function verifyNoOwnedDescendants(pid) {
+  return getProcessTreePids(pid)
+    .then((pids) => {
+      const alivePids = pids.filter((candidate) => candidate !== process.pid && isPidAlive(candidate));
+      return {
+        schemaVersion: 1,
+        verified: alivePids.length === 0,
+        alivePids,
+        checkedAt: new Date().toISOString(),
+      };
+    })
+    .catch((error) => ({
+      schemaVersion: 1,
+      verified: false,
+      error: error instanceof Error ? error.message : String(error),
+      checkedAt: new Date().toISOString(),
+    }));
+}
+
+function getProcessTreePids(pid) {
+  if (!pid) {
+    return Promise.resolve([]);
+  }
+  return Promise.resolve(getProcessTreePidsSync(pid));
+}
+
+function getProcessTreePidsSync(pid) {
+  const parentPairs = getProcessParentPairs();
+  const childrenByParent = new Map();
+  for (const pair of parentPairs) {
+    if (!childrenByParent.has(pair.parentPid)) {
+      childrenByParent.set(pair.parentPid, []);
+    }
+    childrenByParent.get(pair.parentPid).push(pair.pid);
+  }
+  const pids = [];
+  const stack = [pid];
+  while (stack.length > 0) {
+    const current = stack.pop();
+    if (!Number.isInteger(current) || pids.includes(current)) {
+      continue;
+    }
+    pids.push(current);
+    stack.push(...(childrenByParent.get(current) ?? []));
+  }
+  return pids;
+}
+
+function getProcessParentPairs() {
+  if (process.platform === 'win32') {
+    const output = execFileSync(
+      'powershell.exe',
+      [
+        '-NoProfile',
+        '-ExecutionPolicy',
+        'Bypass',
+        '-Command',
+        'Get-CimInstance Win32_Process | Select-Object ProcessId,ParentProcessId | ConvertTo-Json -Compress',
+      ],
+      { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }
+    );
+    const parsed = JSON.parse(output);
+    return (Array.isArray(parsed) ? parsed : [parsed])
+      .map((entry) => ({ pid: Number(entry.ProcessId), parentPid: Number(entry.ParentProcessId) }))
+      .filter((entry) => Number.isInteger(entry.pid) && Number.isInteger(entry.parentPid));
+  }
+
+  const output = execFileSync('ps', ['-eo', 'pid=,ppid='], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+  return output
+    .split(/\r?\n/)
+    .map((line) => line.trim().split(/\s+/).map(Number))
+    .filter(([pidValue, parentPid]) => Number.isInteger(pidValue) && Number.isInteger(parentPid))
+    .map(([pidValue, parentPid]) => ({ pid: pidValue, parentPid }));
+}
+
+function isPidAlive(pid) {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 async function runCreateWorkspaceFull(visibleDelayMs) {
@@ -160,7 +538,7 @@ async function runAzureAuthWarmup(visibleDelayMs) {
 }
 
 async function runWorkspaceLifecycle(visibleDelayMs) {
-  const lifecycleDir = path.resolve(__dirname, '..', '.vscode-test', 'workspace-lifecycle');
+  const lifecycleDir = getLifecycleArtifactDir('workspace-lifecycle');
   fs.mkdirSync(lifecycleDir, { recursive: true });
   const manifest = [];
   const workspaceParent = createOwnedWorkspaceParent('workspace-lifecycle');
@@ -204,7 +582,7 @@ async function runWorkspaceLifecycle(visibleDelayMs) {
 }
 
 async function runNugetConversionLifecycle(visibleDelayMs) {
-  const lifecycleDir = path.resolve(__dirname, '..', '.vscode-test', 'nuget-conversion-lifecycle');
+  const lifecycleDir = getLifecycleArtifactDir('nuget-conversion-lifecycle');
   fs.mkdirSync(lifecycleDir, { recursive: true });
   const workspaceParent = createOwnedWorkspaceParent('nuget-conversion-lifecycle');
   const manifestPath = path.join(lifecycleDir, `manifest-standard-${Date.now()}.json`);
@@ -245,7 +623,7 @@ async function runNugetConversionLifecycle(visibleDelayMs) {
 
 async function runCodefulDebugTasks(visibleDelayMs) {
   ensureCSharpDevKitServerShim();
-  const lifecycleDir = path.resolve(__dirname, '..', '.vscode-test', 'codeful-debug-tasks');
+  const lifecycleDir = getLifecycleArtifactDir('codeful-debug-tasks');
   fs.mkdirSync(lifecycleDir, { recursive: true });
   const manifest = [];
   const workspaceParent = createOwnedWorkspaceParent('codeful-debug-tasks');
@@ -299,7 +677,7 @@ function getCodefulDebugTasksRunExtraEnv({ workspaceParent, entry, now = Date.no
 async function runMsnWeatherLifecycle(visibleDelayMs) {
   ensureMsnWeatherProfile();
   const azureEnv = getMsnWeatherAzureEnv();
-  const lifecycleDir = path.resolve(__dirname, '..', '.vscode-test', 'msn-weather-lifecycle');
+  const lifecycleDir = getLifecycleArtifactDir('msn-weather-lifecycle');
   const lifecycleRunId = Date.now();
   const runtimeDependenciesRoot = createIsolatedRuntimeDependenciesRoot('msnWeatherLifecycle');
   const workspaceParent = createOwnedWorkspaceParent('msn-weather-lifecycle');
@@ -384,14 +762,16 @@ function getMsnWeatherLifecycleRunExtraEnv({ commonEnv, workspaceParent, lifecyc
 }
 
 function ensureMsnWeatherProfile() {
-  const hasHeadlessAzureAuth =
-    !!process.env.LA_E2E_CLI_AZURE_ACCESS_TOKEN?.trim() ||
-    !/^(false|0)?$/i.test(process.env.AzCode_UseAzureFederatedCredentials ?? '') ||
-    !!process.env.FC_SERVICE_CONNECTION_ID?.trim() ||
-    !!process.env.AzCode_ServiceConnectionID?.trim();
+  const hasHeadlessAzureAuth = hasHeadlessMsnWeatherAzureAuth(process.env);
   if (hasHeadlessAzureAuth && !process.env.LA_E2E_CLI_USER_DATA_DIR?.trim()) {
     console.log('[workspace-lifecycle][msn-weather] Using per-phase VS Code profiles with headless Azure auth from environment.');
     return;
+  }
+
+  if (isBatchMode()) {
+    throw new Error(
+      'MSN Weather --suites batch mode requires headless Azure auth (WIF/service connection/access token); refusing to reuse a persistent local VS Code profile.'
+    );
   }
 
   const userDataDir = process.env.LA_E2E_CLI_USER_DATA_DIR ?? getDefaultAzureAuthUserDataDir();
@@ -444,8 +824,8 @@ function getMsnWeatherAzureTargetEnv() {
     );
     return {};
   }
-  const account = explicitSubscriptionId && explicitTenantId ? undefined : tryGetAzureCliAccount();
-  const resourceGroupName = explicitResourceGroupName ?? tryGetAzureCliDefaultResourceGroup();
+  const account = explicitSubscriptionId && explicitTenantId ? undefined : isBatchMode() ? undefined : tryGetAzureCliAccount();
+  const resourceGroupName = explicitResourceGroupName ?? (isBatchMode() ? undefined : tryGetAzureCliDefaultResourceGroup());
   const location = explicitLocation ?? 'westus';
   const tenantId = explicitTenantId ?? account?.tenantId;
 
@@ -480,6 +860,9 @@ function getMsnWeatherAzureTargetEnv() {
 }
 
 function canUseInteractiveMsnWeatherAzureTargetEnv(env) {
+  if (env.LA_E2E_CLI_BATCH_MODE === '1') {
+    return false;
+  }
   const allow = env.LA_E2E_CLI_MSN_WEATHER_ALLOW_INTERACTIVE_AZURE_SETTINGS?.trim();
   if (!/^(1|true)$/i.test(allow ?? '')) {
     return false;
@@ -488,13 +871,26 @@ function canUseInteractiveMsnWeatherAzureTargetEnv(env) {
   return !/^(1|true)$/i.test(env.CI ?? '') && !/^(1|true)$/i.test(env.TF_BUILD ?? '') && !/^(1|true)$/i.test(env.GITHUB_ACTIONS ?? '');
 }
 
+function hasHeadlessMsnWeatherAzureAuth(env) {
+  return (
+    !!env.LA_E2E_CLI_AZURE_ACCESS_TOKEN?.trim() ||
+    !/^(false|0)?$/i.test(env.AzCode_UseAzureFederatedCredentials ?? '') ||
+    !!env.FC_SERVICE_CONNECTION_ID?.trim() ||
+    !!env.AzCode_ServiceConnectionID?.trim()
+  );
+}
+
+function isBatchMode() {
+  return process.env.LA_E2E_CLI_BATCH_MODE === '1';
+}
+
 function getMsnWeatherAzureAuthEnv() {
   if (process.env.LA_E2E_CLI_AZURE_ACCESS_TOKEN?.trim()) {
     console.log('[workspace-lifecycle][msn-weather] Reusing LA_E2E_CLI_AZURE_ACCESS_TOKEN from the current shell.');
     return {};
   }
 
-  if (process.env.LA_E2E_CLI_DISABLE_AZURE_CLI_TOKEN_FALLBACK === '1') {
+  if (isBatchMode() || process.env.LA_E2E_CLI_DISABLE_AZURE_CLI_TOKEN_FALLBACK === '1') {
     return {};
   }
 
@@ -606,7 +1002,7 @@ function ensureCSharpDevKitServerShim() {
     return;
   }
 
-  const extensionsDir = path.resolve(__dirname, '..', '.vscode-test', 'extensions');
+  const extensionsDir = path.resolve(process.env.LA_E2E_CLI_EXTENSIONS_DIR || path.join(__dirname, '..', '.vscode-test', 'extensions'));
   if (!fs.existsSync(extensionsDir)) {
     return;
   }
@@ -645,6 +1041,10 @@ async function runDefaultBaseline(visibleDelayMs) {
 
 function sanitizeEnvSegment(value) {
   return String(value).replace(/[^a-z0-9_-]+/gi, '-');
+}
+
+function getLifecycleArtifactDir(name) {
+  return path.resolve(process.env.LA_E2E_CLI_LIFECYCLE_ARTIFACT_ROOT || path.join(__dirname, '..', '.vscode-test'), name);
 }
 
 function createIsolatedRuntimeDependenciesRoot(label) {
@@ -894,6 +1294,7 @@ function runVscodeTest(args, options = {}) {
         process.stdout.write(remainingOutput);
       }
       let diagnosticsError;
+      let cleanupLedger;
       try {
         captureGeneratedWorkspaceDiagnostics({
           env: childEnv,
@@ -910,8 +1311,27 @@ function runVscodeTest(args, options = {}) {
           }`
         );
       }
-      await cleanupDeferredWorkspaceParent(deferredWorkspaceParent);
-      collectVscodeProfileLogs(label, childEnv);
+      cleanupLedger = await cleanupDeferredWorkspaceParent(deferredWorkspaceParent);
+      try {
+        collectVscodeProfileLogs(label, childEnv);
+      } catch (error) {
+        diagnosticsError = error;
+        console.error(
+          `[vscode-test-cli] Failed to capture required VS Code profile diagnostics: ${
+            error instanceof Error ? error.message : String(error)
+          }`
+        );
+      }
+      writeSuitePhaseResult(childEnv, {
+        phaseId: getSuitePhaseId(label, childEnv),
+        label,
+        exitCode: code,
+        signal,
+        cleanupVerified: cleanupLedger.verified,
+        diagnosticsError: diagnosticsError ? (diagnosticsError instanceof Error ? diagnosticsError.message : String(diagnosticsError)) : '',
+        complete: true,
+        cleanupLedger,
+      });
 
       if (diagnosticsError) {
         reject(diagnosticsError instanceof Error ? diagnosticsError : new Error(String(diagnosticsError)));
@@ -1442,7 +1862,8 @@ function redactGeneratedWorkspaceJsonValue(value, key = '') {
 }
 
 function redactGeneratedWorkspacePlainText(content) {
-  let redacted = content.replace(
+  let redacted = content.replace(/(Authorization\s*[:=]\s*Bearer\s+)[A-Za-z0-9._~+/=-]+/gi, '$1<redacted>');
+  redacted = redacted.replace(
     /((?:access[_-]?token|account[_-]?key|api[_-]?key|authorization|authentication|azurewebjobsstorage|client[_-]?secret|connection[_-]?string|credential|password|sas|secret|sig|signature|token)\s*[=:]\s*)("[^"]*"|'[^']*'|[^\s,;]+)/gi,
     '$1<redacted>'
   );
@@ -1580,38 +2001,46 @@ function appendGeneratedWorkspaceRootIndex(destinationRoot, snapshotName, metada
 function collectVscodeProfileLogs(label, env) {
   const userDataDir = getVscodeUserDataDir(env);
   const sourceLogsDir = path.join(userDataDir, 'logs');
-  const logRoot = process.env.LA_E2E_CLI_VSCODE_LOG_DIR ?? path.resolve(__dirname, '..', '.vscode-test', 'vscode-logs', 'cli');
+  const logRoot =
+    env.LA_E2E_CLI_VSCODE_LOG_DIR ??
+    process.env.LA_E2E_CLI_VSCODE_LOG_DIR ??
+    path.resolve(__dirname, '..', '.vscode-test', 'vscode-logs', 'cli');
   const artifactLabel = env.LA_E2E_CLI_VSCODE_LOG_ARTIFACT_LABEL?.trim() || label || 'default';
   const profileName = sanitizeEnvSegment(
     [env.LA_E2E_CLI_PROFILE_PHASE, env.LA_E2E_CLI_USER_DATA_SUFFIX].filter((part) => part?.trim()).join('__') || 'default'
   );
   const destination = path.join(logRoot, sanitizeEnvSegment(artifactLabel), profileName);
 
-  try {
-    fs.rmSync(destination, { recursive: true, force: true });
-    fs.mkdirSync(destination, { recursive: true });
+  fs.rmSync(destination, { recursive: true, force: true });
+  fs.mkdirSync(destination, { recursive: true });
 
-    if (!fs.existsSync(sourceLogsDir)) {
-      fs.writeFileSync(path.join(destination, 'no-vscode-profile-logs.txt'), `VS Code profile logs were not found at ${sourceLogsDir}\n`);
-      console.warn(`[vscode-test-cli] VS Code profile logs not found: ${sourceLogsDir}`);
-      return;
-    }
-
-    fs.cpSync(sourceLogsDir, path.join(destination, 'logs'), { recursive: true, force: true });
-    const channelLogs = copyAzureLogicAppsChannelLogs(sourceLogsDir, destination);
-    writeVscodeProfileLogIndex(destination, {
-      label: label ?? 'default',
-      phase: env.LA_E2E_CLI_PROFILE_PHASE ?? '',
-      userDataSuffix: env.LA_E2E_CLI_USER_DATA_SUFFIX ?? '',
-      sourceLogsDir,
-      userDataDir,
-      channelLogs,
-      expectAzureLogicAppsChannel: env.LA_E2E_CLI_EXPECT_AZURE_LOGIC_APPS_CHANNEL === '1',
-    });
-    console.log(`[vscode-test-cli] Captured VS Code profile logs: ${sourceLogsDir} -> ${destination}`);
-  } catch (error) {
-    console.warn(`[vscode-test-cli] Unable to capture VS Code profile logs from ${sourceLogsDir}: ${String(error)}`);
+  if (!fs.existsSync(sourceLogsDir)) {
+    fs.writeFileSync(path.join(destination, 'batch-diagnostic-failure.txt'), `VS Code profile logs were not found at ${sourceLogsDir}\n`);
+    throw new Error(`Required VS Code profile logs were not found at ${sourceLogsDir}`);
   }
+
+  const logsCopy = copySanitizedVscodeProfileLogs(sourceLogsDir, path.join(destination, 'logs'));
+  const channelLogs = copyAzureLogicAppsChannelLogs(sourceLogsDir, destination);
+  const expectAzureLogicAppsChannel = env.LA_E2E_CLI_EXPECT_AZURE_LOGIC_APPS_CHANNEL === '1';
+  if (expectAzureLogicAppsChannel && channelLogs.length === 0) {
+    fs.writeFileSync(
+      path.join(destination, 'batch-diagnostic-failure.txt'),
+      `Expected Azure Logic Apps (Standard) output-channel logs were not found under ${sourceLogsDir}\n`
+    );
+    throw new Error(`Expected Azure Logic Apps (Standard) output-channel logs were not found under ${sourceLogsDir}`);
+  }
+
+  writeVscodeProfileLogIndex(destination, {
+    label: label ?? 'default',
+    phase: env.LA_E2E_CLI_PROFILE_PHASE ?? '',
+    userDataSuffix: env.LA_E2E_CLI_USER_DATA_SUFFIX ?? '',
+    sourceLogsDir,
+    userDataDir,
+    channelLogs,
+    logsCopy,
+    expectAzureLogicAppsChannel,
+  });
+  console.log(`[vscode-test-cli] Captured VS Code profile logs: ${sourceLogsDir} -> ${destination}`);
 }
 
 function copyAzureLogicAppsChannelLogs(sourceLogsDir, destination) {
@@ -1622,7 +2051,10 @@ function copyAzureLogicAppsChannelLogs(sourceLogsDir, destination) {
   for (const [index, source] of channelLogs.entries()) {
     const relativeSource = path.relative(sourceLogsDir, source);
     const destinationName = `${String(index + 1).padStart(2, '0')}-${sanitizeEnvSegment(relativeSource)}.log`;
-    fs.copyFileSync(source, path.join(channelDestination, destinationName));
+    copySanitizedTextFile(source, path.join(channelDestination, destinationName), {
+      root: sourceLogsDir,
+      allowAzureLogicAppsChannelName: true,
+    });
   }
 
   if (channelLogs.length === 0) {
@@ -1633,6 +2065,64 @@ function copyAzureLogicAppsChannelLogs(sourceLogsDir, destination) {
   }
 
   return channelLogs.map((source) => path.relative(sourceLogsDir, source));
+}
+
+function copySanitizedVscodeProfileLogs(sourceLogsDir, destination) {
+  const result = { copiedFiles: 0, skippedFiles: [] };
+  fs.mkdirSync(destination, { recursive: true });
+
+  for (const source of walkFiles(sourceLogsDir)) {
+    const relativeSource = path.relative(sourceLogsDir, source);
+    try {
+      if (!isSafeVscodeProfileLogFile(source, sourceLogsDir)) {
+        result.skippedFiles.push({ source: relativeSource, reason: 'not in VS Code profile log allowlist' });
+        continue;
+      }
+      copySanitizedTextFile(source, path.join(destination, sanitizeRelativeLogPath(relativeSource)), { root: sourceLogsDir });
+      result.copiedFiles += 1;
+    } catch (error) {
+      result.skippedFiles.push({ source: relativeSource, reason: error instanceof Error ? error.message : String(error) });
+    }
+  }
+
+  fs.writeFileSync(path.join(destination, 'copy-summary.json'), `${JSON.stringify(result, null, 2)}\n`);
+  return result;
+}
+
+function isSafeVscodeProfileLogFile(filePath, root) {
+  const relativePath = path.relative(root, filePath);
+  if (!relativePath || relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
+    return false;
+  }
+  const normalized = relativePath.replace(/\\/g, '/');
+  if (normalized.split('/').some((segment) => segment === '..' || !segment || segment.startsWith('.'))) {
+    return false;
+  }
+  const stat = fs.lstatSync(filePath);
+  if (!stat.isFile() || stat.isSymbolicLink() || stat.size > vscodeProfileLogMaxFileBytes) {
+    return false;
+  }
+  const fileName = path.basename(filePath).toLowerCase();
+  const extension = path.extname(fileName).toLowerCase();
+  return vscodeProfileLogSafeExtensions.has(extension) || vscodeProfileLogSafeFileNames.has(fileName);
+}
+
+function copySanitizedTextFile(source, destination, options = {}) {
+  if (!isSafeVscodeProfileLogFile(source, options.root ?? path.dirname(source))) {
+    throw new Error('unsafe VS Code profile log file');
+  }
+  const original = fs.readFileSync(source, 'utf-8');
+  const redacted = redactGeneratedWorkspacePlainText(original);
+  fs.mkdirSync(path.dirname(destination), { recursive: true });
+  fs.writeFileSync(destination, redacted);
+}
+
+function sanitizeRelativeLogPath(relativePath) {
+  return relativePath
+    .split(/[\\/]+/)
+    .filter(Boolean)
+    .map((segment) => sanitizeEnvSegment(segment))
+    .join(path.sep);
 }
 
 function findAzureLogicAppsChannelLogs(sourceLogsDir) {
@@ -1661,6 +2151,7 @@ function writeVscodeProfileLogIndex(destination, details) {
     `User data suffix: ${details.userDataSuffix || '<not set>'}`,
     `User data dir: ${details.userDataDir}`,
     `Original logs dir: ${details.sourceLogsDir}`,
+    `Copied log files: ${details.logsCopy?.copiedFiles ?? '<not recorded>'}`,
     '',
     '## Azure Logic Apps (Standard) channel logs',
     '',
@@ -1712,6 +2203,9 @@ function getVscodeUserDataDir(env) {
 
   const checkoutHash = createHash('sha1').update(path.resolve(__dirname, '..')).digest('hex').slice(0, 8);
   const userDataSuffix = env.LA_E2E_CLI_USER_DATA_SUFFIX?.trim();
+  if (env.LA_E2E_CLI_USER_DATA_PARENT?.trim()) {
+    return path.resolve(env.LA_E2E_CLI_USER_DATA_PARENT, userDataSuffix ? `user-data-${userDataSuffix}` : `user-data-${process.pid}`);
+  }
 
   if (process.platform === 'win32') {
     return path.resolve(__dirname, '..', '.vscode-test', userDataSuffix ? `user-data-${userDataSuffix}` : 'user-data');
@@ -1770,20 +2264,25 @@ module.exports = {
     assertSafeRuntimeDependenciesRoot,
     canUseInteractiveMsnWeatherAzureTargetEnv,
     captureGeneratedWorkspaceDiagnostics,
+    collectVscodeProfileLogs,
     collectRuntimeDependencyDiagnostics,
     collectGeneratedWorkspaceSnapshotSources,
     cleanupOwnedWorkspaceParent,
     copyGeneratedWorkspaceSnapshot,
+    copySanitizedVscodeProfileLogs,
     copyAzureLogicAppsChannelLogs,
     createOwnedWorkspaceParent,
     createIsolatedRuntimeDependenciesRoot,
     findAzureLogicAppsChannelLogs,
     getCodefulDebugTasksRunExtraEnv,
     getMsnWeatherAzureTargetEnv,
+    getMsnWeatherAzureAuthEnv,
+    hasHeadlessMsnWeatherAzureAuth,
     getMsnWeatherLifecycleRunExtraEnv,
     hasOwnedWorkspaceParentDiagnosticFailure,
     getNoGeneratedWorkspaceSnapshotReason,
     getGeneratedWorkspaceSnapshotRoot,
+    getVscodeUserDataDir,
     getFuncCoreToolsCandidatePaths,
     getFuncCoreToolsBinaryPath,
     getWorkspaceSourcesFromManifestPath,
@@ -1791,6 +2290,7 @@ module.exports = {
     sanitizeEnvSegment,
     redactGeneratedWorkspaceJsonValue,
     redactGeneratedWorkspacePlainText,
+    runSuiteWrapperProcess,
     verifyFuncCoreToolsAtDependencyRoot,
     walkFiles,
     writeVscodeProfileLogIndex,
@@ -1822,11 +2322,17 @@ function parseArgs(rawArgs) {
   let codefulDebugTasks = false;
   let msnWeatherLifecycle = false;
   let azureAuthWarmup = false;
+  let suites;
 
   for (let index = 0; index < rawArgs.length; index++) {
     const arg = rawArgs[index];
     if (arg === '--visible-delay-ms') {
       visibleDelayMs = rawArgs[index + 1];
+      index++;
+      continue;
+    }
+    if (arg === '--suites') {
+      suites = rawArgs[index + 1] ?? '';
       index++;
       continue;
     }
@@ -1865,6 +2371,7 @@ function parseArgs(rawArgs) {
     createWorkspaceFull,
     msnWeatherLifecycle,
     nugetConversionLifecycle,
+    suites,
     visibleDelayMs,
     workspaceLifecycle,
   };
@@ -1921,13 +2428,21 @@ function getDeferredCreateWorkspaceParent(label) {
     return undefined;
   }
 
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'la-e2e-cli-create-workspace-'));
+  const parentRoot = getOwnedWorkspaceRootParent();
+  fs.mkdirSync(parentRoot, { recursive: true });
+  return fs.mkdtempSync(path.join(parentRoot, 'la-e2e-cli-create-workspace-'));
 }
 
 function createOwnedWorkspaceParent(label) {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), `la-e2e-cli-${sanitizeEnvSegment(label)}-`));
+  const parentRoot = getOwnedWorkspaceRootParent();
+  fs.mkdirSync(parentRoot, { recursive: true });
+  const root = fs.mkdtempSync(path.join(parentRoot, `la-e2e-cli-${sanitizeEnvSegment(label)}-`));
   console.log(`[generated-workspace-diagnostics] Registered owned workspace parent: ${root}`);
   return root;
+}
+
+function getOwnedWorkspaceRootParent() {
+  return path.resolve(process.env.LA_E2E_CLI_WORKSPACE_ROOT || os.tmpdir());
 }
 
 async function cleanupOwnedWorkspaceParent(workspaceParent, context) {
@@ -1951,22 +2466,37 @@ async function cleanupOwnedWorkspaceParent(workspaceParent, context) {
 }
 
 async function cleanupDeferredWorkspaceParent(workspaceParent) {
+  const ledger = {
+    schemaVersion: 1,
+    generatedAt: new Date().toISOString(),
+    workspaceParent: workspaceParent || '',
+    verified: true,
+    action: 'none',
+    reason: '',
+  };
   if (!workspaceParent) {
-    return;
+    return ledger;
   }
   if (workspaceParentsWithDiagnosticFailures.has(path.resolve(workspaceParent))) {
     console.warn(
       `[generated-workspace-diagnostics] Preserving deferred workspace parent because diagnostics capture failed: ${workspaceParent}`
     );
-    return;
+    return { ...ledger, verified: false, action: 'preserved', reason: 'diagnostics capture failed' };
   }
 
   await delay(1000);
   try {
     fs.rmSync(workspaceParent, { recursive: true, force: true, maxRetries: 10, retryDelay: 500 });
+    ledger.action = 'removed';
+    ledger.verified = !fs.existsSync(workspaceParent);
   } catch (error) {
     console.warn(`[create-workspace-smoke] Unable to remove temp workspace parent after VS Code exit ${workspaceParent}: ${String(error)}`);
+    return { ...ledger, verified: false, action: 'failed-remove', reason: String(error) };
   }
+  if (!ledger.verified) {
+    ledger.reason = 'workspace parent still exists after removal';
+  }
+  return ledger;
 }
 
 function markOwnedWorkspaceParentsWithDiagnosticFailure(env, ownedRoots = []) {
@@ -1983,6 +2513,78 @@ function hasOwnedWorkspaceParentDiagnosticFailure(workspaceParent) {
 
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function writeSuiteCleanupLedger(env, ledger) {
+  const filePath = env.LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH;
+  if (!filePath) {
+    return;
+  }
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
+  fs.writeFileSync(filePath, `${JSON.stringify(ledger, null, 2)}\n`);
+}
+
+function writeSuiteTerminalResult(env, result) {
+  const filePath = env.LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH;
+  if (!filePath) {
+    return;
+  }
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
+  fs.writeFileSync(
+    filePath,
+    `${JSON.stringify(
+      {
+        schemaVersion: 1,
+        generatedAt: new Date().toISOString(),
+        ...result,
+      },
+      null,
+      2
+    )}\n`
+  );
+}
+
+function writeSuitePhaseResult(env, result) {
+  const phaseResultsPath = env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH;
+  if (phaseResultsPath) {
+    fs.mkdirSync(path.dirname(phaseResultsPath), { recursive: true });
+    fs.appendFileSync(phaseResultsPath, `${JSON.stringify({ schemaVersion: 1, ...result })}\n`);
+    return;
+  }
+  writeSuiteCleanupLedger(env, result.cleanupLedger);
+  writeSuiteTerminalResult(env, {
+    label: result.label,
+    exitCode: result.exitCode,
+    signal: result.signal,
+    cleanupVerified: result.cleanupVerified,
+    diagnosticsError: result.diagnosticsError,
+    complete: result.complete,
+  });
+}
+
+function getSuitePhaseId(label, env) {
+  const createWorkspaceCase = env.LA_E2E_CLI_CREATE_WORKSPACE_CASE;
+  if (label && createWorkspaceCase) {
+    return `${label}:${createWorkspaceCase}`;
+  }
+  if (label === 'runtimeDependencyBootstrap') {
+    return 'runtimeDependencyBootstrap:bootstrap';
+  }
+  const createWorkspaceLabel = env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_CREATE_LABEL;
+  const lifecycleMode = env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE;
+  if (label === 'msnWeatherLifecycle' && lifecycleMode === 'create') {
+    return 'msnWeatherLifecycle:create';
+  }
+  if (label === 'msnWeatherLifecycle' && lifecycleMode === 'msn-weather-run') {
+    return 'msnWeatherLifecycle:run';
+  }
+  if (lifecycleMode === 'create' && createWorkspaceLabel) {
+    return `${label}:create:${createWorkspaceLabel}`;
+  }
+  if (lifecycleMode && label) {
+    return `${label}:${lifecycleMode}`;
+  }
+  return label || env.LA_E2E_CLI_BATCH_SUITE_ID || 'unknown';
 }
 
 function formatDuration(durationMs) {

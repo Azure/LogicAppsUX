@@ -3059,7 +3059,11 @@ async function startDebuggingGeneratedWorkspace(
 
   if (cleanupBeforeDebug) {
     await stopDebuggingAndTasks();
-    await killPortsBound([7071, ...azuritePorts]);
+    if (process.env.LA_E2E_CLI_DISABLE_UNOWNED_PORT_KILL === '1') {
+      console.log('[workspace-lifecycle] Skipping unowned port cleanup in isolated batch mode.');
+    } else {
+      await killPortsBound([7071, ...azuritePorts]);
+    }
   }
   console.log(`[workspace-lifecycle] Starting debug for ${createdWorkspace.workflowJsonPath} with ${String(generatedConfig.name)}`);
   await logAzuriteDiagnostics('before debug autostart', createdWorkspace.appDir);

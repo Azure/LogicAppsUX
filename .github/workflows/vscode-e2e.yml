@@ -188,7 +188,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
-          node-version: 20.x
+          node-version: 22.x
           package-manager-cache: false
 
       - name: Symlink node to system path (for func host child processes)
@@ -429,7 +429,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
-          node-version: 20.x
+          node-version: 22.x
           package-manager-cache: false
 
       - name: Symlink node to system path (for func host child processes)
@@ -611,7 +611,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
-          node-version: 20.x
+          node-version: 22.x
           package-manager-cache: false
 
       - name: Verify node on PATH (for func host child processes)
@@ -725,7 +725,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
-          node-version: 20.x
+          node-version: 22.x
           package-manager-cache: false
 
       - name: Cache pnpm store
@@ -944,7 +944,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
-          node-version: 20.x
+          node-version: 22.x
           package-manager-cache: false
 
       - name: Symlink node to system path (for func host child processes)
@@ -1116,7 +1116,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
-          node-version: 20.x
+          node-version: 22.x
           package-manager-cache: false
 
       - name: Symlink node to system path (for func host child processes)
@@ -1237,7 +1237,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
-          node-version: 20.x
+          node-version: 22.x
           package-manager-cache: false
 
       - name: Symlink node to system path (for func host child processes)
@@ -1390,7 +1390,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
-          node-version: 20.x
+          node-version: 22.x
           package-manager-cache: false
 
       - name: Setup .NET SDK
@@ -1542,7 +1542,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
-          node-version: 20.x
+          node-version: 22.x
           package-manager-cache: false
 
       - name: Verify node on PATH (for func host child processes)
@@ -1697,7 +1697,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
-          node-version: 20.x
+          node-version: 22.x
           package-manager-cache: false
 
       - name: Verify node on PATH (for func host child processes)
@@ -1872,7 +1872,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
-          node-version: 20.x
+          node-version: 22.x
           package-manager-cache: false
 
       - name: Verify node on PATH (for func host child processes)
@@ -2065,12 +2065,9 @@ jobs:
           # processes that resolve node from PATH. The extension-host Node
           # version is owned by the VS Code/Electron build below.
           #
-          # Keep an explicit legacy smoke so the latest extension continues to
-          # activate on the stable runner/runtime combination used by the full
+          # Keep an explicit stable-version smoke so the latest extension continues to
+          # activate on the runner/runtime combination used by the full
           # VS Code E2E suite.
-          - label: node20-vscode108
-            node-version: 20.x
-            vscode-version: 1.108.0
           - label: node22-vscode108
             node-version: 22.x
             vscode-version: 1.108.0

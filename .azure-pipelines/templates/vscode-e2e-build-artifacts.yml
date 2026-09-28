@@ -57,5 +57,28 @@ steps:
       tar -czf "$(Build.ArtifactStagingDirectory)/vscode-e2e/extension-build.tar.gz" \
         apps/vs-code-designer/dist \
         apps/vs-code-designer/out
+
+      node apps/vs-code-designer/scripts/vscode-e2e-artifact-manifest.js generate \
+        --artifact "$(Build.ArtifactStagingDirectory)/vscode-e2e/extension-build.tar.gz" \
+        --out "$(Build.ArtifactStagingDirectory)/vscode-e2e/vscode-e2e-build-manifest.json" \
+        --artifact-name vscode-e2e-build \
+        --checkout-ref "$(git rev-parse HEAD)" \
+        --payload-root apps/vs-code-designer/dist \
+        --payload-root apps/vs-code-designer/out
+
+      node apps/vs-code-designer/scripts/vscode-e2e-artifact-manifest.js verify \
+        --artifact "$(Build.ArtifactStagingDirectory)/vscode-e2e/extension-build.tar.gz" \
+        --manifest "$(Build.ArtifactStagingDirectory)/vscode-e2e/vscode-e2e-build-manifest.json" \
+        --expected-source-sha "$(git rev-parse HEAD)" \
+        --expected-producer-run-id "$(Build.BuildId)" \
+        --expected-producer-definition-id "$(System.DefinitionId)" \
+        --expected-repository-name "$(Build.Repository.Name)" \
+        --expected-repository-uri "$(Build.Repository.Uri)" \
+        --expected-checkout-ref "$(git rev-parse HEAD)" \
+        --privileged-admission
+
+      sha256sum "$(Build.ArtifactStagingDirectory)/vscode-e2e/extension-build.tar.gz" \
+        > "$(Build.ArtifactStagingDirectory)/vscode-e2e/extension-build.tar.gz.sha256"
+      find "$(Build.ArtifactStagingDirectory)/vscode-e2e" -maxdepth 1 -type f -print -exec ls -lh {} \;
     displayName: Stage reusable VS Code E2E build artifact
     workingDirectory: $(Build.SourcesDirectory)

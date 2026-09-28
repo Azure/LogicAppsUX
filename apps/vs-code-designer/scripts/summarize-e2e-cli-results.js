@@ -3,18 +3,20 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-/* global process, require */
+/* global module, process, require */
 const fs = require('fs');
 const path = require('path');
 
-const options = parseArgs(process.argv.slice(2));
+if (require.main === module) {
+  const options = parseArgs(process.argv.slice(2));
 
-if (options.aggregate) {
-  writeAggregateResult(options);
-} else if (options.appendSummary) {
-  appendSingleSummary(options);
-} else {
-  writeSingleResult(options);
+  if (options.aggregate) {
+    writeAggregateResult(options);
+  } else if (options.appendSummary) {
+    appendSingleSummary(options);
+  } else {
+    writeSingleResult(options);
+  }
 }
 
 function writeSingleResult({ label, log, outDir, outcome }) {
@@ -40,7 +42,7 @@ function appendSingleSummary({ json, githubSummary }) {
   fs.appendFileSync(githubSummary, buildSingleSummary(result));
 }
 
-function writeAggregateResult({ resultsDir, outDir, githubSummary }) {
+function writeAggregateResult({ resultsDir, outDir, githubSummary, expectedSuites, diagnosticOnly }) {
   requireOption(resultsDir, '--results-dir');
   requireOption(outDir, '--out-dir');
 
@@ -50,7 +52,10 @@ function writeAggregateResult({ resultsDir, outDir, githubSummary }) {
     .filter(isSingleResult)
     .map(normalizeResult)
     .sort((a, b) => String(a.label).localeCompare(String(b.label)));
-  const aggregate = buildAggregate(results);
+  const aggregate = buildAggregate(results, {
+    expectedLabels: parseCsvOption(expectedSuites),
+    diagnosticOnly: parseBooleanOption(diagnosticOnly),
+  });
 
   fs.writeFileSync(path.join(outDir, 'vscode-e2e-cli-create-workspace-results.json'), `${JSON.stringify(aggregate, null, 2)}\n`);
   fs.writeFileSync(path.join(outDir, 'vscode-e2e-cli-create-workspace-results.junit.xml'), buildAggregateJUnitXml(aggregate));
@@ -89,17 +94,40 @@ function parseMochaLog(label, outcome, logText) {
   };
 }
 
-function buildAggregate(results) {
-  const total = results.reduce((sum, result) => sum + result.total, 0);
+function buildAggregate(results, options = {}) {
+  const expectedLabels = Array.isArray(options.expectedLabels) ? options.expectedLabels : [];
+  const observedLabels = results.map((result) => result.label);
+  const missingLabels = expectedLabels.filter((label) => !observedLabels.includes(label));
+  const unexpectedLabels = expectedLabels.length > 0 ? observedLabels.filter((label) => !expectedLabels.includes(label)) : [];
+  const complete = expectedLabels.length === 0 || (missingLabels.length === 0 && unexpectedLabels.length === 0);
+  const diagnosticOnly = Boolean(options.diagnosticOnly);
+  const fullRollup = complete && !diagnosticOnly;
+  const rawTotal = results.reduce((sum, result) => sum + result.total, 0);
   const passing = results.reduce((sum, result) => sum + result.passing, 0);
-  const failing = results.reduce((sum, result) => sum + result.failing, 0);
+  const rawFailing = results.reduce((sum, result) => sum + result.failing, 0);
   const pending = results.reduce((sum, result) => sum + result.pending, 0);
-  const failedLabels = results.filter((result) => result.outcome !== 'success' || result.failing > 0).map((result) => result.label);
+  const syntheticFailures = missingLabels.length + unexpectedLabels.length + (diagnosticOnly ? 1 : 0);
+  const total = rawTotal + syntheticFailures;
+  const failing = rawFailing + syntheticFailures;
+  const failedLabels = [
+    ...results.filter((result) => result.outcome !== 'success' || result.failing > 0).map((result) => result.label),
+    ...missingLabels.map((label) => `${label} (missing)`),
+    ...unexpectedLabels.map((label) => `${label} (unexpected)`),
+    ...(diagnosticOnly ? ['diagnosticOnly (not a full rollup)'] : []),
+  ];
   const passRate = total > 0 ? Number(((passing / total) * 100).toFixed(2)) : 0;
   const generatedAt = new Date().toISOString();
 
   return {
     generatedAt,
+    schemaVersion: 2,
+    expectedLabels,
+    observedLabels,
+    missingLabels,
+    unexpectedLabels,
+    complete,
+    diagnosticOnly,
+    fullRollup,
     total,
     passing,
     failing,
@@ -121,6 +149,13 @@ function buildAggregate(results) {
       pending,
       passRate,
       failedLabels,
+      expectedLabels,
+      observedLabels,
+      missingLabels,
+      unexpectedLabels,
+      complete,
+      diagnosticOnly,
+      fullRollup,
     },
   };
 }
@@ -149,6 +184,8 @@ function buildAggregateSummary(aggregate) {
     '### @vscode/test-cli Create Workspace aggregate',
     '',
     `**Pass rate:** ${aggregate.passRate}% (${aggregate.passing}/${aggregate.total})`,
+    `**Completeness:** ${aggregate.complete ? 'complete' : 'incomplete'} (${aggregate.observedLabels.length}/${aggregate.expectedLabels.length || aggregate.observedLabels.length} observed)`,
+    `**Full rollup:** ${aggregate.fullRollup ? 'yes' : 'no'}${aggregate.diagnosticOnly ? ' — diagnostic selected rerun' : ''}`,
     '',
     '| Label | Outcome | Passing | Failing | Pending | Pass rate | Results | Screenshots |',
     '|---|---:|---:|---:|---:|---:|---|---|',
@@ -162,6 +199,12 @@ function buildAggregateSummary(aggregate) {
 
   lines.push(
     '',
+    `Missing expected labels: ${
+      aggregate.missingLabels.length ? aggregate.missingLabels.map((label) => `\`${label}\``).join(', ') : 'None'
+    }`,
+    `Unexpected labels: ${
+      aggregate.unexpectedLabels.length ? aggregate.unexpectedLabels.map((label) => `\`${label}\``).join(', ') : 'None'
+    }`,
     `Failed labels: ${aggregate.failedLabels.length ? aggregate.failedLabels.map((label) => `\`${label}\``).join(', ') : 'None'}`,
     '',
     'Structured artifacts: `vscode-e2e-cli-test-results-summary` contains aggregate JSON, aggregate JUnit XML, a Markdown dashboard, and JSONL trend data for pass-rate ingestion across workflow runs.',
@@ -389,6 +432,26 @@ function parseArgs(args) {
   return parsed;
 }
 
+function parseCsvOption(value) {
+  return String(value ?? '')
+    .split(',')
+    .map((part) => part.trim())
+    .filter(Boolean);
+}
+
+function parseBooleanOption(value) {
+  return /^(1|true|yes)$/i.test(String(value ?? ''));
+}
+
 function toCamelCase(value) {
   return value.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
 }
+
+module.exports = {
+  _test: {
+    buildAggregate,
+    normalizeResult,
+    parseCsvOption,
+    parseMochaLog,
+  },
+};

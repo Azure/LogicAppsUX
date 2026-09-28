@@ -52,6 +52,11 @@ parameters:
     type: boolean
     default: false
 
+  - name: runVscodeE2EExecution
+    displayName: Run VS Code E2E suites after building source-head E2E artifacts
+    type: boolean
+    default: true
+
 variables:
   - template: azdo-pipelines/azcode.variables.yml@azExtTemplates
   # Required by MicroBuild template
@@ -93,10 +98,19 @@ extends:
                   zipSources: false
                   azureSubscription: "MicroBuild Signing Task (DevDiv)"
               outputs:
-                - output: pipelineArtifact
-                  targetPath: $(build.artifactstagingdirectory)/build/Root
-                  artifactName: Build Root
+                - ${{ if eq(parameters.runVscodeE2EExecution, true) }}:
+                    - output: pipelineArtifact
+                      targetPath: $(build.artifactstagingdirectory)/build/Root
+                      artifactName: Build Root
             steps:
+              - pwsh: |
+                  if ('${{ parameters.runVscodeE2EExecution }}' -eq 'False' -and '${{ parameters.dryRun }}' -ne 'True') {
+                    throw 'runVscodeE2EExecution=false is allowed only for non-publishing dryRun pilot runs until the separate full E2E consumer gate is onboarded.'
+                  }
+                  if ('${{ parameters.runVscodeE2EExecution }}' -eq 'False' -and '${{ parameters.enableSigning }}' -eq 'True') {
+                    throw 'runVscodeE2EExecution=false artifact-only pilot runs must disable signing so no signed release Build Root can be produced.'
+                  }
+                displayName: Guard build-only VS Code E2E pilot
               - script: git checkout v${{ parameters.publishVersion }} # Replace with your desired version to release
                 displayName: 'Checkout to specific branch'
               - template: .azure-pipelines/templates/setup.yml@LogicAppsUX
@@ -106,10 +120,11 @@ extends:
               - template: .azure-pipelines/templates/package.yml@LogicAppsUX
                 parameters:
                   publishVersion: ${{ parameters.publishVersion }}
-              - template: .azure-pipelines/templates/sign.yml@LogicAppsUX
-              - template: .azure-pipelines/templates/stage-artifacts.yml@LogicAppsUX
-                parameters:
-                  publishVersion: ${{ parameters.publishVersion }}
+              - ${{ if eq(parameters.runVscodeE2EExecution, true) }}:
+                  - template: .azure-pipelines/templates/sign.yml@LogicAppsUX
+                  - template: .azure-pipelines/templates/stage-artifacts.yml@LogicAppsUX
+                    parameters:
+                      publishVersion: ${{ parameters.publishVersion }}
 
       - ${{ if eq(parameters.enableVscodeE2E, true) }}:
           - template: templates/vscode-e2e-stage.yml@self
@@ -117,4 +132,5 @@ extends:
               feedBaseUrl: ${{ variables.feedBaseUrl }}
               checkoutRef: ${{ variables.vscodeE2ECheckoutRef }}
               testARMServiceConnection: ${{ variables.vscodeE2ETestARMServiceConnection }}
+              runVscodeE2EExecution: ${{ parameters.runVscodeE2EExecution }}
               dependsOn: []
