@@ -155,6 +155,7 @@ vi.mock('../app/utils/managedIdentity', () => ({
 }));
 
 vi.mock('../app/utils/services/VSCodeAzureSubscriptionProvider', () => ({
+  createAzureSubscriptionProvider: vi.fn(() => Promise.resolve({})),
   createVSCodeAzureSubscriptionProvider: vi.fn(() => ({})),
 }));
 

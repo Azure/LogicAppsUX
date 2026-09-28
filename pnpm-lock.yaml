@@ -47,6 +47,7 @@ overrides:
   brace-expansion@<2: ^1.1.11
   redux: 4.2.1
   redux-thunk: 2.4.2
+  '@azure/core-client': 1.10.0
   '@reduxjs/toolkit': 1.9.7
   immer: 9.0.21
   react: 18.3.1
@@ -546,7 +547,7 @@ importers:
         specifier: ^6.0.0
         version: 6.0.0
       '@azure/core-client':
-        specifier: ^1.7.3
+        specifier: 1.10.0
         version: 1.10.0
       '@azure/core-rest-pipeline':
         specifier: ^1.11.0
@@ -567,8 +568,8 @@ importers:
         specifier: ^0.2.11
         version: 0.2.11(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0)
       '@microsoft/vscode-azext-azureauth':
-        specifier: ^4.2.0
-        version: 4.2.1
+        specifier: ^5.1.1
+        version: 5.1.1
       '@microsoft/vscode-azext-azureutils':
         specifier: ^3.5.2
         version: 3.5.2(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0)
@@ -5467,8 +5468,8 @@ packages:
   '@microsoft/vscode-azext-azureappsettings@0.2.11':
     resolution: {integrity: sha512-zu6RedxoVEgOTyTqyeo5HHPowK3aEYyD9if96b3TF3fkiuxuRlR/19V0qmoKxF6w8nYYhuUDScL2i+zlcu9+xQ==}
 
-  '@microsoft/vscode-azext-azureauth@4.2.1':
-    resolution: {integrity: sha512-oKIOR1FumT9ibOPXfhbIknKfxQYXUT3nnsxa6Ezbi/gPEPDKBzbPlkRhvVS/JY5+FZiVpNhsisZa9q8EGNi9rw==}
+  '@microsoft/vscode-azext-azureauth@5.1.1':
+    resolution: {integrity: sha1-dgO021nmWoLya7NQqNV88cDSisE=}
 
   '@microsoft/vscode-azext-azureutils@3.5.2':
     resolution: {integrity: sha512-0jAkM2jAdrVq+lR5yNNQnL/O7Vp6yQo5l0oAyVcddp6WB2bUQrWUUZo1YeTaWl/23MMadWtFmhM4RRJPGWoYoQ==}
@@ -21139,11 +21140,12 @@ snapshots:
       - '@azure/ms-rest-azure-env'
       - tslib
 
-  '@microsoft/vscode-azext-azureauth@4.2.1':
+  '@microsoft/vscode-azext-azureauth@5.1.1':
     dependencies:
       '@azure/arm-resources-subscriptions': 2.1.0
       '@azure/core-client': 1.10.0
       '@azure/core-rest-pipeline': 1.22.0
+      '@azure/identity': 4.5.0
       '@azure/ms-rest-azure-env': 2.0.0
     transitivePeerDependencies:
       - supports-color

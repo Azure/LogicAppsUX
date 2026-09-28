@@ -1,0 +1,341 @@
+# 1ES/MicroBuild consumer for source-head VS Code @vscode/test-cli E2E artifacts.
+# Create/update the Azure DevOps definition to this file only after the producer
+# artifact and required protected-resource gates are owner-approved.
+trigger: none
+pr: none
+
+resources:
+  pipelines:
+    - pipeline: producer
+      source: \Azure Tools\VSCode\Extensions\vscode-azurelogicapps
+      trigger: true
+  repositories:
+    - repository: 1esPipelines
+      type: git
+      name: 1ESPipelineTemplates/MicroBuildTemplate
+      ref: refs/heads/release
+    - repository: azExtTemplates
+      type: github
+      name: microsoft/vscode-azuretools
+      ref: azext-pt/v1
+      endpoint: GitHub-AzureTools
+
+parameters:
+  - name: variableGroups
+    displayName: Owner-provided variable groups
+    type: object
+    default: []
+
+  - name: diagnosticOnly
+    displayName: Diagnostic selected rerun; cannot satisfy full rollup
+    type: boolean
+    default: false
+
+  - name: runLinux
+    displayName: Run Linux prepared suite cohort
+    type: boolean
+    default: true
+
+  - name: runWindows
+    displayName: Run Windows prepared suite cohort
+    type: boolean
+    default: true
+
+  - name: linuxSuites
+    displayName: Linux suites or alias
+    type: string
+    default: linux
+
+  - name: windowsSuites
+    displayName: Windows suites or alias
+    type: string
+    default: windows
+
+  - name: expectedProducerDefinitionId
+    displayName: Expected producer definition ID
+    type: string
+    default: '24067'
+
+  - name: expectedProducerRunId
+    displayName: Optional pinned producer run ID for diagnostic reruns
+    type: string
+    default: ''
+
+  - name: expectedSourceSha
+    displayName: Optional expected source SHA; defaults to producer resource sourceCommit
+    type: string
+    default: ''
+
+  - name: testARMServiceConnection
+    displayName: ARM service connection for live Azure E2E
+    type: string
+    default: LogicAppsVSCode-E2E-SignIn
+
+  - name: azureTenantId
+    displayName: Live E2E tenant ID
+    type: string
+    default: c9db855a-7930-48d8-8e3c-a409a38faab3
+
+  - name: azureSubscriptionId
+    displayName: Live E2E subscription ID
+    type: string
+    default: f11e76f5-6d71-4e8b-9571-9c5f147628ed
+
+  - name: azureResourceGroupName
+    displayName: Live E2E resource group name
+    type: string
+    default: LogicAppsVSCode-E2E-Fixtures
+
+  - name: azureLocationName
+    displayName: Live E2E managed API location
+    type: string
+    default: westus
+
+  - name: testNodeVersion
+    displayName: E2E runner Node.js version
+    type: string
+    default: '22.x'
+
+  - name: dotnetVersion
+    displayName: .NET SDK version
+    type: string
+    default: '8.0.x'
+
+  - name: sdlPool
+    displayName: Owner-approved 1ES SDL pool
+    type: object
+    default:
+      name: VSEngSS-MicroBuild2022-1ES
+      image: server2022-microbuildVS2022-1es
+      os: windows
+
+  - name: linuxPool
+    displayName: Owner-approved 1ES Linux pool
+    type: object
+    default:
+      name: AzurePipelines-EO
+      image: 1ESPT-Ubuntu22.04
+      os: linux
+
+  - name: windowsPool
+    displayName: Owner-approved 1ES Windows pool
+    type: object
+    default:
+      name: VSEngSS-MicroBuild2022-1ES
+      image: server2022-microbuildVS2022-1es
+      os: windows
+
+variables:
+  - template: azdo-pipelines/azcode.variables.yml@azExtTemplates
+  - ${{ each variableGroup in parameters.variableGroups }}:
+      - group: ${{ variableGroup }}
+  - name: TeamName
+    value: Azure Logic Apps for VS Code
+  - name: working_directory
+    value: .
+  - name: producerSourceSha
+    ${{ if ne(parameters.expectedSourceSha, '') }}:
+      value: ${{ parameters.expectedSourceSha }}
+    ${{ else }}:
+      value: $(resources.pipeline.producer.sourceCommit)
+  - name: producerRunId
+    ${{ if ne(parameters.expectedProducerRunId, '') }}:
+      value: ${{ parameters.expectedProducerRunId }}
+    ${{ else }}:
+      value: $(resources.pipeline.producer.runID)
+
+extends:
+  template: azure-pipelines/MicroBuild.1ES.Unofficial.yml@1esPipelines
+  parameters:
+    sdl:
+      credscan:
+        suppressionsFile: $(Build.SourcesDirectory)\.azure-pipelines\compliance\CredScanSuppressions.json
+      codeql:
+        language: javascript
+    pool: ${{ parameters.sdlPool }}
+    stages:
+      - stage: VSCodeE2EConsumer
+        displayName: VS Code @vscode/test-cli E2E consumer
+        jobs:
+          - job: resolve_consumer_context
+            displayName: Resolve shared VS Code E2E consumer context
+            pool: ${{ parameters.sdlPool }}
+            templateContext:
+              type: validationJob
+            steps:
+              - pwsh: |
+                  if ('${{ parameters.runLinux }}' -ne 'True' -and '${{ parameters.runWindows }}' -ne 'True') {
+                    throw 'At least one OS cohort must be selected for the VS Code E2E consumer.'
+                  }
+                  $releases = Invoke-RestMethod -Method Get -Uri 'https://update.code.visualstudio.com/api/releases/stable'
+                  if (-not $releases -or -not $releases[0]) {
+                    throw 'Unable to resolve latest stable VS Code version.'
+                  }
+                  Write-Host "Resolved stable VS Code build: $($releases[0])"
+                  Write-Host "##vso[task.setvariable variable=resolvedVSCodeBuild;isOutput=true]$($releases[0])"
+                name: resolveStableVSCode
+                displayName: Resolve stable VS Code build once
+
+          - ${{ if eq(parameters.runLinux, true) }}:
+              - template: /.config/templates/vscode-e2e-cli-run-suites.yml@self
+                parameters:
+                  jobName: linux_prepared_suites
+                  displayName: Linux prepared suites
+                  dependsOn:
+                    - resolve_consumer_context
+                  suites: ${{ parameters.linuxSuites }}
+                  artifactName: linux-prepared-suites
+                  resolvedVSCodeVersion: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.resolvedVSCodeBuild'] ]
+                  feedBaseUrl: ${{ variables.feedBaseUrl }}
+                  pool: ${{ parameters.linuxPool }}
+                  platform: linux
+                  expectedProducerDefinitionId: ${{ parameters.expectedProducerDefinitionId }}
+                  expectedProducerRunId: $(producerRunId)
+                  expectedSourceSha: $(producerSourceSha)
+                  checkoutRef: $(producerSourceSha)
+                  diagnosticOnly: ${{ parameters.diagnosticOnly }}
+                  trustedFullExecution: ${{ not(parameters.diagnosticOnly) }}
+                  nodeVersion: ${{ parameters.testNodeVersion }}
+                  dotnetVersion: ${{ parameters.dotnetVersion }}
+                  testARMServiceConnection: ${{ parameters.testARMServiceConnection }}
+                  azureTenantId: ${{ parameters.azureTenantId }}
+                  azureSubscriptionId: ${{ parameters.azureSubscriptionId }}
+                  azureResourceGroupName: ${{ parameters.azureResourceGroupName }}
+                  azureLocationName: ${{ parameters.azureLocationName }}
+
+          - ${{ if eq(parameters.runWindows, true) }}:
+              - template: /.config/templates/vscode-e2e-cli-run-suites.yml@self
+                parameters:
+                  jobName: windows_prepared_suites
+                  displayName: Windows prepared suites
+                  dependsOn:
+                    - resolve_consumer_context
+                  suites: ${{ parameters.windowsSuites }}
+                  artifactName: windows-prepared-suites
+                  resolvedVSCodeVersion: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.resolvedVSCodeBuild'] ]
+                  feedBaseUrl: ${{ variables.feedBaseUrl }}
+                  pool: ${{ parameters.windowsPool }}
+                  platform: windows
+                  expectedProducerDefinitionId: ${{ parameters.expectedProducerDefinitionId }}
+                  expectedProducerRunId: $(producerRunId)
+                  expectedSourceSha: $(producerSourceSha)
+                  checkoutRef: $(producerSourceSha)
+                  diagnosticOnly: ${{ parameters.diagnosticOnly }}
+                  trustedFullExecution: ${{ not(parameters.diagnosticOnly) }}
+                  nodeVersion: ${{ parameters.testNodeVersion }}
+                  dotnetVersion: ${{ parameters.dotnetVersion }}
+                  testARMServiceConnection: ${{ parameters.testARMServiceConnection }}
+                  azureTenantId: ${{ parameters.azureTenantId }}
+                  azureSubscriptionId: ${{ parameters.azureSubscriptionId }}
+                  azureResourceGroupName: ${{ parameters.azureResourceGroupName }}
+                  azureLocationName: ${{ parameters.azureLocationName }}
+
+          - ${{ if eq(parameters.diagnosticOnly, false) }}:
+              - job: verify_both_os_full_rollup
+                displayName: Verify both-OS full rollup eligibility
+                dependsOn:
+                  - ${{ if eq(parameters.runLinux, true) }}:
+                      - linux_prepared_suites
+                  - ${{ if eq(parameters.runWindows, true) }}:
+                      - windows_prepared_suites
+                condition: always()
+                pool: ${{ parameters.sdlPool }}
+                variables:
+                  - ${{ if eq(parameters.runLinux, true) }}:
+                      - name: linuxPreparedSuitesResult
+                        value: $[ dependencies.linux_prepared_suites.result ]
+                  - ${{ if eq(parameters.runWindows, true) }}:
+                      - name: windowsPreparedSuitesResult
+                        value: $[ dependencies.windows_prepared_suites.result ]
+                templateContext:
+                  type: validationJob
+                steps:
+                  - download: current
+                    artifact: vscode-e2e-cli-test-results-linux-prepared-suites
+                    displayName: Download Linux aggregate
+                    condition: and(always(), eq('${{ parameters.runLinux }}', 'True'))
+
+                  - download: current
+                    artifact: vscode-e2e-cli-test-results-windows-prepared-suites
+                    displayName: Download Windows aggregate
+                    condition: and(always(), eq('${{ parameters.runWindows }}', 'True'))
+
+                  - pwsh: |
+                      if ('${{ parameters.runLinux }}' -ne 'True' -or '${{ parameters.runWindows }}' -ne 'True') {
+                        throw 'Full VS Code E2E consumer rollup requires both Linux and Windows prepared suite cohorts.'
+                      }
+                      $linuxResult = '$(linuxPreparedSuitesResult)'
+                      $windowsResult = '$(windowsPreparedSuitesResult)'
+                      if ($linuxResult -ne 'Succeeded' -or $windowsResult -ne 'Succeeded') {
+                        throw "One or more OS cohorts did not succeed; linux=$linuxResult windows=$windowsResult."
+                      }
+                      $linuxPath = Join-Path '$(Pipeline.Workspace)' 'vscode-e2e-cli-test-results-linux-prepared-suites/e2e-cli-batch-result.json'
+                      $windowsPath = Join-Path '$(Pipeline.Workspace)' 'vscode-e2e-cli-test-results-windows-prepared-suites/e2e-cli-batch-result.json'
+                      if (-not (Test-Path $linuxPath) -or -not (Test-Path $windowsPath)) {
+                        throw "Missing OS aggregate result(s). linux=$linuxPath windows=$windowsPath"
+                      }
+                      $linux = Get-Content $linuxPath -Raw | ConvertFrom-Json
+                      $windows = Get-Content $windowsPath -Raw | ConvertFrom-Json
+                      foreach ($aggregate in @($linux, $windows)) {
+                        if ($aggregate.aggregateOutcome -ne 'success' -or $aggregate.fullRollup -ne $true -or $aggregate.canonicalInventory -ne $true) {
+                          throw "OS aggregate is not a successful canonical full rollup: platform=$($aggregate.platform) outcome=$($aggregate.aggregateOutcome) fullRollup=$($aggregate.fullRollup) canonical=$($aggregate.canonicalInventory)"
+                        }
+                        if (-not $aggregate.admissionContext) {
+                          throw "OS aggregate is missing admitted producer identity: platform=$($aggregate.platform)"
+                        }
+                      }
+                      $identityFields = @(
+                        'producerDefinitionId',
+                        'producerRunId',
+                        'sourceSHA',
+                        'checkoutRef',
+                        'repositoryName',
+                        'repositoryUri',
+                        'artifactName',
+                        'artifactVersion',
+                        'artifactSHA256',
+                        'resolvedVSCodeBuild'
+                      )
+                      foreach ($field in $identityFields) {
+                        if ([string]$linux.admissionContext.$field -ne [string]$windows.admissionContext.$field) {
+                          throw "OS aggregate admitted identity mismatch for '$field': linux=$($linux.admissionContext.$field) windows=$($windows.admissionContext.$field)"
+                        }
+                        if (-not [string]$linux.admissionContext.$field) {
+                          throw "OS aggregate admitted identity is missing '$field'."
+                        }
+                      }
+                    displayName: Enforce both-OS full rollup gate
+
+          - ${{ if eq(parameters.diagnosticOnly, true) }}:
+              - job: report_diagnostic_selected_rerun
+                displayName: Report diagnostic selected rerun status
+                dependsOn:
+                  - ${{ if eq(parameters.runLinux, true) }}:
+                      - linux_prepared_suites
+                  - ${{ if eq(parameters.runWindows, true) }}:
+                      - windows_prepared_suites
+                condition: always()
+                pool: ${{ parameters.sdlPool }}
+                variables:
+                  - ${{ if eq(parameters.runLinux, true) }}:
+                      - name: linuxPreparedSuitesResult
+                        value: $[ dependencies.linux_prepared_suites.result ]
+                  - ${{ if eq(parameters.runWindows, true) }}:
+                      - name: windowsPreparedSuitesResult
+                        value: $[ dependencies.windows_prepared_suites.result ]
+                templateContext:
+                  type: validationJob
+                steps:
+                  - pwsh: |
+                      $failures = @()
+                      if ('${{ parameters.runLinux }}' -eq 'True' -and '$(linuxPreparedSuitesResult)' -ne 'Succeeded') {
+                        $failures += "linux=$(linuxPreparedSuitesResult)"
+                      }
+                      if ('${{ parameters.runWindows }}' -eq 'True' -and '$(windowsPreparedSuitesResult)' -ne 'Succeeded') {
+                        $failures += "windows=$(windowsPreparedSuitesResult)"
+                      }
+                      if ($failures.Length -gt 0) {
+                        throw "Diagnostic selected rerun failed selected cohort(s): $($failures -join ', ')"
+                      }
+                      Write-Host 'Diagnostic selected rerun completed. This job is intentionally not a full-rollup gate; protected checks must bind verify_both_os_full_rollup for full validation.'
+                    displayName: Report diagnostic-only status

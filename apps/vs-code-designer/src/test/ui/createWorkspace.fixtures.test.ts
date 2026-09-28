@@ -429,11 +429,12 @@ describe('Create Workspace Fixtures', function () {
     this.timeout(600_000);
     workbench = new Workbench();
     driver = workbench.getDriver();
+    const validateDependenciesOnly = process.env.LA_E2E_VALIDATE_DEPENDENCIES_ONLY === '1';
     console.log('[fixtures:setup] Waiting for extension to be ready...');
     await waitForExtensionReady(workbench);
     console.log('[fixtures:setup] Extension is ready');
 
-    if (process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1') {
+    if (process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1' || validateDependenciesOnly) {
       try {
         console.log('[fixtures:setup] Strict dependency validation enabled; invoking product validation before fixtures...');
         dumpBundleDirectoryState('before-product-validation');
@@ -445,6 +446,13 @@ describe('Create Workspace Fixtures', function () {
         await captureSetupDiagnostics('strict-validation-failed', driver);
         throw error;
       }
+    }
+
+    if (validateDependenciesOnly) {
+      console.log(
+        '[fixtures:setup] Dependency validation-only mode completed; skipping workspace fixture creation in this disposable VS Code session'
+      );
+      this.skip();
     }
 
     // Clear any stale manifest from a previous run so this run starts fresh.
