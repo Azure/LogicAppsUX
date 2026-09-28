@@ -564,6 +564,7 @@ async function openDesignerAndCreateWorkflow(
   const tabsBefore = getWebviewTabs(designerViewType).length;
   const useAzureConnectors = options.useAzureConnectors === true;
 
+  await handleDotnetInstallToolPromptIfVisible('before openDesigner command');
   console.log(
     `[workspace-lifecycle] ${createdWorkspace.label}: opening designer for ${createdWorkspace.workflowJsonPath}. tabsBefore=${tabsBefore}. tabs=${describeOpenTabs()}`
   );
@@ -2636,7 +2637,7 @@ async function runMsnWeatherLifecycle(createdWorkspace: CreatedWorkspace): Promi
     if (settings) {
       ensureLocalSettingsForMsnWeather(createdWorkspace.appDir, settings);
       await logMsnWeatherDesignerOpenDiagnostics('after msn weather local settings preseed', createdWorkspace);
-      await openDesignerAndCreateWorkflow(createdWorkspace, { warmOnly: true, useAzureConnectors: true });
+      await openDesignerAndCreateWorkflowWithDotnetInstallRetry(createdWorkspace, { warmOnly: true, useAzureConnectors: true });
       await logMsnWeatherDesignerOpenDiagnostics('after azure-targeted warmup designer open', createdWorkspace);
     } else {
       console.log(
@@ -2645,7 +2646,10 @@ async function runMsnWeatherLifecycle(createdWorkspace: CreatedWorkspace): Promi
     }
     try {
       await logMsnWeatherDesignerOpenDiagnostics('before msn weather designer open', createdWorkspace);
-      await openDesignerAndCreateWorkflow(createdWorkspace, { includeMsnWeather: true, useAzureConnectors: true });
+      await openDesignerAndCreateWorkflowWithDotnetInstallRetry(createdWorkspace, {
+        includeMsnWeather: true,
+        useAzureConnectors: true,
+      });
       await logMsnWeatherDesignerOpenDiagnostics('after msn weather designer open', createdWorkspace);
     } catch (error) {
       await logMsnWeatherDesignerOpenDiagnostics('msn weather designer open failure', createdWorkspace);
@@ -2663,6 +2667,32 @@ async function runMsnWeatherLifecycle(createdWorkspace: CreatedWorkspace): Promi
     await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-msn-weather-response-verified`);
   } finally {
     await stopDebuggingAndTasks();
+  }
+}
+
+async function openDesignerAndCreateWorkflowWithDotnetInstallRetry(
+  createdWorkspace: CreatedWorkspace,
+  options: { includeMsnWeather?: boolean; useAzureConnectors?: boolean; warmOnly?: boolean }
+): Promise<void> {
+  try {
+    await openDesignerAndCreateWorkflow(createdWorkspace, options);
+  } catch (error) {
+    if (process.platform === 'win32') {
+      throw error;
+    }
+
+    const handledInstallPrompt = await handleDotnetInstallToolPromptIfVisible('retry after designer open failure');
+    if (!handledInstallPrompt) {
+      throw error;
+    }
+
+    console.log(
+      `[workspace-lifecycle][msn-weather] Retrying designer open after handling .NET Install Tool prompt. Previous error: ${
+        error instanceof Error ? error.message : String(error)
+      }`
+    );
+    await closeAllTabs();
+    await openDesignerAndCreateWorkflow(createdWorkspace, options);
   }
 }
 
@@ -4051,6 +4081,16 @@ async function handleDesignerQuickPickPrompts(timeoutMs = 20000, options: { useA
   await handleWorkbenchPrompts(
     [
       {
+        matchText: 'Failed to run .NET runtime',
+        optionText: 'Install',
+        postClickDelayMs: 15000,
+      },
+      {
+        matchText: '.NET Install Tool',
+        optionText: 'Install',
+        postClickDelayMs: 15000,
+      },
+      {
         matchText: 'Enable connectors in Azure',
         optionText: options.useAzureConnectors ? 'Use connectors from Azure' : 'Skip for now',
       },
@@ -4060,7 +4100,29 @@ async function handleDesignerQuickPickPrompts(timeoutMs = 20000, options: { useA
   );
 }
 
-async function handleWorkbenchPrompts(prompts: Array<{ matchText: string; optionText: string }>, timeoutMs = 20000): Promise<void> {
+async function handleDotnetInstallToolPromptIfVisible(stage: string): Promise<boolean> {
+  console.log(`[workspace-lifecycle] Checking for .NET Install Tool prompt (${stage})`);
+  return await handleWorkbenchPrompts(
+    [
+      {
+        matchText: 'Failed to run .NET runtime',
+        optionText: 'Install',
+        postClickDelayMs: 15000,
+      },
+      {
+        matchText: '.NET Install Tool',
+        optionText: 'Install',
+        postClickDelayMs: 15000,
+      },
+    ],
+    3000
+  );
+}
+
+async function handleWorkbenchPrompts(
+  prompts: Array<{ matchText: string; optionText: string; postClickDelayMs?: number }>,
+  timeoutMs = 20000
+): Promise<boolean> {
   const cdp = await connectToVsCodeWorkbenchCdp();
   try {
     const deadline = Date.now() + timeoutMs;
@@ -4149,16 +4211,28 @@ async function handleWorkbenchPrompts(prompts: Array<{ matchText: string; option
         console.log(`[workspace-lifecycle] Selecting workbench prompt option "${result.targetText}"`);
         await clickPoint(cdp, result.point);
         handledPrompt = true;
+        const handledPromptConfig = prompts.find(
+          (prompt) =>
+            result.targetText?.toLowerCase().includes(prompt.optionText.toLowerCase()) &&
+            result.text.toLowerCase().includes(prompt.matchText.toLowerCase())
+        );
+        if (handledPromptConfig?.postClickDelayMs) {
+          console.log(
+            `[workspace-lifecycle] Waiting ${handledPromptConfig.postClickDelayMs}ms after selecting "${result.targetText}" for "${handledPromptConfig.matchText}"`
+          );
+          await new Promise((resolve) => setTimeout(resolve, handledPromptConfig.postClickDelayMs));
+        }
         await waitForWorkbenchPromptOptionToDismiss(cdp, result.targetText ?? '', 5000).catch(() => undefined);
         continue;
       }
 
       if (!result.visible && (handledPrompt || Date.now() > noPromptDeadline)) {
-        return;
+        return handledPrompt;
       }
 
       await new Promise((resolve) => setTimeout(resolve, 250));
     }
+    return handledPrompt;
   } finally {
     cdp.dispose();
   }
