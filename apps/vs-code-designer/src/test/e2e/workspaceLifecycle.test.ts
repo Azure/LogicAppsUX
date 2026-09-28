@@ -13,7 +13,7 @@ import {
   waitForCreateWorkspaceFrameContext,
   waitForWebviewFrameContext,
 } from './cdpClient';
-import { waitForAzureConnectedAction } from './azureConnectionStatus';
+import { azureConnectionStatusDomScript, waitForAzureConnectedAction } from './azureConnectionStatus';
 import {
   assertNextButtonEnabled,
   clickPoint,
@@ -1383,97 +1383,7 @@ async function getAzureConnectionStatusStateThroughDesigner(
   contextId: number,
   actionTitle: string
 ): Promise<{ scopedPanelFound: boolean; panelText: string; candidates: string[]; panelSummaries: string[] }> {
-  const script = `
-(() => {
-  const actionTitle = __ACTION_TITLE__;
-  const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim();
-  const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
-  const visibleText = (element) => {
-    if (!isVisible(element)) {
-      return '';
-    }
-    const ownText = Array.from(element.childNodes || [])
-      .filter((node) => node.nodeType === Node.TEXT_NODE)
-      .map((node) => node.textContent || '')
-      .join(' ');
-    const childText = Array.from(element.children || []).map(visibleText).join(' ');
-    return normalize([ownText, childText].filter(Boolean).join(' '));
-  };
-  const isEditable = (element) =>
-    element instanceof HTMLElement &&
-    (element.isContentEditable ||
-      element.matches('[contenteditable="true"], textarea, input') ||
-      !!element.closest('[contenteditable="true"], textarea, input, .editor-input'));
-  const statusPattern = /\\b(invalid connection|connected|disconnected|not connected|loading connection|creating connection|connecting|connection error|connection failed|connection failure|failed to connect|unauthorized|forbidden|sign in to connect)\\b/i;
-  const hasConnectionContext = (element, panel) => {
-    let current = element;
-    let depth = 0;
-    while (current && current !== panel && depth < 6) {
-      const metadata = [
-        current.getAttribute('aria-label') || '',
-        current.getAttribute('data-automation-id') || '',
-        current.getAttribute('data-testid') || '',
-        current.id || '',
-        typeof current.className === 'string' ? current.className : '',
-      ].join(' ');
-      const text = visibleText(current);
-      if (
-        /connection|connector|authentication|auth/i.test(metadata) ||
-        (text.length <= 500 && /\\b(change connection|connection|connected to|loading connection|invalid connection)\\b/i.test(text))
-      ) {
-        return true;
-      }
-      current = current.parentElement;
-      depth++;
-    }
-    return false;
-  };
-  const panelSelectors = '[id^="msla-node-details-panel"], .msla-panel-container';
-  const panels = Array.from(document.querySelectorAll(panelSelectors))
-    .filter(isVisible)
-    .map((panel) => {
-      const text = visibleText(panel);
-      const rect = panel.getBoundingClientRect();
-      return { panel, text, rect };
-    })
-    .filter(({ text, rect }) => rect.width > 250 && rect.height > 200 && text.toLowerCase().includes(actionTitle))
-    .sort((a, b) => a.rect.left - b.rect.left);
-  const panelSummaries = panels.map(({ text, rect }) => Math.round(rect.left) + ',' + Math.round(rect.top) + ' ' + text.slice(0, 240));
-  const scopedPanel = panels.at(-1)?.panel;
-  if (!(scopedPanel instanceof HTMLElement)) {
-    return { scopedPanelFound: false, panelText: '', candidates: [], panelSummaries };
-  }
-
-  const panelText = visibleText(scopedPanel);
-  const candidates = Array.from(scopedPanel.querySelectorAll('*'))
-    .filter(isVisible)
-    .filter((element) => !isEditable(element))
-    .filter((element) => hasConnectionContext(element, scopedPanel))
-    .map((element) => {
-      const text = visibleText(element);
-      const aria = normalize(element.getAttribute('aria-label') || '');
-      const automationId = normalize(element.getAttribute('data-automation-id') || '');
-      const testId = normalize(element.getAttribute('data-testid') || '');
-      return { text, aria, automationId, testId };
-    })
-    .filter(({ text, aria, automationId, testId }) => {
-      const evidence = [text, aria].filter(Boolean).join(' ');
-      const metadata = [automationId, testId].filter(Boolean).join(' ');
-      return statusPattern.test(evidence) || (/connection|status/i.test(metadata) && statusPattern.test(evidence));
-    })
-    .map(({ text, aria, automationId, testId }) => [text, aria, automationId, testId].filter(Boolean).join(' | '))
-    .filter((value, index, all) => value && all.indexOf(value) === index)
-    .slice(0, 30);
-
-  return {
-    scopedPanelFound: true,
-    panelText,
-    candidates,
-    panelSummaries,
-  };
-})()
-`;
-  return cdp.evaluate(contextId, script.replace('__ACTION_TITLE__', JSON.stringify(actionTitle.toLowerCase())));
+  return cdp.evaluate(contextId, azureConnectionStatusDomScript.replace('__ACTION_TITLE__', JSON.stringify(actionTitle.toLowerCase())));
 }
 
 function sanitizeScreenshotSegment(value: string): string {
@@ -3242,7 +3152,7 @@ async function runMsnWeatherLifecycle(createdWorkspace: CreatedWorkspace): Promi
       });
       await logMsnWeatherDesignerOpenDiagnostics('after msn weather designer open', createdWorkspace);
     } catch (error) {
-      await logMsnWeatherDesignerOpenDiagnostics('msn weather designer open failure', createdWorkspace);
+      await logMsnWeatherDesignerOpenDiagnostics('msn weather authoring failure', createdWorkspace);
       throw error;
     }
     if (settings) {

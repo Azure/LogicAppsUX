@@ -16,6 +16,7 @@ async function main(): Promise<void> {
   testDisconnectedDoesNotMatchConnected();
   testActualDomExtractionRejectsUnrelatedEditableConnected();
   testActualDomExtractionAcceptsProductConnectionStatus();
+  testActualDomExtractionAcceptsNodeDetailsPanelConnectionDisplay();
   await testWaitCapturesScreenshotBeforeReturning();
   await testWaitFailsFastOnErrorBeforeConnected();
   console.log('[azureConnectionStatus.unit] all tests passed');
@@ -92,6 +93,27 @@ function testActualDomExtractionAcceptsProductConnectionStatus(): void {
     ])
   );
   assert.strictEqual(result.scopedPanelFound, true);
+  assert.strictEqual(getAzureConnectionStatus(result.candidates).kind, 'connected');
+}
+
+function testActualDomExtractionAcceptsNodeDetailsPanelConnectionDisplay(): void {
+  const result = runConnectionStatusDomScript(
+    new FakeElement('body', {}, [
+      new FakeElement('div', { class: 'msla-node-details-panel' }, [
+        new FakeElement('h2', {}, [], 'Get current weather'),
+        new FakeElement('label', {}, [], 'Location *'),
+        new FakeElement('div', { contenteditable: 'true', class: 'editor-input' }, [], '98058'),
+        new FakeElement('label', {}, [], 'Units *'),
+        new FakeElement('button', {}, [], 'Imperial'),
+        new FakeElement('div', { class: 'msla-connection-display' }, [
+          new FakeElement('span', {}, [], 'Connected to MSN Weather.'),
+          new FakeElement('a', {}, [], 'Change connection'),
+        ]),
+      ]),
+    ])
+  );
+  assert.strictEqual(result.scopedPanelFound, true);
+  assert.match(result.panelText, /Get current weather/);
   assert.strictEqual(getAzureConnectionStatus(result.candidates).kind, 'connected');
 }
 
@@ -219,6 +241,10 @@ class FakeElement {
     return `${this.ownText}${this.children.map((child) => child.textContent).join('')}`;
   }
 
+  get innerText(): string {
+    return `${this.ownText}${this.children.map((child) => child.innerText).join(' ')}`.replace(/\s+/g, ' ').trim();
+  }
+
   get childNodes(): Array<{ nodeType: number; textContent: string } | FakeElement> {
     return this.ownText ? [{ nodeType: 3, textContent: this.ownText }, ...this.children] : this.children;
   }
@@ -293,6 +319,12 @@ function matchesSimpleSelector(element: FakeElement, selector: string): boolean 
   }
   if (selector === '.msla-panel-container') {
     return element.className.split(/\s+/).includes('msla-panel-container');
+  }
+  if (selector === '.msla-node-details-panel') {
+    return element.className.split(/\s+/).includes('msla-node-details-panel');
+  }
+  if (selector === '[class*="node-details-panel"]') {
+    return element.className.includes('node-details-panel');
   }
   if (selector === '[id^="msla-node-details-panel"]') {
     return element.id.startsWith('msla-node-details-panel');

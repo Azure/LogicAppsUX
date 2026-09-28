@@ -48,6 +48,10 @@ export const azureConnectionStatusDomScript = `
     const childText = Array.from(element.children || []).map(visibleText).join(' ');
     return normalize([ownText, childText].filter(Boolean).join(' '));
   };
+  const renderedText = (element) => {
+    const innerText = typeof element.innerText === 'string' ? normalize(element.innerText) : '';
+    return innerText || visibleText(element);
+  };
   const isEditable = (element) =>
     element instanceof HTMLElement &&
     (element.isContentEditable ||
@@ -65,7 +69,7 @@ export const azureConnectionStatusDomScript = `
         current.id || '',
         typeof current.className === 'string' ? current.className : '',
       ].join(' ');
-      const text = visibleText(current);
+      const text = renderedText(current);
       if (
         /connection|connector|authentication|auth/i.test(metadata) ||
         (text.length <= 500 && /\\b(change connection|connection|connected to|loading connection|invalid connection)\\b/i.test(text))
@@ -77,11 +81,11 @@ export const azureConnectionStatusDomScript = `
     }
     return false;
   };
-  const panelSelectors = '[id^="msla-node-details-panel"], .msla-panel-container';
+  const panelSelectors = '[id^="msla-node-details-panel"], .msla-node-details-panel, .msla-panel-container, [class*="node-details-panel"]';
   const panels = Array.from(document.querySelectorAll(panelSelectors))
     .filter(isVisible)
     .map((panel) => {
-      const text = visibleText(panel);
+      const text = renderedText(panel);
       const rect = panel.getBoundingClientRect();
       return { panel, text, rect };
     })
@@ -93,13 +97,13 @@ export const azureConnectionStatusDomScript = `
     return { scopedPanelFound: false, panelText: '', candidates: [], panelSummaries };
   }
 
-  const panelText = visibleText(scopedPanel);
+  const panelText = renderedText(scopedPanel);
   const candidates = Array.from(scopedPanel.querySelectorAll('*'))
     .filter(isVisible)
     .filter((element) => !isEditable(element))
     .filter((element) => hasConnectionContext(element, scopedPanel))
     .map((element) => {
-      const text = visibleText(element);
+      const text = renderedText(element);
       const aria = normalize(element.getAttribute('aria-label') || '');
       const automationId = normalize(element.getAttribute('data-automation-id') || '');
       const testId = normalize(element.getAttribute('data-testid') || '');

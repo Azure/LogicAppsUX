@@ -351,6 +351,7 @@ async function runMsnWeatherLifecycle(visibleDelayMs) {
       extraEnv: {
         ...commonEnv,
         LA_E2E_CLI_INCLUDE_MSN_WEATHER_LIFECYCLE: '1',
+        LA_E2E_CLI_WORKSPACE_PARENT: workspaceParent,
         LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
         LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '1',
         LA_E2E_CLI_PROFILE_PHASE: 'msn-weather-run',
