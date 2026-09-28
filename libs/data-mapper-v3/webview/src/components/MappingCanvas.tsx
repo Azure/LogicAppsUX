@@ -137,9 +137,7 @@ function LinkPath({
     selected: boolean;
     onSelect(): void;
 }): React.ReactElement {
-    const dx = Math.abs(to.x - from.x);
-    const controlOffset = Math.max(dx * 0.4, 40);
-    const path = `M ${from.x} ${from.y} C ${from.x + controlOffset} ${from.y}, ${to.x - controlOffset} ${to.y}, ${to.x} ${to.y}`;
+    const path = `M ${from.x} ${from.y} L ${to.x} ${to.y}`;
     const [hovered, setHovered] = useState(false);
 
     return (

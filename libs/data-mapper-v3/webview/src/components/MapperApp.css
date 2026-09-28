@@ -476,8 +476,10 @@
     position: relative;
     min-width: 200px;
     overflow: auto;
-    background:
-        radial-gradient(circle, var(--vscode-panel-border, #333) 0.5px, transparent 0.5px);
+    background-color: var(--vscode-editor-background);
+    background-image:
+        linear-gradient(to right, var(--vscode-panel-border, #333) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--vscode-panel-border, #333) 1px, transparent 1px);
     background-size: 20px 20px;
 }
 
