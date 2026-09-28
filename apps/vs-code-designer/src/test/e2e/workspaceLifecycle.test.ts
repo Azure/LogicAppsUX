@@ -229,6 +229,11 @@ suite('Generated Workspace Designer Lifecycle Tests', () => {
       return;
     }
 
+    if (process.env.LA_E2E_CLI_WORKSPACE_PARENT || process.env.LA_E2E_CLI_CREATE_WORKSPACE_PARENT) {
+      console.log('[workspace-lifecycle] Deferring temp workspace cleanup to runner-owned diagnostics capture.');
+      return;
+    }
+
     try {
       fs.rmSync(tempWorkspaceParentPath, { recursive: true, force: true });
     } catch (error) {

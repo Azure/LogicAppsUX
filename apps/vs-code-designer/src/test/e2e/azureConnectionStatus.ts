@@ -30,6 +30,7 @@ export interface AzureConnectionStatusObservation {
   panelText: string;
   candidates: string[];
   panelSummaries: string[];
+  debug?: unknown;
 }
 
 export const azureConnectionStatusDomScript = `
@@ -84,6 +85,49 @@ export const azureConnectionStatusDomScript = `
   const hasEditableDescendant = (element) =>
     element instanceof HTMLElement && !!element.querySelector('[contenteditable="true"], textarea, input, .editor-input');
   const statusPattern = /\\b(invalid connection|connected|disconnected|not connected|loading connection|creating connection|connecting|connection error|connection failed|connection failure|failed to connect|unauthorized|forbidden|sign in to connect)\\b/i;
+  const safeStyle = (element) => {
+    try {
+      const style =
+        element?.ownerDocument?.defaultView?.getComputedStyle?.(element) ??
+        (typeof getComputedStyle === 'function' ? getComputedStyle(element) : undefined);
+      return style ? { display: style.display, visibility: style.visibility, opacity: style.opacity } : {};
+    } catch {
+      return {};
+    }
+  };
+  const summarizeElement = (element, reason) => {
+    if (!(element instanceof HTMLElement)) {
+      return { reason: reason || 'not HTMLElement' };
+    }
+    const rect = element.getBoundingClientRect();
+    return {
+      reason: reason || '',
+      tag: element.tagName.toLowerCase(),
+      id: element.id || '',
+      className: typeof element.className === 'string' ? element.className : '',
+      ariaLabel: normalize(element.getAttribute('aria-label') || ''),
+      automationId: normalize(element.getAttribute('data-automation-id') || ''),
+      visible: isVisible(element),
+      rect: {
+        left: Math.round(rect.left),
+        top: Math.round(rect.top),
+        width: Math.round(rect.width),
+        height: Math.round(rect.height),
+      },
+      style: safeStyle(element),
+      renderedText: renderedText(element).slice(0, 240),
+      textContent: normalize(element.textContent || '').slice(0, 240),
+    };
+  };
+  const summarizeAncestors = (element) => {
+    const ancestors = [];
+    let current = element instanceof HTMLElement ? element : undefined;
+    for (let depth = 0; current && depth < 5; depth++) {
+      ancestors.push(summarizeElement(current, depth === 0 ? 'hit' : 'ancestor'));
+      current = current.parentElement || undefined;
+    }
+    return ancestors;
+  };
   const hasConnectionContext = (element, panel) => {
     let current = element;
     let depth = 0;
@@ -108,7 +152,40 @@ export const azureConnectionStatusDomScript = `
     return false;
   };
   const panelSelectors = '[id^="msla-node-details-panel"], .msla-node-details-panel, .msla-panel-container, [class*="node-details-panel"]';
-  const panels = Array.from(document.querySelectorAll(panelSelectors))
+  const rawPanels = Array.from(document.querySelectorAll(panelSelectors));
+  const panelDebug = rawPanels.slice(0, 30).map((panel) => {
+    if (!(panel instanceof HTMLElement)) {
+      return summarizeElement(panel, 'not HTMLElement');
+    }
+    const text = renderedText(panel);
+    const rect = panel.getBoundingClientRect();
+    const reason = !isVisible(panel)
+      ? 'not visible'
+      : rect.width <= 250 || rect.height <= 200
+        ? 'too small'
+        : !text.toLowerCase().includes(actionTitle)
+          ? 'missing action title'
+          : 'candidate';
+    return summarizeElement(panel, reason);
+  });
+  const textHitPattern = new RegExp(actionTitle.replace(/[.*+?^\\x24{}()|[\\]\\\\]/g, '\\\\$&') + '|connected|connection', 'i');
+  const textHits = Array.from(document.querySelectorAll('body *'))
+    .filter((element) => {
+      const text = normalize((element.textContent || '') + ' ' + (element.getAttribute?.('aria-label') || ''));
+      return textHitPattern.test(text);
+    })
+    .slice(0, 20)
+    .map(summarizeAncestors);
+  const debug = {
+    url: window.location?.href || '',
+    title: document.title || '',
+    readyState: document.readyState || '',
+    actionTitle,
+    panelSelectorCount: rawPanels.length,
+    panelDebug,
+    textHits,
+  };
+  const panels = rawPanels
     .filter(isVisible)
     .map((panel) => {
       const text = renderedText(panel);
@@ -120,7 +197,7 @@ export const azureConnectionStatusDomScript = `
   const panelSummaries = panels.map(({ text, rect }) => Math.round(rect.left) + ',' + Math.round(rect.top) + ' ' + text.slice(0, 240));
   const scopedPanel = panels.at(-1)?.panel;
   if (!(scopedPanel instanceof HTMLElement)) {
-    return { scopedPanelFound: false, panelText: '', candidates: [], panelSummaries };
+    return { scopedPanelFound: false, panelText: '', candidates: [], panelSummaries, debug };
   }
 
   const panelText = renderedText(scopedPanel);
@@ -150,6 +227,7 @@ export const azureConnectionStatusDomScript = `
     panelText,
     candidates,
     panelSummaries,
+    debug,
   };
 })()
 `;
@@ -216,7 +294,9 @@ export async function waitForAzureConnectedAction(
 ): Promise<WaitForAzureConnectedActionResult> {
   const startedAt = dependencies.now();
   const screenshotName = `workspace-lifecycle-${options.label}-${sanitizeScreenshotSegment(options.actionTitle)}-connected`;
-  let lastObserved: { status: AzureConnectionStatus; panelText: string; candidates: string[]; panelSummaries: string[] } | undefined;
+  let lastObserved:
+    | { status: AzureConnectionStatus; panelText: string; candidates: string[]; panelSummaries: string[]; debug?: unknown }
+    | undefined;
   let lastObservedLog = '';
 
   while (dependencies.now() - startedAt < options.timeoutMs) {
@@ -227,6 +307,7 @@ export async function waitForAzureConnectedAction(
       panelText: state.panelText,
       candidates: state.candidates,
       panelSummaries: state.panelSummaries,
+      debug: state.debug,
     };
     const serializedObserved = JSON.stringify({
       status: status.kind,
@@ -278,6 +359,7 @@ export async function waitForAzureConnectedAction(
       `Last candidates: ${JSON.stringify(lastObserved?.candidates.slice(0, 20) ?? [])}`,
       `Last panel summaries: ${JSON.stringify(lastObserved?.panelSummaries.slice(0, 10) ?? [])}`,
       `Last scoped panel text: ${(lastObserved?.panelText ?? '').slice(0, 1000)}`,
+      `Last DOM debug: ${JSON.stringify(lastObserved?.debug ?? {})}`,
     ].join('\n')
   );
 }
