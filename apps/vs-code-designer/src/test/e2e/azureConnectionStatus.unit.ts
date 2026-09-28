@@ -17,6 +17,10 @@ async function main(): Promise<void> {
   testActualDomExtractionRejectsUnrelatedEditableConnected();
   testActualDomExtractionAcceptsProductConnectionStatus();
   testActualDomExtractionAcceptsNodeDetailsPanelConnectionDisplay();
+  testActualDomExtractionIgnoresHiddenConnectionStatus();
+  testActualDomExtractionIgnoresTransparentConnectionStatus();
+  testActualDomExtractionDoesNotPromoteEditableErrorText();
+  testActualDomExtractionDoesNotPromoteEditableConnectedText();
   await testWaitCapturesScreenshotBeforeReturning();
   await testWaitFailsFastOnErrorBeforeConnected();
   console.log('[azureConnectionStatus.unit] all tests passed');
@@ -117,6 +121,69 @@ function testActualDomExtractionAcceptsNodeDetailsPanelConnectionDisplay(): void
   assert.strictEqual(getAzureConnectionStatus(result.candidates).kind, 'connected');
 }
 
+function testActualDomExtractionIgnoresHiddenConnectionStatus(): void {
+  const result = runConnectionStatusDomScript(
+    new FakeElement('body', {}, [
+      new FakeElement('div', { class: 'msla-node-details-panel' }, [
+        new FakeElement('h2', {}, [], 'Get current weather'),
+        new FakeElement('div', { class: 'msla-connection-display', style: 'visibility: hidden' }, [
+          new FakeElement('span', {}, [], 'Connected to MSN Weather.'),
+        ]),
+      ]),
+    ])
+  );
+  assert.strictEqual(result.scopedPanelFound, true);
+  assert.strictEqual(getAzureConnectionStatus(result.candidates).kind, 'missing');
+}
+
+function testActualDomExtractionIgnoresTransparentConnectionStatus(): void {
+  const result = runConnectionStatusDomScript(
+    new FakeElement('body', {}, [
+      new FakeElement('div', { class: 'msla-node-details-panel' }, [
+        new FakeElement('h2', {}, [], 'Get current weather'),
+        new FakeElement('div', { class: 'msla-connection-display', style: 'opacity: 0' }, [
+          new FakeElement('span', {}, [], 'Connected to MSN Weather.'),
+        ]),
+      ]),
+    ])
+  );
+  assert.strictEqual(result.scopedPanelFound, true);
+  assert.strictEqual(getAzureConnectionStatus(result.candidates).kind, 'missing');
+}
+
+function testActualDomExtractionDoesNotPromoteEditableErrorText(): void {
+  const result = runConnectionStatusDomScript(
+    new FakeElement('body', {}, [
+      new FakeElement('div', { class: 'msla-node-details-panel parameters-content' }, [
+        new FakeElement('h2', {}, [], 'Get current weather'),
+        new FakeElement('label', {}, [], 'Location *'),
+        new FakeElement('div', { contenteditable: 'true', class: 'editor-input' }, [], 'unauthorized'),
+        new FakeElement('div', { class: 'msla-connection-display' }, [
+          new FakeElement('span', {}, [], 'Connected to MSN Weather.'),
+          new FakeElement('a', {}, [], 'Change connection'),
+        ]),
+      ]),
+    ])
+  );
+  assert.strictEqual(result.scopedPanelFound, true);
+  assert.strictEqual(getAzureConnectionStatus(result.candidates).kind, 'connected');
+}
+
+function testActualDomExtractionDoesNotPromoteEditableConnectedText(): void {
+  const result = runConnectionStatusDomScript(
+    new FakeElement('body', {}, [
+      new FakeElement('div', { class: 'msla-node-details-panel parameters-content' }, [
+        new FakeElement('h2', {}, [], 'Get current weather'),
+        new FakeElement('label', {}, [], 'Location *'),
+        new FakeElement('div', { contenteditable: 'true', class: 'editor-input' }, [], 'Connected'),
+        new FakeElement('div', { class: 'msla-connection-display' }, [new FakeElement('span', {}, [], 'Select a connection')]),
+      ]),
+    ])
+  );
+  assert.strictEqual(result.scopedPanelFound, true);
+  assert.strictEqual(getAzureConnectionStatus(result.candidates).kind, 'missing');
+}
+
 function runConnectionStatusDomScript(root: FakeElement): {
   scopedPanelFound: boolean;
   panelText: string;
@@ -132,6 +199,7 @@ function runConnectionStatusDomScript(root: FakeElement): {
     window,
     HTMLElement: FakeElement,
     Node: { TEXT_NODE: 3 },
+    getComputedStyle: getFakeComputedStyle,
   });
 }
 
@@ -233,6 +301,10 @@ class FakeElement {
     return this.attributes.id ?? '';
   }
 
+  get hidden(): boolean {
+    return this.hasAttribute('hidden');
+  }
+
   get className(): string {
     return this.attributes.class ?? '';
   }
@@ -302,6 +374,21 @@ class FakeElement {
     }
     return matches;
   }
+
+  querySelector(selector: string): FakeElement | undefined {
+    return this.querySelectorAll(selector)[0];
+  }
+}
+
+function getFakeComputedStyle(element: FakeElement): { display: string; visibility: string; opacity: string } {
+  const style = element.attributes.style ?? '';
+  return {
+    display: /display\s*:\s*none/i.test(style) ? 'none' : 'block',
+    visibility: /visibility\s*:\s*(hidden|collapse)/i.test(style)
+      ? (style.match(/visibility\s*:\s*(hidden|collapse)/i)?.[1] ?? 'hidden')
+      : 'visible',
+    opacity: /opacity\s*:\s*0(?:\.0+)?(?:;|$)/i.test(style) ? '0' : '1',
+  };
 }
 
 function matchesSimpleSelector(element: FakeElement, selector: string): boolean {

@@ -36,7 +36,29 @@ export const azureConnectionStatusDomScript = `
 (() => {
   const actionTitle = __ACTION_TITLE__;
   const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim();
-  const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
+  const hasVisibleStyle = (element) => {
+    let current = element;
+    while (current instanceof HTMLElement) {
+      if (current.hidden || current.getAttribute('aria-hidden') === 'true') {
+        return false;
+      }
+      const style =
+        current.ownerDocument?.defaultView?.getComputedStyle?.(current) ??
+        (typeof getComputedStyle === 'function' ? getComputedStyle(current) : undefined);
+      if (style) {
+        if (style.display === 'none' || style.visibility === 'hidden' || style.visibility === 'collapse') {
+          return false;
+        }
+        if (Number.parseFloat(style.opacity || '1') === 0) {
+          return false;
+        }
+      }
+      current = current.parentElement;
+    }
+    return true;
+  };
+  const isVisible = (element) =>
+    !!(element && hasVisibleStyle(element) && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
   const visibleText = (element) => {
     if (!isVisible(element)) {
       return '';
@@ -49,14 +71,18 @@ export const azureConnectionStatusDomScript = `
     return normalize([ownText, childText].filter(Boolean).join(' '));
   };
   const renderedText = (element) => {
-    const innerText = typeof element.innerText === 'string' ? normalize(element.innerText) : '';
-    return innerText || visibleText(element);
+    if (!isVisible(element)) {
+      return '';
+    }
+    return visibleText(element);
   };
   const isEditable = (element) =>
     element instanceof HTMLElement &&
     (element.isContentEditable ||
       element.matches('[contenteditable="true"], textarea, input') ||
       !!element.closest('[contenteditable="true"], textarea, input, .editor-input'));
+  const hasEditableDescendant = (element) =>
+    element instanceof HTMLElement && !!element.querySelector('[contenteditable="true"], textarea, input, .editor-input');
   const statusPattern = /\\b(invalid connection|connected|disconnected|not connected|loading connection|creating connection|connecting|connection error|connection failed|connection failure|failed to connect|unauthorized|forbidden|sign in to connect)\\b/i;
   const hasConnectionContext = (element, panel) => {
     let current = element;
@@ -101,6 +127,7 @@ export const azureConnectionStatusDomScript = `
   const candidates = Array.from(scopedPanel.querySelectorAll('*'))
     .filter(isVisible)
     .filter((element) => !isEditable(element))
+    .filter((element) => !hasEditableDescendant(element))
     .filter((element) => hasConnectionContext(element, scopedPanel))
     .map((element) => {
       const text = renderedText(element);
