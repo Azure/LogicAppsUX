@@ -26,8 +26,12 @@ const includeNugetConversionLifecycle =
 const includeCodefulDebugTasks = process.env.LA_E2E_CLI_INCLUDE_CODEFUL_DEBUG_TASKS === '1' || process.argv.includes('codefulDebugTasks');
 const includeMsnWeatherLifecycle =
   process.env.LA_E2E_CLI_INCLUDE_MSN_WEATHER_LIFECYCLE === '1' || process.argv.includes('msnWeatherLifecycle');
+const includeRuntimeDependencyBootstrap =
+  process.env.LA_E2E_CLI_INCLUDE_RUNTIME_DEPENDENCY_BOOTSTRAP === '1' || process.argv.includes('runtimeDependencyBootstrap');
 const includeAzureAuthWarmup = process.env.LA_E2E_CLI_INCLUDE_AZURE_AUTH_WARMUP === '1' || process.argv.includes('azureAuthWarmup');
-const dependencyRoot = path.join(process.env.USERPROFILE ?? process.env.HOME ?? '', '.azurelogicapps', 'dependencies');
+const dependencyRoot =
+  process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT ??
+  path.join(process.env.USERPROFILE ?? process.env.HOME ?? '', '.azurelogicapps', 'dependencies');
 const dotnetExecutablePath = findExecutable('dotnet') ?? 'dotnet';
 
 prepareUserSettings(userDataDir);
@@ -151,6 +155,18 @@ if (includeMsnWeatherLifecycle) {
   });
 }
 
+if (includeRuntimeDependencyBootstrap) {
+  configs.push({
+    label: 'runtimeDependencyBootstrap',
+    ...baseConfig,
+    files: ['out/test/e2e/runtimeDependencyBootstrap.test.js'],
+    mocha: {
+      ui: 'tdd',
+      timeout: 600000,
+    },
+  });
+}
+
 if (includeAzureAuthWarmup) {
   configs.push({
     label: 'azureAuthWarmup',
@@ -190,6 +206,12 @@ function getForwardedTestEnvironment() {
     'LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME',
     'LA_E2E_CLI_AZURE_LOCATION_NAME',
     'LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL',
+    'LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT',
+    'LA_E2E_CLI_EXPECT_EMPTY_RUNTIME_DEPENDENCIES_ROOT',
+    'LA_E2E_CLI_EMPTY_RUNTIME_DEPENDENCIES_ROOT_CONFIRMED',
+    'LA_E2E_CLI_VALIDATE_DEPENDENCIES',
+    'LA_E2E_CLI_PROFILE_PHASE',
+    'LA_E2E_STRICT_DEPENDENCY_VALIDATION',
     'WORKFLOWS_TENANT_ID',
     'WORKFLOWS_SUBSCRIPTION_ID',
     'WORKFLOWS_RESOURCE_GROUP_NAME',
@@ -207,6 +229,7 @@ function prepareUserSettings(userDataPath) {
     `${JSON.stringify(
       {
         'azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation': process.env.LA_E2E_CLI_VALIDATE_DEPENDENCIES === '1',
+        'azureLogicAppsStandard.e2eStrictDependencyValidation': process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1',
         'azureLogicAppsStandard.validateDotNetSDK': false,
         'azureLogicAppsStandard.autoRuntimeDependenciesPath': dependencyRoot,
         'azureLogicAppsStandard.funcCoreToolsBinaryPath': path.join(

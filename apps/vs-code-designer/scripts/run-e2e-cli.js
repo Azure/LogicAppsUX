@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-/* global __dirname, console, process, require, setTimeout */
+/* global __dirname, console, module, process, require, setTimeout */
 const { execFileSync, spawn } = require('child_process');
 const { createHash } = require('crypto');
 const fs = require('fs');
@@ -20,66 +20,50 @@ const forbiddenOutputPatterns = [
   },
 ];
 
-const {
-  args,
-  azureAuthWarmup,
-  codefulDebugTasks,
-  createWorkspaceFull,
-  msnWeatherLifecycle,
-  nugetConversionLifecycle,
-  visibleDelayMs,
-  workspaceLifecycle,
-} = parseArgs(process.argv.slice(2));
+if (require.main === module) {
+  main();
+}
 
-if (azureAuthWarmup) {
-  runAzureAuthWarmup(visibleDelayMs)
-    .then((code) => process.exit(code))
-    .catch((error) => {
-      console.error(error instanceof Error ? error.message : String(error));
-      process.exit(1);
-    });
-} else if (createWorkspaceFull) {
-  runCreateWorkspaceFull(visibleDelayMs).catch((error) => {
-    console.error(error instanceof Error ? error.message : String(error));
-    process.exit(1);
-  });
-} else if (nugetConversionLifecycle) {
-  runNugetConversionLifecycle(visibleDelayMs).catch((error) => {
-    console.error(error instanceof Error ? error.message : String(error));
-    process.exit(1);
-  });
-} else if (codefulDebugTasks) {
-  runCodefulDebugTasks(visibleDelayMs).catch((error) => {
-    console.error(error instanceof Error ? error.message : String(error));
-    process.exit(1);
-  });
-} else if (msnWeatherLifecycle) {
-  runMsnWeatherLifecycle(visibleDelayMs).catch((error) => {
-    console.error(error instanceof Error ? error.message : String(error));
-    process.exit(1);
-  });
-} else if (workspaceLifecycle) {
-  runWorkspaceLifecycle(visibleDelayMs).catch((error) => {
-    console.error(error instanceof Error ? error.message : String(error));
-    process.exit(1);
-  });
-} else if (args.length === 0) {
-  runDefaultBaseline(visibleDelayMs).catch((error) => {
-    console.error(error instanceof Error ? error.message : String(error));
-    process.exit(1);
-  });
-} else if (getCreateWorkspaceMatrixCaseLabels(args)) {
-  runCreateWorkspaceMatrixCases(args, visibleDelayMs).catch((error) => {
-    console.error(error instanceof Error ? error.message : String(error));
-    process.exit(1);
-  });
-} else {
-  runVscodeTest(args, { visibleDelayMs })
-    .then((code) => process.exit(code))
-    .catch((error) => {
-      console.error(error instanceof Error ? error.message : String(error));
-      process.exit(1);
-    });
+function main() {
+  const {
+    args,
+    azureAuthWarmup,
+    codefulDebugTasks,
+    createWorkspaceFull,
+    msnWeatherLifecycle,
+    nugetConversionLifecycle,
+    visibleDelayMs,
+    workspaceLifecycle,
+  } = parseArgs(process.argv.slice(2));
+
+  if (azureAuthWarmup) {
+    runAzureAuthWarmup(visibleDelayMs)
+      .then((code) => process.exit(code))
+      .catch(exitWithError);
+  } else if (createWorkspaceFull) {
+    runCreateWorkspaceFull(visibleDelayMs).catch(exitWithError);
+  } else if (nugetConversionLifecycle) {
+    runNugetConversionLifecycle(visibleDelayMs).catch(exitWithError);
+  } else if (codefulDebugTasks) {
+    runCodefulDebugTasks(visibleDelayMs).catch(exitWithError);
+  } else if (msnWeatherLifecycle) {
+    runMsnWeatherLifecycle(visibleDelayMs).catch(exitWithError);
+  } else if (workspaceLifecycle) {
+    runWorkspaceLifecycle(visibleDelayMs).catch(exitWithError);
+  } else if (args.length === 0) {
+    runDefaultBaseline(visibleDelayMs).catch(exitWithError);
+  } else if (getCreateWorkspaceMatrixCaseLabels(args)) {
+    runCreateWorkspaceMatrixCases(args, visibleDelayMs).catch(exitWithError);
+  } else {
+    runVscodeTest(args, { visibleDelayMs })
+      .then((code) => process.exit(code))
+      .catch(exitWithError);
+  }
+}
+
+function exitWithError(error) {
+  console.error(error instanceof Error ? error.message : String(error));
+  process.exit(1);
 }
 
 async function runCreateWorkspaceFull(visibleDelayMs) {
@@ -264,39 +248,81 @@ async function runMsnWeatherLifecycle(visibleDelayMs) {
   ensureMsnWeatherProfile();
   const azureEnv = getMsnWeatherAzureEnv();
   const lifecycleDir = path.resolve(__dirname, '..', '.vscode-test', 'msn-weather-lifecycle');
+  const lifecycleRunId = Date.now();
+  const runtimeDependenciesRoot = createIsolatedRuntimeDependenciesRoot('msnWeatherLifecycle');
+  let lifecycleSucceeded = false;
+  const commonEnv = {
+    LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: runtimeDependenciesRoot,
+    LA_E2E_CLI_EXPECT_AZURE_LOGIC_APPS_CHANNEL: '1',
+    LA_E2E_CLI_VSCODE_LOG_ARTIFACT_LABEL: 'msnWeatherLifecycle',
+  };
   fs.mkdirSync(lifecycleDir, { recursive: true });
-  const manifestPath = path.join(lifecycleDir, `manifest-standard-${Date.now()}.json`);
-  await runVscodeTest(['--label', 'msnWeatherLifecycle'], {
-    visibleDelayMs,
-    extraEnv: {
-      LA_E2E_CLI_INCLUDE_MSN_WEATHER_LIFECYCLE: '1',
-      LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'create',
-      LA_E2E_CLI_WORKSPACE_LIFECYCLE_CREATE_LABEL: 'standard',
-      LA_E2E_CLI_WORKSPACE_LIFECYCLE_MANIFEST: manifestPath,
-    },
-  });
+  const manifestPath = path.join(lifecycleDir, `manifest-standard-${lifecycleRunId}.json`);
 
-  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
-  const entry = manifest.find((candidate) => candidate.label === 'standard') ?? manifest[0];
-  if (!entry) {
-    throw new Error('MSN Weather lifecycle setup did not write a Standard workspace entry');
-  }
+  try {
+    await runVscodeTest(['--label', 'runtimeDependencyBootstrap'], {
+      visibleDelayMs,
+      extraEnv: {
+        ...commonEnv,
+        LA_E2E_CLI_INCLUDE_RUNTIME_DEPENDENCY_BOOTSTRAP: '1',
+        LA_E2E_CLI_EXPECT_EMPTY_RUNTIME_DEPENDENCIES_ROOT: '1',
+        LA_E2E_CLI_EMPTY_RUNTIME_DEPENDENCIES_ROOT_CONFIRMED: '1',
+        LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
+        LA_E2E_CLI_VALIDATE_DEPENDENCIES: '1',
+        LA_E2E_STRICT_DEPENDENCY_VALIDATION: '1',
+        LA_E2E_CLI_PROFILE_PHASE: 'msn-weather-bootstrap',
+        LA_E2E_CLI_USER_DATA_SUFFIX: `msn-weather-bootstrap-${lifecycleRunId}`,
+      },
+    });
+    const funcCoreToolsProbe = await waitForFuncCoreToolsAtDependencyRoot(runtimeDependenciesRoot, {
+      context: 'MSN Weather dependency bootstrap',
+      timeoutMs: 30_000,
+    });
+    writeRuntimeDependencyProbe(lifecycleDir, lifecycleRunId, runtimeDependenciesRoot, funcCoreToolsProbe);
 
-  await runVscodeTest(['--label', 'msnWeatherLifecycle'], {
-    visibleDelayMs,
-    extraEnv: {
-      LA_E2E_CLI_INCLUDE_MSN_WEATHER_LIFECYCLE: '1',
-      LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
-      LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '1',
-      LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'msn-weather-run',
-      LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE: JSON.stringify(entry),
-      LA_E2E_CLI_STARTUP_RESOURCE: entry.workspaceFilePath,
-      ...azureEnv,
-    },
-  });
+    await runVscodeTest(['--label', 'msnWeatherLifecycle'], {
+      visibleDelayMs,
+      extraEnv: {
+        ...commonEnv,
+        LA_E2E_CLI_INCLUDE_MSN_WEATHER_LIFECYCLE: '1',
+        LA_E2E_CLI_PROFILE_PHASE: 'msn-weather-create',
+        LA_E2E_CLI_USER_DATA_SUFFIX: `msn-weather-create-${lifecycleRunId}`,
+        LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'create',
+        LA_E2E_CLI_WORKSPACE_LIFECYCLE_CREATE_LABEL: 'standard',
+        LA_E2E_CLI_WORKSPACE_LIFECYCLE_MANIFEST: manifestPath,
+      },
+    });
 
-  if (process.env.LA_E2E_CLI_PRESERVE_WORKSPACES !== '1') {
-    fs.rmSync(entry.workspaceDir, { recursive: true, force: true });
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+    const entry = manifest.find((candidate) => candidate.label === 'standard') ?? manifest[0];
+    if (!entry) {
+      throw new Error('MSN Weather lifecycle setup did not write a Standard workspace entry');
+    }
+
+    await runVscodeTest(['--label', 'msnWeatherLifecycle'], {
+      visibleDelayMs,
+      extraEnv: {
+        ...commonEnv,
+        LA_E2E_CLI_INCLUDE_MSN_WEATHER_LIFECYCLE: '1',
+        LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
+        LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '1',
+        LA_E2E_CLI_PROFILE_PHASE: 'msn-weather-run',
+        LA_E2E_CLI_USER_DATA_SUFFIX: `msn-weather-run-${lifecycleRunId}`,
+        LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'msn-weather-run',
+        LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE: JSON.stringify(entry),
+        LA_E2E_CLI_STARTUP_RESOURCE: entry.workspaceFilePath,
+        ...azureEnv,
+      },
+    });
+
+    lifecycleSucceeded = true;
+    if (process.env.LA_E2E_CLI_PRESERVE_WORKSPACES !== '1') {
+      fs.rmSync(entry.workspaceDir, { recursive: true, force: true });
+    }
+  } finally {
+    if (lifecycleSucceeded && process.env.LA_E2E_CLI_PRESERVE_WORKSPACES !== '1') {
+      await cleanupRuntimeDependenciesRoot(runtimeDependenciesRoot);
+    }
   }
 }
 
@@ -549,6 +575,207 @@ function sanitizeEnvSegment(value) {
   return String(value).replace(/[^a-z0-9_-]+/gi, '-');
 }
 
+function createIsolatedRuntimeDependenciesRoot(label) {
+  const prefix = path.join(
+    os.tmpdir(),
+    `logicappsux-vscode-e2e-runtime-deps-${sanitizeEnvSegment(label)}-${process.platform}-${process.arch}-`
+  );
+  const root = fs.mkdtempSync(prefix);
+  assertSafeRuntimeDependenciesRoot(root);
+
+  const entries = fs.readdirSync(root);
+  if (entries.length > 0) {
+    throw new Error(`[runtime-deps] Expected isolated dependency root to start empty: ${root}`);
+  }
+
+  console.log(`[runtime-deps] Created empty isolated dependency root: ${root}`);
+  return root;
+}
+
+function assertSafeRuntimeDependenciesRoot(root) {
+  const resolvedRoot = path.resolve(root);
+  const tempRoot = path.resolve(os.tmpdir());
+  const userCacheRoot = path.resolve(os.homedir(), '.azurelogicapps', 'dependencies');
+  const relativeToTempRoot = path.relative(tempRoot, resolvedRoot);
+  const expectedPrefix = `logicappsux-vscode-e2e-runtime-deps-`;
+
+  if (path.relative(userCacheRoot, resolvedRoot) === '') {
+    throw new Error(`[runtime-deps] Refusing to use the user's Azure Logic Apps dependency cache as an isolated root: ${resolvedRoot}`);
+  }
+
+  if (
+    relativeToTempRoot.startsWith('..') ||
+    path.isAbsolute(relativeToTempRoot) ||
+    !path.basename(resolvedRoot).startsWith(expectedPrefix)
+  ) {
+    throw new Error(`[runtime-deps] Isolated dependency root must be a test-owned directory under ${tempRoot}: ${resolvedRoot}`);
+  }
+}
+
+function getFuncCoreToolsBinaryPath(runtimeDependenciesRoot) {
+  return path.join(runtimeDependenciesRoot, 'FuncCoreTools', process.platform === 'win32' ? 'func.exe' : 'func');
+}
+
+function getRequiredFuncCoreToolsBinaryPaths(runtimeDependenciesRoot) {
+  const executableName = process.platform === 'win32' ? 'func.exe' : 'func';
+  const funcToolsRoot = path.join(runtimeDependenciesRoot, 'FuncCoreTools');
+  return [
+    { name: 'configured launcher', path: path.join(funcToolsRoot, executableName) },
+    { name: 'in-proc8 worker host', path: path.join(funcToolsRoot, 'in-proc8', executableName) },
+  ];
+}
+
+function getFuncCoreToolsCandidatePaths(runtimeDependenciesRoot) {
+  const executableName = process.platform === 'win32' ? 'func.exe' : 'func';
+  const funcToolsRoot = path.join(runtimeDependenciesRoot, 'FuncCoreTools');
+  const candidates = [
+    path.join(funcToolsRoot, executableName),
+    path.join(funcToolsRoot, 'in-proc8', executableName),
+    path.join(funcToolsRoot, 'in-proc6', executableName),
+  ];
+  const pending = [funcToolsRoot];
+
+  while (pending.length > 0) {
+    const current = pending.pop();
+    if (!current || !fs.existsSync(current)) {
+      continue;
+    }
+
+    for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
+      const entryPath = path.join(current, entry.name);
+      if (entry.isDirectory()) {
+        pending.push(entryPath);
+      } else if (entry.name === executableName) {
+        candidates.push(entryPath);
+      }
+    }
+  }
+
+  return [...new Set(candidates)];
+}
+
+async function waitForFuncCoreToolsAtDependencyRoot(runtimeDependenciesRoot, options = {}) {
+  const startedAt = Date.now();
+  const timeoutMs = options.timeoutMs ?? 120_000;
+  const context = options.context ?? 'runtime dependency bootstrap';
+  let lastError;
+
+  while (Date.now() - startedAt < timeoutMs) {
+    try {
+      const version = verifyFuncCoreToolsAtDependencyRoot(runtimeDependenciesRoot, context);
+      console.log(
+        `[runtime-deps] Func Core Tools ready after ${Date.now() - startedAt}ms for ${context}: ${getFuncCoreToolsBinaryPath(
+          runtimeDependenciesRoot
+        )} -> ${version}`
+      );
+      return version;
+    } catch (error) {
+      lastError = error;
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    }
+  }
+
+  throw lastError ?? new Error(`[runtime-deps] Timed out waiting for Func Core Tools after ${timeoutMs}ms for ${context}`);
+}
+
+function verifyFuncCoreToolsAtDependencyRoot(runtimeDependenciesRoot, context = 'runtime dependency bootstrap') {
+  const requiredBinaries = getRequiredFuncCoreToolsBinaryPaths(runtimeDependenciesRoot);
+  const missingRequiredBinaries = requiredBinaries.filter((candidate) => !fs.existsSync(candidate.path));
+  if (missingRequiredBinaries.length > 0) {
+    throw new Error(
+      [
+        `[runtime-deps] Missing required Func Core Tools executable(s) after ${context}:`,
+        ...missingRequiredBinaries.map((candidate) => `- ${candidate.name}: ${candidate.path}`),
+        'This check runs before opening the designer so CI fails fast instead of waiting for the local designer tab timeout.',
+        collectRuntimeDependencyDiagnostics(runtimeDependenciesRoot),
+      ].join('\n')
+    );
+  }
+
+  const versions = [];
+  for (const candidate of requiredBinaries) {
+    if (process.platform !== 'win32') {
+      fs.chmodSync(candidate.path, 0o755);
+    }
+
+    try {
+      const version = execFileSync(candidate.path, ['--version'], {
+        encoding: 'utf-8',
+        timeout: 30_000,
+        stdio: ['ignore', 'pipe', 'pipe'],
+      }).trim();
+      if (!/^\d+\.\d+\.\d+/.test(version)) {
+        throw new Error(`Unexpected version output: ${version}`);
+      }
+      versions.push(`${candidate.name} ${candidate.path}=${version}`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      throw new Error(
+        [
+          `[runtime-deps] Func Core Tools version probe failed after ${context}: ${candidate.name} ${candidate.path}`,
+          message,
+          collectRuntimeDependencyDiagnostics(runtimeDependenciesRoot),
+        ].join('\n')
+      );
+    }
+  }
+
+  return versions.join(', ');
+}
+
+function collectRuntimeDependencyDiagnostics(runtimeDependenciesRoot) {
+  const funcDir = path.join(runtimeDependenciesRoot, 'FuncCoreTools');
+  const rootEntries = safeReadDirectory(runtimeDependenciesRoot);
+  const funcEntries = safeReadDirectory(funcDir);
+  const candidates = getFuncCoreToolsCandidatePaths(runtimeDependenciesRoot).map(
+    (candidate) => `${fs.existsSync(candidate) ? 'exists' : 'missing'} ${candidate}`
+  );
+  return [
+    `[runtime-deps] dependencyRoot=${runtimeDependenciesRoot}`,
+    `[runtime-deps] dependencyRoot entries=${JSON.stringify(rootEntries)}`,
+    `[runtime-deps] FuncCoreTools entries=${JSON.stringify(funcEntries)}`,
+    `[runtime-deps] Func Core Tools candidates=${JSON.stringify(candidates)}`,
+  ].join('\n');
+}
+
+function writeRuntimeDependencyProbe(lifecycleDir, lifecycleRunId, runtimeDependenciesRoot, probeResult) {
+  fs.mkdirSync(lifecycleDir, { recursive: true });
+  const lines = [
+    '# Runtime dependency probe',
+    '',
+    `Run ID: ${lifecycleRunId}`,
+    `Dependency root: ${runtimeDependenciesRoot}`,
+    '',
+    '## Required Func Core Tools probes',
+    '',
+    probeResult,
+    '',
+    '## Runtime dependency inventory',
+    '',
+    collectRuntimeDependencyDiagnostics(runtimeDependenciesRoot),
+    '',
+  ];
+  fs.writeFileSync(path.join(lifecycleDir, `runtime-dependency-probe-${lifecycleRunId}.md`), `${lines.join('\n')}\n`);
+}
+
+async function cleanupRuntimeDependenciesRoot(runtimeDependenciesRoot) {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  try {
+    fs.rmSync(runtimeDependenciesRoot, { recursive: true, force: true, maxRetries: 10, retryDelay: 500 });
+    console.log(`[runtime-deps] Removed isolated dependency root after successful MSN Weather lifecycle: ${runtimeDependenciesRoot}`);
+  } catch (error) {
+    console.warn(`[runtime-deps] Unable to remove isolated dependency root ${runtimeDependenciesRoot}: ${String(error)}`);
+  }
+}
+
+function safeReadDirectory(directory) {
+  try {
+    return fs.existsSync(directory) ? fs.readdirSync(directory).slice(0, 50) : ['<missing>'];
+  } catch (error) {
+    return [`<error: ${error instanceof Error ? error.message : String(error)}>`];
+  }
+}
+
 function runVscodeTest(args, options = {}) {
   const label = getLabelArg(args);
   const userDataSuffix =
@@ -628,11 +855,11 @@ function collectVscodeProfileLogs(label, env) {
   const userDataDir = getVscodeUserDataDir(env);
   const sourceLogsDir = path.join(userDataDir, 'logs');
   const logRoot = process.env.LA_E2E_CLI_VSCODE_LOG_DIR ?? path.resolve(__dirname, '..', '.vscode-test', 'vscode-logs', 'cli');
-  const destination = path.join(
-    logRoot,
-    sanitizeEnvSegment(label ?? 'default'),
-    sanitizeEnvSegment(env.LA_E2E_CLI_USER_DATA_SUFFIX ?? 'default')
+  const artifactLabel = env.LA_E2E_CLI_VSCODE_LOG_ARTIFACT_LABEL?.trim() || label || 'default';
+  const profileName = sanitizeEnvSegment(
+    [env.LA_E2E_CLI_PROFILE_PHASE, env.LA_E2E_CLI_USER_DATA_SUFFIX].filter((part) => part?.trim()).join('__') || 'default'
   );
+  const destination = path.join(logRoot, sanitizeEnvSegment(artifactLabel), profileName);
 
   try {
     fs.rmSync(destination, { recursive: true, force: true });
@@ -645,10 +872,111 @@ function collectVscodeProfileLogs(label, env) {
     }
 
     fs.cpSync(sourceLogsDir, path.join(destination, 'logs'), { recursive: true, force: true });
+    const channelLogs = copyAzureLogicAppsChannelLogs(sourceLogsDir, destination);
+    writeVscodeProfileLogIndex(destination, {
+      label: label ?? 'default',
+      phase: env.LA_E2E_CLI_PROFILE_PHASE ?? '',
+      userDataSuffix: env.LA_E2E_CLI_USER_DATA_SUFFIX ?? '',
+      sourceLogsDir,
+      userDataDir,
+      channelLogs,
+      expectAzureLogicAppsChannel: env.LA_E2E_CLI_EXPECT_AZURE_LOGIC_APPS_CHANNEL === '1',
+    });
     console.log(`[vscode-test-cli] Captured VS Code profile logs: ${sourceLogsDir} -> ${destination}`);
   } catch (error) {
     console.warn(`[vscode-test-cli] Unable to capture VS Code profile logs from ${sourceLogsDir}: ${String(error)}`);
   }
+}
+
+function copyAzureLogicAppsChannelLogs(sourceLogsDir, destination) {
+  const channelLogs = findAzureLogicAppsChannelLogs(sourceLogsDir);
+  const channelDestination = path.join(destination, 'azure-logic-apps-channel');
+  fs.mkdirSync(channelDestination, { recursive: true });
+
+  for (const [index, source] of channelLogs.entries()) {
+    const relativeSource = path.relative(sourceLogsDir, source);
+    const destinationName = `${String(index + 1).padStart(2, '0')}-${sanitizeEnvSegment(relativeSource)}.log`;
+    fs.copyFileSync(source, path.join(channelDestination, destinationName));
+  }
+
+  if (channelLogs.length === 0) {
+    fs.writeFileSync(
+      path.join(channelDestination, 'missing-azure-logic-apps-channel.txt'),
+      `No Azure Logic Apps (Standard) output-channel logs were found under ${sourceLogsDir}\n`
+    );
+  }
+
+  return channelLogs.map((source) => path.relative(sourceLogsDir, source));
+}
+
+function findAzureLogicAppsChannelLogs(sourceLogsDir) {
+  if (!fs.existsSync(sourceLogsDir)) {
+    return [];
+  }
+
+  return walkFiles(sourceLogsDir)
+    .filter((file) => {
+      const normalized = file.replace(/\\/g, '/');
+      return (
+        /Azure Logic Apps \(Standard\)\.log$/i.test(file) ||
+        normalized.includes('/ms-azuretools.vscode-azurelogicapps/') ||
+        /vscode-azurelogicapps/i.test(file)
+      );
+    })
+    .sort();
+}
+
+function writeVscodeProfileLogIndex(destination, details) {
+  const lines = [
+    '# VS Code profile log index',
+    '',
+    `Label: ${details.label}`,
+    `Phase: ${details.phase || '<not set>'}`,
+    `User data suffix: ${details.userDataSuffix || '<not set>'}`,
+    `User data dir: ${details.userDataDir}`,
+    `Original logs dir: ${details.sourceLogsDir}`,
+    '',
+    '## Azure Logic Apps (Standard) channel logs',
+    '',
+  ];
+
+  if (details.channelLogs.length > 0) {
+    for (const channelLog of details.channelLogs) {
+      lines.push(`- ${channelLog}`);
+    }
+  } else {
+    lines.push('- <missing>');
+    if (details.expectAzureLogicAppsChannel) {
+      console.warn(
+        `[vscode-test-cli] Expected Azure Logic Apps (Standard) output-channel logs were missing for ${details.label}/${details.phase}`
+      );
+    }
+  }
+
+  fs.writeFileSync(path.join(destination, 'profile-log-index.md'), `${lines.join('\n')}\n`);
+}
+
+function walkFiles(root) {
+  const files = [];
+  const pending = [root];
+
+  while (pending.length > 0) {
+    const current = pending.pop();
+    if (!current || !fs.existsSync(current)) {
+      continue;
+    }
+
+    for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
+      const entryPath = path.join(current, entry.name);
+      if (entry.isDirectory()) {
+        pending.push(entryPath);
+      } else if (entry.isFile()) {
+        files.push(entryPath);
+      }
+    }
+  }
+
+  return files;
 }
 
 function getVscodeUserDataDir(env) {
@@ -710,6 +1038,23 @@ function createOutputFilter() {
 function shouldSuppressKnownVscodeNoise(line) {
   return knownVscodeNoisePatterns.some((pattern) => pattern.test(line));
 }
+
+module.exports = {
+  _test: {
+    assertSafeRuntimeDependenciesRoot,
+    collectRuntimeDependencyDiagnostics,
+    copyAzureLogicAppsChannelLogs,
+    createIsolatedRuntimeDependenciesRoot,
+    findAzureLogicAppsChannelLogs,
+    getFuncCoreToolsCandidatePaths,
+    getFuncCoreToolsBinaryPath,
+    safeReadDirectory,
+    sanitizeEnvSegment,
+    verifyFuncCoreToolsAtDependencyRoot,
+    walkFiles,
+    writeVscodeProfileLogIndex,
+  },
+};
 
 const knownVscodeNoisePatterns = [
   /^\[AgentHost\] (No token resolved|Clearing authentication)/,
