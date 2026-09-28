@@ -33,4 +33,8 @@ export abstract class MonitoringPanel extends DesignerPanel {
   protected getExistingPanel(): WebviewPanel | undefined {
     return tryGetWebviewPanel(this.panelGroupKey, this.panelName);
   }
+
+  protected override getDesignerVersion(): number {
+    return 1;
+  }
 }

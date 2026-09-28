@@ -110,6 +110,10 @@ const mockUseConnection = vi.fn(() => ({
   data: mockConnection,
   isLoading: false,
 }));
+const mockUseCosmosDbResourceId = vi.fn(() => ({
+  data: undefined as string | undefined,
+  isInitialLoading: false,
+}));
 const mockUseCompletionModelsByEndpoint = vi.fn(() => ({
   data: [
     { text: 'GPT 4', value: 'gpt-4' },
@@ -125,8 +129,18 @@ const mockUseEmbeddingModelsByEndpoint = vi.fn(() => ({
 
 vi.mock('../../../../../core/knowledge/utils/queries', () => ({
   useConnection: () => mockUseConnection(),
+  useCosmosDbResourceId: (...args: any[]) => mockUseCosmosDbResourceId(...args),
   useCompletionModelsByEndpoint: (endpoint: string, key: string) => mockUseCompletionModelsByEndpoint(endpoint, key),
   useEmbeddingModelsByEndpoint: (endpoint: string, key: string) => mockUseEmbeddingModelsByEndpoint(endpoint, key),
+}));
+
+const mockUseSubscriptions = vi.fn(() => ({
+  data: [{ subscriptionId: 'subscription-1' }],
+  isLoading: false,
+}));
+
+vi.mock('../../../../../core/state/connection/connectionSelector', () => ({
+  useSubscriptions: () => mockUseSubscriptions(),
 }));
 
 // Mock connection utilities
@@ -159,6 +173,7 @@ const mockGetConnectionParametersForEdit = vi.fn(() => ({
   },
   parameterValues: {
     displayName: 'Test Connection',
+    cosmosDbServiceAccountId: undefined,
     cosmosDBAuthenticationType: 'managedIdentity',
     cosmosDBEndpoint: 'https://test-cosmos.documents.azure.com:443/',
     openAIAuthenticationType: 'managedIdentity',
@@ -266,6 +281,14 @@ describe('EditConnectionPanel Component', () => {
       data: mockConnection,
       isLoading: false,
     });
+    mockUseSubscriptions.mockReturnValue({
+      data: [{ subscriptionId: 'subscription-1' }],
+      isLoading: false,
+    });
+    mockUseCosmosDbResourceId.mockReturnValue({
+      data: undefined,
+      isInitialLoading: false,
+    });
     mockGetConnectionParametersForEdit.mockReturnValue({
       connectionParameters: {
         cosmosDBAuthenticationType: {
@@ -295,6 +318,7 @@ describe('EditConnectionPanel Component', () => {
       },
       parameterValues: {
         displayName: 'Test Connection',
+        cosmosDbServiceAccountId: undefined,
         cosmosDBAuthenticationType: 'managedIdentity',
         cosmosDBEndpoint: 'https://test-cosmos.documents.azure.com:443/',
         openAIAuthenticationType: 'managedIdentity',
@@ -472,6 +496,48 @@ describe('EditConnectionPanel Component', () => {
 
       const saveButton = screen.getByTestId('footer-btn-0');
       expect(saveButton).toBeDisabled();
+    });
+
+    it('enables save when a missing Cosmos DB resource ID is resolved', async () => {
+      const resourceId = '/subscriptions/subscription-1/resourceGroups/rg/providers/Microsoft.DocumentDB/databaseAccounts/cosmos';
+      mockUseCosmosDbResourceId.mockReturnValue({
+        data: resourceId,
+        isInitialLoading: false,
+      });
+
+      renderComponent();
+
+      await waitFor(() => {
+        expect(screen.getByTestId('footer-btn-0')).not.toBeDisabled();
+      });
+
+      fireEvent.click(screen.getByTestId('footer-btn-0'));
+
+      await waitFor(() => {
+        expect(mockCreateOrUpdateConnection).toHaveBeenCalledWith(expect.objectContaining({ cosmosDbServiceAccountId: resourceId }), false);
+      });
+    });
+
+    it('does not block normal edits when resource ID resolution is disabled', async () => {
+      mockGetConnectionParametersForEdit.mockReturnValue({
+        ...mockGetConnectionParametersForEdit(),
+        parameterValues: {
+          ...mockGetConnectionParametersForEdit().parameterValues,
+          cosmosDbServiceAccountId:
+            '/subscriptions/subscription-1/resourceGroups/rg/providers/Microsoft.DocumentDB/databaseAccounts/cosmos',
+        },
+      });
+      mockUseCosmosDbResourceId.mockReturnValue({
+        data: undefined,
+        isInitialLoading: true,
+      });
+
+      renderComponent();
+      fireEvent.change(screen.getByTestId('input-connection-display-name'), { target: { value: 'Updated Name' } });
+
+      await waitFor(() => {
+        expect(screen.getByTestId('footer-btn-0')).not.toBeDisabled();
+      });
     });
   });
 

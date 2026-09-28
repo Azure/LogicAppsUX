@@ -111,7 +111,7 @@ export async function getLogicAppProjectRoot(context: IActionContext, workflowFi
   return projectRoot;
 }
 
-async function addConnectionDataInJson(
+export async function addConnectionDataInJson(
   context: IActionContext,
   functionAppPath: string,
   connectionAndAppSetting: ConnectionAndAppSetting<any>,
@@ -123,7 +123,7 @@ async function addConnectionDataInJson(
   const connectionsJsonString = await getConnectionsJson(functionAppPath);
   const connectionsJson = connectionsJsonString === '' ? {} : JSON.parse(connectionsJsonString);
 
-  const { connectionData, connectionKey, pathLocation, settings } = connectionAndAppSetting;
+  const { connectionData, connectionKey, pathLocation, settings, isUpdate } = connectionAndAppSetting;
 
   let pathToSetConnectionsData = connectionsJson;
 
@@ -135,7 +135,7 @@ async function addConnectionDataInJson(
     pathToSetConnectionsData = pathToSetConnectionsData[path];
   }
 
-  if (pathToSetConnectionsData && pathToSetConnectionsData[connectionKey]) {
+  if (pathToSetConnectionsData && pathToSetConnectionsData[connectionKey] && !isUpdate) {
     const message: string = localize('ConnectionKeyAlreadyExist', "Connection key '{0}' already exists.", connectionKey);
     await vscode.window.showErrorMessage(message, localize('OK', 'OK'));
     return;
@@ -444,7 +444,11 @@ export async function getCustomCodeToUpdate(
   return { customCodeFiles: filteredCustomCodeMapping, appFiles };
 }
 
-export async function saveCustomCodeStandard(context: IActionContext, workflowFilePath: string, allCustomCodeFiles?: AllCustomCodeFiles): Promise<void> {
+export async function saveCustomCodeStandard(
+  context: IActionContext,
+  workflowFilePath: string,
+  allCustomCodeFiles?: AllCustomCodeFiles
+): Promise<void> {
   const { customCodeFiles: customCode, appFiles } = allCustomCodeFiles ?? {};
   if (!customCode || Object.keys(customCode).length === 0) {
     return;
@@ -456,15 +460,14 @@ export async function saveCustomCodeStandard(context: IActionContext, workflowFi
       const { isModified, isDeleted, fileData } = customCodeData;
       if (isDeleted) {
         return deleteCustomCode(workflowFolderPath, fileName);
-      } else if (isModified && fileData) {
+      }
+      if (isModified && fileData) {
         return uploadCustomCode(workflowFolderPath, fileName, fileData);
       }
       return Promise.resolve();
     });
     // upload the app files needed for powershell actions
-    const appFilePromises = Object.entries(appFiles ?? {}).map(([fileName, fileData]) =>
-      uploadCustomCode(projectPath, fileName, fileData)
-    );
+    const appFilePromises = Object.entries(appFiles ?? {}).map(([fileName, fileData]) => uploadCustomCode(projectPath, fileName, fileData));
     await Promise.all([...customCodePromises, ...appFilePromises]);
   } catch (error) {
     const errorMessage = `Failed to save custom code: ${error}`;
@@ -991,7 +994,7 @@ async function isMISettingEnabled(context: IActionContext, projectPath: string):
   try {
     const localSettings = await getLocalSettingsJson(context, projectPath);
     const authMethod = localSettings.Values?.[workflowAuthenticationMethodKey];
-    return authMethod?.toLowerCase() === workflowAuthenticationMethodMIValue.toLowerCase()
+    return authMethod?.toLowerCase() === workflowAuthenticationMethodMIValue.toLowerCase();
   } catch {
     return false;
   }

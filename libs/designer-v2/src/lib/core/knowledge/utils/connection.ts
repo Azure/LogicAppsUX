@@ -39,7 +39,7 @@ const getAllConnectionParameters = (intl: IntlShape) => {
         constraints: {
           clearText: true,
           required: 'true',
-          serialize: false,
+          serializationPath: ['cosmosDB', 'resourceId'],
         },
       },
     } as ConnectionParameter,

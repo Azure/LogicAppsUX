@@ -148,6 +148,44 @@ export const useConnection = () => {
   });
 };
 
+const normalizeEndpoint = (endpoint: string) => endpoint.trim().replace(/\/+$/, '').replace(/:443$/, '').toLowerCase();
+
+export const useCosmosDbResourceId = (endpoint: string | undefined, subscriptionIds: string[]) => {
+  return useQuery({
+    queryKey: ['cosmosdbresourceid', endpoint ? normalizeEndpoint(endpoint) : '', [...subscriptionIds].sort()],
+    queryFn: async (): Promise<string | null> => {
+      const normalizedEndpoint = normalizeEndpoint(endpoint ?? '');
+      const accountResults = await Promise.all(
+        subscriptionIds.map(async (subscriptionId) => {
+          try {
+            return await ResourceService().listResources(
+              subscriptionId,
+              `resources | where type =~ 'Microsoft.DocumentDB/databaseAccounts' | where properties.provisioningState =~ 'Succeeded' | project id, properties`
+            );
+          } catch (errorResponse: any) {
+            LoggerService().log({
+              level: LogEntryLevel.Error,
+              area: 'KnowledgeHub.getCosmosDbResourceId',
+              error: errorResponse?.error ?? errorResponse,
+              message: `Error while fetching Cosmos DB accounts for subscription: ${subscriptionId}`,
+            });
+            return [];
+          }
+        })
+      );
+      const matchingResourceIds = accountResults
+        .flat()
+        .filter((account: any) => normalizeEndpoint(account.properties?.documentEndpoint ?? '') === normalizedEndpoint)
+        .map((account: any) => account.id)
+        .filter((resourceId: unknown): resourceId is string => typeof resourceId === 'string');
+
+      return matchingResourceIds.length === 1 ? matchingResourceIds[0] : null;
+    },
+    enabled: !!endpoint && subscriptionIds.length > 0,
+    ...queryOpts,
+  });
+};
+
 export const getCosmosDbEndpoint = async (database: string): Promise<string | undefined> => {
   const queryClient = getReactQueryClient();
 
