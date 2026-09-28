@@ -103,12 +103,14 @@ steps:
             libxss1 \
             libatk-bridge2.0-0 \
             libatk1.0-0 \
+            ca-certificates \
             libc6 \
             libgcc-s1 \
             libgssapi-krb5-2 \
             "$icuPackage" \
             libssl3 \
             libstdc++6 \
+            tzdata \
             libunwind8 \
             zlib1g
           dotnet --info

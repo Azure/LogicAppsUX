@@ -28,6 +28,7 @@ const includeMsnWeatherLifecycle =
   process.env.LA_E2E_CLI_INCLUDE_MSN_WEATHER_LIFECYCLE === '1' || process.argv.includes('msnWeatherLifecycle');
 const includeAzureAuthWarmup = process.env.LA_E2E_CLI_INCLUDE_AZURE_AUTH_WARMUP === '1' || process.argv.includes('azureAuthWarmup');
 const dependencyRoot = path.join(process.env.USERPROFILE ?? process.env.HOME ?? '', '.azurelogicapps', 'dependencies');
+const dotnetExecutablePath = findExecutable('dotnet') ?? 'dotnet';
 
 prepareUserSettings(userDataDir);
 
@@ -213,7 +214,7 @@ function prepareUserSettings(userDataPath) {
           'FuncCoreTools',
           process.platform === 'win32' ? 'func.exe' : 'func'
         ),
-        'azureLogicAppsStandard.dotnetBinaryPath': process.platform === 'win32' ? 'dotnet' : (findExecutable('dotnet') ?? 'dotnet'),
+        'azureLogicAppsStandard.dotnetBinaryPath': dotnetExecutablePath,
         'azureLogicAppsStandard.nodeJsBinaryPath': findExecutable('node') ?? 'node',
         'azureLogicAppsStandard.autoStartDesignTime': process.env.LA_E2E_CLI_AUTO_START_DESIGN_TIME === '1',
         'azureLogicAppsStandard.autoStartAzurite': true,
@@ -222,6 +223,13 @@ function prepareUserSettings(userDataPath) {
         'azurite.location': path.join(userDataPath, 'azurite'),
         'azureLogicAppsStandard.parameterizeConnectionsInProjectLoad': false,
         'azureLogicAppsStandard.enableManagedIdentityAuth': false,
+        'dotnetAcquisitionExtension.sharedExistingDotnetPath': dotnetExecutablePath,
+        'dotnetAcquisitionExtension.existingDotnetPath': [
+          { extensionId: 'ms-dotnettools.csharp', path: dotnetExecutablePath },
+          { extensionId: 'ms-dotnettools.csdevkit', path: dotnetExecutablePath },
+          { extensionId: 'ms-azuretools.vscode-azurefunctions', path: dotnetExecutablePath },
+          { extensionId: 'ms-azuretools.vscode-azurelogicapps', path: dotnetExecutablePath },
+        ],
         'telemetry.telemetryLevel': 'off',
         'update.mode': 'none',
       },
