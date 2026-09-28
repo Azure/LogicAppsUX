@@ -996,12 +996,7 @@ function captureGeneratedWorkspaceDiagnostics({ env, label, outcome, ownedRoots 
   }
 
   if (snapshots.length === 0) {
-    const reason =
-      trustedRootRecords.length === 0 && env.LA_E2E_CLI_PRESERVE_WORKSPACES === '1'
-        ? 'workspace cleanup is preserved and no harness-owned snapshot root was registered for this phase'
-        : trustedRootRecords.length === 0
-          ? 'no workspace created before this phase (for example, bootstrap failed before create)'
-          : 'no snapshot-eligible generated workspace files were found under registered roots';
+    const reason = getNoGeneratedWorkspaceSnapshotReason({ env, label, trustedRootRecords });
     fs.writeFileSync(path.join(snapshotRoot, 'no-workspace-created.txt'), `${reason}\n`);
     skipped.push({ source: '<none>', reason });
   }
@@ -1028,6 +1023,25 @@ function captureGeneratedWorkspaceDiagnostics({ env, label, outcome, ownedRoots 
   writeGeneratedWorkspaceSnapshotIndex(snapshotRoot, metadata);
   appendGeneratedWorkspaceRootIndex(destinationRoot, snapshotName, metadata);
   console.log(`[generated-workspace-diagnostics] Captured ${snapshots.length} workspace snapshot(s): ${snapshotRoot}`);
+}
+
+function getNoGeneratedWorkspaceSnapshotReason({ env, label, trustedRootRecords }) {
+  if (label === 'createWorkspaceBehavior') {
+    return [
+      'createWorkspaceBehavior intentionally validates Create Workspace wizard content, field validation, review/back, and app-type cleanup without clicking Create.',
+      'No generated Logic App project/workspace is expected for this label.',
+    ].join(' ');
+  }
+
+  if (trustedRootRecords.length === 0 && env.LA_E2E_CLI_PRESERVE_WORKSPACES === '1') {
+    return 'workspace cleanup is preserved and no harness-owned snapshot root was registered for this phase';
+  }
+
+  if (trustedRootRecords.length === 0) {
+    return 'no workspace created before this phase (for example, bootstrap failed before create)';
+  }
+
+  return 'no snapshot-eligible generated workspace files were found under registered roots';
 }
 
 function shouldCaptureGeneratedWorkspaceDiagnostics() {
@@ -1730,6 +1744,7 @@ module.exports = {
     createIsolatedRuntimeDependenciesRoot,
     findAzureLogicAppsChannelLogs,
     getMsnWeatherAzureTargetEnv,
+    getNoGeneratedWorkspaceSnapshotReason,
     getGeneratedWorkspaceSnapshotRoot,
     getFuncCoreToolsCandidatePaths,
     getFuncCoreToolsBinaryPath,

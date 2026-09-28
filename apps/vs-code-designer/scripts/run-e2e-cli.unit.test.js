@@ -18,6 +18,7 @@ const {
     getFuncCoreToolsCandidatePaths,
     getFuncCoreToolsBinaryPath,
     getMsnWeatherAzureTargetEnv,
+    getNoGeneratedWorkspaceSnapshotReason,
     getWorkspaceSourcesFromManifestPath,
     redactGeneratedWorkspaceJsonValue,
     redactGeneratedWorkspacePlainText,
@@ -44,6 +45,7 @@ try {
   testGeneratedWorkspaceSnapshotSourcesSupportLifecycleAndManifestShapes();
   testGeneratedWorkspaceSnapshotWritesNoWorkspaceMarker();
   testGeneratedWorkspaceSnapshotWritesNoWorkspaceMarkerForSmokeLabels();
+  testGeneratedWorkspaceSnapshotExplainsBehaviorNoWorkspace();
   testMsnWeatherTargetEnvAllowsLocalInteractiveMode();
   testMsnWeatherTargetEnvBlocksInteractiveModeInCi();
   console.log('[run-e2e-cli.unit] all tests passed');
@@ -414,6 +416,34 @@ function testGeneratedWorkspaceSnapshotWritesNoWorkspaceMarkerForSmokeLabels() {
 
   const marker = findFileByName(artifactRoot, 'no-workspace-created.txt');
   assert.ok(marker, 'non-workspace smoke labels should still publish an explicit no-workspace marker');
+}
+
+function testGeneratedWorkspaceSnapshotExplainsBehaviorNoWorkspace() {
+  assert.match(
+    getNoGeneratedWorkspaceSnapshotReason({ env: {}, label: 'createWorkspaceBehavior', trustedRootRecords: [] }),
+    /without clicking Create/
+  );
+
+  const ownedRoot = path.join(tempRoot, 'behavior-owned-root');
+  fs.mkdirSync(ownedRoot, { recursive: true });
+  const artifactRoot = path.join(tempRoot, 'generated-artifacts-behavior-no-workspace');
+  withEnvironment({ LA_E2E_CLI_GENERATED_WORKSPACE_ARTIFACT_DIR: artifactRoot }, () => {
+    captureGeneratedWorkspaceDiagnostics({
+      env: {
+        LA_E2E_CLI_CREATE_WORKSPACE_PARENT: ownedRoot,
+      },
+      label: 'createWorkspaceBehavior',
+      outcome: 'success',
+      ownedRoots: [ownedRoot],
+    });
+  });
+
+  const marker = findFileByName(artifactRoot, 'no-workspace-created.txt');
+  assert.ok(marker, 'Create Workspace behavior label should write an explicit no-workspace marker');
+  assert.match(fs.readFileSync(marker, 'utf-8'), /without clicking Create/);
+  const index = findFileByName(artifactRoot, 'index.json');
+  assert.ok(index, 'Create Workspace behavior label should write snapshot metadata');
+  assert.match(fs.readFileSync(index, 'utf-8'), /No generated Logic App project\/workspace is expected/);
 }
 
 function testMsnWeatherTargetEnvAllowsLocalInteractiveMode() {
