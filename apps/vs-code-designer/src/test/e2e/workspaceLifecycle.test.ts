@@ -68,7 +68,7 @@ const msnWeatherActionName = 'Get_current_weather';
 const msnWeatherConnectionReferenceName = 'msnweather';
 const msnWeatherLocation = '98058';
 const azuritePorts = [10000, 10001, 10002];
-const msnWeatherWarmupEnvKeys = [
+const msnWeatherAzureTargetEnvKeys = [
   'WORKFLOWS_SUBSCRIPTION_ID',
   'WORKFLOWS_RESOURCE_GROUP_NAME',
   'WORKFLOWS_LOCATION_NAME',
@@ -79,6 +79,22 @@ const msnWeatherWarmupEnvKeys = [
   'LA_E2E_CLI_AZURE_LOCATION_NAME',
   'LA_E2E_CLI_AZURE_TENANT_ID',
   'LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL',
+];
+const msnWeatherAuthEnvKeys = [
+  'LA_E2E_CLI_AZURE_ACCESS_TOKEN',
+  'LA_E2E_CLI_AZURE_CLIENT_ID',
+  'FC_SERVICE_CONNECTION_ID',
+  'FC_SERVICE_CONNECTION_CLIENT_ID',
+  'FC_SERVICE_CONNECTION_TENANT_ID',
+  'AzCode_UseAzureFederatedCredentials',
+  'AzCode_ServiceConnectionID',
+  'AzCode_ServiceConnectionDomain',
+  'AzCode_ServiceConnectionClientID',
+  'SYSTEM_ACCESSTOKEN',
+  'LA_E2E_DESIGNER_API_LOAD_TIMEOUT_MS',
+  'LA_E2E_CLI_USER_DATA_DIR',
+  'LA_E2E_CLI_USER_DATA_SUFFIX',
+  'LA_E2E_CLI_STARTUP_RESOURCE',
 ];
 
 type WorkspaceAppType = 'standard' | 'customCode' | 'rulesEngine' | 'codeful';
@@ -533,13 +549,24 @@ async function openDesignerAndCreateWorkflow(
   createdWorkspace: CreatedWorkspace,
   options: { includeMsnWeather?: boolean; useAzureConnectors?: boolean; warmOnly?: boolean } = {}
 ): Promise<void> {
+  console.log(
+    `[workspace-lifecycle] ${createdWorkspace.label}: openDesignerAndCreateWorkflow start ${JSON.stringify({
+      includeMsnWeather: options.includeMsnWeather === true,
+      useAzureConnectors: options.useAzureConnectors === true,
+      warmOnly: options.warmOnly === true,
+      workflowJsonPath: createdWorkspace.workflowJsonPath,
+      appDir: createdWorkspace.appDir,
+    })}`
+  );
   await closeAllTabs();
   const workflowDocument = await vscode.workspace.openTextDocument(vscode.Uri.file(createdWorkspace.workflowJsonPath));
   await vscode.window.showTextDocument(workflowDocument, { preview: false });
   const tabsBefore = getWebviewTabs(designerViewType).length;
   const useAzureConnectors = options.useAzureConnectors === true;
 
-  console.log(`[workspace-lifecycle] ${createdWorkspace.label}: opening designer for ${createdWorkspace.workflowJsonPath}`);
+  console.log(
+    `[workspace-lifecycle] ${createdWorkspace.label}: opening designer for ${createdWorkspace.workflowJsonPath}. tabsBefore=${tabsBefore}. tabs=${describeOpenTabs()}`
+  );
   const openDesignerResultPromise = vscode.commands
     .executeCommand(openDesignerCommand, vscode.Uri.file(createdWorkspace.workflowJsonPath))
     .then(
@@ -549,8 +576,12 @@ async function openDesignerAndCreateWorkflow(
 
   let cdp: CdpConnection | undefined;
   try {
+    console.log(`[workspace-lifecycle] ${createdWorkspace.label}: handling designer quick-pick prompts before tab wait`);
     await handleDesignerQuickPickPrompts(15000, { useAzureConnectors });
     const designerTabTimeoutMs = getDesignerTabOpenTimeoutMs();
+    console.log(
+      `[workspace-lifecycle] ${createdWorkspace.label}: waiting for designer tab with timeout ${designerTabTimeoutMs}ms. useAzureConnectors=${useAzureConnectors}`
+    );
 
     const tabOrCommandResult = await Promise.race([
       waitForDesignerWebviewTab(tabsBefore, { useAzureConnectors }, designerTabTimeoutMs).then((tab) => ({
@@ -575,8 +606,12 @@ async function openDesignerAndCreateWorkflow(
         assert.fail(`openDesigner command completed without opening ${designerViewType}. Open tabs: ${describeOpenTabs()}`);
       }
       tab = matchingTab ?? tabs[tabs.length - 1];
+      console.log(
+        `[workspace-lifecycle] ${createdWorkspace.label}: openDesigner command resolved. matchingTab=${matchingTab?.label ?? 'none'}. tabs=${describeOpenTabs()}`
+      );
     } else {
       tab = tabOrCommandResult.tab;
+      console.log(`[workspace-lifecycle] ${createdWorkspace.label}: designer tab observed before command completion. tab=${tab.label}`);
     }
     assert.strictEqual(getTabViewType(tab), designerTabViewType);
     assert.ok(
@@ -584,14 +619,18 @@ async function openDesignerAndCreateWorkflow(
       `Expected designer tab label to include workflow name "${createdWorkspace.wfName}". Open tabs: ${describeOpenTabs()}`
     );
 
+    console.log(`[workspace-lifecycle] ${createdWorkspace.label}: handling designer quick-pick prompts after tab open`);
     await handleDesignerQuickPickPrompts(15000, { useAzureConnectors });
 
+    console.log(`[workspace-lifecycle] ${createdWorkspace.label}: connecting to designer webview CDP target`);
     cdp = await connectToVsCodeCdp({ targetName: `${createdWorkspace.label} designer webview` });
+    console.log(`[workspace-lifecycle] ${createdWorkspace.label}: waiting for designer webview DOM context`);
     const contextId = await waitForWebviewFrameContext(cdp, {
       allTextIncludes: ['Save'],
       description: `${createdWorkspace.label} designer webview DOM context`,
       timeoutMs: 180000,
     });
+    console.log(`[workspace-lifecycle] ${createdWorkspace.label}: designer webview DOM context=${contextId}; waiting for canvas content`);
     await waitForDesignerText(
       cdp,
       contextId,
@@ -601,10 +640,20 @@ async function openDesignerAndCreateWorkflow(
     );
     await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-designer-ready`);
     if (options.warmOnly) {
+      console.log(`[workspace-lifecycle] ${createdWorkspace.label}: designer warm-only pass completed`);
       return;
     }
 
     const initialCanvasText = await getDesignerText(cdp, contextId);
+    console.log(
+      `[workspace-lifecycle] ${createdWorkspace.label}: initial designer canvas text ${JSON.stringify({
+        length: initialCanvasText.length,
+        hasAddTrigger: initialCanvasText.includes('Add a trigger'),
+        hasWeather: initialCanvasText.toLowerCase().includes('weather'),
+        hasResponse: initialCanvasText.includes(responseActionTitle),
+        preview: initialCanvasText.slice(0, 1000),
+      })}`
+    );
     if (initialCanvasText.includes('Add a trigger')) {
       await addRequestTriggerThroughDesigner(cdp, contextId, createdWorkspace.label);
       if (options.includeMsnWeather) {
@@ -641,6 +690,15 @@ async function openDesignerAndCreateWorkflow(
       assertMsnWeatherStandardWorkflow(createdWorkspace);
     }
   } catch (error) {
+    console.log(
+      `[workspace-lifecycle] ${createdWorkspace.label}: openDesignerAndCreateWorkflow failed ${JSON.stringify({
+        includeMsnWeather: options.includeMsnWeather === true,
+        useAzureConnectors,
+        warmOnly: options.warmOnly === true,
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+      })}`
+    );
     await logDesignerStartupDiagnostics(createdWorkspace);
     await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-designer-failure`);
     throw error;
@@ -661,7 +719,7 @@ async function logDesignerStartupDiagnostics(createdWorkspace: CreatedWorkspace)
   const rootSettingsPath = path.join(createdWorkspace.appDir, 'local.settings.json');
   const designTimeSettingsPath = path.join(designTimeDir, 'local.settings.json');
   const designTimeHostPath = path.join(designTimeDir, 'host.json');
-  const envState = Object.fromEntries(msnWeatherWarmupEnvKeys.map((key) => [key, process.env[key] ? 'set' : 'unset']));
+  const envState = Object.fromEntries(msnWeatherAzureTargetEnvKeys.map((key) => [key, process.env[key] ? 'set' : 'unset']));
 
   console.log(
     `[workspace-lifecycle][designer-diagnostics] ${createdWorkspace.label}: paths=${JSON.stringify({
@@ -693,6 +751,84 @@ async function logDesignerStartupDiagnostics(createdWorkspace: CreatedWorkspace)
   }
 
   await logLocalhostProbeResults([8000, 8001, 8002, 8003, 7071]);
+}
+
+async function logMsnWeatherDesignerOpenDiagnostics(stage: string, createdWorkspace: CreatedWorkspace): Promise<void> {
+  const logicAppsExtension = vscode.extensions.getExtension(logicAppsExtensionId);
+  const rootSettingsPath = path.join(createdWorkspace.appDir, 'local.settings.json');
+  const designTimeSettingsPath = path.join(createdWorkspace.appDir, 'workflow-designtime', 'local.settings.json');
+
+  console.log(
+    `[workspace-lifecycle][msn-weather][${stage}] workspace=${JSON.stringify({
+      label: createdWorkspace.label,
+      appDir: createdWorkspace.appDir,
+      workflowJsonPath: createdWorkspace.workflowJsonPath,
+      workflowJsonExists: fs.existsSync(createdWorkspace.workflowJsonPath),
+      workflowSummary: summarizeWorkflowDefinition(createdWorkspace.workflowJsonPath),
+      workspaceFolders: (vscode.workspace.workspaceFolders ?? []).map((folder) => folder.uri.fsPath),
+      activeEditor: vscode.window.activeTextEditor?.document.uri.fsPath,
+      tabs: describeOpenTabs(),
+    })}`
+  );
+  console.log(
+    `[workspace-lifecycle][msn-weather][${stage}] env=${JSON.stringify({
+      azureTarget: summarizeEnvironmentState(msnWeatherAzureTargetEnvKeys),
+      azureAuth: summarizeEnvironmentState(msnWeatherAuthEnvKeys),
+    })}`
+  );
+  console.log(
+    `[workspace-lifecycle][msn-weather][${stage}] extension=${JSON.stringify({
+      id: logicAppsExtension?.id,
+      isActive: logicAppsExtension?.isActive,
+      version: logicAppsExtension?.packageJSON?.version,
+      extensionPath: logicAppsExtension?.extensionPath,
+    })}`
+  );
+  console.log(
+    `[workspace-lifecycle][msn-weather][${stage}] runtime=${JSON.stringify({
+      activeDebugSession: vscode.debug.activeDebugSession?.name,
+      tasks: vscode.tasks.taskExecutions.map((execution) => execution.task.name),
+      userDataDir: process.env.LA_E2E_CLI_USER_DATA_DIR,
+    })}`
+  );
+  console.log(`[workspace-lifecycle][msn-weather][${stage}] rootSettings=${JSON.stringify(summarizeLocalSettings(rootSettingsPath))}`);
+  console.log(
+    `[workspace-lifecycle][msn-weather][${stage}] designTimeSettings=${JSON.stringify(summarizeLocalSettings(designTimeSettingsPath))}`
+  );
+
+  const workbenchText = await getWorkbenchText().catch((error) => `Unable to read workbench text: ${String(error)}`);
+  console.log(`[workspace-lifecycle][msn-weather][${stage}] workbenchTextTail=${JSON.stringify(workbenchText.slice(-3000))}`);
+
+  for (const log of findRelevantVsCodeLogFiles().slice(-12)) {
+    console.log(`[workspace-lifecycle][msn-weather][${stage}] logTail ${log}:\n${tailFile(log, 4000)}`);
+  }
+
+  await logLocalhostProbeResults([8000, 8001, 8002, 8003, 7071]);
+}
+
+function summarizeEnvironmentState(keys: string[]): Record<string, 'set' | 'unset'> {
+  return Object.fromEntries(keys.map((key) => [key, process.env[key] ? 'set' : 'unset']));
+}
+
+function summarizeWorkflowDefinition(workflowJsonPath: string): Record<string, unknown> {
+  if (!fs.existsSync(workflowJsonPath)) {
+    return { exists: false };
+  }
+
+  try {
+    const workflowJson = readJsonFile<Record<string, any>>(workflowJsonPath);
+    const triggers = workflowJson.definition?.triggers ?? {};
+    const actions = workflowJson.definition?.actions ?? {};
+    return {
+      exists: true,
+      triggerNames: Object.keys(triggers).sort(),
+      actionNames: Object.keys(actions).sort(),
+      actionTypes: Object.fromEntries(Object.entries(actions).map(([name, action]: [string, any]) => [name, action?.type])),
+      connectionReferences: Object.keys(workflowJson.connectionReferences ?? {}).sort(),
+    };
+  } catch (error) {
+    return { exists: true, error: error instanceof Error ? error.message : String(error) };
+  }
 }
 
 function summarizeLocalSettings(settingsPath: string): Record<string, unknown> {
@@ -2496,16 +2632,25 @@ async function runMsnWeatherLifecycle(createdWorkspace: CreatedWorkspace): Promi
   const settings = getMsnWeatherAzureSettingsFromEnvironment();
   try {
     await waitForGeneratedLogicAppFolder(createdWorkspace);
+    await logMsnWeatherDesignerOpenDiagnostics('before warmup', createdWorkspace);
     if (settings) {
-      ensureLocalSettingsForDesigner(createdWorkspace.appDir);
-      await withMsnWeatherWarmupEnvironmentSuppressed(() => openDesignerAndCreateWorkflow(createdWorkspace, { warmOnly: true }));
       ensureLocalSettingsForMsnWeather(createdWorkspace.appDir, settings);
+      await logMsnWeatherDesignerOpenDiagnostics('after msn weather local settings preseed', createdWorkspace);
+      await openDesignerAndCreateWorkflow(createdWorkspace, { warmOnly: true, useAzureConnectors: true });
+      await logMsnWeatherDesignerOpenDiagnostics('after azure-targeted warmup designer open', createdWorkspace);
     } else {
       console.log(
         '[workspace-lifecycle][msn-weather] Azure settings env vars were not provided; designer will prompt for Azure connector setup.'
       );
     }
-    await openDesignerAndCreateWorkflow(createdWorkspace, { includeMsnWeather: true, useAzureConnectors: true });
+    try {
+      await logMsnWeatherDesignerOpenDiagnostics('before msn weather designer open', createdWorkspace);
+      await openDesignerAndCreateWorkflow(createdWorkspace, { includeMsnWeather: true, useAzureConnectors: true });
+      await logMsnWeatherDesignerOpenDiagnostics('after msn weather designer open', createdWorkspace);
+    } catch (error) {
+      await logMsnWeatherDesignerOpenDiagnostics('msn weather designer open failure', createdWorkspace);
+      throw error;
+    }
     assertMsnWeatherLocalSettingsReady(createdWorkspace.appDir);
     assertMsnWeatherStandardWorkflow(createdWorkspace);
     await waitForPathExists(path.join(createdWorkspace.appDir, 'host.json'), 45000);
@@ -2518,32 +2663,6 @@ async function runMsnWeatherLifecycle(createdWorkspace: CreatedWorkspace): Promi
     await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-msn-weather-response-verified`);
   } finally {
     await stopDebuggingAndTasks();
-  }
-}
-
-async function withMsnWeatherWarmupEnvironmentSuppressed<T>(callback: () => Promise<T>): Promise<T> {
-  const previousValues = new Map<string, string | undefined>();
-  for (const key of msnWeatherWarmupEnvKeys) {
-    previousValues.set(key, process.env[key]);
-    delete process.env[key];
-  }
-
-  console.log(
-    `[workspace-lifecycle][msn-weather] Suppressed Azure connector target env during design-time warm-up: ${msnWeatherWarmupEnvKeys.join(
-      ', '
-    )}.`
-  );
-
-  try {
-    return await callback();
-  } finally {
-    for (const [key, value] of previousValues) {
-      if (value === undefined) {
-        delete process.env[key];
-      } else {
-        process.env[key] = value;
-      }
-    }
   }
 }
 
@@ -3692,7 +3811,14 @@ function findRelevantVsCodeLogFiles(): string[] {
   return walkFiles(logsDir)
     .filter((filePath) => {
       const lowerPath = filePath.toLowerCase();
-      return lowerPath.includes('azurite') || lowerPath.includes('azure logic apps') || lowerPath.includes('output_logging');
+      return (
+        lowerPath.includes('azurite') ||
+        lowerPath.includes('azure logic apps') ||
+        lowerPath.includes('output_logging') ||
+        lowerPath.endsWith(`${path.sep}exthost.log`) ||
+        lowerPath.endsWith(`${path.sep}renderer.log`) ||
+        lowerPath.endsWith(`${path.sep}main.log`)
+      );
     })
     .sort((a, b) => fs.statSync(a).mtimeMs - fs.statSync(b).mtimeMs);
 }
