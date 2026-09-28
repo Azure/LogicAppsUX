@@ -4,10 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 /* global __dirname, console, module, process, require, setTimeout */
 const { execFileSync, spawn } = require('child_process');
+const { Buffer } = require('buffer');
 const { createHash } = require('crypto');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const { URL } = require('url');
 
 const forbiddenOutputPatterns = [
   {
@@ -19,6 +21,57 @@ const forbiddenOutputPatterns = [
     pattern: /Unexpected VS Code dialog attempted/i,
   },
 ];
+const generatedWorkspaceSnapshotDirectoryName = 'generated-workspaces';
+const generatedWorkspaceSnapshotMaxFileBytes = 1024 * 1024;
+const generatedWorkspaceSnapshotExcludedNames = new Set([
+  '.git',
+  '.vscode-test',
+  'bin',
+  'obj',
+  'node_modules',
+  'extensions',
+  'globalStorage',
+  'workspaceStorage',
+  'credentials',
+  'CachedData',
+  'GPUCache',
+  'Service Worker',
+]);
+const generatedWorkspaceSnapshotSecretKeyPattern =
+  /(access[_-]?token|account[_-]?key|api[_-]?key|authorization|authentication|azurewebjobsstorage|client[_-]?secret|connection[_-]?string|credential|password|sas|secret|sig|signature|token)/i;
+const generatedWorkspaceSnapshotSecretQueryPattern =
+  /^(code|sig|signature|se|sp|spr|sr|st|sv|skoid|sktid|skt|ske|sks|skv|access_token|refresh_token|id_token)$/i;
+const generatedWorkspaceSnapshotSafeTextExtensions = new Set([
+  '',
+  '.code-workspace',
+  '.cs',
+  '.csproj',
+  '.funcignore',
+  '.gitignore',
+  '.json',
+  '.md',
+  '.ps1',
+  '.sln',
+  '.txt',
+  '.xml',
+  '.yaml',
+  '.yml',
+]);
+const generatedWorkspaceSnapshotDangerousExtensions = new Set([
+  '.cer',
+  '.crt',
+  '.der',
+  '.env',
+  '.jks',
+  '.js',
+  '.key',
+  '.pem',
+  '.pfx',
+  '.p12',
+  '.ts',
+]);
+const generatedWorkspaceSnapshotDangerousFileNames = new Set(['.env', '.env.local', '.npmrc']);
+const workspaceParentsWithDiagnosticFailures = new Set();
 
 if (require.main === module) {
   main();
@@ -110,12 +163,14 @@ async function runWorkspaceLifecycle(visibleDelayMs) {
   const lifecycleDir = path.resolve(__dirname, '..', '.vscode-test', 'workspace-lifecycle');
   fs.mkdirSync(lifecycleDir, { recursive: true });
   const manifest = [];
+  const workspaceParent = createOwnedWorkspaceParent('workspace-lifecycle');
 
   for (const label of ['standard', 'custom-code', 'rules-engine']) {
     const manifestPath = path.join(lifecycleDir, `manifest-${label}-${Date.now()}.json`);
     await runVscodeTest(['--label', 'workspaceLifecycle'], {
       visibleDelayMs,
       extraEnv: {
+        LA_E2E_CLI_WORKSPACE_PARENT: workspaceParent,
         LA_E2E_CLI_INCLUDE_WORKSPACE_LIFECYCLE: '1',
         LA_E2E_CLI_USER_DATA_SUFFIX: `workspace-lifecycle-create-${sanitizeEnvSegment(label)}-${Date.now()}`,
         LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'create',
@@ -144,24 +199,18 @@ async function runWorkspaceLifecycle(visibleDelayMs) {
     });
   }
 
-  if (process.env.LA_E2E_CLI_PRESERVE_WORKSPACES !== '1') {
-    for (const entry of manifest) {
-      try {
-        fs.rmSync(entry.workspaceDir, { recursive: true, force: true });
-      } catch (error) {
-        console.warn(`[workspace-lifecycle] Unable to remove temp workspace ${entry.workspaceDir}: ${String(error)}`);
-      }
-    }
-  }
+  await cleanupOwnedWorkspaceParent(workspaceParent, 'workspace lifecycle');
 }
 
 async function runNugetConversionLifecycle(visibleDelayMs) {
   const lifecycleDir = path.resolve(__dirname, '..', '.vscode-test', 'nuget-conversion-lifecycle');
   fs.mkdirSync(lifecycleDir, { recursive: true });
+  const workspaceParent = createOwnedWorkspaceParent('nuget-conversion-lifecycle');
   const manifestPath = path.join(lifecycleDir, `manifest-standard-${Date.now()}.json`);
   await runVscodeTest(['--label', 'nugetConversionLifecycle'], {
     visibleDelayMs,
     extraEnv: {
+      LA_E2E_CLI_WORKSPACE_PARENT: workspaceParent,
       LA_E2E_CLI_INCLUDE_NUGET_CONVERSION_LIFECYCLE: '1',
       LA_E2E_CLI_USER_DATA_SUFFIX: `nuget-conversion-create-${Date.now()}`,
       LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'create',
@@ -189,9 +238,7 @@ async function runNugetConversionLifecycle(visibleDelayMs) {
     },
   });
 
-  if (process.env.LA_E2E_CLI_PRESERVE_WORKSPACES !== '1') {
-    fs.rmSync(entry.workspaceDir, { recursive: true, force: true });
-  }
+  await cleanupOwnedWorkspaceParent(workspaceParent, 'NuGet conversion lifecycle');
 }
 
 async function runCodefulDebugTasks(visibleDelayMs) {
@@ -199,12 +246,14 @@ async function runCodefulDebugTasks(visibleDelayMs) {
   const lifecycleDir = path.resolve(__dirname, '..', '.vscode-test', 'codeful-debug-tasks');
   fs.mkdirSync(lifecycleDir, { recursive: true });
   const manifest = [];
+  const workspaceParent = createOwnedWorkspaceParent('codeful-debug-tasks');
 
   for (const label of ['codeful-modern', 'codeful-legacy']) {
     const manifestPath = path.join(lifecycleDir, `manifest-${label}-${Date.now()}.json`);
     await runVscodeTest(['--label', 'codefulDebugTasks'], {
       visibleDelayMs,
       extraEnv: {
+        LA_E2E_CLI_WORKSPACE_PARENT: workspaceParent,
         LA_E2E_CLI_INCLUDE_CODEFUL_DEBUG_TASKS: '1',
         LA_E2E_CLI_USER_DATA_SUFFIX: `codeful-debug-create-${sanitizeEnvSegment(label)}-${Date.now()}`,
         LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'codeful-create',
@@ -237,11 +286,7 @@ async function runCodefulDebugTasks(visibleDelayMs) {
     });
   }
 
-  if (process.env.LA_E2E_CLI_PRESERVE_WORKSPACES !== '1') {
-    for (const entry of manifest) {
-      fs.rmSync(entry.workspaceDir, { recursive: true, force: true });
-    }
-  }
+  await cleanupOwnedWorkspaceParent(workspaceParent, 'codeful debug task lifecycle');
 }
 
 async function runMsnWeatherLifecycle(visibleDelayMs) {
@@ -250,6 +295,7 @@ async function runMsnWeatherLifecycle(visibleDelayMs) {
   const lifecycleDir = path.resolve(__dirname, '..', '.vscode-test', 'msn-weather-lifecycle');
   const lifecycleRunId = Date.now();
   const runtimeDependenciesRoot = createIsolatedRuntimeDependenciesRoot('msnWeatherLifecycle');
+  const workspaceParent = createOwnedWorkspaceParent('msn-weather-lifecycle');
   let lifecycleSucceeded = false;
   const commonEnv = {
     LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: runtimeDependenciesRoot,
@@ -285,6 +331,7 @@ async function runMsnWeatherLifecycle(visibleDelayMs) {
       extraEnv: {
         ...commonEnv,
         LA_E2E_CLI_INCLUDE_MSN_WEATHER_LIFECYCLE: '1',
+        LA_E2E_CLI_WORKSPACE_PARENT: workspaceParent,
         LA_E2E_CLI_PROFILE_PHASE: 'msn-weather-create',
         LA_E2E_CLI_USER_DATA_SUFFIX: `msn-weather-create-${lifecycleRunId}`,
         LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'create',
@@ -316,10 +363,8 @@ async function runMsnWeatherLifecycle(visibleDelayMs) {
     });
 
     lifecycleSucceeded = true;
-    if (process.env.LA_E2E_CLI_PRESERVE_WORKSPACES !== '1') {
-      fs.rmSync(entry.workspaceDir, { recursive: true, force: true });
-    }
   } finally {
+    await cleanupOwnedWorkspaceParent(workspaceParent, 'MSN Weather lifecycle');
     if (lifecycleSucceeded && process.env.LA_E2E_CLI_PRESERVE_WORKSPACES !== '1') {
       await cleanupRuntimeDependenciesRoot(runtimeDependenciesRoot);
     }
@@ -378,15 +423,25 @@ function getMsnWeatherAzureTargetEnv() {
   const explicitResourceGroupName = firstEnvironmentValue(['LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME', 'WORKFLOWS_RESOURCE_GROUP_NAME']);
   const explicitLocation = firstEnvironmentValue(['LA_E2E_CLI_AZURE_LOCATION_NAME', 'WORKFLOWS_LOCATION_NAME']);
   const explicitManagementBaseUrl = firstEnvironmentValue(['LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL', 'WORKFLOWS_MANAGEMENT_BASE_URI']);
+  const hasExplicitTargetValue = Boolean(
+    explicitSubscriptionId || explicitTenantId || explicitResourceGroupName || explicitLocation || explicitManagementBaseUrl
+  );
+  if (!hasExplicitTargetValue && canUseInteractiveMsnWeatherAzureTargetEnv(process.env)) {
+    console.log(
+      '[workspace-lifecycle][msn-weather] Explicit local interactive Azure settings mode enabled; wrapper will not preseed Azure connector target env.'
+    );
+    return {};
+  }
   const account = explicitSubscriptionId && explicitTenantId ? undefined : tryGetAzureCliAccount();
   const resourceGroupName = explicitResourceGroupName ?? tryGetAzureCliDefaultResourceGroup();
   const location = explicitLocation ?? 'westus';
+  const tenantId = explicitTenantId ?? account?.tenantId;
 
-  if (!(explicitSubscriptionId ?? account?.id) || !resourceGroupName || !location) {
+  if (!(explicitSubscriptionId ?? account?.id) || !tenantId || !resourceGroupName || !location) {
     throw new Error(
       [
         'MSN Weather lifecycle needs Azure connector target settings before opening the designer.',
-        'Set LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME, or configure an Azure CLI default group with:',
+        'Set LA_E2E_CLI_AZURE_TENANT_ID and LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME, or configure Azure CLI account/default group with:',
         "  az configure --defaults group='<resource-group-name>'",
         'The wrapper can auto-detect the Azure CLI subscription/tenant and defaults LA_E2E_CLI_AZURE_LOCATION_NAME to westus.',
       ].join('\n')
@@ -395,14 +450,10 @@ function getMsnWeatherAzureTargetEnv() {
 
   const env = {
     LA_E2E_CLI_AZURE_SUBSCRIPTION_ID: explicitSubscriptionId ?? account.id,
+    LA_E2E_CLI_AZURE_TENANT_ID: tenantId,
     LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME: resourceGroupName,
     LA_E2E_CLI_AZURE_LOCATION_NAME: location,
   };
-
-  const tenantId = explicitTenantId ?? account?.tenantId;
-  if (tenantId) {
-    env.LA_E2E_CLI_AZURE_TENANT_ID = tenantId;
-  }
 
   if (explicitManagementBaseUrl) {
     env.LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL = explicitManagementBaseUrl;
@@ -414,6 +465,15 @@ function getMsnWeatherAzureTargetEnv() {
     }; location=${location}.`
   );
   return env;
+}
+
+function canUseInteractiveMsnWeatherAzureTargetEnv(env) {
+  const allow = env.LA_E2E_CLI_MSN_WEATHER_ALLOW_INTERACTIVE_AZURE_SETTINGS?.trim();
+  if (!/^(1|true)$/i.test(allow ?? '')) {
+    return false;
+  }
+
+  return !/^(1|true)$/i.test(env.CI ?? '') && !/^(1|true)$/i.test(env.TF_BUILD ?? '') && !/^(1|true)$/i.test(env.GITHUB_ACTIONS ?? '');
 }
 
 function getMsnWeatherAzureAuthEnv() {
@@ -821,8 +881,30 @@ function runVscodeTest(args, options = {}) {
       if (remainingOutput) {
         process.stdout.write(remainingOutput);
       }
+      let diagnosticsError;
+      try {
+        captureGeneratedWorkspaceDiagnostics({
+          env: childEnv,
+          label,
+          outcome: code === 0 ? 'success' : 'failure',
+          ownedRoots: [deferredWorkspaceParent].filter(Boolean),
+        });
+      } catch (error) {
+        diagnosticsError = error;
+        markOwnedWorkspaceParentsWithDiagnosticFailure(childEnv, [deferredWorkspaceParent].filter(Boolean));
+        console.error(
+          `[generated-workspace-diagnostics] Failed to capture generated workspace diagnostics; preserving owned workspace data: ${
+            error instanceof Error ? error.message : String(error)
+          }`
+        );
+      }
       await cleanupDeferredWorkspaceParent(deferredWorkspaceParent);
       collectVscodeProfileLogs(label, childEnv);
+
+      if (diagnosticsError) {
+        reject(diagnosticsError instanceof Error ? diagnosticsError : new Error(String(diagnosticsError)));
+        return;
+      }
 
       const matchedPattern = forbiddenOutputPatterns.find(({ pattern }) => pattern.test(output));
       if (matchedPattern) {
@@ -849,6 +931,601 @@ function getVscodeTestCommand(args) {
   }
 
   return { command: 'vscode-test', commandArgs: args };
+}
+
+function captureGeneratedWorkspaceDiagnostics({ env, label, outcome, ownedRoots = [] }) {
+  if (!shouldCaptureGeneratedWorkspaceDiagnostics(env, label, ownedRoots)) {
+    return;
+  }
+
+  const scenario = sanitizeEnvSegment(env.LA_E2E_CLI_VSCODE_LOG_ARTIFACT_LABEL || label || 'default');
+  const phase = sanitizeEnvSegment(env.LA_E2E_CLI_PROFILE_PHASE || env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE || label || 'run');
+  const destinationRoot = getGeneratedWorkspaceSnapshotRoot();
+  const snapshotName = `${scenario}__${phase}__${outcome}__${Date.now()}`;
+  const snapshotRoot = path.join(destinationRoot, snapshotName);
+  const workspaceRoot = path.join(snapshotRoot, 'workspaces');
+  const manifestPaths = [env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_MANIFEST].filter((candidate) => candidate?.trim());
+  const trustedRoots = [...ownedRoots, env.LA_E2E_CLI_WORKSPACE_PARENT, env.LA_E2E_CLI_CREATE_WORKSPACE_PARENT].filter((candidate) =>
+    candidate?.trim()
+  );
+  const trustedRootRecords = collectTrustedSnapshotRootRecords(trustedRoots);
+  const sources = collectGeneratedWorkspaceSnapshotSources({
+    manifestPaths,
+    ownedRoots: [env.LA_E2E_CLI_WORKSPACE_PARENT, env.LA_E2E_CLI_CREATE_WORKSPACE_PARENT, ...ownedRoots].filter((candidate) =>
+      candidate?.trim()
+    ),
+    lifecycleCaseJson: env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE,
+  });
+  const snapshots = [];
+  const skipped = [];
+
+  fs.rmSync(snapshotRoot, { recursive: true, force: true });
+  fs.mkdirSync(workspaceRoot, { recursive: true });
+
+  for (const source of sources) {
+    const resolvedSource = path.resolve(source.path);
+    const trustedRoot = findTrustedSnapshotRoot(resolvedSource, trustedRootRecords);
+    if (!trustedRoot) {
+      skipped.push({
+        source: source.path,
+        reason: 'source is outside wrapper-created owned roots',
+      });
+      continue;
+    }
+
+    if (!fs.existsSync(resolvedSource)) {
+      skipped.push({ source: source.path, reason: 'source path does not exist' });
+      continue;
+    }
+
+    const destinationName = uniqueSnapshotName(workspaceRoot, source.label || path.basename(resolvedSource) || 'workspace');
+    const destination = path.join(workspaceRoot, destinationName);
+    const copyResult = copyGeneratedWorkspaceSnapshot(resolvedSource, destination, trustedRoot);
+    snapshots.push({
+      label: source.label || destinationName,
+      kind: source.kind,
+      sourcePath: resolvedSource,
+      trustedRoot: trustedRoot.root,
+      relativeSnapshotPath: path.relative(snapshotRoot, destination),
+      copiedFiles: copyResult.copiedFiles,
+      skippedFiles: copyResult.skippedFiles,
+      redactedFiles: copyResult.redactedFiles,
+      bytes: copyResult.bytes,
+      msnWeatherLocalSettingsEvidence: collectMsnWeatherLocalSettingsEvidence(destination, snapshotRoot),
+    });
+  }
+
+  if (snapshots.length === 0) {
+    const reason =
+      trustedRootRecords.length === 0 && env.LA_E2E_CLI_PRESERVE_WORKSPACES === '1'
+        ? 'workspace cleanup is preserved and no harness-owned snapshot root was registered for this phase'
+        : trustedRootRecords.length === 0
+          ? 'no workspace created before this phase (for example, bootstrap failed before create)'
+          : 'no snapshot-eligible generated workspace files were found under registered roots';
+    fs.writeFileSync(path.join(snapshotRoot, 'no-workspace-created.txt'), `${reason}\n`);
+    skipped.push({ source: '<none>', reason });
+  }
+
+  const metadata = {
+    capturedAt: new Date().toISOString(),
+    label: label || '',
+    phase,
+    scenario,
+    outcome,
+    platform: process.platform,
+    arch: process.arch,
+    sourceWorkspacePaths: sources.map((source) => source.path),
+    trustedRoots: trustedRootRecords.map((root) => root.root),
+    manifestPaths,
+    snapshots,
+    skipped,
+    notes: [
+      'Snapshot reflects files on disk at VS Code host exit; unsaved designer canvas state may be missing if failure happened before save.',
+      'Secrets are recursively redacted from allowlisted JSON/text project files; unhandled or credential-bearing formats are omitted.',
+      'Excluded bulky/generated folders include .git, node_modules, bin, obj, .vscode-test, VS Code user storage, extensions, and files over 1 MiB.',
+    ],
+  };
+  writeGeneratedWorkspaceSnapshotIndex(snapshotRoot, metadata);
+  appendGeneratedWorkspaceRootIndex(destinationRoot, snapshotName, metadata);
+  console.log(`[generated-workspace-diagnostics] Captured ${snapshots.length} workspace snapshot(s): ${snapshotRoot}`);
+}
+
+function shouldCaptureGeneratedWorkspaceDiagnostics() {
+  return true;
+}
+
+function getGeneratedWorkspaceSnapshotRoot() {
+  return path.resolve(
+    process.env.LA_E2E_CLI_GENERATED_WORKSPACE_ARTIFACT_DIR ||
+      path.join(__dirname, '..', '.vscode-test', generatedWorkspaceSnapshotDirectoryName)
+  );
+}
+
+function collectGeneratedWorkspaceSnapshotSources({ manifestPaths = [], ownedRoots = [], lifecycleCaseJson }) {
+  const sources = [];
+
+  for (const source of getWorkspaceSourcesFromLifecycleCase(lifecycleCaseJson)) {
+    sources.push(source);
+  }
+
+  for (const manifestPath of manifestPaths) {
+    for (const source of getWorkspaceSourcesFromManifestPath(manifestPath)) {
+      sources.push(source);
+    }
+  }
+
+  for (const ownedRoot of ownedRoots) {
+    sources.push(...getWorkspaceSourcesFromOwnedRoot(ownedRoot));
+  }
+
+  const seen = new Set();
+  return sources.filter((source) => {
+    const key = normalizeSnapshotPathKey(source.path);
+    if (seen.has(key)) {
+      return false;
+    }
+    seen.add(key);
+    return true;
+  });
+}
+
+function getWorkspaceSourcesFromLifecycleCase(lifecycleCaseJson) {
+  if (!lifecycleCaseJson?.trim()) {
+    return [];
+  }
+
+  try {
+    const entry = JSON.parse(lifecycleCaseJson);
+    return getWorkspaceSourcesFromManifestEntries([entry], 'lifecycle-case');
+  } catch (error) {
+    console.warn(`[generated-workspace-diagnostics] Unable to parse lifecycle case JSON: ${String(error)}`);
+    return [];
+  }
+}
+
+function getWorkspaceSourcesFromManifestPath(manifestPath) {
+  if (!manifestPath || !fs.existsSync(manifestPath)) {
+    return [];
+  }
+
+  try {
+    const entries = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+    return getWorkspaceSourcesFromManifestEntries(Array.isArray(entries) ? entries : [entries], `manifest:${manifestPath}`);
+  } catch (error) {
+    console.warn(`[generated-workspace-diagnostics] Unable to parse workspace manifest ${manifestPath}: ${String(error)}`);
+    return [];
+  }
+}
+
+function getWorkspaceSourcesFromManifestEntries(entries, kind) {
+  return entries
+    .map((entry, index) => {
+      const workspacePath = entry?.workspaceDir || entry?.wsDir || entry?.parentDir;
+      if (typeof workspacePath !== 'string' || !workspacePath.trim()) {
+        return undefined;
+      }
+
+      return {
+        kind,
+        label: sanitizeEnvSegment(entry.label || entry.wsName || `workspace-${index + 1}`),
+        path: workspacePath,
+      };
+    })
+    .filter(Boolean);
+}
+
+function getWorkspaceSourcesFromOwnedRoot(ownedRoot) {
+  if (!ownedRoot || !fs.existsSync(ownedRoot)) {
+    return [];
+  }
+
+  if (looksLikeGeneratedWorkspaceRoot(ownedRoot)) {
+    return [
+      {
+        kind: 'owned-root',
+        label: sanitizeEnvSegment(path.basename(ownedRoot)),
+        path: ownedRoot,
+      },
+    ];
+  }
+
+  const entries = fs.readdirSync(ownedRoot, { withFileTypes: true });
+  if (entries.length === 0) {
+    return [];
+  }
+
+  return entries
+    .filter((entry) => entry.isDirectory() && !entry.isSymbolicLink())
+    .map((entry) => ({
+      kind: 'owned-root-child',
+      label: sanitizeEnvSegment(entry.name),
+      path: path.join(ownedRoot, entry.name),
+    }));
+}
+
+function looksLikeGeneratedWorkspaceRoot(directory) {
+  if (!fs.existsSync(directory) || !fs.lstatSync(directory).isDirectory()) {
+    return false;
+  }
+
+  const entries = fs.readdirSync(directory);
+  return entries.some((entry) => entry.endsWith('.code-workspace')) || fs.existsSync(path.join(directory, 'host.json'));
+}
+
+function collectTrustedSnapshotRootRecords(roots) {
+  const seen = new Set();
+  const records = [];
+  for (const root of roots) {
+    if (!root?.trim()) {
+      continue;
+    }
+
+    const resolvedRoot = path.resolve(root);
+    const key = normalizeSnapshotPathKey(resolvedRoot);
+    if (seen.has(key)) {
+      continue;
+    }
+    seen.add(key);
+
+    if (!fs.existsSync(resolvedRoot)) {
+      continue;
+    }
+
+    const stat = fs.lstatSync(resolvedRoot);
+    if (stat.isSymbolicLink()) {
+      throw new Error(`Generated workspace trusted root is a symlink/reparse point and cannot be snapshotted safely: ${resolvedRoot}`);
+    }
+    if (!stat.isDirectory()) {
+      throw new Error(`Generated workspace trusted root is not a directory: ${resolvedRoot}`);
+    }
+
+    records.push({
+      root: resolvedRoot,
+      realRoot: fs.realpathSync(resolvedRoot),
+    });
+  }
+  return records;
+}
+
+function findTrustedSnapshotRoot(sourcePath, trustedRootRecords) {
+  const resolvedSource = path.resolve(sourcePath);
+  for (const record of trustedRootRecords) {
+    if (!isPathInsideSnapshotRoot(resolvedSource, record.root)) {
+      continue;
+    }
+
+    if (!fs.existsSync(resolvedSource)) {
+      return record;
+    }
+
+    const stat = fs.lstatSync(resolvedSource);
+    if (stat.isSymbolicLink()) {
+      throw new Error(`Generated workspace snapshot source is a symlink/reparse point and cannot be trusted: ${resolvedSource}`);
+    }
+
+    const realSource = fs.realpathSync(resolvedSource);
+    if (!isPathInsideSnapshotRoot(realSource, record.realRoot)) {
+      throw new Error(`Generated workspace snapshot source escapes trusted root: ${resolvedSource}`);
+    }
+    return record;
+  }
+  return undefined;
+}
+
+function isPathInsideSnapshotRoot(candidatePath, rootPath) {
+  const resolvedCandidate = path.resolve(candidatePath);
+  const resolvedRoot = path.resolve(rootPath);
+  if (normalizeSnapshotPathKey(resolvedCandidate) === normalizeSnapshotPathKey(resolvedRoot)) {
+    return true;
+  }
+  const relative = path.relative(resolvedRoot, resolvedCandidate);
+  return Boolean(relative && !relative.startsWith('..') && !path.isAbsolute(relative));
+}
+
+function normalizeSnapshotPathKey(filePath) {
+  const resolved = path.resolve(filePath);
+  return process.platform === 'win32' ? resolved.toLowerCase() : resolved;
+}
+
+function copyGeneratedWorkspaceSnapshot(source, destination, trustedRootRecord = createStandaloneTrustedSnapshotRootRecord(source)) {
+  const sourceStat = fs.lstatSync(source);
+  if (sourceStat.isSymbolicLink()) {
+    throw new Error(`Generated workspace snapshot source is a symlink/reparse point and cannot be copied safely: ${source}`);
+  }
+
+  const resolvedSource = path.resolve(source);
+  const realSource = fs.realpathSync(resolvedSource);
+  if (
+    !isPathInsideSnapshotRoot(resolvedSource, trustedRootRecord.root) ||
+    !isPathInsideSnapshotRoot(realSource, trustedRootRecord.realRoot)
+  ) {
+    throw new Error(`Generated workspace snapshot source is outside the trusted owned root: ${source}`);
+  }
+
+  const result = {
+    bytes: 0,
+    copiedFiles: 0,
+    redactedFiles: 0,
+    skippedFiles: [],
+  };
+  fs.mkdirSync(destination, { recursive: true });
+  copyGeneratedWorkspaceEntry(resolvedSource, resolvedSource, destination, result, trustedRootRecord.realRoot);
+  if (result.skippedFiles.length > 0) {
+    fs.writeFileSync(
+      path.join(destination, 'SNAPSHOT_SKIPPED_FILES.md'),
+      `${result.skippedFiles.map((entry) => `- ${entry}`).join('\n')}\n`
+    );
+  }
+  return result;
+}
+
+function createStandaloneTrustedSnapshotRootRecord(source) {
+  const stat = fs.lstatSync(source);
+  if (stat.isSymbolicLink()) {
+    throw new Error(`Generated workspace snapshot source is a symlink/reparse point and cannot be trusted: ${source}`);
+  }
+  const resolvedSource = path.resolve(source);
+  return {
+    root: resolvedSource,
+    realRoot: fs.realpathSync(resolvedSource),
+  };
+}
+
+function copyGeneratedWorkspaceEntry(root, current, destination, result, trustedRealRoot) {
+  const relative = path.relative(root, current);
+  const displayRelative = relative || '.';
+  const stat = fs.lstatSync(current);
+  if (stat.isSymbolicLink()) {
+    result.skippedFiles.push(`${displayRelative} (symlink/reparse point skipped)`);
+    return;
+  }
+
+  const realCurrent = fs.realpathSync(current);
+  if (!isPathInsideSnapshotRoot(realCurrent, trustedRealRoot)) {
+    result.skippedFiles.push(`${displayRelative} (escaped snapshot root)`);
+    return;
+  }
+
+  if (relative && shouldExcludeGeneratedWorkspaceSnapshotPath(relative, stat)) {
+    result.skippedFiles.push(`${displayRelative} (excluded generated/bulky path)`);
+    return;
+  }
+
+  if (stat.isDirectory()) {
+    fs.mkdirSync(destination, { recursive: true });
+    for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
+      copyGeneratedWorkspaceEntry(root, path.join(current, entry.name), path.join(destination, entry.name), result, trustedRealRoot);
+    }
+    return;
+  }
+
+  if (!stat.isFile()) {
+    result.skippedFiles.push(`${displayRelative} (non-file entry skipped)`);
+    return;
+  }
+
+  if (stat.size > generatedWorkspaceSnapshotMaxFileBytes) {
+    result.skippedFiles.push(`${displayRelative} (${stat.size} bytes exceeds ${generatedWorkspaceSnapshotMaxFileBytes})`);
+    return;
+  }
+
+  fs.mkdirSync(path.dirname(destination), { recursive: true });
+  if (shouldOmitUnsafeGeneratedWorkspaceSnapshotFile(current)) {
+    result.skippedFiles.push(`${displayRelative} (unsafe or unhandled file type omitted)`);
+  } else if (shouldTreatAsTextSnapshotFile(current)) {
+    const original = fs.readFileSync(current, 'utf-8');
+    let redacted;
+    try {
+      redacted = redactGeneratedWorkspaceText(original, current);
+    } catch (error) {
+      if (error instanceof SnapshotFileOmittedError) {
+        result.skippedFiles.push(`${displayRelative} (${error.message})`);
+        return;
+      }
+      throw error;
+    }
+    fs.writeFileSync(destination, redacted);
+    result.bytes += Buffer.byteLength(redacted);
+    result.redactedFiles += redacted === original ? 0 : 1;
+  } else {
+    result.skippedFiles.push(`${displayRelative} (non-allowlisted binary file omitted)`);
+    return;
+  }
+  result.copiedFiles += 1;
+}
+
+function shouldExcludeGeneratedWorkspaceSnapshotPath(relativePath, stat) {
+  const parts = relativePath.split(/[\\/]+/);
+  if (parts.some((part) => generatedWorkspaceSnapshotExcludedNames.has(part))) {
+    return true;
+  }
+
+  return stat.size > generatedWorkspaceSnapshotMaxFileBytes;
+}
+
+function shouldTreatAsTextSnapshotFile(filePath) {
+  const extension = path.extname(filePath).toLowerCase();
+  return (
+    generatedWorkspaceSnapshotSafeTextExtensions.has(extension) &&
+    !generatedWorkspaceSnapshotDangerousFileNames.has(path.basename(filePath).toLowerCase())
+  );
+}
+
+function shouldOmitUnsafeGeneratedWorkspaceSnapshotFile(filePath) {
+  const extension = path.extname(filePath).toLowerCase();
+  const fileName = path.basename(filePath).toLowerCase();
+  return generatedWorkspaceSnapshotDangerousExtensions.has(extension) || generatedWorkspaceSnapshotDangerousFileNames.has(fileName);
+}
+
+function redactGeneratedWorkspaceText(content, filePath) {
+  const extension = path.extname(filePath).toLowerCase();
+  if (extension === '.json' || extension === '.code-workspace') {
+    try {
+      return `${JSON.stringify(redactGeneratedWorkspaceJsonValue(JSON.parse(content)), null, 2)}\n`;
+    } catch {
+      throw new SnapshotFileOmittedError('unparseable JSON/JSONC omitted because it cannot be safely redacted');
+    }
+  }
+
+  return redactGeneratedWorkspacePlainText(content);
+}
+
+function redactGeneratedWorkspaceJsonValue(value, key = '') {
+  if (key && generatedWorkspaceSnapshotSecretKeyPattern.test(key)) {
+    return '<redacted>';
+  }
+
+  if (Array.isArray(value)) {
+    return value.map((entry) => redactGeneratedWorkspaceJsonValue(entry, ''));
+  }
+
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value).map(([entryKey, entryValue]) => [entryKey, redactGeneratedWorkspaceJsonValue(entryValue, entryKey)])
+    );
+  }
+
+  if (typeof value === 'string') {
+    return redactGeneratedWorkspacePlainText(value);
+  }
+
+  return value;
+}
+
+function redactGeneratedWorkspacePlainText(content) {
+  let redacted = content.replace(
+    /((?:access[_-]?token|account[_-]?key|api[_-]?key|authorization|authentication|azurewebjobsstorage|client[_-]?secret|connection[_-]?string|credential|password|sas|secret|sig|signature|token)\s*[=:]\s*)("[^"]*"|'[^']*'|[^\s,;]+)/gi,
+    '$1<redacted>'
+  );
+  redacted = redacted.replace(
+    /((?:access[_-]?token|account[_-]?key|api[_-]?key|authorization|authentication|azurewebjobsstorage|client[_-]?secret|connection[_-]?string|credential|password|sas|secret|sig|signature|token)["']?\s*:\s*)("[^"]*"|'[^']*'|[^\s,}\]]+)/gi,
+    '$1<redacted>'
+  );
+  redacted = redacted.replace(
+    /<\s*(authentication|credentials|password|secret|token|authorization|connectionstring|connection-string|apikey|api-key|key)\b[^>]*>[\s\S]*?<\s*\/\s*\1\s*>/gi,
+    (_match, tagName) => `<${tagName}><redacted></${tagName}>`
+  );
+  redacted = redacted.replace(/(Bearer\s+)[A-Za-z0-9._~+/=-]+/gi, '$1<redacted>');
+  redacted = redacted.replace(/https?:\/\/[^\s"')]+/gi, (url) => redactGeneratedWorkspaceUrl(url));
+  return redacted;
+}
+
+class SnapshotFileOmittedError extends Error {}
+
+function redactGeneratedWorkspaceUrl(value) {
+  try {
+    const url = new URL(value);
+    let changed = false;
+    for (const key of Array.from(url.searchParams.keys())) {
+      if (generatedWorkspaceSnapshotSecretQueryPattern.test(key)) {
+        url.searchParams.set(key, '<redacted>');
+        changed = true;
+      }
+    }
+    return changed ? url.toString() : value;
+  } catch {
+    return value;
+  }
+}
+
+function uniqueSnapshotName(parent, label) {
+  const base = sanitizeEnvSegment(label || 'workspace') || 'workspace';
+  let candidate = base;
+  let index = 1;
+  while (fs.existsSync(path.join(parent, candidate))) {
+    index += 1;
+    candidate = `${base}-${index}`;
+  }
+  return candidate;
+}
+
+function collectMsnWeatherLocalSettingsEvidence(snapshotWorkspaceRoot, snapshotRoot) {
+  return walkFiles(snapshotWorkspaceRoot)
+    .filter((filePath) => path.basename(filePath).startsWith('msn-weather-local-settings-') && path.extname(filePath) === '.json')
+    .map((filePath) => {
+      try {
+        const evidence = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+        const statuses = Object.entries(evidence.keys ?? {}).map(([key, value]) => `${key}=${value?.status ?? 'unknown'}`);
+        return {
+          relativePath: path.relative(snapshotRoot, filePath),
+          stage: evidence.stage ?? path.basename(filePath, '.json'),
+          requiredKeys: Array.isArray(evidence.requiredKeys) ? evidence.requiredKeys : [],
+          summary: statuses.length > 0 ? statuses.join(', ') : 'no key statuses recorded',
+        };
+      } catch (error) {
+        return {
+          relativePath: path.relative(snapshotRoot, filePath),
+          stage: path.basename(filePath, '.json'),
+          requiredKeys: [],
+          summary: `unable to parse evidence: ${error instanceof Error ? error.message : String(error)}`,
+        };
+      }
+    });
+}
+
+function writeGeneratedWorkspaceSnapshotIndex(snapshotRoot, metadata) {
+  fs.writeFileSync(path.join(snapshotRoot, 'index.json'), `${JSON.stringify(metadata, null, 2)}\n`);
+  const lines = [
+    '# Generated workspace snapshot',
+    '',
+    `Scenario: ${metadata.scenario}`,
+    `Phase: ${metadata.phase}`,
+    `Outcome: ${metadata.outcome}`,
+    `Platform: ${metadata.platform}`,
+    '',
+    '## Snapshot notes',
+    '',
+    ...metadata.notes.map((note) => `- ${note}`),
+    '',
+    '## Sources',
+    '',
+    ...(metadata.snapshots.length > 0
+      ? metadata.snapshots.map(
+          (snapshot) =>
+            `- ${snapshot.label}: ${snapshot.sourcePath} -> ${snapshot.relativeSnapshotPath} (${snapshot.copiedFiles} files, ${snapshot.bytes} bytes, ${snapshot.redactedFiles} redacted)`
+        )
+      : ['- no workspace created']),
+    '',
+    '## Skipped',
+    '',
+    ...(metadata.skipped.length > 0 ? metadata.skipped.map((entry) => `- ${entry.source}: ${entry.reason}`) : ['- none']),
+    '',
+    '## MSN Weather local.settings evidence',
+    '',
+    ...metadata.snapshots.flatMap((snapshot) =>
+      snapshot.msnWeatherLocalSettingsEvidence.length > 0
+        ? snapshot.msnWeatherLocalSettingsEvidence.map(
+            (entry) => `- ${snapshot.label} ${entry.stage}: ${entry.summary} (${entry.relativePath})`
+          )
+        : [`- ${snapshot.label}: none`]
+    ),
+    '',
+  ];
+  fs.writeFileSync(path.join(snapshotRoot, 'index.md'), `${lines.join('\n')}\n`);
+}
+
+function appendGeneratedWorkspaceRootIndex(destinationRoot, snapshotName, metadata) {
+  fs.mkdirSync(destinationRoot, { recursive: true });
+  const indexPath = path.join(destinationRoot, 'index.md');
+  if (!fs.existsSync(indexPath)) {
+    fs.writeFileSync(
+      indexPath,
+      [
+        '# Generated workspace diagnostics',
+        '',
+        'Snapshots are redacted on-disk generated workspace copies captured before test cleanup.',
+        '',
+        '| Captured | Scenario | Phase | Outcome | Platform | Snapshot | Sources |',
+        '|---|---|---|---|---|---|---|',
+      ].join('\n') + '\n'
+    );
+  }
+
+  fs.appendFileSync(
+    indexPath,
+    `| ${metadata.capturedAt} | ${metadata.scenario} | ${metadata.phase} | ${metadata.outcome} | ${metadata.platform} | ${snapshotName}/index.md | ${metadata.snapshots.length} |\n`
+  );
+  fs.appendFileSync(path.join(destinationRoot, 'index.jsonl'), `${JSON.stringify({ snapshotName, ...metadata })}\n`);
 }
 
 function collectVscodeProfileLogs(label, env) {
@@ -1042,14 +1719,25 @@ function shouldSuppressKnownVscodeNoise(line) {
 module.exports = {
   _test: {
     assertSafeRuntimeDependenciesRoot,
+    canUseInteractiveMsnWeatherAzureTargetEnv,
+    captureGeneratedWorkspaceDiagnostics,
     collectRuntimeDependencyDiagnostics,
+    collectGeneratedWorkspaceSnapshotSources,
+    cleanupOwnedWorkspaceParent,
+    copyGeneratedWorkspaceSnapshot,
     copyAzureLogicAppsChannelLogs,
+    createOwnedWorkspaceParent,
     createIsolatedRuntimeDependenciesRoot,
     findAzureLogicAppsChannelLogs,
+    getMsnWeatherAzureTargetEnv,
+    getGeneratedWorkspaceSnapshotRoot,
     getFuncCoreToolsCandidatePaths,
     getFuncCoreToolsBinaryPath,
+    getWorkspaceSourcesFromManifestPath,
     safeReadDirectory,
     sanitizeEnvSegment,
+    redactGeneratedWorkspaceJsonValue,
+    redactGeneratedWorkspacePlainText,
     verifyFuncCoreToolsAtDependencyRoot,
     walkFiles,
     writeVscodeProfileLogIndex,
@@ -1183,8 +1871,40 @@ function getDeferredCreateWorkspaceParent(label) {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'la-e2e-cli-create-workspace-'));
 }
 
+function createOwnedWorkspaceParent(label) {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), `la-e2e-cli-${sanitizeEnvSegment(label)}-`));
+  console.log(`[generated-workspace-diagnostics] Registered owned workspace parent: ${root}`);
+  return root;
+}
+
+async function cleanupOwnedWorkspaceParent(workspaceParent, context) {
+  if (!workspaceParent || process.env.LA_E2E_CLI_PRESERVE_WORKSPACES === '1') {
+    return;
+  }
+  if (workspaceParentsWithDiagnosticFailures.has(path.resolve(workspaceParent))) {
+    console.warn(
+      `[generated-workspace-diagnostics] Preserving owned workspace parent after ${context} because diagnostics capture failed: ${workspaceParent}`
+    );
+    return;
+  }
+
+  await delay(1000);
+  try {
+    fs.rmSync(workspaceParent, { recursive: true, force: true, maxRetries: 10, retryDelay: 500 });
+    console.log(`[generated-workspace-diagnostics] Removed owned workspace parent after ${context}: ${workspaceParent}`);
+  } catch (error) {
+    console.warn(`[generated-workspace-diagnostics] Unable to remove owned workspace parent ${workspaceParent}: ${String(error)}`);
+  }
+}
+
 async function cleanupDeferredWorkspaceParent(workspaceParent) {
   if (!workspaceParent) {
+    return;
+  }
+  if (workspaceParentsWithDiagnosticFailures.has(path.resolve(workspaceParent))) {
+    console.warn(
+      `[generated-workspace-diagnostics] Preserving deferred workspace parent because diagnostics capture failed: ${workspaceParent}`
+    );
     return;
   }
 
@@ -1193,6 +1913,14 @@ async function cleanupDeferredWorkspaceParent(workspaceParent) {
     fs.rmSync(workspaceParent, { recursive: true, force: true, maxRetries: 10, retryDelay: 500 });
   } catch (error) {
     console.warn(`[create-workspace-smoke] Unable to remove temp workspace parent after VS Code exit ${workspaceParent}: ${String(error)}`);
+  }
+}
+
+function markOwnedWorkspaceParentsWithDiagnosticFailure(env, ownedRoots = []) {
+  for (const root of [env.LA_E2E_CLI_WORKSPACE_PARENT, env.LA_E2E_CLI_CREATE_WORKSPACE_PARENT, ...ownedRoots].filter((candidate) =>
+    candidate?.trim()
+  )) {
+    workspaceParentsWithDiagnosticFailures.add(path.resolve(root));
   }
 }
 

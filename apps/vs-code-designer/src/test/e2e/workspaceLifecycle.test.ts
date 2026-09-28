@@ -13,6 +13,7 @@ import {
   waitForCreateWorkspaceFrameContext,
   waitForWebviewFrameContext,
 } from './cdpClient';
+import { waitForAzureConnectedAction } from './azureConnectionStatus';
 import {
   assertNextButtonEnabled,
   clickPoint,
@@ -31,6 +32,12 @@ import {
 } from './cdpFormHelpers';
 import type { CodefulControlVariant, FieldLabels } from './createWorkspaceTypes';
 import { assertNoDialogAttempts, installDialogGuard, withAllowedDialogResponses } from './dialogGuard';
+import {
+  assertMsnWeatherLocalSettings,
+  canUseInteractiveMsnWeatherAzureSettings,
+  type MsnWeatherAzureSettings,
+  normalizeManagementBaseUrl,
+} from './msnWeatherSettings';
 import { captureCdpScreenshot, installFailureScreenshotHook } from './screenshot';
 import { containsIgnoreCase, normalizeFsPath, uniqueName } from './testUtils';
 import { waitForVisibleDelay } from './visibleDelay';
@@ -141,18 +148,35 @@ interface HttpResult {
   body: string;
 }
 
-interface MsnWeatherAzureSettings {
-  subscriptionId: string;
-  resourceGroupName: string;
-  location: string;
-  tenantId?: string;
-  managementBaseUrl: string;
-}
-
 interface SavedWorkflowOperations {
   requestTriggerName: string;
   responseActionName: string;
 }
+
+type LifecyclePhaseStatus = 'START' | 'SUCCESS' | 'FAILED';
+
+interface LifecyclePhaseEvent {
+  phase: string;
+  status: LifecyclePhaseStatus;
+  timestamp: string;
+  durationMs?: number;
+  detail?: Record<string, unknown>;
+}
+
+const msnWeatherLifecyclePhaseOrder = [
+  'connectionReady',
+  'Responseinserted',
+  'ResponseBodyready',
+  'ResponseBodyconfigured',
+  'Saveclicked',
+  'savedworkflowverified',
+  'debugrequested',
+  'hostready',
+  'triggerinvoked',
+  'runcompleted',
+  'responseverified',
+];
+const msnWeatherLifecycleTraceFileName = 'msn-weather-lifecycle-trace.json';
 
 interface TaskEvent {
   phase: 'taskStart' | 'taskEnd' | 'processStart' | 'processEnd' | 'debugStart' | 'debugTerminated';
@@ -184,7 +208,7 @@ installDialogGuard();
 installFailureScreenshotHook();
 
 suite('Generated Workspace Designer Lifecycle Tests', () => {
-  const tempWorkspaceParentPath = fs.mkdtempSync(path.join(os.tmpdir(), 'la-e2e-cli-workspace-lifecycle-'));
+  const tempWorkspaceParentPath = getWorkspaceLifecycleParentPath();
   const lifecycleMode = process.env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE ?? 'create';
 
   suiteSetup(async () => {
@@ -288,6 +312,16 @@ suite('Generated Workspace Designer Lifecycle Tests', () => {
     await assertNoDialogAttempts('Generated workspace designer lifecycle');
   });
 });
+
+function getWorkspaceLifecycleParentPath(): string {
+  const envParentPath = process.env.LA_E2E_CLI_WORKSPACE_PARENT;
+  if (envParentPath) {
+    fs.mkdirSync(envParentPath, { recursive: true });
+    return envParentPath;
+  }
+
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'la-e2e-cli-workspace-lifecycle-'));
+}
 
 function getWorkspaceCreationCases(): WorkspaceCreationCase[] {
   return [
@@ -538,6 +572,133 @@ function ensureLocalSettingsForDesigner(appDir: string): void {
   fs.writeFileSync(settingsPath, `${JSON.stringify(settings, null, 2)}\n`);
 }
 
+function beginLifecyclePhase(createdWorkspace: CreatedWorkspace, phase: string, detail: Record<string, unknown> = {}): number {
+  const startedAt = Date.now();
+  appendLifecyclePhaseEvent(createdWorkspace, {
+    phase,
+    status: 'START',
+    timestamp: new Date(startedAt).toISOString(),
+    detail,
+  });
+  console.log(`[workspace-lifecycle] ${createdWorkspace.label}: phase ${phase} START ${JSON.stringify(detail)}`);
+  return startedAt;
+}
+
+function completeLifecyclePhase(
+  createdWorkspace: CreatedWorkspace,
+  phase: string,
+  status: Exclude<LifecyclePhaseStatus, 'START'>,
+  startedAt: number,
+  detail: Record<string, unknown> = {}
+): void {
+  const durationMs = Date.now() - startedAt;
+  appendLifecyclePhaseEvent(createdWorkspace, {
+    phase,
+    status,
+    timestamp: new Date().toISOString(),
+    durationMs,
+    detail,
+  });
+  console.log(
+    `[workspace-lifecycle] ${createdWorkspace.label}: phase ${phase} ${status} durationMs=${durationMs} ${JSON.stringify(detail)}`
+  );
+}
+
+function completeSyntheticLifecyclePhase(createdWorkspace: CreatedWorkspace, phase: string, detail: Record<string, unknown> = {}): void {
+  const startedAt = beginLifecyclePhase(createdWorkspace, phase, detail);
+  completeLifecyclePhase(createdWorkspace, phase, 'SUCCESS', startedAt, detail);
+}
+
+async function runLifecyclePhase<T>(
+  createdWorkspace: CreatedWorkspace,
+  phase: string,
+  action: () => Promise<T>,
+  detail: Record<string, unknown> = {}
+): Promise<T> {
+  const startedAt = beginLifecyclePhase(createdWorkspace, phase, detail);
+  try {
+    const result = await action();
+    completeLifecyclePhase(createdWorkspace, phase, 'SUCCESS', startedAt);
+    return result;
+  } catch (error) {
+    completeLifecyclePhase(createdWorkspace, phase, 'FAILED', startedAt, {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    throw error;
+  }
+}
+
+function appendLifecyclePhaseEvent(createdWorkspace: CreatedWorkspace, event: LifecyclePhaseEvent): void {
+  const diagnosticsDir = getLifecycleDiagnosticsDir(createdWorkspace);
+  fs.mkdirSync(diagnosticsDir, { recursive: true });
+  const events = readLifecyclePhaseEvents(createdWorkspace);
+  events.push(event);
+  fs.writeFileSync(path.join(diagnosticsDir, msnWeatherLifecycleTraceFileName), `${JSON.stringify(events, null, 2)}\n`);
+  writeLifecyclePhaseStatus(createdWorkspace);
+}
+
+function writeLifecyclePhaseStatus(createdWorkspace: CreatedWorkspace): void {
+  const diagnosticsDir = getLifecycleDiagnosticsDir(createdWorkspace);
+  const events = readLifecyclePhaseEvents(createdWorkspace);
+  const completed = events.filter((event) => event.status === 'SUCCESS').map((event) => event.phase);
+  const failed = [...events].reverse().find((event: LifecyclePhaseEvent) => event.status === 'FAILED');
+  const active = [...events]
+    .reverse()
+    .find(
+      (event: LifecyclePhaseEvent) =>
+        event.status === 'START' && !events.some((candidate) => candidate.phase === event.phase && candidate.status !== 'START')
+    );
+  const lastCompleted = completed.at(-1) ?? '';
+  const currentFailed = failed?.phase ?? '';
+  const boundary = currentFailed || active?.phase || lastCompleted;
+  const boundaryIndex = boundary ? msnWeatherLifecyclePhaseOrder.indexOf(boundary) : -1;
+  const laterNotReached = boundaryIndex >= 0 ? msnWeatherLifecyclePhaseOrder.slice(boundaryIndex + 1) : msnWeatherLifecyclePhaseOrder;
+  fs.writeFileSync(
+    path.join(diagnosticsDir, 'msn-weather-lifecycle-status.json'),
+    `${JSON.stringify(
+      {
+        label: createdWorkspace.label,
+        lastCompleted,
+        currentFailed,
+        activePhase: active?.phase ?? '',
+        laterNotReached,
+        savedWorkflowExists: fs.existsSync(createdWorkspace.workflowJsonPath),
+        savedWorkflowNodeCounts: getSafeWorkflowNodeCounts(createdWorkspace.workflowJsonPath),
+      },
+      null,
+      2
+    )}\n`
+  );
+}
+
+function readLifecyclePhaseEvents(createdWorkspace: CreatedWorkspace): LifecyclePhaseEvent[] {
+  const tracePath = path.join(getLifecycleDiagnosticsDir(createdWorkspace), msnWeatherLifecycleTraceFileName);
+  if (!fs.existsSync(tracePath)) {
+    return [];
+  }
+  const events = JSON.parse(fs.readFileSync(tracePath, 'utf-8'));
+  return Array.isArray(events) ? (events as LifecyclePhaseEvent[]) : [];
+}
+
+function getLifecycleDiagnosticsDir(createdWorkspace: CreatedWorkspace): string {
+  return path.join(path.dirname(createdWorkspace.appDir), '.vscode-e2e-diagnostics', path.basename(createdWorkspace.appDir));
+}
+
+function getSafeWorkflowNodeCounts(workflowJsonPath: string): { triggers: number; actions: number } | undefined {
+  try {
+    if (!fs.existsSync(workflowJsonPath)) {
+      return undefined;
+    }
+    const workflowJson = JSON.parse(fs.readFileSync(workflowJsonPath, 'utf-8'));
+    return {
+      triggers: Object.keys(workflowJson?.definition?.triggers ?? {}).length,
+      actions: Object.keys(workflowJson?.definition?.actions ?? {}).length,
+    };
+  } catch {
+    return undefined;
+  }
+}
+
 async function waitForGeneratedLogicAppFolder(createdWorkspace: CreatedWorkspace): Promise<void> {
   await waitUntil(
     () => {
@@ -631,15 +792,16 @@ async function openDesignerAndCreateWorkflow(
 
     console.log(`[workspace-lifecycle] ${createdWorkspace.label}: connecting to designer webview CDP target`);
     cdp = await connectToVsCodeCdp({ targetName: `${createdWorkspace.label} designer webview` });
+    const designerCdp = cdp;
     console.log(`[workspace-lifecycle] ${createdWorkspace.label}: waiting for designer webview DOM context`);
-    const contextId = await waitForWebviewFrameContext(cdp, {
+    const contextId = await waitForWebviewFrameContext(designerCdp, {
       allTextIncludes: ['Save'],
       description: `${createdWorkspace.label} designer webview DOM context`,
       timeoutMs: 180000,
     });
     console.log(`[workspace-lifecycle] ${createdWorkspace.label}: designer webview DOM context=${contextId}; waiting for canvas content`);
     await waitForDesignerText(
-      cdp,
+      designerCdp,
       contextId,
       ['Add a trigger', requestTriggerTitle, responseActionTitle],
       180000,
@@ -651,7 +813,7 @@ async function openDesignerAndCreateWorkflow(
       return;
     }
 
-    const initialCanvasText = await getDesignerText(cdp, contextId);
+    const initialCanvasText = await getDesignerText(designerCdp, contextId);
     console.log(
       `[workspace-lifecycle] ${createdWorkspace.label}: initial designer canvas text ${JSON.stringify({
         length: initialCanvasText.length,
@@ -662,39 +824,57 @@ async function openDesignerAndCreateWorkflow(
       })}`
     );
     if (initialCanvasText.includes('Add a trigger')) {
-      await addRequestTriggerThroughDesigner(cdp, contextId, createdWorkspace.label);
+      await addRequestTriggerThroughDesigner(designerCdp, contextId, createdWorkspace.label);
       if (options.includeMsnWeather) {
-        await addMsnWeatherActionThroughDesigner(cdp, contextId, createdWorkspace.label);
-        await addResponseActionThroughDesigner(cdp, contextId, createdWorkspace.label);
-        await configureResponseBodyThroughDesigner(cdp, contextId, createdWorkspace.label, msnWeatherActionName);
+        await addMsnWeatherActionThroughDesigner(designerCdp, contextId, createdWorkspace);
+        await runLifecyclePhase(createdWorkspace, 'Responseinserted', () =>
+          addResponseActionThroughDesigner(designerCdp, contextId, createdWorkspace.label)
+        );
+        await configureResponseBodyThroughDesigner(designerCdp, contextId, createdWorkspace, msnWeatherActionName);
       } else {
-        await addResponseActionThroughDesigner(cdp, contextId, createdWorkspace.label);
+        await addResponseActionThroughDesigner(designerCdp, contextId, createdWorkspace.label);
       }
     } else {
       console.log(`[workspace-lifecycle] ${createdWorkspace.label}: designer opened with generated workflow content`);
       if (options.includeMsnWeather) {
         const canvasTextLower = initialCanvasText.toLowerCase();
         if (!canvasTextLower.includes('weather')) {
-          await addMsnWeatherActionThroughDesigner(cdp, contextId, createdWorkspace.label);
+          await addMsnWeatherActionThroughDesigner(designerCdp, contextId, createdWorkspace);
         }
       }
       if (!initialCanvasText.includes(responseActionTitle)) {
-        await addResponseActionThroughDesigner(cdp, contextId, createdWorkspace.label);
+        if (options.includeMsnWeather) {
+          await runLifecyclePhase(createdWorkspace, 'Responseinserted', () =>
+            addResponseActionThroughDesigner(designerCdp, contextId, createdWorkspace.label)
+          );
+        } else {
+          await addResponseActionThroughDesigner(designerCdp, contextId, createdWorkspace.label);
+        }
       }
       if (options.includeMsnWeather) {
-        await configureResponseBodyThroughDesigner(cdp, contextId, createdWorkspace.label, msnWeatherActionName);
+        await configureResponseBodyThroughDesigner(designerCdp, contextId, createdWorkspace, msnWeatherActionName);
       }
     }
-    await saveWorkflowThroughDesigner(cdp, contextId, createdWorkspace.label);
+    if (options.includeMsnWeather) {
+      await runLifecyclePhase(createdWorkspace, 'Saveclicked', () =>
+        saveWorkflowThroughDesigner(designerCdp, contextId, createdWorkspace.label)
+      );
+    } else {
+      await saveWorkflowThroughDesigner(designerCdp, contextId, createdWorkspace.label);
+    }
 
-    const canvasText = await getDesignerText(cdp, contextId);
+    const canvasText = await getDesignerText(designerCdp, contextId);
     assert.ok(
       canvasText.includes(responseActionTitle),
       `${createdWorkspace.label} designer should render the Response action added through the UI. Text: ${canvasText.slice(0, 1000)}`
     );
-    await waitForSavedWorkflowContainsDesignerChanges(createdWorkspace);
     if (options.includeMsnWeather) {
-      assertMsnWeatherStandardWorkflow(createdWorkspace);
+      await runLifecyclePhase(createdWorkspace, 'savedworkflowverified', async () => {
+        await waitForSavedWorkflowContainsDesignerChanges(createdWorkspace);
+        assertMsnWeatherStandardWorkflow(createdWorkspace);
+      });
+    } else {
+      await waitForSavedWorkflowContainsDesignerChanges(createdWorkspace);
     }
   } catch (error) {
     console.log(
@@ -956,7 +1136,8 @@ async function addResponseActionThroughDesigner(cdp: CdpEvaluator, contextId: nu
   await captureLifecycleScreenshot(`workspace-lifecycle-${label}-response-action-added`);
 }
 
-async function addMsnWeatherActionThroughDesigner(cdp: CdpEvaluator, contextId: number, label: string): Promise<void> {
+async function addMsnWeatherActionThroughDesigner(cdp: CdpEvaluator, contextId: number, createdWorkspace: CreatedWorkspace): Promise<void> {
+  const label = createdWorkspace.label;
   await openActionDiscoveryPanelThroughDesigner(cdp, contextId, label);
 
   console.log(`[workspace-lifecycle] ${label}: searching for MSN Weather current weather action`);
@@ -965,6 +1146,8 @@ async function addMsnWeatherActionThroughDesigner(cdp: CdpEvaluator, contextId: 
   await waitForSearchResultsThroughDesigner(cdp, contextId, 90000, `${label} MSN Weather search results`);
 
   await selectOperationThroughDesigner(cdp, contextId, 'Get current weather', ['current weather']);
+  await captureLifecycleScreenshot(`workspace-lifecycle-${label}-msn-weather-action-added`);
+  console.log(`[workspace-lifecycle] ${label}: milestone azure-action-added action="Get current weather"`);
   await handleMsnWeatherConnectionThroughDesigner(cdp, contextId, label);
   await waitForDesignerText(
     cdp,
@@ -975,7 +1158,18 @@ async function addMsnWeatherActionThroughDesigner(cdp: CdpEvaluator, contextId: 
   );
   await fillDesignerParameter(cdp, contextId, ['Location', 'location'], msnWeatherLocation, `${label} MSN Weather Location`);
   await captureLifecycleScreenshot(`workspace-lifecycle-${label}-msn-weather-action-configured`);
+  console.log(
+    `[workspace-lifecycle] ${label}: milestone azure-action-configured action="Get current weather" location=${msnWeatherLocation}`
+  );
+  await runLifecyclePhase(createdWorkspace, 'connectionReady', () =>
+    waitForAzureConnectedActionThroughDesigner(cdp, contextId, {
+      actionTitle: 'Get current weather',
+      label,
+      settingsStage: 'after-location-configured',
+    })
+  );
   await closeDesignerDetailsPanelThroughDesigner(cdp, contextId, `${label} MSN Weather action panel`);
+  console.log(`[workspace-lifecycle] ${label}: milestone azure-action-ready-for-next-action action="Get current weather"`);
 }
 
 async function openActionDiscoveryPanelThroughDesigner(cdp: CdpEvaluator, contextId: number, label: string): Promise<void> {
@@ -1028,17 +1222,60 @@ async function closeDesignerDetailsPanelThroughDesigner(cdp: CdpEvaluator, conte
     return;
   }
 
-  const clicked = await tryClickDesignerElement(
-    cdp,
+  const closeTarget = await cdp.evaluate<{
+    ok: boolean;
+    reason?: string;
+    point?: { x: number; y: number };
+    candidates?: string[];
+    panelText?: string;
+  }>(
     contextId,
-    ['[data-automation-id="msla-panel-header-close-nav"]', 'button[aria-label="Close"]'],
-    'Close',
-    {
-      requireTextMatch: false,
-      useLastMatch: true,
-    }
+    `(() => {
+      const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim();
+      const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
+      const panels = Array.from(document.querySelectorAll('.msla-panel-container'))
+        .filter(isVisible)
+        .map((panel) => ({ panel, rect: panel.getBoundingClientRect() }))
+        .filter(({ rect }) => rect.width > 250 && rect.height > 200)
+        .sort((a, b) => a.rect.left - b.rect.left);
+      const panel = panels.at(-1)?.panel;
+      const candidates = Array.from(document.querySelectorAll('[data-automation-id="msla-panel-header-close-nav"], button[aria-label="Close"]'))
+        .filter(isVisible)
+        .slice(0, 10)
+        .map((element) => {
+          const rect = element.getBoundingClientRect();
+          return normalize(element.getAttribute('data-automation-id') || element.getAttribute('aria-label') || element.textContent || '') +
+            ' @ ' + Math.round(rect.left) + ',' + Math.round(rect.top);
+        });
+      if (!(panel instanceof HTMLElement)) {
+        return { ok: false, reason: 'Visible details panel container not found', candidates, panelText: document.body?.innerText || '' };
+      }
+
+      const closeButton = Array.from(panel.querySelectorAll('[data-automation-id="msla-panel-header-close-nav"], button[aria-label="Close"]'))
+        .filter(isVisible)
+        .at(-1);
+      if (!(closeButton instanceof HTMLElement)) {
+        return { ok: false, reason: 'Details panel Close button not found', candidates, panelText: normalize(panel.textContent).slice(0, 1000) };
+      }
+
+      closeButton.scrollIntoView({ block: 'center', inline: 'center' });
+      const rect = closeButton.getBoundingClientRect();
+      return {
+        ok: true,
+        point: { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 },
+        candidates,
+        panelText: normalize(panel.textContent).slice(0, 1000),
+      };
+    })()`
   );
-  assert.ok(clicked, `${description} Close button should be clickable before adding another operation`);
+  assert.ok(
+    closeTarget.ok && closeTarget.point,
+    `${description} Close button should be clickable before adding another operation. Reason=${closeTarget.reason} candidates=${JSON.stringify(
+      closeTarget.candidates
+    )} panelText=${closeTarget.panelText?.slice(0, 1000)}`
+  );
+  console.log(`[workspace-lifecycle] Closing ${description} details panel`);
+  await clickPoint(cdp, closeTarget.point);
 
   await waitUntil(
     async () => !(await hasDesignerDetailsPanelThroughDesigner(cdp, contextId)),
@@ -1060,46 +1297,213 @@ async function hasDesignerDetailsPanelThroughDesigner(cdp: CdpEvaluator, context
 
 async function handleMsnWeatherConnectionThroughDesigner(cdp: CdpEvaluator, contextId: number, label: string): Promise<void> {
   let lastState = '';
-  await waitUntil(
-    async () => {
-      const state = await getDesignerConnectionOrParameterState(cdp, contextId);
-      const stateText = JSON.stringify(state);
-      if (stateText !== lastState) {
-        lastState = stateText;
-        console.log(`[workspace-lifecycle] ${label}: MSN Weather designer state ${stateText.slice(0, 1000)}`);
-      }
+  try {
+    await waitUntil(
+      async () => {
+        const state = await getDesignerConnectionOrParameterState(cdp, contextId);
+        const stateText = JSON.stringify(state);
+        if (stateText !== lastState) {
+          lastState = stateText;
+          console.log(`[workspace-lifecycle] ${label}: MSN Weather designer state ${stateText.slice(0, 1000)}`);
+        }
 
-      if (state.hasLocationParameter) {
+        if (state.hasLocationParameter) {
+          return true;
+        }
+
+        if (state.actionPoint) {
+          await clickPoint(cdp, state.actionPoint);
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          return false;
+        }
+
+        return false;
+      },
+      240000,
+      `${label} MSN Weather connection to be selected or created through designer`
+    );
+  } catch (error) {
+    if (error instanceof Error) {
+      error.message = `${error.message}. Last state: ${lastState}`;
+      throw error;
+    }
+    throw error;
+  }
+}
+
+async function waitForAzureConnectedActionThroughDesigner(
+  cdp: CdpEvaluator,
+  contextId: number,
+  options: { actionTitle: string; label: string; settingsStage: string }
+): Promise<void> {
+  const startedAt = Date.now();
+  const timeoutMs = 120000;
+  try {
+    await waitForAzureConnectedAction(
+      {
+        actionTitle: options.actionTitle,
+        label: options.label,
+        settingsStage: options.settingsStage,
+        timeoutMs,
+        pollMs: 500,
+      },
+      {
+        getStatusState: () => getAzureConnectionStatusStateThroughDesigner(cdp, contextId, options.actionTitle),
+        captureConnectedScreenshot: captureRequiredLifecycleScreenshot,
+        sleep: (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
+        now: () => Date.now(),
+        log: (message) => console.log(message),
+      }
+    );
+  } catch (error) {
+    try {
+      await captureLifecycleScreenshot(
+        `workspace-lifecycle-${options.label}-${sanitizeScreenshotSegment(options.actionTitle)}-connection-status-failure`
+      );
+    } catch (screenshotError) {
+      console.log(
+        `[workspace-lifecycle] ${options.label}: failed to capture Azure connection failure screenshot for ${
+          options.actionTitle
+        }: ${screenshotError instanceof Error ? screenshotError.message : String(screenshotError)}`
+      );
+    }
+    console.log(
+      `[workspace-lifecycle] ${options.label}: Azure connection status wait failed for ${options.actionTitle}: ${JSON.stringify({
+        elapsedMs: Date.now() - startedAt,
+        settingsStage: options.settingsStage,
+        error: error instanceof Error ? error.message : String(error),
+      })}`
+    );
+    throw error;
+  }
+}
+
+async function getAzureConnectionStatusStateThroughDesigner(
+  cdp: CdpEvaluator,
+  contextId: number,
+  actionTitle: string
+): Promise<{ scopedPanelFound: boolean; panelText: string; candidates: string[]; panelSummaries: string[] }> {
+  const script = `
+(() => {
+  const actionTitle = __ACTION_TITLE__;
+  const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim();
+  const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
+  const visibleText = (element) => {
+    if (!isVisible(element)) {
+      return '';
+    }
+    const ownText = Array.from(element.childNodes || [])
+      .filter((node) => node.nodeType === Node.TEXT_NODE)
+      .map((node) => node.textContent || '')
+      .join(' ');
+    const childText = Array.from(element.children || []).map(visibleText).join(' ');
+    return normalize([ownText, childText].filter(Boolean).join(' '));
+  };
+  const isEditable = (element) =>
+    element instanceof HTMLElement &&
+    (element.isContentEditable ||
+      element.matches('[contenteditable="true"], textarea, input') ||
+      !!element.closest('[contenteditable="true"], textarea, input, .editor-input'));
+  const statusPattern = /\\b(invalid connection|connected|disconnected|not connected|loading connection|creating connection|connecting|connection error|connection failed|connection failure|failed to connect|unauthorized|forbidden|sign in to connect)\\b/i;
+  const hasConnectionContext = (element, panel) => {
+    let current = element;
+    let depth = 0;
+    while (current && current !== panel && depth < 6) {
+      const metadata = [
+        current.getAttribute('aria-label') || '',
+        current.getAttribute('data-automation-id') || '',
+        current.getAttribute('data-testid') || '',
+        current.id || '',
+        typeof current.className === 'string' ? current.className : '',
+      ].join(' ');
+      const text = visibleText(current);
+      if (
+        /connection|connector|authentication|auth/i.test(metadata) ||
+        (text.length <= 500 && /\\b(change connection|connection|connected to|loading connection|invalid connection)\\b/i.test(text))
+      ) {
         return true;
       }
+      current = current.parentElement;
+      depth++;
+    }
+    return false;
+  };
+  const panelSelectors = '[id^="msla-node-details-panel"], .msla-panel-container';
+  const panels = Array.from(document.querySelectorAll(panelSelectors))
+    .filter(isVisible)
+    .map((panel) => {
+      const text = visibleText(panel);
+      const rect = panel.getBoundingClientRect();
+      return { panel, text, rect };
+    })
+    .filter(({ text, rect }) => rect.width > 250 && rect.height > 200 && text.toLowerCase().includes(actionTitle))
+    .sort((a, b) => a.rect.left - b.rect.left);
+  const panelSummaries = panels.map(({ text, rect }) => Math.round(rect.left) + ',' + Math.round(rect.top) + ' ' + text.slice(0, 240));
+  const scopedPanel = panels.at(-1)?.panel;
+  if (!(scopedPanel instanceof HTMLElement)) {
+    return { scopedPanelFound: false, panelText: '', candidates: [], panelSummaries };
+  }
 
-      if (state.actionPoint) {
-        await clickPoint(cdp, state.actionPoint);
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        return false;
-      }
+  const panelText = visibleText(scopedPanel);
+  const candidates = Array.from(scopedPanel.querySelectorAll('*'))
+    .filter(isVisible)
+    .filter((element) => !isEditable(element))
+    .filter((element) => hasConnectionContext(element, scopedPanel))
+    .map((element) => {
+      const text = visibleText(element);
+      const aria = normalize(element.getAttribute('aria-label') || '');
+      const automationId = normalize(element.getAttribute('data-automation-id') || '');
+      const testId = normalize(element.getAttribute('data-testid') || '');
+      return { text, aria, automationId, testId };
+    })
+    .filter(({ text, aria, automationId, testId }) => {
+      const evidence = [text, aria].filter(Boolean).join(' ');
+      const metadata = [automationId, testId].filter(Boolean).join(' ');
+      return statusPattern.test(evidence) || (/connection|status/i.test(metadata) && statusPattern.test(evidence));
+    })
+    .map(({ text, aria, automationId, testId }) => [text, aria, automationId, testId].filter(Boolean).join(' | '))
+    .filter((value, index, all) => value && all.indexOf(value) === index)
+    .slice(0, 30);
 
-      return false;
-    },
-    240000,
-    `${label} MSN Weather connection to be selected or created through designer. Last state: ${lastState}`
-  );
+  return {
+    scopedPanelFound: true,
+    panelText,
+    candidates,
+    panelSummaries,
+  };
+})()
+`;
+  return cdp.evaluate(contextId, script.replace('__ACTION_TITLE__', JSON.stringify(actionTitle.toLowerCase())));
+}
+
+function sanitizeScreenshotSegment(value: string): string {
+  return value
+    .replace(/[^a-z0-9_-]+/gi, '-')
+    .replace(/^-+|-+$/g, '')
+    .toLowerCase();
 }
 
 async function configureResponseBodyThroughDesigner(
   cdp: CdpEvaluator,
   contextId: number,
-  label: string,
+  createdWorkspace: CreatedWorkspace,
   weatherActionName: string
 ): Promise<void> {
-  await openResponseSettingsPanelThroughDesigner(cdp, contextId, label);
-  await selectDynamicContentTokenForParameter(
-    cdp,
-    contextId,
-    ['Body', 'body'],
-    ['Get current weather', weatherActionName],
-    ['Body', 'Outputs'],
-    `${label} Response body`
+  const label = createdWorkspace.label;
+  await runLifecyclePhase(createdWorkspace, 'ResponseBodyready', () => openResponseSettingsPanelThroughDesigner(cdp, contextId, label));
+  await runLifecyclePhase(
+    createdWorkspace,
+    'ResponseBodyconfigured',
+    () =>
+      selectDynamicContentTokenForParameter(
+        cdp,
+        contextId,
+        ['Body', 'body'],
+        ['Get current weather', weatherActionName],
+        ['Body', 'Outputs'],
+        `${label} Response body`
+      ),
+    { sourceAction: weatherActionName }
   );
   await captureLifecycleScreenshot(`workspace-lifecycle-${label}-response-body-configured`);
 }
@@ -1107,8 +1511,16 @@ async function configureResponseBodyThroughDesigner(
 async function openResponseSettingsPanelThroughDesigner(cdp: CdpEvaluator, contextId: number, label: string): Promise<void> {
   let lastError = '';
   for (let attempt = 1; attempt <= 5; attempt++) {
-    await clickDesignerNodeByTitle(cdp, contextId, responseActionTitle);
     try {
+      const readyState = await getResponseDetailsPanelState(cdp, contextId);
+      if (readyState.ready) {
+        console.log(`[workspace-lifecycle] ${label}: Response details panel already ready ${JSON.stringify(readyState).slice(0, 1000)}`);
+      } else {
+        console.log(
+          `[workspace-lifecycle] ${label}: opening Response details panel attempt ${attempt}; state=${JSON.stringify(readyState).slice(0, 1000)}`
+        );
+        await clickDesignerNodeByTitle(cdp, contextId, responseActionTitle);
+      }
       await waitForResponseDetailsPanel(cdp, contextId, 5000, `${label} Response details panel`);
       await waitForDesignerParameterEditor(cdp, contextId, ['Body', 'body'], 5000, `${label} Response Body editor`);
       return;
@@ -1231,27 +1643,127 @@ async function clickDesignerCardByExactTitle(cdp: CdpEvaluator, contextId: numbe
 }
 
 async function waitForResponseDetailsPanel(cdp: CdpEvaluator, contextId: number, timeoutMs: number, description: string): Promise<void> {
-  await waitUntil(
-    () =>
-      cdp.evaluate<boolean>(
-        contextId,
-        `(() => {
-          const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim().toLowerCase();
-          const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
-          const panelRoots = Array.from(document.querySelectorAll('.msla-panel-container, [id^="msla-node-details-panel"], [class*="panel"], div'))
+  let lastState = '';
+  try {
+    await waitUntil(
+      async () => {
+        const state = await getResponseDetailsPanelState(cdp, contextId);
+        lastState = JSON.stringify(state);
+        return state.ready;
+      },
+      timeoutMs,
+      description
+    );
+  } catch (error) {
+    if (error instanceof Error) {
+      error.message = `${error.message}. Last response details panel state: ${lastState}`;
+      throw error;
+    }
+    throw error;
+  }
+}
+
+async function getResponseDetailsPanelState(
+  cdp: CdpEvaluator,
+  contextId: number
+): Promise<{
+  ready: boolean;
+  viewport: { width: number; height: number; devicePixelRatio: number };
+  panels: Array<{
+    textPreview: string;
+    bounds: { left: number; top: number; width: number; height: number };
+    hasResponseHeader: boolean;
+    hasStatusCode: boolean;
+    hasBody: boolean;
+    editorCount: number;
+    visibleEditorCount: number;
+    enabledEditorCount: number;
+  }>;
+}> {
+  return cdp.evaluate(
+    contextId,
+    `(() => {
+      const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim();
+      const lower = (value) => normalize(value).toLowerCase();
+      const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
+      const visibleText = (element) => {
+        if (!isVisible(element)) {
+          return '';
+        }
+        const ownText = Array.from(element.childNodes || [])
+          .filter((node) => node.nodeType === Node.TEXT_NODE)
+          .map((node) => node.textContent || '')
+          .join(' ');
+        const childText = Array.from(element.children || []).map(visibleText).join(' ');
+        return normalize([ownText, childText].filter(Boolean).join(' '));
+      };
+      const isEnabled = (element) => !element.hasAttribute('disabled') && element.getAttribute('aria-disabled') !== 'true';
+      const editorSelectors = '[contenteditable="true"].editor-input, [contenteditable="true"], textarea, input';
+      const panelRoots = Array.from(document.querySelectorAll('.msla-panel-container, [id^="msla-node-details-panel"], [role="tabpanel"], aside, section'))
+        .filter(isVisible)
+        .map((panel) => {
+          const rawVisibleText = visibleText(panel);
+          const text = lower(rawVisibleText);
+          const rect = panel.getBoundingClientRect();
+          const headerCandidates = Array.from(panel.querySelectorAll('h1, h2, h3, [role="heading"], [data-automation-id*="header"], [class*="header"]'))
             .filter(isVisible)
-            .filter((element) => {
-              const rect = element.getBoundingClientRect();
-              return rect.left > window.innerWidth * 0.35 && rect.width > 300 && rect.height > 250;
+            .map((element) => lower(visibleText(element) || element.getAttribute('aria-label') || ''));
+          const editors = Array.from(panel.querySelectorAll(editorSelectors));
+          const visibleEditors = editors.filter(isVisible);
+          const enabledEditors = visibleEditors.filter(isEnabled);
+          const hasResponseHeader =
+            headerCandidates.some((header) => /^response$/.test(header) || /\\bresponse\\b/.test(header)) ||
+            /(^|\\b)response(\\b|$)/.test(text);
+          const hasStatusCode = /\\bstatus code\\b/.test(text);
+          const hasBody =
+            /(^|\\b)body(\\b|$)/.test(text) ||
+            visibleEditors.some((editor) => {
+              const values = [
+                editor.getAttribute('aria-label') || '',
+                editor.getAttribute('placeholder') || '',
+                editor.getAttribute('title') || '',
+                editor.getAttribute('data-testid') || '',
+                editor.getAttribute('data-automation-id') || '',
+                editor.getAttribute('aria-labelledby')?.split(/\\s+/).map((id) => document.getElementById(id)?.textContent || '').join(' ') || '',
+              ].join(' ');
+              return /\\bbody\\b|enter response content/i.test(values);
             });
-          return panelRoots.some((panel) => {
-            const text = normalize(panel.textContent);
-            return text.includes('response') && text.includes('status code') && text.includes('body') && !text.includes('request body json schema');
-          });
-        })()`
-      ),
-    timeoutMs,
-    description
+          return {
+            textPreview: rawVisibleText.slice(0, 500),
+            bounds: {
+              left: Math.round(rect.left),
+              top: Math.round(rect.top),
+              width: Math.round(rect.width),
+              height: Math.round(rect.height),
+            },
+            hasResponseHeader,
+            hasStatusCode,
+            hasBody,
+            editorCount: editors.length,
+            visibleEditorCount: visibleEditors.length,
+            enabledEditorCount: enabledEditors.length,
+          };
+        })
+        .filter((panel) => panel.bounds.width > 100 && panel.bounds.height > 100)
+        .filter((panel) => panel.hasResponseHeader || panel.hasStatusCode || panel.hasBody)
+        .sort((a, b) => {
+          const aScore = Number(a.hasResponseHeader) + Number(a.hasStatusCode) + Number(a.hasBody);
+          const bScore = Number(b.hasResponseHeader) + Number(b.hasStatusCode) + Number(b.hasBody);
+          if (aScore !== bScore) {
+            return bScore - aScore;
+          }
+          return b.bounds.width * b.bounds.height - a.bounds.width * a.bounds.height;
+        });
+      return {
+        ready: panelRoots.some((panel) => panel.hasResponseHeader && panel.hasStatusCode && panel.hasBody),
+        viewport: {
+          width: window.innerWidth,
+          height: window.innerHeight,
+          devicePixelRatio: window.devicePixelRatio,
+        },
+        panels: panelRoots.slice(0, 10),
+      };
+    })()`
   );
 }
 
@@ -1272,6 +1784,28 @@ async function waitForDesignerParameterEditor(
           const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
           const isEditable = (element) => !element.hasAttribute('disabled') && element.getAttribute('aria-disabled') !== 'true';
           const editableSelectors = ['[contenteditable="true"].editor-input', '[contenteditable="true"]', 'textarea', 'input'];
+          const matchesLabels = (element) => {
+            const values = [
+              element.textContent,
+              element.getAttribute('aria-label'),
+              element.getAttribute('aria-labelledby')?.split(/\\s+/).map((id) => document.getElementById(id)?.textContent || '').join(' '),
+              element.getAttribute('data-testid'),
+              element.getAttribute('data-automation-id'),
+              element.getAttribute('placeholder'),
+              element.getAttribute('title'),
+            ].map(normalize).join(' ').toLowerCase();
+            return labels.some((label) => values === label || values.includes(label));
+          };
+
+          const directEditor = editableSelectors
+            .flatMap((selector) => Array.from(document.querySelectorAll(selector)))
+            .filter(isVisible)
+            .filter(isEditable)
+            .find(matchesLabels);
+          if (directEditor instanceof HTMLElement) {
+            return true;
+          }
+
           const labelCandidates = Array.from(document.querySelectorAll('label, span, div, p'))
             .filter(isVisible)
             .filter((element) => {
@@ -2530,15 +3064,28 @@ async function waitForDebugStartup(
   );
 }
 
-async function runWorkflowThroughOverviewAndAssertSucceeded(createdWorkspace: CreatedWorkspace): Promise<{ name: string; status: string }> {
+async function runWorkflowThroughOverviewAndAssertSucceeded(
+  createdWorkspace: CreatedWorkspace,
+  options: { traceWorkspace?: CreatedWorkspace } = {}
+): Promise<{ name: string; status: string }> {
   const workflowName = createdWorkspace.wfName;
   const runEvidence = getSavedWorkflowRunEvidence(createdWorkspace);
   await waitForWorkflowReadyForOverviewRun(workflowName, runEvidence.requestTriggerName);
   const previousRunName = await getLatestRunName(workflowName);
 
-  await openOverviewAndClickRunTrigger(createdWorkspace, previousRunName);
+  if (options.traceWorkspace) {
+    await runLifecyclePhase(options.traceWorkspace, 'triggerinvoked', () =>
+      openOverviewAndClickRunTrigger(createdWorkspace, previousRunName)
+    );
+  } else {
+    await openOverviewAndClickRunTrigger(createdWorkspace, previousRunName);
+  }
 
-  const run = await waitForLatestRunStatus(workflowName, 'Succeeded', 180000, previousRunName);
+  const run = options.traceWorkspace
+    ? await runLifecyclePhase(options.traceWorkspace, 'runcompleted', () =>
+        waitForLatestRunStatus(workflowName, 'Succeeded', 180000, previousRunName)
+      )
+    : await waitForLatestRunStatus(workflowName, 'Succeeded', 180000, previousRunName);
   const actionStatuses = await getLatestRunActionStatuses(workflowName, run.name);
   assert.ok(actionStatuses.length > 0, `Expected action status evidence for workflow ${workflowName}, run ${run.name}`);
 
@@ -2677,12 +3224,14 @@ async function runMsnWeatherLifecycle(createdWorkspace: CreatedWorkspace): Promi
     await logMsnWeatherDesignerOpenDiagnostics('before warmup', createdWorkspace);
     if (settings) {
       ensureLocalSettingsForMsnWeather(createdWorkspace.appDir, settings);
+      assertMsnWeatherLocalSettingsReady(createdWorkspace.appDir, settings, 'after-preseed');
       await logMsnWeatherDesignerOpenDiagnostics('after msn weather local settings preseed', createdWorkspace);
       await openDesignerAndCreateWorkflowWithDotnetInstallRetry(createdWorkspace, { warmOnly: true, useAzureConnectors: true });
+      assertMsnWeatherLocalSettingsReady(createdWorkspace.appDir, settings, 'after-warmup');
       await logMsnWeatherDesignerOpenDiagnostics('after azure-targeted warmup designer open', createdWorkspace);
     } else {
       console.log(
-        '[workspace-lifecycle][msn-weather] Azure settings env vars were not provided; designer will prompt for Azure connector setup.'
+        '[workspace-lifecycle][msn-weather] Explicit interactive Azure settings mode enabled; designer will prompt for Azure connector setup.'
       );
     }
     try {
@@ -2696,15 +3245,28 @@ async function runMsnWeatherLifecycle(createdWorkspace: CreatedWorkspace): Promi
       await logMsnWeatherDesignerOpenDiagnostics('msn weather designer open failure', createdWorkspace);
       throw error;
     }
-    assertMsnWeatherLocalSettingsReady(createdWorkspace.appDir);
+    if (settings) {
+      assertMsnWeatherLocalSettingsReady(createdWorkspace.appDir, settings, 'after-save');
+    }
     assertMsnWeatherStandardWorkflow(createdWorkspace);
     await waitForPathExists(path.join(createdWorkspace.appDir, 'host.json'), 45000);
     await waitForPathExists(path.join(createdWorkspace.appDir, '.vscode', 'tasks.json'), 45000);
+    if (settings) {
+      assertMsnWeatherLocalSettingsReady(createdWorkspace.appDir, settings, 'before-debug');
+    }
 
-    await startDebuggingGeneratedWorkspace(createdWorkspace, { useAzureConnectors: true });
-    const run = await runWorkflowThroughOverviewAndAssertSucceeded(createdWorkspace);
+    await runLifecyclePhase(createdWorkspace, 'debugrequested', () =>
+      startDebuggingGeneratedWorkspace(createdWorkspace, { useAzureConnectors: true })
+    );
+    completeSyntheticLifecyclePhase(createdWorkspace, 'hostready', { hostStatusEndpoint: 'http://localhost:7071/admin/host/status' });
+    if (settings) {
+      assertMsnWeatherLocalSettingsReady(createdWorkspace.appDir, settings, 'after-debug-start');
+    }
+    const run = await runWorkflowThroughOverviewAndAssertSucceeded(createdWorkspace, { traceWorkspace: createdWorkspace });
     await openRunDetailsThroughOverview(createdWorkspace, run.name);
-    await assertRunResponseReturnsMsnWeatherConditions(createdWorkspace, run.name);
+    await runLifecyclePhase(createdWorkspace, 'responseverified', () =>
+      assertRunResponseReturnsMsnWeatherConditions(createdWorkspace, run.name)
+    );
     await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-msn-weather-response-verified`);
   } finally {
     await stopDebuggingAndTasks();
@@ -2741,24 +3303,36 @@ function getMsnWeatherAzureSettingsFromEnvironment(): MsnWeatherAzureSettings | 
   const subscriptionId = optionalEnvironmentValue(['LA_E2E_CLI_AZURE_SUBSCRIPTION_ID', 'WORKFLOWS_SUBSCRIPTION_ID']);
   const resourceGroupName = optionalEnvironmentValue(['LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME', 'WORKFLOWS_RESOURCE_GROUP_NAME']);
   const location = optionalEnvironmentValue(['LA_E2E_CLI_AZURE_LOCATION_NAME', 'WORKFLOWS_LOCATION_NAME']);
-  if (!subscriptionId && !resourceGroupName && !location) {
+  const tenantId = optionalEnvironmentValue(['LA_E2E_CLI_AZURE_TENANT_ID', 'WORKFLOWS_TENANT_ID']);
+  const allowInteractiveTarget = canUseInteractiveMsnWeatherAzureSettings(process.env);
+  if (!subscriptionId && !resourceGroupName && !location && !tenantId && allowInteractiveTarget) {
     return undefined;
   }
 
+  const missingTargetValues = [
+    ['LA_E2E_CLI_AZURE_SUBSCRIPTION_ID or WORKFLOWS_SUBSCRIPTION_ID', subscriptionId],
+    ['LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME or WORKFLOWS_RESOURCE_GROUP_NAME', resourceGroupName],
+    ['LA_E2E_CLI_AZURE_LOCATION_NAME or WORKFLOWS_LOCATION_NAME', location],
+    ['LA_E2E_CLI_AZURE_TENANT_ID or WORKFLOWS_TENANT_ID', tenantId],
+  ]
+    .filter(([, value]) => !value)
+    .map(([name]) => name);
+
   assert.ok(
-    subscriptionId && resourceGroupName && location,
+    missingTargetValues.length === 0,
     [
       'MSN Weather lifecycle Azure env var preseed is incomplete.',
-      'Set LA_E2E_CLI_AZURE_SUBSCRIPTION_ID, LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME, and LA_E2E_CLI_AZURE_LOCATION_NAME together,',
-      'or omit all three and let the designer Azure connector wizard populate local.settings.json from the signed-in VS Code profile.',
+      `Missing: ${missingTargetValues.join(', ')}.`,
+      'Set LA_E2E_CLI_AZURE_SUBSCRIPTION_ID, LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME, LA_E2E_CLI_AZURE_LOCATION_NAME, and LA_E2E_CLI_AZURE_TENANT_ID together,',
+      'or set LA_E2E_CLI_MSN_WEATHER_ALLOW_INTERACTIVE_AZURE_SETTINGS=1 for a deliberate local interactive run.',
     ].join(' ')
   );
 
   return {
-    subscriptionId,
-    resourceGroupName,
-    location,
-    tenantId: process.env.LA_E2E_CLI_AZURE_TENANT_ID ?? process.env.WORKFLOWS_TENANT_ID,
+    subscriptionId: requiredValue(subscriptionId),
+    resourceGroupName: requiredValue(resourceGroupName),
+    location: requiredValue(location),
+    tenantId: requiredValue(tenantId),
     managementBaseUrl: normalizeManagementBaseUrl(
       process.env.LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL ?? process.env.WORKFLOWS_MANAGEMENT_BASE_URI ?? 'https://management.azure.com'
     ),
@@ -2769,10 +3343,6 @@ function optionalEnvironmentValue(names: string[]): string | undefined {
   return names.map((name) => process.env[name]?.trim()).find((candidate) => candidate && candidate.length > 0);
 }
 
-function normalizeManagementBaseUrl(value: string): string {
-  return value.endsWith('/') ? value.slice(0, -1) : value;
-}
-
 function ensureLocalSettingsForMsnWeather(appDir: string, settings: MsnWeatherAzureSettings): void {
   const settingsPath = path.join(appDir, 'local.settings.json');
   const localSettings = JSON.parse(fs.readFileSync(settingsPath, 'utf-8'));
@@ -2781,27 +3351,14 @@ function ensureLocalSettingsForMsnWeather(appDir: string, settings: MsnWeatherAz
   localSettings.Values.WORKFLOWS_RESOURCE_GROUP_NAME = settings.resourceGroupName;
   localSettings.Values.WORKFLOWS_LOCATION_NAME = settings.location;
   localSettings.Values.WORKFLOWS_MANAGEMENT_BASE_URI = `${settings.managementBaseUrl}/`;
-  if (settings.tenantId) {
-    localSettings.Values.WORKFLOWS_TENANT_ID = settings.tenantId;
-  }
+  localSettings.Values.WORKFLOWS_TENANT_ID = settings.tenantId;
   fs.writeFileSync(settingsPath, `${JSON.stringify(localSettings, null, 2)}\n`);
 }
 
-function assertMsnWeatherLocalSettingsReady(appDir: string): void {
-  const settingsPath = path.join(appDir, 'local.settings.json');
-  const localSettings = readJsonFile<Record<string, any>>(settingsPath);
-  const values = localSettings.Values ?? {};
-  const requiredKeys = ['WORKFLOWS_SUBSCRIPTION_ID', 'WORKFLOWS_RESOURCE_GROUP_NAME', 'WORKFLOWS_LOCATION_NAME'];
-  const missingKeys = requiredKeys.filter((key) => !values[key]);
-
-  assert.strictEqual(
-    missingKeys.length,
-    0,
-    [
-      `MSN Weather lifecycle expected Azure connector setup to write ${missingKeys.join(', ')} to ${settingsPath}.`,
-      'Use the signed-in Azure profile opened by `pnpm --dir apps\\vs-code-designer run test:e2e-cli:open:azure`,',
-      'or preseed LA_E2E_CLI_AZURE_SUBSCRIPTION_ID, LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME, and LA_E2E_CLI_AZURE_LOCATION_NAME.',
-    ].join(' ')
+function assertMsnWeatherLocalSettingsReady(appDir: string, settings: MsnWeatherAzureSettings, stage: string): void {
+  const evidence = assertMsnWeatherLocalSettings(appDir, settings, stage);
+  console.log(
+    `[workspace-lifecycle][msn-weather] local.settings.json Azure target verified at ${stage}: ${JSON.stringify(evidence.requiredKeys)}`
   );
 }
 
@@ -4301,6 +4858,17 @@ async function captureLifecycleScreenshot(name: string): Promise<void> {
   const cdp = await connectToVsCodeWorkbenchCdp();
   try {
     await captureCdpScreenshot(cdp, name);
+  } finally {
+    cdp.dispose();
+  }
+}
+
+async function captureRequiredLifecycleScreenshot(name: string): Promise<string> {
+  const cdp = await connectToVsCodeWorkbenchCdp();
+  try {
+    const screenshotPath = await captureCdpScreenshot(cdp, name);
+    assert.ok(screenshotPath && fs.existsSync(screenshotPath), `Expected required lifecycle screenshot to be written: ${name}`);
+    return screenshotPath;
   } finally {
     cdp.dispose();
   }

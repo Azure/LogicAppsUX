@@ -814,6 +814,16 @@ jobs:
           if-no-files-found: ignore
           retention-days: 30
 
+      - name: Upload CLI generated workspace snapshots (always)
+        uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: vscode-e2e-cli-generated-workspaces-${{ matrix.label }}
+          path: apps/vs-code-designer/.vscode-test/generated-workspaces/
+          if-no-files-found: ignore
+          include-hidden-files: true
+          retention-days: 30
+
       - name: Upload CLI test log (always)
         uses: actions/upload-artifact@v6
         if: always()

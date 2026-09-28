@@ -58,6 +58,7 @@ const baseConfig = {
     '--skip-welcome',
     '--skip-release-notes',
     '--locale=en-US',
+    '--window-size=1920,1080',
     `--remote-debugging-port=${remoteDebuggingPort}`,
     '--remote-debugging-address=127.0.0.1',
     ...(extensionsDir ? ['--extensions-dir', extensionsDir] : []),

@@ -79,8 +79,8 @@ jobs:
           artifactName: vscode-e2e-cli-screenshots-${{ parameters.artifactName }}
           condition: always()
         - output: pipelineArtifact
-          targetPath: $(Build.ArtifactStagingDirectory)/diagnostics
-          artifactName: vscode-test-diagnostics-${{ parameters.jobName }}
+          targetPath: $(Build.ArtifactStagingDirectory)/vscode-e2e-cli/${{ parameters.artifactName }}/generated-workspaces
+          artifactName: vscode-e2e-cli-generated-workspaces-${{ parameters.artifactName }}
           condition: always()
     steps:
       - checkout: self
@@ -170,7 +170,7 @@ jobs:
       - ${{ if eq(parameters.platform, 'linux') }}:
           - bash: |
               set -euo pipefail
-              /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+              /usr/bin/Xvfb :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
               export PATH="$(Build.SourcesDirectory)/apps/vs-code-designer/node_modules/.bin:$(Build.SourcesDirectory)/node_modules/.bin:$PATH"
               cd "$(Build.SourcesDirectory)/apps/vs-code-designer"
               mkdir -p .vscode-test/results
@@ -276,11 +276,13 @@ jobs:
           $resultDestination = Join-Path $diagnosticsRoot 'results'
           $logDestination = Join-Path $diagnosticsRoot 'log'
           $screenshotDestination = Join-Path $diagnosticsRoot 'screenshots'
-          New-Item -ItemType Directory -Force -Path $resultDestination, $logDestination, $screenshotDestination | Out-Null
+          $workspaceDestination = Join-Path $diagnosticsRoot 'generated-workspaces'
+          New-Item -ItemType Directory -Force -Path $resultDestination, $logDestination, $screenshotDestination, $workspaceDestination | Out-Null
 
           $resultRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/results'
           $screenshotsRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/screenshots/cli'
           $vscodeLogsRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/vscode-logs/cli/${{ parameters.label }}'
+          $workspaceSnapshotsRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/generated-workspaces'
 
           foreach ($extension in @('json', 'junit.xml', 'summary.md')) {
             $source = Join-Path $resultRoot "${{ parameters.label }}.$extension"
@@ -297,12 +299,70 @@ jobs:
           if (Test-Path $vscodeLogsRoot) {
             $vscodeLogDestination = Join-Path $logDestination 'vscode-logs'
             New-Item -ItemType Directory -Force -Path $vscodeLogDestination | Out-Null
-            Copy-Item (Join-Path $vscodeLogsRoot '*') -Destination $vscodeLogDestination -Recurse -Force -ErrorAction SilentlyContinue
+            Copy-Item (Join-Path $vscodeLogsRoot '*') -Destination $vscodeLogDestination -Recurse -Force -ErrorAction Stop
           }
 
           if (Test-Path $screenshotsRoot) {
-            Copy-Item (Join-Path $screenshotsRoot '*') -Destination $screenshotDestination -Recurse -Force -ErrorAction SilentlyContinue
+            Copy-Item (Join-Path $screenshotsRoot '*') -Destination $screenshotDestination -Recurse -Force -ErrorAction Stop
           }
+
+          if (-not (Test-Path $workspaceSnapshotsRoot)) {
+            throw "Generated workspace snapshot root was not produced: $workspaceSnapshotsRoot"
+          }
+          Get-ChildItem -Path $workspaceSnapshotsRoot -Force -ErrorAction Stop | Copy-Item -Destination $workspaceDestination -Recurse -Force -ErrorAction Stop
+          if (-not (Get-ChildItem -Path $workspaceDestination -Force -ErrorAction Stop)) {
+            throw "Generated workspace snapshot staging produced no files: $workspaceDestination"
+          }
+
+          $inventory = Get-ChildItem -Path $diagnosticsRoot -Recurse -Force -File -ErrorAction Stop | ForEach-Object {
+            [pscustomobject]@{
+              relativePath = [System.IO.Path]::GetRelativePath($diagnosticsRoot, $_.FullName).Replace('\', '/')
+              bytes = $_.Length
+            }
+          }
+          $forbiddenArtifactPatterns = @(
+            '(^|/)\.vscode-test(/|$)',
+            '(^|/)vscode-(win32|linux|darwin|alpine|server)(-|/)',
+            '(^|/)vscode-[^/]*archive-[^/]*(/|$)',
+            '(^|/)user-data-run[^/]*(/|$)',
+            '(^|/)CachedData(/|$)',
+            '(^|/)GPUCache(/|$)',
+            '(^|/)Service Worker(/|$)',
+            '(^|/)workspaceStorage(/|$)',
+            '(^|/)globalStorage(/|$)',
+            '(^|/)out/test(/|$)',
+            '(^|/)dist/test-extensions(/|$)',
+            '(^|/)fixtures(/|$)'
+          )
+          $forbidden = @($inventory | Where-Object {
+            $relativePath = $_.relativePath
+            $forbiddenArtifactPatterns | Where-Object { $relativePath -match $_ } | Select-Object -First 1
+          })
+          if ($forbidden.Count -gt 0) {
+            $details = ($forbidden | Select-Object -First 20 | ForEach-Object { "$($_.relativePath) ($($_.bytes) bytes)" }) -join "`n"
+            throw "Forbidden bulky/raw VS Code diagnostic artifact entries were staged:`n$details"
+          }
+          $inventoryBytes = ($inventory | Measure-Object -Property bytes -Sum).Sum
+          if ($null -eq $inventoryBytes) {
+            $inventoryBytes = 0
+          }
+          $inventoryObject = [pscustomobject]@{
+            generatedAt = (Get-Date).ToUniversalTime().ToString('o')
+            artifactName = '${{ parameters.artifactName }}'
+            fileCount = @($inventory).Count
+            totalBytes = [int64]$inventoryBytes
+            files = $inventory
+          }
+          $inventoryObject | ConvertTo-Json -Depth 5 | Set-Content -Path (Join-Path $workspaceDestination 'artifact-inventory.json') -Encoding utf8
+          @(
+            "# VS Code E2E CLI artifact inventory"
+            ""
+            "- Artifact: ${{ parameters.artifactName }}"
+            "- File count: $(@($inventory).Count)"
+            "- Total bytes: $([int64]$inventoryBytes)"
+            ""
+            "Forbidden bulky/raw VS Code archives, profiles, caches, compiled test output, and static fixtures were checked before publishing."
+          ) | Set-Content -Path (Join-Path $workspaceDestination 'artifact-inventory.md') -Encoding utf8
 
           foreach ($directory in @($resultDestination, $logDestination, $screenshotDestination)) {
             if (-not (Get-ChildItem -Path $directory -Force -ErrorAction SilentlyContinue)) {
@@ -310,19 +370,4 @@ jobs:
             }
           }
         displayName: Stage vscode-test CLI results (${{ parameters.label }})
-        condition: always()
-
-      - pwsh: |
-          New-Item -ItemType Directory -Force -Path "$(Build.ArtifactStagingDirectory)/diagnostics" | Out-Null
-          $paths = @(
-            "$(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test",
-            "$(Build.SourcesDirectory)/apps/vs-code-designer/out/test",
-            "$(Build.SourcesDirectory)/apps/vs-code-designer/e2e/test-workspace"
-          )
-          foreach ($path in $paths) {
-            if (Test-Path $path) {
-              Copy-Item -Recurse -Force $path "$(Build.ArtifactStagingDirectory)/diagnostics" -ErrorAction Continue
-            }
-          }
-        displayName: Collect vscode-test diagnostics
         condition: always()
