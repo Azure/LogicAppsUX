@@ -1,0 +1,46 @@
+parameters:
+  - name: artifactStagingPath
+    type: string
+    default: '$(Build.ArtifactStagingDirectory)/vscode-e2e-cli/build'
+
+steps:
+  - script: pnpm --dir apps/vs-code-designer run test:e2e-cli:build
+    displayName: Build extension and compile @vscode/test-cli E2E
+    workingDirectory: $(working_directory)
+    env:
+      NPM_CONFIG_USERCONFIG: $(npmrcFile)
+
+  - bash: |
+      set -euo pipefail
+      staging='${{ parameters.artifactStagingPath }}'
+      mkdir -p "$staging"
+
+      paths=(
+        apps/vs-code-designer/dist
+        apps/vs-code-designer/out
+      )
+
+      tar -czf "$staging/extension-build.tar.gz" "${paths[@]}"
+
+      node apps/vs-code-designer/scripts/vscode-e2e-artifact-manifest.js generate \
+        --artifact "$staging/extension-build.tar.gz" \
+        --out "$staging/vscode-e2e-build-manifest.json" \
+        --artifact-name vscode-e2e-build \
+        --checkout-ref "$(git rev-parse HEAD)" \
+        --payload-root apps/vs-code-designer/dist \
+        --payload-root apps/vs-code-designer/out
+
+      node apps/vs-code-designer/scripts/vscode-e2e-artifact-manifest.js verify \
+        --artifact "$staging/extension-build.tar.gz" \
+        --manifest "$staging/vscode-e2e-build-manifest.json" \
+        --expected-source-sha "$(git rev-parse HEAD)" \
+        --expected-producer-run-id "$(Build.BuildId)" \
+        --expected-producer-definition-id "$(System.DefinitionId)" \
+        --expected-repository-name "$(Build.Repository.Name)" \
+        --expected-repository-uri "$(Build.Repository.Uri)" \
+        --expected-checkout-ref "$(git rev-parse HEAD)" \
+        --privileged-admission
+
+      sha256sum "$staging/extension-build.tar.gz" > "$staging/extension-build.tar.gz.sha256"
+      find "$staging" -maxdepth 1 -type f -print -exec ls -lh {} \;
+    displayName: Stage reusable @vscode/test-cli build artifact

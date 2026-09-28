@@ -1,0 +1,65 @@
+# Staged AzureTools v2 build entry for ADO definition 24067.
+# This entry uses only the published azdo-pipelines v2 contract at azext-pt/v1.
+# The queued branch or tag selects both the extension build source and the
+# source-head VS Code E2E payload source.
+trigger: none
+pr: none
+
+parameters:
+  - name: isOfficialBuild
+    displayName: Use official 1ES template
+    type: boolean
+    default: true
+
+  - name: signType
+    displayName: MicroBuild signing type
+    type: string
+    default: real
+    values:
+      - real
+      - test
+      - none
+
+resources:
+  repositories:
+    - repository: azExtTemplates
+      type: github
+      name: microsoft/vscode-azuretools
+      ref: azext-pt/v1
+      endpoint: GitHub-AzureTools
+
+variables:
+  - template: azdo-pipelines/azcode.variables.yml@azExtTemplates
+  - name: TeamName
+    value: Azure Logic Apps for VS Code
+
+extends:
+  template: azdo-pipelines/1es-mb-main.yml@azExtTemplates
+  parameters:
+    isOfficialBuild: ${{ parameters.isOfficialBuild }}
+    signType: ${{ parameters.signType }}
+    packageManager: pnpm
+    feedBaseUrl: ${{ variables.feedBaseUrl }}
+    additionalSetupSteps:
+      - pwsh: |
+          $npmrcFile = '$(npmrcFile)'
+          if ([string]::IsNullOrWhiteSpace($npmrcFile)) {
+            Write-Host "##vso[task.logissue type=error]npmrcFile was not set by AzureTools setup; feed auth cannot be preserved for package phases."
+            exit 1
+          }
+          if ([System.IO.Path]::IsPathRooted($npmrcFile)) {
+            $resolvedNpmrcFile = $npmrcFile
+          } else {
+            $resolvedNpmrcFile = [System.IO.Path]::GetFullPath((Join-Path '$(Build.SourcesDirectory)' $npmrcFile))
+          }
+          if (-not (Test-Path $resolvedNpmrcFile)) {
+            Write-Host "##vso[task.logissue type=error]Resolved npmrcFile does not exist: $resolvedNpmrcFile"
+            exit 1
+          }
+          Write-Host "##vso[task.setvariable variable=NPM_CONFIG_USERCONFIG]$resolvedNpmrcFile"
+          Write-Host "##vso[task.setvariable variable=LA_VSCODE_ADO_PIPELINE]true"
+          node scripts/prepare-vscode-ado-build.js
+        displayName: Prepare Logic Apps VS Code build metadata
+        env:
+          AI_KEY: $(AI_KEY)
+          LA_VSCODE_ADO_PIPELINE: 'true'
