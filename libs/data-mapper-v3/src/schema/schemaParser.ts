@@ -24,7 +24,7 @@ export class SchemaParser {
     ): SchemaTree {
         this.choiceCounter = 0;
         const parsed = parseOrderedXsd(xsdContent);
-        const schema = parsed['xs:schema'] || parsed['xsd:schema'] || parsed['schema'];
+        const schema = this.getChildren(parsed, 'schema')[0];
 
         if (!schema) {
             throw new Error('Invalid XSD: no schema root element found');
@@ -37,7 +37,7 @@ export class SchemaParser {
                 ? 'qualified'
                 : 'unqualified';
 
-        const rootElements = this.getArray(schema['xs:element'] || schema['xsd:element'] || schema['element']);
+        const rootElements = this.getChildren(schema, 'element');
         if (rootElements.length === 0) {
             throw new Error('Invalid XSD: no root element found');
         }
@@ -182,9 +182,9 @@ export class SchemaParser {
         };
 
         // Parse annotation
-        const annotation = element['xs:annotation'] || element['xsd:annotation'];
+        const annotation = this.getChildren(element, 'annotation')[0];
         if (annotation) {
-            const doc = annotation['xs:documentation'] || annotation['xsd:documentation'];
+            const doc = this.getChildren(annotation, 'documentation')[0];
             if (doc) {
                 node.annotation = typeof doc === 'string' ? doc : doc['#text'];
             }
@@ -192,7 +192,7 @@ export class SchemaParser {
 
         // Parse complex type (inline or referenced)
         const skipExpansion = element['#skipExpansion'] === true;
-        const complexType = element['xs:complexType'] || element['xsd:complexType'];
+        const complexType = this.getChildren(element, 'complexType')[0];
         if (complexType && !skipExpansion) {
             this.parseComplexType(
                 complexType,
@@ -243,7 +243,7 @@ export class SchemaParser {
         }
 
         // Parse simple type restrictions
-        const simpleType = element['xs:simpleType'] || element['xsd:simpleType'];
+        const simpleType = this.getChildren(element, 'simpleType')[0];
         if (simpleType && !skipExpansion) {
             this.applySimpleType(simpleType, node, schema, namespaces);
         }
@@ -1002,7 +1002,7 @@ export class SchemaParser {
     }
 
     private findGlobalElement(name: string, schema: any): any | undefined {
-        const elements = this.getArray(schema['xs:element'] || schema['xsd:element'] || schema['element']);
+        const elements = this.getChildren(schema, 'element');
         return elements.find((el: any) => el['@_name'] === name);
     }
 

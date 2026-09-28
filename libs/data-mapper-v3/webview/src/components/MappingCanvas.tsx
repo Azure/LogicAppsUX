@@ -62,6 +62,7 @@ const accents: Record<string, string> = {
 };
 
 const functoidRadius = 32;
+const functoidScale = 0.5;
 const minZoom = 0.1;
 const maxZoom = 2;
 
@@ -94,7 +95,7 @@ function getLinkPoints(
         const functoid = page.functoids.find(item => item.id === link.sourceId);
         if (functoid) {
             source = {
-                x: offsetX + (functoid.x + originX + functoidRadius) * zoom - scrollLeft,
+                x: offsetX + (functoid.x + originX + functoidRadius * functoidScale) * zoom - scrollLeft,
                 y: offsetY + (functoid.y + originY) * zoom - scrollTop
             };
         }
@@ -109,7 +110,7 @@ function getLinkPoints(
         const functoid = page.functoids.find(item => item.id === link.targetId);
         if (functoid) {
             target = {
-                x: offsetX + (functoid.x + originX - functoidRadius) * zoom - scrollLeft,
+                x: offsetX + (functoid.x + originX - functoidRadius * functoidScale) * zoom - scrollLeft,
                 y: offsetY + (functoid.y + originY) * zoom - scrollTop
             };
         }
@@ -199,7 +200,7 @@ function FunctoidNode({
         <g
             className="functoid-node"
             data-id={functoid.id}
-            transform={`translate(${(functoid.x + originX) * zoom}, ${(functoid.y + originY) * zoom}) scale(${zoom})`}
+            transform={`translate(${(functoid.x + originX) * zoom}, ${(functoid.y + originY) * zoom}) scale(${zoom * functoidScale})`}
             onClick={event => {
                 event.stopPropagation();
                 clickTimer.current = window.setTimeout(
@@ -233,6 +234,7 @@ function FunctoidNode({
                 setDragTarget(target);
             }}
         >
+            <title>{functoid.name}</title>
             <circle
                 cx="3"
                 cy="3"

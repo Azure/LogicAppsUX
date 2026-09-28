@@ -226,6 +226,12 @@ async function run() {
     assert.match(document.querySelector('.notification-warning').textContent, /no input or output links/);
     const canvas = document.querySelector('biztalk-mapping-canvas');
     assert.ok(canvas.querySelector('.functoid-node'));
+    const compactNode = canvas.querySelector('.functoid-node');
+    assert.match(compactNode.getAttribute('transform'), /scale\(0\.5\)/);
+    assert.equal(Number(compactNode.querySelector('.functoid-body').getAttribute('r')) * 2 * 0.5, 32);
+    assert.equal(compactNode.querySelector('title').textContent, map.pages[0].functoids[0].name);
+    assert.equal(Number(compactNode.querySelector('.input-connector').getAttribute('cx')) * 0.5, -16);
+    assert.equal(Number(compactNode.querySelector('.output-connector').getAttribute('cx')) * 0.5, 16);
     canvas.querySelector('.functoid-node text')
         .dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
     await new Promise(resolve => setTimeout(resolve, 300));
@@ -242,7 +248,7 @@ async function run() {
     zoomIn.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
     await new Promise(resolve => setTimeout(resolve, 25));
     assert.equal(canvas.querySelector('[data-zoom]')?.textContent, '110%');
-    assert.match(canvas.querySelector('.functoid-node').getAttribute('transform'), /scale\(1\.1\)/);
+    assert.match(canvas.querySelector('.functoid-node').getAttribute('transform'), /scale\(0\.55\)/);
 
     const pathBeforeScroll = document.querySelector('.mapping-links-overlay [data-link-id] path').getAttribute('d');
     canvas.scrollLeft = 20;
@@ -527,6 +533,26 @@ async function run() {
     };
     const focusSnapshot = JSON.stringify(focusMap);
     const updateCount = messages.filter(message => message.type === 'update').length;
+    const assertCompactLinkEndpoints = () => {
+        const coordinates = id => {
+            const transform = focusCanvas.querySelector(`.functoid-node[data-id="${id}"]`).getAttribute('transform');
+            const [x, y, scale] = transform.match(/-?\d+(?:\.\d+)?(?:e[+-]?\d+)?/g).map(Number);
+            return { x: x - focusCanvas.scrollLeft, y: y - focusCanvas.scrollTop, radius: 32 * scale };
+        };
+        const near = coordinates('near');
+        const far = coordinates('far');
+        for (const [id, endpoint, expected] of [
+            ['ff', 0, { x: near.x + near.radius, y: near.y }],
+            ['ff', 1, { x: far.x - far.radius, y: far.y }],
+            ['fs', 0, { x: near.x + near.radius, y: near.y }],
+            ['sf', 1, { x: far.x - far.radius, y: far.y }]
+        ]) {
+            const circle = document.querySelectorAll(`.mapping-links-overlay [data-link-id="${id}"] circle`)[endpoint];
+            assert.ok(Math.abs(Number(circle.getAttribute('cx')) - expected.x) < 0.001);
+            assert.ok(Math.abs(Number(circle.getAttribute('cy')) - expected.y) < 0.001);
+        }
+    };
+    assertCompactLinkEndpoints();
     const selectConnection = async id => {
         const hitTarget = document.querySelector(`.mapping-links-overlay [data-link-id="${id}"] path`);
         assert.ok(hitTarget, `Connection ${id} remains selectable when its schema node is collapsed`);
@@ -551,6 +577,7 @@ async function run() {
     };
     assertFunctoidVisible('near');
     assertFunctoidVisible('far');
+    assertCompactLinkEndpoints();
     focusCanvas.scrollLeft = 900;
     focusCanvas.scrollTop = 900;
     await selectConnection('sf');
@@ -558,6 +585,7 @@ async function run() {
     assert.equal(focusCanvas.querySelector('[data-zoom]').dataset.zoom, '100');
     await selectConnection('fs');
     assertFunctoidVisible('near');
+    assertCompactLinkEndpoints();
     assert.equal(JSON.stringify(focusMap), focusSnapshot);
     assert.equal(messages.filter(message => message.type === 'update').length, updateCount);
     focusMap.pages[0].functoids[0].x = -300;

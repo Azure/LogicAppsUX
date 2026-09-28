@@ -1595,14 +1595,20 @@ ${parameters ? `${parameters}\n` : ''}${this.indentLines(templateBody, 4)}
     }
 
     private toXPathLiteral(value: string): string {
+        let literal: string;
         if (!value.includes("'")) {
-            return `'${value}'`;
+            literal = `'${value}'`;
+        } else if (!value.includes('"')) {
+            literal = `"${value}"`;
+        } else {
+            const parts = value.split("'").map(part => `'${part}'`);
+            literal = `concat(${parts.join(`, "'", `)})`;
         }
-        if (!value.includes('"')) {
-            return `"${value}"`;
-        }
-        const parts = value.split("'").map(part => `'${part}'`);
-        return `concat(${parts.join(`, "'", `)})`;
+        // Expressions are interpolated into XML attributes; preserve literal whitespace too.
+        return this.escapeXmlAttribute(literal)
+            .replace(/\r/g, '&#13;')
+            .replace(/\n/g, '&#10;')
+            .replace(/\t/g, '&#9;');
     }
 
     private pathToNodeXPath(srcPath: string, contextPath?: string): string {

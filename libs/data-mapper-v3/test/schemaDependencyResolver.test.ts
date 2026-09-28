@@ -3,6 +3,57 @@ import { resolveSchemaDependencies } from '../src/schema/schemaDependencyResolve
 import { SchemaParser } from '../src/schema/schemaParser';
 
 describe('schema dependency resolution', () => {
+    test.each(['xs', 'xsd', 'q1', ''])('parses schema constructs with the %j prefix', (prefix) => {
+        const tag = prefix ? `${prefix}:` : '';
+        const declaration = prefix ? `xmlns:${prefix}` : 'xmlns';
+        const typeNamespace = prefix === 'xs' ? '' : 'xmlns:xs="http://www.w3.org/2001/XMLSchema"';
+        const xml = `<${tag}schema ${declaration}="http://www.w3.org/2001/XMLSchema"
+            ${typeNamespace} xmlns:t="urn:test" targetNamespace="urn:test">
+          <${tag}element name="Leaf" type="xs:string"/>
+          <${tag}element name="Root"><${tag}annotation><${tag}documentation>Root documentation</${tag}documentation></${tag}annotation>
+            <${tag}complexType><${tag}sequence>
+              <${tag}element ref="t:Leaf"/>
+              <${tag}element name="Code"><${tag}simpleType><${tag}restriction base="xs:string">
+                <${tag}maxLength value="5"/>
+              </${tag}restriction></${tag}simpleType></${tag}element>
+            </${tag}sequence></${tag}complexType>
+          </${tag}element>
+        </${tag}schema>`;
+        const tree = new SchemaParser().parse(xml, 'prefixed.xsd', 'Root');
+        expect(tree.rootElement.name).toBe('Root');
+        expect(tree.rootElement.annotation).toBe('Root documentation');
+        expect(tree.rootElement.children.map(node => node.name)).toEqual(['Leaf', 'Code']);
+        expect(tree.rootElement.children[0].namespace).toBe('urn:test');
+        expect(tree.rootElement.children[1].restrictions?.maxLength).toBe(5);
+        expect(() => new SchemaParser().parse(xml, 'prefixed.xsd', 'Missing'))
+            .toThrow("root element 'Missing' was not found");
+    });
+
+    test('loads a q1:schema document with xs children and a differently prefixed imported schema', async () => {
+        const rootPath = path.resolve('schemas', 'prefixed.xsd');
+        const xml = `<q1:schema xmlns:q1="http://www.w3.org/2001/XMLSchema"
+            xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:imp="urn:imported">
+          <xs:import namespace="urn:imported" schemaLocation="imported.xsd"/>
+          <xs:element name="Root"><xs:complexType><xs:sequence>
+            <xs:element ref="imp:Leaf"/>
+          </xs:sequence></xs:complexType></xs:element>
+        </q1:schema>`;
+        const imported = `<other:schema xmlns:other="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="urn:imported">
+          <other:element name="Leaf"><other:complexType><other:sequence>
+            <other:element name="Value" type="other:string"/>
+          </other:sequence></other:complexType></other:element>
+        </other:schema>`;
+        const dependencies = await resolveSchemaDependencies(
+            xml, rootPath, async () => imported,
+            (containingPath, location) => path.resolve(path.dirname(containingPath), location)
+        );
+        const tree = new SchemaParser().parseWithImports(xml, rootPath, dependencies);
+        expect(tree.rootElement.children[0].name).toBe('Leaf');
+        expect(tree.rootElement.children[0].children[0].name).toBe('Value');
+        expect(tree.rootElement.children[0].namespace).toBe('urn:imported');
+    });
+
     test('resolves element-local type and ref prefixes without leaking overrides to siblings', async () => {
         const rootPath = path.resolve('schemas', 'root.xsd');
         const imported = `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:imported"

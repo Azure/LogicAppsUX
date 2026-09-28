@@ -5,7 +5,7 @@ A Logic App Data Mapper extension for Visual Studio Code with BizTalk-compatible
 ## Features
 
 - **Visual Schema Mapping** — Drag-and-drop mapping between source and target XSD schemas
-- **Functoid Palette** — Full suite of built-in functoids:
+- **Functoid Palette** — Built-in functoids:
   - **String**: Concatenate, Left, Right, Uppercase, Lowercase, Length, Substring, Trim, Contains
   - **Math**: Add, Subtract, Multiply, Divide, Modulo, Round, Floor, Ceiling, Abs, Max, Min
   - **Logical**: Equal, Not Equal, Greater/Less Than, AND, OR, NOT, IsNil, Value Mapping
@@ -36,6 +36,10 @@ The mapper surface expands to fit the active page's functoids. Horizontal and
 vertical scrollbars appear when the map extends beyond the visible surface;
 the scrollable area adjusts when zooming or changing pages.
 
+Canvas functoids use a compact 32-pixel body diameter at 100% zoom (half the
+previous size), with proportionally scaled labels and connectors. Hover over a
+functoid to see its full name. Saved node positions and canvas zoom are unchanged.
+
 Selecting a connection reveals its start and end points. Linked schema nodes
 are expanded and scrolled into view, while the mapper surface adjusts its zoom
 and scroll position to show the connected functoids. This changes the view only,
@@ -45,6 +49,18 @@ Legacy BTM links accept both `<Schema>` and `<schema>` wrapper paths while
 preserving the original saved paths. Schema elements can declare local namespace
 prefixes for imported types and element references, including overrides of
 inherited prefixes, so those connections resolve to the correct fields.
+XSD schema and element declarations also accept alternate prefixes such as
+`q1:schema`, including mixed prefixes and imported schemas; existing XSD files
+do not need their prefixes rewritten.
+
+## BizTalk compatibility
+
+The mapper is not yet a feature-complete replacement for the legacy BizTalk
+Mapper. See the [BizTalk compatibility gap report](docs/biztalk-compatibility-gaps.md)
+for the comparison tables, completed fixes, remaining correctness and authoring
+gaps, source evidence, and acceptance criteria. Registered functoids and
+successful XSLT generation do not establish full behavioral parity or
+input/output XSD validity.
 
 ## Installation
 
@@ -89,6 +105,13 @@ open leaves the pending replacement unapplied.
 String Find returns the first 1-based substring position, or `0` when no match
 exists. For example, `String Find("abc", "z")` returns `0`, while
 `String Find("abc", "b")` returns `2`. Matching remains case-sensitive.
+
+### Constant values in compiled XSLT
+
+Target values, schema defaults/fixed values, and functoid constants are escaped
+for both XPath string syntax and XML attributes. Quotes and XML-special
+characters remain literal data: for example, a value containing two double
+quotes compiles as `select="'&quot;&quot;'"`, without removing the quotes.
 
 ### Generated sample input
 
