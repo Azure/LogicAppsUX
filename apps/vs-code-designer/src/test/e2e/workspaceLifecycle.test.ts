@@ -42,6 +42,7 @@ import { captureCdpScreenshot, installFailureScreenshotHook } from './screenshot
 import { containsIgnoreCase, normalizeFsPath, uniqueName } from './testUtils';
 import { waitForVisibleDelay } from './visibleDelay';
 import { closeAllTabs, closeWebviewTabs, describeOpenTabs, getTabViewType, getWebviewTabs, waitForWebviewTab } from './webviewTabs';
+import { shouldDeferWorkspaceLifecycleCleanup } from './workspaceLifecycleCleanup';
 import {
   selectWorkbenchPromptOption,
   type WorkbenchPrompt,
@@ -229,7 +230,7 @@ suite('Generated Workspace Designer Lifecycle Tests', () => {
       return;
     }
 
-    if (process.env.LA_E2E_CLI_WORKSPACE_PARENT || process.env.LA_E2E_CLI_CREATE_WORKSPACE_PARENT) {
+    if (shouldDeferWorkspaceLifecycleCleanup(process.env)) {
       console.log('[workspace-lifecycle] Deferring temp workspace cleanup to runner-owned diagnostics capture.');
       return;
     }
