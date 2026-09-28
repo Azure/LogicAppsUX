@@ -68,6 +68,18 @@ const msnWeatherActionName = 'Get_current_weather';
 const msnWeatherConnectionReferenceName = 'msnweather';
 const msnWeatherLocation = '98058';
 const azuritePorts = [10000, 10001, 10002];
+const msnWeatherWarmupEnvKeys = [
+  'WORKFLOWS_SUBSCRIPTION_ID',
+  'WORKFLOWS_RESOURCE_GROUP_NAME',
+  'WORKFLOWS_LOCATION_NAME',
+  'WORKFLOWS_TENANT_ID',
+  'WORKFLOWS_MANAGEMENT_BASE_URI',
+  'LA_E2E_CLI_AZURE_SUBSCRIPTION_ID',
+  'LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME',
+  'LA_E2E_CLI_AZURE_LOCATION_NAME',
+  'LA_E2E_CLI_AZURE_TENANT_ID',
+  'LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL',
+];
 
 type WorkspaceAppType = 'standard' | 'customCode' | 'rulesEngine' | 'codeful';
 
@@ -557,11 +569,12 @@ async function openDesignerAndCreateWorkflow(
     let tab: vscode.Tab;
     if (tabOrCommandResult.kind === 'resolved') {
       const tabs = getWebviewTabs(designerViewType);
-      if (tabs.length <= tabsBefore) {
+      const matchingTab = getDesignerWebviewTabForWorkflow(createdWorkspace);
+      if (!matchingTab && tabs.length <= tabsBefore) {
         await handleDesignerQuickPickPrompts(5000, { useAzureConnectors });
         assert.fail(`openDesigner command completed without opening ${designerViewType}. Open tabs: ${describeOpenTabs()}`);
       }
-      tab = tabs[tabs.length - 1];
+      tab = matchingTab ?? tabs[tabs.length - 1];
     } else {
       tab = tabOrCommandResult.tab;
     }
@@ -628,11 +641,105 @@ async function openDesignerAndCreateWorkflow(
       assertMsnWeatherStandardWorkflow(createdWorkspace);
     }
   } catch (error) {
+    await logDesignerStartupDiagnostics(createdWorkspace);
     await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-designer-failure`);
     throw error;
   } finally {
     cdp?.dispose();
   }
+}
+
+function getDesignerWebviewTabForWorkflow(createdWorkspace: CreatedWorkspace): vscode.Tab | undefined {
+  const tabs = getWebviewTabs(designerViewType);
+  return (
+    tabs.find((tab) => tab.label.includes(createdWorkspace.wfName)) ?? tabs.find((tab) => tab.label.includes(createdWorkspace.appName))
+  );
+}
+
+async function logDesignerStartupDiagnostics(createdWorkspace: CreatedWorkspace): Promise<void> {
+  const designTimeDir = path.join(createdWorkspace.appDir, 'workflow-designtime');
+  const rootSettingsPath = path.join(createdWorkspace.appDir, 'local.settings.json');
+  const designTimeSettingsPath = path.join(designTimeDir, 'local.settings.json');
+  const designTimeHostPath = path.join(designTimeDir, 'host.json');
+  const envState = Object.fromEntries(msnWeatherWarmupEnvKeys.map((key) => [key, process.env[key] ? 'set' : 'unset']));
+
+  console.log(
+    `[workspace-lifecycle][designer-diagnostics] ${createdWorkspace.label}: paths=${JSON.stringify({
+      appDir: createdWorkspace.appDir,
+      workflowJsonPath: createdWorkspace.workflowJsonPath,
+      designTimeDirExists: fs.existsSync(designTimeDir),
+      designTimeSettingsExists: fs.existsSync(designTimeSettingsPath),
+      designTimeHostExists: fs.existsSync(designTimeHostPath),
+    })}`
+  );
+  console.log(`[workspace-lifecycle][designer-diagnostics] ${createdWorkspace.label}: env=${JSON.stringify(envState)}`);
+  console.log(
+    `[workspace-lifecycle][designer-diagnostics] ${createdWorkspace.label}: rootSettings=${JSON.stringify(
+      summarizeLocalSettings(rootSettingsPath)
+    )}`
+  );
+  console.log(
+    `[workspace-lifecycle][designer-diagnostics] ${createdWorkspace.label}: designTimeSettings=${JSON.stringify(
+      summarizeLocalSettings(designTimeSettingsPath)
+    )}`
+  );
+
+  if (fs.existsSync(designTimeHostPath)) {
+    console.log(
+      `[workspace-lifecycle][designer-diagnostics] ${createdWorkspace.label}: designTimeHost=${JSON.stringify(
+        readJsonFile<Record<string, unknown>>(designTimeHostPath)
+      )}`
+    );
+  }
+
+  await logLocalhostProbeResults([8000, 8001, 8002, 8003, 7071]);
+}
+
+function summarizeLocalSettings(settingsPath: string): Record<string, unknown> {
+  if (!fs.existsSync(settingsPath)) {
+    return { exists: false };
+  }
+
+  try {
+    const settings = readJsonFile<Record<string, any>>(settingsPath);
+    const values = settings.Values ?? {};
+    return {
+      exists: true,
+      keys: Object.keys(values).sort(),
+      azureConnectorKeys: Object.fromEntries(
+        ['WORKFLOWS_SUBSCRIPTION_ID', 'WORKFLOWS_RESOURCE_GROUP_NAME', 'WORKFLOWS_LOCATION_NAME', 'WORKFLOWS_TENANT_ID'].map((key) => [
+          key,
+          values[key] ? 'set' : values[key] === '' ? 'empty' : 'missing',
+        ])
+      ),
+    };
+  } catch (error) {
+    return { exists: true, error: error instanceof Error ? error.message : String(error) };
+  }
+}
+
+async function logLocalhostProbeResults(ports: number[]): Promise<void> {
+  const results = await Promise.all(
+    ports.map(async (port) => ({
+      port,
+      operationGroups: await probeLocalhostPath(port, '/runtime/webhooks/workflow/api/management/operationGroups'),
+    }))
+  );
+  console.log(`[workspace-lifecycle][designer-diagnostics] localhost=${JSON.stringify(results)}`);
+}
+
+function probeLocalhostPath(port: number, requestPath: string): Promise<string> {
+  return new Promise((resolve) => {
+    const request = http.get({ hostname: '127.0.0.1', port, path: requestPath, timeout: 2000 }, (response) => {
+      response.resume();
+      response.on('end', () => resolve(`status:${response.statusCode ?? 'unknown'}`));
+    });
+    request.on('timeout', () => {
+      request.destroy();
+      resolve('timeout');
+    });
+    request.on('error', (error: NodeJS.ErrnoException) => resolve(error.code ?? error.message));
+  });
 }
 
 function getDesignerTabOpenTimeoutMs(): number {
@@ -2391,7 +2498,7 @@ async function runMsnWeatherLifecycle(createdWorkspace: CreatedWorkspace): Promi
     await waitForGeneratedLogicAppFolder(createdWorkspace);
     if (settings) {
       ensureLocalSettingsForDesigner(createdWorkspace.appDir);
-      await openDesignerAndCreateWorkflow(createdWorkspace, { warmOnly: true });
+      await withMsnWeatherWarmupEnvironmentSuppressed(() => openDesignerAndCreateWorkflow(createdWorkspace, { warmOnly: true }));
       ensureLocalSettingsForMsnWeather(createdWorkspace.appDir, settings);
     } else {
       console.log(
@@ -2411,6 +2518,32 @@ async function runMsnWeatherLifecycle(createdWorkspace: CreatedWorkspace): Promi
     await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-msn-weather-response-verified`);
   } finally {
     await stopDebuggingAndTasks();
+  }
+}
+
+async function withMsnWeatherWarmupEnvironmentSuppressed<T>(callback: () => Promise<T>): Promise<T> {
+  const previousValues = new Map<string, string | undefined>();
+  for (const key of msnWeatherWarmupEnvKeys) {
+    previousValues.set(key, process.env[key]);
+    delete process.env[key];
+  }
+
+  console.log(
+    `[workspace-lifecycle][msn-weather] Suppressed Azure connector target env during design-time warm-up: ${msnWeatherWarmupEnvKeys.join(
+      ', '
+    )}.`
+  );
+
+  try {
+    return await callback();
+  } finally {
+    for (const [key, value] of previousValues) {
+      if (value === undefined) {
+        delete process.env[key];
+      } else {
+        process.env[key] = value;
+      }
+    }
   }
 }
 
