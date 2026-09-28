@@ -36,6 +36,12 @@ import { containsIgnoreCase, normalizeFsPath, uniqueName } from './testUtils';
 import { waitForVisibleDelay } from './visibleDelay';
 import { closeAllTabs, closeWebviewTabs, describeOpenTabs, getTabViewType, getWebviewTabs, waitForWebviewTab } from './webviewTabs';
 import {
+  selectWorkbenchPromptOption,
+  type WorkbenchPrompt,
+  type WorkbenchPromptContainer,
+  type WorkbenchPromptSelection,
+} from './workbenchPromptSelection';
+import {
   applyCodefulControlVariantToProject,
   assertCodefulControlVariant,
   assertConvertedNugetProject,
@@ -4119,108 +4125,65 @@ async function handleDotnetInstallToolPromptIfVisible(stage: string): Promise<bo
   );
 }
 
-async function handleWorkbenchPrompts(
-  prompts: Array<{ matchText: string; optionText: string; postClickDelayMs?: number }>,
-  timeoutMs = 20000
-): Promise<boolean> {
+async function handleWorkbenchPrompts(prompts: WorkbenchPrompt[], timeoutMs = 20000): Promise<boolean> {
   const cdp = await connectToVsCodeWorkbenchCdp();
   try {
     const deadline = Date.now() + timeoutMs;
     const noPromptDeadline = Date.now() + 1500;
     let handledPrompt = false;
     while (Date.now() < deadline) {
-      const result = await cdp.evaluate<{
-        visible: boolean;
-        text: string;
-        targetText?: string;
-        point?: { x: number; y: number };
-      }>(
+      const containers = await cdp.evaluate<WorkbenchPromptContainer[]>(
         undefined,
         `(() => {
           const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
-          const prompts = ${JSON.stringify(prompts)};
-          const promptContainers = Array.from(document.querySelectorAll(
+          const getPoint = (element) => {
+            element.scrollIntoView({ block: 'center', inline: 'center' });
+            const rect = element.getBoundingClientRect();
+            return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+          };
+          const getKind = (element) => {
+            if (element.classList.contains('quick-input-widget')) {
+              return 'quickInput';
+            }
+            if (element.classList.contains('notification-toast') || element.classList.contains('notification-list-item')) {
+              return 'notification';
+            }
+            return 'dialog';
+          };
+          return Array.from(document.querySelectorAll(
             '.quick-input-widget, .monaco-dialog-box, [role="dialog"], .notification-toast, .notification-list-item'
-          )).filter(isVisible);
-
-          for (const container of promptContainers) {
+          )).filter(isVisible).flatMap((container) => {
             if (!(container instanceof HTMLElement)) {
-              continue;
+              return [];
             }
 
             const inputText = Array.from(container.querySelectorAll('input'))
               .map((input) => (input.value || '') + ' ' + (input.getAttribute('placeholder') || ''))
               .join(' ');
             const containerText = ((container.innerText || container.textContent || '') + ' ' + inputText).replace(/\\s+/g, ' ').trim();
-
-            const rows = Array.from(container.querySelectorAll('.monaco-list-row, [role="option"]')).filter(isVisible);
-            const rowData = rows.map((row) => ({
-              element: row,
+            const rows = Array.from(container.querySelectorAll('.monaco-list-row, [role="option"]')).filter(isVisible).map((row) => ({
               text: (row.textContent || '').replace(/\\s+/g, ' ').trim(),
+              point: getPoint(row),
             }));
-            const prompt = prompts.find((candidate) => {
-              const lowerContainerText = containerText.toLowerCase();
-              const lowerMatchText = candidate.matchText.toLowerCase();
-              const lowerOptionText = candidate.optionText.toLowerCase();
-              return lowerContainerText.includes(lowerMatchText) || rowData.some((entry) => entry.text.toLowerCase().includes(lowerOptionText));
-            });
-            if (!prompt) {
-              continue;
-            }
-
-            const buttons = Array.from(container.querySelectorAll('a.monaco-button, button, .monaco-text-button')).filter(isVisible);
-            const buttonData = buttons.map((button) => ({
-              element: button,
+            const buttons = Array.from(container.querySelectorAll('a.monaco-button, button, .monaco-text-button')).filter(isVisible).map((button) => ({
               text: (button.textContent || '').replace(/\\s+/g, ' ').trim(),
+              point: getPoint(button),
             }));
-            const lowerOptionText = prompt.optionText.toLowerCase();
-            const targetButton =
-              buttonData.find((entry) => entry.text.toLowerCase() === lowerOptionText) ||
-              buttonData.find((entry) => entry.text.toLowerCase().includes(lowerOptionText) && entry.text.length < containerText.length);
-            if (targetButton) {
-              targetButton.element.scrollIntoView({ block: 'center', inline: 'center' });
-              const rect = targetButton.element.getBoundingClientRect();
-              return {
-                visible: true,
-                text: containerText,
-                targetText: targetButton.text,
-                point: { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 },
-              };
-            }
-
-            const targetRow = rowData.find((entry) => entry.text.toLowerCase().includes(prompt.optionText.toLowerCase()));
-            if (targetRow) {
-              targetRow.element.scrollIntoView({ block: 'center', inline: 'center' });
-              const rect = targetRow.element.getBoundingClientRect();
-              return {
-                visible: true,
-                text: containerText,
-                targetText: targetRow.text,
-                point: { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 },
-              };
-            }
-
-            return { visible: true, text: containerText };
-          }
-
-          return { visible: false, text: document.body?.innerText || '' };
+            return [{ kind: getKind(container), text: containerText, buttons, rows }];
+          });
         })()`
       );
+      const result: WorkbenchPromptSelection = selectWorkbenchPromptOption(prompts, containers);
 
       if (result.point) {
         console.log(`[workspace-lifecycle] Selecting workbench prompt option "${result.targetText}"`);
         await clickPoint(cdp, result.point);
         handledPrompt = true;
-        const handledPromptConfig = prompts.find(
-          (prompt) =>
-            result.targetText?.toLowerCase().includes(prompt.optionText.toLowerCase()) &&
-            result.text.toLowerCase().includes(prompt.matchText.toLowerCase())
-        );
-        if (handledPromptConfig?.postClickDelayMs) {
+        if (result.postClickDelayMs) {
           console.log(
-            `[workspace-lifecycle] Waiting ${handledPromptConfig.postClickDelayMs}ms after selecting "${result.targetText}" for "${handledPromptConfig.matchText}"`
+            `[workspace-lifecycle] Waiting ${result.postClickDelayMs}ms after selecting "${result.targetText}" for matched prompt`
           );
-          await new Promise((resolve) => setTimeout(resolve, handledPromptConfig.postClickDelayMs));
+          await new Promise((resolve) => setTimeout(resolve, result.postClickDelayMs));
         }
         await waitForWorkbenchPromptOptionToDismiss(cdp, result.targetText ?? '', 5000).catch(() => undefined);
         continue;
