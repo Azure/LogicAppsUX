@@ -129,9 +129,7 @@ export class MapperAppController {
             : pane?.classList.contains('target-tree') ? 'target' : undefined;
         if (side && this.state[`${side}Schema`]) {
             const clickedHeader = target?.closest('.schema-header');
-            const clickedNode = target?.closest('.tree-node');
-            const rootNode = pane?.querySelector('.tree-node');
-            if (!clickedHeader && clickedNode !== rootNode) {
+            if (!clickedHeader) {
                 document.querySelectorAll('.context-menu').forEach(menu => menu.remove());
                 return;
             }

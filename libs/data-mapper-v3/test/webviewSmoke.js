@@ -448,11 +448,7 @@ async function run() {
         pane.querySelector('.tree-node').dispatchEvent(
             new dom.window.MouseEvent('contextmenu', { bubbles: true, clientX: 20, clientY: 20 })
         );
-        replace = document.querySelector('.context-menu button');
-        assert.match(replace.textContent, new RegExp(`Replace ${side === 'source' ? 'Source' : 'Target'} Schema`));
-        replace.click();
-        assert.equal(messages.at(-1).type, 'loadSchema');
-        assert.equal(messages.at(-1).side, side);
+        assert.equal(document.querySelector('.context-menu'), null);
         pane.querySelector(`button[aria-label="Replace ${side} schema"]`).click();
         assert.equal(messages.at(-1).side, side);
         assert.equal(JSON.stringify(map), before);
