@@ -133,6 +133,8 @@ function buildSingleSummary(result) {
     '|---|---:|---:|---:|---:|---:|---|---|---|',
     `| \`${result.label}\` | \`${result.outcome}\` | ${result.passing} | ${result.failing} | ${result.pending} | ${result.passRate}% | \`vscode-e2e-cli-test-results-${result.label}\` | \`vscode-e2e-cli-log-${result.label}\` | \`vscode-e2e-cli-screenshots-${result.label}\` |`,
     '',
+    'The log artifact contains the raw runner log and VS Code profile logs under `vscode-logs/`, including extension host and output-channel logs when VS Code produced them.',
+    '',
   ];
 
   if (result.failing > 0 && result.failureExcerpt.length > 0) {

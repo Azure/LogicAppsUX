@@ -280,6 +280,7 @@ jobs:
 
           $resultRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/results'
           $screenshotsRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/screenshots/cli'
+          $vscodeLogsRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/vscode-logs/cli/${{ parameters.label }}'
 
           foreach ($extension in @('json', 'junit.xml', 'summary.md')) {
             $source = Join-Path $resultRoot "${{ parameters.label }}.$extension"
@@ -291,6 +292,12 @@ jobs:
           $log = Join-Path $resultRoot '${{ parameters.label }}.log'
           if (Test-Path $log) {
             Copy-Item $log -Destination $logDestination -Force
+          }
+
+          if (Test-Path $vscodeLogsRoot) {
+            $vscodeLogDestination = Join-Path $logDestination 'vscode-logs'
+            New-Item -ItemType Directory -Force -Path $vscodeLogDestination | Out-Null
+            Copy-Item (Join-Path $vscodeLogsRoot '*') -Destination $vscodeLogDestination -Recurse -Force -ErrorAction SilentlyContinue
           }
 
           if (Test-Path $screenshotsRoot) {

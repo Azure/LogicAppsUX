@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 /* global __dirname, console, process, require, setTimeout */
 const { execFileSync, spawn } = require('child_process');
+const { createHash } = require('crypto');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -549,25 +550,27 @@ function sanitizeEnvSegment(value) {
 }
 
 function runVscodeTest(args, options = {}) {
-  const userDataSuffix = process.env.LA_E2E_CLI_USER_DATA_SUFFIX ?? `run-${Date.now()}-${process.pid}`;
   const label = getLabelArg(args);
+  const userDataSuffix =
+    options.extraEnv?.LA_E2E_CLI_USER_DATA_SUFFIX ?? process.env.LA_E2E_CLI_USER_DATA_SUFFIX ?? `run-${Date.now()}-${process.pid}`;
   const deferredWorkspaceParent = getDeferredCreateWorkspaceParent(label);
   const outputFilter = createOutputFilter();
   const { command, commandArgs } = getVscodeTestCommand(args);
+  const childEnv = {
+    ...process.env,
+    LA_E2E_CLI_LABEL: label ?? '',
+    LA_E2E_CLI_USER_DATA_SUFFIX: userDataSuffix,
+    ...(options.visibleDelayMs ? { LA_E2E_CLI_VISIBLE_DELAY_MS: options.visibleDelayMs } : {}),
+    ...(deferredWorkspaceParent
+      ? {
+          LA_E2E_CLI_CREATE_WORKSPACE_PARENT: deferredWorkspaceParent,
+          LA_E2E_CLI_DEFER_WORKSPACE_CLEANUP: '1',
+        }
+      : {}),
+    ...(options.extraEnv ?? {}),
+  };
   const child = spawn(command, commandArgs, {
-    env: {
-      ...process.env,
-      LA_E2E_CLI_LABEL: label ?? '',
-      LA_E2E_CLI_USER_DATA_SUFFIX: userDataSuffix,
-      ...(options.visibleDelayMs ? { LA_E2E_CLI_VISIBLE_DELAY_MS: options.visibleDelayMs } : {}),
-      ...(deferredWorkspaceParent
-        ? {
-            LA_E2E_CLI_CREATE_WORKSPACE_PARENT: deferredWorkspaceParent,
-            LA_E2E_CLI_DEFER_WORKSPACE_CLEANUP: '1',
-          }
-        : {}),
-      ...(options.extraEnv ?? {}),
-    },
+    env: childEnv,
   });
 
   let output = '';
@@ -592,6 +595,7 @@ function runVscodeTest(args, options = {}) {
         process.stdout.write(remainingOutput);
       }
       await cleanupDeferredWorkspaceParent(deferredWorkspaceParent);
+      collectVscodeProfileLogs(label, childEnv);
 
       const matchedPattern = forbiddenOutputPatterns.find(({ pattern }) => pattern.test(output));
       if (matchedPattern) {
@@ -618,6 +622,48 @@ function getVscodeTestCommand(args) {
   }
 
   return { command: 'vscode-test', commandArgs: args };
+}
+
+function collectVscodeProfileLogs(label, env) {
+  const userDataDir = getVscodeUserDataDir(env);
+  const sourceLogsDir = path.join(userDataDir, 'logs');
+  const logRoot = process.env.LA_E2E_CLI_VSCODE_LOG_DIR ?? path.resolve(__dirname, '..', '.vscode-test', 'vscode-logs', 'cli');
+  const destination = path.join(
+    logRoot,
+    sanitizeEnvSegment(label ?? 'default'),
+    sanitizeEnvSegment(env.LA_E2E_CLI_USER_DATA_SUFFIX ?? 'default')
+  );
+
+  try {
+    fs.rmSync(destination, { recursive: true, force: true });
+    fs.mkdirSync(destination, { recursive: true });
+
+    if (!fs.existsSync(sourceLogsDir)) {
+      fs.writeFileSync(path.join(destination, 'no-vscode-profile-logs.txt'), `VS Code profile logs were not found at ${sourceLogsDir}\n`);
+      console.warn(`[vscode-test-cli] VS Code profile logs not found: ${sourceLogsDir}`);
+      return;
+    }
+
+    fs.cpSync(sourceLogsDir, path.join(destination, 'logs'), { recursive: true, force: true });
+    console.log(`[vscode-test-cli] Captured VS Code profile logs: ${sourceLogsDir} -> ${destination}`);
+  } catch (error) {
+    console.warn(`[vscode-test-cli] Unable to capture VS Code profile logs from ${sourceLogsDir}: ${String(error)}`);
+  }
+}
+
+function getVscodeUserDataDir(env) {
+  if (env.LA_E2E_CLI_USER_DATA_DIR?.trim()) {
+    return path.resolve(env.LA_E2E_CLI_USER_DATA_DIR);
+  }
+
+  const checkoutHash = createHash('sha1').update(path.resolve(__dirname, '..')).digest('hex').slice(0, 8);
+  const userDataSuffix = env.LA_E2E_CLI_USER_DATA_SUFFIX?.trim();
+
+  if (process.platform === 'win32') {
+    return path.resolve(__dirname, '..', '.vscode-test', userDataSuffix ? `user-data-${userDataSuffix}` : 'user-data');
+  }
+
+  return path.join(os.tmpdir(), `la-vscode-test-${checkoutHash}-${userDataSuffix || process.pid}`);
 }
 
 function createOutputFilter() {
