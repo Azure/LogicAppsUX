@@ -71,10 +71,14 @@ async function run() {
                 sourceSchema: schema,
                 targetSchema: schema,
                 functoids: [{
-                    id: 107,
-                    name: 'String Concatenate',
+                    id: 108,
+                    name: 'String Left Trim',
                     category: 'String',
-                    tooltip: 'Concatenate values'
+                    description: 'Removes leading whitespace',
+                    minInputs: 1,
+                    maxInputs: 1,
+                    hasOutput: true,
+                    tooltip: 'Trim leading whitespace'
                 }]
             }
         }
@@ -218,13 +222,38 @@ async function run() {
     await new Promise(resolve => setTimeout(resolve, 25));
 
     assert.equal(map.pages[0].functoids.length, 1);
+    const canvas = document.querySelector('biztalk-mapping-canvas');
+    sourceConnector.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+    canvas.querySelector('.input-connector')
+        .dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+    await new Promise(resolve => setTimeout(resolve, 25));
+    assert.equal(map.pages[0].links.length, 2);
+    assert.equal(
+        JSON.stringify(map.pages[0].functoids[0].inputLinks),
+        JSON.stringify([map.pages[0].links[1].id])
+    );
+    assert.equal(JSON.stringify(map.pages[0].functoids[0].parameters), JSON.stringify([{
+        index: 0,
+        type: 'link',
+        value: map.pages[0].links[1].id
+    }]));
+
+    const secondSourceConnector = Array.from(
+        document.querySelectorAll('biztalk-schema-tree.source-tree .tree-node')
+    ).find(node => node.dataset.path === '/Root/Value')?.querySelector('.node-connector');
+    secondSourceConnector.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+    canvas.querySelector('.input-connector')
+        .dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+    await new Promise(resolve => setTimeout(resolve, 25));
+    assert.equal(map.pages[0].links.length, 2);
+    assert.match(document.querySelector('#toolbar-status').textContent, /accepts 1 input/);
+
     const compileRequestsBefore = messages.filter(message => message.type === 'compile').length;
     document.querySelector('#btn-validate-compile')
         .dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
     assert.equal(messages.filter(message => message.type === 'compile').length, compileRequestsBefore + 1);
     assert.equal(messages.at(-1).data.pages[0].functoids.length, 1);
-    assert.match(document.querySelector('.notification-warning').textContent, /no input or output links/);
-    const canvas = document.querySelector('biztalk-mapping-canvas');
+    assert.match(document.querySelector('.notification-warning').textContent, /no output link/);
     assert.ok(canvas.querySelector('.functoid-node'));
     const compactNode = canvas.querySelector('.functoid-node');
     assert.match(compactNode.getAttribute('transform'), /scale\(0\.5\)/);
@@ -277,7 +306,7 @@ async function run() {
     canvas.querySelector('svg.mapping-svg').dispatchEvent(dropEvent);
     await new Promise(resolve => setTimeout(resolve, 25));
     assert.equal(map.pages[0].functoids.length, 2);
-    assert.ok(Math.abs(map.pages[0].functoids[1].x - (130 / 1.1)) < 0.001);
+    assert.ok(Math.abs(map.pages[0].functoids[1].x - (110 / 1.1)) < 0.001);
     assert.ok(Math.abs(map.pages[0].functoids[1].y - (76 / 1.1)) < 0.001);
 
     const initialX = map.pages[0].functoids[0].x;
@@ -311,6 +340,9 @@ async function run() {
     assert.ok(Math.abs(map.pages[0].functoids[0].y - edgeDragStartY - 30) < 0.001);
 
     const editableFunctoid = map.pages[0].functoids[0];
+    map.pages[0].links = map.pages[0].links.filter(link => link.targetId !== editableFunctoid.id);
+    editableFunctoid.inputLinks = [];
+    editableFunctoid.parameters = [];
     map.pages[0].links.push(
         {
             id: 'functoid-input-1',
@@ -394,7 +426,8 @@ async function run() {
     const surface = currentCanvas.querySelector('svg.mapping-svg');
     assert.equal(Number(surface.getAttribute('width')), 2480);
     assert.equal(Number(surface.getAttribute('height')), 1880);
-    assert.equal(dom.window.getComputedStyle(currentCanvas).overflow, 'auto');
+    assert.equal(dom.window.getComputedStyle(currentCanvas).overflowX, 'hidden');
+    assert.equal(dom.window.getComputedStyle(currentCanvas).overflowY, 'auto');
     assert.equal(dom.window.getComputedStyle(surface).minWidth, '100%');
     assert.equal(dom.window.getComputedStyle(surface).minHeight, '100%');
     currentCanvas.setZoom(0.5);
@@ -501,8 +534,8 @@ async function run() {
     await new Promise(resolve => setTimeout(resolve, 50));
     const focusCanvas = document.querySelector('biztalk-mapping-canvas');
     Object.defineProperties(focusCanvas, {
-        clientWidth: { value: 600 },
-        clientHeight: { value: 400 }
+        clientWidth: { value: 600, configurable: true },
+        clientHeight: { value: 400, configurable: true }
     });
     const panes = Array.from(document.querySelectorAll('biztalk-schema-tree'));
     for (const pane of panes) {
@@ -525,8 +558,16 @@ async function run() {
         if (this.classList.contains('schema-header')) {
             return { x: 0, y: 0, left: 0, top: 0, right: 260, bottom: 40, width: 260, height: 40 };
         }
+        if (this === focusCanvas) {
+            return { x: 260, y: 0, left: 260, top: 0, right: 860, bottom: 400, width: 600, height: 400 };
+        }
+        if (this.classList.contains('mapping-area')) {
+            return { x: 0, y: 0, left: 0, top: 0, right: 1120, bottom: 400, width: 1120, height: 400 };
+        }
         return originalRect.call(this);
     };
+    dom.window.dispatchEvent(new dom.window.Event('resize'));
+    await new Promise(resolve => setTimeout(resolve, 25));
     const focusSnapshot = JSON.stringify(focusMap);
     const updateCount = messages.filter(message => message.type === 'update').length;
     const assertCompactLinkEndpoints = () => {
@@ -549,6 +590,38 @@ async function run() {
         }
     };
     assertCompactLinkEndpoints();
+    const linkOverlay = document.querySelector('.mapping-links-overlay');
+    const clipRect = linkOverlay.querySelector('#mapping-canvas-link-clip rect');
+    assert.equal(linkOverlay.getAttribute('width'), '600');
+    assert.equal(linkOverlay.getAttribute('height'), '400');
+    assert.equal(linkOverlay.style.left, '260px');
+    assert.equal(linkOverlay.style.top, '0px');
+    assert.equal(clipRect.getAttribute('width'), '600');
+    assert.equal(clipRect.getAttribute('height'), '400');
+    assert.equal(dom.window.getComputedStyle(linkOverlay).overflow, 'hidden');
+    assert.equal(
+        linkOverlay.querySelector('.mapping-links-layer').getAttribute('clip-path'),
+        'url(#mapping-canvas-link-clip)'
+    );
+    const linkEndpointX = (id, endpoint) =>
+        Number(document.querySelectorAll(`.mapping-links-overlay [data-link-id="${id}"] circle`)[endpoint]
+            .getAttribute('cx'));
+    assert.equal(linkEndpointX('ss', 0), 0);
+    assert.equal(linkEndpointX('ss', 1), 600);
+    assert.equal(linkEndpointX('sf', 0), 0);
+    assert.equal(linkEndpointX('fs', 1), 600);
+
+    Object.defineProperty(focusCanvas, 'clientWidth', { value: 500, configurable: true });
+    dom.window.dispatchEvent(new dom.window.Event('resize'));
+    await new Promise(resolve => setTimeout(resolve, 25));
+    assert.equal(linkOverlay.getAttribute('width'), '500');
+    assert.equal(clipRect.getAttribute('width'), '500');
+    assert.equal(linkEndpointX('ss', 1), 500);
+    assert.equal(linkEndpointX('fs', 1), 500);
+    Object.defineProperty(focusCanvas, 'clientWidth', { value: 600, configurable: true });
+    dom.window.dispatchEvent(new dom.window.Event('resize'));
+    await new Promise(resolve => setTimeout(resolve, 25));
+
     const selectConnection = async id => {
         const hitTarget = document.querySelector(`.mapping-links-overlay [data-link-id="${id}"] path`);
         assert.ok(hitTarget, `Connection ${id} remains selectable when its schema node is collapsed`);
@@ -578,7 +651,8 @@ async function run() {
     focusCanvas.scrollTop = 900;
     await selectConnection('sf');
     assertFunctoidVisible('far');
-    assert.equal(focusCanvas.querySelector('[data-zoom]').dataset.zoom, '100');
+    assert.ok(Number(focusCanvas.querySelector('[data-zoom]').dataset.zoom) < 100);
+    assert.equal(focusCanvas.scrollLeft, 0);
     await selectConnection('fs');
     assertFunctoidVisible('near');
     assertCompactLinkEndpoints();
@@ -591,10 +665,16 @@ async function run() {
     await selectConnection('ff');
     assertFunctoidVisible('near');
     assertFunctoidVisible('far');
+    focusMap.pages[0].functoids[0].x = 200;
+    focusMap.pages[0].functoids[0].y = 200;
+    focusMap.pages[0].functoids[1].x = 400;
+    focusMap.pages[0].functoids[1].y = 300;
+    focusCanvas.renderWithPositions(new Map(), focusMap.pages[0]);
     focusCanvas.setZoom(1);
     focusCanvas.scrollLeft = 0;
     focusCanvas.scrollTop = 0;
     await new Promise(resolve => setTimeout(resolve, 25));
+    assert.equal(focusCanvas.querySelector('[data-zoom]').dataset.zoom, '100');
     focusCanvas.querySelector('.functoid-node[data-id="near"] .functoid-body').dispatchEvent(
         new dom.window.MouseEvent('mousedown', { bubbles: true, clientX: 80, clientY: 80 })
     );
@@ -605,8 +685,8 @@ async function run() {
         new dom.window.MouseEvent('mouseup', { bubbles: true, clientX: 100, clientY: 110 })
     );
     await new Promise(resolve => setTimeout(resolve, 25));
-    assert.equal(focusMap.pages[0].functoids[0].x, -280);
-    assert.equal(focusMap.pages[0].functoids[0].y, -170);
+    assert.equal(focusMap.pages[0].functoids[0].x, 220);
+    assert.equal(focusMap.pages[0].functoids[0].y, 230);
     dom.window.HTMLElement.prototype.getBoundingClientRect = originalRect;
 
     const legacyPath = '/Root/<Sequence>/Value/<Choice>/Inner/<Group:Fields>/Leaf';

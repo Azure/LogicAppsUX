@@ -10,6 +10,7 @@ import type { MapDocument, MapPage, MapLink, MapFunctoid, MapOptions, SchemaRefe
 import {
   LinkEndpointType,
   FunctoidCategory,
+  reconcilePageFunctoidLinks,
   ParameterType,
   ScriptType,
   DEFAULT_MAP_OPTIONS,
@@ -500,12 +501,16 @@ export class BtmSerializer {
     const pageArray = Array.isArray(pagesNode['Page']) ? pagesNode['Page'] : [pagesNode['Page']];
     return pageArray
       .filter((p: any) => p)
-      .map((page: any, idx: number) => ({
-        id: `page${idx + 1}`,
-        name: page['@_Name'] || `Page ${idx + 1}`,
-        links: this.parseLinks(page),
-        functoids: this.parseFunctoids(page, scriptTypePrecedence),
-      }));
+      .map((page: any, idx: number) => {
+        const parsedPage = {
+          id: `page${idx + 1}`,
+          name: page['@_Name'] || `Page ${idx + 1}`,
+          links: this.parseLinks(page),
+          functoids: this.parseFunctoids(page, scriptTypePrecedence),
+        };
+        reconcilePageFunctoidLinks(parsedPage);
+        return parsedPage;
+      });
   }
 
   private parseLinks(page: any): MapLink[] {

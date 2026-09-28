@@ -1,4 +1,20 @@
-import { fitLinkViewport, getCanvasBounds } from '../webview/src/components/canvasViewport';
+import {
+  constrainZoomToWidth,
+  fitLinkViewport,
+  getCanvasBounds,
+} from '../webview/src/components/canvasViewport';
+
+describe('canvas horizontal fit', () => {
+  test('caps zoom so the content fits within the available width', () => {
+    expect(constrainZoomToWidth(1200, 600, 2)).toBe(0.5);
+    expect(constrainZoomToWidth(400, 600, 2)).toBe(1.5);
+  });
+
+  test('preserves the requested zoom until layout dimensions are available', () => {
+    expect(constrainZoomToWidth(0, 600, 1.5)).toBe(1.5);
+    expect(constrainZoomToWidth(1200, 0, 1.5)).toBe(1.5);
+  });
+});
 
 describe('selected connector viewport', () => {
   const current = { zoom: 1, scrollLeft: 0, scrollTop: 0 };

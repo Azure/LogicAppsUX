@@ -14,7 +14,12 @@ import {
     MapEditorVsCodeApi,
     MapperViewState,
 } from '../../../src/protocol/mapEditorProtocol';
-import { LinkEndpointType, ParameterType } from '../../../src/model/mapModel';
+import {
+    getConfiguredFunctoidInputCount,
+    LinkEndpointType,
+    ParameterType,
+    reconcileMapFunctoidLinks
+} from '../../../src/model';
 
 type ScriptingConfigType = 'inlineCSharp' | 'inlineVbNet' | 'inlineJScript' | 'inlineXslt' | 'inlineXsltCallTemplate' | 'externalAssembly';
 
@@ -626,8 +631,36 @@ export class MapperAppController {
             return;
         }
 
+        if (target.type === 'functoid') {
+            const targetFunctoid = page.functoids.find(functoid => functoid.id === target.id);
+            const definition = this.state.functoids.find(item => item.id === targetFunctoid?.functoidId);
+            if (!targetFunctoid) {
+                this.rejectPendingLink('Target functoid was not found');
+                return;
+            }
+            if (definition && getConfiguredFunctoidInputCount(page, targetFunctoid) >= definition.maxInputs) {
+                this.rejectPendingLink(
+                    `${targetFunctoid.name} accepts ${definition.maxInputs} input${definition.maxInputs === 1 ? '' : 's'}`
+                );
+                return;
+            }
+        }
+        if (source.type === 'functoid') {
+            const sourceFunctoid = page.functoids.find(functoid => functoid.id === source.id);
+            const definition = this.state.functoids.find(item => item.id === sourceFunctoid?.functoidId);
+            if (!sourceFunctoid) {
+                this.rejectPendingLink('Source functoid was not found');
+                return;
+            }
+            if (definition?.hasOutput === false) {
+                this.rejectPendingLink(`${sourceFunctoid.name} does not provide an output`);
+                return;
+            }
+        }
+
+        const linkId = `link_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
         page.links.push({
-            id: `link_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+            id: linkId,
             sourceId: source.id,
             sourcePath: source.type === 'schemaNode' ? source.id : undefined,
             targetId: target.id,
@@ -645,6 +678,12 @@ export class MapperAppController {
         setTimeout(() => this.updateStatusMessage(''), 2000);
         this.updateMap(this.state.map);
         this.redrawLinks();
+    }
+
+    private rejectPendingLink(message: string): void {
+        this.pendingLink = null;
+        this.updateStatusMessage(message);
+        setTimeout(() => this.updateStatusMessage(''), 3000);
     }
 
     private getFunctoidName(id: string): string {
@@ -914,6 +953,7 @@ export class MapperAppController {
     }
 
     private updateMap(map: any): void {
+        reconcileMapFunctoidLinks(map);
         this.state.map = map;
         this.vscode.postMessage({ type: 'update', data: map });
     }
@@ -1062,12 +1102,24 @@ export class MapperAppController {
 
         // Check for dangling functoids
         for (const functoid of (page.functoids || [])) {
-            const hasInput = page.links.some((l: any) => l.targetId === functoid.id);
+            const definition = this.state.functoids.find(item => item.id === functoid.functoidId);
+            const configuredInputCount = getConfiguredFunctoidInputCount(page, functoid);
+            const hasInput = configuredInputCount > 0;
             const hasOutput = page.links.some((l: any) => l.sourceId === functoid.id);
+
+            if (definition && configuredInputCount < definition.minInputs) {
+                issues.push(
+                    `✗ Functoid "${functoid.name}" (${functoid.id}): requires at least ${definition.minInputs} input${definition.minInputs === 1 ? '' : 's'}, but ${configuredInputCount} configured`
+                );
+            } else if (definition && configuredInputCount > definition.maxInputs) {
+                issues.push(
+                    `✗ Functoid "${functoid.name}" (${functoid.id}): accepts at most ${definition.maxInputs} input${definition.maxInputs === 1 ? '' : 's'}, but ${configuredInputCount} configured`
+                );
+            }
 
             if (!hasInput && !hasOutput) {
                 issues.push(`⚠ Functoid "${functoid.name}" (${functoid.id}): not connected — no input or output links`);
-            } else if (!hasInput) {
+            } else if (!hasInput && !definition) {
                 const noInputOk = ['Date', 'Time', 'Date and Time', 'Iteration', 'Scripting'].includes(functoid.name);
                 if (!noInputOk) {
                     issues.push(`⚠ Functoid "${functoid.name}" (${functoid.id}): no input links`);

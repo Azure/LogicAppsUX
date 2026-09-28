@@ -9,6 +9,17 @@ export interface CanvasViewport {
   scrollTop: number;
 }
 
+export function constrainZoomToWidth(
+  contentWidth: number,
+  viewportWidth: number,
+  requestedZoom: number
+): number {
+  if (contentWidth <= 0 || viewportWidth <= 0) {
+    return requestedZoom;
+  }
+  return Math.min(requestedZoom, viewportWidth / contentWidth);
+}
+
 export function getCanvasBounds(nodes: readonly Point[]) {
   let left = 0;
   let top = 0;
@@ -28,7 +39,8 @@ export function fitLinkViewport(
   origin: { originX: number; originY: number },
   width: number,
   height: number,
-  current: CanvasViewport
+  current: CanvasViewport,
+  maximumZoom = 1
 ): CanvasViewport {
   if (nodes.length === 0 || width <= 32 || height <= 64) {
     return current;
@@ -46,7 +58,7 @@ export function fitLinkViewport(
     return current;
   }
   // Reserve room for the sticky zoom controls and both ends of each functoid.
-  const zoom = Math.min(1, (width - 32) / (right - left), (height - 64) / (bottom - top));
+  const zoom = Math.min(maximumZoom, (width - 32) / (right - left), (height - 64) / (bottom - top));
   return {
     zoom,
     scrollLeft: Math.max(0, ((left + right) * zoom) / 2 - width / 2),

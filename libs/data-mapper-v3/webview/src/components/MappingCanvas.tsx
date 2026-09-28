@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { createPortal, flushSync } from 'react-dom';
-import { fitLinkViewport, getCanvasBounds } from './canvasViewport';
+import { constrainZoomToWidth, fitLinkViewport, getCanvasBounds } from './canvasViewport';
 import type { MapFunctoid, MapLink, MapPage } from '../../../src/model/mapModel';
 import type { MapperViewState } from '../../../src/protocol/mapEditorProtocol';
 
@@ -308,6 +308,11 @@ function MappingCanvasView({
     const zoomPercent = Math.round(zoom * 10000) / 100;
     const mappingArea = host.closest('.mapping-area');
     const bounds = dragBounds.current ?? getCanvasBounds(page?.functoids ?? []);
+    const canvasWidth = host.clientWidth;
+    const canvasHeight = host.clientHeight;
+    const maximumZoom = constrainZoomToWidth(bounds.width, canvasWidth, maxZoom);
+    const minimumZoom = Math.min(minZoom, maximumZoom);
+    const surfaceWidth = Math.ceil(bounds.width * zoom);
 
     const finishDrag = (): void => {
         const target = dragTarget.current;
@@ -328,7 +333,7 @@ function MappingCanvasView({
             <svg
                 ref={svgRef}
                 className="mapping-svg"
-                width={Math.ceil(bounds.width * zoom)}
+                width={canvasWidth > 0 ? Math.min(canvasWidth, surfaceWidth) : surfaceWidth}
                 height={Math.ceil(bounds.height * zoom)}
                 onClick={() => callbacks.onDeselect?.()}
                 onMouseMove={event => {
@@ -341,7 +346,14 @@ function MappingCanvasView({
                         return;
                     }
                     const rect = svgRef.current.getBoundingClientRect();
-                    functoid.x = (event.clientX - rect.left) / zoom - bounds.originX - target.offsetX;
+                    const nextX = (event.clientX - rect.left) / zoom - bounds.originX - target.offsetX;
+                    if (canvasWidth > 0) {
+                        const leftLimit = -bounds.originX + functoidRadius * functoidScale;
+                        const rightLimit = canvasWidth / zoom - bounds.originX - functoidRadius * functoidScale;
+                        functoid.x = Math.min(rightLimit, Math.max(leftLimit, nextX));
+                    } else {
+                        functoid.x = nextX;
+                    }
                     functoid.y = (event.clientY - rect.top) / zoom - bounds.originY - target.offsetY;
                     setCurrentDrag({ ...target });
                 }}
@@ -362,7 +374,13 @@ function MappingCanvasView({
                     }
                     try {
                         const rect = host.getBoundingClientRect();
-                        const x = (event.clientX - rect.left + host.scrollLeft) / zoom - bounds.originX;
+                        const rawX = (event.clientX - rect.left) / zoom - bounds.originX;
+                        const x = canvasWidth > 0
+                            ? Math.min(
+                                canvasWidth / zoom - bounds.originX - functoidRadius * functoidScale,
+                                Math.max(-bounds.originX + functoidRadius * functoidScale, rawX)
+                            )
+                            : rawX;
                         const y = (event.clientY - rect.top + host.scrollTop) / zoom - bounds.originY;
                         callbacks.onFunctoidDrop?.(JSON.parse(data), x, y);
                     } catch {
@@ -395,8 +413,8 @@ function MappingCanvasView({
                 <button
                     type="button"
                     title="Zoom Out"
-                    disabled={zoom <= minZoom}
-                    onClick={() => onZoomChange(Math.max(minZoom, zoom - 0.1))}
+                    disabled={zoom <= minimumZoom}
+                    onClick={() => onZoomChange(Math.max(minimumZoom, zoom - 0.1))}
                 >
                     −
                 </button>
@@ -404,18 +422,26 @@ function MappingCanvasView({
                 <button
                     type="button"
                     title="Zoom In"
-                    disabled={zoom >= maxZoom}
-                    onClick={() => onZoomChange(Math.min(maxZoom, zoom + 0.1))}
+                    disabled={zoom >= maximumZoom}
+                    onClick={() => onZoomChange(Math.min(maximumZoom, zoom + 0.1))}
                 >
                     +
                 </button>
-                <button type="button" title="Reset Zoom" onClick={() => onZoomChange(1)}>
+                <button type="button" title="Reset Zoom" onClick={() => onZoomChange(Math.min(1, maximumZoom))}>
                     1:1
                 </button>
             </div>
             {mappingArea && createPortal(
-                <svg className="mapping-links-overlay">
+                <svg
+                    className="mapping-links-overlay"
+                    width={canvasWidth}
+                    height={canvasHeight}
+                    style={{ left: offsetX, top: offsetY }}
+                >
                     <defs>
+                        <clipPath id="mapping-canvas-link-clip">
+                            <rect width={canvasWidth} height={canvasHeight} />
+                        </clipPath>
                         <marker
                             id="arrowhead"
                             markerWidth="8"
@@ -427,30 +453,45 @@ function MappingCanvasView({
                             <polygon points="0 0, 8 3, 0 6" fill="#4fc1ff" />
                         </marker>
                     </defs>
-                    {page?.links.map(link => {
-                        const points = getLinkPoints(
-                            link,
-                            positions,
-                            page,
-                            offsetX,
-                            offsetY,
-                            host.scrollLeft,
-                            host.scrollTop,
-                            zoom,
-                            bounds.originX,
-                            bounds.originY
-                        );
-                        return points ? (
-                            <LinkPath
-                                key={link.id}
-                                link={link}
-                                from={points.source}
-                                to={points.target}
-                                selected={state.selectedLink === link.id}
-                                onSelect={() => callbacks.onLinkSelect?.(link.id)}
-                            />
-                        ) : null;
-                    })}
+                    <g className="mapping-links-layer" clipPath="url(#mapping-canvas-link-clip)">
+                        {page?.links.map(link => {
+                            const points = getLinkPoints(
+                                link,
+                                positions,
+                                page,
+                                offsetX,
+                                offsetY,
+                                host.scrollLeft,
+                                host.scrollTop,
+                                zoom,
+                                bounds.originX,
+                                bounds.originY
+                            );
+                            if (!points) {
+                                return null;
+                            }
+                            const source = {
+                                x: link.sourceType === 'schemaNode' ? 0 : points.source.x - offsetX,
+                                y: points.source.y - offsetY
+                            };
+                            const target = {
+                                x: link.targetType === 'schemaNode'
+                                    ? canvasWidth
+                                    : points.target.x - offsetX,
+                                y: points.target.y - offsetY
+                            };
+                            return (
+                                <LinkPath
+                                    key={link.id}
+                                    link={link}
+                                    from={source}
+                                    to={target}
+                                    selected={state.selectedLink === link.id}
+                                    onSelect={() => callbacks.onLinkSelect?.(link.id)}
+                                />
+                            );
+                        })}
+                    </g>
                 </svg>,
                 mappingArea
             )}
@@ -499,11 +540,18 @@ export class MappingCanvas extends HTMLElement {
         const areaRect = mappingArea?.getBoundingClientRect();
         this.offsetX = areaRect ? canvasRect.left - areaRect.left : 0;
         this.offsetY = areaRect ? canvasRect.top - areaRect.top : 0;
+        const bounds = getCanvasBounds(page?.functoids ?? []);
+        this.zoom = constrainZoomToWidth(bounds.width, this.clientWidth, this.zoom);
+        this.scrollLeft = 0;
         this.renderReact();
     }
 
     public setZoom(zoom: number): void {
-        this.zoom = Math.min(maxZoom, Math.max(minZoom, zoom));
+        const bounds = getCanvasBounds(this.page?.functoids ?? []);
+        const maximumZoom = constrainZoomToWidth(bounds.width, this.clientWidth, maxZoom);
+        const minimumZoom = Math.min(minZoom, maximumZoom);
+        this.zoom = Math.min(maximumZoom, Math.max(minimumZoom, zoom));
+        this.scrollLeft = 0;
         this.renderReact();
     }
 
@@ -517,20 +565,24 @@ export class MappingCanvas extends HTMLElement {
             || (link.targetType === 'functoid' && node.id === link.targetId)
         );
         const bounds = getCanvasBounds(this.page.functoids);
+        const maximumZoom = constrainZoomToWidth(bounds.width, this.clientWidth, 1);
         // A zoom change can add/remove scrollbars and change the usable viewport.
         for (let pass = 0; pass < 2; pass++) {
             const viewport = fitLinkViewport(nodes, bounds, this.clientWidth, this.clientHeight, {
                 zoom: this.zoom, scrollLeft: this.scrollLeft, scrollTop: this.scrollTop
-            });
+            }, maximumZoom);
             this.zoom = viewport.zoom;
             flushSync(() => this.renderReact());
-            this.scrollLeft = viewport.scrollLeft;
+            this.scrollLeft = 0;
             this.scrollTop = viewport.scrollTop;
         }
         this.renderReact();
     }
 
     private readonly handleScroll = (): void => {
+        if (this.scrollLeft !== 0) {
+            this.scrollLeft = 0;
+        }
         this.renderReact();
     };
 

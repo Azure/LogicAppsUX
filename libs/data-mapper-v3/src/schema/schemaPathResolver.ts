@@ -34,15 +34,33 @@ interface XPathStep {
 
 function xpathSteps(path: string): XPathStep[] | undefined {
     if (!path.includes('local-name()')) { return undefined; }
-    const pattern = /\/(@?)\*\[local-name\(\)='([^']+)'(?:\s+and\s+namespace-uri\(\)='([^']*)')?(?:\s+and\s+position\(\)='(\d+)')?\]/gy;
+    const pattern = /\/(@?)\*\[([^\]]+)\](?:\[position\(\)='(\d+)'\])?/gy;
     const steps: XPathStep[] = [];
     let offset = 0;
     while (offset < path.length) {
         pattern.lastIndex = offset;
         const match = pattern.exec(path);
         if (!match) { return undefined; }
-        if (match[2] !== '<Schema>' && match[2] !== '<schema>') {
-            steps.push({ name: match[1] + match[2], namespace: match[3], position: match[4] });
+        let name: string | undefined;
+        let namespace: string | undefined;
+        let position = match[3];
+        for (const predicate of match[2].split(/\s+and\s+/)) {
+            const localName = /^local-name\(\)='([^']+)'$/.exec(predicate);
+            const namespaceUri = /^namespace-uri\(\)='([^']*)'$/.exec(predicate);
+            const inlinePosition = /^position\(\)='(\d+)'$/.exec(predicate);
+            if (localName && !name) {
+                name = localName[1];
+            } else if (namespaceUri && namespace === undefined) {
+                namespace = namespaceUri[1];
+            } else if (inlinePosition && !position) {
+                position = inlinePosition[1];
+            } else {
+                return undefined;
+            }
+        }
+        if (!name) { return undefined; }
+        if (name !== '<Schema>' && name !== '<schema>') {
+            steps.push({ name: match[1] + name, namespace, position });
         }
         offset = pattern.lastIndex;
     }

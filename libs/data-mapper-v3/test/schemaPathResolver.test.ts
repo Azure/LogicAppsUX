@@ -3,7 +3,13 @@ import { SchemaPathResolver, simplifySchemaPath } from '../src/schema/schemaPath
 import { BtmSerializer } from '../src/schema/btmSerializer';
 import { InstanceGenerator } from '../src/schema/instanceGenerator';
 import { XsltCompiler } from '../src/compiler/xsltCompiler';
-import { DEFAULT_MAP_OPTIONS, LinkEndpointType, type MapDocument } from '../src/model';
+import {
+    DEFAULT_MAP_OPTIONS,
+    FunctoidCategory,
+    LinkEndpointType,
+    type MapDocument,
+    ParameterType
+} from '../src/model';
 import { replaceSchema } from '../src/schema/schemaReplacement';
 import { applyMapPatches, createMapPatchValidationContext } from '../src/copilot/mapPrompt';
 
@@ -74,6 +80,8 @@ describe('legacy schema paths', () => {
     test('keeps complete TOM predicates and rejects incomplete decoding', () => {
         const raw = "/*[local-name()='<Schema>']/*[local-name()='Root']/*[local-name()='<Sequence>' and position()='2']/*[local-name()='Value']";
         expect(simplifySchemaPath(raw)).toBe('/Root/<Sequence>[2]/Value');
+        const separatePosition = "/*[local-name()='<Schema>']/*[namespace-uri()='urn:test' and local-name()='Root']/*[local-name()='<Sequence>'][position()='2']/*[local-name()='Value']";
+        expect(simplifySchemaPath(separatePosition)).toBe('/Root/<Sequence>[2]/Value');
         const invalid = "/*[local-name()='Root']/unsupported/*[local-name()='Value']";
         expect(simplifySchemaPath(invalid)).toBe(invalid);
         expect(resolver.resolve(invalid)).toBeUndefined();
@@ -154,10 +162,51 @@ describe('legacy schema paths', () => {
         map.targetValues = { '/Root/A': 'a', '/Root/B': 'b' };
         expect(new XsltCompiler().compile(map, schema, schema).errors).toEqual([]);
         map.targetValues['/Root/C'] = 'c';
-        expect(new XsltCompiler().compile(map, schema, schema).errors.some(error => /multiple branches/.test(error.message))).toBe(true);
+        let result = new XsltCompiler().compile(map, schema, schema);
+        expect(result.errors.some(error => /multiple branches/.test(error.message))).toBe(false);
+        expect(result.warnings.some(warning => /may generate multiple branches/.test(warning.message))).toBe(true);
         delete map.targetValues['/Root/C'];
         map.targetValues['/Root/D'] = 'd';
-        expect(new XsltCompiler().compile(map, schema, schema).errors.some(error => /multiple branches/.test(error.message))).toBe(true);
+        result = new XsltCompiler().compile(map, schema, schema);
+        expect(result.errors.some(error => /multiple branches/.test(error.message))).toBe(false);
+        expect(result.warnings.some(warning => /may generate multiple branches/.test(warning.message))).toBe(true);
+        map.targetValues = {};
+        map.pages[0].functoids = ['conditionalA', 'conditionalD'].map((id, index) => ({
+            id,
+            functoidId: 375,
+            category: FunctoidCategory.Logical,
+            name: 'Value Mapping',
+            x: 0,
+            y: index * 50,
+            inputLinks: [],
+            outputLinks: [],
+            parameters: [
+                { index: 0, type: ParameterType.Constant, value: index === 0 ? 'true' : 'false' },
+                { index: 1, type: ParameterType.Constant, value: id }
+            ]
+        }));
+        map.pages[0].links = [
+            {
+                id: 'conditional-a',
+                sourceId: 'conditionalA',
+                targetId: '/Root/A',
+                targetPath: '/Root/A',
+                sourceType: LinkEndpointType.Functoid,
+                targetType: LinkEndpointType.SchemaNode
+            },
+            {
+                id: 'conditional-d',
+                sourceId: 'conditionalD',
+                targetId: '/Root/D',
+                targetPath: '/Root/D',
+                sourceType: LinkEndpointType.Functoid,
+                targetType: LinkEndpointType.SchemaNode
+            }
+        ];
+        result = new XsltCompiler().compile(map, schema, schema);
+        expect(result.success).toBe(true);
+        expect(result.errors).toEqual([]);
+        expect(result.warnings.some(warning => /conditionally mapped branches/.test(warning.message))).toBe(true);
         const xml = new InstanceGenerator().generate(schema);
         expect(xml).toContain('<A>');
         expect(xml).toContain('<B>');

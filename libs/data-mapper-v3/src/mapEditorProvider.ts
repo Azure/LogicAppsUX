@@ -17,6 +17,7 @@ import { CompilerWorkerClient } from './worker/compilerWorkerClient';
 import type { CompileResult } from './compiler/xsltCompiler';
 import type { SchemaTree } from './model/schemaModel';
 import { resolveSchemaDependencies } from './schema/schemaDependencyResolver';
+import { resolveLooseSchemaReference } from './schema/schemaReferenceResolver';
 import { replaceSchema } from './schema/schemaReplacement';
 import {
   applyMapPatches,
@@ -90,7 +91,11 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
     this.logger.info('Loading source schema and dependencies.');
     try {
       if (mapDoc.sourceSchema.location) {
-        const schemaPath = this.resolveSchemaPath(document.uri, mapDoc.sourceSchema.location);
+        const schemaPath = this.resolveSchemaPath(
+          document.uri,
+          mapDoc.sourceSchema.location,
+          mapDoc.sourceSchema.rootName
+        );
         const schemaContent = await this.readFile(schemaPath);
         if (schemaContent) {
           const importedSchemas = await this.resolveSchemaDependencies(schemaContent, schemaPath);
@@ -119,7 +124,11 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
     this.logger.info(`Source schema ${sourceSchemaTree ? 'loaded' : 'unavailable'}. Loading target schema and dependencies.`);
     try {
       if (mapDoc.targetSchema.location) {
-        const schemaPath = this.resolveSchemaPath(document.uri, mapDoc.targetSchema.location);
+        const schemaPath = this.resolveSchemaPath(
+          document.uri,
+          mapDoc.targetSchema.location,
+          mapDoc.targetSchema.rootName
+        );
         const schemaContent = await this.readFile(schemaPath);
         if (schemaContent) {
           const importedSchemas = await this.resolveSchemaDependencies(schemaContent, schemaPath);
@@ -1232,7 +1241,7 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
 
   private async loadSchemaTree(reference: MapDocument['sourceSchema'], documentUri: vscode.Uri): Promise<SchemaTree | undefined> {
     if (reference.location) {
-      const schemaPath = this.resolveSchemaPath(documentUri, reference.location);
+      const schemaPath = this.resolveSchemaPath(documentUri, reference.location, reference.rootName);
       const schemaContent = await this.readFile(schemaPath);
       if (!schemaContent) {
         throw new Error(`Schema file not found: ${reference.location}`);
@@ -1247,14 +1256,13 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
     return undefined;
   }
 
-  private resolveSchemaPath(docUri: vscode.Uri, schemaLocation: string): string {
+  private resolveSchemaPath(docUri: vscode.Uri, schemaLocation: string, rootName?: string): string {
     if (!schemaLocation) {
       return '';
     }
     if (path.isAbsolute(schemaLocation)) {
       return schemaLocation;
     }
-    const fs = require('fs');
     const docDir = path.dirname(docUri.fsPath);
 
     // Try exact match first
@@ -1364,8 +1372,58 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
       }
     }
 
+    const collectCandidatePaths = (directories: string[]): string[] => directories.flatMap((directory) => {
+      try {
+        return fs
+          .readdirSync(directory, { withFileTypes: true })
+          .filter((entry) => entry.isFile() && entry.name.toLowerCase().endsWith('.xsd'))
+          .map((entry) => path.join(directory, entry.name));
+      } catch {
+        return [];
+      }
+    });
+
+    const localMatch = resolveLooseSchemaReference(
+      schemaLocation,
+      collectCandidatePaths([docDir]),
+      rootName,
+      (candidatePath) => this.readFileSync(candidatePath)
+    );
+    if (localMatch) {
+      return localMatch;
+    }
+
+    const looseMatch = resolveLooseSchemaReference(
+      schemaLocation,
+      collectCandidatePaths(siblingDirs),
+      rootName,
+      (candidatePath) => this.readFileSync(candidatePath)
+    );
+    if (looseMatch) {
+      return looseMatch;
+    }
+
     // Fallback
     return path.resolve(docDir, schemaLocation);
+  }
+
+  private readFileSync(filePath: string): string | undefined {
+    try {
+      const buffer = fs.readFileSync(filePath);
+      if (buffer.length >= 2 && buffer[0] === 0xff && buffer[1] === 0xfe) {
+        return buffer.toString('utf16le').replace(/^\uFEFF/, '');
+      }
+      if (buffer.length >= 2 && buffer[0] === 0xfe && buffer[1] === 0xff) {
+        const swapped = Buffer.from(buffer);
+        for (let index = 0; index < swapped.length - 1; index += 2) {
+          [swapped[index], swapped[index + 1]] = [swapped[index + 1], swapped[index]];
+        }
+        return swapped.toString('utf16le').replace(/^\uFEFF/, '');
+      }
+      return buffer.toString('utf8').replace(/^\uFEFF/, '');
+    } catch {
+      return undefined;
+    }
   }
 
   private async readFile(filePath: string): Promise<string | undefined> {

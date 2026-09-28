@@ -539,13 +539,36 @@ export class XsltCompiler {
         for (const branches of choiceGroups.values()) {
             const mapped = [...branches.values()].filter(children => children.some(child => this.hasAnyMapping(child, page)));
             if (mapped.length > 1) {
-                this.errors.push({
-                    message: `Choice under '${node.name}' has mappings to multiple branches: ${mapped.map(children => children.map(child => child.name).join('/')).join(', ')}`,
+                const conditional = mapped.every(children => this.choiceBranchIsConditional(children, page));
+                this.warnings.push({
+                    message: conditional
+                        ? `Choice under '${node.name}' has conditionally mapped branches: ${mapped.map(children => children.map(child => child.name).join('/')).join(', ')}`
+                        : `Choice under '${node.name}' may generate multiple branches: ${mapped.map(children => children.map(child => child.name).join('/')).join(', ')}`,
                     elementId: node.path
                 });
             }
         }
         node.children.forEach(child => this.validateTargetSchemaSemantics(child, page));
+    }
+
+    private choiceBranchIsConditional(children: SchemaNode[], page: MapPage): boolean {
+        const branchPaths = children.flatMap(child => this.schemaNodePaths(child));
+        if (branchPaths.some(path => this.currentMap?.targetValues?.[path] !== undefined)) {
+            return false;
+        }
+        const links = page.links.filter(link =>
+            link.targetType === LinkEndpointType.SchemaNode &&
+            branchPaths.includes(link.targetPath || '')
+        );
+        return links.length > 0 && links.every(link => this.linkHasConditionalSource(link, page));
+    }
+
+    private schemaNodePaths(node: SchemaNode): string[] {
+        return [
+            node.path,
+            ...node.attributes.map(attribute => `${node.path}/@${attribute.name}`),
+            ...node.children.flatMap(child => this.schemaNodePaths(child))
+        ];
     }
 
     private validateLoopingFunctoid(functoid: MapFunctoid, page: MapPage): void {
