@@ -165,6 +165,10 @@ interface LifecyclePhaseEvent {
 }
 
 const msnWeatherLifecyclePhaseOrder = [
+  'Requestinserted',
+  'MsnWeatherDiscoveryready',
+  'MsnWeatherinserted',
+  'MsnWeatherconfigured',
   'connectionReady',
   'Responseinserted',
   'ResponseBodyready',
@@ -186,6 +190,18 @@ interface TaskEvent {
   processId: number | null;
   exitCode: number | null;
   timestamp: string;
+}
+
+interface DesignerClickResult {
+  ok: boolean;
+  reason?: string;
+  text?: string;
+  point?: { x: number; y: number };
+  rect?: { left: number; top: number; width: number; height: number };
+  target?: Record<string, unknown>;
+  hitTarget?: Record<string, unknown>;
+  viewport?: { width: number; height: number; devicePixelRatio: number; frameUrl?: string; title?: string };
+  candidates?: unknown[];
 }
 
 interface TaskRecorder {
@@ -830,7 +846,9 @@ async function openDesignerAndCreateWorkflow(
       })}`
     );
     if (initialCanvasText.includes('Add a trigger')) {
-      await addRequestTriggerThroughDesigner(designerCdp, contextId, createdWorkspace.label);
+      await runLifecyclePhase(createdWorkspace, 'Requestinserted', () =>
+        addRequestTriggerThroughDesigner(designerCdp, contextId, createdWorkspace.label)
+      );
       if (options.includeMsnWeather) {
         await addMsnWeatherActionThroughDesigner(designerCdp, contextId, createdWorkspace);
         await runLifecyclePhase(createdWorkspace, 'Responseinserted', () =>
@@ -990,10 +1008,12 @@ async function logMsnWeatherDesignerOpenDiagnostics(stage: string, createdWorksp
   );
 
   const workbenchText = await getWorkbenchText().catch((error) => `Unable to read workbench text: ${String(error)}`);
-  console.log(`[workspace-lifecycle][msn-weather][${stage}] workbenchTextTail=${JSON.stringify(workbenchText.slice(-3000))}`);
+  console.log(
+    `[workspace-lifecycle][msn-weather][${stage}] workbenchTextTail=${JSON.stringify(redactDiagnosticString(workbenchText.slice(-3000)))}`
+  );
 
   for (const log of findRelevantVsCodeLogFiles().slice(-12)) {
-    console.log(`[workspace-lifecycle][msn-weather][${stage}] logTail ${log}:\n${tailFile(log, 4000)}`);
+    console.log(`[workspace-lifecycle][msn-weather][${stage}] logTail ${log}:\n${redactDiagnosticString(tailFile(log, 4000))}`);
   }
 
   await logLocalhostProbeResults([8000, 8001, 8002, 8003, 7071]);
@@ -1144,29 +1164,36 @@ async function addResponseActionThroughDesigner(cdp: CdpEvaluator, contextId: nu
 
 async function addMsnWeatherActionThroughDesigner(cdp: CdpEvaluator, contextId: number, createdWorkspace: CreatedWorkspace): Promise<void> {
   const label = createdWorkspace.label;
-  await openActionDiscoveryPanelThroughDesigner(cdp, contextId, label);
 
-  console.log(`[workspace-lifecycle] ${label}: searching for MSN Weather current weather action`);
-  await searchInDiscoveryPanelThroughDesigner(cdp, contextId, 'current weather');
-  await captureLifecycleScreenshot(`workspace-lifecycle-${label}-msn-weather-search-entered`);
-  await waitForSearchResultsThroughDesigner(cdp, contextId, 90000, `${label} MSN Weather search results`);
+  await runLifecyclePhase(createdWorkspace, 'MsnWeatherDiscoveryready', async () => {
+    await openActionDiscoveryPanelThroughDesigner(cdp, contextId, label);
+    console.log(`[workspace-lifecycle] ${label}: searching for MSN Weather current weather action`);
+    await searchInDiscoveryPanelThroughDesigner(cdp, contextId, 'current weather');
+    await captureLifecycleScreenshot(`workspace-lifecycle-${label}-msn-weather-search-entered`);
+    await waitForSearchResultsThroughDesigner(cdp, contextId, 90000, `${label} MSN Weather search results`);
+  });
 
-  await selectOperationThroughDesigner(cdp, contextId, 'Get current weather', ['current weather']);
-  await captureLifecycleScreenshot(`workspace-lifecycle-${label}-msn-weather-action-added`);
-  console.log(`[workspace-lifecycle] ${label}: milestone azure-action-added action="Get current weather"`);
-  await handleMsnWeatherConnectionThroughDesigner(cdp, contextId, label);
-  await waitForDesignerText(
-    cdp,
-    contextId,
-    ['Get current weather', 'Current weather', 'Location'],
-    120000,
-    `${label} MSN Weather action panel`
-  );
-  await fillDesignerParameter(cdp, contextId, ['Location', 'location'], msnWeatherLocation, `${label} MSN Weather Location`);
-  await captureLifecycleScreenshot(`workspace-lifecycle-${label}-msn-weather-action-configured`);
-  console.log(
-    `[workspace-lifecycle] ${label}: milestone azure-action-configured action="Get current weather" location=${msnWeatherLocation}`
-  );
+  await runLifecyclePhase(createdWorkspace, 'MsnWeatherinserted', async () => {
+    await selectOperationThroughDesigner(cdp, contextId, 'Get current weather', ['current weather']);
+    await captureLifecycleScreenshot(`workspace-lifecycle-${label}-msn-weather-action-added`);
+    console.log(`[workspace-lifecycle] ${label}: milestone azure-action-added action="Get current weather"`);
+    await handleMsnWeatherConnectionThroughDesigner(cdp, contextId, label);
+    await waitForDesignerText(
+      cdp,
+      contextId,
+      ['Get current weather', 'Current weather', 'Location'],
+      120000,
+      `${label} MSN Weather action panel`
+    );
+  });
+
+  await runLifecyclePhase(createdWorkspace, 'MsnWeatherconfigured', async () => {
+    await fillDesignerParameter(cdp, contextId, ['Location', 'location'], msnWeatherLocation, `${label} MSN Weather Location`);
+    await captureLifecycleScreenshot(`workspace-lifecycle-${label}-msn-weather-action-configured`);
+    console.log(
+      `[workspace-lifecycle] ${label}: milestone azure-action-configured action="Get current weather" location=${msnWeatherLocation}`
+    );
+  });
   await runLifecyclePhase(createdWorkspace, 'connectionReady', () =>
     waitForAzureConnectedActionThroughDesigner(cdp, contextId, {
       actionTitle: 'Get current weather',
@@ -1183,7 +1210,7 @@ async function openActionDiscoveryPanelThroughDesigner(cdp: CdpEvaluator, contex
   await closeDesignerDetailsPanelThroughDesigner(cdp, contextId, `${label} existing details panel`);
   let actionPanelOpened = false;
   for (let attempt = 1; attempt <= 3; attempt++) {
-    await clickDesignerElement(
+    const plusClick = await clickDesignerElement(
       cdp,
       contextId,
       [
@@ -1196,25 +1223,28 @@ async function openActionDiscoveryPanelThroughDesigner(cdp: CdpEvaluator, contex
       'Add an action',
       { requireTextMatch: false, useLastMatch: true }
     );
+    await logDesignerDiscoveryDiagnostics(cdp, contextId, label, `after Add Action click attempt ${attempt}`, plusClick.point);
 
     if (await waitForOptionalDiscoveryPanelThroughDesigner(cdp, contextId, 7500)) {
       actionPanelOpened = true;
       break;
     }
 
-    const clickedMenuItem = await tryClickDesignerElement(
+    const menuClick = await tryClickDesignerElement(
       cdp,
       contextId,
       ['[data-automation-id^="msla-add-button-"]', '[role="menuitem"]'],
       'Add an action'
     );
-    if (clickedMenuItem) {
+    if (menuClick) {
+      await logDesignerDiscoveryDiagnostics(cdp, contextId, label, `after Add Action menu click attempt ${attempt}`, menuClick.point);
       if (await waitForOptionalDiscoveryPanelThroughDesigner(cdp, contextId, 7500)) {
         actionPanelOpened = true;
         break;
       }
     }
 
+    await logDesignerDiscoveryDiagnostics(cdp, contextId, label, `after Add Action failed attempt ${attempt}`, plusClick.point);
     console.log(`[workspace-lifecycle] ${label}: Add Action panel did not open on attempt ${attempt}`);
   }
   assert.ok(actionPanelOpened, `${label} Add Action panel should open`);
@@ -2267,14 +2297,8 @@ async function clickDesignerElement(
   selectors: string[],
   textToFind: string,
   options: { requireTextMatch?: boolean; useLastMatch?: boolean } = {}
-): Promise<void> {
-  const result = await cdp.evaluate<{
-    ok: boolean;
-    reason?: string;
-    text?: string;
-    point?: { x: number; y: number };
-    candidates?: string[];
-  }>(
+): Promise<DesignerClickResult> {
+  const result = await cdp.evaluate<DesignerClickResult>(
     contextId,
     `(() => {
       const selectors = ${JSON.stringify(selectors)};
@@ -2283,6 +2307,28 @@ async function clickDesignerElement(
       const useLastMatch = ${JSON.stringify(options.useLastMatch === true)};
       const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim();
       const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
+      const describeElement = (element) => {
+        if (!element) {
+          return undefined;
+        }
+        const rect = element.getBoundingClientRect();
+        return {
+          tagName: element.tagName,
+          id: element.id || undefined,
+          role: element.getAttribute('role') || undefined,
+          ariaLabel: normalize(element.getAttribute('aria-label')) || undefined,
+          title: normalize(element.getAttribute('title')) || undefined,
+          dataAutomationId: normalize(element.getAttribute('data-automation-id')) || undefined,
+          className: typeof element.className === 'string' ? normalize(element.className).slice(0, 200) : undefined,
+          text: normalize(element.textContent || '').slice(0, 200),
+          rect: {
+            left: Math.round(rect.left),
+            top: Math.round(rect.top),
+            width: Math.round(rect.width),
+            height: Math.round(rect.height),
+          },
+        };
+      };
       const matchesText = (element) => {
         const text = normalize(element.textContent).toLowerCase();
         const ariaLabel = normalize(element.getAttribute('aria-label')).toLowerCase();
@@ -2295,12 +2341,7 @@ async function clickDesignerElement(
       const debugCandidates = selectors.flatMap((selector) => Array.from(document.querySelectorAll(selector)))
         .filter(isVisible)
         .slice(0, 10)
-        .map((element) => {
-          const aid = normalize(element.getAttribute('data-automation-id'));
-          const aria = normalize(element.getAttribute('aria-label'));
-          const text = normalize(element.textContent).slice(0, 120);
-          return aid + ' | ' + aria + ' | ' + text;
-        });
+        .map(describeElement);
       const element = useLastMatch ? candidates.at(-1) : candidates[0];
       if (!element) {
         return { ok: false, reason: 'Element not found', candidates: debugCandidates, text: document.body?.innerText || '' };
@@ -2308,10 +2349,22 @@ async function clickDesignerElement(
 
       element.scrollIntoView({ block: 'center', inline: 'center' });
       const rect = element.getBoundingClientRect();
+      const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+      const hitTarget = document.elementFromPoint(point.x, point.y);
       return {
         ok: true,
-        point: { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 },
+        point,
+        rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height },
         text: normalize(element.textContent || element.getAttribute('aria-label') || ''),
+        target: describeElement(element),
+        hitTarget: describeElement(hitTarget),
+        viewport: {
+          width: window.innerWidth,
+          height: window.innerHeight,
+          devicePixelRatio: window.devicePixelRatio,
+          frameUrl: document.location.href,
+          title: document.title,
+        },
       };
     })()`
   );
@@ -2323,8 +2376,19 @@ async function clickDesignerElement(
     ).slice(0, 1000)}`
   );
 
-  console.log(`[workspace-lifecycle] Clicking designer element "${textToFind}" (${result.text ?? ''})`);
+  console.log(
+    `[workspace-lifecycle][designer-click] "${textToFind}" ${JSON.stringify({
+      text: result.text,
+      point: result.point,
+      rect: result.rect,
+      target: result.target,
+      hitTarget: result.hitTarget,
+      viewport: result.viewport,
+      contextId,
+    })}`
+  );
   await clickPoint(cdp, result.point);
+  return result;
 }
 
 async function tryClickDesignerElement(
@@ -2333,14 +2397,94 @@ async function tryClickDesignerElement(
   selectors: string[],
   textToFind: string,
   options: { requireTextMatch?: boolean; useLastMatch?: boolean } = {}
-): Promise<boolean> {
+): Promise<DesignerClickResult | undefined> {
   try {
-    await clickDesignerElement(cdp, contextId, selectors, textToFind, options);
-    return true;
+    return await clickDesignerElement(cdp, contextId, selectors, textToFind, options);
   } catch (error) {
     console.log(`[workspace-lifecycle] Optional designer element "${textToFind}" was not clickable: ${String(error)}`);
-    return false;
+    return undefined;
   }
+}
+
+async function logDesignerDiscoveryDiagnostics(
+  cdp: CdpEvaluator,
+  contextId: number,
+  label: string,
+  stage: string,
+  dispatchPoint?: { x: number; y: number }
+): Promise<void> {
+  const diagnostics = await cdp
+    .evaluate<Record<string, unknown>>(
+      contextId,
+      `(() => {
+        const dispatchPoint = ${JSON.stringify(dispatchPoint ?? undefined)};
+        const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim();
+        const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
+        const describeElement = (element) => {
+          if (!element) {
+            return undefined;
+          }
+          const rect = element.getBoundingClientRect();
+          return {
+            tagName: element.tagName,
+            id: element.id || undefined,
+            role: element.getAttribute('role') || undefined,
+            ariaLabel: normalize(element.getAttribute('aria-label')) || undefined,
+            title: normalize(element.getAttribute('title')) || undefined,
+            dataAutomationId: normalize(element.getAttribute('data-automation-id')) || undefined,
+            className: typeof element.className === 'string' ? normalize(element.className).slice(0, 200) : undefined,
+            text: normalize(element.textContent || '').slice(0, 200),
+            rect: {
+              left: Math.round(rect.left),
+              top: Math.round(rect.top),
+              width: Math.round(rect.width),
+              height: Math.round(rect.height),
+            },
+          };
+        };
+        const bySelector = (selector) => Array.from(document.querySelectorAll(selector)).filter(isVisible).slice(0, 12).map(describeElement);
+        return {
+          hasDiscoveryPanel: [
+            '.msla-panel-root-Discovery',
+            '[data-automation-id="msla-search-box"]',
+            '.msla-search-box',
+          ].some((selector) => Array.from(document.querySelectorAll(selector)).some(isVisible)),
+          dispatchPoint,
+          elementFromDispatchPoint: dispatchPoint ? describeElement(document.elementFromPoint(dispatchPoint.x, dispatchPoint.y)) : undefined,
+          activeElement: describeElement(document.activeElement),
+          viewport: {
+            width: window.innerWidth,
+            height: window.innerHeight,
+            devicePixelRatio: window.devicePixelRatio,
+            frameUrl: document.location.href,
+            title: document.title,
+          },
+          contextId: ${JSON.stringify(contextId)},
+          plusButtons: bySelector('[data-automation-id^="msla-plus-button-"], [id^="msla-edge-button-"], [aria-label="Add an action"]'),
+          addButtons: bySelector('[data-automation-id^="msla-add-button-"], [data-testid="card-Add an action"], [data-automation-id="card-Add_an_action"]'),
+          menuItems: bySelector('[role="menuitem"], [role="option"]'),
+          discoveryPanels: bySelector('.msla-panel-root-Discovery, [data-automation-id="msla-search-box"], .msla-search-box'),
+          bodyText: normalize(document.body?.innerText || '').slice(0, 1200),
+        };
+      })()`
+    )
+    .catch((error) => ({ error: String(error) }));
+  const scrub = (value: unknown): unknown => {
+    if (typeof value === 'string') {
+      return value
+        .replace(/\bAuthorization\s*:\s*(?:Basic|Bearer)\s+[A-Za-z0-9+/=._~-]+/gi, 'Authorization: [redacted]')
+        .replace(/([?&](?:sig|signature|code|se|sp|srt|ss|sv|token|api_key|subscription-key|x-api-key)=)[^&\s"']+/gi, '$1[redacted]')
+        .replace(/\b(AccountKey|SharedAccessKey|Password|Pwd|User ID|Uid)=([^;,\s]+)/gi, '$1=[redacted]');
+    }
+    if (Array.isArray(value)) {
+      return value.map(scrub);
+    }
+    if (value && typeof value === 'object') {
+      return Object.fromEntries(Object.entries(value as Record<string, unknown>).map(([key, entry]) => [key, scrub(entry)]));
+    }
+    return value;
+  };
+  console.log(`[workspace-lifecycle][designer-discovery-diagnostics] ${label} ${stage}: ${JSON.stringify(scrub(diagnostics))}`);
 }
 
 async function hasDiscoveryPanelThroughDesigner(cdp: CdpEvaluator, contextId: number): Promise<boolean> {
@@ -3585,7 +3729,12 @@ async function openOverviewAndClickRunTrigger(createdWorkspace: CreatedWorkspace
     contextId = await clickOverviewRunTrigger(cdp, contextId, createdWorkspace);
     const newRunName = await waitForNewRunStarted(createdWorkspace.wfName, previousRunName, 60000);
     await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-overview-run-clicked`);
-    await waitForOverviewRunStatus(cdp, contextId, createdWorkspace.label, newRunName, 'Succeeded', 180000);
+    try {
+      await waitForOverviewRunStatus(cdp, contextId, createdWorkspace.wfName, createdWorkspace.label, newRunName, 'Succeeded', 180000);
+    } catch (error) {
+      await logAzuriteDiagnostics(`${createdWorkspace.label} overview run failure`, createdWorkspace.appDir);
+      throw error;
+    }
     await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-overview-run-succeeded`);
   } finally {
     cdp.dispose();
@@ -3638,6 +3787,7 @@ async function clickOverviewRunTrigger(cdp: CdpConnection, contextId: number, cr
 async function waitForOverviewRunStatus(
   cdp: CdpEvaluator,
   contextId: number,
+  workflowName: string,
   label: string,
   expectedRunName: string,
   targetStatus: string,
@@ -3647,8 +3797,17 @@ async function waitForOverviewRunStatus(
   let lastMatchedRun = '';
   let lastOverviewText = '';
   let lastRefreshAt = 0;
+  let terminalFailure:
+    | {
+        status: string;
+        diagnostics: Record<string, unknown>;
+      }
+    | undefined;
   await waitUntil(
     async () => {
+      if (terminalFailure) {
+        return true;
+      }
       const result = await getOverviewRunStatus(cdp, contextId, expectedRunName);
       const status = result.status;
       lastOverviewText = result.text;
@@ -3664,7 +3823,26 @@ async function waitForOverviewRunStatus(
         return true;
       }
       if (status === 'Failed' || status === 'Cancelled') {
-        throw new Error(`${label} Overview latest run ended with status "${status}"`);
+        const diagnostics = await getWorkflowRunFailureDiagnostics(
+          workflowName,
+          expectedRunName,
+          `${label} overview terminal ${status}`
+        ).catch((error) => ({
+          stage: `${label} overview terminal ${status}`,
+          workflowName,
+          runName: expectedRunName,
+          diagnosticsError: redactDiagnosticString(String(error)),
+        }));
+        terminalFailure = {
+          status,
+          diagnostics,
+        };
+        console.log(
+          `[workspace-lifecycle][run-failure-diagnostics] ${label} Overview run ${expectedRunName} ended with ${status}: ${JSON.stringify(
+            terminalFailure.diagnostics
+          )}`
+        );
+        return true;
       }
 
       if (Date.now() - lastRefreshAt > 5000) {
@@ -3680,6 +3858,13 @@ async function waitForOverviewRunStatus(
       500
     )}"`
   );
+  if (terminalFailure) {
+    assert.fail(
+      `${label} Overview run ${expectedRunName} ended with status "${terminalFailure.status}". Diagnostics=${JSON.stringify(
+        terminalFailure.diagnostics
+      ).slice(0, 6000)}`
+    );
+  }
 }
 
 async function getOverviewButtonState(
@@ -4104,8 +4289,18 @@ async function waitForLatestRunStatus(
 ): Promise<{ name: string; status: string }> {
   let lastStatus = '';
   let lastBody = '';
+  let terminalFailure:
+    | {
+        name: string;
+        status: string;
+        diagnostics: Record<string, unknown>;
+      }
+    | undefined;
   await waitUntil(
     async () => {
+      if (terminalFailure) {
+        return true;
+      }
       const runs = await httpRequest(
         { url: `${managementBaseUrl}/workflows/${encodeURIComponent(workflowName)}/runs?api-version=${apiVersion}`, method: 'GET' },
         5000
@@ -4124,13 +4319,41 @@ async function waitForLatestRunStatus(
         lastStatus = status;
       }
       if (status === 'Failed' || status === 'Cancelled') {
-        throw new Error(`Workflow ${workflowName} run ended with ${status}. Body: ${runs.body.slice(0, 1000)}`);
+        const runName = typeof latestRun?.name === 'string' ? latestRun.name : '(unknown)';
+        const diagnostics =
+          typeof latestRun?.name === 'string'
+            ? await getWorkflowRunFailureDiagnostics(workflowName, runName, `management latest run terminal ${status}`).catch((error) => ({
+                stage: `management latest run terminal ${status}`,
+                workflowName,
+                runName,
+                diagnosticsError: redactDiagnosticString(String(error)),
+              }))
+            : {
+                stage: `management latest run terminal ${status}`,
+                workflowName,
+                runName,
+                run: sanitizeRunDiagnostic(latestRun),
+              };
+        terminalFailure = { name: runName, status, diagnostics };
+        console.log(
+          `[workspace-lifecycle][run-failure-diagnostics] workflow ${workflowName} run ${latestRun.name} ended with ${status}: ${JSON.stringify(
+            terminalFailure.diagnostics
+          )}`
+        );
+        return true;
       }
       return status === targetStatus && typeof latestRun?.name === 'string';
     },
     timeoutMs,
     `workflow ${workflowName} latest run to reach ${targetStatus}. Last status: ${lastStatus}. Last body: ${lastBody.slice(0, 500)}`
   );
+  if (terminalFailure) {
+    assert.fail(
+      `Workflow ${workflowName} run ${terminalFailure.name} ended with ${terminalFailure.status}. Diagnostics=${JSON.stringify(
+        terminalFailure.diagnostics
+      ).slice(0, 6000)}`
+    );
+  }
 
   const runs = await httpRequest({
     url: `${managementBaseUrl}/workflows/${encodeURIComponent(workflowName)}/runs?api-version=${apiVersion}`,
@@ -4146,6 +4369,84 @@ async function waitForLatestRunStatus(
     name: latestRun.name,
     status: latestRun.properties?.status ?? latestRun.status,
   };
+}
+
+async function getWorkflowRunFailureDiagnostics(workflowName: string, runName: string, stage: string): Promise<Record<string, unknown>> {
+  const summarizeError = (value: unknown): unknown => {
+    if (!value || typeof value !== 'object') {
+      return sanitizeRunDiagnostic(value);
+    }
+
+    const record = value as Record<string, any>;
+    return sanitizeRunDiagnostic({
+      code: record.code,
+      message: record.message,
+      target: record.target,
+      innerError: summarizeError(record.innerError ?? record.innererror),
+      details: Array.isArray(record.details) ? record.details.slice(0, 10).map(summarizeError) : undefined,
+    });
+  };
+  const summarizeResource = (value: unknown): Record<string, unknown> => {
+    if (!value || typeof value !== 'object') {
+      return { raw: sanitizeRunDiagnostic(value) };
+    }
+
+    const record = value as Record<string, any>;
+    const properties = record.properties ?? {};
+    return sanitizeRunDiagnostic({
+      name: record.name,
+      type: record.type,
+      status: properties.status ?? record.status,
+      code: properties.code ?? record.code,
+      startTime: properties.startTime ?? record.startTime,
+      endTime: properties.endTime ?? record.endTime,
+      error: summarizeError(properties.error ?? record.error),
+      detailsError: record.detailsError,
+    }) as Record<string, unknown>;
+  };
+  const run = await httpRequest(
+    {
+      url: `${managementBaseUrl}/workflows/${encodeURIComponent(workflowName)}/runs/${encodeURIComponent(runName)}?api-version=${apiVersion}`,
+      method: 'GET',
+    },
+    5000
+  ).catch((error) => ({ status: 0, body: String(error) }));
+  const actions = await httpRequest(
+    {
+      url: `${managementBaseUrl}/workflows/${encodeURIComponent(workflowName)}/runs/${encodeURIComponent(runName)}/actions?api-version=${apiVersion}`,
+      method: 'GET',
+    },
+    5000
+  ).catch((error) => ({ status: 0, body: String(error) }));
+  const parsedActions = actions.status === 200 ? parseListResponse(actions.body) : [];
+  const actionSummaries = await Promise.all(
+    parsedActions.map(async (action) => {
+      const actionName = String(action?.name ?? '');
+      const status = String(action?.properties?.status ?? action?.status ?? '');
+      const baseSummary = summarizeResource(action);
+      if (!actionName || status === 'Succeeded') {
+        return baseSummary;
+      }
+
+      const details = await getRunActionDetails(workflowName, runName, actionName).catch((error) => ({
+        detailsError: String(error),
+      }));
+      return sanitizeRunDiagnostic({
+        ...(baseSummary as Record<string, unknown>),
+        details: summarizeResource(details),
+      });
+    })
+  );
+
+  return sanitizeRunDiagnostic({
+    stage,
+    workflowName,
+    runName,
+    runEndpointStatus: run.status,
+    run: summarizeResource(tryParseJsonForDiagnostics(run.body)),
+    actionsEndpointStatus: actions.status,
+    actions: actionSummaries,
+  }) as Record<string, unknown>;
 }
 
 async function getLatestRunActionStatuses(workflowName: string, runName: string): Promise<Array<{ name: string; status: string }>> {
@@ -4201,6 +4502,94 @@ async function getActionOutputBody(actionDetails: Record<string, any>, actionNam
   const body = outputs.body ?? outputs.Body;
   assert.notStrictEqual(body, undefined, `Expected action ${actionName} outputs to include body. Outputs=${JSON.stringify(outputs)}`);
   return parseMaybeJsonString(body);
+}
+
+function tryParseJsonForDiagnostics(value: string): unknown {
+  if (!value) {
+    return '';
+  }
+
+  try {
+    return JSON.parse(value);
+  } catch {
+    return value.slice(0, 2000);
+  }
+}
+
+function sanitizeRunDiagnostic(value: unknown, depth = 0): unknown {
+  if (depth > 8) {
+    return '[truncated-depth]';
+  }
+  if (value === null || value === undefined) {
+    return value;
+  }
+  if (typeof value === 'string') {
+    return redactDiagnosticString(value).slice(0, 4000);
+  }
+  if (typeof value !== 'object') {
+    return value;
+  }
+  if (Array.isArray(value)) {
+    return value.slice(0, 25).map((item) => sanitizeRunDiagnostic(item, depth + 1));
+  }
+
+  const output: Record<string, unknown> = {};
+  for (const [key, entryValue] of Object.entries(value as Record<string, unknown>).slice(0, 80)) {
+    if (isSensitiveDiagnosticKey(key)) {
+      output[key] = '[redacted]';
+      continue;
+    }
+    output[key] = sanitizeRunDiagnostic(entryValue, depth + 1);
+  }
+  return output;
+}
+
+function isSensitiveDiagnosticKey(key: string): boolean {
+  const normalizedKey = key.replace(/[^a-z0-9]/gi, '').toLowerCase();
+  return (
+    /authorization|authentication|callback|connectionkey|keyvault|outputslink|inputslink|trackingidlink|secret|signature|sas|token|uri|url/i.test(
+      key
+    ) ||
+    /password|credential|credentials|accountkey|apikey|xapikey|cookie|setcookie|connectionstring|azurewebjobsstorage|clientsecret|accesskey/i.test(
+      normalizedKey
+    ) ||
+    /^(sig|se|sp|sv|srt|ss)$/.test(normalizedKey)
+  );
+}
+
+function redactDiagnosticString(value: string): string {
+  let redacted = value;
+  redacted = redacted.replace(/\bAuthorization\s*:\s*(?:Basic|Bearer)\s+[A-Za-z0-9+/=._~-]+/gi, 'Authorization: [redacted]');
+  redacted = redacted.replace(/\bAuthorization\s*:\s*\*+/gi, 'Authorization: [redacted]');
+  redacted = redacted.replace(
+    /((?:access[_-]?token|account[_-]?key|api[_-]?key|authorization|authentication|azurewebjobsstorage|client[_-]?secret|connection[_-]?string|credential|password|sas|secret|sig|signature|token|x-api-key|cookie)\s*[=:]\s*)("[^"]*"|'[^']*'|[^\s,;}]+)/gi,
+    '$1[redacted]'
+  );
+  redacted = redacted.replace(
+    /((?:access[_-]?token|account[_-]?key|api[_-]?key|authorization|authentication|azurewebjobsstorage|client[_-]?secret|connection[_-]?string|credential|password|sas|secret|sig|signature|token|x-api-key|cookie)["']?\s*:\s*)("[^"]*"|'[^']*'|[^\s,}\]]+)/gi,
+    '$1[redacted]'
+  );
+  redacted = redacted.replace(
+    /([?&](?:sig|signature|code|se|sp|srt|ss|sv|token|api_key|subscription-key|x-api-key)=)[^&\s"']+/gi,
+    '$1[redacted]'
+  );
+  redacted = redacted.replace(/\b(AccountKey|SharedAccessKey|Password|Pwd|User ID|Uid)=([^;,\s]+)/gi, '$1=[redacted]');
+  redacted = redacted.replace(/\bBasic\s+[A-Za-z0-9+/=._~-]+/gi, 'Basic [redacted]');
+  redacted = redacted.replace(/\bBearer\s+[A-Za-z0-9._~+/=-]+/gi, 'Bearer [redacted]');
+  redacted = redacted.replace(/https?:\/\/[^\s"')]+/gi, (urlText) => {
+    try {
+      const url = new URL(urlText);
+      for (const key of Array.from(url.searchParams.keys())) {
+        if (isSensitiveDiagnosticKey(key)) {
+          url.searchParams.set(key, '[redacted]');
+        }
+      }
+      return url.toString();
+    } catch {
+      return urlText;
+    }
+  });
+  return redacted;
 }
 
 function parseMaybeJsonString(value: unknown): unknown {
@@ -4328,7 +4717,7 @@ async function logAzuriteDiagnostics(stage: string, appDir: string): Promise<voi
   console.log(`[workspace-lifecycle][azurite-diagnostics][${stage}] statusBar=${JSON.stringify(azuriteStatusLines.slice(-12))}`);
 
   for (const log of findRelevantVsCodeLogFiles().slice(-8)) {
-    console.log(`[workspace-lifecycle][azurite-diagnostics][${stage}] logTail ${log}:\n${tailFile(log, 2500)}`);
+    console.log(`[workspace-lifecycle][azurite-diagnostics][${stage}] logTail ${log}:\n${redactDiagnosticString(tailFile(log, 2500))}`);
   }
 }
 
