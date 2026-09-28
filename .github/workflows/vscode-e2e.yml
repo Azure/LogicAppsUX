@@ -146,6 +146,10 @@ jobs:
         working-directory: apps/vs-code-designer
         run: pnpm run test:e2e-cli:compile
 
+      - name: Run @vscode/test-cli helper unit tests
+        working-directory: apps/vs-code-designer
+        run: pnpm run test:e2e-cli:unit
+
       - name: Tar build artifacts
         # Tar preserves symlinks/permissions and dramatically speeds upload
         # vs uploading thousands of small files in node_modules-adjacent dirs.

@@ -47,6 +47,10 @@ steps:
     displayName: Compile vscode-test CLI E2E bundle
     workingDirectory: $(Build.SourcesDirectory)/apps/vs-code-designer
 
+  - script: pnpm run test:e2e-cli:unit
+    displayName: Run vscode-test CLI helper unit tests
+    workingDirectory: $(Build.SourcesDirectory)/apps/vs-code-designer
+
   - bash: |
       set -euo pipefail
       mkdir -p "$(Build.ArtifactStagingDirectory)/vscode-e2e"
