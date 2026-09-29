@@ -255,6 +255,7 @@ async function captureCdpScreenshotCore(
 
       const preCaptureGeneration = sampleCdp.contextGeneration ?? generation;
       const preCaptureRevision = stableSample?.revision ?? -1;
+      const preCaptureStructuralRevision = stableSample?.structuralRevision ?? preCaptureRevision;
       const preOwnerRevision = await ownerBindingLatch?.readRevision();
       if (classification !== 'diagnostic' && expectation.kind !== 'diagnostic') {
         sampleContextId = await assertBoundSemanticContext(cdp, sampleCdp, sampleContextId, expectation, options.binding, deadline);
@@ -333,7 +334,11 @@ async function captureCdpScreenshotCore(
       generation = postSample.generation;
       const postCaptureGeneration = sampleCdp.contextGeneration ?? generation;
       const postOwnerRevision = await ownerBindingLatch?.readRevision();
-      const revisionAccepted = expectation.kind === 'workbenchShell' || postSample.revision === preCaptureRevision;
+      const postCaptureStructuralRevision = postSample.structuralRevision ?? postSample.revision;
+      const revisionAccepted =
+        expectation.kind === 'workbenchShell'
+          ? postCaptureStructuralRevision === preCaptureStructuralRevision
+          : postSample.revision === preCaptureRevision;
       const ownerRevisionAccepted = preOwnerRevision === undefined || preOwnerRevision === postOwnerRevision;
       const accepted =
         classification === 'diagnostic' ||

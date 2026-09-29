@@ -450,6 +450,7 @@ async function createWorkspaceThroughWebview(creationCase: WorkspaceCreationCase
     } catch (error) {
       lastError = error;
       if (attempt === 2 || !String(error).includes('Timed out waiting for field')) {
+        await captureWorkspaceLifecycleFailureBeforeCleanup(`${creationCase.label}-creation-attempt-${attempt}`);
         throw error;
       }
       console.warn(`[workspace-lifecycle] Retrying ${creationCase.label} Create Workspace webview after blank form context`);
@@ -460,6 +461,26 @@ async function createWorkspaceThroughWebview(creationCase: WorkspaceCreationCase
   }
 
   throw lastError;
+}
+
+async function captureWorkspaceLifecycleFailureBeforeCleanup(label: string): Promise<void> {
+  try {
+    await captureLifecycleScreenshot(`workspace-lifecycle-before-cleanup-${sanitizeDiagnosticName(label)}`, {
+      diagnostic: true,
+      expectation: { kind: 'diagnostic', label, reason: 'workspace-lifecycle-before-cleanup' },
+    });
+  } catch (error) {
+    console.warn(`[workspace-lifecycle] Failed to capture pre-cleanup failure screenshot: ${String(error)}`);
+  }
+}
+
+function sanitizeDiagnosticName(value: string): string {
+  return (
+    value
+      .replace(/[^a-z0-9_-]+/gi, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 80) || 'failure'
+  );
 }
 
 async function openCreateWorkspaceContext(label: string): Promise<{ cdp: CdpEvaluator & { dispose(): void }; contextId: number }> {
