@@ -148,7 +148,22 @@ async function testMalformedActionDiagnosticsPreserveTerminalStatus(): Promise<v
 
 function testRuntimeDiagnosticsRedactSensitiveSubtrees(): void {
   const harness = loadRuntimeHarness('Failed');
-  for (const key of ['password', 'credential', 'accountKey', 'x-api-key', 'cookie', 'authentication', 'clientSecret', 'accessToken']) {
+  for (const key of [
+    'password',
+    'credential',
+    'accountKey',
+    'x-api-key',
+    'cookie',
+    'authentication',
+    'clientSecret',
+    'accessToken',
+    'connectionKey',
+    'MSN_CONNECTION_KEY',
+    'connection-key',
+    'connection_key',
+    'connectionRuntimeUrl',
+    'MSN_CONNECTION_RUNTIME_URL',
+  ]) {
     const secret = `synthetic-${randomUUID()}`;
     const output = JSON.stringify(harness.exported.sanitizeRunDiagnostic({ properties: { details: { [key]: { nested: secret } } } }));
     assert.ok(!output.includes(secret), `Sensitive ${key} value must not survive production sanitizer`);
@@ -161,6 +176,13 @@ function testRuntimeDiagnosticsRedactSensitiveStrings(): void {
     Bearer: (secret: string) => `Authorization: Bearer ${secret}`,
     'SAS URL': (secret: string) => `https://example.invalid/run?sig=${secret}&api-version=1`,
     'connection string': (secret: string) => `Request failed with AccountName=test;AccountKey=${secret};EndpointSuffix=core.windows.net`,
+    connectionKey: (secret: string) => `Request failed with connectionKey=${secret}`,
+    'prefixed connection key': (secret: string) => `Request failed: {"MSN_CONNECTION_KEY":"${secret}"}`,
+    'dash connection key': (secret: string) => `Request failed: {"connection-key":"${secret}"}`,
+    'underscore connection key': (secret: string) => `Request failed: {"connection_key":"${secret}"}`,
+    connectionRuntimeUrl: (secret: string) => `Request failed with connectionRuntimeUrl=https://example.invalid/runtime/${secret}`,
+    'prefixed runtime URL': (secret: string) =>
+      `Request failed: {"MSN_CONNECTION_RUNTIME_URL":"https://example.invalid/runtime/${secret}"}`,
     'embedded JSON': (secret: string) => `Request failed: {"password":"${secret}"}`,
     Basic: (secret: string) => `Authorization: Basic ${secret}`,
   })) {

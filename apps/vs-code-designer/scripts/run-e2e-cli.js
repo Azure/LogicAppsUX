@@ -39,7 +39,7 @@ const generatedWorkspaceSnapshotExcludedNames = new Set([
   'Service Worker',
 ]);
 const generatedWorkspaceSnapshotSecretKeyPattern =
-  /(access[_-]?token|account[_-]?key|api[_-]?key|authorization|authentication|azurewebjobsstorage|client[_-]?secret|connection[_-]?string|credential|password|sas|secret|sig|signature|token)/i;
+  /(access[_-]?token|account[_-]?key|api[_-]?key|authorization|authentication|azurewebjobsstorage|client[_-]?secret|connection[_-]?key|connection[_-]?runtime[_-]?url|connection[_-]?string|credential|password|sas|secret|sig|signature|token)/i;
 const generatedWorkspaceSnapshotSecretQueryPattern =
   /^(code|sig|signature|se|sp|spr|sr|st|sv|skoid|sktid|skt|ske|sks|skv|access_token|refresh_token|id_token)$/i;
 const generatedWorkspaceSnapshotSafeTextExtensions = new Set([
@@ -1864,11 +1864,11 @@ function redactGeneratedWorkspaceJsonValue(value, key = '') {
 function redactGeneratedWorkspacePlainText(content) {
   let redacted = content.replace(/(Authorization\s*[:=]\s*Bearer\s+)[A-Za-z0-9._~+/=-]+/gi, '$1<redacted>');
   redacted = redacted.replace(
-    /((?:access[_-]?token|account[_-]?key|api[_-]?key|authorization|authentication|azurewebjobsstorage|client[_-]?secret|connection[_-]?string|credential|password|sas|secret|sig|signature|token)\s*[=:]\s*)("[^"]*"|'[^']*'|[^\s,;]+)/gi,
+    /((?:access[_-]?token|account[_-]?key|api[_-]?key|authorization|authentication|azurewebjobsstorage|client[_-]?secret|connection[_-]?key|connection[_-]?runtime[_-]?url|connection[_-]?string|credential|password|sas|secret|sig|signature|token)\s*[=:]\s*)("[^"]*"|'[^']*'|[^\s,;]+)/gi,
     '$1<redacted>'
   );
   redacted = redacted.replace(
-    /((?:access[_-]?token|account[_-]?key|api[_-]?key|authorization|authentication|azurewebjobsstorage|client[_-]?secret|connection[_-]?string|credential|password|sas|secret|sig|signature|token)["']?\s*:\s*)("[^"]*"|'[^']*'|[^\s,}\]]+)/gi,
+    /((?:access[_-]?token|account[_-]?key|api[_-]?key|authorization|authentication|azurewebjobsstorage|client[_-]?secret|connection[_-]?key|connection[_-]?runtime[_-]?url|connection[_-]?string|credential|password|sas|secret|sig|signature|token)["']?\s*:\s*)("[^"]*"|'[^']*'|[^\s,}\]]+)/gi,
     '$1<redacted>'
   );
   redacted = redacted.replace(

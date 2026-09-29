@@ -12,7 +12,7 @@ export type ScreenshotExpectation =
       requiredText?: string[];
       scrollPosition?: 'top' | 'middle' | 'bottom' | { target?: 'window' | 'largest-scrollable'; minY?: number; maxY?: number };
     }
-  | { kind: 'designerCanvas'; label: string; requiredNodes?: string[]; allowLoading?: boolean }
+  | { kind: 'designerCanvas'; label: string; requiredNodes?: Array<string | string[]>; allowLoading?: boolean }
   | {
       kind: 'designerPanel';
       label: string;
@@ -445,7 +445,10 @@ export const screenshotReadinessDomScript = `
   const reasonCodes = [];
   let ready = false;
   const requireNoLoader = !expectation.allowLoading;
-  const hasRequiredText = (source, values) => (values || []).every((value) => normalizedIncludes(source, value));
+  const hasRequiredText = (source, values) =>
+    (values || []).every((value) =>
+      Array.isArray(value) ? value.some((variant) => normalizedIncludes(source, variant)) : normalizedIncludes(source, value)
+    );
   const slug = (value) => normalize(value).replace(/\\W+/g, '_').replace(/^_+|_+$/g, '').toLowerCase();
   const matchesExactPanelIdentity = (panel, expectedTitle) => {
     const expectedText = normalize(expectedTitle).toLowerCase();
@@ -688,6 +691,27 @@ export const screenshotReadinessDomScript = `
   };
   const fieldResults = (expectation.fields || []).map((field) => fieldMatches(field));
   const fieldsReady = (fieldResults.length === 0 || fieldResults.every((result) => result.ok));
+  const createWorkspaceValidationPending =
+    expectation.kind === 'createWorkspace' &&
+    expectation.stage !== 'validation' &&
+    visibleElements(
+      [
+        'button',
+        '[role="button"]',
+        '[role="status"]',
+        '[role="alert"]',
+        '[aria-live]',
+        '.ms-TextField-description',
+        '.ms-TextField-errorMessage',
+        '[class*="Message"]',
+        '[class*="message"]',
+        '[class*="description"]',
+        '[class*="Description"]',
+      ].join(', ')
+    ).some((element) => {
+      const pendingText = normalize(element.textContent || '').toLowerCase();
+      return pendingText === 'validating' || pendingText === 'validating...' || pendingText.includes('validating path');
+    });
   const nextButtonMatches = (state) => {
     if (!state) {
       return true;
@@ -774,12 +798,16 @@ export const screenshotReadinessDomScript = `
         ready &&
         hasRequiredText(text, expectation.requiredText || []) &&
         fieldsReady &&
+        !createWorkspaceValidationPending &&
         nextButtonMatches(expectation.nextButton) &&
         createButtonMatches(expectation.createButton) &&
         scrollMatches(expectation.scrollPosition);
       reasonCodes.push(ready ? 'create-workspace-state-visible' : 'create-workspace-state-missing');
       if (!fieldsReady) {
         reasonCodes.push(...fieldResults.filter((result) => !result.ok).map((result) => 'create-workspace-' + result.reason));
+      }
+      if (createWorkspaceValidationPending) {
+        reasonCodes.push('create-workspace-validation-pending');
       }
       if (!nextButtonMatches(expectation.nextButton)) {
         reasonCodes.push('create-workspace-next-button-mismatch');
@@ -885,32 +913,93 @@ export const screenshotReadinessDomScript = `
       reasonCodes.push(ready ? 'generated-artifacts-visible' : 'generated-artifacts-not-visible');
       break;
     case 'discovery':
-      const discoveryRoots = visibleElements(
-        [
-          '[role="dialog"]',
-          '[role="search"]',
-          '[data-automation-id*="recommendation"]',
-          '[data-automation-id*="operation-search"]',
-          '[data-testid*="recommendation"]',
-          '[data-testid*="operation-search"]',
-          '[class*="recommendation"]',
-          '[class*="Recommendation"]',
-          '[class*="operation-search"]',
-          '[class*="operationSearch"]',
-          '.msla-recommendation-panel',
-          '.msla-recommendation-panel-container',
-        ].join(', ')
+      const hasRenderedStyle = (element) => {
+        if (!(element instanceof HTMLElement)) {
+          return false;
+        }
+        let current = element;
+        while (current) {
+          const style = current.ownerDocument?.defaultView?.getComputedStyle?.(current) ?? getComputedStyle(current);
+          if (
+            current.hidden ||
+            style.display === 'none' ||
+            (current === element && (style.visibility === 'hidden' || style.visibility === 'collapse')) ||
+            Number.parseFloat(style.opacity || '1') === 0
+          ) {
+            return false;
+          }
+          current = current.parentElement;
+        }
+        return true;
+      };
+      const isRenderedDiscoveryElement = (element) =>
+        !!(
+          element &&
+          hasRenderedStyle(element) &&
+          (element.offsetWidth || element.offsetHeight || element.getClientRects().length) &&
+          intersectsViewport(element)
+        );
+      const discoveryRoots = Array.from(
+        document.querySelectorAll(
+          [
+            '[role="dialog"]',
+            '[role="search"]',
+            '.msla-panel-root-Discovery',
+            '[data-automation-id="msla-search-box"]',
+            '.msla-search-box',
+            '[data-automation-id*="recommendation"]',
+            '[data-automation-id*="operation-search"]',
+            '[data-testid*="recommendation"]',
+            '[data-testid*="operation-search"]',
+            '[class*="recommendation"]',
+            '[class*="Recommendation"]',
+            '[class*="operation-search"]',
+            '[class*="operationSearch"]',
+            '.msla-recommendation-panel',
+            '.msla-recommendation-panel-container',
+          ].join(', ')
+        )
+      ).filter(isRenderedDiscoveryElement);
+      const discoveryControlSelector = 'input, [role="searchbox"], [role="combobox"], [contenteditable="true"]';
+      const isDiscoveryControl = (element) =>
+        element instanceof HTMLInputElement ||
+        (typeof HTMLTextAreaElement !== 'undefined' && element instanceof HTMLTextAreaElement) ||
+        element.getAttribute?.('role') === 'searchbox' ||
+        element.getAttribute?.('role') === 'combobox' ||
+        element.getAttribute?.('contenteditable') === 'true';
+      const discoveryControls = discoveryRoots
+        .flatMap((root) => [
+          ...(isDiscoveryControl(root) ? [root] : []),
+          ...Array.from(root.querySelectorAll?.(discoveryControlSelector) || []),
+        ])
+        .filter(isRenderedDiscoveryElement);
+      const discoveryInputText = normalize(
+        discoveryControls
+          .map((element) => [
+            element instanceof HTMLInputElement || (typeof HTMLTextAreaElement !== 'undefined' && element instanceof HTMLTextAreaElement)
+              ? element.value
+              : '',
+            element.getAttribute?.('aria-label') || '',
+            element.getAttribute?.('placeholder') || '',
+            element.textContent || '',
+          ].join(' '))
+          .join(' ')
       );
-      const discoveryText = normalize(discoveryRoots.map(visibleText).join(' '));
+      const discoveryText = normalize(discoveryRoots.map(visibleText).join(' ') + ' ' + discoveryInputText);
+      counts.discoveryRoots = discoveryRoots.length;
+      counts.discoveryControls = discoveryControls.length;
       ready =
         discoveryRoots.length > 0 &&
         (normalizedIncludes(discoveryText, 'add an action') ||
           normalizedIncludes(discoveryText, 'search') ||
-          !!discoveryRoots.find((root) =>
-            Array.from(root.querySelectorAll?.('input, [role="searchbox"], [role="combobox"], [contenteditable="true"]') || []).some(isVisible)
-          ));
+          discoveryControls.length > 0);
       if (expectation.searchText) {
         ready = ready && normalizedIncludes(discoveryText, expectation.searchText);
+      }
+      if (discoveryRoots.length === 0) {
+        reasonCodes.push('discovery-root-missing');
+      } else if (discoveryControls.length === 0) {
+        reasonCodes.push('discovery-control-missing');
       }
       reasonCodes.push(ready ? 'discovery-state-visible' : 'discovery-state-missing');
       break;

@@ -39,7 +39,7 @@ import {
   normalizeManagementBaseUrl,
 } from './msnWeatherSettings';
 import { captureCdpScreenshot, captureDiagnosticScreenshot, installFailureScreenshotHook } from './screenshot';
-import type { ScreenshotExpectation } from './screenshotReadiness';
+import { buildScreenshotReadinessExpression, type ScreenshotExpectation, type ScreenshotReadinessSnapshot } from './screenshotReadiness';
 import { containsIgnoreCase, normalizeFsPath, uniqueName } from './testUtils';
 import { waitForVisibleDelay } from './visibleDelay';
 import { closeAllTabs, closeWebviewTabs, describeOpenTabs, getTabViewType, getWebviewTabs, waitForWebviewTab } from './webviewTabs';
@@ -77,7 +77,8 @@ const overviewTabViewType = `mainThreadWebview-${overviewViewType}`;
 const monitoringViewType = 'monitoring';
 const managementBaseUrl = 'http://localhost:7071/runtime/webhooks/workflow/api/management';
 const apiVersion = '2019-10-01-edge-preview';
-const requestTriggerTitle = 'When a HTTP request is received';
+const requestTriggerTitle = 'When an HTTP request is received';
+const requestTriggerTitleVariants = [requestTriggerTitle, 'When a HTTP request is received'];
 const responseActionTitle = 'Response';
 const msnWeatherActionName = 'Get_current_weather';
 const msnWeatherConnectionReferenceName = 'msnweather';
@@ -1048,7 +1049,7 @@ async function openDesignerAndCreateWorkflow(
     await waitForDesignerText(
       designerCdp,
       contextId,
-      ['Add a trigger', requestTriggerTitle, responseActionTitle],
+      ['Add a trigger', ...requestTriggerTitleVariants, responseActionTitle],
       180000,
       `${createdWorkspace.label} designer canvas content`
     );
@@ -1134,7 +1135,7 @@ async function openDesignerAndCreateWorkflow(
       expectation: {
         kind: 'designerCanvas',
         label: createdWorkspace.label,
-        requiredNodes: [requestTriggerTitle, responseActionTitle],
+        requiredNodes: [requestTriggerTitleVariants, responseActionTitle],
       },
       semanticCdp: designerCdp,
       semanticContextId: contextId,
@@ -1367,7 +1368,7 @@ async function waitForDesignerWebviewTab(
   assert.fail(`Timed out waiting for ${designerViewType} webview tab to open. Open tabs: ${describeOpenTabs()}`);
 }
 
-async function addRequestTriggerThroughDesigner(cdp: CdpEvaluator, contextId: number, label: string): Promise<void> {
+async function addRequestTriggerThroughDesigner(cdp: CdpConnection, contextId: number, label: string): Promise<void> {
   console.log(`[workspace-lifecycle] ${label}: clicking Add a trigger`);
   await clickDesignerElement(
     cdp,
@@ -1376,6 +1377,8 @@ async function addRequestTriggerThroughDesigner(cdp: CdpEvaluator, contextId: nu
     'Add a trigger'
   );
   await waitForDiscoveryPanelThroughDesigner(cdp, contextId, 60000, `${label} trigger discovery panel`);
+  await logDesignerDiscoveryDiagnostics(cdp, contextId, label, 'trigger-panel-before-evidence');
+  await logReadinessSnapshot(cdp, contextId, { kind: 'discovery', label, allowLoading: true }, `${label} trigger-panel-before-evidence`);
   await captureLifecycleScreenshot(`workspace-lifecycle-${label}-trigger-panel-open`, {
     expectation: { kind: 'discovery', label, allowLoading: true },
     semanticCdp: cdp,
@@ -1396,9 +1399,9 @@ async function addRequestTriggerThroughDesigner(cdp: CdpEvaluator, contextId: nu
     'when an http request is received',
     'http request',
   ]);
-  await waitForDesignerText(cdp, contextId, [requestTriggerTitle, 'Request'], 90000, `${label} Request trigger on canvas`);
+  await waitForDesignerText(cdp, contextId, requestTriggerTitleVariants, 90000, `${label} Request trigger on canvas`);
   await captureLifecycleScreenshot(`workspace-lifecycle-${label}-request-trigger-added`, {
-    expectation: { kind: 'designerCanvas', label, requiredNodes: [requestTriggerTitle] },
+    expectation: { kind: 'designerCanvas', label, requiredNodes: [requestTriggerTitleVariants] },
     semanticCdp: cdp,
     semanticContextId: contextId,
   });
@@ -2810,6 +2813,18 @@ async function logDesignerDiscoveryDiagnostics(
   console.log(`[workspace-lifecycle][designer-discovery-diagnostics] ${label} ${stage}: ${JSON.stringify(scrub(diagnostics))}`);
 }
 
+async function logReadinessSnapshot(
+  cdp: CdpEvaluator,
+  contextId: number,
+  expectation: ScreenshotExpectation,
+  label: string
+): Promise<void> {
+  const snapshot = await cdp
+    .evaluate<ScreenshotReadinessSnapshot>(contextId, buildScreenshotReadinessExpression(expectation, 0, 0))
+    .catch((error) => ({ error: String(error) }));
+  console.log(`[workspace-lifecycle][readiness-diagnostics] ${label}: ${JSON.stringify(snapshot)}`);
+}
+
 async function hasDiscoveryPanelThroughDesigner(cdp: CdpEvaluator, contextId: number): Promise<boolean> {
   return cdp.evaluate<boolean>(
     contextId,
@@ -4096,7 +4111,7 @@ async function openOverviewAndClickRunTrigger(
 
   const cdp = await connectToVsCodeCdp({ targetName: `${createdWorkspace.label} overview webview` });
   try {
-    let contextId = await waitForWebviewFrameContext(cdp, {
+    const contextId = await waitForWebviewFrameContext(cdp, {
       allTextIncludes: ['Run trigger', 'Refresh'],
       description: `${createdWorkspace.label} overview webview DOM context`,
       timeoutMs: 120000,
@@ -4106,10 +4121,10 @@ async function openOverviewAndClickRunTrigger(
       semanticCdp: cdp,
       semanticContextId: contextId,
     });
-    contextId = await clickOverviewRunTrigger(cdp, contextId, createdWorkspace);
+    await clickOverviewRunTrigger(cdp, contextId, createdWorkspace);
     const newRunName = await waitForNewRunStarted(createdWorkspace.wfName, previousRunName, 60000);
     await captureLifecycleScreenshot(`${screenshotPrefix}-overview-run-clicked`, {
-      expectation: { kind: 'overview', label: createdWorkspace.label, workflowName: createdWorkspace.wfName, runName: newRunName },
+      expectation: { kind: 'overview', label: createdWorkspace.label, workflowName: createdWorkspace.wfName },
       semanticCdp: cdp,
       semanticContextId: contextId,
     });
@@ -4137,28 +4152,16 @@ async function openOverviewAndClickRunTrigger(
   }
 }
 
-async function clickOverviewRunTrigger(cdp: CdpConnection, contextId: number, createdWorkspace: CreatedWorkspace): Promise<number> {
+async function clickOverviewRunTrigger(cdp: CdpConnection, contextId: number, createdWorkspace: CreatedWorkspace): Promise<void> {
   let lastState = '';
   let refreshedAfterReadyProbe = false;
-  let activeContextId = contextId;
-  let contextRefreshCount = 0;
   await waitUntil(
     async () => {
-      const result = await getOverviewButtonState(cdp, activeContextId, 'Run trigger');
+      const result = await getOverviewButtonState(cdp, contextId, 'Run trigger');
       const state = JSON.stringify(result);
       if (state !== lastState) {
         lastState = state;
         console.log(`[workspace-lifecycle] ${createdWorkspace.label}: Overview Run trigger state ${state}`);
-      }
-
-      if (!result.found && !result.text && contextRefreshCount < 3) {
-        activeContextId = await waitForWebviewFrameContext(cdp, {
-          allTextIncludes: ['Run trigger', 'Refresh'],
-          description: `${createdWorkspace.label} overview webview DOM context after reload`,
-          timeoutMs: 30000,
-        });
-        contextRefreshCount++;
-        return false;
       }
 
       if (result.found && !result.disabled && result.hasCallbackUrl && !result.isLoading) {
@@ -4166,7 +4169,7 @@ async function clickOverviewRunTrigger(cdp: CdpConnection, contextId: number, cr
       }
 
       if (!refreshedAfterReadyProbe && !result.isLoading) {
-        await clickOverviewButton(cdp, activeContextId, 'Refresh').catch(() => undefined);
+        await clickOverviewButton(cdp, contextId, 'Refresh').catch(() => undefined);
         refreshedAfterReadyProbe = true;
       }
 
@@ -4175,9 +4178,8 @@ async function clickOverviewRunTrigger(cdp: CdpConnection, contextId: number, cr
     180000,
     `${createdWorkspace.label} Overview Run trigger button to become enabled with a callback URL. Last state: ${lastState}`
   );
-  await clickOverviewButton(cdp, activeContextId, 'Run trigger');
+  await clickOverviewButton(cdp, contextId, 'Run trigger');
   console.log(`[workspace-lifecycle] ${createdWorkspace.label}: clicked Overview Run trigger`);
-  return activeContextId;
 }
 
 async function waitForOverviewRunStatus(
@@ -4996,7 +4998,7 @@ function isSensitiveDiagnosticKey(key: string): boolean {
     /authorization|authentication|callback|connectionkey|keyvault|outputslink|inputslink|trackingidlink|secret|signature|sas|token|uri|url/i.test(
       key
     ) ||
-    /password|credential|credentials|accountkey|apikey|xapikey|cookie|setcookie|connectionstring|azurewebjobsstorage|clientsecret|accesskey/i.test(
+    /password|credential|credentials|accountkey|apikey|xapikey|cookie|setcookie|connectionkey|connectionstring|azurewebjobsstorage|clientsecret|accesskey/i.test(
       normalizedKey
     ) ||
     /^(sig|se|sp|sv|srt|ss)$/.test(normalizedKey)
@@ -5008,11 +5010,11 @@ function redactDiagnosticString(value: string): string {
   redacted = redacted.replace(/\bAuthorization\s*:\s*(?:Basic|Bearer)\s+[A-Za-z0-9+/=._~-]+/gi, 'Authorization: [redacted]');
   redacted = redacted.replace(/\bAuthorization\s*:\s*\*+/gi, 'Authorization: [redacted]');
   redacted = redacted.replace(
-    /((?:access[_-]?token|account[_-]?key|api[_-]?key|authorization|authentication|azurewebjobsstorage|client[_-]?secret|connection[_-]?string|credential|password|sas|secret|sig|signature|token|x-api-key|cookie)\s*[=:]\s*)("[^"]*"|'[^']*'|[^\s,;}]+)/gi,
+    /((?:access[_-]?token|account[_-]?key|api[_-]?key|authorization|authentication|azurewebjobsstorage|client[_-]?secret|connection[_-]?key|connection[_-]?runtime[_-]?url|connection[_-]?string|credential|password|sas|secret|sig|signature|token|x-api-key|cookie)\s*[=:]\s*)("[^"]*"|'[^']*'|[^\s,;}]+)/gi,
     '$1[redacted]'
   );
   redacted = redacted.replace(
-    /((?:access[_-]?token|account[_-]?key|api[_-]?key|authorization|authentication|azurewebjobsstorage|client[_-]?secret|connection[_-]?string|credential|password|sas|secret|sig|signature|token|x-api-key|cookie)["']?\s*:\s*)("[^"]*"|'[^']*'|[^\s,}\]]+)/gi,
+    /((?:access[_-]?token|account[_-]?key|api[_-]?key|authorization|authentication|azurewebjobsstorage|client[_-]?secret|connection[_-]?key|connection[_-]?runtime[_-]?url|connection[_-]?string|credential|password|sas|secret|sig|signature|token|x-api-key|cookie)["']?\s*:\s*)("[^"]*"|'[^']*'|[^\s,}\]]+)/gi,
     '$1[redacted]'
   );
   redacted = redacted.replace(
@@ -5545,6 +5547,7 @@ async function handleWorkbenchPrompts(prompts: WorkbenchPrompt[], timeoutMs = 20
 }
 
 async function dismissWorkbenchNotifications(): Promise<void> {
+  await vscode.commands.executeCommand('notifications.hideToasts');
   const cdp = await connectToVsCodeWorkbenchCdp({ activate: false });
   try {
     for (let attempt = 0; attempt < 4; attempt++) {
@@ -5557,9 +5560,12 @@ async function dismissWorkbenchNotifications(): Promise<void> {
             const buttons = Array.from(notification.querySelectorAll('button, .monaco-button, .monaco-text-button')).filter(isVisible);
             const button = buttons.find((candidate) => {
               const text = (candidate.textContent || '').replace(/\\s+/g, ' ').trim().toLowerCase();
-              return text === 'don\\'t show again' || text === 'close';
+              const label = [text, candidate.getAttribute?.('aria-label') || '', candidate.getAttribute?.('title') || '']
+                .join(' ')
+                .toLowerCase();
+              return label.includes('close') || label.includes('clear notification');
             });
-            const target = button || notification.querySelector('.codicon-close, [aria-label*="Close"], [title*="Close"]');
+            const target = button || notification.querySelector('.codicon-close, [aria-label*="Close" i], [title*="Close" i], [aria-label*="Clear" i], [title*="Clear" i]');
             if (target instanceof HTMLElement && isVisible(target)) {
               target.scrollIntoView({ block: 'center', inline: 'center' });
               const rect = target.getBoundingClientRect();
@@ -5622,6 +5628,11 @@ async function captureLifecycleScreenshot(
       timeoutMs: 1000,
     });
     return;
+  }
+  if (options.semanticCdp || options.expectation?.kind === 'createWorkspace') {
+    await dismissWorkbenchNotifications().catch((error) =>
+      console.warn(`[workspace-lifecycle] Unable to dismiss workbench notifications before ${name}: ${String(error)}`)
+    );
   }
   assertLifecycleWorkspaceBinding(options.expectation);
   const cdp = await connectToVsCodeWorkbenchCdp({ activate: false });

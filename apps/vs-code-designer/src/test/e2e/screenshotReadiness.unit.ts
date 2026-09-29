@@ -17,6 +17,7 @@ async function main(): Promise<void> {
   testSelectedMonitoringPanelAcceptsMatchingActionValues();
   testMonitoringPanelRequiresExpectedValues();
   testMonitoringPanelRejectsPropertiesOnlyWhileInputsLoading();
+  testDesignerCanvasAcceptsRequiredNodeAliases();
   testDesignerPanelRequiresExactFieldValue();
   testDesignerPanelRequiresFocusedEditorTokenSource();
   testDesignerPanelRejectsAncestorFocusAndPlainTextToken();
@@ -24,6 +25,7 @@ async function main(): Promise<void> {
   testCreateWorkspaceRejectsWrongExactValidationMessage();
   testCreateWorkspaceRejectsHiddenValidationMessage();
   testCreateWorkspaceRequiresActualControlValue();
+  testCreateWorkspaceRejectsPendingPathValidation();
   testCreateWorkspaceRejectsFooterClippedFieldControl();
   testCreateWorkspaceRejectsOutputPanelClippedFieldControl();
   testCreateWorkspaceAcceptsFullyVisibleAnchoredFieldControl();
@@ -205,6 +207,43 @@ function testMonitoringPanelRejectsPropertiesOnlyWhileInputsLoading(): void {
   assert.strictEqual(rejected.ready, false, JSON.stringify(rejected));
   assert.ok(rejected.reasonCodes.includes('monitoring-action-state-missing'));
   assert.strictEqual(accepted.ready, true, JSON.stringify(accepted));
+}
+
+function testDesignerCanvasAcceptsRequiredNodeAliases(): void {
+  const accepted = runProbe(
+    new FakeDocument(
+      new FakeElement('body', {}, [
+        new FakeElement('div', { class: 'react-flow' }, [
+          new FakeElement('div', { class: 'msla-card' }, [], 'When an HTTP request is received'),
+          new FakeElement('div', { class: 'msla-card' }, [], 'Response'),
+        ]),
+      ])
+    ),
+    {
+      kind: 'designerCanvas',
+      label: 'request-trigger-added',
+      requiredNodes: [['When an HTTP request is received', 'When a HTTP request is received'], 'Response'],
+    }
+  );
+  const rejected = runProbe(
+    new FakeDocument(
+      new FakeElement('body', {}, [
+        new FakeElement('div', { class: 'react-flow' }, [
+          new FakeElement('div', { class: 'msla-card' }, [], 'When the workflow runs'),
+          new FakeElement('div', { class: 'msla-card' }, [], 'Response'),
+        ]),
+      ])
+    ),
+    {
+      kind: 'designerCanvas',
+      label: 'request-trigger-added',
+      requiredNodes: [['When an HTTP request is received', 'When a HTTP request is received'], 'Response'],
+    }
+  );
+
+  assert.strictEqual(accepted.ready, true, JSON.stringify(accepted));
+  assert.strictEqual(rejected.ready, false, JSON.stringify(rejected));
+  assert.ok(rejected.reasonCodes.includes('designer-canvas-state-missing'));
 }
 
 function testDesignerPanelRequiresExactFieldValue(): void {
@@ -414,6 +453,39 @@ function testCreateWorkspaceRequiresActualControlValue(): void {
 
   assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
   assert.ok(snapshot.reasonCodes.includes('create-workspace-field-value-mismatch'));
+}
+
+function testCreateWorkspaceRejectsPendingPathValidation(): void {
+  const pendingDocument = createWorkspaceDocument([
+    fieldWithInput({
+      label: 'Workspace parent folder path',
+      value: 'C:\\workspace',
+      describedBy: 'workspace-path-status',
+      errorText: 'Validating path...',
+      errorAttributes: { id: 'workspace-path-status', role: 'status' },
+    }),
+    new FakeElement('button', {}, [], 'Validating...'),
+    new FakeElement('button', {}, [], 'Next'),
+  ]);
+  const settledDocument = createWorkspaceDocument([
+    fieldWithInput({ label: 'Workspace parent folder path', value: 'C:\\workspace' }),
+    new FakeElement('button', {}, [], 'Browse...'),
+    new FakeElement('button', {}, [], 'Next'),
+  ]);
+
+  const expectation: ScreenshotExpectation = {
+    kind: 'createWorkspace',
+    label: 'create-workspace-fields-valid',
+    stage: 'fields-valid',
+    fields: [{ labels: ['Workspace parent folder path'], value: 'C:\\workspace' }],
+    nextButton: 'enabled',
+  };
+  const rejected = runProbe(pendingDocument, expectation);
+  const accepted = runProbe(settledDocument, expectation);
+
+  assert.strictEqual(rejected.ready, false, JSON.stringify(rejected));
+  assert.ok(rejected.reasonCodes.includes('create-workspace-validation-pending'));
+  assert.strictEqual(accepted.ready, true, JSON.stringify(accepted));
 }
 
 function testCreateWorkspaceRejectsFooterClippedFieldControl(): void {
@@ -654,10 +726,186 @@ function testDiscoveryRequiresVisibleDiscoveryPanel(): void {
       searchText: 'Search',
     }
   );
+  const acceptedFluentPicker = runProbe(
+    new FakeDocument(
+      new FakeElement('body', {}, [
+        new FakeElement('section', { class: 'msla-panel-root-Discovery' }, [
+          new FakeElement('h2', {}, [], 'Add a trigger'),
+          new FakeElement('div', { 'data-automation-id': 'msla-search-box' }, [
+            new FakeInputElement('input', {
+              'aria-label': 'Search for a trigger or connector',
+              placeholder: 'Search for a trigger or connector',
+              value: 'Request',
+            }),
+          ]),
+          new FakeElement('div', {}, [], 'Built-in tools Request HTTP Schedule'),
+        ]),
+      ])
+    ),
+    {
+      kind: 'discovery',
+      label: 'operation-search',
+      searchText: 'Request',
+    }
+  );
+  const acceptedAriaHiddenFluentPicker = runProbe(
+    new FakeDocument(
+      new FakeElement('body', {}, [
+        new FakeElement('section', { class: 'msla-panel-root-Discovery', 'aria-hidden': 'true' }, [
+          new FakeElement('h2', {}, [], 'Add a trigger'),
+          new FakeElement('div', { 'data-automation-id': 'msla-search-box' }, [
+            new FakeInputElement('input', {
+              'aria-label': 'Search for a trigger or connector',
+              placeholder: 'Search for a trigger or connector',
+              value: 'Request',
+            }),
+          ]),
+          new FakeElement('div', {}, [], 'Built-in tools Request HTTP Schedule'),
+        ]),
+      ])
+    ),
+    {
+      kind: 'discovery',
+      label: 'operation-search',
+      searchText: 'Request',
+    }
+  );
+  const rejectedTransparentAncestor = runProbe(
+    new FakeDocument(
+      new FakeElement('body', {}, [
+        new FakeElement('section', { style: 'opacity: 0' }, [
+          new FakeElement('section', { class: 'msla-panel-root-Discovery' }, [
+            new FakeElement('h2', {}, [], 'Add a trigger'),
+            new FakeElement('div', { 'data-automation-id': 'msla-search-box' }, [
+              new FakeInputElement('input', {
+                'aria-label': 'Search for a trigger or connector',
+                placeholder: 'Search for a trigger or connector',
+                value: 'Request',
+              }),
+            ]),
+            new FakeElement('div', {}, [], 'Built-in tools Request HTTP Schedule'),
+          ]),
+        ]),
+      ])
+    ),
+    {
+      kind: 'discovery',
+      label: 'operation-search',
+      searchText: 'Request',
+    }
+  );
+  const rejectedStylesheetTransparentAncestor = runProbe(
+    new FakeDocument(
+      new FakeElement('body', {}, [
+        new FakeElement('section', { 'data-computed-opacity': '0' }, [
+          new FakeElement('section', { class: 'msla-panel-root-Discovery' }, [
+            new FakeElement('h2', {}, [], 'Add a trigger'),
+            new FakeElement('div', { 'data-automation-id': 'msla-search-box' }, [
+              new FakeInputElement('input', {
+                'aria-label': 'Search for a trigger or connector',
+                placeholder: 'Search for a trigger or connector',
+                value: 'Request',
+              }),
+            ]),
+            new FakeElement('div', {}, [], 'Built-in tools Request HTTP Schedule'),
+          ]),
+        ]),
+      ])
+    ),
+    {
+      kind: 'discovery',
+      label: 'operation-search',
+      searchText: 'Request',
+    }
+  );
+  const rejectedCascadeTransparentAncestor = runProbe(
+    new FakeDocument(
+      new FakeElement('body', {}, [
+        new FakeElement('section', { style: 'opacity: 1; opacity: 0' }, [
+          new FakeElement('section', { class: 'msla-panel-root-Discovery' }, [
+            new FakeElement('h2', {}, [], 'Add a trigger'),
+            new FakeElement('div', { 'data-automation-id': 'msla-search-box' }, [
+              new FakeInputElement('input', {
+                'aria-label': 'Search for a trigger or connector',
+                placeholder: 'Search for a trigger or connector',
+                value: 'Request',
+              }),
+            ]),
+            new FakeElement('div', {}, [], 'Built-in tools Request HTTP Schedule'),
+          ]),
+        ]),
+      ])
+    ),
+    {
+      kind: 'discovery',
+      label: 'operation-search',
+      searchText: 'Request',
+    }
+  );
+  const acceptedCascadeVisibleAncestor = runProbe(
+    new FakeDocument(
+      new FakeElement('body', {}, [
+        new FakeElement('section', { style: 'opacity: 0; opacity: 1' }, [
+          new FakeElement('section', { class: 'msla-panel-root-Discovery' }, [
+            new FakeElement('h2', {}, [], 'Add a trigger'),
+            new FakeElement('div', { 'data-automation-id': 'msla-search-box' }, [
+              new FakeInputElement('input', {
+                'aria-label': 'Search for a trigger or connector',
+                placeholder: 'Search for a trigger or connector',
+                value: 'Request',
+              }),
+            ]),
+            new FakeElement('div', {}, [], 'Built-in tools Request HTTP Schedule'),
+          ]),
+        ]),
+      ])
+    ),
+    {
+      kind: 'discovery',
+      label: 'operation-search',
+      searchText: 'Request',
+    }
+  );
+  const acceptedSearchboxRoot = runProbe(
+    new FakeDocument(
+      new FakeElement('body', {}, [
+        new FakeInputElement('input', {
+          'data-automation-id': 'msla-search-box',
+          'aria-label': 'Search for a trigger or connector',
+          placeholder: 'Search for a trigger or connector',
+          value: 'Request',
+        }),
+      ])
+    ),
+    {
+      kind: 'discovery',
+      label: 'operation-search',
+      searchText: 'Request',
+    }
+  );
+  const unrelatedDialog = runProbe(
+    new FakeDocument(
+      new FakeElement('body', {}, [
+        new FakeElement('section', { role: 'dialog' }, [new FakeElement('div', {}, [], 'Unrelated confirmation')]),
+      ])
+    ),
+    {
+      kind: 'discovery',
+      label: 'operation-search',
+    }
+  );
 
   assert.strictEqual(rejected.ready, false, JSON.stringify(rejected));
   assert.ok(rejected.reasonCodes.includes('discovery-state-missing'));
+  assert.strictEqual(unrelatedDialog.ready, false, JSON.stringify(unrelatedDialog));
   assert.strictEqual(accepted.ready, true, JSON.stringify(accepted));
+  assert.strictEqual(acceptedFluentPicker.ready, true, JSON.stringify(acceptedFluentPicker));
+  assert.strictEqual(acceptedAriaHiddenFluentPicker.ready, true, JSON.stringify(acceptedAriaHiddenFluentPicker));
+  assert.strictEqual(rejectedTransparentAncestor.ready, false, JSON.stringify(rejectedTransparentAncestor));
+  assert.strictEqual(rejectedStylesheetTransparentAncestor.ready, false, JSON.stringify(rejectedStylesheetTransparentAncestor));
+  assert.strictEqual(rejectedCascadeTransparentAncestor.ready, false, JSON.stringify(rejectedCascadeTransparentAncestor));
+  assert.strictEqual(acceptedCascadeVisibleAncestor.ready, true, JSON.stringify(acceptedCascadeVisibleAncestor));
+  assert.strictEqual(acceptedSearchboxRoot.ready, true, JSON.stringify(acceptedSearchboxRoot));
 }
 
 function testAmbiguousSelectedPanelsRejected(): void {
@@ -1045,11 +1293,12 @@ function createWorkspaceDocument(fields: FakeElement[]): FakeDocument {
 function fieldWithInput(options: {
   label: string;
   value: string;
-  describedBy: string;
-  ariaInvalid: string;
-  errorText: string;
+  describedBy?: string;
+  ariaInvalid?: string;
+  errorText?: string;
   errorAttributes?: Record<string, string>;
 }): FakeElement {
+  const describedBy = options.describedBy ?? `${options.label.toLowerCase().replace(/\W+/g, '-')}-description`;
   return new FakeElement(
     'div',
     { class: 'ms-TextField' },
@@ -1057,10 +1306,10 @@ function fieldWithInput(options: {
       new FakeInputElement('input', {
         'aria-label': options.label,
         value: options.value,
-        'aria-describedby': options.describedBy,
-        'aria-invalid': options.ariaInvalid,
+        'aria-describedby': describedBy,
+        'aria-invalid': options.ariaInvalid ?? 'false',
       }),
-      new FakeElement('div', { id: options.describedBy, role: 'alert', ...(options.errorAttributes ?? {}) }, [], options.errorText),
+      new FakeElement('div', { id: describedBy, role: 'alert', ...(options.errorAttributes ?? {}) }, [], options.errorText ?? ''),
     ],
     options.label
   );
@@ -1272,7 +1521,7 @@ function hasClass(element: FakeElement, className: string): boolean {
     .includes(className);
 }
 
-function getComputedStyleForFakeElement(): {
+function getComputedStyleForFakeElement(element?: FakeElement): {
   display: string;
   visibility: string;
   opacity: string;
@@ -1280,7 +1529,22 @@ function getComputedStyleForFakeElement(): {
   overflowX: string;
   overflowY: string;
 } {
-  return { display: 'block', visibility: 'visible', opacity: '1', overflow: 'visible', overflowX: 'visible', overflowY: 'visible' };
+  const styleText = element?.attributes.style ?? '';
+  const style = Object.fromEntries(
+    styleText
+      .split(';')
+      .map((declaration) => declaration.split(':').map((part) => part.trim()))
+      .filter((declaration): declaration is [string, string] => declaration.length === 2 && declaration[0].length > 0)
+  );
+  const computedOpacity = element?.attributes['data-computed-opacity'];
+  return {
+    display: style.display ?? 'block',
+    visibility: style.visibility ?? 'visible',
+    opacity: computedOpacity ?? style.opacity ?? '1',
+    overflow: style.overflow ?? 'visible',
+    overflowX: style['overflow-x'] ?? style.overflow ?? 'visible',
+    overflowY: style['overflow-y'] ?? style.overflow ?? 'visible',
+  };
 }
 
 main().catch((error) => {

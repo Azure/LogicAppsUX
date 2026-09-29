@@ -235,9 +235,44 @@ function testVscodeProfileLogsUseSuiteUserDataParentAndRedact() {
 function testGeneratedWorkspaceSnapshotCopiesUsefulRedactedTree() {
   const source = createSyntheticGeneratedWorkspace('snapshot-source');
   const destination = path.join(tempRoot, 'snapshot-destination');
-  const result = copyGeneratedWorkspaceSnapshot(source, destination);
+  const rawSecretMarkers = [
+    'live-runtime-connection-key',
+    'live-prefixed-runtime-connection-key',
+    'live-dash-runtime-connection-key',
+    'live-underscore-runtime-connection-key',
+    'live-runtime-signature',
+    'live-prefixed-runtime-signature',
+    'live-dash-runtime-signature',
+    'live-underscore-runtime-signature',
+  ];
+  const destinationWrites = new Map();
+  const originalWriteFileSync = fs.writeFileSync;
+  fs.writeFileSync = function writeFileSyncWithDestinationAssertion(filePath, content, ...args) {
+    if (typeof filePath === 'string' && path.resolve(filePath).startsWith(path.resolve(destination))) {
+      const text = Buffer.isBuffer(content) ? content.toString('utf-8') : String(content);
+      destinationWrites.set(path.relative(destination, filePath), text);
+      for (const marker of rawSecretMarkers) {
+        assert.ok(!text.includes(marker), `Raw marker ${marker} must be redacted before writing ${filePath}`);
+      }
+    }
+    return originalWriteFileSync.call(this, filePath, content, ...args);
+  };
+  let result;
+  try {
+    result = copyGeneratedWorkspaceSnapshot(source, destination);
+  } finally {
+    fs.writeFileSync = originalWriteFileSync;
+  }
 
   assert.ok(result.copiedFiles >= 7, `expected useful generated project files to be copied, got ${result.copiedFiles}`);
+  assert.ok(
+    destinationWrites.has(path.join('LogicApp', 'local.settings.json')),
+    'local.settings.json should be redacted before destination write'
+  );
+  assert.ok(
+    destinationWrites.has(path.join('LogicApp', 'connections.json')),
+    'connections.json should be redacted before destination write'
+  );
   assert.ok(fs.existsSync(path.join(destination, 'test.code-workspace')), '.code-workspace should be copied');
   assert.ok(fs.existsSync(path.join(destination, 'LogicApp', 'host.json')), 'host.json should be copied');
   assert.ok(fs.existsSync(path.join(destination, 'LogicApp', 'Workflow1', 'workflow.json')), 'workflow.json should be copied');
@@ -264,6 +299,42 @@ function testGeneratedWorkspaceSnapshotCopiesUsefulRedactedTree() {
   assert.strictEqual(localSettings.Values.WORKFLOWS_TENANT_ID, '00000000-0000-4000-8000-000000000002');
   assert.strictEqual(localSettings.Values.AzureWebJobsStorage, '<redacted>');
   assert.strictEqual(localSettings.Values.SECRET_KEY, '<redacted>');
+  assert.strictEqual(localSettings.Values.connectionKey, '<redacted>');
+  assert.strictEqual(localSettings.Values.MSN_CONNECTION_KEY, '<redacted>');
+  assert.strictEqual(localSettings.Values['connection-key'], '<redacted>');
+  assert.strictEqual(localSettings.Values.connection_key, '<redacted>');
+  const sourceLocalSettings = JSON.parse(fs.readFileSync(path.join(source, 'LogicApp', 'local.settings.json'), 'utf-8'));
+  assert.strictEqual(
+    sourceLocalSettings.Values.connectionKey,
+    'live-runtime-connection-key',
+    'live local.settings.json should not be mutated'
+  );
+  assert.strictEqual(sourceLocalSettings.Values.MSN_CONNECTION_KEY, 'live-prefixed-runtime-connection-key');
+  assert.strictEqual(sourceLocalSettings.Values['connection-key'], 'live-dash-runtime-connection-key');
+  assert.strictEqual(sourceLocalSettings.Values.connection_key, 'live-underscore-runtime-connection-key');
+  const connections = JSON.parse(fs.readFileSync(path.join(destination, 'LogicApp', 'connections.json'), 'utf-8'));
+  assert.strictEqual(connections.managedApiConnections.msnweather.connectionRuntimeUrl, '<redacted>');
+  assert.strictEqual(connections.managedApiConnections.msnweather.MSN_CONNECTION_RUNTIME_URL, '<redacted>');
+  assert.strictEqual(connections.managedApiConnections.msnweather['connection-runtime-url'], '<redacted>');
+  assert.strictEqual(connections.managedApiConnections.msnweather.connection_runtime_url, '<redacted>');
+  const sourceConnections = JSON.parse(fs.readFileSync(path.join(source, 'LogicApp', 'connections.json'), 'utf-8'));
+  assert.strictEqual(
+    sourceConnections.managedApiConnections.msnweather.connectionRuntimeUrl,
+    'https://example.invalid/runtime/webhooks/workflow/api/secret?sig=live-runtime-signature',
+    'live connections.json should not be mutated'
+  );
+  assert.strictEqual(
+    sourceConnections.managedApiConnections.msnweather.MSN_CONNECTION_RUNTIME_URL,
+    'https://example.invalid/runtime/webhooks/workflow/api/prefixed?sig=live-prefixed-runtime-signature'
+  );
+  assert.strictEqual(
+    sourceConnections.managedApiConnections.msnweather['connection-runtime-url'],
+    'https://example.invalid/runtime/webhooks/workflow/api/dash?sig=live-dash-runtime-signature'
+  );
+  assert.strictEqual(
+    sourceConnections.managedApiConnections.msnweather.connection_runtime_url,
+    'https://example.invalid/runtime/webhooks/workflow/api/underscore?sig=live-underscore-runtime-signature'
+  );
   const settingsEvidence = JSON.parse(
     fs.readFileSync(path.join(destination, '.vscode-e2e-diagnostics', 'LogicApp', 'msn-weather-local-settings-after-save.json'), 'utf-8')
   );
@@ -1342,7 +1413,36 @@ function createSyntheticGeneratedWorkspace(name, parent = tempRoot) {
           WORKFLOWS_LOCATION_NAME: 'westus',
           WORKFLOWS_TENANT_ID: '00000000-0000-4000-8000-000000000002',
           WORKFLOWS_MANAGEMENT_BASE_URI: 'https://management.azure.com/',
+          connectionKey: 'live-runtime-connection-key',
+          MSN_CONNECTION_KEY: 'live-prefixed-runtime-connection-key',
+          'connection-key': 'live-dash-runtime-connection-key',
+          connection_key: 'live-underscore-runtime-connection-key',
           SECRET_KEY: 'should-not-appear',
+        },
+      },
+      null,
+      2
+    )}\n`
+  );
+  fs.writeFileSync(
+    path.join(appDir, 'connections.json'),
+    `${JSON.stringify(
+      {
+        managedApiConnections: {
+          msnweather: {
+            api: {
+              id: '/subscriptions/00000000-0000-4000-8000-000000000001/providers/Microsoft.Web/locations/westus/managedApis/msnweather',
+            },
+            connection: {
+              id: '/subscriptions/00000000-0000-4000-8000-000000000001/resourceGroups/rg/providers/Microsoft.Web/connections/msnweather',
+            },
+            connectionRuntimeUrl: 'https://example.invalid/runtime/webhooks/workflow/api/secret?sig=live-runtime-signature',
+            MSN_CONNECTION_RUNTIME_URL:
+              'https://example.invalid/runtime/webhooks/workflow/api/prefixed?sig=live-prefixed-runtime-signature',
+            'connection-runtime-url': 'https://example.invalid/runtime/webhooks/workflow/api/dash?sig=live-dash-runtime-signature',
+            connection_runtime_url:
+              'https://example.invalid/runtime/webhooks/workflow/api/underscore?sig=live-underscore-runtime-signature',
+          },
         },
       },
       null,
