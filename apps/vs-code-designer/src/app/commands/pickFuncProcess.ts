@@ -398,10 +398,12 @@ export async function findChildProcess(processId: number): Promise<string | unde
   return child ? child.pid.toString() : String(processId);
 }
 
+const MAX_PORT_NUMBER = 65535;
+
 function resolveValidPortOrDefault(port: string): number {
   const parsedPort = Number(port);
   const isNonEmpty = Boolean(port);
-  const isValidPort = isNonEmpty && Number.isInteger(parsedPort) && parsedPort > 0 && parsedPort <= 65535;
+  const isValidPort = isNonEmpty && Number.isInteger(parsedPort) && parsedPort > 0 && parsedPort <= MAX_PORT_NUMBER;
   return isValidPort ? parsedPort : Number(defaultFuncPort);
 }
 
