@@ -64,13 +64,7 @@ function testAzureToolsWrapperContract() {
   assert.match(workspace, /overrides:/);
   assert.match(workspace, /'@azure\/core-client': 1\.10\.0/);
 
-  assert.match(registeredBuildEntry, /MicroBuild\.1ES\.Official/);
-  assert.match(registeredBuildEntry, /publishVersion/);
-  assert.match(registeredBuildEntry, /enableVscodeE2E/);
-  assert.match(registeredBuildEntry, /runVscodeE2EExecution/);
-  assert.match(registeredBuildEntry, /template: templates\/vscode-e2e-stage\.yml@self/);
-  assert.doesNotMatch(registeredBuildEntry, /Temporary registered-path bridge/);
-  assert.doesNotMatch(registeredBuildEntry, /azdo-pipelines\/1es-mb-main\.yml@azExtTemplates/);
+  assert.strictEqual(registeredBuildEntry, buildEntry, 'registered 24067 path must temporarily mirror the canonical producer trial entry');
 
   assert.match(buildEntry, /template: azdo-pipelines\/1es-mb-main\.yml@azExtTemplates/);
   assert.match(buildEntry, /ref: azext-pt\/v1/);
@@ -80,6 +74,7 @@ function testAzureToolsWrapperContract() {
   assert.match(buildEntry, /LA_VSCODE_ADO_PIPELINE\]true/);
   assert.match(buildEntry, /LA_VSCODE_ADO_PIPELINE: 'true'/);
   assert.doesNotMatch(buildEntry, /LA_VSCODE_ADO_PIPELINE: true/);
+  assert.match(buildEntry, /variable=NODE_OPTIONS\]--max-old-space-size=6144/);
   assert.match(buildEntry, /variable=NPM_CONFIG_USERCONFIG/);
   assert.match(buildEntry, /\$npmrcFile = '\$\(npmrcFile\)'/);
   assert.match(buildEntry, /IsPathRooted\(\$npmrcFile\)/);
@@ -148,6 +143,9 @@ function testAzureToolsWrapperContract() {
   assert.match(readme, /actual connector connectivity/);
   assert.match(readme, /tracked root `\.npmrc` is intentionally absent/);
   assert.match(readme, /`NPM_CONFIG_USERCONFIG` to the absolute authenticated npmrc path/);
+  assert.match(readme, /`NODE_OPTIONS=--max-old-space-size=6144` for the native wrapper build/);
+  assert.match(readme, /temporarily mirrored into `\.azure-pipelines\/1esmain\.yml`/);
+  assert.match(readme, /restore `\.azure-pipelines\/1esmain\.yml` exactly to blob `025ded92acc13c58bd952fc81bf76ad7ace14807`/);
   assert.match(readme, /Native `pnpm run build` is not a clean type-check signal yet/);
   assert.match(readme, /tsc` exited 2 with 32 errors in unchanged source\/test files outside this migration diff/);
   assert.match(readme, /duplicate `@azure\/core-client` service-client types/);
