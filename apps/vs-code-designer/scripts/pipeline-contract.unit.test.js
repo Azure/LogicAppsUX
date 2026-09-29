@@ -4,6 +4,7 @@ const { execFileSync } = require('child_process');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const { SUITE_REGISTRY } = require('./e2e-cli-batch');
 
 const repoRoot = path.resolve(__dirname, '..', '..', '..');
 
@@ -11,14 +12,226 @@ testAzureToolsWrapperContract();
 testRootNpmrcSourceGuardAllowsGeneratedRuntimeFile();
 testLocalAzureToolsWrapperContractIfAvailable();
 testConsumerAdmissionContract();
+testSelectorResolutionScriptBehavior();
+testFullRollupGateScriptRejectsNonExecutedResults();
 testAzureCliIdentityScriptBehavior();
 testPipelineSafetyGuards();
-testDiagnosticsStagingScriptHandlesControllerLayout();
+testDiagnosticsStagingScriptHandlesDirectSuiteLayout();
+testDiagnosticsStagingScriptPreservesEvidenceBeforeFailing();
 
 console.log('[pipeline-contract.unit] all tests passed');
 
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+}
+
+function testFullRollupGateScriptRejectsNonExecutedResults() {
+  const consumer = parseYaml('.config/vscode-e2e-cli.1es.yml');
+  const script = extractFullRollupGateScript(consumer);
+
+  const valid = runFullRollupGateFixture(script, { scenario: 'valid' });
+  assert.strictEqual(valid.status, 0, valid.output);
+
+  const crlfLog = runFullRollupGateFixture(script, {
+    scenario: 'crlf-log',
+    logTransform: (value) => value.replaceAll('\n', '\r\n'),
+  });
+  assert.strictEqual(crlfLog.status, 0, crlfLog.output);
+
+  const ansiLog = runFullRollupGateFixture(script, {
+    scenario: 'ansi-log',
+    logTransform: (value) => value.replace(/(^[ \t]*\d+ passing(?: \([^)]+\))?[ \t]*$)/gm, '\u001b[32m$1\u001b[0m'),
+  });
+  assert.strictEqual(ansiLog.status, 0, ansiLog.output);
+
+  const allPending = runFullRollupGateFixture(script, {
+    scenario: 'all-pending',
+    resultOverride: { total: 12, passing: 0, failing: 0, pending: 12 },
+  });
+  assert.notStrictEqual(allPending.status, 0);
+  assert.match(allPending.output, /Suite result is not a successful executed test run/);
+
+  const mixedUnexpectedSkip = runFullRollupGateFixture(script, {
+    scenario: 'mixed-unexpected-skip',
+    resultOverride: { total: 12, passing: 11, failing: 0, pending: 1 },
+  });
+  assert.notStrictEqual(mixedUnexpectedSkip.status, 0);
+  assert.match(mixedUnexpectedSkip.output, /Suite result is not a successful executed test run/);
+
+  const syntheticFooterOnly = runFullRollupGateFixture(script, {
+    scenario: 'synthetic-footer-only',
+    logOverride: { job: 'linux_create_workspace_core_matrix', text: '\n  6 passing (1s)\n' },
+  });
+  assert.notStrictEqual(syntheticFooterOnly.status, 0);
+  assert.match(syntheticFooterOnly.output, /Suite log does not contain enough positive real Mocha execution evidence/);
+
+  const zeroRealCompletions = runFullRollupGateFixture(script, {
+    scenario: 'zero-real-completions',
+    logOverride: {
+      job: 'linux_create_workspace_core_matrix',
+      text: `${Array.from({ length: 6 }, () => '  0 passing (1s)').join('\n')}\n  6 passing (1s)\n`,
+    },
+  });
+  assert.notStrictEqual(zeroRealCompletions.status, 0);
+  assert.match(zeroRealCompletions.output, /Suite log does not contain enough positive real Mocha execution evidence/);
+
+  const missingArtifact = runFullRollupGateFixture(script, {
+    scenario: 'missing-artifact',
+    omit: { job: 'linux_unit_tests', file: 'unitTests.summary.md' },
+  });
+  assert.notStrictEqual(missingArtifact.status, 0);
+  assert.match(missingArtifact.output, /Missing required full-rollup artifact/);
+
+  const identityMismatch = runFullRollupGateFixture(script, {
+    scenario: 'identity-mismatch',
+    contextOverride: { job: 'windows_unit_tests', field: 'artifactSHA256', value: 'different-sha' },
+  });
+  assert.notStrictEqual(identityMismatch.status, 0);
+  assert.match(identityMismatch.output, /Suite admitted identity mismatch/);
+}
+
+function runFullRollupGateFixture(script, options = {}) {
+  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), `pipeline-contract-fullgate-${options.scenario ?? 'case'}-`));
+  try {
+    const pipelineWorkspace = path.join(tempRoot, 'workspace');
+    fs.mkdirSync(pipelineWorkspace, { recursive: true });
+    const suites = [
+      {
+        job: 'linux_unit_tests',
+        variable: 'linuxUnitTestsResult',
+        artifact: 'vscode-e2e-cli-test-results-linux-unit-tests',
+        logArtifact: 'vscode-e2e-cli-log-linux-unit-tests',
+        suite: 'unitTests',
+      },
+      {
+        job: 'linux_create_workspace_behavior',
+        variable: 'linuxCreateWorkspaceBehaviorResult',
+        artifact: 'vscode-e2e-cli-test-results-linux-create-workspace-behavior',
+        logArtifact: 'vscode-e2e-cli-log-linux-create-workspace-behavior',
+        suite: 'createWorkspaceBehavior',
+      },
+      {
+        job: 'linux_create_workspace_core_matrix',
+        variable: 'linuxCreateWorkspaceCoreMatrixResult',
+        artifact: 'vscode-e2e-cli-test-results-linux-create-workspace-core-matrix',
+        logArtifact: 'vscode-e2e-cli-log-linux-create-workspace-core-matrix',
+        suite: 'createWorkspaceCoreMatrix',
+      },
+      {
+        job: 'linux_create_workspace_preview_matrix',
+        variable: 'linuxCreateWorkspacePreviewMatrixResult',
+        artifact: 'vscode-e2e-cli-test-results-linux-create-workspace-preview-matrix',
+        logArtifact: 'vscode-e2e-cli-log-linux-create-workspace-preview-matrix',
+        suite: 'createWorkspacePreviewMatrix',
+      },
+      {
+        job: 'linux_create_workspace_codeful',
+        variable: 'linuxCreateWorkspaceCodefulResult',
+        artifact: 'vscode-e2e-cli-test-results-linux-create-workspace-codeful',
+        logArtifact: 'vscode-e2e-cli-log-linux-create-workspace-codeful',
+        suite: 'createWorkspaceCodeful',
+      },
+      {
+        job: 'linux_msn_weather_lifecycle',
+        variable: 'linuxMsnWeatherLifecycleResult',
+        artifact: 'vscode-e2e-cli-test-results-linux-msn-weather-lifecycle',
+        logArtifact: 'vscode-e2e-cli-log-linux-msn-weather-lifecycle',
+        suite: 'msnWeatherLifecycle',
+      },
+      {
+        job: 'windows_unit_tests',
+        variable: 'windowsUnitTestsResult',
+        artifact: 'vscode-e2e-cli-test-results-windows-unit-tests',
+        logArtifact: 'vscode-e2e-cli-log-windows-unit-tests',
+        suite: 'unitTests',
+      },
+      {
+        job: 'windows_create_workspace_behavior_smoke',
+        variable: 'windowsCreateWorkspaceBehaviorSmokeResult',
+        artifact: 'vscode-e2e-cli-test-results-windows-create-workspace-behavior-smoke',
+        logArtifact: 'vscode-e2e-cli-log-windows-create-workspace-behavior-smoke',
+        suite: 'createWorkspaceBehaviorSmoke',
+      },
+      {
+        job: 'windows_msn_weather_lifecycle',
+        variable: 'windowsMsnWeatherLifecycleResult',
+        artifact: 'vscode-e2e-cli-test-results-windows-msn-weather-lifecycle',
+        logArtifact: 'vscode-e2e-cli-log-windows-msn-weather-lifecycle',
+        suite: 'msnWeatherLifecycle',
+      },
+    ];
+    const baseContext = {
+      producerDefinitionId: '28771',
+      producerRunId: '15497031',
+      sourceSHA: 'be05fd61b52d884c8699ceba29ea0e277cb0c14a',
+      checkoutRef: 'be05fd61b52d884c8699ceba29ea0e277cb0c14a',
+      repositoryName: 'Azure/LogicAppsUX',
+      repositoryUri: 'https://github.com/Azure/LogicAppsUX',
+      artifactName: 'vscode-e2e-build',
+      artifactVersion: '1',
+      artifactSHA256: 'same-sha',
+      resolvedVSCodeBuild: '1.139.1',
+    };
+
+    for (const suite of suites) {
+      const root = path.join(pipelineWorkspace, suite.artifact);
+      const logRoot = path.join(pipelineWorkspace, suite.logArtifact);
+      fs.mkdirSync(root, { recursive: true });
+      fs.mkdirSync(logRoot, { recursive: true });
+      const result = { outcome: 'success', total: 12, passing: 12, failing: 0, pending: 0, ...(options.resultOverride ?? {}) };
+      const context = { ...baseContext };
+      if (options.contextOverride?.job === suite.job) {
+        context[options.contextOverride.field] = options.contextOverride.value;
+      }
+      const files = new Map([
+        [`${suite.suite}.json`, `${JSON.stringify(result)}\n`],
+        [`${suite.suite}.junit.xml`, '<testsuite tests="12" failures="0" skipped="0" />\n'],
+        [`${suite.suite}.summary.md`, '# summary\n'],
+        [`admission-context-${suite.suite}.json`, `${JSON.stringify(context)}\n`],
+      ]);
+      for (const [file, content] of files) {
+        if (options.omit?.job === suite.job && options.omit.file === file) {
+          continue;
+        }
+        fs.writeFileSync(path.join(root, file), content);
+      }
+      const logText =
+        options.logOverride?.job === suite.job
+          ? options.logOverride.text
+          : buildRealMochaEvidenceLog({
+              suiteId: suite.suite,
+              phaseCount: SUITE_REGISTRY[suite.suite].expectedPhases.length,
+            });
+      fs.writeFileSync(path.join(logRoot, `${suite.suite}.log`), options.logTransform ? options.logTransform(logText) : logText);
+    }
+
+    let preparedScript = script.replaceAll('$(Pipeline.Workspace)', pipelineWorkspace);
+    for (const suite of suites) {
+      preparedScript = preparedScript.replaceAll(`$(${suite.variable})`, 'Succeeded');
+    }
+
+    function buildRealMochaEvidenceLog({ suiteId, phaseCount }) {
+      const lines = [];
+      for (let index = 0; index < phaseCount; index += 1) {
+        lines.push(`phase ${index + 1} ${suiteId}`);
+        lines.push('  12 passing (1s)');
+      }
+      if (['createWorkspaceCoreMatrix', 'createWorkspacePreviewMatrix', 'createWorkspaceCodeful'].includes(suiteId)) {
+        lines.push(`  ${phaseCount} passing (1s)`);
+      }
+      return `${lines.join('\n')}\n`;
+    }
+    return runPowerShellScript(preparedScript);
+  } finally {
+    fs.rmSync(tempRoot, { recursive: true, force: true });
+  }
+}
+
+function extractFullRollupGateScript(consumer) {
+  const fullGateJob = getConsumerDirectJob(consumer, 'verify_both_os_full_rollup');
+  const step = fullGateJob.steps.find((entry) => entry.displayName === 'Enforce nine-suite both-OS full rollup gate');
+  assert.ok(step?.pwsh, 'full rollup gate must have an executable PowerShell script');
+  return step.pwsh;
 }
 
 function parseYaml(relativePath) {
@@ -273,18 +486,17 @@ function testLocalAzureToolsWrapperContractIfAvailable() {
 
 function testConsumerAdmissionContract() {
   const consumerEntry = read('.config/vscode-e2e-cli.1es.yml');
-  const runSuitesTemplate = read('.config/templates/vscode-e2e-cli-run-suites.yml');
+  const runSuitesTemplate = read('.config/templates/vscode-e2e-cli-run-suite.yml');
   const legacyConsumerEntry = read('.azure-pipelines/vscode-e2e-cli.1es.yml');
   const legacyRunStage = read('.azure-pipelines/templates/vscode-e2e-stage.yml');
   const legacyRunCli = read('.azure-pipelines/templates/vscode-e2e-cli-run.yml');
   const legacyStagedRunCli = read('.azure-pipelines/templates/vscode-e2e-run-cli.yml');
   const cliBuildArtifactsTemplate = read('.azure-pipelines/templates/vscode-e2e-cli-build-artifacts.yml');
+  const selectorScript = read('apps/vs-code-designer/scripts/resolve-e2e-cli-suite-selection.js');
   const readme = read('.config/README.md');
   const e2eReadme = read('apps/vs-code-designer/src/test/e2e/README.md');
   const consumer = parseYaml('.config/vscode-e2e-cli.1es.yml');
-  const runSuites = parseYaml('.config/templates/vscode-e2e-cli-run-suites.yml');
-  const runE2eCli = read('apps/vs-code-designer/scripts/run-e2e-cli.js');
-
+  const runSuites = parseYaml('.config/templates/vscode-e2e-cli-run-suite.yml');
   assert.strictEqual(consumer.extends.template, 'azure-pipelines/MicroBuild.1ES.Unofficial.yml@1esPipelines');
   assert.ok(
     !consumer.parameters.some((parameter) => parameter.name === 'isOfficialBuild'),
@@ -340,34 +552,31 @@ function testConsumerAdmissionContract() {
   assert.match(runSuitesTemplate, /Verify exact admitted source checkout/);
   assert.match(runSuitesTemplate, /Extracted artifact is missing the compiled ExTester dependency-prep harness/);
   assert.match(runSuitesTemplate, /Write admitted E2E artifact identity context/);
-  assert.match(runSuitesTemplate, /LA_E2E_CLI_ADMISSION_CONTEXT_PATH/);
+  assert.match(runSuitesTemplate, /admission-context-\$\{\{ parameters\.suiteId \}\}\.json/);
   assert.match(runSuitesTemplate, /resolvedVSCodeBuild = '\$\(ResolvedVSCodeVersion\)'/);
   assert.match(runSuitesTemplate, /ResolvedVSCodeVersion must be supplied by the shared consumer context job/);
   assert.doesNotMatch(runSuitesTemplate, /Resolve stable VS Code version once/);
   assert.doesNotMatch(runSuitesTemplate, /az account get-access-token/);
   assert.doesNotMatch(runSuitesTemplate, /Copy-Item \(Join-Path \$batchRootParent '\*'\)/);
-  assert.doesNotMatch(runSuitesTemplate, /SilentlyContinue/);
-  assert.match(runSuitesTemplate, /batch-reports/);
-  assert.match(runSuitesTemplate, /\$controllerRoots = Get-ChildItem -Path \$batchRootParent -Directory \| Where-Object/);
-  assert.match(runSuitesTemplate, /la-e2e-cli-batch-\*/);
-  assert.match(runSuitesTemplate, /\$suiteRoots = \$controllerRoots \| ForEach-Object/);
-  assert.match(runSuitesTemplate, /Get-ChildItem -Path \$_.FullName -Directory \| Where-Object/);
-  assert.match(runSuitesTemplate, /suite-terminal-result\.json/);
-  assert.match(runSuitesTemplate, /suite-cleanup-ledger\.json/);
-  assert.match(runSuitesTemplate, /ReparsePoint/);
-  assert.match(runSuitesTemplate, /Refusing to stage suite reports with link\/reparse entries/);
+  assert.doesNotMatch(runSuitesTemplate, /la-e2e-cli-batch/);
+  assert.match(runSuitesTemplate, /\$requiredResultFiles = @\(/);
+  assert.match(runSuitesTemplate, /\$\{\{ parameters\.suiteId \}\}\.terminal-result\.json/);
+  assert.doesNotMatch(runSuitesTemplate, /LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH/);
+  assert.doesNotMatch(runSuitesTemplate, /LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH/);
+  assert.match(runSuitesTemplate, /Required suite diagnostics were missing after staging available evidence/);
   assert.match(runSuitesTemplate, /Redact-DiagnosticText/);
-  assert.match(runSuitesTemplate, /Copy-SanitizedReportDirectory/);
-  assert.match(runSuitesTemplate, /\$relative -eq 'suite-cleanup-ledger\.json'/);
-  assert.doesNotMatch(runSuitesTemplate, /\.vscode-test\/screenshots\/cli/);
-  assert.doesNotMatch(runSuitesTemplate, /\.vscode-test\/generated-workspaces/);
-  assert.match(runSuitesTemplate, /Publish batch suite JUnit results/);
+  assert.doesNotMatch(runSuitesTemplate, /Copy-SanitizedReportDirectory/);
+  assert.doesNotMatch(runSuitesTemplate, /cleanup-ledger\.json'[\s\S]*Copy-Item/);
+  assert.match(runSuitesTemplate, /\.vscode-test\/screenshots\/cli\/\$\{\{ parameters\.suiteId \}\}/);
+  assert.match(runSuitesTemplate, /\.vscode-test\/generated-workspaces\/\$\{\{ parameters\.suiteId \}\}/);
+  assert.match(runSuitesTemplate, /Publish JUnit result/);
   assert.match(runSuitesTemplate, /failTaskOnMissingResultsFile: true/);
   assert.doesNotMatch(runSuitesTemplate, /JUnit placeholders/);
-  assert.match(runE2eCli, /writeBatchJUnitResults\(resultsDir, aggregate\)/);
-  assert.match(runE2eCli, /\$\{sanitizeEnvSegment\(suite\.id\)\}\.junit\.xml/);
-  assert.match(runE2eCli, /e2e-cli-batch-result\.junit\.xml/);
-  assert.match(runSuitesTemplate, /LA_E2E_CLI_BATCH_TRUSTED_FULL_EXECUTION/);
+  assert.match(runSuitesTemplate, /scripts\/summarize-e2e-cli-results\.js/);
+  assert.match(runSuitesTemplate, /node scripts\/run-e2e-cli\.js "\$\{cli_args\[@\]\}"/);
+  assert.match(runSuitesTemplate, /short_profile_parent="\$\(mktemp -d "\/tmp\/la\$\{\{ parameters\.shortName \}\}\.XXXXXX"\)"/);
+  assert.match(runSuitesTemplate, /socket_bytes="\$\(printf '%s' "\$socket_probe" \| wc -c\)"/);
+  assert.match(runSuitesTemplate, /Short Linux VS Code profile socket path budget exceeded/);
   assert.match(runSuitesTemplate, /useGlobalConfig: false/);
   assert.match(runSuitesTemplate, /visibleAzLogin: false/);
   assert.match(runSuitesTemplate, /az account show --query id --output tsv/);
@@ -376,6 +585,11 @@ function testConsumerAdmissionContract() {
   assert.match(runSuitesTemplate, /AzureCLI service connection did not provide subscription and tenant identity/);
   assert.match(runSuitesTemplate, /AzureCLI service connection identity was malformed/);
   assert.match(runSuitesTemplate, /AzureCLI account tenant does not match the service connection tenant/);
+  assert.strictEqual(
+    runSuitesTemplate.match(/LA_E2E_CLI_DISABLE_UNOWNED_PORT_KILL: '1'/g)?.length,
+    2,
+    'MSN lifecycle direct runs must disable unowned port killing on both OS-specific AzureCLI paths'
+  );
   assert.doesNotMatch(runSuitesTemplate, /name: azureTenantId/);
   assert.doesNotMatch(runSuitesTemplate, /name: azureSubscriptionId/);
   assert.doesNotMatch(runSuitesTemplate, /LA_E2E_CLI_AZURE_TENANT_ID: \$\{\{ parameters\.azureTenantId \}\}/);
@@ -429,28 +643,32 @@ function testConsumerAdmissionContract() {
   assert.match(consumerEntry, /targetPath: \$\(Build\.ArtifactStagingDirectory\)\/vscode-e2e/);
   assert.match(consumerEntry, /artifactStagingPath: \$\(Build\.ArtifactStagingDirectory\)\/vscode-e2e/);
   assert.doesNotMatch(consumerEntry, /resources\.pipeline\.producer/);
-  assert.match(consumerEntry, /At least one OS cohort must be selected for the VS Code E2E consumer/);
+  assert.match(selectorScript, /At least one OS cohort must be selected for the VS Code E2E consumer/);
+  assert.match(selectorScript, /normalizeSuiteSelection/);
+  assert.match(selectorScript, /Full VS Code E2E consumer rollup requires canonical/);
+  assert.match(consumerEntry, /Validate requested suite selectors before build/);
+  assert.match(consumerEntry, /resolve-e2e-cli-suite-selection\.js/);
   assert.match(
     consumerEntry,
     /resolvedVSCodeVersion: \$\[ dependencies\.resolve_consumer_context\.outputs\['resolveStableVSCode\.resolvedVSCodeBuild'\] \]/
   );
-  assert.match(consumerEntry, /trustedFullExecution: \$\{\{ not\(parameters\.diagnosticOnly\) \}\}/);
   assert.match(consumerEntry, /expectedProducerDefinitionId: \$\(System\.DefinitionId\)/);
   assert.match(consumerEntry, /expectedProducerRunId: \$\(Build\.BuildId\)/);
   assert.match(consumerEntry, /verify_both_os_full_rollup/);
   assert.match(consumerEntry, /report_diagnostic_selected_rerun/);
   assert.match(consumerEntry, /protected checks must bind verify_both_os_full_rollup/);
-  assert.match(consumerEntry, /Diagnostic selected rerun failed selected cohort/);
-  assert.match(consumerEntry, /requires both Linux and Windows prepared suite cohorts/);
+  assert.match(consumerEntry, /Diagnostic selected rerun failed selected suite job/);
+  assert.match(consumerEntry, /Enforce nine-suite both-OS full rollup gate/);
+  assert.match(consumerEntry, /Suite result is not a successful executed test run/);
+  assert.match(consumerEntry, /Suite log does not contain enough positive real Mocha execution evidence/);
+  assert.match(consumerEntry, /vscode-e2e-cli-log-linux-create-workspace-core-matrix/);
   assert.doesNotMatch(consumerEntry, /\$\{\{ dependencies\.linux_prepared_suites\.result \}\}/);
   assert.doesNotMatch(consumerEntry, /\$\{\{ dependencies\.windows_prepared_suites\.result \}\}/);
-  assert.match(consumerEntry, /linuxPreparedSuitesResult[\s\S]*\$\[ dependencies\.linux_prepared_suites\.result \]/);
-  assert.match(consumerEntry, /windowsPreparedSuitesResult[\s\S]*\$\[ dependencies\.windows_prepared_suites\.result \]/);
-  assert.match(consumerEntry, /\$linuxResult = '\$\(linuxPreparedSuitesResult\)'/);
-  assert.match(consumerEntry, /\$windowsResult = '\$\(windowsPreparedSuitesResult\)'/);
-  assert.match(consumerEntry, /vscode-e2e-cli-test-results-linux-prepared-suites/);
-  assert.match(consumerEntry, /vscode-e2e-cli-test-results-windows-prepared-suites/);
-  assert.match(consumerEntry, /admissionContext/);
+  assert.doesNotMatch(consumerEntry, /linux_prepared_suites/);
+  assert.doesNotMatch(consumerEntry, /windows_prepared_suites/);
+  assert.match(consumerEntry, /vscode-e2e-cli-test-results-linux-unit-tests/);
+  assert.match(consumerEntry, /vscode-e2e-cli-test-results-windows-msn-weather-lifecycle/);
+  assert.match(consumerEntry, /admission-context-\$\(\$suite\.suite\)\.json/);
   assert.match(consumerEntry, /producerDefinitionId/);
   assert.match(consumerEntry, /sourceSHA/);
   assert.match(consumerEntry, /artifactSHA256/);
@@ -463,6 +681,105 @@ function assertConsumerPublicParametersAreMinimal(consumer) {
     ['diagnosticOnly', 'runLinux', 'runWindows', 'linuxSuites', 'windowsSuites'],
     'consumer Run pipeline surface must expose only genuine OS/suite selectors'
   );
+}
+
+function testSelectorResolutionScriptBehavior() {
+  const scriptPath = path.join(repoRoot, 'apps', 'vs-code-designer', 'scripts', 'resolve-e2e-cli-suite-selection.js');
+  const fullResult = runSelectorScript(scriptPath, {
+    LA_E2E_CLI_DIAGNOSTIC_ONLY: 'false',
+    LA_E2E_CLI_RUN_LINUX: 'true',
+    LA_E2E_CLI_RUN_WINDOWS: 'true',
+    LA_E2E_CLI_LINUX_SUITES: 'linux',
+    LA_E2E_CLI_WINDOWS_SUITES: 'windows',
+  });
+  assert.strictEqual(fullResult.status, 0, fullResult.output);
+  assert.match(
+    fullResult.output,
+    /variable=linuxSelectedSuites;isOutput=true]unitTests,createWorkspaceBehavior,createWorkspaceCoreMatrix,createWorkspacePreviewMatrix,createWorkspaceCodeful,msnWeatherLifecycle/
+  );
+  assert.match(
+    fullResult.output,
+    /variable=windowsSelectedSuites;isOutput=true]unitTests,createWorkspaceBehaviorSmoke,msnWeatherLifecycle/
+  );
+  assert.match(fullResult.output, /variable=linux_msnWeatherLifecycle;isOutput=true]true/);
+  assert.match(fullResult.output, /variable=windows_createWorkspaceBehaviorSmoke;isOutput=true]true/);
+
+  const explicitCanonicalResult = runSelectorScript(scriptPath, {
+    LA_E2E_CLI_DIAGNOSTIC_ONLY: 'false',
+    LA_E2E_CLI_RUN_LINUX: 'true',
+    LA_E2E_CLI_RUN_WINDOWS: 'true',
+    LA_E2E_CLI_LINUX_SUITES:
+      'unitTests,createWorkspaceBehavior,createWorkspaceCoreMatrix,createWorkspacePreviewMatrix,createWorkspaceCodeful,msnWeatherLifecycle',
+    LA_E2E_CLI_WINDOWS_SUITES: 'unitTests,createWorkspaceBehaviorSmoke,msnWeatherLifecycle',
+  });
+  assert.strictEqual(explicitCanonicalResult.status, 0, explicitCanonicalResult.output);
+
+  const diagnosticPartialResult = runSelectorScript(scriptPath, {
+    LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true',
+    LA_E2E_CLI_RUN_LINUX: 'true',
+    LA_E2E_CLI_RUN_WINDOWS: 'false',
+    LA_E2E_CLI_LINUX_SUITES: 'unitTests',
+  });
+  assert.strictEqual(diagnosticPartialResult.status, 0, diagnosticPartialResult.output);
+  assert.match(diagnosticPartialResult.output, /variable=linux_unitTests;isOutput=true]true/);
+  assert.match(diagnosticPartialResult.output, /variable=linux_createWorkspaceBehavior;isOutput=true]false/);
+  assert.match(diagnosticPartialResult.output, /variable=windowsSelectedSuites;isOutput=true]/);
+
+  const fullPartialResult = runSelectorScript(scriptPath, {
+    LA_E2E_CLI_DIAGNOSTIC_ONLY: 'false',
+    LA_E2E_CLI_RUN_LINUX: 'true',
+    LA_E2E_CLI_RUN_WINDOWS: 'true',
+    LA_E2E_CLI_LINUX_SUITES: 'unitTests',
+    LA_E2E_CLI_WINDOWS_SUITES: 'windows',
+  });
+  assert.notStrictEqual(fullPartialResult.status, 0);
+  assert.match(fullPartialResult.output, /Full VS Code E2E consumer rollup requires canonical linux suite inventory/);
+
+  const duplicateResult = runSelectorScript(scriptPath, {
+    LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true',
+    LA_E2E_CLI_RUN_LINUX: 'true',
+    LA_E2E_CLI_RUN_WINDOWS: 'false',
+    LA_E2E_CLI_LINUX_SUITES: 'unitTests,unitTests',
+  });
+  assert.notStrictEqual(duplicateResult.status, 0);
+  assert.match(duplicateResult.output, /Duplicate or overlapping --suites entry "unitTests"/);
+
+  const wrongOsResult = runSelectorScript(scriptPath, {
+    LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true',
+    LA_E2E_CLI_RUN_LINUX: 'true',
+    LA_E2E_CLI_RUN_WINDOWS: 'false',
+    LA_E2E_CLI_LINUX_SUITES: 'createWorkspaceBehaviorSmoke',
+  });
+  assert.notStrictEqual(wrongOsResult.status, 0);
+  assert.match(wrongOsResult.output, /is not available on linux/);
+
+  const noOsResult = runSelectorScript(scriptPath, {
+    LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true',
+    LA_E2E_CLI_RUN_LINUX: 'false',
+    LA_E2E_CLI_RUN_WINDOWS: 'false',
+  });
+  assert.notStrictEqual(noOsResult.status, 0);
+  assert.match(noOsResult.output, /At least one OS cohort must be selected/);
+}
+
+function runSelectorScript(scriptPath, env) {
+  try {
+    const result = execFileSync(process.execPath, [scriptPath], {
+      cwd: repoRoot,
+      env: {
+        ...process.env,
+        ...env,
+      },
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    return { status: 0, output: result };
+  } catch (error) {
+    return {
+      status: error.status ?? 1,
+      output: `${error.stdout ?? ''}${error.stderr ?? ''}`,
+    };
+  }
 }
 
 function assertConsumerCurrentRunArtifactContract(consumer) {
@@ -488,8 +805,23 @@ function assertConsumerCurrentRunArtifactContract(consumer) {
   assert.strictEqual(buildTemplate?.parameters?.artifactStagingPath, '$(Build.ArtifactStagingDirectory)/vscode-e2e');
 
   const templateInvocations = flattenAzureList(consumer.extends.parameters.stages[0].jobs).filter((entry) => entry.template);
-  assert.strictEqual(templateInvocations.length, 2);
+  assert.strictEqual(templateInvocations.length, 9);
+  assert.deepStrictEqual(
+    templateInvocations.map((invocation) => invocation.parameters.jobName).sort(),
+    [
+      'linux_create_workspace_behavior',
+      'linux_create_workspace_codeful',
+      'linux_create_workspace_core_matrix',
+      'linux_create_workspace_preview_matrix',
+      'linux_msn_weather_lifecycle',
+      'linux_unit_tests',
+      'windows_create_workspace_behavior_smoke',
+      'windows_msn_weather_lifecycle',
+      'windows_unit_tests',
+    ].sort()
+  );
   for (const invocation of templateInvocations) {
+    assert.strictEqual(invocation.template, '/.config/templates/vscode-e2e-cli-run-suite.yml@self');
     assert.deepStrictEqual(invocation.parameters.dependsOn, ['resolve_consumer_context', 'build_current_run_e2e_artifact']);
     assert.strictEqual(invocation.parameters.expectedProducerDefinitionId, '$(System.DefinitionId)');
     assert.strictEqual(invocation.parameters.expectedProducerRunId, '$(Build.BuildId)');
@@ -501,13 +833,51 @@ function assertConsumerCurrentRunArtifactContract(consumer) {
       invocation.parameters.checkoutRef,
       "$[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]"
     );
-    assert.strictEqual(invocation.parameters.nodeVersion, '22.x');
-    assert.strictEqual(invocation.parameters.dotnetVersion, '8.0.x');
-    assert.strictEqual(invocation.parameters.testARMServiceConnection, 'LogicAppsVSCode-E2E-SignIn');
+    assert.ok(invocation.parameters.selected.includes('validateSuiteSelection.'));
+    assert.match(invocation.parameters.cliArguments, /^--(label|msn-weather-lifecycle)/);
+    assert.ok(invocation.parameters.shortName.length <= 2, 'suite shortName must keep Linux profile/socket paths short');
+    assert.strictEqual(invocation.parameters.nodeVersion ?? '22.x', '22.x');
+    assert.strictEqual(invocation.parameters.dotnetVersion ?? '8.0.x', '8.0.x');
+    if (invocation.parameters.requiresAzureAccessToken === true) {
+      assert.strictEqual(invocation.parameters.testARMServiceConnection, 'LogicAppsVSCode-E2E-SignIn');
+      assert.strictEqual(invocation.parameters.azureResourceGroupName, 'LogicAppsVSCode-E2E-Fixtures');
+      assert.strictEqual(invocation.parameters.azureLocationName, 'westus');
+    } else {
+      assert.strictEqual(invocation.parameters.testARMServiceConnection, undefined);
+      assert.strictEqual(invocation.parameters.azureResourceGroupName, undefined);
+      assert.strictEqual(invocation.parameters.azureLocationName, undefined);
+    }
     assert.strictEqual(invocation.parameters.azureTenantId, undefined);
     assert.strictEqual(invocation.parameters.azureSubscriptionId, undefined);
-    assert.strictEqual(invocation.parameters.azureResourceGroupName, 'LogicAppsVSCode-E2E-Fixtures');
-    assert.strictEqual(invocation.parameters.azureLocationName, 'westus');
+  }
+
+  const diagnosticJob = getConsumerDirectJob(consumer, 'report_diagnostic_selected_rerun');
+  assert.deepStrictEqual(diagnosticJob.dependsOn, [
+    'resolve_consumer_context',
+    'linux_unit_tests',
+    'linux_create_workspace_behavior',
+    'linux_create_workspace_core_matrix',
+    'linux_create_workspace_preview_matrix',
+    'linux_create_workspace_codeful',
+    'linux_msn_weather_lifecycle',
+    'windows_unit_tests',
+    'windows_create_workspace_behavior_smoke',
+    'windows_msn_weather_lifecycle',
+  ]);
+}
+
+function runPowerShellScript(script) {
+  try {
+    const output = execFileSync('pwsh', ['-NoProfile', '-NonInteractive', '-Command', script], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    return { status: 0, output };
+  } catch (error) {
+    return {
+      status: error.status ?? 1,
+      output: `${error.stdout ?? ''}${error.stderr ?? ''}`,
+    };
   }
 }
 
@@ -634,9 +1004,9 @@ function assertConsumerJobsAreValidationJobs(consumer, runSuites) {
     assert.strictEqual(job.templateContext?.type, 'validationJob', `${job.job} must be a validationJob`);
   }
 
-  assert.strictEqual(templateJobs.length, 2);
+  assert.strictEqual(templateJobs.length, 9);
   for (const invocation of templateJobs) {
-    assert.strictEqual(invocation.template, '/.config/templates/vscode-e2e-cli-run-suites.yml@self');
+    assert.strictEqual(invocation.template, '/.config/templates/vscode-e2e-cli-run-suite.yml@self');
   }
 
   assert.strictEqual(runSuites.jobs.length, 1);
@@ -764,7 +1134,7 @@ function assertValidationJobGuardRejectsMutations(consumer, runSuites) {
 function assertConsumerHasNoNetworkIsolationPolicyOverride(consumer, runSuites) {
   const overridePaths = [
     ...findYamlKeyPaths(consumer, 'networkIsolationPolicy', ['.config/vscode-e2e-cli.1es.yml']),
-    ...findYamlKeyPaths(runSuites, 'networkIsolationPolicy', ['.config/templates/vscode-e2e-cli-run-suites.yml']),
+    ...findYamlKeyPaths(runSuites, 'networkIsolationPolicy', ['.config/templates/vscode-e2e-cli-run-suite.yml']),
   ];
 
   assert.deepStrictEqual(
@@ -812,7 +1182,7 @@ function testAzureCliIdentityScriptBehavior() {
   assertCommandAvailable('pwsh');
   assertCommandAvailable('bash');
 
-  const runSuites = parseYaml('.config/templates/vscode-e2e-cli-run-suites.yml');
+  const runSuites = parseYaml('.config/templates/vscode-e2e-cli-run-suite.yml');
   const legacyRunCli = parseYaml('.azure-pipelines/templates/vscode-e2e-run-cli.yml');
   const legacyStandaloneRunCli = parseYaml('.azure-pipelines/templates/vscode-e2e-cli-run.yml');
   const scripts = [
@@ -820,13 +1190,13 @@ function testAzureCliIdentityScriptBehavior() {
       name: 'current-linux',
       shell: 'bash',
       invokesRunner: true,
-      script: getAzureCliInlineScript(runSuites, { scriptType: 'bash', displayName: /Run isolated @vscode\/test-cli suites/ }),
+      script: getAzureCliInlineScript(runSuites, { scriptType: 'bash', displayName: /Run vscode-test CLI/ }),
     },
     {
       name: 'current-windows',
       shell: 'pwsh',
       invokesRunner: true,
-      script: getAzureCliInlineScript(runSuites, { scriptType: 'pscore', displayName: /Run isolated @vscode\/test-cli suites/ }),
+      script: getAzureCliInlineScript(runSuites, { scriptType: 'pscore', displayName: /Run vscode-test CLI/ }),
     },
     {
       name: 'legacy-staged',
@@ -912,6 +1282,8 @@ function prepareInlineScriptForUnit({ name, shell, script, invokesRunner }) {
     .replaceAll('${{ parameters.azureResourceGroupName }}', 'LogicAppsVSCode-E2E-Fixtures')
     .replaceAll('${{ parameters.requiresAzureAccessToken }}', 'True')
     .replaceAll('${{ parameters.artifactName }}', 'unitTests')
+    .replaceAll('${{ parameters.suiteId }}', 'unitTests')
+    .replaceAll('${{ parameters.shortName }}', 'ut')
     .replaceAll('${{ parameters.suites }}', 'unitTests')
     .replaceAll('$(Build.SourcesDirectory)', sourceMacroValue)
     .replaceAll('$(Agent.TempDirectory)', agentTempMacroValue);
@@ -928,6 +1300,7 @@ function runIdentityScript(scriptInfo, overrides = {}) {
     AZ_STUB_SUBSCRIPTION: '00000000-0000-4000-8000-000000000020',
     AZ_STUB_TENANT: '00000000-0000-4000-8000-000000000010',
     AZ_STUB_TOKEN: 'stub-token',
+    LA_E2E_CLI_DIRECT_ARGS: '--label unitTests',
     RUNNER_MARKER: runnerMarker,
     ...overrides,
   };
@@ -1063,41 +1436,38 @@ function testPipelineSafetyGuards() {
   assert.match(stagedReleaseEntry, /releaseApprovalEnvironment: \$\{\{ parameters\.releaseApprovalEnvironment \}\}/);
 }
 
-function testDiagnosticsStagingScriptHandlesControllerLayout() {
-  const runSuitesTemplate = read('.config/templates/vscode-e2e-cli-run-suites.yml');
+function testDiagnosticsStagingScriptHandlesDirectSuiteLayout() {
+  const runSuitesTemplate = read('.config/templates/vscode-e2e-cli-run-suite.yml');
   const script = extractStageDiagnosticsScript(runSuitesTemplate);
   const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'pipeline-contract-staging-'));
   try {
     const sourcesDirectory = path.join(tempRoot, 'sources');
     const agentTempDirectory = path.join(tempRoot, 'agent-temp');
     const artifactStagingDirectory = path.join(tempRoot, 'artifact-staging');
-    const artifactName = 'linux-prepared-suites';
+    const artifactName = 'linux-unit-tests';
+    const suiteId = 'unitTests';
     const resultRoot = path.join(sourcesDirectory, 'apps', 'vs-code-designer', '.vscode-test', 'results');
     fs.mkdirSync(resultRoot, { recursive: true });
-    fs.writeFileSync(path.join(resultRoot, 'e2e-cli-batch-result.json'), '{"aggregateOutcome":"success"}\n');
-    fs.writeFileSync(path.join(resultRoot, 'e2e-cli-batch-result.junit.xml'), '<testsuites />\n');
-    fs.writeFileSync(path.join(resultRoot, 'unitTests.junit.xml'), '<testsuite />\n');
+    fs.writeFileSync(path.join(resultRoot, `${suiteId}.json`), '{"outcome":"success","total":12,"failing":0}\n');
+    fs.writeFileSync(path.join(resultRoot, `${suiteId}.junit.xml`), '<testsuite tests="12" failures="0" />\n');
+    fs.writeFileSync(path.join(resultRoot, `${suiteId}.summary.md`), '# summary\n');
+    fs.writeFileSync(path.join(resultRoot, `${suiteId}.terminal-result.json`), '{"complete":true,"cleanupVerified":true}\n');
+    fs.writeFileSync(path.join(resultRoot, `${suiteId}.cleanup-ledger.json`), '{"privateProcessIds":[1234]}\n');
+    fs.writeFileSync(path.join(resultRoot, `admission-context-${suiteId}.json`), '{"sourceSHA":"abc"}\n');
     fs.writeFileSync(
-      path.join(resultRoot, `${artifactName}.log`),
-      'Authorization: Bearer raw-token\nGET https://example.test/callback?sig=secret-sas\n'
+      path.join(resultRoot, `${suiteId}.log`),
+      'Authorization: Bearer raw-token https://example.test/callback?sig=secret-sas\n'
     );
 
-    const reportsRoot = path.join(
-      agentTempDirectory,
-      `vscode-e2e-cli-batch-${artifactName}`,
-      'la-e2e-cli-batch-controller',
-      '01-unitTests-owned',
-      'reports'
-    );
-    fs.mkdirSync(path.join(reportsRoot, 'vscode-logs'), { recursive: true });
-    fs.mkdirSync(path.join(reportsRoot, 'screenshots'), { recursive: true });
-    fs.mkdirSync(path.join(reportsRoot, 'generated-workspaces'), { recursive: true });
-    fs.writeFileSync(path.join(reportsRoot, 'suite-result.json'), '{"id":"unitTests"}\n');
-    fs.writeFileSync(path.join(reportsRoot, 'suite-terminal-result.json'), '{"complete":true}\n');
-    fs.writeFileSync(path.join(reportsRoot, 'suite-cleanup-ledger.json'), '{"privateProcessIds":[1234]}\n');
-    fs.writeFileSync(path.join(reportsRoot, 'vscode-logs', 'profile.log'), 'already redacted log\n');
-    fs.writeFileSync(path.join(reportsRoot, 'screenshots', 'shot.txt'), 'screenshot placeholder\n');
-    fs.writeFileSync(path.join(reportsRoot, 'generated-workspaces', 'index.md'), '# redacted workspace\n');
+    const vscodeLogsRoot = path.join(sourcesDirectory, 'apps', 'vs-code-designer', '.vscode-test', 'vscode-logs', 'cli', suiteId);
+    const screenshotsRoot = path.join(sourcesDirectory, 'apps', 'vs-code-designer', '.vscode-test', 'screenshots', 'cli', suiteId);
+    const workspaceSnapshotsRoot = path.join(sourcesDirectory, 'apps', 'vs-code-designer', '.vscode-test', 'generated-workspaces', suiteId);
+    fs.mkdirSync(vscodeLogsRoot, { recursive: true });
+    fs.mkdirSync(screenshotsRoot, { recursive: true });
+    fs.mkdirSync(workspaceSnapshotsRoot, { recursive: true });
+    fs.writeFileSync(path.join(vscodeLogsRoot, 'profile.log'), 'already redacted log\n');
+    fs.writeFileSync(path.join(screenshotsRoot, 'shot.txt'), 'screenshot placeholder\n');
+    fs.writeFileSync(path.join(workspaceSnapshotsRoot, 'index.md'), '# redacted workspace\n');
 
     execFileSync(
       'pwsh',
@@ -1109,36 +1479,99 @@ function testDiagnosticsStagingScriptHandlesControllerLayout() {
           .replaceAll('$(Build.ArtifactStagingDirectory)', artifactStagingDirectory)
           .replaceAll('$(Build.SourcesDirectory)', sourcesDirectory)
           .replaceAll('$(Agent.TempDirectory)', agentTempDirectory)
-          .replaceAll('${{ parameters.artifactName }}', artifactName),
+          .replaceAll('${{ parameters.artifactName }}', artifactName)
+          .replaceAll('${{ parameters.suiteId }}', suiteId),
       ],
       { stdio: 'pipe' }
     );
 
     const diagnosticsRoot = path.join(artifactStagingDirectory, 'vscode-e2e-cli', artifactName);
-    assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'results', 'e2e-cli-batch-result.json')));
-    assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'results', 'unitTests.junit.xml')));
-    assert.ok(!fs.existsSync(path.join(diagnosticsRoot, 'results', `${artifactName}.log`)), 'raw tee log must not be copied to results');
+    assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'results', `${suiteId}.json`)));
+    assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'results', `${suiteId}.junit.xml`)));
+    assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'results', `${suiteId}.summary.md`)));
+    assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'results', `${suiteId}.terminal-result.json`)));
+    assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'results', `admission-context-${suiteId}.json`)));
+    assert.ok(
+      !fs.existsSync(path.join(diagnosticsRoot, 'results', `${suiteId}.cleanup-ledger.json`)),
+      'private cleanup ledger must not be published'
+    );
 
-    const sanitizedLog = fs.readFileSync(path.join(diagnosticsRoot, 'log', `${artifactName}.log`), 'utf-8');
+    const sanitizedLog = fs.readFileSync(path.join(diagnosticsRoot, 'log', `${suiteId}.log`), 'utf-8');
     assert.doesNotMatch(sanitizedLog, /raw-token|secret-sas/);
     assert.match(sanitizedLog, /<redacted>/);
 
-    const stagedSuiteReports = path.join(diagnosticsRoot, 'log', 'batch-reports', '01-unitTests-owned');
-    assert.ok(fs.existsSync(path.join(stagedSuiteReports, 'suite-result.json')));
-    assert.ok(fs.existsSync(path.join(stagedSuiteReports, 'suite-terminal-result.json')));
-    assert.ok(fs.existsSync(path.join(stagedSuiteReports, 'vscode-logs', 'profile.log')));
-    assert.ok(!fs.existsSync(path.join(stagedSuiteReports, 'suite-cleanup-ledger.json')), 'cleanup ledger must remain private');
-    assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'screenshots', '01-unitTests-owned')));
-    assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'generated-workspaces', '01-unitTests-owned')));
+    assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'log', 'vscode-logs', 'profile.log')));
+    assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'screenshots', 'shot.txt')));
+    assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'generated-workspaces', 'index.md')));
+  } finally {
+    fs.rmSync(tempRoot, { recursive: true, force: true });
+  }
+}
+
+function testDiagnosticsStagingScriptPreservesEvidenceBeforeFailing() {
+  const runSuitesTemplate = read('.config/templates/vscode-e2e-cli-run-suite.yml');
+  const script = extractStageDiagnosticsScript(runSuitesTemplate);
+  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'pipeline-contract-staging-incomplete-'));
+  try {
+    const sourcesDirectory = path.join(tempRoot, 'sources');
+    const agentTempDirectory = path.join(tempRoot, 'agent-temp');
+    const artifactStagingDirectory = path.join(tempRoot, 'artifact-staging');
+    const artifactName = 'linux-unit-tests';
+    const suiteId = 'unitTests';
+    const resultRoot = path.join(sourcesDirectory, 'apps', 'vs-code-designer', '.vscode-test', 'results');
+    fs.mkdirSync(resultRoot, { recursive: true });
+    fs.writeFileSync(path.join(resultRoot, `${suiteId}.junit.xml`), '<testsuite tests="12" failures="0" />\n');
+    fs.writeFileSync(path.join(resultRoot, `${suiteId}.summary.md`), '# summary\n');
+    fs.writeFileSync(path.join(resultRoot, `${suiteId}.terminal-result.json`), '{"complete":true,"cleanupVerified":true}\n');
+    fs.writeFileSync(path.join(resultRoot, `admission-context-${suiteId}.json`), '{"sourceSHA":"abc"}\n');
+    fs.writeFileSync(
+      path.join(resultRoot, `${suiteId}.log`),
+      'Authorization: Bearer raw-token https://example.test/callback?sig=secret-sas\n'
+    );
+
+    const vscodeLogsRoot = path.join(sourcesDirectory, 'apps', 'vs-code-designer', '.vscode-test', 'vscode-logs', 'cli', suiteId);
+    const screenshotsRoot = path.join(sourcesDirectory, 'apps', 'vs-code-designer', '.vscode-test', 'screenshots', 'cli', suiteId);
+    const workspaceSnapshotsRoot = path.join(sourcesDirectory, 'apps', 'vs-code-designer', '.vscode-test', 'generated-workspaces', suiteId);
+    fs.mkdirSync(vscodeLogsRoot, { recursive: true });
+    fs.mkdirSync(screenshotsRoot, { recursive: true });
+    fs.mkdirSync(workspaceSnapshotsRoot, { recursive: true });
+    fs.writeFileSync(path.join(vscodeLogsRoot, 'profile.log'), 'already redacted log\n');
+    fs.writeFileSync(path.join(screenshotsRoot, 'shot.txt'), 'screenshot placeholder\n');
+    fs.writeFileSync(path.join(workspaceSnapshotsRoot, 'index.md'), '# redacted workspace\n');
+
+    const result = runPowerShellScript(
+      script
+        .replaceAll('$(Build.ArtifactStagingDirectory)', artifactStagingDirectory)
+        .replaceAll('$(Build.SourcesDirectory)', sourcesDirectory)
+        .replaceAll('$(Agent.TempDirectory)', agentTempDirectory)
+        .replaceAll('${{ parameters.artifactName }}', artifactName)
+        .replaceAll('${{ parameters.suiteId }}', suiteId)
+    );
+    assert.notStrictEqual(result.status, 0);
+    assert.match(result.output, /Required suite diagnostics were missing after staging available evidence/);
+
+    const diagnosticsRoot = path.join(artifactStagingDirectory, 'vscode-e2e-cli', artifactName);
+    assert.ok(!fs.existsSync(path.join(diagnosticsRoot, 'results', `${suiteId}.json`)), 'missing required JSON result must stay missing');
+    assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'results', `${suiteId}.junit.xml`)));
+    assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'results', `${suiteId}.summary.md`)));
+    assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'results', `${suiteId}.terminal-result.json`)));
+    assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'results', `admission-context-${suiteId}.json`)));
+
+    const sanitizedLog = fs.readFileSync(path.join(diagnosticsRoot, 'log', `${suiteId}.log`), 'utf-8');
+    assert.doesNotMatch(sanitizedLog, /raw-token|secret-sas/);
+    assert.match(sanitizedLog, /<redacted>/);
+    assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'log', 'vscode-logs', 'profile.log')));
+    assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'screenshots', 'shot.txt')));
+    assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'generated-workspaces', 'index.md')));
   } finally {
     fs.rmSync(tempRoot, { recursive: true, force: true });
   }
 }
 
 function extractStageDiagnosticsScript(templateText) {
-  const displayName = '        displayName: Stage isolated suite diagnostics';
+  const displayName = '        displayName: Stage vscode-test CLI results (${{ parameters.suiteId }})';
   const displayNameIndex = templateText.indexOf(displayName);
-  assert.notStrictEqual(displayNameIndex, -1, 'Stage isolated suite diagnostics step should be present');
+  assert.notStrictEqual(displayNameIndex, -1, 'Stage vscode-test CLI results step should be present');
   const beforeDisplayName = templateText.slice(0, displayNameIndex);
   const blockStart = beforeDisplayName.lastIndexOf('      - pwsh: |');
   assert.notStrictEqual(blockStart, -1, 'Stage isolated suite diagnostics script should have a pwsh block');
