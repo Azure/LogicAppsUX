@@ -349,24 +349,26 @@ async function getWorkflowDebugProcessCandidates(taskInfo: IRunningFuncTask): Pr
   return [firstChildProcessId, hostChildProcessId];
 }
 
+/**
+ * Determines whether `hostChildProcessId` is just an outer launcher `func.exe` with another,
+ * deeper func/dotnet workflow process nested below it. This only matters on Windows, where custom
+ * code projects can spawn such a nested launcher; in that case the workflow debugger should attach
+ * to the nested host instead of the outer launcher.
+ */
+async function shouldPreferNestedHost(firstChildProcessId: string | undefined, hostChildProcessId: string | undefined): Promise<boolean> {
+  if (process.platform !== Platform.windows || !firstChildProcessId || !hostChildProcessId) {
+    return false;
+  }
+  if (hostChildProcessId === firstChildProcessId) {
+    return false;
+  }
+  return Boolean(await getMatchingWorkflowChildProcess(Number(hostChildProcessId)));
+}
+
 export async function pickWorkflowDebugProcess(taskInfo: IRunningFuncTask, preferHostChildProcess = false): Promise<string> {
   const [firstChildProcessId, hostChildProcessId] = await getWorkflowDebugProcessCandidates(taskInfo);
   taskInfo.childProcessId = [firstChildProcessId, hostChildProcessId];
-  let preferNestedWorkflowHost = false;
-  if (
-    process.platform === Platform.windows &&
-    !preferHostChildProcess &&
-    firstChildProcessId &&
-    hostChildProcessId &&
-    hostChildProcessId !== firstChildProcessId
-  ) {
-    // This extra tree walk only runs for the Windows nested-launcher case; the selected child PIDs
-    // are still cached on `taskInfo` so the normal attach path does not rediscover them.
-    // `getMatchingWorkflowChildProcess` returns a deeper func/dotnet child. When that exists under
-    // `hostChildProcessId`, the current host child is an outer launcher func.exe and we should
-    // attach the workflow debugger to that nested host instead of the launcher.
-    preferNestedWorkflowHost = Boolean(await getMatchingWorkflowChildProcess(Number(hostChildProcessId)));
-  }
+  const preferNestedWorkflowHost = preferHostChildProcess ? false : await shouldPreferNestedHost(firstChildProcessId, hostChildProcessId);
   const shouldPreferHostChild = process.platform === Platform.windows && (preferHostChildProcess || preferNestedWorkflowHost);
   const selectedProcessId = shouldPreferHostChild
     ? (hostChildProcessId ?? firstChildProcessId ?? String(taskInfo.processId))
@@ -398,7 +400,9 @@ export async function findChildProcess(processId: number): Promise<string | unde
 
 function resolveValidPortOrDefault(port: string): number {
   const parsedPort = Number(port);
-  return !port || !Number.isInteger(parsedPort) || parsedPort <= 0 || parsedPort > 65535 ? Number(defaultFuncPort) : parsedPort;
+  const isNonEmpty = Boolean(port);
+  const isValidPort = isNonEmpty && Number.isInteger(parsedPort) && parsedPort > 0 && parsedPort <= 65535;
+  return isValidPort ? parsedPort : Number(defaultFuncPort);
 }
 
 // Used both to select the immediate workflow child for attach and to detect whether a candidate
