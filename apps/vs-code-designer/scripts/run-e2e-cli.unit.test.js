@@ -48,7 +48,7 @@ const {
   SUITE_REGISTRY,
 } = require('./e2e-cli-batch.js');
 const {
-  _test: { buildAggregate: buildSummaryAggregate },
+  _test: { buildAggregate: buildSummaryAggregate, buildSingleSummary },
 } = require('./summarize-e2e-cli-results.js');
 
 const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
@@ -90,6 +90,7 @@ const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
     await testRunSuiteWrapperProcessTimeoutCancelsGrandchildListener();
     testAggregateCompletenessAndDiagnosticRerun();
     testAggregateCliOptions();
+    testSingleSummarySupportsDiagnosticsArtifactName();
     console.log('[run-e2e-cli.unit] all tests passed');
   } finally {
     fs.rmSync(tempRoot, { recursive: true, force: true });
@@ -1188,6 +1189,32 @@ function testAggregateCliOptions() {
   assert.strictEqual(aggregate.diagnosticOnly, true);
   assert.strictEqual(aggregate.fullRollup, false);
   assert.ok(aggregate.failedLabels.includes('diagnosticOnly (not a full rollup)'));
+}
+
+function testSingleSummarySupportsDiagnosticsArtifactName() {
+  const result = {
+    label: 'unitTests',
+    outcome: 'success',
+    passing: 12,
+    failing: 0,
+    pending: 0,
+    passRate: 100,
+  };
+  const defaultSummary = buildSingleSummary(result);
+  assert.match(defaultSummary, /vscode-e2e-cli-test-results-unitTests/);
+  assert.match(defaultSummary, /vscode-e2e-cli-log-unitTests/);
+  assert.match(defaultSummary, /vscode-e2e-cli-screenshots-unitTests/);
+
+  const diagnosticsSummary = buildSingleSummary({
+    ...result,
+    diagnosticsArtifactName: 'vscode-e2e-cli-diagnostics-linux-unit-tests',
+  });
+  assert.match(diagnosticsSummary, /vscode-e2e-cli-diagnostics-linux-unit-tests/);
+  assert.match(diagnosticsSummary, /structured results under `results\/`/);
+  assert.match(diagnosticsSummary, /VS Code profile logs under `log\/`/);
+  assert.doesNotMatch(diagnosticsSummary, /vscode-e2e-cli-test-results-unitTests/);
+  assert.doesNotMatch(diagnosticsSummary, /vscode-e2e-cli-log-unitTests/);
+  assert.doesNotMatch(diagnosticsSummary, /vscode-e2e-cli-screenshots-unitTests/);
 }
 
 function writeSuiteTerminalAndCleanup(context, options = {}) {

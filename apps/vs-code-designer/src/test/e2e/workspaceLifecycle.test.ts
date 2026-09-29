@@ -38,7 +38,8 @@ import {
   type MsnWeatherAzureSettings,
   normalizeManagementBaseUrl,
 } from './msnWeatherSettings';
-import { captureCdpScreenshot, installFailureScreenshotHook } from './screenshot';
+import { captureCdpScreenshot, captureDiagnosticScreenshot, installFailureScreenshotHook } from './screenshot';
+import type { ScreenshotExpectation } from './screenshotReadiness';
 import { containsIgnoreCase, normalizeFsPath, uniqueName } from './testUtils';
 import { waitForVisibleDelay } from './visibleDelay';
 import { closeAllTabs, closeWebviewTabs, describeOpenTabs, getTabViewType, getWebviewTabs, waitForWebviewTab } from './webviewTabs';
@@ -319,17 +320,20 @@ suite('Generated Workspace Designer Lifecycle Tests', () => {
     if (createdWorkspace.appType === 'standard') {
       console.log(`[workspace-lifecycle] Opening ${createdWorkspace.label} designer`);
       await openDesignerAndCreateWorkflow(createdWorkspace);
-      await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-designer-open`);
     } else {
       console.log(`[workspace-lifecycle] ${createdWorkspace.label}: skipping designer open; using generated workflow`);
       assertGeneratedWorkflowReadyForRuntime(createdWorkspace);
       await waitForCustomCodeRuntimeArtifactsIfNeeded(createdWorkspace);
-      await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-generated-workflow-ready`);
+      await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-generated-workflow-ready`, {
+        expectation: { kind: 'diagnostic', label: createdWorkspace.label, reason: 'generated-workflow-artifacts-verified' },
+        diagnostic: true,
+      });
     }
 
     await startDebuggingGeneratedWorkspace(createdWorkspace);
-    await runWorkflowThroughOverviewAndAssertSucceeded(createdWorkspace);
-    await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-run-succeeded`);
+    await runWorkflowThroughOverviewAndAssertSucceeded(createdWorkspace, {
+      completedScreenshotName: `workspace-lifecycle-${createdWorkspace.label}-run-succeeded`,
+    });
 
     await assertNoDialogAttempts('Generated workspace designer lifecycle');
   });
@@ -412,16 +416,34 @@ function getWorkspaceLifecycleCaseFromEnv(): CreatedWorkspace {
 async function createWorkspaceThroughWebview(creationCase: WorkspaceCreationCase, parentPath: string): Promise<CreatedWorkspace> {
   let lastError: unknown;
   for (let attempt = 1; attempt <= 2; attempt++) {
-    const { cdp, contextId } = await openCreateWorkspaceContext();
+    const { cdp, contextId } = await openCreateWorkspaceContext(creationCase.label);
     try {
       await fillWorkspaceCreationFields(cdp, contextId, creationCase, parentPath);
       await dismissWorkbenchNotifications();
       await assertWorkspaceCreationFields(cdp, contextId, creationCase, parentPath);
-      await captureWorkspaceCreationFormScreenshots(cdp, contextId, creationCase.label, 'fields-verified');
+      await captureWorkspaceCreationFormScreenshots(cdp, contextId, creationCase, parentPath, 'fields-verified');
       await assertNextButtonEnabled(cdp, contextId, `${creationCase.label} creation fields`);
       await clickWizardButton(cdp, contextId, 'Next');
       await waitForReviewStep(cdp, contextId, creationCase);
-      await captureLifecycleScreenshot(`workspace-lifecycle-${creationCase.label}-review`);
+      await captureLifecycleScreenshot(`workspace-lifecycle-${creationCase.label}-review`, {
+        expectation: {
+          kind: 'createWorkspace',
+          label: creationCase.label,
+          stage: 'review',
+          createButton: 'enabled',
+          requiredText: [
+            creationCase.wsName,
+            creationCase.appName,
+            creationCase.wfName,
+            ...(creationCase.appType === 'codeful' ? [] : ['Stateful']),
+            creationCase.functionFolderName,
+            creationCase.functionNamespace,
+            creationCase.functionName,
+          ].filter((value): value is string => !!value),
+        },
+        semanticCdp: cdp,
+        semanticContextId: contextId,
+      });
       await clickWizardButton(cdp, contextId, 'Create workspace');
       await waitForCreatedWorkspaceMaterialization(parentPath, creationCase);
       return verifyCreatedWorkspace(parentPath, creationCase);
@@ -440,7 +462,7 @@ async function createWorkspaceThroughWebview(creationCase: WorkspaceCreationCase
   throw lastError;
 }
 
-async function openCreateWorkspaceContext(): Promise<{ cdp: CdpEvaluator & { dispose(): void }; contextId: number }> {
+async function openCreateWorkspaceContext(label: string): Promise<{ cdp: CdpEvaluator & { dispose(): void }; contextId: number }> {
   await closeWebviewTabs(createWorkspaceViewType);
   const tabsBefore = getWebviewTabs(createWorkspaceViewType).length;
 
@@ -451,9 +473,27 @@ async function openCreateWorkspaceContext(): Promise<{ cdp: CdpEvaluator & { dis
   assert.strictEqual(tab.label, createWorkspaceTitle);
 
   const cdp = await connectToVsCodeCdp({ targetName: 'Create Workspace webview' });
-  const contextId = await waitForCreateWorkspaceFrameContext(cdp, 60000);
-  await captureLifecycleScreenshot('workspace-lifecycle-create-workspace-form-ready');
-  return { cdp, contextId };
+  try {
+    const contextId = await waitForCreateWorkspaceFrameContext(cdp, 60000);
+    await captureLifecycleScreenshot(`workspace-lifecycle-${label}-create-workspace-form-ready`, {
+      expectation: {
+        kind: 'createWorkspace',
+        label,
+        stage: 'initial',
+        fields: [
+          { labels: ['Workspace parent folder path'], value: '' },
+          { labels: ['Workspace name'], value: '' },
+        ],
+        nextButton: 'disabled',
+      },
+      semanticCdp: cdp,
+      semanticContextId: contextId,
+    });
+    return { cdp, contextId };
+  } catch (error) {
+    cdp.dispose();
+    throw error;
+  }
 }
 
 async function fillWorkspaceCreationFields(
@@ -464,16 +504,59 @@ async function fillWorkspaceCreationFields(
 ): Promise<void> {
   await enterFieldValue(cdp, contextId, 'Workspace parent folder path', parentPath);
   await waitForAsyncValidationToSettle(cdp, contextId);
-  await captureLifecycleScreenshot(`workspace-lifecycle-${creationCase.label}-parent-folder-entered`);
+  await captureLifecycleScreenshot(`workspace-lifecycle-${creationCase.label}-parent-folder-entered`, {
+    expectation: {
+      kind: 'createWorkspace',
+      label: creationCase.label,
+      stage: 'partial-fields',
+      fields: [{ labels: ['Workspace parent folder path'], value: parentPath }],
+      nextButton: 'disabled',
+    },
+    semanticCdp: cdp,
+    semanticContextId: contextId,
+  });
   await enterFieldValue(cdp, contextId, 'Workspace name', creationCase.wsName);
   await waitForAsyncValidationToSettle(cdp, contextId);
-  await captureLifecycleScreenshot(`workspace-lifecycle-${creationCase.label}-workspace-name-entered`);
+  await captureLifecycleScreenshot(`workspace-lifecycle-${creationCase.label}-workspace-name-entered`, {
+    expectation: {
+      kind: 'createWorkspace',
+      label: creationCase.label,
+      stage: 'partial-fields',
+      fields: [
+        { labels: ['Workspace parent folder path'], value: parentPath },
+        { labels: ['Workspace name'], value: creationCase.wsName },
+      ],
+      nextButton: 'disabled',
+    },
+    semanticCdp: cdp,
+    semanticContextId: contextId,
+  });
   await enterFieldValue(cdp, contextId, 'Logic app name', creationCase.appName);
   await enterFieldValue(cdp, contextId, 'Workflow name', creationCase.wfName);
-  await captureLifecycleScreenshot(`workspace-lifecycle-${creationCase.label}-required-fields-entered`);
+  await captureLifecycleScreenshot(`workspace-lifecycle-${creationCase.label}-required-fields-entered`, {
+    expectation: {
+      kind: 'createWorkspace',
+      label: creationCase.label,
+      stage: 'partial-fields',
+      fields: getLifecycleCreateWorkspaceFieldContracts(creationCase, parentPath).slice(0, 4),
+      nextButton: 'disabled',
+    },
+    semanticCdp: cdp,
+    semanticContextId: contextId,
+  });
   await selectDropdownOption(cdp, contextId, 'Workflow type', 'Stateful');
   await selectRadioOption(cdp, contextId, creationCase.radioLabel);
-  await captureLifecycleScreenshot(`workspace-lifecycle-${creationCase.label}-type-selected`);
+  await captureLifecycleScreenshot(`workspace-lifecycle-${creationCase.label}-type-selected`, {
+    expectation: {
+      kind: 'createWorkspace',
+      label: creationCase.label,
+      stage: creationCase.appType === 'standard' || creationCase.appType === 'codeful' ? 'fields-valid' : 'partial-fields',
+      fields: getLifecycleCreateWorkspaceFieldContracts(creationCase, parentPath).slice(0, 4),
+      nextButton: creationCase.appType === 'standard' || creationCase.appType === 'codeful' ? 'enabled' : 'disabled',
+    },
+    semanticCdp: cdp,
+    semanticContextId: contextId,
+  });
 
   if (creationCase.appType === 'customCode') {
     await waitForFieldVisible(cdp, contextId, ['Custom code folder name', 'custom code folder', 'Code folder name', 'Folder name']);
@@ -559,11 +642,65 @@ async function assertWorkspaceCreationFields(
   }
 }
 
-async function captureWorkspaceCreationFormScreenshots(cdp: CdpEvaluator, contextId: number, label: string, stage: string): Promise<void> {
-  for (const position of ['top', 'middle', 'bottom']) {
+async function captureWorkspaceCreationFormScreenshots(
+  cdp: CdpEvaluator,
+  contextId: number,
+  creationCase: WorkspaceCreationCase,
+  parentPath: string,
+  stage: string
+): Promise<void> {
+  const fields = getLifecycleCreateWorkspaceFieldContracts(creationCase, parentPath);
+  for (const position of ['top', 'middle', 'bottom'] as const) {
     await scrollCreateWorkspaceForm(cdp, contextId, position);
-    await captureLifecycleScreenshot(`workspace-lifecycle-${label}-${stage}-${position}`);
+    await captureLifecycleScreenshot(`workspace-lifecycle-${creationCase.label}-${stage}-${position}`, {
+      expectation: {
+        kind: 'createWorkspace',
+        label: `${creationCase.label}-${stage}-${position}`,
+        stage: 'scrolled',
+        fields:
+          position === 'top'
+            ? fields.slice(0, 2)
+            : position === 'middle'
+              ? fields.slice(fields.length > 4 ? 4 : 2, fields.length > 4 ? 6 : 4)
+              : fields.slice(3, 4),
+        nextButton: 'enabled',
+        scrollPosition: position,
+      },
+      semanticCdp: cdp,
+      semanticContextId: contextId,
+    });
   }
+}
+
+function getLifecycleCreateWorkspaceFieldContracts(
+  creationCase: WorkspaceCreationCase,
+  parentPath: string
+): Array<{ labels: string[]; value?: string; validationMessage?: string }> {
+  const fields: Array<{ labels: string[]; value?: string; validationMessage?: string }> = [
+    { labels: ['Workspace parent folder path'], value: parentPath },
+    { labels: ['Workspace name'], value: creationCase.wsName },
+    { labels: ['Logic app name'], value: creationCase.appName },
+    { labels: ['Workflow name'], value: creationCase.wfName },
+  ];
+
+  if (creationCase.appType === 'customCode') {
+    fields.push(
+      {
+        labels: ['Custom code folder name', 'custom code folder', 'Code folder name', 'Folder name'],
+        value: requiredValue(creationCase.functionFolderName),
+      },
+      { labels: ['Function namespace', 'Namespace', 'namespace'], value: requiredValue(creationCase.functionNamespace) },
+      { labels: ['Function name'], value: requiredValue(creationCase.functionName) }
+    );
+  } else if (creationCase.appType === 'rulesEngine') {
+    fields.push(
+      { labels: ['Rules engine folder name', 'rules engine folder', 'Folder name'], value: requiredValue(creationCase.functionFolderName) },
+      { labels: ['Function namespace', 'Namespace', 'namespace'], value: requiredValue(creationCase.functionNamespace) },
+      { labels: ['Function name'], value: requiredValue(creationCase.functionName) }
+    );
+  }
+
+  return fields;
 }
 
 async function scrollCreateWorkspaceForm(cdp: CdpEvaluator, contextId: number, position: string): Promise<void> {
@@ -829,7 +966,14 @@ async function openDesignerAndCreateWorkflow(
       180000,
       `${createdWorkspace.label} designer canvas content`
     );
-    await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-designer-ready`);
+    await captureLifecycleScreenshot(
+      `workspace-lifecycle-${createdWorkspace.label}-${options.warmOnly ? 'warmup' : 'authoring'}-designer-ready`,
+      {
+        expectation: { kind: 'designerCanvas', label: createdWorkspace.label, allowLoading: false },
+        semanticCdp: cdp,
+        semanticContextId: contextId,
+      }
+    );
     if (options.warmOnly) {
       console.log(`[workspace-lifecycle] ${createdWorkspace.label}: designer warm-only pass completed`);
       return;
@@ -900,6 +1044,16 @@ async function openDesignerAndCreateWorkflow(
     } else {
       await waitForSavedWorkflowContainsDesignerChanges(createdWorkspace);
     }
+    await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-designer-open`, {
+      expectation: {
+        kind: 'designerCanvas',
+        label: createdWorkspace.label,
+        requiredNodes: [requestTriggerTitle, responseActionTitle],
+      },
+      semanticCdp: designerCdp,
+      semanticContextId: contextId,
+      activeTabText: [createdWorkspace.wfName, 'Workspace'],
+    });
   } catch (error) {
     console.log(
       `[workspace-lifecycle] ${createdWorkspace.label}: openDesignerAndCreateWorkflow failed ${JSON.stringify({
@@ -911,7 +1065,10 @@ async function openDesignerAndCreateWorkflow(
       })}`
     );
     await logDesignerStartupDiagnostics(createdWorkspace);
-    await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-designer-failure`);
+    await captureLifecycleScreenshot(
+      `workspace-lifecycle-${createdWorkspace.label}-${options.warmOnly ? 'warmup' : 'authoring'}-designer-failure`,
+      { diagnostic: true }
+    );
     throw error;
   } finally {
     cdp?.dispose();
@@ -1133,11 +1290,19 @@ async function addRequestTriggerThroughDesigner(cdp: CdpEvaluator, contextId: nu
     'Add a trigger'
   );
   await waitForDiscoveryPanelThroughDesigner(cdp, contextId, 60000, `${label} trigger discovery panel`);
-  await captureLifecycleScreenshot(`workspace-lifecycle-${label}-trigger-panel-open`);
+  await captureLifecycleScreenshot(`workspace-lifecycle-${label}-trigger-panel-open`, {
+    expectation: { kind: 'discovery', label, allowLoading: true },
+    semanticCdp: cdp,
+    semanticContextId: contextId,
+  });
 
   console.log(`[workspace-lifecycle] ${label}: searching for Request trigger`);
   await searchInDiscoveryPanelThroughDesigner(cdp, contextId, 'Request');
-  await captureLifecycleScreenshot(`workspace-lifecycle-${label}-request-search-entered`);
+  await captureLifecycleScreenshot(`workspace-lifecycle-${label}-request-search-entered`, {
+    expectation: { kind: 'discovery', label, searchText: 'Request', allowLoading: true },
+    semanticCdp: cdp,
+    semanticContextId: contextId,
+  });
   await waitForSearchResultsThroughDesigner(cdp, contextId, 60000, `${label} Request search results`);
 
   await selectOperationThroughDesigner(cdp, contextId, 'Request', [
@@ -1146,7 +1311,11 @@ async function addRequestTriggerThroughDesigner(cdp: CdpEvaluator, contextId: nu
     'http request',
   ]);
   await waitForDesignerText(cdp, contextId, [requestTriggerTitle, 'Request'], 90000, `${label} Request trigger on canvas`);
-  await captureLifecycleScreenshot(`workspace-lifecycle-${label}-request-trigger-added`);
+  await captureLifecycleScreenshot(`workspace-lifecycle-${label}-request-trigger-added`, {
+    expectation: { kind: 'designerCanvas', label, requiredNodes: [requestTriggerTitle] },
+    semanticCdp: cdp,
+    semanticContextId: contextId,
+  });
 }
 
 async function addResponseActionThroughDesigner(cdp: CdpEvaluator, contextId: number, label: string): Promise<void> {
@@ -1154,12 +1323,20 @@ async function addResponseActionThroughDesigner(cdp: CdpEvaluator, contextId: nu
 
   console.log(`[workspace-lifecycle] ${label}: searching for Response action`);
   await searchInDiscoveryPanelThroughDesigner(cdp, contextId, responseActionTitle);
-  await captureLifecycleScreenshot(`workspace-lifecycle-${label}-response-search-entered`);
+  await captureLifecycleScreenshot(`workspace-lifecycle-${label}-response-search-entered`, {
+    expectation: { kind: 'discovery', label, searchText: responseActionTitle, allowLoading: true },
+    semanticCdp: cdp,
+    semanticContextId: contextId,
+  });
   await waitForSearchResultsThroughDesigner(cdp, contextId, 60000, `${label} Response search results`);
 
   await selectOperationThroughDesigner(cdp, contextId, responseActionTitle, ['response']);
   await waitForDesignerText(cdp, contextId, [responseActionTitle], 90000, `${label} Response action on canvas`);
-  await captureLifecycleScreenshot(`workspace-lifecycle-${label}-response-action-added`);
+  await captureLifecycleScreenshot(`workspace-lifecycle-${label}-response-action-added`, {
+    expectation: { kind: 'designerCanvas', label, requiredNodes: [responseActionTitle] },
+    semanticCdp: cdp,
+    semanticContextId: contextId,
+  });
 }
 
 async function addMsnWeatherActionThroughDesigner(cdp: CdpEvaluator, contextId: number, createdWorkspace: CreatedWorkspace): Promise<void> {
@@ -1169,13 +1346,21 @@ async function addMsnWeatherActionThroughDesigner(cdp: CdpEvaluator, contextId: 
     await openActionDiscoveryPanelThroughDesigner(cdp, contextId, label);
     console.log(`[workspace-lifecycle] ${label}: searching for MSN Weather current weather action`);
     await searchInDiscoveryPanelThroughDesigner(cdp, contextId, 'current weather');
-    await captureLifecycleScreenshot(`workspace-lifecycle-${label}-msn-weather-search-entered`);
+    await captureLifecycleScreenshot(`workspace-lifecycle-${label}-msn-weather-search-entered`, {
+      expectation: { kind: 'discovery', label, searchText: 'current weather', allowLoading: true },
+      semanticCdp: cdp,
+      semanticContextId: contextId,
+    });
     await waitForSearchResultsThroughDesigner(cdp, contextId, 90000, `${label} MSN Weather search results`);
   });
 
   await runLifecyclePhase(createdWorkspace, 'MsnWeatherinserted', async () => {
     await selectOperationThroughDesigner(cdp, contextId, 'Get current weather', ['current weather']);
-    await captureLifecycleScreenshot(`workspace-lifecycle-${label}-msn-weather-action-added`);
+    await captureLifecycleScreenshot(`workspace-lifecycle-${label}-msn-weather-action-added`, {
+      expectation: { kind: 'designerCanvas', label, requiredNodes: ['Get current weather'] },
+      semanticCdp: cdp,
+      semanticContextId: contextId,
+    });
     console.log(`[workspace-lifecycle] ${label}: milestone azure-action-added action="Get current weather"`);
     await handleMsnWeatherConnectionThroughDesigner(cdp, contextId, label);
     await waitForDesignerText(
@@ -1189,7 +1374,17 @@ async function addMsnWeatherActionThroughDesigner(cdp: CdpEvaluator, contextId: 
 
   await runLifecyclePhase(createdWorkspace, 'MsnWeatherconfigured', async () => {
     await fillDesignerParameter(cdp, contextId, ['Location', 'location'], msnWeatherLocation, `${label} MSN Weather Location`);
-    await captureLifecycleScreenshot(`workspace-lifecycle-${label}-msn-weather-action-configured`);
+    await captureLifecycleScreenshot(`workspace-lifecycle-${label}-msn-weather-action-configured`, {
+      expectation: {
+        kind: 'designerPanel',
+        label,
+        actionTitle: 'Get current weather',
+        requiredText: ['Location'],
+        fields: [{ labels: ['Location', 'location'], value: msnWeatherLocation }],
+      },
+      semanticCdp: cdp,
+      semanticContextId: contextId,
+    });
     console.log(
       `[workspace-lifecycle] ${label}: milestone azure-action-configured action="Get current weather" location=${msnWeatherLocation}`
     );
@@ -1249,7 +1444,11 @@ async function openActionDiscoveryPanelThroughDesigner(cdp: CdpEvaluator, contex
   }
   assert.ok(actionPanelOpened, `${label} Add Action panel should open`);
   await waitForDiscoveryPanelThroughDesigner(cdp, contextId, 60000, `${label} action discovery panel`);
-  await captureLifecycleScreenshot(`workspace-lifecycle-${label}-action-panel-open`);
+  await captureLifecycleScreenshot(`workspace-lifecycle-${label}-action-panel-open`, {
+    expectation: { kind: 'discovery', label, allowLoading: true },
+    semanticCdp: cdp,
+    semanticContextId: contextId,
+  });
 }
 
 async function closeDesignerDetailsPanelThroughDesigner(cdp: CdpEvaluator, contextId: number, description: string): Promise<void> {
@@ -1385,7 +1584,7 @@ async function waitForAzureConnectedActionThroughDesigner(
       },
       {
         getStatusState: () => getAzureConnectionStatusStateThroughDesigner(cdp, contextId, options.actionTitle),
-        captureConnectedScreenshot: captureRequiredLifecycleScreenshot,
+        captureConnectedScreenshot: (name) => captureRequiredLifecycleScreenshot(name, cdp, contextId),
         sleep: (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
         now: () => Date.now(),
         log: (message) => console.log(message),
@@ -1394,7 +1593,8 @@ async function waitForAzureConnectedActionThroughDesigner(
   } catch (error) {
     try {
       await captureLifecycleScreenshot(
-        `workspace-lifecycle-${options.label}-${sanitizeScreenshotSegment(options.actionTitle)}-connection-status-failure`
+        `workspace-lifecycle-${options.label}-${sanitizeScreenshotSegment(options.actionTitle)}-connection-status-failure`,
+        { diagnostic: true }
       );
     } catch (screenshotError) {
       console.log(
@@ -1446,12 +1646,22 @@ async function configureResponseBodyThroughDesigner(
         contextId,
         ['Body', 'body'],
         ['Get current weather', weatherActionName],
-        ['Body', 'Outputs'],
-        `${label} Response body`
+        ['Body'],
+        `${label} Response body`,
+        weatherActionName
       ),
     { sourceAction: weatherActionName }
   );
-  await captureLifecycleScreenshot(`workspace-lifecycle-${label}-response-body-configured`);
+  await captureLifecycleScreenshot(`workspace-lifecycle-${label}-response-body-configured`, {
+    expectation: {
+      kind: 'designerPanel',
+      label,
+      actionTitle: responseActionTitle,
+      editor: { labels: ['Body'], token: { titles: ['Body'], sourceAction: weatherActionName } },
+    },
+    semanticCdp: cdp,
+    semanticContextId: contextId,
+  });
 }
 
 async function openResponseSettingsPanelThroughDesigner(cdp: CdpEvaluator, contextId: number, label: string): Promise<void> {
@@ -1787,14 +1997,23 @@ async function selectDynamicContentTokenForParameter(
   parameterLabels: string[],
   sectionLabels: string[],
   tokenTitles: string[],
-  description: string
+  description: string,
+  sourceAction: string
 ): Promise<void> {
   const editorPoint = await getDesignerParameterEditorPoint(cdp, contextId, parameterLabels, description);
   await clickPoint(cdp, editorPoint);
-  await new Promise((resolve) => setTimeout(resolve, 300));
   const focusedState = await getDesignerElementStateAtPoint(cdp, contextId, editorPoint);
   console.log(`[workspace-lifecycle] Focused ${description} editor: ${JSON.stringify(focusedState).slice(0, 1000)}`);
-  await captureLifecycleScreenshot(`workspace-lifecycle-${description.replace(/\W+/g, '-').toLowerCase()}-focused`);
+  await captureLifecycleScreenshot(`workspace-lifecycle-${description.replace(/\W+/g, '-').toLowerCase()}-focused`, {
+    expectation: {
+      kind: 'designerPanel',
+      label: description,
+      actionTitle: responseActionTitle,
+      editor: { labels: parameterLabels, focused: true },
+    },
+    semanticCdp: cdp,
+    semanticContextId: contextId,
+  });
 
   const entryPoint = await cdp.evaluate<{ ok: boolean; reason?: string; point?: { x: number; y: number }; text?: string }>(
     contextId,
@@ -1818,12 +2037,30 @@ async function selectDynamicContentTokenForParameter(
   );
 
   await clickPoint(cdp, entryPoint.point);
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  await captureLifecycleScreenshot(`workspace-lifecycle-${description.replace(/\W+/g, '-').toLowerCase()}-picker-open`);
+  await captureLifecycleScreenshot(`workspace-lifecycle-${description.replace(/\W+/g, '-').toLowerCase()}-picker-open`, {
+    expectation: {
+      kind: 'designerPanel',
+      label: description,
+      actionTitle: responseActionTitle,
+      editor: { labels: parameterLabels },
+      picker: { sectionLabels: [sectionLabels[0]] },
+    },
+    semanticCdp: cdp,
+    semanticContextId: contextId,
+  });
   const selectedTokenText = await selectDynamicContentToken(cdp, contextId, sectionLabels, tokenTitles, description);
   console.log(`[workspace-lifecycle] Selected dynamic-content token for ${description}: ${selectedTokenText}`);
   await pressKey(cdp, 'Escape', 'Escape', 27);
-  await new Promise((resolve) => setTimeout(resolve, 5000));
+  await captureLifecycleScreenshot(`workspace-lifecycle-${description.replace(/\W+/g, '-').toLowerCase()}-token-selected`, {
+    expectation: {
+      kind: 'designerPanel',
+      label: description,
+      actionTitle: responseActionTitle,
+      editor: { labels: parameterLabels, token: { titles: tokenTitles, sourceAction } },
+    },
+    semanticCdp: cdp,
+    semanticContextId: contextId,
+  });
   const selectedState = await getDesignerElementStateAtPoint(cdp, contextId, editorPoint);
   console.log(`[workspace-lifecycle] Selected ${description} token state: ${JSON.stringify(selectedState).slice(0, 1000)}`);
   assert.ok(
@@ -3079,21 +3316,37 @@ async function startDebuggingGeneratedWorkspace(
     };
     const startDebuggingMonitor = monitorStartDebugging();
 
-    await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-debug-starting`);
-    await handleWorkbenchPrompts([
-      {
-        matchText: 'Enable connectors in Azure',
-        optionText: options.useAzureConnectors === true ? 'Use connectors from Azure' : 'Skip for now',
-      },
-      { matchText: 'Configure Azurite to autostart on project debug?', optionText: 'Enable AutoStart' },
-      { matchText: 'Failed to verify "AzureWebJobsStorage" connection', optionText: 'Debug anyway' },
+    // Diagnostics must never hold up required prompt handling during F5.
+    await Promise.all([
+      captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-debug-starting`, {
+        diagnostic: true,
+      }),
+      handleWorkbenchPrompts([
+        {
+          matchText: 'Enable connectors in Azure',
+          optionText: options.useAzureConnectors === true ? 'Use connectors from Azure' : 'Skip for now',
+        },
+        { matchText: 'Configure Azurite to autostart on project debug?', optionText: 'Enable AutoStart' },
+        { matchText: 'Failed to verify "AzureWebJobsStorage" connection', optionText: 'Debug anyway' },
+      ]),
     ]);
-    await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-debug-prompts-handled`);
+    await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-debug-prompts-handled`, {
+      expectation: { kind: 'diagnostic', label: createdWorkspace.label, reason: 'debug-prompts-transition' },
+      diagnostic: true,
+    });
     await waitForDebugStartup(createdWorkspace, () => startDebuggingOutcome, 300000, { requireHostRunning });
     await Promise.race([startDebuggingMonitor, Promise.resolve(undefined)]);
   } catch (error) {
     await logAzuriteDiagnostics('debug autostart failure', createdWorkspace.appDir);
-    await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-debug-failure`);
+    try {
+      await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-debug-failure`, { diagnostic: true });
+    } catch (screenshotError) {
+      console.log(
+        `[workspace-lifecycle] ${createdWorkspace.label}: failed to capture debug failure screenshot: ${
+          screenshotError instanceof Error ? screenshotError.message : String(screenshotError)
+        }`
+      );
+    }
     throw error;
   }
   await logAzuriteDiagnostics('after debug autostart', createdWorkspace.appDir);
@@ -3130,39 +3383,51 @@ async function waitForDebugStartup(
 
 async function runWorkflowThroughOverviewAndAssertSucceeded(
   createdWorkspace: CreatedWorkspace,
-  options: { traceWorkspace?: CreatedWorkspace } = {}
+  options: { traceWorkspace?: CreatedWorkspace; completedScreenshotName?: string } = {}
 ): Promise<{ name: string; status: string }> {
   const workflowName = createdWorkspace.wfName;
   const runEvidence = getSavedWorkflowRunEvidence(createdWorkspace);
   await waitForWorkflowReadyForOverviewRun(workflowName, runEvidence.requestTriggerName);
   const previousRunName = await getLatestRunName(workflowName);
+  const screenshotPrefix =
+    options.completedScreenshotName?.replace(/-run-succeeded$/, '') ?? `workspace-lifecycle-${createdWorkspace.label}`;
 
-  if (options.traceWorkspace) {
-    await runLifecyclePhase(options.traceWorkspace, 'triggerinvoked', () =>
-      openOverviewAndClickRunTrigger(createdWorkspace, previousRunName)
-    );
-  } else {
-    await openOverviewAndClickRunTrigger(createdWorkspace, previousRunName);
-  }
-
-  const run = options.traceWorkspace
-    ? await runLifecyclePhase(options.traceWorkspace, 'runcompleted', () =>
-        waitForLatestRunStatus(workflowName, 'Succeeded', 180000, previousRunName)
+  const overview = options.traceWorkspace
+    ? await runLifecyclePhase(options.traceWorkspace, 'triggerinvoked', () =>
+        openOverviewAndClickRunTrigger(createdWorkspace, previousRunName, screenshotPrefix)
       )
-    : await waitForLatestRunStatus(workflowName, 'Succeeded', 180000, previousRunName);
-  const actionStatuses = await getLatestRunActionStatuses(workflowName, run.name);
-  assert.ok(actionStatuses.length > 0, `Expected action status evidence for workflow ${workflowName}, run ${run.name}`);
+    : await openOverviewAndClickRunTrigger(createdWorkspace, previousRunName, screenshotPrefix);
 
-  const failedActions = actionStatuses.filter((action) => action.status !== 'Succeeded');
-  assert.deepStrictEqual(failedActions, [], `Expected all workflow actions to succeed. Actions: ${JSON.stringify(actionStatuses)}`);
-  for (const expectedActionName of runEvidence.expectedActionNames) {
-    assert.ok(
-      actionStatuses.some((action) => action.name === expectedActionName),
-      `Expected action ${expectedActionName} to appear in run history. Actions: ${JSON.stringify(actionStatuses)}`
-    );
+  try {
+    const run = options.traceWorkspace
+      ? await runLifecyclePhase(options.traceWorkspace, 'runcompleted', () =>
+          waitForLatestRunStatus(workflowName, 'Succeeded', 180000, previousRunName)
+        )
+      : await waitForLatestRunStatus(workflowName, 'Succeeded', 180000, previousRunName);
+    assert.strictEqual(run.name, overview.runName, 'Runtime assertions and screenshots must refer to the exact run invoked in Overview');
+    const actionStatuses = await getLatestRunActionStatuses(workflowName, run.name);
+    assert.ok(actionStatuses.length > 0, `Expected action status evidence for workflow ${workflowName}, run ${run.name}`);
+
+    const failedActions = actionStatuses.filter((action) => action.status !== 'Succeeded');
+    assert.deepStrictEqual(failedActions, [], `Expected all workflow actions to succeed. Actions: ${JSON.stringify(actionStatuses)}`);
+    for (const expectedActionName of runEvidence.expectedActionNames) {
+      assert.ok(
+        actionStatuses.some((action) => action.name === expectedActionName),
+        `Expected action ${expectedActionName} to appear in run history. Actions: ${JSON.stringify(actionStatuses)}`
+      );
+    }
+
+    if (options.completedScreenshotName) {
+      await captureLifecycleScreenshot(options.completedScreenshotName, {
+        expectation: { kind: 'overview', label: createdWorkspace.label, workflowName, runName: run.name, runStatus: 'Succeeded' },
+        semanticCdp: overview.cdp,
+        semanticContextId: overview.contextId,
+      });
+    }
+    return run;
+  } finally {
+    overview.cdp.dispose();
   }
-
-  return run;
 }
 
 async function runNugetConversionLifecycle(createdWorkspace: CreatedWorkspace): Promise<void> {
@@ -3175,8 +3440,9 @@ async function runNugetConversionLifecycle(createdWorkspace: CreatedWorkspace): 
   await waitForPathExists(path.join(createdWorkspace.appDir, '.vscode', 'tasks.json'), 45000);
 
   await startDebuggingGeneratedWorkspace(createdWorkspace);
-  await runWorkflowThroughOverviewAndAssertSucceeded(createdWorkspace);
-  await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-bundle-run-succeeded`);
+  await runWorkflowThroughOverviewAndAssertSucceeded(createdWorkspace, {
+    completedScreenshotName: `workspace-lifecycle-${createdWorkspace.label}-bundle-run-succeeded`,
+  });
   await stopDebuggingOnly();
   await closeAllTabs();
 
@@ -3187,8 +3453,9 @@ async function runNugetConversionLifecycle(createdWorkspace: CreatedWorkspace): 
 
   await startDebuggingGeneratedWorkspace(createdWorkspace, { cleanupBeforeDebug: false });
   await assertNoForbiddenWorkbenchPrompts('post-conversion debug start');
-  await runWorkflowThroughOverviewAndAssertSucceeded(createdWorkspace);
-  await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-nuget-run-succeeded`);
+  await runWorkflowThroughOverviewAndAssertSucceeded(createdWorkspace, {
+    completedScreenshotName: `workspace-lifecycle-${createdWorkspace.label}-nuget-run-succeeded`,
+  });
   await assertNoForbiddenWorkbenchPrompts('post-conversion run');
   await stopDebuggingAndTasks();
 }
@@ -3327,11 +3594,23 @@ async function runMsnWeatherLifecycle(createdWorkspace: CreatedWorkspace): Promi
       assertMsnWeatherLocalSettingsReady(createdWorkspace.appDir, settings, 'after-debug-start');
     }
     const run = await runWorkflowThroughOverviewAndAssertSucceeded(createdWorkspace, { traceWorkspace: createdWorkspace });
-    await openRunDetailsThroughOverview(createdWorkspace, run.name);
-    await runLifecyclePhase(createdWorkspace, 'responseverified', () =>
-      assertRunResponseReturnsMsnWeatherConditions(createdWorkspace, run.name)
-    );
-    await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-msn-weather-response-verified`);
+    await openRunDetailsThroughOverview(createdWorkspace, run.name, async (cdp, contextId) => {
+      await runLifecyclePhase(createdWorkspace, 'responseverified', () =>
+        assertRunResponseReturnsMsnWeatherConditions(createdWorkspace, run.name)
+      );
+      await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-msn-weather-response-verified`, {
+        expectation: {
+          kind: 'monitoringAction',
+          label: createdWorkspace.label,
+          actionTitle: responseActionTitle,
+          expectedStatus: 'Succeeded',
+          expectedValues: ['responses', 'weather'],
+        },
+        semanticCdp: cdp,
+        semanticContextId: contextId,
+        activeTabText: [createdWorkspace.wfName, run.name],
+      });
+    });
   } finally {
     await stopDebuggingAndTasks();
   }
@@ -3507,9 +3786,12 @@ async function runCodefulDebugTaskLifecycle(createdWorkspace: CreatedWorkspace):
     await startDebuggingGeneratedWorkspace(createdWorkspace, { cleanupBeforeDebug: true });
     const summary = await waitForCodefulTaskSummary(recorder.events, createdWorkspace.appDir, variant, 720000);
     assertCodefulDesignTimeUsesNodeWorkerIfPresent(createdWorkspace.appDir, createdWorkspace.label);
-    await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-codeful-task-chain-observed`);
     await stopDebuggingAndTasks();
     assertCodefulTaskSummary(summary, variant, createdWorkspace.label);
+    await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-codeful-task-chain-completed`, {
+      expectation: { kind: 'diagnostic', label: createdWorkspace.label, reason: 'codeful-task-chain-asserted' },
+      diagnostic: true,
+    });
   } finally {
     recorder.dispose();
   }
@@ -3711,7 +3993,11 @@ async function waitForWorkflowReadyForOverviewRun(workflowName: string, triggerN
   assert.ok(callbackUrl.includes('/triggers/'), `Expected callback URL for ${workflowName}/${triggerName}. Actual: ${callbackUrl}`);
 }
 
-async function openOverviewAndClickRunTrigger(createdWorkspace: CreatedWorkspace, previousRunName: string | undefined): Promise<void> {
+async function openOverviewAndClickRunTrigger(
+  createdWorkspace: CreatedWorkspace,
+  previousRunName: string | undefined,
+  screenshotPrefix: string
+): Promise<{ cdp: CdpConnection; contextId: number; runName: string }> {
   console.log(`[workspace-lifecycle] Opening ${createdWorkspace.label} Overview`);
   await closeWebviewTabs(designerViewType);
   await closeWebviewTabs(overviewViewType);
@@ -3729,19 +4015,39 @@ async function openOverviewAndClickRunTrigger(createdWorkspace: CreatedWorkspace
       description: `${createdWorkspace.label} overview webview DOM context`,
       timeoutMs: 120000,
     });
-    await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-overview-open`);
+    await captureLifecycleScreenshot(`${screenshotPrefix}-overview-open`, {
+      expectation: { kind: 'overview', label: createdWorkspace.label, workflowName: createdWorkspace.wfName },
+      semanticCdp: cdp,
+      semanticContextId: contextId,
+    });
     contextId = await clickOverviewRunTrigger(cdp, contextId, createdWorkspace);
     const newRunName = await waitForNewRunStarted(createdWorkspace.wfName, previousRunName, 60000);
-    await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-overview-run-clicked`);
+    await captureLifecycleScreenshot(`${screenshotPrefix}-overview-run-clicked`, {
+      expectation: { kind: 'overview', label: createdWorkspace.label, workflowName: createdWorkspace.wfName, runName: newRunName },
+      semanticCdp: cdp,
+      semanticContextId: contextId,
+    });
     try {
       await waitForOverviewRunStatus(cdp, contextId, createdWorkspace.wfName, createdWorkspace.label, newRunName, 'Succeeded', 180000);
     } catch (error) {
       await logAzuriteDiagnostics(`${createdWorkspace.label} overview run failure`, createdWorkspace.appDir);
       throw error;
     }
-    await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-overview-run-succeeded`);
-  } finally {
+    await captureLifecycleScreenshot(`${screenshotPrefix}-overview-run-succeeded`, {
+      expectation: {
+        kind: 'overview',
+        label: createdWorkspace.label,
+        workflowName: createdWorkspace.wfName,
+        runName: newRunName,
+        runStatus: 'Succeeded',
+      },
+      semanticCdp: cdp,
+      semanticContextId: contextId,
+    });
+    return { cdp, contextId, runName: newRunName };
+  } catch (error) {
     cdp.dispose();
+    throw error;
   }
 }
 
@@ -3972,7 +4278,11 @@ async function getOverviewRunStatus(
   );
 }
 
-async function openRunDetailsThroughOverview(createdWorkspace: CreatedWorkspace, runName: string): Promise<void> {
+async function openRunDetailsThroughOverview(
+  createdWorkspace: CreatedWorkspace,
+  runName: string,
+  onResponseDetailsReady: (cdp: CdpEvaluator, contextId: number) => Promise<void>
+): Promise<void> {
   await closeWebviewTabs(monitoringViewType);
   const tabsBefore = getWebviewTabs(monitoringViewType).length;
 
@@ -4003,7 +4313,16 @@ async function openRunDetailsThroughOverview(createdWorkspace: CreatedWorkspace,
       60000,
       `${createdWorkspace.label} opened monitoring run details for ${runName}`
     );
-    await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-overview-run-details-opened`);
+    await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-overview-run-details-opened`, {
+      expectation: {
+        kind: 'designerCanvas',
+        label: createdWorkspace.label,
+        requiredNodes: ['Get current weather', responseActionTitle],
+      },
+      semanticCdp: monitoringCdp,
+      semanticContextId: contextId,
+      activeTabText: [createdWorkspace.wfName, runName],
+    });
   } finally {
     monitoringCdp.dispose();
   }
@@ -4011,19 +4330,24 @@ async function openRunDetailsThroughOverview(createdWorkspace: CreatedWorkspace,
   await openMonitoringActionResultThroughOverview(
     createdWorkspace,
     'Get current weather',
-    `workspace-lifecycle-${createdWorkspace.label}-msn-weather-result-opened`
+    `workspace-lifecycle-${createdWorkspace.label}-msn-weather-result-opened`,
+    runName
   );
   await openMonitoringActionResultThroughOverview(
     createdWorkspace,
     responseActionTitle,
-    `workspace-lifecycle-${createdWorkspace.label}-response-result-opened`
+    `workspace-lifecycle-${createdWorkspace.label}-response-result-opened`,
+    runName,
+    onResponseDetailsReady
   );
 }
 
 async function openMonitoringActionResultThroughOverview(
   createdWorkspace: CreatedWorkspace,
   actionTitle: string,
-  screenshotName: string
+  screenshotName: string,
+  runName: string,
+  onDetailsReady?: (cdp: CdpEvaluator, contextId: number) => Promise<void>
 ): Promise<void> {
   const { cdp: monitoringCdp, contextId } = await connectToVsCodeCdpByText({
     targetName: `${createdWorkspace.label} ${actionTitle} monitoring webview`,
@@ -4032,10 +4356,21 @@ async function openMonitoringActionResultThroughOverview(
   });
   try {
     await clickMonitoringActionCardByTitle(monitoringCdp, contextId, actionTitle);
-    await captureLifecycleScreenshot(`${screenshotName}-loading`);
+    await captureLifecycleScreenshot(`${screenshotName}-loading`, {
+      expectation: { kind: 'diagnostic', label: `${screenshotName}-loading`, reason: 'monitoring-action-loading-transition' },
+      semanticCdp: monitoringCdp,
+      semanticContextId: contextId,
+      diagnostic: true,
+    });
     await waitForVisibleDelay(`${actionTitle} monitoring result loading`);
     await waitForMonitoringActionDetails(monitoringCdp, contextId, actionTitle, 180000, `${actionTitle} monitoring result details`);
-    await captureLifecycleScreenshot(screenshotName);
+    await captureLifecycleScreenshot(screenshotName, {
+      expectation: { kind: 'monitoringAction', label: createdWorkspace.label, actionTitle, expectedStatus: 'Succeeded' },
+      semanticCdp: monitoringCdp,
+      semanticContextId: contextId,
+      activeTabText: [createdWorkspace.wfName, runName],
+    });
+    await onDetailsReady?.(monitoringCdp, contextId);
     await waitForVisibleDelay(`${actionTitle} monitoring result details`);
   } finally {
     monitoringCdp.dispose();
@@ -4127,25 +4462,46 @@ async function waitForMonitoringActionDetails(
   let lastText = '';
   await waitUntil(
     async () => {
-      const result = await cdp.evaluate<{ ok: boolean; text: string }>(
+      const result = await cdp.evaluate<{ ok: boolean; text: string; reason?: string; candidates?: string[] }>(
         contextId,
         `(() => {
           const actionTitle = ${JSON.stringify(normalizedTitle)};
           const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim().toLowerCase();
-          const text = normalize(document.body?.innerText || '');
+          const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
+          const selectedLayouts = Array.from(document.querySelectorAll('.msla-panel-layout.msla-panel-border-selected'))
+            .filter(isVisible)
+            .map((layout) => {
+              const rect = layout.getBoundingClientRect();
+              const content = layout.querySelector('[id^="msla-node-details-panel-"]');
+              const titleInput = layout.querySelector('.msla-panel-header input[aria-label="Card title"], .msla-panel-header input[id$="-title"]');
+              const title = normalize(titleInput instanceof HTMLInputElement ? titleInput.value : titleInput?.getAttribute('value') || '');
+              const nodeId = (content?.id || '').replace(/^msla-node-details-panel-/, '').toLowerCase();
+              const text = normalize(layout.textContent || '');
+              const values = ['inputs-', 'outputs-', 'properties-']
+                .flatMap((prefix) => Array.from(layout.querySelectorAll('.msla-trace-values[aria-labelledby^="' + prefix + '"]')))
+                .filter(isVisible)
+                .map((container) => normalize(container.textContent || ''))
+                .filter((valueText) => valueText.length > 0);
+              return { layout, rect, title, nodeId, text, values };
+            })
+            .filter(({ rect }) => rect.width > 200 && rect.height > 100);
+          const expectedNode = actionTitle.replace(/\\W+/g, '_').replace(/^_+|_+$/g, '');
+          const panel = selectedLayouts.length === 1 ? selectedLayouts[0] : undefined;
+          const text = panel?.text || '';
           const isLoadingInputsOutputs = text.includes('loading inputs') || text.includes('loading outputs') || text.includes('loading inputs and outputs');
-          const hasAction = text.includes(actionTitle);
-          const hasResultEvidence =
-            text.includes('inputs') ||
-            text.includes('outputs') ||
-            text.includes('raw inputs') ||
-            text.includes('raw outputs') ||
-            text.includes('duration') ||
-            text.includes('status');
-          return { ok: hasAction && hasResultEvidence && !isLoadingInputsOutputs, text };
+          const hasActionIdentity =
+            !!panel &&
+            (panel.title === actionTitle || panel.nodeId === expectedNode);
+          const hasResultEvidence = !!panel && panel.values.some((valueText) => !valueText.includes('loading inputs') && !valueText.includes('loading outputs'));
+          return {
+            ok: !!panel && hasActionIdentity && hasResultEvidence && !isLoadingInputsOutputs,
+            reason: selectedLayouts.length !== 1 ? 'selected action result panel ambiguous or missing' : hasActionIdentity ? undefined : 'selected panel action mismatch',
+            candidates: selectedLayouts.slice(0, 5).map((candidate) => (candidate.title + '|' + candidate.nodeId + '|' + candidate.text).slice(0, 160)),
+            text: text || normalize(document.body?.innerText || '').slice(0, 1500),
+          };
         })()`
       );
-      lastText = result.text.slice(0, 1500);
+      lastText = JSON.stringify({ reason: result.reason, candidates: result.candidates, text: result.text.slice(0, 1500) });
       return result.ok;
     },
     timeoutMs,
@@ -4726,7 +5082,7 @@ async function logAzuriteDiagnostics(stage: string, appDir: string): Promise<voi
 }
 
 async function getWorkbenchText(): Promise<string> {
-  const cdp = await connectToVsCodeWorkbenchCdp();
+  const cdp = await connectToVsCodeWorkbenchCdp({ activate: false });
   try {
     return await cdp.evaluate<string>(undefined, 'document.body?.innerText || ""');
   } finally {
@@ -5027,7 +5383,7 @@ async function handleDotnetInstallToolPromptIfVisible(stage: string): Promise<bo
 }
 
 async function handleWorkbenchPrompts(prompts: WorkbenchPrompt[], timeoutMs = 20000): Promise<boolean> {
-  const cdp = await connectToVsCodeWorkbenchCdp();
+  const cdp = await connectToVsCodeWorkbenchCdp({ activate: false });
   try {
     const deadline = Date.now() + timeoutMs;
     const noPromptDeadline = Date.now() + 1500;
@@ -5103,7 +5459,7 @@ async function handleWorkbenchPrompts(prompts: WorkbenchPrompt[], timeoutMs = 20
 }
 
 async function dismissWorkbenchNotifications(): Promise<void> {
-  const cdp = await connectToVsCodeWorkbenchCdp();
+  const cdp = await connectToVsCodeWorkbenchCdp({ activate: false });
   try {
     for (let attempt = 0; attempt < 4; attempt++) {
       const point = await cdp.evaluate<{ x: number; y: number } | undefined>(
@@ -5163,23 +5519,92 @@ async function waitForWorkbenchPromptOptionToDismiss(cdp: CdpEvaluator, optionTe
   );
 }
 
-async function captureLifecycleScreenshot(name: string): Promise<void> {
-  const cdp = await connectToVsCodeWorkbenchCdp();
+async function captureLifecycleScreenshot(
+  name: string,
+  options: {
+    expectation?: ScreenshotExpectation;
+    semanticCdp?: CdpEvaluator;
+    semanticContextId?: number;
+    diagnostic?: boolean;
+    activeTabText?: string[];
+  } = {}
+): Promise<void> {
+  if (options.diagnostic) {
+    // Best effort includes connection failures; never replace the original test error.
+    await captureDiagnosticScreenshot(name, {
+      reason: options.expectation?.kind === 'diagnostic' ? options.expectation.reason : 'lifecycle-diagnostic',
+      timeoutMs: 1000,
+    });
+    return;
+  }
+  assertLifecycleWorkspaceBinding(options.expectation);
+  const cdp = await connectToVsCodeWorkbenchCdp({ activate: false });
   try {
-    await captureCdpScreenshot(cdp, name);
+    await captureCdpScreenshot(cdp, name, {
+      expectation: options.expectation,
+      semanticCdp: options.semanticCdp,
+      semanticContextId: options.semanticContextId,
+      binding: { activeTabText: options.activeTabText ?? getExpectedActiveTabText(options.expectation) },
+      classification: 'evidence',
+    });
   } finally {
     cdp.dispose();
   }
 }
 
-async function captureRequiredLifecycleScreenshot(name: string): Promise<string> {
-  const cdp = await connectToVsCodeWorkbenchCdp();
+async function captureRequiredLifecycleScreenshot(name: string, semanticCdp: CdpEvaluator, semanticContextId: number): Promise<string> {
+  const expectation: ScreenshotExpectation = {
+    kind: 'designerPanel',
+    label: name,
+    actionTitle: 'Get current weather',
+    requiredText: ['Connected'],
+  };
+  assertLifecycleWorkspaceBinding(expectation);
+  const cdp = await connectToVsCodeWorkbenchCdp({ activate: false });
   try {
-    const screenshotPath = await captureCdpScreenshot(cdp, name);
+    const screenshotPath = await captureCdpScreenshot(cdp, name, {
+      expectation,
+      semanticCdp,
+      semanticContextId,
+      binding: { activeTabText: getExpectedActiveTabText(expectation) },
+    });
     assert.ok(screenshotPath && fs.existsSync(screenshotPath), `Expected required lifecycle screenshot to be written: ${name}`);
     return screenshotPath;
   } finally {
     cdp.dispose();
+  }
+}
+
+function assertLifecycleWorkspaceBinding(expectation: ScreenshotExpectation | undefined): void {
+  if (!expectation || expectation.kind === 'createWorkspace' || !process.env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE) {
+    return;
+  }
+  const workspace = getWorkspaceLifecycleCaseFromEnv();
+  assert.strictEqual(
+    normalizeFsPath(vscode.workspace.workspaceFile?.fsPath ?? ''),
+    normalizeFsPath(workspace.workspaceFilePath),
+    'Evidence must belong to the exact generated workspace'
+  );
+}
+
+function getExpectedActiveTabText(expectation: ScreenshotExpectation | undefined): string[] | undefined {
+  if (!expectation) {
+    return undefined;
+  }
+
+  switch (expectation.kind) {
+    case 'createWorkspace':
+      return ['Create Workspace'];
+    case 'overview':
+      return expectation.workflowName ? [expectation.workflowName] : undefined;
+    case 'designerCanvas':
+    case 'designerPanel':
+    case 'discovery':
+      return [getWorkspaceLifecycleCaseFromEnv().wfName, 'Workspace'];
+    case 'monitoringAction':
+      return undefined;
+    default:
+      return undefined;
   }
 }
 

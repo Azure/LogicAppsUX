@@ -406,89 +406,53 @@ extends:
                   type: validationJob
                 steps:
                   - download: current
-                    artifact: vscode-e2e-cli-test-results-linux-unit-tests
-                    displayName: Download Linux unit tests results
+                    artifact: vscode-e2e-cli-diagnostics-linux-unit-tests
+                    displayName: Download Linux unit tests diagnostics
                     condition: always()
                   - download: current
-                    artifact: vscode-e2e-cli-log-linux-unit-tests
-                    displayName: Download Linux unit tests logs
+                    artifact: vscode-e2e-cli-diagnostics-linux-create-workspace-behavior
+                    displayName: Download Linux create workspace behavior diagnostics
                     condition: always()
                   - download: current
-                    artifact: vscode-e2e-cli-test-results-linux-create-workspace-behavior
-                    displayName: Download Linux create workspace behavior results
+                    artifact: vscode-e2e-cli-diagnostics-linux-create-workspace-core-matrix
+                    displayName: Download Linux create workspace core matrix diagnostics
                     condition: always()
                   - download: current
-                    artifact: vscode-e2e-cli-log-linux-create-workspace-behavior
-                    displayName: Download Linux create workspace behavior logs
+                    artifact: vscode-e2e-cli-diagnostics-linux-create-workspace-preview-matrix
+                    displayName: Download Linux create workspace preview matrix diagnostics
                     condition: always()
                   - download: current
-                    artifact: vscode-e2e-cli-test-results-linux-create-workspace-core-matrix
-                    displayName: Download Linux create workspace core matrix results
+                    artifact: vscode-e2e-cli-diagnostics-linux-create-workspace-codeful
+                    displayName: Download Linux create workspace codeful diagnostics
                     condition: always()
                   - download: current
-                    artifact: vscode-e2e-cli-log-linux-create-workspace-core-matrix
-                    displayName: Download Linux create workspace core matrix logs
+                    artifact: vscode-e2e-cli-diagnostics-linux-msn-weather-lifecycle
+                    displayName: Download Linux MSN Weather lifecycle diagnostics
                     condition: always()
                   - download: current
-                    artifact: vscode-e2e-cli-test-results-linux-create-workspace-preview-matrix
-                    displayName: Download Linux create workspace preview matrix results
+                    artifact: vscode-e2e-cli-diagnostics-windows-unit-tests
+                    displayName: Download Windows unit tests diagnostics
                     condition: always()
                   - download: current
-                    artifact: vscode-e2e-cli-log-linux-create-workspace-preview-matrix
-                    displayName: Download Linux create workspace preview matrix logs
+                    artifact: vscode-e2e-cli-diagnostics-windows-create-workspace-behavior-smoke
+                    displayName: Download Windows create workspace behavior smoke diagnostics
                     condition: always()
                   - download: current
-                    artifact: vscode-e2e-cli-test-results-linux-create-workspace-codeful
-                    displayName: Download Linux create workspace codeful results
-                    condition: always()
-                  - download: current
-                    artifact: vscode-e2e-cli-log-linux-create-workspace-codeful
-                    displayName: Download Linux create workspace codeful logs
-                    condition: always()
-                  - download: current
-                    artifact: vscode-e2e-cli-test-results-linux-msn-weather-lifecycle
-                    displayName: Download Linux MSN Weather lifecycle results
-                    condition: always()
-                  - download: current
-                    artifact: vscode-e2e-cli-log-linux-msn-weather-lifecycle
-                    displayName: Download Linux MSN Weather lifecycle logs
-                    condition: always()
-                  - download: current
-                    artifact: vscode-e2e-cli-test-results-windows-unit-tests
-                    displayName: Download Windows unit tests results
-                    condition: always()
-                  - download: current
-                    artifact: vscode-e2e-cli-log-windows-unit-tests
-                    displayName: Download Windows unit tests logs
-                    condition: always()
-                  - download: current
-                    artifact: vscode-e2e-cli-test-results-windows-create-workspace-behavior-smoke
-                    displayName: Download Windows create workspace behavior smoke results
-                    condition: always()
-                  - download: current
-                    artifact: vscode-e2e-cli-log-windows-create-workspace-behavior-smoke
-                    displayName: Download Windows create workspace behavior smoke logs
-                    condition: always()
-                  - download: current
-                    artifact: vscode-e2e-cli-test-results-windows-msn-weather-lifecycle
-                    displayName: Download Windows MSN Weather lifecycle results
-                    condition: always()
-                  - download: current
-                    artifact: vscode-e2e-cli-log-windows-msn-weather-lifecycle
-                    displayName: Download Windows MSN Weather lifecycle logs
+                    artifact: vscode-e2e-cli-diagnostics-windows-msn-weather-lifecycle
+                    displayName: Download Windows MSN Weather lifecycle diagnostics
                     condition: always()
 
                   - pwsh: |
                       $suites = @(
-                        @{ job = 'linux_unit_tests'; result = '$(linuxUnitTestsResult)'; artifact = 'vscode-e2e-cli-test-results-linux-unit-tests'; logArtifact = 'vscode-e2e-cli-log-linux-unit-tests'; suite = 'unitTests'; expectedMochaCompletions = 1; subtractMatrixFooter = $false },
-                        @{ job = 'linux_create_workspace_behavior'; result = '$(linuxCreateWorkspaceBehaviorResult)'; artifact = 'vscode-e2e-cli-test-results-linux-create-workspace-behavior'; logArtifact = 'vscode-e2e-cli-log-linux-create-workspace-behavior'; suite = 'createWorkspaceBehavior'; expectedMochaCompletions = 1; subtractMatrixFooter = $false },
-                        @{ job = 'linux_create_workspace_core_matrix'; result = '$(linuxCreateWorkspaceCoreMatrixResult)'; artifact = 'vscode-e2e-cli-test-results-linux-create-workspace-core-matrix'; logArtifact = 'vscode-e2e-cli-log-linux-create-workspace-core-matrix'; suite = 'createWorkspaceCoreMatrix'; expectedMochaCompletions = 6; subtractMatrixFooter = $true },
-                        @{ job = 'linux_create_workspace_preview_matrix'; result = '$(linuxCreateWorkspacePreviewMatrixResult)'; artifact = 'vscode-e2e-cli-test-results-linux-create-workspace-preview-matrix'; logArtifact = 'vscode-e2e-cli-log-linux-create-workspace-preview-matrix'; suite = 'createWorkspacePreviewMatrix'; expectedMochaCompletions = 6; subtractMatrixFooter = $true },
-                        @{ job = 'linux_create_workspace_codeful'; result = '$(linuxCreateWorkspaceCodefulResult)'; artifact = 'vscode-e2e-cli-test-results-linux-create-workspace-codeful'; logArtifact = 'vscode-e2e-cli-log-linux-create-workspace-codeful'; suite = 'createWorkspaceCodeful'; expectedMochaCompletions = 2; subtractMatrixFooter = $true },
-                        @{ job = 'linux_msn_weather_lifecycle'; result = '$(linuxMsnWeatherLifecycleResult)'; artifact = 'vscode-e2e-cli-test-results-linux-msn-weather-lifecycle'; logArtifact = 'vscode-e2e-cli-log-linux-msn-weather-lifecycle'; suite = 'msnWeatherLifecycle'; expectedMochaCompletions = 3; subtractMatrixFooter = $false },
-                        @{ job = 'windows_unit_tests'; result = '$(windowsUnitTestsResult)'; artifact = 'vscode-e2e-cli-test-results-windows-unit-tests'; logArtifact = 'vscode-e2e-cli-log-windows-unit-tests'; suite = 'unitTests'; expectedMochaCompletions = 1; subtractMatrixFooter = $false },
-                        @{ job = 'windows_create_workspace_behavior_smoke'; result = '$(windowsCreateWorkspaceBehaviorSmokeResult)'; artifact = 'vscode-e2e-cli-test-results-windows-create-workspace-behavior-smoke'; logArtifact = 'vscode-e2e-cli-log-windows-create-workspace-behavior-smoke'; suite = 'createWorkspaceBehaviorSmoke'; expectedMochaCompletions = 1; subtractMatrixFooter = $false },
-                        @{ job = 'windows_msn_weather_lifecycle'; result = '$(windowsMsnWeatherLifecycleResult)'; artifact = 'vscode-e2e-cli-test-results-windows-msn-weather-lifecycle'; logArtifact = 'vscode-e2e-cli-log-windows-msn-weather-lifecycle'; suite = 'msnWeatherLifecycle'; expectedMochaCompletions = 3; subtractMatrixFooter = $false }
+                        @{ job = 'linux_unit_tests'; result = '$(linuxUnitTestsResult)'; artifact = 'vscode-e2e-cli-diagnostics-linux-unit-tests'; suite = 'unitTests'; expectedMochaCompletions = 1; subtractMatrixFooter = $false },
+                        @{ job = 'linux_create_workspace_behavior'; result = '$(linuxCreateWorkspaceBehaviorResult)'; artifact = 'vscode-e2e-cli-diagnostics-linux-create-workspace-behavior'; suite = 'createWorkspaceBehavior'; expectedMochaCompletions = 1; subtractMatrixFooter = $false },
+                        @{ job = 'linux_create_workspace_core_matrix'; result = '$(linuxCreateWorkspaceCoreMatrixResult)'; artifact = 'vscode-e2e-cli-diagnostics-linux-create-workspace-core-matrix'; suite = 'createWorkspaceCoreMatrix'; expectedMochaCompletions = 6; subtractMatrixFooter = $true },
+                        @{ job = 'linux_create_workspace_preview_matrix'; result = '$(linuxCreateWorkspacePreviewMatrixResult)'; artifact = 'vscode-e2e-cli-diagnostics-linux-create-workspace-preview-matrix'; suite = 'createWorkspacePreviewMatrix'; expectedMochaCompletions = 6; subtractMatrixFooter = $true },
+                        @{ job = 'linux_create_workspace_codeful'; result = '$(linuxCreateWorkspaceCodefulResult)'; artifact = 'vscode-e2e-cli-diagnostics-linux-create-workspace-codeful'; suite = 'createWorkspaceCodeful'; expectedMochaCompletions = 2; subtractMatrixFooter = $true },
+                        @{ job = 'linux_msn_weather_lifecycle'; result = '$(linuxMsnWeatherLifecycleResult)'; artifact = 'vscode-e2e-cli-diagnostics-linux-msn-weather-lifecycle'; suite = 'msnWeatherLifecycle'; expectedMochaCompletions = 3; subtractMatrixFooter = $false },
+                        @{ job = 'windows_unit_tests'; result = '$(windowsUnitTestsResult)'; artifact = 'vscode-e2e-cli-diagnostics-windows-unit-tests'; suite = 'unitTests'; expectedMochaCompletions = 1; subtractMatrixFooter = $false },
+                        @{ job = 'windows_create_workspace_behavior_smoke'; result = '$(windowsCreateWorkspaceBehaviorSmokeResult)'; artifact = 'vscode-e2e-cli-diagnostics-windows-create-workspace-behavior-smoke'; suite = 'createWorkspaceBehaviorSmoke'; expectedMochaCompletions = 1; subtractMatrixFooter = $false },
+                        @{ job = 'windows_msn_weather_lifecycle'; result = '$(windowsMsnWeatherLifecycleResult)'; artifact = 'vscode-e2e-cli-diagnostics-windows-msn-weather-lifecycle'; suite = 'msnWeatherLifecycle'; expectedMochaCompletions = 3; subtractMatrixFooter = $false }
                       )
                       $identityFields = @(
                         'producerDefinitionId',
@@ -508,11 +472,12 @@ extends:
                           throw "Canonical suite job did not succeed: $($suite.job) result=$($suite.result)"
                         }
                         $root = Join-Path '$(Pipeline.Workspace)' $suite.artifact
-                        $logRoot = Join-Path '$(Pipeline.Workspace)' $suite.logArtifact
-                        $resultPath = Join-Path $root "$($suite.suite).json"
-                        $junitPath = Join-Path $root "$($suite.suite).junit.xml"
-                        $summaryPath = Join-Path $root "$($suite.suite).summary.md"
-                        $contextPath = Join-Path $root "admission-context-$($suite.suite).json"
+                        $resultRoot = Join-Path $root 'results'
+                        $logRoot = Join-Path $root 'log'
+                        $resultPath = Join-Path $resultRoot "$($suite.suite).json"
+                        $junitPath = Join-Path $resultRoot "$($suite.suite).junit.xml"
+                        $summaryPath = Join-Path $resultRoot "$($suite.suite).summary.md"
+                        $contextPath = Join-Path $resultRoot "admission-context-$($suite.suite).json"
                         $logPath = Join-Path $logRoot "$($suite.suite).log"
                         foreach ($required in @($resultPath, $junitPath, $summaryPath, $contextPath, $logPath)) {
                           if (-not (Test-Path $required)) {

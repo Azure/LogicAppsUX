@@ -2,7 +2,7 @@ import * as assert from 'assert';
 import { randomBytes } from 'crypto';
 import * as net from 'net';
 
-interface CdpTarget {
+export interface CdpTarget {
   id?: string;
   type: string;
   title?: string;
@@ -22,6 +22,22 @@ interface CdpExecutionContext {
   id: number;
   origin?: string;
   name?: string;
+  auxData?: {
+    frameId?: string;
+  };
+}
+
+type CdpSocketFactory = (port: number, host: string) => net.Socket;
+
+const defaultCdpSocketFactory: CdpSocketFactory = (port, host) => net.connect(port, host);
+let cdpSocketFactory = defaultCdpSocketFactory;
+
+export function setCdpSocketFactoryForTests(factory?: CdpSocketFactory): () => void {
+  const previous = cdpSocketFactory;
+  cdpSocketFactory = factory ?? defaultCdpSocketFactory;
+  return () => {
+    cdpSocketFactory = previous;
+  };
 }
 
 export class CdpConnection {
@@ -29,23 +45,49 @@ export class CdpConnection {
   private buffer = Buffer.alloc(0);
   private readonly pending = new Map<number, { resolve: (value: CdpResponse) => void; reject: (error: Error) => void }>();
   private readonly contextListeners: Array<(context: CdpExecutionContext) => void> = [];
+  private readonly lifecycleListeners: Array<(event: CdpResponse) => void> = [];
+  private readonly contexts = new Map<number, CdpExecutionContext>();
+  private generation = 0;
 
-  private constructor(private readonly socket: net.Socket) {
+  private constructor(
+    private readonly socket: net.Socket,
+    readonly targetId?: string,
+    readonly targetUrl?: string,
+    readonly targetTitle?: string
+  ) {
     socket.on('data', (chunk) => this.onData(chunk));
     socket.on('error', (error) => this.rejectAll(error));
-    socket.on('close', () => this.rejectAll(new Error('CDP WebSocket closed')));
+    socket.on('close', () => {
+      this.generation++;
+      this.rejectAll(new Error('CDP WebSocket closed'));
+    });
   }
 
-  static async connect(webSocketUrl: string): Promise<CdpConnection> {
+  static async connect(
+    webSocketUrl: string,
+    targetId?: string,
+    timeoutMs = 15000,
+    target?: Pick<CdpTarget, 'url' | 'title'>
+  ): Promise<CdpConnection> {
     const url = new URL(webSocketUrl);
     const port = Number(url.port || '80');
     const key = randomBytes(16).toString('base64');
-    const socket = net.connect(port, url.hostname);
+    const socket = cdpSocketFactory(port, url.hostname);
+    const deadline = Date.now() + timeoutMs;
 
-    await new Promise<void>((resolve, reject) => {
-      socket.once('connect', resolve);
-      socket.once('error', reject);
-    });
+    try {
+      await withTimeout(
+        new Promise<void>((resolve, reject) => {
+          socket.once('connect', resolve);
+          socket.once('error', reject);
+        }),
+        remaining(deadline),
+        `CDP socket connect ${url.host}`
+      );
+    } catch (error) {
+      socket.destroy();
+      throw error;
+    }
 
     socket.write(
       [
@@ -60,11 +102,21 @@ export class CdpConnection {
       ].join('\r\n')
     );
 
-    await waitForHandshake(socket);
-    return new CdpConnection(socket);
+    try {
+      await waitForHandshake(socket, remaining(deadline));
+    } catch (error) {
+      socket.destroy();
+      throw error;
+    }
+
+    return new CdpConnection(socket, targetId, target?.url, target?.title);
   }
 
-  async send(method: string, params?: Record<string, unknown>): Promise<CdpResponse> {
+  get contextGeneration(): number {
+    return this.generation;
+  }
+
+  async send(method: string, params?: Record<string, unknown>, options: { timeoutMs?: number } = {}): Promise<CdpResponse> {
     const id = this.nextId++;
     const message = JSON.stringify({ id, method, params });
 
@@ -73,16 +125,40 @@ export class CdpConnection {
     });
 
     this.socket.write(encodeClientFrame(message));
-    return promise;
+    if (!options.timeoutMs) {
+      return promise;
+    }
+
+    let timeout: NodeJS.Timeout | undefined;
+    try {
+      return await Promise.race([
+        promise,
+        new Promise<CdpResponse>((_resolve, reject) => {
+          timeout = setTimeout(() => {
+            if (this.pending.delete(id)) {
+              reject(new Error(`Timed out waiting for CDP ${method} response after ${options.timeoutMs}ms`));
+            }
+          }, options.timeoutMs);
+        }),
+      ]);
+    } finally {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+    }
   }
 
-  async evaluate<T>(contextId: number | undefined, expression: string): Promise<T> {
-    const response = await this.send('Runtime.evaluate', {
-      ...(contextId ? { contextId } : {}),
-      expression,
-      awaitPromise: true,
-      returnByValue: true,
-    });
+  async evaluate<T>(contextId: number | undefined, expression: string, options: { timeoutMs?: number } = {}): Promise<T> {
+    const response = await this.send(
+      'Runtime.evaluate',
+      {
+        ...(contextId ? { contextId } : {}),
+        expression,
+        awaitPromise: true,
+        returnByValue: true,
+      },
+      options
+    );
 
     if (response.result?.exceptionDetails) {
       throw new Error(`CDP evaluation failed: ${JSON.stringify(response.result.exceptionDetails)}`);
@@ -93,6 +169,18 @@ export class CdpConnection {
 
   onExecutionContextCreated(listener: (context: CdpExecutionContext) => void): void {
     this.contextListeners.push(listener);
+  }
+
+  onLifecycleEvent(listener: (event: CdpResponse) => void): void {
+    this.lifecycleListeners.push(listener);
+  }
+
+  getExecutionContextIds(): number[] {
+    return [...this.contexts.keys()];
+  }
+
+  getExecutionContextFrameId(contextId: number): string | undefined {
+    return this.contexts.get(contextId)?.auxData?.frameId;
   }
 
   dispose(): void {
@@ -130,7 +218,36 @@ export class CdpConnection {
             pending.resolve(message);
           }
         }
-      } else if (message.method === 'Runtime.executionContextCreated') {
+      } else {
+        if (
+          message.method === 'Runtime.executionContextDestroyed' ||
+          message.method === 'Runtime.executionContextsCleared' ||
+          message.method === 'Page.frameNavigated' ||
+          message.method === 'Page.frameDetached' ||
+          message.method === 'Target.detachedFromTarget'
+        ) {
+          this.generation++;
+          if (message.method === 'Runtime.executionContextDestroyed' && typeof message.params?.executionContextId === 'number') {
+            this.contexts.delete(message.params.executionContextId);
+          }
+          if (message.method === 'Runtime.executionContextsCleared') {
+            this.contexts.clear();
+          }
+          for (const listener of this.lifecycleListeners) {
+            listener(message);
+          }
+        }
+
+        if (message.method === 'Runtime.executionContextCreated') {
+          this.generation++;
+          for (const listener of this.lifecycleListeners) {
+            listener(message);
+          }
+        }
+      }
+
+      if (message.method === 'Runtime.executionContextCreated') {
+        this.contexts.set(message.params.context.id, message.params.context);
         for (const listener of this.contextListeners) {
           listener(message.params.context);
         }
@@ -159,7 +276,7 @@ export async function connectToVsCodeCdp(
   let targets: CdpTarget[] = [];
 
   while (Date.now() < deadline) {
-    targets = (await fetchJson(`http://127.0.0.1:${port}/json/list`)) as CdpTarget[];
+    targets = (await fetchJson(`http://127.0.0.1:${port}/json/list`, remaining(deadline))) as CdpTarget[];
     const webviewTarget = [...targets]
       .reverse()
       .find(
@@ -173,13 +290,13 @@ export async function connectToVsCodeCdp(
 
     if (webviewTarget?.webSocketDebuggerUrl) {
       if (webviewTarget.id) {
-        await fetch(`http://127.0.0.1:${port}/json/activate/${webviewTarget.id}`).catch(() => undefined);
+        await fetchWithTimeout(`http://127.0.0.1:${port}/json/activate/${webviewTarget.id}`, remaining(deadline)).catch(() => undefined);
       }
 
-      return CdpConnection.connect(webviewTarget.webSocketDebuggerUrl);
+      return CdpConnection.connect(webviewTarget.webSocketDebuggerUrl, webviewTarget.id, remaining(deadline), webviewTarget);
     }
 
-    await delay(250);
+    await delay(Math.min(250, remaining(deadline)));
   }
 
   assert.fail(`Unable to find ${targetName} CDP target. Targets: ${JSON.stringify(targets)}`);
@@ -201,7 +318,7 @@ export async function connectToVsCodeCdpByText(options: {
   let lastError = '';
 
   while (Date.now() < deadline) {
-    targets = (await fetchJson(`http://127.0.0.1:${port}/json/list`)) as CdpTarget[];
+    targets = (await fetchJson(`http://127.0.0.1:${port}/json/list`, remaining(deadline))) as CdpTarget[];
     const webviewTargets = [...targets].reverse().filter((target) => {
       return (
         target.type === 'iframe' &&
@@ -216,7 +333,7 @@ export async function connectToVsCodeCdpByText(options: {
         continue;
       }
 
-      const cdp = await CdpConnection.connect(target.webSocketDebuggerUrl);
+      const cdp = await CdpConnection.connect(target.webSocketDebuggerUrl, target.id, remaining(deadline), target);
       try {
         const contextId = await waitForWebviewFrameContext(cdp, {
           allTextIncludes: options.allTextIncludes,
@@ -225,7 +342,7 @@ export async function connectToVsCodeCdpByText(options: {
         });
 
         if (target.id) {
-          await fetch(`http://127.0.0.1:${port}/json/activate/${target.id}`).catch(() => undefined);
+          await fetchWithTimeout(`http://127.0.0.1:${port}/json/activate/${target.id}`, remaining(deadline)).catch(() => undefined);
         }
 
         return { cdp, contextId };
@@ -235,53 +352,60 @@ export async function connectToVsCodeCdpByText(options: {
       }
     }
 
-    await delay(250);
+    await delay(Math.min(250, remaining(deadline)));
   }
 
   assert.fail(`Unable to find ${targetName} CDP target by text. Last error: ${lastError}. Targets: ${JSON.stringify(targets)}`);
 }
 
-export async function connectToVsCodeWorkbenchCdp(): Promise<CdpConnection> {
+export async function connectToVsCodeWorkbenchCdp(options: { activate?: boolean; timeoutMs?: number } = {}): Promise<CdpConnection> {
   const port = process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT;
   assert.ok(port, 'LA_E2E_CLI_REMOTE_DEBUGGING_PORT must be set for workbench DOM smoke tests');
 
-  const deadline = Date.now() + 15000;
+  const deadline = Date.now() + (options.timeoutMs ?? 15000);
   let targets: CdpTarget[] = [];
 
   while (Date.now() < deadline) {
-    targets = (await fetchJson(`http://127.0.0.1:${port}/json/list`)) as CdpTarget[];
-    const workbenchTarget = targets.find(
-      (target) =>
-        target.type === 'page' &&
-        target.webSocketDebuggerUrl &&
-        target.url?.includes('/workbench/workbench.html') &&
-        target.title?.includes('[Extension Development Host]')
-    );
+    targets = (await fetchJson(`http://127.0.0.1:${port}/json/list`, remaining(deadline))) as CdpTarget[];
+    const workbenchTarget = chooseVsCodeWorkbenchTargetForCapture(targets);
 
     if (workbenchTarget?.webSocketDebuggerUrl) {
-      if (workbenchTarget.id) {
-        await fetch(`http://127.0.0.1:${port}/json/activate/${workbenchTarget.id}`).catch(() => undefined);
+      if (options.activate !== false && workbenchTarget.id) {
+        await fetchWithTimeout(`http://127.0.0.1:${port}/json/activate/${workbenchTarget.id}`, remaining(deadline)).catch(() => undefined);
       }
-      return CdpConnection.connect(workbenchTarget.webSocketDebuggerUrl);
+      return CdpConnection.connect(workbenchTarget.webSocketDebuggerUrl, workbenchTarget.id, remaining(deadline), workbenchTarget);
     }
 
-    await delay(250);
+    await delay(Math.min(250, remaining(deadline)));
   }
 
   assert.fail(`Unable to find VS Code workbench CDP target. Targets: ${JSON.stringify(targets)}`);
+}
+
+export function chooseVsCodeWorkbenchTargetForCapture(targets: CdpTarget[]): CdpTarget | undefined {
+  const workbenchTargets = targets.filter(
+    (target) =>
+      target.type === 'page' &&
+      target.webSocketDebuggerUrl &&
+      target.url?.includes('/workbench/workbench.html') &&
+      target.title?.includes('[Extension Development Host]')
+  );
+
+  return workbenchTargets.length === 1 ? workbenchTargets[0] : undefined;
 }
 
 export async function waitForCreateWorkspaceFrameContext(cdp: CdpConnection, timeoutMs = 15000): Promise<number> {
   return waitForWebviewFrameContext(cdp, {
     allTextIncludes: ['Create logic app workspace', 'Workspace parent folder path', 'Workspace name'],
     description: 'Create Workspace webview DOM context',
+    requiredSelector: 'input, textarea, [contenteditable="true"], [role="textbox"], [role="combobox"]',
     timeoutMs,
   });
 }
 
 export async function waitForWebviewFrameContext(
   cdp: CdpConnection,
-  options: { allTextIncludes: string[]; description: string; timeoutMs?: number }
+  options: { allTextIncludes: string[]; description: string; requiredSelector?: string; timeoutMs?: number }
 ): Promise<number> {
   const contexts = new Map<number, CdpExecutionContext>();
   const lastTexts = new Map<number, string>();
@@ -303,9 +427,11 @@ export async function waitForWebviewFrameContext(
           scripts: string[];
           links: string[];
           frames: Array<{ id: string; src: string; location: string; readyState: string; text: string; html: string }>;
+          requiredSelectorFound: boolean;
         }>(
           context.id,
           `(() => {
+            const requiredSelector = ${JSON.stringify(options.requiredSelector)};
             const collectText = (root) => {
               let text = '';
               const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT);
@@ -315,6 +441,7 @@ export async function waitForWebviewFrameContext(
                   node = walker.nextSibling() || walker.nextNode();
                   continue;
                 }
+
                 if (node.parentElement instanceof HTMLScriptElement || node.parentElement instanceof HTMLStyleElement) {
                   node = walker.nextNode();
                   continue;
@@ -324,9 +451,6 @@ export async function waitForWebviewFrameContext(
                 }
                 if (node.shadowRoot) {
                   text += collectText(node.shadowRoot);
-                }
-                if (node instanceof HTMLIFrameElement && node.contentDocument) {
-                  text += collectText(node.contentDocument);
                 }
                 node = walker.nextNode();
               }
@@ -343,11 +467,10 @@ export async function waitForWebviewFrameContext(
               text: frame.contentDocument ? collectText(frame.contentDocument).slice(0, 1000) : '',
               html: frame.contentDocument?.documentElement?.outerHTML?.slice(0, 1000) || '',
             }));
-            const frameText = frameDocuments.map((frameDocument) => collectText(frameDocument)).join('\\n');
             const ownText = document.body?.innerText || collectText(document) || '';
             return {
               ownText: ownText.trim(),
-              text: [ownText, frameText].join('\\n').trim(),
+              text: ownText.trim(),
               readyState: document.readyState,
               location: document.location.href,
               html: [
@@ -357,6 +480,7 @@ export async function waitForWebviewFrameContext(
               scripts: Array.from(document.scripts).map((script) => script.src || script.textContent?.slice(0, 120) || ''),
               links: Array.from(document.querySelectorAll('link')).map((link) => link.href || ''),
               frames,
+              requiredSelectorFound: requiredSelector ? !!document.querySelector(requiredSelector) : true,
             };
           })()`
         )
@@ -368,13 +492,14 @@ export async function waitForWebviewFrameContext(
           html: String(error),
           scripts: [],
           links: [],
+          requiredSelectorFound: false,
         }));
       const text = diagnostics.text;
       const ownText = diagnostics.ownText;
       lastTexts.set(context.id, ownText || text);
       lastDiagnostics.set(context.id, diagnostics);
 
-      if (options.allTextIncludes.every((expected) => ownText.includes(expected))) {
+      if (diagnostics.requiredSelectorFound && options.allTextIncludes.every((expected) => ownText.includes(expected))) {
         return context.id;
       }
     }
@@ -393,41 +518,85 @@ export async function waitForWebviewFrameContext(
   );
 }
 
-async function fetchJson(url: string): Promise<unknown> {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch ${url}: ${response.status} ${response.statusText}`);
+export async function reacquireWebviewFrameContext(
+  cdp: CdpConnection,
+  options: { allTextIncludes: string[]; description: string; timeoutMs?: number }
+): Promise<number> {
+  const deadline = Date.now() + (options.timeoutMs ?? 15000);
+  let lastText = '';
+  while (Date.now() < deadline) {
+    for (const contextId of cdp.getExecutionContextIds()) {
+      const state = await getWebviewContextText(cdp, contextId).catch((error) => ({
+        ownText: '',
+        text: String(error),
+        visible: false,
+      }));
+      lastText = state.ownText || state.text;
+      if (state.visible && options.allTextIncludes.every((expected) => state.ownText.includes(expected))) {
+        return contextId;
+      }
+    }
+
+    await delay(Math.min(250, Math.max(0, deadline - Date.now())));
   }
 
-  return response.json();
+  assert.fail(`Timed out reacquiring ${options.description}. Last text: ${lastText.slice(0, 1000)}`);
 }
 
-async function waitForHandshake(socket: net.Socket): Promise<void> {
+async function getWebviewContextText(cdp: CdpConnection, contextId: number): Promise<{ ownText: string; text: string; visible: boolean }> {
+  return cdp.evaluate<{ ownText: string; text: string; visible: boolean }>(
+    contextId,
+    `(() => {
+      const text = document.body?.innerText || document.body?.textContent || '';
+      return {
+        ownText: text.trim(),
+        text: text.trim(),
+        visible: document.visibilityState !== 'hidden' && document.hidden !== true,
+      };
+    })()`
+  );
+}
+
+async function fetchJson(url: string, timeoutMs: number): Promise<unknown> {
+  return fetchWithTimeout(url, timeoutMs, async (response) => {
+    if (!response.ok) {
+      throw new Error(`Failed to fetch ${url}: ${response.status} ${response.statusText}`);
+    }
+
+    return response.json();
+  });
+}
+
+async function waitForHandshake(socket: net.Socket, timeoutMs: number): Promise<void> {
   let buffer = Buffer.alloc(0);
 
-  await new Promise<void>((resolve, reject) => {
-    const onData = (chunk: Buffer) => {
-      buffer = Buffer.concat([buffer, chunk]);
-      const headerEnd = buffer.indexOf('\r\n\r\n');
-      if (headerEnd < 0) {
-        return;
-      }
+  await withTimeout(
+    new Promise<void>((resolve, reject) => {
+      const onData = (chunk: Buffer) => {
+        buffer = Buffer.concat([buffer, chunk]);
+        const headerEnd = buffer.indexOf('\r\n\r\n');
+        if (headerEnd < 0) {
+          return;
+        }
 
-      const header = buffer.subarray(0, headerEnd).toString('utf8');
-      socket.off('data', onData);
-      socket.off('error', reject);
+        const header = buffer.subarray(0, headerEnd).toString('utf8');
+        socket.off('data', onData);
+        socket.off('error', reject);
 
-      if (!header.startsWith('HTTP/1.1 101')) {
-        reject(new Error(`CDP WebSocket upgrade failed: ${header}`));
-        return;
-      }
+        if (!header.startsWith('HTTP/1.1 101')) {
+          reject(new Error(`CDP WebSocket upgrade failed: ${header}`));
+          return;
+        }
 
-      resolve();
-    };
+        resolve();
+      };
 
-    socket.on('data', onData);
-    socket.once('error', reject);
-  });
+      socket.on('data', onData);
+      socket.once('error', reject);
+    }),
+    timeoutMs,
+    'CDP WebSocket handshake'
+  );
 }
 
 function encodeClientFrame(text: string): Buffer {
@@ -502,4 +671,43 @@ function tryDecodeServerFrame(buffer: Buffer): { opcode: number; payload: Buffer
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function remaining(deadline: number): number {
+  const remainingMs = deadline - Date.now();
+  if (remainingMs <= 0) {
+    throw new Error('CDP connection deadline exceeded');
+  }
+  return remainingMs;
+}
+
+async function fetchWithTimeout<T = Response>(
+  url: string,
+  timeoutMs: number,
+  readResponse?: (response: Response) => Promise<T>
+): Promise<T> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, { signal: controller.signal });
+    return readResponse ? await readResponse(response) : (response as T);
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function withTimeout<T>(promise: Promise<T>, timeoutMs: number, description: string): Promise<T> {
+  let timeout: NodeJS.Timeout | undefined;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<T>((_resolve, reject) => {
+        timeout = setTimeout(() => reject(new Error(`Timed out waiting for ${description}`)), timeoutMs);
+      }),
+    ]);
+  } finally {
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+  }
 }
