@@ -25,6 +25,7 @@ async function main(): Promise<void> {
   testCreateWorkspaceRejectsHiddenValidationMessage();
   testCreateWorkspaceRequiresActualControlValue();
   testCreateWorkspaceRejectsFooterClippedFieldControl();
+  testCreateWorkspaceRejectsOutputPanelClippedFieldControl();
   testCreateWorkspaceAcceptsFullyVisibleAnchoredFieldControl();
   testCreateWorkspaceRequiresEnabledCreateButton();
   testCreateWorkspaceRequiresScrollPosition();
@@ -434,6 +435,44 @@ function testCreateWorkspaceRejectsFooterClippedFieldControl(): void {
       window: {
         innerWidth: 714,
         innerHeight: 414,
+        devicePixelRatio: 1,
+        scrollY: 0,
+        getComputedStyle: getComputedStyleForFakeElement,
+      },
+    }
+  );
+
+  assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
+  assert.ok(snapshot.reasonCodes.includes('create-workspace-field-clipped'));
+}
+
+function testCreateWorkspaceRejectsOutputPanelClippedFieldControl(): void {
+  const input = new FakeInputElement('input', { 'aria-label': 'Workspace parent folder path', value: 'C:\\workspace' });
+  input.bounds = { left: 32, top: 350, width: 620, height: 32, right: 652, bottom: 382 };
+  const field = new FakeElement('div', { class: 'ms-TextField' }, [input], 'Workspace parent folder path');
+  field.bounds = { left: 24, top: 320, width: 640, height: 64, right: 664, bottom: 384 };
+  const scrollContainer = new FakeElement('main', {}, [
+    new FakeElement('h1', {}, [], 'Create logic app workspace'),
+    field,
+    new FakeElement('button', {}, [], 'Next'),
+  ]);
+  scrollContainer.bounds = { left: 0, top: 200, width: 846, height: 160, right: 846, bottom: 360 };
+  scrollContainer.clientHeight = 160;
+  scrollContainer.scrollHeight = 480;
+  const document = new FakeDocument(new FakeElement('body', {}, [scrollContainer]));
+
+  const snapshot = runProbe(
+    document,
+    {
+      kind: 'createWorkspace',
+      label: 'create-workspace-output-panel-clipped',
+      stage: 'scrolled',
+      fields: [{ labels: ['Workspace parent folder path'], value: 'C:\\workspace' }],
+    },
+    {
+      window: {
+        innerWidth: 846,
+        innerHeight: 435,
         devicePixelRatio: 1,
         scrollY: 0,
         getComputedStyle: getComputedStyleForFakeElement,
