@@ -123,7 +123,7 @@ jobs:
             throw 'Expected producer run ID is required for trusted consumer admission.'
           }
           $headers = @{ Authorization = "Bearer $(System.AccessToken)" }
-          $uri = "$(System.CollectionUri)$(System.TeamProject)/_apis/build/builds/$producerRunId?api-version=7.1"
+          $uri = "$(System.CollectionUri)$(System.TeamProject)/_apis/build/builds/${producerRunId}?api-version=7.1"
           $build = Invoke-RestMethod -Method Get -Uri $uri -Headers $headers
           if ([string]$build.definition.id -ne '${{ parameters.expectedProducerDefinitionId }}') {
             throw "Producer definition mismatch. expected=${{ parameters.expectedProducerDefinitionId }} actual=$($build.definition.id)"
