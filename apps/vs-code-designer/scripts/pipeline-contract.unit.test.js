@@ -29,6 +29,7 @@ function parseYaml(relativePath) {
 
 function testAzureToolsWrapperContract() {
   const buildEntry = read('.config/1esmain.yml');
+  const registeredBuildEntry = read('.azure-pipelines/1esmain.yml');
   const releaseEntry = read('.config/release.yml');
   const readme = read('.config/README.md');
   const rootPackage = JSON.parse(read('package.json'));
@@ -63,6 +64,18 @@ function testAzureToolsWrapperContract() {
   assert.doesNotMatch(workspace, /set this to true or false/);
   assert.match(workspace, /overrides:/);
   assert.match(workspace, /'@azure\/core-client': 1\.10\.0/);
+
+  assert.deepStrictEqual(
+    parseYaml('.azure-pipelines/1esmain.yml'),
+    parseYaml('.config/1esmain.yml'),
+    'registered producer path must stay semantically mirrored with the staged AzureTools v2 producer entry'
+  );
+  assert.match(registeredBuildEntry, /Temporary registered-path bridge for ADO definition 24067/);
+  assert.doesNotMatch(registeredBuildEntry, /MicroBuild\.1ES\.Official/);
+  assert.doesNotMatch(registeredBuildEntry, /publishVersion/);
+  assert.doesNotMatch(registeredBuildEntry, /enableVscodeE2E/);
+  assert.doesNotMatch(registeredBuildEntry, /runVscodeE2EExecution/);
+  assert.doesNotMatch(registeredBuildEntry, /git checkout/);
 
   assert.match(buildEntry, /template: azdo-pipelines\/1es-mb-main\.yml@azExtTemplates/);
   assert.match(buildEntry, /ref: azext-pt\/v1/);
@@ -1040,16 +1053,7 @@ function flattenAzureList(value) {
 }
 
 function testPipelineSafetyGuards() {
-  const legacyBuildEntry = read('.azure-pipelines/1esmain.yml');
   const stagedReleaseEntry = read('.config/release.yml');
-
-  assert.match(legacyBuildEntry, /runVscodeE2EExecution=false is allowed only for non-publishing dryRun pilot runs/);
-  assert.match(
-    legacyBuildEntry,
-    /if \('\$\{\{ parameters\.runVscodeE2EExecution \}\}' -eq 'False' -and '\$\{\{ parameters\.dryRun \}\}' -ne 'True'\)/
-  );
-  assert.match(legacyBuildEntry, /artifact-only pilot runs must disable signing/);
-  assert.match(legacyBuildEntry, /if eq\(parameters\.runVscodeE2EExecution, true\)[\s\S]*artifactName: Build Root/);
 
   assert.match(stagedReleaseEntry, /dryRun: true/);
   assert.doesNotMatch(stagedReleaseEntry, /dryRun: \$\{\{ parameters\.dryRun \}\}/);
