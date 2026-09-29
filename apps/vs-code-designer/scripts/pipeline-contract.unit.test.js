@@ -1,4 +1,4 @@
-/* global __dirname, console, process, require, structuredClone */
+/* global Buffer, __dirname, console, process, require, structuredClone */
 const assert = require('assert');
 const { execFileSync } = require('child_process');
 const fs = require('fs');
@@ -119,64 +119,55 @@ function runFullRollupGateFixture(script, options = {}) {
       {
         job: 'linux_unit_tests',
         variable: 'linuxUnitTestsResult',
-        artifact: 'vscode-e2e-cli-test-results-linux-unit-tests',
-        logArtifact: 'vscode-e2e-cli-log-linux-unit-tests',
+        artifact: 'vscode-e2e-cli-diagnostics-linux-unit-tests',
         suite: 'unitTests',
       },
       {
         job: 'linux_create_workspace_behavior',
         variable: 'linuxCreateWorkspaceBehaviorResult',
-        artifact: 'vscode-e2e-cli-test-results-linux-create-workspace-behavior',
-        logArtifact: 'vscode-e2e-cli-log-linux-create-workspace-behavior',
+        artifact: 'vscode-e2e-cli-diagnostics-linux-create-workspace-behavior',
         suite: 'createWorkspaceBehavior',
       },
       {
         job: 'linux_create_workspace_core_matrix',
         variable: 'linuxCreateWorkspaceCoreMatrixResult',
-        artifact: 'vscode-e2e-cli-test-results-linux-create-workspace-core-matrix',
-        logArtifact: 'vscode-e2e-cli-log-linux-create-workspace-core-matrix',
+        artifact: 'vscode-e2e-cli-diagnostics-linux-create-workspace-core-matrix',
         suite: 'createWorkspaceCoreMatrix',
       },
       {
         job: 'linux_create_workspace_preview_matrix',
         variable: 'linuxCreateWorkspacePreviewMatrixResult',
-        artifact: 'vscode-e2e-cli-test-results-linux-create-workspace-preview-matrix',
-        logArtifact: 'vscode-e2e-cli-log-linux-create-workspace-preview-matrix',
+        artifact: 'vscode-e2e-cli-diagnostics-linux-create-workspace-preview-matrix',
         suite: 'createWorkspacePreviewMatrix',
       },
       {
         job: 'linux_create_workspace_codeful',
         variable: 'linuxCreateWorkspaceCodefulResult',
-        artifact: 'vscode-e2e-cli-test-results-linux-create-workspace-codeful',
-        logArtifact: 'vscode-e2e-cli-log-linux-create-workspace-codeful',
+        artifact: 'vscode-e2e-cli-diagnostics-linux-create-workspace-codeful',
         suite: 'createWorkspaceCodeful',
       },
       {
         job: 'linux_msn_weather_lifecycle',
         variable: 'linuxMsnWeatherLifecycleResult',
-        artifact: 'vscode-e2e-cli-test-results-linux-msn-weather-lifecycle',
-        logArtifact: 'vscode-e2e-cli-log-linux-msn-weather-lifecycle',
+        artifact: 'vscode-e2e-cli-diagnostics-linux-msn-weather-lifecycle',
         suite: 'msnWeatherLifecycle',
       },
       {
         job: 'windows_unit_tests',
         variable: 'windowsUnitTestsResult',
-        artifact: 'vscode-e2e-cli-test-results-windows-unit-tests',
-        logArtifact: 'vscode-e2e-cli-log-windows-unit-tests',
+        artifact: 'vscode-e2e-cli-diagnostics-windows-unit-tests',
         suite: 'unitTests',
       },
       {
         job: 'windows_create_workspace_behavior_smoke',
         variable: 'windowsCreateWorkspaceBehaviorSmokeResult',
-        artifact: 'vscode-e2e-cli-test-results-windows-create-workspace-behavior-smoke',
-        logArtifact: 'vscode-e2e-cli-log-windows-create-workspace-behavior-smoke',
+        artifact: 'vscode-e2e-cli-diagnostics-windows-create-workspace-behavior-smoke',
         suite: 'createWorkspaceBehaviorSmoke',
       },
       {
         job: 'windows_msn_weather_lifecycle',
         variable: 'windowsMsnWeatherLifecycleResult',
-        artifact: 'vscode-e2e-cli-test-results-windows-msn-weather-lifecycle',
-        logArtifact: 'vscode-e2e-cli-log-windows-msn-weather-lifecycle',
+        artifact: 'vscode-e2e-cli-diagnostics-windows-msn-weather-lifecycle',
         suite: 'msnWeatherLifecycle',
       },
     ];
@@ -185,8 +176,9 @@ function runFullRollupGateFixture(script, options = {}) {
 
     for (const suite of suites) {
       const root = path.join(pipelineWorkspace, suite.artifact);
-      const logRoot = path.join(pipelineWorkspace, suite.logArtifact);
-      fs.mkdirSync(root, { recursive: true });
+      const resultRoot = path.join(root, 'results');
+      const logRoot = path.join(root, 'log');
+      fs.mkdirSync(resultRoot, { recursive: true });
       fs.mkdirSync(logRoot, { recursive: true });
       const result = { outcome: 'success', total: 12, passing: 12, failing: 0, pending: 0, ...(options.resultOverride ?? {}) };
       const context = { ...baseContext };
@@ -203,7 +195,7 @@ function runFullRollupGateFixture(script, options = {}) {
         if (options.omit?.job === suite.job && options.omit.file === file) {
           continue;
         }
-        fs.writeFileSync(path.join(root, file), content);
+        fs.writeFileSync(path.join(resultRoot, file), content);
       }
       const logText =
         options.logOverride?.job === suite.job
@@ -651,6 +643,16 @@ function testConsumerAdmissionContract() {
   assert.doesNotMatch(runSuitesTemplate, /LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH/);
   assert.doesNotMatch(runSuitesTemplate, /LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH/);
   assert.match(runSuitesTemplate, /Required suite diagnostics were missing after staging available evidence/);
+  assert.match(runSuitesTemplate, /artifactName: vscode-e2e-cli-diagnostics-\$\{\{ parameters\.artifactName \}\}/);
+  assert.match(
+    runSuitesTemplate,
+    /targetPath: \$\(Build\.ArtifactStagingDirectory\)\/vscode-e2e-cli\/\$\{\{ parameters\.artifactName \}\}/
+  );
+  assert.match(runSuitesTemplate, /--diagnostics-artifact-name "vscode-e2e-cli-diagnostics-\$\{\{ parameters\.artifactName \}\}"/);
+  assert.doesNotMatch(runSuitesTemplate, /artifactName: vscode-e2e-cli-test-results-\$\{\{ parameters\.artifactName \}\}/);
+  assert.doesNotMatch(runSuitesTemplate, /artifactName: vscode-e2e-cli-log-\$\{\{ parameters\.artifactName \}\}/);
+  assert.doesNotMatch(runSuitesTemplate, /artifactName: vscode-e2e-cli-screenshots-\$\{\{ parameters\.artifactName \}\}/);
+  assert.doesNotMatch(runSuitesTemplate, /artifactName: vscode-e2e-cli-generated-workspaces-\$\{\{ parameters\.artifactName \}\}/);
   assert.match(runSuitesTemplate, /Redact-DiagnosticText/);
   assert.doesNotMatch(runSuitesTemplate, /Copy-SanitizedReportDirectory/);
   assert.doesNotMatch(runSuitesTemplate, /cleanup-ledger\.json'[\s\S]*Copy-Item/);
@@ -748,13 +750,17 @@ function testConsumerAdmissionContract() {
   assert.match(consumerEntry, /Enforce nine-suite both-OS full rollup gate/);
   assert.match(consumerEntry, /Suite result is not a successful executed test run/);
   assert.match(consumerEntry, /Suite log does not contain enough positive real Mocha execution evidence/);
-  assert.match(consumerEntry, /vscode-e2e-cli-log-linux-create-workspace-core-matrix/);
+  assert.match(consumerEntry, /vscode-e2e-cli-diagnostics-linux-create-workspace-core-matrix/);
   assert.doesNotMatch(consumerEntry, /\$\{\{ dependencies\.linux_prepared_suites\.result \}\}/);
   assert.doesNotMatch(consumerEntry, /\$\{\{ dependencies\.windows_prepared_suites\.result \}\}/);
   assert.doesNotMatch(consumerEntry, /linux_prepared_suites/);
   assert.doesNotMatch(consumerEntry, /windows_prepared_suites/);
-  assert.match(consumerEntry, /vscode-e2e-cli-test-results-linux-unit-tests/);
-  assert.match(consumerEntry, /vscode-e2e-cli-test-results-windows-msn-weather-lifecycle/);
+  assert.match(consumerEntry, /vscode-e2e-cli-diagnostics-linux-unit-tests/);
+  assert.match(consumerEntry, /vscode-e2e-cli-diagnostics-windows-msn-weather-lifecycle/);
+  assert.doesNotMatch(consumerEntry, /vscode-e2e-cli-test-results-linux-unit-tests/);
+  assert.doesNotMatch(consumerEntry, /vscode-e2e-cli-log-linux-unit-tests/);
+  assert.match(consumerEntry, /\$resultRoot = Join-Path \$root 'results'/);
+  assert.match(consumerEntry, /\$logRoot = Join-Path \$root 'log'/);
   assert.match(consumerEntry, /admission-context-\$\(\$suite\.suite\)\.json/);
   assert.match(consumerEntry, /producerDefinitionId/);
   assert.match(consumerEntry, /sourceSHA/);
@@ -1099,10 +1105,15 @@ function assertConsumerJobsAreValidationJobs(consumer, runSuites) {
   assert.strictEqual(runSuites.jobs.length, 1);
   const suiteJob = runSuites.jobs[0];
   assert.strictEqual(suiteJob.templateContext?.type, 'validationJob');
-  assert.strictEqual(suiteJob.templateContext.outputs.length, 4, 'validationJob consumer must preserve diagnostic artifact outputs');
+  assert.strictEqual(suiteJob.templateContext.outputs.length, 1, 'validationJob consumer must preserve diagnostic artifact outputs');
   assert.deepStrictEqual(
     suiteJob.templateContext.outputs.map((output) => output.output),
-    ['pipelineArtifact', 'pipelineArtifact', 'pipelineArtifact', 'pipelineArtifact']
+    ['pipelineArtifact']
+  );
+  assert.strictEqual(suiteJob.templateContext.outputs[0].artifactName, 'vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}');
+  assert.strictEqual(
+    suiteJob.templateContext.outputs[0].targetPath,
+    '$(Build.ArtifactStagingDirectory)/vscode-e2e-cli/${{ parameters.artifactName }}'
   );
 }
 
@@ -1550,10 +1561,9 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout() {
     const screenshotsRoot = path.join(sourcesDirectory, 'apps', 'vs-code-designer', '.vscode-test', 'screenshots', 'cli', suiteId);
     const workspaceSnapshotsRoot = path.join(sourcesDirectory, 'apps', 'vs-code-designer', '.vscode-test', 'generated-workspaces', suiteId);
     fs.mkdirSync(vscodeLogsRoot, { recursive: true });
-    fs.mkdirSync(screenshotsRoot, { recursive: true });
     fs.mkdirSync(workspaceSnapshotsRoot, { recursive: true });
     fs.writeFileSync(path.join(vscodeLogsRoot, 'profile.log'), 'already redacted log\n');
-    fs.writeFileSync(path.join(screenshotsRoot, 'shot.txt'), 'screenshot placeholder\n');
+    const screenshotFixture = writeScreenshotSidecarFixture(screenshotsRoot);
     fs.writeFileSync(path.join(workspaceSnapshotsRoot, 'index.md'), '# redacted workspace\n');
 
     execFileSync(
@@ -1588,7 +1598,7 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout() {
     assert.match(sanitizedLog, /<redacted>/);
 
     assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'log', 'vscode-logs', 'profile.log')));
-    assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'screenshots', 'shot.txt')));
+    assertScreenshotSidecarFixturePreserved(path.join(diagnosticsRoot, 'screenshots'), screenshotFixture);
     assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'generated-workspaces', 'index.md')));
   } finally {
     fs.rmSync(tempRoot, { recursive: true, force: true });
@@ -1620,10 +1630,9 @@ function testDiagnosticsStagingScriptPreservesEvidenceBeforeFailing() {
     const screenshotsRoot = path.join(sourcesDirectory, 'apps', 'vs-code-designer', '.vscode-test', 'screenshots', 'cli', suiteId);
     const workspaceSnapshotsRoot = path.join(sourcesDirectory, 'apps', 'vs-code-designer', '.vscode-test', 'generated-workspaces', suiteId);
     fs.mkdirSync(vscodeLogsRoot, { recursive: true });
-    fs.mkdirSync(screenshotsRoot, { recursive: true });
     fs.mkdirSync(workspaceSnapshotsRoot, { recursive: true });
     fs.writeFileSync(path.join(vscodeLogsRoot, 'profile.log'), 'already redacted log\n');
-    fs.writeFileSync(path.join(screenshotsRoot, 'shot.txt'), 'screenshot placeholder\n');
+    const screenshotFixture = writeScreenshotSidecarFixture(screenshotsRoot);
     fs.writeFileSync(path.join(workspaceSnapshotsRoot, 'index.md'), '# redacted workspace\n');
 
     const result = runPowerShellScript(
@@ -1648,11 +1657,46 @@ function testDiagnosticsStagingScriptPreservesEvidenceBeforeFailing() {
     assert.doesNotMatch(sanitizedLog, /raw-token|secret-sas/);
     assert.match(sanitizedLog, /<redacted>/);
     assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'log', 'vscode-logs', 'profile.log')));
-    assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'screenshots', 'shot.txt')));
+    assertScreenshotSidecarFixturePreserved(path.join(diagnosticsRoot, 'screenshots'), screenshotFixture);
     assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'generated-workspaces', 'index.md')));
   } finally {
     fs.rmSync(tempRoot, { recursive: true, force: true });
   }
+}
+
+function writeScreenshotSidecarFixture(screenshotsRoot) {
+  const relativeDirectory = path.join('owner-switch', 'wizard');
+  const directory = path.join(screenshotsRoot, relativeDirectory);
+  fs.mkdirSync(directory, { recursive: true });
+  const fileName = 'visible-wizard.png';
+  const sidecarName = 'visible-wizard.json';
+  const pngBytes = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=', 'base64');
+  const sidecarJson = `${JSON.stringify(
+    {
+      schemaVersion: 1,
+      expectation: 'createWorkspaceBehavior.visibleWizard',
+      semanticFrameId: 'frame-visible-wizard',
+      ownerFrameId: 'frame-workbench-owner',
+    },
+    null,
+    2
+  )}\n`;
+  fs.writeFileSync(path.join(directory, fileName), pngBytes);
+  fs.writeFileSync(path.join(directory, sidecarName), sidecarJson);
+  return {
+    relativeDirectory,
+    fileName,
+    sidecarName,
+    pngBytes,
+    sidecarJson,
+  };
+}
+
+function assertScreenshotSidecarFixturePreserved(screenshotsRoot, fixture) {
+  const pngPath = path.join(screenshotsRoot, fixture.relativeDirectory, fixture.fileName);
+  const sidecarPath = path.join(screenshotsRoot, fixture.relativeDirectory, fixture.sidecarName);
+  assert.deepStrictEqual(fs.readFileSync(pngPath), fixture.pngBytes);
+  assert.strictEqual(fs.readFileSync(sidecarPath, 'utf-8'), fixture.sidecarJson);
 }
 
 function extractStageDiagnosticsScript(templateText) {

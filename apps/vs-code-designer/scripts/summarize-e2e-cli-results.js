@@ -19,13 +19,14 @@ if (require.main === module) {
   }
 }
 
-function writeSingleResult({ label, log, outDir, outcome }) {
+function writeSingleResult({ label, log, outDir, outcome, diagnosticsArtifactName }) {
   requireOption(label, '--label');
   requireOption(log, '--log');
   requireOption(outDir, '--out-dir');
 
   const logText = stripAnsi(fs.existsSync(log) ? fs.readFileSync(log, 'utf-8') : '');
   const result = parseMochaLog(label, outcome ?? 'unknown', logText);
+  result.diagnosticsArtifactName = diagnosticsArtifactName || undefined;
   result.failureAttachments = result.failing > 0 ? loadFailureScreenshotAttachments(outDir, label) : [];
   fs.mkdirSync(outDir, { recursive: true });
 
@@ -161,14 +162,30 @@ function buildAggregate(results, options = {}) {
 }
 
 function buildSingleSummary(result) {
+  const diagnosticsArtifactName = result.diagnosticsArtifactName || '';
+  const artifactColumns = diagnosticsArtifactName
+    ? {
+        header: '| Label | Outcome | Passing | Failing | Pending | Pass rate | Diagnostics |',
+        separator: '|---|---:|---:|---:|---:|---:|---|',
+        row: `| \`${result.label}\` | \`${result.outcome}\` | ${result.passing} | ${result.failing} | ${result.pending} | ${result.passRate}% | \`${diagnosticsArtifactName}\` |`,
+        description:
+          'The diagnostics artifact contains structured results under `results/`, the raw runner log and VS Code profile logs under `log/`, screenshots under `screenshots/`, and generated workspace snapshots under `generated-workspaces/`.',
+      }
+    : {
+        header: '| Label | Outcome | Passing | Failing | Pending | Pass rate | JUnit | Logs | Screenshots |',
+        separator: '|---|---:|---:|---:|---:|---:|---|---|---|',
+        row: `| \`${result.label}\` | \`${result.outcome}\` | ${result.passing} | ${result.failing} | ${result.pending} | ${result.passRate}% | \`vscode-e2e-cli-test-results-${result.label}\` | \`vscode-e2e-cli-log-${result.label}\` | \`vscode-e2e-cli-screenshots-${result.label}\` |`,
+        description:
+          'The log artifact contains the raw runner log and VS Code profile logs under `vscode-logs/`, including extension host and output-channel logs when VS Code produced them.',
+      };
   const lines = [
     `### @vscode/test-cli: \`${result.label}\``,
     '',
-    '| Label | Outcome | Passing | Failing | Pending | Pass rate | JUnit | Logs | Screenshots |',
-    '|---|---:|---:|---:|---:|---:|---|---|---|',
-    `| \`${result.label}\` | \`${result.outcome}\` | ${result.passing} | ${result.failing} | ${result.pending} | ${result.passRate}% | \`vscode-e2e-cli-test-results-${result.label}\` | \`vscode-e2e-cli-log-${result.label}\` | \`vscode-e2e-cli-screenshots-${result.label}\` |`,
+    artifactColumns.header,
+    artifactColumns.separator,
+    artifactColumns.row,
     '',
-    'The log artifact contains the raw runner log and VS Code profile logs under `vscode-logs/`, including extension host and output-channel logs when VS Code produced them.',
+    artifactColumns.description,
     '',
   ];
 
@@ -450,6 +467,7 @@ function toCamelCase(value) {
 module.exports = {
   _test: {
     buildAggregate,
+    buildSingleSummary,
     normalizeResult,
     parseCsvOption,
     parseMochaLog,

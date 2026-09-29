@@ -100,7 +100,9 @@ suite('Extension Activation Tests', () => {
       `No saved .code-workspace file should be loaded at startup. Actual: ${vscode.workspace.workspaceFile?.toString()}`
     );
     assert.deepStrictEqual(vscode.workspace.workspaceFolders ?? [], [], 'No folders should be loaded at startup');
-    await captureCliScreenshot('empty-window-startup');
+    await captureCliScreenshot('empty-window-startup', {
+      expectation: { kind: 'workbenchShell', label: 'empty-window-startup' },
+    });
   });
 
   function logActivationEvidence(message: string): void {

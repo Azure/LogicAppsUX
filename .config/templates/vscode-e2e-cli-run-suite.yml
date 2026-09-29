@@ -97,20 +97,8 @@ jobs:
       type: validationJob
       outputs:
         - output: pipelineArtifact
-          targetPath: $(Build.ArtifactStagingDirectory)/vscode-e2e-cli/${{ parameters.artifactName }}/results
-          artifactName: vscode-e2e-cli-test-results-${{ parameters.artifactName }}
-          condition: always()
-        - output: pipelineArtifact
-          targetPath: $(Build.ArtifactStagingDirectory)/vscode-e2e-cli/${{ parameters.artifactName }}/log
-          artifactName: vscode-e2e-cli-log-${{ parameters.artifactName }}
-          condition: always()
-        - output: pipelineArtifact
-          targetPath: $(Build.ArtifactStagingDirectory)/vscode-e2e-cli/${{ parameters.artifactName }}/screenshots
-          artifactName: vscode-e2e-cli-screenshots-${{ parameters.artifactName }}
-          condition: always()
-        - output: pipelineArtifact
-          targetPath: $(Build.ArtifactStagingDirectory)/vscode-e2e-cli/${{ parameters.artifactName }}/generated-workspaces
-          artifactName: vscode-e2e-cli-generated-workspaces-${{ parameters.artifactName }}
+          targetPath: $(Build.ArtifactStagingDirectory)/vscode-e2e-cli/${{ parameters.artifactName }}
+          artifactName: vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}
           condition: always()
     steps:
       - checkout: self
@@ -313,7 +301,8 @@ jobs:
                 --label "${{ parameters.suiteId }}" \
                 --log ".vscode-test/results/${{ parameters.suiteId }}.log" \
                 --out-dir ".vscode-test/results" \
-                --outcome "$outcome"
+                --outcome "$outcome" \
+                --diagnostics-artifact-name "vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}"
               exit "$status"
             displayName: Run vscode-test CLI (${{ parameters.suiteId }})
             env:
@@ -401,7 +390,8 @@ jobs:
                   --label "${{ parameters.suiteId }}" \
                   --log ".vscode-test/results/${{ parameters.suiteId }}.log" \
                   --out-dir ".vscode-test/results" \
-                  --outcome "$outcome"
+                  --outcome "$outcome" \
+                  --diagnostics-artifact-name "vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}"
                 exit "$status"
             env:
               LA_E2E_CLI_DIRECT_ARGS: ${{ parameters.cliArguments }}
@@ -439,7 +429,8 @@ jobs:
                 --label "${{ parameters.suiteId }}" `
                 --log ".vscode-test\results\${{ parameters.suiteId }}.log" `
                 --out-dir ".vscode-test\results" `
-                --outcome "$outcome"
+                --outcome "$outcome" `
+                --diagnostics-artifact-name "vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}"
               exit $status
             displayName: Run vscode-test CLI (${{ parameters.suiteId }})
             env:
@@ -518,7 +509,8 @@ jobs:
                   --label "${{ parameters.suiteId }}" `
                   --log ".vscode-test\results\${{ parameters.suiteId }}.log" `
                   --out-dir ".vscode-test\results" `
-                  --outcome "$outcome"
+                  --outcome "$outcome" `
+                  --diagnostics-artifact-name "vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}"
                 exit $status
             env:
               LA_E2E_CLI_DIRECT_ARGS: ${{ parameters.cliArguments }}

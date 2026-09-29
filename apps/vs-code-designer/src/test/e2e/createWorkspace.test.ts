@@ -38,7 +38,8 @@ import {
 } from './createWorkspaceCases';
 import type { FieldLabels, WorkspaceAppType, WorkspaceCreationCase, WorkflowType } from './createWorkspaceTypes';
 import { assertNoDialogAttempts, installDialogGuard } from './dialogGuard';
-import { captureCliScreenshot, installFailureScreenshotHook } from './screenshot';
+import { captureCliScreenshot, captureDiagnosticScreenshot, installFailureScreenshotHook } from './screenshot';
+import type { ScreenshotExpectation } from './screenshotReadiness';
 import { containsIgnoreCase, uniqueName } from './testUtils';
 import { waitForVisibleDelay } from './visibleDelay';
 import { closeWebviewTabs, getTabViewType, getWebviewTabs, waitForWebviewTab } from './webviewTabs';
@@ -237,16 +238,26 @@ suite('Create Workspace Experience Tests', () => {
         const { cdp, contextId } = await openCreateWorkspaceContext();
         try {
           await assertInitialCreateWorkspaceContent(cdp, contextId);
-          await captureCliScreenshot('create-workspace-initial-form');
+          // Hide transient extension welcome toasts without clearing their
+          // notification-center diagnostics or answering any business prompt.
+          await vscode.commands.executeCommand('notifications.hideToasts');
+          // Inspecting the Workflow type options scrolls the form; restore the
+          // initial viewport before requiring the empty workspace fields.
+          await scrollCreateWorkspaceForm(cdp, contextId, 'top');
+          await captureCreateWorkspaceScreenshot(cdp, contextId, 'create-workspace-initial-form', 'initial', false, {
+            fields: [
+              { labels: ['Workspace parent folder path'], value: '' },
+              { labels: ['Workspace name'], value: '' },
+            ],
+            nextButton: 'disabled',
+            scrollPosition: 'top',
+          });
           await runStandardRequiredFieldProgression(cdp, contextId, tempWorkspaceParentPath);
           await runStandardFieldValidationCases(cdp, contextId, tempWorkspaceParentPath);
-          await captureCliScreenshot('create-workspace-standard-fields-valid');
 
           await runCustomCodeFieldValidationCases(cdp, contextId, tempWorkspaceParentPath);
-          await captureCliScreenshot('create-workspace-custom-code-fields-valid');
 
           await runRulesEngineFieldValidationCases(cdp, contextId, tempWorkspaceParentPath);
-          await captureCliScreenshot('create-workspace-rules-engine-fields-valid');
           lastError = undefined;
           break;
         } catch (error) {
@@ -282,7 +293,7 @@ suite('Create Workspace Experience Tests', () => {
             await assertNextButtonEnabled(cdp, contextId, `${creationCase.label} review/back fields`);
             await goToReviewAndBack(cdp, contextId, creationCase);
             await assertWorkspaceCreationFields(cdp, contextId, creationCase, tempWorkspaceParentPath);
-            await captureWorkspaceCreationFormScreenshots(cdp, contextId, creationCase.label, 'review-back');
+            await captureWorkspaceCreationFormScreenshots(cdp, contextId, creationCase, tempWorkspaceParentPath, 'review-back');
             lastError = undefined;
             break;
           } catch (error) {
@@ -315,7 +326,7 @@ suite('Create Workspace Experience Tests', () => {
       for (const creationCase of filterCreationCases(getCoreCreationCases(), createWorkspaceCaseFilter)) {
         await createWorkspaceThroughWebview(creationCase, tempWorkspaceParentPath);
         verifyCreatedWorkspace(tempWorkspaceParentPath, creationCase);
-        await captureCliScreenshot(`create-workspace-${creationCase.label}-created`);
+        await captureCreatedWorkspaceDiagnostic(`create-workspace-${creationCase.label}-created`);
       }
 
       await assertNoDialogAttempts('Create Workspace core project creation flows');
@@ -335,7 +346,7 @@ suite('Create Workspace Experience Tests', () => {
         assertWorkspaceManifestEntry(manifestEntry);
         manifestEntries.push(manifestEntry);
         writeFixtureManifest(manifestEntries);
-        await captureCliScreenshot(`create-workspace-fixtures-${creationCase.label}-created`);
+        await captureCreatedWorkspaceDiagnostic(`create-workspace-fixtures-${creationCase.label}-created`);
       }
 
       assertFixtureManifestComplete(manifestEntries, createWorkspaceCaseFilter);
@@ -350,7 +361,7 @@ suite('Create Workspace Experience Tests', () => {
       for (const creationCase of filterCreationCases(getPreviewCreationCases(), createWorkspaceCaseFilter)) {
         await createWorkspaceThroughWebview(creationCase, tempWorkspaceParentPath);
         verifyCreatedWorkspace(tempWorkspaceParentPath, creationCase);
-        await captureCliScreenshot(`create-workspace-${creationCase.label}-created`);
+        await captureCreatedWorkspaceDiagnostic(`create-workspace-${creationCase.label}-created`);
       }
 
       await assertNoDialogAttempts('Create Workspace preview project creation flows');
@@ -365,7 +376,7 @@ suite('Create Workspace Experience Tests', () => {
         await createWorkspaceThroughWebview(creationCase, tempWorkspaceParentPath);
         applyCodefulControlVariant(tempWorkspaceParentPath, creationCase);
         verifyCreatedWorkspace(tempWorkspaceParentPath, creationCase);
-        await captureCliScreenshot(`create-workspace-${creationCase.label}-created`);
+        await captureCreatedWorkspaceDiagnostic(`create-workspace-${creationCase.label}-created`);
       }
 
       await assertNoDialogAttempts('Create Workspace codeful project creation flows');
@@ -473,6 +484,11 @@ async function runStandardFieldValidationCases(cdp: CdpEvaluator, contextId: num
   await selectDropdownOption(cdp, contextId, 'Workflow type', 'Stateful');
   await waitForAsyncValidationToSettle(cdp, contextId);
   await assertNextButtonEnabled(cdp, contextId, 'standard fields are valid');
+  await scrollFieldIntoView(cdp, contextId, 'Workflow name');
+  await captureCreateWorkspaceScreenshot(cdp, contextId, 'create-workspace-standard-fields-valid', 'fields-valid', false, {
+    fields: [{ labels: ['Workflow name'], value: 'la-trigger-github' }],
+    nextButton: 'enabled',
+  });
 }
 
 async function runStandardRequiredFieldProgression(cdp: CdpEvaluator, contextId: number, validPath: string): Promise<void> {
@@ -553,10 +569,15 @@ async function runCustomCodeFieldValidationCases(cdp: CdpEvaluator, contextId: n
     ['starts with underscore', '_func', nameValidationMessage],
   ]);
 
-  await runThreeRequiredFieldGatingCases(cdp, contextId, 'custom code fields', {
+  const fields = await runThreeRequiredFieldGatingCases(cdp, contextId, 'custom code fields', {
     first: { labels: customCodeFolderLabels, validValue: 'validfolder' },
     second: { labels: ['Function namespace', 'Namespace', 'namespace'], validValue: 'ValidNamespace' },
     third: { labels: 'Function name', validValue: 'validfn' },
+  });
+  await scrollFieldIntoView(cdp, contextId, 'Function name');
+  await captureCreateWorkspaceScreenshot(cdp, contextId, 'create-workspace-custom-code-fields-valid', 'fields-valid', false, {
+    fields: [fields[2]],
+    nextButton: 'enabled',
   });
 }
 
@@ -599,10 +620,15 @@ async function runRulesEngineFieldValidationCases(cdp: CdpEvaluator, contextId: 
     ['starts with underscore', '_func', nameValidationMessage],
   ]);
 
-  await runThreeRequiredFieldGatingCases(cdp, contextId, 'rules engine fields', {
+  const fields = await runThreeRequiredFieldGatingCases(cdp, contextId, 'rules engine fields', {
     first: { labels: rulesEngineFolderLabels, validValue: 'validrefolder' },
     second: { labels: ['Function namespace', 'Namespace', 'namespace'], validValue: 'ValidNamespace' },
     third: { labels: 'Function name', validValue: 'validfn' },
+  });
+  await scrollFieldIntoView(cdp, contextId, 'Function name');
+  await captureCreateWorkspaceScreenshot(cdp, contextId, 'create-workspace-rules-engine-fields-valid', 'fields-valid', false, {
+    fields: [fields[2]],
+    nextButton: 'enabled',
   });
 }
 
@@ -628,7 +654,14 @@ async function createWorkspaceThroughWebview(creationCase: WorkspaceCreationCase
       await assertNextButtonEnabled(cdp, contextId, `${creationCase.label} creation fields`);
       await clickWizardButton(cdp, contextId, 'Next');
       await waitForReviewStep(cdp, contextId, creationCase);
-      await captureCliScreenshot(`create-workspace-${creationCase.label}-review`);
+      await captureCreateWorkspaceScreenshot(
+        cdp,
+        contextId,
+        `create-workspace-${creationCase.label}-review`,
+        'review',
+        false,
+        getReviewScreenshotContract(creationCase)
+      );
       submitted = true;
       await clickWizardButton(cdp, contextId, 'Create workspace');
       await waitForWorkspaceFile(parentPath, creationCase.wsName);
@@ -666,8 +699,13 @@ async function openCreateWorkspaceContext(): Promise<{ cdp: CdpEvaluator & { dis
   assert.strictEqual(tab.label, createWorkspaceTitle);
 
   const cdp = await connectToVsCodeCdp({ targetName: 'Create Workspace webview' });
-  const contextId = await waitForCreateWorkspaceFrameContext(cdp, 60000);
-  return { cdp, contextId };
+  try {
+    const contextId = await waitForCreateWorkspaceFrameContext(cdp, 60000);
+    return { cdp, contextId };
+  } catch (error) {
+    cdp.dispose();
+    throw error;
+  }
 }
 
 async function fillWorkspaceCreationFields(
@@ -718,7 +756,7 @@ async function fillWorkspaceCreationFields(
 
   await waitForAsyncValidationToSettle(cdp, contextId);
   await assertWorkspaceCreationFields(cdp, contextId, creationCase, parentPath);
-  await captureWorkspaceCreationFormScreenshots(cdp, contextId, creationCase.label, 'fields-verified');
+  await captureWorkspaceCreationFormScreenshots(cdp, contextId, creationCase, parentPath, 'fields-verified');
 }
 
 async function assertWorkspaceCreationFields(
@@ -779,11 +817,88 @@ async function assertWorkspaceCreationFields(
   }
 }
 
-async function captureWorkspaceCreationFormScreenshots(cdp: CdpEvaluator, contextId: number, label: string, stage: string): Promise<void> {
-  for (const position of ['top', 'middle', 'bottom']) {
+async function captureWorkspaceCreationFormScreenshots(
+  cdp: CdpEvaluator,
+  contextId: number,
+  creationCase: WorkspaceCreationCase,
+  parentPath: string,
+  stage: string
+): Promise<void> {
+  const fieldContracts = getCreateWorkspaceFieldContracts(creationCase, parentPath);
+  for (const position of ['top', 'middle', 'bottom'] as const) {
     await scrollCreateWorkspaceForm(cdp, contextId, position);
-    await captureCliScreenshot(`create-workspace-${label}-${stage}-${position}`);
+    await captureCreateWorkspaceScreenshot(
+      cdp,
+      contextId,
+      `create-workspace-${creationCase.label}-${stage}-${position}`,
+      'scrolled',
+      false,
+      {
+        fields: getVisibleCreateWorkspaceFieldContracts(fieldContracts, position),
+        nextButton: 'enabled',
+        scrollPosition: position,
+      }
+    );
   }
+}
+
+function getVisibleCreateWorkspaceFieldContracts(
+  fields: Array<{ labels: string[]; value?: string; validationMessage?: string }>,
+  position: string
+): Array<{ labels: string[]; value?: string; validationMessage?: string }> {
+  if (fields.length > 4) {
+    if (position === 'top') {
+      return fields.slice(0, 2);
+    }
+
+    if (position === 'middle') {
+      return fields.slice(4, Math.min(6, fields.length));
+    }
+
+    // WorkflowTypeStep follows the custom-code/rules fields in the rendered form.
+    return fields.slice(3, 4);
+  }
+
+  if (position === 'top') {
+    return fields.slice(0, Math.min(2, fields.length));
+  }
+
+  if (position === 'middle') {
+    return fields.slice(2, Math.min(4, fields.length));
+  }
+
+  return fields.length > 4 ? fields.slice(4) : fields.slice(Math.max(0, fields.length - 1));
+}
+
+function getCreateWorkspaceFieldContracts(
+  creationCase: WorkspaceCreationCase,
+  parentPath: string
+): Array<{ labels: string[]; value?: string; validationMessage?: string }> {
+  const fields: Array<{ labels: string[]; value?: string; validationMessage?: string }> = [
+    { labels: ['Workspace parent folder path'], value: parentPath },
+    { labels: ['Workspace name'], value: creationCase.wsName },
+    { labels: ['Logic app name'], value: creationCase.appName },
+    { labels: ['Workflow name'], value: creationCase.wfName },
+  ];
+
+  if (creationCase.appType === 'customCode') {
+    fields.push(
+      {
+        labels: ['Custom code folder name', 'custom code folder', 'Code folder name', 'Folder name'],
+        value: requiredValue(creationCase.functionFolderName),
+      },
+      { labels: ['Function namespace', 'Namespace', 'namespace'], value: requiredValue(creationCase.functionNamespace) },
+      { labels: ['Function name'], value: requiredValue(creationCase.functionName) }
+    );
+  } else if (creationCase.appType === 'rulesEngine') {
+    fields.push(
+      { labels: ['Rules engine folder name', 'rules engine folder', 'Folder name'], value: requiredValue(creationCase.functionFolderName) },
+      { labels: ['Function namespace', 'Namespace', 'namespace'], value: requiredValue(creationCase.functionNamespace) },
+      { labels: ['Function name'], value: requiredValue(creationCase.functionName) }
+    );
+  }
+
+  return fields;
 }
 
 async function scrollCreateWorkspaceForm(cdp: CdpEvaluator, contextId: number, position: string): Promise<void> {
@@ -877,7 +992,14 @@ async function assertInitialCreateWorkspaceContent(cdp: CdpEvaluator, contextId:
 async function goToReviewAndBack(cdp: CdpEvaluator, contextId: number, creationCase: WorkspaceCreationCase): Promise<void> {
   await clickWizardButton(cdp, contextId, 'Next');
   await waitForReviewStep(cdp, contextId, creationCase);
-  await captureCliScreenshot(`create-workspace-${creationCase.label}-review-before-back`);
+  await captureCreateWorkspaceScreenshot(
+    cdp,
+    contextId,
+    `create-workspace-${creationCase.label}-review-before-back`,
+    'review',
+    false,
+    getReviewScreenshotContract(creationCase)
+  );
   await clickWizardButton(cdp, contextId, 'Back');
   await waitForFormStep(cdp, contextId, creationCase);
 }
@@ -913,7 +1035,12 @@ async function verifyAppTypeCleanup(parentPath: string): Promise<void> {
     await selectRadioOption(cdp, contextId, 'Logic app (Standard)');
     await waitForFieldHidden(cdp, contextId, ['Rules engine folder name', 'rules engine folder', 'Folder name']);
     await assertNextButtonEnabled(cdp, contextId, 'standard fields after rules-engine cleanup');
-    await captureCliScreenshot('create-workspace-app-type-cleanup');
+    await scrollFieldIntoView(cdp, contextId, 'Workflow name');
+    await captureCreateWorkspaceScreenshot(cdp, contextId, 'create-workspace-app-type-cleanup', 'fields-valid', false, {
+      fields: [{ labels: ['Workflow name'], value: cleanupCase.wfName }],
+      nextButton: 'enabled',
+      requiredText: ['Logic app (Standard)'],
+    });
   } finally {
     cdp.dispose();
     await closeWebviewTabs(createWorkspaceViewType);
@@ -957,7 +1084,14 @@ async function verifyWorkflowTypeDescriptionAndReview(parentPath: string): Promi
       await clickWizardButton(cdp, contextId, 'Next');
       await waitForReviewStep(cdp, contextId, creationCase);
       await assertReviewContainsWorkflowType(cdp, contextId, creationCase.workflowType);
-      await captureCliScreenshot(`create-workspace-${workflowTypeCase.label}-review`);
+      await captureCreateWorkspaceScreenshot(
+        cdp,
+        contextId,
+        `create-workspace-${workflowTypeCase.label}-review`,
+        'review',
+        false,
+        getReviewScreenshotContract(creationCase)
+      );
     } finally {
       cdp.dispose();
       await closeWebviewTabs(createWorkspaceViewType);
@@ -965,16 +1099,23 @@ async function verifyWorkflowTypeDescriptionAndReview(parentPath: string): Promi
   }
 }
 
+function getReviewScreenshotContract(creationCase: WorkspaceCreationCase) {
+  return {
+    createButton: 'enabled' as const,
+    requiredText: [
+      creationCase.wsName,
+      creationCase.appName,
+      creationCase.wfName,
+      getReviewWorkflowTypeText(creationCase.workflowType),
+      creationCase.functionFolderName,
+      creationCase.functionNamespace,
+      creationCase.functionName,
+    ].filter((value): value is string => !!value),
+  };
+}
+
 async function waitForReviewStep(cdp: CdpEvaluator, contextId: number, creationCase: WorkspaceCreationCase): Promise<void> {
-  const expectedValues = [
-    creationCase.wsName,
-    creationCase.appName,
-    creationCase.wfName,
-    getReviewWorkflowTypeText(creationCase.workflowType),
-    creationCase.functionFolderName,
-    creationCase.functionNamespace,
-    creationCase.functionName,
-  ].filter((value): value is string => !!value);
+  const expectedValues = getReviewScreenshotContract(creationCase).requiredText;
   const deadline = Date.now() + 15000;
 
   while (Date.now() < deadline) {
@@ -2004,7 +2145,15 @@ async function runInvalidThenValidCase(cdp: CdpEvaluator, contextId: number, tes
   await enterFieldValue(cdp, contextId, testCase.labels, testCase.invalidValue);
   await waitForFieldValidationMessage(cdp, contextId, testCase.labels, testCase.expectedMessage);
   await scrollFieldIntoView(cdp, contextId, testCase.labels);
-  await captureFieldValidationScreenshot(testCase.labels, testCase.name, 'invalid');
+  await captureFieldValidationScreenshot(
+    cdp,
+    contextId,
+    testCase.labels,
+    testCase.name,
+    'invalid',
+    testCase.invalidValue,
+    testCase.expectedMessage
+  );
 
   console.log(`[create-workspace-validation] ${testCase.name}: valid="${testCase.validValue}"`);
   await enterFieldValue(cdp, contextId, testCase.labels, testCase.validValue);
@@ -2027,7 +2176,7 @@ async function runEmptyThenValidCase(
   await enterFieldValue(cdp, contextId, labels, '');
   await waitForFieldValidationMessage(cdp, contextId, labels, emptyValidationMessage);
   await scrollFieldIntoView(cdp, contextId, labels);
-  await captureFieldValidationScreenshot(labels, name, 'empty');
+  await captureFieldValidationScreenshot(cdp, contextId, labels, name, 'empty', '', emptyValidationMessage);
   await assertNextButtonDisabled(cdp, contextId, name);
 
   console.log(`[create-workspace-validation] ${name}: valid="${validValue}"`);
@@ -2045,7 +2194,7 @@ async function runThreeRequiredFieldGatingCases(
     second: { labels: FieldLabels; validValue: string };
     third: { labels: FieldLabels; validValue: string };
   }
-): Promise<void> {
+): Promise<Array<{ labels: string[]; value: string }>> {
   await enterFieldValue(cdp, contextId, fields.first.labels, '');
   await enterFieldValue(cdp, contextId, fields.second.labels, '');
   await enterFieldValue(cdp, contextId, fields.third.labels, '');
@@ -2076,24 +2225,58 @@ async function runThreeRequiredFieldGatingCases(
   await enterFieldValue(cdp, contextId, fields.second.labels, fields.second.validValue);
   await assertNextButtonDisabled(cdp, contextId, `${name}: second and third valid`);
 
-  await enterFieldValue(cdp, contextId, fields.first.labels, uniqueName(fields.first.validValue));
-  await enterFieldValue(cdp, contextId, fields.second.labels, fields.second.validValue);
-  await enterFieldValue(cdp, contextId, fields.third.labels, uniqueName(fields.third.validValue));
+  const finalFields = [
+    { labels: getLabels(fields.first.labels), value: uniqueName(fields.first.validValue) },
+    { labels: getLabels(fields.second.labels), value: fields.second.validValue },
+    { labels: getLabels(fields.third.labels), value: uniqueName(fields.third.validValue) },
+  ];
+  for (const field of finalFields) {
+    await enterFieldValue(cdp, contextId, field.labels, field.value);
+  }
   await assertNextButtonEnabled(cdp, contextId, `${name}: all valid`);
+  return finalFields;
 }
 
-async function captureFieldValidationScreenshot(labels: FieldLabels, caseName: string, stage: string): Promise<void> {
-  if (process.env.LA_E2E_CLI_CAPTURE_FIELD_VALIDATION_SCREENSHOTS === '0') {
-    return;
-  }
-
+async function captureFieldValidationScreenshot(
+  cdp: CdpEvaluator,
+  contextId: number,
+  labels: FieldLabels,
+  caseName: string,
+  stage: string,
+  value: string,
+  validationMessage: string
+): Promise<void> {
   const fieldKey = getValidationScreenshotKey(labels, caseName, stage);
   if (capturedValidationFields.has(fieldKey)) {
     return;
   }
 
   capturedValidationFields.add(fieldKey);
-  await captureCliScreenshot(`create-workspace-validation-${caseName}-${stage}`);
+  await captureCreateWorkspaceScreenshot(cdp, contextId, `create-workspace-validation-${caseName}-${stage}`, 'validation', true, {
+    fields: [{ labels: getLabels(labels), value, validationMessage }],
+    nextButton: 'disabled',
+  });
+}
+
+async function captureCreateWorkspaceScreenshot(
+  cdp: CdpEvaluator | undefined,
+  contextId: number | undefined,
+  name: string,
+  stage: Extract<ScreenshotExpectation, { kind: 'createWorkspace' }>['stage'],
+  optional = false,
+  contract: Omit<Extract<ScreenshotExpectation, { kind: 'createWorkspace' }>, 'kind' | 'label' | 'stage'> = {}
+): Promise<void> {
+  await captureCliScreenshot(name, {
+    expectation: { kind: 'createWorkspace', label: name, stage, ...contract },
+    semanticCdp: cdp,
+    semanticContextId: contextId,
+    binding: { activeTabText: ['Create Workspace'] },
+    optional,
+  });
+}
+
+async function captureCreatedWorkspaceDiagnostic(name: string): Promise<void> {
+  await captureDiagnosticScreenshot(name, { reason: 'created-workspace-durable-artifacts-verified' });
 }
 
 function getValidationScreenshotKey(labels: FieldLabels, caseName: string, stage: string): string {
