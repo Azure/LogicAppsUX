@@ -1,13 +1,42 @@
-import {
-  constrainZoomToWidth,
-  fitLinkViewport,
-  getCanvasBounds,
-} from '../webview/src/components/canvasViewport';
+import { constrainZoomToWidth, fitLinkViewport, getCanvasBounds, zoomToCanvasBox } from '../webview/src/components/canvasViewport';
 
 describe('canvas horizontal fit', () => {
   test('caps zoom so the content fits within the available width', () => {
     expect(constrainZoomToWidth(1200, 600, 2)).toBe(0.5);
     expect(constrainZoomToWidth(400, 600, 2)).toBe(1.5);
+  });
+
+  describe('rectangular box zoom', () => {
+    const viewport = { width: 800, height: 600 };
+    const content = { width: 1600, height: 1200 };
+    const current = { zoom: 1, scrollLeft: 0, scrollTop: 0 };
+    const limits = { minimumZoom: 0.1, maximumZoom: 2 };
+
+    test('zooms into and centers the selected rectangle', () => {
+      expect(zoomToCanvasBox({ x: 200, y: 150, width: 400, height: 300 }, viewport, content, current, limits)).toEqual({
+        zoom: 2,
+        scrollLeft: 400,
+        scrollTop: 300,
+      });
+    });
+
+    test('Shift-selection zooms out around the selected center', () => {
+      expect(
+        zoomToCanvasBox(
+          { x: 200, y: 150, width: 400, height: 300 },
+          viewport,
+          content,
+          { zoom: 2, scrollLeft: 400, scrollTop: 300 },
+          limits,
+          true
+        )
+      ).toEqual({ zoom: 1, scrollLeft: 0, scrollTop: 0 });
+    });
+
+    test('ignores accidental clicks and clamps zoom limits', () => {
+      expect(zoomToCanvasBox({ x: 100, y: 100, width: 2, height: 2 }, viewport, content, current, limits)).toBe(current);
+      expect(zoomToCanvasBox({ x: 390, y: 290, width: 10, height: 10 }, viewport, content, current, limits).zoom).toBe(2);
+    });
   });
 
   test('preserves the requested zoom until layout dimensions are available', () => {

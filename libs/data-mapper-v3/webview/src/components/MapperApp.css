@@ -499,8 +499,6 @@
 }
 
 .mapping-links-overlay {
-    position: absolute;
-    z-index: 5;
     overflow: hidden;
     pointer-events: none;
 }
@@ -535,6 +533,24 @@
 .canvas-zoom-controls button:disabled {
     opacity: 0.4;
     cursor: default;
+}
+
+.canvas-zoom-controls button.active {
+    color: var(--vscode-button-foreground, white);
+    background: var(--vscode-button-background, #0e639c);
+}
+
+.canvas-zoom-selection {
+    fill: rgba(79, 193, 255, 0.12);
+    stroke: #4fc1ff;
+    stroke-width: 1.5;
+    stroke-dasharray: 5 3;
+    pointer-events: none;
+}
+
+.canvas-zoom-selection.zoom-out {
+    fill: rgba(204, 167, 0, 0.12);
+    stroke: #cca700;
 }
 
 .canvas-zoom-controls span {

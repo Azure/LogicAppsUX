@@ -88,6 +88,12 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
     // Load schemas if possible
     let sourceSchemaTree: SchemaTree | undefined;
     let targetSchemaTree: SchemaTree | undefined;
+    const schemaKey = (reference: MapDocument['sourceSchema']) =>
+      JSON.stringify({
+        location: reference.location || '',
+        rootName: reference.rootName || '',
+        inlineSchemaXml: reference.inlineSchemaXml || '',
+      });
     this.logger.info('Loading source schema and dependencies.');
     try {
       if (mapDoc.sourceSchema.location) {
@@ -123,7 +129,10 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
 
     this.logger.info(`Source schema ${sourceSchemaTree ? 'loaded' : 'unavailable'}. Loading target schema and dependencies.`);
     try {
-      if (mapDoc.targetSchema.location) {
+      if (sourceSchemaTree && schemaKey(mapDoc.sourceSchema) === schemaKey(mapDoc.targetSchema)) {
+        targetSchemaTree = sourceSchemaTree;
+        this.logger.info('Target schema matches source schema; reusing the parsed schema tree.');
+      } else if (mapDoc.targetSchema.location) {
         const schemaPath = this.resolveSchemaPath(
           document.uri,
           mapDoc.targetSchema.location,
@@ -158,12 +167,6 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
     let disposed = false;
     let schemaRequest = 0;
     const schemaCache = new Map<string, SchemaTree | undefined>();
-    const schemaKey = (reference: MapDocument['sourceSchema']) =>
-      JSON.stringify({
-        location: reference.location || '',
-        rootName: reference.rootName || '',
-        inlineSchemaXml: reference.inlineSchemaXml || '',
-      });
     schemaCache.set(schemaKey(mapDoc.sourceSchema), sourceSchemaTree);
     schemaCache.set(schemaKey(mapDoc.targetSchema), targetSchemaTree);
     const synchronizeSchemas = async (updatedMap: MapDocument, version: number): Promise<void> => {

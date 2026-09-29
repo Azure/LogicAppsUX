@@ -80,6 +80,24 @@ function collectAllPaths(node: SchemaNodeView | undefined, paths: Set<string>): 
     }
 }
 
+function exceedsInitialExpansionLimit(node: SchemaNodeView, limit = 2000): boolean {
+    let count = 0;
+    const pending = [node];
+    while (pending.length > 0) {
+        const current = pending.pop()!;
+        count++;
+        if (count > limit) {
+            return true;
+        }
+        count += current.attributes?.length || 0;
+        if (count > limit) {
+            return true;
+        }
+        pending.push(...(current.children || []));
+    }
+    return false;
+}
+
 function SchemaTreeView({
     schema,
     side,
@@ -315,10 +333,11 @@ export class SchemaTreeRenderer extends HTMLElement {
         onNodeDoubleClick?: (node: SchemaNodeView) => void,
         onReplaceSchema?: () => void,
         onLayoutChange?: () => void,
-        ignoreNamespaces = false
+        ignoreNamespaces = false,
+        pathResolver?: SchemaPathResolver<SchemaNodeView>
     ): void {
         this.schema = schema;
-        this.paths = new SchemaPathResolver(schema, ignoreNamespaces);
+        this.paths = pathResolver || new SchemaPathResolver(schema, ignoreNamespaces);
         this.revealRequest = undefined;
         this.side = side;
         this.onNodeClick = onNodeClick;
@@ -329,8 +348,10 @@ export class SchemaTreeRenderer extends HTMLElement {
         this.initialExpanded = initialExpanded ? new Set(initialExpanded) : new Set();
         if (schema.rootElement) {
             this.initialExpanded.add(schema.rootElement.path);
-            for (const child of schema.rootElement.children || []) {
-                this.initialExpanded.add(child.path);
+            if (!exceedsInitialExpansionLimit(schema.rootElement)) {
+                for (const child of schema.rootElement.children || []) {
+                    this.initialExpanded.add(child.path);
+                }
             }
         }
         this.renderVersion++;
@@ -347,26 +368,49 @@ export class SchemaTreeRenderer extends HTMLElement {
     }
 
     public getNodePosition(path: string): { x: number; y: number } | null {
-        const resolved = this.paths.resolve(path);
-        if (!resolved) { return null; }
-        path = resolved.path;
+        return this.getNodePositions([path]).get(path) ?? null;
+    }
+
+    public getNodePositions(paths: Iterable<string>): Map<string, { x: number; y: number }> {
+        const positions = new Map<string, { x: number; y: number }>();
         const visibleNodes = Array.from(this.querySelectorAll<HTMLElement>('.tree-node[data-path]'));
-        const node = visibleNodes.find(element => element.dataset.path === path)
-            ?? visibleNodes
-                .filter(element => element.dataset.path && path.startsWith(`${element.dataset.path}/`))
-                .sort((a, b) => (b.dataset.path?.length ?? 0) - (a.dataset.path?.length ?? 0))[0];
-        const connector = node?.querySelector<HTMLElement>('.node-connector');
+        const nodesByPath = new Map(
+            visibleNodes
+                .filter(node => node.dataset.path)
+                .map(node => [node.dataset.path!, node])
+        );
         const mappingArea = this.closest('.mapping-area');
-        if (!connector || !mappingArea) {
-            return null;
+        if (!mappingArea) {
+            return positions;
         }
 
-        const connectorRect = connector.getBoundingClientRect();
         const areaRect = mappingArea.getBoundingClientRect();
-        return {
-            x: connectorRect.left - areaRect.left + connectorRect.width / 2,
-            y: connectorRect.top - areaRect.top + connectorRect.height / 2
-        };
+        for (const requestedPath of paths) {
+            const resolved = this.paths.resolve(requestedPath);
+            if (!resolved) {
+                continue;
+            }
+            let visiblePath = resolved.path;
+            let node = nodesByPath.get(visiblePath);
+            while (!node) {
+                const separator = visiblePath.lastIndexOf('/');
+                if (separator <= 0) {
+                    break;
+                }
+                visiblePath = visiblePath.slice(0, separator);
+                node = nodesByPath.get(visiblePath);
+            }
+            const connector = node?.querySelector<HTMLElement>('.node-connector');
+            if (!connector) {
+                continue;
+            }
+            const connectorRect = connector.getBoundingClientRect();
+            positions.set(requestedPath, {
+                x: connectorRect.left - areaRect.left + connectorRect.width / 2,
+                y: connectorRect.top - areaRect.top + connectorRect.height / 2
+            });
+        }
+        return positions;
     }
 
     public revealNode(path: string): void {

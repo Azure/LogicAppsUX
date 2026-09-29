@@ -9,11 +9,14 @@ export interface CanvasViewport {
   scrollTop: number;
 }
 
-export function constrainZoomToWidth(
-  contentWidth: number,
-  viewportWidth: number,
-  requestedZoom: number
-): number {
+export interface CanvasBox {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export function constrainZoomToWidth(contentWidth: number, viewportWidth: number, requestedZoom: number): number {
   if (contentWidth <= 0 || viewportWidth <= 0) {
     return requestedZoom;
   }
@@ -63,5 +66,28 @@ export function fitLinkViewport(
     zoom,
     scrollLeft: Math.max(0, ((left + right) * zoom) / 2 - width / 2),
     scrollTop: Math.max(0, ((top + bottom) * zoom) / 2 - (height + 32) / 2),
+  };
+}
+
+export function zoomToCanvasBox(
+  selection: CanvasBox,
+  viewport: { width: number; height: number },
+  content: { width: number; height: number },
+  current: CanvasViewport,
+  limits: { minimumZoom: number; maximumZoom: number },
+  zoomOut = false
+): CanvasViewport {
+  if (selection.width < 4 || selection.height < 4 || viewport.width <= 0 || viewport.height <= 0) {
+    return current;
+  }
+  const fitFactor = Math.min(viewport.width / selection.width, viewport.height / selection.height);
+  const requestedZoom = zoomOut ? current.zoom / fitFactor : current.zoom * fitFactor;
+  const zoom = Math.min(limits.maximumZoom, Math.max(limits.minimumZoom, requestedZoom));
+  const centerX = (selection.x + selection.width / 2 + current.scrollLeft) / current.zoom;
+  const centerY = (selection.y + selection.height / 2 + current.scrollTop) / current.zoom;
+  return {
+    zoom,
+    scrollLeft: Math.max(0, Math.min(Math.max(0, content.width * zoom - viewport.width), centerX * zoom - viewport.width / 2)),
+    scrollTop: Math.max(0, Math.min(Math.max(0, content.height * zoom - viewport.height), centerY * zoom - viewport.height / 2)),
   };
 }

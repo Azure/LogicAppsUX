@@ -44,7 +44,9 @@ public sealed class CompilerService : IAsyncDisposable
                 id,
                 map = parameters.GetProperty("map"),
                 sourceSchema = GetOptionalProperty(parameters, "sourceSchema"),
-                targetSchema = GetOptionalProperty(parameters, "targetSchema")
+                targetSchema = GetOptionalProperty(parameters, "targetSchema"),
+                sourceSchemaReference = GetOptionalProperty(parameters, "sourceSchemaReference"),
+                targetSchemaReference = GetOptionalProperty(parameters, "targetSchemaReference")
             });
 
             await activeProcess.StandardInput.WriteLineAsync(request);

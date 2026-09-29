@@ -2,6 +2,8 @@ import * as childProcess from 'child_process';
 import type * as vscode from 'vscode';
 import { CompilerWorkerClient } from '../src/worker/compilerWorkerClient';
 import { disposeDataMapperLogger } from '../src/logger';
+import { DEFAULT_MAP_OPTIONS, MapDocument } from '../src/model';
+import { SchemaNodeType, SchemaTree } from '../src/model/schemaModel';
 import { outputChannel } from './__mocks__/vscode';
 
 jest.mock('child_process', () => {
@@ -72,6 +74,56 @@ describe('compiler worker logging', () => {
     await expect(pending).rejects.toThrow('private-message');
     expect(outputChannel.error).toHaveBeenCalledWith(expect.stringContaining('TRANSFORM_FAILED'));
     expect(JSON.stringify(outputChannel.error.mock.calls)).not.toContain('private-');
+  });
+
+  test('sends file-backed schemas as lightweight references', async () => {
+    const map: MapDocument = {
+      name: 'Reference transport',
+      version: '1',
+      sourceSchema: { location: __filename, rootName: 'Root' },
+      targetSchema: { location: __filename, rootName: 'Root' },
+      pages: [{ id: 'page1', name: 'Page 1', links: [], functoids: [] }],
+      options: { ...DEFAULT_MAP_OPTIONS },
+    };
+    const schema: SchemaTree = {
+      filePath: __filename,
+      namespaces: {},
+      rootElement: {
+        name: 'Root',
+        path: '/Root',
+        type: SchemaNodeType.Element,
+        children: [],
+        attributes: [],
+        isOptional: false,
+      },
+    };
+    const pending = client.compileMap({ map, sourceSchema: schema, targetSchema: schema });
+    const worker = jest.mocked(childProcess.spawn).mock.results[0].value;
+    const writes: string[] = [];
+    worker.stdin.on('data', (chunk: Buffer) => writes.push(chunk.toString()));
+    worker.stdout.write(`${JSON.stringify({ id: 1, result: { protocolVersion: 1 } })}\n`);
+    await flush();
+    for (let attempt = 0; attempt < 10 && writes.length === 0; attempt++) {
+      await new Promise(resolve => setImmediate(resolve));
+    }
+
+    const request = writes
+      .join('')
+      .trim()
+      .split('\n')
+      .map(line => JSON.parse(line))
+      .find(message => message.method === 'compileMap');
+    expect(request).toBeDefined();
+    expect(request.params.sourceSchema).toBeUndefined();
+    expect(request.params.targetSchema).toBeUndefined();
+    expect(request.params.sourceSchemaReference).toEqual({ filePath: __filename, rootName: 'Root' });
+    expect(request.params.targetSchemaReference).toEqual({ filePath: __filename, rootName: 'Root' });
+
+    worker.stdout.write(`${JSON.stringify({
+      id: 2,
+      result: { success: true, xslt: '<xsl:stylesheet />', errors: [], warnings: [] },
+    })}\n`);
+    await expect(pending).resolves.toEqual(expect.objectContaining({ success: true }));
   });
 
   test('logs timed out requests and terminates the worker', async () => {

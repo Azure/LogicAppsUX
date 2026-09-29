@@ -44,6 +44,12 @@ export interface WorkerCompileMapRequest {
     targetSchema?: SchemaTree;
 }
 
+export interface WorkerSchemaReference {
+    filePath?: string;
+    rootName?: string;
+    inlineSchemaXml?: string;
+}
+
 export class CompilerWorkerError extends Error {
     constructor(
         public readonly code: string,
@@ -74,8 +80,10 @@ export class CompilerWorkerClient implements vscode.Disposable {
     public async compileMap(request: WorkerCompileMapRequest): Promise<CompileResult> {
         return this.request<CompileResult>('compileMap', {
             map: request.map,
-            sourceSchema: this.serializeSchema(request.sourceSchema),
-            targetSchema: this.serializeSchema(request.targetSchema)
+            sourceSchema: this.serializeSchema(request.sourceSchema, request.map.sourceSchema),
+            targetSchema: this.serializeSchema(request.targetSchema, request.map.targetSchema),
+            sourceSchemaReference: this.createSchemaReference(request.sourceSchema, request.map.sourceSchema),
+            targetSchemaReference: this.createSchemaReference(request.targetSchema, request.map.targetSchema)
         }, 120_000);
     }
 
@@ -258,11 +266,36 @@ export class CompilerWorkerClient implements vscode.Disposable {
         this.pending.clear();
     }
 
-    private serializeSchema(schema?: SchemaTree): unknown {
+    private serializeSchema(
+        schema: SchemaTree | undefined,
+        reference: MapDocument['sourceSchema']
+    ): unknown {
         if (!schema) { return undefined; }
+        if (this.createSchemaReference(schema, reference)) { return undefined; }
         return {
             ...schema,
             namespaces: { ...schema.namespaces }
         };
+    }
+
+    private createSchemaReference(
+        schema: SchemaTree | undefined,
+        reference: MapDocument['sourceSchema']
+    ): WorkerSchemaReference | undefined {
+        if (!schema) { return undefined; }
+        if (reference.inlineSchemaXml) {
+            return {
+                inlineSchemaXml: reference.inlineSchemaXml,
+                filePath: schema.filePath,
+                rootName: reference.rootName
+            };
+        }
+        if (schema.filePath && fs.existsSync(schema.filePath)) {
+            return {
+                filePath: schema.filePath,
+                rootName: reference.rootName
+            };
+        }
+        return undefined;
     }
 }

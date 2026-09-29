@@ -4,6 +4,7 @@
 
 import { SchemaNodeView, SchemaTreeRenderer } from './SchemaTreeRenderer';
 import { SchemaPathResolver, linkSchemaPath } from '../../../src/schema/schemaPathResolver';
+import { findUniqueNameMatches } from './autoLink';
 import { MappingCanvas } from './MappingCanvas';
 import { FunctoidPalette } from './FunctoidPalette';
 import {
@@ -68,6 +69,10 @@ export class MapperAppController {
     private copilotContextFiles: Array<{ id: string; name: string; size: number }> = [];
 
     private resizeObserver: ResizeObserver | null = null;
+    private schemaResolvers = new WeakMap<object, {
+        ignoreNamespaces: boolean;
+        resolver: SchemaPathResolver<any>;
+    }>();
 
     constructor(
         private readonly container: HTMLElement,
@@ -358,7 +363,8 @@ export class MapperAppController {
             const sourceTree = new SchemaTreeRenderer();
             sourceContainer = sourceTree;
             sourceContainer.className = 'schema-tree-container source-tree';
-            const expandedPaths = this.getLinkedPaths('source');
+            const sourceResolver = this.getSchemaPathResolver(this.state.sourceSchema);
+            const expandedPaths = this.getLinkedPaths('source', sourceResolver);
             this.sourceTree = sourceTree;
             this.sourceTree.configure(
                 this.state.sourceSchema, 'source',
@@ -368,7 +374,8 @@ export class MapperAppController {
                 (node) => this.openSchemaNodeProperties(node, 'source'),
                 () => this.vscode.postMessage({ type: 'loadSchema', side: 'source' }),
                 () => this.redrawLinks(),
-                this.state.map?.options?.ignoreNamespacesForLinks
+                this.state.map?.options?.ignoreNamespacesForLinks,
+                sourceResolver
             );
         } else {
             sourceContainer = document.createElement('div');
@@ -407,7 +414,8 @@ export class MapperAppController {
             const targetTree = new SchemaTreeRenderer();
             targetContainer = targetTree;
             targetContainer.className = 'schema-tree-container target-tree';
-            const expandedPaths = this.getLinkedPaths('target');
+            const targetResolver = this.getSchemaPathResolver(this.state.targetSchema);
+            const expandedPaths = this.getLinkedPaths('target', targetResolver);
             this.targetTree = targetTree;
             this.targetTree.configure(
                 this.state.targetSchema, 'target',
@@ -417,7 +425,8 @@ export class MapperAppController {
                 (node) => this.openSchemaNodeProperties(node, 'target'),
                 () => this.vscode.postMessage({ type: 'loadSchema', side: 'target' }),
                 () => this.redrawLinks(),
-                this.state.map?.options?.ignoreNamespacesForLinks
+                this.state.map?.options?.ignoreNamespacesForLinks,
+                targetResolver
             );
         } else {
             targetContainer = document.createElement('div');
@@ -718,20 +727,32 @@ export class MapperAppController {
         const positions: Map<string, { x: number; y: number }> = new Map();
 
         if (this.sourceTree) {
+            const sourcePaths = new Set(
+                page.links
+                    .filter(link => link.sourceType === 'schemaNode')
+                    .map(link => linkSchemaPath(link, 'source'))
+            );
+            const sourcePositions = this.sourceTree.getNodePositions(sourcePaths);
             for (const link of page.links) {
                 if (link.sourceType === 'schemaNode') {
                     const path = link.sourcePath || link.sourceId;
-                    const pos = this.sourceTree.getNodePosition(linkSchemaPath(link, 'source'));
+                    const pos = sourcePositions.get(linkSchemaPath(link, 'source'));
                     if (pos) { positions.set(`src:${path}`, pos); }
                 }
             }
         }
 
         if (this.targetTree) {
+            const targetPaths = new Set(
+                page.links
+                    .filter(link => link.targetType === 'schemaNode')
+                    .map(link => linkSchemaPath(link, 'target'))
+            );
+            const targetPositions = this.targetTree.getNodePositions(targetPaths);
             for (const link of page.links) {
                 if (link.targetType === 'schemaNode') {
                     const path = link.targetPath || link.targetId;
-                    const pos = this.targetTree.getNodePosition(linkSchemaPath(link, 'target'));
+                    const pos = targetPositions.get(linkSchemaPath(link, 'target'));
                     if (pos) { positions.set(`tgt:${path}`, pos); }
                 }
             }
@@ -1037,28 +1058,47 @@ export class MapperAppController {
     private autoLinkByName(): void {
         if (!this.state.sourceSchema || !this.state.targetSchema || !this.state.map) { return; }
         const page = this.state.map.pages[this.state.activePage];
-        const sourceNodes = this.flattenLeafNodes(this.state.sourceSchema.rootElement);
-        const targetNodes = this.flattenLeafNodes(this.state.targetSchema.rootElement);
-        const sourcePaths = new SchemaPathResolver(this.state.sourceSchema);
-        const targetPaths = new SchemaPathResolver(this.state.targetSchema);
+        const sourcePaths = this.getSchemaPathResolver(this.state.sourceSchema);
+        const targetPaths = this.getSchemaPathResolver(this.state.targetSchema);
+        const existing = new Set<string>();
+        for (const link of page.links) {
+            if (link.sourceType !== LinkEndpointType.SchemaNode || link.targetType !== LinkEndpointType.SchemaNode) {
+                continue;
+            }
+            const source = sourcePaths.resolve(linkSchemaPath(link, 'source'));
+            const target = targetPaths.resolve(linkSchemaPath(link, 'target'));
+            if (source && target) {
+                existing.add(`${source.path}\0${target.path}`);
+            }
+        }
+        const result = findUniqueNameMatches(
+            this.state.sourceSchema.rootElement,
+            this.state.targetSchema.rootElement
+        );
         let added = 0;
 
-        for (const src of sourceNodes) {
-            const match = targetNodes.find((t: any) => t.name.toLowerCase() === src.name.toLowerCase());
-            if (match && !page.links.find((l: any) =>
-                sourcePaths.resolve(l.sourcePath || '')?.path === src.path &&
-                targetPaths.resolve(l.targetPath || '')?.path === match.path)) {
+        for (const { source, target } of result.matches) {
+            if (!existing.has(`${source.path}\0${target.path}`)) {
                 page.links.push({
                     id: `link_${Date.now()}_${Math.random().toString(36).substr(2, 6)}_${added}`,
-                    sourceId: src.schemaPath || src.path, sourcePath: src.schemaPath || src.path,
-                    targetId: match.schemaPath || match.path, targetPath: match.schemaPath || match.path,
+                    sourceId: source.schemaPath || source.path, sourcePath: source.schemaPath || source.path,
+                    targetId: target.schemaPath || target.path, targetPath: target.schemaPath || target.path,
                     sourceType: LinkEndpointType.SchemaNode,
                     targetType: LinkEndpointType.SchemaNode
                 });
                 added++;
             }
         }
-        if (added > 0) { this.updateMap(this.state.map); this.renderView(); setTimeout(() => this.redrawLinks(), 150); }
+        if (added > 0) {
+            this.updateMap(this.state.map);
+            this.canvas?.updateState(this.state);
+            this.redrawLinks();
+        }
+        const skipped = result.ambiguousNameCount > 0
+            ? `; skipped ${result.ambiguousNameCount} ambiguous name${result.ambiguousNameCount === 1 ? '' : 's'}`
+            : '';
+        this.updateStatusMessage(`Auto-Link added ${added} link${added === 1 ? '' : 's'}${skipped}`);
+        setTimeout(() => this.updateStatusMessage(''), 5000);
     }
 
     private validateAndCompile(): void {
@@ -1194,15 +1234,22 @@ export class MapperAppController {
         setTimeout(() => notif.remove(), 5000);
     }
 
-    private getLinkedPaths(side: 'source' | 'target'): Set<string> {
+    private getSchemaPathResolver(schema: any): SchemaPathResolver<any> {
+        const ignoreNamespaces = !!this.state.map?.options?.ignoreNamespacesForLinks;
+        const cached = this.schemaResolvers.get(schema);
+        if (cached?.ignoreNamespaces === ignoreNamespaces) {
+            return cached.resolver;
+        }
+        const resolver = new SchemaPathResolver(schema, ignoreNamespaces);
+        this.schemaResolvers.set(schema, { ignoreNamespaces, resolver });
+        return resolver;
+    }
+
+    private getLinkedPaths(side: 'source' | 'target', resolver: SchemaPathResolver<any>): Set<string> {
         const paths = new Set<string>();
         if (!this.state.map) { return paths; }
         const page = this.state.map.pages[this.state.activePage];
         if (!page) { return paths; }
-        const resolver = new SchemaPathResolver(
-            (side === 'source' ? this.state.sourceSchema : this.state.targetSchema) || undefined,
-            this.state.map.options?.ignoreNamespacesForLinks
-        );
         for (const link of page.links) {
             const p = linkSchemaPath(link, side);
             const resolved = p ? resolver.resolve(p) : undefined;
@@ -1212,12 +1259,6 @@ export class MapperAppController {
             }
         }
         return paths;
-    }
-
-    private flattenLeafNodes(node: any, result: any[] = []): any[] {
-        if (!node.children || node.children.length === 0) { result.push(node); }
-        if (node.children) { for (const c of node.children) this.flattenLeafNodes(c, result); }
-        return result;
     }
 
     private getFileName(p?: string): string { return p ? (p.split(/[/\\]/).pop() || p) : 'None'; }

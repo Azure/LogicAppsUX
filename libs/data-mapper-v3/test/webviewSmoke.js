@@ -594,8 +594,12 @@ async function run() {
     const clipRect = linkOverlay.querySelector('#mapping-canvas-link-clip rect');
     assert.equal(linkOverlay.getAttribute('width'), '600');
     assert.equal(linkOverlay.getAttribute('height'), '400');
-    assert.equal(linkOverlay.style.left, '260px');
-    assert.equal(linkOverlay.style.top, '0px');
+    assert.equal(linkOverlay.parentElement, focusCanvas.querySelector('.mapping-svg'));
+    assert.ok(
+        linkOverlay.compareDocumentPosition(focusCanvas.querySelector('.functoid-node'))
+        & dom.window.Node.DOCUMENT_POSITION_FOLLOWING,
+        'Connections render before functoids so functoids remain visually in front'
+    );
     assert.equal(clipRect.getAttribute('width'), '600');
     assert.equal(clipRect.getAttribute('height'), '400');
     assert.equal(dom.window.getComputedStyle(linkOverlay).overflow, 'hidden');
@@ -675,6 +679,39 @@ async function run() {
     focusCanvas.scrollTop = 0;
     await new Promise(resolve => setTimeout(resolve, 25));
     assert.equal(focusCanvas.querySelector('[data-zoom]').dataset.zoom, '100');
+    const zoomArea = focusCanvas.querySelector('button[title^="Zoom Area"]');
+    zoomArea.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+    await new Promise(resolve => setTimeout(resolve, 25));
+    const focusSurface = focusCanvas.querySelector('.mapping-svg');
+    focusSurface.dispatchEvent(new dom.window.MouseEvent('mousedown', {
+        bubbles: true, clientX: 360, clientY: 100, button: 0
+    }));
+    await new Promise(resolve => setTimeout(resolve, 25));
+    focusSurface.dispatchEvent(new dom.window.MouseEvent('mousemove', {
+        bubbles: true, clientX: 660, clientY: 300, button: 0
+    }));
+    await new Promise(resolve => setTimeout(resolve, 25));
+    assert.ok(focusCanvas.querySelector('.canvas-zoom-selection'));
+    focusSurface.dispatchEvent(new dom.window.MouseEvent('mouseup', {
+        bubbles: true, clientX: 660, clientY: 300, button: 0
+    }));
+    await new Promise(resolve => setTimeout(resolve, 25));
+    assert.equal(focusCanvas.querySelector('[data-zoom]').dataset.zoom, '200');
+    focusSurface.dispatchEvent(new dom.window.MouseEvent('mousedown', {
+        bubbles: true, clientX: 360, clientY: 100, button: 0, shiftKey: true
+    }));
+    await new Promise(resolve => setTimeout(resolve, 25));
+    focusSurface.dispatchEvent(new dom.window.MouseEvent('mousemove', {
+        bubbles: true, clientX: 660, clientY: 300, button: 0, shiftKey: true
+    }));
+    await new Promise(resolve => setTimeout(resolve, 25));
+    assert.ok(focusCanvas.querySelector('.canvas-zoom-selection.zoom-out'));
+    focusSurface.dispatchEvent(new dom.window.MouseEvent('mouseup', {
+        bubbles: true, clientX: 660, clientY: 300, button: 0, shiftKey: true
+    }));
+    await new Promise(resolve => setTimeout(resolve, 25));
+    assert.equal(focusCanvas.querySelector('[data-zoom]').dataset.zoom, '100');
+    zoomArea.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
     focusCanvas.querySelector('.functoid-node[data-id="near"] .functoid-body').dispatchEvent(
         new dom.window.MouseEvent('mousedown', { bubbles: true, clientX: 80, clientY: 80 })
     );
