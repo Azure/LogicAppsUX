@@ -3,7 +3,11 @@ parameters:
     type: string
   - name: displayName
     type: string
-  - name: suites
+  - name: suiteId
+    type: string
+  - name: shortName
+    type: string
+  - name: cliArguments
     type: string
   - name: artifactName
     type: string
@@ -16,6 +20,11 @@ parameters:
     values:
       - linux
       - windows
+  - name: selected
+    type: string
+  - name: requiresAzureAccessToken
+    type: boolean
+    default: false
   - name: dependsOn
     type: object
     default: []
@@ -43,12 +52,6 @@ parameters:
   - name: checkoutRef
     type: string
     default: ''
-  - name: diagnosticOnly
-    type: boolean
-    default: false
-  - name: trustedFullExecution
-    type: boolean
-    default: false
   - name: nodeVersion
     type: string
     default: '22.x'
@@ -78,9 +81,11 @@ jobs:
   - job: ${{ parameters.jobName }}
     displayName: ${{ parameters.displayName }}
     dependsOn: ${{ parameters.dependsOn }}
+    condition: and(succeeded(), eq(variables['SelectedSuite'], 'true'))
     timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
     pool: ${{ parameters.pool }}
     variables:
+      SelectedSuite: ${{ parameters.selected }}
       ResolvedVSCodeVersion: ${{ parameters.resolvedVSCodeVersion }}
       ExpectedProducerDefinitionId: ${{ parameters.expectedProducerDefinitionId }}
       ExpectedProducerRunId: ${{ parameters.expectedProducerRunId }}
@@ -251,7 +256,7 @@ jobs:
             artifactSHA256 = [string]$manifest.artifact.sha256
             resolvedVSCodeBuild = '$(ResolvedVSCodeVersion)'
           }
-          $contextPath = Join-Path $resultRoot 'admission-context.json'
+          $contextPath = Join-Path $resultRoot 'admission-context-${{ parameters.suiteId }}.json'
           $context | ConvertTo-Json -Depth 5 | Set-Content -Path $contextPath -NoNewline
           Write-Host "##vso[task.setvariable variable=AdmissionContextPath]$contextPath"
         displayName: Write admitted E2E artifact identity context
@@ -280,9 +285,56 @@ jobs:
               TEMP: $(Agent.TempDirectory)
               TMP: $(Agent.TempDirectory)
 
-      - ${{ if eq(parameters.platform, 'linux') }}:
+      - ${{ if and(eq(parameters.platform, 'linux'), eq(parameters.requiresAzureAccessToken, false)) }}:
+          - bash: |
+              set -euo pipefail
+              export PATH="$(Build.SourcesDirectory)/apps/vs-code-designer/node_modules/.bin:$(Build.SourcesDirectory)/node_modules/.bin:$PATH"
+              cd "$(Build.SourcesDirectory)/apps/vs-code-designer"
+              mkdir -p .vscode-test/results
+              short_profile_parent="$(mktemp -d "/tmp/la${{ parameters.shortName }}.XXXXXX")"
+              socket_probe="$short_profile_parent/user-data-${{ parameters.shortName }}/main.sock"
+              socket_bytes="$(printf '%s' "$socket_probe" | wc -c)"
+              if [ "$socket_bytes" -ge 100 ]; then
+                echo "Short Linux VS Code profile socket path budget exceeded: $socket_bytes bytes ($socket_probe)" >&2
+                exit 1
+              fi
+              read -r -a cli_args <<< "$LA_E2E_CLI_DIRECT_ARGS"
+              set +e
+              LA_E2E_CLI_USER_DATA_PARENT="$short_profile_parent" \
+              xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
+                node scripts/run-e2e-cli.js "${cli_args[@]}" 2>&1 | tee ".vscode-test/results/${{ parameters.suiteId }}.log"
+              status=${PIPESTATUS[0]}
+              set -e
+              outcome='success'
+              if [ "$status" -ne 0 ]; then
+                outcome='failure'
+              fi
+              node scripts/summarize-e2e-cli-results.js \
+                --label "${{ parameters.suiteId }}" \
+                --log ".vscode-test/results/${{ parameters.suiteId }}.log" \
+                --out-dir ".vscode-test/results" \
+                --outcome "$outcome"
+              exit "$status"
+            displayName: Run vscode-test CLI (${{ parameters.suiteId }})
+            env:
+              LA_E2E_CLI_DIRECT_ARGS: ${{ parameters.cliArguments }}
+              LA_E2E_CLI_EXTENSIONS_DIR: $(Agent.TempDirectory)/test-resources/test-extensions
+              LA_E2E_CLI_GENERATED_WORKSPACE_ARTIFACT_DIR: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/generated-workspaces/${{ parameters.suiteId }}
+              LA_E2E_CLI_LIFECYCLE_ARTIFACT_ROOT: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/lifecycle/${{ parameters.suiteId }}
+              LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: $(Agent.TempDirectory)/runtime-dependencies/${{ parameters.suiteId }}
+              LA_E2E_CLI_SCREENSHOT_DIR: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/screenshots/cli/${{ parameters.suiteId }}
+              LA_E2E_CLI_USER_DATA_SUFFIX: ${{ parameters.shortName }}
+              LA_E2E_CLI_VSCODE_LOG_ARTIFACT_LABEL: ${{ parameters.suiteId }}
+              LA_E2E_CLI_VSCODE_LOG_DIR: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/vscode-logs/cli
+              LA_E2E_CLI_VSCODE_VERSION: $(ResolvedVSCodeVersion)
+              LA_E2E_CLI_WORKSPACE_ROOT: $(Agent.TempDirectory)/workspaces/${{ parameters.suiteId }}
+              NODE_OPTIONS: --dns-result-order=ipv4first --no-network-family-autoselection --max-old-space-size=4096
+              TEMP: $(Agent.TempDirectory)
+              TMPDIR: $(Agent.TempDirectory)
+
+      - ${{ if and(eq(parameters.platform, 'linux'), eq(parameters.requiresAzureAccessToken, true)) }}:
           - task: AzureCLI@2
-            displayName: Run isolated @vscode/test-cli suites (${{ parameters.suites }})
+            displayName: Run vscode-test CLI (${{ parameters.suiteId }})
             inputs:
               azureSubscription: ${{ parameters.testARMServiceConnection }}
               scriptType: bash
@@ -327,20 +379,42 @@ jobs:
                 export PATH="$(Build.SourcesDirectory)/apps/vs-code-designer/node_modules/.bin:$(Build.SourcesDirectory)/node_modules/.bin:$PATH"
                 cd "$(Build.SourcesDirectory)/apps/vs-code-designer"
                 mkdir -p .vscode-test/results
+                short_profile_parent="$(mktemp -d "/tmp/la${{ parameters.shortName }}.XXXXXX")"
+                socket_probe="$short_profile_parent/user-data-${{ parameters.shortName }}/main.sock"
+                socket_bytes="$(printf '%s' "$socket_probe" | wc -c)"
+                if [ "$socket_bytes" -ge 100 ]; then
+                  echo "Short Linux VS Code profile socket path budget exceeded: $socket_bytes bytes ($socket_probe)" >&2
+                  exit 1
+                fi
+                read -r -a cli_args <<< "$LA_E2E_CLI_DIRECT_ARGS"
                 set +e
+                LA_E2E_CLI_USER_DATA_PARENT="$short_profile_parent" \
                 xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
-                  node scripts/run-e2e-cli.js --suites '${{ parameters.suites }}' 2>&1 | tee ".vscode-test/results/${{ parameters.artifactName }}.log"
+                  node scripts/run-e2e-cli.js "${cli_args[@]}" 2>&1 | tee ".vscode-test/results/${{ parameters.suiteId }}.log"
                 status=${PIPESTATUS[0]}
                 set -e
+                outcome='success'
+                if [ "$status" -ne 0 ]; then
+                  outcome='failure'
+                fi
+                node scripts/summarize-e2e-cli-results.js \
+                  --label "${{ parameters.suiteId }}" \
+                  --log ".vscode-test/results/${{ parameters.suiteId }}.log" \
+                  --out-dir ".vscode-test/results" \
+                  --outcome "$outcome"
                 exit "$status"
             env:
-              LA_E2E_CLI_BATCH_DIAGNOSTIC_ONLY: ${{ parameters.diagnosticOnly }}
-              LA_E2E_CLI_BATCH_TRUSTED_FULL_EXECUTION: ${{ parameters.trustedFullExecution }}
-              LA_E2E_CLI_BATCH_RESULTS_DIR: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/results
-              LA_E2E_CLI_ADMISSION_CONTEXT_PATH: $(AdmissionContextPath)
-              LA_E2E_CLI_BATCH_ROOT: $(Agent.TempDirectory)/vscode-e2e-cli-batch-${{ parameters.artifactName }}
-              LA_E2E_CLI_PREPARED_EXTENSIONS_DIR: $(Agent.TempDirectory)/test-resources/test-extensions
+              LA_E2E_CLI_DIRECT_ARGS: ${{ parameters.cliArguments }}
+              LA_E2E_CLI_EXTENSIONS_DIR: $(Agent.TempDirectory)/test-resources/test-extensions
+              LA_E2E_CLI_GENERATED_WORKSPACE_ARTIFACT_DIR: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/generated-workspaces/${{ parameters.suiteId }}
+              LA_E2E_CLI_LIFECYCLE_ARTIFACT_ROOT: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/lifecycle/${{ parameters.suiteId }}
+              LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: $(Agent.TempDirectory)/runtime-dependencies/${{ parameters.suiteId }}
+              LA_E2E_CLI_SCREENSHOT_DIR: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/screenshots/cli/${{ parameters.suiteId }}
+              LA_E2E_CLI_USER_DATA_SUFFIX: ${{ parameters.shortName }}
+              LA_E2E_CLI_VSCODE_LOG_ARTIFACT_LABEL: ${{ parameters.suiteId }}
+              LA_E2E_CLI_VSCODE_LOG_DIR: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/vscode-logs/cli
               LA_E2E_CLI_VSCODE_VERSION: $(ResolvedVSCodeVersion)
+              LA_E2E_CLI_WORKSPACE_ROOT: $(Agent.TempDirectory)/workspaces/${{ parameters.suiteId }}
               NODE_OPTIONS: --dns-result-order=ipv4first --no-network-family-autoselection --max-old-space-size=4096
               TEMP: $(Agent.TempDirectory)
               TMPDIR: $(Agent.TempDirectory)
@@ -349,11 +423,45 @@ jobs:
               LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME: ${{ parameters.azureResourceGroupName }}
               LA_E2E_CLI_AZURE_LOCATION_NAME: ${{ parameters.azureLocationName }}
               LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL: ${{ parameters.azureManagementBaseUrl }}
+              LA_E2E_CLI_DISABLE_UNOWNED_PORT_KILL: '1'
               LA_E2E_DESIGNER_API_LOAD_TIMEOUT_MS: ${{ parameters.designerApiLoadTimeoutMs }}
 
-      - ${{ if eq(parameters.platform, 'windows') }}:
+      - ${{ if and(eq(parameters.platform, 'windows'), eq(parameters.requiresAzureAccessToken, false)) }}:
+          - pwsh: |
+              $env:PATH = "$(Build.SourcesDirectory)\apps\vs-code-designer\node_modules\.bin;$(Build.SourcesDirectory)\node_modules\.bin;$env:PATH"
+              Set-Location "$(Build.SourcesDirectory)\apps\vs-code-designer"
+              New-Item -ItemType Directory -Force -Path ".vscode-test\results" | Out-Null
+              $cliArgs = $env:LA_E2E_CLI_DIRECT_ARGS -split ' '
+              & node scripts/run-e2e-cli.js @cliArgs 2>&1 | Tee-Object -FilePath ".vscode-test\results\${{ parameters.suiteId }}.log"
+              $status = $LASTEXITCODE
+              $outcome = if ($status -eq 0) { 'success' } else { 'failure' }
+              & node scripts/summarize-e2e-cli-results.js `
+                --label "${{ parameters.suiteId }}" `
+                --log ".vscode-test\results\${{ parameters.suiteId }}.log" `
+                --out-dir ".vscode-test\results" `
+                --outcome "$outcome"
+              exit $status
+            displayName: Run vscode-test CLI (${{ parameters.suiteId }})
+            env:
+              LA_E2E_CLI_DIRECT_ARGS: ${{ parameters.cliArguments }}
+              LA_E2E_CLI_EXTENSIONS_DIR: $(Agent.TempDirectory)\test-resources\test-extensions
+              LA_E2E_CLI_GENERATED_WORKSPACE_ARTIFACT_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\generated-workspaces\${{ parameters.suiteId }}
+              LA_E2E_CLI_LIFECYCLE_ARTIFACT_ROOT: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\lifecycle\${{ parameters.suiteId }}
+              LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: $(Agent.TempDirectory)\runtime-dependencies\${{ parameters.suiteId }}
+              LA_E2E_CLI_SCREENSHOT_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\screenshots\cli\${{ parameters.suiteId }}
+              LA_E2E_CLI_USER_DATA_PARENT: $(Agent.TempDirectory)\profiles\${{ parameters.shortName }}
+              LA_E2E_CLI_USER_DATA_SUFFIX: ${{ parameters.shortName }}
+              LA_E2E_CLI_VSCODE_LOG_ARTIFACT_LABEL: ${{ parameters.suiteId }}
+              LA_E2E_CLI_VSCODE_LOG_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\vscode-logs\cli
+              LA_E2E_CLI_VSCODE_VERSION: $(ResolvedVSCodeVersion)
+              LA_E2E_CLI_WORKSPACE_ROOT: $(Agent.TempDirectory)\workspaces\${{ parameters.suiteId }}
+              NODE_OPTIONS: --dns-result-order=ipv4first --no-network-family-autoselection --max-old-space-size=4096
+              TEMP: $(Agent.TempDirectory)
+              TMP: $(Agent.TempDirectory)
+
+      - ${{ if and(eq(parameters.platform, 'windows'), eq(parameters.requiresAzureAccessToken, true)) }}:
           - task: AzureCLI@2
-            displayName: Run isolated @vscode/test-cli suites (${{ parameters.suites }})
+            displayName: Run vscode-test CLI (${{ parameters.suiteId }})
             inputs:
               azureSubscription: ${{ parameters.testARMServiceConnection }}
               scriptType: pscore
@@ -402,16 +510,29 @@ jobs:
                 $env:PATH = "$(Build.SourcesDirectory)\apps\vs-code-designer\node_modules\.bin;$(Build.SourcesDirectory)\node_modules\.bin;$env:PATH"
                 Set-Location "$(Build.SourcesDirectory)\apps\vs-code-designer"
                 New-Item -ItemType Directory -Force -Path ".vscode-test\results" | Out-Null
-                & node scripts/run-e2e-cli.js --suites '${{ parameters.suites }}' 2>&1 | Tee-Object -FilePath ".vscode-test\results\${{ parameters.artifactName }}.log"
-                exit $LASTEXITCODE
+                $cliArgs = $env:LA_E2E_CLI_DIRECT_ARGS -split ' '
+                & node scripts/run-e2e-cli.js @cliArgs 2>&1 | Tee-Object -FilePath ".vscode-test\results\${{ parameters.suiteId }}.log"
+                $status = $LASTEXITCODE
+                $outcome = if ($status -eq 0) { 'success' } else { 'failure' }
+                & node scripts/summarize-e2e-cli-results.js `
+                  --label "${{ parameters.suiteId }}" `
+                  --log ".vscode-test\results\${{ parameters.suiteId }}.log" `
+                  --out-dir ".vscode-test\results" `
+                  --outcome "$outcome"
+                exit $status
             env:
-              LA_E2E_CLI_BATCH_DIAGNOSTIC_ONLY: ${{ parameters.diagnosticOnly }}
-              LA_E2E_CLI_BATCH_TRUSTED_FULL_EXECUTION: ${{ parameters.trustedFullExecution }}
-              LA_E2E_CLI_BATCH_RESULTS_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\results
-              LA_E2E_CLI_ADMISSION_CONTEXT_PATH: $(AdmissionContextPath)
-              LA_E2E_CLI_BATCH_ROOT: $(Agent.TempDirectory)\vscode-e2e-cli-batch-${{ parameters.artifactName }}
-              LA_E2E_CLI_PREPARED_EXTENSIONS_DIR: $(Agent.TempDirectory)\test-resources\test-extensions
+              LA_E2E_CLI_DIRECT_ARGS: ${{ parameters.cliArguments }}
+              LA_E2E_CLI_EXTENSIONS_DIR: $(Agent.TempDirectory)\test-resources\test-extensions
+              LA_E2E_CLI_GENERATED_WORKSPACE_ARTIFACT_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\generated-workspaces\${{ parameters.suiteId }}
+              LA_E2E_CLI_LIFECYCLE_ARTIFACT_ROOT: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\lifecycle\${{ parameters.suiteId }}
+              LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: $(Agent.TempDirectory)\runtime-dependencies\${{ parameters.suiteId }}
+              LA_E2E_CLI_SCREENSHOT_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\screenshots\cli\${{ parameters.suiteId }}
+              LA_E2E_CLI_USER_DATA_PARENT: $(Agent.TempDirectory)\profiles\${{ parameters.shortName }}
+              LA_E2E_CLI_USER_DATA_SUFFIX: ${{ parameters.shortName }}
+              LA_E2E_CLI_VSCODE_LOG_ARTIFACT_LABEL: ${{ parameters.suiteId }}
+              LA_E2E_CLI_VSCODE_LOG_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\vscode-logs\cli
               LA_E2E_CLI_VSCODE_VERSION: $(ResolvedVSCodeVersion)
+              LA_E2E_CLI_WORKSPACE_ROOT: $(Agent.TempDirectory)\workspaces\${{ parameters.suiteId }}
               NODE_OPTIONS: --dns-result-order=ipv4first --no-network-family-autoselection --max-old-space-size=4096
               TEMP: $(Agent.TempDirectory)
               TMP: $(Agent.TempDirectory)
@@ -420,14 +541,15 @@ jobs:
               LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME: ${{ parameters.azureResourceGroupName }}
               LA_E2E_CLI_AZURE_LOCATION_NAME: ${{ parameters.azureLocationName }}
               LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL: ${{ parameters.azureManagementBaseUrl }}
+              LA_E2E_CLI_DISABLE_UNOWNED_PORT_KILL: '1'
               LA_E2E_DESIGNER_API_LOAD_TIMEOUT_MS: ${{ parameters.designerApiLoadTimeoutMs }}
 
       - task: PublishTestResults@2
-        displayName: Publish batch suite JUnit results
+        displayName: Publish JUnit result (${{ parameters.suiteId }})
         condition: always()
         inputs:
           testResultsFormat: JUnit
-          testResultsFiles: apps/vs-code-designer/.vscode-test/results/*.junit.xml
+          testResultsFiles: apps/vs-code-designer/.vscode-test/results/${{ parameters.suiteId }}.junit.xml
           testRunTitle: '@vscode/test-cli ${{ parameters.artifactName }}'
           failTaskOnFailedTests: false
           failTaskOnMissingResultsFile: true
@@ -442,18 +564,9 @@ jobs:
           New-Item -ItemType Directory -Force -Path $resultDestination, $logDestination, $screenshotDestination, $workspaceDestination | Out-Null
 
           $resultRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/results'
-          $batchRootParent = Join-Path '$(Agent.TempDirectory)' 'vscode-e2e-cli-batch-${{ parameters.artifactName }}'
-
-          function Assert-NoReparsePoint {
-            param(
-              [Parameter(Mandatory = $true)][string]$Path,
-              [Parameter(Mandatory = $true)][string]$Context
-            )
-            $item = Get-Item -LiteralPath $Path -Force
-            if (($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) -ne 0) {
-              throw "Refusing to stage $Context with link/reparse entry: $Path"
-            }
-          }
+          $screenshotsRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/screenshots/cli/${{ parameters.suiteId }}'
+          $vscodeLogsRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/vscode-logs/cli/${{ parameters.suiteId }}'
+          $workspaceSnapshotsRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/generated-workspaces/${{ parameters.suiteId }}'
 
           function Redact-DiagnosticText {
             param([string]$Value)
@@ -464,94 +577,55 @@ jobs:
             return $redacted
           }
 
-          function Copy-SanitizedReportDirectory {
-            param(
-              [Parameter(Mandatory = $true)][string]$Source,
-              [Parameter(Mandatory = $true)][string]$Destination
-            )
-            New-Item -ItemType Directory -Force -Path $Destination | Out-Null
-            Get-ChildItem -Path $Source -Recurse -Force | ForEach-Object {
-              if (($_.Attributes -band [System.IO.FileAttributes]::ReparsePoint) -ne 0) {
-                throw "Refusing to stage suite reports with link/reparse entries: $($_.FullName)"
-              }
-              $relative = [System.IO.Path]::GetRelativePath($Source, $_.FullName)
-              if ($relative -eq 'suite-cleanup-ledger.json') {
-                return
-              }
-              $target = Join-Path $Destination $relative
-              if ($_.PSIsContainer) {
-                New-Item -ItemType Directory -Force -Path $target | Out-Null
-              } else {
-                New-Item -ItemType Directory -Force -Path (Split-Path -Parent $target) | Out-Null
-                Copy-Item -LiteralPath $_.FullName -Destination $target -Force
-              }
+          $requiredResultFiles = @(
+            '${{ parameters.suiteId }}.json',
+            '${{ parameters.suiteId }}.junit.xml',
+            '${{ parameters.suiteId }}.summary.md',
+            'admission-context-${{ parameters.suiteId }}.json'
+          )
+          $missingRequiredFiles = @()
+          foreach ($fileName in $requiredResultFiles) {
+            $source = Join-Path $resultRoot $fileName
+            if (-not (Test-Path $source)) {
+              $missingRequiredFiles += $source
+              continue
             }
+            Copy-Item $source -Destination $resultDestination -Force
+          }
+          $optionalTerminalResult = Join-Path $resultRoot '${{ parameters.suiteId }}.terminal-result.json'
+          if (Test-Path $optionalTerminalResult) {
+            Copy-Item $optionalTerminalResult -Destination $resultDestination -Force
           }
 
-          if (Test-Path $resultRoot) {
-            Get-ChildItem -Path $resultRoot -Force | Where-Object { $_.Name -notlike '*.log' } | ForEach-Object {
-              Copy-Item -LiteralPath $_.FullName -Destination $resultDestination -Recurse -Force
-            }
-          }
-          $log = Join-Path $resultRoot '${{ parameters.artifactName }}.log'
+          $log = Join-Path $resultRoot '${{ parameters.suiteId }}.log'
           if (Test-Path $log) {
-            Set-Content -Path (Join-Path $logDestination '${{ parameters.artifactName }}.log') -Value (Redact-DiagnosticText (Get-Content -Path $log -Raw)) -NoNewline
-          }
-          if (-not (Test-Path $batchRootParent)) {
-            throw "Missing batch root for required diagnostics: $batchRootParent"
-          }
-          Assert-NoReparsePoint -Path $batchRootParent -Context 'batch root parent'
-          $batchReportsDestination = Join-Path $logDestination 'batch-reports'
-          New-Item -ItemType Directory -Force -Path $batchReportsDestination | Out-Null
-          $controllerRoots = Get-ChildItem -Path $batchRootParent -Directory | Where-Object { $_.Name -like 'la-e2e-cli-batch-*' }
-          if (-not $controllerRoots) {
-            throw "No controller-created batch roots found under batch root parent: $batchRootParent"
-          }
-          foreach ($controllerRoot in $controllerRoots) {
-            Assert-NoReparsePoint -Path $controllerRoot.FullName -Context 'controller batch root'
-          }
-          $suiteRoots = $controllerRoots | ForEach-Object {
-            Get-ChildItem -Path $_.FullName -Directory | Where-Object { $_.Name -match '^\d{2}-' }
-          }
-          if (-not $suiteRoots) {
-            throw "No owned suite roots found under batch root: $batchRootParent"
-          }
-          foreach ($suiteRoot in $suiteRoots) {
-            Assert-NoReparsePoint -Path $suiteRoot.FullName -Context 'suite root'
-            $reports = Join-Path $suiteRoot.FullName 'reports'
-            $result = Join-Path $reports 'suite-result.json'
-            $terminal = Join-Path $reports 'suite-terminal-result.json'
-            $cleanup = Join-Path $reports 'suite-cleanup-ledger.json'
-            foreach ($required in @($reports, $result, $terminal, $cleanup)) {
-              if (-not (Test-Path $required)) {
-                throw "Missing required suite evidence for $($suiteRoot.Name): $required"
-              }
-            }
-            Assert-NoReparsePoint -Path $reports -Context 'suite reports root'
-            $unsafeReportEntries = Get-ChildItem -Path $reports -Recurse -Force | Where-Object {
-              ($_.Attributes -band [System.IO.FileAttributes]::ReparsePoint) -ne 0
-            }
-            if ($unsafeReportEntries) {
-              throw "Refusing to stage suite reports with link/reparse entries: $($unsafeReportEntries.FullName -join ', ')"
-            }
-            Copy-SanitizedReportDirectory -Source $reports -Destination (Join-Path $batchReportsDestination $suiteRoot.Name)
-            $suiteScreenshots = Join-Path $reports 'screenshots'
-            if (Test-Path $suiteScreenshots) {
-              Copy-Item $suiteScreenshots -Destination (Join-Path $screenshotDestination $suiteRoot.Name) -Recurse -Force
-            }
-            $suiteWorkspaces = Join-Path $reports 'generated-workspaces'
-            if (Test-Path $suiteWorkspaces) {
-              Copy-Item $suiteWorkspaces -Destination (Join-Path $workspaceDestination $suiteRoot.Name) -Recurse -Force
-            }
-          }
-          if (-not (Get-ChildItem -Path $batchReportsDestination -Recurse -File -Force)) {
-            throw "No sanitized suite report files were staged from $batchRootParent"
+            Set-Content -Path (Join-Path $logDestination '${{ parameters.suiteId }}.log') -Value (Redact-DiagnosticText (Get-Content -Path $log -Raw)) -NoNewline
+          } else {
+            $missingRequiredFiles += $log
           }
 
-          foreach ($directory in @($resultDestination, $logDestination, $screenshotDestination, $workspaceDestination)) {
-            if (-not (Get-ChildItem -Path $directory -Force)) {
+          if (Test-Path $vscodeLogsRoot) {
+            $vscodeLogDestination = Join-Path $logDestination 'vscode-logs'
+            New-Item -ItemType Directory -Force -Path $vscodeLogDestination | Out-Null
+            Copy-Item (Join-Path $vscodeLogsRoot '*') -Destination $vscodeLogDestination -Recurse -Force -ErrorAction Stop
+          }
+
+          if (Test-Path $screenshotsRoot) {
+            Copy-Item (Join-Path $screenshotsRoot '*') -Destination $screenshotDestination -Recurse -Force -ErrorAction Stop
+          }
+
+          if (Test-Path $workspaceSnapshotsRoot) {
+            Get-ChildItem -Path $workspaceSnapshotsRoot -Force -ErrorAction Stop | Copy-Item -Destination $workspaceDestination -Recurse -Force -ErrorAction Stop
+          }
+
+          foreach ($directory in @($logDestination, $screenshotDestination, $workspaceDestination)) {
+            if (-not (Get-ChildItem -Path $directory -Force -ErrorAction SilentlyContinue)) {
               Set-Content -Path (Join-Path $directory '.empty') -Value 'No files were produced for this artifact.'
             }
           }
-        displayName: Stage isolated suite diagnostics
+
+          if ($missingRequiredFiles.Count -gt 0) {
+            throw "Required suite diagnostics were missing after staging available evidence: $($missingRequiredFiles -join ', ')"
+          }
+        displayName: Stage vscode-test CLI results (${{ parameters.suiteId }})
         condition: always()

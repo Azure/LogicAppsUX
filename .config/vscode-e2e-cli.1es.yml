@@ -23,12 +23,12 @@ parameters:
     default: false
 
   - name: runLinux
-    displayName: Run Linux prepared suite cohort
+    displayName: Run Linux suite jobs
     type: boolean
     default: true
 
   - name: runWindows
-    displayName: Run Windows prepared suite cohort
+    displayName: Run Windows suite jobs
     type: boolean
     default: true
 
@@ -74,10 +74,18 @@ extends:
             templateContext:
               type: validationJob
             steps:
+              - checkout: self
+                fetchDepth: 0
+
+              - task: UseNode@1
+                displayName: Use trusted Node.js for selector validation
+                inputs:
+                  version: '22.x'
+
+              - pwsh: node --version
+                displayName: Print selector validation Node.js version
+
               - pwsh: |
-                  if ('${{ parameters.runLinux }}' -ne 'True' -and '${{ parameters.runWindows }}' -ne 'True') {
-                    throw 'At least one OS cohort must be selected for the VS Code E2E consumer.'
-                  }
                   $releases = Invoke-RestMethod -Method Get -Uri 'https://update.code.visualstudio.com/api/releases/stable'
                   if (-not $releases -or -not $releases[0]) {
                     throw 'Unable to resolve latest stable VS Code version.'
@@ -92,6 +100,16 @@ extends:
                   Write-Host "##vso[task.setvariable variable=pinnedSourceSha;isOutput=true]$sourceVersion"
                 name: resolveStableVSCode
                 displayName: Resolve stable VS Code build and source SHA once
+
+              - pwsh: node apps/vs-code-designer/scripts/resolve-e2e-cli-suite-selection.js
+                name: validateSuiteSelection
+                displayName: Validate requested suite selectors before build
+                env:
+                  LA_E2E_CLI_DIAGNOSTIC_ONLY: ${{ parameters.diagnosticOnly }}
+                  LA_E2E_CLI_RUN_LINUX: ${{ parameters.runLinux }}
+                  LA_E2E_CLI_RUN_WINDOWS: ${{ parameters.runWindows }}
+                  LA_E2E_CLI_LINUX_SUITES: ${{ parameters.linuxSuites }}
+                  LA_E2E_CLI_WINDOWS_SUITES: ${{ parameters.windowsSuites }}
 
           - job: build_current_run_e2e_artifact
             displayName: Build current-run VS Code E2E artifact
@@ -141,121 +159,337 @@ extends:
                 parameters:
                   artifactStagingPath: $(Build.ArtifactStagingDirectory)/vscode-e2e
 
-          - ${{ if eq(parameters.runLinux, true) }}:
-              - template: /.config/templates/vscode-e2e-cli-run-suites.yml@self
-                parameters:
-                  jobName: linux_prepared_suites
-                  displayName: Linux prepared suites
-                  dependsOn:
-                    - resolve_consumer_context
-                    - build_current_run_e2e_artifact
-                  suites: ${{ parameters.linuxSuites }}
-                  artifactName: linux-prepared-suites
-                  resolvedVSCodeVersion: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.resolvedVSCodeBuild'] ]
-                  expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
-                  feedBaseUrl: ${{ variables.feedBaseUrl }}
-                  pool:
-                    name: AzurePipelines-EO
-                    image: 1ESPT-Ubuntu22.04
-                    os: linux
-                  platform: linux
-                  expectedProducerDefinitionId: $(System.DefinitionId)
-                  expectedProducerRunId: $(Build.BuildId)
-                  checkoutRef: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
-                  diagnosticOnly: ${{ parameters.diagnosticOnly }}
-                  trustedFullExecution: ${{ not(parameters.diagnosticOnly) }}
-                  nodeVersion: '22.x'
-                  dotnetVersion: '8.0.x'
-                  testARMServiceConnection: LogicAppsVSCode-E2E-SignIn
-                  azureResourceGroupName: LogicAppsVSCode-E2E-Fixtures
-                  azureLocationName: westus
+          - template: /.config/templates/vscode-e2e-cli-run-suite.yml@self
+            parameters:
+              jobName: linux_unit_tests
+              displayName: Linux unit tests
+              suiteId: unitTests
+              shortName: lu
+              cliArguments: --label unitTests
+              artifactName: linux-unit-tests
+              selected: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.linux_unitTests'] ]
+              dependsOn: [resolve_consumer_context, build_current_run_e2e_artifact]
+              resolvedVSCodeVersion: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.resolvedVSCodeBuild'] ]
+              expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+              feedBaseUrl: ${{ variables.feedBaseUrl }}
+              pool:
+                name: AzurePipelines-EO
+                image: 1ESPT-Ubuntu22.04
+                os: linux
+              platform: linux
+              expectedProducerDefinitionId: $(System.DefinitionId)
+              expectedProducerRunId: $(Build.BuildId)
+              checkoutRef: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
 
-          - ${{ if eq(parameters.runWindows, true) }}:
-              - template: /.config/templates/vscode-e2e-cli-run-suites.yml@self
-                parameters:
-                  jobName: windows_prepared_suites
-                  displayName: Windows prepared suites
-                  dependsOn:
-                    - resolve_consumer_context
-                    - build_current_run_e2e_artifact
-                  suites: ${{ parameters.windowsSuites }}
-                  artifactName: windows-prepared-suites
-                  resolvedVSCodeVersion: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.resolvedVSCodeBuild'] ]
-                  expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
-                  feedBaseUrl: ${{ variables.feedBaseUrl }}
-                  pool:
-                    name: VSEngSS-MicroBuild2022-1ES
-                    image: server2022-microbuildVS2022-1es
-                    os: windows
-                  platform: windows
-                  expectedProducerDefinitionId: $(System.DefinitionId)
-                  expectedProducerRunId: $(Build.BuildId)
-                  checkoutRef: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
-                  diagnosticOnly: ${{ parameters.diagnosticOnly }}
-                  trustedFullExecution: ${{ not(parameters.diagnosticOnly) }}
-                  nodeVersion: '22.x'
-                  dotnetVersion: '8.0.x'
-                  testARMServiceConnection: LogicAppsVSCode-E2E-SignIn
-                  azureResourceGroupName: LogicAppsVSCode-E2E-Fixtures
-                  azureLocationName: westus
+          - template: /.config/templates/vscode-e2e-cli-run-suite.yml@self
+            parameters:
+              jobName: linux_create_workspace_behavior
+              displayName: Linux create workspace behavior
+              suiteId: createWorkspaceBehavior
+              shortName: lb
+              cliArguments: --label createWorkspaceBehavior
+              artifactName: linux-create-workspace-behavior
+              selected: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.linux_createWorkspaceBehavior'] ]
+              dependsOn: [resolve_consumer_context, build_current_run_e2e_artifact]
+              resolvedVSCodeVersion: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.resolvedVSCodeBuild'] ]
+              expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+              feedBaseUrl: ${{ variables.feedBaseUrl }}
+              pool:
+                name: AzurePipelines-EO
+                image: 1ESPT-Ubuntu22.04
+                os: linux
+              platform: linux
+              expectedProducerDefinitionId: $(System.DefinitionId)
+              expectedProducerRunId: $(Build.BuildId)
+              checkoutRef: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+
+          - template: /.config/templates/vscode-e2e-cli-run-suite.yml@self
+            parameters:
+              jobName: linux_create_workspace_core_matrix
+              displayName: Linux create workspace core matrix
+              suiteId: createWorkspaceCoreMatrix
+              shortName: lc
+              cliArguments: --label createWorkspaceCoreMatrix
+              artifactName: linux-create-workspace-core-matrix
+              selected: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.linux_createWorkspaceCoreMatrix'] ]
+              dependsOn: [resolve_consumer_context, build_current_run_e2e_artifact]
+              resolvedVSCodeVersion: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.resolvedVSCodeBuild'] ]
+              expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+              feedBaseUrl: ${{ variables.feedBaseUrl }}
+              pool:
+                name: AzurePipelines-EO
+                image: 1ESPT-Ubuntu22.04
+                os: linux
+              platform: linux
+              expectedProducerDefinitionId: $(System.DefinitionId)
+              expectedProducerRunId: $(Build.BuildId)
+              checkoutRef: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+
+          - template: /.config/templates/vscode-e2e-cli-run-suite.yml@self
+            parameters:
+              jobName: linux_create_workspace_preview_matrix
+              displayName: Linux create workspace preview matrix
+              suiteId: createWorkspacePreviewMatrix
+              shortName: lp
+              cliArguments: --label createWorkspacePreviewMatrix
+              artifactName: linux-create-workspace-preview-matrix
+              selected: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.linux_createWorkspacePreviewMatrix'] ]
+              dependsOn: [resolve_consumer_context, build_current_run_e2e_artifact]
+              resolvedVSCodeVersion: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.resolvedVSCodeBuild'] ]
+              expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+              feedBaseUrl: ${{ variables.feedBaseUrl }}
+              pool:
+                name: AzurePipelines-EO
+                image: 1ESPT-Ubuntu22.04
+                os: linux
+              platform: linux
+              expectedProducerDefinitionId: $(System.DefinitionId)
+              expectedProducerRunId: $(Build.BuildId)
+              checkoutRef: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+
+          - template: /.config/templates/vscode-e2e-cli-run-suite.yml@self
+            parameters:
+              jobName: linux_create_workspace_codeful
+              displayName: Linux create workspace codeful
+              suiteId: createWorkspaceCodeful
+              shortName: lf
+              cliArguments: --label createWorkspaceCodeful
+              artifactName: linux-create-workspace-codeful
+              selected: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.linux_createWorkspaceCodeful'] ]
+              dependsOn: [resolve_consumer_context, build_current_run_e2e_artifact]
+              resolvedVSCodeVersion: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.resolvedVSCodeBuild'] ]
+              expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+              feedBaseUrl: ${{ variables.feedBaseUrl }}
+              pool:
+                name: AzurePipelines-EO
+                image: 1ESPT-Ubuntu22.04
+                os: linux
+              platform: linux
+              expectedProducerDefinitionId: $(System.DefinitionId)
+              expectedProducerRunId: $(Build.BuildId)
+              checkoutRef: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+
+          - template: /.config/templates/vscode-e2e-cli-run-suite.yml@self
+            parameters:
+              jobName: linux_msn_weather_lifecycle
+              displayName: Linux MSN Weather lifecycle
+              suiteId: msnWeatherLifecycle
+              shortName: lm
+              cliArguments: --msn-weather-lifecycle
+              artifactName: linux-msn-weather-lifecycle
+              selected: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.linux_msnWeatherLifecycle'] ]
+              requiresAzureAccessToken: true
+              dependsOn: [resolve_consumer_context, build_current_run_e2e_artifact]
+              resolvedVSCodeVersion: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.resolvedVSCodeBuild'] ]
+              expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+              feedBaseUrl: ${{ variables.feedBaseUrl }}
+              pool:
+                name: AzurePipelines-EO
+                image: 1ESPT-Ubuntu22.04
+                os: linux
+              platform: linux
+              expectedProducerDefinitionId: $(System.DefinitionId)
+              expectedProducerRunId: $(Build.BuildId)
+              checkoutRef: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+              testARMServiceConnection: LogicAppsVSCode-E2E-SignIn
+              azureResourceGroupName: LogicAppsVSCode-E2E-Fixtures
+              azureLocationName: westus
+
+          - template: /.config/templates/vscode-e2e-cli-run-suite.yml@self
+            parameters:
+              jobName: windows_unit_tests
+              displayName: Windows unit tests
+              suiteId: unitTests
+              shortName: wu
+              cliArguments: --label unitTests
+              artifactName: windows-unit-tests
+              selected: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.windows_unitTests'] ]
+              dependsOn: [resolve_consumer_context, build_current_run_e2e_artifact]
+              resolvedVSCodeVersion: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.resolvedVSCodeBuild'] ]
+              expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+              feedBaseUrl: ${{ variables.feedBaseUrl }}
+              pool:
+                name: VSEngSS-MicroBuild2022-1ES
+                image: server2022-microbuildVS2022-1es
+                os: windows
+              platform: windows
+              expectedProducerDefinitionId: $(System.DefinitionId)
+              expectedProducerRunId: $(Build.BuildId)
+              checkoutRef: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+
+          - template: /.config/templates/vscode-e2e-cli-run-suite.yml@self
+            parameters:
+              jobName: windows_create_workspace_behavior_smoke
+              displayName: Windows create workspace behavior smoke
+              suiteId: createWorkspaceBehaviorSmoke
+              shortName: wb
+              cliArguments: --label createWorkspaceBehaviorSmoke
+              artifactName: windows-create-workspace-behavior-smoke
+              selected: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.windows_createWorkspaceBehaviorSmoke'] ]
+              dependsOn: [resolve_consumer_context, build_current_run_e2e_artifact]
+              resolvedVSCodeVersion: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.resolvedVSCodeBuild'] ]
+              expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+              feedBaseUrl: ${{ variables.feedBaseUrl }}
+              pool:
+                name: VSEngSS-MicroBuild2022-1ES
+                image: server2022-microbuildVS2022-1es
+                os: windows
+              platform: windows
+              expectedProducerDefinitionId: $(System.DefinitionId)
+              expectedProducerRunId: $(Build.BuildId)
+              checkoutRef: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+
+          - template: /.config/templates/vscode-e2e-cli-run-suite.yml@self
+            parameters:
+              jobName: windows_msn_weather_lifecycle
+              displayName: Windows MSN Weather lifecycle
+              suiteId: msnWeatherLifecycle
+              shortName: wm
+              cliArguments: --msn-weather-lifecycle
+              artifactName: windows-msn-weather-lifecycle
+              selected: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.windows_msnWeatherLifecycle'] ]
+              requiresAzureAccessToken: true
+              dependsOn: [resolve_consumer_context, build_current_run_e2e_artifact]
+              resolvedVSCodeVersion: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.resolvedVSCodeBuild'] ]
+              expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+              feedBaseUrl: ${{ variables.feedBaseUrl }}
+              pool:
+                name: VSEngSS-MicroBuild2022-1ES
+                image: server2022-microbuildVS2022-1es
+                os: windows
+              platform: windows
+              expectedProducerDefinitionId: $(System.DefinitionId)
+              expectedProducerRunId: $(Build.BuildId)
+              checkoutRef: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+              testARMServiceConnection: LogicAppsVSCode-E2E-SignIn
+              azureResourceGroupName: LogicAppsVSCode-E2E-Fixtures
+              azureLocationName: westus
 
           - ${{ if eq(parameters.diagnosticOnly, false) }}:
               - job: verify_both_os_full_rollup
                 displayName: Verify both-OS full rollup eligibility
                 dependsOn:
-                  - ${{ if eq(parameters.runLinux, true) }}:
-                      - linux_prepared_suites
-                  - ${{ if eq(parameters.runWindows, true) }}:
-                      - windows_prepared_suites
+                  - linux_unit_tests
+                  - linux_create_workspace_behavior
+                  - linux_create_workspace_core_matrix
+                  - linux_create_workspace_preview_matrix
+                  - linux_create_workspace_codeful
+                  - linux_msn_weather_lifecycle
+                  - windows_unit_tests
+                  - windows_create_workspace_behavior_smoke
+                  - windows_msn_weather_lifecycle
                 condition: always()
                 pool:
                   name: VSEngSS-MicroBuild2022-1ES
                   image: server2022-microbuildVS2022-1es
                   os: windows
                 variables:
-                  - ${{ if eq(parameters.runLinux, true) }}:
-                      - name: linuxPreparedSuitesResult
-                        value: $[ dependencies.linux_prepared_suites.result ]
-                  - ${{ if eq(parameters.runWindows, true) }}:
-                      - name: windowsPreparedSuitesResult
-                        value: $[ dependencies.windows_prepared_suites.result ]
+                  - name: linuxUnitTestsResult
+                    value: $[ dependencies.linux_unit_tests.result ]
+                  - name: linuxCreateWorkspaceBehaviorResult
+                    value: $[ dependencies.linux_create_workspace_behavior.result ]
+                  - name: linuxCreateWorkspaceCoreMatrixResult
+                    value: $[ dependencies.linux_create_workspace_core_matrix.result ]
+                  - name: linuxCreateWorkspacePreviewMatrixResult
+                    value: $[ dependencies.linux_create_workspace_preview_matrix.result ]
+                  - name: linuxCreateWorkspaceCodefulResult
+                    value: $[ dependencies.linux_create_workspace_codeful.result ]
+                  - name: linuxMsnWeatherLifecycleResult
+                    value: $[ dependencies.linux_msn_weather_lifecycle.result ]
+                  - name: windowsUnitTestsResult
+                    value: $[ dependencies.windows_unit_tests.result ]
+                  - name: windowsCreateWorkspaceBehaviorSmokeResult
+                    value: $[ dependencies.windows_create_workspace_behavior_smoke.result ]
+                  - name: windowsMsnWeatherLifecycleResult
+                    value: $[ dependencies.windows_msn_weather_lifecycle.result ]
                 templateContext:
                   type: validationJob
                 steps:
                   - download: current
-                    artifact: vscode-e2e-cli-test-results-linux-prepared-suites
-                    displayName: Download Linux aggregate
-                    condition: and(always(), eq('${{ parameters.runLinux }}', 'True'))
-
+                    artifact: vscode-e2e-cli-test-results-linux-unit-tests
+                    displayName: Download Linux unit tests results
+                    condition: always()
                   - download: current
-                    artifact: vscode-e2e-cli-test-results-windows-prepared-suites
-                    displayName: Download Windows aggregate
-                    condition: and(always(), eq('${{ parameters.runWindows }}', 'True'))
+                    artifact: vscode-e2e-cli-log-linux-unit-tests
+                    displayName: Download Linux unit tests logs
+                    condition: always()
+                  - download: current
+                    artifact: vscode-e2e-cli-test-results-linux-create-workspace-behavior
+                    displayName: Download Linux create workspace behavior results
+                    condition: always()
+                  - download: current
+                    artifact: vscode-e2e-cli-log-linux-create-workspace-behavior
+                    displayName: Download Linux create workspace behavior logs
+                    condition: always()
+                  - download: current
+                    artifact: vscode-e2e-cli-test-results-linux-create-workspace-core-matrix
+                    displayName: Download Linux create workspace core matrix results
+                    condition: always()
+                  - download: current
+                    artifact: vscode-e2e-cli-log-linux-create-workspace-core-matrix
+                    displayName: Download Linux create workspace core matrix logs
+                    condition: always()
+                  - download: current
+                    artifact: vscode-e2e-cli-test-results-linux-create-workspace-preview-matrix
+                    displayName: Download Linux create workspace preview matrix results
+                    condition: always()
+                  - download: current
+                    artifact: vscode-e2e-cli-log-linux-create-workspace-preview-matrix
+                    displayName: Download Linux create workspace preview matrix logs
+                    condition: always()
+                  - download: current
+                    artifact: vscode-e2e-cli-test-results-linux-create-workspace-codeful
+                    displayName: Download Linux create workspace codeful results
+                    condition: always()
+                  - download: current
+                    artifact: vscode-e2e-cli-log-linux-create-workspace-codeful
+                    displayName: Download Linux create workspace codeful logs
+                    condition: always()
+                  - download: current
+                    artifact: vscode-e2e-cli-test-results-linux-msn-weather-lifecycle
+                    displayName: Download Linux MSN Weather lifecycle results
+                    condition: always()
+                  - download: current
+                    artifact: vscode-e2e-cli-log-linux-msn-weather-lifecycle
+                    displayName: Download Linux MSN Weather lifecycle logs
+                    condition: always()
+                  - download: current
+                    artifact: vscode-e2e-cli-test-results-windows-unit-tests
+                    displayName: Download Windows unit tests results
+                    condition: always()
+                  - download: current
+                    artifact: vscode-e2e-cli-log-windows-unit-tests
+                    displayName: Download Windows unit tests logs
+                    condition: always()
+                  - download: current
+                    artifact: vscode-e2e-cli-test-results-windows-create-workspace-behavior-smoke
+                    displayName: Download Windows create workspace behavior smoke results
+                    condition: always()
+                  - download: current
+                    artifact: vscode-e2e-cli-log-windows-create-workspace-behavior-smoke
+                    displayName: Download Windows create workspace behavior smoke logs
+                    condition: always()
+                  - download: current
+                    artifact: vscode-e2e-cli-test-results-windows-msn-weather-lifecycle
+                    displayName: Download Windows MSN Weather lifecycle results
+                    condition: always()
+                  - download: current
+                    artifact: vscode-e2e-cli-log-windows-msn-weather-lifecycle
+                    displayName: Download Windows MSN Weather lifecycle logs
+                    condition: always()
 
                   - pwsh: |
-                      if ('${{ parameters.runLinux }}' -ne 'True' -or '${{ parameters.runWindows }}' -ne 'True') {
-                        throw 'Full VS Code E2E consumer rollup requires both Linux and Windows prepared suite cohorts.'
-                      }
-                      $linuxResult = '$(linuxPreparedSuitesResult)'
-                      $windowsResult = '$(windowsPreparedSuitesResult)'
-                      if ($linuxResult -ne 'Succeeded' -or $windowsResult -ne 'Succeeded') {
-                        throw "One or more OS cohorts did not succeed; linux=$linuxResult windows=$windowsResult."
-                      }
-                      $linuxPath = Join-Path '$(Pipeline.Workspace)' 'vscode-e2e-cli-test-results-linux-prepared-suites/e2e-cli-batch-result.json'
-                      $windowsPath = Join-Path '$(Pipeline.Workspace)' 'vscode-e2e-cli-test-results-windows-prepared-suites/e2e-cli-batch-result.json'
-                      if (-not (Test-Path $linuxPath) -or -not (Test-Path $windowsPath)) {
-                        throw "Missing OS aggregate result(s). linux=$linuxPath windows=$windowsPath"
-                      }
-                      $linux = Get-Content $linuxPath -Raw | ConvertFrom-Json
-                      $windows = Get-Content $windowsPath -Raw | ConvertFrom-Json
-                      foreach ($aggregate in @($linux, $windows)) {
-                        if ($aggregate.aggregateOutcome -ne 'success' -or $aggregate.fullRollup -ne $true -or $aggregate.canonicalInventory -ne $true) {
-                          throw "OS aggregate is not a successful canonical full rollup: platform=$($aggregate.platform) outcome=$($aggregate.aggregateOutcome) fullRollup=$($aggregate.fullRollup) canonical=$($aggregate.canonicalInventory)"
-                        }
-                        if (-not $aggregate.admissionContext) {
-                          throw "OS aggregate is missing admitted E2E artifact identity: platform=$($aggregate.platform)"
-                        }
-                      }
+                      $suites = @(
+                        @{ job = 'linux_unit_tests'; result = '$(linuxUnitTestsResult)'; artifact = 'vscode-e2e-cli-test-results-linux-unit-tests'; logArtifact = 'vscode-e2e-cli-log-linux-unit-tests'; suite = 'unitTests'; expectedMochaCompletions = 1; subtractMatrixFooter = $false },
+                        @{ job = 'linux_create_workspace_behavior'; result = '$(linuxCreateWorkspaceBehaviorResult)'; artifact = 'vscode-e2e-cli-test-results-linux-create-workspace-behavior'; logArtifact = 'vscode-e2e-cli-log-linux-create-workspace-behavior'; suite = 'createWorkspaceBehavior'; expectedMochaCompletions = 1; subtractMatrixFooter = $false },
+                        @{ job = 'linux_create_workspace_core_matrix'; result = '$(linuxCreateWorkspaceCoreMatrixResult)'; artifact = 'vscode-e2e-cli-test-results-linux-create-workspace-core-matrix'; logArtifact = 'vscode-e2e-cli-log-linux-create-workspace-core-matrix'; suite = 'createWorkspaceCoreMatrix'; expectedMochaCompletions = 6; subtractMatrixFooter = $true },
+                        @{ job = 'linux_create_workspace_preview_matrix'; result = '$(linuxCreateWorkspacePreviewMatrixResult)'; artifact = 'vscode-e2e-cli-test-results-linux-create-workspace-preview-matrix'; logArtifact = 'vscode-e2e-cli-log-linux-create-workspace-preview-matrix'; suite = 'createWorkspacePreviewMatrix'; expectedMochaCompletions = 6; subtractMatrixFooter = $true },
+                        @{ job = 'linux_create_workspace_codeful'; result = '$(linuxCreateWorkspaceCodefulResult)'; artifact = 'vscode-e2e-cli-test-results-linux-create-workspace-codeful'; logArtifact = 'vscode-e2e-cli-log-linux-create-workspace-codeful'; suite = 'createWorkspaceCodeful'; expectedMochaCompletions = 2; subtractMatrixFooter = $true },
+                        @{ job = 'linux_msn_weather_lifecycle'; result = '$(linuxMsnWeatherLifecycleResult)'; artifact = 'vscode-e2e-cli-test-results-linux-msn-weather-lifecycle'; logArtifact = 'vscode-e2e-cli-log-linux-msn-weather-lifecycle'; suite = 'msnWeatherLifecycle'; expectedMochaCompletions = 3; subtractMatrixFooter = $false },
+                        @{ job = 'windows_unit_tests'; result = '$(windowsUnitTestsResult)'; artifact = 'vscode-e2e-cli-test-results-windows-unit-tests'; logArtifact = 'vscode-e2e-cli-log-windows-unit-tests'; suite = 'unitTests'; expectedMochaCompletions = 1; subtractMatrixFooter = $false },
+                        @{ job = 'windows_create_workspace_behavior_smoke'; result = '$(windowsCreateWorkspaceBehaviorSmokeResult)'; artifact = 'vscode-e2e-cli-test-results-windows-create-workspace-behavior-smoke'; logArtifact = 'vscode-e2e-cli-log-windows-create-workspace-behavior-smoke'; suite = 'createWorkspaceBehaviorSmoke'; expectedMochaCompletions = 1; subtractMatrixFooter = $false },
+                        @{ job = 'windows_msn_weather_lifecycle'; result = '$(windowsMsnWeatherLifecycleResult)'; artifact = 'vscode-e2e-cli-test-results-windows-msn-weather-lifecycle'; logArtifact = 'vscode-e2e-cli-log-windows-msn-weather-lifecycle'; suite = 'msnWeatherLifecycle'; expectedMochaCompletions = 3; subtractMatrixFooter = $false }
+                      )
                       $identityFields = @(
                         'producerDefinitionId',
                         'producerRunId',
@@ -268,49 +502,141 @@ extends:
                         'artifactSHA256',
                         'resolvedVSCodeBuild'
                       )
-                      foreach ($field in $identityFields) {
-                        if ([string]$linux.admissionContext.$field -ne [string]$windows.admissionContext.$field) {
-                          throw "OS aggregate admitted identity mismatch for '$field': linux=$($linux.admissionContext.$field) windows=$($windows.admissionContext.$field)"
+                      $baseline = $null
+                      foreach ($suite in $suites) {
+                        if ($suite.result -ne 'Succeeded') {
+                          throw "Canonical suite job did not succeed: $($suite.job) result=$($suite.result)"
                         }
-                        if (-not [string]$linux.admissionContext.$field) {
-                          throw "OS aggregate admitted identity is missing '$field'."
+                        $root = Join-Path '$(Pipeline.Workspace)' $suite.artifact
+                        $logRoot = Join-Path '$(Pipeline.Workspace)' $suite.logArtifact
+                        $resultPath = Join-Path $root "$($suite.suite).json"
+                        $junitPath = Join-Path $root "$($suite.suite).junit.xml"
+                        $summaryPath = Join-Path $root "$($suite.suite).summary.md"
+                        $contextPath = Join-Path $root "admission-context-$($suite.suite).json"
+                        $logPath = Join-Path $logRoot "$($suite.suite).log"
+                        foreach ($required in @($resultPath, $junitPath, $summaryPath, $contextPath, $logPath)) {
+                          if (-not (Test-Path $required)) {
+                            throw "Missing required full-rollup artifact for $($suite.job): $required"
+                          }
+                        }
+                        $result = Get-Content $resultPath -Raw | ConvertFrom-Json
+                        $passing = [int]$result.passing
+                        $failing = [int]$result.failing
+                        $pending = [int]$result.pending
+                        $total = [int]$result.total
+                        if ($result.outcome -ne 'success' -or $passing -le 0 -or $failing -ne 0 -or $pending -ne 0 -or $total -ne $passing) {
+                          throw "Suite result is not a successful executed test run: $($suite.job) outcome=$($result.outcome) total=$total passing=$passing failing=$failing pending=$pending"
+                        }
+                        $logText = Get-Content $logPath -Raw
+                        $ansiEscape = "$([char]27)\[[0-?]*[ -/]*[@-~]"
+                        $normalizedLogText = ($logText -replace "`r`n?", "`n") -replace $ansiEscape, ''
+                        $mochaCompletions = [regex]::Matches($normalizedLogText, '(?m)^[ \t]*(\d+) passing(?: \([^)]+\))?[ \t]*$')
+                        $realMochaCompletionCounts = @($mochaCompletions | ForEach-Object { [int]$_.Groups[1].Value })
+                        if ($suite.subtractMatrixFooter -and $realMochaCompletionCounts.Count -gt 0) {
+                          $lastCompletion = $mochaCompletions[$mochaCompletions.Count - 1].Value.Trim()
+                          if ($normalizedLogText.TrimEnd().EndsWith($lastCompletion)) {
+                            $realMochaCompletionCounts = @($realMochaCompletionCounts | Select-Object -First ($realMochaCompletionCounts.Count - 1))
+                          }
+                        }
+                        if ($realMochaCompletionCounts.Count -lt [int]$suite.expectedMochaCompletions -or @($realMochaCompletionCounts | Where-Object { $_ -le 0 }).Count -gt 0) {
+                          throw "Suite log does not contain enough positive real Mocha execution evidence: $($suite.job) expected=$($suite.expectedMochaCompletions) actual=$($realMochaCompletionCounts.Count) counts=$($realMochaCompletionCounts -join ',')"
+                        }
+                        $context = Get-Content $contextPath -Raw | ConvertFrom-Json
+                        foreach ($field in $identityFields) {
+                          if (-not [string]$context.$field) {
+                            throw "Suite admitted identity is missing '$field': $($suite.job)"
+                          }
+                        }
+                        if ($null -eq $baseline) {
+                          $baseline = $context
+                        } else {
+                          foreach ($field in $identityFields) {
+                            if ([string]$baseline.$field -ne [string]$context.$field) {
+                              throw "Suite admitted identity mismatch for '$field': baseline=$($baseline.$field) $($suite.job)=$($context.$field)"
+                            }
+                          }
                         }
                       }
-                    displayName: Enforce both-OS full rollup gate
+                    displayName: Enforce nine-suite both-OS full rollup gate
 
           - ${{ if eq(parameters.diagnosticOnly, true) }}:
               - job: report_diagnostic_selected_rerun
                 displayName: Report diagnostic selected rerun status
                 dependsOn:
-                  - ${{ if eq(parameters.runLinux, true) }}:
-                      - linux_prepared_suites
-                  - ${{ if eq(parameters.runWindows, true) }}:
-                      - windows_prepared_suites
+                  - resolve_consumer_context
+                  - linux_unit_tests
+                  - linux_create_workspace_behavior
+                  - linux_create_workspace_core_matrix
+                  - linux_create_workspace_preview_matrix
+                  - linux_create_workspace_codeful
+                  - linux_msn_weather_lifecycle
+                  - windows_unit_tests
+                  - windows_create_workspace_behavior_smoke
+                  - windows_msn_weather_lifecycle
                 condition: always()
                 pool:
                   name: VSEngSS-MicroBuild2022-1ES
                   image: server2022-microbuildVS2022-1es
                   os: windows
                 variables:
-                  - ${{ if eq(parameters.runLinux, true) }}:
-                      - name: linuxPreparedSuitesResult
-                        value: $[ dependencies.linux_prepared_suites.result ]
-                  - ${{ if eq(parameters.runWindows, true) }}:
-                      - name: windowsPreparedSuitesResult
-                        value: $[ dependencies.windows_prepared_suites.result ]
+                  - name: linuxUnitTestsSelected
+                    value: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.linux_unitTests'] ]
+                  - name: linuxCreateWorkspaceBehaviorSelected
+                    value: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.linux_createWorkspaceBehavior'] ]
+                  - name: linuxCreateWorkspaceCoreMatrixSelected
+                    value: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.linux_createWorkspaceCoreMatrix'] ]
+                  - name: linuxCreateWorkspacePreviewMatrixSelected
+                    value: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.linux_createWorkspacePreviewMatrix'] ]
+                  - name: linuxCreateWorkspaceCodefulSelected
+                    value: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.linux_createWorkspaceCodeful'] ]
+                  - name: linuxMsnWeatherLifecycleSelected
+                    value: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.linux_msnWeatherLifecycle'] ]
+                  - name: windowsUnitTestsSelected
+                    value: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.windows_unitTests'] ]
+                  - name: windowsCreateWorkspaceBehaviorSmokeSelected
+                    value: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.windows_createWorkspaceBehaviorSmoke'] ]
+                  - name: windowsMsnWeatherLifecycleSelected
+                    value: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.windows_msnWeatherLifecycle'] ]
+                  - name: linuxUnitTestsResult
+                    value: $[ dependencies.linux_unit_tests.result ]
+                  - name: linuxCreateWorkspaceBehaviorResult
+                    value: $[ dependencies.linux_create_workspace_behavior.result ]
+                  - name: linuxCreateWorkspaceCoreMatrixResult
+                    value: $[ dependencies.linux_create_workspace_core_matrix.result ]
+                  - name: linuxCreateWorkspacePreviewMatrixResult
+                    value: $[ dependencies.linux_create_workspace_preview_matrix.result ]
+                  - name: linuxCreateWorkspaceCodefulResult
+                    value: $[ dependencies.linux_create_workspace_codeful.result ]
+                  - name: linuxMsnWeatherLifecycleResult
+                    value: $[ dependencies.linux_msn_weather_lifecycle.result ]
+                  - name: windowsUnitTestsResult
+                    value: $[ dependencies.windows_unit_tests.result ]
+                  - name: windowsCreateWorkspaceBehaviorSmokeResult
+                    value: $[ dependencies.windows_create_workspace_behavior_smoke.result ]
+                  - name: windowsMsnWeatherLifecycleResult
+                    value: $[ dependencies.windows_msn_weather_lifecycle.result ]
                 templateContext:
                   type: validationJob
                 steps:
                   - pwsh: |
-                      $failures = @()
-                      if ('${{ parameters.runLinux }}' -eq 'True' -and '$(linuxPreparedSuitesResult)' -ne 'Succeeded') {
-                        $failures += "linux=$(linuxPreparedSuitesResult)"
+                      $selected = @(
+                        @{ name = 'linux_unit_tests'; selected = '$(linuxUnitTestsSelected)'; result = '$(linuxUnitTestsResult)' },
+                        @{ name = 'linux_create_workspace_behavior'; selected = '$(linuxCreateWorkspaceBehaviorSelected)'; result = '$(linuxCreateWorkspaceBehaviorResult)' },
+                        @{ name = 'linux_create_workspace_core_matrix'; selected = '$(linuxCreateWorkspaceCoreMatrixSelected)'; result = '$(linuxCreateWorkspaceCoreMatrixResult)' },
+                        @{ name = 'linux_create_workspace_preview_matrix'; selected = '$(linuxCreateWorkspacePreviewMatrixSelected)'; result = '$(linuxCreateWorkspacePreviewMatrixResult)' },
+                        @{ name = 'linux_create_workspace_codeful'; selected = '$(linuxCreateWorkspaceCodefulSelected)'; result = '$(linuxCreateWorkspaceCodefulResult)' },
+                        @{ name = 'linux_msn_weather_lifecycle'; selected = '$(linuxMsnWeatherLifecycleSelected)'; result = '$(linuxMsnWeatherLifecycleResult)' },
+                        @{ name = 'windows_unit_tests'; selected = '$(windowsUnitTestsSelected)'; result = '$(windowsUnitTestsResult)' },
+                        @{ name = 'windows_create_workspace_behavior_smoke'; selected = '$(windowsCreateWorkspaceBehaviorSmokeSelected)'; result = '$(windowsCreateWorkspaceBehaviorSmokeResult)' },
+                        @{ name = 'windows_msn_weather_lifecycle'; selected = '$(windowsMsnWeatherLifecycleSelected)'; result = '$(windowsMsnWeatherLifecycleResult)' }
+                      ) | Where-Object { $_.selected -eq 'true' }
+                      if (-not $selected) {
+                        throw 'Diagnostic selected rerun had no selected suite jobs.'
                       }
-                      if ('${{ parameters.runWindows }}' -eq 'True' -and '$(windowsPreparedSuitesResult)' -ne 'Succeeded') {
-                        $failures += "windows=$(windowsPreparedSuitesResult)"
-                      }
-                      if ($failures.Length -gt 0) {
-                        throw "Diagnostic selected rerun failed selected cohort(s): $($failures -join ', ')"
+                      $failures = @($selected | Where-Object { $_.result -ne 'Succeeded' })
+                      if ($failures.Count -gt 0) {
+                        $details = ($failures | ForEach-Object { "$($_.name)=$($_.result)" }) -join ', '
+                        throw "Diagnostic selected rerun failed selected suite job(s): $details"
                       }
                       Write-Host 'Diagnostic selected rerun completed. This job is intentionally not a full-rollup gate; protected checks must bind verify_both_os_full_rollup for full validation.'
                     displayName: Report diagnostic-only status
