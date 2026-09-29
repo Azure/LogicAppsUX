@@ -27,25 +27,32 @@ function read(relativePath) {
 
 function testFullRollupGateScriptRejectsNonExecutedResults() {
   const consumer = parseYaml('.config/vscode-e2e-cli.1es.yml');
+  const runSuite = parseYaml('.config/templates/vscode-e2e-cli-run-suite.yml');
   const script = extractFullRollupGateScript(consumer);
+  const admittedContext = runAdmissionContextScriptFixture(runSuite);
+  assert.strictEqual(admittedContext.artifactVersion, undefined);
+  assert.strictEqual(admittedContext.producerBuildNumber, '20260929.5');
 
-  const valid = runFullRollupGateFixture(script, { scenario: 'valid' });
+  const valid = runFullRollupGateFixture(script, { scenario: 'valid', baseContext: admittedContext });
   assert.strictEqual(valid.status, 0, valid.output);
 
   const crlfLog = runFullRollupGateFixture(script, {
     scenario: 'crlf-log',
+    baseContext: admittedContext,
     logTransform: (value) => value.replaceAll('\n', '\r\n'),
   });
   assert.strictEqual(crlfLog.status, 0, crlfLog.output);
 
   const ansiLog = runFullRollupGateFixture(script, {
     scenario: 'ansi-log',
+    baseContext: admittedContext,
     logTransform: (value) => value.replace(/(^[ \t]*\d+ passing(?: \([^)]+\))?[ \t]*$)/gm, '\u001b[32m$1\u001b[0m'),
   });
   assert.strictEqual(ansiLog.status, 0, ansiLog.output);
 
   const allPending = runFullRollupGateFixture(script, {
     scenario: 'all-pending',
+    baseContext: admittedContext,
     resultOverride: { total: 12, passing: 0, failing: 0, pending: 12 },
   });
   assert.notStrictEqual(allPending.status, 0);
@@ -53,6 +60,7 @@ function testFullRollupGateScriptRejectsNonExecutedResults() {
 
   const mixedUnexpectedSkip = runFullRollupGateFixture(script, {
     scenario: 'mixed-unexpected-skip',
+    baseContext: admittedContext,
     resultOverride: { total: 12, passing: 11, failing: 0, pending: 1 },
   });
   assert.notStrictEqual(mixedUnexpectedSkip.status, 0);
@@ -60,6 +68,7 @@ function testFullRollupGateScriptRejectsNonExecutedResults() {
 
   const syntheticFooterOnly = runFullRollupGateFixture(script, {
     scenario: 'synthetic-footer-only',
+    baseContext: admittedContext,
     logOverride: { job: 'linux_create_workspace_core_matrix', text: '\n  6 passing (1s)\n' },
   });
   assert.notStrictEqual(syntheticFooterOnly.status, 0);
@@ -67,6 +76,7 @@ function testFullRollupGateScriptRejectsNonExecutedResults() {
 
   const zeroRealCompletions = runFullRollupGateFixture(script, {
     scenario: 'zero-real-completions',
+    baseContext: admittedContext,
     logOverride: {
       job: 'linux_create_workspace_core_matrix',
       text: `${Array.from({ length: 6 }, () => '  0 passing (1s)').join('\n')}\n  6 passing (1s)\n`,
@@ -77,6 +87,7 @@ function testFullRollupGateScriptRejectsNonExecutedResults() {
 
   const missingArtifact = runFullRollupGateFixture(script, {
     scenario: 'missing-artifact',
+    baseContext: admittedContext,
     omit: { job: 'linux_unit_tests', file: 'unitTests.summary.md' },
   });
   assert.notStrictEqual(missingArtifact.status, 0);
@@ -84,10 +95,19 @@ function testFullRollupGateScriptRejectsNonExecutedResults() {
 
   const identityMismatch = runFullRollupGateFixture(script, {
     scenario: 'identity-mismatch',
+    baseContext: admittedContext,
     contextOverride: { job: 'windows_unit_tests', field: 'artifactSHA256', value: 'different-sha' },
   });
   assert.notStrictEqual(identityMismatch.status, 0);
   assert.match(identityMismatch.output, /Suite admitted identity mismatch/);
+
+  const missingProducerBuildNumber = runFullRollupGateFixture(script, {
+    scenario: 'missing-producer-build-number',
+    baseContext: admittedContext,
+    contextOverride: { job: 'linux_unit_tests', field: 'producerBuildNumber', value: '' },
+  });
+  assert.notStrictEqual(missingProducerBuildNumber.status, 0);
+  assert.match(missingProducerBuildNumber.output, /Suite admitted identity is missing 'producerBuildNumber'/);
 }
 
 function runFullRollupGateFixture(script, options = {}) {
@@ -160,18 +180,8 @@ function runFullRollupGateFixture(script, options = {}) {
         suite: 'msnWeatherLifecycle',
       },
     ];
-    const baseContext = {
-      producerDefinitionId: '28771',
-      producerRunId: '15497031',
-      sourceSHA: 'be05fd61b52d884c8699ceba29ea0e277cb0c14a',
-      checkoutRef: 'be05fd61b52d884c8699ceba29ea0e277cb0c14a',
-      repositoryName: 'Azure/LogicAppsUX',
-      repositoryUri: 'https://github.com/Azure/LogicAppsUX',
-      artifactName: 'vscode-e2e-build',
-      artifactVersion: '1',
-      artifactSHA256: 'same-sha',
-      resolvedVSCodeBuild: '1.139.1',
-    };
+    const baseContext =
+      options.baseContext ?? runAdmissionContextScriptFixture(parseYaml('.config/templates/vscode-e2e-cli-run-suite.yml'));
 
     for (const suite of suites) {
       const root = path.join(pipelineWorkspace, suite.artifact);
@@ -225,6 +235,81 @@ function runFullRollupGateFixture(script, options = {}) {
   } finally {
     fs.rmSync(tempRoot, { recursive: true, force: true });
   }
+}
+
+function runAdmissionContextScriptFixture(runSuite) {
+  const script = extractRunSuiteStepScript(runSuite, 'Write admitted E2E artifact identity context');
+  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'pipeline-contract-admission-context-'));
+  try {
+    const sourcesDirectory = path.join(tempRoot, 'sources');
+    const pipelineWorkspace = path.join(tempRoot, 'workspace');
+    const artifactRoot = path.join(pipelineWorkspace, 'vscode-e2e-build');
+    fs.mkdirSync(artifactRoot, { recursive: true });
+    const manifest = {
+      producer: {
+        definitionId: '28771',
+        runId: '15497809',
+        buildNumber: '20260929.5',
+        actualArtifactBuildSha: '2516c93c9892ca3b76869d1292a12c0ce8f0d971',
+        checkoutRef: '2516c93c9892ca3b76869d1292a12c0ce8f0d971',
+        repositoryName: 'Azure/LogicAppsUX',
+        repositoryUri: 'https://github.com/Azure/LogicAppsUX',
+      },
+      artifact: {
+        name: 'vscode-e2e-build',
+        version: '',
+        sha256: 'same-sha',
+      },
+    };
+    fs.writeFileSync(path.join(artifactRoot, 'vscode-e2e-build-manifest.json'), JSON.stringify(manifest));
+    const preparedScript = script
+      .replaceAll('$(Build.SourcesDirectory)', sourcesDirectory)
+      .replaceAll('$(Pipeline.Workspace)', pipelineWorkspace)
+      .replaceAll('${{ parameters.e2eBuildArtifactName }}', 'vscode-e2e-build')
+      .replaceAll('${{ parameters.suiteId }}', 'unitTests')
+      .replaceAll('$(ResolvedVSCodeVersion)', '1.139.1');
+    const result = runPowerShellScript(preparedScript);
+    assert.strictEqual(result.status, 0, result.output);
+    return JSON.parse(
+      fs.readFileSync(
+        path.join(sourcesDirectory, 'apps', 'vs-code-designer', '.vscode-test', 'results', 'admission-context-unitTests.json'),
+        'utf8'
+      )
+    );
+  } finally {
+    fs.rmSync(tempRoot, { recursive: true, force: true });
+  }
+}
+
+function extractRunSuiteStepScript(runSuite, displayName) {
+  const step = findObjectByDisplayName(runSuite, displayName);
+  assert.ok(step?.pwsh, `run-suite template step must have an executable PowerShell script: ${displayName}`);
+  return step.pwsh;
+}
+
+function findObjectByDisplayName(value, displayName) {
+  if (Array.isArray(value)) {
+    for (const entry of value) {
+      const found = findObjectByDisplayName(entry, displayName);
+      if (found) {
+        return found;
+      }
+    }
+    return undefined;
+  }
+  if (!value || typeof value !== 'object') {
+    return undefined;
+  }
+  if (value.displayName === displayName) {
+    return value;
+  }
+  for (const entry of Object.values(value)) {
+    const found = findObjectByDisplayName(entry, displayName);
+    if (found) {
+      return found;
+    }
+  }
+  return undefined;
 }
 
 function extractFullRollupGateScript(consumer) {
@@ -553,6 +638,8 @@ function testConsumerAdmissionContract() {
   assert.match(runSuitesTemplate, /Extracted artifact is missing the compiled ExTester dependency-prep harness/);
   assert.match(runSuitesTemplate, /Write admitted E2E artifact identity context/);
   assert.match(runSuitesTemplate, /admission-context-\$\{\{ parameters\.suiteId \}\}\.json/);
+  assert.match(runSuitesTemplate, /producerBuildNumber = \[string\]\$manifest\.producer\.buildNumber/);
+  assert.doesNotMatch(runSuitesTemplate, /artifactVersion = \[string\]\$manifest\.artifact\.version/);
   assert.match(runSuitesTemplate, /resolvedVSCodeBuild = '\$\(ResolvedVSCodeVersion\)'/);
   assert.match(runSuitesTemplate, /ResolvedVSCodeVersion must be supplied by the shared consumer context job/);
   assert.doesNotMatch(runSuitesTemplate, /Resolve stable VS Code version once/);
