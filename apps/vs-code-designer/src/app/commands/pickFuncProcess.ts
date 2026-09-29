@@ -154,7 +154,7 @@ export async function pickFuncProcessInternal(
   }
 
   // Resolve the runtime port once from tasks/local.settings so status polling and overview callback URLs stay in sync.
-  const resolvedFuncPort = resolveValidPort(await getFuncPortFromTaskOrProject(context, funcTask, workspaceFolder));
+  const resolvedFuncPort = resolveValidPortOrDefault(await getFuncPortFromTaskOrProject(context, funcTask, workspaceFolder));
   ext.workflowRuntimePort = resolvedFuncPort;
 
   getPickProcessTimeout(context);
@@ -386,10 +386,6 @@ export async function pickWorkflowDebugProcess(taskInfo: IRunningFuncTask, prefe
     )
   );
 
-  if (shouldPreferHostChild) {
-    return selectedProcessId;
-  }
-
   return selectedProcessId;
 }
 
@@ -400,7 +396,7 @@ export async function findChildProcess(processId: number): Promise<string | unde
   return child ? child.pid.toString() : String(processId);
 }
 
-function resolveValidPort(port: string): number {
+function resolveValidPortOrDefault(port: string): number {
   const parsedPort = Number(port);
   return !port || !Number.isInteger(parsedPort) || parsedPort <= 0 || parsedPort > 65535 ? Number(defaultFuncPort) : parsedPort;
 }
