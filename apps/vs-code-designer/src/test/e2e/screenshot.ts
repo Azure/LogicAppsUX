@@ -693,16 +693,46 @@ async function resolveSemanticFrameOwnerObjectId(
     throw new Error('Screenshot binding failed: unable to resolve semantic frame owner');
   }
 
-  const resolved = (await ownerCdp.send(
+  const resolved = (await sendWithTransientRetry(
+    ownerCdp,
     'DOM.resolveNode',
     { ...(backendNodeId ? { backendNodeId } : { nodeId }) },
-    { timeoutMs: remaining(deadline, 2000) }
+    deadline,
+    5000
   )) as { result?: { object?: { objectId?: string } } };
   const objectId = resolved.result?.object?.objectId;
   if (!objectId) {
     throw new Error('Screenshot binding failed: unable to resolve semantic frame owner object');
   }
   return objectId;
+}
+
+async function sendWithTransientRetry(
+  cdp: CdpClient,
+  method: string,
+  params: Record<string, unknown>,
+  deadline: number,
+  perAttemptTimeoutMs: number
+): Promise<unknown> {
+  let lastError: unknown;
+
+  while (Date.now() < deadline) {
+    try {
+      return await cdp.send(method, params, { timeoutMs: remaining(deadline, perAttemptTimeoutMs) });
+    } catch (error) {
+      lastError = error;
+      if (!isTransientCdpTimeout(error)) {
+        throw error;
+      }
+      await delay(Math.min(250, Math.max(0, deadline - Date.now())));
+    }
+  }
+
+  throw lastError instanceof Error ? lastError : new Error(`Timed out waiting for transient CDP ${method} retry`);
+}
+
+function isTransientCdpTimeout(error: unknown): boolean {
+  return error instanceof Error && /Timed out waiting for CDP .* response after \d+ms/.test(error.message);
 }
 
 async function assertResolvedOwnerFrameVisible(ownerCdp: CdpClient, objectId: string, deadline: number): Promise<void> {

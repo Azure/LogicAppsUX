@@ -32,6 +32,7 @@ import {
 } from './cdpFormHelpers';
 import type { CodefulControlVariant, FieldLabels } from './createWorkspaceTypes';
 import { assertNoDialogAttempts, installDialogGuard, withAllowedDialogResponses } from './dialogGuard';
+import { waitForLogicAppsExtensionStartupReady } from './extensionStartupReadiness';
 import {
   assertMsnWeatherLocalSettings,
   canUseInteractiveMsnWeatherAzureSettings,
@@ -234,6 +235,10 @@ suite('Generated Workspace Designer Lifecycle Tests', () => {
     const extension = vscode.extensions.getExtension(logicAppsExtensionId);
     assert.ok(extension, `Expected ${logicAppsExtensionId} to be loaded from the extension development path`);
     await extension.activate();
+    await waitForLogicAppsExtensionStartupReady({
+      label: 'Workspace lifecycle suite setup',
+      requiredCommands: [createWorkspaceCommand, openDesignerCommand],
+    });
   });
 
   suiteTeardown(async () => {
@@ -485,6 +490,10 @@ function sanitizeDiagnosticName(value: string): string {
 }
 
 async function openCreateWorkspaceContext(label: string): Promise<{ cdp: CdpEvaluator & { dispose(): void }; contextId: number }> {
+  await waitForLogicAppsExtensionStartupReady({
+    label: `${label} before Create Workspace command`,
+    requiredCommands: [createWorkspaceCommand],
+  });
   await closeWebviewTabs(createWorkspaceViewType);
   const tabsBefore = getWebviewTabs(createWorkspaceViewType).length;
 
@@ -978,6 +987,10 @@ async function openDesignerAndCreateWorkflow(
   const useAzureConnectors = options.useAzureConnectors === true;
 
   await handleDotnetInstallToolPromptIfVisible('before openDesigner command');
+  await waitForLogicAppsExtensionStartupReady({
+    label: `${createdWorkspace.label} before open designer command`,
+    requiredCommands: [openDesignerCommand],
+  });
   console.log(
     `[workspace-lifecycle] ${createdWorkspace.label}: opening designer for ${createdWorkspace.workflowJsonPath}. tabsBefore=${tabsBefore}. tabs=${describeOpenTabs()}`
   );
@@ -2126,6 +2139,7 @@ async function selectDynamicContentTokenForParameter(
   );
 
   await clickPoint(cdp, entryPoint.point);
+  await waitForDynamicContentPickerOpen(cdp, contextId, sectionLabels, entryPoint.point, description);
   await captureLifecycleScreenshot(`workspace-lifecycle-${description.replace(/\W+/g, '-').toLowerCase()}-picker-open`, {
     expectation: {
       kind: 'designerPanel',
@@ -2195,6 +2209,66 @@ async function getDesignerElementStateAtPoint(
         activeValue: valueOf(active),
       };
     })()`
+  );
+}
+
+async function waitForDynamicContentPickerOpen(
+  cdp: CdpEvaluator,
+  contextId: number,
+  sectionLabels: string[],
+  entryPoint: { x: number; y: number },
+  description: string
+): Promise<void> {
+  const normalizedSectionLabels = sectionLabels.map((label) => label.toLowerCase());
+  let lastState = '';
+  let lastRetryClickAt = 0;
+
+  await waitUntil(
+    async () => {
+      const state = await cdp.evaluate<{
+        visible: boolean;
+        text?: string;
+        sectionCount?: number;
+        pickerRootCount?: number;
+        entryPointVisible?: boolean;
+      }>(
+        contextId,
+        `(() => {
+          const sectionLabels = ${JSON.stringify(normalizedSectionLabels)};
+          const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim().toLowerCase();
+          const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
+          const sections = Array.from(document.querySelectorAll('.msla-token-picker-section, [data-automation-id^="msla-token-picker-section-option-"]'))
+            .filter(isVisible);
+          const pickerRoots = Array.from(document.querySelectorAll(
+            '[role="dialog"], [role="listbox"], [data-automation-id*="picker"], [data-testid*="picker"], [class*="picker"], [class*="Picker"], .msla-token-picker, .msla-token-picker-section'
+          )).filter(isVisible);
+          const text = normalize([...pickerRoots, ...sections].map((element) => element.textContent || '').join(' '));
+          const entryPoint = Array.from(document.querySelectorAll('[data-automation-id="msla-token-picker-entrypoint-button-dynamic-content"]')).some(isVisible);
+          return {
+            visible: sectionLabels.every((label) => text.includes(label)),
+            text: text.slice(0, 1000),
+            sectionCount: sections.length,
+            pickerRootCount: pickerRoots.length,
+            entryPointVisible: entryPoint,
+          };
+        })()`
+      );
+
+      lastState = JSON.stringify(state).slice(0, 1200);
+      if (state.visible) {
+        return true;
+      }
+
+      const now = Date.now();
+      if (state.entryPointVisible && !state.pickerRootCount && now - lastRetryClickAt > 2000) {
+        lastRetryClickAt = now;
+        await clickPoint(cdp, entryPoint);
+      }
+
+      return false;
+    },
+    30000,
+    `dynamic-content picker for ${description}. Last state: ${lastState}`
   );
 }
 

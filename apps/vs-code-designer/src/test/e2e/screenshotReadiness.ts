@@ -678,7 +678,18 @@ export const screenshotReadinessDomScript = `
       return { ok: true, reason: 'picker-not-required' };
     }
     const pickerRoots = visibleElements(
-      '[role="dialog"], [role="listbox"], [data-automation-id*="picker"], [data-testid*="picker"], [class*="picker"], [class*="Picker"], .msla-token-picker'
+      [
+        '[role="dialog"]',
+        '[role="listbox"]',
+        '[data-automation-id*="picker"]',
+        '[data-testid*="picker"]',
+        '[class*="picker"]',
+        '[class*="Picker"]',
+        '.msla-token-picker',
+        '.msla-token-picker-section',
+        '.msla-token-picker-section-option',
+        '[data-automation-id^="msla-token-picker-section-option-"]',
+      ].join(', ')
     );
     const pickerText = normalize(pickerRoots.map(visibleText).join(' '));
     if (!(picker.sectionLabels || []).every((label) => normalizedIncludes(pickerText, label))) {

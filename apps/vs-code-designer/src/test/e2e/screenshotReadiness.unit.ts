@@ -387,6 +387,24 @@ function testDesignerPanelRequiresVisiblePickerSectionAndToken(): void {
 
   assert.strictEqual(accepted.ready, true, JSON.stringify(accepted));
   assert.strictEqual(rejected.ready, false, JSON.stringify(rejected));
+
+  const sectionOnlyDocument = new FakeDocument(
+    new FakeElement('body', {}, [
+      designerPanel({ title: 'Response', nodeId: 'Response', text: 'Body' }),
+      new FakeElement('section', { class: 'msla-token-picker-section' }, [
+        new FakeElement('div', { class: 'msla-token-picker-section-header' }, [], 'Get current weather'),
+        new FakeElement('button', { class: 'msla-token-picker-section-option' }, [], 'Body'),
+      ]),
+    ])
+  );
+  const sectionOnlyAccepted = runProbe(sectionOnlyDocument, {
+    kind: 'designerPanel',
+    label: 'response-token-picker-open',
+    actionTitle: 'Response',
+    picker: { sectionLabels: ['Get current weather'], tokenTitles: ['Body'] },
+  });
+
+  assert.strictEqual(sectionOnlyAccepted.ready, true, JSON.stringify(sectionOnlyAccepted));
 }
 
 function testCreateWorkspaceRejectsWrongExactValidationMessage(): void {
