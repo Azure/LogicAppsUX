@@ -36,8 +36,10 @@ async function main(): Promise<void> {
   testUnrelatedMutationDoesNotInvalidateScopedRoot();
   testAncestorVisibilityMutationInvalidatesScopedRoot();
   testRootDetachMutationInvalidatesScopedRoot();
+  testWorkbenchShellMixedBatchStructuralMutationInvalidates();
   testStableSamplesRequireSameGeometry();
   testWorkbenchShellStabilityAllowsUnrelatedWorkbenchChurn();
+  testWorkbenchShellStabilityRejectsStructuralShellChurn();
   testMetadataDoesNotCarryRawText();
   console.log('[screenshotReadiness.unit] all tests passed');
 }
@@ -766,6 +768,63 @@ function testRootDetachMutationInvalidatesScopedRoot(): void {
   assert.ok(state.revision > scopedRevision, 'root detach/reattach changes must invalidate the selected panel capture');
 }
 
+function testWorkbenchShellMixedBatchStructuralMutationInvalidates(): void {
+  const outputPane = new FakeElement('section', { class: 'output-pane' }, [], 'C# output');
+  const workbenchShell = new FakeElement('div', { class: 'monaco-workbench' }, [
+    new FakeElement('div', { id: 'workbench.parts.activitybar' }, [], 'Accounts'),
+    new FakeElement('div', { id: 'workbench.parts.editor' }, [], 'No folder opened'),
+    outputPane,
+  ]);
+  const document = new FakeDocument(new FakeElement('body', {}, [workbenchShell]));
+  const observers: Array<{
+    callback: (mutations: Array<{ type: string; target: FakeElement }>) => void;
+    targets: FakeElement[];
+  }> = [];
+  const context: Record<string, unknown> = {
+    document,
+    window: {
+      innerWidth: 1200,
+      innerHeight: 800,
+      devicePixelRatio: 1,
+      scrollY: 0,
+      getComputedStyle: getComputedStyleForFakeElement,
+    },
+    globalThis: undefined,
+    HTMLElement: FakeElement,
+    HTMLInputElement: FakeInputElement,
+    HTMLButtonElement: FakeElement,
+    MutationObserver: class {
+      readonly targets: FakeElement[] = [];
+
+      observe(target: FakeElement): void {
+        this.targets.push(target);
+      }
+
+      disconnect(): void {}
+
+      constructor(readonly callback: (mutations: Array<{ type: string; target: FakeElement }>) => void) {
+        observers.push(this);
+      }
+    },
+    getComputedStyle: getComputedStyleForFakeElement,
+  };
+  context.globalThis = context;
+
+  vm.runInNewContext(installScreenshotInvalidationLatchExpression, context);
+  runProbe(document, { kind: 'workbenchShell', label: 'empty-window-startup' }, context);
+  const state = context.__logicAppsScreenshotInvalidation as { structuralRevision: number };
+  const structuralRevision = state.structuralRevision;
+  const rootObserver = observers.find((observer) => observer.targets.includes(workbenchShell));
+  assert.ok(rootObserver, 'expected latch to observe the workbench shell root');
+
+  rootObserver.callback([
+    { type: 'childList', target: outputPane },
+    { type: 'attributes', target: workbenchShell },
+  ]);
+
+  assert.ok(state.structuralRevision > structuralRevision, 'mixed output child-list + shell root attributes must invalidate shell capture');
+}
+
 function createLatchContext(
   document: FakeDocument,
   observerCallbacks: Array<
@@ -833,6 +892,7 @@ function testWorkbenchShellStabilityAllowsUnrelatedWorkbenchChurn(): void {
     counts: { loaders: 0, documentLoaders: 0, buttons: 1 },
     generation: 1,
     revision: 1,
+    structuralRevision: 1,
     scrollY: 0,
     expectationKind: 'workbenchShell',
   };
@@ -842,8 +902,34 @@ function testWorkbenchShellStabilityAllowsUnrelatedWorkbenchChurn(): void {
       ...base,
       counts: { loaders: 0, documentLoaders: 0, buttons: 2 },
       revision: 5,
+      structuralRevision: 1,
     }),
     true
+  );
+}
+
+function testWorkbenchShellStabilityRejectsStructuralShellChurn(): void {
+  const base: ScreenshotReadinessSnapshot = {
+    ready: true,
+    reasonCodes: ['workbench-shell-visible'],
+    blockers: [],
+    anchors: [{ name: 'workbenchShell', visible: true, bounds: { left: 0, top: 0, width: 100, height: 100 } }],
+    viewport: { width: 100, height: 100, deviceScaleFactor: 1 },
+    counts: { workbenchShellParts: 3, documentLoaders: 0 },
+    generation: 1,
+    revision: 1,
+    structuralRevision: 1,
+    scrollY: 0,
+    expectationKind: 'workbenchShell',
+  };
+
+  assert.strictEqual(
+    isStableScreenshotSample(base, {
+      ...base,
+      revision: 5,
+      structuralRevision: 2,
+    }),
+    false
   );
 }
 

@@ -52,6 +52,7 @@ export interface ScreenshotReadinessSnapshot {
   counts: Record<string, number>;
   generation: number;
   revision: number;
+  structuralRevision?: number;
   scrollY: number;
   expectationKind: ScreenshotExpectation['kind'];
 }
@@ -104,6 +105,7 @@ export const installScreenshotInvalidationLatchExpression = `
   }
   const state = {
     revision: 0,
+    structuralRevision: 0,
     disposed: false,
     root: undefined,
     rootSignature: undefined,
@@ -111,11 +113,14 @@ export const installScreenshotInvalidationLatchExpression = `
     ancestorChain: [],
     animationFrame: undefined,
     reasons: [],
-    bump(reason) {
+    bump(reason, structural) {
       if (this.disposed) {
         return;
       }
       this.revision += 1;
+      if (structural) {
+        this.structuralRevision += 1;
+      }
       if (this.reasons.length < 12) {
         this.reasons.push(String(reason || 'unknown').replace(/[^a-z0-9_-]+/gi, '-').slice(0, 80));
       }
@@ -229,12 +234,12 @@ export const installScreenshotInvalidationLatchExpression = `
           const nextSignature = this.readRootSignature(this.root);
           if (this.rootSignature && nextSignature !== this.rootSignature) {
             this.rootSignature = nextSignature;
-            this.bump('root-geometry');
+            this.bump('root-geometry', true);
           }
           const nextOccluder = this.readOccluder(this.root);
           if (this.rootOccluder && nextOccluder !== this.rootOccluder) {
             this.rootOccluder = nextOccluder;
-            this.bump('root-occlusion');
+            this.bump('root-occlusion', true);
           }
         }
         this.animationFrame = requestAnimationFrame(tick);
@@ -252,12 +257,14 @@ export const installScreenshotInvalidationLatchExpression = `
     if (!mutations.some((mutation) => state.isInScope(mutation.target))) {
       return;
     }
+    const touchesStructuralShell = (mutation) => mutation.target === state.root || state.ancestorChain.includes(mutation.target);
+    const structurallyRelevant = mutations.some(touchesStructuralShell);
     if (mutations.some((mutation) => mutation.type === 'childList')) {
-      state.bump('child-list');
+      state.bump('child-list', structurallyRelevant);
       return;
     }
     if (mutations.some((mutation) => mutation.type === 'attributes')) {
-      state.bump('attributes');
+      state.bump('attributes', structurallyRelevant);
       return;
     }
     state.bump('character-data');
@@ -281,10 +288,10 @@ export const installScreenshotInvalidationLatchExpression = `
       return;
     }
     if (mutations.some((mutation) => mutation.type === 'childList')) {
-      state.bump('root-ancestor-child-list');
+      state.bump('root-ancestor-child-list', true);
       return;
     }
-    state.bump('root-ancestor-attributes');
+    state.bump('root-ancestor-attributes', true);
   });
   globalThis.addEventListener?.('scroll', state.onScroll, true);
   globalThis.addEventListener?.('resize', state.onResize, true);
@@ -310,6 +317,7 @@ export const screenshotReadinessDomScript = `
   const generation = __GENERATION__;
   const invalidation = globalThis.__logicAppsScreenshotInvalidation;
   const revision = invalidation?.revision ?? __REVISION__;
+  const structuralRevision = invalidation?.structuralRevision ?? revision;
   const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim();
   const normalizedIncludes = (source, expected) => normalize(source).toLowerCase().includes(normalize(expected).toLowerCase());
   const hasVisibleStyle = (element) => {
@@ -933,6 +941,7 @@ export const screenshotReadinessDomScript = `
     counts,
     generation,
     revision,
+    structuralRevision,
     scrollY: Math.round(window.scrollY || document.documentElement?.scrollTop || 0),
     expectationKind: expectation.kind,
     invalidationReasons: invalidation?.reasons || [],
@@ -954,7 +963,10 @@ export function isStableScreenshotSample(previous: ScreenshotReadinessSnapshot, 
     previous.expectationKind === 'workbenchShell'
       ? previous.counts.workbenchShellParts === current.counts.workbenchShellParts
       : JSON.stringify(previous.counts) === JSON.stringify(current.counts);
-  const revisionIsStable = previous.expectationKind === 'workbenchShell' || previous.revision === current.revision;
+  const revisionIsStable =
+    previous.expectationKind === 'workbenchShell'
+      ? (previous.structuralRevision ?? previous.revision) === (current.structuralRevision ?? current.revision)
+      : previous.revision === current.revision;
 
   return (
     previous.ready &&

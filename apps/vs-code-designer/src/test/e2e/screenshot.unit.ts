@@ -11,6 +11,7 @@ async function main(): Promise<void> {
 
   await testStableCaptureAccepted(captureCdpScreenshot, screenshotDir);
   await testTransientInvalidationRetries(captureCdpScreenshot, screenshotDir);
+  await testWorkbenchShellStructuralInvalidationRetries(captureCdpScreenshot, screenshotDir);
   await testCaptureRpcFailureRetries(captureCdpScreenshot, screenshotDir);
   await testPostcheckFailureRejectsEvidence(captureCdpScreenshot);
   await testEvidenceMissingDataThrows(captureCdpScreenshot);
@@ -68,6 +69,27 @@ async function testTransientInvalidationRetries(
 
   const screenshotPath = await captureCdpScreenshot(cdp, 'transient-retry', {
     expectation: { kind: 'designerCanvas', label: 'transient-retry' },
+    timeoutMs: 5000,
+  });
+
+  assert.strictEqual(path.dirname(screenshotPath ?? ''), screenshotDir);
+  assert.strictEqual(cdp.captureAttempts, 2);
+}
+
+async function testWorkbenchShellStructuralInvalidationRetries(
+  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot,
+  screenshotDir: string
+): Promise<void> {
+  const cdp = new FakeCaptureCdp([
+    snapshot({ revision: 0, structuralRevision: 0 }),
+    snapshot({ revision: 0, structuralRevision: 0 }),
+    snapshot({ revision: 2, structuralRevision: 1 }),
+    snapshot({ revision: 2, structuralRevision: 1 }),
+    snapshot({ revision: 2, structuralRevision: 1 }),
+  ]);
+
+  const screenshotPath = await captureCdpScreenshot(cdp, 'workbench-structural-retry', {
+    expectation: { kind: 'workbenchShell', label: 'workbench-structural-retry' },
     timeoutMs: 5000,
   });
 
@@ -757,6 +779,7 @@ class FakeCaptureCdp {
 
 function snapshot(options: {
   revision: number;
+  structuralRevision?: number;
   expectationKind?: ScreenshotReadinessSnapshot['expectationKind'];
 }): ScreenshotReadinessSnapshot {
   return {
@@ -768,6 +791,7 @@ function snapshot(options: {
     counts: { loaders: 0 },
     generation: 0,
     revision: options.revision,
+    structuralRevision: options.structuralRevision ?? options.revision,
     scrollY: 0,
     expectationKind: options.expectationKind ?? 'workbenchShell',
   };
