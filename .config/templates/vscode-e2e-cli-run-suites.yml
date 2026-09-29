@@ -111,6 +111,14 @@ jobs:
       - checkout: self
         fetchDepth: 0
 
+      - task: UseNode@1
+        displayName: Use trusted Node.js for E2E artifact admission
+        inputs:
+          version: ${{ parameters.nodeVersion }}
+
+      - pwsh: node --version
+        displayName: Print E2E artifact admission Node.js version
+
       - pwsh: |
           $trustedVerifier = Join-Path '$(Agent.TempDirectory)' 'trusted-vscode-e2e-artifact-manifest.js'
           Copy-Item '$(Build.SourcesDirectory)/apps/vs-code-designer/scripts/vscode-e2e-artifact-manifest.js' $trustedVerifier -Force

@@ -323,6 +323,7 @@ function testConsumerAdmissionContract() {
     runSuitesTemplate,
     /displayName: Download current-run E2E artifact[\s\S]*displayName: Verify current-run E2E artifact admission/
   );
+  assertRunSuitesProvisionsTrustedNodeBeforeVerifier(runSuites);
   assert.match(runSuitesTemplate, /\$\(Pipeline\.Workspace\).*e2eBuildArtifactName/);
   assert.doesNotMatch(runSuitesTemplate, /producerPipelineAlias/);
   assert.match(runSuitesTemplate, /artifactName = \[string\]\$manifest\.artifact\.name/);
@@ -639,6 +640,28 @@ function assertConsumerJobsAreValidationJobs(consumer, runSuites) {
   assert.deepStrictEqual(
     suiteJob.templateContext.outputs.map((output) => output.output),
     ['pipelineArtifact', 'pipelineArtifact', 'pipelineArtifact', 'pipelineArtifact']
+  );
+}
+
+function assertRunSuitesProvisionsTrustedNodeBeforeVerifier(runSuites) {
+  const steps = runSuites.jobs[0].steps;
+  const checkoutIndex = steps.findIndex((step) => step.checkout === 'self');
+  const nodeToolIndex = steps.findIndex((step) => step.task === 'UseNode@1' && step.inputs?.version === '${{ parameters.nodeVersion }}');
+  const nodeVersionIndex = steps.findIndex(
+    (step) => step.pwsh === 'node --version' && step.displayName === 'Print E2E artifact admission Node.js version'
+  );
+  const captureVerifierIndex = steps.findIndex((step) => step.displayName === 'Capture trusted artifact verifier before source checkout');
+  const verifyArtifactIndex = steps.findIndex((step) => step.displayName === 'Verify current-run E2E artifact admission');
+  const fullSetupIndex = steps.findIndex((step) => step.template === '/.azure-pipelines/templates/vscode-e2e-cli-setup.yml@self');
+
+  assert.ok(checkoutIndex >= 0, 'suite job must start from repository checkout');
+  assert.ok(nodeToolIndex > checkoutIndex, 'NodeTool must run after checkout');
+  assert.ok(nodeVersionIndex > nodeToolIndex, 'node --version evidence must run after NodeTool');
+  assert.ok(captureVerifierIndex > nodeVersionIndex, 'trusted verifier capture must happen after trusted Node is available');
+  assert.ok(verifyArtifactIndex > captureVerifierIndex, 'artifact verification must happen after verifier capture');
+  assert.ok(
+    fullSetupIndex > verifyArtifactIndex,
+    'full pnpm/.NET setup and restored-code execution must remain after artifact admission verification'
   );
 }
 
