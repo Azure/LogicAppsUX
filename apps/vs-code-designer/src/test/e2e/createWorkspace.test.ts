@@ -263,6 +263,7 @@ suite('Create Workspace Experience Tests', () => {
         } catch (error) {
           lastError = error;
           if (attempt === 3 || !isRetryableBlankCreateWorkspaceError(error)) {
+            await captureCreateWorkspaceFailureBeforeCleanup(cdp, `initial-validation-attempt-${attempt}`);
             throw error;
           }
           console.warn('[create-workspace-smoke] Retrying initial validation after blank form context');
@@ -299,6 +300,7 @@ suite('Create Workspace Experience Tests', () => {
           } catch (error) {
             lastError = error;
             if (attempt === 3 || !isRetryableBlankCreateWorkspaceError(error)) {
+              await captureCreateWorkspaceFailureBeforeCleanup(cdp, `${creationCase.label}-review-back-attempt-${attempt}`);
               throw error;
             }
             console.warn(`[create-workspace-smoke] Retrying ${creationCase.label} review/back after blank form context`);
@@ -669,6 +671,7 @@ async function createWorkspaceThroughWebview(creationCase: WorkspaceCreationCase
       return;
     } catch (error) {
       if (submitted || attempt === 3) {
+        await captureCreateWorkspaceFailureBeforeCleanup(cdp, `${creationCase.label}-creation-attempt-${attempt}`);
         throw error;
       }
 
@@ -681,6 +684,26 @@ async function createWorkspaceThroughWebview(creationCase: WorkspaceCreationCase
   }
 
   throw lastError;
+}
+
+async function captureCreateWorkspaceFailureBeforeCleanup(cdp: CdpEvaluator | undefined, label: string): Promise<void> {
+  try {
+    await captureDiagnosticScreenshot(`create-workspace-before-cleanup-${sanitizeDiagnosticName(label)}`, {
+      reason: 'create-workspace-before-cleanup',
+      timeoutMs: 2000,
+    });
+  } catch (error) {
+    console.warn(`[create-workspace-smoke] Failed to capture pre-cleanup failure screenshot: ${String(error)}`);
+  }
+}
+
+function sanitizeDiagnosticName(value: string): string {
+  return (
+    value
+      .replace(/[^a-z0-9_-]+/gi, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 80) || 'failure'
+  );
 }
 
 function isRetryableBlankCreateWorkspaceError(error: unknown): boolean {
@@ -826,7 +849,8 @@ async function captureWorkspaceCreationFormScreenshots(
 ): Promise<void> {
   const fieldContracts = getCreateWorkspaceFieldContracts(creationCase, parentPath);
   for (const position of ['top', 'middle', 'bottom'] as const) {
-    await scrollCreateWorkspaceForm(cdp, contextId, position);
+    const visibleFields = getVisibleCreateWorkspaceFieldContracts(fieldContracts, position);
+    await scrollCreateWorkspaceForm(cdp, contextId, position, visibleFields);
     await captureCreateWorkspaceScreenshot(
       cdp,
       contextId,
@@ -834,9 +858,8 @@ async function captureWorkspaceCreationFormScreenshots(
       'scrolled',
       false,
       {
-        fields: getVisibleCreateWorkspaceFieldContracts(fieldContracts, position),
+        fields: visibleFields,
         nextButton: 'enabled',
-        scrollPosition: position,
       }
     );
   }
@@ -848,11 +871,11 @@ function getVisibleCreateWorkspaceFieldContracts(
 ): Array<{ labels: string[]; value?: string; validationMessage?: string }> {
   if (fields.length > 4) {
     if (position === 'top') {
-      return fields.slice(0, 2);
+      return fields.slice(0, 1);
     }
 
     if (position === 'middle') {
-      return fields.slice(4, Math.min(6, fields.length));
+      return fields.slice(4, 5);
     }
 
     // WorkflowTypeStep follows the custom-code/rules fields in the rendered form.
@@ -860,14 +883,14 @@ function getVisibleCreateWorkspaceFieldContracts(
   }
 
   if (position === 'top') {
-    return fields.slice(0, Math.min(2, fields.length));
+    return fields.slice(0, 1);
   }
 
   if (position === 'middle') {
-    return fields.slice(2, Math.min(4, fields.length));
+    return fields.slice(Math.min(2, fields.length - 1), Math.min(3, fields.length));
   }
 
-  return fields.length > 4 ? fields.slice(4) : fields.slice(Math.max(0, fields.length - 1));
+  return fields.slice(Math.max(0, fields.length - 1));
 }
 
 function getCreateWorkspaceFieldContracts(
@@ -901,19 +924,85 @@ function getCreateWorkspaceFieldContracts(
   return fields;
 }
 
-async function scrollCreateWorkspaceForm(cdp: CdpEvaluator, contextId: number, position: string): Promise<void> {
+async function scrollCreateWorkspaceForm(
+  cdp: CdpEvaluator,
+  contextId: number,
+  position: string,
+  fields: Array<{ labels: string[] }> = []
+): Promise<void> {
   await cdp.evaluate(
     contextId,
     `(() => {
       const position = ${JSON.stringify(position)};
+      const fields = ${JSON.stringify(fields.map((field) => field.labels))};
+      const normalize = (value) => String(value || '').replace(/\\s+/g, ' ').trim().toLowerCase();
+      const hasVisibleStyle = (element) => {
+        if (!(element instanceof HTMLElement)) {
+          return false;
+        }
+        const style = window.getComputedStyle(element);
+        return style.visibility !== 'hidden' && style.display !== 'none' && Number(style.opacity || '1') > 0;
+      };
+      const intersectsViewport = (element) => {
+        const rects = Array.from(element.getClientRects());
+        return rects.some((rect) => rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.right > 0 && rect.top < window.innerHeight && rect.left < window.innerWidth);
+      };
+      const isVisible = (element) =>
+        element instanceof HTMLElement &&
+        hasVisibleStyle(element) &&
+        (element.offsetWidth || element.offsetHeight || element.getClientRects().length) &&
+        intersectsViewport(element);
       const scrollableElements = Array.from(document.querySelectorAll('*'))
-        .filter((element) => element instanceof HTMLElement && element.scrollHeight > element.clientHeight + 20);
-      const scrollable = scrollableElements
-        .sort((a, b) => (b.scrollHeight - b.clientHeight) - (a.scrollHeight - a.clientHeight))[0] || document.scrollingElement;
+        .filter((element) => element instanceof HTMLElement && element.scrollHeight > element.clientHeight + 20 && isVisible(element));
+      const controls = Array.from(document.querySelectorAll('input, textarea, [contenteditable="true"], [role="textbox"], [role="combobox"]'));
+      const fieldElements = fields
+        .map((labels) => {
+          const normalizedLabels = labels.map(normalize);
+          return controls.find((control) => {
+            const labelledBy = (control.getAttribute('aria-labelledby') || '')
+              .split(/\\s+/)
+              .map((id) => document.getElementById(id)?.textContent || '')
+              .join(' ');
+            const container = control.closest?.('.ms-TextField, .fui-Field, [class*="field"], [class*="Field"], [role="group"]') || control.parentElement;
+            const identity = [
+              control.getAttribute('aria-label'),
+              control.getAttribute('placeholder'),
+              control.getAttribute('title'),
+              labelledBy,
+              container?.textContent,
+            ].map(normalize).join(' ');
+            return normalizedLabels.some((label) => identity.includes(label));
+          });
+        })
+        .filter((element) => element instanceof HTMLElement);
+      const firstField = fieldElements[0];
+      const nearestScrollable = (element) => {
+        let current = element?.parentElement;
+        while (current instanceof HTMLElement) {
+          if (current.scrollHeight > current.clientHeight + 20) {
+            return current;
+          }
+          current = current.parentElement;
+        }
+        return undefined;
+      };
+      const scrollable =
+        nearestScrollable(firstField) ||
+        scrollableElements.sort((a, b) => (b.scrollHeight - b.clientHeight) - (a.scrollHeight - a.clientHeight))[0] ||
+        document.scrollingElement;
       if (!scrollable) {
         return;
       }
       const maxScrollTop = scrollable.scrollHeight - scrollable.clientHeight;
+      if (firstField instanceof HTMLElement) {
+        const scrollRect = scrollable.getBoundingClientRect();
+        const fieldRect = firstField.getBoundingClientRect();
+        const currentTop = scrollable === document.scrollingElement ? window.scrollY : scrollable.scrollTop;
+        const preferredOffset = Math.max(24, Math.round(scrollRect.height * 0.28));
+        const anchoredTop = currentTop + fieldRect.top - scrollRect.top - preferredOffset;
+        scrollable.scrollTo({ top: Math.max(0, Math.min(maxScrollTop, Math.round(anchoredTop))), behavior: 'instant' });
+        return;
+      }
       const top = position === 'top' ? 0 : position === 'middle' ? Math.floor(maxScrollTop / 2) : maxScrollTop;
       scrollable.scrollTo({ top, behavior: 'instant' });
     })()`

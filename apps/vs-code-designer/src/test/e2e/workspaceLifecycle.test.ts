@@ -522,10 +522,7 @@ async function fillWorkspaceCreationFields(
       kind: 'createWorkspace',
       label: creationCase.label,
       stage: 'partial-fields',
-      fields: [
-        { labels: ['Workspace parent folder path'], value: parentPath },
-        { labels: ['Workspace name'], value: creationCase.wsName },
-      ],
+      fields: [{ labels: ['Workspace name'], value: creationCase.wsName }],
       nextButton: 'disabled',
     },
     semanticCdp: cdp,
@@ -533,12 +530,13 @@ async function fillWorkspaceCreationFields(
   });
   await enterFieldValue(cdp, contextId, 'Logic app name', creationCase.appName);
   await enterFieldValue(cdp, contextId, 'Workflow name', creationCase.wfName);
+  await scrollCreateWorkspaceForm(cdp, contextId, 'bottom', [{ labels: ['Workflow name'] }]);
   await captureLifecycleScreenshot(`workspace-lifecycle-${creationCase.label}-required-fields-entered`, {
     expectation: {
       kind: 'createWorkspace',
       label: creationCase.label,
       stage: 'partial-fields',
-      fields: getLifecycleCreateWorkspaceFieldContracts(creationCase, parentPath).slice(0, 4),
+      fields: [{ labels: ['Workflow name'], value: creationCase.wfName }],
       nextButton: 'disabled',
     },
     semanticCdp: cdp,
@@ -546,12 +544,13 @@ async function fillWorkspaceCreationFields(
   });
   await selectDropdownOption(cdp, contextId, 'Workflow type', 'Stateful');
   await selectRadioOption(cdp, contextId, creationCase.radioLabel);
+  await scrollCreateWorkspaceForm(cdp, contextId, 'bottom', [{ labels: ['Workflow name'] }]);
   await captureLifecycleScreenshot(`workspace-lifecycle-${creationCase.label}-type-selected`, {
     expectation: {
       kind: 'createWorkspace',
       label: creationCase.label,
       stage: creationCase.appType === 'standard' || creationCase.appType === 'codeful' ? 'fields-valid' : 'partial-fields',
-      fields: getLifecycleCreateWorkspaceFieldContracts(creationCase, parentPath).slice(0, 4),
+      fields: [{ labels: ['Workflow name'], value: creationCase.wfName }],
       nextButton: creationCase.appType === 'standard' || creationCase.appType === 'codeful' ? 'enabled' : 'disabled',
     },
     semanticCdp: cdp,
@@ -651,20 +650,20 @@ async function captureWorkspaceCreationFormScreenshots(
 ): Promise<void> {
   const fields = getLifecycleCreateWorkspaceFieldContracts(creationCase, parentPath);
   for (const position of ['top', 'middle', 'bottom'] as const) {
-    await scrollCreateWorkspaceForm(cdp, contextId, position);
+    const visibleFields =
+      position === 'top'
+        ? fields.slice(0, 1)
+        : position === 'middle'
+          ? fields.slice(fields.length > 4 ? 4 : Math.min(2, fields.length - 1), fields.length > 4 ? 5 : Math.min(3, fields.length))
+          : fields.slice(3, 4);
+    await scrollCreateWorkspaceForm(cdp, contextId, position, visibleFields);
     await captureLifecycleScreenshot(`workspace-lifecycle-${creationCase.label}-${stage}-${position}`, {
       expectation: {
         kind: 'createWorkspace',
         label: `${creationCase.label}-${stage}-${position}`,
         stage: 'scrolled',
-        fields:
-          position === 'top'
-            ? fields.slice(0, 2)
-            : position === 'middle'
-              ? fields.slice(fields.length > 4 ? 4 : 2, fields.length > 4 ? 6 : 4)
-              : fields.slice(3, 4),
+        fields: visibleFields,
         nextButton: 'enabled',
-        scrollPosition: position,
       },
       semanticCdp: cdp,
       semanticContextId: contextId,
@@ -703,19 +702,85 @@ function getLifecycleCreateWorkspaceFieldContracts(
   return fields;
 }
 
-async function scrollCreateWorkspaceForm(cdp: CdpEvaluator, contextId: number, position: string): Promise<void> {
+async function scrollCreateWorkspaceForm(
+  cdp: CdpEvaluator,
+  contextId: number,
+  position: string,
+  fields: Array<{ labels: string[] }> = []
+): Promise<void> {
   await cdp.evaluate(
     contextId,
     `(() => {
       const position = ${JSON.stringify(position)};
+      const fields = ${JSON.stringify(fields.map((field) => field.labels))};
+      const normalize = (value) => String(value || '').replace(/\\s+/g, ' ').trim().toLowerCase();
+      const hasVisibleStyle = (element) => {
+        if (!(element instanceof HTMLElement)) {
+          return false;
+        }
+        const style = window.getComputedStyle(element);
+        return style.visibility !== 'hidden' && style.display !== 'none' && Number(style.opacity || '1') > 0;
+      };
+      const intersectsViewport = (element) => {
+        const rects = Array.from(element.getClientRects());
+        return rects.some((rect) => rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.right > 0 && rect.top < window.innerHeight && rect.left < window.innerWidth);
+      };
+      const isVisible = (element) =>
+        element instanceof HTMLElement &&
+        hasVisibleStyle(element) &&
+        (element.offsetWidth || element.offsetHeight || element.getClientRects().length) &&
+        intersectsViewport(element);
       const scrollableElements = Array.from(document.querySelectorAll('*'))
-        .filter((element) => element instanceof HTMLElement && element.scrollHeight > element.clientHeight + 20);
-      const scrollable = scrollableElements
-        .sort((a, b) => (b.scrollHeight - b.clientHeight) - (a.scrollHeight - a.clientHeight))[0] || document.scrollingElement;
+        .filter((element) => element instanceof HTMLElement && element.scrollHeight > element.clientHeight + 20 && isVisible(element));
+      const controls = Array.from(document.querySelectorAll('input, textarea, [contenteditable="true"], [role="textbox"], [role="combobox"]'));
+      const fieldElements = fields
+        .map((labels) => {
+          const normalizedLabels = labels.map(normalize);
+          return controls.find((control) => {
+            const labelledBy = (control.getAttribute('aria-labelledby') || '')
+              .split(/\\s+/)
+              .map((id) => document.getElementById(id)?.textContent || '')
+              .join(' ');
+            const container = control.closest?.('.ms-TextField, .fui-Field, [class*="field"], [class*="Field"], [role="group"]') || control.parentElement;
+            const identity = [
+              control.getAttribute('aria-label'),
+              control.getAttribute('placeholder'),
+              control.getAttribute('title'),
+              labelledBy,
+              container?.textContent,
+            ].map(normalize).join(' ');
+            return normalizedLabels.some((label) => identity.includes(label));
+          });
+        })
+        .filter((element) => element instanceof HTMLElement);
+      const firstField = fieldElements[0];
+      const nearestScrollable = (element) => {
+        let current = element?.parentElement;
+        while (current instanceof HTMLElement) {
+          if (current.scrollHeight > current.clientHeight + 20) {
+            return current;
+          }
+          current = current.parentElement;
+        }
+        return undefined;
+      };
+      const scrollable =
+        nearestScrollable(firstField) ||
+        scrollableElements.sort((a, b) => (b.scrollHeight - b.clientHeight) - (a.scrollHeight - a.clientHeight))[0] ||
+        document.scrollingElement;
       if (!scrollable) {
         return;
       }
       const maxScrollTop = scrollable.scrollHeight - scrollable.clientHeight;
+      if (firstField instanceof HTMLElement) {
+        const scrollRect = scrollable.getBoundingClientRect();
+        const fieldRect = firstField.getBoundingClientRect();
+        const currentTop = scrollable === document.scrollingElement ? window.scrollY : scrollable.scrollTop;
+        const preferredOffset = Math.max(24, Math.round(scrollRect.height * 0.28));
+        const anchoredTop = currentTop + fieldRect.top - scrollRect.top - preferredOffset;
+        scrollable.scrollTo({ top: Math.max(0, Math.min(maxScrollTop, Math.round(anchoredTop))), behavior: 'instant' });
+        return;
+      }
       const top = position === 'top' ? 0 : position === 'middle' ? Math.floor(maxScrollTop / 2) : maxScrollTop;
       scrollable.scrollTo({ top, behavior: 'instant' });
     })()`

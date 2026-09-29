@@ -14,6 +14,7 @@ async function main(): Promise<void> {
   await testCaptureRpcFailureRetries(captureCdpScreenshot, screenshotDir);
   await testPostcheckFailureRejectsEvidence(captureCdpScreenshot);
   await testEvidenceMissingDataThrows(captureCdpScreenshot);
+  await testFrameTreeFailureDoesNotMaskOriginalReadinessFailure(captureCdpScreenshot);
   await testAbsoluteDeadlineRejectsDelayedStability(captureCdpScreenshot);
   await testDiagnosticStorageFailureDoesNotThrow(captureCdpScreenshot, setScreenshotFileSystemForTests);
   await testDiagnosticDoesNotRequireSemanticBindingOrLatch(captureCdpScreenshot);
@@ -124,6 +125,26 @@ async function testEvidenceMissingDataThrows(captureCdpScreenshot: typeof import
       timeoutMs: 1000,
     }),
     /no data/
+  );
+}
+
+async function testFrameTreeFailureDoesNotMaskOriginalReadinessFailure(
+  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot
+): Promise<void> {
+  const cdp = new FakeCaptureCdp([], { failFrameTree: true });
+
+  await assert.rejects(
+    captureCdpScreenshot(cdp, 'frame-tree-failure', {
+      expectation: { kind: 'workbenchShell', label: 'frame-tree-failure' },
+      classification: 'evidence',
+      timeoutMs: 25,
+    }),
+    (error: unknown) => {
+      assert.ok(error instanceof Error);
+      assert.ok(!/Cannot read properties|undefined|null|TypeError/i.test(error.message), error.message);
+      assert.ok(/Screenshot readiness failed|deadline/i.test(error.message), error.message);
+      return true;
+    }
   );
 }
 
@@ -602,6 +623,7 @@ class FakeCaptureCdp {
       failLatchEvaluation?: boolean;
       targetUrl?: string;
       targetTitle?: string;
+      failFrameTree?: boolean;
     } = {}
   ) {
     this.targetUrl = options.targetUrl;
@@ -610,6 +632,9 @@ class FakeCaptureCdp {
 
   async send(method: string, params?: Record<string, unknown>): Promise<unknown> {
     if (method === 'Page.getFrameTree') {
+      if (this.options.failFrameTree) {
+        throw new Error('synthetic Page.getFrameTree timeout');
+      }
       const mainFrameId = this.options.mainFrameId ?? (this.targetUrl ? 'semantic-frame' : 'workbench-frame');
       const childFrameIds = this.targetUrl
         ? (this.options.semanticChildFrameIds ?? [])

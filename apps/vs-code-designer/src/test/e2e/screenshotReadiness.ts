@@ -376,12 +376,16 @@ export const screenshotReadinessDomScript = `
   const workbenchParts = visibleElements(
     '[id^="workbench.parts."], .activitybar, .sidebar, .editor, .editor-group-container, .statusbar, .statusbar-item'
   );
+  const workbenchShellParts = visibleElements(
+    '.monaco-workbench, .activitybar, .sidebar, .editor, .editor-group-container, .part.editor, [id="workbench.parts.editor"], [id="workbench.parts.activitybar"], [id="workbench.parts.sidebar"]'
+  );
   const anchors = [];
   const addAnchor = (name, element) => {
     anchors.push({ name, visible: !!element && isVisible(element), bounds: bounds(element) });
   };
   addAnchor('body', document.body);
   addAnchor('activeTab', activeTab);
+  addAnchor('workbenchShell', workbenchShell);
 
   const canvasNodes = visibleElements('[data-automation-id^="msla-node"], [id^="msla-node"], [data-testid*="node"], .msla-card, .react-flow__node');
   const designerCanvas = visibleElements('.react-flow, .msla-designer-canvas, [data-automation-id="msla-designer-canvas"]').at(-1);
@@ -422,6 +426,7 @@ export const screenshotReadinessDomScript = `
     canvasNodes: canvasNodes.length,
     panels: panels.length,
     selectedLayouts: selectedLayouts.length,
+    workbenchShellParts: workbenchShellParts.length,
     buttons: visibleElements('button').length,
     rows: visibleElements('[role="row"], .ms-DetailsRow, tr').length,
   };
@@ -441,12 +446,67 @@ export const screenshotReadinessDomScript = `
     const nodeId = slug(panel?.nodeId || '');
     return title === expectedText || nodeId === expectedSlug;
   };
+  const intersectRects = (a, b) => {
+    const left = Math.max(a.left, b.left);
+    const top = Math.max(a.top, b.top);
+    const right = Math.min(a.right, b.right);
+    const bottom = Math.min(a.bottom, b.bottom);
+    return { left, top, right, bottom, width: Math.max(0, right - left), height: Math.max(0, bottom - top) };
+  };
+  const getClippedRect = (element) => {
+    if (!(element instanceof HTMLElement)) {
+      return undefined;
+    }
+    const rawRect = element.getBoundingClientRect();
+    let clipped = intersectRects(rawRect, {
+      left: 0,
+      top: 0,
+      right: window.innerWidth,
+      bottom: window.innerHeight,
+    });
+    let current = element.parentElement;
+    while (current instanceof HTMLElement && current !== document.body && current !== document.documentElement) {
+      const style = getComputedStyle(current);
+      const clips =
+        current.scrollHeight > current.clientHeight + 1 ||
+        current.scrollWidth > current.clientWidth + 1 ||
+        [style.overflow, style.overflowX, style.overflowY].some((value) => /auto|scroll|hidden|clip/i.test(value || ''));
+      if (clips) {
+        clipped = intersectRects(clipped, current.getBoundingClientRect());
+      }
+      current = current.parentElement;
+    }
+    return clipped.width > 0 && clipped.height > 0 ? clipped : undefined;
+  };
+  const pointHitsElement = (element, x, y) => {
+    const hit = document.elementFromPoint?.(x, y);
+    return !hit || hit === element || element.contains?.(hit) || hit.contains?.(element);
+  };
+  const isReadableFieldControl = (control) => {
+    if (!isVisible(control)) {
+      return false;
+    }
+    const rect = control.getBoundingClientRect();
+    const clipped = getClippedRect(control);
+    if (!clipped) {
+      return false;
+    }
+    const minVisibleHeight = Math.min(rect.height, Math.max(18, rect.height * 0.8));
+    const minVisibleWidth = Math.min(rect.width, Math.max(32, rect.width * 0.85));
+    if (clipped.height < minVisibleHeight || clipped.width < minVisibleWidth) {
+      return false;
+    }
+    const sampleX = Math.min(Math.max(rect.left + rect.width / 2, clipped.left + 1), clipped.right - 1);
+    const sampleYs = [0.3, 0.5, 0.7].map((ratio) => Math.min(Math.max(rect.top + rect.height * ratio, clipped.top + 1), clipped.bottom - 1));
+    return sampleYs.every((sampleY) => pointHitsElement(control, sampleX, sampleY));
+  };
   const findFieldState = (labels, root, expectedValue) => {
     const normalizedLabels = labels.map((label) => normalize(label).toLowerCase());
     const controls = Array.from(
       (root || document).querySelectorAll('input, textarea, [contenteditable="true"], [role="textbox"], [role="combobox"]')
     ).filter(isVisible);
     const candidates = [];
+    let clippedMatch = false;
     for (const control of controls) {
       const labelledBy = (control.getAttribute('aria-labelledby') || '')
         .split(/\\s+/)
@@ -472,6 +532,10 @@ export const screenshotReadinessDomScript = `
       if (!normalizedLabels.some((label) => identity.includes(label))) {
         continue;
       }
+      if (!isReadableFieldControl(control)) {
+        clippedMatch = true;
+        continue;
+      }
       const value = normalize(typeof control.value === 'string' ? control.value : control.getAttribute('value') || control.textContent || '');
       const validationText = normalize(
         [
@@ -492,12 +556,12 @@ export const screenshotReadinessDomScript = `
         return exactValue;
       }
     }
-    return candidates[0] || { found: false, value: '', validationText: '', text: '' };
+    return candidates[0] || { found: false, clipped: clippedMatch, value: '', validationText: '', text: '' };
   };
   const fieldMatches = (field, root) => {
     const state = findFieldState(field.labels || [], root, field.value);
     if (!state.found) {
-      return { ok: false, reason: 'field-missing' };
+      return { ok: false, reason: state.clipped ? 'field-clipped' : 'field-missing' };
     }
     if (field.value !== undefined && state.value !== normalize(field.value)) {
       return { ok: false, reason: 'field-value-mismatch' };
@@ -853,7 +917,7 @@ export const screenshotReadinessDomScript = `
     default:
       reasonCodes.push('unknown-expectation');
   }
-  if (requireNoLoader && loaders.length > 0 && expectation.kind !== 'diagnostic') {
+  if (requireNoLoader && loaders.length > 0 && expectation.kind !== 'diagnostic' && expectation.kind !== 'workbenchShell') {
     ready = false;
   }
   return {
@@ -888,7 +952,7 @@ export function buildScreenshotReadinessExpression(expectation: ScreenshotExpect
 export function isStableScreenshotSample(previous: ScreenshotReadinessSnapshot, current: ScreenshotReadinessSnapshot): boolean {
   const countsAreStable =
     previous.expectationKind === 'workbenchShell'
-      ? previous.counts.loaders === current.counts.loaders && previous.counts.documentLoaders === current.counts.documentLoaders
+      ? previous.counts.workbenchShellParts === current.counts.workbenchShellParts
       : JSON.stringify(previous.counts) === JSON.stringify(current.counts);
   const revisionIsStable = previous.expectationKind === 'workbenchShell' || previous.revision === current.revision;
 

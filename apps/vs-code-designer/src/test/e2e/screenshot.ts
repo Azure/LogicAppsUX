@@ -937,7 +937,8 @@ async function getMainFrameIdFromCdp(cdp: CdpClient, deadline: number): Promise<
 }
 
 function getMainFrameInfo(frameTree: unknown): { id?: string; parentId?: string } {
-  const frame = (frameTree as { result?: { frameTree?: { frame?: { id?: string; parentId?: string } } } }).result?.frameTree?.frame;
+  const frame = (frameTree as { result?: { frameTree?: { frame?: { id?: string; parentId?: string } } } } | undefined)?.result?.frameTree
+    ?.frame;
   return { id: frame?.id, parentId: frame?.parentId };
 }
 
@@ -949,7 +950,7 @@ function getSemanticMetadataFrameId(cdp: CdpClient, contextId: number | undefine
 }
 
 function getFrameIds(frameTree: unknown): string[] {
-  const root = (frameTree as { result?: { frameTree?: unknown } }).result?.frameTree;
+  const root = (frameTree as { result?: { frameTree?: unknown } } | undefined)?.result?.frameTree;
   const ids: string[] = [];
   const visit = (node: unknown) => {
     const value = node as { frame?: { id?: string }; childFrames?: unknown[] };
@@ -1155,8 +1156,8 @@ function disabledMetadata(safeName: string, classification: ScreenshotClassifica
 }
 
 function getMainFrameId(frameTree: unknown): string | undefined {
-  const value = frameTree as { result?: { frameTree?: { frame?: { id?: string } } } };
-  return value.result?.frameTree?.frame?.id;
+  const value = frameTree as { result?: { frameTree?: { frame?: { id?: string } } } } | undefined;
+  return value?.result?.frameTree?.frame?.id;
 }
 
 function writeScreenshotMetadata(metadataPath: string, metadata: ScreenshotReadinessMetadata): void {
