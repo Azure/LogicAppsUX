@@ -247,12 +247,12 @@ jobs:
             schemaVersion = 1
             producerDefinitionId = [string]$manifest.producer.definitionId
             producerRunId = [string]$manifest.producer.runId
+            producerBuildNumber = [string]$manifest.producer.buildNumber
             sourceSHA = [string]$manifest.producer.actualArtifactBuildSha
             checkoutRef = [string]$manifest.producer.checkoutRef
             repositoryName = [string]$manifest.producer.repositoryName
             repositoryUri = [string]$manifest.producer.repositoryUri
             artifactName = [string]$manifest.artifact.name
-            artifactVersion = [string]$manifest.artifact.version
             artifactSHA256 = [string]$manifest.artifact.sha256
             resolvedVSCodeBuild = '$(ResolvedVSCodeVersion)'
           }

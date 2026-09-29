@@ -493,12 +493,12 @@ extends:
                       $identityFields = @(
                         'producerDefinitionId',
                         'producerRunId',
+                        'producerBuildNumber',
                         'sourceSHA',
                         'checkoutRef',
                         'repositoryName',
                         'repositoryUri',
                         'artifactName',
-                        'artifactVersion',
                         'artifactSHA256',
                         'resolvedVSCodeBuild'
                       )
