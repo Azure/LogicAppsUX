@@ -58,7 +58,6 @@ extends:
           }
           Write-Host "##vso[task.setvariable variable=NPM_CONFIG_USERCONFIG]$resolvedNpmrcFile"
           Write-Host "##vso[task.setvariable variable=LA_VSCODE_ADO_PIPELINE]true"
-          Write-Host "##vso[task.setvariable variable=NODE_OPTIONS]--max-old-space-size=6144"
           node scripts/prepare-vscode-ado-build.js
         displayName: Prepare Logic Apps VS Code build metadata
         env:

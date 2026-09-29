@@ -64,7 +64,7 @@ function testAzureToolsWrapperContract() {
   assert.match(workspace, /overrides:/);
   assert.match(workspace, /'@azure\/core-client': 1\.10\.0/);
 
-  assert.strictEqual(registeredBuildEntry, buildEntry, 'registered 24067 path must temporarily mirror the canonical producer trial entry');
+  assert.notStrictEqual(registeredBuildEntry, buildEntry, 'canonical producer entry must remain unchanged during the temporary trial');
 
   assert.match(buildEntry, /template: azdo-pipelines\/1es-mb-main\.yml@azExtTemplates/);
   assert.match(buildEntry, /ref: azext-pt\/v1/);
@@ -74,7 +74,7 @@ function testAzureToolsWrapperContract() {
   assert.match(buildEntry, /LA_VSCODE_ADO_PIPELINE\]true/);
   assert.match(buildEntry, /LA_VSCODE_ADO_PIPELINE: 'true'/);
   assert.doesNotMatch(buildEntry, /LA_VSCODE_ADO_PIPELINE: true/);
-  assert.match(buildEntry, /variable=NODE_OPTIONS\]--max-old-space-size=6144/);
+  assert.doesNotMatch(buildEntry, /variable=NODE_OPTIONS\]--max-old-space-size=6144/);
   assert.match(buildEntry, /variable=NPM_CONFIG_USERCONFIG/);
   assert.match(buildEntry, /\$npmrcFile = '\$\(npmrcFile\)'/);
   assert.match(buildEntry, /IsPathRooted\(\$npmrcFile\)/);
@@ -93,6 +93,13 @@ function testAzureToolsWrapperContract() {
   assert.doesNotMatch(buildEntry, /publishVersion/);
   assert.doesNotMatch(buildEntry, /prepare-v2-release-signed-files/);
   assert.doesNotMatch(buildEntry, /SignExtension\.signproj/);
+  assert.match(registeredBuildEntry, /template: azdo-pipelines\/1es-mb-main\.yml@azExtTemplates/);
+  assert.match(registeredBuildEntry, /ref: azext-pt\/v1/);
+  assert.match(registeredBuildEntry, /packageManager: pnpm/);
+  assert.match(registeredBuildEntry, /variable=NODE_OPTIONS\]--max-old-space-size=6144/);
+  assert.doesNotMatch(registeredBuildEntry, /MicroBuild\.1ES\.Official/);
+  assert.doesNotMatch(registeredBuildEntry, /publishVersion/);
+  assert.doesNotMatch(registeredBuildEntry, /enableVscodeE2E/);
 
   assert.match(releaseEntry, /ref: azext-pt\/v1/);
   assert.match(releaseEntry, /template: azdo-pipelines\/1es-mb-release-extension\.yml@azExtTemplates/);
@@ -143,8 +150,8 @@ function testAzureToolsWrapperContract() {
   assert.match(readme, /actual connector connectivity/);
   assert.match(readme, /tracked root `\.npmrc` is intentionally absent/);
   assert.match(readme, /`NPM_CONFIG_USERCONFIG` to the absolute authenticated npmrc path/);
-  assert.match(readme, /`NODE_OPTIONS=--max-old-space-size=6144` for the native wrapper build/);
-  assert.match(readme, /temporarily mirrored into `\.azure-pipelines\/1esmain\.yml`/);
+  assert.match(readme, /temporary `\.azure-pipelines\/1esmain\.yml` sets `NODE_OPTIONS=--max-old-space-size=6144`/);
+  assert.match(readme, /canonical `\.config\/1esmain\.yml` remains at blob `860aa268644d0da15c3043a543b687dc2878f31f`/);
   assert.match(readme, /restore `\.azure-pipelines\/1esmain\.yml` exactly to blob `025ded92acc13c58bd952fc81bf76ad7ace14807`/);
   assert.match(readme, /Native `pnpm run build` is not a clean type-check signal yet/);
   assert.match(readme, /tsc` exited 2 with 32 errors in unchanged source\/test files outside this migration diff/);
