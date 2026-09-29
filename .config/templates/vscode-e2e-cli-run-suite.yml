@@ -94,7 +94,6 @@ jobs:
       ExpectedRepositoryUri: ${{ parameters.expectedRepositoryUri }}
       ExpectedCheckoutRef: ${{ parameters.checkoutRef }}
     templateContext:
-      type: validationJob
       outputs:
         - output: pipelineArtifact
           targetPath: $(Build.ArtifactStagingDirectory)/vscode-e2e-cli/${{ parameters.artifactName }}

@@ -123,7 +123,6 @@ extends:
               - name: pinnedSourceSha
                 value: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
             templateContext:
-              type: validationJob
               outputs:
                 - output: pipelineArtifact
                   targetPath: $(Build.ArtifactStagingDirectory)/vscode-e2e
