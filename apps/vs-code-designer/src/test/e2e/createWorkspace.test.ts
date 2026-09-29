@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { connectToVsCodeCdp, waitForCreateWorkspaceFrameContext } from './cdpClient';
+import { connectToVsCodeCdp, connectToVsCodeWorkbenchCdp, waitForCreateWorkspaceFrameContext } from './cdpClient';
 import {
   assertDropdownHasOptions,
   assertNextButtonDisabled,
@@ -243,14 +243,27 @@ suite('Create Workspace Experience Tests', () => {
           await vscode.commands.executeCommand('notifications.hideToasts');
           // Inspecting the Workflow type options scrolls the form; restore the
           // initial viewport before requiring the empty workspace fields.
-          await scrollCreateWorkspaceForm(cdp, contextId, 'top');
-          await captureCreateWorkspaceScreenshot(cdp, contextId, 'create-workspace-initial-form', 'initial', false, {
-            fields: [
-              { labels: ['Workspace parent folder path'], value: '' },
-              { labels: ['Workspace name'], value: '' },
-            ],
+          const initialTopFields = [
+            { labels: ['Workspace parent folder path'], value: '' },
+            { labels: ['Workspace name'], value: '' },
+          ];
+          await scrollCreateWorkspaceForm(cdp, contextId, 'top', initialTopFields);
+          await captureCreateWorkspaceScreenshot(cdp, contextId, 'create-workspace-initial-form-top', 'initial', false, {
+            fields: initialTopFields,
             nextButton: 'disabled',
-            scrollPosition: 'top',
+          });
+          const initialMiddleFields = [{ labels: ['Logic app name'], value: '' }];
+          await scrollCreateWorkspaceForm(cdp, contextId, 'middle', initialMiddleFields);
+          await captureCreateWorkspaceScreenshot(cdp, contextId, 'create-workspace-initial-form-middle', 'initial', false, {
+            fields: initialMiddleFields,
+            nextButton: 'disabled',
+          });
+          const initialBottomFields = [{ labels: ['Workflow name'], value: '' }];
+          await scrollCreateWorkspaceForm(cdp, contextId, 'bottom', initialBottomFields);
+          await captureCreateWorkspaceScreenshot(cdp, contextId, 'create-workspace-initial-form-bottom', 'initial', false, {
+            fields: initialBottomFields,
+            nextButton: 'disabled',
+            scrollPosition: 'bottom',
           });
           await runStandardRequiredFieldProgression(cdp, contextId, tempWorkspaceParentPath);
           await runStandardFieldValidationCases(cdp, contextId, tempWorkspaceParentPath);
@@ -2355,6 +2368,7 @@ async function captureCreateWorkspaceScreenshot(
   optional = false,
   contract: Omit<Extract<ScreenshotExpectation, { kind: 'createWorkspace' }>, 'kind' | 'label' | 'stage'> = {}
 ): Promise<void> {
+  await dismissWorkbenchNotificationsBeforeEvidence(name);
   await captureCliScreenshot(name, {
     expectation: { kind: 'createWorkspace', label: name, stage, ...contract },
     semanticCdp: cdp,
@@ -2362,6 +2376,53 @@ async function captureCreateWorkspaceScreenshot(
     binding: { activeTabText: ['Create Workspace'] },
     optional,
   });
+}
+
+async function dismissWorkbenchNotificationsBeforeEvidence(label: string): Promise<void> {
+  try {
+    await vscode.commands.executeCommand('notifications.hideToasts');
+    const cdp = await connectToVsCodeWorkbenchCdp({ activate: false, timeoutMs: 2000 });
+    try {
+      for (let attempt = 0; attempt < 4; attempt++) {
+        const point = await cdp.evaluate<{ x: number; y: number } | undefined>(
+          undefined,
+          `(() => {
+            const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
+            const notifications = Array.from(document.querySelectorAll('.notification-toast, .notification-list-item')).filter(isVisible);
+            for (const notification of notifications) {
+              const buttons = Array.from(notification.querySelectorAll('button, .monaco-button, .monaco-text-button')).filter(isVisible);
+              const button = buttons.find((candidate) => {
+                const text = (candidate.textContent || '').replace(/\\s+/g, ' ').trim().toLowerCase();
+                const label = [text, candidate.getAttribute?.('aria-label') || '', candidate.getAttribute?.('title') || '']
+                  .join(' ')
+                  .toLowerCase();
+                return label.includes('close') || label.includes('clear notification');
+              });
+              const target = button || notification.querySelector('.codicon-close, [aria-label*="Close" i], [title*="Close" i], [aria-label*="Clear" i], [title*="Clear" i]');
+              if (target instanceof HTMLElement && isVisible(target)) {
+                target.scrollIntoView({ block: 'center', inline: 'center' });
+                const rect = target.getBoundingClientRect();
+                return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+              }
+            }
+            return undefined;
+          })()`,
+          { timeoutMs: 1000 }
+        );
+
+        if (!point) {
+          return;
+        }
+
+        await clickPoint(cdp, point);
+        await new Promise((resolve) => setTimeout(resolve, 250));
+      }
+    } finally {
+      cdp.dispose();
+    }
+  } catch (error) {
+    console.warn(`[create-workspace-smoke] Unable to dismiss workbench notifications before ${label}: ${String(error)}`);
+  }
 }
 
 async function captureCreatedWorkspaceDiagnostic(name: string): Promise<void> {

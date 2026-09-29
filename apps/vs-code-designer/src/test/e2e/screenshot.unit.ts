@@ -4,6 +4,8 @@ import * as os from 'os';
 import * as path from 'path';
 import type { ScreenshotReadinessSnapshot } from './screenshotReadiness';
 
+const { JSDOM } = require('jsdom') as { JSDOM: new (html: string, options?: Record<string, unknown>) => { window: SerializedDomWindow } };
+
 async function main(): Promise<void> {
   const screenshotDir = fs.mkdtempSync(path.join(os.tmpdir(), 'la-screenshot-unit-'));
   process.env.LA_E2E_CLI_SCREENSHOT_DIR = screenshotDir;
@@ -23,15 +25,24 @@ async function main(): Promise<void> {
   testFailureAttachmentStorageFailureDoesNotThrow(appendFailureAttachmentSafely, setScreenshotFileSystemForTests);
   await testHiddenSemanticContextRejects(captureCdpScreenshot);
   await testWrongSemanticContextRejects(captureCdpScreenshot);
+  await testSemanticContextBindingIncludesControlMetadata(captureCdpScreenshot);
+  await testDiscoverySemanticContextWaitsForReadyPhase(captureCdpScreenshot);
+  await testDiscoverySemanticContextWithoutVisibleControlRejects(captureCdpScreenshot);
+  await testHiddenDiscoverySemanticContextRejects(captureCdpScreenshot);
+  await testWrongFrameDiscoverySemanticContextRejects(captureCdpScreenshot);
   await testSemanticContextReacquiresMatchingVisibleContext(captureCdpScreenshot);
   await testSemanticContextReacquiresOnlySameFrameAndInstallsLatch(captureCdpScreenshot);
   await testAmbiguousSemanticContextRejects(captureCdpScreenshot);
   await testOwnerFrameInvalidationRetriesCapture(captureCdpScreenshot);
+  await testOwnerNotificationInvalidationRetriesCapture(captureCdpScreenshot);
   await testSemanticOwnerParentFrameAccepted(captureCdpScreenshot);
   await testSemanticContextFrameOutsideTargetRejects(captureCdpScreenshot);
   await testSemanticOwnerOpenerFrameAccepted(captureCdpScreenshot);
   await testSemanticOwnerExactVisibleIframeAccepted(captureCdpScreenshot);
   await testSemanticOwnerExactHiddenIframeRejects(captureCdpScreenshot);
+  await testSemanticOwnerNotificationOcclusionRejects(captureCdpScreenshot);
+  await testSemanticOwnerExactIframeNotificationOcclusionRejects(captureCdpScreenshot);
+  await testSerializedOwnerVisibilityOcclusionPredicates(captureCdpScreenshot);
   await testSemanticOwnerFrameMismatchRejects(captureCdpScreenshot);
   await testOwnerActiveTabMismatchRejects(captureCdpScreenshot);
   console.log('[screenshot.unit] all tests passed');
@@ -312,6 +323,131 @@ async function testWrongSemanticContextRejects(captureCdpScreenshot: typeof impo
   );
 }
 
+async function testSemanticContextBindingIncludesControlMetadata(
+  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot
+): Promise<void> {
+  const ownerCdp = new FakeCaptureCdp([snapshot({ revision: 0 }), snapshot({ revision: 0 })]);
+  const semanticCdp = new FakeCaptureCdp([snapshot({ revision: 0, expectationKind: 'discovery' })], {
+    targetUrl: 'vscode-webview://logic-apps-discovery-control-metadata',
+    contexts: [
+      {
+        id: 7,
+        text: 'Add a trigger Operations panel',
+        controlText: 'Search for a trigger or connector Request',
+        visible: true,
+        frameId: 'semantic-frame',
+      },
+    ],
+  });
+
+  await captureCdpScreenshot(ownerCdp, 'discovery-control-metadata-binding', {
+    expectation: { kind: 'discovery', label: 'discovery-control-metadata-binding', searchText: 'Request' },
+    semanticCdp,
+    semanticContextId: 7,
+    timeoutMs: 1000,
+  });
+
+  assert.strictEqual(
+    semanticCdp.semanticBindingControlMetadataUsed,
+    true,
+    'Semantic binding should include input placeholder/control metadata, not only body innerText'
+  );
+}
+
+async function testDiscoverySemanticContextWaitsForReadyPhase(
+  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot
+): Promise<void> {
+  const ownerCdp = new FakeCaptureCdp([snapshot({ revision: 0 }), snapshot({ revision: 0 }), snapshot({ revision: 0 })]);
+  const semanticCdp = new FakeCaptureCdp(
+    [snapshot({ revision: 0, expectationKind: 'discovery' }), snapshot({ revision: 0, expectationKind: 'discovery' })],
+    {
+      targetUrl: 'vscode-webview://logic-apps-discovery-transition',
+      contexts: [{ id: 7, text: 'Add a trigger Operations panel loading', visible: true, frameId: 'semantic-frame' }],
+    }
+  );
+
+  await captureCdpScreenshot(ownerCdp, 'discovery-transition-same-frame', {
+    expectation: { kind: 'discovery', label: 'discovery-transition-same-frame', searchText: 'Request' },
+    semanticCdp,
+    semanticContextId: 7,
+    timeoutMs: 1000,
+  });
+
+  assert.deepStrictEqual(
+    semanticCdp.latchInstallContextIds,
+    [7],
+    'Visible same-frame discovery should keep the original context while readiness waits'
+  );
+}
+
+async function testDiscoverySemanticContextWithoutVisibleControlRejects(
+  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot
+): Promise<void> {
+  const ownerCdp = new FakeCaptureCdp([snapshot({ revision: 0 }), snapshot({ revision: 0 })]);
+  const semanticCdp = new FakeCaptureCdp([snapshot({ revision: 0, expectationKind: 'discovery' })], {
+    targetUrl: 'vscode-webview://logic-apps-empty-discovery-host',
+    contexts: [
+      {
+        id: 7,
+        text: 'Add a trigger Built-in tools Search Request',
+        visible: true,
+        frameId: 'semantic-frame',
+        requiredSelectorFound: false,
+      },
+    ],
+  });
+
+  await assert.rejects(
+    captureCdpScreenshot(ownerCdp, 'discovery-empty-host-rejected', {
+      expectation: { kind: 'discovery', label: 'discovery-empty-host-rejected', searchText: 'Request' },
+      semanticCdp,
+      semanticContextId: 7,
+      timeoutMs: 1000,
+    }),
+    /semantic context/
+  );
+}
+
+async function testHiddenDiscoverySemanticContextRejects(
+  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot
+): Promise<void> {
+  const ownerCdp = new FakeCaptureCdp([snapshot({ revision: 0 }), snapshot({ revision: 0 })]);
+  const semanticCdp = new FakeCaptureCdp([snapshot({ revision: 0, expectationKind: 'discovery' })], {
+    targetUrl: 'vscode-webview://logic-apps-hidden-discovery',
+    contexts: [{ id: 7, text: 'Add a trigger Operations panel loading', visible: false, frameId: 'semantic-frame' }],
+  });
+
+  await assert.rejects(
+    captureCdpScreenshot(ownerCdp, 'hidden-discovery-context', {
+      expectation: { kind: 'discovery', label: 'hidden-discovery-context', searchText: 'Request' },
+      semanticCdp,
+      semanticContextId: 7,
+      timeoutMs: 1000,
+    }),
+    /semantic context/
+  );
+}
+
+async function testWrongFrameDiscoverySemanticContextRejects(
+  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot
+): Promise<void> {
+  const ownerCdp = new FakeCaptureCdp([snapshot({ revision: 0 }), snapshot({ revision: 0 })]);
+  const semanticCdp = new FakeCaptureCdp([snapshot({ revision: 0, expectationKind: 'discovery' })], {
+    targetUrl: 'vscode-webview://logic-apps-wrong-frame-discovery',
+    contexts: [{ id: 7, text: 'Add a trigger Operations panel loading', visible: true, frameId: 'unowned-frame' }],
+  });
+
+  await assert.rejects(
+    captureCdpScreenshot(ownerCdp, 'wrong-frame-discovery-context', {
+      expectation: { kind: 'discovery', label: 'wrong-frame-discovery-context', searchText: 'Request' },
+      semanticCdp,
+      semanticContextId: 7,
+      timeoutMs: 1000,
+    }),
+    /semantic context frame/
+  );
+}
+
 async function testSemanticContextReacquiresMatchingVisibleContext(
   captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot
 ): Promise<void> {
@@ -434,6 +570,53 @@ async function testOwnerFrameInvalidationRetriesCapture(
   });
 
   assert.strictEqual(ownerCdp.captureAttempts, 2, 'Owner frame mutation during capture should discard the candidate and retry');
+}
+
+async function testOwnerNotificationInvalidationRetriesCapture(
+  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot
+): Promise<void> {
+  const ownerCdp = new FakeCaptureCdp(
+    [
+      snapshot({ revision: 0, expectationKind: 'monitoringAction' }),
+      snapshot({ revision: 0, expectationKind: 'monitoringAction' }),
+      snapshot({ revision: 0, expectationKind: 'monitoringAction' }),
+      snapshot({ revision: 0, expectationKind: 'monitoringAction' }),
+      snapshot({ revision: 0, expectationKind: 'monitoringAction' }),
+      snapshot({ revision: 0, expectationKind: 'monitoringAction' }),
+    ],
+    { ownerFrameRevisionReads: [0, 1, 1, 1] }
+  );
+  const semanticCdp = new FakeCaptureCdp(
+    [
+      snapshot({ revision: 0, expectationKind: 'monitoringAction' }),
+      snapshot({ revision: 0, expectationKind: 'monitoringAction' }),
+      snapshot({ revision: 0, expectationKind: 'monitoringAction' }),
+      snapshot({ revision: 0, expectationKind: 'monitoringAction' }),
+      snapshot({ revision: 0, expectationKind: 'monitoringAction' }),
+      snapshot({ revision: 0, expectationKind: 'monitoringAction' }),
+    ],
+    {
+      mainFrameId: 'semantic-root-frame',
+      mainFrameParentId: 'workbench-frame',
+      targetUrl: 'vscode-webview://logic-apps-owner-notification-revision',
+      contexts: [{ id: 7, text: 'Response Succeeded Outputs response payload', visible: true, frameId: 'semantic-root-frame' }],
+    }
+  );
+
+  await captureCdpScreenshot(ownerCdp, 'owner-notification-invalidation-retries-capture', {
+    expectation: {
+      kind: 'monitoringAction',
+      label: 'owner-notification-invalidation-retries-capture',
+      actionTitle: 'Response',
+      expectedStatus: 'Succeeded',
+    },
+    semanticCdp,
+    semanticContextId: 7,
+    timeoutMs: 1000,
+  });
+
+  assert.strictEqual(ownerCdp.captureAttempts, 2, 'Owner notification mutation during capture should discard the candidate and retry');
+  assert.strictEqual(ownerCdp.ownerLatchObservedNotifications, true, 'Owner latch must observe notification containers');
 }
 
 async function testSemanticOwnerFrameMismatchRejects(
@@ -590,6 +773,168 @@ async function testSemanticOwnerExactHiddenIframeRejects(
   );
 }
 
+async function testSemanticOwnerNotificationOcclusionRejects(
+  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot
+): Promise<void> {
+  const ownerCdp = new FakeCaptureCdp([snapshot({ revision: 0 }), snapshot({ revision: 0 })], {
+    ownerFrameIds: ['semantic-frame'],
+    ownerFrameOccludedByNotification: true,
+  });
+  const semanticCdp = new FakeCaptureCdp([snapshot({ revision: 0 })], {
+    targetUrl: 'vscode-webview://logic-apps-toast-occluded',
+    contexts: [{ id: 7, text: 'Response Succeeded Outputs response payload', visible: true }],
+  });
+
+  await assert.rejects(
+    captureCdpScreenshot(ownerCdp, 'owner-notification-occluded', {
+      expectation: {
+        kind: 'monitoringAction',
+        label: 'owner-notification-occluded',
+        actionTitle: 'Response',
+        expectedStatus: 'Succeeded',
+      },
+      semanticCdp,
+      semanticContextId: 7,
+      timeoutMs: 1000,
+    }),
+    /semantic frame|owner frame/
+  );
+}
+
+async function testSemanticOwnerExactIframeNotificationOcclusionRejects(
+  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot
+): Promise<void> {
+  const targetUrl = 'vscode-webview://logic-apps-exact-toast?id=expected';
+  const ownerCdp = new FakeCaptureCdp([snapshot({ revision: 0 }), snapshot({ revision: 0 })], {
+    exactIframeTargetUrl: targetUrl,
+    exactIframeVisible: true,
+    exactIframeOccludedByNotification: true,
+    ownerFrameIds: [],
+  });
+  const semanticCdp = new FakeCaptureCdp([snapshot({ revision: 0 })], {
+    targetUrl,
+    contexts: [{ id: 7, text: 'Response Succeeded Outputs response payload', visible: true }],
+  });
+
+  await assert.rejects(
+    captureCdpScreenshot(ownerCdp, 'owner-exact-iframe-notification-occluded', {
+      expectation: {
+        kind: 'monitoringAction',
+        label: 'owner-exact-iframe-notification-occluded',
+        actionTitle: 'Response',
+        expectedStatus: 'Succeeded',
+      },
+      semanticCdp,
+      semanticContextId: 7,
+      timeoutMs: 1000,
+    }),
+    /semantic frame|owner frame/
+  );
+}
+
+async function testSerializedOwnerVisibilityOcclusionPredicates(
+  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot
+): Promise<void> {
+  const targetUrl = 'vscode-webview://logic-apps-serialized-visibility?id=expected';
+  const rejectedScenarios: OwnerVisibilityScenario[] = [
+    { name: 'unrelated-modal-over-center', overlay: 'modal', rect: [100, 100, 1000, 800] },
+    { name: 'null-center-hit', nullHit: true },
+    { name: 'short-footer-toast-between-samples', overlay: 'toast', rect: [1020, 855, 140, 35] },
+  ];
+
+  for (const scenario of rejectedScenarios) {
+    await assert.rejects(
+      captureCdpScreenshot(
+        new FakeCaptureCdp([snapshot({ revision: 0 }), snapshot({ revision: 0 })], { ownerVisibilityScenario: scenario }),
+        `serialized-owner-visibility-${scenario.name}`,
+        {
+          expectation: {
+            kind: 'monitoringAction',
+            label: `serialized-owner-visibility-${scenario.name}`,
+            actionTitle: 'Response',
+            expectedStatus: 'Succeeded',
+          },
+          semanticCdp: new FakeCaptureCdp([snapshot({ revision: 0 })], {
+            targetUrl,
+            contexts: [{ id: 7, text: 'Response Succeeded Outputs response payload', visible: true }],
+          }),
+          semanticContextId: 7,
+          timeoutMs: 1000,
+        }
+      ),
+      /semantic frame|owner frame/
+    );
+
+    await assert.rejects(
+      captureCdpScreenshot(
+        new FakeCaptureCdp([snapshot({ revision: 0 }), snapshot({ revision: 0 })], {
+          exactIframeTargetUrl: targetUrl,
+          exactIframeVisibilityScenario: scenario,
+          ownerFrameIds: [],
+        }),
+        `serialized-exact-visibility-${scenario.name}`,
+        {
+          expectation: {
+            kind: 'monitoringAction',
+            label: `serialized-exact-visibility-${scenario.name}`,
+            actionTitle: 'Response',
+            expectedStatus: 'Succeeded',
+          },
+          semanticCdp: new FakeCaptureCdp([snapshot({ revision: 0 })], {
+            targetUrl,
+            contexts: [{ id: 7, text: 'Response Succeeded Outputs response payload', visible: true }],
+          }),
+          semanticContextId: 7,
+          timeoutMs: 1000,
+        }
+      ),
+      /semantic frame|owner frame/
+    );
+  }
+
+  const outsideNotification: OwnerVisibilityScenario = { name: 'notification-outside-frame', overlay: 'toast', rect: [10, 10, 80, 50] };
+  await captureCdpScreenshot(
+    new FakeCaptureCdp([snapshot({ revision: 0 }), snapshot({ revision: 0 })], { ownerVisibilityScenario: outsideNotification }),
+    'serialized-owner-visibility-notification-outside-frame',
+    {
+      expectation: {
+        kind: 'monitoringAction',
+        label: 'serialized-owner-visibility-notification-outside-frame',
+        actionTitle: 'Response',
+        expectedStatus: 'Succeeded',
+      },
+      semanticCdp: new FakeCaptureCdp([snapshot({ revision: 0 })], {
+        targetUrl,
+        contexts: [{ id: 7, text: 'Response Succeeded Outputs response payload', visible: true }],
+      }),
+      semanticContextId: 7,
+      timeoutMs: 1000,
+    }
+  );
+  await captureCdpScreenshot(
+    new FakeCaptureCdp([snapshot({ revision: 0 }), snapshot({ revision: 0 })], {
+      exactIframeTargetUrl: targetUrl,
+      exactIframeVisibilityScenario: outsideNotification,
+      ownerFrameIds: [],
+    }),
+    'serialized-exact-visibility-notification-outside-frame',
+    {
+      expectation: {
+        kind: 'monitoringAction',
+        label: 'serialized-exact-visibility-notification-outside-frame',
+        actionTitle: 'Response',
+        expectedStatus: 'Succeeded',
+      },
+      semanticCdp: new FakeCaptureCdp([snapshot({ revision: 0 })], {
+        targetUrl,
+        contexts: [{ id: 7, text: 'Response Succeeded Outputs response payload', visible: true }],
+      }),
+      semanticContextId: 7,
+      timeoutMs: 1000,
+    }
+  );
+}
+
 async function testOwnerActiveTabMismatchRejects(captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot): Promise<void> {
   const ownerCdp = new FakeCaptureCdp([snapshot({ revision: 0 }), snapshot({ revision: 0 })], { activeTabText: 'Different Workflow' });
   const semanticCdp = new FakeCaptureCdp([snapshot({ revision: 0 })], {
@@ -617,6 +962,8 @@ class FakeCaptureCdp {
   readonly targetTitle?: string;
   readonly evaluatedContextIds: Array<number | undefined> = [];
   readonly latchInstallContextIds: Array<number | undefined> = [];
+  ownerLatchObservedNotifications = false;
+  semanticBindingControlMetadataUsed = false;
   latchInstallAttempts = 0;
   private readinessIndex = 0;
   private ownerFrameRevisionReadIndex = 0;
@@ -629,7 +976,14 @@ class FakeCaptureCdp {
       failPostSample?: boolean;
       omitCaptureData?: boolean;
       evaluateDelayMs?: number;
-      contexts?: Array<{ id: number; text: string; visible: boolean; frameId?: string }>;
+      contexts?: Array<{
+        id: number;
+        text: string;
+        controlText?: string;
+        visible: boolean;
+        frameId?: string;
+        requiredSelectorFound?: boolean;
+      }>;
       activeTabText?: string;
       captureFailures?: number;
       mainFrameId?: string;
@@ -642,10 +996,14 @@ class FakeCaptureCdp {
       exactIframeVisible?: boolean;
       ownerFrameRevisionReads?: number[];
       exactIframeRevisionReads?: number[];
+      exactIframeOccludedByNotification?: boolean;
       failLatchEvaluation?: boolean;
       targetUrl?: string;
       targetTitle?: string;
       failFrameTree?: boolean;
+      ownerFrameOccludedByNotification?: boolean;
+      ownerVisibilityScenario?: OwnerVisibilityScenario;
+      exactIframeVisibilityScenario?: OwnerVisibilityScenario;
     } = {}
   ) {
     this.targetUrl = options.targetUrl;
@@ -689,13 +1047,30 @@ class FakeCaptureCdp {
           return { result: { result: { value: { revision } } } };
         }
         if (functionDeclaration.includes('"install"')) {
+          this.ownerLatchObservedNotifications ||= functionDeclaration.includes('.notifications-toasts');
           return { result: { result: { value: { revision: 0 } } } };
         }
         if (functionDeclaration.includes('"dispose"')) {
           return { result: { result: { value: { revision: 0 } } } };
         }
       }
-      return { result: { result: { value: { visible: this.options.ownerFrameVisible ?? true } } } };
+      if (this.options.ownerVisibilityScenario) {
+        return {
+          result: { result: { value: evaluateSerializedOwnerFrameVisibility(functionDeclaration, this.options.ownerVisibilityScenario) } },
+        };
+      }
+      return {
+        result: {
+          result: {
+            value: {
+              visible:
+                this.options.ownerFrameOccludedByNotification && functionDeclaration.includes('notification-toast')
+                  ? false
+                  : (this.options.ownerFrameVisible ?? true),
+            },
+          },
+        },
+      };
     }
     if (method === 'Page.captureScreenshot') {
       this.captureAttempts++;
@@ -750,16 +1125,35 @@ class FakeCaptureCdp {
         }
         return { installed: count === 1, revision: 0 } as T;
       }
-      return { count, visible: count === 1 && this.options.exactIframeVisible === true } as T;
+      if (this.options.exactIframeVisibilityScenario) {
+        return evaluateSerializedExactIframeVisibility(expression, this.options.exactIframeVisibilityScenario, targetUrl) as T;
+      }
+      return {
+        count,
+        visible:
+          count === 1 &&
+          this.options.exactIframeVisible === true &&
+          !(this.options.exactIframeOccludedByNotification && expression.includes('notification-toast')),
+      } as T;
     }
     if (/const expectedText = \[/.test(expression)) {
       const context = this.options.contexts?.find((candidate) => candidate.id === _contextId) ?? this.options.contexts?.[0];
       const expectedTextMatch = expression.match(/const expectedText = (\[[^\n]+]);/);
       const expectedText = expectedTextMatch ? (JSON.parse(expectedTextMatch[1]) as string[]) : [];
       const normalizedContextText = (context?.text ?? '').toLowerCase();
+      const normalizedControlText = (context?.controlText ?? '').toLowerCase();
+      const requiredSelectorFound = context?.requiredSelectorFound ?? true;
+      const normalizedCombinedText = `${normalizedContextText} ${expression.includes('querySelectorAll') ? normalizedControlText : ''}`;
+      const bodyMatches = expectedText.every((value) => normalizedContextText.includes(value.toLowerCase()));
+      const combinedMatches = expectedText.every((value) => normalizedCombinedText.includes(value.toLowerCase()));
+      if (!bodyMatches && combinedMatches) {
+        this.semanticBindingControlMetadataUsed = true;
+      }
       return {
-        ok: !!context?.visible && expectedText.every((value) => normalizedContextText.includes(value.toLowerCase())),
+        ok: !!context?.visible && requiredSelectorFound && combinedMatches,
+        visible: !!context?.visible,
         text: context?.text ?? '',
+        requiredSelectorFound,
       } as T;
     }
     const snapshotValue = this.readinessSnapshots[Math.min(this.readinessIndex, this.readinessSnapshots.length - 1)];
@@ -775,6 +1169,142 @@ class FakeCaptureCdp {
     const context = this.options.contexts?.find((candidate) => candidate.id === contextId);
     return context?.frameId ?? (this.targetUrl ? (this.options.mainFrameId ?? 'semantic-frame') : undefined);
   }
+}
+
+interface OwnerVisibilityScenario {
+  name: string;
+  overlay?: 'toast' | 'modal';
+  rect?: [number, number, number, number];
+  nullHit?: boolean;
+}
+
+function evaluateSerializedOwnerFrameVisibility(functionDeclaration: string, scenario: OwnerVisibilityScenario): { visible: boolean } {
+  const { window, frame } = createSerializedOwnerVisibilityFixture(
+    scenario,
+    'vscode-webview://logic-apps-serialized-visibility?id=expected'
+  );
+  try {
+    return (window.eval(`(${functionDeclaration})`) as { call(thisArg: SerializedDomElement): unknown }).call(frame) as {
+      visible: boolean;
+    };
+  } finally {
+    window.close();
+  }
+}
+
+function evaluateSerializedExactIframeVisibility(
+  expression: string,
+  scenario: OwnerVisibilityScenario,
+  targetUrl: string
+): { count: number; visible: boolean } {
+  const { window } = createSerializedOwnerVisibilityFixture(scenario, targetUrl);
+  try {
+    return window.eval(expression) as { count: number; visible: boolean };
+  } finally {
+    window.close();
+  }
+}
+
+function createSerializedOwnerVisibilityFixture(
+  scenario: OwnerVisibilityScenario,
+  targetUrl: string
+): { window: SerializedDomWindow; frame: SerializedDomElement } {
+  const dom = new JSDOM('<!doctype html><html><body><iframe></iframe></body></html>', { runScripts: 'outside-only' });
+  const { window } = dom;
+  Object.defineProperties(window, {
+    innerWidth: { value: 1200 },
+    innerHeight: { value: 1000 },
+  });
+  const frame = window.document.querySelector('iframe');
+  assert.ok(frame instanceof window.HTMLIFrameElement, 'Expected serialized fixture iframe');
+  frame.src = targetUrl;
+  const frameRect = rectangle([100, 100, 1000, 800]);
+  frame.getBoundingClientRect = () => frameRect;
+  frame.getClientRects = () => [frameRect];
+  Object.defineProperties(frame, {
+    offsetWidth: { value: 1000 },
+    offsetHeight: { value: 800 },
+  });
+
+  let overlay: SerializedDomElement | undefined;
+  let overlayRect: SerializedDomRect | undefined;
+  if (scenario.overlay) {
+    overlay = window.document.createElement('div');
+    overlay.className = scenario.overlay === 'toast' ? 'notification-toast' : 'monaco-dialog-modal-block';
+    window.document.body.appendChild(overlay);
+    overlayRect = rectangle(scenario.rect ?? [0, 0, 0, 0]);
+    overlay.getBoundingClientRect = () => overlayRect as SerializedDomRect;
+    overlay.getClientRects = () => [overlayRect as SerializedDomRect];
+    Object.defineProperties(overlay, {
+      offsetWidth: { value: overlayRect.width },
+      offsetHeight: { value: overlayRect.height },
+    });
+  }
+
+  const containsPoint = (rect: SerializedDomRect, x: number, y: number) =>
+    x >= rect.left && x < rect.right && y >= rect.top && y < rect.bottom;
+  window.document.elementFromPoint = (x: number, y: number) => {
+    if (scenario.nullHit) {
+      return null;
+    }
+    if (overlay && overlayRect && containsPoint(overlayRect, x, y)) {
+      return overlay;
+    }
+    return containsPoint(frameRect, x, y) ? frame : window.document.body;
+  };
+
+  return { window, frame };
+}
+
+interface SerializedDomWindow {
+  readonly HTMLIFrameElement: new (...args: unknown[]) => SerializedDomElement;
+  readonly document: {
+    readonly body: SerializedDomElement;
+    querySelector(selector: string): SerializedDomElement | null;
+    createElement(tagName: string): SerializedDomElement;
+    elementFromPoint(x: number, y: number): SerializedDomElement | null;
+  };
+  innerWidth: number;
+  innerHeight: number;
+  eval(expression: string): unknown;
+  close(): void;
+}
+
+interface SerializedDomElement {
+  className: string;
+  src: string;
+  readonly offsetWidth: number;
+  readonly offsetHeight: number;
+  appendChild(child: SerializedDomElement): SerializedDomElement;
+  contains(child: SerializedDomElement | null): boolean;
+  getBoundingClientRect(): SerializedDomRect;
+  getClientRects(): SerializedDomRect[];
+}
+
+interface SerializedDomRect {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+  right: number;
+  bottom: number;
+  x: number;
+  y: number;
+  toJSON(): Record<string, never>;
+}
+
+function rectangle([left, top, width, height]: [number, number, number, number]): SerializedDomRect {
+  return {
+    left,
+    top,
+    width,
+    height,
+    right: left + width,
+    bottom: top + height,
+    x: left,
+    y: top,
+    toJSON: () => ({}),
+  };
 }
 
 function snapshot(options: {

@@ -16,6 +16,8 @@ import {
   type ScreenshotReadinessSnapshot,
 } from './screenshotReadiness';
 
+type SemanticTextGroup = string | string[];
+
 const execFileAsync = promisify(execFile);
 const screenshotRoot =
   process.env.LA_E2E_CLI_SCREENSHOT_DIR ?? path.resolve(__dirname, '..', '..', '..', '.vscode-test', 'screenshots', 'cli');
@@ -495,21 +497,29 @@ async function assertBoundSemanticContext(
     return contextId;
   }
 
-  const expectedText = [...deriveSemanticText(expectation), ...(binding?.semanticText ?? [])].filter((value) => value.length > 0);
+  const expectedText = [...deriveSemanticText(expectation), ...(binding?.semanticText ?? [])].filter((value) =>
+    Array.isArray(value) ? value.length > 0 : value.length > 0
+  );
   if (expectedText.length === 0 && !contextId) {
     await assertOwnerWorkbenchBinding(ownerCdp, undefined, binding, deadline);
     return contextId;
   }
 
   const expectedFrameId = contextId !== undefined ? semanticCdp.getExecutionContextFrameId?.(contextId) : undefined;
-  const result = await getSemanticContextBinding(semanticCdp, contextId, expectedText, deadline).catch(() => undefined);
+  const requiredSelector = deriveSemanticRequiredSelector(expectation);
+  const result = await getSemanticContextBinding(semanticCdp, contextId, expectedText, deadline, requiredSelector).catch(() => undefined);
   if (result?.ok) {
     await assertSemanticContextFrameBelongsToTarget(semanticCdp, contextId, deadline);
     await assertOwnerWorkbenchBinding(ownerCdp, semanticCdp, binding, deadline);
     return contextId;
   }
+  if (result?.visible && result.requiredSelectorFound && canWaitForSemanticReadiness(expectation)) {
+    await assertSemanticContextFrameBelongsToTarget(semanticCdp, contextId, deadline);
+    await assertOwnerWorkbenchBinding(ownerCdp, semanticCdp, binding, deadline);
+    return contextId;
+  }
 
-  const reacquiredContextId = await reacquireSemanticContext(semanticCdp, expectedText, deadline, expectedFrameId);
+  const reacquiredContextId = await reacquireSemanticContext(semanticCdp, expectedText, deadline, expectedFrameId, requiredSelector);
   await assertSemanticContextFrameBelongsToTarget(semanticCdp, reacquiredContextId, deadline);
   await assertOwnerWorkbenchBinding(ownerCdp, semanticCdp, binding, deadline);
   return reacquiredContextId;
@@ -722,8 +732,38 @@ async function assertResolvedOwnerFrameVisible(ownerCdp: CdpClient, objectId: st
           if (rect.width <= 0 || rect.height <= 0 || rect.bottom <= 0 || rect.right <= 0 || rect.top >= window.innerHeight || rect.left >= window.innerWidth) {
             return false;
           }
-          const x = Math.min(Math.max(rect.left + rect.width / 2, 0), Math.max(window.innerWidth - 1, 0));
-          const y = Math.min(Math.max(rect.top + rect.height / 2, 0), Math.max(window.innerHeight - 1, 0));
+          const visibleRect = {
+            left: Math.max(rect.left, 0),
+            top: Math.max(rect.top, 0),
+            right: Math.min(rect.right, window.innerWidth),
+            bottom: Math.min(rect.bottom, window.innerHeight),
+          };
+          if (visibleRect.right <= visibleRect.left || visibleRect.bottom <= visibleRect.top) {
+            return false;
+          }
+          const intersects = (first, second) =>
+            first.left < second.right && first.right > second.left && first.top < second.bottom && first.bottom > second.top;
+          const visibleNotifications = Array.from(document.querySelectorAll('.notification-toast, .notification-list-item')).filter((candidate) => {
+            if (!(candidate instanceof HTMLElement) || !(candidate.offsetWidth || candidate.offsetHeight || candidate.getClientRects().length)) {
+              return false;
+            }
+            const style = getComputedStyle(candidate);
+            if (style.display === 'none' || style.visibility === 'hidden' || Number.parseFloat(style.opacity || '1') === 0) {
+              return false;
+            }
+            const notificationRect = candidate.getBoundingClientRect();
+            return notificationRect.width > 0 && notificationRect.height > 0;
+          });
+          if (
+            visibleNotifications.some((notification) => {
+              const notificationRect = notification.getBoundingClientRect();
+              return intersects(visibleRect, notificationRect);
+            })
+          ) {
+            return false;
+          }
+          const x = Math.min(Math.max((visibleRect.left + visibleRect.right) / 2, 0), Math.max(window.innerWidth - 1, 0));
+          const y = Math.min(Math.max((visibleRect.top + visibleRect.bottom) / 2, 0), Math.max(window.innerHeight - 1, 0));
           const topElement = document.elementFromPoint(x, y);
           return topElement === frame || frame.contains(topElement);
         };
@@ -772,6 +812,8 @@ function ownerFrameInvalidationFunction(action: 'install' | 'read' | 'dispose'):
     observe(frame);
     observe(document.querySelector('.editor-group-container'), observerOptions);
     observe(document.querySelector('.tabs-container'), observerOptions);
+    observe(document.querySelector('.notifications-toasts'), observerOptions);
+    observe(document.querySelector('.notifications-center'), observerOptions);
     state.ancestorObserver = new MutationObserver(() => state.bump());
     let ancestor = frame.parentElement;
     while (ancestor) {
@@ -847,6 +889,8 @@ function exactIframeInvalidationExpression(semanticTargetUrl: string, action: 'i
     observe(frame);
     observe(document.querySelector('.editor-group-container'), observerOptions);
     observe(document.querySelector('.tabs-container'), observerOptions);
+    observe(document.querySelector('.notifications-toasts'), observerOptions);
+    observe(document.querySelector('.notifications-center'), observerOptions);
     state.ancestorObserver = new MutationObserver(() => state.bump());
     let ancestor = frame.parentElement;
     while (ancestor) {
@@ -923,8 +967,38 @@ async function hasExactVisibleWorkbenchIframeForSemanticTarget(
           if (rect.width <= 0 || rect.height <= 0 || rect.bottom <= 0 || rect.right <= 0 || rect.top >= window.innerHeight || rect.left >= window.innerWidth) {
             return false;
           }
-          const x = Math.min(Math.max(rect.left + rect.width / 2, 0), Math.max(window.innerWidth - 1, 0));
-          const y = Math.min(Math.max(rect.top + rect.height / 2, 0), Math.max(window.innerHeight - 1, 0));
+          const visibleRect = {
+            left: Math.max(rect.left, 0),
+            top: Math.max(rect.top, 0),
+            right: Math.min(rect.right, window.innerWidth),
+            bottom: Math.min(rect.bottom, window.innerHeight),
+          };
+          if (visibleRect.right <= visibleRect.left || visibleRect.bottom <= visibleRect.top) {
+            return false;
+          }
+          const intersects = (first, second) =>
+            first.left < second.right && first.right > second.left && first.top < second.bottom && first.bottom > second.top;
+          const visibleNotifications = Array.from(document.querySelectorAll('.notification-toast, .notification-list-item')).filter((candidate) => {
+            if (!(candidate instanceof HTMLElement) || !(candidate.offsetWidth || candidate.offsetHeight || candidate.getClientRects().length)) {
+              return false;
+            }
+            const style = getComputedStyle(candidate);
+            if (style.display === 'none' || style.visibility === 'hidden' || Number.parseFloat(style.opacity || '1') === 0) {
+              return false;
+            }
+            const notificationRect = candidate.getBoundingClientRect();
+            return notificationRect.width > 0 && notificationRect.height > 0;
+          });
+          if (
+            visibleNotifications.some((notification) => {
+              const notificationRect = notification.getBoundingClientRect();
+              return intersects(visibleRect, notificationRect);
+            })
+          ) {
+            return false;
+          }
+          const x = Math.min(Math.max((visibleRect.left + visibleRect.right) / 2, 0), Math.max(window.innerWidth - 1, 0));
+          const y = Math.min(Math.max((visibleRect.top + visibleRect.bottom) / 2, 0), Math.max(window.innerHeight - 1, 0));
           const topElement = document.elementFromPoint(x, y);
           return topElement === element || element.contains(topElement);
         };
@@ -973,31 +1047,71 @@ function getFrameIds(frameTree: unknown): string[] {
 async function getSemanticContextBinding(
   semanticCdp: CdpClient,
   contextId: number | undefined,
-  expectedText: string[],
-  deadline: number
-): Promise<{ ok: boolean; text: string }> {
-  return semanticCdp.evaluate<{ ok: boolean; text: string }>(
+  expectedText: SemanticTextGroup[],
+  deadline: number,
+  requiredSelector?: string
+): Promise<{ ok: boolean; visible: boolean; text: string; requiredSelectorFound: boolean }> {
+  return semanticCdp.evaluate<{ ok: boolean; visible: boolean; text: string; requiredSelectorFound: boolean }>(
     contextId,
     `(() => {
       const expectedText = ${JSON.stringify(expectedText)};
+      const requiredSelector = ${JSON.stringify(requiredSelector)};
       const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim().toLowerCase();
-      const text = document.body?.innerText || document.body?.textContent || '';
+      const isVisible = (element) => {
+        if (!(element instanceof HTMLElement) || !(element.offsetWidth || element.offsetHeight || element.getClientRects().length)) {
+          return false;
+        }
+        const style = getComputedStyle(element);
+        return (
+          !element.hidden &&
+          element.getAttribute('aria-hidden') !== 'true' &&
+          style.display !== 'none' &&
+          style.visibility !== 'hidden' &&
+          style.visibility !== 'collapse' &&
+          Number.parseFloat(style.opacity || '1') > 0
+        );
+      };
+      const controlText = Array.from(
+        document.querySelectorAll('input, textarea, [contenteditable="true"], [role="textbox"], [role="combobox"], button, [aria-label], [title]')
+      )
+        .map((element) => [
+          element.textContent,
+          'value' in element ? element.value : '',
+          element.getAttribute?.('aria-label'),
+          element.getAttribute?.('placeholder'),
+          element.getAttribute?.('title'),
+          element.getAttribute?.('value'),
+        ].filter(Boolean).join(' '))
+        .join(' ');
+      const text = [document.body?.innerText || document.body?.textContent || '', controlText].filter(Boolean).join(' ');
       const visible = document.visibilityState !== 'hidden' && document.hidden !== true;
+      const requiredSelectorFound = requiredSelector ? Array.from(document.querySelectorAll(requiredSelector)).some(isVisible) : true;
       const normalizedText = normalize(text);
+      const hasExpectedText = (value) =>
+        Array.isArray(value)
+          ? value.some((variant) => normalizedText.includes(normalize(variant)))
+          : normalizedText.includes(normalize(value));
       return {
-        ok: visible && expectedText.every((value) => normalizedText.includes(normalize(value))),
+        ok: visible && requiredSelectorFound && expectedText.every(hasExpectedText),
+        visible,
         text,
+        requiredSelectorFound,
       };
     })()`,
     { timeoutMs: remaining(deadline, 2000) }
   );
 }
 
+function canWaitForSemanticReadiness(expectation: ScreenshotExpectation): boolean {
+  return expectation.kind === 'discovery';
+}
+
 async function reacquireSemanticContext(
   semanticCdp: CdpClient,
-  expectedText: string[],
+  expectedText: SemanticTextGroup[],
   deadline: number,
-  expectedFrameId?: string
+  expectedFrameId?: string,
+  requiredSelector?: string
 ): Promise<number | undefined> {
   const contextIds = semanticCdp.getExecutionContextIds?.() ?? [];
   const matchingContextIds: number[] = [];
@@ -1005,7 +1119,9 @@ async function reacquireSemanticContext(
     if (expectedFrameId && semanticCdp.getExecutionContextFrameId?.(candidateContextId) !== expectedFrameId) {
       continue;
     }
-    const candidate = await getSemanticContextBinding(semanticCdp, candidateContextId, expectedText, deadline).catch(() => undefined);
+    const candidate = await getSemanticContextBinding(semanticCdp, candidateContextId, expectedText, deadline, requiredSelector).catch(
+      () => undefined
+    );
     if (candidate?.ok) {
       matchingContextIds.push(candidateContextId);
     }
@@ -1016,13 +1132,15 @@ async function reacquireSemanticContext(
   }
 
   if (matchingContextIds.length > 1) {
-    throw new Error(`Screenshot binding failed: semantic context is ambiguous for ${expectedText.join(', ')}`);
+    throw new Error(`Screenshot binding failed: semantic context is ambiguous for ${formatSemanticTextGroups(expectedText)}`);
   }
 
-  throw new Error(`Screenshot binding failed: semantic context is not visible or no longer matches ${expectedText.join(', ')}`);
+  throw new Error(
+    `Screenshot binding failed: semantic context is not visible or no longer matches ${formatSemanticTextGroups(expectedText)}`
+  );
 }
 
-function deriveSemanticText(expectation: ScreenshotExpectation): string[] {
+function deriveSemanticText(expectation: ScreenshotExpectation): SemanticTextGroup[] {
   switch (expectation.kind) {
     case 'createWorkspace':
       return [
@@ -1049,6 +1167,30 @@ function deriveSemanticText(expectation: ScreenshotExpectation): string[] {
       return ['Search', expectation.searchText].filter((value): value is string => !!value);
     default:
       return [];
+  }
+}
+
+function formatSemanticTextGroups(expectedText: SemanticTextGroup[]): string {
+  return expectedText.map((value) => (Array.isArray(value) ? `[${value.join(' | ')}]` : value)).join(', ');
+}
+
+function deriveSemanticRequiredSelector(expectation: ScreenshotExpectation): string | undefined {
+  switch (expectation.kind) {
+    case 'discovery':
+      return [
+        '[data-automation-id="msla-search-box"]',
+        '.msla-search-box',
+        'input',
+        '[role="searchbox"]',
+        '[role="combobox"]',
+        '[contenteditable="true"]',
+        '[data-automation-id="msla-search-box"] input',
+        '.msla-search-box input',
+      ].join(', ');
+    case 'designerCanvas':
+      return '.react-flow, [data-automation-id^="card-"], [data-testid^="card-"]';
+    default:
+      return undefined;
   }
 }
 
