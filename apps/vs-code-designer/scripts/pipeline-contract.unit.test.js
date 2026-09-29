@@ -433,7 +433,9 @@ function testAzureToolsWrapperContract() {
   assert.match(readme, /Resource Groups #1447, Docker #334\/#364\/#365/);
   assert.match(readme, /MicroBuild\.1ES\.Unofficial\.yml@1esPipelines/);
   assert.match(readme, /templateContext\.type: validationJob/);
-  assert.match(readme, /test-only, nonproduction execution path/);
+  assert.match(readme, /ordinary 1ES jobs so their outputs go through normal artifact-publication policy/);
+  assert.match(readme, /Unofficial\/no-deployment routing is distinct from artifact security classification/);
+  assert.match(readme, /test-only, non-release execution path/);
   assert.match(readme, /does not set an explicit `networkIsolationPolicy` override/);
   assert.match(readme, /unofficial wrapper is not an NI-disabled path/);
   assert.match(readme, /centrally required controls/);
@@ -448,7 +450,7 @@ function testAzureToolsWrapperContract() {
   assert.match(readme, /duplicate `@azure\/core-client` service-client types/);
   assert.match(readme, /pre-cutover baseline blocker/);
   assert.match(readme, /artifact-publication authorization/);
-  assert.match(readme, /any validationJob upload allowlist required by the deployed 1ES template/);
+  assert.doesNotMatch(readme, /validationJob upload allowlist/);
   assert.match(readme, /not a network-policy fix or unlimited-egress guarantee/);
   assert.match(readme, /dryRun: true/);
   assert.match(readme, /current `azext-pt\/v1` source notes that `jobs\.job` cannot enforce the environment binding/);
@@ -599,8 +601,8 @@ function testConsumerAdmissionContract() {
     assert.doesNotMatch(consumerText, /vsce\s+package/);
     assert.doesNotMatch(consumerText, /1es-mb-release-extension/);
   }
-  assertConsumerJobsAreValidationJobs(consumer, runSuites);
-  assertValidationJobGuardRejectsMutations(consumer, runSuites);
+  assertConsumerJobRoutingContract(consumer, runSuites);
+  assertConsumerJobRoutingGuardRejectsMutations(consumer, runSuites);
   assertConsumerHasNoNetworkIsolationPolicyOverride(consumer, runSuites);
   assertNetworkIsolationGuardRejectsMutations(consumer, runSuites);
   assert.match(cliBuildArtifactsTemplate, /displayName: Build extension and compile @vscode\/test-cli E2E/);
@@ -885,7 +887,7 @@ function assertConsumerCurrentRunArtifactContract(consumer) {
   const buildJob = jobs.find((entry) => entry.job === 'build_current_run_e2e_artifact');
   assert.ok(buildJob, 'consumer must build the test-only E2E artifact in the same run');
   assert.deepStrictEqual(buildJob.dependsOn, ['resolve_consumer_context']);
-  assert.strictEqual(buildJob.templateContext?.type, 'validationJob');
+  assert.strictEqual(buildJob.templateContext?.type, undefined, 'current-run artifact build job must be an ordinary output-producing job');
   assert.strictEqual(buildJob.templateContext.outputs[0].artifactName, 'vscode-e2e-build');
   assert.strictEqual(buildJob.templateContext.outputs[0].targetPath, '$(Build.ArtifactStagingDirectory)/vscode-e2e');
   const checkoutStep = buildJob.steps.find((step) => step.displayName === 'Checkout pinned source SHA for E2E artifact');
@@ -1082,7 +1084,7 @@ function assertGuidGuardRejectsMutations(text) {
   );
 }
 
-function assertConsumerJobsAreValidationJobs(consumer, runSuites) {
+function assertConsumerJobRoutingContract(consumer, runSuites) {
   const stages = consumer.extends.parameters.stages;
   assert.strictEqual(stages.length, 1);
   const jobs = flattenAzureList(stages[0].jobs).filter((entry) => entry.job || entry.template);
@@ -1094,7 +1096,22 @@ function assertConsumerJobsAreValidationJobs(consumer, runSuites) {
     ['build_current_run_e2e_artifact', 'report_diagnostic_selected_rerun', 'resolve_consumer_context', 'verify_both_os_full_rollup'].sort()
   );
   for (const job of directJobs) {
-    assert.strictEqual(job.templateContext?.type, 'validationJob', `${job.job} must be a validationJob`);
+    if (job.job === 'build_current_run_e2e_artifact') {
+      assert.strictEqual(job.templateContext?.type, undefined, `${job.job} must be an ordinary output-producing job`);
+      assert.strictEqual(job.templateContext.outputs.length, 1, `${job.job} must preserve its current-run artifact output`);
+      assert.strictEqual(job.templateContext.outputs[0].output, 'pipelineArtifact');
+      assert.strictEqual(job.templateContext.outputs[0].artifactName, 'vscode-e2e-build');
+      assert.strictEqual(job.templateContext.outputs[0].targetPath, '$(Build.ArtifactStagingDirectory)/vscode-e2e');
+      assert.strictEqual(
+        job.templateContext.outputs[0].isProduction,
+        undefined,
+        `${job.job} must preserve default artifact classification`
+      );
+      assert.strictEqual(job.templateContext.outputs[0].sbomEnabled, undefined, `${job.job} must preserve default SBOM handling`);
+      continue;
+    }
+    assert.strictEqual(job.templateContext?.type, 'validationJob', `${job.job} must be a no-output validationJob`);
+    assert.strictEqual(job.templateContext.outputs, undefined, `${job.job} must not publish artifacts from a validationJob`);
   }
 
   assert.strictEqual(templateJobs.length, 9);
@@ -1104,8 +1121,8 @@ function assertConsumerJobsAreValidationJobs(consumer, runSuites) {
 
   assert.strictEqual(runSuites.jobs.length, 1);
   const suiteJob = runSuites.jobs[0];
-  assert.strictEqual(suiteJob.templateContext?.type, 'validationJob');
-  assert.strictEqual(suiteJob.templateContext.outputs.length, 1, 'validationJob consumer must preserve diagnostic artifact outputs');
+  assert.strictEqual(suiteJob.templateContext?.type, undefined, 'suite jobs must be ordinary output-producing jobs');
+  assert.strictEqual(suiteJob.templateContext.outputs.length, 1, 'suite jobs must preserve diagnostic artifact outputs');
   assert.deepStrictEqual(
     suiteJob.templateContext.outputs.map((output) => output.output),
     ['pipelineArtifact']
@@ -1114,6 +1131,16 @@ function assertConsumerJobsAreValidationJobs(consumer, runSuites) {
   assert.strictEqual(
     suiteJob.templateContext.outputs[0].targetPath,
     '$(Build.ArtifactStagingDirectory)/vscode-e2e-cli/${{ parameters.artifactName }}'
+  );
+  assert.strictEqual(
+    suiteJob.templateContext.outputs[0].isProduction,
+    undefined,
+    'suite diagnostic output must preserve default artifact classification'
+  );
+  assert.strictEqual(
+    suiteJob.templateContext.outputs[0].sbomEnabled,
+    undefined,
+    'suite diagnostic output must preserve default SBOM handling'
   );
 }
 
@@ -1152,18 +1179,14 @@ function assertCliBuildCompilesPrepHarnessBeforeArchive(cliBuildArtifacts) {
   assert.ok(archiveIndex > prepCompileIndex, 'archive staging must happen after the dependency-prep harness is built');
 }
 
-function assertValidationJobGuardRejectsMutations(consumer, runSuites) {
+function assertConsumerJobRoutingGuardRejectsMutations(consumer, runSuites) {
   const mutate = (value, mutator) => {
     const clone = structuredClone(value);
     mutator(clone);
     return clone;
   };
   const expectRejection = (description, mutatedConsumer, mutatedRunSuites, pattern) => {
-    assert.throws(
-      () => assertConsumerJobsAreValidationJobs(mutatedConsumer ?? consumer, mutatedRunSuites ?? runSuites),
-      pattern,
-      description
-    );
+    assert.throws(() => assertConsumerJobRoutingContract(mutatedConsumer ?? consumer, mutatedRunSuites ?? runSuites), pattern, description);
   };
 
   expectRejection(
@@ -1173,15 +1196,55 @@ function assertValidationJobGuardRejectsMutations(consumer, runSuites) {
       delete job.templateContext.type;
     }),
     null,
-    /resolve_consumer_context must be a validationJob/
+    /resolve_consumer_context must be a no-output validationJob/
   );
   expectRejection(
-    'current-run artifact build job must remain validationJob type',
+    'current-run artifact build job must remain ordinary output-producing job',
+    mutate(consumer, (copy) => {
+      getConsumerDirectJob(copy, 'build_current_run_e2e_artifact').templateContext.type = 'validationJob';
+    }),
+    null,
+    /build_current_run_e2e_artifact must be an ordinary output-producing job/
+  );
+  expectRejection(
+    'current-run artifact build job must reject other explicit job types',
     mutate(consumer, (copy) => {
       getConsumerDirectJob(copy, 'build_current_run_e2e_artifact').templateContext.type = 'buildJob';
     }),
     null,
-    /build_current_run_e2e_artifact must be a validationJob/
+    /build_current_run_e2e_artifact must be an ordinary output-producing job/
+  );
+  expectRejection(
+    'current-run artifact output must remain enabled',
+    mutate(consumer, (copy) => {
+      getConsumerDirectJob(copy, 'build_current_run_e2e_artifact').templateContext.outputs = [];
+    }),
+    null,
+    /build_current_run_e2e_artifact must preserve its current-run artifact output/
+  );
+  expectRejection(
+    'current-run artifact output kind must remain pipelineArtifact',
+    mutate(consumer, (copy) => {
+      getConsumerDirectJob(copy, 'build_current_run_e2e_artifact').templateContext.outputs[0].output = 'buildArtifacts';
+    }),
+    null,
+    /Expected values to be strictly equal/
+  );
+  expectRejection(
+    'current-run artifact output must preserve default artifact classification',
+    mutate(consumer, (copy) => {
+      getConsumerDirectJob(copy, 'build_current_run_e2e_artifact').templateContext.outputs[0].isProduction = false;
+    }),
+    null,
+    /build_current_run_e2e_artifact must preserve default artifact classification/
+  );
+  expectRejection(
+    'current-run artifact output must preserve default SBOM handling',
+    mutate(consumer, (copy) => {
+      getConsumerDirectJob(copy, 'build_current_run_e2e_artifact').templateContext.outputs[0].sbomEnabled = false;
+    }),
+    null,
+    /build_current_run_e2e_artifact must preserve default SBOM handling/
   );
   expectRejection(
     'full-rollup coordinator must reject wrong job type',
@@ -1189,15 +1252,33 @@ function assertValidationJobGuardRejectsMutations(consumer, runSuites) {
       getConsumerDirectJob(copy, 'verify_both_os_full_rollup').templateContext.type = 'buildJob';
     }),
     null,
-    /verify_both_os_full_rollup must be a validationJob/
+    /verify_both_os_full_rollup must be a no-output validationJob/
   );
   expectRejection(
-    'suite template job must not lose validationJob type',
+    'no-output validation jobs must reject artifact outputs',
+    mutate(consumer, (copy) => {
+      getConsumerDirectJob(copy, 'verify_both_os_full_rollup').templateContext.outputs = [
+        { output: 'pipelineArtifact', targetPath: '$(Build.ArtifactStagingDirectory)/unexpected', artifactName: 'unexpected' },
+      ];
+    }),
+    null,
+    /verify_both_os_full_rollup must not publish artifacts from a validationJob/
+  );
+  expectRejection(
+    'suite template job must remain ordinary output-producing job',
+    null,
+    mutate(runSuites, (copy) => {
+      copy.jobs[0].templateContext.type = 'validationJob';
+    }),
+    /suite jobs must be ordinary output-producing jobs/
+  );
+  expectRejection(
+    'suite template job must reject other explicit job types',
     null,
     mutate(runSuites, (copy) => {
       copy.jobs[0].templateContext.type = 'deploymentJob';
     }),
-    /Expected values to be strictly equal/
+    /suite jobs must be ordinary output-producing jobs/
   );
   expectRejection(
     'unexpected deployment job must not be ignored',
@@ -1216,7 +1297,23 @@ function assertValidationJobGuardRejectsMutations(consumer, runSuites) {
     mutate(runSuites, (copy) => {
       copy.jobs[0].templateContext.outputs = [];
     }),
-    /validationJob consumer must preserve diagnostic artifact outputs/
+    /suite jobs must preserve diagnostic artifact outputs/
+  );
+  expectRejection(
+    'diagnostic artifact output must preserve default artifact classification',
+    null,
+    mutate(runSuites, (copy) => {
+      copy.jobs[0].templateContext.outputs[0].isProduction = false;
+    }),
+    /suite diagnostic output must preserve default artifact classification/
+  );
+  expectRejection(
+    'diagnostic artifact output must preserve default SBOM handling',
+    null,
+    mutate(runSuites, (copy) => {
+      copy.jobs[0].templateContext.outputs[0].sbomEnabled = false;
+    }),
+    /suite diagnostic output must preserve default SBOM handling/
   );
   expectRejection(
     'OS suite template invocation must remain the vetted template',
