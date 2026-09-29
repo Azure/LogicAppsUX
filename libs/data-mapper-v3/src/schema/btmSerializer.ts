@@ -3,12 +3,14 @@
  * Reads and writes .btm map files (XML format)
  */
 
-import { XMLParser } from 'fast-xml-parser';
-import { create } from 'xmlbuilder2';
+import { XMLParser, XMLValidator } from 'fast-xml-parser';
+import { create, fragment } from 'xmlbuilder2';
+import { simplifySchemaPath } from './schemaPathResolver';
 import type { MapDocument, MapPage, MapLink, MapFunctoid, MapOptions, SchemaReference } from '../model';
 import {
   LinkEndpointType,
   FunctoidCategory,
+  reconcilePageFunctoidLinks,
   ParameterType,
   ScriptType,
   DEFAULT_MAP_OPTIONS,
@@ -138,11 +140,18 @@ export class BtmSerializer {
       .replace(/\0/g, '')
       .trim();
 
+    const validity = XMLValidator.validate(content);
+    if (validity !== true) {
+      throw new Error(`Invalid .btm XML: ${validity.err.msg}`);
+    }
     const parsed = this.parser.parse(content);
     const root = parsed['mapsource'] || parsed['MapSource'] || parsed['Mapsource'];
 
     if (!root) {
       throw new Error('Invalid .btm file: no mapsource root element found');
+    }
+    if (root['sinktree'] !== undefined || (root['functions'] !== undefined && !root['Pages'] && !root['pages'])) {
+      throw new Error('Unsupported legacy BTM format (srctree/sinktree/functions). Upgrade this map with the legacy BizTalk Mapper before opening it; no links have been imported.');
     }
 
     const name = root['@_Name'] || 'Untitled';
@@ -153,7 +162,8 @@ export class BtmSerializer {
     const sourceSchema = this.parseSchemaRef(root['SrcTree'] || root['srcTree'], content, 'SrcTree');
     const targetSchema = this.parseSchemaRef(root['TrgTree'] || root['trgTree'], content, 'TrgTree');
     const pages = this.parsePages(root['Pages'] || root['pages'], scriptTypePrecedence);
-    const targetValues = this.parseTargetValues(root['TreeValues']);
+    const targetValues = this.parseTreeValues(root['TreeValues']?.['ConstantValues']);
+    const testValues = this.parseTreeValues(root['TreeValues']?.['TestValues']);
     const customXslt = root['CustomXSLT'];
 
     return {
@@ -164,6 +174,7 @@ export class BtmSerializer {
       pages,
       options,
       targetValues,
+      testValues,
       customXsltPath: customXslt?.['@_XsltPath'] || undefined,
       customExtensionXmlPath: customXslt?.['@_ExtObjXmlPath'] || undefined,
       scriptTypePrecedence,
@@ -191,16 +202,30 @@ export class BtmSerializer {
 
     // Source schema
     const srcTree = doc.ele('SrcTree');
-    srcTree.ele('Reference').att('Location', map.sourceSchema.location);
+    if (!map.sourceSchema.location && map.sourceSchema.inlineSchemaXml) {
+      srcTree.import(fragment(map.sourceSchema.inlineSchemaXml));
+    } else {
+      srcTree.ele('Reference').att('Location', map.sourceSchema.location);
+    }
     if (map.sourceSchema.rootName) {
       srcTree.att('RootNode_Name', map.sourceSchema.rootName);
+    }
+    if (map.sourceSchema.namespace) {
+      srcTree.att('Namespace', map.sourceSchema.namespace);
     }
 
     // Target schema
     const trgTree = doc.ele('TrgTree');
-    trgTree.ele('Reference').att('Location', map.targetSchema.location);
+    if (!map.targetSchema.location && map.targetSchema.inlineSchemaXml) {
+      trgTree.import(fragment(map.targetSchema.inlineSchemaXml));
+    } else {
+      trgTree.ele('Reference').att('Location', map.targetSchema.location);
+    }
     if (map.targetSchema.rootName) {
       trgTree.att('RootNode_Name', map.targetSchema.rootName);
+    }
+    if (map.targetSchema.namespace) {
+      trgTree.att('Namespace', map.targetSchema.namespace);
     }
 
     const precedence = doc.ele('ScriptTypePrecedence');
@@ -209,7 +234,10 @@ export class BtmSerializer {
     }
 
     const treeValues = doc.ele('TreeValues');
-    treeValues.ele('TestValues');
+    const tests = treeValues.ele('TestValues');
+    for (const [query, value] of Object.entries(map.testValues || {})) {
+      tests.ele('Value').att('value', value).att('Query', query);
+    }
     const constants = treeValues.ele('ConstantValues');
     for (const [query, value] of Object.entries(map.targetValues || {})) {
       constants.ele('Value').att('value', value).att('Query', query);
@@ -232,15 +260,15 @@ export class BtmSerializer {
         const linkElem = pageElem
           .ele('Link')
           .att('LinkID', link.id)
-          .att('SourceID', link.sourceId)
-          .att('TargetID', link.targetId)
+          .att('SourceID', this.persistedPath(link.sourceId, link.sourceBtmPath))
+          .att('TargetID', this.persistedPath(link.targetId, link.targetBtmPath))
           .att('SourceType', link.sourceType)
           .att('TargetType', link.targetType);
         if (link.sourcePath) {
-          linkElem.att('SourcePath', link.sourcePath);
+          linkElem.att('SourcePath', this.persistedPath(link.sourcePath, link.sourceBtmPath));
         }
         if (link.targetPath) {
-          linkElem.att('TargetPath', link.targetPath);
+          linkElem.att('TargetPath', this.persistedPath(link.targetPath, link.targetBtmPath));
         }
         if (link.label) {
           linkElem.att('Label', link.label);
@@ -365,13 +393,13 @@ export class BtmSerializer {
     };
   }
 
-  private parseTargetValues(treeValues: any): Record<string, string> {
+  private parseTreeValues(treeValues: any): Record<string, string> {
     const result: Record<string, string> = {};
-    const values = treeValues?.['ConstantValues']?.['Value'];
+    const values = treeValues?.['Value'];
     for (const value of values ? (Array.isArray(values) ? values : [values]) : []) {
       const query = value['@_Query'];
       if (query) {
-        result[this.parseBizTalkLinkPath(query)] = value['@_value'] ?? '';
+        result[query] = value['@_value'] ?? '';
       }
     }
     return result;
@@ -473,12 +501,16 @@ export class BtmSerializer {
     const pageArray = Array.isArray(pagesNode['Page']) ? pagesNode['Page'] : [pagesNode['Page']];
     return pageArray
       .filter((p: any) => p)
-      .map((page: any, idx: number) => ({
-        id: `page${idx + 1}`,
-        name: page['@_Name'] || `Page ${idx + 1}`,
-        links: this.parseLinks(page),
-        functoids: this.parseFunctoids(page, scriptTypePrecedence),
-      }));
+      .map((page: any, idx: number) => {
+        const parsedPage = {
+          id: `page${idx + 1}`,
+          name: page['@_Name'] || `Page ${idx + 1}`,
+          links: this.parseLinks(page),
+          functoids: this.parseFunctoids(page, scriptTypePrecedence),
+        };
+        reconcilePageFunctoidLinks(parsedPage);
+        return parsedPage;
+      });
   }
 
   private parseLinks(page: any): MapLink[] {
@@ -515,8 +547,10 @@ export class BtmSerializer {
           id: l['@_LinkID'] || l['@_linkID'] || this.generateId(),
           sourceId: sourceId,
           sourcePath: sourceIsFunctoid ? undefined : sourceId,
+          sourceBtmPath: sourceIsFunctoid ? undefined : linkFrom,
           targetId: targetId,
           targetPath: targetIsFunctoid ? undefined : targetId,
+          targetBtmPath: targetIsFunctoid ? undefined : linkTo,
           sourceType: sourceIsFunctoid ? LinkEndpointType.Functoid : LinkEndpointType.SchemaNode,
           targetType: targetIsFunctoid ? LinkEndpointType.Functoid : LinkEndpointType.SchemaNode,
           label: l['@_Label'] || '',
@@ -528,10 +562,12 @@ export class BtmSerializer {
       // Our serialized format
       return {
         id: l['@_LinkID'] || this.generateId(),
-        sourceId: l['@_SourceID'] || l['@_SourcePath'] || '',
-        sourcePath: l['@_SourcePath'] || l['@_SourceID'] || '',
-        targetId: l['@_TargetID'] || l['@_TargetPath'] || '',
-        targetPath: l['@_TargetPath'] || l['@_TargetID'] || '',
+        sourceId: this.parseBizTalkLinkPath(l['@_SourceID'] || l['@_SourcePath']),
+        sourcePath: l['@_SourceType'] === LinkEndpointType.Functoid ? undefined : this.parseBizTalkLinkPath(l['@_SourcePath'] || l['@_SourceID']),
+        targetId: this.parseBizTalkLinkPath(l['@_TargetID'] || l['@_TargetPath']),
+        targetPath: l['@_TargetType'] === LinkEndpointType.Functoid ? undefined : this.parseBizTalkLinkPath(l['@_TargetPath'] || l['@_TargetID']),
+        sourceBtmPath: l['@_SourcePath'] || l['@_SourceID'],
+        targetBtmPath: l['@_TargetPath'] || l['@_TargetID'],
         sourceType: (l['@_SourceType'] as LinkEndpointType) || LinkEndpointType.SchemaNode,
         targetType: (l['@_TargetType'] as LinkEndpointType) || LinkEndpointType.SchemaNode,
         label: l['@_Label'] || '',
@@ -579,30 +615,11 @@ export class BtmSerializer {
    * Also handles: "/*[local-name()='Root']/@*[local-name()='Field']" → "/Root/@Field"
    */
   private parseBizTalkLinkPath(xpath: string | undefined): string {
-    if (!xpath) {
-      return '';
-    }
+    return simplifySchemaPath(xpath || '');
+  }
 
-    const parts: string[] = [];
-    // Match segments like /*[local-name()='Name' and namespace-uri()='...'] or /@*[local-name()='Name']
-    const regex = /\/([@*]*)?\*\[local-name\(\)='([^']+)'(?:\s+and\s+namespace-uri\(\)='[^']*')?\]/g;
-    let match: RegExpExecArray | null;
-
-    while ((match = regex.exec(xpath)) !== null) {
-      const prefix = match[1] || '';
-      const name = match[2];
-      // Skip the <Schema> virtual root
-      if (name === '<Schema>' || name === '&lt;Schema&gt;') {
-        continue;
-      }
-      if (prefix.includes('@')) {
-        parts.push(`/@${name}`);
-      } else {
-        parts.push(`/${name}`);
-      }
-    }
-
-    return parts.join('') || xpath;
+  private persistedPath(path: string, original?: string): string {
+    return original && path === simplifySchemaPath(original) ? original : path;
   }
 
   private parseFunctoids(page: any, scriptTypePrecedence: Array<{ type: ScriptType; enabled: boolean }>): MapFunctoid[] {

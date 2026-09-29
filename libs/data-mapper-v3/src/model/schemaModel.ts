@@ -18,14 +18,20 @@ export interface SchemaTree {
 export interface SchemaNode {
     name: string;
     path: string;
+    /** TOM identity, including non-instance schema groups. */
+    schemaPath?: string;
+    structuralPath?: string;
+    instancePath?: string;
     type: SchemaNodeType;
     dataType?: string;
+    declaredDataType?: string;
     dataTypeNamespace?: string;
     namespace?: string;
     nillable?: boolean;
     defaultValue?: string;
     fixedValue?: string;
     choiceGroup?: string;
+    choiceBranches?: Array<{ group: string; branch: number }>;
     baseType?: string;
     children: SchemaNode[];
     attributes: SchemaAttribute[];
@@ -52,6 +58,8 @@ export enum SchemaNodeType {
 
 export interface SchemaAttribute {
     name: string;
+    schemaPath?: string;
+    structuralPath?: string;
     type: string;
     required: boolean;
     defaultValue?: string;

@@ -6,9 +6,20 @@ export const window = {
     showOpenDialog: jest.fn(),
     showSaveDialog: jest.fn(),
     showInputBox: jest.fn(),
-    createOutputChannel: jest.fn(() => ({ appendLine: jest.fn(), show: jest.fn(), dispose: jest.fn() })),
+    createOutputChannel: jest.fn(() => outputChannel),
     registerCustomEditorProvider: jest.fn(() => ({ dispose: jest.fn() })),
     registerTreeDataProvider: jest.fn(() => ({ dispose: jest.fn() }))
+};
+
+export const outputChannel = {
+    appendLine: jest.fn(),
+    show: jest.fn(),
+    dispose: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+    debug: jest.fn(),
+    trace: jest.fn()
 };
 
 export const workspace = {

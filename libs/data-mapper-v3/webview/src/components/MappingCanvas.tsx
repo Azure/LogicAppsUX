@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
-import { createRoot, Root } from 'react-dom/client';
-import { createPortal } from 'react-dom';
+import { createRoot, type Root } from 'react-dom/client';
+import { flushSync } from 'react-dom';
+import { CanvasBox, constrainZoomToWidth, fitLinkViewport, getCanvasBounds, zoomToCanvasBox } from './canvasViewport';
 import type { MapFunctoid, MapLink, MapPage } from '../../../src/model/mapModel';
 import type { MapperViewState } from '../../../src/protocol/mapEditorProtocol';
 
@@ -29,7 +30,9 @@ interface CanvasViewProps {
     offsetX: number;
     offsetY: number;
     zoom: number;
+    panX: number;
     onZoomChange(zoom: number): void;
+    onBoxZoom(selection: CanvasBox, zoomOut: boolean): void;
 }
 
 interface DragTarget {
@@ -61,6 +64,7 @@ const accents: Record<string, string> = {
 };
 
 const functoidRadius = 32;
+const functoidScale = 0.5;
 const minZoom = 0.1;
 const maxZoom = 2;
 
@@ -82,7 +86,10 @@ function getLinkPoints(
     offsetY: number,
     scrollLeft: number,
     scrollTop: number,
-    zoom: number
+    zoom: number,
+    panX: number,
+    originX: number,
+    originY: number
 ): { source: Point; target: Point } | null {
     let source: Point | undefined;
     let target: Point | undefined;
@@ -91,12 +98,12 @@ function getLinkPoints(
         const functoid = page.functoids.find(item => item.id === link.sourceId);
         if (functoid) {
             source = {
-                x: offsetX + (functoid.x + functoidRadius) * zoom - scrollLeft,
-                y: offsetY + functoid.y * zoom - scrollTop
+                x: offsetX + (functoid.x + originX + functoidRadius * functoidScale) * zoom - scrollLeft - panX,
+                y: offsetY + (functoid.y + originY) * zoom - scrollTop
             };
         }
-    } else if (link.sourcePath) {
-        const raw = positions.get(`src:${link.sourcePath}`);
+    } else if (link.sourceType === 'schemaNode') {
+        const raw = positions.get(`src:${link.sourcePath || link.sourceId}`);
         if (raw) {
             source = raw;
         }
@@ -106,12 +113,12 @@ function getLinkPoints(
         const functoid = page.functoids.find(item => item.id === link.targetId);
         if (functoid) {
             target = {
-                x: offsetX + (functoid.x - functoidRadius) * zoom - scrollLeft,
-                y: offsetY + functoid.y * zoom - scrollTop
+                x: offsetX + (functoid.x + originX - functoidRadius * functoidScale) * zoom - scrollLeft - panX,
+                y: offsetY + (functoid.y + originY) * zoom - scrollTop
             };
         }
-    } else if (link.targetPath) {
-        const raw = positions.get(`tgt:${link.targetPath}`);
+    } else if (link.targetType === 'schemaNode') {
+        const raw = positions.get(`tgt:${link.targetPath || link.targetId}`);
         if (raw) {
             target = raw;
         }
@@ -133,9 +140,7 @@ function LinkPath({
     selected: boolean;
     onSelect(): void;
 }): React.ReactElement {
-    const dx = Math.abs(to.x - from.x);
-    const controlOffset = Math.max(dx * 0.4, 40);
-    const path = `M ${from.x} ${from.y} C ${from.x + controlOffset} ${from.y}, ${to.x - controlOffset} ${to.y}, ${to.x} ${to.y}`;
+    const path = `M ${from.x} ${from.y} L ${to.x} ${to.y}`;
     const [hovered, setHovered] = useState(false);
 
     return (
@@ -173,6 +178,9 @@ function FunctoidNode({
     functoid,
     selected,
     zoom,
+    panX,
+    originX,
+    originY,
     svgRef,
     callbacks,
     dragTarget,
@@ -181,6 +189,9 @@ function FunctoidNode({
     functoid: MapFunctoid;
     selected: boolean;
     zoom: number;
+    panX: number;
+    originX: number;
+    originY: number;
     svgRef: React.RefObject<SVGSVGElement>;
     callbacks: CanvasCallbacks;
     dragTarget: React.MutableRefObject<DragTarget | null>;
@@ -192,7 +203,7 @@ function FunctoidNode({
         <g
             className="functoid-node"
             data-id={functoid.id}
-            transform={`translate(${functoid.x * zoom}, ${functoid.y * zoom}) scale(${zoom})`}
+            transform={`translate(${(functoid.x + originX) * zoom - panX}, ${(functoid.y + originY) * zoom}) scale(${zoom * functoidScale})`}
             onClick={event => {
                 event.stopPropagation();
                 clickTimer.current = window.setTimeout(
@@ -219,13 +230,14 @@ function FunctoidNode({
                 }
                 const target = {
                     id: functoid.id,
-                    offsetX: (event.clientX - svgRect.left) / zoom - functoid.x,
-                    offsetY: (event.clientY - svgRect.top) / zoom - functoid.y
+                    offsetX: (event.clientX - svgRect.left + panX) / zoom - originX - functoid.x,
+                    offsetY: (event.clientY - svgRect.top) / zoom - originY - functoid.y
                 };
                 dragTarget.current = target;
                 setDragTarget(target);
             }}
         >
+            <title>{functoid.name}</title>
             <circle
                 cx="3"
                 cy="3"
@@ -292,13 +304,24 @@ function MappingCanvasView({
     offsetX,
     offsetY,
     zoom,
-    onZoomChange
+    panX,
+    onZoomChange,
+    onBoxZoom
 }: CanvasViewProps): React.ReactElement {
     const svgRef = useRef<SVGSVGElement>(null);
     const dragTarget = useRef<DragTarget | null>(null);
+    const dragBounds = useRef<ReturnType<typeof getCanvasBounds> | null>(null);
+    const zoomStart = useRef<Point | null>(null);
     const [, setCurrentDrag] = useState<DragTarget | null>(null);
-    const zoomPercent = Math.round(zoom * 100);
-    const mappingArea = host.closest('.mapping-area');
+    const [boxZoomMode, setBoxZoomMode] = useState(false);
+    const [zoomSelection, setZoomSelection] = useState<(CanvasBox & { zoomOut: boolean }) | null>(null);
+    const zoomPercent = Math.round(zoom * 10000) / 100;
+    const bounds = dragBounds.current ?? getCanvasBounds(page?.functoids ?? []);
+    const canvasWidth = host.clientWidth;
+    const canvasHeight = host.clientHeight;
+    const maximumZoom = maxZoom;
+    const minimumZoom = minZoom;
+    const surfaceWidth = Math.ceil(bounds.width * zoom);
 
     const finishDrag = (): void => {
         const target = dragTarget.current;
@@ -310,6 +333,7 @@ function MappingCanvasView({
             callbacks.onFunctoidMove?.(functoid.id, functoid.x, functoid.y);
         }
         dragTarget.current = null;
+        dragBounds.current = null;
         setCurrentDrag(null);
     };
 
@@ -318,10 +342,50 @@ function MappingCanvasView({
             <svg
                 ref={svgRef}
                 className="mapping-svg"
-                width={`${Math.max(100, zoomPercent)}%`}
-                height={`${Math.max(100, zoomPercent)}%`}
+                width={canvasWidth > 0 ? Math.min(canvasWidth, surfaceWidth) : surfaceWidth}
+                height={Math.ceil(bounds.height * zoom)}
                 onClick={() => callbacks.onDeselect?.()}
+                onContextMenu={event => {
+                    if (boxZoomMode) {
+                        event.preventDefault();
+                    }
+                }}
+                onMouseDown={event => {
+                    if (!boxZoomMode || event.target !== svgRef.current || event.button !== 0) {
+                        return;
+                    }
+                    event.preventDefault();
+                    const rect = host.getBoundingClientRect();
+                    zoomStart.current = {
+                        x: event.clientX - rect.left,
+                        y: event.clientY - rect.top
+                    };
+                    setZoomSelection({
+                        x: zoomStart.current.x,
+                        y: zoomStart.current.y,
+                        width: 0,
+                        height: 0,
+                        zoomOut: event.shiftKey
+                    });
+                }}
                 onMouseMove={event => {
+                    if (zoomSelection) {
+                        const rect = host.getBoundingClientRect();
+                        const currentX = event.clientX - rect.left;
+                        const currentY = event.clientY - rect.top;
+                        const start = zoomStart.current;
+                        if (!start) {
+                            return;
+                        }
+                        setZoomSelection({
+                            x: Math.min(start.x, currentX),
+                            y: Math.min(start.y, currentY),
+                            width: Math.abs(currentX - start.x),
+                            height: Math.abs(currentY - start.y),
+                            zoomOut: zoomSelection.zoomOut
+                        });
+                        return;
+                    }
                     const target = dragTarget.current;
                     if (!target || !page || !svgRef.current) {
                         return;
@@ -331,12 +395,31 @@ function MappingCanvasView({
                         return;
                     }
                     const rect = svgRef.current.getBoundingClientRect();
-                    functoid.x = (event.clientX - rect.left) / zoom - target.offsetX;
-                    functoid.y = (event.clientY - rect.top) / zoom - target.offsetY;
+                    const nextX = (event.clientX - rect.left + panX) / zoom - bounds.originX - target.offsetX;
+                    if (canvasWidth > 0) {
+                        const leftLimit = -bounds.originX + functoidRadius * functoidScale;
+                        const rightLimit = canvasWidth / zoom - bounds.originX - functoidRadius * functoidScale;
+                        functoid.x = Math.min(rightLimit, Math.max(leftLimit, nextX));
+                    } else {
+                        functoid.x = nextX;
+                    }
+                    functoid.y = (event.clientY - rect.top) / zoom - bounds.originY - target.offsetY;
                     setCurrentDrag({ ...target });
                 }}
-                onMouseUp={finishDrag}
-                onMouseLeave={finishDrag}
+                onMouseUp={() => {
+                    if (zoomSelection) {
+                        onBoxZoom(zoomSelection, zoomSelection.zoomOut);
+                        zoomStart.current = null;
+                        setZoomSelection(null);
+                        return;
+                    }
+                    finishDrag();
+                }}
+                onMouseLeave={() => {
+                    zoomStart.current = null;
+                    setZoomSelection(null);
+                    finishDrag();
+                }}
                 onDragOver={event => {
                     event.preventDefault();
                     event.dataTransfer.dropEffect = 'copy';
@@ -352,55 +435,31 @@ function MappingCanvasView({
                     }
                     try {
                         const rect = host.getBoundingClientRect();
-                        const x = (event.clientX - rect.left + host.scrollLeft) / zoom;
-                        const y = (event.clientY - rect.top + host.scrollTop) / zoom;
+                        const rawX = (event.clientX - rect.left + panX) / zoom - bounds.originX;
+                        const x = canvasWidth > 0
+                            ? Math.min(
+                                canvasWidth / zoom - bounds.originX - functoidRadius * functoidScale,
+                                Math.max(-bounds.originX + functoidRadius * functoidScale, rawX)
+                            )
+                            : rawX;
+                        const y = (event.clientY - rect.top + host.scrollTop) / zoom - bounds.originY;
                         callbacks.onFunctoidDrop?.(JSON.parse(data), x, y);
                     } catch {
                         return;
                     }
                 }}
             >
-                {page?.functoids.map(functoid => (
-                    <FunctoidNode
-                        key={functoid.id}
-                        functoid={functoid}
-                        selected={state.selectedFunctoid === functoid.id}
-                        zoom={zoom}
-                        svgRef={svgRef}
-                        callbacks={callbacks}
-                        dragTarget={dragTarget}
-                        setDragTarget={target => setCurrentDrag(target)}
-                    />
-                ))}
-                <text x="8" y="16" fill="#888" fontSize="10">
-                    {page ? `${page.links.length} link${page.links.length === 1 ? '' : 's'}` : '0 links'}
-                </text>
-            </svg>
-            <div className="canvas-zoom-controls">
-                <button
-                    type="button"
-                    title="Zoom Out"
-                    disabled={zoom <= minZoom}
-                    onClick={() => onZoomChange(Math.max(minZoom, zoom - 0.1))}
+                <svg
+                    className="mapping-links-overlay"
+                    x="0"
+                    y={host.scrollTop}
+                    width={canvasWidth}
+                    height={canvasHeight}
                 >
-                    −
-                </button>
-                <span data-zoom={zoomPercent}>{zoomPercent}%</span>
-                <button
-                    type="button"
-                    title="Zoom In"
-                    disabled={zoom >= maxZoom}
-                    onClick={() => onZoomChange(Math.min(maxZoom, zoom + 0.1))}
-                >
-                    +
-                </button>
-                <button type="button" title="Reset Zoom" onClick={() => onZoomChange(1)}>
-                    1:1
-                </button>
-            </div>
-            {mappingArea && createPortal(
-                <svg className="mapping-links-overlay">
                     <defs>
+                        <clipPath id="mapping-canvas-link-clip">
+                            <rect width={canvasWidth} height={canvasHeight} />
+                        </clipPath>
                         <marker
                             id="arrowhead"
                             markerWidth="8"
@@ -412,31 +471,109 @@ function MappingCanvasView({
                             <polygon points="0 0, 8 3, 0 6" fill="#4fc1ff" />
                         </marker>
                     </defs>
-                    {page?.links.map(link => {
-                        const points = getLinkPoints(
-                            link,
-                            positions,
-                            page,
-                            offsetX,
-                            offsetY,
-                            host.scrollLeft,
-                            host.scrollTop,
-                            zoom
-                        );
-                        return points ? (
-                            <LinkPath
-                                key={link.id}
-                                link={link}
-                                from={points.source}
-                                to={points.target}
-                                selected={state.selectedLink === link.id}
-                                onSelect={() => callbacks.onLinkSelect?.(link.id)}
-                            />
-                        ) : null;
-                    })}
-                </svg>,
-                mappingArea
-            )}
+                    <g className="mapping-links-layer" clipPath="url(#mapping-canvas-link-clip)">
+                        {page?.links.map(link => {
+                            const points = getLinkPoints(
+                                link,
+                                positions,
+                                page,
+                                offsetX,
+                                offsetY,
+                                host.scrollLeft,
+                                host.scrollTop,
+                                zoom,
+                                panX,
+                                bounds.originX,
+                                bounds.originY
+                            );
+                            if (!points) {
+                                return null;
+                            }
+                            const source = {
+                                x: link.sourceType === 'schemaNode' ? 0 : points.source.x - offsetX,
+                                y: points.source.y - offsetY
+                            };
+                            const target = {
+                                x: link.targetType === 'schemaNode'
+                                    ? canvasWidth
+                                    : points.target.x - offsetX,
+                                y: points.target.y - offsetY
+                            };
+                            return (
+                                <LinkPath
+                                    key={link.id}
+                                    link={link}
+                                    from={source}
+                                    to={target}
+                                    selected={state.selectedLink === link.id}
+                                    onSelect={() => callbacks.onLinkSelect?.(link.id)}
+                                />
+                            );
+                        })}
+                    </g>
+                </svg>
+                {page?.functoids.map(functoid => (
+                    <FunctoidNode
+                        key={functoid.id}
+                        functoid={functoid}
+                        selected={state.selectedFunctoid === functoid.id}
+                        zoom={zoom}
+                        panX={panX}
+                        originX={bounds.originX}
+                        originY={bounds.originY}
+                        svgRef={svgRef}
+                        callbacks={callbacks}
+                        dragTarget={dragTarget}
+                        setDragTarget={target => {
+                            dragBounds.current = bounds;
+                            setCurrentDrag(target);
+                        }}
+                    />
+                ))}
+                <text x="8" y="16" fill="#888" fontSize="10">
+                    {page ? `${page.links.length} link${page.links.length === 1 ? '' : 's'}` : '0 links'}
+                </text>
+                {zoomSelection && (
+                    <rect
+                        className={`canvas-zoom-selection ${zoomSelection.zoomOut ? 'zoom-out' : ''}`}
+                        x={zoomSelection.x}
+                        y={zoomSelection.y + host.scrollTop}
+                        width={zoomSelection.width}
+                        height={zoomSelection.height}
+                    />
+                )}
+            </svg>
+            <div className="canvas-zoom-controls">
+                <button
+                    type="button"
+                    title="Zoom Out"
+                    disabled={zoom <= minimumZoom}
+                    onClick={() => onZoomChange(Math.max(minimumZoom, zoom - 0.1))}
+                >
+                    −
+                </button>
+                <span data-zoom={zoomPercent}>{zoomPercent}%</span>
+                <button
+                    type="button"
+                    title="Zoom In"
+                    disabled={zoom >= maximumZoom}
+                    onClick={() => onZoomChange(Math.min(maximumZoom, zoom + 0.1))}
+                >
+                    +
+                </button>
+                <button type="button" title="Reset Zoom" onClick={() => onZoomChange(Math.min(1, maximumZoom))}>
+                    1:1
+                </button>
+                <button
+                    type="button"
+                    className={boxZoomMode ? 'active' : ''}
+                    title="Zoom Area: drag a rectangle to zoom in; Shift+drag to zoom out"
+                    aria-pressed={boxZoomMode}
+                    onClick={() => setBoxZoomMode(value => !value)}
+                >
+                    ▣
+                </button>
+            </div>
         </>
     );
 }
@@ -450,6 +587,7 @@ export class MappingCanvas extends HTMLElement {
     private offsetX = 0;
     private offsetY = 0;
     private zoom = 1;
+    private panX = 0;
 
     public configure(state: MapperViewState, callbacks?: CanvasCallbacks): void {
         this.state = state;
@@ -482,15 +620,69 @@ export class MappingCanvas extends HTMLElement {
         const areaRect = mappingArea?.getBoundingClientRect();
         this.offsetX = areaRect ? canvasRect.left - areaRect.left : 0;
         this.offsetY = areaRect ? canvasRect.top - areaRect.top : 0;
+        this.scrollLeft = 0;
         this.renderReact();
     }
 
     public setZoom(zoom: number): void {
+        const oldZoom = this.zoom;
+        const centerX = (this.panX + this.clientWidth / 2) / oldZoom;
         this.zoom = Math.min(maxZoom, Math.max(minZoom, zoom));
+        const bounds = getCanvasBounds(this.page?.functoids ?? []);
+        this.panX = Math.max(0, Math.min(
+            Math.max(0, bounds.width * this.zoom - this.clientWidth),
+            centerX * this.zoom - this.clientWidth / 2
+        ));
+        this.scrollLeft = 0;
+        this.renderReact();
+    }
+
+    public zoomToBox(selection: CanvasBox, zoomOut: boolean): void {
+        const bounds = getCanvasBounds(this.page?.functoids ?? []);
+        const viewport = zoomToCanvasBox(
+            selection,
+            { width: this.clientWidth, height: this.clientHeight },
+            bounds,
+            { zoom: this.zoom, scrollLeft: this.panX, scrollTop: this.scrollTop },
+            { minimumZoom: minZoom, maximumZoom: maxZoom },
+            zoomOut
+        );
+        this.zoom = viewport.zoom;
+        this.panX = viewport.scrollLeft;
+        flushSync(() => this.renderReact());
+        this.scrollLeft = 0;
+        this.scrollTop = viewport.scrollTop;
+        this.renderReact();
+    }
+
+    public revealLink(linkId: string): void {
+        const link = this.page?.links.find(item => item.id === linkId);
+        if (!link || !this.page || !this.isConnected) {
+            return;
+        }
+        const nodes = this.page.functoids.filter(node =>
+            (link.sourceType === 'functoid' && node.id === link.sourceId)
+            || (link.targetType === 'functoid' && node.id === link.targetId)
+        );
+        const bounds = getCanvasBounds(this.page.functoids);
+        const maximumZoom = constrainZoomToWidth(bounds.width, this.clientWidth, 1);
+        // A zoom change can add/remove scrollbars and change the usable viewport.
+        for (let pass = 0; pass < 2; pass++) {
+            const viewport = fitLinkViewport(nodes, bounds, this.clientWidth, this.clientHeight, {
+                zoom: this.zoom, scrollLeft: this.scrollLeft, scrollTop: this.scrollTop
+            }, maximumZoom);
+            this.zoom = viewport.zoom;
+            flushSync(() => this.renderReact());
+            this.scrollLeft = 0;
+            this.scrollTop = viewport.scrollTop;
+        }
         this.renderReact();
     }
 
     private readonly handleScroll = (): void => {
+        if (this.scrollLeft !== 0) {
+            this.scrollLeft = 0;
+        }
         this.renderReact();
     };
 
@@ -509,7 +701,9 @@ export class MappingCanvas extends HTMLElement {
                 offsetX={this.offsetX}
                 offsetY={this.offsetY}
                 zoom={this.zoom}
+                panX={this.panX}
                 onZoomChange={zoom => this.setZoom(zoom)}
+                onBoxZoom={(selection, zoomOut) => this.zoomToBox(selection, zoomOut)}
             />
         );
     }

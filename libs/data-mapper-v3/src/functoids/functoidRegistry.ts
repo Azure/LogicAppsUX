@@ -69,12 +69,12 @@ export class FunctoidRegistry {
             id: 101,
             name: 'String Find',
             category: FunctoidCategory.String,
-            description: 'Returns the 1-based position of a substring within a string',
+            description: 'Returns the 1-based position of a substring within a string, or 0 if not found',
             minInputs: 2,
             maxInputs: 2,
             hasOutput: true,
             tooltip: 'Find position of substring',
-            generateXslt: (inputs) => `string-length(substring-before(${inputs[0]}, ${inputs[1]})) + 1`
+            generateXslt: (inputs) => `(string-length(substring-before(${inputs[0]}, ${inputs[1]})) + 1) * number(contains(${inputs[0]}, ${inputs[1]}))`
         });
 
         this.functoids.set(102, {

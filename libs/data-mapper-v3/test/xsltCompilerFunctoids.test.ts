@@ -652,6 +652,148 @@ describe('XsltCompiler functoid coverage', () => {
             .toBeLessThan(result.xslt!.indexOf('<![CDATA['));
     });
 
+    test.each([260, 424, 801, 703, 704, 574, 575])(
+        'warns instead of validating unused FID %i without changing the map or XSLT',
+        id => {
+            const definition = FunctoidRegistry.getInstance().getFunctoid(id)!;
+            const map = createMap({
+                id: 'unused',
+                functoidId: id,
+                category: definition.category,
+                name: definition.name,
+                x: 0,
+                y: 0,
+                inputLinks: [],
+                outputLinks: ['stale-output'],
+                parameters: [],
+                ...(id === 260 ? { scriptType: ScriptType.ExternalAssembly } : {})
+            });
+            map.pages[0].links = map.pages[0].links.filter(link => link.id !== 'output');
+            map.pages[0].links.push({
+                id: 'direct',
+                sourceId: '/Root/Items/Value',
+                sourcePath: '/Root/Items/Value',
+                targetId: '/Root/Sum',
+                targetPath: '/Root/Sum',
+                sourceType: LinkEndpointType.SchemaNode,
+                targetType: LinkEndpointType.SchemaNode
+            });
+            const original = JSON.stringify(map);
+            const baseline: MapDocument = {
+                ...map,
+                pages: [{
+                    ...map.pages[0],
+                    functoids: [],
+                    links: map.pages[0].links.filter(link => link.id === 'direct')
+                }]
+            };
+
+            const result = new XsltCompiler().compile(map, sourceSchema, targetSchema);
+            const expected = new XsltCompiler().compile(baseline, sourceSchema, targetSchema);
+
+            expect(result.errors).toEqual([]);
+            expect(result.success).toBe(true);
+            expect(result.xslt).toBe(expected.xslt);
+            expect(result.warnings).toContainEqual({
+                message: `[Page 1] ${definition.name} has no output links and is not compiled`,
+                elementId: 'unused',
+                pageId: 'page1',
+                pageName: 'Page 1'
+            });
+            expect(JSON.stringify(map)).toBe(original);
+        }
+    );
+
+    test.each([false, true])(
+        'still rejects an unconfigured Table Looping functoid with an output (indirect: %s)',
+        indirect => {
+            const definition = FunctoidRegistry.getInstance().getFunctoid(703)!;
+            const map = createMap({
+                id: 'table',
+                functoidId: definition.id,
+                category: definition.category,
+                name: definition.name,
+                x: 0,
+                y: 0,
+                inputLinks: [],
+                outputLinks: [],
+                parameters: []
+            });
+            const output = map.pages[0].links.find(link => link.id === 'output')!;
+            output.targetId = output.targetPath = '/Root/Line';
+            if (indirect) {
+                const extractor = FunctoidRegistry.getInstance().getFunctoid(704)!;
+                map.pages[0].functoids.push({
+                    id: 'extractor',
+                    functoidId: extractor.id,
+                    category: extractor.category,
+                    name: extractor.name,
+                    x: 0,
+                    y: 0,
+                    inputLinks: [],
+                    outputLinks: [],
+                    parameters: [{ index: 1, value: '1', type: ParameterType.Constant }]
+                });
+                map.pages[0].links.find(link => link.id === 'output')!.sourceId = 'extractor';
+                map.pages[0].links.push({
+                    id: 'table-extractor',
+                    sourceId: 'table',
+                    targetId: 'extractor',
+                    sourceType: LinkEndpointType.Functoid,
+                    targetType: LinkEndpointType.Functoid
+                });
+            }
+
+            const result = new XsltCompiler().compile(map, sourceSchema, targetSchema);
+
+            expect(result.success).toBe(false);
+            expect(result.errors).toContainEqual(expect.objectContaining({
+                message: '[Page 1] Table Looping requires non-empty table-grid metadata',
+                elementId: 'table'
+            }));
+            expect(result.warnings.some(warning => warning.elementId === 'table')).toBe(false);
+        }
+    );
+
+    test('keeps unused functoid diagnostics page-local when pages reuse IDs', () => {
+        const definition = FunctoidRegistry.getInstance().getFunctoid(703)!;
+        const map = createMap({
+            id: 'table',
+            functoidId: definition.id,
+            category: definition.category,
+            name: definition.name,
+            x: 0,
+            y: 0,
+            inputLinks: [],
+            outputLinks: [],
+            parameters: []
+        });
+        const output = map.pages[0].links.find(link => link.id === 'output')!;
+        output.targetId = output.targetPath = '/Root/Line';
+        map.pages.push({
+            id: 'page2',
+            name: 'Unused page',
+            functoids: [{ ...map.pages[0].functoids[0] }],
+            links: []
+        });
+
+        const result = new XsltCompiler().compile(map, sourceSchema, targetSchema);
+
+        expect(result.success).toBe(false);
+        expect(result.errors).toContainEqual(expect.objectContaining({
+            elementId: 'table',
+            pageId: 'page1',
+            message: '[Page 1] Table Looping requires non-empty table-grid metadata'
+        }));
+        expect(result.errors.some(error => error.pageId === 'page2')).toBe(false);
+        expect(result.warnings).toContainEqual({
+            elementId: 'page2:table',
+            pageId: 'page2',
+            pageName: 'Unused page',
+            message: '[Unused page] Table Looping has no output links and is not compiled'
+        });
+    });
+
     test('unrolls Table Looping rows and resolves Table Extractor grid inputs', () => {
         const tableDefinition = FunctoidRegistry.getInstance().getFunctoid(703)!;
         const extractorDefinition = FunctoidRegistry.getInstance().getFunctoid(704)!;

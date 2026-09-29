@@ -56,6 +56,10 @@
     ],
     "commands": [
       {
+        "command": "biztalkDataMapper.showLogs",
+        "title": "Logic App: Show Data Mapper Logs"
+      },
+      {
         "command": "biztalkDataMapper.newMap",
         "title": "Logic App: New Data Map",
         "icon": "$(add)"

@@ -3,6 +3,8 @@
  */
 
 import { SchemaNodeView, SchemaTreeRenderer } from './SchemaTreeRenderer';
+import { SchemaPathResolver, linkSchemaPath } from '../../../src/schema/schemaPathResolver';
+import { findUniqueNameMatches } from './autoLink';
 import { MappingCanvas } from './MappingCanvas';
 import { FunctoidPalette } from './FunctoidPalette';
 import {
@@ -13,7 +15,12 @@ import {
     MapEditorVsCodeApi,
     MapperViewState,
 } from '../../../src/protocol/mapEditorProtocol';
-import { LinkEndpointType, ParameterType } from '../../../src/model/mapModel';
+import {
+    getConfiguredFunctoidInputCount,
+    LinkEndpointType,
+    ParameterType,
+    reconcileMapFunctoidLinks
+} from '../../../src/model';
 
 type ScriptingConfigType = 'inlineCSharp' | 'inlineVbNet' | 'inlineJScript' | 'inlineXslt' | 'inlineXsltCallTemplate' | 'externalAssembly';
 
@@ -62,6 +69,10 @@ export class MapperAppController {
     private copilotContextFiles: Array<{ id: string; name: string; size: number }> = [];
 
     private resizeObserver: ResizeObserver | null = null;
+    private schemaResolvers = new WeakMap<object, {
+        ignoreNamespaces: boolean;
+        resolver: SchemaPathResolver<any>;
+    }>();
 
     constructor(
         private readonly container: HTMLElement,
@@ -122,7 +133,18 @@ export class MapperAppController {
 
     private readonly handleContextMenu = (event: MouseEvent): void => {
         event.preventDefault();
-        this.showContextMenu(event.clientX, event.clientY);
+        const target = event.target instanceof Element ? event.target : null;
+        const pane = target?.closest('.schema-tree-container');
+        const side = pane?.classList.contains('source-tree') ? 'source'
+            : pane?.classList.contains('target-tree') ? 'target' : undefined;
+        if (side && this.state[`${side}Schema`]) {
+            const clickedHeader = target?.closest('.schema-header');
+            if (!clickedHeader) {
+                document.querySelectorAll('.context-menu').forEach(menu => menu.remove());
+                return;
+            }
+        }
+        this.showContextMenu(event.clientX, event.clientY, side);
     };
 
     private readonly handleResize = (): void => this.redrawLinks();
@@ -157,7 +179,7 @@ export class MapperAppController {
         setTimeout(() => this.updateStatusMessage(''), 2000);
     }
 
-    private showContextMenu(x: number, y: number): void {
+    private showContextMenu(x: number, y: number, side?: 'source' | 'target'): void {
         // Remove existing menu
         document.querySelectorAll('.context-menu').forEach(m => m.remove());
 
@@ -167,7 +189,12 @@ export class MapperAppController {
         menu.style.top = `${y}px`;
 
         const hasSelection = !!(this.state.selectedLink || this.state.selectedFunctoid);
-        const items = [
+        const items = side ? [{
+            label: `${this.state[`${side}Schema`] ? 'Replace' : 'Add'} ${side === 'source' ? 'Source' : 'Target'} Schema…`,
+            shortcut: '',
+            action: () => this.vscode.postMessage({ type: 'loadSchema', side }),
+            disabled: !this.state.map
+        }] : [
             { label: '✂️ Cut', shortcut: 'Ctrl+X', action: () => { this.copySelected(); this.deleteSelected(); }, disabled: !hasSelection },
             { label: '📋 Copy', shortcut: 'Ctrl+C', action: () => this.copySelected(), disabled: !hasSelection },
             { label: '📄 Paste', shortcut: 'Ctrl+V', action: () => this.pasteClipboard(), disabled: !this.clipboard },
@@ -185,7 +212,9 @@ export class MapperAppController {
                 menu.appendChild(sep);
                 continue;
             }
-            const el = document.createElement('div');
+            const el = document.createElement('button');
+            el.type = 'button';
+            el.disabled = item.disabled;
             el.className = `context-menu-item${item.disabled ? ' disabled' : ''}`;
             el.innerHTML = `<span class="menu-label">${item.label}</span><span class="menu-shortcut">${item.shortcut}</span>`;
             if (!item.disabled) {
@@ -193,6 +222,11 @@ export class MapperAppController {
             }
             menu.appendChild(el);
         }
+        menu.addEventListener('keydown', event => {
+            if (event.key === 'Escape') {
+                menu.remove();
+            }
+        });
 
         document.body.appendChild(menu);
 
@@ -216,6 +250,19 @@ export class MapperAppController {
             case 'documentChanged':
                 this.state.map = message.data;
                 this.redrawLinks();
+                break;
+            case 'schemaStateChanged':
+                this.state.map = message.data.map;
+                this.state.sourceSchema = message.data.sourceSchema;
+                this.state.targetSchema = message.data.targetSchema;
+                this.pendingLink = null;
+                this.state.selectedLink = null;
+                this.schemaNodeProperties = null;
+                this.functoidPropertiesId = null;
+                this.functoidInputsDraft = null;
+                this.scriptingConfigDraft = null;
+                this.renderView();
+                setTimeout(() => this.redrawLinks(), 150);
                 break;
             case 'schemaLoaded':
                 if (message.data.side === 'source') {
@@ -316,14 +363,19 @@ export class MapperAppController {
             const sourceTree = new SchemaTreeRenderer();
             sourceContainer = sourceTree;
             sourceContainer.className = 'schema-tree-container source-tree';
-            const expandedPaths = this.getLinkedPaths('source');
+            const sourceResolver = this.getSchemaPathResolver(this.state.sourceSchema);
+            const expandedPaths = this.getLinkedPaths('source', sourceResolver);
             this.sourceTree = sourceTree;
             this.sourceTree.configure(
                 this.state.sourceSchema, 'source',
                 (nodePath) => this.onSourceNodeClick(nodePath),
                 expandedPaths,
                 (srcPath, tgtPath) => this.completeLinkCreation({ type: 'schemaNode', id: srcPath }, { type: 'schemaNode', id: tgtPath }),
-                (node) => this.openSchemaNodeProperties(node, 'source')
+                (node) => this.openSchemaNodeProperties(node, 'source'),
+                () => this.vscode.postMessage({ type: 'loadSchema', side: 'source' }),
+                () => this.redrawLinks(),
+                this.state.map?.options?.ignoreNamespacesForLinks,
+                sourceResolver
             );
         } else {
             sourceContainer = document.createElement('div');
@@ -341,7 +393,7 @@ export class MapperAppController {
         canvasContainer.className = 'canvas-container';
         this.canvas = canvasContainer;
         this.canvas.configure(this.state, {
-            onLinkSelect: (linkId) => { this.state.selectedLink = linkId; this.state.selectedFunctoid = null; this.redrawLinks(); },
+            onLinkSelect: (linkId) => this.selectLink(linkId),
             onFunctoidSelect: (fId) => { this.state.selectedFunctoid = fId; this.state.selectedLink = null; this.redrawLinks(); },
             onFunctoidDoubleClick: (fId) => { this.onFunctoidDoubleClick(fId); },
             onFunctoidDrop: (functoid, x, y) => { this.addFunctoidAtPosition(functoid, x, y); },
@@ -362,14 +414,19 @@ export class MapperAppController {
             const targetTree = new SchemaTreeRenderer();
             targetContainer = targetTree;
             targetContainer.className = 'schema-tree-container target-tree';
-            const expandedPaths = this.getLinkedPaths('target');
+            const targetResolver = this.getSchemaPathResolver(this.state.targetSchema);
+            const expandedPaths = this.getLinkedPaths('target', targetResolver);
             this.targetTree = targetTree;
             this.targetTree.configure(
                 this.state.targetSchema, 'target',
                 (nodePath) => this.onTargetNodeClick(nodePath),
                 expandedPaths,
                 (srcPath, tgtPath) => this.completeLinkCreation({ type: 'schemaNode', id: srcPath }, { type: 'schemaNode', id: tgtPath }),
-                (node) => this.openSchemaNodeProperties(node, 'target')
+                (node) => this.openSchemaNodeProperties(node, 'target'),
+                () => this.vscode.postMessage({ type: 'loadSchema', side: 'target' }),
+                () => this.redrawLinks(),
+                this.state.map?.options?.ignoreNamespacesForLinks,
+                targetResolver
             );
         } else {
             targetContainer = document.createElement('div');
@@ -583,8 +640,36 @@ export class MapperAppController {
             return;
         }
 
+        if (target.type === 'functoid') {
+            const targetFunctoid = page.functoids.find(functoid => functoid.id === target.id);
+            const definition = this.state.functoids.find(item => item.id === targetFunctoid?.functoidId);
+            if (!targetFunctoid) {
+                this.rejectPendingLink('Target functoid was not found');
+                return;
+            }
+            if (definition && getConfiguredFunctoidInputCount(page, targetFunctoid) >= definition.maxInputs) {
+                this.rejectPendingLink(
+                    `${targetFunctoid.name} accepts ${definition.maxInputs} input${definition.maxInputs === 1 ? '' : 's'}`
+                );
+                return;
+            }
+        }
+        if (source.type === 'functoid') {
+            const sourceFunctoid = page.functoids.find(functoid => functoid.id === source.id);
+            const definition = this.state.functoids.find(item => item.id === sourceFunctoid?.functoidId);
+            if (!sourceFunctoid) {
+                this.rejectPendingLink('Source functoid was not found');
+                return;
+            }
+            if (definition?.hasOutput === false) {
+                this.rejectPendingLink(`${sourceFunctoid.name} does not provide an output`);
+                return;
+            }
+        }
+
+        const linkId = `link_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
         page.links.push({
-            id: `link_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+            id: linkId,
             sourceId: source.id,
             sourcePath: source.type === 'schemaNode' ? source.id : undefined,
             targetId: target.id,
@@ -604,10 +689,33 @@ export class MapperAppController {
         this.redrawLinks();
     }
 
+    private rejectPendingLink(message: string): void {
+        this.pendingLink = null;
+        this.updateStatusMessage(message);
+        setTimeout(() => this.updateStatusMessage(''), 3000);
+    }
+
     private getFunctoidName(id: string): string {
         const page = this.state.map?.pages[this.state.activePage];
         const f = page?.functoids.find((fn: any) => fn.id === id);
         return f?.name || 'Functoid';
+    }
+
+    private selectLink(linkId: string): void {
+        const link = this.state.map?.pages[this.state.activePage]?.links.find(item => item.id === linkId);
+        if (!link) {
+            return;
+        }
+        this.state.selectedLink = linkId;
+        this.state.selectedFunctoid = null;
+        if (link.sourceType === 'schemaNode') {
+            this.sourceTree?.revealNode(linkSchemaPath(link, 'source'));
+        }
+        if (link.targetType === 'schemaNode') {
+            this.targetTree?.revealNode(linkSchemaPath(link, 'target'));
+        }
+        this.redrawLinks();
+        this.canvas?.revealLink(linkId);
     }
 
     private redrawLinks(): void {
@@ -619,19 +727,33 @@ export class MapperAppController {
         const positions: Map<string, { x: number; y: number }> = new Map();
 
         if (this.sourceTree) {
+            const sourcePaths = new Set(
+                page.links
+                    .filter(link => link.sourceType === 'schemaNode')
+                    .map(link => linkSchemaPath(link, 'source'))
+            );
+            const sourcePositions = this.sourceTree.getNodePositions(sourcePaths);
             for (const link of page.links) {
-                if (link.sourcePath && link.sourceType !== 'functoid') {
-                    const pos = this.sourceTree.getNodePosition(link.sourcePath);
-                    if (pos) { positions.set(`src:${link.sourcePath}`, pos); }
+                if (link.sourceType === 'schemaNode') {
+                    const path = link.sourcePath || link.sourceId;
+                    const pos = sourcePositions.get(linkSchemaPath(link, 'source'));
+                    if (pos) { positions.set(`src:${path}`, pos); }
                 }
             }
         }
 
         if (this.targetTree) {
+            const targetPaths = new Set(
+                page.links
+                    .filter(link => link.targetType === 'schemaNode')
+                    .map(link => linkSchemaPath(link, 'target'))
+            );
+            const targetPositions = this.targetTree.getNodePositions(targetPaths);
             for (const link of page.links) {
-                if (link.targetPath && link.targetType !== 'functoid') {
-                    const pos = this.targetTree.getNodePosition(link.targetPath);
-                    if (pos) { positions.set(`tgt:${link.targetPath}`, pos); }
+                if (link.targetType === 'schemaNode') {
+                    const path = link.targetPath || link.targetId;
+                    const pos = targetPositions.get(linkSchemaPath(link, 'target'));
+                    if (pos) { positions.set(`tgt:${path}`, pos); }
                 }
             }
         }
@@ -852,6 +974,7 @@ export class MapperAppController {
     }
 
     private updateMap(map: any): void {
+        reconcileMapFunctoidLinks(map);
         this.state.map = map;
         this.vscode.postMessage({ type: 'update', data: map });
     }
@@ -935,24 +1058,47 @@ export class MapperAppController {
     private autoLinkByName(): void {
         if (!this.state.sourceSchema || !this.state.targetSchema || !this.state.map) { return; }
         const page = this.state.map.pages[this.state.activePage];
-        const sourceNodes = this.flattenLeafNodes(this.state.sourceSchema.rootElement);
-        const targetNodes = this.flattenLeafNodes(this.state.targetSchema.rootElement);
+        const sourcePaths = this.getSchemaPathResolver(this.state.sourceSchema);
+        const targetPaths = this.getSchemaPathResolver(this.state.targetSchema);
+        const existing = new Set<string>();
+        for (const link of page.links) {
+            if (link.sourceType !== LinkEndpointType.SchemaNode || link.targetType !== LinkEndpointType.SchemaNode) {
+                continue;
+            }
+            const source = sourcePaths.resolve(linkSchemaPath(link, 'source'));
+            const target = targetPaths.resolve(linkSchemaPath(link, 'target'));
+            if (source && target) {
+                existing.add(`${source.path}\0${target.path}`);
+            }
+        }
+        const result = findUniqueNameMatches(
+            this.state.sourceSchema.rootElement,
+            this.state.targetSchema.rootElement
+        );
         let added = 0;
 
-        for (const src of sourceNodes) {
-            const match = targetNodes.find((t: any) => t.name.toLowerCase() === src.name.toLowerCase());
-            if (match && !page.links.find((l: any) => l.sourcePath === src.path && l.targetPath === match.path)) {
+        for (const { source, target } of result.matches) {
+            if (!existing.has(`${source.path}\0${target.path}`)) {
                 page.links.push({
                     id: `link_${Date.now()}_${Math.random().toString(36).substr(2, 6)}_${added}`,
-                    sourceId: src.path, sourcePath: src.path,
-                    targetId: match.path, targetPath: match.path,
+                    sourceId: source.schemaPath || source.path, sourcePath: source.schemaPath || source.path,
+                    targetId: target.schemaPath || target.path, targetPath: target.schemaPath || target.path,
                     sourceType: LinkEndpointType.SchemaNode,
                     targetType: LinkEndpointType.SchemaNode
                 });
                 added++;
             }
         }
-        if (added > 0) { this.updateMap(this.state.map); this.renderView(); setTimeout(() => this.redrawLinks(), 150); }
+        if (added > 0) {
+            this.updateMap(this.state.map);
+            this.canvas?.updateState(this.state);
+            this.redrawLinks();
+        }
+        const skipped = result.ambiguousNameCount > 0
+            ? `; skipped ${result.ambiguousNameCount} ambiguous name${result.ambiguousNameCount === 1 ? '' : 's'}`
+            : '';
+        this.updateStatusMessage(`Auto-Link added ${added} link${added === 1 ? '' : 's'}${skipped}`);
+        setTimeout(() => this.updateStatusMessage(''), 5000);
     }
 
     private validateAndCompile(): void {
@@ -996,12 +1142,24 @@ export class MapperAppController {
 
         // Check for dangling functoids
         for (const functoid of (page.functoids || [])) {
-            const hasInput = page.links.some((l: any) => l.targetId === functoid.id);
+            const definition = this.state.functoids.find(item => item.id === functoid.functoidId);
+            const configuredInputCount = getConfiguredFunctoidInputCount(page, functoid);
+            const hasInput = configuredInputCount > 0;
             const hasOutput = page.links.some((l: any) => l.sourceId === functoid.id);
 
+            if (definition && configuredInputCount < definition.minInputs) {
+                issues.push(
+                    `✗ Functoid "${functoid.name}" (${functoid.id}): requires at least ${definition.minInputs} input${definition.minInputs === 1 ? '' : 's'}, but ${configuredInputCount} configured`
+                );
+            } else if (definition && configuredInputCount > definition.maxInputs) {
+                issues.push(
+                    `✗ Functoid "${functoid.name}" (${functoid.id}): accepts at most ${definition.maxInputs} input${definition.maxInputs === 1 ? '' : 's'}, but ${configuredInputCount} configured`
+                );
+            }
+
             if (!hasInput && !hasOutput) {
-                issues.push(`✗ Functoid "${functoid.name}" (${functoid.id}): not connected — no input or output links`);
-            } else if (!hasInput) {
+                issues.push(`⚠ Functoid "${functoid.name}" (${functoid.id}): not connected — no input or output links`);
+            } else if (!hasInput && !definition) {
                 const noInputOk = ['Date', 'Time', 'Date and Time', 'Iteration', 'Scripting'].includes(functoid.name);
                 if (!noInputOk) {
                     issues.push(`⚠ Functoid "${functoid.name}" (${functoid.id}): no input links`);
@@ -1076,22 +1234,31 @@ export class MapperAppController {
         setTimeout(() => notif.remove(), 5000);
     }
 
-    private getLinkedPaths(side: 'source' | 'target'): Set<string> {
+    private getSchemaPathResolver(schema: any): SchemaPathResolver<any> {
+        const ignoreNamespaces = !!this.state.map?.options?.ignoreNamespacesForLinks;
+        const cached = this.schemaResolvers.get(schema);
+        if (cached?.ignoreNamespaces === ignoreNamespaces) {
+            return cached.resolver;
+        }
+        const resolver = new SchemaPathResolver(schema, ignoreNamespaces);
+        this.schemaResolvers.set(schema, { ignoreNamespaces, resolver });
+        return resolver;
+    }
+
+    private getLinkedPaths(side: 'source' | 'target', resolver: SchemaPathResolver<any>): Set<string> {
         const paths = new Set<string>();
         if (!this.state.map) { return paths; }
         const page = this.state.map.pages[this.state.activePage];
         if (!page) { return paths; }
         for (const link of page.links) {
-            const p = side === 'source' ? link.sourcePath : link.targetPath;
-            if (p) { const parts = p.split('/').filter((s: string) => s); let cur = ''; for (const part of parts) { cur += '/' + part; paths.add(cur); } }
+            const p = linkSchemaPath(link, side);
+            const resolved = p ? resolver.resolve(p) : undefined;
+            if (resolved) {
+                resolved.ancestors.forEach(node => paths.add(node.path));
+                paths.add(resolved.path);
+            }
         }
         return paths;
-    }
-
-    private flattenLeafNodes(node: any, result: any[] = []): any[] {
-        if (!node.children || node.children.length === 0) { result.push(node); }
-        if (node.children) { for (const c of node.children) this.flattenLeafNodes(c, result); }
-        return result;
     }
 
     private getFileName(p?: string): string { return p ? (p.split(/[/\\]/).pop() || p) : 'None'; }

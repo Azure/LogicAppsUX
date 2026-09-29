@@ -77,6 +77,7 @@ export const HOST_TO_WEBVIEW_MESSAGE_TYPES = [
     'init',
     'documentChanged',
     'schemaLoaded',
+    'schemaStateChanged',
     'compileResult',
     'assemblySelected',
     'instanceGenerated',
@@ -112,6 +113,10 @@ export type HostToWebviewMessage =
         };
     }
     | { type: 'documentChanged'; data: MapDocument }
+    | {
+        type: 'schemaStateChanged';
+        data: { map: MapDocument; sourceSchema: SchemaTree | null; targetSchema: SchemaTree | null };
+    }
     | {
         type: 'schemaLoaded';
         data: { side: SchemaSide; schema: SchemaTree; path: string };
@@ -213,6 +218,10 @@ export function isHostToWebviewMessage(value: unknown): value is HostToWebviewMe
                 && (data.targetSchema === null || isObject(data.targetSchema));
         case 'documentChanged':
             return true;
+        case 'schemaStateChanged':
+            return isObject(data.map)
+                && (data.sourceSchema === null || isObject(data.sourceSchema))
+                && (data.targetSchema === null || isObject(data.targetSchema));
         case 'schemaLoaded':
             return isSchemaSide(data.side)
                 && isObject(data.schema)

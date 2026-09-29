@@ -71,10 +71,14 @@ async function run() {
                 sourceSchema: schema,
                 targetSchema: schema,
                 functoids: [{
-                    id: 107,
-                    name: 'String Concatenate',
+                    id: 108,
+                    name: 'String Left Trim',
                     category: 'String',
-                    tooltip: 'Concatenate values'
+                    description: 'Removes leading whitespace',
+                    minInputs: 1,
+                    maxInputs: 1,
+                    hasOutput: true,
+                    tooltip: 'Trim leading whitespace'
                 }]
             }
         }
@@ -219,7 +223,44 @@ async function run() {
 
     assert.equal(map.pages[0].functoids.length, 1);
     const canvas = document.querySelector('biztalk-mapping-canvas');
+    sourceConnector.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+    canvas.querySelector('.input-connector')
+        .dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+    await new Promise(resolve => setTimeout(resolve, 25));
+    assert.equal(map.pages[0].links.length, 2);
+    assert.equal(
+        JSON.stringify(map.pages[0].functoids[0].inputLinks),
+        JSON.stringify([map.pages[0].links[1].id])
+    );
+    assert.equal(JSON.stringify(map.pages[0].functoids[0].parameters), JSON.stringify([{
+        index: 0,
+        type: 'link',
+        value: map.pages[0].links[1].id
+    }]));
+
+    const secondSourceConnector = Array.from(
+        document.querySelectorAll('biztalk-schema-tree.source-tree .tree-node')
+    ).find(node => node.dataset.path === '/Root/Value')?.querySelector('.node-connector');
+    secondSourceConnector.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+    canvas.querySelector('.input-connector')
+        .dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+    await new Promise(resolve => setTimeout(resolve, 25));
+    assert.equal(map.pages[0].links.length, 2);
+    assert.match(document.querySelector('#toolbar-status').textContent, /accepts 1 input/);
+
+    const compileRequestsBefore = messages.filter(message => message.type === 'compile').length;
+    document.querySelector('#btn-validate-compile')
+        .dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+    assert.equal(messages.filter(message => message.type === 'compile').length, compileRequestsBefore + 1);
+    assert.equal(messages.at(-1).data.pages[0].functoids.length, 1);
+    assert.match(document.querySelector('.notification-warning').textContent, /no output link/);
     assert.ok(canvas.querySelector('.functoid-node'));
+    const compactNode = canvas.querySelector('.functoid-node');
+    assert.match(compactNode.getAttribute('transform'), /scale\(0\.5\)/);
+    assert.equal(Number(compactNode.querySelector('.functoid-body').getAttribute('r')) * 2 * 0.5, 32);
+    assert.equal(compactNode.querySelector('title').textContent, map.pages[0].functoids[0].name);
+    assert.equal(Number(compactNode.querySelector('.input-connector').getAttribute('cx')) * 0.5, -16);
+    assert.equal(Number(compactNode.querySelector('.output-connector').getAttribute('cx')) * 0.5, 16);
     canvas.querySelector('.functoid-node text')
         .dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
     await new Promise(resolve => setTimeout(resolve, 300));
@@ -236,7 +277,7 @@ async function run() {
     zoomIn.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
     await new Promise(resolve => setTimeout(resolve, 25));
     assert.equal(canvas.querySelector('[data-zoom]')?.textContent, '110%');
-    assert.match(canvas.querySelector('.functoid-node').getAttribute('transform'), /scale\(1\.1\)/);
+    assert.match(canvas.querySelector('.functoid-node').getAttribute('transform'), /scale\(0\.55\)/);
 
     const pathBeforeScroll = document.querySelector('.mapping-links-overlay [data-link-id] path').getAttribute('d');
     canvas.scrollLeft = 20;
@@ -265,7 +306,7 @@ async function run() {
     canvas.querySelector('svg.mapping-svg').dispatchEvent(dropEvent);
     await new Promise(resolve => setTimeout(resolve, 25));
     assert.equal(map.pages[0].functoids.length, 2);
-    assert.ok(Math.abs(map.pages[0].functoids[1].x - (130 / 1.1)) < 0.001);
+    assert.ok(Math.abs(map.pages[0].functoids[1].x - (110 / 1.1)) < 0.001);
     assert.ok(Math.abs(map.pages[0].functoids[1].y - (76 / 1.1)) < 0.001);
 
     const initialX = map.pages[0].functoids[0].x;
@@ -299,6 +340,9 @@ async function run() {
     assert.ok(Math.abs(map.pages[0].functoids[0].y - edgeDragStartY - 30) < 0.001);
 
     const editableFunctoid = map.pages[0].functoids[0];
+    map.pages[0].links = map.pages[0].links.filter(link => link.targetId !== editableFunctoid.id);
+    editableFunctoid.inputLinks = [];
+    editableFunctoid.parameters = [];
     map.pages[0].links.push(
         {
             id: 'functoid-input-1',
@@ -366,6 +410,356 @@ async function run() {
     }
     assert.equal(currentCanvas.querySelector('[data-zoom]')?.textContent, '10%');
     assert.equal(currentCanvas.querySelector('button[title="Zoom Out"]').disabled, true);
+
+    // The surface must include off-screen functoids, rather than just the viewport.
+    const originalCoordinates = { x: editableFunctoid.x, y: editableFunctoid.y };
+    editableFunctoid.x = 2400;
+    editableFunctoid.y = 1800;
+    currentCanvas.setZoom(1);
+    const scrollPositions = new Map([
+        ['src:/Root/Value', { x: 0, y: 100 }],
+        ['src:/Root/Value/Inner', { x: 0, y: 150 }],
+        ['tgt:/Root/Value/Inner', { x: 900, y: 150 }]
+    ]);
+    currentCanvas.renderWithPositions(scrollPositions, map.pages[0]);
+    await new Promise(resolve => setTimeout(resolve, 25));
+    const surface = currentCanvas.querySelector('svg.mapping-svg');
+    assert.equal(Number(surface.getAttribute('width')), 2480);
+    assert.equal(Number(surface.getAttribute('height')), 1880);
+    assert.equal(dom.window.getComputedStyle(currentCanvas).overflowX, 'hidden');
+    assert.equal(dom.window.getComputedStyle(currentCanvas).overflowY, 'auto');
+    assert.equal(dom.window.getComputedStyle(surface).minWidth, '100%');
+    assert.equal(dom.window.getComputedStyle(surface).minHeight, '100%');
+    currentCanvas.setZoom(0.5);
+    await new Promise(resolve => setTimeout(resolve, 25));
+    assert.equal(Number(surface.getAttribute('width')), 1240);
+    assert.equal(Number(surface.getAttribute('height')), 940);
+    currentCanvas.setZoom(2);
+    await new Promise(resolve => setTimeout(resolve, 25));
+    assert.equal(Number(surface.getAttribute('width')), 4960);
+    assert.equal(Number(surface.getAttribute('height')), 3760);
+    const linksBeforeScroll = Array.from(document.querySelectorAll('.mapping-links-overlay .mapping-link'),
+        link => link.getAttribute('d'));
+    currentCanvas.scrollLeft = 200;
+    currentCanvas.scrollTop = 150;
+    currentCanvas.dispatchEvent(new dom.window.Event('scroll'));
+    await new Promise(resolve => setTimeout(resolve, 25));
+    const linksAfterScroll = Array.from(document.querySelectorAll('.mapping-links-overlay .mapping-link'),
+        link => link.getAttribute('d'));
+    assert.notDeepEqual(linksAfterScroll, linksBeforeScroll);
+    currentCanvas.renderWithPositions(new Map(), { id: 'empty', name: 'Empty', links: [], functoids: [] });
+    await new Promise(resolve => setTimeout(resolve, 25));
+    assert.equal(Number(surface.getAttribute('width')), 0);
+    assert.equal(Number(surface.getAttribute('height')), 0);
+    Object.assign(editableFunctoid, originalCoordinates);
+    currentCanvas.setZoom(1);
+    currentCanvas.renderWithPositions(new Map(), map.pages[0]);
+    await new Promise(resolve => setTimeout(resolve, 25));
+    assert.ok(Number(surface.getAttribute('width')) < 2480);
+    assert.ok(Number(surface.getAttribute('height')) < 1880);
+
+    // Browse actions leave the current map untouched until the host commits a replacement.
+    for (const side of ['source', 'target']) {
+        const pane = document.querySelector(`.${side}-tree`);
+        const before = JSON.stringify(map);
+        const childNode = Array.from(pane.querySelectorAll('.tree-node'))
+            .find(node => node.dataset.path === '/Root/Value');
+        childNode.dispatchEvent(
+            new dom.window.MouseEvent('contextmenu', { bubbles: true, clientX: 20, clientY: 20 })
+        );
+        assert.equal(document.querySelector('.context-menu'), null);
+
+        pane.querySelector('.schema-header').dispatchEvent(
+            new dom.window.MouseEvent('contextmenu', { bubbles: true, clientX: 20, clientY: 20 })
+        );
+        let replace = document.querySelector('.context-menu button');
+        assert.match(replace.textContent, new RegExp(`Replace ${side === 'source' ? 'Source' : 'Target'} Schema`));
+        replace.click();
+        assert.equal(messages.at(-1).type, 'loadSchema');
+        assert.equal(messages.at(-1).side, side);
+
+        pane.querySelector('.tree-node').dispatchEvent(
+            new dom.window.MouseEvent('contextmenu', { bubbles: true, clientX: 20, clientY: 20 })
+        );
+        assert.equal(document.querySelector('.context-menu'), null);
+        pane.querySelector(`button[aria-label="Replace ${side} schema"]`).click();
+        assert.equal(messages.at(-1).side, side);
+        assert.equal(JSON.stringify(map), before);
+    }
+    const updatesBeforeReplacement = messages.filter(message => message.type === 'update').length;
+    dom.window.dispatchEvent(new dom.window.MessageEvent('message', {
+        data: { type: 'schemaStateChanged', data: { map, sourceSchema: null, targetSchema: null } }
+    }));
+    await new Promise(resolve => setTimeout(resolve, 50));
+    assert.equal(messages.filter(message => message.type === 'update').length, updatesBeforeReplacement);
+    for (const side of ['source', 'target']) {
+        const pane = document.querySelector(`.${side}-tree`);
+        pane.dispatchEvent(new dom.window.MouseEvent('contextmenu', { bubbles: true }));
+        const add = document.querySelector('.context-menu button');
+        assert.match(add.textContent, new RegExp(`Add ${side === 'source' ? 'Source' : 'Target'} Schema`));
+        add.click();
+        assert.equal(messages.at(-1).side, side);
+        pane.querySelector('.load-schema-btn').click();
+        assert.equal(messages.at(-1).side, side);
+    }
+    dom.window.dispatchEvent(new dom.window.MessageEvent('message', {
+        data: { type: 'schemaStateChanged', data: { map, sourceSchema: schema, targetSchema: schema } }
+    }));
+    await new Promise(resolve => setTimeout(resolve, 50));
+    assert.equal(document.querySelectorAll('biztalk-schema-tree').length, 2);
+    assert.equal(messages.filter(message => message.type === 'update').length, updatesBeforeReplacement);
+
+    const focusMap = {
+        ...map,
+        pages: [{
+            id: 'focus', name: 'Focus', functoids: [
+                { ...map.pages[0].functoids[0], id: 'near', x: 200, y: 200 },
+                { ...map.pages[0].functoids[0], id: 'far', x: 4000, y: 3000 }
+            ],
+            links: [
+                { id: 'ss', sourceId: '/Root/Value/Inner', targetId: '/Root/Value/Inner',
+                    sourceType: 'schemaNode', targetType: 'schemaNode' },
+                { id: 'sf', sourceId: '/Root/Value/Inner', targetId: 'far',
+                    sourceType: 'schemaNode', targetType: 'functoid' },
+                { id: 'fs', sourceId: 'near', targetId: '/Root/Value/Inner',
+                    sourceType: 'functoid', targetType: 'schemaNode' },
+                { id: 'ff', sourceId: 'near', targetId: 'far',
+                    sourceType: 'functoid', targetType: 'functoid' }
+            ]
+        }]
+    };
+    dom.window.dispatchEvent(new dom.window.MessageEvent('message', {
+        data: { type: 'schemaStateChanged', data: { map: focusMap, sourceSchema: schema, targetSchema: schema } }
+    }));
+    await new Promise(resolve => setTimeout(resolve, 50));
+    const focusCanvas = document.querySelector('biztalk-mapping-canvas');
+    Object.defineProperties(focusCanvas, {
+        clientWidth: { value: 600, configurable: true },
+        clientHeight: { value: 400, configurable: true }
+    });
+    const panes = Array.from(document.querySelectorAll('biztalk-schema-tree'));
+    for (const pane of panes) {
+        Object.defineProperties(pane, {
+            clientWidth: { value: 260 },
+            clientHeight: { value: 300 }
+        });
+        pane.querySelector('button[title="Collapse All"]').click();
+    }
+    await new Promise(resolve => setTimeout(resolve, 25));
+    assert.ok(!panes[0].querySelector('[data-path="/Root/Value/Inner"]'));
+    const originalRect = dom.window.HTMLElement.prototype.getBoundingClientRect;
+    dom.window.HTMLElement.prototype.getBoundingClientRect = function () {
+        const pane = this.closest('biztalk-schema-tree');
+        const isRow = this.classList.contains('tree-node') || this.classList.contains('node-connector');
+        if (pane && isRow) {
+            const top = 1000 - pane.scrollTop;
+            return { x: 0, y: top, left: 0, top, right: 20, bottom: top + 24, width: 20, height: 24 };
+        }
+        if (this.classList.contains('schema-header')) {
+            return { x: 0, y: 0, left: 0, top: 0, right: 260, bottom: 40, width: 260, height: 40 };
+        }
+        if (this === focusCanvas) {
+            return { x: 260, y: 0, left: 260, top: 0, right: 860, bottom: 400, width: 600, height: 400 };
+        }
+        if (this.classList.contains('mapping-area')) {
+            return { x: 0, y: 0, left: 0, top: 0, right: 1120, bottom: 400, width: 1120, height: 400 };
+        }
+        return originalRect.call(this);
+    };
+    dom.window.dispatchEvent(new dom.window.Event('resize'));
+    await new Promise(resolve => setTimeout(resolve, 25));
+    const focusSnapshot = JSON.stringify(focusMap);
+    const updateCount = messages.filter(message => message.type === 'update').length;
+    const assertCompactLinkEndpoints = () => {
+        const coordinates = id => {
+            const transform = focusCanvas.querySelector(`.functoid-node[data-id="${id}"]`).getAttribute('transform');
+            const [x, y, scale] = transform.match(/-?\d+(?:\.\d+)?(?:e[+-]?\d+)?/g).map(Number);
+            return { x: x - focusCanvas.scrollLeft, y: y - focusCanvas.scrollTop, radius: 32 * scale };
+        };
+        const near = coordinates('near');
+        const far = coordinates('far');
+        for (const [id, endpoint, expected] of [
+            ['ff', 0, { x: near.x + near.radius, y: near.y }],
+            ['ff', 1, { x: far.x - far.radius, y: far.y }],
+            ['fs', 0, { x: near.x + near.radius, y: near.y }],
+            ['sf', 1, { x: far.x - far.radius, y: far.y }]
+        ]) {
+            const circle = document.querySelectorAll(`.mapping-links-overlay [data-link-id="${id}"] circle`)[endpoint];
+            assert.ok(Math.abs(Number(circle.getAttribute('cx')) - expected.x) < 0.001);
+            assert.ok(Math.abs(Number(circle.getAttribute('cy')) - expected.y) < 0.001);
+        }
+    };
+    assertCompactLinkEndpoints();
+    const linkOverlay = document.querySelector('.mapping-links-overlay');
+    const clipRect = linkOverlay.querySelector('#mapping-canvas-link-clip rect');
+    assert.equal(linkOverlay.getAttribute('width'), '600');
+    assert.equal(linkOverlay.getAttribute('height'), '400');
+    assert.equal(linkOverlay.parentElement, focusCanvas.querySelector('.mapping-svg'));
+    assert.ok(
+        linkOverlay.compareDocumentPosition(focusCanvas.querySelector('.functoid-node'))
+        & dom.window.Node.DOCUMENT_POSITION_FOLLOWING,
+        'Connections render before functoids so functoids remain visually in front'
+    );
+    assert.equal(clipRect.getAttribute('width'), '600');
+    assert.equal(clipRect.getAttribute('height'), '400');
+    assert.equal(dom.window.getComputedStyle(linkOverlay).overflow, 'hidden');
+    assert.equal(
+        linkOverlay.querySelector('.mapping-links-layer').getAttribute('clip-path'),
+        'url(#mapping-canvas-link-clip)'
+    );
+    const linkEndpointX = (id, endpoint) =>
+        Number(document.querySelectorAll(`.mapping-links-overlay [data-link-id="${id}"] circle`)[endpoint]
+            .getAttribute('cx'));
+    assert.equal(linkEndpointX('ss', 0), 0);
+    assert.equal(linkEndpointX('ss', 1), 600);
+    assert.equal(linkEndpointX('sf', 0), 0);
+    assert.equal(linkEndpointX('fs', 1), 600);
+
+    Object.defineProperty(focusCanvas, 'clientWidth', { value: 500, configurable: true });
+    dom.window.dispatchEvent(new dom.window.Event('resize'));
+    await new Promise(resolve => setTimeout(resolve, 25));
+    assert.equal(linkOverlay.getAttribute('width'), '500');
+    assert.equal(clipRect.getAttribute('width'), '500');
+    assert.equal(linkEndpointX('ss', 1), 500);
+    assert.equal(linkEndpointX('fs', 1), 500);
+    Object.defineProperty(focusCanvas, 'clientWidth', { value: 600, configurable: true });
+    dom.window.dispatchEvent(new dom.window.Event('resize'));
+    await new Promise(resolve => setTimeout(resolve, 25));
+
+    const selectConnection = async id => {
+        const hitTarget = document.querySelector(`.mapping-links-overlay [data-link-id="${id}"] path`);
+        assert.ok(hitTarget, `Connection ${id} remains selectable when its schema node is collapsed`);
+        hitTarget.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+        await new Promise(resolve => setTimeout(resolve, 25));
+    };
+    await selectConnection('ss');
+    for (const pane of panes) {
+        assert.ok(pane.querySelector('[data-path="/Root/Value/Inner"]'));
+        assert.ok(pane.scrollTop > 0);
+    }
+    await selectConnection('ff');
+    assert.ok(Number(focusCanvas.querySelector('[data-zoom]').dataset.zoom) < 100);
+    const assertFunctoidVisible = id => {
+        const transform = focusCanvas.querySelector(`.functoid-node[data-id="${id}"]`).getAttribute('transform');
+        const numbers = transform.match(/-?\d+(?:\.\d+)?(?:e[+-]?\d+)?/g).map(Number);
+        const [x, y, zoom] = numbers;
+        assert.ok(x - focusCanvas.scrollLeft - 40 * zoom >= -0.001);
+        assert.ok(x - focusCanvas.scrollLeft + 40 * zoom <= 600.001);
+        assert.ok(y - focusCanvas.scrollTop - 32 * zoom >= -0.001);
+        assert.ok(y - focusCanvas.scrollTop + 32 * zoom <= 400.001);
+    };
+    assertFunctoidVisible('near');
+    assertFunctoidVisible('far');
+    assertCompactLinkEndpoints();
+    focusCanvas.scrollLeft = 900;
+    focusCanvas.scrollTop = 900;
+    await selectConnection('sf');
+    assertFunctoidVisible('far');
+    assert.ok(Number(focusCanvas.querySelector('[data-zoom]').dataset.zoom) < 100);
+    assert.equal(focusCanvas.scrollLeft, 0);
+    await selectConnection('fs');
+    assertFunctoidVisible('near');
+    assertCompactLinkEndpoints();
+    assert.equal(JSON.stringify(focusMap), focusSnapshot);
+    assert.equal(messages.filter(message => message.type === 'update').length, updateCount);
+    focusMap.pages[0].functoids[0].x = -300;
+    focusMap.pages[0].functoids[0].y = -200;
+    focusCanvas.renderWithPositions(new Map(), focusMap.pages[0]);
+    await new Promise(resolve => setTimeout(resolve, 25));
+    await selectConnection('ff');
+    assertFunctoidVisible('near');
+    assertFunctoidVisible('far');
+    focusMap.pages[0].functoids[0].x = 200;
+    focusMap.pages[0].functoids[0].y = 200;
+    focusMap.pages[0].functoids[1].x = 400;
+    focusMap.pages[0].functoids[1].y = 300;
+    focusCanvas.renderWithPositions(new Map(), focusMap.pages[0]);
+    focusCanvas.setZoom(1);
+    focusCanvas.scrollLeft = 0;
+    focusCanvas.scrollTop = 0;
+    await new Promise(resolve => setTimeout(resolve, 25));
+    assert.equal(focusCanvas.querySelector('[data-zoom]').dataset.zoom, '100');
+    const zoomArea = focusCanvas.querySelector('button[title^="Zoom Area"]');
+    zoomArea.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+    await new Promise(resolve => setTimeout(resolve, 25));
+    const focusSurface = focusCanvas.querySelector('.mapping-svg');
+    focusSurface.dispatchEvent(new dom.window.MouseEvent('mousedown', {
+        bubbles: true, clientX: 360, clientY: 100, button: 0
+    }));
+    await new Promise(resolve => setTimeout(resolve, 25));
+    focusSurface.dispatchEvent(new dom.window.MouseEvent('mousemove', {
+        bubbles: true, clientX: 660, clientY: 300, button: 0
+    }));
+    await new Promise(resolve => setTimeout(resolve, 25));
+    assert.ok(focusCanvas.querySelector('.canvas-zoom-selection'));
+    focusSurface.dispatchEvent(new dom.window.MouseEvent('mouseup', {
+        bubbles: true, clientX: 660, clientY: 300, button: 0
+    }));
+    await new Promise(resolve => setTimeout(resolve, 25));
+    assert.equal(focusCanvas.querySelector('[data-zoom]').dataset.zoom, '200');
+    focusSurface.dispatchEvent(new dom.window.MouseEvent('mousedown', {
+        bubbles: true, clientX: 360, clientY: 100, button: 0, shiftKey: true
+    }));
+    await new Promise(resolve => setTimeout(resolve, 25));
+    focusSurface.dispatchEvent(new dom.window.MouseEvent('mousemove', {
+        bubbles: true, clientX: 660, clientY: 300, button: 0, shiftKey: true
+    }));
+    await new Promise(resolve => setTimeout(resolve, 25));
+    assert.ok(focusCanvas.querySelector('.canvas-zoom-selection.zoom-out'));
+    focusSurface.dispatchEvent(new dom.window.MouseEvent('mouseup', {
+        bubbles: true, clientX: 660, clientY: 300, button: 0, shiftKey: true
+    }));
+    await new Promise(resolve => setTimeout(resolve, 25));
+    assert.equal(focusCanvas.querySelector('[data-zoom]').dataset.zoom, '100');
+    zoomArea.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+    focusCanvas.querySelector('.functoid-node[data-id="near"] .functoid-body').dispatchEvent(
+        new dom.window.MouseEvent('mousedown', { bubbles: true, clientX: 80, clientY: 80 })
+    );
+    focusCanvas.querySelector('.mapping-svg').dispatchEvent(
+        new dom.window.MouseEvent('mousemove', { bubbles: true, clientX: 100, clientY: 110 })
+    );
+    focusCanvas.querySelector('.mapping-svg').dispatchEvent(
+        new dom.window.MouseEvent('mouseup', { bubbles: true, clientX: 100, clientY: 110 })
+    );
+    await new Promise(resolve => setTimeout(resolve, 25));
+    assert.equal(focusMap.pages[0].functoids[0].x, 220);
+    assert.equal(focusMap.pages[0].functoids[0].y, 230);
+    dom.window.HTMLElement.prototype.getBoundingClientRect = originalRect;
+
+    const legacyPath = '/Root/<Sequence>/Value/<Choice>/Inner/<Group:Fields>/Leaf';
+    const legacySchema = JSON.parse(JSON.stringify(schema));
+    const valueNode = legacySchema.rootElement.children[0];
+    valueNode.schemaPath = '/Root/<Sequence>/Value';
+    const innerNode = valueNode.children[0];
+    innerNode.schemaPath = '/Root/<Sequence>/Value/<Choice>/Inner';
+    innerNode.children = [{
+        name: 'Leaf', path: '/Root/Value/Inner/Leaf', schemaPath: legacyPath,
+        children: [], attributes: []
+    }];
+    const legacyMap = {
+        ...map,
+        pages: [{ id: 'legacy', name: 'Legacy', functoids: [], links: [{
+            id: 'legacy-link', sourceId: legacyPath, sourcePath: legacyPath,
+            targetId: legacyPath, targetPath: legacyPath,
+            sourceType: 'schemaNode', targetType: 'schemaNode'
+        }] }]
+    };
+    const legacyBefore = JSON.stringify(legacyMap);
+    dom.window.dispatchEvent(new dom.window.MessageEvent('message', {
+        data: { type: 'schemaStateChanged', data: { map: legacyMap, sourceSchema: legacySchema, targetSchema: legacySchema } }
+    }));
+    await new Promise(resolve => setTimeout(resolve, 50));
+    for (const pane of document.querySelectorAll('biztalk-schema-tree')) {
+        assert.ok(pane.querySelector('[data-path="/Root/Value/Inner/Leaf"]'));
+        assert.ok(pane.getNodePosition(legacyPath));
+        assert.equal(pane.getNodePosition('/Root/<Group:Wrong>/Value/Inner/Leaf'), null);
+        pane.querySelector('button[title="Collapse All"]').click();
+        await new Promise(resolve => setTimeout(resolve, 25));
+        assert.ok(pane.getNodePosition(legacyPath));
+        pane.revealNode(legacyPath);
+        assert.ok(pane.querySelector('[data-path="/Root/Value/Inner/Leaf"]'));
+    }
+    assert.equal(JSON.stringify(legacyMap), legacyBefore);
 
     assert.ok(messages.some(message => message.type === 'update'));
     assert.deepEqual(browserErrors, []);
