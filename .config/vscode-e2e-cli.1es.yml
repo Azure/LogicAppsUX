@@ -1,14 +1,10 @@
-# 1ES/MicroBuild consumer for source-head VS Code @vscode/test-cli E2E artifacts.
-# Create/update the Azure DevOps definition to this file only after the producer
-# artifact and required protected-resource gates are owner-approved.
+# 1ES/MicroBuild validation pipeline for branch-selected VS Code @vscode/test-cli E2E.
+# Create/update the Azure DevOps definition to this file only after required
+# protected-resource gates are owner-approved.
 trigger: none
 pr: none
 
 resources:
-  pipelines:
-    - pipeline: producer
-      source: \Azure Tools\VSCode\Extensions\vscode-azurelogicapps
-      trigger: true
   repositories:
     - repository: 1esPipelines
       type: git
@@ -52,10 +48,6 @@ variables:
     value: Azure Logic Apps for VS Code
   - name: working_directory
     value: .
-  - name: producerSourceSha
-    value: $(resources.pipeline.producer.sourceCommit)
-  - name: producerRunId
-    value: $(resources.pipeline.producer.runID)
 
 extends:
   template: azure-pipelines/MicroBuild.1ES.Unofficial.yml@1esPipelines
@@ -90,10 +82,64 @@ extends:
                   if (-not $releases -or -not $releases[0]) {
                     throw 'Unable to resolve latest stable VS Code version.'
                   }
+                  $sourceVersion = '$(Build.SourceVersion)'
+                  if ($sourceVersion -notmatch '^[0-9a-fA-F]{40}$') {
+                    throw "Build.SourceVersion must be a full git SHA for source-head E2E validation. actual='$sourceVersion'"
+                  }
                   Write-Host "Resolved stable VS Code build: $($releases[0])"
                   Write-Host "##vso[task.setvariable variable=resolvedVSCodeBuild;isOutput=true]$($releases[0])"
+                  Write-Host "Pinned source SHA: $sourceVersion"
+                  Write-Host "##vso[task.setvariable variable=pinnedSourceSha;isOutput=true]$sourceVersion"
                 name: resolveStableVSCode
-                displayName: Resolve stable VS Code build once
+                displayName: Resolve stable VS Code build and source SHA once
+
+          - job: build_current_run_e2e_artifact
+            displayName: Build current-run VS Code E2E artifact
+            dependsOn:
+              - resolve_consumer_context
+            pool:
+              name: AzurePipelines-EO
+              image: 1ESPT-Ubuntu22.04
+              os: linux
+            variables:
+              - name: pinnedSourceSha
+                value: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+            templateContext:
+              type: validationJob
+              outputs:
+                - output: pipelineArtifact
+                  targetPath: $(Build.ArtifactStagingDirectory)/vscode-e2e
+                  artifactName: vscode-e2e-build
+            steps:
+              - checkout: self
+                fetchDepth: 0
+
+              - pwsh: |
+                  git checkout "$(pinnedSourceSha)"
+                  if ($LASTEXITCODE -ne 0) {
+                    exit $LASTEXITCODE
+                  }
+                  $rawHead = git rev-parse HEAD
+                  if ($LASTEXITCODE -ne 0) {
+                    exit $LASTEXITCODE
+                  }
+                  $head = ([string]$rawHead).Trim()
+                  if ($head -ne '$(pinnedSourceSha)') {
+                    throw "E2E artifact build checkout HEAD '$head' does not match pinned source SHA '$(pinnedSourceSha)'."
+                  }
+                displayName: Checkout pinned source SHA for E2E artifact
+
+              - template: /.azure-pipelines/templates/vscode-e2e-cli-setup.yml@self
+                parameters:
+                  feedBaseUrl: ${{ variables.feedBaseUrl }}
+                  nodeVersion: '22.x'
+                  dotnetVersion: '8.0.x'
+                  includeDotNet: true
+                  includeLinuxDisplayDependencies: false
+
+              - template: /.azure-pipelines/templates/vscode-e2e-cli-build-artifacts.yml@self
+                parameters:
+                  artifactStagingPath: $(Build.ArtifactStagingDirectory)/vscode-e2e
 
           - ${{ if eq(parameters.runLinux, true) }}:
               - template: /.config/templates/vscode-e2e-cli-run-suites.yml@self
@@ -102,19 +148,20 @@ extends:
                   displayName: Linux prepared suites
                   dependsOn:
                     - resolve_consumer_context
+                    - build_current_run_e2e_artifact
                   suites: ${{ parameters.linuxSuites }}
                   artifactName: linux-prepared-suites
                   resolvedVSCodeVersion: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.resolvedVSCodeBuild'] ]
+                  expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
                   feedBaseUrl: ${{ variables.feedBaseUrl }}
                   pool:
                     name: AzurePipelines-EO
                     image: 1ESPT-Ubuntu22.04
                     os: linux
                   platform: linux
-                  expectedProducerDefinitionId: '24067'
-                  expectedProducerRunId: $(producerRunId)
-                  expectedSourceSha: $(producerSourceSha)
-                  checkoutRef: $(producerSourceSha)
+                  expectedProducerDefinitionId: $(System.DefinitionId)
+                  expectedProducerRunId: $(Build.BuildId)
+                  checkoutRef: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
                   diagnosticOnly: ${{ parameters.diagnosticOnly }}
                   trustedFullExecution: ${{ not(parameters.diagnosticOnly) }}
                   nodeVersion: '22.x'
@@ -130,19 +177,20 @@ extends:
                   displayName: Windows prepared suites
                   dependsOn:
                     - resolve_consumer_context
+                    - build_current_run_e2e_artifact
                   suites: ${{ parameters.windowsSuites }}
                   artifactName: windows-prepared-suites
                   resolvedVSCodeVersion: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.resolvedVSCodeBuild'] ]
+                  expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
                   feedBaseUrl: ${{ variables.feedBaseUrl }}
                   pool:
                     name: VSEngSS-MicroBuild2022-1ES
                     image: server2022-microbuildVS2022-1es
                     os: windows
                   platform: windows
-                  expectedProducerDefinitionId: '24067'
-                  expectedProducerRunId: $(producerRunId)
-                  expectedSourceSha: $(producerSourceSha)
-                  checkoutRef: $(producerSourceSha)
+                  expectedProducerDefinitionId: $(System.DefinitionId)
+                  expectedProducerRunId: $(Build.BuildId)
+                  checkoutRef: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
                   diagnosticOnly: ${{ parameters.diagnosticOnly }}
                   trustedFullExecution: ${{ not(parameters.diagnosticOnly) }}
                   nodeVersion: '22.x'
@@ -205,7 +253,7 @@ extends:
                           throw "OS aggregate is not a successful canonical full rollup: platform=$($aggregate.platform) outcome=$($aggregate.aggregateOutcome) fullRollup=$($aggregate.fullRollup) canonical=$($aggregate.canonicalInventory)"
                         }
                         if (-not $aggregate.admissionContext) {
-                          throw "OS aggregate is missing admitted producer identity: platform=$($aggregate.platform)"
+                          throw "OS aggregate is missing admitted E2E artifact identity: platform=$($aggregate.platform)"
                         }
                       }
                       $identityFields = @(

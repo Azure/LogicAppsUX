@@ -9,6 +9,7 @@ steps:
     workingDirectory: $(working_directory)
     env:
       NPM_CONFIG_USERCONFIG: $(npmrcFile)
+      NODE_OPTIONS: --max-old-space-size=6144
 
   - bash: |
       set -euo pipefail

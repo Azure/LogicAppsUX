@@ -12,7 +12,6 @@ testRootNpmrcSourceGuardAllowsGeneratedRuntimeFile();
 testLocalAzureToolsWrapperContractIfAvailable();
 testConsumerAdmissionContract();
 testAzureCliIdentityScriptBehavior();
-testProducerAdmissionScriptBehavior();
 testPipelineSafetyGuards();
 testDiagnosticsStagingScriptHandlesControllerLayout();
 
@@ -65,17 +64,13 @@ function testAzureToolsWrapperContract() {
   assert.match(workspace, /overrides:/);
   assert.match(workspace, /'@azure\/core-client': 1\.10\.0/);
 
-  assert.deepStrictEqual(
-    parseYaml('.azure-pipelines/1esmain.yml'),
-    parseYaml('.config/1esmain.yml'),
-    'registered producer path must stay semantically mirrored with the staged AzureTools v2 producer entry'
-  );
-  assert.match(registeredBuildEntry, /Temporary registered-path bridge for ADO definition 24067/);
-  assert.doesNotMatch(registeredBuildEntry, /MicroBuild\.1ES\.Official/);
-  assert.doesNotMatch(registeredBuildEntry, /publishVersion/);
-  assert.doesNotMatch(registeredBuildEntry, /enableVscodeE2E/);
-  assert.doesNotMatch(registeredBuildEntry, /runVscodeE2EExecution/);
-  assert.doesNotMatch(registeredBuildEntry, /git checkout/);
+  assert.match(registeredBuildEntry, /MicroBuild\.1ES\.Official/);
+  assert.match(registeredBuildEntry, /publishVersion/);
+  assert.match(registeredBuildEntry, /enableVscodeE2E/);
+  assert.match(registeredBuildEntry, /runVscodeE2EExecution/);
+  assert.match(registeredBuildEntry, /template: templates\/vscode-e2e-stage\.yml@self/);
+  assert.doesNotMatch(registeredBuildEntry, /Temporary registered-path bridge/);
+  assert.doesNotMatch(registeredBuildEntry, /azdo-pipelines\/1es-mb-main\.yml@azExtTemplates/);
 
   assert.match(buildEntry, /template: azdo-pipelines\/1es-mb-main\.yml@azExtTemplates/);
   assert.match(buildEntry, /ref: azext-pt\/v1/);
@@ -278,6 +273,7 @@ function testConsumerAdmissionContract() {
   const legacyRunStage = read('.azure-pipelines/templates/vscode-e2e-stage.yml');
   const legacyRunCli = read('.azure-pipelines/templates/vscode-e2e-cli-run.yml');
   const legacyStagedRunCli = read('.azure-pipelines/templates/vscode-e2e-run-cli.yml');
+  const cliBuildArtifactsTemplate = read('.azure-pipelines/templates/vscode-e2e-cli-build-artifacts.yml');
   const readme = read('.config/README.md');
   const e2eReadme = read('apps/vs-code-designer/src/test/e2e/README.md');
   const consumer = parseYaml('.config/vscode-e2e-cli.1es.yml');
@@ -290,7 +286,7 @@ function testConsumerAdmissionContract() {
     'consumer must not expose an official build toggle'
   );
   assertConsumerPublicParametersAreMinimal(consumer);
-  assertConsumerResourceIdentityContract(consumer);
+  assertConsumerCurrentRunArtifactContract(consumer);
   assertConsumerParameterGuardRejectsMutations(consumer);
   assert.doesNotMatch(consumerEntry, /MicroBuild\.1ES\.Official/);
   assert.doesNotMatch(consumerEntry, /isOfficialBuild/);
@@ -313,23 +309,25 @@ function testConsumerAdmissionContract() {
   assertValidationJobGuardRejectsMutations(consumer, runSuites);
   assertConsumerHasNoNetworkIsolationPolicyOverride(consumer, runSuites);
   assertNetworkIsolationGuardRejectsMutations(consumer, runSuites);
+  assert.match(cliBuildArtifactsTemplate, /displayName: Build extension and compile @vscode\/test-cli E2E/);
+  assert.match(cliBuildArtifactsTemplate, /NODE_OPTIONS: --max-old-space-size=6144/);
   assert.match(runSuitesTemplate, /--privileged-admission/);
   assert.doesNotMatch(runSuitesTemplate, /download:[\s\S]*\n\s+path:/);
-  assert.match(runSuitesTemplate, /name: producerArtifactName[\s\S]*default: Build Root/);
-  assert.match(runSuitesTemplate, /name: producerArtifactSubdirectory[\s\S]*default: vscode-e2e/);
+  assert.match(runSuitesTemplate, /name: e2eBuildArtifactName[\s\S]*default: vscode-e2e-build/);
   assert.match(
     runSuitesTemplate,
-    /displayName: Download trusted producer artifact[\s\S]*displayName: Verify trusted producer artifact admission/
+    /displayName: Download current-run E2E artifact[\s\S]*displayName: Verify current-run E2E artifact admission/
   );
-  assert.match(runSuitesTemplate, /\$\(Pipeline\.Workspace\).*producerPipelineAlias.*producerArtifactName.*producerArtifactSubdirectory/);
+  assert.match(runSuitesTemplate, /\$\(Pipeline\.Workspace\).*e2eBuildArtifactName/);
+  assert.doesNotMatch(runSuitesTemplate, /producerPipelineAlias/);
   assert.match(runSuitesTemplate, /artifactName = \[string\]\$manifest\.artifact\.name/);
-  assert.match(runSuitesTemplate, /Unexpected logical producer artifact name/);
-  assert.match(runSuitesTemplate, /Capture trusted artifact verifier before producer checkout/);
-  assert.match(runSuitesTemplate, /Verify producer build completed and trusted/);
-  assert.match(runSuitesTemplate, /builds\/\$\{producerRunId\}\?api-version=7\.1/);
-  assert.doesNotMatch(runSuitesTemplate, /builds\/\$producerRunId\?api-version=7\.1/);
-  assert.match(runSuitesTemplate, /Verify exact producer source checkout/);
-  assert.match(runSuitesTemplate, /Write admitted producer identity context/);
+  assert.match(runSuitesTemplate, /Unexpected logical E2E artifact name/);
+  assert.match(runSuitesTemplate, /Capture trusted artifact verifier before source checkout/);
+  assert.doesNotMatch(runSuitesTemplate, /Verify producer build completed and trusted/);
+  assert.doesNotMatch(runSuitesTemplate, /_apis\/build\/builds/);
+  assertRunSuitesBindsDynamicExpectedValuesToVariables(runSuites);
+  assert.match(runSuitesTemplate, /Verify exact admitted source checkout/);
+  assert.match(runSuitesTemplate, /Write admitted E2E artifact identity context/);
   assert.match(runSuitesTemplate, /LA_E2E_CLI_ADMISSION_CONTEXT_PATH/);
   assert.match(runSuitesTemplate, /resolvedVSCodeBuild = '\$\(ResolvedVSCodeVersion\)'/);
   assert.match(runSuitesTemplate, /ResolvedVSCodeVersion must be supplied by the shared consumer context job/);
@@ -413,13 +411,20 @@ function testConsumerAdmissionContract() {
   assert.match(consumerEntry, /resolve_consumer_context/);
   assert.match(consumerEntry, /resolveStableVSCode/);
   assert.match(consumerEntry, /resolvedVSCodeBuild;isOutput=true/);
+  assert.match(consumerEntry, /pinnedSourceSha;isOutput=true/);
+  assert.match(consumerEntry, /build_current_run_e2e_artifact/);
+  assert.match(consumerEntry, /artifactName: vscode-e2e-build/);
+  assert.match(consumerEntry, /targetPath: \$\(Build\.ArtifactStagingDirectory\)\/vscode-e2e/);
+  assert.match(consumerEntry, /artifactStagingPath: \$\(Build\.ArtifactStagingDirectory\)\/vscode-e2e/);
+  assert.doesNotMatch(consumerEntry, /resources\.pipeline\.producer/);
   assert.match(consumerEntry, /At least one OS cohort must be selected for the VS Code E2E consumer/);
   assert.match(
     consumerEntry,
     /resolvedVSCodeVersion: \$\[ dependencies\.resolve_consumer_context\.outputs\['resolveStableVSCode\.resolvedVSCodeBuild'\] \]/
   );
   assert.match(consumerEntry, /trustedFullExecution: \$\{\{ not\(parameters\.diagnosticOnly\) \}\}/);
-  assert.match(consumerEntry, /expectedProducerDefinitionId: '24067'/);
+  assert.match(consumerEntry, /expectedProducerDefinitionId: \$\(System\.DefinitionId\)/);
+  assert.match(consumerEntry, /expectedProducerRunId: \$\(Build\.BuildId\)/);
   assert.match(consumerEntry, /verify_both_os_full_rollup/);
   assert.match(consumerEntry, /report_diagnostic_selected_rerun/);
   assert.match(consumerEntry, /protected checks must bind verify_both_os_full_rollup/);
@@ -448,26 +453,42 @@ function assertConsumerPublicParametersAreMinimal(consumer) {
   );
 }
 
-function assertConsumerResourceIdentityContract(consumer) {
+function assertConsumerCurrentRunArtifactContract(consumer) {
   const variables = new Map(consumer.variables.filter((variable) => variable.name).map((variable) => [variable.name, variable.value]));
-  assert.strictEqual(
-    variables.get('producerSourceSha'),
-    '$(resources.pipeline.producer.sourceCommit)',
-    'producer source SHA must come from selected pipeline resource metadata'
+  assert.strictEqual(variables.get('producerSourceSha'), undefined, 'consumer must not depend on selected producer resource metadata');
+  assert.strictEqual(variables.get('producerRunId'), undefined, 'consumer must not depend on selected producer resource metadata');
+  assert.ok(!consumer.resources?.pipelines, 'consumer must not require manual pipeline resource selection');
+
+  const jobs = flattenAzureList(consumer.extends.parameters.stages[0].jobs);
+  const buildJob = jobs.find((entry) => entry.job === 'build_current_run_e2e_artifact');
+  assert.ok(buildJob, 'consumer must build the test-only E2E artifact in the same run');
+  assert.deepStrictEqual(buildJob.dependsOn, ['resolve_consumer_context']);
+  assert.strictEqual(buildJob.templateContext?.type, 'validationJob');
+  assert.strictEqual(buildJob.templateContext.outputs[0].artifactName, 'vscode-e2e-build');
+  assert.strictEqual(buildJob.templateContext.outputs[0].targetPath, '$(Build.ArtifactStagingDirectory)/vscode-e2e');
+  const checkoutStep = buildJob.steps.find((step) => step.displayName === 'Checkout pinned source SHA for E2E artifact');
+  assert.ok(checkoutStep?.pwsh?.includes('git checkout "$(pinnedSourceSha)"'));
+  assert.match(checkoutStep?.pwsh ?? '', /git checkout "\$\(pinnedSourceSha\)"[\s\S]*if \(\$LASTEXITCODE -ne 0\)/);
+  assert.match(checkoutStep?.pwsh ?? '', /\$rawHead = git rev-parse HEAD[\s\S]*if \(\$LASTEXITCODE -ne 0\)/);
+  const buildTemplate = buildJob.steps.find(
+    (step) => step.template === '/.azure-pipelines/templates/vscode-e2e-cli-build-artifacts.yml@self'
   );
-  assert.strictEqual(
-    variables.get('producerRunId'),
-    '$(resources.pipeline.producer.runID)',
-    'producer run ID must come from selected pipeline resource metadata'
-  );
+  assert.strictEqual(buildTemplate?.parameters?.artifactStagingPath, '$(Build.ArtifactStagingDirectory)/vscode-e2e');
 
   const templateInvocations = flattenAzureList(consumer.extends.parameters.stages[0].jobs).filter((entry) => entry.template);
   assert.strictEqual(templateInvocations.length, 2);
   for (const invocation of templateInvocations) {
-    assert.strictEqual(invocation.parameters.expectedProducerDefinitionId, '24067');
-    assert.strictEqual(invocation.parameters.expectedProducerRunId, '$(producerRunId)');
-    assert.strictEqual(invocation.parameters.expectedSourceSha, '$(producerSourceSha)');
-    assert.strictEqual(invocation.parameters.checkoutRef, '$(producerSourceSha)');
+    assert.deepStrictEqual(invocation.parameters.dependsOn, ['resolve_consumer_context', 'build_current_run_e2e_artifact']);
+    assert.strictEqual(invocation.parameters.expectedProducerDefinitionId, '$(System.DefinitionId)');
+    assert.strictEqual(invocation.parameters.expectedProducerRunId, '$(Build.BuildId)');
+    assert.strictEqual(
+      invocation.parameters.expectedSourceSha,
+      "$[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]"
+    );
+    assert.strictEqual(
+      invocation.parameters.checkoutRef,
+      "$[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]"
+    );
     assert.strictEqual(invocation.parameters.nodeVersion, '22.x');
     assert.strictEqual(invocation.parameters.dotnetVersion, '8.0.x');
     assert.strictEqual(invocation.parameters.testARMServiceConnection, 'LogicAppsVSCode-E2E-SignIn');
@@ -476,6 +497,49 @@ function assertConsumerResourceIdentityContract(consumer) {
     assert.strictEqual(invocation.parameters.azureResourceGroupName, 'LogicAppsVSCode-E2E-Fixtures');
     assert.strictEqual(invocation.parameters.azureLocationName, 'westus');
   }
+}
+
+function assertRunSuitesBindsDynamicExpectedValuesToVariables(runSuites) {
+  const suiteJob = runSuites.jobs[0];
+  assert.strictEqual(suiteJob.variables.ExpectedSourceSha, '${{ parameters.expectedSourceSha }}');
+  assert.strictEqual(suiteJob.variables.ExpectedCheckoutRef, '${{ parameters.checkoutRef }}');
+  assert.strictEqual(suiteJob.variables.ExpectedProducerRunId, '${{ parameters.expectedProducerRunId }}');
+  assert.strictEqual(suiteJob.variables.ExpectedProducerDefinitionId, '${{ parameters.expectedProducerDefinitionId }}');
+  assert.strictEqual(suiteJob.variables.ExpectedRepositoryName, '${{ parameters.expectedRepositoryName }}');
+  assert.strictEqual(suiteJob.variables.ExpectedRepositoryUri, '${{ parameters.expectedRepositoryUri }}');
+
+  const executionText = collectExecutionStrings(suiteJob.steps).join('\n');
+  assert.doesNotMatch(executionText, /\$\{\{ parameters\.expectedSourceSha \}\}/);
+  assert.doesNotMatch(executionText, /\$\{\{ parameters\.checkoutRef \}\}/);
+  assert.doesNotMatch(executionText, /\$\{\{ parameters\.expectedProducerRunId \}\}/);
+  assert.doesNotMatch(executionText, /\$\{\{ parameters\.expectedProducerDefinitionId \}\}/);
+  assert.doesNotMatch(executionText, /\$\{\{ parameters\.expectedRepositoryName \}\}/);
+  assert.doesNotMatch(executionText, /\$\{\{ parameters\.expectedRepositoryUri \}\}/);
+  assert.match(executionText, /\$\(ExpectedSourceSha\)/);
+  assert.match(executionText, /\$\(ExpectedCheckoutRef\)/);
+  assert.match(executionText, /\$\(ExpectedProducerRunId\)/);
+  assert.match(executionText, /\$\(ExpectedProducerDefinitionId\)/);
+  assert.match(executionText, /\$\(ExpectedRepositoryName\)/);
+  assert.match(executionText, /\$\(ExpectedRepositoryUri\)/);
+}
+
+function collectExecutionStrings(value) {
+  if (Array.isArray(value)) {
+    return value.flatMap((entry) => collectExecutionStrings(entry));
+  }
+  if (!value || typeof value !== 'object') {
+    return [];
+  }
+  const current = [];
+  for (const key of ['bash', 'pwsh', 'script']) {
+    if (typeof value[key] === 'string') {
+      current.push(value[key]);
+    }
+  }
+  if (value.task === 'AzureCLI@2' && typeof value.inputs?.inlineScript === 'string') {
+    current.push(value.inputs.inlineScript);
+  }
+  return [...current, ...Object.values(value).flatMap((entry) => collectExecutionStrings(entry))];
 }
 
 function assertConsumerParameterGuardRejectsMutations(consumer) {
@@ -505,19 +569,19 @@ function assertConsumerParameterGuardRejectsMutations(consumer) {
   );
   assert.throws(
     () =>
-      assertConsumerResourceIdentityContract(
+      assertConsumerCurrentRunArtifactContract(
         mutate((copy) => {
-          copy.variables.find((variable) => variable.name === 'producerRunId').value = '${{ parameters.expectedProducerRunId }}';
+          copy.resources.pipelines = [{ pipeline: 'producer', source: 'vscode-azurelogicapps' }];
         })
       ),
-    /producer run ID must come from selected pipeline resource metadata/
+    /consumer must not require manual pipeline resource selection/
   );
   assert.throws(
     () =>
-      assertConsumerResourceIdentityContract(
+      assertConsumerCurrentRunArtifactContract(
         mutate((copy) => {
           const invocation = flattenAzureList(copy.extends.parameters.stages[0].jobs).find((entry) => entry.template);
-          invocation.parameters.expectedProducerDefinitionId = '${{ parameters.expectedProducerDefinitionId }}';
+          invocation.parameters.expectedProducerDefinitionId = '24067';
         })
       ),
     /Expected values to be strictly equal/
@@ -552,7 +616,7 @@ function assertConsumerJobsAreValidationJobs(consumer, runSuites) {
 
   assert.deepStrictEqual(
     directJobs.map((entry) => entry.job).sort(),
-    ['report_diagnostic_selected_rerun', 'resolve_consumer_context', 'verify_both_os_full_rollup'].sort()
+    ['build_current_run_e2e_artifact', 'report_diagnostic_selected_rerun', 'resolve_consumer_context', 'verify_both_os_full_rollup'].sort()
   );
   for (const job of directJobs) {
     assert.strictEqual(job.templateContext?.type, 'validationJob', `${job.job} must be a validationJob`);
@@ -595,6 +659,14 @@ function assertValidationJobGuardRejectsMutations(consumer, runSuites) {
     }),
     null,
     /resolve_consumer_context must be a validationJob/
+  );
+  expectRejection(
+    'current-run artifact build job must remain validationJob type',
+    mutate(consumer, (copy) => {
+      getConsumerDirectJob(copy, 'build_current_run_e2e_artifact').templateContext.type = 'buildJob';
+    }),
+    null,
+    /build_current_run_e2e_artifact must be a validationJob/
   );
   expectRejection(
     'full-rollup coordinator must reject wrong job type',
@@ -894,123 +966,6 @@ ${scriptInfo.script}
       status: error.status ?? 1,
       output: `${error.stdout?.toString() ?? ''}${error.stderr?.toString() ?? ''}`,
       runnerMarker,
-    };
-  }
-}
-
-function testProducerAdmissionScriptBehavior() {
-  if (process.env.PIPELINE_CONTRACT_RUN_SHELL_PROBES !== '1') {
-    console.log(
-      '[pipeline-contract.unit] producer admission probe not run; set PIPELINE_CONTRACT_RUN_SHELL_PROBES=1 for strict execution.'
-    );
-    return;
-  }
-
-  assertCommandAvailable('pwsh');
-  const runSuites = parseYaml('.config/templates/vscode-e2e-cli-run-suites.yml');
-  const script = prepareProducerAdmissionScriptForUnit(
-    getInlineScriptByDisplayName(runSuites, { stepKind: 'pwsh', displayName: /Verify producer build completed and trusted/ })
-  );
-
-  try {
-    const valid = runProducerAdmissionScript(script);
-    assert.strictEqual(valid.status, 0, valid.output);
-    assert.strictEqual(
-      fs.readFileSync(valid.uriMarker, 'utf8').trim(),
-      'https://dev.azure.com/example-org/example-project/_apis/build/builds/15479528?api-version=7.1'
-    );
-
-    const failureCases = [
-      { PRODUCER_STATUS: 'inProgress' },
-      { PRODUCER_RESULT: 'failed' },
-      { PRODUCER_DEFINITION_ID: '12345' },
-      { PRODUCER_SOURCE_VERSION: 'wrong-source' },
-    ];
-    for (const overrides of failureCases) {
-      const failed = runProducerAdmissionScript(script, overrides);
-      assert.notStrictEqual(failed.status, 0, `producer admission script should reject ${JSON.stringify(overrides)}`);
-    }
-  } finally {
-    fs.rmSync(script.tempRoot, { recursive: true, force: true });
-  }
-}
-
-function getInlineScriptByDisplayName(yamlObject, { stepKind, displayName }) {
-  const step = findPipelineSteps(yamlObject).find((candidate) => candidate[stepKind] && displayName.test(candidate.displayName ?? ''));
-  assert.ok(step, `Expected ${stepKind} step matching ${displayName}`);
-  assert.ok(step[stepKind], `Expected inline script for ${step.displayName}`);
-  return step[stepKind];
-}
-
-function findPipelineSteps(value) {
-  if (Array.isArray(value)) {
-    return value.flatMap((entry) => findPipelineSteps(entry));
-  }
-  if (!value || typeof value !== 'object') {
-    return [];
-  }
-  const current = value.pwsh || value.bash || value.script ? [value] : [];
-  return [...current, ...Object.values(value).flatMap((entry) => findPipelineSteps(entry))];
-}
-
-function prepareProducerAdmissionScriptForUnit(script) {
-  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'pipeline-contract-producer-'));
-  const prepared = script
-    .replaceAll('${{ parameters.expectedProducerRunId }}', '15479528')
-    .replaceAll('${{ parameters.expectedProducerDefinitionId }}', '24067')
-    .replaceAll('${{ parameters.expectedSourceSha }}', 'abc123')
-    .replaceAll('${{ parameters.expectedRepositoryName }}', 'Azure/LogicAppsUX')
-    .replaceAll('$(System.CollectionUri)', 'https://dev.azure.com/example-org/')
-    .replaceAll('$(System.TeamProject)', 'example-project');
-  return { script: prepared, tempRoot };
-}
-
-function runProducerAdmissionScript(scriptInfo, overrides = {}) {
-  const uriMarker = path.join(scriptInfo.tempRoot, `producer-uri-${Date.now()}-${Math.random().toString(36).slice(2)}.txt`);
-  const env = {
-    ...process.env,
-    PRODUCER_URI_MARKER: uriMarker,
-    PRODUCER_DEFINITION_ID: '24067',
-    PRODUCER_STATUS: 'completed',
-    PRODUCER_RESULT: 'succeeded',
-    PRODUCER_SOURCE_VERSION: 'abc123',
-    PRODUCER_REPOSITORY_NAME: 'Azure/LogicAppsUX',
-    ...overrides,
-  };
-  const command = `
-function Invoke-RestMethod {
-  param(
-    [string] $Method,
-    [string] $Uri,
-    $Headers
-  )
-  if ($Method -ne 'Get') {
-    throw "Unexpected REST method $Method"
-  }
-  Set-Content -Path $env:PRODUCER_URI_MARKER -Value $Uri
-  return [pscustomobject]@{
-    definition = [pscustomobject]@{ id = $env:PRODUCER_DEFINITION_ID }
-    status = $env:PRODUCER_STATUS
-    result = $env:PRODUCER_RESULT
-    sourceVersion = $env:PRODUCER_SOURCE_VERSION
-    repository = [pscustomobject]@{ name = $env:PRODUCER_REPOSITORY_NAME }
-  }
-}
-${scriptInfo.script}
-`;
-  try {
-    const output = execFileSync('pwsh', ['-NoProfile', '-NonInteractive', '-Command', command], {
-      cwd: repoRoot,
-      encoding: 'utf8',
-      env,
-      stdio: 'pipe',
-    });
-    return { status: 0, output, uriMarker };
-  } catch (error) {
-    return {
-      status: error.status ?? 1,
-      output: `${error.stdout?.toString() ?? ''}${error.stderr?.toString() ?? ''}`,
-      uriMarker,
     };
   }
 }
