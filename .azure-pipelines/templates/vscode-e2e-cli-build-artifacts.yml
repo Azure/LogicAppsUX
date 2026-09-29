@@ -11,6 +11,10 @@ steps:
       NPM_CONFIG_USERCONFIG: $(npmrcFile)
       NODE_OPTIONS: --max-old-space-size=6144
 
+  - script: npx tsup --config tsup.e2e.test.config.ts
+    displayName: Compile ExTester dependency-prep bundle
+    workingDirectory: $(Build.SourcesDirectory)/apps/vs-code-designer
+
   - bash: |
       set -euo pipefail
       staging='${{ parameters.artifactStagingPath }}'
@@ -20,6 +24,18 @@ steps:
         apps/vs-code-designer/dist
         apps/vs-code-designer/out
       )
+
+      required_paths=(
+        apps/vs-code-designer/out/test/e2e/createWorkspace.test.js
+        apps/vs-code-designer/out/test/run-e2e.js
+        apps/vs-code-designer/dist
+      )
+      for required_path in "${required_paths[@]}"; do
+        if [ ! -e "$required_path" ]; then
+          echo "Missing required E2E artifact payload path before archive staging: $required_path" >&2
+          exit 1
+        fi
+      done
 
       tar -czf "$staging/extension-build.tar.gz" "${paths[@]}"
 

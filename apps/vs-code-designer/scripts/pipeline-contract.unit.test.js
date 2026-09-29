@@ -315,7 +315,12 @@ function testConsumerAdmissionContract() {
   assertConsumerHasNoNetworkIsolationPolicyOverride(consumer, runSuites);
   assertNetworkIsolationGuardRejectsMutations(consumer, runSuites);
   assert.match(cliBuildArtifactsTemplate, /displayName: Build extension and compile @vscode\/test-cli E2E/);
+  assertCliBuildCompilesPrepHarnessBeforeArchive(parseYaml('.azure-pipelines/templates/vscode-e2e-cli-build-artifacts.yml'));
   assert.match(cliBuildArtifactsTemplate, /NODE_OPTIONS: --max-old-space-size=6144/);
+  assert.match(cliBuildArtifactsTemplate, /Missing required E2E artifact payload path before archive staging/);
+  assert.match(cliBuildArtifactsTemplate, /apps\/vs-code-designer\/out\/test\/e2e\/createWorkspace\.test\.js/);
+  assert.match(cliBuildArtifactsTemplate, /apps\/vs-code-designer\/out\/test\/run-e2e\.js/);
+  assert.match(cliBuildArtifactsTemplate, /apps\/vs-code-designer\/dist/);
   assert.match(runSuitesTemplate, /--privileged-admission/);
   assert.doesNotMatch(runSuitesTemplate, /download:[\s\S]*\n\s+path:/);
   assert.match(runSuitesTemplate, /name: e2eBuildArtifactName[\s\S]*default: vscode-e2e-build/);
@@ -333,6 +338,7 @@ function testConsumerAdmissionContract() {
   assert.doesNotMatch(runSuitesTemplate, /_apis\/build\/builds/);
   assertRunSuitesBindsDynamicExpectedValuesToVariables(runSuites);
   assert.match(runSuitesTemplate, /Verify exact admitted source checkout/);
+  assert.match(runSuitesTemplate, /Extracted artifact is missing the compiled ExTester dependency-prep harness/);
   assert.match(runSuitesTemplate, /Write admitted E2E artifact identity context/);
   assert.match(runSuitesTemplate, /LA_E2E_CLI_ADMISSION_CONTEXT_PATH/);
   assert.match(runSuitesTemplate, /resolvedVSCodeBuild = '\$\(ResolvedVSCodeVersion\)'/);
@@ -663,6 +669,19 @@ function assertRunSuitesProvisionsTrustedNodeBeforeVerifier(runSuites) {
     fullSetupIndex > verifyArtifactIndex,
     'full pnpm/.NET setup and restored-code execution must remain after artifact admission verification'
   );
+}
+
+function assertCliBuildCompilesPrepHarnessBeforeArchive(cliBuildArtifacts) {
+  const steps = cliBuildArtifacts.steps;
+  const cliBuildIndex = steps.findIndex((step) => step.displayName === 'Build extension and compile @vscode/test-cli E2E');
+  const prepCompileIndex = steps.findIndex(
+    (step) => step.displayName === 'Compile ExTester dependency-prep bundle' && step.script === 'npx tsup --config tsup.e2e.test.config.ts'
+  );
+  const archiveIndex = steps.findIndex((step) => step.displayName === 'Stage reusable @vscode/test-cli build artifact');
+
+  assert.ok(cliBuildIndex >= 0, 'artifact builder must compile the @vscode/test-cli payload');
+  assert.ok(prepCompileIndex > cliBuildIndex, 'ExTester dependency-prep bundle must compile after @vscode/test-cli build');
+  assert.ok(archiveIndex > prepCompileIndex, 'archive staging must happen after the dependency-prep harness is built');
 }
 
 function assertValidationJobGuardRejectsMutations(consumer, runSuites) {
