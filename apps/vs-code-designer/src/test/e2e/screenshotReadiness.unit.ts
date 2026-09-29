@@ -24,6 +24,8 @@ async function main(): Promise<void> {
   testCreateWorkspaceRejectsWrongExactValidationMessage();
   testCreateWorkspaceRejectsHiddenValidationMessage();
   testCreateWorkspaceRequiresActualControlValue();
+  testCreateWorkspaceRejectsFooterClippedFieldControl();
+  testCreateWorkspaceAcceptsFullyVisibleAnchoredFieldControl();
   testCreateWorkspaceRequiresEnabledCreateButton();
   testCreateWorkspaceRequiresScrollPosition();
   testOverviewRequiresStatusOnExpectedRunRow();
@@ -409,6 +411,69 @@ function testCreateWorkspaceRequiresActualControlValue(): void {
 
   assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
   assert.ok(snapshot.reasonCodes.includes('create-workspace-field-value-mismatch'));
+}
+
+function testCreateWorkspaceRejectsFooterClippedFieldControl(): void {
+  const input = new FakeInputElement('input', { 'aria-label': 'Workspace parent folder path', value: 'C:\\workspace' });
+  input.bounds = { left: 32, top: 382, width: 520, height: 32, right: 552, bottom: 414 };
+  const field = new FakeElement('div', { class: 'ms-TextField' }, [input], 'Workspace parent folder path');
+  field.bounds = { left: 24, top: 352, width: 540, height: 64, right: 564, bottom: 416 };
+  const footer = new FakeElement('footer', { class: 'wizard-footer' }, [], 'Next');
+  footer.bounds = { left: 0, top: 392, width: 714, height: 22, right: 714, bottom: 414 };
+  const document = createWorkspaceDocument([field, footer]);
+
+  const snapshot = runProbe(
+    document,
+    {
+      kind: 'createWorkspace',
+      label: 'create-workspace-top-clipped',
+      stage: 'scrolled',
+      fields: [{ labels: ['Workspace parent folder path'], value: 'C:\\workspace' }],
+    },
+    {
+      window: {
+        innerWidth: 714,
+        innerHeight: 414,
+        devicePixelRatio: 1,
+        scrollY: 0,
+        getComputedStyle: getComputedStyleForFakeElement,
+      },
+    }
+  );
+
+  assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
+  assert.ok(snapshot.reasonCodes.includes('create-workspace-field-clipped'));
+}
+
+function testCreateWorkspaceAcceptsFullyVisibleAnchoredFieldControl(): void {
+  const input = new FakeInputElement('input', { 'aria-label': 'Workspace parent folder path', value: 'C:\\workspace' });
+  input.bounds = { left: 32, top: 214, width: 520, height: 32, right: 552, bottom: 246 };
+  const field = new FakeElement('div', { class: 'ms-TextField' }, [input], 'Workspace parent folder path');
+  field.bounds = { left: 24, top: 184, width: 540, height: 64, right: 564, bottom: 248 };
+  const footer = new FakeElement('footer', { class: 'wizard-footer' }, [], 'Next');
+  footer.bounds = { left: 0, top: 392, width: 714, height: 22, right: 714, bottom: 414 };
+  const document = createWorkspaceDocument([field, footer]);
+
+  const snapshot = runProbe(
+    document,
+    {
+      kind: 'createWorkspace',
+      label: 'create-workspace-top-anchored',
+      stage: 'scrolled',
+      fields: [{ labels: ['Workspace parent folder path'], value: 'C:\\workspace' }],
+    },
+    {
+      window: {
+        innerWidth: 714,
+        innerHeight: 414,
+        devicePixelRatio: 1,
+        scrollY: 0,
+        getComputedStyle: getComputedStyleForFakeElement,
+      },
+    }
+  );
+
+  assert.strictEqual(snapshot.ready, true, JSON.stringify(snapshot));
 }
 
 function testCreateWorkspaceRequiresEnabledCreateButton(): void {
@@ -893,6 +958,19 @@ class FakeDocument {
   getElementById(id: string): FakeElement | undefined {
     return this.body.allDescendants().find((element) => element.id === id);
   }
+
+  elementFromPoint(x: number, y: number): FakeElement | undefined {
+    const matches = this.body.allDescendants().filter((element) => {
+      const rect = element.getBoundingClientRect();
+      return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+    });
+    const explicitlyPositioned = matches.filter((element) => element.bounds);
+    if (explicitlyPositioned.length > 0) {
+      return explicitlyPositioned.at(-1);
+    }
+
+    return matches.sort((a, b) => b.depth - a.depth)[0];
+  }
 }
 
 function assignOwnerDocument(element: FakeElement, ownerDocument: FakeDocument): void {
@@ -911,6 +989,7 @@ class FakeElement {
   clientHeight = 40;
   scrollHeight = 40;
   scrollTop = 0;
+  bounds?: { left: number; top: number; width: number; height: number; right: number; bottom: number };
 
   constructor(
     readonly tagName: string,
@@ -928,6 +1007,16 @@ class FakeElement {
   id: string;
   parentElement?: FakeElement;
 
+  get depth(): number {
+    let depth = 0;
+    let current = this.parentElement;
+    while (current) {
+      depth++;
+      current = current.parentElement;
+    }
+    return depth;
+  }
+
   get textContent(): string {
     return `${this.ownText} ${this.children.map((child) => child.textContent).join(' ')}`.trim();
   }
@@ -941,6 +1030,9 @@ class FakeElement {
   }
 
   getBoundingClientRect(): { left: number; top: number; width: number; height: number; right: number; bottom: number } {
+    if (this.bounds) {
+      return this.bounds;
+    }
     if (hasClass(this, 'msla-panel-layout')) {
       return { left: 0, top: 0, width: 480, height: 320, right: 480, bottom: 320 };
     }
@@ -1055,8 +1147,15 @@ function hasClass(element: FakeElement, className: string): boolean {
     .includes(className);
 }
 
-function getComputedStyleForFakeElement(): { display: string; visibility: string; opacity: string } {
-  return { display: 'block', visibility: 'visible', opacity: '1' };
+function getComputedStyleForFakeElement(): {
+  display: string;
+  visibility: string;
+  opacity: string;
+  overflow: string;
+  overflowX: string;
+  overflowY: string;
+} {
+  return { display: 'block', visibility: 'visible', opacity: '1', overflow: 'visible', overflowX: 'visible', overflowY: 'visible' };
 }
 
 main().catch((error) => {
