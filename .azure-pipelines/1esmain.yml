@@ -1,136 +1,66 @@
-# Trigger the build whenever `main` or `rel/*` is updated
+# Staged AzureTools v2 build entry for ADO definition 24067.
+# This entry uses only the published azdo-pipelines v2 contract at azext-pt/v1.
+# The queued branch or tag selects both the extension build source and the
+# source-head VS Code E2E payload source.
 trigger: none
-  # - main
-  # - rel/*
-
-# Disable PR trigger
 pr: none
 
-# `resources` specifies the location of templates to pick up, use it to get 1ES templates
+parameters:
+  - name: isOfficialBuild
+    displayName: Use official 1ES template
+    type: boolean
+    default: true
+
+  - name: signType
+    displayName: MicroBuild signing type
+    type: string
+    default: real
+    values:
+      - real
+      - test
+      - none
+
 resources:
   repositories:
-    - repository: 1esPipelines
-      type: git
-      name: 1ESPipelineTemplates/MicroBuildTemplate
-      ref: refs/tags/release
     - repository: azExtTemplates
       type: github
       name: microsoft/vscode-azuretools
-      ref: main
-      endpoint: GitHub-AzureTools # The service connection to use when accessing this repository
-    - repository: LogicAppsUX
-      type: github
-      name: Azure/LogicAppsUX
-      endpoint: LogicApps-VSCode-connection  # The service connection to use when accessing this repository
-
-parameters:
-  # When true, skips the deployment job which actually publishes the extension
-  - name: dryRun
-    displayName: Dry run
-    type: boolean
-    default: true
-
-  - name: enableSigning
-    displayName: Enable signing
-    type: boolean
-    default: True
-
-  # The intended extension version to publish.
-  # This is used to verify the version in package.json matches the version to publish to avoid accidental publishing.
-  - name: publishVersion
-    displayName: Version to publish
-    type: string
-
-  # Customize the environment to associate the deployment with.
-  # Useful to control which group of people should be required to approve the deployment.
-  - name: environmentName
-    type: string
-    default: VSCodeDeployLAUX
-
-  - name: enableVscodeE2E
-    displayName: Run VS Code E2E validation
-    type: boolean
-    default: false
-
-  - name: runVscodeE2EExecution
-    displayName: Run VS Code E2E suites after building source-head E2E artifacts
-    type: boolean
-    default: true
+      ref: azext-pt/v1
+      endpoint: GitHub-AzureTools
 
 variables:
   - template: azdo-pipelines/azcode.variables.yml@azExtTemplates
-  # Required by MicroBuild template
   - name: TeamName
-    value: "Azure Logic Apps for VS Code"
-  - name: working_directory
-    value: '.'
-  - name: vscodeE2ETestARMServiceConnection
-    value: LogicAppsVSCode-E2E-SignIn
-  - name: vscodeE2ECheckoutRef
-    value: $(Build.SourceVersion)
+    value: Azure Logic Apps for VS Code
 
 extends:
-  template: azure-pipelines/MicroBuild.1ES.Official.yml@1esPipelines
+  template: azdo-pipelines/1es-mb-main.yml@azExtTemplates
   parameters:
-    sdl:
-      credscan:
-        suppressionsFile: $(Build.SourcesDirectory)\.azure-pipelines\compliance\CredScanSuppressions.json
-      codeql:
-        language: javascript # only build a codeql database for javascript, since the jsoncli pipeline handles csharp
-      #   enabled: true # TODO: would like to enable only on scheduled builds but CodeQL cannot currently be disabled per https://eng.ms/docs/cloud-ai-platform/devdiv/one-engineering-system-1es/1es-docs/codeql/1es-codeql
-    settings:
-      networkIsolationPolicy: Permissive,CFSClean
-    pool:
-      name: VSEngSS-MicroBuild2022-1ES # Name of your hosted pool
-      image: server2022-microbuildVS2022-1es # Name of the image in your pool. If not specified, first image of the pool is used
-      os: windows # OS of the image. Allowed values: windows, linux, macOS
-    stages:
-      - stage: Build
-        displayName: Build extension
-        jobs:
-          - job: Build
-            templateContext:
-              mb: # Enable the MicroBuild Signing toolset
-                signing:
-                  enabled: ${{ parameters.enableSigning }}
-                  signType: real # options are 'real' & 'test'
-                  signWithProd: true
-                  zipSources: false
-                  azureSubscription: "MicroBuild Signing Task (DevDiv)"
-              outputs:
-                - ${{ if eq(parameters.runVscodeE2EExecution, true) }}:
-                    - output: pipelineArtifact
-                      targetPath: $(build.artifactstagingdirectory)/build/Root
-                      artifactName: Build Root
-            steps:
-              - pwsh: |
-                  if ('${{ parameters.runVscodeE2EExecution }}' -eq 'False' -and '${{ parameters.dryRun }}' -ne 'True') {
-                    throw 'runVscodeE2EExecution=false is allowed only for non-publishing dryRun pilot runs until the separate full E2E consumer gate is onboarded.'
-                  }
-                  if ('${{ parameters.runVscodeE2EExecution }}' -eq 'False' -and '${{ parameters.enableSigning }}' -eq 'True') {
-                    throw 'runVscodeE2EExecution=false artifact-only pilot runs must disable signing so no signed release Build Root can be produced.'
-                  }
-                displayName: Guard build-only VS Code E2E pilot
-              - script: git checkout v${{ parameters.publishVersion }} # Replace with your desired version to release
-                displayName: 'Checkout to specific branch'
-              - template: .azure-pipelines/templates/setup.yml@LogicAppsUX
-                parameters:
-                  feedBaseUrl: ${{ variables.feedBaseUrl }}
-              - template: .azure-pipelines/templates/build.yml@LogicAppsUX
-              - template: .azure-pipelines/templates/package.yml@LogicAppsUX
-                parameters:
-                  publishVersion: ${{ parameters.publishVersion }}
-              - ${{ if eq(parameters.runVscodeE2EExecution, true) }}:
-                  - template: .azure-pipelines/templates/sign.yml@LogicAppsUX
-                  - template: .azure-pipelines/templates/stage-artifacts.yml@LogicAppsUX
-                    parameters:
-                      publishVersion: ${{ parameters.publishVersion }}
-
-      - ${{ if eq(parameters.enableVscodeE2E, true) }}:
-          - template: templates/vscode-e2e-stage.yml@self
-            parameters:
-              feedBaseUrl: ${{ variables.feedBaseUrl }}
-              checkoutRef: ${{ variables.vscodeE2ECheckoutRef }}
-              testARMServiceConnection: ${{ variables.vscodeE2ETestARMServiceConnection }}
-              runVscodeE2EExecution: ${{ parameters.runVscodeE2EExecution }}
-              dependsOn: []
+    isOfficialBuild: ${{ parameters.isOfficialBuild }}
+    signType: ${{ parameters.signType }}
+    packageManager: pnpm
+    feedBaseUrl: ${{ variables.feedBaseUrl }}
+    additionalSetupSteps:
+      - pwsh: |
+          $npmrcFile = '$(npmrcFile)'
+          if ([string]::IsNullOrWhiteSpace($npmrcFile)) {
+            Write-Host "##vso[task.logissue type=error]npmrcFile was not set by AzureTools setup; feed auth cannot be preserved for package phases."
+            exit 1
+          }
+          if ([System.IO.Path]::IsPathRooted($npmrcFile)) {
+            $resolvedNpmrcFile = $npmrcFile
+          } else {
+            $resolvedNpmrcFile = [System.IO.Path]::GetFullPath((Join-Path '$(Build.SourcesDirectory)' $npmrcFile))
+          }
+          if (-not (Test-Path $resolvedNpmrcFile)) {
+            Write-Host "##vso[task.logissue type=error]Resolved npmrcFile does not exist: $resolvedNpmrcFile"
+            exit 1
+          }
+          Write-Host "##vso[task.setvariable variable=NPM_CONFIG_USERCONFIG]$resolvedNpmrcFile"
+          Write-Host "##vso[task.setvariable variable=LA_VSCODE_ADO_PIPELINE]true"
+          Write-Host "##vso[task.setvariable variable=NODE_OPTIONS]--max-old-space-size=6144"
+          node scripts/prepare-vscode-ado-build.js
+        displayName: Prepare Logic Apps VS Code build metadata
+        env:
+          AI_KEY: $(AI_KEY)
+          LA_VSCODE_ADO_PIPELINE: 'true'
