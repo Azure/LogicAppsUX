@@ -12,6 +12,7 @@ testRootNpmrcSourceGuardAllowsGeneratedRuntimeFile();
 testLocalAzureToolsWrapperContractIfAvailable();
 testConsumerAdmissionContract();
 testAzureCliIdentityScriptBehavior();
+testProducerAdmissionScriptBehavior();
 testPipelineSafetyGuards();
 testDiagnosticsStagingScriptHandlesControllerLayout();
 
@@ -30,7 +31,6 @@ function testAzureToolsWrapperContract() {
   const buildEntry = read('.config/1esmain.yml');
   const releaseEntry = read('.config/release.yml');
   const readme = read('.config/README.md');
-  const e2eReadme = read('apps/vs-code-designer/src/test/e2e/README.md');
   const rootPackage = JSON.parse(read('package.json'));
   const workspace = read('pnpm-workspace.yaml');
   const gitignore = read('.gitignore');
@@ -313,6 +313,8 @@ function testConsumerAdmissionContract() {
   assert.match(runSuitesTemplate, /Unexpected logical producer artifact name/);
   assert.match(runSuitesTemplate, /Capture trusted artifact verifier before producer checkout/);
   assert.match(runSuitesTemplate, /Verify producer build completed and trusted/);
+  assert.match(runSuitesTemplate, /builds\/\$\{producerRunId\}\?api-version=7\.1/);
+  assert.doesNotMatch(runSuitesTemplate, /builds\/\$producerRunId\?api-version=7\.1/);
   assert.match(runSuitesTemplate, /Verify exact producer source checkout/);
   assert.match(runSuitesTemplate, /Write admitted producer identity context/);
   assert.match(runSuitesTemplate, /LA_E2E_CLI_ADMISSION_CONTEXT_PATH/);
@@ -879,6 +881,123 @@ ${scriptInfo.script}
       status: error.status ?? 1,
       output: `${error.stdout?.toString() ?? ''}${error.stderr?.toString() ?? ''}`,
       runnerMarker,
+    };
+  }
+}
+
+function testProducerAdmissionScriptBehavior() {
+  if (process.env.PIPELINE_CONTRACT_RUN_SHELL_PROBES !== '1') {
+    console.log(
+      '[pipeline-contract.unit] producer admission probe not run; set PIPELINE_CONTRACT_RUN_SHELL_PROBES=1 for strict execution.'
+    );
+    return;
+  }
+
+  assertCommandAvailable('pwsh');
+  const runSuites = parseYaml('.config/templates/vscode-e2e-cli-run-suites.yml');
+  const script = prepareProducerAdmissionScriptForUnit(
+    getInlineScriptByDisplayName(runSuites, { stepKind: 'pwsh', displayName: /Verify producer build completed and trusted/ })
+  );
+
+  try {
+    const valid = runProducerAdmissionScript(script);
+    assert.strictEqual(valid.status, 0, valid.output);
+    assert.strictEqual(
+      fs.readFileSync(valid.uriMarker, 'utf8').trim(),
+      'https://dev.azure.com/example-org/example-project/_apis/build/builds/15479528?api-version=7.1'
+    );
+
+    const failureCases = [
+      { PRODUCER_STATUS: 'inProgress' },
+      { PRODUCER_RESULT: 'failed' },
+      { PRODUCER_DEFINITION_ID: '12345' },
+      { PRODUCER_SOURCE_VERSION: 'wrong-source' },
+    ];
+    for (const overrides of failureCases) {
+      const failed = runProducerAdmissionScript(script, overrides);
+      assert.notStrictEqual(failed.status, 0, `producer admission script should reject ${JSON.stringify(overrides)}`);
+    }
+  } finally {
+    fs.rmSync(script.tempRoot, { recursive: true, force: true });
+  }
+}
+
+function getInlineScriptByDisplayName(yamlObject, { stepKind, displayName }) {
+  const step = findPipelineSteps(yamlObject).find((candidate) => candidate[stepKind] && displayName.test(candidate.displayName ?? ''));
+  assert.ok(step, `Expected ${stepKind} step matching ${displayName}`);
+  assert.ok(step[stepKind], `Expected inline script for ${step.displayName}`);
+  return step[stepKind];
+}
+
+function findPipelineSteps(value) {
+  if (Array.isArray(value)) {
+    return value.flatMap((entry) => findPipelineSteps(entry));
+  }
+  if (!value || typeof value !== 'object') {
+    return [];
+  }
+  const current = value.pwsh || value.bash || value.script ? [value] : [];
+  return [...current, ...Object.values(value).flatMap((entry) => findPipelineSteps(entry))];
+}
+
+function prepareProducerAdmissionScriptForUnit(script) {
+  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'pipeline-contract-producer-'));
+  const prepared = script
+    .replaceAll('${{ parameters.expectedProducerRunId }}', '15479528')
+    .replaceAll('${{ parameters.expectedProducerDefinitionId }}', '24067')
+    .replaceAll('${{ parameters.expectedSourceSha }}', 'abc123')
+    .replaceAll('${{ parameters.expectedRepositoryName }}', 'Azure/LogicAppsUX')
+    .replaceAll('$(System.CollectionUri)', 'https://dev.azure.com/example-org/')
+    .replaceAll('$(System.TeamProject)', 'example-project');
+  return { script: prepared, tempRoot };
+}
+
+function runProducerAdmissionScript(scriptInfo, overrides = {}) {
+  const uriMarker = path.join(scriptInfo.tempRoot, `producer-uri-${Date.now()}-${Math.random().toString(36).slice(2)}.txt`);
+  const env = {
+    ...process.env,
+    PRODUCER_URI_MARKER: uriMarker,
+    PRODUCER_DEFINITION_ID: '24067',
+    PRODUCER_STATUS: 'completed',
+    PRODUCER_RESULT: 'succeeded',
+    PRODUCER_SOURCE_VERSION: 'abc123',
+    PRODUCER_REPOSITORY_NAME: 'Azure/LogicAppsUX',
+    ...overrides,
+  };
+  const command = `
+function Invoke-RestMethod {
+  param(
+    [string] $Method,
+    [string] $Uri,
+    $Headers
+  )
+  if ($Method -ne 'Get') {
+    throw "Unexpected REST method $Method"
+  }
+  Set-Content -Path $env:PRODUCER_URI_MARKER -Value $Uri
+  return [pscustomobject]@{
+    definition = [pscustomobject]@{ id = $env:PRODUCER_DEFINITION_ID }
+    status = $env:PRODUCER_STATUS
+    result = $env:PRODUCER_RESULT
+    sourceVersion = $env:PRODUCER_SOURCE_VERSION
+    repository = [pscustomobject]@{ name = $env:PRODUCER_REPOSITORY_NAME }
+  }
+}
+${scriptInfo.script}
+`;
+  try {
+    const output = execFileSync('pwsh', ['-NoProfile', '-NonInteractive', '-Command', command], {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      env,
+      stdio: 'pipe',
+    });
+    return { status: 0, output, uriMarker };
+  } catch (error) {
+    return {
+      status: error.status ?? 1,
+      output: `${error.stdout?.toString() ?? ''}${error.stderr?.toString() ?? ''}`,
+      uriMarker,
     };
   }
 }
