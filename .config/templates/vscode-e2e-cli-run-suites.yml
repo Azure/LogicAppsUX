@@ -22,15 +22,9 @@ parameters:
   - name: resolvedVSCodeVersion
     type: string
     default: ''
-  - name: producerPipelineAlias
+  - name: e2eBuildArtifactName
     type: string
-    default: producer
-  - name: producerArtifactName
-    type: string
-    default: Build Root
-  - name: producerArtifactSubdirectory
-    type: string
-    default: vscode-e2e
+    default: vscode-e2e-build
   - name: expectedProducerDefinitionId
     type: string
     default: ''
@@ -88,6 +82,12 @@ jobs:
     pool: ${{ parameters.pool }}
     variables:
       ResolvedVSCodeVersion: ${{ parameters.resolvedVSCodeVersion }}
+      ExpectedProducerDefinitionId: ${{ parameters.expectedProducerDefinitionId }}
+      ExpectedProducerRunId: ${{ parameters.expectedProducerRunId }}
+      ExpectedSourceSha: ${{ parameters.expectedSourceSha }}
+      ExpectedRepositoryName: ${{ parameters.expectedRepositoryName }}
+      ExpectedRepositoryUri: ${{ parameters.expectedRepositoryUri }}
+      ExpectedCheckoutRef: ${{ parameters.checkoutRef }}
     templateContext:
       type: validationJob
       outputs:
@@ -115,43 +115,21 @@ jobs:
           $trustedVerifier = Join-Path '$(Agent.TempDirectory)' 'trusted-vscode-e2e-artifact-manifest.js'
           Copy-Item '$(Build.SourcesDirectory)/apps/vs-code-designer/scripts/vscode-e2e-artifact-manifest.js' $trustedVerifier -Force
           Write-Host "##vso[task.setvariable variable=TrustedArtifactVerifier]$trustedVerifier"
-        displayName: Capture trusted artifact verifier before producer checkout
+        displayName: Capture trusted artifact verifier before source checkout
+
+      - download: current
+        artifact: ${{ parameters.e2eBuildArtifactName }}
+        displayName: Download current-run E2E artifact
 
       - pwsh: |
-          $producerRunId = '${{ parameters.expectedProducerRunId }}'
-          if (-not $producerRunId) {
-            throw 'Expected producer run ID is required for trusted consumer admission.'
-          }
-          $headers = @{ Authorization = "Bearer $(System.AccessToken)" }
-          $uri = "$(System.CollectionUri)$(System.TeamProject)/_apis/build/builds/${producerRunId}?api-version=7.1"
-          $build = Invoke-RestMethod -Method Get -Uri $uri -Headers $headers
-          if ([string]$build.definition.id -ne '${{ parameters.expectedProducerDefinitionId }}') {
-            throw "Producer definition mismatch. expected=${{ parameters.expectedProducerDefinitionId }} actual=$($build.definition.id)"
-          }
-          if ($build.status -ne 'completed' -or $build.result -ne 'succeeded') {
-            throw "Producer build $producerRunId is not fully succeeded. status=$($build.status) result=$($build.result)"
-          }
-          if ('${{ parameters.expectedSourceSha }}' -and $build.sourceVersion -ne '${{ parameters.expectedSourceSha }}') {
-            throw "Producer sourceVersion mismatch. expected=${{ parameters.expectedSourceSha }} actual=$($build.sourceVersion)"
-          }
-          if ('${{ parameters.expectedRepositoryName }}' -and $build.repository.name -ne '${{ parameters.expectedRepositoryName }}') {
-            throw "Producer repository name mismatch. expected=${{ parameters.expectedRepositoryName }} actual=$($build.repository.name)"
-          }
-        displayName: Verify producer build completed and trusted
-
-      - download: ${{ parameters.producerPipelineAlias }}
-        artifact: ${{ parameters.producerArtifactName }}
-        displayName: Download trusted producer artifact
-
-      - pwsh: |
-          $artifactRoot = Join-Path '$(Pipeline.Workspace)' '${{ parameters.producerPipelineAlias }}/${{ parameters.producerArtifactName }}/${{ parameters.producerArtifactSubdirectory }}'
+          $artifactRoot = Join-Path '$(Pipeline.Workspace)' '${{ parameters.e2eBuildArtifactName }}'
           $artifactPath = Join-Path $artifactRoot 'extension-build.tar.gz'
           $manifestPath = Join-Path $artifactRoot 'vscode-e2e-build-manifest.json'
           if (-not (Test-Path $artifactPath)) {
-            throw "Missing producer artifact payload: $artifactPath"
+            throw "Missing current-run E2E artifact payload: $artifactPath"
           }
           if (-not (Test-Path $manifestPath)) {
-            throw "Missing producer artifact manifest: $manifestPath"
+            throw "Missing current-run E2E artifact manifest: $manifestPath"
           }
 
           $verifyArgs = @(
@@ -163,53 +141,64 @@ jobs:
             $manifestPath
             '--privileged-admission'
           )
-          if ('${{ parameters.expectedSourceSha }}') {
-            $verifyArgs += @('--expected-source-sha', '${{ parameters.expectedSourceSha }}')
+          if ('$(ExpectedSourceSha)') {
+            $verifyArgs += @('--expected-source-sha', '$(ExpectedSourceSha)')
           }
-          if ('${{ parameters.expectedProducerRunId }}') {
-            $verifyArgs += @('--expected-producer-run-id', '${{ parameters.expectedProducerRunId }}')
+          if ('$(ExpectedProducerRunId)') {
+            $verifyArgs += @('--expected-producer-run-id', '$(ExpectedProducerRunId)')
           }
-          if ('${{ parameters.expectedProducerDefinitionId }}') {
-            $verifyArgs += @('--expected-producer-definition-id', '${{ parameters.expectedProducerDefinitionId }}')
+          if ('$(ExpectedProducerDefinitionId)') {
+            $verifyArgs += @('--expected-producer-definition-id', '$(ExpectedProducerDefinitionId)')
           }
-          if ('${{ parameters.expectedRepositoryName }}') {
-            $verifyArgs += @('--expected-repository-name', '${{ parameters.expectedRepositoryName }}')
+          if ('$(ExpectedRepositoryName)') {
+            $verifyArgs += @('--expected-repository-name', '$(ExpectedRepositoryName)')
           }
-          if ('${{ parameters.expectedRepositoryUri }}') {
-            $verifyArgs += @('--expected-repository-uri', '${{ parameters.expectedRepositoryUri }}')
+          if ('$(ExpectedRepositoryUri)') {
+            $verifyArgs += @('--expected-repository-uri', '$(ExpectedRepositoryUri)')
           }
-          if ('${{ parameters.checkoutRef }}') {
-            $verifyArgs += @('--expected-checkout-ref', '${{ parameters.checkoutRef }}')
+          if ('$(ExpectedCheckoutRef)') {
+            $verifyArgs += @('--expected-checkout-ref', '$(ExpectedCheckoutRef)')
           }
           & node @verifyArgs
           if ($LASTEXITCODE -ne 0) {
             exit $LASTEXITCODE
           }
-        displayName: Verify trusted producer artifact admission
-
-      - ${{ if ne(parameters.checkoutRef, '') }}:
-          - script: git checkout ${{ parameters.checkoutRef }}
-            displayName: Checkout producer source SHA
-
-      - ${{ if and(eq(parameters.checkoutRef, ''), ne(parameters.expectedSourceSha, '')) }}:
-          - script: git checkout ${{ parameters.expectedSourceSha }}
-            displayName: Checkout expected producer source SHA
+        displayName: Verify current-run E2E artifact admission
 
       - pwsh: |
-          $head = (git rev-parse HEAD).Trim()
-          if ('${{ parameters.expectedSourceSha }}' -and $head -ne '${{ parameters.expectedSourceSha }}') {
-            throw "Consumer checkout HEAD '$head' does not match expected producer source SHA '${{ parameters.expectedSourceSha }}'."
+          $checkoutRef = '$(ExpectedCheckoutRef)'
+          if (-not $checkoutRef) {
+            $checkoutRef = '$(ExpectedSourceSha)'
           }
-          $artifactRoot = Join-Path '$(Pipeline.Workspace)' '${{ parameters.producerPipelineAlias }}/${{ parameters.producerArtifactName }}/${{ parameters.producerArtifactSubdirectory }}'
+          if (-not $checkoutRef) {
+            throw 'Expected checkout ref or source SHA is required for trusted E2E artifact admission.'
+          }
+          git checkout "$checkoutRef"
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+        displayName: Checkout admitted source SHA
+
+      - pwsh: |
+          $rawHead = git rev-parse HEAD
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+          $head = ([string]$rawHead).Trim()
+          $expectedSourceSha = '$(ExpectedSourceSha)'
+          if ($expectedSourceSha -and $head -ne $expectedSourceSha) {
+            throw "Consumer checkout HEAD '$head' does not match expected source SHA '$expectedSourceSha'."
+          }
+          $artifactRoot = Join-Path '$(Pipeline.Workspace)' '${{ parameters.e2eBuildArtifactName }}'
           $manifestPath = Join-Path $artifactRoot 'vscode-e2e-build-manifest.json'
           $manifest = Get-Content $manifestPath -Raw | ConvertFrom-Json
           if ($manifest.artifact.name -ne 'vscode-e2e-build') {
-            throw "Unexpected logical producer artifact name. expected=vscode-e2e-build actual=$($manifest.artifact.name)"
+            throw "Unexpected logical E2E artifact name. expected=vscode-e2e-build actual=$($manifest.artifact.name)"
           }
           if ($manifest.producer.actualArtifactBuildSha -ne $head) {
-            throw "Consumer checkout HEAD '$head' does not match producer artifact SHA '$($manifest.producer.actualArtifactBuildSha)'."
+            throw "Consumer checkout HEAD '$head' does not match E2E artifact SHA '$($manifest.producer.actualArtifactBuildSha)'."
           }
-        displayName: Verify exact producer source checkout
+        displayName: Verify exact admitted source checkout
 
       - template: /.azure-pipelines/templates/vscode-e2e-cli-setup.yml@self
         parameters:
@@ -220,7 +209,7 @@ jobs:
           includeLinuxDisplayDependencies: ${{ eq(parameters.platform, 'linux') }}
 
       - pwsh: |
-          $artifactRoot = Join-Path '$(Pipeline.Workspace)' '${{ parameters.producerPipelineAlias }}/${{ parameters.producerArtifactName }}/${{ parameters.producerArtifactSubdirectory }}'
+          $artifactRoot = Join-Path '$(Pipeline.Workspace)' '${{ parameters.e2eBuildArtifactName }}'
           tar -xzf (Join-Path $artifactRoot 'extension-build.tar.gz') -C '$(Build.SourcesDirectory)'
           if (-not (Test-Path '$(Build.SourcesDirectory)/apps/vs-code-designer/out/test/e2e/createWorkspace.test.js')) {
             throw 'Extracted artifact is missing compiled @vscode/test-cli E2E tests.'
@@ -228,7 +217,7 @@ jobs:
           if (-not (Test-Path '$(Build.SourcesDirectory)/apps/vs-code-designer/dist')) {
             throw 'Extracted artifact is missing VS Code extension dist payload.'
           }
-        displayName: Extract verified producer artifact
+        displayName: Extract verified E2E artifact
 
       - pwsh: |
           if (-not '$(ResolvedVSCodeVersion)') {
@@ -236,7 +225,7 @@ jobs:
           }
           $resultRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/results'
           New-Item -ItemType Directory -Force -Path $resultRoot | Out-Null
-          $artifactRoot = Join-Path '$(Pipeline.Workspace)' '${{ parameters.producerPipelineAlias }}/${{ parameters.producerArtifactName }}/${{ parameters.producerArtifactSubdirectory }}'
+          $artifactRoot = Join-Path '$(Pipeline.Workspace)' '${{ parameters.e2eBuildArtifactName }}'
           $manifest = Get-Content (Join-Path $artifactRoot 'vscode-e2e-build-manifest.json') -Raw | ConvertFrom-Json
           $context = [ordered]@{
             schemaVersion = 1
@@ -254,7 +243,7 @@ jobs:
           $contextPath = Join-Path $resultRoot 'admission-context.json'
           $context | ConvertTo-Json -Depth 5 | Set-Content -Path $contextPath -NoNewline
           Write-Host "##vso[task.setvariable variable=AdmissionContextPath]$contextPath"
-        displayName: Write admitted producer identity context
+        displayName: Write admitted E2E artifact identity context
 
       - ${{ if eq(parameters.platform, 'linux') }}:
           - bash: |
