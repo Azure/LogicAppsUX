@@ -1,6 +1,7 @@
 import * as assert from 'assert';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { closeCopilotChatIfVisible } from './copilotChat';
 import { assertNoDialogAttempts, installDialogGuard } from './dialogGuard';
 import { captureCliScreenshot, installFailureScreenshotHook } from './screenshot';
 import { normalizeFsPath } from './testUtils';
@@ -16,10 +17,11 @@ suite('Extension Activation Tests', () => {
   let extension: vscode.Extension<unknown> | undefined;
   let activationChannel: vscode.OutputChannel | undefined;
 
-  suiteSetup(() => {
+  suiteSetup(async () => {
     extension = vscode.extensions.getExtension(logicAppsExtensionId);
     activationChannel = vscode.window.createOutputChannel(activationChannelName);
     activationChannel.show(true);
+    await closeCopilotChatIfVisible('activation suite setup', { absentSettleMs: 1500 });
   });
 
   suiteTeardown(() => {

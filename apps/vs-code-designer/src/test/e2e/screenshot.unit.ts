@@ -1131,6 +1131,7 @@ class FakeCaptureCdp {
       exactIframeVisibilityScenario?: OwnerVisibilityScenario;
       resolveNodeTimeoutFailures?: number;
       resolveNodeError?: Error;
+      ownerWorkbenchVisible?: boolean;
     } = {}
   ) {
     this.targetUrl = options.targetUrl;
@@ -1243,7 +1244,7 @@ class FakeCaptureCdp {
       return {
         activeTabText: this.options.activeTabText ?? 'Expected Workflow',
         activeTabVisible: true,
-        visibleWorkbench: true,
+        visibleWorkbench: this.options.ownerWorkbenchVisible ?? true,
       } as T;
     }
     if (expression.includes('const targetUrl =')) {

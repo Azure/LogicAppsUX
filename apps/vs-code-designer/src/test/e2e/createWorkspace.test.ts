@@ -37,6 +37,7 @@ import {
   getReviewBackCases,
 } from './createWorkspaceCases';
 import type { FieldLabels, WorkspaceAppType, WorkspaceCreationCase, WorkflowType } from './createWorkspaceTypes';
+import { closeCopilotChatIfVisible } from './copilotChat';
 import { assertNoDialogAttempts, installDialogGuard } from './dialogGuard';
 import { captureCliScreenshot, captureDiagnosticScreenshot, installFailureScreenshotHook } from './screenshot';
 import type { ScreenshotExpectation } from './screenshotReadiness';
@@ -199,6 +200,7 @@ suite('Create Workspace Experience Tests', () => {
     const extension = vscode.extensions.getExtension(logicAppsExtensionId);
     assert.ok(extension, `Expected ${logicAppsExtensionId} to be loaded from the extension development path`);
     await extension.activate();
+    await closeCopilotChatIfVisible('create workspace suite setup', { absentSettleMs: 1500 });
 
     if (createWorkspaceGroup === 'fixtures-manifest') {
       clearFixtureManifest();
@@ -725,6 +727,7 @@ function isRetryableBlankCreateWorkspaceError(error: unknown): boolean {
 }
 
 async function openCreateWorkspaceContext(): Promise<{ cdp: CdpEvaluator & { dispose(): void }; contextId: number }> {
+  await closeCopilotChatIfVisible('before create workspace command', { absentSettleMs: 1500 });
   await closeWebviewTabs(createWorkspaceViewType);
   const tabsBefore = getWebviewTabs(createWorkspaceViewType).length;
 
@@ -2394,6 +2397,7 @@ async function captureCreateWorkspaceScreenshot(
   optional = false,
   contract: Omit<Extract<ScreenshotExpectation, { kind: 'createWorkspace' }>, 'kind' | 'label' | 'stage'> = {}
 ): Promise<void> {
+  await closeCopilotChatIfVisible(`before create workspace screenshot ${name}`);
   await dismissWorkbenchNotificationsBeforeEvidence(name);
   await captureCliScreenshot(name, {
     expectation: { kind: 'createWorkspace', label: name, stage, ...contract },
