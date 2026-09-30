@@ -1,5 +1,6 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
+import { closeCopilotChatIfVisible } from './copilotChat';
 import { assertNoDialogAttempts, installDialogGuard } from './dialogGuard';
 import { waitForVisibleDelay } from './visibleDelay';
 
@@ -23,6 +24,7 @@ suite('Logic Apps Commands Tests', () => {
     const extension = vscode.extensions.getExtension(logicAppsExtensionId);
     assert.ok(extension, `Expected ${logicAppsExtensionId} to be loaded from the extension development path`);
     await extension.activate();
+    await closeCopilotChatIfVisible('commands suite setup', { absentSettleMs: 1500 });
   });
 
   suiteTeardown(async () => {

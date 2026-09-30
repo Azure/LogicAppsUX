@@ -9,6 +9,10 @@ import {
   type ScreenshotReadinessSnapshot,
 } from './screenshotReadiness';
 
+const { JSDOM } = require('jsdom') as {
+  JSDOM: new (html: string, options?: Record<string, unknown>) => { window: Window & typeof globalThis };
+};
+
 async function main(): Promise<void> {
   testBlankWorkbenchRejected();
   testEmptyWorkbenchShellAccepted();
@@ -23,6 +27,12 @@ async function main(): Promise<void> {
   testDesignerCanvasRejectsRequiredTextOutsideCanvasNode();
   testDesignerCanvasRejectsCoveredConcreteRequiredNode();
   testDesignerCanvasRejectsAncestorClippedConcreteRequiredNode();
+  testDesignerCanvasAcceptsShiftedCanvasRootWhenRequiredCardIsVisible();
+  testDesignerCanvasRejectsPartiallyClippedRequiredNode();
+  testDesignerCanvasRejectsClippedRequiredTitle();
+  testDesignerCanvasRejectsVisibleCardWithOffscreenTitleInRealDom();
+  testDesignerCanvasRejectsHiddenRequiredTitleInRealDom();
+  testDesignerCanvasRejectsObservedNarrowViewportRequiredCardClipping();
   testDesignerCanvasRejectsNonCanvasSubstituteNode();
   testDesignerCanvasRejectsOffCenterLoaderOverRequiredNode();
   testDesignerCanvasPrefersCanvasOverSelectedPanel();
@@ -371,6 +381,192 @@ function testDesignerCanvasRejectsAncestorClippedConcreteRequiredNode(): void {
 
   assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
   assert.ok(snapshot.reasonCodes.includes('designer-canvas-required-node-missing'));
+}
+
+function testDesignerCanvasAcceptsShiftedCanvasRootWhenRequiredCardIsVisible(): void {
+  const requestCard = new FakeElement('div', { class: 'msla-card' }, [], 'When an HTTP request is received');
+  requestCard.bounds = { left: 20, top: 120, width: 220, height: 80, right: 240, bottom: 200 };
+  const canvas = new FakeElement('div', { class: 'react-flow' }, [requestCard]);
+  canvas.bounds = { left: -138, top: 73, width: 458, height: 593, right: 320, bottom: 666 };
+
+  const snapshot = runProbe(
+    new FakeDocument(new FakeElement('body', {}, [canvas])),
+    {
+      kind: 'designerCanvas',
+      label: 'shifted-canvas-root',
+      requiredNodes: ['When an HTTP request is received'],
+    },
+    { window: { innerWidth: 458, innerHeight: 666, devicePixelRatio: 1, scrollY: 0, getComputedStyle: getComputedStyleForFakeElement } }
+  );
+
+  assert.strictEqual(snapshot.ready, true, JSON.stringify(snapshot));
+  assert.strictEqual((snapshot.details?.designerCanvas as { canvasRootVisible?: boolean } | undefined)?.canvasRootVisible, false);
+}
+
+function testDesignerCanvasRejectsPartiallyClippedRequiredNode(): void {
+  const requestCard = new FakeElement('div', { class: 'msla-card' }, [], 'When an HTTP request is received');
+  requestCard.bounds = { left: -80, top: 120, width: 220, height: 80, right: 140, bottom: 200 };
+  const canvas = new FakeElement('div', { class: 'react-flow' }, [requestCard]);
+  canvas.bounds = { left: 0, top: 73, width: 458, height: 593, right: 458, bottom: 666 };
+
+  const snapshot = runProbe(
+    new FakeDocument(new FakeElement('body', {}, [canvas])),
+    {
+      kind: 'designerCanvas',
+      label: 'partially-clipped-card',
+      requiredNodes: ['When an HTTP request is received'],
+    },
+    { window: { innerWidth: 458, innerHeight: 666, devicePixelRatio: 1, scrollY: 0, getComputedStyle: getComputedStyleForFakeElement } }
+  );
+
+  assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
+  assert.ok(snapshot.reasonCodes.includes('designer-canvas-required-node-missing'));
+  assert.ok(((snapshot.details?.designerCanvas as { clipped?: string[] } | undefined)?.clipped ?? []).includes('required-0'));
+}
+
+function testDesignerCanvasRejectsClippedRequiredTitle(): void {
+  const title = new FakeElement('span', { class: 'msla-card-title' }, [], 'Response');
+  title.bounds = { left: -80, top: 125, width: 70, height: 20, right: -10, bottom: 145 };
+  const responseCard = new FakeElement('div', { class: 'msla-card' }, [title]);
+  responseCard.bounds = { left: -30, top: 120, width: 220, height: 80, right: 190, bottom: 200 };
+  const canvas = new FakeElement('div', { class: 'react-flow' }, [responseCard]);
+  canvas.bounds = { left: 0, top: 73, width: 458, height: 593, right: 458, bottom: 666 };
+
+  const snapshot = runProbe(
+    new FakeDocument(new FakeElement('body', {}, [canvas])),
+    {
+      kind: 'designerCanvas',
+      label: 'clipped-required-title',
+      requiredNodes: ['Response'],
+    },
+    { window: { innerWidth: 458, innerHeight: 666, devicePixelRatio: 1, scrollY: 0, getComputedStyle: getComputedStyleForFakeElement } }
+  );
+
+  assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
+  assert.ok(((snapshot.details?.designerCanvas as { clipped?: string[] } | undefined)?.clipped ?? []).includes('required-0'));
+}
+
+function testDesignerCanvasRejectsVisibleCardWithOffscreenTitleInRealDom(): void {
+  const snapshot = runJsdomRequiredTitleProbe({
+    titleStyle: '',
+    titleRect: { left: -30, top: 130, width: 25, height: 20 },
+    label: 'offscreen-title',
+  });
+
+  assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
+  assert.ok(((snapshot.details?.designerCanvas as { clipped?: string[] } | undefined)?.clipped ?? []).includes('required-0'));
+}
+
+function testDesignerCanvasRejectsHiddenRequiredTitleInRealDom(): void {
+  for (const titleStyle of ['visibility:hidden', 'opacity:0']) {
+    const snapshot = runJsdomRequiredTitleProbe({
+      titleStyle,
+      titleRect: { left: 30, top: 130, width: 100, height: 20 },
+      label: `hidden-title-${titleStyle}`,
+    });
+
+    assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
+    assert.ok(((snapshot.details?.designerCanvas as { clipped?: string[] } | undefined)?.clipped ?? []).includes('required-0'));
+  }
+}
+
+function testDesignerCanvasRejectsObservedNarrowViewportRequiredCardClipping(): void {
+  const weatherCard = new FakeElement('div', { class: 'msla-card' }, [], 'Get current weather Connected to MSN Weather');
+  weatherCard.bounds = { left: -96, top: 220, width: 280, height: 96, right: 184, bottom: 316 };
+  const responseCard = new FakeElement('div', { class: 'msla-card' }, [], 'Response');
+  responseCard.bounds = { left: 208, top: 340, width: 220, height: 88, right: 428, bottom: 428 };
+  const canvas = new FakeElement('div', { class: 'react-flow' }, [weatherCard, responseCard]);
+  canvas.bounds = { left: 0, top: 73, width: 458, height: 593, right: 458, bottom: 666 };
+
+  const snapshot = runProbe(
+    new FakeDocument(new FakeElement('body', {}, [canvas])),
+    {
+      kind: 'designerCanvas',
+      label: 'observed-458-required-card-clipped',
+      requiredNodes: ['Get current weather'],
+    },
+    { window: { innerWidth: 458, innerHeight: 666, devicePixelRatio: 1, scrollY: 0, getComputedStyle: getComputedStyleForFakeElement } }
+  );
+
+  assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
+  assert.ok(((snapshot.details?.designerCanvas as { clipped?: string[] } | undefined)?.clipped ?? []).includes('required-0'));
+}
+
+function runJsdomRequiredTitleProbe(options: {
+  titleStyle: string;
+  titleRect: { left: number; top: number; width: number; height: number };
+  label: string;
+}): ScreenshotReadinessSnapshot {
+  const dom = new JSDOM(
+    `<html><body><div class="react-flow" id="canvas"><div class="msla-card" id="card"><span class="msla-card-title" id="title" style="${options.titleStyle}">Response</span></div></div></body></html>`,
+    { runScripts: 'outside-only' }
+  );
+  const { window } = dom;
+  const windowAny = window as any;
+  const { document } = windowAny;
+  Object.defineProperty(windowAny, 'innerWidth', { configurable: true, value: 458 });
+  Object.defineProperty(windowAny, 'innerHeight', { configurable: true, value: 666 });
+  configureJsdomElementGeometry(windowAny, {
+    canvas: { left: 0, top: 73, width: 458, height: 593 },
+    card: { left: 20, top: 120, width: 220, height: 80 },
+    title: options.titleRect,
+  });
+
+  return vm.runInNewContext(
+    buildScreenshotReadinessExpression({ kind: 'designerCanvas', label: options.label, requiredNodes: ['Response'] }, 1, 1),
+    {
+      document,
+      window: windowAny,
+      HTMLElement: windowAny.HTMLElement,
+      HTMLInputElement: windowAny.HTMLInputElement,
+      HTMLButtonElement: windowAny.HTMLButtonElement,
+      Node: windowAny.Node,
+      getComputedStyle: windowAny.getComputedStyle.bind(windowAny),
+    }
+  ) as ScreenshotReadinessSnapshot;
+}
+
+function configureJsdomElementGeometry(
+  window: any,
+  geometry: Record<string, { left: number; top: number; width: number; height: number }>
+): void {
+  const htmlElementPrototype = window.HTMLElement.prototype;
+  Object.defineProperty(htmlElementPrototype, 'offsetWidth', {
+    configurable: true,
+    get() {
+      return geometry[this.id]?.width ?? 100;
+    },
+  });
+  Object.defineProperty(htmlElementPrototype, 'offsetHeight', {
+    configurable: true,
+    get() {
+      return geometry[this.id]?.height ?? 40;
+    },
+  });
+  htmlElementPrototype.getClientRects = function () {
+    const rect = geometry[this.id];
+    return rect ? [this.getBoundingClientRect()] : [];
+  };
+  htmlElementPrototype.getBoundingClientRect = function () {
+    const rect = geometry[this.id] ?? { left: 0, top: 0, width: 100, height: 40 };
+    return {
+      bottom: rect.top + rect.height,
+      height: rect.height,
+      left: rect.left,
+      right: rect.left + rect.width,
+      top: rect.top,
+      width: rect.width,
+      x: rect.left,
+      y: rect.top,
+      toJSON: () => ({}),
+    };
+  };
+  window.document.elementFromPoint = (x: number, y: number) =>
+    (Object.entries(geometry)
+      .map(([id, rect]) => ({ element: window.document.getElementById(id), rect }))
+      .reverse()
+      .find(({ element, rect }) => element && x >= rect.left && x <= rect.left + rect.width && y >= rect.top && y <= rect.top + rect.height)
+      ?.element as any) ?? null;
 }
 
 function testDesignerCanvasRejectsNonCanvasSubstituteNode(): void {

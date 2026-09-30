@@ -14,6 +14,7 @@ import {
   waitForWebviewFrameContext,
 } from './cdpClient';
 import { azureConnectionStatusDomScript, waitForAzureConnectedAction } from './azureConnectionStatus';
+import { closeCopilotChatIfVisible } from './copilotChat';
 import {
   assertNextButtonEnabled,
   clickPoint,
@@ -234,6 +235,7 @@ suite('Generated Workspace Designer Lifecycle Tests', () => {
     const extension = vscode.extensions.getExtension(logicAppsExtensionId);
     assert.ok(extension, `Expected ${logicAppsExtensionId} to be loaded from the extension development path`);
     await extension.activate();
+    await closeCopilotChatIfVisible('workspace lifecycle suite setup', { absentSettleMs: 1500 });
   });
 
   suiteTeardown(async () => {
@@ -485,6 +487,7 @@ function sanitizeDiagnosticName(value: string): string {
 }
 
 async function openCreateWorkspaceContext(label: string): Promise<{ cdp: CdpEvaluator & { dispose(): void }; contextId: number }> {
+  await closeCopilotChatIfVisible(`before create workspace command (${label})`, { absentSettleMs: 1500 });
   await closeWebviewTabs(createWorkspaceViewType);
   const tabsBefore = getWebviewTabs(createWorkspaceViewType).length;
 
@@ -971,6 +974,7 @@ async function openDesignerAndCreateWorkflow(
       appDir: createdWorkspace.appDir,
     })}`
   );
+  await closeCopilotChatIfVisible(`before open designer (${createdWorkspace.label})`, { absentSettleMs: 1500 });
   await closeAllTabs();
   const workflowDocument = await vscode.workspace.openTextDocument(vscode.Uri.file(createdWorkspace.workflowJsonPath));
   await vscode.window.showTextDocument(workflowDocument, { preview: false });
@@ -1402,6 +1406,7 @@ async function addRequestTriggerThroughDesigner(cdp: CdpConnection, contextId: n
   ]);
   await waitForDesignerText(cdp, contextId, requestTriggerTitleVariants, 90000, `${label} Request trigger on canvas`);
   await closeDesignerDetailsPanelThroughDesigner(cdp, contextId, `${label} Request trigger panel`);
+  await normalizeDesignerCanvasViewport(cdp, contextId, `${label} Request trigger-added evidence`);
   await captureLifecycleScreenshot(`workspace-lifecycle-${label}-request-trigger-added`, {
     expectation: { kind: 'designerCanvas', label, requiredNodes: [requestTriggerTitleVariants] },
     semanticCdp: cdp,
@@ -1425,6 +1430,7 @@ async function addResponseActionThroughDesigner(cdp: CdpEvaluator, contextId: nu
   await waitForDesignerText(cdp, contextId, [responseActionTitle], 90000, `${label} Response action on canvas`);
   await closeDesignerDetailsPanelThroughDesigner(cdp, contextId, `${label} Response action panel before action-added evidence`);
   await waitForDesignerText(cdp, contextId, [responseActionTitle], 30000, `${label} Response action card`);
+  await normalizeDesignerCanvasViewport(cdp, contextId, `${label} Response action-added evidence`);
   await captureLifecycleScreenshot(`workspace-lifecycle-${label}-response-action-added`, {
     expectation: { kind: 'designerCanvas', label, requiredNodes: [responseActionTitle] },
     semanticCdp: cdp,
@@ -1459,6 +1465,7 @@ async function addMsnWeatherActionThroughDesigner(cdp: CdpEvaluator, contextId: 
     );
     await closeDesignerDetailsPanelThroughDesigner(cdp, contextId, `${label} MSN Weather action panel before action-added evidence`);
     await waitForDesignerText(cdp, contextId, ['Get current weather'], 30000, `${label} MSN Weather action card`);
+    await normalizeDesignerCanvasViewport(cdp, contextId, `${label} MSN Weather action-added evidence`);
     await captureLifecycleScreenshot(`workspace-lifecycle-${label}-msn-weather-action-added`, {
       expectation: { kind: 'designerCanvas', label, requiredNodes: ['Get current weather'] },
       semanticCdp: cdp,
@@ -2179,34 +2186,72 @@ async function selectDynamicContentTokenForParameter(
     `(() => {
       const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
       const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim();
-      const summarize = (element) => ({
-        tagName: element?.tagName,
-        dataAutomationId: element?.getAttribute?.('data-automation-id'),
-        className: typeof element?.className === 'string' ? element.className.slice(0, 180) : '',
-      });
+      const summarize = (element) => ({ tagName: element?.tagName || '', ownedByButton: element === button || button?.contains?.(element) || false });
+      const intersectRects = (a, b) => {
+        const left = Math.max(a.left, b.left);
+        const top = Math.max(a.top, b.top);
+        const right = Math.min(a.right, b.right);
+        const bottom = Math.min(a.bottom, b.bottom);
+        return { left, top, right, bottom, width: Math.max(0, right - left), height: Math.max(0, bottom - top) };
+      };
+      const getClippedRect = (element) => {
+        let clipped = intersectRects(element.getBoundingClientRect(), { left: 0, top: 0, right: window.innerWidth, bottom: window.innerHeight });
+        let current = element.parentElement;
+        while (current instanceof HTMLElement && current !== document.body && current !== document.documentElement) {
+          const style = getComputedStyle(current);
+          const clips =
+            current.scrollHeight > current.clientHeight + 1 ||
+            current.scrollWidth > current.clientWidth + 1 ||
+            [style.overflow, style.overflowX, style.overflowY].some((value) => /auto|scroll|hidden|clip/i.test(value || ''));
+          if (clips) {
+            clipped = intersectRects(clipped, current.getBoundingClientRect());
+          }
+          current = current.parentElement;
+        }
+        return clipped.width > 0 && clipped.height > 0 ? clipped : undefined;
+      };
       const candidates = Array.from(document.querySelectorAll('[data-automation-id="msla-token-picker-entrypoint-button-dynamic-content"]'))
         .filter(isVisible);
       const button = candidates.at(-1);
       if (!(button instanceof HTMLElement)) {
-        return { ok: false, reason: 'Dynamic content entrypoint not found', text: document.body?.innerText || '' };
+        return { ok: false, reason: 'dynamic-content-entrypoint-not-found', candidateCount: candidates.length };
       }
 
       button.scrollIntoView({ block: 'center', inline: 'center' });
       const rect = button.getBoundingClientRect();
-      const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-      const clippedRect = {
-        left: Math.max(0, Math.round(rect.left)),
-        top: Math.max(0, Math.round(rect.top)),
-        right: Math.min(window.innerWidth, Math.round(rect.right)),
-        bottom: Math.min(window.innerHeight, Math.round(rect.bottom)),
-      };
+      const clippedRect = getClippedRect(button);
+      if (!clippedRect) {
+        return { ok: false, reason: 'dynamic-content-entrypoint-not-visible', candidateCount: candidates.length };
+      }
       const visibleIntersection = {
-        left: clippedRect.left,
-        top: clippedRect.top,
-        width: Math.max(0, clippedRect.right - clippedRect.left),
-        height: Math.max(0, clippedRect.bottom - clippedRect.top),
+        left: Math.round(clippedRect.left),
+        top: Math.round(clippedRect.top),
+        width: Math.round(clippedRect.width),
+        height: Math.round(clippedRect.height),
+      };
+      const point = {
+        x: clippedRect.left + clippedRect.width / 2,
+        y: clippedRect.top + clippedRect.height / 2,
       };
       const hit = document.elementFromPoint(point.x, point.y);
+      const containsButton = hit === button || button.contains(hit);
+      if (!containsButton) {
+        return {
+          ok: false,
+          reason: 'dynamic-content-entrypoint-hit-test-failed',
+          rect: {
+            left: Math.round(rect.left),
+            top: Math.round(rect.top),
+            width: Math.round(rect.width),
+            height: Math.round(rect.height),
+            right: Math.round(rect.right),
+            bottom: Math.round(rect.bottom),
+          },
+          viewport: { width: window.innerWidth, height: window.innerHeight },
+          visibleIntersection,
+          hitTest: { containsButton, element: summarize(hit) },
+        };
+      }
       const ownerPanel = button.closest('.msla-panel-layout, [id^="msla-node-details-panel-"], [role="tabpanel"], [class*="panel"]');
       return {
         ok: true,
@@ -2221,14 +2266,14 @@ async function selectDynamicContentTokenForParameter(
         },
         viewport: { width: window.innerWidth, height: window.innerHeight },
         visibleIntersection,
-        hitTest: { containsButton: hit === button || button.contains(hit), element: summarize(hit) },
+        hitTest: { containsButton, element: summarize(hit) },
         owner: summarize(ownerPanel),
       };
     })()`
   );
   assert.ok(
     entryPoint.ok && entryPoint.point,
-    `Expected dynamic-content picker button for ${description}. Reason=${entryPoint.reason} text=${redactDiagnosticString(entryPoint.text ?? '').slice(0, 1000)}`
+    `Expected dynamic-content picker button for ${description}. State=${JSON.stringify(sanitizeRunDiagnostic(entryPoint)).slice(0, 1000)}`
   );
 
   console.log(
@@ -3025,6 +3070,87 @@ async function tryClickDesignerElement(
   }
 }
 
+async function normalizeDesignerCanvasViewport(cdp: CdpEvaluator, contextId: number, description: string): Promise<void> {
+  const state = await cdp.evaluate<Record<string, unknown>>(
+    contextId,
+    `(() => {
+      const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
+      const summarizeRect = (element) => {
+        const rect = element?.getBoundingClientRect?.();
+        return rect
+          ? {
+              left: Math.round(rect.left),
+              top: Math.round(rect.top),
+              width: Math.round(rect.width),
+              height: Math.round(rect.height),
+              right: Math.round(rect.right),
+              bottom: Math.round(rect.bottom),
+            }
+          : undefined;
+      };
+      const pointHitsElement = (element) => {
+        const rect = element.getBoundingClientRect();
+        const hit = document.elementFromPoint?.(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        return !!hit && (hit === element || element.contains(hit));
+      };
+      const designerCanvas = Array.from(document.querySelectorAll('.react-flow, .msla-designer-canvas, [data-automation-id="msla-designer-canvas"]'))
+        .filter(isVisible)
+        .at(-1);
+      const canvasControlOwner =
+        designerCanvas instanceof HTMLElement
+          ? designerCanvas.closest('.msla-designer-canvas, [data-automation-id="msla-designer-canvas"]') || designerCanvas
+          : undefined;
+      const canvasScope = designerCanvas instanceof HTMLElement ? [designerCanvas, ...Array.from(designerCanvas.querySelectorAll('*'))] : [];
+      const scrollables = canvasScope.filter(
+        (element) => element instanceof HTMLElement && isVisible(element) && element.scrollWidth > element.clientWidth + 1 && element.scrollLeft !== 0
+      );
+      const scrollStateBefore = scrollables.slice(0, 8).map((element, index) => ({
+        index,
+        scrollLeft: Math.round(element.scrollLeft),
+        scrollWidth: element.scrollWidth,
+        clientWidth: element.clientWidth,
+        rect: summarizeRect(element),
+      }));
+
+      for (const element of scrollables) {
+        element.scrollLeft = 0;
+      }
+
+      const exactFitSelectors = ['#control-zoom-fit-button', '[data-testid="control-zoom-fit-button"]'];
+      const exactFitButton = exactFitSelectors
+        .flatMap((selector) => Array.from(canvasControlOwner?.querySelectorAll?.(selector) || []))
+        .find((element) => element instanceof HTMLElement && isVisible(element) && pointHitsElement(element));
+      const labeledFitButton = Array.from(canvasControlOwner?.querySelectorAll?.('button, [role="button"]') || []).find((element) => {
+        if (!(element instanceof HTMLElement) || !isVisible(element) || !pointHitsElement(element)) {
+          return false;
+        }
+        const label = (element.getAttribute('aria-label') || element.getAttribute('title') || '').replace(/\\s+/g, ' ').trim().toLowerCase();
+        return label === 'fit' || label === 'fit view' || label === 'fit to screen';
+      });
+      const fitButton = exactFitButton || labeledFitButton;
+      if (fitButton instanceof HTMLElement) {
+        fitButton.click();
+      }
+
+      const cards = Array.from(
+        designerCanvas?.querySelectorAll?.('[data-automation-id^="msla-node"], [id^="msla-node"], [data-testid*="node"], .msla-card, .react-flow__node') || []
+      )
+        .filter(isVisible)
+        .slice(0, 8)
+        .map((element, index) => ({ index, rect: summarizeRect(element) }));
+      return {
+        fitButtonClicked: !!fitButton,
+        scrollStateBefore,
+        canvasRect: summarizeRect(designerCanvas),
+        cards,
+        viewport: { width: window.innerWidth, height: window.innerHeight, devicePixelRatio: window.devicePixelRatio },
+      };
+    })()`
+  );
+  console.log(`[workspace-lifecycle][canvas-viewport] ${description}: ${JSON.stringify(state).slice(0, 2000)}`);
+  await new Promise((resolve) => setTimeout(resolve, 350));
+}
+
 async function logDesignerDiscoveryDiagnostics(
   cdp: CdpEvaluator,
   contextId: number,
@@ -3697,6 +3823,7 @@ async function startDebuggingGeneratedWorkspace(
     }
   }
   console.log(`[workspace-lifecycle] Starting debug for ${createdWorkspace.workflowJsonPath} with ${String(generatedConfig.name)}`);
+  await closeCopilotChatIfVisible(`before debug start (${createdWorkspace.label})`, { absentSettleMs: 1500 });
   await logAzuriteDiagnostics('before debug autostart', createdWorkspace.appDir);
   try {
     let startDebuggingOutcome: { started?: boolean; error?: unknown } | undefined;
@@ -4393,6 +4520,7 @@ async function openOverviewAndClickRunTrigger(
   screenshotPrefix: string
 ): Promise<{ cdp: CdpConnection; contextId: number; runName: string }> {
   console.log(`[workspace-lifecycle] Opening ${createdWorkspace.label} Overview`);
+  await closeCopilotChatIfVisible(`before overview command (${createdWorkspace.label})`, { absentSettleMs: 1500 });
   await closeWebviewTabs(designerViewType);
   await closeWebviewTabs(overviewViewType);
   await closeAllTabs();
@@ -5934,6 +6062,9 @@ async function captureLifecycleScreenshot(
     });
     return;
   }
+  if (shouldCloseCopilotChatBeforeScreenshot(options.expectation)) {
+    await closeCopilotChatIfVisible(`before screenshot ${name}`);
+  }
   if (!options.skipNotificationHousekeeping && (options.semanticCdp || options.expectation?.kind === 'createWorkspace')) {
     await dismissWorkbenchNotifications().catch((error) =>
       console.warn(`[workspace-lifecycle] Unable to dismiss workbench notifications before ${name}: ${String(error)}`)
@@ -5952,6 +6083,10 @@ async function captureLifecycleScreenshot(
   } finally {
     cdp.dispose();
   }
+}
+
+function shouldCloseCopilotChatBeforeScreenshot(expectation: ScreenshotExpectation | undefined): boolean {
+  return !(expectation?.kind === 'designerPanel' && !!expectation.picker);
 }
 
 async function captureRequiredLifecycleScreenshot(name: string, semanticCdp: CdpEvaluator, semanticContextId: number): Promise<string> {

@@ -578,6 +578,21 @@ export const screenshotReadinessDomScript = `
     return !hit || hit === element || element.contains?.(hit) || hit.contains?.(element);
   };
   const concreteRequiredNodeMatches = (requiredNodes) => {
+    const isSubstantiallyVisible = (element, visibleRatio = 0.98) => {
+      if (!(element instanceof HTMLElement)) {
+        return false;
+      }
+      if (!isVisible(element)) {
+        return false;
+      }
+      const rect = element.getBoundingClientRect();
+      const clipped = getClippedRect(element);
+      if (rect.width <= 0 || rect.height <= 0 || !clipped) {
+        return false;
+      }
+      return clipped.width >= rect.width * visibleRatio && clipped.height >= rect.height * visibleRatio;
+    };
+    const canvasRootSubstantiallyVisible = !designerCanvas || isSubstantiallyVisible(designerCanvas, 0.85);
     const hitTestOwnsElement = (element) => {
       if (!(element instanceof HTMLElement) || typeof document.elementFromPoint !== 'function') {
         return true;
@@ -593,6 +608,40 @@ export const screenshotReadinessDomScript = `
       const centerY = Math.min(Math.max(clipped.top + clipped.height / 2, 0), Math.max(window.innerHeight - 1, 0));
       return pointHitsElement(element, centerX, centerY);
     };
+    const directText = (element) => {
+      const childElements = Array.from(element.children || []);
+      if (childElements.length === 0) {
+        return visibleText(element);
+      }
+      if (typeof Node === 'undefined') {
+        return '';
+      }
+      return normalize(
+        Array.from(element.childNodes || [])
+          .filter((node) => node.nodeType === Node.TEXT_NODE)
+          .map((node) => node.textContent || '')
+          .join(' ')
+      );
+    };
+    const findRequiredLabelTarget = (node, variants) => {
+      const labelSelectors = [
+        '[data-automation-id*="title" i]',
+        '[data-testid*="title" i]',
+        '[class*="title" i]',
+        '[class*="header" i]',
+        '[role="heading"]',
+        'h1',
+        'h2',
+        'h3',
+        'span',
+        'div',
+      ].join(', ');
+      const descendants = Array.from(node.querySelectorAll?.(labelSelectors) || []);
+      return (
+        descendants.find((element) => variants.some((variant) => normalizedIncludes(directText(element), variant))) ||
+        (variants.some((variant) => normalizedIncludes(directText(node), variant)) ? node : undefined)
+      );
+    };
     const canvasNodeSelector = '[data-automation-id^="msla-node"], [id^="msla-node"], [data-testid*="node"], .msla-card, .react-flow__node';
     const candidateNodes = Array.from(
       new Set([
@@ -605,6 +654,8 @@ export const screenshotReadinessDomScript = `
       missing: [],
       matched: [],
       covered: [],
+      clipped: [],
+      canvasRootVisible: canvasRootSubstantiallyVisible,
       visibleNodeCount: candidateNodes.length,
     };
     for (const [requiredIndex, required] of (requiredNodes || []).entries()) {
@@ -612,8 +663,13 @@ export const screenshotReadinessDomScript = `
       const match = candidateNodes.find((node) => variants.some((variant) => normalizedIncludes(nodeIdentityText(node), variant)));
       if (match) {
         const identity = 'required-' + requiredIndex;
+        const labelTarget = findRequiredLabelTarget(match, variants);
         result.matched.push(identity);
-        if (!hitTestOwnsElement(match)) {
+        if (!labelTarget || !isSubstantiallyVisible(labelTarget)) {
+          result.ok = false;
+          result.clipped.push(identity);
+        }
+        if (!labelTarget || !hitTestOwnsElement(labelTarget)) {
           result.ok = false;
           result.covered.push(identity);
         }

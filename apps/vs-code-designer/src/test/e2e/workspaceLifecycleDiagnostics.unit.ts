@@ -5,6 +5,10 @@ import * as path from 'path';
 import * as ts from 'typescript';
 import * as vm from 'vm';
 
+const { JSDOM } = require('jsdom') as {
+  JSDOM: new (html: string, options?: Record<string, unknown>) => { window: Window & typeof globalThis };
+};
+
 const sourcePath = path.resolve(__dirname, '..', '..', '..', 'src', 'test', 'e2e', 'workspaceLifecycle.test.ts');
 const sourceText = fs.readFileSync(sourcePath, 'utf-8');
 const source = ts.createSourceFile(sourcePath, sourceText, ts.ScriptTarget.Latest, true);
@@ -33,8 +37,73 @@ async function main(): Promise<void> {
   testEarlyMsnWeatherPhaseWiring();
   testDynamicContentPickerOpenAcceptsAlternativeLabels();
   await testDynamicContentPickerOpenUsesBoundedEvaluation();
+  await testCopilotChatCleanupDoesNotRunDuringPickerEvidenceCapture();
+  await testCanvasViewportNormalizationUsesStructuralDiagnosticsAndOwnedControls();
   testDesignerConnectionActionExpressionScopesCreateActions();
   console.log('[workspaceLifecycleDiagnostics.unit] all tests passed');
+}
+
+function loadCaptureHarness(sourceOverride = sourceText) {
+  const captureSource = ts.createSourceFile(`${sourcePath}.capture.ts`, sourceOverride, ts.ScriptTarget.Latest, true);
+  const selected = captureSource.statements.filter(
+    (node): node is ts.FunctionDeclaration =>
+      ts.isFunctionDeclaration(node) &&
+      ['captureLifecycleScreenshot', 'shouldCloseCopilotChatBeforeScreenshot'].includes(node.name?.text ?? '')
+  );
+  assert.strictEqual(selected.length, 2, 'Expected captureLifecycleScreenshot and shouldCloseCopilotChatBeforeScreenshot to be extracted');
+
+  const implementation = ts.transpileModule(selected.map((node) => `export ${node.getText(captureSource)}`).join('\n'), {
+    compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS },
+  }).outputText;
+
+  const calls = { chatCleanup: 0, notificationCleanup: 0, capture: 0, ownerConnect: 0 };
+  const exported: Record<string, any> = {};
+  vm.runInNewContext(implementation, {
+    exports: exported,
+    console,
+    closeCopilotChatIfVisible: async () => {
+      calls.chatCleanup++;
+    },
+    dismissWorkbenchNotifications: async () => {
+      calls.notificationCleanup++;
+    },
+    assertLifecycleWorkspaceBinding: () => undefined,
+    captureCdpScreenshot: async () => {
+      calls.capture++;
+    },
+    connectToVsCodeWorkbenchCdp: async () => {
+      calls.ownerConnect++;
+      return { dispose: () => undefined };
+    },
+    captureDiagnosticScreenshot: async () => undefined,
+    getExpectedActiveTabText: () => [],
+  });
+
+  return { exported, calls };
+}
+
+function loadNormalizeViewportHarness() {
+  const selected = source.statements.filter(
+    (node): node is ts.FunctionDeclaration => ts.isFunctionDeclaration(node) && node.name?.text === 'normalizeDesignerCanvasViewport'
+  );
+  assert.strictEqual(selected.length, 1, 'Expected normalizeDesignerCanvasViewport to be extracted');
+
+  const implementation = ts.transpileModule(selected.map((node) => `export ${node.getText(source)}`).join('\n'), {
+    compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS },
+  }).outputText;
+
+  const logs: string[] = [];
+  const exported: Record<string, any> = {};
+  vm.runInNewContext(implementation, {
+    exports: exported,
+    console: { log: (line: string) => logs.push(line) },
+    setTimeout: (callback: () => void) => {
+      callback();
+      return 0;
+    },
+  });
+
+  return { exported, logs };
 }
 
 function loadRuntimeHarness(status: string, options: { malformedActions?: boolean } = {}) {
@@ -191,6 +260,219 @@ function runPickerExpression(expression: string, pickerText: string): { visible:
     },
   };
   return vm.runInNewContext(expression, { document, Array }) as { visible: boolean; text?: string };
+}
+
+async function testCopilotChatCleanupDoesNotRunDuringPickerEvidenceCapture(): Promise<void> {
+  const { exported, calls } = loadCaptureHarness();
+  await exported.captureLifecycleScreenshot('picker-open', {
+    expectation: {
+      kind: 'designerPanel',
+      label: 'picker-open',
+      actionTitle: 'Response',
+      picker: { sectionLabels: ['Get current weather'] },
+    },
+    semanticCdp: {},
+    semanticContextId: 1,
+    skipNotificationHousekeeping: true,
+  });
+
+  assert.strictEqual(calls.chatCleanup, 0, 'Picker-open evidence must not run Copilot Chat cleanup');
+  assert.strictEqual(calls.notificationCleanup, 0, 'Picker-open evidence must not run notification cleanup');
+  assert.strictEqual(calls.capture, 1, 'Expected picker-open evidence capture');
+  assert.strictEqual(calls.ownerConnect, 1, 'Expected picker-open evidence to use owner-bound workbench capture');
+
+  const mutatedSource = sourceText.replace('if (shouldCloseCopilotChatBeforeScreenshot(options.expectation))', 'if (true)');
+  const mutated = loadCaptureHarness(mutatedSource);
+  await mutated.exported.captureLifecycleScreenshot('picker-open', {
+    expectation: {
+      kind: 'designerPanel',
+      label: 'picker-open',
+      actionTitle: 'Response',
+      picker: { sectionLabels: ['Get current weather'] },
+    },
+    semanticCdp: {},
+    semanticContextId: 1,
+    skipNotificationHousekeeping: true,
+  });
+  assert.notStrictEqual(mutated.calls.chatCleanup, 0, 'Unconditional cleanup mutation must be observable');
+}
+
+async function testCanvasViewportNormalizationUsesStructuralDiagnosticsAndOwnedControls(): Promise<void> {
+  const { exported, logs } = loadNormalizeViewportHarness();
+  const dom = new JSDOM(
+    `
+    <html><body>
+      <div id="unrelated-scroll"><div style="width: 1000px">unrelated</div></div>
+      <div id="profit" title="Profit"></div>
+      <div class="react-flow" id="canvas">
+        <button id="control-zoom-fit-button" aria-label="Fit"></button>
+        <div id="canvas-scroll"><div class="msla-card private-Authorization-sentinel">Authorization private runtime text</div></div>
+      </div>
+    </body></html>
+  `,
+    { runScripts: 'outside-only' }
+  );
+  const windowAny = dom.window as any;
+  const { document } = windowAny;
+  let profitClicked = 0;
+  let fitClicked = 0;
+  const profit = document.getElementById('profit');
+  const fit = document.getElementById('control-zoom-fit-button');
+  const unrelatedScroll = document.getElementById('unrelated-scroll');
+  const canvasScroll = document.getElementById('canvas-scroll');
+  profit.click = () => {
+    profitClicked++;
+  };
+  fit.click = () => {
+    fitClicked++;
+  };
+  Object.defineProperty(unrelatedScroll, 'scrollLeft', { configurable: true, writable: true, value: 10 });
+  Object.defineProperty(canvasScroll, 'scrollLeft', { configurable: true, writable: true, value: 10 });
+  configureElementGeometry(dom.window, {
+    profit: { left: 5, top: 5, width: 80, height: 30 },
+    'control-zoom-fit-button': { left: 100, top: 80, width: 40, height: 30 },
+    canvas: { left: 0, top: 50, width: 458, height: 593 },
+    'canvas-scroll': { left: 0, top: 60, width: 300, height: 100, scrollWidth: 600, clientWidth: 300 },
+    'unrelated-scroll': { left: 0, top: 700, width: 300, height: 100, scrollWidth: 600, clientWidth: 300 },
+  });
+
+  const cdp = {
+    evaluate: async (_contextId: number | undefined, expression: string) => dom.window.eval(expression) as Record<string, unknown>,
+  };
+  await exported.normalizeDesignerCanvasViewport(cdp, 1, 'unit normalization');
+
+  assert.strictEqual(profitClicked, 0, 'Normalization must not click unrelated fit-substring controls');
+  assert.strictEqual(fitClicked, 1, 'Normalization should click the exact supported Fit control');
+  assert.strictEqual(unrelatedScroll.scrollLeft, 10, 'Normalization must not reset unrelated scrollers');
+  assert.strictEqual(canvasScroll.scrollLeft, 0, 'Normalization should reset owned canvas scrollers');
+  const serializedLogs = logs.join('\n');
+  assert.ok(!serializedLogs.includes('Authorization'), serializedLogs);
+  assert.ok(!serializedLogs.includes('private-Authorization-sentinel'), serializedLogs);
+
+  const unownedDom = new JSDOM(
+    `
+    <html><body>
+      <div role="dialog"><button id="unowned-fit" aria-label="Fit"></button></div>
+      <div class="react-flow" id="canvas"><div class="msla-card"></div></div>
+    </body></html>
+  `,
+    { runScripts: 'outside-only' }
+  );
+  const unownedWindow = unownedDom.window as any;
+  let unownedFitClicked = 0;
+  unownedWindow.document.getElementById('unowned-fit').click = () => {
+    unownedFitClicked++;
+  };
+  configureElementGeometry(unownedDom.window, {
+    'unowned-fit': { left: 10, top: 10, width: 60, height: 30 },
+    canvas: { left: 0, top: 50, width: 458, height: 593 },
+  });
+  await exported.normalizeDesignerCanvasViewport(
+    {
+      evaluate: async (_contextId: number | undefined, expression: string) => unownedDom.window.eval(expression) as Record<string, unknown>,
+    },
+    1,
+    'unit unowned fit'
+  );
+  assert.strictEqual(unownedFitClicked, 0, 'Normalization must not click Fit controls outside the active canvas owner');
+
+  const offscreenDom = new JSDOM(
+    `
+    <html><body>
+      <div class="react-flow" id="canvas">
+        <button id="control-zoom-fit-button" aria-label="Fit"></button>
+        <div class="msla-card"></div>
+      </div>
+    </body></html>
+  `,
+    { runScripts: 'outside-only' }
+  );
+  const offscreenWindow = offscreenDom.window as any;
+  Object.defineProperty(offscreenWindow, 'innerWidth', { configurable: true, value: 458 });
+  Object.defineProperty(offscreenWindow, 'innerHeight', { configurable: true, value: 666 });
+  let offscreenFitClicked = 0;
+  offscreenWindow.document.getElementById('control-zoom-fit-button').click = () => {
+    offscreenFitClicked++;
+  };
+  configureElementGeometry(offscreenDom.window, {
+    'control-zoom-fit-button': { left: 500, top: 10, width: 40, height: 30 },
+    canvas: { left: 0, top: 50, width: 458, height: 593 },
+  });
+  await exported.normalizeDesignerCanvasViewport(
+    {
+      evaluate: async (_contextId: number | undefined, expression: string) =>
+        offscreenDom.window.eval(expression) as Record<string, unknown>,
+    },
+    1,
+    'unit offscreen fit'
+  );
+  assert.strictEqual(offscreenFitClicked, 0, 'Normalization must not click Fit controls when hit testing returns null');
+}
+
+function configureElementGeometry(
+  window: any,
+  geometry: Record<string, { left: number; top: number; width: number; height: number; scrollWidth?: number; clientWidth?: number }>
+): void {
+  const htmlElementPrototype = (window as any).HTMLElement.prototype;
+  Object.defineProperty(htmlElementPrototype, 'offsetWidth', {
+    configurable: true,
+    get() {
+      return geometry[this.id]?.width ?? 100;
+    },
+  });
+  Object.defineProperty(htmlElementPrototype, 'offsetHeight', {
+    configurable: true,
+    get() {
+      return geometry[this.id]?.height ?? 40;
+    },
+  });
+  Object.defineProperty(htmlElementPrototype, 'clientWidth', {
+    configurable: true,
+    get() {
+      return geometry[this.id]?.clientWidth ?? geometry[this.id]?.width ?? 100;
+    },
+  });
+  Object.defineProperty(htmlElementPrototype, 'clientHeight', {
+    configurable: true,
+    get() {
+      return geometry[this.id]?.height ?? 40;
+    },
+  });
+  Object.defineProperty(htmlElementPrototype, 'scrollWidth', {
+    configurable: true,
+    get() {
+      return geometry[this.id]?.scrollWidth ?? geometry[this.id]?.width ?? 100;
+    },
+  });
+  htmlElementPrototype.getClientRects = function () {
+    return [this.getBoundingClientRect()];
+  };
+  htmlElementPrototype.getBoundingClientRect = function () {
+    const rect = geometry[this.id] ?? { left: 0, top: 0, width: 100, height: 40 };
+    return {
+      bottom: rect.top + rect.height,
+      height: rect.height,
+      left: rect.left,
+      right: rect.left + rect.width,
+      top: rect.top,
+      width: rect.width,
+      x: rect.left,
+      y: rect.top,
+      toJSON: () => ({}),
+    };
+  };
+  window.document.elementFromPoint = (x: number, y: number) => {
+    if (x < 0 || y < 0 || x >= window.innerWidth || y >= window.innerHeight) {
+      return null;
+    }
+    return (
+      (Object.entries(geometry)
+        .map(([id, rect]) => ({ element: window.document.getElementById(id), rect }))
+        .find(
+          ({ element, rect }) => element && x >= rect.left && x <= rect.left + rect.width && y >= rect.top && y <= rect.top + rect.height
+        )?.element as any) ?? null
+    );
+  };
 }
 
 function testDesignerConnectionActionExpressionScopesCreateActions(): void {
