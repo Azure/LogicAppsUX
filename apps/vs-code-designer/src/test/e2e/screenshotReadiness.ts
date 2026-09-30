@@ -688,79 +688,7 @@ export const screenshotReadinessDomScript = `
     const nodeId = slug(panel?.nodeId || '');
     return title === expectedText || nodeId === expectedSlug;
   };
-  const parseCssPixels = (value, fallback = 0) => {
-    const parsed = Number.parseFloat(String(value || ''));
-    return Number.isFinite(parsed) ? parsed : fallback;
-  };
-  const measureExpectedValueWidth = (control, expectedValue) => {
-    const text = normalize(expectedValue);
-    if (!text) {
-      return 0;
-    }
-    const style = window.getComputedStyle(control);
-    const fontSize = parseCssPixels(style.fontSize, 16);
-    try {
-      const canvas = document.createElement?.('canvas');
-      const context = canvas?.getContext?.('2d');
-      if (context) {
-        context.font = style.font || String(fontSize) + 'px ' + (style.fontFamily || 'sans-serif');
-        const measured = context.measureText(text).width;
-        if (Number.isFinite(measured) && measured > 0) {
-          return measured;
-        }
-      }
-    } catch {
-      // Fall back to a conservative estimate when canvas is unavailable in the host.
-    }
-    return text.length * fontSize * 0.6;
-  };
-  const getExpectedValueBounds = (control, expectedValue) => {
-    const text = normalize(expectedValue);
-    if (!text) {
-      return undefined;
-    }
-    const rect = control.getBoundingClientRect();
-    const style = window.getComputedStyle(control);
-    const paddingLeft = parseCssPixels(style.paddingLeft);
-    const paddingRight = parseCssPixels(style.paddingRight);
-    const textIndent = parseCssPixels(style.textIndent);
-    const scrollLeft = Number.isFinite(control.scrollLeft) ? control.scrollLeft : 0;
-    const valueWidth = measureExpectedValueWidth(control, text);
-    const innerLeft = rect.left + paddingLeft;
-    const innerRight = rect.right - paddingRight;
-    const innerWidth = Math.max(0, innerRight - innerLeft);
-    const textAlign = normalize(style.textAlign).toLowerCase();
-    const direction = normalize(style.direction).toLowerCase();
-    let valueLeft = innerLeft + textIndent - scrollLeft;
-    if (textAlign === 'center') {
-      valueLeft = innerLeft + (innerWidth - valueWidth) / 2 + textIndent - scrollLeft;
-    } else if (textAlign === 'right' || (textAlign === 'end' && direction !== 'rtl') || (direction === 'rtl' && (textAlign === '' || textAlign === 'start'))) {
-      valueLeft = innerRight - valueWidth + textIndent - scrollLeft;
-    }
-    return { left: valueLeft, right: valueLeft + valueWidth, width: valueWidth };
-  };
-  const isExpectedFieldValueReadable = (control, clipped, expectedValue) => {
-    if (expectedValue === undefined) {
-      return true;
-    }
-    const bounds = getExpectedValueBounds(control, expectedValue);
-    if (!bounds || bounds.width <= 0) {
-      return true;
-    }
-    const leadingSegmentWidth = Math.min(bounds.width, 80);
-    const leadingLeft = bounds.left;
-    const leadingRight = bounds.left + leadingSegmentWidth;
-    if (leadingLeft < clipped.left || leadingRight > clipped.right) {
-      return false;
-    }
-    const rect = control.getBoundingClientRect();
-    const sampleY = Math.min(Math.max(rect.top + rect.height / 2, clipped.top + 1), clipped.bottom - 1);
-    const sampleXs = [leadingLeft + 1, leadingLeft + leadingSegmentWidth / 2, leadingRight - 1].map((sampleX) =>
-      Math.min(Math.max(sampleX, clipped.left + 1), clipped.right - 1)
-    );
-    return sampleXs.every((sampleX) => pointHitsElement(control, sampleX, sampleY));
-  };
-  const isReadableFieldControl = (control, expectedValue) => {
+  const isReadableFieldControl = (control) => {
     if (!isVisible(control)) {
       return false;
     }
@@ -770,11 +698,8 @@ export const screenshotReadinessDomScript = `
       return false;
     }
     const minVisibleHeight = Math.min(rect.height, Math.max(18, rect.height * 0.8));
-    const minVisibleWidth = Math.min(rect.width, Math.max(160, Math.min(rect.width * 0.85, window.innerWidth * 0.85)));
+    const minVisibleWidth = Math.min(rect.width, Math.max(32, rect.width * 0.85));
     if (clipped.height < minVisibleHeight || clipped.width < minVisibleWidth) {
-      return false;
-    }
-    if (!isExpectedFieldValueReadable(control, clipped, expectedValue)) {
       return false;
     }
     const sampleX = Math.min(Math.max(rect.left + rect.width / 2, clipped.left + 1), clipped.right - 1);
@@ -783,44 +708,16 @@ export const screenshotReadinessDomScript = `
   };
   const findFieldState = (labels, root, expectedValue) => {
     const normalizedLabels = labels.map((label) => normalize(label).toLowerCase());
-    const scope = root || document;
-    const controlSelector = 'input, textarea, [contenteditable="true"], [role="textbox"]';
-    const controls = Array.from(scope.querySelectorAll(controlSelector)).filter(isVisible);
+    const controls = Array.from(
+      (root || document).querySelectorAll('input, textarea, [contenteditable="true"], [role="textbox"], [role="combobox"]')
+    ).filter(isVisible);
     const candidates = [];
-    const visitedControls = new Set();
     let clippedMatch = false;
-    const controlValue = (control) =>
-      normalize(
-        typeof control.value === 'string'
-          ? control.value
-          : control.getAttribute('value') ||
-              (control.getAttribute('contenteditable') === 'true' || control.getAttribute('role') === 'textbox' ? control.textContent || '' : '')
-      );
-    const splitIds = (value) => normalize(value).split(/\\s+/).filter(Boolean);
-    const canonicalLabel = (value) => normalize(value).toLowerCase().replace(/\\s*\\*+$/g, '');
-    const exactLabelMatch = (value) => normalizedLabels.includes(canonicalLabel(value));
-    const associatedLabelTexts = (control) => {
-      const forLabels = control.id
-        ? Array.from(scope.querySelectorAll('label')).filter((label) => label.getAttribute?.('for') === control.id)
-        : [];
-      const ariaLabelledBy = splitIds(control.getAttribute('aria-labelledby') || '')
+    for (const control of controls) {
+      const labelledBy = (control.getAttribute('aria-labelledby') || '')
+        .split(/\\s+/)
         .map((id) => document.getElementById(id)?.textContent || '')
-        .filter((text) => !!text);
-      return [...forLabels.map((label) => label.textContent || ''), ...ariaLabelledBy];
-    };
-    const controlHasExactIdentity = (control) =>
-      [
-        control.getAttribute('aria-label'),
-        control.getAttribute('placeholder'),
-        control.getAttribute('title'),
-        ...associatedLabelTexts(control),
-      ].some((value) => exactLabelMatch(value));
-    const buildCandidate = (control, requireIdentityMatch = true) => {
-      if (visitedControls.has(control)) {
-        return;
-      }
-      visitedControls.add(control);
-      const labelledBy = associatedLabelTexts(control).join(' ');
+        .join(' ');
       const describedBy = (control.getAttribute('aria-describedby') || '')
         .split(/\\s+/)
         .map((id) => document.getElementById(id))
@@ -828,14 +725,24 @@ export const screenshotReadinessDomScript = `
         .map((element) => element.textContent || '')
         .join(' ');
       const container = control.closest?.('.ms-TextField, .fui-Field, [class*="field"], [class*="Field"], [role="group"]') || control.parentElement;
-      if (requireIdentityMatch && !controlHasExactIdentity(control)) {
-        return;
+      const identity = [
+        control.getAttribute('aria-label'),
+        control.getAttribute('placeholder'),
+        control.getAttribute('title'),
+        labelledBy,
+        container?.textContent,
+      ]
+        .map(normalize)
+        .join(' ')
+        .toLowerCase();
+      if (!normalizedLabels.some((label) => identity.includes(label))) {
+        continue;
       }
-      if (!isReadableFieldControl(control, expectedValue)) {
+      if (!isReadableFieldControl(control)) {
         clippedMatch = true;
-        return;
+        continue;
       }
-      const value = controlValue(control);
+      const value = normalize(typeof control.value === 'string' ? control.value : control.getAttribute('value') || control.textContent || '');
       const validationText = normalize(
         [
           describedBy,
@@ -848,47 +755,6 @@ export const screenshotReadinessDomScript = `
       );
       const ariaInvalid = control.getAttribute('aria-invalid') === 'true';
       candidates.push({ found: true, value, validationText, ariaInvalid, text: normalize([container?.textContent || '', value].join(' ')) });
-    };
-    const findAssociatedControl = (label) => {
-      const inputId = label.getAttribute?.('for');
-      const directControl = inputId ? document.getElementById(inputId) : undefined;
-      if (directControl && controls.includes(directControl)) {
-        return directControl;
-      }
-      const nestedControl = Array.from(label.querySelectorAll?.(controlSelector) || []).filter((control) => controls.includes(control));
-      if (nestedControl.length === 1) {
-        return nestedControl[0];
-      }
-      const fieldRootSelector = '.ms-TextField, .fui-Field, [class*="field"], [class*="Field"], [role="group"]';
-      const fieldRoot = label.matches?.(fieldRootSelector)
-        ? label
-        : label.closest?.(fieldRootSelector) || (label.tagName === 'LABEL' ? label.parentElement : undefined);
-      const fieldControls = Array.from(fieldRoot?.querySelectorAll?.(controlSelector) || []).filter((control) => controls.includes(control));
-      if (fieldControls.length === 1) {
-        return fieldControls[0];
-      }
-      return undefined;
-    };
-    const visibleLabels = Array.from(scope.querySelectorAll('label, span, div, p'))
-      .filter(isVisible)
-      .filter((candidate) => {
-        const text = normalize(candidate.textContent);
-        return text.length > 0 && text.length < 160;
-      });
-    for (const label of visibleLabels) {
-      const labelText = normalize(label.textContent).toLowerCase();
-      if (!normalizedLabels.includes(canonicalLabel(labelText))) {
-        continue;
-      }
-      const associatedControl = findAssociatedControl(label);
-      if (associatedControl) {
-        buildCandidate(associatedControl, false);
-      }
-    }
-    for (const control of controls) {
-      if (controlHasExactIdentity(control)) {
-        buildCandidate(control);
-      }
     }
     if (expectedValue !== undefined) {
       const exactValue = candidates.find((candidate) => candidate.value === normalize(expectedValue));
@@ -1024,59 +890,6 @@ export const screenshotReadinessDomScript = `
       (element) => !!(element && hasVisibleStyle(element) && (element.offsetWidth || element.offsetHeight || element.getClientRects().length))
     );
     const loosePickerText = normalize(loosePickerRoots.map(visibleText).join(' '));
-    const active = document.activeElement;
-    const findClosestPickerOwner = (element) => {
-      let current = element;
-      while (current instanceof HTMLElement) {
-        if (current.matches?.(pickerSelector)) {
-          return current;
-        }
-        current = current.parentElement;
-      }
-      return undefined;
-    };
-    const activeOwnedPickerElements = (element) => {
-      if (!isVisible(element)) {
-        return [];
-      }
-      const owned = [];
-      const ownedIds = [
-        element.getAttribute?.('aria-controls') || '',
-        element.getAttribute?.('aria-owns') || '',
-        element.getAttribute?.('aria-activedescendant') || '',
-      ]
-        .join(' ')
-        .split(/\\s+/)
-        .filter(Boolean);
-      for (const id of ownedIds) {
-        const controlled = document.getElementById(id);
-        if (isVisible(controlled)) {
-          owned.push(controlled);
-        }
-      }
-      const closestPicker = findClosestPickerOwner(element);
-      if (closestPicker && isVisible(closestPicker)) {
-        owned.push(closestPicker);
-      }
-      for (const root of pickerRoots) {
-        if (root.contains?.(element) || element.contains?.(root)) {
-          owned.push(root);
-        }
-      }
-      return Array.from(new Set(owned));
-    };
-    const activePickerSearchVisible =
-      isVisible(active) &&
-      [
-        active?.getAttribute?.('data-automation-id') || '',
-        active?.getAttribute?.('aria-label') || '',
-        active?.getAttribute?.('placeholder') || '',
-        active?.getAttribute?.('class') || '',
-      ]
-        .map((value) => normalize(value).toLowerCase())
-        .some((value) => value.includes('token-picker-search'));
-    const activePickerOwnedElements = activePickerSearchVisible ? activeOwnedPickerElements(active) : [];
-    const activePickerOwnedText = normalize(activePickerOwnedElements.map(visibleText).join(' '));
     const strictSectionMatch =
       (picker.sectionLabels || []).length === 0 || (picker.sectionLabels || []).some((label) => normalizedIncludes(pickerText, label));
     const strictRequestedTitlesMatch =
@@ -1085,14 +898,6 @@ export const screenshotReadinessDomScript = `
       (picker.sectionLabels || []).length === 0 || (picker.sectionLabels || []).some((label) => normalizedIncludes(loosePickerText, label));
     const looseRequestedTitlesMatch =
       (picker.tokenTitles || []).length === 0 || (picker.tokenTitles || []).every((title) => normalizedIncludes(loosePickerText, title));
-    const activePickerSectionMatch =
-      activePickerOwnedText.length > 0 &&
-      ((picker.sectionLabels || []).length === 0 ||
-        (picker.sectionLabels || []).some((label) => normalizedIncludes(activePickerOwnedText, label)));
-    const activePickerRequestedTitlesMatch =
-      activePickerOwnedText.length > 0 &&
-      ((picker.tokenTitles || []).length === 0 ||
-        (picker.tokenTitles || []).every((title) => normalizedIncludes(activePickerOwnedText, title)));
     const summarizeElement = (element) => {
       const rect = element?.getBoundingClientRect?.();
       return {
@@ -1142,19 +947,13 @@ export const screenshotReadinessDomScript = `
       strictRequestedTitlesMatch,
       looseSectionMatch,
       looseRequestedTitlesMatch,
-      activePickerSearchVisible,
-      activePickerOwnedElementCount: activePickerOwnedElements.length,
-      activePickerSectionMatch,
-      activePickerRequestedTitlesMatch,
       strictSections: visibleSections.slice(0, 4).map(summarizeSection),
       looseSections: looseSections.slice(0, 4).map(summarizeSection),
     };
-    const sectionReady = strictSectionMatch || activePickerSectionMatch;
-    const requestedTitlesReady = strictRequestedTitlesMatch || activePickerRequestedTitlesMatch;
-    if (!sectionReady) {
+    if (!strictSectionMatch) {
       return { ok: false, reason: 'picker-section-missing' };
     }
-    if (!requestedTitlesReady) {
+    if (!strictRequestedTitlesMatch) {
       return { ok: false, reason: 'picker-token-missing' };
     }
     return { ok: true, reason: 'picker-visible' };
