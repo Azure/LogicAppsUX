@@ -639,24 +639,39 @@ function testDesignerPanelRequiresVisiblePickerSectionAndToken(): void {
 }
 
 function testDesignerPanelAcceptsPickerSectionAliases(): void {
-  const document = new FakeDocument(
-    new FakeElement('body', {}, [
-      designerPanel({ title: 'Response', nodeId: 'Response', text: 'Body' }),
-      new FakeElement('section', { class: 'msla-token-picker-section' }, [
-        new FakeElement('div', { class: 'msla-token-picker-section-header' }, [], 'Get current weather'),
-        new FakeElement('button', { class: 'msla-token-picker-section-option' }, [], 'Body'),
-      ]),
-    ])
-  );
-
-  const snapshot = runProbe(document, {
+  const aliases = ['Get current weather', 'Get_current_weather'];
+  const expectation: ScreenshotExpectation = {
     kind: 'designerPanel',
     label: 'response-token-picker-open',
     actionTitle: 'Response',
-    picker: { sectionLabels: ['Current weather', 'Get current weather'], tokenTitles: ['Body'] },
-  });
+    picker: { sectionLabels: aliases, tokenTitles: ['Body', 'Headers'] },
+  };
+  const createPickerDocument = (sectionLabels: string[], tokenTitles: string[]) =>
+    new FakeDocument(
+      new FakeElement('body', {}, [
+        designerPanel({ title: 'Response', nodeId: 'Response', text: 'Body' }),
+        ...sectionLabels.map(
+          (sectionLabel) =>
+            new FakeElement('section', { class: 'msla-token-picker-section' }, [
+              new FakeElement('div', { class: 'msla-token-picker-section-header' }, [], sectionLabel),
+              ...tokenTitles.map((tokenTitle) => new FakeElement('button', { class: 'msla-token-picker-section-option' }, [], tokenTitle)),
+            ])
+        ),
+      ])
+    );
+  const friendlyOnly = runProbe(createPickerDocument(['Get current weather'], ['Body', 'Headers']), expectation);
+  const internalOnly = runProbe(createPickerDocument(['Get_current_weather'], ['Body', 'Headers']), expectation);
+  const bothAliases = runProbe(createPickerDocument(['Get current weather', 'Get_current_weather'], ['Body', 'Headers']), expectation);
+  const neitherAlias = runProbe(createPickerDocument(['Current weather'], ['Body', 'Headers']), expectation);
+  const missingRequestedTitle = runProbe(createPickerDocument(['Get current weather'], ['Body']), expectation);
 
-  assert.strictEqual(snapshot.ready, true, JSON.stringify(snapshot));
+  assert.strictEqual(friendlyOnly.ready, true, JSON.stringify(friendlyOnly));
+  assert.strictEqual(internalOnly.ready, true, JSON.stringify(internalOnly));
+  assert.strictEqual(bothAliases.ready, true, JSON.stringify(bothAliases));
+  assert.strictEqual(neitherAlias.ready, false, JSON.stringify(neitherAlias));
+  assert.strictEqual(missingRequestedTitle.ready, false, JSON.stringify(missingRequestedTitle));
+  assert.ok(neitherAlias.reasonCodes.includes('picker-section-missing'));
+  assert.ok(missingRequestedTitle.reasonCodes.includes('picker-token-missing'));
 }
 
 function testCreateWorkspaceRejectsWrongExactValidationMessage(): void {
