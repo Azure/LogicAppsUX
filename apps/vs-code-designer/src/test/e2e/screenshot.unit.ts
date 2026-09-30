@@ -20,26 +20,8 @@ async function main(): Promise<void> {
   await testFrameTreeFailureDoesNotMaskOriginalReadinessFailure(captureCdpScreenshot);
   await testAbsoluteDeadlineRejectsDelayedStability(captureCdpScreenshot);
   await testReadinessUnavailableRecordsLastSampleDiagnostics(captureCdpScreenshot, setScreenshotFileSystemForTests);
-  await testDeadlineBindingTimeoutWritesFailedMetadata(captureCdpScreenshot, setScreenshotFileSystemForTests);
-  await testInFlightReadinessTimeoutPreservesPriorSampleMetadata(captureCdpScreenshot, setScreenshotFileSystemForTests);
-  await testDeadlineBindingTimeoutWithViewportCleanupFailureWritesFailedMetadata(captureCdpScreenshot, setScreenshotFileSystemForTests);
-  await testInFlightReadinessTimeoutWithViewportCleanupFailurePreservesPriorSampleMetadata(
-    captureCdpScreenshot,
-    setScreenshotFileSystemForTests
-  );
   await testDiagnosticStorageFailureDoesNotThrow(captureCdpScreenshot, setScreenshotFileSystemForTests);
   await testDiagnosticDoesNotRequireSemanticBindingOrLatch(captureCdpScreenshot);
-  await testViewportOverrideAppliesOnlyToOwnerTarget(captureCdpScreenshot);
-  await testViewportOverrideDoesNotCallUnsupportedSemanticTarget(captureCdpScreenshot);
-  await testViewportOverrideClearsAfterOwnerApplyResponseFailure(captureCdpScreenshot);
-  await testViewportOverrideClearsAfterEvidenceFailure(captureCdpScreenshot);
-  await testViewportOverrideAcceptsClearResponseLostAfterEffect(captureCdpScreenshot);
-  await testViewportOverrideRejectsClearFailureBeforeEffect(captureCdpScreenshot);
-  await testMaxEffectiveViewportAcceptsBoundary(captureCdpScreenshot, screenshotDir);
-  await testMaxEffectiveViewportRejectsPreCaptureOversize(captureCdpScreenshot, setScreenshotFileSystemForTests);
-  await testMaxEffectiveViewportRejectsGrowthWithoutRecapture(captureCdpScreenshot, setScreenshotFileSystemForTests);
-  await testMaxEffectiveViewportUnsetAllowsOversize(captureCdpScreenshot, screenshotDir);
-  await testNearDeadlineReadinessSkipsZeroBudgetEvaluation(captureCdpScreenshot);
   await testEvidenceStorageFailureStillThrows(captureCdpScreenshot, setScreenshotFileSystemForTests);
   testFailureAttachmentStorageFailureDoesNotThrow(appendFailureAttachmentSafely, setScreenshotFileSystemForTests);
   await testHiddenSemanticContextRejects(captureCdpScreenshot);
@@ -269,178 +251,6 @@ async function testReadinessUnavailableRecordsLastSampleDiagnostics(
   assert.strictEqual(cdp.captureAttempts, 0, 'Timeout diagnostics must not accept or capture evidence');
 }
 
-async function testDeadlineBindingTimeoutWritesFailedMetadata(
-  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot,
-  setScreenshotFileSystemForTests: typeof import('./screenshot').setScreenshotFileSystemForTests
-): Promise<void> {
-  const writes = new Map<string, string>();
-  const cdp = new FakeCaptureCdp([snapshot({ revision: 0 })], {
-    bindingTimeoutError: new Error('Timed out waiting for CDP Runtime.evaluate response after 3ms'),
-  });
-  const restore = setScreenshotFileSystemForTests({
-    writeFileSync: (filePath, data) => writes.set(filePath, Buffer.isBuffer(data) ? data.toString('utf8') : String(data)),
-  });
-  try {
-    await assert.rejects(
-      captureCdpScreenshot(cdp, 'deadline-binding-timeout-sidecar', {
-        expectation: { kind: 'workbenchShell', label: 'deadline-binding-timeout-sidecar' },
-        binding: { activeTabText: ['Expected Workflow'] },
-        timeoutMs: 1000,
-      }),
-      /Screenshot readiness failed/
-    );
-  } finally {
-    restore();
-  }
-
-  const metadata = readMetadataFromWrites(writes, 'deadline-binding-timeout-sidecar.json');
-  assert.strictEqual(metadata.verdict, 'failed');
-  assert.strictEqual(metadata.timing.captureAttempts, 0);
-  assert.ok(metadata.reasonCodes.includes('deadline-rpc-timeout'), JSON.stringify(metadata.reasonCodes));
-}
-
-async function testInFlightReadinessTimeoutPreservesPriorSampleMetadata(
-  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot,
-  setScreenshotFileSystemForTests: typeof import('./screenshot').setScreenshotFileSystemForTests
-): Promise<void> {
-  const writes = new Map<string, string>();
-  const cdp = new FakeCaptureCdp(
-    [
-      {
-        ready: false,
-        reasonCodes: ['fixture-readiness-missing'],
-        blockers: [],
-        anchors: [{ name: 'body', visible: true, bounds: { left: 0, top: 0, width: 100, height: 100 } }],
-        viewport: { width: 100, height: 100, deviceScaleFactor: 1 },
-        counts: { canvasNodes: 4 },
-        generation: 0,
-        revision: 0,
-        structuralRevision: 0,
-        scrollY: 0,
-        expectationKind: 'designerCanvas',
-        details: { fixture: { ready: false } },
-      },
-    ],
-    { readinessTimeoutAfterCount: 1 }
-  );
-  const restore = setScreenshotFileSystemForTests({
-    writeFileSync: (filePath, data) => writes.set(filePath, Buffer.isBuffer(data) ? data.toString('utf8') : String(data)),
-  });
-  try {
-    await assert.rejects(
-      captureCdpScreenshot(cdp, 'in-flight-readiness-timeout-sidecar', {
-        expectation: { kind: 'designerCanvas', label: 'in-flight-readiness-timeout-sidecar' },
-        timeoutMs: 1000,
-      }),
-      /Screenshot readiness failed/
-    );
-  } finally {
-    restore();
-  }
-
-  const metadata = readMetadataFromWrites(writes, 'in-flight-readiness-timeout-sidecar.json');
-  assert.strictEqual(metadata.verdict, 'failed');
-  assert.strictEqual(metadata.timing.captureAttempts, 0);
-  assert.ok(metadata.reasonCodes.includes('deadline-rpc-timeout'), JSON.stringify(metadata.reasonCodes));
-  assert.ok(metadata.reasonCodes.includes('fixture-readiness-missing'), JSON.stringify(metadata.reasonCodes));
-  assert.strictEqual(metadata.timing.samples, 1);
-  const readinessEvent = metadata.events.find((event: { name: string }) => event.name === 'deadline-rpc-timeout');
-  assert.deepStrictEqual(readinessEvent.details.fixture, { ready: false });
-}
-
-async function testDeadlineBindingTimeoutWithViewportCleanupFailureWritesFailedMetadata(
-  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot,
-  setScreenshotFileSystemForTests: typeof import('./screenshot').setScreenshotFileSystemForTests
-): Promise<void> {
-  const writes = new Map<string, string>();
-  const cdp = new FakeCaptureCdp([snapshot({ revision: 0 })], {
-    bindingTimeoutError: new Error('Timed out waiting for CDP Runtime.evaluate response after 3ms'),
-    viewportClearFailures: 2,
-  });
-  const restore = setScreenshotFileSystemForTests({
-    writeFileSync: (filePath, data) => writes.set(filePath, Buffer.isBuffer(data) ? data.toString('utf8') : String(data)),
-  });
-  try {
-    await assert.rejects(
-      captureCdpScreenshot(cdp, 'deadline-binding-timeout-cleanup-sidecar', {
-        expectation: { kind: 'workbenchShell', label: 'deadline-binding-timeout-cleanup-sidecar' },
-        binding: { activeTabText: ['Expected Workflow'] },
-        viewport: { width: 714, height: 414, deviceScaleFactor: 1 },
-        timeoutMs: 1000,
-      }),
-      /Failed to clear screenshot viewport override/
-    );
-  } finally {
-    restore();
-  }
-
-  const metadata = readMetadataFromWrites(writes, 'deadline-binding-timeout-cleanup-sidecar.json');
-  assert.strictEqual(metadata.verdict, 'failed');
-  assert.strictEqual(metadata.timing.captureAttempts, 0);
-  assert.ok(metadata.reasonCodes.includes('deadline-rpc-timeout'), JSON.stringify(metadata.reasonCodes));
-  assert.ok(metadata.reasonCodes.includes('viewport-clear-failed'), JSON.stringify(metadata.reasonCodes));
-  assert.strictEqual(cdp.viewportClearCalls, 2);
-}
-
-async function testInFlightReadinessTimeoutWithViewportCleanupFailurePreservesPriorSampleMetadata(
-  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot,
-  setScreenshotFileSystemForTests: typeof import('./screenshot').setScreenshotFileSystemForTests
-): Promise<void> {
-  const writes = new Map<string, string>();
-  const cdp = new FakeCaptureCdp(
-    [
-      {
-        ready: false,
-        reasonCodes: ['fixture-readiness-missing'],
-        blockers: [],
-        anchors: [{ name: 'body', visible: true, bounds: { left: 0, top: 0, width: 100, height: 100 } }],
-        viewport: { width: 100, height: 100, deviceScaleFactor: 1 },
-        counts: { canvasNodes: 4 },
-        generation: 0,
-        revision: 0,
-        structuralRevision: 0,
-        scrollY: 0,
-        expectationKind: 'designerCanvas',
-        details: { fixture: { ready: false } },
-      },
-    ],
-    { readinessTimeoutAfterCount: 1, viewportClearFailures: 2 }
-  );
-  const restore = setScreenshotFileSystemForTests({
-    writeFileSync: (filePath, data) => writes.set(filePath, Buffer.isBuffer(data) ? data.toString('utf8') : String(data)),
-  });
-  try {
-    await assert.rejects(
-      captureCdpScreenshot(cdp, 'in-flight-readiness-timeout-cleanup-sidecar', {
-        expectation: { kind: 'designerCanvas', label: 'in-flight-readiness-timeout-cleanup-sidecar' },
-        viewport: { width: 714, height: 414, deviceScaleFactor: 1 },
-        timeoutMs: 1000,
-      }),
-      /Failed to clear screenshot viewport override/
-    );
-  } finally {
-    restore();
-  }
-
-  const metadata = readMetadataFromWrites(writes, 'in-flight-readiness-timeout-cleanup-sidecar.json');
-  assert.strictEqual(metadata.verdict, 'failed');
-  assert.strictEqual(metadata.timing.captureAttempts, 0);
-  assert.strictEqual(metadata.timing.samples, 1);
-  assert.ok(metadata.reasonCodes.includes('deadline-rpc-timeout'), JSON.stringify(metadata.reasonCodes));
-  assert.ok(metadata.reasonCodes.includes('fixture-readiness-missing'), JSON.stringify(metadata.reasonCodes));
-  assert.ok(metadata.reasonCodes.includes('viewport-clear-failed'), JSON.stringify(metadata.reasonCodes));
-  const readinessEvent = metadata.events.find((event: { name: string }) => event.name === 'deadline-rpc-timeout');
-  assert.strictEqual(readinessEvent.counts.canvasNodes, 4);
-  assert.deepStrictEqual(readinessEvent.details.fixture, { ready: false });
-  assert.strictEqual(cdp.viewportClearCalls, 2);
-}
-
-function readMetadataFromWrites(writes: Map<string, string>, fileName: string): any {
-  const metadataText = Array.from(writes.entries()).find(([filePath]) => filePath.endsWith(fileName))?.[1];
-  assert.ok(metadataText, `Expected failed screenshot metadata sidecar ${fileName}`);
-  return JSON.parse(metadataText);
-}
-
 async function testDiagnosticStorageFailureDoesNotThrow(
   captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot,
   setScreenshotFileSystemForTests: typeof import('./screenshot').setScreenshotFileSystemForTests
@@ -483,277 +293,6 @@ async function testDiagnosticDoesNotRequireSemanticBindingOrLatch(
   });
 
   assert.strictEqual(semanticCdp.latchInstallAttempts, 0);
-}
-
-async function testViewportOverrideAppliesOnlyToOwnerTarget(
-  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot
-): Promise<void> {
-  const ownerCdp = new FakeCaptureCdp([snapshot({ revision: 0 })]);
-  const semanticCdp = new FakeCaptureCdp([snapshot({ revision: 0 })], {
-    targetUrl: 'vscode-webview://detached-diagnostic',
-    contexts: [{ id: 7, text: '', visible: true }],
-  });
-
-  await captureCdpScreenshot(ownerCdp, 'viewport-override-owner-and-semantic', {
-    classification: 'diagnostic',
-    expectation: { kind: 'diagnostic', label: 'viewport-override-owner-and-semantic', reason: 'unit' },
-    semanticCdp,
-    semanticContextId: 7,
-    viewport: { width: 714, height: 414, deviceScaleFactor: 1 },
-    timeoutMs: 1000,
-  });
-
-  assert.deepStrictEqual(ownerCdp.viewportOverrideCalls, [{ width: 714, height: 414, deviceScaleFactor: 1, mobile: false }]);
-  assert.deepStrictEqual(semanticCdp.viewportOverrideCalls, []);
-  assert.strictEqual(ownerCdp.viewportClearCalls, 1);
-  assert.strictEqual(semanticCdp.viewportClearCalls, 0);
-}
-
-async function testViewportOverrideDoesNotCallUnsupportedSemanticTarget(
-  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot
-): Promise<void> {
-  const ownerCdp = new FakeCaptureCdp([snapshot({ revision: 0 })]);
-  const semanticCdp = new FakeCaptureCdp([snapshot({ revision: 0 })], {
-    targetUrl: 'vscode-webview://oopif-semantic-target',
-    contexts: [{ id: 7, text: '', visible: true }],
-    viewportOverrideError: new Error('Command can only be executed on top-level targets'),
-  });
-
-  await captureCdpScreenshot(ownerCdp, 'viewport-override-top-level-only', {
-    classification: 'diagnostic',
-    expectation: { kind: 'diagnostic', label: 'viewport-override-top-level-only', reason: 'unit' },
-    semanticCdp,
-    semanticContextId: 7,
-    viewport: { width: 714, height: 414, deviceScaleFactor: 1 },
-    timeoutMs: 1000,
-  });
-
-  assert.strictEqual(ownerCdp.viewportOverrideCalls.length, 1);
-  assert.strictEqual(ownerCdp.viewportClearCalls, 1);
-  assert.strictEqual(semanticCdp.viewportOverrideCalls.length, 0);
-  assert.strictEqual(semanticCdp.viewportClearCalls, 0);
-}
-
-async function testViewportOverrideClearsAfterOwnerApplyResponseFailure(
-  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot
-): Promise<void> {
-  const cdp = new FakeCaptureCdp([snapshot({ revision: 0 })], {
-    viewportOverrideError: new Error('synthetic set response lost after apply'),
-  });
-
-  await assert.rejects(
-    captureCdpScreenshot(cdp, 'viewport-override-owner-apply-response-failure', {
-      expectation: { kind: 'workbenchShell', label: 'viewport-override-owner-apply-response-failure' },
-      viewport: { width: 714, height: 414, deviceScaleFactor: 1 },
-      timeoutMs: 1000,
-    }),
-    /synthetic set response lost/
-  );
-
-  assert.deepStrictEqual(cdp.viewportOverrideCalls, [{ width: 714, height: 414, deviceScaleFactor: 1, mobile: false }]);
-  assert.strictEqual(cdp.viewportClearCalls, 1);
-}
-
-async function testViewportOverrideClearsAfterEvidenceFailure(
-  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot
-): Promise<void> {
-  const cdp = new FakeCaptureCdp([snapshot({ revision: 0 }), snapshot({ revision: 0 }), snapshot({ revision: 0 })], {
-    omitCaptureData: true,
-  });
-
-  await assert.rejects(
-    captureCdpScreenshot(cdp, 'viewport-override-clears-after-failure', {
-      expectation: { kind: 'workbenchShell', label: 'viewport-override-clears-after-failure' },
-      viewport: { width: 714, height: 414, deviceScaleFactor: 1 },
-      timeoutMs: 1000,
-    }),
-    /no data/
-  );
-
-  assert.deepStrictEqual(cdp.viewportOverrideCalls, [{ width: 714, height: 414, deviceScaleFactor: 1, mobile: false }]);
-  assert.strictEqual(cdp.viewportClearCalls, 1);
-}
-
-async function testViewportOverrideAcceptsClearResponseLostAfterEffect(
-  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot
-): Promise<void> {
-  const cdp = new FakeCaptureCdp([snapshot({ revision: 0 }), snapshot({ revision: 0 }), snapshot({ revision: 0 })], {
-    viewportClearFailures: 1,
-  });
-
-  const screenshotPath = await captureCdpScreenshot(cdp, 'viewport-override-clear-response-lost-after-effect', {
-    expectation: { kind: 'workbenchShell', label: 'viewport-override-clear-response-lost-after-effect' },
-    viewport: { width: 714, height: 414, deviceScaleFactor: 1 },
-    timeoutMs: 1000,
-  });
-
-  assert.ok(screenshotPath);
-  assert.deepStrictEqual(cdp.viewportOverrideCalls, [{ width: 714, height: 414, deviceScaleFactor: 1, mobile: false }]);
-  assert.strictEqual(cdp.viewportClearCalls, 2);
-}
-
-async function testViewportOverrideRejectsClearFailureBeforeEffect(
-  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot
-): Promise<void> {
-  const cdp = new FakeCaptureCdp([snapshot({ revision: 0 }), snapshot({ revision: 0 }), snapshot({ revision: 0 })], {
-    viewportClearFailures: 2,
-  });
-
-  await assert.rejects(
-    captureCdpScreenshot(cdp, 'viewport-override-clear-rejected-before-effect', {
-      expectation: { kind: 'workbenchShell', label: 'viewport-override-clear-rejected-before-effect' },
-      viewport: { width: 714, height: 414, deviceScaleFactor: 1 },
-      timeoutMs: 1000,
-    }),
-    /Failed to clear screenshot viewport override/
-  );
-
-  assert.deepStrictEqual(cdp.viewportOverrideCalls, [{ width: 714, height: 414, deviceScaleFactor: 1, mobile: false }]);
-  assert.strictEqual(cdp.viewportClearCalls, 2);
-}
-
-async function testMaxEffectiveViewportAcceptsBoundary(
-  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot,
-  screenshotDir: string
-): Promise<void> {
-  const viewport = { width: 714, height: 414, deviceScaleFactor: 1 };
-  const cdp = new FakeCaptureCdp([
-    snapshot({ revision: 0, viewport }),
-    snapshot({ revision: 0, viewport }),
-    snapshot({ revision: 0, viewport }),
-  ]);
-
-  const screenshotPath = await captureCdpScreenshot(cdp, 'viewport-effective-boundary-accepted', {
-    expectation: { kind: 'workbenchShell', label: 'viewport-effective-boundary-accepted' },
-    maxEffectiveViewport: { width: 714, height: 414 },
-    timeoutMs: 1000,
-  });
-
-  assert.strictEqual(path.dirname(screenshotPath ?? ''), screenshotDir);
-  assert.strictEqual(cdp.captureAttempts, 1);
-}
-
-async function testMaxEffectiveViewportRejectsPreCaptureOversize(
-  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot,
-  setScreenshotFileSystemForTests: typeof import('./screenshot').setScreenshotFileSystemForTests
-): Promise<void> {
-  const cases = [
-    { name: 'width', viewport: { width: 715, height: 414, deviceScaleFactor: 1 } },
-    { name: 'height', viewport: { width: 714, height: 415, deviceScaleFactor: 1 } },
-    { name: 'both', viewport: { width: 715, height: 415, deviceScaleFactor: 1 } },
-  ];
-
-  for (const testCase of cases) {
-    const writes = new Map<string, string>();
-    const cdp = new FakeCaptureCdp([
-      snapshot({ revision: 0, viewport: testCase.viewport }),
-      snapshot({ revision: 0, viewport: testCase.viewport }),
-      snapshot({ revision: 0, viewport: testCase.viewport }),
-    ]);
-    const restore = setScreenshotFileSystemForTests({
-      writeFileSync: (filePath, data) => writes.set(filePath, Buffer.isBuffer(data) ? data.toString('utf8') : String(data)),
-    });
-    try {
-      await assert.rejects(
-        captureCdpScreenshot(cdp, `viewport-effective-${testCase.name}-oversize-rejected`, {
-          expectation: { kind: 'workbenchShell', label: `viewport-effective-${testCase.name}-oversize-rejected` },
-          maxEffectiveViewport: { width: 714, height: 414 },
-          timeoutMs: 100,
-        }),
-        /Screenshot readiness failed/
-      );
-    } finally {
-      restore();
-    }
-
-    assert.strictEqual(cdp.captureAttempts, 0, `${testCase.name} oversize must not issue screenshot RPCs`);
-    const metadata = readMetadataFromWrites(writes, `viewport-effective-${testCase.name}-oversize-rejected.json`);
-    assert.strictEqual(metadata.verdict, 'failed');
-    assert.strictEqual(metadata.timing.captureAttempts, 0);
-    assert.ok(metadata.reasonCodes.includes('viewport-too-large'), JSON.stringify(metadata.reasonCodes));
-    const viewportEvent = metadata.events.find((event: { name: string }) => event.name === 'effective-viewport-too-large');
-    assert.deepStrictEqual(viewportEvent.details.actualViewport, testCase.viewport);
-    assert.deepStrictEqual(viewportEvent.details.maxEffectiveViewport, { width: 714, height: 414 });
-  }
-}
-
-async function testMaxEffectiveViewportRejectsGrowthWithoutRecapture(
-  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot,
-  setScreenshotFileSystemForTests: typeof import('./screenshot').setScreenshotFileSystemForTests
-): Promise<void> {
-  const writes = new Map<string, string>();
-  const boundary = { width: 714, height: 414, deviceScaleFactor: 1 };
-  const oversized = { width: 715, height: 415, deviceScaleFactor: 1 };
-  const cdp = new FakeCaptureCdp([
-    snapshot({ revision: 0, viewport: boundary }),
-    snapshot({ revision: 0, viewport: boundary }),
-    snapshot({ revision: 0, viewport: oversized }),
-    snapshot({ revision: 0, viewport: oversized }),
-    snapshot({ revision: 0, viewport: oversized }),
-  ]);
-  const restore = setScreenshotFileSystemForTests({
-    writeFileSync: (filePath, data) => writes.set(filePath, Buffer.isBuffer(data) ? data.toString('utf8') : String(data)),
-  });
-  try {
-    await assert.rejects(
-      captureCdpScreenshot(cdp, 'viewport-effective-growth-without-recapture', {
-        expectation: { kind: 'workbenchShell', label: 'viewport-effective-growth-without-recapture' },
-        maxEffectiveViewport: { width: 714, height: 414 },
-        timeoutMs: 1000,
-      }),
-      /Screenshot readiness failed/
-    );
-  } finally {
-    restore();
-  }
-
-  assert.strictEqual(cdp.captureAttempts, 1, 'growth after capture should not retry another screenshot while still oversized');
-  const metadata = readMetadataFromWrites(writes, 'viewport-effective-growth-without-recapture.json');
-  assert.strictEqual(metadata.verdict, 'failed');
-  assert.strictEqual(metadata.timing.captureAttempts, 1);
-  assert.ok(metadata.reasonCodes.includes('viewport-too-large'), JSON.stringify(metadata.reasonCodes));
-  const rejectedEvent = metadata.events.find((event: { name: string }) => event.name === 'rejected');
-  assert.deepStrictEqual(rejectedEvent.details.actualViewport, oversized);
-  assert.deepStrictEqual(rejectedEvent.details.maxEffectiveViewport, { width: 714, height: 414 });
-  const viewportEvent = metadata.events.find((event: { name: string }) => event.name === 'effective-viewport-too-large');
-  assert.deepStrictEqual(viewportEvent.details.actualViewport, oversized);
-}
-
-async function testMaxEffectiveViewportUnsetAllowsOversize(
-  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot,
-  screenshotDir: string
-): Promise<void> {
-  const viewport = { width: 715, height: 415, deviceScaleFactor: 1 };
-  const cdp = new FakeCaptureCdp([
-    snapshot({ revision: 0, viewport }),
-    snapshot({ revision: 0, viewport }),
-    snapshot({ revision: 0, viewport }),
-  ]);
-
-  const screenshotPath = await captureCdpScreenshot(cdp, 'viewport-effective-unset-allows-oversize', {
-    expectation: { kind: 'workbenchShell', label: 'viewport-effective-unset-allows-oversize' },
-    timeoutMs: 1000,
-  });
-
-  assert.strictEqual(path.dirname(screenshotPath ?? ''), screenshotDir);
-  assert.strictEqual(cdp.captureAttempts, 1);
-}
-
-async function testNearDeadlineReadinessSkipsZeroBudgetEvaluation(
-  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot
-): Promise<void> {
-  const cdp = new FakeCaptureCdp([snapshot({ revision: 0 })], { evaluateDelayMs: 35 });
-
-  await assert.rejects(
-    captureCdpScreenshot(cdp, 'near-deadline-readiness-budget', {
-      expectation: { kind: 'workbenchShell', label: 'near-deadline-readiness-budget' },
-      timeoutMs: 40,
-    }),
-    /Screenshot readiness failed/
-  );
-
-  assert.strictEqual(cdp.readinessEvaluationCount, 0, 'near-expired deadlines should not issue a zero-budget readiness evaluation');
-  assert.strictEqual(cdp.captureAttempts, 0);
 }
 
 async function testEvidenceStorageFailureStillThrows(
@@ -1547,13 +1086,10 @@ class FakeCaptureCdp {
   readonly targetTitle?: string;
   readonly evaluatedContextIds: Array<number | undefined> = [];
   readonly latchInstallContextIds: Array<number | undefined> = [];
-  readonly viewportOverrideCalls: Record<string, unknown>[] = [];
-  viewportClearCalls = 0;
   ownerLatchObservedNotifications = false;
   resolveNodeAttempts = 0;
   semanticBindingControlMetadataUsed = false;
   latchInstallAttempts = 0;
-  readinessEvaluationCount = 0;
   private readinessIndex = 0;
   private ownerFrameRevisionReadIndex = 0;
   private exactIframeRevisionReadIndex = 0;
@@ -1596,10 +1132,6 @@ class FakeCaptureCdp {
       resolveNodeTimeoutFailures?: number;
       resolveNodeError?: Error;
       ownerWorkbenchVisible?: boolean;
-      viewportOverrideError?: Error;
-      viewportClearFailures?: number;
-      bindingTimeoutError?: Error;
-      readinessTimeoutAfterCount?: number;
     } = {}
   ) {
     this.targetUrl = options.targetUrl;
@@ -1607,20 +1139,6 @@ class FakeCaptureCdp {
   }
 
   async send(method: string, params?: Record<string, unknown>): Promise<unknown> {
-    if (method === 'Emulation.setDeviceMetricsOverride') {
-      this.viewportOverrideCalls.push({ ...(params ?? {}) });
-      if (this.options.viewportOverrideError) {
-        throw this.options.viewportOverrideError;
-      }
-      return { result: {} };
-    }
-    if (method === 'Emulation.clearDeviceMetricsOverride') {
-      this.viewportClearCalls++;
-      if (this.options.viewportClearFailures && this.viewportClearCalls <= this.options.viewportClearFailures) {
-        throw new Error('synthetic viewport clear rejected before effect');
-      }
-      return { result: {} };
-    }
     if (method === 'Page.getFrameTree') {
       if (this.options.failFrameTree) {
         throw new Error('synthetic Page.getFrameTree timeout');
@@ -1723,9 +1241,6 @@ class FakeCaptureCdp {
       throw new Error('synthetic postcheck failure');
     }
     if (expression.includes('visibleWorkbench:')) {
-      if (this.options.bindingTimeoutError) {
-        throw this.options.bindingTimeoutError;
-      }
       return {
         activeTabText: this.options.activeTabText ?? 'Expected Workflow',
         activeTabVisible: true,
@@ -1776,12 +1291,8 @@ class FakeCaptureCdp {
         requiredSelectorFound,
       } as T;
     }
-    if (this.options.readinessTimeoutAfterCount !== undefined && this.readinessEvaluationCount >= this.options.readinessTimeoutAfterCount) {
-      throw new Error('Timed out waiting for CDP Runtime.evaluate response after 12ms');
-    }
     const snapshotValue = this.readinessSnapshots[Math.min(this.readinessIndex, this.readinessSnapshots.length - 1)];
     this.readinessIndex++;
-    this.readinessEvaluationCount++;
     return snapshotValue as T;
   }
 
@@ -1936,14 +1447,13 @@ function snapshot(options: {
   structuralRevision?: number;
   expectationKind?: ScreenshotReadinessSnapshot['expectationKind'];
   details?: Record<string, unknown>;
-  viewport?: ScreenshotReadinessSnapshot['viewport'];
 }): ScreenshotReadinessSnapshot {
   return {
     ready: true,
     reasonCodes: ['ready'],
     blockers: [],
     anchors: [{ name: 'body', visible: true, bounds: { left: 0, top: 0, width: 100, height: 100 } }],
-    viewport: options.viewport ?? { width: 100, height: 100, deviceScaleFactor: 1 },
+    viewport: { width: 100, height: 100, deviceScaleFactor: 1 },
     counts: { loaders: 0 },
     generation: 0,
     revision: options.revision,

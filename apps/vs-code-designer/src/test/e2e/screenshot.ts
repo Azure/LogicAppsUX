@@ -66,8 +66,6 @@ interface ScreenshotCaptureOptions {
   semanticCdp?: CdpClient;
   semanticContextId?: number;
   captureBeyondViewport?: boolean;
-  viewport?: { width: number; height: number; deviceScaleFactor?: number };
-  maxEffectiveViewport?: { width: number; height: number };
   timeoutMs?: number;
   deadlineMs?: number;
   optional?: boolean;
@@ -207,18 +205,38 @@ async function captureCdpScreenshotCore(
   const targetId = cdp.targetId ?? 'unknown-workbench-target';
   let frameId = 'main-frame';
   let generation = cdp.contextGeneration ?? 0;
-  const sampleCdp = options.semanticCdp ?? cdp;
-  const viewportOverride = options.viewport;
-  const viewportOverrideTargets: CdpClient[] = [];
 
+  await cdp.send('Page.enable', undefined, { timeoutMs: remaining(deadline, 2000) }).catch(() => undefined);
+  await cdp.send('Runtime.enable', undefined, { timeoutMs: remaining(deadline, 2000) }).catch(() => undefined);
+  const frameTree = await cdp.send('Page.getFrameTree', undefined, { timeoutMs: remaining(deadline, 2000) }).catch(() => undefined);
+  frameId = getMainFrameId(frameTree) ?? frameId;
+
+  const sampleCdp = options.semanticCdp ?? cdp;
   let sampleContextId = options.semanticContextId;
   let latchedContextId: number | undefined;
   let ownerBindingLatch: OwnerBindingInvalidationLatch | undefined;
+  const ensureSemanticLatchInstalled = async (): Promise<void> => {
+    if (classification === 'diagnostic' || expectation.kind === 'diagnostic') {
+      return;
+    }
+    if (latchedContextId === sampleContextId) {
+      return;
+    }
+    if (latchedContextId !== undefined) {
+      await sampleCdp
+        .evaluate(latchedContextId, disposeScreenshotInvalidationLatchExpression, { timeoutMs: remaining(deadline, 1000) })
+        .catch(() => undefined);
+    }
+    await sampleCdp.evaluate(sampleContextId, installScreenshotInvalidationLatchExpression, { timeoutMs: remaining(deadline, 2000) });
+    latchedContextId = sampleContextId;
+  };
+  if (classification !== 'diagnostic' && expectation.kind !== 'diagnostic') {
+    sampleContextId = await assertBoundSemanticContext(cdp, sampleCdp, sampleContextId, expectation, options.binding, deadline);
+    await ensureSemanticLatchInstalled();
+    ownerBindingLatch = await installOwnerBindingInvalidationLatch(cdp, sampleCdp, deadline);
+  }
+  const metadataFrameId = getSemanticMetadataFrameId(sampleCdp, sampleContextId) ?? frameId;
   let data: string | undefined;
-  let metadataFrameId = frameId;
-  let deadlineFailureReasonCodes: string[] = [];
-  let pendingCaptureError: unknown;
-  let viewportCleanupError: unknown;
   const recordEvent = (name: string, sample?: ScreenshotReadinessSnapshot, values: Partial<ScreenshotCaptureEvent> = {}): void => {
     events.push({
       name,
@@ -235,52 +253,7 @@ async function captureCdpScreenshotCore(
       details: { ...(sample?.details ?? {}), ...(values.details ?? {}) },
     });
   };
-  const isEffectiveViewportWithinLimit = (sample: ScreenshotReadinessSnapshot | undefined): boolean => {
-    if (!sample || !options.maxEffectiveViewport) {
-      return true;
-    }
-    return sample.viewport.width <= options.maxEffectiveViewport.width && sample.viewport.height <= options.maxEffectiveViewport.height;
-  };
-  const withEffectiveViewportFailure = (sample: ScreenshotReadinessSnapshot): ScreenshotReadinessSnapshot => ({
-    ...sample,
-    ready: false,
-    reasonCodes: sample.reasonCodes.includes('viewport-too-large') ? sample.reasonCodes : [...sample.reasonCodes, 'viewport-too-large'],
-    details: {
-      ...sample.details,
-      actualViewport: sample.viewport,
-      maxEffectiveViewport: options.maxEffectiveViewport,
-    },
-  });
   try {
-    if (viewportOverride) {
-      viewportOverrideTargets.push(cdp);
-      await applyViewportOverride(cdp, viewportOverride, deadline);
-    }
-    await cdp.send('Page.enable', undefined, { timeoutMs: remaining(deadline, 2000) }).catch(() => undefined);
-    await cdp.send('Runtime.enable', undefined, { timeoutMs: remaining(deadline, 2000) }).catch(() => undefined);
-    const frameTree = await cdp.send('Page.getFrameTree', undefined, { timeoutMs: remaining(deadline, 2000) }).catch(() => undefined);
-    frameId = getMainFrameId(frameTree) ?? frameId;
-    const ensureSemanticLatchInstalled = async (): Promise<void> => {
-      if (classification === 'diagnostic' || expectation.kind === 'diagnostic') {
-        return;
-      }
-      if (latchedContextId === sampleContextId) {
-        return;
-      }
-      if (latchedContextId !== undefined) {
-        await sampleCdp
-          .evaluate(latchedContextId, disposeScreenshotInvalidationLatchExpression, { timeoutMs: remaining(deadline, 1000) })
-          .catch(() => undefined);
-      }
-      await sampleCdp.evaluate(sampleContextId, installScreenshotInvalidationLatchExpression, { timeoutMs: remaining(deadline, 2000) });
-      latchedContextId = sampleContextId;
-    };
-    if (classification !== 'diagnostic' && expectation.kind !== 'diagnostic') {
-      sampleContextId = await assertBoundSemanticContext(cdp, sampleCdp, sampleContextId, expectation, options.binding, deadline);
-      await ensureSemanticLatchInstalled();
-      ownerBindingLatch = await installOwnerBindingInvalidationLatch(cdp, sampleCdp, deadline);
-    }
-    metadataFrameId = getSemanticMetadataFrameId(sampleCdp, sampleContextId) ?? frameId;
     while (Date.now() < deadline && !data) {
       let stableSample: ScreenshotReadinessSnapshot | undefined;
       if (classification === 'diagnostic' || expectation.kind === 'diagnostic') {
@@ -297,14 +270,6 @@ async function captureCdpScreenshotCore(
         stableSample = await waitForStableReadiness(sampleCdp, sampleContextId, expectation, generation, deadline, samples);
         generation = stableSample?.generation ?? generation;
         recordEvent(stableSample?.ready ? 'stable-readiness' : 'readiness-unavailable', stableSample ?? samples.at(-1));
-      }
-
-      const effectiveViewportSample = stableSample ?? samples.at(-1);
-      if (classification !== 'diagnostic' && effectiveViewportSample?.ready && !isEffectiveViewportWithinLimit(effectiveViewportSample)) {
-        const failedSample = withEffectiveViewportFailure(effectiveViewportSample);
-        samples.push(failedSample);
-        recordEvent('effective-viewport-too-large', failedSample);
-        break;
       }
 
       if (classification !== 'diagnostic' && (!stableSample || !stableSample.ready)) {
@@ -396,9 +361,7 @@ async function captureCdpScreenshotCore(
         continue;
       }
 
-      const maxEffectiveViewportAccepted = isEffectiveViewportWithinLimit(postSample);
-      const acceptedPostSample = maxEffectiveViewportAccepted ? postSample : withEffectiveViewportFailure(postSample);
-      samples.push(acceptedPostSample);
+      samples.push(postSample);
       generation = postSample.generation;
       const postCaptureGeneration = sampleCdp.contextGeneration ?? generation;
       const postOwnerRevision = await ownerBindingLatch?.readRevision();
@@ -413,7 +376,6 @@ async function captureCdpScreenshotCore(
         (preCaptureGeneration === postCaptureGeneration &&
           ownerRevisionAccepted &&
           postSample.ready &&
-          maxEffectiveViewportAccepted &&
           revisionAccepted &&
           stableSample &&
           isStableScreenshotSample(stableSample, postSample));
@@ -421,7 +383,7 @@ async function captureCdpScreenshotCore(
         recordEvent('accepted', postSample, { ownerRevision: postOwnerRevision });
         data = candidateData;
       } else {
-        recordEvent('rejected', acceptedPostSample, {
+        recordEvent('rejected', postSample, {
           ownerRevision: postOwnerRevision,
           details: {
             preCaptureGeneration,
@@ -434,8 +396,6 @@ async function captureCdpScreenshotCore(
             postOwnerRevision,
             ownerRevisionAccepted,
             revisionAccepted,
-            maxEffectiveViewportAccepted,
-            maxEffectiveViewport: options.maxEffectiveViewport,
           },
         });
         if (!ownerRevisionAccepted) {
@@ -444,28 +404,6 @@ async function captureCdpScreenshotCore(
         }
         await delay(Math.min(250, Math.max(0, deadline - Date.now())));
       }
-    }
-  } catch (error) {
-    if (isDeadlineRelatedError(error)) {
-      deadlineFailureReasonCodes = ['deadline-rpc-timeout'];
-      recordEvent('deadline-rpc-timeout', samples.at(-1), { reasonCodes: deadlineFailureReasonCodes });
-      if (samples.length === 0) {
-        samples.push({
-          ready: false,
-          reasonCodes: deadlineFailureReasonCodes,
-          blockers: [],
-          anchors: [],
-          viewport: { width: 0, height: 0, deviceScaleFactor: 1 },
-          counts: {},
-          generation,
-          revision: 0,
-          structuralRevision: 0,
-          scrollY: 0,
-          expectationKind: expectation.kind,
-        });
-      }
-    } else {
-      pendingCaptureError = error;
     }
   } finally {
     if (classification !== 'diagnostic' && expectation.kind !== 'diagnostic') {
@@ -476,29 +414,12 @@ async function captureCdpScreenshotCore(
       }
       await ownerBindingLatch?.dispose().catch(() => undefined);
     }
-    if (viewportOverrideTargets.length > 0) {
-      for (const target of viewportOverrideTargets) {
-        try {
-          await clearViewportOverride(target);
-        } catch (error) {
-          viewportCleanupError = viewportCleanupError ?? error;
-          recordEvent('viewport-clear-failed', samples.at(-1), { reasonCodes: ['viewport-clear-failed'] });
-        }
-      }
-      await new Promise((resolve) => setTimeout(resolve, 250));
-    }
   }
 
-  if (pendingCaptureError) {
-    throw pendingCaptureError;
-  }
-
-  const writeFailedMetadata = (additionalReasonCodes: string[] = []): void => {
+  if (!data) {
     const reasonCodes = [
       classification === 'diagnostic' ? 'diagnostic-capture-unavailable' : 'readiness-timeout',
-      ...deadlineFailureReasonCodes,
       ...(samples.at(-1)?.reasonCodes ?? []),
-      ...additionalReasonCodes,
     ];
     writeScreenshotMetadata(
       metadataPath,
@@ -518,20 +439,6 @@ async function captureCdpScreenshotCore(
         events,
       })
     );
-  };
-
-  if (viewportCleanupError) {
-    writeFailedMetadata(['viewport-clear-failed']);
-    throw new Error(`Failed to clear screenshot viewport override: ${formatSafeErrorMessage(viewportCleanupError)}`);
-  }
-
-  if (!data) {
-    writeFailedMetadata();
-    const reasonCodes = [
-      classification === 'diagnostic' ? 'diagnostic-capture-unavailable' : 'readiness-timeout',
-      ...deadlineFailureReasonCodes,
-      ...(samples.at(-1)?.reasonCodes ?? []),
-    ];
     if (classification === 'diagnostic') {
       return undefined;
     }
@@ -1273,7 +1180,7 @@ async function getSemanticContextBinding(
 }
 
 function canWaitForSemanticReadiness(expectation: ScreenshotExpectation): boolean {
-  return expectation.kind === 'discovery' || (expectation.kind === 'designerPanel' && !!expectation.picker);
+  return expectation.kind === 'discovery';
 }
 
 async function reacquireSemanticContext(
@@ -1439,39 +1346,6 @@ async function sampleReadiness(
   });
 }
 
-async function applyViewportOverride(
-  cdp: CdpClient,
-  viewport: { width: number; height: number; deviceScaleFactor?: number },
-  deadline: number
-): Promise<void> {
-  await cdp.send(
-    'Emulation.setDeviceMetricsOverride',
-    {
-      width: viewport.width,
-      height: viewport.height,
-      deviceScaleFactor: viewport.deviceScaleFactor ?? 1,
-      mobile: false,
-    },
-    { timeoutMs: remaining(deadline, 2000) }
-  );
-}
-
-async function clearViewportOverride(cdp: CdpClient): Promise<void> {
-  let lastError: unknown;
-  for (let attempt = 0; attempt < 2; attempt++) {
-    try {
-      await cdp.send('Emulation.clearDeviceMetricsOverride', undefined, { timeoutMs: 1000 });
-      return;
-    } catch (error) {
-      lastError = error;
-      if (attempt === 0) {
-        await new Promise((resolve) => setTimeout(resolve, 100));
-      }
-    }
-  }
-  throw lastError;
-}
-
 async function waitForStableReadiness(
   cdp: CdpClient,
   contextId: number | undefined,
@@ -1481,9 +1355,6 @@ async function waitForStableReadiness(
   samples: ScreenshotReadinessSnapshot[]
 ): Promise<ScreenshotReadinessSnapshot | undefined> {
   while (Date.now() < deadline) {
-    if (deadline - Date.now() < 10) {
-      return undefined;
-    }
     const snapshot = await sampleReadiness(cdp, contextId, expectation, cdp.contextGeneration ?? generation, 0, deadline);
     const previous = samples.at(-1);
     samples.push(snapshot);
@@ -1544,15 +1415,6 @@ function remaining(deadline: number, fallbackMs: number): number {
     throw new Error('Screenshot deadline exceeded');
   }
   return Math.min(fallbackMs, remainingMs);
-}
-
-function isDeadlineRelatedError(error: unknown): boolean {
-  const message = error instanceof Error ? error.message : String(error);
-  return /Screenshot deadline exceeded|Timed out waiting for CDP .* after \d+ms|Runtime\.evaluate timeout after \d+ms/i.test(message);
-}
-
-function formatSafeErrorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : String(error);
 }
 
 async function withTimeout<T>(promise: Promise<T>, timeoutMs: number, description: string): Promise<T> {
