@@ -10,13 +10,16 @@ const { JSDOM } = require('jsdom') as {
 async function main(): Promise<void> {
   testCopilotChatStateDetectsVisibleOwnedSurface();
   testCopilotChatStateDetectsKnownGitHubCopilotViewId();
+  testCopilotChatStateDetectsKnownBuiltInChatViewId();
   testCopilotChatStateIgnoresAbsentHiddenStandaloneAndSimilarlyNamedViews();
   testCopilotChatStateIgnoresInactiveSelectorWithHiddenContent();
   await testCloseCopilotChatNoOpsForNavigationDescendantsWithHiddenContent();
   await testCloseCopilotChatFailsWithoutMutatingNestedMixedContainer();
+  await testCloseCopilotChatFailsWithoutMutatingBuiltInContainerWithMixedViews();
   await testCloseCopilotChatNoOpsWhenAbsent();
   await testCloseCopilotChatWaitsForDelayedStartupAppearance();
   await testCloseCopilotChatClosesVisibleSurface();
+  await testCloseCopilotChatClosesExclusiveBuiltInSurface();
   await testCloseCopilotChatClosesVisibleEditorTab();
   await testCloseCopilotChatFailsWithoutMutatingMixedContainer();
   await testCloseCopilotChatFailsWhenCloseCommandRejects();
@@ -49,9 +52,27 @@ function testCopilotChatStateDetectsKnownGitHubCopilotViewId(): void {
   assert.strictEqual(state.owners[0]?.kind, 'sidebar', JSON.stringify(state));
 }
 
+function testCopilotChatStateDetectsKnownBuiltInChatViewId(): void {
+  for (const viewId of ['workbench.panel.chat', 'workbench.panel.chat.view.copilot']) {
+    const state = evaluateState(`
+      <div class="auxiliarybar" aria-label="Secondary Side Bar">
+        <div data-view-id="${viewId}" aria-label="Chat">
+          <section aria-label="Build with Agent"></section>
+        </div>
+      </div>
+    `);
+
+    assert.strictEqual(state.visible, true, `${viewId}: ${JSON.stringify(state)}`);
+    assert.strictEqual(state.owners[0]?.kind, 'auxiliarybar', `${viewId}: ${JSON.stringify(state)}`);
+  }
+}
+
 function testCopilotChatStateIgnoresAbsentHiddenStandaloneAndSimilarlyNamedViews(): void {
   const absent = evaluateState('<div class="auxiliarybar" aria-label="Secondary Side Bar"><span>Explorer</span></div>');
   const activityIconOnly = evaluateState('<button aria-label="GitHub Copilot Chat">Copilot Chat</button>');
+  const builtInCommandOnly = evaluateState(
+    '<div class="auxiliarybar" aria-label="Secondary Side Bar"><button data-view-id="workbench.panel.chat">Chat</button></div>'
+  );
   const hiddenChat = evaluateState(
     '<div class="auxiliarybar" aria-label="Secondary Side Bar"><div aria-label="GitHub Copilot Chat" data-hidden="true">GitHub Copilot Chat</div></div>'
   );
@@ -68,6 +89,7 @@ function testCopilotChatStateIgnoresAbsentHiddenStandaloneAndSimilarlyNamedViews
 
   assert.strictEqual(absent.visible, false, JSON.stringify(absent));
   assert.strictEqual(activityIconOnly.visible, false, JSON.stringify(activityIconOnly));
+  assert.strictEqual(builtInCommandOnly.visible, false, JSON.stringify(builtInCommandOnly));
   assert.strictEqual(hiddenChat.visible, false, JSON.stringify(hiddenChat));
   assert.strictEqual(similarlyNamed.visible, false, JSON.stringify(similarlyNamed));
   assert.strictEqual(mixedContainerWithoutExactChat.visible, false, JSON.stringify(mixedContainerWithoutExactChat));
@@ -143,6 +165,23 @@ async function testCloseCopilotChatClosesVisibleSurface(): Promise<void> {
   assert.strictEqual(host.closeEditorTabCalls, 0);
 }
 
+async function testCloseCopilotChatClosesExclusiveBuiltInSurface(): Promise<void> {
+  const state = evaluateState(`
+    <div class="auxiliarybar" aria-label="Secondary Side Bar">
+      <div data-view-id="workbench.panel.chat" aria-label="Chat">
+        <section aria-label="Build with Agent"></section>
+      </div>
+    </div>
+  `);
+  const host = new FakeCopilotChatHost([state, { visible: false, matchCount: 0, owners: [] }]);
+
+  assert.strictEqual(state.visible, true, JSON.stringify(state));
+  assert.strictEqual(state.owners[0]?.unrelatedVisibleCount, 0, JSON.stringify(state));
+  await closeCopilotChatIfVisibleCore('exclusive-built-in-test', host, { timeoutMs: 1000 });
+  assert.deepStrictEqual(host.commands, ['workbench.action.closeAuxiliaryBar']);
+  assert.strictEqual(host.closeEditorTabCalls, 0);
+}
+
 async function testCloseCopilotChatClosesVisibleEditorTab(): Promise<void> {
   const host = new FakeCopilotChatHost([
     { visible: true, matchCount: 1, owners: [{ kind: 'editor', label: 'copilot-chat', unrelatedVisibleCount: 0 }] },
@@ -185,6 +224,33 @@ async function testCloseCopilotChatFailsWithoutMutatingNestedMixedContainer(): P
     /visible Copilot Chat could not be closed/
   );
   assert.deepStrictEqual(host.commands, []);
+}
+
+async function testCloseCopilotChatFailsWithoutMutatingBuiltInContainerWithMixedViews(): Promise<void> {
+  for (const chatLeaf of [
+    '<div data-view-id="workbench.panel.chat.view.copilot" aria-label="Chat"></div>',
+    '<div data-view-id="github.copilot.chat" aria-label="Chat"></div>',
+  ]) {
+    const builtInContainerMixed = evaluateState(`
+      <div class="auxiliarybar" aria-label="Secondary Side Bar">
+        <div id="workbench.panel.chat">
+          <div class="content">
+            ${chatLeaf}
+            <div data-view-id="my.explorer" aria-label="Explorer"></div>
+          </div>
+        </div>
+      </div>
+    `);
+    const host = new FakeCopilotChatHost([builtInContainerMixed]);
+
+    assert.strictEqual(builtInContainerMixed.visible, true, JSON.stringify(builtInContainerMixed));
+    assert.strictEqual(builtInContainerMixed.owners[0]?.unrelatedVisibleCount, 1, JSON.stringify(builtInContainerMixed));
+    await assert.rejects(
+      () => closeCopilotChatIfVisibleCore('built-in-container-mixed-views-test', host, { timeoutMs: 1000 }),
+      /visible Copilot Chat could not be closed/
+    );
+    assert.deepStrictEqual(host.commands, []);
+  }
 }
 
 async function testCloseCopilotChatFailsWhenCloseCommandRejects(): Promise<void> {
