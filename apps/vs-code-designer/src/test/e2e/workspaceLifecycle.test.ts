@@ -2290,7 +2290,7 @@ async function selectDynamicContentTokenForParameter(
       label: description,
       actionTitle: responseActionTitle,
       editor: { labels: parameterLabels },
-      picker: { sectionLabels },
+      picker: { sectionLabels, tokenTitles },
     },
     semanticCdp: cdp,
     semanticContextId: contextId,

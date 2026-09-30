@@ -796,6 +796,37 @@ export const screenshotReadinessDomScript = `
       .toLowerCase();
     return normalizedLabels.some((label) => identity.includes(label));
   };
+  const closestElement = (element, matches) => {
+    let current = element instanceof HTMLElement ? element : element?.parentElement;
+    while (current instanceof HTMLElement) {
+      if (matches(current)) {
+        return current;
+      }
+      current = current.parentElement;
+    }
+    return undefined;
+  };
+  const hasClassName = (element, className) =>
+    String(element?.getAttribute?.('class') || element?.className || '')
+      .split(/\\s+/)
+      .includes(className);
+  const exactLabelMatches = (actual, expected) => normalize(actual).toLowerCase() === normalize(expected).toLowerCase() || slug(actual) === slug(expected);
+  const anyExactLabelMatches = (actual, expectedValues) => (expectedValues || []).some((expected) => exactLabelMatches(actual, expected));
+  const directText = (element) => {
+    const childElements = Array.from(element?.children || []);
+    if (childElements.length === 0) {
+      return visibleText(element);
+    }
+    if (typeof Node === 'undefined') {
+      return '';
+    }
+    return normalize(
+      Array.from(element.childNodes || [])
+        .filter((node) => node.nodeType === Node.TEXT_NODE)
+        .map((node) => node.textContent || '')
+        .join(' ')
+    );
+  };
   const findEditorState = (editor, root) => {
     if (!editor) {
       return { ok: true, reason: 'editor-not-required' };
@@ -810,16 +841,40 @@ export const screenshotReadinessDomScript = `
         control.getAttribute?.('aria-label') !== 'Card title' &&
         !(control instanceof HTMLInputElement && control.id?.endsWith('-title'))
     );
-    const matchedEditor = controls.find((control) => controlMatchesLabels(control, editor.labels || []));
-    if (!matchedEditor) {
+    const controlExactIdentityParts = (control) => {
+      const labelledBy = (control.getAttribute('aria-labelledby') || '')
+        .split(/\\s+/)
+        .map((id) => document.getElementById(id)?.textContent || '')
+        .filter(Boolean);
+      return [
+        control.getAttribute('aria-label'),
+        control.getAttribute('placeholder'),
+        control.getAttribute('title'),
+        control.getAttribute('data-testid'),
+        control.getAttribute('data-automation-id'),
+        control.id,
+        ...labelledBy,
+      ]
+        .map(normalize)
+        .filter(Boolean);
+    };
+    const matchingEditors = controls.filter((control) => controlMatchesLabels(control, editor.labels || []));
+    const exactMatchingEditors = controls.filter((control) =>
+      controlExactIdentityParts(control).some((identity) => anyExactLabelMatches(identity, editor.labels || []))
+    );
+    const matchedEditor = matchingEditors.find((control) => (control.getAttribute('aria-labelledby') || '').trim().length > 0) || matchingEditors[0];
+    const exactMatchedEditor =
+      exactMatchingEditors.find((control) => (control.getAttribute('aria-labelledby') || '').trim().length > 0) || exactMatchingEditors[0];
+    const selectedEditor = exactMatchedEditor || matchedEditor;
+    if (!selectedEditor) {
       return { ok: false, reason: 'editor-missing' };
     }
     if (editor.focused) {
-      const activeElement = document.activeElement || matchedEditor.ownerDocument?.activeElement;
+      const activeElement = document.activeElement || selectedEditor.ownerDocument?.activeElement;
       const activeElementMatchesEditor =
         !!activeElement &&
-        (activeElement === matchedEditor ||
-          matchedEditor.contains?.(activeElement) ||
+        (activeElement === selectedEditor ||
+          selectedEditor.contains?.(activeElement) ||
           (controlMatchesLabels(activeElement, editor.labels || []) && (root || document).contains?.(activeElement)));
       if (!activeElementMatchesEditor) {
         return { ok: false, reason: 'editor-focus-mismatch' };
@@ -827,11 +882,11 @@ export const screenshotReadinessDomScript = `
     }
     if (editor.token) {
       const selectorTokenNodes = Array.from(
-        matchedEditor.querySelectorAll?.(
+        selectedEditor.querySelectorAll?.(
           '[data-automation-id*="token"], [data-testid*="token"], [class*="token"], [class*="Token"], [class*="pill"], [class*="Pill"]'
         ) || []
       );
-      const metadataTokenNodes = Array.from(matchedEditor.querySelectorAll?.('*') || []).filter((candidate) => {
+      const metadataTokenNodes = Array.from(selectedEditor.querySelectorAll?.('*') || []).filter((candidate) => {
         const tokenMetadata = normalize(
           [
             candidate.getAttribute?.('title') || '',
@@ -866,9 +921,21 @@ export const screenshotReadinessDomScript = `
         return { ok: false, reason: 'editor-token-mismatch' };
       }
     }
-    return { ok: true, reason: 'editor-visible' };
+    const labelIds = (selectedEditor.getAttribute('aria-labelledby') || '').split(/\\s+/).filter(Boolean);
+    const editorContainer = closestElement(
+      selectedEditor,
+      (element) => !!element.id && (element.id.startsWith('msla-tokenpicker-callout-location') || hasClassName(element, 'msla-editor-container'))
+    );
+    return {
+      ok: true,
+      reason: 'editor-visible',
+      element: selectedEditor,
+      labelIds,
+      editorContainerId: editorContainer?.id || '',
+      exactLabelMatch: !!exactMatchedEditor,
+    };
   };
-  const findPickerState = (picker) => {
+  const findPickerState = (picker, editorState) => {
     if (!picker) {
       return { ok: true, reason: 'picker-not-required' };
     }
@@ -884,20 +951,210 @@ export const screenshotReadinessDomScript = `
         '.msla-token-picker-section-option',
         '[data-automation-id^="msla-token-picker-section-option-"]',
       ].join(', ');
+    const pickerTokenTitles = picker.tokenTitles || [];
+    const pickerSectionLabels = picker.sectionLabels || [];
+    const pathHasVisibleFluentLayerContent = (element, hiddenAncestor) => {
+      let current = element;
+      while (current instanceof HTMLElement && current !== hiddenAncestor) {
+        if (current.matches?.('.ms-Layer-content')) {
+          const style = current.ownerDocument?.defaultView?.getComputedStyle?.(current) ?? getComputedStyle(current);
+          return style.visibility === 'visible';
+        }
+        current = current.parentElement;
+      }
+      return false;
+    };
+    const hasHiddenLayerHostAncestor = (element) => {
+      let current = element?.parentElement;
+      while (current instanceof HTMLElement) {
+        if (current.id === 'msla-layer-host') {
+          return true;
+        }
+        current = current.parentElement;
+      }
+      return false;
+    };
+    const hasExplicitHiddenVisibility = (element) => {
+      const inlineVisibility = element?.style?.visibility || '';
+      const styleAttributeVisibility = String(element?.getAttribute?.('style') || '').match(/(?:^|;)\\s*visibility\\s*:\\s*([^;]+)/i)?.[1] || '';
+      return /^(hidden|collapse)$/i.test(inlineVisibility.trim()) || /^(hidden|collapse)$/i.test(styleAttributeVisibility.trim());
+    };
+    const hasConcretePickerVisibleStyle = (element) => {
+      if (!(element instanceof HTMLElement)) {
+        return false;
+      }
+      let current = element;
+      while (current instanceof HTMLElement) {
+        if (current.isConnected === false) {
+          return false;
+        }
+        if (current.hidden || current.getAttribute('aria-hidden') === 'true') {
+          return false;
+        }
+        const style = current.ownerDocument?.defaultView?.getComputedStyle?.(current) ?? getComputedStyle(current);
+        if (style.display === 'none') {
+          return false;
+        }
+        if (style.visibility === 'hidden' || style.visibility === 'collapse') {
+          const allowedFluentLayerHost =
+            style.visibility === 'hidden' &&
+            pathHasVisibleFluentLayerContent(element, current) &&
+            (current.id === 'msla-layer-host' ||
+              (hasClassName(current, 'ms-Layer') && hasHiddenLayerHostAncestor(current) && !hasExplicitHiddenVisibility(current)));
+          if (!allowedFluentLayerHost) {
+            return false;
+          }
+        }
+        if (Number.parseFloat(style.opacity || '1') === 0) {
+          return false;
+        }
+        current = current.parentElement;
+      }
+      return true;
+    };
+    const isConcretePickerReadable = (element, visibleRatio = 0.8) => {
+      if (!(element instanceof HTMLElement) || !hasConcretePickerVisibleStyle(element)) {
+        return false;
+      }
+      const rect = element.getBoundingClientRect();
+      const clipped = getClippedRect(element);
+      if (rect.width <= 0 || rect.height <= 0 || !clipped) {
+        return false;
+      }
+      return clipped.width >= rect.width * visibleRatio && clipped.height >= rect.height * visibleRatio;
+    };
+    const optionTitleText = (button) => {
+      const titleElement = button.querySelector?.('.msla-token-picker-option-title');
+      if (titleElement instanceof HTMLElement && isConcretePickerReadable(titleElement)) {
+        return normalize(visibleText(titleElement));
+      }
+      const descriptionElement = button.querySelector?.('.msla-token-picker-option-description');
+      if (descriptionElement) {
+        return '';
+      }
+      return normalize([button.getAttribute?.('aria-label') || '', button.getAttribute?.('title') || '', button.textContent || ''].join(' '));
+    };
+    const concretePickerState = () => {
+      if (pickerTokenTitles.length === 0) {
+        return undefined;
+      }
+      if (!editorState?.ok || !(editorState.element instanceof HTMLElement)) {
+        return { ok: false, reason: 'picker-editor-missing' };
+      }
+      if (editorState.exactLabelMatch !== true) {
+        return { ok: false, reason: 'picker-editor-label-mismatch' };
+      }
+      const editorLabelIds = editorState.labelIds || [];
+      const activeElement = document.activeElement || editorState.element.ownerDocument?.activeElement;
+      const searchCandidates = Array.from(
+        document.querySelectorAll(
+          '[data-automation-id="msla-token-picker-search"], .msla-token-picker-search input, .msla-token-picker-search [role="searchbox"], .msla-token-picker-search'
+        )
+      ).filter((element) => element instanceof HTMLElement && isConcretePickerReadable(element));
+      const activeElementReadable = activeElement instanceof HTMLElement && isConcretePickerReadable(activeElement);
+      const activeSearch = searchCandidates.find((search) => {
+        if (activeElement === search) {
+          return true;
+        }
+        if (!(activeElement instanceof HTMLElement) || !activeElementReadable) {
+          return false;
+        }
+        return search.contains?.(activeElement) || closestElement(activeElement, (element) => element === search);
+      });
+      if (!(activeSearch instanceof HTMLElement)) {
+        return { ok: false, reason: 'picker-search-missing' };
+      }
+      const pickerAncestors = [];
+      let pickerAncestor = activeSearch;
+      while (pickerAncestor instanceof HTMLElement) {
+        pickerAncestors.push(pickerAncestor);
+        pickerAncestor = pickerAncestor.parentElement;
+      }
+      const pickerRoot =
+        pickerAncestors.find(
+          (element) =>
+            (element.getAttribute('role') === 'dialog' || element.getAttribute('role') === 'listbox') &&
+            (element.getAttribute('aria-labelledby') || '').length > 0
+        ) ||
+        pickerAncestors.find((element) => hasClassName(element, 'msla-token-picker-container-v3')) ||
+        pickerAncestors.find((element) => hasClassName(element, 'msla-token-picker')) ||
+        activeSearch.parentElement;
+      if (!(pickerRoot instanceof HTMLElement)) {
+        return { ok: false, reason: 'picker-root-missing' };
+      }
+      const pickerLabelIds = (pickerRoot.getAttribute('aria-labelledby') || '').split(/\\s+/).filter(Boolean);
+      const associatedByLabelId =
+        editorLabelIds.length > 0 && pickerLabelIds.length > 0 && pickerLabelIds.some((id) => editorLabelIds.includes(id));
+      if (!associatedByLabelId) {
+        return { ok: false, reason: 'picker-editor-association-missing' };
+      }
+      const sections = Array.from(pickerRoot.querySelectorAll('.msla-token-picker-section')).filter(
+        (section) => section instanceof HTMLElement && hasConcretePickerVisibleStyle(section)
+      );
+      let matchedSection = false;
+      for (const section of sections) {
+        const header = Array.from(section.querySelectorAll?.('.msla-token-picker-section-header') || []).find(
+          (candidate) =>
+            candidate instanceof HTMLElement &&
+            closestElement(candidate, (element) => hasClassName(element, 'msla-token-picker-section')) === section
+        );
+        const labelTarget = header instanceof HTMLElement && isConcretePickerReadable(header) ? header : undefined;
+        if (!labelTarget) {
+          continue;
+        }
+        const sectionLabelSource = normalize(
+          [
+            Array.from(labelTarget.querySelectorAll?.('span') || [])
+              .filter((span) => closestElement(span, (element) => hasClassName(element, 'msla-token-picker-section-header')) === labelTarget)
+              .map((span) => directText(span))
+              .find(Boolean) || '',
+            directText(labelTarget),
+            labelTarget.getAttribute?.('aria-label') || '',
+          ]
+            .filter(Boolean)
+            .join(' ')
+        );
+        const sectionMatches = pickerSectionLabels.length === 0 || pickerSectionLabels.some((label) => exactLabelMatches(sectionLabelSource, label));
+        if (!sectionMatches) {
+          continue;
+        }
+        matchedSection = true;
+        const optionButtons = Array.from(
+          section.querySelectorAll('.msla-token-picker-section-option, [data-automation-id^="msla-token-picker-section-option-"]')
+        ).filter((button) => button instanceof HTMLElement && isConcretePickerReadable(button));
+        const matchedTitles = pickerTokenTitles.filter((requestedTitle) =>
+          optionButtons.some((button) => {
+            const nearestSection = closestElement(button, (element) => hasClassName(element, 'msla-token-picker-section'));
+            if (nearestSection !== section) {
+              return false;
+            }
+            const titleElement = button.querySelector?.('.msla-token-picker-option-title');
+            if (titleElement instanceof HTMLElement && !isConcretePickerReadable(titleElement)) {
+              return false;
+            }
+            const titleText = optionTitleText(button);
+            return exactLabelMatches(titleText, requestedTitle);
+          })
+        );
+        if (matchedTitles.length === pickerTokenTitles.length) {
+          return { ok: true, reason: 'picker-visible' };
+        }
+      }
+      return { ok: false, reason: matchedSection ? 'picker-token-missing' : 'picker-section-missing' };
+    };
+    const concreteState = concretePickerState();
     const pickerRoots = visibleElements(pickerSelector);
     const pickerText = normalize(pickerRoots.map(visibleText).join(' '));
     const loosePickerRoots = Array.from(document.querySelectorAll(pickerSelector)).filter(
       (element) => !!(element && hasVisibleStyle(element) && (element.offsetWidth || element.offsetHeight || element.getClientRects().length))
     );
     const loosePickerText = normalize(loosePickerRoots.map(visibleText).join(' '));
-    const strictSectionMatch =
-      (picker.sectionLabels || []).length === 0 || (picker.sectionLabels || []).some((label) => normalizedIncludes(pickerText, label));
+    const strictSectionMatch = pickerSectionLabels.length === 0 || pickerSectionLabels.some((label) => normalizedIncludes(pickerText, label));
     const strictRequestedTitlesMatch =
-      (picker.tokenTitles || []).length === 0 || (picker.tokenTitles || []).every((title) => normalizedIncludes(pickerText, title));
-    const looseSectionMatch =
-      (picker.sectionLabels || []).length === 0 || (picker.sectionLabels || []).some((label) => normalizedIncludes(loosePickerText, label));
+      pickerTokenTitles.length === 0 || pickerTokenTitles.every((title) => normalizedIncludes(pickerText, title));
+    const looseSectionMatch = pickerSectionLabels.length === 0 || pickerSectionLabels.some((label) => normalizedIncludes(loosePickerText, label));
     const looseRequestedTitlesMatch =
-      (picker.tokenTitles || []).length === 0 || (picker.tokenTitles || []).every((title) => normalizedIncludes(loosePickerText, title));
+      pickerTokenTitles.length === 0 || pickerTokenTitles.every((title) => normalizedIncludes(loosePickerText, title));
     const summarizeElement = (element) => {
       const rect = element?.getBoundingClientRect?.();
       return {
@@ -926,18 +1183,20 @@ export const screenshotReadinessDomScript = `
       const sectionText = normalize(visibleText(section));
       return {
         headerPresent: !!header && isVisible(header),
-        matchedSectionLabelIndices: (picker.sectionLabels || [])
+        matchedSectionLabelIndices: pickerSectionLabels
           .map((label, index) => (normalizedIncludes(sectionText, label) ? index : -1))
           .filter((index) => index >= 0),
-        matchedRequestedTitleIndices: (picker.tokenTitles || [])
+        matchedRequestedTitleIndices: pickerTokenTitles
           .map((title, index) => (normalizedIncludes(sectionText, title) ? index : -1))
           .filter((index) => index >= 0),
         ...summarizeElement(section),
       };
     };
     details.picker = {
-      expectedSectionLabelCount: (picker.sectionLabels || []).length,
-      expectedRequestedTitleCount: (picker.tokenTitles || []).length,
+      expectedSectionLabelCount: pickerSectionLabels.length,
+      expectedRequestedTitleCount: pickerTokenTitles.length,
+      concretePathRequired: pickerTokenTitles.length > 0,
+      concretePathReason: concreteState?.reason,
       strictRootCount: pickerRoots.length,
       looseRootCount: loosePickerRoots.length,
       strictSectionCount: visibleSections.length,
@@ -950,6 +1209,9 @@ export const screenshotReadinessDomScript = `
       strictSections: visibleSections.slice(0, 4).map(summarizeSection),
       looseSections: looseSections.slice(0, 4).map(summarizeSection),
     };
+    if (concreteState) {
+      return concreteState;
+    }
     if (!strictSectionMatch) {
       return { ok: false, reason: 'picker-section-missing' };
     }
@@ -1112,7 +1374,7 @@ export const screenshotReadinessDomScript = `
     case 'designerPanel':
       const panelFieldStates = (expectation.fields || []).map((field) => fieldMatches(field, selectedPanel?.layout));
       const editorState = findEditorState(expectation.editor, selectedPanel?.layout);
-      const pickerState = findPickerState(expectation.picker);
+      const pickerState = findPickerState(expectation.picker, editorState);
       ready =
         !!selectedPanel &&
         matchesExactPanelIdentity(selectedPanel, expectation.actionTitle) &&

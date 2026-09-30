@@ -41,7 +41,13 @@ async function main(): Promise<void> {
   testDesignerPanelRequiresFocusedEditorTokenSource();
   testDesignerPanelRejectsAncestorFocusAndPlainTextToken();
   testDesignerPanelRequiresVisiblePickerSectionAndToken();
+  testDesignerPanelAcceptsFluentLayerContentUnderHiddenHost();
   testDesignerPanelAcceptsPickerSectionAliases();
+  testDesignerPanelMatchesRequestedPickerActionAndToken();
+  testDesignerPanelRejectsUnownedPickerText();
+  testDesignerPanelRejectsInexactPickerAndEditorIdentity();
+  testDesignerPanelRequiresOwnPickerSectionHeader();
+  testDesignerPanelRejectsUnassociatedPickerAndInvisibleContributors();
   testDesignerPanelReportsPickerReadinessDiagnostics();
   testPickerReadinessDiagnosticsSerializeWithoutRuntimeText();
   testCreateWorkspaceRejectsWrongExactValidationMessage();
@@ -805,35 +811,60 @@ function testDesignerPanelRequiresVisiblePickerSectionAndToken(): void {
     kind: 'designerPanel',
     label: 'response-token-picker-open',
     actionTitle: 'Response',
-    picker: { sectionLabels: ['Dynamic content'], tokenTitles: ['Body'] },
+    picker: { sectionLabels: ['Dynamic content'] },
   });
   const rejected = runProbe(document, {
     kind: 'designerPanel',
     label: 'response-token-picker-open',
     actionTitle: 'Response',
-    picker: { sectionLabels: ['Expression'], tokenTitles: ['Body'] },
+    picker: { sectionLabels: ['Expression'] },
   });
 
   assert.strictEqual(accepted.ready, true, JSON.stringify(accepted));
   assert.strictEqual(rejected.ready, false, JSON.stringify(rejected));
 
-  const sectionOnlyDocument = new FakeDocument(
-    new FakeElement('body', {}, [
-      designerPanel({ title: 'Response', nodeId: 'Response', text: 'Body' }),
-      new FakeElement('section', { class: 'msla-token-picker-section' }, [
-        new FakeElement('div', { class: 'msla-token-picker-section-header' }, [], 'Get current weather'),
-        new FakeElement('button', { class: 'msla-token-picker-section-option' }, [], 'Body'),
-      ]),
-    ])
-  );
-  const sectionOnlyAccepted = runProbe(sectionOnlyDocument, {
+  const concrete = createAssociatedPickerDocument({
+    sections: [{ label: 'Get current weather', tokens: ['Body'] }],
+  });
+  const sectionOnlyAccepted = runProbe(concrete.document, {
     kind: 'designerPanel',
     label: 'response-token-picker-open',
     actionTitle: 'Response',
+    editor: { labels: ['Body'] },
     picker: { sectionLabels: ['Get current weather'], tokenTitles: ['Body'] },
   });
 
   assert.strictEqual(sectionOnlyAccepted.ready, true, JSON.stringify(sectionOnlyAccepted));
+}
+
+function testDesignerPanelAcceptsFluentLayerContentUnderHiddenHost(): void {
+  const expectation: ScreenshotExpectation = {
+    kind: 'designerPanel',
+    label: 'response-token-picker-open',
+    actionTitle: 'Response',
+    editor: { labels: ['Body'] },
+    picker: { sectionLabels: ['Get current weather'], tokenTitles: ['Body'] },
+  };
+  const hiddenHostInheritedLayer = createAssociatedPickerDocument({
+    sections: [{ label: 'Get current weather', tokens: ['Body'] }],
+  });
+  const visibleHostControl = createAssociatedPickerDocument({
+    hostStyle: 'visibility: visible',
+    sections: [{ label: 'Get current weather', tokens: ['Body'] }],
+  });
+  const explicitlyHiddenLayerWrapper = createAssociatedPickerDocument({
+    layerWrapperStyle: 'visibility: hidden',
+    sections: [{ label: 'Get current weather', tokens: ['Body'] }],
+  });
+
+  const hiddenHostSnapshot = runProbe(hiddenHostInheritedLayer.document, expectation);
+  const visibleHostSnapshot = runProbe(visibleHostControl.document, expectation);
+  const hiddenWrapperSnapshot = runProbe(explicitlyHiddenLayerWrapper.document, expectation);
+
+  assert.strictEqual(hiddenHostSnapshot.ready, true, JSON.stringify(hiddenHostSnapshot));
+  assert.strictEqual(visibleHostSnapshot.ready, true, JSON.stringify(visibleHostSnapshot));
+  assert.strictEqual(hiddenWrapperSnapshot.ready, false, JSON.stringify(hiddenWrapperSnapshot));
+  assert.ok(hiddenWrapperSnapshot.reasonCodes.includes('picker-search-missing'));
 }
 
 function testDesignerPanelAcceptsPickerSectionAliases(): void {
@@ -842,21 +873,13 @@ function testDesignerPanelAcceptsPickerSectionAliases(): void {
     kind: 'designerPanel',
     label: 'response-token-picker-open',
     actionTitle: 'Response',
+    editor: { labels: ['Body'] },
     picker: { sectionLabels: aliases, tokenTitles: ['Body', 'Headers'] },
   };
   const createPickerDocument = (sectionLabels: string[], tokenTitles: string[]) =>
-    new FakeDocument(
-      new FakeElement('body', {}, [
-        designerPanel({ title: 'Response', nodeId: 'Response', text: 'Body' }),
-        ...sectionLabels.map(
-          (sectionLabel) =>
-            new FakeElement('section', { class: 'msla-token-picker-section' }, [
-              new FakeElement('div', { class: 'msla-token-picker-section-header' }, [], sectionLabel),
-              ...tokenTitles.map((tokenTitle) => new FakeElement('button', { class: 'msla-token-picker-section-option' }, [], tokenTitle)),
-            ])
-        ),
-      ])
-    );
+    createAssociatedPickerDocument({
+      sections: sectionLabels.map((sectionLabel) => ({ label: sectionLabel, tokens: tokenTitles })),
+    }).document;
   const friendlyOnly = runProbe(createPickerDocument(['Get current weather'], ['Body', 'Headers']), expectation);
   const internalOnly = runProbe(createPickerDocument(['Get_current_weather'], ['Body', 'Headers']), expectation);
   const bothAliases = runProbe(createPickerDocument(['Get current weather', 'Get_current_weather'], ['Body', 'Headers']), expectation);
@@ -872,21 +895,291 @@ function testDesignerPanelAcceptsPickerSectionAliases(): void {
   assert.ok(missingRequestedTitle.reasonCodes.includes('picker-token-missing'));
 }
 
-function testDesignerPanelReportsPickerReadinessDiagnostics(): void {
-  const document = new FakeDocument(
-    new FakeElement('body', {}, [
-      designerPanel({ title: 'Response', nodeId: 'Response', text: 'Body' }),
-      new FakeElement('section', { class: 'msla-token-picker-section' }, [
-        new FakeElement('div', { class: 'msla-token-picker-section-header' }, [], 'Get current weather'),
-        new FakeElement('button', { class: 'msla-token-picker-section-option' }, [], 'Body'),
-      ]),
-    ])
+function testDesignerPanelMatchesRequestedPickerActionAndToken(): void {
+  const weatherBody = createAssociatedPickerDocument({
+    sections: [
+      { label: 'Get current weather', tokens: ['Body', 'Pressure'] },
+      { label: 'When an HTTP request is received', tokens: ['Body'] },
+    ],
+  });
+  const weatherTemperature = createAssociatedPickerDocument({
+    sections: [
+      { label: 'Get current weather', tokens: ['Body', 'Temperature'] },
+      { label: 'When an HTTP request is received', tokens: ['Temperature'] },
+    ],
+  });
+  const forecastSummary = createAssociatedPickerDocument({
+    sections: [
+      { label: 'Get current weather', tokens: ['Summary'] },
+      { label: 'Get forecast', tokens: ['Summary'] },
+    ],
+  });
+  const repeatedBody = createAssociatedPickerDocument({
+    sections: [
+      { label: 'Get current weather', tokens: ['Body'] },
+      { label: 'Get forecast', tokens: ['Body'] },
+    ],
+  });
+
+  const baseExpectation = {
+    kind: 'designerPanel' as const,
+    label: 'response-token-picker-open',
+    actionTitle: 'Response',
+    editor: { labels: ['Body'] },
+  };
+
+  assert.strictEqual(
+    runProbe(weatherBody.document, {
+      ...baseExpectation,
+      picker: { sectionLabels: ['Get current weather', 'Get_current_weather'], tokenTitles: ['Body'] },
+    }).ready,
+    true
   );
+  assert.strictEqual(
+    runProbe(weatherTemperature.document, {
+      ...baseExpectation,
+      picker: { sectionLabels: ['Get current weather'], tokenTitles: ['Temperature'] },
+    }).ready,
+    true
+  );
+  assert.strictEqual(
+    runProbe(forecastSummary.document, {
+      ...baseExpectation,
+      picker: { sectionLabels: ['Get forecast'], tokenTitles: ['Summary'] },
+    }).ready,
+    true
+  );
+  assert.strictEqual(
+    runProbe(repeatedBody.document, {
+      ...baseExpectation,
+      picker: { sectionLabels: ['Get forecast'], tokenTitles: ['Body'] },
+    }).ready,
+    true
+  );
+}
+
+function testDesignerPanelRejectsUnownedPickerText(): void {
+  const baseExpectation = {
+    kind: 'designerPanel' as const,
+    label: 'response-token-picker-open',
+    actionTitle: 'Response',
+    editor: { labels: ['Body'] },
+  };
+  const httpBodyOnly = createAssociatedPickerDocument({
+    sections: [
+      { label: 'Get current weather', tokens: ['Pressure'] },
+      { label: 'When an HTTP request is received', tokens: ['Body'] },
+    ],
+  });
+  const bodyOnlyInDescription = createAssociatedPickerDocument({
+    sections: [{ label: 'Get current weather', tokens: [{ title: 'Pressure', description: 'Body appears only in the description' }] }],
+  });
+  const unrelatedPicker = createAssociatedPickerDocument({
+    sections: [{ label: 'When an HTTP request is received', tokens: ['Body'] }],
+    extraText: 'Get current weather Body documentation',
+  });
+
+  const httpBodyOnlySnapshot = runProbe(httpBodyOnly.document, {
+    ...baseExpectation,
+    picker: { sectionLabels: ['Get current weather'], tokenTitles: ['Body'] },
+  });
+  const descriptionSnapshot = runProbe(bodyOnlyInDescription.document, {
+    ...baseExpectation,
+    picker: { sectionLabels: ['Get current weather'], tokenTitles: ['Body'] },
+  });
+  const unrelatedSnapshot = runProbe(unrelatedPicker.document, {
+    ...baseExpectation,
+    picker: { sectionLabels: ['Get current weather'], tokenTitles: ['Body'] },
+  });
+
+  assert.strictEqual(httpBodyOnlySnapshot.ready, false, JSON.stringify(httpBodyOnlySnapshot));
+  assert.strictEqual(descriptionSnapshot.ready, false, JSON.stringify(descriptionSnapshot));
+  assert.strictEqual(unrelatedSnapshot.ready, false, JSON.stringify(unrelatedSnapshot));
+  assert.ok(httpBodyOnlySnapshot.reasonCodes.includes('picker-token-missing'));
+  assert.ok(descriptionSnapshot.reasonCodes.includes('picker-token-missing'));
+  assert.ok(
+    unrelatedSnapshot.reasonCodes.includes('picker-token-missing') || unrelatedSnapshot.reasonCodes.includes('picker-section-missing')
+  );
+}
+
+function testDesignerPanelRejectsInexactPickerAndEditorIdentity(): void {
+  const baseExpectation = {
+    kind: 'designerPanel' as const,
+    label: 'response-token-picker-open',
+    actionTitle: 'Response',
+    editor: { labels: ['Body'] },
+    picker: { sectionLabels: ['Get current weather'], tokenTitles: ['Body'] },
+  };
+  const suffixedSection = createAssociatedPickerDocument({
+    sections: [{ label: 'Get current weather 2', tokens: ['Body'] }],
+  });
+  const suffixedToken = createAssociatedPickerDocument({
+    sections: [{ label: 'Get current weather', tokens: ['Body preview'] }],
+  });
+  const suffixedEditorLabel = createAssociatedPickerDocument({
+    editorLabel: 'Body template',
+    sections: [{ label: 'Get current weather', tokens: ['Body'] }],
+  });
+  const bodyOnlyInEditorContainerDocs = createAssociatedPickerDocument({
+    editorLabel: 'Headers',
+    editorContainerExtraText: 'Documentation mentions Body for a different field',
+    sections: [{ label: 'Get current weather', tokens: ['Body'] }],
+  });
+
+  const sectionSnapshot = runProbe(suffixedSection.document, baseExpectation);
+  const tokenSnapshot = runProbe(suffixedToken.document, baseExpectation);
+  const editorLabelSnapshot = runProbe(suffixedEditorLabel.document, baseExpectation);
+  const editorContainerSnapshot = runProbe(bodyOnlyInEditorContainerDocs.document, baseExpectation);
+
+  assert.strictEqual(sectionSnapshot.ready, false, JSON.stringify(sectionSnapshot));
+  assert.strictEqual(tokenSnapshot.ready, false, JSON.stringify(tokenSnapshot));
+  assert.strictEqual(editorLabelSnapshot.ready, false, JSON.stringify(editorLabelSnapshot));
+  assert.strictEqual(editorContainerSnapshot.ready, false, JSON.stringify(editorContainerSnapshot));
+  assert.ok(sectionSnapshot.reasonCodes.includes('picker-section-missing'));
+  assert.ok(tokenSnapshot.reasonCodes.includes('picker-token-missing'));
+  assert.ok(editorLabelSnapshot.reasonCodes.includes('picker-editor-label-mismatch'));
+  assert.ok(editorContainerSnapshot.reasonCodes.includes('picker-editor-label-mismatch'));
+}
+
+function testDesignerPanelRequiresOwnPickerSectionHeader(): void {
+  const expectation: ScreenshotExpectation = {
+    kind: 'designerPanel',
+    label: 'response-token-picker-open',
+    actionTitle: 'Response',
+    editor: { labels: ['Body'] },
+    picker: { sectionLabels: ['Get current weather'], tokenTitles: ['Body'] },
+  };
+  const missingOwnHeader = createAssociatedPickerDocument({
+    sections: [{ label: 'Get current weather', tokens: ['Body'] }],
+  });
+  missingOwnHeader.elements.headers[0].attributes.class = 'not-msla-token-picker-section-header';
+
+  const disconnectedOwnHeader = createAssociatedPickerDocument({
+    sections: [{ label: 'Get current weather', tokens: ['Body'] }],
+  });
+  disconnectedOwnHeader.elements.headers[0].isConnected = false;
+
+  const nestedHeader = createAssociatedPickerDocument({
+    sections: [{ label: 'Get current weather', tokens: ['Body'] }],
+  });
+  nestedHeader.elements.headers[0].attributes.class = 'not-msla-token-picker-section-header';
+  const parentSection = nestedHeader.document.body.querySelector('.msla-token-picker-section') as FakeElement | undefined;
+  assert.ok(parentSection);
+  const borrowedHeader = new FakeElement('div', { class: 'msla-token-picker-section-header' }, [], 'Get current weather');
+  const borrowedSection = new FakeElement('section', { class: 'msla-token-picker-section' }, [borrowedHeader]);
+  borrowedSection.parentElement = parentSection;
+  parentSection.children.push(borrowedSection);
+  assignOwnerDocument(borrowedSection, nestedHeader.document);
+  setBounds(borrowedSection, 135, 152, 320, 32);
+  setBounds(borrowedHeader, 135, 152, 320, 32);
+
+  const missingSnapshot = runProbe(missingOwnHeader.document, expectation);
+  const disconnectedSnapshot = runProbe(disconnectedOwnHeader.document, expectation);
+  const nestedSnapshot = runProbe(nestedHeader.document, expectation);
+
+  assert.strictEqual(missingSnapshot.ready, false, JSON.stringify(missingSnapshot));
+  assert.strictEqual(disconnectedSnapshot.ready, false, JSON.stringify(disconnectedSnapshot));
+  assert.strictEqual(nestedSnapshot.ready, false, JSON.stringify(nestedSnapshot));
+  assert.ok(missingSnapshot.reasonCodes.includes('picker-section-missing'));
+  assert.ok(disconnectedSnapshot.reasonCodes.includes('picker-section-missing'));
+  assert.ok(
+    nestedSnapshot.reasonCodes.some((reasonCode) => reasonCode.startsWith('picker-')),
+    JSON.stringify(nestedSnapshot)
+  );
+}
+
+function testDesignerPanelRejectsUnassociatedPickerAndInvisibleContributors(): void {
+  const baseExpectation = {
+    kind: 'designerPanel' as const,
+    label: 'response-token-picker-open',
+    actionTitle: 'Response',
+    editor: { labels: ['Body'] },
+    picker: { sectionLabels: ['Get current weather'], tokenTitles: ['Body'] },
+  };
+  const wrongAction = createAssociatedPickerDocument({
+    actionTitle: 'Compose',
+    nodeId: 'Compose',
+    sections: [{ label: 'Get current weather', tokens: ['Body'] }],
+  });
+  const missingEditor = createAssociatedPickerDocument({
+    includeEditor: false,
+    sections: [{ label: 'Get current weather', tokens: ['Body'] }],
+  });
+  const wrongAssociation = createAssociatedPickerDocument({
+    dialogLabelId: 'other-editor-label',
+    sections: [{ label: 'Get current weather', tokens: ['Body'] }],
+  });
+  const inactiveSearch = createAssociatedPickerDocument({
+    activeSearch: false,
+    sections: [{ label: 'Get current weather', tokens: ['Body'] }],
+  });
+  const hiddenSearch = createAssociatedPickerDocument({
+    sections: [{ label: 'Get current weather', tokens: ['Body'] }],
+  });
+  hiddenSearch.elements.search.attributes.style = 'display: none';
+  const transparentSearch = createAssociatedPickerDocument({
+    sections: [{ label: 'Get current weather', tokens: ['Body'] }],
+  });
+  transparentSearch.elements.search.attributes.style = 'opacity: 0';
+  const hiddenHostWithoutVisibleLayer = createAssociatedPickerDocument({
+    layerStyle: 'visibility: hidden',
+    sections: [{ label: 'Get current weather', tokens: ['Body'] }],
+  });
+  const transparentLayer = createAssociatedPickerDocument({
+    layerStyle: 'visibility: visible; opacity: 0',
+    sections: [{ label: 'Get current weather', tokens: ['Body'] }],
+  });
+  const detachedSearch = createAssociatedPickerDocument({
+    sections: [{ label: 'Get current weather', tokens: ['Body'] }],
+  });
+  detachedSearch.elements.search.isConnected = false;
+  const clippedHeader = createAssociatedPickerDocument({
+    sections: [{ label: 'Get current weather', tokens: ['Body'] }],
+  });
+  clippedHeader.elements.headers[0].bounds = { left: 140, top: -60, width: 360, height: 32, right: 500, bottom: -28 };
+  const clippedButton = createAssociatedPickerDocument({
+    sections: [{ label: 'Get current weather', tokens: ['Body'] }],
+  });
+  clippedButton.elements.buttons[0].bounds = { left: 150, top: 900, width: 340, height: 32, right: 490, bottom: 932 };
+  const clippedTitle = createAssociatedPickerDocument({
+    sections: [{ label: 'Get current weather', tokens: ['Body'] }],
+  });
+  clippedTitle.elements.titles[0].bounds = { left: 160, top: 900, width: 180, height: 20, right: 340, bottom: 920 };
+
+  const snapshots = [
+    runProbe(wrongAction.document, baseExpectation),
+    runProbe(missingEditor.document, baseExpectation),
+    runProbe(wrongAssociation.document, baseExpectation),
+    runProbe(inactiveSearch.document, baseExpectation),
+    runProbe(hiddenSearch.document, baseExpectation),
+    runProbe(transparentSearch.document, baseExpectation),
+    runProbe(hiddenHostWithoutVisibleLayer.document, baseExpectation),
+    runProbe(transparentLayer.document, baseExpectation),
+    runProbe(detachedSearch.document, baseExpectation),
+    runProbe(clippedHeader.document, baseExpectation),
+    runProbe(clippedButton.document, baseExpectation),
+    runProbe(clippedTitle.document, baseExpectation),
+  ];
+
+  for (const snapshot of snapshots) {
+    assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
+  }
+  assert.ok(snapshots[0].reasonCodes.includes('designer-panel-state-missing'));
+  assert.ok(snapshots[1].reasonCodes.includes('editor-missing'));
+  assert.ok(snapshots[2].reasonCodes.includes('picker-editor-association-missing'));
+  assert.ok(snapshots.slice(3).every((snapshot) => snapshot.reasonCodes.some((code) => code.startsWith('picker-'))));
+}
+
+function testDesignerPanelReportsPickerReadinessDiagnostics(): void {
+  const { document } = createAssociatedPickerDocument({
+    sections: [{ label: 'Get current weather', tokens: ['Body'] }],
+  });
 
   const snapshot = runProbe(document, {
     kind: 'designerPanel',
     label: 'response-token-picker-open',
     actionTitle: 'Response',
+    editor: { labels: ['Body'] },
     picker: { sectionLabels: ['Get_current_weather'], tokenTitles: ['Body', 'Headers'] },
   });
   const pickerDetails = snapshot.details?.picker as
@@ -895,6 +1188,7 @@ function testDesignerPanelReportsPickerReadinessDiagnostics(): void {
         expectedRequestedTitleCount?: number;
         strictRootCount?: number;
         looseRootCount?: number;
+        concretePathReason?: string;
         strictSectionMatch?: boolean;
         looseSectionMatch?: boolean;
         strictRequestedTitlesMatch?: boolean;
@@ -904,41 +1198,45 @@ function testDesignerPanelReportsPickerReadinessDiagnostics(): void {
     | undefined;
 
   assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
-  assert.ok(snapshot.reasonCodes.includes('picker-section-missing') || snapshot.reasonCodes.includes('picker-token-missing'));
+  assert.ok(snapshot.reasonCodes.includes('picker-token-missing'));
   assert.strictEqual(pickerDetails?.expectedSectionLabelCount, 1);
   assert.strictEqual(pickerDetails?.expectedRequestedTitleCount, 2);
-  assert.ok((pickerDetails?.strictRootCount ?? 0) > 0);
-  assert.ok((pickerDetails?.looseRootCount ?? 0) > 0);
+  assert.strictEqual(pickerDetails?.concretePathReason, 'picker-token-missing');
+  assert.strictEqual(pickerDetails?.strictRootCount, 0);
+  assert.strictEqual(pickerDetails?.looseRootCount, 0);
   assert.strictEqual(pickerDetails?.strictSectionMatch, false);
   assert.strictEqual(pickerDetails?.looseSectionMatch, false);
   assert.strictEqual(pickerDetails?.strictRequestedTitlesMatch, false);
   assert.strictEqual(pickerDetails?.looseRequestedTitlesMatch, false);
-  assert.ok(pickerDetails?.strictSections?.some((section) => section.headerPresent === true));
-  assert.ok(pickerDetails?.strictSections?.some((section) => (section.matchedRequestedTitleIndices ?? []).includes(0)));
+  assert.strictEqual(pickerDetails?.strictSections?.length, 0);
 }
 
 function testPickerReadinessDiagnosticsSerializeWithoutRuntimeText(): void {
   const privateTitle = 'Confidential ClientProjectGamma42';
   const secret = 'SYNTHSECRET123';
   const privateIdentity = 'PrivateClientGamma42';
-  const document = new FakeDocument(
-    new FakeElement('body', {}, [
-      designerPanel({ title: 'Response', nodeId: 'Response', text: 'Body' }),
-      new FakeElement('section', { class: 'msla-token-picker-section', 'data-automation-id': privateIdentity, role: privateIdentity }, [
-        new FakeElement('div', { class: 'msla-token-picker-section-header' }, [], privateTitle),
-        new FakeElement('button', { class: 'msla-token-picker-section-option' }, [], `Authorization: Bearer ${secret}`),
-        new FakeElement('button', { class: 'msla-token-picker-section-option' }, [], `connectionKey=${secret}`),
-      ]),
-      new FakeElement('section', { class: 'msla-token-picker-section' }, [
-        new FakeElement('button', { class: 'msla-token-picker-section-option' }, [], `No header fallback ${privateTitle} ${secret}`),
-      ]),
-    ])
-  );
+  const { document } = createAssociatedPickerDocument({
+    sections: [
+      {
+        label: privateTitle,
+        tokens: [
+          'Authorization: ******',
+          { title: `connectionKey=${secret}`, description: `No header fallback ${privateTitle} ${secret}` },
+        ],
+      },
+    ],
+  });
+  const privateSection = document.body.querySelector('.msla-token-picker-section');
+  if (privateSection) {
+    privateSection.attributes['data-automation-id'] = privateIdentity;
+    privateSection.attributes.role = privateIdentity;
+  }
 
   const snapshot = runProbe(document, {
     kind: 'designerPanel',
     label: 'response-token-picker-open',
     actionTitle: 'Response',
+    editor: { labels: ['Body'] },
     picker: { sectionLabels: [privateTitle], tokenTitles: ['Missing requested title'] },
   });
   const metadata = buildScreenshotMetadata({
@@ -974,14 +1272,12 @@ function testPickerReadinessDiagnosticsSerializeWithoutRuntimeText(): void {
   assert.ok(!serialized.includes(`connectionkey_${secret.toLowerCase()}`), serialized);
   assert.ok(!serialized.includes(privateIdentity.toLowerCase()), serialized);
   assert.ok(!serialized.includes('privateclientgamma42'), serialized);
-  assert.strictEqual(eventPicker?.strictSectionMatch, true);
-  assert.strictEqual(eventPicker?.looseSectionMatch, true);
+  assert.strictEqual(eventPicker?.strictSectionMatch, false);
+  assert.strictEqual(eventPicker?.looseSectionMatch, false);
   assert.strictEqual(eventPicker?.strictRequestedTitlesMatch, false);
   assert.strictEqual(eventPicker?.looseRequestedTitlesMatch, false);
-  assert.ok(eventPicker?.strictSections?.some((section) => section.headerPresent === true));
-  assert.ok(eventPicker?.strictSections?.some((section) => (section.matchedSectionLabelIndices ?? []).includes(0)));
+  assert.strictEqual(eventPicker?.strictSections?.length, 0);
 }
-
 function testCreateWorkspaceRejectsWrongExactValidationMessage(): void {
   const document = createWorkspaceDocument([
     fieldWithInput({
@@ -2050,6 +2346,170 @@ function designerPanel(options: { title: string; nodeId: string; text: string; f
   ]);
 }
 
+function createAssociatedPickerDocument(options: {
+  actionTitle?: string;
+  nodeId?: string;
+  editorLabel?: string;
+  editorLabelId?: string;
+  dialogLabelId?: string;
+  includeEditor?: boolean;
+  activeSearch?: boolean;
+  hostStyle?: string;
+  layerStyle?: string;
+  layerWrapperStyle?: string;
+  extraText?: string;
+  editorContainerExtraText?: string;
+  sections: Array<{ label: string; tokens: Array<string | { title: string; description?: string }> }>;
+}): {
+  document: FakeDocument;
+  elements: {
+    search: FakeElement;
+    headers: FakeElement[];
+    buttons: FakeElement[];
+    titles: FakeElement[];
+  };
+} {
+  const editorLabel = options.editorLabel ?? 'Body';
+  const editorLabelId = options.editorLabelId ?? 'response-body-label';
+  const editor = new FakeElement(
+    'div',
+    {
+      id: 'response-body-editor',
+      class: 'editor-input',
+      role: 'textbox',
+      contenteditable: 'true',
+      'aria-labelledby': editorLabelId,
+    },
+    [],
+    ''
+  );
+  const editorContainer = new FakeElement(
+    'div',
+    { id: 'msla-tokenpicker-callout-location-response-body', class: 'msla-editor-container' },
+    [
+      new FakeElement('label', { id: editorLabelId }, [], editorLabel),
+      editor,
+      new FakeElement('div', {}, [], options.editorContainerExtraText ?? ''),
+    ]
+  );
+  const selectedPanel = designerPanel({
+    title: options.actionTitle ?? 'Response',
+    nodeId: options.nodeId ?? 'Response',
+    text: editorLabel,
+    fields: options.includeEditor === false ? [] : [editorContainer],
+  });
+  const search = new FakeInputElement('input', {
+    id: 'picker-search',
+    'data-automation-id': 'msla-token-picker-search',
+    class: 'msla-token-picker-search',
+    value: '',
+  });
+  const headers: FakeElement[] = [];
+  const buttons: FakeElement[] = [];
+  const titles: FakeElement[] = [];
+  const sectionElements = options.sections.map((section, sectionIndex) => {
+    const header = new FakeElement('div', { class: 'msla-token-picker-section-header' }, [], section.label);
+    headers.push(header);
+    const optionButtons = section.tokens.map((token, tokenIndex) => {
+      const tokenTitle = typeof token === 'string' ? token : token.title;
+      const tokenDescription = typeof token === 'string' ? '' : (token.description ?? '');
+      const title = new FakeElement('div', { class: 'msla-token-picker-option-title' }, [], tokenTitle);
+      const description = new FakeElement(
+        'div',
+        { class: 'msla-token-picker-option-description', title: tokenDescription },
+        [],
+        tokenDescription
+      );
+      const button = new FakeElement(
+        'button',
+        {
+          class: 'msla-token-picker-section-option',
+          'data-automation-id': `msla-token-picker-section-option-${tokenIndex}`,
+        },
+        [
+          new FakeElement('div', { class: 'msla-token-picker-section-option-text' }, [
+            new FakeElement('div', { class: 'msla-token-picker-option-inner' }, [title, description]),
+          ]),
+        ]
+      );
+      buttons.push(button);
+      titles.push(title);
+      return new FakeElement('li', {}, [button]);
+    });
+    return new FakeElement('section', { class: 'msla-token-picker-section', id: `picker-section-${sectionIndex}` }, [
+      header,
+      new FakeElement('ul', { class: 'msla-token-picker-section-options', 'aria-label': section.label }, optionButtons),
+    ]);
+  });
+  const picker = new FakeElement('div', { class: 'msla-token-picker' }, [
+    new FakeElement('div', { class: 'msla-token-picker-search-container' }, [search]),
+    ...sectionElements,
+  ]);
+  const pickerContainer = new FakeElement('div', { class: 'msla-token-picker-container-v3' }, [picker]);
+  const dialog = new FakeElement('div', { role: 'dialog', 'aria-labelledby': options.dialogLabelId ?? editorLabelId }, [pickerContainer]);
+  const layerContent = new FakeElement('div', { class: 'ms-Layer-content', style: options.layerStyle ?? 'visibility: visible' }, [dialog]);
+  const layerWrapper = new FakeElement('div', { class: 'ms-Layer', style: options.layerWrapperStyle ?? '' }, [layerContent]);
+  const layerHost = new FakeElement('div', { id: 'msla-layer-host', style: options.hostStyle ?? 'visibility: hidden' }, [layerWrapper]);
+  const document = new FakeDocument(
+    new FakeElement('body', {}, [selectedPanel, layerHost, new FakeElement('div', { class: 'docs' }, [], options.extraText ?? '')])
+  );
+  document.activeElement = options.activeSearch === false ? editor : search;
+  applyPickerGeometry({
+    layerHost,
+    layerWrapper,
+    layerContent,
+    dialog,
+    pickerContainer,
+    picker,
+    search,
+    sections: sectionElements,
+    headers,
+    buttons,
+    titles,
+  });
+  return { document, elements: { search, headers, buttons, titles } };
+}
+
+function applyPickerGeometry(elements: {
+  layerHost: FakeElement;
+  layerWrapper: FakeElement;
+  layerContent: FakeElement;
+  dialog: FakeElement;
+  pickerContainer: FakeElement;
+  picker: FakeElement;
+  search: FakeElement;
+  sections: FakeElement[];
+  headers: FakeElement[];
+  buttons: FakeElement[];
+  titles: FakeElement[];
+}): void {
+  setBounds(elements.layerHost, 0, 0, 800, 700);
+  setBounds(elements.layerWrapper, 100, 80, 420, 560);
+  setBounds(elements.layerContent, 100, 80, 420, 560);
+  setBounds(elements.dialog, 100, 80, 420, 560);
+  setBounds(elements.pickerContainer, 100, 80, 420, 560);
+  setBounds(elements.picker, 100, 80, 420, 560);
+  setBounds(elements.search, 120, 100, 360, 32);
+  elements.sections.forEach((section, sectionIndex) => {
+    const sectionTop = 150 + sectionIndex * 130;
+    setBounds(section, 120, sectionTop, 360, 118);
+    setBounds(elements.headers[sectionIndex], 120, sectionTop, 360, 32);
+  });
+  elements.buttons.forEach((button, index) => {
+    const sectionIndex = Math.floor(index / 3);
+    const optionIndex = index % 3;
+    const top = 188 + sectionIndex * 130 + optionIndex * 34;
+    setBounds(button, 130, top, 340, 30);
+    setBounds(elements.titles[index], 140, top + 5, 200, 20);
+  });
+}
+
+function setBounds(element: FakeElement, left: number, top: number, width: number, height: number): void {
+  element.bounds = { left, top, width, height, right: left + width, bottom: top + height };
+  element.offsetWidth = width;
+  element.offsetHeight = height;
+}
+
 function createWorkspaceDocument(fields: FakeElement[]): FakeDocument {
   return new FakeDocument(
     new FakeElement('body', {}, [
@@ -2137,6 +2597,7 @@ class FakeElement {
   scrollWidth = 200;
   scrollHeight = 40;
   scrollTop = 0;
+  isConnected = true;
   bounds?: { left: number; top: number; width: number; height: number; right: number; bottom: number };
 
   constructor(
@@ -2315,9 +2776,10 @@ function getComputedStyleForFakeElement(element?: FakeElement): {
       .filter((declaration): declaration is [string, string] => declaration.length === 2 && declaration[0].length > 0)
   );
   const computedOpacity = element?.attributes['data-computed-opacity'];
+  const inheritedVisibility = element?.parentElement ? getComputedStyleForFakeElement(element.parentElement).visibility : 'visible';
   return {
     display: style.display ?? 'block',
-    visibility: style.visibility ?? 'visible',
+    visibility: style.visibility ?? inheritedVisibility,
     opacity: computedOpacity ?? style.opacity ?? '1',
     overflow: style.overflow ?? 'visible',
     overflowX: style['overflow-x'] ?? style.overflow ?? 'visible',
