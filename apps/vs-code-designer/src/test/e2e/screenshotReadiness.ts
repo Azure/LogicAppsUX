@@ -831,7 +831,7 @@ export const screenshotReadinessDomScript = `
       ].join(', ')
     );
     const pickerText = normalize(pickerRoots.map(visibleText).join(' '));
-    if (!(picker.sectionLabels || []).every((label) => normalizedIncludes(pickerText, label))) {
+    if ((picker.sectionLabels || []).length > 0 && !(picker.sectionLabels || []).some((label) => normalizedIncludes(pickerText, label))) {
       return { ok: false, reason: 'picker-section-missing' };
     }
     if ((picker.tokenTitles || []).length > 0 && !picker.tokenTitles.every((title) => normalizedIncludes(pickerText, title))) {

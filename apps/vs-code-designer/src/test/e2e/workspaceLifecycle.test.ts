@@ -1400,6 +1400,7 @@ async function addRequestTriggerThroughDesigner(cdp: CdpConnection, contextId: n
     'http request',
   ]);
   await waitForDesignerText(cdp, contextId, requestTriggerTitleVariants, 90000, `${label} Request trigger on canvas`);
+  await closeDesignerDetailsPanelThroughDesigner(cdp, contextId, `${label} Request trigger panel`);
   await captureLifecycleScreenshot(`workspace-lifecycle-${label}-request-trigger-added`, {
     expectation: { kind: 'designerCanvas', label, requiredNodes: [requestTriggerTitleVariants] },
     semanticCdp: cdp,
@@ -2237,7 +2238,7 @@ async function selectDynamicContentTokenForParameter(
       label: description,
       actionTitle: responseActionTitle,
       editor: { labels: parameterLabels },
-      picker: { sectionLabels: [sectionLabels[0]] },
+      picker: { sectionLabels },
     },
     semanticCdp: cdp,
     semanticContextId: contextId,
