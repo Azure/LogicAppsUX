@@ -1131,6 +1131,7 @@ async function openDesignerAndCreateWorkflow(
     } else {
       await waitForSavedWorkflowContainsDesignerChanges(createdWorkspace);
     }
+    await closeDesignerDetailsPanelThroughDesigner(designerCdp, contextId, `${createdWorkspace.label} final designer canvas`);
     await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-designer-open`, {
       expectation: {
         kind: 'designerCanvas',
@@ -1422,6 +1423,8 @@ async function addResponseActionThroughDesigner(cdp: CdpEvaluator, contextId: nu
 
   await selectOperationThroughDesigner(cdp, contextId, responseActionTitle, ['response']);
   await waitForDesignerText(cdp, contextId, [responseActionTitle], 90000, `${label} Response action on canvas`);
+  await closeDesignerDetailsPanelThroughDesigner(cdp, contextId, `${label} Response action panel before action-added evidence`);
+  await waitForDesignerText(cdp, contextId, [responseActionTitle], 30000, `${label} Response action card`);
   await captureLifecycleScreenshot(`workspace-lifecycle-${label}-response-action-added`, {
     expectation: { kind: 'designerCanvas', label, requiredNodes: [responseActionTitle] },
     semanticCdp: cdp,
@@ -1454,6 +1457,8 @@ async function addMsnWeatherActionThroughDesigner(cdp: CdpEvaluator, contextId: 
       120000,
       `${label} MSN Weather action panel`
     );
+    await closeDesignerDetailsPanelThroughDesigner(cdp, contextId, `${label} MSN Weather action panel before action-added evidence`);
+    await waitForDesignerText(cdp, contextId, ['Get current weather'], 30000, `${label} MSN Weather action card`);
     await captureLifecycleScreenshot(`workspace-lifecycle-${label}-msn-weather-action-added`, {
       expectation: { kind: 'designerCanvas', label, requiredNodes: ['Get current weather'] },
       semanticCdp: cdp,
@@ -1463,6 +1468,8 @@ async function addMsnWeatherActionThroughDesigner(cdp: CdpEvaluator, contextId: 
   });
 
   await runLifecyclePhase(createdWorkspace, 'MsnWeatherconfigured', async () => {
+    await clickDesignerNodeByTitle(cdp, contextId, 'Get current weather');
+    await waitForDesignerText(cdp, contextId, ['Get current weather', 'Location'], 30000, `${label} MSN Weather action panel`);
     await fillDesignerParameter(cdp, contextId, ['Location', 'location'], msnWeatherLocation, `${label} MSN Weather Location`);
     await captureLifecycleScreenshot(`workspace-lifecycle-${label}-msn-weather-action-configured`, {
       expectation: {

@@ -816,8 +816,7 @@ export const screenshotReadinessDomScript = `
     if (!picker) {
       return { ok: true, reason: 'picker-not-required' };
     }
-    const pickerRoots = visibleElements(
-      [
+    const pickerSelector = [
         '[role="dialog"]',
         '[role="listbox"]',
         '[data-automation-id*="picker"]',
@@ -828,13 +827,77 @@ export const screenshotReadinessDomScript = `
         '.msla-token-picker-section',
         '.msla-token-picker-section-option',
         '[data-automation-id^="msla-token-picker-section-option-"]',
-      ].join(', ')
-    );
+      ].join(', ');
+    const pickerRoots = visibleElements(pickerSelector);
     const pickerText = normalize(pickerRoots.map(visibleText).join(' '));
-    if ((picker.sectionLabels || []).length > 0 && !(picker.sectionLabels || []).some((label) => normalizedIncludes(pickerText, label))) {
+    const loosePickerRoots = Array.from(document.querySelectorAll(pickerSelector)).filter(
+      (element) => !!(element && hasVisibleStyle(element) && (element.offsetWidth || element.offsetHeight || element.getClientRects().length))
+    );
+    const loosePickerText = normalize(loosePickerRoots.map(visibleText).join(' '));
+    const strictSectionMatch =
+      (picker.sectionLabels || []).length === 0 || (picker.sectionLabels || []).some((label) => normalizedIncludes(pickerText, label));
+    const strictRequestedTitlesMatch =
+      (picker.tokenTitles || []).length === 0 || (picker.tokenTitles || []).every((title) => normalizedIncludes(pickerText, title));
+    const looseSectionMatch =
+      (picker.sectionLabels || []).length === 0 || (picker.sectionLabels || []).some((label) => normalizedIncludes(loosePickerText, label));
+    const looseRequestedTitlesMatch =
+      (picker.tokenTitles || []).length === 0 || (picker.tokenTitles || []).every((title) => normalizedIncludes(loosePickerText, title));
+    const summarizeElement = (element) => {
+      const rect = element?.getBoundingClientRect?.();
+      return {
+        tagName: element?.tagName,
+        classFlags: {
+          picker: !!element?.matches?.('.msla-token-picker, [class*="picker"], [class*="Picker"]'),
+          section: !!element?.matches?.('.msla-token-picker-section'),
+          option: !!element?.matches?.('.msla-token-picker-section-option, [data-automation-id^="msla-token-picker-section-option-"]'),
+        },
+        bounds: rect
+          ? {
+              left: Math.round(rect.left),
+              top: Math.round(rect.top),
+              width: Math.round(rect.width),
+              height: Math.round(rect.height),
+            }
+          : undefined,
+      };
+    };
+    const visibleSections = Array.from(document.querySelectorAll('.msla-token-picker-section')).filter(isVisible);
+    const looseSections = Array.from(document.querySelectorAll('.msla-token-picker-section')).filter(
+      (element) => !!(element && hasVisibleStyle(element) && (element.offsetWidth || element.offsetHeight || element.getClientRects().length))
+    );
+    const summarizeSection = (section) => {
+      const header = section.querySelector?.('.msla-token-picker-section-header');
+      const sectionText = normalize(visibleText(section));
+      return {
+        headerPresent: !!header && isVisible(header),
+        matchedSectionLabelIndices: (picker.sectionLabels || [])
+          .map((label, index) => (normalizedIncludes(sectionText, label) ? index : -1))
+          .filter((index) => index >= 0),
+        matchedRequestedTitleIndices: (picker.tokenTitles || [])
+          .map((title, index) => (normalizedIncludes(sectionText, title) ? index : -1))
+          .filter((index) => index >= 0),
+        ...summarizeElement(section),
+      };
+    };
+    details.picker = {
+      expectedSectionLabelCount: (picker.sectionLabels || []).length,
+      expectedRequestedTitleCount: (picker.tokenTitles || []).length,
+      strictRootCount: pickerRoots.length,
+      looseRootCount: loosePickerRoots.length,
+      strictSectionCount: visibleSections.length,
+      looseSectionCount: looseSections.length,
+      strictOptionCount: visibleElements('[data-automation-id^="msla-token-picker-section-option-"], .msla-token-picker-section-option').length,
+      strictSectionMatch,
+      strictRequestedTitlesMatch,
+      looseSectionMatch,
+      looseRequestedTitlesMatch,
+      strictSections: visibleSections.slice(0, 4).map(summarizeSection),
+      looseSections: looseSections.slice(0, 4).map(summarizeSection),
+    };
+    if (!strictSectionMatch) {
       return { ok: false, reason: 'picker-section-missing' };
     }
-    if ((picker.tokenTitles || []).length > 0 && !picker.tokenTitles.every((title) => normalizedIncludes(pickerText, title))) {
+    if (!strictRequestedTitlesMatch) {
       return { ok: false, reason: 'picker-token-missing' };
     }
     return { ok: true, reason: 'picker-visible' };
