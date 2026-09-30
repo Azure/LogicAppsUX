@@ -36,6 +36,7 @@ async function main(): Promise<void> {
   testRuntimeDiagnosticsRedactSensitiveStrings();
   testEarlyMsnWeatherPhaseWiring();
   testDynamicContentPickerOpenAcceptsAlternativeLabels();
+  testDynamicContentPickerEvidenceForwardsTokenTitles();
   await testDynamicContentPickerOpenUsesBoundedEvaluation();
   await testCopilotChatCleanupDoesNotRunDuringPickerEvidenceCapture();
   await testCanvasViewportNormalizationUsesStructuralDiagnosticsAndOwnedControls();
@@ -190,6 +191,14 @@ function testDynamicContentPickerOpenAcceptsAlternativeLabels(): void {
   assert.strictEqual(friendlyOnly.visible, true, JSON.stringify(friendlyOnly));
   assert.strictEqual(internalOnly.visible, true, JSON.stringify(internalOnly));
   assert.strictEqual(neither.visible, false, JSON.stringify(neither));
+}
+
+function testDynamicContentPickerEvidenceForwardsTokenTitles(): void {
+  assert.match(
+    sourceText,
+    /picker:\s*\{\s*sectionLabels,\s*tokenTitles\s*\}/,
+    'Picker-open evidence must forward requested token titles so readiness proves the same field that selection will click'
+  );
 }
 
 async function testDynamicContentPickerOpenUsesBoundedEvaluation(): Promise<void> {
