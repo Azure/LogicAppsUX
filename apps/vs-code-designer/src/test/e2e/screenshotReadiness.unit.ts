@@ -32,6 +32,8 @@ async function main(): Promise<void> {
   testDesignerPanelRejectsAncestorFocusAndPlainTextToken();
   testDesignerPanelRequiresVisiblePickerSectionAndToken();
   testDesignerPanelAcceptsPickerSectionAliases();
+  testDesignerPanelReportsPickerReadinessDiagnostics();
+  testPickerReadinessDiagnosticsSerializeWithoutRuntimeText();
   testCreateWorkspaceRejectsWrongExactValidationMessage();
   testCreateWorkspaceRejectsHiddenValidationMessage();
   testCreateWorkspaceRequiresActualControlValue();
@@ -672,6 +674,116 @@ function testDesignerPanelAcceptsPickerSectionAliases(): void {
   assert.strictEqual(missingRequestedTitle.ready, false, JSON.stringify(missingRequestedTitle));
   assert.ok(neitherAlias.reasonCodes.includes('picker-section-missing'));
   assert.ok(missingRequestedTitle.reasonCodes.includes('picker-token-missing'));
+}
+
+function testDesignerPanelReportsPickerReadinessDiagnostics(): void {
+  const document = new FakeDocument(
+    new FakeElement('body', {}, [
+      designerPanel({ title: 'Response', nodeId: 'Response', text: 'Body' }),
+      new FakeElement('section', { class: 'msla-token-picker-section' }, [
+        new FakeElement('div', { class: 'msla-token-picker-section-header' }, [], 'Get current weather'),
+        new FakeElement('button', { class: 'msla-token-picker-section-option' }, [], 'Body'),
+      ]),
+    ])
+  );
+
+  const snapshot = runProbe(document, {
+    kind: 'designerPanel',
+    label: 'response-token-picker-open',
+    actionTitle: 'Response',
+    picker: { sectionLabels: ['Get_current_weather'], tokenTitles: ['Body', 'Headers'] },
+  });
+  const pickerDetails = snapshot.details?.picker as
+    | {
+        expectedSectionLabelCount?: number;
+        expectedRequestedTitleCount?: number;
+        strictRootCount?: number;
+        looseRootCount?: number;
+        strictSectionMatch?: boolean;
+        looseSectionMatch?: boolean;
+        strictRequestedTitlesMatch?: boolean;
+        looseRequestedTitlesMatch?: boolean;
+        strictSections?: Array<{ headerPresent?: boolean; matchedSectionLabelIndices?: number[]; matchedRequestedTitleIndices?: number[] }>;
+      }
+    | undefined;
+
+  assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
+  assert.ok(snapshot.reasonCodes.includes('picker-section-missing') || snapshot.reasonCodes.includes('picker-token-missing'));
+  assert.strictEqual(pickerDetails?.expectedSectionLabelCount, 1);
+  assert.strictEqual(pickerDetails?.expectedRequestedTitleCount, 2);
+  assert.ok((pickerDetails?.strictRootCount ?? 0) > 0);
+  assert.ok((pickerDetails?.looseRootCount ?? 0) > 0);
+  assert.strictEqual(pickerDetails?.strictSectionMatch, false);
+  assert.strictEqual(pickerDetails?.looseSectionMatch, false);
+  assert.strictEqual(pickerDetails?.strictRequestedTitlesMatch, false);
+  assert.strictEqual(pickerDetails?.looseRequestedTitlesMatch, false);
+  assert.ok(pickerDetails?.strictSections?.some((section) => section.headerPresent === true));
+  assert.ok(pickerDetails?.strictSections?.some((section) => (section.matchedRequestedTitleIndices ?? []).includes(0)));
+}
+
+function testPickerReadinessDiagnosticsSerializeWithoutRuntimeText(): void {
+  const privateTitle = 'Confidential ClientProjectGamma42';
+  const secret = 'SYNTHSECRET123';
+  const privateIdentity = 'PrivateClientGamma42';
+  const document = new FakeDocument(
+    new FakeElement('body', {}, [
+      designerPanel({ title: 'Response', nodeId: 'Response', text: 'Body' }),
+      new FakeElement('section', { class: 'msla-token-picker-section', 'data-automation-id': privateIdentity, role: privateIdentity }, [
+        new FakeElement('div', { class: 'msla-token-picker-section-header' }, [], privateTitle),
+        new FakeElement('button', { class: 'msla-token-picker-section-option' }, [], `Authorization: Bearer ${secret}`),
+        new FakeElement('button', { class: 'msla-token-picker-section-option' }, [], `connectionKey=${secret}`),
+      ]),
+      new FakeElement('section', { class: 'msla-token-picker-section' }, [
+        new FakeElement('button', { class: 'msla-token-picker-section-option' }, [], `No header fallback ${privateTitle} ${secret}`),
+      ]),
+    ])
+  );
+
+  const snapshot = runProbe(document, {
+    kind: 'designerPanel',
+    label: 'response-token-picker-open',
+    actionTitle: 'Response',
+    picker: { sectionLabels: [privateTitle], tokenTitles: ['Missing requested title'] },
+  });
+  const metadata = buildScreenshotMetadata({
+    checkpoint: 'picker-diagnostics',
+    phase: 'designerPanel',
+    classification: 'diagnostic',
+    verdict: 'failed',
+    targetId: 'target',
+    frameId: 'frame',
+    generation: 1,
+    timeoutMs: 15000,
+    elapsedMs: 15000,
+    samples: [snapshot],
+    captureAttempts: 0,
+    events: [{ name: 'readiness-timeout', elapsedMs: 15000, details: snapshot.details }],
+  });
+  const serialized = JSON.stringify(metadata).toLowerCase();
+  const eventPicker = metadata.events?.[0]?.details?.picker as
+    | {
+        strictSectionMatch?: boolean;
+        looseSectionMatch?: boolean;
+        strictRequestedTitlesMatch?: boolean;
+        looseRequestedTitlesMatch?: boolean;
+        strictSections?: Array<{ headerPresent?: boolean; matchedSectionLabelIndices?: number[]; matchedRequestedTitleIndices?: number[] }>;
+      }
+    | undefined;
+
+  assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
+  assert.ok(snapshot.reasonCodes.includes('picker-token-missing'));
+  assert.ok(!serialized.includes(privateTitle.toLowerCase()), serialized);
+  assert.ok(!serialized.includes('confidential_clientprojectgamma42'), serialized);
+  assert.ok(!serialized.includes(secret.toLowerCase()), serialized);
+  assert.ok(!serialized.includes(`connectionkey_${secret.toLowerCase()}`), serialized);
+  assert.ok(!serialized.includes(privateIdentity.toLowerCase()), serialized);
+  assert.ok(!serialized.includes('privateclientgamma42'), serialized);
+  assert.strictEqual(eventPicker?.strictSectionMatch, true);
+  assert.strictEqual(eventPicker?.looseSectionMatch, true);
+  assert.strictEqual(eventPicker?.strictRequestedTitlesMatch, false);
+  assert.strictEqual(eventPicker?.looseRequestedTitlesMatch, false);
+  assert.ok(eventPicker?.strictSections?.some((section) => section.headerPresent === true));
+  assert.ok(eventPicker?.strictSections?.some((section) => (section.matchedSectionLabelIndices ?? []).includes(0)));
 }
 
 function testCreateWorkspaceRejectsWrongExactValidationMessage(): void {
