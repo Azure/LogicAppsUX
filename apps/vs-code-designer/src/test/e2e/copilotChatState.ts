@@ -63,7 +63,12 @@ export function buildCopilotChatStateExpression(): string {
       }
       const attributeIdentities = identityValues(element);
       return attributeIdentities.some(
-        (value) => value === 'github copilot chat' || value === 'github.copilot.chat' || value === 'github-copilot-chat'
+        (value) =>
+          value === 'github copilot chat' ||
+          value === 'github.copilot.chat' ||
+          value === 'github-copilot-chat' ||
+          value === 'workbench.panel.chat' ||
+          value === 'workbench.panel.chat.view.copilot'
       );
     };
     const ownerKind = (owner) => {
@@ -84,11 +89,17 @@ export function buildCopilotChatStateExpression(): string {
       }
       return 'unknown';
     };
+    const isIndependentViewBoundary = (element) =>
+      element instanceof HTMLElement &&
+      !isGitHubCopilotChat(element) &&
+      (normalize(element.getAttribute('data-view-id')) || normalize(element.getAttribute('id')));
     const summarize = (owner) => {
       const rect = owner?.getBoundingClientRect?.();
       const ownedMatches = new Set(matches.filter((match) => owner === match || owner?.contains?.(match)));
       const isChatOwned = (element) =>
-        Array.from(ownedMatches).some((match) => element === match || match.contains?.(element) || element.contains?.(match));
+        Array.from(ownedMatches).some(
+          (match) => element === match || element.contains?.(match) || (!isIndependentViewBoundary(element) && match.contains?.(element))
+        );
       const visibleViewBoundaries = Array.from(
         owner?.querySelectorAll?.('[data-view-id], [id], [role="tree"], [role="region"], [aria-label]') || []
       ).filter((element) => element instanceof HTMLElement && isVisible(element) && !isGitHubCopilotChat(element));
