@@ -3,7 +3,7 @@ import type { FieldLabels } from './createWorkspaceTypes';
 import { containsIgnoreCase } from './testUtils';
 
 export type CdpEvaluator = {
-  evaluate<T>(contextId: number | undefined, expression: string): Promise<T>;
+  evaluate<T>(contextId: number | undefined, expression: string, options?: { timeoutMs?: number }): Promise<T>;
   send(method: string, params?: Record<string, unknown>): Promise<unknown>;
 };
 

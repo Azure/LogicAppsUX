@@ -32,7 +32,6 @@ import {
 } from './cdpFormHelpers';
 import type { CodefulControlVariant, FieldLabels } from './createWorkspaceTypes';
 import { assertNoDialogAttempts, installDialogGuard, withAllowedDialogResponses } from './dialogGuard';
-import { waitForLogicAppsExtensionStartupReady } from './extensionStartupReadiness';
 import {
   assertMsnWeatherLocalSettings,
   canUseInteractiveMsnWeatherAzureSettings,
@@ -235,10 +234,6 @@ suite('Generated Workspace Designer Lifecycle Tests', () => {
     const extension = vscode.extensions.getExtension(logicAppsExtensionId);
     assert.ok(extension, `Expected ${logicAppsExtensionId} to be loaded from the extension development path`);
     await extension.activate();
-    await waitForLogicAppsExtensionStartupReady({
-      label: 'Workspace lifecycle suite setup',
-      requiredCommands: [createWorkspaceCommand, openDesignerCommand],
-    });
   });
 
   suiteTeardown(async () => {
@@ -490,10 +485,6 @@ function sanitizeDiagnosticName(value: string): string {
 }
 
 async function openCreateWorkspaceContext(label: string): Promise<{ cdp: CdpEvaluator & { dispose(): void }; contextId: number }> {
-  await waitForLogicAppsExtensionStartupReady({
-    label: `${label} before Create Workspace command`,
-    requiredCommands: [createWorkspaceCommand],
-  });
   await closeWebviewTabs(createWorkspaceViewType);
   const tabsBefore = getWebviewTabs(createWorkspaceViewType).length;
 
@@ -987,10 +978,6 @@ async function openDesignerAndCreateWorkflow(
   const useAzureConnectors = options.useAzureConnectors === true;
 
   await handleDotnetInstallToolPromptIfVisible('before openDesigner command');
-  await waitForLogicAppsExtensionStartupReady({
-    label: `${createdWorkspace.label} before open designer command`,
-    requiredCommands: [openDesignerCommand],
-  });
   console.log(
     `[workspace-lifecycle] ${createdWorkspace.label}: opening designer for ${createdWorkspace.workflowJsonPath}. tabsBefore=${tabsBefore}. tabs=${describeOpenTabs()}`
   );
@@ -1458,12 +1445,6 @@ async function addMsnWeatherActionThroughDesigner(cdp: CdpEvaluator, contextId: 
 
   await runLifecyclePhase(createdWorkspace, 'MsnWeatherinserted', async () => {
     await selectOperationThroughDesigner(cdp, contextId, 'Get current weather', ['current weather']);
-    await captureLifecycleScreenshot(`workspace-lifecycle-${label}-msn-weather-action-added`, {
-      expectation: { kind: 'designerCanvas', label, requiredNodes: ['Get current weather'] },
-      semanticCdp: cdp,
-      semanticContextId: contextId,
-    });
-    console.log(`[workspace-lifecycle] ${label}: milestone azure-action-added action="Get current weather"`);
     await handleMsnWeatherConnectionThroughDesigner(cdp, contextId, label);
     await waitForDesignerText(
       cdp,
@@ -1472,6 +1453,12 @@ async function addMsnWeatherActionThroughDesigner(cdp: CdpEvaluator, contextId: 
       120000,
       `${label} MSN Weather action panel`
     );
+    await captureLifecycleScreenshot(`workspace-lifecycle-${label}-msn-weather-action-added`, {
+      expectation: { kind: 'designerCanvas', label, requiredNodes: ['Get current weather'] },
+      semanticCdp: cdp,
+      semanticContextId: contextId,
+    });
+    console.log(`[workspace-lifecycle] ${label}: milestone azure-action-added action="Get current weather"`);
   });
 
   await runLifecyclePhase(createdWorkspace, 'MsnWeatherconfigured', async () => {
@@ -1634,14 +1621,30 @@ async function hasDesignerDetailsPanelThroughDesigner(cdp: CdpEvaluator, context
 
 async function handleMsnWeatherConnectionThroughDesigner(cdp: CdpEvaluator, contextId: number, label: string): Promise<void> {
   let lastState = '';
+  const startedAt = Date.now();
+  let pollCount = 0;
+  let clickCount = 0;
   try {
     await waitUntil(
       async () => {
         const state = await getDesignerConnectionOrParameterState(cdp, contextId);
-        const stateText = JSON.stringify(state);
+        pollCount++;
+        const safeState = sanitizeRunDiagnostic({
+          ...state,
+          textTail: redactDiagnosticString(state.text).slice(-1200),
+          textLength: state.text.length,
+          text: undefined,
+        });
+        const stateText = JSON.stringify(safeState);
         if (stateText !== lastState) {
           lastState = stateText;
-          console.log(`[workspace-lifecycle] ${label}: MSN Weather designer state ${stateText.slice(0, 1000)}`);
+          console.log(
+            `[workspace-lifecycle] ${label}: MSN Weather designer state ${JSON.stringify({
+              elapsedMs: Date.now() - startedAt,
+              pollCount,
+              state: safeState,
+            }).slice(0, 2500)}`
+          );
         }
 
         if (state.hasLocationParameter) {
@@ -1649,6 +1652,14 @@ async function handleMsnWeatherConnectionThroughDesigner(cdp: CdpEvaluator, cont
         }
 
         if (state.actionPoint) {
+          clickCount++;
+          console.log(
+            `[workspace-lifecycle] ${label}: MSN Weather connection action click ${JSON.stringify({
+              elapsedMs: Date.now() - startedAt,
+              clickCount,
+              actionSummary: sanitizeRunDiagnostic(state.actionSummary),
+            })}`
+          );
           await clickPoint(cdp, state.actionPoint);
           await new Promise((resolve) => setTimeout(resolve, 1000));
           return false;
@@ -1660,11 +1671,38 @@ async function handleMsnWeatherConnectionThroughDesigner(cdp: CdpEvaluator, cont
       `${label} MSN Weather connection to be selected or created through designer`
     );
   } catch (error) {
+    await logMsnWeatherConnectionFailureDiagnostics(label, startedAt, pollCount, clickCount, lastState).catch((diagnosticsError) =>
+      console.log(
+        `[workspace-lifecycle] ${label}: MSN Weather connection diagnostics failed: ${redactDiagnosticString(
+          diagnosticsError instanceof Error ? diagnosticsError.message : String(diagnosticsError)
+        )}`
+      )
+    );
     if (error instanceof Error) {
       error.message = `${error.message}. Last state: ${lastState}`;
       throw error;
     }
     throw error;
+  }
+}
+
+async function logMsnWeatherConnectionFailureDiagnostics(
+  label: string,
+  startedAt: number,
+  pollCount: number,
+  clickCount: number,
+  lastState: string
+): Promise<void> {
+  console.log(
+    `[workspace-lifecycle][msn-weather][connection-failure] ${label} summary=${JSON.stringify({
+      elapsedMs: Date.now() - startedAt,
+      pollCount,
+      clickCount,
+      lastState: tryParseJsonForDiagnostics(lastState),
+    })}`
+  );
+  for (const log of findRelevantVsCodeLogFiles().slice(-12)) {
+    console.log(`[workspace-lifecycle][msn-weather][connection-failure] logTail ${log}:\n${redactDiagnosticString(tailFile(log, 6000))}`);
   }
 }
 
@@ -2103,6 +2141,7 @@ async function selectDynamicContentTokenForParameter(
   sourceAction: string
 ): Promise<void> {
   const editorPoint = await getDesignerParameterEditorPoint(cdp, contextId, parameterLabels, description);
+  await logDynamicContentState(cdp, contextId, `${description} before editor click`);
   await clickPoint(cdp, editorPoint);
   const focusedState = await getDesignerElementStateAtPoint(cdp, contextId, editorPoint);
   console.log(`[workspace-lifecycle] Focused ${description} editor: ${JSON.stringify(focusedState).slice(0, 1000)}`);
@@ -2117,10 +2156,26 @@ async function selectDynamicContentTokenForParameter(
     semanticContextId: contextId,
   });
 
-  const entryPoint = await cdp.evaluate<{ ok: boolean; reason?: string; point?: { x: number; y: number }; text?: string }>(
+  const entryPoint = await cdp.evaluate<{
+    ok: boolean;
+    reason?: string;
+    point?: { x: number; y: number };
+    text?: string;
+    rect?: unknown;
+    viewport?: unknown;
+    visibleIntersection?: unknown;
+    hitTest?: unknown;
+    owner?: unknown;
+  }>(
     contextId,
     `(() => {
       const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
+      const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim();
+      const summarize = (element) => ({
+        tagName: element?.tagName,
+        dataAutomationId: element?.getAttribute?.('data-automation-id'),
+        className: typeof element?.className === 'string' ? element.className.slice(0, 180) : '',
+      });
       const candidates = Array.from(document.querySelectorAll('[data-automation-id="msla-token-picker-entrypoint-button-dynamic-content"]'))
         .filter(isVisible);
       const button = candidates.at(-1);
@@ -2130,16 +2185,52 @@ async function selectDynamicContentTokenForParameter(
 
       button.scrollIntoView({ block: 'center', inline: 'center' });
       const rect = button.getBoundingClientRect();
-      return { ok: true, point: { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }, text: button.textContent || button.getAttribute('aria-label') || '' };
+      const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+      const clippedRect = {
+        left: Math.max(0, Math.round(rect.left)),
+        top: Math.max(0, Math.round(rect.top)),
+        right: Math.min(window.innerWidth, Math.round(rect.right)),
+        bottom: Math.min(window.innerHeight, Math.round(rect.bottom)),
+      };
+      const visibleIntersection = {
+        left: clippedRect.left,
+        top: clippedRect.top,
+        width: Math.max(0, clippedRect.right - clippedRect.left),
+        height: Math.max(0, clippedRect.bottom - clippedRect.top),
+      };
+      const hit = document.elementFromPoint(point.x, point.y);
+      const ownerPanel = button.closest('.msla-panel-layout, [id^="msla-node-details-panel-"], [role="tabpanel"], [class*="panel"]');
+      return {
+        ok: true,
+        point,
+        rect: {
+          left: Math.round(rect.left),
+          top: Math.round(rect.top),
+          width: Math.round(rect.width),
+          height: Math.round(rect.height),
+          right: Math.round(rect.right),
+          bottom: Math.round(rect.bottom),
+        },
+        viewport: { width: window.innerWidth, height: window.innerHeight },
+        visibleIntersection,
+        hitTest: { containsButton: hit === button || button.contains(hit), element: summarize(hit) },
+        owner: summarize(ownerPanel),
+      };
     })()`
   );
   assert.ok(
     entryPoint.ok && entryPoint.point,
-    `Expected dynamic-content picker button for ${description}. Reason=${entryPoint.reason} text=${entryPoint.text?.slice(0, 1000)}`
+    `Expected dynamic-content picker button for ${description}. Reason=${entryPoint.reason} text=${redactDiagnosticString(entryPoint.text ?? '').slice(0, 1000)}`
   );
 
+  console.log(
+    `[workspace-lifecycle][dynamic-content] ${description} entrypoint dispatch: ${JSON.stringify(sanitizeRunDiagnostic(entryPoint)).slice(0, 2000)}`
+  );
+  await logDynamicContentState(cdp, contextId, `${description} before entrypoint click`);
   await clickPoint(cdp, entryPoint.point);
+  await logDynamicContentState(cdp, contextId, `${description} after entrypoint click`);
   await waitForDynamicContentPickerOpen(cdp, contextId, sectionLabels, entryPoint.point, description);
+  await logDynamicContentState(cdp, contextId, `${description} before picker-open evidence`);
   await captureLifecycleScreenshot(`workspace-lifecycle-${description.replace(/\W+/g, '-').toLowerCase()}-picker-open`, {
     expectation: {
       kind: 'designerPanel',
@@ -2150,6 +2241,7 @@ async function selectDynamicContentTokenForParameter(
     },
     semanticCdp: cdp,
     semanticContextId: contextId,
+    skipNotificationHousekeeping: true,
   });
   const selectedTokenText = await selectDynamicContentToken(cdp, contextId, sectionLabels, tokenTitles, description);
   console.log(`[workspace-lifecycle] Selected dynamic-content token for ${description}: ${selectedTokenText}`);
@@ -2220,56 +2312,96 @@ async function waitForDynamicContentPickerOpen(
   description: string
 ): Promise<void> {
   const normalizedSectionLabels = sectionLabels.map((label) => label.toLowerCase());
+  const timeoutMs = 30000;
+  const deadline = Date.now() + timeoutMs;
   let lastState = '';
-  let lastRetryClickAt = 0;
 
-  await waitUntil(
-    async () => {
+  while (Date.now() < deadline) {
+    try {
       const state = await cdp.evaluate<{
         visible: boolean;
         text?: string;
         sectionCount?: number;
         pickerRootCount?: number;
         entryPointVisible?: boolean;
-      }>(
-        contextId,
-        `(() => {
-          const sectionLabels = ${JSON.stringify(normalizedSectionLabels)};
-          const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim().toLowerCase();
-          const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
-          const sections = Array.from(document.querySelectorAll('.msla-token-picker-section, [data-automation-id^="msla-token-picker-section-option-"]'))
-            .filter(isVisible);
-          const pickerRoots = Array.from(document.querySelectorAll(
-            '[role="dialog"], [role="listbox"], [data-automation-id*="picker"], [data-testid*="picker"], [class*="picker"], [class*="Picker"], .msla-token-picker, .msla-token-picker-section'
-          )).filter(isVisible);
-          const text = normalize([...pickerRoots, ...sections].map((element) => element.textContent || '').join(' '));
-          const entryPoint = Array.from(document.querySelectorAll('[data-automation-id="msla-token-picker-entrypoint-button-dynamic-content"]')).some(isVisible);
-          return {
-            visible: sectionLabels.every((label) => text.includes(label)),
-            text: text.slice(0, 1000),
-            sectionCount: sections.length,
-            pickerRootCount: pickerRoots.length,
-            entryPointVisible: entryPoint,
-          };
-        })()`
-      );
+        active?: unknown;
+      }>(contextId, buildDynamicContentPickerOpenExpression(normalizedSectionLabels), { timeoutMs: getRemainingTimeoutMs(deadline, 1000) });
 
-      lastState = JSON.stringify(state).slice(0, 1200);
+      lastState = redactDiagnosticString(JSON.stringify(state)).slice(0, 1200);
       if (state.visible) {
-        return true;
+        return;
       }
+    } catch (error) {
+      lastState = redactDiagnosticString(String(error)).slice(0, 1200);
+    }
 
-      const now = Date.now();
-      if (state.entryPointVisible && !state.pickerRootCount && now - lastRetryClickAt > 2000) {
-        lastRetryClickAt = now;
-        await clickPoint(cdp, entryPoint);
-      }
+    await new Promise((resolve) => setTimeout(resolve, Math.min(500, getRemainingTimeoutMs(deadline, 500))));
+  }
 
-      return false;
-    },
-    30000,
-    `dynamic-content picker for ${description}. Last state: ${lastState}`
+  assert.fail(`Timed out waiting for dynamic-content picker for ${description}. Last state: ${lastState}`);
+}
+
+function buildDynamicContentPickerOpenExpression(normalizedSectionLabels: string[]): string {
+  return `(() => {
+    const sectionLabels = ${JSON.stringify(normalizedSectionLabels)};
+    const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim().toLowerCase();
+    const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
+    const sections = Array.from(document.querySelectorAll('.msla-token-picker-section, [data-automation-id^="msla-token-picker-section-option-"]'))
+      .filter(isVisible);
+    const pickerRoots = Array.from(document.querySelectorAll(
+      '[role="dialog"], [role="listbox"], [data-automation-id*="picker"], [data-testid*="picker"], [class*="picker"], [class*="Picker"], .msla-token-picker, .msla-token-picker-section'
+    )).filter(isVisible);
+    const text = normalize([...pickerRoots, ...sections].map((element) => element.textContent || '').join(' '));
+    const entryPoint = Array.from(document.querySelectorAll('[data-automation-id="msla-token-picker-entrypoint-button-dynamic-content"]')).some(isVisible);
+    const active = document.activeElement;
+    return {
+      visible: sectionLabels.some((label) => text.includes(label)),
+      text: text.slice(0, 1000),
+      sectionCount: sections.length,
+      pickerRootCount: pickerRoots.length,
+      entryPointVisible: entryPoint,
+      active: {
+        tagName: active?.tagName,
+        text: normalize(active?.textContent || '').slice(0, 200),
+        ariaLabel: active?.getAttribute?.('aria-label'),
+        dataAutomationId: active?.getAttribute?.('data-automation-id'),
+        className: typeof active?.className === 'string' ? active.className.slice(0, 160) : '',
+      },
+    };
+  })()`;
+}
+
+async function logDynamicContentState(cdp: CdpEvaluator, contextId: number, label: string): Promise<void> {
+  const state = await cdp.evaluate<unknown>(
+    contextId,
+    `(() => {
+      const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim();
+      const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
+      const summarize = (element) => ({
+        tagName: element?.tagName,
+        text: normalize(element?.textContent || '').slice(0, 240),
+        ariaLabel: element?.getAttribute?.('aria-label'),
+        dataAutomationId: element?.getAttribute?.('data-automation-id'),
+        className: typeof element?.className === 'string' ? element.className.slice(0, 180) : '',
+      });
+      const pickerRoots = Array.from(document.querySelectorAll(
+        '[role="dialog"], [role="listbox"], [data-automation-id*="picker"], [data-testid*="picker"], [class*="picker"], [class*="Picker"], .msla-token-picker, .msla-token-picker-section'
+      )).filter(isVisible);
+      const sections = Array.from(document.querySelectorAll('.msla-token-picker-section, [data-automation-id^="msla-token-picker-section-option-"]')).filter(isVisible);
+      const entrypoints = Array.from(document.querySelectorAll('[data-automation-id="msla-token-picker-entrypoint-button-dynamic-content"]')).filter(isVisible);
+      return {
+        active: summarize(document.activeElement),
+        entrypointCount: entrypoints.length,
+        pickerRootCount: pickerRoots.length,
+        sectionCount: sections.length,
+        pickerText: normalize(pickerRoots.map((element) => element.textContent || '').join(' ')).slice(0, 1000),
+        entrypoints: entrypoints.slice(-3).map(summarize),
+        sections: sections.slice(0, 8).map(summarize),
+      };
+    })()`,
+    { timeoutMs: 2000 }
   );
+  console.log(`[workspace-lifecycle][dynamic-content] ${label}: ${redactDiagnosticString(JSON.stringify(state)).slice(0, 2000)}`);
 }
 
 async function selectDynamicContentToken(
@@ -2471,12 +2603,15 @@ async function getDesignerConnectionOrParameterState(
   hasLocationParameter: boolean;
   hasActionOnCanvas: boolean;
   actionPoint?: { x: number; y: number };
+  actionSummary?: { role?: string | null; dataAutomationId?: string | null; className?: string; label: string };
   text: string;
   candidates: string[];
 }> {
-  return cdp.evaluate(
-    contextId,
-    `(() => {
+  return cdp.evaluate(contextId, buildDesignerConnectionOrParameterStateExpression());
+}
+
+function buildDesignerConnectionOrParameterStateExpression(): string {
+  return `(() => {
       const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim();
       const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
       const bodyText = normalize(document.body?.innerText || '');
@@ -2500,38 +2635,114 @@ async function getDesignerConnectionOrParameterState(
         '.msla-panel-root-CreateConnection button',
         '.msla-connections-panel-body button',
       ];
-      const actionTexts = ['Create new', 'Create', 'Sign in', 'Connect', 'Use this connection', 'Select', 'MSN Weather', 'msnweather'];
+      const exactConnectionActionTexts = ['Create connection', 'Sign in', 'Connect', 'Use this connection', 'Select'];
+      const connectorActionTexts = ['MSN Weather', 'msnweather'];
       const candidates = clickableSelectors
         .flatMap((selector) => Array.from(document.querySelectorAll(selector)))
         .filter(isVisible)
         .slice(0, 20)
         .map((element) => normalize(element.textContent || element.getAttribute('aria-label') || element.getAttribute('data-automation-id') || ''));
+      const nearestRecognizedOwner = (element) => {
+        let current = element instanceof HTMLElement ? element : undefined;
+        while (current instanceof HTMLElement) {
+          const identity = normalize([
+            current.className,
+            current.id,
+            current.getAttribute('data-automation-id'),
+            current.getAttribute('aria-label'),
+            current.getAttribute('role'),
+          ].join(' ')).toLowerCase();
+          if (identity.includes('connection') || identity.includes('connector')) {
+            return 'connection';
+          }
+          if (
+            identity.includes('workspace') ||
+            identity.includes('unit-test') ||
+            identity.includes('unit test') ||
+            identity.includes('test-project') ||
+            identity.includes('test project') ||
+            identity.includes('folder') ||
+            identity.includes('function-app') ||
+            identity.includes('function app') ||
+            identity.includes('logic-app') ||
+            identity.includes('logic app') ||
+            identity.includes('project')
+          ) {
+            return 'conflicting';
+          }
+          current = current.parentElement;
+        }
+        return undefined;
+      };
+      const isConnectionScoped = (element) => nearestRecognizedOwner(element) === 'connection';
+      const isExcludedCreateAction = (text) => /unit test|test project|workspace|function app|logic app/i.test(text);
+      const isCreateLikeAction = (text) => {
+        const normalized = text.toLowerCase();
+        return normalized === 'create' || normalized === 'create new' || normalized === 'create new connection';
+      };
+      const summarizeAction = (element, label) => ({
+        role: element.getAttribute('role'),
+        dataAutomationId: element.getAttribute('data-automation-id'),
+        className: typeof element.className === 'string' ? element.className.slice(0, 160) : '',
+        label: label.slice(0, 160),
+      });
+      const actionForElement = (element, label) => {
+        element.scrollIntoView({ block: 'center', inline: 'center' });
+        const rect = element.getBoundingClientRect();
+        return {
+          hasLocationParameter,
+          hasActionOnCanvas,
+          actionPoint: { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 },
+          actionSummary: summarizeAction(element, label),
+          text: bodyText,
+          candidates,
+        };
+      };
 
-      for (const expected of actionTexts) {
+      const scopedCreateElement = clickableSelectors
+        .flatMap((selector) => Array.from(document.querySelectorAll(selector)))
+        .filter(isVisible)
+        .find((candidate) => {
+          const text = normalize(candidate.textContent || candidate.getAttribute('aria-label') || candidate.getAttribute('data-automation-id') || '');
+          return isCreateLikeAction(text) && isConnectionScoped(candidate) && !isExcludedCreateAction(text);
+        });
+      if (scopedCreateElement instanceof HTMLElement) {
+        const label = normalize(scopedCreateElement.textContent || scopedCreateElement.getAttribute('aria-label') || scopedCreateElement.getAttribute('data-automation-id') || '');
+        return actionForElement(scopedCreateElement, label);
+      }
+
+      for (const expected of exactConnectionActionTexts) {
         const lowerExpected = expected.toLowerCase();
         const element = clickableSelectors
           .flatMap((selector) => Array.from(document.querySelectorAll(selector)))
           .filter(isVisible)
           .find((candidate) => {
             const text = normalize(candidate.textContent || candidate.getAttribute('aria-label') || candidate.getAttribute('data-automation-id') || '').toLowerCase();
-            return text.includes(lowerExpected);
+            return text === lowerExpected && isConnectionScoped(candidate);
           });
         if (element instanceof HTMLElement) {
-          element.scrollIntoView({ block: 'center', inline: 'center' });
-          const rect = element.getBoundingClientRect();
-          return {
-            hasLocationParameter,
-            hasActionOnCanvas,
-            actionPoint: { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 },
-            text: bodyText,
-            candidates,
-          };
+          const label = normalize(element.textContent || element.getAttribute('aria-label') || element.getAttribute('data-automation-id') || '');
+          return actionForElement(element, label);
+        }
+      }
+
+      for (const expected of connectorActionTexts) {
+        const lowerExpected = expected.toLowerCase();
+        const element = clickableSelectors
+          .flatMap((selector) => Array.from(document.querySelectorAll(selector)))
+          .filter(isVisible)
+          .find((candidate) => {
+            const text = normalize(candidate.textContent || candidate.getAttribute('aria-label') || candidate.getAttribute('data-automation-id') || '').toLowerCase();
+            return text.includes(lowerExpected) && isConnectionScoped(candidate);
+          });
+        if (element instanceof HTMLElement) {
+          const label = normalize(element.textContent || element.getAttribute('aria-label') || element.getAttribute('data-automation-id') || '');
+          return actionForElement(element, label);
         }
       }
 
       return { hasLocationParameter, hasActionOnCanvas, text: bodyText, candidates };
-    })()`
-  );
+    })()`;
 }
 
 async function fillDesignerParameter(
@@ -5376,6 +5587,9 @@ async function clickWizardButton(cdp: CdpEvaluator, contextId: number, buttonTex
 
   assert.strictEqual(clickResult.ok, true, clickResult.reason ?? `Failed to click "${buttonText}" button. Text: ${clickResult.text ?? ''}`);
   assert.ok(clickResult.point, `Failed to locate "${buttonText}" button click point.`);
+  await dismissWorkbenchNotifications().catch((error) =>
+    console.warn(`[workspace-lifecycle] Unable to dismiss workbench notifications before clicking "${buttonText}": ${String(error)}`)
+  );
   await clickPoint(cdp, clickResult.point);
 }
 
@@ -5621,10 +5835,12 @@ async function handleWorkbenchPrompts(prompts: WorkbenchPrompt[], timeoutMs = 20
 }
 
 async function dismissWorkbenchNotifications(): Promise<void> {
-  await vscode.commands.executeCommand('notifications.hideToasts');
   const cdp = await connectToVsCodeWorkbenchCdp({ activate: false });
   try {
-    for (let attempt = 0; attempt < 4; attempt++) {
+    const deadline = Date.now() + 2500;
+    let quietSince: number | undefined;
+    while (Date.now() < deadline) {
+      await vscode.commands.executeCommand('notifications.hideToasts');
       const point = await cdp.evaluate<{ x: number; y: number } | undefined>(
         undefined,
         `(() => {
@@ -5651,9 +5867,15 @@ async function dismissWorkbenchNotifications(): Promise<void> {
       );
 
       if (!point) {
-        return;
+        quietSince ??= Date.now();
+        if (Date.now() - quietSince >= 750) {
+          return;
+        }
+        await new Promise((resolve) => setTimeout(resolve, 150));
+        continue;
       }
 
+      quietSince = undefined;
       await clickPoint(cdp, point);
       await new Promise((resolve) => setTimeout(resolve, 250));
     }
@@ -5693,6 +5915,7 @@ async function captureLifecycleScreenshot(
     semanticContextId?: number;
     diagnostic?: boolean;
     activeTabText?: string[];
+    skipNotificationHousekeeping?: boolean;
   } = {}
 ): Promise<void> {
   if (options.diagnostic) {
@@ -5703,7 +5926,7 @@ async function captureLifecycleScreenshot(
     });
     return;
   }
-  if (options.semanticCdp || options.expectation?.kind === 'createWorkspace') {
+  if (!options.skipNotificationHousekeeping && (options.semanticCdp || options.expectation?.kind === 'createWorkspace')) {
     await dismissWorkbenchNotifications().catch((error) =>
       console.warn(`[workspace-lifecycle] Unable to dismiss workbench notifications before ${name}: ${String(error)}`)
     );
@@ -5795,6 +6018,10 @@ async function waitUntil(predicate: () => boolean | Promise<boolean>, timeoutMs:
   }
 
   assert.fail(`Timed out waiting for ${description}${lastError ? `. Last error: ${String(lastError)}` : ''}`);
+}
+
+function getRemainingTimeoutMs(deadline: number, capMs: number): number {
+  return Math.max(1, Math.min(capMs, deadline - Date.now()));
 }
 
 async function withTimeout<T>(promise: Thenable<T>, timeoutMs: number, description: string): Promise<T> {

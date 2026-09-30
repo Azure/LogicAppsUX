@@ -18,6 +18,10 @@ const runtimeFunctionNames = new Set([
   'isSensitiveDiagnosticKey',
   'redactDiagnosticString',
   'parseListResponse',
+  'waitForDynamicContentPickerOpen',
+  'buildDynamicContentPickerOpenExpression',
+  'buildDesignerConnectionOrParameterStateExpression',
+  'getRemainingTimeoutMs',
 ]);
 
 async function main(): Promise<void> {
@@ -27,6 +31,9 @@ async function main(): Promise<void> {
   testRuntimeDiagnosticsRedactSensitiveSubtrees();
   testRuntimeDiagnosticsRedactSensitiveStrings();
   testEarlyMsnWeatherPhaseWiring();
+  testDynamicContentPickerOpenAcceptsAlternativeLabels();
+  await testDynamicContentPickerOpenUsesBoundedEvaluation();
+  testDesignerConnectionActionExpressionScopesCreateActions();
   console.log('[workspaceLifecycleDiagnostics.unit] all tests passed');
 }
 
@@ -48,6 +55,8 @@ function loadRuntimeHarness(status: string, options: { malformedActions?: boolea
     exports: exported,
     assert,
     console: { log: (line: string) => calls.logs.push(line) },
+    setTimeout,
+    clearTimeout,
     managementBaseUrl: 'http://localhost:7071/management',
     apiVersion: '2018-11-01',
     getOverviewRunStatus: async () => ({ status, runName, text: `${runName} ${status}` }),
@@ -100,6 +109,245 @@ function loadRuntimeHarness(status: string, options: { malformedActions?: boolea
   });
 
   return { exported, calls, workflowName, runName };
+}
+
+function testDynamicContentPickerOpenAcceptsAlternativeLabels(): void {
+  const { exported } = loadRuntimeHarness('Succeeded');
+  const expression = exported.buildDynamicContentPickerOpenExpression(['get current weather', 'get_current_weather']);
+  const friendlyOnly = runPickerExpression(expression, 'Get current weather Body');
+  const internalOnly = runPickerExpression(expression, 'Get_current_weather Body');
+  const neither = runPickerExpression(expression, 'Different action Body');
+
+  assert.strictEqual(friendlyOnly.visible, true, JSON.stringify(friendlyOnly));
+  assert.strictEqual(internalOnly.visible, true, JSON.stringify(internalOnly));
+  assert.strictEqual(neither.visible, false, JSON.stringify(neither));
+}
+
+async function testDynamicContentPickerOpenUsesBoundedEvaluation(): Promise<void> {
+  const { exported } = loadRuntimeHarness('Succeeded');
+  let calls = 0;
+  const neverResolvingCdp = {
+    evaluate: (_contextId: number | undefined, _expression: string, options?: { timeoutMs?: number }) => {
+      calls++;
+      assert.ok((options?.timeoutMs ?? 0) > 0, 'Expected bounded picker evaluation timeout');
+      return new Promise((_resolve, reject) =>
+        setTimeout(() => reject(new Error('synthetic picker RPC timeout')), options?.timeoutMs ?? 1)
+      );
+    },
+  };
+
+  await assert.rejects(
+    exported.waitForDynamicContentPickerOpen(
+      neverResolvingCdp,
+      1,
+      ['Get current weather', 'Get_current_weather'],
+      { x: 1, y: 1 },
+      'unit picker'
+    ),
+    /Timed out waiting for dynamic-content picker/
+  );
+  assert.ok(calls > 0, 'Expected picker poll to execute');
+
+  let healthyCalls = 0;
+  const healthyDelayedCdp = {
+    evaluate: async (_contextId: number | undefined, expression: string, options?: { timeoutMs?: number }) => {
+      assert.ok((options?.timeoutMs ?? 0) > 0, 'Expected bounded healthy picker evaluation timeout');
+      healthyCalls++;
+      return runPickerExpression(expression, healthyCalls > 1 ? 'Get current weather Body' : '');
+    },
+  };
+
+  await exported.waitForDynamicContentPickerOpen(
+    healthyDelayedCdp,
+    1,
+    ['Get current weather', 'Get_current_weather'],
+    { x: 1, y: 1 },
+    'unit picker'
+  );
+  assert.ok(healthyCalls > 1, 'Expected healthy delayed picker to poll until visible');
+}
+
+function runPickerExpression(expression: string, pickerText: string): { visible: boolean; text?: string } {
+  const visibleElement = {
+    textContent: pickerText,
+    offsetWidth: 100,
+    offsetHeight: 20,
+    getClientRects: () => [{}],
+    getAttribute: () => undefined,
+    tagName: 'DIV',
+    className: '',
+  };
+  const hiddenEntrypoint = { ...visibleElement, textContent: '', offsetWidth: 0, offsetHeight: 0, getClientRects: () => [] };
+  const document = {
+    activeElement: visibleElement,
+    querySelectorAll: (selector: string) => {
+      if (selector.includes('msla-token-picker') || selector.includes('picker')) {
+        return [visibleElement];
+      }
+      if (selector.includes('entrypoint-button-dynamic-content')) {
+        return [hiddenEntrypoint];
+      }
+      return [];
+    },
+  };
+  return vm.runInNewContext(expression, { document, Array }) as { visible: boolean; text?: string };
+}
+
+function testDesignerConnectionActionExpressionScopesCreateActions(): void {
+  const { exported } = loadRuntimeHarness('Succeeded');
+  const expression = exported.buildDesignerConnectionOrParameterStateExpression();
+
+  const unscopedCreateNewFolder = runConnectionStateExpression(expression, [
+    createButton('Create new folder'),
+    createButton('Create new workspace'),
+    createButton('Create new unit test'),
+  ]);
+  assert.strictEqual(unscopedCreateNewFolder.actionPoint, undefined, JSON.stringify(unscopedCreateNewFolder));
+
+  const unscopedCreateNewWithLegitimateConnection = runConnectionStateExpression(expression, [
+    createButton('Create new folder'),
+    createButton('Create new workspace'),
+    createButton('Create new unit test'),
+    createConnectionButton('Create new connection'),
+  ]);
+  assert.strictEqual(unscopedCreateNewWithLegitimateConnection.actionSummary?.label, 'Create new connection');
+
+  const bareCreateUnitTest = runConnectionStateExpression(expression, [createButton('Create unit test')]);
+  assert.strictEqual(bareCreateUnitTest.actionPoint, undefined, JSON.stringify(bareCreateUnitTest));
+
+  const scopedBareCreate = runConnectionStateExpression(expression, [createConnectionButton('Create')]);
+  assert.strictEqual(scopedBareCreate.actionSummary?.label, 'Create');
+
+  const scopedConnect = runConnectionStateExpression(expression, [createConnectionButton('Connect')]);
+  assert.strictEqual(scopedConnect.actionSummary?.label, 'Connect');
+
+  const connectionsNavWithOwnedConnect = runConnectionStateExpression(expression, [
+    createButton('Connections'),
+    createConnectionButton('Connect'),
+  ]);
+  assert.strictEqual(connectionsNavWithOwnedConnect.actionSummary?.label, 'Connect');
+
+  const disconnectWithOwnedConnect = runConnectionStateExpression(expression, [
+    createButton('Disconnect'),
+    createConnectionButton('Connect'),
+  ]);
+  assert.strictEqual(disconnectWithOwnedConnect.actionSummary?.label, 'Connect');
+
+  const selectAllWithOwnedSelect = runConnectionStateExpression(expression, [createButton('Select all'), createConnectionButton('Select')]);
+  assert.strictEqual(selectAllWithOwnedSelect.actionSummary?.label, 'Select');
+
+  const connectionsNavWithOwnedSelect = runConnectionStateExpression(expression, [
+    createButton('Connections'),
+    createConnectionButton('Select'),
+  ]);
+  assert.strictEqual(connectionsNavWithOwnedSelect.actionSummary?.label, 'Select');
+
+  const unscopedCreateNewConnection = runConnectionStateExpression(expression, [createButton('Create new connection')]);
+  assert.strictEqual(unscopedCreateNewConnection.actionPoint, undefined, JSON.stringify(unscopedCreateNewConnection));
+
+  const conflictingNearestOwner = runConnectionStateExpression(expression, [createConflictingOwnerInsideConnectionPanelButton('Create')]);
+  assert.strictEqual(conflictingNearestOwner.actionPoint, undefined, JSON.stringify(conflictingNearestOwner));
+
+  const scopedConnectorRow = runConnectionStateExpression(expression, [createConnectionButton('MSN Weather')]);
+  assert.strictEqual(scopedConnectorRow.actionSummary?.label, 'MSN Weather');
+}
+
+function runConnectionStateExpression(
+  expression: string,
+  buttons: FakeConnectionElement[]
+): {
+  hasLocationParameter: boolean;
+  hasActionOnCanvas: boolean;
+  actionPoint?: { x: number; y: number };
+  actionSummary?: { label: string };
+  candidates: string[];
+} {
+  const body = new FakeConnectionElement('Get current weather', { id: 'body' });
+  const document = {
+    body: { innerText: ['Get current weather', ...buttons.map((button) => button.textContent)].join(' ') },
+    querySelectorAll: (selector: string) => {
+      if (selector.includes('label') || selector.includes('span') || selector.includes('div')) {
+        return [body, ...buttons];
+      }
+      return buttons;
+    },
+  };
+  return vm.runInNewContext(expression, { document, Array, HTMLElement: FakeConnectionElement }) as {
+    hasLocationParameter: boolean;
+    hasActionOnCanvas: boolean;
+    actionPoint?: { x: number; y: number };
+    actionSummary?: { label: string };
+    candidates: string[];
+  };
+}
+
+function createButton(text: string): FakeConnectionElement {
+  return new FakeConnectionElement(text, { className: 'fui-Button' });
+}
+
+function createConnectionButton(text: string): FakeConnectionElement {
+  const panel = new FakeConnectionElement('Connection panel', {
+    className: 'msla-panel-root-CreateConnection',
+    id: 'connection-panel',
+  });
+  const button = new FakeConnectionElement(text, { className: 'fui-Button' });
+  button.parentElement = panel;
+  return button;
+}
+
+function createConflictingOwnerInsideConnectionPanelButton(text: string): FakeConnectionElement {
+  const connectionPanel = new FakeConnectionElement('Connection panel', {
+    className: 'msla-panel-root-CreateConnection',
+    id: 'connection-panel',
+  });
+  const workspaceDialog = new FakeConnectionElement('Workspace dialog', {
+    className: 'create-workspace-dialog',
+    id: 'workspace-dialog',
+  });
+  workspaceDialog.parentElement = connectionPanel;
+  const button = new FakeConnectionElement(text, { className: 'fui-Button' });
+  button.parentElement = workspaceDialog;
+  return button;
+}
+
+class FakeConnectionElement {
+  offsetWidth = 100;
+  offsetHeight = 32;
+  parentElement?: FakeConnectionElement;
+  readonly tagName = 'BUTTON';
+  readonly id: string;
+  readonly className: string;
+
+  constructor(
+    readonly textContent: string,
+    options: { id?: string; className?: string; role?: string; dataAutomationId?: string; ariaLabel?: string } = {}
+  ) {
+    this.id = options.id ?? '';
+    this.className = options.className ?? '';
+    this.attributes = {
+      role: options.role,
+      'data-automation-id': options.dataAutomationId,
+      'aria-label': options.ariaLabel,
+    };
+  }
+
+  private readonly attributes: Record<string, string | undefined>;
+
+  getClientRects(): unknown[] {
+    return [{}];
+  }
+
+  getAttribute(name: string): string | null {
+    return this.attributes[name] ?? null;
+  }
+
+  scrollIntoView(): void {
+    // No-op in VM tests.
+  }
+
+  getBoundingClientRect(): { left: number; top: number; width: number; height: number } {
+    return { left: 10, top: 10, width: 100, height: 32 };
+  }
 }
 
 async function testTerminalStatusFailsFast(): Promise<void> {

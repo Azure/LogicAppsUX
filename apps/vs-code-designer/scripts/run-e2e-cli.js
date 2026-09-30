@@ -225,16 +225,28 @@ function escapeXml(value) {
   return String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 }
 
+function sanitizeInheritedGitCommandConfigEnv(env) {
+  return Object.fromEntries(
+    Object.entries(env).filter(([key]) => {
+      if (key === 'GIT_CONFIG_COUNT' || key === 'GIT_CONFIG_PARAMETERS') {
+        return false;
+      }
+
+      return !/^GIT_CONFIG_(KEY|VALUE)_\d+$/.test(key);
+    })
+  );
+}
+
 function runSuiteWrapperProcess({ suite, context, env, visibleDelayMs, timeoutMs, scriptPath = __filename }) {
   const childArgs = [scriptPath, ...suite.args, ...(visibleDelayMs ? ['--visible-delay-ms', String(visibleDelayMs)] : [])];
   console.log(`[batch] Running suite ${suite.id}: ${process.execPath} ${childArgs.map((arg) => JSON.stringify(arg)).join(' ')}`);
   const child = spawn(process.execPath, childArgs, {
-    env: {
+    env: sanitizeInheritedGitCommandConfigEnv({
       ...env,
       LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH: context.terminalResultPath,
       LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH: context.cleanupLedgerPath,
       LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH: context.phaseResultsPath,
-    },
+    }),
     cwd: path.resolve(__dirname, '..'),
   });
 
@@ -1255,7 +1267,7 @@ function runVscodeTest(args, options = {}) {
   const deferredWorkspaceParent = getDeferredCreateWorkspaceParent(label);
   const outputFilter = createOutputFilter();
   const { command, commandArgs } = getVscodeTestCommand(args);
-  const childEnv = {
+  const childEnv = sanitizeInheritedGitCommandConfigEnv({
     ...process.env,
     LA_E2E_CLI_LABEL: label ?? '',
     LA_E2E_CLI_USER_DATA_SUFFIX: userDataSuffix,
@@ -1267,7 +1279,7 @@ function runVscodeTest(args, options = {}) {
         }
       : {}),
     ...(options.extraEnv ?? {}),
-  };
+  });
   const child = spawn(command, commandArgs, {
     env: childEnv,
   });
@@ -2287,6 +2299,7 @@ module.exports = {
     getFuncCoreToolsBinaryPath,
     getWorkspaceSourcesFromManifestPath,
     safeReadDirectory,
+    sanitizeInheritedGitCommandConfigEnv,
     sanitizeEnvSegment,
     redactGeneratedWorkspaceJsonValue,
     redactGeneratedWorkspacePlainText,

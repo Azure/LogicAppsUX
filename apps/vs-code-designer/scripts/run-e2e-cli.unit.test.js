@@ -32,6 +32,7 @@ const {
     redactGeneratedWorkspaceJsonValue,
     redactGeneratedWorkspacePlainText,
     runSuiteWrapperProcess,
+    sanitizeInheritedGitCommandConfigEnv,
     verifyFuncCoreToolsAtDependencyRoot,
     writeVscodeProfileLogIndex,
   },
@@ -80,6 +81,7 @@ const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
     testMsnWeatherTargetEnvAllowsLocalInteractiveMode();
     testMsnWeatherTargetEnvBlocksInteractiveModeInCi();
     testBatchMsnWeatherDisablesLocalCliFallback();
+    testSanitizesInheritedGitCommandConfigEnv();
     testBatchSuiteRegistryValidation();
     testBatchSuiteEnvironmentIsolation();
     await testBatchSuiteScopedCredentials();
@@ -820,6 +822,29 @@ function testBatchMsnWeatherDisablesLocalCliFallback() {
     },
     () => {
       assert.throws(() => getMsnWeatherAzureTargetEnv(), /Set LA_E2E_CLI_AZURE_TENANT_ID/);
+    }
+  );
+}
+
+function testSanitizesInheritedGitCommandConfigEnv() {
+  assert.deepStrictEqual(
+    sanitizeInheritedGitCommandConfigEnv({
+      GIT_CONFIG_COUNT: '3',
+      GIT_CONFIG_KEY_0: 'safe.bareRepository',
+      GIT_CONFIG_VALUE_0: 'explicit',
+      GIT_CONFIG_KEY_1: 'credential.interactive',
+      GIT_CONFIG_VALUE_1: 'never',
+      GIT_CONFIG_KEY_2: 'core.fsmonitor',
+      GIT_CONFIG_VALUE_2: '',
+      GIT_CONFIG_PARAMETERS: "'credential.https://github.com.helper='",
+      GIT_EXEC_PATH: '/git/libexec/git-core',
+      GIT_TERMINAL_PROMPT: '0',
+      LA_E2E_CLI_LABEL: 'msnWeatherLifecycle',
+    }),
+    {
+      GIT_EXEC_PATH: '/git/libexec/git-core',
+      GIT_TERMINAL_PROMPT: '0',
+      LA_E2E_CLI_LABEL: 'msnWeatherLifecycle',
     }
   );
 }
