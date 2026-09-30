@@ -68,6 +68,8 @@ const funcCoreToolsBinaryPathSetting = '${config:azureLogicAppsStandard.funcCore
 const dotnetBinaryPathSetting = '${config:azureLogicAppsStandard.dotnetBinaryPath}';
 const funcHostStartTaskLabel = 'func: host start';
 const funcWatchProblemMatcher = '$func-watch';
+const narrowFunctionNameViewport = { width: 771, height: 515, deviceScaleFactor: 1 };
+const maxFunctionNameEffectiveViewport = { width: 714, height: 414 };
 const capturedValidationFields = new Set<string>();
 
 type CreateWorkspaceGroup =
@@ -882,7 +884,9 @@ async function captureWorkspaceCreationFormScreenshots(
 
   const functionNameField = getFunctionNameWorkspaceFieldContract(creationCase);
   if (functionNameField) {
-    await scrollCreateWorkspaceForm(cdp, contextId, 'function-name', [functionNameField]);
+    await runWithCreateWorkspaceViewport(cdp, narrowFunctionNameViewport, () =>
+      scrollCreateWorkspaceForm(cdp, contextId, 'function-name', [functionNameField])
+    );
     await captureCreateWorkspaceScreenshot(
       cdp,
       contextId,
@@ -895,6 +899,68 @@ async function captureWorkspaceCreationFormScreenshots(
       }
     );
   }
+}
+
+async function runWithCreateWorkspaceViewport(
+  _cdp: CdpEvaluator,
+  viewport: typeof narrowFunctionNameViewport,
+  action: () => Promise<void>
+): Promise<void> {
+  let primaryError: unknown;
+  let cleanupError: unknown;
+  let workbenchCdp: Awaited<ReturnType<typeof connectToVsCodeWorkbenchCdp>> | undefined;
+  try {
+    workbenchCdp = await connectToVsCodeWorkbenchCdp({ activate: false, timeoutMs: 2000 });
+    await workbenchCdp.send('Emulation.setDeviceMetricsOverride', { ...viewport, mobile: false });
+    try {
+      await action();
+    } catch (error) {
+      primaryError = error;
+    }
+  } catch (error) {
+    primaryError = error;
+  } finally {
+    if (workbenchCdp) {
+      try {
+        await clearCreateWorkspaceViewportOverride(workbenchCdp);
+      } catch (error) {
+        cleanupError = error;
+      } finally {
+        workbenchCdp.dispose();
+      }
+    }
+  }
+
+  if (primaryError) {
+    if (cleanupError) {
+      const primaryMessage = primaryError instanceof Error ? primaryError.message : String(primaryError);
+      const cleanupMessage = cleanupError instanceof Error ? cleanupError.message : String(cleanupError);
+      throw new Error(`${primaryMessage}; secondary Create Workspace viewport cleanup failed: ${cleanupMessage}`);
+    }
+    throw primaryError;
+  }
+
+  if (cleanupError) {
+    throw new Error(
+      `Create Workspace viewport cleanup failed: ${cleanupError instanceof Error ? cleanupError.message : String(cleanupError)}`
+    );
+  }
+}
+
+async function clearCreateWorkspaceViewportOverride(cdp: Awaited<ReturnType<typeof connectToVsCodeWorkbenchCdp>>): Promise<void> {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      await cdp.send('Emulation.clearDeviceMetricsOverride');
+      return;
+    } catch (error) {
+      lastError = error;
+      if (attempt === 0) {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+    }
+  }
+  throw lastError;
 }
 
 function getVisibleCreateWorkspaceFieldContracts(
@@ -997,27 +1063,55 @@ async function scrollCreateWorkspaceForm(
       const scrollableElements = Array.from(document.querySelectorAll('*'))
         .filter((element) => element instanceof HTMLElement && element.scrollHeight > element.clientHeight + 20 && isVisible(element));
       const controls = Array.from(document.querySelectorAll('input, textarea, [contenteditable="true"], [role="textbox"], [role="combobox"]'));
+      const splitIds = (value) => normalize(value).split(/\\s+/).filter(Boolean);
+      const canonicalLabel = (value) => normalize(value).replace(/\\s*\\*+$/g, '');
+      const exactLabelMatch = (labels, value) => labels.includes(canonicalLabel(value));
+      const associatedLabelTexts = (control) => {
+        const forLabels = control.id
+          ? Array.from(document.querySelectorAll('label')).filter((label) => label.getAttribute?.('for') === control.id)
+          : [];
+        const ariaLabelledBy = splitIds(control.getAttribute('aria-labelledby') || '')
+          .map((id) => document.getElementById(id)?.textContent || '')
+          .filter((text) => !!text);
+        return [...forLabels.map((label) => label.textContent || ''), ...ariaLabelledBy];
+      };
+      const controlMatchesLabels = (control, normalizedLabels) =>
+        [
+          control.getAttribute('aria-label'),
+          control.getAttribute('placeholder'),
+          control.getAttribute('title'),
+          ...associatedLabelTexts(control),
+        ].some((value) => exactLabelMatch(normalizedLabels, value));
+      const findAssociatedControl = (label) => {
+        const inputId = label.getAttribute?.('for');
+        const directControl = inputId ? document.getElementById(inputId) : undefined;
+        if (directControl && controls.includes(directControl)) {
+          return directControl;
+        }
+        const nestedControl = Array.from(label.querySelectorAll?.('input, textarea, [contenteditable="true"], [role="textbox"], [role="combobox"]') || []).filter((control) =>
+          controls.includes(control)
+        );
+        if (nestedControl.length === 1) {
+          return nestedControl[0];
+        }
+        const fieldRoot = label.closest?.('.ms-TextField, .fui-Field, [class*="field"], [class*="Field"], [role="group"]') || label.parentElement;
+        const fieldControls = Array.from(fieldRoot?.querySelectorAll?.('input, textarea, [contenteditable="true"], [role="textbox"], [role="combobox"]') || []).filter((control) =>
+          controls.includes(control)
+        );
+        return fieldControls.length === 1 ? fieldControls[0] : undefined;
+      };
       const fieldElements = fields
         .map((labels) => {
           const normalizedLabels = labels.map(normalize);
-          return controls.find((control) => {
-            const labelledBy = (control.getAttribute('aria-labelledby') || '')
-              .split(/\\s+/)
-              .map((id) => document.getElementById(id)?.textContent || '')
-              .join(' ');
-            const container = control.closest?.('.ms-TextField, .fui-Field, [class*="field"], [class*="Field"], [role="group"]') || control.parentElement;
-            const identity = [
-              control.getAttribute('aria-label'),
-              control.getAttribute('placeholder'),
-              control.getAttribute('title'),
-              labelledBy,
-              container?.textContent,
-            ].map(normalize).join(' ');
-            return normalizedLabels.some((label) => identity.includes(label));
-          });
+          const matchingControls = controls.filter((control) => controlMatchesLabels(control, normalizedLabels));
+          const matchingLabel = Array.from(document.querySelectorAll('label, span, div, p')).find(
+            (label) => isVisible(label) && exactLabelMatch(normalizedLabels, label.textContent || '') && findAssociatedControl(label) === matchingControls[0]
+          );
+          return matchingControls.length === 1 ? { control: matchingControls[0], label: matchingLabel } : undefined;
         })
-        .filter((element) => element instanceof HTMLElement);
-      const firstField = fieldElements[0];
+        .filter((field) => field?.control instanceof HTMLElement);
+      const firstField = fieldElements[0]?.control;
+      const firstFieldLabel = fieldElements[0]?.label;
       const nearestScrollable = (element) => {
         let current = element?.parentElement;
         while (current instanceof HTMLElement) {
@@ -1037,11 +1131,24 @@ async function scrollCreateWorkspaceForm(
       }
       const maxScrollTop = scrollable.scrollHeight - scrollable.clientHeight;
       if (firstField instanceof HTMLElement) {
-        const scrollRect = scrollable.getBoundingClientRect();
-        const fieldRect = firstField.getBoundingClientRect();
         const currentTop = scrollable === document.scrollingElement ? window.scrollY : scrollable.scrollTop;
-        const preferredOffset = Math.max(24, Math.round(scrollRect.height * 0.28));
-        const anchoredTop = currentTop + fieldRect.top - scrollRect.top - preferredOffset;
+        const fieldRect = firstField.getBoundingClientRect();
+        const scrollRect = scrollable.getBoundingClientRect();
+        let anchoredTop;
+        if (position === 'function-name') {
+          const labelRect = firstFieldLabel instanceof HTMLElement ? firstFieldLabel.getBoundingClientRect() : fieldRect;
+          const unionTop = Math.min(labelRect.top, fieldRect.top);
+          const unionBottom = Math.max(labelRect.bottom, fieldRect.bottom);
+          const unionHeight = Math.max(1, unionBottom - unionTop);
+          const nextButton = Array.from(document.querySelectorAll('button')).find((button) => normalize(button.textContent).includes('next'));
+          const nextTop = nextButton instanceof HTMLElement && isVisible(nextButton) ? nextButton.getBoundingClientRect().top : window.innerHeight;
+          const visibleBottom = Math.max(96, Math.min(window.innerHeight, nextTop - 20));
+          const targetTop = Math.max(24, Math.min(Math.round(window.innerHeight * 0.38), visibleBottom - unionHeight - 20));
+          anchoredTop = currentTop + unionTop - targetTop;
+        } else {
+          const preferredOffset = Math.max(24, Math.round(scrollRect.height * 0.28));
+          anchoredTop = currentTop + fieldRect.top - scrollRect.top - preferredOffset;
+        }
         scrollable.scrollTo({ top: Math.max(0, Math.min(maxScrollTop, Math.round(anchoredTop))), behavior: 'instant' });
         return;
       }
@@ -2399,11 +2506,17 @@ async function captureCreateWorkspaceScreenshot(
 ): Promise<void> {
   await closeCopilotChatIfVisible(`before create workspace screenshot ${name}`);
   await dismissWorkbenchNotificationsBeforeEvidence(name);
+  const viewport = name.endsWith('-function-name') ? narrowFunctionNameViewport : undefined;
+  if (viewport) {
+    console.log(`[create-workspace-smoke] Capturing ${name} at viewport ${viewport.width}x${viewport.height}`);
+  }
   await captureCliScreenshot(name, {
     expectation: { kind: 'createWorkspace', label: name, stage, ...contract },
     semanticCdp: cdp,
     semanticContextId: contextId,
     binding: { activeTabText: ['Create Workspace'] },
+    viewport,
+    maxEffectiveViewport: viewport ? maxFunctionNameEffectiveViewport : undefined,
     optional,
   });
 }

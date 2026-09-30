@@ -42,6 +42,7 @@ async function main(): Promise<void> {
   testDesignerPanelRejectsAncestorFocusAndPlainTextToken();
   testDesignerPanelRequiresVisiblePickerSectionAndToken();
   testDesignerPanelAcceptsPickerSectionAliases();
+  testDesignerPanelAcceptsObservedPickerSearchWithVirtualizedSections();
   testDesignerPanelReportsPickerReadinessDiagnostics();
   testPickerReadinessDiagnosticsSerializeWithoutRuntimeText();
   testCreateWorkspaceRejectsWrongExactValidationMessage();
@@ -52,8 +53,18 @@ async function main(): Promise<void> {
   testCreateWorkspaceRejectsOutputPanelClippedFieldControl();
   testCreateWorkspaceAcceptsFullyVisibleAnchoredFieldControl();
   testCreateWorkspaceRejectsClippedFunctionNameFieldControl();
+  testCreateWorkspaceRejectsHorizontallyClippedFunctionNameFieldControl();
+  testCreateWorkspaceRejectsWideFunctionNameFieldWhenLeadingValueIsHidden();
+  testCreateWorkspaceAcceptsWideFunctionNameFieldWhenLeadingValueIsVisible();
+  testCreateWorkspaceRejectsWideRtlEndFunctionNameFieldWhenLeadingValueIsHidden();
+  testCreateWorkspaceAcceptsWideRtlEndFunctionNameFieldWhenLeadingValueIsVisible();
+  testCreateWorkspaceAcceptsWideLtrEndFunctionNameFieldWhenLogicalEndIsVisible();
+  testCreateWorkspaceRejectsCenterOccludedFunctionNameFieldControl();
   testCreateWorkspaceAcceptsCenteredFunctionNameFieldControl();
+  testCreateWorkspaceIgnoresComboboxContainingFunctionNameLabel();
   testCreateWorkspaceRejectsWrongFunctionNameFieldValue();
+  testCreateWorkspaceRejectsNamespaceSubstituteForFunctionName();
+  testCreateWorkspaceRejectsNeighborValueWhenFunctionNameHidden();
   testCreateWorkspaceRequiresEnabledCreateButton();
   testCreateWorkspaceRequiresScrollPosition();
   testOverviewRequiresStatusOnExpectedRunRow();
@@ -872,6 +883,115 @@ function testDesignerPanelAcceptsPickerSectionAliases(): void {
   assert.ok(missingRequestedTitle.reasonCodes.includes('picker-token-missing'));
 }
 
+function testDesignerPanelAcceptsObservedPickerSearchWithVirtualizedSections(): void {
+  const pickerSearch = new FakeInputElement('input', {
+    'data-automation-id': 'msla-token-picker-search',
+    'aria-controls': 'picker-sections portal-list',
+    value: '',
+  });
+  const virtualList = new FakeElement('div', { id: 'picker-sections' }, [], 'Get current weather Body');
+  const portalList = new FakeElement('div', { id: 'portal-list' }, [], 'Pressure When an HTTP request is received');
+  const pickerRoot = new FakeElement('div', { class: 'msla-token-picker' }, [pickerSearch]);
+  const document = new FakeDocument(
+    new FakeElement('body', {}, [
+      designerPanel({ title: 'Response', nodeId: 'Response', text: 'Body' }),
+      pickerRoot,
+      virtualList,
+      portalList,
+    ])
+  );
+  document.activeElement = pickerSearch;
+
+  const accepted = runProbe(document, {
+    kind: 'designerPanel',
+    label: 'response-token-picker-open',
+    actionTitle: 'Response',
+    picker: { sectionLabels: ['Get current weather', 'Get_current_weather'], tokenTitles: ['Body'] },
+  });
+  const details = accepted.details?.picker as
+    | {
+        strictSectionCount?: number;
+        activePickerSearchVisible?: boolean;
+        activePickerOwnedElementCount?: number;
+        activePickerSectionMatch?: boolean;
+        activePickerRequestedTitlesMatch?: boolean;
+      }
+    | undefined;
+
+  assert.strictEqual(accepted.ready, true, JSON.stringify(accepted));
+  assert.strictEqual(details?.strictSectionCount, 0);
+  assert.strictEqual(details?.activePickerSearchVisible, true);
+  assert.strictEqual(details?.activePickerOwnedElementCount, 4);
+  assert.strictEqual(details?.activePickerSectionMatch, true);
+  assert.strictEqual(details?.activePickerRequestedTitlesMatch, true);
+
+  const unownedSearch = new FakeInputElement('input', { 'data-automation-id': 'msla-token-picker-search', value: '' });
+  const unownedDocument = new FakeDocument(
+    new FakeElement('body', {}, [
+      designerPanel({ title: 'Response', nodeId: 'Response', text: 'Body' }),
+      new FakeElement('div', { class: 'msla-token-picker' }),
+      unownedSearch,
+      new FakeElement('aside', {}, [], 'Get current weather Body Pressure'),
+    ])
+  );
+  unownedDocument.activeElement = unownedSearch;
+  const rejectedUnowned = runProbe(unownedDocument, {
+    kind: 'designerPanel',
+    label: 'response-token-picker-open',
+    actionTitle: 'Response',
+    picker: { sectionLabels: ['Get current weather'], tokenTitles: ['Pressure'] },
+  });
+  assert.strictEqual(rejectedUnowned.ready, false, JSON.stringify(rejectedUnowned));
+  assert.ok(rejectedUnowned.reasonCodes.includes('picker-section-missing'));
+
+  const genericSearch = new FakeInputElement('input', {
+    'aria-label': 'Search other workflow',
+    'aria-controls': 'generic-list',
+    value: '',
+  });
+  const genericDocument = new FakeDocument(
+    new FakeElement('body', {}, [
+      designerPanel({ title: 'Response', nodeId: 'Response', text: 'Body' }),
+      new FakeElement('div', { class: 'msla-token-picker' }),
+      genericSearch,
+      new FakeElement('div', { id: 'generic-list' }, [], 'Get current weather Body Pressure'),
+    ])
+  );
+  genericDocument.activeElement = genericSearch;
+  const rejectedGeneric = runProbe(genericDocument, {
+    kind: 'designerPanel',
+    label: 'response-token-picker-open',
+    actionTitle: 'Response',
+    picker: { sectionLabels: ['Get current weather'], tokenTitles: ['Pressure'] },
+  });
+  assert.strictEqual(rejectedGeneric.ready, false, JSON.stringify(rejectedGeneric));
+  assert.ok(rejectedGeneric.reasonCodes.includes('picker-section-missing'));
+
+  const hiddenOwnedList = new FakeElement('div', { id: 'hidden-picker-list', style: 'opacity:0' }, [], 'Get current weather Body Pressure');
+  const hiddenSearch = new FakeInputElement('input', {
+    'data-automation-id': 'msla-token-picker-search',
+    'aria-controls': 'hidden-picker-list',
+    value: '',
+  });
+  const hiddenDocument = new FakeDocument(
+    new FakeElement('body', {}, [
+      designerPanel({ title: 'Response', nodeId: 'Response', text: 'Body' }),
+      new FakeElement('div', { class: 'msla-token-picker' }),
+      hiddenSearch,
+      hiddenOwnedList,
+    ])
+  );
+  hiddenDocument.activeElement = hiddenSearch;
+  const rejectedHidden = runProbe(hiddenDocument, {
+    kind: 'designerPanel',
+    label: 'response-token-picker-open',
+    actionTitle: 'Response',
+    picker: { sectionLabels: ['Get current weather'], tokenTitles: ['Pressure'] },
+  });
+  assert.strictEqual(rejectedHidden.ready, false, JSON.stringify(rejectedHidden));
+  assert.ok(rejectedHidden.reasonCodes.includes('picker-section-missing'));
+}
+
 function testDesignerPanelReportsPickerReadinessDiagnostics(): void {
   const document = new FakeDocument(
     new FakeElement('body', {}, [
@@ -1215,6 +1335,242 @@ function testCreateWorkspaceRejectsClippedFunctionNameFieldControl(): void {
   assert.ok(snapshot.reasonCodes.includes('create-workspace-field-clipped'));
 }
 
+function testCreateWorkspaceRejectsHorizontallyClippedFunctionNameFieldControl(): void {
+  const input = new FakeInputElement('input', { 'aria-label': 'Function name', value: 'WeatherFunction' });
+  input.bounds = { left: -300, top: 214, width: 500, height: 32, right: 200, bottom: 246 };
+  const field = new FakeElement('div', { class: 'ms-TextField' }, [input], 'Function name');
+  field.bounds = { left: -308, top: 184, width: 520, height: 64, right: 212, bottom: 248 };
+  const document = createWorkspaceDocument([field]);
+
+  const snapshot = runProbe(
+    document,
+    {
+      kind: 'createWorkspace',
+      label: 'create-workspace-custom-code-function-name',
+      stage: 'scrolled',
+      fields: [{ labels: ['Function name'], value: 'WeatherFunction' }],
+      nextButton: 'enabled',
+    },
+    {
+      window: {
+        innerWidth: 714,
+        innerHeight: 414,
+        devicePixelRatio: 1,
+        scrollY: 0,
+        getComputedStyle: getComputedStyleForFakeElement,
+      },
+    }
+  );
+
+  assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
+  assert.ok(snapshot.reasonCodes.includes('create-workspace-field-clipped'));
+}
+
+function testCreateWorkspaceRejectsWideFunctionNameFieldWhenLeadingValueIsHidden(): void {
+  const input = new FakeInputElement('input', {
+    'aria-label': 'Function name',
+    value: 'WeatherFunction',
+    style: 'font-size:10px;font-family:monospace;padding-left:0;padding-right:0;text-indent:0;text-align:left;direction:ltr',
+  });
+  input.bounds = { left: -286, top: 180, width: 1000, height: 32, right: 714, bottom: 212 };
+  const field = new FakeElement('div', { class: 'ms-TextField' }, [input], 'Function name');
+  field.bounds = { left: -294, top: 150, width: 1020, height: 64, right: 726, bottom: 214 };
+  const document = createWorkspaceDocument([field]);
+
+  const snapshot = runProbe(
+    document,
+    {
+      kind: 'createWorkspace',
+      label: 'create-workspace-custom-code-function-name',
+      stage: 'scrolled',
+      fields: [{ labels: ['Function name'], value: 'WeatherFunction' }],
+      nextButton: 'enabled',
+    },
+    {
+      window: {
+        innerWidth: 714,
+        innerHeight: 414,
+        devicePixelRatio: 1,
+        scrollY: 0,
+        getComputedStyle: getComputedStyleForFakeElement,
+      },
+    }
+  );
+
+  assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
+  assert.ok(snapshot.reasonCodes.includes('create-workspace-field-clipped'));
+}
+
+function testCreateWorkspaceAcceptsWideFunctionNameFieldWhenLeadingValueIsVisible(): void {
+  const input = new FakeInputElement('input', {
+    'aria-label': 'Function name',
+    value: 'WeatherFunction',
+    style: 'font-size:10px;font-family:monospace;padding-left:0;padding-right:0;text-indent:0;text-align:left;direction:ltr',
+  });
+  input.bounds = { left: 32, top: 180, width: 1000, height: 32, right: 1032, bottom: 212 };
+  const field = new FakeElement('div', { class: 'ms-TextField' }, [input], 'Function name');
+  field.bounds = { left: 24, top: 150, width: 1020, height: 64, right: 1044, bottom: 214 };
+  const document = createWorkspaceDocument([field]);
+
+  const snapshot = runProbe(
+    document,
+    {
+      kind: 'createWorkspace',
+      label: 'create-workspace-custom-code-function-name',
+      stage: 'scrolled',
+      fields: [{ labels: ['Function name'], value: 'WeatherFunction' }],
+      nextButton: 'enabled',
+    },
+    {
+      window: {
+        innerWidth: 714,
+        innerHeight: 414,
+        devicePixelRatio: 1,
+        scrollY: 0,
+        getComputedStyle: getComputedStyleForFakeElement,
+      },
+    }
+  );
+
+  assert.strictEqual(snapshot.ready, true, JSON.stringify(snapshot));
+}
+
+function testCreateWorkspaceRejectsWideRtlEndFunctionNameFieldWhenLeadingValueIsHidden(): void {
+  const input = new FakeInputElement('input', {
+    'aria-label': 'Function name',
+    value: 'WeatherFunction',
+    style: 'font-size:10px;font-family:monospace;padding-left:0;padding-right:0;text-indent:0;text-align:end;direction:rtl',
+  });
+  input.bounds = { left: -286, top: 180, width: 1000, height: 32, right: 714, bottom: 212 };
+  const field = new FakeElement('div', { class: 'ms-TextField' }, [input], 'Function name');
+  field.bounds = { left: -294, top: 150, width: 1020, height: 64, right: 726, bottom: 214 };
+  const document = createWorkspaceDocument([field]);
+
+  const snapshot = runProbe(
+    document,
+    {
+      kind: 'createWorkspace',
+      label: 'create-workspace-custom-code-function-name',
+      stage: 'scrolled',
+      fields: [{ labels: ['Function name'], value: 'WeatherFunction' }],
+      nextButton: 'enabled',
+    },
+    {
+      window: {
+        innerWidth: 714,
+        innerHeight: 414,
+        devicePixelRatio: 1,
+        scrollY: 0,
+        getComputedStyle: getComputedStyleForFakeElement,
+      },
+    }
+  );
+
+  assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
+  assert.ok(snapshot.reasonCodes.includes('create-workspace-field-clipped'));
+}
+
+function testCreateWorkspaceAcceptsWideRtlEndFunctionNameFieldWhenLeadingValueIsVisible(): void {
+  const input = new FakeInputElement('input', {
+    'aria-label': 'Function name',
+    value: 'WeatherFunction',
+    style: 'font-size:10px;font-family:monospace;padding-left:0;padding-right:0;text-indent:0;text-align:end;direction:rtl',
+  });
+  input.bounds = { left: 32, top: 180, width: 1000, height: 32, right: 1032, bottom: 212 };
+  const field = new FakeElement('div', { class: 'ms-TextField' }, [input], 'Function name');
+  field.bounds = { left: 24, top: 150, width: 1020, height: 64, right: 1044, bottom: 214 };
+  const document = createWorkspaceDocument([field]);
+
+  const snapshot = runProbe(
+    document,
+    {
+      kind: 'createWorkspace',
+      label: 'create-workspace-custom-code-function-name',
+      stage: 'scrolled',
+      fields: [{ labels: ['Function name'], value: 'WeatherFunction' }],
+      nextButton: 'enabled',
+    },
+    {
+      window: {
+        innerWidth: 714,
+        innerHeight: 414,
+        devicePixelRatio: 1,
+        scrollY: 0,
+        getComputedStyle: getComputedStyleForFakeElement,
+      },
+    }
+  );
+
+  assert.strictEqual(snapshot.ready, true, JSON.stringify(snapshot));
+}
+
+function testCreateWorkspaceAcceptsWideLtrEndFunctionNameFieldWhenLogicalEndIsVisible(): void {
+  const input = new FakeInputElement('input', {
+    'aria-label': 'Function name',
+    value: 'WeatherFunction',
+    style: 'font-size:10px;font-family:monospace;padding-left:0;padding-right:0;text-indent:0;text-align:end;direction:ltr',
+  });
+  input.bounds = { left: -286, top: 180, width: 1000, height: 32, right: 714, bottom: 212 };
+  const field = new FakeElement('div', { class: 'ms-TextField' }, [input], 'Function name');
+  field.bounds = { left: -294, top: 150, width: 1020, height: 64, right: 726, bottom: 214 };
+  const document = createWorkspaceDocument([field]);
+
+  const snapshot = runProbe(
+    document,
+    {
+      kind: 'createWorkspace',
+      label: 'create-workspace-custom-code-function-name',
+      stage: 'scrolled',
+      fields: [{ labels: ['Function name'], value: 'WeatherFunction' }],
+      nextButton: 'enabled',
+    },
+    {
+      window: {
+        innerWidth: 714,
+        innerHeight: 414,
+        devicePixelRatio: 1,
+        scrollY: 0,
+        getComputedStyle: getComputedStyleForFakeElement,
+      },
+    }
+  );
+
+  assert.strictEqual(snapshot.ready, true, JSON.stringify(snapshot));
+}
+
+function testCreateWorkspaceRejectsCenterOccludedFunctionNameFieldControl(): void {
+  const input = new FakeInputElement('input', { 'aria-label': 'Function name', value: 'WeatherFunction' });
+  input.bounds = { left: 32, top: 214, width: 520, height: 32, right: 552, bottom: 246 };
+  const field = new FakeElement('div', { class: 'ms-TextField' }, [input], 'Function name');
+  field.bounds = { left: 24, top: 184, width: 540, height: 64, right: 564, bottom: 248 };
+  const centerOccluder = new FakeElement('div', { class: 'test-center-occluder' });
+  centerOccluder.bounds = { left: 32, top: 229, width: 520, height: 6, right: 552, bottom: 235 };
+  const document = createWorkspaceDocument([field, centerOccluder]);
+
+  const snapshot = runProbe(
+    document,
+    {
+      kind: 'createWorkspace',
+      label: 'create-workspace-custom-code-function-name',
+      stage: 'scrolled',
+      fields: [{ labels: ['Function name'], value: 'WeatherFunction' }],
+      nextButton: 'enabled',
+    },
+    {
+      window: {
+        innerWidth: 714,
+        innerHeight: 414,
+        devicePixelRatio: 1,
+        scrollY: 0,
+        getComputedStyle: getComputedStyleForFakeElement,
+      },
+    }
+  );
+
+  assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
+  assert.ok(snapshot.reasonCodes.includes('create-workspace-field-clipped'));
+}
+
 function testCreateWorkspaceAcceptsCenteredFunctionNameFieldControl(): void {
   const input = new FakeInputElement('input', { 'aria-label': 'Function name', value: 'WeatherFunction' });
   input.bounds = { left: 32, top: 214, width: 520, height: 32, right: 552, bottom: 246 };
@@ -1223,6 +1579,40 @@ function testCreateWorkspaceAcceptsCenteredFunctionNameFieldControl(): void {
   const footer = new FakeElement('footer', { class: 'wizard-footer' }, [], 'Next');
   footer.bounds = { left: 0, top: 392, width: 714, height: 22, right: 714, bottom: 414 };
   const document = createWorkspaceDocument([field, footer]);
+
+  const snapshot = runProbe(
+    document,
+    {
+      kind: 'createWorkspace',
+      label: 'create-workspace-custom-code-function-name',
+      stage: 'scrolled',
+      fields: [{ labels: ['Function name'], value: 'WeatherFunction' }],
+      nextButton: 'enabled',
+    },
+    {
+      window: {
+        innerWidth: 714,
+        innerHeight: 414,
+        devicePixelRatio: 1,
+        scrollY: 0,
+        getComputedStyle: getComputedStyleForFakeElement,
+      },
+    }
+  );
+
+  assert.strictEqual(snapshot.ready, true, JSON.stringify(snapshot));
+}
+
+function testCreateWorkspaceIgnoresComboboxContainingFunctionNameLabel(): void {
+  const combobox = new FakeElement('button', { role: 'combobox' }, [], '.NET 8');
+  combobox.bounds = { left: 32, top: 120, width: 520, height: 32, right: 552, bottom: 152 };
+  const comboboxContainer = new FakeElement('div', { class: 'fui-Field' }, [combobox], '.NET Version Function name');
+  comboboxContainer.bounds = { left: 24, top: 90, width: 540, height: 70, right: 564, bottom: 160 };
+  const input = new FakeInputElement('input', { 'aria-label': 'Function name', value: 'WeatherFunction' });
+  input.bounds = { left: 32, top: 214, width: 520, height: 32, right: 552, bottom: 246 };
+  const field = new FakeElement('div', { class: 'ms-TextField' }, [input], 'Function name');
+  field.bounds = { left: 24, top: 184, width: 540, height: 64, right: 564, bottom: 248 };
+  const document = createWorkspaceDocument([comboboxContainer, field]);
 
   const snapshot = runProbe(
     document,
@@ -1276,6 +1666,70 @@ function testCreateWorkspaceRejectsWrongFunctionNameFieldValue(): void {
 
   assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
   assert.ok(snapshot.reasonCodes.includes('create-workspace-field-value-mismatch'));
+}
+
+function testCreateWorkspaceRejectsNamespaceSubstituteForFunctionName(): void {
+  const namespaceInput = new FakeInputElement('input', { 'aria-label': 'Function namespace', value: 'WeatherFunction' });
+  namespaceInput.bounds = { left: 32, top: 146, width: 520, height: 32, right: 552, bottom: 178 };
+  const namespaceField = new FakeElement('div', { class: 'ms-TextField' }, [namespaceInput], 'Function namespace');
+  namespaceField.bounds = { left: 24, top: 116, width: 540, height: 64, right: 564, bottom: 180 };
+  const document = createWorkspaceDocument([namespaceField]);
+
+  const snapshot = runProbe(
+    document,
+    {
+      kind: 'createWorkspace',
+      label: 'create-workspace-custom-code-function-name',
+      stage: 'scrolled',
+      fields: [{ labels: ['Function name'], value: 'WeatherFunction' }],
+      nextButton: 'enabled',
+    },
+    {
+      window: {
+        innerWidth: 714,
+        innerHeight: 414,
+        devicePixelRatio: 1,
+        scrollY: 0,
+        getComputedStyle: getComputedStyleForFakeElement,
+      },
+    }
+  );
+
+  assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
+  assert.ok(snapshot.reasonCodes.includes('create-workspace-field-missing'));
+}
+
+function testCreateWorkspaceRejectsNeighborValueWhenFunctionNameHidden(): void {
+  const functionInput = new FakeInputElement('input', { 'aria-label': 'Function name', value: 'WeatherFunction', style: 'display:none' });
+  const functionField = new FakeElement('div', { class: 'ms-TextField' }, [functionInput], 'Function name');
+  const workflowInput = new FakeInputElement('input', { 'aria-label': 'Workflow name', value: 'WeatherFunction' });
+  workflowInput.bounds = { left: 32, top: 214, width: 520, height: 32, right: 552, bottom: 246 };
+  const workflowField = new FakeElement('div', { class: 'ms-TextField' }, [workflowInput], 'Workflow name');
+  workflowField.bounds = { left: 24, top: 184, width: 540, height: 64, right: 564, bottom: 248 };
+  const document = createWorkspaceDocument([functionField, workflowField]);
+
+  const snapshot = runProbe(
+    document,
+    {
+      kind: 'createWorkspace',
+      label: 'create-workspace-custom-code-function-name',
+      stage: 'scrolled',
+      fields: [{ labels: ['Function name'], value: 'WeatherFunction' }],
+      nextButton: 'enabled',
+    },
+    {
+      window: {
+        innerWidth: 714,
+        innerHeight: 414,
+        devicePixelRatio: 1,
+        scrollY: 0,
+        getComputedStyle: getComputedStyleForFakeElement,
+      },
+    }
+  );
+
+  assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
+  assert.ok(snapshot.reasonCodes.includes('create-workspace-field-missing'));
 }
 
 function testCreateWorkspaceRequiresEnabledCreateButton(): void {
@@ -2306,6 +2760,14 @@ function getComputedStyleForFakeElement(element?: FakeElement): {
   overflow: string;
   overflowX: string;
   overflowY: string;
+  direction: string;
+  font: string;
+  fontFamily: string;
+  fontSize: string;
+  paddingLeft: string;
+  paddingRight: string;
+  textAlign: string;
+  textIndent: string;
 } {
   const styleText = element?.attributes.style ?? '';
   const style = Object.fromEntries(
@@ -2322,6 +2784,14 @@ function getComputedStyleForFakeElement(element?: FakeElement): {
     overflow: style.overflow ?? 'visible',
     overflowX: style['overflow-x'] ?? style.overflow ?? 'visible',
     overflowY: style['overflow-y'] ?? style.overflow ?? 'visible',
+    direction: style.direction ?? 'ltr',
+    font: style.font ?? '',
+    fontFamily: style['font-family'] ?? 'sans-serif',
+    fontSize: style['font-size'] ?? '16px',
+    paddingLeft: style['padding-left'] ?? '0px',
+    paddingRight: style['padding-right'] ?? '0px',
+    textAlign: style['text-align'] ?? 'left',
+    textIndent: style['text-indent'] ?? '0px',
   };
 }
 
