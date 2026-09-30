@@ -38,7 +38,6 @@ import {
 } from './createWorkspaceCases';
 import type { FieldLabels, WorkspaceAppType, WorkspaceCreationCase, WorkflowType } from './createWorkspaceTypes';
 import { assertNoDialogAttempts, installDialogGuard } from './dialogGuard';
-import { waitForLogicAppsExtensionStartupReady } from './extensionStartupReadiness';
 import { captureCliScreenshot, captureDiagnosticScreenshot, installFailureScreenshotHook } from './screenshot';
 import type { ScreenshotExpectation } from './screenshotReadiness';
 import { containsIgnoreCase, uniqueName } from './testUtils';
@@ -200,10 +199,6 @@ suite('Create Workspace Experience Tests', () => {
     const extension = vscode.extensions.getExtension(logicAppsExtensionId);
     assert.ok(extension, `Expected ${logicAppsExtensionId} to be loaded from the extension development path`);
     await extension.activate();
-    await waitForLogicAppsExtensionStartupReady({
-      label: 'Create Workspace suite setup',
-      requiredCommands: [createWorkspaceCommand],
-    });
 
     if (createWorkspaceGroup === 'fixtures-manifest') {
       clearFixtureManifest();
@@ -730,10 +725,6 @@ function isRetryableBlankCreateWorkspaceError(error: unknown): boolean {
 }
 
 async function openCreateWorkspaceContext(): Promise<{ cdp: CdpEvaluator & { dispose(): void }; contextId: number }> {
-  await waitForLogicAppsExtensionStartupReady({
-    label: 'before Create Workspace command',
-    requiredCommands: [createWorkspaceCommand],
-  });
   await closeWebviewTabs(createWorkspaceViewType);
   const tabsBefore = getWebviewTabs(createWorkspaceViewType).length;
 
@@ -885,6 +876,22 @@ async function captureWorkspaceCreationFormScreenshots(
       }
     );
   }
+
+  const functionNameField = getFunctionNameWorkspaceFieldContract(creationCase);
+  if (functionNameField) {
+    await scrollCreateWorkspaceForm(cdp, contextId, 'function-name', [functionNameField]);
+    await captureCreateWorkspaceScreenshot(
+      cdp,
+      contextId,
+      `create-workspace-${creationCase.label}-${stage}-function-name`,
+      'scrolled',
+      false,
+      {
+        fields: [functionNameField],
+        nextButton: 'enabled',
+      }
+    );
+  }
 }
 
 function getVisibleCreateWorkspaceFieldContracts(
@@ -944,6 +951,16 @@ function getCreateWorkspaceFieldContracts(
   }
 
   return fields;
+}
+
+function getFunctionNameWorkspaceFieldContract(
+  creationCase: WorkspaceCreationCase
+): { labels: string[]; value?: string; validationMessage?: string } | undefined {
+  if (creationCase.appType !== 'customCode' && creationCase.appType !== 'rulesEngine') {
+    return undefined;
+  }
+
+  return { labels: ['Function name'], value: requiredValue(creationCase.functionName) };
 }
 
 async function scrollCreateWorkspaceForm(

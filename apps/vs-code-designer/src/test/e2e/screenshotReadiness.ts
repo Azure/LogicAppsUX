@@ -50,6 +50,7 @@ export interface ScreenshotReadinessSnapshot {
   anchors: Array<{ name: string; visible: boolean; bounds?: ScreenshotBounds }>;
   viewport: ScreenshotViewport;
   counts: Record<string, number>;
+  details?: Record<string, unknown>;
   generation: number;
   revision: number;
   structuralRevision?: number;
@@ -94,6 +95,22 @@ export interface ScreenshotReadinessMetadata {
   };
   counts: Record<string, number>;
   reasonCodes: string[];
+  events?: ScreenshotCaptureEvent[];
+}
+
+export interface ScreenshotCaptureEvent {
+  name: string;
+  elapsedMs: number;
+  attempt?: number;
+  generation?: number;
+  revision?: number;
+  structuralRevision?: number;
+  ownerRevision?: number;
+  reasonCodes?: string[];
+  blockers?: string[];
+  counts?: Record<string, number>;
+  anchors?: Array<{ name: string; bounds?: ScreenshotBounds }>;
+  details?: Record<string, unknown>;
 }
 
 export const installScreenshotInvalidationLatchExpression = `
@@ -419,9 +436,73 @@ export const screenshotReadinessDomScript = `
   const panels = visibleElements('[id^="msla-node-details-panel"], .msla-node-details-panel, .msla-panel-container, [class*="node-details-panel"]');
   addAnchor('selectedPanelLayout', selectedPanel?.layout);
   const createWorkspaceRoot = visibleElements('.monaco-workbench, body').at(-1);
-  const readinessRoot = selectedPanel?.layout || designerCanvas || createWorkspaceRoot || document.body;
+  const readinessRoot =
+    expectation.kind === 'designerCanvas' || expectation.kind === 'discovery'
+      ? designerCanvas || createWorkspaceRoot || document.body
+      : selectedPanel?.layout || designerCanvas || createWorkspaceRoot || document.body;
   invalidation?.setRoot?.(readinessRoot);
-  const loaders = Array.from(readinessRoot?.querySelectorAll?.(loaderSelector) || []).filter(isVisible);
+  const rootRect = readinessRoot?.getBoundingClientRect?.();
+  const rectsOverlap = (first, second) =>
+    !!(
+      first &&
+      second &&
+      first.width > 0 &&
+      first.height > 0 &&
+      second.width > 0 &&
+      second.height > 0 &&
+      first.left < second.right &&
+      first.right > second.left &&
+      first.top < second.bottom &&
+      first.bottom > second.top
+    );
+  const isLoaderElement = (element) => {
+    if (!element?.matches) {
+      return false;
+    }
+    return loaderSelector.split(',').some((selector) => {
+      try {
+        return element.matches(selector.trim());
+      } catch {
+        return false;
+      }
+    });
+  };
+  const loaderOwnsRoot = (loader) => {
+    if (!loader || !readinessRoot) {
+      return false;
+    }
+    if (loader === readinessRoot || readinessRoot.contains?.(loader)) {
+      return true;
+    }
+    if (loader.contains?.(readinessRoot)) {
+      return true;
+    }
+    const loaderRect = loader.getBoundingClientRect?.();
+    if (!rectsOverlap(rootRect, loaderRect)) {
+      return false;
+    }
+    const centerX = Math.min(Math.max((rootRect.left + rootRect.right) / 2, 0), Math.max(window.innerWidth - 1, 0));
+    const centerY = Math.min(Math.max((rootRect.top + rootRect.bottom) / 2, 0), Math.max(window.innerHeight - 1, 0));
+    const loaderCenterX = Math.min(Math.max((loaderRect.left + loaderRect.right) / 2, 0), Math.max(window.innerWidth - 1, 0));
+    const loaderCenterY = Math.min(Math.max((loaderRect.top + loaderRect.bottom) / 2, 0), Math.max(window.innerHeight - 1, 0));
+    const hits = [document.elementFromPoint?.(centerX, centerY), document.elementFromPoint?.(loaderCenterX, loaderCenterY)];
+    return hits.some((hit) => hit === loader || loader.contains?.(hit));
+  };
+  const ancestorLoaders = [];
+  let ancestor = readinessRoot instanceof HTMLElement ? readinessRoot : readinessRoot?.parentElement;
+  while (ancestor instanceof HTMLElement && ancestor !== document.body) {
+    if (isVisible(ancestor) && isLoaderElement(ancestor)) {
+      ancestorLoaders.push(ancestor);
+    }
+    ancestor = ancestor.parentElement;
+  }
+  const loaders = Array.from(
+    new Set([
+      ...Array.from(readinessRoot?.querySelectorAll?.(loaderSelector) || []).filter(isVisible),
+      ...ancestorLoaders,
+      ...documentLoaders.filter(loaderOwnsRoot),
+    ])
+  );
   const reviewEvidence = ['review + create', 'review and create', 'create workspace'].some((value) => lowerText.includes(value));
   const createWorkspaceEvidence = lowerText.includes('create logic app workspace') || lowerText.includes('workspace parent folder path');
   const overviewEvidence = lowerText.includes('run trigger') || lowerText.includes('latest run') || lowerText.includes('workflow overview');
@@ -439,6 +520,7 @@ export const screenshotReadinessDomScript = `
     rows: visibleElements('[role="row"], .ms-DetailsRow, tr').length,
   };
   const blockers = [];
+  const details = {};
   if (loaders.length > 0) {
     blockers.push('loader-visible');
   }
@@ -449,14 +531,16 @@ export const screenshotReadinessDomScript = `
     (values || []).every((value) =>
       Array.isArray(value) ? value.some((variant) => normalizedIncludes(source, variant)) : normalizedIncludes(source, value)
     );
-  const slug = (value) => normalize(value).replace(/\\W+/g, '_').replace(/^_+|_+$/g, '').toLowerCase();
-  const matchesExactPanelIdentity = (panel, expectedTitle) => {
-    const expectedText = normalize(expectedTitle).toLowerCase();
-    const expectedSlug = slug(expectedTitle);
-    const title = normalize(panel?.title || '').toLowerCase();
-    const nodeId = slug(panel?.nodeId || '');
-    return title === expectedText || nodeId === expectedSlug;
-  };
+  const nodeIdentityText = (node) =>
+    normalize(
+      [
+        node?.textContent || '',
+        node?.getAttribute?.('aria-label') || '',
+        node?.getAttribute?.('title') || '',
+        node?.getAttribute?.('data-automation-id') || '',
+        node?.id || '',
+      ].join(' ')
+    );
   const intersectRects = (a, b) => {
     const left = Math.max(a.left, b.left);
     const top = Math.max(a.top, b.top);
@@ -492,6 +576,61 @@ export const screenshotReadinessDomScript = `
   const pointHitsElement = (element, x, y) => {
     const hit = document.elementFromPoint?.(x, y);
     return !hit || hit === element || element.contains?.(hit) || hit.contains?.(element);
+  };
+  const concreteRequiredNodeMatches = (requiredNodes) => {
+    const hitTestOwnsElement = (element) => {
+      if (!(element instanceof HTMLElement) || typeof document.elementFromPoint !== 'function') {
+        return true;
+      }
+
+      const rect = element.getBoundingClientRect();
+      const clipped = getClippedRect(element);
+      if (rect.width <= 0 || rect.height <= 0 || !clipped) {
+        return false;
+      }
+
+      const centerX = Math.min(Math.max(clipped.left + clipped.width / 2, 0), Math.max(window.innerWidth - 1, 0));
+      const centerY = Math.min(Math.max(clipped.top + clipped.height / 2, 0), Math.max(window.innerHeight - 1, 0));
+      return pointHitsElement(element, centerX, centerY);
+    };
+    const canvasNodeSelector = '[data-automation-id^="msla-node"], [id^="msla-node"], [data-testid*="node"], .msla-card, .react-flow__node';
+    const candidateNodes = Array.from(
+      new Set([
+        ...Array.from(designerCanvas?.querySelectorAll?.(canvasNodeSelector) || []).filter(isVisible),
+        ...(designerCanvas && isVisible(designerCanvas) && designerCanvas.matches?.(canvasNodeSelector) ? [designerCanvas] : []),
+      ])
+    );
+    const result = {
+      ok: true,
+      missing: [],
+      matched: [],
+      covered: [],
+      visibleNodeCount: candidateNodes.length,
+    };
+    for (const [requiredIndex, required] of (requiredNodes || []).entries()) {
+      const variants = Array.isArray(required) ? required : [required];
+      const match = candidateNodes.find((node) => variants.some((variant) => normalizedIncludes(nodeIdentityText(node), variant)));
+      if (match) {
+        const identity = 'required-' + requiredIndex;
+        result.matched.push(identity);
+        if (!hitTestOwnsElement(match)) {
+          result.ok = false;
+          result.covered.push(identity);
+        }
+      } else {
+        result.ok = false;
+        result.missing.push('required-' + requiredIndex);
+      }
+    }
+    return result;
+  };
+  const slug = (value) => normalize(value).replace(/\\W+/g, '_').replace(/^_+|_+$/g, '').toLowerCase();
+  const matchesExactPanelIdentity = (panel, expectedTitle) => {
+    const expectedText = normalize(expectedTitle).toLowerCase();
+    const expectedSlug = slug(expectedTitle);
+    const title = normalize(panel?.title || '').toLowerCase();
+    const nodeId = slug(panel?.nodeId || '');
+    return title === expectedText || nodeId === expectedSlug;
   };
   const isReadableFieldControl = (control) => {
     if (!isVisible(control)) {
@@ -702,6 +841,15 @@ export const screenshotReadinessDomScript = `
   };
   const fieldResults = (expectation.fields || []).map((field) => fieldMatches(field));
   const fieldsReady = (fieldResults.length === 0 || fieldResults.every((result) => result.ok));
+  if (expectation.kind === 'createWorkspace' && (expectation.fields || []).length > 0) {
+    details.createWorkspaceFields = (expectation.fields || []).map((field, index) => ({
+      labels: (field.labels || []).map((label) => slug(label)).slice(0, 6),
+      hasExpectedValue: field.value !== undefined,
+      hasValidationMessage: field.validationMessage !== undefined,
+      result: fieldResults[index]?.reason || 'unknown',
+      ok: fieldResults[index]?.ok === true,
+    }));
+  }
   const createWorkspaceValidationPending =
     expectation.kind === 'createWorkspace' &&
     expectation.stage !== 'validation' &&
@@ -831,11 +979,16 @@ export const screenshotReadinessDomScript = `
       }
       break;
     case 'designerCanvas':
-      ready = !!designerCanvas && hasRequiredText(visibleText(designerCanvas), expectation.requiredNodes || []);
+      const concreteNodeState = concreteRequiredNodeMatches(expectation.requiredNodes || []);
+      ready = !!designerCanvas && hasRequiredText(visibleText(designerCanvas), expectation.requiredNodes || []) && concreteNodeState.ok;
       if ((expectation.requiredNodes || []).length > 0) {
         ready = ready && canvasNodes.length >= 1;
       }
       reasonCodes.push(ready ? 'designer-canvas-state-visible' : 'designer-canvas-state-missing');
+      if (!concreteNodeState.ok) {
+        reasonCodes.push('designer-canvas-required-node-missing');
+      }
+      details.designerCanvas = concreteNodeState;
       break;
     case 'designerPanel':
       const panelFieldStates = (expectation.fields || []).map((field) => fieldMatches(field, selectedPanel?.layout));
@@ -1039,6 +1192,7 @@ export const screenshotReadinessDomScript = `
       deviceScaleFactor: Number(window.devicePixelRatio || 1),
     },
     counts,
+    details,
     generation,
     revision,
     structuralRevision,
@@ -1096,6 +1250,7 @@ export function buildScreenshotMetadata(input: {
   samples: ScreenshotReadinessSnapshot[];
   captureAttempts: number;
   reasonCodes?: string[];
+  events?: ScreenshotCaptureEvent[];
 }): ScreenshotReadinessMetadata {
   const lastSample = input.samples.at(-1);
   return {
@@ -1124,6 +1279,20 @@ export function buildScreenshotMetadata(input: {
     },
     counts: lastSample?.counts ?? {},
     reasonCodes: (input.reasonCodes ?? lastSample?.reasonCodes ?? []).map(sanitizeMetadataValue).slice(0, 12),
+    events: (input.events ?? []).slice(-80).map((event) => ({
+      name: sanitizeMetadataValue(event.name),
+      elapsedMs: event.elapsedMs,
+      attempt: event.attempt,
+      generation: event.generation,
+      revision: event.revision,
+      structuralRevision: event.structuralRevision,
+      ownerRevision: event.ownerRevision,
+      reasonCodes: event.reasonCodes?.map(sanitizeMetadataValue).slice(0, 12),
+      blockers: event.blockers?.map(sanitizeMetadataValue).slice(0, 12),
+      counts: event.counts,
+      anchors: event.anchors?.slice(0, 8).map((anchor) => ({ name: sanitizeMetadataValue(anchor.name), bounds: anchor.bounds })),
+      details: sanitizeMetadataDetails(event.details),
+    })),
   };
 }
 
@@ -1141,4 +1310,71 @@ function opaqueId(value: string): string {
     hash = (hash * 31 + value.charCodeAt(index)) >>> 0;
   }
   return `id-${hash.toString(16).padStart(8, '0')}`;
+}
+
+function sanitizeMetadataDetails(value: Record<string, unknown> | undefined): Record<string, unknown> | undefined {
+  if (!value) {
+    return undefined;
+  }
+  const json = JSON.stringify(redactMetadataDetails(value));
+  if (json.length <= 4000) {
+    return JSON.parse(json);
+  }
+  return { truncated: json.slice(0, 4000) };
+}
+
+function redactMetadataDetails(value: unknown): unknown {
+  if (typeof value === 'string') {
+    return redactMetadataString(value).slice(0, 240);
+  }
+  if (Array.isArray(value)) {
+    return value.slice(0, 20).map(redactMetadataDetails);
+  }
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>)
+        .slice(0, 40)
+        .map(([key, entry]) => [sanitizeMetadataValue(key), isSensitiveMetadataKey(key) ? '[redacted]' : redactMetadataDetails(entry)])
+    );
+  }
+  return value;
+}
+
+function isSensitiveMetadataKey(key: string): boolean {
+  const normalizedKey = key.replace(/[^a-z0-9]/gi, '').toLowerCase();
+  return (
+    /authorization|authentication|access[_-]?token|account[_-]?key|api[_-]?key|callback|client[_-]?secret|connection[_-]?key|connection[_-]?runtime[_-]?url|connection[_-]?string|credential|cookie|inputslink|keyvault|outputslink|password|sas|secret|signature|subscription-key|token|uri|url|x-api-key/i.test(
+      key
+    ) || /^(sig|se|sp|sv|srt|ss)$/.test(normalizedKey)
+  );
+}
+
+function redactMetadataString(value: string): string {
+  let redacted = value;
+  redacted = redacted.replace(/\bAuthorization\s*:\s*(?:Basic|Bearer)?\s*[A-Za-z0-9+/=._~*-]+/gi, 'Authorization: [redacted]');
+  redacted = redacted.replace(
+    /((?:access[_-]?token|account[_-]?key|api[_-]?key|authorization|authentication|azurewebjobsstorage|client[_-]?secret|connection[_-]?key|connection[_-]?runtime[_-]?url|connection[_-]?string|credential|password|sas|secret|sig|signature|subscription-key|token|x-api-key|cookie)\s*[=:]\s*)("[^"]*"|'[^']*'|[^\s,;}]+)/gi,
+    '$1[redacted]'
+  );
+  redacted = redacted.replace(
+    /((?:access[_-]?token|account[_-]?key|api[_-]?key|authorization|authentication|azurewebjobsstorage|client[_-]?secret|connection[_-]?key|connection[_-]?runtime[_-]?url|connection[_-]?string|credential|password|sas|secret|sig|signature|subscription-key|token|x-api-key|cookie)["']?\s*:\s*)("[^"]*"|'[^']*'|[^\s,}\]]+)/gi,
+    '$1[redacted]'
+  );
+  redacted = redacted.replace(/\b(AccountKey|SharedAccessKey|Password|Pwd|User ID|Uid)=([^;,\s]+)/gi, '$1=[redacted]');
+  redacted = redacted.replace(/\bBasic\s+[A-Za-z0-9+/=._~-]+/gi, 'Basic [redacted]');
+  redacted = redacted.replace(/\bBearer\s+[A-Za-z0-9._~+/=-]+/gi, 'Bearer [redacted]');
+  redacted = redacted.replace(/https?:\/\/[^\s"')]+/gi, (urlText) => {
+    try {
+      const url = new URL(urlText);
+      for (const key of Array.from(url.searchParams.keys())) {
+        if (isSensitiveMetadataKey(key)) {
+          url.searchParams.set(key, '[redacted]');
+        }
+      }
+      return url.toString();
+    } catch {
+      return '[redacted-url]';
+    }
+  });
+  return redacted;
 }

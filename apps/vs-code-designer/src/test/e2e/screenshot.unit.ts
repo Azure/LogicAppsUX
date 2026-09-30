@@ -19,6 +19,7 @@ async function main(): Promise<void> {
   await testEvidenceMissingDataThrows(captureCdpScreenshot);
   await testFrameTreeFailureDoesNotMaskOriginalReadinessFailure(captureCdpScreenshot);
   await testAbsoluteDeadlineRejectsDelayedStability(captureCdpScreenshot);
+  await testReadinessUnavailableRecordsLastSampleDiagnostics(captureCdpScreenshot, setScreenshotFileSystemForTests);
   await testDiagnosticStorageFailureDoesNotThrow(captureCdpScreenshot, setScreenshotFileSystemForTests);
   await testDiagnosticDoesNotRequireSemanticBindingOrLatch(captureCdpScreenshot);
   await testEvidenceStorageFailureStillThrows(captureCdpScreenshot, setScreenshotFileSystemForTests);
@@ -35,6 +36,8 @@ async function main(): Promise<void> {
   await testAmbiguousSemanticContextRejects(captureCdpScreenshot);
   await testOwnerFrameInvalidationRetriesCapture(captureCdpScreenshot);
   await testOwnerNotificationInvalidationRetriesCapture(captureCdpScreenshot);
+  await testResolveNodeTimeoutRetriesForOwnerBinding(captureCdpScreenshot);
+  await testResolveNodeNonTimeoutFailsFast(captureCdpScreenshot);
   await testSemanticOwnerParentFrameAccepted(captureCdpScreenshot);
   await testSemanticContextFrameOutsideTargetRejects(captureCdpScreenshot);
   await testSemanticOwnerOpenerFrameAccepted(captureCdpScreenshot);
@@ -195,6 +198,57 @@ async function testAbsoluteDeadlineRejectsDelayedStability(
     }),
     /Screenshot readiness failed|deadline/
   );
+}
+
+async function testReadinessUnavailableRecordsLastSampleDiagnostics(
+  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot,
+  setScreenshotFileSystemForTests: typeof import('./screenshot').setScreenshotFileSystemForTests
+): Promise<void> {
+  const writes = new Map<string, string>();
+  const cdp = new FakeCaptureCdp([
+    {
+      ready: false,
+      reasonCodes: ['designer-canvas-required-node-missing'],
+      blockers: [],
+      anchors: [{ name: 'body', visible: true, bounds: { left: 0, top: 0, width: 100, height: 100 } }],
+      viewport: { width: 100, height: 100, deviceScaleFactor: 1 },
+      counts: { canvasNodes: 4 },
+      generation: 0,
+      revision: 0,
+      structuralRevision: 0,
+      scrollY: 0,
+      expectationKind: 'designerCanvas',
+      details: {
+        designerCanvas: {
+          missing: ['required-0'],
+          matched: [],
+          covered: ['required-1'],
+        },
+      },
+    },
+  ]);
+  const restore = setScreenshotFileSystemForTests({
+    writeFileSync: (filePath, data) => writes.set(filePath, Buffer.isBuffer(data) ? data.toString('utf8') : String(data)),
+  });
+  try {
+    await assert.rejects(
+      captureCdpScreenshot(cdp, 'readiness-unavailable-last-sample', {
+        expectation: { kind: 'designerCanvas', label: 'readiness-unavailable-last-sample' },
+        timeoutMs: 25,
+      }),
+      /Screenshot readiness failed/
+    );
+  } finally {
+    restore();
+  }
+
+  const metadataText = Array.from(writes.entries()).find(([filePath]) => filePath.endsWith('readiness-unavailable-last-sample.json'))?.[1];
+  assert.ok(metadataText, 'Expected failed screenshot metadata sidecar');
+  const metadata = JSON.parse(metadataText);
+  const readinessUnavailable = metadata.events.find((event: { name: string }) => event.name === 'readiness-unavailable');
+  assert.ok(readinessUnavailable, JSON.stringify(metadata.events));
+  assert.deepStrictEqual(readinessUnavailable.details.designerCanvas.missing, ['required-0']);
+  assert.strictEqual(cdp.captureAttempts, 0, 'Timeout diagnostics must not accept or capture evidence');
 }
 
 async function testDiagnosticStorageFailureDoesNotThrow(
@@ -529,25 +583,26 @@ async function testAmbiguousSemanticContextRejects(
 async function testOwnerFrameInvalidationRetriesCapture(
   captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot
 ): Promise<void> {
+  const screenshotDir = process.env.LA_E2E_CLI_SCREENSHOT_DIR;
   const ownerCdp = new FakeCaptureCdp(
     [
-      snapshot({ revision: 0, expectationKind: 'monitoringAction' }),
-      snapshot({ revision: 0, expectationKind: 'monitoringAction' }),
-      snapshot({ revision: 0, expectationKind: 'monitoringAction' }),
-      snapshot({ revision: 0, expectationKind: 'monitoringAction' }),
-      snapshot({ revision: 0, expectationKind: 'monitoringAction' }),
-      snapshot({ revision: 0, expectationKind: 'monitoringAction' }),
+      snapshot({ revision: 0, expectationKind: 'monitoringAction', details: { designerCanvas: { visibleNodeCount: 2 } } }),
+      snapshot({ revision: 0, expectationKind: 'monitoringAction', details: { designerCanvas: { visibleNodeCount: 2 } } }),
+      snapshot({ revision: 0, expectationKind: 'monitoringAction', details: { designerCanvas: { visibleNodeCount: 2 } } }),
+      snapshot({ revision: 0, expectationKind: 'monitoringAction', details: { designerCanvas: { visibleNodeCount: 2 } } }),
+      snapshot({ revision: 0, expectationKind: 'monitoringAction', details: { designerCanvas: { visibleNodeCount: 2 } } }),
+      snapshot({ revision: 0, expectationKind: 'monitoringAction', details: { designerCanvas: { visibleNodeCount: 2 } } }),
     ],
     { ownerFrameRevisionReads: [0, 1, 1, 1] }
   );
   const semanticCdp = new FakeCaptureCdp(
     [
-      snapshot({ revision: 0, expectationKind: 'monitoringAction' }),
-      snapshot({ revision: 0, expectationKind: 'monitoringAction' }),
-      snapshot({ revision: 0, expectationKind: 'monitoringAction' }),
-      snapshot({ revision: 0, expectationKind: 'monitoringAction' }),
-      snapshot({ revision: 0, expectationKind: 'monitoringAction' }),
-      snapshot({ revision: 0, expectationKind: 'monitoringAction' }),
+      snapshot({ revision: 0, expectationKind: 'monitoringAction', details: { designerCanvas: { visibleNodeCount: 2 } } }),
+      snapshot({ revision: 0, expectationKind: 'monitoringAction', details: { designerCanvas: { visibleNodeCount: 2 } } }),
+      snapshot({ revision: 0, expectationKind: 'monitoringAction', details: { designerCanvas: { visibleNodeCount: 2 } } }),
+      snapshot({ revision: 0, expectationKind: 'monitoringAction', details: { designerCanvas: { visibleNodeCount: 2 } } }),
+      snapshot({ revision: 0, expectationKind: 'monitoringAction', details: { designerCanvas: { visibleNodeCount: 2 } } }),
+      snapshot({ revision: 0, expectationKind: 'monitoringAction', details: { designerCanvas: { visibleNodeCount: 2 } } }),
     ],
     {
       mainFrameId: 'semantic-root-frame',
@@ -570,6 +625,20 @@ async function testOwnerFrameInvalidationRetriesCapture(
   });
 
   assert.strictEqual(ownerCdp.captureAttempts, 2, 'Owner frame mutation during capture should discard the candidate and retry');
+  const metadata = JSON.parse(fs.readFileSync(path.join(screenshotDir ?? '', 'owner-frame-invalidation-retries-capture.json'), 'utf8')) as {
+    events?: Array<{ name: string; details?: Record<string, unknown> }>;
+  };
+  assert.ok(
+    metadata.events?.some((event) => event.name === 'rejected'),
+    `Expected rejected event. Metadata: ${JSON.stringify(metadata)}`
+  );
+  assert.ok(
+    metadata.events?.some((event) => event.name === 'accepted'),
+    `Expected accepted event. Metadata: ${JSON.stringify(metadata)}`
+  );
+  const rejected = metadata.events?.find((event) => event.name === 'rejected');
+  assert.strictEqual(rejected?.details?.ownerRevisionAccepted, false, JSON.stringify(rejected));
+  assert.ok('designerCanvas' in (rejected?.details ?? {}), JSON.stringify(rejected));
 }
 
 async function testOwnerNotificationInvalidationRetriesCapture(
@@ -617,6 +686,61 @@ async function testOwnerNotificationInvalidationRetriesCapture(
 
   assert.strictEqual(ownerCdp.captureAttempts, 2, 'Owner notification mutation during capture should discard the candidate and retry');
   assert.strictEqual(ownerCdp.ownerLatchObservedNotifications, true, 'Owner latch must observe notification containers');
+}
+
+async function testResolveNodeTimeoutRetriesForOwnerBinding(
+  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot
+): Promise<void> {
+  const ownerCdp = new FakeCaptureCdp([snapshot({ revision: 0 }), snapshot({ revision: 0 })], { resolveNodeTimeoutFailures: 1 });
+  const semanticCdp = new FakeCaptureCdp([snapshot({ revision: 0 })], {
+    mainFrameId: 'semantic-root-frame',
+    mainFrameParentId: 'workbench-frame',
+    targetUrl: 'vscode-webview://logic-apps-resolve-node-retry',
+    contexts: [{ id: 7, text: 'Response Succeeded Outputs response payload', visible: true, frameId: 'semantic-root-frame' }],
+  });
+
+  await captureCdpScreenshot(ownerCdp, 'resolve-node-timeout-retry', {
+    expectation: {
+      kind: 'monitoringAction',
+      label: 'resolve-node-timeout-retry',
+      actionTitle: 'Response',
+      expectedStatus: 'Succeeded',
+    },
+    semanticCdp,
+    semanticContextId: 7,
+    timeoutMs: 1000,
+  });
+
+  assert.ok(ownerCdp.resolveNodeAttempts > 1, 'A typed DOM.resolveNode timeout should retry within the original deadline');
+}
+
+async function testResolveNodeNonTimeoutFailsFast(captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot): Promise<void> {
+  const ownerCdp = new FakeCaptureCdp([snapshot({ revision: 0 }), snapshot({ revision: 0 })], {
+    resolveNodeError: new Error('synthetic resolveNode authorization failure'),
+  });
+  const semanticCdp = new FakeCaptureCdp([snapshot({ revision: 0 })], {
+    mainFrameId: 'semantic-root-frame',
+    mainFrameParentId: 'workbench-frame',
+    targetUrl: 'vscode-webview://logic-apps-resolve-node-failfast',
+    contexts: [{ id: 7, text: 'Response Succeeded Outputs response payload', visible: true, frameId: 'semantic-root-frame' }],
+  });
+
+  await assert.rejects(
+    captureCdpScreenshot(ownerCdp, 'resolve-node-non-timeout-failfast', {
+      expectation: {
+        kind: 'monitoringAction',
+        label: 'resolve-node-non-timeout-failfast',
+        actionTitle: 'Response',
+        expectedStatus: 'Succeeded',
+      },
+      semanticCdp,
+      semanticContextId: 7,
+      timeoutMs: 1000,
+    }),
+    /synthetic resolveNode authorization failure/
+  );
+
+  assert.strictEqual(ownerCdp.resolveNodeAttempts, 1, 'Non-timeout DOM.resolveNode errors must not retry');
 }
 
 async function testSemanticOwnerFrameMismatchRejects(
@@ -963,6 +1087,7 @@ class FakeCaptureCdp {
   readonly evaluatedContextIds: Array<number | undefined> = [];
   readonly latchInstallContextIds: Array<number | undefined> = [];
   ownerLatchObservedNotifications = false;
+  resolveNodeAttempts = 0;
   semanticBindingControlMetadataUsed = false;
   latchInstallAttempts = 0;
   private readinessIndex = 0;
@@ -1004,6 +1129,8 @@ class FakeCaptureCdp {
       ownerFrameOccludedByNotification?: boolean;
       ownerVisibilityScenario?: OwnerVisibilityScenario;
       exactIframeVisibilityScenario?: OwnerVisibilityScenario;
+      resolveNodeTimeoutFailures?: number;
+      resolveNodeError?: Error;
     } = {}
   ) {
     this.targetUrl = options.targetUrl;
@@ -1035,6 +1162,13 @@ class FakeCaptureCdp {
       return { result: { targetInfo: { openerFrameId: this.options.openerFrameId } } };
     }
     if (method === 'DOM.resolveNode') {
+      this.resolveNodeAttempts++;
+      if (this.options.resolveNodeError) {
+        throw this.options.resolveNodeError;
+      }
+      if (this.options.resolveNodeTimeoutFailures && this.resolveNodeAttempts <= this.options.resolveNodeTimeoutFailures) {
+        throw new Error('Timed out waiting for CDP DOM.resolveNode response after 5000ms');
+      }
       return { result: { object: { objectId: 'owner-frame-object' } } };
     }
     if (method === 'Runtime.callFunctionOn') {
@@ -1311,6 +1445,7 @@ function snapshot(options: {
   revision: number;
   structuralRevision?: number;
   expectationKind?: ScreenshotReadinessSnapshot['expectationKind'];
+  details?: Record<string, unknown>;
 }): ScreenshotReadinessSnapshot {
   return {
     ready: true,
@@ -1324,6 +1459,7 @@ function snapshot(options: {
     structuralRevision: options.structuralRevision ?? options.revision,
     scrollY: 0,
     expectationKind: options.expectationKind ?? 'workbenchShell',
+    details: options.details,
   };
 }
 

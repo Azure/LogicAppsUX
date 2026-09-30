@@ -10,6 +10,7 @@ import {
   installScreenshotInvalidationLatchExpression,
   isStableScreenshotSample,
   sanitizeScreenshotSegment,
+  type ScreenshotCaptureEvent,
   type ScreenshotClassification,
   type ScreenshotExpectation,
   type ScreenshotReadinessMetadata,
@@ -199,6 +200,7 @@ async function captureCdpScreenshotCore(
   const timeoutMs = options.timeoutMs ?? (classification === 'diagnostic' ? 5000 : 15000);
   const deadline = options.deadlineMs ?? startedAt + timeoutMs;
   const samples: ScreenshotReadinessSnapshot[] = [];
+  const events: ScreenshotCaptureEvent[] = [];
   let captureAttempts = 0;
   const targetId = cdp.targetId ?? 'unknown-workbench-target';
   let frameId = 'main-frame';
@@ -235,6 +237,22 @@ async function captureCdpScreenshotCore(
   }
   const metadataFrameId = getSemanticMetadataFrameId(sampleCdp, sampleContextId) ?? frameId;
   let data: string | undefined;
+  const recordEvent = (name: string, sample?: ScreenshotReadinessSnapshot, values: Partial<ScreenshotCaptureEvent> = {}): void => {
+    events.push({
+      name,
+      elapsedMs: Date.now() - startedAt,
+      attempt: captureAttempts || undefined,
+      generation: sample?.generation ?? values.generation,
+      revision: sample?.revision ?? values.revision,
+      structuralRevision: sample?.structuralRevision ?? values.structuralRevision,
+      ownerRevision: values.ownerRevision,
+      reasonCodes: [...(sample?.reasonCodes ?? []), ...(values.reasonCodes ?? [])],
+      blockers: sample?.blockers ?? values.blockers,
+      counts: sample?.counts ?? values.counts,
+      anchors: sample?.anchors ?? values.anchors,
+      details: { ...(sample?.details ?? {}), ...(values.details ?? {}) },
+    });
+  };
   try {
     while (Date.now() < deadline && !data) {
       let stableSample: ScreenshotReadinessSnapshot | undefined;
@@ -243,12 +261,15 @@ async function captureCdpScreenshotCore(
         if (stableSample) {
           samples.push(stableSample);
           generation = stableSample.generation;
+          recordEvent('diagnostic-sample', stableSample);
         }
       } else {
+        recordEvent('readiness-wait-start', undefined, { generation });
         sampleContextId = await assertBoundSemanticContext(cdp, sampleCdp, sampleContextId, expectation, options.binding, deadline);
         await ensureSemanticLatchInstalled();
         stableSample = await waitForStableReadiness(sampleCdp, sampleContextId, expectation, generation, deadline, samples);
         generation = stableSample?.generation ?? generation;
+        recordEvent(stableSample?.ready ? 'stable-readiness' : 'readiness-unavailable', stableSample ?? samples.at(-1));
       }
 
       if (classification !== 'diagnostic' && (!stableSample || !stableSample.ready)) {
@@ -264,6 +285,7 @@ async function captureCdpScreenshotCore(
         await ensureSemanticLatchInstalled();
       }
       captureAttempts++;
+      recordEvent('capture-start', stableSample, { ownerRevision: preOwnerRevision });
       let response: { result?: { data?: string } };
       try {
         response = (await cdp.send(
@@ -277,6 +299,10 @@ async function captureCdpScreenshotCore(
           result?: { data?: string };
         };
       } catch (error) {
+        recordEvent('capture-rpc-failed', stableSample, {
+          ownerRevision: preOwnerRevision,
+          reasonCodes: ['capture-rpc-failed'],
+        });
         if (classification === 'diagnostic') {
           break;
         }
@@ -297,6 +323,7 @@ async function captureCdpScreenshotCore(
       }
 
       const candidateData = response.result?.data;
+      recordEvent('capture-end', stableSample, { ownerRevision: preOwnerRevision });
       if (!candidateData) {
         if (classification === 'diagnostic') {
           break;
@@ -311,7 +338,9 @@ async function captureCdpScreenshotCore(
           await ensureSemanticLatchInstalled();
         }
         postSample = await sampleReadiness(sampleCdp, sampleContextId, expectation, sampleCdp.contextGeneration ?? generation, 0, deadline);
+        recordEvent('post-sample', postSample);
       } catch (error) {
+        recordEvent('postcheck-failed', stableSample, { reasonCodes: ['postcheck-failed'] });
         if (classification === 'diagnostic') {
           data = candidateData;
           break;
@@ -351,8 +380,24 @@ async function captureCdpScreenshotCore(
           stableSample &&
           isStableScreenshotSample(stableSample, postSample));
       if (accepted) {
+        recordEvent('accepted', postSample, { ownerRevision: postOwnerRevision });
         data = candidateData;
       } else {
+        recordEvent('rejected', postSample, {
+          ownerRevision: postOwnerRevision,
+          details: {
+            preCaptureGeneration,
+            postCaptureGeneration,
+            preCaptureRevision,
+            postCaptureRevision: postSample.revision,
+            preCaptureStructuralRevision,
+            postCaptureStructuralRevision,
+            preOwnerRevision,
+            postOwnerRevision,
+            ownerRevisionAccepted,
+            revisionAccepted,
+          },
+        });
         if (!ownerRevisionAccepted) {
           await ownerBindingLatch?.dispose().catch(() => undefined);
           ownerBindingLatch = await installOwnerBindingInvalidationLatch(cdp, sampleCdp, deadline);
@@ -391,6 +436,7 @@ async function captureCdpScreenshotCore(
         samples,
         captureAttempts,
         reasonCodes,
+        events,
       })
     );
     if (classification === 'diagnostic') {
@@ -415,6 +461,7 @@ async function captureCdpScreenshotCore(
       samples,
       captureAttempts,
       reasonCodes: samples.at(-1)?.reasonCodes,
+      events,
     })
   );
   console.log(`[screenshot] Saved: ${screenshotPath}`);

@@ -18,6 +18,15 @@ async function main(): Promise<void> {
   testMonitoringPanelRequiresExpectedValues();
   testMonitoringPanelRejectsPropertiesOnlyWhileInputsLoading();
   testDesignerCanvasAcceptsRequiredNodeAliases();
+  testDesignerCanvasRejectsHiddenConcreteRequiredNode();
+  testDesignerCanvasRejectsOffscreenConcreteRequiredNode();
+  testDesignerCanvasRejectsRequiredTextOutsideCanvasNode();
+  testDesignerCanvasRejectsCoveredConcreteRequiredNode();
+  testDesignerCanvasRejectsAncestorClippedConcreteRequiredNode();
+  testDesignerCanvasRejectsNonCanvasSubstituteNode();
+  testDesignerCanvasRejectsOffCenterLoaderOverRequiredNode();
+  testDesignerCanvasPrefersCanvasOverSelectedPanel();
+  testDesignerCanvasBlocksScopedLoadersOnly();
   testDesignerPanelRequiresExactFieldValue();
   testDesignerPanelRequiresFocusedEditorTokenSource();
   testDesignerPanelRejectsAncestorFocusAndPlainTextToken();
@@ -29,6 +38,9 @@ async function main(): Promise<void> {
   testCreateWorkspaceRejectsFooterClippedFieldControl();
   testCreateWorkspaceRejectsOutputPanelClippedFieldControl();
   testCreateWorkspaceAcceptsFullyVisibleAnchoredFieldControl();
+  testCreateWorkspaceRejectsClippedFunctionNameFieldControl();
+  testCreateWorkspaceAcceptsCenteredFunctionNameFieldControl();
+  testCreateWorkspaceRejectsWrongFunctionNameFieldValue();
   testCreateWorkspaceRequiresEnabledCreateButton();
   testCreateWorkspaceRequiresScrollPosition();
   testOverviewRequiresStatusOnExpectedRunRow();
@@ -43,6 +55,7 @@ async function main(): Promise<void> {
   testWorkbenchShellStabilityAllowsUnrelatedWorkbenchChurn();
   testWorkbenchShellStabilityRejectsStructuralShellChurn();
   testMetadataDoesNotCarryRawText();
+  testMetadataRedactsEmbeddedSecretValues();
   console.log('[screenshotReadiness.unit] all tests passed');
 }
 
@@ -210,15 +223,12 @@ function testMonitoringPanelRejectsPropertiesOnlyWhileInputsLoading(): void {
 }
 
 function testDesignerCanvasAcceptsRequiredNodeAliases(): void {
+  const requestCard = new FakeElement('div', { class: 'msla-card' }, [], 'When an HTTP request is received');
+  requestCard.bounds = { left: 100, top: 100, width: 200, height: 80, right: 300, bottom: 180 };
+  const responseCard = new FakeElement('div', { class: 'msla-card' }, [], 'Response');
+  responseCard.bounds = { left: 100, top: 240, width: 200, height: 80, right: 300, bottom: 320 };
   const accepted = runProbe(
-    new FakeDocument(
-      new FakeElement('body', {}, [
-        new FakeElement('div', { class: 'react-flow' }, [
-          new FakeElement('div', { class: 'msla-card' }, [], 'When an HTTP request is received'),
-          new FakeElement('div', { class: 'msla-card' }, [], 'Response'),
-        ]),
-      ])
-    ),
+    new FakeDocument(new FakeElement('body', {}, [new FakeElement('div', { class: 'react-flow' }, [requestCard, responseCard])])),
     {
       kind: 'designerCanvas',
       label: 'request-trigger-added',
@@ -244,6 +254,226 @@ function testDesignerCanvasAcceptsRequiredNodeAliases(): void {
   assert.strictEqual(accepted.ready, true, JSON.stringify(accepted));
   assert.strictEqual(rejected.ready, false, JSON.stringify(rejected));
   assert.ok(rejected.reasonCodes.includes('designer-canvas-state-missing'));
+}
+
+function testDesignerCanvasRejectsHiddenConcreteRequiredNode(): void {
+  const hiddenRequestCard = new FakeElement('div', { class: 'msla-card', 'aria-hidden': 'true' }, [], 'When an HTTP request is received');
+  const snapshot = runProbe(
+    new FakeDocument(
+      new FakeElement('body', {}, [
+        new FakeElement('div', { class: 'react-flow' }, [
+          hiddenRequestCard,
+          new FakeElement('div', { class: 'msla-card' }, [], 'Response'),
+        ]),
+      ])
+    ),
+    {
+      kind: 'designerCanvas',
+      label: 'request-trigger-added',
+      requiredNodes: ['When an HTTP request is received', 'Response'],
+    }
+  );
+
+  assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
+  assert.ok(snapshot.reasonCodes.includes('designer-canvas-required-node-missing'));
+  assert.strictEqual(
+    JSON.stringify((snapshot.details?.designerCanvas as { missing?: string[] } | undefined)?.missing),
+    JSON.stringify(['required-0'])
+  );
+}
+
+function testDesignerCanvasRejectsOffscreenConcreteRequiredNode(): void {
+  const offscreenRequestCard = new FakeElement('div', { class: 'msla-card' }, [], 'When an HTTP request is received');
+  offscreenRequestCard.bounds = { left: 0, top: -200, width: 200, height: 40, right: 200, bottom: -160 };
+  const snapshot = runProbe(
+    new FakeDocument(
+      new FakeElement('body', {}, [
+        new FakeElement('div', { class: 'react-flow' }, [
+          offscreenRequestCard,
+          new FakeElement('div', { class: 'msla-card' }, [], 'Response'),
+        ]),
+      ])
+    ),
+    {
+      kind: 'designerCanvas',
+      label: 'request-trigger-added',
+      requiredNodes: ['When an HTTP request is received', 'Response'],
+    }
+  );
+
+  assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
+  assert.ok(snapshot.reasonCodes.includes('designer-canvas-required-node-missing'));
+}
+
+function testDesignerCanvasRejectsRequiredTextOutsideCanvasNode(): void {
+  const snapshot = runProbe(
+    new FakeDocument(
+      new FakeElement('body', {}, [
+        new FakeElement('div', {}, [], 'When an HTTP request is received'),
+        new FakeElement('div', { class: 'react-flow' }, [new FakeElement('div', { class: 'msla-card' }, [], 'Response')]),
+      ])
+    ),
+    {
+      kind: 'designerCanvas',
+      label: 'request-trigger-added',
+      requiredNodes: ['When an HTTP request is received', 'Response'],
+    }
+  );
+
+  assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
+  assert.ok(snapshot.reasonCodes.includes('designer-canvas-required-node-missing'));
+}
+
+function testDesignerCanvasRejectsCoveredConcreteRequiredNode(): void {
+  const requestCard = new FakeElement('div', { class: 'msla-card' }, [], 'When an HTTP request is received');
+  requestCard.bounds = { left: 100, top: 100, width: 200, height: 80, right: 300, bottom: 180 };
+  const responseCard = new FakeElement('div', { class: 'msla-card' }, [], 'Response');
+  responseCard.bounds = { left: 100, top: 240, width: 200, height: 80, right: 300, bottom: 320 };
+  const overlay = new FakeElement('div', { class: 'canvas-loading-overlay' }, [], 'Loading designer');
+  overlay.bounds = { left: 0, top: 0, width: 600, height: 600, right: 600, bottom: 600 };
+  const snapshot = runProbe(
+    new FakeDocument(new FakeElement('body', {}, [new FakeElement('div', { class: 'react-flow' }, [requestCard, responseCard]), overlay])),
+    {
+      kind: 'designerCanvas',
+      label: 'request-trigger-added',
+      requiredNodes: ['When an HTTP request is received', 'Response'],
+    }
+  );
+
+  assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
+  assert.ok(snapshot.reasonCodes.includes('designer-canvas-required-node-missing'));
+  assert.ok(
+    ((snapshot.details?.designerCanvas as { covered?: string[] } | undefined)?.covered ?? []).includes('required-0'),
+    JSON.stringify(snapshot)
+  );
+}
+
+function testDesignerCanvasRejectsAncestorClippedConcreteRequiredNode(): void {
+  const requestCard = new FakeElement('div', { class: 'msla-card' }, [], 'When an HTTP request is received');
+  requestCard.bounds = { left: 150, top: 360, width: 200, height: 80, right: 350, bottom: 440 };
+  const clippingAncestor = new FakeElement('div', { style: 'overflow:hidden' }, [requestCard]);
+  clippingAncestor.bounds = { left: 100, top: 100, width: 300, height: 180, right: 400, bottom: 280 };
+  clippingAncestor.clientHeight = 180;
+  clippingAncestor.scrollHeight = 360;
+  clippingAncestor.clientWidth = 300;
+  clippingAncestor.scrollWidth = 300;
+  const canvas = new FakeElement('div', { class: 'react-flow' }, [clippingAncestor]);
+  canvas.bounds = { left: 100, top: 100, width: 400, height: 360, right: 500, bottom: 460 };
+
+  const snapshot = runProbe(new FakeDocument(new FakeElement('body', {}, [canvas])), {
+    kind: 'designerCanvas',
+    label: 'ancestor-clipped-node',
+    requiredNodes: ['When an HTTP request is received'],
+  });
+
+  assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
+  assert.ok(snapshot.reasonCodes.includes('designer-canvas-required-node-missing'));
+}
+
+function testDesignerCanvasRejectsNonCanvasSubstituteNode(): void {
+  const panelSubstitute = new FakeElement('div', { class: 'msla-card' }, [], 'Get current weather');
+  panelSubstitute.bounds = { left: 520, top: 100, width: 220, height: 80, right: 740, bottom: 180 };
+  const canvas = new FakeElement('div', { class: 'react-flow' }, [], 'Get current weather');
+  canvas.bounds = { left: 100, top: 100, width: 360, height: 240, right: 460, bottom: 340 };
+
+  const snapshot = runProbe(new FakeDocument(new FakeElement('body', {}, [canvas, panelSubstitute])), {
+    kind: 'designerCanvas',
+    label: 'noncanvas-substitute-node',
+    requiredNodes: ['Get current weather'],
+  });
+
+  assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
+  assert.ok(snapshot.reasonCodes.includes('designer-canvas-required-node-missing'));
+}
+
+function testDesignerCanvasRejectsOffCenterLoaderOverRequiredNode(): void {
+  const requestCard = new FakeElement('div', { class: 'msla-card' }, [], 'Get current weather');
+  requestCard.bounds = { left: 420, top: 160, width: 140, height: 80, right: 560, bottom: 240 };
+  const canvas = new FakeElement('div', { class: 'react-flow' }, [requestCard]);
+  canvas.bounds = { left: 100, top: 100, width: 500, height: 320, right: 600, bottom: 420 };
+  const overlay = new FakeElement('div', { class: 'ms-Spinner' }, [], 'Loading');
+  overlay.bounds = { left: 400, top: 140, width: 180, height: 120, right: 580, bottom: 260 };
+
+  const snapshot = runProbe(new FakeDocument(new FakeElement('body', {}, [canvas, overlay])), {
+    kind: 'designerCanvas',
+    label: 'off-center-loader',
+    requiredNodes: ['Get current weather'],
+  });
+
+  assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
+  assert.ok(snapshot.reasonCodes.includes('loader-visible') || snapshot.reasonCodes.includes('designer-canvas-required-node-missing'));
+}
+
+function testDesignerCanvasPrefersCanvasOverSelectedPanel(): void {
+  const panelCard = new FakeElement('div', { class: 'msla-card' }, [], 'Get current weather');
+  panelCard.bounds = { left: 20, top: 20, width: 200, height: 80, right: 220, bottom: 100 };
+  const selectedPanel = new FakeElement('div', { class: 'msla-panel-layout msla-panel-border-selected' }, [panelCard]);
+  selectedPanel.bounds = { left: 0, top: 0, width: 260, height: 200, right: 260, bottom: 200 };
+  const requestCard = new FakeElement('div', { class: 'msla-card' }, [], 'Get current weather');
+  requestCard.bounds = { left: 320, top: 120, width: 220, height: 80, right: 540, bottom: 200 };
+  const canvas = new FakeElement('div', { class: 'react-flow' }, [requestCard]);
+  canvas.bounds = { left: 300, top: 100, width: 360, height: 260, right: 660, bottom: 360 };
+
+  const snapshot = runProbe(new FakeDocument(new FakeElement('body', {}, [selectedPanel, canvas])), {
+    kind: 'designerCanvas',
+    label: 'selected-panel-with-canvas',
+    requiredNodes: ['Get current weather'],
+  });
+
+  assert.strictEqual(snapshot.ready, true, JSON.stringify(snapshot));
+}
+
+function testDesignerCanvasBlocksScopedLoadersOnly(): void {
+  const canvas = new FakeElement('div', { class: 'react-flow' }, canvasCards());
+  canvas.bounds = { left: 100, top: 100, width: 400, height: 300, right: 500, bottom: 400 };
+  const unrelatedLoader = new FakeElement('div', { class: 'loading' }, [], 'Loading unrelated view');
+  unrelatedLoader.bounds = { left: 700, top: 100, width: 80, height: 80, right: 780, bottom: 180 };
+
+  const unrelated = runProbe(new FakeDocument(new FakeElement('body', {}, [canvas, unrelatedLoader])), {
+    kind: 'designerCanvas',
+    label: 'action-added',
+    requiredNodes: ['Request', 'Response'],
+  });
+
+  const inside = runProbe(
+    new FakeDocument(
+      new FakeElement('body', {}, [
+        new FakeElement('div', { class: 'react-flow' }, [
+          ...canvasCards(),
+          new FakeElement('div', { class: 'loading' }, [], 'Loading designer'),
+        ]),
+      ])
+    ),
+    {
+      kind: 'designerCanvas',
+      label: 'action-added',
+      requiredNodes: ['Request', 'Response'],
+    }
+  );
+
+  const overlay = new FakeElement('div', { class: 'loading' }, [], 'Loading overlay');
+  overlay.bounds = { left: 90, top: 90, width: 420, height: 320, right: 510, bottom: 410 };
+  const overlaidCanvas = new FakeElement('div', { class: 'react-flow' }, canvasCards());
+  overlaidCanvas.bounds = { left: 100, top: 100, width: 400, height: 300, right: 500, bottom: 400 };
+  const overlaid = runProbe(new FakeDocument(new FakeElement('body', {}, [overlaidCanvas, overlay])), {
+    kind: 'designerCanvas',
+    label: 'action-added',
+    requiredNodes: ['Request', 'Response'],
+  });
+
+  assert.strictEqual(unrelated.ready, true, JSON.stringify(unrelated));
+  assert.strictEqual(inside.ready, false, JSON.stringify(inside));
+  assert.ok(inside.blockers.includes('loader-visible'));
+  assert.strictEqual(overlaid.ready, false, JSON.stringify(overlaid));
+  assert.ok(overlaid.blockers.includes('loader-visible'));
+}
+
+function canvasCards(): FakeElement[] {
+  const requestCard = new FakeElement('div', { class: 'msla-card' }, [], 'Request');
+  requestCard.bounds = { left: 150, top: 140, width: 200, height: 80, right: 350, bottom: 220 };
+  const responseCard = new FakeElement('div', { class: 'msla-card' }, [], 'Response');
+  responseCard.bounds = { left: 150, top: 260, width: 200, height: 80, right: 350, bottom: 340 };
+  return [requestCard, responseCard];
 }
 
 function testDesignerPanelRequiresExactFieldValue(): void {
@@ -605,6 +835,102 @@ function testCreateWorkspaceAcceptsFullyVisibleAnchoredFieldControl(): void {
   );
 
   assert.strictEqual(snapshot.ready, true, JSON.stringify(snapshot));
+}
+
+function testCreateWorkspaceRejectsClippedFunctionNameFieldControl(): void {
+  const input = new FakeInputElement('input', { 'aria-label': 'Function name', value: 'WeatherFunction' });
+  input.bounds = { left: 32, top: 382, width: 520, height: 32, right: 552, bottom: 414 };
+  const field = new FakeElement('div', { class: 'ms-TextField' }, [input], 'Function name');
+  field.bounds = { left: 24, top: 352, width: 540, height: 64, right: 564, bottom: 416 };
+  const footer = new FakeElement('footer', { class: 'wizard-footer' }, [], 'Next');
+  footer.bounds = { left: 0, top: 392, width: 714, height: 22, right: 714, bottom: 414 };
+  const document = createWorkspaceDocument([field, footer]);
+
+  const snapshot = runProbe(
+    document,
+    {
+      kind: 'createWorkspace',
+      label: 'create-workspace-custom-code-function-name',
+      stage: 'scrolled',
+      fields: [{ labels: ['Function name'], value: 'WeatherFunction' }],
+      nextButton: 'enabled',
+    },
+    {
+      window: {
+        innerWidth: 714,
+        innerHeight: 414,
+        devicePixelRatio: 1,
+        scrollY: 0,
+        getComputedStyle: getComputedStyleForFakeElement,
+      },
+    }
+  );
+
+  assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
+  assert.ok(snapshot.reasonCodes.includes('create-workspace-field-clipped'));
+}
+
+function testCreateWorkspaceAcceptsCenteredFunctionNameFieldControl(): void {
+  const input = new FakeInputElement('input', { 'aria-label': 'Function name', value: 'WeatherFunction' });
+  input.bounds = { left: 32, top: 214, width: 520, height: 32, right: 552, bottom: 246 };
+  const field = new FakeElement('div', { class: 'ms-TextField' }, [input], 'Function name');
+  field.bounds = { left: 24, top: 184, width: 540, height: 64, right: 564, bottom: 248 };
+  const footer = new FakeElement('footer', { class: 'wizard-footer' }, [], 'Next');
+  footer.bounds = { left: 0, top: 392, width: 714, height: 22, right: 714, bottom: 414 };
+  const document = createWorkspaceDocument([field, footer]);
+
+  const snapshot = runProbe(
+    document,
+    {
+      kind: 'createWorkspace',
+      label: 'create-workspace-custom-code-function-name',
+      stage: 'scrolled',
+      fields: [{ labels: ['Function name'], value: 'WeatherFunction' }],
+      nextButton: 'enabled',
+    },
+    {
+      window: {
+        innerWidth: 714,
+        innerHeight: 414,
+        devicePixelRatio: 1,
+        scrollY: 0,
+        getComputedStyle: getComputedStyleForFakeElement,
+      },
+    }
+  );
+
+  assert.strictEqual(snapshot.ready, true, JSON.stringify(snapshot));
+}
+
+function testCreateWorkspaceRejectsWrongFunctionNameFieldValue(): void {
+  const input = new FakeInputElement('input', { 'aria-label': 'Function name', value: 'OtherFunction' });
+  input.bounds = { left: 32, top: 214, width: 520, height: 32, right: 552, bottom: 246 };
+  const field = new FakeElement('div', { class: 'ms-TextField' }, [input], 'Function name');
+  field.bounds = { left: 24, top: 184, width: 540, height: 64, right: 564, bottom: 248 };
+  const document = createWorkspaceDocument([field]);
+
+  const snapshot = runProbe(
+    document,
+    {
+      kind: 'createWorkspace',
+      label: 'create-workspace-custom-code-function-name',
+      stage: 'scrolled',
+      fields: [{ labels: ['Function name'], value: 'WeatherFunction' }],
+      nextButton: 'enabled',
+    },
+    {
+      window: {
+        innerWidth: 714,
+        innerHeight: 414,
+        devicePixelRatio: 1,
+        scrollY: 0,
+        getComputedStyle: getComputedStyleForFakeElement,
+      },
+    }
+  );
+
+  assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
+  assert.ok(snapshot.reasonCodes.includes('create-workspace-field-value-mismatch'));
 }
 
 function testCreateWorkspaceRequiresEnabledCreateButton(): void {
@@ -1211,6 +1537,16 @@ function testMetadataDoesNotCarryRawText(): void {
     timeoutMs: 15000,
     elapsedMs: 250,
     captureAttempts: 1,
+    events: [
+      {
+        name: 'rejected',
+        elapsedMs: 10,
+        details: {
+          targetUrl: 'vscode-webview://contains-sensitive-looking-url',
+          workspacePath: 'C:\\temp\\workspace',
+        },
+      },
+    ],
     samples: [
       {
         ready: true,
@@ -1231,6 +1567,79 @@ function testMetadataDoesNotCarryRawText(): void {
   assert.ok(!serialized.includes('vscode-webview://'));
   assert.ok(!serialized.includes('C:\\temp\\workspace'));
   assert.ok(serialized.includes('opaqueTargetId'));
+  assert.ok(serialized.includes('targetUrl'));
+  assert.ok(serialized.includes('workspacePath'));
+}
+
+function testMetadataRedactsEmbeddedSecretValues(): void {
+  const secret = 'SENTINELSECRET123';
+  const metadata = buildScreenshotMetadata({
+    checkpoint: 'secret-metadata',
+    phase: 'failed',
+    classification: 'diagnostic',
+    verdict: 'failed',
+    targetId: 'target',
+    frameId: 'frame',
+    generation: 1,
+    elapsedMs: 0,
+    timeoutMs: 1000,
+    events: [
+      {
+        name: 'readiness-unavailable',
+        elapsedMs: 10,
+        details: {
+          message: `Authorization: Bearer ${secret}`,
+          runtime: `connectionRuntimeUrl=https://example.invalid/runtime/${secret}`,
+          signed: `https://example.invalid/path?sig=${secret}&ok=true`,
+          connectionKey: secret,
+          sig: secret,
+          designerCanvas: {
+            missing: ['required-0'],
+            matched: ['required-1'],
+            covered: ['required-2'],
+            scopedCounts: { canvasNodes: 4 },
+          },
+          benign: { nested: 'safe-value' },
+        },
+      },
+    ],
+    samples: [
+      {
+        ready: false,
+        reasonCodes: ['fixture'],
+        blockers: [],
+        anchors: [],
+        viewport: { width: 800, height: 600, deviceScaleFactor: 1 },
+        counts: {},
+        details: {
+          message: `Authorization: Bearer ${secret}`,
+          runtime: `connectionRuntimeUrl=https://example.invalid/runtime/${secret}`,
+          signed: `https://example.invalid/path?sig=${secret}&ok=true`,
+          connectionKey: secret,
+        },
+        generation: 1,
+        revision: 1,
+        scrollY: 0,
+        expectationKind: 'diagnostic',
+      },
+    ],
+    captureAttempts: 0,
+  });
+
+  const serialized = JSON.stringify(metadata);
+  assert.ok(!serialized.includes(secret), serialized);
+  assert.ok(serialized.includes('safe-value'), serialized);
+  const details = metadata.events?.[0]?.details as {
+    designerCanvas?: { missing?: string[]; matched?: string[]; covered?: string[]; scopedCounts?: { canvasNodes?: number } };
+    benign?: { nested?: string };
+    sig?: string;
+  };
+  assert.deepStrictEqual(details?.designerCanvas?.missing, ['required-0']);
+  assert.deepStrictEqual(details?.designerCanvas?.matched, ['required-1']);
+  assert.deepStrictEqual(details?.designerCanvas?.covered, ['required-2']);
+  assert.strictEqual(details?.designerCanvas?.scopedCounts?.canvasNodes, 4);
+  assert.strictEqual(details?.benign?.nested, 'safe-value');
+  assert.strictEqual(details?.sig, '[redacted]');
 }
 
 function runProbe(
@@ -1378,7 +1787,9 @@ class FakeElement {
   hidden = false;
   offsetWidth = 200;
   offsetHeight = 40;
+  clientWidth = 200;
   clientHeight = 40;
+  scrollWidth = 200;
   scrollHeight = 40;
   scrollTop = 0;
   bounds?: { left: number; top: number; width: number; height: number; right: number; bottom: number };
@@ -1453,6 +1864,10 @@ class FakeElement {
       return false;
     }
     return this.allDescendants().includes(candidate);
+  }
+
+  matches(selector: string): boolean {
+    return matchesSelector(this, selector);
   }
 }
 
