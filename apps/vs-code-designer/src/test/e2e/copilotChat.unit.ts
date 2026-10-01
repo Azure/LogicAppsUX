@@ -36,6 +36,13 @@ async function main(): Promise<void> {
   await testCopilotChatAttachRetryDoesNotDuplicateSuccessfulFirstAttach();
   await testCopilotChatAttachRetryDoesNotReclassifyReadStateFailure();
   await testCopilotChatAttachRetryDoesNotReclassifyVisibleChatClosureFailure();
+  await testCopilotChatInitialReadRetryRecoversOnSameConnection();
+  await testCopilotChatInitialReadRetryStopsAfterBoundAndRedactsErrors();
+  await testCopilotChatInitialReadRetryRespectsDeadline();
+  await testCopilotChatInitialReadRetryUsesSharedAttachBudget();
+  await testCopilotChatInitialReadRetryDoesNotRetryOtherErrors();
+  await testCopilotChatInitialReadRetryDoesNotRetryAfterStateObservation();
+  await testCopilotChatInitialReadRetryPreservesClosureFailures();
   console.log('[copilotChat.unit] all tests passed');
 }
 
@@ -440,6 +447,7 @@ async function testCopilotChatAttachRetryDoesNotDuplicateSuccessfulFirstAttach()
 
   assert.strictEqual(harness.connectCalls, 1);
   assert.strictEqual(harness.connections[0]?.disposeCalls, 1);
+  assert.strictEqual(harness.readTimeouts.length, 1);
 }
 
 async function testCopilotChatAttachRetryDoesNotReclassifyReadStateFailure(): Promise<void> {
@@ -467,6 +475,188 @@ async function testCopilotChatAttachRetryDoesNotReclassifyVisibleChatClosureFail
   );
   assert.strictEqual(harness.connectCalls, 1);
   assert.strictEqual(harness.connections[0]?.disposeCalls, 1);
+}
+
+function initialReadTimeout(): Error {
+  return new Error('Timed out waiting for CDP Runtime.evaluate response after 1500ms');
+}
+
+async function testCopilotChatInitialReadRetryRecoversOnSameConnection(): Promise<void> {
+  for (const initiallyVisible of [false, true]) {
+    const harness = new FakeCopilotChatAttachHarness({
+      readStateFailures: [initialReadTimeout()],
+      readDurationsMs: [1500],
+      states: [
+        {
+          visible: initiallyVisible,
+          matchCount: initiallyVisible ? 1 : 0,
+          owners: initiallyVisible ? [{ kind: 'auxiliarybar', label: 'copilot-chat', unrelatedVisibleCount: 0 }] : [],
+        },
+        { visible: false, matchCount: 0, owners: [] },
+      ],
+    });
+
+    await closeCopilotChatIfVisibleWithAttachRetry('initial-read-transient-test', harness);
+
+    assert.strictEqual(harness.connectCalls, 1);
+    assert.strictEqual(harness.createdCloseHosts, 1);
+    assert.strictEqual(harness.connections[0]?.disposeCalls, 1);
+    assert.deepStrictEqual(harness.commands, initiallyVisible ? ['workbench.action.closeAuxiliaryBar'] : []);
+    assert.strictEqual(harness.readTimeouts.length, initiallyVisible ? 3 : 2);
+    assert.ok(harness.logs.some((line) => line.includes('initial workbench Chat state read recovered on attempt 2')));
+  }
+}
+
+async function testCopilotChatInitialReadRetryStopsAfterBoundAndRedactsErrors(): Promise<void> {
+  const sensitiveTimeout = new Error(`${initialReadTimeout().message}\r\n${createSensitiveAttachErrorMessage()}`);
+  const harness = new FakeCopilotChatAttachHarness({
+    readStateFailures: [sensitiveTimeout, sensitiveTimeout, sensitiveTimeout],
+    readDurationsMs: [1500, 1500],
+    states: [{ visible: false, matchCount: 0, owners: [] }],
+  });
+
+  await assert.rejects(
+    () => closeCopilotChatIfVisibleWithAttachRetry('initial-read-persistent-test', harness),
+    (error: Error) => {
+      assert.match(error.message, /initial workbench Chat state read failed after 2 attempts \(max 2\)/);
+      assert.match(error.message, /cdp-runtime-evaluate-timeout/);
+      assertSensitiveAttachDetailsRedacted(error.message);
+      return true;
+    }
+  );
+  assert.strictEqual(harness.connectCalls, 1);
+  assert.strictEqual(harness.connections[0]?.disposeCalls, 1);
+  assert.deepStrictEqual(harness.readTimeouts, [1500, 1500]);
+  assert.deepStrictEqual(harness.commands, []);
+  assert.strictEqual(harness.closeEditorTabCalls, 0);
+  assert.strictEqual(harness.now(), 3250);
+  assertSensitiveAttachDetailsRedacted(harness.logs.join('\n'));
+}
+
+async function testCopilotChatInitialReadRetryRespectsDeadline(): Promise<void> {
+  for (const { durationMs, failures, expectedSleeps } of [
+    { durationMs: 1000, failures: [initialReadTimeout()], expectedSleeps: [] },
+    { durationMs: 900, failures: [initialReadTimeout()], expectedSleeps: [100] },
+    { durationMs: 1000, failures: [], expectedSleeps: [] },
+  ]) {
+    const harness = new FakeCopilotChatAttachHarness({
+      readStateFailures: failures,
+      readDurationsMs: [durationMs],
+      states: [{ visible: false, matchCount: 0, owners: [] }],
+    });
+
+    await assert.rejects(
+      () => closeCopilotChatIfVisibleWithAttachRetry('initial-read-deadline-test', harness, { timeoutMs: 1000 }),
+      /initial workbench Chat state read failed after 1 attempt \(max 2\).*deadline-exceeded/
+    );
+    assert.strictEqual(harness.connectCalls, 1);
+    assert.strictEqual(harness.connections[0]?.disposeCalls, 1);
+    assert.deepStrictEqual(harness.readTimeouts, [1000]);
+    assert.deepStrictEqual(harness.sleepDurations, expectedSleeps);
+    assert.deepStrictEqual(harness.commands, []);
+    assert.strictEqual(harness.now(), 1000);
+  }
+
+  const shortBudget = new FakeCopilotChatAttachHarness({
+    readStateFailures: [initialReadTimeout()],
+    states: [{ visible: false, matchCount: 0, owners: [] }],
+  });
+  await assert.rejects(
+    () => closeCopilotChatIfVisibleWithAttachRetry('initial-read-short-budget-test', shortBudget, { timeoutMs: 100 }),
+    /after 1 attempt.*deadline-exceeded/
+  );
+  assert.deepStrictEqual(shortBudget.readTimeouts, [100]);
+  assert.deepStrictEqual(shortBudget.sleepDurations, [100]);
+  assert.strictEqual(shortBudget.connections[0]?.disposeCalls, 1);
+}
+
+async function testCopilotChatInitialReadRetryUsesSharedAttachBudget(): Promise<void> {
+  const harness = new FakeCopilotChatAttachHarness({
+    connectDurationsMs: [5000, 0],
+    connectFailuresBeforeSuccess: 1,
+    readStateFailures: [initialReadTimeout()],
+    readDurationsMs: [1500],
+    states: [{ visible: false, matchCount: 0, owners: [] }],
+  });
+
+  await closeCopilotChatIfVisibleWithAttachRetry('initial-read-shared-budget-test', harness);
+
+  assert.deepStrictEqual(harness.connectTimeouts, [5000, 2750]);
+  assert.deepStrictEqual(harness.readTimeouts, [1500, 1000]);
+  assert.deepStrictEqual(harness.sleepDurations, [250, 250]);
+  assert.strictEqual(harness.now(), 7000);
+  assert.strictEqual(harness.connections[0]?.disposeCalls, 1);
+}
+
+async function testCopilotChatInitialReadRetryDoesNotRetryOtherErrors(): Promise<void> {
+  for (const message of [
+    'CDP WebSocket closed',
+    'CDP evaluation failed: synthetic exception details',
+    'Timed out waiting for CDP Page.captureScreenshot response after 1500ms',
+  ]) {
+    const failure = new Error(message);
+    const harness = new FakeCopilotChatAttachHarness({
+      readStateFailures: [failure],
+      states: [{ visible: false, matchCount: 0, owners: [] }],
+    });
+
+    await assert.rejects(() => closeCopilotChatIfVisibleWithAttachRetry('initial-read-other-error-test', harness), failure);
+
+    assert.strictEqual(harness.connectCalls, 1);
+    assert.strictEqual(harness.readTimeouts.length, 1);
+    assert.deepStrictEqual(harness.sleepDurations, []);
+    assert.strictEqual(harness.connections[0]?.disposeCalls, 1);
+  }
+}
+
+async function testCopilotChatInitialReadRetryDoesNotRetryAfterStateObservation(): Promise<void> {
+  for (const visible of [false, true]) {
+    const failure = initialReadTimeout();
+    const harness = new FakeCopilotChatAttachHarness({
+      readStateFailures: [undefined, failure],
+      states: [
+        {
+          visible,
+          matchCount: visible ? 1 : 0,
+          owners: visible ? [{ kind: 'auxiliarybar', label: 'copilot-chat', unrelatedVisibleCount: 0 }] : [],
+        },
+      ],
+    });
+
+    await assert.rejects(
+      () => closeCopilotChatIfVisibleWithAttachRetry('initial-read-post-observation-test', harness, { absentSettleMs: 1500 }),
+      failure
+    );
+    assert.strictEqual(harness.connectCalls, 1);
+    assert.strictEqual(harness.readTimeouts.length, 2);
+    assert.deepStrictEqual(harness.commands, visible ? ['workbench.action.closeAuxiliaryBar'] : []);
+    assert.deepStrictEqual(harness.sleepDurations, [250]);
+    assert.strictEqual(harness.connections[0]?.disposeCalls, 1);
+    assert.ok(!harness.logs.some((line) => line.includes('retrying')));
+  }
+}
+
+async function testCopilotChatInitialReadRetryPreservesClosureFailures(): Promise<void> {
+  for (const editor of [false, true]) {
+    const harness = new FakeCopilotChatAttachHarness({
+      readStateFailures: [initialReadTimeout()],
+      rejectCommands: !editor,
+      rejectEditorTabs: editor,
+      states: [
+        { visible: true, matchCount: 1, owners: [{ kind: editor ? 'editor' : 'panel', label: 'copilot-chat', unrelatedVisibleCount: 0 }] },
+      ],
+    });
+
+    await assert.rejects(
+      () => closeCopilotChatIfVisibleWithAttachRetry('initial-read-close-rejection-test', harness),
+      editor ? /synthetic editor tab close failure/ : /failed to execute workbench\.action\.closePanel/
+    );
+    assert.strictEqual(harness.connectCalls, 1);
+    assert.strictEqual(harness.readTimeouts.length, 2);
+    assert.strictEqual(harness.connections[0]?.disposeCalls, 1);
+    assert.strictEqual(harness.closeEditorTabCalls, editor ? 1 : 0);
+    assert.deepStrictEqual(harness.commands, editor ? [] : ['workbench.action.closePanel']);
+  }
 }
 
 function evaluateState(body: string): CopilotChatWorkbenchState {
@@ -559,6 +749,10 @@ class FakeCopilotChatAttachHarness {
       connectDurationsMs?: number[];
       connectFailuresBeforeSuccess?: number;
       readStateFailure?: Error;
+      readStateFailures?: (Error | undefined)[];
+      readDurationsMs?: number[];
+      rejectCommands?: boolean;
+      rejectEditorTabs?: boolean;
       states: CopilotChatWorkbenchState[];
     }
   ) {}
@@ -581,7 +775,19 @@ class FakeCopilotChatAttachHarness {
     const host = new FakeCopilotChatHost(this.options.states, {
       readTimeouts: this.readTimeouts,
       readStateFailure: this.options.readStateFailure,
+      readStateFailures: this.options.readStateFailures,
+      readDurationsMs: this.options.readDurationsMs,
+      rejectCommands: this.options.rejectCommands,
+      rejectEditorTabs: this.options.rejectEditorTabs,
+      clock: {
+        now: () => this.now(),
+        advance: (ms) => {
+          this.currentNow += ms;
+        },
+      },
     });
+    host.log = (message) => this.log(message);
+    host.sleep = (ms) => this.sleep(ms);
     const originalExecuteCommand = host.executeCommand.bind(host);
     host.executeCommand = async (command) => {
       this.commands.push(command);
@@ -615,15 +821,27 @@ class FakeCopilotChatHost {
   readonly logs: string[] = [];
   closeEditorTabCalls = 0;
   private readIndex = 0;
+  private stateIndex = 0;
   private currentNow = 0;
 
   constructor(
     private readonly states: CopilotChatWorkbenchState[],
-    private readonly options: { rejectCommands?: boolean; readStateFailure?: Error; readTimeouts?: number[] } = {}
+    private readonly options: {
+      rejectCommands?: boolean;
+      rejectEditorTabs?: boolean;
+      readStateFailure?: Error;
+      readStateFailures?: (Error | undefined)[];
+      readDurationsMs?: number[];
+      readTimeouts?: number[];
+      clock?: { now(): number; advance(ms: number): void };
+    } = {}
   ) {}
 
   closeEditorTabs(): Promise<void> {
     this.closeEditorTabCalls++;
+    if (this.options.rejectEditorTabs) {
+      return Promise.reject(new Error('synthetic editor tab close failure'));
+    }
     return Promise.resolve();
   }
 
@@ -636,17 +854,19 @@ class FakeCopilotChatHost {
   }
 
   readState(_timeoutMs: number): Promise<CopilotChatWorkbenchState> {
+    const callIndex = this.readIndex++;
     this.options.readTimeouts?.push(_timeoutMs);
-    if (this.options.readStateFailure) {
-      return Promise.reject(this.options.readStateFailure);
+    this.advance(this.options.readDurationsMs?.[callIndex] ?? 0);
+    const failure = this.options.readStateFailure ?? this.options.readStateFailures?.[callIndex];
+    if (failure) {
+      return Promise.reject(failure);
     }
-    const state = this.states[Math.min(this.readIndex, this.states.length - 1)];
-    this.readIndex++;
+    const state = this.states[Math.min(this.stateIndex++, this.states.length - 1)];
     return Promise.resolve(state);
   }
 
   sleep(_ms: number): Promise<void> {
-    this.currentNow += _ms;
+    this.advance(_ms);
     return Promise.resolve();
   }
 
@@ -655,7 +875,15 @@ class FakeCopilotChatHost {
   }
 
   now(): number {
-    return this.currentNow;
+    return this.options.clock?.now() ?? this.currentNow;
+  }
+
+  private advance(ms: number): void {
+    if (this.options.clock) {
+      this.options.clock.advance(ms);
+      return;
+    }
+    this.currentNow += ms;
   }
 }
 

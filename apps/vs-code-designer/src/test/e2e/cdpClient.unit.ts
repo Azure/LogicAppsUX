@@ -19,6 +19,7 @@ async function main(): Promise<void> {
   await testWorkbenchDiscoveryJsonBodyTimesOut();
   await testConnectAndHandshakeShareDeadline();
   await testHandshakeFailureDestroysSocket();
+  await testEvaluateTimeoutKeepsConnectionUsableAndIgnoresLateResponse();
   console.log('[cdpClient.unit] all tests passed');
 }
 
@@ -211,14 +212,47 @@ async function testHandshakeFailureDestroysSocket(): Promise<void> {
   }
 }
 
+async function testEvaluateTimeoutKeepsConnectionUsableAndIgnoresLateResponse(): Promise<void> {
+  const socket = new FakeSocket();
+  const connection: CdpConnection = Reflect.construct(CdpConnection, [socket, 'target']);
+  try {
+    await assert.rejects(
+      connection.evaluate(undefined, 'initial-read', { timeoutMs: 1 }),
+      /Timed out waiting for CDP Runtime\.evaluate response after 1ms/
+    );
+    assert.strictEqual(socket.destroyCalls, 0);
+    assert.strictEqual(socket.endCalls, 0);
+
+    const retry = connection.evaluate<string>(undefined, 'retry-read', { timeoutMs: 100 });
+    for (const [id, value] of [
+      [1, 'late-response'],
+      [2, 'recovered'],
+    ]) {
+      const payload = Buffer.from(JSON.stringify({ id, result: { result: { value } } }));
+      assert.ok(payload.length < 126, 'Synthetic server response should fit a short WebSocket frame');
+      socket.emit('data', Buffer.concat([Buffer.from([0x81, payload.length]), payload]));
+    }
+    assert.strictEqual(await retry, 'recovered', 'Late timed-out response must not satisfy the next read');
+    assert.strictEqual(socket.writes.length, 2);
+  } finally {
+    connection.dispose();
+  }
+  assert.strictEqual(socket.endCalls, 1);
+}
+
 class FakeSocket extends EventEmitter {
   destroyCalls = 0;
+  endCalls = 0;
+  readonly writes: Array<Buffer | string> = [];
 
-  write(): boolean {
+  write(data: Buffer | string): boolean {
+    this.writes.push(data);
     return true;
   }
 
-  end(): void {}
+  end(): void {
+    this.endCalls++;
+  }
 
   destroy(): void {
     this.destroyCalls++;

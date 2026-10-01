@@ -23,6 +23,7 @@ export interface CopilotChatAttachRetryHost<TCdp extends CopilotChatCdpConnectio
 
 const maxCopilotChatAttachAttempts = 2;
 const maxCopilotChatAttachBudgetMs = 5000;
+const maxCopilotChatInitialReadAttempts = 2;
 
 export async function closeCopilotChatIfVisibleWithAttachRetry<TCdp extends CopilotChatCdpConnection>(
   stage: string,
@@ -95,7 +96,7 @@ export async function closeCopilotChatIfVisibleCore(
   const absentSettleMs = options.absentSettleMs ?? 0;
   const deadline = host.now() + timeoutMs;
 
-  let state = await host.readState(getReadTimeout(deadline, host.now()));
+  let state = await readInitialCopilotChatState(stage, host, deadline);
   if (!state.visible) {
     const absentDeadline = Math.min(deadline, host.now() + absentSettleMs);
     while (host.now() < absentDeadline) {
@@ -146,6 +147,61 @@ export async function closeCopilotChatIfVisibleCore(
 
   throw new Error(
     `[copilot-chat] ${stage}: visible Copilot Chat could not be closed. Last state: ${JSON.stringify(lastState).slice(0, 1200)}`
+  );
+}
+
+async function readInitialCopilotChatState(
+  stage: string,
+  host: CopilotChatCloseHost,
+  deadline: number
+): Promise<CopilotChatWorkbenchState> {
+  let attemptsMade = 0;
+  let reason = 'deadline-exceeded';
+  for (let attempt = 1; attempt <= maxCopilotChatInitialReadAttempts; attempt++) {
+    const remainingMs = deadline - host.now();
+    if (remainingMs <= 0) {
+      reason = 'deadline-exceeded';
+      break;
+    }
+
+    attemptsMade++;
+    try {
+      const state = await host.readState(Math.min(1500, remainingMs));
+      if (host.now() >= deadline) {
+        reason = 'deadline-exceeded';
+        break;
+      }
+      if (attempt > 1) {
+        host.log(`[copilot-chat] ${stage}: initial workbench Chat state read recovered on attempt ${attempt}`);
+      }
+      return state;
+    } catch (error) {
+      if (
+        !(error instanceof Error) ||
+        !/^Timed out waiting for CDP Runtime\.evaluate response after \d+ms(?:$|\r?\n)/.test(error.message)
+      ) {
+        throw error;
+      }
+      reason = 'cdp-runtime-evaluate-timeout';
+      if (attempt >= maxCopilotChatInitialReadAttempts) {
+        break;
+      }
+      const retryDelayMs = Math.min(250, deadline - host.now());
+      if (retryDelayMs <= 0) {
+        reason = 'deadline-exceeded';
+        break;
+      }
+      host.log(
+        `[copilot-chat] ${stage}: initial workbench Chat state read attempt ${attempt}/${maxCopilotChatInitialReadAttempts} failed; retrying. Reason: ${reason}`
+      );
+      await host.sleep(retryDelayMs);
+    }
+  }
+
+  throw new Error(
+    `[copilot-chat] ${stage}: initial workbench Chat state read failed after ${attemptsMade} ${
+      attemptsMade === 1 ? 'attempt' : 'attempts'
+    } (max ${maxCopilotChatInitialReadAttempts}). Reason: ${reason}`
   );
 }
 
