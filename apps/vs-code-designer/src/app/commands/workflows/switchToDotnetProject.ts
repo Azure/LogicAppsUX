@@ -36,11 +36,21 @@ import { getFramework, executeDotnetTemplateCommand } from '../../utils/dotnet/e
 import { wrapArgInQuotes } from '../../utils/funcCoreTools/cpUtils';
 import { tryGetMajorVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
-import { getContainingWorkspaceFolder, getLogicAppProjectRoots, getWorkspaceFolder, selectLogicAppProject } from '../../utils/workspace';
+import {
+  getContainingWorkspaceFolder,
+  getWorkspaceFolder,
+  getWorkspaceLogicAppRoots,
+  tryGetWorkspaceFolderLogicApps,
+} from '../../utils/workspace';
 import { InitDotnetProjectStep } from '../initProjectForVSCode/initDotnetProjectStep';
 import { stopFuncTaskForWorkspace } from '../../utils/funcCoreTools/funcHostTask';
 import { DialogResponses, nonNullOrEmptyValue } from '@microsoft/vscode-azext-utils';
-import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
+import {
+  callWithTelemetryAndErrorHandling,
+  type IActionContext,
+  type IAzureQuickPickItem,
+  UserCancelledError,
+} from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext, ITemplates } from '@microsoft/vscode-extension-logic-apps';
 import { FuncVersion, ProjectLanguage, ProjectPackageType, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
@@ -49,10 +59,10 @@ import * as vscode from 'vscode';
 import { validateDotNetIsInstalled } from '../dotnet/validateDotNetInstalled';
 import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { ext } from '../../../extensionVariables';
-import { filterLogicAppProjects, getLogicAppProjectMetadata } from '../../utils/project';
+import { detectProjectPackageType, detectProjectType } from '../../utils/project';
 
 export async function switchToDotnetProjectCommand(context: IActionContext, node?: vscode.Uri) {
-  const projectPaths = await getLogicAppProjectRoots(context, node);
+  const projectPaths = await getProjectPathsForNugetConversion(context, node);
   if (projectPaths.length === 0) {
     vscode.window.showInformationMessage(
       localize('noLogicAppProjectsFound', 'No Logic App projects were found in the selected workspace.'),
@@ -61,11 +71,16 @@ export async function switchToDotnetProjectCommand(context: IActionContext, node
     return;
   }
 
-  const projects = await getLogicAppProjectMetadata(projectPaths);
-  const eligibleProjects = filterLogicAppProjects(projects, {
-    excludedProjectTypes: [ProjectType.codeful],
-    excludedPackageTypes: [ProjectPackageType.Nuget],
-  });
+  const projects = await Promise.all(
+    projectPaths.map(async (projectPath) => ({
+      path: projectPath,
+      projectType: await detectProjectType(projectPath),
+      packageType: await detectProjectPackageType(projectPath),
+    }))
+  );
+  const eligibleProjects = projects.filter(
+    ({ projectType, packageType }) => projectType !== ProjectType.codeful && packageType !== ProjectPackageType.Nuget
+  );
 
   if (eligibleProjects.length === 0) {
     const message =
@@ -81,16 +96,36 @@ export async function switchToDotnetProjectCommand(context: IActionContext, node
     return;
   }
 
-  const targetPath = await selectLogicAppProject(
-    context,
-    eligibleProjects.map(({ path: projectPath }) => projectPath),
-    localize('selectProjectToConvertToNuget', 'Select a Logic App project to convert to NuGet-based')
-  );
-  if (!targetPath) {
-    throw new Error(localize('logicAppProjectSelectionRequired', 'A Logic App project must be selected.'));
+  let targetPath = eligibleProjects[0].path;
+  if (eligibleProjects.length > 1) {
+    const projectPicks: IAzureQuickPickItem<string>[] = eligibleProjects.map(({ path: projectPath }) => ({
+      label: path.basename(projectPath),
+      description: projectPath,
+      data: projectPath,
+    }));
+    const selectedProject = await context.ui.showQuickPick(projectPicks, {
+      placeHolder: localize('selectProjectToConvertToNuget', 'Select a Logic App project to convert to NuGet-based'),
+    });
+    if (!selectedProject?.data) {
+      throw new UserCancelledError();
+    }
+    targetPath = selectedProject.data;
   }
 
   await switchToDotnetProject(context, vscode.Uri.file(targetPath));
+}
+
+async function getProjectPathsForNugetConversion(context: IActionContext, node?: vscode.Uri): Promise<string[]> {
+  if (node?.fsPath) {
+    return tryGetWorkspaceFolderLogicApps(node.fsPath);
+  }
+
+  if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
+    const workspaceFolder = await getWorkspaceFolder(context);
+    return tryGetWorkspaceFolderLogicApps(workspaceFolder);
+  }
+
+  return getWorkspaceLogicAppRoots();
 }
 
 export async function switchToDotnetProject(context: IActionContext, node?: vscode.Uri, localDotNetMajorVersion = '10', isCodeful = false) {

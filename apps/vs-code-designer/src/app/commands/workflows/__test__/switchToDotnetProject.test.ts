@@ -1,22 +1,14 @@
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import type { IProjectWizardContext, ITemplates } from '@microsoft/vscode-extension-logic-apps';
 import { FuncVersion, ProjectLanguage, ProjectPackageType, ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { UserCancelledError } from '@microsoft/vscode-azext-utils';
 
 // Hoisted mock variables
-const {
-  mockGetCachedTemplates,
-  mockGetLatestTemplateVersion,
-  mockGetLatestTemplates,
-  mockGetBackupTemplates,
-  mockDetectProjectType,
-  mockDetectProjectPackageType,
-} = vi.hoisted(() => ({
+const { mockGetCachedTemplates, mockGetLatestTemplateVersion, mockGetLatestTemplates, mockGetBackupTemplates } = vi.hoisted(() => ({
   mockGetCachedTemplates: vi.fn(),
   mockGetLatestTemplateVersion: vi.fn(),
   mockGetLatestTemplates: vi.fn(),
   mockGetBackupTemplates: vi.fn(),
-  mockDetectProjectType: vi.fn(),
-  mockDetectProjectPackageType: vi.fn(),
 }));
 
 // Module mocks
@@ -89,23 +81,9 @@ vi.mock('../../../utils/vsCodeConfig/settings', () => ({
 
 vi.mock('../../../utils/workspace', () => ({
   getContainingWorkspaceFolder: vi.fn(),
-  getLogicAppProjectRoots: vi.fn(),
   getWorkspaceFolder: vi.fn(),
-  selectLogicAppProject: vi.fn(async (context, projectPaths, placeHolder) => {
-    if (projectPaths.length <= 1) {
-      return projectPaths[0];
-    }
-    return (
-      await context.ui.showQuickPick(
-        projectPaths.map((projectPath) => ({
-          label: projectPath.split('/').pop(),
-          description: projectPath,
-          data: projectPath,
-        })),
-        { placeHolder }
-      )
-    ).data;
-  }),
+  getWorkspaceLogicAppRoots: vi.fn(),
+  tryGetWorkspaceFolderLogicApps: vi.fn(),
 }));
 
 vi.mock('../../../utils/funcCoreTools/funcHostTask', () => ({
@@ -124,19 +102,9 @@ vi.mock('../../../utils/verifyIsProject', () => ({
   tryGetLogicAppProjectRoot: vi.fn(),
 }));
 
-vi.mock('../../../utils/project', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../../../utils/project')>()),
-  detectProjectPackageType: mockDetectProjectPackageType,
-  detectProjectType: mockDetectProjectType,
-  getLogicAppProjectMetadata: vi.fn(async (projectPaths: string[]) =>
-    Promise.all(
-      projectPaths.map(async (projectPath) => ({
-        path: projectPath,
-        projectType: await mockDetectProjectType(projectPath),
-        packageType: await mockDetectProjectPackageType(projectPath),
-      }))
-    )
-  ),
+vi.mock('../../../utils/project', () => ({
+  detectProjectPackageType: vi.fn(),
+  detectProjectType: vi.fn(),
 }));
 
 vi.mock('../../../../extensionVariables', () => ({
@@ -156,7 +124,13 @@ import { ext } from '../../../../extensionVariables';
 import { switchToDotnetProject, switchToDotnetProjectCommand } from '../switchToDotnetProject';
 import { validateDotNetIsInstalled } from '../../dotnet/validateDotNetInstalled';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
-import { getLogicAppProjectRoots, getWorkspaceFolder, getContainingWorkspaceFolder, selectLogicAppProject } from '../../../utils/workspace';
+import { detectProjectPackageType, detectProjectType } from '../../../utils/project';
+import {
+  getWorkspaceFolder,
+  getContainingWorkspaceFolder,
+  getWorkspaceLogicAppRoots,
+  tryGetWorkspaceFolderLogicApps,
+} from '../../../utils/workspace';
 import { getProjFiles, getTemplateKeyFromProjFile, getLocalDotNetVersionFromBinaries } from '../../../utils/dotnet/dotnet';
 import { getFramework, executeDotnetTemplateCommand } from '../../../utils/dotnet/executeDotnetTemplateCommand';
 import { tryParseFuncVersion, tryGetMajorVersion } from '../../../utils/funcCoreTools/funcVersion';
@@ -212,9 +186,10 @@ describe('switchToDotnetProject', () => {
     vi.mocked(InitDotnetProjectStep).mockImplementation(() => ({ execute: initDotnetExecute }) as any);
 
     vi.mocked(validateDotNetIsInstalled).mockResolvedValue(true);
-    mockDetectProjectPackageType.mockResolvedValue(ProjectPackageType.Bundle);
-    mockDetectProjectType.mockResolvedValue(ProjectType.logicApp);
-    vi.mocked(getLogicAppProjectRoots).mockResolvedValue([mockTarget.fsPath]);
+    vi.mocked(detectProjectPackageType).mockResolvedValue(ProjectPackageType.Bundle);
+    vi.mocked(detectProjectType).mockResolvedValue(ProjectType.logicApp);
+    vi.mocked(getWorkspaceLogicAppRoots).mockResolvedValue([mockTarget.fsPath]);
+    vi.mocked(tryGetWorkspaceFolderLogicApps).mockResolvedValue([mockTarget.fsPath]);
     vi.mocked(tryParseFuncVersion).mockReturnValue(FuncVersion.v4);
     vi.mocked(getWorkspaceSetting).mockReturnValue('~4');
     vi.mocked(getProjFiles).mockResolvedValue([]);
@@ -433,13 +408,13 @@ describe('switchToDotnetProject', () => {
 
   describe('switchToDotnetProjectCommand', () => {
     it('should block conversion for a codeful project', async () => {
-      vi.mocked(getLogicAppProjectRoots).mockResolvedValue(['/workspace/codeful-project']);
-      mockDetectProjectType.mockResolvedValue(ProjectType.codeful);
+      vi.mocked(tryGetWorkspaceFolderLogicApps).mockResolvedValue(['/workspace/codeful-project']);
+      vi.mocked(detectProjectType).mockResolvedValue(ProjectType.codeful);
 
       await switchToDotnetProjectCommand(mockContext, mockTarget);
 
-      expect(getLogicAppProjectRoots).toHaveBeenCalledWith(mockContext, mockTarget);
-      expect(mockDetectProjectType).toHaveBeenCalledWith('/workspace/codeful-project');
+      expect(tryGetWorkspaceFolderLogicApps).toHaveBeenCalledWith(mockTarget.fsPath);
+      expect(detectProjectType).toHaveBeenCalledWith('/workspace/codeful-project');
       expect(vscode.window.showInformationMessage).toHaveBeenCalledWith(
         'Converting to a NuGet-based project is not available for codeful projects.',
         'OK'
@@ -452,7 +427,7 @@ describe('switchToDotnetProject', () => {
 
       await switchToDotnetProjectCommand(mockContext, mockTarget);
 
-      expect(mockDetectProjectType).toHaveBeenCalledWith(mockTarget.fsPath);
+      expect(detectProjectType).toHaveBeenCalledWith(mockTarget.fsPath);
       expect(vscode.window.showInformationMessage).not.toHaveBeenCalledWith(
         'Converting to a NuGet-based project is not available for codeful projects.',
         'OK'
@@ -461,7 +436,7 @@ describe('switchToDotnetProject', () => {
     });
 
     it('should prompt to select an eligible project when multiple projects are found', async () => {
-      vi.mocked(getLogicAppProjectRoots).mockResolvedValue(['/workspace/AppA', '/workspace/AppB']);
+      vi.mocked(getWorkspaceLogicAppRoots).mockResolvedValue(['/workspace/AppA', '/workspace/AppB']);
       vi.mocked(mockContext.ui.showQuickPick).mockResolvedValue({
         label: 'AppB',
         description: '/workspace/AppB',
@@ -482,13 +457,25 @@ describe('switchToDotnetProject', () => {
       expect(tryGetLogicAppProjectRoot).not.toHaveBeenCalled();
     });
 
-    it('should only offer projects that are not codeful or already NuGet-based', async () => {
+    it('should throw UserCancelledError without starting conversion when project selection is cancelled', async () => {
+      vi.mocked(getWorkspaceLogicAppRoots).mockResolvedValue(['/workspace/AppA', '/workspace/AppB']);
+      vi.mocked(mockContext.ui.showQuickPick).mockResolvedValue(undefined);
+
+      await expect(switchToDotnetProjectCommand(mockContext)).rejects.toThrow(UserCancelledError);
+
+      expect(mockContext.ui.showQuickPick).toHaveBeenCalledOnce();
+      expect(validateDotNetIsInstalled).not.toHaveBeenCalled();
+      expect(executeDotnetTemplateCommand).not.toHaveBeenCalled();
+      expect(initDotnetExecute).not.toHaveBeenCalled();
+    });
+
+    it('should automatically select the only eligible project among codeful and NuGet-based projects', async () => {
       const projectPaths = ['/workspace/Eligible', '/workspace/Codeful', '/workspace/AlreadyNuget'];
-      vi.mocked(getLogicAppProjectRoots).mockResolvedValue(projectPaths);
-      mockDetectProjectType.mockImplementation(async (projectPath) =>
+      vi.mocked(getWorkspaceLogicAppRoots).mockResolvedValue(projectPaths);
+      vi.mocked(detectProjectType).mockImplementation(async (projectPath) =>
         projectPath === '/workspace/Codeful' ? ProjectType.codeful : ProjectType.logicApp
       );
-      mockDetectProjectPackageType.mockImplementation(async (projectPath) =>
+      vi.mocked(detectProjectPackageType).mockImplementation(async (projectPath) =>
         projectPath === '/workspace/AlreadyNuget' ? ProjectPackageType.Nuget : ProjectPackageType.Bundle
       );
       vi.mocked(validateDotNetIsInstalled).mockResolvedValue(false);
@@ -496,17 +483,12 @@ describe('switchToDotnetProject', () => {
       await switchToDotnetProjectCommand(mockContext);
 
       expect(mockContext.ui.showQuickPick).not.toHaveBeenCalled();
-      expect(selectLogicAppProject).toHaveBeenCalledWith(
-        mockContext,
-        ['/workspace/Eligible'],
-        'Select a Logic App project to convert to NuGet-based'
-      );
       expect(validateDotNetIsInstalled).toHaveBeenCalledWith(mockContext, '/workspace/Eligible');
     });
 
     it('should allow a codeless Logic App project with associated custom code', async () => {
-      vi.mocked(getLogicAppProjectRoots).mockResolvedValue(['/workspace/CustomCode', '/workspace/Codeful']);
-      mockDetectProjectType.mockImplementation(async (projectPath) =>
+      vi.mocked(getWorkspaceLogicAppRoots).mockResolvedValue(['/workspace/CustomCode', '/workspace/Codeful']);
+      vi.mocked(detectProjectType).mockImplementation(async (projectPath) =>
         projectPath === '/workspace/CustomCode' ? ProjectType.customCode : ProjectType.codeful
       );
       vi.mocked(validateDotNetIsInstalled).mockResolvedValue(false);
@@ -514,11 +496,6 @@ describe('switchToDotnetProject', () => {
       await switchToDotnetProjectCommand(mockContext);
 
       expect(mockContext.ui.showQuickPick).not.toHaveBeenCalled();
-      expect(selectLogicAppProject).toHaveBeenCalledWith(
-        mockContext,
-        ['/workspace/CustomCode'],
-        'Select a Logic App project to convert to NuGet-based'
-      );
       expect(validateDotNetIsInstalled).toHaveBeenCalledWith(mockContext, '/workspace/CustomCode');
     });
 
@@ -532,7 +509,7 @@ describe('switchToDotnetProject', () => {
     });
 
     it('should show a message when no Logic App projects are found', async () => {
-      vi.mocked(getLogicAppProjectRoots).mockResolvedValue([]);
+      vi.mocked(getWorkspaceLogicAppRoots).mockResolvedValue([]);
 
       await switchToDotnetProjectCommand(mockContext);
 
@@ -544,12 +521,36 @@ describe('switchToDotnetProject', () => {
       expect(validateDotNetIsInstalled).not.toHaveBeenCalled();
     });
 
+    it('should discover projects after prompting to open a workspace', async () => {
+      const workspaceFolder = { uri: { fsPath: '/opened-workspace' } } as vscode.WorkspaceFolder;
+      vscode.workspace.workspaceFolders = [];
+      vi.mocked(getWorkspaceFolder).mockResolvedValue(workspaceFolder);
+      vi.mocked(tryGetWorkspaceFolderLogicApps).mockResolvedValue(['/opened-workspace/App']);
+      vi.mocked(validateDotNetIsInstalled).mockResolvedValue(false);
+
+      await switchToDotnetProjectCommand(mockContext);
+
+      expect(getWorkspaceFolder).toHaveBeenCalledWith(mockContext);
+      expect(tryGetWorkspaceFolderLogicApps).toHaveBeenCalledWith(workspaceFolder);
+      expect(validateDotNetIsInstalled).toHaveBeenCalledWith(mockContext, '/opened-workspace/App');
+    });
+
+    it('should fall back to workspace discovery when the selected node has no path', async () => {
+      vi.mocked(validateDotNetIsInstalled).mockResolvedValue(false);
+
+      await switchToDotnetProjectCommand(mockContext, {} as vscode.Uri);
+
+      expect(getWorkspaceLogicAppRoots).toHaveBeenCalled();
+      expect(tryGetWorkspaceFolderLogicApps).not.toHaveBeenCalled();
+      expect(validateDotNetIsInstalled).toHaveBeenCalledWith(mockContext, mockTarget.fsPath);
+    });
+
     it('should not start conversion when no projects are eligible', async () => {
-      vi.mocked(getLogicAppProjectRoots).mockResolvedValue(['/workspace/Codeful', '/workspace/AlreadyNuget']);
-      mockDetectProjectType.mockImplementation(async (projectPath) =>
+      vi.mocked(getWorkspaceLogicAppRoots).mockResolvedValue(['/workspace/Codeful', '/workspace/AlreadyNuget']);
+      vi.mocked(detectProjectType).mockImplementation(async (projectPath) =>
         projectPath === '/workspace/Codeful' ? ProjectType.codeful : ProjectType.logicApp
       );
-      mockDetectProjectPackageType.mockImplementation(async (projectPath) =>
+      vi.mocked(detectProjectPackageType).mockImplementation(async (projectPath) =>
         projectPath === '/workspace/AlreadyNuget' ? ProjectPackageType.Nuget : ProjectPackageType.Bundle
       );
 
@@ -564,7 +565,7 @@ describe('switchToDotnetProject', () => {
     });
 
     it('should distinguish projects with duplicate folder names by their full paths', async () => {
-      vi.mocked(getLogicAppProjectRoots).mockResolvedValue(['/repoA/SharedProject', '/repoB/SharedProject']);
+      vi.mocked(getWorkspaceLogicAppRoots).mockResolvedValue(['/repoA/SharedProject', '/repoB/SharedProject']);
       vi.mocked(mockContext.ui.showQuickPick).mockResolvedValue({
         label: 'SharedProject',
         description: '/repoB/SharedProject',
@@ -585,7 +586,7 @@ describe('switchToDotnetProject', () => {
     });
 
     it('should discover projects from the selected container folder', async () => {
-      vi.mocked(getLogicAppProjectRoots).mockResolvedValue(['/workspace/AppA', '/workspace/AppB']);
+      vi.mocked(tryGetWorkspaceFolderLogicApps).mockResolvedValue(['/workspace/AppA', '/workspace/AppB']);
       vi.mocked(mockContext.ui.showQuickPick).mockResolvedValue({
         label: 'AppA',
         description: '/workspace/AppA',
@@ -595,7 +596,8 @@ describe('switchToDotnetProject', () => {
 
       await switchToDotnetProjectCommand(mockContext, mockTarget);
 
-      expect(getLogicAppProjectRoots).toHaveBeenCalledWith(mockContext, mockTarget);
+      expect(tryGetWorkspaceFolderLogicApps).toHaveBeenCalledWith(mockTarget.fsPath);
+      expect(getWorkspaceLogicAppRoots).not.toHaveBeenCalled();
       expect(validateDotNetIsInstalled).toHaveBeenCalledWith(mockContext, '/workspace/AppA');
     });
   });
