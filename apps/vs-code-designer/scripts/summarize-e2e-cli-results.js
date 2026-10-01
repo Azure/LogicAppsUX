@@ -6,6 +6,7 @@
 /* global module, process, require */
 const fs = require('fs');
 const path = require('path');
+const { projectPublicScenarioEvidence } = require('./ogf-e2e-registry');
 
 if (require.main === module) {
   const options = parseArgs(process.argv.slice(2));
@@ -331,9 +332,16 @@ function mergeTerminalResultMetadata(result, outDir, label) {
     return result;
   }
 
-  const ogfScenarios = Array.isArray(terminalResult.ogfScenarios) ? terminalResult.ogfScenarios : [];
+  const ogfScenarios = Array.isArray(terminalResult.ogfScenarios) ? terminalResult.ogfScenarios.map(projectPublicScenarioEvidence) : [];
   if (ogfScenarios.length > 0) {
     result.ogfScenarios = ogfScenarios;
+    terminalResult.ogfScenarios = ogfScenarios;
+    terminalResult.phaseResults = (terminalResult.phaseResults || []).map((phase) => {
+      const publicPhase = { ...phase };
+      delete publicPhase.ogfScenarios;
+      return publicPhase;
+    });
+    fs.writeFileSync(terminalResultPath, `${JSON.stringify(terminalResult, null, 2)}\n`);
   }
   if (terminalResult.phaseId) {
     result.terminalPhaseId = terminalResult.phaseId;

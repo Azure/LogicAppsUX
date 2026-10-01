@@ -5,6 +5,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { SUITE_ALIASES, SUITE_REGISTRY } = require('./e2e-cli-batch');
+const { OGF_E2E_SCENARIOS, getOgfScenariosForPhase } = require('./ogf-e2e-registry');
 
 const repoRoot = path.resolve(__dirname, '..', '..', '..');
 
@@ -18,6 +19,9 @@ testFullRollupGateScriptRejectsNonExecutedResults();
 testAzureCliIdentityScriptBehavior();
 testPipelineSafetyGuards();
 testDiagnosticsStagingScriptHandlesDirectSuiteLayout();
+testDiagnosticsStagingScriptHandlesDirectSuiteLayout({ privatePlatform: 'linux' });
+testDiagnosticsStagingScriptHandlesDirectSuiteLayout({ privatePlatform: 'win32' });
+testPrivateTraceabilityConfigurationContract();
 testDiagnosticsStagingScriptPreservesEvidenceBeforeFailing();
 
 console.log('[pipeline-contract.unit] all tests passed');
@@ -1684,7 +1688,7 @@ function testPipelineSafetyGuards() {
   assert.match(stagedReleaseEntry, /releaseApprovalEnvironment: \$\{\{ parameters\.releaseApprovalEnvironment \}\}/);
 }
 
-function testDiagnosticsStagingScriptHandlesDirectSuiteLayout() {
+function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
   const runSuitesTemplate = read('.config/templates/vscode-e2e-cli-run-suite.yml');
   const script = extractStageDiagnosticsScript(runSuitesTemplate);
   const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'pipeline-contract-staging-'));
@@ -1693,28 +1697,77 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout() {
     const agentTempDirectory = path.join(tempRoot, 'agent-temp');
     const artifactStagingDirectory = path.join(tempRoot, 'artifact-staging');
     const artifactName = 'linux-unit-tests';
-    const suiteId = 'unitTests';
+    const suiteId = options.privatePlatform ? 'createWorkspaceCoreMatrix' : 'unitTests';
     const resultRoot = path.join(sourcesDirectory, 'apps', 'vs-code-designer', '.vscode-test', 'results');
-    const ogfScenarios = [
-      {
-        scenarioId: 'ogf-launch-config-generated-name-standard-stateful',
-        executedVariant: 'standard-stateful',
-        assertionIdentities: ['launch-configuration-name-ends-with-created-logic-app-name'],
-      },
-    ];
+    const ogfScenarios = options.privatePlatform
+      ? getOgfScenariosForPhase('createWorkspaceCoreMatrix:standard-stateful', {
+          passed: true,
+          executedVariant: 'standard-stateful',
+          platform: options.privatePlatform,
+          vscodeVersion: '1.140.0',
+          sourceVersion: 'a'.repeat(40),
+          buildId: '42',
+        })
+      : [
+          {
+            scenarioId: 'ogf-launch-config-generated-name-standard-stateful',
+            executedVariant: 'standard-stateful',
+            assertionIdentities: ['launch-configuration-name-ends-with-created-logic-app-name'],
+          },
+        ];
+    if (options.privatePlatform) {
+      const scriptsRoot = path.join(sourcesDirectory, 'apps', 'vs-code-designer', 'scripts');
+      fs.mkdirSync(scriptsRoot, { recursive: true });
+      fs.mkdirSync(agentTempDirectory, { recursive: true });
+      for (const file of ['enrich-e2e-traceability.js', 'ogf-e2e-registry.js', 'e2e-cli-batch.js']) {
+        fs.copyFileSync(path.join(__dirname, file), path.join(scriptsRoot, file));
+      }
+      const scenario = OGF_E2E_SCENARIOS[0];
+      fs.writeFileSync(
+        path.join(agentTempDirectory, `e2e-traceability-crosswalk-${suiteId}.json`),
+        JSON.stringify({
+          schemaVersion: 1,
+          scenarios: [
+            {
+              scenarioId: scenario.scenarioId,
+              suiteId: scenario.suiteId,
+              expectedPhase: scenario.expectedPhase,
+              executedVariant: scenario.executedVariant,
+              assertionIdentities: scenario.assertions,
+              source: {
+                system: 'tracking.example.test',
+                caseId: 812,
+                caseRevision: 3,
+                stepMappings: [{ stepId: 'synthetic', stepOrdinal: 4 }],
+              },
+            },
+          ],
+        })
+      );
+    }
     fs.mkdirSync(resultRoot, { recursive: true });
     fs.writeFileSync(
       path.join(resultRoot, `${suiteId}.json`),
-      `${JSON.stringify({ outcome: 'success', total: 12, failing: 0, ogfScenarios })}\n`
+      `${JSON.stringify({ label: suiteId, outcome: 'success', total: options.privatePlatform ? 6 : 12, passing: options.privatePlatform ? 6 : 12, failing: 0, pending: 0, ogfScenarios })}\n`
     );
     fs.writeFileSync(path.join(resultRoot, `${suiteId}.junit.xml`), '<testsuite tests="12" failures="0" />\n');
     fs.writeFileSync(path.join(resultRoot, `${suiteId}.summary.md`), '# summary\n');
     fs.writeFileSync(
       path.join(resultRoot, `${suiteId}.terminal-result.json`),
-      `${JSON.stringify({ complete: true, cleanupVerified: true, ogfScenarios })}\n`
+      `${JSON.stringify({
+        complete: true,
+        cleanupVerified: true,
+        ogfScenarios,
+        phaseResults: SUITE_REGISTRY[suiteId].expectedPhases.map((phaseId) => ({
+          phaseId,
+          complete: true,
+          cleanupVerified: true,
+          exitCode: 0,
+        })),
+      })}\n`
     );
     fs.writeFileSync(path.join(resultRoot, `${suiteId}.cleanup-ledger.json`), '{"privateProcessIds":[1234]}\n');
-    fs.writeFileSync(path.join(resultRoot, `admission-context-${suiteId}.json`), '{"sourceSHA":"abc"}\n');
+    fs.writeFileSync(path.join(resultRoot, `admission-context-${suiteId}.json`), JSON.stringify({ sourceSHA: 'a'.repeat(40) }));
     fs.writeFileSync(
       path.join(resultRoot, `${suiteId}.log`),
       'Authorization: Bearer raw-token https://example.test/callback?sig=secret-sas\n'
@@ -1739,6 +1792,7 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout() {
           .replaceAll('$(Build.ArtifactStagingDirectory)', artifactStagingDirectory)
           .replaceAll('$(Build.SourcesDirectory)', sourcesDirectory)
           .replaceAll('$(Agent.TempDirectory)', agentTempDirectory)
+          .replaceAll('$(Build.BuildId)', '42')
           .replaceAll('${{ parameters.artifactName }}', artifactName)
           .replaceAll('${{ parameters.suiteId }}', suiteId),
       ],
@@ -1753,6 +1807,18 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout() {
     assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'results', `admission-context-${suiteId}.json`)));
     const stagedResult = JSON.parse(fs.readFileSync(path.join(diagnosticsRoot, 'results', `${suiteId}.json`), 'utf-8'));
     const stagedTerminal = JSON.parse(fs.readFileSync(path.join(diagnosticsRoot, 'results', `${suiteId}.terminal-result.json`), 'utf-8'));
+    assert.deepStrictEqual(stagedResult.ogfScenarios, ogfScenarios);
+    assert.deepStrictEqual(stagedTerminal.ogfScenarios, ogfScenarios);
+    assert.strictEqual(stagedResult.ogfScenarios[0].source, undefined);
+    if (options.privatePlatform) {
+      const privateResult = JSON.parse(fs.readFileSync(path.join(diagnosticsRoot, 'private-traceability', `${suiteId}.json`), 'utf-8'));
+      assert.strictEqual(privateResult.scenarios[0].source.caseId, 812);
+      assert.strictEqual(privateResult.scenarios[0].provenance.platform, options.privatePlatform);
+      assert.strictEqual(privateResult.scenarios[0].provenance.sourceVersion, 'a'.repeat(40));
+      assert.strictEqual(privateResult.scenarios[0].provenance.buildId, '42');
+      assert.doesNotMatch(JSON.stringify(stagedResult), /tracking\.example|synthetic/);
+      assert.doesNotMatch(JSON.stringify(stagedTerminal), /tracking\.example|synthetic/);
+    }
     assert.ok(
       !fs.existsSync(path.join(diagnosticsRoot, 'results', `${suiteId}.cleanup-ledger.json`)),
       'private cleanup ledger must not be published'
@@ -1768,6 +1834,22 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout() {
   } finally {
     fs.rmSync(tempRoot, { recursive: true, force: true });
   }
+}
+
+function testPrivateTraceabilityConfigurationContract() {
+  const template = read('.config/templates/vscode-e2e-cli-run-suite.yml');
+  const validation = template.indexOf('displayName: Validate required private traceability configuration');
+  const execution = template.indexOf('displayName: Prepare VS Code extension dependencies once');
+  assert.ok(validation > 0 && validation < execution, 'required private input must be validated before GUI startup');
+  assert.strictEqual(
+    (template.match(/E2E_TRACEABILITY_CROSSWALK_JSON: \$\(E2E_TRACEABILITY_CROSSWALK_JSON\)/g) || []).length,
+    1,
+    'secret must not be passed to VS Code or suite runner steps'
+  );
+  assert.match(template, /private-traceability\/\$\{\{ parameters\.suiteId \}\}\.json/);
+  assert.match(template, /if \(\$nativeResult\.outcome -eq 'success'\)/);
+  assert.match(template, /--source-version "\$\(\$admissionContext\.sourceSHA\)"/);
+  assert.match(template, /--build-id "\$\(Build\.BuildId\)"/);
 }
 
 function testDiagnosticsStagingScriptPreservesEvidenceBeforeFailing() {

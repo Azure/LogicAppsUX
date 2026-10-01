@@ -1211,6 +1211,7 @@ function testDirectSuitePhaseResultRetainsOgfAcrossMatrixPhases() {
     assert.strictEqual(terminal.phaseResults.length, 6);
     assert.strictEqual(terminal.ogfScenarios.length, 1);
     assert.strictEqual(terminal.ogfScenarios[0].scenarioId, 'ogf-launch-config-generated-name-standard-stateful');
+    assert.strictEqual(terminal.ogfScenarios[0].source, undefined);
     assert.strictEqual(terminal.ogfScenarios[0].executedVariant, 'standard-stateful');
     assert.ok(terminal.ogfScenarios[0].assertionIdentities.includes('launch-configuration-name-ends-with-created-logic-app-name'));
   } finally {
@@ -1493,17 +1494,11 @@ function testSummarizerMergesDirectOgfTerminalResult() {
         complete: true,
         phaseId: 'createWorkspaceCoreMatrix:rules-engine-stateless',
         mochaPassingCount: 1,
-        ogfScenarios: [
-          {
-            scenarioId: 'ogf-launch-config-generated-name-standard-stateful',
-            suiteId: label,
-            expectedPhase: 'createWorkspaceCoreMatrix:standard-stateful',
-            executedPhase: 'createWorkspaceCoreMatrix:standard-stateful',
-            executedVariant: 'standard-stateful',
-            assertionIdentities: ['launch-configuration-name-ends-with-created-logic-app-name'],
-            provenance: { platform: 'win32', sourceVersion: 'a'.repeat(40) },
-          },
-        ],
+        ogfScenarios: buildOgfScenariosForPhase(
+          'createWorkspaceCoreMatrix:standard-stateful',
+          { LA_E2E_CLI_CREATE_WORKSPACE_CASE: 'standard-stateful', BUILD_SOURCEVERSION: 'a'.repeat(40) },
+          { passed: true }
+        ).map((evidence) => ({ ...evidence, source: { system: 'tracking.example.test', caseId: 812 } })),
       },
       null,
       2
@@ -1514,6 +1509,9 @@ function testSummarizerMergesDirectOgfTerminalResult() {
   const result = JSON.parse(fs.readFileSync(path.join(outDir, `${label}.json`), 'utf-8'));
   assert.strictEqual(result.outcome, 'success');
   assert.strictEqual(result.ogfScenarios.length, 1);
+  assert.strictEqual(result.ogfScenarios[0].source, undefined);
+  const terminal = JSON.parse(fs.readFileSync(path.join(outDir, `${label}.terminal-result.json`), 'utf-8'));
+  assert.strictEqual(terminal.ogfScenarios[0].source, undefined);
   assert.strictEqual(result.ogfScenarios[0].executedVariant, 'standard-stateful');
 }
 

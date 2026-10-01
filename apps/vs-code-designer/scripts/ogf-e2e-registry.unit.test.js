@@ -5,12 +5,13 @@
 /* global console, require */
 const assert = require('assert');
 const { SUITE_REGISTRY } = require('./e2e-cli-batch');
-const { OGF_E2E_SCENARIOS, getOgfScenariosForPhase, validateOgfRegistry } = require('./ogf-e2e-registry');
+const { OGF_E2E_SCENARIOS, getOgfScenariosForPhase, projectPublicScenarioEvidence, validateOgfRegistry } = require('./ogf-e2e-registry');
 
 testRegistryReferencesExecutableTestCliPhases();
-testRegistryDoesNotClaimExternalResultsOrApprovals();
+testRegistryDoesNotEmbedPrivateMappingsOrClaimApprovals();
 testPassedPhaseEmitsOgfEvidence();
 testFailedPhaseDoesNotEmitOgfEvidence();
+testPublicProjectionDropsPrivateAndUnknownFields();
 
 console.log('[ogf-e2e-registry.unit] all tests passed');
 
@@ -32,10 +33,11 @@ function testRegistryReferencesExecutableTestCliPhases() {
   }
 }
 
-function testRegistryDoesNotClaimExternalResultsOrApprovals() {
+function testRegistryDoesNotEmbedPrivateMappingsOrClaimApprovals() {
   for (const scenario of OGF_E2E_SCENARIOS) {
     const text = JSON.stringify(scenario);
     assert.doesNotMatch(text, /accepted|approved|passedOriginal|resultWrite|baselineApproved/i);
+    assert.strictEqual(scenario.source, undefined);
   }
 }
 
@@ -54,6 +56,7 @@ function testPassedPhaseEmitsOgfEvidence() {
   assert.strictEqual(evidence[0].executedVariant, 'standard-stateful');
   assert.strictEqual(evidence[0].provenance.platform, 'win32');
   assert.strictEqual(evidence[0].provenance.sourceVersion, 'a'.repeat(40));
+  assert.strictEqual(evidence[0].source, undefined);
   assert.ok(evidence[0].assertionIdentities.includes('launch-configuration-name-ends-with-created-logic-app-name'));
   assert.ok(evidence[0].assertions.includes('launch-configuration-name-ends-with-created-logic-app-name'));
 }
@@ -61,4 +64,30 @@ function testPassedPhaseEmitsOgfEvidence() {
 function testFailedPhaseDoesNotEmitOgfEvidence() {
   assert.deepStrictEqual(getOgfScenariosForPhase('createWorkspaceCoreMatrix:standard-stateful', { passed: false }), []);
   assert.deepStrictEqual(getOgfScenariosForPhase('createWorkspaceCoreMatrix:custom-code-stateful', { passed: true }), []);
+  assert.deepStrictEqual(
+    getOgfScenariosForPhase('createWorkspaceCoreMatrix:standard-stateful', { passed: true, executedVariant: 'standard-stateless' }),
+    []
+  );
+}
+
+function testPublicProjectionDropsPrivateAndUnknownFields() {
+  for (const platform of ['linux', 'win32']) {
+    const [evidence] = getOgfScenariosForPhase('createWorkspaceCoreMatrix:standard-stateful', {
+      passed: true,
+      executedVariant: 'standard-stateful',
+      platform,
+    });
+    const publicEvidence = projectPublicScenarioEvidence({
+      ...evidence,
+      source: { system: 'tracking.example.test', caseId: 812 },
+      privateUrl: 'https://tracking.example.test/private',
+      provenance: { ...evidence.provenance, privateNotes: 'do-not-publish' },
+    });
+    assert.deepStrictEqual(publicEvidence, evidence);
+    assert.doesNotMatch(JSON.stringify(publicEvidence), /tracking\.example|privateNotes|do-not-publish/);
+    assert.throws(
+      () => projectPublicScenarioEvidence({ ...evidence, assertionIdentities: [] }),
+      /Invalid public scenario execution evidence/
+    );
+  }
 }

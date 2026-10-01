@@ -248,6 +248,16 @@ jobs:
           Write-Host "##vso[task.setvariable variable=AdmissionContextPath]$contextPath"
         displayName: Write admitted E2E artifact identity context
 
+      - pwsh: |
+          node apps/vs-code-designer/scripts/enrich-e2e-traceability.js `
+            --prepare "$(Agent.TempDirectory)/e2e-traceability-crosswalk-${{ parameters.suiteId }}.json"
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+        displayName: Validate required private traceability configuration
+        env:
+          E2E_TRACEABILITY_CROSSWALK_JSON: $(E2E_TRACEABILITY_CROSSWALK_JSON)
+
       - ${{ if eq(parameters.platform, 'linux') }}:
           - bash: |
               set -euo pipefail
@@ -617,6 +627,25 @@ jobs:
 
           if ($missingRequiredFiles.Count -gt 0) {
             throw "Required suite diagnostics were missing after staging available evidence: $($missingRequiredFiles -join ', ')"
+          }
+          if ('${{ parameters.suiteId }}' -eq 'createWorkspaceCoreMatrix') {
+            $nativeResultPath = Join-Path $resultDestination '${{ parameters.suiteId }}.json'
+            $nativeResult = Get-Content $nativeResultPath -Raw | ConvertFrom-Json
+            if ($nativeResult.outcome -eq 'success') {
+              $admissionContext = Get-Content (Join-Path $resultDestination 'admission-context-${{ parameters.suiteId }}.json') -Raw | ConvertFrom-Json
+              node "$(Build.SourcesDirectory)/apps/vs-code-designer/scripts/enrich-e2e-traceability.js" `
+                --crosswalk "$(Agent.TempDirectory)/e2e-traceability-crosswalk-${{ parameters.suiteId }}.json" `
+                --input "$nativeResultPath" `
+                --terminal-result "$resultDestination/${{ parameters.suiteId }}.terminal-result.json" `
+                --output "$diagnosticsRoot/private-traceability/${{ parameters.suiteId }}.json" `
+                --source-version "$($admissionContext.sourceSHA)" `
+                --build-id "$(Build.BuildId)"
+              if ($LASTEXITCODE -ne 0) {
+                exit $LASTEXITCODE
+              }
+            } else {
+              Write-Host 'Private traceability join not emitted: native execution was not successful.'
+            }
           }
         displayName: Stage vscode-test CLI results (${{ parameters.suiteId }})
         condition: always()

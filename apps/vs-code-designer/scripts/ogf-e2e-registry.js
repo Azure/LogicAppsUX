@@ -10,6 +10,7 @@ const OGF_E2E_SCENARIOS = Object.freeze([
     scenarioId: 'ogf-launch-config-generated-name-standard-stateful',
     suiteId: 'createWorkspaceCoreMatrix',
     expectedPhase: 'createWorkspaceCoreMatrix:standard-stateful',
+    executedVariant: 'standard-stateful',
     evidenceKind: 'native-vscode-test-cli-phase',
     assertions: Object.freeze([
       'wizard-created-standard-stateful-workspace',
@@ -27,14 +28,15 @@ function getOgfScenariosForPhase(phaseId, options = {}) {
     return [];
   }
 
-  return OGF_E2E_SCENARIOS.filter((scenario) => scenario.expectedPhase === phaseId).map((scenario) => ({
+  return OGF_E2E_SCENARIOS.filter(
+    (scenario) => scenario.expectedPhase === phaseId && scenario.executedVariant === options.executedVariant
+  ).map((scenario) => ({
     scenarioId: scenario.scenarioId,
     suiteId: scenario.suiteId,
     expectedPhase: scenario.expectedPhase,
     executedPhase: phaseId,
     executedVariant: options.executedVariant || '',
     evidenceKind: scenario.evidenceKind,
-    source: scenario.source,
     assertionIdentities: scenario.assertions,
     assertions: scenario.assertions,
     provenance: {
@@ -70,21 +72,69 @@ function validateOgfRegistry(registry = OGF_E2E_SCENARIOS) {
       errors.push(`${scenario.scenarioId}: evidenceKind must stay native test-cli evidence`);
     }
 
+    if (Object.prototype.hasOwnProperty.call(scenario, 'source')) {
+      errors.push('Public scenario registry must not embed private catalogue mappings');
+    }
+
+    if (!scenario.executedVariant || scenario.expectedPhase !== `${scenario.suiteId}:${scenario.executedVariant}`) {
+      errors.push(`${scenario.scenarioId}: exact executable variant is required`);
+    }
+
     if (!Array.isArray(scenario.assertions) || scenario.assertions.length === 0) {
       errors.push(`${scenario.scenarioId}: at least one assertion reference is required`);
     }
 
     const serialized = JSON.stringify(scenario);
     if (/accepted|approved|passedOriginal|resultWrite|baselineApproved/i.test(serialized)) {
-      errors.push(`${scenario.scenarioId}: registry must not claim approval, external result writes, or original catalogue pass status`);
+      errors.push(`${scenario.scenarioId}: registry must not claim approval, result writes, or original catalogue pass status`);
     }
   }
 
   return errors;
 }
 
+function projectPublicScenarioEvidence(evidence) {
+  const scenario = OGF_E2E_SCENARIOS.find((item) => item.scenarioId === evidence?.scenarioId);
+  if (
+    !scenario ||
+    evidence.suiteId !== scenario.suiteId ||
+    evidence.expectedPhase !== scenario.expectedPhase ||
+    evidence.executedPhase !== scenario.expectedPhase ||
+    evidence.executedVariant !== scenario.executedVariant ||
+    evidence.evidenceKind !== scenario.evidenceKind ||
+    !sameIdentities(evidence.assertionIdentities, scenario.assertions) ||
+    !sameIdentities(evidence.assertions, scenario.assertions)
+  ) {
+    throw new Error('Invalid public scenario execution evidence');
+  }
+  const provenance = Object.fromEntries(
+    ['platform', 'arch', 'vscodeVersion', 'sourceVersion', 'buildId', 'definitionId', 'repository'].map((key) => [
+      key,
+      typeof evidence.provenance?.[key] === 'string' ? evidence.provenance[key] : '',
+    ])
+  );
+  const publicEvidence = getOgfScenariosForPhase(evidence.executedPhase, {
+    passed: true,
+    executedVariant: evidence.executedVariant,
+    ...provenance,
+  })[0];
+  publicEvidence.provenance = provenance;
+  return publicEvidence;
+}
+
+function sameIdentities(actual, expected) {
+  return (
+    Array.isArray(actual) &&
+    actual.length === expected.length &&
+    new Set(actual).size === actual.length &&
+    expected.every((identity) => actual.includes(identity))
+  );
+}
+
 module.exports = {
   OGF_E2E_SCENARIOS,
   getOgfScenariosForPhase,
   validateOgfRegistry,
+  projectPublicScenarioEvidence,
+  sameIdentities,
 };
