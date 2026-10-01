@@ -212,7 +212,9 @@ The LogicAppsUX source can stay in GitHub while the VS Code E2E gate runs in Azu
 | Azure Pipeline created from the GitHub repo | Required for GitHub PR checks and normal branch triggers. | Install/authorize the Azure Pipelines GitHub App or a GitHub service connection for `Azure/LogicAppsUX`; keep the YAML in the GitHub repo and use `checkout: self`. |
 | Azure Repos bootstrap pipeline with a GitHub repository resource | Good for scheduled/manual ADO-only runs owned by an existing ADO project. | Store a tiny launcher YAML in Azure Repos, add `resources.repositories` with `type: github`, `endpoint: <GitHub service connection>`, `name: Azure/LogicAppsUX`, and `checkout: logicappsux`. Repository-resource triggers do not provide GitHub PR validation; pass the ref manually or run on a schedule. |
 
-The checked-in starting point is `.azure-pipelines/vscode-e2e-cli.1es.yml`. It is a 1ES/MicroBuild pipeline for the latest-stable `@vscode/test-cli` baseline, with shared templates under `.azure-pipelines/templates/vscode-e2e-cli-*.yml`.
+The staged checked-in starting point is `.config/vscode-e2e-cli.1es.yml`. It is a 1ES/MicroBuild pipeline for the latest-stable `@vscode/test-cli` baseline, with shared templates under `.config/templates/vscode-e2e-cli-*.yml`; legacy registered-path copies under `.azure-pipelines/` remain separate until an owner-approved cutover.
+
+The canonical full ADO inventory is twelve independent jobs: both Linux and Windows run `unitTests`, `createWorkspaceBehavior`, `createWorkspaceCoreMatrix`, `createWorkspacePreviewMatrix`, `createWorkspaceCodeful`, and `msnWeatherLifecycle`. Parity is defined by the same stable scenario/assertion/variant set on each OS, including the core matrix, preview matrix, and codeful variant identities, not by dummy tests or job-count padding. The Windows-only `createWorkspaceBehaviorSmoke` lane remains selectable in diagnostic mode for a shorter compatibility check, but it is not part of the `windows` alias or the protected `verify_both_os_full_rollup` gate.
 
 Recommended first ADO gate:
 
@@ -227,6 +229,8 @@ Recommended first ADO gate:
    - publish a tar artifact containing `apps/vs-code-designer/dist/` and `apps/vs-code-designer/out/`;
    - fan out one job per label and run `xvfb-run ... pnpm exec node scripts/run-e2e-cli.js --label <label>` from `apps/vs-code-designer`.
 4. Publish `apps/vs-code-designer/.vscode-test/results/*.junit.xml` with `PublishTestResults@2`, then stage one diagnostics artifact per independent lane. Each `vscode-e2e-cli-diagnostics-<os-suite>` artifact should contain `results/`, `log/`, `screenshots/`, and `generated-workspaces/`; keep the shared extension/test build artifact separate. ADO run summaries can use `##vso[task.uploadsummary]<path-to-summary.md>`.
+
+The first native OGF mapping slice is intentionally read-only with respect to One: `createWorkspaceCoreMatrix:standard-stateful` can emit DevDiv evidence for One case `31497883` revision `1`, step `2`, because the real wizard-created workspace assertion now proves the generated `.vscode/launch.json` debug configuration name ends with the created Logic App name and is not the hardcoded default. That native pass is traceability evidence only; it does not write One results, approve visual baselines, or certify broader One cases.
 
 Only add an Azure ARM service connection when promoting the Azure-backed MSN Weather lifecycle. The checked-in pipeline defaults to the dedicated LogicAppsUX connection `LogicAppsVSCode-E2E-SignIn`, scoped to the owner-approved test tenant/subscription/resource group. Reusing `LogicAppsPortal-E2E-SignIn` would require that connection's owners to authorize the new pipeline and confirm the permissions are appropriate; do not use Otto's `otto-e2e-testtenant-arm` for LogicAppsUX without explicit ownership approval.
 

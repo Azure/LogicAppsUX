@@ -4,7 +4,7 @@ const { execFileSync } = require('child_process');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { SUITE_REGISTRY } = require('./e2e-cli-batch');
+const { SUITE_ALIASES, SUITE_REGISTRY } = require('./e2e-cli-batch');
 
 const repoRoot = path.resolve(__dirname, '..', '..', '..');
 
@@ -13,6 +13,7 @@ testRootNpmrcSourceGuardAllowsGeneratedRuntimeFile();
 testLocalAzureToolsWrapperContractIfAvailable();
 testConsumerAdmissionContract();
 testSelectorResolutionScriptBehavior();
+testCanonicalSuiteParityContract();
 testFullRollupGateScriptRejectsNonExecutedResults();
 testAzureCliIdentityScriptBehavior();
 testPipelineSafetyGuards();
@@ -159,10 +160,28 @@ function runFullRollupGateFixture(script, options = {}) {
         suite: 'unitTests',
       },
       {
-        job: 'windows_create_workspace_behavior_smoke',
-        variable: 'windowsCreateWorkspaceBehaviorSmokeResult',
-        artifact: 'vscode-e2e-cli-diagnostics-windows-create-workspace-behavior-smoke',
-        suite: 'createWorkspaceBehaviorSmoke',
+        job: 'windows_create_workspace_behavior',
+        variable: 'windowsCreateWorkspaceBehaviorResult',
+        artifact: 'vscode-e2e-cli-diagnostics-windows-create-workspace-behavior',
+        suite: 'createWorkspaceBehavior',
+      },
+      {
+        job: 'windows_create_workspace_core_matrix',
+        variable: 'windowsCreateWorkspaceCoreMatrixResult',
+        artifact: 'vscode-e2e-cli-diagnostics-windows-create-workspace-core-matrix',
+        suite: 'createWorkspaceCoreMatrix',
+      },
+      {
+        job: 'windows_create_workspace_preview_matrix',
+        variable: 'windowsCreateWorkspacePreviewMatrixResult',
+        artifact: 'vscode-e2e-cli-diagnostics-windows-create-workspace-preview-matrix',
+        suite: 'createWorkspacePreviewMatrix',
+      },
+      {
+        job: 'windows_create_workspace_codeful',
+        variable: 'windowsCreateWorkspaceCodefulResult',
+        artifact: 'vscode-e2e-cli-diagnostics-windows-create-workspace-codeful',
+        suite: 'createWorkspaceCodeful',
       },
       {
         job: 'windows_msn_weather_lifecycle',
@@ -306,7 +325,7 @@ function findObjectByDisplayName(value, displayName) {
 
 function extractFullRollupGateScript(consumer) {
   const fullGateJob = getConsumerDirectJob(consumer, 'verify_both_os_full_rollup');
-  const step = fullGateJob.steps.find((entry) => entry.displayName === 'Enforce nine-suite both-OS full rollup gate');
+  const step = fullGateJob.steps.find((entry) => entry.displayName === 'Enforce twelve-suite both-OS full rollup gate');
   assert.ok(step?.pwsh, 'full rollup gate must have an executable PowerShell script');
   return step.pwsh;
 }
@@ -749,7 +768,7 @@ function testConsumerAdmissionContract() {
   assert.match(consumerEntry, /report_diagnostic_selected_rerun/);
   assert.match(consumerEntry, /protected checks must bind verify_both_os_full_rollup/);
   assert.match(consumerEntry, /Diagnostic selected rerun failed selected suite job/);
-  assert.match(consumerEntry, /Enforce nine-suite both-OS full rollup gate/);
+  assert.match(consumerEntry, /Enforce twelve-suite both-OS full rollup gate/);
   assert.match(consumerEntry, /Suite result is not a successful executed test run/);
   assert.match(consumerEntry, /Suite log does not contain enough positive real Mocha execution evidence/);
   assert.match(consumerEntry, /vscode-e2e-cli-diagnostics-linux-create-workspace-core-matrix/);
@@ -794,10 +813,11 @@ function testSelectorResolutionScriptBehavior() {
   );
   assert.match(
     fullResult.output,
-    /variable=windowsSelectedSuites;isOutput=true]unitTests,createWorkspaceBehaviorSmoke,msnWeatherLifecycle/
+    /variable=windowsSelectedSuites;isOutput=true]unitTests,createWorkspaceBehavior,createWorkspaceCoreMatrix,createWorkspacePreviewMatrix,createWorkspaceCodeful,msnWeatherLifecycle/
   );
   assert.match(fullResult.output, /variable=linux_msnWeatherLifecycle;isOutput=true]true/);
-  assert.match(fullResult.output, /variable=windows_createWorkspaceBehaviorSmoke;isOutput=true]true/);
+  assert.match(fullResult.output, /variable=windows_createWorkspaceCoreMatrix;isOutput=true]true/);
+  assert.match(fullResult.output, /variable=windows_createWorkspaceBehaviorSmoke;isOutput=true]false/);
 
   const explicitCanonicalResult = runSelectorScript(scriptPath, {
     LA_E2E_CLI_DIAGNOSTIC_ONLY: 'false',
@@ -805,9 +825,20 @@ function testSelectorResolutionScriptBehavior() {
     LA_E2E_CLI_RUN_WINDOWS: 'true',
     LA_E2E_CLI_LINUX_SUITES:
       'unitTests,createWorkspaceBehavior,createWorkspaceCoreMatrix,createWorkspacePreviewMatrix,createWorkspaceCodeful,msnWeatherLifecycle',
-    LA_E2E_CLI_WINDOWS_SUITES: 'unitTests,createWorkspaceBehaviorSmoke,msnWeatherLifecycle',
+    LA_E2E_CLI_WINDOWS_SUITES:
+      'unitTests,createWorkspaceBehavior,createWorkspaceCoreMatrix,createWorkspacePreviewMatrix,createWorkspaceCodeful,msnWeatherLifecycle',
   });
   assert.strictEqual(explicitCanonicalResult.status, 0, explicitCanonicalResult.output);
+
+  const diagnosticWindowsSmokeResult = runSelectorScript(scriptPath, {
+    LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true',
+    LA_E2E_CLI_RUN_LINUX: 'false',
+    LA_E2E_CLI_RUN_WINDOWS: 'true',
+    LA_E2E_CLI_WINDOWS_SUITES: 'createWorkspaceBehaviorSmoke',
+  });
+  assert.strictEqual(diagnosticWindowsSmokeResult.status, 0, diagnosticWindowsSmokeResult.output);
+  assert.match(diagnosticWindowsSmokeResult.output, /variable=windows_createWorkspaceBehaviorSmoke;isOutput=true]true/);
+  assert.match(diagnosticWindowsSmokeResult.output, /variable=windows_createWorkspaceBehavior;isOutput=true]false/);
 
   const diagnosticPartialResult = runSelectorScript(scriptPath, {
     LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true',
@@ -857,6 +888,20 @@ function testSelectorResolutionScriptBehavior() {
   assert.match(noOsResult.output, /At least one OS cohort must be selected/);
 }
 
+function testCanonicalSuiteParityContract() {
+  assert.deepStrictEqual(SUITE_ALIASES.windows, SUITE_ALIASES.linux, 'canonical Windows and Linux suite aliases must stay equal');
+  assert.ok(!SUITE_ALIASES.windows.includes('createWorkspaceBehaviorSmoke'), 'Windows smoke stays diagnostic-only, not canonical');
+
+  const canonicalPhaseIdentity = (suiteIds) =>
+    suiteIds.flatMap((suiteId) => SUITE_REGISTRY[suiteId].expectedPhases.map((phaseId) => `${suiteId}/${phaseId}`));
+
+  assert.deepStrictEqual(
+    canonicalPhaseIdentity(SUITE_ALIASES.windows),
+    canonicalPhaseIdentity(SUITE_ALIASES.linux),
+    'canonical Windows and Linux stable phase identities must stay equal'
+  );
+}
+
 function runSelectorScript(scriptPath, env) {
   try {
     const result = execFileSync(process.execPath, [scriptPath], {
@@ -900,7 +945,7 @@ function assertConsumerCurrentRunArtifactContract(consumer) {
   assert.strictEqual(buildTemplate?.parameters?.artifactStagingPath, '$(Build.ArtifactStagingDirectory)/vscode-e2e');
 
   const templateInvocations = flattenAzureList(consumer.extends.parameters.stages[0].jobs).filter((entry) => entry.template);
-  assert.strictEqual(templateInvocations.length, 9);
+  assert.strictEqual(templateInvocations.length, 13);
   assert.deepStrictEqual(
     templateInvocations.map((invocation) => invocation.parameters.jobName).sort(),
     [
@@ -910,7 +955,11 @@ function assertConsumerCurrentRunArtifactContract(consumer) {
       'linux_create_workspace_preview_matrix',
       'linux_msn_weather_lifecycle',
       'linux_unit_tests',
+      'windows_create_workspace_behavior',
       'windows_create_workspace_behavior_smoke',
+      'windows_create_workspace_codeful',
+      'windows_create_workspace_core_matrix',
+      'windows_create_workspace_preview_matrix',
       'windows_msn_weather_lifecycle',
       'windows_unit_tests',
     ].sort()
@@ -956,6 +1005,10 @@ function assertConsumerCurrentRunArtifactContract(consumer) {
     'linux_create_workspace_codeful',
     'linux_msn_weather_lifecycle',
     'windows_unit_tests',
+    'windows_create_workspace_behavior',
+    'windows_create_workspace_core_matrix',
+    'windows_create_workspace_preview_matrix',
+    'windows_create_workspace_codeful',
     'windows_create_workspace_behavior_smoke',
     'windows_msn_weather_lifecycle',
   ]);
@@ -1114,7 +1167,7 @@ function assertConsumerJobRoutingContract(consumer, runSuites) {
     assert.strictEqual(job.templateContext.outputs, undefined, `${job.job} must not publish artifacts from a validationJob`);
   }
 
-  assert.strictEqual(templateJobs.length, 9);
+  assert.strictEqual(templateJobs.length, 13);
   for (const invocation of templateJobs) {
     assert.strictEqual(invocation.template, '/.config/templates/vscode-e2e-cli-run-suite.yml@self');
   }

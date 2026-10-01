@@ -863,7 +863,18 @@ function testBatchSuiteRegistryValidation() {
   );
   assert.deepStrictEqual(
     normalizeSuiteSelection('windows', { platform: 'win32' }).map((suite) => suite.id),
-    ['unitTests', 'createWorkspaceBehaviorSmoke', 'msnWeatherLifecycle']
+    [
+      'unitTests',
+      'createWorkspaceBehavior',
+      'createWorkspaceCoreMatrix',
+      'createWorkspacePreviewMatrix',
+      'createWorkspaceCodeful',
+      'msnWeatherLifecycle',
+    ]
+  );
+  assert.deepStrictEqual(
+    normalizeSuiteSelection('createWorkspaceBehaviorSmoke', { platform: 'win32' }).map((suite) => suite.id),
+    ['createWorkspaceBehaviorSmoke']
   );
   assert.throws(() => normalizeSuiteSelection('', { platform: 'linux' }), /requires at least one/);
   assert.throws(() => normalizeSuiteSelection('unitTests,unitTests', { platform: 'linux' }), /Duplicate/);

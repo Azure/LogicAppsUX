@@ -1559,6 +1559,19 @@ function verifyLogicAppLaunch(launch: LaunchJson, creationCase: WorkspaceCreatio
   assert.strictEqual(configurations.length, 1, `${creationCase.label} launch.json should contain one generated debug configuration`);
   const configuration = configurations[0];
   assert.ok(configuration, `${creationCase.label} launch.json should include a debug configuration`);
+  const configurationName = configuration.name;
+  if (typeof configurationName !== 'string') {
+    assert.fail(`${creationCase.label} launch config name should be a string`);
+  }
+  assert.ok(
+    configurationName.endsWith(creationCase.appName),
+    `${creationCase.label} launch config name should end with the generated Logic App name ${creationCase.appName}`
+  );
+  assert.notStrictEqual(
+    configurationName,
+    'Run/Debug logic app LogicApp',
+    `${creationCase.label} launch config name should not use the hardcoded default Logic App name`
+  );
 
   if (creationCase.appType === 'standard') {
     assert.strictEqual(

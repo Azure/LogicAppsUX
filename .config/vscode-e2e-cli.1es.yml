@@ -318,10 +318,98 @@ extends:
 
           - template: /.config/templates/vscode-e2e-cli-run-suite.yml@self
             parameters:
+              jobName: windows_create_workspace_behavior
+              displayName: Windows create workspace behavior
+              suiteId: createWorkspaceBehavior
+              shortName: wb
+              cliArguments: --label createWorkspaceBehavior
+              artifactName: windows-create-workspace-behavior
+              selected: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.windows_createWorkspaceBehavior'] ]
+              dependsOn: [resolve_consumer_context, build_current_run_e2e_artifact]
+              resolvedVSCodeVersion: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.resolvedVSCodeBuild'] ]
+              expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+              feedBaseUrl: ${{ variables.feedBaseUrl }}
+              pool:
+                name: VSEngSS-MicroBuild2022-1ES
+                image: server2022-microbuildVS2022-1es
+                os: windows
+              platform: windows
+              expectedProducerDefinitionId: $(System.DefinitionId)
+              expectedProducerRunId: $(Build.BuildId)
+              checkoutRef: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+
+          - template: /.config/templates/vscode-e2e-cli-run-suite.yml@self
+            parameters:
+              jobName: windows_create_workspace_core_matrix
+              displayName: Windows create workspace core matrix
+              suiteId: createWorkspaceCoreMatrix
+              shortName: wc
+              cliArguments: --label createWorkspaceCoreMatrix
+              artifactName: windows-create-workspace-core-matrix
+              selected: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.windows_createWorkspaceCoreMatrix'] ]
+              dependsOn: [resolve_consumer_context, build_current_run_e2e_artifact]
+              resolvedVSCodeVersion: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.resolvedVSCodeBuild'] ]
+              expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+              feedBaseUrl: ${{ variables.feedBaseUrl }}
+              pool:
+                name: VSEngSS-MicroBuild2022-1ES
+                image: server2022-microbuildVS2022-1es
+                os: windows
+              platform: windows
+              expectedProducerDefinitionId: $(System.DefinitionId)
+              expectedProducerRunId: $(Build.BuildId)
+              checkoutRef: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+
+          - template: /.config/templates/vscode-e2e-cli-run-suite.yml@self
+            parameters:
+              jobName: windows_create_workspace_preview_matrix
+              displayName: Windows create workspace preview matrix
+              suiteId: createWorkspacePreviewMatrix
+              shortName: wp
+              cliArguments: --label createWorkspacePreviewMatrix
+              artifactName: windows-create-workspace-preview-matrix
+              selected: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.windows_createWorkspacePreviewMatrix'] ]
+              dependsOn: [resolve_consumer_context, build_current_run_e2e_artifact]
+              resolvedVSCodeVersion: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.resolvedVSCodeBuild'] ]
+              expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+              feedBaseUrl: ${{ variables.feedBaseUrl }}
+              pool:
+                name: VSEngSS-MicroBuild2022-1ES
+                image: server2022-microbuildVS2022-1es
+                os: windows
+              platform: windows
+              expectedProducerDefinitionId: $(System.DefinitionId)
+              expectedProducerRunId: $(Build.BuildId)
+              checkoutRef: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+
+          - template: /.config/templates/vscode-e2e-cli-run-suite.yml@self
+            parameters:
+              jobName: windows_create_workspace_codeful
+              displayName: Windows create workspace codeful
+              suiteId: createWorkspaceCodeful
+              shortName: wf
+              cliArguments: --label createWorkspaceCodeful
+              artifactName: windows-create-workspace-codeful
+              selected: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.windows_createWorkspaceCodeful'] ]
+              dependsOn: [resolve_consumer_context, build_current_run_e2e_artifact]
+              resolvedVSCodeVersion: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.resolvedVSCodeBuild'] ]
+              expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+              feedBaseUrl: ${{ variables.feedBaseUrl }}
+              pool:
+                name: VSEngSS-MicroBuild2022-1ES
+                image: server2022-microbuildVS2022-1es
+                os: windows
+              platform: windows
+              expectedProducerDefinitionId: $(System.DefinitionId)
+              expectedProducerRunId: $(Build.BuildId)
+              checkoutRef: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+
+          - template: /.config/templates/vscode-e2e-cli-run-suite.yml@self
+            parameters:
               jobName: windows_create_workspace_behavior_smoke
               displayName: Windows create workspace behavior smoke
               suiteId: createWorkspaceBehaviorSmoke
-              shortName: wb
+              shortName: ws
               cliArguments: --label createWorkspaceBehaviorSmoke
               artifactName: windows-create-workspace-behavior-smoke
               selected: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.windows_createWorkspaceBehaviorSmoke'] ]
@@ -375,7 +463,10 @@ extends:
                   - linux_create_workspace_codeful
                   - linux_msn_weather_lifecycle
                   - windows_unit_tests
-                  - windows_create_workspace_behavior_smoke
+                  - windows_create_workspace_behavior
+                  - windows_create_workspace_core_matrix
+                  - windows_create_workspace_preview_matrix
+                  - windows_create_workspace_codeful
                   - windows_msn_weather_lifecycle
                 condition: always()
                 pool:
@@ -397,8 +488,14 @@ extends:
                     value: $[ dependencies.linux_msn_weather_lifecycle.result ]
                   - name: windowsUnitTestsResult
                     value: $[ dependencies.windows_unit_tests.result ]
-                  - name: windowsCreateWorkspaceBehaviorSmokeResult
-                    value: $[ dependencies.windows_create_workspace_behavior_smoke.result ]
+                  - name: windowsCreateWorkspaceBehaviorResult
+                    value: $[ dependencies.windows_create_workspace_behavior.result ]
+                  - name: windowsCreateWorkspaceCoreMatrixResult
+                    value: $[ dependencies.windows_create_workspace_core_matrix.result ]
+                  - name: windowsCreateWorkspacePreviewMatrixResult
+                    value: $[ dependencies.windows_create_workspace_preview_matrix.result ]
+                  - name: windowsCreateWorkspaceCodefulResult
+                    value: $[ dependencies.windows_create_workspace_codeful.result ]
                   - name: windowsMsnWeatherLifecycleResult
                     value: $[ dependencies.windows_msn_weather_lifecycle.result ]
                 templateContext:
@@ -433,8 +530,20 @@ extends:
                     displayName: Download Windows unit tests diagnostics
                     condition: always()
                   - download: current
-                    artifact: vscode-e2e-cli-diagnostics-windows-create-workspace-behavior-smoke
-                    displayName: Download Windows create workspace behavior smoke diagnostics
+                    artifact: vscode-e2e-cli-diagnostics-windows-create-workspace-behavior
+                    displayName: Download Windows create workspace behavior diagnostics
+                    condition: always()
+                  - download: current
+                    artifact: vscode-e2e-cli-diagnostics-windows-create-workspace-core-matrix
+                    displayName: Download Windows create workspace core matrix diagnostics
+                    condition: always()
+                  - download: current
+                    artifact: vscode-e2e-cli-diagnostics-windows-create-workspace-preview-matrix
+                    displayName: Download Windows create workspace preview matrix diagnostics
+                    condition: always()
+                  - download: current
+                    artifact: vscode-e2e-cli-diagnostics-windows-create-workspace-codeful
+                    displayName: Download Windows create workspace codeful diagnostics
                     condition: always()
                   - download: current
                     artifact: vscode-e2e-cli-diagnostics-windows-msn-weather-lifecycle
@@ -450,7 +559,10 @@ extends:
                         @{ job = 'linux_create_workspace_codeful'; result = '$(linuxCreateWorkspaceCodefulResult)'; artifact = 'vscode-e2e-cli-diagnostics-linux-create-workspace-codeful'; suite = 'createWorkspaceCodeful'; expectedMochaCompletions = 2; subtractMatrixFooter = $true },
                         @{ job = 'linux_msn_weather_lifecycle'; result = '$(linuxMsnWeatherLifecycleResult)'; artifact = 'vscode-e2e-cli-diagnostics-linux-msn-weather-lifecycle'; suite = 'msnWeatherLifecycle'; expectedMochaCompletions = 3; subtractMatrixFooter = $false },
                         @{ job = 'windows_unit_tests'; result = '$(windowsUnitTestsResult)'; artifact = 'vscode-e2e-cli-diagnostics-windows-unit-tests'; suite = 'unitTests'; expectedMochaCompletions = 1; subtractMatrixFooter = $false },
-                        @{ job = 'windows_create_workspace_behavior_smoke'; result = '$(windowsCreateWorkspaceBehaviorSmokeResult)'; artifact = 'vscode-e2e-cli-diagnostics-windows-create-workspace-behavior-smoke'; suite = 'createWorkspaceBehaviorSmoke'; expectedMochaCompletions = 1; subtractMatrixFooter = $false },
+                        @{ job = 'windows_create_workspace_behavior'; result = '$(windowsCreateWorkspaceBehaviorResult)'; artifact = 'vscode-e2e-cli-diagnostics-windows-create-workspace-behavior'; suite = 'createWorkspaceBehavior'; expectedMochaCompletions = 1; subtractMatrixFooter = $false },
+                        @{ job = 'windows_create_workspace_core_matrix'; result = '$(windowsCreateWorkspaceCoreMatrixResult)'; artifact = 'vscode-e2e-cli-diagnostics-windows-create-workspace-core-matrix'; suite = 'createWorkspaceCoreMatrix'; expectedMochaCompletions = 6; subtractMatrixFooter = $true },
+                        @{ job = 'windows_create_workspace_preview_matrix'; result = '$(windowsCreateWorkspacePreviewMatrixResult)'; artifact = 'vscode-e2e-cli-diagnostics-windows-create-workspace-preview-matrix'; suite = 'createWorkspacePreviewMatrix'; expectedMochaCompletions = 6; subtractMatrixFooter = $true },
+                        @{ job = 'windows_create_workspace_codeful'; result = '$(windowsCreateWorkspaceCodefulResult)'; artifact = 'vscode-e2e-cli-diagnostics-windows-create-workspace-codeful'; suite = 'createWorkspaceCodeful'; expectedMochaCompletions = 2; subtractMatrixFooter = $true },
                         @{ job = 'windows_msn_weather_lifecycle'; result = '$(windowsMsnWeatherLifecycleResult)'; artifact = 'vscode-e2e-cli-diagnostics-windows-msn-weather-lifecycle'; suite = 'msnWeatherLifecycle'; expectedMochaCompletions = 3; subtractMatrixFooter = $false }
                       )
                       $identityFields = @(
@@ -521,7 +633,7 @@ extends:
                           }
                         }
                       }
-                    displayName: Enforce nine-suite both-OS full rollup gate
+                    displayName: Enforce twelve-suite both-OS full rollup gate
 
           - ${{ if eq(parameters.diagnosticOnly, true) }}:
               - job: report_diagnostic_selected_rerun
@@ -535,6 +647,10 @@ extends:
                   - linux_create_workspace_codeful
                   - linux_msn_weather_lifecycle
                   - windows_unit_tests
+                  - windows_create_workspace_behavior
+                  - windows_create_workspace_core_matrix
+                  - windows_create_workspace_preview_matrix
+                  - windows_create_workspace_codeful
                   - windows_create_workspace_behavior_smoke
                   - windows_msn_weather_lifecycle
                 condition: always()
@@ -557,6 +673,14 @@ extends:
                     value: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.linux_msnWeatherLifecycle'] ]
                   - name: windowsUnitTestsSelected
                     value: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.windows_unitTests'] ]
+                  - name: windowsCreateWorkspaceBehaviorSelected
+                    value: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.windows_createWorkspaceBehavior'] ]
+                  - name: windowsCreateWorkspaceCoreMatrixSelected
+                    value: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.windows_createWorkspaceCoreMatrix'] ]
+                  - name: windowsCreateWorkspacePreviewMatrixSelected
+                    value: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.windows_createWorkspacePreviewMatrix'] ]
+                  - name: windowsCreateWorkspaceCodefulSelected
+                    value: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.windows_createWorkspaceCodeful'] ]
                   - name: windowsCreateWorkspaceBehaviorSmokeSelected
                     value: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.windows_createWorkspaceBehaviorSmoke'] ]
                   - name: windowsMsnWeatherLifecycleSelected
@@ -575,6 +699,14 @@ extends:
                     value: $[ dependencies.linux_msn_weather_lifecycle.result ]
                   - name: windowsUnitTestsResult
                     value: $[ dependencies.windows_unit_tests.result ]
+                  - name: windowsCreateWorkspaceBehaviorResult
+                    value: $[ dependencies.windows_create_workspace_behavior.result ]
+                  - name: windowsCreateWorkspaceCoreMatrixResult
+                    value: $[ dependencies.windows_create_workspace_core_matrix.result ]
+                  - name: windowsCreateWorkspacePreviewMatrixResult
+                    value: $[ dependencies.windows_create_workspace_preview_matrix.result ]
+                  - name: windowsCreateWorkspaceCodefulResult
+                    value: $[ dependencies.windows_create_workspace_codeful.result ]
                   - name: windowsCreateWorkspaceBehaviorSmokeResult
                     value: $[ dependencies.windows_create_workspace_behavior_smoke.result ]
                   - name: windowsMsnWeatherLifecycleResult
@@ -591,6 +723,10 @@ extends:
                         @{ name = 'linux_create_workspace_codeful'; selected = '$(linuxCreateWorkspaceCodefulSelected)'; result = '$(linuxCreateWorkspaceCodefulResult)' },
                         @{ name = 'linux_msn_weather_lifecycle'; selected = '$(linuxMsnWeatherLifecycleSelected)'; result = '$(linuxMsnWeatherLifecycleResult)' },
                         @{ name = 'windows_unit_tests'; selected = '$(windowsUnitTestsSelected)'; result = '$(windowsUnitTestsResult)' },
+                        @{ name = 'windows_create_workspace_behavior'; selected = '$(windowsCreateWorkspaceBehaviorSelected)'; result = '$(windowsCreateWorkspaceBehaviorResult)' },
+                        @{ name = 'windows_create_workspace_core_matrix'; selected = '$(windowsCreateWorkspaceCoreMatrixSelected)'; result = '$(windowsCreateWorkspaceCoreMatrixResult)' },
+                        @{ name = 'windows_create_workspace_preview_matrix'; selected = '$(windowsCreateWorkspacePreviewMatrixSelected)'; result = '$(windowsCreateWorkspacePreviewMatrixResult)' },
+                        @{ name = 'windows_create_workspace_codeful'; selected = '$(windowsCreateWorkspaceCodefulSelected)'; result = '$(windowsCreateWorkspaceCodefulResult)' },
                         @{ name = 'windows_create_workspace_behavior_smoke'; selected = '$(windowsCreateWorkspaceBehaviorSmokeSelected)'; result = '$(windowsCreateWorkspaceBehaviorSmokeResult)' },
                         @{ name = 'windows_msn_weather_lifecycle'; selected = '$(windowsMsnWeatherLifecycleSelected)'; result = '$(windowsMsnWeatherLifecycleResult)' }
                       ) | Where-Object { $_.selected -eq 'true' }

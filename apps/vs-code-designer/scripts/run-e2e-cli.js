@@ -11,6 +11,7 @@ const os = require('os');
 const path = require('path');
 const { URL } = require('url');
 const { createBatchRoot, normalizeSuiteSelection, runBatchSuites } = require('./e2e-cli-batch');
+const { getOgfScenariosForPhase } = require('./ogf-e2e-registry');
 
 const forbiddenOutputPatterns = [
   {
@@ -1382,8 +1383,9 @@ function runVscodeTest(args, options = {}) {
           }`
         );
       }
+      const phaseId = getSuitePhaseId(label, childEnv);
       writeSuitePhaseResult(childEnv, {
-        phaseId: getSuitePhaseId(label, childEnv),
+        phaseId,
         label,
         exitCode: code,
         signal,
@@ -1391,6 +1393,9 @@ function runVscodeTest(args, options = {}) {
         diagnosticsError: diagnosticsError ? (diagnosticsError instanceof Error ? diagnosticsError.message : String(diagnosticsError)) : '',
         complete: true,
         cleanupLedger,
+        ogfScenarios: getOgfScenariosForPhase(phaseId, {
+          passed: code === 0 && cleanupLedger.verified === true && !diagnosticsError,
+        }),
       });
 
       if (diagnosticsError) {
