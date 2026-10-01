@@ -4,13 +4,14 @@
 
 The Functoid Properties experience explains what a functoid does and how it is
 connected without requiring users to inspect the generated XSLT or BTM XML.
-Double-clicking a functoid on the mapping canvas opens a modal that presents:
+Double-clicking a functoid on the mapping canvas opens a tabbed modal that presents:
 
 - functoid identity: name, category, and BizTalk functoid ID (FID);
 - functionality description;
 - expected input cardinality;
-- configured link and constant inputs;
+- editable, ordered link and constant inputs;
 - output capability and connected targets; and
+- native BizTalk label and comments fields; and
 - scripting configuration for Scripting functoids.
 
 ## High-level architecture
@@ -48,7 +49,7 @@ round trip.
 | `MapEditorProvider` | Projects registry definitions into the webview initialization payload. |
 | `MappingCanvas` | Detects double-click and reports the functoid instance ID. |
 | `MapperApp` | Resolves the instance, definition, input links, constants, and output links; owns dialog state. |
-| Properties modal | Presents read-only functionality and connection details. |
+| Properties modal | Edits ordered inputs and native label/comments while presenting output and functionality details. |
 | Scripting modal | Presents the same details plus editable script or external-assembly configuration. |
 
 ## Interaction flow
@@ -70,7 +71,7 @@ sequenceDiagram
     alt Scripting functoid
         App->>Modal: Render details and editable configuration
     else Standard functoid
-        App->>Modal: Render read-only details
+            App->>Modal: Render input, output, and label/comment tabs
     end
     Modal-->>User: Display functionality, inputs, and outputs
     User->>Modal: Close, Escape, or click backdrop
@@ -116,7 +117,10 @@ matching the registry convention for variable-arity functoids.
 
 ## Dialog behavior
 
-- Standard functoids open a read-only properties modal.
+- Standard functoids open a tabbed properties modal with Functoid Inputs, Output, and Label and Comments tabs.
+- The input tab supports constant input creation and removal, input reordering, linked-input fallback values, and registry-based cardinality validation.
+- Input changes are committed atomically on OK; Cancel and backdrop dismissal discard the draft.
+- Label and comments round-trip through the native BTM `Label` and `Comments` attributes.
 - Scripting functoids retain their editable script type, source, assembly,
   class, and method controls beneath the common properties summary.
 - The selected functoid remains highlighted while the dialog is open.

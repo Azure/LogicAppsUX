@@ -11,8 +11,19 @@
     "vscode": "^1.103.0"
   },
   "private": true,
-  "categories": ["Other", "Visualization"],
-  "keywords": ["biztalk", "mapper", "xslt", "xml", "schema", "data mapping", "functoids"],
+  "categories": [
+    "Other",
+    "Visualization"
+  ],
+  "keywords": [
+    "biztalk",
+    "mapper",
+    "xslt",
+    "xml",
+    "schema",
+    "data mapping",
+    "functoids"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "viewsContainers": {
@@ -29,10 +40,6 @@
         {
           "id": "biztalkDataMapper.mapsView",
           "name": "Maps"
-        },
-        {
-          "id": "biztalkDataMapper.functoidView",
-          "name": "Functoids"
         }
       ]
     },
@@ -110,7 +117,10 @@
         "biztalkDataMapper.defaultXsltVersion": {
           "type": "string",
           "default": "1.0",
-          "enum": ["1.0", "2.0"],
+          "enum": [
+            "1.0",
+            "2.0"
+          ],
           "description": "Default XSLT version for compiled maps"
         },
         "biztalkDataMapper.omitXmlDeclaration": {
@@ -162,6 +172,8 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
+    "@fluentui/react-components": "^9.70.0",
+    "@fluentui/react-icons": "^2.0.306",
     "fast-xml-parser": "^4.5.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

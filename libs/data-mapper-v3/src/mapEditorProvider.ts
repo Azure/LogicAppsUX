@@ -18,9 +18,11 @@ import type { CompileResult } from './compiler/xsltCompiler';
 import type { SchemaTree } from './model/schemaModel';
 import { resolveSchemaDependencies } from './schema/schemaDependencyResolver';
 import { applyMapPatches, createMapPatchValidationContext, createMapPrompt, parseMapPromptResponse } from './copilot/mapPrompt';
+import { getSelectedFileDirectory, resolveBrowseDirectory } from './browseLocation';
 
 export class MapEditorProvider implements vscode.CustomTextEditorProvider {
   public static readonly viewType = 'biztalkDataMapper.mapEditor';
+  private static readonly LAST_BROWSE_DIRECTORY_KEY = 'dataMapperV3.lastBrowseDirectory';
   private btmSerializer: BtmSerializer;
   private schemaParser: SchemaParser;
   private instanceGenerator: InstanceGenerator;
@@ -49,6 +51,7 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
     webviewPanel: vscode.WebviewPanel,
     _token: vscode.CancellationToken
   ): Promise<void> {
+    webviewPanel.title = path.basename(document.uri.fsPath, path.extname(document.uri.fsPath));
     webviewPanel.webview.options = {
       enableScripts: true,
       localResourceRoots: [
@@ -208,6 +211,7 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
         }
         case 'browseCopilotContext': {
           const selected = await vscode.window.showOpenDialog({
+            defaultUri: this.getBrowseDefaultUri(document.uri),
             canSelectMany: true,
             canSelectFiles: true,
             canSelectFolders: false,
@@ -217,6 +221,7 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
           if (!selected) {
             break;
           }
+          await this.rememberBrowseSelection(selected[0]);
           let skipped = 0;
           for (const uri of selected) {
             if (!(await addCopilotContextFile(uri))) {
@@ -269,16 +274,25 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
           break;
         }
         case 'loadSchema': {
+          const currentSchema = message.side === 'source' ? sourceSchemaTree : targetSchemaTree;
           const schemaUri = await vscode.window.showOpenDialog({
+            defaultUri: this.getBrowseDefaultUri(document.uri, currentSchema?.filePath),
             canSelectMany: false,
             filters: { 'XSD Schema': ['xsd'] },
             title: `Select ${message.side} Schema`,
           });
           if (schemaUri && schemaUri.length > 0) {
+            await this.rememberBrowseSelection(schemaUri[0]);
             try {
               const content = await this.readFile(schemaUri[0].fsPath);
               if (content) {
-                const tree = this.schemaParser.parse(content, schemaUri[0].fsPath);
+                const importedSchemas = await this.resolveSchemaDependencies(content, schemaUri[0].fsPath);
+                const tree = this.schemaParser.parseWithImports(content, schemaUri[0].fsPath, importedSchemas);
+                if (message.side === 'source') {
+                  sourceSchemaTree = tree;
+                } else {
+                  targetSchemaTree = tree;
+                }
                 webviewPanel.webview.postMessage({
                   type: 'schemaLoaded',
                   data: { side: message.side, schema: tree, path: schemaUri[0].fsPath },
@@ -292,11 +306,13 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
         }
         case 'testMap': {
           const inputFile = await vscode.window.showOpenDialog({
+            defaultUri: this.getBrowseDefaultUri(document.uri),
             canSelectMany: false,
             filters: { 'XML Files': ['xml'] },
             title: 'Select Test Input XML',
           });
           if (inputFile && inputFile.length > 0) {
+            await this.rememberBrowseSelection(inputFile[0]);
             vscode.window.showInformationMessage(`Testing map with: ${inputFile[0].fsPath}`);
           }
           break;
@@ -487,11 +503,13 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
         }
         case 'browseAssembly': {
           const dllUri = await vscode.window.showOpenDialog({
+            defaultUri: this.getBrowseDefaultUri(document.uri),
             canSelectMany: false,
             filters: { '.NET Assembly': ['dll'] },
             title: 'Select .NET Assembly',
           });
           if (dllUri && dllUri.length > 0) {
+            await this.rememberBrowseSelection(dllUri[0]);
             const dllPath = dllUri[0].fsPath;
             // Decompile assembly to get classes and methods
             const assemblyInfo = await this.decompileAssembly(dllPath);
@@ -979,6 +997,18 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
       (dependencyPath) => this.readFile(dependencyPath),
       (containingPath, schemaLocation) => this.resolveSchemaPath(vscode.Uri.file(containingPath), schemaLocation)
     );
+  }
+
+  private getBrowseDefaultUri(documentUri: vscode.Uri, preferredFilePath?: string): vscode.Uri {
+    const rememberedDirectory = this.context.workspaceState.get<string>(MapEditorProvider.LAST_BROWSE_DIRECTORY_KEY);
+    return vscode.Uri.file(resolveBrowseDirectory(documentUri.fsPath, rememberedDirectory, preferredFilePath));
+  }
+
+  private async rememberBrowseSelection(selectedUri: vscode.Uri | undefined): Promise<void> {
+    if (!selectedUri) {
+      return;
+    }
+    await this.context.workspaceState.update(MapEditorProvider.LAST_BROWSE_DIRECTORY_KEY, getSelectedFileDirectory(selectedUri.fsPath));
   }
 
   private async loadSchemaTree(reference: MapDocument['sourceSchema'], documentUri: vscode.Uri): Promise<SchemaTree | undefined> {

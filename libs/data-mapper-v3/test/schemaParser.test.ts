@@ -5,8 +5,8 @@
 import { SchemaParser } from '../src/schema/schemaParser';
 
 describe('SchemaParser', () => {
-    test('selects the BTM-requested root from a multi-root schema', () => {
-        const schema = `
+  test('selects the BTM-requested root from a multi-root schema', () => {
+    const schema = `
             <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
               <xs:element name="First" type="xs:string"/>
               <xs:element name="Selected"><xs:complexType><xs:sequence>
@@ -14,20 +14,20 @@ describe('SchemaParser', () => {
               </xs:sequence></xs:complexType></xs:element>
             </xs:schema>`;
 
-        const tree = parser.parse(schema, 'multi-root.xsd', 'Selected');
+    const tree = parser.parse(schema, 'multi-root.xsd', 'Selected');
 
-        expect(tree.rootElement.name).toBe('Selected');
-        expect(tree.rootElement.children[0].name).toBe('Value');
-    });
+    expect(tree.rootElement.name).toBe('Selected');
+    expect(tree.rootElement.children[0].name).toBe('Value');
+  });
 
-    let parser: SchemaParser;
+  let parser: SchemaParser;
 
-    beforeEach(() => {
-        parser = new SchemaParser();
-    });
+  beforeEach(() => {
+    parser = new SchemaParser();
+  });
 
-    test('should parse a simple XSD with elements', () => {
-        const xsd = `<?xml version="1.0" encoding="utf-8"?>
+  test('should parse a simple XSD with elements', () => {
+    const xsd = `<?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://test.com">
   <xs:element name="Root">
     <xs:complexType>
@@ -40,21 +40,21 @@ describe('SchemaParser', () => {
   </xs:element>
 </xs:schema>`;
 
-        const result = parser.parse(xsd, 'test.xsd');
+    const result = parser.parse(xsd, 'test.xsd');
 
-        expect(result.targetNamespace).toBe('http://test.com');
-        expect(result.rootElement.name).toBe('Root');
-        expect(result.rootElement.children.length).toBe(3);
-        expect(result.rootElement.children[0].name).toBe('Name');
-        expect(result.rootElement.children[0].dataType).toBe('xs:string');
-        expect(result.rootElement.children[1].name).toBe('Age');
-        expect(result.rootElement.children[1].dataType).toBe('xs:int');
-        expect(result.rootElement.children[2].name).toBe('Email');
-        expect(result.rootElement.children[2].isOptional).toBe(true);
-    });
+    expect(result.targetNamespace).toBe('http://test.com');
+    expect(result.rootElement.name).toBe('Root');
+    expect(result.rootElement.children.length).toBe(3);
+    expect(result.rootElement.children[0].name).toBe('Name');
+    expect(result.rootElement.children[0].dataType).toBe('xs:string');
+    expect(result.rootElement.children[1].name).toBe('Age');
+    expect(result.rootElement.children[1].dataType).toBe('xs:int');
+    expect(result.rootElement.children[2].name).toBe('Email');
+    expect(result.rootElement.children[2].isOptional).toBe(true);
+  });
 
-    test('should parse nested complex types', () => {
-        const xsd = `<?xml version="1.0" encoding="utf-8"?>
+  test('should parse nested complex types', () => {
+    const xsd = `<?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:element name="Order">
     <xs:complexType>
@@ -86,23 +86,58 @@ describe('SchemaParser', () => {
   </xs:element>
 </xs:schema>`;
 
-        const result = parser.parse(xsd, 'order.xsd');
+    const result = parser.parse(xsd, 'order.xsd');
 
-        expect(result.rootElement.name).toBe('Order');
-        expect(result.rootElement.children.length).toBe(2);
-        
-        const header = result.rootElement.children[0];
-        expect(header.name).toBe('Header');
-        expect(header.children.length).toBe(2);
-        expect(header.children[0].name).toBe('OrderId');
-        
-        const items = result.rootElement.children[1];
-        expect(items.children[0].name).toBe('Item');
-        expect(items.children[0].maxOccurs).toBe('unbounded');
-    });
+    expect(result.rootElement.name).toBe('Order');
+    expect(result.rootElement.children.length).toBe(2);
 
-    test('should parse attributes', () => {
-        const xsd = `<?xml version="1.0" encoding="utf-8"?>
+    const header = result.rootElement.children[0];
+    expect(header.name).toBe('Header');
+    expect(header.children.length).toBe(2);
+    expect(header.children[0].name).toBe('OrderId');
+
+    const items = result.rootElement.children[1];
+    expect(items.children[0].name).toBe('Item');
+    expect(items.children[0].maxOccurs).toBe('unbounded');
+  });
+
+  test('parses required complex nodes and attributes under a single-branch choice', () => {
+    const xsd = `<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <xs:element name="SSO" msdata:IsDataSet="true">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element name="application">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="description" type="xs:string"/>
+              <xs:element minOccurs="0" maxOccurs="unbounded" name="field">
+                <xs:complexType>
+                  <xs:attribute name="ordinal" type="xs:string"/>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>`;
+
+    const result = parser.parse(xsd, 'affiliate-application.xsd');
+    const application = result.rootElement.children[0];
+    const description = application.children[0];
+    const field = application.children[1];
+
+    expect(application.name).toBe('application');
+    expect(application.isOptional).toBe(false);
+    expect(description.isOptional).toBe(false);
+    expect(field.isOptional).toBe(true);
+    expect(field.attributes).toEqual([expect.objectContaining({ name: 'ordinal', required: true })]);
+  });
+
+  test('should parse attributes', () => {
+    const xsd = `<?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:element name="Person">
     <xs:complexType>
@@ -115,17 +150,18 @@ describe('SchemaParser', () => {
   </xs:element>
 </xs:schema>`;
 
-        const result = parser.parse(xsd, 'person.xsd');
+    const result = parser.parse(xsd, 'person.xsd');
 
-        expect(result.rootElement.attributes.length).toBe(2);
-        expect(result.rootElement.attributes[0].name).toBe('id');
-        expect(result.rootElement.attributes[0].required).toBe(true);
-        expect(result.rootElement.attributes[1].name).toBe('active');
-        expect(result.rootElement.attributes[1].defaultValue).toBe('true');
-    });
+    expect(result.rootElement.attributes.length).toBe(2);
+    expect(result.rootElement.attributes[0].name).toBe('id');
+    expect(result.rootElement.attributes[0].required).toBe(true);
+    expect(result.rootElement.attributes[1].name).toBe('active');
+    expect(result.rootElement.attributes[1].required).toBe(false);
+    expect(result.rootElement.attributes[1].defaultValue).toBe('true');
+  });
 
-    test('preserves numeric defaults, fixed values, and enumerations as strings', () => {
-        const xsd = `<?xml version="1.0"?>
+  test('preserves numeric defaults, fixed values, and enumerations as strings', () => {
+    const xsd = `<?xml version="1.0"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:element name="Root">
     <xs:complexType>
@@ -145,16 +181,15 @@ describe('SchemaParser', () => {
   </xs:element>
 </xs:schema>`;
 
-        const result = parser.parse(xsd, 'numeric-values.xsd');
+    const result = parser.parse(xsd, 'numeric-values.xsd');
 
-        expect(result.rootElement.children[0].defaultValue).toBe('0');
-        expect(result.rootElement.children[1].fixedValue).toBe('101');
-        expect(result.rootElement.children[1].restrictions?.enumeration).toEqual(['101', '202']);
-        expect(result.rootElement.attributes[0].fixedValue).toBe('1');
-    });
+    expect(result.rootElement.children[0].defaultValue).toBe('0');
+    expect(result.rootElement.children[1].fixedValue).toBe('101');
+    expect(result.rootElement.children[1].restrictions?.enumeration).toEqual(['101', '202']);
+    expect(result.rootElement.attributes[0].fixedValue).toBe('1');
+  });
 
-    test('should throw on invalid XSD', () => {
-        expect(() => parser.parse('<invalid>not a schema</invalid>', 'bad.xsd'))
-            .toThrow('Invalid XSD: no schema root element found');
-    });
+  test('should throw on invalid XSD', () => {
+    expect(() => parser.parse('<invalid>not a schema</invalid>', 'bad.xsd')).toThrow('Invalid XSD: no schema root element found');
+  });
 });

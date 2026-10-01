@@ -267,6 +267,12 @@ export class BtmSerializer {
           .att('Name', functoid.name)
           .att('X', functoid.x.toString())
           .att('Y', functoid.y.toString());
+        if (functoid.label) {
+          fElem.att('Label', functoid.label);
+        }
+        if (functoid.comments) {
+          fElem.att('Comments', functoid.comments);
+        }
 
         for (const param of functoid.parameters) {
           const paramElem = fElem.ele('Parameter').att('Index', param.index.toString()).att('Value', param.value).att('Type', param.type);
@@ -677,6 +683,8 @@ export class BtmSerializer {
         functoidId,
         category,
         name,
+        label: f['@_Label'] || undefined,
+        comments: f['@_Comments'] || undefined,
         x,
         y,
         inputLinks: [],
