@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import { closeCopilotChatIfVisibleCore } from './copilotChatController';
+import { closeCopilotChatIfVisibleCore, closeCopilotChatIfVisibleWithAttachRetry } from './copilotChatController';
 import type { CopilotChatWorkbenchState } from './copilotChatState';
 import { buildCopilotChatStateExpression } from './copilotChatState';
 
@@ -24,6 +24,18 @@ async function main(): Promise<void> {
   await testCloseCopilotChatFailsWithoutMutatingMixedContainer();
   await testCloseCopilotChatFailsWhenCloseCommandRejects();
   await testCloseCopilotChatFailsWhenVisibleSurfaceCannotClose();
+  await testCopilotChatAttachRetryRecoversTransientFailure();
+  await testCopilotChatAttachRetryUsesRemainingBudgetForCoreCleanup();
+  await testCopilotChatAttachRetryStopsWhenFirstFailureConsumesBudget();
+  await testCopilotChatAttachRetryStopsWhenRetryDelayConsumesRemainingBudget();
+  await testCopilotChatAttachRetryFailsWhenSuccessfulAttachLeavesNoCleanupBudget();
+  await testCopilotChatAttachRetryKeepsSecondAttemptAndCoreWithinRemainingBudget();
+  await testCopilotChatAttachRetrySanitizesRetryLog();
+  await testCopilotChatAttachRetrySanitizesTerminalError();
+  await testCopilotChatAttachRetryStopsAfterBound();
+  await testCopilotChatAttachRetryDoesNotDuplicateSuccessfulFirstAttach();
+  await testCopilotChatAttachRetryDoesNotReclassifyReadStateFailure();
+  await testCopilotChatAttachRetryDoesNotReclassifyVisibleChatClosureFailure();
   console.log('[copilotChat.unit] all tests passed');
 }
 
@@ -279,6 +291,184 @@ async function testCloseCopilotChatFailsWhenVisibleSurfaceCannotClose(): Promise
   assert.deepStrictEqual(host.commands, []);
 }
 
+async function testCopilotChatAttachRetryRecoversTransientFailure(): Promise<void> {
+  const harness = new FakeCopilotChatAttachHarness({
+    connectFailuresBeforeSuccess: 1,
+    states: [{ visible: false, matchCount: 0, owners: [] }],
+  });
+
+  await closeCopilotChatIfVisibleWithAttachRetry('retry-transient-test', harness, { timeoutMs: 2000 });
+
+  assert.strictEqual(harness.connectCalls, 2);
+  assert.strictEqual(harness.createdCloseHosts, 1);
+  assert.strictEqual(harness.connections[0]?.disposeCalls, 1);
+  assert.ok(
+    harness.logs.some((line) => line.includes('attempt 1/2 failed; retrying')),
+    harness.logs.join('\n')
+  );
+}
+
+async function testCopilotChatAttachRetryUsesRemainingBudgetForCoreCleanup(): Promise<void> {
+  const harness = new FakeCopilotChatAttachHarness({
+    connectFailuresBeforeSuccess: 1,
+    states: [{ visible: false, matchCount: 0, owners: [] }],
+  });
+
+  await closeCopilotChatIfVisibleWithAttachRetry('retry-budget-test', harness, { timeoutMs: 1000 });
+
+  assert.strictEqual(harness.connectCalls, 2);
+  assert.deepStrictEqual(harness.readTimeouts, [750]);
+}
+
+async function testCopilotChatAttachRetryStopsWhenFirstFailureConsumesBudget(): Promise<void> {
+  const harness = new FakeCopilotChatAttachHarness({
+    connectDurationsMs: [1000],
+    connectFailuresBeforeSuccess: 1,
+    states: [{ visible: false, matchCount: 0, owners: [] }],
+  });
+
+  await assert.rejects(
+    () => closeCopilotChatIfVisibleWithAttachRetry('retry-first-failure-budget-test', harness, { timeoutMs: 1000 }),
+    /after 1 attempt \(max 2\)/
+  );
+  assert.deepStrictEqual(harness.connectTimeouts, [1000]);
+  assert.strictEqual(harness.connectCalls, 1);
+  assert.deepStrictEqual(harness.sleepDurations, []);
+}
+
+async function testCopilotChatAttachRetryStopsWhenRetryDelayConsumesRemainingBudget(): Promise<void> {
+  const harness = new FakeCopilotChatAttachHarness({
+    connectFailuresBeforeSuccess: 1,
+    states: [{ visible: false, matchCount: 0, owners: [] }],
+  });
+
+  await assert.rejects(
+    () => closeCopilotChatIfVisibleWithAttachRetry('retry-delay-budget-test', harness, { timeoutMs: 100 }),
+    /after 1 attempt \(max 2\)/
+  );
+  assert.deepStrictEqual(harness.connectTimeouts, [100]);
+  assert.deepStrictEqual(harness.sleepDurations, [100]);
+  assert.strictEqual(harness.connectCalls, 1);
+}
+
+async function testCopilotChatAttachRetryFailsWhenSuccessfulAttachLeavesNoCleanupBudget(): Promise<void> {
+  const harness = new FakeCopilotChatAttachHarness({
+    connectDurationsMs: [1000],
+    states: [{ visible: false, matchCount: 0, owners: [] }],
+  });
+
+  await assert.rejects(
+    () => closeCopilotChatIfVisibleWithAttachRetry('retry-no-cleanup-budget-test', harness, { timeoutMs: 1000 }),
+    /cleanup deadline expired/
+  );
+  assert.strictEqual(harness.connectCalls, 1);
+  assert.strictEqual(harness.createdCloseHosts, 0);
+  assert.strictEqual(harness.connections[0]?.disposeCalls, 1);
+  assert.deepStrictEqual(harness.readTimeouts, []);
+}
+
+async function testCopilotChatAttachRetryKeepsSecondAttemptAndCoreWithinRemainingBudget(): Promise<void> {
+  const harness = new FakeCopilotChatAttachHarness({
+    connectDurationsMs: [5000, 0],
+    connectFailuresBeforeSuccess: 1,
+    states: [{ visible: false, matchCount: 0, owners: [] }],
+  });
+
+  await closeCopilotChatIfVisibleWithAttachRetry('retry-realistic-budget-test', harness, { timeoutMs: 8000 });
+
+  assert.deepStrictEqual(harness.connectTimeouts, [5000, 2750]);
+  assert.deepStrictEqual(harness.sleepDurations, [250]);
+  assert.deepStrictEqual(harness.readTimeouts, [1500]);
+}
+
+async function testCopilotChatAttachRetrySanitizesRetryLog(): Promise<void> {
+  const harness = new FakeCopilotChatAttachHarness({
+    attachErrors: [new Error(createSensitiveAttachErrorMessage())],
+    connectFailuresBeforeSuccess: 1,
+    states: [{ visible: false, matchCount: 0, owners: [] }],
+  });
+
+  await closeCopilotChatIfVisibleWithAttachRetry('retry-sanitize-log-test', harness, { timeoutMs: 2000 });
+
+  assertSensitiveAttachDetailsRedacted(harness.logs.join('\n'));
+  assert.ok(
+    harness.logs.some((line) => line.includes('cdp-websocket-upgrade-failed')),
+    harness.logs.join('\n')
+  );
+}
+
+async function testCopilotChatAttachRetrySanitizesTerminalError(): Promise<void> {
+  const harness = new FakeCopilotChatAttachHarness({
+    attachErrors: [new Error(createSensitiveAttachErrorMessage()), new Error(createSensitiveAttachErrorMessage())],
+    connectFailuresBeforeSuccess: 2,
+    states: [{ visible: false, matchCount: 0, owners: [] }],
+  });
+
+  let message = '';
+  try {
+    await closeCopilotChatIfVisibleWithAttachRetry('retry-sanitize-terminal-test', harness, { timeoutMs: 2000 });
+  } catch (error) {
+    message = error instanceof Error ? error.message : String(error);
+  }
+
+  assert.ok(message.includes('cdp-websocket-upgrade-failed'), message);
+  assertSensitiveAttachDetailsRedacted(message);
+  assertSensitiveAttachDetailsRedacted(harness.logs.join('\n'));
+}
+
+async function testCopilotChatAttachRetryStopsAfterBound(): Promise<void> {
+  const harness = new FakeCopilotChatAttachHarness({
+    connectFailuresBeforeSuccess: 3,
+    states: [{ visible: false, matchCount: 0, owners: [] }],
+  });
+
+  await assert.rejects(
+    () => closeCopilotChatIfVisibleWithAttachRetry('retry-persistent-test', harness, { timeoutMs: 2000 }),
+    /failed to attach workbench CDP for optional cleanup after 2 attempts/
+  );
+  assert.strictEqual(harness.connectCalls, 2);
+  assert.strictEqual(harness.createdCloseHosts, 0);
+  assert.deepStrictEqual(harness.commands, []);
+}
+
+async function testCopilotChatAttachRetryDoesNotDuplicateSuccessfulFirstAttach(): Promise<void> {
+  const harness = new FakeCopilotChatAttachHarness({
+    states: [{ visible: false, matchCount: 0, owners: [] }],
+  });
+
+  await closeCopilotChatIfVisibleWithAttachRetry('retry-first-success-test', harness, { timeoutMs: 2000 });
+
+  assert.strictEqual(harness.connectCalls, 1);
+  assert.strictEqual(harness.connections[0]?.disposeCalls, 1);
+}
+
+async function testCopilotChatAttachRetryDoesNotReclassifyReadStateFailure(): Promise<void> {
+  const harness = new FakeCopilotChatAttachHarness({
+    readStateFailure: new Error('synthetic read state failure'),
+    states: [{ visible: false, matchCount: 0, owners: [] }],
+  });
+
+  await assert.rejects(
+    () => closeCopilotChatIfVisibleWithAttachRetry('retry-read-failure-test', harness, { timeoutMs: 2000 }),
+    /synthetic read state failure/
+  );
+  assert.strictEqual(harness.connectCalls, 1);
+  assert.strictEqual(harness.connections[0]?.disposeCalls, 1);
+}
+
+async function testCopilotChatAttachRetryDoesNotReclassifyVisibleChatClosureFailure(): Promise<void> {
+  const harness = new FakeCopilotChatAttachHarness({
+    states: [{ visible: true, matchCount: 1, owners: [{ kind: 'unknown', label: 'copilot-chat', unrelatedVisibleCount: 0 }] }],
+  });
+
+  await assert.rejects(
+    () => closeCopilotChatIfVisibleWithAttachRetry('retry-visible-failure-test', harness, { timeoutMs: 1000 }),
+    /visible Copilot Chat could not be closed/
+  );
+  assert.strictEqual(harness.connectCalls, 1);
+  assert.strictEqual(harness.connections[0]?.disposeCalls, 1);
+}
+
 function evaluateState(body: string): CopilotChatWorkbenchState {
   const dom = new JSDOM(`<html><body>${body}</body></html>`, { runScripts: 'outside-only' });
   const { window } = dom;
@@ -318,6 +508,108 @@ function evaluateState(body: string): CopilotChatWorkbenchState {
   return window.eval(buildCopilotChatStateExpression()) as CopilotChatWorkbenchState;
 }
 
+function createSensitiveAttachErrorMessage(): string {
+  return [
+    'CDP WebSocket upgrade failed: HTTP/1.1 401 Unauthorized',
+    'Authorization: Bearer synthetic-secret-token',
+    'Location: https://example.invalid/private?sig=synthetic-signature',
+    'Targets: [{"url":"https://host.invalid/workbench?access_token=target-secret","title":"Private Customer Workflow"}]',
+  ].join('\r\n');
+}
+
+function assertSensitiveAttachDetailsRedacted(value: string): void {
+  for (const forbidden of [
+    'HTTP/1.1 401',
+    'Authorization',
+    'synthetic-secret-token',
+    'example.invalid',
+    'synthetic-signature',
+    'host.invalid',
+    'access_token',
+    'target-secret',
+    'Private Customer Workflow',
+  ]) {
+    assert.ok(!value.includes(forbidden), `Attach retry diagnostic leaked ${forbidden}: ${value}`);
+  }
+}
+
+class FakeCopilotChatAttachConnection {
+  disposeCalls = 0;
+
+  dispose(): void {
+    this.disposeCalls++;
+  }
+}
+
+class FakeCopilotChatAttachHarness {
+  readonly commands: string[] = [];
+  readonly connectTimeouts: number[] = [];
+  readonly logs: string[] = [];
+  readonly connections: FakeCopilotChatAttachConnection[] = [];
+  readonly readTimeouts: number[] = [];
+  readonly sleepDurations: number[] = [];
+  connectCalls = 0;
+  createdCloseHosts = 0;
+  closeEditorTabCalls = 0;
+  private currentNow = 0;
+
+  constructor(
+    private readonly options: {
+      attachErrors?: Error[];
+      connectDurationsMs?: number[];
+      connectFailuresBeforeSuccess?: number;
+      readStateFailure?: Error;
+      states: CopilotChatWorkbenchState[];
+    }
+  ) {}
+
+  connect(timeoutMs: number): Promise<FakeCopilotChatAttachConnection> {
+    const callIndex = this.connectCalls;
+    this.connectCalls++;
+    this.connectTimeouts.push(timeoutMs);
+    this.currentNow += this.options.connectDurationsMs?.[callIndex] ?? 0;
+    if (this.connectCalls <= (this.options.connectFailuresBeforeSuccess ?? 0)) {
+      return Promise.reject(this.options.attachErrors?.[callIndex] ?? new Error(`synthetic attach failure ${this.connectCalls}`));
+    }
+    const connection = new FakeCopilotChatAttachConnection();
+    this.connections.push(connection);
+    return Promise.resolve(connection);
+  }
+
+  createCloseHost(_connection: FakeCopilotChatAttachConnection): FakeCopilotChatHost {
+    this.createdCloseHosts++;
+    const host = new FakeCopilotChatHost(this.options.states, {
+      readTimeouts: this.readTimeouts,
+      readStateFailure: this.options.readStateFailure,
+    });
+    const originalExecuteCommand = host.executeCommand.bind(host);
+    host.executeCommand = async (command) => {
+      this.commands.push(command);
+      await originalExecuteCommand(command);
+    };
+    const originalCloseEditorTabs = host.closeEditorTabs.bind(host);
+    host.closeEditorTabs = async () => {
+      this.closeEditorTabCalls++;
+      await originalCloseEditorTabs();
+    };
+    return host;
+  }
+
+  sleep(ms: number): Promise<void> {
+    this.sleepDurations.push(ms);
+    this.currentNow += ms;
+    return Promise.resolve();
+  }
+
+  now(): number {
+    return this.currentNow;
+  }
+
+  log(message: string): void {
+    this.logs.push(message);
+  }
+}
+
 class FakeCopilotChatHost {
   readonly commands: string[] = [];
   readonly logs: string[] = [];
@@ -327,7 +619,7 @@ class FakeCopilotChatHost {
 
   constructor(
     private readonly states: CopilotChatWorkbenchState[],
-    private readonly options: { rejectCommands?: boolean } = {}
+    private readonly options: { rejectCommands?: boolean; readStateFailure?: Error; readTimeouts?: number[] } = {}
   ) {}
 
   closeEditorTabs(): Promise<void> {
@@ -344,6 +636,10 @@ class FakeCopilotChatHost {
   }
 
   readState(_timeoutMs: number): Promise<CopilotChatWorkbenchState> {
+    this.options.readTimeouts?.push(_timeoutMs);
+    if (this.options.readStateFailure) {
+      return Promise.reject(this.options.readStateFailure);
+    }
     const state = this.states[Math.min(this.readIndex, this.states.length - 1)];
     this.readIndex++;
     return Promise.resolve(state);

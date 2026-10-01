@@ -40,6 +40,7 @@ async function main(): Promise<void> {
   await testDynamicContentPickerOpenUsesBoundedEvaluation();
   await testCopilotChatCleanupDoesNotRunDuringPickerEvidenceCapture();
   await testCanvasViewportNormalizationUsesStructuralDiagnosticsAndOwnedControls();
+  testMsnWeatherSkipsOnlyRedundantFinalCanvasCheckpoint();
   testDesignerConnectionActionExpressionScopesCreateActions();
   console.log('[workspaceLifecycleDiagnostics.unit] all tests passed');
 }
@@ -105,6 +106,24 @@ function loadNormalizeViewportHarness() {
   });
 
   return { exported, logs };
+}
+
+function loadFinalCanvasCheckpointHarness() {
+  const selected = source.statements.filter(
+    (node): node is ts.FunctionDeclaration => ts.isFunctionDeclaration(node) && node.name?.text === 'shouldRunFinalDesignerCanvasCheckpoint'
+  );
+  assert.strictEqual(selected.length, 1, 'Expected shouldRunFinalDesignerCanvasCheckpoint to be extracted');
+
+  const implementation = ts.transpileModule(selected.map((node) => `export ${node.getText(source)}`).join('\n'), {
+    compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS },
+  }).outputText;
+
+  const exported: Record<string, any> = {};
+  vm.runInNewContext(implementation, {
+    exports: exported,
+  });
+
+  return { exported };
 }
 
 function loadRuntimeHarness(status: string, options: { malformedActions?: boolean } = {}) {
@@ -416,6 +435,24 @@ async function testCanvasViewportNormalizationUsesStructuralDiagnosticsAndOwnedC
     'unit offscreen fit'
   );
   assert.strictEqual(offscreenFitClicked, 0, 'Normalization must not click Fit controls when hit testing returns null');
+}
+
+function testMsnWeatherSkipsOnlyRedundantFinalCanvasCheckpoint(): void {
+  const { exported } = loadFinalCanvasCheckpointHarness();
+
+  assert.strictEqual(exported.shouldRunFinalDesignerCanvasCheckpoint({ includeMsnWeather: true }), false);
+  assert.strictEqual(exported.shouldRunFinalDesignerCanvasCheckpoint({ includeMsnWeather: false }), true);
+  assert.strictEqual(exported.shouldRunFinalDesignerCanvasCheckpoint({}), true);
+
+  const savedIndex = sourceText.indexOf("runLifecyclePhase(createdWorkspace, 'savedworkflowverified'");
+  const checkpointIndex = sourceText.indexOf('shouldRunFinalDesignerCanvasCheckpoint(options)');
+  const debugIndex = sourceText.indexOf("runLifecyclePhase(createdWorkspace, 'debugrequested'");
+  assert.ok(savedIndex >= 0, 'MSN lifecycle must retain saved workflow verification');
+  assert.ok(checkpointIndex > savedIndex, 'Final canvas checkpoint decision must happen after saved workflow verification');
+  assert.ok(debugIndex > checkpointIndex, 'MSN runtime prep must remain after saved workflow verification and checkpoint decision');
+  assert.match(sourceText, /assertMsnWeatherStandardWorkflow\(createdWorkspace\);/);
+  assert.match(sourceText, /captureLifecycleScreenshot\(`workspace-lifecycle-\$\{createdWorkspace\.label\}-designer-open`/);
+  assert.match(sourceText, /skipping redundant final designer-open canvas checkpoint after MSN saved workflow verification/);
 }
 
 function configureElementGeometry(

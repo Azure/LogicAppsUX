@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { connectToVsCodeWorkbenchCdp } from './cdpClient';
-import { closeCopilotChatIfVisibleCore } from './copilotChatController';
+import { closeCopilotChatIfVisibleWithAttachRetry } from './copilotChatController';
 import { buildCopilotChatStateExpression, type CopilotChatWorkbenchState } from './copilotChatState';
 import { getTabViewType } from './webviewTabs';
 
@@ -8,12 +8,11 @@ export async function closeCopilotChatIfVisible(
   stage: string,
   options: { timeoutMs?: number; absentSettleMs?: number } = {}
 ): Promise<void> {
-  const timeoutMs = options.timeoutMs ?? 8000;
-  const cdp = await connectToVsCodeWorkbenchCdp({ activate: false, timeoutMs: Math.min(timeoutMs, 5000) });
-  try {
-    await closeCopilotChatIfVisibleCore(
-      stage,
-      {
+  await closeCopilotChatIfVisibleWithAttachRetry(
+    stage,
+    {
+      connect: (timeoutMs) => connectToVsCodeWorkbenchCdp({ activate: false, timeoutMs }),
+      createCloseHost: (cdp) => ({
         closeEditorTabs: () => closeCopilotChatEditorTabs(stage),
         executeCommand: async (command) => {
           await vscode.commands.executeCommand(command);
@@ -22,12 +21,13 @@ export async function closeCopilotChatIfVisible(
         now: () => Date.now(),
         readState: (readTimeoutMs) => readCopilotChatState(cdp, readTimeoutMs),
         sleep: (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
-      },
-      options
-    );
-  } finally {
-    cdp.dispose();
-  }
+      }),
+      log: (message) => console.log(message),
+      now: () => Date.now(),
+      sleep: (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
+    },
+    options
+  );
 }
 
 async function closeCopilotChatEditorTabs(stage: string): Promise<void> {
