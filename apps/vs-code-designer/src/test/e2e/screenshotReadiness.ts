@@ -1023,9 +1023,31 @@ export const screenshotReadinessDomScript = `
       }
       return clipped.width >= rect.width * visibleRatio && clipped.height >= rect.height * visibleRatio;
     };
+    const isConcretePickerContainerVisible = (element) => {
+      if (!(element instanceof HTMLElement) || !hasConcretePickerVisibleStyle(element)) {
+        return false;
+      }
+      const rect = element.getBoundingClientRect();
+      return rect.width > 0 && rect.height > 0;
+    };
+    const isConcretePickerOptionReadable = (element) => {
+      if (!(element instanceof HTMLElement) || !hasConcretePickerVisibleStyle(element)) {
+        return false;
+      }
+      const rect = element.getBoundingClientRect();
+      if (rect.width <= 0 || rect.height <= 0) {
+        return false;
+      }
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      if (centerX < 0 || centerY < 0 || centerX > window.innerWidth || centerY > window.innerHeight) {
+        return false;
+      }
+      return true;
+    };
     const optionTitleText = (button) => {
       const titleElement = button.querySelector?.('.msla-token-picker-option-title');
-      if (titleElement instanceof HTMLElement && isConcretePickerReadable(titleElement)) {
+      if (titleElement instanceof HTMLElement && hasConcretePickerVisibleStyle(titleElement)) {
         return normalize(visibleText(titleElement));
       }
       const descriptionElement = button.querySelector?.('.msla-token-picker-option-description');
@@ -1061,26 +1083,44 @@ export const screenshotReadinessDomScript = `
         }
         return search.contains?.(activeElement) || closestElement(activeElement, (element) => element === search);
       });
-      if (!(activeSearch instanceof HTMLElement)) {
-        return { ok: false, reason: 'picker-search-missing' };
-      }
-      const pickerAncestors = [];
-      let pickerAncestor = activeSearch;
-      while (pickerAncestor instanceof HTMLElement) {
-        pickerAncestors.push(pickerAncestor);
-        pickerAncestor = pickerAncestor.parentElement;
-      }
+      const rootFromAncestors = (start) => {
+        const pickerAncestors = [];
+        let pickerAncestor = start;
+        while (pickerAncestor instanceof HTMLElement) {
+          pickerAncestors.push(pickerAncestor);
+          pickerAncestor = pickerAncestor.parentElement;
+        }
+        return (
+          pickerAncestors.find(
+            (element) =>
+              (element.getAttribute('role') === 'dialog' || element.getAttribute('role') === 'listbox') &&
+              (element.getAttribute('aria-labelledby') || '').length > 0
+          ) ||
+          pickerAncestors.find((element) => hasClassName(element, 'msla-token-picker-container-v3')) ||
+          pickerAncestors.find((element) => hasClassName(element, 'msla-token-picker')) ||
+          start.parentElement
+        );
+      };
+      const labelIdsOverlap = (element) => {
+        const ids = (element.getAttribute?.('aria-labelledby') || '').split(/\\s+/).filter(Boolean);
+        return editorLabelIds.length > 0 && ids.length > 0 && ids.some((id) => editorLabelIds.includes(id));
+      };
+      const associatedRootCandidates = Array.from(
+        document.querySelectorAll('[role="dialog"], [role="listbox"], .msla-token-picker-container-v3, .msla-token-picker')
+      )
+        .map((element) => (element instanceof HTMLElement && labelIdsOverlap(element) ? element : closestElement(element, labelIdsOverlap)))
+        .filter(
+          (element, index, array) =>
+            element instanceof HTMLElement &&
+            array.indexOf(element) === index &&
+            isConcretePickerContainerVisible(element) &&
+            !!element.querySelector?.('.msla-token-picker-section')
+        );
       const pickerRoot =
-        pickerAncestors.find(
-          (element) =>
-            (element.getAttribute('role') === 'dialog' || element.getAttribute('role') === 'listbox') &&
-            (element.getAttribute('aria-labelledby') || '').length > 0
-        ) ||
-        pickerAncestors.find((element) => hasClassName(element, 'msla-token-picker-container-v3')) ||
-        pickerAncestors.find((element) => hasClassName(element, 'msla-token-picker')) ||
-        activeSearch.parentElement;
+        associatedRootCandidates.find((element) => labelIdsOverlap(element)) ||
+        (activeSearch instanceof HTMLElement ? rootFromAncestors(activeSearch) : undefined);
       if (!(pickerRoot instanceof HTMLElement)) {
-        return { ok: false, reason: 'picker-root-missing' };
+        return { ok: false, reason: searchCandidates.length > 0 ? 'picker-editor-association-missing' : 'picker-search-missing' };
       }
       const pickerLabelIds = (pickerRoot.getAttribute('aria-labelledby') || '').split(/\\s+/).filter(Boolean);
       const associatedByLabelId =
@@ -1098,18 +1138,26 @@ export const screenshotReadinessDomScript = `
             candidate instanceof HTMLElement &&
             closestElement(candidate, (element) => hasClassName(element, 'msla-token-picker-section')) === section
         );
+        const optionList = Array.from(section.querySelectorAll?.('.msla-token-picker-section-options[aria-label]') || []).find(
+          (candidate) =>
+            candidate instanceof HTMLElement &&
+            closestElement(candidate, (element) => hasClassName(element, 'msla-token-picker-section')) === section
+        );
         const labelTarget = header instanceof HTMLElement && isConcretePickerReadable(header) ? header : undefined;
-        if (!labelTarget) {
+        const optionListLabelTarget =
+          header instanceof HTMLElement && optionList instanceof HTMLElement && hasConcretePickerVisibleStyle(optionList) ? optionList : undefined;
+        if (!(header instanceof HTMLElement) || (!labelTarget && !optionListLabelTarget)) {
           continue;
         }
         const sectionLabelSource = normalize(
           [
-            Array.from(labelTarget.querySelectorAll?.('span') || [])
+            Array.from(labelTarget?.querySelectorAll?.('span') || [])
               .filter((span) => closestElement(span, (element) => hasClassName(element, 'msla-token-picker-section-header')) === labelTarget)
               .map((span) => directText(span))
               .find(Boolean) || '',
             directText(labelTarget),
-            labelTarget.getAttribute?.('aria-label') || '',
+            labelTarget?.getAttribute?.('aria-label') || '',
+            optionListLabelTarget?.getAttribute?.('aria-label') || '',
           ]
             .filter(Boolean)
             .join(' ')
@@ -1121,7 +1169,7 @@ export const screenshotReadinessDomScript = `
         matchedSection = true;
         const optionButtons = Array.from(
           section.querySelectorAll('.msla-token-picker-section-option, [data-automation-id^="msla-token-picker-section-option-"]')
-        ).filter((button) => button instanceof HTMLElement && isConcretePickerReadable(button));
+        ).filter((button) => button instanceof HTMLElement && isConcretePickerOptionReadable(button));
         const matchedTitles = pickerTokenTitles.filter((requestedTitle) =>
           optionButtons.some((button) => {
             const nearestSection = closestElement(button, (element) => hasClassName(element, 'msla-token-picker-section'));
@@ -1129,7 +1177,7 @@ export const screenshotReadinessDomScript = `
               return false;
             }
             const titleElement = button.querySelector?.('.msla-token-picker-option-title');
-            if (titleElement instanceof HTMLElement && !isConcretePickerReadable(titleElement)) {
+            if (titleElement instanceof HTMLElement && !hasConcretePickerVisibleStyle(titleElement)) {
               return false;
             }
             const titleText = optionTitleText(button);

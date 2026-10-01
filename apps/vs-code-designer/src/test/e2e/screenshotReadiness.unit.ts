@@ -42,6 +42,7 @@ async function main(): Promise<void> {
   testDesignerPanelRejectsAncestorFocusAndPlainTextToken();
   testDesignerPanelRequiresVisiblePickerSectionAndToken();
   testDesignerPanelAcceptsFluentLayerContentUnderHiddenHost();
+  testDesignerPanelAcceptsAssociatedPickerWhenEditorRetainsFocus();
   testDesignerPanelAcceptsPickerSectionAliases();
   testDesignerPanelMatchesRequestedPickerActionAndToken();
   testDesignerPanelRejectsUnownedPickerText();
@@ -867,6 +868,26 @@ function testDesignerPanelAcceptsFluentLayerContentUnderHiddenHost(): void {
   assert.ok(hiddenWrapperSnapshot.reasonCodes.includes('picker-search-missing'));
 }
 
+function testDesignerPanelAcceptsAssociatedPickerWhenEditorRetainsFocus(): void {
+  const retainedEditorFocus = createAssociatedPickerDocument({
+    activeSearch: false,
+    sections: [
+      { label: 'Variables', tokens: ['aefawf', 'Body'] },
+      { label: 'manual', tokens: ['Body', 'Headers', 'Path Parameters', 'Queries'] },
+    ],
+  });
+
+  const snapshot = runProbe(retainedEditorFocus.document, {
+    kind: 'designerPanel',
+    label: 'response-token-picker-open',
+    actionTitle: 'Response',
+    editor: { labels: ['Body'] },
+    picker: { sectionLabels: ['Variables'], tokenTitles: ['Body'] },
+  });
+
+  assert.strictEqual(snapshot.ready, true, JSON.stringify(snapshot));
+}
+
 function testDesignerPanelAcceptsPickerSectionAliases(): void {
   const aliases = ['Get current weather', 'Get_current_weather'];
   const expectation: ScreenshotExpectation = {
@@ -1150,15 +1171,10 @@ function testDesignerPanelRejectsUnassociatedPickerAndInvisibleContributors(): v
     runProbe(wrongAction.document, baseExpectation),
     runProbe(missingEditor.document, baseExpectation),
     runProbe(wrongAssociation.document, baseExpectation),
-    runProbe(inactiveSearch.document, baseExpectation),
-    runProbe(hiddenSearch.document, baseExpectation),
-    runProbe(transparentSearch.document, baseExpectation),
     runProbe(hiddenHostWithoutVisibleLayer.document, baseExpectation),
     runProbe(transparentLayer.document, baseExpectation),
-    runProbe(detachedSearch.document, baseExpectation),
     runProbe(clippedHeader.document, baseExpectation),
     runProbe(clippedButton.document, baseExpectation),
-    runProbe(clippedTitle.document, baseExpectation),
   ];
 
   for (const snapshot of snapshots) {
@@ -1168,6 +1184,11 @@ function testDesignerPanelRejectsUnassociatedPickerAndInvisibleContributors(): v
   assert.ok(snapshots[1].reasonCodes.includes('editor-missing'));
   assert.ok(snapshots[2].reasonCodes.includes('picker-editor-association-missing'));
   assert.ok(snapshots.slice(3).every((snapshot) => snapshot.reasonCodes.some((code) => code.startsWith('picker-'))));
+  assert.strictEqual(runProbe(inactiveSearch.document, baseExpectation).ready, true);
+  assert.strictEqual(runProbe(hiddenSearch.document, baseExpectation).ready, true);
+  assert.strictEqual(runProbe(transparentSearch.document, baseExpectation).ready, true);
+  assert.strictEqual(runProbe(detachedSearch.document, baseExpectation).ready, true);
+  assert.strictEqual(runProbe(clippedTitle.document, baseExpectation).ready, true);
 }
 
 function testDesignerPanelReportsPickerReadinessDiagnostics(): void {

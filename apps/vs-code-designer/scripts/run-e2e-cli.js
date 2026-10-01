@@ -90,6 +90,7 @@ function main() {
     msnWeatherLifecycle,
     nugetConversionLifecycle,
     suites,
+    variablesPickerLifecycle,
     visibleDelayMs,
     workspaceLifecycle,
   } = parseArgs(process.argv.slice(2));
@@ -101,6 +102,7 @@ function main() {
       createWorkspaceFull ||
       msnWeatherLifecycle ||
       nugetConversionLifecycle ||
+      variablesPickerLifecycle ||
       workspaceLifecycle ||
       args.length > 0)
   ) {
@@ -121,6 +123,8 @@ function main() {
     runCodefulDebugTasks(visibleDelayMs).catch(exitWithError);
   } else if (msnWeatherLifecycle) {
     runMsnWeatherLifecycle(visibleDelayMs).catch(exitWithError);
+  } else if (variablesPickerLifecycle) {
+    runVariablesPickerLifecycle(visibleDelayMs).catch(exitWithError);
   } else if (workspaceLifecycle) {
     runWorkspaceLifecycle(visibleDelayMs).catch(exitWithError);
   } else if (args.length === 0) {
@@ -754,6 +758,50 @@ async function runMsnWeatherLifecycle(visibleDelayMs) {
     if (lifecycleSucceeded && process.env.LA_E2E_CLI_PRESERVE_WORKSPACES !== '1') {
       await cleanupRuntimeDependenciesRoot(runtimeDependenciesRoot);
     }
+  }
+}
+
+async function runVariablesPickerLifecycle(visibleDelayMs) {
+  const lifecycleDir = getLifecycleArtifactDir('variables-picker-lifecycle');
+  const lifecycleRunId = Date.now();
+  const workspaceParent = createOwnedWorkspaceParent('variables-picker-lifecycle');
+  fs.mkdirSync(lifecycleDir, { recursive: true });
+  const manifestPath = path.join(lifecycleDir, `manifest-standard-${lifecycleRunId}.json`);
+
+  try {
+    await runVscodeTest(['--label', 'workspaceLifecycle'], {
+      visibleDelayMs,
+      extraEnv: {
+        LA_E2E_CLI_WORKSPACE_PARENT: workspaceParent,
+        LA_E2E_CLI_INCLUDE_WORKSPACE_LIFECYCLE: '1',
+        LA_E2E_CLI_USER_DATA_SUFFIX: `variables-picker-create-${lifecycleRunId}`,
+        LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'create',
+        LA_E2E_CLI_WORKSPACE_LIFECYCLE_CREATE_LABEL: 'standard',
+        LA_E2E_CLI_WORKSPACE_LIFECYCLE_MANIFEST: manifestPath,
+      },
+    });
+
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+    const entry = manifest.find((candidate) => candidate.label === 'standard') ?? manifest[0];
+    if (!entry) {
+      throw new Error('Variables picker lifecycle setup did not write a Standard workspace entry');
+    }
+
+    await runVscodeTest(['--label', 'workspaceLifecycle'], {
+      visibleDelayMs,
+      extraEnv: {
+        LA_E2E_CLI_WORKSPACE_PARENT: workspaceParent,
+        LA_E2E_CLI_INCLUDE_WORKSPACE_LIFECYCLE: '1',
+        LA_E2E_CLI_USER_DATA_SUFFIX: `variables-picker-run-${lifecycleRunId}`,
+        LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
+        LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '1',
+        LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'variables-picker-run',
+        LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE: JSON.stringify(entry),
+        LA_E2E_CLI_STARTUP_RESOURCE: entry.workspaceFilePath,
+      },
+    });
+  } finally {
+    await cleanupOwnedWorkspaceParent(workspaceParent, 'Variables picker lifecycle');
   }
 }
 
@@ -2334,6 +2382,7 @@ function parseArgs(rawArgs) {
   let nugetConversionLifecycle = false;
   let codefulDebugTasks = false;
   let msnWeatherLifecycle = false;
+  let variablesPickerLifecycle = false;
   let azureAuthWarmup = false;
   let suites;
 
@@ -2369,6 +2418,10 @@ function parseArgs(rawArgs) {
       msnWeatherLifecycle = true;
       continue;
     }
+    if (arg === '--variables-picker-lifecycle') {
+      variablesPickerLifecycle = true;
+      continue;
+    }
     if (arg === '--azure-auth-warmup') {
       azureAuthWarmup = true;
       continue;
@@ -2385,6 +2438,7 @@ function parseArgs(rawArgs) {
     msnWeatherLifecycle,
     nugetConversionLifecycle,
     suites,
+    variablesPickerLifecycle,
     visibleDelayMs,
     workspaceLifecycle,
   };

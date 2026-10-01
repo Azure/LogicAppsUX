@@ -84,6 +84,12 @@ const responseActionTitle = 'Response';
 const msnWeatherActionName = 'Get_current_weather';
 const msnWeatherConnectionReferenceName = 'msnweather';
 const msnWeatherLocation = '98058';
+const variablesPickerInitialDistractorName = 'aefawf';
+const variablesPickerTargetName = 'Body';
+const variablesPickerInitialDistractorValue = 'variables-picker-aefawf-initial';
+const variablesPickerInitialBodyValue = 'variables-picker-body-initial';
+const lifecycleScreenshotDir = path.join(__dirname, '..', '..', '..', '.vscode-test', 'screenshots', 'cli');
+const variablesPickerUpdatedBodyValue = 'variables-picker-body-updated';
 const azuritePorts = [10000, 10001, 10002];
 const msnWeatherAzureTargetEnvKeys = [
   'WORKFLOWS_SUBSCRIPTION_ID',
@@ -304,6 +310,11 @@ suite('Generated Workspace Designer Lifecycle Tests', () => {
 
     if (lifecycleMode === 'msn-weather-run') {
       await runMsnWeatherLifecycle(getWorkspaceLifecycleCaseFromEnv());
+      return;
+    }
+
+    if (lifecycleMode === 'variables-picker-run') {
+      await runVariablesPickerLifecycle(getWorkspaceLifecycleCaseFromEnv());
       return;
     }
 
@@ -1819,6 +1830,49 @@ async function configureResponseBodyThroughDesigner(
   });
 }
 
+async function configureResponseBodyFromVariablesThroughDesigner(
+  cdp: CdpEvaluator,
+  contextId: number,
+  createdWorkspace: CreatedWorkspace
+): Promise<void> {
+  const label = createdWorkspace.label;
+  await runLifecyclePhase(createdWorkspace, 'VariablesResponseBodyready', () =>
+    openResponseSettingsPanelThroughDesigner(cdp, contextId, label)
+  );
+  await runLifecyclePhase(
+    createdWorkspace,
+    'VariablesResponseBodyconfigured',
+    () =>
+      selectDynamicContentTokenForParameter(
+        cdp,
+        contextId,
+        ['Body', 'body'],
+        ['Variables'],
+        [variablesPickerTargetName],
+        `${label} Variables Response body`,
+        'Variables',
+        {
+          verifyEditorTokenInScreenshot: false,
+          expectedPickerSections: [
+            { sectionLabel: 'Variables', tokenTitles: [variablesPickerInitialDistractorName, variablesPickerTargetName] },
+            { sectionLabel: 'HTTP Request', sectionLabelAliases: ['manual'], tokenTitles: [variablesPickerTargetName] },
+          ],
+        }
+      ),
+    { sourceAction: 'Variables' }
+  );
+  await captureLifecycleScreenshot(`workspace-lifecycle-${label}-variables-response-body-configured`, {
+    expectation: {
+      kind: 'designerPanel',
+      label,
+      actionTitle: responseActionTitle,
+      editor: { labels: ['Body'] },
+    },
+    semanticCdp: cdp,
+    semanticContextId: contextId,
+  });
+}
+
 async function openResponseSettingsPanelThroughDesigner(cdp: CdpEvaluator, contextId: number, label: string): Promise<void> {
   let lastError = '';
   for (let attempt = 1; attempt <= 5; attempt++) {
@@ -2153,7 +2207,11 @@ async function selectDynamicContentTokenForParameter(
   sectionLabels: string[],
   tokenTitles: string[],
   description: string,
-  sourceAction: string
+  sourceAction: string,
+  options: {
+    expectedPickerSections?: Array<{ sectionLabel: string; sectionLabelAliases?: string[]; tokenTitles: string[] }>;
+    verifyEditorTokenInScreenshot?: boolean;
+  } = {}
 ): Promise<void> {
   const editorPoint = await getDesignerParameterEditorPoint(cdp, contextId, parameterLabels, description);
   await logDynamicContentState(cdp, contextId, `${description} before editor click`);
@@ -2284,27 +2342,49 @@ async function selectDynamicContentTokenForParameter(
   await logDynamicContentState(cdp, contextId, `${description} after entrypoint click`);
   await waitForDynamicContentPickerOpen(cdp, contextId, sectionLabels, entryPoint.point, description);
   await logDynamicContentState(cdp, contextId, `${description} before picker-open evidence`);
-  await captureLifecycleScreenshot(`workspace-lifecycle-${description.replace(/\W+/g, '-').toLowerCase()}-picker-open`, {
-    expectation: {
-      kind: 'designerPanel',
-      label: description,
-      actionTitle: responseActionTitle,
-      editor: { labels: parameterLabels },
-      picker: { sectionLabels, tokenTitles },
-    },
-    semanticCdp: cdp,
-    semanticContextId: contextId,
-    skipNotificationHousekeeping: true,
-  });
+  if (options.expectedPickerSections) {
+    await assertDynamicContentPickerContainsSections(cdp, contextId, description, options.expectedPickerSections);
+  }
+  const pickerOpenScreenshotName = `workspace-lifecycle-${description.replace(/\W+/g, '-').toLowerCase()}-picker-open`;
+  const pickerOpenExpectation: ScreenshotExpectation = {
+    kind: 'designerPanel',
+    label: description,
+    actionTitle: responseActionTitle,
+    editor: { labels: parameterLabels },
+    picker: { sectionLabels, tokenTitles },
+  };
+  try {
+    await captureLifecycleScreenshot(pickerOpenScreenshotName, {
+      expectation: pickerOpenExpectation,
+      semanticCdp: cdp,
+      semanticContextId: contextId,
+      skipNotificationHousekeeping: true,
+    });
+  } catch (error) {
+    const dumpPath = await writeDynamicContentPickerEvidenceDump(cdp, contextId, pickerOpenScreenshotName, {
+      description,
+      parameterLabels,
+      sectionLabels,
+      tokenTitles,
+      expectation: pickerOpenExpectation,
+      error: String(error),
+    });
+    console.error(`[workspace-lifecycle][dynamic-content] ${description} full picker evidence dump: ${dumpPath}`);
+    throw error;
+  }
   const selectedTokenText = await selectDynamicContentToken(cdp, contextId, sectionLabels, tokenTitles, description);
   console.log(`[workspace-lifecycle] Selected dynamic-content token for ${description}: ${selectedTokenText}`);
   await pressKey(cdp, 'Escape', 'Escape', 27);
+  const tokenSelectedEditorExpectation =
+    options.verifyEditorTokenInScreenshot === false
+      ? { labels: parameterLabels }
+      : { labels: parameterLabels, token: { titles: tokenTitles, sourceAction } };
   await captureLifecycleScreenshot(`workspace-lifecycle-${description.replace(/\W+/g, '-').toLowerCase()}-token-selected`, {
     expectation: {
       kind: 'designerPanel',
       label: description,
       actionTitle: responseActionTitle,
-      editor: { labels: parameterLabels, token: { titles: tokenTitles, sourceAction } },
+      editor: tokenSelectedEditorExpectation,
     },
     semanticCdp: cdp,
     semanticContextId: contextId,
@@ -2320,6 +2400,212 @@ async function selectDynamicContentTokenForParameter(
     `Expected ${description} editor to contain one of ${tokenTitles.join(', ')} after selecting ${selectedTokenText}. State: ${JSON.stringify(
       selectedState
     )}`
+  );
+}
+
+async function writeDynamicContentPickerEvidenceDump(
+  cdp: CdpEvaluator,
+  contextId: number,
+  checkpointName: string,
+  request: {
+    description: string;
+    parameterLabels: string[];
+    sectionLabels: string[];
+    tokenTitles: string[];
+    expectation: ScreenshotExpectation;
+    error: string;
+  }
+): Promise<string> {
+  const dump = await cdp.evaluate<unknown>(
+    contextId,
+    `(() => {
+      const request = ${JSON.stringify(request)};
+      const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim();
+      const styleOf = (element) => {
+        if (!(element instanceof HTMLElement)) {
+          return undefined;
+        }
+        const style = getComputedStyle(element);
+        return {
+          display: style.display,
+          visibility: style.visibility,
+          opacity: style.opacity,
+          overflow: style.overflow,
+          overflowX: style.overflowX,
+          overflowY: style.overflowY,
+        };
+      };
+      const rectOf = (element) => {
+        if (!(element instanceof HTMLElement)) {
+          return undefined;
+        }
+        const rect = element.getBoundingClientRect();
+        return {
+          left: Math.round(rect.left * 100) / 100,
+          top: Math.round(rect.top * 100) / 100,
+          right: Math.round(rect.right * 100) / 100,
+          bottom: Math.round(rect.bottom * 100) / 100,
+          width: Math.round(rect.width * 100) / 100,
+          height: Math.round(rect.height * 100) / 100,
+        };
+      };
+      const summarize = (element, includeHtml = false) => {
+        if (!(element instanceof Element)) {
+          return undefined;
+        }
+        return {
+          tagName: element.tagName,
+          id: element.id || '',
+          role: element.getAttribute('role'),
+          className: typeof element.className === 'string' ? element.className : '',
+          dataAutomationId: element.getAttribute('data-automation-id'),
+          ariaLabel: element.getAttribute('aria-label'),
+          ariaLabelledBy: element.getAttribute('aria-labelledby'),
+          title: element.getAttribute('title'),
+          text: normalize(element.textContent || ''),
+          rect: rectOf(element),
+          offset: element instanceof HTMLElement ? { width: element.offsetWidth, height: element.offsetHeight } : undefined,
+          style: styleOf(element),
+          html: includeHtml ? element.outerHTML : undefined,
+        };
+      };
+      const active = document.activeElement;
+      const pickerRoots = Array.from(document.querySelectorAll(
+        '[role="dialog"], [role="listbox"], [data-automation-id*="picker"], [data-testid*="picker"], [class*="picker"], [class*="Picker"], .msla-token-picker, .msla-token-picker-section'
+      ));
+      const sections = Array.from(document.querySelectorAll('.msla-token-picker-section')).map((section) => {
+        const header = section.querySelector('.msla-token-picker-section-header');
+        const optionList = section.querySelector('.msla-token-picker-section-options');
+        const options = Array.from(section.querySelectorAll('.msla-token-picker-section-option, [data-automation-id^="msla-token-picker-section-option-"]'))
+          .map((option) => ({
+            option: summarize(option, true),
+            title: summarize(option.querySelector('.msla-token-picker-option-title'), true),
+            description: summarize(option.querySelector('.msla-token-picker-option-description'), true),
+          }));
+        return {
+          section: summarize(section, true),
+          header: summarize(header, true),
+          optionList: summarize(optionList, true),
+          options,
+        };
+      });
+      const editors = Array.from(document.querySelectorAll('[contenteditable="true"], [role="textbox"], textarea, input, .editor-input, .monaco-editor, [class*="editor"]'))
+        .map((editor) => summarize(editor, true));
+      const labels = Array.from(document.querySelectorAll('[id^="msla-tokenpicker-callout-label"], label, .msla-editor-label'))
+        .map((label) => summarize(label, true));
+      return {
+        request,
+        viewport: {
+          width: window.innerWidth,
+          height: window.innerHeight,
+          devicePixelRatio: window.devicePixelRatio,
+        },
+        activeElement: summarize(active, true),
+        pickerRootCount: pickerRoots.length,
+        pickerText: normalize(pickerRoots.map((element) => element.textContent || '').join(' ')),
+        pickerRoots: pickerRoots.map((root) => summarize(root, true)),
+        sections,
+        editors,
+        labels,
+        bodyText: normalize(document.body?.textContent || ''),
+        bodyHtml: document.body?.outerHTML || '',
+      };
+    })()`,
+    { timeoutMs: 5000 }
+  );
+  fs.mkdirSync(lifecycleScreenshotDir, { recursive: true });
+  const dumpPath = path.join(lifecycleScreenshotDir, `${checkpointName}-dom-dump.json`);
+  fs.writeFileSync(dumpPath, `${JSON.stringify(sanitizeFullDynamicContentPickerDump(dump), null, 2)}\n`);
+  return dumpPath;
+}
+
+function sanitizeFullDynamicContentPickerDump(value: unknown, depth = 0): unknown {
+  if (depth > 16) {
+    return '[truncated-depth]';
+  }
+  if (value === null || value === undefined) {
+    return value;
+  }
+  if (typeof value === 'string') {
+    return redactDiagnosticString(value);
+  }
+  if (typeof value !== 'object') {
+    return value;
+  }
+  if (Array.isArray(value)) {
+    return value.map((item) => sanitizeFullDynamicContentPickerDump(item, depth + 1));
+  }
+
+  const output: Record<string, unknown> = {};
+  for (const [key, entryValue] of Object.entries(value as Record<string, unknown>)) {
+    if (isSensitiveDiagnosticKey(key)) {
+      output[key] = '[redacted]';
+      continue;
+    }
+    output[key] = sanitizeFullDynamicContentPickerDump(entryValue, depth + 1);
+  }
+  return output;
+}
+
+async function assertDynamicContentPickerContainsSections(
+  cdp: CdpEvaluator,
+  contextId: number,
+  description: string,
+  expectedSections: Array<{ sectionLabel: string; sectionLabelAliases?: string[]; tokenTitles: string[] }>
+): Promise<void> {
+  const state = await cdp.evaluate<{
+    ok: boolean;
+    missing: string[];
+    sections: Array<{ header: string; titles: string[]; descriptions: string[] }>;
+  }>(
+    contextId,
+    `(() => {
+      const expectedSections = ${JSON.stringify(expectedSections)};
+      const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim();
+      const lower = (value) => normalize(value).toLowerCase();
+      const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
+      const sections = Array.from(document.querySelectorAll('.msla-token-picker-section'))
+        .filter((section) => section instanceof HTMLElement && isVisible(section))
+        .map((section) => {
+          const header = normalize(section.querySelector('.msla-token-picker-section-header')?.textContent || '');
+          const titles = Array.from(section.querySelectorAll('.msla-token-picker-option-title'))
+            .filter(isVisible)
+            .map((title) => normalize(title.textContent || ''))
+            .filter(Boolean);
+          const descriptions = Array.from(section.querySelectorAll('.msla-token-picker-option-description'))
+            .filter(isVisible)
+            .map((title) => normalize(title.textContent || ''))
+            .filter(Boolean);
+          return { header, titles, descriptions };
+        });
+      const missing = [];
+      for (const expected of expectedSections) {
+        const expectedLabels = [expected.sectionLabel, ...(expected.sectionLabelAliases || [])].map(lower);
+        const section = sections.find((candidate) => expectedLabels.includes(lower(candidate.header)));
+        if (!section) {
+          missing.push(expected.sectionLabel + ' section');
+          continue;
+        }
+
+        for (const title of expected.tokenTitles) {
+          const expectedTitle = lower(title);
+          if (!section.titles.some((candidate) => lower(candidate) === expectedTitle)) {
+            missing.push(expected.sectionLabel + ' :: ' + title);
+          }
+        }
+      }
+
+      return { ok: missing.length === 0, missing, sections };
+    })()`
+  );
+  assert.ok(
+    state.ok,
+    `Expected dynamic-content picker for ${description} to contain requested section-owned tokens. Missing=${JSON.stringify(
+      state.missing
+    )}. Sections=${JSON.stringify(state.sections).slice(0, 2000)}`
+  );
+  console.log(
+    `[workspace-lifecycle][dynamic-content] ${description} picker ownership evidence: ${JSON.stringify(state.sections).slice(0, 2000)}`
   );
 }
 
@@ -4026,7 +4312,7 @@ function seedRunnableStandardWorkflow(createdWorkspace: CreatedWorkspace): void 
           $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
           contentVersion: '1.0.0.0',
           triggers: {
-            manual: {
+            HTTP_Request: {
               type: 'Request',
               kind: 'Http',
               inputs: {
@@ -4057,6 +4343,79 @@ function seedRunnableStandardWorkflow(createdWorkspace: CreatedWorkspace): void 
   );
 }
 
+function seedVariablesPickerWorkflow(createdWorkspace: CreatedWorkspace): void {
+  fs.mkdirSync(path.dirname(createdWorkspace.workflowJsonPath), { recursive: true });
+  fs.writeFileSync(
+    createdWorkspace.workflowJsonPath,
+    `${JSON.stringify(
+      {
+        definition: {
+          $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+          contentVersion: '1.0.0.0',
+          triggers: {
+            manual: {
+              type: 'Request',
+              kind: 'Http',
+              inputs: {
+                schema: {
+                  type: 'object',
+                },
+              },
+            },
+          },
+          actions: {
+            Initialize_variables: {
+              type: 'InitializeVariable',
+              inputs: {
+                variables: [
+                  {
+                    name: variablesPickerInitialDistractorName,
+                    type: 'string',
+                    value: variablesPickerInitialDistractorValue,
+                  },
+                  {
+                    name: variablesPickerTargetName,
+                    type: 'string',
+                    value: variablesPickerInitialBodyValue,
+                  },
+                ],
+              },
+              runAfter: {},
+            },
+            Set_variable: {
+              type: 'SetVariable',
+              inputs: {
+                name: variablesPickerTargetName,
+                value: variablesPickerUpdatedBodyValue,
+              },
+              runAfter: {
+                Initialize_variables: ['Succeeded'],
+              },
+            },
+            Response: {
+              type: 'Response',
+              kind: 'Http',
+              inputs: {
+                statusCode: 200,
+              },
+              runAfter: {
+                Set_variable: ['Succeeded'],
+              },
+            },
+          },
+          outputs: {},
+        },
+        kind: 'Stateful',
+      },
+      null,
+      2
+    )}\n`
+  );
+  console.log(
+    `[workspace-lifecycle][variables-picker] Seeded workflow ${createdWorkspace.workflowJsonPath} with Request, Initialize_variables, Set_variable, empty Response body`
+  );
+}
+
 function assertRunnableStandardWorkflow(createdWorkspace: CreatedWorkspace, phase: string): void {
   const workflowJson = readJsonFile<Record<string, any>>(createdWorkspace.workflowJsonPath);
   const triggers = workflowJson.definition?.triggers ?? {};
@@ -4064,6 +4423,137 @@ function assertRunnableStandardWorkflow(createdWorkspace: CreatedWorkspace, phas
 
   assert.strictEqual(triggers.manual?.type, 'Request', `${phase}: workflow should use the built-in Request trigger`);
   assert.strictEqual(actions.Response?.type, 'Response', `${phase}: workflow should use the built-in Response action`);
+}
+
+async function runVariablesPickerLifecycle(createdWorkspace: CreatedWorkspace): Promise<void> {
+  assert.strictEqual(createdWorkspace.appType, 'standard', 'Variables picker lifecycle expects a Standard Stateful workspace');
+  console.log(`[workspace-lifecycle][variables-picker] Running Variables picker lifecycle from ${createdWorkspace.appDir}`);
+
+  ensureLocalSettingsForDesigner(createdWorkspace.appDir);
+  await waitForGeneratedLogicAppFolder(createdWorkspace);
+  seedVariablesPickerWorkflow(createdWorkspace);
+  assertVariablesPickerWorkflowBeforeBinding(createdWorkspace);
+
+  await openDesignerAndConfigureVariablesResponseBody(createdWorkspace);
+  assertVariablesPickerWorkflowAfterBinding(createdWorkspace);
+}
+
+async function openDesignerAndConfigureVariablesResponseBody(createdWorkspace: CreatedWorkspace): Promise<void> {
+  console.log(
+    `[workspace-lifecycle][variables-picker] Opening designer to configure Response Body from Variables for ${createdWorkspace.label}`
+  );
+  await closeCopilotChatIfVisible(`before variables picker designer open (${createdWorkspace.label})`, { absentSettleMs: 1500 });
+  await closeAllTabs();
+  const workflowDocument = await vscode.workspace.openTextDocument(vscode.Uri.file(createdWorkspace.workflowJsonPath));
+  await vscode.window.showTextDocument(workflowDocument, { preview: false });
+  const tabsBefore = getWebviewTabs(designerViewType).length;
+  await handleDotnetInstallToolPromptIfVisible('before variables picker openDesigner command');
+  const openDesignerResultPromise = vscode.commands
+    .executeCommand(openDesignerCommand, vscode.Uri.file(createdWorkspace.workflowJsonPath))
+    .then(
+      () => ({ kind: 'resolved' as const }),
+      (error) => ({ kind: 'rejected' as const, error })
+    );
+
+  let cdp: CdpConnection | undefined;
+  try {
+    await handleDesignerQuickPickPrompts(15000, { useAzureConnectors: false });
+    const tabOrCommandResult = await Promise.race([
+      waitForDesignerWebviewTab(tabsBefore, { useAzureConnectors: false }, getDesignerTabOpenTimeoutMs()).then((tab) => ({
+        kind: 'tab' as const,
+        tab,
+      })),
+      openDesignerResultPromise,
+    ]);
+    if (tabOrCommandResult.kind === 'rejected') {
+      throw new Error(
+        `[workspace-lifecycle][variables-picker] openDesigner command rejected before designer tab opened: ${String(
+          tabOrCommandResult.error
+        )}`
+      );
+    }
+
+    const tab =
+      tabOrCommandResult.kind === 'resolved'
+        ? (getDesignerWebviewTabForWorkflow(createdWorkspace) ?? getWebviewTabs(designerViewType).at(-1))
+        : tabOrCommandResult.tab;
+    assert.ok(tab, `Expected designer tab for variables picker lifecycle. Open tabs: ${describeOpenTabs()}`);
+    assert.strictEqual(getTabViewType(tab), designerTabViewType);
+    assert.ok(
+      tab.label.includes(createdWorkspace.wfName),
+      `Expected designer tab label to include workflow name "${createdWorkspace.wfName}". Open tabs: ${describeOpenTabs()}`
+    );
+    await handleDesignerQuickPickPrompts(15000, { useAzureConnectors: false });
+
+    cdp = await connectToVsCodeCdp({ targetName: `${createdWorkspace.label} variables picker designer webview` });
+    const contextId = await waitForWebviewFrameContext(cdp, {
+      allTextIncludes: ['Save'],
+      description: `${createdWorkspace.label} variables picker designer webview DOM context`,
+      timeoutMs: 180000,
+    });
+    await waitForDesignerText(
+      cdp,
+      contextId,
+      [
+        ...requestTriggerTitleVariants,
+        'Initialize variables',
+        'Set variable',
+        responseActionTitle,
+        variablesPickerInitialDistractorName,
+        variablesPickerTargetName,
+      ],
+      180000,
+      `${createdWorkspace.label} variables picker seeded workflow canvas content`
+    );
+    await configureResponseBodyFromVariablesThroughDesigner(cdp, contextId, createdWorkspace);
+    await saveWorkflowThroughDesigner(cdp, contextId, createdWorkspace.label);
+    await closeDesignerDetailsPanelThroughDesigner(cdp, contextId, `${createdWorkspace.label} variables picker final designer canvas`);
+  } catch (error) {
+    console.log(
+      `[workspace-lifecycle][variables-picker] failed ${JSON.stringify({
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+      })}`
+    );
+    await logDesignerStartupDiagnostics(createdWorkspace);
+    await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-variables-picker-failure`, { diagnostic: true });
+    throw error;
+  } finally {
+    cdp?.dispose();
+  }
+}
+
+function assertVariablesPickerWorkflowBeforeBinding(createdWorkspace: CreatedWorkspace): void {
+  const workflowJson = readJsonFile<Record<string, any>>(createdWorkspace.workflowJsonPath);
+  const actions = workflowJson.definition?.actions ?? {};
+  const responseBody = actions.Response?.inputs?.body;
+  assert.strictEqual(actions.Initialize_variables?.type, 'InitializeVariable', 'Variables picker fixture should initialize variables');
+  assert.strictEqual(actions.Set_variable?.type, 'SetVariable', 'Variables picker fixture should update Body variable');
+  assert.strictEqual(responseBody, undefined, 'Variables picker fixture must start with an empty Response Body');
+}
+
+function assertVariablesPickerWorkflowAfterBinding(createdWorkspace: CreatedWorkspace): void {
+  const workflowJson = readJsonFile<Record<string, any>>(createdWorkspace.workflowJsonPath);
+  const actions = workflowJson.definition?.actions ?? {};
+  const responseBody = actions.Response?.inputs?.body;
+  assert.strictEqual(
+    responseBody,
+    `@variables('${variablesPickerTargetName}')`,
+    `Response Body should be bound to the Body variable, not trigger body or distractor. Response=${JSON.stringify(actions.Response)}`
+  );
+  assert.notStrictEqual(responseBody, '@triggerBody()', 'Response Body must not be bound to HTTP Request Body');
+  assert.notStrictEqual(
+    responseBody,
+    `@variables('${variablesPickerInitialDistractorName}')`,
+    'Response Body must not be bound to the aefawf variable'
+  );
+  assert.deepStrictEqual(actions.Response?.runAfter, { Set_variable: ['Succeeded'] });
+  console.log(
+    `[workspace-lifecycle][variables-picker] Verified saved Response Body expression ${JSON.stringify({
+      workflowJsonPath: createdWorkspace.workflowJsonPath,
+      responseBody,
+    })}`
+  );
 }
 
 async function runMsnWeatherLifecycle(createdWorkspace: CreatedWorkspace): Promise<void> {
