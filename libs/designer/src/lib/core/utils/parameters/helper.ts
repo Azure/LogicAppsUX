@@ -970,6 +970,14 @@ export function loadParameterValue(parameter: InputParameter, shouldEncodeBasedO
       valueObject = parameter?.default;
     }
   }
+  if (
+    parameter.in === ParameterLocations.Path &&
+    typeof valueObject === 'string' &&
+    valueObject.startsWith('#{') &&
+    valueObject.endsWith('}')
+  ) {
+    return [createLiteralValueSegment(valueObject)];
+  }
   const requiresUrlEncoding = shouldEncodeBasedOnMetadata
     ? parameter.in === ParameterLocations.Path || parameter.encode !== undefined
     : parameter.in === ParameterLocations.Path;

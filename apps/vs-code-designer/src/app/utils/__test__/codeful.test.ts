@@ -1,6 +1,6 @@
 import path from 'path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { lspDirectory } from '../../../constants';
+import { codefulSdkProjectHashMarkerName, CodefulSdk, CodefulSdkVersion, lspDirectory, lspSdkHashMarkerName } from '../../../constants';
 import {
   codefulProjectsExist,
   detectAgentCodefulWorkflow,
@@ -56,9 +56,15 @@ describe('invalidateCodefulSdkCacheIfNeeded', () => {
   const runtimeDependenciesPath = 'D:\\runtime-dependencies';
   const lspDirectoryPath = path.join(runtimeDependenciesPath, lspDirectory);
   const nugetConfigPath = path.join(projectPath, 'nuget.config');
-  const installedSdkHashMarkerPath = path.join(runtimeDependenciesPath, '.lspsdk-hash');
-  const projectSdkHashMarkerPath = path.join(projectPath, '.nuget', '.logicapps-lspsdk-hash');
-  const projectSdkPackagePath = path.join(projectPath, '.nuget', 'packages', 'microsoft.azure.workflows.sdk', '1.0.0-preview.1');
+  const installedSdkHashMarkerPath = path.join(runtimeDependenciesPath, lspSdkHashMarkerName);
+  const projectSdkHashMarkerPath = path.join(projectPath, '.nuget', codefulSdkProjectHashMarkerName);
+  const projectSdkPackagePath = path.join(
+    projectPath,
+    '.nuget',
+    'packages',
+    CodefulSdk.WorkflowsSDK.toLowerCase(),
+    CodefulSdkVersion.WorkflowsSDK
+  );
   const projectAssetsPath = path.join(projectPath, 'obj', 'project.assets.json');
   const projectNugetCachePath = path.join(projectPath, 'obj', 'project.nuget.cache');
   const localSettingsPath = path.join(projectPath, 'local.settings.json');

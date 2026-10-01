@@ -10,8 +10,8 @@ import {
   hostFileName,
   localSettingsFileName,
   workflowFileName,
-  CodefulSDKs,
-  CodefulSdkVersions,
+  CodefulSdk,
+  CodefulSdkVersion,
   artifactsDirectory,
   libDirectory,
 } from '../../../constants';
@@ -208,13 +208,9 @@ async function updateBuildFile(context: IActionContext, target: vscode.Uri, dotn
   let xmlBuildFile: any = await getDotnetBuildFile(context, target.fsPath);
   xmlBuildFile = JSON.parse(xmlBuildFile);
   if (isCodeful) {
-    xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, CodefulSDKs.DurableTask, CodefulSdkVersions[CodefulSDKs.DurableTask]);
-    xmlBuildFile = addNugetPackagesToBuildFileByName(
-      xmlBuildFile,
-      CodefulSDKs.WorkflowsWebJobs,
-      CodefulSdkVersions[CodefulSDKs.WorkflowsWebJobs]
-    );
-    xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, CodefulSDKs.WorkflowsSDK, CodefulSdkVersions[CodefulSDKs.WorkflowsSDK]);
+    xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, CodefulSdk.DurableTask, CodefulSdkVersion.DurableTask);
+    xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, CodefulSdk.WorkflowsWebJobs, CodefulSdkVersion.WorkflowsWebJobs);
+    xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, CodefulSdk.WorkflowsSDK, CodefulSdkVersion.WorkflowsSDK);
     xmlBuildFile['Project']['PropertyGroup']['TargetFramework'] = dotnetVersion;
   } else {
     xmlBuildFile = addNugetPackagesToBuildFile(xmlBuildFile); // adds Microsoft.Azure.Workflows.WebJobs.Extension

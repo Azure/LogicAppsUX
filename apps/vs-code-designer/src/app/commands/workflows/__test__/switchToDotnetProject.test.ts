@@ -19,8 +19,8 @@ vi.mock('../../../../constants', () => ({
   hostFileName: 'host.json',
   localSettingsFileName: 'local.settings.json',
   workflowFileName: 'workflow.json',
-  CodefulSDKs: { DurableTask: 'DurableTask', WorkflowsWebJobs: 'WorkflowsWebJobs', WorkflowsSDK: 'WorkflowsSDK' },
-  CodefulSdkVersions: { DurableTask: '1.0.0', WorkflowsWebJobs: '1.0.0', WorkflowsSDK: '1.0.0' },
+  CodefulSdk: { DurableTask: 'DurableTask', WorkflowsWebJobs: 'WorkflowsWebJobs', WorkflowsSDK: 'WorkflowsSDK' },
+  CodefulSdkVersion: { DurableTask: '1.0.0', WorkflowsWebJobs: '1.0.0', WorkflowsSDK: '1.0.0' },
   artifactsDirectory: 'Artifacts',
   libDirectory: 'lib',
 }));

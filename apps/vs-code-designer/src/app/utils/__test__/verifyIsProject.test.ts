@@ -2,7 +2,7 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as verifyIsProject from '../verifyIsProject';
-import { hostFileName, localSettingsFileName, workflowFileName } from '../../../constants';
+import { CodefulSdk, CodefulSdkVersion, hostFileName, localSettingsFileName, workflowFileName } from '../../../constants';
 
 vi.mock('../../utils/vsCodeConfig/settings', () => ({
   getWorkspaceSetting: vi.fn(),
@@ -84,7 +84,7 @@ describe('isLogicAppProject', () => {
         return [
           '<Project Sdk="Microsoft.NET.Sdk">',
           '  <PropertyGroup><TargetFramework>net8</TargetFramework></PropertyGroup>',
-          '  <ItemGroup><PackageReference Include="Microsoft.Azure.Workflows.Sdk" Version="1.0.0-preview.1" /></ItemGroup>',
+          `  <ItemGroup><PackageReference Include="${CodefulSdk.WorkflowsSDK}" Version="${CodefulSdkVersion.WorkflowsSDK}" /></ItemGroup>`,
           '</Project>',
         ].join('\n');
       }
