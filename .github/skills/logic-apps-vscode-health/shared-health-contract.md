@@ -104,7 +104,61 @@ begin with `<!doctype html>`, contain exactly one `<html>`, `<head>`, and
 temporary files, nested output directories, or alternate output names.
 
 The HTML is always suitable for SharePoint archival. Email delivery is
-conditional under `daily-health-orchestrator.md`; `NoFinding` and an
-unmutated `Watchlist` are archived but are not emailed by default. The Logic
-Apps email action must use the HTML file content directly, without wrapping it
-in a paragraph or another HTML document.
+conditional under `daily-health-orchestrator.md`. Archival never implies alert
+delivery. The Logic Apps email action must run only when the final structured
+output has `sendAlertEmail=true` and must use the HTML file content directly,
+without wrapping it in a paragraph or another HTML document.
+
+### Structured response
+
+Return exactly one JSON object with the five required fields below and no
+additional fields, Markdown, or surrounding prose:
+
+| Field | Type | Meaning |
+|---|---|---|
+| `status` | String enum | Run outcome from the status table below. |
+| `sendAlertEmail` | Boolean | The sole decision flag: `true` only for a confirmed actual live-site issue requiring a new alert under the skill's gates and deduplication policy. |
+| `severity` | String enum or JSON `null` | `Critical` or `High` for the confirmed issue described; `null` when no issue is confirmed. |
+| `issueUrl` | String or JSON `null` | Verified canonical `https://github.com/Azure/LogicAppsUX/issues/<number>` URL, or `null` when no issue URL was verified. Never invent a link. |
+| `summary` | String | Short sanitized explanation of the finding, alert decision, and any relevant limitations or GitHub action result. May describe impact across multiple operations. |
+
+Do not return separate issue-identification or alert-reason fields, a single
+operation field, or file paths. The report is available through the agent
+action's file outputs property; it is not part of this JSON.
+
+| `status` | Meaning | `sendAlertEmail` |
+|---|---|---|
+| `NoFinding` | Monitoring completed with no credible anomaly. | `false` |
+| `Watchlist` | A candidate has not passed every live-site issue gate. | `false` |
+| `IssueCreated` | A new confirmed occurrence was written to a new issue and verified. | `true` |
+| `IssueUpdated` | A materially new confirmed occurrence was added to the canonical issue and verified. | `true` |
+| `IssueMutationFailed` | All live-site issue gates passed and deduplication established a new occurrence, but the subsequent GitHub mutation or verification failed operationally. | `true` |
+| `DuplicateSuppressed` | The confirmed occurrence was already recorded; no repeat alert is needed. | `false` |
+| `Degraded` | Monitoring or a required decision step was incomplete; no new alert-eligible occurrence was established. | `false` |
+| `Failed` | A prerequisite or required monitoring step failed; no new alert-eligible occurrence was established. | `false` |
+
+`Critical` requires the configured critical-severity gates; `High` requires
+the configured recurring-issue gates. Use literal JSON booleans and `null`,
+not quoted strings or pipe-separated alternatives.
+
+Monitoring unavailability, degraded queries, telemetry/data-quality findings,
+and Copilot assignment failure do not independently qualify for an alert.
+Optional descriptive-query, assignment, or archive failures must not overwrite
+an already established live-site issue decision; describe those limitations
+in `summary` and the report. A verified dependency outage can qualify without
+being code-actionable. An unverified root-cause hypothesis alone cannot.
+
+Example for a completed run with no finding:
+
+```json
+{
+  "status": "NoFinding",
+  "sendAlertEmail": false,
+  "severity": null,
+  "issueUrl": null,
+  "summary": "Monitoring completed. No live-site issue met the alert criteria; no alert email is needed."
+}
+```
+
+Never include the HTML document, raw telemetry, private identifiers, prompts,
+or tool transcripts in the final JSON.

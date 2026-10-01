@@ -75,8 +75,8 @@ report subsection unavailable and cannot be replaced with free-form Kusto.
    `daily_operation_cohorts` applies the 2% mutation gate. A core query failure
    after prerequisites pass produces `Degraded` or `Failed` monitoring output.
    A result that prevents the core monitor from reaching a decision maps to the
-   `MonitoringUnavailable` notification reason; an isolated descriptive-query
-   failure does not.
+   monitoring-unavailable report state and `sendAlertEmail=false`; an isolated
+   descriptive-query failure does not change the monitoring decision.
 2. Use rollout results to discover versions dynamically. Keep stable and
    prerelease traffic separate only when exact mappings are configured. Treat
    an unmapped numeric version as channel `unknown`; never infer channel from
@@ -191,7 +191,7 @@ existing occurrence marker prevents a repeated notification or comment.
 
 Create or update at most one issue per run. Use:
 
-- title: `[VS Code health][Critical|High] <operation>: <sanitized summary>`;
+- title: `[VS Code health][Critical|High] <sanitized impact summary>`;
 - label: `VSCode`;
 - repository: `Azure/LogicAppsUX`.
 
@@ -201,6 +201,10 @@ sections. Include both markers, exact windows, all rates and samples, affected
 cohorts, quality state, source mapping and SHA, hypothesis/confidence/
 alternatives, limitations, and the statement that only aggregate sanitized
 telemetry is included.
+
+Describe related impact across operations when supported by the evidence;
+the issue and report are not restricted to a single operation. Preserve the
+fixed per-signal gates and fingerprint rules.
 
 Preserve human content. Never close, reopen, or select by title similarity.
 Assign Copilot only for a bounded code-actionable finding with verified source
@@ -214,25 +218,31 @@ and never merge, deploy, or access production telemetry.
 Always generate and validate exactly `/workspace/daily-health-email.html` after
 prerequisites and deterministic monitoring start. Apply
 `report-rendering.md`. Archive the exact file content using the configured
-SharePoint site, folder, and UTC filename pattern regardless of whether email
-is sent and independently of Outlook delivery. Archive failure fails that
-action but does not change the monitoring decision or make an otherwise
-ineligible report email-eligible.
+SharePoint site, folder, and UTC filename pattern regardless of the alert-email
+decision. Archive failure fails that action but does not change the monitoring
+decision or make an otherwise ineligible report email-eligible.
 
-Email only when:
+The final agent output must follow the five-field JSON contract in
+`shared-health-contract.md`. `sendAlertEmail` is the sole decision flag. Set it
+to `true` only for a new alert-worthy occurrence that passed every actual
+live-site issue gate:
 
-- an issue is created;
-- an existing issue receives a materially new verified occurrence;
-- Copilot assignment fails; or
-- monitoring is unavailable after prerequisites passed.
+- an issue was created for the confirmed occurrence;
+- an existing issue received a materially new confirmed occurrence; or
+- the occurrence was confirmed, but the required issue mutation failed.
 
-Do not email `NoFinding`, `DuplicateSuppressed`, or an unmutated `Watchlist` by
-default. Use the configured recipients and one of these subjects:
+Set `sendAlertEmail=false` for `NoFinding`, an unmutated `Watchlist`,
+`DuplicateSuppressed`, `Degraded`, monitoring unavailable, data-quality or
+telemetry-contract findings, and Copilot assignment failure by itself. An
+assignment failure may be included in an already eligible issue alert, but
+cannot independently make the report email-eligible.
 
-- issue action: `[LogicApps VS Code Health][<severity>] <operation> - <created|updated>`;
-- assignment failure: `[LogicApps VS Code Health][<severity>] <operation> - Copilot assignment failed`;
-- unavailable monitor: `[LogicApps VS Code Health][Monitoring unavailable] Daily monitor`.
+Use one of these subjects when `sendAlertEmail=true`:
 
-Pass the complete HTML document directly as the Outlook body; never wrap it in
-another element. Return only a short sanitized status summary and never paste
-the HTML into the assistant response.
+- issue action: `[LogicApps VS Code Health][<severity>] <sanitized impact summary> - <created|updated>`;
+- issue mutation failure: `[LogicApps VS Code Health][<severity>] <sanitized impact summary> - issue action failed`.
+
+The Logic Apps email action must pass the complete HTML document directly as
+the Outlook body and never wrap it in another element. The report is exposed
+through the agent action's file outputs property. Return only the structured
+JSON defined by `shared-health-contract.md`, without HTML or a report path.

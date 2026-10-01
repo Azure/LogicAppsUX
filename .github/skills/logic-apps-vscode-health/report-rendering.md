@@ -45,6 +45,7 @@ with `max-width:100%` and background `#ffffff`. Base text is 14px, line-height
 | `Watchlist` | `#b06f00` | WATCHLIST |
 | `IssueCreated` | `#1a56db` | ISSUE CREATED |
 | `IssueUpdated` | `#1a56db` | ISSUE UPDATED |
+| `IssueMutationFailed` | `#b91c1c` | ISSUE ACTION FAILED |
 | `DuplicateSuppressed` | `#5f6368` | DUPLICATE SUPPRESSED |
 | `Degraded` | `#c05621` | DEGRADED |
 | `Failed` | `#b91c1c` | FAILED |
@@ -55,7 +56,8 @@ Anomaly-card confidence accents are high `#b91c1c`, medium `#b06f00`, and low
 ## Required section order
 
 1. Header band with title, status badge, and plain-language summary.
-2. Run metadata: opaque run ID, generated UTC time, and tools used.
+2. Run metadata: opaque run ID, generated UTC time, tools used, and the single
+   alert-email decision with a short plain-language explanation.
 3. Windows: Current, Previous, and the comparable baseline windows for each.
 4. Data quality: state, freshness, ingestion delay, sampling, unknowns,
    malformed fields, event-contract drift, and warnings.
@@ -81,6 +83,13 @@ hypothesis until proven; confidence; supporting and conflicting evidence;
 alternatives; next step; affected version; source-mapping status; exact SHA;
 and verified paths. When mutation occurred, include acceptance criteria, issue
 action/link, and Copilot result.
+
+The report must state `Alert email: Send` only when the final structured output
+has `sendAlertEmail=true`; otherwise state `Alert email: Do not send`. Report
+creation, archival, monitor unavailability, and Copilot assignment failure are
+not alert reasons. When a confirmed new occurrence could not be written to
+GitHub, render `IssueMutationFailed`, state that the live-site issue was
+confirmed, and explain the sanitized mutation limitation.
 
 ## Data tables
 

@@ -74,3 +74,18 @@ Fail closed on incomplete search, multiple canonical matches, unverifiable
 files, or ambiguous source mapping. Never select by title similarity, rewrite
 human content, close/reopen issues, or reassign Copilot after a successful
 assignment.
+
+If every live-site issue gate and the exact-fingerprint deduplication search
+established that the occurrence is new, but issue creation, update, or
+occurrence verification then fails for an operational GitHub reason, preserve
+the confirmed monitoring decision and return `IssueMutationFailed`. Set
+`sendAlertEmail=true` so the alert can report the confirmed issue and the
+sanitized GitHub limitation. Do not use
+`IssueMutationFailed` when source mapping, deduplication, evidence, or another
+issue-eligibility gate is ambiguous; those cases remain non-alerting.
+
+An external or operational dependency may be the root cause of a confirmed
+live-site issue. Set `codeActionable=false` and do not assign Copilot when the
+evidence does not support a bounded LogicAppsUX code change, but do not
+reclassify an otherwise confirmed customer-impacting issue as a monitoring
+failure merely because it is not code-actionable.

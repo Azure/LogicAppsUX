@@ -115,12 +115,21 @@
     "recipients": [
       "ladevex@microsoft.com"
     ],
+    "decisionOutputField": "sendAlertEmail",
     "sendOn": [
       "IssueCreated",
       "IssueUpdated",
-      "MonitoringUnavailable",
-      "CopilotAssignmentFailed"
-    ]
+      "IssueMutationFailed"
+    ],
+    "doNotSendOn": [
+      "NoFinding",
+      "Watchlist",
+      "DuplicateSuppressed",
+      "Degraded",
+      "Failed"
+    ],
+    "monitoringUnavailableSendsAlert": false,
+    "copilotAssignmentFailureAloneSendsAlert": false
   },
   "archive": {
     "siteUrl": "https://microsoft.sharepoint.com/teams/LogicApps",
