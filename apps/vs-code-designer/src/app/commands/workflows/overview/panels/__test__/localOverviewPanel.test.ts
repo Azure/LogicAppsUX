@@ -213,6 +213,7 @@ describe('LocalOverviewPanel', () => {
     const initCall = panel.webview.postMessage.mock.calls.find(([msg]: any) => msg.command === ExtensionCommand.initialize_frame);
     const initializePayload = initCall?.[0].data;
 
+    expect(initializePayload.workflowProperties.triggerName).toBe('manual');
     expect(initializePayload.workflowProperties.callbackInfo).toEqual({
       value: 'https://callback.local/manual',
       method: 'POST',
@@ -240,6 +241,7 @@ describe('LocalOverviewPanel', () => {
     const initCall = panel.webview.postMessage.mock.calls.find(([msg]: any) => msg.command === ExtensionCommand.initialize_frame);
     const initializePayload = initCall?.[0].data;
 
+    expect(initializePayload.workflowProperties.triggerName).toBe('recurrence');
     expect(initializePayload.workflowProperties.callbackInfo).toEqual({
       value:
         'http://localhost:7071/runtime/webhooks/workflow/api/management/workflows/workflow-a/triggers/recurrence/run?api-version=2019-10-01-edge-preview',

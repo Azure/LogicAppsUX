@@ -6,6 +6,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { projectSlice } from '../state/projectSlice';
 import { render } from '@testing-library/react';
+import { projectOverviewSlice } from '../state/ProjectOverviewSlice';
 
 const { navigate } = vi.hoisted(() => ({
   navigate: vi.fn(),
@@ -23,6 +24,7 @@ function renderStateWrapper(projectState: { initialized: boolean; project?: stri
   const store = configureStore({
     reducer: {
       project: projectSlice.reducer,
+      projectOverview: projectOverviewSlice.reducer,
     },
     preloadedState: {
       project: projectState,
@@ -69,6 +71,27 @@ describe('StateWrapper', () => {
     });
 
     expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('navigates when the project overview protocol initializes', () => {
+    const store = configureStore({
+      reducer: {
+        project: projectSlice.reducer,
+        projectOverview: projectOverviewSlice.reducer,
+      },
+      preloadedState: {
+        project: { initialized: false },
+        projectOverview: { initialized: true, visible: true },
+      },
+    });
+
+    render(
+      <Provider store={store}>
+        <StateWrapper />
+      </Provider>
+    );
+
+    expect(navigate).toHaveBeenCalledWith(`/${ProjectName.overview}`, { replace: true });
   });
 
   it('does not navigate language server projects without a supported route', () => {

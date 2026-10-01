@@ -148,6 +148,11 @@
         "category": "Azure Logic Apps"
       },
       {
+        "command": "azureLogicAppsStandard.openProjectOverview",
+        "title": "Project overview",
+        "category": "Azure Logic Apps"
+      },
+      {
         "command": "azureLogicAppsStandard.cloudToLocal",
         "title": "Create new logic app workspace from package...",
         "category": "Azure Logic Apps"
@@ -682,6 +687,11 @@
         }
       ],
       "explorer/context": [
+        {
+          "command": "azureLogicAppsStandard.openProjectOverview",
+          "when": "azureLogicAppsStandard.hasProject && explorerResourceIsRoot == true",
+          "group": "navigation@1"
+        },
         {
           "command": "azureLogicAppsStandard.dataMap.createDataMap",
           "when": "azureLogicAppsStandard.hasProject && resourceFilename in azureLogicAppsStandard.dataMap.dmFolders",

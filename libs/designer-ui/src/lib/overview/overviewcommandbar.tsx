@@ -1,6 +1,6 @@
 import type { ButtonProps } from '@fluentui/react-components';
 import { Button, Toolbar } from '@fluentui/react-components';
-import { ArrowClockwiseRegular, PlayRegular } from '@fluentui/react-icons';
+import { ArrowClockwiseRegular, ArrowLeftRegular, PlayRegular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
 import { ChatButton } from './chat';
 import type { AgentURL } from '@microsoft/logic-apps-shared';
@@ -12,10 +12,11 @@ export interface OverviewCommandBarProps {
   isAgentWorkflow?: boolean;
   agentUrlLoading?: boolean;
   agentUrlData?: AgentURL;
+  isRunTriggerPending?: boolean;
   isWorkflowRuntimeRunning?: boolean;
-  hasCallbackInfo?: boolean;
   onRefresh(): void;
   onRunTrigger(): void;
+  onOpenProjectOverview?(): void;
 }
 
 export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({
@@ -24,11 +25,12 @@ export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({
   isAgentWorkflow,
   agentUrlLoading,
   agentUrlData,
+  isRunTriggerPending,
   isWorkflowRuntimeRunning,
-  hasCallbackInfo,
   onRefresh,
   onRunTrigger,
   canRunTrigger,
+  onOpenProjectOverview,
 }) => {
   const intl = useIntl();
 
@@ -42,6 +44,11 @@ export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({
       defaultMessage: 'Run trigger',
       id: 'lPTdSf',
       description: 'Button text for run trigger',
+    }),
+    ALL_PROJECT_WORKFLOWS: intl.formatMessage({
+      defaultMessage: 'All project workflows',
+      id: 'hiX2AZ',
+      description: 'Button text for returning from a workflow overview to the project overview',
     }),
   };
 
@@ -61,7 +68,7 @@ export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({
       icon: <PlayRegular />,
       title: Resources.OVERVIEW_RUN_TRIGGER,
       onClick: onRunTrigger,
-      disabled: !isWorkflowRuntimeRunning || !canRunTrigger,
+      disabled: !isWorkflowRuntimeRunning || !canRunTrigger || isRunTriggerPending,
     });
   }
 
@@ -73,6 +80,17 @@ export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({
 
   return (
     <Toolbar data-testid="msla-overview-command-bar" style={{ padding: '8px 0' }}>
+      {onOpenProjectOverview ? (
+        <Button
+          appearance="transparent"
+          aria-label={Resources.ALL_PROJECT_WORKFLOWS}
+          icon={<ArrowLeftRegular />}
+          onClick={onOpenProjectOverview}
+          title={Resources.ALL_PROJECT_WORKFLOWS}
+        >
+          {Resources.ALL_PROJECT_WORKFLOWS}
+        </Button>
+      ) : null}
       {isAgentWorkflow ? (
         <ChatButton
           loading={agentUrlLoading}

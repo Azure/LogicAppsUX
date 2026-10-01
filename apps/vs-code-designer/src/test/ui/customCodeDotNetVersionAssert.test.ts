@@ -42,7 +42,6 @@ import {
   invokeWorkflowCallback,
   startDebugging,
   stopDebugging,
-  verifyAllNodesSucceeded,
   verifyLatestRunActionRunsSucceeded,
   waitForOverviewView,
   waitForRunStatusInList,
@@ -208,9 +207,11 @@ describe('Assert Workspace: CustomCode .NET 8 runtime', function () {
       await assertRunTriggerable(driver, { workflowName: entry.wfName });
       await clickRefresh(driver);
 
+      let usedCallbackFallback = false;
       let { found: succeeded, lastStatus } = await waitForRunStatusInList(driver, 'Succeeded', 180_000);
       if (!succeeded) {
         log(`overview Run trigger did not show a succeeded run (last status: "${lastStatus}"); invoking callback URL directly`);
+        usedCallbackFallback = true;
         assert.ok(
           await invokeWorkflowCallback(driver, { workflowName: entry.wfName, body: { source: 'customcode-dotnet-e2e' } }),
           'callback URL invocation should succeed'
@@ -222,16 +223,13 @@ describe('Assert Workspace: CustomCode .NET 8 runtime', function () {
       const openedRun = await clickLatestRunRow(driver);
       assert.ok(openedRun, 'should be able to open the latest (succeeded) run');
 
-      const { allSucceeded, details } = await verifyAllNodesSucceeded(driver, entry.wfName, 60_000);
-      assert.ok(allSucceeded, `all action nodes should be succeeded (${details})`);
-
       // Explicit action-NAME-level evidence: query the management API directly
-      // (regardless of which internal path verifyAllNodesSucceeded took) and
-      // assert the generated InvokeFunction action specifically succeeded —
-      // proving the local-function/custom-code action ran, not just "some
-      // action succeeded".
-      const actionResult = await verifyLatestRunActionRunsSucceeded(entry.wfName);
+      // and assert the generated InvokeFunction action specifically succeeded.
+      // Management-trigger runs have no HTTP response channel, so Response can
+      // be skipped; callback fallback runs still require every action to succeed.
+      const actionResult = await verifyLatestRunActionRunsSucceeded(entry.wfName, usedCallbackFallback ? [] : ['Response']);
       assert.ok(actionResult, 'management API should return per-action run statuses for the latest run');
+      assert.ok(actionResult!.allSucceeded, `all executable action nodes should be succeeded (${actionResult!.details})`);
       assert.ok(
         new RegExp(`${INVOKE_FUNCTION_ACTION_NAME}:Succeeded`, 'i').test(actionResult!.details),
         `"${INVOKE_FUNCTION_ACTION_NAME}" action should have status Succeeded (${actionResult!.details})`

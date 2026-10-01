@@ -175,6 +175,7 @@ export const extensionCommand = {
   toggleDesignTimeNodeWorker: 'azureLogicAppsStandard.toggleDesignTimeNodeWorker',
   openInPortal: 'azureLogicAppsStandard.openInPortal',
   openOverview: 'azureLogicAppsStandard.openOverview',
+  openProjectOverview: 'azureLogicAppsStandard.openProjectOverview',
   exportLogicApp: 'azureLogicAppsStandard.exportLogicApp',
   reviewValidation: 'azureLogicAppsStandard.reviewValidation',
   browseWebsite: 'azureLogicAppsStandard.browseWebsite',

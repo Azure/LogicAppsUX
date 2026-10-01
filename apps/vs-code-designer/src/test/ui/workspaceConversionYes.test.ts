@@ -10,9 +10,8 @@
  *   1. Pre-click filesystem invariants (A1-A7): .code-workspace, host.json,
  *      launch.json with a logic-app debug configuration, tasks.json with
  *      a "func: host start" task, workflow.json all exist & parse.
- *   2. The ensureWorkspace prompt is shown as a **modal** dialog
- *      (ensureWorkspace.ts:119-121 — `{ modal: true }`), so detection
- *      uses ExTester's ModalDialog only. No notification fallback.
+ *   2. The ensureWorkspace prompt is detected whether VS Code renders it as
+ *      a modal dialog or a workspace recommendation notification.
  *   3. Clicking the localized "Yes" button (en-US locale locked via run-e2e.js;
  *      label matches `DialogResponses.yes.title` from `@microsoft/vscode-azext-utils`)
  *      either reloads the window (session ends or title flips to
@@ -24,7 +23,7 @@
  *
  * Phase 4.8d — own session, startup resource = workspace directory.
  *
- * Hardening: modal-only detection, stale-element retry, focus/keyboard fallback,
+ * Hardening: scoped prompt-action selection, stale-element retry, focus/keyboard fallback,
  * locale-locked labels, pre-flight Quick Input cleanup, visibility waits,
  * diagnostic dumps, and milestone screenshots.
  */
@@ -113,13 +112,21 @@ async function waitForWorkspacePrompt(driver: WebDriver, timeoutMs: number): Pro
 
 async function clickWorkspacePromptButton(driver: WebDriver): Promise<boolean> {
   return driver.executeScript<boolean>(`
-    const labels = ['yes', 'open workspace'];
-    const buttons = Array.from(document.querySelectorAll('button, a.monaco-button, .monaco-button'));
-    for (const button of buttons) {
-      const text = (button.textContent || button.getAttribute('aria-label') || '').trim().toLowerCase();
-      if (labels.some((label) => text.includes(label))) {
-        button.click();
-        return true;
+    const labels = new Set(['yes', 'open workspace']);
+    const prompts = Array.from(
+      document.querySelectorAll('[role="dialog"], .monaco-dialog-box, .notification-toast, .notifications-toasts .notification-list-item')
+    );
+    for (const prompt of prompts) {
+      if (!/workspace/i.test(prompt.textContent || '')) {
+        continue;
+      }
+      const buttons = Array.from(prompt.querySelectorAll('button, a.monaco-button, .monaco-button'));
+      for (const button of buttons) {
+        const text = (button.textContent || button.getAttribute('aria-label') || '').trim().toLowerCase();
+        if (labels.has(text)) {
+          button.click();
+          return true;
+        }
       }
     }
     return false;
@@ -268,19 +275,21 @@ describe('Workspace Conversion — Click Yes', function () {
     // R9: milestone — about to focus + click.
     await captureScreenshot(driver, 'conversion-yes-focus-applied', EXPLICIT_SCREENSHOT_DIR);
 
-    // R2 + R3 + R4 + R6: single retrying handle, force-focus + visibility wait
-    // + Tab+Enter fallback, using the locale-locked Yes label (see
-    // YES_BUTTON_LABEL constant) instead of scanning a fallback list.
+    // Prefer the exact action in the detected prompt container. VS Code can
+    // render the workspace recommendation as either a modal or a notification.
+    // Fall back to the modal page object for older VS Code renderings.
     let clickThrew: unknown;
     try {
-      await pushDialogButtonWithRetry(driver, YES_BUTTON_LABEL, 3, DIAGNOSTICS_DIR);
+      if (await clickWorkspacePromptButton(driver)) {
+        console.log('[conversionYes] Clicked workspace prompt action via scoped selector');
+      } else {
+        await pushDialogButtonWithRetry(driver, YES_BUTTON_LABEL, 3, DIAGNOSTICS_DIR);
+      }
     } catch (e) {
       clickThrew = e;
       if (isSessionEnded(e)) {
         // Session-ended during click = reload raced ahead of the click ACK. That's success.
         console.log('[conversionYes] Selenium session ended during click — VS Code reloaded');
-      } else if (await clickWorkspacePromptButton(driver).catch(() => false)) {
-        console.log('[conversionYes] Clicked workspace prompt button via selector fallback');
       } else {
         await dumpDialogDiagnostics(driver, 'conversion-yes-click-failed', DIAGNOSTICS_DIR);
         throw e;
@@ -375,4 +384,3 @@ describe('Workspace Conversion — Click Yes', function () {
     console.log('[conversionYes] PASSED — prompt appeared, Yes clicked, post-conditions verified');
   });
 });
-

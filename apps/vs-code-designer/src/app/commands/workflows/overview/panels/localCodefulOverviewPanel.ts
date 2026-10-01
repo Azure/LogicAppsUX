@@ -25,18 +25,19 @@ import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { readFileSync } from 'fs';
 import { basename, dirname } from 'path';
 import * as vscode from 'vscode';
+import type { WorkflowOverviewProjectOrigin } from '../openOverview';
 
 export default class LocalCodefulOverviewPanel extends LocalOverviewPanel {
   private codefulWorkflowFileContent = '';
   private isCodefulRuntimeMetadataConfirmed = false;
   private workflowPropertiesListSignature = '';
 
-  constructor(context: IActionContext, node: vscode.Uri) {
-    super(context, node);
+  constructor(context: IActionContext, node: vscode.Uri, projectOrigin?: WorkflowOverviewProjectOrigin) {
+    super(context, node, projectOrigin);
     this.isCodefulOverview = true;
 
     const projectName = basename(dirname(this.workflowFilePath));
-    this.panelName = `${vscode.workspace.name}-${projectName}-codeful-overview`;
+    this.panelName = this.getPanelCacheName(`${vscode.workspace.name}-${projectName}-codeful-overview`);
     this.panelTitle = `${projectName}-overview`;
   }
 
@@ -57,9 +58,7 @@ export default class LocalCodefulOverviewPanel extends LocalOverviewPanel {
       );
     }
 
-    this.localSettings = this.projectPath
-      ? (await getLocalSettingsJson(this.context, this.projectPath)).Values || {}
-      : {};
+    this.localSettings = this.projectPath ? (await getLocalSettingsJson(this.context, this.projectPath)).Values || {} : {};
 
     const fileContent = readFileSync(this.workflowFilePath, 'utf8');
     this.codefulWorkflowFileContent = fileContent;

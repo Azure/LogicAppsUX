@@ -5,6 +5,7 @@ import { languageServerSlice } from './LanguageServerSlice';
 import { workflowSlice } from './WorkflowSlice';
 import { projectSlice } from './projectSlice';
 import { createWorkspaceSlice } from './createWorkspaceSlice';
+import { projectOverviewSlice } from './ProjectOverviewSlice';
 import { configureStore } from '@reduxjs/toolkit';
 
 export const store = configureStore({
@@ -16,6 +17,7 @@ export const store = configureStore({
     dataMap: dataMapSliceV2.reducer, // Data Mapper V2
     languageServer: languageServerSlice.reducer,
     createWorkspace: createWorkspaceSlice.reducer,
+    projectOverview: projectOverviewSlice.reducer,
   },
 });
 

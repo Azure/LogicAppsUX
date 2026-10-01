@@ -10,6 +10,10 @@ import { localize } from '../../localize';
 import { ext } from '../../extensionVariables';
 import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import { pickCustomCodeNetFxWorkerProcessInternal, pickCustomCodeNetHostProcessInternal } from './pickCustomCodeWorkerProcess';
+import { projectRuntimeRegistry } from '../utils/funcCoreTools/projectRuntimeRegistry';
+import { openProjectOverviewForDebugInvocation } from './workflows/projectOverview/openProjectOverview';
+
+const debugInvocationConfigurationKey = 'logicAppsDebugInvocationId';
 
 export async function debugLogicApp(
   context: IActionContext,
@@ -46,99 +50,144 @@ export async function debugLogicApp(
     )
   );
 
-  context.telemetry.properties.lastStep = 'pickFuncProcess';
-  const funcProcessId = await callWithTelemetryAndErrorHandling('debugLogicApp.pickFuncProcess', async (actionContext: IActionContext) => {
-    actionContext.errorHandling.rethrow = true;
-    actionContext.errorHandling.suppressDisplay = true;
-    return await pickFuncProcessInternal(actionContext, debugConfig, resolvedWorkspaceFolder, projectPath);
-  });
-  const logicAppLaunchConfig = {
-    name: localize('attachToNetFunc', `Debug logic app ${logicAppName}`),
-    type: debugConfig.funcRuntime,
-    request: 'attach',
-    processId: funcProcessId,
-  };
-  ext.outputChannel.appendLog(
-    localize(
-      'workflowDebugAttachAttempt',
-      'Attempting workflow debug attach for "{0}" using runtime "{1}" and process ID "{2}".',
-      logicAppName,
-      String(logicAppLaunchConfig.type),
-      String(logicAppLaunchConfig.processId)
-    )
-  );
-  context.telemetry.properties.lastStep = 'startDebugging';
-  const workflowAttachStarted = await vscode.debug.startDebugging(resolvedWorkspaceFolder, logicAppLaunchConfig);
-  ext.outputChannel.appendLog(
-    localize(
-      'workflowDebugAttachResult',
-      'Workflow debug attach request for "{0}" completed with result "{1}".',
-      logicAppName,
-      String(workflowAttachStarted)
-    )
-  );
-
-  let functionLaunchConfig: vscode.DebugConfiguration | undefined;
-  if (debugConfig.customCodeRuntime) {
-    context.telemetry.properties.lastStep = 'pickCustomCodeProcess';
-    if (debugConfig.customCodeRuntime === 'coreclr') {
-      const customCodeNetHostProcessId = await callWithTelemetryAndErrorHandling('debugLogicApp.pickCustomCodeNetHostProcess', async (actionContext: IActionContext) => {
+  const debugInvocationId = projectRuntimeRegistry.createDebugInvocationId(projectPath);
+  let overviewScheduled = false;
+  try {
+    context.telemetry.properties.lastStep = 'pickFuncProcess';
+    let funcProcessId: string | undefined;
+    try {
+      funcProcessId = await callWithTelemetryAndErrorHandling('debugLogicApp.pickFuncProcess', async (actionContext: IActionContext) => {
         actionContext.errorHandling.rethrow = true;
         actionContext.errorHandling.suppressDisplay = true;
-        return await pickCustomCodeNetHostProcessInternal(actionContext, resolvedWorkspaceFolder, projectPath, debugConfig.isCodeless);
+        return await pickFuncProcessInternal(actionContext, debugConfig, resolvedWorkspaceFolder, projectPath, debugInvocationId);
       });
-      functionLaunchConfig = {
-        name: localize('attachToCustomCodeFunc', 'Debug local function'),
-        type: debugConfig.customCodeRuntime,
-        request: 'attach',
-        processId: customCodeNetHostProcessId,
-      };
-    } else if (debugConfig.customCodeRuntime === 'clr') {
-      const customCodeNetFxWorkerProcessId = await callWithTelemetryAndErrorHandling('debugLogicApp.pickCustomCodeNetFxWorkerProcess', async (actionContext: IActionContext) => {
-        actionContext.errorHandling.rethrow = true;
-        actionContext.errorHandling.suppressDisplay = true;
-        return await pickCustomCodeNetFxWorkerProcessInternal(actionContext, resolvedWorkspaceFolder, projectPath);
-      });
-      functionLaunchConfig = {
-        name: localize('attachToFunc', 'Debug local function'),
-        type: debugConfig.customCodeRuntime,
-        request: 'attach',
-        processId: customCodeNetFxWorkerProcessId,
-      };
-    } else {
-      const errorMessage = 'Unsupported custom code runtime "{0}".';
-      context.telemetry.properties.result = 'Failed';
-      context.telemetry.properties.errorMessage = errorMessage.replace('{0}', debugConfig.customCodeRuntime);
-      throw new Error(localize('unsupportedCustomCodeRuntime', errorMessage, debugConfig.customCodeRuntime));
+    } catch (error) {
+      projectRuntimeRegistry.cancelDebugInvocation(projectPath, debugInvocationId);
+      throw error;
     }
-  }
+    const logicAppLaunchConfig = {
+      name: localize('attachToNetFunc', `Debug logic app ${logicAppName}`),
+      type: debugConfig.funcRuntime,
+      request: 'attach',
+      processId: funcProcessId,
+      [debugInvocationConfigurationKey]: debugInvocationId,
+    };
+    ext.outputChannel.appendLog(
+      localize(
+        'workflowDebugAttachAttempt',
+        'Attempting workflow debug attach for "{0}" using runtime "{1}" and process ID "{2}".',
+        logicAppName,
+        String(logicAppLaunchConfig.type),
+        String(logicAppLaunchConfig.processId)
+      )
+    );
+    context.telemetry.properties.lastStep = 'startDebugging';
+    const workflowAttachStarted = await vscode.debug.startDebugging(resolvedWorkspaceFolder, logicAppLaunchConfig);
+    ext.outputChannel.appendLog(
+      localize(
+        'workflowDebugAttachResult',
+        'Workflow debug attach request for "{0}" completed with result "{1}".',
+        logicAppName,
+        String(workflowAttachStarted)
+      )
+    );
 
-  if (functionLaunchConfig?.processId) {
-    ext.outputChannel.appendLog(
-      localize(
-        'customCodeDebugAttachAttempt',
-        'Attempting custom code debug attach for "{0}" using runtime "{1}" and process ID "{2}".',
-        logicAppName,
-        String(functionLaunchConfig.type),
-        String(functionLaunchConfig.processId)
-      )
-    );
-    const customCodeAttachStarted = await vscode.debug.startDebugging(resolvedWorkspaceFolder, functionLaunchConfig);
-    ext.outputChannel.appendLog(
-      localize(
-        'customCodeDebugAttachResult',
-        'Custom code debug attach request for "{0}" completed with result "{1}".',
-        logicAppName,
-        String(customCodeAttachStarted)
-      )
-    );
-  } else if (debugConfig.customCodeRuntime) {
-    ext.outputChannel.appendLog(
-      localize(
-        'customCodeDebugAttachSkipped',
-        'Skipping custom code debug attach for "{0}" because no custom code worker process was found.',
-        logicAppName
-      )
-    );
+    let functionLaunchConfig: vscode.DebugConfiguration | undefined;
+    if (debugConfig.customCodeRuntime) {
+      context.telemetry.properties.lastStep = 'pickCustomCodeProcess';
+      if (debugConfig.customCodeRuntime === 'coreclr') {
+        const customCodeNetHostProcessId = await callWithTelemetryAndErrorHandling(
+          'debugLogicApp.pickCustomCodeNetHostProcess',
+          async (actionContext: IActionContext) => {
+            actionContext.errorHandling.rethrow = true;
+            actionContext.errorHandling.suppressDisplay = true;
+            return await pickCustomCodeNetHostProcessInternal(actionContext, resolvedWorkspaceFolder, projectPath, debugConfig.isCodeless);
+          }
+        );
+        functionLaunchConfig = {
+          name: localize('attachToCustomCodeFunc', 'Debug local function'),
+          type: debugConfig.customCodeRuntime,
+          request: 'attach',
+          processId: customCodeNetHostProcessId,
+          [debugInvocationConfigurationKey]: debugInvocationId,
+        };
+      } else if (debugConfig.customCodeRuntime === 'clr') {
+        const customCodeNetFxWorkerProcessId = await callWithTelemetryAndErrorHandling(
+          'debugLogicApp.pickCustomCodeNetFxWorkerProcess',
+          async (actionContext: IActionContext) => {
+            actionContext.errorHandling.rethrow = true;
+            actionContext.errorHandling.suppressDisplay = true;
+            return await pickCustomCodeNetFxWorkerProcessInternal(actionContext, resolvedWorkspaceFolder, projectPath);
+          }
+        );
+        functionLaunchConfig = {
+          name: localize('attachToFunc', 'Debug local function'),
+          type: debugConfig.customCodeRuntime,
+          request: 'attach',
+          processId: customCodeNetFxWorkerProcessId,
+          [debugInvocationConfigurationKey]: debugInvocationId,
+        };
+      } else {
+        const errorMessage = 'Unsupported custom code runtime "{0}".';
+        context.telemetry.properties.result = 'Failed';
+        context.telemetry.properties.errorMessage = errorMessage.replace('{0}', debugConfig.customCodeRuntime);
+        throw new Error(localize('unsupportedCustomCodeRuntime', errorMessage, debugConfig.customCodeRuntime));
+      }
+    }
+
+    let customCodeAttachStarted = true;
+    if (functionLaunchConfig?.processId) {
+      ext.outputChannel.appendLog(
+        localize(
+          'customCodeDebugAttachAttempt',
+          'Attempting custom code debug attach for "{0}" using runtime "{1}" and process ID "{2}".',
+          logicAppName,
+          String(functionLaunchConfig.type),
+          String(functionLaunchConfig.processId)
+        )
+      );
+      customCodeAttachStarted = await vscode.debug.startDebugging(resolvedWorkspaceFolder, functionLaunchConfig);
+      ext.outputChannel.appendLog(
+        localize(
+          'customCodeDebugAttachResult',
+          'Custom code debug attach request for "{0}" completed with result "{1}".',
+          logicAppName,
+          String(customCodeAttachStarted)
+        )
+      );
+    } else if (debugConfig.customCodeRuntime) {
+      ext.outputChannel.appendLog(
+        localize(
+          'customCodeDebugAttachSkipped',
+          'Skipping custom code debug attach for "{0}" because no custom code worker process was found.',
+          logicAppName
+        )
+      );
+    }
+
+    if (workflowAttachStarted && customCodeAttachStarted) {
+      const overviewPromise = openProjectOverviewForDebugInvocation(context, projectPath, debugInvocationId);
+      const terminationDisposable = vscode.debug.onDidTerminateDebugSession((session) => {
+        if (session.configuration[debugInvocationConfigurationKey] === debugInvocationId) {
+          projectRuntimeRegistry.endDebugInvocation(projectPath, debugInvocationId);
+        }
+      });
+      overviewScheduled = true;
+      overviewPromise
+        .finally(() => terminationDisposable.dispose())
+        .catch((error) =>
+          ext.outputChannel.appendLog(
+            localize(
+              'projectOverviewAutoOpenFailed',
+              'Failed to open the project overview after debug startup. Error: {0}',
+              error instanceof Error ? error.message : String(error)
+            )
+          )
+        );
+    }
+  } finally {
+    if (!overviewScheduled) {
+      projectRuntimeRegistry.endDebugInvocation(projectPath, debugInvocationId);
+    }
   }
 }

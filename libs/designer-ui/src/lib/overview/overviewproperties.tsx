@@ -1,5 +1,6 @@
 import { Label, Link, Pivot, PivotItem } from '@fluentui/react';
-import { Text } from '@fluentui/react-components';
+import { Button, Text } from '@fluentui/react-components';
+import { CopyRegular } from '@fluentui/react-icons';
 import { getCallbackUrl, getIsCallbackUrlSupported } from '@microsoft/logic-apps-shared';
 import type { CallbackInfo, LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
@@ -18,6 +19,7 @@ export interface OverviewPropertiesProps {
   agentUrl?: string;
   agentApiKey?: string;
   isWorkflowRuntimeRunning?: boolean;
+  onCopyCallbackUrl?(): void;
 }
 
 export const OverviewProperties: React.FC<OverviewPropertiesProps> = ({
@@ -30,6 +32,7 @@ export const OverviewProperties: React.FC<OverviewPropertiesProps> = ({
   agentUrl,
   agentApiKey,
   isWorkflowRuntimeRunning,
+  onCopyCallbackUrl,
 }) => {
   const intl = useIntl();
   const styles = useOverviewStyles();
@@ -43,6 +46,11 @@ export const OverviewProperties: React.FC<OverviewPropertiesProps> = ({
       defaultMessage: 'Callback URL:',
       id: 'woJQhv',
       description: 'Label text for callback URL',
+    }),
+    COPY_CALLBACK_URL: intl.formatMessage({
+      defaultMessage: 'Copy callback URL',
+      id: 'R/Dbu8',
+      description: 'Button text for copying the workflow callback URL',
     }),
     AGENT_URL: intl.formatMessage({
       defaultMessage: 'Agent URL:',
@@ -108,10 +116,19 @@ export const OverviewProperties: React.FC<OverviewPropertiesProps> = ({
           {callbackUrl ? (
             <Label>
               <Text>{Resources.CALLBACK_URL}</Text>
-              <div>
+              <div className={styles.callbackUrl}>
                 <Link as="a" href={callbackUrl} rel="noopener" target="_blank">
                   {callbackUrl}
                 </Link>
+                {onCopyCallbackUrl ? (
+                  <Button
+                    appearance="subtle"
+                    aria-label={Resources.COPY_CALLBACK_URL}
+                    icon={<CopyRegular />}
+                    onClick={onCopyCallbackUrl}
+                    title={Resources.COPY_CALLBACK_URL}
+                  />
+                ) : null}
               </div>
             </Label>
           ) : null}

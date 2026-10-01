@@ -52,6 +52,7 @@ import { enableAzureConnectors } from './azureConnectors/enableAzureConnectors';
 import { exportLogicApp } from './workflows/exportLogicApp';
 import { openDesigner } from './workflows/designer/openDesigner';
 import { openOverview } from './workflows/overview/openOverview';
+import { openProjectOverview } from './workflows/projectOverview/openProjectOverview';
 import { reviewValidation } from './workflows/reviewValidation';
 import { switchDebugMode } from './workflows/switchDebugMode/switchDebugMode';
 import { switchToDotnetProjectCommand } from './workflows/switchToDotnetProject';
@@ -110,6 +111,7 @@ export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.getDebugSymbolDll, getDebugSymbolDll);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.deleteLogicApp, deleteLogicApp);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openOverview, openOverview);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.openProjectOverview, openProjectOverview);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.exportLogicApp, exportLogicApp);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.reviewValidation, reviewValidation);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.switchToDotnetProject, switchToDotnetProjectCommand);

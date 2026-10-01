@@ -9,6 +9,7 @@ import { Summary } from '../app/export/summary/summary';
 import { Validation } from '../app/export/validation/validation';
 import { WorkflowsSelection } from '../app/export/workflowsSelection/workflowsSelection';
 import { OverviewApp } from '../app/overview/app';
+import { ProjectOverviewApp } from '../app/projectOverview/app';
 import { ReviewApp } from '../app/review';
 import {
   CreateWorkspace,
@@ -20,6 +21,13 @@ import {
 import { StateWrapper } from '../stateWrapper';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { RouteName } from '@microsoft/vscode-extension-logic-apps';
+import type { RootState } from '../state/store';
+import { useSelector } from 'react-redux';
+
+const OverviewEntry = () => {
+  const isProjectOverview = useSelector((state: RootState) => state.projectOverview.initialized);
+  return isProjectOverview ? <ProjectOverviewApp /> : <OverviewApp />;
+};
 
 export const Router: React.FC = () => {
   return (
@@ -34,7 +42,7 @@ export const Router: React.FC = () => {
           <Route path={`${RouteName.status}`} element={<Status />} />
         </Route>
         <Route path={`/${RouteName.review}`} element={<ReviewApp />} />
-        <Route path={`/${RouteName.overview}`} element={<OverviewApp />} />
+        <Route path={`/${RouteName.overview}`} element={<OverviewEntry />} />
         <Route path={`/${RouteName.dataMapper}`} element={<DataMapperApp />} />
         <Route path={`/${RouteName.designer}`} element={<DesignerApp />} />
         <Route path={`/${RouteName.languageServer}`} element={<LanguageServerConnectionView />}>

@@ -25,7 +25,7 @@ import {
   invokeWorkflowCallback,
   startDebugging,
   stopDebugging,
-  verifyAllNodesSucceeded,
+  verifyLatestRunActionRunsSucceeded,
   waitForOverviewView,
   waitForRunStatusInList,
   waitForRuntimeReady,
@@ -705,11 +705,13 @@ async function runAndVerifyWorkflow(
     await assertRunTriggerable(driver, { workflowName: entry.wfName });
     await clickRefresh(driver);
 
+    let usedCallbackFallback = false;
     let { found: succeeded, lastStatus } = await waitForRunStatusInList(driver, 'Succeeded', 180_000);
     if (!succeeded) {
       console.log(
         `[nugetDebugConversion] ${phase}: overview Run trigger did not create a visible succeeded run (last status: "${lastStatus}"); invoking callback URL directly`
       );
+      usedCallbackFallback = true;
       assert.ok(
         await invokeWorkflowCallback(driver, { workflowName: entry.wfName, body: { source: 'nuget-debug-conversion-e2e' } }),
         `${phase}: callback URL invocation should succeed`
@@ -718,22 +720,22 @@ async function runAndVerifyWorkflow(
     }
 
     if (!succeeded) {
-      const { allSucceeded, details } = await verifyAllNodesSucceeded(driver, entry.wfName, 2000);
-      assert.ok(allSucceeded, `${phase}: callback invocation should produce a succeeded run (${details})`);
+      const actionResult = await verifyLatestRunActionRunsSucceeded(entry.wfName);
+      assert.ok(actionResult?.allSucceeded, `${phase}: callback invocation should produce a succeeded run (${actionResult?.details})`);
       return;
     }
 
     if (!(await clickLatestRunRow(driver))) {
-      const { allSucceeded, details } = await verifyAllNodesSucceeded(driver, entry.wfName, 2000);
+      const actionResult = await verifyLatestRunActionRunsSucceeded(entry.wfName, usedCallbackFallback ? [] : ['Response']);
       assert.ok(
-        allSucceeded,
-        `${phase}: succeeded run should be verifiable through action API when row navigation is unavailable (${details})`
+        actionResult?.allSucceeded,
+        `${phase}: succeeded run should be verifiable through action API when row navigation is unavailable (${actionResult?.details})`
       );
       return;
     }
 
-    const { allSucceeded, details } = await verifyAllNodesSucceeded(driver, entry.wfName, 2000);
-    assert.ok(allSucceeded, `${phase}: all action nodes should be succeeded (${details})`);
+    const actionResult = await verifyLatestRunActionRunsSucceeded(entry.wfName, usedCallbackFallback ? [] : ['Response']);
+    assert.ok(actionResult?.allSucceeded, `${phase}: all executable action nodes should be succeeded (${actionResult?.details})`);
   } finally {
     await overview.switchBack().catch(() => undefined);
     await driver

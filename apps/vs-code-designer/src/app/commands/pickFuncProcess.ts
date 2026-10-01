@@ -37,6 +37,7 @@ const funcTaskStartupTimeoutSeconds = 10 * 60;
 import { getProjFiles } from '../utils/dotnet/dotnet';
 import { hasCodefulWorkflowSetting } from '../utils/codeful';
 import { delay } from '../utils/delay';
+import { projectRuntimeRegistry, type ProjectRuntimeHandle } from '../utils/funcCoreTools/projectRuntimeRegistry';
 
 type OSAgnosticProcess = { command: string | undefined; pid: number | string };
 type ActualUnixPS = unixPsTree.PS & { COMM?: string };
@@ -77,7 +78,8 @@ export async function pickFuncProcessInternal(
   context: IActionContext,
   debugConfig: vscode.DebugConfiguration,
   workspaceFolder: vscode.WorkspaceFolder,
-  projectPath: string
+  projectPath: string,
+  debugInvocationId?: string
 ): Promise<string | undefined> {
   context.telemetry.properties.lastStep = 'activateAzurite';
   const isAzuriteStarted = await callWithTelemetryAndErrorHandling(
@@ -154,30 +156,38 @@ export async function pickFuncProcessInternal(
     throw new Error(localize('noFuncTask', 'Failed to find "{0}" task.', preLaunchTaskName || hostStartTaskName));
   }
 
-  ext.workflowRuntimePort = getFunctionRuntimePort(funcTask);
+  const runtimePort = getFunctionRuntimePort(funcTask);
+  ext.workflowRuntimePort = runtimePort;
+  const runtimeHandle = projectRuntimeRegistry.beginRuntimeStart(projectPath, workspaceFolder.uri, runtimePort, debugInvocationId);
 
-  getPickProcessTimeout(context);
+  try {
+    getPickProcessTimeout(context);
 
-  const isCodelessNugetProject = !isBundleProject && debugConfig.isCodeless === true && !debugConfig.customCodeRuntime;
-  if (debugTask && !debugConfig['noDebug'] && (isBundleProject || !debugConfig.isCodeless || isCodelessNugetProject)) {
-    await startDebugTask(debugTask, workspaceFolder);
+    const isCodelessNugetProject = !isBundleProject && debugConfig.isCodeless === true && !debugConfig.customCodeRuntime;
+    if (debugTask && !debugConfig['noDebug'] && (isBundleProject || !debugConfig.isCodeless || isCodelessNugetProject)) {
+      await startDebugTask(debugTask, workspaceFolder);
+    }
+
+    const taskInfo = await startFuncTask(context, workspaceFolder, funcTask, runtimeHandle);
+    projectRuntimeRegistry.markRunning(runtimeHandle, taskInfo.processId);
+    const preferHostChildProcess = process.platform === Platform.windows && !debugConfig.customCodeRuntime;
+    ext.outputChannel.appendLog(
+      localize(
+        'resolveWorkflowDebugProcess',
+        'Resolving workflow debug process for project "{0}". funcRuntime={1}, customCodeRuntime={2}, isCodeless={3}, preferHostChildProcess={4}, platform={5}.',
+        projectPath,
+        debugConfig.funcRuntime ?? 'undefined',
+        debugConfig.customCodeRuntime ?? 'none',
+        String(Boolean(debugConfig.isCodeless)),
+        String(preferHostChildProcess),
+        process.platform
+      )
+    );
+    return await pickWorkflowDebugProcess(taskInfo, preferHostChildProcess);
+  } catch (error) {
+    projectRuntimeRegistry.fail(runtimeHandle);
+    throw error;
   }
-
-  const taskInfo = await startFuncTask(context, workspaceFolder, funcTask);
-  const preferHostChildProcess = process.platform === Platform.windows && !debugConfig.customCodeRuntime;
-  ext.outputChannel.appendLog(
-    localize(
-      'resolveWorkflowDebugProcess',
-      'Resolving workflow debug process for project "{0}". funcRuntime={1}, customCodeRuntime={2}, isCodeless={3}, preferHostChildProcess={4}, platform={5}.',
-      projectPath,
-      debugConfig.funcRuntime ?? 'undefined',
-      debugConfig.customCodeRuntime ?? 'none',
-      String(Boolean(debugConfig.isCodeless)),
-      String(preferHostChildProcess),
-      process.platform
-    )
-  );
-  return await pickWorkflowDebugProcess(taskInfo, preferHostChildProcess);
 }
 
 /**
@@ -252,7 +262,8 @@ async function startDebugTask(debugTask: vscode.Task, workspaceFolder: vscode.Wo
 async function startFuncTask(
   context: IActionContext,
   workspaceFolder: vscode.WorkspaceFolder,
-  funcTask: vscode.Task
+  funcTask: vscode.Task,
+  runtimeHandle: ProjectRuntimeHandle
 ): Promise<IRunningFuncTask> {
   const funcTaskReadyEmitter = new vscode.EventEmitter<vscode.WorkspaceFolder>();
   const pickProcessTimeout = getPickProcessTimeout(context);
@@ -278,6 +289,12 @@ async function startFuncTask(
     // The "IfNotActive" part helps when the user starts, stops and restarts debugging quickly in succession. We want to use the already-active task to avoid two func tasks causing a port conflict error
     // The most common case we hit this is if the "clean" or "build" task is running when we get here. It's unlikely the "func host start" task is active, since we already stopped any previous workspace-scoped func task above.
     await executeIfNotActive(funcTask);
+    const taskExecution = vscode.tasks.taskExecutions?.find(
+      (execution) => scopeMatchesWorkspace(execution.task.scope, workspaceFolder) && isFuncHostTask(execution.task)
+    );
+    if (taskExecution) {
+      projectRuntimeRegistry.bindTaskExecution(runtimeHandle, taskExecution);
+    }
 
     const intervalMs = 500;
     const funcPort: string = await getFuncPortFromTaskOrProject(context, funcTask, workspaceFolder);

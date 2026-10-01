@@ -1,6 +1,15 @@
 import { makeStyles } from '@fluentui/react-components';
 
 export const useOverviewStyles = makeStyles({
+  callbackUrl: {
+    alignItems: 'center',
+    display: 'flex',
+    gap: '4px',
+    minWidth: 0,
+    '& > a': {
+      overflowWrap: 'anywhere',
+    },
+  },
   runHistoryFilter: {
     alignItems: 'center',
     display: 'flex',
@@ -9,6 +18,11 @@ export const useOverviewStyles = makeStyles({
     '& > button': {
       alignSelf: 'baseline',
     },
+  },
+  runHistoryActions: {
+    alignItems: 'center',
+    display: 'flex',
+    gap: '4px',
   },
   overviewLoadMore: {
     display: 'block',

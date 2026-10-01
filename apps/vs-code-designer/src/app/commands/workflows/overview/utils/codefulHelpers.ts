@@ -20,7 +20,7 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ICallbackUrlResponse } from '@microsoft/vscode-extension-logic-apps';
 import type { CodefulTriggerData, CodefulWorkflowData, CodefulWorkflowDataResult, OverviewWorkflowProperties } from './types';
 import { readFileSync, readdirSync } from 'fs';
-import { basename, dirname, join } from 'path';
+import { basename as getBaseName, dirname, join } from 'path';
 
 export async function getCodefulWorkflowCallbackInfo(
   context: IActionContext,
@@ -236,9 +236,24 @@ export async function getRuntimeCodefulWorkflows(
 }
 
 export function getCodefulWorkflowNames(filePath: string): string[] {
+  const projectDir = dirname(filePath);
+  const projectFiles = readdirSync(projectDir)
+    .filter((file) => file.endsWith('.cs') && file !== getBaseName(filePath))
+    .map((file) => join(projectDir, file));
+  return extractCodefulWorkflowNames([filePath, ...projectFiles]);
+}
+
+export function getCodefulWorkflowNamesFromProject(projectDir: string): string[] {
+  return extractCodefulWorkflowNames(
+    readdirSync(projectDir)
+      .filter((file) => file.endsWith('.cs'))
+      .map((file) => join(projectDir, file))
+  );
+}
+
+function extractCodefulWorkflowNames(filePaths: string[]): string[] {
   const workflowNames: string[] = [];
   const visitedFiles = new Set<string>();
-  const projectDir = dirname(filePath);
 
   const extractWorkflowsFromFile = (currentFilePath: string): void => {
     if (visitedFiles.has(currentFilePath)) {
@@ -256,13 +271,6 @@ export function getCodefulWorkflowNames(filePath: string): string[] {
           workflowNames.push(workflowName);
         }
       }
-
-      const files = readdirSync(projectDir);
-      for (const file of files) {
-        if (file.endsWith('.cs') && file !== basename(currentFilePath)) {
-          extractWorkflowsFromFile(join(projectDir, file));
-        }
-      }
     } catch (error) {
       ext.outputChannel.appendLog(
         localize(
@@ -275,7 +283,9 @@ export function getCodefulWorkflowNames(filePath: string): string[] {
     }
   };
 
-  extractWorkflowsFromFile(filePath);
+  for (const filePath of filePaths) {
+    extractWorkflowsFromFile(filePath);
+  }
   return workflowNames;
 }
 
