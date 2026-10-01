@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-/* global module, require */
+/* global module, process, require */
 const { SUITE_REGISTRY } = require('./e2e-cli-batch');
 
 const OGF_E2E_SCENARIOS = Object.freeze([
@@ -29,9 +29,23 @@ function getOgfScenariosForPhase(phaseId, options = {}) {
 
   return OGF_E2E_SCENARIOS.filter((scenario) => scenario.expectedPhase === phaseId).map((scenario) => ({
     scenarioId: scenario.scenarioId,
+    suiteId: scenario.suiteId,
+    expectedPhase: scenario.expectedPhase,
+    executedPhase: phaseId,
+    executedVariant: options.executedVariant || '',
     evidenceKind: scenario.evidenceKind,
     source: scenario.source,
+    assertionIdentities: scenario.assertions,
     assertions: scenario.assertions,
+    provenance: {
+      platform: options.platform || process.platform,
+      arch: options.arch || process.arch,
+      vscodeVersion: options.vscodeVersion || '',
+      sourceVersion: options.sourceVersion || '',
+      buildId: options.buildId || '',
+      definitionId: options.definitionId || '',
+      repository: options.repository || '',
+    },
   }));
 }
 

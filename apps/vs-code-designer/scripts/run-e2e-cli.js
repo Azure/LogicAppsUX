@@ -357,6 +357,10 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     duplicatePhaseIds.length === 0 &&
     (missingPhaseIds.length === 0 || blockedPhaseIds.length > 0) &&
     phaseResults.length > 0;
+  const terminalComplete =
+    phaseCompleteness && phaseCleanupVerified && processCleanup.verified === true && !error && phaseDiagnosticsErrors.length === 0;
+  const finalizedPhaseResults = terminalComplete ? phaseResults : phaseResults.map(clearOgfScenarios);
+  const ogfScenarios = terminalComplete ? collectOgfScenarios(finalizedPhaseResults) : [];
   const cleanupLedger = {
     schemaVersion: 1,
     generatedAt: new Date().toISOString(),
@@ -371,7 +375,7 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     processTreeVerified: processCleanup.verified === true,
     processCleanup,
     verified: phaseCompleteness && phaseCleanupVerified && processCleanup.verified === true,
-    phases: phaseResults,
+    phases: finalizedPhaseResults,
   };
   const terminalResult = {
     suiteId: suite.id,
@@ -386,7 +390,8 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     duplicatePhaseIds,
     blockedPhaseIds,
     phaseCompleteness,
-    complete: phaseCompleteness && cleanupLedger.verified === true && !error && phaseDiagnosticsErrors.length === 0,
+    complete: terminalComplete,
+    ...(ogfScenarios.length > 0 ? { ogfScenarios } : {}),
   };
   writeSuiteCleanupLedger({ LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH: context.cleanupLedgerPath }, cleanupLedger);
   writeSuiteTerminalResult({ LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH: context.terminalResultPath }, terminalResult);
@@ -1384,18 +1389,25 @@ function runVscodeTest(args, options = {}) {
         );
       }
       const phaseId = getSuitePhaseId(label, childEnv);
+      const matchedPattern = forbiddenOutputPatterns.find(({ pattern }) => pattern.test(output));
+      const mochaPassingCount = getMochaPassingCount(output);
+      const diagnosticsErrorMessage = diagnosticsError
+        ? diagnosticsError instanceof Error
+          ? diagnosticsError.message
+          : String(diagnosticsError)
+        : '';
+      const phasePassed = code === 0 && cleanupLedger.verified === true && !diagnosticsError && !matchedPattern && mochaPassingCount > 0;
       writeSuitePhaseResult(childEnv, {
         phaseId,
         label,
         exitCode: code,
         signal,
         cleanupVerified: cleanupLedger.verified,
-        diagnosticsError: diagnosticsError ? (diagnosticsError instanceof Error ? diagnosticsError.message : String(diagnosticsError)) : '',
-        complete: true,
+        diagnosticsError: diagnosticsErrorMessage,
+        complete: phasePassed,
         cleanupLedger,
-        ogfScenarios: getOgfScenariosForPhase(phaseId, {
-          passed: code === 0 && cleanupLedger.verified === true && !diagnosticsError,
-        }),
+        mochaPassingCount,
+        ogfScenarios: buildOgfScenariosForPhase(phaseId, childEnv, { passed: phasePassed }),
       });
 
       if (diagnosticsError) {
@@ -1403,7 +1415,6 @@ function runVscodeTest(args, options = {}) {
         return;
       }
 
-      const matchedPattern = forbiddenOutputPatterns.find(({ pattern }) => pattern.test(output));
       if (matchedPattern) {
         reject(new Error(`\n[activation-smoke] Failed because VS Code output contained: ${matchedPattern.name}`));
         return;
@@ -2350,7 +2361,12 @@ module.exports = {
     getVscodeUserDataDir,
     getFuncCoreToolsCandidatePaths,
     getFuncCoreToolsBinaryPath,
+    getMochaPassingCount,
+    getSuiteTerminalResultPath,
     getWorkspaceSourcesFromManifestPath,
+    buildOgfScenariosForPhase,
+    clearOgfScenarios,
+    collectOgfScenarios,
     safeReadDirectory,
     sanitizeInheritedGitCommandConfigEnv,
     sanitizeEnvSegment,
@@ -2359,6 +2375,8 @@ module.exports = {
     runSuiteWrapperProcess,
     verifyFuncCoreToolsAtDependencyRoot,
     walkFiles,
+    writeSuitePhaseResult,
+    writeSuiteTerminalResult,
     writeVscodeProfileLogIndex,
   },
 };
@@ -2597,7 +2615,7 @@ function writeSuiteCleanupLedger(env, ledger) {
 }
 
 function writeSuiteTerminalResult(env, result) {
-  const filePath = env.LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH;
+  const filePath = getSuiteTerminalResultPath(env, result.label || result.suiteId);
   if (!filePath) {
     return;
   }
@@ -2623,15 +2641,79 @@ function writeSuitePhaseResult(env, result) {
     fs.appendFileSync(phaseResultsPath, `${JSON.stringify({ schemaVersion: 1, ...result })}\n`);
     return;
   }
+  const priorTerminalResult = readJsonIfExists(getSuiteTerminalResultPath(env, result.label));
+  const retainedOgfScenarios = result.complete === true ? mergeOgfScenarios(priorTerminalResult?.ogfScenarios, result.ogfScenarios) : [];
   writeSuiteCleanupLedger(env, result.cleanupLedger);
   writeSuiteTerminalResult(env, {
     label: result.label,
+    phaseId: result.phaseId,
     exitCode: result.exitCode,
     signal: result.signal,
     cleanupVerified: result.cleanupVerified,
     diagnosticsError: result.diagnosticsError,
     complete: result.complete,
+    mochaPassingCount: result.mochaPassingCount,
+    ...(retainedOgfScenarios.length > 0 ? { ogfScenarios: retainedOgfScenarios } : {}),
   });
+}
+
+function getSuiteTerminalResultPath(env, label) {
+  if (env.LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH) {
+    return env.LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH;
+  }
+  if (!label) {
+    return undefined;
+  }
+  return path.join(process.cwd(), '.vscode-test', 'results', `${sanitizeEnvSegment(label)}.terminal-result.json`);
+}
+
+function getMochaPassingCount(output) {
+  const pattern = /^[ \t]*(\d+) passing\b/gm;
+  let count = 0;
+  let match;
+  while ((match = pattern.exec(String(output ?? ''))) !== null) {
+    count = Number(match[1]) || 0;
+  }
+  return count;
+}
+
+function buildOgfScenariosForPhase(phaseId, env, options = {}) {
+  if (options.passed !== true) {
+    return [];
+  }
+  return getOgfScenariosForPhase(phaseId, {
+    passed: true,
+    executedVariant: env.LA_E2E_CLI_CREATE_WORKSPACE_CASE || '',
+    platform: process.platform,
+    arch: process.arch,
+    vscodeVersion: env.LA_E2E_CLI_VSCODE_VERSION || '',
+    sourceVersion: env.BUILD_SOURCEVERSION || env.GITHUB_SHA || '',
+    buildId: env.BUILD_BUILDID || env.GITHUB_RUN_ID || '',
+    definitionId: env.SYSTEM_DEFINITIONID || '',
+    repository: env.BUILD_REPOSITORY_NAME || env.GITHUB_REPOSITORY || '',
+  });
+}
+
+function mergeOgfScenarios(...scenarioGroups) {
+  const byKey = new Map();
+  for (const scenario of scenarioGroups.flat().filter(Boolean)) {
+    const key = `${scenario.scenarioId || ''}|${scenario.executedPhase || ''}|${scenario.executedVariant || ''}`;
+    byKey.set(key, scenario);
+  }
+  return [...byKey.values()];
+}
+
+function collectOgfScenarios(phaseResults) {
+  return mergeOgfScenarios(...phaseResults.map((phase) => phase.ogfScenarios || []));
+}
+
+function clearOgfScenarios(phase) {
+  if (!phase || !Object.prototype.hasOwnProperty.call(phase, 'ogfScenarios')) {
+    return phase;
+  }
+  const rest = { ...phase };
+  delete rest.ogfScenarios;
+  return rest;
 }
 
 function getSuitePhaseId(label, env) {

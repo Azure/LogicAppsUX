@@ -26,6 +26,7 @@ function writeSingleResult({ label, log, outDir, outcome, diagnosticsArtifactNam
 
   const logText = stripAnsi(fs.existsSync(log) ? fs.readFileSync(log, 'utf-8') : '');
   const result = parseMochaLog(label, outcome ?? 'unknown', logText);
+  mergeTerminalResultMetadata(result, outDir, label);
   result.diagnosticsArtifactName = diagnosticsArtifactName || undefined;
   result.failureAttachments = result.failing > 0 ? loadFailureScreenshotAttachments(outDir, label) : [];
   fs.mkdirSync(outDir, { recursive: true });
@@ -318,6 +319,30 @@ function normalizeResult(result) {
   };
 }
 
+function mergeTerminalResultMetadata(result, outDir, label) {
+  const terminalResultPath = path.join(outDir, `${label}.terminal-result.json`);
+  if (!fs.existsSync(terminalResultPath)) {
+    return result;
+  }
+
+  const terminalResult = JSON.parse(fs.readFileSync(terminalResultPath, 'utf-8'));
+  if (terminalResult.complete !== true || result.outcome !== 'success' || Number(result.passing) <= 0 || Number(result.failing) > 0) {
+    return result;
+  }
+
+  const ogfScenarios = Array.isArray(terminalResult.ogfScenarios) ? terminalResult.ogfScenarios : [];
+  if (ogfScenarios.length > 0) {
+    result.ogfScenarios = ogfScenarios;
+  }
+  if (terminalResult.phaseId) {
+    result.terminalPhaseId = terminalResult.phaseId;
+  }
+  if (Number.isFinite(Number(terminalResult.mochaPassingCount))) {
+    result.terminalMochaPassingCount = Number(terminalResult.mochaPassingCount);
+  }
+  return result;
+}
+
 function loadFailureScreenshotAttachments(outDir, label) {
   const manifestPath = path.resolve(outDir, '..', 'screenshots', 'cli', 'failure-attachments.json');
   if (!fs.existsSync(manifestPath)) {
@@ -468,8 +493,10 @@ module.exports = {
   _test: {
     buildAggregate,
     buildSingleSummary,
+    mergeTerminalResultMetadata,
     normalizeResult,
     parseCsvOption,
     parseMochaLog,
+    writeSingleResult,
   },
 };

@@ -40,9 +40,21 @@ function testRegistryDoesNotClaimExternalResultsOrApprovals() {
 }
 
 function testPassedPhaseEmitsOgfEvidence() {
-  const evidence = getOgfScenariosForPhase('createWorkspaceCoreMatrix:standard-stateful', { passed: true });
+  const evidence = getOgfScenariosForPhase('createWorkspaceCoreMatrix:standard-stateful', {
+    passed: true,
+    executedVariant: 'standard-stateful',
+    platform: 'win32',
+    sourceVersion: 'a'.repeat(40),
+  });
   assert.strictEqual(evidence.length, 1);
   assert.strictEqual(evidence[0].scenarioId, 'ogf-launch-config-generated-name-standard-stateful');
+  assert.strictEqual(evidence[0].suiteId, 'createWorkspaceCoreMatrix');
+  assert.strictEqual(evidence[0].expectedPhase, 'createWorkspaceCoreMatrix:standard-stateful');
+  assert.strictEqual(evidence[0].executedPhase, 'createWorkspaceCoreMatrix:standard-stateful');
+  assert.strictEqual(evidence[0].executedVariant, 'standard-stateful');
+  assert.strictEqual(evidence[0].provenance.platform, 'win32');
+  assert.strictEqual(evidence[0].provenance.sourceVersion, 'a'.repeat(40));
+  assert.ok(evidence[0].assertionIdentities.includes('launch-configuration-name-ends-with-created-logic-app-name'));
   assert.ok(evidence[0].assertions.includes('launch-configuration-name-ends-with-created-logic-app-name'));
 }
 

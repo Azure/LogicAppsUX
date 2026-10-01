@@ -1695,11 +1695,24 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout() {
     const artifactName = 'linux-unit-tests';
     const suiteId = 'unitTests';
     const resultRoot = path.join(sourcesDirectory, 'apps', 'vs-code-designer', '.vscode-test', 'results');
+    const ogfScenarios = [
+      {
+        scenarioId: 'ogf-launch-config-generated-name-standard-stateful',
+        executedVariant: 'standard-stateful',
+        assertionIdentities: ['launch-configuration-name-ends-with-created-logic-app-name'],
+      },
+    ];
     fs.mkdirSync(resultRoot, { recursive: true });
-    fs.writeFileSync(path.join(resultRoot, `${suiteId}.json`), '{"outcome":"success","total":12,"failing":0}\n');
+    fs.writeFileSync(
+      path.join(resultRoot, `${suiteId}.json`),
+      `${JSON.stringify({ outcome: 'success', total: 12, failing: 0, ogfScenarios })}\n`
+    );
     fs.writeFileSync(path.join(resultRoot, `${suiteId}.junit.xml`), '<testsuite tests="12" failures="0" />\n');
     fs.writeFileSync(path.join(resultRoot, `${suiteId}.summary.md`), '# summary\n');
-    fs.writeFileSync(path.join(resultRoot, `${suiteId}.terminal-result.json`), '{"complete":true,"cleanupVerified":true}\n');
+    fs.writeFileSync(
+      path.join(resultRoot, `${suiteId}.terminal-result.json`),
+      `${JSON.stringify({ complete: true, cleanupVerified: true, ogfScenarios })}\n`
+    );
     fs.writeFileSync(path.join(resultRoot, `${suiteId}.cleanup-ledger.json`), '{"privateProcessIds":[1234]}\n');
     fs.writeFileSync(path.join(resultRoot, `admission-context-${suiteId}.json`), '{"sourceSHA":"abc"}\n');
     fs.writeFileSync(
@@ -1738,6 +1751,8 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout() {
     assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'results', `${suiteId}.summary.md`)));
     assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'results', `${suiteId}.terminal-result.json`)));
     assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'results', `admission-context-${suiteId}.json`)));
+    const stagedResult = JSON.parse(fs.readFileSync(path.join(diagnosticsRoot, 'results', `${suiteId}.json`), 'utf-8'));
+    const stagedTerminal = JSON.parse(fs.readFileSync(path.join(diagnosticsRoot, 'results', `${suiteId}.terminal-result.json`), 'utf-8'));
     assert.ok(
       !fs.existsSync(path.join(diagnosticsRoot, 'results', `${suiteId}.cleanup-ledger.json`)),
       'private cleanup ledger must not be published'

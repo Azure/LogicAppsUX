@@ -21,7 +21,11 @@ const {
     getCodefulDebugTasksRunExtraEnv,
     getFuncCoreToolsCandidatePaths,
     getFuncCoreToolsBinaryPath,
+    getMochaPassingCount,
+    getSuiteTerminalResultPath,
     hasOwnedWorkspaceParentDiagnosticFailure,
+    buildOgfScenariosForPhase,
+    collectOgfScenarios,
     getMsnWeatherLifecycleRunExtraEnv,
     getMsnWeatherAzureTargetEnv,
     getMsnWeatherAzureAuthEnv,
@@ -34,6 +38,7 @@ const {
     runSuiteWrapperProcess,
     sanitizeInheritedGitCommandConfigEnv,
     verifyFuncCoreToolsAtDependencyRoot,
+    writeSuitePhaseResult,
     writeVscodeProfileLogIndex,
   },
 } = require('./run-e2e-cli.js');
@@ -49,7 +54,7 @@ const {
   SUITE_REGISTRY,
 } = require('./e2e-cli-batch.js');
 const {
-  _test: { buildAggregate: buildSummaryAggregate, buildSingleSummary },
+  _test: { buildAggregate: buildSummaryAggregate, buildSingleSummary, writeSingleResult },
 } = require('./summarize-e2e-cli-results.js');
 
 const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
@@ -90,9 +95,15 @@ const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
     await testRunSuiteWrapperProcessWritesStructuredResults();
     await testRunSuiteWrapperProcessTimeoutCancelsDisposableChild();
     await testRunSuiteWrapperProcessTimeoutCancelsGrandchildListener();
+    testDirectSuitePhaseResultRetainsOgfAcrossMatrixPhases();
+    testDirectSuitePhaseResultClearsOgfOnLaterFailure();
+    testDirectSuitePhaseResultDoesNotEmitOgfForCleanupFailure();
+    testOgfGateControls();
     testAggregateCompletenessAndDiagnosticRerun();
     testAggregateCliOptions();
     testSingleSummarySupportsDiagnosticsArtifactName();
+    testSummarizerMergesDirectOgfTerminalResult();
+    testSummarizerDoesNotMergeFailedOgfTerminalResult();
     console.log('[run-e2e-cli.unit] all tests passed');
   } finally {
     fs.rmSync(tempRoot, { recursive: true, force: true });
@@ -1160,6 +1171,164 @@ async function testRunSuiteWrapperProcessTimeoutCancelsGrandchildListener() {
   }
 }
 
+function testDirectSuitePhaseResultRetainsOgfAcrossMatrixPhases() {
+  const previousCwd = process.cwd();
+  const cwd = path.join(tempRoot, 'direct-ogf-retained');
+  fs.mkdirSync(cwd, { recursive: true });
+  process.chdir(cwd);
+  try {
+    const label = 'createWorkspaceCoreMatrix';
+    const phaseId = 'createWorkspaceCoreMatrix:standard-stateful';
+    const ogfScenarios = buildOgfScenariosForPhase(
+      phaseId,
+      {
+        LA_E2E_CLI_CREATE_WORKSPACE_CASE: 'standard-stateful',
+        LA_E2E_CLI_VSCODE_VERSION: '1.140.0',
+        BUILD_SOURCEVERSION: 'a'.repeat(40),
+        BUILD_BUILDID: '15500000',
+        SYSTEM_DEFINITIONID: '28771',
+      },
+      { passed: true }
+    );
+
+    writeSuitePhaseResult(
+      {},
+      {
+        phaseId,
+        label,
+        exitCode: 0,
+        signal: null,
+        cleanupVerified: true,
+        diagnosticsError: '',
+        complete: true,
+        mochaPassingCount: 1,
+        cleanupLedger: { verified: true },
+        ogfScenarios,
+      }
+    );
+    writeSuitePhaseResult(
+      {},
+      {
+        phaseId: 'createWorkspaceCoreMatrix:standard-stateless',
+        label,
+        exitCode: 0,
+        signal: null,
+        cleanupVerified: true,
+        diagnosticsError: '',
+        complete: true,
+        mochaPassingCount: 1,
+        cleanupLedger: { verified: true },
+        ogfScenarios: [],
+      }
+    );
+
+    const terminal = JSON.parse(fs.readFileSync(getSuiteTerminalResultPath({}, label), 'utf-8'));
+    assert.strictEqual(terminal.complete, true);
+    assert.strictEqual(terminal.ogfScenarios.length, 1);
+    assert.strictEqual(terminal.ogfScenarios[0].scenarioId, 'ogf-launch-config-generated-name-standard-stateful');
+    assert.strictEqual(terminal.ogfScenarios[0].executedVariant, 'standard-stateful');
+    assert.ok(terminal.ogfScenarios[0].assertionIdentities.includes('launch-configuration-name-ends-with-created-logic-app-name'));
+  } finally {
+    process.chdir(previousCwd);
+  }
+}
+
+function testDirectSuitePhaseResultClearsOgfOnLaterFailure() {
+  const previousCwd = process.cwd();
+  const cwd = path.join(tempRoot, 'direct-ogf-cleared');
+  fs.mkdirSync(cwd, { recursive: true });
+  process.chdir(cwd);
+  try {
+    const label = 'createWorkspaceCoreMatrix';
+    const phaseId = 'createWorkspaceCoreMatrix:standard-stateful';
+    writeSuitePhaseResult(
+      {},
+      {
+        phaseId,
+        label,
+        exitCode: 0,
+        signal: null,
+        cleanupVerified: true,
+        diagnosticsError: '',
+        complete: true,
+        mochaPassingCount: 1,
+        cleanupLedger: { verified: true },
+        ogfScenarios: buildOgfScenariosForPhase(phaseId, { LA_E2E_CLI_CREATE_WORKSPACE_CASE: 'standard-stateful' }, { passed: true }),
+      }
+    );
+    writeSuitePhaseResult(
+      {},
+      {
+        phaseId: 'createWorkspaceCoreMatrix:standard-stateless',
+        label,
+        exitCode: 1,
+        signal: null,
+        cleanupVerified: true,
+        diagnosticsError: '',
+        complete: false,
+        mochaPassingCount: 0,
+        cleanupLedger: { verified: true },
+        ogfScenarios: [],
+      }
+    );
+
+    const terminal = JSON.parse(fs.readFileSync(getSuiteTerminalResultPath({}, label), 'utf-8'));
+    assert.strictEqual(terminal.complete, false);
+    assert.strictEqual(terminal.ogfScenarios, undefined);
+  } finally {
+    process.chdir(previousCwd);
+  }
+}
+
+function testDirectSuitePhaseResultDoesNotEmitOgfForCleanupFailure() {
+  const previousCwd = process.cwd();
+  const cwd = path.join(tempRoot, 'direct-ogf-cleanup-failed');
+  fs.mkdirSync(cwd, { recursive: true });
+  process.chdir(cwd);
+  try {
+    const label = 'createWorkspaceCoreMatrix';
+    const phaseId = 'createWorkspaceCoreMatrix:standard-stateful';
+    writeSuitePhaseResult(
+      {},
+      {
+        phaseId,
+        label,
+        exitCode: 0,
+        signal: null,
+        cleanupVerified: false,
+        diagnosticsError: '',
+        complete: false,
+        mochaPassingCount: 1,
+        cleanupLedger: { verified: false },
+        ogfScenarios: buildOgfScenariosForPhase(phaseId, { LA_E2E_CLI_CREATE_WORKSPACE_CASE: 'standard-stateful' }, { passed: true }),
+      }
+    );
+
+    const terminal = JSON.parse(fs.readFileSync(getSuiteTerminalResultPath({}, label), 'utf-8'));
+    assert.strictEqual(terminal.complete, false);
+    assert.strictEqual(terminal.cleanupVerified, false);
+    assert.strictEqual(terminal.ogfScenarios, undefined);
+  } finally {
+    process.chdir(previousCwd);
+  }
+}
+
+function testOgfGateControls() {
+  assert.strictEqual(getMochaPassingCount('\n  0 passing (10ms)\n'), 0);
+  assert.strictEqual(getMochaPassingCount('\n  1 passing (1s)\n  6 passing (2s)\n'), 6);
+  assert.deepStrictEqual(buildOgfScenariosForPhase('createWorkspaceCoreMatrix:standard-stateful', {}, { passed: false }), []);
+  assert.deepStrictEqual(buildOgfScenariosForPhase('createWorkspaceCoreMatrix:custom-code-stateful', {}, { passed: true }), []);
+  assert.strictEqual(
+    buildOgfScenariosForPhase(
+      'createWorkspaceCoreMatrix:standard-stateful',
+      { LA_E2E_CLI_CREATE_WORKSPACE_CASE: 'standard-stateful' },
+      { passed: true }
+    ).length,
+    1
+  );
+  assert.deepStrictEqual(collectOgfScenarios([{ ogfScenarios: [] }, { phaseId: 'unmapped' }]), []);
+}
+
 function testAggregateCompletenessAndDiagnosticRerun() {
   const suites = [SUITE_REGISTRY.unitTests, SUITE_REGISTRY.msnWeatherLifecycle];
   const incomplete = buildBatchAggregate({
@@ -1322,6 +1491,66 @@ function testSingleSummarySupportsDiagnosticsArtifactName() {
   assert.doesNotMatch(diagnosticsSummary, /vscode-e2e-cli-test-results-unitTests/);
   assert.doesNotMatch(diagnosticsSummary, /vscode-e2e-cli-log-unitTests/);
   assert.doesNotMatch(diagnosticsSummary, /vscode-e2e-cli-screenshots-unitTests/);
+}
+
+function testSummarizerMergesDirectOgfTerminalResult() {
+  const outDir = path.join(tempRoot, 'summarizer-ogf-success');
+  fs.mkdirSync(outDir, { recursive: true });
+  const label = 'createWorkspaceCoreMatrix';
+  const log = path.join(outDir, `${label}.log`);
+  fs.writeFileSync(log, '\n  ✔ creates Standard Stateful workspace and generated debug launch config\n\n  1 passing (1s)\n');
+  fs.writeFileSync(
+    path.join(outDir, `${label}.terminal-result.json`),
+    `${JSON.stringify(
+      {
+        complete: true,
+        phaseId: 'createWorkspaceCoreMatrix:rules-engine-stateless',
+        mochaPassingCount: 1,
+        ogfScenarios: [
+          {
+            scenarioId: 'ogf-launch-config-generated-name-standard-stateful',
+            suiteId: label,
+            expectedPhase: 'createWorkspaceCoreMatrix:standard-stateful',
+            executedPhase: 'createWorkspaceCoreMatrix:standard-stateful',
+            executedVariant: 'standard-stateful',
+            assertionIdentities: ['launch-configuration-name-ends-with-created-logic-app-name'],
+            provenance: { platform: 'win32', sourceVersion: 'a'.repeat(40) },
+          },
+        ],
+      },
+      null,
+      2
+    )}\n`
+  );
+
+  writeSingleResult({ label, log, outDir, outcome: 'success' });
+  const result = JSON.parse(fs.readFileSync(path.join(outDir, `${label}.json`), 'utf-8'));
+  assert.strictEqual(result.outcome, 'success');
+  assert.strictEqual(result.ogfScenarios.length, 1);
+  assert.strictEqual(result.ogfScenarios[0].executedVariant, 'standard-stateful');
+}
+
+function testSummarizerDoesNotMergeFailedOgfTerminalResult() {
+  const outDir = path.join(tempRoot, 'summarizer-ogf-failure');
+  fs.mkdirSync(outDir, { recursive: true });
+  const label = 'createWorkspaceCoreMatrix';
+  const log = path.join(outDir, `${label}.log`);
+  fs.writeFileSync(log, '\n  0 passing (1s)\n');
+  fs.writeFileSync(
+    path.join(outDir, `${label}.terminal-result.json`),
+    `${JSON.stringify(
+      {
+        complete: false,
+        ogfScenarios: [{ scenarioId: 'must-not-merge' }],
+      },
+      null,
+      2
+    )}\n`
+  );
+
+  writeSingleResult({ label, log, outDir, outcome: 'failure' });
+  const result = JSON.parse(fs.readFileSync(path.join(outDir, `${label}.json`), 'utf-8'));
+  assert.strictEqual(result.ogfScenarios, undefined);
 }
 
 function writeSuiteTerminalAndCleanup(context, options = {}) {
