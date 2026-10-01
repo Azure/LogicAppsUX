@@ -1241,6 +1241,9 @@ function testDirectSuitePhaseResultClearsOgfOnLaterFailure() {
     const terminal = JSON.parse(fs.readFileSync(getSuiteTerminalResultPath({}, label), 'utf-8'));
     assert.strictEqual(terminal.complete, false);
     assert.strictEqual(terminal.ogfScenarios, undefined);
+    assert.strictEqual(terminal.phaseResults.length, 2);
+    assert.strictEqual(terminal.phaseResults[0].ogfScenarios, undefined);
+    assert.strictEqual(terminal.phaseResults[1].ogfScenarios, undefined);
   } finally {
     process.chdir(previousCwd);
   }
@@ -1526,6 +1529,12 @@ function testSummarizerDoesNotMergeFailedOgfTerminalResult() {
       {
         complete: false,
         ogfScenarios: [{ scenarioId: 'must-not-merge' }],
+        phaseResults: [
+          {
+            phaseId: 'createWorkspaceCoreMatrix:standard-stateful',
+            ogfScenarios: [{ scenarioId: 'must-not-retain-in-phase-history' }],
+          },
+        ],
       },
       null,
       2
@@ -1537,6 +1546,7 @@ function testSummarizerDoesNotMergeFailedOgfTerminalResult() {
   const terminal = JSON.parse(fs.readFileSync(path.join(outDir, `${label}.terminal-result.json`), 'utf-8'));
   assert.strictEqual(result.ogfScenarios, undefined);
   assert.strictEqual(terminal.ogfScenarios, undefined);
+  assert.strictEqual(terminal.phaseResults[0].ogfScenarios, undefined);
 }
 
 function writeSuiteTerminalAndCleanup(context, options = {}) {

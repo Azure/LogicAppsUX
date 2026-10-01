@@ -2643,7 +2643,8 @@ function writeSuitePhaseResult(env, result) {
   const priorTerminalResult = readJsonIfExists(getSuiteTerminalResultPath(env, result.label));
   const phaseResults = [...(Array.isArray(priorTerminalResult?.phaseResults) ? priorTerminalResult.phaseResults : []), result];
   const terminalComplete = getDirectSuiteComplete(result.label, phaseResults);
-  const retainedOgfScenarios = terminalComplete ? collectOgfScenarios(phaseResults) : [];
+  const finalizedPhaseResults = terminalComplete ? phaseResults : phaseResults.map(clearOgfScenarios);
+  const retainedOgfScenarios = terminalComplete ? collectDirectOgfScenarios(result.label, finalizedPhaseResults, env) : [];
   writeSuiteCleanupLedger(env, result.cleanupLedger);
   writeSuiteTerminalResult(env, {
     label: result.label,
@@ -2654,7 +2655,7 @@ function writeSuitePhaseResult(env, result) {
     diagnosticsError: result.diagnosticsError,
     complete: terminalComplete,
     mochaPassingCount: result.mochaPassingCount,
-    phaseResults: phaseResults.map((phase) => ({
+    phaseResults: finalizedPhaseResults.map((phase) => ({
       phaseId: phase.phaseId,
       exitCode: phase.exitCode,
       signal: phase.signal,
@@ -2690,6 +2691,28 @@ function getDirectExpectedPhaseIds(label) {
     return [];
   }
   return [label];
+}
+
+function collectDirectOgfScenarios(label, phaseResults, env) {
+  const existingScenarios = collectOgfScenarios(phaseResults);
+  const reconstructedScenarios = phaseResults.flatMap((phase) => {
+    const phaseId = phase.phaseId || '';
+    const executedVariant = getDirectPhaseVariant(label, phaseId);
+    return buildOgfScenariosForPhase(
+      phaseId,
+      {
+        ...env,
+        LA_E2E_CLI_CREATE_WORKSPACE_CASE: executedVariant || env.LA_E2E_CLI_CREATE_WORKSPACE_CASE || '',
+      },
+      { passed: phase.complete === true && phase.exitCode === 0 && phase.cleanupVerified === true && !phase.diagnosticsError }
+    );
+  });
+  return mergeOgfScenarios(existingScenarios, reconstructedScenarios);
+}
+
+function getDirectPhaseVariant(label, phaseId) {
+  const prefix = `${label}:`;
+  return typeof phaseId === 'string' && phaseId.startsWith(prefix) ? phaseId.slice(prefix.length) : '';
 }
 
 function getSuiteTerminalResultPath(env, label) {

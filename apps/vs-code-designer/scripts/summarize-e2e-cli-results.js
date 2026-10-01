@@ -345,11 +345,21 @@ function mergeTerminalResultMetadata(result, outDir, label) {
 }
 
 function stripTerminalOgfMetadata(terminalResultPath, terminalResult) {
-  if (!Object.prototype.hasOwnProperty.call(terminalResult, 'ogfScenarios')) {
+  const hasTopLevelOgf = Object.prototype.hasOwnProperty.call(terminalResult, 'ogfScenarios');
+  const phaseResults = Array.isArray(terminalResult.phaseResults) ? terminalResult.phaseResults : [];
+  const hasPhaseOgf = phaseResults.some((phase) => Object.prototype.hasOwnProperty.call(phase, 'ogfScenarios'));
+  if (!hasTopLevelOgf && !hasPhaseOgf) {
     return;
   }
   const sanitized = { ...terminalResult };
   delete sanitized.ogfScenarios;
+  if (hasPhaseOgf) {
+    sanitized.phaseResults = phaseResults.map((phase) => {
+      const sanitizedPhase = { ...phase };
+      delete sanitizedPhase.ogfScenarios;
+      return sanitizedPhase;
+    });
+  }
   fs.writeFileSync(terminalResultPath, `${JSON.stringify(sanitized, null, 2)}\n`);
 }
 
