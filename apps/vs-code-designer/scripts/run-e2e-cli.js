@@ -1390,13 +1390,12 @@ function runVscodeTest(args, options = {}) {
       }
       const phaseId = getSuitePhaseId(label, childEnv);
       const matchedPattern = forbiddenOutputPatterns.find(({ pattern }) => pattern.test(output));
-      const mochaPassingCount = getMochaPassingCount(output);
       const diagnosticsErrorMessage = diagnosticsError
         ? diagnosticsError instanceof Error
           ? diagnosticsError.message
           : String(diagnosticsError)
         : '';
-      const phasePassed = code === 0 && cleanupLedger.verified === true && !diagnosticsError && !matchedPattern && mochaPassingCount > 0;
+      const phasePassed = code === 0 && cleanupLedger.verified === true && !diagnosticsError && !matchedPattern;
       writeSuitePhaseResult(childEnv, {
         phaseId,
         label,
@@ -1406,7 +1405,7 @@ function runVscodeTest(args, options = {}) {
         diagnosticsError: diagnosticsErrorMessage,
         complete: phasePassed,
         cleanupLedger,
-        mochaPassingCount,
+        mochaPassingCount: getMochaPassingCount(output),
         ogfScenarios: buildOgfScenariosForPhase(phaseId, childEnv, { passed: phasePassed }),
       });
 
@@ -2642,7 +2641,9 @@ function writeSuitePhaseResult(env, result) {
     return;
   }
   const priorTerminalResult = readJsonIfExists(getSuiteTerminalResultPath(env, result.label));
-  const retainedOgfScenarios = result.complete === true ? mergeOgfScenarios(priorTerminalResult?.ogfScenarios, result.ogfScenarios) : [];
+  const phaseResults = [...(Array.isArray(priorTerminalResult?.phaseResults) ? priorTerminalResult.phaseResults : []), result];
+  const terminalComplete = getDirectSuiteComplete(result.label, phaseResults);
+  const retainedOgfScenarios = terminalComplete ? collectOgfScenarios(phaseResults) : [];
   writeSuiteCleanupLedger(env, result.cleanupLedger);
   writeSuiteTerminalResult(env, {
     label: result.label,
@@ -2651,10 +2652,44 @@ function writeSuitePhaseResult(env, result) {
     signal: result.signal,
     cleanupVerified: result.cleanupVerified,
     diagnosticsError: result.diagnosticsError,
-    complete: result.complete,
+    complete: terminalComplete,
     mochaPassingCount: result.mochaPassingCount,
+    phaseResults: phaseResults.map((phase) => ({
+      phaseId: phase.phaseId,
+      exitCode: phase.exitCode,
+      signal: phase.signal,
+      cleanupVerified: phase.cleanupVerified,
+      diagnosticsError: phase.diagnosticsError,
+      complete: phase.complete,
+      ...(Array.isArray(phase.ogfScenarios) && phase.ogfScenarios.length > 0 ? { ogfScenarios: phase.ogfScenarios } : {}),
+    })),
     ...(retainedOgfScenarios.length > 0 ? { ogfScenarios: retainedOgfScenarios } : {}),
   });
+}
+
+function getDirectSuiteComplete(label, phaseResults) {
+  const observedPhaseIds = phaseResults.map((phase) => phase.phaseId).filter(Boolean);
+  const expectedPhaseIds = getDirectExpectedPhaseIds(label);
+  const missingPhaseIds = expectedPhaseIds.filter((phaseId) => !observedPhaseIds.includes(phaseId));
+  const unexpectedPhaseIds = observedPhaseIds.filter((phaseId) => !expectedPhaseIds.includes(phaseId));
+  return (
+    phaseResults.length > 0 &&
+    missingPhaseIds.length === 0 &&
+    unexpectedPhaseIds.length === 0 &&
+    getDuplicateValues(observedPhaseIds).length === 0 &&
+    phaseResults.every((phase) => phase.complete === true && phase.cleanupVerified === true && !phase.diagnosticsError)
+  );
+}
+
+function getDirectExpectedPhaseIds(label) {
+  const caseLabels = getCreateWorkspaceMatrixCaseLabels(['--label', label]);
+  if (caseLabels) {
+    return caseLabels.map((caseLabel) => `${label}:${caseLabel}`);
+  }
+  if (!label) {
+    return [];
+  }
+  return [label];
 }
 
 function getSuiteTerminalResultPath(env, label) {

@@ -327,6 +327,7 @@ function mergeTerminalResultMetadata(result, outDir, label) {
 
   const terminalResult = JSON.parse(fs.readFileSync(terminalResultPath, 'utf-8'));
   if (terminalResult.complete !== true || result.outcome !== 'success' || Number(result.passing) <= 0 || Number(result.failing) > 0) {
+    stripTerminalOgfMetadata(terminalResultPath, terminalResult);
     return result;
   }
 
@@ -341,6 +342,15 @@ function mergeTerminalResultMetadata(result, outDir, label) {
     result.terminalMochaPassingCount = Number(terminalResult.mochaPassingCount);
   }
   return result;
+}
+
+function stripTerminalOgfMetadata(terminalResultPath, terminalResult) {
+  if (!Object.prototype.hasOwnProperty.call(terminalResult, 'ogfScenarios')) {
+    return;
+  }
+  const sanitized = { ...terminalResult };
+  delete sanitized.ogfScenarios;
+  fs.writeFileSync(terminalResultPath, `${JSON.stringify(sanitized, null, 2)}\n`);
 }
 
 function loadFailureScreenshotAttachments(outDir, label) {

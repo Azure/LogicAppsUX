@@ -1191,39 +1191,24 @@ function testDirectSuitePhaseResultRetainsOgfAcrossMatrixPhases() {
       { passed: true }
     );
 
-    writeSuitePhaseResult(
-      {},
-      {
-        phaseId,
+    for (const matrixPhaseId of [
+      phaseId,
+      'createWorkspaceCoreMatrix:standard-stateless',
+      'createWorkspaceCoreMatrix:custom-code-stateful',
+      'createWorkspaceCoreMatrix:custom-code-stateless',
+      'createWorkspaceCoreMatrix:rules-engine-stateful',
+      'createWorkspaceCoreMatrix:rules-engine-stateless',
+    ]) {
+      writeDirectPhaseResult({
+        phaseId: matrixPhaseId,
         label,
-        exitCode: 0,
-        signal: null,
-        cleanupVerified: true,
-        diagnosticsError: '',
-        complete: true,
-        mochaPassingCount: 1,
-        cleanupLedger: { verified: true },
-        ogfScenarios,
-      }
-    );
-    writeSuitePhaseResult(
-      {},
-      {
-        phaseId: 'createWorkspaceCoreMatrix:standard-stateless',
-        label,
-        exitCode: 0,
-        signal: null,
-        cleanupVerified: true,
-        diagnosticsError: '',
-        complete: true,
-        mochaPassingCount: 1,
-        cleanupLedger: { verified: true },
-        ogfScenarios: [],
-      }
-    );
+        ogfScenarios: matrixPhaseId === phaseId ? ogfScenarios : [],
+      });
+    }
 
     const terminal = JSON.parse(fs.readFileSync(getSuiteTerminalResultPath({}, label), 'utf-8'));
     assert.strictEqual(terminal.complete, true);
+    assert.strictEqual(terminal.phaseResults.length, 6);
     assert.strictEqual(terminal.ogfScenarios.length, 1);
     assert.strictEqual(terminal.ogfScenarios[0].scenarioId, 'ogf-launch-config-generated-name-standard-stateful');
     assert.strictEqual(terminal.ogfScenarios[0].executedVariant, 'standard-stateful');
@@ -1241,36 +1226,17 @@ function testDirectSuitePhaseResultClearsOgfOnLaterFailure() {
   try {
     const label = 'createWorkspaceCoreMatrix';
     const phaseId = 'createWorkspaceCoreMatrix:standard-stateful';
-    writeSuitePhaseResult(
-      {},
-      {
-        phaseId,
-        label,
-        exitCode: 0,
-        signal: null,
-        cleanupVerified: true,
-        diagnosticsError: '',
-        complete: true,
-        mochaPassingCount: 1,
-        cleanupLedger: { verified: true },
-        ogfScenarios: buildOgfScenariosForPhase(phaseId, { LA_E2E_CLI_CREATE_WORKSPACE_CASE: 'standard-stateful' }, { passed: true }),
-      }
-    );
-    writeSuitePhaseResult(
-      {},
-      {
-        phaseId: 'createWorkspaceCoreMatrix:standard-stateless',
-        label,
-        exitCode: 1,
-        signal: null,
-        cleanupVerified: true,
-        diagnosticsError: '',
-        complete: false,
-        mochaPassingCount: 0,
-        cleanupLedger: { verified: true },
-        ogfScenarios: [],
-      }
-    );
+    writeDirectPhaseResult({
+      phaseId,
+      label,
+      ogfScenarios: buildOgfScenariosForPhase(phaseId, { LA_E2E_CLI_CREATE_WORKSPACE_CASE: 'standard-stateful' }, { passed: true }),
+    });
+    writeDirectPhaseResult({
+      phaseId: 'createWorkspaceCoreMatrix:standard-stateless',
+      label,
+      exitCode: 1,
+      complete: false,
+    });
 
     const terminal = JSON.parse(fs.readFileSync(getSuiteTerminalResultPath({}, label), 'utf-8'));
     assert.strictEqual(terminal.complete, false);
@@ -1278,6 +1244,24 @@ function testDirectSuitePhaseResultClearsOgfOnLaterFailure() {
   } finally {
     process.chdir(previousCwd);
   }
+}
+
+function writeDirectPhaseResult(options) {
+  writeSuitePhaseResult(
+    {},
+    {
+      phaseId: options.phaseId,
+      label: options.label,
+      exitCode: options.exitCode ?? 0,
+      signal: null,
+      cleanupVerified: options.cleanupVerified ?? true,
+      diagnosticsError: options.diagnosticsError ?? '',
+      complete: options.complete ?? true,
+      mochaPassingCount: options.mochaPassingCount ?? 1,
+      cleanupLedger: { verified: options.cleanupVerified ?? true },
+      ogfScenarios: options.ogfScenarios ?? [],
+    }
+  );
 }
 
 function testDirectSuitePhaseResultDoesNotEmitOgfForCleanupFailure() {
@@ -1550,7 +1534,9 @@ function testSummarizerDoesNotMergeFailedOgfTerminalResult() {
 
   writeSingleResult({ label, log, outDir, outcome: 'failure' });
   const result = JSON.parse(fs.readFileSync(path.join(outDir, `${label}.json`), 'utf-8'));
+  const terminal = JSON.parse(fs.readFileSync(path.join(outDir, `${label}.terminal-result.json`), 'utf-8'));
   assert.strictEqual(result.ogfScenarios, undefined);
+  assert.strictEqual(terminal.ogfScenarios, undefined);
 }
 
 function writeSuiteTerminalAndCleanup(context, options = {}) {
