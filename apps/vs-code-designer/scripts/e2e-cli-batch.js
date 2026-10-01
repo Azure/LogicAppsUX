@@ -22,13 +22,13 @@ const SUITE_REGISTRY = Object.freeze({
   createWorkspaceBehavior: Object.freeze({
     id: 'createWorkspaceBehavior',
     args: Object.freeze(['--label', 'createWorkspaceBehavior']),
-    platforms: Object.freeze(['linux']),
+    platforms: Object.freeze(['linux', 'win32']),
     expectedPhases: Object.freeze(['createWorkspaceBehavior']),
   }),
   createWorkspaceCoreMatrix: Object.freeze({
     id: 'createWorkspaceCoreMatrix',
     args: Object.freeze(['--label', 'createWorkspaceCoreMatrix']),
-    platforms: Object.freeze(['linux']),
+    platforms: Object.freeze(['linux', 'win32']),
     expectedPhases: Object.freeze([
       'createWorkspaceCoreMatrix:standard-stateful',
       'createWorkspaceCoreMatrix:standard-stateless',
@@ -41,7 +41,7 @@ const SUITE_REGISTRY = Object.freeze({
   createWorkspacePreviewMatrix: Object.freeze({
     id: 'createWorkspacePreviewMatrix',
     args: Object.freeze(['--label', 'createWorkspacePreviewMatrix']),
-    platforms: Object.freeze(['linux']),
+    platforms: Object.freeze(['linux', 'win32']),
     expectedPhases: Object.freeze([
       'createWorkspacePreviewMatrix:standard-autonomous-agent',
       'createWorkspacePreviewMatrix:standard-conversational-agent',
@@ -54,7 +54,7 @@ const SUITE_REGISTRY = Object.freeze({
   createWorkspaceCodeful: Object.freeze({
     id: 'createWorkspaceCodeful',
     args: Object.freeze(['--label', 'createWorkspaceCodeful']),
-    platforms: Object.freeze(['linux']),
+    platforms: Object.freeze(['linux', 'win32']),
     expectedPhases: Object.freeze(['createWorkspaceCodeful:codeful-modern-control', 'createWorkspaceCodeful:codeful-legacy-control']),
   }),
   createWorkspaceBehaviorSmoke: Object.freeze({
@@ -107,7 +107,14 @@ const SUITE_ALIASES = Object.freeze({
     'createWorkspaceCodeful',
     'msnWeatherLifecycle',
   ]),
-  windows: Object.freeze(['unitTests', 'createWorkspaceBehaviorSmoke', 'msnWeatherLifecycle']),
+  windows: Object.freeze([
+    'unitTests',
+    'createWorkspaceBehavior',
+    'createWorkspaceCoreMatrix',
+    'createWorkspacePreviewMatrix',
+    'createWorkspaceCodeful',
+    'msnWeatherLifecycle',
+  ]),
 });
 
 const SUITE_CONTROL_ENV_PATTERNS = [

@@ -4,7 +4,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 /* global console, module, process, require */
-const { SUITE_ALIASES, normalizeSuiteSelection } = require('./e2e-cli-batch');
+const { SUITE_ALIASES, SUITE_REGISTRY, normalizeSuiteSelection } = require('./e2e-cli-batch');
 
 const OS_SUITES = Object.freeze({
   linux: SUITE_ALIASES.linux,
@@ -61,9 +61,16 @@ function assertCanonicalSelection(os, enabled, selectedSuites) {
 
 function emitSuiteFlags(os, selectedSuites) {
   const selected = new Set(selectedSuites);
-  for (const suite of OS_SUITES[os]) {
+  for (const suite of getPlatformSuites(os)) {
     emit(`${os}_${suite}`, String(selected.has(suite)));
   }
+}
+
+function getPlatformSuites(os) {
+  const platform = os === 'windows' ? 'win32' : 'linux';
+  return Object.values(SUITE_REGISTRY)
+    .filter((suite) => suite.platforms.includes(platform))
+    .map((suite) => suite.id);
 }
 
 function emit(name, value) {
