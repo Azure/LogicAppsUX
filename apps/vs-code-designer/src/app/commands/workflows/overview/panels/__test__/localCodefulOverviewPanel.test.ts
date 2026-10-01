@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as vscode from 'vscode';
+import { WorkflowKind } from '../../../../../../constants';
 import { ext } from '../../../../../../extensionVariables';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import path from 'path';
@@ -154,9 +155,47 @@ vi.mock('../../../overviewCallbackInfo', () => ({
 }));
 
 import LocalCodefulOverviewPanel from '../localCodefulOverviewPanel';
+import { getCodefulWorkflowDataFromFiles, getRuntimeCodefulWorkflows } from '../../utils/codefulHelpers';
 
 const context = { telemetry: { properties: {}, measurements: {} } } as any;
 const codefulFilePath = path.join('D:\\project', 'Workflows.cs');
+
+describe('getCodefulWorkflowDataFromFiles', () => {
+  it('maps autonomous agents to Stateful and conversational agent APIs to Agent', () => {
+    mocks.readFileSync.mockReturnValue(`
+      WorkflowFactory.CreateStatefulWorkflow("autonomous-agent", workflow);
+      WorkflowFactory.CreateStatelessWorkflow("stateless-workflow", workflow);
+      WorkflowBuilderFactory.CreateConversationalAgent("legacy-conversational-agent", builder => {});
+      WorkflowFactory.CreateAgentWorkflow("conversational-agent", workflow);
+    `);
+    mocks.readdirSync.mockReturnValue(['Workflows.cs']);
+
+    expect(getCodefulWorkflowDataFromFiles(codefulFilePath)).toEqual([
+      { workflowName: 'autonomous-agent', workflowKind: WorkflowKind.stateful },
+      { workflowName: 'stateless-workflow', workflowKind: WorkflowKind.stateless },
+      { workflowName: 'legacy-conversational-agent', workflowKind: WorkflowKind.agent },
+      { workflowName: 'conversational-agent', workflowKind: WorkflowKind.agent },
+    ]);
+  });
+
+  it('normalizes runtime workflow kinds to the supported Overview kinds', async () => {
+    mocks.sendRequest.mockResolvedValue(
+      JSON.stringify({
+        value: [
+          { name: 'agent-workflow', kind: 'agent' },
+          { name: 'stateless-workflow', kind: 'Stateless' },
+          { name: 'agentic-workflow', kind: 'Stateful' },
+        ],
+      })
+    );
+
+    await expect(getRuntimeCodefulWorkflows(context, 'http://localhost:7071/management', 'api-version')).resolves.toEqual([
+      { workflowName: 'agent-workflow', workflowKind: WorkflowKind.agent },
+      { workflowName: 'stateless-workflow', workflowKind: WorkflowKind.stateless },
+      { workflowName: 'agentic-workflow', workflowKind: WorkflowKind.stateful },
+    ]);
+  });
+});
 
 interface MockPanel {
   active: boolean;
@@ -252,6 +291,44 @@ describe('LocalCodefulOverviewPanel', () => {
     expect(initializePayload.workflowPropertiesList[0].triggerName).toBe('lspManual');
     expect(initializePayload.workflowPropertiesList[0].callbackInfo.value).toContain(
       '/workflows/workflow-a/triggers/lspManual/listCallbackUrl'
+    );
+  });
+
+  it('initializes a stateless codeful overview from source discovery', async () => {
+    const codefulContent = `
+      WorkflowFactory.CreateStatelessWorkflow("stateless-workflow", workflow);
+      var trigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger();
+    `;
+    mocks.readFileSync.mockReturnValue(codefulContent);
+    mocks.sendRequest.mockImplementation(async (_context: any, request: { url: string; method: string }) => {
+      if (request.url.endsWith('/workflows?api-version=2019-10-01-edge-preview')) {
+        return JSON.stringify({ value: [] });
+      }
+      if (request.url.includes('/triggers?api-version=2019-10-01-edge-preview')) {
+        return JSON.stringify({ value: [] });
+      }
+      if (request.url.includes('/listCallbackUrl?api-version=2019-10-01-edge-preview')) {
+        return JSON.stringify({ value: `callback:${request.url}`, method: 'POST' });
+      }
+      throw new Error(`Unexpected request ${request.url}`);
+    });
+
+    const codefulPanel = new LocalCodefulOverviewPanel(context, vscode.Uri.file(codefulFilePath) as any);
+    await codefulPanel.create();
+
+    const messageHandler = panel.webview.onDidReceiveMessage.mock.calls[0][0];
+    await messageHandler({ command: ExtensionCommand.initialize });
+
+    const initCall = panel.webview.postMessage.mock.calls.find(([msg]: any) => msg.command === ExtensionCommand.initialize_frame);
+    const initializePayload = initCall?.[0].data;
+
+    expect(initializePayload.workflowPropertiesList).toHaveLength(1);
+    expect(initializePayload.workflowPropertiesList[0]).toEqual(
+      expect.objectContaining({
+        name: 'stateless-workflow',
+        kind: 'Stateless',
+        stateType: 'Stateless',
+      })
     );
   });
 
