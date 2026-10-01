@@ -97,9 +97,6 @@ export const HandoffSelector = ({ agentId, readOnly }: { agentId: string; readOn
           });
         }}
         onCheckedValueChange={(_e, data) => {
-          if (data.checkedItems.length === 0) {
-            return;
-          }
           const newItems = data.checkedItems.filter((x) => !selectedIds.includes(x));
           const removedItems = selectedIds.filter((x) => !data.checkedItems.includes(x));
           removedItems.forEach(removeHandoff);

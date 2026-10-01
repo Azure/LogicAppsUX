@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { GoToMockWorkflow } from './utils/GoToWorkflow';
+import { GoToMockWorkflowV2 } from './utils/GoToWorkflow';
 
 test.describe(
   'Designer notes tests',
@@ -12,10 +12,7 @@ test.describe(
       const pageErrors: string[] = [];
       page.on('pageerror', (error) => pageErrors.push(error.message));
 
-      await page.goto('/v2');
-      // The v2 route pulls in a large module graph; give the dev server time to serve it.
-      await page.getByText('Local', { exact: true }).waitFor({ state: 'visible', timeout: 3 * 60 * 1000 });
-      await GoToMockWorkflow(page, 'Notes In Metadata');
+      await GoToMockWorkflowV2(page, 'Notes In Metadata');
 
       await expect(page.getByTestId('card-check_for_entra_security_alerts')).toBeVisible();
       await expect(page.getByTestId('card-initialize_variable')).toBeVisible();
