@@ -9,6 +9,83 @@ export interface CopilotChatCloseHost {
   now(): number;
 }
 
+export interface CopilotChatCdpConnection {
+  dispose(): void;
+}
+
+export interface CopilotChatAttachRetryHost<TCdp extends CopilotChatCdpConnection> {
+  connect(timeoutMs: number): Promise<TCdp>;
+  createCloseHost(cdp: TCdp): CopilotChatCloseHost;
+  log(message: string): void;
+  now(): number;
+  sleep(ms: number): Promise<void>;
+}
+
+const maxCopilotChatAttachAttempts = 2;
+const maxCopilotChatAttachBudgetMs = 5000;
+
+export async function closeCopilotChatIfVisibleWithAttachRetry<TCdp extends CopilotChatCdpConnection>(
+  stage: string,
+  retryHost: CopilotChatAttachRetryHost<TCdp>,
+  options: { timeoutMs?: number; absentSettleMs?: number } = {}
+): Promise<void> {
+  const timeoutMs = options.timeoutMs ?? 8000;
+  const deadline = retryHost.now() + timeoutMs;
+  let lastAttachError: unknown;
+  let attemptsMade = 0;
+
+  for (let attempt = 1; attempt <= maxCopilotChatAttachAttempts; attempt++) {
+    const attachTimeoutMs = getAttachTimeout(deadline, retryHost.now());
+    if (attachTimeoutMs <= 0) {
+      break;
+    }
+
+    attemptsMade++;
+    let cdp: TCdp | undefined;
+    try {
+      cdp = await retryHost.connect(attachTimeoutMs);
+      try {
+        const cleanupTimeoutMs = getRemainingCleanupTimeout(deadline, retryHost.now());
+        if (cleanupTimeoutMs <= 0) {
+          throw new Error('Copilot Chat cleanup deadline expired after workbench CDP attach');
+        }
+        await closeCopilotChatIfVisibleCore(stage, retryHost.createCloseHost(cdp), {
+          ...options,
+          timeoutMs: cleanupTimeoutMs,
+        });
+      } finally {
+        cdp.dispose();
+      }
+      return;
+    } catch (error) {
+      if (cdp) {
+        throw error;
+      }
+
+      lastAttachError = error;
+      if (attempt >= maxCopilotChatAttachAttempts || retryHost.now() >= deadline) {
+        break;
+      }
+
+      const message = summarizeAttachError(error);
+      retryHost.log(
+        `[copilot-chat] ${stage}: workbench CDP attach attempt ${attempt}/${maxCopilotChatAttachAttempts} failed; retrying. Reason: ${message}`
+      );
+      const retryDelayMs = Math.min(250, deadline - retryHost.now());
+      if (retryDelayMs <= 0) {
+        break;
+      }
+      await retryHost.sleep(retryDelayMs);
+    }
+  }
+
+  throw new Error(
+    `[copilot-chat] ${stage}: failed to attach workbench CDP for optional cleanup after ${attemptsMade} ${
+      attemptsMade === 1 ? 'attempt' : 'attempts'
+    } (max ${maxCopilotChatAttachAttempts}). Last error: ${summarizeAttachError(lastAttachError)}`
+  );
+}
+
 export async function closeCopilotChatIfVisibleCore(
   stage: string,
   host: CopilotChatCloseHost,
@@ -91,4 +168,44 @@ export function getCopilotChatCloseCommands(state: CopilotChatWorkbenchState): s
 
 function getReadTimeout(deadline: number, now: number): number {
   return Math.max(250, Math.min(1500, deadline - now));
+}
+
+function getAttachTimeout(deadline: number, now: number): number {
+  return Math.min(maxCopilotChatAttachBudgetMs, deadline - now);
+}
+
+function getRemainingCleanupTimeout(deadline: number, now: number): number {
+  return deadline - now;
+}
+
+function summarizeAttachError(error: unknown): string {
+  const raw = error instanceof Error ? error.message : String(error);
+  const normalized = raw.toLowerCase();
+
+  if (normalized.includes('cdp websocket handshake')) {
+    return 'cdp-websocket-handshake-timeout';
+  }
+  if (normalized.includes('websocket upgrade failed')) {
+    return 'cdp-websocket-upgrade-failed';
+  }
+  if (normalized.includes('unable to find vs code workbench cdp target') || normalized.includes('targets:')) {
+    return 'workbench-target-discovery-failed';
+  }
+  if (normalized.includes('failed to fetch') || normalized.includes('fetch aborted') || normalized.includes('body aborted')) {
+    return 'workbench-target-fetch-failed';
+  }
+  if (normalized.includes('deadline exceeded')) {
+    return 'deadline-exceeded';
+  }
+  if (normalized.includes('timed out') || normalized.includes('timeout')) {
+    return 'timeout';
+  }
+  if (normalized.includes('socket')) {
+    return 'socket-connect-failed';
+  }
+  if (normalized.includes('abort')) {
+    return 'aborted';
+  }
+
+  return error instanceof Error && error.name ? `error:${error.name}` : 'unknown-error';
 }

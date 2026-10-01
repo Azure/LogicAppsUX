@@ -1146,17 +1146,23 @@ async function openDesignerAndCreateWorkflow(
     } else {
       await waitForSavedWorkflowContainsDesignerChanges(createdWorkspace);
     }
-    await closeDesignerDetailsPanelThroughDesigner(designerCdp, contextId, `${createdWorkspace.label} final designer canvas`);
-    await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-designer-open`, {
-      expectation: {
-        kind: 'designerCanvas',
-        label: createdWorkspace.label,
-        requiredNodes: [requestTriggerTitleVariants, responseActionTitle],
-      },
-      semanticCdp: designerCdp,
-      semanticContextId: contextId,
-      activeTabText: [createdWorkspace.wfName, 'Workspace'],
-    });
+    if (shouldRunFinalDesignerCanvasCheckpoint(options)) {
+      await closeDesignerDetailsPanelThroughDesigner(designerCdp, contextId, `${createdWorkspace.label} final designer canvas`);
+      await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-designer-open`, {
+        expectation: {
+          kind: 'designerCanvas',
+          label: createdWorkspace.label,
+          requiredNodes: [requestTriggerTitleVariants, responseActionTitle],
+        },
+        semanticCdp: designerCdp,
+        semanticContextId: contextId,
+        activeTabText: [createdWorkspace.wfName, 'Workspace'],
+      });
+    } else {
+      console.log(
+        `[workspace-lifecycle] ${createdWorkspace.label}: skipping redundant final designer-open canvas checkpoint after MSN saved workflow verification`
+      );
+    }
   } catch (error) {
     console.log(
       `[workspace-lifecycle] ${createdWorkspace.label}: openDesignerAndCreateWorkflow failed ${JSON.stringify({
@@ -1176,6 +1182,10 @@ async function openDesignerAndCreateWorkflow(
   } finally {
     cdp?.dispose();
   }
+}
+
+function shouldRunFinalDesignerCanvasCheckpoint(options: { includeMsnWeather?: boolean }): boolean {
+  return options.includeMsnWeather !== true;
 }
 
 function getDesignerWebviewTabForWorkflow(createdWorkspace: CreatedWorkspace): vscode.Tab | undefined {

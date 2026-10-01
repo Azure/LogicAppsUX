@@ -18,6 +18,7 @@ async function main(): Promise<void> {
   await testWorkbenchDiscoveryFetchTimesOut();
   await testWorkbenchDiscoveryJsonBodyTimesOut();
   await testConnectAndHandshakeShareDeadline();
+  await testHandshakeFailureDestroysSocket();
   console.log('[cdpClient.unit] all tests passed');
 }
 
@@ -195,14 +196,33 @@ async function testConnectAndHandshakeShareDeadline(): Promise<void> {
   }
 }
 
+async function testHandshakeFailureDestroysSocket(): Promise<void> {
+  let socket: FakeSocket | undefined;
+  const restoreSocketFactory = setCdpSocketFactoryForTests(() => {
+    socket = new FakeSocket();
+    setTimeout(() => socket?.emit('connect'), 0);
+    return socket as never;
+  });
+  try {
+    await assert.rejects(CdpConnection.connect('ws://127.0.0.1/devtools/page/1', 'target', 10), /deadline|handshake|timed out/i);
+    assert.strictEqual(socket?.destroyCalls, 1, 'Handshake failures must destroy the socket before callers retry CDP attach');
+  } finally {
+    restoreSocketFactory();
+  }
+}
+
 class FakeSocket extends EventEmitter {
+  destroyCalls = 0;
+
   write(): boolean {
     return true;
   }
 
   end(): void {}
 
-  destroy(): void {}
+  destroy(): void {
+    this.destroyCalls++;
+  }
 }
 
 class FakeContextConnection {
