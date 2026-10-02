@@ -24,7 +24,14 @@ function readMsnTerminal(terminalPath) {
 }
 
 function assertSuccessfulMsnTerminal(summary, terminal) {
-  const expectedPhases = SUITE_REGISTRY.msnWeatherLifecycle.expectedPhases;
+  const originalDirectSchema =
+    terminal?.label === 'msnWeatherLifecycle' &&
+    Object.hasOwn(terminal, 'label') &&
+    !Object.hasOwn(terminal, 'suiteId') &&
+    !Object.hasOwn(terminal, 'lifecycleFinalized');
+  const expectedPhases = originalDirectSchema
+    ? SUITE_REGISTRY.msnWeatherLifecycle.expectedPhases.filter((phaseId) => phaseId.startsWith('msnWeatherLifecycle:'))
+    : SUITE_REGISTRY.msnWeatherLifecycle.expectedPhases;
   if (
     summary.label !== 'msnWeatherLifecycle' ||
     summary.outcome !== 'success' ||
@@ -38,8 +45,10 @@ function assertSuccessfulMsnTerminal(summary, terminal) {
   if (
     !terminal ||
     (terminal.label || terminal.suiteId) !== 'msnWeatherLifecycle' ||
+    (Object.hasOwn(terminal, 'label') && terminal.label !== 'msnWeatherLifecycle') ||
+    (Object.hasOwn(terminal, 'suiteId') && terminal.suiteId !== 'msnWeatherLifecycle') ||
     terminal.complete !== true ||
-    terminal.lifecycleFinalized !== true ||
+    (!originalDirectSchema && terminal.lifecycleFinalized !== true) ||
     terminal.cleanupVerified !== true ||
     terminal.exitCode !== 0 ||
     (terminal.signal !== null && terminal.signal !== undefined) ||

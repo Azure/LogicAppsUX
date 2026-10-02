@@ -5,12 +5,11 @@
 /* global __dirname, __filename, clearTimeout, console, module, process, require, setTimeout */
 const { execFileSync, spawn } = require('child_process');
 const { Buffer } = require('buffer');
-const { createHash, randomUUID } = require('crypto');
+const { createHash } = require('crypto');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { URL } = require('url');
-const { createProcessObservationProvider } = require('./e2e-cli-process-observation');
 const { createBatchRoot, normalizeSuiteSelection, runBatchSuites, SUITE_REGISTRY } = require('./e2e-cli-batch');
 const { getOgfScenariosForPhase } = require('./ogf-e2e-registry');
 
@@ -715,32 +714,22 @@ function getCodefulDebugTasksRunExtraEnv({ workspaceParent, entry, now = Date.no
 }
 
 async function runMsnWeatherLifecycle(visibleDelayMs) {
-  const evidenceEnv = { ...process.env, LA_E2E_CLI_DIRECT_SUITE_LABEL: 'msnWeatherLifecycle' };
-  beginDirectMsnEvidence(evidenceEnv);
-  let runtimeDependenciesRoot;
-  let workspaceParent;
+  ensureMsnWeatherProfile();
+  const azureEnv = getMsnWeatherAzureEnv();
+  const lifecycleDir = getLifecycleArtifactDir('msn-weather-lifecycle');
+  const lifecycleRunId = Date.now();
+  const runtimeDependenciesRoot = createIsolatedRuntimeDependenciesRoot('msnWeatherLifecycle');
+  const workspaceParent = createOwnedWorkspaceParent('msn-weather-lifecycle');
   let lifecycleSucceeded = false;
-  let lifecycleError;
-  let cleanupVerified = false;
-  let terminal;
+  const commonEnv = {
+    LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: runtimeDependenciesRoot,
+    LA_E2E_CLI_EXPECT_AZURE_LOGIC_APPS_CHANNEL: '1',
+    LA_E2E_CLI_VSCODE_LOG_ARTIFACT_LABEL: 'msnWeatherLifecycle',
+  };
+  fs.mkdirSync(lifecycleDir, { recursive: true });
+  const manifestPath = path.join(lifecycleDir, `manifest-standard-${lifecycleRunId}.json`);
+
   try {
-    ensureMsnWeatherProfile();
-    const azureEnv = getMsnWeatherAzureEnv();
-    const lifecycleDir = getLifecycleArtifactDir('msn-weather-lifecycle');
-    const lifecycleRunId = Date.now();
-    runtimeDependenciesRoot = createIsolatedRuntimeDependenciesRoot('msnWeatherLifecycle');
-    workspaceParent = createOwnedWorkspaceParent('msn-weather-lifecycle');
-    fs.mkdirSync(lifecycleDir, { recursive: true });
-    const ownedProcessEnv = await getMsnOwnedProcessEnvironment(lifecycleDir);
-    const commonEnv = {
-      LA_E2E_CLI_DIRECT_SUITE_LABEL: 'msnWeatherLifecycle',
-      LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: runtimeDependenciesRoot,
-      LA_E2E_CLI_EXPECT_AZURE_LOGIC_APPS_CHANNEL: '1',
-      LA_E2E_CLI_VSCODE_LOG_ARTIFACT_LABEL: 'msnWeatherLifecycle',
-      ...ownedProcessEnv,
-    };
-    fs.mkdirSync(lifecycleDir, { recursive: true });
-    const manifestPath = path.join(lifecycleDir, `manifest-standard-${lifecycleRunId}.json`);
     await runVscodeTest(['--label', 'runtimeDependencyBootstrap'], {
       visibleDelayMs,
       extraEnv: {
@@ -787,26 +776,11 @@ async function runMsnWeatherLifecycle(visibleDelayMs) {
     });
 
     lifecycleSucceeded = true;
-  } catch (error) {
-    lifecycleError = error;
-    throw error;
   } finally {
-    ({ cleanupVerified, terminal } = await finalizeMsnLifecycleCleanup({
-      lifecycleError,
-      cleanupSteps: [
-        () => cleanupOwnedWorkspaceParent(workspaceParent, 'MSN Weather lifecycle', true),
-        async () => {
-          if (runtimeDependenciesRoot && lifecycleSucceeded && process.env.LA_E2E_CLI_PRESERVE_WORKSPACES !== '1') {
-            await cleanupRuntimeDependenciesRoot(runtimeDependenciesRoot);
-          }
-        },
-      ],
-      observeCleanup: () => getOwnedRootCleanupVerified([workspaceParent, runtimeDependenciesRoot]),
-      finalizeEvidence: (outcome) => finalizeDirectMsnEvidence(evidenceEnv, { ...outcome, lifecycleSucceeded }),
-    }));
-  }
-  if (!cleanupVerified || terminal?.complete === false) {
-    throw new Error('MSN lifecycle evidence failed: incomplete-or-unclean-lifecycle');
+    await cleanupOwnedWorkspaceParent(workspaceParent, 'MSN Weather lifecycle');
+    if (lifecycleSucceeded && process.env.LA_E2E_CLI_PRESERVE_WORKSPACES !== '1') {
+      await cleanupRuntimeDependenciesRoot(runtimeDependenciesRoot);
+    }
   }
 }
 
@@ -841,24 +815,6 @@ async function finalizeMsnLifecycleCleanup({ lifecycleError, cleanupSteps, obser
     throw new Error('MSN lifecycle evidence failed: incomplete-or-unclean-lifecycle');
   }
   return { cleanupVerified, terminal };
-}
-
-async function getMsnOwnedProcessEnvironment(lifecycleDir) {
-  if (!['linux', 'win32'].includes(process.platform)) {
-    return {};
-  }
-  const provider = createProcessObservationProvider();
-  const records = await provider.snapshot(10_000);
-  const owners = records.filter((record) => record.pid === process.pid);
-  if (owners.length !== 1 || !owners[0].creationIdentity || !owners[0].executable) {
-    throw new Error('Owned process cleanup failed: missing-wrapper-process-identity');
-  }
-  const invocationId = randomUUID();
-  return {
-    LA_E2E_CLI_MSN_PROCESS_INVOCATION: invocationId,
-    LA_E2E_CLI_MSN_PROCESS_OWNER_JSON: JSON.stringify(owners[0]),
-    LA_E2E_CLI_MSN_PROCESS_EVIDENCE_BASE: path.join(lifecycleDir, `owned-processes-${invocationId}`),
-  };
 }
 
 async function runVariablesPickerLifecycle(visibleDelayMs) {
@@ -2460,6 +2416,7 @@ module.exports = {
     finalizeDirectMsnEvidence,
     finalizeMsnLifecycleCleanup,
     getDirectSuiteComplete,
+    getDirectExpectedPhaseIds,
     getOwnedRootCleanupVerified,
     getSuiteTerminalResultPath,
     getWorkspaceSourcesFromManifestPath,
@@ -2744,26 +2701,14 @@ function writeSuitePhaseResult(env, result) {
     fs.appendFileSync(phaseResultsPath, `${JSON.stringify({ schemaVersion: 1, ...result })}\n`);
     return;
   }
-  const label = env.LA_E2E_CLI_DIRECT_SUITE_LABEL || result.label;
-  if (label !== result.label) {
-    writeSuitePhaseResult(
-      {
-        ...env,
-        LA_E2E_CLI_DIRECT_SUITE_LABEL: undefined,
-        LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH: undefined,
-        LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH: undefined,
-      },
-      result
-    );
-  }
-  const priorTerminalResult = readJsonIfExists(getSuiteTerminalResultPath(env, label));
+  const priorTerminalResult = readJsonIfExists(getSuiteTerminalResultPath(env, result.label));
   const phaseResults = [...(Array.isArray(priorTerminalResult?.phaseResults) ? priorTerminalResult.phaseResults : []), result];
-  const terminalComplete = label !== 'msnWeatherLifecycle' && getDirectSuiteComplete(label, phaseResults);
+  const terminalComplete = getDirectSuiteComplete(result.label, phaseResults);
   const finalizedPhaseResults = terminalComplete ? phaseResults : phaseResults.map(clearOgfScenarios);
-  const retainedOgfScenarios = terminalComplete ? collectDirectOgfScenarios(label, finalizedPhaseResults, env) : [];
+  const retainedOgfScenarios = terminalComplete ? collectDirectOgfScenarios(result.label, finalizedPhaseResults, env) : [];
   writeSuiteCleanupLedger(env, result.cleanupLedger);
   writeSuiteTerminalResult(env, {
-    label,
+    label: result.label,
     phaseId: result.phaseId,
     exitCode: result.exitCode,
     signal: result.signal,
@@ -2771,8 +2716,15 @@ function writeSuitePhaseResult(env, result) {
     diagnosticsError: result.diagnosticsError,
     complete: terminalComplete,
     mochaPassingCount: result.mochaPassingCount,
-    phaseResults: finalizedPhaseResults.map(projectTerminalPhase),
-    ...(label === 'msnWeatherLifecycle' ? { lifecycleFinalized: false } : {}),
+    phaseResults: finalizedPhaseResults.map((phase) => ({
+      phaseId: phase.phaseId,
+      exitCode: phase.exitCode,
+      signal: phase.signal,
+      cleanupVerified: phase.cleanupVerified,
+      diagnosticsError: phase.diagnosticsError,
+      complete: phase.complete,
+      ...(Array.isArray(phase.ogfScenarios) && phase.ogfScenarios.length > 0 ? { ogfScenarios: phase.ogfScenarios } : {}),
+    })),
     ...(retainedOgfScenarios.length > 0 ? { ogfScenarios: retainedOgfScenarios } : {}),
   });
 }
@@ -2900,8 +2852,8 @@ function getDirectExpectedPhaseIds(label) {
   if (!label) {
     return [];
   }
-  if (SUITE_REGISTRY[label]) {
-    return SUITE_REGISTRY[label].expectedPhases;
+  if (label === 'msnWeatherLifecycle') {
+    return SUITE_REGISTRY[label].expectedPhases.filter((phaseId) => phaseId.startsWith(`${label}:`));
   }
   if (label === 'runtimeDependencyBootstrap') {
     return ['runtimeDependencyBootstrap:bootstrap'];

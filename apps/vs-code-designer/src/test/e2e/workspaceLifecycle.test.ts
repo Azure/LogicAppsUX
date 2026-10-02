@@ -39,8 +39,6 @@ import {
   type MsnWeatherAzureSettings,
   normalizeManagementBaseUrl,
 } from './msnWeatherSettings';
-import { findLoadedCachedExtensionEntry, teardownOwnedMsnHost } from './ownedMsnShutdown';
-import { createMsnProcessCleanup } from './ownedMsnProcessCleanup';
 import { captureCdpScreenshot, captureDiagnosticScreenshot, installFailureScreenshotHook } from './screenshot';
 import { buildScreenshotReadinessExpression, type ScreenshotExpectation, type ScreenshotReadinessSnapshot } from './screenshotReadiness';
 import { containsIgnoreCase, normalizeFsPath, uniqueName } from './testUtils';
@@ -247,40 +245,6 @@ suite('Generated Workspace Designer Lifecycle Tests', () => {
   });
 
   suiteTeardown(async () => {
-    if (lifecycleMode === 'msn-weather-run' && process.env.LA_E2E_CLI_INCLUDE_MSN_WEATHER_LIFECYCLE === '1') {
-      const extension = vscode.extensions.getExtension(logicAppsExtensionId);
-      assert.ok(extension, 'Owned MSN shutdown requires the loaded Logic Apps extension');
-      const workspaceParent = process.env.LA_E2E_CLI_WORKSPACE_PARENT;
-      assert.ok(workspaceParent, 'Owned MSN shutdown requires the runner-created workspace parent');
-      await teardownOwnedMsnHost(
-        {
-          dedicatedMsnRunHost: true,
-          extension: {
-            id: extension.id,
-            get isActive() {
-              return extension.isActive;
-            },
-            extensionPath: extension.extensionPath,
-            main: extension.packageJSON.main,
-          },
-          workspaceParent,
-          get workspaceRoots() {
-            return (vscode.workspace.workspaceFolders ?? []).map((folder) => folder.uri.fsPath);
-          },
-          resolveEntry: (filename) => require.resolve(filename),
-          cachedEntry: (filename) => findLoadedCachedExtensionEntry(filename, require.cache),
-        },
-        [
-          () => waitForVisibleDelay('Generated workspace designer lifecycle'),
-          () => closeWebviewTabs(createWorkspaceViewType),
-          () => closeWebviewTabs(designerViewType),
-          () => stopDebuggingAndTasks(),
-        ],
-        ['linux', 'win32'].includes(process.platform) ? createMsnProcessCleanup(process.env) : undefined
-      );
-      console.log('[workspace-lifecycle][msn-weather] Awaited original cached extension deactivation and verified repeated shutdown.');
-      return;
-    }
     await waitForVisibleDelay('Generated workspace designer lifecycle');
     await closeWebviewTabs(createWorkspaceViewType);
     await closeWebviewTabs(designerViewType);

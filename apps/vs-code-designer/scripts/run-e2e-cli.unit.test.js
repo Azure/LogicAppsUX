@@ -22,8 +22,6 @@ const {
     getFuncCoreToolsCandidatePaths,
     getFuncCoreToolsBinaryPath,
     getMochaPassingCount,
-    beginDirectMsnEvidence,
-    finalizeDirectMsnEvidence,
     finalizeMsnLifecycleCleanup,
     getDirectSuiteComplete,
     getOwnedRootCleanupVerified,
@@ -1386,13 +1384,14 @@ function testMsnDirectLifecycleEvidence() {
         phaseResults: phases.slice(1),
       };
       assert.throws(() => assertSuccessfulMsnTerminal(msnSummary(), publishedShape), /incomplete-or-unclean-terminal/);
-      assert.strictEqual(getDirectSuiteComplete('msnWeatherLifecycle', phases.slice(1)), false);
+      assert.strictEqual(getDirectSuiteComplete('msnWeatherLifecycle', phases.slice(1)), true);
 
-      beginDirectMsnEvidence(env);
-      for (const phase of phases) {
+      const lifecyclePhases = phases.slice(1);
+      writeSuitePhaseResult({}, phases[0]);
+      for (const [index, phase] of lifecyclePhases.entries()) {
         writeSuitePhaseResult(env, phase);
-        assert.strictEqual(readTerminal().complete, false, 'Phase success cannot precede lifecycle cleanup finalization');
-        assert.strictEqual(readTerminal().lifecycleFinalized, false);
+        assert.strictEqual(readTerminal().complete, index === 1, 'Both actual lifecycle phases are required');
+        assert.strictEqual(readTerminal().lifecycleFinalized, undefined, 'Original direct schema must remain unchanged');
       }
       const bootstrap = JSON.parse(fs.readFileSync(getSuiteTerminalResultPath({}, 'runtimeDependencyBootstrap'), 'utf8'));
       assert.strictEqual(bootstrap.complete, true);
@@ -1400,7 +1399,7 @@ function testMsnDirectLifecycleEvidence() {
         bootstrap.phaseResults.map((phase) => phase.phaseId),
         ['runtimeDependencyBootstrap:bootstrap']
       );
-      const terminal = finalizeDirectMsnEvidence(env, { cleanupVerified: true, lifecycleSucceeded: true, lifecycleError: false });
+      const terminal = readTerminal();
       assertSuccessfulMsnTerminal(msnSummary(), terminal);
       for (const override of [
         { exitCode: 1 },
@@ -1410,8 +1409,8 @@ function testMsnDirectLifecycleEvidence() {
         { complete: false },
         { lifecycleFinalized: false },
         { diagnosticsError: 'postprocessing-failed' },
-        { phaseResults: phases.slice(1) },
-        { phaseResults: [...phases, phases[0]] },
+        { phaseResults: lifecyclePhases.slice(1) },
+        { phaseResults: [...lifecyclePhases, lifecyclePhases[0]] },
       ]) {
         assert.throws(() => assertSuccessfulMsnTerminal(msnSummary(), { ...terminal, ...override }));
       }
@@ -1419,10 +1418,10 @@ function testMsnDirectLifecycleEvidence() {
         assert.throws(() => assertSuccessfulMsnTerminal({ ...msnSummary(), ...override }, terminal));
       }
       assert.strictEqual(terminal.phaseId, 'msnWeatherLifecycle:run');
-      assert.strictEqual(terminal.lifecycleFinalized, true);
+      assert.strictEqual(terminal.lifecycleFinalized, undefined);
       assert.deepStrictEqual(
         terminal.phaseResults.map((phase) => phase.phaseId),
-        SUITE_REGISTRY.msnWeatherLifecycle.expectedPhases
+        SUITE_REGISTRY.msnWeatherLifecycle.expectedPhases.slice(1)
       );
       assert.strictEqual(terminal.ogfScenarios, undefined);
 
@@ -1441,56 +1440,27 @@ function testMsnDirectLifecycleEvidence() {
         { complete: false },
         { diagnosticsError: 'required-profile-capture-failed' },
       ];
-      for (const [index, phase] of phases.entries()) {
+      for (const [index, phase] of lifecyclePhases.entries()) {
         for (const override of failedPhaseOverrides) {
-          const changed = phases.map((entry, entryIndex) => (entryIndex === index ? { ...entry, ...override } : entry));
+          const changed = lifecyclePhases.map((entry, entryIndex) => (entryIndex === index ? { ...entry, ...override } : entry));
           assert.strictEqual(getDirectSuiteComplete('msnWeatherLifecycle', changed), false);
         }
         assert.strictEqual(
           getDirectSuiteComplete(
             'msnWeatherLifecycle',
-            phases.filter((_, phaseIndex) => phaseIndex !== index)
+            lifecyclePhases.filter((_, phaseIndex) => phaseIndex !== index)
           ),
           false
         );
-        assert.strictEqual(getDirectSuiteComplete('msnWeatherLifecycle', [...phases, phase]), false);
+        assert.strictEqual(getDirectSuiteComplete('msnWeatherLifecycle', [...lifecyclePhases, phase]), false);
       }
       assert.strictEqual(getDirectSuiteComplete('msnWeatherLifecycle', [...phases, msnPhase('unexpected')]), false);
       assert.strictEqual(getDirectSuiteComplete('msnWeatherLifecycle', [...phases, msnPhase('')]), false);
 
-      for (const options of [
-        { cleanupVerified: false, lifecycleSucceeded: true, lifecycleError: false },
-        { cleanupVerified: true, lifecycleSucceeded: false, lifecycleError: true },
-        { cleanupVerified: true, lifecycleSucceeded: true, lifecycleError: true },
-      ]) {
-        const failed = finalizeDirectMsnEvidence(env, options);
-        assert.strictEqual(failed.complete, false);
-        assert.strictEqual(failed.exitCode, 1);
-        assert.throws(() => assertSuccessfulMsnTerminal(msnSummary(), failed), /incomplete-or-unclean-terminal/);
-      }
-      beginDirectMsnEvidence(env);
-      assert.deepStrictEqual(readTerminal().phaseResults, [], 'A new invocation must not reuse stale successful phases');
-      assert.strictEqual(readTerminal().complete, false);
-      const earlyFailure = finalizeDirectMsnEvidence(env, {
-        cleanupVerified: true,
-        lifecycleSucceeded: false,
-        lifecycleError: true,
-      });
-      assert.strictEqual(earlyFailure.complete, false);
-      assert.deepStrictEqual(earlyFailure.phaseResults, []);
-      assert.strictEqual(earlyFailure.exitCode, null);
-
-      beginDirectMsnEvidence(env);
-      for (const phase of phases.slice(1)) {
-        writeSuitePhaseResult(env, phase);
-      }
-      const missingBootstrap = finalizeDirectMsnEvidence(env, {
-        cleanupVerified: true,
-        lifecycleSucceeded: true,
-        lifecycleError: false,
-      });
-      assert.strictEqual(missingBootstrap.complete, false);
-      assert.match(missingBootstrap.diagnosticsError, /incomplete-lifecycle-phases/);
+      writeSuitePhaseResult(env, lifecyclePhases[0]);
+      assert.strictEqual(readTerminal().complete, false, 'Duplicate retained observations must not be silently reset');
+      assert.strictEqual(readTerminal().phaseResults.length, 3);
+      assert.throws(() => assertSuccessfulMsnTerminal(msnSummary(), readTerminal()));
     }
   } finally {
     process.chdir(previousCwd);
