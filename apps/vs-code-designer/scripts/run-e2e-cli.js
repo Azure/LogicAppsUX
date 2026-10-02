@@ -10,7 +10,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { URL } = require('url');
-const { createBatchRoot, normalizeSuiteSelection, runBatchSuites } = require('./e2e-cli-batch');
+const { createBatchRoot, normalizeSuiteSelection, runBatchSuites, SUITE_REGISTRY } = require('./e2e-cli-batch');
 const { getOgfScenariosForPhase } = require('./ogf-e2e-registry');
 
 const forbiddenOutputPatterns = [
@@ -357,8 +357,22 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     duplicatePhaseIds.length === 0 &&
     (missingPhaseIds.length === 0 || blockedPhaseIds.length > 0) &&
     phaseResults.length > 0;
+  const msnSucceeded =
+    suite.id !== 'msnWeatherLifecycle' ||
+    (exitCode === 0 &&
+      (signal === null || signal === undefined) &&
+      missingPhaseIds.length === 0 &&
+      phaseResults.length === expectedPhaseIds.length &&
+      phaseResults.every(
+        (phase) => phase.complete === true && phase.exitCode === 0 && (phase.signal === null || phase.signal === undefined)
+      ));
   const terminalComplete =
-    phaseCompleteness && phaseCleanupVerified && processCleanup.verified === true && !error && phaseDiagnosticsErrors.length === 0;
+    phaseCompleteness &&
+    phaseCleanupVerified &&
+    processCleanup.verified === true &&
+    !error &&
+    phaseDiagnosticsErrors.length === 0 &&
+    msnSucceeded;
   const finalizedPhaseResults = terminalComplete ? phaseResults : phaseResults.map(clearOgfScenarios);
   const ogfScenarios = terminalComplete ? collectOgfScenarios(finalizedPhaseResults) : [];
   const cleanupLedger = {
@@ -391,6 +405,9 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     blockedPhaseIds,
     phaseCompleteness,
     complete: terminalComplete,
+    ...(suite.id === 'msnWeatherLifecycle'
+      ? { lifecycleFinalized: true, phaseResults: finalizedPhaseResults.map(projectTerminalPhase) }
+      : {}),
     ...(ogfScenarios.length > 0 ? { ogfScenarios } : {}),
   };
   writeSuiteCleanupLedger({ LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH: context.cleanupLedgerPath }, cleanupLedger);
@@ -697,22 +714,29 @@ function getCodefulDebugTasksRunExtraEnv({ workspaceParent, entry, now = Date.no
 }
 
 async function runMsnWeatherLifecycle(visibleDelayMs) {
-  ensureMsnWeatherProfile();
-  const azureEnv = getMsnWeatherAzureEnv();
-  const lifecycleDir = getLifecycleArtifactDir('msn-weather-lifecycle');
-  const lifecycleRunId = Date.now();
-  const runtimeDependenciesRoot = createIsolatedRuntimeDependenciesRoot('msnWeatherLifecycle');
-  const workspaceParent = createOwnedWorkspaceParent('msn-weather-lifecycle');
+  const evidenceEnv = { ...process.env, LA_E2E_CLI_DIRECT_SUITE_LABEL: 'msnWeatherLifecycle' };
+  beginDirectMsnEvidence(evidenceEnv);
+  let runtimeDependenciesRoot;
+  let workspaceParent;
   let lifecycleSucceeded = false;
-  const commonEnv = {
-    LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: runtimeDependenciesRoot,
-    LA_E2E_CLI_EXPECT_AZURE_LOGIC_APPS_CHANNEL: '1',
-    LA_E2E_CLI_VSCODE_LOG_ARTIFACT_LABEL: 'msnWeatherLifecycle',
-  };
-  fs.mkdirSync(lifecycleDir, { recursive: true });
-  const manifestPath = path.join(lifecycleDir, `manifest-standard-${lifecycleRunId}.json`);
-
+  let lifecycleError;
+  let cleanupVerified = false;
+  let terminal;
   try {
+    ensureMsnWeatherProfile();
+    const azureEnv = getMsnWeatherAzureEnv();
+    const lifecycleDir = getLifecycleArtifactDir('msn-weather-lifecycle');
+    const lifecycleRunId = Date.now();
+    runtimeDependenciesRoot = createIsolatedRuntimeDependenciesRoot('msnWeatherLifecycle');
+    workspaceParent = createOwnedWorkspaceParent('msn-weather-lifecycle');
+    const commonEnv = {
+      LA_E2E_CLI_DIRECT_SUITE_LABEL: 'msnWeatherLifecycle',
+      LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: runtimeDependenciesRoot,
+      LA_E2E_CLI_EXPECT_AZURE_LOGIC_APPS_CHANNEL: '1',
+      LA_E2E_CLI_VSCODE_LOG_ARTIFACT_LABEL: 'msnWeatherLifecycle',
+    };
+    fs.mkdirSync(lifecycleDir, { recursive: true });
+    const manifestPath = path.join(lifecycleDir, `manifest-standard-${lifecycleRunId}.json`);
     await runVscodeTest(['--label', 'runtimeDependencyBootstrap'], {
       visibleDelayMs,
       extraEnv: {
@@ -759,11 +783,23 @@ async function runMsnWeatherLifecycle(visibleDelayMs) {
     });
 
     lifecycleSucceeded = true;
+  } catch (error) {
+    lifecycleError = error;
+    throw error;
   } finally {
     await cleanupOwnedWorkspaceParent(workspaceParent, 'MSN Weather lifecycle');
-    if (lifecycleSucceeded && process.env.LA_E2E_CLI_PRESERVE_WORKSPACES !== '1') {
+    if (runtimeDependenciesRoot && lifecycleSucceeded && process.env.LA_E2E_CLI_PRESERVE_WORKSPACES !== '1') {
       await cleanupRuntimeDependenciesRoot(runtimeDependenciesRoot);
     }
+    cleanupVerified = getOwnedRootCleanupVerified([workspaceParent, runtimeDependenciesRoot]);
+    terminal = finalizeDirectMsnEvidence(evidenceEnv, {
+      cleanupVerified,
+      lifecycleSucceeded,
+      lifecycleError: Boolean(lifecycleError),
+    });
+  }
+  if (!cleanupVerified || terminal?.complete === false) {
+    throw new Error('MSN lifecycle evidence failed: incomplete-or-unclean-lifecycle');
   }
 }
 
@@ -2361,6 +2397,10 @@ module.exports = {
     getFuncCoreToolsCandidatePaths,
     getFuncCoreToolsBinaryPath,
     getMochaPassingCount,
+    beginDirectMsnEvidence,
+    finalizeDirectMsnEvidence,
+    getDirectSuiteComplete,
+    getOwnedRootCleanupVerified,
     getSuiteTerminalResultPath,
     getWorkspaceSourcesFromManifestPath,
     buildOgfScenariosForPhase,
@@ -2375,6 +2415,7 @@ module.exports = {
     verifyFuncCoreToolsAtDependencyRoot,
     walkFiles,
     writeSuitePhaseResult,
+    writeSuiteFinalEvidence,
     writeSuiteTerminalResult,
     writeVscodeProfileLogIndex,
   },
@@ -2640,14 +2681,26 @@ function writeSuitePhaseResult(env, result) {
     fs.appendFileSync(phaseResultsPath, `${JSON.stringify({ schemaVersion: 1, ...result })}\n`);
     return;
   }
-  const priorTerminalResult = readJsonIfExists(getSuiteTerminalResultPath(env, result.label));
+  const label = env.LA_E2E_CLI_DIRECT_SUITE_LABEL || result.label;
+  if (label !== result.label) {
+    writeSuitePhaseResult(
+      {
+        ...env,
+        LA_E2E_CLI_DIRECT_SUITE_LABEL: undefined,
+        LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH: undefined,
+        LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH: undefined,
+      },
+      result
+    );
+  }
+  const priorTerminalResult = readJsonIfExists(getSuiteTerminalResultPath(env, label));
   const phaseResults = [...(Array.isArray(priorTerminalResult?.phaseResults) ? priorTerminalResult.phaseResults : []), result];
-  const terminalComplete = getDirectSuiteComplete(result.label, phaseResults);
+  const terminalComplete = label !== 'msnWeatherLifecycle' && getDirectSuiteComplete(label, phaseResults);
   const finalizedPhaseResults = terminalComplete ? phaseResults : phaseResults.map(clearOgfScenarios);
-  const retainedOgfScenarios = terminalComplete ? collectDirectOgfScenarios(result.label, finalizedPhaseResults, env) : [];
+  const retainedOgfScenarios = terminalComplete ? collectDirectOgfScenarios(label, finalizedPhaseResults, env) : [];
   writeSuiteCleanupLedger(env, result.cleanupLedger);
   writeSuiteTerminalResult(env, {
-    label: result.label,
+    label,
     phaseId: result.phaseId,
     exitCode: result.exitCode,
     signal: result.signal,
@@ -2655,17 +2708,87 @@ function writeSuitePhaseResult(env, result) {
     diagnosticsError: result.diagnosticsError,
     complete: terminalComplete,
     mochaPassingCount: result.mochaPassingCount,
-    phaseResults: finalizedPhaseResults.map((phase) => ({
-      phaseId: phase.phaseId,
-      exitCode: phase.exitCode,
-      signal: phase.signal,
-      cleanupVerified: phase.cleanupVerified,
-      diagnosticsError: phase.diagnosticsError,
-      complete: phase.complete,
-      ...(Array.isArray(phase.ogfScenarios) && phase.ogfScenarios.length > 0 ? { ogfScenarios: phase.ogfScenarios } : {}),
-    })),
+    phaseResults: finalizedPhaseResults.map(projectTerminalPhase),
+    ...(label === 'msnWeatherLifecycle' ? { lifecycleFinalized: false } : {}),
     ...(retainedOgfScenarios.length > 0 ? { ogfScenarios: retainedOgfScenarios } : {}),
   });
+}
+
+function projectTerminalPhase(phase) {
+  return {
+    phaseId: phase.phaseId,
+    exitCode: phase.exitCode,
+    signal: phase.signal,
+    cleanupVerified: phase.cleanupVerified,
+    diagnosticsError: phase.diagnosticsError,
+    complete: phase.complete,
+    ...(Array.isArray(phase.ogfScenarios) && phase.ogfScenarios.length > 0 ? { ogfScenarios: phase.ogfScenarios } : {}),
+  };
+}
+
+function beginDirectMsnEvidence(env) {
+  if (env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH) {
+    return;
+  }
+  writeSuiteTerminalResult(env, {
+    label: 'msnWeatherLifecycle',
+    exitCode: null,
+    signal: null,
+    cleanupVerified: false,
+    diagnosticsError: '',
+    complete: false,
+    lifecycleFinalized: false,
+    phaseResults: [],
+  });
+  writeSuiteTerminalResult(
+    { ...env, LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH: undefined },
+    {
+      label: 'runtimeDependencyBootstrap',
+      complete: false,
+      cleanupVerified: false,
+      exitCode: null,
+      signal: null,
+      diagnosticsError: '',
+      phaseResults: [],
+    }
+  );
+}
+
+function getOwnedRootCleanupVerified(ownedRoots) {
+  return ownedRoots.every((root) => !root || !fs.existsSync(root));
+}
+
+function finalizeDirectMsnEvidence(env, { cleanupVerified, lifecycleSucceeded, lifecycleError }) {
+  if (env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH) {
+    return undefined;
+  }
+  const terminal = readJsonIfExists(getSuiteTerminalResultPath(env, 'msnWeatherLifecycle'));
+  const phaseResults = terminal?.phaseResults || [];
+  const complete =
+    lifecycleSucceeded === true &&
+    !lifecycleError &&
+    cleanupVerified === true &&
+    getDirectSuiteComplete('msnWeatherLifecycle', phaseResults);
+  const finalized = {
+    ...terminal,
+    label: 'msnWeatherLifecycle',
+    complete,
+    lifecycleFinalized: true,
+    cleanupVerified: cleanupVerified === true && phaseResults.every((phase) => phase.cleanupVerified === true),
+    exitCode: complete ? 0 : terminal?.exitCode === 0 || terminal?.exitCode === undefined ? 1 : terminal.exitCode,
+    signal: terminal?.signal ?? null,
+    diagnosticsError: [
+      terminal?.diagnosticsError,
+      lifecycleError ? 'lifecycle-execution-failed' : '',
+      !cleanupVerified ? 'lifecycle-cleanup-failed' : '',
+      !complete && !lifecycleError && cleanupVerified ? 'incomplete-lifecycle-phases' : '',
+    ]
+      .filter(Boolean)
+      .join('; '),
+    phaseResults,
+  };
+  writeSuiteTerminalResult(env, finalized);
+  return finalized;
 }
 
 function getDirectSuiteComplete(label, phaseResults) {
@@ -2675,10 +2798,18 @@ function getDirectSuiteComplete(label, phaseResults) {
   const unexpectedPhaseIds = observedPhaseIds.filter((phaseId) => !expectedPhaseIds.includes(phaseId));
   return (
     phaseResults.length > 0 &&
+    phaseResults.length === expectedPhaseIds.length &&
     missingPhaseIds.length === 0 &&
     unexpectedPhaseIds.length === 0 &&
     getDuplicateValues(observedPhaseIds).length === 0 &&
-    phaseResults.every((phase) => phase.complete === true && phase.cleanupVerified === true && !phase.diagnosticsError)
+    phaseResults.every(
+      (phase) =>
+        phase.complete === true &&
+        phase.exitCode === 0 &&
+        (phase.signal === null || phase.signal === undefined) &&
+        phase.cleanupVerified === true &&
+        !phase.diagnosticsError
+    )
   );
 }
 
@@ -2689,6 +2820,12 @@ function getDirectExpectedPhaseIds(label) {
   }
   if (!label) {
     return [];
+  }
+  if (SUITE_REGISTRY[label]) {
+    return SUITE_REGISTRY[label].expectedPhases;
+  }
+  if (label === 'runtimeDependencyBootstrap') {
+    return ['runtimeDependencyBootstrap:bootstrap'];
   }
   return [label];
 }

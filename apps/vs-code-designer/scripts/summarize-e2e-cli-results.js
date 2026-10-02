@@ -6,6 +6,7 @@
 /* global module, process, require */
 const fs = require('fs');
 const path = require('path');
+const { assertSuccessfulMsnTerminal, readMsnTerminal } = require('./e2e-cli-terminal');
 const { projectPublicScenarioEvidence } = require('./ogf-e2e-registry');
 
 if (require.main === module) {
@@ -27,7 +28,39 @@ function writeSingleResult({ label, log, outDir, outcome, diagnosticsArtifactNam
 
   const logText = stripAnsi(fs.existsSync(log) ? fs.readFileSync(log, 'utf-8') : '');
   const result = parseMochaLog(label, outcome ?? 'unknown', logText);
-  mergeTerminalResultMetadata(result, outDir, label);
+  let terminalError;
+  let terminal;
+  if (label === 'msnWeatherLifecycle') {
+    const terminalPath = path.join(outDir, `${label}.terminal-result.json`);
+    try {
+      terminal = readMsnTerminal(terminalPath);
+      if (result.outcome === 'success') {
+        assertSuccessfulMsnTerminal(result, terminal);
+      }
+    } catch (error) {
+      terminalError = error;
+      const executedResult = parseMochaLog(label, 'success', logText);
+      const executedTestCounts = {
+        total: executedResult.total,
+        passing: executedResult.passing,
+        failing: executedResult.failing,
+        pending: executedResult.pending,
+      };
+      Object.assign(result, parseMochaLog(label, 'failure', logText));
+      result.executedTestCounts = executedTestCounts;
+      result.harnessFailures = [{ name: 'MSN lifecycle evidence', kind: 'lifecycle-evidence', message: error.message }];
+      result.failedTests = [...executedResult.failedTests];
+      while (result.failedTests.length < executedResult.failing) {
+        result.failedTests.push(`Failure ${result.failedTests.length + 1}`);
+      }
+      result.failedTests.push('MSN lifecycle evidence');
+      result.failing = result.failedTests.length;
+      result.total = result.passing + result.failing + result.pending;
+      result.passRate = result.total > 0 ? Number(((result.passing / result.total) * 100).toFixed(2)) : 0;
+      result.failureExcerpt.push(error.message);
+    }
+  }
+  mergeTerminalResultMetadata(result, outDir, label, label === 'msnWeatherLifecycle' ? { terminalResult: terminal } : {});
   result.diagnosticsArtifactName = diagnosticsArtifactName || undefined;
   result.failureAttachments = result.failing > 0 ? loadFailureScreenshotAttachments(outDir, label) : [];
   fs.mkdirSync(outDir, { recursive: true });
@@ -35,6 +68,9 @@ function writeSingleResult({ label, log, outDir, outcome, diagnosticsArtifactNam
   fs.writeFileSync(path.join(outDir, `${label}.json`), `${JSON.stringify(result, null, 2)}\n`);
   fs.writeFileSync(path.join(outDir, `${label}.junit.xml`), buildJUnitXml(result));
   fs.writeFileSync(path.join(outDir, `${label}.summary.md`), buildSingleSummary(result));
+  if (terminalError) {
+    throw terminalError;
+  }
 }
 
 function appendSingleSummary({ json, githubSummary }) {
@@ -191,6 +227,14 @@ function buildSingleSummary(result) {
     '',
   ];
 
+  if (result.harnessFailures?.length) {
+    lines.push(
+      `**Harness evidence failure:** ${result.harnessFailures.map((failure) => failure.message).join('; ')}.`,
+      `Executed Mocha tests: ${result.executedTestCounts.passing} passing, ${result.executedTestCounts.failing} failing, ${result.executedTestCounts.pending} pending. Normalized reporting includes the lifecycle-evidence failure; it is not another executed feature test.`,
+      ''
+    );
+  }
+
   if (result.failing > 0 && result.failureExcerpt.length > 0) {
     lines.push('<details><summary>Failure excerpt</summary>', '', '```text', ...result.failureExcerpt, '```', '</details>', '');
   }
@@ -320,13 +364,18 @@ function normalizeResult(result) {
   };
 }
 
-function mergeTerminalResultMetadata(result, outDir, label) {
+function mergeTerminalResultMetadata(result, outDir, label, options = {}) {
   const terminalResultPath = path.join(outDir, `${label}.terminal-result.json`);
   if (!fs.existsSync(terminalResultPath)) {
     return result;
   }
 
-  const terminalResult = JSON.parse(fs.readFileSync(terminalResultPath, 'utf-8'));
+  const terminalResult = Object.prototype.hasOwnProperty.call(options, 'terminalResult')
+    ? options.terminalResult
+    : JSON.parse(fs.readFileSync(terminalResultPath, 'utf-8'));
+  if (!terminalResult || typeof terminalResult !== 'object') {
+    return result;
+  }
   if (terminalResult.complete !== true || result.outcome !== 'success' || Number(result.passing) <= 0 || Number(result.failing) > 0) {
     stripTerminalOgfMetadata(terminalResultPath, terminalResult);
     return result;

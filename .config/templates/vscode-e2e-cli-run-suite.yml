@@ -440,6 +440,9 @@ jobs:
                 --out-dir ".vscode-test\results" `
                 --outcome "$outcome" `
                 --diagnostics-artifact-name "vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}"
+              if ($LASTEXITCODE -ne 0 -and $status -eq 0) {
+                $status = $LASTEXITCODE
+              }
               exit $status
             displayName: Run vscode-test CLI (${{ parameters.suiteId }})
             env:
@@ -520,6 +523,9 @@ jobs:
                   --out-dir ".vscode-test\results" `
                   --outcome "$outcome" `
                   --diagnostics-artifact-name "vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}"
+                if ($LASTEXITCODE -ne 0 -and $status -eq 0) {
+                  $status = $LASTEXITCODE
+                }
                 exit $status
             env:
               LA_E2E_CLI_DIRECT_ARGS: ${{ parameters.cliArguments }}
@@ -627,6 +633,17 @@ jobs:
 
           if ($missingRequiredFiles.Count -gt 0) {
             throw "Required suite diagnostics were missing after staging available evidence: $($missingRequiredFiles -join ', ')"
+          }
+          if ('${{ parameters.suiteId }}' -eq 'msnWeatherLifecycle') {
+            $nativeResultPath = Join-Path $resultDestination '${{ parameters.suiteId }}.json'
+            $nativeResult = Get-Content $nativeResultPath -Raw | ConvertFrom-Json
+            if ($nativeResult.outcome -eq 'success') {
+              node "$(Build.SourcesDirectory)/apps/vs-code-designer/scripts/e2e-cli-terminal.js" `
+                "$nativeResultPath" "$resultDestination/${{ parameters.suiteId }}.terminal-result.json"
+              if ($LASTEXITCODE -ne 0) {
+                throw 'Published MSN lifecycle evidence failed required terminal validation.'
+              }
+            }
           }
           if ('${{ parameters.suiteId }}' -eq 'createWorkspaceCoreMatrix') {
             $nativeResultPath = Join-Path $resultDestination '${{ parameters.suiteId }}.json'

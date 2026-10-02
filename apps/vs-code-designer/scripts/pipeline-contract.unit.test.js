@@ -19,6 +19,17 @@ testFullRollupGateScriptRejectsNonExecutedResults();
 testAzureCliIdentityScriptBehavior();
 testPipelineSafetyGuards();
 testDiagnosticsStagingScriptHandlesDirectSuiteLayout();
+testDiagnosticsStagingScriptHandlesDirectSuiteLayout({ msn: true });
+testDiagnosticsStagingScriptHandlesDirectSuiteLayout({
+  msn: true,
+  terminalOverride: { complete: false },
+  expectedPrivateFailure: 'Published MSN lifecycle evidence failed required terminal validation',
+});
+testDiagnosticsStagingScriptHandlesDirectSuiteLayout({
+  msn: true,
+  omitTerminal: true,
+  expectedPrivateFailure: 'Published MSN lifecycle evidence failed required terminal validation',
+});
 testDiagnosticsStagingScriptHandlesDirectSuiteLayout({ privatePlatform: 'linux' });
 testDiagnosticsStagingScriptHandlesDirectSuiteLayout({ privatePlatform: 'win32' });
 testDiagnosticsStagingScriptHandlesDirectSuiteLayout({
@@ -1712,7 +1723,7 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
     const agentTempDirectory = path.join(tempRoot, 'agent-temp');
     const artifactStagingDirectory = path.join(tempRoot, 'artifact-staging');
     const artifactName = 'linux-unit-tests';
-    const suiteId = options.privatePlatform ? 'createWorkspaceCoreMatrix' : 'unitTests';
+    const suiteId = options.msn ? 'msnWeatherLifecycle' : options.privatePlatform ? 'createWorkspaceCoreMatrix' : 'unitTests';
     const resultRoot = path.join(sourcesDirectory, 'apps', 'vs-code-designer', '.vscode-test', 'results');
     const ogfScenarios = options.privatePlatform
       ? getOgfScenariosForPhase('createWorkspaceCoreMatrix:standard-stateful', {
@@ -1723,18 +1734,20 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
           sourceVersion: 'a'.repeat(40),
           buildId: '42',
         })
-      : [
-          {
-            scenarioId: 'ogf-launch-config-generated-name-standard-stateful',
-            executedVariant: 'standard-stateful',
-            assertionIdentities: ['launch-configuration-name-ends-with-created-logic-app-name'],
-          },
-        ];
-    if (options.privatePlatform) {
+      : options.msn
+        ? []
+        : [
+            {
+              scenarioId: 'ogf-launch-config-generated-name-standard-stateful',
+              executedVariant: 'standard-stateful',
+              assertionIdentities: ['launch-configuration-name-ends-with-created-logic-app-name'],
+            },
+          ];
+    if (options.privatePlatform || options.msn) {
       const scriptsRoot = path.join(sourcesDirectory, 'apps', 'vs-code-designer', 'scripts');
       fs.mkdirSync(scriptsRoot, { recursive: true });
       fs.mkdirSync(agentTempDirectory, { recursive: true });
-      for (const file of ['enrich-e2e-traceability.js', 'ogf-e2e-registry.js', 'e2e-cli-batch.js']) {
+      for (const file of ['enrich-e2e-traceability.js', 'ogf-e2e-registry.js', 'e2e-cli-batch.js', 'e2e-cli-terminal.js']) {
         fs.copyFileSync(path.join(__dirname, file), path.join(scriptsRoot, file));
       }
       const scenario = OGF_E2E_SCENARIOS[0];
@@ -1763,14 +1776,16 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
     fs.mkdirSync(resultRoot, { recursive: true });
     fs.writeFileSync(
       path.join(resultRoot, `${suiteId}.json`),
-      `${JSON.stringify({ label: suiteId, outcome: 'success', total: options.privatePlatform ? 6 : 12, passing: options.privatePlatform ? 6 : 12, failing: 0, pending: 0, ogfScenarios })}\n`
+      `${JSON.stringify({ label: suiteId, outcome: 'success', total: options.msn ? 1 : options.privatePlatform ? 6 : 12, passing: options.msn ? 1 : options.privatePlatform ? 6 : 12, failing: 0, pending: 0, ogfScenarios })}\n`
     );
     fs.writeFileSync(path.join(resultRoot, `${suiteId}.junit.xml`), '<testsuite tests="12" failures="0" />\n');
     fs.writeFileSync(path.join(resultRoot, `${suiteId}.summary.md`), '# summary\n');
     fs.writeFileSync(
       path.join(resultRoot, `${suiteId}.terminal-result.json`),
       `${JSON.stringify({
+        label: suiteId,
         complete: true,
+        lifecycleFinalized: options.msn ? true : undefined,
         cleanupVerified: true,
         exitCode: 0,
         ogfScenarios,
@@ -1783,6 +1798,9 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
         ...options.terminalOverride,
       })}\n`
     );
+    if (options.omitTerminal) {
+      fs.unlinkSync(path.join(resultRoot, `${suiteId}.terminal-result.json`));
+    }
     fs.writeFileSync(path.join(resultRoot, `${suiteId}.cleanup-ledger.json`), '{"privateProcessIds":[1234]}\n');
     fs.writeFileSync(
       path.join(resultRoot, `admission-context-${suiteId}.json`),
@@ -1825,6 +1843,9 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
       );
     if (options.expectedPrivateFailure) {
       assert.throws(stage, new RegExp(options.expectedPrivateFailure));
+      const failedDiagnosticsRoot = path.join(artifactStagingDirectory, 'vscode-e2e-cli', artifactName);
+      assert.ok(fs.existsSync(path.join(failedDiagnosticsRoot, 'results', `${suiteId}.json`)));
+      assert.ok(fs.existsSync(path.join(failedDiagnosticsRoot, 'log', `${suiteId}.log`)));
       assert.ok(
         !fs.existsSync(path.join(artifactStagingDirectory, 'vscode-e2e-cli', artifactName, 'private-traceability', `${suiteId}.json`))
       );
@@ -1842,7 +1863,9 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
     const stagedTerminal = JSON.parse(fs.readFileSync(path.join(diagnosticsRoot, 'results', `${suiteId}.terminal-result.json`), 'utf-8'));
     assert.deepStrictEqual(stagedResult.ogfScenarios, ogfScenarios);
     assert.deepStrictEqual(stagedTerminal.ogfScenarios, ogfScenarios);
-    assert.strictEqual(stagedResult.ogfScenarios[0].source, undefined);
+    if (ogfScenarios.length > 0) {
+      assert.strictEqual(stagedResult.ogfScenarios[0].source, undefined);
+    }
     if (options.privatePlatform) {
       const privateResult = JSON.parse(fs.readFileSync(path.join(diagnosticsRoot, 'private-traceability', `${suiteId}.json`), 'utf-8'));
       assert.strictEqual(privateResult.scenarios[0].source.caseId, 812);

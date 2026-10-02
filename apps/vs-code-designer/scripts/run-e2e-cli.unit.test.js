@@ -1,7 +1,7 @@
 /* global __dirname, console, process, require, setTimeout */
 const assert = require('assert');
 const { Buffer } = require('buffer');
-const { execFileSync } = require('child_process');
+const { execFileSync, spawnSync } = require('child_process');
 const fs = require('fs');
 const net = require('net');
 const os = require('os');
@@ -22,6 +22,10 @@ const {
     getFuncCoreToolsCandidatePaths,
     getFuncCoreToolsBinaryPath,
     getMochaPassingCount,
+    beginDirectMsnEvidence,
+    finalizeDirectMsnEvidence,
+    getDirectSuiteComplete,
+    getOwnedRootCleanupVerified,
     getSuiteTerminalResultPath,
     hasOwnedWorkspaceParentDiagnosticFailure,
     buildOgfScenariosForPhase,
@@ -39,6 +43,7 @@ const {
     sanitizeInheritedGitCommandConfigEnv,
     verifyFuncCoreToolsAtDependencyRoot,
     writeSuitePhaseResult,
+    writeSuiteFinalEvidence,
     writeVscodeProfileLogIndex,
   },
 } = require('./run-e2e-cli.js');
@@ -56,6 +61,7 @@ const {
 const {
   _test: { buildAggregate: buildSummaryAggregate, buildSingleSummary, writeSingleResult },
 } = require('./summarize-e2e-cli-results.js');
+const { assertSuccessfulMsnTerminal } = require('./e2e-cli-terminal');
 
 const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
 
@@ -98,6 +104,9 @@ const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
     testDirectSuitePhaseResultRetainsOgfAcrossMatrixPhases();
     testDirectSuitePhaseResultClearsOgfOnLaterFailure();
     testDirectSuitePhaseResultDoesNotEmitOgfForCleanupFailure();
+    testMsnDirectLifecycleEvidence();
+    testMsnBatchLifecycleEvidence();
+    testMsnSummaryRejectsIncompleteTerminal();
     testOgfGateControls();
     testAggregateCompletenessAndDiagnosticRerun();
     testAggregateCliOptions();
@@ -1298,6 +1307,276 @@ function testDirectSuitePhaseResultDoesNotEmitOgfForCleanupFailure() {
     assert.strictEqual(terminal.ogfScenarios, undefined);
   } finally {
     process.chdir(previousCwd);
+  }
+}
+
+function msnPhase(phaseId, override = {}) {
+  return {
+    phaseId,
+    label: phaseId.startsWith('runtimeDependencyBootstrap:') ? 'runtimeDependencyBootstrap' : 'msnWeatherLifecycle',
+    exitCode: 0,
+    signal: null,
+    cleanupVerified: true,
+    diagnosticsError: '',
+    complete: true,
+    mochaPassingCount: 0,
+    ...override,
+  };
+}
+
+function msnSummary() {
+  return { label: 'msnWeatherLifecycle', outcome: 'success', total: 1, passing: 1, failing: 0, pending: 0 };
+}
+
+function testMsnDirectLifecycleEvidence() {
+  const previousCwd = process.cwd();
+  try {
+    for (const platform of ['linux', 'win32']) {
+      const cwd = path.join(tempRoot, `msn-direct-${platform}`);
+      fs.mkdirSync(cwd, { recursive: true });
+      process.chdir(cwd);
+      const env = { LA_E2E_CLI_DIRECT_SUITE_LABEL: 'msnWeatherLifecycle' };
+      const ownedRoot = path.join(cwd, 'owned-runtime-root');
+      fs.mkdirSync(ownedRoot);
+      assert.strictEqual(getOwnedRootCleanupVerified([ownedRoot, undefined]), false);
+      fs.rmdirSync(ownedRoot);
+      assert.strictEqual(getOwnedRootCleanupVerified([ownedRoot, undefined]), true);
+      const terminalPath = getSuiteTerminalResultPath(env, 'msnWeatherLifecycle');
+      const readTerminal = () => JSON.parse(fs.readFileSync(terminalPath, 'utf8'));
+      const phases = SUITE_REGISTRY.msnWeatherLifecycle.expectedPhases.map((phaseId) => msnPhase(phaseId));
+      // The published pre-fix shape retained create/run but no bootstrap and was not complete.
+      const publishedShape = {
+        ...msnSummary(),
+        exitCode: 0,
+        signal: null,
+        cleanupVerified: true,
+        diagnosticsError: '',
+        complete: false,
+        phaseResults: phases.slice(1),
+      };
+      assert.throws(() => assertSuccessfulMsnTerminal(msnSummary(), publishedShape), /incomplete-or-unclean-terminal/);
+      assert.strictEqual(getDirectSuiteComplete('msnWeatherLifecycle', phases.slice(1)), false);
+
+      beginDirectMsnEvidence(env);
+      for (const phase of phases) {
+        writeSuitePhaseResult(env, phase);
+        assert.strictEqual(readTerminal().complete, false, 'Phase success cannot precede lifecycle cleanup finalization');
+        assert.strictEqual(readTerminal().lifecycleFinalized, false);
+      }
+      const bootstrap = JSON.parse(fs.readFileSync(getSuiteTerminalResultPath({}, 'runtimeDependencyBootstrap'), 'utf8'));
+      assert.strictEqual(bootstrap.complete, true);
+      assert.deepStrictEqual(
+        bootstrap.phaseResults.map((phase) => phase.phaseId),
+        ['runtimeDependencyBootstrap:bootstrap']
+      );
+      const terminal = finalizeDirectMsnEvidence(env, { cleanupVerified: true, lifecycleSucceeded: true, lifecycleError: false });
+      assertSuccessfulMsnTerminal(msnSummary(), terminal);
+      for (const override of [
+        { exitCode: 1 },
+        { exitCode: null },
+        { signal: 'SIGTERM' },
+        { cleanupVerified: false },
+        { complete: false },
+        { lifecycleFinalized: false },
+        { diagnosticsError: 'postprocessing-failed' },
+        { phaseResults: phases.slice(1) },
+        { phaseResults: [...phases, phases[0]] },
+      ]) {
+        assert.throws(() => assertSuccessfulMsnTerminal(msnSummary(), { ...terminal, ...override }));
+      }
+      for (const override of [{ passing: 0 }, { total: 0 }, { failing: 1 }, { pending: 1 }, { outcome: 'failure' }]) {
+        assert.throws(() => assertSuccessfulMsnTerminal({ ...msnSummary(), ...override }, terminal));
+      }
+      assert.strictEqual(terminal.phaseId, 'msnWeatherLifecycle:run');
+      assert.strictEqual(terminal.lifecycleFinalized, true);
+      assert.deepStrictEqual(
+        terminal.phaseResults.map((phase) => phase.phaseId),
+        SUITE_REGISTRY.msnWeatherLifecycle.expectedPhases
+      );
+      assert.strictEqual(terminal.ogfScenarios, undefined);
+
+      const log = path.join(cwd, 'msn.log');
+      fs.writeFileSync(log, '\n  1 passing (1s)\n');
+      writeSingleResult({ label: 'msnWeatherLifecycle', log, outDir: path.dirname(terminalPath), outcome: 'success' });
+      const summary = JSON.parse(fs.readFileSync(path.join(path.dirname(terminalPath), 'msnWeatherLifecycle.json'), 'utf8'));
+      assert.strictEqual(summary.passing, 1, 'Preparation phases are not additional logical scenarios');
+      assert.strictEqual(summary.terminalPhaseId, 'msnWeatherLifecycle:run');
+
+      const failedPhaseOverrides = [
+        { exitCode: 1 },
+        { exitCode: null },
+        { signal: 'SIGTERM' },
+        { cleanupVerified: false },
+        { complete: false },
+        { diagnosticsError: 'required-profile-capture-failed' },
+      ];
+      for (const [index, phase] of phases.entries()) {
+        for (const override of failedPhaseOverrides) {
+          const changed = phases.map((entry, entryIndex) => (entryIndex === index ? { ...entry, ...override } : entry));
+          assert.strictEqual(getDirectSuiteComplete('msnWeatherLifecycle', changed), false);
+        }
+        assert.strictEqual(
+          getDirectSuiteComplete(
+            'msnWeatherLifecycle',
+            phases.filter((_, phaseIndex) => phaseIndex !== index)
+          ),
+          false
+        );
+        assert.strictEqual(getDirectSuiteComplete('msnWeatherLifecycle', [...phases, phase]), false);
+      }
+      assert.strictEqual(getDirectSuiteComplete('msnWeatherLifecycle', [...phases, msnPhase('unexpected')]), false);
+      assert.strictEqual(getDirectSuiteComplete('msnWeatherLifecycle', [...phases, msnPhase('')]), false);
+
+      for (const options of [
+        { cleanupVerified: false, lifecycleSucceeded: true, lifecycleError: false },
+        { cleanupVerified: true, lifecycleSucceeded: false, lifecycleError: true },
+        { cleanupVerified: true, lifecycleSucceeded: true, lifecycleError: true },
+      ]) {
+        const failed = finalizeDirectMsnEvidence(env, options);
+        assert.strictEqual(failed.complete, false);
+        assert.strictEqual(failed.exitCode, 1);
+        assert.throws(() => assertSuccessfulMsnTerminal(msnSummary(), failed), /incomplete-or-unclean-terminal/);
+      }
+      beginDirectMsnEvidence(env);
+      assert.deepStrictEqual(readTerminal().phaseResults, [], 'A new invocation must not reuse stale successful phases');
+      assert.strictEqual(readTerminal().complete, false);
+      const earlyFailure = finalizeDirectMsnEvidence(env, {
+        cleanupVerified: true,
+        lifecycleSucceeded: false,
+        lifecycleError: true,
+      });
+      assert.strictEqual(earlyFailure.complete, false);
+      assert.deepStrictEqual(earlyFailure.phaseResults, []);
+      assert.strictEqual(earlyFailure.exitCode, null);
+
+      beginDirectMsnEvidence(env);
+      for (const phase of phases.slice(1)) {
+        writeSuitePhaseResult(env, phase);
+      }
+      const missingBootstrap = finalizeDirectMsnEvidence(env, {
+        cleanupVerified: true,
+        lifecycleSucceeded: true,
+        lifecycleError: false,
+      });
+      assert.strictEqual(missingBootstrap.complete, false);
+      assert.match(missingBootstrap.diagnosticsError, /incomplete-lifecycle-phases/);
+    }
+  } finally {
+    process.chdir(previousCwd);
+  }
+}
+
+function testMsnBatchLifecycleEvidence() {
+  const suite = SUITE_REGISTRY.msnWeatherLifecycle;
+  const root = path.join(tempRoot, 'msn-batch-terminal');
+  fs.mkdirSync(root, { recursive: true });
+  const context = {
+    expectedPhaseIds: suite.expectedPhases,
+    phaseResultsPath: path.join(root, 'phases.jsonl'),
+    cleanupLedgerPath: path.join(root, 'cleanup.json'),
+    terminalResultPath: path.join(root, 'terminal.json'),
+  };
+  const phases = suite.expectedPhases.map((phaseId) => msnPhase(phaseId));
+  const write = (phaseResults, options = {}) => {
+    fs.writeFileSync(context.phaseResultsPath, phaseResults.map((phase) => JSON.stringify(phase)).join('\n'));
+    writeSuiteFinalEvidence({
+      context,
+      suite,
+      exitCode: Object.prototype.hasOwnProperty.call(options, 'exitCode') ? options.exitCode : 0,
+      signal: options.signal ?? null,
+      error: options.error,
+      processCleanup: { verified: options.cleanupVerified ?? true },
+    });
+    return JSON.parse(fs.readFileSync(context.terminalResultPath, 'utf8'));
+  };
+  assertSuccessfulMsnTerminal(msnSummary(), write(phases));
+  for (const badPhases of [
+    phases.slice(1),
+    [...phases, phases[0]],
+    [...phases, msnPhase('unexpected')],
+    phases.map((phase, index) => (index === 1 ? { ...phase, exitCode: 1 } : phase)),
+    phases.map((phase, index) => (index === 2 ? { ...phase, complete: false } : phase)),
+  ]) {
+    assert.strictEqual(write(badPhases).complete, false);
+  }
+  for (const options of [
+    { exitCode: 1 },
+    { exitCode: null },
+    { signal: 'SIGTERM' },
+    { error: new Error('outer-runtime-probe-failed') },
+    { cleanupVerified: false },
+  ]) {
+    const terminal = write(phases, options);
+    assert.strictEqual(terminal.complete, false);
+    assert.throws(() => assertSuccessfulMsnTerminal(msnSummary(), terminal));
+  }
+}
+
+function testMsnSummaryRejectsIncompleteTerminal() {
+  const cases = [
+    { name: 'incomplete', terminalText: '{"complete":false}', category: 'incomplete-or-unclean-terminal' },
+    { name: 'missing', category: 'missing-required-terminal' },
+    { name: 'malformed', terminalText: '{"private-sentinel":bad-json}', category: 'malformed-terminal' },
+    { name: 'null', terminalText: 'null', category: 'incomplete-or-unclean-terminal' },
+    { name: 'unreadable', directory: true, category: 'unreadable-terminal' },
+  ];
+  for (const fixture of cases) {
+    const root = path.join(tempRoot, `msn-invalid-summary-${fixture.name}`);
+    fs.mkdirSync(root, { recursive: true });
+    const log = path.join(root, 'msn.log');
+    fs.writeFileSync(log, '\n  ✔ Actual MSN runtime scenario (5ms)\n  1 passing (1s)\n');
+    const terminalPath = path.join(root, 'msnWeatherLifecycle.terminal-result.json');
+    if (fixture.terminalText !== undefined) {
+      fs.writeFileSync(terminalPath, fixture.terminalText);
+    } else if (fixture.directory) {
+      fs.mkdirSync(terminalPath);
+    }
+    const cli = spawnSync(
+      process.execPath,
+      [
+        path.join(__dirname, 'summarize-e2e-cli-results.js'),
+        '--label',
+        'msnWeatherLifecycle',
+        '--log',
+        log,
+        '--out-dir',
+        root,
+        '--outcome',
+        'success',
+      ],
+      { encoding: 'utf8' }
+    );
+    assert.strictEqual(cli.error, undefined);
+    assert.strictEqual(cli.status, 1);
+    assert.match(cli.stderr, new RegExp(fixture.category));
+    const summary = JSON.parse(fs.readFileSync(path.join(root, 'msnWeatherLifecycle.json'), 'utf8'));
+    assert.strictEqual(summary.outcome, 'failure');
+    assert.strictEqual(summary.passing, 1);
+    assert.strictEqual(summary.failing, 1);
+    assert.strictEqual(summary.total, 2);
+    assert.strictEqual(summary.passRate, 50);
+    assert.deepStrictEqual(summary.executedTestCounts, { total: 1, passing: 1, failing: 0, pending: 0 });
+    assert.deepStrictEqual(summary.passedTests, ['Actual MSN runtime scenario']);
+    assert.deepStrictEqual(summary.failedTests, ['MSN lifecycle evidence']);
+    assert.strictEqual(summary.terminalPhaseId, undefined);
+    assert.strictEqual(summary.ogfScenarios, undefined);
+    assert.strictEqual(summary.harnessFailures[0].kind, 'lifecycle-evidence');
+    assert.match(summary.failureExcerpt.join('\n'), new RegExp(fixture.category));
+    const xml = fs.readFileSync(path.join(root, 'msnWeatherLifecycle.junit.xml'), 'utf8');
+    assert.match(xml, /tests="2" failures="1"/);
+    assert.match(xml, /name="Actual MSN runtime scenario" \/>/);
+    assert.match(xml, /<failure message="MSN lifecycle evidence">/);
+    assert.match(xml, new RegExp(fixture.category));
+    assert.strictEqual((xml.match(/<testcase /g) || []).length, 2);
+    const markdown = fs.readFileSync(path.join(root, 'msnWeatherLifecycle.summary.md'), 'utf8');
+    assert.match(markdown, /Harness evidence failure/);
+    assert.match(markdown, /Executed Mocha tests: 1 passing, 0 failing, 0 pending/);
+    assert.match(markdown, /Failure excerpt/);
+    assert.match(markdown, new RegExp(fixture.category));
+    assert.doesNotMatch(`${cli.stderr}\n${JSON.stringify(summary)}\n${xml}\n${markdown}`, /private-sentinel|bad-json/);
+    const aggregate = buildSummaryAggregate([summary], { expectedLabels: ['msnWeatherLifecycle'] });
+    assert.strictEqual(aggregate.failing, 1);
+    assert.deepStrictEqual(aggregate.failedLabels, ['msnWeatherLifecycle']);
   }
 }
 
