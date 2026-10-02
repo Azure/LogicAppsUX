@@ -39,7 +39,7 @@ import {
   type MsnWeatherAzureSettings,
   normalizeManagementBaseUrl,
 } from './msnWeatherSettings';
-import { teardownOwnedMsnHost } from './ownedMsnShutdown';
+import { findLoadedCachedExtensionEntry, teardownOwnedMsnHost } from './ownedMsnShutdown';
 import { captureCdpScreenshot, captureDiagnosticScreenshot, installFailureScreenshotHook } from './screenshot';
 import { buildScreenshotReadinessExpression, type ScreenshotExpectation, type ScreenshotReadinessSnapshot } from './screenshotReadiness';
 import { containsIgnoreCase, normalizeFsPath, uniqueName } from './testUtils';
@@ -267,7 +267,7 @@ suite('Generated Workspace Designer Lifecycle Tests', () => {
             return (vscode.workspace.workspaceFolders ?? []).map((folder) => folder.uri.fsPath);
           },
           resolveEntry: (filename) => require.resolve(filename),
-          cachedEntry: (filename) => require.cache[filename],
+          cachedEntry: (filename) => findLoadedCachedExtensionEntry(filename, require.cache),
         },
         [
           () => waitForVisibleDelay('Generated workspace designer lifecycle'),

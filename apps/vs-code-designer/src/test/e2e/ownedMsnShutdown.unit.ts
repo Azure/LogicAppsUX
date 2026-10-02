@@ -2,7 +2,12 @@ import * as assert from 'assert';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { type CachedExtensionEntry, type OwnedMsnShutdownHost, teardownOwnedMsnHost } from './ownedMsnShutdown';
+import {
+  type CachedExtensionEntry,
+  type OwnedMsnShutdownHost,
+  findLoadedCachedExtensionEntry,
+  teardownOwnedMsnHost,
+} from './ownedMsnShutdown';
 
 async function run(): Promise<void> {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'la-e2e-cli-msn-weather-lifecycle-'));
@@ -26,6 +31,7 @@ async function run(): Promise<void> {
       },
     };
     const entry: CachedExtensionEntry = { id: canonicalMain, filename: canonicalMain, loaded: true, exports };
+    const selectEntry = (selected: CachedExtensionEntry) => ({ cacheKey: canonicalMain, entry: selected });
     const host: OwnedMsnShutdownHost = {
       dedicatedMsnRunHost: true,
       extension: {
@@ -37,7 +43,7 @@ async function run(): Promise<void> {
       workspaceParent: root,
       workspaceRoots: [app],
       resolveEntry: (filename) => filename,
-      cachedEntry: () => entry,
+      cachedEntry: () => selectEntry(entry),
     };
     await teardownOwnedMsnHost(host, [
       async () => {
@@ -62,11 +68,16 @@ async function run(): Promise<void> {
       { host: { ...host, extension: { ...host.extension, main } }, reason: /extension-relative main/ },
       { host: { ...host, resolveEntry: () => other }, reason: /does not match the configured/ },
       { host: { ...host, cachedEntry: () => undefined }, reason: /already-loaded original/ },
-      { host: { ...host, cachedEntry: () => ({ ...entry, loaded: false }) }, reason: /already-loaded original/ },
-      { host: { ...host, cachedEntry: () => ({ ...entry, filename: other }) }, reason: /entry identity/ },
-      { host: { ...host, cachedEntry: () => ({ ...entry, id: other }) }, reason: /entry identity/ },
-      { host: { ...host, cachedEntry: () => ({ ...entry, exports: { activate: exports.activate } }) }, reason: /original lifecycle/ },
-      { host: { ...host, cachedEntry: () => ({ ...entry, exports: Object.create(exports) }) }, reason: /original lifecycle/ },
+      { host: { ...host, cachedEntry: () => ({ cacheKey: canonicalMain, entry: undefined }) }, reason: /already-loaded original/ },
+      { host: { ...host, cachedEntry: () => ({ cacheKey: other, entry }) }, reason: /selected cache key/ },
+      { host: { ...host, cachedEntry: () => selectEntry({ ...entry, loaded: false }) }, reason: /already-loaded original/ },
+      { host: { ...host, cachedEntry: () => selectEntry({ ...entry, filename: other }) }, reason: /entry identity/ },
+      { host: { ...host, cachedEntry: () => selectEntry({ ...entry, id: other }) }, reason: /entry identity/ },
+      {
+        host: { ...host, cachedEntry: () => selectEntry({ ...entry, exports: { activate: exports.activate } }) },
+        reason: /original lifecycle/,
+      },
+      { host: { ...host, cachedEntry: () => selectEntry({ ...entry, exports: Object.create(exports) }) }, reason: /original lifecycle/ },
     ];
     for (const control of rejectedHosts) {
       sequence.length = 0;
@@ -125,7 +136,7 @@ async function run(): Promise<void> {
       },
     };
     await assert.rejects(
-      teardownOwnedMsnHost({ ...host, cachedEntry: () => failingEntry }, [
+      teardownOwnedMsnHost({ ...host, cachedEntry: () => selectEntry(failingEntry) }, [
         async () => {
           throw teardownError;
         },
@@ -139,7 +150,7 @@ async function run(): Promise<void> {
 
     let changedEntry = entry;
     await assert.rejects(
-      teardownOwnedMsnHost({ ...host, cachedEntry: () => changedEntry }, [
+      teardownOwnedMsnHost({ ...host, cachedEntry: () => selectEntry(changedEntry) }, [
         async () => {
           changedEntry = { ...entry };
         },
@@ -155,7 +166,7 @@ async function run(): Promise<void> {
       const mutableEntry: CachedExtensionEntry = { ...entry, exports: original };
       sequence.length = 0;
       await assert.rejects(
-        teardownOwnedMsnHost({ ...host, cachedEntry: () => mutableEntry }, [
+        teardownOwnedMsnHost({ ...host, cachedEntry: () => selectEntry(mutableEntry) }, [
           async () => {
             if (replacement === 'exports') {
               mutableEntry.exports = { ...original };
@@ -224,7 +235,7 @@ async function run(): Promise<void> {
           },
         },
       };
-      mutableHost.cachedEntry = () => mutableEntry;
+      mutableHost.cachedEntry = () => selectEntry(mutableEntry);
       await assert.rejects(teardownOwnedMsnHost(mutableHost, []), (error: AggregateError) => {
         assert.strictEqual(error.errors.length, 1);
         assert.ok(error.errors[0] instanceof assert.AssertionError);
@@ -246,11 +257,108 @@ async function run(): Promise<void> {
         },
       },
     };
-    await assert.rejects(teardownOwnedMsnHost({ ...host, cachedEntry: () => repeatEntry }, []), (error: AggregateError) => {
+    await assert.rejects(teardownOwnedMsnHost({ ...host, cachedEntry: () => selectEntry(repeatEntry) }, []), (error: AggregateError) => {
       assert.deepStrictEqual(error.errors, [repeatError]);
       return true;
     });
     assert.strictEqual(calls, 2, 'Repeated shutdown failure must not be retried or accepted');
+
+    const runtimeMain = path.join(extensionRoot, 'runtime-entry.js');
+    fs.writeFileSync(
+      runtimeMain,
+      'exports.activate = () => undefined; exports.calls = 0; exports.deactivate = () => { exports.calls++; };'
+    );
+    const loadedKey = process.platform === 'win32' ? runtimeMain[0].toLowerCase() + runtimeMain.slice(1) : runtimeMain;
+    const lookupPath = process.platform === 'win32' ? runtimeMain[0].toUpperCase() + runtimeMain.slice(1) : runtimeMain;
+    const runtimeExports: unknown = require(loadedKey);
+    const resolvedRuntime = require.resolve(lookupPath);
+    const runtimeEntry = require.cache[require.resolve(loadedKey)];
+    assert.ok(runtimeEntry?.loaded);
+    if (process.platform === 'win32') {
+      assert.notStrictEqual(
+        require.resolve(loadedKey),
+        resolvedRuntime,
+        'The actual Windows control must use differing drive-key spelling'
+      );
+      assert.strictEqual(require.cache[resolvedRuntime], undefined, 'The exact differing-case cache lookup must miss');
+    }
+    const runtimeHost: OwnedMsnShutdownHost = {
+      ...host,
+      extension: { ...host.extension, main: './runtime-entry.js' },
+      resolveEntry: () => resolvedRuntime,
+      cachedEntry: (filename) => findLoadedCachedExtensionEntry(filename, require.cache),
+    };
+    try {
+      await teardownOwnedMsnHost(runtimeHost, []);
+      assert.ok(typeof runtimeExports === 'object' && runtimeExports !== null && 'calls' in runtimeExports);
+      assert.strictEqual(runtimeExports.calls, 2, 'Only the real already-loaded original module must be called twice');
+      const aliasKey =
+        process.platform === 'win32'
+          ? resolvedRuntime[0].toLowerCase() + resolvedRuntime.slice(1)
+          : `${path.dirname(resolvedRuntime)}${path.sep}.${path.sep}${path.basename(resolvedRuntime)}`;
+      assert.notStrictEqual(aliasKey, resolvedRuntime);
+      const ambiguous: Record<string, CachedExtensionEntry | undefined> = {
+        [resolvedRuntime]: runtimeEntry,
+        [aliasKey]: runtimeEntry,
+      };
+      await assert.rejects(
+        teardownOwnedMsnHost({ ...runtimeHost, cachedEntry: (filename) => findLoadedCachedExtensionEntry(filename, ambiguous) }, []),
+        /unambiguous original/
+      );
+      assert.strictEqual(runtimeExports.calls, 2, 'An exact key must not override a matching alias');
+      for (const mutation of ['add-alias', 'replace-key', 'replace-object']) {
+        const mutableCache: Record<string, CachedExtensionEntry | undefined> = { [resolvedRuntime]: runtimeEntry };
+        await assert.rejects(
+          teardownOwnedMsnHost({ ...runtimeHost, cachedEntry: (filename) => findLoadedCachedExtensionEntry(filename, mutableCache) }, [
+            async () => {
+              if (mutation === 'replace-key') {
+                delete mutableCache[resolvedRuntime];
+                mutableCache[aliasKey] = runtimeEntry;
+              } else if (mutation === 'add-alias') {
+                mutableCache[aliasKey] = runtimeEntry;
+              } else {
+                mutableCache[resolvedRuntime] = { ...runtimeEntry };
+              }
+            },
+          ]),
+          /teardown failed/
+        );
+        assert.strictEqual(runtimeExports.calls, 2, 'Changed cache key, inventory or object must prevent any deactivation');
+      }
+      for (const mutation of ['add-alias', 'replace-key', 'replace-object']) {
+        for (const mutationCall of [1, 2]) {
+          let shutdownCalls = 0;
+          const mutableCache: Record<string, CachedExtensionEntry | undefined> = {};
+          const mutableEntry: CachedExtensionEntry = {
+            ...runtimeEntry,
+            exports: {
+              activate: exports.activate,
+              deactivate: () => {
+                shutdownCalls++;
+                if (shutdownCalls === mutationCall) {
+                  if (mutation === 'add-alias') {
+                    mutableCache[aliasKey] = mutableEntry;
+                  } else if (mutation === 'replace-key') {
+                    delete mutableCache[resolvedRuntime];
+                    mutableCache[aliasKey] = mutableEntry;
+                  } else {
+                    mutableCache[resolvedRuntime] = { ...mutableEntry };
+                  }
+                }
+              },
+            },
+          };
+          mutableCache[resolvedRuntime] = mutableEntry;
+          await assert.rejects(
+            teardownOwnedMsnHost({ ...runtimeHost, cachedEntry: (filename) => findLoadedCachedExtensionEntry(filename, mutableCache) }, []),
+            /teardown failed/
+          );
+          assert.strictEqual(shutdownCalls, mutationCall, 'A cache mutation during either shutdown must remain fatal without retry');
+        }
+      }
+    } finally {
+      delete require.cache[require.resolve(loadedKey)];
+    }
     console.log('[ownedMsnShutdown.unit] all tests passed');
   } finally {
     fs.rmSync(root, { recursive: true, force: true });

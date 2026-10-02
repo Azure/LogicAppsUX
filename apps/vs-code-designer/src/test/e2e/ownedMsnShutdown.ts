@@ -9,6 +9,11 @@ export interface CachedExtensionEntry {
   exports: unknown;
 }
 
+export interface CachedExtensionSelection {
+  cacheKey: string;
+  entry: CachedExtensionEntry | undefined;
+}
+
 interface ExtensionEntryExports {
   activate: (...args: unknown[]) => unknown;
   deactivate: () => unknown;
@@ -25,7 +30,18 @@ export interface OwnedMsnShutdownHost {
   workspaceParent: string;
   workspaceRoots: readonly string[];
   resolveEntry(filename: string): string;
-  cachedEntry(filename: string): CachedExtensionEntry | undefined;
+  cachedEntry(filename: string): CachedExtensionSelection | undefined;
+}
+
+export function findLoadedCachedExtensionEntry(
+  filename: string,
+  cache: Readonly<Record<string, CachedExtensionEntry | undefined>>
+): CachedExtensionSelection | undefined {
+  const identity = normalizePath(filename);
+  const matches = Object.entries(cache).filter(([key]) => normalizePath(key) === identity);
+  assert.ok(matches.length <= 1, 'Owned MSN shutdown requires an unambiguous original cached entry');
+  const match = matches[0];
+  return match ? { cacheKey: match[0], entry: match[1] } : undefined;
 }
 
 export async function teardownOwnedMsnHost(host: OwnedMsnShutdownHost, teardownSteps: readonly (() => Promise<void>)[]): Promise<void> {
@@ -63,8 +79,14 @@ function bindOwnedCachedShutdown(host: OwnedMsnShutdownHost): () => Promise<void
   assert.ok(sameCanonicalFile(configuredEntry, canonicalEntry), 'Owned MSN resolved entry does not match the configured main file');
   assert.ok(fs.lstatSync(canonicalEntry).isFile(), 'Owned MSN extension main must be a file');
   assertInsideDirectory(extensionRoot, canonicalEntry, 'Owned MSN extension main resolves outside the extension directory');
-  const entry = host.cachedEntry(resolvedEntry);
-  assert.ok(entry?.loaded, 'Owned MSN shutdown requires the already-loaded original extension entry');
+  const selection = host.cachedEntry(resolvedEntry);
+  assert.ok(selection?.entry?.loaded, 'Owned MSN shutdown requires the already-loaded original extension entry');
+  const entry = selection.entry;
+  const originalCacheKey = selection.cacheKey;
+  assert.ok(
+    normalizePath(originalCacheKey) === normalizePath(resolvedEntry),
+    'Owned MSN selected cache key does not match the resolved main entry'
+  );
   assert.ok(
     sameCanonicalFile(entry.filename, canonicalEntry) && sameCanonicalFile(entry.id, canonicalEntry),
     'Owned MSN cached extension entry identity does not match the verified main file'
@@ -82,8 +104,10 @@ function bindOwnedCachedShutdown(host: OwnedMsnShutdownHost): () => Promise<void
         host.extension.main === originalMain,
       'Owned MSN host ownership changed during teardown'
     );
+    const currentSelection = host.cachedEntry(resolvedEntry);
     assert.ok(
-      host.cachedEntry(resolvedEntry) === entry &&
+      currentSelection?.cacheKey === originalCacheKey &&
+        currentSelection.entry === entry &&
         entry.loaded &&
         sameCanonicalFile(entry.filename, canonicalEntry) &&
         sameCanonicalFile(entry.id, canonicalEntry) &&
