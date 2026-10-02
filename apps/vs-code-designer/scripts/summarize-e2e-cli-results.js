@@ -31,29 +31,25 @@ function writeSingleResult({ label, log, outDir, outcome, diagnosticsArtifactNam
   let terminalError;
   let terminal;
   if (label === 'msnWeatherLifecycle') {
+    const executedResult = parseMochaLog(label, 'success', logText);
+    result.executedTestCounts = executedResult.executedTestCounts;
     const terminalPath = path.join(outDir, `${label}.terminal-result.json`);
     try {
       terminal = readMsnTerminal(terminalPath);
-      if (result.outcome === 'success') {
-        assertSuccessfulMsnTerminal(result, terminal);
+      if (result.outcome === 'success' || executedResult.failing === 0) {
+        assertSuccessfulMsnTerminal(executedResult, terminal);
+        if (result.outcome !== 'success') {
+          throw new Error('MSN lifecycle evidence failed: unsuccessful-wrapper');
+        }
       }
     } catch (error) {
       terminalError = error;
-      const executedResult = parseMochaLog(label, 'success', logText);
-      const executedTestCounts = {
-        total: executedResult.total,
-        passing: executedResult.passing,
-        failing: executedResult.failing,
-        pending: executedResult.pending,
-      };
-      Object.assign(result, parseMochaLog(label, 'failure', logText));
-      result.executedTestCounts = executedTestCounts;
-      result.harnessFailures = [{ name: 'MSN lifecycle evidence', kind: 'lifecycle-evidence', message: error.message }];
-      result.failedTests = [...executedResult.failedTests];
-      while (result.failedTests.length < executedResult.failing) {
-        result.failedTests.push(`Failure ${result.failedTests.length + 1}`);
-      }
-      result.failedTests.push('MSN lifecycle evidence');
+      Object.assign(result, executedResult, { outcome: 'failure' });
+      result.harnessFailures = [
+        ...(executedResult.harnessFailures || []),
+        { name: 'MSN lifecycle evidence', kind: 'lifecycle-evidence', message: error.message },
+      ];
+      result.failedTests = [...executedResult.failedTests, 'MSN lifecycle evidence'];
       result.failing = result.failedTests.length;
       result.total = result.passing + result.failing + result.pending;
       result.passRate = result.total > 0 ? Number(((result.passing / result.total) * 100).toFixed(2)) : 0;
@@ -111,11 +107,15 @@ function parseMochaLog(label, outcome, logText) {
   const failing = lastNumberMatch(logText, /^[ \t]*(\d+) failing\b/gm);
   const pending = lastNumberMatch(logText, /^[ \t]*(\d+) pending\b/gm);
   const duration = lastTextMatch(logText, /^[ \t]*\d+ passing \(([^)]+)\)/gm);
-  const passedTests = uniqueMatches(logText, /^[ \t]+(?:√|✔)\s+(.+?)(?:\s+\(\d+ms\))?[ \t]*$/gm).slice(-passing);
-  const failedTests = uniqueMatches(logText, /^[ \t]*\d+\)\s+(.+?)[ \t]*$/gm);
+  const passedTests = passing > 0 ? collectMatches(logText, /^[ \t]+(?:√|✔)\s+(.+?)(?:\s+\(\d+ms\))?[ \t]*$/gm).slice(-passing) : [];
+  const failures = parseMochaFailures(logText, failing);
+  const failedTests = failures.map((failure) => failure.name);
+  const hookFailures = failures.filter((failure) => failure.hook);
   const failureExcerpt = buildFailureExcerpt(logText);
   const normalizedFailing = outcome === 'success' ? failing : Math.max(failing, failedTests.length, 1);
   const total = passing + normalizedFailing + pending;
+  const executedFailing = failures.filter((failure) => failure.identified && !failure.hook).length;
+  const unclassifiedMochaFailureCount = failures.filter((failure) => !failure.identified).length;
 
   return {
     label,
@@ -128,9 +128,63 @@ function parseMochaLog(label, outcome, logText) {
     duration,
     passedTests,
     failedTests,
+    executedTestCounts: { total: passing + executedFailing + pending, passing, failing: executedFailing, pending },
+    ...(unclassifiedMochaFailureCount ? { unclassifiedMochaFailureCount } : {}),
+    ...(hookFailures.length
+      ? {
+          harnessFailures: hookFailures.map((failure) => ({
+            name: failure.name,
+            kind: 'mocha-hook',
+            message: 'Mocha hook failure; not an additional executed feature test.',
+          })),
+        }
+      : {}),
     failureExcerpt,
     generatedAt: new Date().toISOString(),
   };
+}
+
+function parseMochaFailures(logText, failing) {
+  const footer = /^[ \t]*\d+ failing\b/gm;
+  let footerEnd = -1;
+  while (footer.exec(logText) !== null) {
+    footerEnd = footer.lastIndex;
+  }
+  const section = footerEnd < 0 ? logText : logText.slice(footerEnd);
+  const header = /^([ \t]*)(\d+)\)\s+(.+?)[ \t]*$/gm;
+  const records = new Map();
+  let match;
+  while ((match = header.exec(section)) !== null) {
+    const ordinal = Number(match[2]);
+    if (ordinal < 1 || ordinal > failing || records.has(ordinal)) {
+      continue;
+    }
+    const parts = [match[3].trim().replace(/:$/, '')];
+    let identified = match[3].trim().endsWith(':');
+    if (!identified) {
+      for (const line of section.slice(header.lastIndex).split(/\r?\n/).slice(1)) {
+        const text = line.trim();
+        if (!text || /^\w*Error\b|^at\b/.test(text) || line.search(/\S/) <= match[1].length) {
+          break;
+        }
+        parts.push(text.replace(/:$/, ''));
+        if (text.endsWith(':')) {
+          identified = true;
+          break;
+        }
+      }
+    }
+    const name = parts.join(': ');
+    records.set(ordinal, {
+      name,
+      identified,
+      hook: identified && /^"(?:before all|after all|before each|after each)" hook(?: for .+| in .+|: .+)?$/.test(parts[parts.length - 1]),
+    });
+  }
+  return Array.from(
+    { length: failing },
+    (_, index) => records.get(index + 1) || { name: `Failure ${index + 1}`, identified: false, hook: false }
+  );
 }
 
 function buildAggregate(results, options = {}) {
@@ -230,7 +284,7 @@ function buildSingleSummary(result) {
   if (result.harnessFailures?.length) {
     lines.push(
       `**Harness evidence failure:** ${result.harnessFailures.map((failure) => failure.message).join('; ')}.`,
-      `Executed Mocha tests: ${result.executedTestCounts.passing} passing, ${result.executedTestCounts.failing} failing, ${result.executedTestCounts.pending} pending. Normalized reporting includes the lifecycle-evidence failure; it is not another executed feature test.`,
+      `Executed Mocha tests: ${result.executedTestCounts.passing} passing, ${result.executedTestCounts.failing} failing, ${result.executedTestCounts.pending} pending. Normalized reporting includes harness failures; they are not additional executed feature tests.`,
       ''
     );
   }
@@ -483,12 +537,12 @@ function lastTextMatch(text, pattern) {
   return value;
 }
 
-function uniqueMatches(text, pattern) {
+function collectMatches(text, pattern) {
   const values = [];
   let match;
   while ((match = pattern.exec(text)) !== null) {
     const value = match[1].trim();
-    if (value && !values.includes(value)) {
+    if (value) {
       values.push(value);
     }
   }

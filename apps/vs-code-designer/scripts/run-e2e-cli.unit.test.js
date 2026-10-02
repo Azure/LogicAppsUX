@@ -59,7 +59,7 @@ const {
   SUITE_REGISTRY,
 } = require('./e2e-cli-batch.js');
 const {
-  _test: { buildAggregate: buildSummaryAggregate, buildSingleSummary, writeSingleResult },
+  _test: { buildAggregate: buildSummaryAggregate, buildSingleSummary, parseMochaLog, writeSingleResult },
 } = require('./summarize-e2e-cli-results.js');
 const { assertSuccessfulMsnTerminal } = require('./e2e-cli-terminal');
 
@@ -107,6 +107,9 @@ const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
     testMsnDirectLifecycleEvidence();
     testMsnBatchLifecycleEvidence();
     testMsnSummaryRejectsIncompleteTerminal();
+    testMochaHookReportingUsesOrdinalFailureIdentity();
+    testMsnFailedWrapperAccounting();
+    testMsnNativeFailureAccounting();
     testOgfGateControls();
     testAggregateCompletenessAndDiagnosticRerun();
     testAggregateCliOptions();
@@ -1578,6 +1581,194 @@ function testMsnSummaryRejectsIncompleteTerminal() {
     assert.strictEqual(aggregate.failing, 1);
     assert.deepStrictEqual(aggregate.failedLabels, ['msnWeatherLifecycle']);
   }
+}
+
+function testMochaHookReportingUsesOrdinalFailureIdentity() {
+  const passed = [
+    'VS Code is running',
+    'Test runner environment is configured',
+    'Logic Apps extension is present with package metadata',
+    'Logic Apps extension is loaded from the development dist folder',
+    'Logic Apps extension dependencies are installed and visible to VS Code',
+    'Logic Apps extension activates successfully',
+    'Logic Apps extension activation does not attempt startup dialogs',
+    'VS Code starts without a folder or saved workspace loaded',
+  ];
+  const logText = [
+    ...passed.map((name) => `    ✔ ${name}`),
+    '  Logic Apps Commands Tests',
+    '    1) "before all" hook for "Should register expected Logic Apps commands"',
+    '  8 passing (26s)',
+    '  1 failing',
+    '  1) Logic Apps Commands Tests',
+    '       "before all" hook for "Should register expected Logic Apps commands":',
+    '     Error: absent-settling workbench Chat state read failed. Reason: deadline-exceeded',
+  ].join('\n');
+  const root = path.join(tempRoot, 'actual-unit-hook-reporting');
+  fs.mkdirSync(root);
+  const log = path.join(root, 'native.log');
+  fs.writeFileSync(log, logText);
+  writeSingleResult({ label: 'unitTests', outcome: 'failure', log, outDir: root });
+  const result = JSON.parse(fs.readFileSync(path.join(root, 'unitTests.json'), 'utf8'));
+  assert.strictEqual(result.total, 9);
+  assert.strictEqual(result.passing, 8);
+  assert.strictEqual(result.failing, 1);
+  assert.deepStrictEqual(result.executedTestCounts, { total: 8, passing: 8, failing: 0, pending: 0 });
+  assert.deepStrictEqual(result.passedTests, passed);
+  assert.deepStrictEqual(result.failedTests, [
+    'Logic Apps Commands Tests: "before all" hook for "Should register expected Logic Apps commands"',
+  ]);
+  assert.strictEqual(result.harnessFailures.length, 1);
+  assert.strictEqual(result.harnessFailures[0].kind, 'mocha-hook');
+  const xml = fs.readFileSync(path.join(root, 'unitTests.junit.xml'), 'utf8');
+  assert.match(xml, /tests="9" failures="1"/);
+  assert.strictEqual((xml.match(/<testcase /g) || []).length, 9);
+  assert.strictEqual((xml.match(/<failure /g) || []).length, 1);
+  const markdown = fs.readFileSync(path.join(root, 'unitTests.summary.md'), 'utf8');
+  assert.match(markdown, /Executed Mocha tests: 8 passing, 0 failing, 0 pending/);
+  assert.match(markdown, /not additional executed feature tests/);
+
+  const identicalTitles = parseMochaLog(
+    'unitTests',
+    'failure',
+    '  0 passing (1s)\n  2 failing\n  1) Same suite\n       Same body:\n     Error: first\n  2) Same suite\n       Same body:\n     Error: second\n'
+  );
+  assert.strictEqual(identicalTitles.failing, 2);
+  assert.deepStrictEqual(identicalTitles.failedTests, ['Same suite: Same body', 'Same suite: Same body']);
+  assert.deepStrictEqual(identicalTitles.executedTestCounts, { total: 2, passing: 0, failing: 2, pending: 0 });
+  const missingDetail = parseMochaLog('unitTests', 'failure', '  0 passing (1s)\n  2 failing\n  1) Only detail:\n     Error: failure\n');
+  assert.deepStrictEqual(missingDetail.failedTests, ['Only detail', 'Failure 2']);
+  assert.strictEqual(missingDetail.total, 2);
+  assert.strictEqual(missingDetail.unclassifiedMochaFailureCount, 1);
+  assert.deepStrictEqual(missingDetail.executedTestCounts, { total: 1, passing: 0, failing: 1, pending: 0 });
+  const duplicatePasses = parseMochaLog('unitTests', 'success', '  ✔ Same title\n  ✔ Same title\n  2 passing (1s)\n');
+  assert.deepStrictEqual(duplicatePasses.passedTests, ['Same title', 'Same title']);
+  assert.strictEqual(duplicatePasses.total, 2);
+  for (const detail of [
+    '  1) "before all" hook reporting\n       Should fail as an ordinary body:',
+    '  1) Ordinary suite\n       Should render "before all" hook text:',
+  ]) {
+    const bodyResult = parseMochaLog(
+      'unitTests',
+      'failure',
+      `  0 passing (1s)\n  1 failing\n${detail}\n     Error: ordinary body failure\n`
+    );
+    assert.deepStrictEqual(bodyResult.executedTestCounts, { total: 1, passing: 0, failing: 1, pending: 0 });
+    assert.strictEqual(bodyResult.harnessFailures, undefined, 'Hook words in suite/body prose do not make a Mocha hook');
+  }
+}
+
+function testMsnFailedWrapperAccounting() {
+  for (const platform of ['linux', 'win32']) {
+    for (const failure of ['cleanup', 'missing', 'malformed', 'signal', 'phase', 'unexpected-wrapper']) {
+      const root = path.join(tempRoot, `msn-failed-wrapper-${platform}-${failure}`);
+      fs.mkdirSync(root);
+      const log = path.join(root, 'native.log');
+      fs.writeFileSync(
+        log,
+        '\n  ✔ Bootstrap preparation\n  1 passing (1s)\n  ✔ Workspace creation\n  1 passing (1s)\n  ✔ Should open generated designers and run saved workflows for Standard, custom code, and rules engine projects (106059ms)\n  1 passing (2m)\n'
+      );
+      const terminal = {
+        schemaVersion: 1,
+        label: 'msnWeatherLifecycle',
+        phaseId: 'msnWeatherLifecycle:run',
+        exitCode: failure === 'cleanup' ? 1 : 0,
+        signal: failure === 'signal' ? 'SIGTERM' : null,
+        cleanupVerified: failure !== 'cleanup',
+        diagnosticsError: failure === 'cleanup' ? 'lifecycle-cleanup-failed' : '',
+        complete: failure !== 'cleanup',
+        mochaPassingCount: 0,
+        phaseResults: SUITE_REGISTRY.msnWeatherLifecycle.expectedPhases.map((phaseId) =>
+          msnPhase(phaseId, failure === 'phase' && phaseId.endsWith(':run') ? { exitCode: 1, complete: false } : {})
+        ),
+        lifecycleFinalized: true,
+      };
+      if (failure !== 'missing') {
+        fs.writeFileSync(
+          path.join(root, 'msnWeatherLifecycle.terminal-result.json'),
+          failure === 'malformed' ? '{"private-sentinel":bad-json}' : JSON.stringify(terminal)
+        );
+      }
+      const cli = spawnSync(
+        process.execPath,
+        [
+          path.join(__dirname, 'summarize-e2e-cli-results.js'),
+          '--label',
+          'msnWeatherLifecycle',
+          '--log',
+          log,
+          '--out-dir',
+          root,
+          '--outcome',
+          'failure',
+        ],
+        { encoding: 'utf8' }
+      );
+      assert.strictEqual(cli.error, undefined);
+      assert.strictEqual(cli.status, 1, 'An already-failed wrapper must not bypass terminal validation');
+      const result = JSON.parse(fs.readFileSync(path.join(root, 'msnWeatherLifecycle.json'), 'utf8'));
+      assert.strictEqual(result.outcome, 'failure');
+      assert.strictEqual(result.passing, 1);
+      assert.strictEqual(result.failing, 1);
+      assert.strictEqual(result.total, 2);
+      assert.deepStrictEqual(result.executedTestCounts, { total: 1, passing: 1, failing: 0, pending: 0 });
+      assert.deepStrictEqual(result.failedTests, ['MSN lifecycle evidence']);
+      assert.strictEqual(result.harnessFailures.length, 1);
+      assert.strictEqual(result.harnessFailures[0].kind, 'lifecycle-evidence');
+      assert.strictEqual(result.ogfScenarios, undefined);
+      const xml = fs.readFileSync(path.join(root, 'msnWeatherLifecycle.junit.xml'), 'utf8');
+      assert.match(xml, /tests="2" failures="1"/);
+      assert.match(xml, /<failure message="MSN lifecycle evidence">/);
+      assert.strictEqual((xml.match(/<testcase /g) || []).length, 2);
+      assert.doesNotMatch(`${cli.stderr}${JSON.stringify(result)}${xml}`, /private-sentinel|bad-json/);
+    }
+  }
+}
+
+function testMsnNativeFailureAccounting() {
+  const root = path.join(tempRoot, 'msn-native-failed-reporting');
+  fs.mkdirSync(root);
+  const log = path.join(root, 'native.log');
+  fs.writeFileSync(
+    log,
+    '  ✔ Bootstrap preparation\n  1 passing (1s)\n  ✔ Workspace creation\n  1 passing (1s)\n  0 passing (1s)\n  1 failing\n  1) Runtime scenario:\n     Error: native assertion failed\n'
+  );
+  fs.writeFileSync(
+    path.join(root, 'msnWeatherLifecycle.terminal-result.json'),
+    JSON.stringify({
+      label: 'msnWeatherLifecycle',
+      complete: false,
+      exitCode: 1,
+      cleanupVerified: true,
+      diagnosticsError: '',
+      phaseResults: [],
+    })
+  );
+  writeSingleResult({ label: 'msnWeatherLifecycle', outcome: 'failure', log, outDir: root });
+  const result = JSON.parse(fs.readFileSync(path.join(root, 'msnWeatherLifecycle.json'), 'utf8'));
+  assert.deepStrictEqual(result.executedTestCounts, { total: 1, passing: 0, failing: 1, pending: 0 });
+  assert.strictEqual(result.total, 1);
+  assert.strictEqual(result.failing, 1);
+  assert.deepStrictEqual(result.failedTests, ['Runtime scenario']);
+  assert.deepStrictEqual(result.passedTests, [], 'Earlier preparation passes must not appear as passed run-phase tests');
+  assert.strictEqual(result.harnessFailures, undefined, 'The native assertion failure must not be counted twice as a harness failure');
+  const xml = fs.readFileSync(path.join(root, 'msnWeatherLifecycle.junit.xml'), 'utf8');
+  assert.strictEqual((xml.match(/<testcase /g) || []).length, 1);
+
+  fs.writeFileSync(
+    log,
+    '  ✔ Actual runtime body\n  1) "after all" hook for "Actual runtime body"\n  1 passing (1s)\n  1 failing\n  1) Generated Workspace Designer Lifecycle Tests\n       "after all" hook for "Actual runtime body":\n     AggregateError: owned host teardown failed\n'
+  );
+  writeSingleResult({ label: 'msnWeatherLifecycle', outcome: 'failure', log, outDir: root });
+  const hookResult = JSON.parse(fs.readFileSync(path.join(root, 'msnWeatherLifecycle.json'), 'utf8'));
+  assert.deepStrictEqual(hookResult.executedTestCounts, { total: 1, passing: 1, failing: 0, pending: 0 });
+  assert.strictEqual(hookResult.total, 2);
+  assert.strictEqual(hookResult.failing, 1);
+  assert.deepStrictEqual(hookResult.failedTests, [
+    'Generated Workspace Designer Lifecycle Tests: "after all" hook for "Actual runtime body"',
+  ]);
+  assert.strictEqual(hookResult.harnessFailures.length, 1);
+  assert.strictEqual(hookResult.harnessFailures[0].kind, 'mocha-hook');
 }
 
 function testOgfGateControls() {
