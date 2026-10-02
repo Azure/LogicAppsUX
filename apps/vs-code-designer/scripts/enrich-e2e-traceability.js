@@ -84,6 +84,9 @@ function joinPrivateTraceability(result, crosswalk, expected, terminalResult) {
   requireTraceability(
     terminalResult?.complete === true &&
       terminalResult.cleanupVerified === true &&
+      terminalResult.exitCode === 0 &&
+      !terminalResult.signal &&
+      !terminalResult.diagnosticsError &&
       Array.isArray(phases) &&
       phases.length === suite.expectedPhases.length &&
       sameIdentities(
@@ -97,13 +100,21 @@ function joinPrivateTraceability(result, crosswalk, expected, terminalResult) {
     'incomplete-or-unclean-execution'
   );
   requireTraceability(
-    /^[a-f0-9]{40}$/i.test(expected?.sourceVersion || '') && /^\d+$/.test(expected?.buildId || ''),
+    /^[a-f0-9]{40}$/i.test(expected?.sourceVersion || '') &&
+      /^\d+$/.test(expected?.buildId || '') &&
+      ['linux', 'win32', 'windows'].includes(expected?.platform) &&
+      /^\d+\.\d+\.\d+$/.test(expected?.vscodeVersion || ''),
     'missing-source-build-binding'
   );
   const required = OGF_E2E_SCENARIOS.filter((scenario) => scenario.suiteId === result.label);
   requireTraceability(required.length > 0, 'no-applicable-scenario');
   requireTraceability(Array.isArray(result.ogfScenarios) && result.ogfScenarios.length === required.length, 'missing-executed-scenario');
+  requireTraceability(
+    Array.isArray(terminalResult.ogfScenarios) && terminalResult.ogfScenarios.length === result.ogfScenarios.length,
+    'missing-terminal-scenario'
+  );
   const observed = new Set();
+  const expectedPlatform = expected.platform === 'windows' ? 'win32' : expected.platform;
   const scenarios = result.ogfScenarios.map((rawEvidence) => {
     const evidence = projectPublicScenarioEvidence(rawEvidence);
     requireTraceability(
@@ -114,9 +125,16 @@ function joinPrivateTraceability(result, crosswalk, expected, terminalResult) {
     requireTraceability(
       evidence.provenance.sourceVersion === expected.sourceVersion &&
         evidence.provenance.buildId === expected.buildId &&
-        ['linux', 'win32'].includes(evidence.provenance.platform) &&
-        evidence.provenance.vscodeVersion.length > 0,
+        evidence.provenance.platform === expectedPlatform &&
+        evidence.provenance.vscodeVersion === expected.vscodeVersion,
       'execution-provenance-mismatch'
+    );
+    const terminalEvidence = terminalResult.ogfScenarios.find((item) => item?.scenarioId === evidence.scenarioId);
+    requireTraceability(
+      terminalEvidence &&
+        !Object.hasOwn(terminalEvidence, 'source') &&
+        JSON.stringify(projectPublicScenarioEvidence(terminalEvidence)) === JSON.stringify(evidence),
+      'terminal-scenario-mismatch'
     );
     const mapping = crosswalk.scenarios.find((item) => item.scenarioId === evidence.scenarioId);
     return { ...evidence, source: mapping.source };
@@ -172,7 +190,12 @@ function runCli(args, env = process.env) {
   const joined = joinPrivateTraceability(
     result,
     crosswalk,
-    { sourceVersion: options['source-version'], buildId: options['build-id'] },
+    {
+      sourceVersion: options['source-version'],
+      buildId: options['build-id'],
+      platform: options.platform,
+      vscodeVersion: options['vscode-version'],
+    },
     terminalResult
   );
   fs.mkdirSync(path.dirname(options.output), { recursive: true, mode: 0o700 });

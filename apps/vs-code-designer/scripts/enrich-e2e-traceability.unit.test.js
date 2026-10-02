@@ -13,6 +13,7 @@ const expected = { sourceVersion: 'a'.repeat(40), buildId: '42' };
 const terminal = {
   complete: true,
   cleanupVerified: true,
+  exitCode: 0,
   phaseResults: SUITE_REGISTRY[scenario.suiteId].expectedPhases.map((phaseId) => ({
     phaseId,
     complete: true,
@@ -42,7 +43,9 @@ const crosswalk = {
 for (const platform of ['linux', 'win32']) {
   const result = fixtureResult(platform);
   const original = JSON.stringify(result);
-  const joined = joinPrivateTraceability(result, crosswalk, expected, terminal);
+  const admitted = { ...expected, platform, vscodeVersion: '1.140.0' };
+  const actualTerminal = { ...terminal, ogfScenarios: result.ogfScenarios };
+  const joined = joinPrivateTraceability(result, crosswalk, admitted, actualTerminal);
   assert.strictEqual(joined.scenarios[0].provenance.platform, platform);
   assert.strictEqual(joined.scenarios[0].provenance.sourceVersion, expected.sourceVersion);
   assert.strictEqual(joined.scenarios[0].provenance.buildId, expected.buildId);
@@ -66,18 +69,40 @@ for (const platform of ['linux', 'win32']) {
       ogfScenarios: [{ ...result.ogfScenarios[0], provenance: { ...result.ogfScenarios[0].provenance, buildId: '43' } }],
     },
   ]) {
-    assert.throws(() => joinPrivateTraceability(invalid, crosswalk, expected, terminal));
+    assert.throws(() => joinPrivateTraceability(invalid, crosswalk, admitted, actualTerminal));
   }
   for (const invalid of [
     undefined,
-    { ...terminal, complete: false },
-    { ...terminal, cleanupVerified: false },
-    { ...terminal, phaseResults: terminal.phaseResults.slice(1) },
-    { ...terminal, phaseResults: terminal.phaseResults.map((phase) => ({ ...phase, exitCode: 1 })) },
-    { ...terminal, phaseResults: terminal.phaseResults.map((phase) => ({ ...phase, diagnosticsError: 'cleanup-failed' })) },
-    { ...terminal, phaseResults: terminal.phaseResults.map((phase) => ({ ...phase, phaseId: 'wrong-phase' })) },
+    { ...actualTerminal, complete: false },
+    { ...actualTerminal, cleanupVerified: false },
+    { ...actualTerminal, exitCode: 1 },
+    { ...actualTerminal, signal: 'SIGTERM' },
+    { ...actualTerminal, diagnosticsError: 'postprocessing-failed' },
+    { ...actualTerminal, phaseResults: terminal.phaseResults.slice(1) },
+    { ...actualTerminal, phaseResults: terminal.phaseResults.map((phase) => ({ ...phase, exitCode: 1 })) },
+    { ...actualTerminal, phaseResults: terminal.phaseResults.map((phase) => ({ ...phase, diagnosticsError: 'cleanup-failed' })) },
+    { ...actualTerminal, phaseResults: terminal.phaseResults.map((phase) => ({ ...phase, phaseId: 'wrong-phase' })) },
   ]) {
-    assert.throws(() => joinPrivateTraceability(result, crosswalk, expected, invalid), /incomplete-or-unclean-execution/);
+    assert.throws(() => joinPrivateTraceability(result, crosswalk, admitted, invalid), /incomplete-or-unclean-execution/);
+  }
+  for (const invalid of [
+    { ...actualTerminal, ogfScenarios: [] },
+    {
+      ...actualTerminal,
+      ogfScenarios: [{ ...result.ogfScenarios[0], provenance: { ...result.ogfScenarios[0].provenance, buildId: '43' } }],
+    },
+    {
+      ...actualTerminal,
+      ogfScenarios: [{ ...result.ogfScenarios[0], assertionIdentities: ['different-assertion'] }],
+    },
+  ]) {
+    assert.throws(() => joinPrivateTraceability(result, crosswalk, admitted, invalid));
+  }
+  for (const invalid of [
+    { ...admitted, platform: platform === 'linux' ? 'win32' : 'linux' },
+    { ...admitted, vscodeVersion: '1.139.0' },
+  ]) {
+    assert.throws(() => joinPrivateTraceability(result, crosswalk, invalid, actualTerminal), /execution-provenance-mismatch/);
   }
 }
 for (const invalid of [
@@ -96,7 +121,7 @@ try {
   const privateMap = path.join(tempRoot, 'private-crosswalk.json');
   const output = path.join(tempRoot, 'restricted-diagnostics', 'traceability.json');
   const terminalPath = path.join(tempRoot, 'terminal-result.json');
-  fs.writeFileSync(terminalPath, JSON.stringify(terminal));
+  fs.writeFileSync(terminalPath, JSON.stringify({ ...terminal, ogfScenarios: fixtureResult('linux').ogfScenarios }));
   const cli = path.join(__dirname, 'enrich-e2e-traceability.js');
   for (const raw of ['', '$(E2E_TRACEABILITY_CROSSWALK_JSON)', 'not-json-private-canary', '{"schemaVersion":1,"scenarios":[]}']) {
     const rejected = spawnSync(process.execPath, [cli, '--prepare', privateMap], {
@@ -131,6 +156,10 @@ try {
       expected.sourceVersion,
       '--build-id',
       expected.buildId,
+      '--platform',
+      'linux',
+      '--vscode-version',
+      '1.140.0',
     ],
     { encoding: 'utf-8' }
   );
@@ -156,6 +185,10 @@ try {
       expected.sourceVersion,
       '--build-id',
       expected.buildId,
+      '--platform',
+      'linux',
+      '--vscode-version',
+      '1.140.0',
     ],
     { encoding: 'utf-8' }
   );

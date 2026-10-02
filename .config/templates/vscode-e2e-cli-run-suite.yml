@@ -639,7 +639,9 @@ jobs:
                 --terminal-result "$resultDestination/${{ parameters.suiteId }}.terminal-result.json" `
                 --output "$diagnosticsRoot/private-traceability/${{ parameters.suiteId }}.json" `
                 --source-version "$($admissionContext.sourceSHA)" `
-                --build-id "$(Build.BuildId)"
+                --build-id "$(Build.BuildId)" `
+                --platform '${{ parameters.platform }}' `
+                --vscode-version "$($admissionContext.resolvedVSCodeBuild)"
               if ($LASTEXITCODE -ne 0) {
                 exit $LASTEXITCODE
               }

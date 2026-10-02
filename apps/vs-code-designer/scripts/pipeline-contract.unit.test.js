@@ -21,6 +21,21 @@ testPipelineSafetyGuards();
 testDiagnosticsStagingScriptHandlesDirectSuiteLayout();
 testDiagnosticsStagingScriptHandlesDirectSuiteLayout({ privatePlatform: 'linux' });
 testDiagnosticsStagingScriptHandlesDirectSuiteLayout({ privatePlatform: 'win32' });
+testDiagnosticsStagingScriptHandlesDirectSuiteLayout({
+  privatePlatform: 'linux',
+  admittedPlatform: 'windows',
+  expectedPrivateFailure: 'execution-provenance-mismatch',
+});
+testDiagnosticsStagingScriptHandlesDirectSuiteLayout({
+  privatePlatform: 'win32',
+  admissionVersion: '1.139.0',
+  expectedPrivateFailure: 'execution-provenance-mismatch',
+});
+testDiagnosticsStagingScriptHandlesDirectSuiteLayout({
+  privatePlatform: 'linux',
+  terminalOverride: { exitCode: 1 },
+  expectedPrivateFailure: 'incomplete-or-unclean-execution',
+});
 testPrivateTraceabilityConfigurationContract();
 testDiagnosticsStagingScriptPreservesEvidenceBeforeFailing();
 
@@ -1757,6 +1772,7 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
       `${JSON.stringify({
         complete: true,
         cleanupVerified: true,
+        exitCode: 0,
         ogfScenarios,
         phaseResults: SUITE_REGISTRY[suiteId].expectedPhases.map((phaseId) => ({
           phaseId,
@@ -1764,10 +1780,14 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
           cleanupVerified: true,
           exitCode: 0,
         })),
+        ...options.terminalOverride,
       })}\n`
     );
     fs.writeFileSync(path.join(resultRoot, `${suiteId}.cleanup-ledger.json`), '{"privateProcessIds":[1234]}\n');
-    fs.writeFileSync(path.join(resultRoot, `admission-context-${suiteId}.json`), JSON.stringify({ sourceSHA: 'a'.repeat(40) }));
+    fs.writeFileSync(
+      path.join(resultRoot, `admission-context-${suiteId}.json`),
+      JSON.stringify({ sourceSHA: 'a'.repeat(40), resolvedVSCodeBuild: options.admissionVersion || '1.140.0' })
+    );
     fs.writeFileSync(
       path.join(resultRoot, `${suiteId}.log`),
       'Authorization: Bearer raw-token https://example.test/callback?sig=secret-sas\n'
@@ -1782,22 +1802,35 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
     const screenshotFixture = writeScreenshotSidecarFixture(screenshotsRoot);
     fs.writeFileSync(path.join(workspaceSnapshotsRoot, 'index.md'), '# redacted workspace\n');
 
-    execFileSync(
-      'pwsh',
-      [
-        '-NoProfile',
-        '-NonInteractive',
-        '-Command',
-        script
-          .replaceAll('$(Build.ArtifactStagingDirectory)', artifactStagingDirectory)
-          .replaceAll('$(Build.SourcesDirectory)', sourcesDirectory)
-          .replaceAll('$(Agent.TempDirectory)', agentTempDirectory)
-          .replaceAll('$(Build.BuildId)', '42')
-          .replaceAll('${{ parameters.artifactName }}', artifactName)
-          .replaceAll('${{ parameters.suiteId }}', suiteId),
-      ],
-      { stdio: 'pipe' }
-    );
+    const stage = () =>
+      execFileSync(
+        'pwsh',
+        [
+          '-NoProfile',
+          '-NonInteractive',
+          '-Command',
+          script
+            .replaceAll('$(Build.ArtifactStagingDirectory)', artifactStagingDirectory)
+            .replaceAll('$(Build.SourcesDirectory)', sourcesDirectory)
+            .replaceAll('$(Agent.TempDirectory)', agentTempDirectory)
+            .replaceAll('$(Build.BuildId)', '42')
+            .replaceAll(
+              '${{ parameters.platform }}',
+              options.admittedPlatform || (options.privatePlatform === 'win32' ? 'windows' : 'linux')
+            )
+            .replaceAll('${{ parameters.artifactName }}', artifactName)
+            .replaceAll('${{ parameters.suiteId }}', suiteId),
+        ],
+        { stdio: 'pipe' }
+      );
+    if (options.expectedPrivateFailure) {
+      assert.throws(stage, new RegExp(options.expectedPrivateFailure));
+      assert.ok(
+        !fs.existsSync(path.join(artifactStagingDirectory, 'vscode-e2e-cli', artifactName, 'private-traceability', `${suiteId}.json`))
+      );
+      return;
+    }
+    stage();
 
     const diagnosticsRoot = path.join(artifactStagingDirectory, 'vscode-e2e-cli', artifactName);
     assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'results', `${suiteId}.json`)));
@@ -1850,6 +1883,8 @@ function testPrivateTraceabilityConfigurationContract() {
   assert.match(template, /if \(\$nativeResult\.outcome -eq 'success'\)/);
   assert.match(template, /--source-version "\$\(\$admissionContext\.sourceSHA\)"/);
   assert.match(template, /--build-id "\$\(Build\.BuildId\)"/);
+  assert.match(template, /--platform '\$\{\{ parameters\.platform \}\}'/);
+  assert.match(template, /--vscode-version "\$\(\$admissionContext\.resolvedVSCodeBuild\)"/);
 }
 
 function testDiagnosticsStagingScriptPreservesEvidenceBeforeFailing() {
