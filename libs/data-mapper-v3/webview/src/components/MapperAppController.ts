@@ -5,6 +5,21 @@
 import { type SchemaNodeView, SchemaTreeRenderer } from './SchemaTreeRenderer';
 import { MappingCanvas } from './MappingCanvas';
 import { FunctoidPalette } from './FunctoidPalette';
+import { FunctoidConfigDialog, type FunctoidConfigInput, type FunctoidConfigResult } from './FunctoidConfigDialog';
+import {
+  ScriptingConfigDialog,
+  type ScriptingConfigResult,
+  type ScriptingConfigType,
+  type ScriptingFunctoidSummary,
+} from './ScriptingConfigDialog';
+import { SchemaNodePropertiesDialog, type SchemaNodePropertyRow } from './SchemaNodePropertiesDialog';
+import { EmptySchemaPlaceholder } from './EmptySchemaPlaceholder';
+import { MapperStatusBar } from './MapperStatusBar';
+import { MapperPageBar } from './MapperPageBar';
+import { CopilotPanel } from './CopilotPanel';
+import { MapperBottomPanel } from './MapperBottomPanel';
+import { MapperContextMenu, type ContextMenuItem } from './MapperContextMenu';
+import { MapperNotification, type NotificationType } from './MapperNotification';
 import { MapperToolbar } from './MapperToolbar';
 import {
   type AssemblyClassInfo,
@@ -15,8 +30,6 @@ import {
   type MapperViewState,
 } from '../../../src/protocol/mapEditorProtocol';
 import { LinkEndpointType, ParameterType } from '../../../src/model/mapModel';
-
-type ScriptingConfigType = 'inlineCSharp' | 'inlineVbNet' | 'inlineJScript' | 'inlineXslt' | 'inlineXsltCallTemplate' | 'externalAssembly';
 
 interface ScriptingConfigDraft {
   functoidId: string;
@@ -52,12 +65,13 @@ export class MapperAppController {
   private mappingAreaEl: HTMLElement | null = null;
   private pendingLink: { type: 'schemaNode' | 'functoid'; id: string; side: 'source' | 'target' } | null = null;
   private scriptingConfigDraft: ScriptingConfigDraft | null = null;
+  private scriptingDialog: ScriptingConfigDialog | null = null;
+  private bottomPanel: MapperBottomPanel | null = null;
   private functoidPropertiesId: string | null = null;
   private functoidInputsDraft: FunctoidInputDraft[] | null = null;
   private functoidLabelDraft = '';
   private functoidCommentsDraft = '';
   private schemaNodeProperties: SchemaNodeProperties | null = null;
-  private renamingPageIndex: number | null = null;
   private copilotPanelOpen = false;
   private copilotBusy = false;
   private copilotDraft = 'Take the XSLT file and generate the map.';
@@ -67,6 +81,23 @@ export class MapperAppController {
   private linkPointerMoved = false;
 
   private resizeObserver: ResizeObserver | null = null;
+
+  // Persistent layout built once; subsequent updates patch in place instead of rebuilding.
+  private layoutBuilt = false;
+  private copilotHost!: HTMLElement;
+  private copilotEl: CopilotPanel | null = null;
+  private toolbarEl!: MapperToolbar;
+  private pageBarEl!: MapperPageBar;
+  private statusBarEl!: MapperStatusBar;
+  private modalHost!: HTMLElement;
+  private sourceEl: HTMLElement | null = null;
+  private targetEl: HTMLElement | null = null;
+  private lastSourceSchema: unknown = undefined;
+  private lastSourceSignature = '';
+  private lastTargetSchema: unknown = undefined;
+  private lastTargetSignature = '';
+  private lastFunctoidsRef: unknown = undefined;
+  private lastModalKey = '';
 
   constructor(
     private readonly container: HTMLElement,
@@ -203,53 +234,33 @@ export class MapperAppController {
   }
 
   private showContextMenu(x: number, y: number): void {
-    // Remove existing menu
     document.querySelectorAll('.context-menu').forEach((m) => m.remove());
 
-    const menu = document.createElement('div');
-    menu.className = 'context-menu';
-    menu.style.left = `${x}px`;
-    menu.style.top = `${y}px`;
-
     const hasSelection = !!(this.state.selectedLink || this.state.selectedFunctoid);
-    const items = [
+    const items: ContextMenuItem[] = [
       {
         label: '✂️ Cut',
         shortcut: 'Ctrl+X',
+        disabled: !hasSelection,
         action: () => {
           this.copySelected();
           this.deleteSelected();
         },
-        disabled: !hasSelection,
       },
-      { label: '📋 Copy', shortcut: 'Ctrl+C', action: () => this.copySelected(), disabled: !hasSelection },
-      { label: '📄 Paste', shortcut: 'Ctrl+V', action: () => this.pasteClipboard(), disabled: !this.clipboard },
-      { label: '---', shortcut: '', action: () => {}, disabled: false },
-      { label: '🗑️ Delete', shortcut: 'Del', action: () => this.deleteSelected(), disabled: !hasSelection },
-      { label: '---', shortcut: '', action: () => {}, disabled: false },
-      { label: '🔗 Auto-Link by Name', shortcut: '', action: () => this.autoLinkByName(), disabled: !this.state.map },
-      { label: '✓ Validate Map', shortcut: '', action: () => this.validateMap(), disabled: !this.state.map },
+      { label: '📋 Copy', shortcut: 'Ctrl+C', disabled: !hasSelection, action: () => this.copySelected() },
+      { label: '📄 Paste', shortcut: 'Ctrl+V', disabled: !this.clipboard, action: () => this.pasteClipboard() },
+      { label: '', divider: true, action: () => {} },
+      { label: '🗑️ Delete', shortcut: 'Del', disabled: !hasSelection, action: () => this.deleteSelected() },
+      { label: '', divider: true, action: () => {} },
+      { label: '🔗 Auto-Link by Name', disabled: !this.state.map, action: () => this.autoLinkByName() },
+      { label: '✓ Validate Map', disabled: !this.state.map, action: () => this.validateMap() },
     ];
 
-    for (const item of items) {
-      if (item.label === '---') {
-        const sep = document.createElement('div');
-        sep.className = 'context-menu-separator';
-        menu.appendChild(sep);
-        continue;
-      }
-      const el = document.createElement('div');
-      el.className = `context-menu-item${item.disabled ? ' disabled' : ''}`;
-      el.innerHTML = `<span class="menu-label">${item.label}</span><span class="menu-shortcut">${item.shortcut}</span>`;
-      if (!item.disabled) {
-        el.addEventListener('click', () => {
-          menu.remove();
-          item.action();
-        });
-      }
-      menu.appendChild(el);
-    }
-
+    const menu = new MapperContextMenu();
+    menu.className = 'context-menu';
+    menu.style.left = `${x}px`;
+    menu.style.top = `${y}px`;
+    menu.configure(items, () => menu.remove());
     document.body.appendChild(menu);
 
     // Close on click outside
@@ -316,21 +327,20 @@ export class MapperAppController {
         if (this.scriptingConfigDraft) {
           this.scriptingConfigDraft.assemblyPath = message.data.path || '';
           this.scriptingConfigDraft.assemblyClasses = message.data.classes || [];
-          const assemblyInput = this.container.querySelector('#config-assembly-path') as HTMLInputElement | null;
-          if (assemblyInput) {
-            assemblyInput.value = this.scriptingConfigDraft.assemblyPath;
-          }
           // Auto-select first class and method
           const classes = this.scriptingConfigDraft.assemblyClasses;
           if (classes && classes.length > 0) {
             const firstClass = classes[0];
             this.scriptingConfigDraft.className = firstClass.className;
-            if (firstClass.methods.length > 0) {
-              this.scriptingConfigDraft.methodName = firstClass.methods[0].name;
-            }
+            this.scriptingConfigDraft.methodName = firstClass.methods[0]?.name || '';
           }
 
-          this.refreshScriptingAssemblySuggestions();
+          this.scriptingDialog?.applyAssemblyResult({
+            assemblyPath: this.scriptingConfigDraft.assemblyPath,
+            assemblyClasses: this.scriptingConfigDraft.assemblyClasses,
+            className: this.scriptingConfigDraft.className,
+            methodName: this.scriptingConfigDraft.methodName,
+          });
         }
         break;
       }
@@ -361,29 +371,40 @@ export class MapperAppController {
   }
 
   private renderView(): void {
-    this.container.innerHTML = '';
+    if (!this.layoutBuilt) {
+      this.buildLayout();
+    }
+    this.syncToolbar();
+    this.syncCopilot();
+    this.syncPalette();
+    this.syncSource();
+    this.configureCanvas();
+    this.syncPageBar();
+    this.syncTarget();
+    this.syncBottom();
+    this.syncStatus();
+    this.syncModal();
+  }
+
+  // Builds the stable DOM skeleton and the long-lived child widgets exactly once.
+  private buildLayout(): void {
+    this.container.replaceChildren();
     this.container.className = 'mapper-container';
 
-    // Toolbar
-    this.container.appendChild(this.createToolbar());
-    if (this.copilotPanelOpen) {
-      this.container.appendChild(this.createCopilotPanel());
-    }
+    this.toolbarEl = new MapperToolbar();
+    this.container.appendChild(this.toolbarEl);
 
-    // Main content area
+    this.copilotHost = document.createElement('div');
+    this.copilotHost.className = 'copilot-host';
+    this.container.appendChild(this.copilotHost);
+
     const content = document.createElement('div');
     content.className = 'mapper-content';
 
-    // Functoid palette
-    const paletteContainer = new FunctoidPalette();
-    paletteContainer.className = 'functoid-palette-container';
-    this.palette = paletteContainer;
-    this.palette.configure(this.state.functoids, (functoid) => {
-      this.addFunctoidToCanvas(functoid);
-    });
-    content.appendChild(paletteContainer);
+    this.palette = new FunctoidPalette();
+    this.palette.className = 'functoid-palette-container';
+    content.appendChild(this.palette);
 
-    // Source/canvas/target workspace
     const mappingWorkspace = document.createElement('div');
     mappingWorkspace.className = 'mapping-workspace';
 
@@ -391,45 +412,202 @@ export class MapperAppController {
     mappingArea.className = 'mapping-area';
     this.mappingAreaEl = mappingArea;
 
-    // Source schema tree
-    let sourceContainer: HTMLElement;
+    this.sourceEl = document.createElement('div');
+    this.sourceEl.className = 'schema-tree-container source-tree';
+    mappingArea.appendChild(this.sourceEl);
+
+    const canvasWorkspace = document.createElement('div');
+    canvasWorkspace.className = 'canvas-workspace';
+
+    this.canvas = new MappingCanvas();
+    this.canvas.className = 'canvas-container';
+    canvasWorkspace.appendChild(this.canvas);
+
+    this.pageBarEl = new MapperPageBar();
+    canvasWorkspace.appendChild(this.pageBarEl);
+    mappingArea.appendChild(canvasWorkspace);
+
+    this.targetEl = document.createElement('div');
+    this.targetEl.className = 'schema-tree-container target-tree';
+    mappingArea.appendChild(this.targetEl);
+
+    mappingWorkspace.appendChild(mappingArea);
+    content.appendChild(mappingWorkspace);
+    this.container.appendChild(content);
+
+    this.bottomPanel = new MapperBottomPanel();
+    this.container.appendChild(this.bottomPanel);
+
+    this.statusBarEl = new MapperStatusBar();
+    this.container.appendChild(this.statusBarEl);
+
+    this.modalHost = document.createElement('div');
+    this.modalHost.className = 'mapper-modal-host';
+    this.container.appendChild(this.modalHost);
+
+    this.resizeObserver = new ResizeObserver(() => this.redrawLinks());
+    this.resizeObserver.observe(mappingArea);
+    this.resizeObserver.observe(this.canvas);
+    window.removeEventListener('resize', this.handleResize);
+    window.addEventListener('resize', this.handleResize);
+
+    this.layoutBuilt = true;
+  }
+
+  private syncToolbar(): void {
+    this.toolbarEl.configure({
+      disabled: !this.state.map,
+      onValidateAndCompile: () => this.validateAndCompile(),
+      onTest: () => this.runTestMap(),
+      onDeploy: () => {
+        if (this.state.map) {
+          this.vscode.postMessage({ type: 'deployToLogicApps', data: this.state.map });
+        }
+      },
+      onCopilot: () => {
+        this.copilotPanelOpen = !this.copilotPanelOpen;
+        this.syncCopilot();
+        if (this.copilotPanelOpen) {
+          setTimeout(() => this.container.querySelector<HTMLTextAreaElement>('#copilot-prompt')?.focus());
+        }
+      },
+    });
+  }
+
+  private syncCopilot(): void {
+    if (this.copilotPanelOpen) {
+      this.copilotEl ??= new CopilotPanel();
+      if (!this.copilotEl.isConnected) {
+        this.copilotHost.appendChild(this.copilotEl);
+      }
+      this.copilotEl.configure(
+        {
+          draft: this.copilotDraft,
+          busy: this.copilotBusy,
+          hasMap: !!this.state.map,
+          message: this.copilotMessage,
+          contextFiles: this.copilotContextFiles,
+        },
+        {
+          onSubmit: (prompt) => this.submitCopilotPrompt(prompt),
+          onAddContext: () => this.vscode.postMessage({ type: 'browseCopilotContext' }),
+          onClearContext: () => this.vscode.postMessage({ type: 'clearCopilotContext' }),
+          onRemoveContext: (id) => this.vscode.postMessage({ type: 'removeCopilotContext', data: { id } }),
+          onClose: () => {
+            this.copilotPanelOpen = false;
+            this.syncCopilot();
+          },
+        }
+      );
+    } else if (this.copilotEl) {
+      this.copilotEl.remove();
+      this.copilotEl = null;
+    }
+  }
+
+  private syncPalette(): void {
+    if (this.lastFunctoidsRef !== this.state.functoids) {
+      this.lastFunctoidsRef = this.state.functoids;
+      this.palette?.configure(this.state.functoids, (functoid) => this.addFunctoidToCanvas(functoid));
+    }
+  }
+
+  private syncSource(): void {
+    const signature = `${this.state.activePage}`;
     if (this.state.sourceSchema) {
-      const sourceTree = new SchemaTreeRenderer();
-      sourceContainer = sourceTree;
-      sourceContainer.className = 'schema-tree-container source-tree';
-      const expandedPaths = this.getLinkedPaths('source');
-      this.sourceTree = sourceTree;
-      this.sourceTree.configure(
+      if (
+        this.sourceEl instanceof SchemaTreeRenderer &&
+        this.lastSourceSchema === this.state.sourceSchema &&
+        this.lastSourceSignature === signature
+      ) {
+        return;
+      }
+      const tree = new SchemaTreeRenderer();
+      tree.className = 'schema-tree-container source-tree';
+      tree.configure(
         this.state.sourceSchema,
         'source',
         (nodePath) => this.onSourceNodeClick(nodePath),
         (nodePath) => this.onSourceNodePointerUp(nodePath),
         (clientX, clientY) => this.beginLinkPointer(clientX, clientY),
-        expandedPaths,
+        this.getLinkedPaths('source'),
         (node) => this.openSchemaNodeProperties(node, 'source'),
         () => this.redrawLinks(),
         () => this.vscode.postMessage({ type: 'loadSchema', side: 'source' }),
         this.getConnectedPaths('source')
       );
-    } else {
-      sourceContainer = document.createElement('div');
-      sourceContainer.className = 'schema-tree-container source-tree';
+      tree.addEventListener('scroll', () => this.redrawLinks());
+      this.replaceSourceEl(tree);
+      this.sourceTree = tree;
+      this.lastSourceSchema = this.state.sourceSchema;
+      this.lastSourceSignature = signature;
+    } else if (!(this.sourceEl instanceof EmptySchemaPlaceholder)) {
+      const empty = new EmptySchemaPlaceholder();
+      empty.className = 'schema-tree-container source-tree';
+      empty.configure('source', () => this.vscode.postMessage({ type: 'loadSchema', side: 'source' }));
+      this.replaceSourceEl(empty);
       this.sourceTree = null;
-      sourceContainer.innerHTML = `<div class="empty-schema"><div class="empty-schema-content"><div class="empty-icon">📄</div><p>No source schema</p><button class="load-schema-btn">Load Source Schema</button></div></div>`;
-      sourceContainer.querySelector('.load-schema-btn')?.addEventListener('click', () => {
-        this.vscode.postMessage({ type: 'loadSchema', side: 'source' });
-      });
+      this.lastSourceSchema = undefined;
+      this.lastSourceSignature = '';
     }
-    mappingArea.appendChild(sourceContainer);
+  }
 
-    // Canvas and its worksheet-style page navigation
-    const canvasWorkspace = document.createElement('div');
-    canvasWorkspace.className = 'canvas-workspace';
+  private syncTarget(): void {
+    const signature = `${this.state.activePage}`;
+    if (this.state.targetSchema) {
+      if (
+        this.targetEl instanceof SchemaTreeRenderer &&
+        this.lastTargetSchema === this.state.targetSchema &&
+        this.lastTargetSignature === signature
+      ) {
+        return;
+      }
+      const tree = new SchemaTreeRenderer();
+      tree.className = 'schema-tree-container target-tree';
+      tree.configure(
+        this.state.targetSchema,
+        'target',
+        (nodePath) => this.onTargetNodeClick(nodePath),
+        (nodePath) => this.onTargetNodePointerUp(nodePath),
+        (clientX, clientY) => this.beginLinkPointer(clientX, clientY),
+        this.getLinkedPaths('target'),
+        (node) => this.openSchemaNodeProperties(node, 'target'),
+        () => this.redrawLinks(),
+        () => this.vscode.postMessage({ type: 'loadSchema', side: 'target' }),
+        this.getConnectedPaths('target')
+      );
+      tree.addEventListener('scroll', () => this.redrawLinks());
+      this.replaceTargetEl(tree);
+      this.targetTree = tree;
+      this.lastTargetSchema = this.state.targetSchema;
+      this.lastTargetSignature = signature;
+    } else if (!(this.targetEl instanceof EmptySchemaPlaceholder)) {
+      const empty = new EmptySchemaPlaceholder();
+      empty.className = 'schema-tree-container target-tree';
+      empty.configure('target', () => this.vscode.postMessage({ type: 'loadSchema', side: 'target' }));
+      this.replaceTargetEl(empty);
+      this.targetTree = null;
+      this.lastTargetSchema = undefined;
+      this.lastTargetSignature = '';
+    }
+  }
 
-    const canvasContainer = new MappingCanvas();
-    canvasContainer.className = 'canvas-container';
-    this.canvas = canvasContainer;
-    this.canvas.configure(this.state, {
+  private replaceSourceEl(element: HTMLElement): void {
+    if (this.sourceEl) {
+      this.mappingAreaEl?.replaceChild(element, this.sourceEl);
+    }
+    this.sourceEl = element;
+  }
+
+  private replaceTargetEl(element: HTMLElement): void {
+    if (this.targetEl) {
+      this.mappingAreaEl?.replaceChild(element, this.targetEl);
+    }
+    this.targetEl = element;
+  }
+
+  private configureCanvas(): void {
+    this.canvas?.configure(this.state, {
       onLinkSelect: (linkId) => {
         this.state.selectedLink = linkId;
         this.state.selectedFunctoid = null;
@@ -474,71 +652,77 @@ export class MapperAppController {
         this.redrawLinks();
       },
     });
-    canvasWorkspace.appendChild(canvasContainer);
-    canvasWorkspace.appendChild(this.createPageBar());
-    mappingArea.appendChild(canvasWorkspace);
+  }
 
-    // Target schema tree
-    let targetContainer: HTMLElement;
-    if (this.state.targetSchema) {
-      const targetTree = new SchemaTreeRenderer();
-      targetContainer = targetTree;
-      targetContainer.className = 'schema-tree-container target-tree';
-      const expandedPaths = this.getLinkedPaths('target');
-      this.targetTree = targetTree;
-      this.targetTree.configure(
-        this.state.targetSchema,
-        'target',
-        (nodePath) => this.onTargetNodeClick(nodePath),
-        (nodePath) => this.onTargetNodePointerUp(nodePath),
-        (clientX, clientY) => this.beginLinkPointer(clientX, clientY),
-        expandedPaths,
-        (node) => this.openSchemaNodeProperties(node, 'target'),
-        () => this.redrawLinks(),
-        () => this.vscode.postMessage({ type: 'loadSchema', side: 'target' }),
-        this.getConnectedPaths('target')
-      );
-    } else {
-      targetContainer = document.createElement('div');
-      targetContainer.className = 'schema-tree-container target-tree';
-      this.targetTree = null;
-      targetContainer.innerHTML = `<div class="empty-schema"><div class="empty-schema-content"><div class="empty-icon">📄</div><p>No target schema</p><button class="load-schema-btn">Load Target Schema</button></div></div>`;
-      targetContainer.querySelector('.load-schema-btn')?.addEventListener('click', () => {
-        this.vscode.postMessage({ type: 'loadSchema', side: 'target' });
-      });
+  private syncPageBar(): void {
+    this.pageBarEl.configure(
+      (this.state.map?.pages || []).map((page: any) => ({ name: page.name })),
+      this.state.activePage,
+      {
+        onSelect: (index) => {
+          this.state.activePage = index;
+          this.renderView();
+        },
+        onRename: (index, name) => {
+          const page = this.state.map?.pages[index];
+          if (page && page.name !== name) {
+            page.name = name;
+            this.updateMap(this.state.map);
+          }
+          this.renderView();
+        },
+        onAdd: () => this.addPage(),
+        onDelete: (index) => this.deletePage(index),
+      }
+    );
+  }
+
+  private syncBottom(): void {
+    this.bottomPanel?.configure(!!this.state.map, this.bottomPanelActiveTab, this.bottomPanelCollapsed, {
+      onGenerateInstance: () => {
+        this.bottomPanelCollapsed = false;
+        this.bottomPanelActiveTab = 'instance';
+        this.vscode.postMessage({ type: 'generateInstance', side: 'source' });
+      },
+      onRunTest: () => this.runTestMap(),
+      onViewStateChange: (tab, collapsed) => {
+        this.bottomPanelActiveTab = tab;
+        this.bottomPanelCollapsed = collapsed;
+      },
+    });
+  }
+
+  private syncStatus(): void {
+    const page = this.state.map?.pages?.[this.state.activePage];
+    this.statusBarEl.configure({
+      links: page?.links?.length || 0,
+      functoids: page?.functoids?.length || 0,
+      sourceName: this.getFileName(this.state.map?.sourceSchema?.location),
+      targetName: this.getFileName(this.state.map?.targetSchema?.location),
+    });
+  }
+
+  private syncModal(): void {
+    const key = this.schemaNodeProperties
+      ? 'schemaNode'
+      : this.scriptingConfigDraft
+        ? 'scripting'
+        : this.functoidPropertiesId
+          ? 'functoid'
+          : '';
+    if (key === this.lastModalKey) {
+      return;
     }
-    mappingArea.appendChild(targetContainer);
-
-    mappingWorkspace.appendChild(mappingArea);
-    content.appendChild(mappingWorkspace);
-    this.container.appendChild(content);
-
-    // Bottom panel (Instance Generator / Test Output)
-    this.container.appendChild(this.createBottomPanel());
-
-    // Status bar
-    this.container.appendChild(this.createStatusBar());
-
-    if (this.schemaNodeProperties) {
-      this.container.appendChild(this.createSchemaNodePropertiesModal());
-    } else if (this.scriptingConfigDraft) {
-      this.container.appendChild(this.createScriptingConfigModal());
-    } else if (this.functoidPropertiesId) {
-      this.container.appendChild(this.createFunctoidPropertiesModal());
+    this.lastModalKey = key;
+    this.scriptingDialog = null;
+    this.modalHost.replaceChildren();
+    if (key === 'schemaNode') {
+      this.modalHost.appendChild(this.createSchemaNodePropertiesModal());
+    } else if (key === 'scripting') {
+      this.modalHost.appendChild(this.createScriptingConfigDialog());
+    } else if (key === 'functoid') {
+      this.modalHost.appendChild(this.createFunctoidPropertiesDialog());
     }
-
-    // Scroll listeners for redraw
-    sourceContainer.addEventListener('scroll', () => this.redrawLinks());
-    targetContainer.addEventListener('scroll', () => this.redrawLinks());
-
-    // Redraw links on resize
-    this.resizeObserver?.disconnect();
-    this.resizeObserver = new ResizeObserver(() => this.redrawLinks());
-    this.resizeObserver.observe(mappingArea);
-    this.resizeObserver.observe(canvasContainer);
-
-    window.removeEventListener('resize', this.handleResize);
-    window.addEventListener('resize', this.handleResize);
   }
 
   /**
@@ -608,7 +792,7 @@ export class MapperAppController {
     const properties = this.schemaNodeProperties!;
     const node = properties.node;
     const occurrence = `${node.minOccurs ?? (node.isOptional ? 0 : 1)}..${node.maxOccurs ?? 1}`;
-    const rows: [string, string | number | boolean | undefined][] = [
+    const rawRows: [string, string | number | boolean | undefined][] = [
       ['XPath', node.path],
       ['Node kind', node.type || 'element'],
       ['Data type', node.dataType],
@@ -621,55 +805,28 @@ export class MapperAppController {
       ['Default value', node.defaultValue],
       ['Fixed value', node.fixedValue],
     ];
-    const restrictions = node.restrictions
-      ? Object.entries(node.restrictions)
-          .filter(([, value]) => value !== undefined)
-          .map(
-            ([name, value]) =>
-              `<div class="schema-property-row"><dt>${this.escapeHtml(name)}</dt><dd>${this.escapeHtml(Array.isArray(value) ? value.join(', ') : String(value))}</dd></div>`
-          )
-          .join('')
-      : '';
-    const modal = document.createElement('div');
-    modal.className = 'functoid-config-modal';
-    modal.innerHTML = `
-            <div class="functoid-config-panel schema-properties-panel" role="dialog"
-                aria-modal="true" aria-label="Schema Node Properties">
-                <div class="config-title">${properties.side === 'source' ? 'Source' : 'Target'} Schema Node Properties</div>
-                <div class="schema-property-name">${this.escapeHtml(node.name)}</div>
-                <dl class="schema-property-list">
-                    ${rows
-                      .filter(([, value]) => value !== undefined && value !== '')
-                      .map(
-                        ([label, value]) => `
-                        <div class="schema-property-row">
-                            <dt>${this.escapeHtml(label)}</dt>
-                            <dd${label === 'XPath' ? ' class="schema-property-xpath"' : ''}>${this.escapeHtml(String(value))}</dd>
-                        </div>`
-                      )
-                      .join('')}
-                    ${restrictions}
-                </dl>
-                ${
-                  node.annotation
-                    ? `
-                    <div class="functoid-property-section">
-                        <div class="functoid-property-heading">Description</div>
-                        <div class="functoid-property-description">${this.escapeHtml(node.annotation)}</div>
-                    </div>`
-                    : ''
-                }
-                <div class="config-actions">
-                    <button type="button" class="config-btn config-btn-primary" id="schema-properties-close">Close</button>
-                </div>
-            </div>`;
-    modal.addEventListener('click', (event) => {
-      if (event.target === modal) {
-        this.closeSchemaNodeProperties();
+    const rows: SchemaNodePropertyRow[] = rawRows
+      .filter(([, value]) => value !== undefined && value !== '')
+      .map(([label, value]) => ({ label, value: String(value), isXPath: label === 'XPath' }));
+    if (node.restrictions) {
+      for (const [name, value] of Object.entries(node.restrictions)) {
+        if (value !== undefined) {
+          rows.push({ label: name, value: Array.isArray(value) ? value.join(', ') : String(value) });
+        }
       }
-    });
-    modal.querySelector('#schema-properties-close')?.addEventListener('click', () => this.closeSchemaNodeProperties());
-    return modal;
+    }
+
+    const dialog = new SchemaNodePropertiesDialog();
+    dialog.configure(
+      {
+        title: `${properties.side === 'source' ? 'Source' : 'Target'} Schema Node Properties`,
+        nodeName: node.name,
+        rows,
+        description: node.annotation,
+      },
+      { onClose: () => this.closeSchemaNodeProperties() }
+    );
+    return dialog;
   }
 
   /**
@@ -792,222 +949,19 @@ export class MapperAppController {
     this.canvas.renderWithPositions(positions, page);
   }
 
-  private createToolbar(): HTMLElement {
-    const toolbar = new MapperToolbar();
-    toolbar.configure({
-      disabled: !this.state.map,
-      onValidateAndCompile: () => this.validateAndCompile(),
-      onTest: () => this.runTestMap(),
-      onDeploy: () => {
-        if (this.state.map) {
-          this.vscode.postMessage({ type: 'deployToLogicApps', data: this.state.map });
-        }
-      },
-      onCopilot: () => {
-        this.copilotPanelOpen = !this.copilotPanelOpen;
-        this.renderView();
-        if (this.copilotPanelOpen) {
-          setTimeout(() => this.container.querySelector<HTMLTextAreaElement>('#copilot-prompt')?.focus());
-        }
-      },
-    });
-    return toolbar;
-  }
-
-  private createPageBar(): HTMLElement {
-    const pageBar = document.createElement('nav');
-    pageBar.className = 'page-sheet-bar';
-    pageBar.setAttribute('aria-label', 'Map pages');
-    pageBar.innerHTML = `
-      <div class="page-tabs">
-        ${
-          this.state.map?.pages
-            ?.map((page: any, index: number) =>
-              index === this.renamingPageIndex
-                ? `<input class="page-name-input" data-page="${index}" type="text"
-                    value="${this.escapeHtml(page.name)}" aria-label="Page name">`
-                : `<span class="page-tab-group">
-                    <button class="page-tab ${index === this.state.activePage ? 'active' : ''}"
-                        data-page="${index}" title="Double-click to rename">${this.escapeHtml(page.name)}</button>
-                    <button class="page-delete-btn" data-page="${index}" title="${this.state.map!.pages.length === 1 ? 'A map must have at least one page' : `Delete ${this.escapeHtml(page.name)}`}"
-                        aria-label="Delete ${this.escapeHtml(page.name)}" ${this.state.map!.pages.length === 1 ? 'disabled' : ''}>×</button>
-                   </span>`
-            )
-            .join('') || ''
-        }
-        <button class="page-add-btn" id="btn-add-page" title="Add page" aria-label="Add page">+</button>
-      </div>`;
-
-    pageBar.querySelector('#btn-add-page')?.addEventListener('click', () => this.addPage());
-    pageBar.querySelectorAll<HTMLButtonElement>('.page-delete-btn').forEach((button) => {
-      button.addEventListener('click', (event) => {
-        event.stopPropagation();
-        this.deletePage(Number(button.dataset.page));
-      });
-    });
-    pageBar.querySelectorAll('.page-tab').forEach((tab) => {
-      let clickTimer: number | undefined;
-      tab.addEventListener('click', (e) => {
-        const pageIndex = Number.parseInt((e.currentTarget as HTMLElement).dataset.page || '0', 10);
-        if (clickTimer !== undefined) {
-          window.clearTimeout(clickTimer);
-        }
-        clickTimer = window.setTimeout(() => {
-          this.state.activePage = pageIndex;
-          this.renderView();
-        }, 200);
-      });
-      tab.addEventListener('dblclick', (e) => {
-        if (clickTimer !== undefined) {
-          window.clearTimeout(clickTimer);
-        }
-        const pageIndex = Number.parseInt((e.currentTarget as HTMLElement).dataset.page || '0', 10);
-        this.state.activePage = pageIndex;
-        this.renamingPageIndex = pageIndex;
-        this.renderView();
-        const input = this.container.querySelector<HTMLInputElement>(`.page-name-input[data-page="${pageIndex}"]`);
-        input?.focus();
-        input?.select();
-      });
-    });
-    const pageNameInput = pageBar.querySelector<HTMLInputElement>('.page-name-input');
-    if (pageNameInput) {
-      const pageIndex = Number(pageNameInput.dataset.page);
-      const commitRename = (): void => {
-        if (this.renamingPageIndex !== pageIndex || !this.state.map) {
-          return;
-        }
-        const name = pageNameInput.value.trim();
-        const page = this.state.map.pages[pageIndex];
-        this.renamingPageIndex = null;
-        if (name && page && page.name !== name) {
-          page.name = name;
-          this.updateMap(this.state.map);
-        }
-        this.renderView();
-      };
-      pageNameInput.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-          event.preventDefault();
-          commitRename();
-        } else if (event.key === 'Escape') {
-          event.preventDefault();
-          this.renamingPageIndex = null;
-          this.renderView();
-        }
-      });
-      pageNameInput.addEventListener('blur', commitRename);
-    }
-
-    return pageBar;
-  }
-
-  private createCopilotPanel(): HTMLElement {
-    const panel = document.createElement('section');
-    panel.className = 'copilot-prompt-panel';
-    panel.innerHTML = `
-            <div class="copilot-prompt-heading">
-                <div>
-                    <strong>Data Mapper Assistant</strong>
-                    <span>Describe links, functoids, constants, or page changes. Review is required before the BTM is updated.</span>
-                </div>
-                <button class="copilot-close" id="copilot-close" title="Close" aria-label="Close Data Mapper Assistant">×</button>
-            </div>
-            <div class="copilot-prompt-controls">
-                <textarea id="copilot-prompt" rows="3" ${this.copilotBusy ? 'disabled' : ''}
-                    placeholder="Example: On this page, connect CustomerName to FullName using String Concatenate.">${this.escapeHtml(this.copilotDraft)}</textarea>
-                <button class="toolbar-btn primary" id="copilot-submit"
-                    ${this.copilotBusy || !this.state.map ? 'disabled' : ''}>${this.copilotBusy ? 'Working…' : 'Apply with Assistant'}</button>
-            </div>
-            <div class="copilot-context-toolbar">
-                <button class="toolbar-btn small" id="copilot-add-context" ${this.copilotBusy ? 'disabled' : ''}>＋ Add context files</button>
-                ${
-                  this.copilotContextFiles.length > 0
-                    ? `<button class="copilot-clear-context" id="copilot-clear-context" ${this.copilotBusy ? 'disabled' : ''}>Clear all</button>`
-                    : '<span class="copilot-context-empty">No additional context files</span>'
-                }
-            </div>
-            ${
-              this.copilotContextFiles.length > 0
-                ? `<div class="copilot-context-files">
-                ${this.copilotContextFiles
-                  .map(
-                    (file) => `<span class="copilot-context-file" title="${this.escapeHtml(file.name)} (${this.formatFileSize(file.size)})">
-                    <span>${this.escapeHtml(file.name)}</span>
-                    <button class="copilot-remove-context" data-context-id="${this.escapeHtml(file.id)}"
-                        aria-label="Remove ${this.escapeHtml(file.name)}" ${this.copilotBusy ? 'disabled' : ''}>×</button>
-                </span>`
-                  )
-                  .join('')}
-            </div>`
-                : ''
-            }
-            ${this.copilotMessage ? `<div class="copilot-result">${this.escapeHtml(this.copilotMessage)}</div>` : ''}
-            <div class="copilot-hint">Press Ctrl+Enter to submit. Assistant output is validated and applied as one undoable edit.</div>
-        `;
-
-    const input = panel.querySelector<HTMLTextAreaElement>('#copilot-prompt');
-    input?.addEventListener('input', () => {
-      this.copilotDraft = input.value;
-    });
-    input?.addEventListener('keydown', (event) => {
-      if (event.ctrlKey && event.key === 'Enter') {
-        event.preventDefault();
-        this.submitCopilotPrompt();
-      }
-    });
-    panel.querySelector('#copilot-submit')?.addEventListener('click', () => this.submitCopilotPrompt());
-    panel.querySelector('#copilot-add-context')?.addEventListener('click', () => {
-      this.vscode.postMessage({ type: 'browseCopilotContext' });
-    });
-    panel.querySelector('#copilot-clear-context')?.addEventListener('click', () => {
-      this.vscode.postMessage({ type: 'clearCopilotContext' });
-    });
-    panel.querySelectorAll<HTMLButtonElement>('.copilot-remove-context').forEach((button) => {
-      button.addEventListener('click', () => {
-        this.vscode.postMessage({
-          type: 'removeCopilotContext',
-          data: { id: button.dataset.contextId || '' },
-        });
-      });
-    });
-    panel.querySelector('#copilot-close')?.addEventListener('click', () => {
-      this.copilotPanelOpen = false;
-      this.renderView();
-    });
-    return panel;
-  }
-
-  private formatFileSize(bytes: number): string {
-    return bytes < 1024 ? `${bytes} B` : `${Math.ceil(bytes / 1024)} KB`;
-  }
-
-  private submitCopilotPrompt(): void {
-    const prompt = this.copilotDraft.trim();
-    if (!prompt || !this.state.map || this.copilotBusy) {
+  private submitCopilotPrompt(prompt: string): void {
+    const trimmed = prompt.trim();
+    if (!trimmed || !this.state.map || this.copilotBusy) {
       return;
     }
+    this.copilotDraft = trimmed;
     this.copilotBusy = true;
     this.copilotMessage = 'Data Mapper Assistant is preparing a validated map edit…';
     this.renderView();
     this.vscode.postMessage({
       type: 'copilotPrompt',
-      data: { prompt, activePage: this.state.activePage },
+      data: { prompt: trimmed, activePage: this.state.activePage },
     });
-  }
-
-  private createStatusBar(): HTMLElement {
-    const statusBar = document.createElement('div');
-    statusBar.className = 'mapper-statusbar';
-    const page = this.state.map?.pages?.[this.state.activePage];
-    statusBar.innerHTML = `
-            <span class="status-item">Links: <strong>${page?.links?.length || 0}</strong></span>
-            <span class="status-item">Functoids: <strong>${page?.functoids?.length || 0}</strong></span>
-            <span class="status-sep">|</span>
-            <span class="status-item">Src: ${this.getFileName(this.state.map?.sourceSchema?.location)}</span>
-            <span class="status-item">Tgt: ${this.getFileName(this.state.map?.targetSchema?.location)}</span>
-        `;
-    return statusBar;
   }
 
   private updateStatusMessage(msg: string): void {
@@ -1091,7 +1045,6 @@ export class MapperAppController {
     } else if (this.state.activePage >= this.state.map.pages.length) {
       this.state.activePage = this.state.map.pages.length - 1;
     }
-    this.renamingPageIndex = null;
     this.updateMap(this.state.map);
     this.renderView();
   }
@@ -1226,20 +1179,15 @@ export class MapperAppController {
     // Combined flow: generate instance (if needed) → run XSLT transform
     this.bottomPanelCollapsed = false;
     this.bottomPanelActiveTab = 'instance';
-    const panel = this.container.querySelector('.bottom-panel') as HTMLElement;
-    if (panel) {
-      this.refreshBottomPanel(panel);
-    }
+    this.bottomPanel?.setCollapsed(false);
+    this.bottomPanel?.setActiveTab('instance');
 
-    const textarea = this.container.querySelector('#instance-xml') as HTMLTextAreaElement;
-    const existingInput = textarea?.value?.trim() || '';
+    const existingInput = this.bottomPanel?.getInputXml() || '';
 
     if (existingInput) {
       // Already have input — go straight to transform
       this.bottomPanelActiveTab = 'output';
-      if (panel) {
-        this.refreshBottomPanel(panel);
-      }
+      this.bottomPanel?.setActiveTab('output');
       this.vscode.postMessage({ type: 'testMapWithInput', data: { inputXml: existingInput, map: this.state.map } });
     } else {
       // Generate instance first, then auto-run transform on response
@@ -1274,12 +1222,10 @@ export class MapperAppController {
     }
   }
 
-  private showNotification(title: string, type: 'success' | 'warning' | 'error', details?: string): void {
-    this.container.querySelectorAll('.notification').forEach((n) => n.remove());
-    const notif = document.createElement('div');
-    notif.className = `notification notification-${type}`;
-    notif.innerHTML = `<div class="notif-header"><strong>${title}</strong><span class="notif-close">✕</span></div>${details ? `<pre class="notif-details">${details}</pre>` : ''}`;
-    notif.querySelector('.notif-close')?.addEventListener('click', () => notif.remove());
+  private showNotification(title: string, type: NotificationType, details?: string): void {
+    this.container.querySelectorAll('biztalk-mapper-notification').forEach((n) => n.remove());
+    const notif = new MapperNotification();
+    notif.configure(title, type, details, () => notif.remove());
     this.container.appendChild(notif);
     setTimeout(() => notif.remove(), 5000);
   }
@@ -1401,12 +1347,12 @@ export class MapperAppController {
     this.renderView();
     setTimeout(() => {
       this.redrawLinks();
-      this.refreshScriptingAssemblySuggestions();
     }, 0);
   }
 
   private closeScriptingConfig(): void {
     this.scriptingConfigDraft = null;
+    this.scriptingDialog = null;
     this.renderView();
     setTimeout(() => this.redrawLinks(), 0);
   }
@@ -1417,6 +1363,7 @@ export class MapperAppController {
     this.functoidLabelDraft = '';
     this.functoidCommentsDraft = '';
     this.scriptingConfigDraft = null;
+    this.scriptingDialog = null;
     this.renderView();
     setTimeout(() => this.redrawLinks(), 0);
   }
@@ -1469,136 +1416,69 @@ export class MapperAppController {
     this.showNotification('Scripting functoid updated', 'success');
   }
 
-  private createScriptingConfigModal(): HTMLElement {
+  private createScriptingConfigDialog(): HTMLElement {
     const draft = this.scriptingConfigDraft!;
     const functoid = this.getCurrentPageFunctoid(draft.functoidId);
-    const modal = document.createElement('div');
-    modal.className = 'functoid-config-modal';
-    modal.innerHTML = `
-            <div class="functoid-config-panel" role="dialog" aria-modal="true" aria-label="Scripting Functoid Properties">
-                <div class="config-title">Scripting Functoid Properties and Configuration</div>
-                ${this.createFunctoidSummaryHtml(functoid)}
-                <div class="config-section">
-                    <label class="config-label">Script Type</label>
-                    <div class="config-radio-group">
-                        <label><input type="radio" name="scriptType" value="inlineCSharp" ${draft.scriptType === 'inlineCSharp' ? 'checked' : ''}> Inline C#</label>
-                        <label><input type="radio" name="scriptType" value="inlineVbNet" ${draft.scriptType === 'inlineVbNet' ? 'checked' : ''}> Inline VB.NET</label>
-                        <label><input type="radio" name="scriptType" value="inlineJScript" ${draft.scriptType === 'inlineJScript' ? 'checked' : ''}> Inline JScript</label>
-                        <label><input type="radio" name="scriptType" value="inlineXslt" ${draft.scriptType === 'inlineXslt' ? 'checked' : ''}> Inline XSLT</label>
-                        <label><input type="radio" name="scriptType" value="inlineXsltCallTemplate" ${draft.scriptType === 'inlineXsltCallTemplate' ? 'checked' : ''}> Inline XSLT Call Template</label>
-                        <label><input type="radio" name="scriptType" value="externalAssembly" ${draft.scriptType === 'externalAssembly' ? 'checked' : ''}> External Assembly</label>
-                    </div>
-                </div>
-                <div class="config-section config-inline-section" ${draft.scriptType === 'externalAssembly' ? 'style="display:none;"' : ''}>
-                    <label class="config-label" for="config-script-body">Script</label>
-                    <textarea id="config-script-body" class="config-textarea" spellcheck="false">${this.escapeHtml(draft.scriptBody)}</textarea>
-                </div>
-                <div class="config-section config-reference-section"
-                    ${this.supportsScriptAssemblyReferences(draft.scriptType) ? '' : 'style="display:none;"'}>
-                    <label class="config-label" for="config-assembly-references">Assembly References</label>
-                    <textarea id="config-assembly-references" class="config-textarea" spellcheck="false"
-                        placeholder="One assembly name or DLL path per line">${this.escapeHtml(draft.assemblyReferences)}</textarea>
-                </div>
-                <div class="config-external-section" ${draft.scriptType === 'externalAssembly' ? '' : 'style="display:none;"'}>
-                    <div class="config-section">
-                        <label class="config-label" for="config-assembly-path">Assembly Path</label>
-                        <div class="config-row">
-                            <input id="config-assembly-path" class="config-input" type="text" value="${this.escapeHtml(draft.assemblyPath)}" placeholder="C:\\path\\to\\Assembly.dll" readonly>
-                            <button type="button" class="config-browse-btn" id="config-browse-assembly">Browse...</button>
-                        </div>
-                    </div>
-                    <div class="config-section">
-                        <label class="config-label" for="config-class-name">Class Name</label>
-                        <select id="config-class-name" class="config-input config-select">
-                            <option value="">-- Browse a DLL to load classes --</option>
-                        </select>
-                        <div class="config-helper" id="config-class-helper"></div>
-                    </div>
-                    <div class="config-section">
-                        <label class="config-label" for="config-method-name">Method Name</label>
-                        <select id="config-method-name" class="config-input config-select">
-                            <option value="">-- Select a class first --</option>
-                        </select>
-                        <div class="config-helper" id="config-method-helper"></div>
-                    </div>
-                </div>
-                <div class="config-actions">
-                    <button type="button" class="config-btn config-btn-cancel" id="config-cancel">Cancel</button>
-                    <button type="button" class="config-btn config-btn-primary" id="config-save">Save</button>
-                </div>
-            </div>
-        `;
-
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        this.closeScriptingConfig();
+    const dialog = new ScriptingConfigDialog();
+    this.scriptingDialog = dialog;
+    dialog.configure(
+      {
+        summary: this.buildScriptingFunctoidSummary(functoid),
+        scriptType: draft.scriptType,
+        scriptBody: draft.scriptBody,
+        assemblyReferences: draft.assemblyReferences,
+        assemblyPath: draft.assemblyPath,
+        className: draft.className,
+        methodName: draft.methodName,
+        assemblyClasses: draft.assemblyClasses || [],
+      },
+      {
+        onSave: (result) => this.applyScriptingDialogResult(result),
+        onCancel: () => this.closeScriptingConfig(),
+        onBrowseAssembly: () => this.vscode.postMessage({ type: 'browseAssembly' }),
       }
-    });
-
-    const inlineSection = modal.querySelector('.config-inline-section') as HTMLElement;
-    const externalSection = modal.querySelector('.config-external-section') as HTMLElement;
-    const scriptBodyInput = modal.querySelector('#config-script-body') as HTMLTextAreaElement | null;
-    const assemblyReferencesInput = modal.querySelector('#config-assembly-references') as HTMLTextAreaElement | null;
-    const referenceSection = modal.querySelector('.config-reference-section') as HTMLElement;
-    const classNameSelect = modal.querySelector('#config-class-name') as HTMLSelectElement | null;
-    const methodNameSelect = modal.querySelector('#config-method-name') as HTMLSelectElement | null;
-
-    modal.querySelectorAll('input[name="scriptType"]').forEach((radio) => {
-      radio.addEventListener('change', (e) => {
-        if (!this.scriptingConfigDraft) {
-          return;
-        }
-        this.scriptingConfigDraft.scriptType = (e.target as HTMLInputElement).value as ScriptingConfigType;
-        inlineSection.style.display = this.scriptingConfigDraft.scriptType === 'externalAssembly' ? 'none' : '';
-        externalSection.style.display = this.scriptingConfigDraft.scriptType === 'externalAssembly' ? '' : 'none';
-        referenceSection.style.display = this.supportsScriptAssemblyReferences(this.scriptingConfigDraft.scriptType) ? '' : 'none';
-      });
-    });
-
-    scriptBodyInput?.addEventListener('input', () => {
-      if (this.scriptingConfigDraft) {
-        this.scriptingConfigDraft.scriptBody = scriptBodyInput.value;
-      }
-    });
-    assemblyReferencesInput?.addEventListener('input', () => {
-      if (this.scriptingConfigDraft) {
-        this.scriptingConfigDraft.assemblyReferences = assemblyReferencesInput.value;
-      }
-    });
-
-    classNameSelect?.addEventListener('change', () => {
-      if (this.scriptingConfigDraft) {
-        this.scriptingConfigDraft.className = classNameSelect.value;
-        // Reset method when class changes
-        this.scriptingConfigDraft.methodName = '';
-        this.refreshScriptingAssemblySuggestions(modal);
-        // Auto-select first method of the new class
-        const selectedClass = this.scriptingConfigDraft.assemblyClasses?.find((c) => c.className === classNameSelect.value);
-        if (selectedClass && selectedClass.methods.length > 0) {
-          this.scriptingConfigDraft.methodName = selectedClass.methods[0].name;
-          if (methodNameSelect) {
-            methodNameSelect.value = selectedClass.methods[0].name;
-          }
-        }
-      }
-    });
-
-    methodNameSelect?.addEventListener('change', () => {
-      if (this.scriptingConfigDraft) {
-        this.scriptingConfigDraft.methodName = methodNameSelect.value;
-      }
-    });
-
-    modal.querySelector('#config-browse-assembly')?.addEventListener('click', () => this.vscode.postMessage({ type: 'browseAssembly' }));
-    modal.querySelector('#config-cancel')?.addEventListener('click', () => this.closeScriptingConfig());
-    modal.querySelector('#config-save')?.addEventListener('click', () => this.saveScriptingConfig());
-
-    this.refreshScriptingAssemblySuggestions(modal);
-    return modal;
+    );
+    return dialog;
   }
 
-  private supportsScriptAssemblyReferences(scriptType: ScriptingConfigType): boolean {
-    return scriptType === 'inlineCSharp' || scriptType === 'inlineVbNet' || scriptType === 'inlineJScript';
+  private applyScriptingDialogResult(result: ScriptingConfigResult): void {
+    if (!this.scriptingConfigDraft) {
+      return;
+    }
+    this.scriptingConfigDraft.scriptType = result.scriptType;
+    this.scriptingConfigDraft.scriptBody = result.scriptBody;
+    this.scriptingConfigDraft.assemblyReferences = result.assemblyReferences;
+    this.scriptingConfigDraft.assemblyPath = result.assemblyPath;
+    this.scriptingConfigDraft.className = result.className;
+    this.scriptingConfigDraft.methodName = result.methodName;
+    this.saveScriptingConfig();
+  }
+
+  private buildScriptingFunctoidSummary(functoid: any): ScriptingFunctoidSummary {
+    const definition = this.state.functoids.find((item) => item.id === functoid?.functoidId);
+    const page = this.state.map?.pages?.[this.state.activePage];
+    const inputLinks = this.orderFunctoidInputLinks(
+      functoid,
+      (page?.links || []).filter((link: any) => link.targetType === 'functoid' && link.targetId === functoid?.id)
+    );
+    const constants = (functoid?.parameters || []).filter((parameter: any) => parameter.type === 'constant');
+    const outputLinks = (page?.links || []).filter((link: any) => link.sourceType === 'functoid' && link.sourceId === functoid?.id);
+    const minInputs = definition?.minInputs ?? 0;
+    const maxInputs = definition?.maxInputs ?? minInputs;
+    const expectedInputs =
+      maxInputs >= 100 ? `${minInputs} or more` : minInputs === maxInputs ? `${minInputs}` : `${minInputs} to ${maxInputs}`;
+    return {
+      name: functoid?.name || definition?.name || 'Functoid',
+      meta: `${definition?.category || functoid?.category || 'Custom'} · FID ${functoid?.functoidId ?? ''}`,
+      description: definition?.description || definition?.tooltip || 'No functionality description is available for this functoid.',
+      expectedInputs,
+      inputs: [
+        ...inputLinks.map((link: any, index: number) => `Input ${index + 1}: ${this.describeLinkSource(link)}`),
+        ...constants.map((parameter: any) => `Input ${Number(parameter.index) + 1}: Constant: ${String(parameter.value ?? '')}`),
+      ],
+      outputs: outputLinks.map((link: any) => this.describeLinkTarget(link)),
+      hasOutput: definition?.hasOutput !== false,
+    };
   }
 
   private getSelectedAssemblyMethod(): AssemblyMethodInfo | undefined {
@@ -1611,9 +1491,8 @@ export class MapperAppController {
       ?.methods.find((method) => method.name === draft.methodName);
   }
 
-  private createFunctoidPropertiesModal(): HTMLElement {
+  private createFunctoidPropertiesDialog(): HTMLElement {
     const functoid = this.getCurrentPageFunctoid(this.functoidPropertiesId!);
-    const inputs = this.functoidInputsDraft || [];
     const definition = this.state.functoids.find((item) => item.id === functoid?.functoidId);
     const page = this.state.map?.pages?.[this.state.activePage];
     const outputLinks = (page?.links || []).filter(
@@ -1621,193 +1500,48 @@ export class MapperAppController {
     );
     const minInputs = definition?.minInputs ?? 0;
     const maxInputs = definition?.maxInputs ?? 100;
-    const hasValidInputCount = inputs.length >= minInputs && inputs.length <= maxInputs;
-    const expectedInputs =
-      maxInputs >= 100 ? `${minInputs} or more` : minInputs === maxInputs ? `${minInputs}` : `${minInputs} to ${maxInputs}`;
     const description = definition?.description || definition?.tooltip || 'No description is available for this functoid.';
-    const modal = document.createElement('div');
-    modal.className = 'functoid-config-modal';
-    modal.innerHTML = `
-            <div class="functoid-config-panel functoid-properties-panel" role="dialog" aria-modal="true" aria-label="Functoid Properties">
-          <div class="functoid-dialog-header">
-            <div>
-              <div class="config-title">Configure ${this.escapeHtml(functoid?.name || definition?.name || 'Functoid')}</div>
-              <div class="functoid-property-meta">${this.escapeHtml(definition?.category || functoid?.category || 'Custom')} · FID ${this.escapeHtml(String(functoid?.functoidId ?? ''))}</div>
-            </div>
-                </div>
-          <div class="functoid-dialog-description">
-                  <div class="config-label">Description</div>
-                  <div class="functoid-dialog-description-value">${this.escapeHtml(description)}</div>
-          </div>
-          <div class="functoid-dialog-tabs" role="tablist" aria-label="Functoid configuration">
-            <button type="button" class="functoid-dialog-tab active" role="tab" aria-selected="true" data-functoid-tab="inputs">Inputs</button>
-            <button type="button" class="functoid-dialog-tab" role="tab" aria-selected="false" data-functoid-tab="output">Outputs</button>
-            <button type="button" class="functoid-dialog-tab" role="tab" aria-selected="false" data-functoid-tab="label">Label and Comments</button>
-          </div>
-          <div class="functoid-dialog-body">
-            <section class="functoid-tab-panel active" role="tabpanel" data-functoid-panel="inputs">
-              <div class="functoid-input-toolbar">
-                <div>
-                  <div class="functoid-property-heading functoid-ordered-inputs-heading">Ordered inputs</div>
-                  <div class="functoid-property-requirement">Inputs are evaluated from top to bottom.</div>
-                </div>
-                <button type="button" class="config-btn config-btn-secondary" id="properties-add-input"
-                  ${inputs.length >= maxInputs ? 'disabled' : ''}>+ Add input</button>
-              </div>
-              <div class="functoid-input-validation ${hasValidInputCount ? 'valid' : 'invalid'}" role="status">
-                ${hasValidInputCount ? '✓' : '⚠'} Configured ${inputs.length}; expected ${this.escapeHtml(expectedInputs)} input${maxInputs === 1 ? '' : 's'}.
-              </div>
-              <div class="functoid-input-table" role="table" aria-label="Functoid inputs">
-                <div class="functoid-input-table-header" role="row">
-                  <span>Name</span><span>Value</span><span>Type</span><span class="sr-only">Actions</span>
-                </div>
-                <ol class="functoid-input-editor">
-                  ${
-                    inputs.length === 0
-                      ? '<li class="functoid-property-empty">No inputs configured. Add a value or connect a source node.</li>'
-                      : inputs.map((input, index) => this.createFunctoidInputEditorHtml(input, index)).join('')
-                  }
-                </ol>
-              </div>
-            </section>
-            <section class="functoid-tab-panel" role="tabpanel" data-functoid-panel="output" hidden>
-              <div class="functoid-property-heading">Connected output</div>
-              <div class="functoid-property-requirement">${definition?.hasOutput === false ? 'This functoid has no output.' : `${outputLinks.length} connection${outputLinks.length === 1 ? '' : 's'}`}</div>
-              <ul class="functoid-property-list">
-                ${
-                  outputLinks.length > 0
-                    ? outputLinks
-                        .map(
-                          (link: any) =>
-                            `<li><span class="property-port">Output</span><span>${this.escapeHtml(this.describeLinkTarget(link))}</span></li>`
-                        )
-                        .join('')
-                    : '<li class="functoid-property-empty">Output is not connected.</li>'
-                }
-              </ul>
-            </section>
-            <section class="functoid-tab-panel" role="tabpanel" data-functoid-panel="label" hidden>
-              <label class="config-label" for="properties-label">Label</label>
-              <input id="properties-label" class="config-input" type="text" maxlength="256"
-                value="${this.escapeHtml(this.functoidLabelDraft)}" placeholder="Optional canvas label">
-              <label class="config-label functoid-comments-label" for="properties-comments">Comments</label>
-              <textarea id="properties-comments" class="config-textarea functoid-comments" maxlength="2048"
-                placeholder="Describe the purpose of this functoid">${this.escapeHtml(this.functoidCommentsDraft)}</textarea>
-            </section>
-          </div>
-                <div class="config-actions">
-                    <button type="button" class="config-btn config-btn-cancel" id="properties-cancel">Cancel</button>
-            <button type="button" class="config-btn config-btn-primary" id="properties-save" ${hasValidInputCount ? '' : 'disabled'}>OK</button>
-                </div>
-            </div>
-        `;
-    modal.addEventListener('click', (event) => {
-      if (event.target === modal) {
-        this.closeFunctoidDialog();
+
+    const inputs: FunctoidConfigInput[] = (this.functoidInputsDraft || []).map((input) => {
+      const isConstant = input.type === ParameterType.Constant;
+      const link = isConstant ? undefined : page?.links?.find((item: any) => item.id === input.linkId);
+      const sourceLabel = isConstant ? '' : link ? this.describeLinkSource(link) : `Missing link: ${input.linkId || ''}`;
+      return { isConstant, value: input.value, defaultValue: input.defaultValue || '', sourceLabel, raw: input };
+    });
+
+    const dialog = new FunctoidConfigDialog();
+    dialog.configure(
+      {
+        title: functoid?.name || definition?.name || 'Functoid',
+        meta: `${definition?.category || functoid?.category || 'Custom'} · FID ${functoid?.functoidId ?? ''}`,
+        description,
+        minInputs,
+        maxInputs,
+        hasOutput: definition?.hasOutput !== false,
+        outputs: outputLinks.map((link: any) => this.describeLinkTarget(link)),
+        inputs,
+        label: this.functoidLabelDraft,
+        comments: this.functoidCommentsDraft,
+      },
+      {
+        onSave: (result) => this.applyFunctoidDialogResult(result),
+        onCancel: () => this.closeFunctoidDialog(),
       }
-    });
-    modal.querySelectorAll<HTMLInputElement>('.functoid-default-input').forEach((input) => {
-      input.addEventListener('input', () => {
-        const index = Number(input.dataset.index);
-        if (this.functoidInputsDraft?.[index]) {
-          const draft = this.functoidInputsDraft[index];
-          if (draft.type === ParameterType.Constant) {
-            draft.value = input.value;
-          } else {
-            draft.defaultValue = input.value;
-          }
-        }
-      });
-    });
-    modal.querySelectorAll<HTMLButtonElement>('[data-functoid-tab]').forEach((tab) => {
-      tab.addEventListener('click', () => {
-        const selectedTab = tab.dataset.functoidTab;
-        modal.querySelectorAll<HTMLButtonElement>('[data-functoid-tab]').forEach((candidate) => {
-          const isActive = candidate === tab;
-          candidate.classList.toggle('active', isActive);
-          candidate.setAttribute('aria-selected', String(isActive));
-        });
-        modal.querySelectorAll<HTMLElement>('[data-functoid-panel]').forEach((panel) => {
-          const isActive = panel.dataset.functoidPanel === selectedTab;
-          panel.classList.toggle('active', isActive);
-          panel.hidden = !isActive;
-        });
-      });
-    });
-    modal.querySelector('#properties-add-input')?.addEventListener('click', () => {
-      if (this.functoidInputsDraft && this.functoidInputsDraft.length < maxInputs) {
-        this.functoidInputsDraft.push({ type: ParameterType.Constant, value: '' });
-        this.renderView();
-        setTimeout(() => this.redrawLinks(), 0);
-      }
-    });
-    modal.querySelectorAll<HTMLButtonElement>('[data-input-action]').forEach((button) => {
-      button.addEventListener('click', () => {
-        const index = Number(button.dataset.index);
-        const action = button.dataset.inputAction;
-        if (!this.functoidInputsDraft || !Number.isInteger(index)) {
-          return;
-        }
-        if (action === 'up' && index > 0) {
-          [this.functoidInputsDraft[index - 1], this.functoidInputsDraft[index]] = [
-            this.functoidInputsDraft[index],
-            this.functoidInputsDraft[index - 1],
-          ];
-        } else if (action === 'down' && index < this.functoidInputsDraft.length - 1) {
-          [this.functoidInputsDraft[index], this.functoidInputsDraft[index + 1]] = [
-            this.functoidInputsDraft[index + 1],
-            this.functoidInputsDraft[index],
-          ];
-        } else if (action === 'remove' && this.functoidInputsDraft[index].type === ParameterType.Constant) {
-          this.functoidInputsDraft.splice(index, 1);
-        } else {
-          return;
-        }
-        this.renderView();
-        setTimeout(() => this.redrawLinks(), 0);
-      });
-    });
-    const labelInput = modal.querySelector<HTMLInputElement>('#properties-label');
-    labelInput?.addEventListener('input', () => {
-      this.functoidLabelDraft = labelInput.value;
-    });
-    const commentsInput = modal.querySelector<HTMLTextAreaElement>('#properties-comments');
-    commentsInput?.addEventListener('input', () => {
-      this.functoidCommentsDraft = commentsInput.value;
-    });
-    modal.querySelector('#properties-cancel')?.addEventListener('click', () => this.closeFunctoidDialog());
-    modal.querySelector('#properties-save')?.addEventListener('click', () => this.saveFunctoidProperties());
-    return modal;
+    );
+    return dialog;
   }
 
-  private createFunctoidInputEditorHtml(input: FunctoidInputDraft, index: number): string {
-    const isDefault = input.type === ParameterType.Constant;
-    const page = this.state.map?.pages?.[this.state.activePage];
-    const link = isDefault ? undefined : page?.links?.find((item: any) => item.id === input.linkId);
-    const source = isDefault
-      ? `<input class="config-input functoid-default-input" data-index="${index}" type="text"
-        value="${this.escapeHtml(input.value)}" placeholder="Enter a value" aria-label="Value for input ${index + 1}">`
-      : `<span class="functoid-input-source">${this.escapeHtml(link ? this.describeLinkSource(link) : `Missing link: ${input.linkId || ''}`)}</span>`;
-    const defaultValue = isDefault ? input.value : input.defaultValue || '';
-    const linkedDefault = isDefault
-      ? ''
-      : `<label class="functoid-default-label">Fallback
-        <input class="config-input functoid-default-input" data-index="${index}" type="text"
-          value="${this.escapeHtml(defaultValue)}" aria-label="Fallback value for input ${index + 1}">
-      </label>`;
-    return `
-        <li class="functoid-input-row" role="row">
-          <span class="functoid-input-name">Input[${index}]</span>
-          <div class="functoid-input-content">${source}${linkedDefault}</div>
-          <span class="functoid-input-kind">${isDefault ? 'Constant' : 'Link'}</span>
-                <div class="functoid-input-actions">
-            <button type="button" data-input-action="up" data-index="${index}" title="Move input up" aria-label="Move input ${index + 1} up"
-                        ${index === 0 ? 'disabled' : ''}>↑</button>
-            <button type="button" data-input-action="down" data-index="${index}" title="Move input down" aria-label="Move input ${index + 1} down"
-                        ${index === (this.functoidInputsDraft?.length || 0) - 1 ? 'disabled' : ''}>↓</button>
-            ${isDefault ? `<button type="button" data-input-action="remove" data-index="${index}" title="Remove input" aria-label="Remove input ${index + 1}">×</button>` : ''}
-                </div>
-            </li>`;
+  private applyFunctoidDialogResult(result: FunctoidConfigResult): void {
+    this.functoidInputsDraft = result.inputs.map((item) => {
+      const raw = item.raw as FunctoidInputDraft | undefined;
+      if (raw) {
+        return raw.type === ParameterType.Constant ? { ...raw, value: item.value } : { ...raw, defaultValue: item.defaultValue };
+      }
+      return { type: ParameterType.Constant, value: item.value };
+    });
+    this.functoidLabelDraft = result.label;
+    this.functoidCommentsDraft = result.comments;
+    this.saveFunctoidProperties();
   }
 
   private createFunctoidInputsDraft(functoid: any): FunctoidInputDraft[] {
@@ -1896,68 +1630,6 @@ export class MapperAppController {
     this.showNotification('Functoid inputs updated', 'success');
   }
 
-  private createFunctoidSummaryHtml(functoid: any, includeInputs = true): string {
-    if (!functoid) {
-      return '<div class="functoid-property-empty">The functoid is no longer available.</div>';
-    }
-    const definition = this.state.functoids.find((item) => item.id === functoid.functoidId);
-    const page = this.state.map?.pages?.[this.state.activePage];
-    const inputLinks = this.orderFunctoidInputLinks(
-      functoid,
-      (page?.links || []).filter((link: any) => link.targetType === 'functoid' && link.targetId === functoid.id)
-    );
-    const constants = (functoid.parameters || []).filter((parameter: any) => parameter.type === 'constant');
-    const outputLinks = (page?.links || []).filter((link: any) => link.sourceType === 'functoid' && link.sourceId === functoid.id);
-    const inputItems = [
-      ...inputLinks.map(
-        (link: any, index: number) =>
-          `<li><span class="property-port">Input ${index + 1}</span><span>${this.escapeHtml(this.describeLinkSource(link))}</span></li>`
-      ),
-      ...constants.map(
-        (parameter: any) =>
-          `<li><span class="property-port">Input ${Number(parameter.index) + 1}</span><span>Constant: <code>${this.escapeHtml(String(parameter.value ?? ''))}</code></span></li>`
-      ),
-    ];
-    const outputItems = outputLinks.map(
-      (link: any) => `<li><span class="property-port">Output</span><span>${this.escapeHtml(this.describeLinkTarget(link))}</span></li>`
-    );
-    const minInputs = definition?.minInputs ?? 0;
-    const maxInputs = definition?.maxInputs ?? minInputs;
-    const expectedInputs =
-      maxInputs >= 100 ? `${minInputs} or more` : minInputs === maxInputs ? `${minInputs}` : `${minInputs} to ${maxInputs}`;
-    const description = definition?.description || definition?.tooltip || 'No functionality description is available for this functoid.';
-
-    return `
-            <div class="functoid-property-header">
-                <div>
-                    <div class="functoid-property-name">${this.escapeHtml(functoid.name || definition?.name || 'Functoid')}</div>
-                    <div class="functoid-property-meta">${this.escapeHtml(definition?.category || functoid.category || 'Custom')} · FID ${this.escapeHtml(String(functoid.functoidId))}</div>
-                </div>
-            </div>
-            <div class="functoid-property-section">
-                <div class="functoid-property-heading">Functionality</div>
-                <div class="functoid-property-description">${this.escapeHtml(description)}</div>
-            </div>
-            <div class="functoid-property-grid${includeInputs ? '' : ' output-only'}">
-                ${
-                  includeInputs
-                    ? `
-                <div class="functoid-property-section">
-                    <div class="functoid-property-heading">Inputs</div>
-                    <div class="functoid-property-requirement">Expected: ${expectedInputs}; configured: ${inputItems.length}</div>
-                    <ul class="functoid-property-list">${inputItems.length > 0 ? inputItems.join('') : '<li class="functoid-property-empty">No inputs connected</li>'}</ul>
-                </div>`
-                    : ''
-                }
-                <div class="functoid-property-section">
-                    <div class="functoid-property-heading">Output</div>
-                    <div class="functoid-property-requirement">${definition?.hasOutput === false ? 'This functoid has no output.' : `${outputLinks.length} connection${outputLinks.length === 1 ? '' : 's'}`}</div>
-                    <ul class="functoid-property-list">${outputItems.length > 0 ? outputItems.join('') : '<li class="functoid-property-empty">Output is not connected</li>'}</ul>
-                </div>
-            </div>
-        `;
-  }
-
   private orderFunctoidInputLinks(functoid: any, links: any[]): any[] {
     if (!Array.isArray(functoid.inputLinks) || functoid.inputLinks.length === 0) {
       return links;
@@ -1982,71 +1654,6 @@ export class MapperAppController {
     return `Target: ${link.targetPath || link.targetId}`;
   }
 
-  private refreshScriptingAssemblySuggestions(root: ParentNode = this.container): void {
-    if (!this.scriptingConfigDraft) {
-      return;
-    }
-
-    const classes = this.scriptingConfigDraft.assemblyClasses || [];
-    const selectedClass = classes.find((c) => c.className === this.scriptingConfigDraft!.className);
-    const methods = selectedClass?.methods || [];
-
-    // Populate class dropdown
-    const classSelect = root.querySelector('#config-class-name') as HTMLSelectElement | null;
-    if (classSelect) {
-      classSelect.innerHTML =
-        classes.length === 0
-          ? this.scriptingConfigDraft.className
-            ? `<option value="${this.escapeHtml(this.scriptingConfigDraft.className)}">${this.escapeHtml(this.scriptingConfigDraft.className)}</option>`
-            : '<option value="">-- Browse a DLL to load classes --</option>'
-          : classes
-              .map(
-                (c) =>
-                  `<option value="${this.escapeHtml(c.className)}" ${c.className === this.scriptingConfigDraft!.className ? 'selected' : ''}>${this.escapeHtml(c.className)}</option>`
-              )
-              .join('');
-      classSelect.value = this.scriptingConfigDraft.className || '';
-    }
-
-    // Populate method dropdown
-    const methodSelect = root.querySelector('#config-method-name') as HTMLSelectElement | null;
-    if (methodSelect) {
-      methodSelect.innerHTML =
-        methods.length === 0
-          ? this.scriptingConfigDraft.methodName
-            ? `<option value="${this.escapeHtml(this.scriptingConfigDraft.methodName)}">${this.escapeHtml(this.scriptingConfigDraft.methodName)}</option>`
-            : '<option value="">-- Select a class first --</option>'
-          : methods
-              .map(
-                (m) =>
-                  `<option value="${this.escapeHtml(m.name)}" ${m.name === this.scriptingConfigDraft!.methodName ? 'selected' : ''}>${this.escapeHtml(m.signature)} : ${this.escapeHtml(m.returnType)}</option>`
-              )
-              .join('');
-      methodSelect.value = this.scriptingConfigDraft.methodName || '';
-    }
-
-    // Update helper text
-    const classHelper = root.querySelector('#config-class-helper') as HTMLElement | null;
-    if (classHelper) {
-      classHelper.textContent =
-        classes.length > 0
-          ? `${classes.length} class${classes.length !== 1 ? 'es' : ''} found in assembly`
-          : this.scriptingConfigDraft.className
-            ? 'Configured class from the map. Browse the DLL to refresh available classes.'
-            : 'Browse a .NET DLL to load available classes.';
-    }
-
-    const methodHelper = root.querySelector('#config-method-helper') as HTMLElement | null;
-    if (methodHelper) {
-      methodHelper.textContent =
-        methods.length > 0
-          ? `${methods.length} method${methods.length !== 1 ? 's' : ''} available`
-          : this.scriptingConfigDraft.methodName
-            ? 'Configured method from the map.'
-            : '';
-    }
-  }
-
   private getCurrentPageFunctoid(functoidId: string): any | undefined {
     const page = this.state.map?.pages?.[this.state.activePage];
     return page?.functoids?.find((fn: any) => fn.id === functoidId);
@@ -2056,105 +1663,21 @@ export class MapperAppController {
     return functoid.parameters?.find((param: any) => param.type === type)?.value || '';
   }
 
-  private escapeHtml(value: string): string {
-    return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-  }
-
   private bottomPanelActiveTab: 'instance' | 'output' = 'instance';
   private bottomPanelCollapsed = true;
-
-  private createBottomPanel(): HTMLElement {
-    const panel = document.createElement('div');
-    panel.className = `bottom-panel${this.bottomPanelCollapsed ? ' collapsed' : ''}`;
-    const hasMap = !!this.state.map;
-
-    panel.innerHTML = `
-            <div class="bottom-panel-header">
-                <div class="bottom-panel-tabs">
-                    <button class="bottom-tab${this.bottomPanelActiveTab === 'instance' ? ' active' : ''}" data-tab="instance">📝 Input Instance</button>
-                    <button class="bottom-tab${this.bottomPanelActiveTab === 'output' ? ' active' : ''}" data-tab="output">📤 Test Output</button>
-                </div>
-                <div class="bottom-panel-actions">
-                    <button class="toolbar-btn small" id="btn-gen-instance" ${hasMap ? '' : 'disabled'}>Generate Instance</button>
-                    <button class="toolbar-btn small primary" id="btn-run-test" ${hasMap ? '' : 'disabled'}>▶ Test Map</button>
-                    <button class="toolbar-btn small" id="btn-toggle-panel">${this.bottomPanelCollapsed ? '▲' : '▼'}</button>
-                </div>
-            </div>
-            <div class="bottom-panel-body">
-                <div class="bottom-tab-content${this.bottomPanelActiveTab === 'instance' ? ' active' : ''}" data-content="instance">
-                    <textarea id="instance-xml" class="xml-editor" placeholder="Paste source XML here or click 'Generate Instance' to auto-generate, then click 'Test Map'..." spellcheck="false"></textarea>
-                </div>
-                <div class="bottom-tab-content${this.bottomPanelActiveTab === 'output' ? ' active' : ''}" data-content="output">
-                    <pre id="test-output" class="xml-output"></pre>
-                </div>
-            </div>
-        `;
-
-    // Tab switching
-    panel.querySelectorAll('.bottom-tab').forEach((tab) => {
-      tab.addEventListener('click', (e) => {
-        this.bottomPanelActiveTab = (e.target as HTMLElement).dataset.tab as 'instance' | 'output';
-        this.bottomPanelCollapsed = false;
-        this.refreshBottomPanel(panel);
-      });
-    });
-
-    // Toggle collapse
-    panel.querySelector('#btn-toggle-panel')?.addEventListener('click', () => {
-      this.bottomPanelCollapsed = !this.bottomPanelCollapsed;
-      this.refreshBottomPanel(panel);
-    });
-
-    // Generate Instance only (for manual use from bottom panel)
-    panel.querySelector('#btn-gen-instance')?.addEventListener('click', () => {
-      this.bottomPanelCollapsed = false;
-      this.bottomPanelActiveTab = 'instance';
-      this.refreshBottomPanel(panel);
-      this.vscode.postMessage({ type: 'generateInstance', side: 'source' });
-    });
-
-    // Run Test Map from bottom panel
-    panel.querySelector('#btn-run-test')?.addEventListener('click', () => {
-      this.runTestMap();
-    });
-
-    return panel;
-  }
-
-  private refreshBottomPanel(panel: HTMLElement): void {
-    panel.className = `bottom-panel${this.bottomPanelCollapsed ? ' collapsed' : ''}`;
-    panel.querySelectorAll('.bottom-tab').forEach((tab) => {
-      tab.classList.toggle('active', (tab as HTMLElement).dataset.tab === this.bottomPanelActiveTab);
-    });
-    panel.querySelectorAll('.bottom-tab-content').forEach((content) => {
-      content.classList.toggle('active', (content as HTMLElement).dataset.content === this.bottomPanelActiveTab);
-    });
-    const toggleBtn = panel.querySelector('#btn-toggle-panel');
-    if (toggleBtn) {
-      toggleBtn.textContent = this.bottomPanelCollapsed ? '▲' : '▼';
-    }
-  }
 
   private showInstanceResult(data: any): void {
     this.bottomPanelCollapsed = false;
     this.bottomPanelActiveTab = 'instance';
-    const panel = this.container.querySelector('.bottom-panel') as HTMLElement;
-    if (panel) {
-      this.refreshBottomPanel(panel);
-    }
-
-    const textarea = this.container.querySelector('#instance-xml') as HTMLTextAreaElement;
-    if (textarea) {
-      textarea.value = data.xml || data.error || '';
-    }
+    this.bottomPanel?.setCollapsed(false);
+    this.bottomPanel?.setActiveTab('instance');
+    this.bottomPanel?.setInputXml(data.xml || data.error || '');
 
     // If Test Map triggered the generation, auto-run the transform now
     if (this.pendingTestAfterGenerate && data.xml && this.state.map) {
       this.pendingTestAfterGenerate = false;
       this.bottomPanelActiveTab = 'output';
-      if (panel) {
-        this.refreshBottomPanel(panel);
-      }
+      this.bottomPanel?.setActiveTab('output');
       this.vscode.postMessage({ type: 'testMapWithInput', data: { inputXml: data.xml, map: this.state.map } });
     } else {
       this.pendingTestAfterGenerate = false;
@@ -2164,20 +1687,12 @@ export class MapperAppController {
   private showTestMapResult(data: any): void {
     this.bottomPanelCollapsed = false;
     this.bottomPanelActiveTab = 'output';
-    const panel = this.container.querySelector('.bottom-panel') as HTMLElement;
-    if (panel) {
-      this.refreshBottomPanel(panel);
-    }
-
-    const output = this.container.querySelector('#test-output') as HTMLPreElement;
-    if (output) {
-      if (data.error) {
-        output.textContent = `Error: ${data.error}`;
-        output.className = 'xml-output error';
-      } else {
-        output.textContent = data.output || data.xslt || '';
-        output.className = 'xml-output';
-      }
+    this.bottomPanel?.setCollapsed(false);
+    this.bottomPanel?.setActiveTab('output');
+    if (data.error) {
+      this.bottomPanel?.setOutput(`Error: ${data.error}`, true);
+    } else {
+      this.bottomPanel?.setOutput(data.output || data.xslt || '', false);
     }
   }
 }

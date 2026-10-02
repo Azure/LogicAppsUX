@@ -3,7 +3,7 @@ import { Beaker20Regular, Bot20Regular, CloudArrowUp20Regular, PlayCircle20Regul
 // biome-ignore lint/style/useImportType: The classic JSX transform requires React at runtime.
 import React from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { getVsCodeFluentTheme } from '../fluentTheme';
+import { getVsCodeFluentTheme, useTypographyStyles } from '../fluentTheme';
 
 interface MapperToolbarViewProps {
   disabled: boolean;
@@ -19,9 +19,15 @@ const useStyles = makeStyles({
   },
   toolbar: {
     boxSizing: 'border-box',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: tokens.spacingHorizontalS,
     width: '100%',
     minHeight: '40px',
     padding: `0 ${tokens.spacingHorizontalS}`,
+    flexShrink: 0,
+    overflowX: 'auto',
     backgroundColor: 'var(--vscode-panel-background, var(--vscode-editor-background))',
     borderBottom: '1px solid var(--vscode-panel-border, transparent)',
   },
@@ -38,16 +44,16 @@ const useStyles = makeStyles({
   status: {
     marginLeft: 'auto',
     color: 'var(--vscode-descriptionForeground)',
-    fontSize: tokens.fontSizeBase200,
   },
 });
 
 function MapperToolbarView({ disabled, onCopilot, onDeploy, onTest, onValidateAndCompile }: MapperToolbarViewProps): React.ReactElement {
   const styles = useStyles();
+  const typographyStyles = useTypographyStyles();
 
   return (
     <FluentProvider theme={getVsCodeFluentTheme()} className={styles.provider}>
-      <Toolbar className={`mapper-toolbar ${styles.toolbar}`} aria-label="Map commands">
+      <Toolbar className={`${styles.toolbar} ${typographyStyles.base}`} aria-label="Map commands">
         <ToolbarGroup className={styles.group}>
           <ToolbarButton
             id="btn-validate-compile"

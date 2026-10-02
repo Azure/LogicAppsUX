@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("XsltTransform")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0ee6994e3a275c893059468fe0190d6b9e4bc664")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a27f9d208a5d0b4185d65093b3dbcd5bd34facd5")]
 [assembly: System.Reflection.AssemblyProductAttribute("XsltTransform")]
 [assembly: System.Reflection.AssemblyTitleAttribute("XsltTransform")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

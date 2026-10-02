@@ -1,10 +1,86 @@
-import { Button, FluentProvider, Input } from '@fluentui/react-components';
+import { Button, FluentProvider, Input, makeStyles } from '@fluentui/react-components';
 import { ChevronDown12Regular, ChevronRight12Regular, Search16Regular } from '@fluentui/react-icons';
 // biome-ignore lint/style/useImportType: The classic JSX transform requires React at runtime.
 import React, { useMemo, useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { getVsCodeFluentTheme } from '../fluentTheme';
 import { getFunctoidDisplayName } from './functoidDisplayName';
+
+const useStyles = makeStyles({
+  header: {
+    padding: '8px 12px',
+    fontWeight: 600,
+    fontSize: '11px',
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px',
+    color: 'var(--vscode-sideBarSectionHeader-foreground)',
+    backgroundColor: 'var(--vscode-sideBarSectionHeader-background)',
+    borderBottom: '1px solid var(--vscode-panel-border, #333)',
+  },
+  search: { width: 'calc(100% - 16px)', margin: '6px 8px', fontSize: '11px' },
+  categoryHeader: {
+    display: 'flex',
+    width: '100%',
+    minHeight: '30px',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    gap: '6px',
+    padding: '0 10px',
+    cursor: 'pointer',
+    fontSize: '14px',
+    fontWeight: 600,
+    color: 'var(--vscode-foreground)',
+    ':hover': { backgroundColor: 'var(--vscode-list-hoverBackground, #2a2d2e)' },
+    '& .fui-Button__content': {
+      display: 'flex',
+      flex: 1,
+      minWidth: 0,
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      textAlign: 'left',
+    },
+  },
+  categoryCount: { marginLeft: 'auto', fontSize: '9px', color: 'var(--vscode-descriptionForeground)' },
+  categoryItems: { padding: '2px 10px 4px 15px' },
+  item: {
+    display: 'flex',
+    width: '100%',
+    height: '30px',
+    minHeight: '30px',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    padding: '1px 4px',
+    cursor: 'grab',
+    fontSize: '13px',
+    borderRadius: '3px',
+    textAlign: 'left',
+    ':active': { cursor: 'grabbing' },
+    ':hover': { backgroundColor: 'var(--vscode-list-hoverBackground, #2a2d2e)' },
+  },
+  itemContent: {
+    display: 'flex',
+    flex: 1,
+    width: '100%',
+    minWidth: 0,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    gap: '8px',
+    textAlign: 'left',
+  },
+  itemIcon: {
+    width: '17px',
+    height: '17px',
+    flex: '0 0 17px',
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '8px',
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  itemName: { minWidth: 0, overflow: 'hidden', fontSize: '13px', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
+});
 
 export interface FunctoidPaletteItem {
   id: number;
@@ -31,6 +107,7 @@ const categoryColors: Record<string, string> = {
 };
 
 function FunctoidPaletteView({ functoids, onSelect }: FunctoidPaletteViewProps): React.ReactElement {
+  const styles = useStyles();
   const [expandedCategories, setExpandedCategories] = useState(() => new Set(['String', 'Math', 'Logical']));
   const [searchTerm, setSearchTerm] = useState('');
   const groups = useMemo(() => {
@@ -56,11 +133,11 @@ function FunctoidPaletteView({ functoids, onSelect }: FunctoidPaletteViewProps):
 
   return (
     <FluentProvider theme={getVsCodeFluentTheme()} style={{ display: 'contents' }}>
-      <div className="palette-header">
-        <span className="palette-title">Functoids</span>
+      <div className={styles.header}>
+        <span>Functoids</span>
       </div>
       <Input
-        className="palette-search"
+        className={styles.search}
         placeholder="Search functoids..."
         size="small"
         contentBefore={<Search16Regular />}
@@ -75,22 +152,22 @@ function FunctoidPaletteView({ functoids, onSelect }: FunctoidPaletteViewProps):
 
         const isExpanded = expandedCategories.has(category) || searchTerm.length > 0;
         return (
-          <div className="palette-category" key={category}>
+          <div key={category}>
             <Button
               appearance="transparent"
-              className="category-header"
+              className={styles.categoryHeader}
               icon={isExpanded ? <ChevronDown12Regular /> : <ChevronRight12Regular />}
               onClick={() => toggleCategory(category)}
             >
-              <span className="category-name">{category}</span>
-              <span className="category-count">{filteredItems.length}</span>
+              <span>{category}</span>
+              <span className={styles.categoryCount}>{filteredItems.length}</span>
             </Button>
             {isExpanded && (
-              <div className="category-items">
+              <div className={styles.categoryItems}>
                 {filteredItems.map((item) => (
                   <Button
                     appearance="transparent"
-                    className="palette-item"
+                    className={styles.item}
                     title={item.tooltip || item.description || ''}
                     draggable
                     key={item.id}
@@ -99,11 +176,11 @@ function FunctoidPaletteView({ functoids, onSelect }: FunctoidPaletteViewProps):
                       event.dataTransfer.setData('functoid', JSON.stringify(item));
                     }}
                   >
-                    <span className="palette-item-content">
-                      <span className="item-icon" style={{ background: categoryColors[category] || '#9e9e9e' }}>
+                    <span className={styles.itemContent}>
+                      <span className={styles.itemIcon} style={{ background: categoryColors[category] || '#9e9e9e' }}>
                         fn
                       </span>
-                      <span className="item-name">{getFunctoidDisplayName(item.name)}</span>
+                      <span className={styles.itemName}>{getFunctoidDisplayName(item.name)}</span>
                     </span>
                   </Button>
                 ))}
