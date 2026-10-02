@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { Buffer } from 'node:buffer';
 import { spawnSync } from 'node:child_process';
 import { once } from 'node:events';
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
@@ -18,6 +18,8 @@ import { coverageDefaults } from '../libs/shared-test-utils/vitestCoverage.ts';
 const requireExtension = createRequire(join(dirname(fileURLToPath(import.meta.url)), '..', 'apps', 'vs-code-designer', 'package.json'));
 const requireMocha = createRequire(requireExtension.resolve('mocha'));
 const requireVitest = createRequire(requireExtension.resolve('vitest/package.json'));
+const requireVsce = createRequire(requireExtension.resolve('@vscode/vsce'));
+const requireDesignerUi = createRequire(join(dirname(fileURLToPath(import.meta.url)), '..', 'libs', 'designer-ui', 'package.json'));
 const picomatch = requireVitest('picomatch');
 const { glob } = requireVitest('tinyglobby');
 
@@ -34,6 +36,81 @@ function fixtureDirectory(t) {
   t.after(() => rmSync(directory, { recursive: true, force: true }));
   return directory;
 }
+
+function sanitizerFixture(t) {
+  const { JSDOM } = requireVitest('jsdom');
+  const { window } = new JSDOM('<!doctype html><body></body>');
+  t.after(() => window.close());
+  return { window, purify: requireDesignerUi('dompurify')(window) };
+}
+
+test('DOMPurify preserves ordinary links and tables while removing executable markup', (t) => {
+  const { window, purify } = sanitizerFixture(t);
+  const result = window.document.createElement('div');
+  result.innerHTML = purify.sanitize(
+    '<a href="https://example.invalid/docs">reference</a><table><tr><td>value</td></tr></table><img onerror="void 0"><script>void 0</script>'
+  );
+  assert.equal(result.querySelector('a')?.href, 'https://example.invalid/docs');
+  assert.equal(result.querySelector('td')?.textContent, 'value');
+  assert.equal(result.querySelector('script, [onerror]'), null);
+});
+
+for (const hook of ['afterSanitizeElements', 'afterSanitizeAttributes']) {
+  test(`DOMPurify neutralizes an IN_PLACE subtree detached by ${hook}`, (t) => {
+    const { window, purify } = sanitizerFixture(t);
+    const root = window.document.createElement('div');
+    root.innerHTML = '<section id="wrapper"><img onerror="void 0"></section>';
+    window.document.body.append(root);
+    const wrapper = root.querySelector('section');
+    const image = root.querySelector('img');
+    purify.addHook(hook, (node) => {
+      if (node === wrapper) {
+        node.remove();
+      }
+    });
+    purify.sanitize(root, { IN_PLACE: true });
+    assert.equal(root.contains(wrapper), false);
+    assert.equal(image.hasAttribute('onerror'), false);
+  });
+}
+
+test('VSIX packaging retains temporary file and directory creation and cleanup', (t) => {
+  const directory = fixtureDirectory(t);
+  const temporary = requireVsce('tmp');
+  const file = temporary.fileSync({ tmpdir: directory, prefix: 'logicapps', postfix: '.txt' });
+  try {
+    assert.equal(dirname(file.name), directory);
+    writeFileSync(file.fd, 'temporary contents');
+    assert.equal(readFileSync(file.name, 'utf8'), 'temporary contents');
+  } finally {
+    file.removeCallback();
+  }
+  assert.equal(existsSync(file.name), false);
+  const folder = temporary.dirSync({ tmpdir: directory, prefix: 'logicapps' });
+  try {
+    assert.equal(dirname(folder.name), directory);
+    assert.ok(existsSync(folder.name));
+  } finally {
+    folder.removeCallback();
+  }
+  assert.equal(existsSync(folder.name), false);
+});
+
+test('temporary names reject non-string path options before generating an escaped name', (t) => {
+  const directory = fixtureDirectory(t);
+  const temporaryRoot = join(directory, 'temporary');
+  mkdirSync(temporaryRoot);
+  const temporary = requireVsce('tmp');
+  for (const option of ['prefix', 'postfix', 'template']) {
+    for (const value of [
+      ['../escape-XXXXXX'],
+      Buffer.from('../escape-XXXXXX'),
+      { includes: () => false, toString: () => '../escape-XXXXXX' },
+    ]) {
+      assert.throws(() => temporary.tmpNameSync({ tmpdir: temporaryRoot, [option]: value }), /must be a string/);
+    }
+  }
+});
 
 test('Vitest coverage retains every previously supported executable extension', () => {
   for (const extension of ['js', 'cjs', 'mjs', 'ts', 'mts', 'tsx', 'jsx', 'vue', 'svelte', 'marko', 'astro']) {
