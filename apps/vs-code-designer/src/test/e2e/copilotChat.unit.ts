@@ -41,7 +41,12 @@ async function main(): Promise<void> {
   await testCopilotChatInitialReadRetryRespectsDeadline();
   await testCopilotChatInitialReadRetryUsesSharedAttachBudget();
   await testCopilotChatInitialReadRetryDoesNotRetryOtherErrors();
-  await testCopilotChatInitialReadRetryDoesNotRetryAfterStateObservation();
+  await testCopilotChatReadRetryDoesNotRetryAfterVisibleObservation();
+  await testCopilotChatAbsentSettlingRetryRecoversWithoutResettingWindow();
+  await testCopilotChatAbsentSettlingRetryStopsAndSanitizes();
+  await testCopilotChatAbsentSettlingSharesInitialRetryAllowance();
+  await testCopilotChatAbsentSettlingRetryPreservesDeadlineAndStrictClosure();
+  await testCopilotChatAbsentSettlingRetryDoesNotRetryOtherErrors();
   await testCopilotChatInitialReadRetryPreservesClosureFailures();
   console.log('[copilotChat.unit] all tests passed');
 }
@@ -518,7 +523,7 @@ async function testCopilotChatInitialReadRetryStopsAfterBoundAndRedactsErrors():
   await assert.rejects(
     () => closeCopilotChatIfVisibleWithAttachRetry('initial-read-persistent-test', harness),
     (error: Error) => {
-      assert.match(error.message, /initial workbench Chat state read failed after 2 attempts \(max 2\)/);
+      assert.match(error.message, /initial workbench Chat state read failed after 2 attempts \(max 2; shared retry allowance 1\/1\)/);
       assert.match(error.message, /cdp-runtime-evaluate-timeout/);
       assertSensitiveAttachDetailsRedacted(error.message);
       return true;
@@ -547,7 +552,7 @@ async function testCopilotChatInitialReadRetryRespectsDeadline(): Promise<void> 
 
     await assert.rejects(
       () => closeCopilotChatIfVisibleWithAttachRetry('initial-read-deadline-test', harness, { timeoutMs: 1000 }),
-      /initial workbench Chat state read failed after 1 attempt \(max 2\).*deadline-exceeded/
+      /initial workbench Chat state read failed after 1 attempt \(max 2; shared retry allowance.*deadline-exceeded/
     );
     assert.strictEqual(harness.connectCalls, 1);
     assert.strictEqual(harness.connections[0]?.disposeCalls, 1);
@@ -609,8 +614,8 @@ async function testCopilotChatInitialReadRetryDoesNotRetryOtherErrors(): Promise
   }
 }
 
-async function testCopilotChatInitialReadRetryDoesNotRetryAfterStateObservation(): Promise<void> {
-  for (const visible of [false, true]) {
+async function testCopilotChatReadRetryDoesNotRetryAfterVisibleObservation(): Promise<void> {
+  for (const visible of [true]) {
     const failure = initialReadTimeout();
     const harness = new FakeCopilotChatAttachHarness({
       readStateFailures: [undefined, failure],
@@ -633,6 +638,114 @@ async function testCopilotChatInitialReadRetryDoesNotRetryAfterStateObservation(
     assert.deepStrictEqual(harness.sleepDurations, [250]);
     assert.strictEqual(harness.connections[0]?.disposeCalls, 1);
     assert.ok(!harness.logs.some((line) => line.includes('retrying')));
+  }
+}
+
+async function testCopilotChatAbsentSettlingRetryRecoversWithoutResettingWindow(): Promise<void> {
+  for (const durationMs of [100, 1500]) {
+    const harness = new FakeCopilotChatAttachHarness({
+      readStateFailures: [undefined, initialReadTimeout()],
+      readDurationsMs: [0, durationMs],
+      states: [{ visible: false, matchCount: 0, owners: [] }],
+    });
+    await closeCopilotChatIfVisibleWithAttachRetry('absent-settling-recovery-test', harness, { absentSettleMs: 1500 });
+    assert.strictEqual(harness.connectCalls, 1);
+    assert.strictEqual(harness.connections[0]?.disposeCalls, 1);
+    assert.deepStrictEqual(harness.commands, []);
+    assert.strictEqual(harness.now(), durationMs === 100 ? 1500 : 2000, 'the original settle window must not restart after recovery');
+    assert.strictEqual(harness.logs.filter((line) => line.includes('retrying')).length, 1);
+    assert.ok(harness.logs.some((line) => line.includes('absent-settling workbench Chat state read recovered on attempt 2')));
+  }
+}
+
+async function testCopilotChatAbsentSettlingRetryStopsAndSanitizes(): Promise<void> {
+  const sensitiveTimeout = new Error(`${initialReadTimeout().message}\r\n${createSensitiveAttachErrorMessage()}`);
+  const harness = new FakeCopilotChatAttachHarness({
+    readStateFailures: [undefined, sensitiveTimeout, sensitiveTimeout],
+    states: [{ visible: false, matchCount: 0, owners: [] }],
+  });
+  await assert.rejects(
+    () => closeCopilotChatIfVisibleWithAttachRetry('absent-settling-persistent-test', harness, { absentSettleMs: 1500 }),
+    (error: Error) => {
+      assert.match(error.message, /absent-settling workbench Chat state read failed after 2 attempts.*shared retry allowance 1\/1/);
+      assertSensitiveAttachDetailsRedacted(error.message);
+      return true;
+    }
+  );
+  assert.strictEqual(harness.readTimeouts.length, 3);
+  assert.strictEqual(harness.connectCalls, 1);
+  assert.strictEqual(harness.connections[0]?.disposeCalls, 1);
+  assertSensitiveAttachDetailsRedacted(harness.logs.join('\n'));
+  assert.deepStrictEqual(harness.commands, []);
+}
+
+async function testCopilotChatAbsentSettlingSharesInitialRetryAllowance(): Promise<void> {
+  const harness = new FakeCopilotChatAttachHarness({
+    readStateFailures: [initialReadTimeout(), undefined, initialReadTimeout()],
+    states: [{ visible: false, matchCount: 0, owners: [] }],
+  });
+  await assert.rejects(
+    () => closeCopilotChatIfVisibleWithAttachRetry('shared-pre-visible-read-test', harness, { absentSettleMs: 1500 }),
+    /absent-settling workbench Chat state read failed after 1 attempt.*shared retry allowance 1\/1/
+  );
+  assert.strictEqual(harness.readTimeouts.length, 3);
+  assert.strictEqual(harness.logs.filter((line) => line.includes('retrying')).length, 1);
+  assert.strictEqual(harness.connections[0]?.disposeCalls, 1);
+}
+
+async function testCopilotChatAbsentSettlingRetryPreservesDeadlineAndStrictClosure(): Promise<void> {
+  for (const durationMs of [650, 750]) {
+    const harness = new FakeCopilotChatAttachHarness({
+      readStateFailures: [undefined, initialReadTimeout()],
+      readDurationsMs: [0, durationMs],
+      states: [{ visible: false, matchCount: 0, owners: [] }],
+    });
+    await assert.rejects(
+      () => closeCopilotChatIfVisibleWithAttachRetry('absent-settling-deadline-test', harness, { timeoutMs: 1000, absentSettleMs: 1500 }),
+      /absent-settling workbench Chat state read failed after 1 attempt.*deadline-exceeded/
+    );
+    assert.deepStrictEqual(harness.readTimeouts, [1000, 750]);
+    assert.strictEqual(harness.now(), 1000);
+    assert.strictEqual(harness.connections[0]?.disposeCalls, 1);
+  }
+  const visible: CopilotChatWorkbenchState = {
+    visible: true,
+    matchCount: 1,
+    owners: [{ kind: 'auxiliarybar', label: 'copilot-chat', unrelatedVisibleCount: 0 }],
+  };
+  const closureFailure = initialReadTimeout();
+  const harness = new FakeCopilotChatAttachHarness({
+    readStateFailures: [undefined, initialReadTimeout(), undefined, closureFailure],
+    states: [{ visible: false, matchCount: 0, owners: [] }, visible],
+  });
+  await assert.rejects(
+    () => closeCopilotChatIfVisibleWithAttachRetry('absent-settling-visible-retry-test', harness, { absentSettleMs: 1500 }),
+    closureFailure
+  );
+  assert.deepStrictEqual(harness.commands, ['workbench.action.closeAuxiliaryBar']);
+  assert.strictEqual(harness.readTimeouts.length, 4);
+  assert.strictEqual(harness.logs.filter((line) => line.includes('retrying')).length, 1);
+  assert.strictEqual(harness.connections[0]?.disposeCalls, 1);
+}
+
+async function testCopilotChatAbsentSettlingRetryDoesNotRetryOtherErrors(): Promise<void> {
+  for (const message of [
+    'CDP WebSocket closed',
+    'synthetic evaluation failure',
+    'Timed out waiting for CDP Page.captureScreenshot response after 1500ms',
+  ]) {
+    const failure = new Error(message);
+    const harness = new FakeCopilotChatAttachHarness({
+      readStateFailures: [undefined, failure],
+      states: [{ visible: false, matchCount: 0, owners: [] }],
+    });
+    await assert.rejects(
+      () => closeCopilotChatIfVisibleWithAttachRetry('absent-settling-other-error-test', harness, { absentSettleMs: 1500 }),
+      failure
+    );
+    assert.strictEqual(harness.readTimeouts.length, 2);
+    assert.strictEqual(harness.logs.filter((line) => line.includes('retrying')).length, 0);
+    assert.strictEqual(harness.connections[0]?.disposeCalls, 1);
   }
 }
 

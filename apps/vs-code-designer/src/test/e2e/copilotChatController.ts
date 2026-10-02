@@ -23,7 +23,7 @@ export interface CopilotChatAttachRetryHost<TCdp extends CopilotChatCdpConnectio
 
 const maxCopilotChatAttachAttempts = 2;
 const maxCopilotChatAttachBudgetMs = 5000;
-const maxCopilotChatInitialReadAttempts = 2;
+const maxCopilotChatPreVisibleReadRetries = 1;
 
 export async function closeCopilotChatIfVisibleWithAttachRetry<TCdp extends CopilotChatCdpConnection>(
   stage: string,
@@ -96,12 +96,13 @@ export async function closeCopilotChatIfVisibleCore(
   const absentSettleMs = options.absentSettleMs ?? 0;
   const deadline = host.now() + timeoutMs;
 
-  let state = await readInitialCopilotChatState(stage, host, deadline);
+  const readRetry = { retriesUsed: 0 };
+  let state = await readPreVisibleCopilotChatState(stage, host, deadline, readRetry, 'initial');
   if (!state.visible) {
     const absentDeadline = Math.min(deadline, host.now() + absentSettleMs);
     while (host.now() < absentDeadline) {
       await host.sleep(Math.min(250, absentDeadline - host.now()));
-      state = await host.readState(getReadTimeout(deadline, host.now()));
+      state = await readPreVisibleCopilotChatState(stage, host, deadline, readRetry, 'absent-settling');
       if (state.visible) {
         break;
       }
@@ -137,6 +138,9 @@ export async function closeCopilotChatIfVisibleCore(
     }
 
     await host.sleep(250);
+    if (host.now() >= deadline) {
+      break;
+    }
     state = await host.readState(getReadTimeout(deadline, host.now()));
     lastState = state;
     if (!state.visible) {
@@ -150,14 +154,16 @@ export async function closeCopilotChatIfVisibleCore(
   );
 }
 
-async function readInitialCopilotChatState(
+async function readPreVisibleCopilotChatState(
   stage: string,
   host: CopilotChatCloseHost,
-  deadline: number
+  deadline: number,
+  retry: { retriesUsed: number },
+  readStage: 'initial' | 'absent-settling'
 ): Promise<CopilotChatWorkbenchState> {
   let attemptsMade = 0;
   let reason = 'deadline-exceeded';
-  for (let attempt = 1; attempt <= maxCopilotChatInitialReadAttempts; attempt++) {
+  for (let attempt = 1; attempt <= maxCopilotChatPreVisibleReadRetries + 1; attempt++) {
     const remainingMs = deadline - host.now();
     if (remainingMs <= 0) {
       reason = 'deadline-exceeded';
@@ -172,7 +178,7 @@ async function readInitialCopilotChatState(
         break;
       }
       if (attempt > 1) {
-        host.log(`[copilot-chat] ${stage}: initial workbench Chat state read recovered on attempt ${attempt}`);
+        host.log(`[copilot-chat] ${stage}: ${readStage} workbench Chat state read recovered on attempt ${attempt}`);
       }
       return state;
     } catch (error) {
@@ -183,7 +189,7 @@ async function readInitialCopilotChatState(
         throw error;
       }
       reason = 'cdp-runtime-evaluate-timeout';
-      if (attempt >= maxCopilotChatInitialReadAttempts) {
+      if (retry.retriesUsed >= maxCopilotChatPreVisibleReadRetries) {
         break;
       }
       const retryDelayMs = Math.min(250, deadline - host.now());
@@ -191,17 +197,16 @@ async function readInitialCopilotChatState(
         reason = 'deadline-exceeded';
         break;
       }
-      host.log(
-        `[copilot-chat] ${stage}: initial workbench Chat state read attempt ${attempt}/${maxCopilotChatInitialReadAttempts} failed; retrying. Reason: ${reason}`
-      );
+      host.log(`[copilot-chat] ${stage}: ${readStage} workbench Chat state read attempt ${attempt}/2 failed; retrying. Reason: ${reason}`);
+      retry.retriesUsed++;
       await host.sleep(retryDelayMs);
     }
   }
 
   throw new Error(
-    `[copilot-chat] ${stage}: initial workbench Chat state read failed after ${attemptsMade} ${
+    `[copilot-chat] ${stage}: ${readStage} workbench Chat state read failed after ${attemptsMade} ${
       attemptsMade === 1 ? 'attempt' : 'attempts'
-    } (max ${maxCopilotChatInitialReadAttempts}). Reason: ${reason}`
+    } (max 2; shared retry allowance ${retry.retriesUsed}/${maxCopilotChatPreVisibleReadRetries}). Reason: ${reason}`
   );
 }
 
@@ -223,7 +228,7 @@ export function getCopilotChatCloseCommands(state: CopilotChatWorkbenchState): s
 }
 
 function getReadTimeout(deadline: number, now: number): number {
-  return Math.max(250, Math.min(1500, deadline - now));
+  return Math.min(1500, deadline - now);
 }
 
 function getAttachTimeout(deadline: number, now: number): number {
