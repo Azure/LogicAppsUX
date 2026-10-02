@@ -341,13 +341,13 @@ pnpm run test:e2e-cli:msn-weather-lifecycle
 
 Use this target when authoring Azure-backed designer tests locally. It is intentionally not part of the default CI matrix because it depends on cached Azure credentials, a real subscription/resource group/location, and managed connector availability. `LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL` is optional when your profile needs a non-public Azure cloud.
 
-Native workspace scenario evidence is public-safe; private catalogue mapping is maintained outside public source and is not certification.
+#### Using an owner-approved test tenant
 
-Native workspace scenario evidence is public-safe; private catalogue mapping is maintained outside public source and is not certification.
+LogicAppsUX VS Code E2E can target an owner-approved test tenant for Azure connector tests, but it cannot directly reuse a browser test suite's authentication cache:
 
-Native workspace scenario evidence is public-safe; private catalogue mapping is maintained outside public source and is not certification.
-Native workspace scenario evidence is public-safe; private catalogue mapping is maintained outside public source and is not certification.
-Native workspace scenario evidence is public-safe; private catalogue mapping is maintained outside public source and is not certification.
+- Browser authentication tokens and certificate-based sign-in fixtures are specific to their browser test environment.
+- VS Code E2E runs inside an extension host and uses VS Code Microsoft authentication plus the test-gated Azure CLI ARM-token fallback. Browser `storageState.json` / `session-storage.json` files do not populate `vscode.authentication` sessions.
+- To run this lifecycle against an owner-approved test tenant, sign Azure CLI into that tenant, use an already authorized subscription/resource group where the test identity can create managed API connections, and set the same `LA_E2E_CLI_AZURE_*` variables above. Do not provision resources, expand permissions, or mutate another suite's shared fixtures without separate authorization.
 
 Example local setup:
 
@@ -364,7 +364,7 @@ $env:LA_E2E_CLI_AZURE_LOCATION_NAME = 'westus'
 pnpm run test:e2e-cli:msn-weather-lifecycle
 ```
 
-Native workspace scenario evidence is public-safe; private catalogue mapping is maintained outside public source and is not certification.
+For CI, use the pipeline's existing authorized test-tenant Azure service connection or equivalent approved secretless login rather than importing browser authentication state. Mint an ARM token for `https://management.core.windows.net/`, export it as `LA_E2E_CLI_AZURE_ACCESS_TOKEN`, and pass the tenant/subscription/resource-group/location variables into `@vscode/test-cli`. Keep the run serialized if the resource group or managed connections are shared.
 
 ### Run NuGet conversion debug/run lifecycle
 ```powershell
