@@ -264,6 +264,12 @@ export class MapperAppController {
 
   public handleMessage(message: HostToWebviewMessage): void {
     switch (message.type) {
+      case 'executeCompile':
+        this.validateAndCompile();
+        break;
+      case 'executeTestMap':
+        this.runTestMap();
+        break;
       case 'init': {
         this.state.map = message.data.map;
         this.state.sourceSchema = message.data.sourceSchema;
@@ -402,7 +408,8 @@ export class MapperAppController {
         expandedPaths,
         (node) => this.openSchemaNodeProperties(node, 'source'),
         () => this.redrawLinks(),
-        () => this.vscode.postMessage({ type: 'loadSchema', side: 'source' })
+        () => this.vscode.postMessage({ type: 'loadSchema', side: 'source' }),
+        this.getConnectedPaths('source')
       );
     } else {
       sourceContainer = document.createElement('div');
@@ -488,7 +495,8 @@ export class MapperAppController {
         expandedPaths,
         (node) => this.openSchemaNodeProperties(node, 'target'),
         () => this.redrawLinks(),
-        () => this.vscode.postMessage({ type: 'loadSchema', side: 'target' })
+        () => this.vscode.postMessage({ type: 'loadSchema', side: 'target' }),
+        this.getConnectedPaths('target')
       );
     } else {
       targetContainer = document.createElement('div');
@@ -758,6 +766,7 @@ export class MapperAppController {
     const positions: Map<string, { x: number; y: number }> = new Map();
 
     if (this.sourceTree) {
+      this.sourceTree.setConnectedPaths(this.getConnectedPaths('source'));
       for (const link of page.links) {
         if (link.sourcePath && link.sourceType !== 'functoid') {
           const pos = this.sourceTree.getNodePosition(link.sourcePath);
@@ -769,6 +778,7 @@ export class MapperAppController {
     }
 
     if (this.targetTree) {
+      this.targetTree.setConnectedPaths(this.getConnectedPaths('target'));
       for (const link of page.links) {
         if (link.targetPath && link.targetType !== 'functoid') {
           const pos = this.targetTree.getNodePosition(link.targetPath);
@@ -1297,6 +1307,13 @@ export class MapperAppController {
     return paths;
   }
 
+  private getConnectedPaths(side: 'source' | 'target'): Set<string> {
+    const page = this.state.map?.pages[this.state.activePage];
+    return new Set(
+      page?.links.map((link) => (side === 'source' ? link.sourcePath : link.targetPath)).filter((path): path is string => !!path)
+    );
+  }
+
   private flattenLeafNodes(node: any, result: any[] = []): any[] {
     if (!node.children || node.children.length === 0) {
       result.push(node);
@@ -1618,16 +1635,20 @@ export class MapperAppController {
               <div class="functoid-property-meta">${this.escapeHtml(definition?.category || functoid?.category || 'Custom')} · FID ${this.escapeHtml(String(functoid?.functoidId ?? ''))}</div>
             </div>
                 </div>
+          <div class="functoid-dialog-description">
+                  <div class="config-label">Description</div>
+                  <div class="functoid-dialog-description-value">${this.escapeHtml(description)}</div>
+          </div>
           <div class="functoid-dialog-tabs" role="tablist" aria-label="Functoid configuration">
-            <button type="button" class="functoid-dialog-tab active" role="tab" aria-selected="true" data-functoid-tab="inputs">Functoid Inputs</button>
-            <button type="button" class="functoid-dialog-tab" role="tab" aria-selected="false" data-functoid-tab="output">Output</button>
+            <button type="button" class="functoid-dialog-tab active" role="tab" aria-selected="true" data-functoid-tab="inputs">Inputs</button>
+            <button type="button" class="functoid-dialog-tab" role="tab" aria-selected="false" data-functoid-tab="output">Outputs</button>
             <button type="button" class="functoid-dialog-tab" role="tab" aria-selected="false" data-functoid-tab="label">Label and Comments</button>
           </div>
           <div class="functoid-dialog-body">
             <section class="functoid-tab-panel active" role="tabpanel" data-functoid-panel="inputs">
               <div class="functoid-input-toolbar">
                 <div>
-                  <div class="functoid-property-heading">Ordered inputs</div>
+                  <div class="functoid-property-heading functoid-ordered-inputs-heading">Ordered inputs</div>
                   <div class="functoid-property-requirement">Inputs are evaluated from top to bottom.</div>
                 </div>
                 <button type="button" class="config-btn config-btn-secondary" id="properties-add-input"
@@ -1647,10 +1668,6 @@ export class MapperAppController {
                       : inputs.map((input, index) => this.createFunctoidInputEditorHtml(input, index)).join('')
                   }
                 </ol>
-              </div>
-              <div class="functoid-dialog-description">
-                <div class="functoid-property-heading">Functoid description</div>
-                <p>${this.escapeHtml(description)}</p>
               </div>
             </section>
             <section class="functoid-tab-panel" role="tabpanel" data-functoid-panel="output" hidden>
@@ -1676,10 +1693,6 @@ export class MapperAppController {
               <label class="config-label functoid-comments-label" for="properties-comments">Comments</label>
               <textarea id="properties-comments" class="config-textarea functoid-comments" maxlength="2048"
                 placeholder="Describe the purpose of this functoid">${this.escapeHtml(this.functoidCommentsDraft)}</textarea>
-              <div class="functoid-dialog-description">
-                <div class="functoid-property-heading">Details</div>
-                <p>${this.escapeHtml(description)}</p>
-              </div>
             </section>
           </div>
                 <div class="config-actions">

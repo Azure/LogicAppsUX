@@ -58,6 +58,7 @@ interface SchemaTreeViewProps {
   schema: SchemaView;
   side: SchemaSide;
   initialExpanded: Set<string>;
+  connectedPaths: Set<string>;
   onNodeClick(nodePath: string): void;
   onNodePointerUp(nodePath: string): void;
   onLinkPointerDown(clientX: number, clientY: number): void;
@@ -82,6 +83,7 @@ function SchemaTreeView({
   schema,
   side,
   initialExpanded,
+  connectedPaths,
   onNodeClick,
   onNodePointerUp,
   onLinkPointerDown,
@@ -121,7 +123,7 @@ function SchemaTreeView({
 
     const connector = (
       <span
-        className="node-connector"
+        className={`node-connector${connectedPaths.has(node.path) ? ' connected' : ''}`}
         data-path={node.path}
         data-side={side}
         title="Click or drag to create/complete link"
@@ -188,12 +190,9 @@ function SchemaTreeView({
           }}
         >
           <span className="tree-indent" style={{ width: `${depth * 16}px` }} />
-          {!isAttribute && (
-            <span
-              className={`tree-icon ${hasChildren ? 'expandable' : 'leaf'}`}
-              onClick={hasChildren ? (event) => toggleNode(event, node.path) : undefined}
-            >
-              {hasChildren ? (isExpanded ? '▼' : '▶') : '•'}
+          {!isAttribute && hasChildren && (
+            <span className="tree-icon expandable" onClick={(event) => toggleNode(event, node.path)}>
+              {isExpanded ? '▼' : '▶'}
             </span>
           )}
           <span className={`node-type-icon${isAttribute ? ' attribute-icon' : ''}`} title={isAttribute ? 'Attribute' : undefined}>
@@ -275,6 +274,7 @@ export class SchemaTreeRenderer extends HTMLElement {
   private onExpansionChange: () => void = () => {};
   private onReload: () => void = () => {};
   private initialExpanded = new Set<string>();
+  private connectedPaths = new Set<string>();
   private renderVersion = 0;
 
   public configure(
@@ -286,7 +286,8 @@ export class SchemaTreeRenderer extends HTMLElement {
     initialExpanded?: Set<string>,
     onNodeDoubleClick?: (node: SchemaNodeView) => void,
     onExpansionChange: () => void = () => {},
-    onReload: () => void = () => {}
+    onReload: () => void = () => {},
+    connectedPaths: Set<string> = new Set()
   ): void {
     this.schema = schema;
     this.side = side;
@@ -296,6 +297,7 @@ export class SchemaTreeRenderer extends HTMLElement {
     this.onNodeDoubleClick = onNodeDoubleClick;
     this.onExpansionChange = onExpansionChange;
     this.onReload = onReload;
+    this.connectedPaths = new Set(connectedPaths);
     this.initialExpanded = initialExpanded ? new Set(initialExpanded) : new Set();
     if (schema.rootElement) {
       this.initialExpanded.add(schema.rootElement.path);
@@ -314,6 +316,16 @@ export class SchemaTreeRenderer extends HTMLElement {
   public disconnectedCallback(): void {
     this.reactRoot?.unmount();
     this.reactRoot = null;
+  }
+
+  public setConnectedPaths(paths: Set<string>): void {
+    this.connectedPaths.clear();
+    for (const path of paths) {
+      this.connectedPaths.add(path);
+    }
+    for (const connector of Array.from(this.querySelectorAll<HTMLElement>('.node-connector[data-path]'))) {
+      connector.classList.toggle('connected', this.connectedPaths.has(connector.dataset.path || ''));
+    }
   }
 
   public getNodePosition(path: string): { x: number; y: number } | null {
@@ -353,6 +365,7 @@ export class SchemaTreeRenderer extends HTMLElement {
         schema={this.schema}
         side={this.side}
         initialExpanded={this.initialExpanded}
+        connectedPaths={this.connectedPaths}
         onNodeClick={this.onNodeClick}
         onNodePointerUp={this.onNodePointerUp}
         onLinkPointerDown={this.onLinkPointerDown}

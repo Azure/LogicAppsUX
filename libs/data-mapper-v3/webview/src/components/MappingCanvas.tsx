@@ -1,6 +1,7 @@
 // biome-ignore lint/style/useImportType: The classic JSX transform requires React at runtime.
 import React, { useRef, useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
+import { getFunctoidDisplayName } from './functoidDisplayName';
 import { createPortal } from 'react-dom';
 import type { MapFunctoid, MapLink, MapPage } from '../../../src/model/mapModel';
 import type { MapperViewState } from '../../../src/protocol/mapEditorProtocol';
@@ -42,17 +43,6 @@ interface DragTarget {
   offsetY: number;
 }
 
-const colors: Record<string, string> = {
-  String: '#1b5e20',
-  Math: '#4a148c',
-  Logical: '#e65100',
-  DateTime: '#01579b',
-  Conversion: '#33691e',
-  Scientific: '#880e4f',
-  Advanced: '#263238',
-  Custom: '#3e2723',
-};
-
 const accents: Record<string, string> = {
   String: '#4caf50',
   Math: '#9c27b0',
@@ -64,21 +54,19 @@ const accents: Record<string, string> = {
   Custom: '#795548',
 };
 
-const functoidRadius = 32;
+const functoidWidth = 56;
+const functoidHeight = 26;
+const functoidHalfWidth = functoidWidth / 2;
+const functoidHalfHeight = functoidHeight / 2;
 const minZoom = 0.1;
 const maxZoom = 2;
 
-function abbreviate(name: string): string {
-  if (name.length <= 10) {
-    return name;
+function getDisplayName(name: string): string {
+  const displayName = getFunctoidDisplayName(name);
+  if (displayName.length <= 4) {
+    return displayName;
   }
-  const words = name.split(' ');
-  return words.length > 1
-    ? words
-        .map((word) => word[0])
-        .join('')
-        .toUpperCase()
-    : `${name.substring(0, 9)}…`;
+  return displayName.substring(0, 4);
 }
 
 function getLinkPoints(
@@ -98,7 +86,7 @@ function getLinkPoints(
     const functoid = page.functoids.find((item) => item.id === link.sourceId);
     if (functoid) {
       source = {
-        x: offsetX + (functoid.x + functoidRadius) * zoom - scrollLeft,
+        x: offsetX + (functoid.x + functoidHalfWidth) * zoom - scrollLeft,
         y: offsetY + functoid.y * zoom - scrollTop,
       };
     }
@@ -113,7 +101,7 @@ function getLinkPoints(
     const functoid = page.functoids.find((item) => item.id === link.targetId);
     if (functoid) {
       target = {
-        x: offsetX + (functoid.x - functoidRadius) * zoom - scrollLeft,
+        x: offsetX + (functoid.x - functoidHalfWidth) * zoom - scrollLeft,
         y: offsetY + functoid.y * zoom - scrollTop,
       };
     }
@@ -182,6 +170,9 @@ function FunctoidNode({
   zoom,
   svgRef,
   callbacks,
+  dragging,
+  inputConnected,
+  outputConnected,
   dragTarget,
   setDragTarget,
 }: {
@@ -190,6 +181,9 @@ function FunctoidNode({
   zoom: number;
   svgRef: React.RefObject<SVGSVGElement>;
   callbacks: CanvasCallbacks;
+  dragging: boolean;
+  inputConnected: boolean;
+  outputConnected: boolean;
   dragTarget: React.MutableRefObject<DragTarget | null>;
   setDragTarget(target: DragTarget): void;
 }): React.ReactElement {
@@ -198,7 +192,7 @@ function FunctoidNode({
 
   return (
     <g
-      className="functoid-node"
+      className={`functoid-node${dragging ? ' dragging' : ''}`}
       data-id={functoid.id}
       transform={`translate(${functoid.x * zoom}, ${functoid.y * zoom}) scale(${zoom})`}
       onClick={(event) => {
@@ -231,28 +225,26 @@ function FunctoidNode({
         setDragTarget(target);
       }}
     >
-      <circle cx="3" cy="3" r={functoidRadius} fill="rgba(0,0,0,0.25)" />
-      <circle
+      <title>{functoid.name}</title>
+      <rect
         className="functoid-body"
-        cx="0"
-        cy="0"
-        r={functoidRadius}
-        fill={colors[functoid.category] || '#424242'}
+        x={-functoidHalfWidth}
+        y={-functoidHalfHeight}
+        width={functoidWidth}
+        height={functoidHeight}
+        rx={functoidHalfHeight}
+        fill="var(--vscode-editor-background, #1e1e1e)"
         stroke={selected ? '#007fd4' : accents[functoid.category] || '#9e9e9e'}
-        strokeWidth={selected ? 4 : 2}
+        strokeWidth={selected ? 2 : 1}
       />
-      <text textAnchor="middle" dominantBaseline="middle" fill="#fff" fontSize="9">
-        {abbreviate(functoid.name)}
+      <text textAnchor="middle" dominantBaseline="middle" fill="var(--vscode-foreground, #fff)" fontSize="10">
+        {getDisplayName(functoid.name)}
       </text>
       <circle
-        cx={-functoidRadius}
+        cx={-functoidHalfWidth}
         cy="0"
-        r="8"
-        fill="#89d185"
-        stroke="#fff"
-        strokeWidth="2"
-        className="functoid-connector input-connector"
-        style={{ cursor: 'crosshair' }}
+        r="7"
+        className={`functoid-connector input-connector${inputConnected ? ' connected' : ''}`}
         onMouseDown={(event) => event.stopPropagation()}
         onPointerDown={(event) => {
           event.preventDefault();
@@ -277,14 +269,10 @@ function FunctoidNode({
         }}
       />
       <circle
-        cx={functoidRadius}
+        cx={functoidHalfWidth}
         cy="0"
-        r="8"
-        fill="#cca700"
-        stroke="#fff"
-        strokeWidth="2"
-        className="functoid-connector output-connector"
-        style={{ cursor: 'crosshair' }}
+        r="7"
+        className={`functoid-connector output-connector${outputConnected ? ' connected' : ''}`}
         onMouseDown={(event) => event.stopPropagation()}
         onPointerDown={(event) => {
           event.preventDefault();
@@ -325,7 +313,7 @@ function MappingCanvasView({
 }: CanvasViewProps): React.ReactElement {
   const svgRef = useRef<SVGSVGElement>(null);
   const dragTarget = useRef<DragTarget | null>(null);
-  const [, setCurrentDrag] = useState<DragTarget | null>(null);
+  const [currentDrag, setCurrentDrag] = useState<DragTarget | null>(null);
   const zoomPercent = Math.round(zoom * 100);
   const mappingArea = host.closest('.mapping-area');
 
@@ -397,6 +385,9 @@ function MappingCanvasView({
             zoom={zoom}
             svgRef={svgRef}
             callbacks={callbacks}
+            dragging={currentDrag?.id === functoid.id}
+            inputConnected={page.links.some((link) => link.targetType === 'functoid' && link.targetId === functoid.id)}
+            outputConnected={page.links.some((link) => link.sourceType === 'functoid' && link.sourceId === functoid.id)}
             dragTarget={dragTarget}
             setDragTarget={(target) => setCurrentDrag(target)}
           />

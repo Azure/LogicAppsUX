@@ -4,6 +4,7 @@ import { ChevronDown12Regular, ChevronRight12Regular, Search16Regular } from '@f
 import React, { useMemo, useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { getVsCodeFluentTheme } from '../fluentTheme';
+import { getFunctoidDisplayName } from './functoidDisplayName';
 
 export interface FunctoidPaletteItem {
   id: number;
@@ -102,7 +103,7 @@ function FunctoidPaletteView({ functoids, onSelect }: FunctoidPaletteViewProps):
                       <span className="item-icon" style={{ background: categoryColors[category] || '#9e9e9e' }}>
                         fn
                       </span>
-                      <span className="item-name">{item.name}</span>
+                      <span className="item-name">{getFunctoidDisplayName(item.name)}</span>
                     </span>
                   </Button>
                 ))}

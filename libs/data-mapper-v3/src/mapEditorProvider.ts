@@ -17,17 +17,29 @@ import { CompilerWorkerClient } from './worker/compilerWorkerClient';
 import type { CompileResult } from './compiler/xsltCompiler';
 import type { SchemaTree } from './model/schemaModel';
 import { resolveSchemaDependencies } from './schema/schemaDependencyResolver';
-import { applyMapPatches, createMapPatchValidationContext, createMapPrompt, parseMapPromptResponse } from './copilot/mapPrompt';
+import { resolveLooseSchemaReference } from './schema/schemaReferenceResolver';
+import { replaceSchema } from './schema/schemaReplacement';
+import {
+  applyMapPatches,
+  createMapLayoutPrompt,
+  createMapPatchValidationContext,
+  createMapPrompt,
+  parseMapPromptResponse,
+} from './copilot/mapPrompt';
+import { errorCategory, getDataMapperLogger } from './logger';
 import { getSelectedFileDirectory, resolveBrowseDirectory } from './browseLocation';
 
 export class MapEditorProvider implements vscode.CustomTextEditorProvider {
   public static readonly viewType = 'biztalkDataMapper.mapEditor';
   private static readonly LAST_BROWSE_DIRECTORY_KEY = 'dataMapperV3.lastBrowseDirectory';
+  private static activeWebviewPanel: vscode.WebviewPanel | undefined;
   private btmSerializer: BtmSerializer;
   private schemaParser: SchemaParser;
   private instanceGenerator: InstanceGenerator;
   private functoidRegistry: FunctoidRegistry;
   private compilerWorker: CompilerWorkerClient;
+  private readonly logger = getDataMapperLogger();
+  private nextOperationId = 1;
 
   constructor(private readonly context: vscode.ExtensionContext) {
     this.btmSerializer = new BtmSerializer();
@@ -46,11 +58,29 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
     return vscode.Disposable.from(registration, provider.compilerWorker);
   }
 
+  public static async executeActiveEditorCommand(type: 'executeCompile' | 'executeTestMap'): Promise<boolean> {
+    if (!MapEditorProvider.activeWebviewPanel) {
+      return false;
+    }
+    return MapEditorProvider.activeWebviewPanel.webview.postMessage({ type, data: {} } satisfies HostToWebviewMessage);
+  }
+
   public async resolveCustomTextEditor(
     document: vscode.TextDocument,
     webviewPanel: vscode.WebviewPanel,
     _token: vscode.CancellationToken
   ): Promise<void> {
+    this.logger.info('Opening map editor; parsing BTM document.');
+    if (webviewPanel.active) {
+      MapEditorProvider.activeWebviewPanel = webviewPanel;
+    }
+    const viewStateSub = webviewPanel.onDidChangeViewState?.(() => {
+      if (webviewPanel.active) {
+        MapEditorProvider.activeWebviewPanel = webviewPanel;
+      } else if (MapEditorProvider.activeWebviewPanel === webviewPanel) {
+        MapEditorProvider.activeWebviewPanel = undefined;
+      }
+    });
     webviewPanel.title = path.basename(document.uri.fsPath, path.extname(document.uri.fsPath));
     webviewPanel.webview.options = {
       enableScripts: true,
@@ -67,7 +97,11 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
       // Strip BOM and normalize encoding issues from UTF-16 files
       content = content.replace(/^\uFEFF/, '').replace(/\0/g, '');
       mapDoc = this.btmSerializer.deserialize(content);
+      this.logger.info(
+        `BTM parsed: ${mapDoc.pages.length} pages, ${mapDoc.pages.reduce((count, page) => count + page.links.length, 0)} links.`
+      );
     } catch (e: any) {
+      this.logger.error(`BTM parsing failed (${errorCategory(e)}); details shown in the editor.`);
       vscode.window.showErrorMessage(`Failed to parse .btm file: ${e.message}`);
       mapDoc = this.btmSerializer.createNew('', '', 'Error');
     }
@@ -75,14 +109,22 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
     // Load schemas if possible
     let sourceSchemaTree: SchemaTree | undefined;
     let targetSchemaTree: SchemaTree | undefined;
+    const schemaKey = (reference: MapDocument['sourceSchema']) =>
+      JSON.stringify({
+        location: reference.location || '',
+        rootName: reference.rootName || '',
+        inlineSchemaXml: reference.inlineSchemaXml || '',
+      });
+    this.logger.info('Loading source schema and dependencies.');
     try {
       if (mapDoc.sourceSchema.location) {
-        const schemaPath = this.resolveSchemaPath(document.uri, mapDoc.sourceSchema.location);
+        const schemaPath = this.resolveSchemaPath(document.uri, mapDoc.sourceSchema.location, mapDoc.sourceSchema.rootName);
         const schemaContent = await this.readFile(schemaPath);
         if (schemaContent) {
           const importedSchemas = await this.resolveSchemaDependencies(schemaContent, schemaPath);
           sourceSchemaTree = this.schemaParser.parseWithImports(schemaContent, schemaPath, importedSchemas, mapDoc.sourceSchema.rootName);
         } else {
+          this.logger.warn('Source schema file was not found.');
           vscode.window.showWarningMessage(
             `Source schema not found: ${mapDoc.sourceSchema.location}. Use "Load Source Schema" to select it manually.`
           );
@@ -98,18 +140,23 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
         );
       }
     } catch (e: any) {
-      console.warn(`Could not load source schema: ${e.message}`);
+      this.logger.error(`Source schema loading failed (${errorCategory(e)}); details shown in the editor.`);
       vscode.window.showWarningMessage(`Could not load source schema "${mapDoc.sourceSchema.location || '(inline)'}": ${e.message}`);
     }
 
+    this.logger.info(`Source schema ${sourceSchemaTree ? 'loaded' : 'unavailable'}. Loading target schema and dependencies.`);
     try {
-      if (mapDoc.targetSchema.location) {
-        const schemaPath = this.resolveSchemaPath(document.uri, mapDoc.targetSchema.location);
+      if (sourceSchemaTree && schemaKey(mapDoc.sourceSchema) === schemaKey(mapDoc.targetSchema)) {
+        targetSchemaTree = sourceSchemaTree;
+        this.logger.info('Target schema matches source schema; reusing the parsed schema tree.');
+      } else if (mapDoc.targetSchema.location) {
+        const schemaPath = this.resolveSchemaPath(document.uri, mapDoc.targetSchema.location, mapDoc.targetSchema.rootName);
         const schemaContent = await this.readFile(schemaPath);
         if (schemaContent) {
           const importedSchemas = await this.resolveSchemaDependencies(schemaContent, schemaPath);
           targetSchemaTree = this.schemaParser.parseWithImports(schemaContent, schemaPath, importedSchemas, mapDoc.targetSchema.rootName);
         } else {
+          this.logger.warn('Target schema file was not found.');
           vscode.window.showWarningMessage(
             `Target schema not found: ${mapDoc.targetSchema.location}. Use "Load Target Schema" to select it manually.`
           );
@@ -125,9 +172,46 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
         );
       }
     } catch (e: any) {
-      console.warn(`Could not load target schema: ${e.message}`);
+      this.logger.error(`Target schema loading failed (${errorCategory(e)}); details shown in the editor.`);
       vscode.window.showWarningMessage(`Could not load target schema "${mapDoc.targetSchema.location}": ${e.message}`);
     }
+
+    this.logger.info(`Target schema ${targetSchemaTree ? 'loaded' : 'unavailable'}.`);
+    let disposed = false;
+    let schemaRequest = 0;
+    const schemaCache = new Map<string, SchemaTree | undefined>();
+    schemaCache.set(schemaKey(mapDoc.sourceSchema), sourceSchemaTree);
+    schemaCache.set(schemaKey(mapDoc.targetSchema), targetSchemaTree);
+    const synchronizeSchemas = async (updatedMap: MapDocument, version: number): Promise<void> => {
+      const load = async (reference: MapDocument['sourceSchema']) => {
+        const key = schemaKey(reference);
+        if (schemaCache.has(key)) {
+          return schemaCache.get(key);
+        }
+        try {
+          const tree = await this.loadSchemaTree(reference, document.uri);
+          schemaCache.set(key, tree);
+          return tree;
+        } catch (error) {
+          this.logger.error(`Schema synchronization failed (${errorCategory(error)}).`);
+          if (!disposed && document.version === version) {
+            vscode.window.showWarningMessage(`Could not load schema: ${error instanceof Error ? error.message : String(error)}`);
+          }
+          return undefined;
+        }
+      };
+      const [source, target] = await Promise.all([load(updatedMap.sourceSchema), load(updatedMap.targetSchema)]);
+      if (disposed || document.version !== version) {
+        return;
+      }
+      mapDoc = updatedMap;
+      sourceSchemaTree = source;
+      targetSchemaTree = target;
+      await webviewPanel.webview.postMessage({
+        type: 'schemaStateChanged',
+        data: { map: updatedMap, sourceSchema: source ?? null, targetSchema: target ?? null },
+      });
+    };
 
     // Prepare initial data
     const initData: HostToWebviewMessage = {
@@ -199,524 +283,669 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
     // Handle messages from webview
     webviewPanel.webview.onDidReceiveMessage(async (candidate) => {
       if (!isWebviewToHostMessage(candidate)) {
-        console.warn('Ignoring invalid Data Mapper webview message');
+        this.logger.warn('Ignoring invalid Data Mapper webview message; contents omitted.');
         return;
       }
       const message = candidate;
-      switch (message.type) {
-        case 'ready': {
-          // Webview is ready, send init data now
-          webviewPanel.webview.postMessage(initData);
-          break;
-        }
-        case 'browseCopilotContext': {
-          const selected = await vscode.window.showOpenDialog({
-            defaultUri: this.getBrowseDefaultUri(document.uri),
-            canSelectMany: true,
-            canSelectFiles: true,
-            canSelectFolders: false,
-            title: 'Add Context Files to Data Mapper Assistant',
-            openLabel: 'Add Context',
-          });
-          if (!selected) {
+      const operation = `${message.type} #${this.nextOperationId++}`;
+      const started = Date.now();
+      const quiet = message.type === 'ready' || message.type === 'update';
+      if (message.type === 'compile' || message.type === 'testMapWithInput') {
+        this.logger.show(true);
+      }
+      if (quiet) {
+        this.logger.debug(`${operation} started.`);
+      } else {
+        this.logger.info(`${operation} started.`);
+      }
+      try {
+        switch (message.type) {
+          case 'ready': {
+            // Webview is ready, send init data now
+            webviewPanel.webview.postMessage(initData);
             break;
           }
-          await this.rememberBrowseSelection(selected[0]);
-          let skipped = 0;
-          for (const uri of selected) {
-            if (!(await addCopilotContextFile(uri))) {
-              skipped++;
-            }
-          }
-          await postCopilotContext(skipped > 0 ? `${skipped} binary or oversized context file(s) were skipped.` : undefined);
-          break;
-        }
-        case 'removeCopilotContext': {
-          copilotContextFiles.delete(message.data.id);
-          await postCopilotContext();
-          break;
-        }
-        case 'clearCopilotContext': {
-          copilotContextFiles.clear();
-          await postCopilotContext();
-          break;
-        }
-        case 'update': {
-          const updatedMap = message.data as MapDocument;
-          const content = this.btmSerializer.serialize(updatedMap);
-          const edit = new vscode.WorkspaceEdit();
-          edit.replace(document.uri, new vscode.Range(0, 0, document.lineCount, 0), content);
-          await vscode.workspace.applyEdit(edit);
-          break;
-        }
-        case 'compile': {
-          const result = await this.compileMap(
-            this.loadCustomTransform(message.data as MapDocument, document),
-            sourceSchemaTree,
-            targetSchemaTree
-          );
-          if (result.success && result.xslt) {
-            const xsltUri = document.uri.with({
-              path: document.uri.path.replace(/\.btm$/, '.xslt'),
+          case 'browseCopilotContext': {
+            const selected = await vscode.window.showOpenDialog({
+              defaultUri: this.getBrowseDefaultUri(document.uri),
+              canSelectMany: true,
+              canSelectFiles: true,
+              canSelectFolders: false,
+              title: 'Add Context Files to Data Mapper Assistant',
+              openLabel: 'Add Context',
             });
-            await vscode.workspace.fs.writeFile(xsltUri, Buffer.from(result.xslt, 'utf-8'));
-            vscode.window.showInformationMessage(`Map compiled successfully: ${path.basename(xsltUri.fsPath)}`);
-            const xsltDoc = await vscode.workspace.openTextDocument(xsltUri);
-            await vscode.window.showTextDocument(xsltDoc, vscode.ViewColumn.Beside);
-          } else {
-            const errorMsg = result.errors.map((e) => e.message).join('\n');
-            vscode.window.showErrorMessage(`Compilation errors:\n${errorMsg}`);
-          }
-          webviewPanel.webview.postMessage({
-            type: 'compileResult',
-            data: result,
-          });
-          break;
-        }
-        case 'loadSchema': {
-          const currentSchema = message.side === 'source' ? sourceSchemaTree : targetSchemaTree;
-          const schemaUri = await vscode.window.showOpenDialog({
-            defaultUri: this.getBrowseDefaultUri(document.uri, currentSchema?.filePath),
-            canSelectMany: false,
-            filters: { 'XSD Schema': ['xsd'] },
-            title: `Select ${message.side} Schema`,
-          });
-          if (schemaUri && schemaUri.length > 0) {
-            await this.rememberBrowseSelection(schemaUri[0]);
-            try {
-              const content = await this.readFile(schemaUri[0].fsPath);
-              if (content) {
-                const importedSchemas = await this.resolveSchemaDependencies(content, schemaUri[0].fsPath);
-                const tree = this.schemaParser.parseWithImports(content, schemaUri[0].fsPath, importedSchemas);
-                if (message.side === 'source') {
-                  sourceSchemaTree = tree;
-                } else {
-                  targetSchemaTree = tree;
-                }
-                webviewPanel.webview.postMessage({
-                  type: 'schemaLoaded',
-                  data: { side: message.side, schema: tree, path: schemaUri[0].fsPath },
-                });
-              }
-            } catch (e: any) {
-              vscode.window.showErrorMessage(`Failed to parse schema: ${e.message}`);
+            if (!selected) {
+              break;
             }
+            await this.rememberBrowseSelection(selected[0]);
+            let skipped = 0;
+            for (const uri of selected) {
+              if (!(await addCopilotContextFile(uri))) {
+                skipped++;
+              }
+            }
+            await postCopilotContext(skipped > 0 ? `${skipped} binary or oversized context file(s) were skipped.` : undefined);
+            break;
           }
-          break;
-        }
-        case 'testMap': {
-          const inputFile = await vscode.window.showOpenDialog({
-            defaultUri: this.getBrowseDefaultUri(document.uri),
-            canSelectMany: false,
-            filters: { 'XML Files': ['xml'] },
-            title: 'Select Test Input XML',
-          });
-          if (inputFile && inputFile.length > 0) {
-            await this.rememberBrowseSelection(inputFile[0]);
-            vscode.window.showInformationMessage(`Testing map with: ${inputFile[0].fsPath}`);
+          case 'removeCopilotContext': {
+            copilotContextFiles.delete(message.data.id);
+            await postCopilotContext();
+            break;
           }
-          break;
-        }
-        case 'generateInstance': {
-          const side = message.side || 'source';
-          let schemaTree = side === 'source' ? sourceSchemaTree : targetSchemaTree;
-          if (!schemaTree) {
+          case 'clearCopilotContext': {
+            copilotContextFiles.clear();
+            await postCopilotContext();
+            break;
+          }
+          case 'update': {
+            const updatedMap = message.data as MapDocument;
+            const content = this.btmSerializer.serialize(updatedMap);
+            const edit = new vscode.WorkspaceEdit();
+            edit.replace(document.uri, new vscode.Range(0, 0, document.lineCount, 0), content);
+            await vscode.workspace.applyEdit(edit);
+            break;
+          }
+          case 'compile': {
+            const result = await this.compileMap(
+              this.loadCustomTransform(message.data as MapDocument, document),
+              sourceSchemaTree,
+              targetSchemaTree
+            );
+            if (result.success && result.xslt) {
+              const xsltUri = document.uri.with({
+                path: document.uri.path.replace(/\.btm$/, '.xslt'),
+              });
+              await vscode.workspace.fs.writeFile(xsltUri, Buffer.from(result.xslt, 'utf-8'));
+              this.logger.info(`${operation}: compiled XSLT saved; opening result.`);
+              vscode.window.showInformationMessage(`Map compiled successfully: ${path.basename(xsltUri.fsPath)}`);
+              const xsltDoc = await vscode.workspace.openTextDocument(xsltUri);
+              await vscode.window.showTextDocument(xsltDoc, vscode.ViewColumn.Beside);
+            } else {
+              const errorMsg = result.errors.map((e) => e.message).join('\n');
+              vscode.window.showErrorMessage(`Compilation errors:\n${errorMsg}`);
+            }
+            webviewPanel.webview.postMessage({
+              type: 'compileResult',
+              data: result,
+            });
+            break;
+          }
+          case 'loadSchema': {
+            const request = ++schemaRequest;
+            const version = document.version;
+            const isCurrent = () => !disposed && request === schemaRequest && document.version === version;
             try {
+              const currentSchema = message.side === 'source' ? sourceSchemaTree : targetSchemaTree;
+              const schemaUri = await vscode.window.showOpenDialog({
+                defaultUri: this.getBrowseDefaultUri(document.uri, currentSchema?.filePath),
+                canSelectMany: false,
+                filters: { 'XSD Schema': ['xsd'] },
+                title: `Select ${message.side} Schema`,
+              });
+              if (!schemaUri?.length || !isCurrent()) {
+                this.logger.info(`${operation}: schema selection cancelled or superseded.`);
+                break;
+              }
+              await this.rememberBrowseSelection(schemaUri[0]);
+              const reference = { location: schemaUri[0].fsPath };
+              const tree = await this.loadSchemaTree(reference, document.uri);
+              if (!isCurrent() || !tree) {
+                break;
+              }
               const currentMap = this.btmSerializer.deserialize(
                 document
                   .getText()
                   .replace(/^\uFEFF/, '')
                   .replace(/\0/g, '')
               );
-              const reference = side === 'source' ? currentMap.sourceSchema : currentMap.targetSchema;
-              schemaTree = await this.loadSchemaTree(reference, document.uri);
-              if (side === 'source') {
-                sourceSchemaTree = schemaTree;
-              } else {
-                targetSchemaTree = schemaTree;
+              const replacement = replaceSchema(currentMap, message.side, tree, {
+                ...reference,
+                rootName: tree.rootElement.name,
+                namespace: tree.targetNamespace,
+              });
+              const existingSchema = currentMap[`${message.side}Schema`];
+              if (existingSchema.location || existingSchema.inlineSchemaXml || replacement.removedLinkCount > 0) {
+                const linkImpact =
+                  replacement.removedLinkCount > 0
+                    ? `Replacing the ${message.side} schema will remove ${replacement.removedLinkCount} unmatched link(s) across all pages. Links whose paths exist in the new schema and all functoids will be preserved.`
+                    : 'All existing links and functoids will be preserved.';
+                const choice = await vscode.window.showWarningMessage(
+                  `Replace the ${message.side} schema with "${path.basename(reference.location)}"? ${linkImpact} This change affects every map page.`,
+                  { modal: true },
+                  'Replace Schema'
+                );
+                if (choice !== 'Replace Schema' || !isCurrent()) {
+                  this.logger.info(`${operation}: schema replacement cancelled or superseded.`);
+                  break;
+                }
+              }
+              if (!isCurrent()) {
+                break;
+              }
+              const edit = new vscode.WorkspaceEdit();
+              const replacementXml = this.btmSerializer.serialize(replacement.map);
+              edit.replace(document.uri, new vscode.Range(0, 0, document.lineCount, 0), replacementXml);
+              const key = schemaKey(replacement.map[`${message.side}Schema`]);
+              const hadCachedSchema = schemaCache.has(key);
+              const previousCachedSchema = schemaCache.get(key);
+              schemaCache.set(key, tree);
+              let applied = false;
+              try {
+                applied = await vscode.workspace.applyEdit(edit);
+              } finally {
+                if (!applied) {
+                  this.logger.error(`${operation}: schema replacement edit rejected.`);
+                  if (hadCachedSchema) {
+                    schemaCache.set(key, previousCachedSchema);
+                  } else {
+                    schemaCache.delete(key);
+                  }
+                }
+              }
+              if (!applied) {
+                vscode.window.showErrorMessage('Could not replace schema. The map was not changed.');
+              } else if (
+                !disposed &&
+                document.getText() === replacementXml &&
+                (message.side === 'source' ? sourceSchemaTree : targetSchemaTree) !== tree
+              ) {
+                await synchronizeSchemas(this.btmSerializer.deserialize(replacementXml), document.version);
+              }
+              if (applied) {
+                this.logger.info(`${operation}: schema replaced; removed ${replacement.removedLinkCount} unmatched links.`);
               }
             } catch (error) {
-              const detail = error instanceof Error ? `: ${error.message}` : '';
+              this.logger.error(`${operation}: schema replacement failed (${errorCategory(error)}).`);
+              if (isCurrent()) {
+                vscode.window.showErrorMessage(`Failed to replace schema: ${error instanceof Error ? error.message : String(error)}`);
+              }
+            }
+            break;
+          }
+          case 'testMap': {
+            const inputFile = await vscode.window.showOpenDialog({
+              defaultUri: this.getBrowseDefaultUri(document.uri),
+              canSelectMany: false,
+              filters: { 'XML Files': ['xml'] },
+              title: 'Select Test Input XML',
+            });
+            if (inputFile && inputFile.length > 0) {
+              await this.rememberBrowseSelection(inputFile[0]);
+              this.logger.info(
+                `${operation}: input selected; this command only selects input. Run Test Map from the editor panel to transform.`
+              );
+              vscode.window.showInformationMessage(`Testing map with: ${inputFile[0].fsPath}`);
+            }
+            break;
+          }
+          case 'generateInstance': {
+            const side = message.side || 'source';
+            let schemaTree = side === 'source' ? sourceSchemaTree : targetSchemaTree;
+            if (!schemaTree) {
+              try {
+                const currentMap = this.btmSerializer.deserialize(
+                  document
+                    .getText()
+                    .replace(/^\uFEFF/, '')
+                    .replace(/\0/g, '')
+                );
+                const reference = side === 'source' ? currentMap.sourceSchema : currentMap.targetSchema;
+                schemaTree = await this.loadSchemaTree(reference, document.uri);
+                if (side === 'source') {
+                  sourceSchemaTree = schemaTree;
+                } else {
+                  targetSchemaTree = schemaTree;
+                }
+              } catch (error) {
+                this.logger.error(`${operation}: schema loading failed (${errorCategory(error)}).`);
+                const detail = error instanceof Error ? `: ${error.message}` : '';
+                webviewPanel.webview.postMessage({
+                  type: 'instanceGenerated',
+                  data: {
+                    side,
+                    xml: '',
+                    error: `Could not load ${side} schema${detail}`,
+                  },
+                });
+                break;
+              }
+            }
+            if (schemaTree) {
+              try {
+                const map = this.btmSerializer.deserialize(document.getText());
+                const xml = this.instanceGenerator.generate(
+                  schemaTree,
+                  side === 'source' ? map.testValues : undefined,
+                  map.options.ignoreNamespacesForLinks
+                );
+                this.logger.info(`${operation}: instance generated (${Buffer.byteLength(xml)} bytes; contents omitted).`);
+                webviewPanel.webview.postMessage({
+                  type: 'instanceGenerated',
+                  data: { side, xml },
+                });
+              } catch (error) {
+                this.logger.error(`${operation}: instance generation failed (${errorCategory(error)}).`);
+                webviewPanel.webview.postMessage({
+                  type: 'instanceGenerated',
+                  data: { side, xml: '', error: error instanceof Error ? error.message : String(error) },
+                });
+              }
+            } else {
+              this.logger.warn(`${operation}: cannot generate an instance without a schema.`);
               webviewPanel.webview.postMessage({
                 type: 'instanceGenerated',
-                data: {
-                  side,
-                  xml: '',
-                  error: `Could not load ${side} schema${detail}`,
-                },
+                data: { side, xml: '', error: `No ${side} schema loaded` },
               });
-              break;
             }
-          }
-          if (schemaTree) {
-            const xml = this.instanceGenerator.generate(schemaTree);
-            webviewPanel.webview.postMessage({
-              type: 'instanceGenerated',
-              data: { side, xml },
-            });
-          } else {
-            webviewPanel.webview.postMessage({
-              type: 'instanceGenerated',
-              data: { side, xml: '', error: `No ${side} schema loaded` },
-            });
-          }
-          break;
-        }
-        case 'testMapWithInput': {
-          // BizTalk Test Map flow:
-          // 1. Validate input against source schema
-          // 2. Compile map to XSLT
-          // 3. Transform input XML → output XML
-          // 4. Validate output against target schema
-          // 5. Save output file & report results
-          const inputXml = message.data?.inputXml || '';
-          const testMessages: string[] = [];
-
-          if (!inputXml) {
-            webviewPanel.webview.postMessage({
-              type: 'testMapResult',
-              data: { output: '', error: 'No input XML provided. Click "Generate Instance" first.' },
-            });
             break;
           }
+          case 'testMapWithInput': {
+            // BizTalk Test Map flow:
+            // 1. Validate input against source schema
+            // 2. Compile map to XSLT
+            // 3. Transform input XML → output XML
+            // 4. Validate output against target schema
+            // 5. Save output file & report results
+            const inputXml = message.data?.inputXml || '';
+            const testMessages: string[] = [];
 
-          // Step 1: Validate input XML is well-formed
-          try {
-            const { XMLParser } = require('fast-xml-parser');
-            const validateParser = new XMLParser({ ignoreAttributes: false });
-            validateParser.parse(inputXml);
-            testMessages.push('✓ Input XML is well-formed');
-          } catch (parseErr: any) {
-            webviewPanel.webview.postMessage({
-              type: 'testMapResult',
-              data: { output: '', error: `Input validation failed: XML is not well-formed.\n${parseErr.message}` },
-            });
-            break;
-          }
-
-          // Step 2: Compile map to XSLT
-          testMessages.push('• Compiling map to XSLT...');
-          const compileResult = await this.compileMap(
-            this.loadCustomTransform(message.data.map as MapDocument, document),
-            sourceSchemaTree,
-            targetSchemaTree
-          );
-          if (!compileResult.success || !compileResult.xslt) {
-            const errorMsg = compileResult.errors.map((e) => e.message).join('\n');
-            webviewPanel.webview.postMessage({
-              type: 'testMapResult',
-              data: { output: '', error: `Compilation failed:\n${errorMsg}` },
-            });
-            break;
-          }
-          testMessages.push('✓ Map compiled successfully');
-
-          // Save compiled XSLT alongside BTM
-          const btmDir = path.dirname(document.uri.fsPath);
-          const btmName = path.basename(document.uri.fsPath, '.btm');
-          const xsltPath = path.join(btmDir, `${btmName}_output.xslt`);
-          fs.writeFileSync(xsltPath, compileResult.xslt, 'utf-8');
-          testMessages.push(`✓ XSLT saved: ${btmName}_output.xslt`);
-          const extensionObjectPath = path.join(btmDir, `${btmName}_extension.xml`);
-          if (compileResult.extensionObjectXml?.includes('<ExtensionObject ')) {
-            fs.writeFileSync(extensionObjectPath, compileResult.extensionObjectXml, 'utf-8');
-          }
-
-          // Step 3: Transform
-          testMessages.push('• Performing XSLT transformation...');
-          try {
-            const outputPath = path.join(btmDir, `${btmName}_output.xml`);
-            let outputXml: string | undefined;
-
-            // Try .NET XslCompiledTransform first (supports msxsl:script)
-            const dotnetResult = await this.tryDotNetTransform(
-              xsltPath,
-              inputXml,
-              btmDir,
-              fs.existsSync(extensionObjectPath) ? extensionObjectPath : undefined
-            );
-            if (dotnetResult.success) {
-              outputXml = dotnetResult.output;
-              testMessages.push('✓ Transform completed (.NET XslCompiledTransform)');
-            } else {
-              const requiresClrRuntime =
-                compileResult.xslt.includes('urn:schemas-microsoft-com:xslt') ||
-                !!compileResult.extensionObjectXml?.includes('<ExtensionObject ');
-              if (requiresClrRuntime) {
-                throw new Error(`.NET transformation failed: ${dotnetResult.error || 'Worker transform failed.'}`);
-              }
-              // Fall back to JavaScript xslt-processor (strip scripts)
-              if (dotnetResult.error) {
-                testMessages.push(`⚠ .NET transform unavailable: ${dotnetResult.error}`);
-              }
-              testMessages.push('• Falling back to JS transform...');
-              const processedXslt = this.preprocessXsltForTestMap(compileResult.xslt, testMessages);
-
-              const xslt = new Xslt();
-              const xmlParser = new XmlParser();
-              outputXml = await xslt.xsltProcess(xmlParser.xmlParse(inputXml), xmlParser.xmlParse(processedXslt));
-            }
-
-            if (!outputXml || outputXml.trim().length === 0) {
+            if (!inputXml) {
+              this.logger.warn(`${operation}: stopped because no input XML was provided.`);
               webviewPanel.webview.postMessage({
                 type: 'testMapResult',
-                data: { output: '', error: `${testMessages.join('\n')}\n\n✗ Transform produced empty output. Check your map links.` },
+                data: { output: '', error: 'No input XML provided. Click "Generate Instance" first.' },
               });
               break;
             }
-            if (!dotnetResult.success) {
-              testMessages.push('✓ Transform completed');
-            }
 
-            // Step 4: Validate output is well-formed XML
-            const formattedOutput = this.formatXml(outputXml);
+            // Step 1: Validate input XML is well-formed
+            this.logger.info(`${operation}: parsing input XML (${Buffer.byteLength(inputXml)} bytes; contents omitted).`);
             try {
               const { XMLParser } = require('fast-xml-parser');
-              const outParser = new XMLParser({ ignoreAttributes: false });
-              outParser.parse(formattedOutput);
-              testMessages.push('✓ Output XML is well-formed');
-            } catch (outParseErr: any) {
-              testMessages.push(`⚠ Output XML validation warning: ${outParseErr.message}`);
+              const validateParser = new XMLParser({ ignoreAttributes: false });
+              validateParser.parse(inputXml);
+              testMessages.push('✓ Input XML is well-formed');
+              this.logger.info(`${operation}: input XML parsing completed.`);
+            } catch (parseErr: any) {
+              this.logger.error(`${operation}: input XML parsing failed (${errorCategory(parseErr)}).`);
+              webviewPanel.webview.postMessage({
+                type: 'testMapResult',
+                data: { output: '', error: `Input validation failed: XML is not well-formed.\n${parseErr.message}` },
+              });
+              break;
             }
 
-            // Step 5: Save output.xml
-            fs.writeFileSync(outputPath, formattedOutput, 'utf-8');
-            testMessages.push(`✓ Output saved: ${btmName}_output.xml`);
+            // Step 2: Compile map to XSLT
+            testMessages.push('• Compiling map to XSLT...');
+            this.logger.info(`${operation}: compiling map before transformation.`);
+            const compileResult = await this.compileMap(
+              this.loadCustomTransform(message.data.map as MapDocument, document),
+              sourceSchemaTree,
+              targetSchemaTree
+            );
+            if (!compileResult.success || !compileResult.xslt) {
+              this.logger.error(`${operation}: stopped because compilation did not produce XSLT.`);
+              const errorMsg = compileResult.errors.map((e) => e.message).join('\n');
+              webviewPanel.webview.postMessage({
+                type: 'testMapResult',
+                data: { output: '', error: `Compilation failed:\n${errorMsg}` },
+              });
+              break;
+            }
+            testMessages.push('✓ Map compiled successfully');
 
-            // Open the output file in VS Code
-            const outputUri = vscode.Uri.file(outputPath);
-            vscode.window.showTextDocument(outputUri, { viewColumn: vscode.ViewColumn.Beside });
+            // Save compiled XSLT alongside BTM
+            const btmDir = path.dirname(document.uri.fsPath);
+            const btmName = path.basename(document.uri.fsPath, '.btm');
+            const xsltPath = path.join(btmDir, `${btmName}_output.xslt`);
+            fs.writeFileSync(xsltPath, compileResult.xslt, 'utf-8');
+            this.logger.info(`${operation}: compiled XSLT saved.`);
+            testMessages.push(`✓ XSLT saved: ${btmName}_output.xslt`);
+            const extensionObjectPath = path.join(btmDir, `${btmName}_extension.xml`);
+            if (compileResult.extensionObjectXml?.includes('<ExtensionObject ')) {
+              fs.writeFileSync(extensionObjectPath, compileResult.extensionObjectXml, 'utf-8');
+              this.logger.info(`${operation}: extension-object configuration saved.`);
+            }
 
-            const resultSummary = `${testMessages.join('\n')}\n\n${'─'.repeat(50)}\n${formattedOutput}`;
-            webviewPanel.webview.postMessage({
-              type: 'testMapResult',
-              data: { output: resultSummary },
-            });
-            vscode.window.showInformationMessage(`Test Map succeeded. Output: ${btmName}_output.xml`);
-          } catch (transformErr: any) {
-            webviewPanel.webview.postMessage({
-              type: 'testMapResult',
-              data: { output: '', error: `${testMessages.join('\n')}\n\n✗ XSLT transformation failed:\n${transformErr.message}` },
-            });
-          }
-          break;
-        }
-        case 'browseAssembly': {
-          const dllUri = await vscode.window.showOpenDialog({
-            defaultUri: this.getBrowseDefaultUri(document.uri),
-            canSelectMany: false,
-            filters: { '.NET Assembly': ['dll'] },
-            title: 'Select .NET Assembly',
-          });
-          if (dllUri && dllUri.length > 0) {
-            await this.rememberBrowseSelection(dllUri[0]);
-            const dllPath = dllUri[0].fsPath;
-            // Decompile assembly to get classes and methods
-            const assemblyInfo = await this.decompileAssembly(dllPath);
-            webviewPanel.webview.postMessage({
-              type: 'assemblySelected',
-              data: { path: dllPath, classes: assemblyInfo },
-            });
-          }
-          break;
-        }
-        case 'exportXslt': {
-          const result = await this.compileMap(
-            this.loadCustomTransform(message.data as MapDocument, document),
-            sourceSchemaTree,
-            targetSchemaTree
-          );
-          if (result.success && result.xslt) {
-            const saveUri = await vscode.window.showSaveDialog({
-              defaultUri: document.uri.with({ path: document.uri.path.replace(/\.btm$/, '.xslt') }),
-              filters: { 'XSLT Stylesheet': ['xslt', 'xsl'], 'All Files': ['*'] },
-              title: 'Export XSLT',
-            });
-            if (saveUri) {
-              await vscode.workspace.fs.writeFile(saveUri, Buffer.from(result.xslt, 'utf-8'));
-              if (result.extensionObjectXml?.includes('<ExtensionObject ')) {
-                const extensionUri = saveUri.with({
-                  path: saveUri.path.replace(/\.(?:xslt|xsl)$/i, '.extension.xml'),
-                });
-                await vscode.workspace.fs.writeFile(extensionUri, Buffer.from(result.extensionObjectXml, 'utf-8'));
+            // Step 3: Transform
+            testMessages.push('• Performing XSLT transformation...');
+            try {
+              const outputPath = path.join(btmDir, `${btmName}_output.xml`);
+              let outputXml: string | undefined;
+
+              // Try .NET XslCompiledTransform first (supports msxsl:script)
+              const dotnetResult = await this.tryDotNetTransform(
+                xsltPath,
+                inputXml,
+                btmDir,
+                fs.existsSync(extensionObjectPath) ? extensionObjectPath : undefined
+              );
+              if (dotnetResult.success) {
+                outputXml = dotnetResult.output;
+                testMessages.push('✓ Transform completed (.NET XslCompiledTransform)');
+              } else {
+                const requiresClrRuntime =
+                  compileResult.xslt.includes('urn:schemas-microsoft-com:xslt') ||
+                  !!compileResult.extensionObjectXml?.includes('<ExtensionObject ');
+                if (requiresClrRuntime) {
+                  this.logger.error(`${operation}: .NET transform failed; JavaScript fallback is not supported for this map.`);
+                  throw new Error(`.NET transformation failed: ${dotnetResult.error || 'Worker transform failed.'}`);
+                }
+                // Fall back to JavaScript xslt-processor (strip scripts)
+                if (dotnetResult.error) {
+                  testMessages.push(`⚠ .NET transform unavailable: ${dotnetResult.error}`);
+                }
+                testMessages.push('• Falling back to JS transform...');
+                this.logger.warn(`${operation}: .NET transform failed; falling back to JavaScript transformation.`);
+                const processedXslt = this.preprocessXsltForTestMap(compileResult.xslt, testMessages);
+
+                const xslt = new Xslt();
+                const xmlParser = new XmlParser();
+                outputXml = await xslt.xsltProcess(xmlParser.xmlParse(inputXml), xmlParser.xmlParse(processedXslt));
               }
-              vscode.window.showInformationMessage(`XSLT exported: ${path.basename(saveUri.fsPath)}`);
-              const xsltDoc = await vscode.workspace.openTextDocument(saveUri);
-              await vscode.window.showTextDocument(xsltDoc, vscode.ViewColumn.Beside);
+
+              if (!outputXml || outputXml.trim().length === 0) {
+                this.logger.error(`${operation}: transformation produced empty output.`);
+                webviewPanel.webview.postMessage({
+                  type: 'testMapResult',
+                  data: { output: '', error: `${testMessages.join('\n')}\n\n✗ Transform produced empty output. Check your map links.` },
+                });
+                break;
+              }
+              if (!dotnetResult.success) {
+                testMessages.push('✓ Transform completed');
+              }
+
+              // Step 4: Validate output is well-formed XML
+              const formattedOutput = this.formatXml(outputXml);
+              try {
+                const { XMLParser } = require('fast-xml-parser');
+                const outParser = new XMLParser({ ignoreAttributes: false });
+                outParser.parse(formattedOutput);
+                this.logger.info(`${operation}: output XML parsing completed.`);
+                testMessages.push('✓ Output XML is well-formed');
+              } catch (outParseErr: any) {
+                this.logger.warn(`${operation}: output XML parsing warning (${errorCategory(outParseErr)}).`);
+                testMessages.push(`⚠ Output XML validation warning: ${outParseErr.message}`);
+              }
+
+              // Step 5: Save output.xml
+              fs.writeFileSync(outputPath, formattedOutput, 'utf-8');
+              this.logger.info(`${operation}: output XML saved (${Buffer.byteLength(formattedOutput)} bytes); Test Map succeeded.`);
+              testMessages.push(`✓ Output saved: ${btmName}_output.xml`);
+
+              // Open the output file in VS Code
+              const outputUri = vscode.Uri.file(outputPath);
+              await vscode.window.showTextDocument(outputUri, { viewColumn: vscode.ViewColumn.Beside });
+
+              const resultSummary = `${testMessages.join('\n')}\n\n${'─'.repeat(50)}\n${formattedOutput}`;
+              webviewPanel.webview.postMessage({
+                type: 'testMapResult',
+                data: { output: resultSummary },
+              });
+              vscode.window.showInformationMessage(`Test Map succeeded. Output: ${btmName}_output.xml`);
+            } catch (transformErr: any) {
+              this.logger.error(
+                `${operation}: transformation or output save failed (${errorCategory(transformErr)}); details returned to the editor.`
+              );
+              webviewPanel.webview.postMessage({
+                type: 'testMapResult',
+                data: { output: '', error: `${testMessages.join('\n')}\n\n✗ XSLT transformation failed:\n${transformErr.message}` },
+              });
             }
-          } else {
-            const errorMsg = result.errors.map((e) => e.message).join('\n');
-            vscode.window.showErrorMessage(`Export failed - compilation errors:\n${errorMsg}`);
-          }
-          break;
-        }
-        case 'deployToLogicApps': {
-          const compileResult = await this.compileMap(
-            this.loadCustomTransform(message.data as MapDocument, document),
-            sourceSchemaTree,
-            targetSchemaTree
-          );
-          if (!compileResult.success || !compileResult.xslt) {
-            const errorMsg = compileResult.errors.map((e) => e.message).join('\n');
-            vscode.window.showErrorMessage(`Compile failed:\n${errorMsg}`);
             break;
           }
-          await this.deployToLogicApps(compileResult.xslt, document, compileResult.assemblyPaths || []);
-          break;
-        }
-        case 'copilotPrompt': {
-          const respond = (data: {
-            success: boolean;
-            applied: boolean;
-            message: string;
-            map?: MapDocument;
-          }): Thenable<boolean> =>
-            webviewPanel.webview.postMessage({
-              type: 'copilotResult',
-              data,
+          case 'browseAssembly': {
+            const dllUri = await vscode.window.showOpenDialog({
+              defaultUri: this.getBrowseDefaultUri(document.uri),
+              canSelectMany: false,
+              filters: { '.NET Assembly': ['dll'] },
+              title: 'Select .NET Assembly',
             });
-
-          try {
-            if (!vscode.lm?.selectChatModels) {
-              await respond({
-                success: false,
-                applied: false,
-                message: 'Data Mapper Assistant requires a newer version of VS Code.',
+            if (dllUri && dllUri.length > 0) {
+              await this.rememberBrowseSelection(dllUri[0]);
+              const dllPath = dllUri[0].fsPath;
+              // Decompile assembly to get classes and methods
+              const assemblyInfo = await this.decompileAssembly(dllPath);
+              webviewPanel.webview.postMessage({
+                type: 'assemblySelected',
+                data: { path: dllPath, classes: assemblyInfo },
               });
-              break;
             }
-
-            const models = await vscode.lm.selectChatModels({ vendor: 'copilot' });
-            const model = models[0];
-            if (!model) {
-              await respond({
-                success: false,
-                applied: false,
-                message: 'Data Mapper Assistant cannot find a language model. Install or enable GitHub Copilot Chat and sign in.',
-              });
-              break;
-            }
-
-            const originalDocumentVersion = document.version;
-            const currentMap = this.btmSerializer.deserialize(
-              document
-                .getText()
-                .replace(/^\uFEFF/, '')
-                .replace(/\0/g, '')
-            );
-            const availableFunctoids = this.functoidRegistry.getAllFunctoids().map((f) => ({
-              id: f.id,
-              name: f.name,
-              category: f.category,
-              description: f.description,
-              minInputs: f.minInputs,
-              maxInputs: f.maxInputs,
-              hasOutput: f.hasOutput,
-              tooltip: f.tooltip,
-            }));
-            const prompt = createMapPrompt(
-              message.data.prompt,
-              currentMap,
-              message.data.activePage,
+            break;
+          }
+          case 'exportXslt': {
+            const result = await this.compileMap(
+              this.loadCustomTransform(message.data as MapDocument, document),
               sourceSchemaTree,
-              targetSchemaTree,
-              availableFunctoids,
-              [...copilotContextFiles.values()].map((file) => ({
+              targetSchemaTree
+            );
+            if (result.success && result.xslt) {
+              const saveUri = await vscode.window.showSaveDialog({
+                defaultUri: document.uri.with({ path: document.uri.path.replace(/\.btm$/, '.xslt') }),
+                filters: { 'XSLT Stylesheet': ['xslt', 'xsl'], 'All Files': ['*'] },
+                title: 'Export XSLT',
+              });
+              if (saveUri) {
+                await vscode.workspace.fs.writeFile(saveUri, Buffer.from(result.xslt, 'utf-8'));
+                this.logger.info(`${operation}: XSLT export saved.`);
+                if (result.extensionObjectXml?.includes('<ExtensionObject ')) {
+                  const extensionUri = saveUri.with({
+                    path: saveUri.path.replace(/\.(?:xslt|xsl)$/i, '.extension.xml'),
+                  });
+                  await vscode.workspace.fs.writeFile(extensionUri, Buffer.from(result.extensionObjectXml, 'utf-8'));
+                }
+                vscode.window.showInformationMessage(`XSLT exported: ${path.basename(saveUri.fsPath)}`);
+                const xsltDoc = await vscode.workspace.openTextDocument(saveUri);
+                await vscode.window.showTextDocument(xsltDoc, vscode.ViewColumn.Beside);
+              }
+            } else {
+              const errorMsg = result.errors.map((e) => e.message).join('\n');
+              vscode.window.showErrorMessage(`Export failed - compilation errors:\n${errorMsg}`);
+            }
+            break;
+          }
+          case 'deployToLogicApps': {
+            const compileResult = await this.compileMap(
+              this.loadCustomTransform(message.data as MapDocument, document),
+              sourceSchemaTree,
+              targetSchemaTree
+            );
+            if (!compileResult.success || !compileResult.xslt) {
+              const errorMsg = compileResult.errors.map((e) => e.message).join('\n');
+              vscode.window.showErrorMessage(`Compile failed:\n${errorMsg}`);
+              break;
+            }
+            await this.deployToLogicApps(compileResult.xslt, document, compileResult.assemblyPaths || []);
+            break;
+          }
+          case 'copilotPrompt': {
+            const respond = (data: {
+              success: boolean;
+              applied: boolean;
+              message: string;
+              map?: MapDocument;
+            }): Thenable<boolean> =>
+              webviewPanel.webview.postMessage({
+                type: 'copilotResult',
+                data,
+              });
+
+            try {
+              if (!vscode.lm?.selectChatModels) {
+                await respond({
+                  success: false,
+                  applied: false,
+                  message: 'Data Mapper Assistant requires a newer version of VS Code.',
+                });
+                break;
+              }
+
+              const models = await vscode.lm.selectChatModels({ vendor: 'copilot' });
+              const model = models[0];
+              if (!model) {
+                await respond({
+                  success: false,
+                  applied: false,
+                  message: 'Data Mapper Assistant cannot find a language model. Install or enable GitHub Copilot Chat and sign in.',
+                });
+                break;
+              }
+
+              const originalDocumentVersion = document.version;
+              const currentMap = this.btmSerializer.deserialize(
+                document
+                  .getText()
+                  .replace(/^\uFEFF/, '')
+                  .replace(/\0/g, '')
+              );
+              const availableFunctoids = this.functoidRegistry.getAllFunctoids().map((f) => ({
+                id: f.id,
+                name: f.name,
+                category: f.category,
+                description: f.description,
+                minInputs: f.minInputs,
+                maxInputs: f.maxInputs,
+                hasOutput: f.hasOutput,
+                tooltip: f.tooltip,
+              }));
+              let prompt = createMapPrompt(
+                message.data.prompt,
+                currentMap,
+                message.data.activePage,
+                sourceSchemaTree,
+                targetSchemaTree,
+                availableFunctoids,
+                [...copilotContextFiles.values()].map((file) => ({
+                  name: file.name,
+                  content: file.content,
+                }))
+              );
+              const tokenCount = await model.countTokens(prompt);
+              const layoutOnly = tokenCount > model.maxInputTokens - 1024;
+              if (layoutOnly) {
+                prompt = createMapLayoutPrompt(message.data.prompt, currentMap, message.data.activePage);
+                if ((await model.countTokens(prompt)) > model.maxInputTokens - 1024) {
+                  throw new Error(
+                    'Even the map page summary exceeds the selected model context window. Use a model with a larger context window.'
+                  );
+                }
+              }
+
+              const messages = [vscode.LanguageModelChatMessage.User(prompt)];
+              const promptContextFiles = [...copilotContextFiles.values()].map((file) => ({
                 name: file.name,
                 content: file.content,
-              }))
-            );
-            const tokenCount = await model.countTokens(prompt);
-            if (tokenCount > model.maxInputTokens - 1024) {
-              throw new Error(
-                `This map needs ${tokenCount} input tokens, but the selected Copilot model supports ${model.maxInputTokens}.`
+              }));
+              const validationContext = createMapPatchValidationContext(
+                sourceSchemaTree,
+                targetSchemaTree,
+                availableFunctoids,
+                promptContextFiles
               );
-            }
-
-            const messages = [vscode.LanguageModelChatMessage.User(prompt)];
-            const promptContextFiles = [...copilotContextFiles.values()].map((file) => ({
-              name: file.name,
-              content: file.content,
-            }));
-            const validationContext = createMapPatchValidationContext(
-              sourceSchemaTree,
-              targetSchemaTree,
-              availableFunctoids,
-              promptContextFiles
-            );
-            let plan: ReturnType<typeof parseMapPromptResponse> | undefined;
-            let updatedMap: MapDocument | undefined;
-            let serialized = '';
-            for (let attempt = 0; attempt < 2; attempt++) {
-              const response = await model.sendRequest(messages, {}, _token);
-              let responseText = '';
-              for await (const fragment of response.text) {
-                responseText += fragment;
-              }
-              try {
-                plan = parseMapPromptResponse(responseText);
-                updatedMap = applyMapPatches(currentMap, plan.patches, validationContext);
-                serialized = this.btmSerializer.serialize(updatedMap);
-                this.btmSerializer.deserialize(serialized);
-                break;
-              } catch (validationError) {
-                if (attempt === 1) {
-                  throw validationError;
+              let plan: ReturnType<typeof parseMapPromptResponse> | undefined;
+              let updatedMap: MapDocument | undefined;
+              let serialized = '';
+              for (let attempt = 0; attempt < 2; attempt++) {
+                const response = await model.sendRequest(messages, {}, _token);
+                let responseText = '';
+                for await (const fragment of response.text) {
+                  responseText += fragment;
                 }
-                const validationMessage = validationError instanceof Error ? validationError.message : String(validationError);
-                messages.push(
-                  vscode.LanguageModelChatMessage.Assistant(responseText),
-                  vscode.LanguageModelChatMessage.User(
-                    `Your proposed edit was rejected by the Logic App Data Mapper validator: ${validationMessage}\nCorrect the complete edit plan and return only the replacement JSON object. Ensure every functoid and link uses the exact complete shapes and graph invariants in your instructions.`
-                  )
-                );
+                try {
+                  plan = parseMapPromptResponse(responseText);
+                  if (layoutOnly && plan.patches.some((patch) => patch.op !== 'layout')) {
+                    throw new Error(
+                      'The full map exceeds the model context window. Only layout operations are allowed with the page summary.'
+                    );
+                  }
+                  updatedMap = applyMapPatches(currentMap, plan.patches, validationContext);
+                  serialized = this.btmSerializer.serialize(updatedMap);
+                  this.btmSerializer.deserialize(serialized);
+                  break;
+                } catch (validationError) {
+                  const validationMessage = validationError instanceof Error ? validationError.message : String(validationError);
+                  if (attempt === 1) {
+                    if (layoutOnly) {
+                      throw new Error(
+                        `Only layout requests can use the page summary. Other edits require a model with a larger context window. ${validationMessage}`
+                      );
+                    }
+                    throw validationError;
+                  }
+                  messages.push(
+                    vscode.LanguageModelChatMessage.Assistant(responseText),
+                    vscode.LanguageModelChatMessage.User(
+                      `Your proposed edit was rejected by the Logic App Data Mapper validator: ${validationMessage}\nCorrect the complete edit plan and return only the replacement JSON object. ${layoutOnly ? 'Only layout operations are allowed; requests that need the full map require a model with a larger context window.' : 'Ensure every functoid and link uses the exact complete shapes and graph invariants in your instructions.'}`
+                    )
+                  );
+                }
               }
-            }
-            if (!plan || !updatedMap) {
-              throw new Error('Data Mapper Assistant did not produce a valid map edit.');
-            }
-            if (document.version !== originalDocumentVersion) {
-              throw new Error('The map changed while Data Mapper Assistant was working. Submit the prompt again using the latest map.');
-            }
+              if (!plan || !updatedMap) {
+                throw new Error('Data Mapper Assistant did not produce a valid map edit.');
+              }
+              if (document.version !== originalDocumentVersion) {
+                throw new Error('The map changed while Data Mapper Assistant was working. Submit the prompt again using the latest map.');
+              }
 
-            const choice = await vscode.window.showInformationMessage(
-              `${plan.summary}\n\nData Mapper Assistant proposes ${plan.patches.length} map change(s).`,
-              { modal: true },
-              'Apply Changes'
-            );
-            if (choice !== 'Apply Changes') {
+              const choice = await vscode.window.showInformationMessage(
+                `${plan.summary}\n\nData Mapper Assistant proposes ${plan.patches.length} map change(s).`,
+                { modal: true },
+                'Apply Changes'
+              );
+              if (choice !== 'Apply Changes') {
+                await respond({
+                  success: true,
+                  applied: false,
+                  message: 'Data Mapper Assistant changes were not applied.',
+                });
+                break;
+              }
+              if (document.version !== originalDocumentVersion) {
+                throw new Error('The map changed before the Data Mapper Assistant edit was applied. Submit the prompt again.');
+              }
+
+              const edit = new vscode.WorkspaceEdit();
+              edit.replace(document.uri, new vscode.Range(0, 0, document.lineCount, 0), serialized);
+              const applied = await vscode.workspace.applyEdit(edit);
+              if (!applied) {
+                throw new Error('VS Code could not apply the Data Mapper Assistant changes.');
+              }
               await respond({
                 success: true,
-                applied: false,
-                message: 'Data Mapper Assistant changes were not applied.',
+                applied: true,
+                message: plan.summary,
+                map: updatedMap,
               });
-              break;
+            } catch (error) {
+              this.logger.error(`${operation}: assistant request failed (${errorCategory(error)}); prompt and response omitted.`);
+              const messageText = error instanceof Error ? error.message : String(error);
+              await respond({
+                success: false,
+                applied: false,
+                message: `Data Mapper Assistant could not update the map: ${messageText}`,
+              });
             }
-            if (document.version !== originalDocumentVersion) {
-              throw new Error('The map changed before the Data Mapper Assistant edit was applied. Submit the prompt again.');
-            }
-
-            const edit = new vscode.WorkspaceEdit();
-            edit.replace(document.uri, new vscode.Range(0, 0, document.lineCount, 0), serialized);
-            const applied = await vscode.workspace.applyEdit(edit);
-            if (!applied) {
-              throw new Error('VS Code could not apply the Data Mapper Assistant changes.');
-            }
-            await respond({
-              success: true,
-              applied: true,
-              message: plan.summary,
-              map: updatedMap,
-            });
-          } catch (error) {
-            const messageText = error instanceof Error ? error.message : String(error);
-            await respond({
-              success: false,
-              applied: false,
-              message: `Data Mapper Assistant could not update the map: ${messageText}`,
-            });
+            break;
           }
-          break;
+        }
+      } catch (error) {
+        this.logger.error(`${operation} failed (${errorCategory(error)}); details shown in the editor.`);
+        const detail = error instanceof Error ? error.message : String(error);
+        vscode.window.showErrorMessage(`Data Mapper ${message.type} failed: ${detail}`);
+        if (message.type === 'testMapWithInput') {
+          await webviewPanel.webview.postMessage({ type: 'testMapResult', data: { output: '', error: detail } });
+        } else if (message.type === 'compile') {
+          await webviewPanel.webview.postMessage({
+            type: 'compileResult',
+            data: { success: false, errors: [{ message: detail }], warnings: [] },
+          });
+        }
+      } finally {
+        if (quiet) {
+          this.logger.debug(`${operation} finished in ${Date.now() - started}ms.`);
+        } else {
+          this.logger.info(`${operation} finished in ${Date.now() - started}ms.`);
         }
       }
     });
@@ -726,10 +955,17 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
     webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview);
 
     // Update webview when document changes
-    const changeDocSub = vscode.workspace.onDidChangeTextDocument((e) => {
+    const changeDocSub = vscode.workspace.onDidChangeTextDocument(async (e) => {
       if (e.document.uri.toString() === document.uri.toString()) {
         try {
           const updatedMap = this.btmSerializer.deserialize(e.document.getText());
+          if (
+            schemaKey(updatedMap.sourceSchema) !== schemaKey(mapDoc.sourceSchema) ||
+            schemaKey(updatedMap.targetSchema) !== schemaKey(mapDoc.targetSchema)
+          ) {
+            await synchronizeSchemas(updatedMap, e.document.version);
+            return;
+          }
           webviewPanel.webview.postMessage({
             type: 'documentChanged',
             data: updatedMap,
@@ -741,7 +977,12 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
     });
 
     webviewPanel.onDidDispose(() => {
+      disposed = true;
       changeDocSub.dispose();
+      viewStateSub?.dispose();
+      if (MapEditorProvider.activeWebviewPanel === webviewPanel) {
+        MapEditorProvider.activeWebviewPanel = undefined;
+      }
     });
   }
 
@@ -762,10 +1003,27 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
   }
 
   private async compileMap(map: MapDocument, sourceSchema?: SchemaTree, targetSchema?: SchemaTree): Promise<CompileResult> {
+    const started = Date.now();
+    this.logger.info(`Compilation started: ${map.pages.length} pages; source schema=${!!sourceSchema}; target schema=${!!targetSchema}.`);
     try {
+      this.logger.info('Compilation: resolving external assembly metadata.');
       const enrichedMap = await this.enrichExternalAssemblyMetadata(map);
-      return await this.compilerWorker.compileMap({ map: enrichedMap, sourceSchema, targetSchema });
+      this.logger.info('Compilation: sending map to compiler worker.');
+      const result = await this.compilerWorker.compileMap({ map: enrichedMap, sourceSchema, targetSchema });
+      const summary = `Compilation ${result.success ? 'succeeded' : 'failed'} in ${Date.now() - started}ms: ${result.errors.length} errors, ${result.warnings.length} warnings. Diagnostic details are shown in the editor.`;
+      if (!result.success) {
+        this.logger.error(summary);
+      } else if (result.warnings.length) {
+        this.logger.warn(summary);
+      } else {
+        this.logger.info(summary);
+      }
+      for (const [index, warning] of result.warnings.entries()) {
+        this.logger.warn(`Compilation warning ${index + 1}/${result.warnings.length}: ${JSON.stringify(warning)}`);
+      }
+      return result;
     } catch (error: any) {
+      this.logger.error(`Compilation failed after ${Date.now() - started}ms (${errorCategory(error)}); details returned to the editor.`);
       const details = error.details ? ` ${error.details}` : '';
       return {
         success: false,
@@ -841,6 +1099,8 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
     btmDir: string,
     extensionObjectPath?: string
   ): Promise<{ success: boolean; output?: string; error?: string }> {
+    const started = Date.now();
+    this.logger.info('Test Map: starting .NET worker transformation.');
     try {
       const result = await this.compilerWorker.testMap({
         xslt: fs.readFileSync(xsltPath, 'utf-8'),
@@ -849,8 +1109,14 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
           extensionObjectPath && fs.existsSync(extensionObjectPath) ? fs.readFileSync(extensionObjectPath, 'utf-8') : undefined,
         workingDirectory: btmDir,
       });
+      this.logger.info(
+        `Test Map: .NET transformation completed in ${Date.now() - started}ms; ${result.diagnostics.length} diagnostics; output=${Buffer.byteLength(result.outputXml)} bytes.`
+      );
       return { success: true, output: result.outputXml };
     } catch (err: any) {
+      this.logger.error(
+        `Test Map: .NET transformation failed after ${Date.now() - started}ms (${errorCategory(err)}); details returned to the editor.`
+      );
       const details = err.details ? ` ${err.details}` : '';
       return { success: false, error: `${err.message || 'Worker transform failed.'}${details}`.substring(0, 500) };
     }
@@ -991,16 +1257,19 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
   }
 
   private async resolveSchemaDependencies(schemaXml: string, schemaPath: string): Promise<Map<string, any>> {
-    return resolveSchemaDependencies(
+    this.logger.debug('Resolving schema imports/includes.');
+    const dependencies = await resolveSchemaDependencies(
       schemaXml,
       schemaPath,
       (dependencyPath) => this.readFile(dependencyPath),
       (containingPath, schemaLocation) => this.resolveSchemaPath(vscode.Uri.file(containingPath), schemaLocation)
     );
+    this.logger.debug(`Resolved ${dependencies.size} schema dependencies.`);
+    return dependencies;
   }
 
   private getBrowseDefaultUri(documentUri: vscode.Uri, preferredFilePath?: string): vscode.Uri {
-    const rememberedDirectory = this.context.workspaceState.get<string>(MapEditorProvider.LAST_BROWSE_DIRECTORY_KEY);
+    const rememberedDirectory = this.context.workspaceState?.get<string>(MapEditorProvider.LAST_BROWSE_DIRECTORY_KEY);
     return vscode.Uri.file(resolveBrowseDirectory(documentUri.fsPath, rememberedDirectory, preferredFilePath));
   }
 
@@ -1008,12 +1277,12 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
     if (!selectedUri) {
       return;
     }
-    await this.context.workspaceState.update(MapEditorProvider.LAST_BROWSE_DIRECTORY_KEY, getSelectedFileDirectory(selectedUri.fsPath));
+    await this.context.workspaceState?.update(MapEditorProvider.LAST_BROWSE_DIRECTORY_KEY, getSelectedFileDirectory(selectedUri.fsPath));
   }
 
   private async loadSchemaTree(reference: MapDocument['sourceSchema'], documentUri: vscode.Uri): Promise<SchemaTree | undefined> {
     if (reference.location) {
-      const schemaPath = this.resolveSchemaPath(documentUri, reference.location);
+      const schemaPath = this.resolveSchemaPath(documentUri, reference.location, reference.rootName);
       const schemaContent = await this.readFile(schemaPath);
       if (!schemaContent) {
         throw new Error(`Schema file not found: ${reference.location}`);
@@ -1028,14 +1297,13 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
     return undefined;
   }
 
-  private resolveSchemaPath(docUri: vscode.Uri, schemaLocation: string): string {
+  private resolveSchemaPath(docUri: vscode.Uri, schemaLocation: string, rootName?: string): string {
     if (!schemaLocation) {
       return '';
     }
     if (path.isAbsolute(schemaLocation)) {
       return schemaLocation;
     }
-    const fs = require('fs');
     const docDir = path.dirname(docUri.fsPath);
 
     // Try exact match first
@@ -1145,8 +1413,53 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
       }
     }
 
+    const collectCandidatePaths = (directories: string[]): string[] =>
+      directories.flatMap((directory) => {
+        try {
+          return fs
+            .readdirSync(directory, { withFileTypes: true })
+            .filter((entry) => entry.isFile() && entry.name.toLowerCase().endsWith('.xsd'))
+            .map((entry) => path.join(directory, entry.name));
+        } catch {
+          return [];
+        }
+      });
+
+    const localMatch = resolveLooseSchemaReference(schemaLocation, collectCandidatePaths([docDir]), rootName, (candidatePath) =>
+      this.readFileSync(candidatePath)
+    );
+    if (localMatch) {
+      return localMatch;
+    }
+
+    const looseMatch = resolveLooseSchemaReference(schemaLocation, collectCandidatePaths(siblingDirs), rootName, (candidatePath) =>
+      this.readFileSync(candidatePath)
+    );
+    if (looseMatch) {
+      return looseMatch;
+    }
+
     // Fallback
     return path.resolve(docDir, schemaLocation);
+  }
+
+  private readFileSync(filePath: string): string | undefined {
+    try {
+      const buffer = fs.readFileSync(filePath);
+      if (buffer.length >= 2 && buffer[0] === 0xff && buffer[1] === 0xfe) {
+        return buffer.toString('utf16le').replace(/^\uFEFF/, '');
+      }
+      if (buffer.length >= 2 && buffer[0] === 0xfe && buffer[1] === 0xff) {
+        const swapped = Buffer.from(buffer);
+        for (let index = 0; index < swapped.length - 1; index += 2) {
+          [swapped[index], swapped[index + 1]] = [swapped[index + 1], swapped[index]];
+        }
+        return swapped.toString('utf16le').replace(/^\uFEFF/, '');
+      }
+      return buffer.toString('utf8').replace(/^\uFEFF/, '');
+    } catch {
+      return undefined;
+    }
   }
 
   private async readFile(filePath: string): Promise<string | undefined> {

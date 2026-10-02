@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "wqbDHwliDok=",
+  "success": true,
+  "projectFilePath": "D:\\Enlistments\\LogicAppsUX\\libs\\data-mapper-v3\\tools\\xslt-transform\\XsltTransform\\XsltTransform.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\psamband.FAREAST\\.nuget\\packages\\microsoft.codeanalysis.analyzers\\3.11.0\\microsoft.codeanalysis.analyzers.3.11.0.nupkg.sha512",
+    "C:\\Users\\psamband.FAREAST\\.nuget\\packages\\microsoft.codeanalysis.common\\4.14.0\\microsoft.codeanalysis.common.4.14.0.nupkg.sha512",
+    "C:\\Users\\psamband.FAREAST\\.nuget\\packages\\microsoft.codeanalysis.csharp\\4.14.0\\microsoft.codeanalysis.csharp.4.14.0.nupkg.sha512",
+    "C:\\Users\\psamband.FAREAST\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.31\\microsoft.net.illink.tasks.8.0.31.nupkg.sha512",
+    "C:\\Users\\psamband.FAREAST\\.nuget\\packages\\system.collections.immutable\\9.0.0\\system.collections.immutable.9.0.0.nupkg.sha512",
+    "C:\\Users\\psamband.FAREAST\\.nuget\\packages\\system.reflection.metadata\\9.0.0\\system.reflection.metadata.9.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

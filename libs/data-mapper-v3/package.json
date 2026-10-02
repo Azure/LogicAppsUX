@@ -63,6 +63,10 @@
     ],
     "commands": [
       {
+        "command": "biztalkDataMapper.showLogs",
+        "title": "Logic App: Show Data Mapper Logs"
+      },
+      {
         "command": "biztalkDataMapper.newMap",
         "title": "Logic App: New Data Map",
         "icon": "$(add)"
@@ -95,18 +99,6 @@
         {
           "command": "biztalkDataMapper.openMap",
           "when": "view == biztalkDataMapper.mapsView",
-          "group": "navigation"
-        }
-      ],
-      "editor/title": [
-        {
-          "command": "biztalkDataMapper.compileMap",
-          "when": "activeCustomEditorId == biztalkDataMapper.mapEditor",
-          "group": "navigation"
-        },
-        {
-          "command": "biztalkDataMapper.testMap",
-          "when": "activeCustomEditorId == biztalkDataMapper.mapEditor",
           "group": "navigation"
         }
       ]

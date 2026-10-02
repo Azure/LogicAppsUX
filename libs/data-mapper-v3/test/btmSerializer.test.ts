@@ -344,6 +344,8 @@ describe('BtmSerializer', () => {
     expect(func.parameters[0].value).toBe('1');
     expect(func.parameters[1].type).toBe(ParameterType.Link);
     expect(func.parameters[1].value).toBe('2');
+    expect(func.inputLinks).toEqual(['1', '2']);
+    expect(func.outputLinks).toEqual(['3']);
 
     // Links
     expect(page.links.length).toBe(3);

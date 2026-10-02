@@ -103,6 +103,16 @@ async function run() {
               hasOutput: true,
               tooltip: 'Concatenate values',
             },
+            {
+              id: 324,
+              name: 'Cumulative Sum',
+              category: 'Cumulative',
+              description: 'Adds values across repeating records.',
+              minInputs: 1,
+              maxInputs: 1,
+              hasOutput: true,
+              tooltip: 'Sum repeating values',
+            },
           ],
         },
       },
@@ -118,8 +128,23 @@ async function run() {
   const document = dom.window.document;
   assert.equal(document.querySelector('.mapper-toolbar')?.getAttribute('role'), 'toolbar');
   assert.equal(document.querySelectorAll('.mapper-toolbar button svg').length, 4);
+  assert.ok(document.querySelector('#btn-validate-compile'));
+  assert.ok(document.querySelector('#btn-test-map'));
   assert.equal(document.querySelector('.toolbar-map-name'), null);
   assert.equal(document.querySelector('.mapper-toolbar .page-tabs'), null);
+  document.querySelector('#btn-validate-compile').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  await new Promise((resolve) => setTimeout(resolve, 25));
+  assert.equal(messages.at(-1).type, 'compile');
+  document.querySelector('#btn-test-map').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  await new Promise((resolve) => setTimeout(resolve, 25));
+  assert.equal(messages.at(-1).type, 'generateInstance');
+  dom.window.dispatchEvent(new dom.window.MessageEvent('message', { data: { type: 'executeCompile', data: {} } }));
+  await new Promise((resolve) => setTimeout(resolve, 25));
+  assert.equal(messages.at(-1).type, 'compile');
+  dom.window.dispatchEvent(new dom.window.MessageEvent('message', { data: { type: 'executeTestMap', data: {} } }));
+  await new Promise((resolve) => setTimeout(resolve, 25));
+  assert.equal(messages.at(-1).type, 'generateInstance');
+  assert.equal(document.querySelector('.bottom-panel').classList.contains('collapsed'), false);
   const pageBar = document.querySelector('.page-sheet-bar');
   assert.ok(pageBar);
   assert.equal(pageBar.parentElement?.classList.contains('canvas-workspace'), true);
@@ -145,10 +170,17 @@ async function run() {
   const paletteIcon = paletteItem.querySelector('.item-icon');
   const paletteItemName = paletteItem.querySelector('.item-name');
   assert.equal(dom.window.getComputedStyle(paletteItem).height, '30px');
+  assert.equal(paletteItemName.textContent, 'Concatenate');
   assert.equal(dom.window.getComputedStyle(paletteItemName).fontSize, '13px');
   assert.equal(dom.window.getComputedStyle(paletteItemContent).justifyContent, 'flex-start');
   assert.equal(dom.window.getComputedStyle(paletteIcon).width, '17px');
   assert.equal(dom.window.getComputedStyle(paletteIcon).height, '17px');
+  const cumulativeCategory = Array.from(document.querySelectorAll('biztalk-functoid-palette .palette-category')).find(
+    (category) => category.querySelector('.category-name').textContent === 'Cumulative'
+  );
+  cumulativeCategory.querySelector('.category-header').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  await new Promise((resolve) => setTimeout(resolve, 25));
+  assert.equal(cumulativeCategory.querySelector('.item-name').textContent, 'Sum');
   assert.equal(document.querySelectorAll('biztalk-schema-tree').length, 2);
   assert.ok(document.querySelectorAll('.tree-node').length >= 2);
   assert.ok(document.querySelector('biztalk-functoid-palette .palette-item'));
@@ -176,6 +208,7 @@ async function run() {
   const optionalAttribute = document.querySelector('.tree-node[data-path="/Root/Value/Inner/@optionalAttribute"]');
   assert.ok(requiredAttribute);
   assert.ok(optionalAttribute);
+  assert.equal(requiredAttribute.querySelector('.tree-icon'), null);
   assert.equal(requiredAttribute.querySelector('.node-name').textContent, 'requiredAttribute');
   assert.equal(optionalAttribute.querySelector('.node-name').textContent, 'optionalAttribute');
   assert.equal(requiredAttribute.querySelector('.tree-icon'), null);
@@ -313,6 +346,21 @@ async function run() {
   await new Promise((resolve) => setTimeout(resolve, 25));
   assert.equal(map.pages[0].links.length, 1);
   assert.ok(document.querySelector('.mapping-links-overlay [data-link-id]'));
+  const connectedSourceNode = Array.from(document.querySelectorAll('biztalk-schema-tree.source-tree .tree-node')).find(
+    (node) => node.dataset.path === '/Root/Value/Inner'
+  );
+  const connectedTargetNode = Array.from(document.querySelectorAll('biztalk-schema-tree.target-tree .tree-node')).find(
+    (node) => node.dataset.path === '/Root/Value/Inner'
+  );
+  assert.ok(connectedSourceNode.querySelector('.node-connector').classList.contains('connected'));
+  assert.ok(connectedTargetNode.querySelector('.node-connector').classList.contains('connected'));
+  assert.equal(
+    Array.from(document.querySelectorAll('biztalk-schema-tree.source-tree .tree-node'))
+      .find((node) => node.dataset.path === '/Root/Value')
+      .querySelector('.node-connector')
+      .classList.contains('connected'),
+    false
+  );
 
   const linkedSourceParent = Array.from(document.querySelectorAll('biztalk-schema-tree.source-tree .tree-node')).find(
     (node) => node.dataset.path === '/Root/Value'
@@ -347,8 +395,13 @@ async function run() {
   assert.ok(canvas.querySelector('.functoid-node'));
   canvas.querySelector('.functoid-node text').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
   await new Promise((resolve) => setTimeout(resolve, 300));
-  assert.equal(canvas.querySelector('.functoid-node .functoid-body').tagName.toLowerCase(), 'circle');
+  assert.equal(canvas.querySelector('.functoid-node .functoid-body').tagName.toLowerCase(), 'rect');
+  assert.equal(canvas.querySelector('.functoid-node .functoid-body').getAttribute('width'), '56');
+  assert.equal(canvas.querySelector('.functoid-node .functoid-body').getAttribute('height'), '26');
+  assert.equal(canvas.querySelector('.functoid-node .functoid-body').getAttribute('rx'), '13');
   assert.equal(canvas.querySelector('.functoid-node .functoid-body').getAttribute('stroke'), '#007fd4');
+  assert.equal(canvas.querySelectorAll('.functoid-node text').length, 1);
+  assert.equal(canvas.querySelector('.functoid-node text').textContent.trim(), 'Conc');
 
   const currentSourceConnector = Array.from(document.querySelectorAll('biztalk-schema-tree.source-tree .tree-node'))
     .find((node) => node.dataset.path === '/Root/Value/Inner')
@@ -358,6 +411,10 @@ async function run() {
     ?.querySelector('.node-connector');
   const functoidInput = canvas.querySelector('.functoid-node .input-connector');
   const functoidOutput = canvas.querySelector('.functoid-node .output-connector');
+  assert.equal(functoidInput.getAttribute('cx'), '-28');
+  assert.equal(functoidOutput.getAttribute('cx'), '28');
+  assert.equal(dom.window.getComputedStyle(canvas.querySelector('.functoid-node')).cursor, 'pointer');
+  assert.equal(dom.window.getComputedStyle(functoidInput).cursor, 'pointer');
 
   currentSourceConnector.dispatchEvent(new dom.window.MouseEvent('pointerdown', { bubbles: true, buttons: 1 }));
   document.dispatchEvent(new dom.window.MouseEvent('pointermove', { bubbles: true, buttons: 1, clientX: 300, clientY: 200 }));
@@ -373,6 +430,8 @@ async function run() {
   assert.equal(map.pages[0].links.length, 3);
   assert.equal(map.pages[0].links[1].targetType, 'functoid');
   assert.equal(map.pages[0].links[2].sourceType, 'functoid');
+  assert.ok(canvas.querySelector('.functoid-node .input-connector').classList.contains('connected'));
+  assert.ok(canvas.querySelector('.functoid-node .output-connector').classList.contains('connected'));
   map.pages[0].links.splice(1, 2);
 
   const zoomIn = canvas.querySelector('button[title="Zoom In"]');
@@ -391,7 +450,7 @@ async function run() {
 
   const droppedFunctoid = {
     id: 107,
-    name: 'String Concatenate',
+    name: 'String Concatenate With A Very Long Name',
     category: 'String',
   };
   const dropEvent = new dom.window.Event('drop', { bubbles: true, cancelable: true });
@@ -410,12 +469,18 @@ async function run() {
   assert.equal(map.pages[0].functoids.length, 2);
   assert.ok(Math.abs(map.pages[0].functoids[1].x - 130 / 1.1) < 0.001);
   assert.ok(Math.abs(map.pages[0].functoids[1].y - 76 / 1.1) < 0.001);
+  const droppedFunctoidNode = canvas.querySelectorAll('.functoid-node')[1];
+  assert.equal(droppedFunctoidNode.querySelector('title').textContent, droppedFunctoid.name);
+  assert.equal(droppedFunctoidNode.querySelector('text').textContent.trim(), 'Conc');
 
   const initialX = map.pages[0].functoids[0].x;
   const initialY = map.pages[0].functoids[0].y;
   canvas
     .querySelector('.functoid-node text')
     .dispatchEvent(new dom.window.MouseEvent('mousedown', { bubbles: true, clientX: 100, clientY: 100 }));
+  await new Promise((resolve) => setTimeout(resolve, 25));
+  assert.ok(canvas.querySelector('.functoid-node').classList.contains('dragging'));
+  assert.equal(dom.window.getComputedStyle(canvas.querySelector('.functoid-node')).cursor, 'grabbing');
   canvas
     .querySelector('svg.mapping-svg')
     .dispatchEvent(new dom.window.MouseEvent('mousemove', { bubbles: true, clientX: 155, clientY: 144 }));
@@ -468,11 +533,23 @@ async function run() {
   assert.equal(dom.window.getComputedStyle(document.querySelector('.functoid-properties-panel > .config-actions')).paddingBottom, '18px');
   assert.deepEqual(
     Array.from(document.querySelectorAll('.functoid-dialog-tab')).map((tab) => tab.textContent),
-    ['Functoid Inputs', 'Output', 'Label and Comments']
+    ['Inputs', 'Outputs', 'Label and Comments']
   );
+  const functoidDescription = document.querySelector('.functoid-dialog-description');
+  const functoidTabs = document.querySelector('.functoid-dialog-tabs');
+  assert.ok(functoidDescription.compareDocumentPosition(functoidTabs) & dom.window.Node.DOCUMENT_POSITION_FOLLOWING);
+  assert.equal(functoidDescription.querySelector('.config-label').textContent, 'Description');
+  assert.equal(functoidDescription.querySelector('.functoid-property-heading'), null);
+  assert.match(functoidDescription.textContent, /Concatenates a series of input strings/);
+  const orderedInputsHeading = document.querySelector('.functoid-ordered-inputs-heading');
+  assert.equal(orderedInputsHeading.textContent, 'Ordered inputs');
+  assert.equal(dom.window.getComputedStyle(orderedInputsHeading).textTransform, 'none');
   assert.match(document.querySelector('.functoid-input-validation').textContent, /Configured 3; expected 2 to 5 inputs/);
   assert.equal(document.querySelectorAll('.functoid-input-row').length, 3);
   assert.equal(document.querySelectorAll('.functoid-default-input').length, 3);
+  const compactInput = document.querySelector('.functoid-default-input');
+  assert.equal(dom.window.getComputedStyle(compactInput).height, '26px');
+  assert.equal(dom.window.getComputedStyle(compactInput).fontSize, '11px');
 
   document.querySelector('[data-functoid-tab="output"]').dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
   assert.equal(document.querySelector('[data-functoid-panel="output"]').hidden, false);
