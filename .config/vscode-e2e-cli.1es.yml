@@ -56,7 +56,12 @@ extends:
       credscan:
         suppressionsFile: $(Build.SourcesDirectory)\.azure-pipelines\compliance\CredScanSuppressions.json
       codeql:
-        language: javascript
+        # Unofficial pipelines must opt in to interpreted source scanning.
+        interpreted:
+          enabled: true
+          language: javascript
+        # The ADO Branch selector admits non-default validation branches.
+        enabledOnNonDefaultBranches: true
     pool:
       name: VSEngSS-MicroBuild2022-1ES
       image: server2022-microbuildVS2022-1es

@@ -18,7 +18,7 @@ describe('ui/panel/panelContainer', () => {
         isError: false,
         isLoading: false,
         nodeId: 'nodeId',
-        onSelectTab: vi.fn(),
+        onSelectTab: vi.fn().mockName('spy'),
         runData: undefined,
         selectedTab: undefined,
         subgraphType: undefined,
@@ -32,12 +32,12 @@ describe('ui/panel/panelContainer', () => {
       panelLocation: PanelLocation.Right,
       panelScope: PanelScope.CardLevel,
       overrideWidth: '630px',
-      onCommentChange: vi.fn(),
-      trackEvent: vi.fn(),
-      setOverrideWidth: vi.fn(),
-      onClose: vi.fn(),
-      onTitleChange: vi.fn(),
-      handleTitleUpdate: vi.fn(),
+      onCommentChange: vi.fn().mockName('spy'),
+      trackEvent: vi.fn().mockName('spy'),
+      setOverrideWidth: vi.fn().mockName('spy'),
+      onClose: vi.fn().mockName('spy'),
+      onTitleChange: vi.fn().mockName('spy'),
+      handleTitleUpdate: vi.fn().mockName('spy'),
     };
     renderer = ReactShallowRenderer.createRenderer();
   });

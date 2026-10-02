@@ -485,11 +485,13 @@ describe('server utils', () => {
 
     beforeEach(() => {
       originalDate = Date;
-      mockDate = vi.fn(() => ({
-        setHours: vi.fn().mockReturnThis(),
-        setDate: vi.fn().mockReturnThis(),
-        toISOString: vi.fn(() => '2024-01-23T12:00:00.000Z'),
-      }));
+      mockDate = vi.fn(function () {
+        return {
+          setHours: vi.fn().mockReturnThis(),
+          setDate: vi.fn().mockReturnThis(),
+          toISOString: vi.fn(() => '2024-01-23T12:00:00.000Z'),
+        };
+      });
       mockDate.prototype = originalDate.prototype;
       global.Date = mockDate as any;
     });
@@ -505,7 +507,9 @@ describe('server utils', () => {
         toISOString: vi.fn(() => '2024-01-23T15:00:00.000Z'),
         getHours: vi.fn(() => 12),
       };
-      mockDate.mockReturnValue(mockDateInstance);
+      mockDate.mockImplementation(function () {
+        return mockDateInstance;
+      });
 
       const result = addExpiryToCurrent(3);
 
@@ -521,7 +525,9 @@ describe('server utils', () => {
         toISOString: vi.fn(() => '2024-01-26T12:00:00.000Z'),
         getDate: vi.fn(() => 23),
       };
-      mockDate.mockReturnValue(mockDateInstance);
+      mockDate.mockImplementation(function () {
+        return mockDateInstance;
+      });
 
       const result = addExpiryToCurrent(undefined, 3);
 
@@ -536,7 +542,9 @@ describe('server utils', () => {
         setDate: vi.fn(),
         toISOString: vi.fn(() => '2024-01-23T12:00:00.000Z'),
       };
-      mockDate.mockReturnValue(mockDateInstance);
+      mockDate.mockImplementation(function () {
+        return mockDateInstance;
+      });
 
       const result = addExpiryToCurrent();
 
@@ -552,7 +560,9 @@ describe('server utils', () => {
         toISOString: vi.fn(() => '2024-01-23T18:00:00.000Z'),
         getHours: vi.fn(() => 12),
       };
-      mockDate.mockReturnValue(mockDateInstance);
+      mockDate.mockImplementation(function () {
+        return mockDateInstance;
+      });
 
       const result = addExpiryToCurrent(6, 10);
 
@@ -568,7 +578,9 @@ describe('server utils', () => {
         toISOString: vi.fn(() => '2024-01-23T12:00:00.000Z'),
         getHours: vi.fn(() => 12),
       };
-      mockDate.mockReturnValue(mockDateInstance);
+      mockDate.mockImplementation(function () {
+        return mockDateInstance;
+      });
 
       const result = addExpiryToCurrent(0);
 
@@ -582,7 +594,9 @@ describe('server utils', () => {
         toISOString: vi.fn(() => '2024-01-23T12:00:00.000Z'),
         getDate: vi.fn(() => 23),
       };
-      mockDate.mockReturnValue(mockDateInstance);
+      mockDate.mockImplementation(function () {
+        return mockDateInstance;
+      });
 
       const result = addExpiryToCurrent(undefined, 0);
 

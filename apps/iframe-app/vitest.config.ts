@@ -2,6 +2,7 @@ import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 import packageJson from './package.json';
+import { coverageDefaults } from '../../libs/shared-test-utils/vitestCoverage';
 
 export default defineConfig({
   plugins: [react()],
@@ -12,7 +13,12 @@ export default defineConfig({
     setupFiles: ['./src/test/setup.ts', '../../libs/shared-test-utils/fluentui-react-icons-mock.ts'],
     root: './',
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
-    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'cobertura', 'lcov'] },
+    coverage: {
+      ...coverageDefaults,
+      enabled: true,
+      provider: 'istanbul',
+      reporter: ['html', 'cobertura', 'lcov'],
+    },
   },
   resolve: {
     alias: {

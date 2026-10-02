@@ -1,0 +1,12 @@
+diff --git a/dist/chunks/coverage.DM_a_rWm.js b/dist/chunks/coverage.DM_a_rWm.js
+--- a/dist/chunks/coverage.DM_a_rWm.js
++++ b/dist/chunks/coverage.DM_a_rWm.js
+@@ -665,7 +665,7 @@
+ 		const cacheHit = this.globCache.get(filename);
+ 		if (cacheHit !== void 0) return cacheHit;
+ 		// File outside project root with default allowExternal
+-		if (this.options.allowExternal === false && roots.every((root) => !filename.startsWith(root))) {
++		if (this.options.allowExternal === false && roots.every((root) => !filename.startsWith(root.endsWith("/") ? root : `${root}/`))) {
+ 			this.globCache.set(filename, false);
+ 			return false;
+ 		}

@@ -16,7 +16,7 @@ describe('lib/identitydropdown', () => {
     minimal = {
       defaultSelectedKey: 'key1',
       dropdownOptions: [{ key: 'key1', text: 'text1' }],
-      handleChange: vi.fn(),
+      handleChange: vi.fn().mockName('spy'),
       readOnly: false,
     };
   });

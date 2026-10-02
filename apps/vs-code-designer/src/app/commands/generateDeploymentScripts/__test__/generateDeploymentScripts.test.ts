@@ -97,10 +97,12 @@ describe('generateDeploymentScripts', () => {
     (tryGetLogicAppProjectRoot as Mock).mockResolvedValue('projectRoot');
     const localSettingsMod = await import('../../../utils/appSettings/localSettings');
     vi.mocked(localSettingsMod.getLocalSettingsJson).mockResolvedValue({ Values: {} } as any);
-    (AzureWizard as Mock).mockImplementation(() => ({
-      prompt: vi.fn().mockResolvedValue({}),
-      execute: vi.fn().mockResolvedValue({}),
-    }));
+    (AzureWizard as Mock).mockImplementation(function () {
+      return {
+        prompt: vi.fn().mockResolvedValue({}),
+        execute: vi.fn().mockResolvedValue({}),
+      };
+    });
     (localize as Mock).mockClear();
   });
 
@@ -127,10 +129,12 @@ describe('generateDeploymentScripts', () => {
 
   it('should handle errors during prompt steps', async () => {
     const errorMessage = 'Test prompt step error message';
-    (AzureWizard as Mock).mockImplementation(() => ({
-      prompt: vi.fn().mockRejectedValue(new Error(errorMessage)),
-      execute: vi.fn(),
-    }));
+    (AzureWizard as Mock).mockImplementation(function () {
+      return {
+        prompt: vi.fn().mockRejectedValue(new Error(errorMessage)),
+        execute: vi.fn(),
+      };
+    });
 
     await expect(generateDeploymentScripts(context, node)).rejects.toThrow(errorMessage);
 
@@ -140,10 +144,12 @@ describe('generateDeploymentScripts', () => {
 
   it('should handle errors during deployment script generation execute step', async () => {
     const errorMessage = 'Test execute step error message';
-    (AzureWizard as Mock).mockImplementation(() => ({
-      prompt: vi.fn(),
-      execute: vi.fn().mockRejectedValue(new Error(errorMessage)),
-    }));
+    (AzureWizard as Mock).mockImplementation(function () {
+      return {
+        prompt: vi.fn(),
+        execute: vi.fn().mockRejectedValue(new Error(errorMessage)),
+      };
+    });
 
     await expect(generateDeploymentScripts(context, node)).rejects.toThrow(errorMessage);
 
@@ -152,7 +158,7 @@ describe('generateDeploymentScripts', () => {
   });
 
   it('should not throw error if operation is cancelled', async () => {
-    (AzureWizard as Mock).mockImplementation(() => {
+    (AzureWizard as Mock).mockImplementation(function () {
       return {
         prompt: vi.fn(),
         execute: vi.fn().mockRejectedValue(new UserCancelledError()),

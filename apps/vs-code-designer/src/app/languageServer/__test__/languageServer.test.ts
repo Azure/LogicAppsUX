@@ -92,7 +92,9 @@ describe('LogicAppsLanguageServer', () => {
     mocks.createFileSystemWatcher.mockReturnValue({ onDidChange: vi.fn() });
     mocks.getGlobalSetting.mockReturnValue(dependenciesPath);
     mocks.getWorkspaceFolderPath.mockResolvedValue('D:\\workspace');
-    mocks.languageClient.mockImplementation(() => ({ start: vi.fn().mockResolvedValue(undefined) }));
+    mocks.languageClient.mockImplementation(function () {
+      return { start: vi.fn().mockResolvedValue(undefined) };
+    });
     mocks.pathExists.mockResolvedValue(false);
     mocks.readFile.mockResolvedValue('{}');
     mocks.readdir.mockResolvedValue([]);
@@ -146,7 +148,9 @@ describe('LogicAppsLanguageServer', () => {
 
   it('starts the language client when project and language server dependencies are available', async () => {
     const languageClient = { start: vi.fn().mockResolvedValue(undefined) };
-    mocks.languageClient.mockReturnValue(languageClient);
+    mocks.languageClient.mockImplementation(function () {
+      return languageClient;
+    });
     mocks.pathExists.mockImplementation(async (filePath: string) => filePath === lspServerPath || filePath === sdkFolderPath);
     mocks.readdir.mockResolvedValue(['Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg']);
 

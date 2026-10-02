@@ -12,6 +12,7 @@ testAzureToolsWrapperContract();
 testRootNpmrcSourceGuardAllowsGeneratedRuntimeFile();
 testLocalAzureToolsWrapperContractIfAvailable();
 testConsumerAdmissionContract();
+testInterpretedCodeQLContract();
 testSelectorResolutionScriptBehavior();
 testCanonicalSuiteParityContract();
 testFullRollupGateScriptRejectsNonExecutedResults();
@@ -1682,6 +1683,17 @@ function testPipelineSafetyGuards() {
   assert.doesNotMatch(stagedReleaseEntry, /dryRun: \$\{\{ parameters\.dryRun \}\}/);
   assert.match(stagedReleaseEntry, /values:\s*\n\s*- VSCodeDeployLAUX/);
   assert.match(stagedReleaseEntry, /releaseApprovalEnvironment: \$\{\{ parameters\.releaseApprovalEnvironment \}\}/);
+}
+
+function testInterpretedCodeQLContract() {
+  const { sdl } = parseYaml('.config/vscode-e2e-cli.1es.yml').extends.parameters;
+
+  assert.deepStrictEqual(sdl.codeql.interpreted, { enabled: true, language: 'javascript' });
+  assert.strictEqual(sdl.codeql.enabledOnNonDefaultBranches, true);
+  assert.strictEqual(sdl.codeql.language, undefined, 'source language must use the interpreted CodeQL contract');
+  assert.strictEqual(sdl.codeql.analyzeInPipeline, undefined, 'keep the CodeQL database upload path for SDL compliance');
+  assert.strictEqual(sdl.enableAllTools, undefined, 'CodeQL opt-in must not enable unrelated scanners');
+  assert.strictEqual(sdl.enableProductionSDL, undefined, 'source scanning must not change the unofficial build policy');
 }
 
 function testDiagnosticsStagingScriptHandlesDirectSuiteLayout() {

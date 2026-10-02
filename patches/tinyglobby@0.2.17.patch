@@ -1,0 +1,26 @@
+diff --git a/dist/index.cjs b/dist/index.cjs
+index c93b23393d316a44a19b6821e69afad47b714101..9e3d23a2baa7793866ffb177b1bf4d3f8bb6c276 100644
+--- a/dist/index.cjs
++++ b/dist/index.cjs
+@@ -176,7 +176,7 @@ function normalizePattern(pattern, opts, props, isIgnore) {
+ 			i++;
+ 		}
+ 		const potentialRoot = path.posix.join(cwd, parentDir.slice(i * 3));
+-		if (potentialRoot[0] !== "." && props.root.length > potentialRoot.length) {
++		if (!isIgnore && potentialRoot[0] !== "." && props.root.length > potentialRoot.length) {
+ 			props.root = ensureNonDriveRelativePath(potentialRoot);
+ 			props.depthOffset = -n + i;
+ 		}
+diff --git a/dist/index.mjs b/dist/index.mjs
+index f5db1ed7627736963cec8db6d5ec0b3c6f5915ff..db513edfce8d60a7347182353abf96f1a04e69dc 100644
+--- a/dist/index.mjs
++++ b/dist/index.mjs
+@@ -152,7 +152,7 @@ function normalizePattern(pattern, opts, props, isIgnore) {
+ 			i++;
+ 		}
+ 		const potentialRoot = posix.join(cwd, parentDir.slice(i * 3));
+-		if (potentialRoot[0] !== "." && props.root.length > potentialRoot.length) {
++		if (!isIgnore && potentialRoot[0] !== "." && props.root.length > potentialRoot.length) {
+ 			props.root = ensureNonDriveRelativePath(potentialRoot);
+ 			props.depthOffset = -n + i;
+ 		}

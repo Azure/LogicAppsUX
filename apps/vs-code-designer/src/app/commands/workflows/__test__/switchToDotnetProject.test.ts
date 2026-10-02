@@ -155,20 +155,21 @@ describe('switchToDotnetProject', () => {
       fsPath: '/test/project',
     } as vscode.Uri;
 
-    // Re-set the DotnetTemplateProvider constructor mock (restoreMocks resets it)
-    vi.mocked(DotnetTemplateProvider).mockImplementation(
-      () =>
-        ({
-          getCachedTemplates: mockGetCachedTemplates,
-          getLatestTemplateVersion: mockGetLatestTemplateVersion,
-          getLatestTemplates: mockGetLatestTemplates,
-          getBackupTemplates: mockGetBackupTemplates,
-        }) as any
-    );
+    // Re-set the DotnetTemplateProvider constructor mock after the per-test reset.
+    vi.mocked(DotnetTemplateProvider).mockImplementation(function () {
+      return {
+        getCachedTemplates: mockGetCachedTemplates,
+        getLatestTemplateVersion: mockGetLatestTemplateVersion,
+        getLatestTemplates: mockGetLatestTemplates,
+        getBackupTemplates: mockGetBackupTemplates,
+      } as any;
+    });
 
     // Re-set the InitDotnetProjectStep constructor mock
     initDotnetExecute = vi.fn().mockResolvedValue(undefined);
-    vi.mocked(InitDotnetProjectStep).mockImplementation(() => ({ execute: initDotnetExecute }) as any);
+    vi.mocked(InitDotnetProjectStep).mockImplementation(function () {
+      return { execute: initDotnetExecute } as any;
+    });
 
     vi.mocked(validateDotNetIsInstalled).mockResolvedValue(true);
     vi.mocked(tryParseFuncVersion).mockReturnValue(FuncVersion.v4);
@@ -187,7 +188,7 @@ describe('switchToDotnetProject', () => {
     // writeFileSync is used by createGlobalJsonFile but not in the global test-setup mock
     (fse as any).writeFileSync = vi.fn();
 
-    // Build file utils - must be set in beforeEach because restoreMocks resets factories
+    // Build file utils must be set after the per-test reset.
     vi.mocked(getDotnetBuildFile).mockResolvedValue('{"Project":{"PropertyGroup":{}}}');
     vi.mocked(addNugetPackagesToBuildFile).mockImplementation((x: any) => x);
     vi.mocked(addNugetPackagesToBuildFileByName).mockImplementation((x: any) => x);

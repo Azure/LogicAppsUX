@@ -1,7 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { DefaultInputsBinder } from '../../inputs/index';
 import * as parseModules from '../../../index'; // Import the module that contains the external function
-import { afterEach } from 'node:test';
 
 let binder: DefaultInputsBinder;
 let spy: any;

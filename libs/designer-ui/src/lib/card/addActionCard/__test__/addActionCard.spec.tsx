@@ -76,7 +76,7 @@ describe('lib/card/addActionCard', () => {
   beforeEach(() => {
     defaultProps = {
       addCardType: ADD_CARD_TYPE.TRIGGER,
-      onClick: vi.fn(),
+      onClick: vi.fn().mockName('spy'),
       selected: false,
     };
   });
@@ -125,7 +125,7 @@ describe('lib/card/addActionCard', () => {
     });
 
     it('should match snapshot with different props combination', () => {
-      const customOnClick = vi.fn();
+      const customOnClick = vi.fn().mockName('spy');
       const tree = renderer
         .create(<SimpleAddActionCard addCardType={ADD_CARD_TYPE.ACTION} selected={true} onClick={customOnClick} />)
         .toJSON();

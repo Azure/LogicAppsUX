@@ -238,9 +238,9 @@ describe('createLogicAppProject', () => {
     };
 
     const mockSetup = vi.fn().mockResolvedValue(undefined);
-    (CreateFunctionAppFiles as Mock).mockImplementation(() => ({
-      setup: mockSetup,
-    }));
+    (CreateFunctionAppFiles as Mock).mockImplementation(function () {
+      return { setup: mockSetup };
+    });
 
     await createLogicAppProject(mockContext, customCodeOptions, workspaceRootFolder);
 
@@ -249,9 +249,9 @@ describe('createLogicAppProject', () => {
 
   it('should not create function app files for standard logic app projects', async () => {
     const mockSetup = vi.fn().mockResolvedValue(undefined);
-    (CreateFunctionAppFiles as Mock).mockImplementation(() => ({
-      setup: mockSetup,
-    }));
+    (CreateFunctionAppFiles as Mock).mockImplementation(function () {
+      return { setup: mockSetup };
+    });
 
     await createLogicAppProject(mockContext, mockOptions, workspaceRootFolder);
 
@@ -306,9 +306,9 @@ describe('createLogicAppProject', () => {
     };
 
     const mockSetup = vi.fn().mockResolvedValue(undefined);
-    (CreateFunctionAppFiles as Mock).mockImplementation(() => ({
-      setup: mockSetup,
-    }));
+    (CreateFunctionAppFiles as Mock).mockImplementation(function () {
+      return { setup: mockSetup };
+    });
 
     await createLogicAppProject(mockContext, rulesEngineOptions, workspaceRootFolder);
 
@@ -344,9 +344,9 @@ describe('createLogicAppProject', () => {
       };
 
       const mockSetup = vi.fn().mockResolvedValue(undefined);
-      (CreateFunctionAppFiles as Mock).mockImplementation(() => ({
-        setup: mockSetup,
-      }));
+      (CreateFunctionAppFiles as Mock).mockImplementation(function () {
+        return { setup: mockSetup };
+      });
 
       await createLogicAppProject(mockContext, customCodeOptions, workspaceRootFolder);
 
@@ -369,9 +369,9 @@ describe('createLogicAppProject', () => {
       };
 
       const mockSetup = vi.fn().mockResolvedValue(undefined);
-      (CreateFunctionAppFiles as Mock).mockImplementation(() => ({
-        setup: mockSetup,
-      }));
+      (CreateFunctionAppFiles as Mock).mockImplementation(function () {
+        return { setup: mockSetup };
+      });
 
       // Simulate the Logic App's local.settings.json already existing on disk (as it would after
       // the real createLocalConfigurationFiles ran), so the LOGIC_APPS_CUSTOMCODE_DOTNETVERSION
@@ -406,9 +406,9 @@ describe('createLogicAppProject', () => {
       };
 
       const mockSetup = vi.fn().mockResolvedValue(undefined);
-      (CreateFunctionAppFiles as Mock).mockImplementation(() => ({
-        setup: mockSetup,
-      }));
+      (CreateFunctionAppFiles as Mock).mockImplementation(function () {
+        return { setup: mockSetup };
+      });
 
       await fse.ensureDir(logicAppFolderPath);
       await fse.writeJson(path.join(logicAppFolderPath, 'local.settings.json'), {
@@ -438,9 +438,9 @@ describe('createLogicAppProject', () => {
       };
 
       const mockSetup = vi.fn().mockResolvedValue(undefined);
-      (CreateFunctionAppFiles as Mock).mockImplementation(() => ({
-        setup: mockSetup,
-      }));
+      (CreateFunctionAppFiles as Mock).mockImplementation(function () {
+        return { setup: mockSetup };
+      });
 
       await fse.ensureDir(logicAppFolderPath);
       await fse.writeJson(path.join(logicAppFolderPath, 'local.settings.json'), {
@@ -465,9 +465,9 @@ describe('createLogicAppProject', () => {
       };
 
       const mockSetup = vi.fn().mockResolvedValue(undefined);
-      (CreateFunctionAppFiles as Mock).mockImplementation(() => ({
-        setup: mockSetup,
-      }));
+      (CreateFunctionAppFiles as Mock).mockImplementation(function () {
+        return { setup: mockSetup };
+      });
 
       await createLogicAppProject(mockContext, customCodeOptions, workspaceRootFolder);
 
@@ -490,9 +490,9 @@ describe('createLogicAppProject', () => {
       };
 
       const mockSetup = vi.fn().mockResolvedValue(undefined);
-      (CreateFunctionAppFiles as Mock).mockImplementation(() => ({
-        setup: mockSetup,
-      }));
+      (CreateFunctionAppFiles as Mock).mockImplementation(function () {
+        return { setup: mockSetup };
+      });
 
       await createLogicAppProject(mockContext, rulesEngineOptions, workspaceRootFolder);
 
@@ -514,9 +514,9 @@ describe('createLogicAppProject', () => {
       };
 
       const mockSetup = vi.fn().mockResolvedValue(undefined);
-      (CreateFunctionAppFiles as Mock).mockImplementation(() => ({
-        setup: mockSetup,
-      }));
+      (CreateFunctionAppFiles as Mock).mockImplementation(function () {
+        return { setup: mockSetup };
+      });
 
       await createLogicAppProject(mockContext, rulesEngineOptions, workspaceRootFolder);
 
@@ -1171,13 +1171,12 @@ local.settings.json`
 
       // Use test-friendly version that uses correct template paths
       const functionAppFiles = createTestFunctionAppFiles();
-      vi.mocked(CreateFunctionAppFiles).mockImplementation(
-        () =>
-          ({
-            setup: (ctx: IProjectWizardContext) => functionAppFiles.setup(ctx),
-            hideStepCount: true,
-          }) as any
-      );
+      vi.mocked(CreateFunctionAppFiles).mockImplementation(function () {
+        return {
+          setup: (ctx: IProjectWizardContext) => functionAppFiles.setup(ctx),
+          hideStepCount: true,
+        } as any;
+      });
 
       await createLogicAppProject(mockContext, options, workspaceRootFolder);
 
@@ -1210,13 +1209,12 @@ local.settings.json`
 
       // Unmock CreateFunctionAppFiles for this test
       const functionAppFiles = createTestFunctionAppFiles();
-      vi.mocked(CreateFunctionAppFiles).mockImplementation(
-        () =>
-          ({
-            setup: (ctx: IProjectWizardContext) => functionAppFiles.setup(ctx),
-            hideStepCount: true,
-          }) as any
-      );
+      vi.mocked(CreateFunctionAppFiles).mockImplementation(function () {
+        return {
+          setup: (ctx: IProjectWizardContext) => functionAppFiles.setup(ctx),
+          hideStepCount: true,
+        } as any;
+      });
 
       await createLogicAppProject(mockContext, options, workspaceRootFolder);
 
@@ -1271,13 +1269,12 @@ local.settings.json`
 
       // Unmock CreateFunctionAppFiles for this test
       const functionAppFiles = createTestFunctionAppFiles();
-      vi.mocked(CreateFunctionAppFiles).mockImplementation(
-        () =>
-          ({
-            setup: (ctx: IProjectWizardContext) => functionAppFiles.setup(ctx),
-            hideStepCount: true,
-          }) as any
-      );
+      vi.mocked(CreateFunctionAppFiles).mockImplementation(function () {
+        return {
+          setup: (ctx: IProjectWizardContext) => functionAppFiles.setup(ctx),
+          hideStepCount: true,
+        } as any;
+      });
 
       await createLogicAppProject(mockContext, options, workspaceRootFolder);
 
@@ -1309,13 +1306,12 @@ local.settings.json`
 
       // Unmock CreateFunctionAppFiles for this test
       const functionAppFiles = createTestFunctionAppFiles();
-      vi.mocked(CreateFunctionAppFiles).mockImplementation(
-        () =>
-          ({
-            setup: (ctx: IProjectWizardContext) => functionAppFiles.setup(ctx),
-            hideStepCount: true,
-          }) as any
-      );
+      vi.mocked(CreateFunctionAppFiles).mockImplementation(function () {
+        return {
+          setup: (ctx: IProjectWizardContext) => functionAppFiles.setup(ctx),
+          hideStepCount: true,
+        } as any;
+      });
 
       await createLogicAppProject(mockContext, options, workspaceRootFolder);
 
@@ -1349,13 +1345,12 @@ local.settings.json`
       } as any;
 
       const functionAppFiles = createTestFunctionAppFiles();
-      vi.mocked(CreateFunctionAppFiles).mockImplementation(
-        () =>
-          ({
-            setup: (ctx: IProjectWizardContext) => functionAppFiles.setup(ctx),
-            hideStepCount: true,
-          }) as any
-      );
+      vi.mocked(CreateFunctionAppFiles).mockImplementation(function () {
+        return {
+          setup: (ctx: IProjectWizardContext) => functionAppFiles.setup(ctx),
+          hideStepCount: true,
+        } as any;
+      });
 
       await createLogicAppProject(mockContext, options, workspaceRootFolder);
 
@@ -1387,13 +1382,12 @@ local.settings.json`
       } as any;
 
       const functionAppFiles = createTestFunctionAppFiles();
-      vi.mocked(CreateFunctionAppFiles).mockImplementation(
-        () =>
-          ({
-            setup: (ctx: IProjectWizardContext) => functionAppFiles.setup(ctx),
-            hideStepCount: true,
-          }) as any
-      );
+      vi.mocked(CreateFunctionAppFiles).mockImplementation(function () {
+        return {
+          setup: (ctx: IProjectWizardContext) => functionAppFiles.setup(ctx),
+          hideStepCount: true,
+        } as any;
+      });
 
       await createLogicAppProject(mockContext, options, workspaceRootFolder);
 
@@ -1419,13 +1413,12 @@ local.settings.json`
       } as any;
 
       const functionAppFiles = createTestFunctionAppFiles();
-      vi.mocked(CreateFunctionAppFiles).mockImplementation(
-        () =>
-          ({
-            setup: (ctx: IProjectWizardContext) => functionAppFiles.setup(ctx),
-            hideStepCount: true,
-          }) as any
-      );
+      vi.mocked(CreateFunctionAppFiles).mockImplementation(function () {
+        return {
+          setup: (ctx: IProjectWizardContext) => functionAppFiles.setup(ctx),
+          hideStepCount: true,
+        } as any;
+      });
 
       await createLogicAppProject(mockContext, options, workspaceRootFolder);
 
@@ -1453,13 +1446,12 @@ local.settings.json`
       } as any;
 
       const functionAppFiles = createTestFunctionAppFiles();
-      vi.mocked(CreateFunctionAppFiles).mockImplementation(
-        () =>
-          ({
-            setup: (ctx: IProjectWizardContext) => functionAppFiles.setup(ctx),
-            hideStepCount: true,
-          }) as any
-      );
+      vi.mocked(CreateFunctionAppFiles).mockImplementation(function () {
+        return {
+          setup: (ctx: IProjectWizardContext) => functionAppFiles.setup(ctx),
+          hideStepCount: true,
+        } as any;
+      });
 
       await createLogicAppProject(mockContext, options, workspaceRootFolder);
 
@@ -1538,13 +1530,12 @@ local.settings.json`
 
       // Use test-friendly version that uses correct template paths
       const functionAppFiles = createTestFunctionAppFiles();
-      vi.mocked(CreateFunctionAppFiles).mockImplementation(
-        () =>
-          ({
-            setup: (ctx: IProjectWizardContext) => functionAppFiles.setup(ctx),
-            hideStepCount: true,
-          }) as any
-      );
+      vi.mocked(CreateFunctionAppFiles).mockImplementation(function () {
+        return {
+          setup: (ctx: IProjectWizardContext) => functionAppFiles.setup(ctx),
+          hideStepCount: true,
+        } as any;
+      });
 
       // Mock createRulesFiles to avoid template access issues
       vi.mocked(createRulesFiles).mockResolvedValue(undefined);
@@ -1583,13 +1574,12 @@ local.settings.json`
 
       // Use test-friendly version that uses correct template paths
       const functionAppFiles = createTestFunctionAppFiles();
-      vi.mocked(CreateFunctionAppFiles).mockImplementation(
-        () =>
-          ({
-            setup: (ctx: IProjectWizardContext) => functionAppFiles.setup(ctx),
-            hideStepCount: true,
-          }) as any
-      );
+      vi.mocked(CreateFunctionAppFiles).mockImplementation(function () {
+        return {
+          setup: (ctx: IProjectWizardContext) => functionAppFiles.setup(ctx),
+          hideStepCount: true,
+        } as any;
+      });
 
       // Mock createRulesFiles to avoid template access issues
       vi.mocked(createRulesFiles).mockResolvedValue(undefined);
@@ -1623,13 +1613,12 @@ local.settings.json`
 
       // Use test-friendly version that uses correct template paths
       const functionAppFiles = createTestFunctionAppFiles();
-      vi.mocked(CreateFunctionAppFiles).mockImplementation(
-        () =>
-          ({
-            setup: (ctx: IProjectWizardContext) => functionAppFiles.setup(ctx),
-            hideStepCount: true,
-          }) as any
-      );
+      vi.mocked(CreateFunctionAppFiles).mockImplementation(function () {
+        return {
+          setup: (ctx: IProjectWizardContext) => functionAppFiles.setup(ctx),
+          hideStepCount: true,
+        } as any;
+      });
 
       // Mock createRulesFiles to avoid template access issues
       vi.mocked(createRulesFiles).mockResolvedValue(undefined);
@@ -1664,13 +1653,12 @@ local.settings.json`
 
       // Use test-friendly version that uses correct template paths
       const functionAppFiles = createTestFunctionAppFiles();
-      vi.mocked(CreateFunctionAppFiles).mockImplementation(
-        () =>
-          ({
-            setup: (ctx: IProjectWizardContext) => functionAppFiles.setup(ctx),
-            hideStepCount: true,
-          }) as any
-      );
+      vi.mocked(CreateFunctionAppFiles).mockImplementation(function () {
+        return {
+          setup: (ctx: IProjectWizardContext) => functionAppFiles.setup(ctx),
+          hideStepCount: true,
+        } as any;
+      });
 
       // Mock createRulesFiles to avoid template access issues
       vi.mocked(createRulesFiles).mockResolvedValue(undefined);
@@ -1763,13 +1751,12 @@ local.settings.json`
 
       // Unmock CreateFunctionAppFiles for this test
       const functionAppFiles = createTestFunctionAppFiles();
-      vi.mocked(CreateFunctionAppFiles).mockImplementation(
-        () =>
-          ({
-            setup: (ctx: IProjectWizardContext) => functionAppFiles.setup(ctx),
-            hideStepCount: true,
-          }) as any
-      );
+      vi.mocked(CreateFunctionAppFiles).mockImplementation(function () {
+        return {
+          setup: (ctx: IProjectWizardContext) => functionAppFiles.setup(ctx),
+          hideStepCount: true,
+        } as any;
+      });
 
       await createLogicAppProject(mockContext, options, workspaceRootFolder);
 

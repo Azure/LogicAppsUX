@@ -1,4 +1,3 @@
-import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useA2A } from './use-a2a';
@@ -17,15 +16,18 @@ let mockStreamReturnValue: any = {
 };
 
 vi.mock('../client/a2a-client', () => ({
-  A2AClient: vi.fn().mockImplementation(() => ({
-    message: {
-      stream: vi.fn().mockImplementation(() => mockStreamReturnValue),
-    },
-    getCapabilities: vi.fn().mockReturnValue({
-      streaming: true,
-      stateTransitionHistory: true,
-    }),
-  })),
+  // biome-ignore lint/complexity/useArrowFunction: Vitest invokes this mock as a constructor.
+  A2AClient: vi.fn().mockImplementation(function () {
+    return {
+      message: {
+        stream: vi.fn().mockImplementation(() => mockStreamReturnValue),
+      },
+      getCapabilities: vi.fn().mockReturnValue({
+        streaming: true,
+        stateTransitionHistory: true,
+      }),
+    };
+  }),
 }));
 
 describe('useA2A', () => {
@@ -257,9 +259,12 @@ describe('useA2A', () => {
   it('should handle errors gracefully', async () => {
     // Mock error in stream
     mockStreamReturnValue = {
+      /* eslint-disable require-yield -- This stream must fail without emitting a chunk. */
+      // biome-ignore lint/correctness/useYield: This stream must fail before yielding to exercise the error path.
       async *[Symbol.asyncIterator]() {
         throw new Error('Stream failed');
       },
+      /* eslint-enable require-yield */
     };
 
     const { result } = renderHook(() => useA2A());

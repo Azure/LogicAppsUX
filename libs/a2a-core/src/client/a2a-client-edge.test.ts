@@ -5,19 +5,22 @@ import type { AgentCard } from '../types';
 // Mock http-client module
 vi.mock('./http-client', () => {
   return {
-    HttpClient: vi.fn().mockImplementation(() => ({
-      post: vi.fn().mockRejectedValue(new Error('Network error')),
-      get: vi.fn().mockResolvedValue({
-        id: 'task-123',
-        state: 'failed',
-        createdAt: new Date().toISOString(),
-        messages: [],
-        error: {
-          code: 'TASK_FAILED',
-          message: 'Task execution failed',
-        },
-      }),
-    })),
+    // biome-ignore lint/complexity/useArrowFunction: Vitest invokes this mock as a constructor.
+    HttpClient: vi.fn().mockImplementation(function () {
+      return {
+        post: vi.fn().mockRejectedValue(new Error('Network error')),
+        get: vi.fn().mockResolvedValue({
+          id: 'task-123',
+          state: 'failed',
+          createdAt: new Date().toISOString(),
+          messages: [],
+          error: {
+            code: 'TASK_FAILED',
+            message: 'Task execution failed',
+          },
+        }),
+      };
+    }),
   };
 });
 

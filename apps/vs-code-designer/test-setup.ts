@@ -1,11 +1,14 @@
 import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
-import { afterEach, vi } from 'vitest';
+import { afterEach, beforeEach, vi } from 'vitest';
 import { COMMON_ERRORS } from './src/constants';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 
 // https://testing-library.com/docs/react-testing-library/api#cleanup
 afterEach(() => cleanup());
+
+// Vitest 4 restoreMocks only restores spies; preserve the previous per-test reset of standalone mocks.
+beforeEach(() => vi.resetAllMocks());
 
 vi.mock('@microsoft/vscode-azext-azureutils', () => ({
   // mock implementation or empty object

@@ -122,7 +122,9 @@ describe('ConnectorDynamicQueries', () => {
 
     const loggerService: any = { log() {} };
     const connectorService: any = {
-      getListDynamicValues: vitest.fn().mockResolvedValue([]),
+      getListDynamicValues() {
+        return Promise.resolve([]);
+      },
     };
 
     beforeAll(() => {

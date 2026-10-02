@@ -12,7 +12,7 @@ describe('lib/flyout/flyoutcallout', () => {
       target: undefined,
       text: 'text',
       visible: true,
-      onDismiss: vi.fn(),
+      onDismiss: vi.fn().mockName('spy'),
     };
     renderer = ShallowRenderer.createRenderer();
   });

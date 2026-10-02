@@ -994,9 +994,9 @@ describe('createLogicAppWorkspace', () => {
 
   it('should create function app files for custom code projects when not from package', async () => {
     const mockSetup = vi.fn().mockResolvedValue(undefined);
-    (CreateFunctionAppFiles as Mock).mockImplementation(() => ({
-      setup: mockSetup,
-    }));
+    (CreateFunctionAppFiles as Mock).mockImplementation(function () {
+      return { setup: mockSetup };
+    });
 
     await CreateLogicAppWorkspaceModule.createLogicAppWorkspace(mockContext, mockOptionsCustomCode, false);
 
@@ -1005,9 +1005,9 @@ describe('createLogicAppWorkspace', () => {
 
   it('should create function app files for rules engine projects when not from package', async () => {
     const mockSetup = vi.fn().mockResolvedValue(undefined);
-    (CreateFunctionAppFiles as Mock).mockImplementation(() => ({
-      setup: mockSetup,
-    }));
+    (CreateFunctionAppFiles as Mock).mockImplementation(function () {
+      return { setup: mockSetup };
+    });
     vi.mocked(fse.readFile).mockResolvedValue('Sample content with <%= methodName %>' as any);
 
     await CreateLogicAppWorkspaceModule.createLogicAppWorkspace(mockContext, mockOptionsRulesEngine, false);
@@ -1017,9 +1017,9 @@ describe('createLogicAppWorkspace', () => {
 
   it('should not create function app files for standard logic app projects', async () => {
     const mockSetup = vi.fn().mockResolvedValue(undefined);
-    (CreateFunctionAppFiles as Mock).mockImplementation(() => ({
-      setup: mockSetup,
-    }));
+    (CreateFunctionAppFiles as Mock).mockImplementation(function () {
+      return { setup: mockSetup };
+    });
 
     await CreateLogicAppWorkspaceModule.createLogicAppWorkspace(mockContext, mockOptionsLogicApp, false);
 

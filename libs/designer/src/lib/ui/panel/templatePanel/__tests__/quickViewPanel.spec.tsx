@@ -1,4 +1,4 @@
-import { describe, beforeAll, expect, it, beforeEach } from 'vitest';
+import { describe, expect, it, beforeEach } from 'vitest';
 import type { AppStore } from '../../../../core/state/templates/store';
 import { setupStore } from '../../../../core/state/templates/store';
 import { StandardTemplateService, InitTemplateService, type Template } from '@microsoft/logic-apps-shared';
@@ -9,7 +9,6 @@ import { TemplatePanelView } from '../../../../core/state/templates/panelSlice';
 import { MockHttpClient } from '../../../../__test__/mock-http-client';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { getReactQueryClient } from '../../../../core';
-// biome-ignore lint/correctness/noUnusedImports: <explanation>
 import React from 'react';
 import { QuickViewPanel } from '../quickViewPanel/quickViewPanel';
 import constants from '../../../../common/constants';
@@ -45,7 +44,7 @@ describe('panel/templatePanel/quickViewPanel', () => {
     })
   );
 
-  beforeAll(() => {
+  beforeEach(() => {
     param1DefaultValue = 'default value for param 1';
     template1Manifest = {
       id: 'template1Manifest',
@@ -200,7 +199,7 @@ describe('panel/templatePanel/quickViewPanel', () => {
     store = setupStore(minimalStoreData);
   });
 
-  beforeEach(() => {
+  const renderPanel = () => {
     const queryClient = getReactQueryClient();
     const ref = React.createRef<HTMLDivElement>();
     renderWithProviders(
@@ -211,9 +210,10 @@ describe('panel/templatePanel/quickViewPanel', () => {
       </QueryClientProvider>,
       { store }
     );
-  });
+  };
 
   it('Ensure template state for showing information is correct', async () => {
+    renderPanel();
     expect(store.getState().template.workflows[defaultWorkflowId].workflowName).toBe('');
     expect(store.getState().template.workflows[defaultWorkflowId].kind).toBe(undefined);
     expect(store.getState().template.templateName).toBe(template1Manifest.title);
@@ -224,6 +224,7 @@ describe('panel/templatePanel/quickViewPanel', () => {
   });
 
   it('Ensures the quickView panel is open with header', async () => {
+    renderPanel();
     expect(store.getState().panel.isOpen).toBe(true);
     expect(store.getState().panel.currentPanelView).toBe(TemplatePanelView.QuickView);
     expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_PANEL_TAB_NAMES.WORKFLOW_VIEW);
@@ -231,9 +232,12 @@ describe('panel/templatePanel/quickViewPanel', () => {
   });
 
   it('Ensures the quickView panel is open with header', async () => {
-    const newState = store.getState();
-    newState.panel.selectedTabId = constants.TEMPLATE_PANEL_TAB_NAMES.OVERVIEW;
-    store = setupStore(newState);
+    const state = store.getState();
+    store = setupStore({
+      ...state,
+      panel: { ...state.panel, selectedTabId: constants.TEMPLATE_PANEL_TAB_NAMES.OVERVIEW },
+    });
+    renderPanel();
     expect(store.getState().panel.isOpen).toBe(true);
     expect(store.getState().panel.currentPanelView).toBe(TemplatePanelView.QuickView);
     expect(screen.queryByText(store.getState().template?.templateName ?? '')).toBeDefined();
@@ -241,10 +245,13 @@ describe('panel/templatePanel/quickViewPanel', () => {
   });
 
   it('Ensures the quickView panel is open without connections section', async () => {
-    const newState = store.getState();
-    newState.panel.selectedTabId = constants.TEMPLATE_PANEL_TAB_NAMES.OVERVIEW;
-    newState.workflow.isConsumption = false;
-    store = setupStore(newState);
+    const state = store.getState();
+    store = setupStore({
+      ...state,
+      panel: { ...state.panel, selectedTabId: constants.TEMPLATE_PANEL_TAB_NAMES.OVERVIEW },
+      workflow: { ...state.workflow, isConsumption: false },
+    });
+    renderPanel();
     expect(screen.queryByText(store.getState().template?.templateName ?? '')).toBeDefined();
     expect(screen.queryByText('No connections are needed in this template')).toBeNull();
   });

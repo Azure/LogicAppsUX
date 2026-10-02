@@ -18,10 +18,13 @@ vi.mock('../use-a2a', () => ({
 }));
 
 vi.mock('../../discovery/agent-discovery', () => ({
-  AgentDiscovery: vi.fn(() => ({
-    fromWellKnownUri: vi.fn(),
-    fromDirect: vi.fn(),
-  })),
+  // biome-ignore lint/complexity/useArrowFunction: Vitest invokes this mock as a constructor.
+  AgentDiscovery: vi.fn(function () {
+    return {
+      fromWellKnownUri: vi.fn(),
+      fromDirect: vi.fn(),
+    };
+  }),
 }));
 
 vi.mock('../utils/messageUtils', () => ({
@@ -418,7 +421,10 @@ describe('useChatWidget', () => {
       fromDirect: vi.fn(),
     };
 
-    vi.mocked(AgentDiscovery).mockImplementation(() => mockDiscoveryInstance as any);
+    // biome-ignore lint/complexity/useArrowFunction: Vitest invokes this mock as a constructor.
+    vi.mocked(AgentDiscovery).mockImplementation(function () {
+      return mockDiscoveryInstance as any;
+    });
 
     renderHook(() =>
       useChatWidget({

@@ -3,10 +3,9 @@ import { JwtTokenHelper } from '@microsoft/vscode-extension-logic-apps';
 import { describe, it, expect } from 'vitest';
 
 describe('isKeyExpired', () => {
-  it('should expose the isKeyExpired function'),
-    () => {
-      expect(isKeyExpired).toBeDefined();
-    };
+  it('should expose the isKeyExpired function', () => {
+    expect(isKeyExpired).toBeDefined();
+  });
 });
 
 describe('isKeyExpired with JWTs', () => {

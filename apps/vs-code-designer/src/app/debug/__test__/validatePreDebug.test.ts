@@ -1,15 +1,18 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import * as azureStorage from 'azure-storage';
+import { createAzuriteBlobClient } from '../azuriteClient';
 import { autoStartAzuriteSetting, localEmulatorConnectionString } from '../../../constants';
 import { validateFuncCoreToolsInstalled } from '../../commands/funcCoreTools/validateFuncCoreToolsInstalled';
 import { getAzureWebJobsStorage } from '../../utils/appSettings/localSettings';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { preDebugValidate, validateEmulatorIsRunning, azuriteProbeTimeoutMs } from '../validatePreDebug';
 
-vi.mock('azure-storage', () => ({
-  createBlobService: vi.fn(() => ({
-    doesContainerExist: (_container: string, callback: (err?: Error) => void) => callback(new Error('connection refused')),
-  })),
+const { exists, getContainerClient } = vi.hoisted(() => {
+  const exists = vi.fn<(options: { abortSignal: AbortSignal }) => Promise<boolean>>();
+  return { exists, getContainerClient: vi.fn(() => ({ exists })) };
+});
+
+vi.mock('../azuriteClient', () => ({
+  createAzuriteBlobClient: vi.fn(() => ({ getContainerClient })),
 }));
 
 vi.mock('../../commands/funcCoreTools/validateFuncCoreToolsInstalled', () => ({
@@ -40,6 +43,7 @@ describe('validatePreDebug', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    exists.mockRejectedValue(new Error('connection refused'));
     context.telemetry.properties = {};
     vi.mocked(getAzureWebJobsStorage).mockResolvedValue(localEmulatorConnectionString);
   });
@@ -59,21 +63,21 @@ describe('validatePreDebug', () => {
   });
 
   it('gives up on a probe that never answers instead of hanging forever', async () => {
-    // A listener that accepts the connection but never calls back — a half-started
+    // A listener that accepts the connection but never responds — a half-started
     // emulator, or an unrelated process squatting on port 10000. Without the probe
     // timeout this call never settles, which is exactly the hang being fixed.
     vi.useFakeTimers();
     try {
-      vi.mocked(azureStorage.createBlobService).mockReturnValueOnce({
-        doesContainerExist: () => {
-          /* never invokes the callback */
-        },
-      } as any);
+      exists.mockImplementationOnce(() => new Promise(() => {}));
 
       const pending = validateEmulatorIsRunning(context, projectPath, { promptWarningMessage: false });
-      await vi.advanceTimersByTimeAsync(azuriteProbeTimeoutMs + 1);
+      await vi.advanceTimersByTimeAsync(azuriteProbeTimeoutMs - 1);
+      expect(exists.mock.calls[0][0].abortSignal.aborted).toBe(false);
+      await vi.advanceTimersByTimeAsync(1);
 
       await expect(pending).resolves.toBe(false);
+      expect(exists.mock.calls[0][0].abortSignal.aborted).toBe(true);
+      expect(vi.getTimerCount()).toBe(0);
     } finally {
       vi.useRealTimers();
     }
@@ -126,7 +130,8 @@ describe('validatePreDebug', () => {
   it('probes the local emulator when AzureWebJobsStorage uses development storage', async () => {
     await validateEmulatorIsRunning(context, projectPath, false);
 
-    expect(azureStorage.createBlobService).toHaveBeenCalledWith(localEmulatorConnectionString);
+    expect(createAzuriteBlobClient).toHaveBeenCalledWith(localEmulatorConnectionString);
+    expect(getContainerClient).toHaveBeenCalledWith('azure-webjob-hosts');
   });
 
   it('uses a provided AzureWebJobsStorage value without rereading settings and still probes each call', async () => {
@@ -140,6 +145,40 @@ describe('validatePreDebug', () => {
     });
 
     expect(getAzureWebJobsStorage).not.toHaveBeenCalled();
-    expect(azureStorage.createBlobService).toHaveBeenCalledTimes(2);
+    expect(createAzuriteBlobClient).toHaveBeenCalledTimes(2);
+  });
+
+  it.each([true, false])('accepts a successful storage response when container existence is %s', async (containerExists) => {
+    vi.useFakeTimers();
+    try {
+      exists.mockResolvedValueOnce(containerExists);
+
+      await expect(validateEmulatorIsRunning(context, projectPath, false)).resolves.toBe(true);
+      expect(vi.getTimerCount()).toBe(0);
+      expect(exists.mock.calls[0][0].abortSignal.aborted).toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('does not probe a non-emulator storage connection', async () => {
+    await expect(
+      validateEmulatorIsRunning(context, projectPath, {
+        azureWebJobsStorage: 'DefaultEndpointsProtocol=https;AccountName=example',
+      })
+    ).resolves.toBe(true);
+
+    expect(createAzuriteBlobClient).not.toHaveBeenCalled();
+    expect(exists).not.toHaveBeenCalled();
+  });
+
+  it('clears the timeout when the storage request fails', async () => {
+    vi.useFakeTimers();
+    try {
+      await expect(validateEmulatorIsRunning(context, projectPath, false)).resolves.toBe(false);
+      expect(vi.getTimerCount()).toBe(0);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

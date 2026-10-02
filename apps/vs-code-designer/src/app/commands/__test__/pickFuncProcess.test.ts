@@ -163,7 +163,9 @@ describe('pickFuncProcessInternal', () => {
     (executeIfNotActive as any).mockImplementation(async () => {
       runningFuncTaskMap.set(workspaceFolder, { startTime: Date.now(), processId: 1234 });
     });
-    (vscode.EventEmitter as any).mockImplementation(() => ({ fire: vi.fn() }));
+    (vscode.EventEmitter as any).mockImplementation(function () {
+      return { fire: vi.fn() };
+    });
     (vscode.tasks as any) = {
       fetchTasks: vi.fn().mockResolvedValue([funcTask]),
       executeTask: vi.fn().mockResolvedValue(undefined),

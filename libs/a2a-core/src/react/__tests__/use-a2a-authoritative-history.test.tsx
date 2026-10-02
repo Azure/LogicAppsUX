@@ -4,24 +4,27 @@ import type { AgentCard } from '../../types';
 import { useA2A } from '../use-a2a';
 
 vi.mock('../../client/a2a-client', () => ({
-  A2AClient: vi.fn(() => ({
-    getCapabilities: vi.fn(() => ({ streaming: true })),
-    message: {
-      stream: vi.fn(async function* () {
-        yield {
-          id: 'live-task',
-          state: 'running',
-          messages: [
-            {
-              role: 'assistant',
-              content: [{ type: 'text', content: 'Live response' }],
-            },
-          ],
-          artifacts: [],
-        };
-      }),
-    },
-  })),
+  // biome-ignore lint/complexity/useArrowFunction: Vitest invokes this mock as a constructor.
+  A2AClient: vi.fn(function () {
+    return {
+      getCapabilities: vi.fn(() => ({ streaming: true })),
+      message: {
+        stream: vi.fn(async function* () {
+          yield {
+            id: 'live-task',
+            state: 'running',
+            messages: [
+              {
+                role: 'assistant',
+                content: [{ type: 'text', content: 'Live response' }],
+              },
+            ],
+            artifacts: [],
+          };
+        }),
+      },
+    };
+  }),
 }));
 
 describe('useA2A authoritative history', () => {

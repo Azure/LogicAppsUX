@@ -208,11 +208,11 @@ describe('OverviewApp', () => {
     mocks.runTrigger.mockResolvedValue(undefined);
     mocks.refetch.mockResolvedValue(undefined);
     mocks.fetchAgentUrl.mockResolvedValue({ agentUrl: 'http://agent', chatUrl: 'http://chat', hostName: 'http://runtime' });
-    mocks.HttpClient.mockImplementation((options: any) => {
+    mocks.HttpClient.mockImplementation(function (options: unknown) {
       mocks.httpClient(options);
       return { options, post: vi.fn() };
     });
-    mocks.StandardRunService.mockImplementation((options: any) => {
+    mocks.StandardRunService.mockImplementation(function (options: unknown) {
       mocks.standardRunService(options);
       return {
         getMoreRuns: mocks.getMoreRuns,

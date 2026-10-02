@@ -1,0 +1,12 @@
+diff --git a/src/cache.js b/src/cache.js
+index b1fdf6d88c1ebd338ff2519755fa4863915166b6..758930d9ad2a6929fe5a0daa479d1b9f93a01b33 100644
+--- a/src/cache.js
++++ b/src/cache.js
+@@ -1,6 +1,6 @@
+ const path = require('path');
+ const fs = require('fs');
+-const Keyv = require('keyv');
++const { Keyv } = require('keyv');
+ const { writeJSON, tryParse } = require('./utils');
+ const { del } = require('./del');
+ 

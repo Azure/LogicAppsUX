@@ -54,7 +54,8 @@ describe('SSEClient', () => {
     mockEventSource = null as any;
 
     // Capture EventSource instance
-    vi.spyOn(global, 'EventSource' as any).mockImplementation((url: string, config?: EventSourceInit) => {
+    // biome-ignore lint/complexity/useArrowFunction: Vitest invokes this mock as a constructor.
+    vi.spyOn(global, 'EventSource' as any).mockImplementation(function (url: string, config?: EventSourceInit) {
       mockEventSource = new MockEventSource(url, config);
       return mockEventSource as any;
     });

@@ -28,7 +28,7 @@
     "lz-string": "^1.5.0",
     "pako": "2.1.0",
     "react-dnd": "16.0.1",
-    "react-dnd-accessible-backend": "1.0.1",
+    "react-dnd-accessible-backend": "2.1.0",
     "react-dnd-html5-backend": "16.0.1",
     "react-dnd-multi-backend": "8.0.0",
     "react-hotkeys-hook": "4.3.8",

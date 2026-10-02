@@ -21,7 +21,8 @@ import { getWorkspaceSetting, getFunctionsWorkerRuntime } from '../utils/vsCodeC
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { parseError } from '@microsoft/vscode-azext-utils';
 import { MismatchBehavior, Platform } from '@microsoft/vscode-extension-logic-apps';
-import * as azureStorage from 'azure-storage';
+import type { BlobServiceClient } from '@azure/storage-blob';
+import { createAzuriteBlobClient } from './azuriteClient';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
@@ -213,7 +214,7 @@ export async function validateEmulatorIsRunning(
 
   if (azureWebJobsStorage && azureWebJobsStorage.toLowerCase() === localEmulatorConnectionString.toLowerCase()) {
     try {
-      const client: azureStorage.BlobService = azureStorage.createBlobService(azureWebJobsStorage);
+      const client = createAzuriteBlobClient(azureWebJobsStorage);
       await probeEmulator(client);
     } catch {
       if (!promptWarningMessage) {
@@ -248,25 +249,22 @@ export async function validateEmulatorIsRunning(
 /**
  * Probes the emulator with a hard upper bound.
  *
- * `doesContainerExist` has no timeout of its own, so a listener that accepts the
- * TCP connection but never replies (a half-started emulator, or an unrelated
- * process squatting on port 10000) would hang this call indefinitely and, through
- * the readiness loop, hang the whole debug session.
+ * Abort the underlying request as well as bounding the readiness check so a
+ * half-started emulator cannot leave requests running between probes.
  */
-async function probeEmulator(client: azureStorage.BlobService): Promise<void> {
-  await new Promise<void>((resolve, reject) => {
-    const timer = setTimeout(() => {
-      reject(new Error(`Azurite probe timed out after ${azuriteProbeTimeoutMs}ms`));
-    }, azuriteProbeTimeoutMs);
-
-    // Checking against a common container for functions, but doesn't really matter what call we make here
-    client.doesContainerExist('azure-webjob-hosts', (err: Error | undefined) => {
-      clearTimeout(timer);
-      if (err) {
-        reject(err);
-      } else {
-        resolve();
-      }
+async function probeEmulator(client: BlobServiceClient): Promise<void> {
+  const controller = new AbortController();
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    const timeout = new Promise<never>((_resolve, reject) => {
+      timer = setTimeout(() => {
+        controller.abort();
+        reject(new Error(`Azurite probe timed out after ${azuriteProbeTimeoutMs}ms`));
+      }, azuriteProbeTimeoutMs);
     });
-  });
+    // A successful response is sufficient, even when the container does not exist.
+    await Promise.race([client.getContainerClient('azure-webjob-hosts').exists({ abortSignal: controller.signal }), timeout]);
+  } finally {
+    clearTimeout(timer);
+  }
 }

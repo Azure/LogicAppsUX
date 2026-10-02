@@ -8,7 +8,9 @@ import { createHash } from 'crypto';
 
 const mocks = vi.hoisted(() => {
   const extractAllTo = vi.fn();
-  const admZip = vi.fn(() => ({ extractAllTo }));
+  const admZip = vi.fn(function () {
+    return { extractAllTo };
+  });
 
   return {
     admZip,

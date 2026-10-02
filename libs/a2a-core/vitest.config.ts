@@ -1,5 +1,6 @@
 import { defineConfig } from 'vitest/config';
 import { resolve } from 'path';
+import { coverageDefaults } from '../shared-test-utils/vitestCoverage';
 
 export default defineConfig({
   test: {
@@ -8,9 +9,9 @@ export default defineConfig({
     exclude: ['**/node_modules/**', '**/dist/**', '**/examples/**', '**/*.spec.ts'],
     setupFiles: ['./src/react/test/setup.ts', '../shared-test-utils/fluentui-react-icons-mock.ts'],
     coverage: {
+      ...coverageDefaults,
       enabled: true,
       provider: 'istanbul',
-      include: ['src/**/*'],
       reporter: ['html', 'cobertura', 'lcov'],
       exclude: ['node_modules/', 'dist/', '**/*.d.ts', '**/*.config.ts', '**/index.ts'],
     },

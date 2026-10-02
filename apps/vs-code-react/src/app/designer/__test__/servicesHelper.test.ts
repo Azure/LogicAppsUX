@@ -2,25 +2,47 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Mock all service class constructors
 vi.mock('@microsoft/logic-apps-shared', () => ({
-  StandardConnectionService: vi.fn().mockImplementation((opts: any) => ({ type: 'connection', opts })),
-  StandardOperationManifestService: vi.fn().mockImplementation((opts: any) => ({ type: 'operationManifest', opts })),
-  StandardSearchService: vi.fn().mockImplementation((opts: any) => ({ type: 'search', opts })),
-  BaseGatewayService: vi.fn().mockImplementation((opts: any) => ({ type: 'gateway', opts })),
-  StandardRunService: vi.fn().mockImplementation((opts: any) => ({ type: 'run', opts, getRun: vi.fn() })),
-  StandardArtifactService: vi.fn().mockImplementation((opts: any) => ({ type: 'artifact', opts })),
-  BaseApiManagementService: vi
-    .fn()
-    .mockImplementation((opts: any) => ({ type: 'apim', opts, getOperationSchema: vi.fn(), getOperations: vi.fn() })),
-  BaseFunctionService: vi.fn().mockImplementation((opts: any) => ({ type: 'function', opts })),
-  BaseAppServiceService: vi.fn().mockImplementation((opts: any) => ({
-    type: 'appService',
-    opts,
-    getOperationSchema: vi.fn(),
-    getOperations: vi.fn(),
-  })),
-  BaseTenantService: vi.fn().mockImplementation((opts: any) => ({ type: 'tenant', opts })),
-  BaseCognitiveServiceService: vi.fn().mockImplementation((opts: any) => ({ type: 'cognitive', opts })),
-  BaseRoleService: vi.fn().mockImplementation((opts: any) => ({ type: 'role', opts })),
+  StandardConnectionService: vi.fn(function (opts: unknown) {
+    return { type: 'connection', opts };
+  }),
+  StandardOperationManifestService: vi.fn(function (opts: unknown) {
+    return { type: 'operationManifest', opts };
+  }),
+  StandardSearchService: vi.fn(function (opts: unknown) {
+    return { type: 'search', opts };
+  }),
+  BaseGatewayService: vi.fn(function (opts: unknown) {
+    return { type: 'gateway', opts };
+  }),
+  StandardRunService: vi.fn(function (opts: unknown) {
+    return { type: 'run', opts, getRun: vi.fn() };
+  }),
+  StandardArtifactService: vi.fn(function (opts: unknown) {
+    return { type: 'artifact', opts };
+  }),
+  BaseApiManagementService: vi.fn(function (opts: unknown) {
+    return { type: 'apim', opts, getOperationSchema: vi.fn(), getOperations: vi.fn() };
+  }),
+  BaseFunctionService: vi.fn(function (opts: unknown) {
+    return { type: 'function', opts };
+  }),
+  BaseAppServiceService: vi.fn(function (opts: unknown) {
+    return {
+      type: 'appService',
+      opts,
+      getOperationSchema: vi.fn(),
+      getOperations: vi.fn(),
+    };
+  }),
+  BaseTenantService: vi.fn(function (opts: unknown) {
+    return { type: 'tenant', opts };
+  }),
+  BaseCognitiveServiceService: vi.fn(function (opts: unknown) {
+    return { type: 'cognitive', opts };
+  }),
+  BaseRoleService: vi.fn(function (opts: unknown) {
+    return { type: 'role', opts };
+  }),
   HTTP_METHODS: { POST: 'POST', GET: 'GET' },
   clone: vi.fn((obj: any) => JSON.parse(JSON.stringify(obj))),
   isEmptyString: vi.fn((s: any) => !s || (typeof s === 'string' && s.trim().length === 0)),
@@ -35,10 +57,9 @@ vi.mock('@microsoft/vscode-extension-logic-apps', () => ({
     openRelativeLink: 'openRelativeLink',
     createFileSystemConnection: 'createFileSystemConnection',
   },
-  HttpClient: vi.fn().mockImplementation(() => ({
-    get: vi.fn(),
-    post: vi.fn(),
-  })),
+  HttpClient: vi.fn(function () {
+    return { get: vi.fn(), post: vi.fn() };
+  }),
 }));
 
 vi.mock('../constants', () => ({
@@ -46,7 +67,9 @@ vi.mock('../constants', () => ({
 }));
 
 vi.mock('../services/oAuth', () => ({
-  BaseOAuthService: vi.fn().mockImplementation(() => ({ type: 'oauth' })),
+  BaseOAuthService: vi.fn(function () {
+    return { type: 'oauth' };
+  }),
 }));
 
 const { mockFetchAgentUrl } = vi.hoisted(() => {
@@ -60,19 +83,27 @@ vi.mock('../services/workflowService', () => ({
 }));
 
 vi.mock('../customEditorService', () => ({
-  CustomEditorService: vi.fn().mockImplementation(() => ({ type: 'editor' })),
+  CustomEditorService: vi.fn(function () {
+    return { type: 'editor' };
+  }),
 }));
 
 vi.mock('../../services/Logger', () => ({
-  LoggerService: vi.fn().mockImplementation(() => ({ type: 'logger' })),
+  LoggerService: vi.fn(function () {
+    return { type: 'logger' };
+  }),
 }));
 
 vi.mock('../services/customConnectionParameterEditorService', () => ({
-  CustomConnectionParameterEditorService: vi.fn().mockImplementation(() => ({ type: 'connectionParam' })),
+  CustomConnectionParameterEditorService: vi.fn(function () {
+    return { type: 'connectionParam' };
+  }),
 }));
 
 vi.mock('../services/connector', () => ({
-  StandardVSCodeConnectorService: vi.fn().mockImplementation(() => ({ type: 'connector' })),
+  StandardVSCodeConnectorService: vi.fn(function () {
+    return { type: 'connector' };
+  }),
 }));
 
 vi.mock('../../../../package.json', () => ({
