@@ -145,10 +145,13 @@ function parseMochaLog(label, outcome, logText) {
 }
 
 function parseMochaFailures(logText, failing) {
-  const footer = /^[ \t]*\d+ failing\b/gm;
+  const footer = /^([ \t]*)\d+ failing\b/gm;
   let footerEnd = -1;
-  while (footer.exec(logText) !== null) {
+  let footerIndent;
+  let footerMatch;
+  while ((footerMatch = footer.exec(logText)) !== null) {
     footerEnd = footer.lastIndex;
+    footerIndent = footerMatch[1];
   }
   const section = footerEnd < 0 ? logText : logText.slice(footerEnd);
   const header = /^([ \t]*)(\d+)\)\s+(.+?)[ \t]*$/gm;
@@ -156,7 +159,7 @@ function parseMochaFailures(logText, failing) {
   let match;
   while ((match = header.exec(section)) !== null) {
     const ordinal = Number(match[2]);
-    if (ordinal < 1 || ordinal > failing || records.has(ordinal)) {
+    if (match[1] !== footerIndent || ordinal < 1 || ordinal > failing || records.has(ordinal)) {
       continue;
     }
     const parts = [match[3].trim().replace(/:$/, '')];

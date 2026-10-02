@@ -1656,6 +1656,15 @@ function testMochaHookReportingUsesOrdinalFailureIdentity() {
     assert.deepStrictEqual(bodyResult.executedTestCounts, { total: 1, passing: 0, failing: 1, pending: 0 });
     assert.strictEqual(bodyResult.harnessFailures, undefined, 'Hook words in suite/body prose do not make a Mocha hook');
   }
+  const nestedNumbering = parseMochaLog(
+    'unitTests',
+    'failure',
+    '  0 passing (1s)\n  2 failing\n  1) Ordinary suite\n       Actual body:\n     Error: multiline detail\n         2) This is error text, not another body:\n  2) Owned suite\n       "after all" hook for "Actual body":\n     Error: teardown failed\n'
+  );
+  assert.deepStrictEqual(nestedNumbering.executedTestCounts, { total: 1, passing: 0, failing: 1, pending: 0 });
+  assert.deepStrictEqual(nestedNumbering.failedTests, ['Ordinary suite: Actual body', 'Owned suite: "after all" hook for "Actual body"']);
+  assert.strictEqual(nestedNumbering.harnessFailures.length, 1);
+  assert.strictEqual(nestedNumbering.harnessFailures[0].kind, 'mocha-hook');
 }
 
 function testMsnFailedWrapperAccounting() {
