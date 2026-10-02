@@ -2,6 +2,7 @@
 const assert = require('assert');
 const { execFileSync } = require('child_process');
 const fs = require('fs');
+const { createRequire } = require('module');
 const os = require('os');
 const path = require('path');
 const { SUITE_ALIASES, SUITE_REGISTRY } = require('./e2e-cli-batch');
@@ -10,6 +11,7 @@ const { OGF_E2E_SCENARIOS, getOgfScenariosForPhase } = require('./ogf-e2e-regist
 const repoRoot = path.resolve(__dirname, '..', '..', '..');
 
 testAzureToolsWrapperContract();
+testPackageLocalLintStagedRoutingContract();
 testRootNpmrcSourceGuardAllowsGeneratedRuntimeFile();
 testLocalAzureToolsWrapperContractIfAvailable();
 testConsumerAdmissionContract();
@@ -54,6 +56,45 @@ console.log('[pipeline-contract.unit] all tests passed');
 
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
+}
+
+function testPackageLocalLintStagedRoutingContract() {
+  const rootPackage = JSON.parse(read('package.json'));
+  const extensionPackage = JSON.parse(read('apps/vs-code-designer/package.json'));
+  const rootConfig = rootPackage['lint-staged'];
+  const localConfig = extensionPackage['lint-staged'];
+  assert.deepStrictEqual(Object.keys(localConfig), Object.keys(rootConfig));
+  const micromatch = createRequire(require.resolve('lint-staged'))('micromatch');
+  const files = [
+    'source.js',
+    'source.ts',
+    'component.tsx',
+    'nested/source.js',
+    'nested/source.d.ts',
+    'source.d.ts',
+    'source.d.test.ts',
+    'package.json',
+    'configuration.yml',
+  ];
+  const route = (config) =>
+    Object.entries(config).flatMap(([pattern, commands]) =>
+      micromatch(files, pattern, { matchBase: !pattern.includes('/'), dot: true }).map((file) => ({
+        file,
+        lintAndFormat: commands.slice(1),
+      }))
+    );
+  assert.deepStrictEqual(route(localConfig), route(rootConfig));
+  for (const pattern of Object.keys(rootConfig)) {
+    assert.deepStrictEqual(localConfig[pattern].slice(1), rootConfig[pattern].slice(1));
+    assert.strictEqual(rootConfig[pattern][0], 'npm run extract');
+    assert.strictEqual(localConfig[pattern][0], 'npm --prefix ../.. run extract -- --ignore "**/*.d.ts"');
+  }
+  assert.strictEqual(path.resolve(repoRoot, 'apps', 'vs-code-designer', '..', '..'), repoRoot);
+  assert.ok(rootPackage.scripts.extract.startsWith('formatjs extract '));
+  const sourcePattern = '*.{js,ts,tsx}';
+  assert.deepStrictEqual(micromatch(files, sourcePattern, { matchBase: true }), files.slice(0, 7));
+  assert.deepStrictEqual(micromatch(files, '**/*.d.ts'), ['nested/source.d.ts', 'source.d.ts']);
+  assert.deepStrictEqual(localConfig[sourcePattern].slice(1), ['eslint --cache --fix', 'biome check --write']);
 }
 
 function testFullRollupGateScriptRejectsNonExecutedResults() {
@@ -1819,6 +1860,21 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
     fs.writeFileSync(path.join(vscodeLogsRoot, 'profile.log'), 'already redacted log\n');
     const screenshotFixture = writeScreenshotSidecarFixture(screenshotsRoot);
     fs.writeFileSync(path.join(workspaceSnapshotsRoot, 'index.md'), '# redacted workspace\n');
+    const processEvidenceRoot = path.join(
+      sourcesDirectory,
+      'apps',
+      'vs-code-designer',
+      '.vscode-test',
+      'lifecycle',
+      suiteId,
+      'msn-weather-lifecycle'
+    );
+    const processNames = ['owned-processes-fixture.before-teardown.json', 'owned-processes-fixture.after-teardown.json'];
+    fs.mkdirSync(processEvidenceRoot, { recursive: true });
+    for (const name of processNames) {
+      fs.writeFileSync(path.join(processEvidenceRoot, name), '{"processExitVerified":false,"filesystemCleanupVerified":false}\n');
+    }
+    fs.writeFileSync(path.join(processEvidenceRoot, 'unrelated.json'), '{"mustNotStage":true}\n');
 
     const stage = () =>
       execFileSync(
@@ -1849,6 +1905,15 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
       assert.ok(
         !fs.existsSync(path.join(artifactStagingDirectory, 'vscode-e2e-cli', artifactName, 'private-traceability', `${suiteId}.json`))
       );
+      if (options.msn) {
+        for (const name of processNames) {
+          assert.strictEqual(
+            fs.readFileSync(path.join(failedDiagnosticsRoot, 'owned-processes', name), 'utf8'),
+            fs.readFileSync(path.join(processEvidenceRoot, name), 'utf8'),
+            'Failed MSN staging must preserve process observations byte-for-byte'
+          );
+        }
+      }
       return;
     }
     stage();
@@ -1887,6 +1952,20 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
     assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'log', 'vscode-logs', 'profile.log')));
     assertScreenshotSidecarFixturePreserved(path.join(diagnosticsRoot, 'screenshots'), screenshotFixture);
     assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'generated-workspaces', 'index.md')));
+    if (options.msn) {
+      assert.deepStrictEqual(fs.readdirSync(path.join(diagnosticsRoot, 'owned-processes')).sort(), processNames.sort());
+      for (const name of processNames) {
+        assert.strictEqual(
+          fs.readFileSync(path.join(diagnosticsRoot, 'owned-processes', name), 'utf8'),
+          fs.readFileSync(path.join(processEvidenceRoot, name), 'utf8')
+        );
+      }
+    } else {
+      assert.ok(
+        !fs.existsSync(path.join(diagnosticsRoot, 'owned-processes')),
+        'Other suite diagnostics must not adopt MSN process evidence'
+      );
+    }
   } finally {
     fs.rmSync(tempRoot, { recursive: true, force: true });
   }

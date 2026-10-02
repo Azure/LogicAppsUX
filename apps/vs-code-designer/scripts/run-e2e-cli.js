@@ -5,11 +5,12 @@
 /* global __dirname, __filename, clearTimeout, console, module, process, require, setTimeout */
 const { execFileSync, spawn } = require('child_process');
 const { Buffer } = require('buffer');
-const { createHash } = require('crypto');
+const { createHash, randomUUID } = require('crypto');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { URL } = require('url');
+const { createProcessObservationProvider } = require('./e2e-cli-process-observation');
 const { createBatchRoot, normalizeSuiteSelection, runBatchSuites, SUITE_REGISTRY } = require('./e2e-cli-batch');
 const { getOgfScenariosForPhase } = require('./ogf-e2e-registry');
 
@@ -729,11 +730,14 @@ async function runMsnWeatherLifecycle(visibleDelayMs) {
     const lifecycleRunId = Date.now();
     runtimeDependenciesRoot = createIsolatedRuntimeDependenciesRoot('msnWeatherLifecycle');
     workspaceParent = createOwnedWorkspaceParent('msn-weather-lifecycle');
+    fs.mkdirSync(lifecycleDir, { recursive: true });
+    const ownedProcessEnv = await getMsnOwnedProcessEnvironment(lifecycleDir);
     const commonEnv = {
       LA_E2E_CLI_DIRECT_SUITE_LABEL: 'msnWeatherLifecycle',
       LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: runtimeDependenciesRoot,
       LA_E2E_CLI_EXPECT_AZURE_LOGIC_APPS_CHANNEL: '1',
       LA_E2E_CLI_VSCODE_LOG_ARTIFACT_LABEL: 'msnWeatherLifecycle',
+      ...ownedProcessEnv,
     };
     fs.mkdirSync(lifecycleDir, { recursive: true });
     const manifestPath = path.join(lifecycleDir, `manifest-standard-${lifecycleRunId}.json`);
@@ -787,20 +791,74 @@ async function runMsnWeatherLifecycle(visibleDelayMs) {
     lifecycleError = error;
     throw error;
   } finally {
-    await cleanupOwnedWorkspaceParent(workspaceParent, 'MSN Weather lifecycle');
-    if (runtimeDependenciesRoot && lifecycleSucceeded && process.env.LA_E2E_CLI_PRESERVE_WORKSPACES !== '1') {
-      await cleanupRuntimeDependenciesRoot(runtimeDependenciesRoot);
-    }
-    cleanupVerified = getOwnedRootCleanupVerified([workspaceParent, runtimeDependenciesRoot]);
-    terminal = finalizeDirectMsnEvidence(evidenceEnv, {
-      cleanupVerified,
-      lifecycleSucceeded,
-      lifecycleError: Boolean(lifecycleError),
-    });
+    ({ cleanupVerified, terminal } = await finalizeMsnLifecycleCleanup({
+      lifecycleError,
+      cleanupSteps: [
+        () => cleanupOwnedWorkspaceParent(workspaceParent, 'MSN Weather lifecycle', true),
+        async () => {
+          if (runtimeDependenciesRoot && lifecycleSucceeded && process.env.LA_E2E_CLI_PRESERVE_WORKSPACES !== '1') {
+            await cleanupRuntimeDependenciesRoot(runtimeDependenciesRoot);
+          }
+        },
+      ],
+      observeCleanup: () => getOwnedRootCleanupVerified([workspaceParent, runtimeDependenciesRoot]),
+      finalizeEvidence: (outcome) => finalizeDirectMsnEvidence(evidenceEnv, { ...outcome, lifecycleSucceeded }),
+    }));
   }
   if (!cleanupVerified || terminal?.complete === false) {
     throw new Error('MSN lifecycle evidence failed: incomplete-or-unclean-lifecycle');
   }
+}
+
+async function finalizeMsnLifecycleCleanup({ lifecycleError, cleanupSteps, observeCleanup, finalizeEvidence }) {
+  const errors = lifecycleError ? [lifecycleError] : [];
+  for (const step of cleanupSteps) {
+    try {
+      await step();
+    } catch (error) {
+      errors.push(error);
+    }
+  }
+  let cleanupVerified = false;
+  try {
+    cleanupVerified = observeCleanup() === true;
+  } catch (error) {
+    errors.push(error);
+  }
+  let terminal;
+  try {
+    terminal = finalizeEvidence({
+      cleanupVerified,
+      lifecycleError: errors.length > 0,
+    });
+  } catch (error) {
+    errors.push(error);
+  }
+  if (errors.length > 0) {
+    throw new AggregateError(errors, 'MSN lifecycle failed; original execution, cleanup and evidence errors were retained');
+  }
+  if (!cleanupVerified || terminal?.complete === false) {
+    throw new Error('MSN lifecycle evidence failed: incomplete-or-unclean-lifecycle');
+  }
+  return { cleanupVerified, terminal };
+}
+
+async function getMsnOwnedProcessEnvironment(lifecycleDir) {
+  if (!['linux', 'win32'].includes(process.platform)) {
+    return {};
+  }
+  const provider = createProcessObservationProvider();
+  const records = await provider.snapshot(10_000);
+  const owners = records.filter((record) => record.pid === process.pid);
+  if (owners.length !== 1 || !owners[0].creationIdentity || !owners[0].executable) {
+    throw new Error('Owned process cleanup failed: missing-wrapper-process-identity');
+  }
+  const invocationId = randomUUID();
+  return {
+    LA_E2E_CLI_MSN_PROCESS_INVOCATION: invocationId,
+    LA_E2E_CLI_MSN_PROCESS_OWNER_JSON: JSON.stringify(owners[0]),
+    LA_E2E_CLI_MSN_PROCESS_EVIDENCE_BASE: path.join(lifecycleDir, `owned-processes-${invocationId}`),
+  };
 }
 
 async function runVariablesPickerLifecycle(visibleDelayMs) {
@@ -1339,6 +1397,7 @@ async function cleanupRuntimeDependenciesRoot(runtimeDependenciesRoot) {
     console.log(`[runtime-deps] Removed isolated dependency root after successful MSN Weather lifecycle: ${runtimeDependenciesRoot}`);
   } catch (error) {
     console.warn(`[runtime-deps] Unable to remove isolated dependency root ${runtimeDependenciesRoot}: ${String(error)}`);
+    throw error;
   }
 }
 
@@ -2399,6 +2458,7 @@ module.exports = {
     getMochaPassingCount,
     beginDirectMsnEvidence,
     finalizeDirectMsnEvidence,
+    finalizeMsnLifecycleCleanup,
     getDirectSuiteComplete,
     getOwnedRootCleanupVerified,
     getSuiteTerminalResultPath,
@@ -2575,7 +2635,7 @@ function getOwnedWorkspaceRootParent() {
   return path.resolve(process.env.LA_E2E_CLI_WORKSPACE_ROOT || os.tmpdir());
 }
 
-async function cleanupOwnedWorkspaceParent(workspaceParent, context) {
+async function cleanupOwnedWorkspaceParent(workspaceParent, context, strict = false) {
   if (!workspaceParent || process.env.LA_E2E_CLI_PRESERVE_WORKSPACES === '1') {
     return;
   }
@@ -2592,6 +2652,9 @@ async function cleanupOwnedWorkspaceParent(workspaceParent, context) {
     console.log(`[generated-workspace-diagnostics] Removed owned workspace parent after ${context}: ${workspaceParent}`);
   } catch (error) {
     console.warn(`[generated-workspace-diagnostics] Unable to remove owned workspace parent ${workspaceParent}: ${String(error)}`);
+    if (strict) {
+      throw error;
+    }
   }
 }
 
@@ -2755,7 +2818,23 @@ function beginDirectMsnEvidence(env) {
 }
 
 function getOwnedRootCleanupVerified(ownedRoots) {
-  return ownedRoots.every((root) => !root || !fs.existsSync(root));
+  if (!Array.isArray(ownedRoots) || ownedRoots.length === 0) {
+    return false;
+  }
+  return ownedRoots.every((root) => {
+    if (!root) {
+      return false;
+    }
+    try {
+      fs.lstatSync(root);
+      return false;
+    } catch (error) {
+      if (error.code === 'ENOENT') {
+        return true;
+      }
+      throw new Error('Owned lifecycle cleanup failed: root-absence-observation-failed');
+    }
+  });
 }
 
 function finalizeDirectMsnEvidence(env, { cleanupVerified, lifecycleSucceeded, lifecycleError }) {

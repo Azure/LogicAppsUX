@@ -40,6 +40,7 @@ import {
   normalizeManagementBaseUrl,
 } from './msnWeatherSettings';
 import { findLoadedCachedExtensionEntry, teardownOwnedMsnHost } from './ownedMsnShutdown';
+import { createMsnProcessCleanup } from './ownedMsnProcessCleanup';
 import { captureCdpScreenshot, captureDiagnosticScreenshot, installFailureScreenshotHook } from './screenshot';
 import { buildScreenshotReadinessExpression, type ScreenshotExpectation, type ScreenshotReadinessSnapshot } from './screenshotReadiness';
 import { containsIgnoreCase, normalizeFsPath, uniqueName } from './testUtils';
@@ -274,7 +275,8 @@ suite('Generated Workspace Designer Lifecycle Tests', () => {
           () => closeWebviewTabs(createWorkspaceViewType),
           () => closeWebviewTabs(designerViewType),
           () => stopDebuggingAndTasks(),
-        ]
+        ],
+        ['linux', 'win32'].includes(process.platform) ? createMsnProcessCleanup(process.env) : undefined
       );
       console.log('[workspace-lifecycle][msn-weather] Awaited original cached extension deactivation and verified repeated shutdown.');
       return;

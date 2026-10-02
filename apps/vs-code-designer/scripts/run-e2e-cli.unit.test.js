@@ -24,6 +24,7 @@ const {
     getMochaPassingCount,
     beginDirectMsnEvidence,
     finalizeDirectMsnEvidence,
+    finalizeMsnLifecycleCleanup,
     getDirectSuiteComplete,
     getOwnedRootCleanupVerified,
     getSuiteTerminalResultPath,
@@ -105,6 +106,7 @@ const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
     testDirectSuitePhaseResultClearsOgfOnLaterFailure();
     testDirectSuitePhaseResultDoesNotEmitOgfForCleanupFailure();
     testMsnDirectLifecycleEvidence();
+    await testMsnLifecycleCleanupRetainsOriginalErrors();
     testMsnBatchLifecycleEvidence();
     testMsnSummaryRejectsIncompleteTerminal();
     testMochaHookReportingUsesOrdinalFailureIdentity();
@@ -1340,10 +1342,36 @@ function testMsnDirectLifecycleEvidence() {
       process.chdir(cwd);
       const env = { LA_E2E_CLI_DIRECT_SUITE_LABEL: 'msnWeatherLifecycle' };
       const ownedRoot = path.join(cwd, 'owned-runtime-root');
+      const otherOwnedRoot = path.join(cwd, 'owned-workspace-root');
       fs.mkdirSync(ownedRoot);
+      fs.mkdirSync(otherOwnedRoot);
+      assert.strictEqual(getOwnedRootCleanupVerified([]), false);
       assert.strictEqual(getOwnedRootCleanupVerified([ownedRoot, undefined]), false);
       fs.rmdirSync(ownedRoot);
-      assert.strictEqual(getOwnedRootCleanupVerified([ownedRoot, undefined]), true);
+      assert.strictEqual(getOwnedRootCleanupVerified([ownedRoot, undefined]), false);
+      assert.strictEqual(getOwnedRootCleanupVerified([ownedRoot]), true);
+      assert.strictEqual(getOwnedRootCleanupVerified([ownedRoot, otherOwnedRoot]), false);
+      fs.rmdirSync(otherOwnedRoot);
+      assert.strictEqual(getOwnedRootCleanupVerified([ownedRoot, otherOwnedRoot]), true);
+      const danglingRoot = `${ownedRoot}-link`;
+      fs.symlinkSync(ownedRoot, danglingRoot, process.platform === 'win32' ? 'junction' : 'dir');
+      assert.strictEqual(getOwnedRootCleanupVerified([danglingRoot]), false, 'A dangling root link is not verified absence');
+      fs.unlinkSync(danglingRoot);
+      const lstat = fs.lstatSync;
+      try {
+        fs.lstatSync = () => {
+          throw Object.assign(new Error('private-root-observation-control'), { code: 'EACCES' });
+        };
+        assert.throws(
+          () => getOwnedRootCleanupVerified([ownedRoot, otherOwnedRoot]),
+          (error) => {
+            assert.strictEqual(error.message, 'Owned lifecycle cleanup failed: root-absence-observation-failed');
+            return true;
+          }
+        );
+      } finally {
+        fs.lstatSync = lstat;
+      }
       const terminalPath = getSuiteTerminalResultPath(env, 'msnWeatherLifecycle');
       const readTerminal = () => JSON.parse(fs.readFileSync(terminalPath, 'utf8'));
       const phases = SUITE_REGISTRY.msnWeatherLifecycle.expectedPhases.map((phaseId) => msnPhase(phaseId));
@@ -2326,4 +2354,50 @@ function withEnvironment(values, callback) {
       }
     }
   }
+}
+
+async function testMsnLifecycleCleanupRetainsOriginalErrors() {
+  const sequence = [];
+  const original = new Error('original-native-phase-control');
+  const workspace = new Error('workspace-removal-control');
+  const dependencies = new Error('dependency-removal-control');
+  const observation = new Error('root-observation-control');
+  const persistence = new Error('terminal-persistence-control');
+  await assert.rejects(
+    finalizeMsnLifecycleCleanup({
+      lifecycleError: original,
+      cleanupSteps: [
+        async () => {
+          sequence.push('workspace');
+          throw workspace;
+        },
+        async () => {
+          sequence.push('dependencies');
+          throw dependencies;
+        },
+      ],
+      observeCleanup: () => {
+        sequence.push('observe-both-roots');
+        throw observation;
+      },
+      finalizeEvidence: (outcome) => {
+        sequence.push('finalize-terminal');
+        assert.deepStrictEqual(outcome, { cleanupVerified: false, lifecycleError: true });
+        throw persistence;
+      },
+    }),
+    (error) => {
+      assert.deepStrictEqual(error.errors, [original, workspace, dependencies, observation, persistence]);
+      return true;
+    }
+  );
+  assert.deepStrictEqual(sequence, ['workspace', 'dependencies', 'observe-both-roots', 'finalize-terminal']);
+  const options = { cleanupSteps: [], observeCleanup: () => false, finalizeEvidence: () => ({ complete: true }) };
+  await assert.rejects(finalizeMsnLifecycleCleanup(options), /incomplete-or-unclean-lifecycle/);
+  await assert.rejects(
+    finalizeMsnLifecycleCleanup({ ...options, observeCleanup: () => true, finalizeEvidence: () => ({ complete: false }) }),
+    /incomplete-or-unclean-lifecycle/
+  );
+  const success = await finalizeMsnLifecycleCleanup({ ...options, observeCleanup: () => true });
+  assert.deepStrictEqual(success, { cleanupVerified: true, terminal: { complete: true } });
 }

@@ -19,6 +19,11 @@ interface ExtensionEntryExports {
   deactivate: () => unknown;
 }
 
+export interface OwnedMsnProcessCleanup {
+  capture(): Promise<unknown>;
+  finalize(): Promise<unknown>;
+}
+
 export interface OwnedMsnShutdownHost {
   dedicatedMsnRunHost: boolean;
   extension: {
@@ -44,9 +49,22 @@ export function findLoadedCachedExtensionEntry(
   return match ? { cacheKey: match[0], entry: match[1] } : undefined;
 }
 
-export async function teardownOwnedMsnHost(host: OwnedMsnShutdownHost, teardownSteps: readonly (() => Promise<void>)[]): Promise<void> {
+export async function teardownOwnedMsnHost(
+  host: OwnedMsnShutdownHost,
+  teardownSteps: readonly (() => Promise<void>)[],
+  processCleanup?: OwnedMsnProcessCleanup
+): Promise<void> {
   const shutdown = bindOwnedCachedShutdown(host);
   const errors: unknown[] = [];
+  let capturedProcesses = false;
+  if (processCleanup) {
+    try {
+      await processCleanup.capture();
+      capturedProcesses = true;
+    } catch (error) {
+      errors.push(error);
+    }
+  }
   for (const step of teardownSteps) {
     try {
       await step();
@@ -58,6 +76,13 @@ export async function teardownOwnedMsnHost(host: OwnedMsnShutdownHost, teardownS
     await shutdown();
   } catch (error) {
     errors.push(error);
+  }
+  if (processCleanup && capturedProcesses) {
+    try {
+      await processCleanup.finalize();
+    } catch (error) {
+      errors.push(error);
+    }
   }
   if (errors.length > 0) {
     throw new AggregateError(errors, 'Owned MSN host teardown failed; teardown and deactivation errors were retained');

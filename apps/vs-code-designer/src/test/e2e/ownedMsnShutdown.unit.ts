@@ -56,6 +56,101 @@ async function run(): Promise<void> {
     assert.deepStrictEqual(sequence, ['panels', 'debug-and-tasks', 'deactivate', 'deactivate']);
     assert.ok(fs.existsSync(root), 'Awaited deactivation must not manufacture filesystem cleanup success');
 
+    sequence.length = 0;
+    await teardownOwnedMsnHost(
+      host,
+      [
+        async () => {
+          sequence.push('panels');
+        },
+      ],
+      {
+        capture: async () => {
+          sequence.push('capture-process-identities');
+        },
+        finalize: async () => {
+          sequence.push('observe-owned-process-exit');
+        },
+      }
+    );
+    assert.deepStrictEqual(sequence, ['capture-process-identities', 'panels', 'deactivate', 'deactivate', 'observe-owned-process-exit']);
+    assert.ok(fs.existsSync(root), 'Process observation success must not manufacture root absence');
+    for (const failedStage of ['capture', 'finalize']) {
+      sequence.length = 0;
+      const observationError = new Error(`process-${failedStage}-control`);
+      await assert.rejects(
+        teardownOwnedMsnHost(
+          host,
+          [
+            async () => {
+              sequence.push('panels');
+            },
+          ],
+          {
+            capture: async () => {
+              sequence.push('capture-process-identities');
+              if (failedStage === 'capture') {
+                throw observationError;
+              }
+            },
+            finalize: async () => {
+              sequence.push('observe-owned-process-exit');
+              if (failedStage === 'finalize') {
+                throw observationError;
+              }
+            },
+          }
+        ),
+        (error: AggregateError) => {
+          assert.deepStrictEqual(error.errors, [observationError]);
+          return true;
+        }
+      );
+      assert.deepStrictEqual(sequence, [
+        'capture-process-identities',
+        'panels',
+        'deactivate',
+        'deactivate',
+        ...(failedStage === 'finalize' ? ['observe-owned-process-exit'] : []),
+      ]);
+    }
+
+    const panelFailure = new Error('combined-panel-control');
+    const shutdownFailure = new Error('combined-deactivation-control');
+    const processFailure = new Error('combined-process-finalization-control');
+    let finalizationCalls = 0;
+    const combinedEntry: CachedExtensionEntry = {
+      ...entry,
+      exports: {
+        activate: exports.activate,
+        deactivate: async () => {
+          throw shutdownFailure;
+        },
+      },
+    };
+    await assert.rejects(
+      teardownOwnedMsnHost(
+        { ...host, cachedEntry: () => selectEntry(combinedEntry) },
+        [
+          async () => {
+            throw panelFailure;
+          },
+        ],
+        {
+          capture: async () => undefined,
+          finalize: async () => {
+            finalizationCalls++;
+            throw processFailure;
+          },
+        }
+      ),
+      (error: AggregateError) => {
+        assert.deepStrictEqual(error.errors, [panelFailure, shutdownFailure, processFailure]);
+        return true;
+      }
+    );
+    assert.strictEqual(finalizationCalls, 1, 'Earlier errors must not skip or retry captured-process finalization');
+
     const rejectedHosts: { host: OwnedMsnShutdownHost; reason: RegExp }[] = [
       { host: { ...host, dedicatedMsnRunHost: false }, reason: /dedicated run-phase/ },
       { host: { ...host, extension: { ...host.extension, isActive: false } }, reason: /active Logic Apps/ },
