@@ -2,7 +2,7 @@
 
 Azure Logic Apps UX is the monorepo for the visual workflow designer, shared UI components, data-mapping experiences, chat integrations, and VS Code extension used to author and manage Azure Logic Apps.
 
-Product documentation is available at [aka.ms/logicappsux](https://aka.ms/logicappsux).
+Product documentation is published at [aka.ms/logicappsux](https://aka.ms/logicappsux).
 
 ## Quick start
 
