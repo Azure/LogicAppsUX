@@ -64,6 +64,18 @@ When this README says "multi-host lifecycle flow", it means the script intention
 
 If your terminal is already in `apps/vs-code-designer`, use the same script names there, for example `pnpm run test:e2e-cli:smoke`. The root scripts are just convenience forwarders.
 
+### Registered contract checks and Azure DevOps parity
+
+After compiling the E2E tests, run the registered non-GUI contract chain from the repository root:
+
+```powershell
+pnpm --dir apps/vs-code-designer run test:e2e-cli:unit
+```
+
+The existing Azure DevOps E2E build already runs this chain on its Linux producer. The `unitTests` consumer jobs now also run the same chain on both Windows and Linux, after verifying the current-run artifact and exact source checkout and extracting its compiled tests. A nonzero contract result fails the consumer before extension-dependency preparation or the VS Code smoke; its raw output is retained as `registered-contract-chain.log` in that job's diagnostics artifact.
+
+These contract checks are separate from the `unitTests` extension-host label, which runs activation and command-registration smoke on the resolved stable VS Code build. Contract passes do not count as native GUI scenarios, add to the canonical E2E counts, or certify workspace lifecycle coverage. Actual source-bound Windows and Linux job results are required to establish Azure DevOps parity.
+
 ### Open latest stable VS Code and see extension activation
 ```powershell
 pnpm run test:e2e-cli:open

@@ -222,6 +222,19 @@ jobs:
           }
         displayName: Extract verified E2E artifact
 
+      - ${{ if eq(parameters.suiteId, 'unitTests') }}:
+          - pwsh: |
+              $diagnosticsRoot = Join-Path '$(Build.ArtifactStagingDirectory)' 'vscode-e2e-cli/${{ parameters.artifactName }}'
+              New-Item -ItemType Directory -Force -Path $diagnosticsRoot | Out-Null
+              $contractLog = Join-Path $diagnosticsRoot 'registered-contract-chain.log'
+              pnpm --dir apps/vs-code-designer run test:e2e-cli:unit *>&1 | Tee-Object -FilePath $contractLog
+              $contractExitCode = $LASTEXITCODE
+              if ($contractExitCode -ne 0) {
+                exit $contractExitCode
+              }
+            displayName: Run registered E2E contracts on consumer OS
+            workingDirectory: $(Build.SourcesDirectory)
+
       - pwsh: |
           if (-not '$(ResolvedVSCodeVersion)') {
             throw 'ResolvedVSCodeVersion must be supplied by the shared consumer context job.'
