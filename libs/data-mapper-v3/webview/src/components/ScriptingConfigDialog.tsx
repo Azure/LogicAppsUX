@@ -349,6 +349,13 @@ export class ScriptingConfigDialog extends HTMLElement {
     this.reactRoot = null;
   }
 
+  public clear(): void {
+    this.reactRoot?.unmount();
+    this.reactRoot = null;
+    this.model = null;
+    this.callbacks = null;
+  }
+
   private renderReact(): void {
     if (!this.isConnected || !this.model || !this.callbacks) {
       return;

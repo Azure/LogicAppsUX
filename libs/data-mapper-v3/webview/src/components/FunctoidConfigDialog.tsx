@@ -153,6 +153,7 @@ const useStyles = makeStyles({
   },
   inputKind: { color: tokens.colorNeutralForeground3, textAlign: 'center' },
   constantInput: { width: '84%' },
+  defaultInput: { height: '26px', fontSize: '11px', width: '84%', boxSizing: 'border-box', padding: '2px 6px' },
   rowActions: {
     display: 'grid',
     gridTemplateColumns: 'repeat(3, 32px)',
@@ -167,6 +168,7 @@ const useStyles = makeStyles({
   fallbackInput: { width: '70%' },
   empty: { color: tokens.colorNeutralForeground3, padding: `${tokens.spacingVerticalS} 0` },
   fields: { display: 'flex', flexDirection: 'column', gap: tokens.spacingVerticalM, paddingTop: tokens.spacingVerticalM },
+  actions: { paddingBottom: '18px' },
 });
 
 function expectedInputsText(minInputs: number, maxInputs: number): string {
@@ -244,34 +246,41 @@ function FunctoidConfigDialogView({ model, onSave, onCancel }: FunctoidConfigDia
         }}
       >
         <DialogSurface className={`${styles.surface} ${typographyStyles.base}`}>
-          <DialogBody className={styles.body}>
+          <DialogBody className={`functoid-properties-panel ${styles.body}`}>
             <DialogTitle className={styles.title}>
-              {model.title}
+              <span className="config-title">{model.title}</span>
               <div className={`${styles.meta} ${typographyStyles.base}`}>{model.meta}</div>
             </DialogTitle>
             <DialogContent className={styles.content}>
-              <div className={styles.descriptionBlock}>
-                <div className={styles.heading}>Description</div>
+              <div className={`functoid-dialog-description ${styles.descriptionBlock}`}>
+                <div className={`config-label ${styles.heading}`}>Description</div>
                 <div className={`${styles.description} ${typographyStyles.base}`}>{model.description}</div>
               </div>
               <TabList
-                className={styles.tabs}
+                className={`functoid-dialog-tabs ${styles.tabs}`}
                 size="small"
                 selectedValue={activeTab}
                 onTabSelect={(_event, data) => setActiveTab(data.value as string)}
               >
-                <Tab value="inputs">Inputs</Tab>
-                <Tab value="output">Outputs</Tab>
-                <Tab value="label">Label and Comments</Tab>
+                <Tab className="functoid-dialog-tab" data-functoid-tab="inputs" value="inputs">
+                  Inputs
+                </Tab>
+                <Tab className="functoid-dialog-tab" data-functoid-tab="output" value="output">
+                  Outputs
+                </Tab>
+                <Tab className="functoid-dialog-tab" data-functoid-tab="label" value="label">
+                  Label and Comments
+                </Tab>
               </TabList>
               {activeTab === 'inputs' && (
-                <div className={`${styles.tabPanel} ${styles.inputTabPanel}`}>
+                <div data-functoid-panel="inputs" className={`${styles.tabPanel} ${styles.inputTabPanel}`}>
                   <div className={styles.toolbar}>
                     <div>
-                      <div className={styles.heading}>Ordered inputs</div>
+                      <div className={`functoid-ordered-inputs-heading ${styles.heading}`}>Ordered inputs</div>
                       <div className={`${styles.requirement} ${typographyStyles.base}`}>Inputs are evaluated from top to bottom.</div>
                     </div>
                     <Button
+                      id="properties-add-input"
                       className={typographyStyles.base}
                       size="small"
                       icon={<Add16Regular />}
@@ -281,7 +290,7 @@ function FunctoidConfigDialogView({ model, onSave, onCancel }: FunctoidConfigDia
                       Add input
                     </Button>
                   </div>
-                  <MessageBar intent={isValid ? 'success' : 'warning'}>
+                  <MessageBar className="functoid-input-validation" intent={isValid ? 'success' : 'warning'}>
                     <MessageBarBody className={typographyStyles.base}>
                       Configured {inputs.length}; expected {expected} input{model.maxInputs === 1 ? '' : 's'}.
                     </MessageBarBody>
@@ -293,29 +302,27 @@ function FunctoidConfigDialogView({ model, onSave, onCancel }: FunctoidConfigDia
                   ) : (
                     <ol className={`${styles.inputList} ${styles.scrollableInputList}`}>
                       {inputs.map((input, index) => (
-                        <li className={styles.inputRow} key={index}>
+                        <li className={`functoid-input-row ${styles.inputRow}`} key={index}>
                           <span className={`${styles.inputName} ${typographyStyles.base}`}>Input[{index}]</span>
                           <div className={styles.inputContent}>
                             {input.isConstant ? (
-                              <Input
-                                size="small"
-                                className={styles.constantInput}
+                              <input
+                                className={`functoid-default-input ${styles.defaultInput}`}
                                 value={input.value}
                                 placeholder="Enter a value"
                                 aria-label={`Value for input ${index + 1}`}
-                                onChange={(_event, data) => updateInput(index, { value: data.value })}
+                                onChange={(event) => updateInput(index, { value: event.target.value })}
                               />
                             ) : (
                               <>
                                 <span className={typographyStyles.base}>{input.sourceLabel}</span>
                                 <label className={`${styles.fallbackLabel} ${typographyStyles.base}`}>
                                   Fallback
-                                  <Input
-                                    className={styles.fallbackInput}
-                                    size="small"
+                                  <input
+                                    className={`functoid-default-input ${styles.defaultInput}`}
                                     value={input.defaultValue}
                                     aria-label={`Fallback value for input ${index + 1}`}
-                                    onChange={(_event, data) => updateInput(index, { defaultValue: data.value })}
+                                    onChange={(event) => updateInput(index, { defaultValue: event.target.value })}
                                   />
                                 </label>
                               </>
@@ -327,6 +334,8 @@ function FunctoidConfigDialogView({ model, onSave, onCancel }: FunctoidConfigDia
                               <Button
                                 size="small"
                                 appearance="subtle"
+                                data-input-action="up"
+                                data-index={index}
                                 icon={<ArrowUp16Regular />}
                                 disabled={index === 0}
                                 onClick={() => moveInput(index, -1)}
@@ -336,6 +345,8 @@ function FunctoidConfigDialogView({ model, onSave, onCancel }: FunctoidConfigDia
                               <Button
                                 size="small"
                                 appearance="subtle"
+                                data-input-action="down"
+                                data-index={index}
                                 icon={<ArrowDown16Regular />}
                                 disabled={index === inputs.length - 1}
                                 onClick={() => moveInput(index, 1)}
@@ -343,7 +354,14 @@ function FunctoidConfigDialogView({ model, onSave, onCancel }: FunctoidConfigDia
                             </Tooltip>
                             {input.isConstant && (
                               <Tooltip content="Remove input" relationship="label">
-                                <Button size="small" appearance="subtle" icon={<Dismiss16Regular />} onClick={() => removeInput(index)} />
+                                <Button
+                                  size="small"
+                                  appearance="subtle"
+                                  data-input-action="remove"
+                                  data-index={index}
+                                  icon={<Dismiss16Regular />}
+                                  onClick={() => removeInput(index)}
+                                />
                               </Tooltip>
                             )}
                           </div>
@@ -354,7 +372,7 @@ function FunctoidConfigDialogView({ model, onSave, onCancel }: FunctoidConfigDia
                 </div>
               )}
               {activeTab === 'output' && (
-                <div className={styles.tabPanel}>
+                <div data-functoid-panel="output" className={styles.tabPanel}>
                   <div className={styles.heading}>Connected output</div>
                   <div className={`${styles.requirement} ${typographyStyles.base}`}>
                     {model.hasOutput
@@ -375,9 +393,10 @@ function FunctoidConfigDialogView({ model, onSave, onCancel }: FunctoidConfigDia
                 </div>
               )}
               {activeTab === 'label' && (
-                <div className={styles.fields}>
+                <div data-functoid-panel="label" className={styles.fields}>
                   <Field className={typographyStyles.base} label="Label" size="small">
                     <Input
+                      id="properties-label"
                       size="small"
                       value={label}
                       maxLength={256}
@@ -387,6 +406,7 @@ function FunctoidConfigDialogView({ model, onSave, onCancel }: FunctoidConfigDia
                   </Field>
                   <Field className={typographyStyles.base} label="Comments" size="small">
                     <Textarea
+                      id="properties-comments"
                       size="small"
                       value={comments}
                       maxLength={2048}
@@ -398,11 +418,18 @@ function FunctoidConfigDialogView({ model, onSave, onCancel }: FunctoidConfigDia
                 </div>
               )}
             </DialogContent>
-            <DialogActions>
+            <DialogActions className={`config-actions ${styles.actions}`}>
               <Button className={typographyStyles.base} size="small" appearance="secondary" onClick={onCancel}>
                 Cancel
               </Button>
-              <Button className={typographyStyles.base} size="small" appearance="primary" disabled={!isValid} onClick={handleSave}>
+              <Button
+                id="properties-save"
+                className={typographyStyles.base}
+                size="small"
+                appearance="primary"
+                disabled={!isValid}
+                onClick={handleSave}
+              >
                 OK
               </Button>
             </DialogActions>
@@ -433,6 +460,13 @@ export class FunctoidConfigDialog extends HTMLElement {
   public disconnectedCallback(): void {
     this.reactRoot?.unmount();
     this.reactRoot = null;
+  }
+
+  public clear(): void {
+    this.reactRoot?.unmount();
+    this.reactRoot = null;
+    this.model = null;
+    this.callbacks = null;
   }
 
   private renderReact(): void {

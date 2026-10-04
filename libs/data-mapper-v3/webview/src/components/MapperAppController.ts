@@ -2,25 +2,20 @@
  * BizTalk Data Mapper - Mapper operations controller
  */
 
-import { type SchemaNodeView, SchemaTreeRenderer } from './SchemaTreeRenderer';
-import { MappingCanvas } from './MappingCanvas';
-import { FunctoidPalette } from './FunctoidPalette';
-import { FunctoidConfigDialog, type FunctoidConfigInput, type FunctoidConfigResult } from './FunctoidConfigDialog';
-import {
-  ScriptingConfigDialog,
-  type ScriptingConfigResult,
-  type ScriptingConfigType,
-  type ScriptingFunctoidSummary,
-} from './ScriptingConfigDialog';
-import { SchemaNodePropertiesDialog, type SchemaNodePropertyRow } from './SchemaNodePropertiesDialog';
-import { EmptySchemaPlaceholder } from './EmptySchemaPlaceholder';
-import { MapperStatusBar } from './MapperStatusBar';
-import { MapperPageBar } from './MapperPageBar';
-import { CopilotPanel } from './CopilotPanel';
-import { MapperBottomPanel } from './MapperBottomPanel';
-import { MapperContextMenu, type ContextMenuItem } from './MapperContextMenu';
-import { MapperNotification, type NotificationType } from './MapperNotification';
-import { MapperToolbar } from './MapperToolbar';
+import type { SchemaNodeView, SchemaTreeRenderer } from './SchemaTreeRenderer';
+import type { MappingCanvas } from './MappingCanvas';
+import type { FunctoidPalette } from './FunctoidPalette';
+import type { FunctoidConfigDialog, FunctoidConfigInput, FunctoidConfigResult } from './FunctoidConfigDialog';
+import type { ScriptingConfigDialog, ScriptingConfigResult, ScriptingConfigType, ScriptingFunctoidSummary } from './ScriptingConfigDialog';
+import type { SchemaNodePropertiesDialog, SchemaNodePropertyRow } from './SchemaNodePropertiesDialog';
+import type { EmptySchemaPlaceholder } from './EmptySchemaPlaceholder';
+import type { MapperStatusBar } from './MapperStatusBar';
+import type { MapperPageBar } from './MapperPageBar';
+import type { CopilotPanel } from './CopilotPanel';
+import type { MapperBottomPanel } from './MapperBottomPanel';
+import type { MapperContextMenu, ContextMenuItem } from './MapperContextMenu';
+import type { MapperNotification, NotificationType } from './MapperNotification';
+import type { MapperToolbar } from './MapperToolbar';
 import {
   type AssemblyClassInfo,
   type AssemblyMethodInfo,
@@ -56,6 +51,27 @@ interface SchemaNodeProperties {
   schemaNamespace?: string;
 }
 
+export interface MapperAppElements {
+  container: HTMLElement;
+  copilot: CopilotPanel;
+  toolbar: MapperToolbar;
+  palette: FunctoidPalette;
+  mappingArea: HTMLElement;
+  sourceTree: SchemaTreeRenderer;
+  sourceEmpty: EmptySchemaPlaceholder;
+  canvas: MappingCanvas;
+  pageBar: MapperPageBar;
+  targetTree: SchemaTreeRenderer;
+  targetEmpty: EmptySchemaPlaceholder;
+  bottomPanel: MapperBottomPanel;
+  statusBar: MapperStatusBar;
+  schemaDialog: SchemaNodePropertiesDialog;
+  scriptingDialog: ScriptingConfigDialog;
+  functoidDialog: FunctoidConfigDialog;
+  contextMenu: MapperContextMenu;
+  notification: MapperNotification;
+}
+
 export class MapperAppController {
   private state: MapperViewState;
   private sourceTree: SchemaTreeRenderer | null = null;
@@ -77,41 +93,58 @@ export class MapperAppController {
   private copilotDraft = 'Take the XSLT file and generate the map.';
   private copilotMessage = '';
   private copilotContextFiles: Array<{ id: string; name: string; size: number }> = [];
+  private toolbarStatusMessage = '';
   private linkPointerStart: { x: number; y: number } | null = null;
   private linkPointerMoved = false;
+  private linkPreviewFrame: number | null = null;
+  private pendingLinkPreviewPoint: { x: number; y: number } | null = null;
+  private redrawFrame: number | null = null;
+  private pendingFullCanvasRedraw = false;
+  private disposed = false;
 
   private resizeObserver: ResizeObserver | null = null;
 
-  // Persistent layout built once; subsequent updates patch in place instead of rebuilding.
-  private layoutBuilt = false;
-  private copilotHost!: HTMLElement;
-  private copilotEl: CopilotPanel | null = null;
   private toolbarEl!: MapperToolbar;
   private pageBarEl!: MapperPageBar;
   private statusBarEl!: MapperStatusBar;
-  private modalHost!: HTMLElement;
-  private sourceEl: HTMLElement | null = null;
-  private targetEl: HTMLElement | null = null;
   private lastSourceSchema: unknown = undefined;
   private lastSourceSignature = '';
   private lastTargetSchema: unknown = undefined;
   private lastTargetSignature = '';
   private lastFunctoidsRef: unknown = undefined;
   private lastModalKey = '';
+  private notificationTimeout: ReturnType<typeof setTimeout> | null = null;
+  private contextMenuCloseHandler: ((event: MouseEvent) => void) | null = null;
 
   constructor(
-    private readonly container: HTMLElement,
+    private readonly elements: MapperAppElements,
     private readonly vscode: MapEditorVsCodeApi
   ) {
     this.state = createInitialMapperViewState();
+    this.toolbarEl = elements.toolbar;
+    this.palette = elements.palette;
+    this.mappingAreaEl = elements.mappingArea;
+    this.canvas = elements.canvas;
+    this.pageBarEl = elements.pageBar;
+    this.bottomPanel = elements.bottomPanel;
+    this.statusBarEl = elements.statusBar;
   }
 
   public mount(): void {
+    this.disposed = false;
+    this.resizeObserver = new ResizeObserver(() => this.redrawLinks(true));
+    this.resizeObserver.observe(this.elements.mappingArea);
+    this.resizeObserver.observe(this.elements.canvas);
+    window.removeEventListener('resize', this.handleResize);
+    window.addEventListener('resize', this.handleResize);
+    this.elements.sourceTree.addEventListener('scroll', this.handleSchemaScroll);
+    this.elements.targetTree.addEventListener('scroll', this.handleSchemaScroll);
     this.renderView();
     this.setupKeyboardShortcuts();
   }
 
   public dispose(): void {
+    this.disposed = true;
     document.removeEventListener('keydown', this.handleKeyDown);
     document.removeEventListener('contextmenu', this.handleContextMenu);
     document.removeEventListener('pointermove', this.handleLinkPointerMove);
@@ -119,8 +152,21 @@ export class MapperAppController {
     window.removeEventListener('resize', this.handleResize);
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
-    document.querySelectorAll('.context-menu').forEach((menu) => menu.remove());
-    this.container.replaceChildren();
+    this.elements.sourceTree.removeEventListener('scroll', this.handleSchemaScroll);
+    this.elements.targetTree.removeEventListener('scroll', this.handleSchemaScroll);
+    if (this.linkPreviewFrame !== null) {
+      cancelAnimationFrame(this.linkPreviewFrame);
+      this.linkPreviewFrame = null;
+    }
+    if (this.redrawFrame !== null) {
+      cancelAnimationFrame(this.redrawFrame);
+      this.redrawFrame = null;
+    }
+    this.hideContextMenu();
+    if (this.notificationTimeout) {
+      clearTimeout(this.notificationTimeout);
+      this.notificationTimeout = null;
+    }
   }
 
   private setupKeyboardShortcuts(): void {
@@ -135,7 +181,16 @@ export class MapperAppController {
       return;
     }
     this.linkPointerMoved ||= Math.hypot(event.clientX - this.linkPointerStart.x, event.clientY - this.linkPointerStart.y) > 3;
-    this.canvas?.updateLinkPreview(event.clientX, event.clientY);
+    this.pendingLinkPreviewPoint = { x: event.clientX, y: event.clientY };
+    if (this.linkPreviewFrame === null) {
+      this.linkPreviewFrame = requestAnimationFrame(() => {
+        this.linkPreviewFrame = null;
+        if (this.pendingLinkPreviewPoint) {
+          this.canvas?.updateLinkPreview(this.pendingLinkPreviewPoint.x, this.pendingLinkPreviewPoint.y);
+          this.pendingLinkPreviewPoint = null;
+        }
+      });
+    }
   };
 
   private readonly handleLinkPointerUp = (): void => this.finishLinkPointer();
@@ -147,6 +202,11 @@ export class MapperAppController {
     }
     this.linkPointerStart = null;
     this.linkPointerMoved = false;
+    this.pendingLinkPreviewPoint = null;
+    if (this.linkPreviewFrame !== null) {
+      cancelAnimationFrame(this.linkPreviewFrame);
+      this.linkPreviewFrame = null;
+    }
     this.canvas?.clearLinkPreview();
   }
 
@@ -190,7 +250,8 @@ export class MapperAppController {
     this.showContextMenu(event.clientX, event.clientY);
   };
 
-  private readonly handleResize = (): void => this.redrawLinks();
+  private readonly handleResize = (): void => this.redrawLinks(true);
+  private readonly handleSchemaScroll = (): void => this.redrawLinks(true);
 
   private clipboard: any = null;
 
@@ -234,8 +295,6 @@ export class MapperAppController {
   }
 
   private showContextMenu(x: number, y: number): void {
-    document.querySelectorAll('.context-menu').forEach((m) => m.remove());
-
     const hasSelection = !!(this.state.selectedLink || this.state.selectedFunctoid);
     const items: ContextMenuItem[] = [
       {
@@ -256,21 +315,31 @@ export class MapperAppController {
       { label: '✓ Validate Map', disabled: !this.state.map, action: () => this.validateMap() },
     ];
 
-    const menu = new MapperContextMenu();
-    menu.className = 'context-menu';
+    const menu = this.elements.contextMenu;
+    menu.hidden = false;
     menu.style.left = `${x}px`;
     menu.style.top = `${y}px`;
-    menu.configure(items, () => menu.remove());
-    document.body.appendChild(menu);
+    menu.configure(items, () => this.hideContextMenu());
 
     // Close on click outside
-    const closeHandler = (e: MouseEvent) => {
+    this.contextMenuCloseHandler = (e: MouseEvent) => {
       if (!menu.contains(e.target as Node)) {
-        menu.remove();
-        document.removeEventListener('click', closeHandler);
+        this.hideContextMenu();
       }
     };
-    setTimeout(() => document.addEventListener('click', closeHandler), 0);
+    setTimeout(() => {
+      if (this.contextMenuCloseHandler) {
+        document.addEventListener('click', this.contextMenuCloseHandler);
+      }
+    }, 0);
+  }
+
+  private hideContextMenu(): void {
+    this.elements.contextMenu.hidden = true;
+    if (this.contextMenuCloseHandler) {
+      document.removeEventListener('click', this.contextMenuCloseHandler);
+      this.contextMenuCloseHandler = null;
+    }
   }
 
   public handleMessage(message: HostToWebviewMessage): void {
@@ -371,9 +440,6 @@ export class MapperAppController {
   }
 
   private renderView(): void {
-    if (!this.layoutBuilt) {
-      this.buildLayout();
-    }
     this.syncToolbar();
     this.syncCopilot();
     this.syncPalette();
@@ -386,77 +452,10 @@ export class MapperAppController {
     this.syncModal();
   }
 
-  // Builds the stable DOM skeleton and the long-lived child widgets exactly once.
-  private buildLayout(): void {
-    this.container.replaceChildren();
-    this.container.className = 'mapper-container';
-
-    this.toolbarEl = new MapperToolbar();
-    this.container.appendChild(this.toolbarEl);
-
-    this.copilotHost = document.createElement('div');
-    this.copilotHost.className = 'copilot-host';
-    this.container.appendChild(this.copilotHost);
-
-    const content = document.createElement('div');
-    content.className = 'mapper-content';
-
-    this.palette = new FunctoidPalette();
-    this.palette.className = 'functoid-palette-container';
-    content.appendChild(this.palette);
-
-    const mappingWorkspace = document.createElement('div');
-    mappingWorkspace.className = 'mapping-workspace';
-
-    const mappingArea = document.createElement('div');
-    mappingArea.className = 'mapping-area';
-    this.mappingAreaEl = mappingArea;
-
-    this.sourceEl = document.createElement('div');
-    this.sourceEl.className = 'schema-tree-container source-tree';
-    mappingArea.appendChild(this.sourceEl);
-
-    const canvasWorkspace = document.createElement('div');
-    canvasWorkspace.className = 'canvas-workspace';
-
-    this.canvas = new MappingCanvas();
-    this.canvas.className = 'canvas-container';
-    canvasWorkspace.appendChild(this.canvas);
-
-    this.pageBarEl = new MapperPageBar();
-    canvasWorkspace.appendChild(this.pageBarEl);
-    mappingArea.appendChild(canvasWorkspace);
-
-    this.targetEl = document.createElement('div');
-    this.targetEl.className = 'schema-tree-container target-tree';
-    mappingArea.appendChild(this.targetEl);
-
-    mappingWorkspace.appendChild(mappingArea);
-    content.appendChild(mappingWorkspace);
-    this.container.appendChild(content);
-
-    this.bottomPanel = new MapperBottomPanel();
-    this.container.appendChild(this.bottomPanel);
-
-    this.statusBarEl = new MapperStatusBar();
-    this.container.appendChild(this.statusBarEl);
-
-    this.modalHost = document.createElement('div');
-    this.modalHost.className = 'mapper-modal-host';
-    this.container.appendChild(this.modalHost);
-
-    this.resizeObserver = new ResizeObserver(() => this.redrawLinks());
-    this.resizeObserver.observe(mappingArea);
-    this.resizeObserver.observe(this.canvas);
-    window.removeEventListener('resize', this.handleResize);
-    window.addEventListener('resize', this.handleResize);
-
-    this.layoutBuilt = true;
-  }
-
   private syncToolbar(): void {
     this.toolbarEl.configure({
       disabled: !this.state.map,
+      status: this.toolbarStatusMessage,
       onValidateAndCompile: () => this.validateAndCompile(),
       onTest: () => this.runTestMap(),
       onDeploy: () => {
@@ -467,20 +466,14 @@ export class MapperAppController {
       onCopilot: () => {
         this.copilotPanelOpen = !this.copilotPanelOpen;
         this.syncCopilot();
-        if (this.copilotPanelOpen) {
-          setTimeout(() => this.container.querySelector<HTMLTextAreaElement>('#copilot-prompt')?.focus());
-        }
       },
     });
   }
 
   private syncCopilot(): void {
     if (this.copilotPanelOpen) {
-      this.copilotEl ??= new CopilotPanel();
-      if (!this.copilotEl.isConnected) {
-        this.copilotHost.appendChild(this.copilotEl);
-      }
-      this.copilotEl.configure(
+      this.elements.copilot.hidden = false;
+      this.elements.copilot.configure(
         {
           draft: this.copilotDraft,
           busy: this.copilotBusy,
@@ -499,9 +492,8 @@ export class MapperAppController {
           },
         }
       );
-    } else if (this.copilotEl) {
-      this.copilotEl.remove();
-      this.copilotEl = null;
+    } else {
+      this.elements.copilot.hidden = true;
     }
   }
 
@@ -515,15 +507,12 @@ export class MapperAppController {
   private syncSource(): void {
     const signature = `${this.state.activePage}`;
     if (this.state.sourceSchema) {
-      if (
-        this.sourceEl instanceof SchemaTreeRenderer &&
-        this.lastSourceSchema === this.state.sourceSchema &&
-        this.lastSourceSignature === signature
-      ) {
+      this.elements.sourceTree.hidden = false;
+      this.elements.sourceEmpty.hidden = true;
+      if (this.lastSourceSchema === this.state.sourceSchema && this.lastSourceSignature === signature) {
         return;
       }
-      const tree = new SchemaTreeRenderer();
-      tree.className = 'schema-tree-container source-tree';
+      const tree = this.elements.sourceTree;
       tree.configure(
         this.state.sourceSchema,
         'source',
@@ -536,16 +525,13 @@ export class MapperAppController {
         () => this.vscode.postMessage({ type: 'loadSchema', side: 'source' }),
         this.getConnectedPaths('source')
       );
-      tree.addEventListener('scroll', () => this.redrawLinks());
-      this.replaceSourceEl(tree);
       this.sourceTree = tree;
       this.lastSourceSchema = this.state.sourceSchema;
       this.lastSourceSignature = signature;
-    } else if (!(this.sourceEl instanceof EmptySchemaPlaceholder)) {
-      const empty = new EmptySchemaPlaceholder();
-      empty.className = 'schema-tree-container source-tree';
-      empty.configure('source', () => this.vscode.postMessage({ type: 'loadSchema', side: 'source' }));
-      this.replaceSourceEl(empty);
+    } else {
+      this.elements.sourceTree.hidden = true;
+      this.elements.sourceEmpty.hidden = false;
+      this.elements.sourceEmpty.configure('source', () => this.vscode.postMessage({ type: 'loadSchema', side: 'source' }));
       this.sourceTree = null;
       this.lastSourceSchema = undefined;
       this.lastSourceSignature = '';
@@ -555,15 +541,12 @@ export class MapperAppController {
   private syncTarget(): void {
     const signature = `${this.state.activePage}`;
     if (this.state.targetSchema) {
-      if (
-        this.targetEl instanceof SchemaTreeRenderer &&
-        this.lastTargetSchema === this.state.targetSchema &&
-        this.lastTargetSignature === signature
-      ) {
+      this.elements.targetTree.hidden = false;
+      this.elements.targetEmpty.hidden = true;
+      if (this.lastTargetSchema === this.state.targetSchema && this.lastTargetSignature === signature) {
         return;
       }
-      const tree = new SchemaTreeRenderer();
-      tree.className = 'schema-tree-container target-tree';
+      const tree = this.elements.targetTree;
       tree.configure(
         this.state.targetSchema,
         'target',
@@ -576,34 +559,17 @@ export class MapperAppController {
         () => this.vscode.postMessage({ type: 'loadSchema', side: 'target' }),
         this.getConnectedPaths('target')
       );
-      tree.addEventListener('scroll', () => this.redrawLinks());
-      this.replaceTargetEl(tree);
       this.targetTree = tree;
       this.lastTargetSchema = this.state.targetSchema;
       this.lastTargetSignature = signature;
-    } else if (!(this.targetEl instanceof EmptySchemaPlaceholder)) {
-      const empty = new EmptySchemaPlaceholder();
-      empty.className = 'schema-tree-container target-tree';
-      empty.configure('target', () => this.vscode.postMessage({ type: 'loadSchema', side: 'target' }));
-      this.replaceTargetEl(empty);
+    } else {
+      this.elements.targetTree.hidden = true;
+      this.elements.targetEmpty.hidden = false;
+      this.elements.targetEmpty.configure('target', () => this.vscode.postMessage({ type: 'loadSchema', side: 'target' }));
       this.targetTree = null;
       this.lastTargetSchema = undefined;
       this.lastTargetSignature = '';
     }
-  }
-
-  private replaceSourceEl(element: HTMLElement): void {
-    if (this.sourceEl) {
-      this.mappingAreaEl?.replaceChild(element, this.sourceEl);
-    }
-    this.sourceEl = element;
-  }
-
-  private replaceTargetEl(element: HTMLElement): void {
-    if (this.targetEl) {
-      this.mappingAreaEl?.replaceChild(element, this.targetEl);
-    }
-    this.targetEl = element;
   }
 
   private configureCanvas(): void {
@@ -715,13 +681,21 @@ export class MapperAppController {
     }
     this.lastModalKey = key;
     this.scriptingDialog = null;
-    this.modalHost.replaceChildren();
+    this.elements.schemaDialog.clear();
+    this.elements.scriptingDialog.clear();
+    this.elements.functoidDialog.clear();
+    this.elements.schemaDialog.hidden = true;
+    this.elements.scriptingDialog.hidden = true;
+    this.elements.functoidDialog.hidden = true;
     if (key === 'schemaNode') {
-      this.modalHost.appendChild(this.createSchemaNodePropertiesModal());
+      this.elements.schemaDialog.hidden = false;
+      this.configureSchemaNodePropertiesModal(this.elements.schemaDialog);
     } else if (key === 'scripting') {
-      this.modalHost.appendChild(this.createScriptingConfigDialog());
+      this.elements.scriptingDialog.hidden = false;
+      this.configureScriptingConfigDialog(this.elements.scriptingDialog);
     } else if (key === 'functoid') {
-      this.modalHost.appendChild(this.createFunctoidPropertiesDialog());
+      this.elements.functoidDialog.hidden = false;
+      this.configureFunctoidPropertiesDialog(this.elements.functoidDialog);
     }
   }
 
@@ -788,7 +762,7 @@ export class MapperAppController {
     setTimeout(() => this.redrawLinks(), 0);
   }
 
-  private createSchemaNodePropertiesModal(): HTMLElement {
+  private configureSchemaNodePropertiesModal(dialog: SchemaNodePropertiesDialog): void {
     const properties = this.schemaNodeProperties!;
     const node = properties.node;
     const occurrence = `${node.minOccurs ?? (node.isOptional ? 0 : 1)}..${node.maxOccurs ?? 1}`;
@@ -816,7 +790,6 @@ export class MapperAppController {
       }
     }
 
-    const dialog = new SchemaNodePropertiesDialog();
     dialog.configure(
       {
         title: `${properties.side === 'source' ? 'Source' : 'Target'} Schema Node Properties`,
@@ -826,7 +799,6 @@ export class MapperAppController {
       },
       { onClose: () => this.closeSchemaNodeProperties() }
     );
-    return dialog;
   }
 
   /**
@@ -910,7 +882,22 @@ export class MapperAppController {
     return f?.name || 'Functoid';
   }
 
-  private redrawLinks(): void {
+  private redrawLinks(geometryOnly = false): void {
+    this.pendingFullCanvasRedraw ||= !geometryOnly;
+    if (this.disposed || this.redrawFrame !== null) {
+      return;
+    }
+    this.redrawFrame = requestAnimationFrame(() => {
+      this.redrawFrame = null;
+      if (!this.disposed) {
+        const renderFullCanvas = this.pendingFullCanvasRedraw;
+        this.pendingFullCanvasRedraw = false;
+        this.redrawLinksNow(renderFullCanvas);
+      }
+    });
+  }
+
+  private redrawLinksNow(renderFullCanvas: boolean): void {
     if (!this.canvas || !this.state.map || !this.mappingAreaEl) {
       return;
     }
@@ -924,29 +911,31 @@ export class MapperAppController {
 
     if (this.sourceTree) {
       this.sourceTree.setConnectedPaths(this.getConnectedPaths('source'));
+      const sourcePaths = new Set<string>();
       for (const link of page.links) {
         if (link.sourcePath && link.sourceType !== 'functoid') {
-          const pos = this.sourceTree.getNodePosition(link.sourcePath);
-          if (pos) {
-            positions.set(`src:${link.sourcePath}`, pos);
-          }
+          sourcePaths.add(link.sourcePath);
         }
+      }
+      for (const [path, position] of this.sourceTree.getNodePositions(sourcePaths)) {
+        positions.set(`src:${path}`, position);
       }
     }
 
     if (this.targetTree) {
       this.targetTree.setConnectedPaths(this.getConnectedPaths('target'));
+      const targetPaths = new Set<string>();
       for (const link of page.links) {
         if (link.targetPath && link.targetType !== 'functoid') {
-          const pos = this.targetTree.getNodePosition(link.targetPath);
-          if (pos) {
-            positions.set(`tgt:${link.targetPath}`, pos);
-          }
+          targetPaths.add(link.targetPath);
         }
+      }
+      for (const [path, position] of this.targetTree.getNodePositions(targetPaths)) {
+        positions.set(`tgt:${path}`, position);
       }
     }
 
-    this.canvas.renderWithPositions(positions, page);
+    this.canvas.renderWithPositions(positions, page, renderFullCanvas);
   }
 
   private submitCopilotPrompt(prompt: string): void {
@@ -965,11 +954,11 @@ export class MapperAppController {
   }
 
   private updateStatusMessage(msg: string): void {
-    const el = document.getElementById('toolbar-status');
-    if (el) {
-      el.textContent = msg;
-      el.style.color = msg ? '#4fc1ff' : '';
+    if (this.disposed) {
+      return;
     }
+    this.toolbarStatusMessage = msg;
+    this.syncToolbar();
   }
 
   private updateMap(map: any): void {
@@ -1223,11 +1212,20 @@ export class MapperAppController {
   }
 
   private showNotification(title: string, type: NotificationType, details?: string): void {
-    this.container.querySelectorAll('biztalk-mapper-notification').forEach((n) => n.remove());
-    const notif = new MapperNotification();
-    notif.configure(title, type, details, () => notif.remove());
-    this.container.appendChild(notif);
-    setTimeout(() => notif.remove(), 5000);
+    const notification = this.elements.notification;
+    const close = (): void => {
+      notification.hidden = true;
+      if (this.notificationTimeout) {
+        clearTimeout(this.notificationTimeout);
+        this.notificationTimeout = null;
+      }
+    };
+    if (this.notificationTimeout) {
+      clearTimeout(this.notificationTimeout);
+    }
+    notification.hidden = false;
+    notification.configure(title, type, details, close);
+    this.notificationTimeout = setTimeout(close, 5000);
   }
 
   private getLinkedPaths(side: 'source' | 'target'): Set<string> {
@@ -1416,10 +1414,9 @@ export class MapperAppController {
     this.showNotification('Scripting functoid updated', 'success');
   }
 
-  private createScriptingConfigDialog(): HTMLElement {
+  private configureScriptingConfigDialog(dialog: ScriptingConfigDialog): void {
     const draft = this.scriptingConfigDraft!;
     const functoid = this.getCurrentPageFunctoid(draft.functoidId);
-    const dialog = new ScriptingConfigDialog();
     this.scriptingDialog = dialog;
     dialog.configure(
       {
@@ -1438,7 +1435,6 @@ export class MapperAppController {
         onBrowseAssembly: () => this.vscode.postMessage({ type: 'browseAssembly' }),
       }
     );
-    return dialog;
   }
 
   private applyScriptingDialogResult(result: ScriptingConfigResult): void {
@@ -1491,7 +1487,7 @@ export class MapperAppController {
       ?.methods.find((method) => method.name === draft.methodName);
   }
 
-  private createFunctoidPropertiesDialog(): HTMLElement {
+  private configureFunctoidPropertiesDialog(dialog: FunctoidConfigDialog): void {
     const functoid = this.getCurrentPageFunctoid(this.functoidPropertiesId!);
     const definition = this.state.functoids.find((item) => item.id === functoid?.functoidId);
     const page = this.state.map?.pages?.[this.state.activePage];
@@ -1509,7 +1505,6 @@ export class MapperAppController {
       return { isConstant, value: input.value, defaultValue: input.defaultValue || '', sourceLabel, raw: input };
     });
 
-    const dialog = new FunctoidConfigDialog();
     dialog.configure(
       {
         title: functoid?.name || definition?.name || 'Functoid',
@@ -1528,7 +1523,6 @@ export class MapperAppController {
         onCancel: () => this.closeFunctoidDialog(),
       }
     );
-    return dialog;
   }
 
   private applyFunctoidDialogResult(result: FunctoidConfigResult): void {

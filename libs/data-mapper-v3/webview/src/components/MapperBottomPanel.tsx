@@ -101,7 +101,7 @@ function BottomPanelView(props: BottomPanelViewProps): React.ReactElement {
   const { hasMap, activeTab, collapsed, inputXml, output, outputError } = props;
   return (
     <FluentProvider theme={getVsCodeFluentTheme()} style={{ display: 'contents' }}>
-      <div className={collapsed ? `${styles.panel} ${styles.collapsed}` : styles.panel}>
+      <div className={collapsed ? `bottom-panel collapsed ${styles.panel} ${styles.collapsed}` : `bottom-panel ${styles.panel}`}>
         <div className={styles.header}>
           <div className={styles.tabs}>
             <button

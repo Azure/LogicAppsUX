@@ -9,6 +9,16 @@ declare function acquireVsCodeApi(): MapEditorVsCodeApi;
 
 let app: MapperAppHandle | null = null;
 
+function renderStartupError(container: HTMLElement, error: unknown): void {
+  const message = error instanceof Error ? `${error.message}\n${error.stack || ''}` : String(error);
+  createRoot(container).render(
+    <div style={{ padding: '20px', color: '#f48771' }}>
+      <h3>Logic App Data Mapper - Error</h3>
+      <pre style={{ marginTop: '10px', whiteSpace: 'pre-wrap' }}>{message}</pre>
+    </div>
+  );
+}
+
 try {
   const vscode = acquireVsCodeApi();
   const container = document.getElementById('app');
@@ -32,14 +42,9 @@ try {
   };
 
   createRoot(container).render(<ReactMapperRoot vscode={vscode} onAppReady={handleAppReady} />);
-} catch (e: any) {
+} catch (error: unknown) {
   const container = document.getElementById('app');
   if (container) {
-    container.innerHTML = `
-            <div style="padding: 20px; color: #f48771;">
-                <h3>Logic App Data Mapper - Error</h3>
-                <pre style="margin-top: 10px; white-space: pre-wrap;">${e.message}\n${e.stack || ''}</pre>
-            </div>
-        `;
+    renderStartupError(container, error);
   }
 }

@@ -11,19 +11,8 @@
     "vscode": "^1.103.0"
   },
   "private": true,
-  "categories": [
-    "Other",
-    "Visualization"
-  ],
-  "keywords": [
-    "biztalk",
-    "mapper",
-    "xslt",
-    "xml",
-    "schema",
-    "data mapping",
-    "functoids"
-  ],
+  "categories": ["Other", "Visualization"],
+  "keywords": ["biztalk", "mapper", "xslt", "xml", "schema", "data mapping", "functoids"],
   "main": "./out/extension.js",
   "contributes": {
     "viewsContainers": {
@@ -109,10 +98,7 @@
         "biztalkDataMapper.defaultXsltVersion": {
           "type": "string",
           "default": "1.0",
-          "enum": [
-            "1.0",
-            "2.0"
-          ],
+          "enum": ["1.0", "2.0"],
           "description": "Default XSLT version for compiled maps"
         },
         "biztalkDataMapper.omitXmlDeclaration": {
@@ -142,9 +128,10 @@
     "watch": "tsc -watch -p ./tsconfig.json",
     "watch:webview": "webpack --watch --mode development --config webpack.webview.config.js",
     "lint": "eslint src",
+    "generate:profile-map": "node scripts/generate-profile-map.js",
     "test": "jest",
     "test:extension-unit": "pnpm run test",
-    "test:webview": "pnpm run compile:webview && node test/webviewSmoke.js",
+    "test:webview": "pnpm run compile:webview && webpack --mode development --config webpack.webview.config.js && node test/webview-smoke/run.js",
     "package": "vsce package --no-dependencies --allow-missing-repository --skip-license"
   },
   "devDependencies": {

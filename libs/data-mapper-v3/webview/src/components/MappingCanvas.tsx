@@ -1,5 +1,4 @@
-// biome-ignore lint/style/useImportType: The classic JSX transform requires React at runtime.
-import React, { useRef, useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { getFunctoidDisplayName } from './functoidDisplayName';
 import { createPortal } from 'react-dom';
@@ -29,11 +28,10 @@ interface CanvasViewProps {
   host: MappingCanvas;
   state: MapperViewState;
   callbacks: CanvasCallbacks;
-  positions: Map<string, Point>;
   page: MapPage | null;
-  offsetX: number;
-  offsetY: number;
   zoom: number;
+  previewRef: React.RefObject<LinkPreviewHandle>;
+  linksOverlayRef: React.RefObject<LinksOverlayHandle>;
   onZoomChange(zoom: number): void;
 }
 
@@ -54,6 +52,52 @@ const accents: Record<string, string> = {
   Custom: '#795548',
 };
 
+interface LinkPreviewHandle {
+  show(start: Point, end: Point): void;
+  update(end: Point): void;
+  clear(): void;
+}
+
+interface LinksOverlayHandle {
+  redraw(): void;
+}
+
+const LinkPreview = forwardRef<LinkPreviewHandle>(function LinkPreview(_props, ref): React.ReactElement | null {
+  const [points, setPoints] = useState<{ start: Point; end: Point } | null>(null);
+
+  useImperativeHandle(ref, () => ({
+    show(start, end): void {
+      setPoints({ start, end });
+    },
+    update(end): void {
+      setPoints((current) => (current ? { ...current, end } : current));
+    },
+    clear(): void {
+      setPoints(null);
+    },
+  }));
+
+  if (!points) {
+    return null;
+  }
+
+  const controlOffset = Math.max(Math.abs(points.end.x - points.start.x) * 0.4, 40);
+  const path = `M ${points.start.x} ${points.start.y} C ${points.start.x + controlOffset} ${points.start.y}, ${points.end.x - controlOffset} ${points.end.y}, ${points.end.x} ${points.end.y}`;
+  return (
+    <path
+      className="mapping-link-preview"
+      d={path}
+      fill="none"
+      markerEnd="url(#arrowhead)"
+      stroke="var(--vscode-charts-blue, #4fc1ff)"
+      strokeWidth="2"
+      strokeDasharray="6 4"
+      strokeLinecap="round"
+      opacity="0.9"
+    />
+  );
+});
+
 const functoidWidth = 56;
 const functoidHeight = 26;
 const functoidHalfWidth = functoidWidth / 2;
@@ -72,7 +116,7 @@ function getDisplayName(name: string): string {
 function getLinkPoints(
   link: MapLink,
   positions: Map<string, Point>,
-  page: MapPage,
+  functoidsById: Map<string, MapFunctoid>,
   offsetX: number,
   offsetY: number,
   scrollLeft: number,
@@ -83,7 +127,7 @@ function getLinkPoints(
   let target: Point | undefined;
 
   if (link.sourceType === 'functoid') {
-    const functoid = page.functoids.find((item) => item.id === link.sourceId);
+    const functoid = functoidsById.get(link.sourceId);
     if (functoid) {
       source = {
         x: offsetX + (functoid.x + functoidHalfWidth) * zoom - scrollLeft,
@@ -98,7 +142,7 @@ function getLinkPoints(
   }
 
   if (link.targetType === 'functoid') {
-    const functoid = page.functoids.find((item) => item.id === link.targetId);
+    const functoid = functoidsById.get(link.targetId);
     if (functoid) {
       target = {
         x: offsetX + (functoid.x - functoidHalfWidth) * zoom - scrollLeft,
@@ -163,6 +207,51 @@ function LinkPath({
     </g>
   );
 }
+
+const MappingLinksOverlay = forwardRef<
+  LinksOverlayHandle,
+  {
+    host: MappingCanvas;
+    mappingArea: Element;
+    callbacks: CanvasCallbacks;
+    previewRef: React.RefObject<LinkPreviewHandle>;
+    selectedLinkId: string | null;
+  }
+>(function MappingLinksOverlay({ host, mappingArea, callbacks, previewRef, selectedLinkId }, ref): React.ReactElement {
+  const [, setRenderVersion] = useState(0);
+  const { page, positions, functoidsById, offsetX, offsetY, zoom } = host.getLinkRenderData();
+
+  useImperativeHandle(ref, () => ({
+    redraw(): void {
+      setRenderVersion((version) => version + 1);
+    },
+  }));
+
+  return createPortal(
+    <svg className="mapping-links-overlay">
+      <defs>
+        <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#4fc1ff" />
+        </marker>
+      </defs>
+      <LinkPreview ref={previewRef} />
+      {page?.links.map((link) => {
+        const points = getLinkPoints(link, positions, functoidsById, offsetX, offsetY, host.scrollLeft, host.scrollTop, zoom);
+        return points ? (
+          <LinkPath
+            key={link.id}
+            link={link}
+            from={points.source}
+            to={points.target}
+            selected={selectedLinkId === link.id}
+            onSelect={() => callbacks.onLinkSelect?.(link.id)}
+          />
+        ) : null;
+      })}
+    </svg>,
+    mappingArea
+  );
+});
 
 function FunctoidNode({
   functoid,
@@ -304,11 +393,10 @@ function MappingCanvasView({
   host,
   state,
   callbacks,
-  positions,
   page,
-  offsetX,
-  offsetY,
   zoom,
+  previewRef,
+  linksOverlayRef,
   onZoomChange,
 }: CanvasViewProps): React.ReactElement {
   const svgRef = useRef<SVGSVGElement>(null);
@@ -316,13 +404,23 @@ function MappingCanvasView({
   const [currentDrag, setCurrentDrag] = useState<DragTarget | null>(null);
   const zoomPercent = Math.round(zoom * 100);
   const mappingArea = host.closest('.mapping-area');
+  const connectedFunctoidInputs = new Set<string>();
+  const connectedFunctoidOutputs = new Set<string>();
+  for (const link of page?.links ?? []) {
+    if (link.sourceType === 'functoid') {
+      connectedFunctoidOutputs.add(link.sourceId);
+    }
+    if (link.targetType === 'functoid') {
+      connectedFunctoidInputs.add(link.targetId);
+    }
+  }
 
   const finishDrag = (): void => {
     const target = dragTarget.current;
     if (!target || !page) {
       return;
     }
-    const functoid = page.functoids.find((item) => item.id === target.id);
+    const functoid = host.getFunctoid(target.id);
     if (functoid) {
       callbacks.onFunctoidMove?.(functoid.id, functoid.x, functoid.y);
     }
@@ -343,7 +441,7 @@ function MappingCanvasView({
           if (!target || !page || !svgRef.current) {
             return;
           }
-          const functoid = page.functoids.find((item) => item.id === target.id);
+          const functoid = host.getFunctoid(target.id);
           if (!functoid) {
             return;
           }
@@ -386,8 +484,8 @@ function MappingCanvasView({
             svgRef={svgRef}
             callbacks={callbacks}
             dragging={currentDrag?.id === functoid.id}
-            inputConnected={page.links.some((link) => link.targetType === 'functoid' && link.targetId === functoid.id)}
-            outputConnected={page.links.some((link) => link.sourceType === 'functoid' && link.sourceId === functoid.id)}
+            inputConnected={connectedFunctoidInputs.has(functoid.id)}
+            outputConnected={connectedFunctoidOutputs.has(functoid.id)}
             dragTarget={dragTarget}
             setDragTarget={(target) => setCurrentDrag(target)}
           />
@@ -408,30 +506,16 @@ function MappingCanvasView({
           1:1
         </button>
       </div>
-      {mappingArea &&
-        createPortal(
-          <svg className="mapping-links-overlay">
-            <defs>
-              <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-                <polygon points="0 0, 8 3, 0 6" fill="#4fc1ff" />
-              </marker>
-            </defs>
-            {page?.links.map((link) => {
-              const points = getLinkPoints(link, positions, page, offsetX, offsetY, host.scrollLeft, host.scrollTop, zoom);
-              return points ? (
-                <LinkPath
-                  key={link.id}
-                  link={link}
-                  from={points.source}
-                  to={points.target}
-                  selected={state.selectedLink === link.id}
-                  onSelect={() => callbacks.onLinkSelect?.(link.id)}
-                />
-              ) : null;
-            })}
-          </svg>,
-          mappingArea
-        )}
+      {mappingArea && (
+        <MappingLinksOverlay
+          ref={linksOverlayRef}
+          host={host}
+          mappingArea={mappingArea}
+          callbacks={callbacks}
+          previewRef={previewRef}
+          selectedLinkId={state.selectedLink}
+        />
+      )}
     </>
   );
 }
@@ -441,12 +525,14 @@ export class MappingCanvas extends HTMLElement {
   private state: MapperViewState | null = null;
   private callbacks: CanvasCallbacks = {};
   private positions = new Map<string, Point>();
+  private functoidsById = new Map<string, MapFunctoid>();
   private page: MapPage | null = null;
   private offsetX = 0;
   private offsetY = 0;
   private zoom = 1;
-  private previewStart: Point | null = null;
-  private previewPath: SVGPathElement | null = null;
+  private scrollFrame: number | null = null;
+  private readonly previewRef = React.createRef<LinkPreviewHandle>();
+  private readonly linksOverlayRef = React.createRef<LinksOverlayHandle>();
 
   public configure(state: MapperViewState, callbacks?: CanvasCallbacks): void {
     this.state = state;
@@ -461,6 +547,10 @@ export class MappingCanvas extends HTMLElement {
 
   public disconnectedCallback(): void {
     this.removeEventListener('scroll', this.handleScroll);
+    if (this.scrollFrame !== null) {
+      cancelAnimationFrame(this.scrollFrame);
+      this.scrollFrame = null;
+    }
     this.reactRoot?.unmount();
     this.reactRoot = null;
   }
@@ -470,16 +560,43 @@ export class MappingCanvas extends HTMLElement {
     this.renderReact();
   }
 
-  public renderWithPositions(positions: Map<string, Point>, page: MapPage | null): void {
+  public renderWithPositions(positions: Map<string, Point>, page: MapPage | null, renderFullCanvas = true): void {
     this.positions = new Map(positions);
     this.page = page;
+    this.functoidsById = new Map(page?.functoids.map((functoid) => [functoid.id, functoid]) ?? []);
 
     const mappingArea = this.closest('.mapping-area');
     const canvasRect = this.getBoundingClientRect();
     const areaRect = mappingArea?.getBoundingClientRect();
     this.offsetX = areaRect ? canvasRect.left - areaRect.left : 0;
     this.offsetY = areaRect ? canvasRect.top - areaRect.top : 0;
-    this.renderReact();
+    if (!renderFullCanvas && this.linksOverlayRef.current) {
+      this.linksOverlayRef.current.redraw();
+    } else {
+      this.renderReact();
+    }
+  }
+
+  public getLinkRenderData(): {
+    page: MapPage | null;
+    positions: Map<string, Point>;
+    functoidsById: Map<string, MapFunctoid>;
+    offsetX: number;
+    offsetY: number;
+    zoom: number;
+  } {
+    return {
+      page: this.page,
+      positions: this.positions,
+      functoidsById: this.functoidsById,
+      offsetX: this.offsetX,
+      offsetY: this.offsetY,
+      zoom: this.zoom,
+    };
+  }
+
+  public getFunctoid(id: string): MapFunctoid | undefined {
+    return this.functoidsById.get(id);
   }
 
   public setZoom(zoom: number): void {
@@ -488,41 +605,16 @@ export class MappingCanvas extends HTMLElement {
   }
 
   public beginLinkPreview(clientX: number, clientY: number): void {
-    this.clearLinkPreview();
-    this.previewStart = this.toMappingAreaPoint(clientX, clientY);
-    const overlay = this.closest('.mapping-area')?.querySelector<SVGSVGElement>('.mapping-links-overlay');
-    if (!overlay) {
-      return;
-    }
-    this.previewPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    this.previewPath.classList.add('mapping-link-preview');
-    this.previewPath.setAttribute('fill', 'none');
-    this.previewPath.setAttribute('marker-end', 'url(#arrowhead)');
-    this.previewPath.style.stroke = 'var(--vscode-charts-blue, #4fc1ff)';
-    this.previewPath.style.strokeWidth = '2';
-    this.previewPath.style.strokeDasharray = '6 4';
-    this.previewPath.style.strokeLinecap = 'round';
-    this.previewPath.style.opacity = '0.9';
-    overlay.appendChild(this.previewPath);
-    this.updateLinkPreview(clientX, clientY);
+    const start = this.toMappingAreaPoint(clientX, clientY);
+    this.previewRef.current?.show(start, start);
   }
 
   public updateLinkPreview(clientX: number, clientY: number): void {
-    if (!this.previewStart || !this.previewPath) {
-      return;
-    }
-    const end = this.toMappingAreaPoint(clientX, clientY);
-    const controlOffset = Math.max(Math.abs(end.x - this.previewStart.x) * 0.4, 40);
-    this.previewPath.setAttribute(
-      'd',
-      `M ${this.previewStart.x} ${this.previewStart.y} C ${this.previewStart.x + controlOffset} ${this.previewStart.y}, ${end.x - controlOffset} ${end.y}, ${end.x} ${end.y}`
-    );
+    this.previewRef.current?.update(this.toMappingAreaPoint(clientX, clientY));
   }
 
   public clearLinkPreview(): void {
-    this.previewPath?.remove();
-    this.previewPath = null;
-    this.previewStart = null;
+    this.previewRef.current?.clear();
   }
 
   private toMappingAreaPoint(clientX: number, clientY: number): Point {
@@ -531,7 +623,13 @@ export class MappingCanvas extends HTMLElement {
   }
 
   private readonly handleScroll = (): void => {
-    this.renderReact();
+    if (this.scrollFrame !== null) {
+      return;
+    }
+    this.scrollFrame = requestAnimationFrame(() => {
+      this.scrollFrame = null;
+      this.linksOverlayRef.current?.redraw();
+    });
   };
 
   private renderReact(): void {
@@ -544,11 +642,10 @@ export class MappingCanvas extends HTMLElement {
         host={this}
         state={this.state}
         callbacks={this.callbacks}
-        positions={this.positions}
         page={this.page}
-        offsetX={this.offsetX}
-        offsetY={this.offsetY}
         zoom={this.zoom}
+        previewRef={this.previewRef}
+        linksOverlayRef={this.linksOverlayRef}
         onZoomChange={(zoom) => this.setZoom(zoom)}
       />
     );

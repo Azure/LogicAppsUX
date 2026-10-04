@@ -110,8 +110,8 @@ function PageBarView({ pages, activePage, onSelect, onRename, onAdd, onDelete }:
     setRenamingIndex(index);
   };
 
-  const commitRename = (index: number): void => {
-    const name = draft.trim();
+  const commitRename = (index: number, value: string = draft): void => {
+    const name = value.trim();
     setRenamingIndex(null);
     if (name && name !== pages[index]?.name) {
       onRename(index, name);
@@ -134,7 +134,7 @@ function PageBarView({ pages, activePage, onSelect, onRename, onAdd, onDelete }:
             index === renamingIndex ? (
               <input
                 key={index}
-                className={styles.nameInput}
+                className={`page-name-input ${styles.nameInput}`}
                 type="text"
                 aria-label="Page name"
                 value={draft}
@@ -143,19 +143,19 @@ function PageBarView({ pages, activePage, onSelect, onRename, onAdd, onDelete }:
                 onKeyDown={(event) => {
                   if (event.key === 'Enter') {
                     event.preventDefault();
-                    commitRename(index);
+                    commitRename(index, event.currentTarget.value);
                   } else if (event.key === 'Escape') {
                     event.preventDefault();
                     setRenamingIndex(null);
                   }
                 }}
-                onBlur={() => commitRename(index)}
+                onBlur={(event) => commitRename(index, event.currentTarget.value)}
               />
             ) : (
               <span className={styles.group} key={index}>
                 <button
                   type="button"
-                  className={`${styles.tab} ${index === activePage ? styles.tabActive : ''}`}
+                  className={`page-tab ${styles.tab} ${index === activePage ? styles.tabActive : ''}`}
                   title="Double-click to rename"
                   onClick={() => handleSelect(index)}
                   onDoubleClick={() => beginRename(index)}
@@ -164,7 +164,8 @@ function PageBarView({ pages, activePage, onSelect, onRename, onAdd, onDelete }:
                 </button>
                 <button
                   type="button"
-                  className={styles.deleteBtn}
+                  className={`page-delete-btn ${styles.deleteBtn}`}
+                  data-page={index}
                   title={pages.length === 1 ? 'A map must have at least one page' : `Delete ${page.name}`}
                   aria-label={`Delete ${page.name}`}
                   disabled={pages.length === 1}
@@ -178,7 +179,7 @@ function PageBarView({ pages, activePage, onSelect, onRename, onAdd, onDelete }:
               </span>
             )
           )}
-          <button type="button" className={styles.addBtn} title="Add page" aria-label="Add page" onClick={onAdd}>
+          <button type="button" id="btn-add-page" className={styles.addBtn} title="Add page" aria-label="Add page" onClick={onAdd}>
             +
           </button>
         </div>

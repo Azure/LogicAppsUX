@@ -66,23 +66,25 @@ function SchemaNodePropertiesDialogView({ model, onClose }: SchemaNodeProperties
           <DialogBody>
             <DialogTitle>{model.title}</DialogTitle>
             <DialogContent>
-              <div className={styles.nodeName}>{model.nodeName}</div>
-              <dl className={styles.list}>
-                {model.rows.map((row) => (
-                  <div className={styles.row} key={row.label}>
-                    <dt className={styles.term}>{row.label}</dt>
-                    <dd className={`${styles.value} ${row.isXPath ? styles.xpath : ''}`}>{row.value}</dd>
-                  </div>
-                ))}
-              </dl>
-              {model.description ? (
-                <Field label="Description">
-                  <div className={styles.description}>{model.description}</div>
-                </Field>
-              ) : null}
+              <div className="schema-properties-panel">
+                <div className={`schema-property-name ${styles.nodeName}`}>{model.nodeName}</div>
+                <dl className={`schema-property-list ${styles.list}`}>
+                  {model.rows.map((row) => (
+                    <div className={styles.row} key={row.label}>
+                      <dt className={styles.term}>{row.label}</dt>
+                      <dd className={`${styles.value} ${row.isXPath ? `schema-property-xpath ${styles.xpath}` : ''}`}>{row.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+                {model.description ? (
+                  <Field label="Description">
+                    <div className={styles.description}>{model.description}</div>
+                  </Field>
+                ) : null}
+              </div>
             </DialogContent>
             <DialogActions>
-              <Button appearance="primary" onClick={onClose}>
+              <Button id="schema-properties-close" appearance="primary" onClick={onClose}>
                 Close
               </Button>
             </DialogActions>
@@ -113,6 +115,13 @@ export class SchemaNodePropertiesDialog extends HTMLElement {
   public disconnectedCallback(): void {
     this.reactRoot?.unmount();
     this.reactRoot = null;
+  }
+
+  public clear(): void {
+    this.reactRoot?.unmount();
+    this.reactRoot = null;
+    this.model = null;
+    this.callbacks = null;
   }
 
   private renderReact(): void {

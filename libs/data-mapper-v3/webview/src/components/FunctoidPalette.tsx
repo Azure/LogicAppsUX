@@ -152,14 +152,14 @@ function FunctoidPaletteView({ functoids, onSelect }: FunctoidPaletteViewProps):
 
         const isExpanded = expandedCategories.has(category) || searchTerm.length > 0;
         return (
-          <div key={category}>
+          <div className="palette-category" key={category}>
             <Button
               appearance="transparent"
-              className={styles.categoryHeader}
+              className={`category-header ${styles.categoryHeader}`}
               icon={isExpanded ? <ChevronDown12Regular /> : <ChevronRight12Regular />}
               onClick={() => toggleCategory(category)}
             >
-              <span>{category}</span>
+              <span className="category-name">{category}</span>
               <span className={styles.categoryCount}>{filteredItems.length}</span>
             </Button>
             {isExpanded && (
@@ -167,7 +167,7 @@ function FunctoidPaletteView({ functoids, onSelect }: FunctoidPaletteViewProps):
                 {filteredItems.map((item) => (
                   <Button
                     appearance="transparent"
-                    className={styles.item}
+                    className={`palette-item ${styles.item}`}
                     title={item.tooltip || item.description || ''}
                     draggable
                     key={item.id}
@@ -176,11 +176,11 @@ function FunctoidPaletteView({ functoids, onSelect }: FunctoidPaletteViewProps):
                       event.dataTransfer.setData('functoid', JSON.stringify(item));
                     }}
                   >
-                    <span className={styles.itemContent}>
-                      <span className={styles.itemIcon} style={{ background: categoryColors[category] || '#9e9e9e' }}>
+                    <span className={`${styles.itemContent} palette-item-content`}>
+                      <span className={`${styles.itemIcon} item-icon`} style={{ background: categoryColors[category] || '#9e9e9e' }}>
                         fn
                       </span>
-                      <span className={styles.itemName}>{getFunctoidDisplayName(item.name)}</span>
+                      <span className={`${styles.itemName} item-name`}>{getFunctoidDisplayName(item.name)}</span>
                     </span>
                   </Button>
                 ))}

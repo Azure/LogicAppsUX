@@ -1,7 +1,7 @@
-import { Button, FluentProvider, Textarea, makeStyles } from '@fluentui/react-components';
+import { Button, FluentProvider, makeStyles } from '@fluentui/react-components';
 import { DismissRegular } from '@fluentui/react-icons';
 // biome-ignore lint/style/useImportType: The classic JSX transform requires React at runtime.
-import React, { useEffect, useState } from 'react';
+import React, { useRef } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { getVsCodeFluentTheme } from '../fluentTheme';
 
@@ -16,6 +16,17 @@ const useStyles = makeStyles({
   headingTitle: { display: 'block', marginBottom: '2px' },
   muted: { color: 'var(--vscode-descriptionForeground, #aaa)', fontSize: '11px' },
   controls: { display: 'flex', gap: '10px' },
+  prompt: {
+    flex: 1,
+    minHeight: '66px',
+    padding: '6px 8px',
+    border: '1px solid var(--vscode-input-border, #3c3c3c)',
+    color: 'var(--vscode-input-foreground, #ccc)',
+    backgroundColor: 'var(--vscode-input-background, #3c3c3c)',
+    resize: 'vertical',
+    fontFamily: 'inherit',
+    fontSize: '12px',
+  },
   contextToolbar: { display: 'flex', alignItems: 'center', gap: '6px', marginTop: '7px' },
   contextFiles: { display: 'flex', alignItems: 'center', gap: '6px', marginTop: '7px', flexWrap: 'wrap' },
   contextFile: {
@@ -74,14 +85,17 @@ function CopilotPanelView({
   onClose,
 }: CopilotPanelViewProps): React.ReactElement {
   const styles = useStyles();
-  const [draft, setDraft] = useState(model.draft);
-
-  useEffect(() => {
-    setDraft(model.draft);
-  }, [model.draft]);
+  const promptRef = useRef<HTMLTextAreaElement>(null);
 
   const submit = (): void => {
-    const prompt = draft.trim();
+    const prompt = (promptRef.current?.value ?? model.draft).trim();
+    if (prompt && model.hasMap && !model.busy) {
+      onSubmit(prompt);
+    }
+  };
+
+  const submitValue = (value: string): void => {
+    const prompt = value.trim();
     if (prompt && model.hasMap && !model.busy) {
       onSubmit(prompt);
     }
@@ -106,17 +120,19 @@ function CopilotPanelView({
           />
         </div>
         <div className={styles.controls}>
-          <Textarea
+          <textarea
             id="copilot-prompt"
+            ref={promptRef}
+            autoFocus
             rows={3}
             disabled={model.busy}
-            value={draft}
+            defaultValue={model.draft}
             placeholder="Example: On this page, connect CustomerName to FullName using String Concatenate."
-            onChange={(_event, data) => setDraft(data.value)}
+            className={styles.prompt}
             onKeyDown={(event) => {
               if (event.ctrlKey && event.key === 'Enter') {
                 event.preventDefault();
-                submit();
+                submitValue(event.currentTarget.value);
               }
             }}
           />
@@ -125,7 +141,7 @@ function CopilotPanelView({
           </Button>
         </div>
         <div className={styles.contextToolbar}>
-          <Button size="small" disabled={model.busy} onClick={onAddContext}>
+          <Button id="copilot-add-context" size="small" disabled={model.busy} onClick={onAddContext}>
             ＋ Add context files
           </Button>
           {model.contextFiles.length > 0 ? (
@@ -139,11 +155,15 @@ function CopilotPanelView({
         {model.contextFiles.length > 0 ? (
           <div className={styles.contextFiles}>
             {model.contextFiles.map((file) => (
-              <span className={styles.contextFile} title={`${file.name} (${formatFileSize(file.size)})`} key={file.id}>
+              <span
+                className={`copilot-context-file ${styles.contextFile}`}
+                title={`${file.name} (${formatFileSize(file.size)})`}
+                key={file.id}
+              >
                 <span className={styles.contextFileName}>{file.name}</span>
                 <button
                   type="button"
-                  className={styles.removeContext}
+                  className={`copilot-remove-context ${styles.removeContext}`}
                   aria-label={`Remove ${file.name}`}
                   disabled={model.busy}
                   onClick={() => onRemoveContext(file.id)}
@@ -154,7 +174,7 @@ function CopilotPanelView({
             ))}
           </div>
         ) : null}
-        {model.message ? <div className={styles.result}>{model.message}</div> : null}
+        {model.message ? <div className={`copilot-result ${styles.result}`}>{model.message}</div> : null}
         <div className={styles.hint}>Press Ctrl+Enter to submit. Assistant output is validated and applied as one undoable edit.</div>
       </section>
     </FluentProvider>
@@ -165,12 +185,10 @@ export class CopilotPanel extends HTMLElement {
   private reactRoot: Root | null = null;
   private model: CopilotPanelViewModel | null = null;
   private callbacks: CopilotPanelCallbacks | null = null;
-  private renderVersion = 0;
 
   public configure(model: CopilotPanelViewModel, callbacks: CopilotPanelCallbacks): void {
     this.model = model;
     this.callbacks = callbacks;
-    this.renderVersion++;
     this.renderReact();
   }
 
@@ -191,7 +209,6 @@ export class CopilotPanel extends HTMLElement {
     this.reactRoot ??= createRoot(this);
     this.reactRoot.render(
       <CopilotPanelView
-        key={this.renderVersion}
         model={this.model}
         onSubmit={this.callbacks.onSubmit}
         onAddContext={this.callbacks.onAddContext}

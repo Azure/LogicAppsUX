@@ -7,6 +7,7 @@ import { getVsCodeFluentTheme, useTypographyStyles } from '../fluentTheme';
 
 interface MapperToolbarViewProps {
   disabled: boolean;
+  status: string;
   onCopilot(): void;
   onDeploy(): void;
   onTest(): void;
@@ -45,15 +46,25 @@ const useStyles = makeStyles({
     marginLeft: 'auto',
     color: 'var(--vscode-descriptionForeground)',
   },
+  statusActive: {
+    color: '#4fc1ff',
+  },
 });
 
-function MapperToolbarView({ disabled, onCopilot, onDeploy, onTest, onValidateAndCompile }: MapperToolbarViewProps): React.ReactElement {
+function MapperToolbarView({
+  disabled,
+  status,
+  onCopilot,
+  onDeploy,
+  onTest,
+  onValidateAndCompile,
+}: MapperToolbarViewProps): React.ReactElement {
   const styles = useStyles();
   const typographyStyles = useTypographyStyles();
 
   return (
     <FluentProvider theme={getVsCodeFluentTheme()} className={styles.provider}>
-      <Toolbar className={`${styles.toolbar} ${typographyStyles.base}`} aria-label="Map commands">
+      <Toolbar className={`mapper-toolbar ${styles.toolbar} ${typographyStyles.base}`} aria-label="Map commands">
         <ToolbarGroup className={styles.group}>
           <ToolbarButton
             id="btn-validate-compile"
@@ -80,7 +91,9 @@ function MapperToolbarView({ disabled, onCopilot, onDeploy, onTest, onValidateAn
             Data Mapper Assistant
           </ToolbarButton>
         </ToolbarGroup>
-        <span className={styles.status} id="toolbar-status" role="status" />
+        <span className={`${styles.status} ${status ? styles.statusActive : ''}`} id="toolbar-status" role="status">
+          {status}
+        </span>
       </Toolbar>
     </FluentProvider>
   );
@@ -90,6 +103,7 @@ export class MapperToolbar extends HTMLElement {
   private reactRoot: Root | null = null;
   private props: MapperToolbarViewProps = {
     disabled: true,
+    status: '',
     onCopilot: () => {},
     onDeploy: () => {},
     onTest: () => {},

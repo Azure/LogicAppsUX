@@ -453,10 +453,15 @@
 	flex: 0 0 clamp(220px, 24%, 320px);
 	background: var(--vscode-editor-background);
 }
-.source-tree {
+.schema-tree-container > biztalk-schema-tree,
+.schema-tree-container > biztalk-empty-schema {
+	display: block;
+	height: 100%;
+}
+.schema-tree-container.source-tree {
 	border-right: 1px solid var(--vscode-panel-border, #333);
 }
-.target-tree {
+.schema-tree-container.target-tree {
 	border-left: 1px solid var(--vscode-panel-border, #333);
 }
 

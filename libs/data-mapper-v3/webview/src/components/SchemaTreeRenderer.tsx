@@ -329,29 +329,48 @@ export class SchemaTreeRenderer extends HTMLElement {
   }
 
   public getNodePosition(path: string): { x: number; y: number } | null {
+    return this.getNodePositions([path]).get(path) ?? null;
+  }
+
+  public getNodePositions(paths: Iterable<string>): Map<string, { x: number; y: number }> {
+    const positions = new Map<string, { x: number; y: number }>();
     const visibleNodes = Array.from(this.querySelectorAll<HTMLElement>('.tree-node[data-path]'));
-    let visiblePath = path;
-    let node = visibleNodes.find((element) => element.dataset.path === visiblePath);
-    while (!node) {
-      const separatorIndex = visiblePath.lastIndexOf('/');
-      if (separatorIndex <= 0) {
-        return null;
+    const nodesByPath = new Map<string, HTMLElement>();
+    for (const node of visibleNodes) {
+      if (node.dataset.path) {
+        nodesByPath.set(node.dataset.path, node);
       }
-      visiblePath = visiblePath.substring(0, separatorIndex);
-      node = visibleNodes.find((element) => element.dataset.path === visiblePath);
-    }
-    const connector = node?.querySelector<HTMLElement>('.node-connector');
-    const mappingArea = this.closest('.mapping-area');
-    if (!connector || !mappingArea) {
-      return null;
     }
 
-    const connectorRect = connector.getBoundingClientRect();
+    const mappingArea = this.closest('.mapping-area');
+    if (!mappingArea) {
+      return positions;
+    }
     const areaRect = mappingArea.getBoundingClientRect();
-    return {
-      x: connectorRect.left - areaRect.left + connectorRect.width / 2,
-      y: connectorRect.top - areaRect.top + connectorRect.height / 2,
-    };
+
+    for (const path of new Set(paths)) {
+      let visiblePath = path;
+      let node = nodesByPath.get(visiblePath);
+      while (!node) {
+        const separatorIndex = visiblePath.lastIndexOf('/');
+        if (separatorIndex <= 0) {
+          break;
+        }
+        visiblePath = visiblePath.substring(0, separatorIndex);
+        node = nodesByPath.get(visiblePath);
+      }
+
+      const connector = node?.querySelector<HTMLElement>('.node-connector');
+      if (connector) {
+        const connectorRect = connector.getBoundingClientRect();
+        positions.set(path, {
+          x: connectorRect.left - areaRect.left + connectorRect.width / 2,
+          y: connectorRect.top - areaRect.top + connectorRect.height / 2,
+        });
+      }
+    }
+
+    return positions;
   }
 
   private renderReact(): void {
