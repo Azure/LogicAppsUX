@@ -1,6 +1,7 @@
 import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { getFunctoidDisplayName } from './functoidDisplayName';
+import { getFunctoidBrand, getFunctoidIcon } from './functoidCategoryIcons';
+import { getFunctoidShortName } from './functoidDisplayName';
 import { createPortal } from 'react-dom';
 import type { MapFunctoid, MapLink, MapPage } from '../../../src/model/mapModel';
 import type { MapperViewState } from '../../../src/protocol/mapEditorProtocol';
@@ -40,17 +41,6 @@ interface DragTarget {
   offsetX: number;
   offsetY: number;
 }
-
-const accents: Record<string, string> = {
-  String: '#4caf50',
-  Math: '#9c27b0',
-  Logical: '#ff9800',
-  DateTime: '#03a9f4',
-  Conversion: '#8bc34a',
-  Scientific: '#e91e63',
-  Advanced: '#607d8b',
-  Custom: '#795548',
-};
 
 interface LinkPreviewHandle {
   show(start: Point, end: Point): void;
@@ -98,20 +88,13 @@ const LinkPreview = forwardRef<LinkPreviewHandle>(function LinkPreview(_props, r
   );
 });
 
-const functoidWidth = 56;
+const functoidWidth = 72;
 const functoidHeight = 26;
+const iconSize = 18;
 const functoidHalfWidth = functoidWidth / 2;
 const functoidHalfHeight = functoidHeight / 2;
 const minZoom = 0.1;
 const maxZoom = 2;
-
-function getDisplayName(name: string): string {
-  const displayName = getFunctoidDisplayName(name);
-  if (displayName.length <= 4) {
-    return displayName;
-  }
-  return displayName.substring(0, 4);
-}
 
 function getLinkPoints(
   link: MapLink,
@@ -278,6 +261,8 @@ function FunctoidNode({
 }): React.ReactElement {
   const clickTimer = useRef<number | null>(null);
   const connectorPointerStarted = useRef<'input' | 'output' | null>(null);
+  const FunctoidIcon = getFunctoidIcon(functoid.name, functoid.category);
+  const brand = getFunctoidBrand(functoid.category);
 
   return (
     <g
@@ -316,18 +301,44 @@ function FunctoidNode({
     >
       <title>{functoid.name}</title>
       <rect
-        className="functoid-body"
         x={-functoidHalfWidth}
         y={-functoidHalfHeight}
         width={functoidWidth}
         height={functoidHeight}
         rx={functoidHalfHeight}
         fill="var(--vscode-editor-background, #1e1e1e)"
-        stroke={selected ? '#007fd4' : accents[functoid.category] || '#9e9e9e'}
+      />
+      <rect
+        className="functoid-body"
+        x={-functoidHalfWidth}
+        y={-functoidHalfHeight}
+        width={functoidWidth}
+        height={functoidHeight}
+        rx={functoidHalfHeight}
+        fill={brand.color}
+        fillOpacity={0.2}
+        stroke={selected ? '#007fd4' : brand.color}
         strokeWidth={selected ? 2 : 1}
       />
-      <text textAnchor="middle" dominantBaseline="middle" fill="var(--vscode-foreground, #fff)" fontSize="10">
-        {getDisplayName(functoid.name)}
+      <foreignObject x={-functoidHalfWidth + 9} y={-iconSize / 2} width={iconSize} height={iconSize} style={{ pointerEvents: 'none' }}>
+        <div
+          style={{
+            width: iconSize,
+            height: iconSize,
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 12,
+            backgroundColor: brand.color,
+            color: brand.iconColor,
+          }}
+        >
+          <FunctoidIcon />
+        </div>
+      </foreignObject>
+      <text x={-functoidHalfWidth + 32} textAnchor="start" dominantBaseline="middle" fill="var(--vscode-foreground, #fff)" fontSize="10">
+        {getFunctoidShortName(functoid.name)}
       </text>
       <circle
         cx={-functoidHalfWidth}

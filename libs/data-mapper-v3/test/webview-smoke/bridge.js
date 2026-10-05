@@ -15,14 +15,30 @@ runScenario('Toolbar, schema, and palette bridge events work', async () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
     assert.equal(messages.at(-1)?.type, 'generateInstance');
 
-    const schemaButtons = document.querySelectorAll('biztalk-schema-tree .schema-edit-btn');
-    assert.equal(schemaButtons.length, 2);
-    click(harness, schemaButtons[0]);
+    const schemaPickers = document.querySelectorAll('biztalk-schema-tree [role="combobox"]');
+    assert.equal(schemaPickers.length, 2);
+    click(harness, schemaPickers[0]);
+    await harness.waitFor(() => document.querySelectorAll('[role="option"]').length === 2);
+    click(
+      harness,
+      Array.from(document.querySelectorAll('[role="option"]')).find((option) => option.textContent === 'existing.xsd')
+    );
     assert.equal(messages.at(-1)?.type, 'loadSchema');
     assert.equal(messages.at(-1)?.side, 'source');
-    click(harness, schemaButtons[1]);
+    assert.equal(messages.at(-1)?.path, 'existing.xsd');
+
+    click(harness, schemaPickers[1]);
+    await harness.waitFor(() => document.querySelectorAll('[role="option"]').length === 2);
+    click(
+      harness,
+      Array.from(document.querySelectorAll('[role="option"]'))
+        .filter((option) => option.textContent === 'Add new schema...')
+        .at(-1)
+    );
     assert.equal(messages.at(-1)?.type, 'loadSchema');
     assert.equal(messages.at(-1)?.side, 'target');
+    assert.equal(messages.at(-1)?.path, undefined);
+    assert.equal(messages.at(-1)?.browse, true);
 
     const paletteItem = document.querySelector('biztalk-functoid-palette .palette-item');
     assert.equal(paletteItem.querySelector('.item-name')?.textContent, 'Concatenate');

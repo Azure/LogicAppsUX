@@ -415,18 +415,6 @@
 .palette-item:hover {
 	background: var(--vscode-list-hoverBackground, #2a2d2e);
 }
-.item-icon {
-	width: 17px;
-	height: 17px;
-	flex: 0 0 17px;
-	border-radius: 50%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 8px;
-	font-weight: bold;
-	color: white;
-}
 .item-name {
 	min-width: 0;
 	overflow: hidden;
@@ -449,7 +437,7 @@
 	width: clamp(220px, 24%, 320px);
 	min-width: 220px;
 	max-width: 320px;
-	overflow-y: auto;
+	overflow: hidden;
 	flex: 0 0 clamp(220px, 24%, 320px);
 	background: var(--vscode-editor-background);
 }
@@ -457,6 +445,14 @@
 .schema-tree-container > biztalk-empty-schema {
 	display: block;
 	height: 100%;
+}
+.schema-tree-container > biztalk-schema-tree {
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+.schema-tree-container > biztalk-schema-tree[hidden],
+.schema-tree-container > biztalk-empty-schema[hidden] {
+	display: none;
 }
 .schema-tree-container.source-tree {
 	border-right: 1px solid var(--vscode-panel-border, #333);
@@ -474,17 +470,25 @@
 	overflow: hidden;
 }
 
+.schema-panel {
+	display: block;
+	min-height: 100%;
+}
+.schema-sticky {
+	position: sticky;
+	top: 0;
+	z-index: 20;
+	background: var(--vscode-editor-background);
+}
 .schema-header {
 	padding: 8px 10px 6px;
 	background: var(--vscode-sideBarSectionHeader-background, #252526);
 	border-bottom: 1px solid var(--vscode-panel-border, #333);
-	position: sticky;
-	top: 0;
-	z-index: 2;
 }
 .schema-header-row {
 	display: flex;
 	align-items: center;
+	justify-content: space-between;
 	gap: 6px;
 }
 .schema-title {
@@ -494,10 +498,12 @@
 	letter-spacing: 0.3px;
 }
 .schema-actions {
-	margin-left: auto;
 	display: flex;
 	align-items: center;
-	gap: 2px;
+	width: 100%;
+	min-width: 0;
+	padding: 6px 10px 2px;
+	box-sizing: border-box;
 }
 .schema-btn {
 	background: none;
@@ -511,16 +517,6 @@
 .schema-btn:hover {
 	background: var(--vscode-toolbar-hoverBackground, #333);
 }
-.schema-path {
-	display: block;
-	font-size: 10px;
-	color: var(--vscode-descriptionForeground);
-	margin-top: 2px;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
-
 .schema-tree {
 	padding: 4px 0;
 }
@@ -819,6 +815,9 @@
 }
 
 /* Notifications */
+biztalk-mapper-notification[hidden] {
+	display: none !important;
+}
 .notification {
 	position: absolute;
 	bottom: 30px;

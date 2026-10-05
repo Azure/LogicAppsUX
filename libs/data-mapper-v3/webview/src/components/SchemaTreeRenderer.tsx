@@ -1,5 +1,5 @@
-import { Button, FluentProvider } from '@fluentui/react-components';
-import { ChevronDoubleDown16Regular, ChevronDoubleUp16Regular, Edit16Regular, Tag16Regular } from '@fluentui/react-icons';
+import { Button, Dropdown, FluentProvider, makeStyles, Option, tokens } from '@fluentui/react-components';
+import { ChevronDoubleDown16Regular, ChevronDoubleUp16Regular, Tag16Regular } from '@fluentui/react-icons';
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { getVsCodeFluentTheme } from '../fluentTheme';
@@ -64,8 +64,16 @@ interface SchemaTreeViewProps {
   onLinkPointerDown(clientX: number, clientY: number): void;
   onNodeDoubleClick?(node: SchemaNodeView): void;
   onExpansionChange(): void;
-  onReload(): void;
+  availableSchemas: string[];
+  onSchemaSelect(path?: string): void;
 }
+
+const addNewSchemaValue = '__add_new_schema__';
+
+const useStyles = makeStyles({
+  option: { fontSize: tokens.fontSizeBase200 },
+  picker: { width: '100%', minWidth: 0, maxWidth: '100%', boxSizing: 'border-box' },
+});
 
 function collectExpandablePaths(node: SchemaNodeView | undefined, paths: Set<string>): void {
   if (!node) {
@@ -89,8 +97,10 @@ function SchemaTreeView({
   onLinkPointerDown,
   onNodeDoubleClick,
   onExpansionChange,
-  onReload,
+  availableSchemas,
+  onSchemaSelect,
 }: SchemaTreeViewProps): React.ReactElement {
+  const styles = useStyles();
   const [expandedPaths, setExpandedPaths] = useState(() => new Set(initialExpanded));
   const pointerStartedPath = useRef<string | null>(null);
   const expandablePaths = new Set<string>();
@@ -220,45 +230,50 @@ function SchemaTreeView({
   const filePath = schema.filePath || '';
   return (
     <FluentProvider theme={getVsCodeFluentTheme()} style={{ display: 'contents' }}>
-      <div className="schema-header">
-        <div className="schema-header-row">
-          <span className="schema-title">{side === 'source' ? 'Source Schema' : 'Target Schema'}</span>
-          <div className="schema-actions">
-            <Button
-              appearance="subtle"
-              aria-label={`Edit ${side} schema`}
-              className="schema-btn schema-edit-btn"
-              icon={<Edit16Regular />}
-              size="small"
-              title={`Edit ${side === 'source' ? 'Source' : 'Target'} Schema`}
-              onClick={onReload}
-            />
-            <Button
-              appearance="subtle"
-              aria-label={`${isFullyExpanded ? 'Collapse' : 'Expand'} all schema nodes`}
-              className="schema-btn schema-expand-collapse-btn"
-              icon={isFullyExpanded ? <ChevronDoubleUp16Regular /> : <ChevronDoubleDown16Regular />}
-              size="small"
-              title={isFullyExpanded ? 'Collapse All' : 'Expand All'}
-              onClick={() => {
-                if (isFullyExpanded) {
-                  const paths = new Set<string>();
-                  if (schema.rootElement) {
-                    paths.add(schema.rootElement.path);
+      <div className="schema-panel">
+        <div className="schema-sticky">
+          <div className="schema-header">
+            <div className="schema-header-row">
+              <span className="schema-title">{side === 'source' ? 'Source Schema' : 'Target Schema'}</span>
+              <Button
+                appearance="subtle"
+                aria-label={`${isFullyExpanded ? 'Collapse' : 'Expand'} all schema nodes`}
+                className="schema-btn schema-expand-collapse-btn"
+                icon={isFullyExpanded ? <ChevronDoubleUp16Regular /> : <ChevronDoubleDown16Regular />}
+                size="small"
+                title={isFullyExpanded ? 'Collapse All' : 'Expand All'}
+                onClick={() => {
+                  if (isFullyExpanded) {
+                    setExpandedPaths(new Set());
+                  } else {
+                    setExpandedPaths(expandablePaths);
                   }
-                  setExpandedPaths(paths);
-                } else {
-                  setExpandedPaths(expandablePaths);
-                }
-              }}
-            />
+                }}
+              />
+            </div>
+          </div>
+          <div className="schema-actions">
+            <Dropdown
+              aria-label={`Choose ${side} schema`}
+              className={styles.picker}
+              size="small"
+              value={filePath.split(/[/\\]/).pop() || ''}
+              selectedOptions={[]}
+              onOptionSelect={(_event, data) => onSchemaSelect(data.optionValue === addNewSchemaValue ? undefined : data.optionValue)}
+            >
+              {availableSchemas.map((schemaName) => (
+                <Option key={schemaName} value={schemaName} className={styles.option}>
+                  {schemaName}
+                </Option>
+              ))}
+              <Option value={addNewSchemaValue} className={styles.option}>
+                Add new schema...
+              </Option>
+            </Dropdown>
           </div>
         </div>
-        <span className="schema-path" title={filePath}>
-          {filePath.split(/[/\\]/).pop() || filePath}
-        </span>
+        <div className="schema-tree">{schema.rootElement && renderNode(schema.rootElement, 0)}</div>
       </div>
-      <div className="schema-tree">{schema.rootElement && renderNode(schema.rootElement, 0)}</div>
     </FluentProvider>
   );
 }
@@ -272,7 +287,8 @@ export class SchemaTreeRenderer extends HTMLElement {
   private onLinkPointerDown: (clientX: number, clientY: number) => void = () => {};
   private onNodeDoubleClick?: (node: SchemaNodeView) => void;
   private onExpansionChange: () => void = () => {};
-  private onReload: () => void = () => {};
+  private availableSchemas: string[] = [];
+  private onSchemaSelect: (path?: string) => void = () => {};
   private initialExpanded = new Set<string>();
   private connectedPaths = new Set<string>();
   private renderVersion = 0;
@@ -286,7 +302,8 @@ export class SchemaTreeRenderer extends HTMLElement {
     initialExpanded?: Set<string>,
     onNodeDoubleClick?: (node: SchemaNodeView) => void,
     onExpansionChange: () => void = () => {},
-    onReload: () => void = () => {},
+    availableSchemas: string[] = [],
+    onSchemaSelect: (path?: string) => void = () => {},
     connectedPaths: Set<string> = new Set()
   ): void {
     this.schema = schema;
@@ -296,7 +313,8 @@ export class SchemaTreeRenderer extends HTMLElement {
     this.onLinkPointerDown = onLinkPointerDown;
     this.onNodeDoubleClick = onNodeDoubleClick;
     this.onExpansionChange = onExpansionChange;
-    this.onReload = onReload;
+    this.availableSchemas = availableSchemas;
+    this.onSchemaSelect = onSchemaSelect;
     this.connectedPaths = new Set(connectedPaths);
     this.initialExpanded = initialExpanded ? new Set(initialExpanded) : new Set();
     if (schema.rootElement) {
@@ -347,6 +365,10 @@ export class SchemaTreeRenderer extends HTMLElement {
       return positions;
     }
     const areaRect = mappingArea.getBoundingClientRect();
+    const viewportRect = this.getBoundingClientRect();
+    const headerHeight = this.querySelector<HTMLElement>('.schema-sticky')?.getBoundingClientRect().height ?? 0;
+    const minY = viewportRect.top + headerHeight;
+    const maxY = Math.max(minY, viewportRect.bottom);
 
     for (const path of new Set(paths)) {
       let visiblePath = path;
@@ -363,9 +385,10 @@ export class SchemaTreeRenderer extends HTMLElement {
       const connector = node?.querySelector<HTMLElement>('.node-connector');
       if (connector) {
         const connectorRect = connector.getBoundingClientRect();
+        const centerY = connectorRect.top + connectorRect.height / 2;
         positions.set(path, {
           x: connectorRect.left - areaRect.left + connectorRect.width / 2,
-          y: connectorRect.top - areaRect.top + connectorRect.height / 2,
+          y: Math.min(Math.max(centerY, minY), maxY) - areaRect.top,
         });
       }
     }
@@ -390,7 +413,8 @@ export class SchemaTreeRenderer extends HTMLElement {
         onLinkPointerDown={this.onLinkPointerDown}
         onNodeDoubleClick={this.onNodeDoubleClick}
         onExpansionChange={this.onExpansionChange}
-        onReload={this.onReload}
+        availableSchemas={this.availableSchemas}
+        onSchemaSelect={this.onSchemaSelect}
       />
     );
   }

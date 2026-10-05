@@ -45,7 +45,8 @@ describe('Map Editor protocol', () => {
 
   test.each([
     { type: 'ready' },
-    { type: 'loadSchema', side: 'source' },
+    { type: 'loadSchema', side: 'source', browse: true },
+    { type: 'loadSchema', side: 'target', path: 'Customer.xsd' },
     { type: 'generateInstance', side: 'target' },
     { type: 'testMapWithInput', data: { inputXml: '<Root/>', map: {} } },
     { type: 'compile', data: {} },
@@ -72,11 +73,11 @@ describe('Map Editor protocol', () => {
   test.each([
     {
       type: 'init',
-      data: { map: {}, sourceSchema: null, targetSchema: null, functoids: [] },
+      data: { map: {}, sourceSchema: null, targetSchema: null, availableSchemas: [], functoids: [] },
     },
     {
       type: 'schemaStateChanged',
-      data: { map: {}, sourceSchema: null, targetSchema: {} },
+      data: { map: {}, sourceSchema: null, targetSchema: {}, availableSchemas: ['Customer.xsd'] },
     },
     {
       type: 'schemaLoaded',
@@ -134,6 +135,7 @@ describe('Map Editor protocol', () => {
       map: null,
       sourceSchema: null,
       targetSchema: null,
+      availableSchemas: [],
       functoids: [],
       selectedLink: null,
       selectedFunctoid: null,

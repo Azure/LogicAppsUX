@@ -4,6 +4,7 @@ import { ChevronDown12Regular, ChevronRight12Regular, Search16Regular } from '@f
 import React, { useMemo, useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { getVsCodeFluentTheme } from '../fluentTheme';
+import { getFunctoidBrand, getFunctoidIcon } from './functoidCategoryIcons';
 import { getFunctoidDisplayName } from './functoidDisplayName';
 
 const useStyles = makeStyles({
@@ -68,16 +69,14 @@ const useStyles = makeStyles({
     textAlign: 'left',
   },
   itemIcon: {
-    width: '17px',
-    height: '17px',
-    flex: '0 0 17px',
+    width: '18px',
+    height: '18px',
+    flex: '0 0 18px',
     borderRadius: '50%',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    fontSize: '8px',
-    fontWeight: 'bold',
-    color: 'white',
+    fontSize: '12px',
   },
   itemName: { minWidth: 0, overflow: 'hidden', fontSize: '13px', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
 });
@@ -94,17 +93,6 @@ interface FunctoidPaletteViewProps {
   functoids: FunctoidPaletteItem[];
   onSelect(functoid: FunctoidPaletteItem): void;
 }
-
-const categoryColors: Record<string, string> = {
-  String: '#4caf50',
-  Math: '#9c27b0',
-  Logical: '#ff9800',
-  DateTime: '#2196f3',
-  Conversion: '#8bc34a',
-  Scientific: '#e91e63',
-  Advanced: '#607d8b',
-  Custom: '#795548',
-};
 
 function FunctoidPaletteView({ functoids, onSelect }: FunctoidPaletteViewProps): React.ReactElement {
   const styles = useStyles();
@@ -151,6 +139,7 @@ function FunctoidPaletteView({ functoids, onSelect }: FunctoidPaletteViewProps):
         }
 
         const isExpanded = expandedCategories.has(category) || searchTerm.length > 0;
+        const brand = getFunctoidBrand(category);
         return (
           <div className="palette-category" key={category}>
             <Button
@@ -164,26 +153,29 @@ function FunctoidPaletteView({ functoids, onSelect }: FunctoidPaletteViewProps):
             </Button>
             {isExpanded && (
               <div className={styles.categoryItems}>
-                {filteredItems.map((item) => (
-                  <Button
-                    appearance="transparent"
-                    className={`palette-item ${styles.item}`}
-                    title={item.tooltip || item.description || ''}
-                    draggable
-                    key={item.id}
-                    onClick={() => onSelect(item)}
-                    onDragStart={(event) => {
-                      event.dataTransfer.setData('functoid', JSON.stringify(item));
-                    }}
-                  >
-                    <span className={`${styles.itemContent} palette-item-content`}>
-                      <span className={`${styles.itemIcon} item-icon`} style={{ background: categoryColors[category] || '#9e9e9e' }}>
-                        fn
+                {filteredItems.map((item) => {
+                  const FunctoidIcon = getFunctoidIcon(item.name, category);
+                  return (
+                    <Button
+                      appearance="transparent"
+                      className={`palette-item ${styles.item}`}
+                      title={item.tooltip || item.description || ''}
+                      draggable
+                      key={item.id}
+                      onClick={() => onSelect(item)}
+                      onDragStart={(event) => {
+                        event.dataTransfer.setData('functoid', JSON.stringify(item));
+                      }}
+                    >
+                      <span className={`${styles.itemContent} palette-item-content`}>
+                        <span className={`${styles.itemIcon} item-icon`} style={{ backgroundColor: brand.color, color: brand.iconColor }}>
+                          <FunctoidIcon />
+                        </span>
+                        <span className={`${styles.itemName} item-name`}>{getFunctoidDisplayName(item.name)}</span>
                       </span>
-                      <span className={`${styles.itemName} item-name`}>{getFunctoidDisplayName(item.name)}</span>
-                    </span>
-                  </Button>
-                ))}
+                    </Button>
+                  );
+                })}
               </div>
             )}
           </div>

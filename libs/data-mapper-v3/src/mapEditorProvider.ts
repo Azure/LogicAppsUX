@@ -28,10 +28,12 @@ import {
 } from './copilot/mapPrompt';
 import { errorCategory, getDataMapperLogger } from './logger';
 import { getSelectedFileDirectory, resolveBrowseDirectory } from './browseLocation';
+import { copySchemaToWorkspace, getXsltOutputUri, listWorkspaceSchemas, schemasFolderName } from './workspaceStructure';
 
 export class MapEditorProvider implements vscode.CustomTextEditorProvider {
   public static readonly viewType = 'biztalkDataMapper.mapEditor';
   private static readonly LAST_BROWSE_DIRECTORY_KEY = 'dataMapperV3.lastBrowseDirectory';
+  private static readonly LAST_SCHEMA_BROWSE_DIRECTORY_KEY = 'dataMapperV3.lastSchemaBrowseDirectory';
   private static activeWebviewPanel: vscode.WebviewPanel | undefined;
   private btmSerializer: BtmSerializer;
   private schemaParser: SchemaParser;
@@ -209,9 +211,32 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
       targetSchemaTree = target;
       await webviewPanel.webview.postMessage({
         type: 'schemaStateChanged',
-        data: { map: updatedMap, sourceSchema: source ?? null, targetSchema: target ?? null },
+        data: {
+          map: updatedMap,
+          sourceSchema: source ?? null,
+          targetSchema: target ?? null,
+          availableSchemas: await listWorkspaceSchemas(document.uri),
+        },
       });
     };
+    const refreshAvailableSchemas = async (): Promise<void> => {
+      if (disposed) {
+        return;
+      }
+      await webviewPanel.webview.postMessage({
+        type: 'schemaStateChanged',
+        data: {
+          map: mapDoc,
+          sourceSchema: sourceSchemaTree ?? null,
+          targetSchema: targetSchemaTree ?? null,
+          availableSchemas: await listWorkspaceSchemas(document.uri),
+        },
+      });
+    };
+    const schemasDirectory = vscode.Uri.joinPath(document.uri, '..', schemasFolderName);
+    const schemaWatcher = vscode.workspace.createFileSystemWatcher(new vscode.RelativePattern(schemasDirectory.fsPath, '*.[xX][sS][dD]'));
+    schemaWatcher.onDidCreate(refreshAvailableSchemas);
+    schemaWatcher.onDidDelete(refreshAvailableSchemas);
 
     // Prepare initial data
     const initData: HostToWebviewMessage = {
@@ -220,6 +245,7 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
         map: mapDoc,
         sourceSchema: sourceSchemaTree ?? null,
         targetSchema: targetSchemaTree ?? null,
+        availableSchemas: await listWorkspaceSchemas(document.uri),
         functoids: this.functoidRegistry.getAllFunctoids().map((f) => ({
           id: f.id,
           name: f.name,
@@ -302,6 +328,11 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
         switch (message.type) {
           case 'ready': {
             // Webview is ready, send init data now
+            const availableSchemas = await listWorkspaceSchemas(document.uri);
+            this.logger.info(`Schemas folder "${schemasDirectory.fsPath}" contains ${availableSchemas.length} .xsd file(s).`);
+            if (initData.type === 'init') {
+              initData.data.availableSchemas = availableSchemas;
+            }
             webviewPanel.webview.postMessage(initData);
             break;
           }
@@ -352,9 +383,7 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
               targetSchemaTree
             );
             if (result.success && result.xslt) {
-              const xsltUri = document.uri.with({
-                path: document.uri.path.replace(/\.btm$/, '.xslt'),
-              });
+              const xsltUri = await getXsltOutputUri(document.uri);
               await vscode.workspace.fs.writeFile(xsltUri, Buffer.from(result.xslt, 'utf-8'));
               this.logger.info(`${operation}: compiled XSLT saved; opening result.`);
               vscode.window.showInformationMessage(`Map compiled successfully: ${path.basename(xsltUri.fsPath)}`);
@@ -374,20 +403,37 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
             const request = ++schemaRequest;
             const version = document.version;
             const isCurrent = () => !disposed && request === schemaRequest && document.version === version;
+            let copiedSchemaUri: vscode.Uri | undefined;
+            let retainCopiedSchema = false;
             try {
-              const currentSchema = message.side === 'source' ? sourceSchemaTree : targetSchemaTree;
-              const schemaUri = await vscode.window.showOpenDialog({
-                defaultUri: this.getBrowseDefaultUri(document.uri, currentSchema?.filePath),
-                canSelectMany: false,
-                filters: { 'XSD Schema': ['xsd'] },
-                title: `Select ${message.side} Schema`,
-              });
-              if (!schemaUri?.length || !isCurrent()) {
-                this.logger.info(`${operation}: schema selection cancelled or superseded.`);
+              let relativePath: string;
+              if (!message.browse && message.path) {
+                const availableSchemas = await listWorkspaceSchemas(document.uri);
+                const selectedName = availableSchemas.find((name) => name === message.path);
+                if (!selectedName) {
+                  throw new Error(`Schema "${message.path}" is not available in the ${schemasFolderName} folder.`);
+                }
+                relativePath = `${schemasFolderName}/${selectedName}`;
+              } else {
+                const selectedSchemas = await vscode.window.showOpenDialog({
+                  defaultUri: this.getSchemaBrowseDefaultUri(document.uri),
+                  canSelectMany: false,
+                  filters: { 'XSD Schema': ['xsd'] },
+                  title: `Add ${message.side} Schema`,
+                });
+                if (!selectedSchemas?.length || !isCurrent()) {
+                  this.logger.info(`${operation}: schema selection cancelled or superseded.`);
+                  break;
+                }
+                await this.rememberSchemaBrowseSelection(selectedSchemas[0]);
+                const copiedSchema = await copySchemaToWorkspace(selectedSchemas[0], document.uri);
+                copiedSchemaUri = copiedSchema.uri;
+                relativePath = copiedSchema.relativePath;
+              }
+              if (!isCurrent()) {
                 break;
               }
-              await this.rememberBrowseSelection(schemaUri[0]);
-              const reference = { location: schemaUri[0].fsPath };
+              const reference = { location: relativePath };
               const tree = await this.loadSchemaTree(reference, document.uri);
               if (!isCurrent() || !tree) {
                 break;
@@ -432,6 +478,7 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
               let applied = false;
               try {
                 applied = await vscode.workspace.applyEdit(edit);
+                retainCopiedSchema = applied;
               } finally {
                 if (!applied) {
                   this.logger.error(`${operation}: schema replacement edit rejected.`);
@@ -458,6 +505,14 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
               this.logger.error(`${operation}: schema replacement failed (${errorCategory(error)}).`);
               if (isCurrent()) {
                 vscode.window.showErrorMessage(`Failed to replace schema: ${error instanceof Error ? error.message : String(error)}`);
+              }
+            } finally {
+              if (copiedSchemaUri && !retainCopiedSchema) {
+                try {
+                  await vscode.workspace.fs.delete(copiedSchemaUri);
+                } catch (error) {
+                  this.logger.warn(`${operation}: failed to remove unused schema copy (${errorCategory(error)}).`);
+                }
               }
             }
             break;
@@ -594,14 +649,15 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
             }
             testMessages.push('✓ Map compiled successfully');
 
-            // Save compiled XSLT alongside BTM
+            // Save compiled XSLT and test output in the workspace __generated folder
             const btmDir = path.dirname(document.uri.fsPath);
             const btmName = path.basename(document.uri.fsPath, '.btm');
-            const xsltPath = path.join(btmDir, `${btmName}_output.xslt`);
+            const xsltUri = await getXsltOutputUri(document.uri);
+            const xsltPath = xsltUri.fsPath;
             fs.writeFileSync(xsltPath, compileResult.xslt, 'utf-8');
             this.logger.info(`${operation}: compiled XSLT saved.`);
-            testMessages.push(`✓ XSLT saved: ${btmName}_output.xslt`);
-            const extensionObjectPath = path.join(btmDir, `${btmName}_extension.xml`);
+            testMessages.push(`✓ XSLT saved: ${path.basename(xsltPath)}`);
+            const extensionObjectPath = path.join(path.dirname(xsltPath), `${btmName}_extension.xml`);
             if (compileResult.extensionObjectXml?.includes('<ExtensionObject ')) {
               fs.writeFileSync(extensionObjectPath, compileResult.extensionObjectXml, 'utf-8');
               this.logger.info(`${operation}: extension-object configuration saved.`);
@@ -610,7 +666,7 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
             // Step 3: Transform
             testMessages.push('• Performing XSLT transformation...');
             try {
-              const outputPath = path.join(btmDir, `${btmName}_output.xml`);
+              const outputPath = path.join(path.dirname(xsltPath), `${btmName}_output.xml`);
               let outputXml: string | undefined;
 
               // Try .NET XslCompiledTransform first (supports msxsl:script)
@@ -722,7 +778,7 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
             );
             if (result.success && result.xslt) {
               const saveUri = await vscode.window.showSaveDialog({
-                defaultUri: document.uri.with({ path: document.uri.path.replace(/\.btm$/, '.xslt') }),
+                defaultUri: await getXsltOutputUri(document.uri),
                 filters: { 'XSLT Stylesheet': ['xslt', 'xsl'], 'All Files': ['*'] },
                 title: 'Export XSLT',
               });
@@ -980,6 +1036,7 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
       disposed = true;
       changeDocSub.dispose();
       viewStateSub?.dispose();
+      schemaWatcher.dispose();
       if (MapEditorProvider.activeWebviewPanel === webviewPanel) {
         MapEditorProvider.activeWebviewPanel = undefined;
       }
@@ -1278,6 +1335,21 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
       return;
     }
     await this.context.workspaceState?.update(MapEditorProvider.LAST_BROWSE_DIRECTORY_KEY, getSelectedFileDirectory(selectedUri.fsPath));
+  }
+
+  private getSchemaBrowseDefaultUri(documentUri: vscode.Uri): vscode.Uri {
+    const rememberedDirectory = this.context.workspaceState?.get<string>(MapEditorProvider.LAST_SCHEMA_BROWSE_DIRECTORY_KEY);
+    return vscode.Uri.file(resolveBrowseDirectory(documentUri.fsPath, rememberedDirectory));
+  }
+
+  private async rememberSchemaBrowseSelection(selectedUri: vscode.Uri | undefined): Promise<void> {
+    if (!selectedUri) {
+      return;
+    }
+    await this.context.workspaceState?.update(
+      MapEditorProvider.LAST_SCHEMA_BROWSE_DIRECTORY_KEY,
+      getSelectedFileDirectory(selectedUri.fsPath)
+    );
   }
 
   private async loadSchemaTree(reference: MapDocument['sourceSchema'], documentUri: vscode.Uri): Promise<SchemaTree | undefined> {

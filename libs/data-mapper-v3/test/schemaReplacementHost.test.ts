@@ -30,6 +30,17 @@ const confirm = jest.mocked<(message: string, options: vscode.MessageOptions, ..
 
 async function setup(inlineSource = false, existingSide?: 'source' | 'target') {
   jest.mocked(vscode.workspace.onDidChangeTextDocument).mockReturnValue({ dispose: jest.fn() });
+  const onDidCreate = jest.fn();
+  jest.mocked(vscode.workspace.createFileSystemWatcher).mockReturnValue({
+    onDidCreate,
+    onDidChange: jest.fn(),
+    onDidDelete: jest.fn(),
+    dispose: jest.fn(),
+  } as unknown as vscode.FileSystemWatcher);
+  jest.mocked(vscode.workspace.fs.readDirectory).mockResolvedValue([]);
+  jest.mocked(vscode.workspace.fs.createDirectory).mockResolvedValue(undefined);
+  jest.mocked(vscode.workspace.fs.copy).mockResolvedValue(undefined);
+  jest.mocked(vscode.workspace.fs.delete).mockResolvedValue(undefined);
   const initial = serializer.createNew('', '', 'Replacement');
   if (inlineSource) {
     initial.sourceSchema.inlineSchemaXml = xsd('Drop');
@@ -57,6 +68,10 @@ async function setup(inlineSource = false, existingSide?: 'source' | 'target') {
   } as unknown as vscode.WebviewPanel;
   jest.mocked(vscode.workspace.fs.readFile).mockResolvedValue(Buffer.from(xsd('Keep')));
   jest.mocked(vscode.window.showOpenDialog).mockResolvedValue([vscode.Uri.file('new.xsd')]);
+  const workspaceState = {
+    get: jest.fn(),
+    update: jest.fn().mockResolvedValue(undefined),
+  };
   const changeDocument = async (newText: string) => {
     text = newText;
     document.version++;
@@ -68,15 +83,20 @@ async function setup(inlineSource = false, existingSide?: 'source' | 'target') {
     await changeDocument(xml);
     return true;
   });
-  const provider = new MapEditorProvider({ extensionUri: vscode.Uri.file('.') } as vscode.ExtensionContext);
+  const provider = new MapEditorProvider({ extensionUri: vscode.Uri.file('.'), workspaceState } as unknown as vscode.ExtensionContext);
   await provider.resolveCustomTextEditor(document as vscode.TextDocument, panel, {} as vscode.CancellationToken);
   return {
     document,
     initial,
     postMessage,
     changeDocument,
+    workspaceState,
+    refreshSchemas: async () => {
+      const listener = onDidCreate.mock.calls[0][0];
+      await listener(vscode.Uri.file('Schemas/added.XSD'));
+    },
     dispose: () => onDidDispose.mock.calls[0][0](),
-    submit: (side: 'source' | 'target' = 'source') => onDidReceiveMessage.mock.calls[0][0]({ type: 'loadSchema', side }),
+    submit: (side: 'source' | 'target' = 'source') => onDidReceiveMessage.mock.calls[0][0]({ type: 'loadSchema', side, browse: true }),
   };
 }
 
@@ -98,7 +118,7 @@ describe('schema replacement host transaction', () => {
     expect(vscode.workspace.applyEdit).toHaveBeenCalledTimes(1);
     const updated = serializer.deserialize(host.document.getText());
     expect(updated.pages.every((page) => page.links.length === 1 && page.links[0].id === 'keep')).toBe(true);
-    expect(updated[`${side}Schema`].location).toBe('new.xsd');
+    expect(updated[`${side}Schema`].location).toBe('Schemas/new.xsd');
     expect(host.postMessage).toHaveBeenLastCalledWith({
       type: 'schemaStateChanged',
       data: expect.objectContaining({
@@ -109,7 +129,12 @@ describe('schema replacement host transaction', () => {
     await host.changeDocument(serializer.serialize(host.initial));
     expect(host.postMessage).toHaveBeenLastCalledWith({
       type: 'schemaStateChanged',
-      data: { map: serializer.deserialize(serializer.serialize(host.initial)), sourceSchema: null, targetSchema: null },
+      data: {
+        map: serializer.deserialize(serializer.serialize(host.initial)),
+        sourceSchema: null,
+        targetSchema: null,
+        availableSchemas: [],
+      },
     });
     await host.changeDocument(serializer.serialize(updated));
     expect(host.postMessage).toHaveBeenLastCalledWith(
@@ -119,6 +144,36 @@ describe('schema replacement host transaction', () => {
       })
     );
     expect(vscode.workspace.fs.readFile).toHaveBeenCalledTimes(1);
+  });
+
+  test('removes a copied schema when replacement is cancelled', async () => {
+    const host = await setup(false, 'source');
+    confirm.mockResolvedValue(undefined);
+
+    await host.submit('source');
+
+    expect(vscode.workspace.fs.delete).toHaveBeenCalledWith(expect.objectContaining({ path: expect.stringContaining('Schemas/new.xsd') }));
+    expect(vscode.workspace.applyEdit).not.toHaveBeenCalled();
+  });
+
+  test('remembers the selected schema browser folder', async () => {
+    const host = await setup();
+
+    await host.submit();
+
+    expect(host.workspaceState.update).toHaveBeenCalledWith('dataMapperV3.lastSchemaBrowseDirectory', expect.any(String));
+  });
+
+  test('refreshes available schemas when an XSD is added to the Schemas folder', async () => {
+    const host = await setup();
+    jest.mocked(vscode.workspace.fs.readDirectory).mockResolvedValue([['added.XSD', 1]]);
+
+    await host.refreshSchemas();
+
+    expect(host.postMessage).toHaveBeenLastCalledWith({
+      type: 'schemaStateChanged',
+      data: expect.objectContaining({ availableSchemas: ['added.XSD'] }),
+    });
   });
 
   test.each(['browse', 'confirm', 'read', 'parse', 'dependency', 'edit', 'edit-error'] as const)(
@@ -270,7 +325,7 @@ describe('schema replacement host transaction', () => {
     await pending;
     expect(vscode.workspace.applyEdit).toHaveBeenCalledTimes(1);
     const updated = serializer.deserialize(host.document.getText());
-    expect(updated[`${side}Schema`].location).toBe('new.xsd');
+    expect(updated[`${side}Schema`].location).toBe('Schemas/new.xsd');
     expect(updated.pages).toEqual(serializer.deserialize(before).pages);
   });
 

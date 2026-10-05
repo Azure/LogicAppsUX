@@ -1,4 +1,4 @@
-import { Button, FluentProvider, makeStyles } from '@fluentui/react-components';
+import { Button, FluentProvider, makeStyles, mergeClasses } from '@fluentui/react-components';
 // biome-ignore lint/style/useImportType: The classic JSX transform requires React at runtime.
 import React from 'react';
 import { createRoot, type Root } from 'react-dom/client';
@@ -101,19 +101,21 @@ function BottomPanelView(props: BottomPanelViewProps): React.ReactElement {
   const { hasMap, activeTab, collapsed, inputXml, output, outputError } = props;
   return (
     <FluentProvider theme={getVsCodeFluentTheme()} style={{ display: 'contents' }}>
-      <div className={collapsed ? `bottom-panel collapsed ${styles.panel} ${styles.collapsed}` : `bottom-panel ${styles.panel}`}>
+      <div
+        className={collapsed ? `bottom-panel collapsed ${mergeClasses(styles.panel, styles.collapsed)}` : `bottom-panel ${styles.panel}`}
+      >
         <div className={styles.header}>
           <div className={styles.tabs}>
             <button
               type="button"
-              className={`${styles.tab} ${activeTab === 'instance' ? styles.tabActive : ''}`}
+              className={mergeClasses(styles.tab, activeTab === 'instance' && styles.tabActive)}
               onClick={() => props.onTabChange('instance')}
             >
               📝 Input Instance
             </button>
             <button
               type="button"
-              className={`${styles.tab} ${activeTab === 'output' ? styles.tabActive : ''}`}
+              className={mergeClasses(styles.tab, activeTab === 'output' && styles.tabActive)}
               onClick={() => props.onTabChange('output')}
             >
               📤 Test Output
@@ -132,7 +134,7 @@ function BottomPanelView(props: BottomPanelViewProps): React.ReactElement {
           </div>
         </div>
         <div className={styles.body}>
-          <div className={`${styles.content} ${activeTab === 'instance' ? styles.contentActive : ''}`}>
+          <div className={mergeClasses(styles.content, activeTab === 'instance' && styles.contentActive)}>
             <textarea
               className={styles.editor}
               spellCheck={false}
@@ -141,8 +143,8 @@ function BottomPanelView(props: BottomPanelViewProps): React.ReactElement {
               onChange={(event) => props.onInputChange(event.target.value)}
             />
           </div>
-          <div className={`${styles.content} ${activeTab === 'output' ? styles.contentActive : ''}`}>
-            <pre className={outputError ? `${styles.output} ${styles.outputError}` : styles.output}>{output}</pre>
+          <div className={mergeClasses(styles.content, activeTab === 'output' && styles.contentActive)}>
+            <pre className={mergeClasses(styles.output, outputError && styles.outputError)}>{output}</pre>
           </div>
         </div>
       </div>

@@ -1,4 +1,6 @@
 // VS Code API mock for testing
+import * as path from 'path';
+
 export const window = {
     showInformationMessage: jest.fn(),
     showErrorMessage: jest.fn(),
@@ -25,7 +27,11 @@ export const outputChannel = {
 export const workspace = {
     fs: {
         readFile: jest.fn(),
-        writeFile: jest.fn()
+        writeFile: jest.fn(),
+        readDirectory: jest.fn().mockResolvedValue([]),
+        createDirectory: jest.fn(),
+        copy: jest.fn(),
+        delete: jest.fn()
     },
     createFileSystemWatcher: jest.fn(() => ({
         onDidCreate: jest.fn(),
@@ -37,14 +43,36 @@ export const workspace = {
 };
 
 export const Uri = {
-    file: (path: string) => ({ fsPath: path, path }),
-    joinPath: jest.fn()
+    file: (filePath: string) => ({ scheme: 'file', fsPath: filePath, path: filePath.replace(/\\/g, '/'), toString: () => filePath }),
+    parse: (value: string) => {
+        const parsed = new URL(value);
+        return {
+            scheme: parsed.protocol.slice(0, -1),
+            authority: parsed.host,
+            fsPath: parsed.pathname,
+            path: parsed.pathname,
+            toString: () => value,
+        };
+    },
+    joinPath: (base: { scheme?: string; authority?: string; fsPath: string; path: string }, ...segments: string[]) => {
+        const uriPath = path.posix.join(base.path, ...segments);
+        const fsPath = base.scheme === 'file' || !base.scheme ? path.join(base.fsPath, ...segments) : uriPath;
+        const value = base.scheme && base.scheme !== 'file' ? `${base.scheme}://${base.authority ?? ''}${uriPath}` : fsPath;
+        return { ...base, fsPath, path: uriPath, toString: () => value };
+    },
 };
 
 export const commands = {
     registerCommand: jest.fn(),
     executeCommand: jest.fn()
 };
+
+export class RelativePattern {
+    constructor(
+        public readonly base: string,
+        public readonly pattern: string
+    ) {}
+}
 
 export class EventEmitter<T> {
     public readonly event = jest.fn();

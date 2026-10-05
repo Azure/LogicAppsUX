@@ -32,6 +32,7 @@ export interface MapperViewState {
   map: MapDocument | null;
   sourceSchema: SchemaTree | null;
   targetSchema: SchemaTree | null;
+  availableSchemas: string[];
   functoids: FunctoidSummary[];
   selectedLink: string | null;
   selectedFunctoid: string | null;
@@ -49,6 +50,7 @@ export function createInitialMapperViewState(): MapperViewState {
     map: null,
     sourceSchema: null,
     targetSchema: null,
+    availableSchemas: [],
     functoids: [],
     selectedLink: null,
     selectedFunctoid: null,
@@ -92,7 +94,7 @@ export type WebviewToHostMessage =
   | { type: 'ready' }
   | { type: 'update'; data: MapDocument }
   | { type: 'compile'; data: MapDocument }
-  | { type: 'loadSchema'; side: SchemaSide }
+  | { type: 'loadSchema'; side: SchemaSide; path?: string; browse?: boolean }
   | { type: 'testMap' }
   | { type: 'generateInstance'; side: SchemaSide }
   | { type: 'testMapWithInput'; data: { inputXml: string; map: MapDocument } }
@@ -111,6 +113,7 @@ export type HostToWebviewMessage =
         map: MapDocument;
         sourceSchema: SchemaTree | null;
         targetSchema: SchemaTree | null;
+        availableSchemas: string[];
         functoids: FunctoidSummary[];
       };
     }
@@ -119,7 +122,7 @@ export type HostToWebviewMessage =
   | { type: 'documentChanged'; data: MapDocument }
   | {
       type: 'schemaStateChanged';
-      data: { map: MapDocument; sourceSchema: SchemaTree | null; targetSchema: SchemaTree | null };
+      data: { map: MapDocument; sourceSchema: SchemaTree | null; targetSchema: SchemaTree | null; availableSchemas: string[] };
     }
   | {
       type: 'schemaLoaded';
@@ -193,6 +196,11 @@ export function isWebviewToHostMessage(value: unknown): value is WebviewToHostMe
       return isObject(data) && typeof data.id === 'string';
     }
     case 'loadSchema':
+      return (
+        isSchemaSide(value.side) &&
+        (value.path === undefined || typeof value.path === 'string') &&
+        (value.browse === undefined || typeof value.browse === 'boolean')
+      );
     case 'generateInstance':
       return isSchemaSide(value.side);
     case 'testMapWithInput': {
@@ -218,6 +226,7 @@ export function isHostToWebviewMessage(value: unknown): value is HostToWebviewMe
       return (
         isObject(data.map) &&
         Array.isArray(data.functoids) &&
+        Array.isArray(data.availableSchemas) &&
         (data.sourceSchema === null || isObject(data.sourceSchema)) &&
         (data.targetSchema === null || isObject(data.targetSchema))
       );
@@ -226,6 +235,7 @@ export function isHostToWebviewMessage(value: unknown): value is HostToWebviewMe
     case 'schemaStateChanged':
       return (
         isObject(data.map) &&
+        Array.isArray(data.availableSchemas) &&
         (data.sourceSchema === null || isObject(data.sourceSchema)) &&
         (data.targetSchema === null || isObject(data.targetSchema))
       );

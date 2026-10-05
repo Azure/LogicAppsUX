@@ -74,6 +74,7 @@ export interface MapperAppElements {
 
 export class MapperAppController {
   private state: MapperViewState;
+  private initialized = false;
   private sourceTree: SchemaTreeRenderer | null = null;
   private targetTree: SchemaTreeRenderer | null = null;
   private canvas: MappingCanvas | null = null;
@@ -137,8 +138,8 @@ export class MapperAppController {
     this.resizeObserver.observe(this.elements.canvas);
     window.removeEventListener('resize', this.handleResize);
     window.addEventListener('resize', this.handleResize);
-    this.elements.sourceTree.addEventListener('scroll', this.handleSchemaScroll);
-    this.elements.targetTree.addEventListener('scroll', this.handleSchemaScroll);
+    this.elements.sourceTree.addEventListener('scroll', this.handleSchemaScroll, { passive: true });
+    this.elements.targetTree.addEventListener('scroll', this.handleSchemaScroll, { passive: true });
     this.renderView();
     this.setupKeyboardShortcuts();
   }
@@ -351,9 +352,11 @@ export class MapperAppController {
         this.runTestMap();
         break;
       case 'init': {
+        this.initialized = true;
         this.state.map = message.data.map;
         this.state.sourceSchema = message.data.sourceSchema;
         this.state.targetSchema = message.data.targetSchema;
+        this.state.availableSchemas = message.data.availableSchemas;
         this.state.functoids = message.data.functoids;
         this.renderView();
         setTimeout(() => this.redrawLinks(), 150);
@@ -362,6 +365,17 @@ export class MapperAppController {
       case 'documentChanged': {
         this.state.map = message.data;
         this.redrawLinks();
+        break;
+      }
+      case 'schemaStateChanged': {
+        this.state.map = message.data.map;
+        this.state.sourceSchema = message.data.sourceSchema;
+        this.state.targetSchema = message.data.targetSchema;
+        this.state.availableSchemas = message.data.availableSchemas;
+        this.lastSourceSchema = undefined;
+        this.lastTargetSchema = undefined;
+        this.renderView();
+        setTimeout(() => this.redrawLinks(), 150);
         break;
       }
       case 'schemaLoaded': {
@@ -505,7 +519,7 @@ export class MapperAppController {
   }
 
   private syncSource(): void {
-    const signature = `${this.state.activePage}`;
+    const signature = `${this.state.activePage}:${this.state.availableSchemas.join('|')}`;
     if (this.state.sourceSchema) {
       this.elements.sourceTree.hidden = false;
       this.elements.sourceEmpty.hidden = true;
@@ -522,7 +536,8 @@ export class MapperAppController {
         this.getLinkedPaths('source'),
         (node) => this.openSchemaNodeProperties(node, 'source'),
         () => this.redrawLinks(),
-        () => this.vscode.postMessage({ type: 'loadSchema', side: 'source' }),
+        this.state.availableSchemas,
+        (path) => this.vscode.postMessage({ type: 'loadSchema', side: 'source', path, browse: path === undefined }),
         this.getConnectedPaths('source')
       );
       this.sourceTree = tree;
@@ -531,7 +546,12 @@ export class MapperAppController {
     } else {
       this.elements.sourceTree.hidden = true;
       this.elements.sourceEmpty.hidden = false;
-      this.elements.sourceEmpty.configure('source', () => this.vscode.postMessage({ type: 'loadSchema', side: 'source' }));
+      this.elements.sourceEmpty.configure(
+        'source',
+        this.state.availableSchemas,
+        (path) => this.vscode.postMessage({ type: 'loadSchema', side: 'source', path, browse: path === undefined }),
+        !this.initialized
+      );
       this.sourceTree = null;
       this.lastSourceSchema = undefined;
       this.lastSourceSignature = '';
@@ -539,7 +559,7 @@ export class MapperAppController {
   }
 
   private syncTarget(): void {
-    const signature = `${this.state.activePage}`;
+    const signature = `${this.state.activePage}:${this.state.availableSchemas.join('|')}`;
     if (this.state.targetSchema) {
       this.elements.targetTree.hidden = false;
       this.elements.targetEmpty.hidden = true;
@@ -556,7 +576,8 @@ export class MapperAppController {
         this.getLinkedPaths('target'),
         (node) => this.openSchemaNodeProperties(node, 'target'),
         () => this.redrawLinks(),
-        () => this.vscode.postMessage({ type: 'loadSchema', side: 'target' }),
+        this.state.availableSchemas,
+        (path) => this.vscode.postMessage({ type: 'loadSchema', side: 'target', path, browse: path === undefined }),
         this.getConnectedPaths('target')
       );
       this.targetTree = tree;
@@ -565,7 +586,12 @@ export class MapperAppController {
     } else {
       this.elements.targetTree.hidden = true;
       this.elements.targetEmpty.hidden = false;
-      this.elements.targetEmpty.configure('target', () => this.vscode.postMessage({ type: 'loadSchema', side: 'target' }));
+      this.elements.targetEmpty.configure(
+        'target',
+        this.state.availableSchemas,
+        (path) => this.vscode.postMessage({ type: 'loadSchema', side: 'target', path, browse: path === undefined }),
+        !this.initialized
+      );
       this.targetTree = null;
       this.lastTargetSchema = undefined;
       this.lastTargetSignature = '';
@@ -648,6 +674,8 @@ export class MapperAppController {
       onGenerateInstance: () => {
         this.bottomPanelCollapsed = false;
         this.bottomPanelActiveTab = 'instance';
+        this.bottomPanel?.setCollapsed(false);
+        this.bottomPanel?.setActiveTab('instance');
         this.vscode.postMessage({ type: 'generateInstance', side: 'source' });
       },
       onRunTest: () => this.runTestMap(),

@@ -115,6 +115,7 @@ async function createHarness() {
           map,
           sourceSchema: schema,
           targetSchema: schema,
+          availableSchemas: ['existing.xsd'],
           functoids,
         },
       },

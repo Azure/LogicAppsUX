@@ -66,6 +66,24 @@
         "icon": "$(folder-opened)"
       },
       {
+        "command": "biztalkDataMapper.addDataMap",
+        "title": "Add Data Map",
+        "icon": "$(new-file)"
+      },
+      {
+        "command": "biztalkDataMapper.addSchemaFile",
+        "title": "Add Schema File",
+        "icon": "$(file-add)"
+      },
+      {
+        "command": "biztalkDataMapper.openDataMap",
+        "title": "Open Data Mapper"
+      },
+      {
+        "command": "biztalkDataMapper.editDataMap",
+        "title": "Edit Data Map as Text"
+      },
+      {
         "command": "biztalkDataMapper.compileMap",
         "title": "Logic App: Compile Map to XSLT"
       },
@@ -89,6 +107,45 @@
           "command": "biztalkDataMapper.openMap",
           "when": "view == biztalkDataMapper.mapsView",
           "group": "navigation"
+        },
+        {
+          "command": "biztalkDataMapper.addDataMap",
+          "when": "view == biztalkDataMapper.mapsView",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "biztalkDataMapper.openDataMap",
+          "when": "view == biztalkDataMapper.mapsView && viewItem == btmFile",
+          "group": "inline"
+        },
+        {
+          "command": "biztalkDataMapper.editDataMap",
+          "when": "view == biztalkDataMapper.mapsView && viewItem == btmFile",
+          "group": "navigation"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "biztalkDataMapper.addDataMap",
+          "when": "explorerResourceIsFolder && resourceFilename != Schemas && resourceFilename != xslt",
+          "group": "navigation@10"
+        },
+        {
+          "command": "biztalkDataMapper.addSchemaFile",
+          "when": "explorerResourceIsFolder && resourceFilename == Schemas",
+          "group": "navigation@10"
+        },
+        {
+          "command": "biztalkDataMapper.openDataMap",
+          "when": "resourceExtname == .btm",
+          "group": "navigation@10"
+        },
+        {
+          "command": "biztalkDataMapper.editDataMap",
+          "when": "resourceExtname == .btm",
+          "group": "navigation@11"
         }
       ]
     },
