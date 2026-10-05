@@ -11,9 +11,12 @@ const {
   assertRequiredScreenshots,
   assertCancelResult,
   finalizeCancelResult,
+  cancelPlatformLaunchArgs,
 } = require('./workspace-prompt-cancel');
 const root = fs.mkdtempSync(path.join(os.tmpdir(), 'cancel-contract-'));
 try {
+  assert.deepEqual(cancelPlatformLaunchArgs('linux'), ['--password-store=gnome-libsecret']);
+  assert.deepEqual(cancelPlatformLaunchArgs('win32'), []);
   const parent = path.join(root, 'wizard');
   const wsDir = path.join(parent, 'workspace');
   const appDir = path.join(wsDir, 'app');

@@ -77,6 +77,12 @@ steps:
             tzdata \
             libunwind8 \
             zlib1g
+          sudo apt-get install -y --no-install-recommends \
+            dbus \
+            gnome-keyring \
+            libglib2.0-bin \
+            libsecret-1-0 \
+            libsecret-tools
           dotnet --info
           dotnet --list-runtimes
         displayName: Install Linux virtual display and .NET runtime dependencies

@@ -311,7 +311,8 @@ jobs:
               read -r -a cli_args <<< "$LA_E2E_CLI_DIRECT_ARGS"
               set +e
               LA_E2E_CLI_USER_DATA_PARENT="$short_profile_parent" \
-              xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
+              bash scripts/run-e2e-cli-linux-secure-session.sh \
+                xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
                 node scripts/run-e2e-cli.js "${cli_args[@]}" 2>&1 | tee ".vscode-test/results/${{ parameters.suiteId }}.log"
               status=${PIPESTATUS[0]}
               set -e
@@ -401,7 +402,8 @@ jobs:
                 read -r -a cli_args <<< "$LA_E2E_CLI_DIRECT_ARGS"
                 set +e
                 LA_E2E_CLI_USER_DATA_PARENT="$short_profile_parent" \
-                xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
+                bash scripts/run-e2e-cli-linux-secure-session.sh \
+                  xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
                   node scripts/run-e2e-cli.js "${cli_args[@]}" 2>&1 | tee ".vscode-test/results/${{ parameters.suiteId }}.log"
                 status=${PIPESTATUS[0]}
                 set -e
@@ -653,7 +655,7 @@ jobs:
           if ('${{ parameters.suiteId }}' -eq 'createWorkspaceCoreMatrix') {
             if (Test-Path $cancelRoot) {
               New-Item -ItemType Directory -Force -Path $cancelDestination | Out-Null
-              foreach ($cancelName in @('final-result.json', 'code.log', 'cancel.log', 'screenshots', 'vscode-logs')) {
+              foreach ($cancelName in @('invocation.json', 'wizard-handoff.json', 'final-result.json', 'code.log', 'cancel.log', 'screenshots', 'vscode-logs')) {
                 $cancelSource = Join-Path $cancelRoot $cancelName
                 if (Test-Path $cancelSource) {
                   Copy-Item $cancelSource -Destination $cancelDestination -Recurse -Force -ErrorAction Stop

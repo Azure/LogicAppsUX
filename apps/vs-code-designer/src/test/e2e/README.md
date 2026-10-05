@@ -46,6 +46,24 @@ active; the fresh regular profile honors `LA_E2E_CLI_USER_DATA_PARENT` (or the e
 `LA_E2E_CLI_CANCEL_USER_DATA_DIR`) and checks the UTF-8 byte length of its actual socket
 path, not another profile's path.
 
+The existing Linux 1ES preparation installs GNOME Keyring, libsecret tools, and
+D-Bus from the signed OS package repositories (without optional PAM/SSH setup).
+The existing Xvfb command runs inside `dbus-run-session` with fresh job-temp
+`XDG_DATA_HOME` and `XDG_RUNTIME_DIR`, not a shared desktop credential store.
+A foreground, secrets-only GNOME provider receives a nonempty random job-only
+password through stdin; neither that password nor credential-store files are
+logged, committed, or archived. Preparation requires an unlocked real default
+collection, an actual Secret Service store/lookup/clear round trip, and the
+encrypted GNOME login-keyring format before the original command can run.
+Normal Linux Code selects the documented `--password-store=gnome-libsecret`
+backend, never `basic`, weaker-encryption UI, or in-memory secret storage.
+Missing packages, unlock/provider failures, or plaintext storage fail closed.
+The shell stops only its own foreground provider job; `dbus-run-session`
+terminates its own bus after the original command. Original Xvfb/Node failures
+remain failures, and no Code process is killed or fixture-retention gate changed.
+This is OS prerequisite preparation on the existing isolated pipeline job,
+not a process-owner protocol or permission to start services on a shared host.
+
 The same-job handoff uses the existing verified manifest fields (`wsFilePath`, `wfDir`)
 and rejects stale, wrong-root/job/source, missing or ambiguous Standard Stateful entries.
 It observes the real picker/modal and trusted mouse Cancel, then checks eight original
@@ -56,7 +74,9 @@ ordinary Code completion and existing runner diagnostics/cleanup; teardown failu
 overrides observation pass without dropping original errors.
 
 Always-published 1ES diagnostics include a separate `workspace-cancel` directory with
-`cancel.log`, original `code.log`/exit, `final-result.json`, the real picker/before/after
+the original `invocation.json` and `wizard-handoff.json` (including the creating
+executable/hash and verified manifest entries), `cancel.log`, original `code.log`/exit,
+`final-result.json`, the real picker/before/after
 PNG files, and the actual regular profile logs. Missing invocation/handoff/evidence
 fails the core job even when baseline Mocha tests pass. No `.empty` placeholder satisfies
 the screenshot requirement; every required PNG must have its matching accepted
@@ -81,7 +101,12 @@ original capture-RPC errors are retained in the case log, while the required unc
 settling interval and final evidence acceptance remain strict.
 
 Focused non-GUI controls are available as `test:e2e-cli:workspace-prompt-cancel:unit`
-and are also included in the existing `test:e2e-cli:unit` chain on both consumer OSes.
+and `test:e2e-cli:linux-secure-session:unit`; both are included in the existing
+`test:e2e-cli:unit` chain on both consumer OSes. The secure-session controls use
+unit-owned command fixtures only, including missing/locked/plaintext storage,
+preparation errors, original exit propagation, and provider death. They do not
+prove a live Linux credential provider, authentication, or GUI scenario; the
+real encrypted backend and Cancel must pass on the actual Linux consumer job.
 
 Run these commands from the repository root unless a section says otherwise.
 

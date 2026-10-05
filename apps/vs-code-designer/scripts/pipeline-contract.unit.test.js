@@ -34,6 +34,15 @@ testDiagnosticsStagingScriptHandlesDirectSuiteLayout({
 });
 testDiagnosticsStagingScriptHandlesDirectSuiteLayout({ privatePlatform: 'linux' });
 testDiagnosticsStagingScriptHandlesDirectSuiteLayout({ privatePlatform: 'win32' });
+for (const privatePlatform of ['linux', 'win32']) {
+  for (const omitCancelMetadata of ['invocation.json', 'wizard-handoff.json']) {
+    testDiagnosticsStagingScriptHandlesDirectSuiteLayout({
+      privatePlatform,
+      omitCancelMetadata,
+      expectedPrivateFailure: 'Required suite diagnostics were missing',
+    });
+  }
+}
 testDiagnosticsStagingScriptHandlesDirectSuiteLayout({
   privatePlatform: 'linux',
   admittedPlatform: 'windows',
@@ -1657,6 +1666,14 @@ xvfb-run() {
   done
   "$@"
 }
+bash() {
+  if [[ "$1" == scripts/run-e2e-cli-linux-secure-session.sh ]]; then
+    shift
+    "$@"
+  else
+    command bash "$@"
+  fi
+}
 ${scriptInfo.script}
 `
       : `
@@ -1881,6 +1898,21 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
       fs.mkdirSync(path.join(cancelRoot, 'vscode-logs'));
       fs.writeFileSync(path.join(cancelRoot, 'code.log'), 'synthetic contract log, not real UI\n');
       fs.writeFileSync(path.join(cancelRoot, 'cancel.log'), 'synthetic contract log\n');
+      for (const name of ['invocation.json', 'wizard-handoff.json']) {
+        fs.writeFileSync(
+          path.join(cancelRoot, name),
+          JSON.stringify({
+            schemaVersion: 1,
+            invocation: 'unit-owned-staging-only',
+            identity: { source: 'a'.repeat(40), run: '42', job: 'contract', platform: options.privatePlatform },
+            launch: { executable: 'unit-owned-not-Code', sha256: 'b'.repeat(64) },
+            entries: [{ fixture: 'unit-owned-staging-only' }],
+          })
+        );
+      }
+      if (options.omitCancelMetadata) {
+        fs.unlinkSync(path.join(cancelRoot, options.omitCancelMetadata));
+      }
       const names = ['open-folder', 'before', 'after', 'preceding-no'];
       const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jL1kAAAAASUVORK5CYII=', 'base64');
       for (const name of names) {
@@ -2003,6 +2035,13 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
       assert.strictEqual(stagedResult.ogfScenarios[0].source, undefined);
     }
     if (options.privatePlatform) {
+      for (const name of ['invocation.json', 'wizard-handoff.json']) {
+        assert.strictEqual(
+          fs.readFileSync(path.join(diagnosticsRoot, 'workspace-cancel', name), 'utf8'),
+          fs.readFileSync(path.join(sourcesDirectory, 'apps', 'vs-code-designer', '.vscode-test', 'workspace-cancel', name), 'utf8'),
+          'The existing original wizard/Code handoff must be staged byte-for-byte'
+        );
+      }
       const privateResult = JSON.parse(fs.readFileSync(path.join(diagnosticsRoot, 'private-traceability', `${suiteId}.json`), 'utf-8'));
       assert.strictEqual(privateResult.scenarios[0].source.caseId, 812);
       assert.strictEqual(privateResult.scenarios[0].provenance.platform, options.privatePlatform);

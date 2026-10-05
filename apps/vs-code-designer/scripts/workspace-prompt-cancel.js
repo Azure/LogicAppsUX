@@ -17,6 +17,7 @@ const hashFile = (file) => createHash('sha256').update(fs.readFileSync(file)).di
 const required = (env) => /^(1|true)$/i.test(env.LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL || '');
 const diagnosticRoot = (env) =>
   path.resolve(env.LA_E2E_CLI_CANCEL_DIAGNOSTICS_DIR || path.join(extensionRoot, '.vscode-test', 'workspace-cancel'));
+const cancelPlatformLaunchArgs = (platform) => (platform === 'linux' ? ['--password-store=gnome-libsecret'] : []);
 
 function prepareCancelContext(env, workspaceParent) {
   assert.ok(workspaceParent && fs.statSync(workspaceParent).isDirectory(), 'Current runner-created wizard root is required');
@@ -255,6 +256,7 @@ async function runCancelSupplement(context, env, collectProfileLogs) {
       })
     );
     const args = [
+      ...cancelPlatformLaunchArgs(process.platform),
       `--user-data-dir=${profile}`,
       `--extensions-dir=${handoff.launch.extensionsDir}`,
       `--extensionDevelopmentPath=${path.join(extensionRoot, 'dist')}`,
@@ -383,4 +385,5 @@ module.exports = {
   assertCancelResult,
   finalizeCancelResult,
   runCancelSupplement,
+  cancelPlatformLaunchArgs,
 };
