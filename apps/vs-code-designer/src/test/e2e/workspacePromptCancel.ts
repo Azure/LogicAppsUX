@@ -4,7 +4,7 @@ import * as path from 'path';
 import { createHash } from 'crypto';
 import { connectToVsCodeWorkbenchCdp } from './cdpClient';
 import { clickPoint, pressKey, type CdpEvaluator, type Point } from './cdpFormHelpers';
-import { captureDiagnosticScreenshot, captureEvidenceScreenshot } from './screenshot';
+import { captureCdpScreenshot, captureDiagnosticScreenshot } from './screenshot';
 import { selectWorkbenchPromptOption, type WorkbenchPromptContainer } from './workbenchPromptSelection';
 
 export interface CancelWorkspace {
@@ -42,6 +42,34 @@ interface WorkspacePromptObservation {
   timeOrigin: number;
   folderNames: string[];
   tabs: string[];
+}
+
+export interface WorkspacePromptCancelPhase {
+  name: 'preceding-no-setup' | 'cancel';
+  startedAt: number;
+  deadline: number;
+}
+
+export function createWorkspacePromptCancelPhase(name: WorkspacePromptCancelPhase['name'], startedAt = Date.now()) {
+  return { name, startedAt, deadline: startedAt + 30000 };
+}
+
+export function assertWorkspacePromptCancelPhaseBudget(phase: WorkspacePromptCancelPhase, now = Date.now()): number {
+  const remaining = phase.deadline - now;
+  assert.ok(remaining > 0, `Actual ${phase.name} phase deadline expired`);
+  return remaining;
+}
+
+export function assertWorkspacePromptCancelSettled(
+  unchangedSince: number | undefined,
+  phase: WorkspacePromptCancelPhase,
+  now = Date.now()
+): void {
+  assertWorkspacePromptCancelPhaseBudget(phase, now);
+  assert.ok(
+    phase.name === 'cancel' && unchangedSince !== undefined && now - unchangedSince >= 1500,
+    'The real dialog must dismiss and leave a stable unchanged app view'
+  );
 }
 
 export async function readWorkspacePromptObservation(cdp: CdpEvaluator): Promise<WorkspacePromptObservation> {
@@ -126,45 +154,83 @@ async function clickFileMenuCommand(cdp: CdpEvaluator, commandPattern: string, d
   return waitForPoint;
 }
 
-async function openExistingAppThroughFileMenu(cdp: CdpEvaluator, appDir: string, deadline: number): Promise<void> {
+interface OpenFolderPickerState {
+  visible: boolean;
+  title: string;
+  value: string;
+  busy: boolean;
+  rowCount: number;
+}
+
+export function isOpenFolderPickerReady(picker: OpenFolderPickerState): boolean {
+  return picker.visible && /open folder/i.test(picker.title) && !!picker.value && !picker.busy && picker.rowCount > 0;
+}
+
+async function readOpenFolderPicker(cdp: CdpEvaluator): Promise<OpenFolderPickerState> {
+  return cdp.evaluate(
+    undefined,
+    `(() => {
+      const widget = document.querySelector('.quick-input-widget');
+      return {
+        visible: !!widget?.getBoundingClientRect().width,
+        title: widget?.querySelector('.quick-input-title')?.textContent || '',
+        value: widget?.querySelector('input')?.value || '',
+        busy: !!widget?.querySelector('.monaco-progress-container.active:not(.done)'),
+        rowCount: widget?.querySelectorAll('.quick-input-list .monaco-list-row').length || 0
+      };
+    })()`
+  );
+}
+
+async function openExistingAppThroughFileMenu(
+  cdp: CdpEvaluator,
+  appDir: string,
+  deadline: number,
+  captureScreenshot: (name: string) => Promise<void>
+): Promise<void> {
   const waitForPoint = await clickFileMenuCommand(cdp, '^Open Folder(?:\\.{3}|\\u2026)?$', deadline);
   let pickerReady = false;
   while (Date.now() < deadline) {
-    pickerReady = await cdp.evaluate<boolean>(
-      undefined,
-      `(() => {
-      const widget = document.querySelector('.quick-input-widget');
-      return !!widget?.getBoundingClientRect().width &&
-        /open folder/i.test(widget.querySelector('.quick-input-title')?.textContent || '');
-    })()`
-    );
+    pickerReady = isOpenFolderPickerReady(await readOpenFolderPicker(cdp));
     if (pickerReady) {
       break;
     }
     await new Promise((resolve) => setTimeout(resolve, Math.min(250, deadline - Date.now())));
   }
-  assert.ok(pickerReady, 'The real File menu must expose the actual stock Open Folder picker before input');
+  assert.ok(pickerReady, 'The real File menu must finish loading the actual stock Open Folder picker before input');
   const input = await waitForPoint('.quick-input-widget input', '.*');
   await clickPoint(cdp, input);
   const modifiers = process.platform === 'darwin' ? 4 : 2;
   await cdp.send('Input.dispatchKeyEvent', { type: 'keyDown', key: 'a', code: 'KeyA', modifiers, windowsVirtualKeyCode: 65 });
   await cdp.send('Input.dispatchKeyEvent', { type: 'keyUp', key: 'a', code: 'KeyA', modifiers, windowsVirtualKeyCode: 65 });
   await cdp.send('Input.insertText', { text: `${appDir}${path.sep}` });
-  const picker = await cdp.evaluate<{ title: string; value: string }>(
-    undefined,
-    `(() => {
-      const widget = document.querySelector('.quick-input-widget');
-      return { title: widget?.querySelector('.quick-input-title')?.textContent || '',
-        value: widget?.querySelector('input')?.value || '' };
-    })()`
-  );
+  let picker = await readOpenFolderPicker(cdp);
+  let settledSince: number | undefined;
+  while (Date.now() < deadline) {
+    picker = await readOpenFolderPicker(cdp);
+    if (isOpenFolderPickerReady(picker) && path.normalize(picker.value) === path.normalize(`${appDir}${path.sep}`)) {
+      settledSince ??= Date.now();
+      if (Date.now() - settledSince >= 250) {
+        break;
+      }
+    } else {
+      settledSince = undefined;
+    }
+    await new Promise((resolve) => setTimeout(resolve, Math.min(100, deadline - Date.now())));
+  }
+  assert.ok(settledSince && Date.now() - settledSince >= 250, 'The stock picker must finish resolving the typed existing app path');
   assert.ok(/open folder/i.test(picker.title), 'The real File menu must open the stock Open Folder picker');
   assert.strictEqual(
     path.normalize(picker.value),
     path.normalize(`${appDir}${path.sep}`),
     'The real picker must contain the existing app path'
   );
-  await captureRequiredCancelScreenshot('workspace-prompt-cancel-ui-open-folder', Math.min(1500, deadline - Date.now()));
+  await captureScreenshot('workspace-prompt-cancel-ui-open-folder');
+  assert.strictEqual(
+    path.normalize((await readOpenFolderPicker(cdp)).value),
+    path.normalize(`${appDir}${path.sep}`),
+    'The captured real picker must retain the existing app path before submission'
+  );
   await pressKey(cdp, 'Enter', 'Enter', 13);
   console.log(
     '[workspacePromptCancelUI] Clicked File -> Open Folder; typed the already-created app path into the stock folder picker and submitted it.'
@@ -188,13 +254,19 @@ export async function runWorkspacePromptCancelUi(
   initialFiles: ReturnType<typeof captureWorkspacePromptCancelBaseline>['files'];
   initialDirectories: ReturnType<typeof captureWorkspacePromptCancelBaseline>['entries'];
   postNoDirectories: ReturnType<typeof captureWorkspacePromptCancelBaseline>['entries'];
+  phaseTimings: Array<{ phase: WorkspacePromptCancelPhase['name']; event: string; elapsedMs: number; remainingMs: number }>;
 }> {
-  const deadline = Date.now() + 30000;
-  const remaining = () => {
-    const budget = deadline - Date.now();
-    assert.ok(budget > 0, 'Actual workspace prompt/Cancel observation deadline expired');
-    return Math.min(1500, budget);
+  let phase = createWorkspacePromptCancelPhase('preceding-no-setup');
+  let deadline = phase.deadline;
+  const remaining = () => Math.min(1500, assertWorkspacePromptCancelPhaseBudget(phase));
+  const phaseTimings: Array<{ phase: WorkspacePromptCancelPhase['name']; event: string; elapsedMs: number; remainingMs: number }> = [];
+  const recordPhase = (event: string) => {
+    const now = Date.now();
+    const timing = { phase: phase.name, event, elapsedMs: now - phase.startedAt, remainingMs: phase.deadline - now };
+    phaseTimings.push(timing);
+    console.log(`[workspacePromptCancelUI] Phase timing: ${JSON.stringify(timing)}`);
   };
+  recordPhase('started');
   let cdp = await connectToVsCodeWorkbenchCdp({
     activate: false,
     waitForServer: true,
@@ -204,6 +276,7 @@ export async function runWorkspacePromptCancelUi(
     evaluate: (context, expression) => cdp.evaluate(context, expression, { timeoutMs: remaining() }),
     send: (method, params) => cdp.send(method, params, { timeoutMs: remaining() }),
   };
+  const captureScreenshot = (name: string) => captureRequiredCancelScreenshot(cdp, name, deadline);
   let lastObservation: WorkspacePromptObservation | undefined;
   let promptBefore: WorkspacePromptObservation | undefined;
   let cancelBaseline = baseline;
@@ -211,7 +284,7 @@ export async function runWorkspacePromptCancelUi(
   let postNoDirectories = baseline.entries;
   try {
     await boundedCdp.send('Page.bringToFront');
-    await openExistingAppThroughFileMenu(boundedCdp, workspace.appDir, deadline);
+    await openExistingAppThroughFileMenu(boundedCdp, workspace.appDir, deadline, captureScreenshot);
     cdp.dispose();
     cdp = await connectToVsCodeWorkbenchCdp({ activate: false, waitForServer: true, timeoutMs: Math.min(15000, deadline - Date.now()) });
     while (Date.now() < deadline) {
@@ -233,7 +306,7 @@ export async function runWorkspacePromptCancelUi(
           assert.ok(cancel.point, 'The preceding source step must offer the real enabled No button');
           assertExistingAppView(lastObservation, workspace);
           const noTimeOrigin = lastObservation.timeOrigin;
-          await captureRequiredCancelScreenshot('workspace-prompt-cancel-ui-preceding-no', remaining());
+          await captureScreenshot('workspace-prompt-cancel-ui-preceding-no');
           await clickPoint(boundedCdp, cancel.point);
           while (Date.now() < deadline) {
             const observation = await readWorkspacePromptObservation(boundedCdp);
@@ -283,7 +356,11 @@ export async function runWorkspacePromptCancelUi(
             await new Promise((resolve) => setTimeout(resolve, Math.min(250, deadline - Date.now())));
           }
           remaining();
-          await openExistingAppThroughFileMenu(boundedCdp, workspace.appDir, deadline);
+          recordPhase('completed');
+          phase = createWorkspacePromptCancelPhase('cancel');
+          deadline = phase.deadline;
+          recordPhase('started');
+          await openExistingAppThroughFileMenu(boundedCdp, workspace.appDir, deadline, captureScreenshot);
           cdp.dispose();
           cdp = await connectToVsCodeWorkbenchCdp({
             activate: false,
@@ -314,7 +391,7 @@ export async function runWorkspacePromptCancelUi(
           'Real prompt must remain visible before Cancel'
         );
         promptBefore = lastObservation;
-        await captureRequiredCancelScreenshot('workspace-prompt-cancel-ui-before', remaining());
+        await captureScreenshot('workspace-prompt-cancel-ui-before');
         cancelBaseline = captureWorkspacePromptCancelBaseline(workspaceParent, workspace);
         assert.deepStrictEqual(
           cancelBaseline.files,
@@ -352,8 +429,10 @@ export async function runWorkspacePromptCancelUi(
       }
       await new Promise((resolve) => setTimeout(resolve, Math.min(250, deadline - Date.now())));
     }
-    assert.ok(unchangedSince && Date.now() - unchangedSince >= 1500, 'The real dialog must dismiss and leave a stable unchanged app view');
-    await captureRequiredCancelScreenshot('workspace-prompt-cancel-ui-after', remaining());
+    assertWorkspacePromptCancelSettled(unchangedSince, phase);
+    await captureScreenshot('workspace-prompt-cancel-ui-after');
+    assertWorkspacePromptCancelSettled(unchangedSince, phase);
+    recordPhase('completed');
     console.log(
       `[workspacePromptCancelUI] PASS: actual Cancel dismissed the prompt; app view and eight original files unchanged (${samples} samples).`
     );
@@ -367,6 +446,7 @@ export async function runWorkspacePromptCancelUi(
       initialFiles: baseline.files,
       initialDirectories: baseline.entries,
       postNoDirectories,
+      phaseTimings,
       screenshots: [
         'workspace-prompt-cancel-ui-open-folder.png',
         'workspace-prompt-cancel-ui-before.png',
@@ -377,6 +457,7 @@ export async function runWorkspacePromptCancelUi(
       after: captureWorkspacePromptCancelBaseline(workspaceParent, workspace),
     };
   } catch (error) {
+    recordPhase('failed');
     await captureDiagnosticScreenshot('workspace-prompt-cancel-ui-failure', {
       reason: error instanceof Error ? error.message : String(error),
       timeoutMs: 1500,
@@ -419,8 +500,54 @@ export async function closeWorkspacePromptCancelWindow(observationFailed = false
   }
 }
 
-export async function captureRequiredCancelScreenshot(name: string, timeoutMs: number): Promise<void> {
-  const file = await captureEvidenceScreenshot(name, { kind: 'diagnostic', label: name, reason: name }, { timeoutMs });
+export function workspacePromptCancelScreenshotOptions(name: string, deadline: number) {
+  const timeoutMs = Math.min(5000, deadline - Date.now());
+  assert.ok(timeoutMs > 0, 'Required Cancel screenshot must stay within the original case deadline');
+  return {
+    classification: 'evidence' as const,
+    expectation: { kind: 'workbenchShell' as const, label: name },
+    timeoutMs,
+    deadlineMs: Math.min(deadline, Date.now() + timeoutMs),
+  };
+}
+
+export async function captureRequiredCancelScreenshot(
+  cdp: Parameters<typeof captureCdpScreenshot>[0],
+  name: string,
+  deadline: number
+): Promise<void> {
+  const captureCdp: Parameters<typeof captureCdpScreenshot>[0] = {
+    targetId: cdp.targetId,
+    targetUrl: cdp.targetUrl,
+    targetTitle: cdp.targetTitle,
+    get contextGeneration() {
+      return cdp.contextGeneration;
+    },
+    getExecutionContextIds: () => cdp.getExecutionContextIds?.() ?? [],
+    getExecutionContextFrameId: (contextId) => cdp.getExecutionContextFrameId?.(contextId),
+    evaluate: (contextId, expression, options) => cdp.evaluate(contextId, expression, options),
+    send: async (method, params, options) => {
+      try {
+        return await cdp.send(method, params, options);
+      } catch (error) {
+        if (method === 'Page.captureScreenshot') {
+          console.error(
+            `[workspacePromptCancelUI] Original required capture RPC failed: ${JSON.stringify({
+              checkpoint: name,
+              command: method,
+              targetId: cdp.targetId,
+              generation: cdp.contextGeneration,
+              timeoutMs: options?.timeoutMs,
+              remainingMs: deadline - Date.now(),
+              error: error instanceof Error ? error.stack || error.message : String(error),
+            })}`
+          );
+        }
+        throw error;
+      }
+    },
+  };
+  const file = await captureCdpScreenshot(captureCdp, name, workspacePromptCancelScreenshotOptions(name, deadline));
   assert.ok(file && fs.existsSync(file), `Required real Cancel screenshot was not captured: ${name}`);
   const bytes = fs.readFileSync(file);
   assert.ok(

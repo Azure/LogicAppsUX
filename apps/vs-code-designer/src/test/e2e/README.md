@@ -68,6 +68,18 @@ This is supplementary real workbench evidence, not an additional Mocha execution
 full source-case certification, OS-native-picker claim, MSN execution, or unit-derived
 GUI/OGF credit.
 
+Picker input waits for the stock folder listing to finish loading, and the typed app
+path must settle and remain unchanged through capture before submission. Required
+captures reuse the current workbench CDP connection and its real generation, with
+stable workbench-shell readiness within the original case deadline; they do not
+reattach a fresh screenshot session or treat diagnostic-only captures as evidence.
+The preceding real-No setup has its own bounded 30-second phase. Cancel retains its
+original 30-second observation budget beginning **before repeated Open Folder**, after
+Close Folder reaches the empty workbench; clicking Cancel never resets that clock.
+Captures use at most five seconds and the remaining phase budget. Phase timing and
+original capture-RPC errors are retained in the case log, while the required unchanged
+settling interval and final evidence acceptance remain strict.
+
 Focused non-GUI controls are available as `test:e2e-cli:workspace-prompt-cancel:unit`
 and are also included in the existing `test:e2e-cli:unit` chain on both consumer OSes.
 
