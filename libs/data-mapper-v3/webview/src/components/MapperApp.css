@@ -491,6 +491,11 @@
 	justify-content: space-between;
 	gap: 6px;
 }
+.schema-header-buttons {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+}
 .schema-title {
 	font-weight: 600;
 	font-size: 11px;
@@ -659,7 +664,7 @@
 		var(--vscode-panel-border, #333) 0.5px,
 		transparent 0.5px
 	);
-	background-size: 20px 20px;
+	background-size: 10px 10px;
 }
 
 .canvas-container.drop-active {

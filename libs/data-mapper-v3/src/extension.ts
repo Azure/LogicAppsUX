@@ -6,14 +6,8 @@ import * as vscode from 'vscode';
 import { MapEditorProvider } from './mapEditorProvider';
 import { MapsTreeProvider } from './mapsTreeProvider';
 import { disposeDataMapperLogger, getDataMapperLogger } from './logger';
-import {
-  copySchemaToWorkspace,
-  createEmptyMap,
-  ensureWorkspaceFolders,
-  getWorkspaceRoot,
-  schemasFolderName,
-  validateWorkspaceName,
-} from './workspaceStructure';
+import { addDataMap, addMapperProject, openExistingMapper } from './projectCommands';
+import { copySchemaToWorkspace, getWorkspaceRoot, schemasFolderName } from './workspaceStructure';
 
 function resourceUri(value: vscode.Uri | { resourceUri?: vscode.Uri } | undefined): vscode.Uri | undefined {
   return value instanceof vscode.Uri ? value : value?.resourceUri;
@@ -30,59 +24,18 @@ export function activate(context: vscode.ExtensionContext) {
 
   // Register the workspace maps view in the sidebar.
   const mapsTreeProvider = new MapsTreeProvider();
+  const refreshMaps = () => mapsTreeProvider.refresh();
 
   context.subscriptions.push(vscode.window.registerTreeDataProvider('biztalkDataMapper.mapsView', mapsTreeProvider));
 
   // Register commands
   context.subscriptions.push(
     vscode.commands.registerCommand('biztalkDataMapper.showLogs', () => logger.show(true)),
-    vscode.commands.registerCommand('biztalkDataMapper.newMap', async () => {
-      const workspaceName = await vscode.window.showInputBox({
-        prompt: 'Enter data map workspace name',
-        value: 'DataMapWorkspace',
-        validateInput: validateWorkspaceName,
-      });
-      if (!workspaceName) {
-        return;
-      }
+    vscode.commands.registerCommand('biztalkDataMapper.newMap', () => addMapperProject(refreshMaps)),
 
-      const selectedParent = await vscode.window.showOpenDialog({
-        canSelectFiles: false,
-        canSelectFolders: true,
-        canSelectMany: false,
-        openLabel: 'Create Workspace Here',
-        title: 'Select a parent folder for the data map workspace',
-      });
-      if (!selectedParent?.length) {
-        return;
-      }
-
-      const rootUri = vscode.Uri.joinPath(selectedParent[0], workspaceName.trim());
-      try {
-        await vscode.workspace.fs.stat(rootUri);
-        vscode.window.showErrorMessage(`A folder named "${workspaceName.trim()}" already exists.`);
-        return;
-      } catch (error) {
-        if (!(error instanceof vscode.FileSystemError) || error.code !== 'FileNotFound') {
-          throw error;
-        }
-      }
-
-      await ensureWorkspaceFolders(rootUri);
-      await createEmptyMap(rootUri);
-      await vscode.commands.executeCommand('vscode.openFolder', rootUri, false);
-    }),
-
-    vscode.commands.registerCommand('biztalkDataMapper.addDataMap', async (value?: vscode.Uri | { resourceUri?: vscode.Uri }) => {
-      const selectedUri = resourceUri(value) ?? vscode.workspace.workspaceFolders?.[0]?.uri;
-      if (!selectedUri) {
-        vscode.window.showWarningMessage('Open a data map workspace before adding a map.');
-        return;
-      }
-      const mapUri = await createEmptyMap(getWorkspaceRoot(selectedUri));
-      mapsTreeProvider.refresh();
-      await openDataMap(mapUri);
-    }),
+    vscode.commands.registerCommand('biztalkDataMapper.addDataMap', (value?: vscode.Uri | { resourceUri?: vscode.Uri }) =>
+      addDataMap(value, refreshMaps)
+    ),
 
     vscode.commands.registerCommand('biztalkDataMapper.addSchemaFile', async (value?: vscode.Uri | { resourceUri?: vscode.Uri }) => {
       const selectedUri = resourceUri(value) ?? vscode.workspace.workspaceFolders?.[0]?.uri;
@@ -123,35 +76,7 @@ export function activate(context: vscode.ExtensionContext) {
       }
     }),
 
-    vscode.commands.registerCommand('biztalkDataMapper.openMap', async () => {
-      const fileUri = await vscode.window.showOpenDialog({
-        canSelectMany: false,
-        canSelectFolders: false,
-        filters: {
-          'BizTalk Map (*.btm)': ['btm'],
-          'All Files': ['*'],
-        },
-        openLabel: 'Open Map',
-        title: 'Open BizTalk Map',
-      });
-      if (!fileUri || fileUri.length === 0) {
-        return;
-      }
-
-      try {
-        await openDataMap(fileUri[0]);
-      } catch (e: any) {
-        // Fallback: try opening as text first, then reopen with custom editor
-        vscode.window.showErrorMessage(`Error opening map: ${e.message}. Trying fallback...`);
-        try {
-          const doc = await vscode.workspace.openTextDocument(fileUri[0]);
-          await vscode.window.showTextDocument(doc);
-          await vscode.commands.executeCommand('vscode.openWith', fileUri[0], 'biztalkDataMapper.mapEditor');
-        } catch (e2: any) {
-          vscode.window.showErrorMessage(`Failed to open map file: ${e2.message}`);
-        }
-      }
-    }),
+    vscode.commands.registerCommand('biztalkDataMapper.openMap', () => openExistingMapper(refreshMaps)),
 
     vscode.commands.registerCommand('biztalkDataMapper.compileMap', async () => {
       logger.show(true);

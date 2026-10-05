@@ -1,5 +1,5 @@
 import { Button, Dropdown, FluentProvider, makeStyles, Option, tokens } from '@fluentui/react-components';
-import { ChevronDoubleDown16Regular, ChevronDoubleUp16Regular, Tag16Regular } from '@fluentui/react-icons';
+import { ChevronDoubleDown16Regular, ChevronDoubleUp16Regular, Tag16Regular, TextBulletListTree16Regular } from '@fluentui/react-icons';
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { getVsCodeFluentTheme } from '../fluentTheme';
@@ -235,21 +235,37 @@ function SchemaTreeView({
           <div className="schema-header">
             <div className="schema-header-row">
               <span className="schema-title">{side === 'source' ? 'Source Schema' : 'Target Schema'}</span>
-              <Button
-                appearance="subtle"
-                aria-label={`${isFullyExpanded ? 'Collapse' : 'Expand'} all schema nodes`}
-                className="schema-btn schema-expand-collapse-btn"
-                icon={isFullyExpanded ? <ChevronDoubleUp16Regular /> : <ChevronDoubleDown16Regular />}
-                size="small"
-                title={isFullyExpanded ? 'Collapse All' : 'Expand All'}
-                onClick={() => {
-                  if (isFullyExpanded) {
-                    setExpandedPaths(new Set());
-                  } else {
-                    setExpandedPaths(expandablePaths);
-                  }
-                }}
-              />
+              <div className="schema-header-buttons">
+                <Button
+                  appearance="subtle"
+                  aria-label="Expand linked schema nodes"
+                  className="schema-btn schema-expand-linked-btn"
+                  icon={<TextBulletListTree16Regular />}
+                  size="small"
+                  title="Expand Linked Nodes"
+                  onClick={() => {
+                    const linkedPaths = Array.from(connectedPaths);
+                    setExpandedPaths(
+                      new Set(Array.from(expandablePaths).filter((path) => linkedPaths.some((linked) => linked.startsWith(`${path}/`))))
+                    );
+                  }}
+                />
+                <Button
+                  appearance="subtle"
+                  aria-label={`${isFullyExpanded ? 'Collapse' : 'Expand'} all schema nodes`}
+                  className="schema-btn schema-expand-collapse-btn"
+                  icon={isFullyExpanded ? <ChevronDoubleUp16Regular /> : <ChevronDoubleDown16Regular />}
+                  size="small"
+                  title={isFullyExpanded ? 'Collapse All' : 'Expand All'}
+                  onClick={() => {
+                    if (isFullyExpanded) {
+                      setExpandedPaths(new Set());
+                    } else {
+                      setExpandedPaths(expandablePaths);
+                    }
+                  }}
+                />
+              </div>
             </div>
           </div>
           <div className="schema-actions">

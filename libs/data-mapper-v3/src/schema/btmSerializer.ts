@@ -660,8 +660,10 @@ export class BtmSerializer {
       // BizTalk uses cell-grid coordinates (X: 0-100, Y: 0-420).
       // Convert to pixel space for the SVG canvas when loading from BTM format.
       const isCellCoords = !!(f['@_X-Cell'] || f['@_Y-Cell']);
-      const x = isCellCoords ? (rawX - 48) * 14 + 150 : rawX;
-      const y = isCellCoords ? (rawY - 205) * 12 + 40 : rawY;
+      // Negative or invalid coordinates would place the functoid partly off-canvas (x/y is the node centre), so pin it to the canvas edge.
+      const toCanvasCoordinate = (value: number, minimum: number): number => (Number.isFinite(value) ? Math.max(minimum, value) : minimum);
+      const x = toCanvasCoordinate(isCellCoords ? (rawX - 48) * 10 + 150 : rawX, 40);
+      const y = toCanvasCoordinate(isCellCoords ? (rawY - 205) * 8 + 40 : rawY, 20);
 
       // Resolve category from the functoid registry if not provided directly
       let category = f['@_Category'] as FunctoidCategory;

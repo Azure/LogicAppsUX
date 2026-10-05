@@ -2,7 +2,7 @@
   "name": "btm-data-mapper",
   "displayName": "Logic App Data Mapper",
   "description": "Logic App Data Mapper for VS Code - visual BizTalk-compatible schema mapping with functoids and XSLT generation",
-  "version": "0.0.1",
+  "version": "0.0.20",
   "publisher": "microsoft",
   "icon": "media/icons/biztalk-icon.jpg",
   "engines": {
@@ -35,7 +35,7 @@
     "viewsWelcome": [
       {
         "view": "biztalkDataMapper.mapsView",
-        "contents": "No maps found in this workspace.\n[Create New Map](command:biztalkDataMapper.newMap)\n[Open Map File](command:biztalkDataMapper.openMap)\nTo get started, create a new map or open an existing .btm file."
+        "contents": "No maps found in this workspace.\n[Add Mapper Project](command:biztalkDataMapper.newMap)\n[Open Existing Mapper](command:biztalkDataMapper.openMap)\nTo get started, add a mapper project or open an existing one."
       }
     ],
     "customEditors": [
@@ -57,12 +57,14 @@
       },
       {
         "command": "biztalkDataMapper.newMap",
-        "title": "Logic App: New Data Map",
+        "title": "Add Mapper Project",
+      "category": "Logic App",
         "icon": "$(add)"
       },
       {
         "command": "biztalkDataMapper.openMap",
-        "title": "Logic App: Open Map File",
+        "title": "Open Existing Mapper",
+      "category": "Logic App",
         "icon": "$(folder-opened)"
       },
       {
@@ -129,7 +131,7 @@
       "explorer/context": [
         {
           "command": "biztalkDataMapper.addDataMap",
-          "when": "explorerResourceIsFolder && resourceFilename != Schemas && resourceFilename != xslt",
+          "when": "explorerResourceIsFolder && resourceFilename != Schemas && resourceFilename != __generated",
           "group": "navigation@10"
         },
         {

@@ -92,6 +92,8 @@ const functoidWidth = 72;
 const functoidHeight = 26;
 const iconSize = 18;
 const functoidHalfWidth = functoidWidth / 2;
+const gridSize = 10;
+const snapToGrid = (value: number): number => Math.max(0, Math.round(value / gridSize) * gridSize);
 const functoidHalfHeight = functoidHeight / 2;
 const minZoom = 0.1;
 const maxZoom = 2;
@@ -457,8 +459,8 @@ function MappingCanvasView({
             return;
           }
           const rect = svgRef.current.getBoundingClientRect();
-          functoid.x = (event.clientX - rect.left) / zoom - target.offsetX;
-          functoid.y = (event.clientY - rect.top) / zoom - target.offsetY;
+          functoid.x = snapToGrid((event.clientX - rect.left) / zoom - target.offsetX);
+          functoid.y = snapToGrid((event.clientY - rect.top) / zoom - target.offsetY);
           setCurrentDrag({ ...target });
         }}
         onMouseUp={finishDrag}

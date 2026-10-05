@@ -63,9 +63,9 @@ export async function ensureWorkspaceFolders(rootUri: vscode.Uri): Promise<void>
   ]);
 }
 
-async function readDirectoryNames(folderUri: vscode.Uri): Promise<string[]> {
+async function readDirectoryEntries(folderUri: vscode.Uri): Promise<[string, vscode.FileType][]> {
   try {
-    return (await vscode.workspace.fs.readDirectory(folderUri)).map(([name]) => name);
+    return await vscode.workspace.fs.readDirectory(folderUri);
   } catch (error) {
     if ((error as { code?: string }).code === 'FileNotFound') {
       return [];
@@ -74,10 +74,79 @@ async function readDirectoryNames(folderUri: vscode.Uri): Promise<string[]> {
   }
 }
 
-export async function createEmptyMap(rootUri: vscode.Uri): Promise<vscode.Uri> {
+export async function readDirectoryNames(folderUri: vscode.Uri): Promise<string[]> {
+  return (await readDirectoryEntries(folderUri)).map(([name]) => name);
+}
+
+export interface MapperProject {
+  name: string;
+  uri: vscode.Uri;
+}
+
+function isMapperProjectEntries(entries: [string, vscode.FileType][]): boolean {
+  return entries.some(
+    ([name, type]) =>
+      (type & vscode.FileType.Directory && name.toLocaleLowerCase() === schemasFolderName.toLocaleLowerCase()) ||
+      name.toLocaleLowerCase().endsWith('.btm')
+  );
+}
+
+export async function isMapperProject(folderUri: vscode.Uri): Promise<boolean> {
+  return isMapperProjectEntries(await readDirectoryEntries(folderUri));
+}
+
+// A mapper project is a workspace folder (or one of its direct child folders) holding a Schemas folder or a .btm file.
+export async function findMapperProjects(): Promise<MapperProject[]> {
+  const projects: MapperProject[] = [];
+  for (const workspaceFolder of vscode.workspace.workspaceFolders ?? []) {
+    const entries = await readDirectoryEntries(workspaceFolder.uri);
+    if (isMapperProjectEntries(entries)) {
+      projects.push({ name: workspaceFolder.name, uri: workspaceFolder.uri });
+    }
+    const ignoredFolders = new Set([schemasFolderName.toLocaleLowerCase(), generatedFolderName, 'node_modules']);
+    for (const [name, type] of entries) {
+      if (!(type & vscode.FileType.Directory) || name.startsWith('.') || ignoredFolders.has(name.toLocaleLowerCase())) {
+        continue;
+      }
+      const childUri = vscode.Uri.joinPath(workspaceFolder.uri, name);
+      if (await isMapperProject(childUri)) {
+        projects.push({ name, uri: childUri });
+      }
+    }
+  }
+  return projects;
+}
+
+export function normalizeMapName(value: string): string {
+  const name = value.trim();
+  return name.toLocaleLowerCase().endsWith('.btm') ? name.slice(0, -'.btm'.length) : name;
+}
+
+export function validateMapName(value: string, existingNames: Iterable<string>): string | undefined {
+  const name = normalizeMapName(value);
+  if (!name) {
+    return 'Enter a file name.';
+  }
+  if (validateWorkspaceName(name)) {
+    return 'Enter a valid file name.';
+  }
+  const fileName = `${name}.btm`;
+  if (Array.from(existingNames, (existing) => existing.toLocaleLowerCase()).includes(fileName.toLocaleLowerCase())) {
+    return `A map named "${fileName}" already exists in this project.`;
+  }
+  return undefined;
+}
+
+export async function createMapperProject(parentUri: vscode.Uri, name: string): Promise<{ rootUri: vscode.Uri; mapUri: vscode.Uri }> {
+  const rootUri = vscode.Uri.joinPath(parentUri, name.trim());
+  const mapUri = await createEmptyMap(rootUri);
+  return { rootUri, mapUri };
+}
+
+export async function createEmptyMap(rootUri: vscode.Uri, baseName = defaultMapBaseName): Promise<vscode.Uri> {
   await ensureWorkspaceFolders(rootUri);
   const existingNames = await readDirectoryNames(rootUri);
-  const fileName = getDuplicateSafeName(defaultMapBaseName, '.btm', existingNames);
+  const fileName = getDuplicateSafeName(baseName, '.btm', existingNames);
   const mapUri = vscode.Uri.joinPath(rootUri, fileName);
   const serializer = new BtmSerializer();
   const map = serializer.createNew('', '', path.basename(fileName, '.btm'));
