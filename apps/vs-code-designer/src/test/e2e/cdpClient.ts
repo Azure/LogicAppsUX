@@ -358,15 +358,37 @@ export async function connectToVsCodeCdpByText(options: {
   assert.fail(`Unable to find ${targetName} CDP target by text. Last error: ${lastError}. Targets: ${JSON.stringify(targets)}`);
 }
 
-export async function connectToVsCodeWorkbenchCdp(options: { activate?: boolean; timeoutMs?: number } = {}): Promise<CdpConnection> {
+export async function connectToVsCodeWorkbenchCdp(
+  options: { activate?: boolean; timeoutMs?: number; waitForServer?: boolean } = {}
+): Promise<CdpConnection> {
   const port = process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT;
   assert.ok(port, 'LA_E2E_CLI_REMOTE_DEBUGGING_PORT must be set for workbench DOM smoke tests');
 
   const deadline = Date.now() + (options.timeoutMs ?? 15000);
   let targets: CdpTarget[] = [];
+  let startupConnectionError: unknown;
 
   while (Date.now() < deadline) {
-    targets = (await fetchJson(`http://127.0.0.1:${port}/json/list`, remaining(deadline))) as CdpTarget[];
+    try {
+      targets = (await fetchJson(`http://127.0.0.1:${port}/json/list`, remaining(deadline))) as CdpTarget[];
+    } catch (error) {
+      if (
+        !options.waitForServer ||
+        !(error instanceof Error) ||
+        !('cause' in error) ||
+        !(error.cause instanceof Error) ||
+        !('code' in error.cause) ||
+        error.cause.code !== 'ECONNREFUSED'
+      ) {
+        throw error;
+      }
+      if (!startupConnectionError) {
+        console.log('[CDP] Waiting for the regular development window debug server within the original connection deadline.');
+      }
+      startupConnectionError = error;
+      await delay(Math.min(250, remaining(deadline)));
+      continue;
+    }
     const workbenchTarget = chooseVsCodeWorkbenchTargetForCapture(targets);
 
     if (workbenchTarget?.webSocketDebuggerUrl) {
@@ -379,6 +401,9 @@ export async function connectToVsCodeWorkbenchCdp(options: { activate?: boolean;
     await delay(Math.min(250, remaining(deadline)));
   }
 
+  if (startupConnectionError && targets.length === 0) {
+    throw startupConnectionError;
+  }
   assert.fail(`Unable to find VS Code workbench CDP target. Targets: ${JSON.stringify(targets)}`);
 }
 

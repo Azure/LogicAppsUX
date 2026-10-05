@@ -20,6 +20,57 @@ src/test/e2e/
 
 ## Running Tests
 
+### Workspace prompt Cancel (Windows and Linux)
+
+After building the extension/webviews and compiling the tests with the commands below,
+run `pnpm --dir apps/vs-code-designer run test:e2e-cli:workspace-prompt-cancel`.
+This focused command runs the existing Standard Stateful wizard setup once, closes that
+original test host, and navigates to **that same created app** in a regular Code window:
+**File -> Open Folder -> stock folder picker -> app -> workspace prompt -> Cancel**.
+It is not another wizard fixture. The primary command and `:ui` alias use the same route.
+The retained source sequence first opens this same app and clicks the real **No**,
+then closes the folder through the stock File menu and repeats Open Folder for Cancel.
+This lets normal activation initialize the app through the actual preceding source
+step; no design-time files are seeded or excluded from the no-change comparison.
+The regular window omits `--extensionTestsPath`: stock VS Code refuses this modal in
+extension-test mode, and a smoke-driver flag alone does not bypass that refusal.
+
+The existing Windows/Linux `createWorkspaceCoreMatrix` consumer jobs require this
+supplementary check after their Standard Stateful creation host closes and **before**
+its existing final cleanup. The other five matrix executions, all existing lanes,
+canonical Mocha counts and strict rollup remain unchanged. Consumers use the admitted
+compiled extension/tests, the **exact executable and SHA-256 reported by the creating
+Code host**, and its prepared extensions directory. Cancel has no compilation,
+download or extension-install fallback. The existing Linux Xvfb/PATH wrapper remains
+active; the fresh regular profile honors `LA_E2E_CLI_USER_DATA_PARENT` (or the explicit
+`LA_E2E_CLI_CANCEL_USER_DATA_DIR`) and checks the UTF-8 byte length of its actual socket
+path, not another profile's path.
+
+The same-job handoff uses the existing verified manifest fields (`wsFilePath`, `wfDir`)
+and rejects stale, wrong-root/job/source, missing or ambiguous Standard Stateful entries.
+It observes the real picker/modal and trusted mouse Cancel, then checks eight original
+file hashes, directory entries, app title/Explorer, and absence of a workbench reload.
+Success sends **Close Window directly**. Escape is used only during failed-observation
+teardown and cannot turn that failure into success. The final result is written after
+ordinary Code completion and existing runner diagnostics/cleanup; teardown failure
+overrides observation pass without dropping original errors.
+
+Always-published 1ES diagnostics include a separate `workspace-cancel` directory with
+`cancel.log`, original `code.log`/exit, `final-result.json`, the real picker/before/after
+PNG files, and the actual regular profile logs. Missing invocation/handoff/evidence
+fails the core job even when baseline Mocha tests pass. No `.empty` placeholder satisfies
+the screenshot requirement; every required PNG must have its matching accepted
+workbench capture/readiness sidecar. An unconfirmed ordinary Code close preserves the
+app through the existing diagnostic retention path instead of attempting destructive
+cleanup. Original source case/step mappings remain in the existing
+private crosswalk (`workspacePromptCancel` mapping), never public source identifiers.
+This is supplementary real workbench evidence, not an additional Mocha execution,
+full source-case certification, OS-native-picker claim, MSN execution, or unit-derived
+GUI/OGF credit.
+
+Focused non-GUI controls are available as `test:e2e-cli:workspace-prompt-cancel:unit`
+and are also included in the existing `test:e2e-cli:unit` chain on both consumer OSes.
+
 Run these commands from the repository root unless a section says otherwise.
 
 ### How the commands are organized

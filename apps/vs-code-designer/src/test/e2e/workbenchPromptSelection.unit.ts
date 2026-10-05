@@ -18,7 +18,26 @@ function run(): void {
   ignoresInstallTextWithoutNotificationButton();
   ignoresExistingDotnetPathWarningWithoutButton();
   preservesAzureQuickPickRows();
+  selectsRealCancelWithoutNoOrEscapeFallback();
   console.log('[workbenchPromptSelection.unit] all tests passed');
+}
+
+function selectsRealCancelWithoutNoOrEscapeFallback(): void {
+  const prompts = [{ matchText: 'Do you want to open this workspace now?', optionText: 'Cancel' }];
+  const text = 'You must open your workspace. Do you want to open this workspace now?';
+  assert.strictEqual(
+    selectWorkbenchPromptOption(prompts, [{ kind: 'dialog', text, buttons: [{ text: 'No', point: { x: 1, y: 2 } }], rows: [] }]).point,
+    undefined
+  );
+  assert.strictEqual(
+    selectWorkbenchPromptOption(prompts, [{ kind: 'dialog', text, buttons: [{ text: 'Cancel' }], rows: [] }]).point,
+    undefined
+  );
+  assert.deepStrictEqual(
+    selectWorkbenchPromptOption(prompts, [{ kind: 'dialog', text, buttons: [{ text: 'Cancel', point: { x: 10, y: 20 } }], rows: [] }])
+      .point,
+    { x: 10, y: 20 }
+  );
 }
 
 function selectsExactInstallButton(): void {

@@ -8,6 +8,7 @@ const fs = require('fs');
 const path = require('path');
 const { SUITE_REGISTRY } = require('./e2e-cli-batch');
 const { OGF_E2E_SCENARIOS, projectPublicScenarioEvidence, sameIdentities } = require('./ogf-e2e-registry');
+const { assertCancelResult } = require('./workspace-prompt-cancel');
 
 class TraceabilityError extends Error {}
 
@@ -149,6 +150,47 @@ function joinPrivateTraceability(result, crosswalk, expected, terminalResult) {
   };
 }
 
+function joinSupplementaryCancel(result, crosswalk, root, expected) {
+  const mapping = crosswalk.workspacePromptCancel;
+  requireTraceability(mapping?.scenarioId === 'workspace-prompt-cancel', 'missing-private-supplementary-mapping');
+  const source = mapping.source;
+  requireTraceability(
+    typeof source?.system === 'string' &&
+      Number.isInteger(source.caseId) &&
+      source.caseId > 0 &&
+      Number.isInteger(source.caseRevision) &&
+      source.caseRevision > 0 &&
+      source.stepMappings?.length === 1 &&
+      typeof source.stepMappings[0].stepId === 'string' &&
+      Number.isInteger(source.stepMappings[0].stepOrdinal) &&
+      source.stepMappings[0].stepOrdinal > 0,
+    'invalid-private-supplementary-source'
+  );
+  assertCancelResult(result, root);
+  requireTraceability(
+    result.identity.source === expected.sourceVersion &&
+      result.identity.run === expected.buildId &&
+      result.identity.platform === (expected.platform === 'windows' ? 'win32' : expected.platform) &&
+      result.code.version === expected.vscodeVersion,
+    'supplementary-execution-provenance-mismatch'
+  );
+  return {
+    scenarioId: 'workspace-prompt-cancel',
+    evidenceKind: 'real-workbench-supplementary',
+    source,
+    provenance: { ...result.identity, vscodeVersion: result.code.version, codeSha256: result.code.sha256 },
+    assertionIdentities: [
+      'real-file-open-folder',
+      'real-workspace-prompt-cancel',
+      'unchanged-app-files-and-workbench',
+      'ordinary-close-window',
+    ],
+    fullCaseCredit: false,
+    certifiedCount: 0,
+    canonicalMochaCount: 0,
+  };
+}
+
 function runCli(args, env = process.env) {
   const options = Object.fromEntries(
     args.reduce((pairs, argument, index) => {
@@ -198,6 +240,17 @@ function runCli(args, env = process.env) {
     },
     terminalResult
   );
+  if (options['supplementary-input']) {
+    const supplementaryPath = options['supplementary-input'];
+    joined.supplementary = [
+      joinSupplementaryCancel(JSON.parse(fs.readFileSync(supplementaryPath, 'utf8')), crosswalk, path.dirname(supplementaryPath), {
+        sourceVersion: options['source-version'],
+        buildId: options['build-id'],
+        platform: options.platform,
+        vscodeVersion: options['vscode-version'],
+      }),
+    ];
+  }
   fs.mkdirSync(path.dirname(options.output), { recursive: true, mode: 0o700 });
   fs.writeFileSync(options.output, `${JSON.stringify(joined, null, 2)}\n`, { mode: 0o600 });
   console.log('Private traceability execution join written to restricted diagnostics; no catalogue values logged.');
@@ -212,4 +265,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { joinPrivateTraceability, runCli, validateCrosswalk };
+module.exports = { joinPrivateTraceability, joinSupplementaryCancel, runCli, validateCrosswalk };

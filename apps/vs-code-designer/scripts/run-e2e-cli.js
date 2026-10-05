@@ -12,6 +12,7 @@ const path = require('path');
 const { URL } = require('url');
 const { createBatchRoot, normalizeSuiteSelection, runBatchSuites, SUITE_REGISTRY } = require('./e2e-cli-batch');
 const { getOgfScenariosForPhase } = require('./ogf-e2e-registry');
+const cancelCheck = require('./workspace-prompt-cancel');
 
 const forbiddenOutputPatterns = [
   {
@@ -83,6 +84,18 @@ if (require.main === module) {
 }
 
 function main() {
+  if (process.argv.includes('--workspace-prompt-cancel')) {
+    if (process.argv.length !== 3) {
+      exitWithError(new Error('--workspace-prompt-cancel is a focused setup + regular UI route; do not combine it with other flags.'));
+      return;
+    }
+    runVscodeTest(['--label', 'createWorkspaceCoreMatrix'], {
+      extraEnv: { LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL: '1', LA_E2E_CLI_CREATE_WORKSPACE_CASE: 'standard-stateful' },
+    })
+      .then((code) => process.exit(code))
+      .catch(exitWithError);
+    return;
+  }
   const {
     args,
     azureAuthWarmup,
@@ -1385,6 +1398,15 @@ function runVscodeTest(args, options = {}) {
       : {}),
     ...(options.extraEnv ?? {}),
   });
+  const cancelRequired =
+    cancelCheck.required(childEnv) &&
+    label === 'createWorkspaceCoreMatrix' &&
+    childEnv.LA_E2E_CLI_CREATE_WORKSPACE_CASE === 'standard-stateful';
+  const cancelContext = cancelRequired ? cancelCheck.prepareCancelContext(childEnv, deferredWorkspaceParent) : undefined;
+  if (cancelContext) {
+    childEnv.LA_E2E_CLI_CANCEL_HANDOFF_PATH = cancelContext.handoffPath;
+    childEnv.LA_E2E_CLI_CANCEL_CONTEXT = JSON.stringify(cancelContext);
+  }
   const child = spawn(command, commandArgs, {
     env: childEnv,
   });
@@ -1411,7 +1433,32 @@ function runVscodeTest(args, options = {}) {
         process.stdout.write(remainingOutput);
       }
       let diagnosticsError;
+      const diagnosticsErrors = [];
       let cleanupLedger;
+      let cancelResult;
+      let cancelError;
+      if (cancelContext) {
+        try {
+          if (code !== 0 || signal) {
+            throw new Error('Original wizard host failed; supplementary Cancel cannot be credited');
+          }
+          cancelResult = await cancelCheck.runCancelSupplement(cancelContext, childEnv, collectVscodeProfileLogs);
+        } catch (error) {
+          cancelError = error;
+          cancelResult = {
+            schemaVersion: 1,
+            scenario: 'workspace-prompt-cancel',
+            invocation: cancelContext.invocation,
+            identity: cancelContext.identity,
+            invocationCount: 0,
+            observationPassed: false,
+            originalCodeClose: null,
+            errors: [String(error)],
+            complete: false,
+          };
+          console.error(`[workspace-cancel] ${String(error)}`);
+        }
+      }
       try {
         captureGeneratedWorkspaceDiagnostics({
           env: childEnv,
@@ -1421,6 +1468,7 @@ function runVscodeTest(args, options = {}) {
         });
       } catch (error) {
         diagnosticsError = error;
+        diagnosticsErrors.push(error);
         markOwnedWorkspaceParentsWithDiagnosticFailure(childEnv, [deferredWorkspaceParent].filter(Boolean));
         console.error(
           `[generated-workspace-diagnostics] Failed to capture generated workspace diagnostics; preserving owned workspace data: ${
@@ -1428,11 +1476,12 @@ function runVscodeTest(args, options = {}) {
           }`
         );
       }
-      cleanupLedger = await cleanupDeferredWorkspaceParent(deferredWorkspaceParent);
+      cleanupLedger = await cleanupDeferredWorkspaceAfterCancel(deferredWorkspaceParent, childEnv, cancelResult);
       try {
         collectVscodeProfileLogs(label, childEnv);
       } catch (error) {
         diagnosticsError = error;
+        diagnosticsErrors.push(error);
         console.error(
           `[vscode-test-cli] Failed to capture required VS Code profile diagnostics: ${
             error instanceof Error ? error.message : String(error)
@@ -1446,7 +1495,17 @@ function runVscodeTest(args, options = {}) {
           ? diagnosticsError.message
           : String(diagnosticsError)
         : '';
-      const phasePassed = code === 0 && cleanupLedger.verified === true && !diagnosticsError && !matchedPattern;
+      if (cancelContext) {
+        try {
+          cancelResult.originalWizardClose = { code, signal };
+          cancelCheck.finalizeCancelResult(cancelContext, cancelResult, cleanupLedger, diagnosticsErrors);
+          cancelCheck.assertCancelResult(cancelResult, cancelContext.root, cancelContext.identity);
+        } catch (error) {
+          cancelError = error;
+          console.error(`[workspace-cancel] Required supplementary acceptance failed: ${String(error)}`);
+        }
+      }
+      const phasePassed = code === 0 && cleanupLedger.verified === true && !diagnosticsError && !matchedPattern && !cancelError;
       writeSuitePhaseResult(childEnv, {
         phaseId,
         label,
@@ -1461,7 +1520,11 @@ function runVscodeTest(args, options = {}) {
       });
 
       if (diagnosticsError) {
-        reject(diagnosticsError instanceof Error ? diagnosticsError : new Error(String(diagnosticsError)));
+        reject(new AggregateError(diagnosticsErrors, 'Required original workspace/profile diagnostics failed'));
+        return;
+      }
+      if (cancelError) {
+        reject(cancelError);
         return;
       }
 
@@ -2394,6 +2457,7 @@ module.exports = {
     collectRuntimeDependencyDiagnostics,
     collectGeneratedWorkspaceSnapshotSources,
     cleanupOwnedWorkspaceParent,
+    cleanupDeferredWorkspaceAfterCancel,
     copyGeneratedWorkspaceSnapshot,
     copySanitizedVscodeProfileLogs,
     copyAzureLogicAppsChannelLogs,
@@ -2613,6 +2677,16 @@ async function cleanupOwnedWorkspaceParent(workspaceParent, context, strict = fa
       throw error;
     }
   }
+}
+
+async function cleanupDeferredWorkspaceAfterCancel(workspaceParent, env, cancelResult) {
+  if (cancelResult && !cancelResult.originalCodeClose) {
+    const error = 'Original regular Code closure was not confirmed; preserving the app through the existing diagnostic retention path.';
+    cancelResult.errors.push(error);
+    markOwnedWorkspaceParentsWithDiagnosticFailure(env, [workspaceParent].filter(Boolean));
+    console.error(`[workspace-cancel] ${error}`);
+  }
+  return cleanupDeferredWorkspaceParent(workspaceParent);
 }
 
 async function cleanupDeferredWorkspaceParent(workspaceParent) {

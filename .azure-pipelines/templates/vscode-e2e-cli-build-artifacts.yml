@@ -27,6 +27,7 @@ steps:
 
       required_paths=(
         apps/vs-code-designer/out/test/e2e/createWorkspace.test.js
+        apps/vs-code-designer/out/test/e2e/workspacePromptCancel.js
         apps/vs-code-designer/out/test/run-e2e.js
         apps/vs-code-designer/dist
       )

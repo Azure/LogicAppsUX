@@ -329,6 +329,7 @@ jobs:
             displayName: Run vscode-test CLI (${{ parameters.suiteId }})
             env:
               LA_E2E_CLI_DIRECT_ARGS: ${{ parameters.cliArguments }}
+              LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL: ${{ eq(parameters.suiteId, 'createWorkspaceCoreMatrix') }}
               LA_E2E_CLI_EXTENSIONS_DIR: $(Agent.TempDirectory)/test-resources/test-extensions
               LA_E2E_CLI_GENERATED_WORKSPACE_ARTIFACT_DIR: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/generated-workspaces/${{ parameters.suiteId }}
               LA_E2E_CLI_LIFECYCLE_ARTIFACT_ROOT: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/lifecycle/${{ parameters.suiteId }}
@@ -417,6 +418,7 @@ jobs:
                 exit "$status"
             env:
               LA_E2E_CLI_DIRECT_ARGS: ${{ parameters.cliArguments }}
+              LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL: ${{ eq(parameters.suiteId, 'createWorkspaceCoreMatrix') }}
               LA_E2E_CLI_EXTENSIONS_DIR: $(Agent.TempDirectory)/test-resources/test-extensions
               LA_E2E_CLI_GENERATED_WORKSPACE_ARTIFACT_DIR: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/generated-workspaces/${{ parameters.suiteId }}
               LA_E2E_CLI_LIFECYCLE_ARTIFACT_ROOT: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/lifecycle/${{ parameters.suiteId }}
@@ -460,6 +462,7 @@ jobs:
             displayName: Run vscode-test CLI (${{ parameters.suiteId }})
             env:
               LA_E2E_CLI_DIRECT_ARGS: ${{ parameters.cliArguments }}
+              LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL: ${{ eq(parameters.suiteId, 'createWorkspaceCoreMatrix') }}
               LA_E2E_CLI_EXTENSIONS_DIR: $(Agent.TempDirectory)\test-resources\test-extensions
               LA_E2E_CLI_GENERATED_WORKSPACE_ARTIFACT_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\generated-workspaces\${{ parameters.suiteId }}
               LA_E2E_CLI_LIFECYCLE_ARTIFACT_ROOT: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\lifecycle\${{ parameters.suiteId }}
@@ -542,6 +545,7 @@ jobs:
                 exit $status
             env:
               LA_E2E_CLI_DIRECT_ARGS: ${{ parameters.cliArguments }}
+              LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL: ${{ eq(parameters.suiteId, 'createWorkspaceCoreMatrix') }}
               LA_E2E_CLI_EXTENSIONS_DIR: $(Agent.TempDirectory)\test-resources\test-extensions
               LA_E2E_CLI_GENERATED_WORKSPACE_ARTIFACT_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\generated-workspaces\${{ parameters.suiteId }}
               LA_E2E_CLI_LIFECYCLE_ARTIFACT_ROOT: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\lifecycle\${{ parameters.suiteId }}
@@ -588,6 +592,8 @@ jobs:
           $vscodeLogsRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/vscode-logs/cli/${{ parameters.suiteId }}'
           $workspaceSnapshotsRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/generated-workspaces/${{ parameters.suiteId }}'
           $processEvidenceRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/lifecycle/${{ parameters.suiteId }}/msn-weather-lifecycle'
+          $cancelRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/workspace-cancel'
+          $cancelDestination = Join-Path $diagnosticsRoot 'workspace-cancel'
 
           function Redact-DiagnosticText {
             param([string]$Value)
@@ -644,6 +650,21 @@ jobs:
             Get-ChildItem -LiteralPath $processEvidenceRoot -File -Filter 'owned-processes-*.json' -ErrorAction Stop |
               Copy-Item -Destination $processDestination -ErrorAction Stop
           }
+          if ('${{ parameters.suiteId }}' -eq 'createWorkspaceCoreMatrix') {
+            if (Test-Path $cancelRoot) {
+              New-Item -ItemType Directory -Force -Path $cancelDestination | Out-Null
+              foreach ($cancelName in @('final-result.json', 'code.log', 'cancel.log', 'screenshots', 'vscode-logs')) {
+                $cancelSource = Join-Path $cancelRoot $cancelName
+                if (Test-Path $cancelSource) {
+                  Copy-Item $cancelSource -Destination $cancelDestination -Recurse -Force -ErrorAction Stop
+                } else {
+                  $missingRequiredFiles += $cancelSource
+                }
+              }
+            } else {
+              $missingRequiredFiles += $cancelRoot
+            }
+          }
 
           foreach ($directory in @($logDestination, $screenshotDestination, $workspaceDestination)) {
             if (-not (Get-ChildItem -Path $directory -Force -ErrorAction SilentlyContinue)) {
@@ -674,6 +695,7 @@ jobs:
                 --crosswalk "$(Agent.TempDirectory)/e2e-traceability-crosswalk-${{ parameters.suiteId }}.json" `
                 --input "$nativeResultPath" `
                 --terminal-result "$resultDestination/${{ parameters.suiteId }}.terminal-result.json" `
+                --supplementary-input "$cancelDestination/final-result.json" `
                 --output "$diagnosticsRoot/private-traceability/${{ parameters.suiteId }}.json" `
                 --source-version "$($admissionContext.sourceSHA)" `
                 --build-id "$(Build.BuildId)" `
@@ -681,6 +703,10 @@ jobs:
                 --vscode-version "$($admissionContext.resolvedVSCodeBuild)"
               if ($LASTEXITCODE -ne 0) {
                 exit $LASTEXITCODE
+              }
+              node "$(Build.SourcesDirectory)/apps/vs-code-designer/scripts/workspace-prompt-cancel.js" "$cancelDestination" '${{ parameters.platform }}'
+              if ($LASTEXITCODE -ne 0) {
+                throw 'Required supplementary workspace Cancel evidence failed; baseline-green/Cancel-missing cannot pass.'
               }
             } else {
               Write-Host 'Private traceability join not emitted: native execution was not successful.'

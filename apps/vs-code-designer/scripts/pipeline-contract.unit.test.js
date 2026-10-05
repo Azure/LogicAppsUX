@@ -1788,7 +1788,13 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
       const scriptsRoot = path.join(sourcesDirectory, 'apps', 'vs-code-designer', 'scripts');
       fs.mkdirSync(scriptsRoot, { recursive: true });
       fs.mkdirSync(agentTempDirectory, { recursive: true });
-      for (const file of ['enrich-e2e-traceability.js', 'ogf-e2e-registry.js', 'e2e-cli-batch.js', 'e2e-cli-terminal.js']) {
+      for (const file of [
+        'enrich-e2e-traceability.js',
+        'ogf-e2e-registry.js',
+        'e2e-cli-batch.js',
+        'e2e-cli-terminal.js',
+        'workspace-prompt-cancel.js',
+      ]) {
         fs.copyFileSync(path.join(__dirname, file), path.join(scriptsRoot, file));
       }
       const scenario = OGF_E2E_SCENARIOS[0];
@@ -1796,6 +1802,15 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
         path.join(agentTempDirectory, `e2e-traceability-crosswalk-${suiteId}.json`),
         JSON.stringify({
           schemaVersion: 1,
+          workspacePromptCancel: {
+            scenarioId: 'workspace-prompt-cancel',
+            source: {
+              system: 'tracking.example.test',
+              caseId: 812,
+              caseRevision: 3,
+              stepMappings: [{ stepId: 'synthetic', stepOrdinal: 4 }],
+            },
+          },
           scenarios: [
             {
               scenarioId: scenario.scenarioId,
@@ -1860,6 +1875,62 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
     fs.writeFileSync(path.join(vscodeLogsRoot, 'profile.log'), 'already redacted log\n');
     const screenshotFixture = writeScreenshotSidecarFixture(screenshotsRoot);
     fs.writeFileSync(path.join(workspaceSnapshotsRoot, 'index.md'), '# redacted workspace\n');
+    if (options.privatePlatform) {
+      const cancelRoot = path.join(sourcesDirectory, 'apps', 'vs-code-designer', '.vscode-test', 'workspace-cancel');
+      fs.mkdirSync(path.join(cancelRoot, 'screenshots'), { recursive: true });
+      fs.mkdirSync(path.join(cancelRoot, 'vscode-logs'));
+      fs.writeFileSync(path.join(cancelRoot, 'code.log'), 'synthetic contract log, not real UI\n');
+      fs.writeFileSync(path.join(cancelRoot, 'cancel.log'), 'synthetic contract log\n');
+      const names = ['open-folder', 'before', 'after', 'preceding-no'];
+      const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jL1kAAAAASUVORK5CYII=', 'base64');
+      for (const name of names) {
+        fs.writeFileSync(path.join(cancelRoot, 'screenshots', `workspace-prompt-cancel-ui-${name}.png`), png);
+        fs.writeFileSync(
+          path.join(cancelRoot, 'screenshots', `workspace-prompt-cancel-ui-${name}.json`),
+          JSON.stringify({
+            schemaVersion: 1,
+            checkpoint: `workspace-prompt-cancel-ui-${name}`,
+            classification: 'evidence',
+            verdict: 'accepted',
+            target: { owner: 'workbench', opaqueTargetId: 'id-unit', opaqueFrameId: 'id-unit', generation: 1 },
+            timing: { samples: 3, captureAttempts: 1 },
+            geometry: { viewport: { width: 1, height: 1 } },
+            events: [{ name: 'accepted', attempt: 1, generation: 1 }],
+          })
+        );
+      }
+      const screenshots = require('./workspace-prompt-cancel').assertRequiredScreenshots(cancelRoot);
+      const unitBaseline = {
+        files: Array.from({ length: 8 }, (_, index) => ({ name: `unit-${index}.json`, sha256: 'a'.repeat(64) })),
+        entries: { app: ['workflow'], vscode: ['launch.json'], workspace: ['app'] },
+      };
+      fs.writeFileSync(
+        path.join(cancelRoot, 'final-result.json'),
+        JSON.stringify({
+          schemaVersion: 1,
+          scenario: 'workspace-prompt-cancel',
+          invocationCount: 1,
+          complete: true,
+          errors: [],
+          identity: { source: 'a'.repeat(40), run: '42', job: 'contract', platform: options.privatePlatform },
+          code: { version: '1.140.0', sha256: 'c'.repeat(64) },
+          observation: {
+            realCancelMouseInput: true,
+            realPrecedingNoMouseInput: true,
+            noReload: true,
+            samples: 7,
+            initialFiles: unitBaseline.files,
+            initialDirectories: unitBaseline.entries,
+            postNoDirectories: unitBaseline.entries,
+            before: unitBaseline,
+            after: unitBaseline,
+          },
+          originalCodeClose: { code: 0, signal: null },
+          cleanup: { verified: true },
+          screenshots,
+        })
+      );
+    }
     const processEvidenceRoot = path.join(
       sourcesDirectory,
       'apps',
@@ -1895,7 +1966,7 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
             .replaceAll('${{ parameters.artifactName }}', artifactName)
             .replaceAll('${{ parameters.suiteId }}', suiteId),
         ],
-        { stdio: 'pipe' }
+        { stdio: 'pipe', env: { ...process.env, BUILD_SOURCEVERSION: 'a'.repeat(40), BUILD_BUILDID: '42', SYSTEM_JOBID: 'contract' } }
       );
     if (options.expectedPrivateFailure) {
       assert.throws(stage, new RegExp(options.expectedPrivateFailure));

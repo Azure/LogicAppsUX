@@ -10,6 +10,7 @@ const path = require('path');
 const {
   _test: {
     collectRuntimeDependencyDiagnostics,
+    cleanupDeferredWorkspaceAfterCancel,
     collectVscodeProfileLogs,
     canUseInteractiveMsnWeatherAzureTargetEnv,
     captureGeneratedWorkspaceDiagnostics,
@@ -66,6 +67,7 @@ const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
 
 (async () => {
   try {
+    await testUnconfirmedCancelClosePreservesExistingApp();
     testCreatesEmptyIsolatedDependencyRoot();
     testFailFastMissingFuncDiagnostics();
     testFailFastMissingInProc8Diagnostics();
@@ -124,6 +126,26 @@ const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
   console.error(error);
   process.exitCode = 1;
 });
+
+async function testUnconfirmedCancelClosePreservesExistingApp() {
+  const root = path.join(tempRoot, 'cancel-unconfirmed-close');
+  fs.mkdirSync(root);
+  const file = path.join(root, 'original-project.json');
+  fs.writeFileSync(file, '{"mustRemain":"original"}');
+  const result = { originalCodeClose: null, errors: ['original ordinary Close Window timeout'] };
+  const cleanup = await cleanupDeferredWorkspaceAfterCancel(root, { LA_E2E_CLI_CREATE_WORKSPACE_PARENT: root }, result);
+  assert.strictEqual(cleanup.verified, false);
+  assert.strictEqual(cleanup.action, 'preserved');
+  assert.strictEqual(fs.readFileSync(file, 'utf8'), '{"mustRemain":"original"}');
+  assert.strictEqual(result.errors[0], 'original ordinary Close Window timeout');
+  assert.match(result.errors[1], /closure was not confirmed/);
+  const closedRoot = path.join(tempRoot, 'cancel-confirmed-close');
+  fs.mkdirSync(closedRoot);
+  const closed = await cleanupDeferredWorkspaceAfterCancel(closedRoot, {}, { originalCodeClose: { code: 0, signal: null }, errors: [] });
+  assert.strictEqual(closed.verified, true);
+  assert.strictEqual(closed.action, 'removed');
+  assert.ok(!fs.existsSync(closedRoot));
+}
 
 function testCreatesEmptyIsolatedDependencyRoot() {
   const root = createIsolatedRuntimeDependenciesRoot('unit-test');

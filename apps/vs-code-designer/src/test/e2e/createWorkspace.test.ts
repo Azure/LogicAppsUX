@@ -1,4 +1,5 @@
 import * as assert from 'assert';
+import { createHash } from 'crypto';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
@@ -344,6 +345,30 @@ suite('Create Workspace Experience Tests', () => {
         await createWorkspaceThroughWebview(creationCase, tempWorkspaceParentPath);
         verifyCreatedWorkspace(tempWorkspaceParentPath, creationCase);
         await captureCreatedWorkspaceDiagnostic(`create-workspace-${creationCase.label}-created`);
+        if (process.env.LA_E2E_CLI_CANCEL_HANDOFF_PATH && creationCase.appType === 'standard' && creationCase.workflowType === 'Stateful') {
+          const entry = buildWorkspaceManifestEntry(tempWorkspaceParentPath, creationCase);
+          assertWorkspaceManifestEntry(entry);
+          const context = JSON.parse(process.env.LA_E2E_CLI_CANCEL_CONTEXT || '{}');
+          assert.ok(context.invocation && context.identity, 'Current-job Cancel context is required');
+          const executable = fs.realpathSync(process.execPath);
+          fs.writeFileSync(
+            process.env.LA_E2E_CLI_CANCEL_HANDOFF_PATH,
+            `${JSON.stringify({
+              schemaVersion: 1,
+              invocation: context.invocation,
+              identity: context.identity,
+              entries: [entry],
+              launch: {
+                executable,
+                sha256: createHash('sha256').update(fs.readFileSync(executable)).digest('hex'),
+                version: vscode.version,
+                extensionsDir: process.env.LA_E2E_CLI_EXTENSIONS_DIR,
+              },
+            })}\n`,
+            { flag: 'wx' }
+          );
+          console.log('[workspace-cancel] Verified original Standard Stateful manifest and resolved Code handoff recorded.');
+        }
       }
 
       await assertNoDialogAttempts('Create Workspace core project creation flows');
