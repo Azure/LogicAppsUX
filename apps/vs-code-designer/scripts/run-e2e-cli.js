@@ -423,6 +423,9 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
   };
   const terminalResult = {
     suiteId: suite.id,
+    originalProcessClosureVerified: processCleanup.retainedOriginalIdentitiesVerified === true,
+    processClosureProof:
+      processCleanup.retainedOriginalIdentitiesVerified === true ? 'retained-original-identities' : 'original-identities-unverified',
     exitCode,
     signal,
     cleanupVerified: cleanupLedger.verified,

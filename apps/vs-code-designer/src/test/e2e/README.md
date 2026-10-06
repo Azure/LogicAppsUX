@@ -82,6 +82,15 @@ Exit zero alone cannot finalize success. Missing, stale, malformed or incomplete
 evidence and cleanup/closure failures produce a current failed result and nonzero
 exit. Batch execution keeps its existing `reports/*` finalization.
 
+Retained-original process identities are a separate native acceptance gate.
+The current legacy post-exit ancestry observer cannot prove reparented Func or
+Azurite closure. It therefore reports `originalProcessClosureVerified: false`
+and `processClosureProof: "original-identities-unverified"`, even when GUI phases,
+ordinary exits and root cleanup succeed. Those results are diagnostic-only;
+parent CI rejects supplementary acceptance until a genuine observer supplies
+`retainedOriginalIdentitiesVerified === true`. No identity-proof flag is inferred
+from an empty current tree, exit zero, directory absence, or unit fixture data.
+
 Native acceptance requires the source-bound compiled producer artifact and
 actual Windows and Linux isolated consumer runs with their generated fixture,
 raw CLI results, saved-definition snapshot and accepted screenshots.
