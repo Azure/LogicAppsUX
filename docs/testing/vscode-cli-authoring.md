@@ -58,6 +58,12 @@ The installed Azure utility can label its existing resource-group list
 select **Create new resource group**. Exact existing-target selection and a
 read-only subscription-name lookup have regression controls in
 `azureConnectorFixture.unit.ts`; source-bound native verification remains open.
+Affirmative wizard consumers must not use command-only minimal activation: the
+normal activation path initializes the real Azure Resources account tree used
+by `getSubscriptionPromptStep`. HTTP keeps bootstrap admission separate and
+uses normal activation with strict managed runtime validation for reopen.
+The selected existing RG's actual ARM location is the persistence oracle;
+template location defaults are not proof of the resource's location.
 
 This policy is specific to Azure connector setup. Tests intentionally exercising
 workspace **No** or **Cancel** retain those original actions and assertions.

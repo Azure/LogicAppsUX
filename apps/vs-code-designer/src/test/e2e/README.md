@@ -89,6 +89,16 @@ harness—persists the approved Azure target, which is independently checked bef
 Request/Compose authoring. Missing context/auth, absent or ambiguous targets,
 sign-in/elevation prompts and resource-creation choices fail explicitly.
 No resources, identities or grants are created or changed.
+Only HTTP reopen uses normal (non-minimal) Logic Apps activation so the actual
+Azure Resources account tree is initialized before the affirmative wizard.
+Bootstrap admission remains unchanged; reopen keeps strict managed dependency
+validation and the same isolated runtime root. The activated dependency's real
+account-tree API is checked, never fabricated.
+The approved existing RG is read with an authenticated **GET** before selection.
+Its returned resource ID/name must match the configured subscription/group; its
+actual location is authoritative. Product-persisted location is compared with
+that observed location, not blindly with the template's `westus` hint.
+Denied WIF reads or missing tree/fixture prerequisites remain explicit blockers.
 It adds Request and Compose through the actual designer, saves through the enabled
 V2 ToolbarButton's accessible Save text,
 reads every numbered rendered CodeMirror line in the global Code tab, replaces

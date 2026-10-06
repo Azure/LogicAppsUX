@@ -4,8 +4,10 @@ import * as os from 'os';
 import * as path from 'path';
 import {
   assertApprovedAzureConnectorFixtureSaved,
+  assertAzureConnectorAccountTreePrerequisite,
   readApprovedAzureConnectorFixture,
   readApprovedAzureSubscriptionName,
+  readApprovedExistingResourceGroup,
   selectApprovedAzureConnectorFixturePrompt,
 } from './azureConnectorFixture';
 import type { CdpEvaluator } from './cdpFormHelpers';
@@ -22,7 +24,8 @@ const env = {
 
 export async function runApprovedAzureConnectorFixtureControls(control: Control): Promise<void> {
   await control('approved fixture environment fails missing context and verifies product-persisted settings without injection', () => {
-    const fixture = readApprovedAzureConnectorFixture(env);
+    const target = readApprovedAzureConnectorFixture(env);
+    const fixture = { ...target, location: 'eastus', resourceGroupLocationVerified: true };
     for (const key of Object.keys(env)) {
       assert.throws(() => readApprovedAzureConnectorFixture({ ...env, [key]: '' }), /fixture missing/);
     }
@@ -40,6 +43,8 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
       };
       fs.writeFileSync(path.join(root, 'local.settings.json'), JSON.stringify(settings));
       assertApprovedAzureConnectorFixtureSaved(root, fixture);
+      assert.throws(() => assertApprovedAzureConnectorFixtureSaved(root, target), /actual location must be verified/);
+      assert.throws(() => assertApprovedAzureConnectorFixtureSaved(root, { ...fixture, location: 'westus' }), /approved target/);
       settings.Values.WORKFLOWS_RESOURCE_GROUP_NAME = 'other-group';
       fs.writeFileSync(path.join(root, 'local.settings.json'), JSON.stringify(settings));
       assert.throws(() => assertApprovedAzureConnectorFixtureSaved(root, fixture), /approved target/);
@@ -47,8 +52,61 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
       fs.rmSync(root, { recursive: true, force: true });
     }
   });
+  await control('normal HTTP activation requires a real initialized account-tree API before affirmative setup', () => {
+    const api = { appResourceTree: { _rootTreeItem: { getSubscriptionPromptStep: () => {} } } };
+    assertAzureConnectorAccountTreePrerequisite(api, '0');
+    assert.throws(() => assertAzureConnectorAccountTreePrerequisite(api, '1'), /normal activation/);
+    assert.throws(() => assertAzureConnectorAccountTreePrerequisite({}, '0'), /account tree is unavailable/);
+    assert.throws(() => assertAzureConnectorAccountTreePrerequisite(undefined, '0'), /account tree is unavailable/);
+    const family = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
+    assert.ok(family.includes('assertAzureConnectorAccountTreePrerequisite'));
+    assert.ok(
+      family.indexOf('assertAzureConnectorAccountTreePrerequisite(') <
+        family.indexOf("executeCommand('azureLogicAppsStandard.openDesigner'")
+    );
+  });
+  await control('existing RG actual ARM location replaces template hint and WIF failures remain blockers', async () => {
+    const target = readApprovedAzureConnectorFixture(env);
+    const group = {
+      id: `/subscriptions/${target.subscriptionId}/resourceGroups/${target.resourceGroupName}`,
+      name: target.resourceGroupName,
+      location: 'eastus',
+    };
+    let calls = 0;
+    const get = async (url: any, options: any) => {
+      calls++;
+      assert.strictEqual(
+        String(url),
+        'https://management.azure.com/subscriptions/unit-subscription/resourceGroups/unit-existing-group?api-version=2022-09-01'
+      );
+      assert.strictEqual(options.method, 'GET');
+      return { ok: true, json: async () => group };
+    };
+    const observed = await readApprovedExistingResourceGroup(target, Date.now() + 1000, 'unit-owned-token', get as typeof fetch);
+    assert.strictEqual(target.location, 'westus');
+    assert.strictEqual(observed.location, 'eastus', 'Do not hardcode or trust template westus over the actual RG');
+    assert.strictEqual(observed.resourceGroupLocationVerified, true);
+    await assert.rejects(() => readApprovedExistingResourceGroup(target, Date.now() + 1000, '', get as typeof fetch), /token missing/);
+    assert.strictEqual(calls, 1);
+    await assert.rejects(
+      () =>
+        readApprovedExistingResourceGroup(target, Date.now() + 1000, 'unit-owned-token', (async () => ({
+          ok: false,
+          status: 403,
+        })) as unknown as typeof fetch),
+      /HTTP 403/
+    );
+    await assert.rejects(
+      () =>
+        readApprovedExistingResourceGroup(target, Date.now() + 1000, 'unit-owned-token', (async () => ({
+          ok: true,
+          json: async () => ({ ...group, id: '/subscriptions/foreign/resourceGroups/other' }),
+        })) as unknown as typeof fetch),
+      /another existing resource group/
+    );
+  });
   await control('approved subscription identity lookup is exact read-only ARM GET and has no ambient auth fallback', async () => {
-    const fixture = readApprovedAzureConnectorFixture(env);
+    const fixture = { ...readApprovedAzureConnectorFixture(env), location: 'eastus', resourceGroupLocationVerified: true };
     let calls = 0;
     const get = async (url: any, options: any) => {
       calls++;
@@ -92,7 +150,7 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
       const { JSDOM } = require('jsdom');
       const dom = new JSDOM('<html><body></body></html>', { pretendToBeVisual: true, runScripts: 'outside-only' });
       const window = dom.window;
-      const fixture = readApprovedAzureConnectorFixture(env);
+      const fixture = { ...readApprovedAzureConnectorFixture(env), location: 'eastus', resourceGroupLocationVerified: true };
       const clicked: string[] = [];
       let stage = 0;
       const render = () => {

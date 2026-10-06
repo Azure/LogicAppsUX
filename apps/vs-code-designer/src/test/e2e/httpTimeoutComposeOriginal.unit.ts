@@ -387,6 +387,7 @@ async function main(): Promise<void> {
           assert.strictEqual(env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT, path.join(root, 'runtime'));
           if (labels.length === 1) {
             assert.strictEqual(env.LA_E2E_CLI_INCLUDE_RUNTIME_DEPENDENCY_BOOTSTRAP, '1');
+            assert.strictEqual(env.LA_E2E_CLI_MINIMAL_ACTIVATION, '1', 'Bootstrap admission stays unchanged');
           } else if (labels.length === 2) {
             assert.strictEqual(env.LA_E2E_CLI_CREATE_WORKSPACE_CASE, 'standard-stateless');
             const entry = makeEntry();
@@ -395,6 +396,9 @@ async function main(): Promise<void> {
             fs.writeFileSync(path.join(entry.wfDir, 'workflow.json'), '{}');
             fs.writeFileSync(env.LA_E2E_CLI_CREATE_WORKSPACE_FIXTURE_MANIFEST, JSON.stringify([entry]));
           } else {
+            assert.strictEqual(env.LA_E2E_CLI_MINIMAL_ACTIVATION, '0', 'Actual HTTP consumer must initialize the real Azure account tree');
+            assert.strictEqual(env.LA_E2E_CLI_VALIDATE_DEPENDENCIES, '1', 'Normal activation preserves managed runtime admission');
+            assert.strictEqual(env.LA_E2E_STRICT_DEPENDENCY_VALIDATION, '1');
             assert.strictEqual(env.LA_E2E_CLI_STARTUP_RESOURCE, makeEntry().wsFilePath);
             assert.strictEqual(env.LA_E2E_CLI_INCLUDE_HTTP_TIMEOUT_COMPOSE_ORIGINAL, '1');
           }
