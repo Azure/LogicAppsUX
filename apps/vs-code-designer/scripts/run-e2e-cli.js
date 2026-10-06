@@ -5,7 +5,7 @@
 /* global __dirname, __filename, clearTimeout, console, module, process, require, setTimeout */
 const { execFileSync, spawn } = require('child_process');
 const { Buffer } = require('buffer');
-const { createHash } = require('crypto');
+const { createHash, randomUUID } = require('crypto');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -529,8 +529,8 @@ function readJsonIfExists(filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 }
 
-function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, processCleanup }) {
-  const phaseResults = readJsonLinesIfExists(context.phaseResultsPath);
+function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, processCleanup, phaseResults: suppliedPhases }) {
+  const phaseResults = suppliedPhases ?? readJsonLinesIfExists(context.phaseResultsPath);
   const observedPhaseIds = phaseResults.map((phase) => phase.phaseId).filter(Boolean);
   const expectedPhaseIds = context.expectedPhaseIds ?? [];
   const missingPhaseIds = expectedPhaseIds.filter((phaseId) => !observedPhaseIds.includes(phaseId));
@@ -569,7 +569,8 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     processCleanup.verified === true &&
     !error &&
     phaseDiagnosticsErrors.length === 0 &&
-    lifecycleSucceeded;
+    lifecycleSucceeded &&
+    (!context.invocation || (context.provenanceVerified === true && context.ownedRootCleanup?.verified === true));
   const finalizedPhaseResults = terminalComplete ? phaseResults : phaseResults.map(clearOgfScenarios);
   const ogfScenarios = terminalComplete ? collectOgfScenarios(finalizedPhaseResults) : [];
   const cleanupLedger = {
@@ -585,8 +586,13 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     phaseCleanupVerified,
     processTreeVerified: processCleanup.verified === true,
     processCleanup,
-    verified: phaseCompleteness && phaseCleanupVerified && processCleanup.verified === true,
+    verified:
+      phaseCompleteness &&
+      phaseCleanupVerified &&
+      processCleanup.verified === true &&
+      (!context.invocation || (context.provenanceVerified === true && context.ownedRootCleanup?.verified === true)),
     phases: finalizedPhaseResults,
+    ...(context.invocation ? { invocation: context.invocation, ownedRootCleanup: context.ownedRootCleanup } : {}),
   };
   const terminalResult = {
     suiteId: suite.id,
@@ -602,6 +608,9 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     blockedPhaseIds,
     phaseCompleteness,
     complete: terminalComplete,
+    ...(context.invocation
+      ? { label: suite.id, invocation: context.invocation, provenanceVerified: context.provenanceVerified === true }
+      : {}),
     ...([
       'msnWeatherLifecycle',
       'httpTimeoutComposeOriginal',
@@ -615,6 +624,7 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
   };
   writeSuiteCleanupLedger({ LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH: context.cleanupLedgerPath }, cleanupLedger);
   writeSuiteTerminalResult({ LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH: context.terminalResultPath }, terminalResult);
+  return terminalResult;
 }
 
 function getDuplicateValues(values) {
@@ -830,71 +840,102 @@ async function runHttpTimeoutComposeOriginal({
   cleanup = cleanupOwnedWorkspaceParent,
   createRuntimeRoot = createIsolatedRuntimeDependenciesRoot,
   cleanupRuntime = cleanupRuntimeDependenciesRoot,
+  observeClosure = verifyNoOwnedDescendants,
   artifactDir = getLifecycleArtifactDir('http-timeout-compose-original'),
+  resultsDir = path.join(process.cwd(), '.vscode-test', 'results'),
 } = {}) {
-  const { selectHttpTimeoutComposeWorkspace } = require('../out/test/e2e/httpTimeoutComposeOracle');
-  fs.mkdirSync(artifactDir, { recursive: true });
-  const workspaceParent = createParent('http-timeout-compose-original');
-  const notBefore = Date.now();
-  const manifestPath = path.join(artifactDir, `manifest-stateless-${notBefore}.json`);
-  const runtimeDependenciesRoot = process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT ?? createRuntimeRoot('httpTimeoutComposeOriginal');
-  const phaseResultsPath = process.env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH ?? path.join(artifactDir, `phases-${notBefore}.jsonl`);
-  const commonEnv = {
-    LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: runtimeDependenciesRoot,
-    LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH: phaseResultsPath,
-    LA_E2E_CLI_CREATE_WORKSPACE_PARENT: workspaceParent,
-    LA_E2E_CLI_CREATE_WORKSPACE_FIXTURE_MANIFEST: manifestPath,
-    LA_E2E_CLI_HTTP_TIMEOUT_COMPOSE_NOT_BEFORE: String(notBefore),
-  };
-  const bootstrapExit = await run(['--label', 'runtimeDependencyBootstrap'], {
-    extraEnv: {
-      ...commonEnv,
-      LA_E2E_CLI_INCLUDE_RUNTIME_DEPENDENCY_BOOTSTRAP: '1',
-      LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
-      LA_E2E_CLI_VALIDATE_DEPENDENCIES: '1',
-      LA_E2E_CLI_USER_DATA_SUFFIX: `http-timeout-compose-bootstrap-${notBefore}`,
-    },
-  });
-  if (bootstrapExit !== 0) {
-    throw new Error('HTTP timeout Compose runtime dependency bootstrap host failed');
-  }
-  // Existing wizard fixture producer, one Standard Stateless case only.
-  // The official CLI process must close successfully before the fresh reopen.
-  const createExit = await run(['--label', 'createWorkspaceFixturesManifest'], {
-    extraEnv: {
-      ...commonEnv,
-      LA_E2E_CLI_HTTP_TIMEOUT_COMPOSE_PHASE: 'create',
-      LA_E2E_CLI_CREATE_WORKSPACE_CASE: 'standard-stateless',
-      LA_E2E_CLI_USER_DATA_SUFFIX: `http-timeout-compose-create-${notBefore}`,
-    },
-  });
-  if (createExit !== 0) {
-    throw new Error('HTTP timeout Compose fixture host failed');
-  }
-  const entry = selectHttpTimeoutComposeWorkspace(JSON.parse(fs.readFileSync(manifestPath, 'utf8')), workspaceParent, notBefore);
-  for (const requiredPath of [entry.wsFilePath, path.join(entry.wfDir, 'workflow.json')]) {
-    if (!fs.existsSync(requiredPath)) {
-      throw new Error(`HTTP timeout Compose generated fixture is missing: ${requiredPath}`);
+  const invocation = { id: randomUUID(), startedAt: new Date().toISOString(), ownerPid: process.pid };
+  const direct = process.env.LA_E2E_CLI_BATCH_MODE !== '1';
+  const context = direct ? beginDirectHttpTimeoutComposeEvidence({ artifactDir, resultsDir, invocation }) : undefined;
+  let lifecycleError;
+  let ownedRootCleanup;
+  try {
+    const { selectHttpTimeoutComposeWorkspace } = require('../out/test/e2e/httpTimeoutComposeOracle');
+    fs.mkdirSync(artifactDir, { recursive: true });
+    const workspaceParent = createParent('http-timeout-compose-original');
+    const notBefore = Date.now();
+    const manifestPath = path.join(artifactDir, `manifest-stateless-${notBefore}.json`);
+    const runtimeDependenciesRoot = process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT ?? createRuntimeRoot('httpTimeoutComposeOriginal');
+    const phaseResultsPath = context?.phaseResultsPath ?? process.env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH;
+    const commonEnv = {
+      LA_E2E_CLI_HTTP_TIMEOUT_COMPOSE_INVOCATION_ID: invocation.id,
+      LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: runtimeDependenciesRoot,
+      LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH: phaseResultsPath,
+      LA_E2E_CLI_CREATE_WORKSPACE_PARENT: workspaceParent,
+      LA_E2E_CLI_CREATE_WORKSPACE_FIXTURE_MANIFEST: manifestPath,
+      LA_E2E_CLI_HTTP_TIMEOUT_COMPOSE_NOT_BEFORE: String(notBefore),
+    };
+    const bootstrapExit = await run(['--label', 'runtimeDependencyBootstrap'], {
+      extraEnv: {
+        ...commonEnv,
+        LA_E2E_CLI_INCLUDE_RUNTIME_DEPENDENCY_BOOTSTRAP: '1',
+        LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
+        LA_E2E_CLI_VALIDATE_DEPENDENCIES: '1',
+        LA_E2E_CLI_USER_DATA_SUFFIX: `http-timeout-compose-bootstrap-${notBefore}`,
+      },
+    });
+    if (bootstrapExit !== 0) {
+      throw new Error('HTTP timeout Compose runtime dependency bootstrap host failed');
     }
+    // Existing wizard fixture producer, one Standard Stateless case only.
+    // The official CLI process must close successfully before the fresh reopen.
+    const createExit = await run(['--label', 'createWorkspaceFixturesManifest'], {
+      extraEnv: {
+        ...commonEnv,
+        LA_E2E_CLI_HTTP_TIMEOUT_COMPOSE_PHASE: 'create',
+        LA_E2E_CLI_CREATE_WORKSPACE_CASE: 'standard-stateless',
+        LA_E2E_CLI_USER_DATA_SUFFIX: `http-timeout-compose-create-${notBefore}`,
+      },
+    });
+    if (createExit !== 0) {
+      throw new Error('HTTP timeout Compose fixture host failed');
+    }
+    const entry = selectHttpTimeoutComposeWorkspace(JSON.parse(fs.readFileSync(manifestPath, 'utf8')), workspaceParent, notBefore);
+    for (const requiredPath of [entry.wsFilePath, path.join(entry.wfDir, 'workflow.json')]) {
+      if (!fs.existsSync(requiredPath)) {
+        throw new Error(`HTTP timeout Compose generated fixture is missing: ${requiredPath}`);
+      }
+    }
+    const runExit = await run(['--label', 'httpTimeoutComposeOriginal'], {
+      extraEnv: {
+        ...commonEnv,
+        LA_E2E_CLI_HTTP_TIMEOUT_COMPOSE_PHASE: 'reopen',
+        LA_E2E_CLI_INCLUDE_HTTP_TIMEOUT_COMPOSE_ORIGINAL: '1',
+        LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
+        LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '1',
+        LA_E2E_CLI_USER_DATA_SUFFIX: `http-timeout-compose-run-${notBefore}`,
+        LA_E2E_CLI_STARTUP_RESOURCE: entry.wsFilePath,
+      },
+    });
+    if (runExit !== 0) {
+      throw new Error('HTTP timeout Compose observation host failed');
+    }
+    // Retain failed fixture/diagnostics. Cleanup failure cannot become success.
+    await cleanup(workspaceParent, 'HTTP timeout Compose original', true);
+    if (!process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT && process.env.LA_E2E_CLI_PRESERVE_WORKSPACES !== '1') {
+      await cleanupRuntime(runtimeDependenciesRoot);
+    }
+    const ownedRoots = [workspaceParent, ...(!process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT ? [runtimeDependenciesRoot] : [])];
+    ownedRootCleanup = { ownedRoots, checkedAt: new Date().toISOString(), verified: getOwnedRootCleanupVerified(ownedRoots) };
+    if (context && !ownedRootCleanup.verified) {
+      throw new Error('HTTP timeout Compose owned lifecycle roots still exist after cleanup');
+    }
+  } catch (error) {
+    lifecycleError = error;
   }
-  const runExit = await run(['--label', 'httpTimeoutComposeOriginal'], {
-    extraEnv: {
-      ...commonEnv,
-      LA_E2E_CLI_HTTP_TIMEOUT_COMPOSE_PHASE: 'reopen',
-      LA_E2E_CLI_INCLUDE_HTTP_TIMEOUT_COMPOSE_ORIGINAL: '1',
-      LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
-      LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '1',
-      LA_E2E_CLI_USER_DATA_SUFFIX: `http-timeout-compose-run-${notBefore}`,
-      LA_E2E_CLI_STARTUP_RESOURCE: entry.wsFilePath,
-    },
-  });
-  if (runExit !== 0) {
-    throw new Error('HTTP timeout Compose observation host failed');
-  }
-  // Retain failed fixture/diagnostics. Cleanup failure cannot become success.
-  await cleanup(workspaceParent, 'HTTP timeout Compose original', true);
-  if (!process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT && process.env.LA_E2E_CLI_PRESERVE_WORKSPACES !== '1') {
-    await cleanupRuntime(runtimeDependenciesRoot);
+  if (context) {
+    let processCleanup;
+    try {
+      processCleanup = { ...(await observeClosure(process.pid)), ownerPid: process.pid };
+    } catch (error) {
+      processCleanup = { verified: false, ownerPid: process.pid, checkedAt: new Date().toISOString(), error: String(error) };
+    }
+    const terminal = finalizeDirectHttpTimeoutComposeEvidence(context, { lifecycleError, processCleanup, ownedRootCleanup });
+    if (!terminal.complete) {
+      throw lifecycleError ?? new Error(terminal.diagnosticsError || 'HTTP timeout Compose direct evidence is incomplete');
+    }
+  } else if (lifecycleError) {
+    throw lifecycleError;
   }
   return 0;
 }
@@ -970,6 +1011,106 @@ async function runStatelessVariablesLifecycle(visibleDelayMs) {
   });
   await cleanupOwnedWorkspaceParent(workspaceParent, 'stateless variables lifecycle', true);
   await cleanupOwnedWorkspaceParent(dependencyRoot, 'stateless variables dependencies', true);
+}
+
+function beginDirectHttpTimeoutComposeEvidence({ artifactDir, resultsDir, invocation }) {
+  const label = 'httpTimeoutComposeOriginal';
+  const context = {
+    invocation,
+    expectedPhaseIds: getDirectExpectedPhaseIds(label),
+    phaseResultsPath: path.join(artifactDir, `phases-${invocation.id}.jsonl`),
+    terminalResultPath: path.join(resultsDir, `${label}.terminal-result.json`),
+    cleanupLedgerPath: path.join(resultsDir, `${label}.cleanup-ledger.json`),
+  };
+  context.invocation = { ...invocation, replacedPriorResult: fs.existsSync(context.terminalResultPath) };
+  writeSuiteTerminalResult(
+    { LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH: context.terminalResultPath },
+    {
+      label,
+      suiteId: label,
+      invocation: context.invocation,
+      complete: false,
+      cleanupVerified: false,
+      lifecycleFinalized: false,
+      expectedPhaseIds: context.expectedPhaseIds,
+      phaseResults: [],
+    }
+  );
+  writeSuiteCleanupLedger(
+    { LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH: context.cleanupLedgerPath },
+    { invocation: context.invocation, verified: false, phaseResults: [] }
+  );
+  fs.mkdirSync(artifactDir, { recursive: true });
+  fs.writeFileSync(context.phaseResultsPath, '');
+  return context;
+}
+
+function finalizeDirectHttpTimeoutComposeEvidence(context, { lifecycleError, processCleanup, ownedRootCleanup }) {
+  let phaseResults = [];
+  let evidenceError;
+  try {
+    phaseResults = readJsonLinesIfExists(context.phaseResultsPath);
+    const initialized = readJsonIfExists(context.terminalResultPath);
+    const start = Date.parse(context.invocation.startedAt);
+    const labels = ['runtimeDependencyBootstrap', 'createWorkspaceFixturesManifest', 'httpTimeoutComposeOriginal'];
+    const validClosure = (closure, notBefore) =>
+      closure?.verified === true &&
+      Number.isInteger(closure.ownerPid) &&
+      closure.ownerPid > 0 &&
+      Array.isArray(closure.alivePids) &&
+      closure.alivePids.length === 0 &&
+      !closure.error &&
+      Date.parse(closure.checkedAt) >= notBefore &&
+      Date.parse(closure.checkedAt) <= Date.now();
+    context.provenanceVerified =
+      initialized?.invocation?.id === context.invocation.id &&
+      initialized.lifecycleFinalized === false &&
+      getDirectSuiteComplete('httpTimeoutComposeOriginal', phaseResults) &&
+      phaseResults.every(
+        (phase, index) =>
+          phase.invocationId === context.invocation.id &&
+          Date.parse(phase.phaseStartedAt) >= start &&
+          phase.label === labels[index] &&
+          Number.isInteger(phase.mochaPassingCount) &&
+          phase.mochaPassingCount > 0 &&
+          Date.parse(phase.phaseFinishedAt) >= Date.parse(phase.phaseStartedAt) &&
+          Date.parse(phase.phaseFinishedAt) <= Date.now() &&
+          validClosure(phase.processCleanup, Date.parse(phase.phaseStartedAt)) &&
+          Date.parse(phase.processCleanup.checkedAt) <= Date.parse(phase.phaseFinishedAt)
+      ) &&
+      validClosure(processCleanup, start) &&
+      processCleanup.ownerPid === context.invocation.ownerPid &&
+      phaseResults.every(
+        (phase, index) => index === 0 || Date.parse(phase.phaseStartedAt) >= Date.parse(phaseResults[index - 1].phaseFinishedAt)
+      );
+    if (!context.provenanceVerified) {
+      throw new Error('HTTP timeout Compose stale, incomplete or mismatched invocation/phase/closure evidence');
+    }
+  } catch (error) {
+    context.provenanceVerified = false;
+    evidenceError = error;
+  }
+  try {
+    context.ownedRootCleanup = {
+      ...ownedRootCleanup,
+      verified:
+        ownedRootCleanup?.verified === true &&
+        getOwnedRootCleanupVerified(ownedRootCleanup.ownedRoots) &&
+        Date.parse(ownedRootCleanup.checkedAt) >= Date.parse(phaseResults.at(-1)?.phaseFinishedAt) &&
+        Date.parse(processCleanup.checkedAt) >= Date.parse(ownedRootCleanup.checkedAt),
+    };
+  } catch (error) {
+    context.ownedRootCleanup = { ...ownedRootCleanup, verified: false, error: String(error) };
+  }
+  return writeSuiteFinalEvidence({
+    context,
+    suite: SUITE_REGISTRY.httpTimeoutComposeOriginal,
+    exitCode: lifecycleError || evidenceError ? 1 : 0,
+    signal: null,
+    error: lifecycleError ?? evidenceError ?? (!context.ownedRootCleanup.verified ? new Error('Owned cleanup not verified') : undefined),
+    processCleanup,
+    phaseResults,
+  });
 }
 
 async function runNugetConversionLifecycle(visibleDelayMs) {
@@ -1718,6 +1859,7 @@ function safeReadDirectory(directory) {
 }
 
 function runVscodeTest(args, options = {}) {
+  const phaseStartedAt = new Date().toISOString();
   const label = getLabelArg(args);
   const userDataSuffix =
     options.extraEnv?.LA_E2E_CLI_USER_DATA_SUFFIX ?? process.env.LA_E2E_CLI_USER_DATA_SUFFIX ?? `run-${Date.now()}-${process.pid}`;
@@ -1926,6 +2068,8 @@ function runVscodeTest(args, options = {}) {
         options.multiRootCreatePhase && childEnv.LA_E2E_CLI_MULTI_ROOT_HANDOFF
           ? 'workspaceMultiRoot:create'
           : getSuitePhaseId(label, childEnv);
+      const ownHttpInvocation = childEnv.LA_E2E_CLI_HTTP_TIMEOUT_COMPOSE_INVOCATION_ID;
+      const processCleanup = ownHttpInvocation ? { ...(await verifyNoOwnedDescendants(child.pid)), ownerPid: child.pid } : undefined;
       const matchedPattern = forbiddenOutputPatterns.find(({ pattern }) => pattern.test(output));
       const diagnosticsErrorMessage = diagnosticsError
         ? diagnosticsError instanceof Error
@@ -1955,7 +2099,14 @@ function runVscodeTest(args, options = {}) {
         }
       }
       const phasePassed =
-        code === 0 && cleanupLedger.verified === true && !diagnosticsError && !matchedPattern && !cancelError && !regenerationError;
+        code === 0 &&
+        cleanupLedger.verified === true &&
+        !diagnosticsError &&
+        !matchedPattern &&
+        !cancelError &&
+        !regenerationError &&
+        (!ownHttpInvocation ||
+          (signal === null && processCleanup?.verified === true && Number.isInteger(child.pid) && getMochaPassingCount(output) > 0));
       if (regenerationContext) {
         const errors = [
           ...diagnosticsErrors.map(String),
@@ -2004,6 +2155,14 @@ function runVscodeTest(args, options = {}) {
           cleanupLedger,
           mochaPassingCount: getMochaPassingCount(output),
           ogfScenarios: buildOgfScenariosForPhase(phaseId, childEnv, { passed: phasePassed }),
+          ...(ownHttpInvocation
+            ? {
+                invocationId: ownHttpInvocation,
+                phaseStartedAt,
+                phaseFinishedAt: new Date().toISOString(),
+                processCleanup,
+              }
+            : {}),
         });
       }
 
@@ -2017,6 +2176,10 @@ function runVscodeTest(args, options = {}) {
       }
       if (regenerationError) {
         reject(regenerationError);
+        return;
+      }
+      if (ownHttpInvocation && processCleanup?.verified !== true) {
+        reject(new Error('HTTP timeout Compose original phase owned-descendant closure was not verified'));
         return;
       }
 
@@ -2958,6 +3121,8 @@ module.exports = {
     findAzureLogicAppsChannelLogs,
     getCodefulDebugTasksRunExtraEnv,
     runHttpTimeoutComposeOriginal,
+    beginDirectHttpTimeoutComposeEvidence,
+    finalizeDirectHttpTimeoutComposeEvidence,
     getMsnWeatherAzureTargetEnv,
     getMsnWeatherAzureAuthEnv,
     hasHeadlessMsnWeatherAzureAuth,

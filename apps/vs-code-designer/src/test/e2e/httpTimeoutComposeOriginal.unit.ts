@@ -5,6 +5,7 @@ import * as path from 'path';
 import type { CdpConnection } from './cdpClient';
 import { HttpTimeoutComposeDriver } from './httpTimeoutComposeDriver';
 import { runHttpTimeoutComposeDomControls } from './httpTimeoutComposeDom.unit';
+import { runHttpTimeoutComposeDirectControls } from './httpTimeoutComposeDirect.unit';
 import {
   assembleHttpTimeoutComposeCode,
   assertHttpTimeoutComposeAuthored,
@@ -305,11 +306,13 @@ async function main(): Promise<void> {
     'LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT',
     'LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH',
     'LA_E2E_CLI_PRESERVE_WORKSPACES',
+    'LA_E2E_CLI_BATCH_MODE',
   ] as const;
   const priorEnvironment = Object.fromEntries(environmentKeys.map((key) => [key, process.env[key]]));
   for (const key of environmentKeys) {
     delete process.env[key];
   }
+  process.env.LA_E2E_CLI_BATCH_MODE = '1'; // Existing callback-only controls leave finalization to the batch wrapper.
   try {
     const makeEntry = (createdAt = new Date().toISOString()) => ({
       appType: 'standard',
@@ -505,6 +508,7 @@ async function main(): Promise<void> {
     }
     fs.rmSync(root, { recursive: true, force: true }); // Unit-owned temporary command fixture only.
   }
+  await runHttpTimeoutComposeDirectControls(control);
   console.log(`[http-timeout-compose-control] ${passed} non-GUI controls passed; no native host launched or credited.`);
 }
 

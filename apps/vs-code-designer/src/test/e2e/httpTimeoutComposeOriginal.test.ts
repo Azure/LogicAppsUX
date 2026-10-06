@@ -47,7 +47,7 @@ suite('HTTP timeout Compose original authoring clause', () => {
     const extension = vscode.extensions.getExtension('ms-azuretools.vscode-azurelogicapps');
     assert.ok(extension);
     await selectHttpTimeoutComposeDesignerV2(
-      vscode.workspace.getConfiguration('azureLogicAppsStandard'),
+      () => vscode.workspace.getConfiguration('azureLogicAppsStandard'),
       vscode.ConfigurationTarget.Workspace
     );
     await extension.activate();
