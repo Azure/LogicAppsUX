@@ -84,6 +84,17 @@ if (require.main === module) {
 }
 
 function main() {
+  if (process.argv.includes('--workspace-multi-root')) {
+    if (process.argv.length !== 3) {
+      exitWithError(new Error('--workspace-multi-root is a focused official-wizard + real-reload family; do not combine flags.'));
+      return;
+    }
+    require('./workspace-multi-root')
+      .runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs })
+      .then((code) => process.exit(code))
+      .catch(exitWithError);
+    return;
+  }
   if (process.argv.includes('--workspace-prompt-cancel')) {
     if (process.argv.length !== 3) {
       exitWithError(new Error('--workspace-prompt-cancel is a focused setup + regular UI route; do not combine it with other flags.'));
@@ -1382,7 +1393,7 @@ function runVscodeTest(args, options = {}) {
   const label = getLabelArg(args);
   const userDataSuffix =
     options.extraEnv?.LA_E2E_CLI_USER_DATA_SUFFIX ?? process.env.LA_E2E_CLI_USER_DATA_SUFFIX ?? `run-${Date.now()}-${process.pid}`;
-  const deferredWorkspaceParent = getDeferredCreateWorkspaceParent(label);
+  const deferredWorkspaceParent = options.workspaceParent ?? getDeferredCreateWorkspaceParent(label);
   const outputFilter = createOutputFilter();
   const { command, commandArgs } = getVscodeTestCommand(args);
   const childEnv = sanitizeInheritedGitCommandConfigEnv({
@@ -1476,7 +1487,14 @@ function runVscodeTest(args, options = {}) {
           }`
         );
       }
-      cleanupLedger = await cleanupDeferredWorkspaceAfterCancel(deferredWorkspaceParent, childEnv, cancelResult);
+      cleanupLedger =
+        options.retainWorkspaceForSupplement && childEnv.LA_E2E_CLI_MULTI_ROOT_HANDOFF
+          ? {
+              verified: fs.existsSync(deferredWorkspaceParent),
+              action: 'retained-for-multi-root',
+              reason: 'Final cleanup belongs to the supplementary family after its original regular window closes.',
+            }
+          : await cleanupDeferredWorkspaceAfterCancel(deferredWorkspaceParent, childEnv, cancelResult);
       try {
         collectVscodeProfileLogs(label, childEnv);
       } catch (error) {

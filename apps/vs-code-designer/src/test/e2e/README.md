@@ -20,6 +20,17 @@ src/test/e2e/
 
 ## Running Tests
 
+### Multi-root workspace supplementary family
+
+`test:e2e-cli:workspace-multi-root` follows official wizard creation, Explorer
+folder Create New Project, a real same-window Reload Window, the complete
+native `func`-population count, sequential folder-qualified debug, and an
+actual Azure Data Mapper open. This is an isolated-native-consumer-only
+supplementary route, not a new baseline label or canonical-count change.
+See [workspaceMultiRoot.md](./workspaceMultiRoot.md) for its exact clause
+boundary, fail-closed prerequisites, local controls and parent-owned Azure
+DevOps requirements. It must not be launched on a shared development host.
+
 ### Workspace prompt Cancel (Windows and Linux)
 
 After building the extension/webviews and compiling the tests with the commands below,
