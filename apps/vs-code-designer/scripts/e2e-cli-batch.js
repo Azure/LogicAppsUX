@@ -84,6 +84,7 @@ const SUITE_REGISTRY = Object.freeze({
     id: 'statelessVariablesLifecycle',
     args: Object.freeze(['--stateless-variables-lifecycle']),
     platforms: Object.freeze(['linux', 'win32']),
+    requiresAzure: true,
     expectedPhases: Object.freeze([
       'runtimeDependencyBootstrap:bootstrap',
       'statelessVariablesLifecycle:create',

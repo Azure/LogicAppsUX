@@ -45,6 +45,7 @@ import { containsIgnoreCase, normalizeFsPath, uniqueName } from './testUtils';
 import { waitForVisibleDelay } from './visibleDelay';
 import { closeAllTabs, closeWebviewTabs, describeOpenTabs, getTabViewType, getWebviewTabs, waitForWebviewTab } from './webviewTabs';
 import { shouldDeferWorkspaceLifecycleCleanup } from './workspaceLifecycleCleanup';
+import { approvedAzureFixturePrompts, type ApprovedAzureFixture } from './approvedAzureFixture';
 import {
   affirmativeAzureConnectorPrompt,
   selectWorkbenchPromptOption,
@@ -983,7 +984,7 @@ async function waitForGeneratedLogicAppFolder(createdWorkspace: CreatedWorkspace
 
 async function openDesignerAndCreateWorkflow(
   createdWorkspace: CreatedWorkspace,
-  options: { includeMsnWeather?: boolean; useAzureConnectors?: boolean; warmOnly?: boolean } = {}
+  options: { includeMsnWeather?: boolean; useAzureConnectors?: boolean; warmOnly?: boolean; azureFixture?: ApprovedAzureFixture } = {}
 ): Promise<void> {
   console.log(
     `[workspace-lifecycle] ${createdWorkspace.label}: openDesignerAndCreateWorkflow start ${JSON.stringify({
@@ -1015,17 +1016,19 @@ async function openDesignerAndCreateWorkflow(
   let cdp: CdpConnection | undefined;
   try {
     console.log(`[workspace-lifecycle] ${createdWorkspace.label}: handling designer quick-pick prompts before tab wait`);
-    await handleDesignerQuickPickPrompts(15000, { useAzureConnectors });
+    await handleDesignerQuickPickPrompts(15000, { useAzureConnectors, azureFixture: options.azureFixture });
     const designerTabTimeoutMs = getDesignerTabOpenTimeoutMs();
     console.log(
       `[workspace-lifecycle] ${createdWorkspace.label}: waiting for designer tab with timeout ${designerTabTimeoutMs}ms. useAzureConnectors=${useAzureConnectors}`
     );
 
     const tabOrCommandResult = await Promise.race([
-      waitForDesignerWebviewTab(tabsBefore, { useAzureConnectors }, designerTabTimeoutMs).then((tab) => ({
-        kind: 'tab' as const,
-        tab,
-      })),
+      waitForDesignerWebviewTab(tabsBefore, { useAzureConnectors, azureFixture: options.azureFixture }, designerTabTimeoutMs).then(
+        (tab) => ({
+          kind: 'tab' as const,
+          tab,
+        })
+      ),
       openDesignerResultPromise,
     ]);
 
@@ -1040,7 +1043,7 @@ async function openDesignerAndCreateWorkflow(
       const tabs = getWebviewTabs(designerViewType);
       const matchingTab = getDesignerWebviewTabForWorkflow(createdWorkspace);
       if (!matchingTab && tabs.length <= tabsBefore) {
-        await handleDesignerQuickPickPrompts(5000, { useAzureConnectors });
+        await handleDesignerQuickPickPrompts(5000, { useAzureConnectors, azureFixture: options.azureFixture });
         assert.fail(`openDesigner command completed without opening ${designerViewType}. Open tabs: ${describeOpenTabs()}`);
       }
       tab = matchingTab ?? tabs[tabs.length - 1];
@@ -1058,7 +1061,7 @@ async function openDesignerAndCreateWorkflow(
     );
 
     console.log(`[workspace-lifecycle] ${createdWorkspace.label}: handling designer quick-pick prompts after tab open`);
-    await handleDesignerQuickPickPrompts(15000, { useAzureConnectors });
+    await handleDesignerQuickPickPrompts(15000, { useAzureConnectors, azureFixture: options.azureFixture });
 
     console.log(`[workspace-lifecycle] ${createdWorkspace.label}: connecting to designer webview CDP target`);
     cdp = await connectToVsCodeCdp({ targetName: `${createdWorkspace.label} designer webview` });
@@ -1381,7 +1384,7 @@ function getDesignerTabOpenTimeoutMs(): number {
 
 async function waitForDesignerWebviewTab(
   previousCount: number,
-  options: { useAzureConnectors?: boolean } = {},
+  options: { useAzureConnectors?: boolean; azureFixture?: ApprovedAzureFixture } = {},
   timeoutMs = 360000
 ): Promise<vscode.Tab> {
   const startedAt = Date.now();
@@ -6358,7 +6361,10 @@ function verifyCreatedWorkspace(parentPath: string, creationCase: WorkspaceCreat
   };
 }
 
-async function handleDesignerQuickPickPrompts(timeoutMs = 20000, options: { useAzureConnectors?: boolean } = {}): Promise<void> {
+async function handleDesignerQuickPickPrompts(
+  timeoutMs = 20000,
+  options: { useAzureConnectors?: boolean; azureFixture?: ApprovedAzureFixture } = {}
+): Promise<void> {
   await handleWorkbenchPrompts(
     [
       {
@@ -6372,6 +6378,7 @@ async function handleDesignerQuickPickPrompts(timeoutMs = 20000, options: { useA
         postClickDelayMs: 15000,
       },
       affirmativeAzureConnectorPrompt,
+      ...(options.azureFixture ? approvedAzureFixturePrompts(options.azureFixture) : []),
       { matchText: 'Connection Keys', optionText: 'Connection Keys' },
     ],
     timeoutMs
@@ -6414,6 +6421,7 @@ async function handleWorkbenchPrompts(prompts: WorkbenchPrompt[], timeoutMs = 20
         `(() => {
           const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
           const getPoint = (element) => {
+            if (element.hasAttribute('disabled') || element.getAttribute('aria-disabled') === 'true') return undefined;
             element.scrollIntoView({ block: 'center', inline: 'center' });
             const rect = element.getBoundingClientRect();
             return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
@@ -6440,6 +6448,7 @@ async function handleWorkbenchPrompts(prompts: WorkbenchPrompt[], timeoutMs = 20
             const containerText = ((container.innerText || container.textContent || '') + ' ' + inputText).replace(/\\s+/g, ' ').trim();
             const rows = Array.from(container.querySelectorAll('.monaco-list-row, [role="option"]')).filter(isVisible).map((row) => ({
               text: (row.textContent || '').replace(/\\s+/g, ' ').trim(),
+              label: (row.querySelector('.label-name')?.textContent || '').replace(/\\s+/g, ' ').trim() || undefined,
               point: getPoint(row),
             }));
             const buttons = Array.from(container.querySelectorAll('a.monaco-button, button, .monaco-text-button')).filter(isVisible).map((button) => ({

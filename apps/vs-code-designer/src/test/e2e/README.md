@@ -151,6 +151,25 @@ Set the existing
 appropriate for the isolated Windows/Linux consumer. Do not run concurrently with
 other runtime families sharing port 7071. This family never kills an unowned port
 occupant, creates live Azure resources, or provisions a connector.
+When standard setup detects **Enable connectors in Azure**, the family reuses
+`affirmativeAzureConnectorPrompt`: **Use connectors from Azure** / exact **Yes**,
+never a negative fallback. Any ensuing authentication/subscription/resource-group
+selection requires the existing approved service connection and fixture context;
+unavailable approval/fixtures remain a native setup blocker, not permission to
+skip setup or create resources. No such native journey is validated in this worker.
+The Stateless suite now preserves the canonical MSN scoped WIF/token environment
+(`requiresAzure: true`) through both direct and batch wrappers. It strictly reads
+the parent-exported `LA_E2E_CLI_AZURE_*` tenant/subscription/existing group/location,
+never an ambient CLI account/default or a guessed target. As in canonical MSN,
+approved metadata is configured in the wizard-owned app settings before the real
+designer producer; the actual product `getAzureConnectorDetailsForLocalProject`
+reads those keys and `getAuthData` consumes the existing WIF/E2E token provider.
+The token remains environment-only. Both app and generated design-time bindings
+are verified. If subscription/group pickers appear, only the approved subscription
+identity and exact existing group label may be selected; Create is never selected.
+Preconfiguration is not GUI-picker coverage or proof of Azure availability.
+Fixture metadata restoration follows actual recovery quiescence, preserves
+unrelated product/foreign changes and refuses any foreign target edit.
 
 The native family authors Request, one multi-variable Initialize (including the
 actual Add a Variable control), both variable appends and Response through the real
@@ -203,8 +222,9 @@ cannot upgrade it. Retained-identity correction and native acceptance are
 parent/other-worker owned; source/unit completion is not native clean approval.
 Missing/stale/incomplete/unordered phases, retained roots, diagnostics or cleanup
 failures produce `complete: false` and nonzero exit. Merely providing JSONL never
-suppresses those final family receipts. Other registered local-only families can
-reuse the same helper; it requires the existing prepared extension seed, and the
+suppresses those final family receipts. Other registered families can
+reuse the same helper; approved Azure suites reuse the canonical scoped credential
+provider. It requires the existing prepared extension seed, and the
 production CLI does not expose the Node-fixture `scriptPath` unit seam.
 Sibling family selectors should call their native orchestrator only when the
 existing wrapper set `LA_E2E_CLI_SUITE_WRAPPER_CHILD=1`; otherwise call

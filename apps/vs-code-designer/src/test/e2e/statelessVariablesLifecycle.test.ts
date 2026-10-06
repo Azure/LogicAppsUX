@@ -8,6 +8,14 @@ import { connectToVsCodeCdp, waitForWebviewFrameContext, type CdpConnection } fr
 import { clickPoint, pressKey, type CdpEvaluator, type Point } from './cdpFormHelpers';
 import { assertNoDialogAttempts, installDialogGuard } from './dialogGuard';
 import { installFailureScreenshotHook } from './screenshot';
+import {
+  approvedAzureFixtureFromEnvironment,
+  approvedAzureFixturePrompts,
+  assertApprovedAzureFixture,
+  installApprovedAzureFixture,
+  type ApprovedAzureFixture,
+  type ApprovedAzureFixtureLease,
+} from './approvedAzureFixture';
 import { uniqueName, normalizeFsPath } from './testUtils';
 import { closeAllTabs, waitForWebviewTab } from './webviewTabs';
 import { statelessLifecycleHelpers as helpers, type CreatedWorkspace } from './workspaceLifecycle.test';
@@ -73,10 +81,12 @@ suite('Stateless variables lifecycle', () => {
     assert.strictEqual(entry.appType, 'standard');
     assert.strictEqual(normalizeFsPath(vscode.workspace.workspaceFile?.fsPath ?? ''), normalizeFsPath(entry.workspaceFilePath));
     assert.strictEqual(objectValue(readJson(entry.workflowJsonPath), 'reopened workflow').kind, 'Stateless');
+    const azureFixture = approvedAzureFixtureFromEnvironment(process.env);
 
     // No history is promised by default Stateless. First author and call it with
     // generated settings, then apply the opt-in to BOTH generated targets.
     let lease: StatelessSettingsLease | undefined;
+    let fixtureLease: ApprovedAzureFixtureLease | undefined;
     let operations: StatelessOperations | undefined;
     const positiveDeadline = Date.now() + 900_000;
     const positiveScope = new StatelessOperationScope();
@@ -90,9 +100,13 @@ suite('Stateless variables lifecycle', () => {
     let originalFailure: unknown;
     try {
       await positiveScope.run(positiveDeadline, 'positive lifecycle', async (signal) => {
-        await establishDesignTime(entry, positiveDeadline, signal);
+        assertPhaseActive(positiveDeadline, signal);
+        fixtureLease = installApprovedAzureFixture(entry.appDir, azureFixture);
+        await establishDesignTime(entry, positiveDeadline, signal, azureFixture);
+        fixtureLease.bindGeneratedDesignTime();
+        fixtureLease.assertBound();
         operations = await authorVariablesThroughDesigner(entry, positiveDeadline, signal);
-        await start(entry, getOwnedDebug(), positiveDeadline, signal);
+        await start(entry, getOwnedDebug(), positiveDeadline, signal, azureFixture);
         const initialOverview = await openHistory(entry, positiveDeadline, signal);
         try {
           await invoke(entry, operations, positiveDeadline, signal);
@@ -103,13 +117,13 @@ suite('Stateless variables lifecycle', () => {
         assertPhaseActive(positiveDeadline, signal);
         lease = installStatelessHistorySettings(entry.appDir, entry.wfName);
         lease.assertInstalled();
-        await start(entry, getOwnedDebug(), positiveDeadline, signal);
+        await start(entry, getOwnedDebug(), positiveDeadline, signal, azureFixture);
         lease.assertInstalled();
         await proveExactHistoryRun(entry, operations, positiveDeadline, signal);
         await getOwnedDebug().quiesce(positiveDeadline);
         assertPhaseActive(positiveDeadline, signal);
         lease.assertInstalled();
-        await start(entry, getOwnedDebug(), positiveDeadline, signal);
+        await start(entry, getOwnedDebug(), positiveDeadline, signal, azureFixture);
         lease.assertInstalled();
         await proveExactHistoryRun(entry, operations, positiveDeadline, signal);
         await assertNoDialogAttempts('Stateless variables lifecycle');
@@ -121,6 +135,7 @@ suite('Stateless variables lifecycle', () => {
     // Always exercise restoration + a real recovered callback, including after
     // failed startup or an expired positive phase. No expired positive clock is reused.
     const recoveryFailures: unknown[] = [];
+    let recoveryQuiescent = false;
     try {
       await recoverStateless({
         quiesce,
@@ -129,15 +144,26 @@ suite('Stateless variables lifecycle', () => {
             await ownedDebug.quiesce(deadline);
           }
         },
-        restore: () => lease?.restore(),
-        restart: (deadline, signal) => start(entry, getOwnedDebug(), deadline, signal),
+        restore: () => {
+          lease?.restore();
+          fixtureLease?.assertBound();
+        },
+        restart: (deadline, signal) => start(entry, getOwnedDebug(), deadline, signal, azureFixture),
         verify: async (deadline, signal) => {
           const saved = operations ?? assertStatelessDefinition(readJson(entry.workflowJsonPath));
           await invoke(entry, saved, deadline, signal);
         },
       });
+      recoveryQuiescent = true;
     } catch (error) {
       recoveryFailures.push(error);
+    }
+    if (recoveryQuiescent && fixtureLease) {
+      try {
+        fixtureLease.restore(); // Only after actual recovered callback and owned quiescence.
+      } catch (error) {
+        recoveryFailures.push(error);
+      }
     }
     if (originalFailure !== undefined || recoveryFailures.length > 0) {
       throw new AggregateError(
@@ -148,12 +174,17 @@ suite('Stateless variables lifecycle', () => {
   });
 });
 
-async function establishDesignTime(entry: CreatedWorkspace, deadline: number, signal: AbortSignal): Promise<void> {
+async function establishDesignTime(
+  entry: CreatedWorkspace,
+  deadline: number,
+  signal: AbortSignal,
+  fixture: ApprovedAzureFixture
+): Promise<void> {
   await helpers.waitForGeneratedLogicAppFolder(entry);
   assertPhaseActive(deadline, signal);
   // Cold wizard creation has app-root settings only; the real designer is the
   // producer of workflow-designtime. Never await its output before this command.
-  await helpers.openDesignerAndCreateWorkflow(entry, { warmOnly: true });
+  await helpers.openDesignerAndCreateWorkflow(entry, { warmOnly: true, useAzureConnectors: true, azureFixture: fixture });
   assertPhaseActive(deadline, signal);
   await poll(
     deadline,
@@ -161,6 +192,8 @@ async function establishDesignTime(entry: CreatedWorkspace, deadline: number, si
     async () => fs.existsSync(path.join(entry.appDir, 'workflow-designtime', 'local.settings.json')),
     signal
   );
+  assertApprovedAzureFixture(path.join(entry.appDir, 'local.settings.json'), fixture);
+  assertApprovedAzureFixture(path.join(entry.appDir, 'workflow-designtime', 'local.settings.json'), fixture);
 }
 
 async function authorVariablesThroughDesigner(
@@ -387,8 +420,15 @@ function createOwnedDebug(entry: CreatedWorkspace): StatelessOwnedDebug {
   return owned;
 }
 
-async function start(entry: CreatedWorkspace, owned: StatelessOwnedDebug, deadline: number, signal: AbortSignal): Promise<void> {
+async function start(
+  entry: CreatedWorkspace,
+  owned: StatelessOwnedDebug,
+  deadline: number,
+  signal: AbortSignal,
+  fixture: ApprovedAzureFixture
+): Promise<void> {
   assertPhaseActive(deadline, signal);
+  assertApprovedAzureFixture(path.join(entry.appDir, 'local.settings.json'), fixture);
   // Do not use the legacy helper's longer start race or global task stop. Both
   // the raw launch and matching late sessions are retained by the owned adapter.
   const results = await Promise.allSettled([
@@ -396,6 +436,7 @@ async function start(entry: CreatedWorkspace, owned: StatelessOwnedDebug, deadli
     helpers.handleWorkbenchPrompts(
       [
         affirmativeAzureConnectorPrompt,
+        ...approvedAzureFixturePrompts(fixture),
         { matchText: 'Configure Azurite to autostart on project debug?', optionText: 'Enable AutoStart' },
         { matchText: 'Failed to verify "AzureWebJobsStorage" connection', optionText: 'Debug anyway' },
       ],
