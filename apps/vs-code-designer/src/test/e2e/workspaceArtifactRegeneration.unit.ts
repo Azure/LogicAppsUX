@@ -8,12 +8,14 @@ import {
   assertRegenerationComplete,
   assertRegenerationNonTargets,
   assertTemplateContracts,
+  buildRegenerationPhaseResults,
   captureRegenerationSnapshot,
   captureTemplateContracts,
   deleteRegenerationTargets,
   regenerationArtifacts,
   regenerationCases,
   regenerationDeadline,
+  regenerationPhaseIds,
   remainingRegenerationBudget,
   requireRegenerationYes,
   selectRegenerationYes,
@@ -252,6 +254,166 @@ async function main(): Promise<void> {
     });
     assert.strictEqual(invalid.status, 1);
     assert.match(invalid.stderr, /do not combine flags/);
+    checks++;
+
+    const scriptRoot = path.dirname(runner);
+    const batch: {
+      SUITE_REGISTRY: Record<string, { id: string; args: string[]; expectedPhases: string[] }>;
+      normalizeSuiteSelection(value: string, options: { platform: string }): Array<{ id: string }>;
+      createSuiteContext(input: unknown): unknown;
+      buildSuiteEnvironment(env: NodeJS.ProcessEnv, context: unknown): NodeJS.ProcessEnv;
+    } = require(path.join(scriptRoot, 'e2e-cli-batch.js'));
+    const registration = batch.SUITE_REGISTRY.workspaceArtifactRegeneration;
+    assert.strictEqual(registration.id, 'workspaceArtifactRegeneration');
+    assert.deepStrictEqual(registration.args, ['--workspace-artifact-regeneration']);
+    assert.deepStrictEqual(
+      registration.expectedPhases,
+      regenerationPhaseIds,
+      'Registered phases must exactly match the real host sequence'
+    );
+    assert.strictEqual(regenerationPhaseIds.length, 14, 'Wizard create, baseline, six regeneration and six reopen phases');
+    for (const platform of ['win32', 'linux']) {
+      assert.deepStrictEqual(
+        batch.normalizeSuiteSelection('workspaceArtifactRegeneration', { platform }).map((suite) => suite.id),
+        ['workspaceArtifactRegeneration']
+      );
+      const canonical = batch.normalizeSuiteSelection(platform === 'win32' ? 'windows' : 'linux', { platform });
+      assert.strictEqual(canonical.length, 6, 'Explicit new suite must not inflate canonical aliases');
+      assert.ok(canonical.every((suite) => suite.id !== 'workspaceArtifactRegeneration'));
+    }
+    checks++;
+
+    const contaminated = {
+      LA_E2E_CLI_REQUIRE_WORKSPACE_REGENERATION: '1',
+      LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR: path.join(root, 'wrong-suite'),
+    };
+    const otherContext = batch.createSuiteContext({
+      batchRoot: root,
+      suite: batch.SUITE_REGISTRY.unitTests,
+      index: 0,
+      total: 1,
+    });
+    const otherEnv = batch.buildSuiteEnvironment(contaminated, otherContext);
+    assert.strictEqual(
+      otherEnv.LA_E2E_CLI_REQUIRE_WORKSPACE_REGENERATION,
+      undefined,
+      'Regeneration control must not bleed to another suite'
+    );
+    assert.strictEqual(otherEnv.LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR, undefined);
+    const ownContext = batch.createSuiteContext({ batchRoot: root, suite: registration, index: 0, total: 1 });
+    const ownEnv = batch.buildSuiteEnvironment(contaminated, ownContext);
+    assert.strictEqual(
+      ownEnv.LA_E2E_CLI_REQUIRE_WORKSPACE_REGENERATION,
+      undefined,
+      'Only the registered family route enables its supplement'
+    );
+    assert.ok(ownEnv.LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR?.startsWith(root));
+    assert.notStrictEqual(ownEnv.LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR, contaminated.LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR);
+    checks++;
+
+    const reporting: {
+      _test: {
+        getDirectSuiteComplete(label: string, phases: unknown[]): boolean;
+        writeSuiteFinalEvidence(input: unknown): void;
+        writeSuitePhaseResult(env: NodeJS.ProcessEnv, phase: unknown): void;
+      };
+    } = require(runner);
+    // These are modeled reporting controls, not actual Code observations or
+    // accepted native fixtures. The GUI driver alone supplies these fields natively.
+    const protocolInput = {
+      wizard: { code: 0, signal: null, verified: true, mochaPassingCount: 1 },
+      hosts: regenerationPhaseIds.slice(1).map((phaseId) => ({
+        phase: phaseId.slice('workspaceArtifactRegeneration:'.length),
+        close: { code: 0, signal: null },
+        observationPassed: true,
+        errors: [],
+      })),
+      complete: true,
+      cleanupVerified: true,
+      errors: [],
+    };
+    const protocolPhases = buildRegenerationPhaseResults(protocolInput);
+    assert.deepStrictEqual(
+      protocolPhases.map((phase) => phase.phaseId),
+      regenerationPhaseIds
+    );
+    assert.strictEqual(
+      protocolPhases.reduce((count, phase) => count + phase.mochaPassingCount, 0),
+      1
+    );
+    assert.strictEqual(reporting._test.getDirectSuiteComplete(registration.id, protocolPhases), true);
+    for (const partial of [
+      protocolPhases.slice(0, 1),
+      protocolPhases.slice(0, -1),
+      [...protocolPhases].reverse(),
+      [...protocolPhases, protocolPhases[0]],
+      [...protocolPhases, { ...protocolPhases[0], phaseId: 'workspaceArtifactRegeneration:invented-bootstrap' }],
+      buildRegenerationPhaseResults({ ...protocolInput, complete: false }),
+      buildRegenerationPhaseResults({ ...protocolInput, cleanupVerified: false }),
+      buildRegenerationPhaseResults({ ...protocolInput, wizard: { ...protocolInput.wizard, verified: false } }),
+      buildRegenerationPhaseResults({ ...protocolInput, wizard: { ...protocolInput.wizard, mochaPassingCount: 0 } }),
+      buildRegenerationPhaseResults({
+        ...protocolInput,
+        hosts: protocolInput.hosts.map((host, index) => (index === 0 ? { ...host, observationPassed: false } : host)),
+      }),
+      buildRegenerationPhaseResults({
+        ...protocolInput,
+        hosts: protocolInput.hosts.map((host, index) => (index === 0 ? { ...host, close: null } : host)),
+      }),
+    ]) {
+      assert.strictEqual(reporting._test.getDirectSuiteComplete(registration.id, partial), false, 'Missing/failed phases cannot pass');
+    }
+    checks++;
+
+    const reportRoot = path.join(root, 'phase-reporting');
+    fs.mkdirSync(reportRoot);
+    const context = {
+      expectedPhaseIds: regenerationPhaseIds,
+      phaseResultsPath: path.join(reportRoot, 'phase-results.jsonl'),
+      cleanupLedgerPath: path.join(reportRoot, 'cleanup.json'),
+      terminalResultPath: path.join(reportRoot, 'terminal.json'),
+    };
+    for (const [phases, expectedComplete] of [
+      [protocolPhases, true],
+      [protocolPhases.slice(0, 1), false],
+      [[...protocolPhases].reverse(), false],
+      [[...protocolPhases, protocolPhases[0]], false],
+      [protocolPhases.map((phase, index) => (index === 1 ? { ...phase, complete: false } : phase)), false],
+    ] as const) {
+      fs.writeFileSync(context.phaseResultsPath, `${phases.map((phase) => JSON.stringify(phase)).join('\n')}\n`);
+      reporting._test.writeSuiteFinalEvidence({
+        context,
+        suite: registration,
+        exitCode: 0,
+        signal: null,
+        processCleanup: { verified: true },
+      });
+      const terminal: { complete: boolean; expectedPhaseIds: string[]; observedPhaseIds: string[] } = JSON.parse(
+        fs.readFileSync(context.terminalResultPath, 'utf8')
+      );
+      assert.strictEqual(terminal.complete, expectedComplete);
+      assert.deepStrictEqual(terminal.expectedPhaseIds, regenerationPhaseIds);
+      assert.deepStrictEqual(
+        terminal.observedPhaseIds,
+        phases.map((phase) => phase.phaseId)
+      );
+    }
+    const directEnv = {
+      LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH: path.join(reportRoot, 'direct-terminal.json'),
+      LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH: path.join(reportRoot, 'direct-cleanup.json'),
+    };
+    for (const phase of protocolPhases) {
+      reporting._test.writeSuitePhaseResult(directEnv, { ...phase, cleanupLedger: { verified: true } });
+    }
+    const direct: { complete: boolean; lifecycleFinalized: boolean; mochaPassingCount: number; phaseResults: Array<{ phaseId: string }> } =
+      JSON.parse(fs.readFileSync(directEnv.LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH, 'utf8'));
+    assert.strictEqual(direct.complete, true);
+    assert.strictEqual(direct.lifecycleFinalized, true);
+    assert.strictEqual(direct.mochaPassingCount, 1, 'Regular workbench phases must not become fabricated Mocha counts');
+    assert.deepStrictEqual(
+      direct.phaseResults.map((phase) => phase.phaseId),
+      regenerationPhaseIds
+    );
     checks++;
     console.log(`[workspace-regeneration-unit] ${checks} focused contract groups passed; no VS Code/runtime/native coverage claimed.`);
   } finally {

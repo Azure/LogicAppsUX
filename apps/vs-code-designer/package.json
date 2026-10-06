@@ -98,6 +98,7 @@
     "test:e2e-cli:workspace-prompt-cancel:ui": "pnpm run test:e2e-cli:workspace-prompt-cancel",
     "test:e2e-cli:workspace-prompt-cancel:unit": "node scripts/workspace-prompt-cancel.unit.test.js && node out/test/e2e/workspacePromptCancel.unit.js",
     "test:e2e-cli:workspace-artifact-regeneration": "node scripts/run-e2e-cli.js --workspace-artifact-regeneration",
+    "test:e2e-cli:workspace-artifact-regeneration:batch": "node scripts/run-e2e-cli.js --suites workspaceArtifactRegeneration",
     "test:e2e-cli:workspace-artifact-regeneration:unit": "node out/test/e2e/workspaceArtifactRegeneration.unit.js",
     "pretest:e2e-cli": "pnpm run test:e2e-cli:build",
     "vscode:designer:e2e:ui": "cd ../.. && pnpm run build:extension && cd apps/vs-code-designer && pnpm run build:ui && node out/test/run-e2e.js",

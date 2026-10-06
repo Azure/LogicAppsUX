@@ -23,6 +23,60 @@ export const regenerationCases: ReadonlyArray<{ name: string; targets: readonly 
   { name: 'root-repeat', targets: ['local.settings.json'] },
 ];
 
+export const regenerationPhaseIds = [
+  'workspaceArtifactRegeneration:create',
+  'workspaceArtifactRegeneration:baseline',
+  ...regenerationCases.flatMap((entry) => [
+    `workspaceArtifactRegeneration:${entry.name}`,
+    `workspaceArtifactRegeneration:${entry.name}-reopen`,
+  ]),
+];
+
+export interface RegenerationHostPhase {
+  phase: string;
+  close: { code: number | null; signal: string | null } | null;
+  observationPassed: boolean;
+  errors: string[];
+}
+
+export function buildRegenerationPhaseResults(input: {
+  wizard: { code: number | null; signal: string | null; verified: boolean; mochaPassingCount: number };
+  hosts: readonly RegenerationHostPhase[];
+  complete: boolean;
+  cleanupVerified: boolean;
+  errors: readonly string[];
+}) {
+  const diagnosticsError = input.errors.join('; ');
+  const common = {
+    label: 'workspaceArtifactRegeneration',
+    cleanupVerified: input.cleanupVerified,
+    ogfScenarios: [],
+  };
+  const admitted = input.complete && input.cleanupVerified && !diagnosticsError;
+  return [
+    {
+      ...common,
+      phaseId: 'workspaceArtifactRegeneration:create',
+      exitCode: input.wizard.code,
+      signal: input.wizard.signal,
+      diagnosticsError,
+      complete:
+        admitted && input.wizard.verified && input.wizard.code === 0 && input.wizard.signal === null && input.wizard.mochaPassingCount > 0,
+      mochaPassingCount: input.wizard.mochaPassingCount,
+    },
+    ...input.hosts.map((host) => ({
+      ...common,
+      phaseId: `workspaceArtifactRegeneration:${host.phase}`,
+      exitCode: host.close?.code ?? null,
+      signal: host.close?.signal ?? null,
+      diagnosticsError: [...input.errors, ...host.errors].join('; '),
+      complete: admitted && host.observationPassed && host.close?.code === 0 && host.close.signal === null && host.errors.length === 0,
+      // Regular Code observations are not additional Mocha bodies.
+      mochaPassingCount: 0,
+    })),
+  ];
+}
+
 export interface RegenerationDeadline {
   phase: string;
   startedAt: number;

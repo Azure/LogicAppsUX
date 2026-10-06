@@ -70,6 +70,27 @@ const SUITE_REGISTRY = Object.freeze({
     requiresAzure: true,
     expectedPhases: Object.freeze(['runtimeDependencyBootstrap:bootstrap', 'msnWeatherLifecycle:create', 'msnWeatherLifecycle:run']),
   }),
+  workspaceArtifactRegeneration: Object.freeze({
+    id: 'workspaceArtifactRegeneration',
+    args: Object.freeze(['--workspace-artifact-regeneration']),
+    platforms: Object.freeze(['linux', 'win32']),
+    expectedPhases: Object.freeze([
+      'workspaceArtifactRegeneration:create',
+      'workspaceArtifactRegeneration:baseline',
+      'workspaceArtifactRegeneration:vscode-single',
+      'workspaceArtifactRegeneration:vscode-single-reopen',
+      'workspaceArtifactRegeneration:vscode-multiple',
+      'workspaceArtifactRegeneration:vscode-multiple-reopen',
+      'workspaceArtifactRegeneration:vscode-repeat',
+      'workspaceArtifactRegeneration:vscode-repeat-reopen',
+      'workspaceArtifactRegeneration:root-single',
+      'workspaceArtifactRegeneration:root-single-reopen',
+      'workspaceArtifactRegeneration:root-multiple',
+      'workspaceArtifactRegeneration:root-multiple-reopen',
+      'workspaceArtifactRegeneration:root-repeat',
+      'workspaceArtifactRegeneration:root-repeat-reopen',
+    ]),
+  }),
 });
 
 const SUITE_SCOPED_AZURE_ENV_KEYS = [
@@ -118,6 +139,7 @@ const SUITE_ALIASES = Object.freeze({
 });
 
 const SUITE_CONTROL_ENV_PATTERNS = [
+  /^LA_E2E_CLI_(?:REQUIRE_WORKSPACE_REGENERATION|REGENERATION_DIAGNOSTICS_DIR)$/,
   /^LA_E2E_CLI_(?:INCLUDE_|WORKSPACE_LIFECYCLE_|STARTUP_RESOURCE$|CREATE_WORKSPACE_CASE$|CREATE_WORKSPACE_GROUP$|CREATE_WORKSPACE_PARENT$|DEFER_WORKSPACE_CLEANUP$|PROFILE_PHASE$|USER_DATA_SUFFIX$|USER_DATA_DIR$|VSCODE_LOG_ARTIFACT_LABEL$|CODEFUL_EVIDENCE_NOT_BEFORE$|MINIMAL_ACTIVATION$|SKIP_ACTIVATION_WORKSPACE_ENSURE$|EXPECT_EMPTY_RUNTIME_DEPENDENCIES_ROOT$|EMPTY_RUNTIME_DEPENDENCIES_ROOT_CONFIRMED$|AZURE_ACCESS_TOKEN$|AZURE_CLIENT_ID$|AZURE_TENANT_ID$|AZURE_SUBSCRIPTION_ID$|AZURE_RESOURCE_GROUP_NAME$|AZURE_LOCATION_NAME$|AZURE_MANAGEMENT_BASE_URL$)/,
   /^(WORKFLOWS_TENANT_ID|WORKFLOWS_SUBSCRIPTION_ID|WORKFLOWS_RESOURCE_GROUP_NAME|WORKFLOWS_LOCATION_NAME|WORKFLOWS_MANAGEMENT_BASE_URI)$/,
   /^(FC_SERVICE_CONNECTION_|AzCode_|SYSTEM_ACCESSTOKEN)/,
@@ -253,6 +275,9 @@ function buildSuiteEnvironment(baseEnv, context, extraEnv = {}) {
   return {
     ...env,
     ...extraEnv,
+    ...(context.id === 'workspaceArtifactRegeneration'
+      ? { LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR: path.join(context.reportsRoot, 'workspace-regeneration') }
+      : {}),
     LA_E2E_CLI_BATCH_MODE: '1',
     LA_E2E_CLI_BATCH_SUITE_ID: context.id,
     LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: context.runtimeRoot,

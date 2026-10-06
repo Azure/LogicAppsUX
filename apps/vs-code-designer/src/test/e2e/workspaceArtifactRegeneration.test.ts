@@ -6,6 +6,7 @@
  */
 import * as assert from 'assert';
 import { spawn } from 'child_process';
+import { createHash } from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
 import { type CdpConnection, connectToVsCodeWorkbenchCdp } from './cdpClient';
@@ -14,15 +15,18 @@ import {
   assertRegenerationComplete,
   assertRegenerationNonTargets,
   assertTemplateContracts,
+  buildRegenerationPhaseResults,
   captureRegenerationSnapshot,
   captureTemplateContracts,
   deleteRegenerationTargets,
   regenerationCases,
   regenerationDeadline,
+  regenerationPhaseIds,
   remainingRegenerationBudget,
   requireRegenerationYes,
   selectRegenerationYes,
   type RegenerationDeadline,
+  type RegenerationHostPhase,
   type RegenerationPromptObservation,
   type RegenerationSnapshot,
 } from './workspaceArtifactRegeneration';
@@ -41,20 +45,18 @@ interface RegenerationHandoff {
   launch: { executable: string; sha256: string; version: string; extensionsDir: string };
 }
 
-interface RegenerationHostResult {
-  phase: string;
-  close: { code: number | null; signal: string | null } | null;
-}
+export { buildRegenerationPhaseResults };
 
 export interface RegenerationResult {
   schemaVersion: 1;
+  suiteId: 'workspaceArtifactRegeneration';
   scenario: 'workspace-artifact-regeneration';
   invocation: string;
   identity: Record<string, string>;
   code: { version: string; sha256: string };
   observationPassed: boolean;
-  originalCodeClose: RegenerationHostResult['close'];
-  hosts: RegenerationHostResult[];
+  originalCodeClose: RegenerationHostPhase['close'];
+  hosts: RegenerationHostPhase[];
   observations: Array<{
     name: string;
     targets: readonly string[];
@@ -188,9 +190,12 @@ async function runFreshRegenerationHost(
   observe: (cdp: CdpConnection, phase: RegenerationDeadline) => Promise<void>
 ): Promise<void> {
   const phase = regenerationDeadline(phaseName);
+  const host: RegenerationHostPhase = { phase: phaseName, close: null, observationPassed: false, errors: [] };
+  result.hosts.push(host);
+  result.originalCodeClose = null;
   const profile = path.join(
     env.LA_E2E_CLI_USER_DATA_PARENT || path.dirname(context.root),
-    `rg-${context.invocation.slice(0, 8)}-${phaseName}`
+    `rg-${createHash('sha256').update(`${context.invocation}/${phaseName}`).digest('hex').slice(0, 8)}`
   );
   assert.ok(!fs.existsSync(profile), 'Every regeneration/reopen requires a fresh regular Code profile');
   if (process.platform === 'linux') {
@@ -211,9 +216,6 @@ async function runFreshRegenerationHost(
       'azureLogicAppsStandard.enableProjectConsistencyChecks': true,
     })
   );
-  const host: RegenerationHostResult = { phase: phaseName, close: null };
-  result.hosts.push(host);
-  result.originalCodeClose = null;
   const log = fs.createWriteStream(path.join(context.root, `${phaseName}-code.log`), { flags: 'wx' });
   const errors: unknown[] = [];
   log.on('error', (error) => errors.push(error));
@@ -277,6 +279,7 @@ async function runFreshRegenerationHost(
       }),
     ]);
     observed = true;
+    host.observationPassed = true;
   } catch (error) {
     errors.push(error);
   } finally {
@@ -314,6 +317,7 @@ async function runFreshRegenerationHost(
   if (host.close?.code !== 0 || host.close.signal !== null) {
     errors.push(new Error(`Regeneration ${phaseName}: ordinary Code exit 0/null is required`));
   }
+  host.errors = errors.map(String);
   if (errors.length > 0) {
     throw new AggregateError(errors, `Regeneration ${phaseName} failed: ${errors.map(String).join('; ')}`);
   }
@@ -326,6 +330,7 @@ export async function runWorkspaceArtifactRegeneration(
 ): Promise<RegenerationResult> {
   const result: RegenerationResult = {
     schemaVersion: 1,
+    suiteId: 'workspaceArtifactRegeneration',
     scenario: 'workspace-artifact-regeneration',
     invocation: context.invocation,
     identity: context.identity,
@@ -455,7 +460,14 @@ export function finalizeWorkspaceArtifactRegeneration(
   assertRegenerationComplete(result);
   assert.strictEqual(result.observations.length, regenerationCases.length, 'All planned branches must have genuine observations');
   assert.strictEqual(result.hosts.length, 1 + regenerationCases.length * 2, 'Baseline, each real Yes, and each fresh reopen are required');
+  assert.deepStrictEqual(
+    result.hosts.map((host) => `workspaceArtifactRegeneration:${host.phase}`),
+    regenerationPhaseIds.slice(1),
+    'Recorded native hosts must match the exact registered order; there is no invented bootstrap'
+  );
   for (const host of result.hosts) {
+    assert.strictEqual(host.observationPassed, true, 'Every recorded regular Code phase must have its real observation');
+    assert.deepStrictEqual(host.errors, [], 'Earlier host observation/teardown errors must remain fatal');
     assert.deepStrictEqual(host.close, { code: 0, signal: null }, 'No failed/unclosed earlier host may be hidden by a later host');
   }
   for (const entry of regenerationCases) {

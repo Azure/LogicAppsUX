@@ -92,7 +92,11 @@ function main() {
       return;
     }
     runVscodeTest(['--label', 'createWorkspaceCoreMatrix'], {
-      extraEnv: { LA_E2E_CLI_REQUIRE_WORKSPACE_REGENERATION: '1', LA_E2E_CLI_CREATE_WORKSPACE_CASE: 'standard-stateful' },
+      extraEnv: {
+        LA_E2E_CLI_REQUIRE_WORKSPACE_REGENERATION: '1',
+        LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL: '0',
+        LA_E2E_CLI_CREATE_WORKSPACE_CASE: 'standard-stateful',
+      },
     })
       .then((code) => process.exit(code))
       .catch(exitWithError);
@@ -380,12 +384,13 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     .filter((diagnosticsError) => typeof diagnosticsError === 'string' && diagnosticsError.trim());
   const phaseCleanupVerified = phaseResults.every((phase) => phase.cleanupVerified === true);
   const phaseCompleteness =
+    (suite.id !== 'workspaceArtifactRegeneration' || expectedPhaseIds.every((phaseId, index) => observedPhaseIds[index] === phaseId)) &&
     unexpectedPhaseIds.length === 0 &&
     duplicatePhaseIds.length === 0 &&
     (missingPhaseIds.length === 0 || blockedPhaseIds.length > 0) &&
     phaseResults.length > 0;
-  const msnSucceeded =
-    suite.id !== 'msnWeatherLifecycle' ||
+  const strictLifecycleSucceeded =
+    !['msnWeatherLifecycle', 'workspaceArtifactRegeneration'].includes(suite.id) ||
     (exitCode === 0 &&
       (signal === null || signal === undefined) &&
       missingPhaseIds.length === 0 &&
@@ -399,7 +404,7 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     processCleanup.verified === true &&
     !error &&
     phaseDiagnosticsErrors.length === 0 &&
-    msnSucceeded;
+    strictLifecycleSucceeded;
   const finalizedPhaseResults = terminalComplete ? phaseResults : phaseResults.map(clearOgfScenarios);
   const ogfScenarios = terminalComplete ? collectOgfScenarios(finalizedPhaseResults) : [];
   const cleanupLedger = {
@@ -432,7 +437,7 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     blockedPhaseIds,
     phaseCompleteness,
     complete: terminalComplete,
-    ...(suite.id === 'msnWeatherLifecycle'
+    ...(['msnWeatherLifecycle', 'workspaceArtifactRegeneration'].includes(suite.id)
       ? { lifecycleFinalized: true, phaseResults: finalizedPhaseResults.map(projectTerminalPhase) }
       : {}),
     ...(ogfScenarios.length > 0 ? { ogfScenarios } : {}),
@@ -1442,6 +1447,17 @@ function runVscodeTest(args, options = {}) {
     childEnv.LA_E2E_CLI_CANCEL_HANDOFF_PATH = wizardHandoffContext.handoffPath;
     childEnv.LA_E2E_CLI_CANCEL_CONTEXT = JSON.stringify(wizardHandoffContext);
   }
+  if (regenerationContext && !childEnv.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH) {
+    writeSuiteTerminalResult(childEnv, {
+      label: 'workspaceArtifactRegeneration',
+      complete: false,
+      cleanupVerified: false,
+      exitCode: null,
+      signal: null,
+      lifecycleFinalized: false,
+      phaseResults: [],
+    });
+  }
   const child = spawn(command, commandArgs, {
     env: childEnv,
   });
@@ -1475,6 +1491,7 @@ function runVscodeTest(args, options = {}) {
       let regenerationResult;
       let regenerationApi;
       let regenerationError;
+      let regenerationWizardVerified = false;
       if (regenerationContext) {
         const previousScreenshotDir = process.env.LA_E2E_CLI_SCREENSHOT_DIR;
         const previousDebugPort = process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT;
@@ -1489,6 +1506,7 @@ function runVscodeTest(args, options = {}) {
             JSON.parse(fs.readFileSync(regenerationContext.handoffPath, 'utf8')),
             regenerationContext
           );
+          regenerationWizardVerified = true;
           regenerationResult = await regenerationApi.runWorkspaceArtifactRegeneration(regenerationContext, handoff, {
             ...childEnv,
             LA_E2E_CLI_REMOTE_DEBUGGING_PORT: process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT,
@@ -1608,18 +1626,56 @@ function runVscodeTest(args, options = {}) {
       }
       const phasePassed =
         code === 0 && cleanupLedger.verified === true && !diagnosticsError && !matchedPattern && !cancelError && !regenerationError;
-      writeSuitePhaseResult(childEnv, {
-        phaseId,
-        label,
-        exitCode: code,
-        signal,
-        cleanupVerified: cleanupLedger.verified,
-        diagnosticsError: diagnosticsErrorMessage,
-        complete: phasePassed,
-        cleanupLedger,
-        mochaPassingCount: getMochaPassingCount(output),
-        ogfScenarios: buildOgfScenariosForPhase(phaseId, childEnv, { passed: phasePassed }),
-      });
+      if (regenerationContext) {
+        const errors = [
+          ...diagnosticsErrors.map(String),
+          ...(regenerationError ? [String(regenerationError)] : []),
+          ...(matchedPattern ? [matchedPattern.name] : []),
+          ...(regenerationResult?.errors || []),
+        ];
+        const regenerationPhases = regenerationApi
+          ? regenerationApi.buildRegenerationPhaseResults({
+              wizard: {
+                code,
+                signal,
+                verified: regenerationWizardVerified,
+                mochaPassingCount: getMochaPassingCount(output),
+              },
+              hosts: regenerationResult?.hosts || [],
+              complete: regenerationResult?.complete === true && phasePassed,
+              cleanupVerified: cleanupLedger.verified,
+              errors,
+            })
+          : [
+              {
+                label: 'workspaceArtifactRegeneration',
+                phaseId: 'workspaceArtifactRegeneration:create',
+                exitCode: code,
+                signal,
+                complete: false,
+                diagnosticsError: errors.join('; '),
+                cleanupVerified: cleanupLedger.verified,
+                mochaPassingCount: getMochaPassingCount(output),
+                ogfScenarios: [],
+              },
+            ];
+        for (const phase of regenerationPhases) {
+          writeSuitePhaseResult(childEnv, { ...phase, cleanupLedger });
+        }
+      } else {
+        writeSuitePhaseResult(childEnv, {
+          phaseId,
+          label,
+          exitCode: code,
+          signal,
+          cleanupVerified: cleanupLedger.verified,
+          diagnosticsError: diagnosticsErrorMessage,
+          complete: phasePassed,
+          cleanupLedger,
+          mochaPassingCount: getMochaPassingCount(output),
+          ogfScenarios: buildOgfScenariosForPhase(phaseId, childEnv, { passed: phasePassed }),
+        });
+      }
 
       if (diagnosticsError) {
         reject(new AggregateError(diagnosticsErrors, 'Required original workspace/profile diagnostics failed'));
@@ -2895,7 +2951,11 @@ function writeSuitePhaseResult(env, result) {
     cleanupVerified: result.cleanupVerified,
     diagnosticsError: result.diagnosticsError,
     complete: terminalComplete,
-    mochaPassingCount: result.mochaPassingCount,
+    ...(result.label === 'workspaceArtifactRegeneration' ? { lifecycleFinalized: terminalComplete } : {}),
+    mochaPassingCount:
+      result.label === 'workspaceArtifactRegeneration'
+        ? phaseResults.reduce((count, phase) => count + (phase.mochaPassingCount || 0), 0)
+        : result.mochaPassingCount,
     phaseResults: finalizedPhaseResults.map((phase) => ({
       phaseId: phase.phaseId,
       exitCode: phase.exitCode,
@@ -2903,6 +2963,7 @@ function writeSuitePhaseResult(env, result) {
       cleanupVerified: phase.cleanupVerified,
       diagnosticsError: phase.diagnosticsError,
       complete: phase.complete,
+      ...(result.label === 'workspaceArtifactRegeneration' ? { mochaPassingCount: phase.mochaPassingCount || 0 } : {}),
       ...(Array.isArray(phase.ogfScenarios) && phase.ogfScenarios.length > 0 ? { ogfScenarios: phase.ogfScenarios } : {}),
     })),
     ...(retainedOgfScenarios.length > 0 ? { ogfScenarios: retainedOgfScenarios } : {}),
@@ -3010,6 +3071,7 @@ function getDirectSuiteComplete(label, phaseResults) {
   return (
     phaseResults.length > 0 &&
     phaseResults.length === expectedPhaseIds.length &&
+    (label !== 'workspaceArtifactRegeneration' || expectedPhaseIds.every((phaseId, index) => observedPhaseIds[index] === phaseId)) &&
     missingPhaseIds.length === 0 &&
     unexpectedPhaseIds.length === 0 &&
     getDuplicateValues(observedPhaseIds).length === 0 &&
@@ -3034,6 +3096,9 @@ function getDirectExpectedPhaseIds(label) {
   }
   if (label === 'msnWeatherLifecycle') {
     return SUITE_REGISTRY[label].expectedPhases.filter((phaseId) => phaseId.startsWith(`${label}:`));
+  }
+  if (label === 'workspaceArtifactRegeneration') {
+    return SUITE_REGISTRY[label].expectedPhases;
   }
   if (label === 'runtimeDependencyBootstrap') {
     return ['runtimeDependencyBootstrap:bootstrap'];

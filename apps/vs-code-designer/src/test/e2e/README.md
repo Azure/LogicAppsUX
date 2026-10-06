@@ -41,6 +41,38 @@ CDP operations, file settlement, and required screenshots consume that same budg
 Ordinary Close Window has its existing separate 10-second teardown budget, never
 a forced process kill or an extension of the observation deadline.
 
+The shared suite ID is **`workspaceArtifactRegeneration`**, available explicitly
+through `--suites workspaceArtifactRegeneration` or the package script
+`test:e2e-cli:workspace-artifact-regeneration:batch`. It is additive in
+`scripts/e2e-cli-batch.js`; the existing `linux` / `windows` aliases are unchanged.
+Its exact ordered phase IDs are:
+
+```text
+workspaceArtifactRegeneration:create
+workspaceArtifactRegeneration:baseline
+workspaceArtifactRegeneration:vscode-single
+workspaceArtifactRegeneration:vscode-single-reopen
+workspaceArtifactRegeneration:vscode-multiple
+workspaceArtifactRegeneration:vscode-multiple-reopen
+workspaceArtifactRegeneration:vscode-repeat
+workspaceArtifactRegeneration:vscode-repeat-reopen
+workspaceArtifactRegeneration:root-single
+workspaceArtifactRegeneration:root-single-reopen
+workspaceArtifactRegeneration:root-multiple
+workspaceArtifactRegeneration:root-multiple-reopen
+workspaceArtifactRegeneration:root-repeat
+workspaceArtifactRegeneration:root-repeat-reopen
+```
+
+`create` is the actual verified official wizard host; `baseline` is the initial
+valid-project regular reopen. Every remaining phase is a real regular Code host,
+reported only when attempted, with its actual observation/exit/error state. There
+is **no runtime bootstrap phase**: this family never starts debug or the Functions
+runtime. Missing, duplicate, unexpected, or failed phases cannot finalize the
+family successfully. Direct and batch terminal results retain the same exact
+phase sequence. The wizard's actual Mocha count is reported once; regular hosts
+are not fabricated Mocha bodies or additions to canonical native counts.
+
 The planned sequence is a valid-project fresh-reopen baseline, then:
 
 | Branch | Deleted artifacts | Required observation |
@@ -96,7 +128,9 @@ The controls cover missing/wrong/invalid regenerated files, actual deletion,
 non-target byte/directory changes, path/link safety, duplicate/unrelated/disabled
 Yes, absent prompt versus silent healing, late read/deadline expiration, transport
 failure, final closure/cleanup failure and invalid runner flag combinations. They
-are appended to `test:e2e-cli:unit`; their temporary unit files are **not** wizard
+also control the exact batch/direct phase contract, missing/failed/duplicate
+phases, unsupported invented bootstrap phases, and unchanged canonical aliases.
+They are appended to `test:e2e-cli:unit`; their temporary unit files are **not** wizard
 fixtures and their passes provide no native GUI/source-case coverage.
 
 **ADO integration remains parent-owned:** run the focused command in isolated
@@ -105,16 +139,27 @@ Code, prepared dependencies/extensions, fresh diagnostics and the existing Linux
 secure desktop preparation. Archive the new diagnostic directory and check
 `final-result.json.complete`, all planned branch observations, ordinary host exits,
 accepted screenshots/sidecars, and verified final cleanup. Existing canonical suite
-registry/reporting counts and private mappings are unchanged. A focused success
+aliases/reporting counts and private mappings are unchanged. A focused success
 would not establish canonical full-rollup, root expectation approval, or whole-case
 acceptance; those require separate source-bound native runs and USER review.
 Use `node apps/vs-code-designer/scripts/run-e2e-cli.js --workspace-artifact-regeneration`
 after artifact admission (with the app's `node_modules/.bin` on PATH), rather than
 building inside the consumer. Set `LA_E2E_CLI_EXTENSIONS_DIR` to the admitted prepared
 directory and `LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL=0` for this independent invocation;
-the runner rejects combining the two supplements. Give this invocation separate
+the focused runner sets the latter for its own invocation and rejects attempts to
+combine the two supplements. Give this invocation separate
 phase/result destinations if consumer result-staging variables are inherited;
 do not overwrite an existing canonical lane or add unit groups to its native count.
+For batch consumers use
+`node apps/vs-code-designer/scripts/run-e2e-cli.js --suites workspaceArtifactRegeneration`
+with the existing prepared extension seed/admission context. The batch allocates
+owned fixtures/profiles/results and a suite-scoped regeneration diagnostics
+directory. This explicit additional selection is not the canonical alias inventory
+and therefore cannot claim canonical full-rollup success.
+On Linux choose a short job-owned `LA_E2E_CLI_BATCH_ROOT` so the batch-owned profile
+parent also fits the unchanged actual UTF-8 socket budget. Regular profile basenames
+are opaque per-invocation/per-phase hashes; this shortens paths without changing
+phase identities, weakening the byte-length check, or using a shared desktop profile.
 
 ### Workspace prompt Cancel (Windows and Linux)
 
