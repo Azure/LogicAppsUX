@@ -1013,7 +1013,17 @@ function testSupplementaryFamilyRoutingContract() {
       assert.ok(job, `Missing native ${os} lane for ${suiteId}`);
       assert.strictEqual(job.suiteId, suiteId);
       assert.strictEqual(job.cliArguments, SUITE_REGISTRY[suiteId].args.join(' '));
-      assert.strictEqual(job.requiresAzureAccessToken, undefined, 'Connector-free families must not receive live Azure credentials');
+      if (['httpTimeoutComposeOriginal', 'statelessVariablesLifecycle'].includes(suiteId)) {
+        assert.strictEqual(job.requiresAzureAccessToken, true, 'Affirmative connector setup requires the approved Azure fixture context');
+        assert.strictEqual(job.testARMServiceConnection, 'LogicAppsVSCode-E2E-SignIn');
+        assert.strictEqual(job.azureResourceGroupName, 'LogicAppsVSCode-E2E-Fixtures');
+        assert.strictEqual(job.azureLocationName, 'westus');
+      } else {
+        assert.strictEqual(job.requiresAzureAccessToken, undefined, 'Workspace-only families must not receive live Azure credentials');
+        assert.strictEqual(job.testARMServiceConnection, undefined);
+        assert.strictEqual(job.azureResourceGroupName, undefined);
+        assert.strictEqual(job.azureLocationName, undefined);
+      }
       assert.ok(job.selected.includes(`validateSuiteSelection.${os}_${suiteId}`));
       assert.ok(diagnostic.dependsOn.includes(jobName));
       assert.ok(!gate.dependsOn.includes(jobName), 'Unvalidated families must not silently replace the established canonical gate');

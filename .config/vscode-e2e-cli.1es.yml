@@ -461,6 +461,10 @@ extends:
               cliArguments: --http-timeout-compose-original
               artifactName: linux-http-timeout-compose
               selected: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.linux_httpTimeoutComposeOriginal'] ]
+              requiresAzureAccessToken: true
+              testARMServiceConnection: LogicAppsVSCode-E2E-SignIn
+              azureResourceGroupName: LogicAppsVSCode-E2E-Fixtures
+              azureLocationName: westus
               dependsOn: [resolve_consumer_context, build_current_run_e2e_artifact]
               resolvedVSCodeVersion: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.resolvedVSCodeBuild'] ]
               expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
@@ -483,6 +487,10 @@ extends:
               cliArguments: --http-timeout-compose-original
               artifactName: windows-http-timeout-compose
               selected: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.windows_httpTimeoutComposeOriginal'] ]
+              requiresAzureAccessToken: true
+              testARMServiceConnection: LogicAppsVSCode-E2E-SignIn
+              azureResourceGroupName: LogicAppsVSCode-E2E-Fixtures
+              azureLocationName: westus
               dependsOn: [resolve_consumer_context, build_current_run_e2e_artifact]
               resolvedVSCodeVersion: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.resolvedVSCodeBuild'] ]
               expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
@@ -505,6 +513,10 @@ extends:
               cliArguments: --stateless-variables-lifecycle
               artifactName: linux-stateless-variables
               selected: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.linux_statelessVariablesLifecycle'] ]
+              requiresAzureAccessToken: true
+              testARMServiceConnection: LogicAppsVSCode-E2E-SignIn
+              azureResourceGroupName: LogicAppsVSCode-E2E-Fixtures
+              azureLocationName: westus
               dependsOn: [resolve_consumer_context, build_current_run_e2e_artifact]
               resolvedVSCodeVersion: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.resolvedVSCodeBuild'] ]
               expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
@@ -527,6 +539,10 @@ extends:
               cliArguments: --stateless-variables-lifecycle
               artifactName: windows-stateless-variables
               selected: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.windows_statelessVariablesLifecycle'] ]
+              requiresAzureAccessToken: true
+              testARMServiceConnection: LogicAppsVSCode-E2E-SignIn
+              azureResourceGroupName: LogicAppsVSCode-E2E-Fixtures
+              azureLocationName: westus
               dependsOn: [resolve_consumer_context, build_current_run_e2e_artifact]
               resolvedVSCodeVersion: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.resolvedVSCodeBuild'] ]
               expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]

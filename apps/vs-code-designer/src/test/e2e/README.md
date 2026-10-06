@@ -26,6 +26,21 @@ src/test/e2e/
 
 ## Running Tests
 
+### Standard Azure connector setup
+
+When **Enable connectors in Azure** appears, shared designer/debug setup must
+choose **Use connectors from Azure** or exact **Yes**, even for workflows that
+only author built-in operations. Reuse `affirmativeAzureConnectorPrompt`; missing
+authentication or fixture context is blocked setup, not permission to choose Skip.
+Intentional workspace No/Cancel tests keep their original actions.
+
+The opt-in HTTP Compose and Stateless variables consumers reuse the existing
+approved MSN service connection and fixture context on both operating systems.
+The shared Azure CLI template supplies tenant, subscription, resource group and
+location through `LA_E2E_CLI_AZURE_*`. Use only the existing approved target; do
+not create resources or expand permissions. Workspace-only consumers remain
+credential-free, and canonical selectors and native acceptance gates are unchanged.
+
 ### HTTP timeout on Compose: original authoring clause
 
 `pnpm --dir apps/vs-code-designer run test:e2e-cli:http-timeout-compose-original`
@@ -101,7 +116,7 @@ Native acceptance requires the source-bound compiled producer artifact and
 actual Windows and Linux isolated consumer runs with their generated fixture,
 raw CLI results, saved-definition snapshot and accepted screenshots.
 
-Boundary: this is only the original connector-free Compose authoring/Code/save/
+Boundary: this is only the original built-in Compose authoring/Code/save/
 unsupported-timeout clause. HTTP timeout execution against the original service,
 HTTP PT24H terminal validation, Portal-specific errors/invalid durations and
 Consumption-only rejection remain uncovered. No original endpoint is used,
