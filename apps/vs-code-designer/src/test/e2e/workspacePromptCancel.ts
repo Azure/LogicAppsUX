@@ -35,11 +35,13 @@ export function captureWorkspacePromptCancelBaseline(workspaceParent: string, wo
   };
 }
 
-interface WorkspacePromptObservation {
+export interface WorkspacePromptObservation {
   containers: WorkbenchPromptContainer[];
   refusal?: string;
   title: string;
   timeOrigin: number;
+  readyState: string;
+  workbenchVisible: boolean;
   folderNames: string[];
   tabs: string[];
 }
@@ -99,9 +101,99 @@ export async function readWorkspacePromptObservation(cdp: CdpEvaluator): Promise
       const folderNames = Array.from(document.querySelectorAll(
         '.explorer-viewlet .pane-header .title, .explorer-folders-view .monaco-list-row[aria-level="1"] .label-name'
       )).filter(visible).map(text);
-      return { containers, refusal, title: document.title, timeOrigin: performance.timeOrigin, folderNames,
+      return { containers, refusal, title: document.title, timeOrigin: performance.timeOrigin,
+        readyState: document.readyState, workbenchVisible: !!Array.from(document.querySelectorAll('.monaco-workbench')).find(visible), folderNames,
         tabs: Array.from(document.querySelectorAll('[role="tab"]')).filter(visible).map(text) };
     })()`
+  );
+}
+
+export function isWorkspacePromptNavigationError(error: unknown): boolean {
+  return (
+    error instanceof Error &&
+    (error.message === 'Inspected target navigated or closed' ||
+      error.message === 'Cannot find context with specified id' ||
+      /^Execution context was destroyed(?:[.,].*)?$/.test(error.message))
+  );
+}
+
+export async function waitForWorkspacePromptNavigation(
+  cdp: CdpEvaluator & { readonly targetId?: string; readonly contextGeneration?: number },
+  options: {
+    workspace: CancelWorkspace;
+    previousTimeOrigin: number;
+    expectedView: 'app' | 'empty';
+    phase: WorkspacePromptCancelPhase;
+  }
+): Promise<WorkspacePromptObservation> {
+  const { workspace, previousTimeOrigin, expectedView, phase } = options;
+  assert.ok(Number.isFinite(previousTimeOrigin), 'Folder navigation requires the original workbench document identity');
+  const appName = path.basename(workspace.appDir).toLowerCase();
+  let lastState = '';
+  let navigationErrors = 0;
+  const report = (event: string, details: Record<string, unknown>) =>
+    console.log(
+      `[workspacePromptCancelUI] Folder navigation: ${JSON.stringify({
+        phase: phase.name,
+        expectedView,
+        event,
+        targetId: cdp.targetId,
+        generation: cdp.contextGeneration,
+        elapsedMs: Date.now() - phase.startedAt,
+        remainingMs: phase.deadline - Date.now(),
+        ...details,
+      })}`
+    );
+  report('started', { previousTimeOrigin });
+  while (Date.now() < phase.deadline) {
+    let observation: WorkspacePromptObservation | undefined;
+    try {
+      observation = await readWorkspacePromptObservation(cdp);
+    } catch (error) {
+      if (!isWorkspacePromptNavigationError(error)) {
+        throw error;
+      }
+      navigationErrors++;
+      report('document-transition', { error: String(error), navigationErrors });
+    }
+    if (observation) {
+      const state = {
+        timeOrigin: observation.timeOrigin,
+        readyState: observation.readyState,
+        workbenchVisible: observation.workbenchVisible,
+        title: observation.title,
+        folderNames: observation.folderNames,
+      };
+      if (JSON.stringify(state) !== lastState) {
+        lastState = JSON.stringify(state);
+        report('document-observed', state);
+      }
+      if (observation.refusal) {
+        throw new Error(`VS Code refused the real workspace dialog: ${observation.refusal}`);
+      }
+      const expectedFolder =
+        expectedView === 'app'
+          ? observation.title.toLowerCase().includes(appName) && observation.folderNames.some((name) => name.toLowerCase() === appName)
+          : !observation.folderNames.length && !observation.title.toLowerCase().includes(appName);
+      if (
+        Number.isFinite(observation.timeOrigin) &&
+        observation.timeOrigin !== previousTimeOrigin &&
+        observation.readyState === 'complete' &&
+        observation.workbenchVisible &&
+        expectedFolder
+      ) {
+        assertWorkspacePromptCancelPhaseBudget(phase);
+        if (expectedView === 'app') {
+          assertExistingAppView(observation, workspace);
+        }
+        report('completed', { previousTimeOrigin, timeOrigin: observation.timeOrigin, navigationErrors });
+        return observation;
+      }
+    }
+    await new Promise((resolve) => setTimeout(resolve, Math.min(100, Math.max(0, phase.deadline - Date.now()))));
+  }
+  throw new Error(
+    `Folder navigation did not reach the new ${expectedView} workbench before the ${phase.name} deadline. Last state: ${lastState}`
   );
 }
 
@@ -267,14 +359,20 @@ export async function runWorkspacePromptCancelUi(
     console.log(`[workspacePromptCancelUI] Phase timing: ${JSON.stringify(timing)}`);
   };
   recordPhase('started');
-  let cdp = await connectToVsCodeWorkbenchCdp({
+  const cdp = await connectToVsCodeWorkbenchCdp({
     activate: false,
     waitForServer: true,
     timeoutMs: Math.min(15000, deadline - Date.now()),
   });
-  const boundedCdp: CdpEvaluator = {
-    evaluate: (context, expression) => cdp.evaluate(context, expression, { timeoutMs: remaining() }),
-    send: (method, params) => cdp.send(method, params, { timeoutMs: remaining() }),
+  const boundedCdp = {
+    get targetId() {
+      return cdp.targetId;
+    },
+    get contextGeneration() {
+      return cdp.contextGeneration;
+    },
+    evaluate: <T>(context: number | undefined, expression: string) => cdp.evaluate<T>(context, expression, { timeoutMs: remaining() }),
+    send: (method: string, params?: Record<string, unknown>) => cdp.send(method, params, { timeoutMs: remaining() }),
   };
   const captureScreenshot = (name: string) => captureRequiredCancelScreenshot(cdp, name, deadline);
   let lastObservation: WorkspacePromptObservation | undefined;
@@ -283,10 +381,28 @@ export async function runWorkspacePromptCancelUi(
   let precedingNoObserved = false;
   let postNoDirectories = baseline.entries;
   try {
+    cdp.onLifecycleEvent((event) =>
+      console.log(
+        `[workspacePromptCancelUI] CDP lifecycle: ${JSON.stringify({
+          phase: phase.name,
+          event: event.method,
+          targetId: cdp.targetId,
+          generation: cdp.contextGeneration,
+          elapsedMs: Date.now() - phase.startedAt,
+        })}`
+      )
+    );
+    await boundedCdp.send('Page.enable');
+    await boundedCdp.send('Runtime.enable');
     await boundedCdp.send('Page.bringToFront');
+    const initialObservation = await readWorkspacePromptObservation(boundedCdp);
     await openExistingAppThroughFileMenu(boundedCdp, workspace.appDir, deadline, captureScreenshot);
-    cdp.dispose();
-    cdp = await connectToVsCodeWorkbenchCdp({ activate: false, waitForServer: true, timeoutMs: Math.min(15000, deadline - Date.now()) });
+    await waitForWorkspacePromptNavigation(boundedCdp, {
+      workspace,
+      previousTimeOrigin: initialObservation.timeOrigin,
+      expectedView: 'app',
+      phase,
+    });
     while (Date.now() < deadline) {
       lastObservation = await readWorkspacePromptObservation(boundedCdp);
       if (lastObservation.refusal) {
@@ -338,34 +454,23 @@ export async function runWorkspacePromptCancelUi(
             '[workspacePromptCancelUI] Preceding source Open Folder -> real No completed on the same app; ordinary activation initialized it.'
           );
           await clickFileMenuCommand(boundedCdp, '^Close Folder$', deadline);
-          cdp.dispose();
-          cdp = await connectToVsCodeWorkbenchCdp({
-            activate: false,
-            waitForServer: true,
-            timeoutMs: Math.min(15000, deadline - Date.now()),
+          const empty = await waitForWorkspacePromptNavigation(boundedCdp, {
+            workspace,
+            previousTimeOrigin: noTimeOrigin,
+            expectedView: 'empty',
+            phase,
           });
-          while (Date.now() < deadline) {
-            const empty = await readWorkspacePromptObservation(boundedCdp);
-            if (
-              empty.timeOrigin !== noTimeOrigin &&
-              !empty.folderNames.length &&
-              !empty.title.toLowerCase().includes(path.basename(workspace.appDir).toLowerCase())
-            ) {
-              break;
-            }
-            await new Promise((resolve) => setTimeout(resolve, Math.min(250, deadline - Date.now())));
-          }
           remaining();
           recordPhase('completed');
           phase = createWorkspacePromptCancelPhase('cancel');
           deadline = phase.deadline;
           recordPhase('started');
           await openExistingAppThroughFileMenu(boundedCdp, workspace.appDir, deadline, captureScreenshot);
-          cdp.dispose();
-          cdp = await connectToVsCodeWorkbenchCdp({
-            activate: false,
-            waitForServer: true,
-            timeoutMs: Math.min(15000, deadline - Date.now()),
+          await waitForWorkspacePromptNavigation(boundedCdp, {
+            workspace,
+            previousTimeOrigin: empty.timeOrigin,
+            expectedView: 'app',
+            phase,
           });
           continue;
         }

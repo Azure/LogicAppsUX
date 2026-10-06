@@ -100,6 +100,16 @@ Captures use at most five seconds and the remaining phase budget. Phase timing a
 original capture-RPC errors are retained in the case log, while the required unchanged
 settling interval and final evidence acceptance remain strict.
 
+File -> Open Folder and Close Folder reload the current workbench document. The
+driver keeps its original CDP target/session and waits for a different document
+time origin, a fully loaded visible shell, and the expected app/empty Explorer.
+Only document-navigation errors from read-only readiness probes are retried,
+within the existing phase deadline; user input is never replayed. A closed CDP
+connection, other RPC errors, or the wrong app remain failures. The real No and
+Cancel observations do not use this navigation recovery: their no-reload
+assertions stay strict. Logs distinguish folder-navigation readiness from CDP
+lifecycle events and record the phase, target, generation and document origin.
+
 Focused non-GUI controls are available as `test:e2e-cli:workspace-prompt-cancel:unit`
 and `test:e2e-cli:linux-secure-session:unit`; both are included in the existing
 `test:e2e-cli:unit` chain on both consumer OSes. The secure-session controls use

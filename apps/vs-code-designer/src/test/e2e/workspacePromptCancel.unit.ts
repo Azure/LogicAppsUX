@@ -2,6 +2,8 @@ import * as assert from 'assert';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
+import type { CdpEvaluator } from './cdpFormHelpers';
+import type { WorkspacePromptObservation } from './workspacePromptCancel';
 import type { ScreenshotReadinessMetadata, ScreenshotReadinessSnapshot } from './screenshotReadiness';
 
 async function main(): Promise<void> {
@@ -16,6 +18,8 @@ async function main(): Promise<void> {
     assertWorkspacePromptCancelPhaseBudget,
     assertWorkspacePromptCancelSettled,
     isOpenFolderPickerReady,
+    isWorkspacePromptNavigationError,
+    waitForWorkspacePromptNavigation,
     workspacePromptCancelScreenshotOptions,
   } = await import('./workspacePromptCancel');
   try {
@@ -58,6 +62,107 @@ async function main(): Promise<void> {
     assert.throws(() => assertExistingAppView({ ...view, title: 'existing workspace' }, workspace), /must still show the existing app/);
     assert.throws(() => assertExistingAppView({ ...view, folderNames: ['workspace'] }, workspace), /Explorer must still show/);
     assert.throws(() => assertExistingAppView({ ...view, tabs: ['Create logic app workspace'] }, workspace), /must not open the wizard/);
+    const appObservation: WorkspacePromptObservation = {
+      ...view,
+      containers: [],
+      timeOrigin: 2,
+      readyState: 'complete',
+      workbenchVisible: true,
+    };
+    const transitionError = new Error('Inspected target navigated or closed');
+    for (const error of [
+      transitionError,
+      new Error('Cannot find context with specified id'),
+      new Error('Execution context was destroyed.'),
+    ]) {
+      assert.strictEqual(isWorkspacePromptNavigationError(error), true);
+    }
+    for (const error of [
+      'Inspected target navigated or closed',
+      new Error('CDP WebSocket closed'),
+      new Error('Target closed'),
+      new Error('Timed out waiting for CDP Runtime.evaluate response after 1500ms'),
+      new Error('Required supplementary result failed'),
+    ]) {
+      assert.strictEqual(
+        isWorkspacePromptNavigationError(error),
+        false,
+        'Process loss, RPC expiry and terminal failures are not navigation'
+      );
+    }
+    const navigation = new NavigationFixture([
+      { ...appObservation, timeOrigin: 1 },
+      transitionError,
+      { ...appObservation, readyState: 'loading' },
+      { ...appObservation, workbenchVisible: false },
+      { ...appObservation, folderNames: ['other-app'] },
+      appObservation,
+    ]);
+    const navigationOptions = {
+      workspace,
+      previousTimeOrigin: 1,
+      expectedView: 'app' as const,
+      phase: createWorkspacePromptCancelPhase('preceding-no-setup'),
+    };
+    assert.deepStrictEqual(await waitForWorkspacePromptNavigation(navigation, navigationOptions), appObservation);
+    assert.strictEqual(navigation.evaluateCalls, 6, 'Old documents, loading shells and wrong folders cannot satisfy navigation');
+    assert.strictEqual(navigation.sendCalls, 0, 'Navigation readiness must not replay any user input');
+    const emptyObservation = { ...appObservation, timeOrigin: 3, title: '[Extension Development Host]', folderNames: [] };
+    const closeFolder = new NavigationFixture([appObservation, emptyObservation]);
+    assert.deepStrictEqual(
+      await waitForWorkspacePromptNavigation(closeFolder, { ...navigationOptions, previousTimeOrigin: 2, expectedView: 'empty' }),
+      emptyObservation
+    );
+    for (const error of [
+      new Error('CDP WebSocket closed'),
+      new Error('Timed out waiting for CDP Runtime.evaluate response after 1500ms'),
+      new Error('Required supplementary result failed'),
+    ]) {
+      const fatalNavigation = new NavigationFixture([error, appObservation]);
+      await assert.rejects(waitForWorkspacePromptNavigation(fatalNavigation, navigationOptions), (actual) => actual === error);
+      assert.strictEqual(fatalNavigation.evaluateCalls, 1, 'Only document-navigation errors may be retried');
+    }
+    await assert.rejects(
+      waitForWorkspacePromptNavigation(
+        new NavigationFixture([{ ...appObservation, tabs: ['Create logic app workspace'] }]),
+        navigationOptions
+      ),
+      /must not open the wizard/,
+      'An unexpected wizard is an assertion failure, not transient navigation'
+    );
+    await assert.rejects(
+      waitForWorkspacePromptNavigation(new NavigationFixture([{ ...appObservation, refusal: 'DialogService refused' }]), navigationOptions),
+      /refused the real workspace dialog/
+    );
+    for (const observation of [
+      { ...appObservation, timeOrigin: 1 },
+      { ...appObservation, folderNames: ['other-app'] },
+    ]) {
+      const timeoutNavigation = new NavigationFixture([observation]);
+      const fixedPhase = createWorkspacePromptCancelPhase('preceding-no-setup', Date.now() - 29970);
+      await assert.rejects(
+        waitForWorkspacePromptNavigation(timeoutNavigation, { ...navigationOptions, phase: fixedPhase }),
+        /Folder navigation did not reach the new app workbench/,
+        'Neither a stale document nor a competing app can extend the phase deadline or satisfy readiness'
+      );
+      assert.strictEqual(fixedPhase.deadline - fixedPhase.startedAt, 30000);
+    }
+    const lateNavigation = new NavigationFixture([appObservation], 40);
+    await assert.rejects(
+      waitForWorkspacePromptNavigation(lateNavigation, {
+        ...navigationOptions,
+        phase: createWorkspacePromptCancelPhase('preceding-no-setup', Date.now() - 29980),
+      }),
+      /deadline expired/,
+      'A ready document arriving after the original deadline cannot be accepted'
+    );
+    await assert.rejects(
+      waitForWorkspacePromptNavigation(new NavigationFixture([appObservation]), {
+        ...navigationOptions,
+        previousTimeOrigin: Number.NaN,
+      }),
+      /original workbench document identity/
+    );
     const picker = { visible: true, title: 'Open Folder', value: appDir, busy: false, rowCount: 1 };
     assert.strictEqual(isOpenFolderPickerReady(picker), true);
     for (const rejected of [
@@ -136,6 +241,34 @@ async function main(): Promise<void> {
       process.env.LA_E2E_CLI_SCREENSHOT_DIR = originalScreenshotDir;
     }
     fs.rmSync(root, { recursive: true, force: true });
+  }
+}
+
+class NavigationFixture implements CdpEvaluator {
+  readonly targetId = 'unit-original-workbench';
+  readonly contextGeneration = 0;
+  evaluateCalls = 0;
+  sendCalls = 0;
+
+  constructor(
+    private readonly observations: Array<WorkspacePromptObservation | Error>,
+    private readonly readDelayMs = 0
+  ) {}
+
+  async evaluate<T>(): Promise<T> {
+    if (this.readDelayMs) {
+      await new Promise((resolve) => setTimeout(resolve, this.readDelayMs));
+    }
+    const observation = this.observations[Math.min(this.evaluateCalls++, this.observations.length - 1)];
+    if (observation instanceof Error) {
+      throw observation;
+    }
+    return observation as T;
+  }
+
+  async send(): Promise<unknown> {
+    this.sendCalls++;
+    throw new Error('Navigation readiness must not dispatch input or replace the connection');
   }
 }
 
