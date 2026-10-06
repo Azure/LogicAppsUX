@@ -541,6 +541,9 @@ async function main(): Promise<void> {
         writeSuitePhaseResult(env: NodeJS.ProcessEnv, phase: unknown): void;
         publishRegenerationStageEvidence(context: unknown, result: unknown, phases: unknown[], cleanup: unknown): unknown;
         assertRegenerationStageEvidence(root: string, identity: Record<string, string>): unknown;
+        getDirectRegenerationEvidencePaths(): { terminalResultPath: string; cleanupLedgerPath: string };
+        beginDirectRegenerationEvidence(context: unknown, paths: unknown): void;
+        writeDirectRegenerationEvidence(context: unknown, terminal: unknown, cleanup: unknown, paths: unknown): void;
       };
     } = require(runner);
     // These are modeled reporting controls, not actual Code observations or
@@ -708,7 +711,86 @@ async function main(): Promise<void> {
         })
       );
     }
+    const completeTerminal = reporting._test.publishRegenerationStageEvidence(stageContext, stageResult, protocolPhases, ownedCleanup);
+    const canonicalPaths = reporting._test.getDirectRegenerationEvidencePaths();
+    assert.strictEqual(path.basename(canonicalPaths.terminalResultPath), 'workspaceArtifactRegeneration.terminal-result.json');
+    assert.strictEqual(path.basename(path.dirname(canonicalPaths.terminalResultPath)), 'results');
+    assert.strictEqual(path.basename(path.dirname(path.dirname(canonicalPaths.terminalResultPath))), '.vscode-test');
+    const modeledDirectPaths = {
+      terminalResultPath: path.join(reportRoot, 'canonical-model.terminal-result.json'),
+      cleanupLedgerPath: path.join(reportRoot, 'canonical-model.cleanup-ledger.json'),
+    };
+    reporting._test.writeDirectRegenerationEvidence(stageContext, completeTerminal, ownedCleanup, modeledDirectPaths);
+    const requiredTerminal: {
+      suiteId: string;
+      complete: boolean;
+      lifecycleFinalized: boolean;
+      exitCode: number | null;
+      signal: string | null;
+      cleanupVerified: boolean;
+      diagnosticsError: string;
+      phaseCompleteness: boolean;
+      expectedPhaseIds: string[];
+      observedPhaseIds: string[];
+      missingPhaseIds: string[];
+      unexpectedPhaseIds: string[];
+      duplicatePhaseIds: string[];
+      blockedPhaseIds: string[];
+      phaseResults: unknown[];
+    } = JSON.parse(fs.readFileSync(modeledDirectPaths.terminalResultPath, 'utf8'));
+    assert.strictEqual(requiredTerminal.suiteId, 'workspaceArtifactRegeneration');
+    assert.strictEqual(requiredTerminal.complete, true);
+    assert.strictEqual(requiredTerminal.lifecycleFinalized, true);
+    assert.strictEqual(requiredTerminal.exitCode, 0);
+    assert.strictEqual(requiredTerminal.signal, null);
+    assert.strictEqual(requiredTerminal.cleanupVerified, true);
+    assert.strictEqual(requiredTerminal.diagnosticsError, '');
+    assert.strictEqual(requiredTerminal.phaseCompleteness, true);
+    assert.deepStrictEqual(requiredTerminal.expectedPhaseIds, regenerationPhaseIds);
+    assert.deepStrictEqual(requiredTerminal.observedPhaseIds, regenerationPhaseIds);
+    for (const name of ['missingPhaseIds', 'unexpectedPhaseIds', 'duplicatePhaseIds', 'blockedPhaseIds'] as const) {
+      assert.deepStrictEqual(requiredTerminal[name], []);
+    }
+    assert.strictEqual(requiredTerminal.phaseResults.length, 14);
+    // Reset a previous green before any creating-host admission/launch can fail.
+    reporting._test.beginDirectRegenerationEvidence({ ...stageContext, invocation: 'new-scope' }, modeledDirectPaths);
+    const pending: { complete: boolean; lifecycleFinalized: boolean; invocation: string } = JSON.parse(
+      fs.readFileSync(modeledDirectPaths.terminalResultPath, 'utf8')
+    );
+    assert.strictEqual(pending.complete, false);
+    assert.strictEqual(pending.lifecycleFinalized, false);
+    assert.strictEqual(pending.invocation, 'new-scope');
+    assert.throws(() =>
+      reporting._test.writeDirectRegenerationEvidence(
+        stageContext,
+        completeTerminal,
+        { ...ownedCleanup, verified: false },
+        modeledDirectPaths
+      )
+    );
+    assert.throws(() =>
+      reporting._test.writeDirectRegenerationEvidence(
+        stageContext,
+        { ...requiredTerminal, invocation: 'stale' },
+        ownedCleanup,
+        modeledDirectPaths
+      )
+    );
+    const incomplete = reporting._test.publishRegenerationStageEvidence(
+      stageContext,
+      stageResult,
+      protocolPhases.slice(0, 1),
+      ownedCleanup
+    );
+    reporting._test.writeDirectRegenerationEvidence(stageContext, incomplete, ownedCleanup, modeledDirectPaths);
+    const failedCanonical: { complete: boolean; phaseCompleteness: boolean; diagnosticsError: string; missingPhaseIds: string[] } =
+      JSON.parse(fs.readFileSync(modeledDirectPaths.terminalResultPath, 'utf8'));
+    assert.strictEqual(failedCanonical.complete, false);
+    assert.strictEqual(failedCanonical.phaseCompleteness, false);
+    assert.ok(failedCanonical.diagnosticsError);
+    assert.strictEqual(failedCanonical.missingPhaseIds.length, 13, 'A passing wizard is not a finalized lifecycle');
     reporting._test.publishRegenerationStageEvidence(stageContext, stageResult, protocolPhases, ownedCleanup);
+    checks++;
     assert.ok(
       !fs.readFileSync(path.join(stageRoot, 'code.log'), 'utf8').includes('unit-secret'),
       'Only sanitized code.log may be archived'

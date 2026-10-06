@@ -265,7 +265,42 @@ Relevant environment paths:
   may still point at the consumer's **separate** result area. The family copies
   above are emitted independently and cannot be replaced by baseline results.
 
-After collecting the whitelist into a staged family directory, validate it using
+  #### Canonical direct supplementary terminal
+
+  The direct ADO invocation additionally writes these fixed **app-root-relative**
+  paths, independent of the caller's working directory or batch result overrides:
+
+  ```text
+  .vscode-test/results/workspaceArtifactRegeneration.terminal-result.json
+  .vscode-test/results/workspaceArtifactRegeneration.cleanup-ledger.json
+  ```
+
+  The terminal is cleared to a fresh `complete=false`, `lifecycleFinalized=false`
+  scope before creating-host admission/launch can fail, then bound to the current
+  invocation/job/source/platform. After actual normal host closure, final evidence
+  checks and verified removal of the owned wizard root, it receives the same
+  standardized result shape as the family-root `terminal-result.json`:
+
+  - `suiteId: "workspaceArtifactRegeneration"`, `complete: true`,
+    `lifecycleFinalized: true`, `exitCode: 0`, `signal: null`;
+  - `cleanupVerified: true`, `diagnosticsError: ""`, `phaseCompleteness: true`;
+  - `expectedPhaseIds` and `observedPhaseIds` both exactly the ordered fourteen
+    registered phases; `missingPhaseIds`, `unexpectedPhaseIds`,
+    `duplicatePhaseIds`, `blockedPhaseIds` are empty;
+  - each `phaseResults` entry retains actual `phaseId`, `complete`, `exitCode`,
+    `signal`, `cleanupVerified`, and `diagnosticsError`. The actual wizard's Mocha
+    count remains once only; regular workbench phases are not extra Mocha bodies.
+
+  Incomplete phases, diagnostics, failed/preserved/wrong-root cleanup, or failed
+  final evidence leave the terminal unsuccessful. The canonical cleanup ledger
+  records the actual existing owned-root removal result, current binding and phase
+  proofs; it does not invent the outer wrapper's process-tree verification.
+  Archive these two files through the existing results archive in addition to the
+  safe family-root whitelist. Batch's general wrapper continues to finalize its
+  standard report-folder result separately. No parent CI implementation was copied
+  into this family branch; publication uses the existing terminal/cleanup helpers.
+
+  After collecting the whitelist into a staged family directory, validate it using
 the admitted source/compiled tests and the same current-job identity environment:
 
 ```text

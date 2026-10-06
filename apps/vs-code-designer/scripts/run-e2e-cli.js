@@ -110,6 +110,7 @@ function main() {
       );
       return;
     }
+    beginDirectRegenerationEvidence();
     runVscodeTest(['--label', 'createWorkspaceCoreMatrix'], {
       extraEnv: {
         LA_E2E_CLI_REQUIRE_WORKSPACE_REGENERATION: '1',
@@ -1465,6 +1466,7 @@ function runVscodeTest(args, options = {}) {
     : undefined;
   const cancelContext = cancelRequired ? cancelCheck.prepareCancelContext(childEnv, deferredWorkspaceParent) : undefined;
   if (regenerationContext) {
+    beginDirectRegenerationEvidence(regenerationContext);
     const runtime = require('../out/test/e2e/workspaceArtifactRegenerationRuntime');
     regenerationContext.runtimeAdmission = {
       root: runtime.assertRegenerationRuntimeRoot(childEnv.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT, false),
@@ -1702,8 +1704,9 @@ function runVscodeTest(args, options = {}) {
           writeSuitePhaseResult(childEnv, { ...phase, cleanupLedger });
         }
         try {
-          publishRegenerationStageEvidence(regenerationContext, regenerationResult, regenerationPhases, cleanupLedger);
+          const terminal = publishRegenerationStageEvidence(regenerationContext, regenerationResult, regenerationPhases, cleanupLedger);
           assertRegenerationStageEvidence(regenerationContext.root, regenerationContext.identity);
+          writeDirectRegenerationEvidence(regenerationContext, terminal, cleanupLedger);
         } catch (error) {
           regenerationError = error;
           console.error(`[workspace-regeneration] Strict family staging evidence failed: ${String(error)}`);
@@ -1711,7 +1714,8 @@ function runVscodeTest(args, options = {}) {
             regenerationResult.complete = false;
             regenerationResult.errors.push(String(error));
             try {
-              publishRegenerationStageEvidence(regenerationContext, regenerationResult, regenerationPhases, cleanupLedger);
+              const terminal = publishRegenerationStageEvidence(regenerationContext, regenerationResult, regenerationPhases, cleanupLedger);
+              writeDirectRegenerationEvidence(regenerationContext, terminal, cleanupLedger);
             } catch (publishError) {
               console.error(`[workspace-regeneration] Failed to retain unsuccessful staging result: ${String(publishError)}`);
             }
@@ -2667,6 +2671,9 @@ function shouldSuppressKnownVscodeNoise(line) {
 
 module.exports = {
   _test: {
+    getDirectRegenerationEvidencePaths,
+    beginDirectRegenerationEvidence,
+    writeDirectRegenerationEvidence,
     publishRegenerationStageEvidence,
     assertRegenerationStageEvidence,
     assertSafeRuntimeDependenciesRoot,
@@ -3143,6 +3150,102 @@ function getDirectSuiteComplete(label, phaseResults) {
   );
 }
 
+function getDirectRegenerationEvidencePaths() {
+  const resultsRoot = path.resolve(__dirname, '..', '.vscode-test', 'results');
+  return {
+    terminalResultPath: path.join(resultsRoot, 'workspaceArtifactRegeneration.terminal-result.json'),
+    cleanupLedgerPath: path.join(resultsRoot, 'workspaceArtifactRegeneration.cleanup-ledger.json'),
+  };
+}
+
+function beginDirectRegenerationEvidence(context, paths = getDirectRegenerationEvidencePaths()) {
+  const expectedPhaseIds = [...SUITE_REGISTRY.workspaceArtifactRegeneration.expectedPhases];
+  writeSuiteTerminalResult(
+    { LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH: paths.terminalResultPath },
+    {
+      suiteId: 'workspaceArtifactRegeneration',
+      label: 'workspaceArtifactRegeneration',
+      invocation: context?.invocation ?? null,
+      identity: context?.identity ?? {
+        source: process.env.BUILD_SOURCEVERSION || 'local',
+        run: process.env.BUILD_BUILDID || 'local',
+        job: process.env.SYSTEM_JOBID || 'local',
+        platform: process.platform,
+      },
+      complete: false,
+      lifecycleFinalized: false,
+      exitCode: null,
+      signal: null,
+      cleanupVerified: false,
+      diagnosticsError: 'lifecycle-not-finalized',
+      phaseCompleteness: false,
+      expectedPhaseIds,
+      observedPhaseIds: [],
+      missingPhaseIds: expectedPhaseIds,
+      unexpectedPhaseIds: [],
+      duplicatePhaseIds: [],
+      blockedPhaseIds: [],
+      phaseResults: [],
+      mochaPassingCount: 0,
+    }
+  );
+  writeSuiteCleanupLedger(
+    { LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH: paths.cleanupLedgerPath },
+    {
+      suiteId: 'workspaceArtifactRegeneration',
+      invocation: context?.invocation ?? null,
+      identity: context?.identity,
+      verified: false,
+      action: 'pending',
+      workspaceParent: context?.workspaceParent ?? '',
+      reason: 'lifecycle-not-finalized',
+    }
+  );
+}
+
+function writeDirectRegenerationEvidence(context, terminal, cleanup, paths = getDirectRegenerationEvidencePaths()) {
+  assert.equal(terminal.suiteId, 'workspaceArtifactRegeneration');
+  assert.equal(terminal.invocation, context.invocation);
+  assert.deepEqual(terminal.identity, context.identity);
+  if (terminal.complete) {
+    assert.equal(terminal.lifecycleFinalized, true);
+    assert.equal(terminal.phaseCompleteness, true);
+    assert.equal(terminal.exitCode, 0);
+    assert.equal(terminal.signal, null);
+    assert.equal(terminal.cleanupVerified, true);
+    assert.equal(terminal.diagnosticsError, '');
+    assert.equal(getDirectSuiteComplete(terminal.suiteId, terminal.phaseResults), true);
+    assert.deepEqual(terminal.expectedPhaseIds, [...SUITE_REGISTRY.workspaceArtifactRegeneration.expectedPhases]);
+    assert.deepEqual(terminal.observedPhaseIds, terminal.expectedPhaseIds);
+    for (const name of ['missingPhaseIds', 'unexpectedPhaseIds', 'duplicatePhaseIds', 'blockedPhaseIds']) {
+      assert.deepEqual(terminal[name], []);
+    }
+    assert.equal(cleanup.verified, true);
+    assert.equal(cleanup.action, 'removed');
+    assert.equal(cleanup.workspaceParent, context.workspaceParent);
+  }
+  // Only actual owned-root cleanup and native phase proofs are recorded here.
+  // The outer wrapper's independent process-tree receipt is not fabricated.
+  writeSuiteCleanupLedger(
+    { LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH: paths.cleanupLedgerPath },
+    {
+      ...cleanup,
+      suiteId: terminal.suiteId,
+      invocation: context.invocation,
+      identity: context.identity,
+      expectedPhaseIds: terminal.expectedPhaseIds,
+      observedPhaseIds: terminal.observedPhaseIds,
+      missingPhaseIds: terminal.missingPhaseIds,
+      unexpectedPhaseIds: terminal.unexpectedPhaseIds,
+      duplicatePhaseIds: terminal.duplicatePhaseIds,
+      blockedPhaseIds: terminal.blockedPhaseIds,
+      phaseCleanupVerified: terminal.phaseResults.every((phase) => phase.cleanupVerified === true),
+      phases: terminal.phaseResults,
+    }
+  );
+  writeSuiteTerminalResult({ LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH: paths.terminalResultPath }, terminal);
+}
+
 function publishRegenerationStageEvidence(context, result, phases, cleanup) {
   const expectedPhaseIds = SUITE_REGISTRY.workspaceArtifactRegeneration.expectedPhases;
   const safePhases = phases.map((phase) => ({
@@ -3152,12 +3255,33 @@ function publishRegenerationStageEvidence(context, result, phases, cleanup) {
     mochaPassingCount: phase.mochaPassingCount || 0,
     diagnosticsError: redactGeneratedWorkspacePlainText(String(phase.diagnosticsError || '')),
   }));
+  const observedPhaseIds = safePhases.map((phase) => phase.phaseId);
+  const missingPhaseIds = expectedPhaseIds.filter((phaseId) => !observedPhaseIds.includes(phaseId));
+  const unexpectedPhaseIds = observedPhaseIds.filter((phaseId) => !expectedPhaseIds.includes(phaseId));
+  const duplicatePhaseIds = getDuplicateValues(observedPhaseIds);
+  const phaseCompleteness =
+    safePhases.length === expectedPhaseIds.length &&
+    expectedPhaseIds.every((phaseId, index) => observedPhaseIds[index] === phaseId) &&
+    missingPhaseIds.length === 0 &&
+    unexpectedPhaseIds.length === 0 &&
+    duplicatePhaseIds.length === 0;
+  const cleanupVerified =
+    cleanup.verified === true &&
+    cleanup.action === 'removed' &&
+    cleanup.workspaceParent === context.workspaceParent &&
+    safePhases.every((phase) => phase.cleanupVerified === true);
+  const diagnostics = [
+    ...(result?.errors || []),
+    ...safePhases.map((phase) => phase.diagnosticsError).filter(Boolean),
+    ...(!cleanupVerified ? [cleanup.reason || 'owned-cleanup-not-verified'] : []),
+    ...(!phaseCompleteness ? ['incomplete-or-invalid-lifecycle-phases'] : []),
+  ].map((error) => redactGeneratedWorkspacePlainText(String(error)));
   const complete =
     result?.complete === true &&
     getDirectSuiteComplete('workspaceArtifactRegeneration', safePhases) &&
-    cleanup.verified === true &&
-    cleanup.action === 'removed' &&
-    cleanup.workspaceParent === context.workspaceParent;
+    cleanupVerified &&
+    phaseCompleteness &&
+    diagnostics.length === 0;
   const binding = {
     schemaVersion: 1,
     suiteId: 'workspaceArtifactRegeneration',
@@ -3173,14 +3297,31 @@ function publishRegenerationStageEvidence(context, result, phases, cleanup) {
     exitCode: complete ? 0 : 1,
     signal: null,
     expectedPhaseIds: [...expectedPhaseIds],
-    observedPhaseIds: safePhases.map((phase) => phase.phaseId),
+    observedPhaseIds,
+    missingPhaseIds,
+    unexpectedPhaseIds,
+    duplicatePhaseIds,
+    blockedPhaseIds: complete ? [] : missingPhaseIds,
+    phaseCompleteness,
+    diagnosticsError: diagnostics.join('; '),
     phaseResults: safePhases,
-    cleanupVerified: cleanup.verified === true,
+    cleanupVerified,
     mochaPassingCount: safePhases.reduce((sum, phase) => sum + phase.mochaPassingCount, 0),
   };
   fs.writeFileSync(path.join(context.root, 'phase-results.jsonl'), `${safePhases.map((phase) => JSON.stringify(phase)).join('\n')}\n`);
-  fs.writeFileSync(path.join(context.root, 'terminal-result.json'), `${JSON.stringify(terminal, null, 2)}\n`);
-  fs.writeFileSync(path.join(context.root, 'cleanup-ledger.json'), `${JSON.stringify({ ...cleanup, ...binding }, null, 2)}\n`);
+  writeSuiteTerminalResult({ LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH: path.join(context.root, 'terminal-result.json') }, terminal);
+  writeSuiteCleanupLedger(
+    { LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH: path.join(context.root, 'cleanup-ledger.json') },
+    {
+      ...cleanup,
+      ...binding,
+      verified: cleanupVerified,
+      expectedPhaseIds: [...expectedPhaseIds],
+      observedPhaseIds,
+      phaseCleanupVerified: safePhases.every((phase) => phase.cleanupVerified === true),
+      phases: safePhases,
+    }
+  );
   const primary = result || { ...binding, errors: ['Regular-workbench phases did not start'], hosts: [], observations: [] };
   fs.writeFileSync(
     context.resultPath,
@@ -3253,6 +3394,13 @@ function assertRegenerationStageEvidence(root, expectedIdentity) {
   assert.equal(primary.complete, true);
   assert.equal(terminal.exitCode, 0);
   assert.equal(terminal.signal, null);
+  assert.equal(terminal.cleanupVerified, true);
+  assert.equal(terminal.diagnosticsError, '');
+  assert.equal(terminal.phaseCompleteness, true);
+  assert.equal(terminal.suiteId, 'workspaceArtifactRegeneration');
+  for (const name of ['missingPhaseIds', 'unexpectedPhaseIds', 'duplicatePhaseIds', 'blockedPhaseIds']) {
+    assert.deepEqual(terminal[name], []);
+  }
   assert.equal(cleanup.verified, true);
   assert.equal(cleanup.action, 'removed', 'Preserved/failed owned cleanup must not pass staging');
   assert.equal(cleanup.workspaceParent, invocation.workspaceParent);
