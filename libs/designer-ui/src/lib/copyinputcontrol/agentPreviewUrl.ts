@@ -41,16 +41,15 @@ export function isSafeAgentPreviewUrl(candidate: string | undefined): boolean {
   }
 
   if (!ALLOWED_AGENT_PREVIEW_PROTOCOLS.has(parsed.protocol)) {
-    logBlockedAgentPreviewDestination(parsed.protocol);
+    logBlockedAgentPreviewDestination('disallowed-protocol');
     return false;
   }
 
   return true;
 }
 
-function logBlockedAgentPreviewDestination(reason: string): void {
-  // Logs only the disallowed-protocol/"malformed" reason, never the raw destination or any
-  // query string, so a blocked attempt cannot leak a secret/payload into logs.
+function logBlockedAgentPreviewDestination(reason: 'malformed' | 'disallowed-protocol'): void {
+  // Even parsed protocols are attacker-controlled; log only fixed rejection categories.
   LoggerService().log({
     level: LogEntryLevel.Warning,
     area: 'AgentUrlPreview_BlockedDestination',

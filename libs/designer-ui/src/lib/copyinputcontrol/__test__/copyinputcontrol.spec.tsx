@@ -161,10 +161,7 @@ describe('lib/copyinputcontrol', () => {
 
         expect(screen.queryByTitle('Agent URL Preview')).toBeNull();
 
-        // The existing error UI's retry button is still present (reused, not a new element),
-        // but since linkUrl is undefined for an unsafe destination it must remain a no-op.
-        const retryButton = await screen.findByRole('button', { name: 'Open Chat in New Tab' });
-        await userEvent.click(retryButton);
+        expect(screen.queryByRole('button', { name: 'Open Chat in New Tab' })).toBeNull();
         expect(windowOpenSpy).not.toHaveBeenCalled();
       } finally {
         windowOpenSpy.mockRestore();

@@ -78,5 +78,14 @@ describe('lib/copyinputcontrol/agentPreviewUrl', () => {
         expect(serialized).not.toContain('alert(');
       }
     });
+
+    it('logs only a fixed rejection category when a custom scheme contains a private marker', () => {
+      expect(isSafeAgentPreviewUrl('PrivateMarker0123:https://example.invalid/?apiKey=never-log-me')).toBe(false);
+
+      const telemetry = JSON.stringify(mockLog.mock.calls);
+      expect(telemetry).toContain('disallowed-protocol');
+      expect(telemetry.toLowerCase()).not.toContain('privatemarker0123');
+      expect(telemetry).not.toContain('never-log-me');
+    });
   });
 });

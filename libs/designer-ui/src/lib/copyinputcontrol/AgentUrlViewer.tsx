@@ -112,9 +112,11 @@ export const AgentUrlViewer: React.FC<AgentUrlViewerProps> = ({ url, isOpen, que
         <div className={styles.errorContainer}>
           <ErrorCircle24Regular />
           <Text className={styles.errorMessage}>{iframeError}</Text>
-          <Button appearance="primary" onClick={handleOpenInNewTab}>
-            {DISPLAY_TEXT_RETRY}
-          </Button>
+          {linkUrl ? (
+            <Button appearance="primary" onClick={handleOpenInNewTab}>
+              {DISPLAY_TEXT_RETRY}
+            </Button>
+          ) : null}
         </div>
       );
     }
