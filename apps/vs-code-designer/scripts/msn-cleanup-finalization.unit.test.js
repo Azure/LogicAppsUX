@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-/* global __dirname, process, require */
+/* global __dirname, process, require, URL */
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
@@ -10,6 +10,10 @@ const path = require('node:path');
 const { test } = require('node:test');
 const { execFileSync } = require('node:child_process');
 const vm = require('node:vm');
+const {
+  _test: { writeSingleResult },
+} = require('./summarize-e2e-cli-results');
+const { createMsnFinalizationReport } = require('./msn-finalization-reporting');
 const {
   observeMsnCleanupDiagnostics,
   queryWindowsFileLocks,
@@ -42,6 +46,170 @@ function fixture(t) {
   const read = () => JSON.parse(fs.readFileSync(env.LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH));
   return { root, dependencyRoot, workspaceRoot, resource, outputDir, env, read };
 }
+
+function reportFixture(t) {
+  const f = fixture(t);
+  f.root = path.join(f.root, 'results');
+  fs.mkdirSync(f.root);
+  f.env.LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH = path.join(f.root, 'msnWeatherLifecycle.terminal-result.json');
+  const log = path.join(f.root, 'msnWeatherLifecycle.log');
+  fs.writeFileSync(
+    log,
+    [
+      '  √ actual MSN body scenario (1ms)',
+      '  1 passing (1s)',
+      'Extension host exited with code: 0',
+      '[generated-workspace-diagnostics] Error: EBUSY workspace locked callback=https://example.test/callback?sig=raw-sas https://raw-user:raw-password@example.test/cleanup',
+      '[runtime-deps] Error: EPERM AccentedCommandLineParser.dll Authorization: Bearer raw-bearer',
+      '',
+    ].join('\n')
+  );
+  fs.writeFileSync(
+    f.env.LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH,
+    JSON.stringify({
+      label: 'msnWeatherLifecycle',
+      complete: true,
+      cleanupVerified: true,
+      exitCode: 0,
+      signal: null,
+      phaseResults: ['create', 'run'].map((phase) => ({
+        phaseId: `msnWeatherLifecycle:${phase}`,
+        complete: true,
+        cleanupVerified: true,
+        exitCode: 0,
+      })),
+      privateCatalogue: 'must-not-copy-private-catalogue',
+      failureReasons: ['EPERM client_secret=raw-client-secret'],
+    })
+  );
+  return {
+    ...f,
+    options: {
+      label: 'msnWeatherLifecycle',
+      log,
+      outDir: f.root,
+      outcome: 'failure',
+      diagnosticsArtifactName: 'vscode-e2e-cli-diagnostics-windows-msn-weather-lifecycle',
+    },
+  };
+}
+
+test('post-Code cleanup failure gets a real sanitized text attachment on the synthetic testcase, not the passing body', (t) => {
+  const f = reportFixture(t);
+  assert.throws(() => writeSingleResult(f.options), /unsuccessful-wrapper/);
+  const result = JSON.parse(fs.readFileSync(path.join(f.root, 'msnWeatherLifecycle.json')));
+  assert.deepEqual(result.executedTestCounts, { total: 1, passing: 1, failing: 0, pending: 0 });
+  assert.equal(result.harnessFailures[0].kind, 'lifecycle-evidence');
+  assert.equal(result.failureAttachments.length, 1);
+  const attachment = result.failureAttachments[0];
+  assert.equal(attachment.testTitle, 'MSN lifecycle evidence');
+  assert.equal(attachment.evidenceKind, 'cleanup-finalization-diagnostics');
+  assert.equal(attachment.screenshotPath, undefined);
+  const evidence = fs.readFileSync(attachment.attachmentPath, 'utf8');
+  assert.match(evidence, /L4: .*EBUSY/);
+  assert.match(evidence, /L5: .*EPERM.*AccentedCommandLineParser\.dll/);
+  assert.match(evidence, /may predate outer cleanup; not acceptance/);
+  assert.match(evidence, /No failing UI screenshot is implied/);
+  assert.doesNotMatch(evidence, /raw-sas|raw-bearer|raw-client-secret|raw-password|raw-user|must-not-copy-private-catalogue/);
+  const xml = fs.readFileSync(path.join(f.root, 'msnWeatherLifecycle.junit.xml'), 'utf8');
+  assert.match(xml, /name="actual MSN body scenario" \/>/);
+  const synthetic = xml.slice(xml.indexOf('name="MSN lifecycle evidence"'));
+  assert.match(synthetic, /\[\[ATTACHMENT\|.*msnWeatherLifecycle\.cleanup-finalization\.txt\]\]/);
+  assert.match(synthetic, /vscode-e2e-cli-diagnostics-windows-msn-weather-lifecycle\/log\/msnWeatherLifecycle.log/);
+  assert.doesNotMatch(xml, /raw-sas|raw-bearer|raw-client-secret|raw-password|raw-user/);
+});
+
+test('a successful response PNG is never attached to the synthetic failure, even if a manifest incorrectly gives it that title', (t) => {
+  const f = reportFixture(t);
+  const screenshots = path.join(f.root, '..', 'screenshots', 'cli');
+  fs.mkdirSync(screenshots, { recursive: true });
+  t.after(() => fs.rmSync(path.dirname(screenshots), { recursive: true, force: true }));
+  const png = path.join(f.root, 'successful-response.png');
+  fs.writeFileSync(png, 'non-native successful image fixture');
+  fs.writeFileSync(
+    path.join(screenshots, 'failure-attachments.json'),
+    JSON.stringify([{ label: 'msnWeatherLifecycle', testTitle: 'MSN lifecycle evidence', screenshotPath: png }])
+  );
+  assert.throws(() => writeSingleResult(f.options), /unsuccessful-wrapper/);
+  const xml = fs.readFileSync(path.join(f.root, 'msnWeatherLifecycle.junit.xml'), 'utf8');
+  const result = JSON.parse(fs.readFileSync(path.join(f.root, 'msnWeatherLifecycle.json')));
+  assert.equal(result.failureAttachments.length, 1);
+  assert.equal(result.failureAttachments[0].screenshotPath, undefined);
+  assert.doesNotMatch(xml, /\[\[ATTACHMENT\|[^\]]*\.png\]\]/);
+  assert.match(xml, /\[\[ATTACHMENT\|[^\]]*\.txt\]\]/);
+});
+
+test('missing terminal still associates actual cleanup log evidence without fabricating terminal claims', (t) => {
+  const f = reportFixture(t);
+  fs.unlinkSync(f.env.LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH);
+  assert.throws(() => writeSingleResult(f.options), /missing-required-terminal/);
+  const contents = fs.readFileSync(path.join(f.root, 'msnWeatherLifecycle.cleanup-finalization.txt'), 'utf8');
+  assert.match(contents, /No readable terminal was supplied/);
+  assert.match(contents, /EBUSY/);
+});
+
+test('synthetic failure carries deterministic exact run/task and artifact references for uploader-independent navigation', (t) => {
+  const f = reportFixture(t);
+  const evidence = createMsnFinalizationReport({
+    result: {
+      label: 'msnWeatherLifecycle',
+      outcome: 'failure',
+      generatedAt: 'control-time',
+      executedTestCounts: { passing: 1, failing: 0, total: 1, pending: 0 },
+      harnessFailures: [{ name: 'MSN lifecycle evidence', kind: 'lifecycle-evidence', message: 'actual cleanup failure control' }],
+    },
+    terminal: null,
+    logText: 'Error: EPERM original dependency cleanup',
+    outDir: f.root,
+    diagnosticsArtifactName: f.options.diagnosticsArtifactName,
+    env: {
+      SYSTEM_COLLECTIONURI: 'https://dev.azure.com/control-org/',
+      SYSTEM_TEAMPROJECTID: 'control-project',
+      BUILD_BUILDID: '410',
+      SYSTEM_JOBID: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+      SYSTEM_TASKINSTANCEID: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+    },
+  });
+  const task = evidence.references.find((reference) => reference.title === 'Exact producing run task log');
+  const url = new URL(task.url);
+  assert.equal(url.pathname, '/control-org/control-project/_build/results');
+  assert.equal(url.searchParams.get('buildId'), '410');
+  assert.equal(url.searchParams.get('view'), 'logs');
+  assert.equal(url.searchParams.get('j'), 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa');
+  assert.equal(url.searchParams.get('t'), 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb');
+  assert.equal(evidence.references[0].relativePath, 'log/msnWeatherLifecycle.log');
+});
+
+test('text attachment storage failure preserves the original harness error and publishes artifact references without a fake attachment', (t) => {
+  const f = reportFixture(t);
+  const original = fs.writeFileSync;
+  const denied = Object.assign(new Error('cleanup report storage denied'), { code: 'EPERM' });
+  fs.writeFileSync = (file, ...args) => {
+    if (String(file).endsWith('.cleanup-finalization.txt')) {
+      throw denied;
+    }
+    return original(file, ...args);
+  };
+  try {
+    assert.throws(
+      () => writeSingleResult(f.options),
+      (error) => {
+        assert.match(error.errors[0].message, /unsuccessful-wrapper/);
+        assert.equal(error.errors[1], denied);
+        return true;
+      }
+    );
+    const result = JSON.parse(fs.readFileSync(path.join(f.root, 'msnWeatherLifecycle.json')));
+    assert.deepEqual(result.executedTestCounts, { total: 1, passing: 1, failing: 0, pending: 0 });
+    assert.equal(result.failureAttachments.length, 0);
+    const xml = fs.readFileSync(path.join(f.root, 'msnWeatherLifecycle.junit.xml'), 'utf8');
+    assert.match(xml, /cleanup report storage denied/);
+    assert.match(xml, /vscode-e2e-cli-diagnostics-windows-msn-weather-lifecycle\/log\/msnWeatherLifecycle.log/);
+    assert.doesNotMatch(xml, /\[\[ATTACHMENT\|/);
+  } finally {
+    fs.writeFileSync = original;
+  }
+});
 
 function phases(env) {
   for (const phaseId of SUITE_REGISTRY.msnWeatherLifecycle.expectedPhases) {

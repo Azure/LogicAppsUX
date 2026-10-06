@@ -1945,6 +1945,8 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
     }
     fs.mkdirSync(resultRoot, { recursive: true });
     const msnJournalName = 'msnWeatherLifecycle.phases-aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa.jsonl';
+    const cleanupReportName = 'msnWeatherLifecycle.cleanup-finalization.txt';
+    fs.writeFileSync(path.join(resultRoot, cleanupReportName), 'Error: EPERM cleanup Authorization: Bearer raw-cleanup-token\n');
     if (options.msn) {
       fs.writeFileSync(path.join(resultRoot, msnJournalName), '{"phaseId":"msnWeatherLifecycle:run","complete":true}\n');
     }
@@ -2115,6 +2117,9 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
         !fs.existsSync(path.join(artifactStagingDirectory, 'vscode-e2e-cli', artifactName, 'private-traceability', `${suiteId}.json`))
       );
       if (options.msn) {
+        const stagedCleanup = fs.readFileSync(path.join(failedDiagnosticsRoot, 'log', cleanupReportName), 'utf8');
+        assert.match(stagedCleanup, /EPERM cleanup/);
+        assert.doesNotMatch(stagedCleanup, /raw-cleanup-token/);
         if (!options.omitTerminal) {
           assert.strictEqual(
             fs.readFileSync(path.join(failedDiagnosticsRoot, 'log', msnJournalName), 'utf8'),
@@ -2180,6 +2185,9 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
     assertScreenshotSidecarFixturePreserved(path.join(diagnosticsRoot, 'screenshots'), screenshotFixture);
     assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'generated-workspaces', 'index.md')));
     if (options.msn) {
+      const stagedCleanup = fs.readFileSync(path.join(diagnosticsRoot, 'log', cleanupReportName), 'utf8');
+      assert.match(stagedCleanup, /EPERM cleanup/);
+      assert.doesNotMatch(stagedCleanup, /raw-cleanup-token/);
       assert.strictEqual(
         fs.readFileSync(path.join(diagnosticsRoot, 'log', msnJournalName), 'utf8'),
         fs.readFileSync(path.join(resultRoot, msnJournalName), 'utf8')
@@ -2196,6 +2204,7 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
         );
       }
     } else {
+      assert.ok(!fs.existsSync(path.join(diagnosticsRoot, 'log', cleanupReportName)));
       assert.ok(!fs.existsSync(path.join(diagnosticsRoot, 'log', lockObservationName)));
       assert.ok(
         !fs.existsSync(path.join(diagnosticsRoot, 'owned-processes')),

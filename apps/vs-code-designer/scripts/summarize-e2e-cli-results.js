@@ -8,6 +8,7 @@ const fs = require('fs');
 const path = require('path');
 const { assertSuccessfulMsnTerminal, readMsnTerminal } = require('./e2e-cli-terminal');
 const { projectPublicScenarioEvidence } = require('./ogf-e2e-registry');
+const { createMsnFinalizationReport, formatReference, artifactReferences, redactReportingText } = require('./msn-finalization-reporting');
 
 if (require.main === module) {
   const options = parseArgs(process.argv.slice(2));
@@ -26,10 +27,11 @@ function writeSingleResult({ label, log, outDir, outcome, diagnosticsArtifactNam
   requireOption(log, '--log');
   requireOption(outDir, '--out-dir');
 
-  const logText = stripAnsi(fs.existsSync(log) ? fs.readFileSync(log, 'utf-8') : '');
+  const logText = redactReportingText(stripAnsi(fs.existsSync(log) ? fs.readFileSync(log, 'utf-8') : ''));
   const result = parseMochaLog(label, outcome ?? 'unknown', logText);
   let terminalError;
   let terminal;
+  let reportingError;
   if (label === 'msnWeatherLifecycle') {
     const executedResult = parseMochaLog(label, 'success', logText);
     result.executedTestCounts = executedResult.executedTestCounts;
@@ -59,12 +61,33 @@ function writeSingleResult({ label, log, outDir, outcome, diagnosticsArtifactNam
   mergeTerminalResultMetadata(result, outDir, label, label === 'msnWeatherLifecycle' ? { terminalResult: terminal } : {});
   result.diagnosticsArtifactName = diagnosticsArtifactName || undefined;
   result.failureAttachments = result.failing > 0 ? loadFailureScreenshotAttachments(outDir, label) : [];
+  if (label === 'msnWeatherLifecycle') {
+    result.failureAttachments = result.failureAttachments.filter((attachment) =>
+      result.failedTests.some((name) => attachmentMatchesTest(attachment, name))
+    );
+  }
+  if (terminalError) {
+    const failure = result.harnessFailures.find((entry) => entry.name === 'MSN lifecycle evidence' && entry.kind === 'lifecycle-evidence');
+    try {
+      failure.evidence = createMsnFinalizationReport({ result, terminal, logText, outDir, diagnosticsArtifactName });
+      result.failureAttachments.push(failure.evidence.attachment);
+    } catch (error) {
+      reportingError = error;
+      failure.evidence = {
+        note: `Cleanup/finalization evidence attachment could not be created: ${redactReportingText(error.message)}. No failing UI screenshot is fabricated.`,
+        references: /^[a-z0-9._-]+$/i.test(diagnosticsArtifactName || '') ? artifactReferences(diagnosticsArtifactName) : [],
+      };
+    }
+  }
   fs.mkdirSync(outDir, { recursive: true });
 
   fs.writeFileSync(path.join(outDir, `${label}.json`), `${JSON.stringify(result, null, 2)}\n`);
   fs.writeFileSync(path.join(outDir, `${label}.junit.xml`), buildJUnitXml(result));
   fs.writeFileSync(path.join(outDir, `${label}.summary.md`), buildSingleSummary(result));
   if (terminalError) {
+    if (reportingError) {
+      throw new AggregateError([terminalError, reportingError], 'MSN lifecycle and evidence reporting failed; original errors retained');
+    }
     throw terminalError;
   }
 }
@@ -290,6 +313,11 @@ function buildSingleSummary(result) {
       `Executed Mocha tests: ${result.executedTestCounts.passing} passing, ${result.executedTestCounts.failing} failing, ${result.executedTestCounts.pending} pending. Normalized reporting includes harness failures; they are not additional executed feature tests.`,
       ''
     );
+    for (const failure of result.harnessFailures) {
+      if (failure.evidence) {
+        lines.push(failure.evidence.note, ...failure.evidence.references.map(formatReference), '');
+      }
+    }
   }
 
   if (result.failing > 0 && result.failureExcerpt.length > 0) {
@@ -346,12 +374,18 @@ function buildJUnitXml(result, options = {}) {
     ...passed.map((name) => `    <testcase classname="${escapeXml(result.label)}" name="${escapeXml(name)}" />`),
     ...failures.map((name) => {
       const testcaseAttachments = failureAttachments.filter((attachment) => attachmentMatchesTest(attachment, name));
+      const evidence = result.harnessFailures?.find((failure) => failure.name === name)?.evidence;
       const attachmentOutput =
-        testcaseAttachments.length > 0
+        testcaseAttachments.length > 0 || evidence
           ? [
               '      <system-out>',
               escapeXml(
-                testcaseAttachments.map((attachment) => `[[ATTACHMENT|${formatAttachmentPath(attachment.screenshotPath)}]]`).join('\n')
+                [
+                  ...(evidence ? [evidence.note, ...evidence.references.map(formatReference)] : []),
+                  ...testcaseAttachments.map(
+                    (attachment) => `[[ATTACHMENT|${formatAttachmentPath(attachment.attachmentPath || attachment.screenshotPath)}]]`
+                  ),
+                ].join('\n')
               ),
               '      </system-out>',
             ].join('\n')
@@ -500,6 +534,12 @@ function loadFailureScreenshotAttachments(outDir, label) {
 function attachmentMatchesTest(attachment, testName) {
   const normalizedTitle = normalizeTestName(attachment.testTitle);
   const normalizedTestName = normalizeTestName(testName);
+  if (
+    normalizedTestName === normalizeTestName('MSN lifecycle evidence') ||
+    attachment.evidenceKind === 'cleanup-finalization-diagnostics'
+  ) {
+    return attachment.evidenceKind === 'cleanup-finalization-diagnostics' && normalizedTitle === normalizedTestName;
+  }
   return (
     normalizedTitle === normalizedTestName || normalizedTitle.includes(normalizedTestName) || normalizedTestName.includes(normalizedTitle)
   );

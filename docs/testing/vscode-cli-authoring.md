@@ -215,6 +215,31 @@ original errors, retained roots, PID reuse, foreign holders and unavailable lock
 observations. These controls are included in `test:e2e-cli:unit`; they neither
 exercise Windows Restart Manager nor certify native cleanup.
 
+### Reporting failures discovered after Code closes
+
+A synthetic **MSN lifecycle evidence** failure can be added after Mocha reported
+a passing body and the original Code host exited. No live UI assertion failed
+at that point, so the Mocha failure-screenshot hook cannot capture that later
+cleanup failure. Do not relabel the last successful response PNG as failure
+proof or manufacture a new failing screenshot.
+
+`scripts/msn-finalization-reporting.js` creates a sanitized
+`msnWeatherLifecycle.cleanup-finalization.txt` from actual runner cleanup lines
+and allowlisted terminal claims. The summarizer associates this text attachment
+with the **synthetic harness testcase**, using the existing JUnit
+`[[ATTACHMENT|...]]` / ADO `PublishTestResults@2` mechanism. Original executed
+Mocha counts remain separate from the normalized harness failure count.
+The testcase also names the exact diagnostics artifact/log paths and, when
+trusted ADO run/job/task context exists, links its producing run task log.
+These references remain useful if the uploader does not expose the attachment.
+Attachment-generation failures preserve the original harness error and report
+the missing attachment explicitly instead of inventing evidence.
+
+The existing staging template preserves the sanitized text under the diagnostic
+artifact's `log/` before terminal rejection. Non-native controls verify the
+actual summarizer/JUnit association, token redaction, successful-image rejection
+and failed-run staging; actual ADO attachment upload remains native/CI-owned.
+
 ## Validation and maintenance
 
 1. Read this guide and the relevant suite/fixture prerequisites.

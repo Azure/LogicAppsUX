@@ -648,6 +648,13 @@ jobs:
           } else {
             $missingRequiredFiles += $log
           }
+          if ('${{ parameters.suiteId }}' -eq 'msnWeatherLifecycle') {
+            $cleanupEvidence = Join-Path $resultRoot 'msnWeatherLifecycle.cleanup-finalization.txt'
+            if (Test-Path -LiteralPath $cleanupEvidence) {
+              Set-Content -LiteralPath (Join-Path $logDestination 'msnWeatherLifecycle.cleanup-finalization.txt') `
+                -Value (Redact-DiagnosticText (Get-Content -LiteralPath $cleanupEvidence -Raw)) -NoNewline
+            }
+          }
 
           if (Test-Path $vscodeLogsRoot) {
             $vscodeLogDestination = Join-Path $logDestination 'vscode-logs'

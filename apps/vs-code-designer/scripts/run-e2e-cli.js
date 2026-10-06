@@ -3502,6 +3502,7 @@ function shouldSuppressKnownVscodeNoise(line) {
 }
 
 module.exports = {
+  redactDiagnosticText: redactGeneratedWorkspacePlainText,
   runDirectFamily,
   _test: {
     getDirectRegenerationEvidencePaths,
