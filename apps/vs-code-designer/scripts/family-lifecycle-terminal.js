@@ -18,6 +18,12 @@ function assertFamilyLifecycleTerminal(nativeResult, terminal, suiteId) {
   assert.equal(terminal.exitCode, 0, 'Supplementary wrapper did not exit normally');
   assert.equal(terminal.signal, null, 'Supplementary wrapper was terminated by a signal');
   assert.equal(terminal.cleanupVerified, true, 'Supplementary final cleanup is not verified');
+  assert.equal(terminal.originalProcessClosureVerified, true, 'Original owned process identities have not been verified after closure');
+  assert.equal(
+    terminal.processClosureProof,
+    'retained-original-identities',
+    'Post-exit ancestry alone is not original owned-process closure proof'
+  );
   assert.equal(terminal.diagnosticsError, '', 'Supplementary required diagnostics failed');
   assert.equal(terminal.phaseCompleteness, true, 'Supplementary phase completeness failed');
   assert.deepEqual(terminal.expectedPhaseIds, suite.expectedPhases, 'Supplementary phase contract differs from the registry');

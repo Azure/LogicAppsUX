@@ -75,6 +75,11 @@ must exit normally with accepted diagnostics/cleanup, and final owned cleanup
 must be verified. `family-lifecycle-terminal.js` checks these gates during result
 staging. A direct selector that exits zero without that terminal report fails
 publication; a wizard pass alone cannot certify later regular-Code phases.
+Original process closure is a separate acceptance gate. A tree reconstructed
+only after its parent exits can miss reparented descendants, so supplementary
+publication also requires verified retained-original-identity closure evidence.
+Until that evidence is available, native execution is diagnostic only and result
+staging rejects acceptance even if the GUI bodies and ordinary exits succeeded.
 
 Multi-root jobs explicitly opt into complete native process observation only on
 their dedicated ADO worker. The real dependency bootstrap attests the configured

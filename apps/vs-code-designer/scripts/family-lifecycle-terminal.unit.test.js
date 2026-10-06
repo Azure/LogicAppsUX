@@ -19,6 +19,8 @@ function fixture(suiteId) {
       exitCode: 0,
       signal: null,
       cleanupVerified: true,
+      originalProcessClosureVerified: true,
+      processClosureProof: 'retained-original-identities',
       diagnosticsError: '',
       phaseCompleteness: true,
       expectedPhaseIds: phases,
@@ -57,6 +59,15 @@ for (const suiteId of [
       },
       (value) => {
         value.cleanupVerified = false;
+      },
+      (value) => {
+        value.originalProcessClosureVerified = false;
+      },
+      (value) => {
+        delete value.originalProcessClosureVerified;
+      },
+      (value) => {
+        value.processClosureProof = 'original-identities-unverified';
       },
       (value) => {
         value.exitCode = 1;
