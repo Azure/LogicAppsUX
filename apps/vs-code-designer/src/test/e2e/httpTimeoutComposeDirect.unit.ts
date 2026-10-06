@@ -199,11 +199,34 @@ export async function runHttpTimeoutComposeDirectControls(control: Control): Pro
         assert.deepStrictEqual(terminal.expectedPhaseIds, expected);
         assert.strictEqual(terminal.ogfScenarios, undefined, 'Unit writer fixtures cannot create mapped/native credit');
         if (fault === 'none') {
+          assert.strictEqual(terminal.suiteId, 'httpTimeoutComposeOriginal');
+          assert.strictEqual(terminal.exitCode, 0);
+          assert.strictEqual(terminal.signal, null);
+          assert.strictEqual(terminal.cleanupVerified, true);
+          assert.strictEqual(terminal.diagnosticsError, '');
+          assert.strictEqual(terminal.phaseCompleteness, true);
           assert.deepStrictEqual(terminal.observedPhaseIds, expected);
+          for (const field of ['missingPhaseIds', 'unexpectedPhaseIds', 'duplicatePhaseIds', 'blockedPhaseIds']) {
+            assert.deepStrictEqual(terminal[field], [], `Supplementary acceptance requires empty ${field}`);
+          }
           assert.strictEqual(ledger.ownedRootCleanup.verified, true);
           assert.strictEqual(fs.existsSync(workspace), false);
           assert.strictEqual(fs.existsSync(runtime), false);
           assert.strictEqual(terminal.phaseResults.length, 3);
+          for (const [index, phase] of terminal.phaseResults.entries()) {
+            assert.deepStrictEqual(
+              phase,
+              {
+                phaseId: expected[index],
+                complete: true,
+                exitCode: 0,
+                signal: null,
+                cleanupVerified: true,
+                diagnosticsError: '',
+              },
+              'Each original phase must have the standard supplementary terminal projection'
+            );
+          }
         }
         assert.ok(fs.existsSync(phasePath), 'Original invocation phase evidence retained');
       });
