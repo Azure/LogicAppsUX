@@ -430,7 +430,13 @@ export async function waitForCreateWorkspaceFrameContext(cdp: CdpConnection, tim
 
 export async function waitForWebviewFrameContext(
   cdp: CdpConnection,
-  options: { allTextIncludes: string[]; description: string; requiredSelector?: string; timeoutMs?: number }
+  options: {
+    allTextIncludes: string[];
+    description: string;
+    requiredSelector?: string;
+    timeoutMs?: number;
+    beforePoll?: (deadline: number) => Promise<void>;
+  }
 ): Promise<number> {
   const contexts = new Map<number, CdpExecutionContext>();
   const lastTexts = new Map<number, string>();
@@ -441,6 +447,7 @@ export async function waitForWebviewFrameContext(
 
   const deadline = Date.now() + (options.timeoutMs ?? 15000);
   while (Date.now() < deadline) {
+    await options.beforePoll?.(deadline);
     for (const context of contexts.values()) {
       const diagnostics = await cdp
         .evaluate<{
