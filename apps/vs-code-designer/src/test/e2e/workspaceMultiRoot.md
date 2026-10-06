@@ -7,6 +7,27 @@ same admitted Code executable, extensions, dependency root and generated
 `.code-workspace`. It is **not** another baseline Mocha label: all existing
 labels, canonical counts and rollup contracts remain unchanged.
 
+The shared suite ID is **`workspaceMultiRoot`**. It is also explicitly selectable
+with `node scripts/run-e2e-cli.js --suites workspaceMultiRoot`; legacy `linux` /
+`windows` aliases are deliberately unchanged. Its exact ordered phase IDs are:
+
+1. `runtimeDependencyBootstrap:bootstrap` — real official CLI managed-runtime
+   validation, including its native executable probes; never inferred from
+   preflight file presence.
+2. `workspaceMultiRoot:create` — the official wizard creates the original first
+   app/workspace and supplies its verified same-job handoff.
+3. `workspaceMultiRoot:reopen` — the fresh regular window opens that same
+   workspace, creates the additional projects through Explorer, performs the
+   real same-window reload and all count/debug/Mapper assertions, then completes
+   ordinary window close, diagnostics and final fixture cleanup.
+
+The family writes these phases through the existing official phase reporter.
+Missing, duplicate, unexpected, reordered, failed or unfinalized phases cannot
+produce a complete family result. Source ordinal 1 spans the create phase and
+the first part of reopen; the real source Reload Window remains inside reopen,
+not a substituted host relaunch. Supporting pipeline/admission contracts and
+all public/private OGF mappings remain parent-owned and unchanged here.
+
 ## Clause boundary
 
 1. Create the first Standard/Stateful app with the official Create Workspace
@@ -65,9 +86,11 @@ The consumer must supply:
 - `LA_E2E_CLI_MULTI_ROOT_ISOLATED=1`.
 - `LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT` and
   `LA_E2E_CLI_EXTENSIONS_DIR`, prepared for this job.
-- `LA_E2E_CLI_MULTI_ROOT_FUNC_PATH`, the same dependency root's
-  `FuncCoreTools/func.exe` (Windows) or `FuncCoreTools/func` (Linux), and its
-  admitted `LA_E2E_CLI_MULTI_ROOT_FUNC_SHA256`.
+- Admitted `LA_E2E_CLI_MULTI_ROOT_FUNC_SHA256` before bootstrap.
+  `LA_E2E_CLI_MULTI_ROOT_FUNC_PATH`, when supplied, must be the same root's
+  `FuncCoreTools/func.exe` (Windows) or `FuncCoreTools/func` (Linux). In batch mode
+  omit a stale parent-root path; the family derives the path under its new
+  isolated suite dependency root and still requires the admitted digest.
 - Current-run/source/job identity variables and fresh diagnostic/profile
   parents. Use `LA_E2E_CLI_MULTI_ROOT_DIAGNOSTICS_PARENT`,
   `LA_E2E_CLI_USER_DATA_PARENT`, `LA_E2E_CLI_WORKSPACE_ROOT` as needed.
@@ -76,9 +99,11 @@ The consumer must supply:
   unrelated `func` population. Linux requires the existing secure Xvfb/D-Bus/
   GNOME-libsecret wrapper; there is no plaintext-password-store fallback.
 
-Missing Mapper HTML/JS, compiled tests, dependencies, native permissions or
-binary admission is a meaningful blocked/failing prerequisite. There is no
-download/build/asset-discovery fallback in this supplementary route.
+Missing Mapper HTML/JS, compiled tests, native permissions or binary admission
+is a meaningful blocked/failing prerequisite. The official bootstrap may
+populate its genuinely empty isolated batch runtime root; a prepared direct
+root is never falsely reported as starting empty. There is no extension/
+webview build or asset-discovery fallback in the supplementary route.
 
 Require `final-result.json.complete === true` **after** ordinary Code
 completion, profile diagnostics and final fixture cleanup. Preserve the

@@ -70,6 +70,12 @@ const SUITE_REGISTRY = Object.freeze({
     requiresAzure: true,
     expectedPhases: Object.freeze(['runtimeDependencyBootstrap:bootstrap', 'msnWeatherLifecycle:create', 'msnWeatherLifecycle:run']),
   }),
+  workspaceMultiRoot: Object.freeze({
+    id: 'workspaceMultiRoot',
+    args: Object.freeze(['--workspace-multi-root']),
+    platforms: Object.freeze(['linux', 'win32']),
+    expectedPhases: Object.freeze(['runtimeDependencyBootstrap:bootstrap', 'workspaceMultiRoot:create', 'workspaceMultiRoot:reopen']),
+  }),
 });
 
 const SUITE_SCOPED_AZURE_ENV_KEYS = [

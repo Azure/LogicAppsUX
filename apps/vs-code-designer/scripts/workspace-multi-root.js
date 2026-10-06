@@ -8,6 +8,8 @@ const path = require('node:path');
 
 const extensionRoot = path.resolve(__dirname, '..');
 const hash = (file) => createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+const suiteId = 'workspaceMultiRoot';
+const expectedPhases = Object.freeze(['runtimeDependencyBootstrap:bootstrap', 'workspaceMultiRoot:create', 'workspaceMultiRoot:reopen']);
 
 function assertAssets(root) {
   const html = path.join(root, 'dist/vs-code-react/index.html');
@@ -65,8 +67,35 @@ function finalizeResult(result) {
     result.originalCodeClose?.signal === null &&
     result.diagnosticsVerified === true &&
     result.cleanupVerified === true &&
-    result.errors.length === 0;
+    result.errors.length === 0 &&
+    exactPhasesComplete(result.phaseResults);
   return result;
+}
+
+function exactPhasesComplete(phases) {
+  return (
+    Array.isArray(phases) &&
+    phases.every((phase) => phase && typeof phase === 'object') &&
+    JSON.stringify(phases.map((phase) => phase.phaseId)) === JSON.stringify(expectedPhases) &&
+    phases.every(
+      (phase) =>
+        phase.complete === true &&
+        phase.exitCode === 0 &&
+        (phase.signal === null || phase.signal === undefined) &&
+        phase.cleanupVerified === true &&
+        !phase.diagnosticsError
+    )
+  );
+}
+
+function readFamilyPhases(file) {
+  return fs.existsSync(file)
+    ? fs
+        .readFileSync(file, 'utf8')
+        .split('\n')
+        .filter(Boolean)
+        .map((line) => JSON.parse(line))
+    : [];
 }
 
 function assertEvidence(observation, funcExecutable, funcSha256) {
@@ -118,7 +147,7 @@ function assertEvidence(observation, funcExecutable, funcSha256) {
   }
 }
 
-async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs }, env = process.env) {
+async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, writeSuitePhaseResult }, env = process.env) {
   assert.equal(
     env.LA_E2E_CLI_MULTI_ROOT_ISOLATED,
     '1',
@@ -126,21 +155,12 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs }
   );
   assert.ok(['win32', 'linux'].includes(process.platform));
   assertAssets(extensionRoot);
-  const funcExecutable = fs.realpathSync(env.LA_E2E_CLI_MULTI_ROOT_FUNC_PATH || '');
-  assert.ok(/^func(?:\.exe)?$/i.test(path.basename(funcExecutable)), 'Admitted executable must be func, not dotnet');
-  const funcSha256 = hash(funcExecutable);
-  assert.equal(funcSha256, env.LA_E2E_CLI_MULTI_ROOT_FUNC_SHA256, 'Admitted native func SHA-256 is required');
   assert.ok(
     env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT && env.LA_E2E_CLI_EXTENSIONS_DIR,
     'Prepared same-job native dependencies/extensions are required'
   );
-  assert.equal(
-    funcExecutable,
-    fs.realpathSync(
-      path.join(env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT, 'FuncCoreTools', process.platform === 'win32' ? 'func.exe' : 'func')
-    ),
-    'Collector oracle must use the same executable as product design-time startup'
-  );
+  assert.match(env.LA_E2E_CLI_MULTI_ROOT_FUNC_SHA256 || '', /^[a-f0-9]{64}$/, 'Admitted native func SHA-256 is required before bootstrap');
+  assert.equal(typeof writeSuitePhaseResult, 'function', 'Official suite phase reporter is required');
   const ui = require('../out/test/e2e/workspaceMultiRoot.test');
   const { closeWorkspacePromptCancelWindow } = require('../out/test/e2e/workspacePromptCancel');
   const recorder = path.join(__dirname, 'fixtures/workspace-multi-root-recorder');
@@ -152,6 +172,7 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs }
     path.join(env.LA_E2E_CLI_MULTI_ROOT_DIAGNOSTICS_PARENT || path.join(extensionRoot, '.vscode-test'), 'multi-root-')
   );
   const context = {
+    suiteId,
     invocation: randomUUID(),
     identity: {
       source: env.BUILD_SOURCEVERSION || 'local',
@@ -167,7 +188,13 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs }
   fs.writeFileSync(path.join(diagnosticRoot, 'invocation.json'), JSON.stringify(context), { flag: 'wx' });
   const handoffPath = path.join(diagnosticRoot, 'wizard-handoff.json');
   const eventsFile = path.join(diagnosticRoot, 'debug-events.jsonl');
+  const phaseFile = env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH || path.join(diagnosticRoot, 'phases.jsonl');
+  assert.ok(!fs.existsSync(phaseFile), 'Multi-root phases must be fresh for this invocation');
+  const phaseEnv = { ...env, LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH: phaseFile };
   const result = {
+    schemaVersion: 1,
+    suiteId,
+    expectedPhaseIds: expectedPhases,
     scenario: 'workspace-multi-root',
     invocation: context.invocation,
     identity: context.identity,
@@ -182,17 +209,50 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs }
   let completion;
   let child;
   let profile;
+  let reopenStarted = false;
   const previousPort = process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT;
   const previousScreenshots = process.env.LA_E2E_CLI_SCREENSHOT_DIR;
   try {
+    // Real official dependency validation, not a fabricated preflight-success phase.
+    // A prepared direct root may be nonempty; only a genuinely empty batch root
+    // is reported as starting empty.
+    const runtimeEmpty = fs.readdirSync(env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT).length === 0;
+    const bootstrapCode = await runVscodeTest(['--label', 'runtimeDependencyBootstrap'], {
+      extraEnv: {
+        ...phaseEnv,
+        LA_E2E_CLI_INCLUDE_RUNTIME_DEPENDENCY_BOOTSTRAP: '1',
+        LA_E2E_CLI_CREATE_WORKSPACE_CASE: '',
+        LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
+        LA_E2E_CLI_VALIDATE_DEPENDENCIES: '1',
+        LA_E2E_STRICT_DEPENDENCY_VALIDATION: '1',
+        LA_E2E_CLI_EXPECT_EMPTY_RUNTIME_DEPENDENCIES_ROOT: runtimeEmpty ? '1' : '0',
+        LA_E2E_CLI_EMPTY_RUNTIME_DEPENDENCIES_ROOT_CONFIRMED: runtimeEmpty ? '1' : '0',
+        LA_E2E_CLI_PROFILE_PHASE: 'workspace-multi-root-bootstrap',
+        LA_E2E_CLI_USER_DATA_SUFFIX: `multi-root-bootstrap-${context.invocation}`,
+      },
+    });
+    assert.equal(bootstrapCode, 0, 'Official multi-root runtime bootstrap failed');
+    const configuredFunc = path.join(
+      env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT,
+      'FuncCoreTools',
+      process.platform === 'win32' ? 'func.exe' : 'func'
+    );
+    const funcExecutable = fs.realpathSync(env.LA_E2E_CLI_MULTI_ROOT_FUNC_PATH || configuredFunc);
+    assert.equal(funcExecutable, fs.realpathSync(configuredFunc), 'Collector must use the same admitted executable as product startup');
+    const funcSha256 = hash(funcExecutable);
+    assert.equal(funcSha256, env.LA_E2E_CLI_MULTI_ROOT_FUNC_SHA256, 'Bootstrapped native func differs from admitted SHA-256');
     const code = await runVscodeTest(['--label', 'createWorkspaceCoreMatrix'], {
       workspaceParent: root,
       retainWorkspaceForSupplement: true,
+      multiRootCreatePhase: true,
       extraEnv: {
+        ...phaseEnv,
         LA_E2E_CLI_CREATE_WORKSPACE_CASE: 'standard-stateful',
         LA_E2E_CLI_PRESERVE_WORKSPACES: '1',
         LA_E2E_CLI_MULTI_ROOT_CONTEXT: JSON.stringify(context),
         LA_E2E_CLI_MULTI_ROOT_HANDOFF: handoffPath,
+        LA_E2E_CLI_PROFILE_PHASE: 'workspace-multi-root-create',
+        LA_E2E_CLI_USER_DATA_SUFFIX: `multi-root-create-${context.invocation}`,
       },
     });
     assert.equal(code, 0, 'Official wizard setup failed');
@@ -248,6 +308,7 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs }
       },
       stdio: ['ignore', 'pipe', 'pipe'],
     });
+    reopenStarted = true;
     completion = new Promise((resolve, reject) => {
       child.once('error', reject);
       child.once('close', (code, signal) => {
@@ -335,10 +396,52 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs }
     } else {
       process.env.LA_E2E_CLI_SCREENSHOT_DIR = previousScreenshots;
     }
-    fs.writeFileSync(path.join(diagnosticRoot, 'final-result.json'), JSON.stringify(finalizeResult(result), null, 2));
+    try {
+      if (reopenStarted) {
+        // Reopen encompasses the actual fresh regular window, Explorer additions,
+        // same-window Reload Window, count/debug/Mapper assertions and final teardown.
+        const phasePassed =
+          result.observationPassed &&
+          result.evidenceVerified &&
+          result.originalCodeClose?.code === 0 &&
+          result.originalCodeClose?.signal === null &&
+          result.diagnosticsVerified &&
+          result.cleanupVerified &&
+          result.errors.length === 0;
+        writeSuitePhaseResult(phaseEnv, {
+          suiteId,
+          label: suiteId,
+          phaseId: 'workspaceMultiRoot:reopen',
+          complete: phasePassed,
+          exitCode: phasePassed ? 0 : 1,
+          signal: result.originalCodeClose?.signal ?? null,
+          cleanupVerified: result.cleanupVerified,
+          diagnosticsError: result.errors.join('; ') || (phasePassed ? '' : 'multi-root-reopen-not-finalized'),
+        });
+      }
+      result.phaseResults = readFamilyPhases(phaseFile);
+    } catch (error) {
+      result.errors.push(String(error));
+      result.phaseResults = [];
+    }
+    result.observedPhaseIds = result.phaseResults.map((phase) => phase.phaseId);
+    finalizeResult(result);
+    result.lifecycleFinalized = true;
+    result.exitCode = result.complete ? 0 : 1;
+    result.signal = result.originalCodeClose?.signal ?? null;
+    fs.writeFileSync(path.join(diagnosticRoot, 'final-result.json'), JSON.stringify(result, null, 2));
   }
-  console.log(`[workspace-multi-root] complete=${result.complete}; native diagnostics=${diagnosticRoot}`);
+  console.log(`[${suiteId}] complete=${result.complete}; native diagnostics=${diagnosticRoot}`);
   return result.complete ? 0 : 1;
 }
 
-module.exports = { assertAssets, validateHandoff, assertEvidence, finalizeResult, runWorkspaceMultiRoot };
+module.exports = {
+  suiteId,
+  expectedPhases,
+  exactPhasesComplete,
+  assertAssets,
+  validateHandoff,
+  assertEvidence,
+  finalizeResult,
+  runWorkspaceMultiRoot,
+};

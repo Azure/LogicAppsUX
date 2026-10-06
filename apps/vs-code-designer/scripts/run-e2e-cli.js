@@ -90,7 +90,7 @@ function main() {
       return;
     }
     require('./workspace-multi-root')
-      .runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs })
+      .runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, writeSuitePhaseResult })
       .then((code) => process.exit(code))
       .catch(exitWithError);
     return;
@@ -382,7 +382,7 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     (missingPhaseIds.length === 0 || blockedPhaseIds.length > 0) &&
     phaseResults.length > 0;
   const msnSucceeded =
-    suite.id !== 'msnWeatherLifecycle' ||
+    (suite.id !== 'msnWeatherLifecycle' && suite.id !== 'workspaceMultiRoot') ||
     (exitCode === 0 &&
       (signal === null || signal === undefined) &&
       missingPhaseIds.length === 0 &&
@@ -429,7 +429,7 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     blockedPhaseIds,
     phaseCompleteness,
     complete: terminalComplete,
-    ...(suite.id === 'msnWeatherLifecycle'
+    ...(suite.id === 'msnWeatherLifecycle' || suite.id === 'workspaceMultiRoot'
       ? { lifecycleFinalized: true, phaseResults: finalizedPhaseResults.map(projectTerminalPhase) }
       : {}),
     ...(ogfScenarios.length > 0 ? { ogfScenarios } : {}),
@@ -1506,7 +1506,10 @@ function runVscodeTest(args, options = {}) {
           }`
         );
       }
-      const phaseId = getSuitePhaseId(label, childEnv);
+      const phaseId =
+        options.multiRootCreatePhase && childEnv.LA_E2E_CLI_MULTI_ROOT_HANDOFF
+          ? 'workspaceMultiRoot:create'
+          : getSuitePhaseId(label, childEnv);
       const matchedPattern = forbiddenOutputPatterns.find(({ pattern }) => pattern.test(output));
       const diagnosticsErrorMessage = diagnosticsError
         ? diagnosticsError instanceof Error
