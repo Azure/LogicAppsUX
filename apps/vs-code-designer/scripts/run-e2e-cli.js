@@ -103,6 +103,7 @@ function main() {
     createWorkspaceFull,
     msnWeatherLifecycle,
     nugetConversionLifecycle,
+    statelessVariablesLifecycle,
     suites,
     variablesPickerLifecycle,
     visibleDelayMs,
@@ -110,12 +111,26 @@ function main() {
   } = parseArgs(process.argv.slice(2));
 
   if (
+    statelessVariablesLifecycle &&
+    (azureAuthWarmup ||
+      codefulDebugTasks ||
+      createWorkspaceFull ||
+      msnWeatherLifecycle ||
+      nugetConversionLifecycle ||
+      variablesPickerLifecycle ||
+      workspaceLifecycle ||
+      suites !== undefined ||
+      args.length > 0)
+  ) {
+    exitWithError(new Error('--stateless-variables-lifecycle is a focused two-host family; do not combine selectors.'));
+  } else if (
     suites !== undefined &&
     (azureAuthWarmup ||
       codefulDebugTasks ||
       createWorkspaceFull ||
       msnWeatherLifecycle ||
       nugetConversionLifecycle ||
+      statelessVariablesLifecycle ||
       variablesPickerLifecycle ||
       workspaceLifecycle ||
       args.length > 0)
@@ -139,6 +154,8 @@ function main() {
     runMsnWeatherLifecycle(visibleDelayMs).catch(exitWithError);
   } else if (variablesPickerLifecycle) {
     runVariablesPickerLifecycle(visibleDelayMs).catch(exitWithError);
+  } else if (statelessVariablesLifecycle) {
+    runStatelessVariablesLifecycle(visibleDelayMs).catch(exitWithError);
   } else if (workspaceLifecycle) {
     runWorkspaceLifecycle(visibleDelayMs).catch(exitWithError);
   } else if (args.length === 0) {
@@ -610,6 +627,7 @@ async function runWorkspaceLifecycle(visibleDelayMs) {
     });
     manifest.push(...JSON.parse(fs.readFileSync(manifestPath, 'utf-8')));
   }
+
   if (!Array.isArray(manifest) || manifest.length === 0) {
     throw new Error('Workspace lifecycle setup did not write workspace entries');
   }
@@ -631,6 +649,62 @@ async function runWorkspaceLifecycle(visibleDelayMs) {
   }
 
   await cleanupOwnedWorkspaceParent(workspaceParent, 'workspace lifecycle');
+}
+
+// Additive family selector, intentionally outside the canonical baseline/OGF
+// rollup. Native coverage is earned only by its actual isolated consumer run.
+async function runStatelessVariablesLifecycle(visibleDelayMs) {
+  const dependencyRoot = process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT;
+  if (!dependencyRoot) {
+    throw new Error('Stateless variables requires a prepared isolated LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT');
+  }
+  assertSafeRuntimeDependenciesRoot(dependencyRoot);
+  const lifecycleDir = getLifecycleArtifactDir('stateless-variables-lifecycle');
+  fs.mkdirSync(lifecycleDir, { recursive: true });
+  const workspaceParent = createOwnedWorkspaceParent('stateless-variables-lifecycle');
+  const manifestPath = path.join(lifecycleDir, `manifest-stateless-${Date.now()}.json`);
+  const sharedEnv = {
+    LA_E2E_CLI_INCLUDE_STATELESS_VARIABLES: '1',
+    LA_E2E_CLI_WORKSPACE_PARENT: workspaceParent,
+    LA_E2E_CLI_WORKSPACE_LIFECYCLE_MANIFEST: manifestPath,
+    LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: dependencyRoot,
+    LA_E2E_CLI_DISABLE_UNOWNED_PORT_KILL: '1',
+    LA_E2E_CLI_DEFER_WORKSPACE_CLEANUP: '1',
+  };
+  await runVscodeTest(['--label', 'statelessVariablesLifecycle'], {
+    visibleDelayMs,
+    extraEnv: {
+      ...sharedEnv,
+      LA_E2E_CLI_USER_DATA_SUFFIX: `stateless-variables-create-${Date.now()}`,
+      LA_E2E_CLI_STATELESS_VARIABLES_MODE: 'create',
+      LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'create',
+    },
+  });
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  if (
+    !Array.isArray(manifest) ||
+    manifest.length !== 1 ||
+    manifest[0].label !== 'stateless-variables' ||
+    manifest[0].appType !== 'standard'
+  ) {
+    throw new Error('Stateless wizard must write exactly one Standard stateless family entry');
+  }
+  const entry = manifest[0];
+  await runVscodeTest(['--label', 'statelessVariablesLifecycle'], {
+    visibleDelayMs,
+    extraEnv: {
+      ...sharedEnv,
+      LA_E2E_CLI_USER_DATA_SUFFIX: `stateless-variables-run-${Date.now()}`,
+      LA_E2E_CLI_STATELESS_VARIABLES_MODE: 'run',
+      LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'stateless-variables-run',
+      LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE: JSON.stringify(entry),
+      LA_E2E_CLI_STARTUP_RESOURCE: entry.workspaceFilePath,
+      LA_E2E_CLI_AUTO_START_DESIGN_TIME: '1',
+      LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
+      LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '1',
+    },
+  });
+  await cleanupOwnedWorkspaceParent(workspaceParent, 'stateless variables lifecycle', true);
 }
 
 async function runNugetConversionLifecycle(visibleDelayMs) {
@@ -2523,6 +2597,7 @@ function parseArgs(rawArgs) {
   let createWorkspaceFull = false;
   let visibleDelayMs;
   let workspaceLifecycle = false;
+  let statelessVariablesLifecycle = false;
   let nugetConversionLifecycle = false;
   let codefulDebugTasks = false;
   let msnWeatherLifecycle = false;
@@ -2548,6 +2623,10 @@ function parseArgs(rawArgs) {
     }
     if (arg === '--workspace-lifecycle') {
       workspaceLifecycle = true;
+      continue;
+    }
+    if (arg === '--stateless-variables-lifecycle') {
+      statelessVariablesLifecycle = true;
       continue;
     }
     if (arg === '--nuget-conversion-lifecycle') {
@@ -2582,6 +2661,7 @@ function parseArgs(rawArgs) {
     msnWeatherLifecycle,
     nugetConversionLifecycle,
     suites,
+    statelessVariablesLifecycle,
     variablesPickerLifecycle,
     visibleDelayMs,
     workspaceLifecycle,

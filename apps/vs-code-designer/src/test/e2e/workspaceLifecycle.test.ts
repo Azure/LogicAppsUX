@@ -124,6 +124,7 @@ type WorkspaceAppType = 'standard' | 'customCode' | 'rulesEngine' | 'codeful';
 
 interface WorkspaceCreationCase {
   label: string;
+  wfType?: 'Stateful' | 'Stateless';
   appType: WorkspaceAppType;
   radioLabel: string;
   wsName: string;
@@ -230,128 +231,135 @@ interface CodefulTaskSummary {
   cleanReleaseExit: number | null;
 }
 
-installDialogGuard();
-installFailureScreenshotHook();
+// Family consumers share the real wizard/designer helpers without registering the
+// canonical lifecycle test a second time. Existing labels keep their old counts.
+if (!process.env.LA_E2E_CLI_STATELESS_VARIABLES_MODE) {
+  registerWorkspaceLifecycleSuite();
+}
 
-suite('Generated Workspace Designer Lifecycle Tests', () => {
-  const tempWorkspaceParentPath = getWorkspaceLifecycleParentPath();
-  const lifecycleMode = process.env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE ?? 'create';
+function registerWorkspaceLifecycleSuite(): void {
+  installDialogGuard();
+  installFailureScreenshotHook();
+  suite('Generated Workspace Designer Lifecycle Tests', () => {
+    const tempWorkspaceParentPath = getWorkspaceLifecycleParentPath();
+    const lifecycleMode = process.env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE ?? 'create';
 
-  suiteSetup(async () => {
-    const extension = vscode.extensions.getExtension(logicAppsExtensionId);
-    assert.ok(extension, `Expected ${logicAppsExtensionId} to be loaded from the extension development path`);
-    await extension.activate();
-    await closeCopilotChatIfVisible('workspace lifecycle suite setup', { absentSettleMs: 1500 });
-  });
-
-  suiteTeardown(async () => {
-    await waitForVisibleDelay('Generated workspace designer lifecycle');
-    await closeWebviewTabs(createWorkspaceViewType);
-    await closeWebviewTabs(designerViewType);
-    await stopDebuggingAndTasks();
-  });
-
-  suiteTeardown(() => {
-    if (lifecycleMode === 'create' || lifecycleMode === 'codeful-create') {
-      return;
-    }
-
-    if (shouldDeferWorkspaceLifecycleCleanup(process.env)) {
-      console.log('[workspace-lifecycle] Deferring temp workspace cleanup to runner-owned diagnostics capture.');
-      return;
-    }
-
-    try {
-      fs.rmSync(tempWorkspaceParentPath, { recursive: true, force: true });
-    } catch (error) {
-      console.warn(`[workspace-lifecycle] Unable to remove temp workspace parent ${tempWorkspaceParentPath}: ${String(error)}`);
-    }
-  });
-
-  test('Should open generated designers and run saved workflows for Standard, custom code, and rules engine projects', async function () {
-    this.timeout(1_800_000);
-
-    if (lifecycleMode === 'create') {
-      const createdWorkspaces: CreatedWorkspace[] = [];
-      const createLabel = process.env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_CREATE_LABEL;
-      for (const creationCase of getWorkspaceCreationCases().filter((candidate) => !createLabel || candidate.label === createLabel)) {
-        createdWorkspaces.push(await createWorkspaceThroughWebview(creationCase, tempWorkspaceParentPath));
-      }
-
-      const manifestPath = process.env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_MANIFEST;
-      assert.ok(manifestPath, 'LA_E2E_CLI_WORKSPACE_LIFECYCLE_MANIFEST must be set in create mode');
-      fs.mkdirSync(path.dirname(manifestPath), { recursive: true });
-      fs.writeFileSync(manifestPath, `${JSON.stringify(createdWorkspaces, null, 2)}\n`);
-      return;
-    }
-
-    if (lifecycleMode === 'codeful-create') {
-      const createdWorkspaces: CreatedWorkspace[] = [];
-      const createLabel = process.env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_CREATE_LABEL;
-      for (const creationCase of getCodefulDebugCreationCases().filter((candidate) => !createLabel || candidate.label === createLabel)) {
-        const createdWorkspace = await createWorkspaceThroughWebview(creationCase, tempWorkspaceParentPath);
-        patchCodefulProjectForDebugGuard(createdWorkspace.appDir, createdWorkspace.wfName, creationCase.label);
-        applyCodefulControlVariantToProject(createdWorkspace.appDir, creationCase.codefulControlVariant);
-        assertCodefulControlVariant(createdWorkspace.appDir, creationCase.codefulControlVariant, creationCase.label);
-        createdWorkspaces.push({ ...createdWorkspace, codefulControlVariant: creationCase.codefulControlVariant });
-      }
-
-      const manifestPath = process.env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_MANIFEST;
-      assert.ok(manifestPath, 'LA_E2E_CLI_WORKSPACE_LIFECYCLE_MANIFEST must be set in codeful-create mode');
-      fs.mkdirSync(path.dirname(manifestPath), { recursive: true });
-      fs.writeFileSync(manifestPath, `${JSON.stringify(createdWorkspaces, null, 2)}\n`);
-      return;
-    }
-
-    if (lifecycleMode === 'nuget-run') {
-      await runNugetConversionLifecycle(getWorkspaceLifecycleCaseFromEnv());
-      return;
-    }
-
-    if (lifecycleMode === 'msn-weather-run') {
-      await runMsnWeatherLifecycle(getWorkspaceLifecycleCaseFromEnv());
-      return;
-    }
-
-    if (lifecycleMode === 'variables-picker-run') {
-      await runVariablesPickerLifecycle(getWorkspaceLifecycleCaseFromEnv());
-      return;
-    }
-
-    if (lifecycleMode === 'codeful-run') {
-      await runCodefulDebugTaskLifecycle(getWorkspaceLifecycleCaseFromEnv());
-      return;
-    }
-
-    assert.strictEqual(lifecycleMode, 'run', `Unsupported workspace lifecycle mode: ${lifecycleMode}`);
-    const createdWorkspace = getWorkspaceLifecycleCaseFromEnv();
-    console.log(`[workspace-lifecycle] Running ${createdWorkspace.label} workspace from ${createdWorkspace.workspaceFilePath}`);
-    ensureLocalSettingsForDesigner(createdWorkspace.appDir);
-
-    console.log(`[workspace-lifecycle] Waiting for ${createdWorkspace.label} Logic App folder`);
-    await waitForGeneratedLogicAppFolder(createdWorkspace);
-    buildCustomCodeProjectIfNeeded(createdWorkspace);
-    if (createdWorkspace.appType === 'standard') {
-      console.log(`[workspace-lifecycle] Opening ${createdWorkspace.label} designer`);
-      await openDesignerAndCreateWorkflow(createdWorkspace);
-    } else {
-      console.log(`[workspace-lifecycle] ${createdWorkspace.label}: skipping designer open; using generated workflow`);
-      assertGeneratedWorkflowReadyForRuntime(createdWorkspace);
-      await waitForCustomCodeRuntimeArtifactsIfNeeded(createdWorkspace);
-      await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-generated-workflow-ready`, {
-        expectation: { kind: 'diagnostic', label: createdWorkspace.label, reason: 'generated-workflow-artifacts-verified' },
-        diagnostic: true,
-      });
-    }
-
-    await startDebuggingGeneratedWorkspace(createdWorkspace);
-    await runWorkflowThroughOverviewAndAssertSucceeded(createdWorkspace, {
-      completedScreenshotName: `workspace-lifecycle-${createdWorkspace.label}-run-succeeded`,
+    suiteSetup(async () => {
+      const extension = vscode.extensions.getExtension(logicAppsExtensionId);
+      assert.ok(extension, `Expected ${logicAppsExtensionId} to be loaded from the extension development path`);
+      await extension.activate();
+      await closeCopilotChatIfVisible('workspace lifecycle suite setup', { absentSettleMs: 1500 });
     });
 
-    await assertNoDialogAttempts('Generated workspace designer lifecycle');
+    suiteTeardown(async () => {
+      await waitForVisibleDelay('Generated workspace designer lifecycle');
+      await closeWebviewTabs(createWorkspaceViewType);
+      await closeWebviewTabs(designerViewType);
+      await stopDebuggingAndTasks();
+    });
+
+    suiteTeardown(() => {
+      if (lifecycleMode === 'create' || lifecycleMode === 'codeful-create') {
+        return;
+      }
+
+      if (shouldDeferWorkspaceLifecycleCleanup(process.env)) {
+        console.log('[workspace-lifecycle] Deferring temp workspace cleanup to runner-owned diagnostics capture.');
+        return;
+      }
+
+      try {
+        fs.rmSync(tempWorkspaceParentPath, { recursive: true, force: true });
+      } catch (error) {
+        console.warn(`[workspace-lifecycle] Unable to remove temp workspace parent ${tempWorkspaceParentPath}: ${String(error)}`);
+      }
+    });
+
+    test('Should open generated designers and run saved workflows for Standard, custom code, and rules engine projects', async function () {
+      this.timeout(1_800_000);
+
+      if (lifecycleMode === 'create') {
+        const createdWorkspaces: CreatedWorkspace[] = [];
+        const createLabel = process.env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_CREATE_LABEL;
+        for (const creationCase of getWorkspaceCreationCases().filter((candidate) => !createLabel || candidate.label === createLabel)) {
+          createdWorkspaces.push(await createWorkspaceThroughWebview(creationCase, tempWorkspaceParentPath));
+        }
+
+        const manifestPath = process.env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_MANIFEST;
+        assert.ok(manifestPath, 'LA_E2E_CLI_WORKSPACE_LIFECYCLE_MANIFEST must be set in create mode');
+        fs.mkdirSync(path.dirname(manifestPath), { recursive: true });
+        fs.writeFileSync(manifestPath, `${JSON.stringify(createdWorkspaces, null, 2)}\n`);
+        return;
+      }
+
+      if (lifecycleMode === 'codeful-create') {
+        const createdWorkspaces: CreatedWorkspace[] = [];
+        const createLabel = process.env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_CREATE_LABEL;
+        for (const creationCase of getCodefulDebugCreationCases().filter((candidate) => !createLabel || candidate.label === createLabel)) {
+          const createdWorkspace = await createWorkspaceThroughWebview(creationCase, tempWorkspaceParentPath);
+          patchCodefulProjectForDebugGuard(createdWorkspace.appDir, createdWorkspace.wfName, creationCase.label);
+          applyCodefulControlVariantToProject(createdWorkspace.appDir, creationCase.codefulControlVariant);
+          assertCodefulControlVariant(createdWorkspace.appDir, creationCase.codefulControlVariant, creationCase.label);
+          createdWorkspaces.push({ ...createdWorkspace, codefulControlVariant: creationCase.codefulControlVariant });
+        }
+
+        const manifestPath = process.env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_MANIFEST;
+        assert.ok(manifestPath, 'LA_E2E_CLI_WORKSPACE_LIFECYCLE_MANIFEST must be set in codeful-create mode');
+        fs.mkdirSync(path.dirname(manifestPath), { recursive: true });
+        fs.writeFileSync(manifestPath, `${JSON.stringify(createdWorkspaces, null, 2)}\n`);
+        return;
+      }
+
+      if (lifecycleMode === 'nuget-run') {
+        await runNugetConversionLifecycle(getWorkspaceLifecycleCaseFromEnv());
+        return;
+      }
+
+      if (lifecycleMode === 'msn-weather-run') {
+        await runMsnWeatherLifecycle(getWorkspaceLifecycleCaseFromEnv());
+        return;
+      }
+
+      if (lifecycleMode === 'variables-picker-run') {
+        await runVariablesPickerLifecycle(getWorkspaceLifecycleCaseFromEnv());
+        return;
+      }
+
+      if (lifecycleMode === 'codeful-run') {
+        await runCodefulDebugTaskLifecycle(getWorkspaceLifecycleCaseFromEnv());
+        return;
+      }
+
+      assert.strictEqual(lifecycleMode, 'run', `Unsupported workspace lifecycle mode: ${lifecycleMode}`);
+      const createdWorkspace = getWorkspaceLifecycleCaseFromEnv();
+      console.log(`[workspace-lifecycle] Running ${createdWorkspace.label} workspace from ${createdWorkspace.workspaceFilePath}`);
+      ensureLocalSettingsForDesigner(createdWorkspace.appDir);
+
+      console.log(`[workspace-lifecycle] Waiting for ${createdWorkspace.label} Logic App folder`);
+      await waitForGeneratedLogicAppFolder(createdWorkspace);
+      buildCustomCodeProjectIfNeeded(createdWorkspace);
+      if (createdWorkspace.appType === 'standard') {
+        console.log(`[workspace-lifecycle] Opening ${createdWorkspace.label} designer`);
+        await openDesignerAndCreateWorkflow(createdWorkspace);
+      } else {
+        console.log(`[workspace-lifecycle] ${createdWorkspace.label}: skipping designer open; using generated workflow`);
+        assertGeneratedWorkflowReadyForRuntime(createdWorkspace);
+        await waitForCustomCodeRuntimeArtifactsIfNeeded(createdWorkspace);
+        await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-generated-workflow-ready`, {
+          expectation: { kind: 'diagnostic', label: createdWorkspace.label, reason: 'generated-workflow-artifacts-verified' },
+          diagnostic: true,
+        });
+      }
+
+      await startDebuggingGeneratedWorkspace(createdWorkspace);
+      await runWorkflowThroughOverviewAndAssertSucceeded(createdWorkspace, {
+        completedScreenshotName: `workspace-lifecycle-${createdWorkspace.label}-run-succeeded`,
+      });
+
+      await assertNoDialogAttempts('Generated workspace designer lifecycle');
+    });
   });
-});
+}
 
 function getWorkspaceLifecycleParentPath(): string {
   const envParentPath = process.env.LA_E2E_CLI_WORKSPACE_PARENT;
@@ -449,7 +457,7 @@ async function createWorkspaceThroughWebview(creationCase: WorkspaceCreationCase
             creationCase.wsName,
             creationCase.appName,
             creationCase.wfName,
-            ...(creationCase.appType === 'codeful' ? [] : ['Stateful']),
+            ...(creationCase.appType === 'codeful' ? [] : [creationCase.wfType ?? 'Stateful']),
             creationCase.functionFolderName,
             creationCase.functionNamespace,
             creationCase.functionName,
@@ -578,7 +586,7 @@ async function fillWorkspaceCreationFields(
     semanticCdp: cdp,
     semanticContextId: contextId,
   });
-  await selectDropdownOption(cdp, contextId, 'Workflow type', 'Stateful');
+  await selectDropdownOption(cdp, contextId, 'Workflow type', creationCase.wfType ?? 'Stateful');
   await selectRadioOption(cdp, contextId, creationCase.radioLabel);
   await scrollCreateWorkspaceForm(cdp, contextId, 'bottom', [{ labels: ['Workflow name'] }]);
   await captureLifecycleScreenshot(`workspace-lifecycle-${creationCase.label}-type-selected`, {
@@ -663,8 +671,8 @@ async function assertWorkspaceCreationFields(
 
   if (creationCase.appType !== 'codeful') {
     assert.ok(
-      await isDropdownValueSelected(cdp, contextId, 'Workflow type', 'Stateful'),
-      `Expected ${creationCase.label} Workflow type dropdown to be Stateful`
+      await isDropdownValueSelected(cdp, contextId, 'Workflow type', creationCase.wfType ?? 'Stateful'),
+      `Expected ${creationCase.label} Workflow type dropdown to be ${creationCase.wfType ?? 'Stateful'}`
     );
   }
   assert.ok(
@@ -6682,3 +6690,33 @@ async function withTimeout<T>(promise: Thenable<T>, timeoutMs: number, descripti
     }
   }
 }
+
+// Narrow test-only seam for the stateless family. No workflow seeds or runtime
+// assertions are shared: those have stateless-specific contracts in that family.
+export const statelessLifecycleHelpers = {
+  createWorkspaceThroughWebview,
+  waitForGeneratedLogicAppFolder,
+  openDesignerAndCreateWorkflow,
+  addRequestTriggerThroughDesigner,
+  addResponseActionThroughDesigner,
+  openActionDiscoveryPanelThroughDesigner,
+  searchInDiscoveryPanelThroughDesigner,
+  waitForSearchResultsThroughDesigner,
+  selectOperationThroughDesigner,
+  clickDesignerNodeByTitle,
+  clickDesignerElement,
+  fillDesignerParameter,
+  replaceFocusedDesignerText,
+  selectDynamicContentTokenForParameter,
+  waitForDesignerParameterEditor,
+  waitForDesignerText,
+  saveWorkflowThroughDesigner,
+  closeDesignerDetailsPanelThroughDesigner,
+  captureLifecycleScreenshot,
+  startDebuggingGeneratedWorkspace,
+  stopDebuggingAndTasks,
+  waitForOverviewRunStatus,
+  waitForWorkflowHealthy,
+};
+
+export type { CreatedWorkspace };

@@ -20,6 +20,53 @@ src/test/e2e/
 
 ## Running Tests
 
+### Stateless variables family (isolated native host only)
+
+Compile with `pnpm --dir apps/vs-code-designer run test:e2e-cli:compile`.
+Non-GUI controls run with
+`pnpm --dir apps/vs-code-designer run test:e2e-cli:stateless-variables:unit`;
+they are also additive members of the existing registered unit chain.
+
+After the parent has admitted the extension/webview build and prepared an isolated
+runtime dependency root, run
+`pnpm --dir apps/vs-code-designer run test:e2e-cli:stateless-variables-lifecycle`.
+The underlying selector is
+`node apps/vs-code-designer/scripts/run-e2e-cli.js --stateless-variables-lifecycle`.
+Set `LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT` to that prepared root (a job-owned
+`logicappsux-vscode-e2e-runtime-deps-*` directory under the OS temporary directory,
+not the user's dependency cache). The existing runner
+uses `statelessVariablesLifecycle` twice: one real Standard/Stateless wizard host,
+then a fresh host opened with its exact generated `.code-workspace`. Set the existing
+`LA_E2E_CLI_USER_DATA_PARENT`, extensions directory and remote-debugging port as
+appropriate for the isolated Windows/Linux consumer. Do not run concurrently with
+other runtime families sharing port 7071. This family never kills an unowned port
+occupant, creates live Azure resources, or provisions a connector.
+
+The native family authors Request, one multi-variable Initialize (including the
+actual Add a Variable control), both variable appends and Response through the real
+designer. It validates saved types and dependencies, invokes the local callback
+through the harness HTTP client, and validates the exact response. It opens Run
+history before that first call, but **does not require default Stateless history**.
+It then installs `WithStatelessRunHistory` into the generated app-root
+`local.settings.json` and `workflow-designtime/local.settings.json`, stops/restarts,
+and verifies a new callback-identified run, exact action identities, Response outputs
+and the matching visible history row. A further stop/restart repeats that proof.
+Restoration and a recovered real callback have an independent bounded deadline,
+including when the positive deadline expires. Any foreign settings edit or deletion
+preserves both files rather than partly restoring or overwriting them.
+
+Boundary: private source text asks for “both” local-settings files without naming
+their paths; the pair above follows the extension's two established generated
+settings targets. Embedded source images were used only as a private authoring
+oracle, not copied into the repository. Portal environment-variable configuration
+and the original external HTTP-client UI are not driven here. The local HTTP client
+is a transport substitute, not external-client certification. Native screenshots,
+actual Windows/Linux consumer results, generated design-time readiness, runtime
+restart/recovery and any source-image visual parity remain parent-owned validation.
+Source catalogue metadata, screenshots, private assets and signed endpoints must
+not be published. This additive family does not change canonical baseline counts,
+the existing OGF rollup or any previously earned native coverage.
+
 ### Workspace prompt Cancel (Windows and Linux)
 
 After building the extension/webviews and compiling the tests with the commands below,
