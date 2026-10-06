@@ -25,13 +25,16 @@ src/test/e2e/
 `pnpm --dir apps/vs-code-designer run test:e2e-cli:http-timeout-compose-original`
 first validates dependencies in an isolated runtime root using the existing
 bootstrap label, uses the existing Create Workspace fixture label filtered to
-Standard Stateless, then reopens that generated `.code-workspace` in a fresh latest-stable official
-CLI host under the supplementary `httpTimeoutComposeOriginal` label.
-It adds Request and Compose through the actual designer, saves, reads every
-numbered rendered Monaco line in the Code tab, replaces only Compose with input
-`"test"` and `runtimeConfiguration.requestOptions.timeout: "PT24H"`, saves again,
-and independently checks the persisted definition. Missing/changed virtualized
-lines fail; there is no filesystem/Monaco-model injection or fallback save.
+Standard Stateless, then reopens that generated `.code-workspace` in a fresh
+latest-stable official CLI host under the supplementary `httpTimeoutComposeOriginal` label.
+The family explicitly selects V2 in its generated workspace and binds
+`designerLocalV2` throughout. It adds Request and Compose through the actual
+designer, saves through the enabled V2 ToolbarButton's accessible Save text,
+reads every numbered rendered CodeMirror line in the global Code tab, replaces
+only Compose with input `"test"` and `runtimeConfiguration.requestOptions.timeout: "PT24H"`,
+saves again, and independently checks the persisted definition. Missing/changed
+virtualized lines, altered DOM identity and incomplete editor readiness fail;
+there is no filesystem/editor-model injection or fallback save.
 The exact unsupported-timeout error must then be visible on the same active
 workflow designer target, frame and document. A different message, hidden text,
 another editor, stale save or expired observation fails.
@@ -39,8 +42,13 @@ another editor, stale save or expired observation fails.
 The focused non-GUI controls are
 `test:e2e-cli:http-timeout-compose-original:unit` (after CLI compilation), also
 included in `test:e2e-cli:unit`. They validate the source oracle and driver
-failure behavior only; they are not native GUI coverage. Canonical baseline
-labels/counts and rollup are unchanged. This supplementary label is runnable,
+failure behavior only; they are not native GUI coverage.
+The DOM controls mount an actual CodeMirror `EditorView` with production theme,
+keybinding and content-change extensions, run the driver against its rendered
+lines/gutters/caret, and render the actual Fluent V2 Save `ToolbarButton`.
+Only jsdom's missing browser layout/input platform is supplied; editor-model
+replacement and preassembled driver page replies are not used.
+Canonical baseline labels/counts and rollup are unchanged. This supplementary label is runnable,
 not automatically admitted to an Azure DevOps baseline or credited from units.
 The explicit batch selector is `node scripts/run-e2e-cli.js --suites httpTimeoutComposeOriginal`;
 canonical `linux`/`windows` aliases remain unchanged. Its exact expected phases,

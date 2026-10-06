@@ -1411,7 +1411,7 @@ export const screenshotReadinessDomScript = `
     case 'designerValidationError':
       const visibleValidationMessages = visibleElements(
         '[role="alert"], [aria-live], .ms-MessageBar, [class*="error"], [class*="Error"]'
-      ).filter(element => !element.closest('.monaco-editor'));
+      ).filter(element => !element.closest('.monaco-editor, .cm-editor'));
       ready = visibleValidationMessages.some(element =>
         normalize(visibleText(element)).includes(normalize(expectation.message))
       );

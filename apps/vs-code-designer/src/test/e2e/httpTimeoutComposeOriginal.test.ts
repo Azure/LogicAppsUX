@@ -10,12 +10,14 @@ import {
   assertHttpTimeoutComposeAuthored,
   assertHttpTimeoutComposePersisted,
   assertHttpTimeoutComposeVisibleError,
+  httpTimeoutComposeDesignerViewType,
   httpTimeoutComposeError,
   type HttpTimeoutComposeWorkflow,
   httpTimeoutComposeRemaining,
   pollHttpTimeoutCompose,
   replaceHttpTimeoutComposeAction,
   selectHttpTimeoutComposeWorkspace,
+  selectHttpTimeoutComposeDesignerV2,
 } from './httpTimeoutComposeOracle';
 import { captureEvidenceScreenshot, installFailureScreenshotHook } from './screenshot';
 import { closeAllTabs, getWebviewTabs } from './webviewTabs';
@@ -44,6 +46,10 @@ suite('HTTP timeout Compose original authoring clause', () => {
 
     const extension = vscode.extensions.getExtension('ms-azuretools.vscode-azurelogicapps');
     assert.ok(extension);
+    await selectHttpTimeoutComposeDesignerV2(
+      vscode.workspace.getConfiguration('azureLogicAppsStandard'),
+      vscode.ConfigurationTarget.Workspace
+    );
     await extension.activate();
     // Same prerequisite as existing CLI/ExTester designer helpers. This is not
     // a workflow fixture or a save fallback: only suppress Azure connector setup.
@@ -66,16 +72,16 @@ suite('HTTP timeout Compose original authoring clause', () => {
         if (commandError) {
           throw commandError;
         }
-        const tabs = getWebviewTabs('designerLocal');
+        const tabs = getWebviewTabs(httpTimeoutComposeDesignerViewType);
         return tabs.length === 1 && tabs[0].isActive && tabs[0].label.includes(entry.wfName);
       },
       Boolean,
       deadline,
       'actual workflow designer tab'
     );
-    const tab = getWebviewTabs('designerLocal')[0];
+    const tab = getWebviewTabs(httpTimeoutComposeDesignerViewType)[0];
     const assertActive = (): void => {
-      const tabs = getWebviewTabs('designerLocal');
+      const tabs = getWebviewTabs(httpTimeoutComposeDesignerViewType);
       assert.strictEqual(tabs.length, 1, 'No ambiguous/stale designer webviews');
       assert.strictEqual(tabs[0], tab, 'Designer tab changed');
       assert.strictEqual(tab.isActive, true, 'Actual source workflow designer must be active');
@@ -106,7 +112,7 @@ suite('HTTP timeout Compose original authoring clause', () => {
       await driver.click('.msla-panel-container [contenteditable="true"].editor-input');
       await driver.replaceFocused('test');
       await driver.closePanel();
-      await driver.click('button[aria-label="Save"]');
+      await driver.save();
       const authored = await pollHttpTimeoutCompose(
         async () => readSaved(),
         (value) => {
@@ -137,11 +143,10 @@ suite('HTTP timeout Compose original authoring clause', () => {
       assertHttpTimeoutComposeAuthored(codeBefore);
       assert.deepStrictEqual(codeBefore.definition, authored.definition, 'Code tab must show the independently saved authored definition');
       const expected = replaceHttpTimeoutComposeAction(codeBefore);
-      await driver.click('.monaco-editor');
-      await driver.replaceFocused(JSON.stringify(expected, null, 2));
+      await driver.replaceCode(JSON.stringify(expected, null, 2));
       const codeAfter = JSON.parse(await driver.readCode());
       assert.deepStrictEqual(codeAfter, expected, 'Actual rendered Code replacement must match before saving');
-      await driver.click('button[aria-label="Save"]');
+      await driver.save();
       const persisted = await pollHttpTimeoutCompose(
         async () => readSaved(),
         (value) => isDeepStrictEqual(value.definition.actions.Compose, expected.definition.actions.Compose),

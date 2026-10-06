@@ -4,6 +4,7 @@ import * as os from 'os';
 import * as path from 'path';
 import type { CdpConnection } from './cdpClient';
 import { HttpTimeoutComposeDriver } from './httpTimeoutComposeDriver';
+import { runHttpTimeoutComposeDomControls } from './httpTimeoutComposeDom.unit';
 import {
   assembleHttpTimeoutComposeCode,
   assertHttpTimeoutComposeAuthored,
@@ -45,24 +46,14 @@ function numbered(text: string): HttpTimeoutComposeRenderedPage {
   return { editorId: 'unit-editor-json', lines: text.split('\n').map((text, index) => ({ number: index + 1, text })) };
 }
 
-function driverFixture(pages: HttpTimeoutComposeRenderedPage[], deadline = Date.now() + 5000) {
-  let index = 0;
+function inputDriverFixture(deadline = Date.now() + 5000) {
   const sent: Array<{ method: string; params: Record<string, unknown> }> = [];
   const cdp = {
-    async evaluate<T>(_contextId: number, expression: string): Promise<T> {
-      return (expression.includes('const editors =') ? pages[index] : { x: 10, y: 10 }) as T;
+    async evaluate() {
+      throw new Error('Input-only control cannot supply synthetic editor DOM/pages');
     },
     async send(method: string, params: Record<string, unknown>) {
       sent.push({ method, params });
-      if (method === 'Input.dispatchKeyEvent' && params.type === 'keyDown') {
-        if (params.code === 'End') {
-          index = pages.length - 1;
-        } else if (params.code === 'Home') {
-          index = 0;
-        } else if (params.code === 'PageDown') {
-          index = Math.min(index + 1, pages.length - 1);
-        }
-      }
       return {};
     },
   } as unknown as CdpConnection;
@@ -230,7 +221,7 @@ async function main(): Promise<void> {
   await control('complete overlapping rendered pages assemble exactly', () => {
     assert.strictEqual(assembleHttpTimeoutComposeCode(pages, eof), text);
   });
-  await control('incomplete Monaco virtualization fails without fixture fallback', () => {
+  await control('incomplete Code editor virtualization fails without fixture fallback', () => {
     const missing = pages.map((page) => ({ ...page, lines: page.lines.filter((line) => line.number !== 8) }));
     assert.throws(() => assembleHttpTimeoutComposeCode(missing, eof), /missing line 8/);
     assert.throws(() => assembleHttpTimeoutComposeCode([pages[0]], eof), /missing line/);
@@ -246,18 +237,9 @@ async function main(): Promise<void> {
     assert.throws(() => assembleHttpTimeoutComposeCode([{ ...full, lines: [] }], eof));
     assert.throws(() => assembleHttpTimeoutComposeCode([numbered('{"Compose":')], 1));
   });
-  await control('suite driver reads all supplied pages through key dispatch', async () => {
-    const { driver, sent } = driverFixture(pages);
-    assert.strictEqual(await driver.readCode(), text);
-    assert.ok(sent.some((entry) => entry.params.code === 'PageDown'));
-    assert.ok(!sent.some((entry) => entry.method === 'Input.insertText'));
-  });
-  await control('suite driver rejects missing virtualized line', async () => {
-    const { driver } = driverFixture(pages.map((page) => ({ ...page, lines: page.lines.filter((line) => line.number !== 8) })));
-    await assert.rejects(() => driver.readCode(), /missing line 8/);
-  });
+  await runHttpTimeoutComposeDomControls(control, authored);
   await control('replacement uses key dispatch and insertText only', async () => {
-    const { driver, sent } = driverFixture(pages);
+    const { driver, sent } = inputDriverFixture();
     await driver.replaceFocused(text);
     assert.deepStrictEqual(
       sent.map((entry) => entry.method),
@@ -282,7 +264,7 @@ async function main(): Promise<void> {
     assert.strictEqual(reads, 0);
   });
   await control('wrong active tab prevents every driver observation and input', async () => {
-    const { driver } = driverFixture(pages);
+    const { driver } = inputDriverFixture();
     const inactive = new HttpTimeoutComposeDriver(driver.cdp, 17, Date.now() + 5000, () => {
       throw new Error('wrong tab');
     });
