@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { assertNoDialogAttempts, installDialogGuard } from './dialogGuard';
+import { bootstrapRequest, snapshotBootstrapBinary, writeBootstrapAttestation } from './workspaceMultiRootBootstrap';
 
 const logicAppsExtensionId = 'ms-azuretools.vscode-azurelogicapps';
 const validateDependenciesCommand = 'azureLogicAppsStandard.validateAndInstallBinaries';
@@ -23,6 +24,14 @@ suite('Runtime Dependency Bootstrap', function () {
     assert.ok(runtimeDependenciesRoot, 'LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT must be set for dependency bootstrap');
 
     const resolvedRoot = path.resolve(runtimeDependenciesRoot);
+    const familyBootstrap = bootstrapRequest(process.env);
+    if (familyBootstrap) {
+      assert.strictEqual(
+        fs.realpathSync(resolvedRoot),
+        familyBootstrap.context.runtimeRoot,
+        'Native bootstrap must use this current job-owned dependency root'
+      );
+    }
     log(`Runtime dependency root: ${resolvedRoot}`);
     assert.ok(
       !isUserAzureLogicAppsCache(resolvedRoot),
@@ -61,9 +70,13 @@ suite('Runtime Dependency Bootstrap', function () {
       `Configured func path should point at the isolated dependency root. Actual: ${configuredFuncPath}`
     );
 
+    const before = familyBootstrap ? snapshotBootstrapBinary(familyBootstrap.context, configuredFuncPath) : undefined;
     const versions = probeFuncVersions(resolvedRoot, configuredFuncPath);
     log(`Func Core Tools version probe succeeded: ${versions.join(', ')}`);
     await assertNoDialogAttempts('runtime dependency bootstrap');
+    if (familyBootstrap && before) {
+      writeBootstrapAttestation(familyBootstrap, before, versions, vscode.version);
+    }
   });
 });
 

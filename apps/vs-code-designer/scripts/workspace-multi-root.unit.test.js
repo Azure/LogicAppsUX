@@ -14,6 +14,7 @@ const {
   suiteId,
   expectedPhases,
   exactPhasesComplete,
+  assertNoCallerFuncAdmission,
 } = require('./workspace-multi-root');
 const { SUITE_REGISTRY, normalizeSuiteSelection } = require('./e2e-cli-batch');
 const {
@@ -32,6 +33,15 @@ const phaseFixtures = () =>
 
 test('native family cannot run on a shared host; rejection precedes any native operation', async () => {
   await assert.rejects(runWorkspaceMultiRoot({}, {}), /isolated native consumer/);
+});
+test('caller-supplied Func path/hash cannot act as native bootstrap admission', () => {
+  assertNoCallerFuncAdmission({});
+  for (const env of [
+    { LA_E2E_CLI_MULTI_ROOT_FUNC_SHA256: 'a'.repeat(64) },
+    { LA_E2E_CLI_MULTI_ROOT_FUNC_PATH: path.resolve('unit-free-form-func') },
+  ]) {
+    assert.throws(() => assertNoCallerFuncAdmission(env), /not admission/);
+  }
 });
 test('missing Data Mapper HTML/JS is a meaningful block, not command discovery pass', () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'multi-root-assets-unit-'));

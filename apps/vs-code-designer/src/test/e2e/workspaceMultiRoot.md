@@ -86,11 +86,14 @@ The consumer must supply:
 - `LA_E2E_CLI_MULTI_ROOT_ISOLATED=1`.
 - `LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT` and
   `LA_E2E_CLI_EXTENSIONS_DIR`, prepared for this job.
-- Admitted `LA_E2E_CLI_MULTI_ROOT_FUNC_SHA256` before bootstrap.
-  `LA_E2E_CLI_MULTI_ROOT_FUNC_PATH`, when supplied, must be the same root's
-  `FuncCoreTools/func.exe` (Windows) or `FuncCoreTools/func` (Linux). In batch mode
-  omit a stale parent-root path; the family derives the path under its new
-  isolated suite dependency root and still requires the admitted digest.
+- **No caller-supplied Func path/hash.** The successful ordinary native
+  bootstrap resolves the configured job-root executable, snapshots its bytes
+  before the existing real version probes and attests unchanged bytes after
+  those probes and the no-dialog assertion. The route consumes the attestation
+  only after the exact bootstrap phase succeeds with ordinary Code closure,
+  verified phase cleanup and diagnostics. Deprecated
+  `LA_E2E_CLI_MULTI_ROOT_FUNC_PATH` / `LA_E2E_CLI_MULTI_ROOT_FUNC_SHA256` inputs
+  are rejected, not used as assumed admission.
 - Current-run/source/job identity variables and fresh diagnostic/profile
   parents. Use `LA_E2E_CLI_MULTI_ROOT_DIAGNOSTICS_PARENT`,
   `LA_E2E_CLI_USER_DATA_PARENT`, `LA_E2E_CLI_WORKSPACE_ROOT` as needed.
@@ -113,6 +116,68 @@ Code log/exit, profile logs and terminal result. Original observation and
 teardown errors are both retained. Failed/unclosed native runs preserve their
 fixture for parent-owned diagnostics; this family contains no process kill,
 port cleanup or prior process-owner protocol.
+
+### Exact ADO defaults and evidence paths
+
+The existing consumer's `TF_BUILD` does **not** satisfy the explicit isolated
+worker guard. Parent wiring must add `LA_E2E_CLI_MULTI_ROOT_ISOLATED=1` only on
+an actual exclusive native worker. No additional caller Func path/hash is
+required or accepted.
+
+The direct route uses the consumer's existing
+`LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT` (normally
+`$(Agent.TempDirectory)/runtime-dependencies/workspaceMultiRoot`),
+`LA_E2E_CLI_EXTENSIONS_DIR` (normally
+`$(Agent.TempDirectory)/test-resources/test-extensions`),
+`LA_E2E_CLI_WORKSPACE_ROOT` and `LA_E2E_CLI_USER_DATA_PARENT`. It preserves job
+ownership and has no user-home dependency fallback. Explicit batch selection
+instead creates its own new suite-owned dependency/workspace/profile roots.
+
+The route itself generates
+`LA_E2E_CLI_MULTI_ROOT_BOOTSTRAP_CONTEXT` and
+`LA_E2E_CLI_MULTI_ROOT_BOOTSTRAP_ATTESTATION` for the ordinary bootstrap host.
+The physical `FuncCoreTools/func.exe` (Windows) or `FuncCoreTools/func` (Linux)
+resolved from that host's actual configuration supplies the bytes/digest.
+`func-bootstrap.json` binds these to the current invocation, source/run/job,
+physical root, actual Code version and successful native probe outputs. A
+missing/stale record, failed bootstrap phase, outside-root/link path, denied
+read, changed file during probes or later replacement fails closed.
+
+The admitted producer payload includes `dist/` and `out/`; it must be rebuilt
+from this source revision so both the compiled bootstrap test and
+`out/test/e2e/workspaceMultiRootBootstrap.js` contain the attestation hook.
+The recorder is ordinary checked-in JavaScript plus its manifest at
+`scripts/fixtures/workspace-multi-root-recorder/{extension.js,package.json}`:
+no compilation or extra payload copy is needed when the consumer performs its
+existing full pinned-source checkout. It is not in the default `dist/out`-only
+archive, so a sparse/source-less consumer must explicitly preserve those same
+source-admitted fixture files. The Mapper entry remains
+`dist/vs-code-react/index.html`, with nonempty `dist/vs-code-react/assets/*.js`,
+from the existing admitted extension/webview build.
+
+Let **D** be the fresh directory made by
+`mkdtemp((LA_E2E_CLI_MULTI_ROOT_DIAGNOSTICS_PARENT ??
+<extensionRoot>/.vscode-test) + "/multi-root-")`. The route writes:
+
+- `D/invocation.json`, `D/func-bootstrap.json`, `D/wizard-handoff.json`;
+- `D/debug-events.jsonl`, `D/code.log`, `D/final-result.json`;
+- `D/screenshots/workspace-multi-root-*.png` and matching `.json` sidecars;
+- `D/vscode-logs/workspaceMultiRoot/workspace-multi-root[__<consumer-user-data-suffix>]/`
+  through the existing sanitized profile-log copier;
+- `D/phases.jsonl` for direct execution, or the supplied
+  `LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH` for batch execution.
+
+Bootstrap/create profiles continue using the consumer's normal
+`LA_E2E_CLI_VSCODE_LOG_DIR`, with profile names
+`workspace-multi-root-bootstrap__multi-root-bootstrap-<invocation>` and
+`workspace-multi-root-create__multi-root-create-<invocation>`.
+The consumer's ordinary console log remains
+`.vscode-test/results/workspaceMultiRoot.log`. The current generic diagnostics
+gatherer does **not** recursively publish D; its ordinary screenshot/log roots
+do not capture the regular-window family paths above. Parent must explicitly
+publish D (or its controlled diagnostics-parent directory), and validate its
+`final-result.json` after all three phases and teardown. Pipeline gathering,
+source/admission support and any summarizer/OGF wiring remain parent-owned.
 
 ## Non-native controls
 
