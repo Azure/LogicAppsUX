@@ -58,19 +58,24 @@
       {
         "command": "biztalkDataMapper.newMap",
         "title": "Add Mapper Project",
-      "category": "Logic App",
+        "category": "Logic App",
         "icon": "$(add)"
       },
       {
         "command": "biztalkDataMapper.openMap",
         "title": "Open Existing Mapper",
-      "category": "Logic App",
+        "category": "Logic App",
         "icon": "$(folder-opened)"
       },
       {
         "command": "biztalkDataMapper.addDataMap",
         "title": "Add Data Map",
         "icon": "$(new-file)"
+      },
+      {
+        "command": "biztalkDataMapper.importExistingMap",
+        "title": "Import Existing Map",
+        "icon": "$(go-to-file)"
       },
       {
         "command": "biztalkDataMapper.addSchemaFile",
@@ -111,7 +116,7 @@
           "group": "navigation"
         },
         {
-          "command": "biztalkDataMapper.addDataMap",
+          "submenu": "biztalkDataMapper.addMapMenu",
           "when": "view == biztalkDataMapper.mapsView",
           "group": "navigation"
         }
@@ -135,6 +140,11 @@
           "group": "navigation@10"
         },
         {
+          "command": "biztalkDataMapper.importExistingMap",
+          "when": "explorerResourceIsFolder && resourceFilename != Schemas && resourceFilename != __generated",
+          "group": "navigation@11"
+        },
+        {
           "command": "biztalkDataMapper.addSchemaFile",
           "when": "explorerResourceIsFolder && resourceFilename == Schemas",
           "group": "navigation@10"
@@ -148,6 +158,16 @@
           "command": "biztalkDataMapper.editDataMap",
           "when": "resourceExtname == .btm",
           "group": "navigation@11"
+        }
+      ],
+      "biztalkDataMapper.addMapMenu": [
+        {
+          "command": "biztalkDataMapper.addDataMap",
+          "group": "1_add@1"
+        },
+        {
+          "command": "biztalkDataMapper.importExistingMap",
+          "group": "1_add@2"
         }
       ]
     },
@@ -171,7 +191,14 @@
           "description": "Preserve sequence order in generated XSLT"
         }
       }
-    }
+    },
+    "submenus": [
+      {
+        "id": "biztalkDataMapper.addMapMenu",
+        "label": "Add Data Map",
+        "icon": "$(new-file)"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "pnpm run publish:framework-transform && pnpm run publish:worker && pnpm run bundle",

@@ -6,7 +6,7 @@ import * as vscode from 'vscode';
 import { MapEditorProvider } from './mapEditorProvider';
 import { MapsTreeProvider } from './mapsTreeProvider';
 import { disposeDataMapperLogger, getDataMapperLogger } from './logger';
-import { addDataMap, addMapperProject, openExistingMapper } from './projectCommands';
+import { addDataMap, addMapperProject, importExistingMap, openExistingMapper } from './projectCommands';
 import { copySchemaToWorkspace, getWorkspaceRoot, schemasFolderName } from './workspaceStructure';
 
 function resourceUri(value: vscode.Uri | { resourceUri?: vscode.Uri } | undefined): vscode.Uri | undefined {
@@ -35,6 +35,10 @@ export function activate(context: vscode.ExtensionContext) {
 
     vscode.commands.registerCommand('biztalkDataMapper.addDataMap', (value?: vscode.Uri | { resourceUri?: vscode.Uri }) =>
       addDataMap(value, refreshMaps)
+    ),
+
+    vscode.commands.registerCommand('biztalkDataMapper.importExistingMap', (value?: vscode.Uri | { resourceUri?: vscode.Uri }) =>
+      importExistingMap(value, refreshMaps)
     ),
 
     vscode.commands.registerCommand('biztalkDataMapper.addSchemaFile', async (value?: vscode.Uri | { resourceUri?: vscode.Uri }) => {

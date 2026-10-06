@@ -1,16 +1,20 @@
-import * as vscode from 'vscode';
+import { planMapImport } from './schema/mapImportPlanner';
+import type { MapImportPlan } from './schema/mapImportPlanner';
 import {
   createEmptyMap,
   createMapperProject,
+  ensureWorkspaceFolders,
   findMapperProjects,
   getDuplicateSafeName,
   getWorkspaceRoot,
   isMapperProject,
   normalizeMapName,
   readDirectoryNames,
+  schemasFolderName,
   validateMapName,
   validateWorkspaceName,
 } from './workspaceStructure';
+import * as vscode from 'vscode';
 
 type CommandTarget = vscode.Uri | { resourceUri?: vscode.Uri } | undefined;
 
@@ -50,7 +54,8 @@ async function showProjectInWorkspace(projectUri: vscode.Uri): Promise<void> {
   vscode.workspace.updateWorkspaceFolders(folders.length, 0, { uri: projectUri });
 }
 
-export async function addMapperProject(onChanged: () => void): Promise<void> {
+// Asks where to create a new mapper project and what to call it.
+async function promptForNewProject(title: string): Promise<{ parentUri: vscode.Uri; name: string } | undefined> {
   const folders = vscode.workspace.workspaceFolders ?? [];
   let parentUri: vscode.Uri | undefined;
   if (folders.length === 0) {
@@ -61,32 +66,37 @@ export async function addMapperProject(onChanged: () => void): Promise<void> {
       { label: '$(folder-opened) Browse...', description: 'Choose a different folder' },
     ];
     const picked = await vscode.window.showQuickPick(items, {
-      title: 'Add Mapper Project',
+      title,
       placeHolder: 'Select the workspace folder for the new mapper project',
     });
     if (!picked) {
-      return;
+      return undefined;
     }
     parentUri = picked.uri ?? (await browseForFolder('Select Folder', 'Select the folder to create the mapper project in'));
   }
   if (!parentUri) {
-    return;
+    return undefined;
   }
 
   const existingNames = new Set((await readDirectoryNames(parentUri)).map((name) => name.toLocaleLowerCase()));
   const name = await vscode.window.showInputBox({
-    title: 'Add Mapper Project',
+    title,
     prompt: 'Enter the mapper project name',
     value: getDuplicateSafeName('MapperProject', '', existingNames),
     validateInput: (value) =>
       validateWorkspaceName(value) ??
       (existingNames.has(value.trim().toLocaleLowerCase()) ? `A folder named "${value.trim()}" already exists.` : undefined),
   });
-  if (!name) {
+  return name ? { parentUri, name: name.trim() } : undefined;
+}
+
+export async function addMapperProject(onChanged: () => void): Promise<void> {
+  const newProject = await promptForNewProject('Add Mapper Project');
+  if (!newProject) {
     return;
   }
 
-  const { rootUri, mapUri } = await createMapperProject(parentUri, name);
+  const { rootUri, mapUri } = await createMapperProject(newProject.parentUri, newProject.name);
   onChanged();
   if (vscode.workspace.getWorkspaceFolder(rootUri)) {
     await openDataMap(mapUri);
@@ -151,4 +161,110 @@ export async function addDataMap(value: CommandTarget, onChanged: () => void): P
   const mapUri = await createEmptyMap(project.uri, normalizeMapName(input));
   onChanged();
   await openDataMap(mapUri);
+}
+
+async function pathExists(uri: vscode.Uri): Promise<boolean> {
+  try {
+    await vscode.workspace.fs.stat(uri);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// Imports a .btm from outside the project: copies the map and the schemas it references (with their imports) into the project.
+export async function importExistingMap(value: CommandTarget, onChanged: () => void): Promise<void> {
+  const selected = await vscode.window.showOpenDialog({
+    canSelectFiles: true,
+    canSelectFolders: false,
+    canSelectMany: false,
+    filters: { 'BizTalk Map': ['btm'] },
+    openLabel: 'Import Map',
+    title: 'Select the map (.btm) to import',
+  });
+  if (!selected?.[0]) {
+    return;
+  }
+
+  let plan: MapImportPlan;
+  try {
+    plan = planMapImport(selected[0].fsPath);
+  } catch (error) {
+    vscode.window.showErrorMessage(`Could not import "${selected[0].fsPath}": ${error instanceof Error ? error.message : String(error)}`);
+    return;
+  }
+
+  let projectUri: vscode.Uri | undefined;
+  const selectedUri = resourceUri(value);
+  if (selectedUri) {
+    projectUri = getWorkspaceRoot(selectedUri);
+  } else {
+    const projects = await findMapperProjects();
+    if (projects.length === 0) {
+      const newProject = await promptForNewProject('Import Existing Map');
+      projectUri = newProject ? vscode.Uri.joinPath(newProject.parentUri, newProject.name) : undefined;
+    } else if (projects.length === 1) {
+      projectUri = projects[0].uri;
+    } else {
+      const picked = await vscode.window.showQuickPick(
+        projects.map((candidate) => ({ label: candidate.name, description: candidate.uri.fsPath, project: candidate })),
+        { title: 'Import Existing Map', placeHolder: 'Select the workspace to import the map into' }
+      );
+      projectUri = picked?.project.uri;
+    }
+  }
+  if (!projectUri) {
+    return;
+  }
+
+  await ensureWorkspaceFolders(projectUri);
+  const schemasUri = vscode.Uri.joinPath(projectUri, schemasFolderName);
+  const filesToWrite: { uri: vscode.Uri; data: Buffer }[] = [];
+  const conflicts: { uri: vscode.Uri; data: Buffer; relativePath: string }[] = [];
+  for (const schemaFile of plan.schemaFiles) {
+    const uri = vscode.Uri.joinPath(schemasUri, ...schemaFile.relativePath.split('/'));
+    if (!(await pathExists(uri))) {
+      filesToWrite.push({ uri, data: schemaFile.data });
+    } else if (Buffer.compare(Buffer.from(await vscode.workspace.fs.readFile(uri)), schemaFile.data) !== 0) {
+      conflicts.push({ uri, data: schemaFile.data, relativePath: schemaFile.relativePath });
+    }
+  }
+  if (conflicts.length > 0) {
+    const overwrite = 'Overwrite';
+    const keep = 'Keep Existing';
+    const choice = await vscode.window.showWarningMessage(
+      `${conflicts.length} schema file(s) already exist in ${schemasFolderName} with different content: ${conflicts
+        .map((conflict) => conflict.relativePath)
+        .join(', ')}`,
+      { modal: true },
+      overwrite,
+      keep
+    );
+    if (!choice) {
+      return;
+    }
+    if (choice === overwrite) {
+      filesToWrite.push(...conflicts);
+    }
+  }
+
+  for (const file of filesToWrite) {
+    await vscode.workspace.fs.writeFile(file.uri, file.data);
+  }
+  const existingNames = await readDirectoryNames(projectUri);
+  const mapUri = vscode.Uri.joinPath(projectUri, getDuplicateSafeName(plan.mapName, '.btm', existingNames));
+  await vscode.workspace.fs.writeFile(mapUri, Buffer.from(plan.mapContent, 'utf8'));
+  onChanged();
+
+  const summary = `Imported "${plan.mapName}.btm" with ${plan.schemaFiles.length} schema file(s).`;
+  if (plan.warnings.length > 0) {
+    vscode.window.showWarningMessage(`${summary} ${plan.warnings.join(' ')}`);
+  } else {
+    vscode.window.showInformationMessage(summary);
+  }
+  if (vscode.workspace.getWorkspaceFolder(projectUri)) {
+    await openDataMap(mapUri);
+  } else {
+    await showProjectInWorkspace(projectUri);
+  }
 }
