@@ -40,6 +40,15 @@ select the existing approved resource group, and fail explicitly when they are
 unavailable. Do not create new resources, acquire new grants or intercept dialog
 return values to obtain a pass.
 
+Check the consumer's activation mode as well as its credentials. Minimal
+activation can register local commands but return before Azure Resources and
+the account tree are initialized. An affirmative connector wizard then cannot
+use the missing subscription picker. Reuse the actual production initialization
+path needed by the consumer; do not fabricate an account tree or wizard result.
+Environment target values alone also do not select subscription/resource-group
+UI controls. Verify the exact approved selection and persisted location rather
+than assuming that the runner's location parameter controls the selected group.
+
 This policy is specific to Azure connector setup. Tests intentionally exercising
 workspace **No** or **Cancel** retain those original actions and assertions.
 
@@ -135,6 +144,13 @@ child exit zero cannot manufacture missing later GUI/runtime phases.
 
 Shared direct orchestration is in `scripts/run-e2e-cli.js`; supplementary
 publication is checked by `scripts/family-lifecycle-terminal.js`.
+
+Collect required profile diagnostics and validate required screenshots and
+other non-cleanup evidence before removing the original generated fixture.
+A failure discovered only after deletion cannot satisfy failure retention.
+On required collection or validation failure, preserve the fixture and the
+actual error; only successful pre-cleanup checks admit destructive cleanup.
+The regeneration ordering correction remains an open implementation gate.
 
 Reconstructing ancestry only after a parent exits can miss reparented
 descendants. When original process identities have not been verified after
