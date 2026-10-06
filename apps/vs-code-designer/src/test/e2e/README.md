@@ -28,8 +28,11 @@ bootstrap label, uses the existing Create Workspace fixture label filtered to
 Standard Stateless, then reopens that generated `.code-workspace` in a fresh
 latest-stable official CLI host under the supplementary `httpTimeoutComposeOriginal` label.
 The family explicitly selects V2 in its generated workspace and binds
-`designerLocalV2` throughout. It adds Request and Compose through the actual
-designer, saves through the enabled V2 ToolbarButton's accessible Save text,
+`designerLocalV2` throughout. VS Code configuration is reacquired after the awaited
+version update because
+`WorkspaceConfiguration` objects retain their acquisition-time snapshot.
+It adds Request and Compose through the actual designer, saves through the enabled
+V2 ToolbarButton's accessible Save text,
 reads every numbered rendered CodeMirror line in the global Code tab, replaces
 only Compose with input `"test"` and `runtimeConfiguration.requestOptions.timeout: "PT24H"`,
 saves again, and independently checks the persisted definition. Missing/changed
@@ -57,6 +60,18 @@ also recorded by the direct route in the existing phase JSONL format, are:
 1. `runtimeDependencyBootstrap:bootstrap` (existing bootstrap label);
 2. `httpTimeoutComposeOriginal:create` (`createWorkspaceFixturesManifest`, Standard Stateless only);
 3. `httpTimeoutComposeOriginal:reopen` (`httpTimeoutComposeOriginal`, actual designer/Code/save/error).
+
+The direct route replaces prior results with a fresh incomplete invocation before
+work starts and writes label-specific acceptance files under `.vscode-test/results/`:
+`httpTimeoutComposeOriginal.terminal-result.json` and
+`httpTimeoutComposeOriginal.cleanup-ledger.json`. Its unique original phase JSONL
+is retained under the family lifecycle artifact directory. Final success requires
+the exact ordered current-invocation phases, positive actual test counts, each
+original CLI host's observed owned-descendant closure, actual owned-root absence
+after cleanup, and a final closure observation using the existing process observer.
+Exit zero alone cannot finalize success. Missing, stale, malformed or incomplete
+evidence and cleanup/closure failures produce a current failed result and nonzero
+exit. Batch execution keeps its existing `reports/*` finalization.
 
 Native acceptance requires the source-bound compiled producer artifact and
 actual Windows and Linux isolated consumer runs with their generated fixture,

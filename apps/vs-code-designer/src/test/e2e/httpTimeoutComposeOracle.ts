@@ -16,14 +16,14 @@ export const httpTimeoutComposeError =
 export const httpTimeoutComposeDesignerViewType = 'designerLocalV2';
 
 export async function selectHttpTimeoutComposeDesignerV2(
-  configuration: {
+  getConfiguration: () => {
     update(section: string, value: number, target: number): PromiseLike<void>;
     get<T>(section: string): T | undefined;
   },
   workspaceTarget: number
 ): Promise<void> {
-  await configuration.update('designerVersion', 2, workspaceTarget);
-  assert.strictEqual(configuration.get<number>('designerVersion'), 2, 'Family requires the V2 global Code/Workflow views');
+  await getConfiguration().update('designerVersion', 2, workspaceTarget);
+  assert.strictEqual(getConfiguration().get<number>('designerVersion'), 2, 'Family requires the V2 global Code/Workflow views');
 }
 
 export interface HttpTimeoutComposeWorkflow {

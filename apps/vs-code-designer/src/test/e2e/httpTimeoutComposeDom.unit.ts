@@ -5,6 +5,7 @@ import * as path from 'path';
 import * as vm from 'vm';
 import type { CdpConnection } from './cdpClient';
 import { HttpTimeoutComposeDriver } from './httpTimeoutComposeDriver';
+import { testInstalledHttpTimeoutConfigurationSnapshot } from './httpTimeoutComposeConfiguration.unit';
 import {
   assertHttpTimeoutComposePersisted,
   httpTimeoutComposeDesignerViewType,
@@ -300,20 +301,30 @@ async function editorDomFixture(text: string, options: { readOnly?: boolean; del
 }
 
 export async function runHttpTimeoutComposeDomControls(control: Control, authored: HttpTimeoutComposeWorkflow): Promise<void> {
+  await control(
+    'installed VS Code configuration snapshot requires reacquisition after update',
+    testInstalledHttpTimeoutConfigurationSnapshot
+  );
   await control('family explicitly selects V2 and the actual production command routes to V2', async () => {
     let version = 1;
     let scope = -1;
-    const configuration = {
-      async update(section: string, value: number, target: number) {
-        assert.strictEqual(section, 'designerVersion');
-        version = value;
-        scope = target;
-      },
-      get<T>() {
-        return version as T;
-      },
+    const getConfiguration = () => {
+      const snapshot = version;
+      return {
+        async update(section: string, value: number, target: number) {
+          assert.strictEqual(section, 'designerVersion');
+          version = value;
+          scope = target;
+        },
+        get<T>() {
+          return snapshot as T;
+        },
+      };
     };
-    await selectHttpTimeoutComposeDesignerV2(configuration, 2);
+    const before = getConfiguration();
+    await selectHttpTimeoutComposeDesignerV2(getConfiguration, 2);
+    assert.strictEqual(before.get<number>(), 1, 'WorkspaceConfiguration retains its acquisition-time snapshot');
+    assert.strictEqual(getConfiguration().get<number>(), 2);
     assert.strictEqual(scope, 2, 'Only the generated workspace configuration is changed');
     assert.strictEqual(httpTimeoutComposeDesignerViewType, 'designerLocalV2');
     const ts = require('typescript');
@@ -327,7 +338,7 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       exports,
       require: (name: string) => {
         if (name === 'vscode') {
-          return { workspace: { getConfiguration: () => configuration } };
+          return { workspace: { getConfiguration } };
         }
         if (name.endsWith('/designer-v2/openDesignerV2')) {
           return {
