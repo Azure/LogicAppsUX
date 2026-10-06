@@ -87,6 +87,7 @@ const operations = {
 api.runStatelessVariablesLifecycle(undefined, operations).then(() => {
   assert.equal(invocations, 3);
   for (const owned of trace.roots) assert.equal(fs.existsSync(owned), false, 'Actual family cleanup must remove both roots');
+  trace.actorFinishedAt = new Date().toISOString();
   if (mode === 'missing-file') fs.unlinkSync(process.env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH);
   if (mode === 'malformed') fs.appendFileSync(process.env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH, '\\n{');
   if (mode === 'missing-artifacts') {
@@ -106,12 +107,29 @@ api.runStatelessVariablesLifecycle(undefined, operations).then(() => {
 
 interface Receipt {
   suiteId: string;
+  generatedAt: string;
   complete: boolean;
   exitCode: number;
+  signal: string | null;
+  cleanupVerified: boolean;
+  diagnosticsError: string;
+  phaseCompleteness: boolean;
   lifecycleFinalized: boolean;
+  phaseJournalPath: string;
   expectedPhaseIds: string[];
   observedPhaseIds: string[];
-  phaseResults: Array<{ phaseId: string }>;
+  missingPhaseIds: string[];
+  unexpectedPhaseIds: string[];
+  duplicatePhaseIds: string[];
+  blockedPhaseIds: string[];
+  phaseResults: Array<{
+    phaseId: string;
+    complete: boolean;
+    exitCode: number;
+    signal: string | null;
+    cleanupVerified: boolean;
+    diagnosticsError: string;
+  }>;
 }
 interface Ledger {
   verified: boolean;
@@ -123,6 +141,7 @@ interface Trace {
   roots: string[];
   invocations: number;
   pendingReceiptObservations: number;
+  actorFinishedAt?: string;
   orchestratorError?: string;
 }
 
@@ -184,6 +203,38 @@ async function main(): Promise<void> {
     assert.strictEqual(ledger.processCleanup.verified, true, 'Actual bounded Node child must have an observed clean process tree');
     assert.ok(ledger.processCleanup.checkedAt && Array.isArray(ledger.processCleanup.alivePids), 'No fabricated processCleanup proof');
     if (accepted) {
+      // Assert the user-supplied supplementary terminal contract on the real
+      // shared-writer artifact, not a separately constructed receipt/checker.
+      assert.strictEqual(terminal.signal, null);
+      assert.strictEqual(terminal.cleanupVerified, true);
+      assert.strictEqual(terminal.diagnosticsError, '');
+      assert.strictEqual(terminal.phaseCompleteness, true);
+      assert.deepStrictEqual(terminal.missingPhaseIds, []);
+      assert.deepStrictEqual(terminal.unexpectedPhaseIds, []);
+      assert.deepStrictEqual(terminal.duplicatePhaseIds, []);
+      assert.deepStrictEqual(terminal.blockedPhaseIds, []);
+      assert.strictEqual(terminal.phaseResults.length, expected.length);
+      terminal.phaseResults.forEach((phase, index) =>
+        assert.deepStrictEqual(phase, {
+          phaseId: expected[index],
+          complete: true,
+          exitCode: 0,
+          signal: null,
+          cleanupVerified: true,
+          diagnosticsError: '',
+        })
+      );
+      assert.notStrictEqual(terminal.phaseJournalPath, staleJournal);
+      assert.ok(fs.existsSync(terminal.phaseJournalPath), 'Fresh scoped phase journal must be retained as provenance');
+      assert.ok(trace.actorFinishedAt);
+      assert.ok(
+        Date.parse(ledger.processCleanup.checkedAt) >= Date.parse(trace.actorFinishedAt),
+        'Observed normal child closure/process cleanup must follow actual orchestrator cleanup'
+      );
+      assert.ok(
+        Date.parse(terminal.generatedAt) >= Date.parse(ledger.processCleanup.checkedAt),
+        'Final label-specific terminal must follow the real process-cleanup observation'
+      );
       assert.strictEqual(ledger.verified, true);
       assert.strictEqual(ledger.transientCleanupVerified, true);
       assert.deepStrictEqual(terminal.observedPhaseIds, expected);

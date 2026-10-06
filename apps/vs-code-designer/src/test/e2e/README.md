@@ -82,6 +82,14 @@ after family-owned roots and wrapper transient roots are actually removed.
 The default label-specific ADO artifacts are
 `.vscode-test/results/statelessVariablesLifecycle.terminal-result.json` and
 `.vscode-test/results/statelessVariablesLifecycle.cleanup-ledger.json`.
+Successful final terminals use the existing shared-writer shape: exact ordered
+registry `expectedPhaseIds`/`observedPhaseIds`, empty missing/unexpected/duplicate/
+blocked lists, complete per-phase proofs, `phaseCompleteness`, normal zero exit/
+null signal, empty diagnostics, verified cleanup and finalized lifecycle. The
+fresh `phaseJournalPath`, terminal `generatedAt`, cleanup ledger's observed
+`processCleanup.checkedAt` and actual owned-root absence provide provenance.
+Node-only controls assert these fields on the real emitted artifact; they do
+not import the parent CI checker or replace native phase/runtime validation.
 Missing/stale/incomplete/unordered phases, retained roots, diagnostics or cleanup
 failures produce `complete: false` and nonzero exit. Merely providing JSONL never
 suppresses those final family receipts. Other registered local-only families can
