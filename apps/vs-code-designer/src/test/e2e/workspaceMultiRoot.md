@@ -1,5 +1,21 @@
 # Multi-root workspace supplementary native family
 
+> **BLOCKED — native finalization gate.** Post-exit ancestry reconstruction
+> cannot prove that reparented former children exited. The family currently
+> lacks a live retained native-identity set covering its actual Code/Func/task/
+> Azurite ownership. The direct and batch terminals are forced incomplete with
+> unverified cleanup; the family refuses native launch rather than authorizing
+> another run on an unproven gate. Existing source/evidence is preserved.
+>
+> The existing owned-cleanup helper requires its owner to stay alive and scopes
+> candidates to dependency-root executables. It does not currently establish
+> this case's Code/Azurite/task identity coverage after ordinary Code closure.
+> Reusing only the Func count or the wrapper's empty post-exit ancestry list
+> would relabel unknown ownership as success. No V1–V22 framework, provider,
+> broker, broad-name kill or caller proof is introduced here. The review's
+> retained-identity comparison controls are diagnostic only and cannot authorize
+> cleanup, even if every supplied identity is absent.
+
 Selector: `node scripts/run-e2e-cli.js --workspace-multi-root` from
 `apps/vs-code-designer`, or `pnpm --dir apps/vs-code-designer run
 test:e2e-cli:workspace-multi-root`. It uses the official CLI wizard setup and the

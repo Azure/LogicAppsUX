@@ -485,6 +485,8 @@ function readJsonIfExists(filePath) {
 }
 
 function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, processCleanup }) {
+  const retainedCaseCleanupBlocked = suite.id === 'workspaceMultiRoot';
+  const retainedCaseCleanupError = retainedCaseCleanupBlocked ? require('./workspace-multi-root').nativeCleanupBlocker : '';
   const phaseResults = readJsonLinesIfExists(context.phaseResultsPath);
   const observedPhaseIds = phaseResults.map((phase) => phase.phaseId).filter(Boolean);
   const expectedPhaseIds = context.expectedPhaseIds ?? [];
@@ -513,6 +515,7 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
   const terminalComplete =
     phaseCompleteness &&
     phaseCleanupVerified &&
+    !retainedCaseCleanupBlocked &&
     processCleanup.verified === true &&
     !error &&
     phaseDiagnosticsErrors.length === 0 &&
@@ -530,9 +533,12 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     duplicatePhaseIds,
     blockedPhaseIds,
     phaseCleanupVerified,
-    processTreeVerified: processCleanup.verified === true,
-    processCleanup,
-    verified: phaseCompleteness && phaseCleanupVerified && processCleanup.verified === true,
+    processTreeVerified: processCleanup.verified === true && !retainedCaseCleanupBlocked,
+    processCleanup: retainedCaseCleanupBlocked
+      ? { verified: false, error: retainedCaseCleanupError, postExitAncestryObservation: processCleanup }
+      : processCleanup,
+    verified: phaseCompleteness && phaseCleanupVerified && processCleanup.verified === true && !retainedCaseCleanupBlocked,
+    ...(retainedCaseCleanupBlocked ? { retainedCaseCleanupVerified: false, retainedCaseCleanupError } : {}),
     phases: finalizedPhaseResults,
   };
   const terminalResult = {
@@ -540,7 +546,9 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     exitCode,
     signal,
     cleanupVerified: cleanupLedger.verified,
-    diagnosticsError: [error instanceof Error ? error.message : String(error || ''), ...phaseDiagnosticsErrors].filter(Boolean).join('\n'),
+    diagnosticsError: [error instanceof Error ? error.message : String(error || ''), ...phaseDiagnosticsErrors, retainedCaseCleanupError]
+      .filter(Boolean)
+      .join('\n'),
     expectedPhaseIds,
     observedPhaseIds,
     missingPhaseIds,

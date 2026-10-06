@@ -10,6 +10,48 @@ const extensionRoot = path.resolve(__dirname, '..');
 const hash = (file) => createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 const suiteId = 'workspaceMultiRoot';
 const expectedPhases = Object.freeze(['runtimeDependencyBootstrap:bootstrap', 'workspaceMultiRoot:create', 'workspaceMultiRoot:reopen']);
+const nativeCleanupBlocker =
+  'workspaceMultiRoot native finalization blocked: missing live retained Code/Func/task/Azurite identities; post-exit ancestry is not exit proof';
+function requireRetainedCaseCleanupProof() {
+  throw new Error(nativeCleanupBlocker);
+}
+
+// Diagnostic comparator for the review reproduction ONLY. It cannot authorize
+// cleanup: this family has not captured the required live case ownership set.
+// No provider/broker/termination contract or caller-supplied proof is introduced.
+function retainedIdentityExitFacts(retained, observation) {
+  const unknown = (reason) => ({ cleanupVerified: false, retainedSetAbsent: false, reason });
+  if (!Array.isArray(retained) || retained.length === 0 || !Array.isArray(observation)) {
+    return unknown('missing-live-retained-identity-observation');
+  }
+  const valid = (record) =>
+    record &&
+    Number.isSafeInteger(record.pid) &&
+    record.pid > 0 &&
+    typeof record.creationIdentity === 'string' &&
+    record.creationIdentity &&
+    typeof record.executable === 'string' &&
+    path.isAbsolute(record.executable);
+  if (!retained.every(valid) || new Set(retained.map((record) => record.pid)).size !== retained.length) {
+    return unknown('missing-or-ambiguous-retained-native-identity');
+  }
+  for (const record of retained) {
+    const matches = observation.filter((current) => current?.pid === record.pid);
+    if (matches.length > 1 || (matches[0] && !valid(matches[0]))) {
+      return unknown('inaccessible-or-ambiguous-current-native-identity');
+    }
+    const current = matches[0];
+    if (current) {
+      if (current.creationIdentity !== record.creationIdentity || current.executable !== record.executable) {
+        return unknown('pid-reuse-or-native-identity-changed');
+      }
+      // Parentage is deliberately NOT used here: PID1 reparenting cannot erase
+      // a same native identity that is still alive.
+      return unknown('retained-native-identity-still-alive');
+    }
+  }
+  return { cleanupVerified: false, retainedSetAbsent: true, reason: 'case-ownership-coverage-not-established' };
+}
 
 function assertNoCallerFuncAdmission(env) {
   assert.ok(
@@ -67,7 +109,10 @@ function validateHandoff(value, context) {
 }
 
 function finalizeResult(result) {
+  result.retainedCaseCleanupVerified = false;
+  result.cleanupBlocker = nativeCleanupBlocker;
   result.complete =
+    result.retainedCaseCleanupVerified === true &&
     result.observationPassed === true &&
     result.evidenceVerified === true &&
     result.originalCodeClose?.code === 0 &&
@@ -164,6 +209,10 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, 
     '1',
     'Full func population requires an isolated native consumer, not a shared workstation'
   );
+  // Fail before launching another native phase. Existing artifacts are kept;
+  // a valid guard and exit-zero ancestry scan cannot certify this unknown gate.
+  requireRetainedCaseCleanupProof();
+  /* Native implementation preserved below for a bounded retained-identity fix. */
   assert.ok(['win32', 'linux'].includes(process.platform));
   assertAssets(extensionRoot);
   assert.ok(
@@ -439,6 +488,8 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, 
 }
 
 module.exports = {
+  nativeCleanupBlocker,
+  retainedIdentityExitFacts,
   assertNoCallerFuncAdmission,
   suiteId,
   expectedPhases,
