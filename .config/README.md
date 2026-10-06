@@ -55,7 +55,8 @@ Each suite publishes its own JUnit results and one consolidated sanitized diagno
 
 The E2E Run Pipeline form intentionally exposes only test-selection controls: `diagnosticOnly`, `runLinux`, `runWindows`, `linuxSuites`, and `windowsSuites`. Selection is validated before the artifact build. A normal run requires the full canonical inventory on both OSes, expressed through the `linux`/`windows` aliases or complete explicit lists; partial runs must be diagnostic. Unknown, duplicate, overlapping, or OS-incompatible selections are rejected. Diagnostic selection only schedules the selected independent jobs and cannot satisfy the full gate.
 
-The supplementary `httpTimeoutComposeOriginal` and `statelessVariablesLifecycle`
+The supplementary `httpTimeoutComposeOriginal`, `statelessVariablesLifecycle`
+and `workspaceArtifactRegeneration`
 families have independent Linux and Windows jobs using the same admitted payload,
 isolated dependencies/profiles, secure Linux session and required result staging.
 Select either or both by their suite IDs in each OS selector with
