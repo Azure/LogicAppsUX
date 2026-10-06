@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 /* global __dirname, __filename, clearTimeout, console, module, process, require, setTimeout */
 const { execFileSync, spawn } = require('child_process');
+const assert = require('node:assert/strict');
 const { Buffer } = require('buffer');
 const { createHash } = require('crypto');
 const fs = require('fs');
@@ -84,6 +85,24 @@ if (require.main === module) {
 }
 
 function main() {
+  if (process.argv[2] === '--check-workspace-artifact-regeneration') {
+    if (process.argv.length !== 4) {
+      exitWithError(new Error('--check-workspace-artifact-regeneration requires only the archived family diagnostic root.'));
+      return;
+    }
+    try {
+      assertRegenerationStageEvidence(path.resolve(process.argv[3]), {
+        source: process.env.BUILD_SOURCEVERSION || 'local',
+        run: process.env.BUILD_BUILDID || 'local',
+        job: process.env.SYSTEM_JOBID || 'local',
+        platform: process.platform,
+      });
+      console.log('[workspace-regeneration] Strict archived evidence accepted; source-case/expectation approval is not assessed.');
+    } catch (error) {
+      exitWithError(error);
+    }
+    return;
+  }
   if (process.argv.includes('--workspace-artifact-regeneration')) {
     if (process.argv.length !== 3) {
       exitWithError(
@@ -1682,6 +1701,22 @@ function runVscodeTest(args, options = {}) {
         for (const phase of regenerationPhases) {
           writeSuitePhaseResult(childEnv, { ...phase, cleanupLedger });
         }
+        try {
+          publishRegenerationStageEvidence(regenerationContext, regenerationResult, regenerationPhases, cleanupLedger);
+          assertRegenerationStageEvidence(regenerationContext.root, regenerationContext.identity);
+        } catch (error) {
+          regenerationError = error;
+          console.error(`[workspace-regeneration] Strict family staging evidence failed: ${String(error)}`);
+          if (regenerationResult) {
+            regenerationResult.complete = false;
+            regenerationResult.errors.push(String(error));
+            try {
+              publishRegenerationStageEvidence(regenerationContext, regenerationResult, regenerationPhases, cleanupLedger);
+            } catch (publishError) {
+              console.error(`[workspace-regeneration] Failed to retain unsuccessful staging result: ${String(publishError)}`);
+            }
+          }
+        }
       } else {
         writeSuitePhaseResult(childEnv, {
           phaseId,
@@ -2632,6 +2667,8 @@ function shouldSuppressKnownVscodeNoise(line) {
 
 module.exports = {
   _test: {
+    publishRegenerationStageEvidence,
+    assertRegenerationStageEvidence,
     assertSafeRuntimeDependenciesRoot,
     canUseInteractiveMsnWeatherAzureTargetEnv,
     captureGeneratedWorkspaceDiagnostics,
@@ -3104,6 +3141,205 @@ function getDirectSuiteComplete(label, phaseResults) {
         !phase.diagnosticsError
     )
   );
+}
+
+function publishRegenerationStageEvidence(context, result, phases, cleanup) {
+  const expectedPhaseIds = SUITE_REGISTRY.workspaceArtifactRegeneration.expectedPhases;
+  const safePhases = phases.map((phase) => ({
+    schemaVersion: 1,
+    label: 'workspaceArtifactRegeneration',
+    ...projectTerminalPhase(phase),
+    mochaPassingCount: phase.mochaPassingCount || 0,
+    diagnosticsError: redactGeneratedWorkspacePlainText(String(phase.diagnosticsError || '')),
+  }));
+  const complete =
+    result?.complete === true &&
+    getDirectSuiteComplete('workspaceArtifactRegeneration', safePhases) &&
+    cleanup.verified === true &&
+    cleanup.action === 'removed' &&
+    cleanup.workspaceParent === context.workspaceParent;
+  const binding = {
+    schemaVersion: 1,
+    suiteId: 'workspaceArtifactRegeneration',
+    invocation: context.invocation,
+    identity: context.identity,
+    finalizedUtc: new Date().toISOString(),
+  };
+  const terminal = {
+    ...binding,
+    label: 'workspaceArtifactRegeneration',
+    lifecycleFinalized: true,
+    complete,
+    exitCode: complete ? 0 : 1,
+    signal: null,
+    expectedPhaseIds: [...expectedPhaseIds],
+    observedPhaseIds: safePhases.map((phase) => phase.phaseId),
+    phaseResults: safePhases,
+    cleanupVerified: cleanup.verified === true,
+    mochaPassingCount: safePhases.reduce((sum, phase) => sum + phase.mochaPassingCount, 0),
+  };
+  fs.writeFileSync(path.join(context.root, 'phase-results.jsonl'), `${safePhases.map((phase) => JSON.stringify(phase)).join('\n')}\n`);
+  fs.writeFileSync(path.join(context.root, 'terminal-result.json'), `${JSON.stringify(terminal, null, 2)}\n`);
+  fs.writeFileSync(path.join(context.root, 'cleanup-ledger.json'), `${JSON.stringify({ ...cleanup, ...binding }, null, 2)}\n`);
+  const primary = result || { ...binding, errors: ['Regular-workbench phases did not start'], hosts: [], observations: [] };
+  fs.writeFileSync(
+    context.resultPath,
+    `${JSON.stringify(
+      {
+        ...primary,
+        ...binding,
+        complete,
+        lifecycleFinalized: true,
+        expectedPhaseIds: [...expectedPhaseIds],
+        phaseResults: safePhases,
+        cleanup: { verified: cleanup.verified === true, action: cleanup.action, workspaceParent: cleanup.workspaceParent },
+        errors: (primary.errors || []).map((error) => redactGeneratedWorkspacePlainText(String(error))),
+        hosts: (primary.hosts || []).map((host) => ({
+          ...host,
+          errors: (host.errors || []).map((error) => redactGeneratedWorkspacePlainText(String(error))),
+        })),
+      },
+      null,
+      2
+    )}\n`
+  );
+  const codeLogs = ['Sanitized regular Code stdout/stderr; raw per-phase logs are not part of the safe archive.'];
+  for (const host of primary.hosts || []) {
+    assert.ok(
+      expectedPhaseIds.includes(`workspaceArtifactRegeneration:${host.phase}`),
+      'Only registered native phase logs may be published'
+    );
+    const file = path.join(context.root, `${host.phase}-code.log`);
+    if (fs.existsSync(file)) {
+      const stat = fs.lstatSync(file);
+      assert.ok(stat.isFile() && !stat.isSymbolicLink(), 'Code log must be an original regular file');
+      codeLogs.push(
+        `\n## ${host.phase}\n${redactGeneratedWorkspacePlainText(fs.readFileSync(file, 'utf8').slice(0, vscodeProfileLogMaxFileBytes))}`
+      );
+    }
+  }
+  fs.writeFileSync(path.join(context.root, 'code.log'), `${codeLogs.join('\n')}\n`);
+  return terminal;
+}
+
+function assertRegenerationStageEvidence(root, expectedIdentity) {
+  const read = (name) => JSON.parse(fs.readFileSync(path.join(root, name), 'utf8'));
+  const invocation = read('invocation.json');
+  const handoff = read('wizard-handoff.json');
+  const primary = read('final-result.json');
+  const terminal = read('terminal-result.json');
+  const cleanup = read('cleanup-ledger.json');
+  const phases = readJsonLinesIfExists(path.join(root, 'phase-results.jsonl'));
+  assert.deepEqual(invocation.identity, expectedIdentity, 'Wrong current job/source/platform evidence');
+  for (const artifact of [handoff, primary, terminal, cleanup]) {
+    assert.equal(artifact.schemaVersion, 1);
+    assert.equal(artifact.invocation, invocation.invocation, 'Stale or wrong family invocation');
+    assert.deepEqual(artifact.identity, expectedIdentity);
+  }
+  const expectedPhases = SUITE_REGISTRY.workspaceArtifactRegeneration.expectedPhases;
+  assert.deepEqual(
+    phases.map((phase) => phase.phaseId),
+    [...expectedPhases],
+    'All fourteen phases must be present in exact order'
+  );
+  assert.equal(getDirectSuiteComplete('workspaceArtifactRegeneration', phases), true, 'One passing wizard is not complete family evidence');
+  assert.deepEqual(terminal.expectedPhaseIds, [...expectedPhases]);
+  assert.deepEqual(terminal.observedPhaseIds, [...expectedPhases]);
+  assert.deepEqual(terminal.phaseResults, phases);
+  assert.deepEqual(primary.phaseResults, phases);
+  assert.equal(terminal.lifecycleFinalized, true);
+  assert.equal(primary.lifecycleFinalized, true);
+  assert.equal(terminal.complete, true);
+  assert.equal(primary.complete, true);
+  assert.equal(terminal.exitCode, 0);
+  assert.equal(terminal.signal, null);
+  assert.equal(cleanup.verified, true);
+  assert.equal(cleanup.action, 'removed', 'Preserved/failed owned cleanup must not pass staging');
+  assert.equal(cleanup.workspaceParent, invocation.workspaceParent);
+  assert.equal(primary.cleanup?.verified, true);
+  assert.equal(primary.cleanup?.action, 'removed');
+  assert.equal(primary.cleanup?.workspaceParent, invocation.workspaceParent);
+  assert.deepEqual(primary.errors, []);
+  assert.deepEqual(primary.code, { version: handoff.launch.version, sha256: handoff.launch.sha256 });
+  assert.match(handoff.launch.sha256, /^[a-f0-9]{64}$/);
+  const runtime = handoff.runtimeSettings;
+  assert.ok(runtime, 'Actual creating-host runtime configuration evidence is required');
+  assert.equal(runtime.schemaVersion, 1);
+  assert.equal(runtime.invocation, invocation.invocation);
+  assert.deepEqual(runtime.identity, expectedIdentity);
+  assert.equal(runtime.root, invocation.runtimeAdmission?.root, 'Wrong admitted runtime root in archived handoff');
+  assert.ok(
+    Date.parse(runtime.capturedUtc) >= Date.parse(invocation.startedUtc) &&
+      Date.parse(runtime.capturedUtc) <= Date.parse(terminal.finalizedUtc),
+    'Stale runtime capture'
+  );
+  const {
+    regenerationRuntimeSettingsHash,
+    regenerationRuntimeSettingKeys,
+  } = require('../out/test/e2e/workspaceArtifactRegenerationRuntime');
+  assert.deepEqual(Object.keys(runtime.settings).sort(), [...regenerationRuntimeSettingKeys].sort());
+  assert.equal(runtime.allowlistedSettingsSha256, regenerationRuntimeSettingsHash(runtime.settings));
+  assert.equal(runtime.settings['azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation'], true);
+  assert.equal(runtime.settings['azureLogicAppsStandard.e2eStrictDependencyValidation'], true);
+  assert.ok(Array.isArray(runtime.binaries) && runtime.binaries.length >= 3);
+  assert.ok(runtime.binaries.every((binary) => typeof binary.path === 'string' && /^[a-f0-9]{64}$/.test(binary.sha256)));
+  // This archived check intentionally does not read the original profiles or
+  // dependency cache; live path/byte checks already gate native completion.
+  assert.equal(primary.hosts.length, 13);
+  assert.deepEqual(
+    primary.hosts.map((host) => `workspaceArtifactRegeneration:${host.phase}`),
+    expectedPhases.slice(1)
+  );
+  for (const host of primary.hosts) {
+    assert.equal(host.observationPassed, true);
+    assert.deepEqual(host.close, { code: 0, signal: null });
+    assert.deepEqual(host.errors, []);
+  }
+  const names = ['vscode-single', 'vscode-multiple', 'vscode-repeat', 'root-single', 'root-multiple', 'root-repeat'];
+  assert.deepEqual(
+    primary.observations.map((observation) => observation.name),
+    names
+  );
+  for (const observation of primary.observations) {
+    assert.equal(observation.realYesMouseInput, true);
+    assert.equal(observation.realOverwriteYesMouseInput, true);
+    assert.equal(observation.initializationYesCount, 1);
+    assert.equal(observation.overwriteYesCount, 1);
+    assert.equal(observation.freshReopen, true);
+  }
+  const checkpoints = [
+    'workspace-regeneration-baseline',
+    ...names.flatMap((name) =>
+      ['before-yes', 'before-overwrite-yes', 'after-yes', 'reopened'].map((suffix) => `workspace-regeneration-${name}-${suffix}`)
+    ),
+  ];
+  for (const checkpoint of checkpoints) {
+    const bytes = fs.readFileSync(path.join(root, 'screenshots', `${checkpoint}.png`));
+    assert.ok(
+      bytes.length > 8 && bytes.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])),
+      'Required real PNG missing/invalid'
+    );
+    const sidecar = read(path.join('screenshots', `${checkpoint}.json`));
+    assert.equal(sidecar.checkpoint, checkpoint);
+    assert.equal(sidecar.classification, 'evidence');
+    assert.equal(sidecar.verdict, 'accepted');
+    assert.equal(sidecar.target?.owner, 'workbench');
+    assert.ok(sidecar.target?.opaqueTargetId && sidecar.target?.opaqueFrameId);
+    assert.ok(Number.isInteger(sidecar.target?.generation));
+    assert.ok(sidecar.timing?.samples > 1 && sidecar.timing?.captureAttempts > 0);
+    const accepted = sidecar.events?.findLast((event) => event.name === 'accepted');
+    assert.ok(accepted && accepted.attempt === sidecar.timing.captureAttempts && accepted.generation === sidecar.target.generation);
+  }
+  assert.ok(fs.statSync(path.join(root, 'code.log')).size > 0);
+  const indices = walkFiles(path.join(root, 'vscode-logs')).filter((file) => path.basename(file) === 'profile-log-index.md');
+  for (const phaseId of expectedPhases.slice(1)) {
+    const phaseName = phaseId.slice('workspaceArtifactRegeneration:'.length);
+    assert.ok(
+      indices.some((file) => fs.readFileSync(file, 'utf8').includes(`Phase: ${phaseName}\n`)),
+      `Sanitized profile-log index is required for ${phaseName}`
+    );
+  }
+  return terminal;
 }
 
 function getDirectExpectedPhaseIds(label) {

@@ -60,7 +60,7 @@ function selectedSettings(source: Record<string, unknown>): Record<string, unkno
   );
 }
 
-function settingsHash(settings: Record<string, unknown>): string {
+export function regenerationRuntimeSettingsHash(settings: Record<string, unknown>): string {
   return createHash('sha256')
     .update(JSON.stringify(selectedSettings(settings)))
     .digest('hex');
@@ -142,7 +142,7 @@ export function captureRegenerationRuntimeSettings(
     root,
     sourceSettingsPath,
     settings,
-    allowlistedSettingsSha256: settingsHash(settings),
+    allowlistedSettingsSha256: regenerationRuntimeSettingsHash(settings),
     binaries,
   };
 }
@@ -169,7 +169,11 @@ export function verifyRegenerationRuntimeSettings(
   );
   const disk = selectedSettings(JSON.parse(fs.readFileSync(handoff.sourceSettingsPath, 'utf8')) as Record<string, unknown>);
   assert.deepStrictEqual(handoff.settings, disk, 'Creating-host runtime configuration changed after the wizard');
-  assert.strictEqual(handoff.allowlistedSettingsSha256, settingsHash(disk), 'Stale creating-host allowlisted settings hash');
+  assert.strictEqual(
+    handoff.allowlistedSettingsSha256,
+    regenerationRuntimeSettingsHash(disk),
+    'Stale creating-host allowlisted settings hash'
+  );
   assert.deepStrictEqual(
     handoff.binaries,
     configuredBinaries(handoff.settings, root).map((binary) => ({ path: binary, sha256: hashFile(binary) })),

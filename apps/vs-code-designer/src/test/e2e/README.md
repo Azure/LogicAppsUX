@@ -206,6 +206,81 @@ parent also fits the unchanged actual UTF-8 socket budget. Regular profile basen
 are opaque per-invocation/per-phase hashes; this shortens paths without changing
 phase identities, weakening the byte-length check, or using a shared desktop profile.
 
+#### ADO staging boundary and safe archive whitelist
+
+For an existing per-job lifecycle archive, use the **direct** selector and set
+`LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR` to a fresh dedicated child directory,
+for example `<existing-job-lifecycle>/workspaceArtifactRegeneration`. It is fully
+supported; no archive of arbitrary `.vscode-test/` directories is necessary.
+The default direct root is
+`apps/vs-code-designer/.vscode-test/workspace-regeneration-<user-data-suffix>`.
+The explicit batch suite instead assigns
+`<allocated-suite-root>/reports/workspace-regeneration`; its suite-scoped setting
+replaces an inherited diagnostic-root override.
+
+The runner **always** writes self-contained finalized family evidence beneath that
+root, including when a consumer sets `LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH` (which
+otherwise selects JSONL-only batch reporting). Consumer baseline result destinations
+can remain separate; the family root is authoritative for this supplement:
+
+| File/path relative to the family root | Safe archive use |
+|---|---|
+| `invocation.json` | Current invocation/job/source/platform and owned-root admission |
+| `wizard-handoff.json` | Verified original wizard, Code hash/version and allowlisted nonsecret runtime settings |
+| `final-result.json` | Final observation/closure/cleanup result and exact fourteen phase records |
+| `terminal-result.json` | Strict finalized fourteen-phase terminal result, not the wizard's single Mocha body |
+| `phase-results.jsonl` | Exact ordered executed phases; missing regular phases remain failures |
+| `cleanup-ledger.json` | Actual owned wizard-root cleanup, invocation-bound; `removed`/verified required |
+| `code.log` | Aggregate regular-Code stdout/stderr sanitized with the existing log redactor |
+| `screenshots/workspace-regeneration-baseline.{png,json}` | Required baseline evidence/readiness pair |
+| `screenshots/workspace-regeneration-<branch>-<checkpoint>.{png,json}` | Required branch evidence/readiness pairs |
+| `vscode-logs/**` | **Only this producer-sanitized subtree**, including `profile-log-index.md`, `copy-summary.json`, copied logs and channel diagnostics |
+
+`<branch>` is exactly `vscode-single`, `vscode-multiple`, `vscode-repeat`,
+`root-single`, `root-multiple`, `root-repeat`; `<checkpoint>` is exactly
+`before-yes`, `before-overwrite-yes`, `after-yes`, `reopened`.
+Success requires all **25 PNG/accepted-sidecar pairs**. Archive only these exact
+paths, not `*.json` or the whole diagnostic directory. **Exclude**
+`*-profile.json` locator markers and raw `*-code.log` files (the safe aggregate
+is `code.log`), all raw profiles/`User`/`globalStorage`/`workspaceStorage`,
+account/keyring/auth stores, original unsanitized logs, prepared extensions and
+runtime/dependency caches. Keep existing admitted baseline logs/results/generated
+snapshots under their current separately governed archive rules.
+
+Relevant environment paths:
+
+- `LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR`: dedicated family archive root.
+- `LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT`: explicit admitted job-owned managed
+  dependency root; **not archived**.
+- `LA_E2E_CLI_EXTENSIONS_DIR`: admitted prepared extensions; **not archived here**.
+- `LA_E2E_CLI_USER_DATA_PARENT`: private fresh-profile parent, short on Linux;
+  **never archive raw profile contents**.
+- `LA_E2E_CLI_WORKSPACE_ROOT`: owned wizard fixture parent; normal verified removal
+  is recorded in `cleanup-ledger.json`.
+- `LA_E2E_CLI_VSCODE_VERSION`: producer-admitted resolved stable Code version.
+- `LA_E2E_CLI_REMOTE_DEBUGGING_PORT`: optional isolated-job port (regular host
+  default `9514`); no shared local-host native execution.
+- Existing `LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH`,
+  `LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH`, `LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH`
+  may still point at the consumer's **separate** result area. The family copies
+  above are emitted independently and cannot be replaced by baseline results.
+
+After collecting the whitelist into a staged family directory, validate it using
+the admitted source/compiled tests and the same current-job identity environment:
+
+```text
+node apps/vs-code-designer/scripts/run-e2e-cli.js --check-workspace-artifact-regeneration <staged-family-root>
+```
+
+This read-only checker starts no Code/runtime. It rejects stale/wrong invocation,
+job/source/platform, incomplete/reordered/failed phase records, unsuccessful
+ordinary host exits, missing real Yes counts, preserved/failed owned cleanup,
+missing overwrite screenshots or unaccepted sidecars/log indices. It works from
+the archive without reading the original profiles or runtime caches. A single
+`1 passing` wizard log cannot satisfy it. Original expectation approval, canonical
+rollup and the existing outer process-tree cleanup gate remain separate; this
+family does not fabricate a new process-tree-verification receipt.
+
 ### Workspace prompt Cancel (Windows and Linux)
 
 After building the extension/webviews and compiling the tests with the commands below,

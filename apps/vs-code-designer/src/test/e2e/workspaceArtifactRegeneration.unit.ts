@@ -539,6 +539,8 @@ async function main(): Promise<void> {
         getDirectSuiteComplete(label: string, phases: unknown[]): boolean;
         writeSuiteFinalEvidence(input: unknown): void;
         writeSuitePhaseResult(env: NodeJS.ProcessEnv, phase: unknown): void;
+        publishRegenerationStageEvidence(context: unknown, result: unknown, phases: unknown[], cleanup: unknown): unknown;
+        assertRegenerationStageEvidence(root: string, identity: Record<string, string>): unknown;
       };
     } = require(runner);
     // These are modeled reporting controls, not actual Code observations or
@@ -637,6 +639,108 @@ async function main(): Promise<void> {
       direct.phaseResults.map((phase) => phase.phaseId),
       regenerationPhaseIds
     );
+    checks++;
+
+    // Archive protocol models only: synthetic PNG headers/receipts below are
+    // never native fixture/evidence claims. No Code, CDP or runtime is launched.
+    const stageRoot = path.join(root, 'archive-protocol-model');
+    fs.mkdirSync(path.join(stageRoot, 'screenshots'), { recursive: true });
+    const stageContext = {
+      ...binding,
+      root: stageRoot,
+      workspaceParent: path.join(root, 'removed-wizard-model'),
+      resultPath: path.join(stageRoot, 'final-result.json'),
+    };
+    const launch = { version: 'unit-only', sha256: 'a'.repeat(64) };
+    fs.writeFileSync(path.join(stageRoot, 'invocation.json'), JSON.stringify(stageContext));
+    fs.writeFileSync(
+      path.join(stageRoot, 'wizard-handoff.json'),
+      JSON.stringify({
+        schemaVersion: 1,
+        invocation: binding.invocation,
+        identity: binding.identity,
+        launch,
+        runtimeSettings: runtimeHandoff,
+      })
+    );
+    const modelNames = regenerationCases.map((entry) => entry.name);
+    const stageResult = {
+      schemaVersion: 1,
+      invocation: binding.invocation,
+      identity: binding.identity,
+      complete: true,
+      code: launch,
+      errors: [],
+      hosts: protocolInput.hosts,
+      observations: modelNames.map((name) => ({
+        name,
+        realYesMouseInput: true,
+        realOverwriteYesMouseInput: true,
+        initializationYesCount: 1,
+        overwriteYesCount: 1,
+        freshReopen: true,
+      })),
+    };
+    const ownedCleanup = { verified: true, action: 'removed', workspaceParent: stageContext.workspaceParent };
+    for (const host of protocolInput.hosts) {
+      fs.writeFileSync(path.join(stageRoot, `${host.phase}-code.log`), 'unit-only Authorization: Bearer unit-secret\n');
+      const logDir = path.join(stageRoot, 'vscode-logs', 'unit-sanitized', host.phase);
+      fs.mkdirSync(logDir, { recursive: true });
+      fs.writeFileSync(path.join(logDir, 'profile-log-index.md'), `Phase: ${host.phase}\n`);
+    }
+    const checkpoints = [
+      'workspace-regeneration-baseline',
+      ...modelNames.flatMap((name) =>
+        ['before-yes', 'before-overwrite-yes', 'after-yes', 'reopened'].map((suffix) => `workspace-regeneration-${name}-${suffix}`)
+      ),
+    ];
+    for (const checkpoint of checkpoints) {
+      fs.writeFileSync(path.join(stageRoot, 'screenshots', `${checkpoint}.png`), Buffer.from([137, 80, 78, 71, 13, 10, 26, 10, 0]));
+      fs.writeFileSync(
+        path.join(stageRoot, 'screenshots', `${checkpoint}.json`),
+        JSON.stringify({
+          checkpoint,
+          classification: 'evidence',
+          verdict: 'accepted',
+          target: { owner: 'workbench', opaqueTargetId: 'unit-target', opaqueFrameId: 'unit-frame', generation: 1 },
+          timing: { samples: 2, captureAttempts: 1 },
+          events: [{ name: 'accepted', attempt: 1, generation: 1 }],
+        })
+      );
+    }
+    reporting._test.publishRegenerationStageEvidence(stageContext, stageResult, protocolPhases, ownedCleanup);
+    assert.ok(
+      !fs.readFileSync(path.join(stageRoot, 'code.log'), 'utf8').includes('unit-secret'),
+      'Only sanitized code.log may be archived'
+    );
+    assert.ok(fs.readFileSync(path.join(stageRoot, 'code.log'), 'utf8').includes('<redacted>'));
+    // Stage validation must work from the archive alone, without the original
+    // raw profiles or runtime caches, even if consumer phase paths were set.
+    fs.renameSync(dependencyRoot, `${dependencyRoot}-not-archived`);
+    fs.renameSync(path.dirname(sourceSettingsPath), `${path.dirname(sourceSettingsPath)}-not-archived`);
+    try {
+      reporting._test.assertRegenerationStageEvidence(stageRoot, binding.identity);
+    } finally {
+      fs.renameSync(`${dependencyRoot}-not-archived`, dependencyRoot);
+      fs.renameSync(`${path.dirname(sourceSettingsPath)}-not-archived`, path.dirname(sourceSettingsPath));
+    }
+    assert.throws(
+      () => reporting._test.assertRegenerationStageEvidence(stageRoot, { ...binding.identity, job: 'wrong' }),
+      /Wrong current job/
+    );
+    for (const phases of [protocolPhases.slice(0, 1), protocolPhases.slice(0, -1), [...protocolPhases].reverse()]) {
+      reporting._test.publishRegenerationStageEvidence(stageContext, stageResult, phases, ownedCleanup);
+      assert.throws(() => reporting._test.assertRegenerationStageEvidence(stageRoot, binding.identity));
+    }
+    reporting._test.publishRegenerationStageEvidence(stageContext, stageResult, protocolPhases, {
+      ...ownedCleanup,
+      verified: false,
+      action: 'preserved',
+    });
+    assert.throws(() => reporting._test.assertRegenerationStageEvidence(stageRoot, binding.identity));
+    reporting._test.publishRegenerationStageEvidence(stageContext, stageResult, protocolPhases, ownedCleanup);
+    fs.unlinkSync(path.join(stageRoot, 'screenshots', 'workspace-regeneration-vscode-single-before-overwrite-yes.png'));
+    assert.throws(() => reporting._test.assertRegenerationStageEvidence(stageRoot, binding.identity), /ENOENT/);
     checks++;
     console.log(`[workspace-regeneration-unit] ${checks} focused contract groups passed; no VS Code/runtime/native coverage claimed.`);
   } finally {
