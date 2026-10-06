@@ -46,6 +46,7 @@ import { containsIgnoreCase, uniqueName } from './testUtils';
 import { waitForVisibleDelay } from './visibleDelay';
 import { closeWebviewTabs, getTabViewType, getWebviewTabs, waitForWebviewTab } from './webviewTabs';
 import { applyCodefulControlVariantToProject, requiredValue, waitForPathExists } from './workspaceArtifacts';
+import { recordMultiRootWizardHandoff } from './workspaceMultiRootHandoff';
 
 const logicAppsExtensionId = 'ms-azuretools.vscode-azurelogicapps';
 const createWorkspaceCommand = 'azureLogicAppsStandard.createWorkspace';
@@ -345,6 +346,11 @@ suite('Create Workspace Experience Tests', () => {
         await createWorkspaceThroughWebview(creationCase, tempWorkspaceParentPath);
         verifyCreatedWorkspace(tempWorkspaceParentPath, creationCase);
         await captureCreatedWorkspaceDiagnostic(`create-workspace-${creationCase.label}-created`);
+        if (process.env.LA_E2E_CLI_MULTI_ROOT_HANDOFF) {
+          const entry = buildWorkspaceManifestEntry(tempWorkspaceParentPath, creationCase);
+          assertWorkspaceManifestEntry(entry);
+          recordMultiRootWizardHandoff(entry, vscode.version);
+        }
         if (process.env.LA_E2E_CLI_CANCEL_HANDOFF_PATH && creationCase.appType === 'standard' && creationCase.workflowType === 'Stateful') {
           const entry = buildWorkspaceManifestEntry(tempWorkspaceParentPath, creationCase);
           assertWorkspaceManifestEntry(entry);

@@ -1,0 +1,8 @@
+{
+  "name": "logic-apps-multi-root-test-recorder",
+  "publisher": "logic-apps-tests",
+  "version": "0.0.1",
+  "engines": { "vscode": "^1.95.0" },
+  "activationEvents": ["*"],
+  "main": "./extension.js"
+}

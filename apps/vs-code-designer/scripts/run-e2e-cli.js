@@ -112,6 +112,17 @@ function main() {
       .catch(exitWithError);
     return;
   }
+  if (process.argv.includes('--workspace-multi-root')) {
+    if (process.argv.length !== 3) {
+      exitWithError(new Error('--workspace-multi-root is a focused official-wizard + real-reload family; do not combine flags.'));
+      return;
+    }
+    require('./workspace-multi-root')
+      .runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, writeSuitePhaseResult })
+      .then((code) => process.exit(code))
+      .catch(exitWithError);
+    return;
+  }
   if (process.argv.includes('--workspace-prompt-cancel')) {
     if (process.argv.length !== 3) {
       exitWithError(new Error('--workspace-prompt-cancel is a focused setup + regular UI route; do not combine it with other flags.'));
@@ -417,9 +428,13 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     (missingPhaseIds.length === 0 || blockedPhaseIds.length > 0) &&
     phaseResults.length > 0;
   const lifecycleSucceeded =
-    !['msnWeatherLifecycle', 'httpTimeoutComposeOriginal', 'statelessVariablesLifecycle', 'workspaceArtifactRegeneration'].includes(
-      suite.id
-    ) ||
+    ![
+      'msnWeatherLifecycle',
+      'httpTimeoutComposeOriginal',
+      'statelessVariablesLifecycle',
+      'workspaceArtifactRegeneration',
+      'workspaceMultiRoot',
+    ].includes(suite.id) ||
     (exitCode === 0 &&
       (signal === null || signal === undefined) &&
       missingPhaseIds.length === 0 &&
@@ -467,9 +482,13 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     blockedPhaseIds,
     phaseCompleteness,
     complete: terminalComplete,
-    ...(['msnWeatherLifecycle', 'httpTimeoutComposeOriginal', 'statelessVariablesLifecycle', 'workspaceArtifactRegeneration'].includes(
-      suite.id
-    )
+    ...([
+      'msnWeatherLifecycle',
+      'httpTimeoutComposeOriginal',
+      'statelessVariablesLifecycle',
+      'workspaceArtifactRegeneration',
+      'workspaceMultiRoot',
+    ].includes(suite.id)
       ? { lifecycleFinalized: true, phaseResults: finalizedPhaseResults.map(projectTerminalPhase) }
       : {}),
     ...(ogfScenarios.length > 0 ? { ogfScenarios } : {}),
@@ -1582,7 +1601,7 @@ function runVscodeTest(args, options = {}) {
   const label = getLabelArg(args);
   const userDataSuffix =
     options.extraEnv?.LA_E2E_CLI_USER_DATA_SUFFIX ?? process.env.LA_E2E_CLI_USER_DATA_SUFFIX ?? `run-${Date.now()}-${process.pid}`;
-  const deferredWorkspaceParent = getDeferredCreateWorkspaceParent(label);
+  const deferredWorkspaceParent = options.workspaceParent ?? getDeferredCreateWorkspaceParent(label);
   const outputFilter = createOutputFilter();
   const { command, commandArgs } = getVscodeTestCommand(args);
   const childEnv = sanitizeInheritedGitCommandConfigEnv({
@@ -1764,7 +1783,14 @@ function runVscodeTest(args, options = {}) {
           }`
         );
       }
-      cleanupLedger = await cleanupDeferredWorkspaceAfterCancel(deferredWorkspaceParent, childEnv, cancelResult || regenerationResult);
+      cleanupLedger =
+        options.retainWorkspaceForSupplement && childEnv.LA_E2E_CLI_MULTI_ROOT_HANDOFF
+          ? {
+              verified: fs.existsSync(deferredWorkspaceParent),
+              action: 'retained-for-multi-root',
+              reason: 'Final cleanup belongs to the supplementary family after its original regular window closes.',
+            }
+          : await cleanupDeferredWorkspaceAfterCancel(deferredWorkspaceParent, childEnv, cancelResult || regenerationResult);
       try {
         collectVscodeProfileLogs(label, childEnv);
       } catch (error) {
@@ -1776,7 +1802,10 @@ function runVscodeTest(args, options = {}) {
           }`
         );
       }
-      const phaseId = getSuitePhaseId(label, childEnv);
+      const phaseId =
+        options.multiRootCreatePhase && childEnv.LA_E2E_CLI_MULTI_ROOT_HANDOFF
+          ? 'workspaceMultiRoot:create'
+          : getSuitePhaseId(label, childEnv);
       const matchedPattern = forbiddenOutputPatterns.find(({ pattern }) => pattern.test(output));
       const diagnosticsErrorMessage = diagnosticsError
         ? diagnosticsError instanceof Error
