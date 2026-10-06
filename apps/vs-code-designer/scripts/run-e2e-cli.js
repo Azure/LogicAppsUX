@@ -10,7 +10,16 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { URL } = require('url');
-const { createBatchRoot, normalizeSuiteSelection, runBatchSuites, SUITE_REGISTRY } = require('./e2e-cli-batch');
+const {
+  createBatchRoot,
+  createSuiteContext,
+  buildSuiteEnvironment,
+  prepareSuiteExtensionsDirectory,
+  cleanupSuiteTransientRoots,
+  normalizeSuiteSelection,
+  runBatchSuites,
+  SUITE_REGISTRY,
+} = require('./e2e-cli-batch');
 const { getOgfScenariosForPhase } = require('./ogf-e2e-registry');
 const cancelCheck = require('./workspace-prompt-cancel');
 
@@ -200,7 +209,13 @@ function main() {
   } else if (variablesPickerLifecycle) {
     runVariablesPickerLifecycle(visibleDelayMs).catch(exitWithError);
   } else if (statelessVariablesLifecycle) {
-    runStatelessVariablesLifecycle(visibleDelayMs).catch(exitWithError);
+    if (process.env.LA_E2E_CLI_SUITE_WRAPPER_CHILD === '1') {
+      runStatelessVariablesLifecycle(visibleDelayMs).catch(exitWithError);
+    } else {
+      runDirectFamily('statelessVariablesLifecycle', visibleDelayMs)
+        .then((code) => process.exit(code))
+        .catch(exitWithError);
+    }
   } else if (workspaceLifecycle) {
     runWorkspaceLifecycle(visibleDelayMs).catch(exitWithError);
   } else if (args.length === 0) {
@@ -303,6 +318,90 @@ function buildBatchAggregateJUnitXml(aggregate) {
 
 function escapeXml(value) {
   return String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+}
+
+/** Shared direct-family entry point. Native work stays in the existing suite
+ * wrapper; this caller never invents a successful process-cleanup observation. */
+async function runDirectFamily(suiteId, visibleDelayMs, options = {}) {
+  const suite = SUITE_REGISTRY[suiteId];
+  if (!suite || suite.requiresAzure) {
+    throw new Error('Direct family wrapper requires a registered local-only suite');
+  }
+  const resultsDir = path.resolve(options.resultsDir || path.join(__dirname, '..', '.vscode-test', 'results'));
+  fs.mkdirSync(resultsDir, { recursive: true });
+  const batchRoot = createBatchRoot({ batchRoot: options.batchRoot || process.env.LA_E2E_CLI_BATCH_ROOT });
+  const context = {
+    ...createSuiteContext({ batchRoot, suite, index: 0, total: 1 }),
+    directFamily: true,
+    transientCleanupVerified: false,
+    terminalResultPath: path.join(resultsDir, `${suiteId}.terminal-result.json`),
+    cleanupLedgerPath: path.join(resultsDir, `${suiteId}.cleanup-ledger.json`),
+  };
+  // Fresh unique phase journal and label-specific receipts, even when callers
+  // inherited an old JSONL or a previously successful terminal artifact.
+  fs.writeFileSync(context.phaseResultsPath, '');
+  writeSuiteTerminalResult(
+    { LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH: context.terminalResultPath },
+    {
+      suiteId,
+      label: suiteId,
+      complete: false,
+      lifecycleFinalized: false,
+      cleanupVerified: false,
+      exitCode: null,
+      phaseResults: [],
+      expectedPhaseIds: context.expectedPhaseIds,
+    }
+  );
+  writeSuiteCleanupLedger(
+    { LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH: context.cleanupLedgerPath },
+    {
+      suiteId,
+      verified: false,
+      processTreeVerified: false,
+      phases: [],
+    }
+  );
+  const seedDir =
+    options.seedDir || process.env.LA_E2E_CLI_PREPARED_EXTENSIONS_DIR || path.join(__dirname, '..', '.vscode-test', 'extensions');
+  const execute = async () => {
+    try {
+      prepareSuiteExtensionsDirectory({ seedDir, targetDir: context.extensionsDir });
+      const env = buildSuiteEnvironment(process.env, context);
+      return await runSuiteWrapperProcess({
+        suite,
+        context,
+        env,
+        visibleDelayMs,
+        timeoutMs: options.timeoutMs || 45 * 60 * 1000,
+        ...(options.scriptPath ? { scriptPath: options.scriptPath } : {}),
+      });
+    } catch (error) {
+      return {
+        exitCode: null,
+        signal: null,
+        error,
+        processCleanup: {
+          verified: false,
+          error: 'Suite wrapper process observation was not completed',
+        },
+      };
+    }
+  };
+  const result = await execute();
+  let error = result.error;
+  if (result.processCleanup?.verified === true && result.exitCode === 0 && !result.signal && !error) {
+    try {
+      cleanupSuiteTransientRoots(context);
+      context.transientCleanupVerified = true;
+    } catch (cleanupError) {
+      error = cleanupError;
+    }
+  }
+  context.directFinalizationComplete = true;
+  writeSuiteFinalEvidence({ ...result, context, suite, error });
+  const terminal = readJsonIfExists(context.terminalResultPath);
+  return terminal?.complete === true && context.transientCleanupVerified && !error ? 0 : 1;
 }
 
 function sanitizeInheritedGitCommandConfigEnv(env) {
@@ -437,6 +536,7 @@ function runSuiteWrapperProcess({ suite, context, env, visibleDelayMs, timeoutMs
   const child = spawn(process.execPath, childArgs, {
     env: sanitizeInheritedGitCommandConfigEnv({
       ...env,
+      LA_E2E_CLI_SUITE_WRAPPER_CHILD: '1',
       LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH: context.terminalResultPath,
       LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH: context.cleanupLedgerPath,
       LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH: context.phaseResultsPath,
@@ -494,6 +594,7 @@ function runSuiteWrapperProcess({ suite, context, env, visibleDelayMs, timeoutMs
       settled = true;
       process.off('SIGINT', forwardSignal);
       process.off('SIGTERM', forwardSignal);
+      const processCleanup = { verified: false, error: error.message };
       writeSuiteFinalEvidence({
         context,
         suite,
@@ -501,23 +602,28 @@ function runSuiteWrapperProcess({ suite, context, env, visibleDelayMs, timeoutMs
         signal: null,
         output,
         error,
-        processCleanup: { verified: false, error: error.message },
+        processCleanup,
       });
-      resolve({ exitCode: null, signal: null, error, output });
+      resolve({ exitCode: null, signal: null, error, output, processCleanup });
     });
     child.on('close', async (exitCode, signal) => {
+      if (settled) {
+        return;
+      }
       clearTimeout(timeout);
       settled = true;
       process.off('SIGINT', forwardSignal);
       process.off('SIGTERM', forwardSignal);
-      const processCleanup = await verifyNoOwnedDescendants(child.pid);
+      const processCleanup = child.pid
+        ? await verifyNoOwnedDescendants(child.pid)
+        : { verified: false, error: 'Suite wrapper has no observed process ID' };
       const error = timedOut
         ? new Error(`suite timed out after ${timeoutMs}ms`)
         : processCleanup.error
           ? new Error(processCleanup.error)
           : undefined;
       writeSuiteFinalEvidence({ context, suite, exitCode, signal, output, error, processCleanup });
-      resolve({ exitCode, signal, output, error });
+      resolve({ exitCode, signal, output, error, processCleanup });
     });
   });
 }
@@ -530,7 +636,21 @@ function readJsonIfExists(filePath) {
 }
 
 function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, processCleanup, phaseResults: suppliedPhases }) {
-  const phaseResults = suppliedPhases ?? readJsonLinesIfExists(context.phaseResultsPath);
+  const readJournal = () => {
+    if (suppliedPhases) {
+      return { phases: suppliedPhases, error: '' };
+    }
+    try {
+      return { phases: readJsonLinesIfExists(context.phaseResultsPath), error: '' };
+    } catch (journalError) {
+      if (!context.directFamily) {
+        throw journalError;
+      }
+      return { phases: [], error: 'Invalid direct family phase journal' };
+    }
+  };
+  const journal = readJournal();
+  const phaseResults = journal.phases;
   const observedPhaseIds = phaseResults.map((phase) => phase.phaseId).filter(Boolean);
   const expectedPhaseIds = context.expectedPhaseIds ?? [];
   const missingPhaseIds = expectedPhaseIds.filter((phaseId) => !observedPhaseIds.includes(phaseId));
@@ -563,13 +683,26 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
       phaseResults.every(
         (phase) => phase.complete === true && phase.exitCode === 0 && (phase.signal === null || phase.signal === undefined)
       ));
+  const statelessSucceeded =
+    suite.id !== 'statelessVariablesLifecycle' || (exitCode === 0 && !signal && getDirectSuiteComplete(suite.id, phaseResults));
+  const directSucceeded =
+    !context.directFamily ||
+    (exitCode === 0 &&
+      !signal &&
+      context.transientCleanupVerified === true &&
+      observedPhaseIds.length === expectedPhaseIds.length &&
+      observedPhaseIds.every((phaseId, index) => phaseId === expectedPhaseIds[index]) &&
+      phaseResults.every((phase) => phase.complete === true && phase.exitCode === 0 && !phase.signal));
   const terminalComplete =
     phaseCompleteness &&
     phaseCleanupVerified &&
     processCleanup.verified === true &&
     !error &&
+    !journal.error &&
     phaseDiagnosticsErrors.length === 0 &&
     lifecycleSucceeded &&
+    statelessSucceeded &&
+    directSucceeded &&
     (!context.invocation || (context.provenanceVerified === true && context.ownedRootCleanup?.verified === true));
   const finalizedPhaseResults = terminalComplete ? phaseResults : phaseResults.map(clearOgfScenarios);
   const ogfScenarios = terminalComplete ? collectOgfScenarios(finalizedPhaseResults) : [];
@@ -590,7 +723,9 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
       phaseCompleteness &&
       phaseCleanupVerified &&
       processCleanup.verified === true &&
-      (!context.invocation || (context.provenanceVerified === true && context.ownedRootCleanup?.verified === true)),
+      (!context.invocation || (context.provenanceVerified === true && context.ownedRootCleanup?.verified === true)) &&
+      (!context.directFamily || directSucceeded),
+    ...(context.directFamily ? { transientCleanupVerified: context.transientCleanupVerified === true } : {}),
     phases: finalizedPhaseResults,
     ...(context.invocation ? { invocation: context.invocation, ownedRootCleanup: context.ownedRootCleanup } : {}),
   };
@@ -599,10 +734,13 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     originalProcessClosureVerified: processCleanup.retainedOriginalIdentitiesVerified === true,
     processClosureProof:
       processCleanup.retainedOriginalIdentitiesVerified === true ? 'retained-original-identities' : 'original-identities-unverified',
-    exitCode,
+    ...(context.directFamily ? { label: suite.id, phaseJournalPath: context.phaseResultsPath } : {}),
+    exitCode: context.directFamily && !terminalComplete ? 1 : exitCode,
     signal,
     cleanupVerified: cleanupLedger.verified,
-    diagnosticsError: [error instanceof Error ? error.message : String(error || ''), ...phaseDiagnosticsErrors].filter(Boolean).join('\n'),
+    diagnosticsError: [error instanceof Error ? error.message : String(error || ''), journal.error, ...phaseDiagnosticsErrors]
+      .filter(Boolean)
+      .join('\n'),
     expectedPhaseIds,
     observedPhaseIds,
     missingPhaseIds,
@@ -620,8 +758,11 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
       'statelessVariablesLifecycle',
       'workspaceArtifactRegeneration',
       'workspaceMultiRoot',
-    ].includes(suite.id)
-      ? { lifecycleFinalized: true, phaseResults: finalizedPhaseResults.map(projectTerminalPhase) }
+    ].includes(suite.id) || context.directFamily
+      ? {
+          lifecycleFinalized: !context.directFamily || context.directFinalizationComplete === true,
+          phaseResults: finalizedPhaseResults.map(projectTerminalPhase),
+        }
       : {}),
     ...(ogfScenarios.length > 0 ? { ogfScenarios } : {}),
   };
@@ -945,13 +1086,29 @@ async function runHttpTimeoutComposeOriginal({
 
 // Additive family selector, intentionally outside the canonical baseline/OGF
 // rollup. Native coverage is earned only by its actual isolated consumer run.
-async function runStatelessVariablesLifecycle(visibleDelayMs) {
+async function runStatelessVariablesLifecycle(visibleDelayMs, operations = { runVscodeTest, waitForFuncCoreToolsAtDependencyRoot }) {
+  const phaseResultsPath = process.env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH;
+  if (!phaseResultsPath || (fs.existsSync(phaseResultsPath) && fs.readFileSync(phaseResultsPath, 'utf8').trim())) {
+    throw new Error('Stateless lifecycle requires a fresh isolated wrapper phase journal');
+  }
   const dependencyRoot = createIsolatedRuntimeDependenciesRoot('statelessVariablesLifecycle');
   const lifecycleDir = getLifecycleArtifactDir('stateless-variables-lifecycle');
   fs.mkdirSync(lifecycleDir, { recursive: true });
   const workspaceParent = createOwnedWorkspaceParent('stateless-variables-lifecycle');
   const manifestPath = path.join(lifecycleDir, `manifest-stateless-${Date.now()}.json`);
+  const phaseEnv = {
+    LA_E2E_CLI_CREATE_WORKSPACE_CASE: '',
+    LA_E2E_CLI_WORKSPACE_LIFECYCLE_CREATE_LABEL: '',
+    LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE: '',
+    LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: '',
+    LA_E2E_CLI_WORKSPACE_LIFECYCLE_MANIFEST: '',
+    LA_E2E_CLI_WORKSPACE_PARENT: '',
+    LA_E2E_CLI_STATELESS_VARIABLES_MODE: '',
+    LA_E2E_CLI_STARTUP_RESOURCE: '',
+    LA_E2E_CLI_PROFILE_PHASE: '',
+  };
   const sharedEnv = {
+    ...phaseEnv,
     LA_E2E_CLI_INCLUDE_STATELESS_VARIABLES: '1',
     LA_E2E_CLI_WORKSPACE_PARENT: workspaceParent,
     LA_E2E_CLI_WORKSPACE_LIFECYCLE_MANIFEST: manifestPath,
@@ -959,61 +1116,86 @@ async function runStatelessVariablesLifecycle(visibleDelayMs) {
     LA_E2E_CLI_DISABLE_UNOWNED_PORT_KILL: '1',
     LA_E2E_CLI_DEFER_WORKSPACE_CLEANUP: '1',
   };
-  // Reuse the existing native dependency bootstrap; this is a real reported
-  // phase, not preparation inferred from a warm user cache or unit controls.
-  await runVscodeTest(['--label', 'runtimeDependencyBootstrap'], {
-    visibleDelayMs,
-    extraEnv: {
-      LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: dependencyRoot,
-      LA_E2E_CLI_INCLUDE_RUNTIME_DEPENDENCY_BOOTSTRAP: '1',
-      LA_E2E_CLI_EXPECT_EMPTY_RUNTIME_DEPENDENCIES_ROOT: '1',
-      LA_E2E_CLI_EMPTY_RUNTIME_DEPENDENCIES_ROOT_CONFIRMED: '1',
-      LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
-      LA_E2E_CLI_VALIDATE_DEPENDENCIES: '1',
-      LA_E2E_STRICT_DEPENDENCY_VALIDATION: '1',
-      LA_E2E_CLI_PROFILE_PHASE: 'stateless-variables-bootstrap',
-      LA_E2E_CLI_USER_DATA_SUFFIX: `stateless-variables-bootstrap-${Date.now()}`,
-    },
-  });
-  await waitForFuncCoreToolsAtDependencyRoot(dependencyRoot, {
-    context: 'Stateless variables dependency bootstrap',
-    timeoutMs: 30_000,
-  });
-  await runVscodeTest(['--label', 'statelessVariablesLifecycle'], {
-    visibleDelayMs,
-    extraEnv: {
-      ...sharedEnv,
-      LA_E2E_CLI_USER_DATA_SUFFIX: `stateless-variables-create-${Date.now()}`,
-      LA_E2E_CLI_STATELESS_VARIABLES_MODE: 'create',
-      LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'create',
-    },
-  });
-  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-  if (
-    !Array.isArray(manifest) ||
-    manifest.length !== 1 ||
-    manifest[0].label !== 'stateless-variables' ||
-    manifest[0].appType !== 'standard'
-  ) {
-    throw new Error('Stateless wizard must write exactly one Standard stateless family entry');
+  const failures = [];
+  let lifecycleSucceeded = false;
+  try {
+    // Reuse the existing native dependency bootstrap; this is a real reported
+    // phase, not preparation inferred from a warm user cache or unit controls.
+    await operations.runVscodeTest(['--label', 'runtimeDependencyBootstrap'], {
+      visibleDelayMs,
+      extraEnv: {
+        ...phaseEnv,
+        LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: dependencyRoot,
+        LA_E2E_CLI_INCLUDE_RUNTIME_DEPENDENCY_BOOTSTRAP: '1',
+        LA_E2E_CLI_EXPECT_EMPTY_RUNTIME_DEPENDENCIES_ROOT: '1',
+        LA_E2E_CLI_EMPTY_RUNTIME_DEPENDENCIES_ROOT_CONFIRMED: '1',
+        LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
+        LA_E2E_CLI_VALIDATE_DEPENDENCIES: '1',
+        LA_E2E_STRICT_DEPENDENCY_VALIDATION: '1',
+        LA_E2E_CLI_PROFILE_PHASE: 'stateless-variables-bootstrap',
+        LA_E2E_CLI_USER_DATA_SUFFIX: `stateless-variables-bootstrap-${Date.now()}`,
+      },
+    });
+    await operations.waitForFuncCoreToolsAtDependencyRoot(dependencyRoot, {
+      context: 'Stateless variables dependency bootstrap',
+      timeoutMs: 30_000,
+    });
+    await operations.runVscodeTest(['--label', 'statelessVariablesLifecycle'], {
+      visibleDelayMs,
+      extraEnv: {
+        ...sharedEnv,
+        LA_E2E_CLI_USER_DATA_SUFFIX: `stateless-variables-create-${Date.now()}`,
+        LA_E2E_CLI_STATELESS_VARIABLES_MODE: 'create',
+        LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'create',
+      },
+    });
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    if (
+      !Array.isArray(manifest) ||
+      manifest.length !== 1 ||
+      manifest[0].label !== 'stateless-variables' ||
+      manifest[0].appType !== 'standard'
+    ) {
+      throw new Error('Stateless wizard must write exactly one Standard stateless family entry');
+    }
+    const entry = manifest[0];
+    await operations.runVscodeTest(['--label', 'statelessVariablesLifecycle'], {
+      visibleDelayMs,
+      extraEnv: {
+        ...sharedEnv,
+        LA_E2E_CLI_USER_DATA_SUFFIX: `stateless-variables-run-${Date.now()}`,
+        LA_E2E_CLI_STATELESS_VARIABLES_MODE: 'run',
+        LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'stateless-variables-run',
+        LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE: JSON.stringify(entry),
+        LA_E2E_CLI_STARTUP_RESOURCE: entry.workspaceFilePath,
+        LA_E2E_CLI_AUTO_START_DESIGN_TIME: '1',
+        LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
+        LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '1',
+      },
+    });
+    lifecycleSucceeded = true;
+  } catch (error) {
+    failures.push(error);
   }
-  const entry = manifest[0];
-  await runVscodeTest(['--label', 'statelessVariablesLifecycle'], {
-    visibleDelayMs,
-    extraEnv: {
-      ...sharedEnv,
-      LA_E2E_CLI_USER_DATA_SUFFIX: `stateless-variables-run-${Date.now()}`,
-      LA_E2E_CLI_STATELESS_VARIABLES_MODE: 'run',
-      LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'stateless-variables-run',
-      LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE: JSON.stringify(entry),
-      LA_E2E_CLI_STARTUP_RESOURCE: entry.workspaceFilePath,
-      LA_E2E_CLI_AUTO_START_DESIGN_TIME: '1',
-      LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
-      LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '1',
-    },
-  });
-  await cleanupOwnedWorkspaceParent(workspaceParent, 'stateless variables lifecycle', true);
-  await cleanupOwnedWorkspaceParent(dependencyRoot, 'stateless variables dependencies', true);
+  if (lifecycleSucceeded) {
+    for (const root of [workspaceParent, dependencyRoot]) {
+      try {
+        await cleanupOwnedWorkspaceParent(root, 'stateless variables lifecycle', true);
+      } catch (error) {
+        failures.push(error);
+      }
+    }
+  }
+  // Final admission is after actual owned-root cleanup, not after the last child
+  // returned zero. Missing/unordered phases and retained roots cannot exit zero.
+  const complete =
+    lifecycleSucceeded &&
+    failures.length === 0 &&
+    getOwnedRootCleanupVerified([workspaceParent, dependencyRoot]) &&
+    getDirectSuiteComplete('statelessVariablesLifecycle', readJsonLinesIfExists(phaseResultsPath));
+  if (!complete) {
+    throw new AggregateError(failures, 'Stateless three-phase lifecycle evidence is inadmissible');
+  }
 }
 
 function beginDirectHttpTimeoutComposeEvidence({ artifactDir, resultsDir, invocation }) {
@@ -3107,6 +3289,7 @@ function shouldSuppressKnownVscodeNoise(line) {
 }
 
 module.exports = {
+  runDirectFamily,
   _test: {
     assertSafeRuntimeDependenciesRoot,
     canUseInteractiveMsnWeatherAzureTargetEnv,
@@ -3142,6 +3325,7 @@ module.exports = {
     finalizeMsnLifecycleCleanup,
     getDirectSuiteComplete,
     getDirectExpectedPhaseIds,
+    runStatelessVariablesLifecycle,
     getSuitePhaseId,
     getOwnedRootCleanupVerified,
     getSuiteTerminalResultPath,
@@ -3582,7 +3766,8 @@ function getDirectSuiteComplete(label, phaseResults) {
     missingPhaseIds.length === 0 &&
     unexpectedPhaseIds.length === 0 &&
     getDuplicateValues(observedPhaseIds).length === 0 &&
-    (label !== 'httpTimeoutComposeOriginal' || expectedPhaseIds.every((phaseId, index) => observedPhaseIds[index] === phaseId)) &&
+    (!['httpTimeoutComposeOriginal', 'statelessVariablesLifecycle'].includes(label) ||
+      expectedPhaseIds.every((phaseId, index) => observedPhaseIds[index] === phaseId)) &&
     phaseResults.every(
       (phase) =>
         phase.complete === true &&
@@ -3608,8 +3793,8 @@ function getDirectExpectedPhaseIds(label) {
   if (label === 'msnWeatherLifecycle') {
     return SUITE_REGISTRY[label].expectedPhases.filter((phaseId) => phaseId.startsWith(`${label}:`));
   }
-  if (label === 'workspaceArtifactRegeneration') {
-    return SUITE_REGISTRY[label].expectedPhases;
+  if (label === 'workspaceArtifactRegeneration' || label === 'statelessVariablesLifecycle') {
+    return [...SUITE_REGISTRY[label].expectedPhases];
   }
   if (label === 'runtimeDependencyBootstrap') {
     return ['runtimeDependencyBootstrap:bootstrap'];
