@@ -4,6 +4,12 @@ This directory contains extension-host smoke tests for the Logic Apps VS Code ex
 
 ## Overview
 
+**Before authoring or changing a test, read the canonical
+[established-contracts guide](../../../../../docs/testing/vscode-cli-authoring.md).**
+It records shared prompt policy, actual V2/CodeMirror controls, configuration
+snapshots, navigation, cancellation and evidence boundaries. Reuse the named
+helpers and regression controls before introducing another local workaround.
+
 These tests follow the pattern from [helloworld-test-cli-sample](https://github.com/microsoft/vscode-extension-samples/tree/main/helloworld-test-cli-sample) and run directly inside VS Code's extension host environment on latest stable VS Code. They intentionally start from an empty VS Code window with no folder or `.code-workspace` loaded, then cover activation, command registration, Create Workspace, focused generated-workspace designer/runtime lifecycle, bundle-to-NuGet debug/run lifecycle, and codeful modern-vs-legacy debug task behavior. Keep ExTester webview DOM scenarios in `src/test/ui/` for deeper designer and wizard UI coverage.
 
 ## Test Structure
