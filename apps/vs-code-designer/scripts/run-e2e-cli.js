@@ -122,7 +122,7 @@ function main() {
       suites !== undefined ||
       args.length > 0)
   ) {
-    exitWithError(new Error('--stateless-variables-lifecycle is a focused two-host family; do not combine selectors.'));
+    exitWithError(new Error('--stateless-variables-lifecycle is a focused bootstrap/create/reopen family; do not combine selectors.'));
   } else if (
     suites !== undefined &&
     (azureAuthWarmup ||
@@ -654,11 +654,7 @@ async function runWorkspaceLifecycle(visibleDelayMs) {
 // Additive family selector, intentionally outside the canonical baseline/OGF
 // rollup. Native coverage is earned only by its actual isolated consumer run.
 async function runStatelessVariablesLifecycle(visibleDelayMs) {
-  const dependencyRoot = process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT;
-  if (!dependencyRoot) {
-    throw new Error('Stateless variables requires a prepared isolated LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT');
-  }
-  assertSafeRuntimeDependenciesRoot(dependencyRoot);
+  const dependencyRoot = createIsolatedRuntimeDependenciesRoot('statelessVariablesLifecycle');
   const lifecycleDir = getLifecycleArtifactDir('stateless-variables-lifecycle');
   fs.mkdirSync(lifecycleDir, { recursive: true });
   const workspaceParent = createOwnedWorkspaceParent('stateless-variables-lifecycle');
@@ -671,6 +667,26 @@ async function runStatelessVariablesLifecycle(visibleDelayMs) {
     LA_E2E_CLI_DISABLE_UNOWNED_PORT_KILL: '1',
     LA_E2E_CLI_DEFER_WORKSPACE_CLEANUP: '1',
   };
+  // Reuse the existing native dependency bootstrap; this is a real reported
+  // phase, not preparation inferred from a warm user cache or unit controls.
+  await runVscodeTest(['--label', 'runtimeDependencyBootstrap'], {
+    visibleDelayMs,
+    extraEnv: {
+      LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: dependencyRoot,
+      LA_E2E_CLI_INCLUDE_RUNTIME_DEPENDENCY_BOOTSTRAP: '1',
+      LA_E2E_CLI_EXPECT_EMPTY_RUNTIME_DEPENDENCIES_ROOT: '1',
+      LA_E2E_CLI_EMPTY_RUNTIME_DEPENDENCIES_ROOT_CONFIRMED: '1',
+      LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
+      LA_E2E_CLI_VALIDATE_DEPENDENCIES: '1',
+      LA_E2E_STRICT_DEPENDENCY_VALIDATION: '1',
+      LA_E2E_CLI_PROFILE_PHASE: 'stateless-variables-bootstrap',
+      LA_E2E_CLI_USER_DATA_SUFFIX: `stateless-variables-bootstrap-${Date.now()}`,
+    },
+  });
+  await waitForFuncCoreToolsAtDependencyRoot(dependencyRoot, {
+    context: 'Stateless variables dependency bootstrap',
+    timeoutMs: 30_000,
+  });
   await runVscodeTest(['--label', 'statelessVariablesLifecycle'], {
     visibleDelayMs,
     extraEnv: {
@@ -705,6 +721,7 @@ async function runStatelessVariablesLifecycle(visibleDelayMs) {
     },
   });
   await cleanupOwnedWorkspaceParent(workspaceParent, 'stateless variables lifecycle', true);
+  await cleanupOwnedWorkspaceParent(dependencyRoot, 'stateless variables dependencies', true);
 }
 
 async function runNugetConversionLifecycle(visibleDelayMs) {
@@ -3103,6 +3120,12 @@ function getSuitePhaseId(label, env) {
   }
   if (label === 'runtimeDependencyBootstrap') {
     return 'runtimeDependencyBootstrap:bootstrap';
+  }
+  if (label === 'statelessVariablesLifecycle' && env.LA_E2E_CLI_STATELESS_VARIABLES_MODE === 'create') {
+    return 'statelessVariablesLifecycle:create';
+  }
+  if (label === 'statelessVariablesLifecycle' && env.LA_E2E_CLI_STATELESS_VARIABLES_MODE === 'run') {
+    return 'statelessVariablesLifecycle:reopen';
   }
   const createWorkspaceLabel = env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_CREATE_LABEL;
   const lifecycleMode = env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE;

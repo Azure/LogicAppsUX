@@ -27,16 +27,24 @@ Non-GUI controls run with
 `pnpm --dir apps/vs-code-designer run test:e2e-cli:stateless-variables:unit`;
 they are also additive members of the existing registered unit chain.
 
-After the parent has admitted the extension/webview build and prepared an isolated
-runtime dependency root, run
+After the parent has admitted the extension/webview build on an isolated native
+consumer, run
 `pnpm --dir apps/vs-code-designer run test:e2e-cli:stateless-variables-lifecycle`.
 The underlying selector is
 `node apps/vs-code-designer/scripts/run-e2e-cli.js --stateless-variables-lifecycle`.
-Set `LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT` to that prepared root (a job-owned
-`logicappsux-vscode-e2e-runtime-deps-*` directory under the OS temporary directory,
-not the user's dependency cache). The existing runner
-uses `statelessVariablesLifecycle` twice: one real Standard/Stateless wizard host,
-then a fresh host opened with its exact generated `.code-workspace`. Set the existing
+The additive batch suite ID is `statelessVariablesLifecycle`, selected explicitly
+with `--suites statelessVariablesLifecycle`; it is not added to canonical OS aliases.
+Both selectors run exactly these native phases, in order:
+
+1. `runtimeDependencyBootstrap:bootstrap` — the existing dependency-bootstrap
+   label populates a new job-owned `logicappsux-vscode-e2e-runtime-deps-*` root under
+   the OS temporary directory, never the user's dependency cache.
+2. `statelessVariablesLifecycle:create` — one real Standard/Stateless wizard host.
+3. `statelessVariablesLifecycle:reopen` — a fresh host opened with that exact
+   generated `.code-workspace`, including authoring/runtime/history/recovery.
+
+The family does not report bootstrap from a prepared cache or from unit controls.
+Set the existing
 `LA_E2E_CLI_USER_DATA_PARENT`, extensions directory and remote-debugging port as
 appropriate for the isolated Windows/Linux consumer. Do not run concurrently with
 other runtime families sharing port 7071. This family never kills an unowned port

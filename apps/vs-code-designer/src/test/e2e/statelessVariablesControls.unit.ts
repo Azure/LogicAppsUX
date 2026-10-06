@@ -447,45 +447,108 @@ async function testRegisteredRunner(): Promise<void> {
       ts.isFunctionDeclaration(statement) && statement.name?.text === 'runStatelessVariablesLifecycle'
   );
   assert.ok(node);
-  const implementation = ts.transpileModule(`export ${node.getText(parsed)}`, {
+  const phaseNode = parsed.statements.find(
+    (statement): statement is ts.FunctionDeclaration => ts.isFunctionDeclaration(statement) && statement.name?.text === 'getSuitePhaseId'
+  );
+  assert.ok(phaseNode);
+  const implementation = ts.transpileModule(`export ${node.getText(parsed)}\nexport ${phaseNode.getText(parsed)}`, {
     compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS },
   }).outputText;
   const calls: Array<{ args: string[]; extraEnv: Record<string, string> }> = [];
-  const exported: { runStatelessVariablesLifecycle?: (visibleDelayMs?: string) => Promise<void> } = {};
-  let cleaned = false;
+  const exported: {
+    runStatelessVariablesLifecycle?: (visibleDelayMs?: string) => Promise<void>;
+    getSuitePhaseId?: (label: string, env: Record<string, string>) => string;
+  } = {};
+  const cleanupRoots: string[] = [];
+  let failBootstrap = false;
   const entry = { label: 'stateless-variables', appType: 'standard', workspaceFilePath: '/unit/created.code-workspace' };
   vm.runInNewContext(implementation, {
     exports: exported,
     process: { env: { LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: '/unit/prepared-deps' } },
     path,
     fs: { mkdirSync: () => undefined, readFileSync: () => JSON.stringify([entry]) },
-    assertSafeRuntimeDependenciesRoot: () => undefined,
+    createIsolatedRuntimeDependenciesRoot: () => '/unit/runtime-deps',
+    waitForFuncCoreToolsAtDependencyRoot: async () => {
+      assert.strictEqual(calls.length, 1, 'Bootstrap readiness must precede creation');
+    },
     getLifecycleArtifactDir: () => '/unit/artifacts',
     createOwnedWorkspaceParent: () => '/unit/parent',
     runVscodeTest: async (args: string[], options: { extraEnv: Record<string, string> }) => {
       calls.push({ args, ...options });
+      if (failBootstrap) {
+        throw new Error('unit bootstrap failed');
+      }
     },
-    cleanupOwnedWorkspaceParent: async () => {
-      cleaned = true;
+    cleanupOwnedWorkspaceParent: async (root: string, _description: string, strict: boolean) => {
+      assert.strictEqual(strict, true);
+      cleanupRoots.push(root);
     },
   });
   assert.ok(exported.runStatelessVariablesLifecycle);
   await exported.runStatelessVariablesLifecycle();
   check(() => {
-    assert.strictEqual(calls.length, 2, 'One creation host followed by one fresh reopen host');
+    assert.strictEqual(calls.length, 3, 'Real dependency bootstrap, creation and fresh reopen must be separate hosts');
     assert.deepStrictEqual(
       calls.map((call) => Array.from(call.args)),
       [
+        ['--label', 'runtimeDependencyBootstrap'],
         ['--label', 'statelessVariablesLifecycle'],
         ['--label', 'statelessVariablesLifecycle'],
       ]
     );
-    assert.strictEqual(calls[0].extraEnv.LA_E2E_CLI_STATELESS_VARIABLES_MODE, 'create');
-    assert.strictEqual(calls[1].extraEnv.LA_E2E_CLI_STATELESS_VARIABLES_MODE, 'run');
-    assert.strictEqual(calls[1].extraEnv.LA_E2E_CLI_STARTUP_RESOURCE, entry.workspaceFilePath);
-    assert.strictEqual(calls[1].extraEnv.LA_E2E_CLI_AUTO_START_DESIGN_TIME, '1');
-    assert.ok(cleaned);
+    assert.strictEqual(calls[0].extraEnv.LA_E2E_CLI_EXPECT_EMPTY_RUNTIME_DEPENDENCIES_ROOT, '1');
+    assert.strictEqual(calls[1].extraEnv.LA_E2E_CLI_STATELESS_VARIABLES_MODE, 'create');
+    assert.strictEqual(calls[2].extraEnv.LA_E2E_CLI_STATELESS_VARIABLES_MODE, 'run');
+    assert.strictEqual(calls[2].extraEnv.LA_E2E_CLI_STARTUP_RESOURCE, entry.workspaceFilePath);
+    assert.strictEqual(calls[2].extraEnv.LA_E2E_CLI_AUTO_START_DESIGN_TIME, '1');
+    assert.deepStrictEqual(cleanupRoots, ['/unit/parent', '/unit/runtime-deps']);
     assert.ok(text.includes('--stateless-variables-lifecycle'));
+  });
+  interface RegisteredSuite {
+    id: string;
+    args: string[];
+    expectedPhases: string[];
+  }
+  const batch = require(path.resolve(__dirname, '..', '..', '..', 'scripts', 'e2e-cli-batch.js')) as {
+    SUITE_REGISTRY: Record<string, RegisteredSuite>;
+    SUITE_ALIASES: { linux: string[]; windows: string[] };
+    normalizeSuiteSelection(value: string, options: { platform: string }): RegisteredSuite[];
+    createSuiteContext(options: { batchRoot: string; suite: RegisteredSuite; index: number; total: number }): object;
+    buildSuiteEnvironment(env: Record<string, string>, context: object): Record<string, string>;
+  };
+  assert.ok(exported.getSuitePhaseId);
+  check(() => {
+    const observed = calls.map((call) => exported.getSuitePhaseId?.(call.args[1], call.extraEnv));
+    assert.deepStrictEqual(observed, [
+      'runtimeDependencyBootstrap:bootstrap',
+      'statelessVariablesLifecycle:create',
+      'statelessVariablesLifecycle:reopen',
+    ]);
+    assert.deepStrictEqual(observed, batch.SUITE_REGISTRY.statelessVariablesLifecycle.expectedPhases);
+    assert.deepStrictEqual(batch.SUITE_REGISTRY.statelessVariablesLifecycle.args, ['--stateless-variables-lifecycle']);
+    for (const platform of ['win32', 'linux']) {
+      assert.strictEqual(batch.normalizeSuiteSelection('statelessVariablesLifecycle', { platform })[0].id, 'statelessVariablesLifecycle');
+    }
+    assert.ok(!batch.SUITE_ALIASES.linux.includes('statelessVariablesLifecycle'));
+    assert.ok(!batch.SUITE_ALIASES.windows.includes('statelessVariablesLifecycle'), 'Canonical inventory must remain unchanged');
+  });
+  check(() => {
+    const context = batch.createSuiteContext({
+      batchRoot: tempRoot,
+      suite: batch.SUITE_REGISTRY.statelessVariablesLifecycle,
+      index: 0,
+      total: 1,
+    });
+    const env = batch.buildSuiteEnvironment({ LA_E2E_CLI_STATELESS_VARIABLES_MODE: 'run' }, context);
+    assert.strictEqual(env.LA_E2E_CLI_STATELESS_VARIABLES_MODE, undefined, 'Another suite must not inherit stale family mode');
+  });
+  calls.length = 0;
+  cleanupRoots.length = 0;
+  failBootstrap = true;
+  await assert.rejects(() => exported.runStatelessVariablesLifecycle?.() ?? Promise.resolve(), /unit bootstrap failed/);
+  check(() => {
+    assert.strictEqual(calls.length, 1, 'A failed bootstrap must not run or report create/reopen');
+    assert.strictEqual(cleanupRoots.length, 0, 'Preserve failed native dependency data for parent diagnostics');
   });
 }
 
