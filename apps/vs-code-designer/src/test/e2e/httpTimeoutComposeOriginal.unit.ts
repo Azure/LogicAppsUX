@@ -319,6 +319,15 @@ async function main(): Promise<void> {
     );
   });
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'http-timeout-compose-unit-'));
+  const environmentKeys = [
+    'LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT',
+    'LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH',
+    'LA_E2E_CLI_PRESERVE_WORKSPACES',
+  ] as const;
+  const priorEnvironment = Object.fromEntries(environmentKeys.map((key) => [key, process.env[key]]));
+  for (const key of environmentKeys) {
+    delete process.env[key];
+  }
   try {
     const makeEntry = (createdAt = new Date().toISOString()) => ({
       appType: 'standard',
@@ -345,12 +354,39 @@ async function main(): Promise<void> {
       assert.throws(() => selectHttpTimeoutComposeWorkspace([{ ...entry, wfDir: root }], root, now - 1000));
     });
     const runner = require(path.resolve(__dirname, '../../../scripts/run-e2e-cli.js'))._test;
-    await control('registered runner creates Stateless then fresh-reopens exact workspace', async () => {
+    const batch = require(path.resolve(__dirname, '../../../scripts/e2e-cli-batch.js'));
+    const expectedPhases = [
+      'runtimeDependencyBootstrap:bootstrap',
+      'httpTimeoutComposeOriginal:create',
+      'httpTimeoutComposeOriginal:reopen',
+    ];
+    await control('shared family ID registers exact phases without expanding canonical aliases', () => {
+      const suite = batch.SUITE_REGISTRY.httpTimeoutComposeOriginal;
+      assert.deepStrictEqual(suite.args, ['--http-timeout-compose-original']);
+      assert.deepStrictEqual(suite.expectedPhases, expectedPhases);
+      assert.deepStrictEqual(runner.getDirectExpectedPhaseIds('httpTimeoutComposeOriginal'), expectedPhases);
+      for (const platform of ['linux', 'win32']) {
+        assert.strictEqual(batch.normalizeSuiteSelection('httpTimeoutComposeOriginal', { platform })[0], suite);
+      }
+      for (const alias of ['linux', 'windows']) {
+        assert.ok(!batch.normalizeSuiteSelection(alias).some((entry: { id: string }) => entry.id === suite.id));
+      }
+    });
+    await control('registered runner bootstraps then creates Stateless and fresh-reopens exact workspace', async () => {
       const labels: string[] = [];
+      const phases: string[] = [];
+      const phasePaths: string[] = [];
+      const profiles: string[] = [];
       let cleanup = false;
+      let runtimeCleanup = false;
       const result = await runner.runHttpTimeoutComposeOriginal({
         artifactDir: path.join(root, 'artifacts'),
         createParent: () => root,
+        createRuntimeRoot: () => path.join(root, 'runtime'),
+        cleanupRuntime: async (directory: string) => {
+          assert.strictEqual(directory, path.join(root, 'runtime'));
+          runtimeCleanup = true;
+        },
         cleanup: async (_root: string, _description: string, strict: boolean) => {
           assert.strictEqual(strict, true);
           cleanup = true;
@@ -358,7 +394,13 @@ async function main(): Promise<void> {
         run: async (args: string[], options: { extraEnv: Record<string, string> }) => {
           labels.push(args[1]);
           const env = options.extraEnv;
+          phases.push(runner.getSuitePhaseId(args[1], env));
+          phasePaths.push(env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH);
+          profiles.push(env.LA_E2E_CLI_USER_DATA_SUFFIX);
+          assert.strictEqual(env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT, path.join(root, 'runtime'));
           if (labels.length === 1) {
+            assert.strictEqual(env.LA_E2E_CLI_INCLUDE_RUNTIME_DEPENDENCY_BOOTSTRAP, '1');
+          } else if (labels.length === 2) {
             assert.strictEqual(env.LA_E2E_CLI_CREATE_WORKSPACE_CASE, 'standard-stateless');
             const entry = makeEntry();
             fs.mkdirSync(entry.wfDir, { recursive: true });
@@ -373,11 +415,15 @@ async function main(): Promise<void> {
         },
       });
       assert.strictEqual(result, 0);
-      assert.deepStrictEqual(labels, ['createWorkspaceFixturesManifest', 'httpTimeoutComposeOriginal']);
+      assert.deepStrictEqual(labels, ['runtimeDependencyBootstrap', 'createWorkspaceFixturesManifest', 'httpTimeoutComposeOriginal']);
+      assert.deepStrictEqual(phases, expectedPhases);
+      assert.strictEqual(new Set(phasePaths).size, 1, 'Every exact phase must report to the same original invocation JSONL');
+      assert.strictEqual(new Set(profiles).size, 3, 'Bootstrap, create and reopen must use fresh hosts/profiles');
       assert.strictEqual(cleanup, true);
+      assert.strictEqual(runtimeCleanup, true);
     });
-    await control('runner setup, reopen and cleanup failures propagate', async () => {
-      for (const failAt of [1, 2, 3]) {
+    await control('runner bootstrap, create, reopen and cleanup failures propagate', async () => {
+      for (const failAt of [1, 2, 3, 4, 5]) {
         let calls = 0;
         const failed = new Error(`original phase ${failAt} failure`);
         await assert.rejects(
@@ -385,24 +431,96 @@ async function main(): Promise<void> {
             runner.runHttpTimeoutComposeOriginal({
               artifactDir: path.join(root, 'failures'),
               createParent: () => root,
-              cleanup: async () => {
+              createRuntimeRoot: () => path.join(root, 'runtime'),
+              cleanupRuntime: async () => {
                 throw failed;
+              },
+              cleanup: async () => {
+                if (failAt === 4) {
+                  throw failed;
+                }
               },
               run: async (_args: string[], options: { extraEnv: Record<string, string> }) => {
                 calls++;
                 if (calls === failAt) {
                   throw failed;
                 }
-                fs.writeFileSync(options.extraEnv.LA_E2E_CLI_CREATE_WORKSPACE_FIXTURE_MANIFEST, JSON.stringify([makeEntry()]));
+                if (calls === 2) {
+                  fs.writeFileSync(options.extraEnv.LA_E2E_CLI_CREATE_WORKSPACE_FIXTURE_MANIFEST, JSON.stringify([makeEntry()]));
+                }
                 return 0;
               },
             }),
           (error) => error === failed
         );
-        assert.strictEqual(calls, Math.min(failAt, 2));
+        assert.strictEqual(calls, Math.min(failAt, 3));
+      }
+    });
+    await control('phase completion rejects missing, duplicate, mismatched and failed phases', () => {
+      const phases = expectedPhases.map((phaseId) => ({
+        phaseId,
+        complete: true,
+        exitCode: 0,
+        signal: null,
+        cleanupVerified: true,
+        diagnosticsError: '',
+      }));
+      assert.strictEqual(runner.getDirectSuiteComplete('httpTimeoutComposeOriginal', phases), true);
+      for (const invalid of [
+        phases.slice(1),
+        [...phases, phases[0]],
+        [phases[1], phases[0], phases[2]],
+        [{ ...phases[0], phaseId: 'wrong:bootstrap' }, ...phases.slice(1)],
+        [phases[0], phases[1], { ...phases[2], complete: false }],
+        [phases[0], phases[1], { ...phases[2], exitCode: 1 }],
+      ]) {
+        assert.strictEqual(runner.getDirectSuiteComplete('httpTimeoutComposeOriginal', invalid), false);
+      }
+    });
+    await control('batch terminal requires exact completed family phases and ordinary wrapper success', () => {
+      const suite = batch.SUITE_REGISTRY.httpTimeoutComposeOriginal;
+      const context = {
+        expectedPhaseIds: expectedPhases,
+        phaseResultsPath: path.join(root, 'batch-phases.jsonl'),
+        cleanupLedgerPath: path.join(root, 'batch-cleanup.json'),
+        terminalResultPath: path.join(root, 'batch-terminal.json'),
+      };
+      const phases = expectedPhases.map((phaseId) => ({
+        phaseId,
+        complete: true,
+        exitCode: 0,
+        signal: null,
+        cleanupVerified: true,
+        diagnosticsError: '',
+      }));
+      for (const [phaseResults, exitCode, complete] of [
+        [phases, 0, true],
+        [phases.slice(1), 1, false],
+        [[...phases, phases[0]], 0, false],
+        [[phases[1], phases[0], phases[2]], 0, false],
+        [[phases[0], phases[1], { ...phases[2], complete: false }], 0, false],
+        [phases, 1, false],
+      ] as const) {
+        fs.writeFileSync(context.phaseResultsPath, phaseResults.map((phase) => JSON.stringify(phase)).join('\n'));
+        runner.writeSuiteFinalEvidence({ context, suite, exitCode, signal: null, processCleanup: { verified: true } });
+        const terminal = JSON.parse(fs.readFileSync(context.terminalResultPath, 'utf8'));
+        assert.strictEqual(terminal.complete, complete);
+        assert.deepStrictEqual(terminal.expectedPhaseIds, expectedPhases);
+        assert.deepStrictEqual(
+          terminal.observedPhaseIds,
+          phaseResults.map((phase) => phase.phaseId)
+        );
+        assert.strictEqual(terminal.ogfScenarios, undefined, 'Phase controls must not create mapped source/native credit');
       }
     });
   } finally {
+    for (const key of environmentKeys) {
+      if (priorEnvironment[key] === undefined) {
+        delete process.env[key];
+      } else {
+        process.env[key] = priorEnvironment[key];
+      }
+    }
     fs.rmSync(root, { recursive: true, force: true }); // Unit-owned temporary command fixture only.
   }
   console.log(`[http-timeout-compose-control] ${passed} non-GUI controls passed; no native host launched or credited.`);

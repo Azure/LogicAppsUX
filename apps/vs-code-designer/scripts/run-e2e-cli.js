@@ -380,12 +380,13 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     duplicatePhaseIds.length === 0 &&
     (missingPhaseIds.length === 0 || blockedPhaseIds.length > 0) &&
     phaseResults.length > 0;
-  const msnSucceeded =
-    suite.id !== 'msnWeatherLifecycle' ||
+  const lifecycleSucceeded =
+    (suite.id !== 'msnWeatherLifecycle' && suite.id !== 'httpTimeoutComposeOriginal') ||
     (exitCode === 0 &&
       (signal === null || signal === undefined) &&
       missingPhaseIds.length === 0 &&
       phaseResults.length === expectedPhaseIds.length &&
+      (suite.id !== 'httpTimeoutComposeOriginal' || expectedPhaseIds.every((phaseId, index) => observedPhaseIds[index] === phaseId)) &&
       phaseResults.every(
         (phase) => phase.complete === true && phase.exitCode === 0 && (phase.signal === null || phase.signal === undefined)
       ));
@@ -395,7 +396,7 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     processCleanup.verified === true &&
     !error &&
     phaseDiagnosticsErrors.length === 0 &&
-    msnSucceeded;
+    lifecycleSucceeded;
   const finalizedPhaseResults = terminalComplete ? phaseResults : phaseResults.map(clearOgfScenarios);
   const ogfScenarios = terminalComplete ? collectOgfScenarios(finalizedPhaseResults) : [];
   const cleanupLedger = {
@@ -428,7 +429,7 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     blockedPhaseIds,
     phaseCompleteness,
     complete: terminalComplete,
-    ...(suite.id === 'msnWeatherLifecycle'
+    ...(suite.id === 'msnWeatherLifecycle' || suite.id === 'httpTimeoutComposeOriginal'
       ? { lifecycleFinalized: true, phaseResults: finalizedPhaseResults.map(projectTerminalPhase) }
       : {}),
     ...(ogfScenarios.length > 0 ? { ogfScenarios } : {}),
@@ -647,6 +648,8 @@ async function runHttpTimeoutComposeOriginal({
   run = runVscodeTest,
   createParent = createOwnedWorkspaceParent,
   cleanup = cleanupOwnedWorkspaceParent,
+  createRuntimeRoot = createIsolatedRuntimeDependenciesRoot,
+  cleanupRuntime = cleanupRuntimeDependenciesRoot,
   artifactDir = getLifecycleArtifactDir('http-timeout-compose-original'),
 } = {}) {
   const { selectHttpTimeoutComposeWorkspace } = require('../out/test/e2e/httpTimeoutComposeOracle');
@@ -654,16 +657,33 @@ async function runHttpTimeoutComposeOriginal({
   const workspaceParent = createParent('http-timeout-compose-original');
   const notBefore = Date.now();
   const manifestPath = path.join(artifactDir, `manifest-stateless-${notBefore}.json`);
+  const runtimeDependenciesRoot = process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT ?? createRuntimeRoot('httpTimeoutComposeOriginal');
+  const phaseResultsPath = process.env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH ?? path.join(artifactDir, `phases-${notBefore}.jsonl`);
   const commonEnv = {
+    LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: runtimeDependenciesRoot,
+    LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH: phaseResultsPath,
     LA_E2E_CLI_CREATE_WORKSPACE_PARENT: workspaceParent,
     LA_E2E_CLI_CREATE_WORKSPACE_FIXTURE_MANIFEST: manifestPath,
     LA_E2E_CLI_HTTP_TIMEOUT_COMPOSE_NOT_BEFORE: String(notBefore),
   };
+  const bootstrapExit = await run(['--label', 'runtimeDependencyBootstrap'], {
+    extraEnv: {
+      ...commonEnv,
+      LA_E2E_CLI_INCLUDE_RUNTIME_DEPENDENCY_BOOTSTRAP: '1',
+      LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
+      LA_E2E_CLI_VALIDATE_DEPENDENCIES: '1',
+      LA_E2E_CLI_USER_DATA_SUFFIX: `http-timeout-compose-bootstrap-${notBefore}`,
+    },
+  });
+  if (bootstrapExit !== 0) {
+    throw new Error('HTTP timeout Compose runtime dependency bootstrap host failed');
+  }
   // Existing wizard fixture producer, one Standard Stateless case only.
   // The official CLI process must close successfully before the fresh reopen.
   const createExit = await run(['--label', 'createWorkspaceFixturesManifest'], {
     extraEnv: {
       ...commonEnv,
+      LA_E2E_CLI_HTTP_TIMEOUT_COMPOSE_PHASE: 'create',
       LA_E2E_CLI_CREATE_WORKSPACE_CASE: 'standard-stateless',
       LA_E2E_CLI_USER_DATA_SUFFIX: `http-timeout-compose-create-${notBefore}`,
     },
@@ -680,6 +700,7 @@ async function runHttpTimeoutComposeOriginal({
   const runExit = await run(['--label', 'httpTimeoutComposeOriginal'], {
     extraEnv: {
       ...commonEnv,
+      LA_E2E_CLI_HTTP_TIMEOUT_COMPOSE_PHASE: 'reopen',
       LA_E2E_CLI_INCLUDE_HTTP_TIMEOUT_COMPOSE_ORIGINAL: '1',
       LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
       LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '1',
@@ -692,6 +713,9 @@ async function runHttpTimeoutComposeOriginal({
   }
   // Retain failed fixture/diagnostics. Cleanup failure cannot become success.
   await cleanup(workspaceParent, 'HTTP timeout Compose original', true);
+  if (!process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT && process.env.LA_E2E_CLI_PRESERVE_WORKSPACES !== '1') {
+    await cleanupRuntime(runtimeDependenciesRoot);
+  }
   return 0;
 }
 
@@ -2544,6 +2568,7 @@ module.exports = {
     finalizeMsnLifecycleCleanup,
     getDirectSuiteComplete,
     getDirectExpectedPhaseIds,
+    getSuitePhaseId,
     getOwnedRootCleanupVerified,
     getSuiteTerminalResultPath,
     getWorkspaceSourcesFromManifestPath,
@@ -2970,6 +2995,7 @@ function getDirectSuiteComplete(label, phaseResults) {
     missingPhaseIds.length === 0 &&
     unexpectedPhaseIds.length === 0 &&
     getDuplicateValues(observedPhaseIds).length === 0 &&
+    (label !== 'httpTimeoutComposeOriginal' || expectedPhaseIds.every((phaseId, index) => observedPhaseIds[index] === phaseId)) &&
     phaseResults.every(
       (phase) =>
         phase.complete === true &&
@@ -2988,6 +3014,9 @@ function getDirectExpectedPhaseIds(label) {
   }
   if (!label) {
     return [];
+  }
+  if (label === 'httpTimeoutComposeOriginal') {
+    return [...SUITE_REGISTRY[label].expectedPhases];
   }
   if (label === 'msnWeatherLifecycle') {
     return SUITE_REGISTRY[label].expectedPhases.filter((phaseId) => phaseId.startsWith(`${label}:`));
@@ -3080,6 +3109,16 @@ function clearOgfScenarios(phase) {
 }
 
 function getSuitePhaseId(label, env) {
+  if (
+    label === 'createWorkspaceFixturesManifest' &&
+    env.LA_E2E_CLI_HTTP_TIMEOUT_COMPOSE_PHASE === 'create' &&
+    env.LA_E2E_CLI_CREATE_WORKSPACE_CASE === 'standard-stateless'
+  ) {
+    return 'httpTimeoutComposeOriginal:create';
+  }
+  if (label === 'httpTimeoutComposeOriginal' && env.LA_E2E_CLI_HTTP_TIMEOUT_COMPOSE_PHASE === 'reopen') {
+    return 'httpTimeoutComposeOriginal:reopen';
+  }
   const createWorkspaceCase = env.LA_E2E_CLI_CREATE_WORKSPACE_CASE;
   if (label && createWorkspaceCase) {
     return `${label}:${createWorkspaceCase}`;

@@ -23,8 +23,9 @@ src/test/e2e/
 ### HTTP timeout on Compose: original authoring clause
 
 `pnpm --dir apps/vs-code-designer run test:e2e-cli:http-timeout-compose-original`
-uses the existing Create Workspace fixture label, filtered to Standard Stateless,
-then reopens that generated `.code-workspace` in a fresh latest-stable official
+first validates dependencies in an isolated runtime root using the existing
+bootstrap label, uses the existing Create Workspace fixture label filtered to
+Standard Stateless, then reopens that generated `.code-workspace` in a fresh latest-stable official
 CLI host under the supplementary `httpTimeoutComposeOriginal` label.
 It adds Request and Compose through the actual designer, saves, reads every
 numbered rendered Monaco line in the Code tab, replaces only Compose with input
@@ -41,6 +42,14 @@ included in `test:e2e-cli:unit`. They validate the source oracle and driver
 failure behavior only; they are not native GUI coverage. Canonical baseline
 labels/counts and rollup are unchanged. This supplementary label is runnable,
 not automatically admitted to an Azure DevOps baseline or credited from units.
+The explicit batch selector is `node scripts/run-e2e-cli.js --suites httpTimeoutComposeOriginal`;
+canonical `linux`/`windows` aliases remain unchanged. Its exact expected phases,
+also recorded by the direct route in the existing phase JSONL format, are:
+
+1. `runtimeDependencyBootstrap:bootstrap` (existing bootstrap label);
+2. `httpTimeoutComposeOriginal:create` (`createWorkspaceFixturesManifest`, Standard Stateless only);
+3. `httpTimeoutComposeOriginal:reopen` (`httpTimeoutComposeOriginal`, actual designer/Code/save/error).
+
 Native acceptance requires the source-bound compiled producer artifact and
 actual Windows and Linux isolated consumer runs with their generated fixture,
 raw CLI results, saved-definition snapshot and accepted screenshots.
