@@ -477,17 +477,20 @@ async function testRegisteredRunner(): Promise<void> {
   vm.runInNewContext(implementation, {
     exports: exported,
     process: {
-      env: {},
+      env: { LA_E2E_CLI_BATCH_MODE: '1', LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH: '/unit/fresh-family-phases' },
       argv: ['node', 'unit-runner', '--stateless-variables-lifecycle'],
       exit: (code: number) => reportExit(code),
     },
     console: { error: () => undefined },
-    beginStatelessEvidence: () => ({ env: { LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH: '/unit/fresh-family-phases' } }),
-    finalizeStatelessEvidence: (_evidence: unknown, outcome: { lifecycleSucceeded: boolean }) => ({
-      complete: outcome.lifecycleSucceeded && admissionComplete,
-    }),
+    getOwnedRootCleanupVerified: () => cleanupRoots.length === 2,
+    getDirectSuiteComplete: () => admissionComplete,
+    readJsonLinesIfExists: () => calls,
+    runDirectFamily: async (suiteId: string) => {
+      assert.strictEqual(suiteId, 'statelessVariablesLifecycle');
+      return admissionComplete ? 0 : 1;
+    },
     path,
-    fs: { mkdirSync: () => undefined, readFileSync: () => JSON.stringify([entry]) },
+    fs: { existsSync: () => false, mkdirSync: () => undefined, readFileSync: () => JSON.stringify([entry]) },
     createIsolatedRuntimeDependenciesRoot: () => '/unit/runtime-deps',
     waitForFuncCoreToolsAtDependencyRoot: async () => {
       assert.strictEqual(calls.length, 1, 'Bootstrap readiness must precede creation');
@@ -589,10 +592,9 @@ async function testRegisteredRunner(): Promise<void> {
     reportExit = resolve;
   });
   exported.main();
-  check(() => assert.ok(calls.length > 0));
+  check(() => assert.strictEqual(calls.length, 0, 'Direct main must select the shared wrapper, not an unwrapped orchestrator'));
   assert.strictEqual(await exited, 1, 'Direct selector must exit nonzero when final phase/cleanup admission fails');
-  assert.strictEqual(calls.length, 3);
-  assert.strictEqual(cleanupRoots.length, 2);
+  assert.strictEqual(calls.length, 0);
   checks++;
 }
 

@@ -293,25 +293,11 @@ interface Phase {
   signal: null;
   diagnosticsError: string;
 }
-interface Evidence {
-  runId: string;
-  env: Record<string, string>;
-  phaseResultsPath: string;
-}
-interface Terminal {
-  complete: boolean;
-  exitCode: number;
-  cleanupVerified: boolean;
-  phaseResults: Phase[];
-}
-
 function testDirectThreePhaseEvidence(): void {
   const runner = require(path.resolve(__dirname, '..', '..', '..', 'scripts', 'run-e2e-cli.js')) as {
     _test: {
       getDirectExpectedPhaseIds(label: string): string[];
       getDirectSuiteComplete(label: string, phases: Phase[]): boolean;
-      beginStatelessEvidence(env: Record<string, string>, lifecycleDir: string): Evidence;
-      finalizeStatelessEvidence(evidence: Evidence, outcome: { ownedRoots: string[]; lifecycleSucceeded: boolean }): Terminal;
     };
   };
   const api = runner._test;
@@ -329,34 +315,9 @@ function testDirectThreePhaseEvidence(): void {
     good.map((phase, index) => (index === 1 ? { ...phase, complete: false, exitCode: 1 } : phase)),
   ];
   for (const candidate of [good, ...defects]) {
-    const lifecycle = fs.mkdtempSync(path.join(root, 'direct-'));
-    const terminalPath = path.join(lifecycle, 'terminal.json');
-    fs.writeFileSync(terminalPath, '{"complete":true,"phaseResults":[{"phaseId":"stale"}]}');
-    const evidence = api.beginStatelessEvidence({ LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH: terminalPath }, lifecycle);
-    assert.strictEqual(JSON.parse(fs.readFileSync(terminalPath, 'utf8')).complete, false);
-    assert.strictEqual(fs.readFileSync(evidence.phaseResultsPath, 'utf8'), '', 'Fresh family journal must never reuse old label results');
-    assert.strictEqual(evidence.env.LA_E2E_CLI_CREATE_WORKSPACE_CASE, '');
-    assert.strictEqual(evidence.env.LA_E2E_CLI_PROFILE_PHASE, '');
-    assert.strictEqual(evidence.env.LA_E2E_CLI_STARTUP_RESOURCE, '');
-    assert.strictEqual(evidence.env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE, '');
-    fs.writeFileSync(evidence.phaseResultsPath, candidate.map((phase) => JSON.stringify(phase)).join('\n'));
-    const owned = path.join(lifecycle, 'owned-root');
-    fs.mkdirSync(owned);
-    const retained = api.finalizeStatelessEvidence(evidence, { ownedRoots: [owned], lifecycleSucceeded: true });
-    assert.strictEqual(retained.complete, false);
-    assert.strictEqual(retained.exitCode, 1, 'Retained owned files make direct success inadmissible');
-    fs.rmSync(owned, { recursive: true });
-    const final = api.finalizeStatelessEvidence(evidence, { ownedRoots: [owned], lifecycleSucceeded: true });
-    assert.strictEqual(final.complete, candidate === good);
-    assert.strictEqual(final.exitCode, candidate === good ? 0 : 1);
-    assert.strictEqual(final.phaseResults.length, candidate.length);
+    assert.strictEqual(api.getDirectSuiteComplete('statelessVariablesLifecycle', candidate), candidate === good);
     checks++;
   }
-  const lifecycle = fs.mkdtempSync(path.join(root, 'stale-batch-'));
-  const stale = path.join(lifecycle, 'already-written.jsonl');
-  fs.writeFileSync(stale, JSON.stringify(good[0]));
-  assert.throws(() => api.beginStatelessEvidence({ LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH: stale }, lifecycle), /not fresh/);
-  checks++;
 }
 
 async function main(): Promise<void> {

@@ -72,11 +72,30 @@ handles in the wizard-owned app, never global task/session or port cleanup.
 Late resolving owned starts remain observed and stopped even when bounded cleanup
 fails; that failure is inadmissible, not a passing race against a timeout.
 
-The direct selector has a fresh family-scoped three-phase journal. Bootstrap,
-create and reopen must all succeed exactly once and in order. Final admission is
-written after both owned roots are actually removed. Missing/unordered phases,
-retained roots, diagnostics or cleanup failures produce `complete: false` and a
-nonzero direct exit. Existing canonical labels and Stateful defaults are unchanged.
+The direct selector uses the exported reusable
+`runDirectFamily(suiteId, visibleDelayMs?, options?)` helper in `scripts/run-e2e-cli.js`.
+It runs the actual family orchestrator inside the existing `runSuiteWrapperProcess`
+and finalizes with `writeSuiteFinalEvidence`, using that wrapper's observed process
+cleanup result, not a fabricated `verified: true`. Bootstrap, create and reopen use
+one fresh journal and must succeed exactly once and in order. Final admission is
+after family-owned roots and wrapper transient roots are actually removed.
+The default label-specific ADO artifacts are
+`.vscode-test/results/statelessVariablesLifecycle.terminal-result.json` and
+`.vscode-test/results/statelessVariablesLifecycle.cleanup-ledger.json`.
+Missing/stale/incomplete/unordered phases, retained roots, diagnostics or cleanup
+failures produce `complete: false` and nonzero exit. Merely providing JSONL never
+suppresses those final family receipts. Other registered local-only families can
+reuse the same helper; it requires the existing prepared extension seed, and the
+production CLI does not expose the Node-fixture `scriptPath` unit seam.
+Sibling family selectors should call their native orchestrator only when the
+existing wrapper set `LA_E2E_CLI_SUITE_WRAPPER_CHILD=1`; otherwise call
+`runDirectFamily(theRegisteredSuiteId, visibleDelayMs)` and propagate its exit code.
+Inherited JSONL or batch-mode environment alone is not a wrapper-child identity.
+Registered Node-only integration controls run the actual orchestrator, real phase
+writer, strict filesystem cleanup and shared finalizer with only VS Code phase
+execution/Core Tools probing replaced. They exercise real bounded Node child
+process observation and are not native GUI/runtime coverage.
+Existing canonical labels and Stateful defaults are unchanged.
 
 Boundary: private source text asks for “both” local-settings files without naming
 their paths; the pair above follows the extension's two established generated
