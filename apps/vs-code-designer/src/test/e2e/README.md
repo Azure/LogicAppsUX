@@ -55,6 +55,12 @@ Set the existing
 appropriate for the isolated Windows/Linux consumer. Do not run concurrently with
 other runtime families sharing port 7071. This family never kills an unowned port
 occupant, creates live Azure resources, or provisions a connector.
+When standard setup detects **Enable connectors in Azure**, the family reuses
+`affirmativeAzureConnectorPrompt`: **Use connectors from Azure** / exact **Yes**,
+never a negative fallback. Any ensuing authentication/subscription/resource-group
+selection requires the existing approved service connection and fixture context;
+unavailable approval/fixtures remain a native setup blocker, not permission to
+skip setup or create resources. No such native journey is validated in this worker.
 
 The native family authors Request, one multi-variable Initialize (including the
 actual Add a Variable control), both variable appends and Response through the real

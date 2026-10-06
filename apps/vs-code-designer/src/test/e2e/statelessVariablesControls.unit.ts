@@ -331,6 +331,15 @@ function testNativeWiring(): void {
     assert.ok(native.includes("callback.headers['x-ms-workflow-run-id']"));
     assert.ok(native.includes('assertStatelessRun(runName, previous, run, JSON.parse(actions.body), operations)'));
     assert.ok(native.includes('await recoverStateless('));
+    assert.ok(
+      native.includes('affirmativeAzureConnectorPrompt'),
+      'Custom debug handling must reuse the approved affirmative connector policy'
+    );
+    assert.ok(
+      native.includes('useAzureConnectors: true'),
+      'Real designer setup must continue the affirmative Azure fixture/authentication journey'
+    );
+    assert.ok(!native.includes('Skip for now'), 'Stateless setup cannot silently choose a negative Azure connector fallback');
     assert.ok(shared.includes("creationCase.wfType ?? 'Stateful'"), 'Canonical old fixtures remain Stateful');
   });
   check(() => {

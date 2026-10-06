@@ -42,7 +42,9 @@ async function testColdProducer(): Promise<void> {
       waitForGeneratedLogicAppFolder: async () => {
         order.push('folder');
       },
-      openDesignerAndCreateWorkflow: async () => {
+      openDesignerAndCreateWorkflow: async (_entry: unknown, options: { warmOnly: boolean; useAzureConnectors: boolean }) => {
+        assert.strictEqual(options.warmOnly, true);
+        assert.strictEqual(options.useAzureConnectors, true, 'Cold real designer producer must use affirmative connector setup');
         order.push('real-designer');
         if (producerFails) {
           throw new Error('cold designer producer failed');

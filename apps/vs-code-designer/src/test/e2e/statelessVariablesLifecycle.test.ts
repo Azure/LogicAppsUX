@@ -8,6 +8,7 @@ import { connectToVsCodeCdp, waitForWebviewFrameContext, type CdpConnection } fr
 import { clickPoint, pressKey, type CdpEvaluator, type Point } from './cdpFormHelpers';
 import { assertNoDialogAttempts, installDialogGuard } from './dialogGuard';
 import { installFailureScreenshotHook } from './screenshot';
+import { affirmativeAzureConnectorPrompt } from './workbenchPromptSelection';
 import { uniqueName, normalizeFsPath } from './testUtils';
 import { closeAllTabs, waitForWebviewTab } from './webviewTabs';
 import { statelessLifecycleHelpers as helpers, type CreatedWorkspace } from './workspaceLifecycle.test';
@@ -152,7 +153,7 @@ async function establishDesignTime(entry: CreatedWorkspace, deadline: number, si
   assertPhaseActive(deadline, signal);
   // Cold wizard creation has app-root settings only; the real designer is the
   // producer of workflow-designtime. Never await its output before this command.
-  await helpers.openDesignerAndCreateWorkflow(entry, { warmOnly: true });
+  await helpers.openDesignerAndCreateWorkflow(entry, { warmOnly: true, useAzureConnectors: true });
   assertPhaseActive(deadline, signal);
   await poll(
     deadline,
@@ -394,7 +395,7 @@ async function start(entry: CreatedWorkspace, owned: StatelessOwnedDebug, deadli
     owned.start(signal),
     helpers.handleWorkbenchPrompts(
       [
-        { matchText: 'Enable connectors in Azure', optionText: 'Skip for now' },
+        affirmativeAzureConnectorPrompt,
         { matchText: 'Configure Azurite to autostart on project debug?', optionText: 'Enable AutoStart' },
         { matchText: 'Failed to verify "AzureWebJobsStorage" connection', optionText: 'Debug anyway' },
       ],
