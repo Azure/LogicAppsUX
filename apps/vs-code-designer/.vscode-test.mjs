@@ -33,6 +33,8 @@ const includeRuntimeDependencyBootstrap =
 const includeAzureAuthWarmup = process.env.LA_E2E_CLI_INCLUDE_AZURE_AUTH_WARMUP === '1' || process.argv.includes('azureAuthWarmup');
 const includeHttpTimeoutComposeOriginal =
   process.env.LA_E2E_CLI_INCLUDE_HTTP_TIMEOUT_COMPOSE_ORIGINAL === '1' || process.argv.includes('httpTimeoutComposeOriginal');
+const includeStatelessVariables =
+  process.env.LA_E2E_CLI_INCLUDE_STATELESS_VARIABLES === '1' || process.argv.includes('statelessVariablesLifecycle');
 const vscodeVersion = process.env.LA_E2E_CLI_VSCODE_VERSION || 'stable';
 const dependencyRoot =
   process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT ??
@@ -115,6 +117,18 @@ const configs = [
     }),
   },
 ];
+
+if (includeStatelessVariables) {
+  configs.push({
+    label: 'statelessVariablesLifecycle',
+    ...baseConfig,
+    files: ['out/test/e2e/statelessVariablesLifecycle.test.js'],
+    mocha: {
+      ui: 'tdd',
+      timeout: 1500000,
+    },
+  });
+}
 
 if (includeWorkspaceLifecycle) {
   configs.push({
@@ -217,6 +231,10 @@ function createWorkspaceConfig(group, timeout, extraEnv = {}) {
 
 function getForwardedTestEnvironment() {
   const names = [
+    'LA_E2E_CLI_STATELESS_VARIABLES_MODE',
+    'LA_E2E_CLI_WORKSPACE_PARENT',
+    'LA_E2E_CLI_WORKSPACE_LIFECYCLE_MANIFEST',
+    'LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE',
     'LA_E2E_CLI_AZURE_ACCESS_TOKEN',
     'LA_E2E_CLI_AZURE_CLIENT_ID',
     'LA_E2E_CLI_AZURE_TENANT_ID',
