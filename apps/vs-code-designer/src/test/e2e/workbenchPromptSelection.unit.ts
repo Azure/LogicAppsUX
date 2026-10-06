@@ -1,15 +1,17 @@
 import * as assert from 'assert';
-import { selectWorkbenchPromptOption, type WorkbenchPrompt, type WorkbenchPromptContainer } from './workbenchPromptSelection';
+import {
+  affirmativeAzureConnectorPrompt,
+  selectWorkbenchPromptOption,
+  type WorkbenchPrompt,
+  type WorkbenchPromptContainer,
+} from './workbenchPromptSelection';
 
 const dotnetPrompts: WorkbenchPrompt[] = [
   { matchText: 'Failed to run .NET runtime', optionText: 'Install', postClickDelayMs: 15000 },
   { matchText: '.NET Install Tool', optionText: 'Install', postClickDelayMs: 15000 },
 ];
 
-const azurePrompts: WorkbenchPrompt[] = [
-  { matchText: 'Enable connectors in Azure', optionText: 'Use connectors from Azure' },
-  { matchText: 'Enable connectors in Azure', optionText: 'Skip for now' },
-];
+const azurePrompts: WorkbenchPrompt[] = [affirmativeAzureConnectorPrompt];
 
 run();
 
@@ -18,10 +20,51 @@ function run(): void {
   ignoresInstallTextWithoutNotificationButton();
   ignoresExistingDotnetPathWarningWithoutButton();
   preservesAzureQuickPickRows();
+  selectsOnlyAffirmativeAzureOptions();
   selectsRealCancelWithoutNoOrEscapeFallback();
   console.log('[workbenchPromptSelection.unit] all tests passed');
 }
 
+function selectsOnlyAffirmativeAzureOptions(): void {
+  const prompt = [affirmativeAzureConnectorPrompt];
+  for (const kind of ['quickInput', 'dialog', 'notification'] as const) {
+    const affirmative = { text: 'Yes', point: { x: 10, y: 20 } };
+    const container: WorkbenchPromptContainer = {
+      kind,
+      text: 'Enable connectors in Azure',
+      rows: kind === 'quickInput' ? [affirmative, { text: 'Skip for now', point: { x: 30, y: 40 } }] : [],
+      buttons: kind === 'quickInput' ? [] : [{ text: 'No', point: { x: 30, y: 40 } }, affirmative],
+    };
+    assert.strictEqual(selectWorkbenchPromptOption(prompt, [container]).targetText, 'Yes');
+  }
+  for (const text of ['Skip for now', 'No', 'Cancel', 'Not Yes', 'Yesterday']) {
+    const rejected: WorkbenchPromptContainer = {
+      kind: 'quickInput',
+      text: 'Enable connectors in Azure',
+      buttons: [{ text, point: { x: 1, y: 2 } }],
+      rows: [{ text, point: { x: 1, y: 2 } }],
+    };
+    assert.strictEqual(
+      selectWorkbenchPromptOption(prompt, [rejected]).point,
+      undefined,
+      'Azure setup must never fall back to a negative option'
+    );
+  }
+  const disabled: WorkbenchPromptContainer = {
+    kind: 'quickInput',
+    text: 'Enable connectors in Azure',
+    rows: [{ text: 'Use connectors from Azure' }, { text: 'Skip for now', point: { x: 1, y: 2 } }],
+    buttons: [],
+  };
+  assert.strictEqual(selectWorkbenchPromptOption(prompt, [disabled]).point, undefined);
+  assert.strictEqual(
+    selectWorkbenchPromptOption(prompt, [
+      { ...disabled, text: 'Do you want to open this workspace now?', buttons: [{ text: 'Yes', point: { x: 1, y: 2 } }] },
+    ]).visible,
+    false,
+    'The Azure policy must not change an unrelated workspace dialog'
+  );
+}
 function selectsRealCancelWithoutNoOrEscapeFallback(): void {
   const prompts = [{ matchText: 'Do you want to open this workspace now?', optionText: 'Cancel' }];
   const text = 'You must open your workspace. Do you want to open this workspace now?';
