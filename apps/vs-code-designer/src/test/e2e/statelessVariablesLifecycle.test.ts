@@ -27,6 +27,7 @@ import {
   type StatelessSettingsLease,
 } from './statelessVariablesControls';
 import { StatelessOwnedDebug, type StatelessDebugTask } from './statelessVariablesDebug';
+import { affirmativeAzureConnectorPrompt } from './workbenchPromptSelection';
 
 const managementRoot = 'http://localhost:7071/runtime/webhooks/workflow/api/management';
 const apiVersion = '2019-10-01-edge-preview';
@@ -394,7 +395,7 @@ async function start(entry: CreatedWorkspace, owned: StatelessOwnedDebug, deadli
     owned.start(signal),
     helpers.handleWorkbenchPrompts(
       [
-        { matchText: 'Enable connectors in Azure', optionText: 'Skip for now' },
+        affirmativeAzureConnectorPrompt,
         { matchText: 'Configure Azurite to autostart on project debug?', optionText: 'Enable AutoStart' },
         { matchText: 'Failed to verify "AzureWebJobsStorage" connection', optionText: 'Debug anyway' },
       ],
