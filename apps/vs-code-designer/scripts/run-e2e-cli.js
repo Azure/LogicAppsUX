@@ -554,6 +554,11 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
   };
   const terminalResult = {
     suiteId: suite.id,
+    // Only the actual wrapper observation may establish this stronger proof.
+    // Legacy post-exit ancestry, phase models and directory absence do not.
+    originalProcessClosureVerified: processCleanup.retainedOriginalIdentitiesVerified === true,
+    processClosureProof:
+      processCleanup.retainedOriginalIdentitiesVerified === true ? 'retained-original-identities' : 'original-identities-unverified',
     ...(context.directFamily ? { label: suite.id, phaseJournalPath: context.phaseResultsPath } : {}),
     exitCode: context.directFamily && !terminalComplete ? 1 : exitCode,
     signal,

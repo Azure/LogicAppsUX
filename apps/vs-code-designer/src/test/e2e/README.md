@@ -90,6 +90,15 @@ fresh `phaseJournalPath`, terminal `generatedAt`, cleanup ledger's observed
 `processCleanup.checkedAt` and actual owned-root absence provide provenance.
 Node-only controls assert these fields on the real emitted artifact; they do
 not import the parent CI checker or replace native phase/runtime validation.
+Original-process closure is a separate, stronger acceptance requirement.
+`originalProcessClosureVerified` is true and `processClosureProof` is
+`retained-original-identities` only when the actual process-observer result has
+`retainedOriginalIdentitiesVerified === true`. This branch's legacy post-exit
+ancestry observer does not establish that fact: even a successful diagnostic
+reports false and `original-identities-unverified`. Exit zero, empty post-exit
+ancestry, directory deletion, stale receipts and phase/callee model assertions
+cannot upgrade it. Retained-identity correction and native acceptance are
+parent/other-worker owned; source/unit completion is not native clean approval.
 Missing/stale/incomplete/unordered phases, retained roots, diagnostics or cleanup
 failures produce `complete: false` and nonzero exit. Merely providing JSONL never
 suppresses those final family receipts. Other registered local-only families can

@@ -61,6 +61,12 @@ const operations = {
     const phase = {phaseId, label, exitCode:0, signal:null, complete:cleaned,
       cleanupVerified:cleaned, cleanupLedger:{verified:cleaned}, diagnosticsError:'',
       mochaPassingCount:0, unitFixture:true};
+    if (mode === 'model-hint') {
+      // Deliberately untrusted callee data: never a process-observer proof.
+      phase.processCleanup = {retainedOriginalIdentitiesVerified:true};
+      phase.originalProcessClosureVerified = true;
+      phase.processClosureProof = 'retained-original-identities';
+    }
     if (index === 1 && mode.startsWith('incomplete')) phase.complete = false;
     phases.push(phase);
     if (!mode.startsWith('reordered') && !(mode === 'missing-zero-exit' && index === 1)) record(phase);
@@ -114,6 +120,8 @@ interface Receipt {
   cleanupVerified: boolean;
   diagnosticsError: string;
   phaseCompleteness: boolean;
+  originalProcessClosureVerified: boolean;
+  processClosureProof: 'retained-original-identities' | 'original-identities-unverified';
   lifecycleFinalized: boolean;
   phaseJournalPath: string;
   expectedPhaseIds: string[];
@@ -135,7 +143,12 @@ interface Ledger {
   verified: boolean;
   processTreeVerified: boolean;
   transientCleanupVerified: boolean;
-  processCleanup: { verified: boolean; checkedAt: string; alivePids: number[] };
+  processCleanup: {
+    verified: boolean;
+    checkedAt: string;
+    alivePids: number[];
+    retainedOriginalIdentitiesVerified?: boolean;
+  };
 }
 interface Trace {
   roots: string[];
@@ -154,6 +167,7 @@ async function main(): Promise<void> {
   const modes = [
     'success',
     'missing-artifacts',
+    'model-hint',
     'missing-zero-exit',
     'missing-file',
     'stale',
@@ -171,7 +185,10 @@ async function main(): Promise<void> {
     fs.mkdirSync(resultsDir, { recursive: true });
     const terminalPath = path.join(resultsDir, `${suiteId}.terminal-result.json`);
     const ledgerPath = path.join(resultsDir, `${suiteId}.cleanup-ledger.json`);
-    fs.writeFileSync(terminalPath, '{"complete":true,"oldSuccessfulReceipt":true}');
+    fs.writeFileSync(
+      terminalPath,
+      '{"complete":true,"oldSuccessfulReceipt":true,"originalProcessClosureVerified":true,"processClosureProof":"retained-original-identities"}'
+    );
     fs.writeFileSync(ledgerPath, '{"verified":true,"oldSuccessfulReceipt":true}');
     const staleJournal = path.join(caseRoot, 'caller-stale.jsonl');
     fs.writeFileSync(staleJournal, '{"phaseId":"wrong-old-family"}');
@@ -189,12 +206,12 @@ async function main(): Promise<void> {
     const terminal = JSON.parse(fs.readFileSync(terminalPath, 'utf8')) as Receipt;
     const ledger = JSON.parse(fs.readFileSync(ledgerPath, 'utf8')) as Ledger;
     const trace = JSON.parse(fs.readFileSync(process.env.UNIT_STATELESS_DIRECT_TRACE, 'utf8')) as Trace;
-    const accepted = mode === 'success' || mode === 'missing-artifacts';
-    assert.strictEqual(code, accepted ? 0 : 1, `${mode}: actual wrapper exit must follow final admission`);
-    assert.strictEqual(terminal.complete, accepted, mode);
-    assert.strictEqual(terminal.exitCode, accepted ? 0 : 1, mode);
+    const diagnosticSucceeded = mode === 'success' || mode === 'missing-artifacts' || mode === 'model-hint';
+    assert.strictEqual(code, diagnosticSucceeded ? 0 : 1, `${mode}: actual wrapper exit must follow phase/finalizer diagnostic outcome`);
+    assert.strictEqual(terminal.complete, diagnosticSucceeded, mode);
+    assert.strictEqual(terminal.exitCode, diagnosticSucceeded ? 0 : 1, mode);
     assert.strictEqual(terminal.lifecycleFinalized, true, mode);
-    assert.strictEqual(ledger.verified, accepted, 'No inadmissible ordered-phase chain may have a verified ledger');
+    assert.strictEqual(ledger.verified, diagnosticSucceeded, 'No inadmissible ordered-phase chain may have a verified ledger');
     assert.strictEqual(terminal.suiteId, suiteId);
     assert.deepStrictEqual(terminal.expectedPhaseIds, expected);
     assert.ok(!fs.readFileSync(terminalPath, 'utf8').includes('oldSuccessfulReceipt'));
@@ -202,7 +219,18 @@ async function main(): Promise<void> {
     assert.strictEqual(fs.readFileSync(staleJournal, 'utf8'), '{"phaseId":"wrong-old-family"}');
     assert.strictEqual(ledger.processCleanup.verified, true, 'Actual bounded Node child must have an observed clean process tree');
     assert.ok(ledger.processCleanup.checkedAt && Array.isArray(ledger.processCleanup.alivePids), 'No fabricated processCleanup proof');
-    if (accepted) {
+    assert.strictEqual(
+      ledger.processCleanup.retainedOriginalIdentitiesVerified,
+      undefined,
+      'This branch has only the legacy actual observer, not the other worker retained-identity correction'
+    );
+    assert.strictEqual(
+      terminal.originalProcessClosureVerified,
+      false,
+      'Exit zero, empty post-exit tree, removed directories, stale receipt and callee model hints cannot prove original closure'
+    );
+    assert.strictEqual(terminal.processClosureProof, 'original-identities-unverified');
+    if (diagnosticSucceeded) {
       // Assert the user-supplied supplementary terminal contract on the real
       // shared-writer artifact, not a separately constructed receipt/checker.
       assert.strictEqual(terminal.signal, null);
@@ -256,7 +284,7 @@ async function main(): Promise<void> {
     }
   }
   console.log(
-    `[statelessVariablesDirect.unit] ${modes.length} actual orchestrator/phasewriter/owned-cleanup/shared-finalizer Node-only chains passed; no native credit`
+    `[statelessVariablesDirect.unit] ${modes.length} actual Node-only chains passed; original identities unverified, diagnostic only, no native credit`
   );
 }
 
