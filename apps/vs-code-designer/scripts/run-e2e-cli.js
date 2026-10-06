@@ -97,7 +97,9 @@ function main() {
         job: process.env.SYSTEM_JOBID || 'local',
         platform: process.platform,
       });
-      console.log('[workspace-regeneration] Strict archived evidence accepted; source-case/expectation approval is not assessed.');
+      console.log(
+        '[workspace-regeneration] Diagnostic evidence structure complete; original identities unverified; no supplementary acceptance.'
+      );
     } catch (error) {
       exitWithError(error);
     }
@@ -1488,6 +1490,8 @@ function runVscodeTest(args, options = {}) {
       label: 'workspaceArtifactRegeneration',
       complete: false,
       cleanupVerified: false,
+      originalProcessClosureVerified: false,
+      processClosureProof: 'original-identities-unverified',
       exitCode: null,
       signal: null,
       lifecycleFinalized: false,
@@ -3178,6 +3182,8 @@ function beginDirectRegenerationEvidence(context, paths = getDirectRegenerationE
       signal: null,
       cleanupVerified: false,
       diagnosticsError: 'lifecycle-not-finalized',
+      originalProcessClosureVerified: false,
+      processClosureProof: 'original-identities-unverified',
       phaseCompleteness: false,
       expectedPhaseIds,
       observedPhaseIds: [],
@@ -3231,6 +3237,7 @@ function writeDirectRegenerationEvidence(context, terminal, cleanup, paths = get
     {
       ...cleanup,
       suiteId: terminal.suiteId,
+      retainedOriginalIdentitiesVerified: false,
       invocation: context.invocation,
       identity: context.identity,
       expectedPhaseIds: terminal.expectedPhaseIds,
@@ -3243,7 +3250,16 @@ function writeDirectRegenerationEvidence(context, terminal, cleanup, paths = get
       phases: terminal.phaseResults,
     }
   );
-  writeSuiteTerminalResult({ LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH: paths.terminalResultPath }, terminal);
+  writeSuiteTerminalResult(
+    { LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH: paths.terminalResultPath },
+    {
+      ...terminal,
+      // This custom finalizer has no retained-original-identities observer yet.
+      // Do not accept caller/model claims, exit 0 or removed-directory inference.
+      originalProcessClosureVerified: false,
+      processClosureProof: 'original-identities-unverified',
+    }
+  );
 }
 
 function publishRegenerationStageEvidence(context, result, phases, cleanup) {
@@ -3288,6 +3304,8 @@ function publishRegenerationStageEvidence(context, result, phases, cleanup) {
     invocation: context.invocation,
     identity: context.identity,
     finalizedUtc: new Date().toISOString(),
+    originalProcessClosureVerified: false,
+    processClosureProof: 'original-identities-unverified',
   };
   const terminal = {
     ...binding,
@@ -3315,6 +3333,7 @@ function publishRegenerationStageEvidence(context, result, phases, cleanup) {
     {
       ...cleanup,
       ...binding,
+      retainedOriginalIdentitiesVerified: false,
       verified: cleanupVerified,
       expectedPhaseIds: [...expectedPhaseIds],
       observedPhaseIds,

@@ -737,6 +737,8 @@ async function main(): Promise<void> {
       duplicatePhaseIds: string[];
       blockedPhaseIds: string[];
       phaseResults: unknown[];
+      originalProcessClosureVerified: boolean;
+      processClosureProof: string;
     } = JSON.parse(fs.readFileSync(modeledDirectPaths.terminalResultPath, 'utf8'));
     assert.strictEqual(requiredTerminal.suiteId, 'workspaceArtifactRegeneration');
     assert.strictEqual(requiredTerminal.complete, true);
@@ -752,6 +754,33 @@ async function main(): Promise<void> {
       assert.deepStrictEqual(requiredTerminal[name], []);
     }
     assert.strictEqual(requiredTerminal.phaseResults.length, 14);
+    assert.strictEqual(
+      requiredTerminal.originalProcessClosureVerified,
+      false,
+      'Ordinary Code exit and removed owned root do not prove retained-original process closure'
+    );
+    assert.strictEqual(requiredTerminal.processClosureProof, 'original-identities-unverified');
+    reporting._test.writeDirectRegenerationEvidence(
+      stageContext,
+      {
+        ...requiredTerminal,
+        invocation: binding.invocation,
+        identity: binding.identity,
+        originalProcessClosureVerified: true,
+        processClosureProof: 'retained-original-identities',
+      },
+      { ...ownedCleanup, retainedOriginalIdentitiesVerified: true },
+      modeledDirectPaths
+    );
+    const untrustedProof: { originalProcessClosureVerified: boolean; processClosureProof: string } = JSON.parse(
+      fs.readFileSync(modeledDirectPaths.terminalResultPath, 'utf8')
+    );
+    assert.strictEqual(
+      untrustedProof.originalProcessClosureVerified,
+      false,
+      'Callee-supplied models must not become original-identity proof'
+    );
+    assert.strictEqual(untrustedProof.processClosureProof, 'original-identities-unverified');
     // Reset a previous green before any creating-host admission/launch can fail.
     reporting._test.beginDirectRegenerationEvidence({ ...stageContext, invocation: 'new-scope' }, modeledDirectPaths);
     const pending: { complete: boolean; lifecycleFinalized: boolean; invocation: string } = JSON.parse(

@@ -281,6 +281,18 @@ Relevant environment paths:
   checks and verified removal of the owned wizard root, it receives the same
   standardized result shape as the family-root `terminal-result.json`:
 
+  **Diagnostic-only closure boundary:** this branch's custom finalizer does not yet
+  have a genuine retained-original-process-identities observer. Both direct and
+  archived receipts therefore explicitly carry
+  `originalProcessClosureVerified: false` and
+  `processClosureProof: "original-identities-unverified"`, even when all GUI phase
+  observations and owned-directory cleanup complete. Caller/model flags, exit 0,
+  an empty post-exit ancestry tree or a removed directory never promote these to
+  true. Parent CI must reject supplementary **acceptance** until the existing
+  helper's retained-identity correction supplies genuine observed proof; no such
+  proof or native clean approval is claimed by these source/unit changes.
+  The archive checker validates diagnostic evidence structure, not acceptance.
+
   - `suiteId: "workspaceArtifactRegeneration"`, `complete: true`,
     `lifecycleFinalized: true`, `exitCode: 0`, `signal: null`;
   - `cleanupVerified: true`, `diagnosticsError: ""`, `phaseCompleteness: true`;
