@@ -314,6 +314,8 @@ async function runDirectRegisteredSuite(
       exitCode: null,
       signal: null,
       cleanupVerified: false,
+      originalProcessClosureVerified: false,
+      processClosureProof: 'original-identities-unverified',
       diagnosticsError: 'direct-invocation-not-finalized',
       phaseCompleteness: false,
       expectedPhaseIds: context.expectedPhaseIds,
@@ -357,6 +359,8 @@ async function runDirectRegisteredSuite(
     terminal.complete === true &&
     terminal.lifecycleFinalized === true &&
     terminal.exitCode === 0 &&
+    terminal.originalProcessClosureVerified === true &&
+    terminal.processClosureProof === 'retained-original-identities' &&
     terminal.signal === null &&
     terminal.cleanupVerified === true &&
     terminal.diagnosticsError === '' &&
@@ -487,6 +491,10 @@ function readJsonIfExists(filePath) {
 function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, processCleanup }) {
   const retainedCaseCleanupBlocked = suite.id === 'workspaceMultiRoot';
   const retainedCaseCleanupError = retainedCaseCleanupBlocked ? require('./workspace-multi-root').nativeCleanupBlocker : '';
+  // Current verifier supplies no retained-original identity evidence. Never
+  // infer this marker from its empty post-exit tree, exit 0 or removed files.
+  const originalProcessClosureVerified = !retainedCaseCleanupBlocked && processCleanup.retainedOriginalIdentitiesVerified === true;
+  const processClosureProof = originalProcessClosureVerified ? 'retained-original-identities' : 'original-identities-unverified';
   const phaseResults = readJsonLinesIfExists(context.phaseResultsPath);
   const observedPhaseIds = phaseResults.map((phase) => phase.phaseId).filter(Boolean);
   const expectedPhaseIds = context.expectedPhaseIds ?? [];
@@ -523,6 +531,8 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
   const finalizedPhaseResults = terminalComplete ? phaseResults : phaseResults.map(clearOgfScenarios);
   const ogfScenarios = terminalComplete ? collectOgfScenarios(finalizedPhaseResults) : [];
   const cleanupLedger = {
+    originalProcessClosureVerified,
+    processClosureProof,
     schemaVersion: 1,
     generatedAt: new Date().toISOString(),
     suiteId: suite.id,
@@ -542,6 +552,8 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     phases: finalizedPhaseResults,
   };
   const terminalResult = {
+    originalProcessClosureVerified,
+    processClosureProof,
     suiteId: suite.id,
     exitCode,
     signal,

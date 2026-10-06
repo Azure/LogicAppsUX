@@ -12,7 +12,11 @@ const suiteId = 'workspaceMultiRoot';
 const expectedPhases = Object.freeze(['runtimeDependencyBootstrap:bootstrap', 'workspaceMultiRoot:create', 'workspaceMultiRoot:reopen']);
 const nativeCleanupBlocker =
   'workspaceMultiRoot native finalization blocked: missing live retained Code/Func/task/Azurite identities; post-exit ancestry is not exit proof';
-function requireRetainedCaseCleanupProof() {
+function caseExecutionMode(env) {
+  assert.equal(env.LA_E2E_CLI_MULTI_ROOT_ISOLATED, '1', 'Diagnostic execution still requires an isolated native worker');
+  if (env.LA_E2E_CLI_MULTI_ROOT_DIAGNOSTIC_ONLY === '1') {
+    return { diagnosticOnly: true, acceptanceAuthorized: false };
+  }
   throw new Error(nativeCleanupBlocker);
 }
 
@@ -110,6 +114,8 @@ function validateHandoff(value, context) {
 
 function finalizeResult(result) {
   result.retainedCaseCleanupVerified = false;
+  result.originalProcessClosureVerified = false;
+  result.processClosureProof = 'original-identities-unverified';
   result.cleanupBlocker = nativeCleanupBlocker;
   result.complete =
     result.retainedCaseCleanupVerified === true &&
@@ -211,8 +217,7 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, 
   );
   // Fail before launching another native phase. Existing artifacts are kept;
   // a valid guard and exit-zero ancestry scan cannot certify this unknown gate.
-  requireRetainedCaseCleanupProof();
-  /* Native implementation preserved below for a bounded retained-identity fix. */
+  const mode = caseExecutionMode(env);
   assert.ok(['win32', 'linux'].includes(process.platform));
   assertAssets(extensionRoot);
   assert.ok(
@@ -234,6 +239,7 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, 
     path.join(env.LA_E2E_CLI_MULTI_ROOT_DIAGNOSTICS_PARENT || path.join(extensionRoot, '.vscode-test'), 'multi-root-')
   );
   const context = {
+    diagnosticOnly: mode.diagnosticOnly,
     suiteId,
     invocation: randomUUID(),
     identity: {
@@ -256,6 +262,7 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, 
   assert.ok(!fs.existsSync(phaseFile), 'Multi-root phases must be fresh for this invocation');
   const phaseEnv = { ...env, LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH: phaseFile };
   const result = {
+    diagnosticOnly: mode.diagnosticOnly,
     schemaVersion: 1,
     suiteId,
     expectedPhaseIds: expectedPhases,
@@ -424,20 +431,11 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, 
         result.errors.push(String(error));
       }
     }
-    if (
-      result.observationPassed &&
-      result.originalCodeClose?.code === 0 &&
-      result.originalCodeClose?.signal === null &&
-      result.errors.length === 0 &&
-      result.diagnosticsVerified
-    ) {
-      try {
-        fs.rmSync(root, { recursive: true });
-        result.cleanupVerified = !fs.existsSync(root);
-      } catch (error) {
-        result.errors.push(String(error));
-      }
-    }
+    // Unknown original-process closure must not destroy fixture/history proof.
+    // Diagnostic execution observes GUI/ordinary closure but cannot certify
+    // retained Code/Func/task/Azurite exit or perform destructive final cleanup.
+    result.fixturePreservedForDiagnostic = fs.existsSync(root);
+    result.cleanupVerified = false;
     if (previousPort === undefined) {
       delete process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT;
     } else {
@@ -461,6 +459,15 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, 
           result.cleanupVerified &&
           result.errors.length === 0;
         writeSuitePhaseResult(phaseEnv, {
+          diagnosticOnly: mode.diagnosticOnly,
+          guiObservationPassed:
+            result.observationPassed &&
+            result.evidenceVerified &&
+            result.originalCodeClose?.code === 0 &&
+            result.originalCodeClose?.signal === null &&
+            result.diagnosticsVerified,
+          originalProcessClosureVerified: false,
+          processClosureProof: 'original-identities-unverified',
           suiteId,
           label: suiteId,
           phaseId: 'workspaceMultiRoot:reopen',
@@ -488,6 +495,7 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, 
 }
 
 module.exports = {
+  caseExecutionMode,
   nativeCleanupBlocker,
   retainedIdentityExitFacts,
   assertNoCallerFuncAdmission,

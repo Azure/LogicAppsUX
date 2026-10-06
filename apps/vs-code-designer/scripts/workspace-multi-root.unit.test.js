@@ -17,6 +17,7 @@ const {
   assertNoCallerFuncAdmission,
   nativeCleanupBlocker,
   retainedIdentityExitFacts,
+  caseExecutionMode,
 } = require('./workspace-multi-root');
 const { SUITE_REGISTRY, normalizeSuiteSelection } = require('./e2e-cli-batch');
 const {
@@ -38,6 +39,22 @@ test('native family cannot run on a shared host; rejection precedes any native o
 });
 test('isolated flag alone cannot authorize the unresolved retained native cleanup gate', async () => {
   await assert.rejects(runWorkspaceMultiRoot({}, { LA_E2E_CLI_MULTI_ROOT_ISOLATED: '1' }), /native finalization blocked/);
+});
+test('explicit isolated diagnostic execution never authorizes native-clean acceptance', () => {
+  assert.deepEqual(
+    caseExecutionMode({
+      LA_E2E_CLI_MULTI_ROOT_ISOLATED: '1',
+      LA_E2E_CLI_MULTI_ROOT_DIAGNOSTIC_ONLY: '1',
+    }),
+    { diagnosticOnly: true, acceptanceAuthorized: false }
+  );
+  assert.throws(() => caseExecutionMode({ LA_E2E_CLI_MULTI_ROOT_DIAGNOSTIC_ONLY: '1' }), /isolated native worker/);
+  assert.throws(() => caseExecutionMode({ LA_E2E_CLI_MULTI_ROOT_ISOLATED: '1' }), /native finalization blocked/);
+  const callerModel = { ...passing(), originalProcessClosureVerified: true, processClosureProof: 'retained-original-identities' };
+  const final = finalizeResult(callerModel);
+  assert.equal(final.originalProcessClosureVerified, false);
+  assert.equal(final.processClosureProof, 'original-identities-unverified');
+  assert.equal(final.complete, false);
 });
 
 test('review repro: exited root and live retained former child reparented to PID1 cannot prove cleanup', () => {
@@ -226,6 +243,8 @@ test('batch terminal reports the exact family lifecycle and cannot credit blocke
     assert.equal(good.suiteId, suiteId);
     assert.equal(good.complete, false);
     assert.equal(good.cleanupVerified, false);
+    assert.equal(good.originalProcessClosureVerified, false);
+    assert.equal(good.processClosureProof, 'original-identities-unverified');
     assert.ok(good.diagnosticsError.includes(nativeCleanupBlocker));
     assert.equal(good.lifecycleFinalized, true);
     assert.deepEqual(
@@ -286,6 +305,8 @@ test('direct supplementary route invalidates stale terminal and uses exact regis
     assert.equal(terminal.lifecycleFinalized, true);
     assert.equal(terminal.complete, false);
     assert.equal(terminal.cleanupVerified, false);
+    assert.equal(terminal.originalProcessClosureVerified, false);
+    assert.equal(terminal.processClosureProof, 'original-identities-unverified');
     const cleanup = JSON.parse(fs.readFileSync(path.join(reportRoot, 'workspaceMultiRoot.cleanup-ledger.json'), 'utf8'));
     assert.equal(cleanup.verified, false);
     assert.equal(cleanup.processTreeVerified, false);
