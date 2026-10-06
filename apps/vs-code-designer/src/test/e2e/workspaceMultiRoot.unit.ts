@@ -3,7 +3,22 @@ import { createHash } from 'node:crypto';
 import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
-import { test } from 'node:test';
+import { test, mock } from 'node:test';
+import nativeFs from 'node:fs';
+import {
+  bootstrapRequest,
+  parseBootstrapContext,
+  readBootstrapAttestation,
+  snapshotBootstrapBinary,
+  writeBootstrapAttestation,
+  type MultiRootBootstrapContext,
+} from './workspaceMultiRootBootstrap';
+import {
+  controlledFuncEnvironment,
+  multiRootRegularLaunch,
+  observeFuncRuntime,
+  assertFuncRuntimeResolution,
+} from './workspaceMultiRootLaunch';
 import {
   createLinuxPopulationProvider,
   createWindowsPopulationProvider,
@@ -48,6 +63,205 @@ const virtualClock = () => {
   };
 };
 const options = (count = 3) => ({ executable, sha256, logicAppCount: count, deadline: 3000, stableMs: 500 });
+
+function bootstrapFixture() {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'multi-root-bootstrap-unit-'));
+  fs.mkdirSync(path.join(root, 'FuncCoreTools'));
+  const executable = path.join(root, 'FuncCoreTools', process.platform === 'win32' ? 'func.exe' : 'func');
+  fs.writeFileSync(executable, 'unit-owned-binary-bytes-never-executed');
+  const context: MultiRootBootstrapContext = {
+    suiteId: 'workspaceMultiRoot',
+    invocation: 'unit-bootstrap-invocation',
+    startedUtc: new Date(Date.now() - 1000).toISOString(),
+    runtimeRoot: fs.realpathSync(root),
+    identity: { source: 'unit-source', run: 'unit-run', job: 'unit-job', platform: process.platform },
+  };
+  const request = { context, file: path.join(root, 'func-bootstrap.json') };
+  const phase = {
+    phaseId: 'runtimeDependencyBootstrap:bootstrap',
+    complete: true,
+    exitCode: 0,
+    signal: null,
+    cleanupVerified: true,
+    diagnosticsError: '',
+  };
+  const probes = [`configured launcher ${executable}=4.1.2`, 'in-proc8 fixture=4.1.2'];
+  return { root, executable, context, request, phase, probes };
+}
+
+test('controlled Windows PATH uses one canonical key and disables current-directory/extension shadowing', () => {
+  const env = controlledFuncEnvironment(
+    'C:\\job\\FuncCoreTools',
+    {
+      PATH: 'C:\\other;.;C:\\job\\FuncCoreTools;C:\\tools',
+      PATHEXT: '.COM;.BAT;.EXE',
+      NoDefaultCurrentDirectoryInExePath: '',
+    },
+    'win32'
+  );
+  assert.equal(env.PATH, undefined);
+  assert.equal(env.Path, 'C:\\job\\FuncCoreTools;C:\\other;C:\\tools');
+  assert.equal(env.PATHEXT, '.EXE;.CMD;.BAT;.COM');
+  assert.equal(env.NoDefaultCurrentDirectoryInExePath, '1');
+  assert.throws(() => controlledFuncEnvironment('C:\\job\\FuncCoreTools', { PATH: 'C:\\a', Path: 'C:\\b' }, 'win32'), /Conflicting/);
+});
+test('controlled Linux PATH puts the admitted directory first and removes relative/current-directory entries', () => {
+  const env = controlledFuncEnvironment('/job/FuncCoreTools', { PATH: '/other:.:/job/FuncCoreTools::/tools' }, 'linux');
+  assert.equal(env.PATH, '/job/FuncCoreTools:/other:/tools');
+  assert.throws(() => controlledFuncEnvironment('/job:ambiguous/FuncCoreTools', {}, 'linux'), /unambiguous/);
+});
+test('regular launch accepts actual plain-func activation only when PATH resolves bootstrap-attested bytes', () => {
+  const f = bootstrapFixture();
+  try {
+    writeBootstrapAttestation(f.request, snapshotBootstrapBinary(f.context, f.executable), f.probes, 'unit-Code');
+    const admitted = readBootstrapAttestation(f.request.file, f.context, f.phase);
+    const launch = multiRootRegularLaunch(admitted, {}, path.join(f.root, 'profile'));
+    assert.equal(launch.settings['azureLogicAppsStandard.funcCoreToolsBinaryPath'], 'func');
+    assert.equal(launch.settings['azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation'], false);
+    const resolution = observeFuncRuntime('func', false, f.root, launch.env);
+    assertFuncRuntimeResolution(resolution, admitted);
+    assert.throws(() => observeFuncRuntime(f.executable, false, f.root, launch.env), /not a profile pin/);
+    assert.throws(() => observeFuncRuntime('func', true, f.root, launch.env), /another managed/);
+    assert.throws(() => assertFuncRuntimeResolution({ ...resolution, sha256: 'b'.repeat(64) }, admitted), /different Func bytes/);
+    fs.writeFileSync(f.executable, 'post-bootstrap-replacement-unit-file');
+    assert.throws(() => multiRootRegularLaunch(admitted, {}, path.join(f.root, 'profile')), /changed before regular launch/);
+  } finally {
+    fs.rmSync(f.root, { recursive: true, force: true });
+  }
+});
+test('same-name shell wrapper in admitted Func directory fails rather than masking shell resolution', () => {
+  const f = bootstrapFixture();
+  try {
+    const env = controlledFuncEnvironment(path.dirname(f.executable), {});
+    fs.writeFileSync(path.join(path.dirname(f.executable), process.platform === 'win32' ? 'func.cmd' : 'func.exe'), 'unit-shadow-not-run');
+    assert.throws(() => observeFuncRuntime('func', false, f.root, env), /shadows/);
+  } finally {
+    fs.rmSync(f.root, { recursive: true, force: true });
+  }
+});
+
+test('bootstrap attestation derives exact job-owned binary bytes after successful probes and phase finalization', () => {
+  const f = bootstrapFixture();
+  try {
+    const before = snapshotBootstrapBinary(f.context, f.executable);
+    writeBootstrapAttestation(f.request, before, f.probes, 'unit-Code-version');
+    const admitted = readBootstrapAttestation(f.request.file, f.context, f.phase);
+    assert.deepEqual(admitted.binary, before);
+    assert.equal(admitted.binary.sha256, createHash('sha256').update(fs.readFileSync(f.executable)).digest('hex'));
+  } finally {
+    fs.rmSync(f.root, { recursive: true, force: true });
+  }
+});
+
+test('missing/failed/incomplete bootstrap phase cannot admit a Func attestation', () => {
+  const f = bootstrapFixture();
+  try {
+    writeBootstrapAttestation(f.request, snapshotBootstrapBinary(f.context, f.executable), f.probes, 'unit-Code');
+    for (const phase of [
+      {},
+      { ...f.phase, complete: false },
+      { ...f.phase, exitCode: 1 },
+      { ...f.phase, cleanupVerified: false },
+      { ...f.phase, signal: 'SIGTERM' },
+      { ...f.phase, diagnosticsError: 'fixture original error' },
+    ]) {
+      assert.throws(() => readBootstrapAttestation(f.request.file, f.context, phase), /successful finalized/);
+    }
+  } finally {
+    fs.rmSync(f.root, { recursive: true, force: true });
+  }
+});
+
+test('bootstrap attestation is bound to the current invocation, job/source and physical runtime root', () => {
+  const f = bootstrapFixture();
+  try {
+    writeBootstrapAttestation(f.request, snapshotBootstrapBinary(f.context, f.executable), f.probes, 'unit-Code');
+    assert.throws(() => readBootstrapAttestation(f.request.file, { ...f.context, invocation: 'stale' }, f.phase), /invocation/);
+    assert.throws(
+      () =>
+        readBootstrapAttestation(
+          f.request.file,
+          {
+            ...f.context,
+            identity: { ...f.context.identity, job: 'wrong-job' },
+          },
+          f.phase
+        ),
+      /job\/source/
+    );
+    assert.throws(
+      () => readBootstrapAttestation(f.request.file, { ...f.context, runtimeRoot: os.tmpdir() }, f.phase),
+      /different dependency root/
+    );
+    assert.throws(() => readBootstrapAttestation(path.join(f.root, 'missing.json'), f.context, f.phase));
+  } finally {
+    fs.rmSync(f.root, { recursive: true, force: true });
+  }
+});
+
+test('binary replacement during native probes or after bootstrap cannot be attested or admitted', () => {
+  const f = bootstrapFixture();
+  try {
+    const before = snapshotBootstrapBinary(f.context, f.executable);
+    fs.writeFileSync(f.executable, 'changed-longer-unit-fixture-binary-bytes-never-executed');
+    assert.throws(() => writeBootstrapAttestation(f.request, before, f.probes, 'unit-Code'), /changed during/);
+    writeBootstrapAttestation(f.request, snapshotBootstrapBinary(f.context, f.executable), f.probes, 'unit-Code');
+    fs.writeFileSync(f.executable, 'post-bootstrap-unit-fixture-replacement');
+    assert.throws(() => readBootstrapAttestation(f.request.file, f.context, f.phase), /changed after/);
+  } finally {
+    fs.rmSync(f.root, { recursive: true, force: true });
+  }
+});
+
+test('outside-root executable and user-home cache are not bootstrap admission', () => {
+  const f = bootstrapFixture();
+  try {
+    const outside = path.join(f.root, 'outside-func');
+    fs.writeFileSync(outside, 'unit fixture');
+    assert.throws(() => snapshotBootstrapBinary(f.context, outside), /outside/);
+    assert.throws(
+      () => parseBootstrapContext({ ...f.context, runtimeRoot: path.join(f.root, '.azurelogicapps/dependencies') }),
+      /User-home/
+    );
+  } finally {
+    fs.rmSync(f.root, { recursive: true, force: true });
+  }
+});
+
+test('bootstrap evidence requires paired internal inputs, actual probe versions and a fresh evidence file', () => {
+  const f = bootstrapFixture();
+  try {
+    assert.equal(bootstrapRequest({}), undefined);
+    assert.throws(() => bootstrapRequest({ LA_E2E_CLI_MULTI_ROOT_BOOTSTRAP_ATTESTATION: f.request.file }), /Both/);
+    assert.throws(() => bootstrapRequest({ LA_E2E_CLI_MULTI_ROOT_BOOTSTRAP_CONTEXT: JSON.stringify(f.context) }), /Both/);
+    const before = snapshotBootstrapBinary(f.context, f.executable);
+    assert.throws(() => writeBootstrapAttestation(f.request, before, [], 'unit-Code'), /probes/);
+    writeBootstrapAttestation(f.request, before, f.probes, 'unit-Code');
+    assert.throws(() => writeBootstrapAttestation(f.request, before, f.probes, 'unit-Code'), /EEXIST/);
+  } finally {
+    fs.rmSync(f.root, { recursive: true, force: true });
+  }
+});
+
+test('bootstrap hash read permission errors and file-read races fail closed using own file fixtures', () => {
+  const f = bootstrapFixture();
+  try {
+    const denied = mock.method(nativeFs, 'readFileSync', () => {
+      throw new Error('EACCES unit fixture');
+    });
+    assert.throws(() => snapshotBootstrapBinary(f.context, f.executable), /EACCES/);
+    denied.mock.restore();
+    const raced = mock.method(nativeFs, 'readFileSync', () => {
+      nativeFs.writeFileSync(f.executable, 'longer-unit-fixture-to-change-stat-during-read');
+      return Buffer.from('unit-owned-race-result');
+    });
+    assert.throws(() => snapshotBootstrapBinary(f.context, f.executable), /changed during bootstrap hashing/);
+    raced.mock.restore();
+  } finally {
+    mock.restoreAll();
+    fs.rmSync(f.root, { recursive: true, force: true });
+  }
+});
 
 test('full executable count settles without attributing one process to each root', async () => {
   const result = await waitForFuncPopulation({ snapshot: async () => population() }, options(), virtualClock());

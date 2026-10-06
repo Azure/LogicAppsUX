@@ -11,6 +11,13 @@ const hash = (file) => createHash('sha256').update(fs.readFileSync(file)).digest
 const suiteId = 'workspaceMultiRoot';
 const expectedPhases = Object.freeze(['runtimeDependencyBootstrap:bootstrap', 'workspaceMultiRoot:create', 'workspaceMultiRoot:reopen']);
 
+function assertNoCallerFuncAdmission(env) {
+  assert.ok(
+    !env.LA_E2E_CLI_MULTI_ROOT_FUNC_PATH && !env.LA_E2E_CLI_MULTI_ROOT_FUNC_SHA256,
+    'Caller-supplied Func path/hash is not admission; identity comes only from successful native bootstrap'
+  );
+}
+
 function assertAssets(root) {
   const html = path.join(root, 'dist/vs-code-react/index.html');
   assert.ok(fs.statSync(html).isFile() && fs.statSync(html).size > 0, 'Required Data Mapper webview HTML is missing/empty');
@@ -108,6 +115,10 @@ function assertEvidence(observation, funcExecutable, funcSha256) {
     'Real fresh-host reload evidence is required'
   );
   assert.equal(observation.population?.complete, true);
+  assert.equal(observation.runtimeResolution?.command, 'func', 'Actual post-reload ensureBinaries command was not observed');
+  assert.equal(observation.runtimeResolution?.managedValidation, false);
+  assert.equal(observation.runtimeResolution?.executable, funcExecutable, 'Post-reload activation resolved the wrong Func');
+  assert.equal(observation.runtimeResolution?.sha256, funcSha256, 'Post-reload activation resolved different Func bytes');
   assert.ok(
     observation.population.stability?.samples >= 3 && observation.population.stability?.durationMs >= 1500,
     'Native population stability evidence is required'
@@ -159,9 +170,11 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, 
     env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT && env.LA_E2E_CLI_EXTENSIONS_DIR,
     'Prepared same-job native dependencies/extensions are required'
   );
-  assert.match(env.LA_E2E_CLI_MULTI_ROOT_FUNC_SHA256 || '', /^[a-f0-9]{64}$/, 'Admitted native func SHA-256 is required before bootstrap');
+  assertNoCallerFuncAdmission(env);
   assert.equal(typeof writeSuitePhaseResult, 'function', 'Official suite phase reporter is required');
   const ui = require('../out/test/e2e/workspaceMultiRoot.test');
+  const { readBootstrapAttestation } = require('../out/test/e2e/workspaceMultiRootBootstrap');
+  const { multiRootRegularLaunch } = require('../out/test/e2e/workspaceMultiRootLaunch');
   const { closeWorkspacePromptCancelWindow } = require('../out/test/e2e/workspacePromptCancel');
   const recorder = path.join(__dirname, 'fixtures/workspace-multi-root-recorder');
   for (const file of ['package.json', 'extension.js']) {
@@ -182,12 +195,14 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, 
     },
     startedUtc: new Date().toISOString(),
     requestedVersion: env.LA_E2E_CLI_VSCODE_VERSION || 'stable',
+    runtimeRoot: fs.realpathSync(env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT),
     workspaceParent: fs.realpathSync(root),
     extensionsDir: env.LA_E2E_CLI_EXTENSIONS_DIR,
   };
   fs.writeFileSync(path.join(diagnosticRoot, 'invocation.json'), JSON.stringify(context), { flag: 'wx' });
   const handoffPath = path.join(diagnosticRoot, 'wizard-handoff.json');
   const eventsFile = path.join(diagnosticRoot, 'debug-events.jsonl');
+  const bootstrapAttestationPath = path.join(diagnosticRoot, 'func-bootstrap.json');
   const phaseFile = env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH || path.join(diagnosticRoot, 'phases.jsonl');
   assert.ok(!fs.existsSync(phaseFile), 'Multi-root phases must be fresh for this invocation');
   const phaseEnv = { ...env, LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH: phaseFile };
@@ -221,6 +236,8 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, 
       extraEnv: {
         ...phaseEnv,
         LA_E2E_CLI_INCLUDE_RUNTIME_DEPENDENCY_BOOTSTRAP: '1',
+        LA_E2E_CLI_MULTI_ROOT_BOOTSTRAP_CONTEXT: JSON.stringify(context),
+        LA_E2E_CLI_MULTI_ROOT_BOOTSTRAP_ATTESTATION: bootstrapAttestationPath,
         LA_E2E_CLI_CREATE_WORKSPACE_CASE: '',
         LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
         LA_E2E_CLI_VALIDATE_DEPENDENCIES: '1',
@@ -232,15 +249,14 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, 
       },
     });
     assert.equal(bootstrapCode, 0, 'Official multi-root runtime bootstrap failed');
-    const configuredFunc = path.join(
-      env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT,
-      'FuncCoreTools',
-      process.platform === 'win32' ? 'func.exe' : 'func'
-    );
-    const funcExecutable = fs.realpathSync(env.LA_E2E_CLI_MULTI_ROOT_FUNC_PATH || configuredFunc);
-    assert.equal(funcExecutable, fs.realpathSync(configuredFunc), 'Collector must use the same admitted executable as product startup');
-    const funcSha256 = hash(funcExecutable);
-    assert.equal(funcSha256, env.LA_E2E_CLI_MULTI_ROOT_FUNC_SHA256, 'Bootstrapped native func differs from admitted SHA-256');
+    const bootstrapPhases = readFamilyPhases(phaseFile);
+    assert.equal(bootstrapPhases.length, 1, 'Bootstrap admission requires exactly its actual first phase');
+    const bootstrap = readBootstrapAttestation(bootstrapAttestationPath, context, bootstrapPhases[0]);
+    if (context.requestedVersion !== 'stable') {
+      assert.equal(bootstrap.vscodeVersion, context.requestedVersion, 'Bootstrap Code differs from the admitted native version');
+    }
+    const { executable: funcExecutable, sha256: funcSha256 } = bootstrap.binary;
+    result.funcAdmission = { source: 'successful-native-bootstrap', attestationPath: bootstrapAttestationPath, binary: bootstrap.binary };
     const code = await runVscodeTest(['--label', 'createWorkspaceCoreMatrix'], {
       workspaceParent: root,
       retainWorkspaceForSupplement: true,
@@ -262,21 +278,8 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, 
       assert.ok(Buffer.byteLength(path.join(profile, 'main.sock')) < 100, 'Native profile socket path exceeds byte budget');
     }
     fs.mkdirSync(path.join(profile, 'User'));
-    fs.writeFileSync(
-      path.join(profile, 'User/settings.json'),
-      JSON.stringify({
-        'azureLogicAppsStandard.autoStartDesignTime': true,
-        'azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation': false,
-        'azureLogicAppsStandard.autoRuntimeDependenciesPath': env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT,
-        'azureLogicAppsStandard.funcCoreToolsBinaryPath': funcExecutable,
-        'azureLogicAppsStandard.parameterizeConnectionsInProjectLoad': false,
-        'azureLogicAppsStandard.silentAuth': true,
-        'azureLogicAppsStandard.autoStartAzurite': true,
-        'azurite.location': path.join(profile, 'azurite'),
-        'telemetry.telemetryLevel': 'off',
-        'update.mode': 'none',
-      })
-    );
+    const regularLaunch = multiRootRegularLaunch(bootstrap, env, profile);
+    fs.writeFileSync(path.join(profile, 'User/settings.json'), JSON.stringify(regularLaunch.settings));
     process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT = env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT || '9527';
     process.env.LA_E2E_CLI_SCREENSHOT_DIR = path.join(diagnosticRoot, 'screenshots');
     const args = [
@@ -301,7 +304,7 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, 
     fs.writeFileSync(path.join(diagnosticRoot, 'code.log'), '', { flag: 'wx' });
     child = spawn(launch.executable, args, {
       env: {
-        ...env,
+        ...regularLaunch.env,
         LA_E2E_CLI_MULTI_ROOT_EVENTS: eventsFile,
         LA_E2E_CLI_MINIMAL_ACTIVATION: '0',
         LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '0',
@@ -327,7 +330,7 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, 
       });
     }
     result.observation = await Promise.race([
-      ui.runWorkspaceMultiRootUi({ workspace: entry, eventsFile, funcExecutable, funcSha256, deadline: Date.now() + 1200000 }),
+      ui.runWorkspaceMultiRootUi({ workspace: entry, eventsFile, bootstrap, funcExecutable, funcSha256, deadline: Date.now() + 1200000 }),
       completion.then(() => {
         throw new Error('Original Code closed before multi-root observation completed');
       }),
@@ -436,6 +439,7 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, 
 }
 
 module.exports = {
+  assertNoCallerFuncAdmission,
   suiteId,
   expectedPhases,
   exactPhasesComplete,

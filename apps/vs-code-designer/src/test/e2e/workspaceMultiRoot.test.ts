@@ -5,6 +5,8 @@ import { connectToVsCodeWorkbenchCdp } from './cdpClient';
 import { assertNextButtonEnabled, enterFieldValue, getPageText, selectDropdownOption, selectRadioOption } from './cdpFormHelpers';
 import { captureCdpScreenshot } from './screenshot';
 import { nativePopulationProvider, remainingBudget, waitForFuncPopulation } from './workspaceMultiRootCollector';
+import type { MultiRootBootstrapAttestation } from './workspaceMultiRootBootstrap';
+import { assertFuncRuntimeResolution } from './workspaceMultiRootLaunch';
 import {
   activeWebview,
   assertMapper,
@@ -31,6 +33,7 @@ export interface MultiRootOptions {
   eventsFile: string;
   funcExecutable: string;
   funcSha256: string;
+  bootstrap: MultiRootBootstrapAttestation;
   deadline: number;
 }
 
@@ -121,6 +124,16 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
       phaseDeadline(30000)
     );
     assert.ok(activation?.roots);
+    const runtime = await poll(
+      async () =>
+        debugEvents(options.eventsFile)
+          .reverse()
+          .find((event) => event.kind === 'runtimeResolution' && event.boot === activation.boot),
+      (event) => !!event,
+      phaseDeadline(30000)
+    );
+    assert.ok(runtime && !runtime.error, `Actual post-reload runtime resolution failed: ${runtime?.error || 'missing observation'}`);
+    assertFuncRuntimeResolution(runtime.resolution, options.bootstrap);
     assert.deepEqual(
       activation.roots
         .filter((root) => fs.existsSync(path.join(root, 'host.json')))
@@ -232,7 +245,17 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
       mapper.dispose();
     }
     remainingBudget(deadline);
-    return { roots, reload, originalBoot, reloadedBoot: activation.boot, population, events, mapperOpened: true, screenshots };
+    return {
+      roots,
+      reload,
+      originalBoot,
+      reloadedBoot: activation.boot,
+      runtimeResolution: runtime.resolution,
+      population,
+      events,
+      mapperOpened: true,
+      screenshots,
+    };
   } finally {
     cdp.dispose();
   }
