@@ -456,6 +456,20 @@ jobs:
             8.0.x
             10.0.x
 
+      - name: Ensure .NET 8 runtime is installed
+        run: |
+          dotnet_root="$(dirname -- "$(readlink -f "$(command -v dotnet)")")"
+          if ! "$dotnet_root/dotnet" --list-runtimes | grep -q '^Microsoft\.NETCore\.App 8\.'; then
+            curl -fsSL https://dot.net/v1/dotnet-install.sh -o "$RUNNER_TEMP/dotnet-install.sh"
+            bash "$RUNNER_TEMP/dotnet-install.sh" \
+              --runtime dotnet \
+              --channel 8.0 \
+              --install-dir "$dotnet_root" \
+              --no-path
+          fi
+          "$dotnet_root/dotnet" --list-runtimes
+          "$dotnet_root/dotnet" --list-runtimes | grep -q '^Microsoft\.NETCore\.App 8\.'
+
       - name: Use system .NET SDK for custom-code workspaces
         run: echo "CUSTOMCODE_DOTNET_BINARY_PATH=$(command -v dotnet)" >> "$GITHUB_ENV"
 
@@ -1232,7 +1246,13 @@ jobs:
             10.0.x
 
       - name: Use system .NET SDK for custom-code workspaces
-        run: echo "CUSTOMCODE_DOTNET_BINARY_PATH=$(command -v dotnet)" >> "$GITHUB_ENV"
+        shell: pwsh
+        run: |
+          $dotnetPath = (Get-Command dotnet).Source
+          if (-not (Test-Path -LiteralPath $dotnetPath)) {
+            throw "Resolved dotnet path does not exist: $dotnetPath"
+          }
+          "CUSTOMCODE_DOTNET_BINARY_PATH=$dotnetPath" >> $env:GITHUB_ENV
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v5
@@ -1726,7 +1746,13 @@ jobs:
             10.0.x
 
       - name: Use system .NET SDK for custom-code workspaces
-        run: echo "CUSTOMCODE_DOTNET_BINARY_PATH=$(command -v dotnet)" >> "$GITHUB_ENV"
+        shell: pwsh
+        run: |
+          $dotnetPath = (Get-Command dotnet).Source
+          if (-not (Test-Path -LiteralPath $dotnetPath)) {
+            throw "Resolved dotnet path does not exist: $dotnetPath"
+          }
+          "CUSTOMCODE_DOTNET_BINARY_PATH=$dotnetPath" >> $env:GITHUB_ENV
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v5
