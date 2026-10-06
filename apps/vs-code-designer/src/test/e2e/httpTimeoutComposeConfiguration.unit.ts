@@ -4,7 +4,26 @@ import * as path from 'path';
 import * as vm from 'vm';
 import { selectHttpTimeoutComposeDesignerV2 } from './httpTimeoutComposeOracle';
 
-export async function testInstalledHttpTimeoutConfigurationSnapshot(): Promise<void> {
+export function discoverHttpTimeoutConfigurationBundle(
+  roots: string[],
+  explicit: string | undefined,
+  fileSystem = { exists: fs.existsSync, list: fs.readdirSync }
+): string | undefined {
+  if (explicit) {
+    assert.ok(fileSystem.exists(explicit), 'Explicit installed VS Code configuration bundle missing');
+    return explicit;
+  }
+  const relative = 'resources/app/out/vs/workbench/api/node/extensionHostProcess.js';
+  const candidates = roots.flatMap((root) => {
+    if (!fileSystem.exists(root)) {
+      return [];
+    }
+    return [path.join(root, relative), ...fileSystem.list(root).map((child) => path.join(root, String(child), relative))];
+  });
+  return candidates.find((file) => fileSystem.exists(file));
+}
+
+export async function testInstalledHttpTimeoutConfigurationSnapshot(): Promise<'executed' | 'not-executed'> {
   const explicit = process.env.LA_E2E_CLI_VSCODE_CONFIGURATION_BUNDLE;
   const roots = [
     ...(process.env.LOCALAPPDATA ? [path.join(process.env.LOCALAPPDATA, 'Programs/Microsoft VS Code')] : []),
@@ -12,19 +31,12 @@ export async function testInstalledHttpTimeoutConfigurationSnapshot(): Promise<v
     '/usr/share/code-insiders',
     '/Applications/Visual Studio Code.app/Contents',
   ];
-  const relative = 'resources/app/out/vs/workbench/api/node/extensionHostProcess.js';
-  const candidates = roots.flatMap((root) => {
-    if (!fs.existsSync(root)) {
-      return [];
-    }
-    return [path.join(root, relative), ...fs.readdirSync(root).map((child) => path.join(root, child, relative))];
-  });
-  const bundle = explicit ?? candidates.find((file) => fs.existsSync(file));
+  const bundle = discoverHttpTimeoutConfigurationBundle(roots, explicit);
   if (!bundle) {
     console.log(
-      '[http-timeout-compose-control] Installed VS Code bundle unavailable; snapshot regression still runs, installed-code probe not run.'
+      '[http-timeout-compose-optional] NOT EXECUTED: installed VS Code bundle unavailable; mandatory immutable-snapshot regression and native V2 readback remain required.'
     );
-    return;
+    return 'not-executed';
   }
   assert.ok(fs.existsSync(bundle), 'Explicit installed VS Code configuration bundle missing');
   const source = fs.readFileSync(bundle, 'utf8');
@@ -75,4 +87,5 @@ export async function testInstalledHttpTimeoutConfigurationSnapshot(): Promise<v
   console.log(
     '[http-timeout-compose-control] Actual installed VS Code provider snapshot/update/reacquisition probe passed; no Code process launched.'
   );
+  return 'executed';
 }

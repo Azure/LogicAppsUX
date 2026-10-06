@@ -51,6 +51,15 @@ keybinding and content-change extensions, run the driver against its rendered
 lines/gutters/caret, and render the actual Fluent V2 Save `ToolbarButton`.
 Only jsdom's missing browser layout/input platform is supplied; editor-model
 replacement and preassembled driver page replies are not used.
+The immutable configuration-snapshot regression is mandatory and self-contained.
+An additional installed-code probe is optional: it reads an explicit
+`LA_E2E_CLI_VSCODE_CONFIGURATION_BUNDLE`, or an existing system Code installation
+under LocalAppData, `/usr/share/code`, `/usr/share/code-insiders`, or the macOS app.
+It does not search `.vscode-test`, download Code, or start a Code process.
+No installation on a cold producer reports **NOT EXECUTED** and contributes no
+passing-control count; an explicit missing bundle or a found incompatible provider
+fails rather than substituting a model. Native V2 configuration readback is always
+required independently of this optional probe.
 Canonical baseline labels/counts and rollup are unchanged. This supplementary label is runnable,
 not automatically admitted to an Azure DevOps baseline or credited from units.
 The explicit batch selector is `node scripts/run-e2e-cli.js --suites httpTimeoutComposeOriginal`;
@@ -72,6 +81,15 @@ after cleanup, and a final closure observation using the existing process observ
 Exit zero alone cannot finalize success. Missing, stale, malformed or incomplete
 evidence and cleanup/closure failures produce a current failed result and nonzero
 exit. Batch execution keeps its existing `reports/*` finalization.
+
+Retained-original process identities are a separate native acceptance gate.
+The current legacy post-exit ancestry observer cannot prove reparented Func or
+Azurite closure. It therefore reports `originalProcessClosureVerified: false`
+and `processClosureProof: "original-identities-unverified"`, even when GUI phases,
+ordinary exits and root cleanup succeed. Those results are diagnostic-only;
+parent CI rejects supplementary acceptance until a genuine observer supplies
+`retainedOriginalIdentitiesVerified === true`. No identity-proof flag is inferred
+from an empty current tree, exit zero, directory absence, or unit fixture data.
 
 Native acceptance requires the source-bound compiled producer artifact and
 actual Windows and Linux isolated consumer runs with their generated fixture,

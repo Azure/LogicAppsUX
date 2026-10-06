@@ -191,6 +191,12 @@ export async function runHttpTimeoutComposeDirectControls(control: Control): Pro
         }
         const terminal = JSON.parse(fs.readFileSync(terminalPath, 'utf8'));
         const ledger = JSON.parse(fs.readFileSync(ledgerPath, 'utf8'));
+        assert.strictEqual(
+          terminal.originalProcessClosureVerified,
+          false,
+          'Current post-exit ancestry fixtures cannot prove original retained process identities'
+        );
+        assert.strictEqual(terminal.processClosureProof, 'original-identities-unverified');
         assert.strictEqual(terminal.complete, fault === 'none');
         assert.strictEqual(terminal.lifecycleFinalized, true);
         assert.strictEqual(terminal.invocation.id, initializedId);
