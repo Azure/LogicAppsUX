@@ -65,6 +65,30 @@ The family explicitly selects V2 in its generated workspace and binds
 `designerLocalV2` throughout. VS Code configuration is reacquired after the awaited
 version update because
 `WorkspaceConfiguration` objects retain their acquisition-time snapshot.
+Startup resource and actual reopened workspace are checked by canonical physical
+file identity under the owned fixture root. Windows drive/path case normalization
+is platform-specific; Linux remains case-sensitive. Missing files, wrong
+workspaces, escaped roots and symlink/reparse-point aliases are rejected.
+Opening polls the actual workbench for this app's exact "Enable connectors in
+Azure" prompt through the shared workbench detector/selector and uses trusted native
+mouse input to choose **Use connectors from Azure**, or **Yes** for a matching yes/no dialog.
+The same handling remains active while waiting for the designer frame's content.
+Unknown, ambiguous, unfocused, disabled or covered prompts fail; no dialog API is
+intercepted and no timeout is extended. The family never chooses Skip/No/Cancel or
+blanks the subscription settings. Existing approved fixture settings are preserved.
+Affirmative setup may next require the existing WIF subscription provider to sign
+in/list subscriptions and the Azure wizard to select an existing resource group.
+The HTTP lane requires the existing approved `requiresAzureAccessToken=true` WIF
+context and all five `LA_E2E_CLI_AZURE_{TENANT_ID,SUBSCRIPTION_ID,RESOURCE_GROUP_NAME,
+LOCATION_NAME,MANAGEMENT_BASE_URL}` exports. The shared journey selects only the
+approved existing subscription and resource group through native UI. If the
+subscription picker is shown, an authenticated **GET** of that exact existing
+subscription resolves its display name and verifies subscription/tenant identity;
+no ambient Azure CLI or credential fallback is used. The product wizard—not the
+harness—persists the approved Azure target, which is independently checked before
+Request/Compose authoring. Missing context/auth, absent or ambiguous targets,
+sign-in/elevation prompts and resource-creation choices fail explicitly.
+No resources, identities or grants are created or changed.
 It adds Request and Compose through the actual designer, saves through the enabled
 V2 ToolbarButton's accessible Save text,
 reads every numbered rendered CodeMirror line in the global Code tab, replaces

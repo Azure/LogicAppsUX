@@ -6,6 +6,8 @@ import type { CdpConnection } from './cdpClient';
 import { HttpTimeoutComposeDriver } from './httpTimeoutComposeDriver';
 import { runHttpTimeoutComposeDomControls } from './httpTimeoutComposeDom.unit';
 import { runHttpTimeoutComposeDirectControls } from './httpTimeoutComposeDirect.unit';
+import { runHttpTimeoutEnvironmentControls } from './httpTimeoutComposeEnvironment.unit';
+import { runApprovedAzureConnectorFixtureControls } from './azureConnectorFixture.unit';
 import {
   assembleHttpTimeoutComposeCode,
   assertHttpTimeoutComposeAuthored,
@@ -509,6 +511,8 @@ async function main(): Promise<void> {
     fs.rmSync(root, { recursive: true, force: true }); // Unit-owned temporary command fixture only.
   }
   await runHttpTimeoutComposeDirectControls(control);
+  await runHttpTimeoutEnvironmentControls(control);
+  await runApprovedAzureConnectorFixtureControls(control);
   console.log(`[http-timeout-compose-control] ${passed} non-GUI controls passed; no native host launched or credited.`);
 }
 

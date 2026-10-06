@@ -49,6 +49,16 @@ Environment target values alone also do not select subscription/resource-group
 UI controls. Verify the exact approved selection and persisted location rather
 than assuming that the runner's location parameter controls the selected group.
 
+The HTTP fixture consumer reads the existing `LA_E2E_CLI_AZURE_*` account/target
+exports in `azureConnectorFixture.ts`. Its native picker journey uses the approved
+subscription identity and existing resource-group name only, and independently
+checks the local target settings written by the product wizard before authoring.
+The installed Azure utility can label its existing resource-group list
+**Select a resource group for new resources.**; that title is not permission to
+select **Create new resource group**. Exact existing-target selection and a
+read-only subscription-name lookup have regression controls in
+`azureConnectorFixture.unit.ts`; source-bound native verification remains open.
+
 This policy is specific to Azure connector setup. Tests intentionally exercising
 workspace **No** or **Cancel** retain those original actions and assertions.
 
