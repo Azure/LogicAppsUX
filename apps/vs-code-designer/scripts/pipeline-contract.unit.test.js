@@ -1003,6 +1003,7 @@ function testSupplementaryFamilyRoutingContract() {
     ['httpTimeoutComposeOriginal', 'http_timeout_compose'],
     ['statelessVariablesLifecycle', 'stateless_variables'],
     ['workspaceArtifactRegeneration', 'workspace_regeneration'],
+    ['workspaceMultiRoot', 'workspace_multi_root'],
   ]) {
     assert.ok(SUITE_REGISTRY[suiteId], `Supplementary family ${suiteId} must have an executable registry entry`);
     assert.ok(staging.pwsh.includes(`'${suiteId}'`), `Supplementary ${suiteId} must be covered by the terminal publication guard`);
@@ -1023,12 +1024,17 @@ function testSupplementaryFamilyRoutingContract() {
     LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true',
     LA_E2E_CLI_RUN_LINUX: 'true',
     LA_E2E_CLI_RUN_WINDOWS: 'true',
-    LA_E2E_CLI_LINUX_SUITES: 'httpTimeoutComposeOriginal,statelessVariablesLifecycle,workspaceArtifactRegeneration',
-    LA_E2E_CLI_WINDOWS_SUITES: 'httpTimeoutComposeOriginal,statelessVariablesLifecycle,workspaceArtifactRegeneration',
+    LA_E2E_CLI_LINUX_SUITES: 'httpTimeoutComposeOriginal,statelessVariablesLifecycle,workspaceArtifactRegeneration,workspaceMultiRoot',
+    LA_E2E_CLI_WINDOWS_SUITES: 'httpTimeoutComposeOriginal,statelessVariablesLifecycle,workspaceArtifactRegeneration,workspaceMultiRoot',
   });
   assert.strictEqual(selected.status, 0, selected.output);
   for (const os of ['linux', 'windows']) {
-    for (const suiteId of ['httpTimeoutComposeOriginal', 'statelessVariablesLifecycle', 'workspaceArtifactRegeneration']) {
+    for (const suiteId of [
+      'httpTimeoutComposeOriginal',
+      'statelessVariablesLifecycle',
+      'workspaceArtifactRegeneration',
+      'workspaceMultiRoot',
+    ]) {
       assert.ok(selected.output.includes(`variable=${os}_${suiteId};isOutput=true]true`));
     }
   }
@@ -1077,7 +1083,7 @@ function assertConsumerCurrentRunArtifactContract(consumer) {
   assert.strictEqual(buildTemplate?.parameters?.artifactStagingPath, '$(Build.ArtifactStagingDirectory)/vscode-e2e');
 
   const templateInvocations = flattenAzureList(consumer.extends.parameters.stages[0].jobs).filter((entry) => entry.template);
-  assert.strictEqual(templateInvocations.length, 19);
+  assert.strictEqual(templateInvocations.length, 21);
   assert.deepStrictEqual(
     templateInvocations.map((invocation) => invocation.parameters.jobName).sort(),
     [
@@ -1090,6 +1096,7 @@ function assertConsumerCurrentRunArtifactContract(consumer) {
       'linux_http_timeout_compose',
       'linux_stateless_variables',
       'linux_workspace_regeneration',
+      'linux_workspace_multi_root',
       'windows_create_workspace_behavior',
       'windows_create_workspace_behavior_smoke',
       'windows_create_workspace_codeful',
@@ -1100,6 +1107,7 @@ function assertConsumerCurrentRunArtifactContract(consumer) {
       'windows_http_timeout_compose',
       'windows_stateless_variables',
       'windows_workspace_regeneration',
+      'windows_workspace_multi_root',
     ].sort()
   );
   for (const invocation of templateInvocations) {
@@ -1118,7 +1126,7 @@ function assertConsumerCurrentRunArtifactContract(consumer) {
     assert.ok(invocation.parameters.selected.includes('validateSuiteSelection.'));
     assert.match(
       invocation.parameters.cliArguments,
-      /^--(label|msn-weather-lifecycle|http-timeout-compose-original|stateless-variables-lifecycle|workspace-artifact-regeneration)/
+      /^--(label|msn-weather-lifecycle|http-timeout-compose-original|stateless-variables-lifecycle|workspace-artifact-regeneration|workspace-multi-root)/
     );
     assert.ok(invocation.parameters.shortName.length <= 2, 'suite shortName must keep Linux profile/socket paths short');
     assert.strictEqual(invocation.parameters.nodeVersion ?? '22.x', '22.x');
@@ -1158,6 +1166,8 @@ function assertConsumerCurrentRunArtifactContract(consumer) {
     'windows_stateless_variables',
     'linux_workspace_regeneration',
     'windows_workspace_regeneration',
+    'linux_workspace_multi_root',
+    'windows_workspace_multi_root',
   ]);
 }
 
@@ -1314,7 +1324,7 @@ function assertConsumerJobRoutingContract(consumer, runSuites) {
     assert.strictEqual(job.templateContext.outputs, undefined, `${job.job} must not publish artifacts from a validationJob`);
   }
 
-  assert.strictEqual(templateJobs.length, 19);
+  assert.strictEqual(templateJobs.length, 21);
   for (const invocation of templateJobs) {
     assert.strictEqual(invocation.template, '/.config/templates/vscode-e2e-cli-run-suite.yml@self');
   }

@@ -56,7 +56,7 @@ Each suite publishes its own JUnit results and one consolidated sanitized diagno
 The E2E Run Pipeline form intentionally exposes only test-selection controls: `diagnosticOnly`, `runLinux`, `runWindows`, `linuxSuites`, and `windowsSuites`. Selection is validated before the artifact build. A normal run requires the full canonical inventory on both OSes, expressed through the `linux`/`windows` aliases or complete explicit lists; partial runs must be diagnostic. Unknown, duplicate, overlapping, or OS-incompatible selections are rejected. Diagnostic selection only schedules the selected independent jobs and cannot satisfy the full gate.
 
 The supplementary `httpTimeoutComposeOriginal`, `statelessVariablesLifecycle`
-and `workspaceArtifactRegeneration`
+and `workspaceArtifactRegeneration`/`workspaceMultiRoot`
 families have independent Linux and Windows jobs using the same admitted payload,
 isolated dependencies/profiles, secure Linux session and required result staging.
 Select either or both by their suite IDs in each OS selector with
@@ -75,6 +75,14 @@ must exit normally with accepted diagnostics/cleanup, and final owned cleanup
 must be verified. `family-lifecycle-terminal.js` checks these gates during result
 staging. A direct selector that exits zero without that terminal report fails
 publication; a wizard pass alone cannot certify later regular-Code phases.
+
+Multi-root jobs explicitly opt into complete native process observation only on
+their dedicated ADO worker. The real dependency bootstrap attests the configured
+Functions executable and its bytes; callers do not supply a free-form Func path
+or hash. After ordinary activation/reload, command resolution and the observed
+complete Func population must match that admission. The job archives the current
+invocation, bootstrap and wizard handoffs, debug events, final result, screenshots
+and collected logs, never the credential profile or dependency cache.
 
 Azure DevOps runtime parameters are always shown in the manual queue UI, so source identity, WIF/service connection, resource group/location, pool, Node, and .NET values stay fixed in YAML instead of becoming optional blank inputs. Tenant and subscription identity are derived inside the AzureCLI task from the already-authenticated fixed service connection context, then validated as non-empty before live Azure suites run. Do not select an external producer resource for this validation flow; wrong source SHA, wrong run/definition identity, wrong repository, archive hash mismatch, or manifest mismatch remain rejection cases through the current-run artifact manifest admission.
 
