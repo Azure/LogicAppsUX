@@ -14,6 +14,12 @@ import {
   type MultiRootBootstrapContext,
 } from './workspaceMultiRootBootstrap';
 import {
+  controlledFuncEnvironment,
+  multiRootRegularLaunch,
+  observeFuncRuntime,
+  assertFuncRuntimeResolution,
+} from './workspaceMultiRootLaunch';
+import {
   createLinuxPopulationProvider,
   createWindowsPopulationProvider,
   fingerprint,
@@ -82,6 +88,57 @@ function bootstrapFixture() {
   const probes = [`configured launcher ${executable}=4.1.2`, 'in-proc8 fixture=4.1.2'];
   return { root, executable, context, request, phase, probes };
 }
+
+test('controlled Windows PATH uses one canonical key and disables current-directory/extension shadowing', () => {
+  const env = controlledFuncEnvironment(
+    'C:\\job\\FuncCoreTools',
+    {
+      PATH: 'C:\\other;.;C:\\job\\FuncCoreTools;C:\\tools',
+      PATHEXT: '.COM;.BAT;.EXE',
+      NoDefaultCurrentDirectoryInExePath: '',
+    },
+    'win32'
+  );
+  assert.equal(env.PATH, undefined);
+  assert.equal(env.Path, 'C:\\job\\FuncCoreTools;C:\\other;C:\\tools');
+  assert.equal(env.PATHEXT, '.EXE;.CMD;.BAT;.COM');
+  assert.equal(env.NoDefaultCurrentDirectoryInExePath, '1');
+  assert.throws(() => controlledFuncEnvironment('C:\\job\\FuncCoreTools', { PATH: 'C:\\a', Path: 'C:\\b' }, 'win32'), /Conflicting/);
+});
+test('controlled Linux PATH puts the admitted directory first and removes relative/current-directory entries', () => {
+  const env = controlledFuncEnvironment('/job/FuncCoreTools', { PATH: '/other:.:/job/FuncCoreTools::/tools' }, 'linux');
+  assert.equal(env.PATH, '/job/FuncCoreTools:/other:/tools');
+  assert.throws(() => controlledFuncEnvironment('/job:ambiguous/FuncCoreTools', {}, 'linux'), /unambiguous/);
+});
+test('regular launch accepts actual plain-func activation only when PATH resolves bootstrap-attested bytes', () => {
+  const f = bootstrapFixture();
+  try {
+    writeBootstrapAttestation(f.request, snapshotBootstrapBinary(f.context, f.executable), f.probes, 'unit-Code');
+    const admitted = readBootstrapAttestation(f.request.file, f.context, f.phase);
+    const launch = multiRootRegularLaunch(admitted, {}, path.join(f.root, 'profile'));
+    assert.equal(launch.settings['azureLogicAppsStandard.funcCoreToolsBinaryPath'], 'func');
+    assert.equal(launch.settings['azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation'], false);
+    const resolution = observeFuncRuntime('func', false, f.root, launch.env);
+    assertFuncRuntimeResolution(resolution, admitted);
+    assert.throws(() => observeFuncRuntime(f.executable, false, f.root, launch.env), /not a profile pin/);
+    assert.throws(() => observeFuncRuntime('func', true, f.root, launch.env), /another managed/);
+    assert.throws(() => assertFuncRuntimeResolution({ ...resolution, sha256: 'b'.repeat(64) }, admitted), /different Func bytes/);
+    fs.writeFileSync(f.executable, 'post-bootstrap-replacement-unit-file');
+    assert.throws(() => multiRootRegularLaunch(admitted, {}, path.join(f.root, 'profile')), /changed before regular launch/);
+  } finally {
+    fs.rmSync(f.root, { recursive: true, force: true });
+  }
+});
+test('same-name shell wrapper in admitted Func directory fails rather than masking shell resolution', () => {
+  const f = bootstrapFixture();
+  try {
+    const env = controlledFuncEnvironment(path.dirname(f.executable), {});
+    fs.writeFileSync(path.join(path.dirname(f.executable), process.platform === 'win32' ? 'func.cmd' : 'func.exe'), 'unit-shadow-not-run');
+    assert.throws(() => observeFuncRuntime('func', false, f.root, env), /shadows/);
+  } finally {
+    fs.rmSync(f.root, { recursive: true, force: true });
+  }
+});
 
 test('bootstrap attestation derives exact job-owned binary bytes after successful probes and phase finalization', () => {
   const f = bootstrapFixture();

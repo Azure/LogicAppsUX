@@ -6,6 +6,18 @@ import { getWorkspaceSetting, shouldValidateAndInstallRuntimeDependencies, updat
 import { autoStartDesignTimeSetting, extensionCommand } from '../constants';
 import { ext } from '../extensionVariables';
 import { activate } from '../main';
+import * as fs from 'node:fs';
+import * as os from 'node:os';
+import * as path from 'node:path';
+import { validateAndInstallBinaries } from '../app/commands/binaries/validateAndInstallBinaries';
+import { getGlobalSetting } from '../app/utils/vsCodeConfig/settings';
+import {
+  bootstrapRequest,
+  snapshotBootstrapBinary,
+  writeBootstrapAttestation,
+  readBootstrapAttestation,
+} from '../test/e2e/workspaceMultiRootBootstrap';
+import { multiRootRegularLaunch, observeFuncRuntime, assertFuncRuntimeResolution } from '../test/e2e/workspaceMultiRootLaunch';
 
 const mocks = vi.hoisted(() => ({
   callWithTelemetryAndErrorHandling: vi.fn(),
@@ -20,6 +32,13 @@ const mocks = vi.hoisted(() => ({
   scheduleStartAllDesignTimeApis: vi.fn(),
   startDesignTimeApi: vi.fn(),
 }));
+
+// This control needs real IO only for its unit-owned binary fixture; all
+// activation side effects (Code/runtime/download/services) remain mocked below.
+vi.unmock('fs');
+vi.unmock('node:fs');
+vi.unmock('os');
+vi.unmock('node:os');
 
 vi.mock('@microsoft/vscode-azext-azureappservice', () => ({
   registerAppServiceExtensionVariables: vi.fn(),
@@ -341,5 +360,84 @@ describe('activate design-time startup', () => {
     expect(mocks.startDesignTimeApi).toHaveBeenCalledTimes(2);
     expect(mocks.startDesignTimeApi).toHaveBeenCalledWith(expect.any(Object), 'D:\\workspace\\app-one');
     expect(mocks.startDesignTimeApi).toHaveBeenCalledWith(expect.any(Object), 'D:\\workspace\\app-two');
+  });
+
+  it('multi-root launch binds the attested Func through PATH after the REAL non-managed ensureBinaries branch overwrites a profile pin', async () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'multi-root-activation-unit-'));
+    const configured = new Map<string, unknown>();
+    let configurationSpy: ReturnType<typeof vi.spyOn> | undefined;
+    try {
+      fs.mkdirSync(path.join(root, 'FuncCoreTools'));
+      const executable = path.join(root, 'FuncCoreTools', process.platform === 'win32' ? 'func.exe' : 'func');
+      fs.writeFileSync(executable, 'unit-owned-nonexecutable-fixture-never-run');
+      const request = bootstrapRequest({
+        LA_E2E_CLI_MULTI_ROOT_BOOTSTRAP_ATTESTATION: path.join(root, 'attestation.json'),
+        LA_E2E_CLI_MULTI_ROOT_BOOTSTRAP_CONTEXT: JSON.stringify({
+          suiteId: 'workspaceMultiRoot',
+          invocation: 'activation-unit',
+          runtimeRoot: fs.realpathSync(root),
+          startedUtc: new Date(Date.now() - 1000).toISOString(),
+          identity: { source: 'unit', run: 'unit', job: 'unit', platform: process.platform },
+        }),
+      });
+      if (!request) {
+        throw new Error('Unit bootstrap request missing');
+      }
+      writeBootstrapAttestation(
+        request,
+        snapshotBootstrapBinary(request.context, executable),
+        ['configured launcher fixture=4.1.2', 'in-proc8 fixture=4.1.2'],
+        'unit-Code'
+      );
+      const admitted = readBootstrapAttestation(request.file, request.context, {
+        phaseId: 'runtimeDependencyBootstrap:bootstrap',
+        complete: true,
+        exitCode: 0,
+        signal: null,
+        cleanupVerified: true,
+      });
+      const launch = multiRootRegularLaunch(admitted, process.env, path.join(root, 'profile'));
+      for (const [key, value] of Object.entries(launch.settings)) {
+        configured.set(key.replace(/^azureLogicAppsStandard\./, ''), value);
+      }
+      // Deliberately reproduce the rejected pin-only configuration. The real
+      // main.activate -> ensureBinaries implementation must overwrite this.
+      configured.set('funcCoreToolsBinaryPath', executable);
+      configurationSpy = vi.spyOn(vscode.workspace, 'getConfiguration').mockReturnValue({
+        inspect: <T>(key: string) => ({ globalValue: configured.get(key) as T }),
+      } as unknown as vscode.WorkspaceConfiguration);
+      const actualSettings = await vi.importActual<typeof import('../app/utils/vsCodeConfig/settings')>(
+        '../app/utils/vsCodeConfig/settings'
+      );
+      vi.mocked(shouldValidateAndInstallRuntimeDependencies).mockImplementation(actualSettings.shouldValidateAndInstallRuntimeDependencies);
+      vi.mocked(getGlobalSetting).mockImplementation(actualSettings.getGlobalSetting);
+      vi.mocked(updateGlobalSetting).mockImplementation(async (key, value) => {
+        configured.set(key, value);
+      });
+      expect(await binaries.useBinariesDependencies()).toBe(false);
+
+      await activate(createExtensionContext());
+      await Promise.all(backgroundOperations);
+      expect(updateGlobalSetting).toHaveBeenCalledWith('funcCoreToolsBinaryPath', 'func');
+      expect(configured.get('funcCoreToolsBinaryPath')).toBe('func');
+      expect(validateAndInstallBinaries).not.toHaveBeenCalled();
+      const actualVersion = await vi.importActual<typeof import('../app/utils/funcCoreTools/funcVersion')>(
+        '../app/utils/funcCoreTools/funcVersion'
+      );
+      const actualCommand = actualVersion.getFunctionsCommand();
+      expect(actualCommand).toBe('func');
+      const observed = observeFuncRuntime(actualCommand, false, admitted.runtimeRoot, launch.env);
+      assertFuncRuntimeResolution(observed, admitted);
+      // Same actual rewritten command, but no controlled PATH: the old pin
+      // cannot establish identity and must fail instead of passing this control.
+      const unbound = { ...launch.env, [process.platform === 'win32' ? 'Path' : 'PATH']: root };
+      expect(() => observeFuncRuntime(actualCommand, false, admitted.runtimeRoot, unbound)).toThrow(/PATH does not lead/);
+    } finally {
+      configurationSpy?.mockRestore();
+      vi.mocked(getGlobalSetting).mockReset();
+      vi.mocked(shouldValidateAndInstallRuntimeDependencies).mockReset();
+      vi.mocked(updateGlobalSetting).mockReset();
+      fs.rmSync(root, { recursive: true, force: true });
+    }
   });
 });

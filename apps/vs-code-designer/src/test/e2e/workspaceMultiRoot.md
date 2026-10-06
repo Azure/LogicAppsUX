@@ -143,6 +143,26 @@ physical root, actual Code version and successful native probe outputs. A
 missing/stale record, failed bootstrap phase, outside-root/link path, denied
 read, changed file during probes or later replacement fails closed.
 
+Regular activation intentionally uses the real non-managed `ensureBinaries`
+branch (`autoRuntimeDependenciesValidationAndInstallation=false`), which
+overwrites the Func setting with plain `func`. The profile therefore does **not**
+claim that pinning an absolute path survives activation. Instead the route
+prepends the successful-bootstrap-attested executable directory to the regular
+Code process's inherited PATH, removes empty/relative entries and duplicate
+PATH keys, and keeps the job-owned dependency root for existing assets.
+Windows also gets `NoDefaultCurrentDirectoryInExePath=1` and
+`PATHEXT=.EXE;.CMD;.BAT;.COM`, with ambiguous same-name wrappers rejected.
+These are route-derived launch values, not additional caller admission env.
+
+The recorder awaits actual Logic Apps activation, reads actual global settings
+after `ensureBinaries`, observes command/PATH resolution without executing Func
+or installing anything, and records its physical path/SHA. After real Reload
+Window the driver requires that fresh extension-host observation to match the
+bootstrap attestation, then still verifies the complete running Func executable
+population and exact identities. Wrong command, PATH, binary bytes, runtime
+root, missing observation or observer error fails; no extra bootstrap/phase,
+download, cache migration or process cleanup is added by this fix.
+
 The admitted producer payload includes `dist/` and `out/`; it must be rebuilt
 from this source revision so both the compiled bootstrap test and
 `out/test/e2e/workspaceMultiRootBootstrap.js` contain the attestation hook.

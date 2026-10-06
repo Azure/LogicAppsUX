@@ -115,6 +115,10 @@ function assertEvidence(observation, funcExecutable, funcSha256) {
     'Real fresh-host reload evidence is required'
   );
   assert.equal(observation.population?.complete, true);
+  assert.equal(observation.runtimeResolution?.command, 'func', 'Actual post-reload ensureBinaries command was not observed');
+  assert.equal(observation.runtimeResolution?.managedValidation, false);
+  assert.equal(observation.runtimeResolution?.executable, funcExecutable, 'Post-reload activation resolved the wrong Func');
+  assert.equal(observation.runtimeResolution?.sha256, funcSha256, 'Post-reload activation resolved different Func bytes');
   assert.ok(
     observation.population.stability?.samples >= 3 && observation.population.stability?.durationMs >= 1500,
     'Native population stability evidence is required'
@@ -170,6 +174,7 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, 
   assert.equal(typeof writeSuitePhaseResult, 'function', 'Official suite phase reporter is required');
   const ui = require('../out/test/e2e/workspaceMultiRoot.test');
   const { readBootstrapAttestation } = require('../out/test/e2e/workspaceMultiRootBootstrap');
+  const { multiRootRegularLaunch } = require('../out/test/e2e/workspaceMultiRootLaunch');
   const { closeWorkspacePromptCancelWindow } = require('../out/test/e2e/workspacePromptCancel');
   const recorder = path.join(__dirname, 'fixtures/workspace-multi-root-recorder');
   for (const file of ['package.json', 'extension.js']) {
@@ -273,21 +278,8 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, 
       assert.ok(Buffer.byteLength(path.join(profile, 'main.sock')) < 100, 'Native profile socket path exceeds byte budget');
     }
     fs.mkdirSync(path.join(profile, 'User'));
-    fs.writeFileSync(
-      path.join(profile, 'User/settings.json'),
-      JSON.stringify({
-        'azureLogicAppsStandard.autoStartDesignTime': true,
-        'azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation': false,
-        'azureLogicAppsStandard.autoRuntimeDependenciesPath': env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT,
-        'azureLogicAppsStandard.funcCoreToolsBinaryPath': funcExecutable,
-        'azureLogicAppsStandard.parameterizeConnectionsInProjectLoad': false,
-        'azureLogicAppsStandard.silentAuth': true,
-        'azureLogicAppsStandard.autoStartAzurite': true,
-        'azurite.location': path.join(profile, 'azurite'),
-        'telemetry.telemetryLevel': 'off',
-        'update.mode': 'none',
-      })
-    );
+    const regularLaunch = multiRootRegularLaunch(bootstrap, env, profile);
+    fs.writeFileSync(path.join(profile, 'User/settings.json'), JSON.stringify(regularLaunch.settings));
     process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT = env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT || '9527';
     process.env.LA_E2E_CLI_SCREENSHOT_DIR = path.join(diagnosticRoot, 'screenshots');
     const args = [
@@ -312,7 +304,7 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, 
     fs.writeFileSync(path.join(diagnosticRoot, 'code.log'), '', { flag: 'wx' });
     child = spawn(launch.executable, args, {
       env: {
-        ...env,
+        ...regularLaunch.env,
         LA_E2E_CLI_MULTI_ROOT_EVENTS: eventsFile,
         LA_E2E_CLI_MINIMAL_ACTIVATION: '0',
         LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '0',
@@ -338,7 +330,7 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, 
       });
     }
     result.observation = await Promise.race([
-      ui.runWorkspaceMultiRootUi({ workspace: entry, eventsFile, funcExecutable, funcSha256, deadline: Date.now() + 1200000 }),
+      ui.runWorkspaceMultiRootUi({ workspace: entry, eventsFile, bootstrap, funcExecutable, funcSha256, deadline: Date.now() + 1200000 }),
       completion.then(() => {
         throw new Error('Original Code closed before multi-root observation completed');
       }),

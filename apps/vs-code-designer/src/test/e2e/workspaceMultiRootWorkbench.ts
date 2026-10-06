@@ -4,6 +4,7 @@ import * as path from 'node:path';
 import { connectToVsCodeCdpByText, type CdpConnection } from './cdpClient';
 import { clickPoint, type CdpEvaluator, type Point, pressKey } from './cdpFormHelpers';
 import { remainingBudget } from './workspaceMultiRootCollector';
+import type { FuncRuntimeResolution } from './workspaceMultiRootLaunch';
 
 export function boundedCdp(cdp: Pick<CdpConnection, 'evaluate' | 'send'>, deadline: number): CdpEvaluator {
   return {
@@ -235,13 +236,15 @@ export function readLogicAppRoots(workspaceFile: string, expected: string[]): st
 }
 
 export interface DebugEvent {
-  kind: 'activation' | 'started' | 'terminated';
+  kind: 'activation' | 'runtimeResolution' | 'started' | 'terminated';
   boot: string;
   roots?: string[];
   id?: string;
   name?: string;
   folder?: string;
   type?: string;
+  resolution?: FuncRuntimeResolution;
+  error?: string;
 }
 
 export function debugEvents(file: string): DebugEvent[] {
@@ -260,6 +263,10 @@ export function assertSequentialDebug(events: DebugEvent[], expectedRoots: strin
   let debugBoot: string | undefined;
   const completed: string[] = [];
   for (const event of events) {
+    if (event.kind === 'runtimeResolution') {
+      assert.ok(event.resolution && !event.error, 'Actual runtime resolution observation failed');
+      continue;
+    }
     if (event.kind === 'activation') {
       assert.equal(active.size, 0, 'Extension-host replacement during debugging invalidates the observation');
       if (debugBoot) {
