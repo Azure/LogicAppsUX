@@ -5,7 +5,10 @@ import * as path from 'path';
 import * as vm from 'vm';
 import type { CdpConnection } from './cdpClient';
 import { HttpTimeoutComposeDriver } from './httpTimeoutComposeDriver';
-import { testInstalledHttpTimeoutConfigurationSnapshot } from './httpTimeoutComposeConfiguration.unit';
+import {
+  discoverHttpTimeoutConfigurationBundle,
+  testInstalledHttpTimeoutConfigurationSnapshot,
+} from './httpTimeoutComposeConfiguration.unit';
 import {
   assertHttpTimeoutComposePersisted,
   httpTimeoutComposeDesignerViewType,
@@ -301,11 +304,24 @@ async function editorDomFixture(text: string, options: { readOnly?: boolean; del
 }
 
 export async function runHttpTimeoutComposeDomControls(control: Control, authored: HttpTimeoutComposeWorkflow): Promise<void> {
-  await control(
-    'installed VS Code configuration snapshot requires reacquisition after update',
-    testInstalledHttpTimeoutConfigurationSnapshot
-  );
+  const installedProbe = await testInstalledHttpTimeoutConfigurationSnapshot();
+  if (installedProbe === 'executed') {
+    await control('executed installed VS Code configuration snapshot probe', () => {});
+  }
   await control('family explicitly selects V2 and the actual production command routes to V2', async () => {
+    // A cold Linux producer has declared workspace dependencies but no Code.
+    // Discovery must not enumerate/download missing installations or claim a pass.
+    const missingFileSystem = {
+      exists: () => false,
+      list: () => {
+        throw new Error('Cold producer must not enumerate nonexistent installations');
+      },
+    };
+    assert.strictEqual(
+      discoverHttpTimeoutConfigurationBundle(['/usr/share/code', '/usr/share/code-insiders'], undefined, missingFileSystem),
+      undefined
+    );
+    assert.throws(() => discoverHttpTimeoutConfigurationBundle([], '/explicit/missing/bundle.js', missingFileSystem), /Explicit installed/);
     let version = 1;
     let scope = -1;
     const getConfiguration = () => {

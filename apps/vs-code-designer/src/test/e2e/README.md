@@ -51,6 +51,15 @@ keybinding and content-change extensions, run the driver against its rendered
 lines/gutters/caret, and render the actual Fluent V2 Save `ToolbarButton`.
 Only jsdom's missing browser layout/input platform is supplied; editor-model
 replacement and preassembled driver page replies are not used.
+The immutable configuration-snapshot regression is mandatory and self-contained.
+An additional installed-code probe is optional: it reads an explicit
+`LA_E2E_CLI_VSCODE_CONFIGURATION_BUNDLE`, or an existing system Code installation
+under LocalAppData, `/usr/share/code`, `/usr/share/code-insiders`, or the macOS app.
+It does not search `.vscode-test`, download Code, or start a Code process.
+No installation on a cold producer reports **NOT EXECUTED** and contributes no
+passing-control count; an explicit missing bundle or a found incompatible provider
+fails rather than substituting a model. Native V2 configuration readback is always
+required independently of this optional probe.
 Canonical baseline labels/counts and rollup are unchanged. This supplementary label is runnable,
 not automatically admitted to an Azure DevOps baseline or credited from units.
 The explicit batch selector is `node scripts/run-e2e-cli.js --suites httpTimeoutComposeOriginal`;
