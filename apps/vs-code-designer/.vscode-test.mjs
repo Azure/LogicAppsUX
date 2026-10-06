@@ -31,6 +31,8 @@ const includeMsnWeatherLifecycle =
 const includeRuntimeDependencyBootstrap =
   process.env.LA_E2E_CLI_INCLUDE_RUNTIME_DEPENDENCY_BOOTSTRAP === '1' || process.argv.includes('runtimeDependencyBootstrap');
 const includeAzureAuthWarmup = process.env.LA_E2E_CLI_INCLUDE_AZURE_AUTH_WARMUP === '1' || process.argv.includes('azureAuthWarmup');
+const includeHttpTimeoutComposeOriginal =
+  process.env.LA_E2E_CLI_INCLUDE_HTTP_TIMEOUT_COMPOSE_ORIGINAL === '1' || process.argv.includes('httpTimeoutComposeOriginal');
 const vscodeVersion = process.env.LA_E2E_CLI_VSCODE_VERSION || 'stable';
 const dependencyRoot =
   process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT ??
@@ -126,6 +128,15 @@ if (includeWorkspaceLifecycle) {
   });
 }
 
+if (includeHttpTimeoutComposeOriginal) {
+  configs.push({
+    label: 'httpTimeoutComposeOriginal',
+    ...baseConfig,
+    files: ['out/test/e2e/httpTimeoutComposeOriginal.test.js'],
+    mocha: { ui: 'tdd', timeout: 600000 },
+  });
+}
+
 if (includeNugetConversionLifecycle) {
   configs.push({
     label: 'nugetConversionLifecycle',
@@ -215,6 +226,9 @@ function getForwardedTestEnvironment() {
     'LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL',
     'LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT',
     'LA_E2E_CLI_CREATE_WORKSPACE_FIXTURE_MANIFEST',
+    'LA_E2E_CLI_CREATE_WORKSPACE_PARENT',
+    'LA_E2E_CLI_HTTP_TIMEOUT_COMPOSE_NOT_BEFORE',
+    'LA_E2E_CLI_INCLUDE_HTTP_TIMEOUT_COMPOSE_ORIGINAL',
     'LA_E2E_CLI_CANCEL_HANDOFF_PATH',
     'LA_E2E_CLI_CANCEL_CONTEXT',
     'LA_E2E_CLI_EXTENSIONS_DIR',

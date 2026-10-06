@@ -13,6 +13,7 @@ export type ScreenshotExpectation =
       scrollPosition?: 'top' | 'middle' | 'bottom' | { target?: 'window' | 'largest-scrollable'; minY?: number; maxY?: number };
     }
   | { kind: 'designerCanvas'; label: string; requiredNodes?: Array<string | string[]>; allowLoading?: boolean }
+  | { kind: 'designerValidationError'; label: string; message: string }
   | {
       kind: 'designerPanel';
       label: string;
@@ -1406,6 +1407,15 @@ export const screenshotReadinessDomScript = `
       if (!scrollMatches(expectation.scrollPosition)) {
         reasonCodes.push('create-workspace-scroll-mismatch');
       }
+      break;
+    case 'designerValidationError':
+      const visibleValidationMessages = visibleElements(
+        '[role="alert"], [aria-live], .ms-MessageBar, [class*="error"], [class*="Error"]'
+      ).filter(element => !element.closest('.monaco-editor'));
+      ready = visibleValidationMessages.some(element =>
+        normalize(visibleText(element)).includes(normalize(expectation.message))
+      );
+      reasonCodes.push(ready ? 'designer-validation-error-visible' : 'designer-validation-error-missing');
       break;
     case 'designerCanvas':
       const concreteNodeState = concreteRequiredNodeMatches(expectation.requiredNodes || []);

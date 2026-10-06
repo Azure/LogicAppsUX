@@ -20,6 +20,37 @@ src/test/e2e/
 
 ## Running Tests
 
+### HTTP timeout on Compose: original authoring clause
+
+`pnpm --dir apps/vs-code-designer run test:e2e-cli:http-timeout-compose-original`
+uses the existing Create Workspace fixture label, filtered to Standard Stateless,
+then reopens that generated `.code-workspace` in a fresh latest-stable official
+CLI host under the supplementary `httpTimeoutComposeOriginal` label.
+It adds Request and Compose through the actual designer, saves, reads every
+numbered rendered Monaco line in the Code tab, replaces only Compose with input
+`"test"` and `runtimeConfiguration.requestOptions.timeout: "PT24H"`, saves again,
+and independently checks the persisted definition. Missing/changed virtualized
+lines fail; there is no filesystem/Monaco-model injection or fallback save.
+The exact unsupported-timeout error must then be visible on the same active
+workflow designer target, frame and document. A different message, hidden text,
+another editor, stale save or expired observation fails.
+
+The focused non-GUI controls are
+`test:e2e-cli:http-timeout-compose-original:unit` (after CLI compilation), also
+included in `test:e2e-cli:unit`. They validate the source oracle and driver
+failure behavior only; they are not native GUI coverage. Canonical baseline
+labels/counts and rollup are unchanged. This supplementary label is runnable,
+not automatically admitted to an Azure DevOps baseline or credited from units.
+Native acceptance requires the source-bound compiled producer artifact and
+actual Windows and Linux isolated consumer runs with their generated fixture,
+raw CLI results, saved-definition snapshot and accepted screenshots.
+
+Boundary: this is only the original connector-free Compose authoring/Code/save/
+unsupported-timeout clause. HTTP timeout execution against the original service,
+HTTP PT24H terminal validation, Portal-specific errors/invalid durations and
+Consumption-only rejection remain uncovered. No original endpoint is used,
+published or replaced with a generic delayed local service.
+
 ### Workspace prompt Cancel (Windows and Linux)
 
 After building the extension/webviews and compiling the tests with the commands below,

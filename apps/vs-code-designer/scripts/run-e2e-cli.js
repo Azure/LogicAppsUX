@@ -84,6 +84,16 @@ if (require.main === module) {
 }
 
 function main() {
+  if (process.argv.includes('--http-timeout-compose-original')) {
+    if (process.argv.length !== 3) {
+      exitWithError(new Error('--http-timeout-compose-original is a focused create + reopen route; do not combine it with other flags.'));
+      return;
+    }
+    runHttpTimeoutComposeOriginal()
+      .then((code) => process.exit(code))
+      .catch(exitWithError);
+    return;
+  }
   if (process.argv.includes('--workspace-prompt-cancel')) {
     if (process.argv.length !== 3) {
       exitWithError(new Error('--workspace-prompt-cancel is a focused setup + regular UI route; do not combine it with other flags.'));
@@ -631,6 +641,58 @@ async function runWorkspaceLifecycle(visibleDelayMs) {
   }
 
   await cleanupOwnedWorkspaceParent(workspaceParent, 'workspace lifecycle');
+}
+
+async function runHttpTimeoutComposeOriginal({
+  run = runVscodeTest,
+  createParent = createOwnedWorkspaceParent,
+  cleanup = cleanupOwnedWorkspaceParent,
+  artifactDir = getLifecycleArtifactDir('http-timeout-compose-original'),
+} = {}) {
+  const { selectHttpTimeoutComposeWorkspace } = require('../out/test/e2e/httpTimeoutComposeOracle');
+  fs.mkdirSync(artifactDir, { recursive: true });
+  const workspaceParent = createParent('http-timeout-compose-original');
+  const notBefore = Date.now();
+  const manifestPath = path.join(artifactDir, `manifest-stateless-${notBefore}.json`);
+  const commonEnv = {
+    LA_E2E_CLI_CREATE_WORKSPACE_PARENT: workspaceParent,
+    LA_E2E_CLI_CREATE_WORKSPACE_FIXTURE_MANIFEST: manifestPath,
+    LA_E2E_CLI_HTTP_TIMEOUT_COMPOSE_NOT_BEFORE: String(notBefore),
+  };
+  // Existing wizard fixture producer, one Standard Stateless case only.
+  // The official CLI process must close successfully before the fresh reopen.
+  const createExit = await run(['--label', 'createWorkspaceFixturesManifest'], {
+    extraEnv: {
+      ...commonEnv,
+      LA_E2E_CLI_CREATE_WORKSPACE_CASE: 'standard-stateless',
+      LA_E2E_CLI_USER_DATA_SUFFIX: `http-timeout-compose-create-${notBefore}`,
+    },
+  });
+  if (createExit !== 0) {
+    throw new Error('HTTP timeout Compose fixture host failed');
+  }
+  const entry = selectHttpTimeoutComposeWorkspace(JSON.parse(fs.readFileSync(manifestPath, 'utf8')), workspaceParent, notBefore);
+  for (const requiredPath of [entry.wsFilePath, path.join(entry.wfDir, 'workflow.json')]) {
+    if (!fs.existsSync(requiredPath)) {
+      throw new Error(`HTTP timeout Compose generated fixture is missing: ${requiredPath}`);
+    }
+  }
+  const runExit = await run(['--label', 'httpTimeoutComposeOriginal'], {
+    extraEnv: {
+      ...commonEnv,
+      LA_E2E_CLI_INCLUDE_HTTP_TIMEOUT_COMPOSE_ORIGINAL: '1',
+      LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
+      LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '1',
+      LA_E2E_CLI_USER_DATA_SUFFIX: `http-timeout-compose-run-${notBefore}`,
+      LA_E2E_CLI_STARTUP_RESOURCE: entry.wsFilePath,
+    },
+  });
+  if (runExit !== 0) {
+    throw new Error('HTTP timeout Compose observation host failed');
+  }
+  // Retain failed fixture/diagnostics. Cleanup failure cannot become success.
+  await cleanup(workspaceParent, 'HTTP timeout Compose original', true);
+  return 0;
 }
 
 async function runNugetConversionLifecycle(visibleDelayMs) {
@@ -2465,6 +2527,7 @@ module.exports = {
     createIsolatedRuntimeDependenciesRoot,
     findAzureLogicAppsChannelLogs,
     getCodefulDebugTasksRunExtraEnv,
+    runHttpTimeoutComposeOriginal,
     getMsnWeatherAzureTargetEnv,
     getMsnWeatherAzureAuthEnv,
     hasHeadlessMsnWeatherAzureAuth,
