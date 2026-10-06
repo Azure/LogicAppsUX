@@ -13,6 +13,19 @@ export const httpTimeoutComposeAction = {
 export const httpTimeoutComposeError =
   "The request options timeout parameter is not supported for action 'Compose' of type 'Compose'. Actions of type 'HTTP' are supported.";
 
+export const httpTimeoutComposeDesignerViewType = 'designerLocalV2';
+
+export async function selectHttpTimeoutComposeDesignerV2(
+  configuration: {
+    update(section: string, value: number, target: number): PromiseLike<void>;
+    get<T>(section: string): T | undefined;
+  },
+  workspaceTarget: number
+): Promise<void> {
+  await configuration.update('designerVersion', 2, workspaceTarget);
+  assert.strictEqual(configuration.get<number>('designerVersion'), 2, 'Family requires the V2 global Code/Workflow views');
+}
+
 export interface HttpTimeoutComposeWorkflow {
   kind: string;
   definition: {
@@ -144,7 +157,7 @@ export function assembleHttpTimeoutComposeCode(pages: HttpTimeoutComposeRendered
   }
   const text = Array.from({ length: endLine }, (_, index) => {
     const number = index + 1;
-    assert.ok(lines.has(number), `Incomplete Monaco virtualization: missing line ${number}`);
+    assert.ok(lines.has(number), `Incomplete Code editor virtualization: missing line ${number}`);
     return lines.get(number);
   }).join('\n');
   JSON.parse(text); // Truncation/invalid JSON must fail, even if the fragment contains Compose.
