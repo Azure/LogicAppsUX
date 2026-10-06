@@ -985,9 +985,19 @@ function testCanonicalSuiteParityContract() {
 
 function testSupplementaryFamilyRoutingContract() {
   const consumer = parseYaml('.config/vscode-e2e-cli.1es.yml');
-  const staging = parseYaml('.config/templates/vscode-e2e-cli-run-suite.yml').jobs[0].steps.find(
-    (step) => step.displayName === 'Stage vscode-test CLI results (${{ parameters.suiteId }})'
-  );
+  const suiteSteps = parseYaml('.config/templates/vscode-e2e-cli-run-suite.yml').jobs[0].steps;
+  const nativeBranches = suiteSteps.filter((step) => Object.keys(step).some((key) => key.includes('parameters.requiresAzureAccessToken')));
+  assert.strictEqual(nativeBranches.length, 4, 'Both OS and authentication paths must retain diagnostic-only multi-root execution');
+  for (const branch of nativeBranches) {
+    const nativeStep = Object.values(branch)
+      .flat()
+      .find((step) => step.displayName === 'Run vscode-test CLI (${{ parameters.suiteId }})');
+    assert.ok(nativeStep, 'Missing native execution step');
+    const multiRootEnvironment = nativeStep.env["${{ if eq(parameters.suiteId, 'workspaceMultiRoot') }}"];
+    assert.strictEqual(multiRootEnvironment?.LA_E2E_CLI_MULTI_ROOT_ISOLATED, '1');
+    assert.strictEqual(multiRootEnvironment?.LA_E2E_CLI_MULTI_ROOT_DIAGNOSTIC_ONLY, '1');
+  }
+  const staging = suiteSteps.find((step) => step.displayName === 'Stage vscode-test CLI results (${{ parameters.suiteId }})');
   assert.ok(
     staging?.pwsh?.includes('scripts/family-lifecycle-terminal.js'),
     'Supplementary staging must validate actual finalized evidence'

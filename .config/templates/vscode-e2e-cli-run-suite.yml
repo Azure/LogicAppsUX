@@ -332,6 +332,7 @@ jobs:
               LA_E2E_CLI_DIRECT_ARGS: ${{ parameters.cliArguments }}
               ${{ if eq(parameters.suiteId, 'workspaceMultiRoot') }}:
                 LA_E2E_CLI_MULTI_ROOT_ISOLATED: '1'
+                LA_E2E_CLI_MULTI_ROOT_DIAGNOSTIC_ONLY: '1'
                 LA_E2E_CLI_MULTI_ROOT_DIAGNOSTICS_PARENT: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/lifecycle/workspaceMultiRoot
               LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL: ${{ eq(parameters.suiteId, 'createWorkspaceCoreMatrix') }}
               LA_E2E_CLI_EXTENSIONS_DIR: $(Agent.TempDirectory)/test-resources/test-extensions
@@ -425,6 +426,7 @@ jobs:
               LA_E2E_CLI_DIRECT_ARGS: ${{ parameters.cliArguments }}
               ${{ if eq(parameters.suiteId, 'workspaceMultiRoot') }}:
                 LA_E2E_CLI_MULTI_ROOT_ISOLATED: '1'
+                LA_E2E_CLI_MULTI_ROOT_DIAGNOSTIC_ONLY: '1'
                 LA_E2E_CLI_MULTI_ROOT_DIAGNOSTICS_PARENT: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/lifecycle/workspaceMultiRoot
               LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL: ${{ eq(parameters.suiteId, 'createWorkspaceCoreMatrix') }}
               LA_E2E_CLI_EXTENSIONS_DIR: $(Agent.TempDirectory)/test-resources/test-extensions
@@ -472,6 +474,7 @@ jobs:
               LA_E2E_CLI_DIRECT_ARGS: ${{ parameters.cliArguments }}
               ${{ if eq(parameters.suiteId, 'workspaceMultiRoot') }}:
                 LA_E2E_CLI_MULTI_ROOT_ISOLATED: '1'
+                LA_E2E_CLI_MULTI_ROOT_DIAGNOSTIC_ONLY: '1'
                 LA_E2E_CLI_MULTI_ROOT_DIAGNOSTICS_PARENT: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\lifecycle\workspaceMultiRoot
               LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL: ${{ eq(parameters.suiteId, 'createWorkspaceCoreMatrix') }}
               LA_E2E_CLI_EXTENSIONS_DIR: $(Agent.TempDirectory)\test-resources\test-extensions
@@ -558,6 +561,7 @@ jobs:
               LA_E2E_CLI_DIRECT_ARGS: ${{ parameters.cliArguments }}
               ${{ if eq(parameters.suiteId, 'workspaceMultiRoot') }}:
                 LA_E2E_CLI_MULTI_ROOT_ISOLATED: '1'
+                LA_E2E_CLI_MULTI_ROOT_DIAGNOSTIC_ONLY: '1'
                 LA_E2E_CLI_MULTI_ROOT_DIAGNOSTICS_PARENT: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\lifecycle\workspaceMultiRoot
               LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL: ${{ eq(parameters.suiteId, 'createWorkspaceCoreMatrix') }}
               LA_E2E_CLI_EXTENSIONS_DIR: $(Agent.TempDirectory)\test-resources\test-extensions

@@ -458,6 +458,8 @@ async function runDirectRegisteredSuite(
       exitCode: null,
       signal: null,
       cleanupVerified: false,
+      originalProcessClosureVerified: false,
+      processClosureProof: 'original-identities-unverified',
       diagnosticsError: 'direct-invocation-not-finalized',
       phaseCompleteness: false,
       expectedPhaseIds: context.expectedPhaseIds,
@@ -501,6 +503,8 @@ async function runDirectRegisteredSuite(
     terminal.complete === true &&
     terminal.lifecycleFinalized === true &&
     terminal.exitCode === 0 &&
+    terminal.originalProcessClosureVerified === true &&
+    terminal.processClosureProof === 'retained-original-identities' &&
     terminal.signal === null &&
     terminal.cleanupVerified === true &&
     terminal.diagnosticsError === '' &&
@@ -636,6 +640,10 @@ function readJsonIfExists(filePath) {
 }
 
 function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, processCleanup, phaseResults: suppliedPhases }) {
+  const retainedCaseCleanupBlocked = suite.id === 'workspaceMultiRoot';
+  const retainedCaseCleanupError = retainedCaseCleanupBlocked ? require('./workspace-multi-root').nativeCleanupBlocker : '';
+  const originalProcessClosureVerified = !retainedCaseCleanupBlocked && processCleanup.retainedOriginalIdentitiesVerified === true;
+  const processClosureProof = originalProcessClosureVerified ? 'retained-original-identities' : 'original-identities-unverified';
   const readJournal = () => {
     if (suppliedPhases) {
       return { phases: suppliedPhases, error: '' };
@@ -696,6 +704,7 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
   const terminalComplete =
     phaseCompleteness &&
     phaseCleanupVerified &&
+    !retainedCaseCleanupBlocked &&
     processCleanup.verified === true &&
     !error &&
     !journal.error &&
@@ -707,6 +716,8 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
   const finalizedPhaseResults = terminalComplete ? phaseResults : phaseResults.map(clearOgfScenarios);
   const ogfScenarios = terminalComplete ? collectOgfScenarios(finalizedPhaseResults) : [];
   const cleanupLedger = {
+    originalProcessClosureVerified,
+    processClosureProof,
     schemaVersion: 1,
     generatedAt: new Date().toISOString(),
     suiteId: suite.id,
@@ -717,28 +728,36 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     duplicatePhaseIds,
     blockedPhaseIds,
     phaseCleanupVerified,
-    processTreeVerified: processCleanup.verified === true,
-    processCleanup,
+    processTreeVerified: processCleanup.verified === true && !retainedCaseCleanupBlocked,
+    processCleanup: retainedCaseCleanupBlocked
+      ? { verified: false, error: retainedCaseCleanupError, postExitAncestryObservation: processCleanup }
+      : processCleanup,
     verified:
       phaseCompleteness &&
       phaseCleanupVerified &&
       processCleanup.verified === true &&
+      !retainedCaseCleanupBlocked &&
       (!context.invocation || (context.provenanceVerified === true && context.ownedRootCleanup?.verified === true)) &&
       (!context.directFamily || directSucceeded),
     ...(context.directFamily ? { transientCleanupVerified: context.transientCleanupVerified === true } : {}),
+    ...(retainedCaseCleanupBlocked ? { retainedCaseCleanupVerified: false, retainedCaseCleanupError } : {}),
     phases: finalizedPhaseResults,
     ...(context.invocation ? { invocation: context.invocation, ownedRootCleanup: context.ownedRootCleanup } : {}),
   };
   const terminalResult = {
+    originalProcessClosureVerified,
+    processClosureProof,
     suiteId: suite.id,
-    originalProcessClosureVerified: processCleanup.retainedOriginalIdentitiesVerified === true,
-    processClosureProof:
-      processCleanup.retainedOriginalIdentitiesVerified === true ? 'retained-original-identities' : 'original-identities-unverified',
     ...(context.directFamily ? { label: suite.id, phaseJournalPath: context.phaseResultsPath } : {}),
     exitCode: context.directFamily && !terminalComplete ? 1 : exitCode,
     signal,
     cleanupVerified: cleanupLedger.verified,
-    diagnosticsError: [error instanceof Error ? error.message : String(error || ''), journal.error, ...phaseDiagnosticsErrors]
+    diagnosticsError: [
+      error instanceof Error ? error.message : String(error || ''),
+      journal.error,
+      ...phaseDiagnosticsErrors,
+      retainedCaseCleanupError,
+    ]
       .filter(Boolean)
       .join('\n'),
     expectedPhaseIds,

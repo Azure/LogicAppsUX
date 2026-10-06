@@ -1,5 +1,34 @@
 # Multi-root workspace supplementary native family
 
+> **BLOCKED — native finalization gate.** Post-exit ancestry reconstruction
+> cannot prove that reparented former children exited. The family currently
+> lacks a live retained native-identity set covering its actual Code/Func/task/
+> Azurite ownership. The direct and batch terminals are forced incomplete with
+> unverified cleanup. An isolated parent-owned diagnostic execution is allowed
+> only with both `LA_E2E_CLI_MULTI_ROOT_ISOLATED=1` and
+> `LA_E2E_CLI_MULTI_ROOT_DIAGNOSTIC_ONLY=1`; it does not authorize acceptance.
+> Existing source/evidence and diagnostic fixtures/history are preserved.
+>
+> The existing owned-cleanup helper requires its owner to stay alive and scopes
+> candidates to dependency-root executables. It does not currently establish
+> this case's Code/Azurite/task identity coverage after ordinary Code closure.
+> Reusing only the Func count or the wrapper's empty post-exit ancestry list
+> would relabel unknown ownership as success. No V1–V22 framework, provider,
+> broker, broad-name kill or caller proof is introduced here. The review's
+> retained-identity comparison controls are diagnostic only and cannot authorize
+> cleanup, even if every supplied identity is absent.
+
+The required direct terminal and family final result report
+`originalProcessClosureVerified=false` and
+`processClosureProof="original-identities-unverified"`. They never derive true
+from the current verifier's post-exit empty tree, ordinary exit zero, directory
+absence or a caller model. Parent acceptance must require actual retained
+original identities and `processClosureProof="retained-original-identities"`.
+The diagnostic route retains its fixture instead of deleting it, preserves
+actual GUI observation plus phase/history failures, and remains exit-nonzero /
+incomplete while original process closure is unproven. Its exact three phase
+IDs and all existing Mocha/native-credit boundaries remain unchanged.
+
 Selector: `node scripts/run-e2e-cli.js --workspace-multi-root` from
 `apps/vs-code-designer`, or `pnpm --dir apps/vs-code-designer run
 test:e2e-cli:workspace-multi-root`. It uses the official CLI wizard setup and the

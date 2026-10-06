@@ -15,6 +15,9 @@ const {
   expectedPhases,
   exactPhasesComplete,
   assertNoCallerFuncAdmission,
+  nativeCleanupBlocker,
+  retainedIdentityExitFacts,
+  caseExecutionMode,
 } = require('./workspace-multi-root');
 const { SUITE_REGISTRY, normalizeSuiteSelection } = require('./e2e-cli-batch');
 const {
@@ -33,6 +36,58 @@ const phaseFixtures = () =>
 
 test('native family cannot run on a shared host; rejection precedes any native operation', async () => {
   await assert.rejects(runWorkspaceMultiRoot({}, {}), /isolated native consumer/);
+});
+test('isolated flag alone cannot authorize the unresolved retained native cleanup gate', async () => {
+  await assert.rejects(runWorkspaceMultiRoot({}, { LA_E2E_CLI_MULTI_ROOT_ISOLATED: '1' }), /native finalization blocked/);
+});
+test('explicit isolated diagnostic execution never authorizes native-clean acceptance', () => {
+  assert.deepEqual(
+    caseExecutionMode({
+      LA_E2E_CLI_MULTI_ROOT_ISOLATED: '1',
+      LA_E2E_CLI_MULTI_ROOT_DIAGNOSTIC_ONLY: '1',
+    }),
+    { diagnosticOnly: true, acceptanceAuthorized: false }
+  );
+  assert.throws(() => caseExecutionMode({ LA_E2E_CLI_MULTI_ROOT_DIAGNOSTIC_ONLY: '1' }), /isolated native worker/);
+  assert.throws(() => caseExecutionMode({ LA_E2E_CLI_MULTI_ROOT_ISOLATED: '1' }), /native finalization blocked/);
+  const callerModel = { ...passing(), originalProcessClosureVerified: true, processClosureProof: 'retained-original-identities' };
+  const final = finalizeResult(callerModel);
+  assert.equal(final.originalProcessClosureVerified, false);
+  assert.equal(final.processClosureProof, 'original-identities-unverified');
+  assert.equal(final.complete, false);
+});
+
+test('review repro: exited root and live retained former child reparented to PID1 cannot prove cleanup', () => {
+  const exe = path.resolve('unit-owned-func');
+  const retained = [
+    { pid: 10, parentPid: 2, creationIdentity: 'root-birth', executable: path.resolve('unit-owned-Code') },
+    { pid: 20, parentPid: 10, creationIdentity: 'child-birth', executable: exe },
+  ];
+  const after = [{ ...retained[1], parentPid: 1 }];
+  const verdict = retainedIdentityExitFacts(retained, after);
+  assert.equal(verdict.cleanupVerified, false);
+  assert.equal(verdict.reason, 'retained-native-identity-still-alive');
+});
+
+test('exited intermediate parent, reused PID, missing birth and inaccessible native identity are not verified', () => {
+  const retained = [
+    { pid: 10, parentPid: 2, creationIdentity: 'root', executable: path.resolve('unit-Code') },
+    { pid: 20, parentPid: 10, creationIdentity: 'middle', executable: path.resolve('unit-shell') },
+    { pid: 30, parentPid: 20, creationIdentity: 'child', executable: path.resolve('unit-Azurite-node') },
+  ];
+  for (const after of [
+    [{ ...retained[2], parentPid: 1 }],
+    [{ ...retained[2], parentPid: 1, creationIdentity: 'reused' }],
+    [{ ...retained[2], creationIdentity: '' }],
+    [{ ...retained[2], executable: '' }],
+    undefined,
+  ]) {
+    assert.equal(retainedIdentityExitFacts(retained, after).cleanupVerified, false);
+  }
+  assert.equal(retainedIdentityExitFacts([{ ...retained[2], creationIdentity: '' }], []).cleanupVerified, false);
+  const absent = retainedIdentityExitFacts(retained, []);
+  assert.equal(absent.retainedSetAbsent, true);
+  assert.equal(absent.cleanupVerified, false, 'Known-set absence cannot establish unobserved case ownership coverage');
 });
 test('caller-supplied Func path/hash cannot act as native bootstrap admission', () => {
   assertNoCallerFuncAdmission({});
@@ -66,8 +121,9 @@ const passing = () => ({
   errors: [],
   phaseResults: phaseFixtures(),
 });
-test('final result only passes after observation, evidence, ordinary native close, diagnostics and cleanup', () => {
-  assert.equal(finalizeResult(passing()).complete, true);
+test('final result stays blocked even with observation/phase/ordinary-close booleans until live retained ownership coverage exists', () => {
+  assert.equal(finalizeResult(passing()).complete, false);
+  assert.equal(finalizeResult(passing()).retainedCaseCleanupVerified, false);
   for (const field of ['observationPassed', 'evidenceVerified', 'diagnosticsVerified', 'cleanupVerified']) {
     assert.equal(finalizeResult({ ...passing(), [field]: false }).complete, false);
   }
@@ -185,7 +241,11 @@ test('batch terminal reports the exact family lifecycle and cannot credit blocke
     };
     const good = finalize(phaseFixtures(), 0);
     assert.equal(good.suiteId, suiteId);
-    assert.equal(good.complete, true);
+    assert.equal(good.complete, false);
+    assert.equal(good.cleanupVerified, false);
+    assert.equal(good.originalProcessClosureVerified, false);
+    assert.equal(good.processClosureProof, 'original-identities-unverified');
+    assert.ok(good.diagnosticsError.includes(nativeCleanupBlocker));
     assert.equal(good.lifecycleFinalized, true);
     assert.deepEqual(
       good.phaseResults.map((phase) => phase.phaseId),
@@ -239,14 +299,21 @@ test('direct supplementary route invalidates stale terminal and uses exact regis
         return { exitCode: 0, signal: null };
       },
     });
-    assert.equal(code, 0);
+    assert.equal(code, 1, 'Even existing general ancestry success cannot bypass the retained case cleanup block');
     const terminal = JSON.parse(fs.readFileSync(terminalPath, 'utf8'));
     assert.equal(terminal.suiteId, 'workspaceMultiRoot');
     assert.equal(terminal.lifecycleFinalized, true);
-    assert.equal(terminal.complete, true);
+    assert.equal(terminal.complete, false);
+    assert.equal(terminal.cleanupVerified, false);
+    assert.equal(terminal.originalProcessClosureVerified, false);
+    assert.equal(terminal.processClosureProof, 'original-identities-unverified');
+    const cleanup = JSON.parse(fs.readFileSync(path.join(reportRoot, 'workspaceMultiRoot.cleanup-ledger.json'), 'utf8'));
+    assert.equal(cleanup.verified, false);
+    assert.equal(cleanup.processTreeVerified, false);
+    assert.equal(cleanup.processCleanup.verified, false);
     assert.deepEqual(terminal.expectedPhaseIds, terminal.observedPhaseIds);
     const provenance = JSON.parse(fs.readFileSync(path.join(reportRoot, 'workspaceMultiRoot.terminal-invocation.json'), 'utf8'));
-    assert.equal(provenance.accepted, true);
+    assert.equal(provenance.accepted, false);
     assert.deepEqual(provenance.identity, { source: 'unit-source', run: 'unit-run', job: 'unit-job' });
     assert.ok(provenance.invocation && provenance.phaseResultsPath.includes(provenance.invocation));
   } finally {
