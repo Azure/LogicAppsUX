@@ -985,6 +985,17 @@ function testCanonicalSuiteParityContract() {
 
 function testSupplementaryFamilyRoutingContract() {
   const consumer = parseYaml('.config/vscode-e2e-cli.1es.yml');
+  const staging = parseYaml('.config/templates/vscode-e2e-cli-run-suite.yml').jobs[0].steps.find(
+    (step) => step.displayName === 'Stage vscode-test CLI results (${{ parameters.suiteId }})'
+  );
+  assert.ok(
+    staging?.pwsh?.includes('scripts/family-lifecycle-terminal.js'),
+    'Supplementary staging must validate actual finalized evidence'
+  );
+  assert.match(
+    staging.pwsh,
+    /family-lifecycle-terminal\.js[\s\S]*if \(\$LASTEXITCODE -ne 0\)[\s\S]*throw 'Supplementary family native lifecycle/
+  );
   const invocations = flattenAzureList(consumer.extends.parameters.stages[0].jobs).filter((entry) => entry.template);
   const diagnostic = getConsumerDirectJob(consumer, 'report_diagnostic_selected_rerun');
   const gate = getConsumerDirectJob(consumer, 'verify_both_os_full_rollup');
@@ -994,6 +1005,7 @@ function testSupplementaryFamilyRoutingContract() {
     ['workspaceArtifactRegeneration', 'workspace_regeneration'],
   ]) {
     assert.ok(SUITE_REGISTRY[suiteId], `Supplementary family ${suiteId} must have an executable registry entry`);
+    assert.ok(staging.pwsh.includes(`'${suiteId}'`), `Supplementary ${suiteId} must be covered by the terminal publication guard`);
     for (const os of ['linux', 'windows']) {
       const jobName = `${os}_${jobSuffix}`;
       const job = invocations.find((entry) => entry.parameters.jobName === jobName)?.parameters;

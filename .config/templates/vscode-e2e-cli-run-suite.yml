@@ -677,6 +677,19 @@ jobs:
           if ($missingRequiredFiles.Count -gt 0) {
             throw "Required suite diagnostics were missing after staging available evidence: $($missingRequiredFiles -join ', ')"
           }
+          if ('${{ parameters.suiteId }}' -in @('httpTimeoutComposeOriginal', 'statelessVariablesLifecycle', 'workspaceArtifactRegeneration', 'workspaceMultiRoot')) {
+            $nativeResultPath = Join-Path $resultDestination '${{ parameters.suiteId }}.json'
+            $nativeResult = Get-Content $nativeResultPath -Raw | ConvertFrom-Json
+            if ($nativeResult.outcome -eq 'success') {
+              node "$(Build.SourcesDirectory)/apps/vs-code-designer/scripts/family-lifecycle-terminal.js" `
+                '${{ parameters.suiteId }}' `
+                "$nativeResultPath" `
+                "$resultDestination/${{ parameters.suiteId }}.terminal-result.json"
+              if ($LASTEXITCODE -ne 0) {
+                throw 'Supplementary family native lifecycle or final cleanup evidence is incomplete.'
+              }
+            }
+          }
           if ('${{ parameters.suiteId }}' -eq 'msnWeatherLifecycle') {
             $nativeResultPath = Join-Path $resultDestination '${{ parameters.suiteId }}.json'
             $nativeResult = Get-Content $nativeResultPath -Raw | ConvertFrom-Json
