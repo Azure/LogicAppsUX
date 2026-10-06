@@ -17,6 +17,7 @@ testLocalAzureToolsWrapperContractIfAvailable();
 testConsumerAdmissionContract();
 testSelectorResolutionScriptBehavior();
 testCanonicalSuiteParityContract();
+testSupplementaryFamilyRoutingContract();
 testFullRollupGateScriptRejectsNonExecutedResults();
 testAzureCliIdentityScriptBehavior();
 testPipelineSafetyGuards();
@@ -982,6 +983,44 @@ function testCanonicalSuiteParityContract() {
   );
 }
 
+function testSupplementaryFamilyRoutingContract() {
+  const consumer = parseYaml('.config/vscode-e2e-cli.1es.yml');
+  const invocations = flattenAzureList(consumer.extends.parameters.stages[0].jobs).filter((entry) => entry.template);
+  const diagnostic = getConsumerDirectJob(consumer, 'report_diagnostic_selected_rerun');
+  const gate = getConsumerDirectJob(consumer, 'verify_both_os_full_rollup');
+  for (const [suiteId, jobSuffix] of [
+    ['httpTimeoutComposeOriginal', 'http_timeout_compose'],
+    ['statelessVariablesLifecycle', 'stateless_variables'],
+  ]) {
+    assert.ok(SUITE_REGISTRY[suiteId], `Supplementary family ${suiteId} must have an executable registry entry`);
+    for (const os of ['linux', 'windows']) {
+      const jobName = `${os}_${jobSuffix}`;
+      const job = invocations.find((entry) => entry.parameters.jobName === jobName)?.parameters;
+      assert.ok(job, `Missing native ${os} lane for ${suiteId}`);
+      assert.strictEqual(job.suiteId, suiteId);
+      assert.strictEqual(job.cliArguments, SUITE_REGISTRY[suiteId].args.join(' '));
+      assert.strictEqual(job.requiresAzureAccessToken, undefined, 'Connector-free families must not receive live Azure credentials');
+      assert.ok(job.selected.includes(`validateSuiteSelection.${os}_${suiteId}`));
+      assert.ok(diagnostic.dependsOn.includes(jobName));
+      assert.ok(!gate.dependsOn.includes(jobName), 'Unvalidated families must not silently replace the established canonical gate');
+      assert.ok(!SUITE_ALIASES[os].includes(suiteId));
+    }
+  }
+  const selected = runSelectorScript(path.join(__dirname, 'resolve-e2e-cli-suite-selection.js'), {
+    LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true',
+    LA_E2E_CLI_RUN_LINUX: 'true',
+    LA_E2E_CLI_RUN_WINDOWS: 'true',
+    LA_E2E_CLI_LINUX_SUITES: 'httpTimeoutComposeOriginal,statelessVariablesLifecycle',
+    LA_E2E_CLI_WINDOWS_SUITES: 'httpTimeoutComposeOriginal,statelessVariablesLifecycle',
+  });
+  assert.strictEqual(selected.status, 0, selected.output);
+  for (const os of ['linux', 'windows']) {
+    for (const suiteId of ['httpTimeoutComposeOriginal', 'statelessVariablesLifecycle']) {
+      assert.ok(selected.output.includes(`variable=${os}_${suiteId};isOutput=true]true`));
+    }
+  }
+}
+
 function runSelectorScript(scriptPath, env) {
   try {
     const result = execFileSync(process.execPath, [scriptPath], {
@@ -1025,7 +1064,7 @@ function assertConsumerCurrentRunArtifactContract(consumer) {
   assert.strictEqual(buildTemplate?.parameters?.artifactStagingPath, '$(Build.ArtifactStagingDirectory)/vscode-e2e');
 
   const templateInvocations = flattenAzureList(consumer.extends.parameters.stages[0].jobs).filter((entry) => entry.template);
-  assert.strictEqual(templateInvocations.length, 13);
+  assert.strictEqual(templateInvocations.length, 17);
   assert.deepStrictEqual(
     templateInvocations.map((invocation) => invocation.parameters.jobName).sort(),
     [
@@ -1035,6 +1074,8 @@ function assertConsumerCurrentRunArtifactContract(consumer) {
       'linux_create_workspace_preview_matrix',
       'linux_msn_weather_lifecycle',
       'linux_unit_tests',
+      'linux_http_timeout_compose',
+      'linux_stateless_variables',
       'windows_create_workspace_behavior',
       'windows_create_workspace_behavior_smoke',
       'windows_create_workspace_codeful',
@@ -1042,6 +1083,8 @@ function assertConsumerCurrentRunArtifactContract(consumer) {
       'windows_create_workspace_preview_matrix',
       'windows_msn_weather_lifecycle',
       'windows_unit_tests',
+      'windows_http_timeout_compose',
+      'windows_stateless_variables',
     ].sort()
   );
   for (const invocation of templateInvocations) {
@@ -1058,7 +1101,10 @@ function assertConsumerCurrentRunArtifactContract(consumer) {
       "$[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]"
     );
     assert.ok(invocation.parameters.selected.includes('validateSuiteSelection.'));
-    assert.match(invocation.parameters.cliArguments, /^--(label|msn-weather-lifecycle)/);
+    assert.match(
+      invocation.parameters.cliArguments,
+      /^--(label|msn-weather-lifecycle|http-timeout-compose-original|stateless-variables-lifecycle)/
+    );
     assert.ok(invocation.parameters.shortName.length <= 2, 'suite shortName must keep Linux profile/socket paths short');
     assert.strictEqual(invocation.parameters.nodeVersion ?? '22.x', '22.x');
     assert.strictEqual(invocation.parameters.dotnetVersion ?? '8.0.x', '8.0.x');
@@ -1091,6 +1137,10 @@ function assertConsumerCurrentRunArtifactContract(consumer) {
     'windows_create_workspace_codeful',
     'windows_create_workspace_behavior_smoke',
     'windows_msn_weather_lifecycle',
+    'linux_http_timeout_compose',
+    'windows_http_timeout_compose',
+    'linux_stateless_variables',
+    'windows_stateless_variables',
   ]);
 }
 
@@ -1247,7 +1297,7 @@ function assertConsumerJobRoutingContract(consumer, runSuites) {
     assert.strictEqual(job.templateContext.outputs, undefined, `${job.job} must not publish artifacts from a validationJob`);
   }
 
-  assert.strictEqual(templateJobs.length, 13);
+  assert.strictEqual(templateJobs.length, 17);
   for (const invocation of templateJobs) {
     assert.strictEqual(invocation.template, '/.config/templates/vscode-e2e-cli-run-suite.yml@self');
   }

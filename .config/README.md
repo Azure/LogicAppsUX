@@ -55,6 +55,18 @@ Each suite publishes its own JUnit results and one consolidated sanitized diagno
 
 The E2E Run Pipeline form intentionally exposes only test-selection controls: `diagnosticOnly`, `runLinux`, `runWindows`, `linuxSuites`, and `windowsSuites`. Selection is validated before the artifact build. A normal run requires the full canonical inventory on both OSes, expressed through the `linux`/`windows` aliases or complete explicit lists; partial runs must be diagnostic. Unknown, duplicate, overlapping, or OS-incompatible selections are rejected. Diagnostic selection only schedules the selected independent jobs and cannot satisfy the full gate.
 
+The supplementary `httpTimeoutComposeOriginal` and `statelessVariablesLifecycle`
+families have independent Linux and Windows jobs using the same admitted payload,
+isolated dependencies/profiles, secure Linux session and required result staging.
+Select either or both by their suite IDs in each OS selector with
+`diagnosticOnly=true`. Their bootstrap/create/reopen prerequisites run inside
+their owning family; they do not receive live Azure credentials. The diagnostic
+reporter depends on these jobs and fails if any selected family fails or skips.
+They remain outside the established six-suite aliases and twelve-job protected
+gate until actual native evidence and explicit baseline promotion are complete.
+An existing canonical green does not certify these new families, and a green
+family diagnostic does not certify the complete expanded test inventory.
+
 Azure DevOps runtime parameters are always shown in the manual queue UI, so source identity, WIF/service connection, resource group/location, pool, Node, and .NET values stay fixed in YAML instead of becoming optional blank inputs. Tenant and subscription identity are derived inside the AzureCLI task from the already-authenticated fixed service connection context, then validated as non-empty before live Azure suites run. Do not select an external producer resource for this validation flow; wrong source SHA, wrong run/definition identity, wrong repository, archive hash mismatch, or manifest mismatch remain rejection cases through the current-run artifact manifest admission.
 
 The E2E consumer is intentionally separate from the producer build and release wrappers. It keeps source-resolution, full-rollup, and diagnostic-report coordination as no-output validation jobs while publishing the current-run build payload and per-suite diagnostics from ordinary 1ES jobs. This avoids pretending artifact producers have no outputs while preserving the test-only, non-release execution path. Unofficial/no-deployment routing is distinct from artifact security classification, so the artifact outputs retain their normal default scanning path unless owners explicitly approve a non-production artifact classification. The consumer does not set an explicit `networkIsolationPolicy` override; the unofficial wrapper is not an NI-disabled path, and this pipeline does not by itself prove unrestricted connector egress or full compliance readiness. Before using it for broader connector coverage, owners must verify the actual expanded run with the selected pool, centrally required controls, WIF/service connection, artifact-publication authorization, and actual connector connectivity. The existing diagnostic pipeline-artifact outputs stay enabled so failures remain observable; if artifact upload is not yet authorized, that onboarding is a cutover prerequisite rather than a reason to suppress diagnostics.
