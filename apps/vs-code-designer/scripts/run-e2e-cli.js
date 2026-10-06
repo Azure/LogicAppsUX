@@ -16,6 +16,7 @@ const {
   buildSuiteEnvironment,
   prepareSuiteExtensionsDirectory,
   cleanupSuiteTransientRoots,
+  getSuiteScopedCredentialEnv,
   normalizeSuiteSelection,
   runBatchSuites,
   SUITE_REGISTRY,
@@ -279,8 +280,8 @@ function escapeXml(value) {
  * wrapper; this caller never invents a successful process-cleanup observation. */
 async function runDirectFamily(suiteId, visibleDelayMs, options = {}) {
   const suite = SUITE_REGISTRY[suiteId];
-  if (!suite || suite.requiresAzure) {
-    throw new Error('Direct family wrapper requires a registered local-only suite');
+  if (!suite) {
+    throw new Error('Direct family wrapper requires a registered suite');
   }
   const resultsDir = path.resolve(options.resultsDir || path.join(__dirname, '..', '.vscode-test', 'results'));
   fs.mkdirSync(resultsDir, { recursive: true });
@@ -322,7 +323,10 @@ async function runDirectFamily(suiteId, visibleDelayMs, options = {}) {
   const execute = async () => {
     try {
       prepareSuiteExtensionsDirectory({ seedDir, targetDir: context.extensionsDir });
-      const env = buildSuiteEnvironment(process.env, context);
+      // Same approved WIF/token scope as the canonical MSN/batch lane. No
+      // ambient Azure CLI fallback, new grants, or resource creation.
+      const credentials = await getSuiteScopedCredentialEnv(process.env, suite, options.timeoutMs || 45 * 60 * 1000);
+      const env = buildSuiteEnvironment(process.env, context, credentials);
       return await runSuiteWrapperProcess({
         suite,
         context,

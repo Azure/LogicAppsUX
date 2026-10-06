@@ -20,6 +20,16 @@ const runner = require(runnerPath) as {
 };
 const suiteId = 'statelessVariablesLifecycle';
 const expected = ['runtimeDependencyBootstrap:bootstrap', `${suiteId}:create`, `${suiteId}:reopen`];
+const unitAzureEnv = {
+  LA_E2E_CLI_AZURE_SUBSCRIPTION_ID: '00000000-0000-4000-8000-000000000001',
+  LA_E2E_CLI_AZURE_TENANT_ID: '00000000-0000-4000-8000-000000000002',
+  LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME: 'approved-existing-unit-rg',
+  LA_E2E_CLI_AZURE_LOCATION_NAME: 'westus2',
+  LA_E2E_CLI_AZURE_ACCESS_TOKEN: 'UNIT_ONLY_TOKEN_NOT_A_REAL_CREDENTIAL',
+  LA_E2E_CLI_AZURE_ACCESS_TOKEN_EXPIRES_ON: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+  LA_E2E_CLI_AZURE_ACCESS_TOKEN_MINTED_AT: new Date().toISOString(),
+};
+const priorAzureEnv = Object.fromEntries(Object.keys(unitAzureEnv).map((key) => [key, process.env[key]]));
 const originalEnv = {
   mode: process.env.UNIT_STATELESS_DIRECT_MODE,
   trace: process.env.UNIT_STATELESS_DIRECT_TRACE,
@@ -54,6 +64,9 @@ const operations = {
     const label = args[1];
     const phaseId = api.getSuitePhaseId(label, env);
     const index = invocations++;
+    assert.equal(env.LA_E2E_CLI_AZURE_SUBSCRIPTION_ID, ${JSON.stringify(unitAzureEnv.LA_E2E_CLI_AZURE_SUBSCRIPTION_ID)});
+    assert.equal(env.LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME, ${JSON.stringify(unitAzureEnv.LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME)});
+    assert.ok(env.LA_E2E_CLI_AZURE_ACCESS_TOKEN, 'Approved scoped token must reach the phase executor');
     const scratch = fs.mkdtempSync(path.join(process.env.TEMP, 'unit-phase-'));
     fs.writeFileSync(path.join(scratch, 'owned.txt'), 'unit-owned');
     fs.rmSync(scratch, {recursive:true});
@@ -159,6 +172,7 @@ interface Trace {
 }
 
 async function main(): Promise<void> {
+  Object.assign(process.env, unitAzureEnv); // Synthetic unit credential avoids all Azure token-provider/network calls.
   const scriptPath = path.join(root, 'node-only-phase-fixture.js');
   fs.writeFileSync(scriptPath, fixture);
   const seedDir = path.join(root, 'extensions-seed');
@@ -295,6 +309,7 @@ main()
       UNIT_STATELESS_DIRECT_TRACE: originalEnv.trace,
       LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH: originalEnv.journal,
       LA_E2E_CLI_PRESERVE_WORKSPACES: originalEnv.keep,
+      ...priorAzureEnv,
     })) {
       if (value === undefined) {
         delete process.env[key];

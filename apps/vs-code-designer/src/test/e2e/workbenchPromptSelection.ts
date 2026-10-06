@@ -2,6 +2,7 @@ export interface WorkbenchPrompt {
   matchText: string;
   optionText: string;
   alternateOptionTexts?: readonly string[];
+  exactRowLabel?: boolean;
   postClickDelayMs?: number;
 }
 
@@ -18,6 +19,7 @@ export interface WorkbenchPromptPoint {
 
 export interface WorkbenchPromptOption {
   text: string;
+  label?: string;
   point?: WorkbenchPromptPoint;
 }
 
@@ -57,9 +59,10 @@ export function selectWorkbenchPromptOption(prompts: WorkbenchPrompt[], containe
 
     if (container.kind === 'quickInput') {
       const row = container.rows.find((candidate) =>
-        options.some(
-          (option) =>
-            equalsNormalized(candidate.text, option) || (option === prompt.optionText && includesNormalized(candidate.text, option))
+        options.some((option) =>
+          prompt.exactRowLabel
+            ? equalsNormalized(candidate.label ?? candidate.text, option)
+            : equalsNormalized(candidate.text, option) || (option === prompt.optionText && includesNormalized(candidate.text, option))
         )
       );
       if (row?.point) {

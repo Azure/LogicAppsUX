@@ -32,10 +32,13 @@ async function testColdProducer(): Promise<void> {
   const order: string[] = [];
   let produced = false;
   let producerFails = false;
-  const exports: { establishDesignTime?: (entry: { appDir: string }, deadline: number, signal: AbortSignal) => Promise<void> } = {};
+  const exports: {
+    establishDesignTime?: (entry: { appDir: string }, deadline: number, signal: AbortSignal, fixture: object) => Promise<void>;
+  } = {};
   vm.runInNewContext(code, {
     exports,
     assertPhaseActive,
+    assertApprovedAzureFixture: () => assert.ok(produced, 'Fixture assertions must follow the real producer'),
     path,
     fs: { existsSync: () => produced },
     helpers: {
@@ -59,7 +62,8 @@ async function testColdProducer(): Promise<void> {
   });
   const establish = exports.establishDesignTime;
   assert.ok(establish);
-  await establish({ appDir: '/unit/cold-app' }, Date.now() + 1000, new AbortController().signal);
+  const approved = { resourceGroupName: 'existing-unit-rg' };
+  await establish({ appDir: '/unit/cold-app' }, Date.now() + 1000, new AbortController().signal, approved);
   assert.deepStrictEqual(order, ['folder', 'real-designer', 'readiness']);
   assert.ok(text.indexOf('await positiveScope.run(') < text.indexOf('await establishDesignTime(entry,'));
   checks++;
@@ -68,7 +72,10 @@ async function testColdProducer(): Promise<void> {
   order.length = 0;
   const scope = new StatelessOperationScope();
   await assert.rejects(
-    () => scope.run(Date.now() + 1000, 'cold producer', (signal) => establish({ appDir: '/unit/cold-app' }, Date.now() + 1000, signal)),
+    () =>
+      scope.run(Date.now() + 1000, 'cold producer', (signal) =>
+        establish({ appDir: '/unit/cold-app' }, Date.now() + 1000, signal, approved)
+      ),
     /cold designer producer failed/
   );
   await scope.quiesce(Date.now() + 1000);

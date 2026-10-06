@@ -340,6 +340,13 @@ function testNativeWiring(): void {
       'Real designer setup must continue the affirmative Azure fixture/authentication journey'
     );
     assert.ok(!native.includes('Skip for now'), 'Stateless setup cannot silently choose a negative Azure connector fallback');
+    assert.ok(native.includes('approvedAzureFixtureFromEnvironment(process.env)'));
+    assert.ok(native.includes('installApprovedAzureFixture(entry.appDir, azureFixture)'));
+    assert.ok(native.includes('fixtureLease.bindGeneratedDesignTime()'));
+    assert.ok(
+      native.includes('if (recoveryQuiescent && fixtureLease)'),
+      'Approved fixture restoration must follow owned recovery quiescence'
+    );
     assert.ok(shared.includes("creationCase.wfType ?? 'Stateful'"), 'Canonical old fixtures remain Stateful');
   });
   check(() => {
@@ -539,6 +546,7 @@ async function testRegisteredRunner(): Promise<void> {
   });
   interface RegisteredSuite {
     id: string;
+    requiresAzure?: boolean;
     args: string[];
     expectedPhases: string[];
   }
@@ -559,6 +567,7 @@ async function testRegisteredRunner(): Promise<void> {
     ]);
     assert.deepStrictEqual(observed, batch.SUITE_REGISTRY.statelessVariablesLifecycle.expectedPhases);
     assert.deepStrictEqual(batch.SUITE_REGISTRY.statelessVariablesLifecycle.args, ['--stateless-variables-lifecycle']);
+    assert.strictEqual(batch.SUITE_REGISTRY.statelessVariablesLifecycle.requiresAzure, true, 'Approved WIF fixture must be forwarded');
     for (const platform of ['win32', 'linux']) {
       assert.strictEqual(batch.normalizeSuiteSelection('statelessVariablesLifecycle', { platform })[0].id, 'statelessVariablesLifecycle');
     }
