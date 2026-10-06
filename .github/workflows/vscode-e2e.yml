@@ -193,6 +193,16 @@ jobs:
             sudo ln -sf "$NPX_BIN"  "$dir/npx"
           done
 
+      - name: Setup .NET SDKs
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: |
+            8.0.x
+            10.0.x
+
+      - name: Use system .NET SDK for custom-code workspaces
+        run: echo "CUSTOMCODE_DOTNET_BINARY_PATH=$(command -v dotnet)" >> "$GITHUB_ENV"
+
       - name: Cache pnpm store
         uses: actions/cache@v5
         with:
@@ -438,6 +448,16 @@ jobs:
           done
           echo "Symlinked node $(node --version) into /usr/local/bin and /usr/bin"
           env -i /usr/bin/node --version
+
+      - name: Setup .NET SDKs
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: |
+            8.0.x
+            10.0.x
+
+      - name: Use system .NET SDK for custom-code workspaces
+        run: echo "CUSTOMCODE_DOTNET_BINARY_PATH=$(command -v dotnet)" >> "$GITHUB_ENV"
 
       - name: Cache pnpm store
         uses: actions/cache@v5
@@ -1022,9 +1042,9 @@ jobs:
   vscode-e2e-customcode-dotnet:
     name: vscode-e2e-customcode-dotnet (ubuntu-latest, ${{ matrix.version }})
     needs: setup-extension-build
-    # The net8 leg creates a real workspace and proves the full debug/run
-    # lifecycle. The net10 leg opens the real wizard and verifies the option is
-    # hidden. 60 min leaves room for one full net8 retry and a cold restore.
+    # The net10 leg creates a real workspace and validates its generated files
+    # without building while Workflows SDK 1.4.0 is pending release. The net8
+    # leg opens the real wizard and verifies the option is hidden.
     timeout-minutes: 60
     runs-on: ubuntu-latest
     # Sharded by dotnet target rather than looping both in one job, same
@@ -1062,12 +1082,12 @@ jobs:
             sudo ln -sf "$NPX_BIN"  "$dir/npx"
           done
 
-      # The net8 leg creates, debugs, and runs a custom-code project. The net10
-      # leg only verifies that the option is hidden from the real wizard.
-      - name: Setup .NET SDK 8
+      # The net10 leg creates a custom-code project. The net8 leg only verifies
+      # that the option is hidden from the real wizard.
+      - name: Setup .NET SDK 10
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 10.0.x
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v5
@@ -1109,10 +1129,10 @@ jobs:
         run: pnpm exec mocha out/test/customCodeDotNetVersionShared.test.js
 
       - name: Prove dotnet symlink regression and fix
-        if: matrix.version == 'net8'
+        if: matrix.version == 'net10'
         run: bash scripts/__test__/resolve-dotnet-root.test.sh
 
-      - name: Run custom-code .NET version create/assert + debug lifecycle E2E
+      - name: Run custom-code .NET version create/assert E2E
         run: |
           dotnet_root="$(bash scripts/resolve-dotnet-root.sh)"
           export CUSTOMCODE_DOTNET_BINARY_PATH="$dotnet_root/dotnet"
@@ -1204,10 +1224,15 @@ jobs:
           node-version: 20.x
           package-manager-cache: false
 
-      - name: Setup .NET SDK
+      - name: Setup .NET SDKs
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: |
+            8.0.x
+            10.0.x
+
+      - name: Use system .NET SDK for custom-code workspaces
+        run: echo "CUSTOMCODE_DOTNET_BINARY_PATH=$(command -v dotnet)" >> "$GITHUB_ENV"
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v5
@@ -1693,10 +1718,15 @@ jobs:
       # p41a-fixtures creates the customCode / rulesEngine / codeful workspace shapes,
       # which run dotnet. setup-runtime-deps-windows installs the SDK for the same
       # reason before running the same scenario.
-      - name: Setup .NET SDK
+      - name: Setup .NET SDKs
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: |
+            8.0.x
+            10.0.x
+
+      - name: Use system .NET SDK for custom-code workspaces
+        run: echo "CUSTOMCODE_DOTNET_BINARY_PATH=$(command -v dotnet)" >> "$GITHUB_ENV"
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v5
