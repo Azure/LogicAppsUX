@@ -20,6 +20,102 @@ src/test/e2e/
 
 ## Running Tests
 
+### Workspace artifact regeneration (focused, native validation pending)
+
+After building the extension/webview and running `test:e2e-cli:compile`, use
+`pnpm --dir apps/vs-code-designer run test:e2e-cli:workspace-artifact-regeneration`.
+This is a registered supplement in `scripts/run-e2e-cli.js`, implemented in
+`workspaceArtifactRegeneration.test.ts`. It reuses the official latest-stable
+`createWorkspaceCoreMatrix` label filtered to **Standard Stateful** and the existing
+current-invocation wizard handoff. No synthetic native fixture, product dialog
+interception, baseline label replacement, or canonical execution-count change is
+introduced. The `.vscode-test.mjs` label and handoff forwarding already exist;
+no new ExTester mode or CLI label is required.
+
+The original wizard host must finish first. The supplement uses its resolved Code
+executable/hash/version and prepared extensions directory, then reopens that same
+generated `.code-workspace` in fresh **regular** Code hosts (without
+`--extensionTestsPath`). Normal activation/consistency checks remain enabled.
+Each observation retains a 30-second deadline starting before launch; polling,
+CDP operations, file settlement, and required screenshots consume that same budget.
+Ordinary Close Window has its existing separate 10-second teardown budget, never
+a forced process kill or an extension of the observation deadline.
+
+The planned sequence is a valid-project fresh-reopen baseline, then:
+
+| Branch | Deleted artifacts | Required observation |
+|---|---|---|
+| `vscode-single` | `.vscode/tasks.json` | Real initialization prompt, actual Yes mouse input |
+| `vscode-multiple` | `.vscode/launch.json`, `settings.json`, `extensions.json` | Same real prompt/Yes |
+| `vscode-repeat` | `.vscode/tasks.json` again | Another real prompt/Yes, not a fabricated repeat |
+| `root-single` | Root `host.json` | Required initialization prompt/Yes; silent repair fails |
+| `root-multiple` | Root `host.json`, `local.settings.json` | Required initialization prompt/Yes; silent repair fails |
+| `root-repeat` | Root `local.settings.json` again | Required initialization prompt/Yes; silent repair fails |
+
+Before deletion the test retains the exact JSON contracts of **all six** original
+wizard artifacts. Regenerated JSON must deep-equal those contracts; existence or
+valid JSON alone is insufficient. Every non-target workspace file stays byte-for-byte
+unchanged, with exact directory-entry checks and no exclusion list. The initial
+valid-project reopen may create the product's normal design-time directory, but
+must preserve every original wizard file; that directory is then included in
+the full unchanged-state baseline. No later healing file is exempted.
+Every real Yes branch must dismiss the prompt, write the expected files durably,
+close Code normally, and persist all file bytes/entries without another initialization
+prompt on a separate fresh reopen. A failed branch stops the sequence; planned but
+unobserved branches cannot receive credit.
+
+**Known source/product boundary, not a waiver:** the retained source requires
+initialization/Yes for missing `.vscode` artifacts and repeats deletion for root
+`host.json` / `local.settings.json` with the original template oracle. Its root
+repeat wording does not independently spell out another Yes; this family keeps the
+requested strict root/repeated-Yes interpretation explicit for expectation review.
+Current product activation repairs root files before `.vscode` consistency prompting.
+Consequently root-only branches may heal silently and fail the required prompt/Yes
+assertion. No native outcome is claimed here, and neither the source interpretation
+nor an initial/intentionally changed expectation baseline is auto-approved.
+
+Set `LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR` to a fresh job-owned path for
+`invocation.json`, `wizard-handoff.json`, `final-result.json`, per-phase Code logs,
+actual profile-log diagnostics and accepted PNG/readiness-sidecar pairs.
+`LA_E2E_CLI_USER_DATA_PARENT` should be a short isolated path on Linux (the actual
+UTF-8 socket path must be under 100 bytes); the existing encrypted GNOME/D-Bus/Xvfb
+preparation remains required. The supplement inherits the admitted executable,
+runtime dependency root, prepared extensions directory and current source/job
+identity; it has no compilation, dependency-install or executable fallback of its own.
+Unconfirmed ordinary closure or an observation/diagnostic failure preserves the
+wizard root through the existing runner retention path, never a false successful cleanup.
+
+Focused non-GUI controls:
+
+```powershell
+pnpm --dir apps/vs-code-designer run test:e2e-cli:compile
+pnpm --dir apps/vs-code-designer run test:e2e-cli:workspace-artifact-regeneration:unit
+```
+
+The controls cover missing/wrong/invalid regenerated files, actual deletion,
+non-target byte/directory changes, path/link safety, duplicate/unrelated/disabled
+Yes, absent prompt versus silent healing, late read/deadline expiration, transport
+failure, final closure/cleanup failure and invalid runner flag combinations. They
+are appended to `test:e2e-cli:unit`; their temporary unit files are **not** wizard
+fixtures and their passes provide no native GUI/source-case coverage.
+
+**ADO integration remains parent-owned:** run the focused command in isolated
+Windows and Linux jobs with the admitted compiled extension/tests, official stable
+Code, prepared dependencies/extensions, fresh diagnostics and the existing Linux
+secure desktop preparation. Archive the new diagnostic directory and check
+`final-result.json.complete`, all planned branch observations, ordinary host exits,
+accepted screenshots/sidecars, and verified final cleanup. Existing canonical suite
+registry/reporting counts and private mappings are unchanged. A focused success
+would not establish canonical full-rollup, root expectation approval, or whole-case
+acceptance; those require separate source-bound native runs and USER review.
+Use `node apps/vs-code-designer/scripts/run-e2e-cli.js --workspace-artifact-regeneration`
+after artifact admission (with the app's `node_modules/.bin` on PATH), rather than
+building inside the consumer. Set `LA_E2E_CLI_EXTENSIONS_DIR` to the admitted prepared
+directory and `LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL=0` for this independent invocation;
+the runner rejects combining the two supplements. Give this invocation separate
+phase/result destinations if consumer result-staging variables are inherited;
+do not overwrite an existing canonical lane or add unit groups to its native count.
+
 ### Workspace prompt Cancel (Windows and Linux)
 
 After building the extension/webviews and compiling the tests with the commands below,
