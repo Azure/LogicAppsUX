@@ -1,7 +1,9 @@
 import { ValueSegmentType } from '../../../editor';
 import { CustomTokenField } from '../customTokenField';
-import type { SettingTokenFieldProps } from '../settingTokenField';
+import type { SettingTokenFieldProps, TokenFieldProps } from '../settingTokenField';
 import { SettingTokenField, TokenField } from '../settingTokenField';
+import { CopyInputControlWithAgent } from '../../../copyinputcontrol/CopyInputControlWithAgent';
+import constants from '../../../constants';
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 import { describe, vi, beforeEach, afterEach, it, expect } from 'vitest';
@@ -125,5 +127,73 @@ describe('ui/settings/settingTokenField', () => {
     const tokenField: any[] = React.Children.toArray(tokenFieldContainer.props.children);
     expect(tokenField[0].type).toBe(CustomTokenField);
     expect(tokenField[0].props).toEqual({ ...props, labelId: expect.stringContaining(props.label) });
+  });
+
+  describe('COPYABLE editor (Agent-preview navigation sink)', () => {
+    const baseProps = (overrides: Partial<TokenFieldProps> = {}): TokenFieldProps => ({
+      label: 'agentUrl',
+      labelId: 'agentUrl-label',
+      value: [
+        {
+          value: 'https://example.invalid/agent',
+          type: ValueSegmentType.LITERAL,
+          id: '8713da12-1afb-48ce-8fec-429bdb8599b9',
+        },
+      ],
+      tokenEditor: true,
+      tokenMapping: {},
+      onCastParameter: vi.fn(),
+      getTokenPicker: vi.fn(),
+      editor: constants.PARAMETER.EDITOR.COPYABLE,
+      ...overrides,
+    });
+
+    it('must never source chatUrl/queryParams from schema-declared editorOptions, even when forged values are present', () => {
+      const props = baseProps({
+        editorOptions: {
+          showAgentViewer: true,
+          chatUrl: 'https://attacker.example.invalid/chat',
+          queryParams: { apiKey: 'forged-key' },
+        },
+        agentUrlMetadata: undefined,
+      });
+
+      const output = render(TokenField, props);
+
+      expect(output.type).toBe(CopyInputControlWithAgent);
+      expect(output.props.chatUrl).toBeUndefined();
+      expect(output.props.queryParams).toBeUndefined();
+      // showAgentViewer is a static, non-navigating visibility flag and remains schema-sourced.
+      expect(output.props.showAgentViewer).toBe(true);
+    });
+
+    it('sources chatUrl/queryParams only from the trusted runtime agentUrlMetadata field', () => {
+      const props = baseProps({
+        editorOptions: { showAgentViewer: true },
+        agentUrlMetadata: {
+          chatUrl: 'https://trusted.example.invalid/chat',
+          queryParams: { apiKey: 'trusted-key' },
+        },
+      });
+
+      const output = render(TokenField, props);
+
+      expect(output.type).toBe(CopyInputControlWithAgent);
+      expect(output.props.chatUrl).toBe('https://trusted.example.invalid/chat');
+      expect(output.props.queryParams).toEqual({ apiKey: 'trusted-key' });
+      expect(output.props.showAgentViewer).toBe(true);
+    });
+
+    it('renders ordinary copyable fields with no agent data unaffected', () => {
+      const props = baseProps();
+
+      const output = render(TokenField, props);
+
+      expect(output.type).toBe(CopyInputControlWithAgent);
+      expect(output.props.text).toBe('https://example.invalid/agent');
+      expect(output.props.chatUrl).toBeUndefined();
+      expect(output.props.queryParams).toBeUndefined();
+      expect(output.props.showAgentViewer).toBeUndefined();
+    });
   });
 });

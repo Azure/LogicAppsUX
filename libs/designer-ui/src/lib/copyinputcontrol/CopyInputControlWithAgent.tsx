@@ -8,6 +8,7 @@ import { Label } from '../label';
 import { Key20Regular } from '@fluentui/react-icons';
 import { useCopyInputControlStyles } from './styles';
 import { AgentUrlButton } from './AgentUrlButton';
+import { isSafeAgentPreviewUrl } from './agentPreviewUrl';
 
 export interface CopyInputControlWithAgentProps extends Omit<CopyInputControlProps, 'children'> {
   /**
@@ -40,8 +41,17 @@ export const CopyInputControlWithAgent = React.forwardRef<Pick<HTMLElement, 'foc
     const handleAgentViewerOpen = React.useCallback(() => {
       // If there are no query params, easy auth is enabled so chat cannot be opened as Iframe in portal
       if (queryParams) {
+        // The dialog itself is not a navigation sink -- AgentUrlViewer applies its own
+        // destination-safety boundary before its iframe/fallback-popup sinks, and shows the
+        // existing error UI when the destination is unsafe. Always allow it to open so that
+        // error handling is visible instead of the button silently doing nothing.
         setIsAgentViewerOpen(true);
       } else {
+        // This is the only direct navigation sink here: a chatUrl that is absent, malformed, or
+        // uses a non-web/executable scheme must never reach window.open, regardless of provenance.
+        if (!isSafeAgentPreviewUrl(chatUrl)) {
+          return;
+        }
         window.open(chatUrl, '_blank', 'noopener,noreferrer');
       }
     }, [chatUrl, queryParams]);
