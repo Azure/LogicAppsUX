@@ -18,7 +18,7 @@ const {
 } = require('./workspace-multi-root');
 const { SUITE_REGISTRY, normalizeSuiteSelection } = require('./e2e-cli-batch');
 const {
-  _test: { writeSuiteFinalEvidence },
+  _test: { writeSuiteFinalEvidence, runDirectRegisteredSuite },
 } = require('./run-e2e-cli');
 
 const phaseFixtures = () =>
@@ -200,6 +200,89 @@ test('batch terminal reports the exact family lifecycle and cannot credit blocke
     }
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('direct supplementary route invalidates stale terminal and uses exact registry phases/general finalization at ADO paths', async () => {
+  const reportRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'multi-root-direct-terminal-unit-'));
+  try {
+    const terminalPath = path.join(reportRoot, 'workspaceMultiRoot.terminal-result.json');
+    fs.writeFileSync(terminalPath, JSON.stringify({ complete: true, stale: true }));
+    const code = await runDirectRegisteredSuite(SUITE_REGISTRY.workspaceMultiRoot, {
+      reportRoot,
+      env: { BUILD_SOURCEVERSION: 'unit-source', BUILD_BUILDID: 'unit-run', SYSTEM_JOBID: 'unit-job' },
+      runWrapper: async ({ suite, context, env }) => {
+        assert.equal(
+          JSON.parse(fs.readFileSync(terminalPath, 'utf8')).complete,
+          false,
+          'Old success must be invalidated before wrapper launch'
+        );
+        assert.equal(env.LA_E2E_CLI_DIRECT_WRAPPED_SUITE, 'workspaceMultiRoot');
+        assert.equal(context.terminalResultPath, terminalPath);
+        assert.deepEqual(context.expectedPhaseIds, expectedPhases);
+        assert.equal(fs.existsSync(context.phaseResultsPath), false);
+        fs.writeFileSync(
+          context.phaseResultsPath,
+          phaseFixtures()
+            .map((phase) => JSON.stringify(phase))
+            .join('\n')
+        );
+        // Explicit unit-owned observation fixture. Production uses actual
+        // wrapper child-close and verifyNoOwnedDescendants observation.
+        writeSuiteFinalEvidence({
+          context,
+          suite,
+          exitCode: 0,
+          signal: null,
+          processCleanup: { verified: true, checkedAt: 'unit-observation' },
+        });
+        return { exitCode: 0, signal: null };
+      },
+    });
+    assert.equal(code, 0);
+    const terminal = JSON.parse(fs.readFileSync(terminalPath, 'utf8'));
+    assert.equal(terminal.suiteId, 'workspaceMultiRoot');
+    assert.equal(terminal.lifecycleFinalized, true);
+    assert.equal(terminal.complete, true);
+    assert.deepEqual(terminal.expectedPhaseIds, terminal.observedPhaseIds);
+    const provenance = JSON.parse(fs.readFileSync(path.join(reportRoot, 'workspaceMultiRoot.terminal-invocation.json'), 'utf8'));
+    assert.equal(provenance.accepted, true);
+    assert.deepEqual(provenance.identity, { source: 'unit-source', run: 'unit-run', job: 'unit-job' });
+    assert.ok(provenance.invocation && provenance.phaseResultsPath.includes(provenance.invocation));
+  } finally {
+    fs.rmSync(reportRoot, { recursive: true, force: true });
+  }
+});
+
+test('direct exit zero with missing phases/finalization or unobserved cleanup stays failed', async () => {
+  const reportRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'multi-root-direct-negative-unit-'));
+  try {
+    for (const mode of ['missing-terminal-finalization', 'missing-phase', 'unobserved-cleanup', 'wrong-order']) {
+      const code = await runDirectRegisteredSuite(SUITE_REGISTRY.workspaceMultiRoot, {
+        reportRoot,
+        env: {},
+        runWrapper: async ({ context, suite }) => {
+          if (mode !== 'missing-terminal-finalization') {
+            const phases =
+              mode === 'missing-phase' ? phaseFixtures().slice(0, 2) : mode === 'wrong-order' ? phaseFixtures().reverse() : phaseFixtures();
+            fs.writeFileSync(context.phaseResultsPath, phases.map((phase) => JSON.stringify(phase)).join('\n'));
+            writeSuiteFinalEvidence({
+              context,
+              suite,
+              exitCode: 0,
+              signal: null,
+              processCleanup: { verified: mode !== 'unobserved-cleanup' },
+            });
+          }
+          return { exitCode: 0, signal: null };
+        },
+      });
+      assert.equal(code, 1, mode);
+      const provenance = JSON.parse(fs.readFileSync(path.join(reportRoot, 'workspaceMultiRoot.terminal-invocation.json'), 'utf8'));
+      assert.equal(provenance.accepted, false);
+    }
+  } finally {
+    fs.rmSync(reportRoot, { recursive: true, force: true });
   }
 });
 

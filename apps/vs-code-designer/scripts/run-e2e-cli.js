@@ -89,6 +89,12 @@ function main() {
       exitWithError(new Error('--workspace-multi-root is a focused official-wizard + real-reload family; do not combine flags.'));
       return;
     }
+    if (process.env.LA_E2E_CLI_BATCH_MODE !== '1' && process.env.LA_E2E_CLI_DIRECT_WRAPPED_SUITE !== 'workspaceMultiRoot') {
+      runDirectRegisteredSuite(SUITE_REGISTRY.workspaceMultiRoot)
+        .then((code) => process.exit(code))
+        .catch(exitWithError);
+      return;
+    }
     require('./workspace-multi-root')
       .runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, writeSuitePhaseResult })
       .then((code) => process.exit(code))
@@ -264,6 +270,120 @@ function sanitizeInheritedGitCommandConfigEnv(env) {
       return !/^GIT_CONFIG_(KEY|VALUE)_\d+$/.test(key);
     })
   );
+}
+
+// Direct ADO selectors need the SAME outer process/phase finalization as batch
+// execution, but at the stable direct-consumer report paths. This does not
+// fabricate a process cleanup result or promote a family's exit code to proof.
+async function runDirectRegisteredSuite(
+  suite,
+  { env = process.env, reportRoot = path.resolve(__dirname, '..', '.vscode-test', 'results'), runWrapper = runSuiteWrapperProcess } = {}
+) {
+  if (!suite || SUITE_REGISTRY[suite.id] !== suite) {
+    throw new Error('Direct supplementary execution requires an exact registered suite');
+  }
+  fs.mkdirSync(reportRoot, { recursive: true });
+  const invocation = require('crypto').randomUUID();
+  const context = {
+    id: suite.id,
+    startedAt: new Date().toISOString(),
+    expectedPhaseIds: [...suite.expectedPhases],
+    phaseResultsPath: path.join(reportRoot, `${suite.id}.phases-${invocation}.jsonl`),
+    cleanupLedgerPath: path.join(reportRoot, `${suite.id}.cleanup-ledger.json`),
+    terminalResultPath: path.join(reportRoot, `${suite.id}.terminal-result.json`),
+  };
+  const provenancePath = path.join(reportRoot, `${suite.id}.terminal-invocation.json`);
+  const provenance = {
+    schemaVersion: 1,
+    suiteId: suite.id,
+    invocation,
+    startedAt: context.startedAt,
+    identity: { source: env.BUILD_SOURCEVERSION || 'local', run: env.BUILD_BUILDID || 'local', job: env.SYSTEM_JOBID || 'local' },
+    expectedPhaseIds: context.expectedPhaseIds,
+    phaseResultsPath: context.phaseResultsPath,
+    cleanupLedgerPath: context.cleanupLedgerPath,
+    terminalResultPath: context.terminalResultPath,
+  };
+  // Invalidate an earlier success BEFORE child launch or native preflight.
+  writeSuiteTerminalResult(
+    { LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH: context.terminalResultPath },
+    {
+      suiteId: suite.id,
+      complete: false,
+      lifecycleFinalized: false,
+      exitCode: null,
+      signal: null,
+      cleanupVerified: false,
+      diagnosticsError: 'direct-invocation-not-finalized',
+      phaseCompleteness: false,
+      expectedPhaseIds: context.expectedPhaseIds,
+      observedPhaseIds: [],
+      missingPhaseIds: context.expectedPhaseIds,
+      unexpectedPhaseIds: [],
+      duplicatePhaseIds: [],
+      blockedPhaseIds: [],
+      phaseResults: [],
+    }
+  );
+  writeSuiteCleanupLedger(
+    { LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH: context.cleanupLedgerPath },
+    {
+      schemaVersion: 1,
+      suiteId: suite.id,
+      verified: false,
+      invocation,
+      reason: 'direct-invocation-not-finalized',
+    }
+  );
+  fs.writeFileSync(provenancePath, JSON.stringify(provenance, null, 2));
+  const result = await runWrapper({
+    suite,
+    context,
+    timeoutMs: 45 * 60 * 1000,
+    env: { ...env, LA_E2E_CLI_DIRECT_WRAPPED_SUITE: suite.id },
+  });
+  // The general wrapper writes the terminal only after its child closes and
+  // verifyNoOwnedDescendants actually observes cleanup. Reopen phase proof
+  // separately covers original Code closure, diagnostics and fixture absence.
+  const terminal = readJsonIfExists(context.terminalResultPath);
+  const cleanup = readJsonIfExists(context.cleanupLedgerPath);
+  const exact = (value) => JSON.stringify(value) === JSON.stringify(context.expectedPhaseIds);
+  const phases = terminal?.phaseResults;
+  const accepted =
+    result.exitCode === 0 &&
+    !result.signal &&
+    !result.error &&
+    terminal?.suiteId === suite.id &&
+    terminal.complete === true &&
+    terminal.lifecycleFinalized === true &&
+    terminal.exitCode === 0 &&
+    terminal.signal === null &&
+    terminal.cleanupVerified === true &&
+    terminal.diagnosticsError === '' &&
+    terminal.phaseCompleteness === true &&
+    exact(terminal.expectedPhaseIds) &&
+    exact(terminal.observedPhaseIds) &&
+    ['missingPhaseIds', 'unexpectedPhaseIds', 'duplicatePhaseIds', 'blockedPhaseIds'].every(
+      (key) => Array.isArray(terminal[key]) && terminal[key].length === 0
+    ) &&
+    Array.isArray(phases) &&
+    exact(phases.map((phase) => phase.phaseId)) &&
+    phases.every(
+      (phase) =>
+        phase.complete === true &&
+        phase.exitCode === 0 &&
+        phase.signal === null &&
+        phase.cleanupVerified === true &&
+        phase.diagnosticsError === ''
+    ) &&
+    cleanup?.schemaVersion === 1 &&
+    cleanup.verified === true &&
+    cleanup.processTreeVerified === true &&
+    cleanup.processCleanup?.verified === true;
+  provenance.finalizedAt = new Date().toISOString();
+  provenance.accepted = accepted;
+  fs.writeFileSync(provenancePath, JSON.stringify(provenance, null, 2));
+  return accepted ? 0 : 1;
 }
 
 function runSuiteWrapperProcess({ suite, context, env, visibleDelayMs, timeoutMs, scriptPath = __filename }) {
@@ -2514,6 +2634,7 @@ module.exports = {
     redactGeneratedWorkspaceJsonValue,
     redactGeneratedWorkspacePlainText,
     runSuiteWrapperProcess,
+    runDirectRegisteredSuite,
     verifyFuncCoreToolsAtDependencyRoot,
     walkFiles,
     writeSuitePhaseResult,

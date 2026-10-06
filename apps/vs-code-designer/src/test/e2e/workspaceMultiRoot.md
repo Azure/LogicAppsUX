@@ -184,8 +184,31 @@ Let **D** be the fresh directory made by
 - `D/screenshots/workspace-multi-root-*.png` and matching `.json` sidecars;
 - `D/vscode-logs/workspaceMultiRoot/workspace-multi-root[__<consumer-user-data-suffix>]/`
   through the existing sanitized profile-log copier;
-- `D/phases.jsonl` for direct execution, or the supplied
-  `LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH` for batch execution.
+- The supplied `LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH`: the fresh direct wrapper
+  results file below, or the existing batch report-folder phase file.
+
+Direct ADO execution now enters the existing general suite-process wrapper
+before running the family body. Its stable required terminal is
+`.vscode-test/results/workspaceMultiRoot.terminal-result.json`, with the general
+`writeSuiteFinalEvidence` shape, ordered registry phase IDs and each phase's
+complete/exit/signal/cleanup/diagnostics proof. The same existing wrapper
+observes its actual child closure and descendant cleanup; the family reopen
+phase separately proves actual ordinary Code closure, evidence/diagnostics
+and removed fixture-root absence. No cleanup boolean is assumed from exit 0.
+
+Its associated paths are:
+
+- `.vscode-test/results/workspaceMultiRoot.cleanup-ledger.json`;
+- `.vscode-test/results/workspaceMultiRoot.terminal-invocation.json`, binding
+  source/run/job and a fresh invocation to the report paths;
+- `.vscode-test/results/workspaceMultiRoot.phases-<invocation>.jsonl`.
+
+The direct stable terminal/ledger are first invalidated to incomplete, before
+child launch or preflight, so an older success cannot satisfy a failed new
+invocation. Exact phase order, all phase proofs, actual general-wrapper cleanup
+and finalized lifecycle are required for direct exit 0. Direct family phases
+are routed to that fresh results file rather than `D/phases.jsonl`. Batch
+execution keeps its existing suite report-folder paths and is not rewrapped.
 
 Bootstrap/create profiles continue using the consumer's normal
 `LA_E2E_CLI_VSCODE_LOG_DIR`, with profile names
