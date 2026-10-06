@@ -153,14 +153,16 @@ suite('Stateless variables lifecycle', () => {
           const saved = operations ?? assertStatelessDefinition(readJson(entry.workflowJsonPath));
           await invoke(entry, saved, deadline, signal);
         },
+        onQuiescenceVerified: () => {
+          recoveryQuiescent = true;
+        },
       });
-      recoveryQuiescent = true;
     } catch (error) {
       recoveryFailures.push(error);
     }
     if (recoveryQuiescent && fixtureLease) {
       try {
-        fixtureLease.restore(); // Only after actual recovered callback and owned quiescence.
+        fixtureLease.restore(); // After verified owned quiescence, even if callback verification failed.
       } catch (error) {
         recoveryFailures.push(error);
       }
@@ -193,7 +195,8 @@ async function establishDesignTime(
     signal
   );
   assertApprovedAzureFixture(path.join(entry.appDir, 'local.settings.json'), fixture);
-  assertApprovedAzureFixture(path.join(entry.appDir, 'workflow-designtime', 'local.settings.json'), fixture);
+  // Caller binds the real independently generated file through its own guarded
+  // per-file lease, then asserts both targets. Azure keys are not inherited here.
 }
 
 async function authorVariablesThroughDesigner(

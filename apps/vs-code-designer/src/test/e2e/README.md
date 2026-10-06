@@ -168,8 +168,14 @@ The token remains environment-only. Both app and generated design-time bindings
 are verified. If subscription/group pickers appear, only the approved subscription
 identity and exact existing group label may be selected; Create is never selected.
 Preconfiguration is not GUI-picker coverage or proof of Azure availability.
-Fixture metadata restoration follows actual recovery quiescence, preserves
-unrelated product/foreign changes and refuses any foreign target edit.
+The design-time file is generated independently, not copied from app settings.
+After the real producer and file-readiness gate, a guarded per-file lease binds
+its Azure keys before assertions, snapshots that file's own original target-key
+presence/values, and preserves every unrelated generator setting.
+Fixture metadata restoration follows actual recovery quiescence, independently
+of callback-verification success. A callback failure remains a failure after safe
+restoration; failed quiescence or foreign target edits refuse restoration. Both
+leases preserve unrelated product/foreign changes and their distinct baselines.
 
 The native family authors Request, one multi-variable Initialize (including the
 actual Add a Variable control), both variable appends and Response through the real
