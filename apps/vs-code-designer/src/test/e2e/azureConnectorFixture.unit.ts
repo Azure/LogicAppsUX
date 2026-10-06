@@ -15,8 +15,9 @@ import { handleAffirmativeConnectorWorkbenchPrompt } from './workbenchPrompts';
 
 type Control = (name: string, run: () => void | Promise<void>) => Promise<void>;
 const env = {
-  LA_E2E_CLI_AZURE_TENANT_ID: 'unit-tenant',
-  LA_E2E_CLI_AZURE_SUBSCRIPTION_ID: 'unit-subscription',
+  LA_E2E_CLI_AZURE_TENANT_ID: '00000000-0000-4000-8000-000000000002',
+  LA_E2E_CLI_AZURE_SUBSCRIPTION_ID: '00000000-0000-4000-8000-000000000001',
+  LA_E2E_CLI_AZURE_ACCESS_TOKEN: 'unit-owned-token',
   LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME: 'unit-existing-group',
   LA_E2E_CLI_AZURE_LOCATION_NAME: 'westus',
   LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL: 'https://management.azure.com/',
@@ -27,7 +28,7 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
     const target = readApprovedAzureConnectorFixture(env);
     const fixture = { ...target, location: 'eastus', resourceGroupLocationVerified: true };
     for (const key of Object.keys(env)) {
-      assert.throws(() => readApprovedAzureConnectorFixture({ ...env, [key]: '' }), /fixture missing/);
+      assert.throws(() => readApprovedAzureConnectorFixture({ ...env, [key]: '' }), /fixture.*missing/i);
     }
     assert.throws(() => readApprovedAzureConnectorFixture({ ...env, LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL: 'http://example.test' }));
     const root = fs.mkdtempSync(path.join(os.tmpdir(), 'azure-fixture-unit-'));
@@ -44,10 +45,10 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
       fs.writeFileSync(path.join(root, 'local.settings.json'), JSON.stringify(settings));
       assertApprovedAzureConnectorFixtureSaved(root, fixture);
       assert.throws(() => assertApprovedAzureConnectorFixtureSaved(root, target), /actual location must be verified/);
-      assert.throws(() => assertApprovedAzureConnectorFixtureSaved(root, { ...fixture, location: 'westus' }), /approved target/);
+      assert.throws(() => assertApprovedAzureConnectorFixtureSaved(root, { ...fixture, location: 'westus' }), /Approved Azure fixture/);
       settings.Values.WORKFLOWS_RESOURCE_GROUP_NAME = 'other-group';
       fs.writeFileSync(path.join(root, 'local.settings.json'), JSON.stringify(settings));
-      assert.throws(() => assertApprovedAzureConnectorFixtureSaved(root, fixture), /approved target/);
+      assert.throws(() => assertApprovedAzureConnectorFixtureSaved(root, fixture), /Approved Azure fixture/);
     } finally {
       fs.rmSync(root, { recursive: true, force: true });
     }
@@ -77,7 +78,7 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
       calls++;
       assert.strictEqual(
         String(url),
-        'https://management.azure.com/subscriptions/unit-subscription/resourceGroups/unit-existing-group?api-version=2022-09-01'
+        `https://management.azure.com/subscriptions/${target.subscriptionId}/resourceGroups/unit-existing-group?api-version=2022-09-01`
       );
       assert.strictEqual(options.method, 'GET');
       return { ok: true, json: async () => group };
@@ -110,7 +111,7 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
     let calls = 0;
     const get = async (url: any, options: any) => {
       calls++;
-      assert.strictEqual(String(url), 'https://management.azure.com/subscriptions/unit-subscription?api-version=2022-12-01');
+      assert.strictEqual(String(url), `https://management.azure.com/subscriptions/${fixture.subscriptionId}?api-version=2022-12-01`);
       assert.strictEqual(options.method, 'GET');
       assert.strictEqual(options.headers.Authorization, 'Bearer unit-owned-token');
       return {

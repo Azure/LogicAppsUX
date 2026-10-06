@@ -2,38 +2,29 @@ import * as assert from 'assert';
 import * as path from 'path';
 import type { CdpEvaluator } from './cdpFormHelpers';
 import { clickPoint } from './cdpFormHelpers';
-import { getMsnWeatherLocalSettingsEvidence, type MsnWeatherAzureSettings, normalizeManagementBaseUrl } from './msnWeatherSettings';
+import {
+  approvedAzureFixtureFromEnvironment,
+  approvedAzureFixturePrompts,
+  assertApprovedAzureFixture,
+  type ApprovedAzureFixture,
+} from './approvedAzureFixture';
+import { selectWorkbenchPromptOption } from './workbenchPromptSelection';
 import { readWorkbenchPrompts, type DetectedWorkbenchPrompt } from './workbenchPrompts';
 
-export interface ApprovedAzureConnectorFixture extends MsnWeatherAzureSettings {
+export interface ApprovedAzureConnectorFixture extends ApprovedAzureFixture {
   // Template location is only a setup hint until the approved existing RG's
   // actual ARM location has been read and independently checked.
   resourceGroupLocationVerified?: boolean;
 }
 
 export function readApprovedAzureConnectorFixture(env: NodeJS.ProcessEnv = process.env): ApprovedAzureConnectorFixture {
-  const fields = {
-    tenantId: 'LA_E2E_CLI_AZURE_TENANT_ID',
-    subscriptionId: 'LA_E2E_CLI_AZURE_SUBSCRIPTION_ID',
-    resourceGroupName: 'LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME',
-    location: 'LA_E2E_CLI_AZURE_LOCATION_NAME',
-    managementBaseUrl: 'LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL',
-  } as const;
-  const missing = Object.values(fields).filter((key) => !env[key]?.trim());
-  assert.strictEqual(
-    missing.length,
-    0,
-    `Approved Azure connector fixture missing: ${missing.join(', ')}; parent HTTP lane requiresAzureAccessToken/WIF context must be enabled`
-  );
-  const result = Object.fromEntries(
-    Object.entries(fields).map(([field, key]) => [field, env[key]!.trim()])
-  ) as unknown as ApprovedAzureConnectorFixture;
+  assert.ok(env.LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL?.trim(), 'Approved HTTP fixture missing LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL');
+  const result = approvedAzureFixtureFromEnvironment(env);
   const endpoint = new URL(result.managementBaseUrl);
   assert.ok(
     endpoint.protocol === 'https:' && !endpoint.username && !endpoint.password && !endpoint.search && !endpoint.hash,
     'Approved management endpoint must be an HTTPS base URL without credentials/query'
   );
-  result.managementBaseUrl = normalizeManagementBaseUrl(result.managementBaseUrl);
   return result;
 }
 
@@ -43,13 +34,9 @@ export function assertApprovedAzureConnectorFixtureSaved(appDir: string, fixture
     true,
     'Existing resource-group actual location must be verified, not assumed from template'
   );
-  // Reuse the existing independent local.settings evidence reader. Product
-  // SaveAzureContext writes these values; the HTTP harness never injects them.
-  const evidence = getMsnWeatherLocalSettingsEvidence(path.join(appDir, 'local.settings.json'), fixture, 'http-affirmative-native-wizard');
-  const invalid = Object.entries(evidence.keys)
-    .filter(([, value]) => value.status !== 'valid')
-    .map(([key]) => key);
-  assert.strictEqual(invalid.length, 0, `Product affirmative Azure setup did not persist the approved target: ${invalid.join(', ')}`);
+  // Shared strict verifier only. HTTP deliberately does not call the shared
+  // preconfiguration lease: product wizard persistence is still required.
+  assertApprovedAzureFixture(path.join(appDir, 'local.settings.json'), fixture);
 }
 
 export async function readApprovedExistingResourceGroup(
@@ -125,15 +112,20 @@ export async function selectApprovedAzureConnectorFixturePrompt(
     expectedName && !/create new|sign in|grant|permission/i.test(expectedName),
     'Never select cloud creation, sign-in or elevation actions'
   );
-  const matches = prompt.rows.filter((row) => row.text === expectedName);
+  const matches = prompt.rows.filter((row) => (row.label ?? row.text) === expectedName);
   assert.strictEqual(
     matches.length,
     1,
     'Approved existing Azure target unavailable/ambiguous; do not select another target or create a resource'
   );
-  assert.ok(matches[0].point, 'Approved existing target must be enabled and hit-testable');
+  const sharedRule = approvedAzureFixturePrompts(fixture)[subscriptionTitles.includes(prompt.title) ? 0 : 1];
+  const selection = selectWorkbenchPromptOption(
+    [{ ...sharedRule, matchText: prompt.title, optionText: expectedName, exactRowLabel: true }],
+    [prompt]
+  );
+  assert.ok(selection.point, 'Approved existing target must be enabled and hit-testable');
   assert.ok(Date.now() < deadline, 'Approved existing target observation deadline expired before native input');
-  await clickPoint(cdp, matches[0].point);
+  await clickPoint(cdp, selection.point);
   while (Date.now() < deadline) {
     const next = (await readWorkbenchPrompts(cdp, Math.min(3000, deadline - Date.now()))).filter((value) => value.kind !== 'notification');
     if (!next.length || next.every((value) => value.title !== prompt.title)) {

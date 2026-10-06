@@ -58,6 +58,11 @@ The installed Azure utility can label its existing resource-group list
 select **Create new resource group**. Exact existing-target selection and a
 read-only subscription-name lookup have regression controls in
 `azureConnectorFixture.unit.ts`; source-bound native verification remains open.
+Strict reusable fixture parsing/verification and exact existing-target policy
+live in `approvedAzureFixture.ts`. HTTP consumes these contracts while retaining
+its actual UI journey and independent product-persistence proof; it does not use
+the preconfiguration lease to claim picker coverage. Pure lease controls do not
+resolve the separate Stateless review or native evidence gates.
 Affirmative wizard consumers must not use command-only minimal activation: the
 normal activation path initializes the real Azure Resources account tree used
 by `getSubscriptionPromptStep`. HTTP keeps bootstrap admission separate and

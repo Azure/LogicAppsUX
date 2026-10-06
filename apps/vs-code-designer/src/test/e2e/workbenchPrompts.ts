@@ -38,7 +38,8 @@ export const workbenchPromptDomScript = `(() => {
       const text = normalize((container.innerText || container.textContent || '') + ' ' +
         Array.from(container.querySelectorAll('input')).map(input => (input.value || '') + ' ' + (input.placeholder || '')).join(' '));
       const options = selector => Array.from(container.querySelectorAll(selector)).filter(visible).map(element => ({
-        text: normalize(element.querySelector('.label-name')?.textContent || element.textContent), point: pointFor(element),
+        text: normalize(element.querySelector('.label-name')?.textContent || element.textContent),
+        label: normalize(element.querySelector('.label-name')?.textContent || element.textContent), point: pointFor(element),
       }));
       return {
         kind: quickInput ? 'quickInput' : notification ? 'notification' : 'dialog',

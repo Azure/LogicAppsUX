@@ -89,6 +89,12 @@ harness—persists the approved Azure target, which is independently checked bef
 Request/Compose authoring. Missing context/auth, absent or ambiguous targets,
 sign-in/elevation prompts and resource-creation choices fail explicitly.
 No resources, identities or grants are created or changed.
+HTTP reuses `approvedAzureFixture.ts` for strict environment/GUID/WIF-tenant
+contracts, exact existing-target picker rules and saved-target verification.
+The helper and its 15 pure controls are taken from the shared fixture prior art;
+HTTP does **not** install its preconfiguration lease. Preconfiguration, binding
+and restoration controls are not affirmative picker/native coverage, and that
+lease's separate Stateless review/native limitations remain unchanged.
 Only HTTP reopen uses normal (non-minimal) Logic Apps activation so the actual
 Azure Resources account tree is initialized before the affirmative wizard.
 Bootstrap admission remains unchanged; reopen keeps strict managed dependency
