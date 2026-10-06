@@ -1,0 +1,188 @@
+import * as assert from 'assert';
+import { randomUUID } from 'crypto';
+import { abortable, remainingMs, withinDeadline } from './statelessVariablesControls';
+
+export interface StatelessDebugSession {
+  id: string;
+  workspacePath: string;
+  ownerTag: string | undefined;
+  stop(): PromiseLike<void>;
+}
+
+export interface StatelessDebugTask {
+  id: string;
+  workspacePath: string;
+  name: string;
+  terminate(): void;
+}
+
+interface Attempt {
+  tag: string;
+  settled: boolean;
+  started: boolean;
+  taskStarted: boolean;
+  cancelled: boolean;
+  result?: boolean;
+}
+
+/** Test-window handles only, not OS process discovery or a process-owner protocol.
+ * Listeners stay armed on failure so a resolving late launch is stopped by exact
+ * session marker + workspace identity, even after a bounded quiescence failure. */
+export class StatelessOwnedDebug {
+  private readonly attempts = new Map<string, Attempt>();
+  private readonly sessions = new Map<string, StatelessDebugSession>();
+  private readonly tasks = new Map<string, { task: StatelessDebugTask; ownerTag: string }>();
+  private readonly stopping = new Set<string>();
+  private readonly terminating = new Set<string>();
+  private readonly stopJobs = new Set<Promise<void>>();
+  private readonly cleanupErrors: unknown[] = [];
+
+  constructor(
+    private readonly workspacePath: string,
+    private readonly preLaunchTask: string,
+    private readonly launch: (tag: string) => PromiseLike<boolean>
+  ) {}
+
+  async start(signal: AbortSignal): Promise<void> {
+    signal.throwIfAborted();
+    assert.ok(this.isQuiescent(), 'An earlier owned launch must quiesce before another debug start');
+    const attempt: Attempt = { tag: randomUUID(), settled: false, started: false, taskStarted: false, cancelled: false };
+    this.attempts.set(attempt.tag, attempt);
+    const cancel = () => {
+      attempt.cancelled = true;
+      this.stopOwnedHandles(attempt.tag);
+    };
+    signal.addEventListener('abort', cancel, { once: true });
+    // Never discard this underlying promise when the caller's abort wins.
+    const operation = Promise.resolve()
+      .then(() => {
+        signal.throwIfAborted();
+        return this.launch(attempt.tag);
+      })
+      .then(
+        (result) => {
+          attempt.result = result;
+          attempt.settled = true;
+          if (attempt.cancelled) {
+            this.stopOwnedHandles(attempt.tag);
+          }
+          return result;
+        },
+        (error) => {
+          attempt.settled = true;
+          throw error;
+        }
+      );
+    try {
+      assert.strictEqual(await abortable(operation, signal), true, 'VS Code reported startDebugging=false');
+    } finally {
+      signal.removeEventListener('abort', cancel);
+      if (signal.aborted) {
+        cancel();
+      }
+    }
+  }
+
+  sessionStarted(session: StatelessDebugSession): void {
+    const attempt = session.ownerTag ? this.attempts.get(session.ownerTag) : undefined;
+    if (!attempt || session.workspacePath !== this.workspacePath) {
+      return; // Explicitly foreign sessions are never stopped.
+    }
+    attempt.started = true;
+    this.sessions.set(session.id, session);
+    if (attempt.cancelled) {
+      this.stopOwnedHandles(attempt.tag);
+    }
+  }
+
+  sessionEnded(id: string): void {
+    this.sessions.delete(id);
+  }
+
+  taskStarted(task: StatelessDebugTask): void {
+    const pending = [...this.attempts.values()].find((attempt) => !attempt.settled);
+    if (task.workspacePath !== this.workspacePath || task.name !== this.preLaunchTask || !pending) {
+      return;
+    }
+    this.tasks.set(task.id, { task, ownerTag: pending.tag });
+    pending.taskStarted = true;
+    if (pending.cancelled) {
+      this.stopOwnedHandles(pending.tag);
+    }
+  }
+
+  taskEnded(id: string): void {
+    this.tasks.delete(id);
+  }
+
+  cancel(): void {
+    for (const attempt of this.attempts.values()) {
+      attempt.cancelled = true;
+    }
+    this.stopOwnedHandles();
+  }
+
+  async quiesce(deadline: number): Promise<void> {
+    this.cancel();
+    await withinDeadline(deadline, 'owned debug quiescence', async () => {
+      while (!this.isQuiescent()) {
+        this.throwCleanupErrors();
+        await new Promise((resolve) => setTimeout(resolve, remainingMs(deadline, 20)));
+      }
+      this.throwCleanupErrors();
+    });
+  }
+
+  private isQuiescent(): boolean {
+    return (
+      [...this.attempts.values()].every(
+        (attempt) => attempt.settled && (attempt.result !== true || (attempt.started && attempt.taskStarted))
+      ) &&
+      this.sessions.size === 0 &&
+      this.tasks.size === 0 &&
+      this.stopJobs.size === 0
+    );
+  }
+
+  private stopOwnedHandles(ownerTag?: string): void {
+    for (const { task, ownerTag: taskOwner } of this.tasks.values()) {
+      if (ownerTag && taskOwner !== ownerTag) {
+        continue;
+      }
+      if (this.terminating.has(task.id)) {
+        continue;
+      }
+      this.terminating.add(task.id);
+      try {
+        task.terminate();
+      } catch (error) {
+        this.cleanupErrors.push(error);
+      }
+    }
+    for (const session of this.sessions.values()) {
+      if (ownerTag && session.ownerTag !== ownerTag) {
+        continue;
+      }
+      if (this.stopping.has(session.id)) {
+        continue;
+      }
+      this.stopping.add(session.id);
+      const job = Promise.resolve()
+        .then(() => session.stop())
+        .then(
+          () => undefined,
+          (error) => {
+            this.cleanupErrors.push(error);
+          }
+        );
+      this.stopJobs.add(job);
+      job.then(() => this.stopJobs.delete(job));
+    }
+  }
+
+  private throwCleanupErrors(): void {
+    if (this.cleanupErrors.length > 0) {
+      throw new AggregateError(this.cleanupErrors, 'Matching owned debug cleanup failed');
+    }
+  }
+}

@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as http from 'http';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { randomUUID } from 'crypto';
 import { connectToVsCodeCdp, waitForWebviewFrameContext, type CdpConnection } from './cdpClient';
 import { clickPoint, pressKey, type CdpEvaluator, type Point } from './cdpFormHelpers';
 import { assertNoDialogAttempts, installDialogGuard } from './dialogGuard';
@@ -20,9 +21,12 @@ import {
   recoverStateless,
   remainingMs,
   withinDeadline,
+  assertPhaseActive,
+  StatelessOperationScope,
   type StatelessOperations,
   type StatelessSettingsLease,
 } from './statelessVariablesControls';
+import { StatelessOwnedDebug, type StatelessDebugTask } from './statelessVariablesDebug';
 
 const managementRoot = 'http://localhost:7071/runtime/webhooks/workflow/api/management';
 const apiVersion = '2019-10-01-edge-preview';
@@ -68,38 +72,47 @@ suite('Stateless variables lifecycle', () => {
     assert.strictEqual(entry.appType, 'standard');
     assert.strictEqual(normalizeFsPath(vscode.workspace.workspaceFile?.fsPath ?? ''), normalizeFsPath(entry.workspaceFilePath));
     assert.strictEqual(objectValue(readJson(entry.workflowJsonPath), 'reopened workflow').kind, 'Stateless');
-    await helpers.waitForGeneratedLogicAppFolder(entry);
-    await poll(Date.now() + 180_000, 'generated design-time settings', async () =>
-      fs.existsSync(path.join(entry.appDir, 'workflow-designtime', 'local.settings.json'))
-    );
 
     // No history is promised by default Stateless. First author and call it with
     // generated settings, then apply the opt-in to BOTH generated targets.
     let lease: StatelessSettingsLease | undefined;
     let operations: StatelessOperations | undefined;
     const positiveDeadline = Date.now() + 900_000;
+    const positiveScope = new StatelessOperationScope();
+    let ownedDebug: StatelessOwnedDebug | undefined;
+    const getOwnedDebug = () => (ownedDebug ??= createOwnedDebug(entry));
+    const quiesce = async (deadline: number) => {
+      positiveScope.cancel();
+      ownedDebug?.cancel();
+      await Promise.all([positiveScope.quiesce(deadline), ...(ownedDebug ? [ownedDebug.quiesce(deadline)] : [])]);
+    };
     let originalFailure: unknown;
     try {
-      operations = await withinDeadline(positiveDeadline, 'authoring', () => authorVariablesThroughDesigner(entry, positiveDeadline));
-      await start(entry, positiveDeadline);
-      const initialOverview = await openHistory(entry, positiveDeadline);
-      try {
-        await invoke(entry, operations, positiveDeadline);
-      } finally {
-        initialOverview.cdp.dispose();
-      }
-      await withinDeadline(positiveDeadline, 'stop before settings', () => helpers.stopDebuggingAndTasks());
-      lease = installStatelessHistorySettings(entry.appDir, entry.wfName);
-      lease.assertInstalled();
-      await start(entry, positiveDeadline);
-      lease.assertInstalled();
-      await proveExactHistoryRun(entry, operations, positiveDeadline);
-      await withinDeadline(positiveDeadline, 'stop for restart', () => helpers.stopDebuggingAndTasks());
-      lease.assertInstalled();
-      await start(entry, positiveDeadline);
-      lease.assertInstalled();
-      await proveExactHistoryRun(entry, operations, positiveDeadline);
-      await assertNoDialogAttempts('Stateless variables lifecycle');
+      await positiveScope.run(positiveDeadline, 'positive lifecycle', async (signal) => {
+        await establishDesignTime(entry, positiveDeadline, signal);
+        operations = await authorVariablesThroughDesigner(entry, positiveDeadline, signal);
+        await start(entry, getOwnedDebug(), positiveDeadline, signal);
+        const initialOverview = await openHistory(entry, positiveDeadline, signal);
+        try {
+          await invoke(entry, operations, positiveDeadline, signal);
+        } finally {
+          initialOverview.cdp.dispose();
+        }
+        await getOwnedDebug().quiesce(positiveDeadline);
+        assertPhaseActive(positiveDeadline, signal);
+        lease = installStatelessHistorySettings(entry.appDir, entry.wfName);
+        lease.assertInstalled();
+        await start(entry, getOwnedDebug(), positiveDeadline, signal);
+        lease.assertInstalled();
+        await proveExactHistoryRun(entry, operations, positiveDeadline, signal);
+        await getOwnedDebug().quiesce(positiveDeadline);
+        assertPhaseActive(positiveDeadline, signal);
+        lease.assertInstalled();
+        await start(entry, getOwnedDebug(), positiveDeadline, signal);
+        lease.assertInstalled();
+        await proveExactHistoryRun(entry, operations, positiveDeadline, signal);
+        await assertNoDialogAttempts('Stateless variables lifecycle');
+      });
     } catch (error) {
       originalFailure = error;
     }
@@ -109,12 +122,17 @@ suite('Stateless variables lifecycle', () => {
     const recoveryFailures: unknown[] = [];
     try {
       await recoverStateless({
-        stop: () => helpers.stopDebuggingAndTasks(),
+        quiesce,
+        stop: async (deadline) => {
+          if (ownedDebug) {
+            await ownedDebug.quiesce(deadline);
+          }
+        },
         restore: () => lease?.restore(),
-        restart: (deadline) => start(entry, deadline),
-        verify: async (deadline) => {
+        restart: (deadline, signal) => start(entry, getOwnedDebug(), deadline, signal),
+        verify: async (deadline, signal) => {
           const saved = operations ?? assertStatelessDefinition(readJson(entry.workflowJsonPath));
-          await invoke(entry, saved, deadline);
+          await invoke(entry, saved, deadline, signal);
         },
       });
     } catch (error) {
@@ -129,15 +147,36 @@ suite('Stateless variables lifecycle', () => {
   });
 });
 
-async function authorVariablesThroughDesigner(entry: CreatedWorkspace, deadline: number): Promise<StatelessOperations> {
+async function establishDesignTime(entry: CreatedWorkspace, deadline: number, signal: AbortSignal): Promise<void> {
+  await helpers.waitForGeneratedLogicAppFolder(entry);
+  assertPhaseActive(deadline, signal);
+  // Cold wizard creation has app-root settings only; the real designer is the
+  // producer of workflow-designtime. Never await its output before this command.
+  await helpers.openDesignerAndCreateWorkflow(entry, { warmOnly: true });
+  assertPhaseActive(deadline, signal);
+  await poll(
+    deadline,
+    'generated design-time settings',
+    async () => fs.existsSync(path.join(entry.appDir, 'workflow-designtime', 'local.settings.json')),
+    signal
+  );
+}
+
+async function authorVariablesThroughDesigner(
+  entry: CreatedWorkspace,
+  deadline: number,
+  signal: AbortSignal
+): Promise<StatelessOperations> {
+  assertPhaseActive(deadline, signal);
   const blank = objectValue(readJson(entry.workflowJsonPath), 'wizard workflow');
   const definition = objectValue(blank.definition, 'wizard definition');
   assert.deepStrictEqual(definition.actions, {}, 'Do not seed a workflow in place of actual authoring');
   assert.deepStrictEqual(definition.triggers, {});
-  // The shared warm-only path opens the actual active workflow without authoring.
-  await helpers.openDesignerAndCreateWorkflow(entry, { warmOnly: true });
   const cdp = await connectToVsCodeCdp({ targetName: 'stateless variables designer' });
+  const cancel = () => cdp.dispose();
+  signal.addEventListener('abort', cancel, { once: true });
   try {
+    assertPhaseActive(deadline, signal);
     const context = await waitForWebviewFrameContext(cdp, {
       allTextIncludes: ['Save', 'Add a trigger'],
       description: 'visible stateless designer',
@@ -182,7 +221,7 @@ async function authorVariablesThroughDesigner(entry: CreatedWorkspace, deadline:
       );
       await pressKey(cdp, 'End', 'End', 35);
     }
-    remainingMs(deadline);
+    assertPhaseActive(deadline, signal);
     await helpers.saveWorkflowThroughDesigner(cdp, context, entry.label);
     let saved: StatelessOperations | undefined;
     await poll(deadline, 'saved stateless actions', async () => {
@@ -196,6 +235,7 @@ async function authorVariablesThroughDesigner(entry: CreatedWorkspace, deadline:
     assert.ok(saved, 'Saved workflow evidence is required');
     return saved;
   } finally {
+    signal.removeEventListener('abort', cancel);
     cdp.dispose();
   }
 }
@@ -290,19 +330,131 @@ async function configureAppend(
   await pressKey(cdp, 'Tab', 'Tab', 9);
 }
 
-async function start(entry: CreatedWorkspace, deadline: number): Promise<void> {
-  // No new process-owner protocol or unowned-port kills. The parent runs this
-  // registered native family only on an isolated consumer host.
-  await withinDeadline(deadline, 'debug startup', () => helpers.startDebuggingGeneratedWorkspace(entry, { cleanupBeforeDebug: false }));
-  await withinDeadline(deadline, 'workflow health', () => helpers.waitForWorkflowHealthy(entry.wfName, remainingMs(deadline, 240_000)));
+function createOwnedDebug(entry: CreatedWorkspace): StatelessOwnedDebug {
+  const folder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(entry.appDir));
+  assert.ok(folder, 'The generated app must be open as a workspace folder');
+  const launch = objectValue(readJson(path.join(entry.appDir, '.vscode', 'launch.json')), 'generated launch');
+  assert.ok(Array.isArray(launch.configurations) && launch.configurations.length > 0, 'Generated debug configuration is required');
+  const configuration = objectValue(launch.configurations[0], 'debug configuration');
+  assert.ok(typeof configuration.name === 'string' && typeof configuration.type === 'string');
+  assert.strictEqual(configuration.type, 'coreclr', 'Standard generated attach shape is required');
+  assert.strictEqual(configuration.request, 'attach');
+  const tasksFile = objectValue(readJson(path.join(entry.appDir, '.vscode', 'tasks.json')), 'generated tasks');
+  assert.ok(Array.isArray(tasksFile.tasks));
+  const hostTasks = tasksFile.tasks.map((task) => objectValue(task, 'generated task')).filter((task) => task.label === 'func: host start');
+  assert.strictEqual(hostTasks.length, 1, 'Exact generated Functions task identity is required');
+  const taskName = String(hostTasks[0].label);
+  const ownerKey = '__logicAppsStatelessTestOwner';
+  const generatedConfiguration: vscode.DebugConfiguration = {
+    ...configuration,
+    type: 'coreclr',
+    request: 'attach',
+    name: String(configuration.name),
+  };
+  const owned = new StatelessOwnedDebug(normalizeFsPath(entry.appDir), taskName, (tag) =>
+    vscode.debug.startDebugging(folder, { ...generatedConfiguration, [ownerKey]: tag })
+  );
+  // These exact in-memory handles remain armed until the test window exits.
+  // Inadmissible cleanup must not abandon a late resolving debug launch.
+  vscode.debug.onDidStartDebugSession((session) =>
+    owned.sessionStarted({
+      id: session.id,
+      workspacePath: normalizeFsPath(session.workspaceFolder?.uri.fsPath ?? ''),
+      ownerTag: typeof session.configuration[ownerKey] === 'string' ? session.configuration[ownerKey] : undefined,
+      stop: () => vscode.debug.stopDebugging(session),
+    })
+  );
+  vscode.debug.onDidTerminateDebugSession((session) => owned.sessionEnded(session.id));
+  const taskHandles = new WeakMap<vscode.TaskExecution, StatelessDebugTask>();
+  vscode.tasks.onDidStartTask(({ execution }) => {
+    const scope = execution.task.scope;
+    const handle: StatelessDebugTask = {
+      id: randomUUID(),
+      workspacePath: normalizeFsPath(scope && typeof scope === 'object' ? scope.uri.fsPath : ''),
+      name: execution.task.name,
+      terminate: () => execution.terminate(),
+    };
+    taskHandles.set(execution, handle);
+    owned.taskStarted(handle);
+  });
+  vscode.tasks.onDidEndTask(({ execution }) => {
+    const handle = taskHandles.get(execution);
+    if (handle) {
+      owned.taskEnded(handle.id);
+    }
+  });
+  return owned;
 }
 
-async function openHistory(entry: CreatedWorkspace, deadline: number): Promise<{ cdp: CdpConnection; context: number }> {
+async function start(entry: CreatedWorkspace, owned: StatelessOwnedDebug, deadline: number, signal: AbortSignal): Promise<void> {
+  assertPhaseActive(deadline, signal);
+  // Do not use the legacy helper's longer start race or global task stop. Both
+  // the raw launch and matching late sessions are retained by the owned adapter.
+  const results = await Promise.allSettled([
+    owned.start(signal),
+    helpers.handleWorkbenchPrompts(
+      [
+        { matchText: 'Enable connectors in Azure', optionText: 'Skip for now' },
+        { matchText: 'Configure Azurite to autostart on project debug?', optionText: 'Enable AutoStart' },
+        { matchText: 'Failed to verify "AzureWebJobsStorage" connection', optionText: 'Debug anyway' },
+      ],
+      remainingMs(deadline, 20_000),
+      signal
+    ),
+  ]);
+  const failures = results.flatMap((result) => (result.status === 'rejected' ? [result.reason] : []));
+  if (failures.length > 0) {
+    throw new AggregateError(failures, 'Owned stateless debug startup failed');
+  }
+  assertPhaseActive(deadline, signal);
+  await poll(
+    deadline,
+    'Functions Running',
+    async () => {
+      const status = await request('http://localhost:7071/admin/host/status', 'GET', deadline, undefined, signal);
+      if (status.status === 0 || status.status === 503) {
+        return false;
+      }
+      assert.strictEqual(status.status, 200);
+      return objectValue(JSON.parse(status.body), 'host status').state === 'Running';
+    },
+    signal
+  );
+  await poll(
+    deadline,
+    'exact workflow Healthy',
+    async () => {
+      const response = await request(`${managementRoot}/workflows?api-version=${apiVersion}`, 'GET', deadline, undefined, signal);
+      if (response.status === 0 || response.status === 503) {
+        return false;
+      }
+      assert.strictEqual(response.status, 200);
+      const workflow = listValues(JSON.parse(response.body)).find((item) => item.name === entry.wfName);
+      if (!workflow) {
+        return false;
+      }
+      const properties = objectValue(workflow.properties ?? workflow, 'workflow properties');
+      const health = properties.health ?? workflow.health;
+      return health !== undefined && objectValue(health, 'workflow health').state === 'Healthy';
+    },
+    signal
+  );
+}
+
+async function openHistory(
+  entry: CreatedWorkspace,
+  deadline: number,
+  signal: AbortSignal
+): Promise<{ cdp: CdpConnection; context: number }> {
+  assertPhaseActive(deadline, signal);
   await closeAllTabs();
+  assertPhaseActive(deadline, signal);
   await vscode.commands.executeCommand('azureLogicAppsStandard.openOverview', vscode.Uri.file(entry.workflowJsonPath));
   await waitForWebviewTab('workflowOverview', 0, remainingMs(deadline, 60_000));
   const cdp = await connectToVsCodeCdp({ targetName: 'stateless run history' });
+  signal.addEventListener('abort', () => cdp.dispose(), { once: true });
   try {
+    assertPhaseActive(deadline, signal);
     const context = await waitForWebviewFrameContext(cdp, {
       allTextIncludes: ['Run history', 'Refresh'],
       description: 'active stateless Run history',
@@ -315,62 +467,90 @@ async function openHistory(entry: CreatedWorkspace, deadline: number): Promise<{
   }
 }
 
-async function invoke(entry: CreatedWorkspace, operations: StatelessOperations, deadline: number): Promise<HttpResult> {
+async function invoke(
+  entry: CreatedWorkspace,
+  operations: StatelessOperations,
+  deadline: number,
+  signal: AbortSignal
+): Promise<HttpResult> {
   let callback = '';
-  await poll(deadline, 'local callback readiness', async () => {
-    const result = await request(
-      `${workflowUrl(entry)}/triggers/${encodeURIComponent(operations.trigger)}/listCallbackUrl?api-version=${apiVersion}`,
-      'POST',
-      deadline
-    );
-    if (result.status === 0 || result.status === 503 || result.status === 404) {
-      return false;
-    }
-    assert.strictEqual(result.status, 200, 'Local callback lookup must succeed');
-    const value = objectValue(JSON.parse(result.body), 'callback lookup').value;
-    assert.ok(typeof value === 'string' && value.length > 0, 'Local callback lookup must return a URL');
-    callback = value;
-    return true;
-  });
-  const response = await request(callback, 'POST', deadline, '{}');
+  await poll(
+    deadline,
+    'local callback readiness',
+    async () => {
+      const result = await request(
+        `${workflowUrl(entry)}/triggers/${encodeURIComponent(operations.trigger)}/listCallbackUrl?api-version=${apiVersion}`,
+        'POST',
+        deadline,
+        undefined,
+        signal
+      );
+      if (result.status === 0 || result.status === 503 || result.status === 404) {
+        return false;
+      }
+      assert.strictEqual(result.status, 200, 'Local callback lookup must succeed');
+      const value = objectValue(JSON.parse(result.body), 'callback lookup').value;
+      assert.ok(typeof value === 'string' && value.length > 0, 'Local callback lookup must return a URL');
+      callback = value;
+      return true;
+    },
+    signal
+  );
+  const response = await request(callback, 'POST', deadline, '{}', signal);
   assertStatelessResponse(response.status, response.body);
   return response;
 }
 
-async function proveExactHistoryRun(entry: CreatedWorkspace, operations: StatelessOperations, deadline: number): Promise<void> {
-  const before = await request(`${workflowUrl(entry)}/runs?api-version=${apiVersion}`, 'GET', deadline);
+async function proveExactHistoryRun(
+  entry: CreatedWorkspace,
+  operations: StatelessOperations,
+  deadline: number,
+  signal: AbortSignal
+): Promise<void> {
+  const before = await request(`${workflowUrl(entry)}/runs?api-version=${apiVersion}`, 'GET', deadline, undefined, signal);
   assert.strictEqual(before.status, 200, 'Enabled stateless history must be available');
   const previous = new Set(listValues(JSON.parse(before.body)).map((run) => String(run.name)));
-  const history = await openHistory(entry, deadline);
+  const history = await openHistory(entry, deadline, signal);
   try {
-    const callback = await invoke(entry, operations, deadline);
+    const callback = await invoke(entry, operations, deadline, signal);
     const runName = callback.headers['x-ms-workflow-run-id'];
     assert.ok(typeof runName === 'string' && runName.length > 0, 'Callback must identify its actual run');
     assert.ok(!previous.has(runName), 'Callback must create a new run');
     const runUrl = `${workflowUrl(entry)}/runs/${encodeURIComponent(runName)}`;
     let run: unknown;
-    await poll(deadline, 'exact callback run history', async () => {
-      const result = await request(`${runUrl}?api-version=${apiVersion}`, 'GET', deadline);
-      if (result.status === 404) {
-        return false;
-      }
-      assert.strictEqual(result.status, 200, 'Exact callback run must be readable');
-      run = JSON.parse(result.body);
-      const status = objectValue(objectValue(run, 'run').properties, 'properties').status;
-      assert.ok(!['Failed', 'Cancelled', 'TimedOut'].includes(String(status)), 'Callback run must not fail');
-      return status === 'Succeeded';
-    });
-    const actions = await request(`${runUrl}/actions?api-version=${apiVersion}`, 'GET', deadline);
+    await poll(
+      deadline,
+      'exact callback run history',
+      async () => {
+        const result = await request(`${runUrl}?api-version=${apiVersion}`, 'GET', deadline, undefined, signal);
+        if (result.status === 404) {
+          return false;
+        }
+        assert.strictEqual(result.status, 200, 'Exact callback run must be readable');
+        run = JSON.parse(result.body);
+        const status = objectValue(objectValue(run, 'run').properties, 'properties').status;
+        assert.ok(!['Failed', 'Cancelled', 'TimedOut'].includes(String(status)), 'Callback run must not fail');
+        return status === 'Succeeded';
+      },
+      signal
+    );
+    const actions = await request(`${runUrl}/actions?api-version=${apiVersion}`, 'GET', deadline, undefined, signal);
     assert.strictEqual(actions.status, 200, 'Callback run action history must be readable');
     assertStatelessRun(runName, previous, run, JSON.parse(actions.body), operations);
-    const detail = await request(`${runUrl}/actions/${encodeURIComponent(operations.response)}?api-version=${apiVersion}`, 'GET', deadline);
+    const detail = await request(
+      `${runUrl}/actions/${encodeURIComponent(operations.response)}?api-version=${apiVersion}`,
+      'GET',
+      deadline,
+      undefined,
+      signal
+    );
     assert.strictEqual(detail.status, 200, 'Exact saved Response action must be readable');
     const properties = objectValue(objectValue(JSON.parse(detail.body), 'Response action').properties, 'Response properties');
     let outputs = properties.outputs;
     if (outputs === undefined) {
       const uri = objectValue(properties.outputsLink, 'Response outputs link').uri;
       assert.ok(typeof uri === 'string', 'Response outputs link must exist');
-      const linked = await request(uri, 'GET', deadline);
+      const linked = await request(uri, 'GET', deadline, undefined, signal);
       assert.strictEqual(linked.status, 200, 'Local Response outputs must be readable');
       outputs = JSON.parse(linked.body);
     }
@@ -401,7 +581,10 @@ interface HttpResult {
   headers: http.IncomingHttpHeaders;
 }
 
-function request(rawUrl: string, method: string, deadline: number, body?: string): Promise<HttpResult> {
+function request(rawUrl: string, method: string, deadline: number, body?: string, signal?: AbortSignal): Promise<HttpResult> {
+  if (signal) {
+    assertPhaseActive(deadline, signal);
+  }
   const url = new URL(rawUrl);
   assert.ok(
     url.protocol === 'http:' && ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname),
@@ -411,6 +594,7 @@ function request(rawUrl: string, method: string, deadline: number, body?: string
   return new Promise((resolve, reject) => {
     const clearTimer = () => {
       clearTimeout(hardTimeout);
+      signal?.removeEventListener('abort', cancel);
     };
     const req = http.request(
       url,
@@ -434,10 +618,14 @@ function request(rawUrl: string, method: string, deadline: number, body?: string
     );
     // A continuously streaming response can defeat a socket inactivity timer.
     const hardTimeout = setTimeout(() => req.destroy(new Error('Local stateless request deadline expired')), timeout);
+    const cancel = () => req.destroy(new Error('Local stateless request cancelled'));
+    signal?.addEventListener('abort', cancel, { once: true });
     req.on('timeout', () => req.destroy(new Error('Local stateless request timeout')));
     req.on('error', (error: NodeJS.ErrnoException) => {
       clearTimer();
-      if (error.code === 'ECONNREFUSED' || error.code === 'ECONNRESET') {
+      if (signal?.aborted) {
+        reject(signal.reason);
+      } else if (error.code === 'ECONNREFUSED' || error.code === 'ECONNRESET') {
         resolve({ status: 0, body: '', headers: {} });
       } else {
         reject(new Error('Local stateless request failed')); // Do not log a signed callback/outputs URL.
@@ -455,8 +643,9 @@ function readJson(file: string): unknown {
   return JSON.parse(fs.readFileSync(file, 'utf8'));
 }
 
-async function poll(deadline: number, description: string, predicate: () => Promise<boolean>): Promise<void> {
+async function poll(deadline: number, description: string, predicate: () => Promise<boolean>, signal?: AbortSignal): Promise<void> {
   while (remainingMs(deadline) > 0) {
+    signal?.throwIfAborted();
     if (await withinDeadline(deadline, description, predicate)) {
       return;
     }

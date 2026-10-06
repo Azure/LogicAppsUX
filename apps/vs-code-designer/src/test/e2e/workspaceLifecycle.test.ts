@@ -6402,13 +6402,18 @@ async function handleDotnetInstallToolPromptIfVisible(stage: string): Promise<bo
   );
 }
 
-async function handleWorkbenchPrompts(prompts: WorkbenchPrompt[], timeoutMs = 20000): Promise<boolean> {
+async function handleWorkbenchPrompts(prompts: WorkbenchPrompt[], timeoutMs = 20000, signal?: AbortSignal): Promise<boolean> {
+  signal?.throwIfAborted();
   const cdp = await connectToVsCodeWorkbenchCdp({ activate: false });
+  const cancel = () => cdp.dispose();
+  signal?.addEventListener('abort', cancel, { once: true });
   try {
+    signal?.throwIfAborted();
     const deadline = Date.now() + timeoutMs;
     const noPromptDeadline = Date.now() + 1500;
     let handledPrompt = false;
     while (Date.now() < deadline) {
+      signal?.throwIfAborted();
       const containers = await cdp.evaluate<WorkbenchPromptContainer[]>(
         undefined,
         `(() => {
@@ -6453,6 +6458,7 @@ async function handleWorkbenchPrompts(prompts: WorkbenchPrompt[], timeoutMs = 20
       const result: WorkbenchPromptSelection = selectWorkbenchPromptOption(prompts, containers);
 
       if (result.point) {
+        signal?.throwIfAborted();
         console.log(`[workspace-lifecycle] Selecting workbench prompt option "${result.targetText}"`);
         await clickPoint(cdp, result.point);
         handledPrompt = true;
@@ -6474,6 +6480,7 @@ async function handleWorkbenchPrompts(prompts: WorkbenchPrompt[], timeoutMs = 20
     }
     return handledPrompt;
   } finally {
+    signal?.removeEventListener('abort', cancel);
     cdp.dispose();
   }
 }
@@ -6710,6 +6717,7 @@ export const statelessLifecycleHelpers = {
   selectDynamicContentTokenForParameter,
   waitForDesignerParameterEditor,
   waitForDesignerText,
+  handleWorkbenchPrompts,
   saveWorkflowThroughDesigner,
   closeDesignerDetailsPanelThroughDesigner,
   captureLifecycleScreenshot,

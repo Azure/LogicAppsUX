@@ -63,6 +63,21 @@ Restoration and a recovered real callback have an independent bounded deadline,
 including when the positive deadline expires. Any foreign settings edit or deletion
 preserves both files rather than partly restoring or overwriting them.
 
+Cold reopen starts the actual designer producer before awaiting generated
+design-time settings, inside the positive/recovery cleanup boundary. Side-effect
+operations receive cancellation signals and retain their underlying promises.
+Restoration cannot overlap an unquiesced producer or debug start. Debug cleanup
+uses only exact marked sessions and newly observed generated Functions task
+handles in the wizard-owned app, never global task/session or port cleanup.
+Late resolving owned starts remain observed and stopped even when bounded cleanup
+fails; that failure is inadmissible, not a passing race against a timeout.
+
+The direct selector has a fresh family-scoped three-phase journal. Bootstrap,
+create and reopen must all succeed exactly once and in order. Final admission is
+written after both owned roots are actually removed. Missing/unordered phases,
+retained roots, diagnostics or cleanup failures produce `complete: false` and a
+nonzero direct exit. Existing canonical labels and Stateful defaults are unchanged.
+
 Boundary: private source text asks for “both” local-settings files without naming
 their paths; the pair above follows the extension's two established generated
 settings targets. Embedded source images were used only as a private authoring

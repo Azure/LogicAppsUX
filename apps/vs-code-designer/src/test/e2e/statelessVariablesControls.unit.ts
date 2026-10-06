@@ -217,6 +217,7 @@ function testBothSettings(): void {
 async function testRecovery(): Promise<void> {
   const order: string[] = [];
   const hooks: RecoveryHooks = {
+    quiesce: async () => undefined,
     stop: async (deadline) => {
       assert.ok(remainingMs(deadline) > 0);
       order.push('stop');
@@ -451,20 +452,40 @@ async function testRegisteredRunner(): Promise<void> {
     (statement): statement is ts.FunctionDeclaration => ts.isFunctionDeclaration(statement) && statement.name?.text === 'getSuitePhaseId'
   );
   assert.ok(phaseNode);
-  const implementation = ts.transpileModule(`export ${node.getText(parsed)}\nexport ${phaseNode.getText(parsed)}`, {
-    compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS },
-  }).outputText;
+  const entryPoints = parsed.statements.filter(
+    (statement): statement is ts.FunctionDeclaration =>
+      ts.isFunctionDeclaration(statement) && ['main', 'parseArgs', 'exitWithError'].includes(statement.name?.text ?? '')
+  );
+  assert.strictEqual(entryPoints.length, 3);
+  const implementation = ts.transpileModule(
+    [node, phaseNode, ...entryPoints].map((statement) => `export ${statement.getText(parsed)}`).join('\n'),
+    {
+      compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS },
+    }
+  ).outputText;
   const calls: Array<{ args: string[]; extraEnv: Record<string, string> }> = [];
   const exported: {
     runStatelessVariablesLifecycle?: (visibleDelayMs?: string) => Promise<void>;
     getSuitePhaseId?: (label: string, env: Record<string, string>) => string;
+    main?: () => void;
   } = {};
   const cleanupRoots: string[] = [];
   let failBootstrap = false;
+  let admissionComplete = true;
+  let reportExit: (code: number) => void = () => undefined;
   const entry = { label: 'stateless-variables', appType: 'standard', workspaceFilePath: '/unit/created.code-workspace' };
   vm.runInNewContext(implementation, {
     exports: exported,
-    process: { env: { LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: '/unit/prepared-deps' } },
+    process: {
+      env: {},
+      argv: ['node', 'unit-runner', '--stateless-variables-lifecycle'],
+      exit: (code: number) => reportExit(code),
+    },
+    console: { error: () => undefined },
+    beginStatelessEvidence: () => ({ env: { LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH: '/unit/fresh-family-phases' } }),
+    finalizeStatelessEvidence: (_evidence: unknown, outcome: { lifecycleSucceeded: boolean }) => ({
+      complete: outcome.lifecycleSucceeded && admissionComplete,
+    }),
     path,
     fs: { mkdirSync: () => undefined, readFileSync: () => JSON.stringify([entry]) },
     createIsolatedRuntimeDependenciesRoot: () => '/unit/runtime-deps',
@@ -545,11 +566,34 @@ async function testRegisteredRunner(): Promise<void> {
   calls.length = 0;
   cleanupRoots.length = 0;
   failBootstrap = true;
-  await assert.rejects(() => exported.runStatelessVariablesLifecycle?.() ?? Promise.resolve(), /unit bootstrap failed/);
+  await assert.rejects(
+    () => exported.runStatelessVariablesLifecycle?.() ?? Promise.resolve(),
+    (error: AggregateError) => error.errors.some((cause: Error) => cause.message === 'unit bootstrap failed')
+  );
   check(() => {
     assert.strictEqual(calls.length, 1, 'A failed bootstrap must not run or report create/reopen');
     assert.strictEqual(cleanupRoots.length, 0, 'Preserve failed native dependency data for parent diagnostics');
   });
+  failBootstrap = false;
+  admissionComplete = false;
+  calls.length = 0;
+  cleanupRoots.length = 0;
+  await assert.rejects(() => exported.runStatelessVariablesLifecycle?.() ?? Promise.resolve(), /evidence is inadmissible/);
+  assert.strictEqual(calls.length, 3, 'Admission failure must be tested after all three successful native-shaped child stubs');
+  assert.strictEqual(cleanupRoots.length, 2, 'Final evidence must follow both strict owned cleanup attempts');
+  checks++;
+  assert.ok(exported.main);
+  calls.length = 0;
+  cleanupRoots.length = 0;
+  const exited = new Promise<number>((resolve) => {
+    reportExit = resolve;
+  });
+  exported.main();
+  check(() => assert.ok(calls.length > 0));
+  assert.strictEqual(await exited, 1, 'Direct selector must exit nonzero when final phase/cleanup admission fails');
+  assert.strictEqual(calls.length, 3);
+  assert.strictEqual(cleanupRoots.length, 2);
+  checks++;
 }
 
 main()

@@ -171,10 +171,64 @@ export function installStatelessHistorySettings(appDir: string, workflowName: st
 }
 
 export interface RecoveryHooks {
+  quiesce(deadline: number): Promise<void>;
   stop(deadline: number): Promise<void>;
   restore(): void;
-  restart(deadline: number): Promise<void>;
-  verify(deadline: number): Promise<void>;
+  restart(deadline: number, signal: AbortSignal): Promise<void>;
+  verify(deadline: number, signal: AbortSignal): Promise<void>;
+}
+
+export function assertPhaseActive(deadline: number, signal: AbortSignal): void {
+  signal.throwIfAborted();
+  remainingMs(deadline);
+}
+
+export function abortable<T>(operation: PromiseLike<T>, signal: AbortSignal): Promise<T> {
+  signal.throwIfAborted();
+  return new Promise<T>((resolve, reject) => {
+    const abort = () => reject(signal.reason);
+    signal.addEventListener('abort', abort, { once: true });
+    Promise.resolve(operation)
+      .then(resolve, reject)
+      .finally(() => signal.removeEventListener('abort', abort));
+  });
+}
+
+/** Keeps the underlying operation, not just the timed race. Restoration may only
+ * follow quiescence; an uncooperative operation makes cleanup inadmissible. */
+export class StatelessOperationScope {
+  private readonly pending = new Map<Promise<unknown>, AbortController>();
+
+  async run<T>(deadline: number, phase: string, action: (signal: AbortSignal) => PromiseLike<T>): Promise<T> {
+    const timeoutMs = remainingMs(deadline);
+    const controller = new AbortController();
+    const operation = Promise.resolve().then(() => {
+      assertPhaseActive(deadline, controller.signal);
+      return action(controller.signal);
+    });
+    this.pending.set(operation, controller);
+    const remove = () => this.pending.delete(operation);
+    operation.then(remove, remove);
+    const timer = setTimeout(() => controller.abort(new Error(`Stateless ${phase} deadline expired`)), timeoutMs);
+    try {
+      return await abortable(operation, controller.signal);
+    } finally {
+      clearTimeout(timer);
+      controller.abort(new Error(`Stateless ${phase} operation closed`));
+    }
+  }
+
+  cancel(): void {
+    for (const controller of this.pending.values()) {
+      controller.abort(new Error('Stateless operation cancelled for quiescence'));
+    }
+  }
+
+  async quiesce(deadline: number): Promise<void> {
+    this.cancel();
+    await withinDeadline(deadline, 'operation quiescence', () => Promise.allSettled([...this.pending.keys()]));
+    assert.strictEqual(this.pending.size, 0, 'No pending side effect may overlap restoration or another restart');
+  }
 }
 
 export function remainingMs(deadline: number, cap = Number.MAX_SAFE_INTEGER): number {
@@ -204,21 +258,29 @@ export async function withinDeadline<T>(deadline: number, phase: string, action:
 export async function recoverStateless(hooks: RecoveryHooks, budgetMs = 120_000): Promise<void> {
   assert.ok(Number.isFinite(budgetMs) && budgetMs > 0, 'Recovery needs a positive finite budget');
   const deadline = Date.now() + budgetMs;
+  await withinDeadline(deadline, 'positive operation quiescence', () => hooks.quiesce(deadline));
   await withinDeadline(deadline, 'recovery stop', () => hooks.stop(deadline));
   hooks.restore(); // A foreign edit fails closed before restarting with unknown settings.
   const failures: unknown[] = [];
+  const scope = new StatelessOperationScope();
   try {
-    await withinDeadline(deadline, 'recovery restart', () => hooks.restart(deadline));
-    await withinDeadline(deadline, 'recovery callback', () => hooks.verify(deadline));
+    await scope.run(deadline, 'recovery restart', (signal) => hooks.restart(deadline, signal));
+    await scope.run(deadline, 'recovery callback', (signal) => hooks.verify(deadline, signal));
   } catch (error) {
     failures.push(error);
   }
   // Teardown is independent even if verification used the entire recovery budget.
   const stopDeadline = Date.now() + Math.min(budgetMs, 30_000);
-  try {
-    await withinDeadline(stopDeadline, 'recovery final stop', () => hooks.stop(stopDeadline));
-  } catch (error) {
-    failures.push(error);
+  scope.cancel();
+  const cleanup = await Promise.allSettled([
+    scope.quiesce(stopDeadline),
+    hooks.quiesce(stopDeadline),
+    withinDeadline(stopDeadline, 'recovery final stop', () => hooks.stop(stopDeadline)),
+  ]);
+  for (const result of cleanup) {
+    if (result.status === 'rejected') {
+      failures.push(result.reason);
+    }
   }
   if (failures.length > 0) {
     throw new AggregateError(failures, 'Stateless recovery failed');

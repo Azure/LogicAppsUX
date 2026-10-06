@@ -5,7 +5,7 @@
 /* global __dirname, __filename, clearTimeout, console, module, process, require, setTimeout */
 const { execFileSync, spawn } = require('child_process');
 const { Buffer } = require('buffer');
-const { createHash } = require('crypto');
+const { createHash, randomUUID } = require('crypto');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -396,13 +396,16 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
       phaseResults.every(
         (phase) => phase.complete === true && phase.exitCode === 0 && (phase.signal === null || phase.signal === undefined)
       ));
+  const statelessSucceeded =
+    suite.id !== 'statelessVariablesLifecycle' || (exitCode === 0 && !signal && getDirectSuiteComplete(suite.id, phaseResults));
   const terminalComplete =
     phaseCompleteness &&
     phaseCleanupVerified &&
     processCleanup.verified === true &&
     !error &&
     phaseDiagnosticsErrors.length === 0 &&
-    msnSucceeded;
+    msnSucceeded &&
+    statelessSucceeded;
   const finalizedPhaseResults = terminalComplete ? phaseResults : phaseResults.map(clearOgfScenarios);
   const ogfScenarios = terminalComplete ? collectOgfScenarios(finalizedPhaseResults) : [];
   const cleanupLedger = {
@@ -435,7 +438,7 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     blockedPhaseIds,
     phaseCompleteness,
     complete: terminalComplete,
-    ...(suite.id === 'msnWeatherLifecycle'
+    ...(suite.id === 'msnWeatherLifecycle' || suite.id === 'statelessVariablesLifecycle'
       ? { lifecycleFinalized: true, phaseResults: finalizedPhaseResults.map(projectTerminalPhase) }
       : {}),
     ...(ogfScenarios.length > 0 ? { ogfScenarios } : {}),
@@ -659,7 +662,10 @@ async function runStatelessVariablesLifecycle(visibleDelayMs) {
   fs.mkdirSync(lifecycleDir, { recursive: true });
   const workspaceParent = createOwnedWorkspaceParent('stateless-variables-lifecycle');
   const manifestPath = path.join(lifecycleDir, `manifest-stateless-${Date.now()}.json`);
+  const evidence = beginStatelessEvidence(process.env, lifecycleDir);
+  const phaseEnv = evidence.env;
   const sharedEnv = {
+    ...phaseEnv,
     LA_E2E_CLI_INCLUDE_STATELESS_VARIABLES: '1',
     LA_E2E_CLI_WORKSPACE_PARENT: workspaceParent,
     LA_E2E_CLI_WORKSPACE_LIFECYCLE_MANIFEST: manifestPath,
@@ -667,61 +673,85 @@ async function runStatelessVariablesLifecycle(visibleDelayMs) {
     LA_E2E_CLI_DISABLE_UNOWNED_PORT_KILL: '1',
     LA_E2E_CLI_DEFER_WORKSPACE_CLEANUP: '1',
   };
-  // Reuse the existing native dependency bootstrap; this is a real reported
-  // phase, not preparation inferred from a warm user cache or unit controls.
-  await runVscodeTest(['--label', 'runtimeDependencyBootstrap'], {
-    visibleDelayMs,
-    extraEnv: {
-      LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: dependencyRoot,
-      LA_E2E_CLI_INCLUDE_RUNTIME_DEPENDENCY_BOOTSTRAP: '1',
-      LA_E2E_CLI_EXPECT_EMPTY_RUNTIME_DEPENDENCIES_ROOT: '1',
-      LA_E2E_CLI_EMPTY_RUNTIME_DEPENDENCIES_ROOT_CONFIRMED: '1',
-      LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
-      LA_E2E_CLI_VALIDATE_DEPENDENCIES: '1',
-      LA_E2E_STRICT_DEPENDENCY_VALIDATION: '1',
-      LA_E2E_CLI_PROFILE_PHASE: 'stateless-variables-bootstrap',
-      LA_E2E_CLI_USER_DATA_SUFFIX: `stateless-variables-bootstrap-${Date.now()}`,
-    },
-  });
-  await waitForFuncCoreToolsAtDependencyRoot(dependencyRoot, {
-    context: 'Stateless variables dependency bootstrap',
-    timeoutMs: 30_000,
-  });
-  await runVscodeTest(['--label', 'statelessVariablesLifecycle'], {
-    visibleDelayMs,
-    extraEnv: {
-      ...sharedEnv,
-      LA_E2E_CLI_USER_DATA_SUFFIX: `stateless-variables-create-${Date.now()}`,
-      LA_E2E_CLI_STATELESS_VARIABLES_MODE: 'create',
-      LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'create',
-    },
-  });
-  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-  if (
-    !Array.isArray(manifest) ||
-    manifest.length !== 1 ||
-    manifest[0].label !== 'stateless-variables' ||
-    manifest[0].appType !== 'standard'
-  ) {
-    throw new Error('Stateless wizard must write exactly one Standard stateless family entry');
+  const failures = [];
+  let lifecycleSucceeded = false;
+  try {
+    // Reuse the existing native dependency bootstrap; this is a real reported
+    // phase, not preparation inferred from a warm user cache or unit controls.
+    await runVscodeTest(['--label', 'runtimeDependencyBootstrap'], {
+      visibleDelayMs,
+      extraEnv: {
+        ...phaseEnv,
+        LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: dependencyRoot,
+        LA_E2E_CLI_INCLUDE_RUNTIME_DEPENDENCY_BOOTSTRAP: '1',
+        LA_E2E_CLI_EXPECT_EMPTY_RUNTIME_DEPENDENCIES_ROOT: '1',
+        LA_E2E_CLI_EMPTY_RUNTIME_DEPENDENCIES_ROOT_CONFIRMED: '1',
+        LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
+        LA_E2E_CLI_VALIDATE_DEPENDENCIES: '1',
+        LA_E2E_STRICT_DEPENDENCY_VALIDATION: '1',
+        LA_E2E_CLI_PROFILE_PHASE: 'stateless-variables-bootstrap',
+        LA_E2E_CLI_USER_DATA_SUFFIX: `stateless-variables-bootstrap-${Date.now()}`,
+      },
+    });
+    await waitForFuncCoreToolsAtDependencyRoot(dependencyRoot, {
+      context: 'Stateless variables dependency bootstrap',
+      timeoutMs: 30_000,
+    });
+    await runVscodeTest(['--label', 'statelessVariablesLifecycle'], {
+      visibleDelayMs,
+      extraEnv: {
+        ...sharedEnv,
+        LA_E2E_CLI_USER_DATA_SUFFIX: `stateless-variables-create-${Date.now()}`,
+        LA_E2E_CLI_STATELESS_VARIABLES_MODE: 'create',
+        LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'create',
+      },
+    });
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    if (
+      !Array.isArray(manifest) ||
+      manifest.length !== 1 ||
+      manifest[0].label !== 'stateless-variables' ||
+      manifest[0].appType !== 'standard'
+    ) {
+      throw new Error('Stateless wizard must write exactly one Standard stateless family entry');
+    }
+    const entry = manifest[0];
+    await runVscodeTest(['--label', 'statelessVariablesLifecycle'], {
+      visibleDelayMs,
+      extraEnv: {
+        ...sharedEnv,
+        LA_E2E_CLI_USER_DATA_SUFFIX: `stateless-variables-run-${Date.now()}`,
+        LA_E2E_CLI_STATELESS_VARIABLES_MODE: 'run',
+        LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'stateless-variables-run',
+        LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE: JSON.stringify(entry),
+        LA_E2E_CLI_STARTUP_RESOURCE: entry.workspaceFilePath,
+        LA_E2E_CLI_AUTO_START_DESIGN_TIME: '1',
+        LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
+        LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '1',
+      },
+    });
+    lifecycleSucceeded = true;
+  } catch (error) {
+    failures.push(error);
   }
-  const entry = manifest[0];
-  await runVscodeTest(['--label', 'statelessVariablesLifecycle'], {
-    visibleDelayMs,
-    extraEnv: {
-      ...sharedEnv,
-      LA_E2E_CLI_USER_DATA_SUFFIX: `stateless-variables-run-${Date.now()}`,
-      LA_E2E_CLI_STATELESS_VARIABLES_MODE: 'run',
-      LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'stateless-variables-run',
-      LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE: JSON.stringify(entry),
-      LA_E2E_CLI_STARTUP_RESOURCE: entry.workspaceFilePath,
-      LA_E2E_CLI_AUTO_START_DESIGN_TIME: '1',
-      LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
-      LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '1',
-    },
+  if (lifecycleSucceeded) {
+    for (const root of [workspaceParent, dependencyRoot]) {
+      try {
+        await cleanupOwnedWorkspaceParent(root, 'stateless variables lifecycle', true);
+      } catch (error) {
+        failures.push(error);
+      }
+    }
+  }
+  // Final admission is after actual owned-root cleanup, not after the last child
+  // returned zero. Missing/unordered phases and retained roots cannot exit zero.
+  const terminal = finalizeStatelessEvidence(evidence, {
+    ownedRoots: [workspaceParent, dependencyRoot],
+    lifecycleSucceeded: lifecycleSucceeded && failures.length === 0,
   });
-  await cleanupOwnedWorkspaceParent(workspaceParent, 'stateless variables lifecycle', true);
-  await cleanupOwnedWorkspaceParent(dependencyRoot, 'stateless variables dependencies', true);
+  if (!terminal.complete || failures.length > 0) {
+    throw new AggregateError(failures, 'Stateless three-phase lifecycle evidence is inadmissible');
+  }
 }
 
 async function runNugetConversionLifecycle(visibleDelayMs) {
@@ -2572,6 +2602,8 @@ module.exports = {
     finalizeMsnLifecycleCleanup,
     getDirectSuiteComplete,
     getDirectExpectedPhaseIds,
+    beginStatelessEvidence,
+    finalizeStatelessEvidence,
     getOwnedRootCleanupVerified,
     getSuiteTerminalResultPath,
     getWorkspaceSourcesFromManifestPath,
@@ -3004,6 +3036,7 @@ function getDirectSuiteComplete(label, phaseResults) {
     missingPhaseIds.length === 0 &&
     unexpectedPhaseIds.length === 0 &&
     getDuplicateValues(observedPhaseIds).length === 0 &&
+    (label !== 'statelessVariablesLifecycle' || observedPhaseIds.every((phaseId, index) => phaseId === expectedPhaseIds[index])) &&
     phaseResults.every(
       (phase) =>
         phase.complete === true &&
@@ -3026,10 +3059,78 @@ function getDirectExpectedPhaseIds(label) {
   if (label === 'msnWeatherLifecycle') {
     return SUITE_REGISTRY[label].expectedPhases.filter((phaseId) => phaseId.startsWith(`${label}:`));
   }
+  if (label === 'statelessVariablesLifecycle') {
+    return [...SUITE_REGISTRY[label].expectedPhases];
+  }
   if (label === 'runtimeDependencyBootstrap') {
     return ['runtimeDependencyBootstrap:bootstrap'];
   }
   return [label];
+}
+
+function beginStatelessEvidence(env, lifecycleDir) {
+  const runId = randomUUID();
+  const runDir = fs.mkdtempSync(path.join(lifecycleDir, 'direct-stateless-'));
+  const phaseResultsPath = env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH || path.join(runDir, 'phases.jsonl');
+  const scopedEnv = {
+    LA_E2E_CLI_CREATE_WORKSPACE_CASE: '',
+    LA_E2E_CLI_WORKSPACE_LIFECYCLE_CREATE_LABEL: '',
+    LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE: '',
+    LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: '',
+    LA_E2E_CLI_WORKSPACE_LIFECYCLE_MANIFEST: '',
+    LA_E2E_CLI_WORKSPACE_PARENT: '',
+    LA_E2E_CLI_STATELESS_VARIABLES_MODE: '',
+    LA_E2E_CLI_STARTUP_RESOURCE: '',
+    LA_E2E_CLI_PROFILE_PHASE: '',
+    LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH: phaseResultsPath,
+    LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH: getSuiteTerminalResultPath(env, 'statelessVariablesLifecycle'),
+    LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH: env.LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH || path.join(runDir, 'cleanup.json'),
+  };
+  writeSuiteTerminalResult(scopedEnv, {
+    label: 'statelessVariablesLifecycle',
+    runId,
+    complete: false,
+    lifecycleFinalized: false,
+    cleanupVerified: false,
+    exitCode: null,
+    phaseResults: [],
+  });
+  if (fs.existsSync(phaseResultsPath) && fs.readFileSync(phaseResultsPath, 'utf8').trim()) {
+    throw new Error('Stateless family phase evidence is not fresh');
+  }
+  fs.mkdirSync(path.dirname(phaseResultsPath), { recursive: true });
+  fs.writeFileSync(phaseResultsPath, '');
+  return { runId, env: scopedEnv, phaseResultsPath };
+}
+
+function finalizeStatelessEvidence(evidence, { ownedRoots, lifecycleSucceeded }) {
+  const phases = readJsonLinesIfExists(evidence.phaseResultsPath);
+  const cleanupVerified = getOwnedRootCleanupVerified(ownedRoots);
+  const complete = lifecycleSucceeded === true && cleanupVerified && getDirectSuiteComplete('statelessVariablesLifecycle', phases);
+  const terminal = {
+    label: 'statelessVariablesLifecycle',
+    runId: evidence.runId,
+    lifecycleFinalized: true,
+    expectedPhaseIds: getDirectExpectedPhaseIds('statelessVariablesLifecycle'),
+    observedPhaseIds: phases.map((phase) => phase.phaseId),
+    cleanupVerified,
+    complete,
+    exitCode: complete ? 0 : 1,
+    signal: null,
+    diagnosticsError: complete ? '' : 'stateless-lifecycle-or-ordered-phases-or-owned-cleanup-failed',
+    phaseResults: phases.map((phase) => projectTerminalPhase(clearOgfScenarios(phase))),
+  };
+  writeSuiteCleanupLedger(evidence.env, {
+    schemaVersion: 1,
+    runId: evidence.runId,
+    verified: complete,
+    ownedRootCleanupVerified: cleanupVerified,
+    expectedPhaseIds: terminal.expectedPhaseIds,
+    observedPhaseIds: terminal.observedPhaseIds,
+    phases: terminal.phaseResults,
+  });
+  writeSuiteTerminalResult(evidence.env, terminal);
+  return terminal;
 }
 
 function collectDirectOgfScenarios(label, phaseResults, env) {
