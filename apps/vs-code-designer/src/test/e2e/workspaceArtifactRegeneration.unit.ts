@@ -11,17 +11,29 @@ import {
   buildRegenerationPhaseResults,
   captureRegenerationSnapshot,
   captureTemplateContracts,
+  confirmRegenerationPromptSequence,
   deleteRegenerationTargets,
   regenerationArtifacts,
   regenerationCases,
   regenerationDeadline,
   regenerationPhaseIds,
+  regenerationOverwriteMessage,
   remainingRegenerationBudget,
   requireRegenerationYes,
   selectRegenerationYes,
+  selectRegenerationOverwriteYes,
   type RegenerationPromptObservation,
 } from './workspaceArtifactRegeneration';
 import type { WorkbenchPromptContainer } from './workbenchPromptSelection';
+import {
+  assertRegenerationRuntimeProfile,
+  assertRegenerationRuntimeRoot,
+  captureRegenerationRuntimeSettings,
+  regenerationRuntimeSettingKeys,
+  verifyRegenerationRuntimeSettings,
+  writeRegenerationRuntimeProfile,
+  type RegenerationRuntimeBinding,
+} from './workspaceArtifactRegenerationRuntime';
 
 async function main(): Promise<void> {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'regeneration-unit-'));
@@ -31,6 +43,7 @@ async function main(): Promise<void> {
     // fixtures must still come from the real registered CLI wizard/handoff.
     const workspaceDir = path.join(root, 'workspace');
     const appDir = path.join(workspaceDir, 'app');
+    const prompt = initializationPrompt(appDir);
     fs.mkdirSync(path.join(appDir, '.vscode'), { recursive: true });
     for (const artifact of regenerationArtifacts) {
       fs.writeFileSync(path.join(appDir, artifact), JSON.stringify({ artifact, version: 1 }));
@@ -48,6 +61,107 @@ async function main(): Promise<void> {
     assert.strictEqual(regenerationCases.filter((entry) => entry.targets.includes('.vscode/tasks.json')).length, 2);
     checks++;
 
+    const overwrite: WorkbenchPromptContainer = {
+      kind: 'dialog',
+      text: regenerationOverwriteMessage,
+      buttons: [{ text: 'Yes', point: { x: 30, y: 40 } }],
+      rows: [],
+    };
+    assert.strictEqual(selectRegenerationOverwriteYes([prompt]).visible, false);
+    assert.strictEqual(selectRegenerationOverwriteYes([{ ...overwrite, kind: 'notification' }]).visible, false);
+    assert.strictEqual(selectRegenerationOverwriteYes([{ ...overwrite, text: 'Overwrite unrelated files?' }]).visible, false);
+    assert.throws(() => selectRegenerationOverwriteYes([overwrite, overwrite]), /Ambiguous/);
+    const sequenceClock = fakeClock();
+    const clicks: Array<{ x: number; y: number }> = [];
+    const captures: string[] = [];
+    const sequenceOptions = {
+      appDir,
+      phase: regenerationDeadline('two-real-prompts', 0),
+      clock: sequenceClock,
+      read: async (): Promise<RegenerationPromptObservation> => ({
+        ready: true,
+        timeOrigin: 1,
+        containers: clicks.length === 0 ? [prompt] : [overwrite],
+      }),
+      filesHealed: () => false,
+      assertBeforeOverwrite: () => {
+        assert.ok(clicks.length < 2, 'No writes may precede overwrite Yes');
+      },
+      click: async (point: { x: number; y: number }) => {
+        clicks.push(point);
+      },
+      capture: async (kind: 'initialize' | 'overwrite') => {
+        captures.push(kind);
+      },
+    };
+    assert.deepStrictEqual(await confirmRegenerationPromptSequence(sequenceOptions), { initializationYesCount: 1, overwriteYesCount: 1 });
+    assert.deepStrictEqual(
+      clicks,
+      [
+        { x: 10, y: 20 },
+        { x: 30, y: 40 },
+      ],
+      'Two distinct real controls, never replaying the first Yes'
+    );
+    assert.deepStrictEqual(captures, ['initialize', 'overwrite']);
+    checks++;
+
+    for (const failure of [
+      'missing',
+      'disabled',
+      'wrong-message',
+      'navigation',
+      'early-write',
+      'capture-expiry',
+      'input-failure',
+      'disappeared',
+    ]) {
+      const failureClock = fakeClock();
+      const inputs: Array<{ x: number; y: number }> = [];
+      let overwriteCaptured = false;
+      const modal =
+        failure === 'disabled'
+          ? { ...overwrite, buttons: [{ text: 'Yes' }] }
+          : failure === 'wrong-message'
+            ? { ...overwrite, text: 'Overwrite unrelated files?' }
+            : overwrite;
+      await assert.rejects(
+        confirmRegenerationPromptSequence({
+          ...sequenceOptions,
+          clock: failureClock,
+          phase: regenerationDeadline(failure, 0),
+          read: async () => ({
+            ready: true,
+            timeOrigin: failure === 'navigation' && inputs.length > 0 ? 2 : 1,
+            containers:
+              inputs.length === 0 ? [prompt] : failure === 'missing' || (failure === 'disappeared' && overwriteCaptured) ? [] : [modal],
+          }),
+          assertBeforeOverwrite: () => {
+            if (failure === 'early-write' && inputs.length > 0) {
+              throw new Error('Files changed before overwrite Yes');
+            }
+          },
+          capture: async (kind) => {
+            if (kind === 'overwrite') {
+              overwriteCaptured = true;
+              if (failure === 'capture-expiry') {
+                failureClock.advance(30000);
+              }
+            }
+          },
+          click: async (point) => {
+            inputs.push(point);
+            if (failure === 'input-failure') {
+              throw new Error('Uncertain trusted input RPC');
+            }
+          },
+        })
+      );
+      assert.strictEqual(inputs.length, 1, `${failure} must not replay initialization or fabricate overwrite Yes`);
+      assert.deepStrictEqual(inputs[0], { x: 10, y: 20 });
+    }
+    checks++;
+
     const target = '.vscode/tasks.json';
     const targetPath = path.join(appDir, target);
     const original = fs.readFileSync(targetPath);
@@ -61,6 +175,116 @@ async function main(): Promise<void> {
     fs.writeFileSync(targetPath, original);
     assert.deepStrictEqual(captureRegenerationSnapshot(root, workspaceDir), baseline);
     assertRegenerationNonTargets(baseline, baseline, workspaceDir, appDir, [target], true);
+    checks++;
+
+    // Unit-owned runtime/profile files exercise provenance and configuration
+    // controls only; they are not installed binaries or a native wizard fixture.
+    const dependencyRoot = path.join(root, 'admitted-runtime');
+    const binaryPaths = ['FuncCoreTools', 'DotNetSDK', 'NodeJs'].map((name) => {
+      fs.mkdirSync(path.join(dependencyRoot, name), { recursive: true });
+      const file = path.join(dependencyRoot, name, 'unit-binary');
+      fs.writeFileSync(file, `unit-only-${name}`);
+      return file;
+    });
+    const sourceSettingsPath = path.join(root, 'creating-profile', 'User', 'settings.json');
+    fs.mkdirSync(path.dirname(sourceSettingsPath), { recursive: true });
+    const runtimeSettings: Record<string, unknown> = {
+      'azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation': true,
+      'azureLogicAppsStandard.autoRuntimeDependenciesPath': dependencyRoot,
+      'azureLogicAppsStandard.funcCoreToolsBinaryPath': binaryPaths[0],
+      'azureLogicAppsStandard.dotnetBinaryPath': binaryPaths[1],
+      'azureLogicAppsStandard.nodeJsBinaryPath': binaryPaths[2],
+      'azureLogicAppsStandard.e2eStrictDependencyValidation': true,
+      'azureLogicAppsStandard.validateDotNetSDK': false,
+      'dotnetAcquisitionExtension.sharedExistingDotnetPath': binaryPaths[1],
+      'dotnetAcquisitionExtension.existingDotnetPath': [
+        'ms-dotnettools.csharp',
+        'ms-dotnettools.csdevkit',
+        'ms-azuretools.vscode-azurefunctions',
+        'ms-azuretools.vscode-azurelogicapps',
+      ].map((extensionId) => ({ extensionId, path: binaryPaths[1] })),
+    };
+    const writeSource = (settings: Record<string, unknown>) =>
+      fs.writeFileSync(sourceSettingsPath, JSON.stringify({ ...settings, 'unit.auth.setting': 'unit-only-not-copied' }));
+    writeSource(runtimeSettings);
+    fs.mkdirSync(path.join(root, 'creating-profile', 'User', 'globalStorage'));
+    fs.writeFileSync(path.join(root, 'creating-profile', 'User', 'globalStorage', 'unit-store'), 'unit-store-sentinel');
+    const binding: RegenerationRuntimeBinding = {
+      invocation: 'unit-invocation',
+      identity: { source: 'unit-source', job: 'unit-job', platform: process.platform },
+      startedUtc: new Date(Date.now() - 1000).toISOString(),
+      runtimeAdmission: { root: dependencyRoot, sourceSettingsPath },
+    };
+    const queried: string[] = [];
+    const runtimeHandoff = captureRegenerationRuntimeSettings(binding, (key) => {
+      queried.push(key);
+      return runtimeSettings[key];
+    });
+    assert.deepStrictEqual(queried, [...regenerationRuntimeSettingKeys]);
+    assert.deepStrictEqual(Object.keys(runtimeHandoff.settings).sort(), [...regenerationRuntimeSettingKeys].sort());
+    verifyRegenerationRuntimeSettings(runtimeHandoff, binding);
+    const freshProfile = path.join(root, 'regular-profile');
+    const freshSettingsPath = writeRegenerationRuntimeProfile(freshProfile, runtimeHandoff, binding);
+    assertRegenerationRuntimeProfile(freshSettingsPath, runtimeHandoff);
+    const freshSettings: Record<string, unknown> = JSON.parse(fs.readFileSync(freshSettingsPath, 'utf8'));
+    for (const key of regenerationRuntimeSettingKeys) {
+      assert.deepStrictEqual(freshSettings[key], runtimeSettings[key], 'Fresh profile must derive from actual creating-host configuration');
+    }
+    assert.strictEqual(freshSettings['unit.auth.setting'], undefined);
+    assert.strictEqual(
+      fs.existsSync(path.join(freshProfile, 'User', 'globalStorage')),
+      false,
+      'Never copy original profile/secret storage'
+    );
+    assert.throws(() => writeRegenerationRuntimeProfile(freshProfile, runtimeHandoff, binding), /fresh/);
+    checks++;
+
+    assert.throws(() => assertRegenerationRuntimeRoot(undefined), /explicit admitted/);
+    assert.throws(() => captureRegenerationRuntimeSettings(binding, () => undefined), /actual creating-host global configuration/i);
+    assert.throws(() => verifyRegenerationRuntimeSettings({ ...runtimeHandoff, invocation: 'stale' }, binding), /Stale/);
+    assert.throws(() => verifyRegenerationRuntimeSettings({ ...runtimeHandoff, identity: { job: 'other' } }, binding), /Wrong job/);
+    assert.throws(() => verifyRegenerationRuntimeSettings({ ...runtimeHandoff, capturedUtc: '2000-01-01T00:00:00Z' }, binding), /Stale/);
+    assert.throws(() => verifyRegenerationRuntimeSettings({ ...runtimeHandoff, root: root }, binding), /same admitted root/);
+    const otherSettings = path.join(root, 'other-settings.json');
+    fs.copyFileSync(sourceSettingsPath, otherSettings);
+    assert.throws(
+      () => verifyRegenerationRuntimeSettings({ ...runtimeHandoff, sourceSettingsPath: otherSettings }, binding),
+      /actual creating profile/
+    );
+    assert.throws(
+      () => verifyRegenerationRuntimeSettings({ ...runtimeHandoff, allowlistedSettingsSha256: 'stale' }, binding),
+      /settings hash/
+    );
+    writeSource({ ...runtimeSettings, 'azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation': false });
+    assert.throws(() => verifyRegenerationRuntimeSettings(runtimeHandoff, binding), /configuration changed/);
+    assert.throws(
+      () =>
+        captureRegenerationRuntimeSettings(binding, (key) =>
+          key === 'azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation' ? false : runtimeSettings[key]
+        ),
+      /must stay enabled/
+    );
+    writeSource(runtimeSettings);
+    const binary = binaryPaths[0];
+    const originalBinary = fs.readFileSync(binary);
+    fs.writeFileSync(binary, 'changed-unit-binary');
+    assert.throws(() => verifyRegenerationRuntimeSettings(runtimeHandoff, binding), /binary bytes changed/);
+    fs.writeFileSync(binary, originalBinary);
+    const outsideBinary = path.join(root, 'outside-binary');
+    fs.writeFileSync(outsideBinary, 'unit-only');
+    const wrongBinarySettings: Record<string, unknown> = {
+      ...runtimeSettings,
+      'azureLogicAppsStandard.funcCoreToolsBinaryPath': outsideBinary,
+    };
+    writeSource(wrongBinarySettings);
+    assert.throws(() => captureRegenerationRuntimeSettings(binding, (key) => wrongBinarySettings[key]), /outside its admitted/);
+    writeSource(runtimeSettings);
+    fs.writeFileSync(freshSettingsPath, JSON.stringify({ ...freshSettings, 'azureLogicAppsStandard.funcCoreToolsBinaryPath': 'func' }));
+    assert.throws(() => assertRegenerationRuntimeProfile(freshSettingsPath, runtimeHandoff), /substituted system binaries/);
+    const envOnlyProfile = path.join(root, 'env-only', 'settings.json');
+    fs.mkdirSync(path.dirname(envOnlyProfile));
+    fs.writeFileSync(envOnlyProfile, '{}');
+    assert.throws(() => assertRegenerationRuntimeProfile(envOnlyProfile, runtimeHandoff), /explicitly configure/);
     checks++;
 
     for (const entry of regenerationCases) {
@@ -136,7 +360,6 @@ async function main(): Promise<void> {
     assert.throws(() => remainingRegenerationBudget(phase, 30100), /cannot be reset/);
     checks++;
 
-    const prompt = initializationPrompt(appDir);
     assert.deepStrictEqual(selectRegenerationYes([prompt], appDir).point, { x: 10, y: 20 });
     assert.strictEqual(selectRegenerationYes([initializationPrompt(`${appDir}-other`)], appDir).visible, false);
     // The text contains the actual complete path; an unrelated app without that

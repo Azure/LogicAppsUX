@@ -208,6 +208,15 @@ export function selectRegenerationYes(containers: WorkbenchPromptContainer[], ap
   return selectWorkbenchPromptOption([{ matchText: 'Initialize for optimal use with VS Code?', optionText: 'Yes' }], matches);
 }
 
+export const regenerationOverwriteMessage =
+  'The .vscode configuration files will be regenerated to match the current project settings. This will overwrite any custom modifications. Continue?';
+
+export function selectRegenerationOverwriteYes(containers: WorkbenchPromptContainer[]): WorkbenchPromptSelection {
+  const matches = containers.filter((container) => container.kind === 'dialog' && container.text.includes(regenerationOverwriteMessage));
+  assert.ok(matches.length <= 1, 'Ambiguous overwrite confirmations cannot be credited');
+  return selectWorkbenchPromptOption([{ matchText: regenerationOverwriteMessage, optionText: 'Yes' }], matches);
+}
+
 export interface RegenerationPromptObservation {
   containers: WorkbenchPromptContainer[];
   ready: boolean;
@@ -241,6 +250,61 @@ export async function requireRegenerationYes(
     silentHealingObserved
       ? `Regeneration ${phase.phase}: files healed silently, but the required initialization prompt/real Yes was absent`
       : `Regeneration ${phase.phase}: required initialization prompt/real Yes was absent before the original deadline`
+  );
+}
+
+export async function confirmRegenerationPromptSequence(options: {
+  read: () => Promise<RegenerationPromptObservation>;
+  appDir: string;
+  phase: RegenerationDeadline;
+  filesHealed: () => boolean;
+  assertBeforeOverwrite: () => void;
+  capture: (kind: 'initialize' | 'overwrite') => Promise<void>;
+  click: (point: { x: number; y: number }) => Promise<void>;
+  clock?: { now: () => number; poll: (remainingMs: number) => Promise<void> };
+}): Promise<{ initializationYesCount: number; overwriteYesCount: number }> {
+  const clock = options.clock ?? {
+    now: Date.now,
+    poll: async (remainingMs: number) => new Promise<void>((resolve) => setTimeout(resolve, Math.min(100, remainingMs))),
+  };
+  const budget = () => remainingRegenerationBudget(options.phase, clock.now());
+  await requireRegenerationYes(options.read, options.appDir, options.phase, options.filesHealed, clock);
+  await options.capture('initialize');
+  budget();
+  const initial = await options.read();
+  budget();
+  const initialize = selectRegenerationYes(initial.containers, options.appDir);
+  assert.ok(initial.ready && initialize.point, 'The same real initialization prompt must remain enabled immediately before Yes');
+  assert.strictEqual(selectRegenerationOverwriteYes(initial.containers).visible, false, 'Overwrite must be a second distinct prompt');
+  options.assertBeforeOverwrite();
+  // An uncertain input RPC is fatal. Neither click is retried or replayed.
+  await options.click(initialize.point);
+  budget();
+  const initializationYesCount = 1;
+  while (clock.now() < options.phase.deadline) {
+    const view = await options.read();
+    budget();
+    assert.strictEqual(view.timeOrigin, initial.timeOrigin, 'The overwrite confirmation must belong to the same workbench document');
+    options.assertBeforeOverwrite();
+    const overwrite = selectRegenerationOverwriteYes(view.containers);
+    if (view.ready && overwrite.visible) {
+      assert.ok(overwrite.point, 'The distinct real overwrite modal must offer an enabled, unobstructed Yes');
+      await options.capture('overwrite');
+      budget();
+      const current = await options.read();
+      budget();
+      assert.ok(current.ready && current.timeOrigin === initial.timeOrigin, 'Overwrite must retain the original app/workbench binding');
+      const actual = selectRegenerationOverwriteYes(current.containers);
+      assert.ok(actual.point, 'The same real overwrite modal must remain enabled immediately before Yes');
+      options.assertBeforeOverwrite();
+      await options.click(actual.point);
+      budget();
+      return { initializationYesCount, overwriteYesCount: 1 };
+    }
+    await clock.poll(budget());
+  }
+  throw new Error(
+    `Regeneration ${options.phase.phase}: distinct overwrite-existing-.vscode confirmation/real Yes was absent before the original deadline`
   );
 }
 

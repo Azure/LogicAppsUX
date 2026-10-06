@@ -96,6 +96,11 @@ function main() {
         LA_E2E_CLI_REQUIRE_WORKSPACE_REGENERATION: '1',
         LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL: '0',
         LA_E2E_CLI_CREATE_WORKSPACE_CASE: 'standard-stateful',
+        LA_E2E_CLI_VALIDATE_DEPENDENCIES: '1',
+        LA_E2E_STRICT_DEPENDENCY_VALIDATION: '1',
+        LA_E2E_CLI_AUTO_START_DESIGN_TIME: '0',
+        LA_E2E_CLI_MINIMAL_ACTIVATION: '0',
+        LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '0',
       },
     })
       .then((code) => process.exit(code))
@@ -1440,6 +1445,16 @@ function runVscodeTest(args, options = {}) {
       )
     : undefined;
   const cancelContext = cancelRequired ? cancelCheck.prepareCancelContext(childEnv, deferredWorkspaceParent) : undefined;
+  if (regenerationContext) {
+    const runtime = require('../out/test/e2e/workspaceArtifactRegenerationRuntime');
+    regenerationContext.runtimeAdmission = {
+      root: runtime.assertRegenerationRuntimeRoot(childEnv.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT, false),
+      sourceSettingsPath: path.join(getVscodeUserDataDir(childEnv), 'User', 'settings.json'),
+    };
+    // Persist the admission before starting the original wizard host. The host
+    // must capture actual VS Code global configuration, not environment guesses.
+    fs.writeFileSync(path.join(regenerationContext.root, 'invocation.json'), `${JSON.stringify(regenerationContext)}\n`);
+  }
   // The existing validated wizard handoff is shared, not the Cancel observation
   // or its private mapping. No extra fixture generation or Code download occurs.
   const wizardHandoffContext = cancelContext || regenerationContext;
@@ -1502,8 +1517,13 @@ function runVscodeTest(args, options = {}) {
           process.env.LA_E2E_CLI_SCREENSHOT_DIR = path.join(regenerationContext.root, 'screenshots');
           process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT = childEnv.LA_E2E_CLI_REMOTE_DEBUGGING_PORT || '9514';
           regenerationApi = require('../out/test/e2e/workspaceArtifactRegeneration.test');
-          const handoff = cancelCheck.adaptCancelHandoff(
-            JSON.parse(fs.readFileSync(regenerationContext.handoffPath, 'utf8')),
+          const originalHandoff = JSON.parse(fs.readFileSync(regenerationContext.handoffPath, 'utf8'));
+          const handoff = {
+            ...cancelCheck.adaptCancelHandoff(originalHandoff, regenerationContext),
+            runtimeSettings: originalHandoff.runtimeSettings,
+          };
+          require('../out/test/e2e/workspaceArtifactRegenerationRuntime').verifyRegenerationRuntimeSettings(
+            handoff.runtimeSettings,
             regenerationContext
           );
           regenerationWizardVerified = true;

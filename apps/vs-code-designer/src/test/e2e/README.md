@@ -41,6 +41,25 @@ CDP operations, file settlement, and required screenshots consume that same budg
 Ordinary Close Window has its existing separate 10-second teardown budget, never
 a forced process kill or an extension of the observation deadline.
 
+Each partial deletion leaves existing `.vscode` files. Consequently the product
+requires **two distinct renderer controls**, in this order:
+
+1. The project-scoped notification, `Detected an Azure Logic App project "..."`
+   / `Initialize for optimal use with VS Code?` → its real **Yes**.
+2. The modal, `The .vscode configuration files will be regenerated to match the
+   current project settings. This will overwrite any custom modifications.
+   Continue?` → its separate real **Yes**.
+
+The production prompt-sequence helper revalidates each enabled/unobstructed
+control after its required capture, sends trusted renderer mouse input once per
+control, and retains the same app/document and original deadline throughout.
+It proves deletion/non-target invariants before overwrite Yes, then requires
+durable writes and dismissal of both prompts. Missing/disabled/unrelated/
+ambiguous/disappearing overwrite dialogs, navigation, early writes, capture
+expiry, or uncertain input RPCs fail without input replay or a fresh clock.
+`before-overwrite-yes` PNG/readiness pairs and both actual Yes counts are required
+in addition to the existing branch evidence.
+
 The shared suite ID is **`workspaceArtifactRegeneration`**, available explicitly
 through `--suites workspaceArtifactRegeneration` or the package script
 `test:e2e-cli:workspace-artifact-regeneration:batch`. It is additive in
@@ -114,6 +133,28 @@ UTF-8 socket path must be under 100 bytes); the existing encrypted GNOME/D-Bus/X
 preparation remains required. The supplement inherits the admitted executable,
 runtime dependency root, prepared extensions directory and current source/job
 identity; it has no compilation, dependency-install or executable fallback of its own.
+The creating wizard host uses the existing **managed dependency flow with strict
+validation enabled**, not the activation branch that resets paths to system
+`func`/`dotnet`/`node`. Before starting that host, the invocation binds an explicit
+job-owned `LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT` and its actual profile settings path.
+The verified creating host then captures its actual VS Code global runtime
+configuration and checks it against the real `User/settings.json`.
+`runtimeSettings` in `wizard-handoff.json` preserves an allowlist of managed-flow,
+runtime-root, Func/.NET/Node binary and .NET-acquisition settings, an allowlisted
+configuration hash, binary SHA-256 values, invocation/job/source identity and
+capture time. Environment values alone are not a configuration handoff.
+
+Every fresh baseline/regeneration/reopen profile writes those **same captured**
+runtime settings to its own `User/settings.json`. Original-profile provenance,
+admitted root/binary bytes and fresh-profile configuration are checked before
+launch and after observation/ordinary closure. Stale invocations/timestamps,
+another source profile, wrong roots, missing binaries, system-path substitution
+or changed settings/bytes fail; the artifact JSON/hash oracles remain unchanged.
+The harness does not install replacement binaries or invent global paths.
+Normal product-managed validation stays on the same admitted dependency root.
+Only allowlisted nonsecret settings cross hosts—never the original profile,
+account/secret storage, `globalStorage`, terminal environment or arbitrary settings.
+There is still no separate runtime-bootstrap phase and no debug/Functions host start.
 Unconfirmed ordinary closure or an observation/diagnostic failure preserves the
 wizard root through the existing runner retention path, never a false successful cleanup.
 
@@ -130,6 +171,10 @@ Yes, absent prompt versus silent healing, late read/deadline expiration, transpo
 failure, final closure/cleanup failure and invalid runner flag combinations. They
 also control the exact batch/direct phase contract, missing/failed/duplicate
 phases, unsupported invented bootstrap phases, and unchanged canonical aliases.
+Production two-prompt sequencing and creating-host runtime/profile derivation
+also have focused negative controls, including deadline expiry, uncertain input,
+wrong-root/stale source settings, binary changes, environment-only configuration,
+and proof that profile/secret-storage files are not copied.
 They are appended to `test:e2e-cli:unit`; their temporary unit files are **not** wizard
 fixtures and their passes provide no native GUI/source-case coverage.
 

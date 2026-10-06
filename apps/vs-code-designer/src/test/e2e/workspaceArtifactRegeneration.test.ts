@@ -18,12 +18,13 @@ import {
   buildRegenerationPhaseResults,
   captureRegenerationSnapshot,
   captureTemplateContracts,
+  confirmRegenerationPromptSequence,
   deleteRegenerationTargets,
   regenerationCases,
   regenerationDeadline,
   regenerationPhaseIds,
   remainingRegenerationBudget,
-  requireRegenerationYes,
+  selectRegenerationOverwriteYes,
   selectRegenerationYes,
   type RegenerationDeadline,
   type RegenerationHostPhase,
@@ -31,10 +32,15 @@ import {
   type RegenerationSnapshot,
 } from './workspaceArtifactRegeneration';
 import { captureRequiredCancelScreenshot, closeWorkspacePromptCancelWindow } from './workspacePromptCancel';
+import {
+  assertRegenerationRuntimeProfile,
+  verifyRegenerationRuntimeSettings,
+  writeRegenerationRuntimeProfile,
+  type RegenerationRuntimeBinding,
+  type RegenerationRuntimeHandoff,
+} from './workspaceArtifactRegenerationRuntime';
 
-interface RegenerationContext {
-  invocation: string;
-  identity: Record<string, string>;
+interface RegenerationContext extends RegenerationRuntimeBinding {
   workspaceParent: string;
   root: string;
   resultPath: string;
@@ -43,6 +49,7 @@ interface RegenerationContext {
 interface RegenerationHandoff {
   workspace: { appDir: string; workspaceFilePath: string; workflowJsonPath: string };
   launch: { executable: string; sha256: string; version: string; extensionsDir: string };
+  runtimeSettings: RegenerationRuntimeHandoff;
 }
 
 export { buildRegenerationPhaseResults };
@@ -61,6 +68,9 @@ export interface RegenerationResult {
     name: string;
     targets: readonly string[];
     realYesMouseInput: true;
+    realOverwriteYesMouseInput: true;
+    initializationYesCount: number;
+    overwriteYesCount: number;
     before: RegenerationSnapshot;
     after: RegenerationSnapshot;
     freshReopen: true;
@@ -150,6 +160,7 @@ async function waitForStableFiles(
       timeOrigin ??= view.timeOrigin;
       assert.strictEqual(view.timeOrigin, timeOrigin, 'No incidental workbench reload may replace the observed regeneration phase');
       assert.strictEqual(selectRegenerationYes(view.containers, appDir).visible, false, 'Initialization prompt must be dismissed/absent');
+      assert.strictEqual(selectRegenerationOverwriteYes(view.containers).visible, false, 'Overwrite confirmation must be dismissed/absent');
       const snapshot = captureRegenerationSnapshot(context.workspaceParent, path.dirname(workspaceFilePath));
       check(snapshot);
       const serialized = JSON.stringify(snapshot);
@@ -204,18 +215,8 @@ async function runFreshRegenerationHost(
       'Actual regeneration profile socket path exceeds Linux limit'
     );
   }
-  fs.mkdirSync(path.join(profile, 'User'), { recursive: true });
-  fs.writeFileSync(
-    path.join(profile, 'User', 'settings.json'),
-    JSON.stringify({
-      'telemetry.telemetryLevel': 'off',
-      'update.mode': 'none',
-      'azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation': false,
-      'azureLogicAppsStandard.autoStartDesignTime': false,
-      'azureLogicAppsStandard.parameterizeConnectionsInProjectLoad': false,
-      'azureLogicAppsStandard.enableProjectConsistencyChecks': true,
-    })
-  );
+  const profileSettingsPath = writeRegenerationRuntimeProfile(profile, handoff.runtimeSettings, context);
+  remainingRegenerationBudget(phase);
   const log = fs.createWriteStream(path.join(context.root, `${phaseName}-code.log`), { flags: 'wx' });
   const errors: unknown[] = [];
   log.on('error', (error) => errors.push(error));
@@ -272,12 +273,15 @@ async function runFreshRegenerationHost(
       waitForServer: true,
       timeoutMs: Math.min(15000, remainingRegenerationBudget(phase)),
     });
+    assertRegenerationRuntimeProfile(profileSettingsPath, handoff.runtimeSettings);
     await Promise.race([
       observe(cdp, phase),
       completion.then(() => {
         throw new Error('Regular Code closed before the regeneration observation finished');
       }),
     ]);
+    assertRegenerationRuntimeProfile(profileSettingsPath, handoff.runtimeSettings);
+    remainingRegenerationBudget(phase);
     observed = true;
     host.observationPassed = true;
   } catch (error) {
@@ -317,6 +321,12 @@ async function runFreshRegenerationHost(
   if (host.close?.code !== 0 || host.close.signal !== null) {
     errors.push(new Error(`Regeneration ${phaseName}: ordinary Code exit 0/null is required`));
   }
+  try {
+    assertRegenerationRuntimeProfile(profileSettingsPath, handoff.runtimeSettings);
+    verifyRegenerationRuntimeSettings(handoff.runtimeSettings, context);
+  } catch (error) {
+    errors.push(error);
+  }
   host.errors = errors.map(String);
   if (errors.length > 0) {
     throw new AggregateError(errors, `Regeneration ${phaseName} failed: ${errors.map(String).join('; ')}`);
@@ -344,6 +354,7 @@ export async function runWorkspaceArtifactRegeneration(
     complete: false,
   };
   const { appDir, workspaceFilePath } = handoff.workspace;
+  verifyRegenerationRuntimeSettings(handoff.runtimeSettings, context);
   const workspaceDir = path.dirname(workspaceFilePath);
   const template = captureTemplateContracts(appDir);
   const wizardSnapshot = captureRegenerationSnapshot(context.workspaceParent, workspaceDir);
@@ -377,17 +388,36 @@ export async function runWorkspaceArtifactRegeneration(
       const before = baseline;
       deleteRegenerationTargets(context.workspaceParent, workspaceDir, appDir, entry.targets, before);
       let after: RegenerationSnapshot | undefined;
+      let prompts: { initializationYesCount: number; overwriteYesCount: number } | undefined;
       await runFreshRegenerationHost(context, handoff, env, result, entry.name, async (cdp, phase) => {
         const bounded = boundedConnection(cdp, phase);
         const read = () => readRegenerationWorkbench(bounded, workspaceFilePath, appDir);
         const healed = () => entry.targets.every((target) => fs.existsSync(path.join(appDir, target)));
-        await requireRegenerationYes(read, appDir, phase, healed);
-        await captureRegenerationEvidence(cdp, context, phase, `workspace-regeneration-${entry.name}-before-yes`);
-        const view = await read();
-        const selection = selectRegenerationYes(view.containers, appDir);
-        assert.ok(view.ready && selection.point, 'The same real initialization prompt must remain enabled immediately before Yes');
-        await clickPoint(bounded, selection.point);
-        // Never replay Yes, substitute an API response, or accept mere target existence.
+        prompts = await confirmRegenerationPromptSequence({
+          read,
+          appDir,
+          phase,
+          filesHealed: healed,
+          assertBeforeOverwrite: () =>
+            assertRegenerationNonTargets(
+              before,
+              captureRegenerationSnapshot(context.workspaceParent, workspaceDir),
+              workspaceDir,
+              appDir,
+              entry.targets,
+              false
+            ),
+          capture: (kind) =>
+            captureRegenerationEvidence(
+              cdp,
+              context,
+              phase,
+              `workspace-regeneration-${entry.name}-${kind === 'initialize' ? 'before-yes' : 'before-overwrite-yes'}`
+            ),
+          click: (point) => clickPoint(bounded, point),
+        });
+        // Neither Yes is replayed or substituted with an API response. File writes
+        // must follow the distinct real overwrite modal, within this same deadline.
         while (Date.now() < phase.deadline && !healed()) {
           await poll(phase);
         }
@@ -406,6 +436,10 @@ export async function runWorkspaceArtifactRegeneration(
         await captureRegenerationEvidence(cdp, context, phase, `workspace-regeneration-${entry.name}-after-yes`);
       });
       assert.ok(after, 'Real Yes must produce validated, durably written artifacts');
+      assert.ok(
+        prompts && prompts.initializationYesCount === 1 && prompts.overwriteYesCount === 1,
+        'Exactly one real Yes for each distinct production prompt is required'
+      );
       const regenerated = captureRegenerationSnapshot(context.workspaceParent, workspaceDir);
       assert.deepStrictEqual(regenerated, after, 'Ordinary Code closure must not alter the regenerated files');
       await runFreshRegenerationHost(context, handoff, env, result, `${entry.name}-reopen`, async (cdp, phase) => {
@@ -431,6 +465,8 @@ export async function runWorkspaceArtifactRegeneration(
         name: entry.name,
         targets: entry.targets,
         realYesMouseInput: true,
+        realOverwriteYesMouseInput: true,
+        ...prompts,
         before,
         after: regenerated,
         freshReopen: true,
@@ -472,8 +508,14 @@ export function finalizeWorkspaceArtifactRegeneration(
   }
   for (const entry of regenerationCases) {
     assertAcceptedScreenshot(context.root, `workspace-regeneration-${entry.name}-before-yes`);
+    assertAcceptedScreenshot(context.root, `workspace-regeneration-${entry.name}-before-overwrite-yes`);
     assertAcceptedScreenshot(context.root, `workspace-regeneration-${entry.name}-after-yes`);
     assertAcceptedScreenshot(context.root, `workspace-regeneration-${entry.name}-reopened`);
+  }
+  for (const observation of result.observations) {
+    assert.strictEqual(observation.realOverwriteYesMouseInput, true);
+    assert.strictEqual(observation.initializationYesCount, 1);
+    assert.strictEqual(observation.overwriteYesCount, 1);
   }
   assertAcceptedScreenshot(context.root, 'workspace-regeneration-baseline');
   result.complete = true;
