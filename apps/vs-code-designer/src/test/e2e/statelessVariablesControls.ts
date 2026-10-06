@@ -176,6 +176,7 @@ export interface RecoveryHooks {
   restore(): void;
   restart(deadline: number, signal: AbortSignal): Promise<void>;
   verify(deadline: number, signal: AbortSignal): Promise<void>;
+  onQuiescenceVerified?(): void;
 }
 
 export function assertPhaseActive(deadline: number, signal: AbortSignal): void {
@@ -280,6 +281,15 @@ export async function recoverStateless(hooks: RecoveryHooks, budgetMs = 120_000)
   for (const result of cleanup) {
     if (result.status === 'rejected') {
       failures.push(result.reason);
+    }
+  }
+  if (cleanup.every((result) => result.status === 'fulfilled')) {
+    // Physical owned-operation quiescence is independent of callback success.
+    // Preserve any verification failure while allowing safe fixture restoration.
+    try {
+      hooks.onQuiescenceVerified?.();
+    } catch (error) {
+      failures.push(error);
     }
   }
   if (failures.length > 0) {

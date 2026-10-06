@@ -343,6 +343,7 @@ function testNativeWiring(): void {
     assert.ok(native.includes('approvedAzureFixtureFromEnvironment(process.env)'));
     assert.ok(native.includes('installApprovedAzureFixture(entry.appDir, azureFixture)'));
     assert.ok(native.includes('fixtureLease.bindGeneratedDesignTime()'));
+    assert.ok(native.includes('onQuiescenceVerified:'), 'Verified cleanup must be independent of callback verification');
     assert.ok(
       native.includes('if (recoveryQuiescent && fixtureLease)'),
       'Approved fixture restoration must follow owned recovery quiescence'

@@ -88,13 +88,15 @@ export interface ApprovedAzureFixtureLease {
   restore(): void;
 }
 
-/** Canonical MSN target preconfiguration, with per-key ownership so unrelated
- * product/foreign settings changes survive restoration. No token is written. */
-export function installApprovedAzureFixture(appDir: string, fixture: ApprovedAzureFixture): ApprovedAzureFixtureLease {
-  const rootFile = path.join(appDir, 'local.settings.json');
-  const designFile = path.join(appDir, 'workflow-designtime', 'local.settings.json');
-  const beforeInstall = fs.readFileSync(rootFile);
-  const original = settings(rootFile);
+type TargetKey = (typeof targetKeys)[number][0];
+interface BoundSettingsFile {
+  file: string;
+  previous: Map<TargetKey, { existed: boolean; value: unknown }>;
+}
+
+function bindSettingsFile(file: string, fixture: ApprovedAzureFixture): BoundSettingsFile {
+  const before = fs.readFileSync(file);
+  const original = settings(file);
   for (const [key, property] of targetKeys) {
     const value = original.values[key];
     if (value !== undefined && value !== '') {
@@ -106,40 +108,52 @@ export function installApprovedAzureFixture(appDir: string, fixture: ApprovedAzu
       );
     }
   }
-  const previous = new Map(
-    targetKeys.map(([key]) => [
-      key,
-      {
-        existed: Object.hasOwn(original.values, key),
-        value: original.values[key],
-      },
-    ])
-  );
+  const previous = new Map(targetKeys.map(([key]) => [key, { existed: Object.hasOwn(original.values, key), value: original.values[key] }]));
   for (const [key, property] of targetKeys) {
     original.values[key] = property === 'managementBaseUrl' ? `${fixture[property]}/` : fixture[property];
   }
-  assert.ok(fs.readFileSync(rootFile).equals(beforeInstall), 'Foreign settings edit before approved fixture install');
-  fs.writeFileSync(rootFile, `${JSON.stringify(original.root, null, 2)}\n`);
-  const files = [rootFile];
+  assert.ok(fs.readFileSync(file).equals(before), 'Foreign settings edit before approved fixture install');
+  fs.writeFileSync(file, `${JSON.stringify(original.root, null, 2)}\n`);
+  return { file, previous };
+}
+
+/** Canonical MSN target preconfiguration, with per-key ownership so unrelated
+ * product/foreign settings changes survive restoration. No token is written. */
+export function installApprovedAzureFixture(appDir: string, fixture: ApprovedAzureFixture): ApprovedAzureFixtureLease {
+  const rootFile = path.join(appDir, 'local.settings.json');
+  const designFile = path.join(appDir, 'workflow-designtime', 'local.settings.json');
+  const files: BoundSettingsFile[] = [bindSettingsFile(rootFile, fixture)];
   let restored = false;
+  let generatedBindingFailed = false;
   const assertBound = () => {
     assert.ok(!restored, 'Approved fixture lease was restored');
-    files.forEach((file) => assertApprovedAzureFixture(file, fixture));
+    assert.ok(!generatedBindingFailed, 'Generated fixture binding failed; refusing partial restoration');
+    files.forEach(({ file }) => assertApprovedAzureFixture(file, fixture));
   };
   return {
     assertBound,
     bindGeneratedDesignTime() {
-      assertApprovedAzureFixture(designFile, fixture);
-      if (!files.includes(designFile)) {
-        files.push(designFile);
+      assert.ok(!restored, 'Approved fixture lease was restored');
+      if (files.some(({ file }) => file === designFile)) {
+        assertApprovedAzureFixture(designFile, fixture);
+      } else {
+        // The product generator has an independent baseline; never substitute
+        // the app-root snapshot or assert inherited Azure keys before binding.
+        try {
+          files.push(bindSettingsFile(designFile, fixture));
+        } catch (error) {
+          generatedBindingFailed = true;
+          throw error;
+        }
       }
+      assertApprovedAzureFixture(designFile, fixture);
     },
     restore() {
       if (restored) {
         return;
       }
       assertBound(); // All-target preflight: never partly restore after a foreign target edit.
-      const updates = files.map((file) => {
+      const updates = files.map(({ file, previous }) => {
         const before = fs.readFileSync(file);
         const current = settings(file);
         for (const [key] of targetKeys) {
