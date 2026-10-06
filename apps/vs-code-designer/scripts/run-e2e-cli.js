@@ -94,6 +94,24 @@ function main() {
       .catch(exitWithError);
     return;
   }
+  if (process.argv.includes('--workspace-artifact-regeneration')) {
+    if (process.argv.length !== 3) {
+      exitWithError(
+        new Error('--workspace-artifact-regeneration is a focused wizard + fresh regular-workbench route; do not combine flags.')
+      );
+      return;
+    }
+    runVscodeTest(['--label', 'createWorkspaceCoreMatrix'], {
+      extraEnv: {
+        LA_E2E_CLI_REQUIRE_WORKSPACE_REGENERATION: '1',
+        LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL: '0',
+        LA_E2E_CLI_CREATE_WORKSPACE_CASE: 'standard-stateful',
+      },
+    })
+      .then((code) => process.exit(code))
+      .catch(exitWithError);
+    return;
+  }
   if (process.argv.includes('--workspace-prompt-cancel')) {
     if (process.argv.length !== 3) {
       exitWithError(new Error('--workspace-prompt-cancel is a focused setup + regular UI route; do not combine it with other flags.'));
@@ -393,12 +411,15 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     .filter((diagnosticsError) => typeof diagnosticsError === 'string' && diagnosticsError.trim());
   const phaseCleanupVerified = phaseResults.every((phase) => phase.cleanupVerified === true);
   const phaseCompleteness =
+    (suite.id !== 'workspaceArtifactRegeneration' || expectedPhaseIds.every((phaseId, index) => observedPhaseIds[index] === phaseId)) &&
     unexpectedPhaseIds.length === 0 &&
     duplicatePhaseIds.length === 0 &&
     (missingPhaseIds.length === 0 || blockedPhaseIds.length > 0) &&
     phaseResults.length > 0;
   const lifecycleSucceeded =
-    (suite.id !== 'msnWeatherLifecycle' && suite.id !== 'httpTimeoutComposeOriginal') ||
+    !['msnWeatherLifecycle', 'httpTimeoutComposeOriginal', 'statelessVariablesLifecycle', 'workspaceArtifactRegeneration'].includes(
+      suite.id
+    ) ||
     (exitCode === 0 &&
       (signal === null || signal === undefined) &&
       missingPhaseIds.length === 0 &&
@@ -446,7 +467,9 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     blockedPhaseIds,
     phaseCompleteness,
     complete: terminalComplete,
-    ...(suite.id === 'msnWeatherLifecycle' || suite.id === 'httpTimeoutComposeOriginal'
+    ...(['msnWeatherLifecycle', 'httpTimeoutComposeOriginal', 'statelessVariablesLifecycle', 'workspaceArtifactRegeneration'].includes(
+      suite.id
+    )
       ? { lifecycleFinalized: true, phaseResults: finalizedPhaseResults.map(projectTerminalPhase) }
       : {}),
     ...(ogfScenarios.length > 0 ? { ogfScenarios } : {}),
@@ -1579,10 +1602,42 @@ function runVscodeTest(args, options = {}) {
     cancelCheck.required(childEnv) &&
     label === 'createWorkspaceCoreMatrix' &&
     childEnv.LA_E2E_CLI_CREATE_WORKSPACE_CASE === 'standard-stateful';
+  const regenerationRequired = childEnv.LA_E2E_CLI_REQUIRE_WORKSPACE_REGENERATION === '1';
+  if (
+    regenerationRequired &&
+    (cancelRequired || label !== 'createWorkspaceCoreMatrix' || childEnv.LA_E2E_CLI_CREATE_WORKSPACE_CASE !== 'standard-stateful')
+  ) {
+    throw new Error('Regeneration requires its isolated Standard Stateful wizard; it cannot share the Cancel supplement or other labels.');
+  }
+  const regenerationContext = regenerationRequired
+    ? cancelCheck.prepareCancelContext(
+        {
+          ...childEnv,
+          LA_E2E_CLI_CANCEL_DIAGNOSTICS_DIR:
+            childEnv.LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR ||
+            path.join(__dirname, '..', '.vscode-test', `workspace-regeneration-${userDataSuffix}`),
+        },
+        deferredWorkspaceParent
+      )
+    : undefined;
   const cancelContext = cancelRequired ? cancelCheck.prepareCancelContext(childEnv, deferredWorkspaceParent) : undefined;
-  if (cancelContext) {
-    childEnv.LA_E2E_CLI_CANCEL_HANDOFF_PATH = cancelContext.handoffPath;
-    childEnv.LA_E2E_CLI_CANCEL_CONTEXT = JSON.stringify(cancelContext);
+  // The existing validated wizard handoff is shared, not the Cancel observation
+  // or its private mapping. No extra fixture generation or Code download occurs.
+  const wizardHandoffContext = cancelContext || regenerationContext;
+  if (wizardHandoffContext) {
+    childEnv.LA_E2E_CLI_CANCEL_HANDOFF_PATH = wizardHandoffContext.handoffPath;
+    childEnv.LA_E2E_CLI_CANCEL_CONTEXT = JSON.stringify(wizardHandoffContext);
+  }
+  if (regenerationContext && !childEnv.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH) {
+    writeSuiteTerminalResult(childEnv, {
+      label: 'workspaceArtifactRegeneration',
+      complete: false,
+      cleanupVerified: false,
+      exitCode: null,
+      signal: null,
+      lifecycleFinalized: false,
+      phaseResults: [],
+    });
   }
   const child = spawn(command, commandArgs, {
     env: childEnv,
@@ -1614,6 +1669,62 @@ function runVscodeTest(args, options = {}) {
       let cleanupLedger;
       let cancelResult;
       let cancelError;
+      let regenerationResult;
+      let regenerationApi;
+      let regenerationError;
+      let regenerationWizardVerified = false;
+      if (regenerationContext) {
+        const previousScreenshotDir = process.env.LA_E2E_CLI_SCREENSHOT_DIR;
+        const previousDebugPort = process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT;
+        try {
+          if (code !== 0 || signal) {
+            throw new Error('Original wizard host failed; regeneration cannot be credited');
+          }
+          process.env.LA_E2E_CLI_SCREENSHOT_DIR = path.join(regenerationContext.root, 'screenshots');
+          process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT = childEnv.LA_E2E_CLI_REMOTE_DEBUGGING_PORT || '9514';
+          regenerationApi = require('../out/test/e2e/workspaceArtifactRegeneration.test');
+          const handoff = cancelCheck.adaptCancelHandoff(
+            JSON.parse(fs.readFileSync(regenerationContext.handoffPath, 'utf8')),
+            regenerationContext
+          );
+          regenerationWizardVerified = true;
+          regenerationResult = await regenerationApi.runWorkspaceArtifactRegeneration(regenerationContext, handoff, {
+            ...childEnv,
+            LA_E2E_CLI_REMOTE_DEBUGGING_PORT: process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT,
+          });
+          for (const file of fs.readdirSync(regenerationContext.root).filter((name) => name.endsWith('-profile.json'))) {
+            const profile = JSON.parse(fs.readFileSync(path.join(regenerationContext.root, file), 'utf8'));
+            collectVscodeProfileLogs('workspaceRegeneration', {
+              ...childEnv,
+              LA_E2E_CLI_USER_DATA_DIR: profile.profile,
+              LA_E2E_CLI_PROFILE_PHASE: profile.phase,
+              LA_E2E_CLI_VSCODE_LOG_DIR: path.join(regenerationContext.root, 'vscode-logs'),
+            });
+          }
+          if (!regenerationResult.observationPassed) {
+            throw new Error(`Required regeneration observation failed: ${regenerationResult.errors.join('; ')}`);
+          }
+        } catch (error) {
+          regenerationError = error;
+          markOwnedWorkspaceParentsWithDiagnosticFailure(childEnv, [deferredWorkspaceParent].filter(Boolean));
+          fs.writeFileSync(
+            regenerationContext.resultPath,
+            `${JSON.stringify(regenerationResult || { scenario: 'workspace-artifact-regeneration', complete: false, errors: [String(error)] }, null, 2)}\n`
+          );
+          console.error(`[workspace-regeneration] ${String(error)}`);
+        } finally {
+          if (previousScreenshotDir === undefined) {
+            delete process.env.LA_E2E_CLI_SCREENSHOT_DIR;
+          } else {
+            process.env.LA_E2E_CLI_SCREENSHOT_DIR = previousScreenshotDir;
+          }
+          if (previousDebugPort === undefined) {
+            delete process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT;
+          } else {
+            process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT = previousDebugPort;
+          }
+        }
+      }
       if (cancelContext) {
         try {
           if (code !== 0 || signal) {
@@ -1653,7 +1764,7 @@ function runVscodeTest(args, options = {}) {
           }`
         );
       }
-      cleanupLedger = await cleanupDeferredWorkspaceAfterCancel(deferredWorkspaceParent, childEnv, cancelResult);
+      cleanupLedger = await cleanupDeferredWorkspaceAfterCancel(deferredWorkspaceParent, childEnv, cancelResult || regenerationResult);
       try {
         collectVscodeProfileLogs(label, childEnv);
       } catch (error) {
@@ -1682,19 +1793,70 @@ function runVscodeTest(args, options = {}) {
           console.error(`[workspace-cancel] Required supplementary acceptance failed: ${String(error)}`);
         }
       }
-      const phasePassed = code === 0 && cleanupLedger.verified === true && !diagnosticsError && !matchedPattern && !cancelError;
-      writeSuitePhaseResult(childEnv, {
-        phaseId,
-        label,
-        exitCode: code,
-        signal,
-        cleanupVerified: cleanupLedger.verified,
-        diagnosticsError: diagnosticsErrorMessage,
-        complete: phasePassed,
-        cleanupLedger,
-        mochaPassingCount: getMochaPassingCount(output),
-        ogfScenarios: buildOgfScenariosForPhase(phaseId, childEnv, { passed: phasePassed }),
-      });
+      if (regenerationContext && regenerationResult && regenerationApi) {
+        try {
+          regenerationApi.finalizeWorkspaceArtifactRegeneration(regenerationContext, regenerationResult, cleanupLedger, [
+            ...diagnosticsErrors,
+            ...(regenerationError ? [regenerationError] : []),
+            ...(matchedPattern ? [matchedPattern.name] : []),
+          ]);
+        } catch (error) {
+          regenerationError = error;
+          console.error(`[workspace-regeneration] Required final acceptance failed: ${String(error)}`);
+        }
+      }
+      const phasePassed =
+        code === 0 && cleanupLedger.verified === true && !diagnosticsError && !matchedPattern && !cancelError && !regenerationError;
+      if (regenerationContext) {
+        const errors = [
+          ...diagnosticsErrors.map(String),
+          ...(regenerationError ? [String(regenerationError)] : []),
+          ...(matchedPattern ? [matchedPattern.name] : []),
+          ...(regenerationResult?.errors || []),
+        ];
+        const regenerationPhases = regenerationApi
+          ? regenerationApi.buildRegenerationPhaseResults({
+              wizard: {
+                code,
+                signal,
+                verified: regenerationWizardVerified,
+                mochaPassingCount: getMochaPassingCount(output),
+              },
+              hosts: regenerationResult?.hosts || [],
+              complete: regenerationResult?.complete === true && phasePassed,
+              cleanupVerified: cleanupLedger.verified,
+              errors,
+            })
+          : [
+              {
+                label: 'workspaceArtifactRegeneration',
+                phaseId: 'workspaceArtifactRegeneration:create',
+                exitCode: code,
+                signal,
+                complete: false,
+                diagnosticsError: errors.join('; '),
+                cleanupVerified: cleanupLedger.verified,
+                mochaPassingCount: getMochaPassingCount(output),
+                ogfScenarios: [],
+              },
+            ];
+        for (const phase of regenerationPhases) {
+          writeSuitePhaseResult(childEnv, { ...phase, cleanupLedger });
+        }
+      } else {
+        writeSuitePhaseResult(childEnv, {
+          phaseId,
+          label,
+          exitCode: code,
+          signal,
+          cleanupVerified: cleanupLedger.verified,
+          diagnosticsError: diagnosticsErrorMessage,
+          complete: phasePassed,
+          cleanupLedger,
+          mochaPassingCount: getMochaPassingCount(output),
+          ogfScenarios: buildOgfScenariosForPhase(phaseId, childEnv, { passed: phasePassed }),
+        });
+      }
 
       if (diagnosticsError) {
         reject(new AggregateError(diagnosticsErrors, 'Required original workspace/profile diagnostics failed'));
@@ -1702,6 +1864,10 @@ function runVscodeTest(args, options = {}) {
       }
       if (cancelError) {
         reject(cancelError);
+        return;
+      }
+      if (regenerationError) {
+        reject(regenerationError);
         return;
       }
 
@@ -2974,7 +3140,11 @@ function writeSuitePhaseResult(env, result) {
     cleanupVerified: result.cleanupVerified,
     diagnosticsError: result.diagnosticsError,
     complete: terminalComplete,
-    mochaPassingCount: result.mochaPassingCount,
+    ...(result.label === 'workspaceArtifactRegeneration' ? { lifecycleFinalized: terminalComplete } : {}),
+    mochaPassingCount:
+      result.label === 'workspaceArtifactRegeneration'
+        ? phaseResults.reduce((count, phase) => count + (phase.mochaPassingCount || 0), 0)
+        : result.mochaPassingCount,
     phaseResults: finalizedPhaseResults.map((phase) => ({
       phaseId: phase.phaseId,
       exitCode: phase.exitCode,
@@ -2982,6 +3152,7 @@ function writeSuitePhaseResult(env, result) {
       cleanupVerified: phase.cleanupVerified,
       diagnosticsError: phase.diagnosticsError,
       complete: phase.complete,
+      ...(result.label === 'workspaceArtifactRegeneration' ? { mochaPassingCount: phase.mochaPassingCount || 0 } : {}),
       ...(Array.isArray(phase.ogfScenarios) && phase.ogfScenarios.length > 0 ? { ogfScenarios: phase.ogfScenarios } : {}),
     })),
     ...(retainedOgfScenarios.length > 0 ? { ogfScenarios: retainedOgfScenarios } : {}),
@@ -3089,6 +3260,7 @@ function getDirectSuiteComplete(label, phaseResults) {
   return (
     phaseResults.length > 0 &&
     phaseResults.length === expectedPhaseIds.length &&
+    (label !== 'workspaceArtifactRegeneration' || expectedPhaseIds.every((phaseId, index) => observedPhaseIds[index] === phaseId)) &&
     missingPhaseIds.length === 0 &&
     unexpectedPhaseIds.length === 0 &&
     getDuplicateValues(observedPhaseIds).length === 0 &&
@@ -3117,6 +3289,9 @@ function getDirectExpectedPhaseIds(label) {
   }
   if (label === 'msnWeatherLifecycle') {
     return SUITE_REGISTRY[label].expectedPhases.filter((phaseId) => phaseId.startsWith(`${label}:`));
+  }
+  if (label === 'workspaceArtifactRegeneration') {
+    return SUITE_REGISTRY[label].expectedPhases;
   }
   if (label === 'runtimeDependencyBootstrap') {
     return ['runtimeDependencyBootstrap:bootstrap'];
