@@ -89,6 +89,31 @@ export async function teardownOwnedMsnHost(
   }
 }
 
+/** Scope validation for existing VS Code handles; never OS PID admission. */
+export function assertOwnedMsnHandleScopes(
+  host: OwnedMsnShutdownHost,
+  invocation: string,
+  handles: {
+    tasks: readonly { workspacePath: string | undefined; name: string }[];
+    session?: { workspacePath: string | undefined; invocation: unknown };
+  }
+): void {
+  assertOwnedWorkspaceHost(host);
+  assert.ok(invocation, 'Owned MSN handles require the current invocation marker');
+  const roots = new Set(host.workspaceRoots.map((root) => normalizePath(fs.realpathSync(root))));
+  const assertScope = (workspacePath: string | undefined): void => {
+    assert.ok(workspacePath && roots.has(normalizePath(fs.realpathSync(workspacePath))), 'Refusing to stop a foreign MSN workspace handle');
+  };
+  for (const task of handles.tasks) {
+    assertScope(task.workspacePath);
+    assert.strictEqual(task.name, 'func: host start', 'Refusing to terminate a foreign MSN task');
+  }
+  if (handles.session) {
+    assertScope(handles.session.workspacePath);
+    assert.strictEqual(handles.session.invocation, invocation, 'Refusing to stop a foreign MSN debug session');
+  }
+}
+
 function bindOwnedCachedShutdown(host: OwnedMsnShutdownHost): () => Promise<void> {
   const canonicalParent = assertOwnedWorkspaceHost(host);
   assert.ok(

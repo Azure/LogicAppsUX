@@ -667,6 +667,24 @@ jobs:
             New-Item -ItemType Directory -Force -Path $processDestination | Out-Null
             Get-ChildItem -LiteralPath $processEvidenceRoot -File -Filter 'owned-processes-*.json' -ErrorAction Stop |
               Copy-Item -Destination $processDestination -ErrorAction Stop
+            # Read-only lock diagnostics are separate from process ownership.
+            Get-ChildItem -LiteralPath $processEvidenceRoot -Directory -Filter 'msn-cleanup-observations-*' -ErrorAction Stop |
+              Copy-Item -Destination $logDestination -Recurse -ErrorAction Stop
+            if (Test-Path $optionalTerminalResult) {
+              $msnTerminal = Get-Content -LiteralPath $optionalTerminalResult -Raw | ConvertFrom-Json
+              if ($msnTerminal.phaseResultsPath) {
+                $journal = [IO.Path]::GetFullPath([string]$msnTerminal.phaseResultsPath)
+                $comparison = [StringComparison]::Ordinal
+                if ($IsWindows) { $comparison = [StringComparison]::OrdinalIgnoreCase }
+                if (-not [IO.Path]::GetDirectoryName($journal).Equals([IO.Path]::GetFullPath($resultRoot), $comparison) -or
+                    [IO.Path]::GetFileName($journal) -notmatch '^msnWeatherLifecycle\.phases-[a-f0-9-]{36}\.jsonl$') {
+                  throw 'MSN phase journal escapes the original result directory.'
+                }
+                if (Test-Path -LiteralPath $journal) {
+                  Copy-Item -LiteralPath $journal -Destination $logDestination -ErrorAction Stop
+                }
+              }
+            }
           }
           if ('${{ parameters.suiteId }}' -eq 'createWorkspaceCoreMatrix') {
             if (Test-Path $cancelRoot) {

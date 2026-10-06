@@ -5,6 +5,8 @@ import * as http from 'http';
 import * as os from 'os';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { observeMsnCleanupDiagnostics, recordMsnBodyAssertions } from '../../../scripts/msn-cleanup-diagnostics';
+import { assertOwnedMsnHandleScopes } from './ownedMsnShutdown';
 import {
   type CdpConnection,
   connectToVsCodeCdp,
@@ -254,6 +256,27 @@ function registerWorkspaceLifecycleSuite(): void {
     });
 
     suiteTeardown(async () => {
+      if (lifecycleMode === 'msn-weather-run') {
+        const errors: unknown[] = [];
+        // The original runtime finally owns the before/after task samples.
+        // Keep later panel/handle teardown errors independent as well.
+        for (const step of [
+          () => waitForVisibleDelay('Generated workspace designer lifecycle'),
+          () => closeWebviewTabs(createWorkspaceViewType),
+          () => closeWebviewTabs(designerViewType),
+          () => stopDebuggingAndTasks(),
+        ]) {
+          try {
+            await step();
+          } catch (error) {
+            errors.push(error);
+          }
+        }
+        if (errors.length > 0) {
+          throw new AggregateError(errors, 'MSN shutdown/observation failed; original errors retained');
+        }
+        return;
+      }
       await waitForVisibleDelay('Generated workspace designer lifecycle');
       await closeWebviewTabs(createWorkspaceViewType);
       await closeWebviewTabs(designerViewType);
@@ -4121,6 +4144,9 @@ async function startDebuggingGeneratedWorkspace(
   const generatedConfig = launchJson.configurations?.[0];
   assert.ok(generatedConfig, `Expected ${launchPath} to contain a debug configuration`);
   assert.ok(generatedConfig.name, `Expected ${launchPath} debug configuration to have a name`);
+  if (process.env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE === 'msn-weather-run') {
+    generatedConfig.__logicAppsMsnInvocation = requiredValue('LA_E2E_CLI_MSN_LIFECYCLE_INVOCATION');
+  }
 
   if (cleanupBeforeDebug) {
     await stopDebuggingAndTasks();
@@ -4580,6 +4606,7 @@ async function runMsnWeatherLifecycle(createdWorkspace: CreatedWorkspace): Promi
   console.log(`[workspace-lifecycle][msn-weather] Running MSN Weather lifecycle from ${createdWorkspace.appDir}`);
 
   const settings = getMsnWeatherAzureSettingsFromEnvironment();
+  const errors: unknown[] = [];
   try {
     await waitForGeneratedLogicAppFolder(createdWorkspace);
     await logMsnWeatherDesignerOpenDiagnostics('before warmup', createdWorkspace);
@@ -4641,8 +4668,33 @@ async function runMsnWeatherLifecycle(createdWorkspace: CreatedWorkspace): Promi
         activeTabText: [createdWorkspace.wfName, run.name],
       });
     });
-  } finally {
-    await stopDebuggingAndTasks();
+    recordMsnBodyAssertions({
+      outputDir: requiredValue('LA_E2E_CLI_MSN_DIAGNOSTICS_DIR'),
+      invocation: requiredValue('LA_E2E_CLI_MSN_LIFECYCLE_INVOCATION'),
+    });
+  } catch (error) {
+    errors.push(error);
+  }
+  const observe = (stage: 'before-task-teardown' | 'after-task-teardown') =>
+    observeMsnCleanupDiagnostics({
+      dependencyRoot: requiredValue('LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT'),
+      outputDir: requiredValue('LA_E2E_CLI_MSN_DIAGNOSTICS_DIR'),
+      stage,
+    });
+  // Sample live identities before terminating the original runtime handles, not
+  // in suiteTeardown after this finally has already removed the task registry.
+  for (const step of [() => observe('before-task-teardown'), () => stopDebuggingAndTasks(), () => observe('after-task-teardown')]) {
+    try {
+      await step();
+    } catch (error) {
+      errors.push(error);
+    }
+  }
+  if (errors.length > 0) {
+    throw new AggregateError(
+      errors,
+      `MSN body/shutdown failed; original errors retained: ${errors.map((error) => redactDiagnosticString(String(error))).join('; ')}`
+    );
   }
 }
 
@@ -6031,6 +6083,50 @@ function httpRequest(options: { url: string; method: string; body?: string }, ti
 }
 
 async function stopDebuggingAndTasks(): Promise<void> {
+  if (process.env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE === 'msn-weather-run') {
+    const extension = vscode.extensions.getExtension(logicAppsExtensionId);
+    assert.ok(extension, 'MSN cleanup requires the original active extension');
+    const session = vscode.debug.activeDebugSession;
+    const executions = [...vscode.tasks.taskExecutions];
+    assertOwnedMsnHandleScopes(
+      {
+        dedicatedMsnRunHost: true,
+        extension: {
+          id: extension.id,
+          isActive: extension.isActive,
+          extensionPath: extension.extensionPath,
+          main: extension.packageJSON.main,
+        },
+        workspaceParent: requiredValue('LA_E2E_CLI_WORKSPACE_PARENT'),
+        workspaceRoots: (vscode.workspace.workspaceFolders || []).map((folder) => folder.uri.fsPath),
+        resolveEntry: require.resolve,
+        cachedEntry: () => undefined, // Scope check only; no lifecycle loading/invocation.
+      },
+      requiredValue('LA_E2E_CLI_MSN_LIFECYCLE_INVOCATION'),
+      {
+        tasks: executions.map(({ task }) => ({
+          name: task.name,
+          workspacePath: typeof task.scope === 'object' ? task.scope.uri.fsPath : undefined,
+        })),
+        ...(session
+          ? { session: { workspacePath: session.workspaceFolder?.uri.fsPath, invocation: session.configuration.__logicAppsMsnInvocation } }
+          : {}),
+      }
+    );
+    if (session) {
+      await vscode.debug.stopDebugging(session);
+      await waitUntil(() => vscode.debug.activeDebugSession !== session, 10000, 'original MSN debug handle to stop');
+    }
+    for (const execution of executions) {
+      execution.terminate();
+    }
+    await waitUntil(
+      () => !vscode.tasks.taskExecutions.some((execution) => executions.includes(execution)),
+      10000,
+      'original MSN task handles to terminate'
+    );
+    return;
+  }
   if (vscode.debug.activeDebugSession) {
     await vscode.debug.stopDebugging(vscode.debug.activeDebugSession);
     await waitUntil(() => !vscode.debug.activeDebugSession, 10000, 'active debug session to stop');

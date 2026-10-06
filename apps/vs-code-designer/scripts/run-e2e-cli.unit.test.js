@@ -1410,10 +1410,10 @@ function testMsnDirectLifecycleEvidence() {
 
       const lifecyclePhases = phases.slice(1);
       writeSuitePhaseResult({}, phases[0]);
-      for (const [index, phase] of lifecyclePhases.entries()) {
+      for (const phase of lifecyclePhases) {
         writeSuitePhaseResult(env, phase);
-        assert.strictEqual(readTerminal().complete, index === 1, 'Both actual lifecycle phases are required');
-        assert.strictEqual(readTerminal().lifecycleFinalized, undefined, 'Original direct schema must remain unchanged');
+        assert.strictEqual(readTerminal().complete, false, 'Phase success cannot finalize outer cleanup');
+        assert.strictEqual(readTerminal().lifecycleFinalized, false);
       }
       const bootstrap = JSON.parse(fs.readFileSync(getSuiteTerminalResultPath({}, 'runtimeDependencyBootstrap'), 'utf8'));
       assert.strictEqual(bootstrap.complete, true);
@@ -1422,7 +1422,7 @@ function testMsnDirectLifecycleEvidence() {
         ['runtimeDependencyBootstrap:bootstrap']
       );
       const terminal = readTerminal();
-      assertSuccessfulMsnTerminal(msnSummary(), terminal);
+      assert.throws(() => assertSuccessfulMsnTerminal(msnSummary(), terminal), /incomplete-or-unclean-terminal/);
       for (const override of [
         { exitCode: 1 },
         { exitCode: null },
@@ -1440,7 +1440,7 @@ function testMsnDirectLifecycleEvidence() {
         assert.throws(() => assertSuccessfulMsnTerminal({ ...msnSummary(), ...override }, terminal));
       }
       assert.strictEqual(terminal.phaseId, 'msnWeatherLifecycle:run');
-      assert.strictEqual(terminal.lifecycleFinalized, undefined);
+      assert.strictEqual(terminal.lifecycleFinalized, false);
       assert.deepStrictEqual(
         terminal.phaseResults.map((phase) => phase.phaseId),
         SUITE_REGISTRY.msnWeatherLifecycle.expectedPhases.slice(1)
@@ -1449,10 +1449,15 @@ function testMsnDirectLifecycleEvidence() {
 
       const log = path.join(cwd, 'msn.log');
       fs.writeFileSync(log, '\n  1 passing (1s)\n');
-      writeSingleResult({ label: 'msnWeatherLifecycle', log, outDir: path.dirname(terminalPath), outcome: 'success' });
+      assert.throws(
+        () => writeSingleResult({ label: 'msnWeatherLifecycle', log, outDir: path.dirname(terminalPath), outcome: 'success' }),
+        /incomplete-or-unclean-terminal/
+      );
       const summary = JSON.parse(fs.readFileSync(path.join(path.dirname(terminalPath), 'msnWeatherLifecycle.json'), 'utf8'));
       assert.strictEqual(summary.passing, 1, 'Preparation phases are not additional logical scenarios');
-      assert.strictEqual(summary.terminalPhaseId, 'msnWeatherLifecycle:run');
+      assert.strictEqual(summary.terminalPhaseId, undefined, 'An intermediate receipt must not be advertised as final acceptance');
+      assert.deepStrictEqual(summary.executedTestCounts, { total: 1, passing: 1, failing: 0, pending: 0 });
+      assert.strictEqual(summary.harnessFailures[0].kind, 'lifecycle-evidence');
 
       const failedPhaseOverrides = [
         { exitCode: 1 },
@@ -1499,7 +1504,9 @@ function testMsnBatchLifecycleEvidence() {
     cleanupLedgerPath: path.join(root, 'cleanup.json'),
     terminalResultPath: path.join(root, 'terminal.json'),
   };
-  const phases = suite.expectedPhases.map((phaseId) => msnPhase(phaseId));
+  const phases = suite.expectedPhases.map((phaseId) =>
+    msnPhase(phaseId, phaseId === 'msnWeatherLifecycle:run' ? { bodyAssertionsPassed: true } : {})
+  );
   const write = (phaseResults, options = {}) => {
     fs.writeFileSync(context.phaseResultsPath, phaseResults.map((phase) => JSON.stringify(phase)).join('\n'));
     writeSuiteFinalEvidence({
@@ -1512,7 +1519,13 @@ function testMsnBatchLifecycleEvidence() {
     });
     return JSON.parse(fs.readFileSync(context.terminalResultPath, 'utf8'));
   };
-  assertSuccessfulMsnTerminal(msnSummary(), write(phases));
+  const diagnostic = write(phases);
+  assert.strictEqual(diagnostic.lifecycleBodySucceeded, true);
+  assert.strictEqual(diagnostic.complete, false);
+  assert.strictEqual(diagnostic.cleanupVerified, false);
+  assert.strictEqual(diagnostic.originalProcessClosureVerified, false);
+  assert.throws(() => assertSuccessfulMsnTerminal(msnSummary(), diagnostic), /incomplete-or-unclean-terminal/);
+  assert.strictEqual(JSON.parse(fs.readFileSync(context.cleanupLedgerPath)).verified, false);
   for (const badPhases of [
     phases.slice(1),
     [...phases, phases[0]],
@@ -2374,7 +2387,11 @@ async function testMsnLifecycleCleanupRetainsOriginalErrors() {
       },
       finalizeEvidence: (outcome) => {
         sequence.push('finalize-terminal');
-        assert.deepStrictEqual(outcome, { cleanupVerified: false, lifecycleError: true });
+        assert.deepStrictEqual(outcome, {
+          cleanupVerified: false,
+          lifecycleError: true,
+          errors: [original, workspace, dependencies, observation],
+        });
         throw persistence;
       },
     }),

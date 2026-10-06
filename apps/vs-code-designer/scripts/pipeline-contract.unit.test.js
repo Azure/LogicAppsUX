@@ -1944,6 +1944,10 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
       );
     }
     fs.mkdirSync(resultRoot, { recursive: true });
+    const msnJournalName = 'msnWeatherLifecycle.phases-aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa.jsonl';
+    if (options.msn) {
+      fs.writeFileSync(path.join(resultRoot, msnJournalName), '{"phaseId":"msnWeatherLifecycle:run","complete":true}\n');
+    }
     fs.writeFileSync(
       path.join(resultRoot, `${suiteId}.json`),
       `${JSON.stringify({ label: suiteId, outcome: 'success', total: options.msn ? 1 : options.privatePlatform ? 6 : 12, passing: options.msn ? 1 : options.privatePlatform ? 6 : 12, failing: 0, pending: 0, ogfScenarios })}\n`
@@ -1965,6 +1969,7 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
           cleanupVerified: true,
           exitCode: 0,
         })),
+        ...(options.msn ? { phaseResultsPath: path.join(resultRoot, msnJournalName) } : {}),
         ...options.terminalOverride,
       })}\n`
     );
@@ -2075,6 +2080,10 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
       fs.writeFileSync(path.join(processEvidenceRoot, name), '{"processExitVerified":false,"filesystemCleanupVerified":false}\n');
     }
     fs.writeFileSync(path.join(processEvidenceRoot, 'unrelated.json'), '{"mustNotStage":true}\n');
+    const lockObservationName = 'msn-cleanup-observations-control';
+    const lockObservationDir = path.join(processEvidenceRoot, lockObservationName);
+    fs.mkdirSync(lockObservationDir);
+    fs.writeFileSync(path.join(lockObservationDir, 'before-task-teardown.json'), '{"originalProcessClosureVerified":false}\n');
 
     const stage = () =>
       execFileSync(
@@ -2106,6 +2115,17 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
         !fs.existsSync(path.join(artifactStagingDirectory, 'vscode-e2e-cli', artifactName, 'private-traceability', `${suiteId}.json`))
       );
       if (options.msn) {
+        if (!options.omitTerminal) {
+          assert.strictEqual(
+            fs.readFileSync(path.join(failedDiagnosticsRoot, 'log', msnJournalName), 'utf8'),
+            fs.readFileSync(path.join(resultRoot, msnJournalName), 'utf8')
+          );
+        }
+        assert.strictEqual(
+          fs.readFileSync(path.join(failedDiagnosticsRoot, 'log', lockObservationName, 'before-task-teardown.json'), 'utf8'),
+          fs.readFileSync(path.join(lockObservationDir, 'before-task-teardown.json'), 'utf8'),
+          'Failed MSN staging must preserve read-only lock diagnostics'
+        );
         for (const name of processNames) {
           assert.strictEqual(
             fs.readFileSync(path.join(failedDiagnosticsRoot, 'owned-processes', name), 'utf8'),
@@ -2160,6 +2180,14 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
     assertScreenshotSidecarFixturePreserved(path.join(diagnosticsRoot, 'screenshots'), screenshotFixture);
     assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'generated-workspaces', 'index.md')));
     if (options.msn) {
+      assert.strictEqual(
+        fs.readFileSync(path.join(diagnosticsRoot, 'log', msnJournalName), 'utf8'),
+        fs.readFileSync(path.join(resultRoot, msnJournalName), 'utf8')
+      );
+      assert.strictEqual(
+        fs.readFileSync(path.join(diagnosticsRoot, 'log', lockObservationName, 'before-task-teardown.json'), 'utf8'),
+        fs.readFileSync(path.join(lockObservationDir, 'before-task-teardown.json'), 'utf8')
+      );
       assert.deepStrictEqual(fs.readdirSync(path.join(diagnosticsRoot, 'owned-processes')).sort(), processNames.sort());
       for (const name of processNames) {
         assert.strictEqual(
@@ -2168,6 +2196,7 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
         );
       }
     } else {
+      assert.ok(!fs.existsSync(path.join(diagnosticsRoot, 'log', lockObservationName)));
       assert.ok(
         !fs.existsSync(path.join(diagnosticsRoot, 'owned-processes')),
         'Other suite diagnostics must not adopt MSN process evidence'

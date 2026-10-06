@@ -31,17 +31,18 @@ for (const platform of ['linux', 'windows']) {
       false
     );
   });
-  test(`${platform}: actual phase writer persists the original aggregate schema with corrected completeness`, (t) => {
+  test(`${platform}: actual intermediate phase writer preserves bodies without claiming outer cleanup or finalization`, (t) => {
     const { terminalPath, env } = fixture(t);
     for (const phase of original.phaseResults) {
       writeSuitePhaseResult(env, { ...phase, label: original.label, mochaPassingCount: 0 });
     }
     const terminal = JSON.parse(fs.readFileSync(terminalPath));
-    assert.equal(terminal.complete, true);
+    assert.equal(terminal.complete, false);
     assert.equal(terminal.exitCode, 0);
-    assert.equal(terminal.cleanupVerified, true);
+    assert.equal(terminal.cleanupVerified, false);
+    assert.equal(terminal.lifecycleFinalized, false);
+    assert.equal(terminal.originalProcessClosureVerified, false);
     assert.deepEqual(terminal.phaseResults, original.phaseResults);
-    assert.deepEqual(Object.keys(terminal).sort(), Object.keys(original).sort());
     assert.equal(terminal.mochaPassingCount, original.mochaPassingCount);
   });
   for (const [name, modify] of [

@@ -5,6 +5,7 @@ import * as path from 'path';
 import {
   type CachedExtensionEntry,
   type OwnedMsnShutdownHost,
+  assertOwnedMsnHandleScopes,
   findLoadedCachedExtensionEntry,
   teardownOwnedMsnHost,
 } from './ownedMsnShutdown';
@@ -45,6 +46,22 @@ async function run(): Promise<void> {
       resolveEntry: (filename) => filename,
       cachedEntry: () => selectEntry(entry),
     };
+    const ownedHandles = {
+      tasks: [{ workspacePath: app, name: 'func: host start' }],
+      session: { workspacePath: app, invocation: 'current-msn-control' },
+    };
+    assertOwnedMsnHandleScopes(host, 'current-msn-control', ownedHandles);
+    for (const handles of [
+      { ...ownedHandles, tasks: [{ workspacePath: outside, name: 'func: host start' }] },
+      { ...ownedHandles, tasks: [{ workspacePath: prefixSibling, name: 'func: host start' }] },
+      { ...ownedHandles, tasks: [{ workspacePath: undefined, name: 'func: host start' }] },
+      { ...ownedHandles, tasks: [{ workspacePath: app, name: 'foreign-task' }] },
+      { ...ownedHandles, session: { workspacePath: outside, invocation: 'current-msn-control' } },
+      { ...ownedHandles, session: { workspacePath: app, invocation: 'earlier-msn-control' } },
+    ]) {
+      assert.throws(() => assertOwnedMsnHandleScopes(host, 'current-msn-control', handles), /foreign MSN/);
+    }
+    assert.throws(() => assertOwnedMsnHandleScopes({ ...host, dedicatedMsnRunHost: false }, 'current-msn-control', ownedHandles));
     await teardownOwnedMsnHost(host, [
       async () => {
         sequence.push('panels');

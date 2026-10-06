@@ -158,6 +158,63 @@ closure, report `originalProcessClosureVerified: false` and keep execution
 diagnostic-only. Directory removal and an empty post-exit tree are not stronger
 proof. Do not revive abandoned process-owner frameworks to disguise this gap.
 
+### Canonical MSN cleanup: fail-closed diagnostic boundary
+
+**Source/control correction; native lock-holder diagnosis pending.** A successful
+MSN response and a passing extension-host scenario are body evidence, not final
+root-cleanup or original-process acceptance. The direct orchestrator now starts
+with incomplete receipts and a fresh three-phase JSONL journal. Only its outer
+finalizer publishes the finalized verdict, after required shutdown observations,
+workspace/profile diagnostics and exact-root absence observation. Original body
+and cleanup/instrumentation errors remain separate and are retained.
+
+The current path cannot prove original Functions/Code descendant identity
+closure. It therefore deliberately retains the original generated workspace
+and isolated dependency root and exits nonzero. Direct and batch results report
+`complete: false`, `cleanupVerified: false`,
+`originalProcessClosureVerified: false` and
+`processClosureProof: "original-identities-unverified"`, even if every body phase
+passed. `lifecycleBodySucceeded` records the independent body verdict.
+The current-invocation `body-assertions.json` is written only after the actual
+MSN body and required response screenshot assertions, before runtime teardown.
+It keeps passing assertions visible even when later inner shutdown fails;
+`bodyAssertionsPassed` is not process/root cleanup or native acceptance.
+Do not remove this blocker using exit zero, disappearing VS Code task handles,
+empty post-exit ancestry, directory absence or a synthetic control observation.
+The protected canonical rollup is unchanged.
+
+`scripts/msn-cleanup-diagnostics.js` adds **read-only** Windows Restart Manager
+file-lock observations for the mapped Functions dependency DLL, together with
+the existing process observer's PID, creation identity, parent PID and
+executable records. Samples are taken in the original runtime cleanup boundary before task teardown,
+after task teardown
+and after the original CLI closes. A matching PID without the same creation
+identity is not a matched process. Dependency-executable candidates and foreign
+file-lock holders are diagnostics, never authority to terminate. Missing files,
+unavailable native observations and partial failures provide no closure proof.
+No command lines, environment variables or credentials are collected.
+VS Code handle cleanup rejects foreign task scopes/names and debug invocation
+markers, retains the original admitted handle objects across awaits, and does
+not equate their termination with OS process exit.
+
+Use the existing `--msn-weather-lifecycle` direct selector or explicit batch
+`--suites msnWeatherLifecycle` only on an isolated, source-bound native consumer.
+No new native mode, resource, grant or owner framework is introduced.
+The existing ADO template stages `msn-cleanup-observations-*` under the diagnostic
+artifact's `log/` before terminal rejection, including failed runs.
+Require the compiled producer and consumer source manifests to identify the
+same immutable correction source. Preserve all three samples, the phase
+journal, final terminal, generated fixture snapshot and original profile/task
+logs privately. Linux process samples are diagnostic-only and do not claim a
+Windows file-lock observation.
+
+The registered `test:e2e-cli:msn-reporting-unit` controls exercise the actual
+orchestrator, phase writer and finalizer with only native phase/auth/probe
+boundaries replaced. They cover late cleanup failure, fresh invocation ordering,
+original errors, retained roots, PID reuse, foreign holders and unavailable lock
+observations. These controls are included in `test:e2e-cli:unit`; they neither
+exercise Windows Restart Manager nor certify native cleanup.
+
 ## Validation and maintenance
 
 1. Read this guide and the relevant suite/fixture prerequisites.

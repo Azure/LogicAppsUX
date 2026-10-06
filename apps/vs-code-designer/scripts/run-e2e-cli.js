@@ -682,8 +682,13 @@ function readJsonIfExists(filePath) {
 }
 
 function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, processCleanup, phaseResults: suppliedPhases }) {
-  const retainedCaseCleanupBlocked = suite.id === 'workspaceMultiRoot';
-  const retainedCaseCleanupError = retainedCaseCleanupBlocked ? require('./workspace-multi-root').nativeCleanupBlocker : '';
+  const retainedCaseCleanupBlocked = ['workspaceMultiRoot', 'msnWeatherLifecycle'].includes(suite.id);
+  const retainedCaseCleanupError =
+    suite.id === 'workspaceMultiRoot'
+      ? require('./workspace-multi-root').nativeCleanupBlocker
+      : suite.id === 'msnWeatherLifecycle'
+        ? 'MSN cleanup blocked: original process identity closure is unverified; exact workspace and dependency roots retained'
+        : '';
   const originalProcessClosureVerified = !retainedCaseCleanupBlocked && processCleanup.retainedOriginalIdentitiesVerified === true;
   const processClosureProof = originalProcessClosureVerified ? 'retained-original-identities' : 'original-identities-unverified';
   const readJournal = () => {
@@ -794,6 +799,19 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     exitCode: context.directFamily && !terminalComplete ? 1 : exitCode,
     signal,
     cleanupVerified: cleanupLedger.verified,
+    ...(suite.id === 'msnWeatherLifecycle'
+      ? {
+          lifecycleBodySucceeded:
+            expectedPhaseIds.length === phaseResults.length &&
+            expectedPhaseIds.every((phaseId, index) => phaseResults[index].phaseId === phaseId) &&
+            phaseResults.every((phase) =>
+              phase.phaseId === 'msnWeatherLifecycle:run'
+                ? phase.bodyAssertionsPassed === true
+                : phase.complete === true && phase.exitCode === 0 && !phase.signal
+            ),
+          filesystemCleanupVerified: false,
+        }
+      : {}),
     diagnosticsError: [
       error instanceof Error ? error.message : String(error || ''),
       journal.error,
@@ -1452,24 +1470,44 @@ function getCodefulDebugTasksRunExtraEnv({ workspaceParent, entry, now = Date.no
   };
 }
 
-async function runMsnWeatherLifecycle(visibleDelayMs) {
-  ensureMsnWeatherProfile();
-  const azureEnv = getMsnWeatherAzureEnv();
+async function runMsnWeatherLifecycle(
+  visibleDelayMs,
+  {
+    ensureProfile = ensureMsnWeatherProfile,
+    azureEnvironment = getMsnWeatherAzureEnv,
+    runPhase = runVscodeTest,
+    probe = waitForFuncCoreToolsAtDependencyRoot,
+    observe = require('./msn-cleanup-diagnostics').observeMsnCleanupDiagnostics,
+  } = {}
+) {
+  const evidenceEnv = { ...process.env };
+  if (evidenceEnv.LA_E2E_CLI_SUITE_WRAPPER_CHILD !== '1') {
+    delete evidenceEnv.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH;
+  }
+  const directEvidence = beginDirectMsnEvidence(evidenceEnv);
+  ensureProfile();
+  const azureEnv = azureEnvironment();
   const lifecycleDir = getLifecycleArtifactDir('msn-weather-lifecycle');
   const lifecycleRunId = Date.now();
   const runtimeDependenciesRoot = createIsolatedRuntimeDependenciesRoot('msnWeatherLifecycle');
   const workspaceParent = createOwnedWorkspaceParent('msn-weather-lifecycle');
   let lifecycleSucceeded = false;
+  let preparationSucceeded = false;
+  let lifecycleError;
   const commonEnv = {
+    ...directEvidence,
     LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: runtimeDependenciesRoot,
     LA_E2E_CLI_EXPECT_AZURE_LOGIC_APPS_CHANNEL: '1',
     LA_E2E_CLI_VSCODE_LOG_ARTIFACT_LABEL: 'msnWeatherLifecycle',
+    LA_E2E_CLI_MSN_LIFECYCLE_INVOCATION: require('crypto').randomUUID(),
+    LA_E2E_CLI_DISABLE_UNOWNED_PORT_KILL: '1',
+    LA_E2E_CLI_MSN_DIAGNOSTICS_DIR: path.join(lifecycleDir, `msn-cleanup-observations-${lifecycleRunId}`),
   };
   fs.mkdirSync(lifecycleDir, { recursive: true });
   const manifestPath = path.join(lifecycleDir, `manifest-standard-${lifecycleRunId}.json`);
 
   try {
-    await runVscodeTest(['--label', 'runtimeDependencyBootstrap'], {
+    await runPhase(['--label', 'runtimeDependencyBootstrap'], {
       visibleDelayMs,
       extraEnv: {
         ...commonEnv,
@@ -1483,13 +1521,13 @@ async function runMsnWeatherLifecycle(visibleDelayMs) {
         LA_E2E_CLI_USER_DATA_SUFFIX: `msn-weather-bootstrap-${lifecycleRunId}`,
       },
     });
-    const funcCoreToolsProbe = await waitForFuncCoreToolsAtDependencyRoot(runtimeDependenciesRoot, {
+    const funcCoreToolsProbe = await probe(runtimeDependenciesRoot, {
       context: 'MSN Weather dependency bootstrap',
       timeoutMs: 30_000,
     });
     writeRuntimeDependencyProbe(lifecycleDir, lifecycleRunId, runtimeDependenciesRoot, funcCoreToolsProbe);
 
-    await runVscodeTest(['--label', 'msnWeatherLifecycle'], {
+    await runPhase(['--label', 'msnWeatherLifecycle'], {
       visibleDelayMs,
       extraEnv: {
         ...commonEnv,
@@ -1509,18 +1547,52 @@ async function runMsnWeatherLifecycle(visibleDelayMs) {
       throw new Error('MSN Weather lifecycle setup did not write a Standard workspace entry');
     }
 
-    await runVscodeTest(['--label', 'msnWeatherLifecycle'], {
+    preparationSucceeded = true;
+    await runPhase(['--label', 'msnWeatherLifecycle'], {
       visibleDelayMs,
       extraEnv: getMsnWeatherLifecycleRunExtraEnv({ commonEnv, workspaceParent, lifecycleRunId, entry, azureEnv }),
     });
 
     lifecycleSucceeded = true;
-  } finally {
-    await cleanupOwnedWorkspaceParent(workspaceParent, 'MSN Weather lifecycle');
-    if (lifecycleSucceeded && process.env.LA_E2E_CLI_PRESERVE_WORKSPACES !== '1') {
-      await cleanupRuntimeDependenciesRoot(runtimeDependenciesRoot);
-    }
+  } catch (error) {
+    lifecycleError = error;
   }
+  await finalizeMsnLifecycleCleanup({
+    lifecycleError,
+    cleanupSteps: [
+      async () => {
+        if (!lifecycleSucceeded && preparationSucceeded) {
+          lifecycleSucceeded = require('./msn-cleanup-diagnostics').readMsnBodyAssertions({
+            outputDir: commonEnv.LA_E2E_CLI_MSN_DIAGNOSTICS_DIR,
+            invocation: commonEnv.LA_E2E_CLI_MSN_LIFECYCLE_INVOCATION,
+          });
+        }
+      },
+      async () => {
+        await observe({
+          dependencyRoot: runtimeDependenciesRoot,
+          outputDir: commonEnv.LA_E2E_CLI_MSN_DIAGNOSTICS_DIR,
+          stage: 'after-cli-close',
+        });
+      },
+      async () => {
+        // Neither the task registry nor the legacy post-exit ancestry observer
+        // proves original identity closure. Do not delete the evidence/fixture
+        // or reuse the abandoned process-owner framework to fill that gap.
+        throw new Error(
+          'MSN cleanup blocked: original process identity closure is unverified; exact workspace and dependency roots retained'
+        );
+      },
+    ],
+    observeCleanup: () => getOwnedRootCleanupVerified([workspaceParent, runtimeDependenciesRoot]),
+    finalizeEvidence: (outcome) =>
+      finalizeDirectMsnEvidence(evidenceEnv, {
+        ...outcome,
+        lifecycleSucceeded,
+        phaseResultsPath: commonEnv.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH,
+        ownedRoots: [workspaceParent, runtimeDependenciesRoot],
+      }),
+  });
 }
 
 async function finalizeMsnLifecycleCleanup({ lifecycleError, cleanupSteps, observeCleanup, finalizeEvidence }) {
@@ -1543,17 +1615,30 @@ async function finalizeMsnLifecycleCleanup({ lifecycleError, cleanupSteps, obser
     terminal = finalizeEvidence({
       cleanupVerified,
       lifecycleError: errors.length > 0,
+      errors,
     });
   } catch (error) {
     errors.push(error);
   }
   if (errors.length > 0) {
-    throw new AggregateError(errors, 'MSN lifecycle failed; original execution, cleanup and evidence errors were retained');
+    throw new AggregateError(
+      errors,
+      `MSN lifecycle failed; original execution, cleanup and evidence errors were retained:\n${describeMsnFailures(errors).join('\n')}`
+    );
   }
   if (!cleanupVerified || terminal?.complete === false) {
     throw new Error('MSN lifecycle evidence failed: incomplete-or-unclean-lifecycle');
   }
   return { cleanupVerified, terminal };
+}
+
+function describeMsnFailures(errors, depth = 0) {
+  return errors
+    .slice(0, 20)
+    .flatMap((error) => [
+      redactGeneratedWorkspacePlainText(error instanceof Error ? error.message : String(error)),
+      ...(error instanceof AggregateError && depth < 4 ? describeMsnFailures(error.errors, depth + 1) : []),
+    ]);
 }
 
 async function runVariablesPickerLifecycle(visibleDelayMs) {
@@ -2214,6 +2299,7 @@ function runVscodeTest(args, options = {}) {
       let regenerationError;
       let regenerationWizardVerified = false;
       let regenerationEvidenceVerified = false;
+      let msnBodyAssertionsPassed;
       if (regenerationContext) {
         const previousScreenshotDir = process.env.LA_E2E_CLI_SCREENSHOT_DIR;
         const previousDebugPort = process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT;
@@ -2337,6 +2423,18 @@ function runVscodeTest(args, options = {}) {
           console.error(`[workspace-regeneration] Required pre-cleanup evidence validation failed: ${String(error)}`);
         }
       }
+      if (label === 'msnWeatherLifecycle' && childEnv.LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE === 'msn-weather-run') {
+        try {
+          msnBodyAssertionsPassed = require('./msn-cleanup-diagnostics').readMsnBodyAssertions({
+            outputDir: childEnv.LA_E2E_CLI_MSN_DIAGNOSTICS_DIR,
+            invocation: childEnv.LA_E2E_CLI_MSN_LIFECYCLE_INVOCATION,
+          });
+        } catch (error) {
+          diagnosticsError = error;
+          diagnosticsErrors.push(error);
+          markOwnedWorkspaceParentsWithDiagnosticFailure(childEnv, [deferredWorkspaceParent].filter(Boolean));
+        }
+      }
       cleanupLedger =
         options.retainWorkspaceForSupplement && childEnv.LA_E2E_CLI_MULTI_ROOT_HANDOFF
           ? {
@@ -2454,6 +2552,7 @@ function runVscodeTest(args, options = {}) {
           cleanupLedger,
           mochaPassingCount: getMochaPassingCount(output),
           ogfScenarios: buildOgfScenariosForPhase(phaseId, childEnv, { passed: phasePassed }),
+          ...(msnBodyAssertionsPassed !== undefined ? { bodyAssertionsPassed: msnBodyAssertionsPassed } : {}),
           ...(ownHttpInvocation
             ? {
                 invocationId: ownHttpInvocation,
@@ -3442,6 +3541,7 @@ module.exports = {
     beginDirectMsnEvidence,
     finalizeDirectMsnEvidence,
     finalizeMsnLifecycleCleanup,
+    runMsnWeatherLifecycle,
     getDirectSuiteComplete,
     getDirectExpectedPhaseIds,
     runStatelessVariablesLifecycle,
@@ -3752,15 +3852,28 @@ function writeSuitePhaseResult(env, result) {
   const terminalComplete = getDirectSuiteComplete(result.label, phaseResults);
   const finalizedPhaseResults = terminalComplete ? phaseResults : phaseResults.map(clearOgfScenarios);
   const retainedOgfScenarios = terminalComplete ? collectDirectOgfScenarios(result.label, finalizedPhaseResults, env) : [];
-  writeSuiteCleanupLedger(env, result.cleanupLedger);
+  writeSuiteCleanupLedger(
+    env,
+    result.label === 'msnWeatherLifecycle'
+      ? {
+          ...result.cleanupLedger,
+          verified: false,
+          lifecycleFinalized: false,
+          phaseCleanupVerified: result.cleanupLedger?.verified === true,
+        }
+      : result.cleanupLedger
+  );
   writeSuiteTerminalResult(env, {
     label: result.label,
     phaseId: result.phaseId,
     exitCode: result.exitCode,
     signal: result.signal,
-    cleanupVerified: result.cleanupVerified,
+    cleanupVerified: result.label === 'msnWeatherLifecycle' ? false : result.cleanupVerified,
     diagnosticsError: result.diagnosticsError,
-    complete: terminalComplete,
+    complete: result.label === 'msnWeatherLifecycle' ? false : terminalComplete,
+    ...(result.label === 'msnWeatherLifecycle'
+      ? { lifecycleFinalized: false, originalProcessClosureVerified: false, processClosureProof: 'original-identities-unverified' }
+      : {}),
     ...(result.label === 'workspaceArtifactRegeneration' ? { lifecycleFinalized: terminalComplete } : {}),
     mochaPassingCount:
       result.label === 'workspaceArtifactRegeneration'
@@ -3788,24 +3901,43 @@ function projectTerminalPhase(phase) {
     cleanupVerified: phase.cleanupVerified,
     diagnosticsError: phase.diagnosticsError,
     complete: phase.complete,
+    ...(typeof phase.bodyAssertionsPassed === 'boolean' ? { bodyAssertionsPassed: phase.bodyAssertionsPassed } : {}),
     ...(Array.isArray(phase.ogfScenarios) && phase.ogfScenarios.length > 0 ? { ogfScenarios: phase.ogfScenarios } : {}),
   };
 }
 
 function beginDirectMsnEvidence(env) {
-  if (env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH) {
-    return;
+  if (env.LA_E2E_CLI_SUITE_WRAPPER_CHILD === '1' && env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH) {
+    return { LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH: env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH };
   }
+  const phaseResultsPath = path.join(
+    path.dirname(getSuiteTerminalResultPath(env, 'msnWeatherLifecycle')),
+    `msnWeatherLifecycle.phases-${require('crypto').randomUUID()}.jsonl`
+  );
   writeSuiteTerminalResult(env, {
     label: 'msnWeatherLifecycle',
+    phaseResultsPath,
     exitCode: null,
     signal: null,
     cleanupVerified: false,
     diagnosticsError: '',
     complete: false,
     lifecycleFinalized: false,
+    originalProcessClosureVerified: false,
+    processClosureProof: 'original-identities-unverified',
     phaseResults: [],
   });
+  writeSuiteCleanupLedger(
+    { ...env, LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH: env.LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH || getDirectMsnCleanupLedgerPath(env) },
+    {
+      schemaVersion: 1,
+      verified: false,
+      originalProcessClosureVerified: false,
+      filesystemCleanupVerified: false,
+      reason: 'lifecycle-not-finalized',
+      phaseResultsPath,
+    }
+  );
   writeSuiteTerminalResult(
     { ...env, LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH: undefined },
     {
@@ -3818,6 +3950,11 @@ function beginDirectMsnEvidence(env) {
       phaseResults: [],
     }
   );
+  return { LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH: phaseResultsPath };
+}
+
+function getDirectMsnCleanupLedgerPath(env) {
+  return path.join(path.dirname(getSuiteTerminalResultPath(env, 'msnWeatherLifecycle')), 'msnWeatherLifecycle.cleanup-ledger.json');
 }
 
 function getOwnedRootCleanupVerified(ownedRoots) {
@@ -3840,30 +3977,70 @@ function getOwnedRootCleanupVerified(ownedRoots) {
   });
 }
 
-function finalizeDirectMsnEvidence(env, { cleanupVerified, lifecycleSucceeded, lifecycleError }) {
-  if (env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH) {
+function finalizeDirectMsnEvidence(
+  env,
+  { cleanupVerified, lifecycleSucceeded, lifecycleError, phaseResultsPath, ownedRoots = [], errors = [] }
+) {
+  if (env.LA_E2E_CLI_SUITE_WRAPPER_CHILD === '1' && env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH) {
     return undefined;
   }
   const terminal = readJsonIfExists(getSuiteTerminalResultPath(env, 'msnWeatherLifecycle'));
-  const phaseResults = terminal?.phaseResults || [];
-  const complete =
-    lifecycleSucceeded === true &&
-    !lifecycleError &&
-    cleanupVerified === true &&
-    getDirectSuiteComplete('msnWeatherLifecycle', phaseResults);
+  const phaseResults = readJsonLinesIfExists(phaseResultsPath);
+  const expectedPhaseIds = SUITE_REGISTRY.msnWeatherLifecycle.expectedPhases;
+  const phaseCompleteness =
+    phaseResults.length === expectedPhaseIds.length &&
+    phaseResults.every(
+      (phase, index) =>
+        phase.phaseId === expectedPhaseIds[index] &&
+        phase.complete === true &&
+        phase.exitCode === 0 &&
+        !phase.signal &&
+        phase.cleanupVerified === true &&
+        !phase.diagnosticsError &&
+        phase.mochaPassingCount > 0
+    );
+  // Required identity proof is absent in the current native path. This is a
+  // diagnostic correction, not native acceptance or an empty-tree inference.
+  const complete = false;
+  const cleanupLedger = {
+    schemaVersion: 1,
+    generatedAt: new Date().toISOString(),
+    verified: false,
+    filesystemCleanupVerified: cleanupVerified === true,
+    originalProcessClosureVerified: false,
+    processClosureProof: 'original-identities-unverified',
+    ownedRoots,
+    phaseResultsPath,
+    failureReasons: describeMsnFailures(errors),
+    reason: 'original-process-closure-unverified',
+  };
+  writeSuiteCleanupLedger(
+    { ...env, LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH: env.LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH || getDirectMsnCleanupLedgerPath(env) },
+    cleanupLedger
+  );
   const finalized = {
     ...terminal,
     label: 'msnWeatherLifecycle',
     complete,
     lifecycleFinalized: true,
-    cleanupVerified: cleanupVerified === true && phaseResults.every((phase) => phase.cleanupVerified === true),
-    exitCode: complete ? 0 : terminal?.exitCode === 0 || terminal?.exitCode === undefined ? 1 : terminal.exitCode,
+    cleanupVerified: false,
+    filesystemCleanupVerified: cleanupVerified === true,
+    originalProcessClosureVerified: false,
+    processClosureProof: 'original-identities-unverified',
+    lifecycleBodySucceeded: lifecycleSucceeded === true,
+    phaseCompleteness,
+    expectedPhaseIds,
+    observedPhaseIds: phaseResults.map((phase) => phase.phaseId),
+    phaseResultsPath,
+    failureReasons: describeMsnFailures(errors),
+    exitCode: typeof terminal?.exitCode === 'number' && terminal.exitCode !== 0 ? terminal.exitCode : 1,
     signal: terminal?.signal ?? null,
     diagnosticsError: [
       terminal?.diagnosticsError,
-      lifecycleError ? 'lifecycle-execution-failed' : '',
+      lifecycleError ? (lifecycleSucceeded ? 'lifecycle-finalization-failed' : 'lifecycle-execution-failed') : '',
       !cleanupVerified ? 'lifecycle-cleanup-failed' : '',
-      !complete && !lifecycleError && cleanupVerified ? 'incomplete-lifecycle-phases' : '',
+      !phaseCompleteness ? 'incomplete-lifecycle-phases' : '',
+      'original-process-closure-unverified',
     ]
       .filter(Boolean)
       .join('; '),

@@ -216,7 +216,7 @@ for (const platform of ['linux', 'windows']) {
       assert.throws(() => assertSuccessfulMsnTerminal(summary, value));
     });
   }
-  test(`${platform}: genuine writer output reaches actual summary and staging CLI consumers`, (t) => {
+  test(`${platform}: actual summary and staging reject intermediate writer output while preserving body counts`, (t) => {
     const root = fs.mkdtempSync(path.join(os.tmpdir(), 'la-msn-consumer-'));
     t.after(() => fs.rmSync(root, { recursive: true, force: false }));
     const terminalPath = path.join(root, 'msnWeatherLifecycle.terminal-result.json');
@@ -243,16 +243,18 @@ for (const platform of ['linux', 'windows']) {
       ],
       { encoding: 'utf8' }
     );
-    assert.equal(generated.status, 0, generated.stderr);
+    assert.notEqual(generated.status, 0);
+    assert.match(generated.stderr, /incomplete-or-unclean-terminal/);
     const summaryPath = path.join(root, 'msnWeatherLifecycle.json');
     const persisted = JSON.parse(fs.readFileSync(summaryPath));
-    assert.equal(persisted.total, 1);
-    assert.equal(persisted.failing, 0);
+    assert.equal(persisted.total, 2);
+    assert.equal(persisted.failing, 1);
+    assert.equal(persisted.harnessFailures[0].kind, 'lifecycle-evidence');
     assert.deepEqual(persisted.executedTestCounts, { total: 1, passing: 1, failing: 0, pending: 0 });
     const staged = spawnSync(require('node:process').execPath, [path.join(__dirname, 'e2e-cli-terminal.js'), summaryPath, terminalPath], {
       encoding: 'utf8',
     });
-    assert.equal(staged.status, 0, staged.stderr);
+    assert.notEqual(staged.status, 0);
   });
 }
 
