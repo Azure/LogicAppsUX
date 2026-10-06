@@ -1,8 +1,15 @@
 export interface WorkbenchPrompt {
   matchText: string;
   optionText: string;
+  alternateOptionTexts?: readonly string[];
   postClickDelayMs?: number;
 }
+
+export const affirmativeAzureConnectorPrompt: WorkbenchPrompt = {
+  matchText: 'Enable connectors in Azure',
+  optionText: 'Use connectors from Azure',
+  alternateOptionTexts: ['Yes'],
+};
 
 export interface WorkbenchPromptPoint {
   x: number;
@@ -36,7 +43,8 @@ export function selectWorkbenchPromptOption(prompts: WorkbenchPrompt[], containe
       continue;
     }
 
-    const exactButton = container.buttons.find((button) => equalsNormalized(button.text, prompt.optionText));
+    const options = [prompt.optionText, ...(prompt.alternateOptionTexts ?? [])];
+    const exactButton = container.buttons.find((button) => options.some((option) => equalsNormalized(button.text, option)));
     if (exactButton?.point) {
       return {
         visible: true,
@@ -48,7 +56,12 @@ export function selectWorkbenchPromptOption(prompts: WorkbenchPrompt[], containe
     }
 
     if (container.kind === 'quickInput') {
-      const row = container.rows.find((candidate) => includesNormalized(candidate.text, prompt.optionText));
+      const row = container.rows.find((candidate) =>
+        options.some(
+          (option) =>
+            equalsNormalized(candidate.text, option) || (option === prompt.optionText && includesNormalized(candidate.text, option))
+        )
+      );
       if (row?.point) {
         return {
           visible: true,

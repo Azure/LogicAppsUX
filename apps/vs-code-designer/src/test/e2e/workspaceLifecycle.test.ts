@@ -46,6 +46,7 @@ import { waitForVisibleDelay } from './visibleDelay';
 import { closeAllTabs, closeWebviewTabs, describeOpenTabs, getTabViewType, getWebviewTabs, waitForWebviewTab } from './webviewTabs';
 import { shouldDeferWorkspaceLifecycleCleanup } from './workspaceLifecycleCleanup';
 import {
+  affirmativeAzureConnectorPrompt,
   selectWorkbenchPromptOption,
   type WorkbenchPrompt,
   type WorkbenchPromptContainer,
@@ -4147,10 +4148,7 @@ async function startDebuggingGeneratedWorkspace(
         diagnostic: true,
       }),
       handleWorkbenchPrompts([
-        {
-          matchText: 'Enable connectors in Azure',
-          optionText: options.useAzureConnectors === true ? 'Use connectors from Azure' : 'Skip for now',
-        },
+        affirmativeAzureConnectorPrompt,
         { matchText: 'Configure Azurite to autostart on project debug?', optionText: 'Enable AutoStart' },
         { matchText: 'Failed to verify "AzureWebJobsStorage" connection', optionText: 'Debug anyway' },
       ]),
@@ -6373,10 +6371,7 @@ async function handleDesignerQuickPickPrompts(timeoutMs = 20000, options: { useA
         optionText: 'Install',
         postClickDelayMs: 15000,
       },
-      {
-        matchText: 'Enable connectors in Azure',
-        optionText: options.useAzureConnectors ? 'Use connectors from Azure' : 'Skip for now',
-      },
+      affirmativeAzureConnectorPrompt,
       { matchText: 'Connection Keys', optionText: 'Connection Keys' },
     ],
     timeoutMs
