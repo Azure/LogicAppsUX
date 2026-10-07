@@ -625,6 +625,21 @@ export class MapperAppController {
           this.updateMap(this.state.map);
         }
       },
+      onFunctoidsMove: (moves) => {
+        const page = this.state.map?.pages[this.state.activePage];
+        if (!page) {
+          return;
+        }
+        for (const move of moves) {
+          const functoid = page.functoids.find((fn: any) => fn.id === move.id);
+          if (functoid) {
+            functoid.x = move.x;
+            functoid.y = move.y;
+          }
+        }
+        this.updateMap(this.state.map);
+        this.redrawLinks();
+      },
       onFunctoidInputClick: (fId) => {
         this.onFunctoidConnectorClick(fId, 'input');
       },

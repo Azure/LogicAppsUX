@@ -331,6 +331,14 @@
 	z-index: 6;
 }
 
+.functoid-palette-container[collapsed] {
+	width: 40px;
+	min-width: 40px;
+	max-width: 40px;
+	flex-basis: 40px;
+	overflow: hidden;
+}
+
 .palette-header {
 	padding: 8px 12px;
 	font-weight: 600;
@@ -434,11 +442,11 @@
 }
 
 .schema-tree-container {
-	width: clamp(220px, 24%, 320px);
-	min-width: 220px;
+	width: clamp(180px, 22%, 320px);
+	min-width: 180px;
 	max-width: 320px;
 	overflow: hidden;
-	flex: 0 0 clamp(220px, 24%, 320px);
+	flex: 0 0 clamp(180px, 22%, 320px);
 	background: var(--vscode-editor-background);
 }
 .schema-tree-container > biztalk-schema-tree,
@@ -678,6 +686,13 @@
 	top: 0;
 	left: 0;
 	overflow: visible;
+	cursor: grab;
+}
+
+.canvas-container.panning,
+.canvas-container.panning * {
+	cursor: grabbing !important;
+	user-select: none;
 }
 
 .mapping-links-overlay {
@@ -693,7 +708,7 @@
 .canvas-zoom-controls {
 	position: sticky;
 	top: 8px;
-	left: calc(100% - 132px);
+	left: calc(100% - 172px);
 	z-index: 20;
 	display: flex;
 	align-items: center;

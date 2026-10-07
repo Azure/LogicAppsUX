@@ -1,5 +1,11 @@
 import { Button, FluentProvider, Input, makeStyles } from '@fluentui/react-components';
-import { ChevronDown12Regular, ChevronRight12Regular, Search16Regular } from '@fluentui/react-icons';
+import {
+  ChevronDoubleLeft20Regular,
+  ChevronDoubleRight20Regular,
+  ChevronDown12Regular,
+  ChevronRight12Regular,
+  Search16Regular,
+} from '@fluentui/react-icons';
 // biome-ignore lint/style/useImportType: The classic JSX transform requires React at runtime.
 import React, { useMemo, useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
@@ -9,7 +15,10 @@ import { getFunctoidDisplayName } from './functoidDisplayName';
 
 const useStyles = makeStyles({
   header: {
-    padding: '8px 12px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: '4px 8px 4px 12px',
     fontWeight: 600,
     fontSize: '11px',
     textTransform: 'uppercase',
@@ -17,6 +26,11 @@ const useStyles = makeStyles({
     color: 'var(--vscode-sideBarSectionHeader-foreground)',
     backgroundColor: 'var(--vscode-sideBarSectionHeader-background)',
     borderBottom: '1px solid var(--vscode-panel-border, #333)',
+  },
+  collapsedStrip: {
+    display: 'flex',
+    justifyContent: 'center',
+    padding: '6px 0',
   },
   search: { width: 'calc(100% - 16px)', margin: '6px 8px', fontSize: '11px' },
   categoryHeader: {
@@ -91,10 +105,12 @@ export interface FunctoidPaletteItem {
 
 interface FunctoidPaletteViewProps {
   functoids: FunctoidPaletteItem[];
+  collapsed: boolean;
   onSelect(functoid: FunctoidPaletteItem): void;
+  onCollapsedChange(collapsed: boolean): void;
 }
 
-function FunctoidPaletteView({ functoids, onSelect }: FunctoidPaletteViewProps): React.ReactElement {
+function FunctoidPaletteView({ functoids, collapsed, onSelect, onCollapsedChange }: FunctoidPaletteViewProps): React.ReactElement {
   const styles = useStyles();
   const [expandedCategories, setExpandedCategories] = useState(() => new Set(['String', 'Math', 'Logical']));
   const [searchTerm, setSearchTerm] = useState('');
@@ -119,10 +135,35 @@ function FunctoidPaletteView({ functoids, onSelect }: FunctoidPaletteViewProps):
     });
   };
 
+  if (collapsed) {
+    return (
+      <FluentProvider theme={getVsCodeFluentTheme()} style={{ display: 'contents' }}>
+        <div className={styles.collapsedStrip}>
+          <Button
+            appearance="subtle"
+            size="small"
+            aria-label="Expand functoids"
+            title="Expand functoids"
+            icon={<ChevronDoubleRight20Regular />}
+            onClick={() => onCollapsedChange(false)}
+          />
+        </div>
+      </FluentProvider>
+    );
+  }
+
   return (
     <FluentProvider theme={getVsCodeFluentTheme()} style={{ display: 'contents' }}>
       <div className={styles.header}>
         <span>Functoids</span>
+        <Button
+          appearance="subtle"
+          size="small"
+          aria-label="Collapse functoids"
+          title="Collapse functoids"
+          icon={<ChevronDoubleLeft20Regular />}
+          onClick={() => onCollapsedChange(true)}
+        />
       </div>
       <Input
         className={styles.search}
@@ -190,6 +231,7 @@ export class FunctoidPalette extends HTMLElement {
   private functoids: FunctoidPaletteItem[] = [];
   private onSelect: (functoid: FunctoidPaletteItem) => void = () => {};
   private renderVersion = 0;
+  private collapsed = false;
 
   public configure(functoids: FunctoidPaletteItem[], onSelect: (functoid: FunctoidPaletteItem) => void): void {
     this.functoids = functoids;
@@ -212,7 +254,19 @@ export class FunctoidPalette extends HTMLElement {
       return;
     }
     this.reactRoot ??= createRoot(this);
-    this.reactRoot.render(<FunctoidPaletteView key={this.renderVersion} functoids={this.functoids} onSelect={this.onSelect} />);
+    this.toggleAttribute('collapsed', this.collapsed);
+    this.reactRoot.render(
+      <FunctoidPaletteView
+        key={this.renderVersion}
+        functoids={this.functoids}
+        collapsed={this.collapsed}
+        onSelect={this.onSelect}
+        onCollapsedChange={(collapsed) => {
+          this.collapsed = collapsed;
+          this.renderReact();
+        }}
+      />
+    );
   }
 }
 
