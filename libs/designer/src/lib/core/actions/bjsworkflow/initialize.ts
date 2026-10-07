@@ -604,17 +604,24 @@ export const updateCallbackUrlInInputs = async (
 
 export const updateAgentUrlInInputs = async ({ type, kind }: NodeOperation, nodeInputs: NodeInputs): Promise<ParameterInfo | undefined> => {
   if (equals(type, Constants.NODE.TYPE.REQUEST) && equals(kind, Constants.NODE.KIND.AGENT)) {
+    const parameter = getParameterFromName(nodeInputs, 'agentUrl');
+    if (!parameter) {
+      return;
+    }
+
+    // Clear any previously trusted agent-preview navigation data before attempting a refresh, and
+    // return the parameter unconditionally below, so a failed/empty response can never leave a
+    // stale or forged chatUrl/queryParams active in state.
+    parameter.agentUrlMetadata = undefined;
+
     try {
       const agentUrlInfo = await WorkflowService().getAgentUrl?.();
-      const parameter = getParameterFromName(nodeInputs, 'agentUrl');
-      if (parameter && agentUrlInfo) {
+      if (agentUrlInfo) {
         parameter.value = [createLiteralValueSegment(agentUrlInfo.agentUrl)];
-        parameter.editorOptions = {
-          ...parameter.editorOptions,
+        parameter.agentUrlMetadata = {
           chatUrl: agentUrlInfo.chatUrl,
           ...(agentUrlInfo.queryParams ? { queryParams: agentUrlInfo.queryParams } : {}),
         };
-        return parameter;
       }
     } catch (error) {
       LoggerService().log({
@@ -624,6 +631,8 @@ export const updateAgentUrlInInputs = async ({ type, kind }: NodeOperation, node
         error: error instanceof Error ? error : isObject(error) ? new Error(JSON.stringify(error)) : undefined,
       });
     }
+
+    return parameter;
   }
   return;
 };

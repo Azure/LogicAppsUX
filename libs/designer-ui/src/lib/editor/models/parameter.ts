@@ -1,4 +1,5 @@
 import type {
+  AgentQueryParams,
   Expression,
   InputDependencies,
   ParameterDeserializationOptions,
@@ -7,7 +8,16 @@ import type {
   OpenAPIV2,
 } from '@microsoft/logic-apps-shared';
 
+// Agent-preview navigation data (chatUrl/queryParams) sourced exclusively at runtime from
+// WorkflowService().getAgentUrl(). This is kept as a sibling field, separate from editorOptions,
+// so that schema/manifest-declared values can never populate or be mistaken for trusted data.
+export interface AgentUrlMetadata {
+  chatUrl?: string;
+  queryParams?: AgentQueryParams;
+}
+
 export interface ParameterInfo {
+  agentUrlMetadata?: AgentUrlMetadata;
   alternativeKey?: string;
   conditionalVisibility?: boolean;
   dynamicData?: {
