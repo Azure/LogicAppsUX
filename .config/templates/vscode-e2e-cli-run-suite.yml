@@ -308,6 +308,7 @@ jobs:
                 echo "Short Linux VS Code profile socket path budget exceeded: $socket_bytes bytes ($socket_probe)" >&2
                 exit 1
               fi
+              mkdir -p "$(Agent.TempDirectory)/runtime-dependencies"
               read -r -a cli_args <<< "$LA_E2E_CLI_DIRECT_ARGS"
               set +e
               LA_E2E_CLI_USER_DATA_PARENT="$short_profile_parent" \
@@ -403,6 +404,7 @@ jobs:
                   echo "Short Linux VS Code profile socket path budget exceeded: $socket_bytes bytes ($socket_probe)" >&2
                   exit 1
                 fi
+                mkdir -p "$(Agent.TempDirectory)/runtime-dependencies"
                 read -r -a cli_args <<< "$LA_E2E_CLI_DIRECT_ARGS"
                 set +e
                 LA_E2E_CLI_USER_DATA_PARENT="$short_profile_parent" \
@@ -455,6 +457,7 @@ jobs:
               $env:PATH = "$(Build.SourcesDirectory)\apps\vs-code-designer\node_modules\.bin;$(Build.SourcesDirectory)\node_modules\.bin;$env:PATH"
               Set-Location "$(Build.SourcesDirectory)\apps\vs-code-designer"
               New-Item -ItemType Directory -Force -Path ".vscode-test\results" | Out-Null
+              New-Item -ItemType Directory -Force -Path "$(Agent.TempDirectory)\runtime-dependencies" | Out-Null
               $cliArgs = $env:LA_E2E_CLI_DIRECT_ARGS -split ' '
               & node scripts/run-e2e-cli.js @cliArgs 2>&1 | Tee-Object -FilePath ".vscode-test\results\${{ parameters.suiteId }}.log"
               $status = $LASTEXITCODE
@@ -543,6 +546,7 @@ jobs:
                 $env:PATH = "$(Build.SourcesDirectory)\apps\vs-code-designer\node_modules\.bin;$(Build.SourcesDirectory)\node_modules\.bin;$env:PATH"
                 Set-Location "$(Build.SourcesDirectory)\apps\vs-code-designer"
                 New-Item -ItemType Directory -Force -Path ".vscode-test\results" | Out-Null
+                New-Item -ItemType Directory -Force -Path "$(Agent.TempDirectory)\runtime-dependencies" | Out-Null
                 $cliArgs = $env:LA_E2E_CLI_DIRECT_ARGS -split ' '
                 & node scripts/run-e2e-cli.js @cliArgs 2>&1 | Tee-Object -FilePath ".vscode-test\results\${{ parameters.suiteId }}.log"
                 $status = $LASTEXITCODE

@@ -15,6 +15,7 @@ const {
 } = require('./summarize-e2e-cli-results');
 const { createMsnFinalizationReport } = require('./msn-finalization-reporting');
 const {
+  closeOwnedMsnProcesses,
   observeMsnCleanupDiagnostics,
   queryWindowsFileLocks,
   recordMsnBodyAssertions,
@@ -221,7 +222,8 @@ function phases(env) {
       cleanupVerified: true,
       complete: true,
       diagnosticsError: '',
-      mochaPassingCount: 1,
+      mochaPassingCount: phaseId === 'msnWeatherLifecycle:run' ? 1 : 0,
+      ...(phaseId === 'msnWeatherLifecycle:run' ? { bodyAssertionsPassed: true } : {}),
     });
   }
 }
@@ -336,6 +338,50 @@ test('no identities, empty post-exit observations and actual root absence cannot
   assert.equal(terminal.complete, false);
   assert.equal(terminal.cleanupVerified, false);
   assert.equal(terminal.processClosureProof, 'original-identities-unverified');
+});
+
+test('exact original dependency identities can be closed and admit clean current-invocation evidence', async (t) => {
+  const f = fixture(t);
+  const observer = { pid: process.pid, parentPid: 1, creationIdentity: '100', executable: process.execPath };
+  const dependency = {
+    pid: 23,
+    parentPid: process.pid,
+    creationIdentity: '200',
+    executable: path.join(f.dependencyRoot, 'FuncCoreTools', 'in-proc8', 'func.exe'),
+  };
+  const observations = {
+    platform: process.platform,
+    queryLocks: () => [],
+    snapshot: async () => [observer, dependency],
+  };
+  await observeMsnCleanupDiagnostics({ ...f, stage: 'before-task-teardown' }, observations);
+  await observeMsnCleanupDiagnostics({ ...f, stage: 'after-cli-close' }, observations);
+  const snapshots = [[observer, dependency], [observer]];
+  const terminated = [];
+  const processCleanup = await closeOwnedMsnProcesses(f, {
+    snapshot: async () => snapshots.shift() ?? [observer],
+    terminate: async (pid) => terminated.push(pid),
+    wait: async () => undefined,
+    timeoutMs: 100,
+  });
+  assert.deepEqual(terminated, [dependency.pid]);
+  assert.equal(processCleanup.originalProcessClosureVerified, true);
+  const journalEnv = beginDirectMsnEvidence(f.env);
+  phases({ ...f.env, ...journalEnv });
+  fs.rmSync(f.workspaceRoot, { recursive: true, force: false });
+  fs.rmSync(f.dependencyRoot, { recursive: true, force: false });
+  const terminal = finalizeDirectMsnEvidence(f.env, {
+    lifecycleSucceeded: true,
+    cleanupVerified: getOwnedRootCleanupVerified([f.workspaceRoot, f.dependencyRoot]),
+    phaseResultsPath: journalEnv.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH,
+    ownedRoots: [f.workspaceRoot, f.dependencyRoot],
+    processCleanup,
+  });
+  assert.equal(terminal.complete, true);
+  assert.equal(terminal.cleanupVerified, true);
+  assert.equal(terminal.originalProcessClosureVerified, true);
+  assert.equal(terminal.processClosureProof, 'exact-original-identities-absent');
+  assert.equal(terminal.exitCode, 0);
 });
 
 test('fresh journaling cannot reuse an earlier complete phase sequence', (t) => {
@@ -549,6 +595,11 @@ for (const [failedBody, recordedBody] of [
             assert.ok(fs.existsSync(dependencies));
             assert.ok(fs.existsSync(workspace));
             assert.equal(f.read().complete, false);
+          },
+          closeOwnedProcesses: async () => {
+            throw new Error(
+              'MSN cleanup blocked: original process identity closure is unverified; exact workspace and dependency roots retained'
+            );
           },
         }),
         (error) => {

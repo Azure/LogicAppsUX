@@ -993,6 +993,18 @@ function testSupplementaryFamilyRoutingContract() {
       .flat()
       .find((step) => step.displayName === 'Run vscode-test CLI (${{ parameters.suiteId }})');
     assert.ok(nativeStep, 'Missing native execution step');
+    const runtimeRoot = nativeStep.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT;
+    const nativeScript = nativeStep.bash ?? nativeStep.pwsh ?? nativeStep.inputs?.inlineScript;
+    assert.ok(nativeScript, 'Native execution step must expose its launch script');
+    const runtimeParentCreation =
+      runtimeRoot === '$(Agent.TempDirectory)/runtime-dependencies/${{ parameters.suiteId }}'
+        ? 'mkdir -p "$(Agent.TempDirectory)/runtime-dependencies"'
+        : 'New-Item -ItemType Directory -Force -Path "$(Agent.TempDirectory)\\runtime-dependencies"';
+    assert.ok(nativeScript.includes(runtimeParentCreation), 'Native execution must create the admitted runtime parent');
+    assert.ok(
+      nativeScript.indexOf(runtimeParentCreation) < nativeScript.indexOf('node scripts/run-e2e-cli.js'),
+      'Admitted runtime parent must exist before the direct family runner starts'
+    );
     const multiRootEnvironment = nativeStep.env["${{ if eq(parameters.suiteId, 'workspaceMultiRoot') }}"];
     assert.strictEqual(multiRootEnvironment?.LA_E2E_CLI_MULTI_ROOT_ISOLATED, '1');
     assert.strictEqual(multiRootEnvironment?.LA_E2E_CLI_MULTI_ROOT_DIAGNOSTIC_ONLY, '1');

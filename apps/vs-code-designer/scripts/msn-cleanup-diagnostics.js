@@ -228,4 +228,119 @@ async function observeMsnCleanupDiagnostics(
   return observation;
 }
 
-module.exports = { observeMsnCleanupDiagnostics, queryWindowsFileLocks, recordMsnBodyAssertions, readMsnBodyAssertions };
+function sameProcessIdentity(left, right) {
+  return left.pid === right.pid && left.creationIdentity === right.creationIdentity;
+}
+
+function readCleanupObservation(outputDir, stage) {
+  const file = path.join(outputDir, `${stage}.json`);
+  const observation = JSON.parse(fs.readFileSync(file, 'utf8'));
+  if (
+    observation?.schemaVersion !== 1 ||
+    observation.stage !== stage ||
+    observation.processObservationAvailable !== true ||
+    !Array.isArray(observation.observerIdentities) ||
+    !Array.isArray(observation.dependencyCandidateAncestry)
+  ) {
+    throw new Error(`Invalid MSN ${stage} process observation`);
+  }
+  return observation;
+}
+
+async function closeOwnedMsnProcesses(
+  { dependencyRoot, outputDir },
+  {
+    snapshot = createProcessObservationProvider(process.platform).snapshot,
+    terminate = async (pid) => process.kill(pid, 'SIGTERM'),
+    wait = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds)),
+    timeoutMs = 15_000,
+  } = {}
+) {
+  const root = fs.realpathSync(dependencyRoot);
+  const before = readCleanupObservation(outputDir, 'before-task-teardown');
+  const afterClose = readCleanupObservation(outputDir, 'after-cli-close');
+  if (before.dependencyRoot !== root || afterClose.dependencyRoot !== root) {
+    throw new Error('MSN cleanup observations do not belong to the exact owned dependency root');
+  }
+  if (before.observerIdentities.length !== 1) {
+    throw new Error('MSN cleanup requires one exact original Code observer identity');
+  }
+  const owner = before.observerIdentities[0];
+  const original = before.dependencyCandidateAncestry
+    .filter((candidate) => candidate.observedAncestry.some((ancestor) => sameProcessIdentity(ancestor, owner)))
+    .map(({ pid, parentPid, creationIdentity, executable, observedAncestry }) => ({
+      pid,
+      parentPid,
+      creationIdentity,
+      executable,
+      depth: observedAncestry.length,
+    }));
+  if (original.length === 0) {
+    throw new Error('MSN cleanup has no dependency process identities proven as descendants of the original Code host');
+  }
+  const identityKeys = new Set(original.map((identity) => `${identity.pid}:${identity.creationIdentity}`));
+  const scopedSnapshot = async () => {
+    const records = await snapshot(10_000);
+    if (!Array.isArray(records)) {
+      throw new Error('Invalid MSN cleanup process observation');
+    }
+    return records.filter((record) => identityKeys.has(`${record.pid}:${record.creationIdentity}`));
+  };
+  const terminated = [];
+  for (const record of (await scopedSnapshot()).sort(
+    (left, right) =>
+      (original.find((identity) => sameProcessIdentity(identity, right))?.depth ?? 0) -
+      (original.find((identity) => sameProcessIdentity(identity, left))?.depth ?? 0)
+  )) {
+    const relative = path.relative(
+      process.platform === 'win32' ? root.toLowerCase() : root,
+      process.platform === 'win32' ? String(record.executable).toLowerCase() : String(record.executable)
+    );
+    if (!record.executable || relative === '..' || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) {
+      throw new Error('MSN cleanup refused an original identity outside the owned dependency root');
+    }
+    try {
+      await terminate(record.pid);
+      terminated.push(processIdentity(record));
+    } catch (error) {
+      if (error?.code !== 'ESRCH') {
+        throw error;
+      }
+    }
+  }
+  const deadline = Date.now() + timeoutMs;
+  let alive = await scopedSnapshot();
+  while (alive.length > 0 && Date.now() < deadline) {
+    await wait(Math.min(250, deadline - Date.now()));
+    alive = await scopedSnapshot();
+  }
+  const proof = {
+    schemaVersion: 1,
+    generatedAt: new Date().toISOString(),
+    dependencyRoot: root,
+    originalProcessClosureVerified: alive.length === 0,
+    processClosureProof: alive.length === 0 ? 'exact-original-identities-absent' : 'exact-original-identities-still-alive',
+    originalIdentities: original.map(({ depth: _depth, ...identity }) => identity),
+    terminatedIdentities: terminated,
+    aliveIdentities: alive.map(processIdentity),
+  };
+  fs.writeFileSync(path.join(outputDir, 'after-owned-process-close.json'), `${JSON.stringify(proof, null, 2)}\n`, { flag: 'wx' });
+  if (!proof.originalProcessClosureVerified) {
+    throw new Error('MSN cleanup could not close every exact original dependency process identity');
+  }
+  return {
+    verified: true,
+    originalProcessClosureVerified: true,
+    processClosureProof: proof.processClosureProof,
+    originalIdentities: proof.originalIdentities,
+    terminatedIdentities: proof.terminatedIdentities,
+  };
+}
+
+module.exports = {
+  closeOwnedMsnProcesses,
+  observeMsnCleanupDiagnostics,
+  queryWindowsFileLocks,
+  recordMsnBodyAssertions,
+  readMsnBodyAssertions,
+};

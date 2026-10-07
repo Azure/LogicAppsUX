@@ -18,6 +18,14 @@ export interface StatelessOperations {
   response: string;
 }
 
+function assertSucceededRunAfter(value: unknown, predecessor: string): void {
+  const runAfter = objectValue(value, 'runAfter');
+  assert.deepStrictEqual(Object.keys(runAfter), [predecessor]);
+  const statuses = runAfter[predecessor];
+  assert.ok(Array.isArray(statuses) && statuses.length === 1, 'runAfter must contain exactly one success status');
+  assert.strictEqual(String(statuses[0]).toLowerCase(), 'succeeded', 'runAfter must require the predecessor to succeed');
+}
+
 /** Read-only oracle. The native test must author every operation through the designer. */
 export function assertStatelessDefinition(value: unknown): StatelessOperations {
   const workflow = objectValue(value, 'workflow');
@@ -55,9 +63,9 @@ export function assertStatelessDefinition(value: unknown): StatelessOperations {
   assert.strictEqual(replyInputs.statusCode, 200);
   assert.strictEqual(replyInputs.body, "@{variables('v1')}@{variables('v2')}", 'Response must contain both adjacent variable tokens');
   assert.deepStrictEqual(init.runAfter, {});
-  assert.deepStrictEqual(array.runAfter, { [initialize]: ['Succeeded'] });
-  assert.deepStrictEqual(string.runAfter, { [appendArray]: ['Succeeded'] });
-  assert.deepStrictEqual(reply.runAfter, { [appendString]: ['Succeeded'] });
+  assertSucceededRunAfter(array.runAfter, initialize);
+  assertSucceededRunAfter(string.runAfter, appendArray);
+  assertSucceededRunAfter(reply.runAfter, appendString);
   return { trigger, initialize, appendArray, appendString, response };
 }
 

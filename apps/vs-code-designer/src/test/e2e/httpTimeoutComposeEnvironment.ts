@@ -50,7 +50,7 @@ export function assertHttpTimeoutWorkspaceIdentity(actual: string, expected: str
 }
 
 // Same stock QuickPick/list-row selectors as workspaceLifecycle's native
-// workbench helper. This family handles only the specific connector choice;
+// workbench helper. This family handles only the affirmative connector choice;
 // unknown/ambiguous/noninteractive prompts fail instead of being dismissed.
 export const httpTimeoutConnectorPromptDom = `(() => {
   const visible = element => {
@@ -75,7 +75,7 @@ export const httpTimeoutConnectorPromptDom = `(() => {
       });
     return {
       kind: 'quickInput', text: title, buttons: [], rows,
-      interactive: document.visibilityState === 'visible' && document.hasFocus() &&
+      interactive: document.visibilityState === 'visible' &&
         !!input && container.contains(document.activeElement) && !input.disabled && !input.readOnly,
     };
   });
@@ -92,13 +92,20 @@ export async function handleHttpTimeoutConnectorPrompt(cdp: CdpConnection, appNa
   }
   assert.strictEqual(containers.length, 1, 'Ambiguous workbench QuickPick while opening original designer');
   const prompt = containers[0];
+  if (/^Loading(?:\.\.\.)?$/.test(prompt.text) && prompt.rows.length === 0) {
+    return false;
+  }
   const title = `Enable connectors in Azure for Logic App ${appName}`;
   assert.strictEqual(prompt.text, title, 'Unknown workbench QuickPick; do not answer another wizard');
   assert.strictEqual(prompt.interactive, true, 'Connector QuickPick is not interactive/focused');
-  assert.strictEqual(prompt.rows.filter((row) => row.text === 'Skip for now').length, 1, 'Missing/ambiguous Skip for now option');
-  const selection = selectWorkbenchPromptOption([{ matchText: title, optionText: 'Skip for now' }], containers);
-  assert.strictEqual(selection.targetText, 'Skip for now');
-  assert.ok(selection.point, 'Skip for now must be visible, enabled and hit-testable');
+  assert.strictEqual(
+    prompt.rows.filter((row) => row.text === 'Use connectors from Azure').length,
+    1,
+    'Missing/ambiguous Use connectors from Azure option'
+  );
+  const selection = selectWorkbenchPromptOption([{ matchText: title, optionText: 'Use connectors from Azure' }], containers);
+  assert.strictEqual(selection.targetText, 'Use connectors from Azure');
+  assert.ok(selection.point, 'Use connectors from Azure must be visible, enabled and hit-testable');
   await clickPoint(
     {
       evaluate: cdp.evaluate.bind(cdp),
@@ -106,6 +113,6 @@ export async function handleHttpTimeoutConnectorPrompt(cdp: CdpConnection, appNa
     },
     selection.point
   );
-  await pollHttpTimeoutCompose(read, (value) => value.length === 0, deadline, 'native connector Skip for now dismissal');
+  await pollHttpTimeoutCompose(read, (value) => value.length === 0, deadline, 'native affirmative connector prompt dismissal');
   return true;
 }

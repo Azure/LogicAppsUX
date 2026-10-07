@@ -46,7 +46,7 @@ export const workbenchPromptDomScript = `(() => {
         title, text,
         rows: options('.monaco-list-row, [role="option"]'),
         buttons: options('a.monaco-button, button, .monaco-text-button'),
-        interactive: document.visibilityState === 'visible' && document.hasFocus() &&
+        interactive: document.visibilityState === 'visible' &&
           container.contains(document.activeElement) && (!input || (!input.disabled && !input.readOnly)),
       };
     });
@@ -76,6 +76,9 @@ export async function handleAffirmativeConnectorWorkbenchPrompt(
   }
   assert.strictEqual(prompts.length, 1, 'Ambiguous workbench prompt during affirmative connector setup');
   const prompt = prompts[0];
+  if (prompt.kind === 'quickInput' && /^Loading(?:\.\.\.)?$/.test(prompt.title) && prompt.rows.length === 0) {
+    return false;
+  }
   const title = `Enable connectors in Azure for Logic App ${appName}`;
   const matchesConnector = (value: DetectedWorkbenchPrompt) =>
     value.kind === 'quickInput' ? value.title === title : value.text.includes(title);

@@ -51,9 +51,10 @@ export async function runHttpTimeoutEnvironmentControls(control: Control): Promi
     'unknown',
     'wrong-app',
     'ambiguous',
-    'duplicate-skip',
+    'duplicate-affirmative',
     'disabled',
     'unfocused',
+    'loading',
     'covered',
     'expired',
     'not-dismissed',
@@ -61,15 +62,25 @@ export async function runHttpTimeoutEnvironmentControls(control: Control): Promi
     await control(`stock production connector QuickPick DOM ${fault} is handled fail-closed`, async () => {
       const { JSDOM } = require('jsdom');
       const title =
-        fault === 'unknown'
-          ? 'Sign in to another service'
-          : `Enable connectors in Azure for Logic App ${fault === 'wrong-app' ? 'otherApp' : 'unitApp'}`;
+        fault === 'loading'
+          ? 'Loading...'
+          : fault === 'unknown'
+            ? 'Sign in to another service'
+            : `Enable connectors in Azure for Logic App ${fault === 'wrong-app' ? 'otherApp' : 'unitApp'}`;
       const widget = `<div class="quick-input-widget" style="display:block">
         <div class="quick-input-header"><div class="quick-input-box"><input placeholder="${title}"></div></div>
         <div class="quick-input-list"><div class="monaco-list" role="listbox"><div class="monaco-list-rows">
-          <div class="monaco-list-row" role="option"><div class="quick-input-list-label"><span class="label-name">Use connectors from Azure</span></div></div>
-          <div class="monaco-list-row" role="option" ${fault === 'disabled' ? 'aria-disabled="true"' : ''}><div class="quick-input-list-label"><span class="label-name">Skip for now</span></div></div>
-          ${fault === 'duplicate-skip' ? '<div class="monaco-list-row" role="option"><span class="label-name">Skip for now</span></div>' : ''}
+          ${
+            fault === 'loading'
+              ? ''
+              : `<div class="monaco-list-row" role="option" ${fault === 'disabled' ? 'aria-disabled="true"' : ''}><div class="quick-input-list-label"><span class="label-name">Use connectors from Azure</span></div></div>
+          <div class="monaco-list-row" role="option"><div class="quick-input-list-label"><span class="label-name">Skip for now</span></div></div>
+          ${
+            fault === 'duplicate-affirmative'
+              ? '<div class="monaco-list-row" role="option"><span class="label-name">Use connectors from Azure</span></div>'
+              : ''
+          }`
+          }
         </div></div></div></div>`;
       const dom = new JSDOM(`<html><body>${widget}${fault === 'ambiguous' ? widget : ''}<div id="cover"></div></body></html>`, {
         pretendToBeVisual: true,
@@ -105,7 +116,9 @@ export async function runHttpTimeoutEnvironmentControls(control: Control): Promi
           (row: any) => row.textContent.trim() === (y >= 80 ? 'Skip for now' : 'Use connectors from Azure')
         );
       };
-      window.document.querySelector('input').focus();
+      if (fault !== 'unfocused') {
+        window.document.querySelector('input').focus();
+      }
       const cdp = {
         async evaluate<T>(_context: number | undefined, expression: string) {
           return window.eval(expression) as T;
@@ -113,7 +126,7 @@ export async function runHttpTimeoutEnvironmentControls(control: Control): Promi
         async send(_method: string, params: Record<string, unknown>) {
           sends.push(params);
           if (params.type === 'mouseReleased') {
-            assert.strictEqual(params.y, 92.5, 'Native click must select Skip, not the initially selected Azure row');
+            assert.strictEqual(params.y, 62.5, 'Native click must select the affirmative Azure connector row');
             const row = window.document.elementFromPoint(Number(params.x), Number(params.y));
             row.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
             if (fault !== 'not-dismissed') {
@@ -158,6 +171,9 @@ export async function runHttpTimeoutEnvironmentControls(control: Control): Promi
             ['mouseMoved', 'mousePressed', 'mouseReleased']
           );
           assert.strictEqual(window.document.querySelector('.quick-input-widget'), null);
+        } else if (fault === 'loading') {
+          assert.strictEqual(await handleHttpTimeoutConnectorPrompt(cdp, 'unitApp', deadline), false);
+          assert.strictEqual(sends.length, 0, 'Transient loading prompt must receive no input');
         } else {
           await assert.rejects(() => handleHttpTimeoutConnectorPrompt(cdp, 'unitApp', deadline));
           if (fault !== 'not-dismissed') {

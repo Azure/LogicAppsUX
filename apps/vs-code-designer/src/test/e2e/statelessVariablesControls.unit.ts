@@ -72,6 +72,11 @@ function unitDefinition() {
 
 function testSavedDefinition(): void {
   check(() => assert.strictEqual(assertStatelessDefinition(unitDefinition()).initialize, 'Initialize_variables'));
+  check(() => {
+    const workflow = unitDefinition();
+    workflow.definition.actions.Append_array.runAfter.Initialize_variables = ['SUCCEEDED'];
+    assert.strictEqual(assertStatelessDefinition(workflow).appendArray, 'Append_array');
+  });
   check(() => assert.throws(() => assertStatelessDefinition({ ...unitDefinition(), kind: 'Stateful' }), /Stateful proxy/));
   check(() => {
     const workflow = unitDefinition();
@@ -97,6 +102,11 @@ function testSavedDefinition(): void {
     const workflow = unitDefinition();
     (workflow.definition.actions.Append_string.runAfter as Record<string, string[]>) = { Initialize_variables: ['Succeeded'] };
     assert.throws(() => assertStatelessDefinition(workflow));
+  });
+  check(() => {
+    const workflow = unitDefinition();
+    workflow.definition.actions.Append_array.runAfter.Initialize_variables = ['Failed'];
+    assert.throws(() => assertStatelessDefinition(workflow), /predecessor to succeed/);
   });
 }
 
