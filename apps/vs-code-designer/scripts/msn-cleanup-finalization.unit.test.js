@@ -449,12 +449,26 @@ if([Runtime.InteropServices.Marshal]::SizeOf([type][MsnFileLocks+UniqueProcess])
 if([Runtime.InteropServices.Marshal]::SizeOf([type][MsnFileLocks+Info]) -ne 668){throw 'Invalid RM info layout'}
 Write-Output 'interop-declaration-compiled-without-native-invocation'
 `;
-  const result = execFileSync('pwsh', ['-NoProfile', '-NonInteractive', '-Command', script], {
+  const shell = process.platform === 'win32' ? 'powershell.exe' : 'pwsh';
+  const result = execFileSync(shell, ['-NoProfile', '-NonInteractive', '-Command', script], {
     encoding: 'utf8',
     timeout: 30_000,
     stdio: ['ignore', 'pipe', 'pipe'],
   });
   assert.match(result, /interop-declaration-compiled-without-native-invocation/);
+});
+
+test('MSN native lifecycle resolves environment values instead of treating variable names as paths or identities', () => {
+  const source = fs.readFileSync(path.join(__dirname, '..', 'src', 'test', 'e2e', 'workspaceLifecycle.test.ts'), 'utf8');
+  assert.doesNotMatch(source, /requiredValue\('LA_E2E_CLI_(?:MSN_|RUNTIME_DEPENDENCIES_ROOT|WORKSPACE_PARENT)/);
+  for (const key of [
+    'LA_E2E_CLI_MSN_LIFECYCLE_INVOCATION',
+    'LA_E2E_CLI_MSN_DIAGNOSTICS_DIR',
+    'LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT',
+    'LA_E2E_CLI_WORKSPACE_PARENT',
+  ]) {
+    assert.match(source, new RegExp(`requiredValue\\(process\\.env\\.${key}\\)`));
+  }
 });
 
 for (const [failedBody, recordedBody] of [

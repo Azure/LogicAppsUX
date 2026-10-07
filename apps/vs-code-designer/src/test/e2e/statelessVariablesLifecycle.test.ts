@@ -168,6 +168,7 @@ suite('Stateless variables lifecycle', () => {
       }
     }
     if (originalFailure !== undefined || recoveryFailures.length > 0) {
+      logStatelessLifecycleFailures(originalFailure, recoveryFailures);
       throw new AggregateError(
         [...(originalFailure === undefined ? [] : [originalFailure]), ...recoveryFailures],
         'Stateless lifecycle failed; original and independent recovery failures are retained'
@@ -175,6 +176,27 @@ suite('Stateless variables lifecycle', () => {
     }
   });
 });
+
+function logStatelessLifecycleFailures(originalFailure: unknown, recoveryFailures: unknown[]): void {
+  const failures = [
+    ...(originalFailure === undefined ? [] : [{ stage: 'positive lifecycle', error: originalFailure }]),
+    ...recoveryFailures.map((error, index) => ({ stage: `recovery ${index + 1}`, error })),
+  ];
+  for (const failure of failures) {
+    console.error(`[stateless-variables][${failure.stage}] ${formatStatelessFailure(failure.error)}`);
+  }
+}
+
+function formatStatelessFailure(error: unknown, depth = 0): string {
+  if (error instanceof AggregateError && depth < 4) {
+    const nested = Array.from(error.errors, (entry, index) => `\n  [${index + 1}] ${formatStatelessFailure(entry, depth + 1)}`).join('');
+    return `${error.name}: ${error.message}${nested}`;
+  }
+  if (error instanceof Error) {
+    return error.stack ?? `${error.name}: ${error.message}`;
+  }
+  return String(error);
+}
 
 async function establishDesignTime(
   entry: CreatedWorkspace,
@@ -225,6 +247,7 @@ async function authorVariablesThroughDesigner(
     await configureVariable(cdp, context, 0, 'v1', 'Array', '[1,2]', deadline);
     await helpers.clickDesignerElement(cdp, context, ['button[aria-label="Add a Variable"]'], 'Add a Variable');
     await configureVariable(cdp, context, 1, 'v2', 'String', 'foo', deadline);
+    await helpers.closeDesignerDetailsPanelThroughDesigner(cdp, context, 'stateless variables initialization evidence');
     await helpers.captureLifecycleScreenshot('stateless-variables-initialize-two-variables', {
       expectation: { kind: 'designerCanvas', label: entry.label, requiredNodes: [['Initialize variables']] },
       semanticCdp: cdp,

@@ -65,10 +65,9 @@ $ErrorActionPreference='Stop'
 Add-Type -TypeDefinition @'
 using System;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
 public static class MsnFileLocks {
   [StructLayout(LayoutKind.Sequential)]
-  public struct UniqueProcess { public int pid; public FILETIME start; }
+  public struct UniqueProcess { public int pid; public System.Runtime.InteropServices.ComTypes.FILETIME start; }
   [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
   public struct Info {
     public UniqueProcess process;

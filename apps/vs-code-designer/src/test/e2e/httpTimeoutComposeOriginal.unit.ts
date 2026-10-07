@@ -310,12 +310,18 @@ async function main(): Promise<void> {
     'LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH',
     'LA_E2E_CLI_PRESERVE_WORKSPACES',
     'LA_E2E_CLI_BATCH_MODE',
+    'LA_E2E_CLI_AZURE_ACCESS_TOKEN',
+    'LA_E2E_CLI_AZURE_ACCESS_TOKEN_EXPIRES_ON',
+    'LA_E2E_CLI_AZURE_ACCESS_TOKEN_MINTED_AT',
   ] as const;
   const priorEnvironment = Object.fromEntries(environmentKeys.map((key) => [key, process.env[key]]));
   for (const key of environmentKeys) {
     delete process.env[key];
   }
   process.env.LA_E2E_CLI_BATCH_MODE = '1'; // Existing callback-only controls leave finalization to the batch wrapper.
+  process.env.LA_E2E_CLI_AZURE_ACCESS_TOKEN = 'unit-token';
+  process.env.LA_E2E_CLI_AZURE_ACCESS_TOKEN_EXPIRES_ON = '2099-01-01T00:00:00.000Z';
+  process.env.LA_E2E_CLI_AZURE_ACCESS_TOKEN_MINTED_AT = new Date().toISOString();
   try {
     const makeEntry = (createdAt = new Date().toISOString()) => ({
       appType: 'standard',

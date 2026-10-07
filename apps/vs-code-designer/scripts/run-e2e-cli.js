@@ -1064,6 +1064,7 @@ async function runHttpTimeoutComposeOriginal({
   createRuntimeRoot = createIsolatedRuntimeDependenciesRoot,
   cleanupRuntime = cleanupRuntimeDependenciesRoot,
   observeClosure = verifyNoOwnedDescendants,
+  credentialEnvironment = getSuiteScopedCredentialEnv,
   artifactDir = getLifecycleArtifactDir('http-timeout-compose-original'),
   resultsDir = path.join(process.cwd(), '.vscode-test', 'results'),
 } = {}) {
@@ -1080,7 +1081,9 @@ async function runHttpTimeoutComposeOriginal({
     const manifestPath = path.join(artifactDir, `manifest-stateless-${notBefore}.json`);
     const runtimeDependenciesRoot = process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT ?? createRuntimeRoot('httpTimeoutComposeOriginal');
     const phaseResultsPath = context?.phaseResultsPath ?? process.env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH;
+    const azureCredentialEnv = await credentialEnvironment(process.env, SUITE_REGISTRY.httpTimeoutComposeOriginal, 45 * 60 * 1000);
     const commonEnv = {
+      ...azureCredentialEnv,
       LA_E2E_CLI_HTTP_TIMEOUT_COMPOSE_INVOCATION_ID: invocation.id,
       LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: runtimeDependenciesRoot,
       LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH: phaseResultsPath,
@@ -2239,7 +2242,7 @@ function runVscodeTest(args, options = {}) {
     beginDirectRegenerationEvidence(regenerationContext);
     const runtime = require('../out/test/e2e/workspaceArtifactRegenerationRuntime');
     regenerationContext.runtimeAdmission = {
-      root: runtime.assertRegenerationRuntimeRoot(childEnv.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT, false),
+      root: runtime.initializeRegenerationRuntimeRoot(childEnv.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT),
       sourceSettingsPath: path.join(getVscodeUserDataDir(childEnv), 'User', 'settings.json'),
     };
     // Persist the admission before starting the original wizard host. The host

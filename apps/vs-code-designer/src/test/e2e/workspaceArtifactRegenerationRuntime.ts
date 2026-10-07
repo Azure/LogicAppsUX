@@ -51,6 +51,14 @@ export function assertRegenerationRuntimeRoot(root: string | undefined, requireI
   return physical;
 }
 
+export function initializeRegenerationRuntimeRoot(root: string | undefined): string {
+  assert.ok(root && path.isAbsolute(root), 'Regeneration requires an explicit admitted runtime dependency root, not a home/PATH fallback');
+  if (!fs.existsSync(root)) {
+    fs.mkdirSync(root);
+  }
+  return assertRegenerationRuntimeRoot(root, false);
+}
+
 function selectedSettings(source: Record<string, unknown>): Record<string, unknown> {
   return Object.fromEntries(
     regenerationRuntimeSettingKeys.map((key) => {

@@ -3270,20 +3270,48 @@ async function replaceFocusedDesignerText(cdp: CdpEvaluator, value: string): Pro
 async function saveWorkflowThroughDesigner(cdp: CdpEvaluator, contextId: number, label: string): Promise<void> {
   console.log(`[workspace-lifecycle] ${label}: saving workflow through designer command bar`);
   await clickDesignerElement(cdp, contextId, ['button[aria-label="Save"]'], 'Save');
-  await waitUntil(
-    async () =>
-      cdp.evaluate<boolean>(
-        contextId,
-        `(() => {
-          const button = document.querySelector('button[aria-label="Save"]');
-          const text = (button?.textContent || '').toLowerCase();
-          const label = (button?.getAttribute('aria-label') || '').toLowerCase();
-          return !text.includes('saving') && !label.includes('saving');
-        })()`
-      ),
-    60000,
-    `${label} designer save to complete`
-  );
+  try {
+    await waitUntil(
+      async () =>
+        cdp.evaluate<boolean>(
+          contextId,
+          `(() => {
+            const button = document.querySelector('button[aria-label="Save"]');
+            const text = (button?.textContent || '').toLowerCase();
+            const label = (button?.getAttribute('aria-label') || '').toLowerCase();
+            return !text.includes('saving') && !label.includes('saving');
+          })()`
+        ),
+      60000,
+      `${label} designer save to complete`
+    );
+  } catch (error) {
+    const diagnostics = await cdp.evaluate<Record<string, unknown>>(
+      contextId,
+      `(() => {
+        const save = document.querySelector('button[aria-label*="Sav"]');
+        const visibleText = Array.from(document.querySelectorAll('body *'))
+          .filter((element) => {
+            const rect = element.getBoundingClientRect();
+            const style = getComputedStyle(element);
+            return rect.width > 0 && rect.height > 0 && style.visibility !== 'hidden' && style.display !== 'none';
+          })
+          .map((element) => (element.textContent || '').trim())
+          .filter(Boolean);
+        return {
+          save: save ? {
+            ariaLabel: save.getAttribute('aria-label'),
+            text: (save.textContent || '').trim(),
+            disabled: save.hasAttribute('disabled'),
+          } : null,
+          bodyText: (document.body?.innerText || '').slice(0, 4000),
+          visibleErrorText: visibleText.filter((text) => /error|required|invalid|failed/i.test(text)).slice(0, 40),
+        };
+      })()`
+    );
+    console.error(`[workspace-lifecycle] ${label}: designer save did not complete ${JSON.stringify(diagnostics)}`);
+    throw error;
+  }
 }
 
 async function clickDesignerElement(
@@ -4145,7 +4173,7 @@ async function startDebuggingGeneratedWorkspace(
   assert.ok(generatedConfig, `Expected ${launchPath} to contain a debug configuration`);
   assert.ok(generatedConfig.name, `Expected ${launchPath} debug configuration to have a name`);
   if (process.env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE === 'msn-weather-run') {
-    generatedConfig.__logicAppsMsnInvocation = requiredValue('LA_E2E_CLI_MSN_LIFECYCLE_INVOCATION');
+    generatedConfig.__logicAppsMsnInvocation = requiredValue(process.env.LA_E2E_CLI_MSN_LIFECYCLE_INVOCATION);
   }
 
   if (cleanupBeforeDebug) {
@@ -4669,16 +4697,16 @@ async function runMsnWeatherLifecycle(createdWorkspace: CreatedWorkspace): Promi
       });
     });
     recordMsnBodyAssertions({
-      outputDir: requiredValue('LA_E2E_CLI_MSN_DIAGNOSTICS_DIR'),
-      invocation: requiredValue('LA_E2E_CLI_MSN_LIFECYCLE_INVOCATION'),
+      outputDir: requiredValue(process.env.LA_E2E_CLI_MSN_DIAGNOSTICS_DIR),
+      invocation: requiredValue(process.env.LA_E2E_CLI_MSN_LIFECYCLE_INVOCATION),
     });
   } catch (error) {
     errors.push(error);
   }
   const observe = (stage: 'before-task-teardown' | 'after-task-teardown') =>
     observeMsnCleanupDiagnostics({
-      dependencyRoot: requiredValue('LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT'),
-      outputDir: requiredValue('LA_E2E_CLI_MSN_DIAGNOSTICS_DIR'),
+      dependencyRoot: requiredValue(process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT),
+      outputDir: requiredValue(process.env.LA_E2E_CLI_MSN_DIAGNOSTICS_DIR),
       stage,
     });
   // Sample live identities before terminating the original runtime handles, not
@@ -6097,12 +6125,12 @@ async function stopDebuggingAndTasks(): Promise<void> {
           extensionPath: extension.extensionPath,
           main: extension.packageJSON.main,
         },
-        workspaceParent: requiredValue('LA_E2E_CLI_WORKSPACE_PARENT'),
+        workspaceParent: requiredValue(process.env.LA_E2E_CLI_WORKSPACE_PARENT),
         workspaceRoots: (vscode.workspace.workspaceFolders || []).map((folder) => folder.uri.fsPath),
         resolveEntry: require.resolve,
         cachedEntry: () => undefined, // Scope check only; no lifecycle loading/invocation.
       },
-      requiredValue('LA_E2E_CLI_MSN_LIFECYCLE_INVOCATION'),
+      requiredValue(process.env.LA_E2E_CLI_MSN_LIFECYCLE_INVOCATION),
       {
         tasks: executions.map(({ task }) => ({
           name: task.name,

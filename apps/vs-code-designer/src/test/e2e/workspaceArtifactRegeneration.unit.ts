@@ -30,6 +30,7 @@ import {
   assertRegenerationRuntimeProfile,
   assertRegenerationRuntimeRoot,
   captureRegenerationRuntimeSettings,
+  initializeRegenerationRuntimeRoot,
   regenerationRuntimeSettingKeys,
   verifyRegenerationRuntimeSettings,
   writeRegenerationRuntimeProfile,
@@ -241,6 +242,10 @@ async function main(): Promise<void> {
     checks++;
 
     assert.throws(() => assertRegenerationRuntimeRoot(undefined), /explicit admitted/);
+    const initializedRoot = path.join(root, 'initialized-runtime-root');
+    assert.strictEqual(initializeRegenerationRuntimeRoot(initializedRoot), fs.realpathSync(initializedRoot));
+    assert.ok(fs.statSync(initializedRoot).isDirectory(), 'Missing admitted runtime root is initialized before original host admission');
+    assert.throws(() => initializeRegenerationRuntimeRoot(path.join(root, 'missing-parent', 'runtime')), /ENOENT/);
     assert.throws(() => captureRegenerationRuntimeSettings(binding, () => undefined), /actual creating-host global configuration/i);
     assert.throws(() => verifyRegenerationRuntimeSettings({ ...runtimeHandoff, invocation: 'stale' }, binding), /Stale/);
     assert.throws(() => verifyRegenerationRuntimeSettings({ ...runtimeHandoff, identity: { job: 'other' } }, binding), /Wrong job/);

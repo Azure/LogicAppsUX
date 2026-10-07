@@ -15,6 +15,9 @@ export async function runHttpTimeoutComposeDirectControls(control: Control): Pro
     'LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT',
     'LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH',
     'LA_E2E_CLI_PRESERVE_WORKSPACES',
+    'LA_E2E_CLI_AZURE_ACCESS_TOKEN',
+    'LA_E2E_CLI_AZURE_ACCESS_TOKEN_EXPIRES_ON',
+    'LA_E2E_CLI_AZURE_ACCESS_TOKEN_MINTED_AT',
   ] as const;
   const prior = Object.fromEntries(keys.map((key) => [key, process.env[key]]));
   for (const key of keys) {
@@ -96,9 +99,17 @@ export async function runHttpTimeoutComposeDirectControls(control: Control): Pro
             }
             return fault === 'final-orphan' ? { ...closure(ownerPid), verified: false, alivePids: [1234] } : closure(ownerPid);
           },
+          credentialEnvironment: async () => ({
+            LA_E2E_CLI_AZURE_ACCESS_TOKEN: 'unit-token',
+            LA_E2E_CLI_AZURE_ACCESS_TOKEN_EXPIRES_ON: '2099-01-01T00:00:00.000Z',
+            LA_E2E_CLI_AZURE_ACCESS_TOKEN_MINTED_AT: '2026-01-01T00:00:00.000Z',
+          }),
           run: async (args: string[], options: { extraEnv: Record<string, string> }) => {
             calls++;
             const env = options.extraEnv;
+            assert.strictEqual(env.LA_E2E_CLI_AZURE_ACCESS_TOKEN, 'unit-token');
+            assert.strictEqual(env.LA_E2E_CLI_AZURE_ACCESS_TOKEN_EXPIRES_ON, '2099-01-01T00:00:00.000Z');
+            assert.strictEqual(env.LA_E2E_CLI_AZURE_ACCESS_TOKEN_MINTED_AT, '2026-01-01T00:00:00.000Z');
             phasePath = env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH;
             const initialized = JSON.parse(fs.readFileSync(terminalPath, 'utf8'));
             assert.strictEqual(initialized.complete, false);
