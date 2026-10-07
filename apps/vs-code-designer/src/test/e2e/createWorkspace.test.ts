@@ -47,6 +47,7 @@ import { waitForVisibleDelay } from './visibleDelay';
 import { closeWebviewTabs, getTabViewType, getWebviewTabs, waitForWebviewTab } from './webviewTabs';
 import { applyCodefulControlVariantToProject, requiredValue, waitForPathExists } from './workspaceArtifacts';
 import { recordMultiRootWizardHandoff } from './workspaceMultiRootHandoff';
+import { captureRegenerationRuntimeSettings, type RegenerationRuntimeBinding } from './workspaceArtifactRegenerationRuntime';
 
 const logicAppsExtensionId = 'ms-azuretools.vscode-azurelogicapps';
 const createWorkspaceCommand = 'azureLogicAppsStandard.createWorkspace';
@@ -363,6 +364,14 @@ suite('Create Workspace Experience Tests', () => {
               schemaVersion: 1,
               invocation: context.invocation,
               identity: context.identity,
+              ...(context.runtimeAdmission
+                ? {
+                    runtimeSettings: captureRegenerationRuntimeSettings(
+                      context as RegenerationRuntimeBinding,
+                      (key) => vscode.workspace.getConfiguration().inspect(key)?.globalValue
+                    ),
+                  }
+                : {}),
               entries: [entry],
               launch: {
                 executable,

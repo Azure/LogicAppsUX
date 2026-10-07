@@ -13,7 +13,7 @@ const runner = require(runnerPath) as {
       scriptPath: string;
       resultsDir: string;
       batchRoot: string;
-      seedDir: string;
+      seedDir?: string;
       timeoutMs: number;
     }
   ): Promise<number>;
@@ -35,6 +35,8 @@ const originalEnv = {
   trace: process.env.UNIT_STATELESS_DIRECT_TRACE,
   journal: process.env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH,
   keep: process.env.LA_E2E_CLI_PRESERVE_WORKSPACES,
+  preparedExtensions: process.env.LA_E2E_CLI_PREPARED_EXTENSIONS_DIR,
+  extensions: process.env.LA_E2E_CLI_EXTENSIONS_DIR,
 };
 
 // A bounded Node-only command fixture, not another E2E entry point. It executes
@@ -297,8 +299,52 @@ async function main(): Promise<void> {
       assert.strictEqual(ledger.verified, false);
     }
   }
+  const pipelineCaseRoot = path.join(root, 'pipeline-seed');
+  process.env.UNIT_STATELESS_DIRECT_MODE = 'success';
+  process.env.UNIT_STATELESS_DIRECT_TRACE = path.join(pipelineCaseRoot, 'actual-orchestrator-trace.json');
+  process.env.LA_E2E_CLI_EXTENSIONS_DIR = seedDir;
+  delete process.env.LA_E2E_CLI_PREPARED_EXTENSIONS_DIR;
+  const pipelineCode = await runner.runDirectFamily(suiteId, undefined, {
+    scriptPath,
+    resultsDir: path.join(pipelineCaseRoot, 'results'),
+    batchRoot: path.join(pipelineCaseRoot, 'batch'),
+    timeoutMs: 30_000,
+  });
+  assert.strictEqual(pipelineCode, 0, 'The actual ADO extension-directory contract must admit the prepared seed without a private alias');
+  const pipelineTrace = JSON.parse(fs.readFileSync(process.env.UNIT_STATELESS_DIRECT_TRACE, 'utf8')) as Trace;
+  assert.strictEqual(pipelineTrace.invocations, 3);
+  assert.ok(fs.existsSync(seedDir), 'Admitting the prepared seed must not remove its original shared preparation directory');
+
+  const missingCaseRoot = path.join(root, 'missing-seed');
+  process.env.LA_E2E_CLI_EXTENSIONS_DIR = path.join(root, 'absent-extensions');
+  process.env.UNIT_STATELESS_DIRECT_TRACE = path.join(missingCaseRoot, 'must-not-launch.json');
+  const messages: string[] = [];
+  const originalConsoleError = console.error;
+  let missingCode: number;
+  try {
+    console.error = (...args: unknown[]) => messages.push(args.map(String).join(' '));
+    missingCode = await runner.runDirectFamily(suiteId, undefined, {
+      scriptPath,
+      resultsDir: path.join(missingCaseRoot, 'results'),
+      batchRoot: path.join(missingCaseRoot, 'batch'),
+      timeoutMs: 30_000,
+    });
+  } finally {
+    console.error = originalConsoleError;
+  }
+  assert.strictEqual(missingCode, 1);
+  assert.ok(
+    messages.some((message) => message.includes('Missing prepared extensions seed')),
+    'Preparation failure must reach CLI logs'
+  );
+  assert.ok(!fs.existsSync(process.env.UNIT_STATELESS_DIRECT_TRACE), 'Missing admitted seed must fail before any phase launches');
+  const missingTerminal = JSON.parse(
+    fs.readFileSync(path.join(missingCaseRoot, 'results', `${suiteId}.terminal-result.json`), 'utf8')
+  ) as Receipt;
+  assert.strictEqual(missingTerminal.complete, false);
+  assert.ok(missingTerminal.diagnosticsError.includes('Missing prepared extensions seed'));
   console.log(
-    `[statelessVariablesDirect.unit] ${modes.length} actual Node-only chains passed; original identities unverified, diagnostic only, no native credit`
+    `[statelessVariablesDirect.unit] ${modes.length + 2} actual Node-only chains passed; original identities unverified, diagnostic only, no native credit`
   );
 }
 
@@ -309,6 +355,8 @@ main()
       UNIT_STATELESS_DIRECT_TRACE: originalEnv.trace,
       LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH: originalEnv.journal,
       LA_E2E_CLI_PRESERVE_WORKSPACES: originalEnv.keep,
+      LA_E2E_CLI_PREPARED_EXTENSIONS_DIR: originalEnv.preparedExtensions,
+      LA_E2E_CLI_EXTENSIONS_DIR: originalEnv.extensions,
       ...priorAzureEnv,
     })) {
       if (value === undefined) {

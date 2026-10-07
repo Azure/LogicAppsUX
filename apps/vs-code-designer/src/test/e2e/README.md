@@ -275,6 +275,25 @@ CDP operations, file settlement, and required screenshots consume that same budg
 Ordinary Close Window has its existing separate 10-second teardown budget, never
 a forced process kill or an extension of the observation deadline.
 
+Each partial deletion leaves existing `.vscode` files. Consequently the product
+requires **two distinct renderer controls**, in this order:
+
+1. The project-scoped notification, `Detected an Azure Logic App project "..."`
+   / `Initialize for optimal use with VS Code?` → its real **Yes**.
+2. The modal, `The .vscode configuration files will be regenerated to match the
+   current project settings. This will overwrite any custom modifications.
+   Continue?` → its separate real **Yes**.
+
+The production prompt-sequence helper revalidates each enabled/unobstructed
+control after its required capture, sends trusted renderer mouse input once per
+control, and retains the same app/document and original deadline throughout.
+It proves deletion/non-target invariants before overwrite Yes, then requires
+durable writes and dismissal of both prompts. Missing/disabled/unrelated/
+ambiguous/disappearing overwrite dialogs, navigation, early writes, capture
+expiry, or uncertain input RPCs fail without input replay or a fresh clock.
+`before-overwrite-yes` PNG/readiness pairs and both actual Yes counts are required
+in addition to the existing branch evidence.
+
 The shared suite ID is **`workspaceArtifactRegeneration`**, available explicitly
 through `--suites workspaceArtifactRegeneration` or the package script
 `test:e2e-cli:workspace-artifact-regeneration:batch`. It is additive in
@@ -348,6 +367,28 @@ UTF-8 socket path must be under 100 bytes); the existing encrypted GNOME/D-Bus/X
 preparation remains required. The supplement inherits the admitted executable,
 runtime dependency root, prepared extensions directory and current source/job
 identity; it has no compilation, dependency-install or executable fallback of its own.
+The creating wizard host uses the existing **managed dependency flow with strict
+validation enabled**, not the activation branch that resets paths to system
+`func`/`dotnet`/`node`. Before starting that host, the invocation binds an explicit
+job-owned `LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT` and its actual profile settings path.
+The verified creating host then captures its actual VS Code global runtime
+configuration and checks it against the real `User/settings.json`.
+`runtimeSettings` in `wizard-handoff.json` preserves an allowlist of managed-flow,
+runtime-root, Func/.NET/Node binary and .NET-acquisition settings, an allowlisted
+configuration hash, binary SHA-256 values, invocation/job/source identity and
+capture time. Environment values alone are not a configuration handoff.
+
+Every fresh baseline/regeneration/reopen profile writes those **same captured**
+runtime settings to its own `User/settings.json`. Original-profile provenance,
+admitted root/binary bytes and fresh-profile configuration are checked before
+launch and after observation/ordinary closure. Stale invocations/timestamps,
+another source profile, wrong roots, missing binaries, system-path substitution
+or changed settings/bytes fail; the artifact JSON/hash oracles remain unchanged.
+The harness does not install replacement binaries or invent global paths.
+Normal product-managed validation stays on the same admitted dependency root.
+Only allowlisted nonsecret settings cross hosts—never the original profile,
+account/secret storage, `globalStorage`, terminal environment or arbitrary settings.
+There is still no separate runtime-bootstrap phase and no debug/Functions host start.
 Unconfirmed ordinary closure or an observation/diagnostic failure preserves the
 wizard root through the existing runner retention path, never a false successful cleanup.
 
@@ -364,6 +405,10 @@ Yes, absent prompt versus silent healing, late read/deadline expiration, transpo
 failure, final closure/cleanup failure and invalid runner flag combinations. They
 also control the exact batch/direct phase contract, missing/failed/duplicate
 phases, unsupported invented bootstrap phases, and unchanged canonical aliases.
+Production two-prompt sequencing and creating-host runtime/profile derivation
+also have focused negative controls, including deadline expiry, uncertain input,
+wrong-root/stale source settings, binary changes, environment-only configuration,
+and proof that profile/secret-storage files are not copied.
 They are appended to `test:e2e-cli:unit`; their temporary unit files are **not** wizard
 fixtures and their passes provide no native GUI/source-case coverage.
 
@@ -394,6 +439,128 @@ On Linux choose a short job-owned `LA_E2E_CLI_BATCH_ROOT` so the batch-owned pro
 parent also fits the unchanged actual UTF-8 socket budget. Regular profile basenames
 are opaque per-invocation/per-phase hashes; this shortens paths without changing
 phase identities, weakening the byte-length check, or using a shared desktop profile.
+
+#### ADO staging boundary and safe archive whitelist
+
+For an existing per-job lifecycle archive, use the **direct** selector and set
+`LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR` to a fresh dedicated child directory,
+for example `<existing-job-lifecycle>/workspaceArtifactRegeneration`. It is fully
+supported; no archive of arbitrary `.vscode-test/` directories is necessary.
+The default direct root is
+`apps/vs-code-designer/.vscode-test/workspace-regeneration-<user-data-suffix>`.
+The explicit batch suite instead assigns
+`<allocated-suite-root>/reports/workspace-regeneration`; its suite-scoped setting
+replaces an inherited diagnostic-root override.
+
+The runner **always** writes self-contained finalized family evidence beneath that
+root, including when a consumer sets `LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH` (which
+otherwise selects JSONL-only batch reporting). Consumer baseline result destinations
+can remain separate; the family root is authoritative for this supplement:
+
+| File/path relative to the family root | Safe archive use |
+|---|---|
+| `invocation.json` | Current invocation/job/source/platform and owned-root admission |
+| `wizard-handoff.json` | Verified original wizard, Code hash/version and allowlisted nonsecret runtime settings |
+| `final-result.json` | Final observation/closure/cleanup result and exact fourteen phase records |
+| `terminal-result.json` | Strict finalized fourteen-phase terminal result, not the wizard's single Mocha body |
+| `phase-results.jsonl` | Exact ordered executed phases; missing regular phases remain failures |
+| `cleanup-ledger.json` | Actual owned wizard-root cleanup, invocation-bound; `removed`/verified required |
+| `code.log` | Aggregate regular-Code stdout/stderr sanitized with the existing log redactor |
+| `screenshots/workspace-regeneration-baseline.{png,json}` | Required baseline evidence/readiness pair |
+| `screenshots/workspace-regeneration-<branch>-<checkpoint>.{png,json}` | Required branch evidence/readiness pairs |
+| `vscode-logs/**` | **Only this producer-sanitized subtree**, including `profile-log-index.md`, `copy-summary.json`, copied logs and channel diagnostics |
+
+`<branch>` is exactly `vscode-single`, `vscode-multiple`, `vscode-repeat`,
+`root-single`, `root-multiple`, `root-repeat`; `<checkpoint>` is exactly
+`before-yes`, `before-overwrite-yes`, `after-yes`, `reopened`.
+Success requires all **25 PNG/accepted-sidecar pairs**. Archive only these exact
+paths, not `*.json` or the whole diagnostic directory. **Exclude**
+`*-profile.json` locator markers and raw `*-code.log` files (the safe aggregate
+is `code.log`), all raw profiles/`User`/`globalStorage`/`workspaceStorage`,
+account/keyring/auth stores, original unsanitized logs, prepared extensions and
+runtime/dependency caches. Keep existing admitted baseline logs/results/generated
+snapshots under their current separately governed archive rules.
+
+Relevant environment paths:
+
+- `LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR`: dedicated family archive root.
+- `LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT`: explicit admitted job-owned managed
+  dependency root; **not archived**.
+- `LA_E2E_CLI_EXTENSIONS_DIR`: admitted prepared extensions; **not archived here**.
+- `LA_E2E_CLI_USER_DATA_PARENT`: private fresh-profile parent, short on Linux;
+  **never archive raw profile contents**.
+- `LA_E2E_CLI_WORKSPACE_ROOT`: owned wizard fixture parent; normal verified removal
+  is recorded in `cleanup-ledger.json`.
+- `LA_E2E_CLI_VSCODE_VERSION`: producer-admitted resolved stable Code version.
+- `LA_E2E_CLI_REMOTE_DEBUGGING_PORT`: optional isolated-job port (regular host
+  default `9514`); no shared local-host native execution.
+- Existing `LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH`,
+  `LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH`, `LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH`
+  may still point at the consumer's **separate** result area. The family copies
+  above are emitted independently and cannot be replaced by baseline results.
+
+  #### Canonical direct supplementary terminal
+
+  The direct ADO invocation additionally writes these fixed **app-root-relative**
+  paths, independent of the caller's working directory or batch result overrides:
+
+  ```text
+  .vscode-test/results/workspaceArtifactRegeneration.terminal-result.json
+  .vscode-test/results/workspaceArtifactRegeneration.cleanup-ledger.json
+  ```
+
+  The terminal is cleared to a fresh `complete=false`, `lifecycleFinalized=false`
+  scope before creating-host admission/launch can fail, then bound to the current
+  invocation/job/source/platform. After actual normal host closure, final evidence
+  checks and verified removal of the owned wizard root, it receives the same
+  standardized result shape as the family-root `terminal-result.json`:
+
+  **Diagnostic-only closure boundary:** this branch's custom finalizer does not yet
+  have a genuine retained-original-process-identities observer. Both direct and
+  archived receipts therefore explicitly carry
+  `originalProcessClosureVerified: false` and
+  `processClosureProof: "original-identities-unverified"`, even when all GUI phase
+  observations and owned-directory cleanup complete. Caller/model flags, exit 0,
+  an empty post-exit ancestry tree or a removed directory never promote these to
+  true. Parent CI must reject supplementary **acceptance** until the existing
+  helper's retained-identity correction supplies genuine observed proof; no such
+  proof or native clean approval is claimed by these source/unit changes.
+  The archive checker validates diagnostic evidence structure, not acceptance.
+
+  - `suiteId: "workspaceArtifactRegeneration"`, `complete: true`,
+    `lifecycleFinalized: true`, `exitCode: 0`, `signal: null`;
+  - `cleanupVerified: true`, `diagnosticsError: ""`, `phaseCompleteness: true`;
+  - `expectedPhaseIds` and `observedPhaseIds` both exactly the ordered fourteen
+    registered phases; `missingPhaseIds`, `unexpectedPhaseIds`,
+    `duplicatePhaseIds`, `blockedPhaseIds` are empty;
+  - each `phaseResults` entry retains actual `phaseId`, `complete`, `exitCode`,
+    `signal`, `cleanupVerified`, and `diagnosticsError`. The actual wizard's Mocha
+    count remains once only; regular workbench phases are not extra Mocha bodies.
+
+  Incomplete phases, diagnostics, failed/preserved/wrong-root cleanup, or failed
+  final evidence leave the terminal unsuccessful. The canonical cleanup ledger
+  records the actual existing owned-root removal result, current binding and phase
+  proofs; it does not invent the outer wrapper's process-tree verification.
+  Archive these two files through the existing results archive in addition to the
+  safe family-root whitelist. Batch's general wrapper continues to finalize its
+  standard report-folder result separately. No parent CI implementation was copied
+  into this family branch; publication uses the existing terminal/cleanup helpers.
+
+  After collecting the whitelist into a staged family directory, validate it using
+the admitted source/compiled tests and the same current-job identity environment:
+
+```text
+node apps/vs-code-designer/scripts/run-e2e-cli.js --check-workspace-artifact-regeneration <staged-family-root>
+```
+
+This read-only checker starts no Code/runtime. It rejects stale/wrong invocation,
+job/source/platform, incomplete/reordered/failed phase records, unsuccessful
+ordinary host exits, missing real Yes counts, preserved/failed owned cleanup,
+missing overwrite screenshots or unaccepted sidecars/log indices. It works from
+the archive without reading the original profiles or runtime caches. A single
+`1 passing` wizard log cannot satisfy it. Original expectation approval, canonical
+rollup and the existing outer process-tree cleanup gate remain separate; this
+family does not fabricate a new process-tree-verification receipt.
 
 ### Multi-root workspace supplementary family
 
