@@ -1,5 +1,4 @@
 import { ChildProcess, type ExecFileException, type ExecFileOptions } from 'child_process';
-import { createHash } from 'crypto';
 import { platform } from 'os';
 import * as path from 'path';
 import { PassThrough } from 'stream';
@@ -224,7 +223,7 @@ describe.skipIf(process.platform !== 'win32')('bundled Windows SMB helper', () =
   function withFakeApi(script: string, body: string): string {
     return script.replace(
       /Add-Type -TypeDefinition @'[\s\S]*?\r?\n'@/,
-      `Add-Type -TypeDefinition @'\nusing System;\nusing System.Text;\nusing System.Security.Cryptography;\npublic static class LogicAppsSmbConnection {\npublic static uint Connect(string rootFolder, string username, string password) {\n${body}\n}\n}\n'@`
+      `Add-Type -TypeDefinition @'\nusing System;\nusing System.Text;\npublic static class LogicAppsSmbConnection {\npublic static uint Connect(string rootFolder, string username, string password) {\n${body}\n}\n}\n'@`
     );
   }
 
@@ -241,16 +240,16 @@ describe.skipIf(process.platform !== 'win32')('bundled Windows SMB helper', () =
   }, 20000);
 
   it('preserves Unicode and shell metacharacters through the real PowerShell stdin reader', async () => {
-    const expectedHash = createHash('sha256')
-      .update([credentials.rootFolder, credentials.username, credentials.password].join('\0'))
-      .digest('hex');
+    const expectedBytes = Buffer.from([credentials.rootFolder, credentials.username, credentials.password].join('\0'), 'utf8');
     const script = withFakeApi(
       await getScript(),
-      `using (var hash = SHA256.Create()) {
-        var actual = BitConverter.ToString(hash.ComputeHash(Encoding.UTF8.GetBytes(rootFolder + "\\0" + username + "\\0" + password))).Replace("-", "").ToLowerInvariant();
-        if (actual != "${expectedHash}") { throw new Exception("Credentials were not transported intact."); }
-        return 0;
-      }`
+      `var expected = new byte[] { ${expectedBytes.join(', ')} };
+      var actual = Encoding.UTF8.GetBytes(rootFolder + "\\0" + username + "\\0" + password);
+      if (actual.Length != expected.Length) { throw new Exception("Credentials were not transported intact."); }
+      for (var index = 0; index < expected.Length; index++) {
+        if (actual[index] != expected[index]) { throw new Exception("Credentials were not transported intact."); }
+      }
+      return 0;`
     );
     expect(await runScript(script, JSON.stringify(credentials))).toEqual({ code: undefined, stdout: '0\r\n', stderr: '' });
   }, 20000);
