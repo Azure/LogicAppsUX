@@ -986,6 +986,21 @@ async function testBatchSuiteScopedCredentials() {
   assert.strictEqual(scoped.LA_E2E_CLI_AZURE_SUBSCRIPTION_ID, 'subscription');
   assert.strictEqual(scoped.WORKFLOWS_SUBSCRIPTION_ID, 'workflow-subscription');
   assert.strictEqual(scoped.PATH, undefined);
+  const httpScoped = await getSuiteScopedCredentialEnv(
+    {
+      LA_E2E_CLI_AZURE_ACCESS_TOKEN: 'http-token',
+      LA_E2E_CLI_AZURE_ACCESS_TOKEN_EXPIRES_ON: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+      LA_E2E_CLI_AZURE_ACCESS_TOKEN_MINTED_AT: new Date().toISOString(),
+      LA_E2E_CLI_AZURE_TENANT_ID: 'http-tenant',
+      LA_E2E_CLI_AZURE_SUBSCRIPTION_ID: 'http-subscription',
+      LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME: 'http-resource-group',
+      LA_E2E_CLI_AZURE_LOCATION_NAME: 'westus',
+      LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL: 'https://management.azure.com',
+    },
+    SUITE_REGISTRY.httpTimeoutComposeOriginal
+  );
+  assert.strictEqual(httpScoped.LA_E2E_CLI_AZURE_ACCESS_TOKEN, 'http-token');
+  assert.strictEqual(httpScoped.LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME, 'http-resource-group');
   await assert.rejects(
     () => getSuiteScopedCredentialEnv({}, SUITE_REGISTRY.msnWeatherLifecycle),
     /refusing to use ambient Azure CLI profile fallback/

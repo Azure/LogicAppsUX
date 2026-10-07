@@ -74,6 +74,7 @@ const SUITE_REGISTRY = Object.freeze({
     id: 'httpTimeoutComposeOriginal',
     args: Object.freeze(['--http-timeout-compose-original']),
     platforms: Object.freeze(['linux', 'win32']),
+    requiresAzure: true,
     expectedPhases: Object.freeze([
       'runtimeDependencyBootstrap:bootstrap',
       'httpTimeoutComposeOriginal:create',
