@@ -4327,6 +4327,29 @@ function publishRegenerationStageEvidence(context, result, phases, cleanup) {
       2
     )}\n`
   );
+  const promptObservations = [];
+  for (const phaseId of expectedPhaseIds.slice(1)) {
+    const phase = phaseId.slice('workspaceArtifactRegeneration:'.length);
+    const file = path.join(context.root, `${phase}-prompt-observations.jsonl`);
+    if (!fs.existsSync(file)) {
+      continue;
+    }
+    const stat = fs.lstatSync(file);
+    assert.ok(stat.isFile() && !stat.isSymbolicLink(), 'Prompt observations must be an original regular file');
+    assert.ok(stat.size <= vscodeProfileLogMaxFileBytes, 'Prompt observations exceed the safe archive size limit');
+    for (const line of fs.readFileSync(file, 'utf8').split(/\r?\n/).filter(Boolean)) {
+      promptObservations.push(
+        JSON.stringify({
+          phase,
+          observation: redactGeneratedWorkspaceJsonValue(JSON.parse(line)),
+        })
+      );
+    }
+  }
+  fs.writeFileSync(
+    path.join(context.root, 'prompt-observations.jsonl'),
+    `${promptObservations.join('\n')}${promptObservations.length ? '\n' : ''}`
+  );
   const codeLogs = ['Sanitized regular Code stdout/stderr; raw per-phase logs are not part of the safe archive.'];
   for (const host of primary.hosts || []) {
     assert.ok(

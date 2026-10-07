@@ -266,6 +266,23 @@ async function main(): Promise<void> {
       fs.unlinkSync(originalNodeFolder);
       fs.renameSync(internalTarget, originalNodeFolder);
 
+      const directNodeBinary = path.join(dependencyRoot, 'NodeJs', 'bin', 'node');
+      fs.mkdirSync(path.dirname(directNodeBinary), { recursive: true });
+      fs.copyFileSync(nodeBinary, directNodeBinary);
+      await assert.rejects(() => pinRegenerationRuntimeSettings(binding, async () => undefined), /Expected one admitted Node\.js binary/);
+      fs.rmSync(path.join(dependencyRoot, 'NodeJs', 'bin'), { recursive: true });
+
+      fs.renameSync(originalNodeFolder, internalTarget);
+      fs.mkdirSync(path.dirname(directNodeBinary), { recursive: true });
+      fs.copyFileSync(path.join(internalTarget, 'bin', 'node'), directNodeBinary);
+      const directPinned: Record<string, unknown> = {};
+      await pinRegenerationRuntimeSettings(binding, async (key, value) => {
+        directPinned[key] = value;
+      });
+      assert.strictEqual(directPinned['azureLogicAppsStandard.nodeJsBinaryPath'], fs.realpathSync(directNodeBinary));
+      fs.rmSync(path.join(dependencyRoot, 'NodeJs', 'bin'), { recursive: true });
+      fs.renameSync(internalTarget, originalNodeFolder);
+
       const nodeRoot = path.join(dependencyRoot, 'NodeJs');
       const internalNodeRoot = path.join(dependencyRoot, 'NodeJs-internal');
       fs.renameSync(nodeRoot, internalNodeRoot);
@@ -782,6 +799,14 @@ async function main(): Promise<void> {
     const ownedCleanup = { verified: true, action: 'removed', workspaceParent: stageContext.workspaceParent };
     for (const host of protocolInput.hosts) {
       fs.writeFileSync(path.join(stageRoot, `${host.phase}-code.log`), 'unit-only Authorization: Bearer unit-secret\n');
+      fs.writeFileSync(
+        path.join(stageRoot, `${host.phase}-prompt-observations.jsonl`),
+        `${JSON.stringify({
+          title: 'Initialize project',
+          connectionKey: 'unit-secret',
+          connectionRuntimeUrl: 'https://unit.test/?sig=unit-secret',
+        })}\n`
+      );
       const logDir = path.join(stageRoot, 'vscode-logs', 'unit-sanitized', host.phase);
       fs.mkdirSync(logDir, { recursive: true });
       fs.writeFileSync(path.join(logDir, 'profile-log-index.md'), `Phase: ${host.phase}\n`);
@@ -935,6 +960,9 @@ async function main(): Promise<void> {
       'Only sanitized code.log may be archived'
     );
     assert.ok(fs.readFileSync(path.join(stageRoot, 'code.log'), 'utf8').includes('<redacted>'));
+    const safePromptObservations = fs.readFileSync(path.join(stageRoot, 'prompt-observations.jsonl'), 'utf8');
+    assert.ok(!safePromptObservations.includes('unit-secret'), 'Prompt observations must be recursively redacted before staging');
+    assert.ok(safePromptObservations.includes('<redacted>'));
     // Stage validation must work from the archive alone, without the original
     // raw profiles or runtime caches, even if consumer phase paths were set.
     fs.renameSync(dependencyRoot, `${dependencyRoot}-not-archived`);

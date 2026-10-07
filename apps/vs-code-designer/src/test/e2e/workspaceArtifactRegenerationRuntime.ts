@@ -109,6 +109,17 @@ function managedRuntimeBinaries(root: string): { func: string; dotnet: string; n
       'Admitted NodeJs directory resolves outside the runtime root'
     );
     const candidates: string[] = [];
+    const directCandidate = path.join(nodeRoot, 'bin', 'node');
+    if (fs.existsSync(directCandidate)) {
+      const physical = fs.realpathSync(directCandidate);
+      const relative = path.relative(physicalNodeRoot, physical);
+      assert.ok(
+        relative && !relative.startsWith('..') && !path.isAbsolute(relative),
+        'Admitted direct Node.js binary resolves outside the managed NodeJs root'
+      );
+      assert.ok(fs.statSync(physical).isFile(), 'Admitted direct Node.js binary must be a regular file');
+      candidates.push(physical);
+    }
     for (const entry of observedEntries.filter((name) => name.startsWith('node-v'))) {
       const entryPath = path.join(nodeRoot, entry);
       let directory: boolean;

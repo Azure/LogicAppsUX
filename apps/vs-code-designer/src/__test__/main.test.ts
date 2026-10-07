@@ -10,6 +10,7 @@ import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import { validateAndInstallBinaries } from '../app/commands/binaries/validateAndInstallBinaries';
+import { ensureWorkspace } from '../app/commands/ensureWorkspace';
 import { getGlobalSetting } from '../app/utils/vsCodeConfig/settings';
 import {
   bootstrapRequest,
@@ -374,6 +375,7 @@ describe('activate design-time startup', () => {
     await flushPromises();
     await Promise.all(backgroundOperations);
 
+    expect(ensureWorkspace).toHaveBeenCalledTimes(1);
     expect(mocks.runProjectConsistencyCheck).toHaveBeenCalledTimes(1);
   });
 
@@ -387,6 +389,7 @@ describe('activate design-time startup', () => {
     await flushPromises();
     await Promise.all(backgroundOperations);
 
+    expect(ensureWorkspace).toHaveBeenCalledTimes(2);
     expect(mocks.runProjectConsistencyCheck).toHaveBeenCalledTimes(1);
   });
 
@@ -401,6 +404,7 @@ describe('activate design-time startup', () => {
     await flushPromises();
     await Promise.all(backgroundOperations);
 
+    expect(ensureWorkspace).toHaveBeenCalledTimes(1);
     expect(mocks.runProjectConsistencyCheck).toHaveBeenCalledTimes(1);
   });
 

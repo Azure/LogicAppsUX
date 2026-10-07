@@ -55,6 +55,7 @@ export async function runHttpTimeoutEnvironmentControls(control: Control): Promi
     'disabled',
     'unfocused',
     'hidden-visibility',
+    'readonly-input',
     'loading',
     'covered',
     'expired',
@@ -69,7 +70,9 @@ export async function runHttpTimeoutEnvironmentControls(control: Control): Promi
             ? 'Sign in to another service'
             : `Enable connectors in Azure for Logic App ${fault === 'wrong-app' ? 'otherApp' : 'unitApp'}`;
       const widget = `<div class="quick-input-widget" style="display:block">
-        <div class="quick-input-header"><div class="quick-input-box"><input placeholder="${title}"></div></div>
+        <div class="quick-input-header"><div class="quick-input-box"><input placeholder="${title}" ${
+          fault === 'readonly-input' ? 'readonly' : ''
+        }></div></div>
         <div class="quick-input-list"><div class="monaco-list" role="listbox"><div class="monaco-list-rows">
           ${
             fault === 'loading'
@@ -143,7 +146,7 @@ export async function runHttpTimeoutEnvironmentControls(control: Control): Promi
       } as unknown as CdpConnection;
       try {
         const deadline = Date.now() + (fault === 'expired' ? -1 : fault === 'not-dismissed' ? 200 : 2000);
-        if (fault === 'none' || fault === 'unfocused' || fault === 'hidden-visibility') {
+        if (fault === 'none' || fault === 'unfocused' || fault === 'hidden-visibility' || fault === 'readonly-input') {
           let contextCreated: (context: { id: number }) => void = () => {};
           const designerCdp = {
             onExecutionContextCreated: (listener: typeof contextCreated) => {

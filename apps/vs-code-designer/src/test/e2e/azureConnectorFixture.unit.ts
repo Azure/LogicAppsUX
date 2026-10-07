@@ -149,6 +149,8 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
     'creation-prompt',
     'external-focus',
     'hidden-visibility',
+    'readonly-connector-input',
+    'loading-after-affirmative',
   ]) {
     await control(`approved native fixture journey DOM ${fault} never creates or selects a foreign target`, async () => {
       const { JSDOM } = require('jsdom');
@@ -157,20 +159,24 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
       const fixture = { ...readApprovedAzureConnectorFixture(env), location: 'eastus', resourceGroupLocationVerified: true };
       const clicked: string[] = [];
       let stage = 0;
+      let loadingReads = 0;
       const render = () => {
         const titles = [
           'Enable connectors in Azure for Logic App unitApp',
           'Select subscription',
           'Select a resource group for new resources.',
         ];
-        const title =
-          stage === 2 && fault === 'auth-prompt'
+        const loadingAfterAffirmative = fault === 'loading-after-affirmative' && stage === 1 && loadingReads === 0;
+        const title = loadingAfterAffirmative
+          ? 'Loading...'
+          : stage === 2 && fault === 'auth-prompt'
             ? 'Sign in to Azure'
             : stage === 2 && fault === 'creation-prompt'
               ? 'Enter the name of the new resource group'
               : titles[stage];
-        const rows =
-          stage === 0
+        const rows = loadingAfterAffirmative
+          ? []
+          : stage === 0
             ? ['Skip for now', 'Use connectors from Azure']
             : stage === 1
               ? [fault === 'wrong-subscription' ? 'Other Subscription' : 'Unit Approved Subscription']
@@ -182,7 +188,9 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
         window.document.body.innerHTML =
           stage > 2
             ? '<div class="react-flow">Ready</div>'
-            : `<div class="quick-input-widget"><input placeholder="${title}"><div class="monaco-list" role="listbox">${rows
+            : `<div class="quick-input-widget"><input placeholder="${title}" ${
+                stage === 0 && fault === 'readonly-connector-input' ? 'readonly' : ''
+              }><div class="monaco-list" role="listbox">${rows
                 .map(
                   (text, index) =>
                     `<div class="monaco-list-row" role="option" data-unit-row="${index}" ${stage === 2 && fault === 'disabled-group' && index === 1 ? 'aria-disabled="true"' : ''}>
@@ -216,7 +224,12 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
         window.document.querySelector(`[data-unit-row="${Math.round((y - 52.5) / 30)}"]`);
       const cdp: CdpEvaluator = {
         async evaluate<T>(_context: number | undefined, expression: string) {
-          return window.eval(expression) as T;
+          const result = window.eval(expression) as T;
+          if (fault === 'loading-after-affirmative' && stage === 1 && loadingReads === 0) {
+            loadingReads++;
+            render();
+          }
+          return result;
         },
         async send(_method, params) {
           if (params?.type === 'mouseReleased') {
@@ -236,7 +249,13 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
           handleAffirmativeConnectorWorkbenchPrompt(cdp, 'unitApp', deadline, (prompt) =>
             selectApprovedAzureConnectorFixturePrompt(cdp, prompt, fixture, deadline, async () => 'Unit Approved Subscription')
           );
-        if (fault === 'none' || fault === 'external-focus' || fault === 'hidden-visibility') {
+        if (
+          fault === 'none' ||
+          fault === 'external-focus' ||
+          fault === 'hidden-visibility' ||
+          fault === 'readonly-connector-input' ||
+          fault === 'loading-after-affirmative'
+        ) {
           assert.strictEqual(await journey(), true);
           assert.deepStrictEqual(clicked, ['Use connectors from Azure', 'Unit Approved Subscription', 'unit-existing-group']);
         } else {

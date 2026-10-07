@@ -96,7 +96,6 @@ export async function handleHttpTimeoutConnectorPrompt(cdp: CdpConnection, appNa
   }
   const title = `Enable connectors in Azure for Logic App ${appName}`;
   assert.strictEqual(prompt.text, title, 'Unknown workbench QuickPick; do not answer another wizard');
-  assert.strictEqual(prompt.interactive, true, 'Connector QuickPick is not interactive/focused');
   assert.strictEqual(
     prompt.rows.filter((row) => row.text === 'Use connectors from Azure').length,
     1,

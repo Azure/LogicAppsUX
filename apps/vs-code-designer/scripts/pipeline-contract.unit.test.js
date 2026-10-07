@@ -757,7 +757,11 @@ function testConsumerAdmissionContract() {
   assert.doesNotMatch(runSuitesTemplate, /artifactName: vscode-e2e-cli-generated-workspaces-\$\{\{ parameters\.artifactName \}\}/);
   assert.match(runSuitesTemplate, /Redact-DiagnosticText/);
   assert.doesNotMatch(runSuitesTemplate, /Copy-SanitizedReportDirectory/);
-  assert.doesNotMatch(runSuitesTemplate, /cleanup-ledger\.json'[\s\S]*Copy-Item/);
+  assert.doesNotMatch(
+    runSuitesTemplate,
+    /\$\{\{ parameters\.suiteId \}\}\.cleanup-ledger\.json'[\s\S]*Copy-Item/,
+    'Private per-suite process cleanup ledgers must not be published'
+  );
   assert.match(runSuitesTemplate, /\.vscode-test\/screenshots\/cli\/\$\{\{ parameters\.suiteId \}\}/);
   assert.match(runSuitesTemplate, /\.vscode-test\/generated-workspaces\/\$\{\{ parameters\.suiteId \}\}/);
   assert.match(runSuitesTemplate, /Publish JUnit result/);
@@ -1017,6 +1021,28 @@ function testSupplementaryFamilyRoutingContract() {
   assert.match(
     staging.pwsh,
     /family-lifecycle-terminal\.js[\s\S]*if \(\$LASTEXITCODE -ne 0\)[\s\S]*throw 'Supplementary family native lifecycle/
+  );
+  assert.ok(
+    staging.pwsh.includes('workspace-regeneration-${{ parameters.shortName }}'),
+    'Regeneration staging must address the direct family evidence root'
+  );
+  for (const evidencePattern of [
+    "'terminal-result.json'",
+    "'cleanup-ledger.json'",
+    "'phase-results.jsonl'",
+    "'code.log'",
+    "'prompt-observations.jsonl'",
+    "'screenshots', 'vscode-logs'",
+    "'vscode-logs'",
+  ]) {
+    assert.ok(staging.pwsh.includes(evidencePattern), `Regeneration staging must preserve ${evidencePattern}`);
+  }
+  assert.ok(!staging.pwsh.includes("Name -like '*-code.log'"), 'Raw per-phase Code logs must never enter the diagnostics artifact');
+  assert.ok(!staging.pwsh.includes("Name -like '*-profile.json'"), 'Raw profile descriptors must never enter the diagnostics artifact');
+  assert.match(
+    staging.pwsh,
+    /workspaceArtifactRegeneration[\s\S]*missingRequiredFiles \+= \$regenerationEvidenceRoot/,
+    'A missing regeneration evidence root must fail diagnostics staging'
   );
   const invocations = flattenAzureList(consumer.extends.parameters.stages[0].jobs).filter((entry) => entry.template);
   const diagnostic = getConsumerDirectJob(consumer, 'report_diagnostic_selected_rerun');

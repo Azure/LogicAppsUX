@@ -154,6 +154,7 @@ export async function activate(context: vscode.ExtensionContext) {
       vscode.workspace.onDidChangeWorkspaceFolders,
       async (actionContext: IActionContext) => {
         workspaceConsistencyIdentity = workspaceIdentity();
+        await ensureWorkspace(actionContext);
         await updateLogicAppsContext();
         await runProjectConsistencyCheck(actionContext);
       }
@@ -164,6 +165,9 @@ export async function activate(context: vscode.ExtensionContext) {
       activateContext.telemetry.properties.lastStep = 'catchUpWorkspaceConsistency';
       await callWithTelemetryAndErrorHandling('activate.catchUpWorkspaceConsistency', async (actionContext: IActionContext) => {
         actionContext.telemetry.properties.isActivationEvent = 'true';
+        actionContext.errorHandling.rethrow = true;
+        actionContext.errorHandling.suppressDisplay = true;
+        await ensureWorkspace(actionContext);
         await updateLogicAppsContext();
         await runProjectConsistencyCheck(actionContext);
       });

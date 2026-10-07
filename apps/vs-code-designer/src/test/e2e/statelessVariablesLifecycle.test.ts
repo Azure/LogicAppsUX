@@ -101,7 +101,9 @@ suite('Stateless variables lifecycle', () => {
     try {
       await positiveScope.run(positiveDeadline, 'positive lifecycle', async (signal) => {
         assertPhaseActive(positiveDeadline, signal);
+        await prepareDesignTimeBaseline(entry, positiveDeadline, signal);
         fixtureLease = installApprovedAzureFixture(entry.appDir, azureFixture);
+        fixtureLease.assertBound();
         await establishDesignTime(entry, positiveDeadline, signal, azureFixture);
         fixtureLease.bindGeneratedDesignTime();
         fixtureLease.assertBound();
@@ -198,17 +200,28 @@ function formatStatelessFailure(error: unknown, depth = 0): string {
   return String(error);
 }
 
+async function prepareDesignTimeBaseline(entry: CreatedWorkspace, deadline: number, signal: AbortSignal): Promise<void> {
+  await helpers.waitForGeneratedLogicAppFolder(entry);
+  assertPhaseActive(deadline, signal);
+  await vscode.commands.executeCommand('azureLogicAppsStandard.runProjectConsistencyCheck');
+  assertPhaseActive(deadline, signal);
+  await poll(
+    deadline,
+    'product-generated design-time settings before approved fixture binding',
+    async () => fs.existsSync(path.join(entry.appDir, 'workflow-designtime', 'local.settings.json')),
+    signal
+  );
+}
+
 async function establishDesignTime(
   entry: CreatedWorkspace,
   deadline: number,
   signal: AbortSignal,
   fixture: ApprovedAzureFixture
 ): Promise<void> {
-  await helpers.waitForGeneratedLogicAppFolder(entry);
   assertPhaseActive(deadline, signal);
-  // Reopened wizard workspaces can already contain workflow-designtime. The
-  // fixture lease binds that existing file before this command; cold creation
-  // still binds the independently generated file immediately afterward.
+  // Bind only after the real consistency command has generated its independent
+  // design-time baseline, so startup cannot race the approved target fixture.
   await helpers.openDesignerAndCreateWorkflow(entry, { warmOnly: true, useAzureConnectors: true, azureFixture: fixture });
   assertPhaseActive(deadline, signal);
   await poll(

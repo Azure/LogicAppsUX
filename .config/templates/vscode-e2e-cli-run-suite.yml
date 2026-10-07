@@ -613,6 +613,7 @@ jobs:
           $screenshotsRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/screenshots/cli/${{ parameters.suiteId }}'
           $vscodeLogsRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/vscode-logs/cli/${{ parameters.suiteId }}'
           $workspaceSnapshotsRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/generated-workspaces/${{ parameters.suiteId }}'
+          $regenerationEvidenceRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/workspace-regeneration-${{ parameters.shortName }}'
           $processEvidenceRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/lifecycle/${{ parameters.suiteId }}/msn-weather-lifecycle'
           $cancelRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/workspace-cancel'
           $cancelDestination = Join-Path $diagnosticsRoot 'workspace-cancel'
@@ -672,6 +673,41 @@ jobs:
 
           if (Test-Path $workspaceSnapshotsRoot) {
             Get-ChildItem -Path $workspaceSnapshotsRoot -Force -ErrorAction Stop | Copy-Item -Destination $workspaceDestination -Recurse -Force -ErrorAction Stop
+          }
+          if ('${{ parameters.suiteId }}' -eq 'workspaceArtifactRegeneration') {
+            if (Test-Path $regenerationEvidenceRoot) {
+              $regenerationDestination = Join-Path $logDestination 'regeneration'
+              New-Item -ItemType Directory -Force -Path $regenerationDestination | Out-Null
+              $requiredRegenerationFiles = @(
+                'invocation.json',
+                'final-result.json',
+                'terminal-result.json',
+                'cleanup-ledger.json',
+                'phase-results.jsonl',
+                'code.log',
+                'prompt-observations.jsonl'
+              )
+              foreach ($requiredName in $requiredRegenerationFiles) {
+                if (-not (Test-Path -LiteralPath (Join-Path $regenerationEvidenceRoot $requiredName))) {
+                  $missingRequiredFiles += (Join-Path $regenerationEvidenceRoot $requiredName)
+                }
+              }
+              foreach ($name in @($requiredRegenerationFiles + 'wizard-handoff.json')) {
+                $source = Join-Path $regenerationEvidenceRoot $name
+                if (Test-Path -LiteralPath $source) {
+                  Set-Content -LiteralPath (Join-Path $regenerationDestination $name) `
+                    -Value (Redact-DiagnosticText (Get-Content -LiteralPath $source -Raw)) -NoNewline
+                }
+              }
+              foreach ($directoryName in @('screenshots', 'vscode-logs')) {
+                $source = Join-Path $regenerationEvidenceRoot $directoryName
+                if (Test-Path $source) {
+                  Copy-Item -LiteralPath $source -Destination $regenerationDestination -Recurse -Force -ErrorAction Stop
+                }
+              }
+            } else {
+              $missingRequiredFiles += $regenerationEvidenceRoot
+            }
           }
           if ('${{ parameters.suiteId }}' -eq 'msnWeatherLifecycle' -and (Test-Path $processEvidenceRoot)) {
             $processDestination = Join-Path $diagnosticsRoot 'owned-processes'

@@ -42,9 +42,6 @@ async function testColdProducer(): Promise<void> {
     path,
     fs: { existsSync: () => produced },
     helpers: {
-      waitForGeneratedLogicAppFolder: async () => {
-        order.push('folder');
-      },
       openDesignerAndCreateWorkflow: async (_entry: unknown, options: { warmOnly: boolean; useAzureConnectors: boolean }) => {
         assert.strictEqual(options.warmOnly, true);
         assert.strictEqual(options.useAzureConnectors, true, 'Cold real designer producer must use affirmative connector setup');
@@ -64,7 +61,12 @@ async function testColdProducer(): Promise<void> {
   assert.ok(establish);
   const approved = { resourceGroupName: 'existing-unit-rg' };
   await establish({ appDir: '/unit/cold-app' }, Date.now() + 1000, new AbortController().signal, approved);
-  assert.deepStrictEqual(order, ['folder', 'real-designer', 'readiness']);
+  assert.deepStrictEqual(order, ['real-designer', 'readiness']);
+  assert.ok(text.includes('await prepareDesignTimeBaseline(entry, positiveDeadline, signal);'));
+  assert.ok(text.indexOf('await prepareDesignTimeBaseline(entry,') < text.indexOf('fixtureLease = installApprovedAzureFixture('));
+  assert.ok(text.indexOf('fixtureLease = installApprovedAzureFixture(') < text.indexOf('await establishDesignTime(entry,'));
+  assert.ok(text.includes("await vscode.commands.executeCommand('azureLogicAppsStandard.runProjectConsistencyCheck');"));
+  assert.ok(text.includes("'product-generated design-time settings before approved fixture binding'"));
   assert.ok(text.indexOf('await positiveScope.run(') < text.indexOf('await establishDesignTime(entry,'));
   checks++;
   produced = false;
@@ -79,7 +81,7 @@ async function testColdProducer(): Promise<void> {
     /cold designer producer failed/
   );
   await scope.quiesce(Date.now() + 1000);
-  assert.deepStrictEqual(order, ['folder', 'real-designer'], 'No readiness wait may precede or outlive failed producer startup');
+  assert.deepStrictEqual(order, ['real-designer'], 'No readiness wait may precede or outlive failed producer startup');
   checks++;
 }
 

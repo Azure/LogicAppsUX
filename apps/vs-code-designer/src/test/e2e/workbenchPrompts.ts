@@ -55,6 +55,10 @@ export function readWorkbenchPrompts(cdp: CdpEvaluator, timeoutMs = 3000): Promi
   return cdp.evaluate(undefined, workbenchPromptDomScript, { timeoutMs });
 }
 
+function isLoadingPrompt(prompt: DetectedWorkbenchPrompt): boolean {
+  return prompt.kind === 'quickInput' && /^Loading(?:\.\.\.)?$/.test(prompt.title) && prompt.rows.length === 0;
+}
+
 function remaining(deadline: number): number {
   const value = deadline - Date.now();
   assert.ok(value > 0, 'Workbench affirmative prompt deadline expired');
@@ -75,7 +79,7 @@ export async function handleAffirmativeConnectorWorkbenchPrompt(
   }
   assert.strictEqual(prompts.length, 1, 'Ambiguous workbench prompt during affirmative connector setup');
   const prompt = prompts[0];
-  if (prompt.kind === 'quickInput' && /^Loading(?:\.\.\.)?$/.test(prompt.title) && prompt.rows.length === 0) {
+  if (isLoadingPrompt(prompt)) {
     return false;
   }
   const title = `Enable connectors in Azure for Logic App ${appName}`;
@@ -88,7 +92,6 @@ export async function handleAffirmativeConnectorWorkbenchPrompt(
     );
     return selectExistingTarget(prompt);
   }
-  assert.strictEqual(prompt.interactive, true, 'Affirmative connector prompt is not interactive/focused');
   const affirmative =
     prompt.kind === 'quickInput' ? affirmativeAzureConnectorPrompt.optionText : affirmativeAzureConnectorPrompt.alternateOptionTexts?.[0];
   assert.ok(affirmative, 'Shared affirmative policy must declare the actual Yes alternative');
@@ -105,6 +108,10 @@ export async function handleAffirmativeConnectorWorkbenchPrompt(
       return true;
     }
     assert.strictEqual(next.length, 1, 'Ambiguous follow-up connector wizard');
+    if (isLoadingPrompt(next[0])) {
+      await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining(deadline))));
+      continue;
+    }
     if (!matchesConnector(next[0])) {
       assert.ok(
         selectExistingTarget,
