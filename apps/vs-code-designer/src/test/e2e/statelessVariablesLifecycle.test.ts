@@ -14,7 +14,6 @@ import {
   assertApprovedAzureFixture,
   installApprovedAzureFixture,
   type ApprovedAzureFixture,
-  type ApprovedAzureFixtureLease,
 } from './approvedAzureFixture';
 import { uniqueName, normalizeFsPath } from './testUtils';
 import { closeAllTabs, waitForWebviewTab } from './webviewTabs';
@@ -36,6 +35,7 @@ import {
 } from './statelessVariablesControls';
 import { StatelessOwnedDebug, type StatelessDebugTask } from './statelessVariablesDebug';
 import { affirmativeAzureConnectorPrompt } from './workbenchPromptSelection';
+import { showLogicAppsStandardOutput } from './logicAppsOutputChannel';
 
 const managementRoot = 'http://localhost:7071/runtime/webhooks/workflow/api/management';
 const apiVersion = '2019-10-01-edge-preview';
@@ -74,19 +74,34 @@ suite('Stateless variables lifecycle', () => {
       fs.writeFileSync(manifest, `${JSON.stringify([entry], null, 2)}\n`);
       return;
     }
-    assert.strictEqual(mode, 'run', 'Use the registered stateless-variables lifecycle runner');
     const rawEntry = process.env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE;
-    assert.ok(rawEntry, 'Reopen requires the exact wizard manifest entry');
+    assert.ok(rawEntry, 'Fresh host requires the exact wizard manifest entry');
     const entry = JSON.parse(rawEntry) as CreatedWorkspace;
     assert.strictEqual(entry.appType, 'standard');
     assert.strictEqual(normalizeFsPath(vscode.workspace.workspaceFile?.fsPath ?? ''), normalizeFsPath(entry.workspaceFilePath));
     assert.strictEqual(objectValue(readJson(entry.workflowJsonPath), 'reopened workflow').kind, 'Stateless');
     const azureFixture = approvedAzureFixtureFromEnvironment(process.env);
+    if (mode === 'prepare') {
+      const deadline = Date.now() + 300_000;
+      const signal = new AbortController().signal;
+      await prepareDesignTimeBaseline(entry, deadline, signal);
+      const preparationLease = installApprovedAzureFixture(entry.appDir, azureFixture);
+      preparationLease.bindGeneratedDesignTime();
+      preparationLease.assertBound();
+      console.log('[stateless-variables] Prepared product-generated settings for a clean activation-time startup host');
+      return;
+    }
+    assert.strictEqual(mode, 'run', 'Use the registered stateless-variables lifecycle runner');
+    const outputCommand = await showLogicAppsStandardOutput(
+      () => vscode.commands.getCommands(true),
+      (command) => vscode.commands.executeCommand(command),
+      Date.now() + 15_000
+    );
+    console.log(`[stateless-variables] Showing activation-time design-time diagnostics through ${outputCommand}`);
 
     // No history is promised by default Stateless. First author and call it with
     // generated settings, then apply the opt-in to BOTH generated targets.
     let lease: StatelessSettingsLease | undefined;
-    let fixtureLease: ApprovedAzureFixtureLease | undefined;
     let operations: StatelessOperations | undefined;
     const positiveDeadline = Date.now() + 900_000;
     const positiveScope = new StatelessOperationScope();
@@ -101,12 +116,10 @@ suite('Stateless variables lifecycle', () => {
     try {
       await positiveScope.run(positiveDeadline, 'positive lifecycle', async (signal) => {
         assertPhaseActive(positiveDeadline, signal);
-        await prepareDesignTimeBaseline(entry, positiveDeadline, signal);
-        fixtureLease = installApprovedAzureFixture(entry.appDir, azureFixture);
-        fixtureLease.assertBound();
+        assertApprovedAzureFixture(path.join(entry.appDir, 'local.settings.json'), azureFixture);
+        assertApprovedAzureFixture(path.join(entry.appDir, 'workflow-designtime', 'local.settings.json'), azureFixture);
+        await waitForActivationDesignTime(positiveDeadline, signal);
         await establishDesignTime(entry, positiveDeadline, signal, azureFixture);
-        fixtureLease.bindGeneratedDesignTime();
-        fixtureLease.assertBound();
         operations = await authorVariablesThroughDesigner(entry, positiveDeadline, signal);
         await start(entry, getOwnedDebug(), positiveDeadline, signal, azureFixture);
         const initialOverview = await openHistory(entry, positiveDeadline, signal);
@@ -137,7 +150,6 @@ suite('Stateless variables lifecycle', () => {
     // Always exercise restoration + a real recovered callback, including after
     // failed startup or an expired positive phase. No expired positive clock is reused.
     const recoveryFailures: unknown[] = [];
-    let recoveryQuiescent = false;
     try {
       await recoverStateless({
         quiesce,
@@ -148,26 +160,15 @@ suite('Stateless variables lifecycle', () => {
         },
         restore: () => {
           lease?.restore();
-          fixtureLease?.assertBound();
         },
         restart: (deadline, signal) => start(entry, getOwnedDebug(), deadline, signal, azureFixture),
         verify: async (deadline, signal) => {
           const saved = operations ?? assertStatelessDefinition(readJson(entry.workflowJsonPath));
           await invoke(entry, saved, deadline, signal);
         },
-        onQuiescenceVerified: () => {
-          recoveryQuiescent = true;
-        },
       });
     } catch (error) {
       recoveryFailures.push(error);
-    }
-    if (recoveryQuiescent && fixtureLease) {
-      try {
-        fixtureLease.restore(); // After verified owned quiescence, even if callback verification failed.
-      } catch (error) {
-        recoveryFailures.push(error);
-      }
     }
     if (originalFailure !== undefined || recoveryFailures.length > 0) {
       logStatelessLifecycleFailures(originalFailure, recoveryFailures);
@@ -198,6 +199,56 @@ function formatStatelessFailure(error: unknown, depth = 0): string {
     return error.stack ?? `${error.name}: ${error.message}`;
   }
   return String(error);
+}
+
+async function waitForActivationDesignTime(deadline: number, signal: AbortSignal): Promise<void> {
+  let lastProbe = 'not started';
+  try {
+    await poll(
+      Math.min(deadline, Date.now() + 180_000),
+      'activation-time design-time operationGroups endpoint',
+      async () => {
+        const probes = await Promise.all(
+          [8000, 8001, 8002, 8003].map(async (port) => ({
+            port,
+            result: await probeOperationGroups(port),
+          }))
+        );
+        lastProbe = probes
+          .map(
+            ({ port, result }) => `${port}=${result.status ?? 'refused'}:${result.json ? 'json' : result.contentType || 'no-content-type'}`
+          )
+          .join(', ');
+        return probes.some(({ result }) => result.status !== undefined && result.status >= 200 && result.status < 300 && result.json);
+      },
+      signal
+    );
+  } catch (error) {
+    throw new AggregateError([error], `Activation-time design-time endpoint did not become ready. Last probe: ${lastProbe}`);
+  }
+  console.log(`[stateless-variables] Activation-time design-time endpoint is reachable: ${lastProbe}`);
+}
+
+function probeOperationGroups(port: number): Promise<{ status: number | undefined; contentType: string; json: boolean }> {
+  return new Promise((resolve) => {
+    const request = http.get(
+      {
+        host: '127.0.0.1',
+        port,
+        path: '/runtime/webhooks/workflow/api/management/operationGroups',
+        timeout: 1000,
+        headers: { Accept: 'application/json' },
+      },
+      (response) => {
+        const contentType = String(response.headers['content-type'] ?? '');
+        const status = response.statusCode;
+        response.resume();
+        resolve({ status, contentType, json: /\bapplication\/json\b/i.test(contentType) });
+      }
+    );
+    request.on('timeout', () => request.destroy());
+    request.on('error', () => resolve({ status: undefined, contentType: '', json: false }));
+  });
 }
 
 async function prepareDesignTimeBaseline(entry: CreatedWorkspace, deadline: number, signal: AbortSignal): Promise<void> {

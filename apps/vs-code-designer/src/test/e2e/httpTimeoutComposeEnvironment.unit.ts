@@ -138,7 +138,8 @@ export async function runHttpTimeoutEnvironmentControls(control: Control): Promi
             row.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
             if (fault !== 'not-dismissed') {
               window.document.querySelector('.quick-input-widget').remove();
-              designer.window.document.body.innerHTML = '<div class="react-flow">Save Add a trigger</div>';
+              designer.window.document.body.innerHTML =
+                '<main><nav><button>Workflow</button><button>Code</button></nav><button>Save</button><button>Add a trigger</button></main>';
             }
           }
           return {};
@@ -162,9 +163,8 @@ export async function runHttpTimeoutEnvironmentControls(control: Control): Promi
           } as unknown as CdpConnection;
           assert.strictEqual(
             await waitForWebviewFrameContext(designerCdp, {
-              allTextIncludes: ['Save', 'Add a trigger'],
+              allTextIncludes: ['Workflow', 'Code', 'Save', 'Add a trigger'],
               description: 'original empty designer after native prompt',
-              requiredSelector: '.react-flow',
               timeoutMs: 2000,
               beforePoll: async (openingDeadline) => {
                 assert.ok(openingDeadline <= deadline + 10, 'Do not inflate the existing designer observation deadline');

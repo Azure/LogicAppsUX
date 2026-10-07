@@ -155,12 +155,15 @@ Racing a side-effecting operation against a timer does not stop that operation.
 Retain the underlying promise and propagate cancellation. Require quiescence
 before restoring settings or beginning a recovery restart.
 
-For the Stateless variables family, disable activation-time background
-design-time startup. The test first runs the real consistency command, waits
-for the independently generated design-time settings, binds the approved
-fixture, and then uses the explicit designer open as the startup authority.
-Background auto-start can otherwise race fixture binding and retain a failed
-startup promise/process for the rest of the host.
+For the Stateless variables family, use a preparation host with auto-start
+disabled to run real consistency generation and bind the approved fixture to
+both settings targets. Then use a separate fresh host with activation-time
+design-time startup enabled. The activation host must expose the real **Azure
+Logic Apps (Standard)** Output channel and prove the design-time management
+endpoint is reachable before opening the Designer. This makes the
+product-selected Func Core Tools command, working directory, port, child
+process output, host readiness and early exit visible in native evidence
+without racing first-time settings generation.
 
 Late debug sessions may be stopped only when they match the test's exact attempt
 marker and workspace identity. Never stop a foreign session or globally clear

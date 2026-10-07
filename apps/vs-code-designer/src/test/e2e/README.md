@@ -195,7 +195,9 @@ Both selectors run exactly these native phases, in order:
    label populates a new job-owned `logicappsux-vscode-e2e-runtime-deps-*` root under
    the OS temporary directory, never the user's dependency cache.
 2. `statelessVariablesLifecycle:create` — one real Standard/Stateless wizard host.
-3. `statelessVariablesLifecycle:reopen` — a fresh host opened with that exact
+3. `statelessVariablesLifecycle:prepare` — a fresh host generates the real
+   design-time baseline and binds the approved fixture without auto-start.
+4. `statelessVariablesLifecycle:reopen` — a fresh activation-time auto-start host opened with that exact
    generated `.code-workspace`, including authoring/runtime/history/recovery.
 
 The family does not report bootstrap from a prepared cache or from unit controls.
@@ -223,12 +225,12 @@ identity and exact existing group label may be selected; Create is never selecte
 Preconfiguration is not GUI-picker coverage or proof of Azure availability.
 The design-time file is generated independently, not copied from app settings.
 After the real producer and file-readiness gate, a guarded per-file lease binds
-its Azure keys before assertions, snapshots that file's own original target-key
-presence/values, and preserves every unrelated generator setting.
-Fixture metadata restoration follows actual recovery quiescence, independently
-of callback-verification success. A callback failure remains a failure after safe
-restoration; failed quiescence or foreign target edits refuse restoration. Both
-leases preserve unrelated product/foreign changes and their distinct baselines.
+its Azure keys before assertions and preserves every unrelated generator
+setting. The preparation transaction intentionally leaves only the approved,
+non-token target metadata for the following activation host. The family-owned
+workspace is deleted after complete success and retained for diagnostics after
+failure. The separate Stateless history-settings lease still restores only
+after actual recovery quiescence; callback or cleanup failures remain failures.
 
 The native family authors Request, one multi-variable Initialize (including the
 actual Add a Variable control), both variable appends and Response through the real
@@ -239,18 +241,21 @@ It then installs `WithStatelessRunHistory` into the generated app-root
 `local.settings.json` and `workflow-designtime/local.settings.json`, stops/restarts,
 and verifies a new callback-identified run, exact action identities, Response outputs
 and the matching visible history row. A further stop/restart repeats that proof.
-Restoration and a recovered real callback have an independent bounded deadline,
+History-settings restoration and a recovered real callback have an independent bounded deadline,
 including when the positive deadline expires. Any foreign settings edit or deletion
 preserves both files rather than partly restoring or overwriting them.
 
 Cold reopen starts the actual designer producer before awaiting generated
 design-time settings, inside the positive/recovery cleanup boundary. Side-effect
 operations receive cancellation signals and retain their underlying promises.
-The reopen profile disables activation-time background design-time startup.
-The test first runs the real consistency command, waits for the independently
-generated design-time settings, binds the approved fixture, and then uses the
-explicit designer open as the sole startup authority. This avoids a background
-host retaining a failed pre-fixture startup.
+A separate preparation profile disables auto-start only while it runs the real
+consistency command, waits for product-generated design-time settings and binds
+the approved fixture to both targets. The following fresh reopen profile enables
+activation-time startup, immediately shows the real **Azure Logic Apps
+(Standard)** Output channel, and proves the design-time management endpoint is
+reachable before opening the Designer. Native failure evidence therefore shows
+the product-selected command, port, process output, readiness or early exit
+without racing first-time settings generation or bypassing activation startup.
 Restoration cannot overlap an unquiesced producer or debug start. Debug cleanup
 uses only exact marked sessions and newly observed generated Functions task
 handles in the wizard-owned app, never global task/session or port cleanup.

@@ -62,9 +62,10 @@ async function testColdProducer(): Promise<void> {
   const approved = { resourceGroupName: 'existing-unit-rg' };
   await establish({ appDir: '/unit/cold-app' }, Date.now() + 1000, new AbortController().signal, approved);
   assert.deepStrictEqual(order, ['real-designer', 'readiness']);
-  assert.ok(text.includes('await prepareDesignTimeBaseline(entry, positiveDeadline, signal);'));
-  assert.ok(text.indexOf('await prepareDesignTimeBaseline(entry,') < text.indexOf('fixtureLease = installApprovedAzureFixture('));
-  assert.ok(text.indexOf('fixtureLease = installApprovedAzureFixture(') < text.indexOf('await establishDesignTime(entry,'));
+  assert.ok(text.includes('await prepareDesignTimeBaseline(entry, deadline, signal);'));
+  assert.ok(text.includes("if (mode === 'prepare')"));
+  assert.ok(text.indexOf('await prepareDesignTimeBaseline(entry,') < text.indexOf('const preparationLease = installApprovedAzureFixture('));
+  assert.ok(text.indexOf('await waitForActivationDesignTime(') < text.indexOf('await establishDesignTime(entry,'));
   assert.ok(text.includes("await vscode.commands.executeCommand('azureLogicAppsStandard.runProjectConsistencyCheck');"));
   assert.ok(text.includes("'product-generated design-time settings before approved fixture binding'"));
   assert.ok(text.indexOf('await positiveScope.run(') < text.indexOf('await establishDesignTime(entry,'));
@@ -304,7 +305,7 @@ interface Phase {
   signal: null;
   diagnosticsError: string;
 }
-function testDirectThreePhaseEvidence(): void {
+function testDirectFourPhaseEvidence(): void {
   const runner = require(path.resolve(__dirname, '..', '..', '..', 'scripts', 'run-e2e-cli.js')) as {
     _test: {
       getDirectExpectedPhaseIds(label: string): string[];
@@ -312,7 +313,12 @@ function testDirectThreePhaseEvidence(): void {
     };
   };
   const api = runner._test;
-  const phases = ['runtimeDependencyBootstrap:bootstrap', 'statelessVariablesLifecycle:create', 'statelessVariablesLifecycle:reopen'];
+  const phases = [
+    'runtimeDependencyBootstrap:bootstrap',
+    'statelessVariablesLifecycle:create',
+    'statelessVariablesLifecycle:prepare',
+    'statelessVariablesLifecycle:reopen',
+  ];
   assert.deepStrictEqual(api.getDirectExpectedPhaseIds('statelessVariablesLifecycle'), phases);
   assert.deepStrictEqual(api.getDirectExpectedPhaseIds('workspaceLifecycle'), ['workspaceLifecycle']);
   const good = phases.map(
@@ -337,7 +343,7 @@ async function main(): Promise<void> {
   await testLatePositiveLaunchBeforeRestore();
   await testLateRecoveryLaunchAfterRejectedDeadline();
   await testFailedOrUnobservedNativeStart();
-  testDirectThreePhaseEvidence();
+  testDirectFourPhaseEvidence();
   console.log(
     `[statelessVariablesDebug.unit] ${checks} cold-start, resolving-late-start, ownership, quiescence and direct-evidence controls passed; no native credit`
   );

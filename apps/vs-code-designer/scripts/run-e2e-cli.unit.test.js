@@ -246,6 +246,7 @@ function testVscodeProfileLogsUseSuiteUserDataParentAndRedact() {
   const channelDir = path.join(logDir, 'output_logging_20260928T030211');
   fs.mkdirSync(channelDir, { recursive: true });
   fs.writeFileSync(path.join(channelDir, '11-Azure Logic Apps (Standard).log'), 'access_token=abc123\nchannel line\n');
+  fs.writeFileSync(path.join(logDir, 'ms-azuretools.vscode-azurelogicapps.log'), 'generic extension log\n');
 
   const env = {
     LA_E2E_CLI_USER_DATA_PARENT: userDataParent,
@@ -270,6 +271,11 @@ function testVscodeProfileLogsUseSuiteUserDataParentAndRedact() {
   const copiedText = fs.readFileSync(path.join(destination, 'logs', '20260928T030206', 'window1', 'exthost', 'exthost-log'), 'utf-8');
   assert.doesNotMatch(copiedText, /top-secret|abc123/);
   assert.match(copiedText, /<redacted>/);
+  assert.deepStrictEqual(
+    findAzureLogicAppsChannelLogs(logsRoot).map((file) => path.basename(file)),
+    ['11-Azure Logic Apps (Standard).log'],
+    'Required channel evidence must not accept a generic extension-host log'
+  );
 
   assert.throws(
     () =>

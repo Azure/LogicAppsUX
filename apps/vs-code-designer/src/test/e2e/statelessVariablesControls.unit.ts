@@ -6,6 +6,7 @@ import * as ts from 'typescript';
 import * as vm from 'vm';
 import { EventEmitter } from 'events';
 import type { CdpEvaluator, Point } from './cdpFormHelpers';
+import { findLogicAppsStandardOutputCommand, showLogicAppsStandardOutput } from './logicAppsOutputChannel';
 import {
   assertStatelessDefinition,
   assertStatelessResponse,
@@ -28,8 +29,51 @@ async function main(): Promise<void> {
   await testRecovery();
   testNativeWiring();
   await testNativeRowScopingAndTransport();
+  await testOutputChannelSelection();
   await testRegisteredRunner();
   console.log(`[statelessVariablesControls.unit] ${checks} local controls passed; no native GUI/runtime credit`);
+}
+
+async function testOutputChannelSelection(): Promise<void> {
+  const outputCommand = 'workbench.action.output.show.extension-output-ms-azuretools.vscode-azurelogicapps-#1-Azure Logic Apps (Standard)';
+  check(() => {
+    assert.strictEqual(findLogicAppsStandardOutputCommand(['workbench.action.output.toggleOutput', outputCommand]), outputCommand);
+    assert.strictEqual(findLogicAppsStandardOutputCommand(['workbench.action.output.toggleOutput']), undefined);
+    assert.throws(
+      () =>
+        findLogicAppsStandardOutputCommand([
+          outputCommand,
+          'workbench.action.output.show.extension-output-ms-azuretools.vscode-azurelogicapps-#2-Azure Logic Apps (Standard)',
+        ]),
+      /Ambiguous/
+    );
+  });
+  let attempts = 0;
+  const executed: string[] = [];
+  assert.strictEqual(
+    await showLogicAppsStandardOutput(
+      async () => (++attempts < 3 ? [] : [outputCommand]),
+      async (command) => {
+        executed.push(command);
+      },
+      Date.now() + 1000
+    ),
+    outputCommand
+  );
+  check(() => {
+    assert.strictEqual(attempts, 3, 'Output selection must tolerate asynchronous channel registration');
+    assert.deepStrictEqual(executed, [outputCommand], 'Only the exact product Output channel may be shown');
+  });
+  await assert.rejects(
+    () =>
+      showLogicAppsStandardOutput(
+        async () => [],
+        async () => undefined,
+        Date.now() - 1
+      ),
+    /was not registered/
+  );
+  checks++;
 }
 
 function check(action: () => void): void {
@@ -351,13 +395,11 @@ function testNativeWiring(): void {
     );
     assert.ok(!native.includes('Skip for now'), 'Stateless setup cannot silently choose a negative Azure connector fallback');
     assert.ok(native.includes('approvedAzureFixtureFromEnvironment(process.env)'));
-    assert.ok(native.includes('installApprovedAzureFixture(entry.appDir, azureFixture)'));
-    assert.ok(native.includes('fixtureLease.bindGeneratedDesignTime()'));
-    assert.ok(native.includes('onQuiescenceVerified:'), 'Verified cleanup must be independent of callback verification');
-    assert.ok(
-      native.includes('if (recoveryQuiescent && fixtureLease)'),
-      'Approved fixture restoration must follow owned recovery quiescence'
-    );
+    assert.ok(native.includes('const preparationLease = installApprovedAzureFixture(entry.appDir, azureFixture)'));
+    assert.ok(native.includes('preparationLease.bindGeneratedDesignTime()'));
+    assert.ok(native.includes('await waitForActivationDesignTime(positiveDeadline, signal)'));
+    assert.ok(native.includes('showLogicAppsStandardOutput('));
+    assert.ok(native.includes('lease?.restore();'), 'Stateless history settings restoration must remain in bounded recovery');
     assert.ok(shared.includes("creationCase.wfType ?? 'Stateful'"), 'Canonical old fixtures remain Stateful');
   });
   check(() => {
@@ -538,20 +580,25 @@ async function testRegisteredRunner(): Promise<void> {
   assert.ok(exported.runStatelessVariablesLifecycle);
   await exported.runStatelessVariablesLifecycle();
   check(() => {
-    assert.strictEqual(calls.length, 3, 'Real dependency bootstrap, creation and fresh reopen must be separate hosts');
+    assert.strictEqual(calls.length, 4, 'Bootstrap, creation, preparation and activation must use separate hosts');
     assert.deepStrictEqual(
       calls.map((call) => Array.from(call.args)),
       [
         ['--label', 'runtimeDependencyBootstrap'],
         ['--label', 'statelessVariablesLifecycle'],
         ['--label', 'statelessVariablesLifecycle'],
+        ['--label', 'statelessVariablesLifecycle'],
       ]
     );
     assert.strictEqual(calls[0].extraEnv.LA_E2E_CLI_EXPECT_EMPTY_RUNTIME_DEPENDENCIES_ROOT, '1');
     assert.strictEqual(calls[1].extraEnv.LA_E2E_CLI_STATELESS_VARIABLES_MODE, 'create');
-    assert.strictEqual(calls[2].extraEnv.LA_E2E_CLI_STATELESS_VARIABLES_MODE, 'run');
-    assert.strictEqual(calls[2].extraEnv.LA_E2E_CLI_STARTUP_RESOURCE, entry.workspaceFilePath);
+    assert.strictEqual(calls[2].extraEnv.LA_E2E_CLI_STATELESS_VARIABLES_MODE, 'prepare');
     assert.strictEqual(calls[2].extraEnv.LA_E2E_CLI_AUTO_START_DESIGN_TIME, '0');
+    assert.strictEqual(calls[3].extraEnv.LA_E2E_CLI_STATELESS_VARIABLES_MODE, 'run');
+    assert.strictEqual(calls[3].extraEnv.LA_E2E_CLI_STARTUP_RESOURCE, entry.workspaceFilePath);
+    assert.strictEqual(calls[3].extraEnv.LA_E2E_CLI_AUTO_START_DESIGN_TIME, '1');
+    assert.strictEqual(calls[3].extraEnv.LA_E2E_CLI_EXPECT_AZURE_LOGIC_APPS_CHANNEL, '1');
+    assert.strictEqual(calls[3].extraEnv.LA_E2E_CLI_PROFILE_PHASE, 'stateless-variables-activation');
     assert.deepStrictEqual(cleanupRoots, ['/unit/parent', '/unit/runtime-deps']);
     assert.ok(text.includes('--stateless-variables-lifecycle'));
   });
@@ -574,6 +621,7 @@ async function testRegisteredRunner(): Promise<void> {
     assert.deepStrictEqual(observed, [
       'runtimeDependencyBootstrap:bootstrap',
       'statelessVariablesLifecycle:create',
+      'statelessVariablesLifecycle:prepare',
       'statelessVariablesLifecycle:reopen',
     ]);
     assert.deepStrictEqual(observed, batch.SUITE_REGISTRY.statelessVariablesLifecycle.expectedPhases);
@@ -581,6 +629,22 @@ async function testRegisteredRunner(): Promise<void> {
     assert.strictEqual(batch.SUITE_REGISTRY.statelessVariablesLifecycle.requiresAzure, true, 'Approved WIF fixture must be forwarded');
     for (const platform of ['win32', 'linux']) {
       assert.strictEqual(batch.normalizeSuiteSelection('statelessVariablesLifecycle', { platform })[0].id, 'statelessVariablesLifecycle');
+    }
+    const context = batch.createSuiteContext({
+      batchRoot: fs.mkdtempSync(path.join(os.tmpdir(), 'stateless-batch-artifacts-')),
+      suite: batch.SUITE_REGISTRY.statelessVariablesLifecycle,
+      index: 0,
+      total: 1,
+    });
+    const external = {
+      LA_E2E_CLI_VSCODE_LOG_DIR: path.join(tempRoot, 'published-vscode-logs'),
+      LA_E2E_CLI_GENERATED_WORKSPACE_ARTIFACT_DIR: path.join(tempRoot, 'published-workspaces'),
+      LA_E2E_CLI_SCREENSHOT_DIR: path.join(tempRoot, 'published-screenshots'),
+      LA_E2E_CLI_LIFECYCLE_ARTIFACT_ROOT: path.join(tempRoot, 'published-lifecycle'),
+    };
+    const artifactEnv = batch.buildSuiteEnvironment(external, context);
+    for (const [key, value] of Object.entries(external)) {
+      assert.strictEqual(artifactEnv[key], value, `${key} must survive batch isolation so ADO can stage diagnostics`);
     }
     assert.ok(!batch.SUITE_ALIASES.linux.includes('statelessVariablesLifecycle'));
     assert.ok(!batch.SUITE_ALIASES.windows.includes('statelessVariablesLifecycle'), 'Canonical inventory must remain unchanged');
@@ -611,7 +675,7 @@ async function testRegisteredRunner(): Promise<void> {
   calls.length = 0;
   cleanupRoots.length = 0;
   await assert.rejects(() => exported.runStatelessVariablesLifecycle?.() ?? Promise.resolve(), /evidence is inadmissible/);
-  assert.strictEqual(calls.length, 3, 'Admission failure must be tested after all three successful native-shaped child stubs');
+  assert.strictEqual(calls.length, 4, 'Admission failure must be tested after all four successful native-shaped child stubs');
   assert.strictEqual(cleanupRoots.length, 2, 'Final evidence must follow both strict owned cleanup attempts');
   checks++;
   assert.ok(exported.main);

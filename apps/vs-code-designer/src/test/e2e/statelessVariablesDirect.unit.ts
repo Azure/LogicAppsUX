@@ -19,7 +19,7 @@ const runner = require(runnerPath) as {
   ): Promise<number>;
 };
 const suiteId = 'statelessVariablesLifecycle';
-const expected = ['runtimeDependencyBootstrap:bootstrap', `${suiteId}:create`, `${suiteId}:reopen`];
+const expected = ['runtimeDependencyBootstrap:bootstrap', `${suiteId}:create`, `${suiteId}:prepare`, `${suiteId}:reopen`];
 const unitAzureEnv = {
   LA_E2E_CLI_AZURE_SUBSCRIPTION_ID: '00000000-0000-4000-8000-000000000001',
   LA_E2E_CLI_AZURE_TENANT_ID: '00000000-0000-4000-8000-000000000002',
@@ -69,8 +69,13 @@ const operations = {
     assert.equal(env.LA_E2E_CLI_AZURE_SUBSCRIPTION_ID, ${JSON.stringify(unitAzureEnv.LA_E2E_CLI_AZURE_SUBSCRIPTION_ID)});
     assert.equal(env.LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME, ${JSON.stringify(unitAzureEnv.LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME)});
     assert.ok(env.LA_E2E_CLI_AZURE_ACCESS_TOKEN, 'Approved scoped token must reach the phase executor');
+    if (env.LA_E2E_CLI_STATELESS_VARIABLES_MODE === 'prepare') {
+      assert.equal(env.LA_E2E_CLI_AUTO_START_DESIGN_TIME, '0', 'Preparation must not compete with activation-time startup');
+    }
     if (env.LA_E2E_CLI_STATELESS_VARIABLES_MODE === 'run') {
       assert.equal(env.LA_E2E_CLI_MINIMAL_ACTIVATION, '0', 'Real debug startup must register Functions task-process listeners');
+      assert.equal(env.LA_E2E_CLI_AUTO_START_DESIGN_TIME, '1', 'Fresh activation host must exercise product auto-start');
+      assert.equal(env.LA_E2E_CLI_EXPECT_AZURE_LOGIC_APPS_CHANNEL, '1', 'Activation diagnostics require the product output channel');
     }
     const scratch = fs.mkdtempSync(path.join(process.env.TEMP, 'unit-phase-'));
     fs.writeFileSync(path.join(scratch, 'owned.txt'), 'unit-owned');
@@ -103,13 +108,13 @@ const operations = {
     const pending = JSON.parse(fs.readFileSync(env.LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH, 'utf8'));
     assert.equal(pending.complete, false, 'Leaf phase writer must not finalize the direct family');
     trace.pendingReceiptObservations++;
-    if (mode.startsWith('reordered') && index === 2) {
-      for (const item of [phases[1], phases[0], phases[2]]) record(item);
+    if (mode.startsWith('reordered') && index === 3) {
+      for (const item of [phases[1], phases[0], phases[2], phases[3]]) record(item);
     }
   }
 };
 api.runStatelessVariablesLifecycle(undefined, operations).then(() => {
-  assert.equal(invocations, 3);
+  assert.equal(invocations, 4);
   for (const owned of trace.roots) assert.equal(fs.existsSync(owned), false, 'Actual family cleanup must remove both roots');
   trace.actorFinishedAt = new Date().toISOString();
   if (mode === 'missing-file') fs.unlinkSync(process.env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH);
@@ -285,13 +290,13 @@ async function main(): Promise<void> {
       assert.strictEqual(ledger.verified, true);
       assert.strictEqual(ledger.transientCleanupVerified, true);
       assert.deepStrictEqual(terminal.observedPhaseIds, expected);
-      assert.strictEqual(trace.invocations, 3);
-      assert.strictEqual(trace.pendingReceiptObservations, 3);
+      assert.strictEqual(trace.invocations, 4);
+      assert.strictEqual(trace.pendingReceiptObservations, 4);
       trace.roots.forEach((owned) => assert.ok(!fs.existsSync(owned)));
     }
     if (mode === 'missing-zero-exit') {
       assert.ok(trace.orchestratorError, 'The actual orchestrator must reject incomplete phases before the forced-zero fault');
-      assert.strictEqual(trace.invocations, 3);
+      assert.strictEqual(trace.invocations, 4);
       trace.roots.forEach((owned) => assert.ok(!fs.existsSync(owned)), 'Reviewed zero-after-cleanup failure must be reproduced');
     }
     if (mode === 'retained-root') {
@@ -315,7 +320,7 @@ async function main(): Promise<void> {
   });
   assert.strictEqual(pipelineCode, 0, 'The actual ADO extension-directory contract must admit the prepared seed without a private alias');
   const pipelineTrace = JSON.parse(fs.readFileSync(process.env.UNIT_STATELESS_DIRECT_TRACE, 'utf8')) as Trace;
-  assert.strictEqual(pipelineTrace.invocations, 3);
+  assert.strictEqual(pipelineTrace.invocations, 4);
   assert.ok(fs.existsSync(seedDir), 'Admitting the prepared seed must not remove its original shared preparation directory');
 
   const missingCaseRoot = path.join(root, 'missing-seed');

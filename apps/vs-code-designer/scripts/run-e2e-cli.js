@@ -1247,15 +1247,33 @@ async function runStatelessVariablesLifecycle(visibleDelayMs, operations = { run
       visibleDelayMs,
       extraEnv: {
         ...sharedEnv,
+        LA_E2E_CLI_USER_DATA_SUFFIX: `stateless-variables-prepare-${Date.now()}`,
+        LA_E2E_CLI_PROFILE_PHASE: 'stateless-variables-prepare',
+        LA_E2E_CLI_STATELESS_VARIABLES_MODE: 'prepare',
+        LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'stateless-variables-prepare',
+        LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE: JSON.stringify(entry),
+        LA_E2E_CLI_STARTUP_RESOURCE: entry.workspaceFilePath,
+        LA_E2E_CLI_AUTO_START_DESIGN_TIME: '0',
+        LA_E2E_CLI_MINIMAL_ACTIVATION: '0',
+        LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '1',
+      },
+    });
+    await operations.runVscodeTest(['--label', 'statelessVariablesLifecycle'], {
+      visibleDelayMs,
+      extraEnv: {
+        ...sharedEnv,
         LA_E2E_CLI_USER_DATA_SUFFIX: `stateless-variables-run-${Date.now()}`,
+        LA_E2E_CLI_PROFILE_PHASE: 'stateless-variables-activation',
+        LA_E2E_CLI_EXPECT_AZURE_LOGIC_APPS_CHANNEL: '1',
+        LA_E2E_CLI_VSCODE_LOG_ARTIFACT_LABEL: 'statelessVariablesLifecycle',
         LA_E2E_CLI_STATELESS_VARIABLES_MODE: 'run',
         LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'stateless-variables-run',
         LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE: JSON.stringify(entry),
         LA_E2E_CLI_STARTUP_RESOURCE: entry.workspaceFilePath,
-        // The test first generates the independent design-time baseline and
-        // binds the approved Azure fixture. Background activation startup would
-        // race that sequence and retain a failed startup promise/process.
-        LA_E2E_CLI_AUTO_START_DESIGN_TIME: '0',
+        // This family proves the product's real activation-time startup path.
+        // The test exposes the product Output channel before its bounded
+        // consistency, fixture-binding and Designer assertions continue.
+        LA_E2E_CLI_AUTO_START_DESIGN_TIME: '1',
         // The real consumer requires registerFuncHostTaskEvents(). Command-only
         // activation returns before those task-process listeners are registered,
         // so pickFuncProcess can never observe the generated host task.
@@ -1284,7 +1302,7 @@ async function runStatelessVariablesLifecycle(visibleDelayMs, operations = { run
     getOwnedRootCleanupVerified([workspaceParent, dependencyRoot]) &&
     getDirectSuiteComplete('statelessVariablesLifecycle', readJsonLinesIfExists(phaseResultsPath));
   if (!complete) {
-    throw new AggregateError(failures, 'Stateless three-phase lifecycle evidence is inadmissible');
+    throw new AggregateError(failures, 'Stateless four-phase lifecycle evidence is inadmissible');
   }
 }
 
@@ -3417,14 +3435,7 @@ function findAzureLogicAppsChannelLogs(sourceLogsDir) {
   }
 
   return walkFiles(sourceLogsDir)
-    .filter((file) => {
-      const normalized = file.replace(/\\/g, '/');
-      return (
-        /Azure Logic Apps \(Standard\)\.log$/i.test(file) ||
-        normalized.includes('/ms-azuretools.vscode-azurelogicapps/') ||
-        /vscode-azurelogicapps/i.test(file)
-      );
-    })
+    .filter((file) => /^\d+-Azure Logic Apps \(Standard\)\.log$/i.test(path.basename(file)))
     .sort();
 }
 
@@ -4623,6 +4634,9 @@ function getSuitePhaseId(label, env) {
   }
   if (label === 'statelessVariablesLifecycle' && env.LA_E2E_CLI_STATELESS_VARIABLES_MODE === 'create') {
     return 'statelessVariablesLifecycle:create';
+  }
+  if (label === 'statelessVariablesLifecycle' && env.LA_E2E_CLI_STATELESS_VARIABLES_MODE === 'prepare') {
+    return 'statelessVariablesLifecycle:prepare';
   }
   if (label === 'statelessVariablesLifecycle' && env.LA_E2E_CLI_STATELESS_VARIABLES_MODE === 'run') {
     return 'statelessVariablesLifecycle:reopen';

@@ -89,6 +89,7 @@ const SUITE_REGISTRY = Object.freeze({
     expectedPhases: Object.freeze([
       'runtimeDependencyBootstrap:bootstrap',
       'statelessVariablesLifecycle:create',
+      'statelessVariablesLifecycle:prepare',
       'statelessVariablesLifecycle:reopen',
     ]),
   }),
@@ -315,10 +316,11 @@ function buildSuiteEnvironment(baseEnv, context, extraEnv = {}) {
     LA_E2E_CLI_USER_DATA_PARENT: context.userDataParent,
     LA_E2E_CLI_EXTENSIONS_DIR: context.extensionsDir,
     LA_E2E_CLI_WORKSPACE_ROOT: context.workspaceRoot,
-    LA_E2E_CLI_VSCODE_LOG_DIR: path.join(context.reportsRoot, 'vscode-logs'),
-    LA_E2E_CLI_GENERATED_WORKSPACE_ARTIFACT_DIR: path.join(context.reportsRoot, 'generated-workspaces'),
-    LA_E2E_CLI_SCREENSHOT_DIR: path.join(context.reportsRoot, 'screenshots'),
-    LA_E2E_CLI_LIFECYCLE_ARTIFACT_ROOT: context.lifecycleRoot,
+    LA_E2E_CLI_VSCODE_LOG_DIR: baseEnv.LA_E2E_CLI_VSCODE_LOG_DIR || path.join(context.reportsRoot, 'vscode-logs'),
+    LA_E2E_CLI_GENERATED_WORKSPACE_ARTIFACT_DIR:
+      baseEnv.LA_E2E_CLI_GENERATED_WORKSPACE_ARTIFACT_DIR || path.join(context.reportsRoot, 'generated-workspaces'),
+    LA_E2E_CLI_SCREENSHOT_DIR: baseEnv.LA_E2E_CLI_SCREENSHOT_DIR || path.join(context.reportsRoot, 'screenshots'),
+    LA_E2E_CLI_LIFECYCLE_ARTIFACT_ROOT: baseEnv.LA_E2E_CLI_LIFECYCLE_ARTIFACT_ROOT || context.lifecycleRoot,
     LA_E2E_CLI_CREATE_WORKSPACE_FIXTURE_MANIFEST: path.join(context.workspaceRoot, 'created-workspaces.json'),
     LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH: context.terminalResultPath,
     LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH: context.cleanupLedgerPath,
