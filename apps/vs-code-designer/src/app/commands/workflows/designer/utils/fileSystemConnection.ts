@@ -3,45 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import type { FileSystemConnectionInfo } from '@microsoft/vscode-extension-logic-apps';
-import { execFile } from 'child_process';
+import { spawn } from 'child_process';
 import { platform } from 'os';
 import * as path from 'path';
 import { localize } from '../../../../../localize';
-import { getExtensionAssetPath } from '../../../../utils/extensionAssets';
 
 interface FileSystemConnectionResult {
   connection?: FileSystemConnectionInfo;
   errorMessage?: string;
-}
-
-function getConnectionErrorMessage(status?: string): string {
-  switch (status) {
-    case '5':
-    case '86':
-    case '1326':
-    case '2202':
-      return localize(
-        'fileSystemConnectionAccessDenied',
-        'Access to the SMB share was denied. Check the credentials and share permissions.'
-      );
-    case '1219':
-      return localize(
-        'fileSystemConnectionCredentialConflict',
-        'A connection to this server already exists with different credentials. Disconnect it before trying again.'
-      );
-    case '53':
-    case '67':
-    case '1231':
-      return localize(
-        'fileSystemConnectionShareUnavailable',
-        'The SMB share could not be reached. Check the root folder and network connection.'
-      );
-    default:
-      return localize(
-        'fileSystemConnectionFailed',
-        'Unable to create the file system connection. Check the SMB share and credentials, and ensure Windows PowerShell is available.'
-      );
-  }
 }
 
 export function createFileSystemConnection(connectionInfo: FileSystemConnectionInfo): Promise<FileSystemConnectionResult> {
@@ -72,8 +41,14 @@ export function createFileSystemConnection(connectionInfo: FileSystemConnectionI
   }
 
   return new Promise((resolve) => {
-    // Raw process errors and output must never cross this boundary into webview telemetry.
-    const fail = () => resolve({ errorMessage: getConnectionErrorMessage() });
+    // Process errors can contain credentials in spawnargs; never forward them to webview telemetry.
+    const fail = () =>
+      resolve({
+        errorMessage: localize(
+          'fileSystemConnectionFailed',
+          'Unable to create the file system connection. Check the SMB share, credentials, network access, and existing connections.'
+        ),
+      });
 
     try {
       const systemRoot = process.env.SystemRoot;
@@ -82,41 +57,24 @@ export function createFileSystemConnection(connectionInfo: FileSystemConnectionI
         return;
       }
 
-      const child = execFile(
-        path.join(systemRoot, 'System32', 'WindowsPowerShell', 'v1.0', 'powershell.exe'),
-        [
-          '-NoLogo',
-          '-NoProfile',
-          '-NonInteractive',
-          '-ExecutionPolicy',
-          'Bypass',
-          '-File',
-          getExtensionAssetPath('scripts', 'connect-smb-share.ps1'),
-        ],
-        { encoding: 'utf8', shell: false, windowsHide: true, timeout: 30000, maxBuffer: 1024 },
-        (error, stdout) => {
-          if (error) {
-            fail();
-          } else if (stdout.trim() === '0') {
-            resolve({
-              connection: {
-                ...connectionInfo,
-                connectionParameters: { mountPath: rootFolder },
-              },
-            });
-          } else {
-            resolve({ errorMessage: getConnectionErrorMessage(stdout.trim()) });
-          }
+      const child = spawn(path.join(systemRoot, 'System32', 'net.exe'), ['use', rootFolder, password, `/user:${username}`], {
+        shell: false,
+        windowsHide: true,
+        stdio: 'ignore',
+      });
+      child.on('error', fail);
+      child.once('close', (code: number | null, signal: NodeJS.Signals | null) => {
+        if (code !== 0 || signal) {
+          fail();
+        } else {
+          resolve({
+            connection: {
+              ...connectionInfo,
+              connectionParameters: { mountPath: rootFolder },
+            },
+          });
         }
-      );
-
-      if (!child.stdin) {
-        fail();
-        return;
-      }
-
-      child.stdin.on('error', fail);
-      child.stdin.end(JSON.stringify({ rootFolder, username, password }), 'utf8');
+      });
     } catch {
       fail();
     }

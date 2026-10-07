@@ -62,9 +62,11 @@ For known issues, see [GitHub issues - Azure Logic Apps](https://github.com/Azur
 
 ## Local SMB file system connections
 
-Creating a local file system connection to an SMB share requires Windows and Windows PowerShell. The extension uses the Windows `WNetAddConnection2W` API through a bundled PowerShell helper. Credentials are passed through a private standard-input pipe, not command-line arguments, environment variables, or generated scripts. Connections do not assign a drive letter or save credentials for future logons.
+Creating a local file system connection to an SMB share requires Windows. The extension runs `net.exe use` directly, without a shell, and returns the existing UNC `mountPath` on success. No PowerShell adapter or additional runtime dependency is required.
 
-Failures return fixed messages for credential, network, or existing-connection problems. Raw process errors and provider diagnostics are not forwarded to the designer, logs, or telemetry. If a connection fails, check the share path, credentials, network access, and whether Windows PowerShell and `Add-Type` are permitted by your organization's policies.
+Process output is discarded, and failures return a fixed message. Raw process errors, command arguments, and diagnostic output are not forwarded to the designer, logs, or telemetry. If a connection fails, check the share path, credentials, network access, and any existing connections to the same server.
+
+Passwords remain in the `net.exe` process arguments and may be visible to local process inspection or process-creation auditing. This protects the extension's error-reporting path, not command-line credential exposure. Standard `net use` password parsing still applies, including the special `*` password-prompt syntax; the extension does not provide interactive input.
 
 ## Providing feedback
 
