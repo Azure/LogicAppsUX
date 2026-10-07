@@ -46,8 +46,7 @@ export const workbenchPromptDomScript = `(() => {
         title, text,
         rows: options('.monaco-list-row, [role="option"]'),
         buttons: options('a.monaco-button, button, .monaco-text-button'),
-        interactive: document.visibilityState === 'visible' &&
-          (!input || (!input.disabled && !input.readOnly)),
+        interactive: !input || (!input.disabled && !input.readOnly),
       };
     });
 })()`;

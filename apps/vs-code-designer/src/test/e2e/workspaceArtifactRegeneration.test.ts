@@ -13,6 +13,7 @@ import { type CdpConnection, connectToVsCodeWorkbenchCdp } from './cdpClient';
 import { clickPoint, type CdpEvaluator } from './cdpFormHelpers';
 import {
   assertRegenerationComplete,
+  assertRegenerationPromptObservation,
   assertRegenerationNonTargets,
   assertTemplateContracts,
   buildRegenerationPhaseResults,
@@ -123,16 +124,16 @@ async function readRegenerationWorkbench(cdp: CdpEvaluator, workspaceFile: strin
             return { text: text(button), ...(enabled && hit && (hit === button || button.contains(hit)) ? { point } : {}) };
           })
         }));
-      if (containers.some((container) => /DialogService:.*refused to show dialog/i.test(container.text))) {
-        throw new Error('Stock Code refused a required regeneration dialog');
-      }
+      const failure = containers.some((container) => /DialogService:.*refused to show dialog/i.test(container.text))
+        ? 'Stock Code refused a required regeneration dialog'
+        : undefined;
       const folders = Array.from(document.querySelectorAll(
         '.explorer-folders-view .monaco-list-row[aria-level="1"] .label-name, .explorer-viewlet .pane-header .title'
       )).filter(visible).map(text);
       const ready = document.readyState === 'complete' && Array.from(document.querySelectorAll('.monaco-workbench')).some(visible) &&
         document.title.toLowerCase().includes(${JSON.stringify(path.basename(workspaceFile, '.code-workspace').toLowerCase())}) &&
         folders.some((name) => name.toLowerCase() === ${JSON.stringify(path.basename(appDir).toLowerCase())});
-      return { containers, ready, timeOrigin: performance.timeOrigin };
+      return { containers, ready, timeOrigin: performance.timeOrigin, ...(failure ? { failure } : {}) };
     })()`
   );
 }
@@ -156,6 +157,7 @@ async function waitForStableFiles(
   while (Date.now() < phase.deadline) {
     const view = await readRegenerationWorkbench(cdp, workspaceFilePath, appDir);
     remainingRegenerationBudget(phase);
+    assertRegenerationPromptObservation(view);
     if (view.ready) {
       timeOrigin ??= view.timeOrigin;
       assert.strictEqual(view.timeOrigin, timeOrigin, 'No incidental workbench reload may replace the observed regeneration phase');
@@ -391,7 +393,28 @@ export async function runWorkspaceArtifactRegeneration(
       let prompts: { initializationYesCount: number; overwriteYesCount: number } | undefined;
       await runFreshRegenerationHost(context, handoff, env, result, entry.name, async (cdp, phase) => {
         const bounded = boundedConnection(cdp, phase);
-        const read = () => readRegenerationWorkbench(bounded, workspaceFilePath, appDir);
+        const observationsPath = path.join(context.root, `${entry.name}-prompt-observations.jsonl`);
+        const read = async () => {
+          const observation = await readRegenerationWorkbench(bounded, workspaceFilePath, appDir);
+          fs.appendFileSync(
+            observationsPath,
+            `${JSON.stringify({
+              observedAt: new Date().toISOString(),
+              ready: observation.ready,
+              timeOrigin: observation.timeOrigin,
+              missingTargets: entry.targets.filter((target) => !fs.existsSync(path.join(appDir, target))),
+              containers: observation.containers.map((container) => ({
+                kind: container.kind,
+                text: container.text,
+                buttons: container.buttons.map((button) => ({
+                  text: button.text,
+                  hitTestable: Boolean(button.point),
+                })),
+              })),
+            })}\n`
+          );
+          return observation;
+        };
         const healed = () => entry.targets.every((target) => fs.existsSync(path.join(appDir, target)));
         prompts = await confirmRegenerationPromptSequence({
           read,

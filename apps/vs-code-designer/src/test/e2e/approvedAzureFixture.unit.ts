@@ -198,6 +198,88 @@ async function main(): Promise<void> {
         }
       }
     });
+    check(() => {
+      const app = path.join(root, 'existing-design-time');
+      fs.mkdirSync(app);
+      const [appFile, designFile] = settingsFiles(app);
+      fs.writeFileSync(appFile, '{"Values":{}}');
+      const generatedBaseline = writeIndependentProducer(designFile, app);
+      const lease = installApprovedAzureFixture(app, fixture);
+      lease.assertBound();
+      assertApprovedAzureFixture(appFile, fixture);
+      assertApprovedAzureFixture(designFile, fixture);
+      lease.bindGeneratedDesignTime();
+      lease.restore();
+      assert.deepStrictEqual(read(designFile).Values, generatedBaseline, 'Existing design-time settings must restore their own baseline');
+    });
+    check(() => {
+      const app = path.join(root, 'existing-design-time-conflict');
+      fs.mkdirSync(app);
+      const [appFile, designFile] = settingsFiles(app);
+      fs.writeFileSync(appFile, '{"Values":{"unrelated":"root-before"}}');
+      fs.mkdirSync(path.dirname(designFile), { recursive: true });
+      fs.writeFileSync(designFile, '{"Values":{"WORKFLOWS_RESOURCE_GROUP_NAME":"foreign-target"}}');
+      const rootBefore = fs.readFileSync(appFile);
+      assert.throws(() => installApprovedAzureFixture(app, fixture), /Refusing to replace a foreign/);
+      assert.ok(fs.readFileSync(appFile).equals(rootBefore), 'A conflicting existing design-time file must not modify app-root settings');
+    });
+    check(() => {
+      const app = path.join(root, 'partial-design-time-write');
+      fs.mkdirSync(app);
+      const [appFile, designFile] = settingsFiles(app);
+      fs.writeFileSync(appFile, '{"Values":{"unrelated":"root-before"}}');
+      writeIndependentProducer(designFile, app);
+      const before = [fs.readFileSync(appFile), fs.readFileSync(designFile)];
+      let injected = false;
+      const partialWriter = ((file: fs.PathOrFileDescriptor, data: string | NodeJS.ArrayBufferView) => {
+        if (!injected && String(file) === designFile) {
+          injected = true;
+          const concurrent = read(appFile);
+          concurrent.Values.unrelated = 'root-concurrent';
+          fs.writeFileSync(appFile, JSON.stringify(concurrent));
+          fs.writeFileSync(file, '{"partial":');
+          throw new Error('unit partial write');
+        }
+        return fs.writeFileSync(file, data);
+      }) as typeof fs.writeFileSync;
+      assert.throws(() => installApprovedAzureFixture(app, fixture, partialWriter), /unit partial write/);
+      const rootAfter = read(appFile);
+      assert.strictEqual(rootAfter.Values.unrelated, 'root-concurrent', 'Rollback must preserve unrelated concurrent settings edits');
+      assert.strictEqual(rootAfter.Values.WORKFLOWS_SUBSCRIPTION_ID, undefined, 'Rollback must remove its owned fixture keys');
+      assert.ok(fs.readFileSync(designFile).equals(before[1]), 'The partially written in-progress file must return to its exact baseline');
+    });
+    check(() => {
+      const app = path.join(root, 'partial-design-time-restore');
+      fs.mkdirSync(app);
+      const [appFile, designFile] = settingsFiles(app);
+      fs.writeFileSync(appFile, '{"Values":{"unrelated":"root-before"}}');
+      writeIndependentProducer(designFile, app);
+      let restoring = false;
+      let injected = false;
+      const partialWriter = ((file: fs.PathOrFileDescriptor, data: string | NodeJS.ArrayBufferView) => {
+        if (restoring && !injected && String(file) === designFile) {
+          injected = true;
+          fs.writeFileSync(file, '{"partial":');
+          throw new Error('unit partial restore');
+        }
+        return fs.writeFileSync(file, data);
+      }) as typeof fs.writeFileSync;
+      const lease = installApprovedAzureFixture(app, fixture, partialWriter);
+      for (const file of [appFile, designFile]) {
+        const current = read(file);
+        current.Values.unrelated = `${path.basename(path.dirname(file))}-concurrent`;
+        fs.writeFileSync(file, JSON.stringify(current));
+      }
+      restoring = true;
+      assert.throws(() => lease.restore(), /unit partial restore/);
+      lease.assertBound();
+      for (const file of [appFile, designFile]) {
+        assert.match(String(read(file).Values.unrelated), /-concurrent$/, 'Failed restore rollback must preserve unrelated edits');
+      }
+      lease.restore();
+      assert.strictEqual(read(appFile).Values.WORKFLOWS_SUBSCRIPTION_ID, undefined);
+      assert.strictEqual(read(designFile).Values.WORKFLOWS_SUBSCRIPTION_ID, undefined);
+    });
     for (const index of [0, 1]) {
       check(() => {
         const app = path.join(root, `target-conflict-${index}`);

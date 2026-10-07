@@ -6,6 +6,7 @@ import * as path from 'path';
 import {
   assertOwnedRegenerationPath,
   assertRegenerationComplete,
+  assertRegenerationPromptObservation,
   assertRegenerationNonTargets,
   assertTemplateContracts,
   buildRegenerationPhaseResults,
@@ -235,6 +236,53 @@ async function main(): Promise<void> {
       (pinned['dotnetAcquisitionExtension.existingDotnetPath'] as Array<{ path: string }>).map((entry) => entry.path),
       Array(4).fill(fs.realpathSync(binaryPaths[1]))
     );
+    if (process.platform !== 'win32') {
+      const originalNodeFolder = path.dirname(path.dirname(nodeBinary));
+      const linkedNodeFolder = path.join(dependencyRoot, 'NodeJs', 'node-v-linked');
+      fs.symlinkSync(originalNodeFolder, linkedNodeFolder, 'dir');
+      await assert.rejects(() => pinRegenerationRuntimeSettings(binding, async () => undefined), /Expected one admitted Node\.js binary/);
+      fs.unlinkSync(linkedNodeFolder);
+
+      const internalTarget = path.join(dependencyRoot, 'NodeJs', 'internal-node-target');
+      fs.renameSync(originalNodeFolder, internalTarget);
+      fs.symlinkSync(internalTarget, originalNodeFolder, 'dir');
+      const internalPinned: Record<string, unknown> = {};
+      await pinRegenerationRuntimeSettings(binding, async (key, value) => {
+        internalPinned[key] = value;
+      });
+      assert.strictEqual(internalPinned['azureLogicAppsStandard.nodeJsBinaryPath'], fs.realpathSync(nodeBinary));
+      fs.unlinkSync(originalNodeFolder);
+      fs.renameSync(internalTarget, originalNodeFolder);
+
+      const outside = path.join(root, 'outside-node');
+      fs.mkdirSync(path.join(outside, 'bin'), { recursive: true });
+      fs.writeFileSync(path.join(outside, 'bin', 'node'), 'unit-outside-node');
+      fs.renameSync(originalNodeFolder, internalTarget);
+      fs.symlinkSync(outside, originalNodeFolder, 'dir');
+      await assert.rejects(
+        () => pinRegenerationRuntimeSettings(binding, async () => undefined),
+        /resolves outside the managed NodeJs root/
+      );
+      fs.unlinkSync(originalNodeFolder);
+      fs.renameSync(internalTarget, originalNodeFolder);
+
+      const nodeRoot = path.join(dependencyRoot, 'NodeJs');
+      const internalNodeRoot = path.join(dependencyRoot, 'NodeJs-internal');
+      fs.renameSync(nodeRoot, internalNodeRoot);
+      fs.symlinkSync(outside, nodeRoot, 'dir');
+      await assert.rejects(
+        () => pinRegenerationRuntimeSettings(binding, async () => undefined),
+        /NodeJs resolves outside the runtime root/
+      );
+      fs.unlinkSync(nodeRoot);
+      fs.renameSync(internalNodeRoot, nodeRoot);
+
+      fs.renameSync(originalNodeFolder, internalTarget);
+      fs.symlinkSync(path.join(dependencyRoot, 'NodeJs', 'missing-target'), originalNodeFolder, 'dir');
+      await assert.rejects(() => pinRegenerationRuntimeSettings(binding, async () => undefined), /Invalid admitted Node\.js entry/);
+      fs.unlinkSync(originalNodeFolder);
+      fs.renameSync(internalTarget, originalNodeFolder);
+    }
     const queried: string[] = [];
     const runtimeHandoff = captureRegenerationRuntimeSettings(binding, (key) => {
       queried.push(key);
@@ -424,6 +472,21 @@ async function main(): Promise<void> {
     }
     const clock = fakeClock();
     const observed: RegenerationPromptObservation = { containers: [prompt], ready: true, timeOrigin: 1 };
+    assert.throws(
+      () => assertRegenerationPromptObservation({ ...observed, failure: 'Stock Code refused a required regeneration dialog' }),
+      /refused a required regeneration dialog/
+    );
+    await assert.rejects(
+      requireRegenerationYes(
+        async () => ({ ...observed, failure: 'Stock Code refused a required regeneration dialog' }),
+        appDir,
+        regenerationDeadline('refused-dialog', 0),
+        () => false,
+        fakeClock()
+      ),
+      /refused a required regeneration dialog/
+    );
+    checks++;
     const selected = await requireRegenerationYes(
       async () => observed,
       appDir,

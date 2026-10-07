@@ -1,4 +1,5 @@
 import * as assert from 'assert';
+import { createHash } from 'crypto';
 import * as path from 'path';
 import type { CdpEvaluator } from './cdpFormHelpers';
 import { clickPoint } from './cdpFormHelpers';
@@ -77,6 +78,46 @@ export function assertAzureConnectorAccountTreePrerequisite(api: unknown, minima
   );
 }
 
+export function describeUnsupportedAzurePrompt(prompt: DetectedWorkbenchPrompt): string {
+  const knownActions = new Set([
+    'Cancel',
+    'Create new resource group',
+    'Grant permission',
+    'Loading...',
+    'Sign in',
+    'Sign in to Azure',
+    'Skip for now',
+  ]);
+  const safeLabel = (value: string) => {
+    const normalized = value.replace(/\s+/g, ' ').trim();
+    if (knownActions.has(normalized)) {
+      return normalized;
+    }
+    return `<target:${createHash('sha256').update(normalized).digest('hex').slice(0, 12)}>`;
+  };
+  const normalizedTitle = prompt.title.replace(/\s+/g, ' ').trim();
+  return JSON.stringify({
+    kind: prompt.kind,
+    title: knownActions.has(normalizedTitle)
+      ? normalizedTitle
+      : `<prompt:${createHash('sha256').update(normalizedTitle).digest('hex').slice(0, 12)}>`,
+    category: /sign in|account/i.test(normalizedTitle)
+      ? 'authentication'
+      : /create|resource group/i.test(normalizedTitle)
+        ? 'resource-creation'
+        : /grant|permission/i.test(normalizedTitle)
+          ? 'permission'
+          : /subscription/i.test(normalizedTitle)
+            ? 'subscription'
+            : 'unknown',
+    interactive: prompt.interactive,
+    rows: prompt.rows.map((row) => ({
+      label: safeLabel(row.label ?? row.text),
+      hitTestable: Boolean(row.point),
+    })),
+  });
+}
+
 export async function selectApprovedAzureConnectorFixturePrompt(
   cdp: CdpEvaluator,
   prompt: DetectedWorkbenchPrompt,
@@ -84,7 +125,6 @@ export async function selectApprovedAzureConnectorFixturePrompt(
   deadline: number,
   getSubscriptionName: () => Promise<string>
 ): Promise<boolean> {
-  assert.ok(prompt.kind === 'quickInput' && prompt.interactive, 'Approved fixture picker must be an interactive native QuickPick');
   const subscriptionTitles = [
     'Select subscription',
     'Select subscription.',
@@ -93,20 +133,23 @@ export async function selectApprovedAzureConnectorFixturePrompt(
     'Select an Azure subscription',
     'Select an Azure subscription.',
   ];
+  const supportedTitle = subscriptionTitles.includes(prompt.title) || prompt.title === 'Select a resource group for new resources.';
+  if (prompt.kind !== 'quickInput' || !prompt.interactive || !supportedTitle) {
+    throw new Error(
+      `Azure setup reached an unsupported or noninteractive prompt; existing approved WIF sign-in and target fixture are required: ${describeUnsupportedAzurePrompt(prompt)}`
+    );
+  }
   let expectedName: string;
   if (subscriptionTitles.includes(prompt.title)) {
     expectedName = await getSubscriptionName();
-  } else if (prompt.title === 'Select a resource group for new resources.') {
+  } else {
+    assert.strictEqual(prompt.title, 'Select a resource group for new resources.');
     assert.strictEqual(
       fixture.resourceGroupLocationVerified,
       true,
       'Existing RG identity/location must be read before its native selection'
     );
     expectedName = fixture.resourceGroupName;
-  } else {
-    throw new Error(
-      'Azure setup reached an unsupported auth/creation prompt; existing approved WIF sign-in and target fixture are required'
-    );
   }
   assert.ok(
     expectedName && !/create new|sign in|grant|permission/i.test(expectedName),

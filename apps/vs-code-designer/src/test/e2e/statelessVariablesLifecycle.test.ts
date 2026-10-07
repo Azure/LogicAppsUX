@@ -206,8 +206,9 @@ async function establishDesignTime(
 ): Promise<void> {
   await helpers.waitForGeneratedLogicAppFolder(entry);
   assertPhaseActive(deadline, signal);
-  // Cold wizard creation has app-root settings only; the real designer is the
-  // producer of workflow-designtime. Never await its output before this command.
+  // Reopened wizard workspaces can already contain workflow-designtime. The
+  // fixture lease binds that existing file before this command; cold creation
+  // still binds the independently generated file immediately afterward.
   await helpers.openDesignerAndCreateWorkflow(entry, { warmOnly: true, useAzureConnectors: true, azureFixture: fixture });
   assertPhaseActive(deadline, signal);
   await poll(
@@ -217,8 +218,8 @@ async function establishDesignTime(
     signal
   );
   assertApprovedAzureFixture(path.join(entry.appDir, 'local.settings.json'), fixture);
-  // Caller binds the real independently generated file through its own guarded
-  // per-file lease, then asserts both targets. Azure keys are not inherited here.
+  // Caller idempotently binds the generated file through its guarded per-file
+  // lease, then asserts both targets. Azure keys are not inherited here.
 }
 
 async function authorVariablesThroughDesigner(

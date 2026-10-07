@@ -29,6 +29,8 @@ const mocks = vi.hoisted(() => ({
   getWorkspaceLogicAppRoots: vi.fn(),
   isAutoStartDesignTimeNotificationSuppressed: vi.fn(),
   isManagedIdentityAuthNotificationSuppressed: vi.fn(),
+  registerEvent: vi.fn(),
+  runProjectConsistencyCheck: vi.fn(),
   scheduleStartAllDesignTimeApis: vi.fn(),
   startDesignTimeApi: vi.fn(),
 }));
@@ -56,7 +58,7 @@ vi.mock('@microsoft/vscode-azext-utils', () => ({
     no: 'No',
     dontWarnAgain: "Don't warn again",
   },
-  registerEvent: vi.fn(),
+  registerEvent: mocks.registerEvent,
   registerUIExtensionVariables: vi.fn(),
 }));
 
@@ -105,7 +107,7 @@ vi.mock('../app/commands/registerCommands', () => ({
 }));
 
 vi.mock('../app/commands/runProjectConsistencyCheck', () => ({
-  runProjectConsistencyCheck: vi.fn(),
+  runProjectConsistencyCheck: mocks.runProjectConsistencyCheck,
 }));
 
 vi.mock('../app/languageServer/languageServer', () => ({
@@ -360,6 +362,46 @@ describe('activate design-time startup', () => {
     expect(mocks.startDesignTimeApi).toHaveBeenCalledTimes(2);
     expect(mocks.startDesignTimeApi).toHaveBeenCalledWith(expect.any(Object), 'D:\\workspace\\app-one');
     expect(mocks.startDesignTimeApi).toHaveBeenCalledWith(expect.any(Object), 'D:\\workspace\\app-two');
+  });
+
+  it('catches up workspace consistency when the workspace loads before the folder listener is registered', async () => {
+    (vscode.workspace as any).workspaceFolders = undefined;
+    mocks.registerEvent.mockImplementation(() => {
+      (vscode.workspace as any).workspaceFolders = [{ uri: vscode.Uri.file('D:\\workspace\\app-one'), name: 'app-one', index: 0 }];
+    });
+
+    await activate(createExtensionContext());
+    await flushPromises();
+    await Promise.all(backgroundOperations);
+
+    expect(mocks.runProjectConsistencyCheck).toHaveBeenCalledTimes(1);
+  });
+
+  it('catches up workspace consistency when startup switches between nonempty workspaces before listener registration', async () => {
+    (vscode.workspace as any).workspaceFolders = [{ uri: vscode.Uri.file('D:\\workspace\\app-one'), name: 'app-one', index: 0 }];
+    mocks.registerEvent.mockImplementation(() => {
+      (vscode.workspace as any).workspaceFolders = [{ uri: vscode.Uri.file('D:\\workspace\\app-two'), name: 'app-two', index: 0 }];
+    });
+
+    await activate(createExtensionContext());
+    await flushPromises();
+    await Promise.all(backgroundOperations);
+
+    expect(mocks.runProjectConsistencyCheck).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not duplicate catch-up when the workspace listener observes the startup folder change', async () => {
+    (vscode.workspace as any).workspaceFolders = undefined;
+    mocks.registerEvent.mockImplementation((_eventName, _event, listener) => {
+      (vscode.workspace as any).workspaceFolders = [{ uri: vscode.Uri.file('D:\\workspace\\app-one'), name: 'app-one', index: 0 }];
+      return listener(createActionContext());
+    });
+
+    await activate(createExtensionContext());
+    await flushPromises();
+    await Promise.all(backgroundOperations);
+
+    expect(mocks.runProjectConsistencyCheck).toHaveBeenCalledTimes(1);
   });
 
   it('multi-root launch binds the attested Func through PATH after the REAL non-managed ensureBinaries branch overwrites a profile pin', async () => {

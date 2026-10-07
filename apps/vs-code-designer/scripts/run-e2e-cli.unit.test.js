@@ -10,6 +10,7 @@ const path = require('path');
 const {
   _test: {
     collectRuntimeDependencyDiagnostics,
+    collectRegenerationProfileLogs,
     cleanupDeferredWorkspaceAfterCancel,
     collectVscodeProfileLogs,
     canUseInteractiveMsnWeatherAzureTargetEnv,
@@ -73,6 +74,7 @@ const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
     testFailFastMissingInProc8Diagnostics();
     testCopiesAzureLogicAppsChannelLogs();
     testVscodeProfileLogsUseSuiteUserDataParentAndRedact();
+    testRegenerationProfileCollectionPreservesPrimaryFailure();
     testGeneratedWorkspaceSnapshotCopiesUsefulRedactedTree();
     testGeneratedWorkspaceSnapshotRedactsNestedSecrets();
     testGeneratedWorkspaceSnapshotOmitsUnsafeFormats();
@@ -277,6 +279,21 @@ function testVscodeProfileLogsUseSuiteUserDataParentAndRedact() {
       }),
     /Required VS Code profile logs were not found/
   );
+}
+
+function testRegenerationProfileCollectionPreservesPrimaryFailure() {
+  const missing = path.join(tempRoot, 'missing-regeneration-profile-root');
+  const missingErrors = collectRegenerationProfileLogs(missing, {});
+  assert.strictEqual(missingErrors.length, 1, 'Missing evidence roots must be reported without throwing over the primary failure');
+
+  const root = path.join(tempRoot, 'regeneration-profile-root');
+  fs.mkdirSync(root);
+  fs.writeFileSync(path.join(root, 'phase-profile.json'), JSON.stringify({ profile: path.join(root, 'profile'), phase: 'phase' }));
+  const collectorError = new Error('unit collector failure');
+  const collectorErrors = collectRegenerationProfileLogs(root, {}, () => {
+    throw collectorError;
+  });
+  assert.deepStrictEqual(collectorErrors, [collectorError], 'Profile collection failures must remain secondary diagnostics');
 }
 
 function testGeneratedWorkspaceSnapshotCopiesUsefulRedactedTree() {

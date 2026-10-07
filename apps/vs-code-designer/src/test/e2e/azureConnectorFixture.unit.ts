@@ -5,6 +5,7 @@ import * as path from 'path';
 import {
   assertApprovedAzureConnectorFixtureSaved,
   assertAzureConnectorAccountTreePrerequisite,
+  describeUnsupportedAzurePrompt,
   readApprovedAzureConnectorFixture,
   readApprovedAzureSubscriptionName,
   readApprovedExistingResourceGroup,
@@ -147,6 +148,7 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
     'auth-prompt',
     'creation-prompt',
     'external-focus',
+    'hidden-visibility',
   ]) {
     await control(`approved native fixture journey DOM ${fault} never creates or selects a foreign target`, async () => {
       const { JSDOM } = require('jsdom');
@@ -192,6 +194,9 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
         } else {
           window.document.querySelector('input')?.focus();
         }
+        if (fault === 'hidden-visibility') {
+          Object.defineProperty(window.document, 'visibilityState', { configurable: true, value: 'hidden' });
+        }
       };
       render();
       const geometry = (element: any) => {
@@ -231,7 +236,7 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
           handleAffirmativeConnectorWorkbenchPrompt(cdp, 'unitApp', deadline, (prompt) =>
             selectApprovedAzureConnectorFixturePrompt(cdp, prompt, fixture, deadline, async () => 'Unit Approved Subscription')
           );
-        if (fault === 'none' || fault === 'external-focus') {
+        if (fault === 'none' || fault === 'external-focus' || fault === 'hidden-visibility') {
           assert.strictEqual(await journey(), true);
           assert.deepStrictEqual(clicked, ['Use connectors from Azure', 'Unit Approved Subscription', 'unit-existing-group']);
         } else {
@@ -243,4 +248,73 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
       }
     });
   }
+  await control('unsupported Azure prompt diagnostics preserve actions but hash target identities', () => {
+    const diagnostic = describeUnsupportedAzurePrompt({
+      kind: 'quickInput',
+      title: 'Sign in to Azure',
+      text: 'Sign in to Azure',
+      interactive: true,
+      buttons: [],
+      rows: [
+        { text: 'Sign in', label: 'Sign in', point: { x: 1, y: 1 } },
+        { text: 'Unit Approved Subscription', label: 'Unit Approved Subscription', point: { x: 1, y: 2 } },
+      ],
+    });
+    assert.match(diagnostic, /Sign in to Azure/);
+    assert.match(diagnostic, /"label":"Sign in"/);
+    assert.doesNotMatch(diagnostic, /Unit Approved Subscription/);
+    assert.match(diagnostic, /<target:[0-9a-f]{12}>/);
+  });
+  await control('unsupported Azure prompt diagnostics redact dynamic action and account titles', () => {
+    const diagnostic = describeUnsupportedAzurePrompt({
+      kind: 'quickInput',
+      title: 'Sign in to Azure as unit@example.test',
+      text: 'Sign in to Azure as unit@example.test',
+      interactive: true,
+      buttons: [],
+      rows: [{ text: 'Create production-secret-subscription', label: 'Create production-secret-subscription', point: { x: 1, y: 1 } }],
+    });
+    assert.doesNotMatch(diagnostic, /unit@example\.test|production-secret-subscription/);
+    assert.match(diagnostic, /"category":"authentication"/);
+    assert.match(diagnostic, /<prompt:[0-9a-f]{12}>/);
+    assert.match(diagnostic, /<target:[0-9a-f]{12}>/);
+  });
+  await control('unsupported dialogs and noninteractive pickers retain safe diagnostic evidence', async () => {
+    const fixture = { ...readApprovedAzureConnectorFixture(env), location: 'eastus', resourceGroupLocationVerified: true };
+    const cdp = {
+      async evaluate() {
+        return [];
+      },
+      async send() {
+        throw new Error('Unsupported prompts must receive no input');
+      },
+    } as CdpEvaluator;
+    for (const prompt of [
+      {
+        kind: 'dialog' as const,
+        title: 'Sign in to Azure as unit@example.test',
+        text: 'Sign in to Azure as unit@example.test',
+        interactive: true,
+        buttons: [],
+        rows: [],
+      },
+      {
+        kind: 'quickInput' as const,
+        title: 'Select a subscription',
+        text: 'Select a subscription',
+        interactive: false,
+        buttons: [],
+        rows: [{ text: 'Unit Approved Subscription', label: 'Unit Approved Subscription' }],
+      },
+    ]) {
+      const error = await selectApprovedAzureConnectorFixturePrompt(cdp, prompt, fixture, Date.now() + 1000, async () => 'unused').then(
+        () => undefined,
+        (reason) => reason as Error
+      );
+      assert.ok(error);
+      assert.match(error.message, /unsupported or noninteractive prompt/);
+      assert.doesNotMatch(error.message, /unit@example\.test|Unit Approved Subscription/);
+      assert.match(error.message, /"kind":"(dialog|quickInput)"/);
+    }
+  });
 }

@@ -56,10 +56,10 @@ export function approvedAzureFixturePrompts(fixture: ApprovedAzureFixture): Work
   ];
 }
 
-function settings(file: string): { root: Record<string, unknown>; values: Record<string, unknown> } {
+function parseSettings(content: string | Buffer): { root: Record<string, unknown>; values: Record<string, unknown> } {
   let parsed: unknown;
   try {
-    parsed = JSON.parse(fs.readFileSync(file, 'utf8'));
+    parsed = JSON.parse(content.toString());
   } catch {
     throw new Error('Approved Azure fixture settings are missing or invalid JSON');
   }
@@ -67,6 +67,10 @@ function settings(file: string): { root: Record<string, unknown>; values: Record
   const root = parsed as Record<string, unknown>;
   assert.ok(root.Values && typeof root.Values === 'object' && !Array.isArray(root.Values), 'Approved fixture Values must be an object');
   return { root, values: root.Values as Record<string, unknown> };
+}
+
+function settings(file: string): { root: Record<string, unknown>; values: Record<string, unknown> } {
+  return parseSettings(fs.readFileSync(file));
 }
 
 export function assertApprovedAzureFixture(file: string, fixture: ApprovedAzureFixture): void {
@@ -94,7 +98,18 @@ interface BoundSettingsFile {
   previous: Map<TargetKey, { existed: boolean; value: unknown }>;
 }
 
-function bindSettingsFile(file: string, fixture: ApprovedAzureFixture): BoundSettingsFile {
+interface PreparedSettingsFile extends BoundSettingsFile {
+  before: Buffer;
+  content: string;
+}
+
+interface SettingsTransactionFile {
+  file: string;
+  before: Buffer;
+  content: string;
+}
+
+function prepareSettingsFile(file: string, fixture: ApprovedAzureFixture): PreparedSettingsFile {
   const before = fs.readFileSync(file);
   const original = settings(file);
   for (const [key, property] of targetKeys) {
@@ -113,16 +128,91 @@ function bindSettingsFile(file: string, fixture: ApprovedAzureFixture): BoundSet
     original.values[key] = property === 'managementBaseUrl' ? `${fixture[property]}/` : fixture[property];
   }
   assert.ok(fs.readFileSync(file).equals(before), 'Foreign settings edit before approved fixture install');
-  fs.writeFileSync(file, `${JSON.stringify(original.root, null, 2)}\n`);
-  return { file, previous };
+  return { file, previous, before, content: `${JSON.stringify(original.root, null, 2)}\n` };
+}
+
+function targetState(values: Record<string, unknown>, key: TargetKey): { existed: boolean; value: unknown } {
+  return { existed: Object.hasOwn(values, key), value: values[key] };
+}
+
+function applyTargetState(values: Record<string, unknown>, key: TargetKey, state: { existed: boolean; value: unknown }): void {
+  if (state.existed) {
+    values[key] = state.value;
+  } else {
+    delete values[key];
+  }
+}
+
+function rollbackCommittedSettingsFile(entry: SettingsTransactionFile): void {
+  const current = settings(entry.file);
+  const expected = parseSettings(entry.content);
+  const rollback = parseSettings(entry.before);
+  for (const [key] of targetKeys) {
+    assert.deepStrictEqual(
+      targetState(current.values, key),
+      targetState(expected.values, key),
+      `Foreign ${key} target edit during approved fixture transaction`
+    );
+    applyTargetState(current.values, key, targetState(rollback.values, key));
+  }
+  fs.writeFileSync(entry.file, `${JSON.stringify(current.root, null, 2)}\n`);
+}
+
+function commitSettingsTransaction(entries: SettingsTransactionFile[], writeFile: typeof fs.writeFileSync, preflightMessage: string): void {
+  for (const entry of entries) {
+    assert.ok(fs.readFileSync(entry.file).equals(entry.before), preflightMessage);
+  }
+  const committed: SettingsTransactionFile[] = [];
+  let inProgress: SettingsTransactionFile | undefined;
+  try {
+    for (const entry of entries) {
+      inProgress = entry;
+      writeFile(entry.file, entry.content);
+      committed.push(entry);
+      inProgress = undefined;
+    }
+  } catch (error) {
+    const rollbackErrors: unknown[] = [];
+    if (inProgress) {
+      try {
+        fs.writeFileSync(inProgress.file, inProgress.before);
+      } catch (rollbackError) {
+        rollbackErrors.push(rollbackError);
+      }
+    }
+    for (const entry of committed.reverse()) {
+      try {
+        rollbackCommittedSettingsFile(entry);
+      } catch (rollbackError) {
+        rollbackErrors.push(rollbackError);
+      }
+    }
+    if (rollbackErrors.length > 0) {
+      throw new AggregateError([error, ...rollbackErrors], 'Approved Azure fixture transaction and rollback failed');
+    }
+    throw error;
+  }
+}
+
+function commitSettingsFiles(prepared: PreparedSettingsFile[], writeFile: typeof fs.writeFileSync): BoundSettingsFile[] {
+  commitSettingsTransaction(prepared, writeFile, 'Foreign settings edit before approved fixture install');
+  return prepared.map(({ file, previous }) => ({ file, previous }));
 }
 
 /** Canonical MSN target preconfiguration, with per-key ownership so unrelated
  * product/foreign settings changes survive restoration. No token is written. */
-export function installApprovedAzureFixture(appDir: string, fixture: ApprovedAzureFixture): ApprovedAzureFixtureLease {
+export function installApprovedAzureFixture(
+  appDir: string,
+  fixture: ApprovedAzureFixture,
+  writeFile: typeof fs.writeFileSync = fs.writeFileSync
+): ApprovedAzureFixtureLease {
   const rootFile = path.join(appDir, 'local.settings.json');
   const designFile = path.join(appDir, 'workflow-designtime', 'local.settings.json');
-  const files: BoundSettingsFile[] = [bindSettingsFile(rootFile, fixture)];
+  const prepared = [prepareSettingsFile(rootFile, fixture)];
+  if (fs.existsSync(designFile)) {
+    prepared.push(prepareSettingsFile(designFile, fixture));
+  }
+  const files = commitSettingsFiles(prepared, writeFile);
   let restored = false;
   let generatedBindingFailed = false;
   const assertBound = () => {
@@ -140,7 +230,7 @@ export function installApprovedAzureFixture(appDir: string, fixture: ApprovedAzu
         // The product generator has an independent baseline; never substitute
         // the app-root snapshot or assert inherited Azure keys before binding.
         try {
-          files.push(bindSettingsFile(designFile, fixture));
+          files.push(...commitSettingsFiles([prepareSettingsFile(designFile, fixture)], writeFile));
         } catch (error) {
           generatedBindingFailed = true;
           throw error;
@@ -170,9 +260,7 @@ export function installApprovedAzureFixture(appDir: string, fixture: ApprovedAzu
       for (const update of updates) {
         assert.ok(fs.readFileSync(update.file).equals(update.before), 'Foreign settings edit before approved fixture restore');
       }
-      for (const update of updates) {
-        fs.writeFileSync(update.file, update.content);
-      }
+      commitSettingsTransaction(updates, writeFile, 'Foreign settings edit before approved fixture restore');
       restored = true;
     },
   };

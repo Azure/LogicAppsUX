@@ -2214,6 +2214,30 @@ function safeReadDirectory(directory) {
   }
 }
 
+function collectRegenerationProfileLogs(root, childEnv, collector = collectVscodeProfileLogs) {
+  const errors = [];
+  let profileFiles;
+  try {
+    profileFiles = fs.readdirSync(root).filter((name) => name.endsWith('-profile.json'));
+  } catch (error) {
+    return [error];
+  }
+  for (const file of profileFiles) {
+    try {
+      const profile = JSON.parse(fs.readFileSync(path.join(root, file), 'utf8'));
+      collector('workspaceRegeneration', {
+        ...childEnv,
+        LA_E2E_CLI_USER_DATA_DIR: profile.profile,
+        LA_E2E_CLI_PROFILE_PHASE: profile.phase,
+        LA_E2E_CLI_VSCODE_LOG_DIR: path.join(root, 'vscode-logs'),
+      });
+    } catch (error) {
+      errors.push(error);
+    }
+  }
+  return errors;
+}
+
 function runVscodeTest(args, options = {}) {
   const phaseStartedAt = new Date().toISOString();
   const label = getLabelArg(args);
@@ -2349,15 +2373,6 @@ function runVscodeTest(args, options = {}) {
             ...childEnv,
             LA_E2E_CLI_REMOTE_DEBUGGING_PORT: process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT,
           });
-          for (const file of fs.readdirSync(regenerationContext.root).filter((name) => name.endsWith('-profile.json'))) {
-            const profile = JSON.parse(fs.readFileSync(path.join(regenerationContext.root, file), 'utf8'));
-            collectVscodeProfileLogs('workspaceRegeneration', {
-              ...childEnv,
-              LA_E2E_CLI_USER_DATA_DIR: profile.profile,
-              LA_E2E_CLI_PROFILE_PHASE: profile.phase,
-              LA_E2E_CLI_VSCODE_LOG_DIR: path.join(regenerationContext.root, 'vscode-logs'),
-            });
-          }
           if (!regenerationResult.observationPassed) {
             throw new Error(`Required regeneration observation failed: ${regenerationResult.errors.join('; ')}`);
           }
@@ -2370,6 +2385,7 @@ function runVscodeTest(args, options = {}) {
           );
           console.error(`[workspace-regeneration] ${String(error)}`);
         } finally {
+          diagnosticsErrors.push(...collectRegenerationProfileLogs(regenerationContext.root, childEnv));
           if (previousScreenshotDir === undefined) {
             delete process.env.LA_E2E_CLI_SCREENSHOT_DIR;
           } else {
@@ -3539,6 +3555,7 @@ module.exports = {
     canUseInteractiveMsnWeatherAzureTargetEnv,
     captureGeneratedWorkspaceDiagnostics,
     collectVscodeProfileLogs,
+    collectRegenerationProfileLogs,
     collectRuntimeDependencyDiagnostics,
     collectGeneratedWorkspaceSnapshotSources,
     cleanupOwnedWorkspaceParent,

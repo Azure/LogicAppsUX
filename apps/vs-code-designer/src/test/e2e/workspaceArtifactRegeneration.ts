@@ -221,6 +221,11 @@ export interface RegenerationPromptObservation {
   containers: WorkbenchPromptContainer[];
   ready: boolean;
   timeOrigin: number;
+  failure?: string;
+}
+
+export function assertRegenerationPromptObservation(observation: RegenerationPromptObservation): void {
+  assert.ok(!observation.failure, observation.failure);
 }
 
 export async function requireRegenerationYes(
@@ -238,6 +243,7 @@ export async function requireRegenerationYes(
     remainingRegenerationBudget(phase, clock.now());
     const observation = await read();
     remainingRegenerationBudget(phase, clock.now());
+    assertRegenerationPromptObservation(observation);
     silentHealingObserved ||= filesHealed();
     const selection = selectRegenerationYes(observation.containers, appDir);
     if (observation.ready && selection.visible) {
@@ -273,6 +279,7 @@ export async function confirmRegenerationPromptSequence(options: {
   budget();
   const initial = await options.read();
   budget();
+  assertRegenerationPromptObservation(initial);
   const initialize = selectRegenerationYes(initial.containers, options.appDir);
   assert.ok(initial.ready && initialize.point, 'The same real initialization prompt must remain enabled immediately before Yes');
   assert.strictEqual(selectRegenerationOverwriteYes(initial.containers).visible, false, 'Overwrite must be a second distinct prompt');
@@ -284,6 +291,7 @@ export async function confirmRegenerationPromptSequence(options: {
   while (clock.now() < options.phase.deadline) {
     const view = await options.read();
     budget();
+    assertRegenerationPromptObservation(view);
     assert.strictEqual(view.timeOrigin, initial.timeOrigin, 'The overwrite confirmation must belong to the same workbench document');
     options.assertBeforeOverwrite();
     const overwrite = selectRegenerationOverwriteYes(view.containers);
@@ -293,6 +301,7 @@ export async function confirmRegenerationPromptSequence(options: {
       budget();
       const current = await options.read();
       budget();
+      assertRegenerationPromptObservation(current);
       assert.ok(current.ready && current.timeOrigin === initial.timeOrigin, 'Overwrite must retain the original app/workbench binding');
       const actual = selectRegenerationOverwriteYes(current.containers);
       assert.ok(actual.point, 'The same real overwrite modal must remain enabled immediately before Yes');

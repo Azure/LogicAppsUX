@@ -104,6 +104,9 @@ export async function activate(context: vscode.ExtensionContext) {
       return;
     }
 
+    const workspaceIdentity = () => JSON.stringify((vscode.workspace.workspaceFolders ?? []).map((folder) => folder.uri.toString()).sort());
+    const workspaceIdentityAtActivation = workspaceIdentity();
+    const workspaceWasReadyAtActivation = workspaceIdentityAtActivation !== '[]';
     if (
       vscode.workspace.workspaceFolders &&
       vscode.workspace.workspaceFolders.length > 0 &&
@@ -145,14 +148,26 @@ export async function activate(context: vscode.ExtensionContext) {
     }
 
     activateContext.telemetry.properties.lastStep = 'registerWorkspaceFolderChangeEvent';
+    let workspaceConsistencyIdentity = workspaceWasReadyAtActivation ? workspaceIdentityAtActivation : '';
     registerEvent(
       extensionEvent.onDidChangeWorkspaceFolders,
       vscode.workspace.onDidChangeWorkspaceFolders,
       async (actionContext: IActionContext) => {
+        workspaceConsistencyIdentity = workspaceIdentity();
         await updateLogicAppsContext();
         await runProjectConsistencyCheck(actionContext);
       }
     );
+    const workspaceIdentityAfterRegistration = workspaceIdentity();
+    if (workspaceIdentityAfterRegistration !== '[]' && workspaceConsistencyIdentity !== workspaceIdentityAfterRegistration) {
+      workspaceConsistencyIdentity = workspaceIdentityAfterRegistration;
+      activateContext.telemetry.properties.lastStep = 'catchUpWorkspaceConsistency';
+      await callWithTelemetryAndErrorHandling('activate.catchUpWorkspaceConsistency', async (actionContext: IActionContext) => {
+        actionContext.telemetry.properties.isActivationEvent = 'true';
+        await updateLogicAppsContext();
+        await runProjectConsistencyCheck(actionContext);
+      });
+    }
 
     activateContext.telemetry.properties.lastStep = 'promptEnableManagedIdentityAuth';
     callWithTelemetryAndErrorHandling('activate.enableLocalManagedIdentityAuth', async (actionContext: IActionContext) => {

@@ -54,6 +54,7 @@ export async function runHttpTimeoutEnvironmentControls(control: Control): Promi
     'duplicate-affirmative',
     'disabled',
     'unfocused',
+    'hidden-visibility',
     'loading',
     'covered',
     'expired',
@@ -108,6 +109,9 @@ export async function runHttpTimeoutEnvironmentControls(control: Control): Promi
         return [geometry(this)];
       };
       window.document.hasFocus = () => fault !== 'unfocused';
+      if (fault === 'hidden-visibility') {
+        Object.defineProperty(window.document, 'visibilityState', { configurable: true, value: 'hidden' });
+      }
       window.document.elementFromPoint = (_x: number, y: number) => {
         if (fault === 'covered') {
           return window.document.getElementById('cover');
@@ -139,7 +143,7 @@ export async function runHttpTimeoutEnvironmentControls(control: Control): Promi
       } as unknown as CdpConnection;
       try {
         const deadline = Date.now() + (fault === 'expired' ? -1 : fault === 'not-dismissed' ? 200 : 2000);
-        if (fault === 'none' || fault === 'unfocused') {
+        if (fault === 'none' || fault === 'unfocused' || fault === 'hidden-visibility') {
           let contextCreated: (context: { id: number }) => void = () => {};
           const designerCdp = {
             onExecutionContextCreated: (listener: typeof contextCreated) => {

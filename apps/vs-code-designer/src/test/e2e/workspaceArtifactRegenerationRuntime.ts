@@ -46,7 +46,13 @@ export function assertRegenerationRuntimeRoot(root: string | undefined, requireI
   const physical = fs.realpathSync(root);
   assert.ok(fs.statSync(physical).isDirectory(), 'Admitted runtime root must be an existing directory');
   for (const name of requireInstalled ? ['FuncCoreTools', 'DotNetSDK', 'NodeJs'] : []) {
-    assert.ok(fs.statSync(path.join(physical, name)).isDirectory(), 'Admitted managed dependency directories must already exist');
+    const dependency = path.join(physical, name);
+    assert.ok(fs.statSync(dependency).isDirectory(), 'Admitted managed dependency directories must already exist');
+    const relative = path.relative(physical, fs.realpathSync(dependency));
+    assert.ok(
+      relative && !relative.startsWith('..') && !path.isAbsolute(relative),
+      `Admitted managed dependency directory ${name} resolves outside the runtime root`
+    );
   }
   return physical;
 }
@@ -91,16 +97,49 @@ function managedRuntimeBinaries(root: string): { func: string; dotnet: string; n
   const func = fs.realpathSync(funcCandidates[0]);
   const dotnet = executable(path.join(root, 'DotNetSDK'), [process.platform === 'win32' ? 'dotnet.exe' : 'dotnet']);
   const nodeRoot = path.join(root, 'NodeJs');
-  const node =
-    process.platform === 'win32'
-      ? executable(nodeRoot, ['node.exe'])
-      : executable(
-          nodeRoot,
-          fs
-            .readdirSync(nodeRoot, { withFileTypes: true })
-            .filter((entry) => entry.isDirectory() && entry.name.startsWith('node-v'))
-            .map((entry) => path.join(entry.name, 'bin', 'node'))
-        );
+  let node: string;
+  if (process.platform === 'win32') {
+    node = executable(nodeRoot, ['node.exe']);
+  } else {
+    const observedEntries = fs.readdirSync(nodeRoot).sort();
+    const physicalNodeRoot = fs.realpathSync(nodeRoot);
+    const nodeRootRelative = path.relative(root, physicalNodeRoot);
+    assert.ok(
+      nodeRootRelative && !nodeRootRelative.startsWith('..') && !path.isAbsolute(nodeRootRelative),
+      'Admitted NodeJs directory resolves outside the runtime root'
+    );
+    const candidates: string[] = [];
+    for (const entry of observedEntries.filter((name) => name.startsWith('node-v'))) {
+      const entryPath = path.join(nodeRoot, entry);
+      let directory: boolean;
+      try {
+        directory = fs.statSync(entryPath).isDirectory();
+      } catch (error) {
+        throw new Error(`Invalid admitted Node.js entry ${entry}: ${String(error)}`);
+      }
+      if (!directory) {
+        continue;
+      }
+      const candidate = path.join(entryPath, 'bin', 'node');
+      if (!fs.existsSync(candidate)) {
+        continue;
+      }
+      const physical = fs.realpathSync(candidate);
+      const relative = path.relative(physicalNodeRoot, physical);
+      assert.ok(
+        relative && !relative.startsWith('..') && !path.isAbsolute(relative),
+        `Admitted Node.js entry ${entry} resolves outside the managed NodeJs root`
+      );
+      assert.ok(fs.statSync(physical).isFile(), 'Admitted Node.js binary must be a regular file');
+      candidates.push(physical);
+    }
+    assert.strictEqual(
+      candidates.length,
+      1,
+      `Expected one admitted Node.js binary; observed NodeJs entries=${JSON.stringify(observedEntries)}`
+    );
+    node = candidates[0];
+  }
   return { func, dotnet, node };
 }
 

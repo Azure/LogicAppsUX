@@ -75,8 +75,7 @@ export const httpTimeoutConnectorPromptDom = `(() => {
       });
     return {
       kind: 'quickInput', text: title, buttons: [], rows,
-      interactive: document.visibilityState === 'visible' &&
-        !!input && !input.disabled && !input.readOnly,
+      interactive: !!input && !input.disabled && !input.readOnly,
     };
   });
 })()`;
