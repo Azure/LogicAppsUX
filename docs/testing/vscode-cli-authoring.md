@@ -67,6 +67,12 @@ Affirmative wizard consumers must not use command-only minimal activation: the
 normal activation path initializes the real Azure Resources account tree used
 by `getSubscriptionPromptStep`. HTTP keeps bootstrap admission separate and
 uses normal activation with strict managed runtime validation for reopen.
+Quick-pick title/input readiness is not row readiness. The shared helper waits
+within the original deadline for the exact affirmative or approved existing
+target row to become uniquely hit-testable. A read-only input or an initially
+empty subscription/resource-group list is transitional, not permission to
+choose another row. Ambiguous rows, unsupported prompt transitions, creation,
+sign-in and foreign targets still fail closed.
 The selected existing RG's actual ARM location is the persistence oracle;
 template location defaults are not proof of the resource's location.
 
@@ -148,6 +154,13 @@ do not repeatedly click the first prompt while waiting for files.
 Racing a side-effecting operation against a timer does not stop that operation.
 Retain the underlying promise and propagate cancellation. Require quiescence
 before restoring settings or beginning a recovery restart.
+
+For the Stateless variables family, disable activation-time background
+design-time startup. The test first runs the real consistency command, waits
+for the independently generated design-time settings, binds the approved
+fixture, and then uses the explicit designer open as the startup authority.
+Background auto-start can otherwise race fixture binding and retain a failed
+startup promise/process for the rest of the host.
 
 Late debug sessions may be stopped only when they match the test's exact attempt
 marker and workspace identity. Never stop a foreign session or globally clear

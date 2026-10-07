@@ -1252,7 +1252,10 @@ async function runStatelessVariablesLifecycle(visibleDelayMs, operations = { run
         LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'stateless-variables-run',
         LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE: JSON.stringify(entry),
         LA_E2E_CLI_STARTUP_RESOURCE: entry.workspaceFilePath,
-        LA_E2E_CLI_AUTO_START_DESIGN_TIME: '1',
+        // The test first generates the independent design-time baseline and
+        // binds the approved Azure fixture. Background activation startup would
+        // race that sequence and retain a failed startup promise/process.
+        LA_E2E_CLI_AUTO_START_DESIGN_TIME: '0',
         // The real consumer requires registerFuncHostTaskEvents(). Command-only
         // activation returns before those task-process listeners are registered,
         // so pickFuncProcess can never observe the generated host task.

@@ -551,7 +551,7 @@ async function testRegisteredRunner(): Promise<void> {
     assert.strictEqual(calls[1].extraEnv.LA_E2E_CLI_STATELESS_VARIABLES_MODE, 'create');
     assert.strictEqual(calls[2].extraEnv.LA_E2E_CLI_STATELESS_VARIABLES_MODE, 'run');
     assert.strictEqual(calls[2].extraEnv.LA_E2E_CLI_STARTUP_RESOURCE, entry.workspaceFilePath);
-    assert.strictEqual(calls[2].extraEnv.LA_E2E_CLI_AUTO_START_DESIGN_TIME, '1');
+    assert.strictEqual(calls[2].extraEnv.LA_E2E_CLI_AUTO_START_DESIGN_TIME, '0');
     assert.deepStrictEqual(cleanupRoots, ['/unit/parent', '/unit/runtime-deps']);
     assert.ok(text.includes('--stateless-variables-lifecycle'));
   });

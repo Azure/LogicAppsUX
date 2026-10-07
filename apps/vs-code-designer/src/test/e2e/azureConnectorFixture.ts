@@ -134,9 +134,9 @@ export async function selectApprovedAzureConnectorFixturePrompt(
     'Select an Azure subscription.',
   ];
   const supportedTitle = subscriptionTitles.includes(prompt.title) || prompt.title === 'Select a resource group for new resources.';
-  if (prompt.kind !== 'quickInput' || !prompt.interactive || !supportedTitle) {
+  if (prompt.kind !== 'quickInput' || !supportedTitle) {
     throw new Error(
-      `Azure setup reached an unsupported or noninteractive prompt; existing approved WIF sign-in and target fixture are required: ${describeUnsupportedAzurePrompt(prompt)}`
+      `Azure setup reached an unsupported prompt; existing approved WIF sign-in and target fixture are required: ${describeUnsupportedAzurePrompt(prompt)}`
     );
   }
   let expectedName: string;
@@ -155,28 +155,44 @@ export async function selectApprovedAzureConnectorFixturePrompt(
     expectedName && !/create new|sign in|grant|permission/i.test(expectedName),
     'Never select cloud creation, sign-in or elevation actions'
   );
-  const matches = prompt.rows.filter((row) => (row.label ?? row.text) === expectedName);
-  assert.strictEqual(
-    matches.length,
-    1,
-    'Approved existing Azure target unavailable/ambiguous; do not select another target or create a resource'
-  );
+  const remaining = () => {
+    const value = deadline - Date.now();
+    assert.ok(value > 0, 'Approved existing Azure target unavailable before the original deadline');
+    return value;
+  };
   const sharedRule = approvedAzureFixturePrompts(fixture)[subscriptionTitles.includes(prompt.title) ? 0 : 1];
-  const selection = selectWorkbenchPromptOption(
-    [{ ...sharedRule, matchText: prompt.title, optionText: expectedName, exactRowLabel: true }],
-    [prompt]
-  );
-  assert.ok(selection.point, 'Approved existing target must be enabled and hit-testable');
-  assert.ok(Date.now() < deadline, 'Approved existing target observation deadline expired before native input');
+  let current = prompt;
+  let selection: ReturnType<typeof selectWorkbenchPromptOption>;
+  while (true) {
+    const matches = current.rows.filter((row) => (row.label ?? row.text) === expectedName);
+    assert.ok(matches.length <= 1, 'Approved existing Azure target is ambiguous; do not select another target or create a resource');
+    selection = selectWorkbenchPromptOption(
+      [{ ...sharedRule, matchText: prompt.title, optionText: expectedName, exactRowLabel: true }],
+      [current]
+    );
+    if (selection.point) {
+      assert.strictEqual(matches.length, 1, 'Approved existing Azure target selection must resolve exactly one row');
+      break;
+    }
+    await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining())));
+    const prompts = (await readWorkbenchPrompts(cdp, Math.min(3000, remaining()))).filter((value) => value.kind !== 'notification');
+    assert.strictEqual(prompts.length, 1, 'Approved Azure target prompt disappeared or became ambiguous before selection');
+    current = prompts[0];
+    if (current.kind !== 'quickInput' || current.title !== prompt.title) {
+      throw new Error(
+        `Azure setup changed to an unsupported prompt before the approved target was actionable: ${describeUnsupportedAzurePrompt(current)}`
+      );
+    }
+  }
+  remaining();
   await clickPoint(cdp, selection.point);
-  while (Date.now() < deadline) {
-    const next = (await readWorkbenchPrompts(cdp, Math.min(3000, deadline - Date.now()))).filter((value) => value.kind !== 'notification');
+  while (true) {
+    const next = (await readWorkbenchPrompts(cdp, Math.min(3000, remaining()))).filter((value) => value.kind !== 'notification');
     if (!next.length || next.every((value) => value.title !== prompt.title)) {
       return true;
     }
-    await new Promise((resolve) => setTimeout(resolve, Math.min(100, deadline - Date.now())));
+    await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining())));
   }
-  throw new Error('Approved Azure target selection did not advance within the original deadline');
 }
 
 export async function readApprovedAzureSubscriptionName(

@@ -246,6 +246,11 @@ preserves both files rather than partly restoring or overwriting them.
 Cold reopen starts the actual designer producer before awaiting generated
 design-time settings, inside the positive/recovery cleanup boundary. Side-effect
 operations receive cancellation signals and retain their underlying promises.
+The reopen profile disables activation-time background design-time startup.
+The test first runs the real consistency command, waits for the independently
+generated design-time settings, binds the approved fixture, and then uses the
+explicit designer open as the sole startup authority. This avoids a background
+host retaining a failed pre-fixture startup.
 Restoration cannot overlap an unquiesced producer or debug start. Debug cleanup
 uses only exact marked sessions and newly observed generated Functions task
 handles in the wizard-owned app, never global task/session or port cleanup.

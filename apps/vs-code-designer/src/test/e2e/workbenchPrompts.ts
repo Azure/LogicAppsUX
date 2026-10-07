@@ -73,12 +73,12 @@ export async function handleAffirmativeConnectorWorkbenchPrompt(
 ): Promise<boolean> {
   const read = () => readWorkbenchPrompts(cdp, Math.min(3000, remaining(deadline)));
   const blocking = (prompts: DetectedWorkbenchPrompt[]) => prompts.filter((prompt) => prompt.kind !== 'notification');
-  const prompts = blocking(await read());
+  let prompts = blocking(await read());
   if (!prompts.length) {
     return false;
   }
   assert.strictEqual(prompts.length, 1, 'Ambiguous workbench prompt during affirmative connector setup');
-  const prompt = prompts[0];
+  let prompt = prompts[0];
   if (isLoadingPrompt(prompt)) {
     return false;
   }
@@ -95,11 +95,25 @@ export async function handleAffirmativeConnectorWorkbenchPrompt(
   const affirmative =
     prompt.kind === 'quickInput' ? affirmativeAzureConnectorPrompt.optionText : affirmativeAzureConnectorPrompt.alternateOptionTexts?.[0];
   assert.ok(affirmative, 'Shared affirmative policy must declare the actual Yes alternative');
-  const options = prompt.kind === 'quickInput' ? prompt.rows : prompt.buttons;
-  assert.strictEqual(options.filter((option) => option.text === affirmative).length, 1, 'Missing/ambiguous affirmative connector option');
-  const selected = selectWorkbenchPromptOption([{ ...affirmativeAzureConnectorPrompt, matchText: title }], [prompt]);
+  let selected: ReturnType<typeof selectWorkbenchPromptOption>;
+  while (true) {
+    const options = prompt.kind === 'quickInput' ? prompt.rows : prompt.buttons;
+    const matches = options.filter(
+      (option) => option.text.replace(/\s+/g, ' ').trim().toLowerCase() === affirmative.replace(/\s+/g, ' ').trim().toLowerCase()
+    );
+    assert.ok(matches.length <= 1, 'Missing/ambiguous affirmative connector option');
+    selected = selectWorkbenchPromptOption([{ ...affirmativeAzureConnectorPrompt, matchText: title }], [prompt]);
+    if (selected.point) {
+      assert.strictEqual(matches.length, 1, 'Affirmative connector selection must resolve exactly one matching option');
+      break;
+    }
+    await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining(deadline))));
+    prompts = blocking(await read());
+    assert.strictEqual(prompts.length, 1, 'Affirmative connector prompt disappeared or became ambiguous before it was actionable');
+    prompt = prompts[0];
+    assert.ok(matchesConnector(prompt), 'Connector setup changed to another prompt before the affirmative option was actionable');
+  }
   assert.strictEqual(selected.targetText, affirmative, 'Never route connector setup to Skip, No, Cancel or a partial label');
-  assert.ok(selected.point, 'Affirmative connector option must be enabled and hit-testable');
   await clickPoint(cdp, selected.point);
   while (true) {
     remaining(deadline);

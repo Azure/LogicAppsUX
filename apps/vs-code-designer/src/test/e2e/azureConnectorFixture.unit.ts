@@ -150,6 +150,10 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
     'external-focus',
     'hidden-visibility',
     'readonly-connector-input',
+    'readonly-target-input',
+    'delayed-connector-row',
+    'delayed-subscription-rows',
+    'delayed-resource-group-rows',
     'loading-after-affirmative',
   ]) {
     await control(`approved native fixture journey DOM ${fault} never creates or selects a foreign target`, async () => {
@@ -160,6 +164,7 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
       const clicked: string[] = [];
       let stage = 0;
       let loadingReads = 0;
+      const stageReads = new Map<number, number>();
       const render = () => {
         const titles = [
           'Enable connectors in Azure for Logic App unitApp',
@@ -167,6 +172,11 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
           'Select a resource group for new resources.',
         ];
         const loadingAfterAffirmative = fault === 'loading-after-affirmative' && stage === 1 && loadingReads === 0;
+        const delayedRows =
+          ((fault === 'delayed-connector-row' && stage === 0) ||
+            (fault === 'delayed-subscription-rows' && stage === 1) ||
+            (fault === 'delayed-resource-group-rows' && stage === 2)) &&
+          (stageReads.get(stage) ?? 0) === 0;
         const title = loadingAfterAffirmative
           ? 'Loading...'
           : stage === 2 && fault === 'auth-prompt'
@@ -174,22 +184,23 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
             : stage === 2 && fault === 'creation-prompt'
               ? 'Enter the name of the new resource group'
               : titles[stage];
-        const rows = loadingAfterAffirmative
-          ? []
-          : stage === 0
-            ? ['Skip for now', 'Use connectors from Azure']
-            : stage === 1
-              ? [fault === 'wrong-subscription' ? 'Other Subscription' : 'Unit Approved Subscription']
-              : [
-                  '$(plus) Create new resource group',
-                  fault === 'missing-group' ? 'other-group' : fixture.resourceGroupName,
-                  ...(fault === 'duplicate-group' ? [fixture.resourceGroupName] : []),
-                ];
+        const rows =
+          loadingAfterAffirmative || delayedRows
+            ? []
+            : stage === 0
+              ? ['Skip for now', 'Use connectors from Azure']
+              : stage === 1
+                ? [fault === 'wrong-subscription' ? 'Other Subscription' : 'Unit Approved Subscription']
+                : [
+                    '$(plus) Create new resource group',
+                    fault === 'missing-group' ? 'other-group' : fixture.resourceGroupName,
+                    ...(fault === 'duplicate-group' ? [fixture.resourceGroupName] : []),
+                  ];
         window.document.body.innerHTML =
           stage > 2
             ? '<div class="react-flow">Ready</div>'
             : `<div class="quick-input-widget"><input placeholder="${title}" ${
-                stage === 0 && fault === 'readonly-connector-input' ? 'readonly' : ''
+                (stage === 0 && fault === 'readonly-connector-input') || (stage > 0 && fault === 'readonly-target-input') ? 'readonly' : ''
               }><div class="monaco-list" role="listbox">${rows
                 .map(
                   (text, index) =>
@@ -229,6 +240,15 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
             loadingReads++;
             render();
           }
+          if (
+            ((fault === 'delayed-connector-row' && stage === 0) ||
+              (fault === 'delayed-subscription-rows' && stage === 1) ||
+              (fault === 'delayed-resource-group-rows' && stage === 2)) &&
+            (stageReads.get(stage) ?? 0) === 0
+          ) {
+            stageReads.set(stage, 1);
+            render();
+          }
           return result;
         },
         async send(_method, params) {
@@ -254,6 +274,10 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
           fault === 'external-focus' ||
           fault === 'hidden-visibility' ||
           fault === 'readonly-connector-input' ||
+          fault === 'readonly-target-input' ||
+          fault === 'delayed-connector-row' ||
+          fault === 'delayed-subscription-rows' ||
+          fault === 'delayed-resource-group-rows' ||
           fault === 'loading-after-affirmative'
         ) {
           assert.strictEqual(await journey(), true);
@@ -298,7 +322,7 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
     assert.match(diagnostic, /<prompt:[0-9a-f]{12}>/);
     assert.match(diagnostic, /<target:[0-9a-f]{12}>/);
   });
-  await control('unsupported dialogs and noninteractive pickers retain safe diagnostic evidence', async () => {
+  await control('unsupported Azure prompts retain safe diagnostic evidence', async () => {
     const fixture = { ...readApprovedAzureConnectorFixture(env), location: 'eastus', resourceGroupLocationVerified: true };
     const cdp = {
       async evaluate() {
@@ -319,11 +343,11 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
       },
       {
         kind: 'quickInput' as const,
-        title: 'Select a subscription',
-        text: 'Select a subscription',
+        title: 'Enter the name of the new resource group',
+        text: 'Enter the name of the new resource group',
         interactive: false,
         buttons: [],
-        rows: [{ text: 'Unit Approved Subscription', label: 'Unit Approved Subscription' }],
+        rows: [],
       },
     ]) {
       const error = await selectApprovedAzureConnectorFixturePrompt(cdp, prompt, fixture, Date.now() + 1000, async () => 'unused').then(
@@ -331,9 +355,42 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
         (reason) => reason as Error
       );
       assert.ok(error);
-      assert.match(error.message, /unsupported or noninteractive prompt/);
-      assert.doesNotMatch(error.message, /unit@example\.test|Unit Approved Subscription/);
+      assert.match(error.message, /unsupported prompt/);
+      assert.doesNotMatch(error.message, /unit@example\.test/);
       assert.match(error.message, /"kind":"(dialog|quickInput)"/);
     }
+  });
+  await control('expired approved-target deadline sends no native input', async () => {
+    const fixture = { ...readApprovedAzureConnectorFixture(env), location: 'eastus', resourceGroupLocationVerified: true };
+    let inputSent = false;
+    const cdp = {
+      async evaluate() {
+        return [];
+      },
+      async send(method: string) {
+        if (method.startsWith('Input.')) {
+          inputSent = true;
+        }
+        return {};
+      },
+    } as CdpEvaluator;
+    await assert.rejects(
+      selectApprovedAzureConnectorFixturePrompt(
+        cdp,
+        {
+          kind: 'quickInput',
+          title: 'Select a resource group for new resources.',
+          text: 'Select a resource group for new resources.',
+          interactive: false,
+          buttons: [],
+          rows: [{ text: fixture.resourceGroupName, label: fixture.resourceGroupName, point: { x: 10, y: 10 } }],
+        },
+        fixture,
+        Date.now() - 1,
+        async () => 'unused'
+      ),
+      /original deadline/
+    );
+    assert.strictEqual(inputSent, false);
   });
 }
