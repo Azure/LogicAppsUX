@@ -191,8 +191,8 @@ export class DesignerCdpActions {
           const toolbarText = Array.from(document.querySelectorAll('[role="toolbar"] button, button'))
             .filter(visible)
             .map((button) => normalize(button.textContent || button.getAttribute('aria-label')).toLowerCase());
-          const hasToolbar = ['workflow', 'code', 'save'].every((label) => toolbarText.some((value) => value === label || value.includes(label)));
-          if (!hasToolbar) return false;
+          const hasSave = toolbarText.some((value) => value === 'save' || value.includes('save'));
+          if (!hasSave) return false;
           const addTrigger = Array.from(document.querySelectorAll(
             '[data-testid="card-Add a trigger"], [data-testid="card-Add trigger"], ' +
             '[data-automation-id="card-Add_a_trigger"], [data-automation-id="card-Add_trigger"], ' +
@@ -468,6 +468,7 @@ export class DesignerCdpActions {
     return this.evaluate(`(() => {
       ${visibleDom}
       if (Array.from(document.querySelectorAll(
+        '[data-automation-id="msla-search-box"], .msla-search-box, .msla-panel-root-Discovery, ' +
         '[data-automation-id="msla-search-box"] input, .msla-search-box input, input[placeholder*="Search"]'
       )).some(visible)) return 'panel';
       if (Array.from(document.querySelectorAll(

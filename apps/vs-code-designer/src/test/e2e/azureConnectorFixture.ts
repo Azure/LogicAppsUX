@@ -162,6 +162,7 @@ export async function selectApprovedAzureConnectorFixturePrompt(
   };
   const sharedRule = approvedAzureFixturePrompts(fixture)[subscriptionTitles.includes(prompt.title) ? 0 : 1];
   let current = prompt;
+  let filtered = false;
   let selection: ReturnType<typeof selectWorkbenchPromptOption>;
   while (true) {
     const matches = current.rows.filter((row) => (row.label ?? row.text) === expectedName);
@@ -174,6 +175,11 @@ export async function selectApprovedAzureConnectorFixturePrompt(
       assert.strictEqual(matches.length, 1, 'Approved existing Azure target selection must resolve exactly one row');
       break;
     }
+    if (!filtered && current.interactive && current.inputPoint) {
+      await clickPoint(cdp, current.inputPoint);
+      await replaceFocusedWorkbenchInput(cdp, expectedName);
+      filtered = true;
+    }
     await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining())));
     const prompts = (await readWorkbenchPrompts(cdp, Math.min(3000, remaining()))).filter((value) => value.kind !== 'notification');
     assert.strictEqual(prompts.length, 1, 'Approved Azure target prompt disappeared or became ambiguous before selection');
@@ -183,6 +189,41 @@ export async function selectApprovedAzureConnectorFixturePrompt(
         `Azure setup changed to an unsupported prompt before the approved target was actionable: ${describeUnsupportedAzurePrompt(current)}`
       );
     }
+  }
+
+  async function replaceFocusedWorkbenchInput(cdp: CdpEvaluator, value: string): Promise<void> {
+    await cdp.send('Input.dispatchKeyEvent', {
+      type: 'keyDown',
+      key: 'Control',
+      code: 'ControlLeft',
+      windowsVirtualKeyCode: 17,
+      nativeVirtualKeyCode: 17,
+      modifiers: 2,
+    });
+    await cdp.send('Input.dispatchKeyEvent', {
+      type: 'keyDown',
+      key: 'a',
+      code: 'KeyA',
+      windowsVirtualKeyCode: 65,
+      nativeVirtualKeyCode: 65,
+      modifiers: 2,
+    });
+    await cdp.send('Input.dispatchKeyEvent', {
+      type: 'keyUp',
+      key: 'a',
+      code: 'KeyA',
+      windowsVirtualKeyCode: 65,
+      nativeVirtualKeyCode: 65,
+      modifiers: 2,
+    });
+    await cdp.send('Input.dispatchKeyEvent', {
+      type: 'keyUp',
+      key: 'Control',
+      code: 'ControlLeft',
+      windowsVirtualKeyCode: 17,
+      nativeVirtualKeyCode: 17,
+    });
+    await cdp.send('Input.insertText', { text: value });
   }
   remaining();
   await clickPoint(cdp, selection.point);

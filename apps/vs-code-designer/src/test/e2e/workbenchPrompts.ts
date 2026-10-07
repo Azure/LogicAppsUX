@@ -6,6 +6,7 @@ import { affirmativeAzureConnectorPrompt, selectWorkbenchPromptOption, type Work
 export interface DetectedWorkbenchPrompt extends WorkbenchPromptContainer {
   title: string;
   interactive: boolean;
+  inputPoint?: { x: number; y: number };
 }
 
 // Shared stock workbench detection extracted from workspaceLifecycle's prompt
@@ -19,7 +20,6 @@ export const workbenchPromptDomScript = `(() => {
   };
   const normalize = text => (text || '').replace(/\\s+/g, ' ').trim();
   const pointFor = element => {
-    element.scrollIntoView({ block: 'center', inline: 'center' });
     const rect = element.getBoundingClientRect();
     const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
     const hit = document.elementFromPoint(point.x, point.y);
@@ -47,6 +47,7 @@ export const workbenchPromptDomScript = `(() => {
         rows: options('.monaco-list-row, [role="option"]'),
         buttons: options('a.monaco-button, button, .monaco-text-button'),
         interactive: !input || (!input.disabled && !input.readOnly),
+        inputPoint: input ? pointFor(input) : undefined,
       };
     });
 })()`;

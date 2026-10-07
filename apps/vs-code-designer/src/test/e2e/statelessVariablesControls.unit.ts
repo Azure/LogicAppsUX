@@ -6,7 +6,11 @@ import * as ts from 'typescript';
 import * as vm from 'vm';
 import { EventEmitter } from 'events';
 import type { CdpEvaluator, Point } from './cdpFormHelpers';
-import { findLogicAppsStandardOutputCommand, showLogicAppsStandardOutput } from './logicAppsOutputChannel';
+import {
+  findLogicAppsStandardOutputCommand,
+  selectLogicAppsStandardOutputThroughWorkbench,
+  showLogicAppsStandardOutput,
+} from './logicAppsOutputChannel';
 import {
   assertStatelessDefinition,
   assertStatelessResponse,
@@ -79,6 +83,44 @@ async function testOutputChannelSelection(): Promise<void> {
       ]),
       'workbench.action.output.show.extension-output-ms-azuretools.vscode-azurelogicapps-#3-Azure Logic Apps (Standard)'
     );
+  });
+  const fallbackExecutions: string[] = [];
+  assert.strictEqual(
+    await showLogicAppsStandardOutput(
+      async () => ['workbench.action.output.toggleOutput'],
+      async (command) => {
+        fallbackExecutions.push(command);
+      },
+      Date.now() + 1000,
+      async () => true
+    ),
+    'workbench UI channel "Azure Logic Apps (Standard)"'
+  );
+  check(() => {
+    assert.deepStrictEqual(fallbackExecutions, ['workbench.action.output.toggleOutput']);
+  });
+  let selected = false;
+  const nativeEvents: string[] = [];
+  const outputCdp: CdpEvaluator = {
+    async evaluate<T>() {
+      return {
+        trigger: { kind: 'select', point: { x: 40, y: 20 }, optionIndex: 2 },
+        selected,
+      } as T;
+    },
+    async send(method, params) {
+      nativeEvents.push(`${method}:${String(params?.type ?? params?.key ?? '')}`);
+      if (method === 'Input.dispatchKeyEvent' && params?.type === 'keyUp' && params?.key === 'Enter') {
+        selected = true;
+      }
+      return {};
+    },
+  };
+  assert.strictEqual(await selectLogicAppsStandardOutputThroughWorkbench(outputCdp, Date.now() + 1000), true);
+  check(() => {
+    assert.ok(nativeEvents.some((event) => event.startsWith('Input.dispatchMouseEvent:mousePressed')));
+    assert.strictEqual(nativeEvents.filter((event) => event === 'Input.dispatchKeyEvent:keyDown').length, 4);
+    assert.strictEqual(selected, true);
   });
   await assert.rejects(
     () =>

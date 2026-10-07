@@ -156,6 +156,7 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
     'delayed-resource-group-rows',
     'transient-resource-group-gap',
     'loading-after-affirmative',
+    'virtualized-resource-group',
   ]) {
     await control(`approved native fixture journey DOM ${fault} never creates or selects a foreign target`, async () => {
       const { JSDOM } = require('jsdom');
@@ -166,6 +167,7 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
       let stage = 0;
       let loadingReads = 0;
       let resourceGroupGapReads = 0;
+      let filterText = '';
       const stageReads = new Map<number, number>();
       const render = () => {
         const titles = [
@@ -193,15 +195,21 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
               ? ['Skip for now', 'Use connectors from Azure']
               : stage === 1
                 ? [fault === 'wrong-subscription' ? 'Other Subscription' : 'Unit Approved Subscription']
-                : [
-                    '$(plus) Create new resource group',
-                    fault === 'missing-group' ? 'other-group' : fixture.resourceGroupName,
-                    ...(fault === 'duplicate-group' ? [fixture.resourceGroupName] : []),
-                  ];
+                : fault === 'virtualized-resource-group' && !filterText
+                  ? [
+                      '$(plus) Create new resource group',
+                      ...Array.from({ length: 30 }, (_, index) => `foreign-group-${index}`),
+                      fixture.resourceGroupName,
+                    ]
+                  : [
+                      '$(plus) Create new resource group',
+                      fault === 'missing-group' ? 'other-group' : fixture.resourceGroupName,
+                      ...(fault === 'duplicate-group' ? [fixture.resourceGroupName] : []),
+                    ];
         window.document.body.innerHTML =
           stage > 2 || (fault === 'transient-resource-group-gap' && stage === 2 && resourceGroupGapReads === 0)
             ? '<div class="react-flow">Ready</div>'
-            : `<div class="quick-input-widget"><input placeholder="${title}" ${
+            : `<div class="quick-input-widget"><input placeholder="${title}" value="${filterText}" ${
                 (stage === 0 && fault === 'readonly-connector-input') || (stage > 0 && fault === 'readonly-target-input') ? 'readonly' : ''
               }><div class="monaco-list" role="listbox">${rows
                 .map(
@@ -234,7 +242,7 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
       window.HTMLElement.prototype.scrollIntoView = () => {};
       window.document.hasFocus = () => true;
       window.document.elementFromPoint = (_x: number, y: number) =>
-        window.document.querySelector(`[data-unit-row="${Math.round((y - 52.5) / 30)}"]`);
+        y < 40 ? window.document.querySelector('input') : window.document.querySelector(`[data-unit-row="${Math.round((y - 52.5) / 30)}"]`);
       const cdp: CdpEvaluator = {
         async evaluate<T>(_context: number | undefined, expression: string) {
           const result = window.eval(expression) as T;
@@ -257,9 +265,16 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
           }
           return result;
         },
-        async send(_method, params) {
+        async send(method, params) {
+          if (method === 'Input.insertText') {
+            filterText = String(params?.text ?? '');
+            render();
+          }
           if (params?.type === 'mouseReleased') {
             const row = window.document.elementFromPoint(Number(params.x), Number(params.y));
+            if (!row?.matches('.monaco-list-row')) {
+              return {};
+            }
             const text = row.textContent.trim();
             clicked.push(text);
             assert.ok(!/skip|cancel|create new|other|sign in/i.test(text), 'Never click a negative, creation or foreign target action');
@@ -285,7 +300,8 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
           fault === 'delayed-subscription-rows' ||
           fault === 'delayed-resource-group-rows' ||
           fault === 'transient-resource-group-gap' ||
-          fault === 'loading-after-affirmative'
+          fault === 'loading-after-affirmative' ||
+          fault === 'virtualized-resource-group'
         ) {
           assert.strictEqual(await journey(), true);
           assert.deepStrictEqual(clicked, ['Use connectors from Azure', 'Unit Approved Subscription', 'unit-existing-group']);

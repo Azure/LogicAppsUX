@@ -4,7 +4,7 @@ import * as http from 'http';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { randomUUID } from 'crypto';
-import { connectToVsCodeCdp, waitForWebviewFrameContext, type CdpConnection } from './cdpClient';
+import { connectToVsCodeCdp, connectToVsCodeWorkbenchCdp, waitForWebviewFrameContext, type CdpConnection } from './cdpClient';
 import { clickPoint, pressKey, type CdpEvaluator, type Point } from './cdpFormHelpers';
 import { DesignerCdpActions } from './designerCdpActions';
 import { assertNoDialogAttempts, installDialogGuard } from './dialogGuard';
@@ -36,7 +36,7 @@ import {
 } from './statelessVariablesControls';
 import { StatelessOwnedDebug, type StatelessDebugTask } from './statelessVariablesDebug';
 import { affirmativeAzureConnectorPrompt } from './workbenchPromptSelection';
-import { showLogicAppsStandardOutput } from './logicAppsOutputChannel';
+import { selectLogicAppsStandardOutputThroughWorkbench, showLogicAppsStandardOutput } from './logicAppsOutputChannel';
 
 const managementRoot = 'http://localhost:7071/runtime/webhooks/workflow/api/management';
 const apiVersion = '2019-10-01-edge-preview';
@@ -93,11 +93,19 @@ suite('Stateless variables lifecycle', () => {
       return;
     }
     assert.strictEqual(mode, 'run', 'Use the registered stateless-variables lifecycle runner');
-    const outputCommand = await showLogicAppsStandardOutput(
-      () => vscode.commands.getCommands(true),
-      (command, ...args) => vscode.commands.executeCommand(command, ...args),
-      Date.now() + 15_000
-    );
+    const outputDeadline = Date.now() + 30_000;
+    const outputWorkbench = await connectToVsCodeWorkbenchCdp();
+    let outputCommand: string;
+    try {
+      outputCommand = await showLogicAppsStandardOutput(
+        () => vscode.commands.getCommands(true),
+        (command, ...args) => vscode.commands.executeCommand(command, ...args),
+        outputDeadline,
+        () => selectLogicAppsStandardOutputThroughWorkbench(outputWorkbench, outputDeadline)
+      );
+    } finally {
+      outputWorkbench.dispose();
+    }
     console.log(`[stateless-variables] Showing activation-time design-time diagnostics through ${outputCommand}`);
 
     // No history is promised by default Stateless. First author and call it with
