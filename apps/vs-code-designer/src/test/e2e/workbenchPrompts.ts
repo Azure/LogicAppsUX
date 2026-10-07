@@ -115,12 +115,19 @@ export async function handleAffirmativeConnectorWorkbenchPrompt(
   }
   assert.strictEqual(selected.targetText, affirmative, 'Never route connector setup to Skip, No, Cancel or a partial label');
   await clickPoint(cdp, selected.point);
+  let emptySince: number | undefined;
   while (true) {
     remaining(deadline);
     const next = blocking(await read());
     if (!next.length) {
-      return true;
+      emptySince ??= Date.now();
+      if (Date.now() - emptySince >= 500) {
+        return true;
+      }
+      await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining(deadline))));
+      continue;
     }
+    emptySince = undefined;
     assert.strictEqual(next.length, 1, 'Ambiguous follow-up connector wizard');
     if (isLoadingPrompt(next[0])) {
       await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining(deadline))));

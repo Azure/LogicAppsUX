@@ -154,6 +154,7 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
     'delayed-connector-row',
     'delayed-subscription-rows',
     'delayed-resource-group-rows',
+    'transient-resource-group-gap',
     'loading-after-affirmative',
   ]) {
     await control(`approved native fixture journey DOM ${fault} never creates or selects a foreign target`, async () => {
@@ -164,6 +165,7 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
       const clicked: string[] = [];
       let stage = 0;
       let loadingReads = 0;
+      let resourceGroupGapReads = 0;
       const stageReads = new Map<number, number>();
       const render = () => {
         const titles = [
@@ -197,7 +199,7 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
                     ...(fault === 'duplicate-group' ? [fixture.resourceGroupName] : []),
                   ];
         window.document.body.innerHTML =
-          stage > 2
+          stage > 2 || (fault === 'transient-resource-group-gap' && stage === 2 && resourceGroupGapReads === 0)
             ? '<div class="react-flow">Ready</div>'
             : `<div class="quick-input-widget"><input placeholder="${title}" ${
                 (stage === 0 && fault === 'readonly-connector-input') || (stage > 0 && fault === 'readonly-target-input') ? 'readonly' : ''
@@ -249,6 +251,10 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
             stageReads.set(stage, 1);
             render();
           }
+          if (fault === 'transient-resource-group-gap' && stage === 2 && resourceGroupGapReads === 0) {
+            resourceGroupGapReads++;
+            render();
+          }
           return result;
         },
         async send(_method, params) {
@@ -278,6 +284,7 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
           fault === 'delayed-connector-row' ||
           fault === 'delayed-subscription-rows' ||
           fault === 'delayed-resource-group-rows' ||
+          fault === 'transient-resource-group-gap' ||
           fault === 'loading-after-affirmative'
         ) {
           assert.strictEqual(await journey(), true);

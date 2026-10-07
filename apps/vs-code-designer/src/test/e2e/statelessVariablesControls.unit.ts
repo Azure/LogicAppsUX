@@ -53,7 +53,7 @@ async function testOutputChannelSelection(): Promise<void> {
   const executed: Array<{ command: string; args: unknown[] }> = [];
   assert.strictEqual(
     await showLogicAppsStandardOutput(
-      async () => (++attempts < 3 ? [] : [outputCommand]),
+      async () => (++attempts < 3 ? ['workbench.action.output.toggleOutput'] : ['workbench.action.output.toggleOutput', outputCommand]),
       async (command, ...args) => {
         executed.push({ command, args });
       },
@@ -63,7 +63,14 @@ async function testOutputChannelSelection(): Promise<void> {
   );
   check(() => {
     assert.strictEqual(attempts, 3, 'Output selection must tolerate asynchronous channel registration');
-    assert.deepStrictEqual(executed, [{ command: outputCommand, args: [] }], 'Only the exact product Output channel may be shown');
+    assert.deepStrictEqual(
+      executed,
+      [
+        { command: 'workbench.action.output.toggleOutput', args: [] },
+        { command: outputCommand, args: [] },
+      ],
+      'Output must be opened before selecting the exact product channel'
+    );
   });
   check(() => {
     assert.strictEqual(

@@ -131,7 +131,9 @@ suite('HTTP timeout Compose original authoring clause', () => {
         const driver = new HttpTimeoutComposeDriver(cdp, contextId, deadline, assertActive);
         assertApprovedAzureConnectorFixtureSaved(entry.appDir, azureFixture);
         const owner = await driver.context();
-        await driver.click('[data-testid="card-Add a trigger"], [data-automation-id="card-Add_a_trigger"], [aria-label="Add a trigger"]');
+        await driver.click(
+          '[data-testid="card-Add a trigger"], [data-testid="card-Add trigger"], [data-automation-id="card-Add_a_trigger"], [data-automation-id="card-Add_trigger"], [aria-label="Add a trigger"], [aria-label="Add trigger"]'
+        );
         const requestTitles = ['When an HTTP request is received', 'When a HTTP request is received'];
         await driver.discover('Request', requestTitles);
         await driver.waitNode(requestTitles);
