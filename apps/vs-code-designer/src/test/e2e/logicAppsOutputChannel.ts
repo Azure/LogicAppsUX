@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import { clickPoint, pressKey, type CdpEvaluator, type Point } from './cdpFormHelpers';
+import { clickPoint, type CdpEvaluator, type Point } from './cdpFormHelpers';
 
 const logicAppsExtensionId = 'ms-azuretools.vscode-azurelogicapps';
 const logicAppsStandardOutputLabel = 'Azure Logic Apps (Standard)';
@@ -61,14 +61,16 @@ export async function selectLogicAppsStandardOutputThroughWorkbench(cdp: CdpEval
   if (!trigger.trigger) {
     return false;
   }
-  await clickPoint(cdp, trigger.trigger.point);
   if (trigger.trigger.kind === 'select') {
-    await pressKey(cdp, 'Home', undefined, 36);
-    for (let index = 0; index < trigger.trigger.optionIndex; index++) {
-      await pressKey(cdp, 'ArrowDown', undefined, 40);
-    }
-    await pressKey(cdp, 'Enter', undefined, 13);
+    const result = await selectExactOutputOption(cdp);
+    assert.ok(
+      result.ok,
+      `${logicAppsStandardOutputLabel} could not be selected through the exact Output select. Selected=${result.selectedText} candidates=${JSON.stringify(
+        result.candidates
+      )}`
+    );
   } else {
+    await clickPoint(cdp, trigger.trigger.point);
     const option = await pollWorkbenchOutputState(cdp, deadline, (state) => state.option);
     assert.ok(option.option, `${logicAppsStandardOutputLabel} was not exposed by the Output channel picker`);
     await clickPoint(cdp, option.option);
@@ -83,6 +85,53 @@ interface WorkbenchOutputState {
   trigger?: { kind: 'select' | 'picker'; point: Point; optionIndex: number };
   option?: Point;
   selected: boolean;
+}
+
+interface OutputSelectResult {
+  ok: boolean;
+  selectedText?: string;
+  candidates: Array<{ selectedText: string; options: string[] }>;
+}
+
+function selectExactOutputOption(cdp: CdpEvaluator): Promise<OutputSelectResult> {
+  return cdp.evaluate(
+    undefined,
+    `(() => {
+      const expected = ${JSON.stringify(logicAppsStandardOutputLabel)};
+      const normalize = (text) => (text || '').replace(/\\s+/g, ' ').trim();
+      const visible = (element) => {
+        if (!(element instanceof HTMLElement)) return false;
+        const rect = element.getBoundingClientRect();
+        const style = getComputedStyle(element);
+        return rect.width > 0 && rect.height > 0 && style.display !== 'none' && style.visibility !== 'hidden';
+      };
+      const selects = Array.from(document.querySelectorAll('select')).filter(visible);
+      const candidates = selects.map((select) => ({
+        selectedText: normalize(select.selectedOptions[0]?.textContent),
+        options: Array.from(select.options).map((option) => normalize(option.textContent)).filter(Boolean),
+      }));
+      const select = selects.find((candidate) =>
+        Array.from(candidate.options).some((option) => normalize(option.textContent) === expected)
+      );
+      if (!(select instanceof HTMLSelectElement)) {
+        return { ok: false, candidates };
+      }
+      const option = Array.from(select.options).find((candidate) => normalize(candidate.textContent) === expected);
+      if (!option) {
+        return { ok: false, candidates };
+      }
+      select.focus();
+      const valueSetter = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value')?.set;
+      valueSetter?.call(select, option.value);
+      if (select.selectedIndex !== option.index) {
+        select.selectedIndex = option.index;
+      }
+      select.dispatchEvent(new Event('input', { bubbles: true }));
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+      const selectedText = normalize(select.selectedOptions[0]?.textContent);
+      return { ok: selectedText === expected, selectedText, candidates };
+    })()`
+  );
 }
 
 async function pollWorkbenchOutputState<T>(

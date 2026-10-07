@@ -6,7 +6,7 @@ import * as vscode from 'vscode';
 import { randomUUID } from 'crypto';
 import { connectToVsCodeCdp, connectToVsCodeWorkbenchCdp, waitForWebviewFrameContext, type CdpConnection } from './cdpClient';
 import { clickPoint, pressKey, type CdpEvaluator, type Point } from './cdpFormHelpers';
-import { DesignerCdpActions } from './designerCdpActions';
+import { type DesignerCdpActions, ProvenDesignerCdpActions } from './designerCdpActions';
 import { assertNoDialogAttempts, installDialogGuard } from './dialogGuard';
 import { installFailureScreenshotHook } from './screenshot';
 import {
@@ -311,11 +311,13 @@ async function authorVariablesThroughDesigner(
   try {
     assertPhaseActive(deadline, signal);
     const context = await waitForWebviewFrameContext(cdp, {
-      allTextIncludes: ['Workflow', 'Code', 'Save'],
+      allTextIncludes: ['Save'],
       description: 'visible stateless designer',
+      requiredSelector:
+        '[data-testid="card-Add a trigger"], [data-testid="card-Add trigger"], [data-automation-id="card-Add_a_trigger"], [data-automation-id="card-Add_trigger"], [aria-label="Add a trigger"], [aria-label="Add trigger"]',
       timeoutMs: remainingMs(deadline, 90_000),
     });
-    const designer = new DesignerCdpActions(cdp, context, deadline, () => assertPhaseActive(deadline, signal));
+    const designer = new ProvenDesignerCdpActions(cdp, context, deadline, () => assertPhaseActive(deadline, signal));
     await designer.waitForDesignerReady();
     await designer.addRequestTrigger();
     await addAction(designer, 'Initialize variables', ['initialize variable']);

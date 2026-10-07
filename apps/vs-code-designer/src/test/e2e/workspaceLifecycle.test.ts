@@ -17,7 +17,13 @@ import {
 } from './cdpClient';
 import { azureConnectionStatusDomScript, waitForAzureConnectedAction } from './azureConnectionStatus';
 import { closeCopilotChatIfVisible } from './copilotChat';
-import { DesignerCdpActions, requestTriggerTitles as sharedRequestTriggerTitles } from './designerCdpActions';
+import {
+  DesignerCdpActions,
+  type DesignerActionProfile,
+  MsnDesignerCdpActions,
+  requestTriggerTitles as sharedRequestTriggerTitles,
+  resolveDesignerActionProfile,
+} from './designerCdpActions';
 import {
   assertNextButtonEnabled,
   clickPoint,
@@ -100,6 +106,11 @@ const azuritePorts = [10000, 10001, 10002];
 function getDesignerActions(cdp: CdpEvaluator, contextId: number, timeoutMs = 120_000): DesignerCdpActions {
   return new DesignerCdpActions(cdp, contextId, Date.now() + timeoutMs);
 }
+
+function getMsnDesignerActions(cdp: CdpEvaluator, contextId: number): MsnDesignerCdpActions {
+  return new MsnDesignerCdpActions(cdp, contextId);
+}
+
 const msnWeatherAzureTargetEnvKeys = [
   'WORKFLOWS_SUBSCRIPTION_ID',
   'WORKFLOWS_RESOURCE_GROUP_NAME',
@@ -1012,13 +1023,20 @@ async function waitForGeneratedLogicAppFolder(createdWorkspace: CreatedWorkspace
 
 async function openDesignerAndCreateWorkflow(
   createdWorkspace: CreatedWorkspace,
-  options: { includeMsnWeather?: boolean; useAzureConnectors?: boolean; warmOnly?: boolean; azureFixture?: ApprovedAzureFixture } = {}
+  options: {
+    includeMsnWeather?: boolean;
+    useAzureConnectors?: boolean;
+    warmOnly?: boolean;
+    azureFixture?: ApprovedAzureFixture;
+    actionProfile?: DesignerActionProfile;
+  } = {}
 ): Promise<void> {
   console.log(
     `[workspace-lifecycle] ${createdWorkspace.label}: openDesignerAndCreateWorkflow start ${JSON.stringify({
       includeMsnWeather: options.includeMsnWeather === true,
       useAzureConnectors: options.useAzureConnectors === true,
       warmOnly: options.warmOnly === true,
+      actionProfile: options.actionProfile,
       workflowJsonPath: createdWorkspace.workflowJsonPath,
       appDir: createdWorkspace.appDir,
     })}`
@@ -1101,7 +1119,16 @@ async function openDesignerAndCreateWorkflow(
       timeoutMs: 180000,
     });
     console.log(`[workspace-lifecycle] ${createdWorkspace.label}: designer webview DOM context=${contextId}; waiting for canvas content`);
-    await getDesignerActions(designerCdp, contextId, 180_000).waitForDesignerReady([...requestTriggerTitleVariants, responseActionTitle]);
+    const designerActionProfile = resolveDesignerActionProfile(options.actionProfile, options.includeMsnWeather === true);
+    if (designerActionProfile === 'msn') {
+      await getMsnDesignerActions(designerCdp, contextId).waitForText(
+        ['Add a trigger', ...requestTriggerTitleVariants, responseActionTitle],
+        180000,
+        `${createdWorkspace.label} designer canvas content`
+      );
+    } else {
+      await getDesignerActions(designerCdp, contextId, 180_000).waitForDesignerReady([...requestTriggerTitleVariants, responseActionTitle]);
+    }
     await captureLifecycleScreenshot(
       `workspace-lifecycle-${createdWorkspace.label}-${options.warmOnly ? 'warmup' : 'authoring'}-designer-ready`,
       {
@@ -1115,7 +1142,10 @@ async function openDesignerAndCreateWorkflow(
       return;
     }
 
-    const initialCanvasText = await getDesignerText(designerCdp, contextId);
+    const initialCanvasText =
+      designerActionProfile === 'msn'
+        ? await getMsnDesignerActions(designerCdp, contextId).getText()
+        : await getDesignerText(designerCdp, contextId);
     console.log(
       `[workspace-lifecycle] ${createdWorkspace.label}: initial designer canvas text ${JSON.stringify({
         length: initialCanvasText.length,
@@ -1127,16 +1157,16 @@ async function openDesignerAndCreateWorkflow(
     );
     if (initialCanvasText.includes('Add a trigger')) {
       await runLifecyclePhase(createdWorkspace, 'Requestinserted', () =>
-        addRequestTriggerThroughDesigner(designerCdp, contextId, createdWorkspace.label)
+        addRequestTriggerThroughDesigner(designerCdp, contextId, createdWorkspace.label, designerActionProfile)
       );
       if (options.includeMsnWeather) {
         await addMsnWeatherActionThroughDesigner(designerCdp, contextId, createdWorkspace);
         await runLifecyclePhase(createdWorkspace, 'Responseinserted', () =>
-          addResponseActionThroughDesigner(designerCdp, contextId, createdWorkspace.label)
+          addResponseActionThroughDesigner(designerCdp, contextId, createdWorkspace.label, designerActionProfile)
         );
-        await configureResponseBodyThroughDesigner(designerCdp, contextId, createdWorkspace, msnWeatherActionName);
+        await configureResponseBodyThroughDesigner(designerCdp, contextId, createdWorkspace, msnWeatherActionName, designerActionProfile);
       } else {
-        await addResponseActionThroughDesigner(designerCdp, contextId, createdWorkspace.label);
+        await addResponseActionThroughDesigner(designerCdp, contextId, createdWorkspace.label, designerActionProfile);
       }
     } else {
       console.log(`[workspace-lifecycle] ${createdWorkspace.label}: designer opened with generated workflow content`);
@@ -1149,25 +1179,28 @@ async function openDesignerAndCreateWorkflow(
       if (!initialCanvasText.includes(responseActionTitle)) {
         if (options.includeMsnWeather) {
           await runLifecyclePhase(createdWorkspace, 'Responseinserted', () =>
-            addResponseActionThroughDesigner(designerCdp, contextId, createdWorkspace.label)
+            addResponseActionThroughDesigner(designerCdp, contextId, createdWorkspace.label, designerActionProfile)
           );
         } else {
-          await addResponseActionThroughDesigner(designerCdp, contextId, createdWorkspace.label);
+          await addResponseActionThroughDesigner(designerCdp, contextId, createdWorkspace.label, designerActionProfile);
         }
       }
       if (options.includeMsnWeather) {
-        await configureResponseBodyThroughDesigner(designerCdp, contextId, createdWorkspace, msnWeatherActionName);
+        await configureResponseBodyThroughDesigner(designerCdp, contextId, createdWorkspace, msnWeatherActionName, designerActionProfile);
       }
     }
     if (options.includeMsnWeather) {
       await runLifecyclePhase(createdWorkspace, 'Saveclicked', () =>
-        saveWorkflowThroughDesigner(designerCdp, contextId, createdWorkspace.label)
+        saveWorkflowThroughDesigner(designerCdp, contextId, createdWorkspace.label, designerActionProfile)
       );
     } else {
-      await saveWorkflowThroughDesigner(designerCdp, contextId, createdWorkspace.label);
+      await saveWorkflowThroughDesigner(designerCdp, contextId, createdWorkspace.label, designerActionProfile);
     }
 
-    const canvasText = await getDesignerText(designerCdp, contextId);
+    const canvasText =
+      designerActionProfile === 'msn'
+        ? await getMsnDesignerActions(designerCdp, contextId).getText()
+        : await getDesignerText(designerCdp, contextId);
     assert.ok(
       canvasText.includes(responseActionTitle),
       `${createdWorkspace.label} designer should render the Response action added through the UI. Text: ${canvasText.slice(0, 1000)}`
@@ -1181,7 +1214,12 @@ async function openDesignerAndCreateWorkflow(
       await waitForSavedWorkflowContainsDesignerChanges(createdWorkspace);
     }
     if (shouldRunFinalDesignerCanvasCheckpoint(options)) {
-      await closeDesignerDetailsPanelThroughDesigner(designerCdp, contextId, `${createdWorkspace.label} final designer canvas`);
+      await closeDesignerDetailsPanelThroughDesigner(
+        designerCdp,
+        contextId,
+        `${createdWorkspace.label} final designer canvas`,
+        designerActionProfile
+      );
       await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-designer-open`, {
         expectation: {
           kind: 'designerCanvas',
@@ -1428,9 +1466,44 @@ async function waitForDesignerWebviewTab(
   assert.fail(`Timed out waiting for ${designerViewType} webview tab to open. Open tabs: ${describeOpenTabs()}`);
 }
 
-async function addRequestTriggerThroughDesigner(cdp: CdpConnection, contextId: number, label: string): Promise<void> {
-  console.log(`[workspace-lifecycle] ${label}: adding Request trigger through shared Designer CDP actions`);
-  await getDesignerActions(cdp, contextId, 180_000).addRequestTrigger();
+async function addRequestTriggerThroughDesigner(
+  cdp: CdpConnection,
+  contextId: number,
+  label: string,
+  profile: DesignerActionProfile = 'generalized'
+): Promise<void> {
+  if (profile === 'msn') {
+    const actions = getMsnDesignerActions(cdp, contextId);
+    console.log(`[workspace-lifecycle] ${label}: clicking Add a trigger`);
+    await actions.clickElement(
+      ['[data-testid="card-Add a trigger"]', '[data-automation-id="card-Add_a_trigger"]', '[aria-label="Add a trigger"]'],
+      'Add a trigger'
+    );
+    await actions.waitForDiscoveryPanel(60000, `${label} trigger discovery panel`);
+    await logDesignerDiscoveryDiagnostics(cdp, contextId, label, 'trigger-panel-before-evidence');
+    await logReadinessSnapshot(cdp, contextId, { kind: 'discovery', label, allowLoading: true }, `${label} trigger-panel-before-evidence`);
+    await captureLifecycleScreenshot(`workspace-lifecycle-${label}-trigger-panel-open`, {
+      expectation: { kind: 'discovery', label, allowLoading: true },
+      semanticCdp: cdp,
+      semanticContextId: contextId,
+    });
+
+    console.log(`[workspace-lifecycle] ${label}: searching for Request trigger`);
+    await actions.search('Request');
+    await captureLifecycleScreenshot(`workspace-lifecycle-${label}-request-search-entered`, {
+      expectation: { kind: 'discovery', label, searchText: 'Request', allowLoading: true },
+      semanticCdp: cdp,
+      semanticContextId: contextId,
+    });
+    await actions.waitForSearchResults(60000, `${label} Request search results`);
+
+    await actions.selectOperation('Request', ['when a http request is received', 'when an http request is received', 'http request']);
+    await actions.waitForText(requestTriggerTitleVariants, 90000, `${label} Request trigger on canvas`);
+    await actions.closePanel(`${label} Request trigger panel`);
+  } else {
+    console.log(`[workspace-lifecycle] ${label}: adding Request trigger through shared Designer CDP actions`);
+    await getDesignerActions(cdp, contextId, 180_000).addRequestTrigger();
+  }
   await normalizeDesignerCanvasViewport(cdp, contextId, `${label} Request trigger-added evidence`);
   await captureLifecycleScreenshot(`workspace-lifecycle-${label}-request-trigger-added`, {
     expectation: { kind: 'designerCanvas', label, requiredNodes: [requestTriggerTitleVariants] },
@@ -1439,11 +1512,35 @@ async function addRequestTriggerThroughDesigner(cdp: CdpConnection, contextId: n
   });
 }
 
-async function addResponseActionThroughDesigner(cdp: CdpEvaluator, contextId: number, label: string): Promise<void> {
-  console.log(`[workspace-lifecycle] ${label}: adding Response through shared Designer CDP actions`);
-  const actions = getDesignerActions(cdp, contextId, 180_000);
-  await actions.addAction(responseActionTitle, responseActionTitle, ['response']);
-  await actions.closePanel();
+async function addResponseActionThroughDesigner(
+  cdp: CdpEvaluator,
+  contextId: number,
+  label: string,
+  profile: DesignerActionProfile = 'generalized'
+): Promise<void> {
+  if (profile === 'msn') {
+    const actions = getMsnDesignerActions(cdp, contextId);
+    await openActionDiscoveryPanelThroughDesigner(cdp, contextId, label);
+
+    console.log(`[workspace-lifecycle] ${label}: searching for Response action`);
+    await actions.search(responseActionTitle);
+    await captureLifecycleScreenshot(`workspace-lifecycle-${label}-response-search-entered`, {
+      expectation: { kind: 'discovery', label, searchText: responseActionTitle, allowLoading: true },
+      semanticCdp: cdp,
+      semanticContextId: contextId,
+    });
+    await actions.waitForSearchResults(60000, `${label} Response search results`);
+
+    await actions.selectOperation(responseActionTitle, ['response']);
+    await actions.waitForText([responseActionTitle], 90000, `${label} Response action on canvas`);
+    await actions.closePanel(`${label} Response action panel before action-added evidence`);
+    await actions.waitForText([responseActionTitle], 30000, `${label} Response action card`);
+  } else {
+    console.log(`[workspace-lifecycle] ${label}: adding Response through shared Designer CDP actions`);
+    const actions = getDesignerActions(cdp, contextId, 180_000);
+    await actions.addAction(responseActionTitle, responseActionTitle, ['response']);
+    await actions.closePanel();
+  }
   await normalizeDesignerCanvasViewport(cdp, contextId, `${label} Response action-added evidence`);
   await captureLifecycleScreenshot(`workspace-lifecycle-${label}-response-action-added`, {
     expectation: { kind: 'designerCanvas', label, requiredNodes: [responseActionTitle] },
@@ -1475,10 +1572,11 @@ async function addMsnWeatherActionThroughDesigner(cdp: CdpEvaluator, contextId: 
       contextId,
       ['Get current weather', 'Current weather', 'Location'],
       120000,
-      `${label} MSN Weather action panel`
+      `${label} MSN Weather action panel`,
+      'msn'
     );
-    await closeDesignerDetailsPanelThroughDesigner(cdp, contextId, `${label} MSN Weather action panel before action-added evidence`);
-    await waitForDesignerText(cdp, contextId, ['Get current weather'], 30000, `${label} MSN Weather action card`);
+    await closeDesignerDetailsPanelThroughDesigner(cdp, contextId, `${label} MSN Weather action panel before action-added evidence`, 'msn');
+    await waitForDesignerText(cdp, contextId, ['Get current weather'], 30000, `${label} MSN Weather action card`, 'msn');
     await normalizeDesignerCanvasViewport(cdp, contextId, `${label} MSN Weather action-added evidence`);
     await captureLifecycleScreenshot(`workspace-lifecycle-${label}-msn-weather-action-added`, {
       expectation: { kind: 'designerCanvas', label, requiredNodes: ['Get current weather'] },
@@ -1489,8 +1587,8 @@ async function addMsnWeatherActionThroughDesigner(cdp: CdpEvaluator, contextId: 
   });
 
   await runLifecyclePhase(createdWorkspace, 'MsnWeatherconfigured', async () => {
-    await clickDesignerNodeByTitle(cdp, contextId, 'Get current weather');
-    await waitForDesignerText(cdp, contextId, ['Get current weather', 'Location'], 30000, `${label} MSN Weather action panel`);
+    await clickDesignerNodeByTitle(cdp, contextId, 'Get current weather', 'msn');
+    await waitForDesignerText(cdp, contextId, ['Get current weather', 'Location'], 30000, `${label} MSN Weather action panel`, 'msn');
     await fillDesignerParameter(cdp, contextId, ['Location', 'location'], msnWeatherLocation, `${label} MSN Weather Location`);
     await captureLifecycleScreenshot(`workspace-lifecycle-${label}-msn-weather-action-configured`, {
       expectation: {
@@ -1514,13 +1612,13 @@ async function addMsnWeatherActionThroughDesigner(cdp: CdpEvaluator, contextId: 
       settingsStage: 'after-location-configured',
     })
   );
-  await closeDesignerDetailsPanelThroughDesigner(cdp, contextId, `${label} MSN Weather action panel`);
+  await closeDesignerDetailsPanelThroughDesigner(cdp, contextId, `${label} MSN Weather action panel`, 'msn');
   console.log(`[workspace-lifecycle] ${label}: milestone azure-action-ready-for-next-action action="Get current weather"`);
 }
 
 async function openActionDiscoveryPanelThroughDesigner(cdp: CdpEvaluator, contextId: number, label: string): Promise<void> {
-  console.log(`[workspace-lifecycle] ${label}: opening action discovery through shared Designer CDP actions`);
-  await getDesignerActions(cdp, contextId, 120_000).openActionDiscovery();
+  const actions = getMsnDesignerActions(cdp, contextId);
+  await actions.openActionDiscovery(label, (stage, point) => logDesignerDiscoveryDiagnostics(cdp, contextId, label, stage, point));
   await captureLifecycleScreenshot(`workspace-lifecycle-${label}-action-panel-open`, {
     expectation: { kind: 'discovery', label, allowLoading: true },
     semanticCdp: cdp,
@@ -1528,9 +1626,18 @@ async function openActionDiscoveryPanelThroughDesigner(cdp: CdpEvaluator, contex
   });
 }
 
-async function closeDesignerDetailsPanelThroughDesigner(cdp: CdpEvaluator, contextId: number, description: string): Promise<void> {
-  console.log(`[workspace-lifecycle] Closing ${description} through shared Designer CDP actions`);
-  await getDesignerActions(cdp, contextId, 30_000).closePanel();
+async function closeDesignerDetailsPanelThroughDesigner(
+  cdp: CdpEvaluator,
+  contextId: number,
+  description: string,
+  profile: DesignerActionProfile = 'generalized'
+): Promise<void> {
+  if (profile === 'msn') {
+    await getMsnDesignerActions(cdp, contextId).closePanel(description);
+  } else {
+    console.log(`[workspace-lifecycle] Closing ${description} through shared Designer CDP actions`);
+    await getDesignerActions(cdp, contextId, 30_000).closePanel();
+  }
 }
 
 async function hasDesignerDetailsPanelThroughDesigner(cdp: CdpEvaluator, contextId: number): Promise<boolean> {
@@ -1697,10 +1804,13 @@ async function configureResponseBodyThroughDesigner(
   cdp: CdpEvaluator,
   contextId: number,
   createdWorkspace: CreatedWorkspace,
-  weatherActionName: string
+  weatherActionName: string,
+  profile: DesignerActionProfile = 'generalized'
 ): Promise<void> {
   const label = createdWorkspace.label;
-  await runLifecyclePhase(createdWorkspace, 'ResponseBodyready', () => openResponseSettingsPanelThroughDesigner(cdp, contextId, label));
+  await runLifecyclePhase(createdWorkspace, 'ResponseBodyready', () =>
+    openResponseSettingsPanelThroughDesigner(cdp, contextId, label, profile)
+  );
   await runLifecyclePhase(
     createdWorkspace,
     'ResponseBodyconfigured',
@@ -1771,7 +1881,12 @@ async function configureResponseBodyFromVariablesThroughDesigner(
   });
 }
 
-async function openResponseSettingsPanelThroughDesigner(cdp: CdpEvaluator, contextId: number, label: string): Promise<void> {
+async function openResponseSettingsPanelThroughDesigner(
+  cdp: CdpEvaluator,
+  contextId: number,
+  label: string,
+  profile: DesignerActionProfile = 'generalized'
+): Promise<void> {
   let lastError = '';
   for (let attempt = 1; attempt <= 5; attempt++) {
     try {
@@ -1782,7 +1897,7 @@ async function openResponseSettingsPanelThroughDesigner(cdp: CdpEvaluator, conte
         console.log(
           `[workspace-lifecycle] ${label}: opening Response details panel attempt ${attempt}; state=${JSON.stringify(readyState).slice(0, 1000)}`
         );
-        await clickDesignerNodeByTitle(cdp, contextId, responseActionTitle);
+        await clickDesignerNodeByTitle(cdp, contextId, responseActionTitle, profile);
       }
       await waitForResponseDetailsPanel(cdp, contextId, 5000, `${label} Response details panel`);
       await waitForDesignerParameterEditor(cdp, contextId, ['Body', 'body'], 5000, `${label} Response Body editor`);
@@ -1796,8 +1911,17 @@ async function openResponseSettingsPanelThroughDesigner(cdp: CdpEvaluator, conte
   assert.fail(`${label} Response settings panel should open before configuring Body. Last error: ${lastError}`);
 }
 
-async function clickDesignerNodeByTitle(cdp: CdpEvaluator, contextId: number, title: string): Promise<void> {
-  await getDesignerActions(cdp, contextId, 60_000).clickNode([title]);
+async function clickDesignerNodeByTitle(
+  cdp: CdpEvaluator,
+  contextId: number,
+  title: string,
+  profile: DesignerActionProfile = 'generalized'
+): Promise<void> {
+  if (profile === 'msn') {
+    await getMsnDesignerActions(cdp, contextId).clickNode(title);
+  } else {
+    await getDesignerActions(cdp, contextId, 60_000).clickNode([title]);
+  }
 }
 
 async function clickDesignerCardByExactTitle(cdp: CdpEvaluator, contextId: number, title: string): Promise<void> {
@@ -2943,17 +3067,25 @@ async function fillDesignerParameter(
   value: string,
   description: string
 ): Promise<void> {
-  console.log(`[workspace-lifecycle] Filling ${description} through shared Designer CDP actions`);
-  await getDesignerActions(cdp, contextId, 60_000).fillParameter(labels, value);
+  await getMsnDesignerActions(cdp, contextId).fillParameter(labels, value, description);
 }
 
 async function replaceFocusedDesignerText(cdp: CdpEvaluator, value: string): Promise<void> {
-  await new DesignerCdpActions(cdp, 0, Date.now() + 30_000).replaceFocused(value);
+  await new MsnDesignerCdpActions(cdp, 0).replaceFocused(value);
 }
 
-async function saveWorkflowThroughDesigner(cdp: CdpEvaluator, contextId: number, label: string): Promise<void> {
-  console.log(`[workspace-lifecycle] ${label}: saving through shared Designer CDP actions`);
-  await getDesignerActions(cdp, contextId, 90_000).save();
+async function saveWorkflowThroughDesigner(
+  cdp: CdpEvaluator,
+  contextId: number,
+  label: string,
+  profile: DesignerActionProfile = 'generalized'
+): Promise<void> {
+  if (profile === 'msn') {
+    await getMsnDesignerActions(cdp, contextId).save(label);
+  } else {
+    console.log(`[workspace-lifecycle] ${label}: saving through shared Designer CDP actions`);
+    await getDesignerActions(cdp, contextId, 90_000).save();
+  }
 }
 
 async function clickDesignerElement(
@@ -2963,7 +3095,7 @@ async function clickDesignerElement(
   textToFind: string,
   options: { requireTextMatch?: boolean; useLastMatch?: boolean } = {}
 ): Promise<DesignerClickResult> {
-  return getDesignerActions(cdp, contextId, 60_000).clickElement(selectors, textToFind, options);
+  return getMsnDesignerActions(cdp, contextId).clickElement(selectors, textToFind, options);
 }
 
 async function tryClickDesignerElement(
@@ -3188,7 +3320,7 @@ async function waitForOptionalDiscoveryPanelThroughDesigner(cdp: CdpEvaluator, c
 }
 
 async function searchInDiscoveryPanelThroughDesigner(cdp: CdpEvaluator, contextId: number, searchTerm: string): Promise<void> {
-  await getDesignerActions(cdp, contextId, 60_000).search(searchTerm);
+  await getMsnDesignerActions(cdp, contextId).search(searchTerm);
 }
 
 async function waitForSearchResultsThroughDesigner(
@@ -3197,7 +3329,7 @@ async function waitForSearchResultsThroughDesigner(
   timeoutMs: number,
   description: string
 ): Promise<void> {
-  await getDesignerActions(cdp, contextId, timeoutMs).waitForSearchResults(description);
+  await getMsnDesignerActions(cdp, contextId).waitForSearchResults(timeoutMs, description);
 }
 
 async function selectOperationThroughDesigner(
@@ -3206,7 +3338,7 @@ async function selectOperationThroughDesigner(
   operationName: string,
   variants: string[]
 ): Promise<void> {
-  await getDesignerActions(cdp, contextId, 120_000).selectOperation(operationName, variants);
+  await getMsnDesignerActions(cdp, contextId).selectOperation(operationName, variants);
 }
 
 async function scrollDesignerSearchResults(cdp: CdpEvaluator, contextId: number): Promise<void> {
@@ -3236,9 +3368,14 @@ async function waitForDesignerText(
   contextId: number,
   expectedText: string[],
   timeoutMs: number,
-  description: string
+  description: string,
+  profile: DesignerActionProfile = 'generalized'
 ): Promise<void> {
-  await getDesignerActions(cdp, contextId, timeoutMs).waitForText(expectedText, description);
+  if (profile === 'msn') {
+    await getMsnDesignerActions(cdp, contextId).waitForText(expectedText, timeoutMs, description);
+  } else {
+    await getDesignerActions(cdp, contextId, timeoutMs).waitForText(expectedText, description);
+  }
 }
 
 async function getDesignerText(cdp: CdpEvaluator, contextId: number): Promise<string> {
@@ -3998,7 +4135,11 @@ async function runMsnWeatherLifecycle(createdWorkspace: CreatedWorkspace): Promi
       ensureLocalSettingsForMsnWeather(createdWorkspace.appDir, settings);
       assertMsnWeatherLocalSettingsReady(createdWorkspace.appDir, settings, 'after-preseed');
       await logMsnWeatherDesignerOpenDiagnostics('after msn weather local settings preseed', createdWorkspace);
-      await openDesignerAndCreateWorkflowWithDotnetInstallRetry(createdWorkspace, { warmOnly: true, useAzureConnectors: true });
+      await openDesignerAndCreateWorkflowWithDotnetInstallRetry(createdWorkspace, {
+        warmOnly: true,
+        useAzureConnectors: true,
+        actionProfile: 'msn',
+      });
       assertMsnWeatherLocalSettingsReady(createdWorkspace.appDir, settings, 'after-warmup');
       await logMsnWeatherDesignerOpenDiagnostics('after azure-targeted warmup designer open', createdWorkspace);
     } else {
@@ -4084,7 +4225,12 @@ async function runMsnWeatherLifecycle(createdWorkspace: CreatedWorkspace): Promi
 
 async function openDesignerAndCreateWorkflowWithDotnetInstallRetry(
   createdWorkspace: CreatedWorkspace,
-  options: { includeMsnWeather?: boolean; useAzureConnectors?: boolean; warmOnly?: boolean }
+  options: {
+    includeMsnWeather?: boolean;
+    useAzureConnectors?: boolean;
+    warmOnly?: boolean;
+    actionProfile?: DesignerActionProfile;
+  }
 ): Promise<void> {
   try {
     await openDesignerAndCreateWorkflow(createdWorkspace, options);

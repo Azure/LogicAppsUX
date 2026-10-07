@@ -102,7 +102,17 @@ async function testOutputChannelSelection(): Promise<void> {
   let selected = false;
   const nativeEvents: string[] = [];
   const outputCdp: CdpEvaluator = {
-    async evaluate<T>() {
+    async evaluate<T>(_contextId: number | undefined, expression: string) {
+      if (expression.includes('HTMLSelectElement.prototype')) {
+        selected = true;
+        return {
+          ok: true,
+          selectedText: 'Azure Logic Apps (Standard)',
+          candidates: [
+            { selectedText: 'Text Model Changes Reason', options: ['Text Model Changes Reason', 'Azure Logic Apps (Standard)'] },
+          ],
+        } as T;
+      }
       return {
         trigger: { kind: 'select', point: { x: 40, y: 20 }, optionIndex: 2 },
         selected,
@@ -118,8 +128,7 @@ async function testOutputChannelSelection(): Promise<void> {
   };
   assert.strictEqual(await selectLogicAppsStandardOutputThroughWorkbench(outputCdp, Date.now() + 1000), true);
   check(() => {
-    assert.ok(nativeEvents.some((event) => event.startsWith('Input.dispatchMouseEvent:mousePressed')));
-    assert.strictEqual(nativeEvents.filter((event) => event === 'Input.dispatchKeyEvent:keyDown').length, 4);
+    assert.deepStrictEqual(nativeEvents, [], 'Native select value assignment must not depend on keyboard navigation or picker focus');
     assert.strictEqual(selected, true);
   });
   await assert.rejects(

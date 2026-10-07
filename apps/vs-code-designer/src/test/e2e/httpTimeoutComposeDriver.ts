@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 import type { CdpConnection } from './cdpClient';
-import { DesignerCdpActions } from './designerCdpActions';
+import { DesignerCdpActions, ProvenDesignerCdpActions } from './designerCdpActions';
 import {
   assembleHttpTimeoutComposeCode,
   type HttpTimeoutComposeContext,
@@ -44,8 +44,17 @@ const visibleDom = `
   const normalize = (text) => (text || '').replace(/\\s+/g, ' ').trim();
 `;
 
-export class HttpTimeoutComposeDriver extends DesignerCdpActions {
+export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
   private codeEditorObjectId?: string;
+
+  override async replaceFocused(value: string): Promise<void> {
+    await this.key('KeyA', 'a', 65, 2);
+    await this.send('Input.insertText', { text: value });
+  }
+
+  override async save(): Promise<void> {
+    await DesignerCdpActions.prototype.save.call(this);
+  }
 
   async readCode(): Promise<string> {
     // MonacoEditor is a compatibility export of CodeMirrorEditor. Read only
