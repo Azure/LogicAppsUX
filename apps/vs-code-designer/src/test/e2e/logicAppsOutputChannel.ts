@@ -1,10 +1,12 @@
 const logicAppsExtensionId = 'ms-azuretools.vscode-azurelogicapps';
 const logicAppsStandardOutputLabel = 'Azure Logic Apps (Standard)';
 const outputCommandPrefix = `workbench.action.output.show.extension-output-${logicAppsExtensionId}-#`;
-const outputCommandSuffix = `-${logicAppsStandardOutputLabel}`;
+const outputCommandSuffixes = [`-${logicAppsStandardOutputLabel}`, '-Azure-Logic-Apps-Standard-log'];
 
 export function findLogicAppsStandardOutputCommand(commands: readonly string[]): string | undefined {
-  const matches = commands.filter((command) => command.startsWith(outputCommandPrefix) && command.endsWith(outputCommandSuffix));
+  const matches = commands.filter(
+    (command) => command.startsWith(outputCommandPrefix) && outputCommandSuffixes.some((suffix) => command.endsWith(suffix))
+  );
   if (matches.length > 1) {
     throw new Error(`Ambiguous ${logicAppsStandardOutputLabel} output commands: ${matches.join(', ')}`);
   }
@@ -13,19 +15,17 @@ export function findLogicAppsStandardOutputCommand(commands: readonly string[]):
 
 export async function showLogicAppsStandardOutput(
   getCommands: () => Thenable<string[]>,
-  executeCommand: (command: string) => Thenable<unknown>,
+  executeCommand: (command: string, ...args: unknown[]) => Thenable<unknown>,
   deadline: number
 ): Promise<string> {
-  let command: string | undefined;
-  while (!command && Date.now() < deadline) {
-    command = findLogicAppsStandardOutputCommand(await getCommands());
-    if (!command) {
-      await new Promise((resolve) => setTimeout(resolve, 100));
+  while (Date.now() < deadline) {
+    const commands = await getCommands();
+    const exactCommand = findLogicAppsStandardOutputCommand(commands);
+    if (exactCommand) {
+      await executeCommand(exactCommand);
+      return exactCommand;
     }
+    await new Promise((resolve) => setTimeout(resolve, 100));
   }
-  if (!command) {
-    throw new Error(`${logicAppsStandardOutputLabel} output channel was not registered before the startup diagnostic deadline`);
-  }
-  await executeCommand(command);
-  return command;
+  throw new Error(`${logicAppsStandardOutputLabel} output command was not registered before the startup diagnostic deadline`);
 }

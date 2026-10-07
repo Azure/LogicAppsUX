@@ -76,6 +76,11 @@ const operations = {
       assert.equal(env.LA_E2E_CLI_MINIMAL_ACTIVATION, '0', 'Real debug startup must register Functions task-process listeners');
       assert.equal(env.LA_E2E_CLI_AUTO_START_DESIGN_TIME, '1', 'Fresh activation host must exercise product auto-start');
       assert.equal(env.LA_E2E_CLI_EXPECT_AZURE_LOGIC_APPS_CHANNEL, '1', 'Activation diagnostics require the product output channel');
+      assert.equal(
+        options.controlledFuncDirectory,
+        path.join(env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT, 'FuncCoreTools'),
+        'Activation host must apply controlled Func resolution after assembling its final environment'
+      );
     }
     const scratch = fs.mkdtempSync(path.join(process.env.TEMP, 'unit-phase-'));
     fs.writeFileSync(path.join(scratch, 'owned.txt'), 'unit-owned');
@@ -124,7 +129,7 @@ api.runStatelessVariablesLifecycle(undefined, operations).then(() => {
     fs.unlinkSync(process.env.LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH);
   }
 }).catch((error) => {
-  trace.orchestratorError = error.message;
+  trace.orchestratorError = [error.stack || error.message, ...(error.errors || []).map((item) => item.stack || item.message || String(item))].join('\\n');
   // Deliberately reproduce the reviewed bug: force zero after incomplete phase
   // data and actual owned cleanup. The real parent wrapper must reject it.
   if (!mode.endsWith('zero-exit')) process.exitCode = 1;
@@ -231,7 +236,11 @@ async function main(): Promise<void> {
     const ledger = JSON.parse(fs.readFileSync(ledgerPath, 'utf8')) as Ledger;
     const trace = JSON.parse(fs.readFileSync(process.env.UNIT_STATELESS_DIRECT_TRACE, 'utf8')) as Trace;
     const diagnosticSucceeded = mode === 'success' || mode === 'missing-artifacts' || mode === 'model-hint';
-    assert.strictEqual(code, diagnosticSucceeded ? 0 : 1, `${mode}: actual wrapper exit must follow phase/finalizer diagnostic outcome`);
+    assert.strictEqual(
+      code,
+      diagnosticSucceeded ? 0 : 1,
+      `${mode}: actual wrapper exit must follow phase/finalizer diagnostic outcome; orchestratorError=${trace.orchestratorError ?? 'none'}`
+    );
     assert.strictEqual(terminal.complete, diagnosticSucceeded, mode);
     assert.strictEqual(terminal.exitCode, diagnosticSucceeded ? 0 : 1, mode);
     assert.strictEqual(terminal.lifecycleFinalized, true, mode);

@@ -12,6 +12,7 @@ const {
     collectRuntimeDependencyDiagnostics,
     collectRegenerationProfileLogs,
     cleanupDeferredWorkspaceAfterCancel,
+    applyControlledFuncEnvironment,
     collectVscodeProfileLogs,
     canUseInteractiveMsnWeatherAzureTargetEnv,
     captureGeneratedWorkspaceDiagnostics,
@@ -70,6 +71,7 @@ const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
   try {
     await testUnconfirmedCancelClosePreservesExistingApp();
     testCreatesEmptyIsolatedDependencyRoot();
+    testAppliesControlledFuncAfterFinalEnvironmentMerge();
     testFailFastMissingFuncDiagnostics();
     testFailFastMissingInProc8Diagnostics();
     testCopiesAzureLogicAppsChannelLogs();
@@ -159,6 +161,15 @@ function testCreatesEmptyIsolatedDependencyRoot() {
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
   }
+}
+
+function testAppliesControlledFuncAfterFinalEnvironmentMerge() {
+  const controlledDirectory = path.join(tempRoot, 'controlled-func');
+  const inheritedPath = process.platform === 'win32' ? 'C:\\inherited-bin' : '/inherited-bin';
+  const result = applyControlledFuncEnvironment({ PATH: inheritedPath }, controlledDirectory);
+  const pathKeys = Object.keys(result).filter((key) => (process.platform === 'win32' ? key.toLowerCase() === 'path' : key === 'PATH'));
+  assert.strictEqual(pathKeys.length, 1, 'Final child environment must contain one unambiguous PATH key');
+  assert.strictEqual(result[pathKeys[0]].split(path.delimiter)[0], controlledDirectory);
 }
 
 function testFailFastMissingFuncDiagnostics() {

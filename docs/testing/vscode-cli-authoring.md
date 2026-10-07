@@ -144,6 +144,11 @@ Ordinary activation can replace a pinned Functions path with plain `func` when
 managed dependency validation is disabled. Verify actual post-activation
 command/PATH resolution and binary identity rather than trusting the profile
 pin. Do not migrate to a user cache or download another binary as a fallback.
+Installing Func in one host does not transfer that host's global VS Code setting
+to a fresh profile. When full activation selects plain `func`, put the
+bootstrap-admitted `FuncCoreTools` directory first in the fresh host's `PATH`
+using the existing platform-aware environment helper. Minimal-activation tests
+that retain an absolute managed path do not prove this full-activation contract.
 
 Regeneration can produce a second, distinct overwrite confirmation after the
 initial initialization prompt. Detect and affirm the actual second prompt once;

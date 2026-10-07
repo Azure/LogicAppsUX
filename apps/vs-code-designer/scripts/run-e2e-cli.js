@@ -1224,8 +1224,10 @@ async function runStatelessVariablesLifecycle(visibleDelayMs, operations = { run
       context: 'Stateless variables dependency bootstrap',
       timeoutMs: 30_000,
     });
+    const controlledFuncDirectory = path.dirname(getFuncCoreToolsBinaryPath(dependencyRoot));
     await operations.runVscodeTest(['--label', 'statelessVariablesLifecycle'], {
       visibleDelayMs,
+      controlledFuncDirectory,
       extraEnv: {
         ...sharedEnv,
         LA_E2E_CLI_USER_DATA_SUFFIX: `stateless-variables-create-${Date.now()}`,
@@ -1245,6 +1247,7 @@ async function runStatelessVariablesLifecycle(visibleDelayMs, operations = { run
     const entry = manifest[0];
     await operations.runVscodeTest(['--label', 'statelessVariablesLifecycle'], {
       visibleDelayMs,
+      controlledFuncDirectory,
       extraEnv: {
         ...sharedEnv,
         LA_E2E_CLI_USER_DATA_SUFFIX: `stateless-variables-prepare-${Date.now()}`,
@@ -1260,6 +1263,7 @@ async function runStatelessVariablesLifecycle(visibleDelayMs, operations = { run
     });
     await operations.runVscodeTest(['--label', 'statelessVariablesLifecycle'], {
       visibleDelayMs,
+      controlledFuncDirectory,
       extraEnv: {
         ...sharedEnv,
         LA_E2E_CLI_USER_DATA_SUFFIX: `stateless-variables-run-${Date.now()}`,
@@ -2259,6 +2263,14 @@ function collectRegenerationProfileLogs(root, childEnv, collector = collectVscod
   return errors;
 }
 
+function applyControlledFuncEnvironment(env, controlledFuncDirectory) {
+  if (!controlledFuncDirectory) {
+    return env;
+  }
+  const { controlledFuncEnvironment } = require('../out/test/e2e/workspaceMultiRootLaunch');
+  return controlledFuncEnvironment(controlledFuncDirectory, env, process.platform);
+}
+
 function runVscodeTest(args, options = {}) {
   const phaseStartedAt = new Date().toISOString();
   const label = getLabelArg(args);
@@ -2267,7 +2279,7 @@ function runVscodeTest(args, options = {}) {
   const deferredWorkspaceParent = options.workspaceParent ?? getDeferredCreateWorkspaceParent(label);
   const outputFilter = createOutputFilter();
   const { command, commandArgs } = getVscodeTestCommand(args);
-  const childEnv = sanitizeInheritedGitCommandConfigEnv({
+  let childEnv = sanitizeInheritedGitCommandConfigEnv({
     ...process.env,
     LA_E2E_CLI_LABEL: label ?? '',
     LA_E2E_CLI_USER_DATA_SUFFIX: userDataSuffix,
@@ -2280,6 +2292,7 @@ function runVscodeTest(args, options = {}) {
       : {}),
     ...(options.extraEnv ?? {}),
   });
+  childEnv = applyControlledFuncEnvironment(childEnv, options.controlledFuncDirectory);
   const cancelRequired =
     cancelCheck.required(childEnv) &&
     label === 'createWorkspaceCoreMatrix' &&
@@ -2291,6 +2304,7 @@ function runVscodeTest(args, options = {}) {
   ) {
     throw new Error('Regeneration requires its isolated Standard Stateful wizard; it cannot share the Cancel supplement or other labels.');
   }
+
   const regenerationContext = regenerationRequired
     ? cancelCheck.prepareCancelContext(
         {
@@ -3571,6 +3585,7 @@ module.exports = {
     collectVscodeProfileLogs,
     collectRegenerationProfileLogs,
     collectRuntimeDependencyDiagnostics,
+    applyControlledFuncEnvironment,
     collectGeneratedWorkspaceSnapshotSources,
     cleanupOwnedWorkspaceParent,
     cleanupDeferredWorkspaceAfterCancel,

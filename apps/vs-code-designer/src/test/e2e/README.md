@@ -201,6 +201,13 @@ Both selectors run exactly these native phases, in order:
    generated `.code-workspace`, including authoring/runtime/history/recovery.
 
 The family does not report bootstrap from a prepared cache or from unit controls.
+The bootstrap executable survives between phases in the job-owned runtime root,
+but the bootstrap profile's global VS Code settings do not. Full activation can
+normalize `azureLogicAppsStandard.funcCoreToolsBinaryPath` to plain `func`; the
+reopen host therefore puts the bootstrap-admitted `FuncCoreTools` directory first
+in its platform-correct `PATH`. Do not replace this with an absolute profile pin:
+minimal-activation families such as MSN can retain an absolute managed path, but
+that does not exercise the Stateless full-activation command-resolution contract.
 Set the existing
 `LA_E2E_CLI_USER_DATA_PARENT`, extensions directory and remote-debugging port as
 appropriate for the isolated Windows/Linux consumer. Do not run concurrently with

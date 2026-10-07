@@ -94,7 +94,7 @@ suite('Stateless variables lifecycle', () => {
     assert.strictEqual(mode, 'run', 'Use the registered stateless-variables lifecycle runner');
     const outputCommand = await showLogicAppsStandardOutput(
       () => vscode.commands.getCommands(true),
-      (command) => vscode.commands.executeCommand(command),
+      (command, ...args) => vscode.commands.executeCommand(command, ...args),
       Date.now() + 15_000
     );
     console.log(`[stateless-variables] Showing activation-time design-time diagnostics through ${outputCommand}`);

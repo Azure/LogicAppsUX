@@ -35,7 +35,8 @@ async function main(): Promise<void> {
 }
 
 async function testOutputChannelSelection(): Promise<void> {
-  const outputCommand = 'workbench.action.output.show.extension-output-ms-azuretools.vscode-azurelogicapps-#1-Azure Logic Apps (Standard)';
+  const outputCommand =
+    'workbench.action.output.show.extension-output-ms-azuretools.vscode-azurelogicapps-#1-Azure-Logic-Apps-Standard-log';
   check(() => {
     assert.strictEqual(findLogicAppsStandardOutputCommand(['workbench.action.output.toggleOutput', outputCommand]), outputCommand);
     assert.strictEqual(findLogicAppsStandardOutputCommand(['workbench.action.output.toggleOutput']), undefined);
@@ -49,12 +50,12 @@ async function testOutputChannelSelection(): Promise<void> {
     );
   });
   let attempts = 0;
-  const executed: string[] = [];
+  const executed: Array<{ command: string; args: unknown[] }> = [];
   assert.strictEqual(
     await showLogicAppsStandardOutput(
       async () => (++attempts < 3 ? [] : [outputCommand]),
-      async (command) => {
-        executed.push(command);
+      async (command, ...args) => {
+        executed.push({ command, args });
       },
       Date.now() + 1000
     ),
@@ -62,7 +63,15 @@ async function testOutputChannelSelection(): Promise<void> {
   );
   check(() => {
     assert.strictEqual(attempts, 3, 'Output selection must tolerate asynchronous channel registration');
-    assert.deepStrictEqual(executed, [outputCommand], 'Only the exact product Output channel may be shown');
+    assert.deepStrictEqual(executed, [{ command: outputCommand, args: [] }], 'Only the exact product Output channel may be shown');
+  });
+  check(() => {
+    assert.strictEqual(
+      findLogicAppsStandardOutputCommand([
+        'workbench.action.output.show.extension-output-ms-azuretools.vscode-azurelogicapps-#3-Azure Logic Apps (Standard)',
+      ]),
+      'workbench.action.output.show.extension-output-ms-azuretools.vscode-azurelogicapps-#3-Azure Logic Apps (Standard)'
+    );
   });
   await assert.rejects(
     () =>
@@ -532,7 +541,7 @@ async function testRegisteredRunner(): Promise<void> {
       compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS },
     }
   ).outputText;
-  const calls: Array<{ args: string[]; extraEnv: Record<string, string> }> = [];
+  const calls: Array<{ args: string[]; controlledFuncDirectory?: string; extraEnv: Record<string, string> }> = [];
   const exported: {
     runStatelessVariablesLifecycle?: (visibleDelayMs?: string) => Promise<void>;
     getSuitePhaseId?: (label: string, env: Record<string, string>) => string;
@@ -561,12 +570,13 @@ async function testRegisteredRunner(): Promise<void> {
     path,
     fs: { existsSync: () => false, mkdirSync: () => undefined, readFileSync: () => JSON.stringify([entry]) },
     createIsolatedRuntimeDependenciesRoot: () => '/unit/runtime-deps',
+    getFuncCoreToolsBinaryPath: (runtimeRoot: string) => path.join(runtimeRoot, 'FuncCoreTools', 'func'),
     waitForFuncCoreToolsAtDependencyRoot: async () => {
       assert.strictEqual(calls.length, 1, 'Bootstrap readiness must precede creation');
     },
     getLifecycleArtifactDir: () => '/unit/artifacts',
     createOwnedWorkspaceParent: () => '/unit/parent',
-    runVscodeTest: async (args: string[], options: { extraEnv: Record<string, string> }) => {
+    runVscodeTest: async (args: string[], options: { controlledFuncDirectory?: string; extraEnv: Record<string, string> }) => {
       calls.push({ args, ...options });
       if (failBootstrap) {
         throw new Error('unit bootstrap failed');
@@ -599,6 +609,11 @@ async function testRegisteredRunner(): Promise<void> {
     assert.strictEqual(calls[3].extraEnv.LA_E2E_CLI_AUTO_START_DESIGN_TIME, '1');
     assert.strictEqual(calls[3].extraEnv.LA_E2E_CLI_EXPECT_AZURE_LOGIC_APPS_CHANNEL, '1');
     assert.strictEqual(calls[3].extraEnv.LA_E2E_CLI_PROFILE_PHASE, 'stateless-variables-activation');
+    assert.strictEqual(
+      calls[3].controlledFuncDirectory,
+      path.join('/unit/runtime-deps', 'FuncCoreTools'),
+      'Activation host must control final PATH resolution with the bootstrap-admitted Func directory'
+    );
     assert.deepStrictEqual(cleanupRoots, ['/unit/parent', '/unit/runtime-deps']);
     assert.ok(text.includes('--stateless-variables-lifecycle'));
   });
