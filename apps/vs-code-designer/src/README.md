@@ -60,6 +60,12 @@ Please note that this feature is currently in private preview and is only availa
 
 For known issues, see [GitHub issues - Azure Logic Apps](https://github.com/Azure/LogicAppsUX/issues).
 
+## Local SMB file system connections
+
+Creating a local file system connection to an SMB share requires Windows and Windows PowerShell. The extension uses the Windows `WNetAddConnection2W` API through a bundled PowerShell helper. Credentials are passed through a private standard-input pipe, not command-line arguments, environment variables, or generated scripts. Connections do not assign a drive letter or save credentials for future logons.
+
+Failures return fixed messages for credential, network, or existing-connection problems. Raw process errors and provider diagnostics are not forwarded to the designer, logs, or telemetry. If a connection fails, check the share path, credentials, network access, and whether Windows PowerShell and `Add-Type` are permitted by your organization's policies.
+
 ## Providing feedback
 
 - To open product bugs, go to [GitHub issues for Azure Logic Apps](https://github.com/Azure/LogicAppsUX/issues).
