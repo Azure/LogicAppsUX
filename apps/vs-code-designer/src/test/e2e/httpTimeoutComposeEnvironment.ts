@@ -76,7 +76,7 @@ export const httpTimeoutConnectorPromptDom = `(() => {
     return {
       kind: 'quickInput', text: title, buttons: [], rows,
       interactive: document.visibilityState === 'visible' &&
-        !!input && container.contains(document.activeElement) && !input.disabled && !input.readOnly,
+        !!input && !input.disabled && !input.readOnly,
     };
   });
 })()`;

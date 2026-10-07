@@ -1253,7 +1253,10 @@ async function runStatelessVariablesLifecycle(visibleDelayMs, operations = { run
         LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE: JSON.stringify(entry),
         LA_E2E_CLI_STARTUP_RESOURCE: entry.workspaceFilePath,
         LA_E2E_CLI_AUTO_START_DESIGN_TIME: '1',
-        LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
+        // The real consumer requires registerFuncHostTaskEvents(). Command-only
+        // activation returns before those task-process listeners are registered,
+        // so pickFuncProcess can never observe the generated host task.
+        LA_E2E_CLI_MINIMAL_ACTIVATION: '0',
         LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '1',
       },
     });

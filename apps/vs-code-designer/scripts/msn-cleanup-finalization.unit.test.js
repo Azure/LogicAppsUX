@@ -340,7 +340,7 @@ test('no identities, empty post-exit observations and actual root absence cannot
   assert.equal(terminal.processClosureProof, 'original-identities-unverified');
 });
 
-test('exact original dependency identities can be closed and admit clean current-invocation evidence', async (t) => {
+test('exact original and successor dependency identities can be closed and admit clean current-invocation evidence', async (t) => {
   const f = fixture(t);
   const observer = { pid: process.pid, parentPid: 1, creationIdentity: '100', executable: process.execPath };
   const dependency = {
@@ -349,14 +349,34 @@ test('exact original dependency identities can be closed and admit clean current
     creationIdentity: '200',
     executable: path.join(f.dependencyRoot, 'FuncCoreTools', 'in-proc8', 'func.exe'),
   };
-  const observations = {
-    platform: process.platform,
-    queryLocks: () => [],
-    snapshot: async () => [observer, dependency],
+  const successorParent = {
+    pid: 24,
+    parentPid: 999,
+    creationIdentity: '300',
+    executable: path.join(f.dependencyRoot, 'FuncCoreTools', 'func.exe'),
   };
-  await observeMsnCleanupDiagnostics({ ...f, stage: 'before-task-teardown' }, observations);
-  await observeMsnCleanupDiagnostics({ ...f, stage: 'after-cli-close' }, observations);
-  const snapshots = [[observer, dependency], [observer]];
+  const successor = {
+    pid: 25,
+    parentPid: successorParent.pid,
+    creationIdentity: '400',
+    executable: path.join(f.dependencyRoot, 'FuncCoreTools', 'in-proc8', 'func.exe'),
+  };
+  const observationSnapshots = [
+    [observer, dependency],
+    [observer, dependency, successorParent, successor],
+    [observer, dependency, successorParent, successor],
+  ];
+  for (const stage of ['before-task-teardown', 'after-task-teardown', 'after-cli-close']) {
+    await observeMsnCleanupDiagnostics(
+      { ...f, stage },
+      {
+        platform: process.platform,
+        queryLocks: () => [],
+        snapshot: async () => observationSnapshots.shift(),
+      }
+    );
+  }
+  const snapshots = [[observer, dependency, successorParent, successor], [observer]];
   const terminated = [];
   const processCleanup = await closeOwnedMsnProcesses(f, {
     snapshot: async () => snapshots.shift() ?? [observer],
@@ -364,7 +384,11 @@ test('exact original dependency identities can be closed and admit clean current
     wait: async () => undefined,
     timeoutMs: 100,
   });
-  assert.deepEqual(terminated, [dependency.pid]);
+  assert.deepEqual(terminated, [dependency.pid, successor.pid, successorParent.pid]);
+  assert.deepEqual(
+    processCleanup.rootOwnedIdentities.map((identity) => identity.pid).sort((left, right) => left - right),
+    [dependency.pid, successorParent.pid, successor.pid]
+  );
   assert.equal(processCleanup.originalProcessClosureVerified, true);
   const journalEnv = beginDirectMsnEvidence(f.env);
   phases({ ...f.env, ...journalEnv });
@@ -380,8 +404,78 @@ test('exact original dependency identities can be closed and admit clean current
   assert.equal(terminal.complete, true);
   assert.equal(terminal.cleanupVerified, true);
   assert.equal(terminal.originalProcessClosureVerified, true);
-  assert.equal(terminal.processClosureProof, 'exact-original-identities-absent');
+  assert.equal(terminal.processClosureProof, 'exact-root-owned-identities-absent');
   assert.equal(terminal.exitCode, 0);
+});
+
+test('an unobserved later root process fails closed without termination', async (t) => {
+  const f = fixture(t);
+  const observer = { pid: process.pid, parentPid: 1, creationIdentity: '100', executable: process.execPath };
+  const dependency = {
+    pid: 23,
+    parentPid: process.pid,
+    creationIdentity: '200',
+    executable: path.join(f.dependencyRoot, 'FuncCoreTools', 'func.exe'),
+  };
+  const unexpected = {
+    pid: 24,
+    parentPid: dependency.pid,
+    creationIdentity: '300',
+    executable: path.join(f.dependencyRoot, 'FuncCoreTools', 'in-proc8', 'func.exe'),
+  };
+  for (const stage of ['before-task-teardown', 'after-task-teardown', 'after-cli-close']) {
+    await observeMsnCleanupDiagnostics(
+      { ...f, stage },
+      {
+        platform: process.platform,
+        queryLocks: () => [],
+        snapshot: async () => [observer, dependency],
+      }
+    );
+  }
+  const terminated = [];
+  await assert.rejects(
+    closeOwnedMsnProcesses(f, {
+      snapshot: async () => [observer, dependency, unexpected],
+      terminate: async (pid) => terminated.push(pid),
+      wait: async () => undefined,
+      timeoutMs: 100,
+    }),
+    /unadmitted process identity/
+  );
+  assert.deepEqual(terminated, []);
+});
+
+test('a reused admitted PID fails closed without termination', async (t) => {
+  const f = fixture(t);
+  const observer = { pid: process.pid, parentPid: 1, creationIdentity: '100', executable: process.execPath };
+  const dependency = {
+    pid: 23,
+    parentPid: process.pid,
+    creationIdentity: '200',
+    executable: path.join(f.dependencyRoot, 'FuncCoreTools', 'func.exe'),
+  };
+  for (const stage of ['before-task-teardown', 'after-task-teardown', 'after-cli-close']) {
+    await observeMsnCleanupDiagnostics(
+      { ...f, stage },
+      {
+        platform: process.platform,
+        queryLocks: () => [],
+        snapshot: async () => [observer, dependency],
+      }
+    );
+  }
+  const terminated = [];
+  await assert.rejects(
+    closeOwnedMsnProcesses(f, {
+      snapshot: async () => [observer, { ...dependency, creationIdentity: '201' }],
+      terminate: async (pid) => terminated.push(pid),
+      wait: async () => undefined,
+      timeoutMs: 100,
+    }),
+    /unadmitted process identity/
+  );
+  assert.deepEqual(terminated, []);
 });
 
 test('fresh journaling cannot reuse an earlier complete phase sequence', (t) => {

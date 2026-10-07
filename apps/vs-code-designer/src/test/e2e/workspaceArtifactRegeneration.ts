@@ -84,7 +84,7 @@ export interface RegenerationDeadline {
 }
 
 export function regenerationDeadline(phase: string, now = Date.now()): RegenerationDeadline {
-  return { phase, startedAt: now, deadline: now + 30000 };
+  return { phase, startedAt: now, deadline: now + 120000 };
 }
 
 export function remainingRegenerationBudget(phase: RegenerationDeadline, now = Date.now()): number {

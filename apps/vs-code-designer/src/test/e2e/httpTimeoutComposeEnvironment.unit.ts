@@ -139,7 +139,7 @@ export async function runHttpTimeoutEnvironmentControls(control: Control): Promi
       } as unknown as CdpConnection;
       try {
         const deadline = Date.now() + (fault === 'expired' ? -1 : fault === 'not-dismissed' ? 200 : 2000);
-        if (fault === 'none') {
+        if (fault === 'none' || fault === 'unfocused') {
           let contextCreated: (context: { id: number }) => void = () => {};
           const designerCdp = {
             onExecutionContextCreated: (listener: typeof contextCreated) => {

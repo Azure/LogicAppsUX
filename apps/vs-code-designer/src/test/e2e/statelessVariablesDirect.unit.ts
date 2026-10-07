@@ -69,6 +69,9 @@ const operations = {
     assert.equal(env.LA_E2E_CLI_AZURE_SUBSCRIPTION_ID, ${JSON.stringify(unitAzureEnv.LA_E2E_CLI_AZURE_SUBSCRIPTION_ID)});
     assert.equal(env.LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME, ${JSON.stringify(unitAzureEnv.LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME)});
     assert.ok(env.LA_E2E_CLI_AZURE_ACCESS_TOKEN, 'Approved scoped token must reach the phase executor');
+    if (env.LA_E2E_CLI_STATELESS_VARIABLES_MODE === 'run') {
+      assert.equal(env.LA_E2E_CLI_MINIMAL_ACTIVATION, '0', 'Real debug startup must register Functions task-process listeners');
+    }
     const scratch = fs.mkdtempSync(path.join(process.env.TEMP, 'unit-phase-'));
     fs.writeFileSync(path.join(scratch, 'owned.txt'), 'unit-owned');
     fs.rmSync(scratch, {recursive:true});

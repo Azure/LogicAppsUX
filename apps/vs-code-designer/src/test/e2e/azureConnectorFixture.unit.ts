@@ -146,6 +146,7 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
     'wrong-subscription',
     'auth-prompt',
     'creation-prompt',
+    'external-focus',
   ]) {
     await control(`approved native fixture journey DOM ${fault} never creates or selects a foreign target`, async () => {
       const { JSDOM } = require('jsdom');
@@ -186,7 +187,11 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
               <span class="label-name">${text}</span></div>`
                 )
                 .join('')}</div></div>`;
-        window.document.querySelector('input')?.focus();
+        if (fault === 'external-focus') {
+          window.document.body.focus();
+        } else {
+          window.document.querySelector('input')?.focus();
+        }
       };
       render();
       const geometry = (element: any) => {
@@ -226,7 +231,7 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
           handleAffirmativeConnectorWorkbenchPrompt(cdp, 'unitApp', deadline, (prompt) =>
             selectApprovedAzureConnectorFixturePrompt(cdp, prompt, fixture, deadline, async () => 'Unit Approved Subscription')
           );
-        if (fault === 'none') {
+        if (fault === 'none' || fault === 'external-focus') {
           assert.strictEqual(await journey(), true);
           assert.deepStrictEqual(clicked, ['Use connectors from Azure', 'Unit Approved Subscription', 'unit-existing-group']);
         } else {

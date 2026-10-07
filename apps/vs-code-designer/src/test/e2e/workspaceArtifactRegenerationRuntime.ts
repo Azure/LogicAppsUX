@@ -74,6 +74,62 @@ export function regenerationRuntimeSettingsHash(settings: Record<string, unknown
     .digest('hex');
 }
 
+function managedRuntimeBinaries(root: string): { func: string; dotnet: string; node: string } {
+  const executable = (directory: string, names: string[]): string => {
+    const matches = names.map((name) => path.join(directory, name)).filter((candidate) => fs.existsSync(candidate));
+    assert.strictEqual(matches.length, 1, `Expected exactly one admitted managed binary in ${directory}`);
+    assert.ok(fs.statSync(matches[0]).isFile(), 'Admitted managed binary must be a regular file');
+    return fs.realpathSync(matches[0]);
+  };
+  const funcRoot = path.join(root, 'FuncCoreTools');
+  const funcNames =
+    process.platform === 'win32'
+      ? ['func.exe', path.join('in-proc8', 'func.exe'), path.join('in-proc6', 'func.exe')]
+      : ['func', path.join('in-proc8', 'func'), path.join('in-proc6', 'func')];
+  const funcCandidates = funcNames.map((name) => path.join(funcRoot, name)).filter((candidate) => fs.existsSync(candidate));
+  assert.ok(funcCandidates.length > 0, 'Admitted FuncCoreTools executable is missing');
+  const func = fs.realpathSync(funcCandidates[0]);
+  const dotnet = executable(path.join(root, 'DotNetSDK'), [process.platform === 'win32' ? 'dotnet.exe' : 'dotnet']);
+  const nodeRoot = path.join(root, 'NodeJs');
+  const node =
+    process.platform === 'win32'
+      ? executable(nodeRoot, ['node.exe'])
+      : executable(
+          nodeRoot,
+          fs
+            .readdirSync(nodeRoot, { withFileTypes: true })
+            .filter((entry) => entry.isDirectory() && entry.name.startsWith('node-v'))
+            .map((entry) => path.join(entry.name, 'bin', 'node'))
+        );
+  return { func, dotnet, node };
+}
+
+export async function pinRegenerationRuntimeSettings(
+  binding: RegenerationRuntimeBinding,
+  updateGlobalValue: (key: string, value: unknown) => PromiseLike<void>
+): Promise<void> {
+  const root = assertRegenerationRuntimeRoot(binding.runtimeAdmission.root);
+  const binaries = managedRuntimeBinaries(root);
+  const dotnetOwners = [
+    'ms-dotnettools.csharp',
+    'ms-dotnettools.csdevkit',
+    'ms-azuretools.vscode-azurefunctions',
+    'ms-azuretools.vscode-azurelogicapps',
+  ];
+  for (const [key, value] of Object.entries({
+    'azureLogicAppsStandard.funcCoreToolsBinaryPath': binaries.func,
+    'azureLogicAppsStandard.dotnetBinaryPath': binaries.dotnet,
+    'azureLogicAppsStandard.nodeJsBinaryPath': binaries.node,
+    'dotnetAcquisitionExtension.sharedExistingDotnetPath': binaries.dotnet,
+    'dotnetAcquisitionExtension.existingDotnetPath': dotnetOwners.map((extensionId) => ({
+      extensionId,
+      path: binaries.dotnet,
+    })),
+  })) {
+    await updateGlobalValue(key, value);
+  }
+}
+
 function configuredBinaries(settings: Record<string, unknown>, root: string): string[] {
   assert.deepStrictEqual(
     Object.keys(settings).sort(),
@@ -100,7 +156,10 @@ function configuredBinaries(settings: Record<string, unknown>, root: string): st
     ['azureLogicAppsStandard.nodeJsBinaryPath', 'NodeJs'],
   ].map(([key, directory]) => {
     const binary = settings[key];
-    assert.ok(typeof binary === 'string' && path.isAbsolute(binary), 'Actual creating-host binary setting must be an absolute path');
+    assert.ok(
+      typeof binary === 'string' && path.isAbsolute(binary),
+      `Actual creating-host binary setting ${key} must be an absolute path; received ${JSON.stringify(binary)}`
+    );
     const relative = path.relative(path.join(root, directory), fs.realpathSync(binary));
     assert.ok(
       relative && !relative.startsWith('..') && !path.isAbsolute(relative),

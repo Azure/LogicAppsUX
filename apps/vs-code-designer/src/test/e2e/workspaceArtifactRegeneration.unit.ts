@@ -31,6 +31,7 @@ import {
   assertRegenerationRuntimeRoot,
   captureRegenerationRuntimeSettings,
   initializeRegenerationRuntimeRoot,
+  pinRegenerationRuntimeSettings,
   regenerationRuntimeSettingKeys,
   verifyRegenerationRuntimeSettings,
   writeRegenerationRuntimeProfile,
@@ -147,7 +148,7 @@ async function main(): Promise<void> {
             if (kind === 'overwrite') {
               overwriteCaptured = true;
               if (failure === 'capture-expiry') {
-                failureClock.advance(30000);
+                failureClock.advance(120000);
               }
             }
           },
@@ -182,12 +183,17 @@ async function main(): Promise<void> {
     // Unit-owned runtime/profile files exercise provenance and configuration
     // controls only; they are not installed binaries or a native wizard fixture.
     const dependencyRoot = path.join(root, 'admitted-runtime');
-    const binaryPaths = ['FuncCoreTools', 'DotNetSDK', 'NodeJs'].map((name) => {
-      fs.mkdirSync(path.join(dependencyRoot, name), { recursive: true });
-      const file = path.join(dependencyRoot, name, 'unit-binary');
-      fs.writeFileSync(file, `unit-only-${name}`);
-      return file;
-    });
+    const funcBinary = path.join(dependencyRoot, 'FuncCoreTools', process.platform === 'win32' ? 'func.exe' : 'func');
+    const dotnetBinary = path.join(dependencyRoot, 'DotNetSDK', process.platform === 'win32' ? 'dotnet.exe' : 'dotnet');
+    const nodeBinary =
+      process.platform === 'win32'
+        ? path.join(dependencyRoot, 'NodeJs', 'node.exe')
+        : path.join(dependencyRoot, 'NodeJs', 'node-v-unit', 'bin', 'node');
+    const binaryPaths = [funcBinary, dotnetBinary, nodeBinary];
+    for (const file of binaryPaths) {
+      fs.mkdirSync(path.dirname(file), { recursive: true });
+      fs.writeFileSync(file, `unit-only-${path.basename(path.dirname(file))}`);
+    }
     const sourceSettingsPath = path.join(root, 'creating-profile', 'User', 'settings.json');
     fs.mkdirSync(path.dirname(sourceSettingsPath), { recursive: true });
     const runtimeSettings: Record<string, unknown> = {
@@ -217,6 +223,18 @@ async function main(): Promise<void> {
       startedUtc: new Date(Date.now() - 1000).toISOString(),
       runtimeAdmission: { root: dependencyRoot, sourceSettingsPath },
     };
+    const pinned: Record<string, unknown> = {};
+    await pinRegenerationRuntimeSettings(binding, async (key, value) => {
+      pinned[key] = value;
+    });
+    assert.strictEqual(pinned['azureLogicAppsStandard.funcCoreToolsBinaryPath'], fs.realpathSync(binaryPaths[0]));
+    assert.strictEqual(pinned['azureLogicAppsStandard.dotnetBinaryPath'], fs.realpathSync(binaryPaths[1]));
+    assert.strictEqual(pinned['azureLogicAppsStandard.nodeJsBinaryPath'], fs.realpathSync(binaryPaths[2]));
+    assert.strictEqual(pinned['dotnetAcquisitionExtension.sharedExistingDotnetPath'], fs.realpathSync(binaryPaths[1]));
+    assert.deepStrictEqual(
+      (pinned['dotnetAcquisitionExtension.existingDotnetPath'] as Array<{ path: string }>).map((entry) => entry.path),
+      Array(4).fill(fs.realpathSync(binaryPaths[1]))
+    );
     const queried: string[] = [];
     const runtimeHandoff = captureRegenerationRuntimeSettings(binding, (key) => {
       queried.push(key);
@@ -361,9 +379,9 @@ async function main(): Promise<void> {
     checks++;
 
     const phase = regenerationDeadline('unit', 100);
-    assert.strictEqual(phase.deadline, 30100);
-    assert.strictEqual(remainingRegenerationBudget(phase, 30099), 1);
-    assert.throws(() => remainingRegenerationBudget(phase, 30100), /cannot be reset/);
+    assert.strictEqual(phase.deadline, 120100);
+    assert.strictEqual(remainingRegenerationBudget(phase, 120099), 1);
+    assert.throws(() => remainingRegenerationBudget(phase, 120100), /cannot be reset/);
     checks++;
 
     assert.deepStrictEqual(selectRegenerationYes([prompt], appDir).point, { x: 10, y: 20 });
@@ -401,7 +419,7 @@ async function main(): Promise<void> {
         ),
         expected
       );
-      assert.strictEqual(clock.now(), 30000, 'Silent healing must not create a fresh deadline or fake Yes');
+      assert.strictEqual(clock.now(), 120000, 'Silent healing must not create a fresh deadline or fake Yes');
       checks++;
     }
     const clock = fakeClock();
@@ -451,7 +469,7 @@ async function main(): Promise<void> {
     await assert.rejects(
       requireRegenerationYes(
         async () => {
-          expiredClock.advance(30000);
+          expiredClock.advance(120000);
           return observed;
         },
         appDir,

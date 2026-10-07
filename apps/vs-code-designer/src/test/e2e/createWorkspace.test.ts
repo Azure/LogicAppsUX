@@ -47,7 +47,11 @@ import { waitForVisibleDelay } from './visibleDelay';
 import { closeWebviewTabs, getTabViewType, getWebviewTabs, waitForWebviewTab } from './webviewTabs';
 import { applyCodefulControlVariantToProject, requiredValue, waitForPathExists } from './workspaceArtifacts';
 import { recordMultiRootWizardHandoff } from './workspaceMultiRootHandoff';
-import { captureRegenerationRuntimeSettings, type RegenerationRuntimeBinding } from './workspaceArtifactRegenerationRuntime';
+import {
+  captureRegenerationRuntimeSettings,
+  pinRegenerationRuntimeSettings,
+  type RegenerationRuntimeBinding,
+} from './workspaceArtifactRegenerationRuntime';
 
 const logicAppsExtensionId = 'ms-azuretools.vscode-azurelogicapps';
 const createWorkspaceCommand = 'azureLogicAppsStandard.createWorkspace';
@@ -358,6 +362,11 @@ suite('Create Workspace Experience Tests', () => {
           const context = JSON.parse(process.env.LA_E2E_CLI_CANCEL_CONTEXT || '{}');
           assert.ok(context.invocation && context.identity, 'Current-job Cancel context is required');
           const executable = fs.realpathSync(process.execPath);
+          if (context.runtimeAdmission) {
+            await pinRegenerationRuntimeSettings(context as RegenerationRuntimeBinding, (key, value) =>
+              vscode.workspace.getConfiguration().update(key, value, vscode.ConfigurationTarget.Global)
+            );
+          }
           fs.writeFileSync(
             process.env.LA_E2E_CLI_CANCEL_HANDOFF_PATH,
             `${JSON.stringify({
