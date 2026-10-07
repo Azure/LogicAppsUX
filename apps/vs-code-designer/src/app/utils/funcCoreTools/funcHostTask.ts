@@ -17,10 +17,12 @@ import * as cp from 'child_process';
 import * as os from 'os';
 import * as path from 'path';
 import { Platform } from '@microsoft/vscode-extension-logic-apps';
+import { projectRuntimeRegistry } from './projectRuntimeRegistry';
 export interface IRunningFuncTask {
   startTime: number;
   processId: number;
   childProcessId?: any[];
+  taskExecution?: vscode.TaskExecution;
 }
 
 export const runningFuncTaskMap: Map<vscode.WorkspaceFolder | vscode.TaskScope, IRunningFuncTask> = new Map();
@@ -112,10 +114,22 @@ async function killFuncProcessTree(runningFuncTask: IRunningFuncTask): Promise<v
 
 export async function stopFuncTaskForWorkspace(
   workspaceFolder: vscode.WorkspaceFolder,
-  options?: { minimumRuntimeMs?: number; timeoutInSeconds?: number }
+  options?: {
+    minimumRuntimeMs?: number;
+    timeoutInSeconds?: number;
+    expectedProcessId?: number;
+    expectedTaskExecution?: vscode.TaskExecution;
+  }
 ): Promise<boolean> {
-  const funcExecution = findFuncTaskExecution(workspaceFolder);
   const runningFuncTask = getRunningFuncTaskForWorkspace(workspaceFolder);
+  if (
+    options?.expectedTaskExecution &&
+    (runningFuncTask?.taskExecution !== options.expectedTaskExecution ||
+      (options.expectedProcessId !== undefined && runningFuncTask.processId !== options.expectedProcessId))
+  ) {
+    return false;
+  }
+  const funcExecution = options?.expectedTaskExecution ?? findFuncTaskExecution(workspaceFolder);
 
   if (!funcExecution && !runningFuncTask) {
     return false;
@@ -163,7 +177,14 @@ export function registerFuncHostTaskEvents(): void {
       context.errorHandling.suppressDisplay = true;
       context.telemetry.suppressIfSuccessful = true;
       if (e.execution.task.scope !== undefined && isFuncHostTask(e.execution.task)) {
-        runningFuncTaskMap.set(e.execution.task.scope, { startTime: Date.now(), processId: e.processId });
+        runningFuncTaskMap.set(e.execution.task.scope, {
+          startTime: Date.now(),
+          processId: e.processId,
+          taskExecution: e.execution,
+        });
+        if (typeof e.execution.task.scope === 'object') {
+          projectRuntimeRegistry.claimTaskStart(e.execution.task.scope.uri, e.execution, e.processId);
+        }
       }
     }
   );
@@ -175,8 +196,16 @@ export function registerFuncHostTaskEvents(): void {
       context.errorHandling.suppressDisplay = true;
       context.telemetry.suppressIfSuccessful = true;
       if (e.execution.task.scope !== undefined && isFuncHostTask(e.execution.task)) {
-        runningFuncTaskMap.delete(e.execution.task.scope);
-        ext.workflowRuntimePort = undefined;
+        const trackedTask = runningFuncTaskMap.get(e.execution.task.scope);
+        if (!trackedTask?.taskExecution || trackedTask.taskExecution === e.execution) {
+          runningFuncTaskMap.delete(e.execution.task.scope);
+        }
+        const terminatedRegistration = projectRuntimeRegistry.terminateTaskExecution(e.execution);
+        if (terminatedRegistration) {
+          ext.workflowRuntimePort = projectRuntimeRegistry.getMostRecentActive()?.port;
+        } else if (!projectRuntimeRegistry.getMostRecentActive()) {
+          ext.workflowRuntimePort = undefined;
+        }
       }
     }
   );

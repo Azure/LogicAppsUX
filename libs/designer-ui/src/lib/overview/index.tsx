@@ -14,24 +14,30 @@ import { useIntl } from 'react-intl';
 import { useOverviewStyles } from './styles';
 
 export interface OverviewProps {
+  canRunTrigger?: boolean;
   corsNotice?: string;
   errorMessage?: string;
   isRefreshing?: boolean;
   isDarkMode?: boolean;
   isAgentWorkflow?: boolean;
+  isRunTriggerPending?: boolean;
   agentUrlLoading?: boolean;
   agentUrlData?: AgentURL;
   isWorkflowRuntimeRunning?: boolean;
   hasMoreRuns?: boolean;
   loading?: boolean;
+  pendingRunId?: string;
   runItems: RunDisplayItem[];
   workflowProperties: OverviewPropertiesProps;
   onLoadMoreRuns(): void;
   onLoadRuns(): void;
   onOpenRun(run: RunDisplayItem): void;
+  onCancelRun?(run: RunDisplayItem): void;
   onRunTrigger(): void;
   onVerifyRunId(runId: string): Promise<Run | RunError> | undefined;
   onCreateUnitTestFromRun?(run: RunDisplayItem): void;
+  onCopyCallbackUrl?(): void;
+  onOpenProjectOverview?(): void;
 }
 
 const filterTextFieldStyles: Pick<ITextFieldStyles, 'root'> = {
@@ -43,24 +49,29 @@ const filterTextFieldStyles: Pick<ITextFieldStyles, 'root'> = {
 const navigateForwardIconProps: IIconProps = { iconName: 'NavigateForward' };
 
 export const Overview: React.FC<OverviewProps> = ({
+  canRunTrigger,
   corsNotice,
   errorMessage,
   loading = false,
   isDarkMode,
   isAgentWorkflow,
+  isRunTriggerPending,
   agentUrlLoading,
   agentUrlData,
   isWorkflowRuntimeRunning,
   hasMoreRuns = false,
   runItems,
+  pendingRunId,
   workflowProperties,
   isRefreshing,
   onLoadMoreRuns,
   onLoadRuns,
   onOpenRun,
+  onCancelRun,
   onRunTrigger,
   onVerifyRunId,
-  onCreateUnitTestFromRun,
+  onCopyCallbackUrl,
+  onOpenProjectOverview,
 }: OverviewProps) => {
   const intl = useIntl();
   const styles = useOverviewStyles();
@@ -131,22 +142,24 @@ export const Overview: React.FC<OverviewProps> = ({
   return (
     <div>
       <OverviewCommandBar
-        canRunTrigger={Boolean(workflowProperties.callbackInfo)}
+        canRunTrigger={canRunTrigger}
         isDarkMode={isDarkMode}
         isRefreshing={isRefreshing}
         isAgentWorkflow={isAgentWorkflow}
         agentUrlLoading={agentUrlLoading}
         agentUrlData={agentUrlData}
         isWorkflowRuntimeRunning={isWorkflowRuntimeRunning}
-        hasCallbackInfo={!!workflowProperties.callbackInfo}
+        isRunTriggerPending={isRunTriggerPending}
         onRefresh={onLoadRuns}
         onRunTrigger={onRunTrigger}
+        onOpenProjectOverview={onOpenProjectOverview}
       />
       <OverviewProperties
         {...workflowProperties}
         agentUrl={agentUrlData?.agentUrl}
         agentApiKey={agentUrlData?.queryParams?.apiKey}
         isWorkflowRuntimeRunning={isWorkflowRuntimeRunning}
+        onCopyCallbackUrl={onCopyCallbackUrl}
       />
       <Pivot>
         <PivotItem headerText={Resources.RUN_HISTORY}>
@@ -179,12 +192,7 @@ export const Overview: React.FC<OverviewProps> = ({
               </div>
             }
           >
-            <RunHistory
-              items={runItems}
-              loading={loading}
-              onOpenRun={onOpenRun}
-              onCreateUnitTestFromRun={onCreateUnitTestFromRun}
-            />
+            <RunHistory items={runItems} loading={loading} pendingRunId={pendingRunId} onCancelRun={onCancelRun} onOpenRun={onOpenRun} />
           </InfiniteScroll>
           {errorMessage ? (
             <MessageBar data-testid="msla-overview-error-message" isMultiline={false} messageBarType={MessageBarType.error}>

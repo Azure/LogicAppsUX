@@ -26,6 +26,17 @@ export interface RunServiceOptions {
   isDev?: boolean;
 }
 
+export interface StartTriggerOptions {
+  content?: unknown;
+  headers?: HttpRequestOptions<unknown>['headers'];
+}
+
+export interface StartTriggerResult {
+  responseHeaders?: Record<string, string | string[] | undefined>;
+  runId?: string;
+  trackingId?: string;
+}
+
 export class StandardRunService implements IRunService {
   _isDev = false;
 
@@ -465,6 +476,41 @@ export class StandardRunService implements IRunService {
     } catch (e: any) {
       throw new Error(parseErrorMessage(e));
     }
+  }
+
+  async startTrigger(triggerName: string, options?: StartTriggerOptions): Promise<StartTriggerResult> {
+    const { apiVersion, baseUrl, httpClient, workflowName } = this.options;
+    const uri = `${baseUrl}/workflows/${encodeURIComponent(workflowName)}/triggers/${encodeURIComponent(triggerName)}/run`;
+    const noAuth = !(isArmResourceId(baseUrl) || baseUrl.includes('/subscriptions/'));
+
+    try {
+      const response = await httpClient.post<Record<string, unknown>, unknown>({
+        uri,
+        noAuth,
+        returnHeaders: true,
+        headers: options?.headers,
+        queryParameters: { 'api-version': apiVersion },
+        content: options?.content,
+      });
+      const responseHeaders = response?.['responseHeaders'] as StartTriggerResult['responseHeaders'];
+
+      return {
+        responseHeaders,
+        runId: this.getResponseHeader(responseHeaders, 'x-ms-workflow-run-id') ?? (response?.['runId'] as string | undefined),
+        trackingId: this.getResponseHeader(responseHeaders, 'x-ms-client-tracking-id') ?? (response?.['trackingId'] as string | undefined),
+      };
+    } catch (e: any) {
+      throw new Error(parseErrorMessage(e));
+    }
+  }
+
+  private getResponseHeader(headers: StartTriggerResult['responseHeaders'], headerName: string): string | undefined {
+    if (!headers) {
+      return undefined;
+    }
+
+    const value = Object.entries(headers).find(([key]) => key.toLowerCase() === headerName)?.[1];
+    return Array.isArray(value) ? value[0] : value;
   }
 
   /**

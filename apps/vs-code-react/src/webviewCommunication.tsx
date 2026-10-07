@@ -66,6 +66,7 @@ import {
   updateRuntimeBaseUrl,
 } from './state/DesignerSlice';
 import type { InitializePayload } from './state/WorkflowSlice';
+import type { ProjectOverviewMessageToWebview } from '@microsoft/vscode-extension-logic-apps';
 import {
   initializeWorkflow,
   updateAccessToken,
@@ -96,6 +97,7 @@ import {
   setPackageValidationResult,
   initializeWorkspace,
 } from './state/createWorkspaceSlice';
+import { routeProjectOverviewMessage } from './app/projectOverview/messageRouter';
 
 const vscode: WebviewApi<unknown> = acquireVsCodeApi();
 export const VSCodeContext = React.createContext(vscode);
@@ -132,7 +134,12 @@ type WorkflowMessageType =
   | AddStatusMessage
   | SetFinalStatusMessage
   | ValidateWorkspacePathMessage;
-type MessageType = InjectValuesMessage | DesignerMessageType | DataMapperMessageType | WorkflowMessageType;
+type MessageType =
+  | InjectValuesMessage
+  | DesignerMessageType
+  | DataMapperMessageType
+  | WorkflowMessageType
+  | ProjectOverviewMessageToWebview;
 
 export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ children }) => {
   const dispatch: AppDispatch = useDispatch();
@@ -142,6 +149,10 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
 
   useEventListener('message', (event: MessageEvent<MessageType>) => {
     const message = event.data; // The JSON data our extension sent
+
+    if (routeProjectOverviewMessage(dispatch, message as ProjectOverviewMessageToWebview)) {
+      return;
+    }
 
     // // Handle workspace existence validation results (for any project type)
     // if ((message as any).command === 'workspaceExistenceResult') {
@@ -170,7 +181,12 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
       dispatch(initialize(message.data));
     }
 
-    switch (projectState?.project ?? message?.data?.project) {
+    const messageProject =
+      'data' in message && message.data && typeof message.data === 'object' && 'project' in message.data
+        ? String(message.data.project)
+        : undefined;
+
+    switch (projectState?.project ?? messageProject) {
       case ProjectName.designer: {
         switch (message.command) {
           case ExtensionCommand.initialize_frame: {

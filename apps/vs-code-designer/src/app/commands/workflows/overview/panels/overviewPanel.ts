@@ -10,11 +10,17 @@ import { getWebViewHTML } from '../../../../utils/codeless/getWebViewHTML';
 import { openMonitoringView } from '../../monitoringView/openMonitoringView';
 import { shouldUpdateOverviewCallbackInfo } from '../../overviewCallbackInfo';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { AzureConnectorDetails, ICallbackUrlResponse } from '@microsoft/vscode-extension-logic-apps';
+import type {
+  AzureConnectorDetails,
+  ICallbackUrlResponse,
+  WorkflowOverviewMessageToExtension,
+} from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
+import { getCallbackUrl, getIsCallbackUrlSupported } from '@microsoft/logic-apps-shared';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import type { OverviewWorkflowProperties } from '../utils/types';
+import type { WorkflowOverviewProjectOrigin } from '../openOverview';
 
 export abstract class OverviewPanel {
   protected readonly context: IActionContext;
@@ -37,6 +43,7 @@ export abstract class OverviewPanel {
   protected corsNotice?: string;
   protected connectionData: Record<string, any> = {};
   protected workflowFilePath?: string;
+  protected readonly projectOrigin?: WorkflowOverviewProjectOrigin;
 
   private pollingInterval?: NodeJS.Timeout;
 
@@ -46,11 +53,13 @@ export abstract class OverviewPanel {
     panelName: string,
     panelTitle: string,
     apiVersion: string,
-    isLocal: boolean
+    isLocal: boolean,
+    projectOrigin?: WorkflowOverviewProjectOrigin
   ) {
     this.context = context;
     this.workflowName = workflowName;
-    this.panelName = panelName;
+    this.projectOrigin = this.isValidProjectOrigin(projectOrigin) ? projectOrigin : undefined;
+    this.panelName = this.getPanelCacheName(panelName);
     this.panelTitle = panelTitle;
     this.apiVersion = apiVersion;
     this.isLocal = isLocal;
@@ -101,7 +110,7 @@ export abstract class OverviewPanel {
     };
   }
 
-  protected async handleWebviewMsg(message: any): Promise<void> {
+  protected async handleWebviewMsg(message: WorkflowOverviewMessageToExtension | any): Promise<void> {
     switch (message.command) {
       case ExtensionCommand.loadRun: {
         openMonitoringView(this.context, this.getWorkflowNode(), message.item.id, this.workflowFilePath);
@@ -110,6 +119,24 @@ export abstract class OverviewPanel {
       case ExtensionCommand.initialize: {
         this.sendInitializeFrame();
         this.startPollingInterval();
+        break;
+      }
+      case ExtensionCommand.copyWorkflowOverviewCallback: {
+        const workflowName = message.data?.workflowName;
+        const workflowProperties = this.getWorkflowProperties(workflowName);
+        const { isCallbackUrlSupported = false } = workflowProperties?.definition
+          ? getIsCallbackUrlSupported(workflowProperties.definition)
+          : {};
+        const callbackUrl = isCallbackUrlSupported ? getCallbackUrl(workflowProperties?.callbackInfo) : undefined;
+        if (callbackUrl) {
+          await vscode.env.clipboard.writeText(callbackUrl);
+        }
+        break;
+      }
+      case ExtensionCommand.openProjectOverview: {
+        if (this.projectOrigin && message.data?.projectId === this.projectOrigin.projectId) {
+          await this.projectOrigin.openProjectOverview();
+        }
         break;
       }
       default:
@@ -135,8 +162,29 @@ export abstract class OverviewPanel {
         kind: this.workflowProps?.kind ?? kind,
         isCodeful: this.isCodefulOverview,
         connectionData: this.connectionData,
+        projectOverviewOrigin: this.projectOrigin ? { projectId: this.projectOrigin.projectId } : undefined,
       },
     });
+  }
+
+  protected getPanelCacheName(panelName: string): string {
+    return this.projectOrigin ? `${panelName}-${this.projectOrigin.projectId}` : panelName;
+  }
+
+  private getWorkflowProperties(workflowName: unknown): OverviewWorkflowProperties | undefined {
+    if (typeof workflowName !== 'string') {
+      return undefined;
+    }
+
+    return (this.workflowPropertiesList ?? [this.workflowProps]).find((workflowProperties) => workflowProperties?.name === workflowName);
+  }
+
+  private isValidProjectOrigin(projectOrigin: WorkflowOverviewProjectOrigin | undefined): projectOrigin is WorkflowOverviewProjectOrigin {
+    return (
+      typeof projectOrigin?.projectId === 'string' &&
+      projectOrigin.projectId.length > 0 &&
+      typeof projectOrigin.openProjectOverview === 'function'
+    );
   }
 
   private startPollingInterval(): void {

@@ -1,7 +1,7 @@
 import type { ExportData, ITargetDirectory, IValidationData, ManagedConnections, WorkflowsList } from '../run-service';
 import { AdvancedOptionsTypes } from '../run-service';
 import type { OverviewPropertiesProps } from '@microsoft/designer-ui';
-import type { AzureConnectorDetails, ICallbackUrlResponse } from '@microsoft/vscode-extension-logic-apps';
+import type { AzureConnectorDetails, ICallbackUrlResponse, OpenProjectOverviewPayload } from '@microsoft/vscode-extension-logic-apps';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -21,6 +21,7 @@ export interface InitializePayload {
   azureDetails?: AzureConnectorDetails;
   kind?: string;
   connectionData?: Record<string, any>;
+  projectOverviewOrigin?: OpenProjectOverviewPayload;
 }
 
 export interface UpdateCallbackInfoPayload {
@@ -61,6 +62,7 @@ export interface WorkflowState {
   azureDetails?: AzureConnectorDetails;
   kind?: string;
   connectionData?: Record<string, any>;
+  projectOverviewOrigin?: OpenProjectOverviewPayload;
 }
 
 const initialState: WorkflowState = {
@@ -111,6 +113,7 @@ export const workflowSlice = createSlice({
         azureDetails,
         kind,
         connectionData,
+        projectOverviewOrigin,
       } = action.payload;
       const initializedState = state;
       initializedState.accessToken = accessToken;
@@ -146,6 +149,7 @@ export const workflowSlice = createSlice({
       initializedState.azureDetails = azureDetails;
       initializedState.kind = kind;
       initializedState.connectionData = connectionData || {};
+      initializedState.projectOverviewOrigin = projectOverviewOrigin;
     },
     updateBaseUrl: (state: WorkflowState, action: PayloadAction<string | undefined>) => {
       state.baseUrl = action.payload ?? '';

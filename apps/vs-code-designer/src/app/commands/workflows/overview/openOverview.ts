@@ -12,26 +12,40 @@ import type { OverviewPanel } from './panels/overviewPanel';
 import RemoteOverviewPanel from './panels/remoteOverviewPanel';
 import LocalOverviewPanel from './panels/localOverviewPanel';
 import LocalCodefulOverviewPanel from './panels/localCodefulOverviewPanel';
+import type { ProjectOverviewProjectId } from '@microsoft/vscode-extension-logic-apps';
 
-export async function openOverview(context: IActionContext, node: Uri | RemoteWorkflowTreeItem | undefined): Promise<void> {
+export interface WorkflowOverviewProjectOrigin {
+  projectId: ProjectOverviewProjectId;
+  openProjectOverview(): Promise<void> | void;
+}
+
+export async function openOverview(
+  context: IActionContext,
+  node: Uri | RemoteWorkflowTreeItem | undefined,
+  projectOrigin?: WorkflowOverviewProjectOrigin
+): Promise<void> {
   const workflowNode = getWorkflowNode(node);
   if (!workflowNode) {
     ext.outputChannel.appendLog(localize('workflowNodeNotFound', 'Failed to open overview. Unable to find the workflow node.'));
     return;
   }
 
-  const overviewPanel = getOverviewPanel(context, workflowNode);
+  const overviewPanel = getOverviewPanel(context, workflowNode, projectOrigin);
   await overviewPanel.create();
 }
 
-function getOverviewPanel(context: IActionContext, workflowNode: Uri | RemoteWorkflowTreeItem): OverviewPanel {
+function getOverviewPanel(
+  context: IActionContext,
+  workflowNode: Uri | RemoteWorkflowTreeItem,
+  projectOrigin?: WorkflowOverviewProjectOrigin
+): OverviewPanel {
   if (workflowNode instanceof RemoteWorkflowTreeItem) {
     return new RemoteOverviewPanel(context, workflowNode);
   }
 
   if (workflowNode.fsPath.endsWith('.cs')) {
-    return new LocalCodefulOverviewPanel(context, workflowNode);
+    return new LocalCodefulOverviewPanel(context, workflowNode, projectOrigin);
   }
 
-  return new LocalOverviewPanel(context, workflowNode);
+  return new LocalOverviewPanel(context, workflowNode, projectOrigin);
 }
