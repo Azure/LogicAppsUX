@@ -87,6 +87,39 @@ describe('openMonitoringView', () => {
     expect(mockLocalMonitoringCreate).toHaveBeenCalledOnce();
   });
 
+  it.each(['Program.cs', 'Workflow.cs'])('forwards optional compiled context by identity for %s in V2', async (fileName) => {
+    vi.mocked(workspace.getConfiguration).mockReturnValue({ get: vi.fn(() => 2) } as any);
+    const filePath = `/test/project/${fileName}`;
+    const uri = Uri.file(filePath);
+    const monitoring = { workflowName: 'selected-workflow', runId: 'historical-run' } as any;
+
+    await openMonitoringView(mockContext, uri, 'historical-run', filePath, monitoring);
+
+    expect(openDesignerV2).toHaveBeenCalledExactlyOnceWith(mockContext, uri, 'historical-run', monitoring);
+    expect(vi.mocked(openDesignerV2).mock.calls[0][3]).toBe(monitoring);
+    expect(mockLocalMonitoringConstructor).not.toHaveBeenCalled();
+    expect(mockRemoteMonitoringCreate).not.toHaveBeenCalled();
+  });
+
+  it.each([1, undefined])('preserves the V1/default route even if a context is supplied (setting %s)', async (version) => {
+    vi.mocked(workspace.getConfiguration).mockReturnValue({ get: vi.fn(() => version) } as any);
+    const uri = Uri.file('/test/project/Program.cs');
+    await openMonitoringView(mockContext, uri, 'run-id', uri.fsPath, {} as any);
+    expect(openDesignerV2).not.toHaveBeenCalled();
+    expect(mockLocalMonitoringConstructor).toHaveBeenCalledWith(mockContext, 'run-id', uri.fsPath);
+    expect(mockLocalMonitoringCreate).toHaveBeenCalledOnce();
+  });
+
+  it('preserves codeless and remote V1 monitoring routes', async () => {
+    vi.mocked(workspace.getConfiguration).mockReturnValue({ get: vi.fn(() => 1) } as any);
+    const uri = Uri.file('/test/project/workflow.json');
+    await openMonitoringView(mockContext, uri, 'local-run', uri.fsPath);
+    await openMonitoringView(mockContext, { name: 'remote' } as any, 'remote-run', 'remote-path');
+    expect(mockLocalMonitoringConstructor).toHaveBeenCalledWith(mockContext, 'local-run', uri.fsPath);
+    expect(mockRemoteMonitoringCreate).toHaveBeenCalledOnce();
+    expect(openDesignerV2).not.toHaveBeenCalled();
+  });
+
   it('continues routing local codeful workflows to the v1 monitoring panel when designer version is 1', async () => {
     vi.mocked(workspace.getConfiguration).mockReturnValue({ get: vi.fn(() => 1) } as any);
     const workflowFilePath = '/test/project/workflow.cs';

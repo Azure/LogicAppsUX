@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
 import { getLocalSettingsJson } from '../../../../utils/appSettings/localSettings';
@@ -19,6 +20,9 @@ import {
   getRuntimeCodefulWorkflows,
 } from '../utils/codefulHelpers';
 import { getWorkflowPropertiesListSignature } from '../utils/overviewHelpers';
+import { getCodefulMonitoringContext } from '../../monitoringView/codefulMonitoring';
+import { openMonitoringView } from '../../monitoringView/openMonitoringView';
+import { defaultDesignerVersion, designerVersionSetting } from '../../../../../constants';
 import LocalOverviewPanel from './localOverviewPanel';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
@@ -40,6 +44,38 @@ export default class LocalCodefulOverviewPanel extends LocalOverviewPanel {
     this.panelTitle = `${projectName}-overview`;
   }
 
+  protected async handleWebviewMsg(message: any): Promise<void> {
+    if (message.command !== ExtensionCommand.loadRun) {
+      return super.handleWebviewMsg(message);
+    }
+    const designerVersion = vscode.workspace.getConfiguration(ext.prefix).get<number>(designerVersionSetting) ?? defaultDesignerVersion;
+    if (designerVersion !== 2) {
+      return super.handleWebviewMsg(message);
+    }
+
+    await callWithTelemetryAndErrorHandling('LocalCodefulOverviewPanel.loadRun', async (actionContext: IActionContext) => {
+      const selectedWorkflow = this.workflowPropertiesList?.find((workflow) => workflow.name === message.workflowName);
+      const runtimeBaseUrl = this.getBaseUrl();
+      if (!selectedWorkflow || !this.projectPath || !runtimeBaseUrl || typeof message.item?.id !== 'string') {
+        throw new Error(
+          localize('codefulRunSelectionUnavailable', 'Select a named workflow and run in Overview while its project runtime is running.')
+        );
+      }
+      const sourceUri = this.getWorkflowNode();
+      const monitoring = await getCodefulMonitoringContext(
+        actionContext,
+        sourceUri,
+        this.projectPath,
+        selectedWorkflow.name,
+        message.item.id,
+        runtimeBaseUrl,
+        this.apiVersion,
+        selectedWorkflow.kind ?? 'Stateful'
+      );
+      await openMonitoringView(actionContext, sourceUri, message.item.id, this.workflowFilePath, monitoring);
+    });
+  }
+
   protected async initializeOverviewData(): Promise<void> {
     this.projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
 
@@ -57,9 +93,7 @@ export default class LocalCodefulOverviewPanel extends LocalOverviewPanel {
       );
     }
 
-    this.localSettings = this.projectPath
-      ? (await getLocalSettingsJson(this.context, this.projectPath)).Values || {}
-      : {};
+    this.localSettings = this.projectPath ? (await getLocalSettingsJson(this.context, this.projectPath)).Values || {} : {};
 
     const fileContent = readFileSync(this.workflowFilePath, 'utf8');
     this.codefulWorkflowFileContent = fileContent;

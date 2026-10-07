@@ -255,6 +255,7 @@ export const OverviewApp = () => {
           vscode.postMessage({
             command: ExtensionCommand.loadRun,
             item: run,
+            ...(workflowState.isLocal && workflowState.isCodeful ? { workflowName: selectedWorkflowProperties.name } : {}),
           });
         }}
         onRunTrigger={runTriggerCall}

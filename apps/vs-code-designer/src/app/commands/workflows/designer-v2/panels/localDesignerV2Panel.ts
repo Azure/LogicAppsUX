@@ -2,12 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import {
-  assetsFolderName,
-  logicAppsStandardExtensionId,
-  managementApiPrefix,
-  workflowAppApiVersion,
-} from '../../../../../constants';
+import { assetsFolderName, logicAppsStandardExtensionId, managementApiPrefix, workflowAppApiVersion } from '../../../../../constants';
 import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
 import { getLocalSettingsJson } from '../../../../utils/appSettings/localSettings';
@@ -55,6 +50,7 @@ import type { WebviewPanel, ProgressOptions } from 'vscode';
 import { createUnitTest } from '../../unitTest/createUnitTest';
 import { createUnitTestFromRun } from '../../unitTest/createUnitTestFromRun';
 import { getBundleVersionNumber } from '../../../../utils/bundleFeed';
+import { assertCodefulMonitoringContext, type CodefulMonitoringContext } from '../../monitoringView/codefulMonitoring';
 
 export default class LocalDesignerV2Panel extends DesignerV2Panel {
   private readonly workflowFilePath: string;
@@ -64,16 +60,37 @@ export default class LocalDesignerV2Panel extends DesignerV2Panel {
   private workflowRuntimeBaseUrlInterval?: NodeJS.Timeout;
   private accessTokenInterval?: NodeJS.Timeout;
 
-  constructor(context: IActionContext, node: Uri, runId?: string) {
+  constructor(
+    context: IActionContext,
+    node: Uri,
+    runId?: string,
+    private readonly codefulMonitoring?: CodefulMonitoringContext
+  ) {
     const workflowFilePath = node.fsPath;
-    const workflowName = path.basename(path.dirname(workflowFilePath));
+    if (codefulMonitoring) {
+      assertCodefulMonitoringContext(codefulMonitoring, node, runId);
+    }
+    if (runId && path.extname(workflowFilePath).toLowerCase() === '.cs' && !codefulMonitoring) {
+      throw new Error(
+        localize(
+          'codefulRunContextRequired',
+          'Open a codeful run from its named workflow Overview so the compiled run definition is available.'
+        )
+      );
+    }
+    const workflowName = codefulMonitoring?.workflowName ?? path.basename(path.dirname(workflowFilePath));
     const logicAppName = path.basename(path.dirname(path.dirname(workflowFilePath)));
-    const panelName = `${workspace.name}-${logicAppName}-${workflowName}`;
+    const panelName = codefulMonitoring
+      ? JSON.stringify([workspace.name, codefulMonitoring.projectPath, workflowName, codefulMonitoring.runId])
+      : `${workspace.name}-${logicAppName}-${workflowName}`;
     const panelGroupKey = ext.webViewKey.designerLocalV2;
 
-    super(context, workflowName, panelName, workflowAppApiVersion, panelGroupKey, true, runId);
+    super(context, workflowName, panelName, workflowAppApiVersion, panelGroupKey, true, codefulMonitoring?.runId ?? runId);
 
     this.workflowFilePath = workflowFilePath;
+    if (codefulMonitoring) {
+      this.readOnly = true;
+    }
   }
 
   public async create(): Promise<void> {
@@ -90,7 +107,7 @@ export default class LocalDesignerV2Panel extends DesignerV2Panel {
       return;
     }
 
-    this.projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
+    this.projectPath = this.codefulMonitoring?.projectPath ?? (await getLogicAppProjectRoot(this.context, this.workflowFilePath));
     if (!this.projectPath) {
       throw new Error(localize('projectPathUndefined', 'Unable to determine project root folder.'));
     }
@@ -120,28 +137,36 @@ export default class LocalDesignerV2Panel extends DesignerV2Panel {
     }
 
     this.baseUrl = `http://localhost:${designTimePort}${managementApiPrefix}`;
-    this.workflowRuntimeBaseUrl = ext.getWorkflowRuntimeBaseUrl();
+    this.workflowRuntimeBaseUrl = this.codefulMonitoring?.runtimeBaseUrl ?? ext.getWorkflowRuntimeBaseUrl();
 
-    this.panel = window.createWebviewPanel(this.panelGroupKey, this.panelName, ViewColumn.Active, this.getPanelOptions());
-    this.panel.iconPath = {
-      light: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'light', 'workflow.svg')),
-      dark: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'dark', 'workflow.svg')),
-    };
-
-    this.migrationOptions = await getMigrationOptions(this.baseUrl);
+    this.migrationOptions = this.codefulMonitoring ? undefined : await getMigrationOptions(this.baseUrl);
     this.panelMetadata = await this.getDesignerPanelMetadata(this.migrationOptions);
     const callbackUri: Uri = await (env as any).asExternalUri(Uri.parse(`${env.uriScheme}://${logicAppsStandardExtensionId}/authcomplete`));
     this.context.telemetry.properties.extensionBundleVersion = this.panelMetadata.extensionBundleVersion;
     this.oauthRedirectUrl = callbackUri.toString(true);
 
-    this.panel.webview.html = await this.getWebviewContent({
-      connectionsData: this.panelMetadata.connectionsData,
-      parametersData: this.panelMetadata.parametersData || {},
-      localSettings: this.panelMetadata.localSettings,
-      artifacts: this.panelMetadata.artifacts,
-      azureDetails: this.panelMetadata.azureDetails,
-      workflowDetails: this.panelMetadata.workflowDetails,
-    });
+    const panelTitle = this.codefulMonitoring
+      ? `${workspace.name}-${path.basename(this.projectPath)}-${this.workflowName}-run-${this.runId}`
+      : this.panelName;
+    this.panel = window.createWebviewPanel(this.panelGroupKey, panelTitle, ViewColumn.Active, this.getPanelOptions());
+    this.panel.iconPath = {
+      light: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'light', 'workflow.svg')),
+      dark: Uri.file(path.join(ext.context.extensionPath, assetsFolderName, 'dark', 'workflow.svg')),
+    };
+
+    try {
+      this.panel.webview.html = await this.getWebviewContent({
+        connectionsData: this.panelMetadata.connectionsData,
+        parametersData: this.panelMetadata.parametersData || {},
+        localSettings: this.panelMetadata.localSettings,
+        artifacts: this.panelMetadata.artifacts,
+        azureDetails: this.panelMetadata.azureDetails,
+        workflowDetails: this.panelMetadata.workflowDetails,
+      });
+    } catch (error) {
+      this.panel.dispose();
+      throw error;
+    }
 
     this.panelMetadata.mapArtifacts = this.mapArtifacts as Record<string, FileDetails[]>;
     this.panelMetadata.schemaArtifacts = this.schemaArtifacts as FileDetails[];
@@ -182,7 +207,7 @@ export default class LocalDesignerV2Panel extends DesignerV2Panel {
       case ExtensionCommand.initialize: {
         clearInterval(this.workflowRuntimeBaseUrlInterval);
         this.workflowRuntimeBaseUrlInterval = setInterval(async () => {
-          const updatedRuntimeBaseUrl = ext.getWorkflowRuntimeBaseUrl();
+          const updatedRuntimeBaseUrl = this.codefulMonitoring?.runtimeBaseUrl ?? ext.getWorkflowRuntimeBaseUrl();
 
           if (updatedRuntimeBaseUrl !== this.workflowRuntimeBaseUrl) {
             this.workflowRuntimeBaseUrl = updatedRuntimeBaseUrl;
@@ -361,8 +386,8 @@ export default class LocalDesignerV2Panel extends DesignerV2Panel {
     await window.withProgress(options, async () => {
       const runtimeBaseUrl = this.workflowRuntimeBaseUrl ?? this.baseUrl;
       try {
-        const fileContent = await fsPromises.readFile(this.workflowFilePath, 'utf8');
-        const workflowContent: any = JSON.parse(fileContent);
+        const workflowContent =
+          this.codefulMonitoring?.workflowContent ?? JSON.parse(await fsPromises.readFile(this.workflowFilePath, 'utf8'));
         const triggerName = getRunTriggerName(workflowContent.definition);
         if (!triggerName) {
           throw new Error(localize('workflowTriggerNotFound', 'Unable to determine a trigger to resubmit this workflow run.'));
@@ -390,6 +415,9 @@ export default class LocalDesignerV2Panel extends DesignerV2Panel {
     azureTenantId?: string,
     workflowBaseManagementUri?: string
   ): Promise<void> {
+    if (this.codefulMonitoring) {
+      throw new Error(localize('codefulRunReadOnly', 'Codeful run snapshots are read-only. Edit the workflow in its C# authoring source.'));
+    }
     const options: ProgressOptions = {
       location: ProgressLocation.Notification,
       title: localize('azureFunctions.savingWorkflow', 'Saving Workflow...'),
@@ -448,13 +476,15 @@ export default class LocalDesignerV2Panel extends DesignerV2Panel {
   }
 
   private async getDesignerPanelMetadata(migrationOptions: Record<string, any> = {}): Promise<DesignerPanelMetadata> {
-    const projectPath: string | undefined = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
+    const projectPath = this.codefulMonitoring?.projectPath ?? (await getLogicAppProjectRoot(this.context, this.workflowFilePath));
     if (!projectPath) {
       throw new Error(localize('FunctionRootFolderError', 'Unable to determine function project root folder.'));
     }
 
-    const workflowContent: any = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
-    migrateWorkflow(workflowContent, migrationOptions);
+    const workflowContent = this.codefulMonitoring?.workflowContent ?? JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
+    if (!this.codefulMonitoring) {
+      migrateWorkflow(workflowContent, migrationOptions);
+    }
 
     const [connectionsData, parametersData, customCodeData, workflowDetails, artifacts, bundleVersionNumber, azureDetails] =
       await Promise.all([

@@ -116,7 +116,8 @@ vi.mock('@microsoft/logic-apps-designer', () => ({
   useThemeObserver: vi.fn(),
 }));
 
-vi.mock('@microsoft/logic-apps-shared', () => ({
+vi.mock('@microsoft/logic-apps-shared', async (importActual) => ({
+  ...(await importActual<typeof import('@microsoft/logic-apps-shared')>()),
   StandardRunService: mocks.StandardRunService,
   Theme: {
     Dark: 'dark',
@@ -347,12 +348,56 @@ describe('OverviewApp', () => {
         status: 'Succeeded',
       },
     });
+
     expect(mocks.postMessage).toHaveBeenCalledWith({
       command: ExtensionCommand.createUnitTestFromRun,
       runId: 'run-id',
     });
   });
 
+  it('includes the selected workflow only in local codeful loadRun messages', async () => {
+    renderOverviewApp({
+      isCodeful: true,
+      workflowPropertiesList: [
+        { name: 'workflow-a', kind: 'Stateful' },
+        { name: 'workflow-b', kind: 'Stateless' },
+      ],
+    });
+    fireEvent.click(screen.getByText('Open run'));
+    expect(mocks.postMessage).toHaveBeenLastCalledWith({
+      command: ExtensionCommand.loadRun,
+      workflowName: 'workflow-a',
+      item: { id: 'run-id', identifier: 'run-id', startTime: '', duration: '', status: 'Succeeded' },
+    });
+
+    fireEvent.change(screen.getByRole('combobox', { name: 'Workflow' }), { target: { value: 'workflow-b' } });
+    await waitFor(() => expect(screen.getByTestId('overview')).toHaveAttribute('data-workflow-name', 'workflow-b'));
+    fireEvent.click(screen.getByText('Open run'));
+    expect(mocks.postMessage).toHaveBeenLastCalledWith({
+      command: ExtensionCommand.loadRun,
+      workflowName: 'workflow-b',
+      item: { id: 'run-id', identifier: 'run-id', startTime: '', duration: '', status: 'Succeeded' },
+    });
+    fireEvent.click(screen.getByText('Create unit test'));
+    expect(mocks.postMessage).toHaveBeenLastCalledWith({
+      command: ExtensionCommand.createUnitTestFromRun,
+      runId: 'run-id',
+    });
+  });
+
+  it.each([
+    { isLocal: true, isCodeful: false },
+    { isLocal: false, isCodeful: false },
+    { isLocal: false, isCodeful: true },
+  ])('keeps loadRun unchanged for non-local-codeful routes %j', (route) => {
+    renderOverviewApp(route);
+    fireEvent.click(screen.getByText('Open run'));
+    expect(mocks.postMessage).toHaveBeenCalledExactlyOnceWith({
+      command: ExtensionCommand.loadRun,
+      item: { id: 'run-id', identifier: 'run-id', startTime: '', duration: '', status: 'Succeeded' },
+    });
+    expect(mocks.postMessage.mock.calls[0][0]).not.toHaveProperty('workflowName');
+  });
   it('shows the runtime-down error when the workflow runtime is unavailable', async () => {
     mocks.isRuntimeUp.mockResolvedValue(false);
 

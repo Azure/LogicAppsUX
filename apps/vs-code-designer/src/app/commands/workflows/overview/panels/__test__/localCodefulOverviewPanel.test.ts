@@ -24,6 +24,7 @@ const mocks = vi.hoisted(() => {
     createWebviewPanel: vi.fn(),
     delay: vi.fn().mockResolvedValue(undefined),
     getAuthorizationToken: vi.fn().mockResolvedValue('local-token'),
+    getCodefulMonitoringContext: vi.fn(),
     getAzureConnectorDetailsForLocalProject: vi.fn().mockResolvedValue({
       enabled: true,
       accessToken: 'azure-token',
@@ -60,7 +61,7 @@ vi.mock('vscode', () => ({
   Uri: mocks.MockUri,
   ViewColumn: { Active: -1 },
   window: { createWebviewPanel: mocks.createWebviewPanel },
-  workspace: { name: 'test-workspace' },
+  workspace: { name: 'test-workspace', getConfiguration: vi.fn(() => ({ get: vi.fn(() => 2) })) },
 }));
 
 vi.mock('fs', () => ({
@@ -68,11 +69,16 @@ vi.mock('fs', () => ({
   readdirSync: mocks.readdirSync,
 }));
 
-vi.mock('@microsoft/logic-apps-shared', () => ({
+vi.mock('@microsoft/logic-apps-shared', async (importActual) => ({
+  ...(await importActual<typeof import('@microsoft/logic-apps-shared')>()),
   getRequestTriggerName: vi.fn(),
   getTriggerName: vi.fn().mockReturnValue('manual'),
   HTTP_METHODS: { GET: 'GET', POST: 'POST' },
   isNullOrUndefined: (value: unknown) => value === null || value === undefined,
+}));
+
+vi.mock('../../../monitoringView/codefulMonitoring', () => ({
+  getCodefulMonitoringContext: mocks.getCodefulMonitoringContext,
 }));
 
 vi.mock('../../../../../../localize', () => ({
@@ -154,6 +160,7 @@ vi.mock('../../../overviewCallbackInfo', () => ({
 }));
 
 import LocalCodefulOverviewPanel from '../localCodefulOverviewPanel';
+import LocalOverviewPanel from '../localOverviewPanel';
 
 const context = { telemetry: { properties: {}, measurements: {} } } as any;
 const codefulFilePath = path.join('D:\\project', 'Workflows.cs');
@@ -214,6 +221,135 @@ describe('LocalCodefulOverviewPanel', () => {
     mocks.extractHttpTriggerName.mockReturnValue(undefined);
     mocks.hasHttpRequestTrigger.mockImplementation((content: string) => content.includes('CreateHttpTrigger'));
     (ext as any).workflowRuntimePort = 7071;
+    vi.mocked(vscode.workspace.getConfiguration).mockReturnValue({ get: vi.fn(() => 2) } as any);
+    mocks.openMonitoringView.mockResolvedValue(undefined);
+  });
+
+  describe('V2 codeful run selection', () => {
+    function selectionHarness() {
+      const instance = new LocalCodefulOverviewPanel(context, vscode.Uri.file(codefulFilePath) as any);
+      (instance as any).projectPath = 'D:\\project';
+      (instance as any).baseUrl = 'http://localhost:9999/stale-runtime';
+      (instance as any).workflowPropertiesList = [
+        { name: 'workflow-a', kind: 'Stateful' },
+        { name: 'workflow-b', kind: 'Stateless' },
+      ];
+      return instance as any;
+    }
+
+    it('uses the selected named workflow, initialized project and current runtime, and awaits opening', async () => {
+      const instance = selectionHarness();
+      const monitoring = { workflowName: 'workflow-b', runId: 'historical-run' };
+      mocks.getCodefulMonitoringContext.mockResolvedValue(monitoring);
+      (ext as any).workflowRuntimePort = 17072;
+      let completeOpen: () => void = () => {};
+      mocks.openMonitoringView.mockReturnValue(
+        new Promise<void>((resolve) => {
+          completeOpen = resolve;
+        })
+      );
+      let complete = false;
+      const pending = instance
+        .handleWebviewMsg({
+          command: ExtensionCommand.loadRun,
+          workflowName: 'workflow-b',
+          item: { id: '/workflows/workflow-b/runs/historical-run' },
+        })
+        .then(() => {
+          complete = true;
+        });
+      await Promise.resolve();
+      await Promise.resolve();
+
+      expect(mocks.getCodefulMonitoringContext).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({ telemetry: expect.any(Object) }),
+        expect.objectContaining({ fsPath: codefulFilePath }),
+        'D:\\project',
+        'workflow-b',
+        '/workflows/workflow-b/runs/historical-run',
+        'http://localhost:17072/runtime/webhooks/workflow/api/management',
+        '2019-10-01-edge-preview',
+        'Stateless'
+      );
+      expect(mocks.openMonitoringView).toHaveBeenCalledWith(
+        expect.any(Object),
+        expect.objectContaining({ fsPath: codefulFilePath }),
+        '/workflows/workflow-b/runs/historical-run',
+        codefulFilePath,
+        monitoring
+      );
+      expect(mocks.openMonitoringView.mock.calls[0][4]).toBe(monitoring);
+      expect(complete).toBe(false);
+      completeOpen();
+      await pending;
+      expect(complete).toBe(true);
+      expect(mocks.readFileSync).not.toHaveBeenCalled();
+      expect(mocks.launchProjectDebugger).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      ['missing workflow', { item: { id: 'run' } }, {}],
+      ['unknown workflow', { workflowName: 'other', item: { id: 'run' } }, {}],
+      ['missing item', { workflowName: 'workflow-b' }, {}],
+      ['non-string run', { workflowName: 'workflow-b', item: { id: 42 } }, {}],
+      ['uninitialized project', { workflowName: 'workflow-b', item: { id: 'run' } }, { projectPath: undefined }],
+      ['uninitialized workflow list', { workflowName: 'workflow-b', item: { id: 'run' } }, { workflowPropertiesList: undefined }],
+    ])('rejects %s without fetching or opening a run', async (_label, message, fields) => {
+      const instance = selectionHarness();
+      Object.assign(instance, fields);
+      await expect(instance.handleWebviewMsg({ command: ExtensionCommand.loadRun, ...message })).rejects.toThrow(
+        'Select a named workflow and run'
+      );
+      expect(mocks.getCodefulMonitoringContext).not.toHaveBeenCalled();
+      expect(mocks.openMonitoringView).not.toHaveBeenCalled();
+    });
+
+    it('rejects a stopped current runtime instead of reusing a stale cached base URL', async () => {
+      const instance = selectionHarness();
+      (ext as any).workflowRuntimePort = undefined;
+      await expect(
+        instance.handleWebviewMsg({
+          command: ExtensionCommand.loadRun,
+          workflowName: 'workflow-b',
+          item: { id: 'run' },
+        })
+      ).rejects.toThrow('Select a named workflow and run');
+      expect(mocks.getCodefulMonitoringContext).not.toHaveBeenCalled();
+      expect(mocks.openMonitoringView).not.toHaveBeenCalled();
+    });
+
+    it('does not open monitoring when the compiled run lookup fails', async () => {
+      mocks.getCodefulMonitoringContext.mockRejectedValue(new Error('snapshot unavailable'));
+      await expect(
+        selectionHarness().handleWebviewMsg({
+          command: ExtensionCommand.loadRun,
+          workflowName: 'workflow-b',
+          item: { id: 'run' },
+        })
+      ).rejects.toThrow('snapshot unavailable');
+      expect(mocks.openMonitoringView).not.toHaveBeenCalled();
+    });
+
+    it.each([1, undefined])('delegates V1/default loadRun unchanged (setting %s)', async (version) => {
+      vi.mocked(vscode.workspace.getConfiguration).mockReturnValue({ get: vi.fn(() => version) } as any);
+      const instance = selectionHarness();
+      await instance.handleWebviewMsg({ command: ExtensionCommand.loadRun, item: { id: 'run' } });
+      expect(mocks.getCodefulMonitoringContext).not.toHaveBeenCalled();
+      expect(mocks.openMonitoringView).toHaveBeenCalledExactlyOnceWith(
+        context,
+        expect.objectContaining({ fsPath: codefulFilePath }),
+        'run',
+        codefulFilePath
+      );
+    });
+
+    it('delegates commands other than loadRun unchanged', async () => {
+      const inheritedHandler = vi.spyOn(LocalOverviewPanel.prototype as any, 'handleWebviewMsg').mockResolvedValue(undefined);
+      const message = { command: ExtensionCommand.fileABug };
+      await selectionHarness().handleWebviewMsg(message);
+      expect(inheritedHandler).toHaveBeenCalledExactlyOnceWith(message);
+      expect(mocks.getCodefulMonitoringContext).not.toHaveBeenCalled();
+    });
   });
 
   it('initializes a codeful overview with discovered workflows and LSP fallback trigger metadata', async () => {

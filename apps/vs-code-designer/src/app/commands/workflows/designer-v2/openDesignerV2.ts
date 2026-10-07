@@ -15,6 +15,7 @@ import type { DesignerV2Panel } from './panels/designerV2Panel';
 import LocalDesignerV2Panel from './panels/localDesignerV2Panel';
 import { RemoteDesignerV2Panel } from './panels/remoteDesignerV2Panel';
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
+import type { CodefulMonitoringContext } from '../monitoringView/codefulMonitoring';
 
 /**
  * Opens the V2 designer for a workflow. If `runId` is provided, the designer
@@ -23,7 +24,8 @@ import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microso
 export async function openDesignerV2(
   context: IActionContext,
   node: Uri | RemoteWorkflowTreeItem | undefined,
-  runId?: string
+  runId?: string,
+  codefulMonitoring?: CodefulMonitoringContext
 ): Promise<void> {
   const workflowNode = getWorkflowNode(node);
   if (!workflowNode) {
@@ -31,14 +33,15 @@ export async function openDesignerV2(
     return;
   }
 
-  const designerPanel = await getDesignerV2Panel(context, workflowNode, runId);
+  const designerPanel = await getDesignerV2Panel(context, workflowNode, runId, codefulMonitoring);
   await designerPanel.create();
 }
 
 async function getDesignerV2Panel(
   context: IActionContext,
   workflowNode: Uri | RemoteWorkflowTreeItem,
-  runId?: string
+  runId?: string,
+  codefulMonitoring?: CodefulMonitoringContext
 ): Promise<DesignerV2Panel> {
   if (workflowNode instanceof RemoteWorkflowTreeItem) {
     return new RemoteDesignerV2Panel(context, workflowNode, runId);
@@ -54,5 +57,7 @@ async function getDesignerV2Panel(
     });
   }
 
-  return new LocalDesignerV2Panel(context, workflowNode, runId);
+  return codefulMonitoring
+    ? new LocalDesignerV2Panel(context, workflowNode, runId, codefulMonitoring)
+    : new LocalDesignerV2Panel(context, workflowNode, runId);
 }

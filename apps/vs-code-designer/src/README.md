@@ -56,6 +56,12 @@ We are excited to announce a new feature in Logic Apps that allows users to auth
 
 Please note that this feature is currently in private preview and is only available on Windows. We encourage users to try out this new feature and provide feedback to help us improve it.
 
+## Local codeful workflow run monitoring
+
+With designer V2 selected, choose the named codeful workflow in the project Overview and open its run. Monitoring uses the compiled workflow definition retained with that run, not the current C# source. The run snapshot is read-only; edit the workflow in its C# authoring source.
+
+The local runtime must be available and retain the run's complete workflow version. If that definition cannot be loaded, the extension reports an error instead of opening an empty monitoring panel. Legacy V1 monitoring and codeless and remote workflow routes are unchanged.
+
 ## Known issues
 
 For known issues, see [GitHub issues - Azure Logic Apps](https://github.com/Azure/LogicAppsUX/issues).

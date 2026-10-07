@@ -22,11 +22,17 @@ vi.mock('../../../../utils/vsCodeConfig/settings', () => ({
   shouldAlwaysBuildCustomCode: vi.fn().mockReturnValue(false),
 }));
 
-const mockCreate = vi.fn().mockResolvedValue(undefined);
+const { mockCreate, mockConstructor } = vi.hoisted(() => ({
+  mockCreate: vi.fn().mockResolvedValue(undefined),
+  mockConstructor: vi.fn(),
+}));
 
 vi.mock('../panels/localDesignerV2Panel', () => ({
   default: class MockLocalDesignerV2Panel {
     create = mockCreate;
+    constructor(...args: unknown[]) {
+      mockConstructor(...args);
+    }
   },
 }));
 
@@ -38,12 +44,18 @@ import { openDesignerV2 } from '../openDesignerV2';
 import { tryBuildCustomCodeFunctionsProject } from '../../../buildCustomCodeFunctionsProject';
 import { customCodeArtifactsExist } from '../../../../utils/customCodeUtils';
 import { shouldAlwaysBuildCustomCode } from '../../../../utils/vsCodeConfig/settings';
+import { RemoteWorkflowTreeItem } from '../../../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
+import { RemoteDesignerV2Panel } from '../panels/remoteDesignerV2Panel';
+import { getWorkflowNode } from '../../../../utils/workspace';
 
 describe('openDesignerV2', () => {
   const mockContext = { telemetry: { properties: {} } } as any;
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(getWorkflowNode).mockImplementation((node: any) => node);
+    vi.mocked(shouldAlwaysBuildCustomCode).mockReturnValue(false);
+    vi.mocked(RemoteDesignerV2Panel).mockImplementation(() => ({ create: mockCreate }) as any);
     (ext as any).outputChannel = { appendLog: vi.fn() };
     vi.mocked(workspace.getConfiguration).mockReturnValue({ get: vi.fn(() => 2) } as any);
   });
@@ -54,6 +66,26 @@ describe('openDesignerV2', () => {
     await openDesignerV2(mockContext, mockUri, 'workflows/myWorkflow/runs/run-1');
 
     expect(tryBuildCustomCodeFunctionsProject).not.toHaveBeenCalled();
+    expect(customCodeArtifactsExist).not.toHaveBeenCalled();
+    expect(mockConstructor).toHaveBeenCalledWith(mockContext, mockUri, 'workflows/myWorkflow/runs/run-1');
+  });
+
+  it('passes optional codeful context unchanged only to the local V2 panel', async () => {
+    const uri = { fsPath: '/test/project/Program.cs' } as any;
+    const monitoring = { workflowName: 'selected', runId: 'run-1' } as any;
+    await openDesignerV2(mockContext, uri, 'run-1', monitoring);
+    expect(mockConstructor).toHaveBeenCalledExactlyOnceWith(mockContext, uri, 'run-1', monitoring);
+    expect(mockConstructor.mock.calls[0][3]).toBe(monitoring);
+    expect(mockCreate).toHaveBeenCalledOnce();
+    expect(customCodeArtifactsExist).not.toHaveBeenCalled();
+    expect(tryBuildCustomCodeFunctionsProject).not.toHaveBeenCalled();
+  });
+
+  it('leaves the remote constructor contract unchanged when an optional context is supplied', async () => {
+    const remote = Object.create(RemoteWorkflowTreeItem.prototype);
+    await openDesignerV2(mockContext, remote, 'run-1', {} as any);
+    expect(RemoteDesignerV2Panel).toHaveBeenCalledExactlyOnceWith(mockContext, remote, 'run-1');
+    expect(mockConstructor).not.toHaveBeenCalled();
     expect(customCodeArtifactsExist).not.toHaveBeenCalled();
   });
 

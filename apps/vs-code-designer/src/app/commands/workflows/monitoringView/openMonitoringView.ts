@@ -12,12 +12,14 @@ import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { openDesignerV2 } from '../designer-v2/openDesignerV2';
 import { defaultDesignerVersion, designerVersionSetting } from '../../../../constants';
+import type { CodefulMonitoringContext } from './codefulMonitoring';
 
 export async function openMonitoringView(
   context: IActionContext,
   node: Uri | RemoteWorkflowTreeItem | undefined,
   runId: string,
-  workflowFilePath: string
+  workflowFilePath: string,
+  codefulMonitoring?: CodefulMonitoringContext
 ): Promise<void> {
   if (!node) {
     ext.outputChannel.appendLog(localize('workflowNodeNotFound', 'Failed to open monitoring view. Unable to find the workflow node.'));
@@ -27,9 +29,8 @@ export async function openMonitoringView(
   const designerVersion = workspace.getConfiguration(ext.prefix).get<number>(designerVersionSetting) ?? defaultDesignerVersion;
   const isLocalCodefulWorkflow = node instanceof Uri && node.fsPath.toLowerCase().endsWith('.cs');
 
-  // NOTE(aeldridge): Using the v1 monitoring panel for codeful workflows since the v2 designer panel reads definition from workflow.json.
-  if (designerVersion === 2 && !isLocalCodefulWorkflow) {
-    return openDesignerV2(context, node, runId);
+  if (designerVersion === 2 && (!isLocalCodefulWorkflow || codefulMonitoring)) {
+    return codefulMonitoring ? openDesignerV2(context, node, runId, codefulMonitoring) : openDesignerV2(context, node, runId);
   }
 
   const monitoringPanel =
