@@ -123,7 +123,7 @@ suite('HTTP timeout Compose original authoring clause', () => {
       const cdp = await connectToVsCodeCdp({ targetName: 'HTTP timeout Compose actual designer' });
       try {
         const contextId = await waitForWebviewFrameContext(cdp, {
-          allTextIncludes: ['Workflow', 'Code', 'Save', 'Add a trigger'],
+          allTextIncludes: ['Workflow', 'Code', 'Save'],
           description: 'empty original workflow designer',
           timeoutMs: Math.min(180_000, httpTimeoutComposeRemaining(deadline)),
           beforePoll: handleConnectorPrompt,

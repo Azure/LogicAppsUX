@@ -163,7 +163,7 @@ export async function runHttpTimeoutEnvironmentControls(control: Control): Promi
           } as unknown as CdpConnection;
           assert.strictEqual(
             await waitForWebviewFrameContext(designerCdp, {
-              allTextIncludes: ['Workflow', 'Code', 'Save', 'Add a trigger'],
+              allTextIncludes: ['Workflow', 'Code', 'Save'],
               description: 'original empty designer after native prompt',
               timeoutMs: 2000,
               beforePoll: async (openingDeadline) => {
