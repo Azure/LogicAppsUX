@@ -1,12 +1,11 @@
 import * as assert from 'assert';
 import type { CdpConnection } from './cdpClient';
-import { clickPoint, type Point } from './cdpFormHelpers';
+import { DesignerCdpActions } from './designerCdpActions';
 import {
   assembleHttpTimeoutComposeCode,
   type HttpTimeoutComposeContext,
   type HttpTimeoutComposeErrorObservation,
   type HttpTimeoutComposeRenderedPage,
-  httpTimeoutComposeRemaining,
   pollHttpTimeoutCompose,
 } from './httpTimeoutComposeOracle';
 
@@ -45,162 +44,8 @@ const visibleDom = `
   const normalize = (text) => (text || '').replace(/\\s+/g, ' ').trim();
 `;
 
-export class HttpTimeoutComposeDriver {
+export class HttpTimeoutComposeDriver extends DesignerCdpActions {
   private codeEditorObjectId?: string;
-  constructor(
-    readonly cdp: CdpConnection,
-    readonly contextId: number,
-    readonly deadline: number,
-    readonly assertActive: () => void
-  ) {}
-
-  async evaluate<T>(expression: string): Promise<T> {
-    this.assertActive();
-    return this.cdp.evaluate<T>(this.contextId, expression, {
-      timeoutMs: Math.min(5000, httpTimeoutComposeRemaining(this.deadline)),
-    });
-  }
-
-  async send(method: string, params: Record<string, unknown>): Promise<unknown> {
-    this.assertActive();
-    return this.cdp.send(method, params, { timeoutMs: Math.min(5000, httpTimeoutComposeRemaining(this.deadline)) });
-  }
-
-  async click(selector: string, names: string[] = [], last = false): Promise<void> {
-    const point = await pollHttpTimeoutCompose(
-      () =>
-        this.evaluate<Point | null>(`(() => {
-        ${visibleDom}
-        const names = ${JSON.stringify(names)};
-        const matches = Array.from(document.querySelectorAll(${JSON.stringify(selector)}))
-          .filter(visible).filter(element => !element.disabled && element.getAttribute('aria-disabled') !== 'true')
-          .filter(element => !names.length || names.includes(normalize(
-            element.querySelector('.msla-op-search-card-title')?.textContent ||
-            element.getAttribute('aria-label') || element.textContent)));
-        const element = ${last ? 'matches.at(-1)' : 'matches[0]'};
-        if (!element) return null;
-        element.scrollIntoView({ block: 'center', inline: 'center' });
-        const rect = element.getBoundingClientRect();
-        const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-        const hit = document.elementFromPoint(point.x, point.y);
-        return hit && (hit === element || element.contains(hit)) ? point : null;
-      })()`),
-      (value) => value !== null,
-      this.deadline,
-      `visible clickable ${names.join('/') || selector}`
-    );
-    assert.ok(point);
-    await clickPoint(
-      {
-        evaluate: <T>(_contextId: number | undefined, expression: string) => this.evaluate<T>(expression),
-        send: (method, params) => this.send(method, params ?? {}),
-      },
-      point
-    );
-  }
-
-  async key(code: string, key: string, virtualKey: number, modifiers = 0): Promise<void> {
-    for (const type of ['keyDown', 'keyUp']) {
-      await this.send('Input.dispatchKeyEvent', {
-        type,
-        code,
-        key,
-        windowsVirtualKeyCode: virtualKey,
-        nativeVirtualKeyCode: virtualKey,
-        modifiers,
-      });
-    }
-  }
-
-  async replaceFocused(value: string): Promise<void> {
-    await this.key('KeyA', 'a', 65, 2);
-    await this.send('Input.insertText', { text: value });
-  }
-
-  async save(): Promise<void> {
-    // V2's real ToolbarButton has text "Save", not an aria-label.
-    // click() requires visibility, hit testing and an enabled button.
-    await this.click('[role="toolbar"] button', ['Save']);
-  }
-
-  async discover(search: string, titles: string[]): Promise<void> {
-    await this.click('[data-automation-id="msla-search-box"] input, .msla-search-box input, input[placeholder*="Search"]');
-    await this.replaceFocused(search);
-    await pollHttpTimeoutCompose(
-      () =>
-        this.evaluate<boolean>(`(() => {
-        ${visibleDom}
-        return Array.from(document.querySelectorAll(
-          '[data-automation-id="msla-search-box"] input, .msla-search-box input, input[placeholder*="Search"]'
-        )).some(element => visible(element) && element.value === ${JSON.stringify(search)});
-      })()`),
-      Boolean,
-      this.deadline,
-      'discovery search text'
-    );
-    await this.click(
-      '[data-automation-id^="msla-op-search-result-"], [data-testid^="msla-op-search-result-"], .msla-op-search-card-container',
-      titles
-    );
-  }
-
-  async openActionDiscovery(): Promise<void> {
-    await this.closePanel();
-    await this.click('[data-automation-id^="msla-plus-button-"], [id^="msla-edge-button-"]', [], true);
-    const state = await pollHttpTimeoutCompose(
-      () =>
-        this.evaluate<string>(`(() => {
-        ${visibleDom}
-        if (Array.from(document.querySelectorAll(
-          '[data-automation-id="msla-search-box"] input, .msla-search-box input, input[placeholder*="Search"]'
-        )).some(visible)) return 'panel';
-        if (Array.from(document.querySelectorAll(
-          '[data-automation-id^="msla-add-button-"], [role="menuitem"]'
-        )).some(element => visible(element) && normalize(element.getAttribute('aria-label') || element.textContent) === 'Add an action'))
-          return 'menu';
-        return '';
-      })()`),
-      Boolean,
-      this.deadline,
-      'action insertion menu or discovery panel'
-    );
-    if (state === 'menu') {
-      await this.click('[data-automation-id^="msla-add-button-"], [role="menuitem"]', ['Add an action']);
-    }
-  }
-
-  async hasNode(titles: string[]): Promise<boolean> {
-    return this.evaluate<boolean>(`(() => {
-      ${visibleDom}
-      const titles = ${JSON.stringify(titles)};
-      return Array.from(document.querySelectorAll('.react-flow__node'))
-        .some(element => visible(element) && titles.some(title => normalize(element.textContent).includes(title)));
-    })()`);
-  }
-
-  async waitNode(titles: string[]): Promise<void> {
-    await pollHttpTimeoutCompose(() => this.hasNode(titles), Boolean, this.deadline, `${titles.join('/')} canvas node`);
-  }
-
-  async closePanel(): Promise<void> {
-    const open = await this.evaluate<boolean>(`(() => {
-      ${visibleDom}
-      return Array.from(document.querySelectorAll('[data-automation-id="msla-panel-header-close-nav"]')).some(visible);
-    })()`);
-    if (open) {
-      await this.click('[data-automation-id="msla-panel-header-close-nav"]');
-      await pollHttpTimeoutCompose(
-        () =>
-          this.evaluate<boolean>(`(() => {
-          ${visibleDom}
-          return !Array.from(document.querySelectorAll('[data-automation-id="msla-panel-header-close-nav"]')).some(visible);
-        })()`),
-        Boolean,
-        this.deadline,
-        'details panel close'
-      );
-    }
-  }
 
   async readCode(): Promise<string> {
     // MonacoEditor is a compatibility export of CodeMirrorEditor. Read only
@@ -352,12 +197,13 @@ export class HttpTimeoutComposeDriver {
   }
 
   async context(): Promise<HttpTimeoutComposeContext> {
-    assert.ok(this.cdp.targetId, 'Designer CDP target identity missing');
-    const frameId = this.cdp.getExecutionContextFrameId(this.contextId);
+    const cdp = this.cdp as CdpConnection;
+    assert.ok(cdp.targetId, 'Designer CDP target identity missing');
+    const frameId = cdp.getExecutionContextFrameId(this.contextId);
     assert.ok(frameId, 'Designer frame identity missing');
     const documentOrigin = await this.evaluate<number>('performance.timeOrigin');
     assert.ok(Number.isFinite(documentOrigin) && documentOrigin > 0, 'Designer document origin missing');
-    return { targetId: this.cdp.targetId, contextId: this.contextId, frameId, documentOrigin };
+    return { targetId: cdp.targetId, contextId: this.contextId, frameId, documentOrigin };
   }
 
   async errorObservation(): Promise<HttpTimeoutComposeErrorObservation> {

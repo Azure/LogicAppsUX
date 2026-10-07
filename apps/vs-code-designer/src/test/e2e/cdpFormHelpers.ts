@@ -4,7 +4,7 @@ import { containsIgnoreCase } from './testUtils';
 
 export type CdpEvaluator = {
   evaluate<T>(contextId: number | undefined, expression: string, options?: { timeoutMs?: number }): Promise<T>;
-  send(method: string, params?: Record<string, unknown>): Promise<unknown>;
+  send(method: string, params?: Record<string, unknown>, options?: { timeoutMs?: number }): Promise<unknown>;
 };
 
 export type Point = {

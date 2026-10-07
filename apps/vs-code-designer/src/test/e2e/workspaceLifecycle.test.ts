@@ -17,6 +17,7 @@ import {
 } from './cdpClient';
 import { azureConnectionStatusDomScript, waitForAzureConnectedAction } from './azureConnectionStatus';
 import { closeCopilotChatIfVisible } from './copilotChat';
+import { DesignerCdpActions, requestTriggerTitles as sharedRequestTriggerTitles } from './designerCdpActions';
 import {
   assertNextButtonEnabled,
   clickPoint,
@@ -82,8 +83,8 @@ const overviewTabViewType = `mainThreadWebview-${overviewViewType}`;
 const monitoringViewType = 'monitoring';
 const managementBaseUrl = 'http://localhost:7071/runtime/webhooks/workflow/api/management';
 const apiVersion = '2019-10-01-edge-preview';
-const requestTriggerTitle = 'When an HTTP request is received';
-const requestTriggerTitleVariants = [requestTriggerTitle, 'When a HTTP request is received'];
+const requestTriggerTitleVariants = sharedRequestTriggerTitles;
+const requestTriggerTitle = requestTriggerTitleVariants[0];
 const responseActionTitle = 'Response';
 const msnWeatherActionName = 'Get_current_weather';
 const msnWeatherConnectionReferenceName = 'msnweather';
@@ -95,6 +96,10 @@ const variablesPickerInitialBodyValue = 'variables-picker-body-initial';
 const lifecycleScreenshotDir = path.join(__dirname, '..', '..', '..', '.vscode-test', 'screenshots', 'cli');
 const variablesPickerUpdatedBodyValue = 'variables-picker-body-updated';
 const azuritePorts = [10000, 10001, 10002];
+
+function getDesignerActions(cdp: CdpEvaluator, contextId: number, timeoutMs = 120_000): DesignerCdpActions {
+  return new DesignerCdpActions(cdp, contextId, Date.now() + timeoutMs);
+}
 const msnWeatherAzureTargetEnvKeys = [
   'WORKFLOWS_SUBSCRIPTION_ID',
   'WORKFLOWS_RESOURCE_GROUP_NAME',
@@ -1096,13 +1101,7 @@ async function openDesignerAndCreateWorkflow(
       timeoutMs: 180000,
     });
     console.log(`[workspace-lifecycle] ${createdWorkspace.label}: designer webview DOM context=${contextId}; waiting for canvas content`);
-    await waitForDesignerText(
-      designerCdp,
-      contextId,
-      ['Add a trigger', ...requestTriggerTitleVariants, responseActionTitle],
-      180000,
-      `${createdWorkspace.label} designer canvas content`
-    );
+    await getDesignerActions(designerCdp, contextId, 180_000).waitForDesignerReady([...requestTriggerTitleVariants, responseActionTitle]);
     await captureLifecycleScreenshot(
       `workspace-lifecycle-${createdWorkspace.label}-${options.warmOnly ? 'warmup' : 'authoring'}-designer-ready`,
       {
@@ -1430,38 +1429,8 @@ async function waitForDesignerWebviewTab(
 }
 
 async function addRequestTriggerThroughDesigner(cdp: CdpConnection, contextId: number, label: string): Promise<void> {
-  console.log(`[workspace-lifecycle] ${label}: clicking Add a trigger`);
-  await clickDesignerElement(
-    cdp,
-    contextId,
-    ['[data-testid="card-Add a trigger"]', '[data-automation-id="card-Add_a_trigger"]', '[aria-label="Add a trigger"]'],
-    'Add a trigger'
-  );
-  await waitForDiscoveryPanelThroughDesigner(cdp, contextId, 60000, `${label} trigger discovery panel`);
-  await logDesignerDiscoveryDiagnostics(cdp, contextId, label, 'trigger-panel-before-evidence');
-  await logReadinessSnapshot(cdp, contextId, { kind: 'discovery', label, allowLoading: true }, `${label} trigger-panel-before-evidence`);
-  await captureLifecycleScreenshot(`workspace-lifecycle-${label}-trigger-panel-open`, {
-    expectation: { kind: 'discovery', label, allowLoading: true },
-    semanticCdp: cdp,
-    semanticContextId: contextId,
-  });
-
-  console.log(`[workspace-lifecycle] ${label}: searching for Request trigger`);
-  await searchInDiscoveryPanelThroughDesigner(cdp, contextId, 'Request');
-  await captureLifecycleScreenshot(`workspace-lifecycle-${label}-request-search-entered`, {
-    expectation: { kind: 'discovery', label, searchText: 'Request', allowLoading: true },
-    semanticCdp: cdp,
-    semanticContextId: contextId,
-  });
-  await waitForSearchResultsThroughDesigner(cdp, contextId, 60000, `${label} Request search results`);
-
-  await selectOperationThroughDesigner(cdp, contextId, 'Request', [
-    'when a http request is received',
-    'when an http request is received',
-    'http request',
-  ]);
-  await waitForDesignerText(cdp, contextId, requestTriggerTitleVariants, 90000, `${label} Request trigger on canvas`);
-  await closeDesignerDetailsPanelThroughDesigner(cdp, contextId, `${label} Request trigger panel`);
+  console.log(`[workspace-lifecycle] ${label}: adding Request trigger through shared Designer CDP actions`);
+  await getDesignerActions(cdp, contextId, 180_000).addRequestTrigger();
   await normalizeDesignerCanvasViewport(cdp, contextId, `${label} Request trigger-added evidence`);
   await captureLifecycleScreenshot(`workspace-lifecycle-${label}-request-trigger-added`, {
     expectation: { kind: 'designerCanvas', label, requiredNodes: [requestTriggerTitleVariants] },
@@ -1471,21 +1440,10 @@ async function addRequestTriggerThroughDesigner(cdp: CdpConnection, contextId: n
 }
 
 async function addResponseActionThroughDesigner(cdp: CdpEvaluator, contextId: number, label: string): Promise<void> {
-  await openActionDiscoveryPanelThroughDesigner(cdp, contextId, label);
-
-  console.log(`[workspace-lifecycle] ${label}: searching for Response action`);
-  await searchInDiscoveryPanelThroughDesigner(cdp, contextId, responseActionTitle);
-  await captureLifecycleScreenshot(`workspace-lifecycle-${label}-response-search-entered`, {
-    expectation: { kind: 'discovery', label, searchText: responseActionTitle, allowLoading: true },
-    semanticCdp: cdp,
-    semanticContextId: contextId,
-  });
-  await waitForSearchResultsThroughDesigner(cdp, contextId, 60000, `${label} Response search results`);
-
-  await selectOperationThroughDesigner(cdp, contextId, responseActionTitle, ['response']);
-  await waitForDesignerText(cdp, contextId, [responseActionTitle], 90000, `${label} Response action on canvas`);
-  await closeDesignerDetailsPanelThroughDesigner(cdp, contextId, `${label} Response action panel before action-added evidence`);
-  await waitForDesignerText(cdp, contextId, [responseActionTitle], 30000, `${label} Response action card`);
+  console.log(`[workspace-lifecycle] ${label}: adding Response through shared Designer CDP actions`);
+  const actions = getDesignerActions(cdp, contextId, 180_000);
+  await actions.addAction(responseActionTitle, responseActionTitle, ['response']);
+  await actions.closePanel();
   await normalizeDesignerCanvasViewport(cdp, contextId, `${label} Response action-added evidence`);
   await captureLifecycleScreenshot(`workspace-lifecycle-${label}-response-action-added`, {
     expectation: { kind: 'designerCanvas', label, requiredNodes: [responseActionTitle] },
@@ -1561,49 +1519,8 @@ async function addMsnWeatherActionThroughDesigner(cdp: CdpEvaluator, contextId: 
 }
 
 async function openActionDiscoveryPanelThroughDesigner(cdp: CdpEvaluator, contextId: number, label: string): Promise<void> {
-  console.log(`[workspace-lifecycle] ${label}: clicking Add an action`);
-  await closeDesignerDetailsPanelThroughDesigner(cdp, contextId, `${label} existing details panel`);
-  let actionPanelOpened = false;
-  for (let attempt = 1; attempt <= 3; attempt++) {
-    const plusClick = await clickDesignerElement(
-      cdp,
-      contextId,
-      [
-        '[data-automation-id^="msla-plus-button-"]',
-        '[id^="msla-edge-button-"]',
-        '[data-testid="card-Add an action"]',
-        '[data-automation-id="card-Add_an_action"]',
-        '[aria-label="Add an action"]',
-      ],
-      'Add an action',
-      { requireTextMatch: false, useLastMatch: true }
-    );
-    await logDesignerDiscoveryDiagnostics(cdp, contextId, label, `after Add Action click attempt ${attempt}`, plusClick.point);
-
-    if (await waitForOptionalDiscoveryPanelThroughDesigner(cdp, contextId, 7500)) {
-      actionPanelOpened = true;
-      break;
-    }
-
-    const menuClick = await tryClickDesignerElement(
-      cdp,
-      contextId,
-      ['[data-automation-id^="msla-add-button-"]', '[role="menuitem"]'],
-      'Add an action'
-    );
-    if (menuClick) {
-      await logDesignerDiscoveryDiagnostics(cdp, contextId, label, `after Add Action menu click attempt ${attempt}`, menuClick.point);
-      if (await waitForOptionalDiscoveryPanelThroughDesigner(cdp, contextId, 7500)) {
-        actionPanelOpened = true;
-        break;
-      }
-    }
-
-    await logDesignerDiscoveryDiagnostics(cdp, contextId, label, `after Add Action failed attempt ${attempt}`, plusClick.point);
-    console.log(`[workspace-lifecycle] ${label}: Add Action panel did not open on attempt ${attempt}`);
-  }
-  assert.ok(actionPanelOpened, `${label} Add Action panel should open`);
-  await waitForDiscoveryPanelThroughDesigner(cdp, contextId, 60000, `${label} action discovery panel`);
+  console.log(`[workspace-lifecycle] ${label}: opening action discovery through shared Designer CDP actions`);
+  await getDesignerActions(cdp, contextId, 120_000).openActionDiscovery();
   await captureLifecycleScreenshot(`workspace-lifecycle-${label}-action-panel-open`, {
     expectation: { kind: 'discovery', label, allowLoading: true },
     semanticCdp: cdp,
@@ -1612,72 +1529,8 @@ async function openActionDiscoveryPanelThroughDesigner(cdp: CdpEvaluator, contex
 }
 
 async function closeDesignerDetailsPanelThroughDesigner(cdp: CdpEvaluator, contextId: number, description: string): Promise<void> {
-  if (!(await hasDesignerDetailsPanelThroughDesigner(cdp, contextId))) {
-    console.log(`[workspace-lifecycle] ${description}: details panel was already closed`);
-    return;
-  }
-
-  const closeTarget = await cdp.evaluate<{
-    ok: boolean;
-    reason?: string;
-    point?: { x: number; y: number };
-    candidates?: string[];
-    panelText?: string;
-  }>(
-    contextId,
-    `(() => {
-      const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim();
-      const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
-      const panels = Array.from(document.querySelectorAll('.msla-panel-container'))
-        .filter(isVisible)
-        .map((panel) => ({ panel, rect: panel.getBoundingClientRect() }))
-        .filter(({ rect }) => rect.width > 250 && rect.height > 200)
-        .sort((a, b) => a.rect.left - b.rect.left);
-      const panel = panels.at(-1)?.panel;
-      const candidates = Array.from(document.querySelectorAll('[data-automation-id="msla-panel-header-close-nav"], button[aria-label="Close"]'))
-        .filter(isVisible)
-        .slice(0, 10)
-        .map((element) => {
-          const rect = element.getBoundingClientRect();
-          return normalize(element.getAttribute('data-automation-id') || element.getAttribute('aria-label') || element.textContent || '') +
-            ' @ ' + Math.round(rect.left) + ',' + Math.round(rect.top);
-        });
-      if (!(panel instanceof HTMLElement)) {
-        return { ok: false, reason: 'Visible details panel container not found', candidates, panelText: document.body?.innerText || '' };
-      }
-
-      const closeButton = Array.from(panel.querySelectorAll('[data-automation-id="msla-panel-header-close-nav"], button[aria-label="Close"]'))
-        .filter(isVisible)
-        .at(-1);
-      if (!(closeButton instanceof HTMLElement)) {
-        return { ok: false, reason: 'Details panel Close button not found', candidates, panelText: normalize(panel.textContent).slice(0, 1000) };
-      }
-
-      closeButton.scrollIntoView({ block: 'center', inline: 'center' });
-      const rect = closeButton.getBoundingClientRect();
-      return {
-        ok: true,
-        point: { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 },
-        candidates,
-        panelText: normalize(panel.textContent).slice(0, 1000),
-      };
-    })()`
-  );
-  assert.ok(
-    closeTarget.ok && closeTarget.point,
-    `${description} Close button should be clickable before adding another operation. Reason=${closeTarget.reason} candidates=${JSON.stringify(
-      closeTarget.candidates
-    )} panelText=${closeTarget.panelText?.slice(0, 1000)}`
-  );
-  console.log(`[workspace-lifecycle] Closing ${description} details panel`);
-  await clickPoint(cdp, closeTarget.point);
-
-  await waitUntil(
-    async () => !(await hasDesignerDetailsPanelThroughDesigner(cdp, contextId)),
-    15000,
-    `${description} to close before adding another operation`
-  );
-  await new Promise((resolve) => setTimeout(resolve, 750));
+  console.log(`[workspace-lifecycle] Closing ${description} through shared Designer CDP actions`);
+  await getDesignerActions(cdp, contextId, 30_000).closePanel();
 }
 
 async function hasDesignerDetailsPanelThroughDesigner(cdp: CdpEvaluator, contextId: number): Promise<boolean> {
@@ -1944,53 +1797,7 @@ async function openResponseSettingsPanelThroughDesigner(cdp: CdpEvaluator, conte
 }
 
 async function clickDesignerNodeByTitle(cdp: CdpEvaluator, contextId: number, title: string): Promise<void> {
-  const result = await cdp.evaluate<{
-    ok: boolean;
-    reason?: string;
-    text?: string;
-    point?: { x: number; y: number };
-    candidates?: string[];
-  }>(
-    contextId,
-    `(() => {
-      const title = ${JSON.stringify(title.toLowerCase())};
-      const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim();
-      const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
-      const exactId = 'msla-node-' + ${JSON.stringify(title === responseActionTitle ? responseActionTitle : title)};
-      const exactNode = document.getElementById(exactId);
-      const candidates = exactNode instanceof HTMLElement && isVisible(exactNode)
-        ? [exactNode]
-        : Array.from(document.querySelectorAll('.react-flow__node, [id^="msla-node-"]'))
-          .filter(isVisible)
-          .filter((element) => normalize(element.textContent).toLowerCase() === title || normalize(element.textContent).toLowerCase().includes(title));
-      const debugCandidates = Array.from(document.querySelectorAll('.react-flow__node, [id^="msla-node-"]'))
-        .filter(isVisible)
-        .slice(0, 20)
-        .map((element) => (element.id || '(no id)') + ' | ' + normalize(element.textContent).slice(0, 120));
-      const element = candidates.at(-1);
-      if (!element) {
-        return { ok: false, reason: 'Designer node not found', candidates: debugCandidates, text: document.body?.innerText || '' };
-      }
-
-      element.scrollIntoView({ block: 'center', inline: 'center' });
-      const rect = element.getBoundingClientRect();
-      return {
-        ok: true,
-        point: { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 },
-        text: normalize(element.textContent || element.getAttribute('aria-label') || ''),
-      };
-    })()`
-  );
-
-  assert.ok(
-    result.ok && result.point,
-    `Expected designer node "${title}". Reason=${result.reason} candidates=${JSON.stringify(result.candidates)} text=${String(
-      result.text
-    ).slice(0, 1000)}`
-  );
-
-  console.log(`[workspace-lifecycle] Clicking designer node "${title}" (${result.text ?? ''})`);
-  await clickPoint(cdp, result.point);
+  await getDesignerActions(cdp, contextId, 60_000).clickNode([title]);
 }
 
 async function clickDesignerCardByExactTitle(cdp: CdpEvaluator, contextId: number, title: string): Promise<void> {
@@ -3136,182 +2943,17 @@ async function fillDesignerParameter(
   value: string,
   description: string
 ): Promise<void> {
-  const focusResult = await cdp.evaluate<{
-    ok: boolean;
-    reason?: string;
-    point?: { x: number; y: number };
-    candidates?: string[];
-    text?: string;
-  }>(
-    contextId,
-    `(() => {
-      const labels = ${JSON.stringify(labels.map((label) => label.toLowerCase()))};
-      const normalize = (input) => (input || '').replace(/\\s+/g, ' ').trim();
-      const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
-      const editableSelectors = ['input:not([type="hidden"])', 'textarea', '[contenteditable="true"]'];
-      const isEditable = (element) =>
-        element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement || element.getAttribute('contenteditable') === 'true';
-      const editables = () => editableSelectors.flatMap((selector) => Array.from(document.querySelectorAll(selector))).filter(isVisible).filter(isEditable);
-      const elementText = (element) =>
-        [
-          element.textContent,
-          element.getAttribute('aria-label'),
-          element.getAttribute('aria-labelledby')?.split(/\\s+/).map((id) => document.getElementById(id)?.textContent || '').join(' '),
-          element.getAttribute('data-testid'),
-          element.getAttribute('data-automation-id'),
-          element.getAttribute('placeholder'),
-          element.getAttribute('title'),
-        ]
-          .map(normalize)
-          .filter(Boolean)
-          .join(' ')
-          .toLowerCase();
-      const matches = (element) => labels.some((label) => elementText(element).includes(label));
-
-      const direct = editables().find(matches);
-      if (direct instanceof HTMLElement) {
-        direct.scrollIntoView({ block: 'center', inline: 'center' });
-        const rect = direct.getBoundingClientRect();
-        return { ok: true, point: { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 } };
-      }
-
-      const labelCandidates = Array.from(document.querySelectorAll('label, span, div, p, [data-automation-id], [data-testid]'))
-        .filter(isVisible)
-        .filter((element) => {
-          const text = elementText(element);
-          return labels.some((label) => text === label || text.includes(label));
-        })
-        .sort((a, b) => elementText(a).length - elementText(b).length);
-
-      for (const label of labelCandidates) {
-        let container = label;
-        for (let depth = 0; depth < 6 && container; depth++) {
-          const editable = editableSelectors
-            .flatMap((selector) => Array.from(container.querySelectorAll(selector)))
-            .filter(isVisible)
-            .filter(isEditable)[0];
-          if (editable instanceof HTMLElement) {
-            editable.scrollIntoView({ block: 'center', inline: 'center' });
-            const rect = editable.getBoundingClientRect();
-            return { ok: true, point: { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 } };
-          }
-          container = container.parentElement;
-        }
-      }
-
-      return {
-        ok: false,
-        reason: 'Parameter editor not found',
-        candidates: editables().slice(0, 20).map((element) => elementText(element).slice(0, 160)),
-        text: document.body?.innerText || '',
-      };
-    })()`
-  );
-
-  assert.ok(
-    focusResult.ok && focusResult.point,
-    `Expected ${description} parameter editor. Reason=${focusResult.reason} candidates=${JSON.stringify(
-      focusResult.candidates
-    )} text=${focusResult.text?.slice(0, 1000)}`
-  );
-
-  await clickPoint(cdp, focusResult.point);
-  await replaceFocusedDesignerText(cdp, value);
+  console.log(`[workspace-lifecycle] Filling ${description} through shared Designer CDP actions`);
+  await getDesignerActions(cdp, contextId, 60_000).fillParameter(labels, value);
 }
 
 async function replaceFocusedDesignerText(cdp: CdpEvaluator, value: string): Promise<void> {
-  await cdp.send('Input.dispatchKeyEvent', {
-    type: 'keyDown',
-    key: 'Control',
-    code: 'ControlLeft',
-    windowsVirtualKeyCode: 17,
-    nativeVirtualKeyCode: 17,
-  });
-  await cdp.send('Input.dispatchKeyEvent', {
-    type: 'keyDown',
-    key: 'a',
-    code: 'KeyA',
-    windowsVirtualKeyCode: 65,
-    nativeVirtualKeyCode: 65,
-    modifiers: 2,
-  });
-  await cdp.send('Input.dispatchKeyEvent', {
-    type: 'keyUp',
-    key: 'a',
-    code: 'KeyA',
-    windowsVirtualKeyCode: 65,
-    nativeVirtualKeyCode: 65,
-    modifiers: 2,
-  });
-  await cdp.send('Input.dispatchKeyEvent', {
-    type: 'keyUp',
-    key: 'Control',
-    code: 'ControlLeft',
-    windowsVirtualKeyCode: 17,
-    nativeVirtualKeyCode: 17,
-  });
-  await cdp.send('Input.dispatchKeyEvent', {
-    type: 'keyDown',
-    key: 'Backspace',
-    code: 'Backspace',
-    windowsVirtualKeyCode: 8,
-    nativeVirtualKeyCode: 8,
-  });
-  await cdp.send('Input.dispatchKeyEvent', {
-    type: 'keyUp',
-    key: 'Backspace',
-    code: 'Backspace',
-    windowsVirtualKeyCode: 8,
-    nativeVirtualKeyCode: 8,
-  });
-  await cdp.send('Input.insertText', { text: value });
+  await new DesignerCdpActions(cdp, 0, Date.now() + 30_000).replaceFocused(value);
 }
 
 async function saveWorkflowThroughDesigner(cdp: CdpEvaluator, contextId: number, label: string): Promise<void> {
-  console.log(`[workspace-lifecycle] ${label}: saving workflow through designer command bar`);
-  await clickDesignerElement(cdp, contextId, ['button[aria-label="Save"]'], 'Save');
-  try {
-    await waitUntil(
-      async () =>
-        cdp.evaluate<boolean>(
-          contextId,
-          `(() => {
-            const button = document.querySelector('button[aria-label="Save"]');
-            const text = (button?.textContent || '').toLowerCase();
-            const label = (button?.getAttribute('aria-label') || '').toLowerCase();
-            return !text.includes('saving') && !label.includes('saving');
-          })()`
-        ),
-      60000,
-      `${label} designer save to complete`
-    );
-  } catch (error) {
-    const diagnostics = await cdp.evaluate<Record<string, unknown>>(
-      contextId,
-      `(() => {
-        const save = document.querySelector('button[aria-label*="Sav"]');
-        const visibleText = Array.from(document.querySelectorAll('body *'))
-          .filter((element) => {
-            const rect = element.getBoundingClientRect();
-            const style = getComputedStyle(element);
-            return rect.width > 0 && rect.height > 0 && style.visibility !== 'hidden' && style.display !== 'none';
-          })
-          .map((element) => (element.textContent || '').trim())
-          .filter(Boolean);
-        return {
-          save: save ? {
-            ariaLabel: save.getAttribute('aria-label'),
-            text: (save.textContent || '').trim(),
-            disabled: save.hasAttribute('disabled'),
-          } : null,
-          bodyText: (document.body?.innerText || '').slice(0, 4000),
-          visibleErrorText: visibleText.filter((text) => /error|required|invalid|failed/i.test(text)).slice(0, 40),
-        };
-      })()`
-    );
-    console.error(`[workspace-lifecycle] ${label}: designer save did not complete ${JSON.stringify(diagnostics)}`);
-    throw error;
-  }
+  console.log(`[workspace-lifecycle] ${label}: saving through shared Designer CDP actions`);
+  await getDesignerActions(cdp, contextId, 90_000).save();
 }
 
 async function clickDesignerElement(
@@ -3321,97 +2963,7 @@ async function clickDesignerElement(
   textToFind: string,
   options: { requireTextMatch?: boolean; useLastMatch?: boolean } = {}
 ): Promise<DesignerClickResult> {
-  const result = await cdp.evaluate<DesignerClickResult>(
-    contextId,
-    `(() => {
-      const selectors = ${JSON.stringify(selectors)};
-      const textToFind = ${JSON.stringify(textToFind.toLowerCase())};
-      const requireTextMatch = ${JSON.stringify(options.requireTextMatch !== false)};
-      const useLastMatch = ${JSON.stringify(options.useLastMatch === true)};
-      const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim();
-      const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
-      const describeElement = (element) => {
-        if (!element) {
-          return undefined;
-        }
-        const rect = element.getBoundingClientRect();
-        return {
-          tagName: element.tagName,
-          id: element.id || undefined,
-          role: element.getAttribute('role') || undefined,
-          ariaLabel: normalize(element.getAttribute('aria-label')) || undefined,
-          title: normalize(element.getAttribute('title')) || undefined,
-          dataAutomationId: normalize(element.getAttribute('data-automation-id')) || undefined,
-          className: typeof element.className === 'string' ? normalize(element.className).slice(0, 200) : undefined,
-          text: normalize(element.textContent || '').slice(0, 200),
-          rect: {
-            left: Math.round(rect.left),
-            top: Math.round(rect.top),
-            width: Math.round(rect.width),
-            height: Math.round(rect.height),
-          },
-        };
-      };
-      const matchesText = (element) => {
-        const text = normalize(element.textContent).toLowerCase();
-        const ariaLabel = normalize(element.getAttribute('aria-label')).toLowerCase();
-        const title = normalize(element.getAttribute('title')).toLowerCase();
-        return !requireTextMatch || !textToFind || text.includes(textToFind) || ariaLabel.includes(textToFind) || title.includes(textToFind);
-      };
-      const candidates = selectors.flatMap((selector) => Array.from(document.querySelectorAll(selector)))
-        .filter(isVisible)
-        .filter(matchesText);
-      const debugCandidates = selectors.flatMap((selector) => Array.from(document.querySelectorAll(selector)))
-        .filter(isVisible)
-        .slice(0, 10)
-        .map(describeElement);
-      const element = useLastMatch ? candidates.at(-1) : candidates[0];
-      if (!element) {
-        return { ok: false, reason: 'Element not found', candidates: debugCandidates, text: document.body?.innerText || '' };
-      }
-
-      element.scrollIntoView({ block: 'center', inline: 'center' });
-      const rect = element.getBoundingClientRect();
-      const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-      const hitTarget = document.elementFromPoint(point.x, point.y);
-      return {
-        ok: true,
-        point,
-        rect: { left: rect.left, top: rect.top, width: rect.width, height: rect.height },
-        text: normalize(element.textContent || element.getAttribute('aria-label') || ''),
-        target: describeElement(element),
-        hitTarget: describeElement(hitTarget),
-        viewport: {
-          width: window.innerWidth,
-          height: window.innerHeight,
-          devicePixelRatio: window.devicePixelRatio,
-          frameUrl: document.location.href,
-          title: document.title,
-        },
-      };
-    })()`
-  );
-
-  assert.ok(
-    result.ok && result.point,
-    `Expected clickable designer element "${textToFind}". Reason=${result.reason} candidates=${JSON.stringify(result.candidates)} text=${String(
-      result.text
-    ).slice(0, 1000)}`
-  );
-
-  console.log(
-    `[workspace-lifecycle][designer-click] "${textToFind}" ${JSON.stringify({
-      text: result.text,
-      point: result.point,
-      rect: result.rect,
-      target: result.target,
-      hitTarget: result.hitTarget,
-      viewport: result.viewport,
-      contextId,
-    })}`
-  );
-  await clickPoint(cdp, result.point);
-  return result;
+  return getDesignerActions(cdp, contextId, 60_000).clickElement(selectors, textToFind, options);
 }
 
 async function tryClickDesignerElement(
@@ -3636,52 +3188,7 @@ async function waitForOptionalDiscoveryPanelThroughDesigner(cdp: CdpEvaluator, c
 }
 
 async function searchInDiscoveryPanelThroughDesigner(cdp: CdpEvaluator, contextId: number, searchTerm: string): Promise<void> {
-  const result = await cdp.evaluate<{ ok: boolean; reason?: string; text?: string; value?: string }>(
-    contextId,
-    `(() => {
-      const searchTerm = ${JSON.stringify(searchTerm)};
-      const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
-      const selectors = [
-        '[data-automation-id="msla-search-box"] input',
-        '[data-automation-id="msla-search-box"]',
-        '.msla-search-box input',
-        '.msla-search-box',
-        'input[placeholder*="Search"]',
-        'input[type="text"]',
-      ];
-      for (const selector of selectors) {
-        const element = Array.from(document.querySelectorAll(selector)).find(isVisible);
-        if (!element) {
-          continue;
-        }
-
-        const input = element instanceof HTMLInputElement ? element : element.querySelector('input');
-        if (!(input instanceof HTMLInputElement)) {
-          continue;
-        }
-
-        input.scrollIntoView({ block: 'center', inline: 'center' });
-        input.focus();
-        input.select();
-        const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set;
-        setter?.call(input, searchTerm);
-        input.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText', data: searchTerm }));
-        input.dispatchEvent(new Event('change', { bubbles: true }));
-        return {
-          ok: true,
-          text: input.placeholder || input.getAttribute('aria-label') || '',
-          value: input.value,
-        };
-      }
-
-      return { ok: false, reason: 'Search input not found', text: document.body?.innerText || '' };
-    })()`
-  );
-
-  assert.ok(
-    result.ok && result.value === searchTerm,
-    `Expected designer search input for "${searchTerm}". Reason=${result.reason} value=${result.value} text=${result.text?.slice(0, 1000)}`
-  );
+  await getDesignerActions(cdp, contextId, 60_000).search(searchTerm);
 }
 
 async function waitForSearchResultsThroughDesigner(
@@ -3690,26 +3197,7 @@ async function waitForSearchResultsThroughDesigner(
   timeoutMs: number,
   description: string
 ): Promise<void> {
-  await waitUntil(
-    () =>
-      cdp.evaluate<boolean>(
-        contextId,
-        `(() => {
-          const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
-          const selectors = [
-            '[data-automation-id^="msla-op-search-result-"]',
-            '[data-testid^="msla-op-search-result-"]',
-            '.msla-op-search-card-container',
-            '.msla-op-search-card',
-            '.msla-recommendation-panel-card',
-            '[role="option"]',
-          ];
-          return selectors.some((selector) => Array.from(document.querySelectorAll(selector)).some(isVisible));
-        })()`
-      ),
-    timeoutMs,
-    description
-  );
+  await getDesignerActions(cdp, contextId, timeoutMs).waitForSearchResults(description);
 }
 
 async function selectOperationThroughDesigner(
@@ -3718,102 +3206,7 @@ async function selectOperationThroughDesigner(
   operationName: string,
   variants: string[]
 ): Promise<void> {
-  let result:
-    | {
-        ok: boolean;
-        reason?: string;
-        point?: { x: number; y: number };
-        text?: string;
-        candidates?: string[];
-      }
-    | undefined;
-
-  for (let attempt = 0; attempt < 20; attempt++) {
-    result = await cdp.evaluate(
-      contextId,
-      `(() => {
-      const variants = ${JSON.stringify([operationName, ...variants].map((variant) => variant.toLowerCase()))};
-      const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim();
-      const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
-      const selectors = [
-        '[data-automation-id^="msla-op-search-result-"]',
-        '[data-testid^="msla-op-search-result-"]',
-        '.msla-op-search-card-container',
-        '.msla-op-search-card',
-        '.msla-recommendation-panel-card',
-        '[role="option"]',
-        '[class*="connector"] [role="button"]',
-        '[class*="connector"] button',
-      ];
-      const cards = selectors.flatMap((selector) => Array.from(document.querySelectorAll(selector))).filter(isVisible);
-      const candidates = cards.slice(0, 12).map((element) => {
-        const aid = normalize(element.getAttribute('data-automation-id'));
-        const aria = normalize(element.getAttribute('aria-label'));
-        const text = normalize(element.textContent).slice(0, 160);
-        return aid + ' | ' + aria + ' | ' + text;
-      });
-
-      const exactOperationName = variants[0];
-      const getCardDetails = (card) => {
-        const title = normalize(card.querySelector('.msla-op-search-card-title')?.textContent);
-        const text = normalize(title || card.textContent).toLowerCase();
-        const aria = normalize(card.getAttribute('aria-label')).toLowerCase();
-        const aid = normalize(card.getAttribute('data-automation-id')).toLowerCase();
-        return { title, text, aria, aid, combined: text + ' ' + aria + ' ' + aid };
-      };
-      const exactCard = cards.find((card) => getCardDetails(card).text === exactOperationName);
-      if (exactCard) {
-        exactCard.scrollIntoView({ block: 'center', inline: 'center' });
-        const rect = exactCard.getBoundingClientRect();
-        return {
-          ok: true,
-          point: { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 },
-          text: normalize(getCardDetails(exactCard).title || exactCard.textContent || exactCard.getAttribute('aria-label') || ''),
-          candidates,
-        };
-      }
-
-      for (const card of cards) {
-        const { title, text, combined } = getCardDetails(card);
-        if (combined === 'all' || combined.startsWith('all ')) {
-          continue;
-        }
-        if (exactOperationName === 'get current weather' && text.includes(exactOperationName) && text !== exactOperationName && !combined.includes('msnweather')) {
-          continue;
-        }
-
-        if (variants.some((variant) => combined.includes(variant))) {
-          card.scrollIntoView({ block: 'center', inline: 'center' });
-          const rect = card.getBoundingClientRect();
-          return {
-            ok: true,
-            point: { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 },
-            text: normalize(title || card.textContent || card.getAttribute('aria-label') || ''),
-            candidates,
-          };
-        }
-      }
-
-      return { ok: false, reason: 'Operation card not found', candidates, text: document.body?.innerText || '' };
-    })()`
-    );
-
-    if (result?.ok && result.point) {
-      console.log(`[workspace-lifecycle] Selecting operation "${operationName}" (${result.text ?? ''})`);
-      await clickPoint(cdp, result.point);
-      return;
-    }
-
-    await scrollDesignerSearchResults(cdp, contextId);
-    await new Promise((resolve) => setTimeout(resolve, 300));
-  }
-
-  assert.ok(
-    result?.ok && result.point,
-    `Expected operation card "${operationName}". Reason=${result?.reason} candidates=${JSON.stringify(result?.candidates)} text=${String(
-      result?.text
-    ).slice(0, 1000)}`
-  );
+  await getDesignerActions(cdp, contextId, 120_000).selectOperation(operationName, variants);
 }
 
 async function scrollDesignerSearchResults(cdp: CdpEvaluator, contextId: number): Promise<void> {
@@ -3845,44 +3238,7 @@ async function waitForDesignerText(
   timeoutMs: number,
   description: string
 ): Promise<void> {
-  await waitUntil(
-    () =>
-      cdp.evaluate<boolean>(
-        contextId,
-        `(() => {
-          const collectText = (root) => {
-            let text = '';
-            const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT);
-            let node = walker.currentNode;
-            while (node) {
-              if (node instanceof HTMLScriptElement || node instanceof HTMLStyleElement) {
-                node = walker.nextSibling() || walker.nextNode();
-                continue;
-              }
-              if (node.parentElement instanceof HTMLScriptElement || node.parentElement instanceof HTMLStyleElement) {
-                node = walker.nextNode();
-                continue;
-              }
-              if (node.nodeType === Node.TEXT_NODE) {
-                text += node.textContent || '';
-              }
-              if (node.shadowRoot) {
-                text += collectText(node.shadowRoot);
-              }
-              if (node instanceof HTMLIFrameElement && node.contentDocument) {
-                text += collectText(node.contentDocument);
-              }
-              node = walker.nextNode();
-            }
-            return text;
-          };
-          const text = collectText(document).toLowerCase();
-          return ${JSON.stringify(expectedText.map((text) => text.toLowerCase()))}.some((expected) => text.includes(expected));
-        })()`
-      ),
-    timeoutMs,
-    description
-  );
+  await getDesignerActions(cdp, contextId, timeoutMs).waitForText(expectedText, description);
 }
 
 async function getDesignerText(cdp: CdpEvaluator, contextId: number): Promise<string> {

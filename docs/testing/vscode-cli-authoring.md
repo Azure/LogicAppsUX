@@ -88,6 +88,22 @@ that the affirmative journey has already passed on both operating systems.
 Choose the required designer version explicitly. A V2 flow must target
 `designerLocalV2`, not the V1 `designerLocal` tab or a different designer window.
 
+Generic Designer authoring must use
+`apps/vs-code-designer/src/test/e2e/designerCdpActions.ts`. The shared
+`DesignerCdpActions` layer owns hit-tested Add-trigger variants, action
+discovery, exact operation selection, node/panel interaction, semantic
+parameter editing and toolbar saving. Workspace lifecycle/MSN Weather, HTTP
+timeout Compose and Stateless variables are reference consumers. Keep only
+scenario-specific setup and assertions in those families; do not copy their
+selectors or build another family-local Designer driver.
+
+The shared layer accepts the already-owned CDP connection, frame context,
+deadline and active-tab assertion. Reuse that same instance through a scenario
+so navigation, screenshots and assertions remain bound to the known Designer
+frame. A hidden, occluded, disabled or wrong-frame match is not readiness.
+Support both current `Add trigger` and legacy `Add a trigger` labels, and verify
+operation insertion before editing the resulting panel.
+
 `WorkspaceConfiguration` is a snapshot. After awaiting `update`, call
 `workspace.getConfiguration` again before checking the effective value.
 

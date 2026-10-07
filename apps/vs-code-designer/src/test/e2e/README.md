@@ -54,6 +54,13 @@ location through `LA_E2E_CLI_AZURE_*`. Use only the existing approved target; do
 not create resources or expand permissions. Workspace-only consumers remain
 credential-free, and canonical selectors and native acceptance gates are unchanged.
 
+Workspace lifecycle/MSN Weather, HTTP timeout Compose and Stateless variables
+also share `designerCdpActions.ts` for native Designer mechanics. This helper
+owns visible and hit-tested Add-trigger variants, action discovery and exact
+selection, node/panel interaction, semantic parameter editing and saving.
+Family tests must retain their own workflow/runtime assertions and should not
+introduce local copies of those selectors or interaction sequences.
+
 ### HTTP timeout on Compose: original authoring clause
 
 `pnpm --dir apps/vs-code-designer run test:e2e-cli:http-timeout-compose-original`

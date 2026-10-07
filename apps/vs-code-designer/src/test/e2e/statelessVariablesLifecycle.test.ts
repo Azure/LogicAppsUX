@@ -6,6 +6,7 @@ import * as vscode from 'vscode';
 import { randomUUID } from 'crypto';
 import { connectToVsCodeCdp, waitForWebviewFrameContext, type CdpConnection } from './cdpClient';
 import { clickPoint, pressKey, type CdpEvaluator, type Point } from './cdpFormHelpers';
+import { DesignerCdpActions } from './designerCdpActions';
 import { assertNoDialogAttempts, installDialogGuard } from './dialogGuard';
 import { installFailureScreenshotHook } from './screenshot';
 import {
@@ -302,30 +303,31 @@ async function authorVariablesThroughDesigner(
   try {
     assertPhaseActive(deadline, signal);
     const context = await waitForWebviewFrameContext(cdp, {
-      allTextIncludes: ['Save', 'Add a trigger'],
+      allTextIncludes: ['Workflow', 'Code', 'Save'],
       description: 'visible stateless designer',
       timeoutMs: remainingMs(deadline, 90_000),
     });
-    await helpers.addRequestTriggerThroughDesigner(cdp, context, entry.label);
-    await addAction(cdp, context, 'Initialize variables', ['initialize variable'], deadline);
-    await helpers.clickDesignerNodeByTitle(cdp, context, 'Initialize variables');
-    await configureVariable(cdp, context, 0, 'v1', 'Array', '[1,2]', deadline);
-    await helpers.clickDesignerElement(cdp, context, ['button[aria-label="Add a Variable"]'], 'Add a Variable');
-    await configureVariable(cdp, context, 1, 'v2', 'String', 'foo', deadline);
-    await helpers.closeDesignerDetailsPanelThroughDesigner(cdp, context, 'stateless variables initialization evidence');
+    const designer = new DesignerCdpActions(cdp, context, deadline, () => assertPhaseActive(deadline, signal));
+    await designer.waitForDesignerReady();
+    await designer.addRequestTrigger();
+    await addAction(designer, 'Initialize variables', ['initialize variable']);
+    await designer.clickNode(['Initialize variables']);
+    await configureVariable(designer, cdp, context, 0, 'v1', 'Array', '[1,2]', deadline);
+    await designer.clickElement(['button[aria-label="Add a Variable"]'], 'Add a Variable');
+    await configureVariable(designer, cdp, context, 1, 'v2', 'String', 'foo', deadline);
+    await designer.closePanel();
     await helpers.captureLifecycleScreenshot('stateless-variables-initialize-two-variables', {
       expectation: { kind: 'designerCanvas', label: entry.label, requiredNodes: [['Initialize variables']] },
       semanticCdp: cdp,
       semanticContextId: context,
     });
-    await addAction(cdp, context, 'Append to array variable', ['append to array variable'], deadline);
-    await configureAppend(cdp, context, 'Append to array variable', 'v1', '3', deadline);
-    await addAction(cdp, context, 'Append to string variable', ['append to string variable'], deadline);
-    await configureAppend(cdp, context, 'Append to string variable', 'v2', 'bar', deadline);
-    await helpers.addResponseActionThroughDesigner(cdp, context, entry.label);
-    await helpers.clickDesignerNodeByTitle(cdp, context, 'Response');
-    await helpers.waitForDesignerParameterEditor(cdp, context, ['Status code'], remainingMs(deadline, 30_000), 'Response Status code');
-    await helpers.fillDesignerParameter(cdp, context, ['Status code'], '200', 'Response Status code');
+    await addAction(designer, 'Append to array variable', ['append to array variable']);
+    await configureAppend(designer, 'Append to array variable', 'v1', '3');
+    await addAction(designer, 'Append to string variable', ['append to string variable']);
+    await configureAppend(designer, 'Append to string variable', 'v2', 'bar');
+    await designer.addAction('Response', 'Response', ['response']);
+    await designer.clickNode(['Response']);
+    await designer.fillParameter(['Status code'], '200');
     await pressKey(cdp, 'Tab', 'Tab', 9);
     for (const variable of ['v1', 'v2']) {
       await helpers.selectDynamicContentTokenForParameter(
@@ -347,7 +349,7 @@ async function authorVariablesThroughDesigner(
       await pressKey(cdp, 'End', 'End', 35);
     }
     assertPhaseActive(deadline, signal);
-    await helpers.saveWorkflowThroughDesigner(cdp, context, entry.label);
+    await designer.save();
     let saved: StatelessOperations | undefined;
     await poll(deadline, 'saved stateless actions', async () => {
       const actions = objectValue(objectValue(readJson(entry.workflowJsonPath), 'workflow').definition, 'definition').actions;
@@ -365,15 +367,12 @@ async function authorVariablesThroughDesigner(
   }
 }
 
-async function addAction(cdp: CdpEvaluator, context: number, title: string, variants: string[], deadline: number): Promise<void> {
-  await helpers.openActionDiscoveryPanelThroughDesigner(cdp, context, 'stateless-variables');
-  await helpers.searchInDiscoveryPanelThroughDesigner(cdp, context, title);
-  await helpers.waitForSearchResultsThroughDesigner(cdp, context, 60_000, title);
-  await helpers.selectOperationThroughDesigner(cdp, context, title, variants);
-  await helpers.waitForDesignerText(cdp, context, [title], remainingMs(deadline, 60_000), `${title} inserted`);
+async function addAction(designer: DesignerCdpActions, title: string, variants: string[]): Promise<void> {
+  await designer.addAction(title, title, variants);
 }
 
 async function configureVariable(
+  designer: DesignerCdpActions,
   cdp: CdpEvaluator,
   context: number,
   index: number,
@@ -397,11 +396,11 @@ async function configureVariable(
   if (!expansion.expanded) {
     await clickPoint(cdp, expansion.point);
   }
-  await variableField(cdp, context, index, 'name', name, deadline);
+  await variableField(designer, cdp, context, index, 'name', name, deadline);
   const typePoint = await variableFieldPoint(cdp, context, index, 'type', deadline);
   await clickPoint(cdp, typePoint);
-  await helpers.clickDesignerElement(cdp, context, ['[role="option"]'], type);
-  await variableField(cdp, context, index, 'value', value, deadline);
+  await designer.clickElement(['[role="option"]'], type);
+  await variableField(designer, cdp, context, index, 'value', value, deadline);
 }
 
 async function variableFieldPoint(cdp: CdpEvaluator, context: number, index: number, label: string, deadline: number): Promise<Point> {
@@ -427,6 +426,7 @@ async function variableFieldPoint(cdp: CdpEvaluator, context: number, index: num
 }
 
 async function variableField(
+  designer: DesignerCdpActions,
   cdp: CdpEvaluator,
   context: number,
   index: number,
@@ -435,24 +435,16 @@ async function variableField(
   deadline: number
 ): Promise<void> {
   await clickPoint(cdp, await variableFieldPoint(cdp, context, index, label, deadline));
-  await helpers.replaceFocusedDesignerText(cdp, value);
+  await designer.replaceFocused(value);
   await pressKey(cdp, 'Tab', 'Tab', 9); // Commit the real editor blur, not a React state injection.
 }
 
-async function configureAppend(
-  cdp: CdpEvaluator,
-  context: number,
-  title: string,
-  name: string,
-  value: string,
-  deadline: number
-): Promise<void> {
-  await helpers.clickDesignerNodeByTitle(cdp, context, title);
-  await helpers.waitForDesignerParameterEditor(cdp, context, ['Name'], remainingMs(deadline, 30_000), `${title} Name`);
-  await helpers.clickDesignerElement(cdp, context, ['[role="combobox"]'], 'Name', { requireTextMatch: false });
-  await helpers.clickDesignerElement(cdp, context, ['[role="option"]'], name);
-  await helpers.fillDesignerParameter(cdp, context, ['Value'], value, `${title} Value`);
-  await pressKey(cdp, 'Tab', 'Tab', 9);
+async function configureAppend(designer: DesignerCdpActions, title: string, name: string, value: string): Promise<void> {
+  await designer.clickNode([title]);
+  await designer.clickElement(['[role="combobox"]'], 'Name', { requireTextMatch: false });
+  await designer.clickElement(['[role="option"]'], name);
+  await designer.fillParameter(['Value'], value);
+  await designer.key('Tab', 'Tab', 9);
 }
 
 function createOwnedDebug(entry: CreatedWorkspace): StatelessOwnedDebug {

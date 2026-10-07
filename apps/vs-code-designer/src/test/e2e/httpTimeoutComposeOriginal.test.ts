@@ -131,18 +131,11 @@ suite('HTTP timeout Compose original authoring clause', () => {
         const driver = new HttpTimeoutComposeDriver(cdp, contextId, deadline, assertActive);
         assertApprovedAzureConnectorFixtureSaved(entry.appDir, azureFixture);
         const owner = await driver.context();
-        await driver.click(
-          '[data-testid="card-Add a trigger"], [data-testid="card-Add trigger"], [data-automation-id="card-Add_a_trigger"], [data-automation-id="card-Add_trigger"], [aria-label="Add a trigger"], [aria-label="Add trigger"]'
-        );
         const requestTitles = ['When an HTTP request is received', 'When a HTTP request is received'];
-        await driver.discover('Request', requestTitles);
-        await driver.waitNode(requestTitles);
-        await driver.closePanel();
-        await driver.openActionDiscovery();
-        await driver.discover('Compose', ['Compose']);
-        await driver.waitNode(['Compose']);
-        await driver.click('.msla-panel-container [contenteditable="true"].editor-input');
-        await driver.replaceFocused('test');
+        await driver.waitForDesignerReady();
+        await driver.addRequestTrigger();
+        await driver.addAction('Compose', 'Compose');
+        await driver.fillParameter(['Inputs'], 'test');
         await driver.closePanel();
         await driver.save();
         const authored = await pollHttpTimeoutCompose(
