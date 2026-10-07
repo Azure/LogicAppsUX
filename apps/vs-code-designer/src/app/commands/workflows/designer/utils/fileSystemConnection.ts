@@ -10,7 +10,7 @@ import { localize } from '../../../../../localize';
 
 interface FileSystemConnectionResult {
   connection?: FileSystemConnectionInfo;
-  errorMessage?: string;
+  errorMessage: string;
 }
 
 export function createFileSystemConnection(connectionInfo: FileSystemConnectionInfo): Promise<FileSystemConnectionResult> {
@@ -68,6 +68,7 @@ export function createFileSystemConnection(connectionInfo: FileSystemConnectionI
           fail();
         } else {
           resolve({
+            errorMessage: '',
             connection: {
               ...connectionInfo,
               connectionParameters: { mountPath: rootFolder },

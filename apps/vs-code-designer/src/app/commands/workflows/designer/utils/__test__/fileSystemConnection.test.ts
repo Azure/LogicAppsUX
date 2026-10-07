@@ -1,3 +1,4 @@
+import type { CompleteFileSystemConnectionData } from '@microsoft/vscode-extension-logic-apps';
 import { ChildProcess, type SpawnOptions } from 'child_process';
 import { platform } from 'os';
 import * as path from 'path';
@@ -52,6 +53,7 @@ describe('createFileSystemConnection', () => {
     );
     child.emit('close', 0, null);
     expect(await result).toEqual({
+      errorMessage: '',
       connection: { displayName: connectionInfo.displayName, connectionParameters: { mountPath: credentials.rootFolder } },
     });
     expect(JSON.stringify(await result)).not.toContain('CWE532-PASSWORD');
@@ -68,6 +70,22 @@ describe('createFileSystemConnection', () => {
       expect(await result).toHaveProperty('connection.connectionParameters.mountPath', credentials.rootFolder);
     }
   );
+
+  it('returns an error string compatible with the completion message contract on success', async () => {
+    const result = createFileSystemConnection(connectionInfo);
+    child.emit('close', 0, null);
+    const { connection, errorMessage } = await result;
+    const completion: CompleteFileSystemConnectionData = {
+      connectionName: 'smb-connection',
+      connection,
+      error: errorMessage,
+    };
+    expect(completion.error).toBe('');
+    expect(completion.connection).toEqual({
+      displayName: connectionInfo.displayName,
+      connectionParameters: { mountPath: credentials.rootFolder },
+    });
+  });
 
   it.each([1, 2, 5, 53, 1219, null])('returns only the fixed safe failure for exit code %s', async (code) => {
     const result = createFileSystemConnection(connectionInfo);
@@ -175,6 +193,7 @@ describe('createFileSystemConnection', () => {
       });
 
       expect(await createFileSystemConnection({ connectionParameters: { ...credentials, password } })).toEqual({
+        errorMessage: '',
         connection: { connectionParameters: { mountPath: credentials.rootFolder } },
       });
       expect(child.stdin).toBeNull();
