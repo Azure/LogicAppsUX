@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { IntlProvider } from 'react-intl';
 import type { ComponentProps, PropsWithChildren } from 'react';
 import type { CreateConnectionWrapper } from '../../createConnection/createConnectionWrapper';
+import type { ConnectionTableProps } from '../connectionTable';
 import {
   $createParagraphNode,
   $createTextNode,
@@ -12,6 +13,8 @@ import {
 } from '../../../../../../../../designer-ui/__test__/connection-expression-editor-helper';
 import { SelectConnectionWrapper } from '../selectConnection';
 import { createValueSegmentFromToken } from '../../../../../core/utils/tokens';
+import { AgentUtils } from '../../../../../common/utilities/Utils';
+import type { ConnectionReference } from '../../../../../common/models/workflow';
 import { createConnectionExpressionState } from './connectionExpressionTestState';
 
 const mocks = vi.hoisted(() => ({
@@ -25,6 +28,11 @@ const mocks = vi.hoisted(() => ({
   query: { data: [] as any[], isLoading: false, isError: false, error: undefined as Error | undefined },
   selectedNodeIds: ['action'],
   pickerProps: undefined as any,
+  tableProps: undefined as ConnectionTableProps | undefined,
+  connector: { id: '/serviceProviders/sql', name: 'sql', properties: { iconUri: 'https://example.com/sql.svg' } },
+  referencesForConnector: [] as ConnectionReference[],
+  isA2A: false,
+  isAgentSubgraph: false,
 }));
 
 vi.mock('react-redux', () => ({
@@ -40,8 +48,8 @@ vi.mock('../../../../../core/state/connection/connectionSelector', () => ({
   useNodeConnectionMapping: () => mocks.state.connections.connectionsMapping.action,
   useNodeConnectionId: () => '/connections/SqlDesign',
   useConnectionRefs: () => mocks.state.connections.connectionReferences,
-  useConnectionRefsByConnectorId: () => [],
-  useConnectorByNodeId: () => ({ id: '/serviceProviders/sql', name: 'sql', properties: { iconUri: 'https://example.com/sql.svg' } }),
+  useConnectionRefsByConnectorId: () => mocks.referencesForConnector,
+  useConnectorByNodeId: () => mocks.connector,
 }));
 vi.mock('../../../../../core/state/panel/panelSelectors', () => ({
   useConnectionPanelSelectedNodeIds: () => mocks.selectedNodeIds,
@@ -54,8 +62,8 @@ vi.mock('../../../../../core/state/panel/panelSlice', async (importOriginal) => 
   openPanel: (payload: unknown) => ({ type: 'openPanel', payload }),
   setIsCreatingConnection: (payload: unknown) => ({ type: 'createPanel', payload }),
 }));
-vi.mock('../../../../../core/state/designerView/designerViewSelectors', () => ({ useIsA2AWorkflow: () => false }));
-vi.mock('../../../../../common/hooks/agent', () => ({ useIsAgentSubGraph: () => false }));
+vi.mock('../../../../../core/state/designerView/designerViewSelectors', () => ({ useIsA2AWorkflow: () => mocks.isA2A }));
+vi.mock('../../../../../common/hooks/agent', () => ({ useIsAgentSubGraph: () => mocks.isAgentSubgraph }));
 vi.mock('../../../../../core/queries/connections', () => ({ useConnectionsForConnector: () => mocks.query }));
 vi.mock('../../actionList/actionList', () => ({
   ActionList: ({ nodeIds, iconUri }: { nodeIds: string[]; iconUri: string }) => (
@@ -81,11 +89,14 @@ vi.mock('../../createConnection/createConnectionWrapper', () => ({
   ),
 }));
 vi.mock('../connectionTable', () => ({
-  ConnectionTable: ({ saveSelectionCallback }: any) => (
-    <button type="button" onClick={() => saveSelectionCallback({ id: '/connections/SqlDesign' })}>
-      Select SqlDesign
-    </button>
-  ),
+  ConnectionTable: (props: any) => {
+    mocks.tableProps = props;
+    return (
+      <button type="button" onClick={() => props.saveSelectionCallback({ id: '/connections/SqlDesign' })}>
+        Select SqlDesign
+      </button>
+    );
+  },
 }));
 vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@microsoft/logic-apps-shared')>()),
@@ -189,6 +200,11 @@ beforeEach(() => {
   connectionExpressionEditor.current = undefined;
   mocks.selectedNodeIds = ['action'];
   mocks.pickerProps = undefined;
+  mocks.tableProps = undefined;
+  mocks.connector = { id: '/serviceProviders/sql', name: 'sql', properties: { iconUri: 'https://example.com/sql.svg' } };
+  mocks.referencesForConnector = [];
+  mocks.isA2A = false;
+  mocks.isAgentSubgraph = false;
   mocks.query = { data: [], isLoading: false, isError: false, error: undefined };
   const initialState = createConnectionExpressionState();
   mocks.state = {
@@ -230,6 +246,112 @@ afterEach(() => {
 });
 
 describe('connection selection tabs', () => {
+  it.each([false, true])(
+    'classifies agent connections using reference resource IDs and respects A2A model eligibility when A2A is %s',
+    (isA2A) => {
+      mocks.connector.id = '/connectionProviders/agent';
+      mocks.isA2A = isA2A;
+      const account = '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.CognitiveServices/accounts';
+      const makeConnection = (name: string, resourceId?: string) => ({
+        id: `/connections/${name}`,
+        name,
+        properties: {
+          displayName: name,
+          connectionParameters: resourceId ? { cognitiveServiceAccountId: { metadata: { value: resourceId } } } : undefined,
+        },
+      });
+      mocks.query.data = [
+        makeConnection('OpenAI', `${account}/openai`),
+        makeConnection('Project', `${account}/legacy-account`),
+        makeConnection('Gateway', '/subscriptions/sub/providers/Microsoft.ApiManagement/service/gateway/apis/model'),
+        makeConnection('Models', `${account}/foundry/models`),
+        makeConnection('BringYourOwn'),
+      ];
+      // The matching reference overrides stale resource metadata, even when the connection ID casing differs.
+      mocks.referencesForConnector = [
+        {
+          api: { id: mocks.connector.id },
+          connection: { id: '/CONNECTIONS/PROJECT' },
+          resourceId: `${account}/foundry/projects/project`,
+        },
+      ];
+      renderPanel();
+
+      expect(mocks.tableProps?.connections.map((connection) => connection.name)).toEqual(
+        isA2A ? ['OpenAI', 'Models', 'BringYourOwn'] : ['OpenAI', 'Project', 'Gateway', 'Models', 'BringYourOwn']
+      );
+      expect(mocks.query.data.map((connection) => connection.properties.connectionParameters.agentModelType.type)).toEqual([
+        AgentUtils.ModelType.AzureOpenAI,
+        AgentUtils.ModelType.FoundryService,
+        AgentUtils.ModelType.APIM,
+        AgentUtils.ModelType.MicrosoftFoundry,
+        AgentUtils.ModelType.V1ChatCompletionsService,
+      ]);
+      expect(mocks.query.data[1].properties.connectionParameters.cognitiveServiceAccountId.metadata.value).toBe(
+        `${account}/legacy-account`
+      );
+      expect(mocks.state.connections.connectionsMapping.action).toBeNull();
+      expect(mocks.staticUpdate).not.toHaveBeenCalled();
+      expect(mocks.expressionUpdate).not.toHaveBeenCalled();
+      expect(mocks.setupConnection).not.toHaveBeenCalled();
+    }
+  );
+
+  it.each([
+    [false, false, ['Static']],
+    [true, false, ['Static']],
+    [true, true, ['Static', 'Dynamic']],
+  ] as const)('limits dynamic connections to A2A agent subgraphs (A2A=%s, agentSubgraph=%s)', (isA2A, isAgentSubgraph, expectedNames) => {
+    mocks.isA2A = isA2A;
+    mocks.isAgentSubgraph = isAgentSubgraph;
+    mocks.query.data = [
+      { id: '/connections/static', name: 'Static', properties: {} },
+      { id: '/connections/dynamic', name: 'Dynamic', properties: { features: 'DynamicUserInvoked' } },
+    ];
+    renderPanel();
+
+    expect(mocks.tableProps?.connections.map((connection) => connection.name)).toEqual(expectedNames);
+    expect(mocks.query.data.map((connection) => connection.name)).toEqual(['Static', 'Dynamic']);
+    expect(mocks.staticUpdate).not.toHaveBeenCalled();
+    expect(mocks.setupConnection).not.toHaveBeenCalled();
+  });
+
+  it('reports a connection-list failure without replacing mappings or hiding the selection tabs', () => {
+    mocks.query.isError = true;
+    mocks.query.error = new Error('Connection list unavailable');
+    const originalMappings = structuredClone(mocks.state.connections.connectionsMapping);
+    renderPanel();
+
+    expect(screen.getByText('Error loading connections')).toBeVisible();
+    expect(screen.getByText('Connection list unavailable')).toBeVisible();
+    expect(screen.queryByRole('button', { name: 'Select SqlDesign' })).not.toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Create new' })).toBeEnabled();
+    expect(screen.getByRole('tab', { name: 'Use expression' })).toBeEnabled();
+    expect(mocks.state.connections.connectionsMapping).toEqual(originalMappings);
+    expect(mocks.staticUpdate).not.toHaveBeenCalled();
+    expect(mocks.expressionUpdate).not.toHaveBeenCalled();
+    expect(mocks.setupConnection).not.toHaveBeenCalled();
+  });
+
+  it('returns to the existing list when the inline creation form is cancelled without changing the binding', () => {
+    const { rerenderPanel } = renderPanel();
+    fireEvent.click(screen.getByRole('tab', { name: 'Create new' }));
+    rerenderPanel();
+    expect(screen.getByRole('tabpanel', { name: 'Create new' })).toBeVisible();
+    mocks.dispatch.mockClear();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel creation' }));
+    rerenderPanel();
+
+    expect(mocks.dispatch).toHaveBeenCalledExactlyOnceWith({ type: 'createPanel', payload: false });
+    expect(screen.getByRole('tabpanel', { name: 'Select existing' })).toBeVisible();
+    expect(screen.queryByTestId('create-connection-form')).not.toBeInTheDocument();
+    expect(mocks.state.connections.connectionsMapping.action).toBeNull();
+    expect(mocks.staticUpdate).not.toHaveBeenCalled();
+    expect(mocks.expressionUpdate).not.toHaveBeenCalled();
+    expect(mocks.setupConnection).not.toHaveBeenCalled();
+  });
+
   it('renders one shared action bar before the ordered tabs without radio mode controls or a footer Add new button', () => {
     renderPanel();
 
