@@ -39,7 +39,6 @@ export interface AzuriteEndpointSettings {
  * is configured to use non-default hosts, ports, or HTTPS.
  */
 export async function synchronizeAzuriteConnectionString(context: IActionContext, projectPath: string): Promise<void> {
-  const localSettingsEncrypted = await isLocalSettingsEncrypted(projectPath);
   const localSettings = await getLocalSettingsJson(context, projectPath);
   const configuredStorage = localSettings.Values?.[azureWebJobsStorageKey];
   const managedConnectionStringStateKey = `${managedConnectionStringStatePrefix}:${projectPath}`;
@@ -50,7 +49,7 @@ export async function synchronizeAzuriteConnectionString(context: IActionContext
   }
 
   const endpointSettings = getAzuriteEndpointSettings(projectPath);
-  const shouldUseExplicitEndpoints = isManagedConnectionString || !hasDefaultAzuriteEndpoints(endpointSettings);
+  const shouldUseExplicitEndpoints = !hasDefaultAzuriteEndpoints(endpointSettings);
   const updatedConnectionString = shouldUseExplicitEndpoints
     ? createAzuriteDevelopmentConnectionString(endpointSettings)
     : localEmulatorConnectionString;
@@ -58,6 +57,7 @@ export async function synchronizeAzuriteConnectionString(context: IActionContext
     return;
   }
 
+  const localSettingsEncrypted = await isLocalSettingsEncrypted(projectPath);
   if (localSettingsEncrypted) {
     throw new Error(
       localize(

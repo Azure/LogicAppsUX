@@ -130,6 +130,7 @@ describe('azuriteConnectionString', () => {
     await synchronizeAzuriteConnectionString(context, projectPath);
 
     expect(setLocalAppSetting).not.toHaveBeenCalled();
+    expect(isLocalSettingsEncrypted).not.toHaveBeenCalled();
     expect(workspaceStateUpdate).not.toHaveBeenCalled();
   });
 
@@ -187,7 +188,7 @@ describe('azuriteConnectionString', () => {
     );
   });
 
-  it('keeps explicit endpoints when extension-managed ports return to their defaults', async () => {
+  it('restores the shorthand when extension-managed ports return to their defaults', async () => {
     const previousConnectionString = createAzuriteDevelopmentConnectionString({
       blobHost: '127.0.0.1',
       blobPort: 10000,
@@ -209,29 +210,10 @@ describe('azuriteConnectionString', () => {
       context,
       projectPath,
       azureWebJobsStorageKey,
-      createAzuriteDevelopmentConnectionString({
-        blobHost: '127.0.0.1',
-        blobPort: 10000,
-        queueHost: '127.0.0.1',
-        queuePort: 10001,
-        tableHost: '127.0.0.1',
-        tablePort: 10002,
-        useHttps: false,
-      }),
+      localEmulatorConnectionString,
       MismatchBehavior.Overwrite
     );
-    expect(workspaceStateUpdate).toHaveBeenCalledWith(
-      stateKey,
-      createAzuriteDevelopmentConnectionString({
-        blobHost: '127.0.0.1',
-        blobPort: 10000,
-        queueHost: '127.0.0.1',
-        queuePort: 10001,
-        tableHost: '127.0.0.1',
-        tablePort: 10002,
-        useHttps: false,
-      })
-    );
+    expect(workspaceStateUpdate).toHaveBeenCalledWith(stateKey, undefined);
   });
 
   it('preserves an explicit customer storage connection string', async () => {
