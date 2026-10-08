@@ -32,6 +32,7 @@ export const ownedFuncTasks: vscode.Task[] = [];
 let isStoppingOwnedFuncTasks = false;
 const pendingShutdownKills = new Set<Promise<void>>();
 const pendingFuncTaskStarts = new Set<Promise<void>>();
+const funcTaskShutdownTimeoutMs = 5000;
 
 function scopesMatch(
   firstScope: vscode.WorkspaceFolder | vscode.TaskScope | undefined,
@@ -206,20 +207,56 @@ function hasTrackedFuncTask(task: vscode.Task): boolean {
   );
 }
 
-async function waitForFuncTaskExecutionsToStop(executions: vscode.TaskExecution[]): Promise<void> {
-  while (true) {
+async function waitForPromisesUntil(promises: Promise<unknown>[], deadline: number): Promise<boolean> {
+  if (promises.length === 0) {
+    return true;
+  }
+
+  const remainingTime = deadline - Date.now();
+  if (remainingTime <= 0) {
+    return false;
+  }
+
+  return Promise.race([Promise.allSettled(promises).then(() => true), delay(remainingTime).then(() => false)]);
+}
+
+async function waitForFuncTaskExecutionsToStop(executions: vscode.TaskExecution[], deadline: number): Promise<boolean> {
+  while (Date.now() < deadline) {
     const activeExecutions = vscode.tasks.taskExecutions;
     if (!executions.some((execution) => activeExecutions.includes(execution))) {
-      return;
+      return true;
     }
-    await delay(100);
+    await delay(Math.min(100, deadline - Date.now()));
   }
+  return !executions.some((execution) => vscode.tasks.taskExecutions.includes(execution));
+}
+
+async function waitForPendingShutdownKills(deadline: number): Promise<boolean> {
+  while (pendingShutdownKills.size > 0) {
+    if (!(await waitForPromisesUntil([...pendingShutdownKills], deadline))) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function describeFuncTasks(tasks: vscode.Task[]): string {
+  return tasks
+    .map((task) => {
+      const scope = typeof task.scope === 'object' && 'name' in task.scope ? task.scope.name : 'unknown scope';
+      return `"${task.name || 'unnamed task'}" (${scope})`;
+    })
+    .join(', ');
 }
 
 export async function stopAllFuncTasks(): Promise<void> {
   isStoppingOwnedFuncTasks = true;
-  while (pendingFuncTaskStarts.size > 0) {
-    await Promise.allSettled([...pendingFuncTaskStarts]);
+  const shutdownDeadline = Date.now() + funcTaskShutdownTimeoutMs;
+  const pendingStartsCompleted = await waitForPromisesUntil([...pendingFuncTaskStarts], shutdownDeadline);
+  if (!pendingStartsCompleted) {
+    ext.outputChannel?.appendLog(
+      `Timed out waiting for ${pendingFuncTaskStarts.size} Functions host task launch(es) during extension shutdown.`
+    );
   }
 
   const ownedTasksSnapshot = [...ownedFuncTasks];
@@ -242,17 +279,36 @@ export async function stopAllFuncTasks(): Promise<void> {
     }
   }
 
-  await Promise.allSettled(trackedFuncTasks.map(([, runningFuncTask]) => killFuncProcessTree(runningFuncTask)));
-  for (const [scope] of trackedFuncTasks) {
-    runningFuncTaskMap.delete(scope);
+  const trackedKillPromises = trackedFuncTasks.map(([scope, runningFuncTask]) =>
+    killFuncProcessTree(runningFuncTask).finally(() => runningFuncTaskMap.delete(scope))
+  );
+  const trackedKillsCompleted = await waitForPromisesUntil(trackedKillPromises, shutdownDeadline);
+  if (!trackedKillsCompleted) {
+    ext.outputChannel?.appendLog(
+      `Timed out waiting for ${trackedKillPromises.length} Functions host process tree(s) to terminate during extension shutdown.`
+    );
   }
 
-  await waitForFuncTaskExecutionsToStop(executionsWithoutTrackedProcesses);
-  while (pendingShutdownKills.size > 0) {
-    await Promise.allSettled([...pendingShutdownKills]);
+  const executionsStopped = await waitForFuncTaskExecutionsToStop(executionsWithoutTrackedProcesses, shutdownDeadline);
+  if (!executionsStopped) {
+    const remainingTasks = executionsWithoutTrackedProcesses
+      .filter((execution) => vscode.tasks.taskExecutions.includes(execution))
+      .map((execution) => execution.task);
+    ext.outputChannel?.appendLog(
+      `Timed out waiting for Functions host task execution(s) to terminate during extension shutdown: ${describeFuncTasks(remainingTasks)}.`
+    );
   }
 
-  ownedFuncTasks.length = 0;
+  const pendingKillsCompleted = await waitForPendingShutdownKills(shutdownDeadline);
+  if (!pendingKillsCompleted) {
+    ext.outputChannel?.appendLog(
+      `Timed out waiting for ${pendingShutdownKills.size} late-starting Functions host process tree(s) to terminate during extension shutdown.`
+    );
+  }
+
+  if (pendingStartsCompleted && trackedKillsCompleted && executionsStopped && pendingKillsCompleted) {
+    ownedFuncTasks.length = 0;
+  }
   ext.workflowRuntimePort = undefined;
 }
 

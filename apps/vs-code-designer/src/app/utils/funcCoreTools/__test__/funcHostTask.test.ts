@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as vscode from 'vscode';
 import { ext } from '../../../../extensionVariables';
 import * as cp from 'child_process';
@@ -75,6 +75,10 @@ describe('funcHostTask', () => {
     (vscode as any).debug = {
       onDidTerminateDebugSession: vi.fn(),
     };
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   describe('isFuncHostTask', () => {
@@ -245,6 +249,63 @@ describe('funcHostTask', () => {
 
       expect(resolved).toBe(true);
       expect(ownedFuncTasks).toHaveLength(0);
+    });
+
+    it('stops waiting after the shutdown deadline when task termination throws', async () => {
+      vi.useFakeTimers();
+      const task = {
+        ...createProcessTask('func host start', workspaceFolder),
+        name: 'func: host start',
+      } as vscode.Task;
+      const execution = {
+        task,
+        terminate: vi.fn(() => {
+          throw new Error('termination failed');
+        }),
+      } as unknown as vscode.TaskExecution;
+      trackFuncTaskForCleanup(task);
+      (vscode.tasks.taskExecutions as vscode.TaskExecution[]) = [execution];
+
+      let resolved = false;
+      const stopPromise = stopAllFuncTasks().then(() => {
+        resolved = true;
+      });
+      await Promise.resolve();
+
+      expect(execution.terminate).toHaveBeenCalledOnce();
+      expect(resolved).toBe(false);
+
+      await vi.advanceTimersByTimeAsync(5000);
+      await stopPromise;
+
+      expect(resolved).toBe(true);
+      expect(ownedFuncTasks).toContain(task);
+      expect(ext.outputChannel?.appendLog).toHaveBeenCalledWith(expect.stringContaining('"func: host start" (logicapp)'));
+    });
+
+    it('stops waiting after the shutdown deadline when an execution never leaves the active task list', async () => {
+      vi.useFakeTimers();
+      const task = {
+        ...createProcessTask('func host start', workspaceFolder),
+        name: 'func: host start',
+      } as vscode.Task;
+      const execution = {
+        task,
+        terminate: vi.fn(),
+      } as unknown as vscode.TaskExecution;
+      trackFuncTaskForCleanup(task);
+      (vscode.tasks.taskExecutions as vscode.TaskExecution[]) = [execution];
+
+      const stopPromise = stopAllFuncTasks();
+      await Promise.resolve();
+      await vi.advanceTimersByTimeAsync(5000);
+
+      await expect(stopPromise).resolves.toBeUndefined();
+      expect(execution.terminate).toHaveBeenCalledOnce();
+      expect(ownedFuncTasks).toContain(task);
+      expect(ext.outputChannel?.appendLog).toHaveBeenCalledWith(
+        expect.stringContaining('Timed out waiting for Functions host task execution(s)')
+      );
     });
 
     it('waits for every tracked Windows process tree and terminates active func task executions', async () => {
