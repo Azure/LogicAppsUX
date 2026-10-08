@@ -375,8 +375,8 @@ export const DesignerApp = () => {
               showRunHistory={!isCodefulWorkflow && isRuntimeAvailable}
             />
             {codeViewValidationErrors.map((error) => (
-              <MessageBar key={error} intent="error" role="alert">
-                <MessageBarBody>{error}</MessageBarBody>
+              <MessageBar key={error} intent="error" role="alert" style={{ boxSizing: 'border-box', maxWidth: '100%' }}>
+                <MessageBarBody style={{ minWidth: 0, overflowWrap: 'anywhere', whiteSpace: 'normal' }}>{error}</MessageBarBody>
               </MessageBar>
             ))}
 

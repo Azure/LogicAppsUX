@@ -220,8 +220,40 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
 
   async errorObservation(): Promise<HttpTimeoutComposeErrorObservation> {
     const context = await this.context();
-    const state = await this.evaluate<{ visible: boolean; messages: string[] }>(`(() => {
+    const state = await this.evaluate<{
+      visible: boolean;
+      messages: string[];
+      candidates: Array<{
+        text: string;
+        visible: boolean;
+        fullyVisible: boolean;
+        rect: { left: number; top: number; right: number; bottom: number; width: number; height: number };
+        display: string;
+        visibility: string;
+        whiteSpace: string;
+        overflowWrap: string;
+      }>;
+    }>(`(() => {
       ${visibleDom}
+      const candidates = Array.from(document.querySelectorAll(
+        '[role="alert"], [aria-live], .ms-MessageBar, [class*="error"], [class*="Error"]'
+      )).filter(element => !element.closest('.monaco-editor, .cm-editor')).map(element => {
+        const rect = element.getBoundingClientRect();
+        const style = getComputedStyle(element);
+        return {
+          text: normalize(element.innerText || ''),
+          visible: visible(element),
+          fullyVisible: fullyVisible(element),
+          rect: {
+            left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom,
+            width: rect.width, height: rect.height
+          },
+          display: style.display,
+          visibility: style.visibility,
+          whiteSpace: style.whiteSpace,
+          overflowWrap: style.overflowWrap
+        };
+      });
       const messages = Array.from(document.querySelectorAll(
         '[role="alert"], [aria-live], .ms-MessageBar, [class*="error"], [class*="Error"]'
       )).filter(fullyVisible).filter(element => !element.closest('.monaco-editor, .cm-editor'))
@@ -231,10 +263,11 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
           return style.display === 'none' || style.visibility === 'hidden' || fullyVisible(child);
         }))
         .flatMap(element => (element.innerText || '').split(/\\r?\\n/).map(normalize)).filter(Boolean);
-      return { visible: document.visibilityState === 'visible', messages };
+      return { visible: document.visibilityState === 'visible', messages, candidates };
     })()`);
-    const observation = { ...context, ...state, activeDesigner: true }; // assertActive() precedes every read.
-    const signature = JSON.stringify(observation);
+    const { candidates, ...visibleState } = state;
+    const observation = { ...context, ...visibleState, activeDesigner: true }; // assertActive() precedes every read.
+    const signature = JSON.stringify({ ...observation, candidates });
     if (signature !== this.errorObservationSignature) {
       console.log(`[http-timeout-compose][error-observation] ${signature}`);
       this.errorObservationSignature = signature;

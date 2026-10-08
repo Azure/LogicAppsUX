@@ -4795,7 +4795,9 @@ function getMochaPassingCount(output) {
   const pattern = /^[ \t]*(\d+) passing\b/gm;
   let count = 0;
   let match;
-  while ((match = pattern.exec(String(output ?? ''))) !== null) {
+  const ansiEscapeSequencePattern = new RegExp(`${String.fromCharCode(27)}\\[[0-?]*[ -/]*[@-~]`, 'g');
+  const normalizedOutput = String(output ?? '').replace(ansiEscapeSequencePattern, '');
+  while ((match = pattern.exec(normalizedOutput)) !== null) {
     count = Number(match[1]) || 0;
   }
   return count;

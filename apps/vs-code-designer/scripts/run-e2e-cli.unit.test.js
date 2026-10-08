@@ -2001,6 +2001,7 @@ function testMsnNativeFailureAccounting() {
 function testOgfGateControls() {
   assert.strictEqual(getMochaPassingCount('\n  0 passing (10ms)\n'), 0);
   assert.strictEqual(getMochaPassingCount('\n  1 passing (1s)\n  6 passing (2s)\n'), 6);
+  assert.strictEqual(getMochaPassingCount('\n\u001b[92m \u001b[0m\u001b[32m 1 passing\u001b[0m\u001b[90m (35s)\u001b[0m\n'), 1);
   assert.deepStrictEqual(buildOgfScenariosForPhase('createWorkspaceCoreMatrix:standard-stateful', {}, { passed: false }), []);
   assert.deepStrictEqual(buildOgfScenariosForPhase('createWorkspaceCoreMatrix:custom-code-stateful', {}, { passed: true }), []);
   assert.strictEqual(
