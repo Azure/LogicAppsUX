@@ -12,20 +12,6 @@ const { mockGetCachedTemplates, mockGetLatestTemplateVersion, mockGetLatestTempl
 }));
 
 // Module mocks
-vi.mock('../../../../constants', () => ({
-  connectionsFileName: 'connections.json',
-  parametersFileName: 'parameters.json',
-  funcIgnoreFileName: '.funcignore',
-  funcVersionSetting: 'projectRuntime',
-  hostFileName: 'host.json',
-  localSettingsFileName: 'local.settings.json',
-  workflowFileName: 'workflow.json',
-  CodefulSDKs: { DurableTask: 'DurableTask', WorkflowsWebJobs: 'WorkflowsWebJobs', WorkflowsSDK: 'WorkflowsSDK' },
-  CodefulSdkVersions: { DurableTask: '1.0.0', WorkflowsWebJobs: '1.0.0', WorkflowsSDK: '1.0.0' },
-  artifactsDirectory: 'Artifacts',
-  libDirectory: 'lib',
-}));
-
 vi.mock('../../../../localize', () => ({
   localize: (_key: string, defaultValue: string) => defaultValue,
 }));
