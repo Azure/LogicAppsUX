@@ -102,7 +102,11 @@ vi.mock('../createConnection/createConnectionWrapper', () => ({
 }));
 
 vi.mock('../selectConnection/selectConnection', () => ({
-  SelectConnectionWrapper: () => <div data-testid="select-connection-wrapper" />,
+  SelectConnectionWrapper: () => (
+    <div data-testid="select-connection-wrapper">
+      <input aria-label="Connection selection draft" defaultValue="" />
+    </div>
+  ),
 }));
 
 const mockConnector = {
@@ -290,15 +294,43 @@ describe('ConnectionPanel (designer-v2)', () => {
       expect(screen.queryByTestId('create-connection-wrapper')).not.toBeInTheDocument();
     });
 
-    it('renders the create-connection header and CreateConnectionWrapper when creating', () => {
+    it('keeps the Change connection header and selection wrapper when creating', () => {
       (useIsCreatingConnection as Mock).mockReturnValue(true);
       setConnectionsQuery({ data: [mockConnection] });
 
       render(<ConnectionPanel {...panelProps} />);
 
-      expect(screen.getByRole('heading', { name: 'Create connection' })).toBeInTheDocument();
-      expect(screen.getByTestId('create-connection-wrapper')).toBeInTheDocument();
-      expect(screen.queryByTestId('select-connection-wrapper')).not.toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Change connection' })).toBeInTheDocument();
+      expect(screen.getByTestId('select-connection-wrapper')).toBeInTheDocument();
+      expect(screen.queryByTestId('create-connection-wrapper')).not.toBeInTheDocument();
+    });
+
+    it('does not remount selection drafts when switching between selection and creation', () => {
+      setConnectionsQuery({ data: [mockConnection] });
+      const { rerender } = render(<ConnectionPanel {...panelProps} />);
+      const draft = screen.getByRole('textbox', { name: 'Connection selection draft' });
+      fireEvent.change(draft, { target: { value: 'unsaved expression' } });
+
+      for (const isCreating of [true, false]) {
+        (useIsCreatingConnection as Mock).mockReturnValue(isCreating);
+        rerender(<ConnectionPanel {...panelProps} />);
+        expect(screen.getByRole('heading', { name: 'Change connection' })).toBeInTheDocument();
+        expect(screen.getByRole('textbox', { name: 'Connection selection draft' })).toBe(draft);
+        expect(draft).toHaveValue('unsaved expression');
+      }
+    });
+
+    it('resets the selection draft when changing to a different selected action', () => {
+      setConnectionsQuery({ data: [mockConnection] });
+      const { rerender } = render(<ConnectionPanel {...panelProps} />);
+      const draft = screen.getByRole('textbox', { name: 'Connection selection draft' });
+      fireEvent.change(draft, { target: { value: 'previous action expression' } });
+
+      (useOperationPanelSelectedNodeId as Mock).mockReturnValue('second-node');
+      (useConnectionPanelSelectedNodeIds as Mock).mockReturnValue(['second-node']);
+      rerender(<ConnectionPanel {...panelProps} />);
+      expect(screen.getByRole('textbox', { name: 'Connection selection draft' })).not.toBe(draft);
+      expect(screen.getByRole('textbox', { name: 'Connection selection draft' })).toHaveValue('');
     });
 
     it('invokes the toggleCollapse prop when the close button is clicked', () => {
@@ -313,6 +345,26 @@ describe('ConnectionPanel (designer-v2)', () => {
   });
 
   describe('autoCreateConnectionIfPossible', () => {
+    it('does not restart automatic creation when manual creation is cancelled without changing connection inputs', () => {
+      (autoCreateConnectionIfPossible as Mock).mockImplementation(({ onManualConnectionCreation }) => {
+        onManualConnectionCreation();
+        return Promise.resolve();
+      });
+      const { rerender } = render(<ConnectionPanel {...panelProps} />);
+      expect(autoCreateConnectionIfPossible).toHaveBeenCalledTimes(1);
+
+      for (const isCreating of [true, false]) {
+        (useIsCreatingConnection as Mock).mockReturnValue(isCreating);
+        rerender(<ConnectionPanel {...panelProps} />);
+        expect(screen.getByRole('heading', { name: 'Change connection' })).toBeInTheDocument();
+        expect(screen.getByTestId('select-connection-wrapper')).toBeInTheDocument();
+        expect(autoCreateConnectionIfPossible).toHaveBeenCalledTimes(1);
+      }
+      expect(updateNodeConnection).not.toHaveBeenCalled();
+      expect(closeConnectionsFlow).not.toHaveBeenCalled();
+      expect(setIsCreatingConnection).toHaveBeenCalledExactlyOnceWith(true);
+    });
+
     it('does not run while connections are still loading', () => {
       setConnectionsQuery({ isLoading: true });
 
@@ -442,12 +494,8 @@ describe('ConnectionPanel (designer-v2)', () => {
 
       await waitFor(() => expect(autoCreateConnectionIfPossible).toHaveBeenCalledTimes(1));
 
-      // A new render with a fresh empty connections reference (e.g. cache refetch)
-      // should be allowed to re-trigger the auto-create flow now that the prior
-      // attempt has resolved via onManualConnectionCreation.
       setConnectionsQuery({ data: [] });
       rerender(<ConnectionPanel {...panelProps} />);
-
       await waitFor(() => expect(autoCreateConnectionIfPossible).toHaveBeenCalledTimes(2));
     });
 
