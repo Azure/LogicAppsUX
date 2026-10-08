@@ -22,7 +22,7 @@ vi.mock('../../../functionsExtension/executeOnFunctionsExt', () => ({
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { ProjectType, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
-import { addCustomCodeDotNetVersionSetting } from '../localSettings';
+import { addCustomCodeDotNetVersionSetting, isLocalSettingsEncrypted } from '../localSettings';
 
 describe('localSettings - addCustomCodeDotNetVersionSetting', () => {
   let tempDir: string;
@@ -167,6 +167,88 @@ describe('localSettings - addCustomCodeDotNetVersionSetting', () => {
       await addCustomCodeDotNetVersionSetting(mockContext, projectPath, ProjectType.rulesEngine, TargetFramework.Net8);
 
       expect(await fse.pathExists(path.join(projectPath, 'local.settings.json'))).toBe(false);
+    });
+  });
+
+  describe('localSettings - isLocalSettingsEncrypted', () => {
+    let tempDir: string;
+    let projectPath: string;
+    let localSettingsPath: string;
+
+    beforeEach(async () => {
+      const tmpBase = process.env.TEMP || process.env.TMP || process.cwd();
+      tempDir = await fse.mkdtemp(path.join(tmpBase, 'logic-apps-localsettings-encryption-test-'));
+      projectPath = path.join(tempDir, 'TestLogicApp');
+      localSettingsPath = path.join(projectPath, 'local.settings.json');
+      await fse.ensureDir(projectPath);
+    });
+
+    afterEach(async () => {
+      await fse.remove(tempDir);
+    });
+
+    it('returns false when local.settings.json does not exist', async () => {
+      expect(await isLocalSettingsEncrypted(projectPath)).toBe(false);
+    });
+
+    it.each(['', ' \r\n\t '])('returns false when local.settings.json is empty or whitespace-only', async (content) => {
+      await fse.writeFile(localSettingsPath, content);
+
+      expect(await isLocalSettingsEncrypted(projectPath)).toBe(false);
+    });
+
+    it('returns true when IsEncrypted is true', async () => {
+      await fse.writeFile(localSettingsPath, '{"IsEncrypted":true,"Values":{}}');
+
+      expect(await isLocalSettingsEncrypted(projectPath)).toBe(true);
+    });
+
+    it.each([
+      ['false', '{"IsEncrypted":false,"Values":{}}'],
+      ['absent', '{"Values":{}}'],
+      ['not a boolean', '{"IsEncrypted":"true","Values":{}}'],
+    ])('returns false when IsEncrypted is %s', async (_description, content) => {
+      await fse.writeFile(localSettingsPath, content);
+
+      expect(await isLocalSettingsEncrypted(projectPath)).toBe(false);
+    });
+
+    it('supports JSONC comments', async () => {
+      await fse.writeFile(
+        localSettingsPath,
+        `{
+          // Encryption state is maintained by Functions Core Tools.
+          "IsEncrypted": true,
+          /* Settings remain opaque while encrypted. */
+          "Values": {}
+        }`
+      );
+
+      expect(await isLocalSettingsEncrypted(projectPath)).toBe(true);
+    });
+
+    it('supports trailing commas', async () => {
+      await fse.writeFile(
+        localSettingsPath,
+        `{
+          "IsEncrypted": true,
+          "Values": {},
+        }`
+      );
+
+      expect(await isLocalSettingsEncrypted(projectPath)).toBe(true);
+    });
+
+    it('supports a UTF-8 BOM', async () => {
+      await fse.writeFile(localSettingsPath, '\uFEFF{"IsEncrypted":true,"Values":{}}');
+
+      expect(await isLocalSettingsEncrypted(projectPath)).toBe(true);
+    });
+
+    it('rejects malformed non-empty JSONC', async () => {
+      await fse.writeFile(localSettingsPath, '{"IsEncrypted":true');
+
+      await expect(isLocalSettingsEncrypted(projectPath)).rejects.toThrow();
     });
   });
 });

@@ -167,7 +167,12 @@ export async function isLocalSettingsEncrypted(projectPath: string): Promise<boo
     return false;
   }
 
-  const localSettings = (await fse.readJson(localSettingsPath)) as ILocalSettingsJson;
+  const data = (await fse.readFile(localSettingsPath)).toString();
+  if (!/[^\s]/.test(data)) {
+    return false;
+  }
+
+  const localSettings = parseJson<ILocalSettingsJson>(data);
   return localSettings.IsEncrypted === true;
 }
 
