@@ -78,8 +78,16 @@ export const DesignerApp = () => {
 
   const [designerID, setDesignerID] = useState(guid());
   const [workflowDefinitionId, setWorkflowDefinitionId] = useState<string>(guid());
+  const loadedCodeViewValidationErrors = useMemo(
+    () => getCodeViewRequestOptionsValidationErrors(panelMetaData?.standardApp?.definition),
+    [panelMetaData?.standardApp?.definition]
+  );
+  const initialPersistedCodeViewValidationErrors = useMemo(() => readPersistedCodeViewValidationErrors(vscode.getState()), [vscode]);
+  const codeViewValidationSource = useRef<'code' | 'loaded' | 'none'>(
+    initialPersistedCodeViewValidationErrors.length > 0 ? 'code' : loadedCodeViewValidationErrors.length > 0 ? 'loaded' : 'none'
+  );
   const [codeViewValidationErrors, setCodeViewValidationErrors] = useState<string[]>(() =>
-    readPersistedCodeViewValidationErrors(vscode.getState())
+    Array.from(new Set([...initialPersistedCodeViewValidationErrors, ...loadedCodeViewValidationErrors]))
   );
 
   const codeEditorRef = useRef<{ getValue: () => string | undefined; hasChanges: () => boolean; resetChanges: () => void }>(null);
@@ -102,6 +110,7 @@ export const DesignerApp = () => {
 
   const persistCodeViewValidationErrors = useCallback(
     (errors: string[]) => {
+      codeViewValidationSource.current = errors.length > 0 ? 'code' : 'none';
       setCodeViewValidationErrors(errors);
       vscode.setState({
         ...(vscode.getState() as DesignerWebviewState | undefined),
@@ -110,6 +119,13 @@ export const DesignerApp = () => {
     },
     [vscode]
   );
+
+  useEffect(() => {
+    if (codeViewValidationSource.current !== 'code') {
+      codeViewValidationSource.current = loadedCodeViewValidationErrors.length > 0 ? 'loaded' : 'none';
+      setCodeViewValidationErrors(loadedCodeViewValidationErrors);
+    }
+  }, [loadedCodeViewValidationErrors]);
 
   const discardAllChanges = useCallback(() => {
     persistCodeViewValidationErrors([]);

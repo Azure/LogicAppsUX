@@ -114,14 +114,16 @@ that observed location, not blindly with the template's `westus` hint.
 Denied WIF reads or missing tree/fixture prerequisites remain explicit blockers.
 It adds Request and Compose through the actual designer, saves through the enabled
 V2 ToolbarButton's accessible Save text,
-reads every numbered rendered CodeMirror line in the global Code tab, replaces
-only Compose with input `"test"` and `runtimeConfiguration.requestOptions.timeout: "PT24H"`,
-saves again, and independently checks the persisted definition. Missing/changed
-virtualized lines, altered DOM identity and incomplete editor readiness fail;
-there is no filesystem/editor-model injection or fallback save.
-The exact unsupported-timeout error must then be visible on the same active
-workflow designer target, frame and document. A different message, hidden text,
-another editor, stale save or expired observation fails.
+closes that designer, reveals and double-clicks its exact generated `workflow.json`
+through the native Explorer, and replaces only Compose with input `"test"` and
+`runtimeConfiguration.requestOptions.timeout: "PT24H"` through native Monaco
+keyboard/input events. It saves and closes that exact text editor, independently
+checks the persisted definition, then right-clicks the same selected Explorer row
+and chooses **Open Designer**. Wrong files/tabs, hidden or ambiguous Explorer rows,
+stale text editors and incomplete native saves fail; there is no filesystem/editor-model
+injection or fallback save. The exact unsupported-timeout error must then be visible
+on the newly reopened active workflow designer target, frame and document. A different
+message, hidden text, a stale webview, stale save or expired observation fails.
 
 The focused non-GUI controls are
 `test:e2e-cli:http-timeout-compose-original:unit` (after CLI compilation), also

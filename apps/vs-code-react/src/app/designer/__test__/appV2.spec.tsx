@@ -450,4 +450,44 @@ describe('vs-code-react appV2 DesignerApp (Standard designer/monitoring host)', 
     expect(screen.queryByRole('alert')).toBeNull();
     expect(mockCodeViewEditor.mock.lastCall?.[0].workflowFile.definition).toEqual(invalidDefinition);
   });
+
+  it('shows validation errors when a native workflow.json edit is loaded into a newly opened designer', () => {
+    const expectedError =
+      "The request options timeout parameter is not supported for action 'Compose' of type 'Compose'. Actions of type 'HTTP' are supported.";
+    const invalidDefinition = {
+      actions: {
+        Compose: {
+          type: 'Compose',
+          runtimeConfiguration: { requestOptions: { timeout: 'PT24H' } },
+        },
+      },
+    };
+    mockGetCodeViewRequestOptionsValidationErrors.mockImplementation((definition: any) =>
+      definition?.actions?.Compose?.runtimeConfiguration?.requestOptions?.timeout ? [expectedError] : []
+    );
+    const store = createTestStore({
+      definition: invalidDefinition,
+      kind: 'stateful',
+    });
+
+    render(
+      <Provider store={store}>
+        <DesignerApp />
+      </Provider>
+    );
+
+    expect(screen.getByRole('alert')).toHaveTextContent(expectedError);
+    expect(mockVscodeState.value).toBeUndefined();
+
+    act(() => {
+      store.dispatch({
+        type: 'designer/updateStandardApp',
+        payload: {
+          definition: { actions: { Compose: { type: 'Compose', inputs: 'test' } } },
+          kind: 'stateful',
+        },
+      });
+    });
+    expect(screen.queryByRole('alert')).toBeNull();
+  });
 });

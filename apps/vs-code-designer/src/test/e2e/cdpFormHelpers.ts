@@ -434,11 +434,18 @@ export async function isDropdownValueSelected(
   return result.selected;
 }
 
-export async function pressKey(cdp: CdpEvaluator, code: string, key?: string, windowsVirtualKeyCode?: number): Promise<void> {
+export async function pressKey(
+  cdp: CdpEvaluator,
+  code: string,
+  key?: string,
+  windowsVirtualKeyCode?: number,
+  modifiers = 0
+): Promise<void> {
   await cdp.send('Input.dispatchKeyEvent', {
     type: 'keyDown',
     key: key ?? code,
     code,
+    modifiers,
     windowsVirtualKeyCode,
     nativeVirtualKeyCode: windowsVirtualKeyCode,
   });
@@ -446,6 +453,7 @@ export async function pressKey(cdp: CdpEvaluator, code: string, key?: string, wi
     type: 'keyUp',
     key: key ?? code,
     code,
+    modifiers,
     windowsVirtualKeyCode,
     nativeVirtualKeyCode: windowsVirtualKeyCode,
   });

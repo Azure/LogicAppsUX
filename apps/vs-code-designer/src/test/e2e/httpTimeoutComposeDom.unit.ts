@@ -385,7 +385,7 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
     const syntax = ts.createSourceFile('family.ts', family, ts.ScriptTarget.Latest, true);
     let bindings = 0;
     let saves = 0;
-    let replacements = 0;
+    const nativeSteps = new Set<string>();
     const visit = (node: any) => {
       if (ts.isCallExpression(node) && node.expression.getText(syntax) === 'getWebviewTabs') {
         assert.strictEqual(node.arguments[0].getText(syntax), 'httpTimeoutComposeDesignerViewType');
@@ -394,19 +394,71 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       if (ts.isCallExpression(node) && node.expression.getText(syntax) === 'driver.save') {
         saves++;
       }
-      if (ts.isCallExpression(node) && node.expression.getText(syntax) === 'driver.replaceCode') {
-        replacements++;
+      if (
+        ts.isCallExpression(node) &&
+        [
+          'closeActiveDesignerByKeyboard',
+          'openExplorerFileByDoubleClick',
+          'replaceActiveNativeEditorText',
+          'saveAndCloseActiveNativeEditor',
+          'openDesignerFromExactExplorerFile',
+        ].includes(node.expression.getText(syntax))
+      ) {
+        nativeSteps.add(node.expression.getText(syntax));
       }
       ts.forEachChild(node, visit);
     };
     visit(syntax);
-    assert.strictEqual(bindings, 3, 'Every launch/owner assertion binds V2');
-    assert.strictEqual(saves, 2, 'Both original saves use the tested enabled production toolbar selector');
-    assert.strictEqual(replacements, 1, 'The family replaces through the tested production CodeMirror input path');
+    assert.strictEqual(bindings, 4, 'Every original/reopened launch owner assertion binds V2');
+    assert.strictEqual(saves, 1, 'Designer authoring save uses the tested enabled production toolbar selector');
+    assert.deepStrictEqual(
+      [...nativeSteps].sort(),
+      [
+        'closeActiveDesignerByKeyboard',
+        'openDesignerFromExactExplorerFile',
+        'openExplorerFileByDoubleClick',
+        'replaceActiveNativeEditorText',
+        'saveAndCloseActiveNativeEditor',
+      ],
+      'The family must exercise the native workflow.json edit and reopened-designer lifecycle'
+    );
+    assert.ok(!family.includes('showTextDocument'), 'The family must open workflow.json through native Explorer double-click');
+    assert.ok(!family.includes("driver.click('button', ['Code'])"), 'The embedded Designer Code tab is not the OGF flow');
+    assert.ok(
+      family.includes('const originalOwner = await driver.context()') &&
+        family.includes('assert.notStrictEqual(reopenedOwner.targetId, originalOwner.targetId'),
+      'The family must prove the reopened Designer has a fresh CDP target'
+    );
+    const nativeEditorActions = fs.readFileSync(
+      path.join(repository, 'apps/vs-code-designer/src/test/e2e/workbenchEditorActions.ts'),
+      'utf8'
+    );
+    for (const requiredContract of [
+      'revealInExplorer',
+      'explorer-viewlet .monaco-list-row',
+      'Input.dispatchMouseEvent',
+      'for (const clickCount of [1, 2])',
+      "pressKey(cdp, 'KeyA', 'a', 65, 2)",
+      'Input.insertText',
+      "pressKey(cdp, 'KeyS', 's', 83, 2)",
+      "pressKey(cdp, 'KeyW', 'w', 87, 2)",
+      'TabInputText',
+      "button: 'right'",
+      "clickText(cdp, '.monaco-menu .action-label', 'Open Designer'",
+      'beforePoll?.()',
+    ]) {
+      assert.ok(nativeEditorActions.includes(requiredContract), `Native editor helper lost required contract: ${requiredContract}`);
+    }
+    assert.ok(
+      nativeEditorActions.includes('isExactPath(editor.document.uri.fsPath, filePath)'),
+      'Native editor helper must bind the active editor to the exact physical workflow.json path'
+    );
+    assert.ok(
+      nativeEditorActions.includes('tabs.length === 1 && tabs[0].isActive && tabs[0].label.includes(workflowName)'),
+      'Native editor helper must require one fresh active designer tab for the generated workflow'
+    );
     const selectionIndex = family.indexOf('await selectHttpTimeoutComposeDesignerV2(');
     assert.ok(selectionIndex >= 0 && selectionIndex < family.indexOf("executeCommand('azureLogicAppsStandard.openDesigner'"));
-    const compatibility = fs.readFileSync(path.join(repository, 'libs/designer-ui/src/lib/editor/monaco/index.tsx'), 'utf8');
-    assert.ok(compatibility.includes('CodeMirrorEditor as MonacoEditor'));
   });
   const extended = structuredClone(authored);
   extended.definition.outputs = Object.fromEntries(

@@ -24,6 +24,14 @@ import {
 import { captureEvidenceScreenshot, installFailureScreenshotHook } from './screenshot';
 import { closeAllTabs, getWebviewTabs } from './webviewTabs';
 import {
+  closeActiveDesignerByKeyboard,
+  openDesignerFromExactExplorerFile,
+  openExplorerFileByDoubleClick,
+  replaceActiveNativeEditorText,
+  saveAndCloseActiveNativeEditor,
+} from './workbenchEditorActions';
+import { activeWebview, boundedCdp } from './workspaceMultiRootWorkbench';
+import {
   assertApprovedAzureConnectorFixtureSaved,
   assertAzureConnectorAccountTreePrerequisite,
   readApprovedAzureConnectorFixture,
@@ -35,7 +43,7 @@ import {
 installFailureScreenshotHook();
 
 suite('HTTP timeout Compose original authoring clause', () => {
-  test('Request and Compose -> original Code replacement -> persisted definition -> exact visible unsupported timeout', async function () {
+  test('Request and Compose -> native workflow.json replacement -> reopen designer -> exact visible unsupported timeout', async function () {
     this.timeout(600_000);
     const deadline = Date.now() + 540_000;
     const manifestPath = process.env.LA_E2E_CLI_CREATE_WORKSPACE_FIXTURE_MANIFEST;
@@ -69,7 +77,6 @@ suite('HTTP timeout Compose original authoring clause', () => {
     // choose its affirmative native option; never blank a subscription to bypass it.
     await closeCopilotChatIfVisible('HTTP timeout Compose setup', { absentSettleMs: 0 });
     await closeAllTabs();
-    await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(workflowPath), { preview: false });
     const workbench = await connectToVsCodeWorkbenchCdp({
       activate: false,
       timeoutMs: Math.min(15000, httpTimeoutComposeRemaining(deadline)),
@@ -121,6 +128,7 @@ suite('HTTP timeout Compose original authoring clause', () => {
         httpTimeoutComposeRemaining(deadline);
       };
       const cdp = await connectToVsCodeCdp({ targetName: 'HTTP timeout Compose actual designer' });
+      let reopenedCdp: { dispose: () => void } | undefined;
       try {
         const contextId = await waitForWebviewFrameContext(cdp, {
           allTextIncludes: ['Workflow', 'Code', 'Save'],
@@ -131,8 +139,8 @@ suite('HTTP timeout Compose original authoring clause', () => {
           beforePoll: handleConnectorPrompt,
         });
         const driver = new HttpTimeoutComposeDriver(cdp, contextId, deadline, assertActive);
+        const originalOwner = await driver.context();
         assertApprovedAzureConnectorFixtureSaved(entry.appDir, azureFixture);
-        const owner = await driver.context();
         const requestTitles = ['When an HTTP request is received', 'When a HTTP request is received'];
         await driver.waitForDesignerReady();
         await driver.addRequestTrigger();
@@ -165,19 +173,19 @@ suite('HTTP timeout Compose original authoring clause', () => {
           }
         );
 
-        await driver.click('button', ['Code']);
-        const codeBefore = JSON.parse(await driver.readCode()) as HttpTimeoutComposeWorkflow;
-        assertHttpTimeoutComposeAuthored(codeBefore);
+        cdp.dispose();
+        const workbenchActions = boundedCdp(workbench, deadline);
+        await closeActiveDesignerByKeyboard(workbenchActions, httpTimeoutComposeDesignerViewType, deadline);
+        const nativeCodeBefore = JSON.parse(await openExplorerFileByDoubleClick(workbenchActions, workflowPath, deadline));
+        assertHttpTimeoutComposeAuthored(nativeCodeBefore);
         assert.deepStrictEqual(
-          codeBefore.definition,
+          nativeCodeBefore.definition,
           authored.definition,
-          'Code tab must show the independently saved authored definition'
+          'Double-clicked workflow.json must show the independently saved authored definition'
         );
-        const expected = replaceHttpTimeoutComposeAction(codeBefore);
-        await driver.replaceCode(JSON.stringify(expected, null, 2));
-        const codeAfter = JSON.parse(await driver.readCode());
-        assert.deepStrictEqual(codeAfter, expected, 'Actual rendered Code replacement must match before saving');
-        await driver.save();
+        const expected = replaceHttpTimeoutComposeAction(nativeCodeBefore);
+        await replaceActiveNativeEditorText(workbenchActions, workflowPath, JSON.stringify(expected, null, 2), deadline);
+        await saveAndCloseActiveNativeEditor(workbenchActions, workflowPath, expected, deadline);
         const persisted = await pollHttpTimeoutCompose(
           async () => readSaved(),
           (value) => isDeepStrictEqual(value.definition.actions.Compose, expected.definition.actions.Compose),
@@ -185,17 +193,35 @@ suite('HTTP timeout Compose original authoring clause', () => {
           'original Code replacement saved on disk'
         );
         assertHttpTimeoutComposePersisted(persisted, expected);
-        assert.deepStrictEqual(await driver.context(), owner, 'Save must retain the original designer context');
-        // V2 labels this view "Workflow", not "Designer". Do not reopen or attach
-        // another webview to manufacture a validation message.
-        await driver.click('button', ['Workflow']);
+        const reopenedTab = await openDesignerFromExactExplorerFile(
+          workbenchActions,
+          workflowPath,
+          entry.wfName,
+          httpTimeoutComposeDesignerViewType,
+          deadline,
+          handleConnectorPrompt
+        );
+        const reopened = await activeWebview(workbenchActions, reopenedTab.label, ['Workflow', 'Code', 'Save'], deadline);
+        reopenedCdp = reopened.cdp;
+        const assertReopenedActive = (): void => {
+          const tabs = getWebviewTabs(httpTimeoutComposeDesignerViewType);
+          assert.strictEqual(tabs.length, 1, 'No ambiguous/stale reopened designer webviews');
+          assert.strictEqual(tabs[0], reopenedTab, 'Reopened designer tab changed');
+          assert.strictEqual(reopenedTab.isActive, true, 'Reopened source workflow designer must be active');
+          assert.ok(reopenedTab.label.includes(entry.wfName), 'Wrong reopened workflow designer');
+          httpTimeoutComposeRemaining(deadline);
+        };
+        const reopenedDriver = new HttpTimeoutComposeDriver(reopened.cdp, reopened.contextId, deadline, assertReopenedActive);
+        const reopenedOwner = await reopenedDriver.context();
+        assert.notDeepStrictEqual(reopenedOwner, originalOwner, 'Reopened designer must have a fresh CDP owner');
+        assert.notStrictEqual(reopenedOwner.targetId, originalOwner.targetId, 'Reopened designer must use a fresh CDP target');
         const observation = await pollHttpTimeoutCompose(
-          () => driver.errorObservation(),
+          () => reopenedDriver.errorObservation(),
           (value) => value.messages.includes(httpTimeoutComposeError),
           deadline,
-          'exact unsupported-timeout message on the same designer'
+          'exact unsupported-timeout message on the reopened designer'
         );
-        assertHttpTimeoutComposeVisibleError(observation, owner);
+        assertHttpTimeoutComposeVisibleError(observation, reopenedOwner);
         assertHttpTimeoutComposePersisted(readSaved(), expected);
         await captureEvidenceScreenshot(
           'http-timeout-compose-unsupported-error',
@@ -205,19 +231,20 @@ suite('HTTP timeout Compose original authoring clause', () => {
             message: httpTimeoutComposeError,
           },
           {
-            semanticCdp: cdp,
-            semanticContextId: contextId,
+            semanticCdp: reopened.cdp,
+            semanticContextId: reopened.contextId,
             deadlineMs: deadline,
             binding: { activeTabText: [entry.wfName, 'Workspace'], semanticText: [httpTimeoutComposeError] },
           }
         );
-        assertHttpTimeoutComposeVisibleError(await driver.errorObservation(), owner);
+        assertHttpTimeoutComposeVisibleError(await reopenedDriver.errorObservation(), reopenedOwner);
         assertHttpTimeoutComposePersisted(readSaved(), expected);
         console.log(
           '[http-timeout-compose] Original Compose authoring/save/error clause passed; HTTP run, Portal and Consumption residuals not exercised.'
         );
       } finally {
         cdp.dispose();
+        reopenedCdp?.dispose();
         await closeAllTabs();
       }
     } finally {
