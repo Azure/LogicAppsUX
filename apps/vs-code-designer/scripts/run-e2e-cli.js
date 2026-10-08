@@ -1551,29 +1551,46 @@ function finalizeDirectHttpTimeoutComposeEvidence(context, { lifecycleError, pro
       !closure.error &&
       Date.parse(closure.checkedAt) >= notBefore &&
       Date.parse(closure.checkedAt) <= Date.now();
-    context.provenanceVerified =
-      initialized?.invocation?.id === context.invocation.id &&
-      initialized.lifecycleFinalized === false &&
-      getDirectSuiteComplete('httpTimeoutComposeOriginal', phaseResults) &&
-      phaseResults.every(
-        (phase, index) =>
-          phase.invocationId === context.invocation.id &&
-          Date.parse(phase.phaseStartedAt) >= start &&
-          phase.label === labels[index] &&
-          Number.isInteger(phase.mochaPassingCount) &&
-          phase.mochaPassingCount > 0 &&
-          Date.parse(phase.phaseFinishedAt) >= Date.parse(phase.phaseStartedAt) &&
-          Date.parse(phase.phaseFinishedAt) <= Date.now() &&
-          validClosure(phase.processCleanup, Date.parse(phase.phaseStartedAt)) &&
-          Date.parse(phase.processCleanup.checkedAt) <= Date.parse(phase.phaseFinishedAt)
-      ) &&
-      validClosure(processCleanup, start) &&
-      processCleanup.ownerPid === context.invocation.ownerPid &&
-      phaseResults.every(
-        (phase, index) => index === 0 || Date.parse(phase.phaseStartedAt) >= Date.parse(phaseResults[index - 1].phaseFinishedAt)
+    const provenanceFailures = [];
+    const requireProvenance = (condition, message) => {
+      if (!condition) {
+        provenanceFailures.push(message);
+      }
+    };
+    requireProvenance(initialized?.invocation?.id === context.invocation.id, 'initialized invocation id mismatch');
+    requireProvenance(initialized?.lifecycleFinalized === false, 'initialized lifecycle was already finalized');
+    requireProvenance(
+      getDirectSuiteComplete('httpTimeoutComposeOriginal', phaseResults),
+      'direct phase journal is incomplete or out of order'
+    );
+    for (const [index, phase] of phaseResults.entries()) {
+      const phaseStartedAt = Date.parse(phase.phaseStartedAt);
+      const phaseFinishedAt = Date.parse(phase.phaseFinishedAt);
+      requireProvenance(phase.invocationId === context.invocation.id, `phase ${index} invocation id mismatch`);
+      requireProvenance(phaseStartedAt >= start, `phase ${index} started before the invocation`);
+      requireProvenance(phase.label === labels[index], `phase ${index} label mismatch`);
+      requireProvenance(
+        Number.isInteger(phase.mochaPassingCount) && phase.mochaPassingCount > 0,
+        `phase ${index} lacks a passing Mocha test`
       );
+      requireProvenance(phaseFinishedAt >= phaseStartedAt, `phase ${index} finish time precedes its start`);
+      requireProvenance(phaseFinishedAt <= Date.now(), `phase ${index} finish time is in the future`);
+      requireProvenance(validClosure(phase.processCleanup, phaseStartedAt), `phase ${index} process closure is invalid`);
+      requireProvenance(
+        Date.parse(phase.processCleanup?.checkedAt) <= phaseFinishedAt,
+        `phase ${index} process closure was checked after phase completion`
+      );
+      if (index > 0) {
+        requireProvenance(phaseStartedAt >= Date.parse(phaseResults[index - 1].phaseFinishedAt), `phase ${index} overlaps the prior phase`);
+      }
+    }
+    requireProvenance(validClosure(processCleanup, start), 'wrapper process closure is invalid');
+    requireProvenance(processCleanup?.ownerPid === context.invocation.ownerPid, 'wrapper process owner mismatch');
+    context.provenanceVerified = provenanceFailures.length === 0;
     if (!context.provenanceVerified) {
-      throw new Error('HTTP timeout Compose stale, incomplete or mismatched invocation/phase/closure evidence');
+      throw new Error(
+        `HTTP timeout Compose stale, incomplete or mismatched invocation/phase/closure evidence: ${provenanceFailures.join('; ')}`
+      );
     }
   } catch (error) {
     context.provenanceVerified = false;

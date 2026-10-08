@@ -247,6 +247,6 @@ describe('vs-code-react appV2 DesignerApp (Standard designer/monitoring host)', 
     act(() => {
       store.dispatch({ type: 'designer/updateWorkflowName', payload: 'another-workflow' });
     });
-    expect(screen.queryByRole('alert')).toBeNull();
+    expect(screen.getByRole('alert')).toHaveTextContent(expectedError);
   });
 });

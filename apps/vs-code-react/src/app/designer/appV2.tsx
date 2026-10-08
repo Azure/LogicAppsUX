@@ -166,10 +166,6 @@ export const DesignerApp = () => {
   }, [panelMetaData?.customCodeData]);
 
   useEffect(() => {
-    setCodeViewValidationErrors([]);
-  }, [panelMetaData?.workflowName]);
-
-  useEffect(() => {
     if (runInstance) {
       const standardAppInstance = {
         ...workflow,
