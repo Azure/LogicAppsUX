@@ -5,7 +5,13 @@ import { LoggerService } from '@microsoft/logic-apps-shared';
 import { useMcpConnectorPanelTabs } from '../usePanelTabs';
 import { closePanel, McpPanelView } from '../../../../../core/state/mcp/panel/mcpPanelSlice';
 import { clearAllSelections } from '../../../../../core/state/mcp/mcpselectionslice';
-import { connectorId, createMcpHarness, createMcpState, expressionMapping } from '../../../../../core/state/mcp/__test__/fixtures';
+import {
+  connectorId,
+  createMcpHarness,
+  createMcpState,
+  expressionMapping,
+  mcpConnectionMappingCaseNames,
+} from '../../../../../core/state/mcp/__test__/fixtures';
 
 vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@microsoft/logic-apps-shared')>()),
@@ -45,22 +51,13 @@ describe('MCP connector panel tabs', () => {
     }
   });
 
-  it.each(['concrete', 'expression', 'null', 'missing', 'dangling reference'] as const)(
-    'allows connection submission only for a usable concrete reference (%s)',
-    (kind) => {
-      const state = createMcpState();
-      state.mcpPanel.currentPanelView = McpPanelView.CreateConnection;
-      if (kind === 'missing') {
-        delete state.connection.connectionsMapping.Query;
-      } else {
-        state.connection.connectionsMapping.Query =
-          kind === 'expression' ? expressionMapping : kind === 'null' ? null : kind === 'concrete' ? 'Sql' : 'Unknown';
-      }
-      const { result, actions } = renderTabs(state);
-      expect(primary(result.current[0]).disabled).toBe(kind !== 'concrete');
-      expect(actions).toEqual([]);
-    }
-  );
+  it.each(mcpConnectionMappingCaseNames)('allows connection submission only for a usable concrete reference (%s)', (kind) => {
+    const state = createMcpState(kind);
+    state.mcpPanel.currentPanelView = McpPanelView.CreateConnection;
+    const { result, actions } = renderTabs(state);
+    expect(primary(result.current[0]).disabled).toBe(kind !== 'concrete');
+    expect(actions).toEqual([]);
+  });
 
   it('does not let an unselected concrete operation validate selected expressions', () => {
     const state = createMcpState();
