@@ -1,6 +1,8 @@
 import * as assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { applyEdits, modify } from 'jsonc-parser';
 import * as vscode from 'vscode';
 import type { CdpConnection } from './cdpClient';
 import type { Point } from './cdpFormHelpers';
@@ -30,6 +32,8 @@ const normalizedPhysicalPath = (value: string): string => {
 
 const isExactPath = (actual: string | undefined, expected: string): boolean =>
   typeof actual === 'string' && normalizedPhysicalPath(actual) === normalizedPhysicalPath(expected);
+
+const textHash = (value: string): string => createHash('sha256').update(value).digest('hex');
 
 const nativeStepDeadline = (deadline: number, timeoutMs: number, description: string): number => {
   const bounded = Math.min(deadline, Date.now() + timeoutMs);
@@ -72,6 +76,16 @@ const textEditorTabForPath = (filePath: string): vscode.Tab | undefined =>
   vscode.window.tabGroups.all
     .flatMap((group) => group.tabs)
     .find((tab) => tab.input instanceof vscode.TabInputText && isExactPath(tab.input.uri.fsPath, filePath));
+
+const visibleTextEditorForPath = (filePath: string): vscode.TextEditor | undefined =>
+  vscode.window.visibleTextEditors.find((editor) => isExactPath(editor.document.uri.fsPath, filePath));
+
+const assertVisibleTextEditor = (filePath: string): vscode.TextEditor => {
+  const editor = visibleTextEditorForPath(filePath);
+  assert.ok(editor, `Visible text editor is not ${filePath}`);
+  assert.ok(textEditorTabForPath(filePath)?.isActive, `Exact workflow text tab is not active: ${filePath}`);
+  return editor;
+};
 
 const assertActiveTextEditor = (filePath: string): vscode.TextEditor => {
   const editor = vscode.window.activeTextEditor;
@@ -154,45 +168,178 @@ export async function openExactExplorerFileInNativeEditor(
   return editor.document.getText();
 }
 
-export async function replaceActiveNativeEditorText(
+const jsonValueAtPath = (value: unknown, jsonPath: readonly (string | number)[]): unknown =>
+  jsonPath.reduce<unknown>((current, segment) => {
+    if (typeof segment === 'number') {
+      return Array.isArray(current) ? current[segment] : undefined;
+    }
+    return current !== null && typeof current === 'object' ? (current as Record<string, unknown>)[segment] : undefined;
+  }, value);
+
+const focusActiveNativeEditorInput = async (
   connection: Pick<CdpConnection, 'evaluate' | 'send'>,
   filePath: string,
-  replacement: string,
   deadline: number
-): Promise<void> {
-  assertActiveTextEditor(filePath);
-  const editorDeadline = nativeStepDeadline(deadline, 15_000, 'locating the visible native workflow.json Monaco editor');
-  const editorCdp = boundedCdp(connection, editorDeadline);
-  const position = await pollNativeStep(
-    () =>
-      editorCdp.evaluate<Point | null>(
-        undefined,
-        `(() => { ${visibleWorkbenchElement}
-          const editors = Array.from(document.querySelectorAll('.editor-group-container.active .monaco-editor')).filter(visible);
-          const target = editors.length === 1 ? editors[0].querySelector('.view-lines') || editors[0] : null;
-          return target ? point(target) : null;
-        })()`
-      ),
-    (value) => value !== null,
-    editorDeadline,
-    `locating the visible native Monaco editor for ${filePath}`
+): Promise<vscode.TextEditor> => {
+  const editor = assertActiveTextEditor(filePath);
+  await runNativeStep(
+    () => vscode.commands.executeCommand('workbench.action.focusActiveEditorGroup'),
+    deadline,
+    10_000,
+    'focusing the active native workflow.json editor group'
   );
-  assert.ok(position, 'Active native Monaco editor was not visible');
-  const inputDeadline = nativeStepDeadline(deadline, 15_000, 'replacing the active native workflow.json editor contents');
-  const inputCdp = boundedCdp(connection, inputDeadline);
-  await clickPoint(inputCdp, position);
-  await pressKey(inputCdp, 'KeyA', 'a', 65, 2);
-  await inputCdp.send('Input.insertText', { text: replacement });
-  const replacementDeadline = nativeStepDeadline(deadline, 15_000, 'observing the replaced native workflow.json contents');
+  const editorDeadline = nativeStepDeadline(deadline, 15_000, 'focusing the native workflow.json Monaco input');
+  const editorCdp = boundedCdp(connection, editorDeadline);
+  type FocusObservation = {
+    focused: boolean;
+    active: { tagName: string; className: string; role: string | null } | null;
+    candidates: Array<{
+      tagName: string;
+      className: string;
+      role: string | null;
+      contentEditable: string | null;
+      readOnly: boolean;
+      disabled: boolean;
+      tabIndex: number;
+    }>;
+  };
+  let lastFocusObservation: FocusObservation | undefined;
+  try {
+    await pollNativeStep(
+      async () => {
+        lastFocusObservation = await editorCdp.evaluate<FocusObservation>(
+          undefined,
+          `(() => { ${visibleWorkbenchElement}
+            const describe = element => element ? ({
+              tagName: element.tagName,
+              className: String(element.className || ''),
+              role: element.getAttribute('role'),
+              contentEditable: element.getAttribute('contenteditable'),
+              readOnly: !!element.readOnly,
+              disabled: !!element.disabled,
+              tabIndex: element.tabIndex,
+            }) : null;
+            const editors = Array.from(document.querySelectorAll('.editor-group-container.active .monaco-editor')).filter(visible);
+            const candidates = editors.length === 1
+              ? Array.from(editors[0].querySelectorAll(
+                  'textarea, [contenteditable="true"], .native-edit-context, [role="textbox"]'
+                ))
+              : [];
+            const input = candidates.find(candidate => !candidate.disabled && !candidate.readOnly) || null;
+            input?.focus();
+            return {
+              focused: !!input && document.activeElement === input,
+              active: describe(document.activeElement),
+              candidates: candidates.map(describe),
+            };
+          })()`
+        );
+        return lastFocusObservation;
+      },
+      (value) => value.focused,
+      editorDeadline,
+      `focusing the native Monaco input for ${filePath}`
+    );
+  } catch (error) {
+    throw new Error(`${error instanceof Error ? error.message : String(error)}; focusObservation=${JSON.stringify(lastFocusObservation)}`);
+  }
+  return editor;
+};
+
+const pasteIntoActiveNativeEditorSelection = async (
+  connection: Pick<CdpConnection, 'evaluate' | 'send'>,
+  text: string,
+  deadline: number
+): Promise<void> => {
+  const pasteDeadline = nativeStepDeadline(deadline, 10_000, 'pasting into the active native workflow.json editor selection');
+  const previousClipboard = await runNativeStep(
+    () => vscode.env.clipboard.readText(),
+    pasteDeadline,
+    5_000,
+    'reading the clipboard before native workflow.json insertion'
+  );
+  try {
+    await runNativeStep(
+      () => vscode.env.clipboard.writeText(text),
+      pasteDeadline,
+      5_000,
+      'copying the native workflow.json insertion text'
+    );
+    await pressKey(boundedCdp(connection, pasteDeadline), 'KeyV', 'v', 86, 2);
+  } finally {
+    await vscode.env.clipboard.writeText(previousClipboard);
+  }
+};
+
+export async function pasteJsonValueIntoActiveNativeEditor(
+  connection: Pick<CdpConnection, 'evaluate' | 'send'>,
+  filePath: string,
+  jsonPath: readonly (string | number)[],
+  value: unknown,
+  deadline: number
+): Promise<string> {
+  assert.ok(jsonPath.length > 0, 'Native JSON insertion path is required');
+  const editor = await focusActiveNativeEditorInput(connection, filePath, deadline);
+  const originalText = editor.document.getText();
+  JSON.parse(originalText);
+  const tabSize = typeof editor.options.tabSize === 'number' ? editor.options.tabSize : 2;
+  const insertSpaces = typeof editor.options.insertSpaces === 'boolean' ? editor.options.insertSpaces : true;
+  const eol = editor.document.eol === vscode.EndOfLine.CRLF ? '\r\n' : '\n';
+  const edits = modify(originalText, [...jsonPath], value, {
+    formattingOptions: { tabSize, insertSpaces, eol },
+  });
+  assert.strictEqual(edits.length, 1, `Expected one native JSON edit for ${jsonPath.join('.')}`);
+  const [edit] = edits;
+  assert.ok(edit.offset >= 0 && edit.length >= 0, `Invalid native JSON edit for ${jsonPath.join('.')}`);
+  const expectedText = applyEdits(originalText, edits);
+  const expectedJson = JSON.parse(expectedText);
+  assert.deepStrictEqual(jsonValueAtPath(expectedJson, jsonPath), value, `Native JSON edit did not set ${jsonPath.join('.')}`);
+
+  const start = editor.document.positionAt(edit.offset);
+  const end = editor.document.positionAt(edit.offset + edit.length);
+  editor.selection = new vscode.Selection(start, end);
+  editor.revealRange(new vscode.Range(start, end), vscode.TextEditorRevealType.InCenterIfOutsideViewport);
+  const selectionDeadline = nativeStepDeadline(deadline, 10_000, 'observing the targeted native workflow.json selection');
   await pollNativeStep(
     async () => {
-      const editor = assertActiveTextEditor(filePath);
-      return editor.document.isDirty && editor.document.getText() === replacement;
+      if (editor.selections.length !== 1) {
+        return false;
+      }
+      const selection = editor.selections[0];
+      const anchor = editor.document.offsetAt(selection.anchor);
+      const active = editor.document.offsetAt(selection.active);
+      return Math.min(anchor, active) === edit.offset && Math.max(anchor, active) === edit.offset + edit.length;
     },
     Boolean,
-    replacementDeadline,
-    `replacing the native editor contents for ${filePath}`
+    selectionDeadline,
+    `selecting the native JSON edit for ${jsonPath.join('.')} in ${filePath}`
   );
+  await pasteIntoActiveNativeEditorSelection(connection, edit.content, deadline);
+  const insertionDeadline = nativeStepDeadline(deadline, 15_000, 'observing the targeted native workflow.json insertion');
+  try {
+    await pollNativeStep(
+      async () => {
+        return textEditorTabForPath(filePath)?.isActive === true && editor.document.isDirty && editor.document.getText() === expectedText;
+      },
+      Boolean,
+      insertionDeadline,
+      `inserting ${jsonPath.join('.')} into the native editor for ${filePath}`
+    );
+  } catch (error) {
+    const actual = editor.document.getText();
+    throw new Error(
+      [
+        error instanceof Error ? error.message : String(error),
+        `dirty=${editor.document.isDirty}`,
+        `version=${editor.document.version}`,
+        `actualLength=${actual.length}`,
+        `expectedLength=${expectedText.length}`,
+        `actualHash=${textHash(actual)}`,
+        `expectedHash=${textHash(expectedText)}`,
+      ].join('; ')
+    );
+  }
+  return expectedText;
 }
 
 export async function saveAndCloseActiveNativeEditor(
@@ -201,13 +348,19 @@ export async function saveAndCloseActiveNativeEditor(
   expected: unknown,
   deadline: number
 ): Promise<void> {
-  assertActiveTextEditor(filePath);
+  let editor = assertVisibleTextEditor(filePath);
+  editor = await runNativeStep(
+    () => vscode.window.showTextDocument(editor.document, { preview: false, preserveFocus: false }),
+    deadline,
+    10_000,
+    'refocusing the exact native workflow.json editor before save'
+  );
+  assert.ok(isExactPath(editor.document.uri.fsPath, filePath), `Refocused text editor is not ${filePath}`);
   const saveDeadline = nativeStepDeadline(deadline, 10_000, 'saving the active native workflow.json editor');
   await pressKey(boundedCdp(connection, saveDeadline), 'KeyS', 's', 83, 2);
   const persistenceDeadline = nativeStepDeadline(deadline, 20_000, 'observing the persisted native workflow.json contents');
   await pollNativeStep(
     async () => {
-      const editor = assertActiveTextEditor(filePath);
       if (editor.document.isDirty) {
         return false;
       }

@@ -399,7 +399,7 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
         [
           'closeActiveDesignerTab',
           'openExactExplorerFileInNativeEditor',
-          'replaceActiveNativeEditorText',
+          'pasteJsonValueIntoActiveNativeEditor',
           'saveAndCloseActiveNativeEditor',
           'openDesignerFromExactExplorerFile',
         ].includes(node.expression.getText(syntax))
@@ -417,10 +417,15 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
         'closeActiveDesignerTab',
         'openDesignerFromExactExplorerFile',
         'openExactExplorerFileInNativeEditor',
-        'replaceActiveNativeEditorText',
+        'pasteJsonValueIntoActiveNativeEditor',
         'saveAndCloseActiveNativeEditor',
       ],
       'The family must exercise the native workflow.json edit and reopened-designer lifecycle'
+    );
+    assert.ok(
+      family.includes("['definition', 'actions', 'Compose', 'runtimeConfiguration']") &&
+        family.includes('httpTimeoutComposeAction.runtimeConfiguration'),
+      'The family must paste only the unsupported timeout property into the authored Compose action'
     );
     const initialTextEditorIndex = family.indexOf('showTextDocument');
     assert.ok(
@@ -479,8 +484,15 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       'explorer-viewlet .monaco-list-row',
       'opening the exact selected workflow.json in the native editor',
       'boundedCdp(connection, selectionDeadline)',
-      "pressKey(inputCdp, 'KeyA', 'a', 65, 2)",
-      'Input.insertText',
+      "executeCommand('workbench.action.focusActiveEditorGroup')",
+      '.native-edit-context',
+      'document.activeElement === input',
+      'modify(originalText, [...jsonPath], value',
+      'applyEdits(originalText, edits)',
+      'editor.selections',
+      'Math.min(anchor, active) === edit.offset',
+      'vscode.env.clipboard.writeText(text)',
+      "pressKey(boundedCdp(connection, pasteDeadline), 'KeyV', 'v', 86, 2)",
       "pressKey(boundedCdp(connection, saveDeadline), 'KeyS', 's', 83, 2)",
       "pressKey(boundedCdp(connection, closeDeadline), 'KeyW', 'w', 87, 2)",
       'TabInputText',
@@ -494,6 +506,10 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
     assert.ok(
       family.includes("'http-timeout-compose-native-editor-open'"),
       'The family must capture evidence after opening the exact native workflow.json editor'
+    );
+    assert.ok(
+      family.includes("'http-timeout-compose-native-editor-replaced'"),
+      'The family must capture evidence after exact native workflow.json replacement and before save'
     );
     assert.ok(
       nativeEditorActions.includes('isExactPath(editor.document.uri.fsPath, filePath)'),

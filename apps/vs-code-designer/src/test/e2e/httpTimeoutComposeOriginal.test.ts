@@ -12,6 +12,7 @@ import {
   assertHttpTimeoutComposeAuthored,
   assertHttpTimeoutComposePersisted,
   assertHttpTimeoutComposeVisibleError,
+  httpTimeoutComposeAction,
   httpTimeoutComposeDesignerViewType,
   httpTimeoutComposeError,
   type HttpTimeoutComposeWorkflow,
@@ -27,7 +28,7 @@ import {
   closeActiveDesignerTab,
   openDesignerFromExactExplorerFile,
   openExactExplorerFileInNativeEditor,
-  replaceActiveNativeEditorText,
+  pasteJsonValueIntoActiveNativeEditor,
   saveAndCloseActiveNativeEditor,
 } from './workbenchEditorActions';
 import { boundedCdp } from './workbenchCdpActions';
@@ -211,7 +212,21 @@ suite('HTTP timeout Compose original authoring clause', () => {
           }
         );
         const expected = replaceHttpTimeoutComposeAction(nativeCodeBefore);
-        await replaceActiveNativeEditorText(workbench, workflowPath, JSON.stringify(expected, null, 2), deadline);
+        await pasteJsonValueIntoActiveNativeEditor(
+          workbench,
+          workflowPath,
+          ['definition', 'actions', 'Compose', 'runtimeConfiguration'],
+          httpTimeoutComposeAction.runtimeConfiguration,
+          deadline
+        );
+        await captureEvidenceScreenshot(
+          'http-timeout-compose-native-editor-replaced',
+          { kind: 'workbenchShell', label: 'httpTimeoutComposeOriginalNativeEditorReplaced' },
+          {
+            deadlineMs: deadline,
+            binding: { activeTabText: ['workflow.json'] },
+          }
+        );
         await saveAndCloseActiveNativeEditor(workbench, workflowPath, expected, deadline);
         const persisted = await pollHttpTimeoutCompose(
           async () => readSaved(),

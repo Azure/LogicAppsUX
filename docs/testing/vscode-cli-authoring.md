@@ -94,7 +94,14 @@ bind the resulting `TextEditor` plus `TabInputText` to the same URI. Explorer's
 single-click behavior opens the native preview editor. Do not invent a raw
 double-click sequence or fall back to the Designer's embedded Code view.
 Run `pnpm --dir apps/vs-code-designer run test:e2e-cli:native-editor-click`
-for a credential-free real VS Code host proof of this transition.
+for a credential-free real VS Code host proof of open, JSON-path selection,
+targeted insertion, save and close. Native JSON changes must derive a bounded
+text edit from the current document and the requested JSON path, focus Monaco's
+actual input surface, prove the VS Code selection matches that edit's offsets,
+then paste the edit through the clipboard and `Ctrl+V`. Do not overwrite the
+whole document when a targeted JSON edit represents the user action, and do not
+use `Input.insertText` for serialized JSON: Monaco treats it as
+character-by-character typing and auto-closes quotes and brackets.
 
 Generic Designer authoring must use
 `apps/vs-code-designer/src/test/e2e/designerCdpActions.ts`. The shared
