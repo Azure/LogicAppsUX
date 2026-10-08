@@ -1356,29 +1356,24 @@ export class MsnDesignerCdpActions {
  */
 export class ProvenDesignerCdpActions extends DesignerCdpActions {
   private readonly proven: MsnDesignerCdpActions;
-  private readonly scenarioDeadline: number;
-  private readonly scenarioAssertActive: () => void;
 
   constructor(cdp: CdpEvaluator, contextId: number, deadline: number, assertActive: () => void = () => undefined) {
     super(cdp, contextId, deadline, assertActive);
-    this.scenarioDeadline = deadline;
-    this.scenarioAssertActive = assertActive;
-    const boundedCdp: CdpEvaluator = {
-      evaluate: <T>(boundedContextId: number | undefined, expression: string, options?: { timeoutMs?: number }) => {
-        const timeoutMs = Math.min(options?.timeoutMs ?? 5000, this.remainingScenarioMs());
-        return cdp.evaluate<T>(boundedContextId, expression, { timeoutMs });
+    const assertScenarioActive = (): void => {
+      assertActive();
+      assert.ok(Date.now() < deadline, 'Designer action scenario deadline expired');
+    };
+    const guardedCdp: CdpEvaluator = {
+      evaluate: <T>(guardedContextId: number | undefined, expression: string, options?: { timeoutMs?: number }) => {
+        assertScenarioActive();
+        return cdp.evaluate<T>(guardedContextId, expression, options);
       },
       send: (method: string, params?: Record<string, unknown>, options?: { timeoutMs?: number }) => {
-        const timeoutMs = Math.min(options?.timeoutMs ?? 5000, this.remainingScenarioMs());
-        return cdp.send(method, params, { timeoutMs });
+        assertScenarioActive();
+        return cdp.send(method, params, options);
       },
     };
-    this.proven = new MsnDesignerCdpActions(boundedCdp, contextId);
-    (
-      this.proven as unknown as {
-        waitUntil: (predicate: () => boolean | Promise<boolean>, timeoutMs: number, description: string) => Promise<void>;
-      }
-    ).waitUntil = (predicate, timeoutMs, description) => this.waitForProvenCondition(predicate, timeoutMs, description);
+    this.proven = new MsnDesignerCdpActions(guardedCdp, contextId);
   }
 
   override async clickElement(
@@ -1468,32 +1463,6 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
 
   override async fillParameter(labels: string[], value: string): Promise<void> {
     await this.proven.fillParameter(labels, value, labels.join('/'));
-  }
-
-  private remainingScenarioMs(): number {
-    this.scenarioAssertActive();
-    const remaining = this.scenarioDeadline - Date.now();
-    assert.ok(remaining > 0, 'Designer action scenario deadline expired');
-    return remaining;
-  }
-
-  private async waitForProvenCondition(predicate: () => boolean | Promise<boolean>, timeoutMs: number, description: string): Promise<void> {
-    const deadline = Math.min(Date.now() + timeoutMs, this.scenarioDeadline);
-    let lastError: unknown;
-    while (Date.now() < deadline) {
-      this.scenarioAssertActive();
-      try {
-        if (await predicate()) {
-          return;
-        }
-      } catch (error) {
-        this.scenarioAssertActive();
-        lastError = error;
-      }
-      await new Promise((resolve) => setTimeout(resolve, 500));
-    }
-    this.scenarioAssertActive();
-    assert.fail(`Timed out waiting for ${description}${lastError ? `. Last error: ${String(lastError)}` : ''}`);
   }
 }
 

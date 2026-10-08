@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { isDeepStrictEqual } from 'util';
 import * as vscode from 'vscode';
-import { connectToVsCodeCdp, connectToVsCodeWorkbenchCdp, waitForWebviewFrameContext } from './cdpClient';
+import { type CdpConnection, connectToVsCodeCdp, connectToVsCodeWorkbenchCdp, waitForWebviewFrameContext } from './cdpClient';
 import { closeCopilotChatIfVisible } from './copilotChat';
 import { HttpTimeoutComposeDriver } from './httpTimeoutComposeDriver';
 import { assertHttpTimeoutWorkspaceIdentity } from './httpTimeoutComposeEnvironment';
@@ -77,16 +77,19 @@ suite('HTTP timeout Compose original authoring clause', () => {
     // choose its affirmative native option; never blank a subscription to bypass it.
     await closeCopilotChatIfVisible('HTTP timeout Compose setup', { absentSettleMs: 0 });
     await closeAllTabs();
-    const workbench = await connectToVsCodeWorkbenchCdp({
+    await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(workflowPath), { preview: false });
+    let workbench: CdpConnection | undefined = await connectToVsCodeWorkbenchCdp({
       activate: false,
       timeoutMs: Math.min(15000, httpTimeoutComposeRemaining(deadline)),
     });
     const handleConnectorPrompt = async (openingDeadline = deadline) => {
       const originalDeadline = Math.min(deadline, openingDeadline);
+      const promptWorkbench = workbench;
+      assert.ok(promptWorkbench, 'Workbench CDP must be connected while handling the connector prompt');
       const nativeWorkbench = {
-        evaluate: workbench.evaluate.bind(workbench),
+        evaluate: promptWorkbench.evaluate.bind(promptWorkbench),
         send: (method: string, params?: Record<string, unknown>) =>
-          workbench.send(method, params, { timeoutMs: Math.min(3000, httpTimeoutComposeRemaining(originalDeadline)) }),
+          promptWorkbench.send(method, params, { timeoutMs: Math.min(3000, httpTimeoutComposeRemaining(originalDeadline)) }),
       };
       await handleAffirmativeConnectorWorkbenchPrompt(nativeWorkbench, entry.appName, originalDeadline, (prompt) =>
         selectApprovedAzureConnectorFixturePrompt(nativeWorkbench, prompt, azureFixture, originalDeadline, () =>
@@ -138,11 +141,23 @@ suite('HTTP timeout Compose original authoring clause', () => {
           timeoutMs: Math.min(180_000, httpTimeoutComposeRemaining(deadline)),
           beforePoll: handleConnectorPrompt,
         });
+        workbench.dispose();
+        workbench = undefined;
         const driver = new HttpTimeoutComposeDriver(cdp, contextId, deadline, assertActive);
         const originalOwner = await driver.context();
         assertApprovedAzureConnectorFixtureSaved(entry.appDir, azureFixture);
         const requestTitles = ['When an HTTP request is received', 'When a HTTP request is received'];
         await driver.waitForDesignerReady();
+        await captureEvidenceScreenshot(
+          'http-timeout-compose-designer-ready',
+          { kind: 'designerCanvas', label: 'httpTimeoutComposeOriginal', allowLoading: false },
+          {
+            semanticCdp: cdp,
+            semanticContextId: contextId,
+            deadlineMs: deadline,
+            binding: { activeTabText: [entry.wfName, 'Workspace'] },
+          }
+        );
         await driver.addRequestTrigger();
         await driver.addAction('Compose', 'Compose');
         await driver.fillParameter(['Inputs'], 'test');
@@ -174,6 +189,10 @@ suite('HTTP timeout Compose original authoring clause', () => {
         );
 
         cdp.dispose();
+        workbench = await connectToVsCodeWorkbenchCdp({
+          activate: false,
+          timeoutMs: Math.min(15000, httpTimeoutComposeRemaining(deadline)),
+        });
         const workbenchActions = boundedCdp(workbench, deadline);
         await closeActiveDesignerByKeyboard(workbenchActions, httpTimeoutComposeDesignerViewType, deadline);
         const nativeCodeBefore = JSON.parse(await openExplorerFileByDoubleClick(workbenchActions, workflowPath, deadline));
@@ -248,7 +267,7 @@ suite('HTTP timeout Compose original authoring clause', () => {
         await closeAllTabs();
       }
     } finally {
-      workbench.dispose();
+      workbench?.dispose();
     }
   });
 });

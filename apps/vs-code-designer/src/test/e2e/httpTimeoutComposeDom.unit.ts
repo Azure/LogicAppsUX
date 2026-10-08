@@ -422,8 +422,16 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       ],
       'The family must exercise the native workflow.json edit and reopened-designer lifecycle'
     );
-    assert.ok(!family.includes('showTextDocument'), 'The family must open workflow.json through native Explorer double-click');
+    const initialTextEditorIndex = family.indexOf('showTextDocument');
+    assert.ok(
+      initialTextEditorIndex >= 0 && initialTextEditorIndex < family.indexOf("executeCommand('azureLogicAppsStandard.openDesigner'"),
+      'Initial Designer opening must retain the proven MSN workflow.json tab setup'
+    );
     assert.ok(!family.includes("driver.click('button', ['Code'])"), 'The embedded Designer Code tab is not the OGF flow');
+    assert.ok(
+      family.includes("'http-timeout-compose-designer-ready'"),
+      'The family must capture Designer-ready evidence before authoring begins'
+    );
     assert.ok(
       family.includes('const originalOwner = await driver.context()') &&
         family.includes('assert.notStrictEqual(reopenedOwner.targetId, originalOwner.targetId'),

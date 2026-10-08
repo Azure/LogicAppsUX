@@ -26,6 +26,7 @@ async function main(): Promise<void> {
   testParameterAndSaveParity();
   await testReplacementKeySequence();
   await testProvenAdapterCancellation();
+  testProvenAdapterUsesUnmodifiedMsnHelper();
   testProvenAdapterCompatibility();
   testWorkspaceLifecycleWrapperParity();
   console.log('[designerCdpActions.unit] all tests passed');
@@ -49,6 +50,22 @@ async function testProvenAdapterCancellation(): Promise<void> {
   );
   await assert.rejects(() => actions.waitForDesignerReady(), /scenario cancelled/);
   assert.strictEqual(evaluateCalls, 0, 'Cancelled scenarios must not issue delegated MSN CDP requests');
+}
+
+function testProvenAdapterUsesUnmodifiedMsnHelper(): void {
+  const adapter = getClass('ProvenDesignerCdpActions').getText(actionsSource);
+  assert.ok(
+    adapter.includes('new MsnDesignerCdpActions(guardedCdp, contextId)'),
+    'Proven adapter must delegate directly through the cancellation-only CDP guard'
+  );
+  assert.ok(
+    adapter.includes('return cdp.evaluate<T>(guardedContextId, expression, options)') &&
+      adapter.includes('return cdp.send(method, params, options)'),
+    'Cancellation guard must preserve the original MSN CDP request options'
+  );
+  for (const forbiddenRewrite of ['boundedCdp', 'waitForProvenCondition', ').waitUntil =', 'Math.min(options?.timeoutMs']) {
+    assert.ok(!adapter.includes(forbiddenRewrite), `Proven adapter must not rewrite MSN behavior with ${forbiddenRewrite}`);
+  }
 }
 
 function testProvenAdapterCompatibility(): void {
