@@ -102,6 +102,11 @@ then paste the edit through the clipboard and `Ctrl+V`. Do not overwrite the
 whole document when a targeted JSON edit represents the user action, and do not
 use `Input.insertText` for serialized JSON: Monaco treats it as
 character-by-character typing and auto-closes quotes and brackets.
+After `Ctrl+S`, require the native document to become clean and compare parsed
+disk JSON semantically. Property order can differ after a targeted edit without
+changing the workflow, so do not use `JSON.stringify` equality. Once the
+semantically exact saved file is observed, close the native tab and continue
+immediately to **Open Designer**.
 
 Generic Designer authoring must use
 `apps/vs-code-designer/src/test/e2e/designerCdpActions.ts`. The shared

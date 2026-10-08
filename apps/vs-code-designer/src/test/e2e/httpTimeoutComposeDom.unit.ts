@@ -2,6 +2,7 @@ import * as assert from 'assert';
 import * as fs from 'fs';
 import { createRequire } from 'module';
 import * as path from 'path';
+import { isDeepStrictEqual } from 'util';
 import * as vm from 'vm';
 import type { CdpConnection } from './cdpClient';
 import { HttpTimeoutComposeDriver } from './httpTimeoutComposeDriver';
@@ -494,6 +495,7 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       'vscode.env.clipboard.writeText(text)',
       "pressKey(boundedCdp(connection, pasteDeadline), 'KeyV', 'v', 86, 2)",
       "pressKey(boundedCdp(connection, saveDeadline), 'KeyS', 's', 83, 2)",
+      'isDeepStrictEqual(JSON.parse(fs.readFileSync(filePath',
       "pressKey(boundedCdp(connection, closeDeadline), 'KeyW', 'w', 87, 2)",
       'TabInputText',
       "button: 'right'",
@@ -503,6 +505,17 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
     ]) {
       assert.ok(nativeEditorActions.includes(requiredContract), `Native editor helper lost required contract: ${requiredContract}`);
     }
+    assert.ok(
+      isDeepStrictEqual(
+        { type: 'Compose', inputs: 'test', runAfter: {}, runtimeConfiguration: { requestOptions: { timeout: 'PT24H' } } },
+        { inputs: 'test', runAfter: {}, runtimeConfiguration: { requestOptions: { timeout: 'PT24H' } }, type: 'Compose' }
+      ),
+      'Persistence comparison must accept semantically equal JSON objects with different property order'
+    );
+    assert.ok(
+      !nativeEditorActions.includes('JSON.stringify(JSON.parse(fs.readFileSync(filePath'),
+      'Native editor persistence must not regress to property-order-sensitive JSON.stringify equality'
+    );
     assert.ok(
       family.includes("'http-timeout-compose-native-editor-open'"),
       'The family must capture evidence after opening the exact native workflow.json editor'

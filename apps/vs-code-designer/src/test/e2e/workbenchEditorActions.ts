@@ -2,6 +2,7 @@ import * as assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { isDeepStrictEqual } from 'node:util';
 import { applyEdits, modify } from 'jsonc-parser';
 import * as vscode from 'vscode';
 import type { CdpConnection } from './cdpClient';
@@ -365,7 +366,7 @@ export async function saveAndCloseActiveNativeEditor(
         return false;
       }
       try {
-        return JSON.stringify(JSON.parse(fs.readFileSync(filePath, 'utf8'))) === JSON.stringify(expected);
+        return isDeepStrictEqual(JSON.parse(fs.readFileSync(filePath, 'utf8')), expected);
       } catch {
         return false;
       }
