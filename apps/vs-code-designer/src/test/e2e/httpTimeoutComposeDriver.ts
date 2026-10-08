@@ -54,20 +54,19 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
 
   override async save(): Promise<void> {
     await this.click('[role="toolbar"] button, button[aria-label="Save"]', ['Save']);
-    await pollHttpTimeoutCompose(
-      () =>
-        this.evaluate<boolean>(`(() => {
-          ${visibleDom}
-          const buttons = Array.from(document.querySelectorAll('[role="toolbar"] button, button[aria-label*="Sav"]')).filter(visible);
-          return buttons.some((button) => {
-            const text = normalize(button.textContent || button.getAttribute('aria-label')).toLowerCase();
-            return text === 'save' && (button.disabled || button.getAttribute('aria-disabled') === 'true');
-          });
-        })()`),
-      Boolean,
-      this.deadline,
-      'V2 designer save completion'
-    );
+    const readSaveState = () =>
+      this.evaluate<{ save: boolean; saving: boolean }>(`(() => {
+        ${visibleDom}
+        const labels = Array.from(document.querySelectorAll('[role="toolbar"] button, button[aria-label*="Sav"]'))
+          .filter(visible)
+          .map((button) => normalize(button.textContent || button.getAttribute('aria-label')).toLowerCase());
+        return {
+          save: labels.some((text) => text === 'save'),
+          saving: labels.some((text) => text.startsWith('saving')),
+        };
+      })()`);
+    await pollHttpTimeoutCompose(readSaveState, (state) => state.saving, this.deadline, 'V2 designer Saving transition');
+    await pollHttpTimeoutCompose(readSaveState, (state) => state.save && !state.saving, this.deadline, 'V2 designer Save completion');
   }
 
   async readCode(): Promise<string> {

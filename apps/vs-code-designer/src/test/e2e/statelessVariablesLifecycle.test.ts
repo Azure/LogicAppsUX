@@ -1,6 +1,7 @@
 import * as assert from 'assert';
 import * as fs from 'fs';
 import * as http from 'http';
+import * as net from 'net';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { randomUUID } from 'crypto';
@@ -153,6 +154,7 @@ suite('Stateless variables lifecycle', () => {
           initialOverview.cdp.dispose();
         }
         await getOwnedDebug().quiesce(positiveDeadline);
+        await waitForRuntimePortReleased(positiveDeadline, signal);
         assertPhaseActive(positiveDeadline, signal);
         lease = installStatelessHistorySettings(entry.appDir, entry.wfName);
         lease.assertInstalled();
@@ -160,6 +162,7 @@ suite('Stateless variables lifecycle', () => {
         lease.assertInstalled();
         await proveExactHistoryRun(entry, operations, positiveDeadline, signal);
         await getOwnedDebug().quiesce(positiveDeadline);
+        await waitForRuntimePortReleased(positiveDeadline, signal);
         assertPhaseActive(positiveDeadline, signal);
         lease.assertInstalled();
         await start(entry, getOwnedDebug(), positiveDeadline, signal, azureFixture);
@@ -185,7 +188,10 @@ suite('Stateless variables lifecycle', () => {
         restore: () => {
           lease?.restore();
         },
-        restart: (deadline, signal) => start(entry, getOwnedDebug(), deadline, signal, azureFixture),
+        restart: async (deadline, signal) => {
+          await waitForRuntimePortReleased(deadline, signal);
+          await start(entry, getOwnedDebug(), deadline, signal, azureFixture);
+        },
         verify: async (deadline, signal) => {
           const saved = operations ?? assertStatelessDefinition(readJson(entry.workflowJsonPath));
           await invoke(entry, saved, deadline, signal);
@@ -721,17 +727,27 @@ async function proveExactHistoryRun(
     assert.ok(!previous.has(runName), 'Callback must create a new run');
     const runUrl = `${workflowUrl(entry)}/runs/${encodeURIComponent(runName)}`;
     let run: unknown;
+    let lastObservation = '';
     await poll(
       deadline,
       'exact callback run history',
       async () => {
         const result = await request(`${runUrl}?api-version=${apiVersion}`, 'GET', deadline, undefined, signal);
         if (result.status === 404) {
+          if (lastObservation !== 'HTTP 404') {
+            lastObservation = 'HTTP 404';
+            console.log(`[stateless-variables] Exact callback run ${runName} history observation: ${lastObservation}`);
+          }
           return false;
         }
         assert.strictEqual(result.status, 200, 'Exact callback run must be readable');
         run = JSON.parse(result.body);
         const status = objectValue(objectValue(run, 'run').properties, 'properties').status;
+        const observation = `HTTP 200 status=${String(status)}`;
+        if (lastObservation !== observation) {
+          lastObservation = observation;
+          console.log(`[stateless-variables] Exact callback run ${runName} history observation: ${lastObservation}`);
+        }
         assert.ok(!['Failed', 'Cancelled', 'TimedOut'].includes(String(status)), 'Callback run must not fail');
         return status === 'Succeeded';
       },
@@ -776,6 +792,48 @@ async function proveExactHistoryRun(
   } finally {
     history.cdp.dispose();
   }
+}
+
+async function waitForRuntimePortReleased(deadline: number, signal: AbortSignal): Promise<void> {
+  const releaseDeadline = Math.min(deadline, Date.now() + 30_000);
+  await poll(releaseDeadline, 'owned Functions runtime port release', canExclusivelyBindRuntimePort, signal);
+  console.log('[stateless-variables] Owned Functions runtime released port 7071');
+}
+
+async function canExclusivelyBindRuntimePort(): Promise<boolean> {
+  const dualStack = await tryBindRuntimePort('::', false);
+  if (dualStack !== undefined) {
+    return dualStack;
+  }
+  const ipv4 = await tryBindRuntimePort('0.0.0.0');
+  if (ipv4 !== undefined) {
+    return ipv4;
+  }
+  throw new Error('The test host cannot prove exclusive ownership availability for local runtime port 7071');
+}
+
+function tryBindRuntimePort(host: string, ipv6Only?: boolean): Promise<boolean | undefined> {
+  return new Promise((resolve, reject) => {
+    const server = net.createServer();
+    server.once('error', (error: NodeJS.ErrnoException) => {
+      if (error.code === 'EADDRINUSE') {
+        resolve(false);
+      } else if (error.code === 'EAFNOSUPPORT' || error.code === 'EADDRNOTAVAIL') {
+        resolve(undefined);
+      } else {
+        reject(new Error(`Exclusive local runtime port probe failed with ${error.code ?? 'an unknown socket error'}`));
+      }
+    });
+    server.listen({ port: 7071, host, ipv6Only, exclusive: true }, () => {
+      server.close((error) => {
+        if (error) {
+          reject(new Error('Exclusive local runtime port probe could not release its temporary listener'));
+        } else {
+          resolve(true);
+        }
+      });
+    });
+  });
 }
 
 interface HttpResult {

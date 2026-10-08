@@ -270,7 +270,7 @@ async function editorDomFixture(text: string, options: { readOnly?: boolean; del
     onPage: (hook: () => void) => {
       afterPage = hook;
     },
-    async toolbar(disabled: boolean, onSave: () => void) {
+    async toolbar(label: string, disabled: boolean, onSave: () => void) {
       reactRoot ??= createRoot(window.document.getElementById('toolbar-host'));
       flushSync(() =>
         reactRoot.render(
@@ -280,7 +280,7 @@ async function editorDomFixture(text: string, options: { readOnly?: boolean; del
             React.createElement(
               Toolbar,
               null,
-              React.createElement(ToolbarButton, { appearance: 'primary', disabled, onClick: onSave }, 'Save')
+              React.createElement(ToolbarButton, { appearance: 'primary', disabled, onClick: onSave }, label)
             )
           )
         )
@@ -451,24 +451,52 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       await fixture.dispose();
     }
   });
-  await control('V2 real Fluent ToolbarButton Save works without aria-label and waits for the clean disabled state', async () => {
+  await control('V2 real Fluent ToolbarButton Save works without aria-label and observes Saving before enabled completion', async () => {
     const fixture = await editorDomFixture(JSON.stringify(authored, null, 2));
     try {
       let saves = 0;
-      await fixture.toolbar(true, () => {
+      await fixture.toolbar('Save', true, () => {
         saves++;
       });
       assert.strictEqual(fixture.window.document.querySelector('[role="toolbar"] button').hasAttribute('aria-label'), false);
       const saving = fixture.driver.save();
       await new Promise((resolve) => fixture.window.setTimeout(resolve, 30));
       assert.strictEqual(saves, 0);
-      await fixture.toolbar(false, () => {
+      await fixture.toolbar('Save', false, () => {
         saves++;
       });
       while (!saves) {
         await new Promise((resolve) => fixture.window.setTimeout(resolve, 1));
       }
-      await fixture.toolbar(true, () => {
+      await fixture.toolbar('Saving...', true, () => {
+        saves++;
+      });
+      await new Promise((resolve) => fixture.window.setTimeout(resolve, 150));
+      await fixture.toolbar('Save', false, () => {
+        saves++;
+      });
+      await saving;
+      assert.strictEqual(saves, 1);
+    } finally {
+      await fixture.dispose();
+    }
+  });
+  await control('V2 Code Save observes Saving before disabled clean completion', async () => {
+    const fixture = await editorDomFixture(JSON.stringify(authored, null, 2));
+    try {
+      let saves = 0;
+      await fixture.toolbar('Save', false, () => {
+        saves++;
+      });
+      const saving = fixture.driver.save();
+      while (!saves) {
+        await new Promise((resolve) => fixture.window.setTimeout(resolve, 1));
+      }
+      await fixture.toolbar('Saving...', true, () => {
+        saves++;
+      });
+      await new Promise((resolve) => fixture.window.setTimeout(resolve, 150));
+      await fixture.toolbar('Save', true, () => {
         saves++;
       });
       await saving;

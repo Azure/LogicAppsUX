@@ -371,6 +371,16 @@ async function testLatePositiveLaunchBeforeRestore(): Promise<void> {
   checks++;
 }
 
+async function testSettledLaunchStopsDebuggerBeforeTask(): Promise<void> {
+  const h = debugHarness(Promise.resolve(), true);
+  await h.manager.start(new AbortController().signal);
+  await h.manager.quiesce(Date.now() + 1000);
+  assert.ok(h.order.indexOf('session-stop-1') < h.order.indexOf('task-stop-1'), 'Debugger must stop before its host task is terminated');
+  assert.strictEqual(h.live.size, 0);
+  assert.strictEqual(h.foreignStops(), 0, 'Neither a foreign session nor preexisting same-folder task may be stopped');
+  checks++;
+}
+
 async function testFailedOrUnobservedNativeStart(): Promise<void> {
   const failed = new StatelessOwnedDebug('/unit/owned-app', 'func: host start', async () => false);
   await assert.rejects(() => failed.start(new AbortController().signal), /startDebugging=false/);
@@ -465,6 +475,7 @@ async function main(): Promise<void> {
   await testColdProducer();
   await testResolvingSideEffectQuiescence();
   await testLatePositiveLaunchBeforeRestore();
+  await testSettledLaunchStopsDebuggerBeforeTask();
   await testLateRecoveryLaunchAfterRejectedDeadline();
   await testFailedOrUnobservedNativeStart();
   testDirectFourPhaseEvidence();

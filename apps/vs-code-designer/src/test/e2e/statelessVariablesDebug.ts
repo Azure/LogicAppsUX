@@ -189,39 +189,39 @@ export class StatelessOwnedDebug {
   }
 
   private stopOwnedHandles(ownerTag?: string): void {
-    for (const { task, ownerTag: taskOwner } of this.tasks.values()) {
-      if (ownerTag && taskOwner !== ownerTag) {
-        continue;
-      }
-      if (this.terminating.has(task.id)) {
-        continue;
-      }
-      this.terminating.add(task.id);
-      try {
-        task.terminate();
-      } catch (error) {
-        this.cleanupErrors.push(error);
-      }
+    const sessions = [...this.sessions.values()].filter(
+      (session) => (!ownerTag || session.ownerTag === ownerTag) && !this.stopping.has(session.id)
+    );
+    const tasks = [...this.tasks.values()]
+      .filter(({ task, ownerTag: taskOwner }) => (!ownerTag || taskOwner === ownerTag) && !this.terminating.has(task.id))
+      .map(({ task }) => task);
+    if (sessions.length === 0 && tasks.length === 0) {
+      return;
     }
-    for (const session of this.sessions.values()) {
-      if (ownerTag && session.ownerTag !== ownerTag) {
-        continue;
-      }
-      if (this.stopping.has(session.id)) {
-        continue;
-      }
-      this.stopping.add(session.id);
-      const job = Promise.resolve()
-        .then(() => session.stop())
-        .then(
-          () => undefined,
-          (error) => {
+    sessions.forEach((session) => this.stopping.add(session.id));
+    tasks.forEach((task) => this.terminating.add(task.id));
+    const job = Promise.all(
+      sessions.map((session) =>
+        Promise.resolve()
+          .then(() => session.stop())
+          .catch((error) => {
             this.cleanupErrors.push(error);
-          }
-        );
-      this.stopJobs.add(job);
-      job.then(() => this.stopJobs.delete(job));
-    }
+          })
+      )
+    ).then(() => {
+      for (const task of tasks) {
+        if (!this.tasks.has(task.id)) {
+          continue;
+        }
+        try {
+          task.terminate();
+        } catch (error) {
+          this.cleanupErrors.push(error);
+        }
+      }
+    });
+    this.stopJobs.add(job);
+    job.then(() => this.stopJobs.delete(job));
   }
 
   private throwCleanupErrors(): void {

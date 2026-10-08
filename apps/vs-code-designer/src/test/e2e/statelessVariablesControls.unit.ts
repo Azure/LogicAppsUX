@@ -489,6 +489,11 @@ function testNativeWiring(): void {
     );
     assert.ok(native.includes('preparationLease.bindGeneratedDesignTime()'));
     assert.ok(native.includes('await waitForActivationDesignTime(positiveDeadline, signal)'));
+    assert.ok(
+      native.match(/await waitForRuntimePortReleased\((positiveDeadline|deadline), signal\)/g)?.length === 3,
+      'Positive-lifecycle and recovery restarts must prove exclusive availability of port 7071 before continuing'
+    );
+    assert.ok(native.includes('server.listen({ port: 7071, host, ipv6Only, exclusive: true }'));
     assert.ok(native.includes('showLogicAppsStandardOutput('));
     assert.ok(native.includes('lease?.restore();'), 'Stateless history settings restoration must remain in bounded recovery');
     assert.ok(shared.includes("creationCase.wfType ?? 'Stateful'"), 'Canonical old fixtures remain Stateful');
