@@ -17,27 +17,42 @@ import * as cp from 'child_process';
 import * as os from 'os';
 import * as path from 'path';
 import { Platform } from '@microsoft/vscode-extension-logic-apps';
+import psTree from 'ps-tree';
+import { isTaskEqual } from '../taskUtils';
 export interface IRunningFuncTask {
   startTime: number;
   processId: number;
   childProcessId?: any[];
+  task?: vscode.Task;
 }
 
 export const runningFuncTaskMap: Map<vscode.WorkspaceFolder | vscode.TaskScope, IRunningFuncTask> = new Map();
+export const ownedFuncTasks: vscode.Task[] = [];
+
+let isStoppingOwnedFuncTasks = false;
+const pendingShutdownKills = new Set<Promise<void>>();
+const pendingFuncTaskStarts = new Set<Promise<void>>();
+
+function scopesMatch(
+  firstScope: vscode.WorkspaceFolder | vscode.TaskScope | undefined,
+  secondScope: vscode.WorkspaceFolder | vscode.TaskScope | undefined
+): boolean {
+  if (firstScope === secondScope) {
+    return true;
+  }
+  if (typeof firstScope === 'object' && 'uri' in firstScope && typeof secondScope === 'object' && 'uri' in secondScope) {
+    const firstPath = path.normalize(firstScope.uri.fsPath);
+    const secondPath = path.normalize(secondScope.uri.fsPath);
+    return process.platform === Platform.windows ? firstPath.toLowerCase() === secondPath.toLowerCase() : firstPath === secondPath;
+  }
+  return false;
+}
 
 export function scopeMatchesWorkspace(
   scope: vscode.WorkspaceFolder | vscode.TaskScope | undefined,
   workspaceFolder: vscode.WorkspaceFolder
 ): boolean {
-  if (scope === workspaceFolder) {
-    return true;
-  }
-  if (typeof scope === 'object' && 'uri' in scope) {
-    const scopePath = path.normalize(scope.uri.fsPath);
-    const workspacePath = path.normalize(workspaceFolder.uri.fsPath);
-    return process.platform === Platform.windows ? scopePath.toLowerCase() === workspacePath.toLowerCase() : scopePath === workspacePath;
-  }
-  return false;
+  return scopesMatch(scope, workspaceFolder);
 }
 
 export function getRunningFuncTaskForWorkspace(workspaceFolder: vscode.WorkspaceFolder): IRunningFuncTask | undefined {
@@ -99,6 +114,19 @@ function spawnAndIgnore(command: string, args: string[]): Promise<void> {
   });
 }
 
+async function getUnixProcessIds(runningFuncTask: IRunningFuncTask): Promise<Array<number | string>> {
+  const descendants = await new Promise<psTree.PS[]>((resolve) => {
+    psTree(runningFuncTask.processId, (_error: Error | null, children: psTree.PS[]) => resolve(children ?? []));
+  });
+  return [
+    ...new Set([
+      ...descendants.map((processInfo) => processInfo.PID),
+      ...(runningFuncTask.childProcessId || []).filter(Boolean),
+      runningFuncTask.processId,
+    ]),
+  ].reverse();
+}
+
 async function killFuncProcessTree(runningFuncTask: IRunningFuncTask): Promise<void> {
   if (os.platform() === Platform.windows) {
     await Promise.all([
@@ -106,8 +134,126 @@ async function killFuncProcessTree(runningFuncTask: IRunningFuncTask): Promise<v
       ...(runningFuncTask.childProcessId || []).filter(Boolean).map((pid) => execAndIgnore(`taskkill /PID ${pid} /T /F`)),
     ]);
   } else {
-    await spawnAndIgnore('kill', ['-9'].concat(`${runningFuncTask.processId}`));
+    const processIds = await getUnixProcessIds(runningFuncTask);
+    await Promise.all(processIds.map((processId) => spawnAndIgnore('kill', ['-9', `${processId}`])));
   }
+}
+
+function isOwnedFuncTask(task: vscode.Task): boolean {
+  return ownedFuncTasks.some((ownedTask) => isTaskEqual(ownedTask, task));
+}
+
+function removeOwnedFuncTask(task: vscode.Task): void {
+  const taskIndex = ownedFuncTasks.findIndex((ownedTask) => isTaskEqual(ownedTask, task));
+  if (taskIndex >= 0) {
+    ownedFuncTasks.splice(taskIndex, 1);
+  }
+}
+
+function removeOwnedFuncTasksForWorkspace(workspaceFolder: vscode.WorkspaceFolder): void {
+  for (let index = ownedFuncTasks.length - 1; index >= 0; index--) {
+    if (scopeMatchesWorkspace(ownedFuncTasks[index].scope, workspaceFolder)) {
+      ownedFuncTasks.splice(index, 1);
+    }
+  }
+}
+
+export function trackFuncTaskForCleanup(task: vscode.Task): void {
+  if (isStoppingOwnedFuncTasks) {
+    throw new Error('Cannot start the Functions host while the Logic Apps extension is shutting down.');
+  }
+  if (!isOwnedFuncTask(task)) {
+    ownedFuncTasks.push(task);
+  }
+}
+
+export async function executeFuncTaskForCleanup(task: vscode.Task): Promise<boolean> {
+  if (vscode.tasks.taskExecutions.some((execution) => isTaskEqual(execution.task, task))) {
+    return false;
+  }
+
+  trackFuncTaskForCleanup(task);
+  let startPromise: Promise<void>;
+  try {
+    startPromise = Promise.resolve(vscode.tasks.executeTask(task)).then(() => undefined);
+  } catch (error) {
+    removeOwnedFuncTask(task);
+    throw error;
+  }
+
+  pendingFuncTaskStarts.add(startPromise);
+  try {
+    await startPromise;
+    return true;
+  } catch (error) {
+    removeOwnedFuncTask(task);
+    throw error;
+  } finally {
+    pendingFuncTaskStarts.delete(startPromise);
+  }
+}
+
+export function resetFuncTaskShutdownStateForTest(): void {
+  isStoppingOwnedFuncTasks = false;
+  pendingShutdownKills.clear();
+  pendingFuncTaskStarts.clear();
+  ownedFuncTasks.length = 0;
+}
+
+function hasTrackedFuncTask(task: vscode.Task): boolean {
+  return [...runningFuncTaskMap.entries()].some(([scope, runningFuncTask]) =>
+    runningFuncTask.task ? isTaskEqual(runningFuncTask.task, task) : scopesMatch(scope, task.scope)
+  );
+}
+
+async function waitForFuncTaskExecutionsToStop(executions: vscode.TaskExecution[]): Promise<void> {
+  while (true) {
+    const activeExecutions = vscode.tasks.taskExecutions;
+    if (!executions.some((execution) => activeExecutions.includes(execution))) {
+      return;
+    }
+    await delay(100);
+  }
+}
+
+export async function stopAllFuncTasks(): Promise<void> {
+  isStoppingOwnedFuncTasks = true;
+  while (pendingFuncTaskStarts.size > 0) {
+    await Promise.allSettled([...pendingFuncTaskStarts]);
+  }
+
+  const ownedTasksSnapshot = [...ownedFuncTasks];
+  const trackedFuncTasks = [...runningFuncTaskMap.entries()].filter(([scope, runningFuncTask]) =>
+    runningFuncTask.task
+      ? ownedTasksSnapshot.some((task) => isTaskEqual(task, runningFuncTask.task!))
+      : ownedTasksSnapshot.some((task) => scopesMatch(scope, task.scope))
+  );
+  const funcExecutions = vscode.tasks.taskExecutions.filter((execution) =>
+    ownedTasksSnapshot.some((task) => isTaskEqual(task, execution.task))
+  );
+  const executionsWithoutTrackedProcesses = funcExecutions.filter((execution) => !hasTrackedFuncTask(execution.task));
+
+  for (const execution of funcExecutions) {
+    try {
+      execution.terminate();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      ext.outputChannel?.appendLog(`Failed to terminate func task during extension shutdown: ${message}`);
+    }
+  }
+
+  await Promise.allSettled(trackedFuncTasks.map(([, runningFuncTask]) => killFuncProcessTree(runningFuncTask)));
+  for (const [scope] of trackedFuncTasks) {
+    runningFuncTaskMap.delete(scope);
+  }
+
+  await waitForFuncTaskExecutionsToStop(executionsWithoutTrackedProcesses);
+  while (pendingShutdownKills.size > 0) {
+    await Promise.allSettled([...pendingShutdownKills]);
+  }
+
+  ownedFuncTasks.length = 0;
+  ext.workflowRuntimePort = undefined;
 }
 
 export async function stopFuncTaskForWorkspace(
@@ -133,6 +279,7 @@ export async function stopFuncTaskForWorkspace(
 
   funcExecution?.terminate();
   await waitForFuncTaskToStop(workspaceFolder, options?.timeoutInSeconds ?? 30);
+  removeOwnedFuncTasksForWorkspace(workspaceFolder);
   return true;
 }
 
@@ -163,7 +310,23 @@ export function registerFuncHostTaskEvents(): void {
       context.errorHandling.suppressDisplay = true;
       context.telemetry.suppressIfSuccessful = true;
       if (e.execution.task.scope !== undefined && isFuncHostTask(e.execution.task)) {
-        runningFuncTaskMap.set(e.execution.task.scope, { startTime: Date.now(), processId: e.processId });
+        const runningFuncTask = { startTime: Date.now(), processId: e.processId, task: e.execution.task };
+        runningFuncTaskMap.set(e.execution.task.scope, runningFuncTask);
+        if (isStoppingOwnedFuncTasks && isOwnedFuncTask(e.execution.task)) {
+          try {
+            e.execution.terminate();
+          } catch (error) {
+            const message = error instanceof Error ? error.message : String(error);
+            ext.outputChannel?.appendLog(`Failed to terminate late-starting func task during extension shutdown: ${message}`);
+          }
+          const shutdownKill = killFuncProcessTree(runningFuncTask).finally(() => {
+            runningFuncTaskMap.delete(e.execution.task.scope!);
+            removeOwnedFuncTask(e.execution.task);
+            pendingShutdownKills.delete(shutdownKill);
+          });
+          pendingShutdownKills.add(shutdownKill);
+          await shutdownKill;
+        }
       }
     }
   );
@@ -176,6 +339,7 @@ export function registerFuncHostTaskEvents(): void {
       context.telemetry.suppressIfSuccessful = true;
       if (e.execution.task.scope !== undefined && isFuncHostTask(e.execution.task)) {
         runningFuncTaskMap.delete(e.execution.task.scope);
+        removeOwnedFuncTask(e.execution.task);
         ext.workflowRuntimePort = undefined;
       }
     }
