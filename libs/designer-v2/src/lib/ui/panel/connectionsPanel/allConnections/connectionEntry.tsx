@@ -1,5 +1,6 @@
 import { useConnectionById } from '../../../../core/queries/connections';
-import { useReadOnly } from '../../../../core/state/designerOptions/designerOptionsSelectors';
+import { useMonitoringView, useReadOnly } from '../../../../core/state/designerOptions/designerOptionsSelectors';
+import type { ConnectionReference } from '../../../../common/models/workflow';
 import { openPanel } from '../../../../core/state/panel/panelSlice';
 import { NodeLinkButton } from './nodeLinkButton';
 import { css } from '@fluentui/react';
@@ -11,28 +12,47 @@ import {
   CheckmarkCircle24Filled,
   ErrorCircle24Filled,
   PlugDisconnected24Filled,
+  LinkMultiple24Regular,
 } from '@fluentui/react-icons';
 import { HostService, cleanResourceId, getConnectionErrors } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
+export interface ConnectionReferenceWithNodes extends ConnectionReference {
+  nodes: string[];
+}
+
 interface ConnectionEntryProps {
   connectorId: string;
   refId?: string;
-  connectionReference?: any;
+  connectionReference?: ConnectionReferenceWithNodes;
   brandColor?: string;
   iconUri?: string;
   disconnectedNodeIds?: string[];
+  runtimeNodeIds?: string[];
 }
 
-export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconUri, disconnectedNodeIds = [] }: ConnectionEntryProps) => {
+export const ConnectionEntry = ({
+  connectorId,
+  refId,
+  connectionReference,
+  iconUri,
+  disconnectedNodeIds = [],
+  runtimeNodeIds = [],
+}: ConnectionEntryProps) => {
   const dispatch = useDispatch();
-  const readOnly = useReadOnly();
+  const isReadOnly = useReadOnly();
+  const isMonitoringView = useMonitoringView();
+  const readOnly = isReadOnly || isMonitoringView;
   const styles = useConnectionContainerStyles();
+  const runtime = runtimeNodeIds.length > 0;
   const connectionId = cleanResourceId(connectionReference?.connection?.id);
-  const connection = useConnectionById(connectionId, connectorId);
-  const nodeIds = useMemo(() => connectionReference?.nodes || disconnectedNodeIds, [connectionReference?.nodes, disconnectedNodeIds]);
+  const connection = useConnectionById(runtime ? '' : connectionId, runtime ? '' : connectorId);
+  const nodeIds = useMemo(
+    () => (runtime ? runtimeNodeIds : connectionReference?.nodes || disconnectedNodeIds),
+    [runtime, runtimeNodeIds, connectionReference?.nodes, disconnectedNodeIds]
+  );
 
   const disconnected = useMemo(() => disconnectedNodeIds.length > 0, [disconnectedNodeIds.length]);
 
@@ -72,22 +92,30 @@ export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconU
     id: 'TsJbGH',
     description: 'Text to show when a connection is disconnected',
   });
+  const runtimeConnectionText = intl.formatMessage({
+    defaultMessage: 'Connection selected at runtime',
+    id: 'elDTa6',
+    description: 'Status for a connection selected at runtime by an expression',
+  });
 
   const onReassignButtonClick = useCallback(() => {
     dispatch(openPanel({ nodeIds, panelMode: 'Connection', referencePanelMode: 'Connection' }));
   }, [dispatch, nodeIds]);
 
   const errors = useMemo(() => {
-    if (connection?.isLoading) {
+    if (runtime || connection?.isLoading) {
       return [];
     }
     if (!connection?.result) {
       return [connectionInvalidStatusText];
     }
     return getConnectionErrors(connection?.result);
-  }, [connection, connectionInvalidStatusText]);
+  }, [connection, connectionInvalidStatusText, runtime]);
 
   const statusIconComponent = useMemo(() => {
+    if (runtime) {
+      return <LinkMultiple24Regular />;
+    }
     if (connection?.isLoading) {
       return <Spinner size="extra-small" />;
     }
@@ -104,7 +132,7 @@ export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconU
         )}
       </Tooltip>
     );
-  }, [connection?.isLoading, connectionInvalidStatusText, connectionValidStatusText, errors.length, disconnected]);
+  }, [connection?.isLoading, connectionInvalidStatusText, connectionValidStatusText, errors.length, disconnected, runtime]);
 
   // Only show the open connection button if the service method is supplied
   const openConnectionSupported = useMemo(() => HostService().openConnectionResource !== undefined, []);
@@ -115,7 +143,7 @@ export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconU
     HostService().openConnectionResource?.(connection?.result?.id);
   }, [connection?.result?.id]);
 
-  const cardTitle = connection?.result?.properties.displayName ?? refId ?? disconnectedText;
+  const cardTitle = runtime ? runtimeConnectionText : (connection?.result?.properties.displayName ?? refId ?? disconnectedText);
 
   return (
     <div key={refId} className={css('msla-connector-connections-card-connection', disconnected && 'disconnected')}>
@@ -124,10 +152,12 @@ export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconU
         <Text size={300} weight="semibold" className="msla-flex-header-title">
           {cardTitle}
         </Text>
-        <Text size={300} className="msla-flex-header-subtitle">
-          {connection?.result?.name}
-        </Text>
-        {openConnectionSupported && (
+        {!runtime && (
+          <Text size={300} className="msla-flex-header-subtitle">
+            {connection?.result?.name}
+          </Text>
+        )}
+        {!runtime && openConnectionSupported && (
           <Tooltip content={openConnectionTooltipText} relationship="label">
             <Button
               icon={<Open24Filled />}
