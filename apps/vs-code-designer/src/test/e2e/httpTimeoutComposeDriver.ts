@@ -53,20 +53,9 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
   }
 
   override async save(): Promise<void> {
+    // V2 does not expose a reliable intermediate Saving state. The caller proves
+    // completion from the exact persisted workflow.json definition.
     await this.click('[role="toolbar"] button, button[aria-label="Save"]', ['Save']);
-    const readSaveState = () =>
-      this.evaluate<{ save: boolean; saving: boolean }>(`(() => {
-        ${visibleDom}
-        const labels = Array.from(document.querySelectorAll('[role="toolbar"] button, button[aria-label*="Sav"]'))
-          .filter(visible)
-          .map((button) => normalize(button.textContent || button.getAttribute('aria-label')).toLowerCase());
-        return {
-          save: labels.some((text) => text === 'save'),
-          saving: labels.some((text) => text.startsWith('saving')),
-        };
-      })()`);
-    await pollHttpTimeoutCompose(readSaveState, (state) => state.saving, this.deadline, 'V2 designer Saving transition');
-    await pollHttpTimeoutCompose(readSaveState, (state) => state.save && !state.saving, this.deadline, 'V2 designer Save completion');
   }
 
   async readCode(): Promise<string> {

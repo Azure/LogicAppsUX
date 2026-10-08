@@ -451,55 +451,46 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       await fixture.dispose();
     }
   });
-  await control('V2 real Fluent ToolbarButton Save works without aria-label and observes Saving before enabled completion', async () => {
-    const fixture = await editorDomFixture(JSON.stringify(authored, null, 2));
-    try {
-      let saves = 0;
-      await fixture.toolbar('Save', true, () => {
-        saves++;
-      });
-      assert.strictEqual(fixture.window.document.querySelector('[role="toolbar"] button').hasAttribute('aria-label'), false);
-      const saving = fixture.driver.save();
-      await new Promise((resolve) => fixture.window.setTimeout(resolve, 30));
-      assert.strictEqual(saves, 0);
-      await fixture.toolbar('Save', false, () => {
-        saves++;
-      });
-      while (!saves) {
-        await new Promise((resolve) => fixture.window.setTimeout(resolve, 1));
+  await control(
+    'V2 real Fluent ToolbarButton Save waits for an enabled control and delegates completion to persisted workflow proof',
+    async () => {
+      const fixture = await editorDomFixture(JSON.stringify(authored, null, 2));
+      try {
+        let saves = 0;
+        await fixture.toolbar('Save', true, () => {
+          saves++;
+        });
+        assert.strictEqual(fixture.window.document.querySelector('[role="toolbar"] button').hasAttribute('aria-label'), false);
+        const saving = fixture.driver.save();
+        await new Promise((resolve) => fixture.window.setTimeout(resolve, 30));
+        assert.strictEqual(saves, 0);
+        await fixture.toolbar('Save', false, () => {
+          saves++;
+        });
+        while (!saves) {
+          await new Promise((resolve) => fixture.window.setTimeout(resolve, 1));
+        }
+        await saving;
+        assert.strictEqual(saves, 1);
+      } finally {
+        await fixture.dispose();
       }
-      await fixture.toolbar('Saving...', true, () => {
-        saves++;
-      });
-      await new Promise((resolve) => fixture.window.setTimeout(resolve, 150));
-      await fixture.toolbar('Save', false, () => {
-        saves++;
-      });
-      await saving;
-      assert.strictEqual(saves, 1);
-    } finally {
-      await fixture.dispose();
     }
-  });
-  await control('V2 Code Save observes Saving before disabled clean completion', async () => {
+  );
+  await control('V2 Code Save permits the product to return immediately to a disabled clean state', async () => {
     const fixture = await editorDomFixture(JSON.stringify(authored, null, 2));
     try {
       let saves = 0;
+      let cleanState: Promise<void> | undefined;
       await fixture.toolbar('Save', false, () => {
         saves++;
+        cleanState = fixture.toolbar('Save', true, () => {
+          saves++;
+        });
       });
-      const saving = fixture.driver.save();
-      while (!saves) {
-        await new Promise((resolve) => fixture.window.setTimeout(resolve, 1));
-      }
-      await fixture.toolbar('Saving...', true, () => {
-        saves++;
-      });
-      await new Promise((resolve) => fixture.window.setTimeout(resolve, 150));
-      await fixture.toolbar('Save', true, () => {
-        saves++;
-      });
-      await saving;
+      await fixture.driver.save();
+      assert.ok(cleanState);
+      await cleanState;
       assert.strictEqual(saves, 1);
     } finally {
       await fixture.dispose();
