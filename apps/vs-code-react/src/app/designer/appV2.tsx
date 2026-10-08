@@ -3,7 +3,8 @@ import type { AppDispatch, RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
 import { DesignerCommandBar } from './DesignerCommandBar/indexV2';
 import { getDesignerServices } from './servicesHelper';
-import { convertConnectionsDataToReferences } from './utilities/workflow';
+import { convertConnectionsDataToReferences, getCodeViewRequestOptionsValidationErrors } from './utilities/workflow';
+import { MessageBar, MessageBarBody } from '@fluentui/react-components';
 import type { ConnectionCreationInfo, Workflow } from '@microsoft/logic-apps-shared';
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer-v2';
 import {
@@ -68,6 +69,7 @@ export const DesignerApp = () => {
 
   const [designerID, setDesignerID] = useState(guid());
   const [workflowDefinitionId, setWorkflowDefinitionId] = useState<string>(guid());
+  const [codeViewValidationErrors, setCodeViewValidationErrors] = useState<string[]>([]);
 
   const codeEditorRef = useRef<{ getValue: () => string | undefined; hasChanges: () => boolean; resetChanges: () => void }>(null);
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
@@ -88,6 +90,7 @@ export const DesignerApp = () => {
   );
 
   const discardAllChanges = useCallback(() => {
+    setCodeViewValidationErrors([]);
     setDesignerID(guid());
   }, []);
 
@@ -156,8 +159,12 @@ export const DesignerApp = () => {
 
   useEffect(() => {
     setWorkflow(panelMetaData?.standardApp);
+    setCodeViewValidationErrors([]);
+  }, [panelMetaData?.standardApp]);
+
+  useEffect(() => {
     setCustomCode(panelMetaData?.customCodeData);
-  }, [panelMetaData]);
+  }, [panelMetaData?.customCodeData]);
 
   useEffect(() => {
     if (runInstance) {
@@ -211,6 +218,7 @@ export const DesignerApp = () => {
         }
         const codeToConvert = JSON.parse(codeEditorRef.current?.getValue() ?? '');
         const { definition, parameters, connectionReferences } = codeToConvert;
+        setCodeViewValidationErrors(getCodeViewRequestOptionsValidationErrors(definition));
         // code view editor cannot add/remove connections, parameters, settings, or customcode
         vscode.postMessage({
           command: ExtensionCommand.save,
@@ -345,6 +353,11 @@ export const DesignerApp = () => {
               switchToMonitoringView={switchToMonitoringView}
               showRunHistory={!isCodefulWorkflow && isRuntimeAvailable}
             />
+            {codeViewValidationErrors.map((error) => (
+              <MessageBar key={error} intent="error" role="alert">
+                <MessageBarBody>{error}</MessageBarBody>
+              </MessageBar>
+            ))}
 
             {!isCodeView && (
               <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1, height: '80%', position: 'relative' }}>

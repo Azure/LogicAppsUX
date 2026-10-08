@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 
@@ -22,6 +22,10 @@ const { mockBJSWorkflowProvider } = vi.hoisted(() => {
   return { mockBJSWorkflowProvider: vi.fn() };
 });
 
+const { mockGetCodeViewRequestOptionsValidationErrors } = vi.hoisted(() => {
+  return { mockGetCodeViewRequestOptionsValidationErrors: vi.fn((): string[] => []) };
+});
+
 vi.mock('../../../webviewCommunication', async () => {
   const React = await import('react');
   return {
@@ -35,14 +39,31 @@ vi.mock('../servicesHelper', () => ({
 
 vi.mock('../utilities/workflow', () => ({
   convertConnectionsDataToReferences: vi.fn(() => ({})),
+  getCodeViewRequestOptionsValidationErrors: mockGetCodeViewRequestOptionsValidationErrors,
 }));
 
 vi.mock('../DesignerCommandBar/indexV2', () => ({
-  DesignerCommandBar: () => <div data-testid="designer-command-bar" />,
+  DesignerCommandBar: (props: any) => (
+    <div data-testid="designer-command-bar">
+      <button type="button" onClick={props.switchToCodeView}>
+        Code
+      </button>
+      <button type="button" onClick={() => props.saveWorkflowFromCode()}>
+        Save code
+      </button>
+    </div>
+  ),
 }));
 
 vi.mock('../CodeViewEditor', () => ({
-  default: () => <div data-testid="code-view-editor" />,
+  default: React.forwardRef((_props, ref) => {
+    React.useImperativeHandle(ref, () => ({
+      getValue: () => JSON.stringify({ definition: { actions: { Compose: { type: 'Compose' } } } }),
+      hasChanges: () => true,
+      resetChanges: vi.fn(),
+    }));
+    return <div data-testid="code-view-editor" />;
+  }),
 }));
 
 vi.mock('@microsoft/logic-apps-designer-v2', () => ({
@@ -80,6 +101,11 @@ vi.mock('@tanstack/react-query', () => ({
 
 vi.mock('@microsoft/designer-ui', () => ({
   XLargeText: ({ text }: any) => <div>{text}</div>,
+}));
+
+vi.mock('@fluentui/react-components', () => ({
+  MessageBar: ({ children, role }: any) => <div role={role}>{children}</div>,
+  MessageBarBody: ({ children }: any) => <div>{children}</div>,
 }));
 
 vi.mock('../../../intl', () => ({
@@ -120,7 +146,11 @@ const createTestStore = (standardApp: Record<string, unknown>) => {
           hostVersion: '',
           oauthRedirectUrl: '',
         },
-        reducers: {},
+        reducers: {
+          updateAccessToken: (state, action) => {
+            state.panelMetaData = { ...state.panelMetaData, accessToken: action.payload };
+          },
+        },
       }).reducer,
     },
   });
@@ -162,5 +192,38 @@ describe('vs-code-react appV2 DesignerApp (Standard designer/monitoring host)', 
 
     expect(screen.getByTestId('designer-command-bar')).toBeDefined();
     expect(screen.getByTestId('designer-v2-inner')).toBeDefined();
+  });
+
+  it('shows exact code-view validation errors while still posting the invalid workflow for persistence', async () => {
+    const expectedError =
+      "The request options timeout parameter is not supported for action 'Compose' of type 'Compose'. Actions of type 'HTTP' are supported.";
+    mockGetCodeViewRequestOptionsValidationErrors.mockReturnValue([expectedError]);
+    const store = createTestStore({
+      definition: { $schema: 'schema', triggers: { manual: {} }, actions: {} },
+      kind: 'stateful',
+    });
+
+    render(
+      <Provider store={store}>
+        <DesignerApp />
+      </Provider>
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Code' }));
+    expect(screen.getByTestId('code-view-editor')).toBeDefined();
+    fireEvent.click(screen.getByRole('button', { name: 'Save code' }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(expectedError);
+    expect(mockPostMessage).toHaveBeenCalledWith({
+      command: 'save',
+      definition: { actions: { Compose: { type: 'Compose' } } },
+      parameters: undefined,
+      connectionReferences: undefined,
+    });
+
+    act(() => {
+      store.dispatch({ type: 'designer/updateAccessToken', payload: 'refreshed-token' });
+    });
+    expect(screen.getByRole('alert')).toHaveTextContent(expectedError);
   });
 });
