@@ -579,39 +579,62 @@ async function runDirectRegisteredSuite(
 function runSuiteWrapperProcess({ suite, context, env, visibleDelayMs, timeoutMs, scriptPath = __filename }) {
   const childArgs = [scriptPath, ...suite.args, ...(visibleDelayMs ? ['--visible-delay-ms', String(visibleDelayMs)] : [])];
   console.log(`[batch] Running suite ${suite.id}: ${process.execPath} ${childArgs.map((arg) => JSON.stringify(arg)).join(' ')}`);
-  const child = spawn(process.execPath, childArgs, {
-    env: sanitizeInheritedGitCommandConfigEnv({
-      ...env,
-      LA_E2E_CLI_SUITE_WRAPPER_CHILD: '1',
-      LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH: context.terminalResultPath,
-      LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH: context.cleanupLedgerPath,
-      LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH: context.phaseResultsPath,
-    }),
-    cwd: path.resolve(__dirname, '..'),
+  const childEnv = sanitizeInheritedGitCommandConfigEnv({
+    ...env,
+    LA_E2E_CLI_SUITE_WRAPPER_CHILD: '1',
+    LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH: context.terminalResultPath,
+    LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH: context.cleanupLedgerPath,
+    LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH: context.phaseResultsPath,
   });
+  let launch;
+  try {
+    launch = spawnContainedSuiteProcess({
+      childArgs,
+      cwd: path.resolve(__dirname, '..'),
+      env: childEnv,
+      reportsRoot: context.reportsRoot,
+    });
+  } catch (error) {
+    const processCleanup = {
+      schemaVersion: 1,
+      verified: false,
+      retainedOriginalIdentitiesVerified: false,
+      containmentEstablished: false,
+      error: error instanceof Error ? error.message : String(error),
+      checkedAt: new Date().toISOString(),
+    };
+    writeSuiteFinalEvidence({ context, suite, exitCode: null, signal: null, output: '', error, processCleanup });
+    return Promise.resolve({ exitCode: null, signal: null, error, output: '', processCleanup });
+  }
+  const { child, containmentReceiptPath } = launch;
 
   let output = '';
   let timedOut = false;
   let settled = false;
+  let forceKillTimeout;
+  let parentSignal;
+  const requestContainmentTermination = () => {
+    terminateContainmentHost(child, 'SIGTERM');
+    clearTimeout(forceKillTimeout);
+    const forceKillDelayMs = process.platform === 'linux' ? 12_000 : 5000;
+    forceKillTimeout = setTimeout(() => {
+      if (!settled) {
+        terminateContainmentHost(child, 'SIGKILL');
+      }
+    }, forceKillDelayMs).unref();
+  };
   const timeout = setTimeout(() => {
     timedOut = true;
-    terminateProcessTree(child, 'SIGTERM')
-      .then(() => delay(5000))
-      .then(() => terminateProcessTree(child, 'SIGKILL'))
-      .catch((error) => {
-        appendOutput(`\n[batch] Failed to terminate timed-out process tree: ${error instanceof Error ? error.message : String(error)}\n`);
-      });
+    requestContainmentTermination();
   }, timeoutMs).unref();
 
   const forwardSignal = (signal) => {
     if (settled) {
       return;
     }
+    parentSignal = signal;
     appendOutput(`\n[batch] Parent received ${signal}; terminating suite process tree.\n`);
-    terminateProcessTree(child, 'SIGTERM')
-      .then(() => delay(5000))
-      .then(() => terminateProcessTree(child, 'SIGKILL'))
-      .finally(() => process.exit(1));
+    requestContainmentTermination();
   };
   process.once('SIGINT', forwardSignal);
   process.once('SIGTERM', forwardSignal);
@@ -622,24 +645,30 @@ function runSuiteWrapperProcess({ suite, context, env, visibleDelayMs, timeoutMs
       output = output.slice(-2 * 1024 * 1024);
     }
   };
+  const stdoutPrefixer = createLinePrefixer(`[${suite.id}] `, (text) => process.stdout.write(text));
+  const stderrPrefixer = createLinePrefixer(`[${suite.id}] `, (text) => process.stderr.write(text));
 
   child.stdout.on('data', (data) => {
     const text = data.toString();
     appendOutput(text);
-    process.stdout.write(`[${suite.id}] ${text}`);
+    stdoutPrefixer.push(text);
   });
   child.stderr.on('data', (data) => {
     const text = data.toString();
     appendOutput(text);
-    process.stderr.write(`[${suite.id}] ${text}`);
+    stderrPrefixer.push(text);
   });
 
   return new Promise((resolve) => {
     child.on('error', (error) => {
+      stdoutPrefixer.flush();
+      stderrPrefixer.flush();
       clearTimeout(timeout);
+      clearTimeout(forceKillTimeout);
       settled = true;
       process.off('SIGINT', forwardSignal);
       process.off('SIGTERM', forwardSignal);
+      fs.rmSync(containmentReceiptPath, { force: true });
       const processCleanup = { verified: false, error: error.message };
       writeSuiteFinalEvidence({
         context,
@@ -657,21 +686,173 @@ function runSuiteWrapperProcess({ suite, context, env, visibleDelayMs, timeoutMs
         return;
       }
       clearTimeout(timeout);
+      clearTimeout(forceKillTimeout);
       settled = true;
+      stdoutPrefixer.flush();
+      stderrPrefixer.flush();
       process.off('SIGINT', forwardSignal);
       process.off('SIGTERM', forwardSignal);
-      const processCleanup = child.pid
-        ? await verifyNoOwnedDescendants(child.pid)
-        : { verified: false, error: 'Suite wrapper has no observed process ID' };
+      const processCleanup = readContainmentReceipt(containmentReceiptPath, exitCode, signal);
+      fs.rmSync(containmentReceiptPath, { force: true });
+      const reportedExitCode = processCleanup.verified ? processCleanup.rootExitCode : exitCode;
+      const reportedSignal = processCleanup.verified ? processCleanup.rootSignal : signal;
       const error = timedOut
         ? new Error(`suite timed out after ${timeoutMs}ms`)
         : processCleanup.error
           ? new Error(processCleanup.error)
           : undefined;
-      writeSuiteFinalEvidence({ context, suite, exitCode, signal, output, error, processCleanup });
-      resolve({ exitCode, signal, output, error, processCleanup });
+      writeSuiteFinalEvidence({
+        context,
+        suite,
+        exitCode: reportedExitCode,
+        signal: reportedSignal,
+        output,
+        error,
+        processCleanup,
+      });
+      if (parentSignal) {
+        process.exit(1);
+      } else {
+        resolve({ exitCode: reportedExitCode, signal: reportedSignal, output, error, processCleanup });
+      }
     });
   });
+}
+
+function createLinePrefixer(prefix, write) {
+  let pending = '';
+  return Object.freeze({
+    push(value) {
+      pending += String(value ?? '');
+      let newline;
+      while ((newline = pending.indexOf('\n')) >= 0) {
+        const line = pending.slice(0, newline + 1);
+        pending = pending.slice(newline + 1);
+        write(`${prefix}${line}`);
+      }
+    },
+    flush() {
+      if (pending) {
+        write(`${prefix}${pending}`);
+        pending = '';
+      }
+    },
+  });
+}
+
+function getContainmentHost() {
+  if (!['linux', 'win32'].includes(process.platform)) {
+    throw new Error(`Unsupported suite containment platform: ${process.platform}`);
+  }
+  const extension = process.platform === 'win32' ? 'cs' : 'c';
+  const sourcePath = path.join(__dirname, `e2e-cli-containment-host.${extension}`);
+  const source = fs.readFileSync(sourcePath);
+  const sourceHash = createHash('sha256').update(source).digest('hex');
+  const buildRoot = path.join(os.tmpdir(), 'logicappsux-e2e-containment', sourceHash);
+  const hostPath = path.join(buildRoot, process.platform === 'win32' ? 'e2e-cli-containment-host.exe' : 'e2e-cli-containment-host');
+  if (fs.existsSync(hostPath)) {
+    return hostPath;
+  }
+  fs.mkdirSync(buildRoot, { recursive: true });
+  if (process.platform === 'win32') {
+    const quote = (value) => `'${String(value).replace(/'/g, "''")}'`;
+    execFileSync(
+      'powershell.exe',
+      [
+        '-NoProfile',
+        '-NonInteractive',
+        '-ExecutionPolicy',
+        'Bypass',
+        '-Command',
+        `Add-Type -Path ${quote(sourcePath)} -OutputAssembly ${quote(hostPath)} -OutputType ConsoleApplication`,
+      ],
+      { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], timeout: 120_000 }
+    );
+  } else {
+    execFileSync(process.env.CC || 'cc', ['-O2', '-Wall', '-Wextra', sourcePath, '-o', hostPath], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+      timeout: 120_000,
+    });
+    fs.chmodSync(hostPath, 0o755);
+  }
+  if (!fs.existsSync(hostPath)) {
+    throw new Error(`Suite containment host was not created: ${hostPath}`);
+  }
+  return hostPath;
+}
+
+function spawnContainedSuiteProcess({ childArgs, cwd, env, reportsRoot }) {
+  const hostPath = getContainmentHost();
+  const containmentReceiptPath = path.join(
+    os.tmpdir(),
+    'logicappsux-e2e-containment-receipts',
+    `${path.basename(reportsRoot)}-${process.pid}-${randomUUID()}.json`
+  );
+  fs.mkdirSync(path.dirname(containmentReceiptPath), { recursive: true });
+  const child = spawn(hostPath, [containmentReceiptPath, process.execPath, ...childArgs], {
+    env,
+    cwd,
+  });
+  return { child, containmentReceiptPath };
+}
+
+function readContainmentReceipt(receiptPath, hostExitCode, hostSignal) {
+  const expectedMechanism = process.platform === 'win32' ? 'windows-job-object' : process.platform === 'linux' ? 'linux-subreaper' : '';
+  try {
+    const receipt = JSON.parse(fs.readFileSync(receiptPath, 'utf8'));
+    const escapedDescendants = Array.isArray(receipt.escapedDescendants) ? receipt.escapedDescendants : [];
+    const rootSignalNumber = receipt.rootSignal === null ? null : signalNumber(receipt.rootSignal);
+    const expectedHostExitCode = rootSignalNumber === null ? receipt.rootExitCode : rootSignalNumber ? 128 + rootSignalNumber : undefined;
+    const hostOutcomeMatches = Number.isInteger(expectedHostExitCode) && hostSignal === null && hostExitCode === expectedHostExitCode;
+    const receiptShapeValid =
+      receipt.schemaVersion === 1 &&
+      receipt.mechanism === expectedMechanism &&
+      receipt.containmentEstablished === true &&
+      Number.isSafeInteger(receipt.rootPid) &&
+      receipt.rootPid > 0 &&
+      Number.isInteger(receipt.rootExitCode) &&
+      (receipt.rootSignal === null || Number.isInteger(rootSignalNumber));
+    const containmentEmpty =
+      receipt.containmentEmpty === true &&
+      receipt.retainedOriginalIdentitiesVerified === true &&
+      escapedDescendants.length === 0 &&
+      (!Number.isInteger(receipt.activeContainedProcessCount) || receipt.activeContainedProcessCount === 0);
+    const verified = receiptShapeValid && containmentEmpty && hostOutcomeMatches;
+    const verificationError = !receiptShapeValid
+      ? 'Suite ownership containment receipt was malformed'
+      : !containmentEmpty
+        ? 'Suite ownership containment was not empty after the wrapper root closed'
+        : `Suite containment receipt did not match host outcome: host=${hostExitCode ?? hostSignal}, receipt=${expectedHostExitCode}`;
+    return {
+      ...receipt,
+      verified,
+      retainedOriginalIdentitiesVerified: verified,
+      checkedAt: new Date().toISOString(),
+      ...(verified ? {} : { error: verificationError }),
+    };
+  } catch (error) {
+    return {
+      schemaVersion: 1,
+      verified: false,
+      retainedOriginalIdentitiesVerified: false,
+      containmentEstablished: false,
+      error: `Suite ownership containment receipt unavailable: ${error instanceof Error ? error.message : String(error)}`,
+      checkedAt: new Date().toISOString(),
+    };
+  }
+}
+
+function signalNumber(signal) {
+  const signals = {
+    SIGHUP: 1,
+    SIGABRT: 6,
+    SIGINT: 2,
+    SIGKILL: 9,
+    SIGSEGV: 11,
+    SIGTERM: 15,
+  };
+  return signals[signal];
 }
 
 function readJsonIfExists(filePath) {
@@ -886,6 +1067,17 @@ function terminateProcessTree(child, signal) {
       }
     }
   });
+}
+
+function terminateContainmentHost(child, signal) {
+  if (child.exitCode !== null || child.signalCode !== null) {
+    return false;
+  }
+  try {
+    return child.kill(signal);
+  } catch {
+    return false;
+  }
 }
 
 function verifyNoOwnedDescendants(pid) {
@@ -3631,6 +3823,8 @@ module.exports = {
     redactGeneratedWorkspacePlainText,
     runSuiteWrapperProcess,
     runDirectRegisteredSuite,
+    createLinePrefixer,
+    readContainmentReceipt,
     verifyFuncCoreToolsAtDependencyRoot,
     walkFiles,
     writeSuitePhaseResult,

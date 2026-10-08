@@ -1414,8 +1414,16 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
 
   override async addRequestTrigger(): Promise<void> {
     await this.proven.clickElement(
-      ['[data-testid="card-Add a trigger"]', '[data-automation-id="card-Add_a_trigger"]', '[aria-label="Add a trigger"]'],
-      'Add a trigger'
+      [
+        '[data-testid="card-Add a trigger"]',
+        '[data-testid="card-Add trigger"]',
+        '[data-automation-id="card-Add_a_trigger"]',
+        '[data-automation-id="card-Add_trigger"]',
+        '[aria-label="Add a trigger"]',
+        '[aria-label="Add trigger"]',
+      ],
+      'Add a trigger',
+      { requireTextMatch: false }
     );
     await this.proven.waitForDiscoveryPanel(60000, 'Request trigger discovery panel');
     await this.proven.search('Request');

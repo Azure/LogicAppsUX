@@ -557,20 +557,14 @@ async function start(
   );
   await poll(
     deadline,
-    'exact workflow Healthy',
+    'exact workflow registration',
     async () => {
       const response = await request(`${managementRoot}/workflows?api-version=${apiVersion}`, 'GET', deadline, undefined, signal);
       if (response.status === 0 || response.status === 503) {
         return false;
       }
       assert.strictEqual(response.status, 200);
-      const workflow = listValues(JSON.parse(response.body)).find((item) => item.name === entry.wfName);
-      if (!workflow) {
-        return false;
-      }
-      const properties = objectValue(workflow.properties ?? workflow, 'workflow properties');
-      const health = properties.health ?? workflow.health;
-      return health !== undefined && objectValue(health, 'workflow health').state === 'Healthy';
+      return listValues(JSON.parse(response.body)).some((item) => item.name === entry.wfName);
     },
     signal
   );

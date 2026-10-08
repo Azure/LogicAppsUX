@@ -164,13 +164,13 @@ evidence and cleanup/closure failures produce a current failed result and nonzer
 exit. Batch execution keeps its existing `reports/*` finalization.
 
 Retained-original process identities are a separate native acceptance gate.
-The current legacy post-exit ancestry observer cannot prove reparented Func or
-Azurite closure. It therefore reports `originalProcessClosureVerified: false`
-and `processClosureProof: "original-identities-unverified"`, even when GUI phases,
-ordinary exits and root cleanup succeed. Those results are diagnostic-only;
-parent CI rejects supplementary acceptance until a genuine observer supplies
-`retainedOriginalIdentitiesVerified === true`. No identity-proof flag is inferred
-from an empty current tree, exit zero, directory absence, or unit fixture data.
+The outer suite wrapper starts the child suspended inside a non-breakaway
+Windows Job Object, or under a Linux `PR_SET_CHILD_SUBREAPER` supervisor. The
+supervisor remains alive through root closure, so a detached/reparented process
+stays owned and makes containment fail. It reports
+`retainedOriginalIdentitiesVerified === true` only when the kernel ownership
+container is empty. No identity-proof flag is inferred from an empty current
+ancestry tree, exit zero, directory absence, or unit fixture data.
 
 Native acceptance requires the source-bound compiled producer artifact and
 actual Windows and Linux isolated consumer runs with their generated fixture,
@@ -296,13 +296,13 @@ Node-only controls assert these fields on the real emitted artifact; they do
 not import the parent CI checker or replace native phase/runtime validation.
 Original-process closure is a separate, stronger acceptance requirement.
 `originalProcessClosureVerified` is true and `processClosureProof` is
-`retained-original-identities` only when the actual process-observer result has
-`retainedOriginalIdentitiesVerified === true`. This branch's legacy post-exit
-ancestry observer does not establish that fact: even a successful diagnostic
-reports false and `original-identities-unverified`. Exit zero, empty post-exit
-ancestry, directory deletion, stale receipts and phase/callee model assertions
-cannot upgrade it. Retained-identity correction and native acceptance are
-parent/other-worker owned; source/unit completion is not native clean approval.
+`retained-original-identities` only when the wrapper is launched inside a
+platform ownership container: a Windows Job Object that disallows breakaway,
+or a Linux child-subreaper supervisor that adopts orphaned descendants. The
+container must be empty after the wrapper root closes. This remains valid when
+children reparent and does not depend on periodic ancestry snapshots. If the
+container cannot be established, queried, or emptied, the result remains false
+and `original-identities-unverified`.
 Missing/stale/incomplete/unordered phases, retained roots, diagnostics or cleanup
 failures produce `complete: false` and nonzero exit. Merely providing JSONL never
 suppresses those final family receipts. Other registered families can

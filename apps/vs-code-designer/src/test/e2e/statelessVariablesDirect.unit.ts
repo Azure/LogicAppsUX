@@ -174,8 +174,15 @@ interface Ledger {
   processCleanup: {
     verified: boolean;
     checkedAt: string;
-    alivePids: number[];
-    retainedOriginalIdentitiesVerified?: boolean;
+    retainedOriginalIdentitiesVerified: boolean;
+    mechanism?: 'windows-job-object' | 'linux-subreaper';
+    containmentEstablished?: boolean;
+    containmentEmpty?: boolean;
+    rootPid?: number;
+    rootExitCode?: number;
+    rootSignal?: string | null;
+    escapedDescendants?: number[];
+    activeContainedProcessCount?: number;
   };
 }
 interface Trace {
@@ -250,19 +257,37 @@ async function main(): Promise<void> {
     assert.ok(!fs.readFileSync(terminalPath, 'utf8').includes('oldSuccessfulReceipt'));
     assert.ok(!fs.readFileSync(ledgerPath, 'utf8').includes('oldSuccessfulReceipt'));
     assert.strictEqual(fs.readFileSync(staleJournal, 'utf8'), '{"phaseId":"wrong-old-family"}');
-    assert.strictEqual(ledger.processCleanup.verified, true, 'Actual bounded Node child must have an observed clean process tree');
-    assert.ok(ledger.processCleanup.checkedAt && Array.isArray(ledger.processCleanup.alivePids), 'No fabricated processCleanup proof');
-    assert.strictEqual(
-      ledger.processCleanup.retainedOriginalIdentitiesVerified,
-      undefined,
-      'This branch has only the legacy actual observer, not the other worker retained-identity correction'
-    );
-    assert.strictEqual(
-      terminal.originalProcessClosureVerified,
-      false,
-      'Exit zero, empty post-exit tree, removed directories, stale receipt and callee model hints cannot prove original closure'
-    );
-    assert.strictEqual(terminal.processClosureProof, 'original-identities-unverified');
+    if (ledger.processCleanup.retainedOriginalIdentitiesVerified) {
+      assert.strictEqual(
+        ledger.processCleanup.verified,
+        true,
+        'Kernel ownership containment must be verified empty before cleanup succeeds'
+      );
+      assert.ok(
+        /^(windows-job-object|linux-subreaper)$/.test(ledger.processCleanup.mechanism ?? '') &&
+          ledger.processCleanup.containmentEstablished === true &&
+          ledger.processCleanup.containmentEmpty === true &&
+          Number.isInteger(ledger.processCleanup.rootPid) &&
+          Number.isInteger(ledger.processCleanup.rootExitCode) &&
+          ledger.processCleanup.rootSignal === null &&
+          ledger.processCleanup.escapedDescendants?.length === 0 &&
+          (!Number.isInteger(ledger.processCleanup.activeContainedProcessCount) ||
+            ledger.processCleanup.activeContainedProcessCount === 0) &&
+          ledger.processCleanup.checkedAt,
+        'No fabricated ownership-containment proof'
+      );
+      assert.strictEqual(
+        terminal.originalProcessClosureVerified,
+        true,
+        'The terminal must project only the verified empty ownership container'
+      );
+      assert.strictEqual(terminal.processClosureProof, 'retained-original-identities');
+    } else {
+      assert.strictEqual(diagnosticSucceeded, false, 'A successful lifecycle must retain and verify its original wrapper identity');
+      assert.strictEqual(ledger.processCleanup.verified, false, 'Uncaptured or unverifiable identities must fail process cleanup');
+      assert.strictEqual(terminal.originalProcessClosureVerified, false);
+      assert.strictEqual(terminal.processClosureProof, 'original-identities-unverified');
+    }
     if (diagnosticSucceeded) {
       // Assert the user-supplied supplementary terminal contract on the real
       // shared-writer artifact, not a separately constructed receipt/checker.
@@ -361,7 +386,7 @@ async function main(): Promise<void> {
   assert.strictEqual(missingTerminal.complete, false);
   assert.ok(missingTerminal.diagnosticsError.includes('Missing prepared extensions seed'));
   console.log(
-    `[statelessVariablesDirect.unit] ${modes.length + 2} actual Node-only chains passed; original identities unverified, diagnostic only, no native credit`
+    `[statelessVariablesDirect.unit] ${modes.length + 2} actual Node-only chains passed; kernel ownership-containment controls verified, no native credit`
   );
 }
 

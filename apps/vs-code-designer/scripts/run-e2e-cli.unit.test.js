@@ -41,7 +41,9 @@ const {
     getWorkspaceSourcesFromManifestPath,
     redactGeneratedWorkspaceJsonValue,
     redactGeneratedWorkspacePlainText,
+    readContainmentReceipt,
     runSuiteWrapperProcess,
+    createLinePrefixer,
     sanitizeInheritedGitCommandConfigEnv,
     verifyFuncCoreToolsAtDependencyRoot,
     writeSuitePhaseResult,
@@ -106,6 +108,9 @@ const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
     await testRunSuiteWrapperProcessWritesStructuredResults();
     await testRunSuiteWrapperProcessTimeoutCancelsDisposableChild();
     await testRunSuiteWrapperProcessTimeoutCancelsGrandchildListener();
+    await testRunSuiteWrapperProcessTimeoutCancelsSignalResistantDescendant();
+    await testContainedWrapperRejectsEscapedDescendant();
+    testContainmentReceiptMustMatchHostOutcome();
     testDirectSuitePhaseResultRetainsOgfAcrossMatrixPhases();
     testDirectSuitePhaseResultClearsOgfOnLaterFailure();
     testDirectSuitePhaseResultDoesNotEmitOgfForCleanupFailure();
@@ -114,6 +119,7 @@ const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
     testMsnBatchLifecycleEvidence();
     testMsnSummaryRejectsIncompleteTerminal();
     testMochaHookReportingUsesOrdinalFailureIdentity();
+    testSuitePrefixedMochaSummaryParsing();
     testMsnFailedWrapperAccounting();
     testMsnNativeFailureAccounting();
     testOgfGateControls();
@@ -1196,7 +1202,11 @@ async function testRunSuiteWrapperProcessWritesStructuredResults() {
   const cleanup = JSON.parse(fs.readFileSync(context.cleanupLedgerPath, 'utf8'));
   assert.strictEqual(terminal.complete, true);
   assert.strictEqual(terminal.cleanupVerified, true);
+  assert.strictEqual(terminal.originalProcessClosureVerified, true);
+  assert.strictEqual(terminal.processClosureProof, 'retained-original-identities');
   assert.strictEqual(cleanup.verified, true);
+  assert.strictEqual(cleanup.processCleanup.retainedOriginalIdentitiesVerified, true);
+  assert.match(cleanup.processCleanup.mechanism, /^(windows-job-object|linux-subreaper)$/);
 }
 
 async function testRunSuiteWrapperProcessTimeoutCancelsDisposableChild() {
@@ -1252,6 +1262,85 @@ async function testRunSuiteWrapperProcessTimeoutCancelsGrandchildListener() {
   for (const record of records.filter((entry) => entry.port)) {
     assert.strictEqual(await listenerAvailable(record.port), false, `fixture listener should be closed: ${JSON.stringify(record)}`);
   }
+}
+
+async function testRunSuiteWrapperProcessTimeoutCancelsSignalResistantDescendant() {
+  const batchRoot = path.join(tempRoot, 'wrapper-process-signal-resistant-timeout');
+  fs.mkdirSync(batchRoot, { recursive: true });
+  const context = createSuiteContext({ batchRoot, suite: SUITE_REGISTRY.unitTests, index: 0, total: 1 });
+  const processRecordsPath = path.join(context.reportsRoot, 'signal-resistant-processes.jsonl');
+  const result = await runSuiteWrapperProcess({
+    suite: SUITE_REGISTRY.unitTests,
+    context,
+    env: {
+      ...process.env,
+      LA_E2E_CLI_PROCESS_RECORDS_PATH: processRecordsPath,
+    },
+    timeoutMs: 1500,
+    scriptPath: createWrapperFixtureScript('signal-resistant-descendant'),
+  });
+
+  assert.ok(result.error instanceof Error);
+  assert.match(result.error.message, /suite timed out/);
+  const records = readJsonLines(processRecordsPath);
+  assert.ok(
+    records.some((record) => record.role === 'grandchild'),
+    'fixture should record the signal-resistant grandchild'
+  );
+  await delay(500);
+  for (const record of records.filter((entry) => entry.pid)) {
+    assert.strictEqual(isAlive(record.pid), false, `signal-resistant fixture should be terminated: ${JSON.stringify(record)}`);
+  }
+}
+
+async function testContainedWrapperRejectsEscapedDescendant() {
+  const batchRoot = path.join(tempRoot, 'wrapper-process-escaped-descendant');
+  fs.mkdirSync(batchRoot, { recursive: true });
+  const context = createSuiteContext({ batchRoot, suite: SUITE_REGISTRY.unitTests, index: 0, total: 1 });
+  const processRecordsPath = path.join(context.reportsRoot, 'escaped-processes.jsonl');
+  const result = await runSuiteWrapperProcess({
+    suite: SUITE_REGISTRY.unitTests,
+    context,
+    env: {
+      ...process.env,
+      LA_E2E_CLI_PROCESS_RECORDS_PATH: processRecordsPath,
+    },
+    timeoutMs: 15_000,
+    scriptPath: createWrapperFixtureScript('escaped-descendant'),
+  });
+  assert.notStrictEqual(result.exitCode, 0);
+  assert.ok(result.error instanceof Error);
+  assert.match(result.error.message, /ownership containment was not empty/i);
+  assert.strictEqual(result.processCleanup.verified, false);
+  assert.strictEqual(result.processCleanup.retainedOriginalIdentitiesVerified, false);
+  assert.strictEqual(result.processCleanup.containmentEmpty, false);
+  const records = readJsonLines(processRecordsPath);
+  const escaped = records.find((record) => record.role === 'grandchild');
+  assert.ok(escaped?.pid, 'fixture must record the detached descendant');
+  await delay(250);
+  assert.strictEqual(isAlive(escaped.pid), false, 'containment host must terminate the rejected escaped descendant');
+}
+
+function testContainmentReceiptMustMatchHostOutcome() {
+  const receiptPath = path.join(tempRoot, 'forged-containment-receipt.json');
+  fs.writeFileSync(
+    receiptPath,
+    JSON.stringify({
+      schemaVersion: 1,
+      mechanism: process.platform === 'win32' ? 'windows-job-object' : 'linux-subreaper',
+      containmentEstablished: true,
+      rootPid: 1234,
+      rootExitCode: 0,
+      rootSignal: null,
+      containmentEmpty: true,
+      retainedOriginalIdentitiesVerified: true,
+      escapedDescendants: [],
+      activeContainedProcessCount: 0,
+    })
+  );
+  const cleanup = readContainmentReceipt(receiptPath, 126, null);
+  assert.strictEqual(cleanup.verified, false);
+  assert.match(cleanup.error, /did not match host outcome/);
 }
 
 function testDirectSuitePhaseResultRetainsOgfAcrossMatrixPhases() {
@@ -1738,6 +1827,7 @@ function testMochaHookReportingUsesOrdinalFailureIdentity() {
     assert.deepStrictEqual(bodyResult.executedTestCounts, { total: 1, passing: 0, failing: 1, pending: 0 });
     assert.strictEqual(bodyResult.harnessFailures, undefined, 'Hook words in suite/body prose do not make a Mocha hook');
   }
+
   const nestedNumbering = parseMochaLog(
     'unitTests',
     'failure',
@@ -1747,6 +1837,52 @@ function testMochaHookReportingUsesOrdinalFailureIdentity() {
   assert.deepStrictEqual(nestedNumbering.failedTests, ['Ordinary suite: Actual body', 'Owned suite: "after all" hook for "Actual body"']);
   assert.strictEqual(nestedNumbering.harnessFailures.length, 1);
   assert.strictEqual(nestedNumbering.harnessFailures[0].kind, 'mocha-hook');
+}
+
+function testSuitePrefixedMochaSummaryParsing() {
+  const productionLog = [];
+  const foreignPrefixer = createLinePrefixer('[otherSuite] ', (text) => productionLog.push(text));
+  foreignPrefixer.push('    ✔ Must not be counted\n  9 pass');
+  foreignPrefixer.push('ing (9s)\n');
+  foreignPrefixer.flush();
+  const currentPrefixer = createLinePrefixer('[statelessVariablesLifecycle] ', (text) => productionLog.push(text));
+  currentPrefixer.push('    ✔ verifies callback, history, restart, and recovery (25ms)\n  1 pass');
+  currentPrefixer.push('ing (2m)\n');
+  currentPrefixer.flush();
+  assert.ok(
+    productionLog
+      .join('')
+      .split(/\r?\n/)
+      .filter(Boolean)
+      .every((line) => /^\[(?:otherSuite|statelessVariablesLifecycle)\] /.test(line)),
+    'Every complete line from a production-shaped multi-line chunk must retain its suite owner'
+  );
+  const accepted = parseMochaLog('statelessVariablesLifecycle', 'success', productionLog.join(''));
+  assert.strictEqual(accepted.passing, 1);
+  assert.strictEqual(accepted.total, 1);
+  assert.deepStrictEqual(accepted.passedTests, ['verifies callback, history, restart, and recovery']);
+  assert.strictEqual(accepted.duration, '2m');
+
+  const rejected = parseMochaLog(
+    'statelessVariablesLifecycle',
+    'success',
+    '[statelessVariablesLifecycleOther]     ✔ Wrong suite\n[statelessVariablesLifecycleOther]   1 passing (1s)\n'
+  );
+  assert.strictEqual(rejected.passing, 0);
+  assert.strictEqual(rejected.total, 0);
+  assert.deepStrictEqual(rejected.passedTests, []);
+
+  const unprefixed = parseMochaLog('statelessVariablesLifecycle', 'success', '    ✔ Single suite compatibility\n  1 passing (1s)\n');
+  assert.strictEqual(unprefixed.passing, 1);
+  assert.deepStrictEqual(unprefixed.passedTests, ['Single suite compatibility']);
+
+  const unprefixedWithDiagnostics = parseMochaLog(
+    'statelessVariablesLifecycle',
+    'success',
+    '    ✔ Single suite with diagnostics\n  1 passing (1s)\n[runtime-deps] Error: cleanup diagnostic\n'
+  );
+  assert.strictEqual(unprefixedWithDiagnostics.passing, 1);
+  assert.deepStrictEqual(unprefixedWithDiagnostics.passedTests, ['Single suite with diagnostics']);
 }
 
 function testMsnFailedWrapperAccounting() {
@@ -2168,7 +2304,22 @@ function createWrapperFixtureScript(mode) {
       "  if (role === 'parent') { spawn(process.execPath, [__filename, '--grandchild'], { stdio: 'ignore', env: process.env }); }",
       '  setInterval(() => undefined, 1000);',
       '}',
-      'else { appendPhase(0); process.exit(0); }',
+      "else if (mode === 'signal-resistant-descendant') {",
+      "  process.on('SIGTERM', () => undefined);",
+      '  record({ pid: process.pid, role });',
+      "  if (role === 'parent') { spawn(process.execPath, [__filename, '--grandchild'], { stdio: 'ignore', env: process.env }); }",
+      '  setInterval(() => undefined, 1000);',
+      '}',
+      "else if (mode === 'escaped-descendant') {",
+      '  record({ pid: process.pid, role });',
+      "  if (role === 'grandchild') { setInterval(() => undefined, 1000); }",
+      '  else {',
+      "    const escaped = spawn(process.execPath, [__filename, '--grandchild'], { detached: true, stdio: 'ignore', env: process.env });",
+      '    escaped.unref();',
+      '    setTimeout(() => { appendPhase(0); process.exit(0); }, 250);',
+      '  }',
+      '}',
+      'else { setTimeout(() => { appendPhase(0); process.exit(0); }, 1500); }',
     ].join('\n')
   );
   return scriptPath;

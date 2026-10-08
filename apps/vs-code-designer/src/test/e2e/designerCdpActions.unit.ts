@@ -26,6 +26,7 @@ async function main(): Promise<void> {
   testParameterAndSaveParity();
   await testReplacementKeySequence();
   await testProvenAdapterCancellation();
+  testProvenAdapterCompatibility();
   testWorkspaceLifecycleWrapperParity();
   console.log('[designerCdpActions.unit] all tests passed');
 }
@@ -48,6 +49,25 @@ async function testProvenAdapterCancellation(): Promise<void> {
   );
   await assert.rejects(() => actions.waitForDesignerReady(), /scenario cancelled/);
   assert.strictEqual(evaluateCalls, 0, 'Cancelled scenarios must not issue delegated MSN CDP requests');
+}
+
+function testProvenAdapterCompatibility(): void {
+  const addRequestTrigger = getMethod('ProvenDesignerCdpActions', 'addRequestTrigger');
+  for (const selector of [
+    '[data-testid="card-Add a trigger"]',
+    '[data-testid="card-Add trigger"]',
+    '[data-automation-id="card-Add_a_trigger"]',
+    '[data-automation-id="card-Add_trigger"]',
+    '[aria-label="Add a trigger"]',
+    '[aria-label="Add trigger"]',
+  ]) {
+    assert.ok(addRequestTrigger.includes(selector), `Proven adapter must support ${selector}`);
+  }
+  assert.match(
+    addRequestTrigger,
+    /\{\s*requireTextMatch:\s*false\s*\}/,
+    'Exact V2 Add-trigger selectors must not be rejected by the historical article-sensitive text filter'
+  );
 }
 
 function testActionProfileResolution(): void {

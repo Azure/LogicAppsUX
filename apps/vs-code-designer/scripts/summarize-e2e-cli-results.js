@@ -126,12 +126,13 @@ function writeAggregateResult({ resultsDir, outDir, githubSummary, expectedSuite
 }
 
 function parseMochaLog(label, outcome, logText) {
-  const passing = lastNumberMatch(logText, /^[ \t]*(\d+) passing\b/gm);
-  const failing = lastNumberMatch(logText, /^[ \t]*(\d+) failing\b/gm);
-  const pending = lastNumberMatch(logText, /^[ \t]*(\d+) pending\b/gm);
-  const duration = lastTextMatch(logText, /^[ \t]*\d+ passing \(([^)]+)\)/gm);
-  const passedTests = passing > 0 ? collectMatches(logText, /^[ \t]+(?:√|✔)\s+(.+?)(?:\s+\(\d+ms\))?[ \t]*$/gm).slice(-passing) : [];
-  const failures = parseMochaFailures(logText, failing);
+  const mochaLogText = selectSuiteMochaLog(label, logText);
+  const passing = lastNumberMatch(mochaLogText, /^[ \t]*(\d+) passing\b/gm);
+  const failing = lastNumberMatch(mochaLogText, /^[ \t]*(\d+) failing\b/gm);
+  const pending = lastNumberMatch(mochaLogText, /^[ \t]*(\d+) pending\b/gm);
+  const duration = lastTextMatch(mochaLogText, /^[ \t]*\d+ passing \(([^)]+)\)/gm);
+  const passedTests = passing > 0 ? collectMatches(mochaLogText, /^[ \t]+(?:√|✔)\s+(.+?)(?:\s+\(\d+ms\))?[ \t]*$/gm).slice(-passing) : [];
+  const failures = parseMochaFailures(mochaLogText, failing);
   const failedTests = failures.map((failure) => failure.name);
   const hookFailures = failures.filter((failure) => failure.hook);
   const failureExcerpt = buildFailureExcerpt(logText);
@@ -165,6 +166,29 @@ function parseMochaLog(label, outcome, logText) {
     failureExcerpt,
     generatedAt: new Date().toISOString(),
   };
+}
+
+function selectSuiteMochaLog(label, logText) {
+  const expectedPrefix = `[${label}]`;
+  const lines = String(logText ?? '').split(/\r?\n/);
+  const hasSuitePrefixes = lines.some((line) => {
+    if (line.startsWith(expectedPrefix) && (line.length === expectedPrefix.length || /\s/.test(line[expectedPrefix.length]))) {
+      return true;
+    }
+    const prefixedContent = line.match(/^\[[^\]\r\n]+\](?:\s+(.*)|$)/)?.[1] ?? '';
+    return /^[ \t]*(?:(?:√|✔)\s+|\d+\s+(?:passing|failing|pending)\b|\d+\)\s+)/.test(prefixedContent);
+  });
+  if (!hasSuitePrefixes) {
+    return lines.join('\n');
+  }
+  return lines
+    .map((line) => {
+      if (line.startsWith(expectedPrefix) && (line.length === expectedPrefix.length || /\s/.test(line[expectedPrefix.length]))) {
+        return line.slice(expectedPrefix.length).replace(/^ /, '');
+      }
+      return '';
+    })
+    .join('\n');
 }
 
 function parseMochaFailures(logText, failing) {
@@ -671,6 +695,7 @@ module.exports = {
     normalizeResult,
     parseCsvOption,
     parseMochaLog,
+    selectSuiteMochaLog,
     writeSingleResult,
   },
 };
