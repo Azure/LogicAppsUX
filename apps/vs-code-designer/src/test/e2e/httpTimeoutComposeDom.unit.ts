@@ -398,7 +398,7 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
         ts.isCallExpression(node) &&
         [
           'closeActiveDesignerTab',
-          'openExplorerFileByDoubleClick',
+          'openExactExplorerFileInNativeEditor',
           'replaceActiveNativeEditorText',
           'saveAndCloseActiveNativeEditor',
           'openDesignerFromExactExplorerFile',
@@ -416,7 +416,7 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       [
         'closeActiveDesignerTab',
         'openDesignerFromExactExplorerFile',
-        'openExplorerFileByDoubleClick',
+        'openExactExplorerFileInNativeEditor',
         'replaceActiveNativeEditorText',
         'saveAndCloseActiveNativeEditor',
       ],
@@ -450,22 +450,51 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       path.join(repository, 'apps/vs-code-designer/src/test/e2e/workbenchEditorActions.ts'),
       'utf8'
     );
+    const nativeEditorSyntax = ts.createSourceFile('workbenchEditorActions.ts', nativeEditorActions, ts.ScriptTarget.Latest, true);
+    const nativeOpenFunction = nativeEditorSyntax.statements.find(
+      (statement: any) => ts.isFunctionDeclaration(statement) && statement.name?.text === 'openExactExplorerFileInNativeEditor'
+    ) as any;
+    assert.ok(nativeOpenFunction?.body, 'Exact native editor open helper must remain a function declaration');
+    const nativeOpenBody = nativeOpenFunction.body.getText(nativeEditorSyntax);
+    const nativeOpenClicks: any[] = [];
+    const visitNativeOpen = (node: any) => {
+      if (ts.isCallExpression(node) && node.expression.getText(nativeEditorSyntax) === 'clickPoint') {
+        nativeOpenClicks.push(node);
+      }
+      ts.forEachChild(node, visitNativeOpen);
+    };
+    visitNativeOpen(nativeOpenFunction.body);
+    assert.strictEqual(nativeOpenClicks.length, 1, 'Exact native editor opening must use one shared hit-tested Explorer click');
+    assert.strictEqual(nativeOpenClicks[0].arguments[1].getText(nativeEditorSyntax), 'position');
+    assert.match(nativeOpenClicks[0].arguments[0].getText(nativeEditorSyntax), /^boundedCdp\(connection, clickDeadline\)$/);
+    assert.ok(
+      !nativeOpenBody.includes('Input.dispatchMouseEvent') &&
+        !nativeOpenBody.includes('clickCount: 2') &&
+        !nativeOpenBody.includes('for (const clickCount of [1, 2])'),
+      'Exact native editor opening must not regress to a raw synthetic double-click sequence'
+    );
     for (const requiredContract of [
+      "executeCommand('workbench.view.explorer')",
       'revealInExplorer',
       'explorer-viewlet .monaco-list-row',
-      'Input.dispatchMouseEvent',
-      'for (const clickCount of [1, 2])',
-      "pressKey(cdp, 'KeyA', 'a', 65, 2)",
+      'opening the exact selected workflow.json in the native editor',
+      'boundedCdp(connection, selectionDeadline)',
+      "pressKey(inputCdp, 'KeyA', 'a', 65, 2)",
       'Input.insertText',
-      "pressKey(cdp, 'KeyS', 's', 83, 2)",
-      "pressKey(cdp, 'KeyW', 'w', 87, 2)",
+      "pressKey(boundedCdp(connection, saveDeadline), 'KeyS', 's', 83, 2)",
+      "pressKey(boundedCdp(connection, closeDeadline), 'KeyW', 'w', 87, 2)",
       'TabInputText',
       "button: 'right'",
-      "clickText(cdp, '.monaco-menu .action-label', 'Open Designer'",
+      "'.monaco-menu .action-label'",
+      "'Open Designer'",
       'beforePoll?.()',
     ]) {
       assert.ok(nativeEditorActions.includes(requiredContract), `Native editor helper lost required contract: ${requiredContract}`);
     }
+    assert.ok(
+      family.includes("'http-timeout-compose-native-editor-open'"),
+      'The family must capture evidence after opening the exact native workflow.json editor'
+    );
     assert.ok(
       nativeEditorActions.includes('isExactPath(editor.document.uri.fsPath, filePath)'),
       'Native editor helper must bind the active editor to the exact physical workflow.json path'

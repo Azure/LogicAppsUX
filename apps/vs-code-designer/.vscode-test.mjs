@@ -35,6 +35,8 @@ const includeHttpTimeoutComposeOriginal =
   process.env.LA_E2E_CLI_INCLUDE_HTTP_TIMEOUT_COMPOSE_ORIGINAL === '1' || process.argv.includes('httpTimeoutComposeOriginal');
 const includeStatelessVariables =
   process.env.LA_E2E_CLI_INCLUDE_STATELESS_VARIABLES === '1' || process.argv.includes('statelessVariablesLifecycle');
+const includeNativeEditorClick = process.env.LA_E2E_CLI_INCLUDE_NATIVE_EDITOR_CLICK === '1' || process.argv.includes('nativeEditorClick');
+const nativeEditorClickWorkspace = path.join(__dirname, 'scripts', 'fixtures', 'native-editor-click');
 const vscodeVersion = process.env.LA_E2E_CLI_VSCODE_VERSION || 'stable';
 const dependencyRoot =
   process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT ??
@@ -126,6 +128,19 @@ if (includeStatelessVariables) {
     mocha: {
       ui: 'tdd',
       timeout: 1500000,
+    },
+  });
+}
+
+if (includeNativeEditorClick) {
+  configs.push({
+    label: 'nativeEditorClick',
+    ...baseConfig,
+    workspaceFolder: nativeEditorClickWorkspace,
+    files: ['out/test/e2e/nativeEditorClick.test.js'],
+    mocha: {
+      ui: 'tdd',
+      timeout: 120000,
     },
   });
 }

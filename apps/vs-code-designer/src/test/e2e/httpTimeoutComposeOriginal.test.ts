@@ -26,7 +26,7 @@ import { closeAllTabs, getWebviewTabs } from './webviewTabs';
 import {
   closeActiveDesignerTab,
   openDesignerFromExactExplorerFile,
-  openExplorerFileByDoubleClick,
+  openExactExplorerFileInNativeEditor,
   replaceActiveNativeEditorText,
   saveAndCloseActiveNativeEditor,
 } from './workbenchEditorActions';
@@ -194,18 +194,25 @@ suite('HTTP timeout Compose original authoring clause', () => {
           activate: false,
           timeoutMs: Math.min(15000, httpTimeoutComposeRemaining(deadline)),
         });
-        const workbenchActions = boundedCdp(workbench, deadline);
         await closeActiveDesignerTab(httpTimeoutComposeDesignerViewType, deadline);
-        const nativeCodeBefore = JSON.parse(await openExplorerFileByDoubleClick(workbenchActions, workflowPath, deadline));
+        const nativeCodeBefore = JSON.parse(await openExactExplorerFileInNativeEditor(workbench, workflowPath, deadline));
         assertHttpTimeoutComposeAuthored(nativeCodeBefore);
         assert.deepStrictEqual(
           nativeCodeBefore.definition,
           authored.definition,
-          'Double-clicked workflow.json must show the independently saved authored definition'
+          'Native workflow.json editor must show the independently saved authored definition'
+        );
+        await captureEvidenceScreenshot(
+          'http-timeout-compose-native-editor-open',
+          { kind: 'workbenchShell', label: 'httpTimeoutComposeOriginalNativeEditor' },
+          {
+            deadlineMs: deadline,
+            binding: { activeTabText: ['workflow.json'] },
+          }
         );
         const expected = replaceHttpTimeoutComposeAction(nativeCodeBefore);
-        await replaceActiveNativeEditorText(workbenchActions, workflowPath, JSON.stringify(expected, null, 2), deadline);
-        await saveAndCloseActiveNativeEditor(workbenchActions, workflowPath, expected, deadline);
+        await replaceActiveNativeEditorText(workbench, workflowPath, JSON.stringify(expected, null, 2), deadline);
+        await saveAndCloseActiveNativeEditor(workbench, workflowPath, expected, deadline);
         const persisted = await pollHttpTimeoutCompose(
           async () => readSaved(),
           (value) => isDeepStrictEqual(value.definition.actions.Compose, expected.definition.actions.Compose),
@@ -214,13 +221,14 @@ suite('HTTP timeout Compose original authoring clause', () => {
         );
         assertHttpTimeoutComposePersisted(persisted, expected);
         const reopenedTab = await openDesignerFromExactExplorerFile(
-          workbenchActions,
+          workbench,
           workflowPath,
           entry.wfName,
           httpTimeoutComposeDesignerViewType,
           deadline,
           handleConnectorPrompt
         );
+        const workbenchActions = boundedCdp(workbench, deadline);
         const reopened = await activeWebview(workbenchActions, reopenedTab.label, ['Workflow', 'Code', 'Save'], deadline);
         reopenedCdp = reopened.cdp;
         const assertReopenedActive = (): void => {

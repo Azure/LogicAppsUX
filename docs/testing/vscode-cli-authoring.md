@@ -88,6 +88,14 @@ that the affirmative journey has already passed on both operating systems.
 Choose the required designer version explicitly. A V2 flow must target
 `designerLocalV2`, not the V1 `designerLocal` tab or a different designer window.
 
+For native workflow JSON editing, reveal and verify the exact physical Explorer
+file, then issue one shared hit-tested `clickPoint` on that selected row and
+bind the resulting `TextEditor` plus `TabInputText` to the same URI. Explorer's
+single-click behavior opens the native preview editor. Do not invent a raw
+double-click sequence or fall back to the Designer's embedded Code view.
+Run `pnpm --dir apps/vs-code-designer run test:e2e-cli:native-editor-click`
+for a credential-free real VS Code host proof of this transition.
+
 Generic Designer authoring must use
 `apps/vs-code-designer/src/test/e2e/designerCdpActions.ts`. The shared
 `DesignerCdpActions` layer owns hit-tested Add-trigger variants, action
