@@ -644,17 +644,42 @@ async function assertSemanticTargetOwnedByVisibleWorkbenchFrame(
   semanticCdp: CdpClient,
   deadline: number
 ): Promise<void> {
-  const ownerObjectId = await resolveSemanticFrameOwnerObjectId(ownerCdp, semanticCdp, deadline);
-  if (ownerObjectId) {
-    await assertResolvedOwnerFrameVisible(ownerCdp, ownerObjectId, deadline);
-    return;
-  }
-
-  if (await hasExactVisibleWorkbenchIframeForSemanticTarget(ownerCdp, semanticCdp.targetUrl, deadline)) {
-    return;
+  while (Date.now() < deadline) {
+    let ownerObjectId: string | undefined;
+    try {
+      ownerObjectId = await resolveSemanticFrameOwnerObjectId(ownerCdp, semanticCdp, deadline);
+      if (ownerObjectId && (await isResolvedOwnerFrameVisible(ownerCdp, ownerObjectId, deadline))) {
+        return;
+      }
+    } catch (error) {
+      if (!isTransientOwnerFrameError(error)) {
+        throw error;
+      }
+    }
+    if (Date.now() >= deadline) {
+      break;
+    }
+    if (await hasExactVisibleWorkbenchIframeForSemanticTarget(ownerCdp, semanticCdp.targetUrl, deadline)) {
+      return;
+    }
+    if (Date.now() >= deadline) {
+      break;
+    }
+    await delay(Math.min(100, Math.max(deadline - Date.now(), 0)));
   }
 
   throw new Error('Screenshot binding failed: semantic frame is not owned by the workbench frame tree');
+}
+
+function isTransientOwnerFrameError(error: unknown): boolean {
+  return (
+    error instanceof Error &&
+    (error.message === 'Inspected target navigated or closed' ||
+      error.message === 'Cannot find context with specified id' ||
+      /^Execution context was destroyed(?:[.,].*)?$/.test(error.message) ||
+      /(?:Could not find|Cannot find|No) (?:DOM )?(?:node|object) with (?:given )?id/i.test(error.message) ||
+      /Node with given id does not belong to the document/i.test(error.message))
+  );
 }
 
 async function installOwnerBindingInvalidationLatch(
@@ -782,7 +807,7 @@ function isTransientCdpTimeout(error: unknown): boolean {
   return error instanceof Error && /Timed out waiting for CDP .* response after \d+ms/.test(error.message);
 }
 
-async function assertResolvedOwnerFrameVisible(ownerCdp: CdpClient, objectId: string, deadline: number): Promise<void> {
+async function isResolvedOwnerFrameVisible(ownerCdp: CdpClient, objectId: string, deadline: number): Promise<boolean> {
   const visibility = (await ownerCdp.send(
     'Runtime.callFunctionOn',
     {
@@ -849,9 +874,7 @@ async function assertResolvedOwnerFrameVisible(ownerCdp: CdpClient, objectId: st
     },
     { timeoutMs: remaining(deadline, 2000) }
   )) as { result?: { result?: { value?: { visible?: boolean } } } };
-  if (visibility.result?.result?.value?.visible !== true) {
-    throw new Error('Screenshot binding failed: semantic frame owner is not visible');
-  }
+  return visibility.result?.result?.value?.visible === true;
 }
 
 function ownerFrameInvalidationFunction(action: 'install' | 'read' | 'dispose'): string {

@@ -43,6 +43,8 @@ async function main(): Promise<void> {
   await testSemanticOwnerOpenerFrameAccepted(captureCdpScreenshot);
   await testSemanticOwnerExactVisibleIframeAccepted(captureCdpScreenshot);
   await testSemanticOwnerExactHiddenIframeRejects(captureCdpScreenshot);
+  await testSemanticOwnerTransientNotificationOcclusionWaits(captureCdpScreenshot);
+  await testSemanticOwnerStaleObjectRetries(captureCdpScreenshot);
   await testSemanticOwnerNotificationOcclusionRejects(captureCdpScreenshot);
   await testSemanticOwnerExactIframeNotificationOcclusionRejects(captureCdpScreenshot);
   await testSerializedOwnerVisibilityOcclusionPredicates(captureCdpScreenshot);
@@ -925,6 +927,60 @@ async function testSemanticOwnerNotificationOcclusionRejects(
   );
 }
 
+async function testSemanticOwnerTransientNotificationOcclusionWaits(
+  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot
+): Promise<void> {
+  const ownerCdp = new FakeCaptureCdp([snapshot({ revision: 0 }), snapshot({ revision: 0 })], {
+    ownerFrameIds: ['semantic-frame'],
+    ownerFrameVisibilityResponses: [false, false, true],
+  });
+  const semanticCdp = new FakeCaptureCdp([snapshot({ revision: 0 })], {
+    targetUrl: 'vscode-webview://logic-apps-transient-toast',
+    contexts: [{ id: 7, text: 'Compose Inputs test', visible: true }],
+  });
+
+  await captureCdpScreenshot(ownerCdp, 'owner-transient-notification-occlusion', {
+    expectation: {
+      kind: 'designerCanvas',
+      label: 'owner-transient-notification-occlusion',
+      requiredNodes: ['Compose'],
+    },
+    semanticCdp,
+    semanticContextId: 7,
+    timeoutMs: 1000,
+  });
+
+  assert.ok(ownerCdp.ownerFrameVisibilityReadIndex >= 3);
+  assert.strictEqual(ownerCdp.captureAttempts, 1);
+}
+
+async function testSemanticOwnerStaleObjectRetries(
+  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot
+): Promise<void> {
+  const ownerCdp = new FakeCaptureCdp([snapshot({ revision: 0 }), snapshot({ revision: 0 })], {
+    ownerFrameIds: ['semantic-frame'],
+    ownerFrameVisibilityResponses: [new Error('Could not find object with given id'), true],
+  });
+  const semanticCdp = new FakeCaptureCdp([snapshot({ revision: 0 })], {
+    targetUrl: 'vscode-webview://logic-apps-replaced-frame',
+    contexts: [{ id: 7, text: 'Compose Inputs test', visible: true }],
+  });
+
+  await captureCdpScreenshot(ownerCdp, 'owner-stale-object-retry', {
+    expectation: {
+      kind: 'designerCanvas',
+      label: 'owner-stale-object-retry',
+      requiredNodes: ['Compose'],
+    },
+    semanticCdp,
+    semanticContextId: 7,
+    timeoutMs: 1000,
+  });
+
+  assert.ok(ownerCdp.resolveNodeAttempts >= 2);
+  assert.strictEqual(ownerCdp.captureAttempts, 1);
+}
+
 async function testSemanticOwnerExactIframeNotificationOcclusionRejects(
   captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot
 ): Promise<void> {
@@ -1093,6 +1149,7 @@ class FakeCaptureCdp {
   private readinessIndex = 0;
   private ownerFrameRevisionReadIndex = 0;
   private exactIframeRevisionReadIndex = 0;
+  ownerFrameVisibilityReadIndex = 0;
 
   constructor(
     private readonly readinessSnapshots: ScreenshotReadinessSnapshot[],
@@ -1127,6 +1184,7 @@ class FakeCaptureCdp {
       targetTitle?: string;
       failFrameTree?: boolean;
       ownerFrameOccludedByNotification?: boolean;
+      ownerFrameVisibilityResponses?: Array<boolean | Error>;
       ownerVisibilityScenario?: OwnerVisibilityScenario;
       exactIframeVisibilityScenario?: OwnerVisibilityScenario;
       resolveNodeTimeoutFailures?: number;
@@ -1194,12 +1252,21 @@ class FakeCaptureCdp {
           result: { result: { value: evaluateSerializedOwnerFrameVisibility(functionDeclaration, this.options.ownerVisibilityScenario) } },
         };
       }
+      const ownerFrameVisibilityResponse = this.options.ownerFrameVisibilityResponses
+        ? this.options.ownerFrameVisibilityResponses[
+            Math.min(this.ownerFrameVisibilityReadIndex++, this.options.ownerFrameVisibilityResponses.length - 1)
+          ]
+        : undefined;
+      if (ownerFrameVisibilityResponse instanceof Error) {
+        throw ownerFrameVisibilityResponse;
+      }
       return {
         result: {
           result: {
             value: {
-              visible:
-                this.options.ownerFrameOccludedByNotification && functionDeclaration.includes('notification-toast')
+              visible: this.options.ownerFrameVisibilityResponses
+                ? ownerFrameVisibilityResponse
+                : this.options.ownerFrameOccludedByNotification && functionDeclaration.includes('notification-toast')
                   ? false
                   : (this.options.ownerFrameVisible ?? true),
             },
