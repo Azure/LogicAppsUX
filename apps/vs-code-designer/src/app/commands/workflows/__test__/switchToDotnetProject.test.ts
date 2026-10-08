@@ -16,7 +16,7 @@ vi.mock('../../../../constants', () => ({
   connectionsFileName: 'connections.json',
   parametersFileName: 'parameters.json',
   funcIgnoreFileName: '.funcignore',
-  funcVersionSetting: 'azureFunctions.projectRuntime',
+  funcVersionSetting: 'projectRuntime',
   hostFileName: 'host.json',
   localSettingsFileName: 'local.settings.json',
   workflowFileName: 'workflow.json',

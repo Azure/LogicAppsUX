@@ -241,14 +241,6 @@ export const extensionContext = {
 } as const;
 export type extensionContext = (typeof extensionContext)[keyof typeof extensionContext];
 
-export const functionsCommand = {
-  azureFunctionsOpenFile: 'azureFunctions.openFile',
-  azureFunctionsUninstallFuncCoreTools: 'azureFunctions.uninstallFuncCoreTools',
-  azureFunctionsAppSettingsEncrypt: 'azureFunctions.appSettings.encrypt',
-  azureFunctionsAppSettingsDecrypt: 'azureFunctions.appSettings.decrypt',
-} as const;
-export type functionsCommand = (typeof functionsCommand)[keyof typeof functionsCommand];
-
 export const azuriteCommand = {
   start: 'azurite.start',
 } as const;

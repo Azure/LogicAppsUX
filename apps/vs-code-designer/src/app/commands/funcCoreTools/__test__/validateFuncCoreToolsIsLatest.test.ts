@@ -46,7 +46,6 @@ vi.mock('../../../utils/funcCoreTools/getFuncPackageManagers');
 vi.mock('../../../utils/funcCoreTools/getNpmDistTag');
 vi.mock('../../../utils/funcCoreTools/getBrewPackageName');
 vi.mock('../../../utils/requestUtils');
-vi.mock('../../../functionsExtension/executeOnFunctionsExt');
 
 const createContext = (): IActionContext =>
   ({

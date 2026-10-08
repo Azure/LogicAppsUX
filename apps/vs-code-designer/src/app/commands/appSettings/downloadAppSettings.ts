@@ -5,7 +5,6 @@
 import { localSettingsFileName, logicAppFilter, viewOutput } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { executeOnFunctions } from '../../functionsExtension/executeOnFunctionsExt';
 import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
 import { decryptLocalSettings } from './decryptLocalSettings';
 import { encryptLocalSettings } from './encryptLocalSettings';
@@ -49,7 +48,7 @@ async function downloadAppSettingsInternal(context: IActionContext, client: IApp
   const isEncrypted: boolean | undefined = localSettings.IsEncrypted;
 
   if (isEncrypted) {
-    await executeOnFunctions(decryptLocalSettings, context, localSettingsUri);
+    await decryptLocalSettings(localSettingsUri);
     localSettings = await AzExtFsExtra.readJSON<ILocalSettingsJson>(localSettingsPath);
   }
 
@@ -69,7 +68,7 @@ async function downloadAppSettingsInternal(context: IActionContext, client: IApp
     await AzExtFsExtra.writeJSON(localSettingsPath, localSettings, 2);
   } finally {
     if (isEncrypted) {
-      await executeOnFunctions(encryptLocalSettings, context, localSettingsUri);
+      await encryptLocalSettings(localSettingsUri);
     }
   }
 

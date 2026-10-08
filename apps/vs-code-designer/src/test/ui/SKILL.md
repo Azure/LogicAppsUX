@@ -309,7 +309,6 @@ And `run-e2e.ts` removes any stale auto-updated versions of our extension on sta
 dist/test-extensions/
 ├── extensions.json                              ← VS Code reads this
 ├── ms-azuretools.vscode-azurelogicapps-5.110.0/ ← OUR extension (copied from dist/)
-├── ms-azuretools.vscode-azurefunctions-1.20.3/  ← dependency
 ├── azurite.azurite-3.35.0/                      ← dependency
 ├── ms-azuretools.vscode-azureresourcegroups-.../ ← dependency
 ├── ms-dotnettools.csharp-.../                   ← dependency
@@ -549,11 +548,10 @@ Must call `webview.switchToFrame(timeout)` before any element interaction. Must 
 ## 8. Extension Dependencies
 
 These are installed from the marketplace into `test-extensions/`:
-1. `ms-azuretools.vscode-azurefunctions`
-2. `azurite.azurite`
-3. `ms-azuretools.vscode-azureresourcegroups`
-4. `ms-dotnettools.csharp`
-5. `ms-dotnettools.csdevkit`
+1. `azurite.azurite`
+2. `ms-azuretools.vscode-azureresourcegroups`
+3. `ms-dotnettools.csharp`
+4. `ms-dotnettools.csdevkit`
 
 ## 9. Timing Constants
 
