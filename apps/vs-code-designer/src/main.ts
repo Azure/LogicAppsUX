@@ -10,7 +10,6 @@ import { getExtensionVersion, initializeCustomExtensionContext, updateLogicAppsC
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
 import { shouldRequireStrictDependencyValidation } from './app/utils/strictDependencyValidation';
 import { ensureVSCodeFiles } from './app/projectConsistency/vscodeConsistency';
-import { tryGetLogicAppProjectRoot } from './app/utils/verifyIsProject';
 import {
   autoStartDesignTimeSetting,
   DependencyDefaultPath,
@@ -178,7 +177,7 @@ export async function activate(context: vscode.ExtensionContext) {
       } else {
         const projectPaths = await getWorkspaceLogicAppRoots();
         if (await promptShouldAutoStartDesignTime(projectPaths)) {
-          const startDesignTimePromises = projectPaths.map(async (projectPath) => 
+          const startDesignTimePromises = projectPaths.map(async (projectPath) =>
             callWithTelemetryAndErrorHandling('activate.startDesignTimeApi', async (innerActionContext: IActionContext) => {
               innerActionContext.telemetry.properties.isActivationEvent = 'true';
               await startDesignTimeApi(innerActionContext, projectPath);
