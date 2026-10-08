@@ -35,6 +35,13 @@ const { mockGetCodeViewRequestOptionsValidationErrors } = vi.hoisted(() => {
   return { mockGetCodeViewRequestOptionsValidationErrors: vi.fn((): string[] => []) };
 });
 
+const { mockCodeValue, mockHasCodeChanges } = vi.hoisted(() => {
+  return {
+    mockCodeValue: { value: JSON.stringify({ definition: { actions: { Compose: { type: 'Compose' } } } }) as string | undefined },
+    mockHasCodeChanges: { value: true },
+  };
+});
+
 vi.mock('../../../webviewCommunication', async () => {
   const React = await import('react');
   return {
@@ -57,8 +64,17 @@ vi.mock('../DesignerCommandBar/indexV2', () => ({
       <button type="button" onClick={props.switchToCodeView}>
         Code
       </button>
+      <button type="button" onClick={props.switchToDesignerView}>
+        Workflow
+      </button>
       <button type="button" onClick={() => props.saveWorkflowFromCode()}>
         Save code
+      </button>
+      <button
+        type="button"
+        onClick={() => props.saveWorkflow({ definition: { actions: {} }, parameters: {}, connectionReferences: {} }, undefined)}
+      >
+        Save workflow
       </button>
       <button type="button" onClick={props.discard}>
         Discard
@@ -70,9 +86,11 @@ vi.mock('../DesignerCommandBar/indexV2', () => ({
 vi.mock('../CodeViewEditor', () => ({
   default: React.forwardRef((_props, ref) => {
     React.useImperativeHandle(ref, () => ({
-      getValue: () => JSON.stringify({ definition: { actions: { Compose: { type: 'Compose' } } } }),
-      hasChanges: () => true,
-      resetChanges: vi.fn(),
+      getValue: () => mockCodeValue.value,
+      hasChanges: () => mockHasCodeChanges.value,
+      resetChanges: () => {
+        mockHasCodeChanges.value = false;
+      },
     }));
     return <div data-testid="code-view-editor" />;
   }),
@@ -176,6 +194,8 @@ describe('vs-code-react appV2 DesignerApp (Standard designer/monitoring host)', 
   beforeEach(() => {
     vi.clearAllMocks();
     mockVscodeState.value = undefined;
+    mockCodeValue.value = JSON.stringify({ definition: { actions: { Compose: { type: 'Compose' } } } });
+    mockHasCodeChanges.value = true;
     mockGetCodeViewRequestOptionsValidationErrors.mockReturnValue([]);
   });
 
@@ -264,6 +284,7 @@ describe('vs-code-react appV2 DesignerApp (Standard designer/monitoring host)', 
     expect(screen.getByRole('alert')).toHaveTextContent(expectedError);
 
     mockGetCodeViewRequestOptionsValidationErrors.mockReturnValue([]);
+    mockHasCodeChanges.value = true;
     fireEvent.click(screen.getByRole('button', { name: 'Code' }));
     fireEvent.click(screen.getByRole('button', { name: 'Save code' }));
     expect(screen.queryByRole('alert')).toBeNull();
@@ -302,6 +323,75 @@ describe('vs-code-react appV2 DesignerApp (Standard designer/monitoring host)', 
         <DesignerApp />
       </Provider>
     );
+    expect(screen.queryByRole('alert')).toBeNull();
+  });
+
+  it('recomputes code-view validation when switching views after dirty state was reset', async () => {
+    const expectedError =
+      "The request options timeout parameter is not supported for action 'Compose' of type 'Compose'. Actions of type 'HTTP' are supported.";
+    mockHasCodeChanges.value = false;
+    mockGetCodeViewRequestOptionsValidationErrors.mockImplementation((definition: any) =>
+      definition?.actions?.Compose ? [expectedError] : []
+    );
+    const store = createTestStore({
+      definition: { $schema: 'schema', triggers: { manual: {} }, actions: {} },
+      kind: 'stateful',
+    });
+
+    render(
+      <Provider store={store}>
+        <DesignerApp />
+      </Provider>
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Code' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Workflow' }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(expectedError);
+    expect(mockPostMessage).not.toHaveBeenCalledWith(expect.objectContaining({ command: 'save' }));
+  });
+
+  it('clears persisted validation errors after a valid workflow-view save', async () => {
+    const expectedError =
+      "The request options timeout parameter is not supported for action 'Compose' of type 'Compose'. Actions of type 'HTTP' are supported.";
+    mockVscodeState.value = { codeViewValidationErrors: [expectedError] };
+    mockGetCodeViewRequestOptionsValidationErrors.mockReturnValue([]);
+    const store = createTestStore({
+      definition: { $schema: 'schema', triggers: { manual: {} }, actions: {} },
+      kind: 'stateful',
+    });
+
+    render(
+      <Provider store={store}>
+        <DesignerApp />
+      </Provider>
+    );
+    expect(screen.getByRole('alert')).toHaveTextContent(expectedError);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Save workflow' }));
+
+    expect(screen.queryByRole('alert')).toBeNull();
+    expect(mockVscodeState.value).toEqual({ codeViewValidationErrors: [] });
+  });
+
+  it('uses the saved baseline when Code view has not initialized its editor value', () => {
+    mockCodeValue.value = undefined;
+    mockHasCodeChanges.value = false;
+    const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => undefined);
+    const store = createTestStore({
+      definition: { $schema: 'schema', triggers: { manual: {} }, actions: {} },
+      kind: 'stateful',
+    });
+
+    render(
+      <Provider store={store}>
+        <DesignerApp />
+      </Provider>
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Code' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Workflow' }));
+
+    expect(alertSpy).not.toHaveBeenCalled();
     expect(screen.queryByRole('alert')).toBeNull();
   });
 });

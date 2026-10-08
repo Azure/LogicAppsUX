@@ -233,6 +233,7 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
         whiteSpace: string;
         overflowWrap: string;
       }>;
+      renderedValidationErrors: string | null;
     }>(`(() => {
       ${visibleDom}
       const candidates = Array.from(document.querySelectorAll(
@@ -263,11 +264,13 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
           return style.display === 'none' || style.visibility === 'hidden' || fullyVisible(child);
         }))
         .flatMap(element => (element.innerText || '').split(/\\r?\\n/).map(normalize)).filter(Boolean);
-      return { visible: document.visibilityState === 'visible', messages, candidates };
+      const renderedValidationErrors =
+        document.querySelector('[data-code-view-validation-errors]')?.getAttribute('data-code-view-validation-errors') ?? null;
+      return { visible: document.visibilityState === 'visible', messages, candidates, renderedValidationErrors };
     })()`);
-    const { candidates, ...visibleState } = state;
+    const { candidates, renderedValidationErrors, ...visibleState } = state;
     const observation = { ...context, ...visibleState, activeDesigner: true }; // assertActive() precedes every read.
-    const signature = JSON.stringify({ ...observation, candidates });
+    const signature = JSON.stringify({ ...observation, candidates, renderedValidationErrors });
     if (signature !== this.errorObservationSignature) {
       console.log(`[http-timeout-compose][error-observation] ${signature}`);
       this.errorObservationSignature = signature;

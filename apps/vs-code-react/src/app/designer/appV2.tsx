@@ -81,6 +81,14 @@ export const DesignerApp = () => {
   const [codeViewValidationErrors, setCodeViewValidationErrors] = useState<string[]>(() =>
     readPersistedCodeViewValidationErrors(vscode.getState())
   );
+  const savedCodeViewValidationErrors = useMemo(
+    () => getCodeViewRequestOptionsValidationErrors(initialWorkflow?.definition),
+    [initialWorkflow?.definition]
+  );
+  const displayedCodeViewValidationErrors = useMemo(
+    () => Array.from(new Set([...codeViewValidationErrors, ...savedCodeViewValidationErrors])),
+    [codeViewValidationErrors, savedCodeViewValidationErrors]
+  );
 
   const codeEditorRef = useRef<{ getValue: () => string | undefined; hasChanges: () => boolean; resetChanges: () => void }>(null);
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
@@ -205,6 +213,7 @@ export const DesignerApp = () => {
   const saveWorkflowFromDesigner = useCallback(
     async (workflowToSave: Workflow, customCodeData: Record<string, string> | undefined, _clearDirtyState?: () => void) => {
       const { definition, parameters, connectionReferences } = workflowToSave;
+      persistCodeViewValidationErrors(getCodeViewRequestOptionsValidationErrors(definition));
       vscode.postMessage({
         command: ExtensionCommand.save,
         definition,
@@ -228,18 +237,24 @@ export const DesignerApp = () => {
         customCodeData,
       };
     },
-    [vscode, workflow]
+    [persistCodeViewValidationErrors, vscode, workflow]
   );
 
   const validateAndSaveCodeView = useCallback(
     async (clearDirtyState?: () => void) => {
       try {
-        if (!codeEditorRef.current?.hasChanges()) {
+        const hasChanges = codeEditorRef.current?.hasChanges() ?? false;
+        const code = codeEditorRef.current?.getValue();
+        if (!hasChanges && !code) {
+          persistCodeViewValidationErrors(getCodeViewRequestOptionsValidationErrors(initialWorkflow?.definition));
           return workflow;
         }
-        const codeToConvert = JSON.parse(codeEditorRef.current?.getValue() ?? '');
+        const codeToConvert = JSON.parse(code ?? '');
         const { definition, parameters, connectionReferences } = codeToConvert;
         persistCodeViewValidationErrors(getCodeViewRequestOptionsValidationErrors(definition));
+        if (!hasChanges) {
+          return workflow;
+        }
         // code view editor cannot add/remove connections, parameters, settings, or customcode
         vscode.postMessage({
           command: ExtensionCommand.save,
@@ -264,7 +279,7 @@ export const DesignerApp = () => {
       }
       return undefined;
     },
-    [persistCodeViewValidationErrors, vscode, workflow]
+    [initialWorkflow?.definition, persistCodeViewValidationErrors, vscode, workflow]
   );
 
   /////////////////////////////////////////////////////////////////////////////
@@ -328,7 +343,7 @@ export const DesignerApp = () => {
   }
 
   return (
-    <div key={designerID} style={{ height: '100vh' }}>
+    <div key={designerID} data-code-view-validation-errors={JSON.stringify(displayedCodeViewValidationErrors)} style={{ height: '100vh' }}>
       <DesignerProvider
         id={workflowDefinitionId}
         key={designerID}
@@ -374,7 +389,7 @@ export const DesignerApp = () => {
               switchToMonitoringView={switchToMonitoringView}
               showRunHistory={!isCodefulWorkflow && isRuntimeAvailable}
             />
-            {codeViewValidationErrors.map((error) => (
+            {displayedCodeViewValidationErrors.map((error) => (
               <MessageBar key={error} intent="error" role="alert" style={{ boxSizing: 'border-box', maxWidth: '100%' }}>
                 <MessageBarBody style={{ minWidth: 0, overflowWrap: 'anywhere', whiteSpace: 'normal' }}>{error}</MessageBarBody>
               </MessageBar>
