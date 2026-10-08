@@ -28,6 +28,15 @@ import { useAppStyles } from './appStyles';
 import { DesignerViewType } from './constants';
 import CodeViewEditor from './CodeViewEditor';
 
+interface DesignerWebviewState {
+  codeViewValidationErrors?: string[];
+}
+
+const readPersistedCodeViewValidationErrors = (state: unknown): string[] => {
+  const errors = (state as DesignerWebviewState | undefined)?.codeViewValidationErrors;
+  return Array.isArray(errors) && errors.every((error) => typeof error === 'string') ? errors : [];
+};
+
 export const DesignerApp = () => {
   const vscode = useContext(VSCodeContext);
   const dispatch: AppDispatch = useDispatch();
@@ -69,7 +78,9 @@ export const DesignerApp = () => {
 
   const [designerID, setDesignerID] = useState(guid());
   const [workflowDefinitionId, setWorkflowDefinitionId] = useState<string>(guid());
-  const [codeViewValidationErrors, setCodeViewValidationErrors] = useState<string[]>([]);
+  const [codeViewValidationErrors, setCodeViewValidationErrors] = useState<string[]>(() =>
+    readPersistedCodeViewValidationErrors(vscode.getState())
+  );
 
   const codeEditorRef = useRef<{ getValue: () => string | undefined; hasChanges: () => boolean; resetChanges: () => void }>(null);
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
@@ -89,10 +100,21 @@ export const DesignerApp = () => {
     [vscode]
   );
 
+  const persistCodeViewValidationErrors = useCallback(
+    (errors: string[]) => {
+      setCodeViewValidationErrors(errors);
+      vscode.setState({
+        ...(vscode.getState() as DesignerWebviewState | undefined),
+        codeViewValidationErrors: errors,
+      });
+    },
+    [vscode]
+  );
+
   const discardAllChanges = useCallback(() => {
-    setCodeViewValidationErrors([]);
+    persistCodeViewValidationErrors([]);
     setDesignerID(guid());
-  }, []);
+  }, [persistCodeViewValidationErrors]);
 
   const services = useMemo(() => {
     const fileSystemConnectionCreate = async (
@@ -217,7 +239,7 @@ export const DesignerApp = () => {
         }
         const codeToConvert = JSON.parse(codeEditorRef.current?.getValue() ?? '');
         const { definition, parameters, connectionReferences } = codeToConvert;
-        setCodeViewValidationErrors(getCodeViewRequestOptionsValidationErrors(definition));
+        persistCodeViewValidationErrors(getCodeViewRequestOptionsValidationErrors(definition));
         // code view editor cannot add/remove connections, parameters, settings, or customcode
         vscode.postMessage({
           command: ExtensionCommand.save,
@@ -242,7 +264,7 @@ export const DesignerApp = () => {
       }
       return undefined;
     },
-    [vscode, workflow]
+    [persistCodeViewValidationErrors, vscode, workflow]
   );
 
   /////////////////////////////////////////////////////////////////////////////

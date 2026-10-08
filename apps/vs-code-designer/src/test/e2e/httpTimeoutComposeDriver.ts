@@ -46,6 +46,7 @@ const visibleDom = `
 
 export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
   private codeEditorObjectId?: string;
+  private errorObservationSignature?: string;
 
   override async replaceFocused(value: string): Promise<void> {
     await this.key('KeyA', 'a', 65, 2);
@@ -232,6 +233,12 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
         .flatMap(element => (element.innerText || '').split(/\\r?\\n/).map(normalize)).filter(Boolean);
       return { visible: document.visibilityState === 'visible', messages };
     })()`);
-    return { ...context, ...state, activeDesigner: true }; // assertActive() precedes every read.
+    const observation = { ...context, ...state, activeDesigner: true }; // assertActive() precedes every read.
+    const signature = JSON.stringify(observation);
+    if (signature !== this.errorObservationSignature) {
+      console.log(`[http-timeout-compose][error-observation] ${signature}`);
+      this.errorObservationSignature = signature;
+    }
+    return observation;
   }
 }

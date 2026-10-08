@@ -14,8 +14,17 @@ import { configureStore, createSlice } from '@reduxjs/toolkit';
 // piece of host wiring that Standard-detection (`isStandard = !!workflowKind`) depends on -- and
 // that the surrounding shell (command bar) still renders alongside the designer.
 
-const { mockPostMessage } = vi.hoisted(() => {
-  return { mockPostMessage: vi.fn() };
+const { mockGetState, mockPostMessage, mockSetState, mockVscodeState } = vi.hoisted(() => {
+  const mockVscodeState: { value: unknown } = { value: undefined };
+  return {
+    mockGetState: vi.fn(() => mockVscodeState.value),
+    mockPostMessage: vi.fn(),
+    mockSetState: vi.fn((state: unknown) => {
+      mockVscodeState.value = state;
+      return state;
+    }),
+    mockVscodeState,
+  };
 });
 
 const { mockBJSWorkflowProvider } = vi.hoisted(() => {
@@ -29,7 +38,7 @@ const { mockGetCodeViewRequestOptionsValidationErrors } = vi.hoisted(() => {
 vi.mock('../../../webviewCommunication', async () => {
   const React = await import('react');
   return {
-    VSCodeContext: React.createContext({ postMessage: mockPostMessage }),
+    VSCodeContext: React.createContext({ getState: mockGetState, postMessage: mockPostMessage, setState: mockSetState }),
   };
 });
 
@@ -50,6 +59,9 @@ vi.mock('../DesignerCommandBar/indexV2', () => ({
       </button>
       <button type="button" onClick={() => props.saveWorkflowFromCode()}>
         Save code
+      </button>
+      <button type="button" onClick={props.discard}>
+        Discard
       </button>
     </div>
   ),
@@ -154,9 +166,6 @@ const createTestStore = (standardApp: Record<string, unknown>) => {
           updateStandardApp: (state, action) => {
             state.panelMetaData = { ...state.panelMetaData, standardApp: action.payload };
           },
-          updateWorkflowName: (state, action) => {
-            state.panelMetaData = { ...state.panelMetaData, workflowName: action.payload };
-          },
         },
       }).reducer,
     },
@@ -166,6 +175,8 @@ const createTestStore = (standardApp: Record<string, unknown>) => {
 describe('vs-code-react appV2 DesignerApp (Standard designer/monitoring host)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockVscodeState.value = undefined;
+    mockGetCodeViewRequestOptionsValidationErrors.mockReturnValue([]);
   });
 
   it('threads the Standard workflow kind through to BJSWorkflowProvider so isStandard detection works', () => {
@@ -210,7 +221,7 @@ describe('vs-code-react appV2 DesignerApp (Standard designer/monitoring host)', 
       kind: 'stateful',
     });
 
-    render(
+    let rendered = render(
       <Provider store={store}>
         <DesignerApp />
       </Provider>
@@ -244,9 +255,53 @@ describe('vs-code-react appV2 DesignerApp (Standard designer/monitoring host)', 
     });
     expect(screen.getByRole('alert')).toHaveTextContent(expectedError);
 
-    act(() => {
-      store.dispatch({ type: 'designer/updateWorkflowName', payload: 'another-workflow' });
-    });
+    rendered.unmount();
+    rendered = render(
+      <Provider store={store}>
+        <DesignerApp />
+      </Provider>
+    );
     expect(screen.getByRole('alert')).toHaveTextContent(expectedError);
+
+    mockGetCodeViewRequestOptionsValidationErrors.mockReturnValue([]);
+    fireEvent.click(screen.getByRole('button', { name: 'Code' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Save code' }));
+    expect(screen.queryByRole('alert')).toBeNull();
+
+    rendered.unmount();
+    render(
+      <Provider store={store}>
+        <DesignerApp />
+      </Provider>
+    );
+    expect(screen.queryByRole('alert')).toBeNull();
+  });
+
+  it('clears persisted code-view validation errors when changes are discarded', () => {
+    const expectedError =
+      "The request options timeout parameter is not supported for action 'Compose' of type 'Compose'. Actions of type 'HTTP' are supported.";
+    mockVscodeState.value = { codeViewValidationErrors: [expectedError] };
+    const store = createTestStore({
+      definition: { $schema: 'schema', triggers: { manual: {} }, actions: {} },
+      kind: 'stateful',
+    });
+
+    const { unmount } = render(
+      <Provider store={store}>
+        <DesignerApp />
+      </Provider>
+    );
+    expect(screen.getByRole('alert')).toHaveTextContent(expectedError);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Discard' }));
+    expect(screen.queryByRole('alert')).toBeNull();
+
+    unmount();
+    render(
+      <Provider store={store}>
+        <DesignerApp />
+      </Provider>
+    );
+    expect(screen.queryByRole('alert')).toBeNull();
   });
 });
