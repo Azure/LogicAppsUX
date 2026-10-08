@@ -468,7 +468,11 @@ function testNativeWiring(): void {
     assert.ok(native.includes('coordinateStatelessStartup('), 'Prompt monitoring must remain active through workflow registration');
     assert.ok(native.includes('selectExactWorkbenchPromptOption('), 'Azurite/debug prompts must use the same owned workbench connection');
     assert.ok(native.includes("prompt.kind === 'notification'"), 'Debug prompt allowlisting must not auto-select dialogs or quick picks');
-    assert.ok(native.includes('readApprovedExistingResourceGroup(azureFixture, positiveDeadline)'));
+    assert.ok(
+      native.includes('azureFixture = await readApprovedExistingResourceGroup(azureFixture, deadline, undefined, fetch, signal)') &&
+        native.includes('azureFixture = await readApprovedExistingResourceGroup(azureFixture, positiveDeadline, undefined, fetch, signal)'),
+      'Preparation and run hosts must bind the actual existing resource-group location with cancellation'
+    );
     assert.ok(native.includes('assertAzureConnectorAccountTreePrerequisite('));
     assert.ok(!native.includes('approvedAzureFixturePrompts'), 'Do not regress to GUID matching through the generic prompt loop');
     assert.ok(
@@ -478,6 +482,11 @@ function testNativeWiring(): void {
     assert.ok(!native.includes('Skip for now'), 'Stateless setup cannot silently choose a negative Azure connector fallback');
     assert.ok(native.includes('readApprovedAzureConnectorFixture(process.env)'));
     assert.ok(native.includes('const preparationLease = installApprovedAzureFixture(entry.appDir, azureFixture)'));
+    assert.ok(
+      native.indexOf('readApprovedExistingResourceGroup(azureFixture, deadline, undefined, fetch, signal)') <
+        native.indexOf('const preparationLease = installApprovedAzureFixture(entry.appDir, azureFixture)'),
+      'Preparation must verify the actual resource-group location before binding settings'
+    );
     assert.ok(native.includes('preparationLease.bindGeneratedDesignTime()'));
     assert.ok(native.includes('await waitForActivationDesignTime(positiveDeadline, signal)'));
     assert.ok(native.includes('showLogicAppsStandardOutput('));

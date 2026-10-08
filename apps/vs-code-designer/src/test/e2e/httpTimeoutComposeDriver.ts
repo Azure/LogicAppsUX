@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 import type { CdpConnection } from './cdpClient';
-import { DesignerCdpActions, ProvenDesignerCdpActions } from './designerCdpActions';
+import { ProvenDesignerCdpActions } from './designerCdpActions';
 import {
   assembleHttpTimeoutComposeCode,
   type HttpTimeoutComposeContext,
@@ -53,7 +53,21 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
   }
 
   override async save(): Promise<void> {
-    await DesignerCdpActions.prototype.save.call(this);
+    await this.click('[role="toolbar"] button, button[aria-label="Save"]', ['Save']);
+    await pollHttpTimeoutCompose(
+      () =>
+        this.evaluate<boolean>(`(() => {
+          ${visibleDom}
+          const buttons = Array.from(document.querySelectorAll('[role="toolbar"] button, button[aria-label*="Sav"]')).filter(visible);
+          return buttons.some((button) => {
+            const text = normalize(button.textContent || button.getAttribute('aria-label')).toLowerCase();
+            return text === 'save' && (button.disabled || button.getAttribute('aria-disabled') === 'true');
+          });
+        })()`),
+      Boolean,
+      this.deadline,
+      'V2 designer save completion'
+    );
   }
 
   async readCode(): Promise<string> {

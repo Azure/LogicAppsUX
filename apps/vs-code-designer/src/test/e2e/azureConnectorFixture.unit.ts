@@ -106,6 +106,62 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
         })) as unknown as typeof fetch),
       /another existing resource group/
     );
+    const parent = new AbortController();
+    let requestAborted = false;
+    const pending = readApprovedExistingResourceGroup(
+      target,
+      Date.now() + 1000,
+      'unit-owned-token',
+      ((_url: unknown, options: { signal: AbortSignal }) =>
+        new Promise((_resolve, reject) => {
+          const abort = () => {
+            requestAborted = true;
+            reject(options.signal.reason);
+          };
+          options.signal.addEventListener('abort', abort, { once: true });
+          if (options.signal.aborted) {
+            abort();
+          }
+        })) as typeof fetch,
+      parent.signal
+    );
+    parent.abort(new Error('resource-group lookup cancelled'));
+    await assert.rejects(pending, /resource-group lookup cancelled/);
+    assert.strictEqual(requestAborted, true);
+
+    const bodyParent = new AbortController();
+    let bodyAborted = false;
+    let markBodyStarted!: () => void;
+    const bodyStarted = new Promise<void>((resolve) => {
+      markBodyStarted = resolve;
+    });
+    const bodyPending = readApprovedExistingResourceGroup(
+      target,
+      Date.now() + 1000,
+      'unit-owned-token',
+      ((_url: unknown, options: { signal: AbortSignal }) =>
+        Promise.resolve({
+          ok: true,
+          status: 200,
+          json: () =>
+            new Promise((_resolve, reject) => {
+              markBodyStarted();
+              const abort = () => {
+                bodyAborted = true;
+                reject(options.signal.reason);
+              };
+              options.signal.addEventListener('abort', abort, { once: true });
+              if (options.signal.aborted) {
+                abort();
+              }
+            }),
+        })) as typeof fetch,
+      bodyParent.signal
+    );
+    await bodyStarted;
+    bodyParent.abort(new Error('resource-group response body cancelled'));
+    await assert.rejects(bodyPending, /resource-group response body cancelled/);
+    assert.strictEqual(bodyAborted, true);
   });
   await control('approved subscription identity lookup is exact read-only ARM GET and has no ambient auth fallback', async () => {
     const fixture = { ...readApprovedAzureConnectorFixture(env), location: 'eastus', resourceGroupLocationVerified: true };

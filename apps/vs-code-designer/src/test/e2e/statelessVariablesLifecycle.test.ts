@@ -96,6 +96,7 @@ suite('Stateless variables lifecycle', () => {
       const deadline = Date.now() + 300_000;
       const signal = new AbortController().signal;
       await prepareDesignTimeBaseline(entry, deadline, signal);
+      azureFixture = await readApprovedExistingResourceGroup(azureFixture, deadline, undefined, fetch, signal);
       const preparationLease = installApprovedAzureFixture(entry.appDir, azureFixture);
       preparationLease.bindGeneratedDesignTime();
       preparationLease.assertBound();
@@ -126,7 +127,6 @@ suite('Stateless variables lifecycle', () => {
     const azureResources = vscode.extensions.getExtension('ms-azuretools.vscode-azureresourcegroups');
     assert.ok(azureResources?.isActive, 'Normal Logic Apps activation must initialize the real Azure Resources dependency');
     assertAzureConnectorAccountTreePrerequisite(await azureResources.exports.getApi('^0.0.1'), process.env.LA_E2E_CLI_MINIMAL_ACTIVATION);
-    azureFixture = await readApprovedExistingResourceGroup(azureFixture, positiveDeadline);
     const positiveScope = new StatelessOperationScope();
     let ownedDebug: StatelessOwnedDebug | undefined;
     const getOwnedDebug = () => (ownedDebug ??= createOwnedDebug(entry));
@@ -139,6 +139,7 @@ suite('Stateless variables lifecycle', () => {
     try {
       await positiveScope.run(positiveDeadline, 'positive lifecycle', async (signal) => {
         assertPhaseActive(positiveDeadline, signal);
+        azureFixture = await readApprovedExistingResourceGroup(azureFixture, positiveDeadline, undefined, fetch, signal);
         assertApprovedAzureFixture(path.join(entry.appDir, 'local.settings.json'), azureFixture);
         assertApprovedAzureFixture(path.join(entry.appDir, 'workflow-designtime', 'local.settings.json'), azureFixture);
         await waitForActivationDesignTime(positiveDeadline, signal);

@@ -44,21 +44,41 @@ export async function readApprovedExistingResourceGroup(
   fixture: ApprovedAzureConnectorFixture,
   deadline: number,
   token = process.env.LA_E2E_CLI_AZURE_ACCESS_TOKEN,
-  get = fetch
+  get = fetch,
+  signal?: AbortSignal
 ): Promise<ApprovedAzureConnectorFixture> {
   assert.ok(token?.trim(), 'Approved ARM access token missing for existing resource-group verification');
+  signal?.throwIfAborted();
   assert.ok(Date.now() < deadline, 'Existing resource-group verification deadline expired');
   const endpoint = new URL(
     `${fixture.managementBaseUrl}/subscriptions/${encodeURIComponent(fixture.subscriptionId)}/resourceGroups/${encodeURIComponent(fixture.resourceGroupName)}`
   );
   endpoint.searchParams.set('api-version', '2022-09-01');
-  const response = await get(endpoint, {
-    method: 'GET',
-    headers: { Authorization: `Bearer ${token}` },
-    signal: AbortSignal.timeout(Math.min(5000, deadline - Date.now())),
-  });
-  assert.ok(response.ok, `Existing approved resource-group read failed: HTTP ${response.status}; WIF access/fixture remains blocked`);
-  const group = (await response.json()) as { id?: string; name?: string; location?: string };
+  const timeoutMs = Math.min(30_000, deadline - Date.now());
+  assert.ok(timeoutMs > 0, 'Existing resource-group verification deadline expired');
+  const request = new AbortController();
+  const cancelRequest = () => request.abort(signal?.reason);
+  signal?.addEventListener('abort', cancelRequest, { once: true });
+  if (signal?.aborted) {
+    cancelRequest();
+  }
+  const timeout = setTimeout(() => request.abort(new Error('Existing approved resource-group lookup timed out')), timeoutMs);
+  let response: Response;
+  let group: { id?: string; name?: string; location?: string };
+  try {
+    response = await get(endpoint, {
+      method: 'GET',
+      headers: { Authorization: `Bearer ${token}` },
+      signal: request.signal,
+    });
+    signal?.throwIfAborted();
+    assert.ok(response.ok, `Existing approved resource-group read failed: HTTP ${response.status}; WIF access/fixture remains blocked`);
+    group = (await response.json()) as { id?: string; name?: string; location?: string };
+    signal?.throwIfAborted();
+  } finally {
+    clearTimeout(timeout);
+    signal?.removeEventListener('abort', cancelRequest);
+  }
   assert.ok(Date.now() < deadline, 'Existing resource-group response arrived after the original deadline');
   const expectedId = `/subscriptions/${fixture.subscriptionId}/resourceGroups/${fixture.resourceGroupName}`;
   assert.strictEqual(group.id?.toLowerCase(), expectedId.toLowerCase(), 'ARM returned another existing resource group/subscription');

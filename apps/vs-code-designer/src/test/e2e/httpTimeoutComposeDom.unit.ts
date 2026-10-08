@@ -451,7 +451,7 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       await fixture.dispose();
     }
   });
-  await control('V2 real Fluent ToolbarButton Save works without aria-label and waits for enabled state', async () => {
+  await control('V2 real Fluent ToolbarButton Save works without aria-label and waits for the clean disabled state', async () => {
     const fixture = await editorDomFixture(JSON.stringify(authored, null, 2));
     try {
       let saves = 0;
@@ -463,6 +463,12 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       await new Promise((resolve) => fixture.window.setTimeout(resolve, 30));
       assert.strictEqual(saves, 0);
       await fixture.toolbar(false, () => {
+        saves++;
+      });
+      while (!saves) {
+        await new Promise((resolve) => fixture.window.setTimeout(resolve, 1));
+      }
+      await fixture.toolbar(true, () => {
         saves++;
       });
       await saving;
