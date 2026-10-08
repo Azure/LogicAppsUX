@@ -107,6 +107,10 @@ disk JSON semantically. Property order can differ after a targeted edit without
 changing the workflow, so do not use `JSON.stringify` equality. Once the
 semantically exact saved file is observed, close the native tab and continue
 immediately to **Open Designer**.
+After choosing **Open Designer**, prove the context menu actually closes before
+waiting for a webview. CDP pointer input can move the native menu highlight
+without activating the item on a remote host; when the exact menu item remains
+open, press Enter once to activate that highlighted item.
 
 Generic Designer authoring must use
 `apps/vs-code-designer/src/test/e2e/designerCdpActions.ts`. The shared

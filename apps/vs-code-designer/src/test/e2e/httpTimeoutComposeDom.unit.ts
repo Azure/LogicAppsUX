@@ -501,6 +501,9 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       "button: 'right'",
       "'.monaco-menu .action-label'",
       "'Open Designer'",
+      'Open Designer pointer click left the context menu open; pressing Enter',
+      "pressKey(openDesignerCdp, 'Enter', 'Enter', 13, 0)",
+      'observing the dismissed Open Designer context menu',
       'beforePoll?.()',
     ]) {
       assert.ok(nativeEditorActions.includes(requiredContract), `Native editor helper lost required contract: ${requiredContract}`);

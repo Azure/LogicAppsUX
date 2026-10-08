@@ -411,7 +411,34 @@ export async function openDesignerFromExactExplorerFile(
     });
   }
   const openDesignerDeadline = nativeStepDeadline(deadline, 20_000, 'selecting Open Designer for the exact workflow.json');
-  await clickText(boundedCdp(connection, openDesignerDeadline), '.monaco-menu .action-label', 'Open Designer', openDesignerDeadline);
+  const openDesignerCdp = boundedCdp(connection, openDesignerDeadline);
+  await clickText(openDesignerCdp, '.monaco-menu .action-label', 'Open Designer', openDesignerDeadline);
+  await new Promise((resolve) => setTimeout(resolve, 250));
+  const contextMenuStillOpen = await openDesignerCdp.evaluate<boolean>(
+    undefined,
+    `(() => { ${visibleWorkbenchElement}
+      return Array.from(document.querySelectorAll('.monaco-menu .action-label')).filter(visible)
+        .filter(element => text(element).toLowerCase() === 'open designer').length === 1;
+    })()`
+  );
+  if (contextMenuStillOpen) {
+    console.log('[http-timeout-compose][native-editor] Open Designer pointer click left the context menu open; pressing Enter');
+    await pressKey(openDesignerCdp, 'Enter', 'Enter', 13, 0);
+  }
+  const contextMenuClosedDeadline = nativeStepDeadline(deadline, 5_000, 'observing the dismissed Open Designer context menu');
+  await pollNativeStep(
+    () =>
+      boundedCdp(connection, contextMenuClosedDeadline).evaluate<boolean>(
+        undefined,
+        `(() => { ${visibleWorkbenchElement}
+          return Array.from(document.querySelectorAll('.monaco-menu .action-label')).filter(visible)
+            .every(element => text(element).toLowerCase() !== 'open designer');
+        })()`
+      ),
+    Boolean,
+    contextMenuClosedDeadline,
+    'activating Open Designer from the exact workflow.json context menu'
+  );
   const designerDeadline = nativeStepDeadline(deadline, 180_000, 'observing the fresh Designer tab');
   const tab = await pollNativeStep(
     async () => {
