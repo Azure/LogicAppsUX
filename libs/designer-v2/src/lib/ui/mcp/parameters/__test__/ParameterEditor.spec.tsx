@@ -9,7 +9,7 @@ import {
   createMcpHarness,
   createMcpState,
   createParameter,
-  expressionMapping,
+  mcpConnectionMappingCaseNames,
   reference,
 } from '../../../../core/state/mcp/__test__/fixtures';
 
@@ -156,24 +156,42 @@ describe('MCP parameter editor', () => {
     expect(onParameterValueChange).toHaveBeenCalledWith({ value: [{ id: 'edited', type: 'literal', value: 'manual value' }] });
   });
 
-  it.each(['concrete', 'expression', 'null', 'missing', 'dangling reference'] as const)(
-    'passes only concrete references to dynamic value and tree loaders (%s)',
-    (kind) => {
-      const state = createMcpState();
-      if (kind === 'missing') {
-        delete state.connection.connectionsMapping.Query;
-      } else {
-        state.connection.connectionsMapping.Query =
-          kind === 'expression' ? expressionMapping : kind === 'null' ? null : kind === 'concrete' ? 'Sql' : 'Unknown';
-      }
-      const parameter = createParameter({ editor: 'combobox', dynamicData: { status: DynamicLoadStatus.NOTSTARTED } });
-      const { rerender, store } = renderEditor(parameter, state);
-      fireEvent.click(screen.getByRole('button', { name: 'Open choices' }));
-      const expectedReference = kind === 'concrete' ? reference : undefined;
-      expect(parameterHelpers.loadDynamicValuesForParameter).toHaveBeenCalledExactlyOnceWith(
+  it.each(mcpConnectionMappingCaseNames)('passes only concrete references to dynamic value and tree loaders (%s)', (kind) => {
+    const state = createMcpState(kind);
+    const parameter = createParameter({ editor: 'combobox', dynamicData: { status: DynamicLoadStatus.NOTSTARTED } });
+    const { rerender, store } = renderEditor(parameter, state);
+    fireEvent.click(screen.getByRole('button', { name: 'Open choices' }));
+    const expectedReference = kind === 'concrete' ? reference : undefined;
+    expect(parameterHelpers.loadDynamicValuesForParameter).toHaveBeenCalledExactlyOnceWith(
+      'Query',
+      'default',
+      'body',
+      state.operations.operationInfo.Query,
+      expectedReference,
+      state.operations.inputParameters.Query,
+      state.operations.dependencies.Query,
+      true,
+      store.dispatch,
+      {},
+      {}
+    );
+    rerender(
+      <ParameterEditor
+        operationId="Query"
+        groupId="default"
+        parameter={{ ...parameter, editor: 'filepicker' }}
+        onParameterVisibilityUpdate={vi.fn()}
+        onParameterValueChange={vi.fn()}
+      />
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Browse root' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Open folder' }));
+    for (const selectedItem of [undefined, { id: 'folder' }]) {
+      expect(parameterHelpers.loadDynamicTreeItemsForParameter).toHaveBeenCalledWith(
         'Query',
         'default',
         'body',
+        selectedItem,
         state.operations.operationInfo.Query,
         expectedReference,
         state.operations.inputParameters.Query,
@@ -183,36 +201,9 @@ describe('MCP parameter editor', () => {
         {},
         {}
       );
-      rerender(
-        <ParameterEditor
-          operationId="Query"
-          groupId="default"
-          parameter={{ ...parameter, editor: 'filepicker' }}
-          onParameterVisibilityUpdate={vi.fn()}
-          onParameterValueChange={vi.fn()}
-        />
-      );
-      fireEvent.click(screen.getByRole('button', { name: 'Browse root' }));
-      fireEvent.click(screen.getByRole('button', { name: 'Open folder' }));
-      for (const selectedItem of [undefined, { id: 'folder' }]) {
-        expect(parameterHelpers.loadDynamicTreeItemsForParameter).toHaveBeenCalledWith(
-          'Query',
-          'default',
-          'body',
-          selectedItem,
-          state.operations.operationInfo.Query,
-          expectedReference,
-          state.operations.inputParameters.Query,
-          state.operations.dependencies.Query,
-          true,
-          store.dispatch,
-          {},
-          {}
-        );
-      }
-      expect(parameterHelpers.loadDynamicTreeItemsForParameter).toHaveBeenCalledTimes(2);
     }
-  );
+    expect(parameterHelpers.loadDynamicTreeItemsForParameter).toHaveBeenCalledTimes(2);
+  });
 
   it.each([DynamicLoadStatus.LOADING, DynamicLoadStatus.SUCCEEDED, undefined])(
     'does not reload dynamic values when status is %s',

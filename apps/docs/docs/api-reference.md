@@ -71,6 +71,19 @@ workflows, and triggers do not expose expression authoring. Imported expressions
 are preserved when their context does not support authoring. Designer V1 is
 unchanged and does not offer this editor.
 
+The connection panel places **Select existing**, **Create new**, and (when supported)
+**Use expression** tabs below the action name. Switching tabs preserves the
+expression draft until it is applied or the panel is closed. Saved expressions
+use token presentation in the connection editor. Action details show only
+**Connection selected at runtime**, with **Change connection** to view or edit
+the expression.
+The **Connections** panel groups runtime-selected actions under their connector,
+in a **Connection selected at runtime** block. Select an action to edit its
+expression, or use **Reassign** to move the block's actions to an existing or new
+connection together. Expression authoring remains per-action.
+The expression tab lists existing connection keys for the current connector as
+case-sensitive examples; this reference list does not select a connection.
+
 Expression editing is per action, not bulk connection reassignment. The token
 picker does not insert implicit loops. For per-item selection within an existing
 loop, enter an explicit expression such as `@items('For_each')?['connectionName']`.
