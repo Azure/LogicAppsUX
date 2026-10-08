@@ -27,8 +27,8 @@ const { mockGetState, mockPostMessage, mockSetState, mockVscodeState } = vi.hois
   };
 });
 
-const { mockBJSWorkflowProvider } = vi.hoisted(() => {
-  return { mockBJSWorkflowProvider: vi.fn() };
+const { mockBJSWorkflowProvider, mockCodeViewEditor } = vi.hoisted(() => {
+  return { mockBJSWorkflowProvider: vi.fn(), mockCodeViewEditor: vi.fn() };
 });
 
 const { mockGetCodeViewRequestOptionsValidationErrors } = vi.hoisted(() => {
@@ -84,7 +84,8 @@ vi.mock('../DesignerCommandBar/indexV2', () => ({
 }));
 
 vi.mock('../CodeViewEditor', () => ({
-  default: React.forwardRef((_props, ref) => {
+  default: React.forwardRef((props, ref) => {
+    mockCodeViewEditor(props);
     React.useImperativeHandle(ref, () => ({
       getValue: () => mockCodeValue.value,
       hasChanges: () => mockHasCodeChanges.value,
@@ -235,7 +236,19 @@ describe('vs-code-react appV2 DesignerApp (Standard designer/monitoring host)', 
   it('shows exact code-view validation errors while still posting the invalid workflow for persistence', async () => {
     const expectedError =
       "The request options timeout parameter is not supported for action 'Compose' of type 'Compose'. Actions of type 'HTTP' are supported.";
-    mockGetCodeViewRequestOptionsValidationErrors.mockReturnValue([expectedError]);
+    mockCodeValue.value = JSON.stringify({
+      definition: {
+        actions: {
+          Compose: {
+            type: 'Compose',
+            runtimeConfiguration: { requestOptions: { timeout: 'PT24H' } },
+          },
+        },
+      },
+    });
+    mockGetCodeViewRequestOptionsValidationErrors.mockImplementation((definition: any) =>
+      definition?.actions?.Compose?.runtimeConfiguration?.requestOptions?.timeout ? [expectedError] : []
+    );
     const store = createTestStore({
       definition: { $schema: 'schema', triggers: { manual: {} }, actions: {} },
       kind: 'stateful',
@@ -252,9 +265,17 @@ describe('vs-code-react appV2 DesignerApp (Standard designer/monitoring host)', 
     fireEvent.click(screen.getByRole('button', { name: 'Save code' }));
 
     expect(await screen.findByRole('alert')).toHaveTextContent(expectedError);
+    expect(mockCodeViewEditor.mock.lastCall?.[0].workflowFile.definition.actions).toEqual({});
     expect(mockPostMessage).toHaveBeenCalledWith({
       command: 'save',
-      definition: { actions: { Compose: { type: 'Compose' } } },
+      definition: {
+        actions: {
+          Compose: {
+            type: 'Compose',
+            runtimeConfiguration: { requestOptions: { timeout: 'PT24H' } },
+          },
+        },
+      },
       parameters: undefined,
       connectionReferences: undefined,
     });
@@ -283,7 +304,7 @@ describe('vs-code-react appV2 DesignerApp (Standard designer/monitoring host)', 
     );
     expect(screen.getByRole('alert')).toHaveTextContent(expectedError);
 
-    mockGetCodeViewRequestOptionsValidationErrors.mockReturnValue([]);
+    mockCodeValue.value = JSON.stringify({ definition: { actions: { Compose: { type: 'Compose' } } } });
     mockHasCodeChanges.value = true;
     fireEvent.click(screen.getByRole('button', { name: 'Code' }));
     fireEvent.click(screen.getByRole('button', { name: 'Save code' }));
@@ -348,6 +369,8 @@ describe('vs-code-react appV2 DesignerApp (Standard designer/monitoring host)', 
     fireEvent.click(screen.getByRole('button', { name: 'Workflow' }));
 
     expect(await screen.findByRole('alert')).toHaveTextContent(expectedError);
+    fireEvent.click(screen.getByRole('button', { name: 'Code' }));
+    expect(mockCodeViewEditor.mock.lastCall?.[0].workflowFile.definition.actions.Compose).toEqual({ type: 'Compose' });
     expect(mockPostMessage).not.toHaveBeenCalledWith(expect.objectContaining({ command: 'save' }));
   });
 
@@ -393,5 +416,38 @@ describe('vs-code-react appV2 DesignerApp (Standard designer/monitoring host)', 
 
     expect(alertSpy).not.toHaveBeenCalled();
     expect(screen.queryByRole('alert')).toBeNull();
+  });
+
+  it('clears an invalid saved baseline after valid Code content is saved without reinitializing the mounted editor', () => {
+    const expectedError =
+      "The request options timeout parameter is not supported for action 'Compose' of type 'Compose'. Actions of type 'HTTP' are supported.";
+    const invalidDefinition = {
+      actions: {
+        Compose: {
+          type: 'Compose',
+          runtimeConfiguration: { requestOptions: { timeout: 'PT24H' } },
+        },
+      },
+    };
+    mockVscodeState.value = { codeViewValidationErrors: [expectedError] };
+    mockCodeValue.value = JSON.stringify({ definition: { actions: { Compose: { type: 'Compose' } } } });
+    mockGetCodeViewRequestOptionsValidationErrors.mockImplementation((definition: any) =>
+      definition?.actions?.Compose?.runtimeConfiguration?.requestOptions?.timeout ? [expectedError] : []
+    );
+    const store = createTestStore({
+      definition: invalidDefinition,
+      kind: 'stateful',
+    });
+
+    render(
+      <Provider store={store}>
+        <DesignerApp />
+      </Provider>
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Code' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Save code' }));
+
+    expect(screen.queryByRole('alert')).toBeNull();
+    expect(mockCodeViewEditor.mock.lastCall?.[0].workflowFile.definition).toEqual(invalidDefinition);
   });
 });

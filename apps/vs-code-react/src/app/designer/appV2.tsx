@@ -81,14 +81,6 @@ export const DesignerApp = () => {
   const [codeViewValidationErrors, setCodeViewValidationErrors] = useState<string[]>(() =>
     readPersistedCodeViewValidationErrors(vscode.getState())
   );
-  const savedCodeViewValidationErrors = useMemo(
-    () => getCodeViewRequestOptionsValidationErrors(initialWorkflow?.definition),
-    [initialWorkflow?.definition]
-  );
-  const displayedCodeViewValidationErrors = useMemo(
-    () => Array.from(new Set([...codeViewValidationErrors, ...savedCodeViewValidationErrors])),
-    [codeViewValidationErrors, savedCodeViewValidationErrors]
-  );
 
   const codeEditorRef = useRef<{ getValue: () => string | undefined; hasChanges: () => boolean; resetChanges: () => void }>(null);
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
@@ -253,7 +245,10 @@ export const DesignerApp = () => {
         const { definition, parameters, connectionReferences } = codeToConvert;
         persistCodeViewValidationErrors(getCodeViewRequestOptionsValidationErrors(definition));
         if (!hasChanges) {
-          return workflow;
+          return {
+            ...workflow,
+            definition,
+          } as StandardApp;
         }
         // code view editor cannot add/remove connections, parameters, settings, or customcode
         vscode.postMessage({
@@ -267,7 +262,6 @@ export const DesignerApp = () => {
           definition,
         } as StandardApp;
         setWorkflow(newWorkflow);
-        setInitialWorkflow(newWorkflow);
 
         clearDirtyState?.();
         codeEditorRef.current?.resetChanges();
@@ -296,7 +290,12 @@ export const DesignerApp = () => {
       return;
     }
     if (isCodeView) {
-      validateAndSaveCodeView().then(() => setCurrentView(DesignerViewType.Workflow));
+      validateAndSaveCodeView().then((savedWorkflow) => {
+        setCurrentView(DesignerViewType.Workflow);
+        if (savedWorkflow) {
+          setInitialWorkflow(savedWorkflow);
+        }
+      });
     }
     if (isMonitoringView) {
       hideMonitoringView();
@@ -328,7 +327,12 @@ export const DesignerApp = () => {
     }
 
     if (isCodeView) {
-      validateAndSaveCodeView().then(() => setCurrentView(DesignerViewType.Monitoring));
+      validateAndSaveCodeView().then((savedWorkflow) => {
+        setCurrentView(DesignerViewType.Monitoring);
+        if (savedWorkflow) {
+          setInitialWorkflow(savedWorkflow);
+        }
+      });
     }
   }, [isMonitoringView, isDesignerView, isCodeView, validateAndSaveCodeView]);
 
@@ -343,7 +347,7 @@ export const DesignerApp = () => {
   }
 
   return (
-    <div key={designerID} data-code-view-validation-errors={JSON.stringify(displayedCodeViewValidationErrors)} style={{ height: '100vh' }}>
+    <div key={designerID} data-code-view-validation-errors={JSON.stringify(codeViewValidationErrors)} style={{ height: '100vh' }}>
       <DesignerProvider
         id={workflowDefinitionId}
         key={designerID}
@@ -389,7 +393,7 @@ export const DesignerApp = () => {
               switchToMonitoringView={switchToMonitoringView}
               showRunHistory={!isCodefulWorkflow && isRuntimeAvailable}
             />
-            {displayedCodeViewValidationErrors.map((error) => (
+            {codeViewValidationErrors.map((error) => (
               <MessageBar key={error} intent="error" role="alert" style={{ boxSizing: 'border-box', maxWidth: '100%' }}>
                 <MessageBarBody style={{ minWidth: 0, overflowWrap: 'anywhere', whiteSpace: 'normal' }}>{error}</MessageBarBody>
               </MessageBar>
