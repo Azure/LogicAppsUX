@@ -4,10 +4,9 @@ import { updateNodeConnection, useOperationInfo, useOperationPanelSelectedNodeId
 import { useConnectionsForConnector } from '../../../core/queries/connections';
 import { useConnectionRefs, useConnectorByNodeId, useNodeConnectionMapping } from '../../../core/state/connection/connectionSelector';
 import { useMonitoringView, useReadOnly } from '../../../core/state/designerOptions/designerOptionsSelectors';
-import { useConnectionPanelSelectedNodeIds, useIsCreatingConnection } from '../../../core/state/panel/panelSelectors';
+import { useConnectionPanelSelectedNodeIds } from '../../../core/state/panel/panelSelectors';
 import { setIsCreatingConnection } from '../../../core/state/panel/panelSlice';
 import { AllConnections } from './allConnections/allConnections';
-import { CreateConnectionWrapper } from './createConnection/createConnectionWrapper';
 import { SelectConnectionWrapper } from './selectConnection/selectConnection';
 import { useConnectionExpressionEnabled } from './selectConnection/connectionExpression';
 import { isExpressionConnectionMapping } from '../../../common/models/workflow';
@@ -37,8 +36,6 @@ export const ConnectionPanel = (props: CommonPanelProps) => {
   const references = useConnectionRefs();
   const connectionQuery = useConnectionsForConnector(connector?.id ?? '');
   const connections = useMemo(() => connectionQuery.data ?? [], [connectionQuery.data]);
-
-  const isCreatingConnection = useIsCreatingConnection();
 
   // NOTE: Re-entry guard for autoCreateConnectionIfPossible. Without this guard, the effect can fire in a
   // loop because autoCreateConnectionIfPossible -> getUniqueConnectionName -> getConnectionsForConnector
@@ -94,8 +91,8 @@ export const ConnectionPanel = (props: CommonPanelProps) => {
     if (!selectedNodeId) {
       return 'default';
     }
-    return isCreatingConnection ? 'create' : 'select';
-  }, [isCreatingConnection, selectedNodeId]);
+    return 'select';
+  }, [selectedNodeId]);
 
   /// INTL
   const intl = useIntl();
@@ -109,11 +106,6 @@ export const ConnectionPanel = (props: CommonPanelProps) => {
     id: 'eb91v1',
     description: 'Header for the change connection panel',
   });
-  const createConnectionPanelHeader = intl.formatMessage({
-    defaultMessage: 'Create connection',
-    id: 'NHqCeQ',
-    description: 'Header for the create connection panel',
-  });
   const closeButtonAriaLabel = intl.formatMessage({
     defaultMessage: 'Close panel',
     id: 'uzj2d3',
@@ -126,21 +118,17 @@ export const ConnectionPanel = (props: CommonPanelProps) => {
         return connectionsPanelDefaultHeader;
       case 'select':
         return selectConnectionPanelHeader;
-      case 'create':
-        return createConnectionPanelHeader;
     }
-  }, [connectionsPanelDefaultHeader, createConnectionPanelHeader, panelStatus, selectConnectionPanelHeader]);
+  }, [connectionsPanelDefaultHeader, panelStatus, selectConnectionPanelHeader]);
 
   const renderContent = useCallback(() => {
     switch (panelStatus) {
       case 'default':
         return <AllConnections />;
       case 'select':
-        return <SelectConnectionWrapper />;
-      case 'create':
-        return <CreateConnectionWrapper />;
+        return <SelectConnectionWrapper key={selectedNodeIds.join(',')} />;
     }
-  }, [panelStatus]);
+  }, [panelStatus, selectedNodeIds]);
 
   return (
     <>

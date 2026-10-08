@@ -1,5 +1,5 @@
 import { useAllConnectionErrors } from '../../../../core';
-import { ConnectionEntry } from './connectionEntry';
+import { ConnectionEntry, type ConnectionReferenceWithNodes } from './connectionEntry';
 import { AccordionHeader, AccordionItem, AccordionPanel, Badge, Spinner, Text } from '@fluentui/react-components';
 import { getConnectorCategoryString, isBuiltInConnector } from '@microsoft/designer-ui';
 import type { Connector } from '@microsoft/logic-apps-shared';
@@ -14,8 +14,9 @@ import { useMemo } from 'react';
 export interface ConnectorConnectionsCardProps {
   connectorId: string;
   connector: Connector | undefined;
-  connectionRefs?: Record<string, any>;
+  connectionRefs?: Record<string, ConnectionReferenceWithNodes>;
   disconnectedNodes?: string[];
+  runtimeNodes?: string[];
   isLoading?: boolean;
 }
 
@@ -24,6 +25,7 @@ export const ConnectorConnectionsCard: React.FC<ConnectorConnectionsCardProps> =
   connector,
   connectionRefs = {},
   disconnectedNodes = [],
+  runtimeNodes = [],
   isLoading = false,
 }) => {
   const title = getDisplayNameFromConnector(connector) ?? connectorId;
@@ -39,9 +41,9 @@ export const ConnectorConnectionsCard: React.FC<ConnectorConnectionsCardProps> =
       return true;
     }
     const nodesWithErrors = Object.keys(allErrors);
-    const connectorNodeIds = Object.values(connectionRefs).flatMap((obj) => obj.nodes);
+    const connectorNodeIds = [...Object.values(connectionRefs).flatMap((obj) => obj.nodes), ...runtimeNodes];
     return nodesWithErrors.some((nodeId) => connectorNodeIds.includes(nodeId));
-  }, [allErrors, connectionRefs, disconnectedNodes?.length]);
+  }, [allErrors, connectionRefs, disconnectedNodes?.length, runtimeNodes]);
 
   return (
     <AccordionItem key={connectorId} value={connectorId} className="msla-connector-connections-card">
@@ -79,6 +81,9 @@ export const ConnectorConnectionsCard: React.FC<ConnectorConnectionsCardProps> =
               brandColor={brandColor}
             />
           ))}
+          {runtimeNodes.length > 0 && (
+            <ConnectionEntry runtimeNodeIds={runtimeNodes} connectorId={connectorId} iconUri={iconUri} brandColor={brandColor} />
+          )}
           {disconnectedNodes?.length > 0 && (
             <ConnectionEntry disconnectedNodeIds={disconnectedNodes} connectorId={connectorId} iconUri={iconUri} brandColor={brandColor} />
           )}

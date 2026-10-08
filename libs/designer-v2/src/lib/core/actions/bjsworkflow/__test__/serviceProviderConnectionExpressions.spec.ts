@@ -57,7 +57,7 @@ import { storeStateHistoryMiddleware } from '../../../utils/middleware';
 import { canInvokeDynamicConnection, getDynamicSchema, getDynamicValues, getFolderItems } from '../../../utils/parameters/dynamicdata';
 import { shouldUseParameterInGroup, updateParameterAndDependencies, validateParameter } from '../../../utils/parameters/helper';
 import { getConnectionMappingForNode, updateNodeConnection, updateNodeConnectionExpression } from '../connections';
-import { copyOperation, pasteOperation, pasteScopeOperation } from '../copypaste';
+import { copyOperation, copyScopeOperation, pasteOperation, pasteScopeOperation } from '../copypaste';
 import { initializeDynamicDataInNodes, initializeOperationDetailsForManifest } from '../operationdeserializer';
 import { updateNodeFromCodeView } from '../updateNodeFromCodeView';
 import { serializeOperation, serializeWorkflow } from '../serializer';
@@ -1003,8 +1003,9 @@ describe('ServiceProvider runtime connection expressions', () => {
   it('retains expression mappings through single and scope clipboard state, even without references', async () => {
     const state = await buildState();
     const store = makeStore(state);
-    await store.dispatch(copyOperation({ nodeId }));
+    await store.dispatch(copyOperation({ nodeId })).unwrap();
     const copied = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.CLIPBOARD) ?? '{}');
+    expect(copied).toMatchObject({ nodeId: 'Query-copy', mslaNode: true, isScopeNode: false });
     expect(copied.nodeConnectionData).toEqual(state.connections.connectionsMapping.Query);
     expect(copied.nodeData.nodeInputs.preservedConnectionInputs.parameters.body.rows).toEqual([{ id: 7 }]);
     await store
@@ -1035,6 +1036,37 @@ describe('ServiceProvider runtime connection expressions', () => {
       renameConnectionExpressionParameter({ oldName: 'missing', newName: 'new' })
     );
     expect(renamed.connectionsMapping.Copy).toEqual(copied.nodeConnectionData);
+  });
+
+  it('copies a tagged scope with the existing clipboard envelope and runtime mappings', async () => {
+    const state = await buildState();
+    const scope: LogicAppsV2.ScopeAction = {
+      type: 'Scope',
+      actions: { Query: state.workflow.operations.Query as LogicAppsV2.ServiceProvider },
+    };
+    const serialize = vi.spyOn(await import('../serializer'), 'serializeOperation').mockResolvedValue(scope);
+    const store = makeStore(state);
+    await store.dispatch(copyScopeOperation({ nodeId: 'Container-#scope' })).unwrap();
+    expect(serialize).toHaveBeenCalledExactlyOnceWith(store.getState(), 'Container', {
+      skipValidation: true,
+      ignoreNonCriticalErrors: true,
+    });
+    expect(JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.CLIPBOARD) ?? '{}')).toEqual({
+      nodeId: 'Container-copy',
+      mslaNode: true,
+      isScopeNode: true,
+      serializedOperation: scope,
+      allConnectionData: { Query: { mapping: state.connections.connectionsMapping.Query } },
+      staticResults: {},
+    });
+  });
+
+  it.each([
+    ['an action', copyOperation, 'Node does not exist'],
+    ['a scope', copyScopeOperation, 'Scope Node does not exist'],
+  ] as const)('rejects a missing node when copying %s', async (_kind, copy, message) => {
+    const store = makeStore(await buildState());
+    await expect(store.dispatch(copy({ nodeId: '' })).unwrap()).rejects.toThrow(message);
   });
 
   it('stores a concrete selection over an expression without losing other references', async () => {
