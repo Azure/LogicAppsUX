@@ -16,6 +16,7 @@ import {
   assertStatelessResponse,
   assertStatelessRun,
   installStatelessHistorySettings,
+  listValues,
   recoverStateless,
   remainingMs,
   statelessSettingsTargets,
@@ -234,6 +235,10 @@ function testResponseAndHistory(): void {
   check(() => assert.throws(() => assertStatelessResponse(200, '[1,2,"3"]foobar')));
   check(() => assert.throws(() => assertStatelessResponse(202, '[1,2,3]foobar')));
   check(() => assertStatelessRun(run.name, new Set(['older']), run, actions, operations));
+  check(() => assert.deepStrictEqual(listValues(actions.value), actions.value));
+  check(() => assert.deepStrictEqual(listValues(actions), actions.value));
+  check(() => assert.throws(() => listValues({ items: actions.value }), /value array/));
+  check(() => assert.throws(() => listValues('not a management response'), /management response/));
   check(() => assert.throws(() => assertStatelessRun(run.name, new Set([run.name]), run, actions, operations), /exact new run/));
   check(() =>
     assert.throws(() => assertStatelessRun(run.name, new Set(), { ...run, name: 'unrelated-latest' }, actions, operations), /callback run/)

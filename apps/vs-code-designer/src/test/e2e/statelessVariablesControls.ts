@@ -75,7 +75,7 @@ export function assertStatelessResponse(status: number, body: unknown): void {
 }
 
 export function listValues(value: unknown): Record<string, unknown>[] {
-  const values = objectValue(value, 'management response').value;
+  const values = Array.isArray(value) ? value : objectValue(value, 'management response').value;
   assert.ok(Array.isArray(values), 'Management response must have a value array');
   return values.map((item) => objectValue(item, 'management item'));
 }

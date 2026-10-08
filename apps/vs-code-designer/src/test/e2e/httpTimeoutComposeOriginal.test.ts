@@ -125,6 +125,8 @@ suite('HTTP timeout Compose original authoring clause', () => {
         const contextId = await waitForWebviewFrameContext(cdp, {
           allTextIncludes: ['Workflow', 'Code', 'Save'],
           description: 'empty original workflow designer',
+          requiredSelector:
+            '[data-testid="card-Add a trigger"], [data-testid="card-Add trigger"], [data-automation-id="card-Add_a_trigger"], [data-automation-id="card-Add_trigger"], [aria-label="Add a trigger"], [aria-label="Add trigger"]',
           timeoutMs: Math.min(180_000, httpTimeoutComposeRemaining(deadline)),
           beforePoll: handleConnectorPrompt,
         });
