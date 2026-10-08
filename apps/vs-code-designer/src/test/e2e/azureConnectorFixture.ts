@@ -123,7 +123,8 @@ export async function selectApprovedAzureConnectorFixturePrompt(
   prompt: DetectedWorkbenchPrompt,
   fixture: ApprovedAzureConnectorFixture,
   deadline: number,
-  getSubscriptionName: () => Promise<string>
+  getSubscriptionName: () => Promise<string>,
+  signal?: AbortSignal
 ): Promise<boolean> {
   const subscriptionTitles = [
     'Select subscription',
@@ -141,7 +142,9 @@ export async function selectApprovedAzureConnectorFixturePrompt(
   }
   let expectedName: string;
   if (subscriptionTitles.includes(prompt.title)) {
+    signal?.throwIfAborted();
     expectedName = await getSubscriptionName();
+    signal?.throwIfAborted();
   } else {
     assert.strictEqual(prompt.title, 'Select a resource group for new resources.');
     assert.strictEqual(
@@ -156,6 +159,7 @@ export async function selectApprovedAzureConnectorFixturePrompt(
     'Never select cloud creation, sign-in or elevation actions'
   );
   const remaining = () => {
+    signal?.throwIfAborted();
     const value = deadline - Date.now();
     assert.ok(value > 0, 'Approved existing Azure target unavailable before the original deadline');
     return value;
@@ -182,6 +186,7 @@ export async function selectApprovedAzureConnectorFixturePrompt(
     }
     await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining())));
     const prompts = (await readWorkbenchPrompts(cdp, Math.min(3000, remaining()))).filter((value) => value.kind !== 'notification');
+    signal?.throwIfAborted();
     assert.strictEqual(prompts.length, 1, 'Approved Azure target prompt disappeared or became ambiguous before selection');
     current = prompts[0];
     if (current.kind !== 'quickInput' || current.title !== prompt.title) {
@@ -229,6 +234,7 @@ export async function selectApprovedAzureConnectorFixturePrompt(
   await clickPoint(cdp, selection.point);
   while (true) {
     const next = (await readWorkbenchPrompts(cdp, Math.min(3000, remaining()))).filter((value) => value.kind !== 'notification');
+    signal?.throwIfAborted();
     if (!next.length || next.every((value) => value.title !== prompt.title)) {
       return true;
     }
@@ -240,24 +246,42 @@ export async function readApprovedAzureSubscriptionName(
   fixture: ApprovedAzureConnectorFixture,
   deadline: number,
   token = process.env.LA_E2E_CLI_AZURE_ACCESS_TOKEN,
-  get = fetch
+  get = fetch,
+  signal?: AbortSignal
 ): Promise<string> {
   assert.ok(token?.trim(), 'Approved ARM access token missing; parent must enable requiresAzureAccessToken using existing WIF connection');
-  assert.ok(deadline > Date.now(), 'Approved subscription lookup deadline expired');
+  signal?.throwIfAborted();
+  const timeoutMs = Math.min(5000, deadline - Date.now());
+  assert.ok(timeoutMs > 0, 'Approved subscription lookup deadline expired');
   // Read-only lookup of this exact existing subscription, never list/create/
   // mutate resources or use Azure CLI/ambient sign-in as a fallback.
   const endpoint = new URL(`${fixture.managementBaseUrl}/subscriptions/${encodeURIComponent(fixture.subscriptionId)}`);
   endpoint.searchParams.set('api-version', '2022-12-01');
-  const response = await get(endpoint, {
-    method: 'GET',
-    headers: { Authorization: `Bearer ${token}` },
-    signal: AbortSignal.timeout(Math.min(5000, deadline - Date.now())),
-  });
+  const request = new AbortController();
+  const cancelRequest = () => request.abort(signal?.reason);
+  signal?.addEventListener('abort', cancelRequest, { once: true });
+  if (signal?.aborted) {
+    cancelRequest();
+  }
+  const timeout = setTimeout(() => request.abort(new Error('Approved subscription lookup timed out')), timeoutMs);
+  let response: Response;
+  try {
+    response = await get(endpoint, {
+      method: 'GET',
+      headers: { Authorization: `Bearer ${token}` },
+      signal: request.signal,
+    });
+  } finally {
+    clearTimeout(timeout);
+    signal?.removeEventListener('abort', cancelRequest);
+  }
+  signal?.throwIfAborted();
   assert.ok(
     response.ok,
     `Approved subscription read-only lookup failed: HTTP ${response.status}; existing auth/fixture access is required`
   );
   const subscription = (await response.json()) as { subscriptionId?: string; tenantId?: string; displayName?: string };
+  signal?.throwIfAborted();
   assert.ok(Date.now() < deadline, 'Approved subscription lookup completed after the original observation deadline');
   assert.strictEqual(subscription.subscriptionId?.toLowerCase(), fixture.subscriptionId.toLowerCase(), 'ARM returned another subscription');
   assert.strictEqual(subscription.tenantId?.toLowerCase(), fixture.tenantId.toLowerCase(), 'ARM returned another tenant');

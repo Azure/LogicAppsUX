@@ -12,7 +12,7 @@ import {
   selectApprovedAzureConnectorFixturePrompt,
 } from './azureConnectorFixture';
 import type { CdpEvaluator } from './cdpFormHelpers';
-import { handleAffirmativeConnectorWorkbenchPrompt } from './workbenchPrompts';
+import { handleAffirmativeConnectorWorkbenchPrompt, selectExactWorkbenchPromptOption } from './workbenchPrompts';
 
 type Control = (name: string, run: () => void | Promise<void>) => Promise<void>;
 const env = {
@@ -138,6 +138,19 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
         })) as unknown as typeof fetch),
       /another subscription/
     );
+    const abort = new AbortController();
+    const pending = readApprovedAzureSubscriptionName(
+      fixture,
+      Date.now() + 1000,
+      'unit-owned-token',
+      (async (_url: unknown, options: { signal: AbortSignal }) =>
+        new Promise((_, reject) => {
+          options.signal.addEventListener('abort', () => reject(options.signal.reason), { once: true });
+        })) as unknown as typeof fetch,
+      abort.signal
+    );
+    abort.abort(new Error('unit subscription lookup cancelled'));
+    await assert.rejects(() => pending, /unit subscription lookup cancelled/);
   });
   for (const fault of [
     'none',
@@ -330,6 +343,67 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
     assert.match(diagnostic, /"label":"Sign in"/);
     assert.doesNotMatch(diagnostic, /Unit Approved Subscription/);
     assert.match(diagnostic, /<target:[0-9a-f]{12}>/);
+  });
+  await control('exact debug prompt selection waits for a hit-testable option and honors cancellation', async () => {
+    let reads = 0;
+    let selected = false;
+    let nativeInput = 0;
+    const prompt = {
+      kind: 'notification' as const,
+      title: 'Configure Azurite to autostart on project debug?',
+      text: 'Configure Azurite to autostart on project debug? Enable AutoStart',
+      interactive: true,
+      inputPoint: undefined,
+      buttons: [{ text: 'Enable AutoStart', point: undefined }],
+      rows: [],
+    };
+    const cdp = {
+      async evaluate() {
+        reads++;
+        if (selected) {
+          return [];
+        }
+        return [{ ...prompt, buttons: [{ ...prompt.buttons[0], point: { x: 10, y: 10 } }] }];
+      },
+      async send(method, params) {
+        if (method === 'Input.dispatchMouseEvent') {
+          nativeInput++;
+          if (params?.type === 'mouseReleased') {
+            selected = true;
+          }
+        }
+        return {};
+      },
+    } as CdpEvaluator;
+    assert.strictEqual(
+      await handleAffirmativeConnectorWorkbenchPrompt(
+        cdp,
+        'unitApp',
+        Date.now() + 2000,
+        (current) =>
+          selectExactWorkbenchPromptOption(cdp, current, { matchText: prompt.title, optionText: 'Enable AutoStart' }, Date.now() + 2000),
+        undefined,
+        (current) => current.kind === 'notification' && current.text.includes(prompt.title)
+      ),
+      true
+    );
+    assert.ok(reads >= 2 && selected && nativeInput >= 2);
+
+    const aborted = new AbortController();
+    aborted.abort(new Error('unit prompt cancelled'));
+    nativeInput = 0;
+    await assert.rejects(
+      () =>
+        selectExactWorkbenchPromptOption(
+          cdp,
+          prompt,
+          { matchText: prompt.title, optionText: 'Enable AutoStart' },
+          Date.now() + 1000,
+          aborted.signal
+        ),
+      /unit prompt cancelled/
+    );
+    assert.strictEqual(nativeInput, 0);
   });
   await control('unsupported Azure prompt diagnostics redact dynamic action and account titles', () => {
     const diagnostic = describeUnsupportedAzurePrompt({

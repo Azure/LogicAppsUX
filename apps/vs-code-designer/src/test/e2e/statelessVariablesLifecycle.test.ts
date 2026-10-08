@@ -9,13 +9,15 @@ import { clickPoint, pressKey, type CdpEvaluator, type Point } from './cdpFormHe
 import { type DesignerCdpActions, ProvenDesignerCdpActions } from './designerCdpActions';
 import { assertNoDialogAttempts, installDialogGuard } from './dialogGuard';
 import { installFailureScreenshotHook } from './screenshot';
+import { assertApprovedAzureFixture, installApprovedAzureFixture } from './approvedAzureFixture';
 import {
-  approvedAzureFixtureFromEnvironment,
-  approvedAzureFixturePrompts,
-  assertApprovedAzureFixture,
-  installApprovedAzureFixture,
-  type ApprovedAzureFixture,
-} from './approvedAzureFixture';
+  assertAzureConnectorAccountTreePrerequisite,
+  readApprovedAzureConnectorFixture,
+  readApprovedAzureSubscriptionName,
+  readApprovedExistingResourceGroup,
+  selectApprovedAzureConnectorFixturePrompt,
+  type ApprovedAzureConnectorFixture,
+} from './azureConnectorFixture';
 import { uniqueName, normalizeFsPath } from './testUtils';
 import { closeAllTabs, waitForWebviewTab } from './webviewTabs';
 import { statelessLifecycleHelpers as helpers, type CreatedWorkspace } from './workspaceLifecycle.test';
@@ -34,13 +36,21 @@ import {
   type StatelessOperations,
   type StatelessSettingsLease,
 } from './statelessVariablesControls';
-import { StatelessOwnedDebug, type StatelessDebugTask } from './statelessVariablesDebug';
-import { affirmativeAzureConnectorPrompt } from './workbenchPromptSelection';
+import { coordinateStatelessStartup, StatelessOwnedDebug, type StatelessDebugTask } from './statelessVariablesDebug';
 import { selectLogicAppsStandardOutputThroughWorkbench, showLogicAppsStandardOutput } from './logicAppsOutputChannel';
+import {
+  handleAffirmativeConnectorWorkbenchPrompt,
+  selectExactWorkbenchPromptOption,
+  type DetectedWorkbenchPrompt,
+} from './workbenchPrompts';
 
 const managementRoot = 'http://localhost:7071/runtime/webhooks/workflow/api/management';
 const apiVersion = '2019-10-01-edge-preview';
 const mode = process.env.LA_E2E_CLI_STATELESS_VARIABLES_MODE;
+const statelessDebugPromptRules = [
+  { matchText: 'Configure Azurite to autostart on project debug?', optionText: 'Enable AutoStart' },
+  { matchText: 'Failed to verify "AzureWebJobsStorage" connection', optionText: 'Debug anyway' },
+];
 
 installDialogGuard();
 installFailureScreenshotHook();
@@ -81,7 +91,7 @@ suite('Stateless variables lifecycle', () => {
     assert.strictEqual(entry.appType, 'standard');
     assert.strictEqual(normalizeFsPath(vscode.workspace.workspaceFile?.fsPath ?? ''), normalizeFsPath(entry.workspaceFilePath));
     assert.strictEqual(objectValue(readJson(entry.workflowJsonPath), 'reopened workflow').kind, 'Stateless');
-    const azureFixture = approvedAzureFixtureFromEnvironment(process.env);
+    let azureFixture = readApprovedAzureConnectorFixture(process.env);
     if (mode === 'prepare') {
       const deadline = Date.now() + 300_000;
       const signal = new AbortController().signal;
@@ -113,6 +123,10 @@ suite('Stateless variables lifecycle', () => {
     let lease: StatelessSettingsLease | undefined;
     let operations: StatelessOperations | undefined;
     const positiveDeadline = Date.now() + 900_000;
+    const azureResources = vscode.extensions.getExtension('ms-azuretools.vscode-azureresourcegroups');
+    assert.ok(azureResources?.isActive, 'Normal Logic Apps activation must initialize the real Azure Resources dependency');
+    assertAzureConnectorAccountTreePrerequisite(await azureResources.exports.getApi('^0.0.1'), process.env.LA_E2E_CLI_MINIMAL_ACTIVATION);
+    azureFixture = await readApprovedExistingResourceGroup(azureFixture, positiveDeadline);
     const positiveScope = new StatelessOperationScope();
     let ownedDebug: StatelessOwnedDebug | undefined;
     const getOwnedDebug = () => (ownedDebug ??= createOwnedDebug(entry));
@@ -277,7 +291,7 @@ async function establishDesignTime(
   entry: CreatedWorkspace,
   deadline: number,
   signal: AbortSignal,
-  fixture: ApprovedAzureFixture
+  fixture: ApprovedAzureConnectorFixture
 ): Promise<void> {
   assertPhaseActive(deadline, signal);
   // Bind only after the real consistency command has generated its independent
@@ -518,56 +532,110 @@ async function start(
   owned: StatelessOwnedDebug,
   deadline: number,
   signal: AbortSignal,
-  fixture: ApprovedAzureFixture
+  fixture: ApprovedAzureConnectorFixture
 ): Promise<void> {
   assertPhaseActive(deadline, signal);
+  assert.strictEqual(fixture.resourceGroupLocationVerified, true, 'Debug startup requires the verified existing Azure fixture');
   assertApprovedAzureFixture(path.join(entry.appDir, 'local.settings.json'), fixture);
-  // Do not use the legacy helper's longer start race or global task stop. Both
-  // the raw launch and matching late sessions are retained by the owned adapter.
-  const results = await Promise.allSettled([
-    owned.start(signal),
-    helpers.handleWorkbenchPrompts(
-      [
-        affirmativeAzureConnectorPrompt,
-        ...approvedAzureFixturePrompts(fixture),
-        { matchText: 'Configure Azurite to autostart on project debug?', optionText: 'Enable AutoStart' },
-        { matchText: 'Failed to verify "AzureWebJobsStorage" connection', optionText: 'Debug anyway' },
-      ],
-      remainingMs(deadline, 20_000),
-      signal
-    ),
-  ]);
-  const failures = results.flatMap((result) => (result.status === 'rejected' ? [result.reason] : []));
-  if (failures.length > 0) {
-    throw new AggregateError(failures, 'Owned stateless debug startup failed');
+  console.log('[stateless-variables] Starting owned debug launch with affirmative Azure prompt monitoring');
+  const workbench = await connectToVsCodeWorkbenchCdp({
+    activate: false,
+    timeoutMs: remainingMs(deadline, 15_000),
+  });
+  let subscriptionName: Promise<string> | undefined;
+  const nativeWorkbench = {
+    evaluate: workbench.evaluate.bind(workbench),
+    send: (method: string, params?: Record<string, unknown>) => workbench.send(method, params, { timeoutMs: remainingMs(deadline, 3000) }),
+  };
+  try {
+    signal.throwIfAborted();
+    await coordinateStatelessStartup(
+      signal,
+      async (startupSignal) => {
+        await owned.start(startupSignal);
+        console.log('[stateless-variables] Owned debug launch settled');
+        await poll(
+          deadline,
+          'Functions Running',
+          async () => {
+            const status = await request('http://localhost:7071/admin/host/status', 'GET', deadline, undefined, startupSignal);
+            if (status.status === 0 || status.status === 503) {
+              return false;
+            }
+            assert.strictEqual(status.status, 200);
+            return objectValue(JSON.parse(status.body), 'host status').state === 'Running';
+          },
+          startupSignal
+        );
+        console.log('[stateless-variables] Functions host reached Running');
+        await poll(
+          deadline,
+          'exact workflow registration',
+          async () => {
+            const response = await request(
+              `${managementRoot}/workflows?api-version=${apiVersion}`,
+              'GET',
+              deadline,
+              undefined,
+              startupSignal
+            );
+            if (response.status === 0 || response.status === 503) {
+              return false;
+            }
+            assert.strictEqual(response.status, 200);
+            return listValues(JSON.parse(response.body)).some((item) => item.name === entry.wfName);
+          },
+          startupSignal
+        );
+        console.log(`[stateless-variables] Exact workflow registration observed for ${entry.wfName}`);
+      },
+      async (startupSignal, isReady) => {
+        while (!isReady()) {
+          await handleAffirmativeConnectorWorkbenchPrompt(
+            nativeWorkbench,
+            entry.appName,
+            deadline,
+            (prompt) =>
+              selectStatelessDebugStartupPrompt(nativeWorkbench, prompt, fixture, deadline, startupSignal, () => {
+                subscriptionName ??= readApprovedAzureSubscriptionName(fixture, deadline, undefined, fetch, startupSignal);
+                return subscriptionName;
+              }),
+            startupSignal,
+            isStatelessDebugPrompt
+          );
+          if (!isReady()) {
+            await new Promise((resolve) => setTimeout(resolve, remainingMs(deadline, 100)));
+          }
+        }
+      },
+      () => owned.cancel()
+    );
+  } finally {
+    workbench.dispose();
   }
-  assertPhaseActive(deadline, signal);
-  await poll(
-    deadline,
-    'Functions Running',
-    async () => {
-      const status = await request('http://localhost:7071/admin/host/status', 'GET', deadline, undefined, signal);
-      if (status.status === 0 || status.status === 503) {
-        return false;
-      }
-      assert.strictEqual(status.status, 200);
-      return objectValue(JSON.parse(status.body), 'host status').state === 'Running';
-    },
-    signal
-  );
-  await poll(
-    deadline,
-    'exact workflow registration',
-    async () => {
-      const response = await request(`${managementRoot}/workflows?api-version=${apiVersion}`, 'GET', deadline, undefined, signal);
-      if (response.status === 0 || response.status === 503) {
-        return false;
-      }
-      assert.strictEqual(response.status, 200);
-      return listValues(JSON.parse(response.body)).some((item) => item.name === entry.wfName);
-    },
-    signal
-  );
+  console.log('[stateless-variables] Owned debug startup and prompt journey reached workflow registration');
+}
+
+async function selectStatelessDebugStartupPrompt(
+  cdp: CdpEvaluator,
+  prompt: DetectedWorkbenchPrompt,
+  fixture: ApprovedAzureConnectorFixture,
+  deadline: number,
+  signal: AbortSignal,
+  getSubscriptionName: () => Promise<string>
+): Promise<boolean> {
+  const debugRule =
+    prompt.kind === 'notification'
+      ? statelessDebugPromptRules.find((rule) => prompt.text.toLowerCase().includes(rule.matchText.toLowerCase()))
+      : undefined;
+  if (debugRule) {
+    return selectExactWorkbenchPromptOption(cdp, prompt, debugRule, deadline, signal);
+  }
+  return selectApprovedAzureConnectorFixturePrompt(cdp, prompt, fixture, deadline, getSubscriptionName, signal);
+}
+
+function isStatelessDebugPrompt(prompt: DetectedWorkbenchPrompt): boolean {
+  return statelessDebugPromptRules.some((rule) => prompt.text.toLowerCase().includes(rule.matchText.toLowerCase()));
 }
 
 async function openHistory(
@@ -603,6 +671,7 @@ async function invoke(
   signal: AbortSignal
 ): Promise<HttpResult> {
   let callback = '';
+  console.log(`[stateless-variables] Waiting for callback readiness for ${entry.wfName}`);
   await poll(
     deadline,
     'local callback readiness',
@@ -625,7 +694,9 @@ async function invoke(
     },
     signal
   );
+  console.log(`[stateless-variables] Callback URL is ready for ${entry.wfName}`);
   const response = await request(callback, 'POST', deadline, '{}', signal);
+  console.log(`[stateless-variables] Callback invocation completed with HTTP ${response.status}`);
   assertStatelessResponse(response.status, response.body);
   return response;
 }
@@ -636,9 +707,11 @@ async function proveExactHistoryRun(
   deadline: number,
   signal: AbortSignal
 ): Promise<void> {
+  console.log(`[stateless-variables] Reading existing run history before invoking ${entry.wfName}`);
   const before = await request(`${workflowUrl(entry)}/runs?api-version=${apiVersion}`, 'GET', deadline, undefined, signal);
   assert.strictEqual(before.status, 200, 'Enabled stateless history must be available');
   const previous = new Set(listValues(JSON.parse(before.body)).map((run) => String(run.name)));
+  console.log(`[stateless-variables] Existing history is readable; opening overview for ${entry.wfName}`);
   const history = await openHistory(entry, deadline, signal);
   try {
     const callback = await invoke(entry, operations, deadline, signal);

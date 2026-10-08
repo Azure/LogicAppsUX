@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as ts from 'typescript';
 import * as vm from 'vm';
 import { assertPhaseActive, recoverStateless, StatelessOperationScope, type RecoveryHooks } from './statelessVariablesControls';
-import { StatelessOwnedDebug } from './statelessVariablesDebug';
+import { coordinateStatelessStartup, StatelessOwnedDebug } from './statelessVariablesDebug';
 
 const root = fs.mkdtempSync(path.join(os.tmpdir(), 'stateless-review-controls-'));
 let checks = 0;
@@ -16,6 +16,129 @@ function deferred<T>() {
     resolve = complete;
   });
   return { promise, resolve };
+}
+
+function untilAborted(signal: AbortSignal): Promise<never> {
+  return new Promise((_, reject) => {
+    const rejectAbort = () => reject(signal.reason);
+    signal.addEventListener('abort', rejectAbort, { once: true });
+    if (signal.aborted) {
+      rejectAbort();
+    }
+  });
+}
+
+async function testStartupCoordination(): Promise<void> {
+  const readiness = deferred<void>();
+  let promptPasses = 0;
+  const success = coordinateStatelessStartup(
+    new AbortController().signal,
+    async (signal) => {
+      await readiness.promise;
+      signal.throwIfAborted();
+    },
+    async (signal, isReady) => {
+      while (!isReady()) {
+        signal.throwIfAborted();
+        promptPasses++;
+        await new Promise((resolve) => setTimeout(resolve, 1));
+      }
+    },
+    () => assert.fail('Successful startup must not cancel owned work')
+  );
+  while (promptPasses < 2) {
+    await new Promise((resolve) => setTimeout(resolve, 1));
+  }
+  readiness.resolve();
+  await success;
+  assert.ok(promptPasses >= 2, 'Prompt monitoring must remain active through the complete readiness operation');
+  checks++;
+
+  let promptFailureCancel = 0;
+  await assert.rejects(
+    () =>
+      coordinateStatelessStartup(
+        new AbortController().signal,
+        (signal) => untilAborted(signal),
+        async () => {
+          throw new Error('prompt failed');
+        },
+        () => {
+          promptFailureCancel++;
+        }
+      ),
+    (error: AggregateError) => error.errors.some((cause: Error) => cause.message === 'prompt failed')
+  );
+  assert.ok(promptFailureCancel >= 1, 'Prompt failure must cancel the owned readiness operation');
+  checks++;
+
+  let readinessFailureCancel = 0;
+  await assert.rejects(
+    () =>
+      coordinateStatelessStartup(
+        new AbortController().signal,
+        async () => {
+          throw new Error('readiness failed');
+        },
+        (signal) => untilAborted(signal),
+        () => {
+          readinessFailureCancel++;
+        }
+      ),
+    (error: AggregateError) => error.errors.some((cause: Error) => cause.message === 'readiness failed')
+  );
+  assert.ok(readinessFailureCancel >= 1, 'Readiness failure must abort the prompt monitor');
+  checks++;
+
+  const parent = new AbortController();
+  parent.abort(new Error('parent aborted'));
+  let callbacksObservedAbort = 0;
+  let parentCancel = 0;
+  await assert.rejects(
+    () =>
+      coordinateStatelessStartup(
+        parent.signal,
+        async (signal) => {
+          assert.ok(signal.aborted);
+          callbacksObservedAbort++;
+          signal.throwIfAborted();
+        },
+        async (signal) => {
+          assert.ok(signal.aborted);
+          callbacksObservedAbort++;
+          signal.throwIfAborted();
+        },
+        () => {
+          parentCancel++;
+        }
+      ),
+    (error: AggregateError) => error.errors.every((cause: Error) => cause.message === 'parent aborted')
+  );
+  assert.strictEqual(callbacksObservedAbort, 2);
+  assert.ok(parentCancel >= 1);
+  checks++;
+
+  const finalParent = new AbortController();
+  let finalCancel = 0;
+  await assert.rejects(
+    () =>
+      coordinateStatelessStartup(
+        finalParent.signal,
+        async () => undefined,
+        async (_signal, isReady) => {
+          while (!isReady()) {
+            await new Promise((resolve) => setImmediate(resolve));
+          }
+          finalParent.abort(new Error('final parent abort'));
+        },
+        () => {
+          finalCancel++;
+        }
+      ),
+    /final parent abort/
+  );
+  assert.ok(finalCancel >= 1);
+  checks++;
 }
 
 async function testColdProducer(): Promise<void> {
@@ -338,6 +461,7 @@ function testDirectFourPhaseEvidence(): void {
 }
 
 async function main(): Promise<void> {
+  await testStartupCoordination();
   await testColdProducer();
   await testResolvingSideEffectQuiescence();
   await testLatePositiveLaunchBeforeRestore();

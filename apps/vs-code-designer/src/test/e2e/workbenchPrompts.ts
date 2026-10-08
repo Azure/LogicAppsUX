@@ -1,7 +1,12 @@
 import * as assert from 'assert';
 import type { CdpEvaluator } from './cdpFormHelpers';
 import { clickPoint } from './cdpFormHelpers';
-import { affirmativeAzureConnectorPrompt, selectWorkbenchPromptOption, type WorkbenchPromptContainer } from './workbenchPromptSelection';
+import {
+  affirmativeAzureConnectorPrompt,
+  selectWorkbenchPromptOption,
+  type WorkbenchPrompt,
+  type WorkbenchPromptContainer,
+} from './workbenchPromptSelection';
 
 export interface DetectedWorkbenchPrompt extends WorkbenchPromptContainer {
   title: string;
@@ -60,7 +65,8 @@ function isLoadingPrompt(prompt: DetectedWorkbenchPrompt): boolean {
   return prompt.kind === 'quickInput' && /^Loading(?:\.\.\.)?$/.test(prompt.title) && prompt.rows.length === 0;
 }
 
-function remaining(deadline: number): number {
+function remaining(deadline: number, signal?: AbortSignal): number {
+  signal?.throwIfAborted();
   const value = deadline - Date.now();
   assert.ok(value > 0, 'Workbench affirmative prompt deadline expired');
   return value;
@@ -70,11 +76,15 @@ export async function handleAffirmativeConnectorWorkbenchPrompt(
   cdp: CdpEvaluator,
   appName: string,
   deadline: number,
-  selectExistingTarget?: (prompt: DetectedWorkbenchPrompt) => Promise<boolean>
+  selectExistingTarget?: (prompt: DetectedWorkbenchPrompt) => Promise<boolean>,
+  signal?: AbortSignal,
+  includeNotification?: (prompt: DetectedWorkbenchPrompt) => boolean
 ): Promise<boolean> {
-  const read = () => readWorkbenchPrompts(cdp, Math.min(3000, remaining(deadline)));
-  const blocking = (prompts: DetectedWorkbenchPrompt[]) => prompts.filter((prompt) => prompt.kind !== 'notification');
+  const read = () => readWorkbenchPrompts(cdp, Math.min(3000, remaining(deadline, signal)));
+  const blocking = (prompts: DetectedWorkbenchPrompt[]) =>
+    prompts.filter((prompt) => prompt.kind !== 'notification' || includeNotification?.(prompt));
   let prompts = blocking(await read());
+  signal?.throwIfAborted();
   if (!prompts.length) {
     return false;
   }
@@ -108,7 +118,7 @@ export async function handleAffirmativeConnectorWorkbenchPrompt(
       assert.strictEqual(matches.length, 1, 'Affirmative connector selection must resolve exactly one matching option');
       break;
     }
-    await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining(deadline))));
+    await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining(deadline, signal))));
     prompts = blocking(await read());
     assert.strictEqual(prompts.length, 1, 'Affirmative connector prompt disappeared or became ambiguous before it was actionable');
     prompt = prompts[0];
@@ -118,20 +128,20 @@ export async function handleAffirmativeConnectorWorkbenchPrompt(
   await clickPoint(cdp, selected.point);
   let emptySince: number | undefined;
   while (true) {
-    remaining(deadline);
+    remaining(deadline, signal);
     const next = blocking(await read());
     if (!next.length) {
       emptySince ??= Date.now();
       if (Date.now() - emptySince >= 500) {
         return true;
       }
-      await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining(deadline))));
+      await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining(deadline, signal))));
       continue;
     }
     emptySince = undefined;
     assert.strictEqual(next.length, 1, 'Ambiguous follow-up connector wizard');
     if (isLoadingPrompt(next[0])) {
-      await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining(deadline))));
+      await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining(deadline, signal))));
       continue;
     }
     if (!matchesConnector(next[0])) {
@@ -142,6 +152,40 @@ export async function handleAffirmativeConnectorWorkbenchPrompt(
       assert.strictEqual(await selectExistingTarget(next[0]), true, 'Existing approved fixture selection failed');
       continue;
     }
-    await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining(deadline))));
+    await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining(deadline, signal))));
+  }
+}
+
+export async function selectExactWorkbenchPromptOption(
+  cdp: CdpEvaluator,
+  initialPrompt: DetectedWorkbenchPrompt,
+  rule: WorkbenchPrompt,
+  deadline: number,
+  signal?: AbortSignal
+): Promise<boolean> {
+  const matchesPrompt = (prompt: DetectedWorkbenchPrompt) =>
+    prompt.kind === initialPrompt.kind && prompt.text.toLowerCase().includes(rule.matchText.toLowerCase());
+  let prompt = initialPrompt;
+  while (true) {
+    remaining(deadline, signal);
+    const selection = selectWorkbenchPromptOption([rule], [prompt]);
+    if (selection.point) {
+      await clickPoint(cdp, selection.point);
+      break;
+    }
+    assert.strictEqual(selection.visible, true, `Expected workbench prompt is no longer visible: ${rule.matchText}`);
+    await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining(deadline, signal))));
+    const prompts = await readWorkbenchPrompts(cdp, Math.min(3000, remaining(deadline, signal)));
+    const matches = prompts.filter(matchesPrompt);
+    assert.strictEqual(matches.length, 1, `Expected one matching workbench prompt while waiting for option: ${rule.matchText}`);
+    prompt = matches[0];
+  }
+  while (true) {
+    remaining(deadline, signal);
+    const prompts = await readWorkbenchPrompts(cdp, Math.min(3000, remaining(deadline, signal)));
+    if (!prompts.some(matchesPrompt)) {
+      return true;
+    }
+    await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining(deadline, signal))));
   }
 }

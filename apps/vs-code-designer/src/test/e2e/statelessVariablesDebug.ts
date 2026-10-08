@@ -25,6 +25,50 @@ interface Attempt {
   result?: boolean;
 }
 
+export async function coordinateStatelessStartup(
+  signal: AbortSignal,
+  readiness: (startupSignal: AbortSignal) => Promise<void>,
+  monitorPrompts: (startupSignal: AbortSignal, isReady: () => boolean) => Promise<void>,
+  cancelOwned: () => void
+): Promise<void> {
+  const startup = new AbortController();
+  const cancelStartup = () => {
+    startup.abort(signal.reason);
+    cancelOwned();
+  };
+  signal.addEventListener('abort', cancelStartup, { once: true });
+  if (signal.aborted) {
+    cancelStartup();
+  }
+  let ready = false;
+  const cancelSibling = (error: unknown) => {
+    startup.abort(error);
+    cancelOwned();
+  };
+  const readinessTask = readiness(startup.signal)
+    .then(() => {
+      ready = true;
+    })
+    .catch((error) => {
+      cancelSibling(error);
+      throw error;
+    });
+  const promptTask = monitorPrompts(startup.signal, () => ready).catch((error) => {
+    cancelSibling(error);
+    throw error;
+  });
+  try {
+    const results = await Promise.allSettled([readinessTask, promptTask]);
+    const failures = results.flatMap((result) => (result.status === 'rejected' ? [result.reason] : []));
+    if (failures.length > 0) {
+      throw new AggregateError(failures, 'Owned stateless debug startup failed');
+    }
+    startup.signal.throwIfAborted();
+  } finally {
+    signal.removeEventListener('abort', cancelStartup);
+  }
+}
+
 /** Test-window handles only, not OS process discovery or a process-owner protocol.
  * Listeners stay armed on failure so a resolving late launch is stopped by exact
  * session marker + workspace identity, even after a bounded quiescence failure. */
