@@ -132,6 +132,7 @@ const createTestStore = (standardApp: Record<string, unknown>) => {
             parametersData: {},
             localSettings: {},
             extensionBundleVersion: '1.0.0',
+            workflowName: 'workflow',
           },
           connectionData: {},
           baseUrl: '/url',
@@ -149,6 +150,12 @@ const createTestStore = (standardApp: Record<string, unknown>) => {
         reducers: {
           updateAccessToken: (state, action) => {
             state.panelMetaData = { ...state.panelMetaData, accessToken: action.payload };
+          },
+          updateStandardApp: (state, action) => {
+            state.panelMetaData = { ...state.panelMetaData, standardApp: action.payload };
+          },
+          updateWorkflowName: (state, action) => {
+            state.panelMetaData = { ...state.panelMetaData, workflowName: action.payload };
           },
         },
       }).reducer,
@@ -225,5 +232,21 @@ describe('vs-code-react appV2 DesignerApp (Standard designer/monitoring host)', 
       store.dispatch({ type: 'designer/updateAccessToken', payload: 'refreshed-token' });
     });
     expect(screen.getByRole('alert')).toHaveTextContent(expectedError);
+
+    act(() => {
+      store.dispatch({
+        type: 'designer/updateStandardApp',
+        payload: {
+          definition: { actions: { Compose: { type: 'Compose', inputs: 'test' } } },
+          kind: 'stateful',
+        },
+      });
+    });
+    expect(screen.getByRole('alert')).toHaveTextContent(expectedError);
+
+    act(() => {
+      store.dispatch({ type: 'designer/updateWorkflowName', payload: 'another-workflow' });
+    });
+    expect(screen.queryByRole('alert')).toBeNull();
   });
 });
