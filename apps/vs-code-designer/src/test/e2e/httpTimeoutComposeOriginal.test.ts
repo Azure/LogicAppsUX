@@ -24,13 +24,14 @@ import {
 import { captureEvidenceScreenshot, installFailureScreenshotHook } from './screenshot';
 import { closeAllTabs, getWebviewTabs } from './webviewTabs';
 import {
-  closeActiveDesignerByKeyboard,
+  closeActiveDesignerTab,
   openDesignerFromExactExplorerFile,
   openExplorerFileByDoubleClick,
   replaceActiveNativeEditorText,
   saveAndCloseActiveNativeEditor,
 } from './workbenchEditorActions';
-import { activeWebview, boundedCdp } from './workspaceMultiRootWorkbench';
+import { boundedCdp } from './workbenchCdpActions';
+import { activeWebview } from './workspaceMultiRootWorkbench';
 import {
   assertApprovedAzureConnectorFixtureSaved,
   assertAzureConnectorAccountTreePrerequisite,
@@ -194,7 +195,7 @@ suite('HTTP timeout Compose original authoring clause', () => {
           timeoutMs: Math.min(15000, httpTimeoutComposeRemaining(deadline)),
         });
         const workbenchActions = boundedCdp(workbench, deadline);
-        await closeActiveDesignerByKeyboard(workbenchActions, httpTimeoutComposeDesignerViewType, deadline);
+        await closeActiveDesignerTab(httpTimeoutComposeDesignerViewType, deadline);
         const nativeCodeBefore = JSON.parse(await openExplorerFileByDoubleClick(workbenchActions, workflowPath, deadline));
         assertHttpTimeoutComposeAuthored(nativeCodeBefore);
         assert.deepStrictEqual(

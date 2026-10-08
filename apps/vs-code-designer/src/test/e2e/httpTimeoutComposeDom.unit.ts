@@ -397,7 +397,7 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       if (
         ts.isCallExpression(node) &&
         [
-          'closeActiveDesignerByKeyboard',
+          'closeActiveDesignerTab',
           'openExplorerFileByDoubleClick',
           'replaceActiveNativeEditorText',
           'saveAndCloseActiveNativeEditor',
@@ -414,7 +414,7 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
     assert.deepStrictEqual(
       [...nativeSteps].sort(),
       [
-        'closeActiveDesignerByKeyboard',
+        'closeActiveDesignerTab',
         'openDesignerFromExactExplorerFile',
         'openExplorerFileByDoubleClick',
         'replaceActiveNativeEditorText',
@@ -431,6 +431,15 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
     assert.ok(
       family.includes("'http-timeout-compose-designer-ready'"),
       'The family must capture Designer-ready evidence before authoring begins'
+    );
+    assert.ok(
+      !family.includes("boundedCdp } from './workspaceMultiRootWorkbench'"),
+      'Native editor actions must use shared workbench helpers'
+    );
+    const nativeHelpers = fs.readFileSync(path.join(repository, 'apps/vs-code-designer/src/test/e2e/workbenchEditorActions.ts'), 'utf8');
+    assert.ok(
+      !nativeHelpers.includes("from './workspaceMultiRootWorkbench'"),
+      'Shared native editor helpers must not depend on multi-root-specific workbench actions'
     );
     assert.ok(
       family.includes('const originalOwner = await driver.context()') &&

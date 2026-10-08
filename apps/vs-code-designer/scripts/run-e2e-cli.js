@@ -1099,6 +1099,10 @@ function verifyNoOwnedDescendants(pid) {
     }));
 }
 
+function requiresDirectHttpPhaseClosure(env) {
+  return !!env.LA_E2E_CLI_HTTP_TIMEOUT_COMPOSE_INVOCATION_ID && env.LA_E2E_CLI_SUITE_WRAPPER_CHILD !== '1';
+}
+
 function getProcessTreePids(pid) {
   if (!pid) {
     return Promise.resolve([]);
@@ -2733,7 +2737,10 @@ function runVscodeTest(args, options = {}) {
           ? 'workspaceMultiRoot:create'
           : getSuitePhaseId(label, childEnv);
       const ownHttpInvocation = childEnv.LA_E2E_CLI_HTTP_TIMEOUT_COMPOSE_INVOCATION_ID;
-      const processCleanup = ownHttpInvocation ? { ...(await verifyNoOwnedDescendants(child.pid)), ownerPid: child.pid } : undefined;
+      const requireDirectHttpPhaseClosure = requiresDirectHttpPhaseClosure(childEnv);
+      const processCleanup = requireDirectHttpPhaseClosure
+        ? { ...(await verifyNoOwnedDescendants(child.pid)), ownerPid: child.pid }
+        : undefined;
       const diagnosticsErrorMessage = diagnosticsError
         ? diagnosticsError instanceof Error
           ? diagnosticsError.message
@@ -2769,7 +2776,7 @@ function runVscodeTest(args, options = {}) {
         !matchedPattern &&
         !cancelError &&
         !regenerationError &&
-        (!ownHttpInvocation ||
+        (!requireDirectHttpPhaseClosure ||
           (signal === null && processCleanup?.verified === true && Number.isInteger(child.pid) && getMochaPassingCount(output) > 0));
       if (regenerationContext) {
         const errors = [
@@ -2861,8 +2868,9 @@ function runVscodeTest(args, options = {}) {
         reject(regenerationError);
         return;
       }
-      if (ownHttpInvocation && processCleanup?.verified !== true) {
-        reject(new Error('HTTP timeout Compose original phase owned-descendant closure was not verified'));
+      if (requireDirectHttpPhaseClosure && processCleanup?.verified !== true) {
+        const alivePids = Array.isArray(processCleanup?.alivePids) ? processCleanup.alivePids.join(', ') : 'unavailable';
+        reject(new Error(`HTTP timeout Compose original direct phase owned-descendant closure was not verified; alive PIDs: ${alivePids}`));
         return;
       }
 
@@ -3842,6 +3850,7 @@ module.exports = {
     runDirectRegisteredSuite,
     createLinePrefixer,
     readContainmentReceipt,
+    requiresDirectHttpPhaseClosure,
     verifyFuncCoreToolsAtDependencyRoot,
     walkFiles,
     writeSuitePhaseResult,

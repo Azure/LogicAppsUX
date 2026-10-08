@@ -176,6 +176,13 @@ Racing a side-effecting operation against a timer does not stop that operation.
 Retain the underlying promise and propagate cancellation. Require quiescence
 before restoring settings or beginning a recovery restart.
 
+Batch-native families must use the suite containment host's retained process
+identities as their closure proof. Do not reconstruct ancestry after a phase
+root has exited: an intermediate process can disappear while its child remains,
+making an ordinary parent/child walk falsely report an empty tree. Per-phase
+checks may remain as direct-run diagnostics, but batch acceptance belongs to
+the Windows job-object or Linux subreaper receipt.
+
 For the Stateless variables family, use a preparation host with auto-start
 disabled to run real consistency generation and bind the approved fixture to
 both settings targets. Then use a separate fresh host with activation-time

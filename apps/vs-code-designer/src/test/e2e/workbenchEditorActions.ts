@@ -5,7 +5,7 @@ import * as vscode from 'vscode';
 import type { CdpEvaluator, Point } from './cdpFormHelpers';
 import { clickPoint, pressKey } from './cdpFormHelpers';
 import { getWebviewTabs } from './webviewTabs';
-import { clickText, command, poll } from './workspaceMultiRootWorkbench';
+import { clickText, command, poll } from './workbenchCdpActions';
 
 const visibleWorkbenchElement = `
   const visible = element => element instanceof HTMLElement &&
@@ -68,11 +68,11 @@ async function selectedExplorerFilePoint(cdp: CdpEvaluator, filePath: string, de
   return position;
 }
 
-export async function closeActiveDesignerByKeyboard(cdp: CdpEvaluator, designerViewType: string, deadline: number): Promise<void> {
+export async function closeActiveDesignerTab(designerViewType: string, deadline: number): Promise<void> {
   const tabs = getWebviewTabs(designerViewType);
   assert.strictEqual(tabs.length, 1, 'Exactly one designer tab must be open before closing it');
-  assert.strictEqual(tabs[0].isActive, true, 'The designer tab must be active before Ctrl+W');
-  await pressKey(cdp, 'KeyW', 'w', 87, 2);
+  assert.strictEqual(tabs[0].isActive, true, 'The designer tab must be active before closing it');
+  assert.strictEqual(await vscode.window.tabGroups.close(tabs[0]), true, 'The exact active designer tab must close');
   await poll(
     async () => getWebviewTabs(designerViewType).length,
     (count) => count === 0,
