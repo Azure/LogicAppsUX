@@ -9,6 +9,23 @@ import type { RootState } from '../store';
 import { getCompressedSlicesFromRootState, getEditedPanelNode, getEditedPanelTab, shouldSkipSavingStateToHistory } from './undoredo';
 import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import type { Middleware } from '@reduxjs/toolkit';
+import { setWorkflowExtractionBusy } from '../state/designerView/designerViewSlice';
+
+// Only the extraction transaction may modify the editor during persistence.
+// This also discards late metadata callbacks belonging to the previous graph.
+export const extractionMutationGuardMiddleware: Middleware =
+  ({ getState }) =>
+  (next) =>
+  (action) => {
+    if (
+      getState().designerView.workflowExtractionBusy &&
+      action?.type !== setWorkflowExtractionBusy.type &&
+      !action?.meta?.workflowExtraction
+    ) {
+      return action;
+    }
+    return next(action);
+  };
 
 export const storeStateHistoryMiddleware: Middleware =
   ({ dispatch, getState }) =>

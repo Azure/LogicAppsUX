@@ -1,8 +1,11 @@
-import type { RootState } from '../../state/store';
+import type { AppDispatch, RootState } from '../../state/store';
+import { synchronizeAppliedLocalWorkflow } from '../../state/workflowLoadingSlice';
 import { CustomConnectionParameterEditorService } from './customConnection/customConnectionParameterEditorService';
 import { CustomEditorService } from './customEditorService';
 import { HttpClient } from './httpClient';
-import { PseudoCommandBar } from './pseudoCommandBar';
+import { PseudoCommandBarV2 } from './pseudoCommandBar';
+import { createLocalWorkflowConnectorService, LocalWorkflowManifestService } from './localWorkflowManifest';
+import { localWorkflowPrefix, localWorkflowRegistry } from './localWorkflowRegistry';
 import {
   StandardConnectionService,
   StandardOperationManifestService,
@@ -28,8 +31,10 @@ import {
   Designer,
   CombineInitializeVariableDialog,
   TriggerDescriptionDialog,
+  type Workflow,
 } from '@microsoft/logic-apps-designer-v2';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useMemo } from 'react';
 
 const httpClient = new HttpClient();
 const connectionServiceStandard = new StandardConnectionService({
@@ -66,6 +71,15 @@ const operationManifestServiceStandard = new StandardOperationManifestService({
   baseUrl: '/url',
   httpClient,
 });
+const operationManifestServiceLocal = new LocalWorkflowManifestService(
+  {
+    apiVersion: '2018-11-01',
+    baseUrl: '/url',
+    httpClient,
+  },
+  localWorkflowRegistry
+);
+const connectorServiceLocal = createLocalWorkflowConnectorService(httpClient, localWorkflowRegistry);
 
 const operationManifestServiceConsumption = new ConsumptionOperationManifestService({
   apiVersion: '2018-11-01',
@@ -189,8 +203,12 @@ const editorService = new CustomEditorService();
 const connectionParameterEditorService = new CustomConnectionParameterEditorService();
 
 export const LocalDesigner = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const {
     workflowDefinition,
+    appliedWorkflow,
+    resourcePath,
+    workflowLoadError,
     notes,
     parameters,
     isReadOnly,
@@ -209,10 +227,30 @@ export const LocalDesigner = () => {
   editorService.areCustomEditorsEnabled = !!areCustomEditorsEnabled;
   connectionParameterEditorService.areCustomEditorsEnabled = !!areCustomEditorsEnabled;
   const isConsumption = hostingPlan === 'consumption';
+  const enableWorkflowExtraction = hostingPlan === 'standard' && !!hostOptions.enableWorkflowExtraction;
+  const workflowExtractionService = useMemo(
+    () =>
+      enableWorkflowExtraction && resourcePath
+        ? {
+            ...localWorkflowRegistry.createService(
+              resourcePath,
+              resourcePath.replace(new RegExp(`^${localWorkflowPrefix}`), '').replace(/\.json$/, '')
+            ),
+            onApplied: (workflow: Workflow) => dispatch(synchronizeAppliedLocalWorkflow({ sourceId: resourcePath, workflow })),
+          }
+        : undefined,
+    [enableWorkflowExtraction, resourcePath, dispatch]
+  );
   const designerProviderProps = {
     services: {
       connectionService: isConsumption ? connectionServiceConsumption : connectionServiceStandard,
-      operationManifestService: isConsumption ? operationManifestServiceConsumption : operationManifestServiceStandard,
+      operationManifestService: isConsumption
+        ? operationManifestServiceConsumption
+        : enableWorkflowExtraction
+          ? operationManifestServiceLocal
+          : operationManifestServiceStandard,
+      connectorService: enableWorkflowExtraction ? connectorServiceLocal : undefined,
+      workflowExtractionService,
       searchService: isConsumption ? searchServiceConsumption : searchServiceStandard,
       oAuthService,
       gatewayService,
@@ -240,8 +278,10 @@ export const LocalDesigner = () => {
 
   return (
     <DesignerProvider locale={language} options={{ ...designerProviderProps }}>
+      {workflowLoadError ? <div role="alert">{workflowLoadError}</div> : null}
       {workflowDefinition ? (
         <BJSWorkflowProvider
+          externallyAppliedWorkflow={appliedWorkflow}
           workflow={{
             definition: workflowDefinition,
             connectionReferences: connections,
@@ -252,7 +292,7 @@ export const LocalDesigner = () => {
           runInstance={runInstance}
           isMultiVariableEnabled={hostOptions.enableMultiVariable}
         >
-          <PseudoCommandBar />
+          <PseudoCommandBarV2 />
           <Designer />
           <CombineInitializeVariableDialog />
           <TriggerDescriptionDialog workflowId={'local'} />

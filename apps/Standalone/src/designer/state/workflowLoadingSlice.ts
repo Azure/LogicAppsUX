@@ -5,6 +5,8 @@ import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { readJsonFiles } from './helper';
+import { isLocalExtractionEnabled, localWorkflowPrefix, localWorkflowRegistry } from '../app/LocalDesigner/localWorkflowRegistry';
+import type { Workflow } from '@microsoft/logic-apps-designer-v2';
 
 export type HostingPlanTypes = 'standard' | 'consumption' | 'hybrid';
 
@@ -14,6 +16,8 @@ export interface WorkflowLoadingState {
   workflowName?: string;
   runId?: string;
   workflowDefinition: LogicAppsV2.WorkflowDefinition | null;
+  workflowLoadError?: string;
+  appliedWorkflow?: Workflow;
   notes: Record<string, any> | undefined;
   runInstance: LogicAppsV2.RunInstanceDefinition | null;
   connections: ConnectionReferences;
@@ -37,6 +41,7 @@ export interface WorkflowLoadingState {
     collapseGraphsByDefault?: boolean; // collapse scope by default
     enableMultiVariable?: boolean; // supports creating multiple variables in one action
     enableEditableCodeView?: boolean; // allow editing an action's JSON inline from the node code view tab
+    enableWorkflowExtraction?: boolean; // offline local Standard authoring only
   };
   showPerformanceDebug?: boolean;
   isFirstDesignerV2Load?: boolean;
@@ -94,7 +99,29 @@ type LoadRunPayload = {
 
 export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow', async (_: unknown, thunkAPI) => {
   const currentState: RootState = thunkAPI.getState() as RootState;
-  const fileName = currentState.workflowLoader.resourcePath?.split('.')[0];
+  const { resourcePath, hostingPlan, hostOptions, isLocal } = currentState.workflowLoader;
+  if (
+    isLocal &&
+    hostingPlan === 'standard' &&
+    window.location.pathname === '/v2' &&
+    (isLocalExtractionEnabled() || hostOptions.enableWorkflowExtraction)
+  ) {
+    const persisted = localWorkflowRegistry.get(resourcePath ?? '');
+    if (persisted) {
+      return {
+        workflowDefinition: persisted.definition,
+        notes: persisted.notes ?? persisted.definition.metadata?.notes,
+        connectionReferences: persisted.connectionReferences,
+        parameters: persisted.parameters ?? {},
+        workflowKind: persisted.kind,
+        runFiles: [],
+      } as WorkflowPayload;
+    }
+    if (resourcePath?.startsWith(localWorkflowPrefix)) {
+      throw new Error('This local workflow is missing from this browser. Open it in the browser where it was created.');
+    }
+  }
+  const fileName = resourcePath?.replace(/\.json$/, '');
   const isMonitoringView = currentState.workflowLoader.isMonitoringView;
 
   const runFiles = isMonitoringView && fileName ? await readJsonFiles(fileName) : [];
@@ -130,6 +157,19 @@ export const workflowLoadingSlice = createSlice({
   name: 'workflowLoader',
   initialState,
   reducers: {
+    synchronizeAppliedLocalWorkflow: (state, action: PayloadAction<{ sourceId: string; workflow: Workflow }>) => {
+      if (!state.isLocal || state.hostingPlan !== 'standard' || state.resourcePath !== action.payload.sourceId) {
+        throw new Error('The local workflow changed before its saved definition could be synchronized.');
+      }
+      const { workflow } = action.payload;
+      state.workflowDefinition = workflow.definition;
+      state.connections = workflow.connectionReferences;
+      state.parameters = workflow.parameters ?? {};
+      state.notes = workflow.notes;
+      state.workflowKind = workflow.kind;
+      state.workflowLoadError = undefined;
+      state.appliedWorkflow = workflow;
+    },
     setAppid: (state, action: PayloadAction<string>) => {
       state.appId = action.payload;
     },
@@ -240,14 +280,18 @@ export const workflowLoadingSlice = createSlice({
         return;
       }
       state.workflowDefinition = action.payload?.workflowDefinition;
+      state.appliedWorkflow = undefined;
+      state.workflowLoadError = undefined;
       state.notes = action.payload?.notes;
       state.connections = action.payload?.connectionReferences ?? {};
       state.parameters = action.payload?.parameters ?? {};
       state.runFiles = action.payload?.runFiles ?? [];
       state.workflowKind = action.payload?.workflowKind ?? (state.hostingPlan === 'consumption' ? undefined : 'stateful');
     });
-    builder.addCase(loadWorkflow.rejected, (state) => {
+    builder.addCase(loadWorkflow.rejected, (state, action) => {
       state.workflowDefinition = null;
+      state.appliedWorkflow = undefined;
+      state.workflowLoadError = action.error.message ?? 'Unable to load the workflow.';
       state.notes = undefined;
       state.parameters = {};
     });
@@ -264,6 +308,7 @@ export const workflowLoadingSlice = createSlice({
 });
 
 export const {
+  synchronizeAppliedLocalWorkflow,
   setResourcePath,
   setAppid,
   setWorkflowName,

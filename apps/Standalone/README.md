@@ -47,6 +47,26 @@ For local-only PR deployments triggered by the `ephemeral` label, see [PR previe
 
 Unknown routes fall back to the production designer development shell.
 
+## Extract selected actions (local only)
+
+Open `/v2?extraction=true&local=ExtractSelection.json` on the running development server. The **Extract Selection** fixture uses a Standard workflow. Ctrl-click (Cmd-click on macOS) **Build message** and **Build result**, then right-click either selected action and choose **Extract to new workflow**. Two selected actions retain their side-by-side details. Selecting **Read customer** as well opens the larger multi-select panel, where **Extract** sits alongside Cut, Copy, Group, and Delete.
+
+The compact, single-column dialog places the workflow name above a 320px-high, pan/zoom-only child workflow preview. The preview has a 1px border, 4px corners, and a muted floating label. Input/output bindings appear in a collapsed section below the preview, omitted when there are no bindings. The preview uses the reusable `WorkflowPreview` component from `@microsoft/designer-ui` and shares the V2 designer's card styling, with its own React Flow viewport and no action/edge editing or shared designer state. Confirmation saves the child and rewritten source together in browser storage, replacing the selected actions with a workflow invocation. The child uses Request/Response actions, and the completion link opens its editable workflow. Both saved documents and their dynamic-content schemas survive reload.
+
+Binding names identify their source action or trigger, such as `input_Read_customer`, `output_Build_result`, or `input_Request`. Spaces and punctuation become underscores, and numeric suffixes distinguish colliding names. Repeated references to the same data root share a binding. This naming applies to new extractions; existing saved workflows keep their original bindings.
+
+The initial workflow name is the first available choice among `Extracted_workflow`, `Extracted_workflow_1`, `Extracted_workflow_2`, and so on, checking existing names case-insensitively. Manually entered names and names at save time still undergo collision validation. Empty input/output sections are hidden independently; nonempty sections show only the original expression and its replacement, where the binding name is already visible.
+
+Extraction is action-type independent: data operations, HTTP, connector actions, and other ordinary action definitions keep their settings and metadata. Entire selected control-flow containers move with their nested actions. The preview uses the selected actions' existing connector icons and colors; containers appear as single cards. Referenced workflow parameters, connection references, and static results are carried into the child without resolving app-setting expressions or creating new connections. Connector metadata must be available to the local designer before saving.
+
+Open `/v2?extraction=true&local=ExtractActions.json` for a mixed-action example: Initialize variable, Parse JSON, Filter array, HTTP, and a downstream consumer. Extract **Filter array** and **HTTP** to see incoming variable and Parse JSON bindings, distinct `body()`/`outputs()` return values, and preserved chunking/retry settings. Selecting the first four actions instead keeps the variable declaration inside the child.
+
+Eligibility is based on dependencies, not a built-in action allowlist. Selections must still form a connected top-level linear region with success-only boundaries. Shared variable writes, escaping variable declarations, partial nested selections, ambiguous loop/conditional output values, secure/binary data transport, and opaque execution-context references are rejected with specific explanations. Existing Response and Terminate actions cannot move because that would change the caller they respond to or the workflow they stop. A child always gets its own generated Request and Response. Schemas are inferred where known; unknown output shapes remain untyped rather than being guessed.
+
+This opt-in is unavailable for Consumption workflows. Storage is local to the browser origin: nothing is deployed, published, or run in Azure, and cloud invocation semantics are not established by this prototype. Use synthetic data only; literal credentials and secure parameter values cannot be persisted. Managed identity and unresolved credential references are preserved. Undo/Redo changes the current source editor without deleting the saved child or rolling back browser storage.
+
+Browser regression coverage is in `e2e/designer/extractSelection.spec.ts`.
+
 ## Designer v2 keyboard navigation
 
 In designer v2 (`/v2`), click a card on the canvas and use
