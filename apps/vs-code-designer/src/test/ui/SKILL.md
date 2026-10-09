@@ -130,8 +130,8 @@ For debug lifecycle regressions, especially bundle → NuGet conversion, seed a 
 | `src/test/ui/nonLogicAppStartup.test.ts` | Plain-folder startup regression test. Phase 4.0 |
 | `src/test/ui/bundleCdnHealth.test.ts` | CDN integrity probe (`Content-Length` + `Content-MD5` on Microsoft.Azure.Functions.ExtensionBundle.Workflows). Pure Mocha — runs without VS Code. Phase 4.11 / `E2E_MODE=bundleintegrityonly`. |
 | `src/test/ui/funcRepair.test.ts` | Func Core Tools pre-debug self-heal. Corrupts the extension-managed func executable in place (exists but won't execute), presses F5, asserts the gate silently reinstalls it instead of showing the blocking "must have Azure Functions Core Tools installed" modal. Phase 4.14 / `E2E_MODE=funcrepaironly`. Mutates the runtime-dependency cache — it restores the original bytes in `afterEach`, and resolves its target from `LA_E2E_RUNTIME_DEPS_ROOT` so it can never touch a global func install. |
-| `src/test/ui/customCodeDotNetVersionCreate.test.ts` | Custom-code .NET picker/create phase. The `net8` target drives the real Create Workspace webview and creates a Stateful workspace; the `net10` target asserts `.NET 10` is hidden from the picker. Phase 4.15A / `E2E_MODE=customcodedotnetonly`. See §20. |
-| `src/test/ui/customCodeDotNetVersionAssert.test.ts` | Custom-code .NET 8 assert phase. Reopens the 4.15A workspace in a fresh session; asserts `local.settings.json` and a full debug/run lifecycle with action-level evidence. Phase 4.15B / `E2E_MODE=customcodedotnetonly`. See §20. |
+| `src/test/ui/customCodeDotNetVersionCreate.test.ts` | Custom-code .NET picker/create phase. The `net10` target drives the real Create Workspace webview and creates a Stateful workspace; the `net8` target asserts `.NET 8` is hidden from the picker. Phase 4.15A / `E2E_MODE=customcodedotnetonly`. See §20. |
+| `src/test/ui/customCodeDotNetVersionAssert.test.ts` | Custom-code .NET 10 assert phase. Validates the 4.15A workspace's `local.settings.json`, project template, and workflow shape without building while Workflows SDK 1.4.0 is pending release. Phase 4.15B / `E2E_MODE=customcodedotnetonly`. See §20. |
 | `src/test/ui/createWorkspace.test.ts` | Create Workspace wizard tests (~4359 lines). Phase 4.1 |
 | `src/test/ui/designerActions.test.ts` | Designer full lifecycle tests (~2647 lines). Phase 4.2 |
 | `src/test/ui/designerOpen.test.ts` | Designer open tests (~1100 lines). Deprecated — Phase 4.2 now uses `designerActions.test.ts` only |
@@ -201,7 +201,7 @@ pnpm run test:ui        # Runs node out/test/run-e2e.js
 | `nugetdebugonly` | Runs `p49-nugetdebugconversion`: bundle debug → run Request/Response workflow → stop → convert to NuGet → debug again without harness port cleanup → run workflow again. Requires the Phase 4.1 fixture manifest from `p41a-fixtures` / createWorkspace setup. |
 | `bundleintegrityonly` | Runs Phase 4.11 (`bundleCdnHealth.test.ts`) — pure-Mocha probe of `cdn.functions.azure.com` integrity headers. No VS Code session, no compiled extension required (only `npx tsup --config tsup.e2e.test.config.ts`). Bundled into the `independentonly` shard for CI. |
 | `funcrepaironly` | Runs Phase 4.14 (`funcRepair.test.ts`) only — the Func Core Tools pre-debug self-heal. Requires a manifest from a previous `p41a-fixtures` run. In CI this scenario runs as the ubuntu `func-selfheal` shard and as the `vscode-e2e-funcselfheal-windows` job (which creates its own fixtures first — see section 19). |
-| `customcodedotnetonly` | Runs Phase 4.15 (§20): the `net8` target performs real wizard create → fresh-session reopen → setting assertion → full debug/run lifecycle; the `net10` target verifies `.NET 10` is absent from the custom-code picker. Runs both targets by default and can be sharded with `CUSTOMCODE_DOTNET_E2E_VERSIONS`. No manifest required. |
+| `customcodedotnetonly` | Runs Phase 4.15 (§20): the `net10` target performs real wizard create → generated settings/project/workflow assertions without building; the `net8` target verifies `.NET 8` is absent from the custom-code picker. Runs both targets by default and can be sharded with `CUSTOMCODE_DOTNET_E2E_VERSIONS`. No manifest required. |
 
 **IMPORTANT**: Any focused mode whose scenario uses a manifest-backed `workspaceSpec` requires that Phase 4.1 has been run previously in the same session and workspaces still exist on disk. This includes `designeronly` and `nugetdebugonly`. If the manifest is missing, stale, or a previous run's cleanup removed workspace directories, rerun the fixture/createWorkspace phase before the focused mode.
 
@@ -1158,25 +1158,21 @@ not in `timeout-minutes`.
 
 ## 20. Pattern: Custom-code .NET version create/assert pair (Phase 4.15)
 
-Phase 4.15 covers the CustomCode wizard's framework availability and .NET 8 runtime behavior.
-The `net8` target verifies the Logic App root `local.settings.json` setting and full runtime
-lifecycle. The `net10` target verifies that `.NET 10` does not appear in the custom-code
-framework picker. The underlying net10 generation and template behavior remains unit tested.
+Phase 4.15 covers the CustomCode wizard's framework availability and .NET 10 workspace
+generation. The `net10` target verifies the Logic App root `local.settings.json`, generated
+project template, and workflow shape. It intentionally does not build or run the project
+while `Microsoft.Azure.Workflows.WebJobs.Sdk` 1.4.0 is pending release. The `net8` target
+verifies that `.NET 8` does not appear in the custom-code framework picker. Existing .NET 8
+project detection and compatibility behavior remains covered outside the new-project wizard.
 
 - `src/test/ui/customCodeDotNetVersionCreate.test.ts` (4.15A) drives the real Create
-  Workspace webview. For `net8`, it creates a `Logic app with custom code` + Stateful
-  workspace. For `net10`, it opens the framework dropdown and asserts `.NET 10` is absent.
-- `src/test/ui/customCodeDotNetVersionAssert.test.ts` (4.15B) reopens the generated net8
-  `.code-workspace` in a fresh session (same env var, same fixed layout, recomputed
-  independently — the two files' constants tables must stay byte-for-byte identical),
-  asserts the dotnet-version setting, then runs the
-  full debug/run lifecycle: `startDebugging` → `waitForRuntimeReady` (build succeeds,
-  host starts) → `waitForOverviewView` → `assertRunTriggerable` (workflow reaches
-  Healthy, callback URL available, Request trigger invoked) → run history reaches
-  `Succeeded` → `verifyAllNodesSucceeded` + the newly-exported
-  `verifyLatestRunActionRunsSucceeded()` for an explicit
-  `Call_a_local_function_in_this_logic_app:Succeeded` assertion — proving the generated
-  local-function/custom-code action specifically succeeded, not just "some action did".
+  Workspace webview. For `net10`, it creates a `Logic app with custom code` + Stateful
+  workspace. For `net8`, it opens the framework dropdown and asserts `.NET 8` is absent.
+- `src/test/ui/customCodeDotNetVersionAssert.test.ts` (4.15B) independently recomputes the
+  generated net10 workspace layout and asserts the dotnet-version setting, `net10.0`
+  target framework, Workflows SDK 1.4.0 package reference, Request trigger, and generated
+  InvokeFunction action. It does not build or start the workspace until Workflows SDK
+  1.4.0 is released.
 
 **No shared manifest.** Unlike the declarative `scenarios[]` table entries, this pair (like
 Azurite and Codeful debug before it) uses **fixed, deterministic temp paths**
@@ -1189,19 +1185,26 @@ CustomCode entry would create an ambiguous match. Reusing the fixed-path idiom i
 inventing a new manifest field or `WorkspaceSpec` literal keeps the two scenario families
 independent.
 
+The separate Phase 4.1 shared CustomCode fixture is still consumed by
+`p42-customcode` and `p43-customcode` for existing-project debug/run compatibility.
+`createWorkspace.fixtures.test.ts` creates it through the public .NET 10 wizard option,
+then `run-e2e.ts` normalizes only that shared fixture to the existing .NET 8 project
+template and setting before downstream scenarios consume it. Remove that normalization
+when Workflows SDK 1.4.0 is released and the runtime lifecycle moves to .NET 10.
+
 **Orchestration**: `runCustomCodeDotNetPhasesForTarget()` / `runCustomCodeDotNetPhases()`
 in `run-e2e.ts` mirror `runAzuriteReadinessPhasesForKind()` / `runAzuriteReadinessPhases()`
 exactly — same `writeTestSettings` per phase (4.15A: `{validateDependencies: true,
-autoStartDesignTime: true}`, matching Phase 4.1a; 4.15B: `{validateDependencies:
-shouldValidateRuntimeDependencies(), autoStartDesignTime: true}`, matching Azurite 4.13B so
-`workflow-designtime/` evidence exists before F5), same `withPhaseGroupRetries` wrapping
-per-target (not per-sweep), and the same disk-existence short-circuit before 4.15B if
-4.15A did not produce the `.code-workspace`. The net10 negative picker test intentionally
+autoStartDesignTime: true}`, matching Phase 4.1a; 4.15B: `{validateDependencies: false,
+autoStartDesignTime: false}` because it validates files without building), same
+`withPhaseGroupRetries` wrapping per-target (not per-sweep), and the same disk-existence
+short-circuit before 4.15B if
+4.15A did not produce the `.code-workspace`. The net8 negative picker test intentionally
 does not run 4.15B. `E2E_MODE=customcodedotnetonly` runs both targets by default;
 `CUSTOMCODE_DOTNET_E2E_VERSIONS` (comma-separated `net8`/`net10`, plural
 — mirrors `AZURITE_E2E_APP_KINDS`) shards it in CI, one target per matrix leg.
 
-**SDK selection**: the net8 runtime leg resolves the system dotnet installed by
-`actions/setup-dotnet`, verifies SDK 8 is available, and passes that exact binary through
-`dotnetBinaryPathOverride`. The net10 leg is a picker-visibility assertion and does not
-generate or build a net10 project.
+**SDK selection**: the net10 creation leg resolves the system dotnet installed by
+`actions/setup-dotnet`, verifies SDK 10 is available, and passes that exact binary through
+`dotnetBinaryPathOverride` for wizard validation. The net8 leg is a picker-visibility
+assertion and does not generate or build a net8 project.
