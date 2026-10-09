@@ -6,7 +6,6 @@ exports[`ui/settings/settingtagpicker > should construct with basic props 1`] = 
 >
   <Combobox
     className="___1s3ioet_0000000 fly5x3f f93ek0f"
-    freeform={true}
     onInput={[Function]}
     onOptionSelect={[Function]}
     placeholder="Select options..."
