@@ -18,7 +18,7 @@ parameters:
     default: true
   - name: pnpmStoreCacheNamespace
     type: string
-    default: vscode-e2e-pnpm-store-v1
+    default: vscode-e2e-pnpm-store-v2
   - name: telemetryFile
     type: string
     default: ''
@@ -253,18 +253,29 @@ steps:
         condition: always()
 
   - pwsh: |
-      $statusOutput = pnpm store status --store-dir "$(pnpmStorePath)" 2>&1
-      if ($LASTEXITCODE -eq 0) {
-        Write-Host "pnpm store integrity check passed for cache state '$(pnpmStoreCacheState)'."
-        Write-Host "##vso[task.setvariable variable=pnpmStoreFallback]none"
-        exit 0
+      $storePath = '$(pnpmStorePath)'
+      $manifestPath = Join-Path $storePath '.logicappsux-store-manifest.json'
+      $cacheState = '$(pnpmStoreCacheState)'
+      $fallback = 'none'
+
+      if ($cacheState -eq 'miss') {
+        Remove-Item -LiteralPath $storePath -Recurse -Force -ErrorAction SilentlyContinue
+        New-Item -ItemType Directory -Force -Path $storePath | Out-Null
+        Write-Host 'pnpm store cache miss; initialized an empty store root.'
+      } else {
+        node apps/vs-code-designer/scripts/pnpm-store-integrity.js verify --store $storePath --manifest $manifestPath
+        if ($LASTEXITCODE -ne 0) {
+          Write-Warning "pnpm store integrity manifest verification failed for cache state '$cacheState'; clearing the content-addressed store and falling back to authenticated network restore."
+          Remove-Item -LiteralPath $storePath -Recurse -Force -ErrorAction Stop
+          New-Item -ItemType Directory -Force -Path $storePath | Out-Null
+          $fallback = 'corrupt-store-cleared'
+        } else {
+          Write-Host "pnpm store integrity manifest passed for cache state '$cacheState'."
+        }
       }
 
-      Write-Warning "pnpm store integrity check failed for cache state '$(pnpmStoreCacheState)'; clearing the content-addressed store and falling back to authenticated network restore."
-      $statusOutput | ForEach-Object { Write-Warning $_ }
-      Remove-Item -LiteralPath "$(pnpmStorePath)" -Recurse -Force -ErrorAction Stop
-      New-Item -ItemType Directory -Force -Path "$(pnpmStorePath)" | Out-Null
-      Write-Host "##vso[task.setvariable variable=pnpmStoreFallback]corrupt-store-cleared"
+      Write-Host "##vso[task.setvariable variable=pnpmStoreManifestPath]$manifestPath"
+      Write-Host "##vso[task.setvariable variable=pnpmStoreFallback]$fallback"
     displayName: Validate cached pnpm store integrity
     workingDirectory: $(working_directory)
 
@@ -291,7 +302,11 @@ steps:
       if ([IO.Path]::GetFullPath($resolvedStorePath) -ne [IO.Path]::GetFullPath($expectedResolvedStore)) {
         throw "pnpm resolved an unexpected versioned store path. expected='$expectedResolvedStore' actual='$resolvedStorePath'"
       }
-      pnpm store status --store-dir "$(pnpmStorePath)"
+      node apps/vs-code-designer/scripts/pnpm-store-integrity.js write --store '$(pnpmStorePath)' --manifest '$(pnpmStoreManifestPath)'
+      if ($LASTEXITCODE -ne 0) {
+        exit $LASTEXITCODE
+      }
+      node apps/vs-code-designer/scripts/pnpm-store-integrity.js verify --store '$(pnpmStorePath)' --manifest '$(pnpmStoreManifestPath)'
       if ($LASTEXITCODE -ne 0) {
         exit $LASTEXITCODE
       }
