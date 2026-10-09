@@ -13,6 +13,7 @@ const repoRoot = path.resolve(__dirname, '..', '..', '..');
 testAzureToolsWrapperContract();
 testE2eDependencyInstallRetryContract();
 testPnpmStoreCacheContract();
+testConsumerNodeProvisioningContract();
 testPackageLocalLintStagedRoutingContract();
 testRootNpmrcSourceGuardAllowsGeneratedRuntimeFile();
 testLocalAzureToolsWrapperContractIfAvailable();
@@ -406,6 +407,16 @@ function findObjectByDisplayName(value, displayName) {
   return undefined;
 }
 
+function findObjects(value, predicate) {
+  if (Array.isArray(value)) {
+    return value.flatMap((entry) => findObjects(entry, predicate));
+  }
+  if (!value || typeof value !== 'object') {
+    return [];
+  }
+  return [...(predicate(value) ? [value] : []), ...Object.values(value).flatMap((entry) => findObjects(entry, predicate))];
+}
+
 function extractFullRollupGateScript(consumer) {
   const fullGateJob = getConsumerDirectJob(consumer, 'verify_both_os_full_rollup');
   const step = fullGateJob.steps.find((entry) => entry.displayName === 'Enforce twelve-suite both-OS full rollup gate');
@@ -487,6 +498,29 @@ function testPnpmStoreCacheContract() {
   assert.match(finalEvidence.pwsh, /pnpm store status/);
   assert.match(finalEvidence.pwsh, /pnpmStoreCacheState/);
   assert.match(finalEvidence.pwsh, /pnpmStoreFallback/);
+}
+
+function testConsumerNodeProvisioningContract() {
+  const setup = parseYaml('.azure-pipelines/templates/vscode-e2e-cli-setup.yml');
+  const runSuites = parseYaml('.config/templates/vscode-e2e-cli-run-suite.yml');
+  const setupNodeTasks = findObjects(setup.steps, (entry) => entry.task === 'UseNode@1');
+  assert.strictEqual(setupNodeTasks.length, 1, 'The shared setup template keeps one optional Node provisioning task');
+  assert.ok(
+    setup.parameters.some((parameter) => parameter.name === 'provisionNode' && parameter.default === true),
+    'Shared setup provisions Node by default for build and standalone setup consumers'
+  );
+
+  const runSuiteNodeTasks = findObjects(runSuites.jobs, (entry) => entry.task === 'UseNode@1');
+  assert.strictEqual(runSuiteNodeTasks.length, 1, 'Each suite consumer job must provision trusted Node exactly once');
+  assert.strictEqual(runSuiteNodeTasks[0].displayName, 'Use trusted Node.js for E2E artifact admission');
+
+  const setupInvocation = findObjects(
+    runSuites.jobs,
+    (entry) => entry.template === '/.azure-pipelines/templates/vscode-e2e-cli-setup.yml@self'
+  );
+  assert.strictEqual(setupInvocation.length, 1);
+  assert.strictEqual(setupInvocation[0].parameters.provisionNode, false);
+  assertRunSuitesProvisionsTrustedNodeBeforeVerifier(runSuites);
 }
 
 function testAzureToolsWrapperContract() {

@@ -13,15 +13,19 @@ parameters:
   - name: includeLinuxDisplayDependencies
     type: boolean
     default: false
+  - name: provisionNode
+    type: boolean
+    default: true
   - name: pnpmStoreCacheNamespace
     type: string
     default: vscode-e2e-pnpm-store-v1
 
 steps:
-  - task: UseNode@1
-    displayName: Use Node.js ${{ parameters.nodeVersion }}
-    inputs:
-      version: ${{ parameters.nodeVersion }}
+  - ${{ if eq(parameters.provisionNode, true) }}:
+      - task: UseNode@1
+        displayName: Use Node.js ${{ parameters.nodeVersion }}
+        inputs:
+          version: ${{ parameters.nodeVersion }}
 
   - ${{ if eq(parameters.includeDotNet, true) }}:
       - task: UseDotNet@2

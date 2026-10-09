@@ -207,6 +207,7 @@ jobs:
           dotnetVersion: ${{ parameters.dotnetVersion }}
           includeDotNet: true
           includeLinuxDisplayDependencies: ${{ eq(parameters.platform, 'linux') }}
+          provisionNode: false
 
       - pwsh: |
           $artifactRoot = Join-Path '$(Pipeline.Workspace)' '${{ parameters.e2eBuildArtifactName }}'
