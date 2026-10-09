@@ -455,7 +455,7 @@ function parseYaml(relativePath) {
 
 function testE2eDependencyInstallRetryContract() {
   const setup = parseYaml('.azure-pipelines/templates/vscode-e2e-cli-setup.yml');
-  assert.equal(setup.parameters.find((parameter) => parameter.name === 'pnpmStoreCacheNamespace')?.default, 'vscode-e2e-pnpm-store-v2');
+  assert.equal(setup.parameters.find((parameter) => parameter.name === 'pnpmStoreCacheNamespace')?.default, 'vscode-e2e-pnpm-store-v3');
   assert.doesNotMatch(JSON.stringify(setup), /pnpm config set --global fetchTimeout/);
   const installSteps = setup.steps.filter((step) => step.displayName === 'Install dependencies with pnpm');
   assert.strictEqual(installSteps.length, 1, 'E2E setup must have one unambiguous pnpm dependency install step');
@@ -528,6 +528,7 @@ function testPnpmStoreCacheContract() {
   assert.match(finalEvidence.pwsh, /pnpm store path/);
   assert.match(finalEvidence.pwsh, /expectedResolvedStore/);
   assert.match(finalEvidence.pwsh, /"v\$pnpmMajor"/);
+  assert.match(finalEvidence.pwsh, /pnpm-store-integrity\.js prune/);
   assert.match(finalEvidence.pwsh, /pnpm-store-integrity\.js write/);
   assert.match(finalEvidence.pwsh, /pnpm-store-integrity\.js verify/);
   assert.match(finalEvidence.pwsh, /pnpmStoreCacheState/);

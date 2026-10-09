@@ -15,9 +15,13 @@ try {
   const store = path.join(root, 'store');
   const manifest = path.join(store, '.logicappsux-store-manifest.json');
   fs.mkdirSync(path.join(store, 'v11', 'files'), { recursive: true });
+  fs.mkdirSync(path.join(store, 'v11', 'projects', 'checkout-state'), { recursive: true });
+  fs.writeFileSync(path.join(store, 'v11', 'projects', 'checkout-state', 'metadata.json'), '{}');
   fs.writeFileSync(path.join(store, 'v11', 'files', 'package-a'), 'package-a');
   fs.writeFileSync(path.join(store, 'v11', 'files', 'package-b'), 'package-b');
 
+  assert.equal(_test.pruneVolatileMetadata(store), 1);
+  assert.ok(!fs.existsSync(path.join(store, 'v11', 'projects')));
   const written = _test.writeManifest(store, manifest);
   assert.equal(written.schemaVersion, 1);
   assert.deepEqual(

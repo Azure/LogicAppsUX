@@ -21,7 +21,11 @@ function main(args = process.argv.slice(2)) {
     verifyManifest(options.store, options.manifest);
     return;
   }
-  throw new Error('Usage: pnpm-store-integrity.js <write|verify> --store <path> --manifest <path>');
+  if (command === 'prune') {
+    pruneVolatileMetadata(options.store);
+    return;
+  }
+  throw new Error('Usage: pnpm-store-integrity.js <write|verify|prune> --store <path> [--manifest <path>]');
 }
 
 function writeManifest(storeRoot, manifestPath) {
@@ -114,6 +118,38 @@ function sha256File(filePath) {
   return hash.digest('hex');
 }
 
+function pruneVolatileMetadata(storeRoot) {
+  const store = requireDirectory(storeRoot, 'pnpm store');
+  let removed = 0;
+  for (const entry of fs.readdirSync(store, { withFileTypes: true })) {
+    if (!entry.isDirectory() || !/^v\d+$/.test(entry.name)) {
+      continue;
+    }
+    const projects = path.join(store, entry.name, 'projects');
+    if (fs.existsSync(projects)) {
+      removeTreeWithoutFollowingLinks(projects);
+      removed += 1;
+    }
+  }
+  console.log(`Pruned ${removed} pnpm store project metadata director${removed === 1 ? 'y' : 'ies'}.`);
+  return removed;
+}
+
+function removeTreeWithoutFollowingLinks(target) {
+  const stat = fs.lstatSync(target);
+  if (stat.isSymbolicLink() || stat.isFile()) {
+    fs.unlinkSync(target);
+    return;
+  }
+  if (!stat.isDirectory()) {
+    throw new Error(`pnpm store volatile metadata contains an unsupported entry: ${target}`);
+  }
+  for (const entry of fs.readdirSync(target)) {
+    removeTreeWithoutFollowingLinks(path.join(target, entry));
+  }
+  fs.rmdirSync(target);
+}
+
 function parseArgs(args) {
   const options = {};
   for (let index = 0; index < args.length; index += 2) {
@@ -167,6 +203,7 @@ if (require.main === module) {
 module.exports = {
   _test: {
     collectStoreFiles,
+    pruneVolatileMetadata,
     verifyManifest,
     writeManifest,
   },

@@ -18,7 +18,7 @@ parameters:
     default: true
   - name: pnpmStoreCacheNamespace
     type: string
-    default: vscode-e2e-pnpm-store-v2
+    default: vscode-e2e-pnpm-store-v3
   - name: telemetryFile
     type: string
     default: ''
@@ -301,6 +301,10 @@ steps:
       $expectedResolvedStore = Join-Path '$(pnpmStorePath)' "v$pnpmMajor"
       if ([IO.Path]::GetFullPath($resolvedStorePath) -ne [IO.Path]::GetFullPath($expectedResolvedStore)) {
         throw "pnpm resolved an unexpected versioned store path. expected='$expectedResolvedStore' actual='$resolvedStorePath'"
+      }
+      node apps/vs-code-designer/scripts/pnpm-store-integrity.js prune --store '$(pnpmStorePath)'
+      if ($LASTEXITCODE -ne 0) {
+        exit $LASTEXITCODE
       }
       node apps/vs-code-designer/scripts/pnpm-store-integrity.js write --store '$(pnpmStorePath)' --manifest '$(pnpmStoreManifestPath)'
       if ($LASTEXITCODE -ne 0) {
