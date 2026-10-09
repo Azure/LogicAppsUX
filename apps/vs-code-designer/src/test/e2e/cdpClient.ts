@@ -307,6 +307,8 @@ export async function connectToVsCodeCdpByText(options: {
   urlIncludes?: string;
   allTextIncludes: string[];
   timeoutMs?: number;
+  beforePoll?: () => void | Promise<void>;
+  acceptCandidate?: (cdp: CdpConnection, contextId: number) => void | Promise<void>;
 }): Promise<{ cdp: CdpConnection; contextId: number }> {
   const port = process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT;
   assert.ok(port, 'LA_E2E_CLI_REMOTE_DEBUGGING_PORT must be set for webview DOM smoke tests');
@@ -318,6 +320,7 @@ export async function connectToVsCodeCdpByText(options: {
   let lastError = '';
 
   while (Date.now() < deadline) {
+    await options.beforePoll?.();
     targets = (await fetchJson(`http://127.0.0.1:${port}/json/list`, remaining(deadline))) as CdpTarget[];
     const webviewTargets = [...targets].reverse().filter((target) => {
       return (
@@ -340,6 +343,7 @@ export async function connectToVsCodeCdpByText(options: {
           description: `${targetName} candidate`,
           timeoutMs: 1000,
         });
+        await options.acceptCandidate?.(cdp, contextId);
 
         if (target.id) {
           await fetchWithTimeout(`http://127.0.0.1:${port}/json/activate/${target.id}`, remaining(deadline)).catch(() => undefined);

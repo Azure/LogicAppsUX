@@ -118,19 +118,21 @@ export function assertActiveWebview(state: WorkbenchState, targetUrl: string | u
   );
 }
 
-export async function activeWebview(workbench: CdpEvaluator, tab: string, texts: string[], deadline: number) {
+export async function activeWebview(
+  workbench: CdpEvaluator,
+  tab: string,
+  texts: string[],
+  deadline: number,
+  beforePoll?: () => void | Promise<void>
+) {
   const result = await connectToVsCodeCdpByText({
     targetName: tab,
     allTextIncludes: texts,
     timeoutMs: remainingBudget(deadline),
+    beforePoll,
+    acceptCandidate: async (cdp) => assertActiveWebview(await readWorkbench(workbench), cdp.targetUrl, tab),
   });
-  try {
-    assertActiveWebview(await readWorkbench(workbench), result.cdp.targetUrl, tab);
-    return result;
-  } catch (error) {
-    result.cdp.dispose();
-    throw error;
-  }
+  return result;
 }
 
 export function readLogicAppRoots(workspaceFile: string, expected: string[]): string[] {

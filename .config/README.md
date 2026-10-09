@@ -55,13 +55,15 @@ Each suite publishes its own JUnit results and one consolidated sanitized diagno
 
 The E2E Run Pipeline form intentionally exposes only test-selection controls: `diagnosticOnly`, `runLinux`, `runWindows`, `linuxSuites`, and `windowsSuites`. Selection is validated before the artifact build. A normal run requires the full canonical inventory on both OSes, expressed through the `linux`/`windows` aliases or complete explicit lists; partial runs must be diagnostic. Unknown, duplicate, overlapping, or OS-incompatible selections are rejected. Diagnostic selection only schedules the selected independent jobs and cannot satisfy the full gate.
 
-The supplementary `httpTimeoutComposeOriginal`, `statelessVariablesLifecycle`
+The supplementary `httpTimeoutLifecycle`, `statelessVariablesLifecycle`
 and `workspaceArtifactRegeneration`/`workspaceMultiRoot`
 families have independent Linux and Windows jobs using the same admitted payload,
 isolated dependencies/profiles, secure Linux session and required result staging.
 Select either or both by their suite IDs in each OS selector with
 `diagnosticOnly=true`. Their bootstrap/create/reopen prerequisites run inside
-their owning family; they do not receive live Azure credentials. The diagnostic
+their owning family. The HTTP lifecycle receives only the approved WIF-backed
+Azure fixture context required by its affirmative connector setup; workspace-only
+families do not receive live Azure credentials. The diagnostic
 reporter depends on these jobs and fails if any selected family fails or skips.
 They remain outside the established six-suite aliases and twelve-job protected
 gate until actual native evidence and explicit baseline promotion are complete.

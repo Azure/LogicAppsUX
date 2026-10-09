@@ -70,38 +70,12 @@ const SUITE_REGISTRY = Object.freeze({
     requiresAzure: true,
     expectedPhases: Object.freeze(['runtimeDependencyBootstrap:bootstrap', 'msnWeatherLifecycle:create', 'msnWeatherLifecycle:run']),
   }),
-  httpTimeoutComposeOriginal: Object.freeze({
-    id: 'httpTimeoutComposeOriginal',
-    args: Object.freeze(['--http-timeout-compose-original']),
+  httpTimeoutLifecycle: Object.freeze({
+    id: 'httpTimeoutLifecycle',
+    args: Object.freeze(['--http-timeout-lifecycle']),
     platforms: Object.freeze(['linux', 'win32']),
     requiresAzure: true,
-    expectedPhases: Object.freeze([
-      'runtimeDependencyBootstrap:bootstrap',
-      'httpTimeoutComposeOriginal:create',
-      'httpTimeoutComposeOriginal:reopen',
-    ]),
-  }),
-  httpTimeoutRequestExecution: Object.freeze({
-    id: 'httpTimeoutRequestExecution',
-    args: Object.freeze(['--http-timeout-request-execution']),
-    platforms: Object.freeze(['linux', 'win32']),
-    requiresAzure: true,
-    expectedPhases: Object.freeze([
-      'runtimeDependencyBootstrap:bootstrap',
-      'httpTimeoutRequestExecution:create',
-      'httpTimeoutRequestExecution:run',
-    ]),
-  }),
-  httpTimeoutRequestValidation: Object.freeze({
-    id: 'httpTimeoutRequestValidation',
-    args: Object.freeze(['--http-timeout-request-validation']),
-    platforms: Object.freeze(['linux', 'win32']),
-    requiresAzure: true,
-    expectedPhases: Object.freeze([
-      'runtimeDependencyBootstrap:bootstrap',
-      'httpTimeoutRequestValidation:create',
-      'httpTimeoutRequestValidation:run',
-    ]),
+    expectedPhases: Object.freeze(['runtimeDependencyBootstrap:bootstrap', 'httpTimeoutLifecycle:create', 'httpTimeoutLifecycle:reopen']),
   }),
   statelessVariablesLifecycle: Object.freeze({
     id: 'statelessVariablesLifecycle',

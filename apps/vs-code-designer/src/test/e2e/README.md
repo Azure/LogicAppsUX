@@ -61,13 +61,13 @@ selection, node/panel interaction, semantic parameter editing and saving.
 Family tests must retain their own workflow/runtime assertions and should not
 introduce local copies of those selectors or interaction sequences.
 
-### HTTP timeout on Compose: original authoring clause
+### HTTP timeout lifecycle: OGF Scenarios 1-3
 
-`pnpm --dir apps/vs-code-designer run test:e2e-cli:http-timeout-compose-original`
+`pnpm --dir apps/vs-code-designer run test:e2e-cli:http-timeout-lifecycle`
 first validates dependencies in an isolated runtime root using the existing
 bootstrap label, uses the existing Create Workspace fixture label filtered to
-Standard Stateless, then reopens that generated `.code-workspace` in a fresh
-latest-stable official CLI host under the supplementary `httpTimeoutComposeOriginal` label.
+Standard Stateless, then reopens that generated `.code-workspace` once in a fresh
+latest-stable official CLI host under the supplementary `httpTimeoutLifecycle` label.
 The family explicitly selects V2 in its generated workspace and binds
 `designerLocalV2` throughout. VS Code configuration is reacquired after the awaited
 version update because
@@ -143,20 +143,21 @@ No installation on a cold producer reports **NOT EXECUTED** and contributes no
 passing-control count; an explicit missing bundle or a found incompatible provider
 fails rather than substituting a model. Native V2 configuration readback is always
 required independently of this optional probe.
-Canonical baseline labels/counts and rollup are unchanged. This supplementary label is runnable,
-not automatically admitted to an Azure DevOps baseline or credited from units.
-The explicit batch selector is `node scripts/run-e2e-cli.js --suites httpTimeoutComposeOriginal`;
-canonical `linux`/`windows` aliases remain unchanged. Its exact expected phases,
-also recorded by the direct route in the existing phase JSONL format, are:
+Canonical baseline labels/counts and rollup are unchanged. This supplementary
+label is runnable, not automatically admitted to an Azure DevOps baseline or
+credited from units. The explicit batch selector is
+`node scripts/run-e2e-cli.js --suites httpTimeoutLifecycle`; canonical
+`linux`/`windows` aliases remain unchanged. Its exact expected phases, also
+recorded by the direct route in the existing phase JSONL format, are:
 
 1. `runtimeDependencyBootstrap:bootstrap` (existing bootstrap label);
-2. `httpTimeoutComposeOriginal:create` (`createWorkspaceFixturesManifest`, Standard Stateless only);
-3. `httpTimeoutComposeOriginal:reopen` (`httpTimeoutComposeOriginal`, actual designer/Code/save/error).
+2. `httpTimeoutLifecycle:create` (`createWorkspaceFixturesManifest`, Standard Stateless only);
+3. `httpTimeoutLifecycle:reopen` (one host running Scenarios 1, 2, and 3 in order).
 
 The direct route replaces prior results with a fresh incomplete invocation before
 work starts and writes label-specific acceptance files under `.vscode-test/results/`:
-`httpTimeoutComposeOriginal.terminal-result.json` and
-`httpTimeoutComposeOriginal.cleanup-ledger.json`. Its unique original phase JSONL
+`httpTimeoutLifecycle.terminal-result.json` and
+`httpTimeoutLifecycle.cleanup-ledger.json`. Its unique original phase JSONL
 is retained under the family lifecycle artifact directory. Final success requires
 the exact ordered current-invocation phases, positive actual test counts, each
 original CLI host's observed owned-descendant closure, actual owned-root absence
@@ -178,20 +179,21 @@ Native acceptance requires the source-bound compiled producer artifact and
 actual Windows and Linux isolated consumer runs with their generated fixture,
 raw CLI results, saved-definition snapshot and accepted screenshots.
 
-The Compose family remains scoped only to the original built-in Compose
-authoring/Code/save/unsupported-timeout clause. Two separate supplementary
-families preserve that meaning while covering the Standard HTTP clauses:
+The reopened host runs the three Standard VS Code scenarios sequentially:
 
-- `httpTimeoutRequestExecution` creates an isolated Standard Stateless workspace,
-  authors Request + HTTP through Designer Settings with `PT1S` and asynchronous
-  pattern disabled, verifies the serialized definition, invokes the exact local
-  callback, correlates the returned run ID, and requires that run's HTTP action
-  to fail with timeout-specific evidence.
-- `httpTimeoutRequestValidation` creates another isolated workspace, saves
-  `PT24H`, requires the current Functions validation text from the real
-  `Azure Logic Apps (Standard)` Output channel, then proves the current V2
-  `InvalidString` ISO-8601 validation leaves Save disabled and the persisted
-  `PT24H` definition unchanged.
+1. The first workflow authors Request + HTTP through Designer Settings with
+   `PT1S` and asynchronous pattern disabled, verifies the serialized definition,
+   invokes the exact local callback, correlates the returned run ID, and requires
+   that run's HTTP action to fail with timeout-specific evidence.
+2. The same workflow changes only the existing HTTP timeout to `PT24H`, requires
+   fresh Functions validation text from the real `Azure Logic Apps (Standard)`
+   Output channel, then proves current V2 `InvalidString` ISO-8601 validation
+   leaves Save disabled and the persisted `PT24H` definition unchanged.
+3. The same VS Code host creates a second empty Stateless workflow in the same
+   Logic App, authors Request + Compose with input `test`, saves and closes the
+   Designer, opens the exact `workflow.json` in the native editor, inserts only
+   the Compose `runtimeConfiguration.requestOptions.timeout`, saves and closes
+   the editor, and reopens Designer to require the unsupported-timeout message.
 
 Both use a runner-owned loopback delayed endpoint so Linux and Windows exercise
 real timeout behavior deterministically without publishing the retired signed
@@ -200,12 +202,11 @@ for the original credential-bearing endpoint identity. Portal-only validation
 wording and the Consumption-only rejection remain host residuals; VS Code cannot
 create the required Consumption workflow.
 
-Run the new families explicitly with
-`node scripts/run-e2e-cli.js --http-timeout-request-execution` and
-`node scripts/run-e2e-cli.js --http-timeout-request-validation`, or select their
-suite IDs in a diagnostic batch. Each has bootstrap, isolated wizard-create, and
-fresh reopen/run phases with the same retained-original process and owned-root
-cleanup gates as other strict supplementary families.
+Run the family explicitly with
+`node scripts/run-e2e-cli.js --http-timeout-lifecycle`, or select
+`httpTimeoutLifecycle` in a diagnostic batch. The prior scenario-specific CLI
+flags remain compatibility aliases to this same lifecycle and do not create
+separate jobs or scenario processes.
 
 ### Stateless variables family (isolated native host only)
 

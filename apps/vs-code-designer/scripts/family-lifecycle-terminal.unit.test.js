@@ -41,12 +41,7 @@ function fixture(suiteId) {
   };
 }
 
-for (const suiteId of [
-  'httpTimeoutComposeOriginal',
-  'statelessVariablesLifecycle',
-  'workspaceArtifactRegeneration',
-  'workspaceMultiRoot',
-]) {
+for (const suiteId of ['httpTimeoutLifecycle', 'statelessVariablesLifecycle', 'workspaceArtifactRegeneration', 'workspaceMultiRoot']) {
   test(`${suiteId}: every real ordered phase and final cleanup are required`, () => {
     const { result, terminal } = fixture(suiteId);
     assertFamilyLifecycleTerminal(result, terminal, suiteId);
@@ -138,14 +133,14 @@ for (const suiteId of [
 }
 
 test('supplementary evidence cannot bypass or replace the canonical gate', () => {
-  const { result, terminal } = fixture('httpTimeoutComposeOriginal');
+  const { result, terminal } = fixture('httpTimeoutLifecycle');
   assert.throws(() => assertFamilyLifecycleTerminal(result, terminal, 'unitTests'), /Canonical suites/);
   assert.throws(() => assertFamilyLifecycleTerminal(result, terminal, 'unregistered'), /Unknown supplementary suite/);
 });
 
 test('publication CLI rejects absent/stale terminal evidence even after a successful native summary', () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'family-terminal-unit-'));
-  const suiteId = 'httpTimeoutComposeOriginal';
+  const suiteId = 'httpTimeoutLifecycle';
   const { result, terminal } = fixture(suiteId);
   const nativePath = path.join(root, 'native.json');
   const terminalPath = path.join(root, 'terminal.json');

@@ -3,13 +3,16 @@ import * as fs from 'fs';
 import * as http from 'http';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { connectToVsCodeCdp, connectToVsCodeWorkbenchCdp, type CdpConnection, waitForWebviewFrameContext } from './cdpClient';
+import { connectToVsCodeWorkbenchCdp, type CdpConnection } from './cdpClient';
+import { assertNextButtonEnabled, enterFieldValue, getPageText, selectDropdownOption } from './cdpFormHelpers';
 import { closeCopilotChatIfVisible } from './copilotChat';
 import { assertNoDialogAttempts, installDialogGuard } from './dialogGuard';
 import { HttpTimeoutComposeDriver } from './httpTimeoutComposeDriver';
 import { assertHttpTimeoutWorkspaceIdentity } from './httpTimeoutComposeEnvironment';
+import { proveHttpTimeoutComposeOriginal } from './httpTimeoutComposeOriginal.test';
 import {
   httpTimeoutComposeDesignerViewType,
+  type HttpTimeoutComposeWorkspace,
   httpTimeoutComposeRemaining,
   pollHttpTimeoutCompose,
   selectHttpTimeoutComposeDesignerV2,
@@ -32,6 +35,8 @@ import { installStatelessHistorySettings } from './statelessVariablesControls';
 import { normalizeFsPath, uniqueName } from './testUtils';
 import { closeAllTabs, getWebviewTabs, waitForWebviewTab } from './webviewTabs';
 import { statelessLifecycleHelpers as helpers, type CreatedWorkspace } from './workspaceLifecycle.test';
+import { boundedCdp, clickText, poll as pollWorkbench } from './workbenchCdpActions';
+import { activeWebview } from './workspaceMultiRootWorkbench';
 import {
   assertAzureConnectorAccountTreePrerequisite,
   readApprovedAzureConnectorFixture,
@@ -43,17 +48,15 @@ import { handleAffirmativeConnectorWorkbenchPrompt } from './workbenchPrompts';
 
 const managementRoot = 'http://localhost:7071/runtime/webhooks/workflow/api/management';
 const apiVersion = '2019-10-01-edge-preview';
-const scenario = process.env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_SCENARIO;
 const mode = process.env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MODE;
 
 installDialogGuard();
 installFailureScreenshotHook();
 
-suite('HTTP timeout request original clauses', () => {
-  test('proves the selected isolated HTTP timeout request clause', async function () {
-    this.timeout(1_200_000);
-    assert.ok(scenario === 'execution' || scenario === 'validation', 'Use a registered HTTP timeout request scenario');
-    const label = scenario === 'execution' ? 'http-timeout-request-execution' : 'http-timeout-request-validation';
+suite('HTTP timeout original clauses', () => {
+  test('proves HTTP execution, HTTP validation, then Compose unsupported timeout in one session', async function () {
+    this.timeout(1_800_000);
+    const label = 'http-timeout-lifecycle';
     if (mode === 'create') {
       const parent = process.env.LA_E2E_CLI_WORKSPACE_PARENT;
       const manifestPath = process.env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MANIFEST;
@@ -64,9 +67,9 @@ suite('HTTP timeout request original clauses', () => {
           appType: 'standard',
           wfType: 'Stateless',
           radioLabel: 'Logic app (Standard)',
-          wsName: uniqueName(`${scenario}httpws`),
-          appName: uniqueName(`${scenario}httpapp`),
-          wfName: uniqueName(`${scenario}httpwf`),
+          wsName: uniqueName('httptimeoutws'),
+          appName: uniqueName('httptimeoutapp'),
+          wfName: uniqueName('httprequestwf'),
         },
         parent
       );
@@ -76,7 +79,7 @@ suite('HTTP timeout request original clauses', () => {
     }
 
     assert.strictEqual(mode, 'run', 'Use the registered HTTP timeout request lifecycle runner');
-    const deadline = Date.now() + 1_080_000;
+    const deadline = Date.now() + 1_680_000;
     const parent = process.env.LA_E2E_CLI_WORKSPACE_PARENT;
     const manifestPath = process.env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MANIFEST;
     assert.ok(parent && manifestPath, 'HTTP timeout request run requires runner-owned paths');
@@ -90,11 +93,13 @@ suite('HTTP timeout request original clauses', () => {
 
     const endpoint = await startOwnedDelayEndpoint();
     try {
-      if (scenario === 'execution') {
-        await provePt1sExecution(entry, endpoint, deadline);
-      } else {
-        await provePt24hAndInvalidValidation(entry, endpoint.url, deadline);
-      }
+      await provePt1sExecution(entry, endpoint, deadline);
+      await provePt24hAndInvalidValidation(entry, endpoint.url, deadline);
+      const composeEntry = await createComposeWorkflow(entry, deadline);
+      await proveHttpTimeoutComposeOriginal(composeEntry, deadline);
+      console.log(
+        '[http-timeout] Scenarios 1-3 passed sequentially in one VS Code session; Portal wording and Consumption rejection remain residual.'
+      );
     } finally {
       await helpers.stopDebuggingAndTasks();
       await endpoint.close();
@@ -159,7 +164,7 @@ async function provePt1sExecution(entry: CreatedWorkspace, endpoint: OwnedDelayE
 async function provePt24hAndInvalidValidation(entry: CreatedWorkspace, endpoint: string, deadline: number): Promise<void> {
   let session = await openDesigner(entry, deadline, 'HTTP PT24H actual designer');
   try {
-    await authorHttpRequest(session.driver, endpoint, 'PT24H', entry, deadline);
+    await updateHttpRequestTimeout(session.driver, endpoint, 'PT24H', entry, deadline);
     await captureEvidenceScreenshot(
       'http-timeout-request-pt24h-saved',
       {
@@ -228,8 +233,10 @@ async function provePt24hAndInvalidValidation(entry: CreatedWorkspace, endpoint:
         binding: { activeTabText: [entry.wfName, 'Workspace'], semanticText: [httpTimeoutInvalidDurationError] },
       }
     );
+    await updateHttpRequestTimeout(session.driver, endpoint, 'PT24H', entry, deadline);
   } finally {
     session.dispose();
+    await closeAllTabs();
   }
 }
 
@@ -261,6 +268,107 @@ async function authorHttpRequest(
     `persisted HTTP timeout ${timeout}`
   );
   assertHttpTimeoutRequestPersisted(persisted, timeout, endpoint);
+}
+
+async function updateHttpRequestTimeout(
+  driver: HttpTimeoutComposeDriver,
+  endpoint: string,
+  timeout: string,
+  entry: CreatedWorkspace,
+  deadline: number
+): Promise<void> {
+  await driver.waitForDesignerReady(['When an HTTP request is received', 'When a HTTP request is received']);
+  await driver.configureHttpRequestSettings(timeout);
+  await driver.closePanel();
+  await pollHttpTimeoutCompose(() => driver.saveEnabled(), Boolean, deadline, `enabled Save after setting HTTP timeout ${timeout}`);
+  const priorModifiedAt = fs.statSync(entry.workflowJsonPath).mtimeMs;
+  await driver.save();
+  await pollHttpTimeoutCompose(
+    async () => ({
+      enabled: await driver.saveEnabled(),
+      modifiedAt: fs.statSync(entry.workflowJsonPath).mtimeMs,
+    }),
+    (state) => state.enabled === false && state.modifiedAt > priorModifiedAt,
+    deadline,
+    `persisted and clean designer after saving HTTP timeout ${timeout}`
+  );
+  const persisted = await pollHttpTimeoutCompose(
+    async () => readWorkflow(entry),
+    (value) => {
+      try {
+        assertHttpTimeoutRequestPersisted(value, timeout, endpoint);
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    deadline,
+    `updated persisted HTTP timeout ${timeout}`
+  );
+  assertHttpTimeoutRequestPersisted(persisted, timeout, endpoint);
+}
+
+async function createComposeWorkflow(entry: CreatedWorkspace, deadline: number): Promise<HttpTimeoutComposeWorkspace> {
+  await closeAllTabs();
+  const workflowName = uniqueName('httpcomposewf');
+  const workflowDir = path.join(entry.appDir, workflowName);
+  const workflowJsonPath = path.join(workflowDir, 'workflow.json');
+  let commandError: unknown;
+  const command = vscode.commands.executeCommand('azureLogicAppsStandard.createWorkflow', vscode.Uri.file(entry.appDir));
+  command.then(undefined, (error) => {
+    commandError = error;
+  });
+  const workbenchConnection = await connectToVsCodeWorkbenchCdp({
+    activate: false,
+    timeoutMs: Math.min(15_000, httpTimeoutComposeRemaining(deadline)),
+  });
+  try {
+    const workbench = boundedCdp(workbenchConnection, deadline);
+    const wizard = await activeWebview(workbench, 'Create workflow', ['Workflow name', 'Workflow type'], deadline);
+    try {
+      await enterFieldValue(wizard.cdp, wizard.contextId, 'Workflow name', workflowName);
+      await selectDropdownOption(wizard.cdp, wizard.contextId, 'Workflow type', 'Stateless');
+      await assertNextButtonEnabled(wizard.cdp, wizard.contextId, 'HTTP timeout Compose workflow');
+      await clickText(wizard.cdp, 'button', 'Next', deadline, wizard.contextId);
+      await pollWorkbench(
+        () => getPageText(wizard.cdp, wizard.contextId),
+        (text) => /Review your configuration/i.test(text) && text.includes(workflowName) && text.includes('Stateless'),
+        deadline
+      );
+      await clickText(wizard.cdp, 'button', 'Create workflow', deadline, wizard.contextId);
+    } finally {
+      wizard.cdp.dispose();
+    }
+    await pollWorkbench(
+      async () => {
+        if (commandError) {
+          throw commandError;
+        }
+        return fs.existsSync(workflowJsonPath) ? JSON.parse(fs.readFileSync(workflowJsonPath, 'utf8')) : undefined;
+      },
+      (workflow) =>
+        workflow?.kind === 'Stateless' &&
+        Object.keys(workflow.definition?.triggers ?? {}).length === 0 &&
+        Object.keys(workflow.definition?.actions ?? {}).length === 0,
+      deadline
+    );
+    await command;
+  } finally {
+    workbenchConnection.dispose();
+  }
+  return {
+    appType: 'standard',
+    wfType: 'Stateless',
+    parentDir: entry.workspaceDir,
+    wsName: entry.wsName,
+    appName: entry.appName,
+    wfName: workflowName,
+    wsDir: entry.workspaceDir,
+    wsFilePath: entry.workspaceFilePath,
+    appDir: entry.appDir,
+    wfDir: workflowDir,
+    createdAt: new Date().toISOString(),
+  };
 }
 
 interface DesignerSession {
@@ -321,16 +429,10 @@ async function openDesigner(entry: CreatedWorkspace, deadline: number, targetNam
       'actual HTTP timeout request designer tab'
     );
     const tab = getWebviewTabs(httpTimeoutComposeDesignerViewType)[0];
-    const cdp = await connectToVsCodeCdp({ targetName });
+    const active = await activeWebview(workbench, tab.label, ['Workflow', 'Code', 'Save'], deadline, handlePrompt);
+    const cdp = active.cdp;
     try {
-      const contextId = await waitForWebviewFrameContext(cdp, {
-        allTextIncludes: ['Workflow', 'Code', 'Save'],
-        description: targetName,
-        requiredSelector:
-          '[data-testid="card-Add a trigger"], [data-testid="card-Add trigger"], [aria-label="Add a trigger"], [aria-label="Add trigger"]',
-        timeoutMs: Math.min(180_000, httpTimeoutComposeRemaining(deadline)),
-        beforePoll: handlePrompt,
-      });
+      const contextId = active.contextId;
       const assertActive = () => {
         const tabs = getWebviewTabs(httpTimeoutComposeDesignerViewType);
         assert.strictEqual(tabs.length, 1);

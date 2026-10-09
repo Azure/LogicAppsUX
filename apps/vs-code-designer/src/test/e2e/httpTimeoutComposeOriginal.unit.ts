@@ -70,6 +70,19 @@ function inputDriverFixture(deadline = Date.now() + 5000) {
 }
 
 async function main(): Promise<void> {
+  await control('combined lifecycle executes request execution, validation, then Compose in one ordered test', () => {
+    const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutRequestLifecycle.test.ts'), 'utf8');
+    const pt1s = source.indexOf('await provePt1sExecution');
+    const pt24h = source.indexOf('await provePt24hAndInvalidValidation');
+    const createCompose = source.indexOf('await createComposeWorkflow');
+    const compose = source.indexOf('await proveHttpTimeoutComposeOriginal');
+    assert.ok(pt1s >= 0 && pt1s < pt24h && pt24h < createCompose && createCompose < compose);
+    assert.strictEqual(
+      (source.match(/\btest\('proves HTTP execution, HTTP validation, then Compose unsupported timeout in one session'/g) ?? []).length,
+      1
+    );
+    assert.ok(!source.includes('LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_SCENARIO'));
+  });
   await control('original replacement is exact and leaves authored source unchanged', () => {
     assertHttpTimeoutComposeAuthored(authored);
     assert.deepStrictEqual(expected.definition.actions.Compose, {
@@ -407,13 +420,17 @@ async function main(): Promise<void> {
       'httpTimeoutComposeOriginal:create',
       'httpTimeoutComposeOriginal:reopen',
     ];
-    await control('shared family ID registers exact phases without expanding canonical aliases', () => {
-      const suite = batch.SUITE_REGISTRY.httpTimeoutComposeOriginal;
-      assert.deepStrictEqual(suite.args, ['--http-timeout-compose-original']);
-      assert.deepStrictEqual(suite.expectedPhases, expectedPhases);
+    await control('combined HTTP family registers exact phases without expanding canonical aliases', () => {
+      const suite = batch.SUITE_REGISTRY.httpTimeoutLifecycle;
+      assert.deepStrictEqual(suite.args, ['--http-timeout-lifecycle']);
+      assert.deepStrictEqual(suite.expectedPhases, [
+        'runtimeDependencyBootstrap:bootstrap',
+        'httpTimeoutLifecycle:create',
+        'httpTimeoutLifecycle:reopen',
+      ]);
       assert.deepStrictEqual(runner.getDirectExpectedPhaseIds('httpTimeoutComposeOriginal'), expectedPhases);
       for (const platform of ['linux', 'win32']) {
-        assert.strictEqual(batch.normalizeSuiteSelection('httpTimeoutComposeOriginal', { platform })[0], suite);
+        assert.strictEqual(batch.normalizeSuiteSelection('httpTimeoutLifecycle', { platform })[0], suite);
       }
       for (const alias of ['linux', 'windows']) {
         assert.ok(!batch.normalizeSuiteSelection(alias).some((entry: { id: string }) => entry.id === suite.id));
@@ -529,7 +546,7 @@ async function main(): Promise<void> {
       }
     });
     await control('batch terminal requires exact completed family phases and ordinary wrapper success', () => {
-      const suite = batch.SUITE_REGISTRY.httpTimeoutComposeOriginal;
+      const suite = batch.SUITE_REGISTRY.httpTimeoutLifecycle;
       const context = {
         expectedPhaseIds: expectedPhases,
         phaseResultsPath: path.join(root, 'batch-phases.jsonl'),

@@ -46,7 +46,7 @@ const {
     readContainmentReceipt,
     requiresDirectHttpPhaseClosure,
     requiresDirectFamilyWrapper,
-    runHttpTimeoutRequestLifecycle,
+    runHttpTimeoutLifecycle,
     runSuiteWrapperProcess,
     createLinePrefixer,
     sanitizeInheritedGitCommandConfigEnv,
@@ -723,19 +723,13 @@ function testMsnWeatherLifecycleRunEnvCarriesOwnedRoot() {
 }
 
 async function testHttpTimeoutRequestLifecycleUsesIsolatedStartupResources() {
-  assert.deepStrictEqual(getDirectExpectedPhaseIds('httpTimeoutRequestExecution'), [
+  assert.deepStrictEqual(getDirectExpectedPhaseIds('httpTimeoutLifecycle'), [
     'runtimeDependencyBootstrap:bootstrap',
-    'httpTimeoutRequestExecution:create',
-    'httpTimeoutRequestExecution:run',
-  ]);
-  assert.deepStrictEqual(getDirectExpectedPhaseIds('httpTimeoutRequestValidation'), [
-    'runtimeDependencyBootstrap:bootstrap',
-    'httpTimeoutRequestValidation:create',
-    'httpTimeoutRequestValidation:run',
+    'httpTimeoutLifecycle:create',
+    'httpTimeoutLifecycle:reopen',
   ]);
 
-  const suiteId = 'httpTimeoutRequestExecution';
-  const scenario = 'execution';
+  const suiteId = 'httpTimeoutLifecycle';
   const root = fs.mkdtempSync(path.join(tempRoot, 'http-timeout-request-'));
   const workspaceParent = path.join(root, 'workspaces');
   const runtimeRoot = path.join(root, 'runtime');
@@ -749,9 +743,7 @@ async function testHttpTimeoutRequestLifecycleUsesIsolatedStartupResources() {
   process.env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH = phaseResultsPath;
   process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT = runtimeRoot;
   try {
-    await runHttpTimeoutRequestLifecycle({
-      suiteId,
-      scenario,
+    await runHttpTimeoutLifecycle({
       createParent: () => workspaceParent,
       createRuntimeRoot: () => runtimeRoot,
       cleanupRuntime: async () => undefined,
@@ -765,9 +757,9 @@ async function testHttpTimeoutRequestLifecycleUsesIsolatedStartupResources() {
         let phaseId = 'runtimeDependencyBootstrap:bootstrap';
         if (env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MODE === 'create') {
           phaseId = `${suiteId}:create`;
-          const wsName = 'executionhttpws';
-          const appDir = path.join(workspaceParent, wsName, 'executionhttpapp');
-          const wfName = 'executionhttpwf';
+          const wsName = 'httptimeoutws';
+          const appDir = path.join(workspaceParent, wsName, 'httptimeoutapp');
+          const wfName = 'httptimeoutwf';
           const workspaceDir = path.join(workspaceParent, wsName);
           const workspaceFilePath = path.join(workspaceDir, `${wsName}.code-workspace`);
           const workflowJsonPath = path.join(appDir, wfName, 'workflow.json');
@@ -778,7 +770,7 @@ async function testHttpTimeoutRequestLifecycleUsesIsolatedStartupResources() {
             env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MANIFEST,
             JSON.stringify([
               {
-                label: 'http-timeout-request-execution',
+                label: 'http-timeout-lifecycle',
                 appType: 'standard',
                 wsName,
                 wfName,
@@ -790,7 +782,7 @@ async function testHttpTimeoutRequestLifecycleUsesIsolatedStartupResources() {
             ])
           );
         } else if (env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MODE === 'run') {
-          phaseId = `${suiteId}:run`;
+          phaseId = `${suiteId}:reopen`;
         }
         fs.appendFileSync(
           phaseResultsPath,
@@ -1174,7 +1166,7 @@ async function testBatchSuiteScopedCredentials() {
       LA_E2E_CLI_AZURE_LOCATION_NAME: 'westus',
       LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL: 'https://management.azure.com',
     },
-    SUITE_REGISTRY.httpTimeoutComposeOriginal
+    SUITE_REGISTRY.httpTimeoutLifecycle
   );
   assert.strictEqual(httpScoped.LA_E2E_CLI_AZURE_ACCESS_TOKEN, 'http-token');
   assert.strictEqual(httpScoped.LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME, 'http-resource-group');
@@ -1363,7 +1355,7 @@ async function testDirectHttpFamilyRetainsWrapperPhaseJournal() {
   process.env.LA_E2E_CLI_AZURE_ACCESS_TOKEN_EXPIRES_ON = new Date(Date.now() + 60 * 60 * 1000).toISOString();
   process.env.LA_E2E_CLI_AZURE_ACCESS_TOKEN_MINTED_AT = new Date().toISOString();
   try {
-    const code = await runDirectFamily('httpTimeoutComposeOriginal', undefined, {
+    const code = await runDirectFamily('httpTimeoutLifecycle', undefined, {
       resultsDir,
       batchRoot,
       seedDir,
@@ -1371,9 +1363,9 @@ async function testDirectHttpFamilyRetainsWrapperPhaseJournal() {
       scriptPath: createWrapperFixtureScript('success'),
     });
     assert.strictEqual(code, 0);
-    const terminal = JSON.parse(fs.readFileSync(path.join(resultsDir, 'httpTimeoutComposeOriginal.terminal-result.json'), 'utf8'));
-    assert.deepStrictEqual(terminal.expectedPhaseIds, SUITE_REGISTRY.httpTimeoutComposeOriginal.expectedPhases);
-    assert.deepStrictEqual(terminal.observedPhaseIds, SUITE_REGISTRY.httpTimeoutComposeOriginal.expectedPhases);
+    const terminal = JSON.parse(fs.readFileSync(path.join(resultsDir, 'httpTimeoutLifecycle.terminal-result.json'), 'utf8'));
+    assert.deepStrictEqual(terminal.expectedPhaseIds, SUITE_REGISTRY.httpTimeoutLifecycle.expectedPhases);
+    assert.deepStrictEqual(terminal.observedPhaseIds, SUITE_REGISTRY.httpTimeoutLifecycle.expectedPhases);
     assert.strictEqual(terminal.complete, true);
     assert.strictEqual(terminal.cleanupVerified, true);
     assert.strictEqual(terminal.originalProcessClosureVerified, true);

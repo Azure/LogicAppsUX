@@ -24,6 +24,15 @@ const {
 } = require('./e2e-cli-batch');
 const { getOgfScenariosForPhase } = require('./ogf-e2e-registry');
 const cancelCheck = require('./workspace-prompt-cancel');
+const legacyHttpTimeoutComposeSuite = Object.freeze({
+  id: 'httpTimeoutComposeOriginal',
+  requiresAzure: true,
+  expectedPhases: Object.freeze([
+    'runtimeDependencyBootstrap:bootstrap',
+    'httpTimeoutComposeOriginal:create',
+    'httpTimeoutComposeOriginal:reopen',
+  ]),
+});
 
 const forbiddenOutputPatterns = [
   {
@@ -95,28 +104,18 @@ if (require.main === module) {
 }
 
 function main() {
-  const httpTimeoutRequestSelector = [
-    ['--http-timeout-request-execution', 'httpTimeoutRequestExecution', 'execution'],
-    ['--http-timeout-request-validation', 'httpTimeoutRequestValidation', 'validation'],
-  ].find(([selector]) => process.argv.includes(selector));
-  if (httpTimeoutRequestSelector) {
-    const [selector, suiteId, scenario] = httpTimeoutRequestSelector;
+  const httpTimeoutSelector = [
+    '--http-timeout-lifecycle',
+    '--http-timeout-request-execution',
+    '--http-timeout-request-validation',
+    '--http-timeout-compose-original',
+  ].find((selector) => process.argv.includes(selector));
+  if (httpTimeoutSelector) {
     if (process.argv.length !== 3) {
-      exitWithError(new Error(`${selector} is a focused create + reopen route; do not combine it with other flags.`));
+      exitWithError(new Error(`${httpTimeoutSelector} is a focused create + reopen route; do not combine it with other flags.`));
       return;
     }
-    const run = requiresDirectFamilyWrapper(process.env) ? runDirectFamily(suiteId) : runHttpTimeoutRequestLifecycle({ suiteId, scenario });
-    Promise.resolve(run)
-      .then((code) => process.exit(code))
-      .catch(exitWithError);
-    return;
-  }
-  if (process.argv.includes('--http-timeout-compose-original')) {
-    if (process.argv.length !== 3) {
-      exitWithError(new Error('--http-timeout-compose-original is a focused create + reopen route; do not combine it with other flags.'));
-      return;
-    }
-    const run = requiresDirectFamilyWrapper(process.env) ? runDirectFamily('httpTimeoutComposeOriginal') : runHttpTimeoutComposeOriginal();
+    const run = requiresDirectFamilyWrapper(process.env) ? runDirectFamily('httpTimeoutLifecycle') : runHttpTimeoutLifecycle();
     Promise.resolve(run)
       .then((code) => process.exit(code))
       .catch(exitWithError);
@@ -928,6 +927,7 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     ![
       'msnWeatherLifecycle',
       'httpTimeoutComposeOriginal',
+      'httpTimeoutLifecycle',
       'statelessVariablesLifecycle',
       'workspaceArtifactRegeneration',
       'workspaceMultiRoot',
@@ -936,7 +936,7 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
       (signal === null || signal === undefined) &&
       missingPhaseIds.length === 0 &&
       phaseResults.length === expectedPhaseIds.length &&
-      (suite.id !== 'httpTimeoutComposeOriginal' || expectedPhaseIds.every((phaseId, index) => observedPhaseIds[index] === phaseId)) &&
+      (suite.id !== 'httpTimeoutLifecycle' || expectedPhaseIds.every((phaseId, index) => observedPhaseIds[index] === phaseId)) &&
       phaseResults.every(
         (phase) => phase.complete === true && phase.exitCode === 0 && (phase.signal === null || phase.signal === undefined)
       ));
@@ -1036,6 +1036,7 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     ...([
       'msnWeatherLifecycle',
       'httpTimeoutComposeOriginal',
+      'httpTimeoutLifecycle',
       'statelessVariablesLifecycle',
       'workspaceArtifactRegeneration',
       'workspaceMultiRoot',
@@ -1298,7 +1299,7 @@ async function runHttpTimeoutComposeOriginal({
     const manifestPath = path.join(artifactDir, `manifest-stateless-${notBefore}.json`);
     const runtimeDependenciesRoot = process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT ?? createRuntimeRoot('httpTimeoutComposeOriginal');
     const phaseResultsPath = context?.phaseResultsPath ?? process.env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH;
-    const azureCredentialEnv = await credentialEnvironment(process.env, SUITE_REGISTRY.httpTimeoutComposeOriginal, 45 * 60 * 1000);
+    const azureCredentialEnv = await credentialEnvironment(process.env, legacyHttpTimeoutComposeSuite, 45 * 60 * 1000);
     const commonEnv = {
       ...azureCredentialEnv,
       LA_E2E_CLI_HTTP_TIMEOUT_COMPOSE_INVOCATION_ID: invocation.id,
@@ -1385,9 +1386,7 @@ async function runHttpTimeoutComposeOriginal({
   return 0;
 }
 
-async function runHttpTimeoutRequestLifecycle({
-  suiteId,
-  scenario,
+async function runHttpTimeoutLifecycle({
   run = runVscodeTest,
   createParent = createOwnedWorkspaceParent,
   cleanup = cleanupOwnedWorkspaceParent,
@@ -1395,22 +1394,15 @@ async function runHttpTimeoutRequestLifecycle({
   cleanupRuntime = cleanupRuntimeDependenciesRoot,
   credentialEnvironment = getSuiteScopedCredentialEnv,
 } = {}) {
-  if (!['httpTimeoutRequestExecution', 'httpTimeoutRequestValidation'].includes(suiteId)) {
-    throw new Error(`Unknown HTTP timeout request suite: ${suiteId}`);
-  }
-  if (!['execution', 'validation'].includes(scenario)) {
-    throw new Error(`Unknown HTTP timeout request scenario: ${scenario}`);
-  }
+  const suiteId = 'httpTimeoutLifecycle';
   const phaseResultsPath = process.env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH;
   if (!phaseResultsPath || (fs.existsSync(phaseResultsPath) && fs.readFileSync(phaseResultsPath, 'utf8').trim())) {
     throw new Error(`${suiteId} requires a fresh isolated wrapper phase journal`);
   }
-  const artifactDir = getLifecycleArtifactDir(
-    suiteId === 'httpTimeoutRequestExecution' ? 'http-timeout-request-execution' : 'http-timeout-request-validation'
-  );
+  const artifactDir = getLifecycleArtifactDir('http-timeout-lifecycle');
   fs.mkdirSync(artifactDir, { recursive: true });
   const workspaceParent = createParent(suiteId);
-  const manifestPath = path.join(artifactDir, `manifest-${scenario}-${Date.now()}.json`);
+  const manifestPath = path.join(artifactDir, `manifest-${Date.now()}.json`);
   const runtimeDependenciesRoot = process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT ?? createRuntimeRoot(suiteId);
   const failures = [];
   try {
@@ -1421,7 +1413,6 @@ async function runHttpTimeoutRequestLifecycle({
       LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH: phaseResultsPath,
       LA_E2E_CLI_WORKSPACE_PARENT: workspaceParent,
       LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MANIFEST: manifestPath,
-      LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_SCENARIO: scenario,
       LA_E2E_CLI_INCLUDE_HTTP_TIMEOUT_REQUEST_LIFECYCLE: '1',
       LA_E2E_CLI_DISABLE_UNOWNED_PORT_KILL: '1',
       LA_E2E_CLI_STARTUP_RESOURCE: '',
@@ -1438,7 +1429,7 @@ async function runHttpTimeoutRequestLifecycle({
     if (bootstrapExit !== 0) {
       throw new Error(`${suiteId} runtime dependency bootstrap host failed`);
     }
-    const createExit = await run(['--label', 'httpTimeoutRequestLifecycle'], {
+    const createExit = await run(['--label', 'httpTimeoutLifecycle'], {
       extraEnv: {
         ...commonEnv,
         LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MODE: 'create',
@@ -1450,14 +1441,13 @@ async function runHttpTimeoutRequestLifecycle({
       throw new Error(`${suiteId} fixture host failed`);
     }
     const { selectHttpTimeoutRequestWorkspace } = require('../out/test/e2e/httpTimeoutRequestOracle');
-    const expectedLabel = scenario === 'execution' ? 'http-timeout-request-execution' : 'http-timeout-request-validation';
-    const entry = selectHttpTimeoutRequestWorkspace(JSON.parse(fs.readFileSync(manifestPath, 'utf8')), expectedLabel);
+    const entry = selectHttpTimeoutRequestWorkspace(JSON.parse(fs.readFileSync(manifestPath, 'utf8')), 'http-timeout-lifecycle');
     for (const requiredPath of [entry.workspaceFilePath, entry.workflowJsonPath]) {
       if (!fs.existsSync(requiredPath)) {
         throw new Error(`${suiteId} generated fixture is missing: ${requiredPath}`);
       }
     }
-    const runExit = await run(['--label', 'httpTimeoutRequestLifecycle'], {
+    const runExit = await run(['--label', 'httpTimeoutLifecycle'], {
       extraEnv: {
         ...commonEnv,
         LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MODE: 'run',
@@ -1750,7 +1740,7 @@ function finalizeDirectHttpTimeoutComposeEvidence(context, { lifecycleError, pro
   }
   return writeSuiteFinalEvidence({
     context,
-    suite: SUITE_REGISTRY.httpTimeoutComposeOriginal,
+    suite: legacyHttpTimeoutComposeSuite,
     exitCode: lifecycleError || evidenceError ? 1 : 0,
     signal: null,
     error: lifecycleError ?? evidenceError ?? (!context.ownedRootCleanup.verified ? new Error('Owned cleanup not verified') : undefined),
@@ -3963,7 +3953,7 @@ module.exports = {
     getFuncCoreToolsCandidatePaths,
     getFuncCoreToolsBinaryPath,
     getMochaPassingCount,
-    runHttpTimeoutRequestLifecycle,
+    runHttpTimeoutLifecycle,
     beginDirectMsnEvidence,
     finalizeDirectMsnEvidence,
     finalizeMsnLifecycleCleanup,
@@ -4492,9 +4482,7 @@ function getDirectSuiteComplete(label, phaseResults) {
     missingPhaseIds.length === 0 &&
     unexpectedPhaseIds.length === 0 &&
     getDuplicateValues(observedPhaseIds).length === 0 &&
-    (!['httpTimeoutComposeOriginal', 'httpTimeoutRequestExecution', 'httpTimeoutRequestValidation', 'statelessVariablesLifecycle'].includes(
-      label
-    ) ||
+    (!['httpTimeoutComposeOriginal', 'httpTimeoutLifecycle', 'statelessVariablesLifecycle'].includes(label) ||
       expectedPhaseIds.every((phaseId, index) => observedPhaseIds[index] === phaseId)) &&
     phaseResults.every(
       (phase) =>
@@ -4893,7 +4881,10 @@ function getDirectExpectedPhaseIds(label) {
   if (!label) {
     return [];
   }
-  if (['httpTimeoutComposeOriginal', 'httpTimeoutRequestExecution', 'httpTimeoutRequestValidation'].includes(label)) {
+  if (label === 'httpTimeoutComposeOriginal') {
+    return [...legacyHttpTimeoutComposeSuite.expectedPhases];
+  }
+  if (['httpTimeoutComposeOriginal', 'httpTimeoutLifecycle'].includes(label)) {
     return [...SUITE_REGISTRY[label].expectedPhases];
   }
   if (label === 'msnWeatherLifecycle') {
@@ -4992,10 +4983,9 @@ function clearOgfScenarios(phase) {
 }
 
 function getSuitePhaseId(label, env) {
-  if (label === 'httpTimeoutRequestLifecycle' && env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_SCENARIO) {
-    const suiteId =
-      env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_SCENARIO === 'execution' ? 'httpTimeoutRequestExecution' : 'httpTimeoutRequestValidation';
-    return `${suiteId}:${env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MODE}`;
+  if (label === 'httpTimeoutLifecycle' && env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MODE) {
+    const phase = env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MODE === 'run' ? 'reopen' : env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MODE;
+    return `httpTimeoutLifecycle:${phase}`;
   }
   if (
     label === 'createWorkspaceFixturesManifest' &&
