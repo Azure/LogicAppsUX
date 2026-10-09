@@ -26,6 +26,7 @@ const {
     getFuncCoreToolsCandidatePaths,
     getFuncCoreToolsBinaryPath,
     getMochaPassingCount,
+    getDirectExpectedPhaseIds,
     finalizeMsnLifecycleCleanup,
     getDirectSuiteComplete,
     getOwnedRootCleanupVerified,
@@ -45,6 +46,7 @@ const {
     readContainmentReceipt,
     requiresDirectHttpPhaseClosure,
     requiresDirectFamilyWrapper,
+    runHttpTimeoutRequestLifecycle,
     runSuiteWrapperProcess,
     createLinePrefixer,
     sanitizeInheritedGitCommandConfigEnv,
@@ -93,6 +95,7 @@ const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
     testGeneratedWorkspaceSnapshotFailsAndPreservesRejectedRunCaseWithOwnedRoot();
     testGeneratedWorkspaceSnapshotExplainsRejectedRunCaseWithoutOwnedRoot();
     testMsnWeatherLifecycleRunEnvCarriesOwnedRoot();
+    await testHttpTimeoutRequestLifecycleUsesIsolatedStartupResources();
     testCodefulDebugTasksRunEnvCarriesOwnedRoot();
     testGeneratedWorkspaceSnapshotFallsBackToOwnedRootForPartialManifest();
     testGeneratedWorkspaceSnapshotSourcesSupportLifecycleAndManifestShapes();
@@ -717,6 +720,113 @@ function testMsnWeatherLifecycleRunEnvCarriesOwnedRoot() {
   assert.deepStrictEqual(JSON.parse(env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE), entry);
   assert.strictEqual(env.LA_E2E_CLI_STARTUP_RESOURCE, entry.workspaceFilePath);
   assert.strictEqual(env.LA_E2E_CLI_AZURE_SUBSCRIPTION_ID, 'sub');
+}
+
+async function testHttpTimeoutRequestLifecycleUsesIsolatedStartupResources() {
+  assert.deepStrictEqual(getDirectExpectedPhaseIds('httpTimeoutRequestExecution'), [
+    'runtimeDependencyBootstrap:bootstrap',
+    'httpTimeoutRequestExecution:create',
+    'httpTimeoutRequestExecution:run',
+  ]);
+  assert.deepStrictEqual(getDirectExpectedPhaseIds('httpTimeoutRequestValidation'), [
+    'runtimeDependencyBootstrap:bootstrap',
+    'httpTimeoutRequestValidation:create',
+    'httpTimeoutRequestValidation:run',
+  ]);
+
+  const suiteId = 'httpTimeoutRequestExecution';
+  const scenario = 'execution';
+  const root = fs.mkdtempSync(path.join(tempRoot, 'http-timeout-request-'));
+  const workspaceParent = path.join(root, 'workspaces');
+  const runtimeRoot = path.join(root, 'runtime');
+  const phaseResultsPath = path.join(root, 'phases.jsonl');
+  fs.mkdirSync(workspaceParent, { recursive: true });
+  fs.mkdirSync(runtimeRoot, { recursive: true });
+  const priorPhaseResultsPath = process.env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH;
+  const priorRuntimeRoot = process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT;
+  const calls = [];
+
+  process.env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH = phaseResultsPath;
+  process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT = runtimeRoot;
+  try {
+    await runHttpTimeoutRequestLifecycle({
+      suiteId,
+      scenario,
+      createParent: () => workspaceParent,
+      createRuntimeRoot: () => runtimeRoot,
+      cleanupRuntime: async () => undefined,
+      credentialEnvironment: async () => ({}),
+      cleanup: async (ownedRoot) => {
+        fs.rmSync(ownedRoot, { recursive: true, force: true });
+      },
+      run: async (args, options) => {
+        const env = options.extraEnv;
+        calls.push({ args, env: { ...env } });
+        let phaseId = 'runtimeDependencyBootstrap:bootstrap';
+        if (env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MODE === 'create') {
+          phaseId = `${suiteId}:create`;
+          const wsName = 'executionhttpws';
+          const appDir = path.join(workspaceParent, wsName, 'executionhttpapp');
+          const wfName = 'executionhttpwf';
+          const workspaceDir = path.join(workspaceParent, wsName);
+          const workspaceFilePath = path.join(workspaceDir, `${wsName}.code-workspace`);
+          const workflowJsonPath = path.join(appDir, wfName, 'workflow.json');
+          fs.mkdirSync(path.dirname(workflowJsonPath), { recursive: true });
+          fs.writeFileSync(workspaceFilePath, '{}');
+          fs.writeFileSync(workflowJsonPath, '{}');
+          fs.writeFileSync(
+            env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MANIFEST,
+            JSON.stringify([
+              {
+                label: 'http-timeout-request-execution',
+                appType: 'standard',
+                wsName,
+                wfName,
+                workspaceDir,
+                workspaceFilePath,
+                appDir,
+                workflowJsonPath,
+              },
+            ])
+          );
+        } else if (env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MODE === 'run') {
+          phaseId = `${suiteId}:run`;
+        }
+        fs.appendFileSync(
+          phaseResultsPath,
+          `${JSON.stringify({
+            phaseId,
+            complete: true,
+            exitCode: 0,
+            signal: null,
+            cleanupVerified: true,
+          })}\n`
+        );
+        return 0;
+      },
+    });
+  } finally {
+    if (priorPhaseResultsPath === undefined) {
+      delete process.env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH;
+    } else {
+      process.env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH = priorPhaseResultsPath;
+    }
+    if (priorRuntimeRoot === undefined) {
+      delete process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT;
+    } else {
+      process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT = priorRuntimeRoot;
+    }
+  }
+
+  assert.strictEqual(calls.length, 3);
+  const [bootstrap, create, run] = calls;
+  assert.strictEqual(bootstrap.env.LA_E2E_CLI_STARTUP_RESOURCE, '');
+  assert.strictEqual(create.env.LA_E2E_CLI_STARTUP_RESOURCE, '');
+  assert.strictEqual(create.env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MODE, 'create');
+  assert.strictEqual(run.env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MODE, 'run');
+  const manifest = JSON.parse(fs.readFileSync(create.env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MANIFEST, 'utf8'));
+  assert.strictEqual(run.env.LA_E2E_CLI_STARTUP_RESOURCE, manifest[0].workspaceFilePath);
+  assert.notStrictEqual(create.env.LA_E2E_CLI_USER_DATA_SUFFIX, run.env.LA_E2E_CLI_USER_DATA_SUFFIX);
 }
 
 function testCodefulDebugTasksRunEnvCarriesOwnedRoot() {

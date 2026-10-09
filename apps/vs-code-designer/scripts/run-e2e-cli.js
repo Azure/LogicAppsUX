@@ -1424,6 +1424,7 @@ async function runHttpTimeoutRequestLifecycle({
       LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_SCENARIO: scenario,
       LA_E2E_CLI_INCLUDE_HTTP_TIMEOUT_REQUEST_LIFECYCLE: '1',
       LA_E2E_CLI_DISABLE_UNOWNED_PORT_KILL: '1',
+      LA_E2E_CLI_STARTUP_RESOURCE: '',
     };
     const bootstrapExit = await run(['--label', 'runtimeDependencyBootstrap'], {
       extraEnv: {
@@ -4892,7 +4893,7 @@ function getDirectExpectedPhaseIds(label) {
   if (!label) {
     return [];
   }
-  if (label === 'httpTimeoutComposeOriginal') {
+  if (['httpTimeoutComposeOriginal', 'httpTimeoutRequestExecution', 'httpTimeoutRequestValidation'].includes(label)) {
     return [...SUITE_REGISTRY[label].expectedPhases];
   }
   if (label === 'msnWeatherLifecycle') {

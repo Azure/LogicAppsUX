@@ -28,6 +28,7 @@ async function main(): Promise<void> {
   await testProvenAdapterCancellation();
   testProvenAdapterUsesUnmodifiedMsnHelper();
   testProvenAdapterCompatibility();
+  testHelperConsumersDoNotRegisterCanonicalLifecycleSuite();
   testWorkspaceLifecycleWrapperParity();
   console.log('[designerCdpActions.unit] all tests passed');
 }
@@ -85,6 +86,17 @@ function testProvenAdapterCompatibility(): void {
     /\{\s*requireTextMatch:\s*false\s*\}/,
     'Exact V2 Add-trigger selectors must not be rejected by the historical article-sensitive text filter'
   );
+}
+
+function testHelperConsumersDoNotRegisterCanonicalLifecycleSuite(): void {
+  const registration = lifecycleSource.statements.find(
+    (node): node is ts.IfStatement =>
+      ts.isIfStatement(node) && node.thenStatement.getText(lifecycleSource).includes('registerWorkspaceLifecycleSuite()')
+  );
+  assert.ok(registration, 'Expected canonical workspace lifecycle registration guard');
+  const condition = registration.expression.getText(lifecycleSource);
+  assert.match(condition, /!process\.env\.LA_E2E_CLI_STATELESS_VARIABLES_MODE/);
+  assert.match(condition, /!process\.env\.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MODE/);
 }
 
 function testActionProfileResolution(): void {
