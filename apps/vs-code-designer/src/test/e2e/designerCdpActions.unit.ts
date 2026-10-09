@@ -3,6 +3,7 @@ import { createHash } from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as ts from 'typescript';
+import { runInNewContext } from 'vm';
 import { MsnDesignerCdpActions, ProvenDesignerCdpActions, resolveDesignerActionProfile } from './designerCdpActions';
 
 const actionsSourcePath = path.resolve(__dirname, '..', '..', '..', 'src', 'test', 'e2e', 'designerCdpActions.ts');
@@ -25,6 +26,8 @@ async function main(): Promise<void> {
   testNodeAndPanelParity();
   testParameterAndSaveParity();
   await testReplacementKeySequence();
+  await testExactNodeIdentity();
+  await testDeleteWaitsForExactClickedNode();
   await testProvenAdapterCancellation();
   testProvenAdapterUsesUnmodifiedMsnHelper();
   testProvenAdapterCompatibility();
@@ -86,6 +89,19 @@ function testProvenAdapterCompatibility(): void {
     /\{\s*requireTextMatch:\s*false\s*\}/,
     'Exact V2 Add-trigger selectors must not be rejected by the historical article-sensitive text filter'
   );
+  const deleteNode = getMethod('ProvenDesignerCdpActions', 'deleteNode');
+  assert.ok(deleteNode.includes("await this.key('Delete', 'Delete', 46)"), 'Node deletion must use the native Delete key');
+  assert.ok(deleteNode.includes('\'[role="dialog"] button\''), 'Node deletion must bind confirmation to the visible modal');
+  assert.ok(deleteNode.includes("=== 'Delete'"), 'Node deletion must require the exact Delete action');
+  assert.ok(
+    deleteNode.includes('const clickedNodeId = await this.proven.clickNode(matchingTitles[0])'),
+    'Node deletion must retain the exact clicked node ID'
+  );
+  assert.ok(
+    deleteNode.includes('document.getElementById(${JSON.stringify(clickedNodeId)}) === null'),
+    'Node deletion must wait for the exact clicked node ID to disappear'
+  );
+  assert.ok(!deleteNode.includes('if (!(await this.hasNode(titles)))'), 'Node deletion must not poll substring-based node titles');
 }
 
 function testHelperConsumersDoNotRegisterCanonicalLifecycleSuite(): void {
@@ -285,6 +301,9 @@ function testNodeAndPanelParity(): void {
     ],
     'Node ID preference'
   );
+  assert.match(node, /async clickNode\(title: string\): Promise<string>/);
+  assert.match(node, /id: element\.id/);
+  assert.match(node, /return result\.id/);
 
   const panel = getMethod('MsnDesignerCdpActions', 'closePanel');
   assert.match(panel, /document\.querySelectorAll\('\.msla-panel-container'\)/);
@@ -292,6 +311,92 @@ function testNodeAndPanelParity(): void {
   assert.match(panel, /panel\.querySelectorAll\('\[data-automation-id="msla-panel-header-close-nav"\], button\[aria-label="Close"\]'\)/);
   assert.match(panel, /this\.waitUntil\(async \(\) => !\(await this\.hasDetailsPanel\(\)\), 15000/);
   assert.match(panel, /setTimeout\(resolve, 750\)/);
+}
+
+async function testExactNodeIdentity(): Promise<void> {
+  class FakeHTMLElement {
+    readonly offsetWidth = 100;
+    readonly offsetHeight = 50;
+
+    constructor(
+      readonly id: string,
+      readonly textContent: string
+    ) {}
+
+    getClientRects(): object[] {
+      return [{}];
+    }
+
+    scrollIntoView(): void {}
+
+    getBoundingClientRect(): { left: number; top: number; width: number; height: number } {
+      return { left: 10, top: 20, width: 100, height: 50 };
+    }
+
+    getAttribute(): null {
+      return null;
+    }
+  }
+
+  const httpAction = new FakeHTMLElement('msla-node-HTTP', 'HTTP');
+  const requestTrigger = new FakeHTMLElement('msla-node-Request', 'When an HTTP request is received');
+  const document = {
+    body: { innerText: 'HTTP When an HTTP request is received' },
+    getElementById: (id: string) => (id === httpAction.id ? httpAction : id === requestTrigger.id ? requestTrigger : null),
+    querySelectorAll: () => [httpAction, requestTrigger],
+  };
+  const actions = new MsnDesignerCdpActions(
+    {
+      evaluate: async <T>(_contextId: number | undefined, expression: string) =>
+        runInNewContext(expression, { document, HTMLElement: FakeHTMLElement }) as T,
+      send: async () => undefined,
+    },
+    7
+  );
+
+  assert.strictEqual(await actions.clickNode('HTTP'), httpAction.id);
+}
+
+async function testDeleteWaitsForExactClickedNode(): Promise<void> {
+  let substringPresenceChecks = 0;
+  let exactDisappearanceChecks = 0;
+  const actions = new ProvenDesignerCdpActions(
+    {
+      evaluate: async <T>(_contextId: number | undefined, expression: string) => {
+        if (expression.includes('[id^="msla-node-details-panel"]')) {
+          return false as T;
+        }
+        if (expression.includes('const titles = ["http"]')) {
+          substringPresenceChecks++;
+          return true as T;
+        }
+        if (expression.includes('const title = "http"')) {
+          return {
+            ok: true,
+            id: 'msla-node-HTTP',
+            point: { x: 10, y: 20 },
+            text: 'HTTP',
+          } as T;
+        }
+        if (expression.includes('document.getElementById("msla-node-HTTP") === null')) {
+          exactDisappearanceChecks++;
+          return true as T;
+        }
+        throw new Error(`Unexpected CDP expression: ${expression.slice(0, 200)}`);
+      },
+      send: async () => undefined,
+    },
+    7,
+    Date.now() + 5000
+  );
+
+  await actions.deleteNode(['HTTP']);
+  assert.strictEqual(
+    substringPresenceChecks,
+    1,
+    'The remaining "When an HTTP request is received" trigger must not keep exact HTTP action deletion pending'
+  );
+  assert.strictEqual(exactDisappearanceChecks, 1);
 }
 
 function testParameterAndSaveParity(): void {

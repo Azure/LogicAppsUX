@@ -31,10 +31,10 @@ const includeMsnWeatherLifecycle =
 const includeRuntimeDependencyBootstrap =
   process.env.LA_E2E_CLI_INCLUDE_RUNTIME_DEPENDENCY_BOOTSTRAP === '1' || process.argv.includes('runtimeDependencyBootstrap');
 const includeAzureAuthWarmup = process.env.LA_E2E_CLI_INCLUDE_AZURE_AUTH_WARMUP === '1' || process.argv.includes('azureAuthWarmup');
-const includeHttpTimeoutComposeOriginal =
-  process.env.LA_E2E_CLI_INCLUDE_HTTP_TIMEOUT_COMPOSE_ORIGINAL === '1' || process.argv.includes('httpTimeoutComposeOriginal');
+const httpTimeoutRequestMode = process.env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MODE;
 const includeHttpTimeoutRequestLifecycle =
-  process.env.LA_E2E_CLI_INCLUDE_HTTP_TIMEOUT_REQUEST_LIFECYCLE === '1' || process.argv.includes('httpTimeoutLifecycle');
+  (process.env.LA_E2E_CLI_INCLUDE_HTTP_TIMEOUT_REQUEST_LIFECYCLE === '1' || process.argv.includes('httpTimeoutLifecycle')) &&
+  (httpTimeoutRequestMode === 'create' || httpTimeoutRequestMode === 'run');
 const includeStatelessVariables =
   process.env.LA_E2E_CLI_INCLUDE_STATELESS_VARIABLES === '1' || process.argv.includes('statelessVariablesLifecycle');
 const includeNativeEditorClick = process.env.LA_E2E_CLI_INCLUDE_NATIVE_EDITOR_CLICK === '1' || process.argv.includes('nativeEditorClick');
@@ -159,20 +159,11 @@ if (includeWorkspaceLifecycle) {
   });
 }
 
-if (includeHttpTimeoutComposeOriginal) {
-  configs.push({
-    label: 'httpTimeoutComposeOriginal',
-    ...baseConfig,
-    files: ['out/test/e2e/httpTimeoutComposeOriginal.test.js'],
-    mocha: { ui: 'tdd', timeout: 600000 },
-  });
-}
-
 if (includeHttpTimeoutRequestLifecycle) {
   configs.push({
     label: 'httpTimeoutLifecycle',
     ...baseConfig,
-    files: ['out/test/e2e/httpTimeoutRequestLifecycle.test.js'],
+    files: ['out/test/e2e/httpTimeoutComposeOriginal.test.js'],
     mocha: { ui: 'tdd', timeout: 1200000 },
   });
 }
@@ -274,9 +265,6 @@ function getForwardedTestEnvironment() {
     'LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT',
     'LA_E2E_CLI_CREATE_WORKSPACE_FIXTURE_MANIFEST',
     'LA_E2E_CLI_CREATE_WORKSPACE_PARENT',
-    'LA_E2E_CLI_HTTP_TIMEOUT_COMPOSE_NOT_BEFORE',
-    'LA_E2E_CLI_HTTP_TIMEOUT_COMPOSE_PHASE',
-    'LA_E2E_CLI_INCLUDE_HTTP_TIMEOUT_COMPOSE_ORIGINAL',
     'LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MANIFEST',
     'LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MODE',
     'LA_E2E_CLI_CANCEL_HANDOFF_PATH',

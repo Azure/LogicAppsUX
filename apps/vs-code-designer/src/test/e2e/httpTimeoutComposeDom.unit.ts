@@ -619,7 +619,11 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
         assert.strictEqual(node.arguments[0].getText(syntax), 'httpTimeoutComposeDesignerViewType');
         bindings++;
       }
-      if (ts.isCallExpression(node) && node.expression.getText(syntax) === 'driver.save') {
+      if (
+        ts.isCallExpression(node) &&
+        node.expression.getText(syntax).endsWith('.save') &&
+        node.expression.getText(syntax).includes('driver')
+      ) {
         saves++;
       }
       if (
@@ -638,7 +642,7 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
     };
     visit(syntax);
     assert.strictEqual(bindings, 4, 'Every original/reopened launch owner assertion binds V2');
-    assert.strictEqual(saves, 1, 'Designer authoring save uses the tested enabled production toolbar selector');
+    assert.strictEqual(saves, 3, 'Each authored lifecycle state uses the tested enabled production toolbar selector');
     assert.deepStrictEqual(
       [...nativeSteps].sort(),
       [
@@ -662,8 +666,8 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
     );
     assert.ok(!family.includes("driver.click('button', ['Code'])"), 'The embedded Designer Code tab is not the OGF flow');
     assert.ok(
-      family.includes("'http-timeout-compose-designer-ready'"),
-      'The family must capture Designer-ready evidence before authoring begins'
+      family.includes("'http-timeout-request-scenario-2-complete-before-reset'") && family.includes("'http-timeout-transition-cleared'"),
+      'The family must prove Scenario 2 completion and the same-workflow reset before Compose authoring'
     );
     assert.ok(
       !family.includes("boundedCdp } from './workspaceMultiRootWorkbench'"),
@@ -675,7 +679,7 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       'Shared native editor helpers must not depend on multi-root-specific workbench actions'
     );
     assert.ok(
-      family.includes('const originalOwner = await driver.context()') &&
+      family.includes('originalOwner = await activeSession.driver.context()') &&
         family.includes('assert.notStrictEqual(reopenedOwner.targetId, originalOwner.targetId'),
       'The family must prove the reopened Designer has a fresh CDP target'
     );

@@ -189,11 +189,14 @@ The reopened host runs the three Standard VS Code scenarios sequentially:
    fresh Functions validation text from the real `Azure Logic Apps (Standard)`
    Output channel, then proves current V2 `InvalidString` ISO-8601 validation
    leaves Save disabled and the persisted `PT24H` definition unchanged.
-3. The same VS Code host creates a second empty Stateless workflow in the same
-   Logic App, authors Request + Compose with input `test`, saves and closes the
-   Designer, opens the exact `workflow.json` in the native editor, inserts only
-   the Compose `runtimeConfiguration.requestOptions.timeout`, saves and closes
-   the editor, and reopens Designer to require the unsupported-timeout message.
+3. Only after Scenario 2 passes, the same VS Code host reopens the same workflow,
+   proves the persisted Request + HTTP `PT24H` state, deletes HTTP and Request
+   through the real Designer, and waits for the canvas to clear. It then authors
+   Request + Compose with input `test` in that same workflow, saves and closes the
+   Designer, opens the same exact `workflow.json` in the native editor, inserts
+   only the Compose `runtimeConfiguration.requestOptions.timeout`, saves and
+   closes the editor, and reopens Designer to require the unsupported-timeout
+   message. A Scenario 1 or 2 failure must stop before the reset.
 
 Both use a runner-owned loopback delayed endpoint so Linux and Windows exercise
 real timeout behavior deterministically without publishing the retired signed

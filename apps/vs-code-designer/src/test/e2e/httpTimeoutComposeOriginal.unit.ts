@@ -6,7 +6,6 @@ import * as path from 'path';
 import type { CdpConnection } from './cdpClient';
 import { HttpTimeoutComposeDriver } from './httpTimeoutComposeDriver';
 import { runHttpTimeoutComposeDomControls } from './httpTimeoutComposeDom.unit';
-import { runHttpTimeoutComposeDirectControls } from './httpTimeoutComposeDirect.unit';
 import { runHttpTimeoutEnvironmentControls } from './httpTimeoutComposeEnvironment.unit';
 import { runApprovedAzureConnectorFixtureControls } from './azureConnectorFixture.unit';
 import {
@@ -71,32 +70,41 @@ function inputDriverFixture(deadline = Date.now() + 5000) {
 
 async function main(): Promise<void> {
   await control('combined lifecycle executes request execution, validation, then Compose in one ordered test', () => {
-    const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutRequestLifecycle.test.ts'), 'utf8');
+    const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
     const pt1s = source.indexOf('await provePt1sExecution');
     const pt24h = source.indexOf('await provePt24hAndInvalidValidation');
-    const createCompose = source.indexOf('await createComposeWorkflow');
-    const compose = source.indexOf('await proveHttpTimeoutComposeOriginal');
-    assert.ok(pt1s >= 0 && pt1s < pt24h && pt24h < createCompose && createCompose < compose);
+    const compose = source.indexOf('await proveComposeUnsupportedTimeoutOnSameWorkflow');
+    assert.ok(pt1s >= 0 && pt1s < pt24h && pt24h < compose);
     assert.strictEqual(
       (source.match(/\btest\('proves HTTP execution, HTTP validation, then Compose unsupported timeout in one session'/g) ?? []).length,
       1
     );
+    assert.ok(!source.includes('createComposeWorkflow'));
+    assert.ok(!source.includes("executeCommand('azureLogicAppsStandard.createWorkflow'"));
     assert.ok(!source.includes('LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_SCENARIO'));
   });
-  await control('second workflow identity preserves the canonical parentDir plus wsName relationship', () => {
-    const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutRequestLifecycle.test.ts'), 'utf8');
-    assert.ok(source.includes('const parentDir = path.dirname(entry.workspaceDir);'));
-    assert.ok(source.includes('path.resolve(parentDir, entry.wsName)'));
-    assert.ok(source.includes('parentDir,'));
-    assert.ok(!source.includes('parentDir: entry.workspaceDir'));
-    const parentDir = path.resolve(os.tmpdir(), 'http-timeout-parent');
-    const wsName = 'http-timeout-workspace';
-    const wsDir = path.join(parentDir, wsName);
-    assert.strictEqual(path.resolve(parentDir, wsName), path.resolve(wsDir));
-    assert.notStrictEqual(path.resolve(parentDir), path.resolve(wsDir));
+  await control('all scenarios mutate one physical workflow only after prior evidence passes', () => {
+    const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
+    const scenario2Complete = source.indexOf('http-timeout-request-scenario-2-complete-before-reset');
+    const deleteHttp = source.indexOf("await activeSession.driver.deleteNode(['HTTP'])", scenario2Complete);
+    const deleteRequest = source.indexOf('await activeSession.driver.deleteNode(requestTitles)', deleteHttp);
+    const transitionCleared = source.indexOf('http-timeout-transition-cleared', deleteRequest);
+    const addRequest = source.indexOf('await activeSession.driver.addRequestTrigger()', transitionCleared);
+    const addCompose = source.indexOf("await activeSession.driver.addAction('Compose', 'Compose')", addRequest);
+    assert.ok(
+      scenario2Complete >= 0 &&
+        scenario2Complete < deleteHttp &&
+        deleteHttp < deleteRequest &&
+        deleteRequest < transitionCleared &&
+        transitionCleared < addRequest &&
+        addRequest < addCompose
+    );
+    assert.ok(source.includes('openExactExplorerFileInNativeEditor(workbench, entry.workflowJsonPath, deadline)'));
+    assert.ok(source.includes('openDesignerFromExactExplorerFile('));
+    assert.ok(!source.includes("uniqueName('httpcomposewf')"));
   });
   await control('HTTP request evidence checkpoints are unique, ordered, and use the proven semantic screenshot binding', () => {
-    const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutRequestLifecycle.test.ts'), 'utf8');
+    const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
     const scenario1 = [
       'http-timeout-request-pt1s-designer-ready',
       'http-timeout-request-pt1s-request-inserted',
@@ -128,7 +136,7 @@ async function main(): Promise<void> {
     assert.ok(source.includes("binding: { activeTabText: [entry.wfName, 'Workspace'], semanticText }"));
   });
   await control('failing HTTP evidence expectations use the shared local screenshot cap instead of the family deadline', () => {
-    const lifecycle = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutRequestLifecycle.test.ts'), 'utf8');
+    const lifecycle = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
     const screenshot = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/screenshot.ts'), 'utf8');
     assert.ok(lifecycle.includes('defaultEvidenceScreenshotTimeoutMs'));
     assert.ok(lifecycle.includes('deadlineMs: Math.min(deadline, Date.now() + defaultEvidenceScreenshotTimeoutMs)'));
@@ -142,7 +150,7 @@ async function main(): Promise<void> {
     assert.strictEqual(Math.min(now + 1_680_000, now + 15_000), now + 15_000);
   });
   await control('HTTP screenshot expectations are satisfiable at their exact production lifecycle checkpoints', () => {
-    const lifecycle = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutRequestLifecycle.test.ts'), 'utf8');
+    const lifecycle = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
     const readiness = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/screenshotReadiness.ts'), 'utf8');
     const networking = fs.readFileSync(
       path.resolve(__dirname, '../../../../../libs/designer-v2/src/lib/ui/settings/sections/networking.tsx'),
@@ -177,7 +185,7 @@ async function main(): Promise<void> {
     assert.ok(invalidConfigured >= 0 && invalidConfigured < invalidEvidence && invalidEvidence < restoration);
   });
   await control('Designer acquisition and later failures capture before optional disposal and tab cleanup', () => {
-    const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutRequestLifecycle.test.ts'), 'utf8');
+    const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
     const pt1sStart = source.indexOf('async function provePt1sExecution');
     const scenario2Start = source.indexOf('async function provePt24hAndInvalidValidation');
     const authorStart = source.indexOf('async function authorHttpRequest');
@@ -530,114 +538,49 @@ async function main(): Promise<void> {
     });
     const runner = require(path.resolve(__dirname, '../../../scripts/run-e2e-cli.js'))._test;
     const batch = require(path.resolve(__dirname, '../../../scripts/e2e-cli-batch.js'));
-    const expectedPhases = [
-      'runtimeDependencyBootstrap:bootstrap',
-      'httpTimeoutComposeOriginal:create',
-      'httpTimeoutComposeOriginal:reopen',
-    ];
-    await control('combined HTTP family registers exact phases without expanding canonical aliases', () => {
+    const expectedPhases = ['runtimeDependencyBootstrap:bootstrap', 'httpTimeoutLifecycle:create', 'httpTimeoutLifecycle:reopen'];
+    await control('combined HTTP family registers exact canonical phases without a legacy standalone label', () => {
       const suite = batch.SUITE_REGISTRY.httpTimeoutLifecycle;
       assert.deepStrictEqual(suite.args, ['--http-timeout-lifecycle']);
-      assert.deepStrictEqual(suite.expectedPhases, [
-        'runtimeDependencyBootstrap:bootstrap',
-        'httpTimeoutLifecycle:create',
-        'httpTimeoutLifecycle:reopen',
-      ]);
-      assert.deepStrictEqual(runner.getDirectExpectedPhaseIds('httpTimeoutComposeOriginal'), expectedPhases);
+      assert.deepStrictEqual(suite.expectedPhases, expectedPhases);
+      assert.deepStrictEqual(runner.getDirectExpectedPhaseIds('httpTimeoutLifecycle'), expectedPhases);
       for (const platform of ['linux', 'win32']) {
         assert.strictEqual(batch.normalizeSuiteSelection('httpTimeoutLifecycle', { platform })[0], suite);
       }
       for (const alias of ['linux', 'windows']) {
         assert.ok(!batch.normalizeSuiteSelection(alias).some((entry: { id: string }) => entry.id === suite.id));
       }
+      const vscodeTestSource = fs.readFileSync(path.resolve(__dirname, '../../../.vscode-test.mjs'), 'utf8');
+      assert.ok(vscodeTestSource.includes('const httpTimeoutRequestMode = process.env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MODE;'));
+      assert.ok(
+        vscodeTestSource.includes("(httpTimeoutRequestMode === 'create' || httpTimeoutRequestMode === 'run')"),
+        'Canonical HTTP test registration must require an exact valid lifecycle mode'
+      );
+      assert.ok(vscodeTestSource.includes("label: 'httpTimeoutLifecycle'"));
+      assert.ok(vscodeTestSource.includes("files: ['out/test/e2e/httpTimeoutComposeOriginal.test.js']"));
+      assert.ok(!vscodeTestSource.includes("label: 'httpTimeoutComposeOriginal'"));
+      assert.ok(!vscodeTestSource.includes('LA_E2E_CLI_INCLUDE_HTTP_TIMEOUT_COMPOSE_ORIGINAL'));
     });
-    await control('registered runner bootstraps then creates Stateless and fresh-reopens exact workspace', async () => {
-      const labels: string[] = [];
-      const phases: string[] = [];
-      const phasePaths: string[] = [];
-      const profiles: string[] = [];
-      let cleanup = false;
-      let runtimeCleanup = false;
-      const result = await runner.runHttpTimeoutComposeOriginal({
-        artifactDir: path.join(root, 'artifacts'),
-        createParent: () => root,
-        createRuntimeRoot: () => path.join(root, 'runtime'),
-        cleanupRuntime: async (directory: string) => {
-          assert.strictEqual(directory, path.join(root, 'runtime'));
-          runtimeCleanup = true;
-        },
-        cleanup: async (_root: string, _description: string, strict: boolean) => {
-          assert.strictEqual(strict, true);
-          cleanup = true;
-        },
-        run: async (args: string[], options: { extraEnv: Record<string, string> }) => {
-          labels.push(args[1]);
-          const env = options.extraEnv;
-          phases.push(runner.getSuitePhaseId(args[1], env));
-          phasePaths.push(env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH);
-          profiles.push(env.LA_E2E_CLI_USER_DATA_SUFFIX);
-          assert.strictEqual(env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT, path.join(root, 'runtime'));
-          if (labels.length === 1) {
-            assert.strictEqual(env.LA_E2E_CLI_INCLUDE_RUNTIME_DEPENDENCY_BOOTSTRAP, '1');
-            assert.strictEqual(env.LA_E2E_CLI_MINIMAL_ACTIVATION, '1', 'Bootstrap admission stays unchanged');
-          } else if (labels.length === 2) {
-            assert.strictEqual(env.LA_E2E_CLI_CREATE_WORKSPACE_CASE, 'standard-stateless');
-            const entry = makeEntry();
-            fs.mkdirSync(entry.wfDir, { recursive: true });
-            fs.writeFileSync(entry.wsFilePath, '{}');
-            fs.writeFileSync(path.join(entry.wfDir, 'workflow.json'), '{}');
-            fs.writeFileSync(env.LA_E2E_CLI_CREATE_WORKSPACE_FIXTURE_MANIFEST, JSON.stringify([entry]));
-          } else {
-            assert.strictEqual(env.LA_E2E_CLI_MINIMAL_ACTIVATION, '0', 'Actual HTTP consumer must initialize the real Azure account tree');
-            assert.strictEqual(env.LA_E2E_CLI_VALIDATE_DEPENDENCIES, '1', 'Normal activation preserves managed runtime admission');
-            assert.strictEqual(env.LA_E2E_STRICT_DEPENDENCY_VALIDATION, '1');
-            assert.strictEqual(env.LA_E2E_CLI_STARTUP_RESOURCE, makeEntry().wsFilePath);
-            assert.strictEqual(env.LA_E2E_CLI_INCLUDE_HTTP_TIMEOUT_COMPOSE_ORIGINAL, '1');
-          }
-          return 0;
-        },
-      });
-      assert.strictEqual(result, 0);
-      assert.deepStrictEqual(labels, ['runtimeDependencyBootstrap', 'createWorkspaceFixturesManifest', 'httpTimeoutComposeOriginal']);
-      assert.deepStrictEqual(phases, expectedPhases);
-      assert.strictEqual(new Set(phasePaths).size, 1, 'Every exact phase must report to the same original invocation JSONL');
-      assert.strictEqual(new Set(profiles).size, 3, 'Bootstrap, create and reopen must use fresh hosts/profiles');
-      assert.strictEqual(cleanup, true);
-      assert.strictEqual(runtimeCleanup, true);
-    });
-    await control('runner bootstrap, create, reopen and cleanup failures propagate', async () => {
-      for (const failAt of [1, 2, 3, 4, 5]) {
-        let calls = 0;
-        const failed = new Error(`original phase ${failAt} failure`);
-        await assert.rejects(
-          () =>
-            runner.runHttpTimeoutComposeOriginal({
-              artifactDir: path.join(root, 'failures'),
-              createParent: () => root,
-              createRuntimeRoot: () => path.join(root, 'runtime'),
-              cleanupRuntime: async () => {
-                throw failed;
-              },
-              cleanup: async () => {
-                if (failAt === 4) {
-                  throw failed;
-                }
-              },
-              run: async (_args: string[], options: { extraEnv: Record<string, string> }) => {
-                calls++;
-                if (calls === failAt) {
-                  throw failed;
-                }
-                if (calls === 2) {
-                  fs.writeFileSync(options.extraEnv.LA_E2E_CLI_CREATE_WORKSPACE_FIXTURE_MANIFEST, JSON.stringify([makeEntry()]));
-                }
-                return 0;
-              },
-            }),
-          (error) => error === failed
-        );
-        assert.strictEqual(calls, Math.min(failAt, 3));
+    await control('all public HTTP timeout flags dispatch through the canonical lifecycle runner', () => {
+      const runnerSource = fs.readFileSync(path.resolve(__dirname, '../../../scripts/run-e2e-cli.js'), 'utf8');
+      const selectorStart = runnerSource.indexOf('const httpTimeoutSelector = [');
+      const selectorEnd = runnerSource.indexOf('].find((selector) => process.argv.includes(selector));', selectorStart);
+      assert.ok(selectorStart >= 0 && selectorStart < selectorEnd);
+      const selectorSource = runnerSource.slice(selectorStart, selectorEnd);
+      for (const flag of [
+        '--http-timeout-lifecycle',
+        '--http-timeout-request-execution',
+        '--http-timeout-request-validation',
+        '--http-timeout-compose-original',
+      ]) {
+        assert.ok(selectorSource.includes(`'${flag}'`), `${flag} must remain a canonical lifecycle alias`);
       }
+      assert.ok(
+        runnerSource.includes(
+          "requiresDirectFamilyWrapper(process.env) ? runDirectFamily('httpTimeoutLifecycle') : runHttpTimeoutLifecycle()"
+        )
+      );
+      assert.ok(!runnerSource.includes('runHttpTimeoutComposeOriginal'), 'No public flag may dispatch through a legacy standalone runner');
     });
     await control('phase completion rejects missing, duplicate, mismatched and failed phases', () => {
       const phases = expectedPhases.map((phaseId) => ({
@@ -648,7 +591,7 @@ async function main(): Promise<void> {
         cleanupVerified: true,
         diagnosticsError: '',
       }));
-      assert.strictEqual(runner.getDirectSuiteComplete('httpTimeoutComposeOriginal', phases), true);
+      assert.strictEqual(runner.getDirectSuiteComplete('httpTimeoutLifecycle', phases), true);
       for (const invalid of [
         phases.slice(1),
         [...phases, phases[0]],
@@ -657,7 +600,7 @@ async function main(): Promise<void> {
         [phases[0], phases[1], { ...phases[2], complete: false }],
         [phases[0], phases[1], { ...phases[2], exitCode: 1 }],
       ]) {
-        assert.strictEqual(runner.getDirectSuiteComplete('httpTimeoutComposeOriginal', invalid), false);
+        assert.strictEqual(runner.getDirectSuiteComplete('httpTimeoutLifecycle', invalid), false);
       }
     });
     await control('batch terminal requires exact completed family phases and ordinary wrapper success', () => {
@@ -706,7 +649,6 @@ async function main(): Promise<void> {
     }
     fs.rmSync(root, { recursive: true, force: true }); // Unit-owned temporary command fixture only.
   }
-  await runHttpTimeoutComposeDirectControls(control);
   await runHttpTimeoutEnvironmentControls(control);
   await runApprovedAzureConnectorFixtureControls(control);
   console.log(`[http-timeout-compose-control] ${passed} non-GUI controls passed; no native host launched or credited.`);

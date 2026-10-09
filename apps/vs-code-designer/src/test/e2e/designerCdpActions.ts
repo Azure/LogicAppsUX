@@ -1002,9 +1002,10 @@ export class MsnDesignerCdpActions {
     await this.waitForDiscoveryPanel(60000, `${label} action discovery panel`);
   }
 
-  async clickNode(title: string): Promise<void> {
+  async clickNode(title: string): Promise<string> {
     const result = await this.cdp.evaluate<{
       ok: boolean;
+      id?: string;
       reason?: string;
       text?: string;
       point?: Point;
@@ -1035,6 +1036,7 @@ export class MsnDesignerCdpActions {
         const rect = element.getBoundingClientRect();
         return {
           ok: true,
+          id: element.id,
           point: { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 },
           text: normalize(element.textContent || element.getAttribute('aria-label') || ''),
         };
@@ -1042,7 +1044,7 @@ export class MsnDesignerCdpActions {
     );
 
     assert.ok(
-      result.ok && result.point,
+      result.ok && result.id && result.point,
       `Expected designer node "${title}". Reason=${result.reason} candidates=${JSON.stringify(result.candidates)} text=${String(
         result.text
       ).slice(0, 1000)}`
@@ -1050,6 +1052,7 @@ export class MsnDesignerCdpActions {
 
     console.log(`[workspace-lifecycle] Clicking designer node "${title}" (${result.text ?? ''})`);
     await clickPoint(this.cdp, result.point);
+    return result.id;
   }
 
   async hasDetailsPanel(): Promise<boolean> {
@@ -1455,6 +1458,54 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
   override async clickNode(titles: string[]): Promise<void> {
     assert.ok(titles.length > 0, 'Expected at least one Designer node title');
     await this.proven.clickNode(titles[0]);
+  }
+
+  async deleteNode(titles: string[]): Promise<void> {
+    assert.ok(titles.length > 0, 'Expected at least one Designer node title to delete');
+    await this.closePanel();
+    const matchingTitles: string[] = [];
+    for (const title of titles) {
+      if (await this.hasNode([title])) {
+        matchingTitles.push(title);
+      }
+    }
+    assert.strictEqual(matchingTitles.length, 1, `Expected one visible Designer node identity, found ${matchingTitles.join('/')}`);
+    const clickedNodeId = await this.proven.clickNode(matchingTitles[0]);
+    await this.key('Delete', 'Delete', 46);
+
+    let confirmationDispatched = false;
+    while (Date.now() < this.deadline) {
+      const clickedNodeRemoved = await this.evaluate<boolean>(
+        `(() => document.getElementById(${JSON.stringify(clickedNodeId)}) === null)()`
+      );
+      if (clickedNodeRemoved) {
+        return;
+      }
+      const state = await this.evaluate<{ dialogCount: number; deleteButtonCount: number }>(`(() => {
+        const visible = (element) => {
+          if (!(element instanceof HTMLElement)) return false;
+          const rect = element.getBoundingClientRect();
+          const style = getComputedStyle(element);
+          return rect.width > 0 && rect.height > 0 && style.display !== 'none' &&
+            style.visibility !== 'hidden' && style.opacity !== '0';
+        };
+        const normalize = (text) => (text || '').replace(/\\s+/g, ' ').trim();
+        const dialogs = Array.from(document.querySelectorAll('[role="dialog"]')).filter(visible);
+        const deleteButtons = dialogs.flatMap((dialog) => Array.from(dialog.querySelectorAll('button')))
+          .filter(visible)
+          .filter((button) => !button.disabled && button.getAttribute('aria-disabled') !== 'true')
+          .filter((button) => normalize(button.textContent || button.getAttribute('aria-label')) === 'Delete');
+        return { dialogCount: dialogs.length, deleteButtonCount: deleteButtons.length };
+      })()`);
+      assert.ok(state.dialogCount <= 1, `Ambiguous Designer delete confirmation dialogs: ${state.dialogCount}`);
+      assert.ok(state.deleteButtonCount <= 1, `Ambiguous Designer Delete buttons: ${state.deleteButtonCount}`);
+      if (state.deleteButtonCount === 1 && !confirmationDispatched) {
+        await this.clickElement(['[role="dialog"] button'], 'Delete');
+        confirmationDispatched = true;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    assert.fail(`Timed out deleting Designer node ${titles.join('/')}`);
   }
 
   override async closePanel(): Promise<void> {

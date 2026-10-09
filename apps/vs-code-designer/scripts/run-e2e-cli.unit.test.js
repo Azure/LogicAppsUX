@@ -44,7 +44,6 @@ const {
     redactGeneratedWorkspaceJsonValue,
     redactGeneratedWorkspacePlainText,
     readContainmentReceipt,
-    requiresDirectHttpPhaseClosure,
     requiresDirectFamilyWrapper,
     runHttpTimeoutLifecycle,
     runSuiteWrapperProcess,
@@ -109,7 +108,6 @@ const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
     testBatchSuiteRegistryValidation();
     testBatchSuiteEnvironmentIsolation();
     testHttpDirectSelectorUsesRegisteredContainment();
-    testHttpBatchDelegatesProcessClosureToSuiteContainment();
     await testBatchSuiteScopedCredentials();
     await testBatchContinuesAfterOrdinaryFailure();
     await testBatchStopsAfterContainmentBreach();
@@ -185,16 +183,6 @@ function testAppliesControlledFuncAfterFinalEnvironmentMerge() {
   const pathKeys = Object.keys(result).filter((key) => (process.platform === 'win32' ? key.toLowerCase() === 'path' : key === 'PATH'));
   assert.strictEqual(pathKeys.length, 1, 'Final child environment must contain one unambiguous PATH key');
   assert.strictEqual(result[pathKeys[0]].split(path.delimiter)[0], controlledDirectory);
-}
-
-function testHttpBatchDelegatesProcessClosureToSuiteContainment() {
-  const invocation = { LA_E2E_CLI_HTTP_TIMEOUT_COMPOSE_INVOCATION_ID: 'unit-http-invocation' };
-  assert.strictEqual(requiresDirectHttpPhaseClosure(invocation), true);
-  assert.strictEqual(
-    requiresDirectHttpPhaseClosure({ ...invocation, LA_E2E_CLI_SUITE_WRAPPER_CHILD: '1' }),
-    false,
-    'Batch HTTP phases must rely on the exact suite containment receipt instead of reconstructing exited process ancestry'
-  );
 }
 
 function testHttpDirectSelectorUsesRegisteredContainment() {

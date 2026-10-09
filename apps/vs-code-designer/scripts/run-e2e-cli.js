@@ -24,15 +24,6 @@ const {
 } = require('./e2e-cli-batch');
 const { getOgfScenariosForPhase } = require('./ogf-e2e-registry');
 const cancelCheck = require('./workspace-prompt-cancel');
-const legacyHttpTimeoutComposeSuite = Object.freeze({
-  id: 'httpTimeoutComposeOriginal',
-  requiresAzure: true,
-  expectedPhases: Object.freeze([
-    'runtimeDependencyBootstrap:bootstrap',
-    'httpTimeoutComposeOriginal:create',
-    'httpTimeoutComposeOriginal:reopen',
-  ]),
-});
 
 const forbiddenOutputPatterns = [
   {
@@ -926,7 +917,6 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
   const lifecycleSucceeded =
     ![
       'msnWeatherLifecycle',
-      'httpTimeoutComposeOriginal',
       'httpTimeoutLifecycle',
       'statelessVariablesLifecycle',
       'workspaceArtifactRegeneration',
@@ -1035,7 +1025,6 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
       : {}),
     ...([
       'msnWeatherLifecycle',
-      'httpTimeoutComposeOriginal',
       'httpTimeoutLifecycle',
       'statelessVariablesLifecycle',
       'workspaceArtifactRegeneration',
@@ -1077,114 +1066,12 @@ function readJsonLinesIfExists(filePath) {
     .map((line) => JSON.parse(line));
 }
 
-function terminateProcessTree(child, signal) {
-  return getProcessTreePids(child.pid).then((pids) => {
-    for (const pid of [...pids].reverse()) {
-      if (pid !== process.pid && isPidAlive(pid)) {
-        try {
-          process.kill(pid, signal);
-        } catch {
-          // Process already exited.
-        }
-      }
-    }
-  });
-}
-
 function terminateContainmentHost(child, signal) {
   if (child.exitCode !== null || child.signalCode !== null) {
     return false;
   }
   try {
     return child.kill(signal);
-  } catch {
-    return false;
-  }
-}
-
-function verifyNoOwnedDescendants(pid) {
-  return getProcessTreePids(pid)
-    .then((pids) => {
-      const alivePids = pids.filter((candidate) => candidate !== process.pid && isPidAlive(candidate));
-      return {
-        schemaVersion: 1,
-        verified: alivePids.length === 0,
-        alivePids,
-        checkedAt: new Date().toISOString(),
-      };
-    })
-    .catch((error) => ({
-      schemaVersion: 1,
-      verified: false,
-      error: error instanceof Error ? error.message : String(error),
-      checkedAt: new Date().toISOString(),
-    }));
-}
-
-function requiresDirectHttpPhaseClosure(env) {
-  return !!env.LA_E2E_CLI_HTTP_TIMEOUT_COMPOSE_INVOCATION_ID && env.LA_E2E_CLI_SUITE_WRAPPER_CHILD !== '1';
-}
-
-function getProcessTreePids(pid) {
-  if (!pid) {
-    return Promise.resolve([]);
-  }
-  return Promise.resolve(getProcessTreePidsSync(pid));
-}
-
-function getProcessTreePidsSync(pid) {
-  const parentPairs = getProcessParentPairs();
-  const childrenByParent = new Map();
-  for (const pair of parentPairs) {
-    if (!childrenByParent.has(pair.parentPid)) {
-      childrenByParent.set(pair.parentPid, []);
-    }
-    childrenByParent.get(pair.parentPid).push(pair.pid);
-  }
-  const pids = [];
-  const stack = [pid];
-  while (stack.length > 0) {
-    const current = stack.pop();
-    if (!Number.isInteger(current) || pids.includes(current)) {
-      continue;
-    }
-    pids.push(current);
-    stack.push(...(childrenByParent.get(current) ?? []));
-  }
-  return pids;
-}
-
-function getProcessParentPairs() {
-  if (process.platform === 'win32') {
-    const output = execFileSync(
-      'powershell.exe',
-      [
-        '-NoProfile',
-        '-ExecutionPolicy',
-        'Bypass',
-        '-Command',
-        'Get-CimInstance Win32_Process | Select-Object ProcessId,ParentProcessId | ConvertTo-Json -Compress',
-      ],
-      { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }
-    );
-    const parsed = JSON.parse(output);
-    return (Array.isArray(parsed) ? parsed : [parsed])
-      .map((entry) => ({ pid: Number(entry.ProcessId), parentPid: Number(entry.ParentProcessId) }))
-      .filter((entry) => Number.isInteger(entry.pid) && Number.isInteger(entry.parentPid));
-  }
-
-  const output = execFileSync('ps', ['-eo', 'pid=,ppid='], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
-  return output
-    .split(/\r?\n/)
-    .map((line) => line.trim().split(/\s+/).map(Number))
-    .filter(([pidValue, parentPid]) => Number.isInteger(pidValue) && Number.isInteger(parentPid))
-    .map(([pidValue, parentPid]) => ({ pid: pidValue, parentPid }));
-}
-
-function isPidAlive(pid) {
-  try {
-    process.kill(pid, 0);
-    return true;
   } catch {
     return false;
   }
@@ -1273,117 +1160,6 @@ async function runWorkspaceLifecycle(visibleDelayMs) {
   }
 
   await cleanupOwnedWorkspaceParent(workspaceParent, 'workspace lifecycle');
-}
-
-async function runHttpTimeoutComposeOriginal({
-  run = runVscodeTest,
-  createParent = createOwnedWorkspaceParent,
-  cleanup = cleanupOwnedWorkspaceParent,
-  createRuntimeRoot = createIsolatedRuntimeDependenciesRoot,
-  cleanupRuntime = cleanupRuntimeDependenciesRoot,
-  observeClosure = verifyNoOwnedDescendants,
-  credentialEnvironment = getSuiteScopedCredentialEnv,
-  artifactDir = getLifecycleArtifactDir('http-timeout-compose-original'),
-  resultsDir = path.join(process.cwd(), '.vscode-test', 'results'),
-} = {}) {
-  const invocation = { id: randomUUID(), startedAt: new Date().toISOString(), ownerPid: process.pid };
-  const direct = process.env.LA_E2E_CLI_BATCH_MODE !== '1';
-  const context = direct ? beginDirectHttpTimeoutComposeEvidence({ artifactDir, resultsDir, invocation }) : undefined;
-  let lifecycleError;
-  let ownedRootCleanup;
-  try {
-    const { selectHttpTimeoutComposeWorkspace } = require('../out/test/e2e/httpTimeoutComposeOracle');
-    fs.mkdirSync(artifactDir, { recursive: true });
-    const workspaceParent = createParent('http-timeout-compose-original');
-    const notBefore = Date.now();
-    const manifestPath = path.join(artifactDir, `manifest-stateless-${notBefore}.json`);
-    const runtimeDependenciesRoot = process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT ?? createRuntimeRoot('httpTimeoutComposeOriginal');
-    const phaseResultsPath = context?.phaseResultsPath ?? process.env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH;
-    const azureCredentialEnv = await credentialEnvironment(process.env, legacyHttpTimeoutComposeSuite, 45 * 60 * 1000);
-    const commonEnv = {
-      ...azureCredentialEnv,
-      LA_E2E_CLI_HTTP_TIMEOUT_COMPOSE_INVOCATION_ID: invocation.id,
-      LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: runtimeDependenciesRoot,
-      LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH: phaseResultsPath,
-      LA_E2E_CLI_CREATE_WORKSPACE_PARENT: workspaceParent,
-      LA_E2E_CLI_CREATE_WORKSPACE_FIXTURE_MANIFEST: manifestPath,
-      LA_E2E_CLI_HTTP_TIMEOUT_COMPOSE_NOT_BEFORE: String(notBefore),
-    };
-    const bootstrapExit = await run(['--label', 'runtimeDependencyBootstrap'], {
-      extraEnv: {
-        ...commonEnv,
-        LA_E2E_CLI_INCLUDE_RUNTIME_DEPENDENCY_BOOTSTRAP: '1',
-        LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
-        LA_E2E_CLI_VALIDATE_DEPENDENCIES: '1',
-        LA_E2E_CLI_USER_DATA_SUFFIX: `http-timeout-compose-bootstrap-${notBefore}`,
-      },
-    });
-    if (bootstrapExit !== 0) {
-      throw new Error('HTTP timeout Compose runtime dependency bootstrap host failed');
-    }
-    // Existing wizard fixture producer, one Standard Stateless case only.
-    // The official CLI process must close successfully before the fresh reopen.
-    const createExit = await run(['--label', 'createWorkspaceFixturesManifest'], {
-      extraEnv: {
-        ...commonEnv,
-        LA_E2E_CLI_HTTP_TIMEOUT_COMPOSE_PHASE: 'create',
-        LA_E2E_CLI_CREATE_WORKSPACE_CASE: 'standard-stateless',
-        LA_E2E_CLI_USER_DATA_SUFFIX: `http-timeout-compose-create-${notBefore}`,
-      },
-    });
-    if (createExit !== 0) {
-      throw new Error('HTTP timeout Compose fixture host failed');
-    }
-    const entry = selectHttpTimeoutComposeWorkspace(JSON.parse(fs.readFileSync(manifestPath, 'utf8')), workspaceParent, notBefore);
-    for (const requiredPath of [entry.wsFilePath, path.join(entry.wfDir, 'workflow.json')]) {
-      if (!fs.existsSync(requiredPath)) {
-        throw new Error(`HTTP timeout Compose generated fixture is missing: ${requiredPath}`);
-      }
-    }
-    const runExit = await run(['--label', 'httpTimeoutComposeOriginal'], {
-      extraEnv: {
-        ...commonEnv,
-        LA_E2E_CLI_HTTP_TIMEOUT_COMPOSE_PHASE: 'reopen',
-        LA_E2E_CLI_INCLUDE_HTTP_TIMEOUT_COMPOSE_ORIGINAL: '1',
-        LA_E2E_CLI_MINIMAL_ACTIVATION: '0',
-        LA_E2E_CLI_VALIDATE_DEPENDENCIES: '1',
-        LA_E2E_STRICT_DEPENDENCY_VALIDATION: '1',
-        LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '1',
-        LA_E2E_CLI_USER_DATA_SUFFIX: `http-timeout-compose-run-${notBefore}`,
-        LA_E2E_CLI_STARTUP_RESOURCE: entry.wsFilePath,
-      },
-    });
-    if (runExit !== 0) {
-      throw new Error('HTTP timeout Compose observation host failed');
-    }
-    // Retain failed fixture/diagnostics. Cleanup failure cannot become success.
-    await cleanup(workspaceParent, 'HTTP timeout Compose original', true);
-    if (!process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT && process.env.LA_E2E_CLI_PRESERVE_WORKSPACES !== '1') {
-      await cleanupRuntime(runtimeDependenciesRoot);
-    }
-    const ownedRoots = [workspaceParent, ...(!process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT ? [runtimeDependenciesRoot] : [])];
-    ownedRootCleanup = { ownedRoots, checkedAt: new Date().toISOString(), verified: getOwnedRootCleanupVerified(ownedRoots) };
-    if (context && !ownedRootCleanup.verified) {
-      throw new Error('HTTP timeout Compose owned lifecycle roots still exist after cleanup');
-    }
-  } catch (error) {
-    lifecycleError = error;
-  }
-  if (context) {
-    let processCleanup;
-    try {
-      processCleanup = { ...(await observeClosure(process.pid)), ownerPid: process.pid };
-    } catch (error) {
-      processCleanup = { verified: false, ownerPid: process.pid, checkedAt: new Date().toISOString(), error: String(error) };
-    }
-    const terminal = finalizeDirectHttpTimeoutComposeEvidence(context, { lifecycleError, processCleanup, ownedRootCleanup });
-    if (!terminal.complete) {
-      throw lifecycleError ?? new Error(terminal.diagnosticsError || 'HTTP timeout Compose direct evidence is incomplete');
-    }
-  } else if (lifecycleError) {
-    throw lifecycleError;
-  }
-  return 0;
 }
 
 async function runHttpTimeoutLifecycle({
@@ -1630,123 +1406,6 @@ async function runStatelessVariablesLifecycle(visibleDelayMs, operations = { run
   if (!complete) {
     throw new AggregateError(failures, 'Stateless four-phase lifecycle evidence is inadmissible');
   }
-}
-
-function beginDirectHttpTimeoutComposeEvidence({ artifactDir, resultsDir, invocation }) {
-  const label = 'httpTimeoutComposeOriginal';
-  const context = {
-    invocation,
-    expectedPhaseIds: getDirectExpectedPhaseIds(label),
-    phaseResultsPath: path.join(artifactDir, `phases-${invocation.id}.jsonl`),
-    terminalResultPath: path.join(resultsDir, `${label}.terminal-result.json`),
-    cleanupLedgerPath: path.join(resultsDir, `${label}.cleanup-ledger.json`),
-  };
-  context.invocation = { ...invocation, replacedPriorResult: fs.existsSync(context.terminalResultPath) };
-  writeSuiteTerminalResult(
-    { LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH: context.terminalResultPath },
-    {
-      label,
-      suiteId: label,
-      invocation: context.invocation,
-      complete: false,
-      cleanupVerified: false,
-      lifecycleFinalized: false,
-      expectedPhaseIds: context.expectedPhaseIds,
-      phaseResults: [],
-    }
-  );
-  writeSuiteCleanupLedger(
-    { LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH: context.cleanupLedgerPath },
-    { invocation: context.invocation, verified: false, phaseResults: [] }
-  );
-  fs.mkdirSync(artifactDir, { recursive: true });
-  fs.writeFileSync(context.phaseResultsPath, '');
-  return context;
-}
-
-function finalizeDirectHttpTimeoutComposeEvidence(context, { lifecycleError, processCleanup, ownedRootCleanup }) {
-  let phaseResults = [];
-  let evidenceError;
-  try {
-    phaseResults = readJsonLinesIfExists(context.phaseResultsPath);
-    const initialized = readJsonIfExists(context.terminalResultPath);
-    const start = Date.parse(context.invocation.startedAt);
-    const labels = ['runtimeDependencyBootstrap', 'createWorkspaceFixturesManifest', 'httpTimeoutComposeOriginal'];
-    const validClosure = (closure, notBefore) =>
-      closure?.verified === true &&
-      Number.isInteger(closure.ownerPid) &&
-      closure.ownerPid > 0 &&
-      Array.isArray(closure.alivePids) &&
-      closure.alivePids.length === 0 &&
-      !closure.error &&
-      Date.parse(closure.checkedAt) >= notBefore &&
-      Date.parse(closure.checkedAt) <= Date.now();
-    const provenanceFailures = [];
-    const requireProvenance = (condition, message) => {
-      if (!condition) {
-        provenanceFailures.push(message);
-      }
-    };
-    requireProvenance(initialized?.invocation?.id === context.invocation.id, 'initialized invocation id mismatch');
-    requireProvenance(initialized?.lifecycleFinalized === false, 'initialized lifecycle was already finalized');
-    requireProvenance(
-      getDirectSuiteComplete('httpTimeoutComposeOriginal', phaseResults),
-      'direct phase journal is incomplete or out of order'
-    );
-    for (const [index, phase] of phaseResults.entries()) {
-      const phaseStartedAt = Date.parse(phase.phaseStartedAt);
-      const phaseFinishedAt = Date.parse(phase.phaseFinishedAt);
-      requireProvenance(phase.invocationId === context.invocation.id, `phase ${index} invocation id mismatch`);
-      requireProvenance(phaseStartedAt >= start, `phase ${index} started before the invocation`);
-      requireProvenance(phase.label === labels[index], `phase ${index} label mismatch`);
-      requireProvenance(
-        Number.isInteger(phase.mochaPassingCount) && phase.mochaPassingCount > 0,
-        `phase ${index} lacks a passing Mocha test`
-      );
-      requireProvenance(phaseFinishedAt >= phaseStartedAt, `phase ${index} finish time precedes its start`);
-      requireProvenance(phaseFinishedAt <= Date.now(), `phase ${index} finish time is in the future`);
-      requireProvenance(validClosure(phase.processCleanup, phaseStartedAt), `phase ${index} process closure is invalid`);
-      requireProvenance(
-        Date.parse(phase.processCleanup?.checkedAt) <= phaseFinishedAt,
-        `phase ${index} process closure was checked after phase completion`
-      );
-      if (index > 0) {
-        requireProvenance(phaseStartedAt >= Date.parse(phaseResults[index - 1].phaseFinishedAt), `phase ${index} overlaps the prior phase`);
-      }
-    }
-    requireProvenance(validClosure(processCleanup, start), 'wrapper process closure is invalid');
-    requireProvenance(processCleanup?.ownerPid === context.invocation.ownerPid, 'wrapper process owner mismatch');
-    context.provenanceVerified = provenanceFailures.length === 0;
-    if (!context.provenanceVerified) {
-      throw new Error(
-        `HTTP timeout Compose stale, incomplete or mismatched invocation/phase/closure evidence: ${provenanceFailures.join('; ')}`
-      );
-    }
-  } catch (error) {
-    context.provenanceVerified = false;
-    evidenceError = error;
-  }
-  try {
-    context.ownedRootCleanup = {
-      ...ownedRootCleanup,
-      verified:
-        ownedRootCleanup?.verified === true &&
-        getOwnedRootCleanupVerified(ownedRootCleanup.ownedRoots) &&
-        Date.parse(ownedRootCleanup.checkedAt) >= Date.parse(phaseResults.at(-1)?.phaseFinishedAt) &&
-        Date.parse(processCleanup.checkedAt) >= Date.parse(ownedRootCleanup.checkedAt),
-    };
-  } catch (error) {
-    context.ownedRootCleanup = { ...ownedRootCleanup, verified: false, error: String(error) };
-  }
-  return writeSuiteFinalEvidence({
-    context,
-    suite: legacyHttpTimeoutComposeSuite,
-    exitCode: lifecycleError || evidenceError ? 1 : 0,
-    signal: null,
-    error: lifecycleError ?? evidenceError ?? (!context.ownedRootCleanup.verified ? new Error('Owned cleanup not verified') : undefined),
-    processCleanup,
-    phaseResults,
-  });
 }
 
 async function runNugetConversionLifecycle(visibleDelayMs) {
@@ -2611,7 +2270,6 @@ function applyControlledFuncEnvironment(env, controlledFuncDirectory) {
 }
 
 function runVscodeTest(args, options = {}) {
-  const phaseStartedAt = new Date().toISOString();
   const label = getLabelArg(args);
   const userDataSuffix =
     options.extraEnv?.LA_E2E_CLI_USER_DATA_SUFFIX ?? process.env.LA_E2E_CLI_USER_DATA_SUFFIX ?? `run-${Date.now()}-${process.pid}`;
@@ -2862,11 +2520,6 @@ function runVscodeTest(args, options = {}) {
         options.multiRootCreatePhase && childEnv.LA_E2E_CLI_MULTI_ROOT_HANDOFF
           ? 'workspaceMultiRoot:create'
           : getSuitePhaseId(label, childEnv);
-      const ownHttpInvocation = childEnv.LA_E2E_CLI_HTTP_TIMEOUT_COMPOSE_INVOCATION_ID;
-      const requireDirectHttpPhaseClosure = requiresDirectHttpPhaseClosure(childEnv);
-      const processCleanup = requireDirectHttpPhaseClosure
-        ? { ...(await verifyNoOwnedDescendants(child.pid)), ownerPid: child.pid }
-        : undefined;
       const diagnosticsErrorMessage = diagnosticsError
         ? diagnosticsError instanceof Error
           ? diagnosticsError.message
@@ -2896,14 +2549,7 @@ function runVscodeTest(args, options = {}) {
         }
       }
       const phasePassed =
-        code === 0 &&
-        cleanupLedger.verified === true &&
-        !diagnosticsError &&
-        !matchedPattern &&
-        !cancelError &&
-        !regenerationError &&
-        (!requireDirectHttpPhaseClosure ||
-          (signal === null && processCleanup?.verified === true && Number.isInteger(child.pid) && getMochaPassingCount(output) > 0));
+        code === 0 && cleanupLedger.verified === true && !diagnosticsError && !matchedPattern && !cancelError && !regenerationError;
       if (regenerationContext) {
         const errors = [
           ...diagnosticsErrors.map(String),
@@ -2971,14 +2617,6 @@ function runVscodeTest(args, options = {}) {
           mochaPassingCount: getMochaPassingCount(output),
           ogfScenarios: buildOgfScenariosForPhase(phaseId, childEnv, { passed: phasePassed }),
           ...(msnBodyAssertionsPassed !== undefined ? { bodyAssertionsPassed: msnBodyAssertionsPassed } : {}),
-          ...(ownHttpInvocation
-            ? {
-                invocationId: ownHttpInvocation,
-                phaseStartedAt,
-                phaseFinishedAt: new Date().toISOString(),
-                processCleanup,
-              }
-            : {}),
         });
       }
 
@@ -2994,12 +2632,6 @@ function runVscodeTest(args, options = {}) {
         reject(regenerationError);
         return;
       }
-      if (requireDirectHttpPhaseClosure && processCleanup?.verified !== true) {
-        const alivePids = Array.isArray(processCleanup?.alivePids) ? processCleanup.alivePids.join(', ') : 'unavailable';
-        reject(new Error(`HTTP timeout Compose original direct phase owned-descendant closure was not verified; alive PIDs: ${alivePids}`));
-        return;
-      }
-
       if (matchedPattern) {
         reject(new Error(`\n[activation-smoke] Failed because VS Code output contained: ${matchedPattern.name}`));
         return;
@@ -3939,9 +3571,6 @@ module.exports = {
     createIsolatedRuntimeDependenciesRoot,
     findAzureLogicAppsChannelLogs,
     getCodefulDebugTasksRunExtraEnv,
-    runHttpTimeoutComposeOriginal,
-    beginDirectHttpTimeoutComposeEvidence,
-    finalizeDirectHttpTimeoutComposeEvidence,
     getMsnWeatherAzureTargetEnv,
     getMsnWeatherAzureAuthEnv,
     hasHeadlessMsnWeatherAzureAuth,
@@ -3977,7 +3606,6 @@ module.exports = {
     runDirectRegisteredSuite,
     createLinePrefixer,
     readContainmentReceipt,
-    requiresDirectHttpPhaseClosure,
     requiresDirectFamilyWrapper,
     verifyFuncCoreToolsAtDependencyRoot,
     walkFiles,
@@ -4482,7 +4110,7 @@ function getDirectSuiteComplete(label, phaseResults) {
     missingPhaseIds.length === 0 &&
     unexpectedPhaseIds.length === 0 &&
     getDuplicateValues(observedPhaseIds).length === 0 &&
-    (!['httpTimeoutComposeOriginal', 'httpTimeoutLifecycle', 'statelessVariablesLifecycle'].includes(label) ||
+    (!['httpTimeoutLifecycle', 'statelessVariablesLifecycle'].includes(label) ||
       expectedPhaseIds.every((phaseId, index) => observedPhaseIds[index] === phaseId)) &&
     phaseResults.every(
       (phase) =>
@@ -4881,10 +4509,7 @@ function getDirectExpectedPhaseIds(label) {
   if (!label) {
     return [];
   }
-  if (label === 'httpTimeoutComposeOriginal') {
-    return [...legacyHttpTimeoutComposeSuite.expectedPhases];
-  }
-  if (['httpTimeoutComposeOriginal', 'httpTimeoutLifecycle'].includes(label)) {
+  if (label === 'httpTimeoutLifecycle') {
     return [...SUITE_REGISTRY[label].expectedPhases];
   }
   if (label === 'msnWeatherLifecycle') {
@@ -4986,16 +4611,6 @@ function getSuitePhaseId(label, env) {
   if (label === 'httpTimeoutLifecycle' && env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MODE) {
     const phase = env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MODE === 'run' ? 'reopen' : env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MODE;
     return `httpTimeoutLifecycle:${phase}`;
-  }
-  if (
-    label === 'createWorkspaceFixturesManifest' &&
-    env.LA_E2E_CLI_HTTP_TIMEOUT_COMPOSE_PHASE === 'create' &&
-    env.LA_E2E_CLI_CREATE_WORKSPACE_CASE === 'standard-stateless'
-  ) {
-    return 'httpTimeoutComposeOriginal:create';
-  }
-  if (label === 'httpTimeoutComposeOriginal' && env.LA_E2E_CLI_HTTP_TIMEOUT_COMPOSE_PHASE === 'reopen') {
-    return 'httpTimeoutComposeOriginal:reopen';
   }
   const createWorkspaceCase = env.LA_E2E_CLI_CREATE_WORKSPACE_CASE;
   if (label && createWorkspaceCase) {
