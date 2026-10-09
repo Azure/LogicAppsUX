@@ -24,7 +24,7 @@ export interface PublishCodefulProjectOptions {
    * the subsequent Debug build.
    *
    * Used by the debug (F5) pipeline. Deploy paths must leave this `false` so
-   * `bin/Release/<tfm>/publish/` is always produced for `azureFunctions.deploySubpath`.
+   * `bin/Release/<tfm>/publish/` is always produced for the configured deployment subpath.
    */
   skipIfBuildPopulatesCodeful?: boolean;
 }

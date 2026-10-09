@@ -96,6 +96,11 @@ type Scenario = {
   monolithic?: boolean;
   env?: Record<string, string>;
   /**
+   * Whether the generic fresh-session retry can safely rerun this scenario.
+   * Disable for tests that deliberately mutate shared persistent state.
+   */
+  retryable?: boolean;
+  /**
    * Install the codeful task recorder extension and point it at a freshly truncated
    * events/trigger pair for this scenario.
    *
@@ -1717,6 +1722,7 @@ async function main(): Promise<void> {
       testFile: phaseBundleRepairFiles[0],
       workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
       settings: { validateDependencies: true, autoStartDesignTime: false },
+      retryable: false,
     },
 
     // Phase 4.14 — Func Core Tools pre-debug self-heal.
@@ -2899,14 +2905,15 @@ namespace ${namespaceName}
       // Opt-in via LA_E2E_SCENARIO_RETRIES (default 0 = fail fast locally; CI
       // sets it). Each retry is a full prepareFreshSession(), so it also clears
       // the stale-window / leftover-process flakes.
-      const scenarioRetries = Math.max(0, Number.parseInt(process.env.LA_E2E_SCENARIO_RETRIES ?? '', 10) || 0);
-      const maxAttempts = scenarioRetries + 1;
-      if (scenarioRetries > 0) {
-        console.log(`Scenario retry enabled: up to ${scenarioRetries} retry(ies) per failing scenario (LA_E2E_SCENARIO_RETRIES).`);
+      const configuredScenarioRetries = Math.max(0, Number.parseInt(process.env.LA_E2E_SCENARIO_RETRIES ?? '', 10) || 0);
+      if (configuredScenarioRetries > 0) {
+        console.log(
+          `Scenario retry enabled: up to ${configuredScenarioRetries} retry(ies) per failing scenario (LA_E2E_SCENARIO_RETRIES).`
+        );
       }
       const exits: number[] = [];
       for (const scenario of scenarioList) {
-        const { id, testFile: files, workspaceSpec, settings = {}, monolithic, env: scenarioEnv, recorder } = scenario;
+        const { id, testFile: files, workspaceSpec, settings = {}, monolithic, env: scenarioEnv, recorder, retryable } = scenario;
         const resolvedSettings: ScenarioSettings = { ...settings };
         if (resolvedSettings.validateDependencies === 'auto') {
           resolvedSettings.validateDependencies = shouldValidateRuntimeDependencies();
@@ -2948,10 +2955,16 @@ namespace ${namespaceName}
           console.warn(`  [${id}] Non-monolithic scenario received ${fileList.length} files; running all of them`);
         }
 
+        const scenarioRetryCount = retryable === false ? 0 : configuredScenarioRetries;
+        const scenarioMaxAttempts = scenarioRetryCount + 1;
+        if (retryable === false && configuredScenarioRetries > 0) {
+          console.log(`  [${id}] Generic scenario retry disabled because this test mutates persistent shared state.`);
+        }
+
         let exit = 1;
-        for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        for (let attempt = 1; attempt <= scenarioMaxAttempts; attempt++) {
           if (attempt > 1) {
-            console.log(`\n  ↻ [${id}] retry ${attempt - 1}/${scenarioRetries} in a fresh session after a failed attempt...`);
+            console.log(`\n  ↻ [${id}] retry ${attempt - 1}/${scenarioRetryCount} in a fresh session after a failed attempt...`);
             // Give VS Code/chromedriver/func extra time to release ports and
             // sockets before relaunching, on top of prepareFreshSession()'s kill.
             await new Promise((r) => setTimeout(r, 8000));
@@ -2977,7 +2990,7 @@ namespace ${namespaceName}
               verifyLogicAppsExtensionBundle(`preflight:${id}`);
             }
 
-            const attemptLabel = maxAttempts > 1 ? `Scenario ${id} (attempt ${attempt}/${maxAttempts})` : `Scenario ${id}`;
+            const attemptLabel = scenarioMaxAttempts > 1 ? `Scenario ${id} (attempt ${attempt}/${scenarioMaxAttempts})` : `Scenario ${id}`;
             exit = await runPhase(attemptLabel, fileList, { resources });
 
             // p41a-fixtures must also pass its post-run bundle verification to
@@ -2993,14 +3006,14 @@ namespace ${namespaceName}
             // A deterministic failure (e.g. a genuinely corrupt bundle) simply
             // throws again on every attempt and still fails the shard.
             exit = 1;
-            console.warn(`  [${id}] attempt ${attempt}/${maxAttempts} threw: ${getErrorMessage(e)}`);
+            console.warn(`  [${id}] attempt ${attempt}/${scenarioMaxAttempts} threw: ${getErrorMessage(e)}`);
           }
 
           if (exit === 0) {
             if (attempt > 1) {
               // Surface the flake loudly (but non-fatally). A scenario that
               // needed a retry to pass is a signal to fix the underlying race.
-              const flakeMsg = `${id} passed on attempt ${attempt}/${maxAttempts} (failed ${attempt - 1}x)`;
+              const flakeMsg = `${id} passed on attempt ${attempt}/${scenarioMaxAttempts} (failed ${attempt - 1}x)`;
               console.warn(`  ⚠ FLAKE: ${flakeMsg}`);
               console.log(`::warning title=E2E scenario flake::${flakeMsg}`);
             }

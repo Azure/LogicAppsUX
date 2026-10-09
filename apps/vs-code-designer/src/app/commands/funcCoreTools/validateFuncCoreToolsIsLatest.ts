@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 import { PackageManager, funcDependencyName } from '../../../constants';
 import { localize } from '../../../localize';
-import { executeOnFunctions } from '../../functionsExtension/executeOnFunctionsExt';
 import { binariesExist, getLatestFunctionCoreToolsVersion, useBinariesDependencies, verifyDependencyIntegrity } from '../../utils/binaries';
 import { shouldCheckForDependencyUpdates } from '../../state/dependencies';
 import { startAllDesignTimeApis, stopAllDesignTimeApis } from '../../utils/codeless/startDesignTimeApi';
@@ -95,7 +94,7 @@ async function validateFuncCoreToolsIsLatestSystem(context: IActionContext): Pro
         const result: MessageItem = await context.ui.showWarningMessage(message, selectUninstall, DialogResponses.dontWarnAgain);
 
         if (result === selectUninstall) {
-          await executeOnFunctions(uninstallFuncCoreTools, context, packageManagers);
+          await uninstallFuncCoreTools(context, packageManagers);
         } else if (result === DialogResponses.dontWarnAgain) {
           await suppressMultiCoreToolsWarning();
         }
