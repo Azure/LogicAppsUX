@@ -21,6 +21,7 @@ import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getWorkspaceSetting, updateGlobalSetting, removeSharedSetting } from '../vsCodeConfig/settings';
 import { isAutoStartAzuriteNotificationSuppressed, suppressAutoStartAzuriteNotification } from '../../state/notifications';
 import { getWorkspaceFolder } from '../workspace';
+import { synchronizeAzuriteConnectionString } from './azuriteConnectionString';
 import { DialogResponses, parseError, type IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 import type { MessageItem } from 'vscode';
@@ -51,6 +52,8 @@ export async function activateAzurite(context: IActionContext, projectPath?: str
     }
 
     if (projectPath) {
+      await synchronizeAzuriteConnectionString(context, projectPath);
+
       const globalAzuriteLocationSetting: string = getWorkspaceSetting<string>(azuriteLocationSetting, projectPath, azuriteExtensionPrefix);
       context.telemetry.properties.globalAzuriteLocation = globalAzuriteLocationSetting;
 

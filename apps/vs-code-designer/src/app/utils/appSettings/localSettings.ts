@@ -161,6 +161,21 @@ async function getDecryptedLocalSettings(
   return localSettings;
 }
 
+export async function isLocalSettingsEncrypted(projectPath: string): Promise<boolean> {
+  const localSettingsPath = path.join(projectPath, localSettingsFileName);
+  if (!(await fse.pathExists(localSettingsPath))) {
+    return false;
+  }
+
+  const data = (await fse.readFile(localSettingsPath)).toString();
+  if (!/[^\s]/.test(data)) {
+    return false;
+  }
+
+  const localSettings = parseJson<ILocalSettingsJson>(data);
+  return localSettings.IsEncrypted === true;
+}
+
 /**
  * Set local.settings.json values.
  * @param {IActionContext} context - The action context.
