@@ -419,6 +419,13 @@ function parseYaml(relativePath) {
 
 function testE2eDependencyInstallRetryContract() {
   const setup = parseYaml('.azure-pipelines/templates/vscode-e2e-cli-setup.yml');
+  const timeoutSteps = setup.steps.filter((step) => step.displayName === 'Configure pnpm fetch timeout');
+  assert.strictEqual(timeoutSteps.length, 1, 'E2E setup must configure one unambiguous pnpm fetch timeout');
+  const timeoutStep = timeoutSteps[0];
+  assert.match(timeoutStep.pwsh, /\$fetchTimeout = 300000/);
+  assert.match(timeoutStep.pwsh, /pnpm config set --global fetchTimeout \$fetchTimeout/);
+  assert.match(timeoutStep.pwsh, /pnpm config get --global fetchTimeout/);
+  assert.match(timeoutStep.pwsh, /\$configuredFetchTimeout -ne "\$fetchTimeout"/);
   const installSteps = setup.steps.filter((step) => step.displayName === 'Install dependencies with pnpm');
   assert.strictEqual(installSteps.length, 1, 'E2E setup must have one unambiguous pnpm dependency install step');
   const install = installSteps[0];
