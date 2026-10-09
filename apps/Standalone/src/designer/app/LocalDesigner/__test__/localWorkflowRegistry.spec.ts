@@ -251,6 +251,18 @@ describe('offline local workflow registry', () => {
     }
   );
 
+  it.each([
+    'https://example.azurewebsites.net/api/run?code=literal-function-key',
+    'https://example.azurewebsites.net/api/run?c%6Fde=encoded-function-key',
+  ])('refuses credential-bearing URL query parameters: %s', async (uri) => {
+    const plan = makePlan();
+    (plan.child.definition.actions!.Build_message as LogicAppsV2.ComposeAction).inputs = { uri };
+    const service = createRegistry().createService('ExtractSelection.json', 'ExtractSelection');
+    expect(() => service.prepare!(plan)).toThrow('credential');
+    await expect(service.commit(request(plan))).rejects.toThrow('credential');
+    expect(storage.setItem).not.toHaveBeenCalled();
+  });
+
   it('persists connection metadata, managed identity, settings, and parameter references without resolving them', async () => {
     const plan = makePlan();
     const references = {
@@ -266,7 +278,7 @@ describe('offline local workflow registry', () => {
     plan.source.connectionReferences = structuredClone(references);
     plan.child.connectionReferences = structuredClone(references);
     plan.child.parameters = {
-      endpoint: { type: 'String', value: 'https://example.test' },
+      endpoint: { type: 'String', value: "@appsetting('FunctionUrl')" },
       AuthHeader: { type: 'String', value: "@appsetting('HttpAuthorization')" },
       FunctionKey: { type: 'String', value: "@appsetting('FunctionKey')" },
     };

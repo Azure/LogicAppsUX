@@ -225,7 +225,13 @@ export const WorkflowExtractionDialog = () => {
   const request = useRef<WorkflowExtractionRequest>();
 
   useEffect(() => {
-    if (!open) {
+    if (open && !service) {
+      dispatch(setWorkflowExtractionDialogOpen(false));
+    }
+  }, [dispatch, open, service]);
+
+  useEffect(() => {
+    if (!open || !service) {
       return;
     }
     let current = true;

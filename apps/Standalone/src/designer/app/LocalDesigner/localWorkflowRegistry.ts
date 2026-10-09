@@ -43,6 +43,26 @@ type RegistryExclusiveRunner = <T>(operation: () => Promise<T>) => Promise<T>;
 const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value));
 const normalize = (value: string) => value.toLowerCase();
 const isRecord = (value: unknown): value is Record<string, unknown> => !!value && typeof value === 'object' && !Array.isArray(value);
+const credentialQueryParameterNames = new Set([
+  'code',
+  'sig',
+  'token',
+  'accesstoken',
+  'apikey',
+  'subscriptionkey',
+  'xfunctionskey',
+  'ocpapimsubscriptionkey',
+]);
+const containsCredentialQueryParameter = (value: string): boolean => {
+  const queryStart = value.indexOf('?');
+  if (queryStart < 0) {
+    return false;
+  }
+  const query = value.slice(queryStart + 1).split('#', 1)[0];
+  return Array.from(new URLSearchParams(query).keys()).some((key) =>
+    credentialQueryParameterNames.has(normalize(key).replace(/[-_\s]/g, ''))
+  );
+};
 const fingerprint = async (value: unknown): Promise<string> => {
   if (!globalThis.crypto?.subtle) {
     throw new Error('This browser cannot safely create a compact workflow extraction fingerprint.');
@@ -148,7 +168,10 @@ function assertSafeWorkflow(workflow: Workflow): void {
   };
   const inspect = (value: unknown): void => {
     if (typeof value === 'string') {
-      if (/SharedAccessSignature=|AccountKey=|Bearer\s+\S+|[?&]sig=|-----BEGIN .*PRIVATE KEY-----/i.test(value)) {
+      if (
+        /SharedAccessSignature=|AccountKey=|Bearer\s+\S+|-----BEGIN .*PRIVATE KEY-----/i.test(value) ||
+        containsCredentialQueryParameter(value)
+      ) {
         throw new Error('Offline extraction cannot store credential-bearing workflows.');
       }
     } else if (Array.isArray(value)) {
