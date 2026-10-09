@@ -419,13 +419,7 @@ function parseYaml(relativePath) {
 
 function testE2eDependencyInstallRetryContract() {
   const setup = parseYaml('.azure-pipelines/templates/vscode-e2e-cli-setup.yml');
-  const timeoutSteps = setup.steps.filter((step) => step.displayName === 'Configure pnpm fetch timeout');
-  assert.strictEqual(timeoutSteps.length, 1, 'E2E setup must configure one unambiguous pnpm fetch timeout');
-  const timeoutStep = timeoutSteps[0];
-  assert.match(timeoutStep.pwsh, /\$fetchTimeout = 300000/);
-  assert.match(timeoutStep.pwsh, /pnpm config set --global fetchTimeout \$fetchTimeout/);
-  assert.match(timeoutStep.pwsh, /pnpm config get --global fetchTimeout/);
-  assert.match(timeoutStep.pwsh, /\$configuredFetchTimeout -ne "\$fetchTimeout"/);
+  assert.doesNotMatch(JSON.stringify(setup), /pnpm config set --global fetchTimeout/);
   const installSteps = setup.steps.filter((step) => step.displayName === 'Install dependencies with pnpm');
   assert.strictEqual(installSteps.length, 1, 'E2E setup must have one unambiguous pnpm dependency install step');
   const install = installSteps[0];
@@ -434,6 +428,13 @@ function testE2eDependencyInstallRetryContract() {
   assert.ok(install.continueOnError === undefined || install.continueOnError === false, 'Install failures must remain fatal');
   assert.strictEqual(install.timeoutInMinutes, undefined, 'The containing job remains the install retry time limit');
   assert.strictEqual(install.env?.NPM_CONFIG_USERCONFIG, '$(npmrcFile)');
+  assert.strictEqual(install.env?.PNPM_CONFIG_FETCH_TIMEOUT, '300000');
+  const fetchTimeoutOwners = setup.steps.filter((step) => step.env?.PNPM_CONFIG_FETCH_TIMEOUT !== undefined);
+  assert.deepStrictEqual(
+    fetchTimeoutOwners.map((step) => step.displayName),
+    ['Install dependencies with pnpm'],
+    'The process-scoped fetch timeout must apply only to the dependency install'
+  );
 }
 
 function testAzureToolsWrapperContract() {

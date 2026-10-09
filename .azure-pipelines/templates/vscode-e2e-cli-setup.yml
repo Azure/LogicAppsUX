@@ -137,25 +137,10 @@ steps:
     displayName: Install pinned pnpm from CFS
     workingDirectory: $(working_directory)
 
-  - pwsh: |
-      $fetchTimeout = 300000
-      pnpm config set --global fetchTimeout $fetchTimeout
-      if ($LASTEXITCODE -ne 0) {
-        exit $LASTEXITCODE
-      }
-
-      $configuredFetchTimeout = (pnpm config get --global fetchTimeout).Trim()
-      if ($LASTEXITCODE -ne 0 -or $configuredFetchTimeout -ne "$fetchTimeout") {
-        Write-Error "Expected pnpm fetchTimeout '$fetchTimeout', received '$configuredFetchTimeout'."
-        exit 1
-      }
-      Write-Host "Configured pnpm fetchTimeout: $configuredFetchTimeout ms"
-    displayName: Configure pnpm fetch timeout
-    workingDirectory: $(working_directory)
-
   - script: pnpm install --frozen-lockfile --strict-peer-dependencies --recursive
     displayName: Install dependencies with pnpm
     workingDirectory: $(working_directory)
     retryCountOnTaskFailure: 2
     env:
       NPM_CONFIG_USERCONFIG: $(npmrcFile)
+      PNPM_CONFIG_FETCH_TIMEOUT: '300000'
