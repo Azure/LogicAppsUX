@@ -1,5 +1,6 @@
 import * as assert from 'assert';
 import type { CdpConnection } from './cdpClient';
+import { clickPoint, type CdpEvaluator, type Point } from './cdpFormHelpers';
 import { ProvenDesignerCdpActions } from './designerCdpActions';
 import {
   assembleHttpTimeoutComposeCode,
@@ -8,6 +9,7 @@ import {
   type HttpTimeoutComposeRenderedPage,
   pollHttpTimeoutCompose,
 } from './httpTimeoutComposeOracle';
+import { boundedCdp } from './workbenchCdpActions';
 
 // Shared CLI input dispatch (native CDP mouse/key events), not DOM .click(),
 // React handler invocation, editor-model writes, or extension save-message injection.
@@ -44,9 +46,31 @@ const visibleDom = `
   const normalize = (text) => (text || '').replace(/\\s+/g, ' ').trim();
 `;
 
+const httpSettingsPanelTimeoutMs = 45_000;
+
+interface HttpSettingsPanelObservation {
+  httpPanelOpen: boolean;
+  selectedNodeIdentity: string[];
+  panelText: string;
+  tabText: string[];
+  settingsPoint?: Point;
+  settingsSelected: boolean;
+  overlays: string[];
+}
+
 export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
   private codeEditorObjectId?: string;
   private errorObservationSignature?: string;
+
+  constructor(
+    cdp: CdpEvaluator,
+    contextId: number,
+    deadline: number,
+    assertActive: () => void = () => undefined,
+    private readonly settingsPanelTimeoutMs = httpSettingsPanelTimeoutMs
+  ) {
+    super(cdp, contextId, deadline, assertActive);
+  }
 
   override async replaceFocused(value: string): Promise<void> {
     await this.key('KeyA', 'a', 65, 2);
@@ -60,8 +84,7 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
   }
 
   async configureHttpRequestSettings(timeout: string): Promise<void> {
-    await this.clickNode(['HTTP']);
-    await this.click('[role="tab"]', ['Settings']);
+    await this.openHttpSettings();
     const requestTimeoutVisible = await this.evaluate<boolean>(`!!document.querySelector('[aria-label="Request options - Timeout"]')`);
     if (!requestTimeoutVisible) {
       await this.click('button[aria-label^="Collapsed Networking"]');
@@ -96,6 +119,137 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
       (value) => value === false,
       this.deadline,
       'disabled Asynchronous pattern'
+    );
+  }
+
+  private async openHttpSettings(): Promise<void> {
+    const startedAt = Date.now();
+    const deadline = Math.min(this.deadline, startedAt + this.settingsPanelTimeoutMs);
+    const localCdp = boundedCdp(this.cdp, deadline);
+    const localActions = new ProvenDesignerCdpActions(localCdp, this.contextId, deadline, this.assertActive);
+    let observation: HttpSettingsPanelObservation = {
+      httpPanelOpen: false,
+      selectedNodeIdentity: [],
+      panelText: '',
+      tabText: [],
+      settingsSelected: false,
+      overlays: [],
+    };
+    let panelStateObserved = false;
+    let settingsClickDispatched = false;
+    let lastError: unknown;
+    while (Date.now() < deadline) {
+      try {
+        observation = await this.httpSettingsPanelObservation(localCdp);
+        if (!panelStateObserved) {
+          console.log(`[http-timeout][http-panel] initial ${JSON.stringify(observation)}`);
+          panelStateObserved = true;
+          if (observation.httpPanelOpen) {
+            console.log('[http-timeout][http-panel] HTTP node-details panel is already open; preserving current selection');
+          } else {
+            console.log('[http-timeout][http-panel] HTTP node-details panel is closed; opening HTTP through proven CDP node interaction');
+            await localActions.clickNode(['HTTP']);
+            continue;
+          }
+        }
+        if (observation.httpPanelOpen && observation.settingsPoint) {
+          if (observation.settingsSelected) {
+            console.log(
+              `[http-timeout][http-panel] Settings ready elapsedMs=${Date.now() - startedAt} selected=${JSON.stringify(
+                observation.selectedNodeIdentity
+              )} tabs=${JSON.stringify(observation.tabText)} overlays=${JSON.stringify(observation.overlays)}`
+            );
+            return;
+          }
+          if (!settingsClickDispatched) {
+            console.log(
+              `[http-timeout][http-panel] Clicking scoped Settings tab selected=${JSON.stringify(
+                observation.selectedNodeIdentity
+              )} tabs=${JSON.stringify(observation.tabText)}`
+            );
+            await clickPoint(localCdp, observation.settingsPoint);
+            settingsClickDispatched = true;
+          }
+        }
+      } catch (error) {
+        lastError = error;
+      }
+
+      const remaining = deadline - Date.now();
+      if (remaining <= 0) {
+        break;
+      }
+      await new Promise((resolve) => setTimeout(resolve, Math.min(200, remaining)));
+    }
+
+    assert.fail(
+      `Timed out after ${Date.now() - startedAt}ms waiting for a visible hit-tested Settings tab inside the active HTTP node-details panel. selectedNodeIdentity=${JSON.stringify(observation.selectedNodeIdentity)} panelText=${JSON.stringify(
+        observation.panelText
+      )} tabs=${JSON.stringify(observation.tabText)} overlays=${JSON.stringify(observation.overlays)}${
+        lastError ? ` lastError=${String(lastError)}` : ''
+      }`
+    );
+  }
+
+  private async httpSettingsPanelObservation(cdp: CdpEvaluator): Promise<HttpSettingsPanelObservation> {
+    this.assertActive();
+    return cdp.evaluate<HttpSettingsPanelObservation>(
+      this.contextId,
+      `(() => {
+      ${visibleDom}
+      const selectedLayouts = Array.from(document.querySelectorAll('.msla-panel-layout.msla-panel-border-selected'))
+        .filter(visible)
+        .map((layout) => {
+          const nodePanel = layout.querySelector('[id^="msla-node-details-panel-"]');
+          const titleInput = layout.querySelector(
+            '.msla-panel-header input[aria-label="Card title"], .msla-panel-header input[id$="-title"]'
+          );
+          const nodeId = normalize(nodePanel?.id || '').replace(/^msla-node-details-panel-/, '');
+          const title = normalize(
+            titleInput instanceof HTMLInputElement ? titleInput.value : titleInput?.getAttribute('value') || ''
+          );
+          return { layout, nodePanel, nodeId, title };
+        });
+      const identity = (entry) => [entry.nodeId, entry.title].map(normalize).filter(Boolean);
+      const isHttpPanel = (entry) => identity(entry).some((value) => value.toLowerCase() === 'http');
+      const httpPanels = selectedLayouts.filter(isHttpPanel);
+      const active = httpPanels.length === 1 ? httpPanels[0] : undefined;
+      const tabs = active ? Array.from(active.layout.querySelectorAll('[role="tab"]')).filter(visible) : [];
+      const tabIdentity = (tab) => [
+        tab.textContent,
+        tab.getAttribute('aria-label'),
+        tab.getAttribute('title')
+      ].map(normalize).find(Boolean) || '';
+      const settings = tabs.find((tab) => tabIdentity(tab).toLowerCase().startsWith('settings'));
+      let settingsPoint;
+      if (settings instanceof HTMLElement && !settings.disabled && settings.getAttribute('aria-disabled') !== 'true') {
+        settings.scrollIntoView({ block: 'center', inline: 'center' });
+        const rect = settings.getBoundingClientRect();
+        const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+        const hit = document.elementFromPoint(point.x, point.y);
+        if (hit && (hit === settings || settings.contains(hit))) {
+          settingsPoint = point;
+        }
+      }
+      const overlays = Array.from(document.querySelectorAll(
+        '[role="menu"], .fui-MenuPopover, [role="dialog"], .fui-PopoverSurface, .ms-Callout'
+      )).filter(visible).slice(0, 12).map((element) => {
+        const label = normalize(
+          element.getAttribute('aria-label') || element.getAttribute('data-automation-id') ||
+          element.textContent || element.className || element.getAttribute('role') || ''
+        );
+        return label.slice(0, 240);
+      });
+      return {
+        httpPanelOpen: !!active,
+        selectedNodeIdentity: selectedLayouts.flatMap(identity),
+        panelText: selectedLayouts.map((entry) => normalize(entry.layout.textContent).slice(0, 1200)).join(' || '),
+        tabText: tabs.map(tabIdentity).filter(Boolean),
+        settingsPoint,
+        settingsSelected: settings?.getAttribute('aria-selected') === 'true',
+        overlays,
+      };
+    })()`
     );
   }
 

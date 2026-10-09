@@ -1,5 +1,4 @@
 import * as assert from 'node:assert/strict';
-import type { CdpConnection } from './cdpClient';
 import { clickPoint, type CdpEvaluator, type Point } from './cdpFormHelpers';
 
 const remainingWorkbenchBudget = (deadline: number): number => {
@@ -8,7 +7,7 @@ const remainingWorkbenchBudget = (deadline: number): number => {
   return remaining;
 };
 
-export function boundedCdp(cdp: Pick<CdpConnection, 'evaluate' | 'send'>, deadline: number): CdpEvaluator {
+export function boundedCdp(cdp: CdpEvaluator, deadline: number): CdpEvaluator {
   return {
     evaluate: (context, expression) => cdp.evaluate(context, expression, { timeoutMs: Math.min(5000, remainingWorkbenchBudget(deadline)) }),
     send: (method, params) => cdp.send(method, params, { timeoutMs: Math.min(5000, remainingWorkbenchBudget(deadline)) }),

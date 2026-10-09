@@ -20,6 +20,7 @@ import {
 type SemanticTextGroup = string | string[];
 
 const execFileAsync = promisify(execFile);
+export const defaultEvidenceScreenshotTimeoutMs = 15_000;
 const screenshotRoot =
   process.env.LA_E2E_CLI_SCREENSHOT_DIR ?? path.resolve(__dirname, '..', '..', '..', '.vscode-test', 'screenshots', 'cli');
 const failureAttachmentManifestPath = path.join(screenshotRoot, 'failure-attachments.json');
@@ -197,7 +198,7 @@ async function captureCdpScreenshotCore(
     throw new Error(`Evidence screenshot ${name} must provide an explicit expectation`);
   }
   const startedAt = Date.now();
-  const timeoutMs = options.timeoutMs ?? (classification === 'diagnostic' ? 5000 : 15000);
+  const timeoutMs = options.timeoutMs ?? (classification === 'diagnostic' ? 5000 : defaultEvidenceScreenshotTimeoutMs);
   const deadline = options.deadlineMs ?? startedAt + timeoutMs;
   const samples: ScreenshotReadinessSnapshot[] = [];
   const events: ScreenshotCaptureEvent[] = [];

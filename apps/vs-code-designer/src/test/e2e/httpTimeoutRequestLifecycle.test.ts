@@ -30,7 +30,13 @@ import {
   selectLogicAppsStandardOutputThroughWorkbench,
   showLogicAppsStandardOutput,
 } from './logicAppsOutputChannel';
-import { captureEvidenceScreenshot, installFailureScreenshotHook } from './screenshot';
+import {
+  captureDiagnosticScreenshot,
+  captureEvidenceScreenshot,
+  defaultEvidenceScreenshotTimeoutMs,
+  installFailureScreenshotHook,
+} from './screenshot';
+import type { ScreenshotExpectation } from './screenshotReadiness';
 import { installStatelessHistorySettings } from './statelessVariablesControls';
 import { normalizeFsPath, uniqueName } from './testUtils';
 import { closeAllTabs, getWebviewTabs, waitForWebviewTab } from './webviewTabs';
@@ -110,25 +116,16 @@ suite('HTTP timeout original clauses', () => {
 });
 
 async function provePt1sExecution(entry: CreatedWorkspace, endpoint: OwnedDelayEndpoint, deadline: number): Promise<void> {
-  const session = await openDesigner(entry, deadline, 'HTTP PT1S actual designer');
+  let session: DesignerSession | undefined;
   try {
-    await authorHttpRequest(session.driver, endpoint.url, 'PT1S', entry, deadline);
-    await captureEvidenceScreenshot(
-      'http-timeout-request-pt1s-authored',
-      {
-        kind: 'designerCanvas',
-        label: 'httpTimeoutRequestExecution',
-        requiredNodes: [['When an HTTP request is received', 'When a HTTP request is received'], 'HTTP'],
-      },
-      {
-        semanticCdp: session.cdp,
-        semanticContextId: session.contextId,
-        deadlineMs: deadline,
-        binding: { activeTabText: [entry.wfName, 'Workspace'] },
-      }
-    );
+    const activeSession = await openDesigner(entry, deadline, 'HTTP PT1S actual designer');
+    session = activeSession;
+    await authorHttpRequest(activeSession, endpoint.url, 'PT1S', entry, deadline);
+  } catch (error) {
+    await captureHttpDesignerFailure('pt1s-designer-lifecycle', error);
+    throw error;
   } finally {
-    session.dispose();
+    session?.dispose();
     await closeAllTabs();
   }
 
@@ -162,25 +159,37 @@ async function provePt1sExecution(entry: CreatedWorkspace, endpoint: OwnedDelayE
 }
 
 async function provePt24hAndInvalidValidation(entry: CreatedWorkspace, endpoint: string, deadline: number): Promise<void> {
-  let session = await openDesigner(entry, deadline, 'HTTP PT24H actual designer');
+  let session: DesignerSession | undefined;
   try {
-    await updateHttpRequestTimeout(session.driver, endpoint, 'PT24H', entry, deadline);
-    await captureEvidenceScreenshot(
-      'http-timeout-request-pt24h-saved',
-      {
-        kind: 'designerCanvas',
-        label: 'httpTimeoutRequestValidation',
-        requiredNodes: [['When an HTTP request is received', 'When a HTTP request is received'], 'HTTP'],
-      },
-      {
-        semanticCdp: session.cdp,
-        semanticContextId: session.contextId,
-        deadlineMs: deadline,
-        binding: { activeTabText: [entry.wfName, 'Workspace'] },
-      }
-    );
+    const activeSession = await openDesigner(entry, deadline, 'HTTP PT24H actual designer');
+    session = activeSession;
+    await activeSession.driver.waitForDesignerReady(['When an HTTP request is received', 'When a HTTP request is received']);
+    await captureHttpDesignerEvidence(activeSession, entry, deadline, 'http-timeout-request-pt24h-designer-reopened', {
+      kind: 'designerCanvas',
+      label: 'httpTimeoutRequestPt24hDesignerReopened',
+      requiredNodes: [['When an HTTP request is received', 'When a HTTP request is received'], 'HTTP'],
+    });
+    await updateHttpRequestTimeout(activeSession.driver, endpoint, 'PT24H', entry, deadline, {
+      configured: () =>
+        captureHttpDesignerEvidence(activeSession, entry, deadline, 'http-timeout-request-pt24h-settings-configured', {
+          kind: 'designerPanel',
+          label: 'httpTimeoutRequestPt24hSettingsConfigured',
+          actionTitle: 'HTTP',
+          requiredText: ['Settings'],
+          fields: [{ labels: ['Request options - Timeout', 'Timeout'], value: 'PT24H' }],
+        }),
+      persisted: () =>
+        captureHttpDesignerEvidence(activeSession, entry, deadline, 'http-timeout-request-pt24h-saved', {
+          kind: 'designerCanvas',
+          label: 'httpTimeoutRequestPt24hSaved',
+          requiredNodes: [['When an HTTP request is received', 'When a HTTP request is received'], 'HTTP'],
+        }),
+    });
+  } catch (error) {
+    await captureHttpDesignerFailure('pt24h-designer-lifecycle', error);
+    throw error;
   } finally {
-    session.dispose();
+    session?.dispose();
     await closeAllTabs();
   }
 
@@ -207,51 +216,93 @@ async function provePt24hAndInvalidValidation(entry: CreatedWorkspace, endpoint:
     await helpers.stopDebuggingAndTasks();
   }
 
-  session = await openDesigner(entry, deadline, 'HTTP invalid duration actual designer');
+  session = undefined;
   try {
-    await session.driver.configureHttpRequestSettings('InvalidString');
+    const activeSession = await openDesigner(entry, deadline, 'HTTP invalid duration actual designer');
+    session = activeSession;
+    await activeSession.driver.waitForDesignerReady(['When an HTTP request is received', 'When a HTTP request is received']);
+    await captureHttpDesignerEvidence(activeSession, entry, deadline, 'http-timeout-request-invalid-designer-reopened', {
+      kind: 'designerCanvas',
+      label: 'httpTimeoutRequestInvalidDesignerReopened',
+      requiredNodes: [['When an HTTP request is received', 'When a HTTP request is received'], 'HTTP'],
+    });
+    await activeSession.driver.configureHttpRequestSettings('InvalidString');
     const messages = await pollHttpTimeoutCompose(
-      () => session.driver.visibleValidationMessages(),
+      () => activeSession.driver.visibleValidationMessages(),
       (value) => value.includes(httpTimeoutInvalidDurationError),
       deadline,
       'invalid ISO 8601 duration validation'
     );
     assert.ok(messages.includes(httpTimeoutInvalidDurationError));
-    assert.strictEqual(await session.driver.saveEnabled(), false, 'InvalidString must not become a persisted workflow definition');
+    assert.strictEqual(await activeSession.driver.saveEnabled(), false, 'InvalidString must not become a persisted workflow definition');
     assertHttpTimeoutRequestPersisted(readWorkflow(entry), 'PT24H', endpoint);
-    await captureEvidenceScreenshot(
+    await captureHttpDesignerEvidence(
+      activeSession,
+      entry,
+      deadline,
       'http-timeout-request-invalid-duration',
       {
         kind: 'designerValidationError',
-        label: 'httpTimeoutRequestInvalidDuration',
+        label: 'httpTimeoutRequestInvalidDurationValidation',
         message: httpTimeoutInvalidDurationError,
       },
-      {
-        semanticCdp: session.cdp,
-        semanticContextId: session.contextId,
-        deadlineMs: deadline,
-        binding: { activeTabText: [entry.wfName, 'Workspace'], semanticText: [httpTimeoutInvalidDurationError] },
-      }
+      [httpTimeoutInvalidDurationError]
     );
-    await updateHttpRequestTimeout(session.driver, endpoint, 'PT24H', entry, deadline);
+    await updateHttpRequestTimeout(activeSession.driver, endpoint, 'PT24H', entry, deadline, {
+      persisted: () =>
+        captureHttpDesignerEvidence(activeSession, entry, deadline, 'http-timeout-request-valid-state-restored', {
+          kind: 'designerCanvas',
+          label: 'httpTimeoutRequestValidStateRestored',
+          requiredNodes: [['When an HTTP request is received', 'When a HTTP request is received'], 'HTTP'],
+        }),
+    });
+  } catch (error) {
+    await captureHttpDesignerFailure('invalid-duration-designer-lifecycle', error);
+    throw error;
   } finally {
-    session.dispose();
+    session?.dispose();
     await closeAllTabs();
   }
 }
 
 async function authorHttpRequest(
-  driver: HttpTimeoutComposeDriver,
+  session: DesignerSession,
   endpoint: string,
   timeout: string,
   entry: CreatedWorkspace,
   deadline: number
 ): Promise<void> {
+  const driver = session.driver;
   await driver.waitForDesignerReady();
+  await captureHttpDesignerEvidence(session, entry, deadline, 'http-timeout-request-pt1s-designer-ready', {
+    kind: 'designerCanvas',
+    label: 'httpTimeoutRequestPt1sDesignerReady',
+    allowLoading: false,
+  });
   await driver.addRequestTrigger();
+  await captureHttpDesignerEvidence(session, entry, deadline, 'http-timeout-request-pt1s-request-inserted', {
+    kind: 'designerCanvas',
+    label: 'httpTimeoutRequestPt1sRequestInserted',
+    requiredNodes: [['When an HTTP request is received', 'When a HTTP request is received']],
+  });
   await driver.addAction('HTTP', 'HTTP', ['http']);
+  await captureHttpDesignerEvidence(session, entry, deadline, 'http-timeout-request-pt1s-http-panel-ready', {
+    kind: 'designerPanel',
+    label: 'httpTimeoutRequestPt1sHttpPanelReady',
+    actionTitle: 'HTTP',
+    requiredText: ['URI'],
+  });
   await driver.fillParameter(['URI'], endpoint);
+  console.log(`[http-timeout][checkpoint] ${entry.wfName}: URI entered; waiting for HTTP panel Settings readiness`);
   await driver.configureHttpRequestSettings(timeout);
+  console.log(`[http-timeout][checkpoint] ${entry.wfName}: HTTP panel Settings ready and timeout ${timeout} configured`);
+  await captureHttpDesignerEvidence(session, entry, deadline, 'http-timeout-request-pt1s-settings-configured', {
+    kind: 'designerPanel',
+    label: 'httpTimeoutRequestPt1sSettingsConfigured',
+    actionTitle: 'HTTP',
+    requiredText: ['Settings'],
+    fields: [{ labels: ['Request options - Timeout', 'Timeout'], value: timeout }],
+  });
   await driver.closePanel();
   await driver.save();
   const persisted = await pollHttpTimeoutCompose(
@@ -268,6 +319,16 @@ async function authorHttpRequest(
     `persisted HTTP timeout ${timeout}`
   );
   assertHttpTimeoutRequestPersisted(persisted, timeout, endpoint);
+  await captureHttpDesignerEvidence(session, entry, deadline, 'http-timeout-request-pt1s-saved', {
+    kind: 'designerCanvas',
+    label: 'httpTimeoutRequestPt1sSaved',
+    requiredNodes: [['When an HTTP request is received', 'When a HTTP request is received'], 'HTTP'],
+  });
+}
+
+interface HttpTimeoutUpdateCheckpoints {
+  configured?: () => Promise<void>;
+  persisted?: () => Promise<void>;
 }
 
 async function updateHttpRequestTimeout(
@@ -275,10 +336,14 @@ async function updateHttpRequestTimeout(
   endpoint: string,
   timeout: string,
   entry: CreatedWorkspace,
-  deadline: number
+  deadline: number,
+  checkpoints: HttpTimeoutUpdateCheckpoints = {}
 ): Promise<void> {
   await driver.waitForDesignerReady(['When an HTTP request is received', 'When a HTTP request is received']);
+  console.log(`[http-timeout][checkpoint] ${entry.wfName}: reopening HTTP panel Settings for timeout ${timeout}`);
   await driver.configureHttpRequestSettings(timeout);
+  console.log(`[http-timeout][checkpoint] ${entry.wfName}: HTTP panel Settings ready and timeout ${timeout} configured`);
+  await checkpoints.configured?.();
   await driver.closePanel();
   await pollHttpTimeoutCompose(() => driver.saveEnabled(), Boolean, deadline, `enabled Save after setting HTTP timeout ${timeout}`);
   const priorModifiedAt = fs.statSync(entry.workflowJsonPath).mtimeMs;
@@ -306,6 +371,32 @@ async function updateHttpRequestTimeout(
     `updated persisted HTTP timeout ${timeout}`
   );
   assertHttpTimeoutRequestPersisted(persisted, timeout, endpoint);
+  await checkpoints.persisted?.();
+}
+
+async function captureHttpDesignerEvidence(
+  session: DesignerSession,
+  entry: CreatedWorkspace,
+  deadline: number,
+  name: string,
+  expectation: ScreenshotExpectation,
+  semanticText?: string[]
+): Promise<void> {
+  console.log(`[http-timeout][checkpoint] capturing ${name}`);
+  await captureEvidenceScreenshot(name, expectation, {
+    semanticCdp: session.cdp,
+    semanticContextId: session.contextId,
+    deadlineMs: Math.min(deadline, Date.now() + defaultEvidenceScreenshotTimeoutMs),
+    binding: { activeTabText: [entry.wfName, 'Workspace'], semanticText },
+  });
+}
+
+async function captureHttpDesignerFailure(stage: string, error: unknown): Promise<void> {
+  console.warn(`[http-timeout][checkpoint] ${stage} failed before Designer cleanup: ${String(error)}`);
+  await captureDiagnosticScreenshot(`http-timeout-request-${stage}-before-cleanup-${Date.now()}`, {
+    reason: `HTTP timeout ${stage} failed while the Designer tab was still open`,
+    timeoutMs: 5000,
+  });
 }
 
 async function createComposeWorkflow(entry: CreatedWorkspace, deadline: number): Promise<HttpTimeoutComposeWorkspace> {
@@ -356,10 +447,16 @@ async function createComposeWorkflow(entry: CreatedWorkspace, deadline: number):
   } finally {
     workbenchConnection.dispose();
   }
+  const parentDir = path.dirname(entry.workspaceDir);
+  assert.strictEqual(
+    path.resolve(entry.workspaceDir),
+    path.resolve(parentDir, entry.wsName),
+    'Compose workflow identity requires parentDir/wsName to reconstruct wsDir'
+  );
   return {
     appType: 'standard',
     wfType: 'Stateless',
-    parentDir: entry.workspaceDir,
+    parentDir,
     wsName: entry.wsName,
     appName: entry.appName,
     wfName: workflowName,

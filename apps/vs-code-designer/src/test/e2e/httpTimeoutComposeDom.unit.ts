@@ -5,6 +5,7 @@ import * as path from 'path';
 import { isDeepStrictEqual } from 'util';
 import * as vm from 'vm';
 import type { CdpConnection } from './cdpClient';
+import type { CdpEvaluator } from './cdpFormHelpers';
 import { HttpTimeoutComposeDriver } from './httpTimeoutComposeDriver';
 import {
   discoverHttpTimeoutConfigurationBundle,
@@ -304,6 +305,227 @@ async function editorDomFixture(text: string, options: { readOnly?: boolean; del
   };
 }
 
+async function httpSettingsPanelDomFixture(options: { panelOpen: boolean; includeSettings?: boolean; overlayText?: string }) {
+  const { JSDOM } = require('jsdom');
+  const dom = new JSDOM(
+    '<html><body>' +
+      '<button id="msla-node-HTTP" class="react-flow__node">HTTP</button>' +
+      '<button id="unrelated-settings" role="tab" aria-selected="false">Settings</button>' +
+      '<div id="panel-host"></div>' +
+      '</body></html>',
+    { pretendToBeVisual: true, runScripts: 'outside-only' }
+  );
+  const window = dom.window;
+  const clicked: string[] = [];
+  const mouseEvents: Array<{
+    type: string;
+    x: number;
+    y: number;
+    button: string;
+    buttons?: number;
+    clickCount?: number;
+    targetId: string;
+  }> = [];
+  let pendingMouse:
+    | {
+        x: number;
+        y: number;
+        targetId: string;
+        moved: boolean;
+        pressed: boolean;
+      }
+    | undefined;
+  const rect = (left: number, top: number, width: number, height: number) => ({
+    left,
+    top,
+    width,
+    height,
+    right: left + width,
+    bottom: top + height,
+    x: left,
+    y: top,
+  });
+  const layout = (element: { id: string }) => {
+    switch (element.id) {
+      case 'msla-node-HTTP':
+        return rect(20, 20, 160, 60);
+      case 'unrelated-settings':
+        return rect(220, 20, 120, 40);
+      case 'http-parameters':
+        return rect(520, 100, 120, 40);
+      case 'http-settings':
+        return rect(660, 100, 120, 40);
+      case 'request-timeout':
+        return rect(520, 180, 220, 40);
+      case 'async-pattern':
+        return rect(520, 240, 40, 40);
+      case 'blocking-menu':
+        return rect(360, 20, 120, 60);
+      default:
+        return rect(0, 0, 1000, 800);
+    }
+  };
+  window.HTMLElement.prototype.getBoundingClientRect = function () {
+    return layout(this);
+  };
+  window.HTMLElement.prototype.getClientRects = function () {
+    return [layout(this)];
+  };
+  window.HTMLElement.prototype.scrollIntoView = () => {};
+  for (const dimension of ['offsetWidth', 'clientWidth', 'offsetHeight', 'clientHeight']) {
+    Object.defineProperty(window.HTMLElement.prototype, dimension, {
+      configurable: true,
+      get() {
+        return dimension.endsWith('Width') ? layout(this).width : layout(this).height;
+      },
+    });
+  }
+  window.document.elementFromPoint = (x: number, y: number) => {
+    const candidates = [
+      'http-settings',
+      'http-parameters',
+      'request-timeout',
+      'async-pattern',
+      'blocking-menu',
+      'unrelated-settings',
+      'msla-node-HTTP',
+    ]
+      .map((id) => window.document.getElementById(id))
+      .filter((element) => element instanceof window.HTMLElement);
+    return (
+      candidates.find((element) => {
+        const bounds = layout(element);
+        return x >= bounds.left && x <= bounds.right && y >= bounds.top && y <= bounds.bottom;
+      }) ?? window.document.body
+    );
+  };
+  const mountPanel = () => {
+    const host = window.document.getElementById('panel-host');
+    assert.ok(host);
+    host.innerHTML = `
+      <section class="msla-panel-container">
+        <div class="msla-panel-layout msla-panel-border-selected">
+          <div class="msla-panel-header"><input aria-label="Card title" value="HTTP" /></div>
+          <div id="msla-node-details-panel-HTTP" class="msla-node-details-panel">
+            <button id="http-parameters" role="tab" aria-selected="true">Parameters</button>
+            ${
+              options.includeSettings === false
+                ? ''
+                : '<button id="http-settings" role="tab" aria-selected="false"><span> Settings </span></button>'
+            }
+            <input id="request-timeout" aria-label="Request options - Timeout" value="" />
+            <input id="async-pattern" aria-label="Asynchronous pattern" type="checkbox" checked />
+          </div>
+        </div>
+      </section>
+      ${options.overlayText ? `<div id="blocking-menu" role="menu">${options.overlayText}</div>` : ''}
+    `;
+    const settings = window.document.getElementById('http-settings');
+    settings?.addEventListener('click', () => {
+      window.document.getElementById('http-parameters')?.setAttribute('aria-selected', 'false');
+      settings.setAttribute('aria-selected', 'true');
+    });
+    const timeout = window.document.getElementById('request-timeout');
+    timeout?.addEventListener('click', () => timeout.focus());
+    const asyncPattern = window.document.getElementById('async-pattern');
+    asyncPattern?.addEventListener('click', () => {
+      if (asyncPattern instanceof window.HTMLInputElement) {
+        asyncPattern.checked = false;
+      }
+    });
+  };
+  window.document.getElementById('msla-node-HTTP')?.addEventListener('click', mountPanel);
+  if (options.panelOpen) {
+    mountPanel();
+  }
+  const cdp = {
+    async evaluate<T>(_context: number | undefined, expression: string) {
+      return window.eval(expression) as T;
+    },
+    async send(method: string, params: Record<string, unknown>) {
+      if (method === 'Input.dispatchMouseEvent') {
+        const type = String(params.type);
+        const x = Number(params.x);
+        const y = Number(params.y);
+        const button = String(params.button);
+        const buttons = params.buttons === undefined ? undefined : Number(params.buttons);
+        const clickCount = params.clickCount === undefined ? undefined : Number(params.clickCount);
+        const element = window.document.elementFromPoint(x, y);
+        const targetId = element instanceof window.HTMLElement ? element.id : '';
+        mouseEvents.push({ type, x, y, button, buttons, clickCount, targetId });
+        if (type === 'mouseMoved' && button === 'none' && targetId) {
+          pendingMouse = { x, y, targetId, moved: true, pressed: false };
+        } else if (
+          type === 'mousePressed' &&
+          button === 'left' &&
+          buttons === 1 &&
+          clickCount === 1 &&
+          pendingMouse?.moved &&
+          pendingMouse.x === x &&
+          pendingMouse.y === y &&
+          pendingMouse.targetId === targetId
+        ) {
+          pendingMouse.pressed = true;
+        } else if (
+          type === 'mouseReleased' &&
+          button === 'left' &&
+          buttons === 0 &&
+          clickCount === 1 &&
+          pendingMouse?.moved &&
+          pendingMouse.pressed &&
+          pendingMouse.x === x &&
+          pendingMouse.y === y &&
+          pendingMouse.targetId === targetId &&
+          element instanceof window.HTMLElement
+        ) {
+          clicked.push(element.id);
+          element.dispatchEvent(new window.MouseEvent('click', { bubbles: true, button: 0 }));
+          pendingMouse = undefined;
+        } else {
+          pendingMouse = undefined;
+        }
+      }
+      if (method === 'Input.insertText') {
+        const active = window.document.activeElement;
+        if (active instanceof window.HTMLInputElement) {
+          active.value = String(params.text);
+        }
+      }
+      return {};
+    },
+  } as unknown as CdpConnection;
+  return {
+    cdp,
+    clicked,
+    mouseEvents,
+    window,
+    driver: (settingsTimeoutMs = 45_000) => new HttpTimeoutComposeDriver(cdp, 17, Date.now() + 20_000, () => {}, settingsTimeoutMs),
+    assertNativeClickSequences: () => {
+      assert.strictEqual(mouseEvents.length, clicked.length * 3, 'Every synthesized click requires exactly three native mouse events');
+      for (let index = 0; index < clicked.length; index++) {
+        const sequence = mouseEvents.slice(index * 3, index * 3 + 3);
+        assert.deepStrictEqual(
+          sequence.map(({ type, button, buttons, clickCount }) => ({ type, button, buttons, clickCount })),
+          [
+            { type: 'mouseMoved', button: 'none', buttons: undefined, clickCount: undefined },
+            { type: 'mousePressed', button: 'left', buttons: 1, clickCount: 1 },
+            { type: 'mouseReleased', button: 'left', buttons: 0, clickCount: 1 },
+          ]
+        );
+        assert.ok(
+          sequence.every(({ x, y }) => x === sequence[0].x && y === sequence[0].y),
+          'Native click coordinates changed'
+        );
+        assert.ok(
+          sequence.every(({ targetId }) => targetId === clicked[index]),
+          'Native click hit target changed'
+        );
+      }
+    },
+    dispose: () => window.close(),
+  };
+}
+
 export async function runHttpTimeoutComposeDomControls(control: Control, authored: HttpTimeoutComposeWorkflow): Promise<void> {
   const installedProbe = await testInstalledHttpTimeoutConfigurationSnapshot();
   if (installedProbe === 'executed') {
@@ -537,6 +759,136 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
     );
     const selectionIndex = family.indexOf('await selectHttpTimeoutComposeDesignerV2(');
     assert.ok(selectionIndex >= 0 && selectionIndex < family.indexOf("executeCommand('azureLogicAppsStandard.openDesigner'"));
+  });
+  await control('HTTP panel selectors and Settings identities are anchored to production components and prior art', () => {
+    const panelContainer = fs.readFileSync(path.join(repository, 'libs/designer-ui/src/lib/panel/panelcontainer.tsx'), 'utf8');
+    const panelContent = fs.readFileSync(path.join(repository, 'libs/designer-ui/src/lib/panel/panelcontent.tsx'), 'utf8');
+    const panelTitle = fs.readFileSync(path.join(repository, 'libs/designer-ui/src/lib/panel/panelheader/panelheadertitle.tsx'), 'utf8');
+    const settingsTab = fs.readFileSync(
+      path.join(repository, 'libs/designer-v2/src/lib/ui/panel/nodeDetailsPanel/tabs/settingsTab.tsx'),
+      'utf8'
+    );
+    const networking = fs.readFileSync(path.join(repository, 'libs/designer-v2/src/lib/ui/settings/sections/networking.tsx'), 'utf8');
+    const priorArt = fs.readFileSync(path.join(repository, 'apps/vs-code-designer/src/test/e2e/workspaceLifecycle.test.ts'), 'utf8');
+    const readiness = fs.readFileSync(path.join(repository, 'apps/vs-code-designer/src/test/e2e/screenshotReadiness.ts'), 'utf8');
+    assert.ok(panelContainer.includes("'msla-panel-layout', `msla-panel-border-${type}`"));
+    assert.ok(panelContainer.includes("renderPanelContents(node, 'selected', false)"));
+    assert.ok(panelContent.includes('id={`msla-node-details-panel-${nodeId}`}'));
+    assert.ok(panelContent.includes("<Tab value={id} role={'tab'}>"));
+    assert.ok(panelTitle.includes('id={titleId}'));
+    assert.ok(panelTitle.includes('ariaLabel={panelHeaderCardTitle}'));
+    assert.ok(settingsTab.includes('id: constants.PANEL_TAB_NAMES.SETTINGS'));
+    assert.ok(settingsTab.includes("defaultMessage: 'Settings'"));
+    assert.ok(networking.includes("defaultMessage: 'Request options - Timeout'"));
+    assert.ok(networking.includes('ariaLabel: requestOptionsTitle'));
+    assert.ok(networking.includes("defaultMessage: 'Asynchronous pattern'"));
+    assert.ok(networking.includes('ariaLabel: asyncPatternTitle'));
+    assert.ok(priorArt.includes("document.querySelectorAll('.msla-panel-layout.msla-panel-border-selected')"));
+    assert.ok(
+      priorArt.includes(
+        'layout.querySelector(\'.msla-panel-header input[aria-label="Card title"], .msla-panel-header input[id$="-title"]\')'
+      )
+    );
+    assert.ok(readiness.includes("visibleElements('.msla-panel-layout.msla-panel-border-selected')"));
+    assert.ok(readiness.includes('layout.querySelector(\'[id^="msla-node-details-panel-"]'));
+  });
+  await control('HTTP Settings uses an already-open HTTP node-details panel without re-clicking the node', async () => {
+    const fixture = await httpSettingsPanelDomFixture({ panelOpen: true });
+    try {
+      await fixture.driver().configureHttpRequestSettings('PT1S');
+      assert.strictEqual(fixture.clicked.filter((id) => id === 'msla-node-HTTP').length, 0);
+      assert.strictEqual(fixture.clicked.filter((id) => id === 'http-settings').length, 1);
+      const timeoutInput = fixture.window.document.getElementById('request-timeout');
+      assert.ok(timeoutInput instanceof fixture.window.HTMLInputElement);
+      assert.strictEqual(timeoutInput.value, 'PT1S');
+      fixture.assertNativeClickSequences();
+    } finally {
+      fixture.dispose();
+    }
+  });
+  await control('HTTP Settings opens a closed panel through the proven HTTP node interaction', async () => {
+    const fixture = await httpSettingsPanelDomFixture({ panelOpen: false });
+    try {
+      await fixture.driver().configureHttpRequestSettings('PT24H');
+      assert.strictEqual(fixture.clicked.filter((id) => id === 'msla-node-HTTP').length, 1);
+      assert.strictEqual(fixture.clicked.filter((id) => id === 'http-settings').length, 1);
+      fixture.assertNativeClickSequences();
+    } finally {
+      fixture.dispose();
+    }
+  });
+  await control('HTTP Settings scopes normalized tab text to the selected HTTP node-details panel', async () => {
+    const fixture = await httpSettingsPanelDomFixture({ panelOpen: true });
+    try {
+      await fixture.driver().configureHttpRequestSettings('PT1S');
+      assert.ok(fixture.clicked.includes('http-settings'));
+      assert.ok(!fixture.clicked.includes('unrelated-settings'));
+      fixture.assertNativeClickSequences();
+    } finally {
+      fixture.dispose();
+    }
+  });
+  await control('missing scoped HTTP Settings tab fails on its local bound with panel and overlay diagnostics', async () => {
+    const fixture = await httpSettingsPanelDomFixture({
+      panelOpen: true,
+      includeSettings: false,
+      overlayText: 'Add an action menu',
+    });
+    try {
+      const startedAt = Date.now();
+      await assert.rejects(
+        () => fixture.driver(80).configureHttpRequestSettings('PT1S'),
+        (error: Error) => {
+          assert.match(error.message, /visible hit-tested Settings tab inside the active HTTP node-details panel/);
+          assert.match(error.message, /selectedNodeIdentity=\["HTTP","HTTP"\]/);
+          assert.match(error.message, /tabs=\["Parameters"\]/);
+          assert.match(error.message, /overlays=\["Add an action menu"\]/);
+          return true;
+        }
+      );
+      assert.ok(Date.now() - startedAt < 1000, 'Missing Settings must honor the local driver-control deadline');
+      const source = fs.readFileSync(path.join(repository, 'apps/vs-code-designer/src/test/e2e/httpTimeoutComposeDriver.ts'), 'utf8');
+      assert.ok(source.includes('const httpSettingsPanelTimeoutMs = 45_000;'));
+      assert.ok(source.includes('Math.min(this.deadline, startedAt + this.settingsPanelTimeoutMs)'));
+      fixture.assertNativeClickSequences();
+    } finally {
+      fixture.dispose();
+    }
+  });
+  await control('stalled HTTP panel CDP honors the tight local deadline for every bounded operation', async () => {
+    const timeoutBudgets: number[] = [];
+    const stalledCdp: CdpEvaluator = {
+      evaluate<T>(_contextId: number | undefined, _expression: string, options?: { timeoutMs?: number }): Promise<T> {
+        const timeoutMs = options?.timeoutMs ?? 5000;
+        timeoutBudgets.push(timeoutMs);
+        return new Promise<T>((_resolve, reject) => {
+          setTimeout(() => reject(new Error('stalled HTTP panel evaluate')), Math.max(1, timeoutMs));
+        });
+      },
+      send(_method: string, _params?: Record<string, unknown>, options?: { timeoutMs?: number }): Promise<unknown> {
+        const timeoutMs = options?.timeoutMs ?? 5000;
+        timeoutBudgets.push(timeoutMs);
+        return new Promise<unknown>((_resolve, reject) => {
+          setTimeout(() => reject(new Error('stalled HTTP panel send')), Math.max(1, timeoutMs));
+        });
+      },
+    };
+    const startedAt = Date.now();
+    const driver = new HttpTimeoutComposeDriver(stalledCdp, 17, Date.now() + 20_000, () => {}, 80);
+    await assert.rejects(() => driver.configureHttpRequestSettings('PT1S'), /stalled HTTP panel evaluate/);
+    assert.ok(Date.now() - startedAt < 1000, 'Stalled CDP must not inherit the family deadline');
+    assert.ok(timeoutBudgets.length >= 1);
+    assert.ok(timeoutBudgets.every((timeoutMs) => timeoutMs > 0 && timeoutMs <= 80));
+    const source = fs.readFileSync(path.join(repository, 'apps/vs-code-designer/src/test/e2e/httpTimeoutComposeDriver.ts'), 'utf8');
+    for (const boundedOperation of [
+      'const localCdp = boundedCdp(this.cdp, deadline);',
+      'new ProvenDesignerCdpActions(localCdp, this.contextId, deadline, this.assertActive)',
+      'this.httpSettingsPanelObservation(localCdp)',
+      "await localActions.clickNode(['HTTP']);",
+      'await clickPoint(localCdp, observation.settingsPoint);',
+    ]) {
+      assert.ok(source.includes(boundedOperation), `HTTP panel operation lost local CDP bound: ${boundedOperation}`);
+    }
   });
   const extended = structuredClone(authored);
   extended.definition.outputs = Object.fromEntries(

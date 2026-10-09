@@ -83,6 +83,121 @@ async function main(): Promise<void> {
     );
     assert.ok(!source.includes('LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_SCENARIO'));
   });
+  await control('second workflow identity preserves the canonical parentDir plus wsName relationship', () => {
+    const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutRequestLifecycle.test.ts'), 'utf8');
+    assert.ok(source.includes('const parentDir = path.dirname(entry.workspaceDir);'));
+    assert.ok(source.includes('path.resolve(parentDir, entry.wsName)'));
+    assert.ok(source.includes('parentDir,'));
+    assert.ok(!source.includes('parentDir: entry.workspaceDir'));
+    const parentDir = path.resolve(os.tmpdir(), 'http-timeout-parent');
+    const wsName = 'http-timeout-workspace';
+    const wsDir = path.join(parentDir, wsName);
+    assert.strictEqual(path.resolve(parentDir, wsName), path.resolve(wsDir));
+    assert.notStrictEqual(path.resolve(parentDir), path.resolve(wsDir));
+  });
+  await control('HTTP request evidence checkpoints are unique, ordered, and use the proven semantic screenshot binding', () => {
+    const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutRequestLifecycle.test.ts'), 'utf8');
+    const scenario1 = [
+      'http-timeout-request-pt1s-designer-ready',
+      'http-timeout-request-pt1s-request-inserted',
+      'http-timeout-request-pt1s-http-panel-ready',
+      'http-timeout-request-pt1s-settings-configured',
+      'http-timeout-request-pt1s-saved',
+    ];
+    const scenario2 = [
+      'http-timeout-request-pt24h-designer-reopened',
+      'http-timeout-request-pt24h-settings-configured',
+      'http-timeout-request-pt24h-saved',
+      'http-timeout-request-invalid-designer-reopened',
+      'http-timeout-request-invalid-duration',
+      'http-timeout-request-valid-state-restored',
+    ];
+    for (const labels of [scenario1, scenario2]) {
+      let previous = -1;
+      for (const label of labels) {
+        const index = source.indexOf(label);
+        assert.ok(index > previous, `Expected ordered HTTP evidence checkpoint ${label}`);
+        assert.strictEqual(source.indexOf(label, index + 1), -1, `HTTP evidence checkpoint ${label} must not overwrite itself`);
+        previous = index;
+      }
+    }
+    assert.strictEqual(new Set([...scenario1, ...scenario2]).size, scenario1.length + scenario2.length);
+    assert.ok(source.includes('await captureEvidenceScreenshot(name, expectation, {'));
+    assert.ok(source.includes('semanticCdp: session.cdp'));
+    assert.ok(source.includes('semanticContextId: session.contextId'));
+    assert.ok(source.includes("binding: { activeTabText: [entry.wfName, 'Workspace'], semanticText }"));
+  });
+  await control('failing HTTP evidence expectations use the shared local screenshot cap instead of the family deadline', () => {
+    const lifecycle = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutRequestLifecycle.test.ts'), 'utf8');
+    const screenshot = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/screenshot.ts'), 'utf8');
+    assert.ok(lifecycle.includes('defaultEvidenceScreenshotTimeoutMs'));
+    assert.ok(lifecycle.includes('deadlineMs: Math.min(deadline, Date.now() + defaultEvidenceScreenshotTimeoutMs)'));
+    const helperStart = lifecycle.indexOf('async function captureHttpDesignerEvidence');
+    const helperEnd = lifecycle.indexOf('async function captureHttpDesignerFailure', helperStart);
+    const helper = lifecycle.slice(helperStart, helperEnd);
+    assert.ok(!helper.includes('deadlineMs: deadline'));
+    assert.ok(screenshot.includes('export const defaultEvidenceScreenshotTimeoutMs = 15_000;'));
+    assert.ok(screenshot.includes("classification === 'diagnostic' ? 5000 : defaultEvidenceScreenshotTimeoutMs"));
+    const now = Date.now();
+    assert.strictEqual(Math.min(now + 1_680_000, now + 15_000), now + 15_000);
+  });
+  await control('HTTP screenshot expectations are satisfiable at their exact production lifecycle checkpoints', () => {
+    const lifecycle = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutRequestLifecycle.test.ts'), 'utf8');
+    const readiness = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/screenshotReadiness.ts'), 'utf8');
+    const networking = fs.readFileSync(
+      path.resolve(__dirname, '../../../../../libs/designer-v2/src/lib/ui/settings/sections/networking.tsx'),
+      'utf8'
+    );
+    const validation = fs.readFileSync(
+      path.resolve(__dirname, '../../../../../libs/designer-v2/src/lib/ui/settings/validation/validation.ts'),
+      'utf8'
+    );
+    const errorBar = fs.readFileSync(
+      path.resolve(__dirname, '../../../../../libs/designer-v2/src/lib/ui/settings/validation/errorbar.tsx'),
+      'utf8'
+    );
+    assert.ok(
+      readiness.includes(
+        'ready = !!designerCanvas && hasRequiredText(visibleText(designerCanvas), expectation.requiredNodes || []) && concreteNodeState.ok'
+      ),
+      'Designer-ready evidence must permit an empty required-node list while requiring the real canvas'
+    );
+    assert.ok(networking.includes("defaultMessage: 'Request options - Timeout'") && networking.includes('ariaLabel: requestOptionsTitle'));
+    assert.ok(validation.includes("defaultMessage: 'Timeout value is invalid, must match ISO 8601 duration format'"));
+    assert.ok(errorBar.includes("const role = type === 'error' || type === 'warning' ? 'alert' : undefined;"));
+    assert.ok(readiness.includes('\'[role="alert"], [aria-live], .ms-MessageBar, [class*="error"], [class*="Error"]\''));
+    const configured = lifecycle.indexOf('http-timeout-request-pt1s-settings-configured');
+    const closePanel = lifecycle.indexOf('await driver.closePanel();', configured);
+    const saved = lifecycle.indexOf('http-timeout-request-pt1s-saved', closePanel);
+    const persisted = lifecycle.lastIndexOf('assertHttpTimeoutRequestPersisted(persisted, timeout, endpoint);', saved);
+    assert.ok(configured >= 0 && configured < closePanel && closePanel < persisted && persisted < saved);
+    const invalidConfigured = lifecycle.indexOf("await activeSession.driver.configureHttpRequestSettings('InvalidString')");
+    const invalidEvidence = lifecycle.indexOf('http-timeout-request-invalid-duration', invalidConfigured);
+    const restoration = lifecycle.indexOf('http-timeout-request-valid-state-restored', invalidEvidence);
+    assert.ok(invalidConfigured >= 0 && invalidConfigured < invalidEvidence && invalidEvidence < restoration);
+  });
+  await control('Designer acquisition and later failures capture before optional disposal and tab cleanup', () => {
+    const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutRequestLifecycle.test.ts'), 'utf8');
+    const pt1sStart = source.indexOf('async function provePt1sExecution');
+    const scenario2Start = source.indexOf('async function provePt24hAndInvalidValidation');
+    const authorStart = source.indexOf('async function authorHttpRequest');
+    const pt1s = source.slice(pt1sStart, scenario2Start);
+    const scenario2 = source.slice(scenario2Start, authorStart);
+    for (const [body, failureCall] of [
+      [pt1s, "captureHttpDesignerFailure('pt1s-designer-lifecycle'"],
+      [scenario2, "captureHttpDesignerFailure('pt24h-designer-lifecycle'"],
+      [scenario2, "captureHttpDesignerFailure('invalid-duration-designer-lifecycle'"],
+    ] as const) {
+      const capture = body.indexOf(failureCall);
+      const dispose = body.indexOf('session?.dispose()', capture);
+      const closeTabs = body.indexOf('await closeAllTabs()', dispose);
+      assert.ok(capture >= 0 && capture < dispose && dispose < closeTabs, `${failureCall} must precede Designer cleanup`);
+    }
+    assert.ok(pt1s.indexOf('const activeSession = await openDesigner') > pt1s.indexOf('try {'));
+    assert.ok(scenario2.indexOf('const activeSession = await openDesigner') > scenario2.indexOf('try {'));
+    assert.ok(source.includes('let session: DesignerSession | undefined;'));
+    assert.ok(source.includes('captureDiagnosticScreenshot(`http-timeout-request-${stage}-before-cleanup-${Date.now()}`'));
+  });
   await control('original replacement is exact and leaves authored source unchanged', () => {
     assertHttpTimeoutComposeAuthored(authored);
     assert.deepStrictEqual(expected.definition.actions.Compose, {
