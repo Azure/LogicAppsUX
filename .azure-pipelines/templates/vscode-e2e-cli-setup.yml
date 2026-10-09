@@ -275,6 +275,7 @@ steps:
     env:
       NPM_CONFIG_USERCONFIG: $(npmrcFile)
       PNPM_CONFIG_FETCH_TIMEOUT: '300000'
+      PNPM_CONFIG_PACKAGE_IMPORT_METHOD: clone-or-copy
       PNPM_CONFIG_STORE_DIR: $(pnpmStorePath)
 
   - ${{ if ne(parameters.telemetryFile, '') }}:

@@ -465,6 +465,11 @@ function testE2eDependencyInstallRetryContract() {
   assert.strictEqual(install.timeoutInMinutes, undefined, 'The containing job remains the install retry time limit');
   assert.strictEqual(install.env?.NPM_CONFIG_USERCONFIG, '$(npmrcFile)');
   assert.strictEqual(install.env?.PNPM_CONFIG_FETCH_TIMEOUT, '300000');
+  assert.strictEqual(
+    install.env?.PNPM_CONFIG_PACKAGE_IMPORT_METHOD,
+    'clone-or-copy',
+    'Pipeline installs must isolate lifecycle-mutated node_modules files from the cached content-addressed store'
+  );
   assert.strictEqual(install.env?.PNPM_CONFIG_STORE_DIR, '$(pnpmStorePath)');
   const fetchTimeoutOwners = setup.steps.filter((step) => step.env?.PNPM_CONFIG_FETCH_TIMEOUT !== undefined);
   assert.deepStrictEqual(
