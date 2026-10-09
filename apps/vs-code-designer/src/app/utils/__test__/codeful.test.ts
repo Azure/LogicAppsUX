@@ -377,3 +377,19 @@ describe('codefulProjectsExist', () => {
     expect(result).toBe(false);
   });
 });
+
+describe('detectCodefulWorkflow', () => {
+  it('detects stateless provider workflows', () => {
+    const fileContent = `
+      return new[]
+      {
+        WorkflowFactory.CreateStatelessWorkflow("stateless-workflow", workflow)
+      };
+    `;
+
+    expect(detectCodefulWorkflow(fileContent)).toEqual({
+      workflowName: 'stateless-workflow',
+      workflowType: 'stateless',
+    });
+  });
+});
