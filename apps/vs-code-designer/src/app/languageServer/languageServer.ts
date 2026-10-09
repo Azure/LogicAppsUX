@@ -2,6 +2,7 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import {
   autoRuntimeDependenciesPathSettingKey,
+  codefulSdkPackageFileName,
   connectionsFileName,
   lspDirectory,
   onStartLanguageServer,
@@ -200,14 +201,11 @@ export default class LogicAppsLanguageServer {
     }
 
     const files = await fse.readdir(sdkFolderPath);
-    const sdkNupkgFile = files.find((file) => {
-      return file.startsWith('Microsoft.Azure.Workflows.Sdk.') && file.endsWith('.nupkg');
-    });
-    if (!sdkNupkgFile) {
+    if (!files.includes(codefulSdkPackageFileName)) {
       return { lspServerPath, sdkNupkgPath: undefined };
     }
 
-    const sdkNupkgPath = path.join(sdkFolderPath, sdkNupkgFile);
+    const sdkNupkgPath = path.join(sdkFolderPath, codefulSdkPackageFileName);
 
     return { lspServerPath, sdkNupkgPath };
   }

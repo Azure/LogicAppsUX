@@ -971,6 +971,15 @@ export function loadParameterValue(parameter: InputParameter, shouldEncodeBasedO
       valueObject = parameter?.default;
     }
   }
+  if (
+    parameter.in === ParameterLocations.Path &&
+    typeof valueObject === 'string' &&
+    valueObject.startsWith('#{') &&
+    valueObject.endsWith('}')
+  ) {
+    // Native interpolation text inside a C# string must remain part of the opaque C# source.
+    return [createLiteralValueSegment(valueObject)];
+  }
   const requiresUrlEncoding = shouldEncodeBasedOnMetadata
     ? parameter.in === ParameterLocations.Path || parameter.encode !== undefined
     : parameter.in === ParameterLocations.Path;
