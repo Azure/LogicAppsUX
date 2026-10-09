@@ -140,5 +140,6 @@ steps:
   - script: pnpm install --frozen-lockfile --strict-peer-dependencies --recursive
     displayName: Install dependencies with pnpm
     workingDirectory: $(working_directory)
+    retryCountOnTaskFailure: 2
     env:
       NPM_CONFIG_USERCONFIG: $(npmrcFile)

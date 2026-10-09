@@ -11,6 +11,7 @@ const { OGF_E2E_SCENARIOS, getOgfScenariosForPhase } = require('./ogf-e2e-regist
 const repoRoot = path.resolve(__dirname, '..', '..', '..');
 
 testAzureToolsWrapperContract();
+testE2eDependencyInstallRetryContract();
 testPackageLocalLintStagedRoutingContract();
 testRootNpmrcSourceGuardAllowsGeneratedRuntimeFile();
 testLocalAzureToolsWrapperContractIfAvailable();
@@ -414,6 +415,18 @@ function extractFullRollupGateScript(consumer) {
 function parseYaml(relativePath) {
   const { parse } = require(path.join(repoRoot, 'apps', 'vs-code-designer', 'node_modules', 'yaml'));
   return parse(read(relativePath));
+}
+
+function testE2eDependencyInstallRetryContract() {
+  const setup = parseYaml('.azure-pipelines/templates/vscode-e2e-cli-setup.yml');
+  const installSteps = setup.steps.filter((step) => step.displayName === 'Install dependencies with pnpm');
+  assert.strictEqual(installSteps.length, 1, 'E2E setup must have one unambiguous pnpm dependency install step');
+  const install = installSteps[0];
+  assert.strictEqual(install.script, 'pnpm install --frozen-lockfile --strict-peer-dependencies --recursive');
+  assert.strictEqual(install.retryCountOnTaskFailure, 2, 'Transient feed failures get two bounded whole-install retries');
+  assert.ok(install.continueOnError === undefined || install.continueOnError === false, 'Install failures must remain fatal');
+  assert.strictEqual(install.timeoutInMinutes, undefined, 'The containing job remains the install retry time limit');
+  assert.strictEqual(install.env?.NPM_CONFIG_USERCONFIG, '$(npmrcFile)');
 }
 
 function testAzureToolsWrapperContract() {
