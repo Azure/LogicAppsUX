@@ -300,6 +300,7 @@ async function runSuitesBatch(suitesValue, visibleDelayMs) {
     diagnosticOnly: isEnabledEnv(process.env.LA_E2E_CLI_BATCH_DIAGNOSTIC_ONLY),
     trustedFullExecution: isEnabledEnv(process.env.LA_E2E_CLI_BATCH_TRUSTED_FULL_EXECUTION),
     admissionContext: readJsonIfExists(process.env.LA_E2E_CLI_ADMISSION_CONTEXT_PATH),
+    cohortId: process.env.LA_E2E_CLI_BATCH_COHORT_ID,
     runSuite: ({ suite, context, env, timeoutMs }) => runSuiteWrapperProcess({ suite, context, env, visibleDelayMs, timeoutMs }),
   });
   fs.writeFileSync(path.join(resultsDir, 'e2e-cli-batch-result.json'), `${JSON.stringify(aggregate, null, 2)}\n`);
@@ -1075,20 +1076,6 @@ function readJsonLinesIfExists(filePath) {
     .map((line) => line.trim())
     .filter(Boolean)
     .map((line) => JSON.parse(line));
-}
-
-function terminateProcessTree(child, signal) {
-  return getProcessTreePids(child.pid).then((pids) => {
-    for (const pid of [...pids].reverse()) {
-      if (pid !== process.pid && isPidAlive(pid)) {
-        try {
-          process.kill(pid, signal);
-        } catch {
-          // Process already exited.
-        }
-      }
-    }
-  });
 }
 
 function terminateContainmentHost(child, signal) {

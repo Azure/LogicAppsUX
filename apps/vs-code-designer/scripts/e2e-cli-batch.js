@@ -11,6 +11,12 @@ const path = require('path');
 const BATCH_SCHEMA_VERSION = 1;
 const DEFAULT_SUITE_TIMEOUT_MS = 45 * 60 * 1000;
 const MIN_AZURE_TOKEN_REMAINING_MS = DEFAULT_SUITE_TIMEOUT_MS + 5 * 60 * 1000;
+const SUPPLEMENTARY_LIFECYCLE_SUITES = new Set([
+  'httpTimeoutLifecycle',
+  'statelessVariablesLifecycle',
+  'workspaceArtifactRegeneration',
+  'workspaceMultiRoot',
+]);
 
 const SUITE_REGISTRY = Object.freeze({
   unitTests: Object.freeze({
@@ -171,6 +177,7 @@ const SUITE_CONTROL_ENV_PATTERNS = [
   /^LA_E2E_CLI_(?:INCLUDE_|WORKSPACE_LIFECYCLE_|STARTUP_RESOURCE$|CREATE_WORKSPACE_CASE$|CREATE_WORKSPACE_GROUP$|CREATE_WORKSPACE_PARENT$|DEFER_WORKSPACE_CLEANUP$|PROFILE_PHASE$|USER_DATA_SUFFIX$|USER_DATA_DIR$|VSCODE_LOG_ARTIFACT_LABEL$|CODEFUL_EVIDENCE_NOT_BEFORE$|MINIMAL_ACTIVATION$|SKIP_ACTIVATION_WORKSPACE_ENSURE$|EXPECT_EMPTY_RUNTIME_DEPENDENCIES_ROOT$|EMPTY_RUNTIME_DEPENDENCIES_ROOT_CONFIRMED$|AZURE_ACCESS_TOKEN$|AZURE_CLIENT_ID$|AZURE_TENANT_ID$|AZURE_SUBSCRIPTION_ID$|AZURE_RESOURCE_GROUP_NAME$|AZURE_LOCATION_NAME$|AZURE_MANAGEMENT_BASE_URL$)/,
   /^(WORKFLOWS_TENANT_ID|WORKFLOWS_SUBSCRIPTION_ID|WORKFLOWS_RESOURCE_GROUP_NAME|WORKFLOWS_LOCATION_NAME|WORKFLOWS_MANAGEMENT_BASE_URI)$/,
   /^(FC_SERVICE_CONNECTION_|AzCode_|SYSTEM_ACCESSTOKEN)/,
+  /^(?:idToken|servicePrincipalKey|servicePrincipalId|tenantId|AZURE_CONFIG_DIR)$/i,
 ];
 
 const CONTAINMENT_BREACH_PATTERNS = [
@@ -260,10 +267,11 @@ function createSuiteContext({ batchRoot, suite, index, total, now = Date.now() }
   const workspaceRoot = ensureDirectory(path.join(suiteRoot, 'workspaces'));
   const reportsRoot = ensureDirectory(path.join(suiteRoot, 'reports'));
   const lifecycleRoot = ensureDirectory(path.join(suiteRoot, 'lifecycle'));
-  const resultPath = path.join(reportsRoot, 'suite-result.json');
-  const terminalResultPath = path.join(reportsRoot, 'suite-terminal-result.json');
-  const cleanupLedgerPath = path.join(reportsRoot, 'suite-cleanup-ledger.json');
-  const phaseResultsPath = path.join(reportsRoot, 'suite-phase-results.jsonl');
+  const resultPath = path.join(reportsRoot, `${suite.id}.batch-result.json`);
+  const terminalResultPath = path.join(reportsRoot, `${suite.id}.terminal-result.json`);
+  const cleanupLedgerPath = path.join(reportsRoot, `${suite.id}.cleanup-ledger.json`);
+  const phaseResultsPath = path.join(reportsRoot, `${suite.id}.phase-results.jsonl`);
+  const logPath = path.join(reportsRoot, `${suite.id}.log`);
   const expectedPhaseIds = [...(suite.expectedPhases ?? [suite.id])];
 
   return {
@@ -283,6 +291,7 @@ function createSuiteContext({ batchRoot, suite, index, total, now = Date.now() }
     terminalResultPath,
     cleanupLedgerPath,
     phaseResultsPath,
+    logPath,
     expectedPhaseIds,
     args: [...suite.args],
   };
@@ -305,6 +314,19 @@ function buildSuiteEnvironment(baseEnv, context, extraEnv = {}) {
     ...extraEnv,
     ...(context.id === 'workspaceArtifactRegeneration'
       ? { LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR: path.join(context.reportsRoot, 'workspace-regeneration') }
+      : {}),
+    ...(context.id === 'createWorkspaceCoreMatrix'
+      ? {
+          LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL: '1',
+          LA_E2E_CLI_CANCEL_DIAGNOSTICS_DIR: path.join(context.reportsRoot, 'workspace-cancel'),
+        }
+      : {}),
+    ...(context.id === 'workspaceMultiRoot'
+      ? {
+          LA_E2E_CLI_MULTI_ROOT_ISOLATED: '1',
+          LA_E2E_CLI_MULTI_ROOT_DIAGNOSTIC_ONLY: '1',
+          LA_E2E_CLI_MULTI_ROOT_DIAGNOSTICS_PARENT: path.join(context.reportsRoot, 'workspace-multi-root'),
+        }
       : {}),
     LA_E2E_CLI_BATCH_MODE: '1',
     LA_E2E_CLI_BATCH_SUITE_ID: context.id,
@@ -458,6 +480,7 @@ function buildBatchAggregate({
   trustedFullExecution = false,
   platform = process.platform,
   admissionContext,
+  cohortId,
 }) {
   const normalizedPlatform = platformKey(platform);
   const expectedSuiteIds = suites.map((suite) => suite.id);
@@ -486,6 +509,7 @@ function buildBatchAggregate({
     schemaVersion: BATCH_SCHEMA_VERSION,
     generatedAt: new Date().toISOString(),
     platform: normalizedPlatform,
+    cohortId: cohortId ?? null,
     batchRoot,
     expectedSuiteIds,
     observedSuiteIds,
@@ -518,22 +542,104 @@ async function runBatchSuites({
   trustedFullExecution = false,
   platform = process.platform,
   admissionContext,
+  cohortId,
+  createContext = createSuiteContext,
 }) {
   ensureDirectory(batchRoot);
   const observed = [];
   let stoppedAfter;
-  const preparedExtensionsManifest = buildDirectoryIntegrityManifest(seedDir);
+  let preparedExtensionsManifest;
+  try {
+    preparedExtensionsManifest = buildDirectoryIntegrityManifest(seedDir);
+  } catch (error) {
+    const normalizedPlatform = platformKey(platform);
+    const failedSuiteId = suites[0]?.id;
+    const reason = `cohort initialization failed: ${error instanceof Error ? error.message : String(error)}`;
+    for (const [index, suite] of suites.entries()) {
+      observed.push({
+        id: suite.id,
+        rerunId: `${normalizedPlatform === 'win32' ? 'windows' : 'linux'}:${suite.id}`,
+        cohortId: cohortId ?? null,
+        platform: normalizedPlatform,
+        args: suite.args,
+        suiteRoot: null,
+        reportsRoot: null,
+        startedAt: null,
+        finishedAt: new Date().toISOString(),
+        exitCode: null,
+        signal: null,
+        classification: index === 0 ? 'containmentBreach' : 'blocked',
+        finalOutcome: index === 0 ? 'infrastructureFailure' : 'blocked',
+        reason: index === 0 ? reason : `blocked because ${failedSuiteId} had a cohort initialization failure`,
+        cleanupVerified: false,
+      });
+    }
+    return buildBatchAggregate({
+      batchRoot,
+      suites,
+      observed,
+      stoppedAfter: failedSuiteId,
+      diagnosticOnly,
+      trustedFullExecution,
+      platform,
+      admissionContext,
+      cohortId,
+    });
+  }
 
   for (let index = 0; index < suites.length; index++) {
     const suite = suites[index];
-    const context = createSuiteContext({ batchRoot, suite, index, total: suites.length });
+    let context;
+    try {
+      context = createContext({ batchRoot, suite, index, total: suites.length });
+    } catch (error) {
+      const normalizedPlatform = platformKey(platform);
+      const reason = `suite context creation failed: ${error instanceof Error ? error.message : String(error)}`;
+      observed.push({
+        id: suite.id,
+        rerunId: `${normalizedPlatform === 'win32' ? 'windows' : 'linux'}:${suite.id}`,
+        cohortId: cohortId ?? null,
+        platform: normalizedPlatform,
+        args: suite.args,
+        suiteRoot: null,
+        reportsRoot: null,
+        startedAt: null,
+        finishedAt: new Date().toISOString(),
+        exitCode: null,
+        signal: null,
+        classification: 'containmentBreach',
+        finalOutcome: 'infrastructureFailure',
+        reason,
+        cleanupVerified: false,
+      });
+      for (const remaining of suites.slice(index + 1)) {
+        observed.push({
+          id: remaining.id,
+          rerunId: `${normalizedPlatform === 'win32' ? 'windows' : 'linux'}:${remaining.id}`,
+          cohortId: cohortId ?? null,
+          platform: normalizedPlatform,
+          args: remaining.args,
+          suiteRoot: null,
+          reportsRoot: null,
+          startedAt: null,
+          finishedAt: new Date().toISOString(),
+          exitCode: null,
+          signal: null,
+          classification: 'blocked',
+          finalOutcome: 'blocked',
+          reason: `blocked because ${suite.id} had a suite context creation failure`,
+          cleanupVerified: false,
+        });
+      }
+      stoppedAfter = suite.id;
+      break;
+    }
     const timeoutMs = Number(process.env.LA_E2E_CLI_SUITE_TIMEOUT_MS) || DEFAULT_SUITE_TIMEOUT_MS;
-    const env = buildSuiteEnvironment(baseEnv, context, await getSuiteScopedCredentialEnv(baseEnv, suite, timeoutMs));
-    prepareSuiteExtensionsDirectory({ seedDir, targetDir: context.extensionsDir, expectedManifest: preparedExtensionsManifest });
-
     const startedAt = new Date().toISOString();
     let runResult = { exitCode: null, signal: null, output: '', error: undefined };
     try {
+      const env = buildSuiteEnvironment(baseEnv, context, await getSuiteScopedCredentialEnv(baseEnv, suite, timeoutMs));
+      prepareSuiteExtensionsDirectory({ seedDir, targetDir: context.extensionsDir, expectedManifest: preparedExtensionsManifest });
       runResult = await runSuite({
         suite,
         context,
@@ -550,20 +656,48 @@ async function runBatchSuites({
     }
     try {
       verifySuiteRootContainment(context);
+      runResult.terminalResult = readJsonIfExists(context.terminalResultPath);
+      runResult.cleanupLedger = readJsonIfExists(context.cleanupLedgerPath);
     } catch (error) {
       runResult = {
-        exitCode: null,
-        signal: null,
+        ...runResult,
         output: [runResult.output, error instanceof Error ? error.message : String(error)].filter(Boolean).join('\n'),
         error,
       };
     }
-    runResult.terminalResult = readJsonIfExists(context.terminalResultPath);
-    runResult.cleanupLedger = readJsonIfExists(context.cleanupLedgerPath);
-    const classification = classifySuiteRunResult(runResult);
+    let classification = classifySuiteRunResult(runResult);
+    fs.writeFileSync(context.logPath, runResult.output ?? '');
+    try {
+      const { _test: resultSummary } = require('./summarize-e2e-cli-results');
+      resultSummary.writeSingleResult({
+        label: suite.id,
+        log: context.logPath,
+        outDir: context.reportsRoot,
+        outcome: classification.category === 'success' ? 'success' : 'failure',
+      });
+      if (classification.category === 'success' && SUPPLEMENTARY_LIFECYCLE_SUITES.has(suite.id)) {
+        const { assertFamilyLifecycleTerminal } = require('./family-lifecycle-terminal');
+        assertFamilyLifecycleTerminal(
+          JSON.parse(fs.readFileSync(path.join(context.reportsRoot, `${suite.id}.json`), 'utf8')),
+          JSON.parse(fs.readFileSync(context.terminalResultPath, 'utf8')),
+          suite.id
+        );
+      }
+    } catch (error) {
+      classification = {
+        category: 'containmentBreach',
+        outcome: 'infrastructureFailure',
+        reason: `suite evidence finalization failed: ${error instanceof Error ? error.message : String(error)}`,
+      };
+    }
     const finalOutcome = classification.category === 'success' ? 'success' : classification.outcome;
+    const normalizedPlatform = platformKey(platform);
+    const rerunId = `${normalizedPlatform === 'win32' ? 'windows' : 'linux'}:${suite.id}`;
     const suiteResult = {
       id: suite.id,
+      rerunId,
+      cohortId: cohortId ?? null,
+      platform: normalizedPlatform,
       args: suite.args,
       suiteRoot: context.suiteRoot,
       reportsRoot: context.reportsRoot,
@@ -577,7 +711,40 @@ async function runBatchSuites({
       cleanupVerified: runResult.cleanupLedger?.verified === true,
       terminalResultPath: context.terminalResultPath,
       cleanupLedgerPath: context.cleanupLedgerPath,
+      evidence: {
+        result: `${suite.id}.json`,
+        junit: `${suite.id}.junit.xml`,
+        summary: `${suite.id}.summary.md`,
+        terminal: `${suite.id}.terminal-result.json`,
+        log: `${suite.id}.log`,
+      },
     };
+    if (admissionContext) {
+      fs.writeFileSync(
+        path.join(context.reportsRoot, `admission-context-${suite.id}.json`),
+        `${JSON.stringify({ ...admissionContext, suiteId: suite.id, rerunId, cohortId: cohortId ?? null, platform: normalizedPlatform }, null, 2)}\n`
+      );
+    }
+    const publicResultPath = path.join(context.reportsRoot, `${suite.id}.json`);
+    if (fs.existsSync(publicResultPath)) {
+      const publicResult = JSON.parse(fs.readFileSync(publicResultPath, 'utf8'));
+      fs.writeFileSync(
+        publicResultPath,
+        `${JSON.stringify(
+          {
+            ...publicResult,
+            suiteId: suite.id,
+            rerunId,
+            cohortId: cohortId ?? null,
+            platform: normalizedPlatform,
+            classification: classification.category,
+            finalOutcome,
+          },
+          null,
+          2
+        )}\n`
+      );
+    }
     fs.writeFileSync(context.resultPath, `${JSON.stringify(suiteResult, null, 2)}\n`);
     observed.push(suiteResult);
 
@@ -611,6 +778,7 @@ async function runBatchSuites({
     trustedFullExecution,
     platform,
     admissionContext,
+    cohortId,
   });
 }
 

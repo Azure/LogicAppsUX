@@ -113,6 +113,9 @@ const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
     await testBatchSuiteScopedCredentials();
     await testBatchContinuesAfterOrdinaryFailure();
     await testBatchStopsAfterContainmentBreach();
+    await testBatchStopsAfterSuiteSetupFailure();
+    await testBatchReturnsAggregateAfterInitializationFailure();
+    await testBatchReturnsAggregateAfterContextCreationFailure();
     await testRunSuiteWrapperProcessWritesStructuredResults();
     await testDirectHttpFamilyRetainsWrapperPhaseJournal();
     await testRunSuiteWrapperProcessTimeoutCancelsDisposableChild();
@@ -1110,6 +1113,11 @@ function testBatchSuiteEnvironmentIsolation() {
       LA_E2E_CLI_USER_DATA_DIR: path.join(tempRoot, 'stale-user-data'),
       LA_E2E_CLI_AZURE_ACCESS_TOKEN: 'stale-token',
       WORKFLOWS_SUBSCRIPTION_ID: 'stale-subscription',
+      idToken: 'raw-federated-token',
+      servicePrincipalKey: 'raw-service-principal-key',
+      servicePrincipalId: 'raw-service-principal-id',
+      tenantId: 'raw-tenant-id',
+      AZURE_CONFIG_DIR: path.join(tempRoot, 'azure-profile'),
     },
     context
   );
@@ -1129,6 +1137,11 @@ function testBatchSuiteEnvironmentIsolation() {
   assert.strictEqual(env.LA_E2E_CLI_USER_DATA_DIR, undefined);
   assert.strictEqual(env.LA_E2E_CLI_AZURE_ACCESS_TOKEN, undefined);
   assert.strictEqual(env.WORKFLOWS_SUBSCRIPTION_ID, undefined);
+  assert.strictEqual(env.idToken, undefined);
+  assert.strictEqual(env.servicePrincipalKey, undefined);
+  assert.strictEqual(env.servicePrincipalId, undefined);
+  assert.strictEqual(env.tenantId, undefined);
+  assert.strictEqual(env.AZURE_CONFIG_DIR, undefined);
   assert.strictEqual(env.LA_E2E_CLI_DISABLE_UNOWNED_PORT_KILL, '1');
 
   const seedDir = path.join(tempRoot, 'extensions-seed');
@@ -1311,6 +1324,81 @@ async function testBatchStopsAfterContainmentBreach() {
     }).category,
     'containmentBreach'
   );
+}
+
+async function testBatchStopsAfterSuiteSetupFailure() {
+  const suites = [SUITE_REGISTRY.msnWeatherLifecycle, SUITE_REGISTRY.unitTests];
+  const batchRoot = path.join(tempRoot, 'batch-suite-setup-failure');
+  const seedDir = path.join(tempRoot, 'batch-suite-setup-seed');
+  fs.mkdirSync(seedDir, { recursive: true });
+  fs.writeFileSync(path.join(seedDir, 'extensions.json'), '[]');
+  const launched = [];
+  const aggregate = await runBatchSuites({
+    suites,
+    batchRoot,
+    seedDir,
+    baseEnv: { LA_E2E_CLI_AZURE_TOKEN_PROVIDER: path.join(tempRoot, 'missing-token-provider.cjs') },
+    runSuite: async ({ suite }) => {
+      launched.push(suite.id);
+      return { exitCode: 0, signal: null, output: '1 passing\n' };
+    },
+  });
+
+  assert.deepStrictEqual(launched, []);
+  assert.strictEqual(aggregate.containmentBreach, true);
+  assert.strictEqual(aggregate.stoppedAfter, 'msnWeatherLifecycle');
+  assert.deepStrictEqual(
+    aggregate.suites.map((suite) => suite.finalOutcome),
+    ['infrastructureFailure', 'blocked']
+  );
+}
+
+async function testBatchReturnsAggregateAfterInitializationFailure() {
+  const suites = [SUITE_REGISTRY.unitTests, SUITE_REGISTRY.createWorkspaceBehavior];
+  const batchRoot = path.join(tempRoot, 'batch-initialization-failure');
+  const aggregate = await runBatchSuites({
+    suites,
+    batchRoot,
+    seedDir: path.join(tempRoot, 'missing-extensions-seed'),
+    runSuite: async () => {
+      throw new Error('suite must not launch');
+    },
+  });
+
+  assert.strictEqual(aggregate.containmentBreach, true);
+  assert.strictEqual(aggregate.stoppedAfter, 'unitTests');
+  assert.deepStrictEqual(
+    aggregate.suites.map((suite) => suite.finalOutcome),
+    ['infrastructureFailure', 'blocked']
+  );
+  assert.match(aggregate.suites[0].reason, /cohort initialization failed/);
+}
+
+async function testBatchReturnsAggregateAfterContextCreationFailure() {
+  const suites = [SUITE_REGISTRY.unitTests, SUITE_REGISTRY.createWorkspaceBehavior];
+  const batchRoot = path.join(tempRoot, 'batch-context-failure');
+  const seedDir = path.join(tempRoot, 'batch-context-seed');
+  fs.mkdirSync(seedDir, { recursive: true });
+  fs.writeFileSync(path.join(seedDir, 'extensions.json'), '[]');
+  const aggregate = await runBatchSuites({
+    suites,
+    batchRoot,
+    seedDir,
+    createContext: () => {
+      throw new Error('synthetic context failure');
+    },
+    runSuite: async () => {
+      throw new Error('suite must not launch');
+    },
+  });
+
+  assert.strictEqual(aggregate.containmentBreach, true);
+  assert.strictEqual(aggregate.stoppedAfter, 'unitTests');
+  assert.deepStrictEqual(
+    aggregate.suites.map((suite) => suite.finalOutcome),
+    ['infrastructureFailure', 'blocked']
+  );
+  assert.match(aggregate.suites[0].reason, /suite context creation failed: synthetic context failure/);
 }
 
 async function testRunSuiteWrapperProcessWritesStructuredResults() {

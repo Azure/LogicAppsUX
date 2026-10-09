@@ -22,6 +22,14 @@ parameters:
     type: boolean
     default: false
 
+  - name: executionTopology
+    displayName: Execution topology
+    type: string
+    default: perSuite
+    values:
+      - perSuite
+      - cohort
+
   - name: runLinux
     displayName: Run Linux suite jobs
     type: boolean
@@ -106,6 +114,7 @@ extends:
                 displayName: Validate requested suite selectors before build
                 env:
                   LA_E2E_CLI_DIAGNOSTIC_ONLY: ${{ parameters.diagnosticOnly }}
+                  LA_E2E_CLI_EXECUTION_TOPOLOGY: ${{ parameters.executionTopology }}
                   LA_E2E_CLI_RUN_LINUX: ${{ parameters.runLinux }}
                   LA_E2E_CLI_RUN_WINDOWS: ${{ parameters.runWindows }}
                   LA_E2E_CLI_LINUX_SUITES: ${{ parameters.linuxSuites }}
@@ -452,6 +461,143 @@ extends:
               azureResourceGroupName: LogicAppsVSCode-E2E-Fixtures
               azureLocationName: westus
 
+          - job: seed_windows_pnpm_store
+            displayName: Seed shared Windows pnpm store for cohorts
+            dependsOn:
+              - resolve_consumer_context
+              - build_current_run_e2e_artifact
+            condition: and(not(failed()), not(canceled()), eq(variables['SeedRequired'], 'true'))
+            timeoutInMinutes: 45
+            pool:
+              name: VSEngSS-MicroBuild2022-1ES
+              image: server2022-microbuildVS2022-1es
+              os: windows
+            variables:
+              - name: SeedRequired
+                value: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.windowsPnpmSeedRequired'] ]
+              - name: pinnedSourceSha
+                value: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+            templateContext:
+              type: validationJob
+            steps:
+              - checkout: self
+                fetchDepth: 0
+              - task: UseNode@1
+                displayName: Use trusted Node.js for Windows cache seed
+                inputs:
+                  version: '22.x'
+              - pwsh: |
+                  git checkout "$(pinnedSourceSha)"
+                  if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+                displayName: Checkout pinned source SHA for Windows cache seed
+              - template: /.azure-pipelines/templates/vscode-e2e-cli-setup.yml@self
+                parameters:
+                  feedBaseUrl: ${{ variables.feedBaseUrl }}
+                  nodeVersion: '22.x'
+                  includeDotNet: false
+                  includeLinuxDisplayDependencies: false
+                  provisionNode: false
+
+          - template: /.config/templates/vscode-e2e-cli-run-cohort.yml@self
+            parameters:
+              jobName: linux_non_azure_cohort
+              displayName: Linux non-Azure E2E cohort
+              cohortId: linux-nonAzure
+              artifactName: cohort-linux-nonAzure
+              selected: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.linux_nonAzureSelected'] ]
+              suites: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.linux_nonAzureSuites'] ]
+              runRegisteredContracts: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.linux_nonAzureRunsContracts'] ]
+              trustedFullExecution: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.trustedFullExecution'] ]
+              dependsOn: [resolve_consumer_context, build_current_run_e2e_artifact]
+              resolvedVSCodeVersion: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.resolvedVSCodeBuild'] ]
+              expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+              checkoutRef: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+              feedBaseUrl: ${{ variables.feedBaseUrl }}
+              pool:
+                name: AzurePipelines-EO
+                image: 1ESPT-Ubuntu22.04
+                os: linux
+              platform: linux
+              expectedProducerDefinitionId: $(System.DefinitionId)
+              expectedProducerRunId: $(Build.BuildId)
+
+          - template: /.config/templates/vscode-e2e-cli-run-cohort.yml@self
+            parameters:
+              jobName: linux_azure_cohort
+              displayName: Linux Azure E2E cohort
+              cohortId: linux-azure
+              artifactName: cohort-linux-azure
+              selected: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.linux_azureSelected'] ]
+              suites: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.linux_azureSuites'] ]
+              runRegisteredContracts: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.linux_azureRunsContracts'] ]
+              trustedFullExecution: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.trustedFullExecution'] ]
+              requiresAzureAccessToken: true
+              dependsOn: [resolve_consumer_context, build_current_run_e2e_artifact]
+              resolvedVSCodeVersion: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.resolvedVSCodeBuild'] ]
+              expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+              checkoutRef: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+              feedBaseUrl: ${{ variables.feedBaseUrl }}
+              pool:
+                name: AzurePipelines-EO
+                image: 1ESPT-Ubuntu22.04
+                os: linux
+              platform: linux
+              expectedProducerDefinitionId: $(System.DefinitionId)
+              expectedProducerRunId: $(Build.BuildId)
+              testARMServiceConnection: LogicAppsVSCode-E2E-SignIn
+              azureResourceGroupName: LogicAppsVSCode-E2E-Fixtures
+              azureLocationName: westus
+
+          - template: /.config/templates/vscode-e2e-cli-run-cohort.yml@self
+            parameters:
+              jobName: windows_non_azure_cohort
+              displayName: Windows non-Azure E2E cohort
+              cohortId: windows-nonAzure
+              artifactName: cohort-windows-nonAzure
+              selected: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.windows_nonAzureSelected'] ]
+              suites: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.windows_nonAzureSuites'] ]
+              runRegisteredContracts: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.windows_nonAzureRunsContracts'] ]
+              trustedFullExecution: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.trustedFullExecution'] ]
+              dependsOn: [resolve_consumer_context, build_current_run_e2e_artifact, seed_windows_pnpm_store]
+              resolvedVSCodeVersion: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.resolvedVSCodeBuild'] ]
+              expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+              checkoutRef: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+              feedBaseUrl: ${{ variables.feedBaseUrl }}
+              pool:
+                name: VSEngSS-MicroBuild2022-1ES
+                image: server2022-microbuildVS2022-1es
+                os: windows
+              platform: windows
+              expectedProducerDefinitionId: $(System.DefinitionId)
+              expectedProducerRunId: $(Build.BuildId)
+
+          - template: /.config/templates/vscode-e2e-cli-run-cohort.yml@self
+            parameters:
+              jobName: windows_azure_cohort
+              displayName: Windows Azure E2E cohort
+              cohortId: windows-azure
+              artifactName: cohort-windows-azure
+              selected: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.windows_azureSelected'] ]
+              suites: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.windows_azureSuites'] ]
+              runRegisteredContracts: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.windows_azureRunsContracts'] ]
+              trustedFullExecution: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.trustedFullExecution'] ]
+              requiresAzureAccessToken: true
+              dependsOn: [resolve_consumer_context, build_current_run_e2e_artifact, seed_windows_pnpm_store]
+              resolvedVSCodeVersion: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.resolvedVSCodeBuild'] ]
+              expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+              checkoutRef: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+              feedBaseUrl: ${{ variables.feedBaseUrl }}
+              pool:
+                name: VSEngSS-MicroBuild2022-1ES
+                image: server2022-microbuildVS2022-1es
+                os: windows
+              platform: windows
+              expectedProducerDefinitionId: $(System.DefinitionId)
+              expectedProducerRunId: $(Build.BuildId)
+              testARMServiceConnection: LogicAppsVSCode-E2E-SignIn
+              azureResourceGroupName: LogicAppsVSCode-E2E-Fixtures
+              azureLocationName: westus
+
           - template: /.config/templates/vscode-e2e-cli-run-suite.yml@self
             parameters:
               jobName: linux_http_timeout_lifecycle
@@ -660,6 +806,10 @@ extends:
                   - windows_create_workspace_preview_matrix
                   - windows_create_workspace_codeful
                   - windows_msn_weather_lifecycle
+                  - linux_non_azure_cohort
+                  - linux_azure_cohort
+                  - windows_non_azure_cohort
+                  - windows_azure_cohort
                 condition: always()
                 pool:
                   name: VSEngSS-MicroBuild2022-1ES
@@ -690,57 +840,82 @@ extends:
                     value: $[ dependencies.windows_create_workspace_codeful.result ]
                   - name: windowsMsnWeatherLifecycleResult
                     value: $[ dependencies.windows_msn_weather_lifecycle.result ]
+                  - name: linuxNonAzureCohortResult
+                    value: $[ dependencies.linux_non_azure_cohort.result ]
+                  - name: linuxAzureCohortResult
+                    value: $[ dependencies.linux_azure_cohort.result ]
+                  - name: windowsNonAzureCohortResult
+                    value: $[ dependencies.windows_non_azure_cohort.result ]
+                  - name: windowsAzureCohortResult
+                    value: $[ dependencies.windows_azure_cohort.result ]
                 templateContext:
                   type: validationJob
                 steps:
                   - download: current
                     artifact: vscode-e2e-cli-diagnostics-linux-unit-tests
                     displayName: Download Linux unit tests diagnostics
-                    condition: always()
+                    condition: and(always(), eq('${{ parameters.executionTopology }}', 'perSuite'))
                   - download: current
                     artifact: vscode-e2e-cli-diagnostics-linux-create-workspace-behavior
                     displayName: Download Linux create workspace behavior diagnostics
-                    condition: always()
+                    condition: and(always(), eq('${{ parameters.executionTopology }}', 'perSuite'))
                   - download: current
                     artifact: vscode-e2e-cli-diagnostics-linux-create-workspace-core-matrix
                     displayName: Download Linux create workspace core matrix diagnostics
-                    condition: always()
+                    condition: and(always(), eq('${{ parameters.executionTopology }}', 'perSuite'))
                   - download: current
                     artifact: vscode-e2e-cli-diagnostics-linux-create-workspace-preview-matrix
                     displayName: Download Linux create workspace preview matrix diagnostics
-                    condition: always()
+                    condition: and(always(), eq('${{ parameters.executionTopology }}', 'perSuite'))
                   - download: current
                     artifact: vscode-e2e-cli-diagnostics-linux-create-workspace-codeful
                     displayName: Download Linux create workspace codeful diagnostics
-                    condition: always()
+                    condition: and(always(), eq('${{ parameters.executionTopology }}', 'perSuite'))
                   - download: current
                     artifact: vscode-e2e-cli-diagnostics-linux-msn-weather-lifecycle
                     displayName: Download Linux MSN Weather lifecycle diagnostics
-                    condition: always()
+                    condition: and(always(), eq('${{ parameters.executionTopology }}', 'perSuite'))
                   - download: current
                     artifact: vscode-e2e-cli-diagnostics-windows-unit-tests
                     displayName: Download Windows unit tests diagnostics
-                    condition: always()
+                    condition: and(always(), eq('${{ parameters.executionTopology }}', 'perSuite'))
                   - download: current
                     artifact: vscode-e2e-cli-diagnostics-windows-create-workspace-behavior
                     displayName: Download Windows create workspace behavior diagnostics
-                    condition: always()
+                    condition: and(always(), eq('${{ parameters.executionTopology }}', 'perSuite'))
                   - download: current
                     artifact: vscode-e2e-cli-diagnostics-windows-create-workspace-core-matrix
                     displayName: Download Windows create workspace core matrix diagnostics
-                    condition: always()
+                    condition: and(always(), eq('${{ parameters.executionTopology }}', 'perSuite'))
                   - download: current
                     artifact: vscode-e2e-cli-diagnostics-windows-create-workspace-preview-matrix
                     displayName: Download Windows create workspace preview matrix diagnostics
-                    condition: always()
+                    condition: and(always(), eq('${{ parameters.executionTopology }}', 'perSuite'))
                   - download: current
                     artifact: vscode-e2e-cli-diagnostics-windows-create-workspace-codeful
                     displayName: Download Windows create workspace codeful diagnostics
-                    condition: always()
+                    condition: and(always(), eq('${{ parameters.executionTopology }}', 'perSuite'))
                   - download: current
                     artifact: vscode-e2e-cli-diagnostics-windows-msn-weather-lifecycle
                     displayName: Download Windows MSN Weather lifecycle diagnostics
-                    condition: always()
+                    condition: and(always(), eq('${{ parameters.executionTopology }}', 'perSuite'))
+
+                  - download: current
+                    artifact: vscode-e2e-cli-diagnostics-cohort-linux-nonAzure
+                    displayName: Download Linux non-Azure cohort diagnostics
+                    condition: and(always(), eq('${{ parameters.executionTopology }}', 'cohort'))
+                  - download: current
+                    artifact: vscode-e2e-cli-diagnostics-cohort-linux-azure
+                    displayName: Download Linux Azure cohort diagnostics
+                    condition: and(always(), eq('${{ parameters.executionTopology }}', 'cohort'))
+                  - download: current
+                    artifact: vscode-e2e-cli-diagnostics-cohort-windows-nonAzure
+                    displayName: Download Windows non-Azure cohort diagnostics
+                    condition: and(always(), eq('${{ parameters.executionTopology }}', 'cohort'))
+                  - download: current
+                    artifact: vscode-e2e-cli-diagnostics-cohort-windows-azure
+                    displayName: Download Windows Azure cohort diagnostics
+                    condition: and(always(), eq('${{ parameters.executionTopology }}', 'cohort'))
 
                   - pwsh: |
                       $suites = @(
@@ -826,6 +1001,27 @@ extends:
                         }
                       }
                     displayName: Enforce twelve-suite both-OS full rollup gate
+                    condition: and(always(), eq('${{ parameters.executionTopology }}', 'perSuite'))
+
+                  - pwsh: |
+                      $cohorts = @(
+                        @{ job = 'linux_non_azure_cohort'; result = '$(linuxNonAzureCohortResult)'; artifact = 'vscode-e2e-cli-diagnostics-cohort-linux-nonAzure' },
+                        @{ job = 'linux_azure_cohort'; result = '$(linuxAzureCohortResult)'; artifact = 'vscode-e2e-cli-diagnostics-cohort-linux-azure' },
+                        @{ job = 'windows_non_azure_cohort'; result = '$(windowsNonAzureCohortResult)'; artifact = 'vscode-e2e-cli-diagnostics-cohort-windows-nonAzure' },
+                        @{ job = 'windows_azure_cohort'; result = '$(windowsAzureCohortResult)'; artifact = 'vscode-e2e-cli-diagnostics-cohort-windows-azure' }
+                      )
+                      $failed = @($cohorts | Where-Object { $_.result -ne 'Succeeded' })
+                      if ($failed.Count -gt 0) {
+                        throw "Canonical cohort job failure(s): $(($failed | ForEach-Object { "$($_.job)=$($_.result)" }) -join ', ')"
+                      }
+                      $arguments = @()
+                      foreach ($cohort in $cohorts) {
+                        $arguments += @('--artifact', (Join-Path '$(Pipeline.Workspace)' $cohort.artifact))
+                      }
+                      node apps/vs-code-designer/scripts/verify-e2e-cli-cohort-rollup.js @arguments
+                      if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+                    displayName: Enforce registry-driven both-OS cohort rollup gate
+                    condition: and(always(), eq('${{ parameters.executionTopology }}', 'cohort'))
 
           - ${{ if eq(parameters.diagnosticOnly, true) }}:
               - job: report_diagnostic_selected_rerun
@@ -853,6 +1049,10 @@ extends:
                   - windows_workspace_regeneration
                   - linux_workspace_multi_root
                   - windows_workspace_multi_root
+                  - linux_non_azure_cohort
+                  - linux_azure_cohort
+                  - windows_non_azure_cohort
+                  - windows_azure_cohort
                 condition: always()
                 pool:
                   name: VSEngSS-MicroBuild2022-1ES
@@ -943,11 +1143,31 @@ extends:
                     value: $[ dependencies.windows_create_workspace_behavior_smoke.result ]
                   - name: windowsMsnWeatherLifecycleResult
                     value: $[ dependencies.windows_msn_weather_lifecycle.result ]
+                  - name: linuxNonAzureCohortSelected
+                    value: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.linux_nonAzureSelected'] ]
+                  - name: linuxAzureCohortSelected
+                    value: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.linux_azureSelected'] ]
+                  - name: windowsNonAzureCohortSelected
+                    value: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.windows_nonAzureSelected'] ]
+                  - name: windowsAzureCohortSelected
+                    value: $[ dependencies.resolve_consumer_context.outputs['validateSuiteSelection.windows_azureSelected'] ]
+                  - name: linuxNonAzureCohortResult
+                    value: $[ dependencies.linux_non_azure_cohort.result ]
+                  - name: linuxAzureCohortResult
+                    value: $[ dependencies.linux_azure_cohort.result ]
+                  - name: windowsNonAzureCohortResult
+                    value: $[ dependencies.windows_non_azure_cohort.result ]
+                  - name: windowsAzureCohortResult
+                    value: $[ dependencies.windows_azure_cohort.result ]
                 templateContext:
                   type: validationJob
                 steps:
                   - pwsh: |
                       $selected = @(
+                        @{ name = 'linux_non_azure_cohort'; selected = '$(linuxNonAzureCohortSelected)'; result = '$(linuxNonAzureCohortResult)' },
+                        @{ name = 'linux_azure_cohort'; selected = '$(linuxAzureCohortSelected)'; result = '$(linuxAzureCohortResult)' },
+                        @{ name = 'windows_non_azure_cohort'; selected = '$(windowsNonAzureCohortSelected)'; result = '$(windowsNonAzureCohortResult)' },
+                        @{ name = 'windows_azure_cohort'; selected = '$(windowsAzureCohortSelected)'; result = '$(windowsAzureCohortResult)' },
                         @{ name = 'linux_workspace_multi_root'; selected = '$(linuxWorkspaceMultiRootSelected)'; result = '$(linuxWorkspaceMultiRootResult)' },
                         @{ name = 'windows_workspace_multi_root'; selected = '$(windowsWorkspaceMultiRootSelected)'; result = '$(windowsWorkspaceMultiRootResult)' },
                         @{ name = 'linux_workspace_regeneration'; selected = '$(linuxWorkspaceRegenerationSelected)'; result = '$(linuxWorkspaceRegenerationResult)' },

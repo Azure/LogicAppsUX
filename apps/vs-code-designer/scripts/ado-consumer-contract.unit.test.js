@@ -11,6 +11,7 @@ const { parse } = require('yaml');
 
 const repositoryRoot = path.resolve(__dirname, '..', '..', '..');
 const consumer = parse(fs.readFileSync(path.join(repositoryRoot, '.config', 'templates', 'vscode-e2e-cli-run-suite.yml'), 'utf8'));
+const cohort = parse(fs.readFileSync(path.join(repositoryRoot, '.config', 'templates', 'vscode-e2e-cli-run-cohort.yml'), 'utf8'));
 const pipeline = parse(fs.readFileSync(path.join(repositoryRoot, '.config', 'vscode-e2e-cli.1es.yml'), 'utf8'));
 const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8'));
 const branchName = "${{ if eq(parameters.suiteId, 'unitTests') }}";
@@ -74,6 +75,36 @@ function assertMandatoryConsumerContract(template, entry, packageManifest) {
 
 test('same registered contracts gate both existing OS consumers after admission/extraction, before native prep, without changing native labels', () => {
   assertMandatoryConsumerContract(consumer, pipeline, manifest);
+});
+
+test('cohort topology runs the registered contract chain once on the selected owner cohort for each OS', () => {
+  const steps = cohort.jobs[0].steps;
+  const contractSteps = steps.filter((step) => step.displayName === 'Run registered E2E contracts once for cohort OS');
+  assert.equal(contractSteps.length, 1);
+  const step = contractSteps[0];
+  assert.equal(step.condition, "and(succeeded(), eq(variables['RunRegisteredContracts'], 'true'))");
+  assert.equal(step.pwsh.split(command).length - 1, 1);
+  assert.match(step.pwsh, /Tee-Object -FilePath \$contractLog/);
+  assert.match(step.pwsh, /if \(\$LASTEXITCODE -ne 0\) \{ exit \$LASTEXITCODE \}/);
+  const contractIndex = steps.indexOf(step);
+  const extractionIndex = steps.findIndex((item) => item.displayName === 'Extract verified artifact and write admitted identity context');
+  assert.ok(extractionIndex >= 0 && extractionIndex < contractIndex);
+  assert.equal(
+    collect(steps.slice(0, contractIndex), (item) => item.displayName === 'Prepare VS Code extension dependencies once').length,
+    0
+  );
+  assert.equal(
+    collect(steps.slice(contractIndex + 1), (item) => item.displayName === 'Prepare VS Code extension dependencies once').length,
+    2
+  );
+  const cohortJobs = collect(pipeline, (item) => item.template === '/.config/templates/vscode-e2e-cli-run-cohort.yml@self');
+  assert.equal(cohortJobs.length, 4);
+  for (const platform of ['linux', 'windows']) {
+    const owners = cohortJobs.filter((item) => item.parameters.platform === platform);
+    assert.equal(owners.length, 2);
+    assert.ok(owners.some((item) => item.parameters.runRegisteredContracts.includes(`${platform}_nonAzureRunsContracts`)));
+    assert.ok(owners.some((item) => item.parameters.runRegisteredContracts.includes(`${platform}_azureRunsContracts`)));
+  }
 });
 
 const controls = [

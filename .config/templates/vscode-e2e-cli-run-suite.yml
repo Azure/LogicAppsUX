@@ -93,6 +93,7 @@ jobs:
       ExpectedRepositoryName: ${{ parameters.expectedRepositoryName }}
       ExpectedRepositoryUri: ${{ parameters.expectedRepositoryUri }}
       ExpectedCheckoutRef: ${{ parameters.checkoutRef }}
+      TimingFile: $(Agent.TempDirectory)/vscode-e2e-cli-timing-${{ parameters.artifactName }}.jsonl
     templateContext:
       outputs:
         - output: pipelineArtifact
@@ -100,8 +101,39 @@ jobs:
           artifactName: vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}
           condition: always()
     steps:
+      - pwsh: |
+          $event = @{
+            schemaVersion = 1
+            event = 'start'
+            phase = 'checkout'
+            timestamp = (Get-Date).ToUniversalTime().ToString('o')
+          } | ConvertTo-Json -Compress
+          New-Item -ItemType Directory -Force -Path (Split-Path '$(TimingFile)') | Out-Null
+          Add-Content -LiteralPath '$(TimingFile)' -Value $event
+        displayName: Start checkout timing
+        condition: always()
+
       - checkout: self
         fetchDepth: 0
+
+      - pwsh: |
+          $event = @{
+            schemaVersion = 1
+            event = 'finish'
+            phase = 'checkout'
+            status = '$(Agent.JobStatus)'
+            timestamp = (Get-Date).ToUniversalTime().ToString('o')
+          } | ConvertTo-Json -Compress
+          Add-Content -LiteralPath '$(TimingFile)' -Value $event
+          $start = @{
+            schemaVersion = 1
+            event = 'start'
+            phase = 'nodeSetup'
+            timestamp = (Get-Date).ToUniversalTime().ToString('o')
+          } | ConvertTo-Json -Compress
+          Add-Content -LiteralPath '$(TimingFile)' -Value $start
+        displayName: Finish checkout and start trusted Node timing
+        condition: always()
 
       - task: UseNode@1
         displayName: Use trusted Node.js for E2E artifact admission
@@ -112,14 +144,23 @@ jobs:
         displayName: Print E2E artifact admission Node.js version
 
       - pwsh: |
+          node apps/vs-code-designer/scripts/pipeline-timing.js finish '$(TimingFile)' nodeSetup '$(Agent.JobStatus)'
+          node apps/vs-code-designer/scripts/pipeline-timing.js start '$(TimingFile)' artifactTransfer
           $trustedVerifier = Join-Path '$(Agent.TempDirectory)' 'trusted-vscode-e2e-artifact-manifest.js'
           Copy-Item '$(Build.SourcesDirectory)/apps/vs-code-designer/scripts/vscode-e2e-artifact-manifest.js' $trustedVerifier -Force
           Write-Host "##vso[task.setvariable variable=TrustedArtifactVerifier]$trustedVerifier"
         displayName: Capture trusted artifact verifier before source checkout
+        condition: always()
 
       - download: current
         artifact: ${{ parameters.e2eBuildArtifactName }}
         displayName: Download current-run E2E artifact
+
+      - pwsh: |
+          node apps/vs-code-designer/scripts/pipeline-timing.js finish '$(TimingFile)' artifactTransfer '$(Agent.JobStatus)'
+          node apps/vs-code-designer/scripts/pipeline-timing.js start '$(TimingFile)' artifactAdmission
+        displayName: Finish artifact transfer and start admission timing
+        condition: always()
 
       - pwsh: |
           $artifactRoot = Join-Path '$(Pipeline.Workspace)' '${{ parameters.e2eBuildArtifactName }}'
@@ -200,6 +241,10 @@ jobs:
           }
         displayName: Verify exact admitted source checkout
 
+      - pwsh: node apps/vs-code-designer/scripts/pipeline-timing.js finish '$(TimingFile)' artifactAdmission '$(Agent.JobStatus)'
+        displayName: Finish artifact admission timing
+        condition: always()
+
       - template: /.azure-pipelines/templates/vscode-e2e-cli-setup.yml@self
         parameters:
           feedBaseUrl: ${{ parameters.feedBaseUrl }}
@@ -208,6 +253,8 @@ jobs:
           includeDotNet: true
           includeLinuxDisplayDependencies: ${{ eq(parameters.platform, 'linux') }}
           provisionNode: false
+          telemetryFile: $(TimingFile)
+          measureNodeSetup: false
 
       - pwsh: |
           $artifactRoot = Join-Path '$(Pipeline.Workspace)' '${{ parameters.e2eBuildArtifactName }}'
@@ -272,6 +319,10 @@ jobs:
         env:
           E2E_TRACEABILITY_CROSSWALK_JSON: $(E2E_TRACEABILITY_CROSSWALK_JSON)
 
+      - pwsh: node apps/vs-code-designer/scripts/pipeline-timing.js start '$(TimingFile)' extensionDependencyPreparation
+        displayName: Start extension dependency preparation timing
+        condition: always()
+
       - ${{ if eq(parameters.platform, 'linux') }}:
           - bash: |
               set -euo pipefail
@@ -295,6 +346,12 @@ jobs:
               NODE_OPTIONS: --max-old-space-size=4096
               TEMP: $(Agent.TempDirectory)
               TMP: $(Agent.TempDirectory)
+
+      - pwsh: |
+          node apps/vs-code-designer/scripts/pipeline-timing.js finish '$(TimingFile)' extensionDependencyPreparation '$(Agent.JobStatus)'
+          node apps/vs-code-designer/scripts/pipeline-timing.js start '$(TimingFile)' nativeExecution
+        displayName: Finish extension preparation and start native execution timing
+        condition: always()
 
       - ${{ if and(eq(parameters.platform, 'linux'), eq(parameters.requiresAzureAccessToken, false)) }}:
           - bash: |
@@ -591,6 +648,10 @@ jobs:
               LA_E2E_CLI_DISABLE_UNOWNED_PORT_KILL: '1'
               LA_E2E_DESIGNER_API_LOAD_TIMEOUT_MS: ${{ parameters.designerApiLoadTimeoutMs }}
 
+      - pwsh: node apps/vs-code-designer/scripts/pipeline-timing.js finish '$(TimingFile)' nativeExecution '$(Agent.JobStatus)'
+        displayName: Finish native execution timing
+        condition: always()
+
       - task: PublishTestResults@2
         displayName: Publish JUnit result (${{ parameters.suiteId }})
         condition: always()
@@ -601,6 +662,10 @@ jobs:
           failTaskOnFailedTests: false
           failTaskOnMissingResultsFile: true
           publishRunAttachments: true
+
+      - pwsh: node apps/vs-code-designer/scripts/pipeline-timing.js start '$(TimingFile)' evidenceStaging
+        displayName: Start evidence staging timing
+        condition: always()
 
       - pwsh: |
           $diagnosticsRoot = "$(Build.ArtifactStagingDirectory)/vscode-e2e-cli/${{ parameters.artifactName }}"
@@ -829,3 +894,12 @@ jobs:
           }
         displayName: Stage vscode-test CLI results (${{ parameters.suiteId }})
         condition: always()
+
+      - pwsh: |
+          $diagnosticsRoot = "$(Build.ArtifactStagingDirectory)/vscode-e2e-cli/${{ parameters.artifactName }}"
+          New-Item -ItemType Directory -Force -Path $diagnosticsRoot | Out-Null
+          node apps/vs-code-designer/scripts/pipeline-timing.js finish '$(TimingFile)' evidenceStaging '$(Agent.JobStatus)'
+          node apps/vs-code-designer/scripts/pipeline-timing.js summary '$(TimingFile)' "$diagnosticsRoot/timing.json"
+        displayName: Finalize suite timing evidence
+        condition: always()
+        workingDirectory: $(Build.SourcesDirectory)

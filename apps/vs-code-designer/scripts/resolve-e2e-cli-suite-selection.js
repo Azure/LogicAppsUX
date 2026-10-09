@@ -15,9 +15,13 @@ function main() {
   const diagnosticOnly = parseBoolean(process.env.LA_E2E_CLI_DIAGNOSTIC_ONLY);
   const runLinux = parseBoolean(process.env.LA_E2E_CLI_RUN_LINUX);
   const runWindows = parseBoolean(process.env.LA_E2E_CLI_RUN_WINDOWS);
+  const executionTopology = String(process.env.LA_E2E_CLI_EXECUTION_TOPOLOGY || 'perSuite').trim();
   const linuxSelection = process.env.LA_E2E_CLI_LINUX_SUITES ?? 'linux';
   const windowsSelection = process.env.LA_E2E_CLI_WINDOWS_SUITES ?? 'windows';
 
+  if (!['perSuite', 'cohort'].includes(executionTopology)) {
+    throw new Error(`Unsupported executionTopology "${executionTopology}". Expected perSuite or cohort.`);
+  }
   if (!runLinux && !runWindows) {
     throw new Error('At least one OS cohort must be selected for the VS Code E2E consumer.');
   }
@@ -32,10 +36,40 @@ function main() {
 
   emit('linuxSelectedSuites', linuxSuites.join(','));
   emit('windowsSelectedSuites', windowsSuites.join(','));
-  emitSuiteFlags('linux', linuxSuites);
-  emitSuiteFlags('windows', windowsSuites);
+  emit('trustedFullExecution', String(!diagnosticOnly));
+  emit('executionTopology', executionTopology);
+  emit('perSuiteTopology', String(executionTopology === 'perSuite'));
+  emit('cohortTopology', String(executionTopology === 'cohort'));
+  emitCohortSelection('linux', linuxSuites, executionTopology === 'cohort');
+  emitCohortSelection('windows', windowsSuites, executionTopology === 'cohort');
+  const windowsCohorts = partitionSuitesByAccess(windowsSuites);
+  emit(
+    'windowsPnpmSeedRequired',
+    String(executionTopology === 'cohort' && windowsCohorts.nonAzure.length > 0 && windowsCohorts.azure.length > 0)
+  );
+  emitSuiteFlags('linux', linuxSuites, executionTopology === 'perSuite');
+  emitSuiteFlags('windows', windowsSuites, executionTopology === 'perSuite');
   console.log(`Selected Linux suites: ${linuxSuites.join(',') || '<none>'}`);
   console.log(`Selected Windows suites: ${windowsSuites.join(',') || '<none>'}`);
+}
+
+function emitCohortSelection(os, selectedSuites, enabled) {
+  const cohorts = partitionSuitesByAccess(selectedSuites);
+  for (const [access, suites] of Object.entries(cohorts)) {
+    emit(`${os}_${access}Suites`, suites.join(','));
+    emit(`${os}_${access}Selected`, String(enabled && suites.length > 0));
+  }
+  emit(`${os}_nonAzureRunsContracts`, String(enabled && cohorts.nonAzure.length > 0));
+  emit(`${os}_azureRunsContracts`, String(enabled && cohorts.nonAzure.length === 0 && cohorts.azure.length > 0));
+}
+
+function partitionSuitesByAccess(selectedSuites) {
+  const selected = new Set(selectedSuites);
+  const ordered = Object.values(SUITE_REGISTRY).filter((suite) => selected.has(suite.id));
+  return {
+    nonAzure: ordered.filter((suite) => suite.requiresAzure !== true).map((suite) => suite.id),
+    azure: ordered.filter((suite) => suite.requiresAzure === true).map((suite) => suite.id),
+  };
 }
 
 function parseBoolean(value) {
@@ -59,10 +93,10 @@ function assertCanonicalSelection(os, enabled, selectedSuites) {
   }
 }
 
-function emitSuiteFlags(os, selectedSuites) {
+function emitSuiteFlags(os, selectedSuites, enabled) {
   const selected = new Set(selectedSuites);
   for (const suite of getPlatformSuites(os)) {
-    emit(`${os}_${suite}`, String(selected.has(suite)));
+    emit(`${os}_${suite}`, String(enabled && selected.has(suite)));
   }
 }
 
@@ -76,6 +110,14 @@ function getPlatformSuites(os) {
 function emit(name, value) {
   console.log(`##vso[task.setvariable variable=${name};isOutput=true]${value}`);
 }
+
+module.exports = {
+  OS_SUITES,
+  assertCanonicalSelection,
+  getPlatformSuites,
+  parseBoolean,
+  partitionSuitesByAccess,
+};
 
 if (require.main === module) {
   try {

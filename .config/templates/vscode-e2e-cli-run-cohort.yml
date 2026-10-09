@@ -1,0 +1,487 @@
+parameters:
+  - name: jobName
+    type: string
+  - name: displayName
+    type: string
+  - name: cohortId
+    type: string
+  - name: artifactName
+    type: string
+  - name: feedBaseUrl
+    type: string
+  - name: pool
+    type: object
+  - name: platform
+    type: string
+    values:
+      - linux
+      - windows
+  - name: selected
+    type: string
+  - name: suites
+    type: string
+  - name: runRegisteredContracts
+    type: string
+  - name: trustedFullExecution
+    type: string
+  - name: requiresAzureAccessToken
+    type: boolean
+    default: false
+  - name: dependsOn
+    type: object
+    default: []
+  - name: resolvedVSCodeVersion
+    type: string
+    default: ''
+  - name: e2eBuildArtifactName
+    type: string
+    default: vscode-e2e-build
+  - name: expectedProducerDefinitionId
+    type: string
+    default: ''
+  - name: expectedProducerRunId
+    type: string
+    default: ''
+  - name: expectedSourceSha
+    type: string
+    default: ''
+  - name: expectedRepositoryName
+    type: string
+    default: 'Azure/LogicAppsUX'
+  - name: expectedRepositoryUri
+    type: string
+    default: 'https://github.com/Azure/LogicAppsUX'
+  - name: checkoutRef
+    type: string
+    default: ''
+  - name: nodeVersion
+    type: string
+    default: '22.x'
+  - name: dotnetVersion
+    type: string
+    default: '8.0.x'
+  - name: timeoutInMinutes
+    type: number
+    default: 180
+  - name: testARMServiceConnection
+    type: string
+    default: ''
+  - name: azureResourceGroupName
+    type: string
+    default: ''
+  - name: azureLocationName
+    type: string
+    default: ''
+  - name: azureManagementBaseUrl
+    type: string
+    default: 'https://management.azure.com'
+  - name: designerApiLoadTimeoutMs
+    type: string
+    default: '600000'
+
+jobs:
+  - job: ${{ parameters.jobName }}
+    displayName: ${{ parameters.displayName }}
+    dependsOn: ${{ parameters.dependsOn }}
+    condition: and(not(failed()), not(canceled()), eq(variables['SelectedCohort'], 'true'))
+    timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
+    pool: ${{ parameters.pool }}
+    variables:
+      SelectedCohort: ${{ parameters.selected }}
+      CohortSuites: ${{ parameters.suites }}
+      RunRegisteredContracts: ${{ parameters.runRegisteredContracts }}
+      TrustedFullExecution: ${{ parameters.trustedFullExecution }}
+      ResolvedVSCodeVersion: ${{ parameters.resolvedVSCodeVersion }}
+      ExpectedProducerDefinitionId: ${{ parameters.expectedProducerDefinitionId }}
+      ExpectedProducerRunId: ${{ parameters.expectedProducerRunId }}
+      ExpectedSourceSha: ${{ parameters.expectedSourceSha }}
+      ExpectedRepositoryName: ${{ parameters.expectedRepositoryName }}
+      ExpectedRepositoryUri: ${{ parameters.expectedRepositoryUri }}
+      ExpectedCheckoutRef: ${{ parameters.checkoutRef }}
+      TimingFile: $(Agent.TempDirectory)/vscode-e2e-cli-timing-${{ parameters.cohortId }}.jsonl
+      BatchRoot: $(Agent.TempDirectory)/vscode-e2e-cli-batch-${{ parameters.cohortId }}
+      BatchResultsRoot: $(Agent.TempDirectory)/vscode-e2e-cli-batch-results-${{ parameters.cohortId }}
+      DiagnosticsRoot: $(Build.ArtifactStagingDirectory)/vscode-e2e-cli/${{ parameters.artifactName }}
+    templateContext:
+      outputs:
+        - output: pipelineArtifact
+          targetPath: $(Build.ArtifactStagingDirectory)/vscode-e2e-cli/${{ parameters.artifactName }}
+          artifactName: vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}
+          condition: always()
+    steps:
+      - pwsh: |
+          $event = @{
+            schemaVersion = 1
+            event = 'start'
+            phase = 'checkout'
+            timestamp = (Get-Date).ToUniversalTime().ToString('o')
+          } | ConvertTo-Json -Compress
+          New-Item -ItemType Directory -Force -Path (Split-Path '$(TimingFile)') | Out-Null
+          Add-Content -LiteralPath '$(TimingFile)' -Value $event
+        displayName: Start checkout timing
+        condition: always()
+
+      - checkout: self
+        fetchDepth: 0
+
+      - pwsh: |
+          $event = @{
+            schemaVersion = 1
+            event = 'finish'
+            phase = 'checkout'
+            status = '$(Agent.JobStatus)'
+            timestamp = (Get-Date).ToUniversalTime().ToString('o')
+          } | ConvertTo-Json -Compress
+          Add-Content -LiteralPath '$(TimingFile)' -Value $event
+        displayName: Finish checkout timing
+        condition: always()
+
+      - pwsh: |
+          $event = @{
+            schemaVersion = 1
+            event = 'start'
+            phase = 'nodeSetup'
+            timestamp = (Get-Date).ToUniversalTime().ToString('o')
+          } | ConvertTo-Json -Compress
+          Add-Content -LiteralPath '$(TimingFile)' -Value $event
+        displayName: Start trusted Node setup timing
+        condition: always()
+
+      - task: UseNode@1
+        displayName: Use trusted Node.js for E2E artifact admission
+        inputs:
+          version: ${{ parameters.nodeVersion }}
+
+      - pwsh: node apps/vs-code-designer/scripts/pipeline-timing.js finish '$(TimingFile)' nodeSetup '$(Agent.JobStatus)'
+        displayName: Finish trusted Node setup timing
+        condition: always()
+
+      - pwsh: |
+          node apps/vs-code-designer/scripts/pipeline-timing.js start '$(TimingFile)' artifactTransfer
+          $trustedVerifier = Join-Path '$(Agent.TempDirectory)' 'trusted-vscode-e2e-artifact-manifest.js'
+          Copy-Item '$(Build.SourcesDirectory)/apps/vs-code-designer/scripts/vscode-e2e-artifact-manifest.js' $trustedVerifier -Force
+          Write-Host "##vso[task.setvariable variable=TrustedArtifactVerifier]$trustedVerifier"
+        displayName: Capture trusted verifier and start artifact transfer timing
+        condition: always()
+
+      - download: current
+        artifact: ${{ parameters.e2eBuildArtifactName }}
+        displayName: Download current-run E2E artifact
+
+      - pwsh: node apps/vs-code-designer/scripts/pipeline-timing.js finish '$(TimingFile)' artifactTransfer '$(Agent.JobStatus)'
+        displayName: Finish artifact transfer timing
+        condition: always()
+
+      - pwsh: node apps/vs-code-designer/scripts/pipeline-timing.js start '$(TimingFile)' artifactAdmission
+        displayName: Start artifact admission timing
+        condition: always()
+
+      - pwsh: |
+          $artifactRoot = Join-Path '$(Pipeline.Workspace)' '${{ parameters.e2eBuildArtifactName }}'
+          $artifactPath = Join-Path $artifactRoot 'extension-build.tar.gz'
+          $manifestPath = Join-Path $artifactRoot 'vscode-e2e-build-manifest.json'
+          if (-not (Test-Path $artifactPath) -or -not (Test-Path $manifestPath)) {
+            throw 'Current-run E2E artifact payload and manifest are required.'
+          }
+          $verifyArgs = @(
+            '$(TrustedArtifactVerifier)', 'verify',
+            '--artifact', $artifactPath,
+            '--manifest', $manifestPath,
+            '--privileged-admission'
+          )
+          if ('$(ExpectedSourceSha)') { $verifyArgs += @('--expected-source-sha', '$(ExpectedSourceSha)') }
+          if ('$(ExpectedProducerRunId)') { $verifyArgs += @('--expected-producer-run-id', '$(ExpectedProducerRunId)') }
+          if ('$(ExpectedProducerDefinitionId)') { $verifyArgs += @('--expected-producer-definition-id', '$(ExpectedProducerDefinitionId)') }
+          if ('$(ExpectedRepositoryName)') { $verifyArgs += @('--expected-repository-name', '$(ExpectedRepositoryName)') }
+          if ('$(ExpectedRepositoryUri)') { $verifyArgs += @('--expected-repository-uri', '$(ExpectedRepositoryUri)') }
+          if ('$(ExpectedCheckoutRef)') { $verifyArgs += @('--expected-checkout-ref', '$(ExpectedCheckoutRef)') }
+          & node @verifyArgs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+          $checkoutRef = '$(ExpectedCheckoutRef)'
+          if (-not $checkoutRef) { $checkoutRef = '$(ExpectedSourceSha)' }
+          if (-not $checkoutRef) { throw 'Expected checkout ref or source SHA is required.' }
+          git checkout "$checkoutRef"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+          $head = ([string](git rev-parse HEAD)).Trim()
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          if ('$(ExpectedSourceSha)' -and $head -ne '$(ExpectedSourceSha)') {
+            throw "Consumer checkout HEAD '$head' does not match expected source SHA '$(ExpectedSourceSha)'."
+          }
+          $manifest = Get-Content $manifestPath -Raw | ConvertFrom-Json
+          if ($manifest.producer.actualArtifactBuildSha -ne $head) {
+            throw "Consumer checkout HEAD '$head' does not match E2E artifact SHA '$($manifest.producer.actualArtifactBuildSha)'."
+          }
+        displayName: Verify artifact and exact admitted source checkout
+
+      - pwsh: node apps/vs-code-designer/scripts/pipeline-timing.js finish '$(TimingFile)' artifactAdmission '$(Agent.JobStatus)'
+        displayName: Finish artifact admission timing
+        condition: always()
+
+      - template: /.azure-pipelines/templates/vscode-e2e-cli-setup.yml@self
+        parameters:
+          feedBaseUrl: ${{ parameters.feedBaseUrl }}
+          nodeVersion: ${{ parameters.nodeVersion }}
+          dotnetVersion: ${{ parameters.dotnetVersion }}
+          includeDotNet: true
+          includeLinuxDisplayDependencies: ${{ eq(parameters.platform, 'linux') }}
+          provisionNode: false
+          telemetryFile: $(TimingFile)
+          measureNodeSetup: false
+
+      - pwsh: |
+          $artifactRoot = Join-Path '$(Pipeline.Workspace)' '${{ parameters.e2eBuildArtifactName }}'
+          tar -xzf (Join-Path $artifactRoot 'extension-build.tar.gz') -C '$(Build.SourcesDirectory)'
+          foreach ($required in @(
+            'apps/vs-code-designer/out/test/e2e/createWorkspace.test.js',
+            'apps/vs-code-designer/out/test/run-e2e.js',
+            'apps/vs-code-designer/dist'
+          )) {
+            if (-not (Test-Path (Join-Path '$(Build.SourcesDirectory)' $required))) {
+              throw "Extracted artifact is missing required payload: $required"
+            }
+          }
+
+          if (-not '$(ResolvedVSCodeVersion)') {
+            throw 'ResolvedVSCodeVersion must be supplied by the shared consumer context job.'
+          }
+          $manifest = Get-Content (Join-Path $artifactRoot 'vscode-e2e-build-manifest.json') -Raw | ConvertFrom-Json
+          $context = [ordered]@{
+            schemaVersion = 1
+            producerDefinitionId = [string]$manifest.producer.definitionId
+            producerRunId = [string]$manifest.producer.runId
+            producerBuildNumber = [string]$manifest.producer.buildNumber
+            sourceSHA = [string]$manifest.producer.actualArtifactBuildSha
+            checkoutRef = [string]$manifest.producer.checkoutRef
+            repositoryName = [string]$manifest.producer.repositoryName
+            repositoryUri = [string]$manifest.producer.repositoryUri
+            artifactName = [string]$manifest.artifact.name
+            artifactSHA256 = [string]$manifest.artifact.sha256
+            resolvedVSCodeBuild = '$(ResolvedVSCodeVersion)'
+          }
+          $contextPath = Join-Path '$(Agent.TempDirectory)' 'admission-context-${{ parameters.cohortId }}.json'
+          $context | ConvertTo-Json -Depth 5 | Set-Content -Path $contextPath -NoNewline
+          Write-Host "##vso[task.setvariable variable=AdmissionContextPath]$contextPath"
+        displayName: Extract verified artifact and write admitted identity context
+
+      - pwsh: |
+          New-Item -ItemType Directory -Force -Path '$(DiagnosticsRoot)' | Out-Null
+          $contractLog = Join-Path '$(DiagnosticsRoot)' 'registered-contract-chain.log'
+          pnpm --dir apps/vs-code-designer run test:e2e-cli:unit *>&1 | Tee-Object -FilePath $contractLog
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        displayName: Run registered E2E contracts once for cohort OS
+        workingDirectory: $(Build.SourcesDirectory)
+        condition: and(succeeded(), eq(variables['RunRegisteredContracts'], 'true'))
+
+      - pwsh: |
+          node apps/vs-code-designer/scripts/enrich-e2e-traceability.js `
+            --prepare "$(Agent.TempDirectory)/e2e-traceability-crosswalk-${{ parameters.cohortId }}.json"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        displayName: Validate required private traceability configuration
+        env:
+          E2E_TRACEABILITY_CROSSWALK_JSON: $(E2E_TRACEABILITY_CROSSWALK_JSON)
+
+      - pwsh: node apps/vs-code-designer/scripts/pipeline-timing.js start '$(TimingFile)' extensionDependencyPreparation
+        displayName: Start extension dependency preparation timing
+        condition: always()
+
+      - ${{ if eq(parameters.platform, 'linux') }}:
+          - bash: |
+              set -euo pipefail
+              export PATH="$(dirname "$(command -v node)"):/usr/local/bin:/usr/bin:/bin:$PATH"
+              xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" node apps/vs-code-designer/out/test/run-e2e.js
+            displayName: Prepare VS Code extension dependencies once
+            env:
+              LA_E2E_PREPARE_EXTENSION_DEPENDENCIES_ONLY: '1'
+              NODE_OPTIONS: --dns-result-order=ipv4first --no-network-family-autoselection --max-old-space-size=4096
+              TEMP: $(Agent.TempDirectory)
+              TMPDIR: $(Agent.TempDirectory)
+
+      - ${{ if eq(parameters.platform, 'windows') }}:
+          - pwsh: |
+              $env:PATH = "$(Build.SourcesDirectory)\apps\vs-code-designer\node_modules\.bin;$(Build.SourcesDirectory)\node_modules\.bin;$env:PATH"
+              node apps/vs-code-designer/out/test/run-e2e.js
+            displayName: Prepare VS Code extension dependencies once
+            env:
+              LA_E2E_PREPARE_EXTENSION_DEPENDENCIES_ONLY: '1'
+              NODE_OPTIONS: --max-old-space-size=4096
+              TEMP: $(Agent.TempDirectory)
+              TMP: $(Agent.TempDirectory)
+
+      - pwsh: node apps/vs-code-designer/scripts/pipeline-timing.js finish '$(TimingFile)' extensionDependencyPreparation '$(Agent.JobStatus)'
+        displayName: Finish extension dependency preparation timing
+        condition: always()
+
+      - pwsh: node apps/vs-code-designer/scripts/pipeline-timing.js start '$(TimingFile)' nativeExecution
+        displayName: Start cohort native execution timing
+        condition: always()
+
+      - ${{ if and(eq(parameters.platform, 'linux'), eq(parameters.requiresAzureAccessToken, false)) }}:
+          - bash: |
+              set -euo pipefail
+              export PATH="$(Build.SourcesDirectory)/apps/vs-code-designer/node_modules/.bin:$(Build.SourcesDirectory)/node_modules/.bin:$PATH"
+              cd "$(Build.SourcesDirectory)/apps/vs-code-designer"
+              mkdir -p "$(Agent.TempDirectory)/runtime-dependencies"
+              bash scripts/run-e2e-cli-linux-secure-session.sh \
+                xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
+                node scripts/run-e2e-cli.js --suites "$(CohortSuites)"
+            displayName: Run Linux non-Azure cohort
+            env:
+              LA_E2E_CLI_ADMISSION_CONTEXT_PATH: $(AdmissionContextPath)
+              LA_E2E_CLI_BATCH_COHORT_ID: ${{ parameters.cohortId }}
+              LA_E2E_CLI_BATCH_ROOT: $(BatchRoot)
+              LA_E2E_CLI_BATCH_RESULTS_DIR: $(BatchResultsRoot)
+              LA_E2E_CLI_BATCH_TRUSTED_FULL_EXECUTION: $(TrustedFullExecution)
+              LA_E2E_CLI_PREPARED_EXTENSIONS_DIR: $(Agent.TempDirectory)/test-resources/test-extensions
+              LA_E2E_CLI_VSCODE_VERSION: $(ResolvedVSCodeVersion)
+              NODE_OPTIONS: --dns-result-order=ipv4first --no-network-family-autoselection --max-old-space-size=4096
+              TEMP: $(Agent.TempDirectory)
+              TMPDIR: $(Agent.TempDirectory)
+
+      - ${{ if and(eq(parameters.platform, 'windows'), eq(parameters.requiresAzureAccessToken, false)) }}:
+          - pwsh: |
+              $env:PATH = "$(Build.SourcesDirectory)\apps\vs-code-designer\node_modules\.bin;$(Build.SourcesDirectory)\node_modules\.bin;$env:PATH"
+              Set-Location "$(Build.SourcesDirectory)\apps\vs-code-designer"
+              New-Item -ItemType Directory -Force -Path "$(Agent.TempDirectory)\runtime-dependencies" | Out-Null
+              node scripts/run-e2e-cli.js --suites "$(CohortSuites)"
+              exit $LASTEXITCODE
+            displayName: Run Windows non-Azure cohort
+            env:
+              LA_E2E_CLI_ADMISSION_CONTEXT_PATH: $(AdmissionContextPath)
+              LA_E2E_CLI_BATCH_COHORT_ID: ${{ parameters.cohortId }}
+              LA_E2E_CLI_BATCH_ROOT: $(BatchRoot)
+              LA_E2E_CLI_BATCH_RESULTS_DIR: $(BatchResultsRoot)
+              LA_E2E_CLI_BATCH_TRUSTED_FULL_EXECUTION: $(TrustedFullExecution)
+              LA_E2E_CLI_PREPARED_EXTENSIONS_DIR: $(Agent.TempDirectory)\test-resources\test-extensions
+              LA_E2E_CLI_VSCODE_VERSION: $(ResolvedVSCodeVersion)
+              NODE_OPTIONS: --dns-result-order=ipv4first --no-network-family-autoselection --max-old-space-size=4096
+              TEMP: $(Agent.TempDirectory)
+              TMP: $(Agent.TempDirectory)
+
+      - ${{ if eq(parameters.requiresAzureAccessToken, true) }}:
+          - task: AzureCLI@2
+            displayName: Run ${{ parameters.platform }} Azure cohort
+            inputs:
+              azureSubscription: ${{ parameters.testARMServiceConnection }}
+              scriptType: pscore
+              scriptLocation: inlineScript
+              addSpnToEnvironment: true
+              useGlobalConfig: false
+              visibleAzLogin: false
+              inlineScript: |
+                $ErrorActionPreference = 'Stop'
+                if (-not '${{ parameters.azureResourceGroupName }}') {
+                  throw 'azureResourceGroupName is required for live Azure E2E.'
+                }
+                $accountSubscriptionId = ([string](az account show --query id --output tsv)).Trim()
+                $accountTenantId = ([string](az account show --query tenantId --output tsv)).Trim()
+                $tenantMetadata = ([string]$env:tenantId).Trim()
+                $guidPattern = '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+                if ($accountSubscriptionId -notmatch $guidPattern -or $accountTenantId -notmatch $guidPattern -or $tenantMetadata -notmatch $guidPattern) {
+                  throw 'AzureCLI service connection identity was malformed.'
+                }
+                if ($accountTenantId.ToLowerInvariant() -ne $tenantMetadata.ToLowerInvariant()) {
+                  throw 'AzureCLI account tenant does not match the service connection tenant.'
+                }
+                $env:FC_SERVICE_CONNECTION_ID = $env:AZURESUBSCRIPTION_SERVICE_CONNECTION_ID
+                $env:FC_SERVICE_CONNECTION_CLIENT_ID = $env:servicePrincipalId
+                $env:FC_SERVICE_CONNECTION_TENANT_ID = $accountTenantId
+                $env:AzCode_UseAzureFederatedCredentials = 'true'
+                $env:AzCode_ServiceConnectionID = $env:FC_SERVICE_CONNECTION_ID
+                $env:AzCode_ServiceConnectionDomain = $env:FC_SERVICE_CONNECTION_TENANT_ID
+                $env:AzCode_ServiceConnectionClientID = $env:FC_SERVICE_CONNECTION_CLIENT_ID
+                $env:LA_E2E_CLI_AZURE_TENANT_ID = $accountTenantId
+                $env:LA_E2E_CLI_AZURE_SUBSCRIPTION_ID = $accountSubscriptionId
+                $binPaths = @(
+                  (Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/node_modules/.bin'),
+                  (Join-Path '$(Build.SourcesDirectory)' 'node_modules/.bin')
+                )
+                $env:PATH = "$($binPaths -join [IO.Path]::PathSeparator)$([IO.Path]::PathSeparator)$env:PATH"
+                Set-Location "$(Build.SourcesDirectory)/apps/vs-code-designer"
+                if ('${{ parameters.platform }}' -eq 'linux') {
+                  bash scripts/run-e2e-cli-linux-secure-session.sh xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" node scripts/run-e2e-cli.js --suites "$(CohortSuites)"
+                } else {
+                  node scripts/run-e2e-cli.js --suites "$(CohortSuites)"
+                }
+                exit $LASTEXITCODE
+            env:
+              LA_E2E_CLI_ADMISSION_CONTEXT_PATH: $(AdmissionContextPath)
+              LA_E2E_CLI_AZURE_LOCATION_NAME: ${{ parameters.azureLocationName }}
+              LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL: ${{ parameters.azureManagementBaseUrl }}
+              LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME: ${{ parameters.azureResourceGroupName }}
+              LA_E2E_CLI_BATCH_COHORT_ID: ${{ parameters.cohortId }}
+              LA_E2E_CLI_BATCH_ROOT: $(BatchRoot)
+              LA_E2E_CLI_BATCH_RESULTS_DIR: $(BatchResultsRoot)
+              LA_E2E_CLI_BATCH_TRUSTED_FULL_EXECUTION: $(TrustedFullExecution)
+              LA_E2E_CLI_DISABLE_UNOWNED_PORT_KILL: '1'
+              LA_E2E_CLI_PREPARED_EXTENSIONS_DIR: $(Agent.TempDirectory)/test-resources/test-extensions
+              LA_E2E_CLI_VSCODE_VERSION: $(ResolvedVSCodeVersion)
+              LA_E2E_DESIGNER_API_LOAD_TIMEOUT_MS: ${{ parameters.designerApiLoadTimeoutMs }}
+              NODE_OPTIONS: --dns-result-order=ipv4first --no-network-family-autoselection --max-old-space-size=4096
+              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+              FC_SERVICE_CONNECTION_NAME: ${{ parameters.testARMServiceConnection }}
+              TEMP: $(Agent.TempDirectory)
+              TMP: $(Agent.TempDirectory)
+              TMPDIR: $(Agent.TempDirectory)
+
+      - pwsh: node apps/vs-code-designer/scripts/pipeline-timing.js finish '$(TimingFile)' nativeExecution '$(Agent.JobStatus)'
+        displayName: Finish cohort native execution timing
+        condition: always()
+
+      - pwsh: node apps/vs-code-designer/scripts/pipeline-timing.js start '$(TimingFile)' evidenceStaging
+        displayName: Start cohort evidence staging timing
+        condition: always()
+
+      - pwsh: |
+          $aggregate = Join-Path '$(BatchResultsRoot)' 'e2e-cli-batch-result.json'
+          node apps/vs-code-designer/scripts/stage-e2e-cli-cohort.js `
+            --aggregate "$aggregate" `
+            --output '$(DiagnosticsRoot)' `
+            --cohort-id '${{ parameters.cohortId }}' `
+            --artifact-name 'vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+          if ('$(CohortSuites)' -split ',' -contains 'createWorkspaceCoreMatrix') {
+            $suiteRoot = Join-Path '$(DiagnosticsRoot)' 'suites'
+            $platformName = '${{ parameters.platform }}'
+            $coreRoot = Join-Path $suiteRoot "$platformName-createWorkspaceCoreMatrix"
+            $resultRoot = Join-Path $coreRoot 'results'
+            $nativeResultPath = Join-Path $resultRoot 'createWorkspaceCoreMatrix.json'
+            $nativeResult = Get-Content $nativeResultPath -Raw | ConvertFrom-Json
+            if ($nativeResult.outcome -eq 'success') {
+              $admissionContext = Get-Content (Join-Path $resultRoot 'admission-context-createWorkspaceCoreMatrix.json') -Raw | ConvertFrom-Json
+              node apps/vs-code-designer/scripts/enrich-e2e-traceability.js `
+                --crosswalk "$(Agent.TempDirectory)/e2e-traceability-crosswalk-${{ parameters.cohortId }}.json" `
+                --input "$nativeResultPath" `
+                --terminal-result "$resultRoot/createWorkspaceCoreMatrix.terminal-result.json" `
+                --supplementary-input "$coreRoot/workspace-cancel/final-result.json" `
+                --output "$(DiagnosticsRoot)/private-traceability/createWorkspaceCoreMatrix.json" `
+                --source-version "$($admissionContext.sourceSHA)" `
+                --build-id "$(Build.BuildId)" `
+                --platform '${{ parameters.platform }}' `
+                --vscode-version "$($admissionContext.resolvedVSCodeBuild)"
+              if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+              node apps/vs-code-designer/scripts/workspace-prompt-cancel.js "$coreRoot/workspace-cancel" '${{ parameters.platform }}'
+              if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+            }
+          }
+        displayName: Stage and validate stable cohort evidence
+        condition: always()
+        workingDirectory: $(Build.SourcesDirectory)
+
+      - pwsh: |
+          node apps/vs-code-designer/scripts/pipeline-timing.js finish '$(TimingFile)' evidenceStaging '$(Agent.JobStatus)'
+          node apps/vs-code-designer/scripts/pipeline-timing.js summary '$(TimingFile)' '$(DiagnosticsRoot)/timing.json'
+        displayName: Finalize cohort timing evidence
+        condition: always()
+        workingDirectory: $(Build.SourcesDirectory)
+
+      - task: PublishTestResults@2
+        displayName: Publish cohort suite results
+        condition: always()
+        inputs:
+          testResultsFormat: JUnit
+          testResultsFiles: $(DiagnosticsRoot)/**/*.junit.xml
+          failTaskOnFailedTests: false
+          testRunTitle: VS Code CLI E2E ${{ parameters.cohortId }}
