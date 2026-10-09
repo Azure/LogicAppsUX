@@ -1,8 +1,45 @@
-import { getUpdatedManifestForSplitOn } from '../outputs';
+import { getUpdatedManifestForSplitOn, loadDynamicOutputsInNode } from '../outputs';
+import * as initialization from '../../actions/bjsworkflow/initialize';
 import { onNewEmail, ConnectionReferenceKeyFormat } from '@microsoft/logic-apps-shared';
 import type { OperationManifest } from '@microsoft/logic-apps-shared';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('Outputs Utilities', () => {
+  describe('static-schema output initialization', () => {
+    const load = () =>
+      loadDynamicOutputsInNode(
+        'Request',
+        true,
+        { type: 'Request', connectorId: 'request', operationId: 'request' },
+        undefined,
+        { body: { dependencyType: 'StaticSchema', definition: {}, dependentParameters: {} } },
+        { parameterGroups: {} },
+        {},
+        {},
+        vi.fn()
+      );
+
+    it('waits until Request output metadata and tokens have finished loading', async () => {
+      let finish!: () => void;
+      const initialized = new Promise<void>((resolve) => {
+        finish = resolve;
+      });
+      const update = vi.spyOn(initialization, 'updateOutputsAndTokens').mockReturnValue(initialized);
+      const completed = vi.fn();
+      const pending = load().then(completed);
+      await Promise.resolve();
+      expect(update).toHaveBeenCalledOnce();
+      expect(completed).not.toHaveBeenCalled();
+      finish();
+      await pending;
+      expect(completed).toHaveBeenCalledOnce();
+    });
+
+    it('propagates static-schema initialization failures to the awaiting caller', async () => {
+      vi.spyOn(initialization, 'updateOutputsAndTokens').mockRejectedValue(new Error('Request outputs unavailable'));
+      await expect(load()).rejects.toThrow('Request outputs unavailable');
+    });
+  });
+
   describe('getUpdatedManifestForSpiltOn', () => {
     it('properly deserializes OpenAPI property aliases', () => {
       const sampleManifest: OperationManifest = {

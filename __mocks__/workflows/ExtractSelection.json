@@ -1,0 +1,57 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "triggers": {
+      "Request": {
+        "type": "Request",
+        "kind": "Http",
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "customer": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "name": { "type": "string" },
+                  "id": { "type": "string" }
+                }
+              },
+              "message": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "actions": {
+      "Read_customer": {
+        "type": "Compose",
+        "inputs": "@triggerBody()?['customer']",
+        "runAfter": {}
+      },
+      "Build_message": {
+        "type": "Compose",
+        "inputs": "@concat('Hello ', outputs('Read_customer')?['name'])",
+        "runAfter": { "Read_customer": ["Succeeded"] }
+      },
+      "Build_result": {
+        "type": "Compose",
+        "inputs": {
+          "customer": "@outputs('Read_customer')",
+          "message": "@outputs('Build_message')"
+        },
+        "runAfter": { "Build_message": ["Succeeded"] }
+      },
+      "Consume_result": {
+        "type": "Compose",
+        "inputs": "@outputs('Build_result')",
+        "runAfter": { "Build_result": ["Succeeded"] }
+      }
+    },
+    "outputs": {}
+  },
+  "kind": "Stateful",
+  "connections": {}
+}

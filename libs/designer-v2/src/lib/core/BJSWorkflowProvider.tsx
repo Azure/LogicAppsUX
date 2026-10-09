@@ -17,7 +17,7 @@ import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { hasMultipleTriggers } from '@microsoft/logic-apps-shared';
 import { useDeepCompareEffect } from '@react-hookz/web';
 import type React from 'react';
-import { createContext, useContext, useEffect, useMemo } from 'react';
+import { createContext, useContext, useEffect, useMemo, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import { initRunInPanel } from './state/panel/panelSlice';
@@ -44,6 +44,8 @@ export interface BJSWorkflowProviderProps {
   children?: React.ReactNode;
   appSettings?: Record<string, any>;
   isMultiVariableEnabled?: boolean;
+  /** A host acknowledgement of a workflow already hydrated and applied to this editor. */
+  externallyAppliedWorkflow?: Workflow;
 }
 
 const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
@@ -54,11 +56,14 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
   customCode,
   appSettings,
   isMultiVariableEnabled,
+  externallyAppliedWorkflow,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const isReadOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
+  const initialized = useRef(false);
+  const acknowledgedWorkflow = useRef<Workflow>();
 
   // Computed synchronously during render (not in the effect below) and exposed via context so
   // Designer can pick the fallback on its very first render for this workflow -- see
@@ -66,6 +71,17 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
   const isUnsupportedMultipleTriggers = useMemo(() => hasMultipleTriggers(workflow?.definition), [workflow]);
 
   useDeepCompareEffect(() => {
+    const alreadyApplied =
+      initialized.current &&
+      !isUnsupportedMultipleTriggers &&
+      externallyAppliedWorkflow &&
+      acknowledgedWorkflow.current !== externallyAppliedWorkflow &&
+      workflow.definition === externallyAppliedWorkflow.definition;
+    initialized.current = true;
+    acknowledgedWorkflow.current = externallyAppliedWorkflow;
+    if (alreadyApplied) {
+      return;
+    }
     // Neither the Consumption nor Standard designer/monitoring experiences support workflow definitions
     // with more than one trigger. Detect this before initializing any graph/designer state so the
     // canvas is never rendered against unsupported data (see BJSDeserializer's RENDER_MULTIPLE_TRIGGERS
@@ -92,7 +108,16 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
     if (!isUnsupportedMultipleTriggers) {
       dispatch(initializeGraphState({ workflowDefinition: workflow, runInstance, isMultiVariableEnabled }));
     }
-  }, [workflowId, runInstance, workflow, customCode, isReadOnly, isMonitoringView, isUnsupportedMultipleTriggers]);
+  }, [
+    workflowId,
+    runInstance,
+    workflow,
+    customCode,
+    isReadOnly,
+    isMonitoringView,
+    isUnsupportedMultipleTriggers,
+    externallyAppliedWorkflow,
+  ]);
 
   // Store app settings in query to access outside of functional components
   useQuery({

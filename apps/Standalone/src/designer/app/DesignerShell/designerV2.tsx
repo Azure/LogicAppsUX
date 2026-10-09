@@ -1,4 +1,8 @@
-import type { ReactNode } from 'react';
+import { type ReactNode, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { useLocation } from 'react-router-dom';
+import type { AppDispatch } from '../../state/store';
+import { loadWorkflow, setHostOptions, setHostingPlan, setIsLocalSelected, setResourcePath } from '../../state/workflowLoadingSlice';
 import { loadSubscriptionIds, loadToken } from '../../../environments/environment';
 import { SettingsBox } from '../../components/settings_box';
 import { useHostingPlan, useIsLocal, useQueryCachePersist, useResourcePath } from '../../state/workflowLoadingSelectors';
@@ -14,10 +18,26 @@ const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
   return isLoading ? null : <>{children}</>;
 };
 export const DesignerWrapper = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { search } = useLocation();
   const resourcePath = useResourcePath();
   const isLocal = useIsLocal();
   const hostingPlan = useHostingPlan();
   const queryCachePersist = useQueryCachePersist();
+  useEffect(() => {
+    const params = new URLSearchParams(search);
+    if (params.get('extraction') !== 'true') {
+      return;
+    }
+    dispatch(setHostOptions({ enableWorkflowExtraction: true }));
+    const localWorkflow = params.get('local');
+    if (localWorkflow) {
+      dispatch(setHostingPlan('standard'));
+      dispatch(setIsLocalSelected(true));
+      dispatch(setResourcePath(localWorkflow));
+      dispatch(loadWorkflow(undefined));
+    }
+  }, [dispatch, search]);
 
   return (
     <ReactQueryProvider persistEnabled={queryCachePersist}>

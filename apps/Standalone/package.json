@@ -58,7 +58,8 @@
     "dev": "vite --force",
     "e2e": "vite --config vite.e2e.config.ts",
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:lib": "vitest run --config vite.config.ts"
   },
   "type": "module"
 }

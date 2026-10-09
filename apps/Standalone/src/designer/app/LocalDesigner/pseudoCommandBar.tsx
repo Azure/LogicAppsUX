@@ -2,7 +2,8 @@ import './pseudoCommandBar.less';
 import type { IModalStyles } from '@fluentui/react';
 import { ActionButton, Modal } from '@fluentui/react';
 import { MonacoEditor } from '@microsoft/designer-ui';
-import type { Workflow, AppDispatch, RootState } from '@microsoft/logic-apps-designer';
+import type { AppDispatch, RootState } from '@microsoft/logic-apps-designer';
+import * as DesignerV2 from '@microsoft/logic-apps-designer-v2';
 import {
   useIsDesignerDirty,
   resetDesignerDirtyState,
@@ -24,23 +25,75 @@ const modalStyles: Partial<IModalStyles> = {
   },
 };
 
-export const PseudoCommandBar = () => {
-  const state = useSelector((state: any) => state);
-  const dispatch = useDispatch<AppDispatch>();
+interface CommandBarBindings {
+  isDarkMode: boolean;
+  isDirty: boolean;
+  numErrors: number;
+  canUndo: boolean;
+  canRedo: boolean;
+  serialize: () => Promise<unknown>;
+  resetDirty: () => void;
+  openPanel: (panelMode: 'WorkflowParameters' | 'Connection' | 'Error') => void;
+  undo: () => void;
+  redo: () => void;
+}
 
+export const PseudoCommandBar = () => {
+  const state = useSelector((state: RootState) => state);
+  const dispatch = useDispatch<AppDispatch>();
+  const bindings: CommandBarBindings = {
+    isDarkMode: state.designerOptions.isDarkMode ?? false,
+    isDirty: useIsDesignerDirty(),
+    numErrors: useTotalNumErrors(),
+    canUndo: useCanUndo(),
+    canRedo: useCanRedo(),
+    serialize: () => serializeWorkflow(state),
+    resetDirty: () => dispatch(resetDesignerDirtyState(undefined)),
+    openPanel: (panelMode) => dispatch(openPanel({ panelMode })),
+    undo: () => dispatch(onUndoClick()),
+    redo: () => dispatch(onRedoClick()),
+  };
+  return <CommandBar {...bindings} />;
+};
+
+export const PseudoCommandBarV2 = () => {
+  const state = useSelector((state: DesignerV2.RootState) => state);
+  const dispatch = useDispatch<DesignerV2.AppDispatch>();
+  const bindings: CommandBarBindings = {
+    isDarkMode: state.designerOptions.isDarkMode ?? false,
+    isDirty: DesignerV2.useIsDesignerDirty(),
+    numErrors: DesignerV2.useTotalNumErrors(),
+    canUndo: DesignerV2.useCanUndo(),
+    canRedo: DesignerV2.useCanRedo(),
+    serialize: () => DesignerV2.serializeWorkflow(state),
+    resetDirty: () => dispatch(DesignerV2.resetDesignerDirtyState(undefined)),
+    openPanel: (panelMode) => dispatch(DesignerV2.openPanel({ panelMode })),
+    undo: () => dispatch(DesignerV2.onUndoClick()),
+    redo: () => dispatch(DesignerV2.onRedoClick()),
+  };
+  return <CommandBar {...bindings} />;
+};
+
+const CommandBar = ({
+  isDarkMode,
+  isDirty,
+  numErrors,
+  canUndo,
+  canRedo,
+  serialize,
+  resetDirty,
+  openPanel,
+  undo,
+  redo,
+}: CommandBarBindings) => {
   const [showSerialization, setShowSeralization] = useState(false);
-  const [serializedWorkflow, setSerializedWorkflow] = useState<Workflow>();
+  const [serializedWorkflow, setSerializedWorkflow] = useState<unknown>();
   const serializeCallback = () => {
-    serializeWorkflow(state).then((serialized) => setSerializedWorkflow(serialized));
+    serialize().then((serialized) => setSerializedWorkflow(serialized));
     setShowSeralization(true);
   };
 
-  const isDarkMode = useSelector((state: RootState) => state.designerOptions.isDarkMode);
-
-  const numErrors = useTotalNumErrors();
   const haveErrors = useMemo(() => numErrors > 0, [numErrors]);
-
-  const isDirty = useIsDesignerDirty();
 
   return (
     <div className="pseudo-command-bar">
@@ -50,7 +103,7 @@ export const PseudoCommandBar = () => {
         disabled={!isDirty}
         onClick={() => {
           alert("Congrats you saved the workflow! (Not really, you're in standalone)");
-          dispatch(resetDesignerDirtyState(undefined));
+          resetDirty();
         }}
       />
       <ActionButton
@@ -58,19 +111,11 @@ export const PseudoCommandBar = () => {
         text="Discard"
         disabled={!isDirty}
         onClick={() => {
-          dispatch(resetDesignerDirtyState(undefined));
+          resetDirty();
         }}
       />
-      <ActionButton
-        iconProps={{ iconName: 'Parameter' }}
-        text="Workflow Parameters"
-        onClick={() => dispatch(openPanel({ panelMode: 'WorkflowParameters' }))}
-      />
-      <ActionButton
-        iconProps={{ iconName: 'Link12' }}
-        text="Connections"
-        onClick={() => dispatch(openPanel({ panelMode: 'Connection' }))}
-      />
+      <ActionButton iconProps={{ iconName: 'Parameter' }} text="Workflow Parameters" onClick={() => openPanel('WorkflowParameters')} />
+      <ActionButton iconProps={{ iconName: 'Link12' }} text="Connections" onClick={() => openPanel('Connection')} />
       <ActionButton iconProps={{ iconName: 'Code' }} text="Code View" onClick={serializeCallback} />
       <ActionButton
         iconProps={{
@@ -78,11 +123,11 @@ export const PseudoCommandBar = () => {
           style: haveErrors ? { color: RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED'] } : undefined,
         }}
         text="Errors"
-        onClick={() => dispatch(openPanel({ panelMode: 'Error' }))}
+        onClick={() => openPanel('Error')}
         disabled={!haveErrors}
       />
-      <ActionButton iconProps={{ iconName: 'Undo' }} text="Undo" onClick={() => dispatch(onUndoClick())} disabled={!useCanUndo()} />
-      <ActionButton iconProps={{ iconName: 'Redo' }} text="Redo" onClick={() => dispatch(onRedoClick())} disabled={!useCanRedo()} />
+      <ActionButton iconProps={{ iconName: 'Undo' }} text="Undo" onClick={undo} disabled={!canUndo} />
+      <ActionButton iconProps={{ iconName: 'Redo' }} text="Redo" onClick={redo} disabled={!canRedo} />
 
       {/* Code view modal */}
       <Modal
