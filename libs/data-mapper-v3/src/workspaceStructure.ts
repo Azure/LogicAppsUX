@@ -1,6 +1,7 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { BtmSerializer } from './schema/btmSerializer';
+import { planSchemaImport } from './schema/mapImportPlanner';
 
 export const schemasFolderName = 'Schemas';
 export const generatedFolderName = '__generated';
@@ -154,23 +155,101 @@ export async function createEmptyMap(rootUri: vscode.Uri, baseName = defaultMapB
   return mapUri;
 }
 
+// Lists every .xsd under the Schemas folder as a posix path relative to it.
 export async function listWorkspaceSchemas(mapUri: vscode.Uri): Promise<string[]> {
   const schemasUri = vscode.Uri.joinPath(getWorkspaceRootForMap(mapUri), schemasFolderName);
-  const entries = await readDirectoryNames(schemasUri);
-  return entries.filter((name) => path.extname(name).toLocaleLowerCase() === '.xsd').sort((left, right) => left.localeCompare(right));
+  const schemas: string[] = [];
+  const visit = async (folderUri: vscode.Uri, prefix: string): Promise<void> => {
+    for (const [name, type] of await readDirectoryEntries(folderUri)) {
+      if (type & vscode.FileType.Directory) {
+        await visit(vscode.Uri.joinPath(folderUri, name), `${prefix}${name}/`);
+      } else if (path.extname(name).toLocaleLowerCase() === '.xsd') {
+        schemas.push(`${prefix}${name}`);
+      }
+    }
+  };
+  await visit(schemasUri, '');
+  return schemas.sort((left, right) => left.localeCompare(right));
 }
 
-export async function copySchemaToWorkspace(sourceUri: vscode.Uri, mapUri: vscode.Uri): Promise<{ uri: vscode.Uri; relativePath: string }> {
-  const rootUri = getWorkspaceRootForMap(mapUri);
-  const schemasUri = vscode.Uri.joinPath(rootUri, schemasFolderName);
-  await vscode.workspace.fs.createDirectory(schemasUri);
-  const existingNames = await readDirectoryNames(schemasUri);
-  const extension = path.posix.extname(sourceUri.path) || '.xsd';
-  const baseName = path.posix.basename(sourceUri.path, extension);
-  const fileName = getDuplicateSafeName(baseName, extension, existingNames);
-  const destinationUri = vscode.Uri.joinPath(schemasUri, fileName);
-  await vscode.workspace.fs.copy(sourceUri, destinationUri, { overwrite: false });
-  return { uri: destinationUri, relativePath: `${schemasFolderName}/${fileName}` };
+export interface CopiedSchema {
+  // Path of the requested schema relative to the map's folder, e.g. "Schemas/Order.xsd".
+  relativePath: string;
+  // Files newly created by the copy; existing files that were overwritten are not listed.
+  createdUris: vscode.Uri[];
+  warnings: string[];
+}
+
+async function tryReadFile(uri: vscode.Uri): Promise<Buffer | undefined> {
+  try {
+    return Buffer.from(await vscode.workspace.fs.readFile(uri));
+  } catch {
+    return undefined;
+  }
+}
+
+// Copies a schema into the map's Schemas folder together with every schema it imports or includes, so it loads completely.
+// Returns undefined when the user cancels.
+export async function copySchemaWithDependencies(sourceUri: vscode.Uri, mapUri: vscode.Uri): Promise<CopiedSchema | undefined> {
+  const schemasUri = vscode.Uri.joinPath(getWorkspaceRootForMap(mapUri), schemasFolderName);
+  const plan = planSchemaImport(sourceUri.fsPath);
+  const toUri = (relativePath: string): vscode.Uri => vscode.Uri.joinPath(schemasUri, ...relativePath.split('/'));
+
+  let rootRelativePath = plan.rootRelativePath;
+  const writes: { uri: vscode.Uri; data: Buffer; isNew: boolean }[] = [];
+  const conflicts: { uri: vscode.Uri; data: Buffer; relativePath: string }[] = [];
+  for (const file of plan.schemaFiles) {
+    const uri = toUri(file.relativePath);
+    const existing = await tryReadFile(uri);
+    if (!existing) {
+      writes.push({ uri, data: file.data, isNew: true });
+    } else if (Buffer.compare(existing, file.data) !== 0) {
+      if (file.relativePath === plan.rootRelativePath) {
+        // Keep the existing schema and add the new one alongside it under a unique name.
+        const folderUri = vscode.Uri.joinPath(uri, '..');
+        const extension = path.posix.extname(file.relativePath) || '.xsd';
+        const fileName = getDuplicateSafeName(
+          path.posix.basename(file.relativePath, extension),
+          extension,
+          await readDirectoryNames(folderUri)
+        );
+        const folder = path.posix.dirname(file.relativePath);
+        rootRelativePath = folder === '.' ? fileName : `${folder}/${fileName}`;
+        writes.push({ uri: vscode.Uri.joinPath(folderUri, fileName), data: file.data, isNew: true });
+      } else {
+        conflicts.push({ uri, data: file.data, relativePath: file.relativePath });
+      }
+    }
+  }
+
+  if (conflicts.length > 0) {
+    const overwrite = 'Overwrite';
+    const keep = 'Keep Existing';
+    const choice = await vscode.window.showWarningMessage(
+      `${conflicts.length} referenced schema file(s) already exist in ${schemasFolderName} with different content: ${conflicts
+        .map((conflict) => conflict.relativePath)
+        .join(', ')}`,
+      { modal: true },
+      overwrite,
+      keep
+    );
+    if (!choice) {
+      return undefined;
+    }
+    if (choice === overwrite) {
+      writes.push(...conflicts.map((conflict) => ({ uri: conflict.uri, data: conflict.data, isNew: false })));
+    }
+  }
+
+  const createdUris: vscode.Uri[] = [];
+  for (const write of writes) {
+    await vscode.workspace.fs.createDirectory(vscode.Uri.joinPath(write.uri, '..'));
+    await vscode.workspace.fs.writeFile(write.uri, write.data);
+    if (write.isNew) {
+      createdUris.push(write.uri);
+    }
+  }
+  return { relativePath: `${schemasFolderName}/${rootRelativePath}`, createdUris, warnings: plan.warnings };
 }
 
 export async function getXsltOutputUri(mapUri: vscode.Uri, suffix = ''): Promise<vscode.Uri> {

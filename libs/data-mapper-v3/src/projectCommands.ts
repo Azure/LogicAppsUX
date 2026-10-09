@@ -1,3 +1,4 @@
+import { IMPORT_MAP_BROWSE_DIRECTORY_KEY, getSelectedFileDirectory } from './browseLocation';
 import { planMapImport } from './schema/mapImportPlanner';
 import type { MapImportPlan } from './schema/mapImportPlanner';
 import {
@@ -173,8 +174,10 @@ async function pathExists(uri: vscode.Uri): Promise<boolean> {
 }
 
 // Imports a .btm from outside the project: copies the map and the schemas it references (with their imports) into the project.
-export async function importExistingMap(value: CommandTarget, onChanged: () => void): Promise<void> {
+export async function importExistingMap(value: CommandTarget, onChanged: () => void, context: vscode.ExtensionContext): Promise<void> {
+  const rememberedDirectory = context.globalState.get<string>(IMPORT_MAP_BROWSE_DIRECTORY_KEY);
   const selected = await vscode.window.showOpenDialog({
+    defaultUri: rememberedDirectory ? vscode.Uri.file(rememberedDirectory) : undefined,
     canSelectFiles: true,
     canSelectFolders: false,
     canSelectMany: false,
@@ -185,6 +188,7 @@ export async function importExistingMap(value: CommandTarget, onChanged: () => v
   if (!selected?.[0]) {
     return;
   }
+  await context.globalState.update(IMPORT_MAP_BROWSE_DIRECTORY_KEY, getSelectedFileDirectory(selected[0].fsPath));
 
   let plan: MapImportPlan;
   try {

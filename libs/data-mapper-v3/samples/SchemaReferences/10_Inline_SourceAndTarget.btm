@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Both trees embed their schema. -->
+<mapsource Name="10 Inline source and target schemas" Version="2" OmitXmlDeclaration="Yes"
+           PreserveSequenceOrder="Yes" TreatElementsAsRecords="Yes">
+  <SrcTree>
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+               targetNamespace="urn:samples:inline-source"
+               xmlns="urn:samples:inline-source"
+               elementFormDefault="qualified">
+      <xs:element name="Order">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="OrderId" type="xs:string"/>
+            <xs:element name="CustomerName" type="xs:string"/>
+            <xs:element name="ShipTo">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="Street" type="xs:string"/>
+                  <xs:element name="City" type="xs:string"/>
+                  <xs:element name="PostalCode" type="xs:string"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="Total" type="xs:decimal"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+  </SrcTree>
+  <TrgTree>
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+               targetNamespace="urn:samples:inline-target"
+               xmlns="urn:samples:inline-target"
+               elementFormDefault="qualified">
+      <xs:element name="Invoice">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="InvoiceId" type="xs:string"/>
+            <xs:element name="Customer" type="xs:string"/>
+            <xs:element name="BillTo">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="Street" type="xs:string"/>
+                  <xs:element name="City" type="xs:string"/>
+                  <xs:element name="PostalCode" type="xs:string"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="Amount" type="xs:decimal"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+  </TrgTree>
+  <Pages>
+    <Page Name="Page 1">
+      <Links>
+        <Link LinkID="link1" SourceID="/Order/OrderId" SourcePath="/Order/OrderId" TargetID="/Invoice/InvoiceId" TargetPath="/Invoice/InvoiceId" SourceType="schemaNode" TargetType="schemaNode"/>
+        <Link LinkID="link2" SourceID="/Order/CustomerName" SourcePath="/Order/CustomerName" TargetID="/Invoice/Customer" TargetPath="/Invoice/Customer" SourceType="schemaNode" TargetType="schemaNode"/>
+        <Link LinkID="link3" SourceID="/Order/ShipTo/Street" SourcePath="/Order/ShipTo/Street" TargetID="/Invoice/BillTo/Street" TargetPath="/Invoice/BillTo/Street" SourceType="schemaNode" TargetType="schemaNode"/>
+        <Link LinkID="link4" SourceID="/Order/ShipTo/City" SourcePath="/Order/ShipTo/City" TargetID="/Invoice/BillTo/City" TargetPath="/Invoice/BillTo/City" SourceType="schemaNode" TargetType="schemaNode"/>
+        <Link LinkID="link5" SourceID="/Order/Total" SourcePath="/Order/Total" TargetID="/Invoice/Amount" TargetPath="/Invoice/Amount" SourceType="schemaNode" TargetType="schemaNode"/>
+      </Links>
+      <Functoids/>
+    </Page>
+  </Pages>
+</mapsource>

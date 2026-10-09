@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="urn:samples:redefine"
+           xmlns="urn:samples:redefine"
+           elementFormDefault="qualified">
+  <xs:redefine schemaLocation=".\Redefine_Base.xsd">
+    <xs:complexType name="AddressType">
+      <xs:complexContent>
+        <xs:extension base="AddressType">
+          <xs:sequence>
+            <xs:element name="PostalCode" type="xs:string"/>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:redefine>
+  <xs:element name="Order">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="OrderId" type="xs:string"/>
+        <xs:element name="CustomerName" type="xs:string"/>
+        <xs:element name="ShipTo" type="AddressType"/>
+        <xs:element name="Total" type="xs:decimal"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

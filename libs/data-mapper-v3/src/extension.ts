@@ -6,8 +6,9 @@ import * as vscode from 'vscode';
 import { MapEditorProvider } from './mapEditorProvider';
 import { MapsTreeProvider } from './mapsTreeProvider';
 import { disposeDataMapperLogger, getDataMapperLogger } from './logger';
+import { SCHEMA_BROWSE_DIRECTORY_KEY, getSelectedFileDirectory } from './browseLocation';
 import { addDataMap, addMapperProject, importExistingMap, openExistingMapper } from './projectCommands';
-import { copySchemaToWorkspace, getWorkspaceRoot, schemasFolderName } from './workspaceStructure';
+import { copySchemaWithDependencies, getWorkspaceRoot, schemasFolderName } from './workspaceStructure';
 
 function resourceUri(value: vscode.Uri | { resourceUri?: vscode.Uri } | undefined): vscode.Uri | undefined {
   return value instanceof vscode.Uri ? value : value?.resourceUri;
@@ -38,7 +39,7 @@ export function activate(context: vscode.ExtensionContext) {
     ),
 
     vscode.commands.registerCommand('biztalkDataMapper.importExistingMap', (value?: vscode.Uri | { resourceUri?: vscode.Uri }) =>
-      importExistingMap(value, refreshMaps)
+      importExistingMap(value, refreshMaps, context)
     ),
 
     vscode.commands.registerCommand('biztalkDataMapper.addSchemaFile', async (value?: vscode.Uri | { resourceUri?: vscode.Uri }) => {
@@ -47,7 +48,9 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.window.showWarningMessage('Open a data map workspace before adding a schema.');
         return;
       }
+      const rememberedDirectory = context.workspaceState.get<string>(SCHEMA_BROWSE_DIRECTORY_KEY);
       const selectedFiles = await vscode.window.showOpenDialog({
+        defaultUri: rememberedDirectory ? vscode.Uri.file(rememberedDirectory) : undefined,
         canSelectFiles: true,
         canSelectFolders: false,
         canSelectMany: true,
@@ -58,12 +61,28 @@ export function activate(context: vscode.ExtensionContext) {
       if (!selectedFiles?.length) {
         return;
       }
+      await context.workspaceState.update(SCHEMA_BROWSE_DIRECTORY_KEY, getSelectedFileDirectory(selectedFiles[0].fsPath));
       const workspaceRoot = getWorkspaceRoot(selectedUri);
       const mapUri = vscode.Uri.joinPath(workspaceRoot, 'map.btm');
+      let added = 0;
+      const warnings: string[] = [];
       for (const selectedFile of selectedFiles) {
-        await copySchemaToWorkspace(selectedFile, mapUri);
+        try {
+          const copied = await copySchemaWithDependencies(selectedFile, mapUri);
+          if (copied) {
+            added += copied.createdUris.length;
+            warnings.push(...copied.warnings);
+          }
+        } catch (error) {
+          warnings.push(`Could not add "${selectedFile.fsPath}": ${error instanceof Error ? error.message : String(error)}`);
+        }
       }
-      vscode.window.showInformationMessage(`${selectedFiles.length} schema file(s) added to ${schemasFolderName}.`);
+      const summary = `${added} schema file(s) added to ${schemasFolderName}, including referenced schemas.`;
+      if (warnings.length > 0) {
+        vscode.window.showWarningMessage(`${summary} ${warnings.join(' ')}`);
+      } else {
+        vscode.window.showInformationMessage(summary);
+      }
     }),
 
     vscode.commands.registerCommand('biztalkDataMapper.openDataMap', async (value?: vscode.Uri | { resourceUri?: vscode.Uri }) => {

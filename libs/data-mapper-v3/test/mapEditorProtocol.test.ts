@@ -13,6 +13,7 @@ describe('Map Editor protocol', () => {
       'update',
       'compile',
       'loadSchema',
+      'selectSchemaRoot',
       'testMap',
       'generateInstance',
       'testMapWithInput',

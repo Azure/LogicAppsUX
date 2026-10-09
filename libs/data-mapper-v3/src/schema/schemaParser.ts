@@ -39,6 +39,7 @@ export class SchemaParser {
     if (!selectedRoot) {
       throw new Error(`Invalid XSD: root element '${rootName}' was not found`);
     }
+    const rootNames = rootElements.map((element) => element['@_name']).filter((name): name is string => typeof name === 'string');
     const rootElement = this.parseElement(selectedRoot, '/', schema, namespaces, importedSchemas, new Set());
     this.assignNodePaths(rootElement);
 
@@ -48,6 +49,7 @@ export class SchemaParser {
       namespaces: Object.fromEntries(namespaces),
       filePath,
       elementFormDefault,
+      ...(rootNames.length > 1 ? { availableRoots: rootNames } : {}),
     };
   }
 

@@ -357,6 +357,7 @@ export class MapperAppController {
         this.state.sourceSchema = message.data.sourceSchema;
         this.state.targetSchema = message.data.targetSchema;
         this.state.availableSchemas = message.data.availableSchemas;
+        this.state.schemaErrors = message.data.schemaErrors;
         this.state.functoids = message.data.functoids;
         this.renderView();
         setTimeout(() => this.redrawLinks(), 150);
@@ -372,6 +373,7 @@ export class MapperAppController {
         this.state.sourceSchema = message.data.sourceSchema;
         this.state.targetSchema = message.data.targetSchema;
         this.state.availableSchemas = message.data.availableSchemas;
+        this.state.schemaErrors = message.data.schemaErrors;
         this.lastSourceSchema = undefined;
         this.lastTargetSchema = undefined;
         this.renderView();
@@ -538,7 +540,8 @@ export class MapperAppController {
         () => this.redrawLinks(),
         this.state.availableSchemas,
         (path) => this.vscode.postMessage({ type: 'loadSchema', side: 'source', path, browse: path === undefined }),
-        this.getConnectedPaths('source')
+        this.getConnectedPaths('source'),
+        (rootName) => this.vscode.postMessage({ type: 'selectSchemaRoot', side: 'source', rootName })
       );
       this.sourceTree = tree;
       this.lastSourceSchema = this.state.sourceSchema;
@@ -550,7 +553,8 @@ export class MapperAppController {
         'source',
         this.state.availableSchemas,
         (path) => this.vscode.postMessage({ type: 'loadSchema', side: 'source', path, browse: path === undefined }),
-        !this.initialized
+        !this.initialized,
+        this.state.schemaErrors?.source
       );
       this.sourceTree = null;
       this.lastSourceSchema = undefined;
@@ -578,7 +582,8 @@ export class MapperAppController {
         () => this.redrawLinks(),
         this.state.availableSchemas,
         (path) => this.vscode.postMessage({ type: 'loadSchema', side: 'target', path, browse: path === undefined }),
-        this.getConnectedPaths('target')
+        this.getConnectedPaths('target'),
+        (rootName) => this.vscode.postMessage({ type: 'selectSchemaRoot', side: 'target', rootName })
       );
       this.targetTree = tree;
       this.lastTargetSchema = this.state.targetSchema;
@@ -590,7 +595,8 @@ export class MapperAppController {
         'target',
         this.state.availableSchemas,
         (path) => this.vscode.postMessage({ type: 'loadSchema', side: 'target', path, browse: path === undefined }),
-        !this.initialized
+        !this.initialized,
+        this.state.schemaErrors?.target
       );
       this.targetTree = null;
       this.lastTargetSchema = undefined;

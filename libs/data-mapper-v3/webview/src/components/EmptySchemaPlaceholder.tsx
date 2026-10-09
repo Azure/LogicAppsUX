@@ -1,7 +1,8 @@
-import { Dropdown, FluentProvider, makeStyles, Option, Spinner, tokens } from '@fluentui/react-components';
+import { Dropdown, FluentProvider, Link, makeStyles, Option, Spinner, tokens } from '@fluentui/react-components';
 // biome-ignore lint/style/useImportType: The classic JSX transform requires React at runtime.
 import React from 'react';
 import { createRoot, type Root } from 'react-dom/client';
+import type { SchemaLoadError } from '../../../src/protocol/mapEditorProtocol';
 import { getVsCodeFluentTheme } from '../fluentTheme';
 
 export type SchemaSide = 'source' | 'target';
@@ -17,7 +18,17 @@ const useStyles = makeStyles({
   content: { width: '100%', minWidth: 0, textAlign: 'center' },
   icon: { fontSize: '40px', marginBottom: '8px' },
   text: { marginBottom: '12px', color: 'var(--vscode-descriptionForeground)', fontSize: '12px' },
+  error: {
+    marginBottom: '12px',
+    color: 'var(--vscode-errorForeground)',
+    fontSize: '12px',
+    overflowWrap: 'anywhere',
+    textAlign: 'left',
+  },
+  errorLink: { display: 'block', marginTop: '6px', fontSize: '12px' },
   picker: { width: 'min(180px, 90%)', minWidth: 0, maxWidth: '90%' },
+  pickerButton: { minWidth: 0 },
+  pickerText: { display: 'block', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
   option: { fontSize: tokens.fontSizeBase200 },
 });
 
@@ -25,9 +36,12 @@ function EmptySchemaPlaceholderView({
   side,
   availableSchemas,
   loading,
+  error,
   onSelect,
-}: { side: SchemaSide; availableSchemas: string[]; loading: boolean } & EmptySchemaCallbacks): React.ReactElement {
+}: { side: SchemaSide; availableSchemas: string[]; loading: boolean; error?: SchemaLoadError } & EmptySchemaCallbacks): React.ReactElement {
   const styles = useStyles();
+  const [selectedSchema, setSelectedSchema] = React.useState<string>();
+  const pickerPlaceholder = `Choose ${side} schema`;
   if (loading) {
     return (
       <FluentProvider theme={getVsCodeFluentTheme()} style={{ display: 'contents' }}>
@@ -42,12 +56,30 @@ function EmptySchemaPlaceholderView({
       <div className={styles.root}>
         <div className={styles.content}>
           <div className={styles.icon}>📄</div>
-          <p className={styles.text}>No {side} schema</p>
+          {error ? (
+            <div className={styles.error} role="alert">
+              {error.message}
+              <Link as="button" className={styles.errorLink} onClick={() => onSelect(undefined)}>
+                Load your schema file
+              </Link>
+            </div>
+          ) : (
+            <p className={styles.text}>No {side} schema</p>
+          )}
           <Dropdown
             aria-label={`Choose ${side} schema`}
             className={styles.picker}
-            placeholder={`Choose ${side} schema`}
-            onOptionSelect={(_event, data) => onSelect(data.optionValue === addNewSchemaValue ? undefined : data.optionValue)}
+            button={{
+              className: styles.pickerButton,
+              title: selectedSchema,
+              children: <span className={styles.pickerText}>{selectedSchema ?? pickerPlaceholder}</span>,
+            }}
+            placeholder={pickerPlaceholder}
+            onOptionSelect={(_event, data) => {
+              const isAddNew = data.optionValue === addNewSchemaValue;
+              setSelectedSchema(isAddNew ? undefined : data.optionValue);
+              onSelect(isAddNew ? undefined : data.optionValue);
+            }}
           >
             {availableSchemas.map((schemaName) => (
               <Option key={schemaName} value={schemaName} className={styles.option}>
@@ -69,10 +101,18 @@ export class EmptySchemaPlaceholder extends HTMLElement {
   private side: SchemaSide = 'source';
   private availableSchemas: string[] = [];
   private loading = false;
+  private error: SchemaLoadError | undefined;
   private onSelect: (path?: string) => void = () => {};
 
-  public configure(side: SchemaSide, availableSchemas: string[], onSelect: (path?: string) => void, loading = false): void {
+  public configure(
+    side: SchemaSide,
+    availableSchemas: string[],
+    onSelect: (path?: string) => void,
+    loading = false,
+    error?: SchemaLoadError
+  ): void {
     this.side = side;
+    this.error = error;
     this.availableSchemas = availableSchemas;
     this.onSelect = onSelect;
     this.loading = loading;
@@ -98,6 +138,7 @@ export class EmptySchemaPlaceholder extends HTMLElement {
         side={this.side}
         availableSchemas={this.availableSchemas}
         loading={this.loading}
+        error={this.error}
         onSelect={this.onSelect}
       />
     );

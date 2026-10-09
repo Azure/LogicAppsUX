@@ -4,6 +4,13 @@ import type { SchemaTree } from '../model/schemaModel';
 
 export type SchemaSide = 'source' | 'target';
 
+export interface SchemaLoadError {
+  reference: string;
+  message: string;
+}
+
+export type SchemaLoadErrors = Partial<Record<SchemaSide, SchemaLoadError>>;
+
 export interface FunctoidSummary {
   id: number;
   name: string;
@@ -33,6 +40,7 @@ export interface MapperViewState {
   sourceSchema: SchemaTree | null;
   targetSchema: SchemaTree | null;
   availableSchemas: string[];
+  schemaErrors?: SchemaLoadErrors;
   functoids: FunctoidSummary[];
   selectedLink: string | null;
   selectedFunctoid: string | null;
@@ -63,6 +71,7 @@ export const WEBVIEW_TO_HOST_MESSAGE_TYPES = [
   'update',
   'compile',
   'loadSchema',
+  'selectSchemaRoot',
   'testMap',
   'generateInstance',
   'testMapWithInput',
@@ -95,6 +104,7 @@ export type WebviewToHostMessage =
   | { type: 'update'; data: MapDocument }
   | { type: 'compile'; data: MapDocument }
   | { type: 'loadSchema'; side: SchemaSide; path?: string; browse?: boolean }
+  | { type: 'selectSchemaRoot'; side: SchemaSide; rootName: string }
   | { type: 'testMap' }
   | { type: 'generateInstance'; side: SchemaSide }
   | { type: 'testMapWithInput'; data: { inputXml: string; map: MapDocument } }
@@ -114,6 +124,7 @@ export type HostToWebviewMessage =
         sourceSchema: SchemaTree | null;
         targetSchema: SchemaTree | null;
         availableSchemas: string[];
+        schemaErrors?: SchemaLoadErrors;
         functoids: FunctoidSummary[];
       };
     }
@@ -122,7 +133,13 @@ export type HostToWebviewMessage =
   | { type: 'documentChanged'; data: MapDocument }
   | {
       type: 'schemaStateChanged';
-      data: { map: MapDocument; sourceSchema: SchemaTree | null; targetSchema: SchemaTree | null; availableSchemas: string[] };
+      data: {
+        map: MapDocument;
+        sourceSchema: SchemaTree | null;
+        targetSchema: SchemaTree | null;
+        availableSchemas: string[];
+        schemaErrors?: SchemaLoadErrors;
+      };
     }
   | {
       type: 'schemaLoaded';
@@ -201,6 +218,8 @@ export function isWebviewToHostMessage(value: unknown): value is WebviewToHostMe
         (value.path === undefined || typeof value.path === 'string') &&
         (value.browse === undefined || typeof value.browse === 'boolean')
       );
+    case 'selectSchemaRoot':
+      return isSchemaSide(value.side) && typeof value.rootName === 'string' && value.rootName.length > 0;
     case 'generateInstance':
       return isSchemaSide(value.side);
     case 'testMapWithInput': {

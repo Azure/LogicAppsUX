@@ -13,6 +13,8 @@ export interface SchemaTree {
    * namespace-qualified. Defaults to 'unqualified' (the XSD default) when absent.
    */
   elementFormDefault?: 'qualified' | 'unqualified';
+  /** Names of all global root elements; set only when the schema declares more than one. */
+  availableRoots?: string[];
 }
 
 export interface SchemaNode {

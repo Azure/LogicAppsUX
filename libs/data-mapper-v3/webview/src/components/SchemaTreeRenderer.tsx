@@ -1,4 +1,17 @@
-import { Button, Dropdown, FluentProvider, makeStyles, Option, tokens } from '@fluentui/react-components';
+import {
+  Button,
+  Dropdown,
+  FluentProvider,
+  Link,
+  makeStyles,
+  Menu,
+  MenuItemRadio,
+  MenuList,
+  MenuPopover,
+  MenuTrigger,
+  Option,
+  tokens,
+} from '@fluentui/react-components';
 import { ChevronDoubleDown16Regular, ChevronDoubleUp16Regular, Tag16Regular, TextBulletListTree16Regular } from '@fluentui/react-icons';
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
@@ -49,6 +62,7 @@ export interface SchemaNodeView {
 
 interface SchemaView {
   filePath?: string;
+  availableRoots?: string[];
   rootElement?: SchemaNodeView;
 }
 
@@ -66,6 +80,7 @@ interface SchemaTreeViewProps {
   onExpansionChange(): void;
   availableSchemas: string[];
   onSchemaSelect(path?: string): void;
+  onRootSelect(rootName: string): void;
 }
 
 const addNewSchemaValue = '__add_new_schema__';
@@ -73,6 +88,17 @@ const addNewSchemaValue = '__add_new_schema__';
 const useStyles = makeStyles({
   option: { fontSize: tokens.fontSizeBase200 },
   picker: { width: '100%', minWidth: 0, maxWidth: '100%', boxSizing: 'border-box' },
+  rootRow: {
+    display: 'flex',
+    alignItems: 'baseline',
+    columnGap: '6px',
+    minWidth: 0,
+    padding: '0 10px 4px',
+    fontSize: tokens.fontSizeBase200,
+    color: 'var(--vscode-descriptionForeground)',
+  },
+  rootName: { minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
+  rootLink: { fontSize: tokens.fontSizeBase200, whiteSpace: 'nowrap' },
 });
 
 function collectExpandablePaths(node: SchemaNodeView | undefined, paths: Set<string>): void {
@@ -99,6 +125,7 @@ function SchemaTreeView({
   onExpansionChange,
   availableSchemas,
   onSchemaSelect,
+  onRootSelect,
 }: SchemaTreeViewProps): React.ReactElement {
   const styles = useStyles();
   const [expandedPaths, setExpandedPaths] = useState(() => new Set(initialExpanded));
@@ -287,6 +314,37 @@ function SchemaTreeView({
               </Option>
             </Dropdown>
           </div>
+          {schema.availableRoots && schema.availableRoots.length > 1 && (
+            <div className={styles.rootRow}>
+              <span className={styles.rootName} title={schema.rootElement?.name}>
+                Root: {schema.rootElement?.name}
+              </span>
+              <Menu
+                checkedValues={{ root: schema.rootElement ? [schema.rootElement.name] : [] }}
+                onCheckedValueChange={(_event, data) => {
+                  const selectedRoot = data.checkedItems[0];
+                  if (selectedRoot && selectedRoot !== schema.rootElement?.name) {
+                    onRootSelect(selectedRoot);
+                  }
+                }}
+              >
+                <MenuTrigger disableButtonEnhancement>
+                  <Link as="button" className={styles.rootLink} aria-label={`Change ${side} schema root`}>
+                    Change root
+                  </Link>
+                </MenuTrigger>
+                <MenuPopover>
+                  <MenuList>
+                    {schema.availableRoots.map((rootName) => (
+                      <MenuItemRadio key={rootName} name="root" value={rootName}>
+                        {rootName}
+                      </MenuItemRadio>
+                    ))}
+                  </MenuList>
+                </MenuPopover>
+              </Menu>
+            </div>
+          )}
         </div>
         <div className="schema-tree">{schema.rootElement && renderNode(schema.rootElement, 0)}</div>
       </div>
@@ -305,6 +363,7 @@ export class SchemaTreeRenderer extends HTMLElement {
   private onExpansionChange: () => void = () => {};
   private availableSchemas: string[] = [];
   private onSchemaSelect: (path?: string) => void = () => {};
+  private onRootSelect: (rootName: string) => void = () => {};
   private initialExpanded = new Set<string>();
   private connectedPaths = new Set<string>();
   private renderVersion = 0;
@@ -320,7 +379,8 @@ export class SchemaTreeRenderer extends HTMLElement {
     onExpansionChange: () => void = () => {},
     availableSchemas: string[] = [],
     onSchemaSelect: (path?: string) => void = () => {},
-    connectedPaths: Set<string> = new Set()
+    connectedPaths: Set<string> = new Set(),
+    onRootSelect: (rootName: string) => void = () => {}
   ): void {
     this.schema = schema;
     this.side = side;
@@ -331,6 +391,7 @@ export class SchemaTreeRenderer extends HTMLElement {
     this.onExpansionChange = onExpansionChange;
     this.availableSchemas = availableSchemas;
     this.onSchemaSelect = onSchemaSelect;
+    this.onRootSelect = onRootSelect;
     this.connectedPaths = new Set(connectedPaths);
     this.initialExpanded = initialExpanded ? new Set(initialExpanded) : new Set();
     if (schema.rootElement) {
@@ -431,6 +492,7 @@ export class SchemaTreeRenderer extends HTMLElement {
         onExpansionChange={this.onExpansionChange}
         availableSchemas={this.availableSchemas}
         onSchemaSelect={this.onSchemaSelect}
+        onRootSelect={this.onRootSelect}
       />
     );
   }

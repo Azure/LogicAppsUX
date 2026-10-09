@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:w="urn:samples:wrapper"
+           targetNamespace="urn:samples:import-transitive"
+           xmlns="urn:samples:import-transitive"
+           elementFormDefault="qualified">
+  <xs:import namespace="urn:samples:wrapper" schemaLocation=".\Shared\Wrapper.xsd"/>
+  <xs:element name="Order" type="w:OrderBodyType"/>
+</xs:schema>

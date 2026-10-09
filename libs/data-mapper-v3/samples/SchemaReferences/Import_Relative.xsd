@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:c="urn:samples:common"
+           targetNamespace="urn:samples:import-relative"
+           xmlns="urn:samples:import-relative"
+           elementFormDefault="qualified">
+  <xs:import namespace="urn:samples:common" schemaLocation=".\Common.xsd"/>
+  <xs:element name="Order">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="OrderId" type="xs:string"/>
+        <xs:element name="CustomerName" type="xs:string"/>
+        <xs:element name="ShipTo" type="c:AddressType"/>
+        <xs:element name="Total" type="xs:decimal"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

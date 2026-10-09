@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Same as 11 but each part import uses a .NET type name instead of a file path. -->
+<mapsource Name="12 Aggregate multi-part source (.NET name parts)" Version="2" OmitXmlDeclaration="Yes"
+           PreserveSequenceOrder="Yes" TreatElementsAsRecords="Yes">
+  <SrcTree>
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+               xmlns:ns0="urn:samples:import-relative"
+               xmlns:ns1="urn:samples:customer-part"
+               targetNamespace="http://schemas.microsoft.com/BizTalk/2003/aggschema"
+               elementFormDefault="qualified">
+      <xs:import namespace="urn:samples:import-relative" schemaLocation="Samples.Schemas.Import_Relative"/>
+      <xs:import namespace="urn:samples:customer-part" schemaLocation="Samples.Schemas.CustomerPart"/>
+      <xs:element name="Root">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="msgOrder">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="ns0:Order"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="msgCustomer">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="ns1:Customer"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+  </SrcTree>
+  <TrgTree>
+    <Reference Location=".\InvoiceTarget.xsd"/>
+  </TrgTree>
+  <Pages>
+    <Page Name="Page 1">
+      <Links>
+        <Link LinkID="link1" SourceID="/Root/msgOrder/Order/OrderId" SourcePath="/Root/msgOrder/Order/OrderId" TargetID="/Invoice/InvoiceId" TargetPath="/Invoice/InvoiceId" SourceType="schemaNode" TargetType="schemaNode"/>
+        <Link LinkID="link2" SourceID="/Root/msgCustomer/Customer/Name" SourcePath="/Root/msgCustomer/Customer/Name" TargetID="/Invoice/Customer" TargetPath="/Invoice/Customer" SourceType="schemaNode" TargetType="schemaNode"/>
+        <Link LinkID="link3" SourceID="/Root/msgOrder/Order/ShipTo/Street" SourcePath="/Root/msgOrder/Order/ShipTo/Street" TargetID="/Invoice/BillTo/Street" TargetPath="/Invoice/BillTo/Street" SourceType="schemaNode" TargetType="schemaNode"/>
+        <Link LinkID="link4" SourceID="/Root/msgOrder/Order/ShipTo/City" SourcePath="/Root/msgOrder/Order/ShipTo/City" TargetID="/Invoice/BillTo/City" TargetPath="/Invoice/BillTo/City" SourceType="schemaNode" TargetType="schemaNode"/>
+        <Link LinkID="link5" SourceID="/Root/msgOrder/Order/Total" SourcePath="/Root/msgOrder/Order/Total" TargetID="/Invoice/Amount" TargetPath="/Invoice/Amount" SourceType="schemaNode" TargetType="schemaNode"/>
+      </Links>
+      <Functoids/>
+    </Page>
+  </Pages>
+</mapsource>

@@ -4,7 +4,7 @@
  */
 
 import * as vscode from 'vscode';
-import { type HostToWebviewMessage, isWebviewToHostMessage } from './protocol/mapEditorProtocol';
+import { type HostToWebviewMessage, isWebviewToHostMessage, type SchemaLoadErrors, type SchemaSide } from './protocol/mapEditorProtocol';
 import * as path from 'path';
 import * as fs from 'fs';
 import { BtmSerializer } from './schema/btmSerializer';
@@ -19,6 +19,7 @@ import type { SchemaTree } from './model/schemaModel';
 import { resolveSchemaDependencies } from './schema/schemaDependencyResolver';
 import { resolveSchemaFilePath } from './schema/schemaFileResolver';
 import { replaceSchema } from './schema/schemaReplacement';
+import { describeSchemaLoadError, SchemaNotFoundError, type SchemaLoadResult } from './schema/schemaLoadError';
 import {
   applyMapPatches,
   createMapLayoutPrompt,
@@ -27,13 +28,13 @@ import {
   parseMapPromptResponse,
 } from './copilot/mapPrompt';
 import { errorCategory, getDataMapperLogger } from './logger';
-import { getSelectedFileDirectory, resolveBrowseDirectory } from './browseLocation';
-import { copySchemaToWorkspace, getXsltOutputUri, listWorkspaceSchemas, schemasFolderName } from './workspaceStructure';
+import { SCHEMA_BROWSE_DIRECTORY_KEY, getSelectedFileDirectory, resolveBrowseDirectory } from './browseLocation';
+import { copySchemaWithDependencies, getXsltOutputUri, listWorkspaceSchemas, schemasFolderName } from './workspaceStructure';
 
 export class MapEditorProvider implements vscode.CustomTextEditorProvider {
   public static readonly viewType = 'biztalkDataMapper.mapEditor';
   private static readonly LAST_BROWSE_DIRECTORY_KEY = 'dataMapperV3.lastBrowseDirectory';
-  private static readonly LAST_SCHEMA_BROWSE_DIRECTORY_KEY = 'dataMapperV3.lastSchemaBrowseDirectory';
+  private static readonly LAST_SCHEMA_BROWSE_DIRECTORY_KEY = SCHEMA_BROWSE_DIRECTORY_KEY;
   private static activeWebviewPanel: vscode.WebviewPanel | undefined;
   private btmSerializer: BtmSerializer;
   private schemaParser: SchemaParser;
@@ -118,104 +119,61 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
         inlineSchemaXml: reference.inlineSchemaXml || '',
       });
     this.logger.info('Loading source schema and dependencies.');
-    try {
-      if (mapDoc.sourceSchema.location) {
-        const schemaPath = this.resolveSchemaPath(document.uri, mapDoc.sourceSchema.location, mapDoc.sourceSchema.rootName);
-        const schemaContent = await this.readFile(schemaPath);
-        if (schemaContent) {
-          const importedSchemas = await this.resolveSchemaDependencies(schemaContent, schemaPath);
-          sourceSchemaTree = this.schemaParser.parseWithImports(schemaContent, schemaPath, importedSchemas, mapDoc.sourceSchema.rootName);
-        } else {
-          this.logger.warn('Source schema file was not found.');
-          vscode.window.showWarningMessage(
-            `Source schema not found: ${mapDoc.sourceSchema.location}. Use "Load Source Schema" to select it manually.`
-          );
-        }
-      } else if (mapDoc.sourceSchema.inlineSchemaXml) {
-        // Inline/aggregate schema embedded directly in the BTM file
-        const importedSchemas = await this.resolveSchemaDependencies(mapDoc.sourceSchema.inlineSchemaXml, document.uri.fsPath);
-        sourceSchemaTree = this.schemaParser.parseWithImports(
-          mapDoc.sourceSchema.inlineSchemaXml,
-          document.uri.fsPath,
-          importedSchemas,
-          mapDoc.sourceSchema.rootName
-        );
-      }
-    } catch (e: any) {
-      this.logger.error(`Source schema loading failed (${errorCategory(e)}); details shown in the editor.`);
-      vscode.window.showWarningMessage(`Could not load source schema "${mapDoc.sourceSchema.location || '(inline)'}": ${e.message}`);
-    }
+    const sourceLoad = await this.tryLoadSchema('source', mapDoc.sourceSchema, document.uri);
+    sourceSchemaTree = sourceLoad.tree;
 
     this.logger.info(`Source schema ${sourceSchemaTree ? 'loaded' : 'unavailable'}. Loading target schema and dependencies.`);
-    try {
-      if (sourceSchemaTree && schemaKey(mapDoc.sourceSchema) === schemaKey(mapDoc.targetSchema)) {
-        targetSchemaTree = sourceSchemaTree;
-        this.logger.info('Target schema matches source schema; reusing the parsed schema tree.');
-      } else if (mapDoc.targetSchema.location) {
-        const schemaPath = this.resolveSchemaPath(document.uri, mapDoc.targetSchema.location, mapDoc.targetSchema.rootName);
-        const schemaContent = await this.readFile(schemaPath);
-        if (schemaContent) {
-          const importedSchemas = await this.resolveSchemaDependencies(schemaContent, schemaPath);
-          targetSchemaTree = this.schemaParser.parseWithImports(schemaContent, schemaPath, importedSchemas, mapDoc.targetSchema.rootName);
-        } else {
-          this.logger.warn('Target schema file was not found.');
-          vscode.window.showWarningMessage(
-            `Target schema not found: ${mapDoc.targetSchema.location}. Use "Load Target Schema" to select it manually.`
-          );
-        }
-      } else if (mapDoc.targetSchema.inlineSchemaXml) {
-        // Inline/aggregate schema embedded directly in the BTM file
-        const importedSchemas = await this.resolveSchemaDependencies(mapDoc.targetSchema.inlineSchemaXml, document.uri.fsPath);
-        targetSchemaTree = this.schemaParser.parseWithImports(
-          mapDoc.targetSchema.inlineSchemaXml,
-          document.uri.fsPath,
-          importedSchemas,
-          mapDoc.targetSchema.rootName
-        );
-      }
-    } catch (e: any) {
-      this.logger.error(`Target schema loading failed (${errorCategory(e)}); details shown in the editor.`);
-      vscode.window.showWarningMessage(`Could not load target schema "${mapDoc.targetSchema.location}": ${e.message}`);
+    let targetLoad: SchemaLoadResult;
+    if (sourceSchemaTree && schemaKey(mapDoc.sourceSchema) === schemaKey(mapDoc.targetSchema)) {
+      targetLoad = { tree: sourceSchemaTree };
+      this.logger.info('Target schema matches source schema; reusing the parsed schema tree.');
+    } else {
+      targetLoad = await this.tryLoadSchema('target', mapDoc.targetSchema, document.uri);
     }
+    targetSchemaTree = targetLoad.tree;
 
     this.logger.info(`Target schema ${targetSchemaTree ? 'loaded' : 'unavailable'}.`);
     let disposed = false;
     let schemaRequest = 0;
     const schemaCache = new Map<string, SchemaTree | undefined>();
-    schemaCache.set(schemaKey(mapDoc.sourceSchema), sourceSchemaTree);
-    schemaCache.set(schemaKey(mapDoc.targetSchema), targetSchemaTree);
+    if (sourceSchemaTree || !sourceLoad.error) {
+      schemaCache.set(schemaKey(mapDoc.sourceSchema), sourceSchemaTree);
+    }
+    if (targetSchemaTree || !targetLoad.error) {
+      schemaCache.set(schemaKey(mapDoc.targetSchema), targetSchemaTree);
+    }
+    let schemaErrors = this.describeSchemaErrors(mapDoc, sourceLoad, targetLoad);
     const synchronizeSchemas = async (updatedMap: MapDocument, version: number): Promise<void> => {
-      const load = async (reference: MapDocument['sourceSchema']) => {
+      const load = async (side: SchemaSide, reference: MapDocument['sourceSchema']): Promise<SchemaLoadResult> => {
         const key = schemaKey(reference);
         if (schemaCache.has(key)) {
-          return schemaCache.get(key);
+          return { tree: schemaCache.get(key) };
         }
-        try {
-          const tree = await this.loadSchemaTree(reference, document.uri);
-          schemaCache.set(key, tree);
-          return tree;
-        } catch (error) {
-          this.logger.error(`Schema synchronization failed (${errorCategory(error)}).`);
-          if (!disposed && document.version === version) {
-            vscode.window.showWarningMessage(`Could not load schema: ${error instanceof Error ? error.message : String(error)}`);
-          }
-          return undefined;
+        const result = await this.tryLoadSchema(side, reference, document.uri);
+        if (!result.error) {
+          schemaCache.set(key, result.tree);
         }
+        return result;
       };
-      const [source, target] = await Promise.all([load(updatedMap.sourceSchema), load(updatedMap.targetSchema)]);
+      const [sourceResult, targetResult] = await Promise.all([
+        load('source', updatedMap.sourceSchema),
+        load('target', updatedMap.targetSchema),
+      ]);
       if (disposed || document.version !== version) {
         return;
       }
       mapDoc = updatedMap;
-      sourceSchemaTree = source;
-      targetSchemaTree = target;
+      sourceSchemaTree = sourceResult.tree;
+      targetSchemaTree = targetResult.tree;
+      schemaErrors = this.describeSchemaErrors(updatedMap, sourceResult, targetResult);
       await webviewPanel.webview.postMessage({
         type: 'schemaStateChanged',
         data: {
           map: updatedMap,
-          sourceSchema: source ?? null,
-          targetSchema: target ?? null,
+          sourceSchema: sourceSchemaTree ?? null,
+          targetSchema: targetSchemaTree ?? null,
           availableSchemas: await listWorkspaceSchemas(document.uri),
+          schemaErrors,
         },
       });
     };
@@ -230,13 +188,78 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
           sourceSchema: sourceSchemaTree ?? null,
           targetSchema: targetSchemaTree ?? null,
           availableSchemas: await listWorkspaceSchemas(document.uri),
+          schemaErrors,
         },
       });
     };
     const schemasDirectory = vscode.Uri.joinPath(document.uri, '..', schemasFolderName);
-    const schemaWatcher = vscode.workspace.createFileSystemWatcher(new vscode.RelativePattern(schemasDirectory.fsPath, '*.[xX][sS][dD]'));
+    const schemaWatcher = vscode.workspace.createFileSystemWatcher(
+      new vscode.RelativePattern(schemasDirectory.fsPath, '**/*.[xX][sS][dD]')
+    );
     schemaWatcher.onDidCreate(refreshAvailableSchemas);
     schemaWatcher.onDidDelete(refreshAvailableSchemas);
+
+    const replaceSchemaReference = async (
+      operation: string,
+      side: SchemaSide,
+      currentMap: MapDocument,
+      reference: MapDocument['sourceSchema'],
+      tree: SchemaTree,
+      isCurrent: () => boolean,
+      confirmation: {
+        button: string;
+        message: (removedLinkCount: number, existingSchema: MapDocument['sourceSchema']) => string | undefined;
+      },
+      onApplied: () => void = () => {}
+    ): Promise<void> => {
+      const replacement = replaceSchema(currentMap, side, tree, {
+        ...reference,
+        rootName: tree.rootElement.name,
+        namespace: tree.targetNamespace,
+      });
+      const confirmationMessage = confirmation.message(replacement.removedLinkCount, currentMap[`${side}Schema`]);
+      if (confirmationMessage) {
+        const choice = await vscode.window.showWarningMessage(confirmationMessage, { modal: true }, confirmation.button);
+        if (choice !== confirmation.button || !isCurrent()) {
+          this.logger.info(`${operation}: schema change cancelled or superseded.`);
+          return;
+        }
+      }
+      if (!isCurrent()) {
+        return;
+      }
+      const edit = new vscode.WorkspaceEdit();
+      const replacementXml = this.btmSerializer.serialize(replacement.map);
+      edit.replace(document.uri, new vscode.Range(0, 0, document.lineCount, 0), replacementXml);
+      const key = schemaKey(replacement.map[`${side}Schema`]);
+      const hadCachedSchema = schemaCache.has(key);
+      const previousCachedSchema = schemaCache.get(key);
+      schemaCache.set(key, tree);
+      let applied = false;
+      try {
+        applied = await vscode.workspace.applyEdit(edit);
+        if (applied) {
+          onApplied();
+        }
+      } finally {
+        if (!applied) {
+          this.logger.error(`${operation}: schema replacement edit rejected.`);
+          if (hadCachedSchema) {
+            schemaCache.set(key, previousCachedSchema);
+          } else {
+            schemaCache.delete(key);
+          }
+        }
+      }
+      if (!applied) {
+        vscode.window.showErrorMessage('Could not replace schema. The map was not changed.');
+        return;
+      }
+      if (!disposed && document.getText() === replacementXml && (side === 'source' ? sourceSchemaTree : targetSchemaTree) !== tree) {
+        await synchronizeSchemas(this.btmSerializer.deserialize(replacementXml), document.version);
+      }
+      this.logger.info(`${operation}: schema updated; removed ${replacement.removedLinkCount} unmatched links.`);
+    };
 
     // Prepare initial data
     const initData: HostToWebviewMessage = {
@@ -246,6 +269,7 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
         sourceSchema: sourceSchemaTree ?? null,
         targetSchema: targetSchemaTree ?? null,
         availableSchemas: await listWorkspaceSchemas(document.uri),
+        schemaErrors,
         functoids: this.functoidRegistry.getAllFunctoids().map((f) => ({
           id: f.id,
           name: f.name,
@@ -403,7 +427,7 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
             const request = ++schemaRequest;
             const version = document.version;
             const isCurrent = () => !disposed && request === schemaRequest && document.version === version;
-            let copiedSchemaUri: vscode.Uri | undefined;
+            let copiedSchemaUris: vscode.Uri[] = [];
             let retainCopiedSchema = false;
             try {
               let relativePath: string;
@@ -426,17 +450,42 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
                   break;
                 }
                 await this.rememberSchemaBrowseSelection(selectedSchemas[0]);
-                const copiedSchema = await copySchemaToWorkspace(selectedSchemas[0], document.uri);
-                copiedSchemaUri = copiedSchema.uri;
+                const copiedSchema = await copySchemaWithDependencies(selectedSchemas[0], document.uri);
+                if (!copiedSchema) {
+                  this.logger.info(`${operation}: schema copy cancelled.`);
+                  break;
+                }
+                copiedSchemaUris = copiedSchema.createdUris;
                 relativePath = copiedSchema.relativePath;
+                if (copiedSchema.warnings.length > 0) {
+                  vscode.window.showWarningMessage(copiedSchema.warnings.join(' '));
+                }
               }
               if (!isCurrent()) {
                 break;
               }
-              const reference = { location: relativePath };
-              const tree = await this.loadSchemaTree(reference, document.uri);
+              let reference: MapDocument['sourceSchema'] = { location: relativePath };
+              let tree = await this.loadSchemaTree(reference, document.uri);
               if (!isCurrent() || !tree) {
                 break;
+              }
+              if (tree.availableRoots && tree.availableRoots.length > 1) {
+                const pickedRoot = await vscode.window.showQuickPick(tree.availableRoots, {
+                  title: `Select the ${message.side} schema root`,
+                  placeHolder: `"${path.basename(relativePath)}" has multiple root elements. Select the root to map.`,
+                  ignoreFocusOut: true,
+                });
+                if (!pickedRoot || !isCurrent()) {
+                  this.logger.info(`${operation}: schema root selection cancelled or superseded.`);
+                  break;
+                }
+                if (pickedRoot !== tree.rootElement.name) {
+                  reference = { location: relativePath, rootName: pickedRoot };
+                  tree = await this.loadSchemaTree(reference, document.uri);
+                  if (!isCurrent() || !tree) {
+                    break;
+                  }
+                }
               }
               const currentMap = this.btmSerializer.deserialize(
                 document
@@ -444,75 +493,79 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
                   .replace(/^\uFEFF/, '')
                   .replace(/\0/g, '')
               );
-              const replacement = replaceSchema(currentMap, message.side, tree, {
-                ...reference,
-                rootName: tree.rootElement.name,
-                namespace: tree.targetNamespace,
-              });
-              const existingSchema = currentMap[`${message.side}Schema`];
-              if (existingSchema.location || existingSchema.inlineSchemaXml || replacement.removedLinkCount > 0) {
-                const linkImpact =
-                  replacement.removedLinkCount > 0
-                    ? `Replacing the ${message.side} schema will remove ${replacement.removedLinkCount} unmatched link(s) across all pages. Links whose paths exist in the new schema and all functoids will be preserved.`
-                    : 'All existing links and functoids will be preserved.';
-                const choice = await vscode.window.showWarningMessage(
-                  `Replace the ${message.side} schema with "${path.basename(reference.location)}"? ${linkImpact} This change affects every map page.`,
-                  { modal: true },
-                  'Replace Schema'
-                );
-                if (choice !== 'Replace Schema' || !isCurrent()) {
-                  this.logger.info(`${operation}: schema replacement cancelled or superseded.`);
-                  break;
+              await replaceSchemaReference(
+                operation,
+                message.side,
+                currentMap,
+                reference,
+                tree,
+                isCurrent,
+                {
+                  button: 'Replace Schema',
+                  message: (removedLinkCount, existingSchema) => {
+                    if (!existingSchema.location && !existingSchema.inlineSchemaXml && removedLinkCount === 0) {
+                      return undefined;
+                    }
+                    const linkImpact =
+                      removedLinkCount > 0
+                        ? `Replacing the ${message.side} schema will remove ${removedLinkCount} unmatched link(s) across all pages. Links whose paths exist in the new schema and all functoids will be preserved.`
+                        : 'All existing links and functoids will be preserved.';
+                    return `Replace the ${message.side} schema with "${path.basename(reference.location ?? '')}"? ${linkImpact} This change affects every map page.`;
+                  },
+                },
+                () => {
+                  retainCopiedSchema = true;
                 }
-              }
-              if (!isCurrent()) {
-                break;
-              }
-              const edit = new vscode.WorkspaceEdit();
-              const replacementXml = this.btmSerializer.serialize(replacement.map);
-              edit.replace(document.uri, new vscode.Range(0, 0, document.lineCount, 0), replacementXml);
-              const key = schemaKey(replacement.map[`${message.side}Schema`]);
-              const hadCachedSchema = schemaCache.has(key);
-              const previousCachedSchema = schemaCache.get(key);
-              schemaCache.set(key, tree);
-              let applied = false;
-              try {
-                applied = await vscode.workspace.applyEdit(edit);
-                retainCopiedSchema = applied;
-              } finally {
-                if (!applied) {
-                  this.logger.error(`${operation}: schema replacement edit rejected.`);
-                  if (hadCachedSchema) {
-                    schemaCache.set(key, previousCachedSchema);
-                  } else {
-                    schemaCache.delete(key);
-                  }
-                }
-              }
-              if (!applied) {
-                vscode.window.showErrorMessage('Could not replace schema. The map was not changed.');
-              } else if (
-                !disposed &&
-                document.getText() === replacementXml &&
-                (message.side === 'source' ? sourceSchemaTree : targetSchemaTree) !== tree
-              ) {
-                await synchronizeSchemas(this.btmSerializer.deserialize(replacementXml), document.version);
-              }
-              if (applied) {
-                this.logger.info(`${operation}: schema replaced; removed ${replacement.removedLinkCount} unmatched links.`);
-              }
+              );
             } catch (error) {
               this.logger.error(`${operation}: schema replacement failed (${errorCategory(error)}).`);
               if (isCurrent()) {
                 vscode.window.showErrorMessage(`Failed to replace schema: ${error instanceof Error ? error.message : String(error)}`);
               }
             } finally {
-              if (copiedSchemaUri && !retainCopiedSchema) {
-                try {
-                  await vscode.workspace.fs.delete(copiedSchemaUri);
-                } catch (error) {
-                  this.logger.warn(`${operation}: failed to remove unused schema copy (${errorCategory(error)}).`);
+              if (!retainCopiedSchema) {
+                for (const copiedSchemaUri of copiedSchemaUris) {
+                  try {
+                    await vscode.workspace.fs.delete(copiedSchemaUri);
+                  } catch (error) {
+                    this.logger.warn(`${operation}: failed to remove unused schema copy (${errorCategory(error)}).`);
+                  }
                 }
+              }
+            }
+            break;
+          }
+          case 'selectSchemaRoot': {
+            const request = ++schemaRequest;
+            const version = document.version;
+            const isCurrent = () => !disposed && request === schemaRequest && document.version === version;
+            try {
+              const currentMap = this.btmSerializer.deserialize(
+                document
+                  .getText()
+                  .replace(/^\uFEFF/, '')
+                  .replace(/\0/g, '')
+              );
+              const existingSchema = currentMap[`${message.side}Schema`];
+              if (existingSchema.rootName === message.rootName) {
+                break;
+              }
+              const reference = { ...existingSchema, rootName: message.rootName };
+              const tree = await this.loadSchemaTree(reference, document.uri);
+              if (!isCurrent() || !tree) {
+                break;
+              }
+              await replaceSchemaReference(operation, message.side, currentMap, reference, tree, isCurrent, {
+                button: 'Change Root',
+                message: (removedLinkCount) =>
+                  removedLinkCount > 0
+                    ? `Changing the ${message.side} schema root to "${message.rootName}" will remove ${removedLinkCount} unmatched link(s) across all pages. Links whose paths exist in the new root and all functoids will be preserved.`
+                    : undefined,
+              });
+            } catch (error) {
+              this.logger.error(`${operation}: schema root change failed (${errorCategory(error)}).`);
+              if (isCurrent()) {
+                vscode.window.showErrorMessage(`Failed to change schema root: ${error instanceof Error ? error.message : String(error)}`);
               }
             }
             break;
@@ -1357,7 +1410,7 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
       const schemaPath = this.resolveSchemaPath(documentUri, reference.location, reference.rootName);
       const schemaContent = await this.readFile(schemaPath);
       if (!schemaContent) {
-        throw new Error(`Schema file not found: ${reference.location}`);
+        throw new SchemaNotFoundError(reference.location);
       }
       const importedSchemas = await this.resolveSchemaDependencies(schemaContent, schemaPath);
       return this.schemaParser.parseWithImports(schemaContent, schemaPath, importedSchemas, reference.rootName);
@@ -1367,6 +1420,30 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
       return this.schemaParser.parseWithImports(reference.inlineSchemaXml, documentUri.fsPath, importedSchemas, reference.rootName);
     }
     return undefined;
+  }
+
+  private async tryLoadSchema(
+    side: SchemaSide,
+    reference: MapDocument['sourceSchema'],
+    documentUri: vscode.Uri
+  ): Promise<SchemaLoadResult> {
+    try {
+      return { tree: await this.loadSchemaTree(reference, documentUri) };
+    } catch (error) {
+      this.logger.error(`${side} schema loading failed (${errorCategory(error)}); details shown in the editor.`);
+      return { error };
+    }
+  }
+
+  private describeSchemaErrors(map: MapDocument, source: SchemaLoadResult, target: SchemaLoadResult): SchemaLoadErrors | undefined {
+    const errors: SchemaLoadErrors = {};
+    if (source.error) {
+      errors.source = describeSchemaLoadError('source', map.sourceSchema, source.error);
+    }
+    if (target.error) {
+      errors.target = describeSchemaLoadError('target', map.targetSchema, target.error);
+    }
+    return errors.source || errors.target ? errors : undefined;
   }
 
   private resolveSchemaPath(docUri: vscode.Uri, schemaLocation: string, rootName?: string): string {
