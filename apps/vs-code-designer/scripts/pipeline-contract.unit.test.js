@@ -12,6 +12,7 @@ const repoRoot = path.resolve(__dirname, '..', '..', '..');
 
 testAzureToolsWrapperContract();
 testE2eDependencyInstallRetryContract();
+testPnpmStoreCacheContract();
 testPackageLocalLintStagedRoutingContract();
 testRootNpmrcSourceGuardAllowsGeneratedRuntimeFile();
 testLocalAzureToolsWrapperContractIfAvailable();
@@ -429,12 +430,63 @@ function testE2eDependencyInstallRetryContract() {
   assert.strictEqual(install.timeoutInMinutes, undefined, 'The containing job remains the install retry time limit');
   assert.strictEqual(install.env?.NPM_CONFIG_USERCONFIG, '$(npmrcFile)');
   assert.strictEqual(install.env?.PNPM_CONFIG_FETCH_TIMEOUT, '300000');
+  assert.strictEqual(install.env?.PNPM_CONFIG_STORE_DIR, '$(pnpmStorePath)');
   const fetchTimeoutOwners = setup.steps.filter((step) => step.env?.PNPM_CONFIG_FETCH_TIMEOUT !== undefined);
   assert.deepStrictEqual(
     fetchTimeoutOwners.map((step) => step.displayName),
     ['Install dependencies with pnpm'],
     'The process-scoped fetch timeout must apply only to the dependency install'
   );
+}
+
+function testPnpmStoreCacheContract() {
+  const setup = parseYaml('.azure-pipelines/templates/vscode-e2e-cli-setup.yml');
+  const cacheSteps = setup.steps.filter((step) => step.task === 'Cache@2');
+  assert.strictEqual(cacheSteps.length, 1, 'E2E setup must restore one pnpm content-addressed store cache');
+  const cache = cacheSteps[0];
+  assert.strictEqual(cache.displayName, 'Restore pnpm content-addressed store');
+  assert.strictEqual(cache.inputs.path, '$(pnpmStorePath)');
+  assert.strictEqual(cache.inputs.cacheHitVar, 'pnpmStoreCacheHit');
+  assert.strictEqual(cache.continueOnError, true, 'Cache service failures must fall back to authenticated install');
+  for (const identity of [
+    '$(Agent.OS)',
+    '$(Agent.OSArchitecture)',
+    '$(pnpmNodeVersion)',
+    '$(pnpmVersion)',
+    '$(pnpmLockfileVersion)',
+    'pnpm-lock.yaml',
+  ]) {
+    assert.match(cache.inputs.key, new RegExp(identity.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  }
+  assert.match(cache.inputs.restoreKeys, /\$\(Agent\.OS\)/);
+  assert.match(cache.inputs.restoreKeys, /\$\(Agent\.OSArchitecture\)/);
+  assert.match(cache.inputs.restoreKeys, /\$\(pnpmNodeVersion\)/);
+  assert.match(cache.inputs.restoreKeys, /\$\(pnpmVersion\)/);
+  assert.match(cache.inputs.restoreKeys, /\$\(pnpmLockfileVersion\)/);
+  assert.doesNotMatch(cache.inputs.restoreKeys, /pnpm-lock\.yaml/);
+  assert.doesNotMatch(JSON.stringify(cache), /node_modules|\.npmrc|credentials|azure|profiles|runtime-dependencies|results/i);
+
+  const identityStep = setup.steps.find((step) => step.displayName === 'Resolve deterministic pnpm store cache identity');
+  assert.ok(identityStep?.pwsh);
+  assert.match(identityStep.pwsh, /Join-Path '\$\(Pipeline\.Workspace\)' '\.pnpm-store'/);
+  assert.match(identityStep.pwsh, /lockfileVersion/);
+  assert.match(identityStep.pwsh, /packageManager/);
+
+  const restoreEvidence = setup.steps.find((step) => step.displayName === 'Record pnpm store cache restore evidence');
+  assert.match(restoreEvidence.pwsh, /'exact'/);
+  assert.match(restoreEvidence.pwsh, /'inexact'/);
+  assert.match(restoreEvidence.pwsh, /'miss'/);
+
+  const integrity = setup.steps.find((step) => step.displayName === 'Validate cached pnpm store integrity');
+  assert.match(integrity.pwsh, /pnpm store status/);
+  assert.match(integrity.pwsh, /corrupt-store-cleared/);
+  assert.match(integrity.pwsh, /authenticated network restore/);
+
+  const finalEvidence = setup.steps.find((step) => step.displayName === 'Verify installed dependency store evidence');
+  assert.match(finalEvidence.pwsh, /pnpm store path/);
+  assert.match(finalEvidence.pwsh, /pnpm store status/);
+  assert.match(finalEvidence.pwsh, /pnpmStoreCacheState/);
+  assert.match(finalEvidence.pwsh, /pnpmStoreFallback/);
 }
 
 function testAzureToolsWrapperContract() {
