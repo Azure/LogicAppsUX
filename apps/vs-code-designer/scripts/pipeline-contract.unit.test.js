@@ -1055,6 +1055,8 @@ function testSupplementaryFamilyRoutingContract() {
   const gate = getConsumerDirectJob(consumer, 'verify_both_os_full_rollup');
   for (const [suiteId, jobSuffix] of [
     ['httpTimeoutComposeOriginal', 'http_timeout_compose'],
+    ['httpTimeoutRequestExecution', 'http_timeout_request_execution'],
+    ['httpTimeoutRequestValidation', 'http_timeout_request_validation'],
     ['statelessVariablesLifecycle', 'stateless_variables'],
     ['workspaceArtifactRegeneration', 'workspace_regeneration'],
     ['workspaceMultiRoot', 'workspace_multi_root'],
@@ -1067,7 +1069,14 @@ function testSupplementaryFamilyRoutingContract() {
       assert.ok(job, `Missing native ${os} lane for ${suiteId}`);
       assert.strictEqual(job.suiteId, suiteId);
       assert.strictEqual(job.cliArguments, SUITE_REGISTRY[suiteId].args.join(' '));
-      if (['httpTimeoutComposeOriginal', 'statelessVariablesLifecycle'].includes(suiteId)) {
+      if (
+        [
+          'httpTimeoutComposeOriginal',
+          'httpTimeoutRequestExecution',
+          'httpTimeoutRequestValidation',
+          'statelessVariablesLifecycle',
+        ].includes(suiteId)
+      ) {
         assert.strictEqual(job.requiresAzureAccessToken, true, 'Affirmative connector setup requires the approved Azure fixture context');
         assert.strictEqual(job.testARMServiceConnection, 'LogicAppsVSCode-E2E-SignIn');
         assert.strictEqual(job.azureResourceGroupName, 'LogicAppsVSCode-E2E-Fixtures');
@@ -1088,13 +1097,17 @@ function testSupplementaryFamilyRoutingContract() {
     LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true',
     LA_E2E_CLI_RUN_LINUX: 'true',
     LA_E2E_CLI_RUN_WINDOWS: 'true',
-    LA_E2E_CLI_LINUX_SUITES: 'httpTimeoutComposeOriginal,statelessVariablesLifecycle,workspaceArtifactRegeneration,workspaceMultiRoot',
-    LA_E2E_CLI_WINDOWS_SUITES: 'httpTimeoutComposeOriginal,statelessVariablesLifecycle,workspaceArtifactRegeneration,workspaceMultiRoot',
+    LA_E2E_CLI_LINUX_SUITES:
+      'httpTimeoutComposeOriginal,httpTimeoutRequestExecution,httpTimeoutRequestValidation,statelessVariablesLifecycle,workspaceArtifactRegeneration,workspaceMultiRoot',
+    LA_E2E_CLI_WINDOWS_SUITES:
+      'httpTimeoutComposeOriginal,httpTimeoutRequestExecution,httpTimeoutRequestValidation,statelessVariablesLifecycle,workspaceArtifactRegeneration,workspaceMultiRoot',
   });
   assert.strictEqual(selected.status, 0, selected.output);
   for (const os of ['linux', 'windows']) {
     for (const suiteId of [
       'httpTimeoutComposeOriginal',
+      'httpTimeoutRequestExecution',
+      'httpTimeoutRequestValidation',
       'statelessVariablesLifecycle',
       'workspaceArtifactRegeneration',
       'workspaceMultiRoot',
@@ -1147,7 +1160,7 @@ function assertConsumerCurrentRunArtifactContract(consumer) {
   assert.strictEqual(buildTemplate?.parameters?.artifactStagingPath, '$(Build.ArtifactStagingDirectory)/vscode-e2e');
 
   const templateInvocations = flattenAzureList(consumer.extends.parameters.stages[0].jobs).filter((entry) => entry.template);
-  assert.strictEqual(templateInvocations.length, 21);
+  assert.strictEqual(templateInvocations.length, 25);
   assert.deepStrictEqual(
     templateInvocations.map((invocation) => invocation.parameters.jobName).sort(),
     [
@@ -1158,6 +1171,8 @@ function assertConsumerCurrentRunArtifactContract(consumer) {
       'linux_msn_weather_lifecycle',
       'linux_unit_tests',
       'linux_http_timeout_compose',
+      'linux_http_timeout_request_execution',
+      'linux_http_timeout_request_validation',
       'linux_stateless_variables',
       'linux_workspace_regeneration',
       'linux_workspace_multi_root',
@@ -1169,6 +1184,8 @@ function assertConsumerCurrentRunArtifactContract(consumer) {
       'windows_msn_weather_lifecycle',
       'windows_unit_tests',
       'windows_http_timeout_compose',
+      'windows_http_timeout_request_execution',
+      'windows_http_timeout_request_validation',
       'windows_stateless_variables',
       'windows_workspace_regeneration',
       'windows_workspace_multi_root',
@@ -1190,7 +1207,7 @@ function assertConsumerCurrentRunArtifactContract(consumer) {
     assert.ok(invocation.parameters.selected.includes('validateSuiteSelection.'));
     assert.match(
       invocation.parameters.cliArguments,
-      /^--(label|msn-weather-lifecycle|http-timeout-compose-original|stateless-variables-lifecycle|workspace-artifact-regeneration|workspace-multi-root)/
+      /^--(label|msn-weather-lifecycle|http-timeout-compose-original|http-timeout-request-execution|http-timeout-request-validation|stateless-variables-lifecycle|workspace-artifact-regeneration|workspace-multi-root)/
     );
     assert.ok(invocation.parameters.shortName.length <= 2, 'suite shortName must keep Linux profile/socket paths short');
     assert.strictEqual(invocation.parameters.nodeVersion ?? '22.x', '22.x');
@@ -1226,6 +1243,10 @@ function assertConsumerCurrentRunArtifactContract(consumer) {
     'windows_msn_weather_lifecycle',
     'linux_http_timeout_compose',
     'windows_http_timeout_compose',
+    'linux_http_timeout_request_execution',
+    'windows_http_timeout_request_execution',
+    'linux_http_timeout_request_validation',
+    'windows_http_timeout_request_validation',
     'linux_stateless_variables',
     'windows_stateless_variables',
     'linux_workspace_regeneration',
@@ -1388,7 +1409,7 @@ function assertConsumerJobRoutingContract(consumer, runSuites) {
     assert.strictEqual(job.templateContext.outputs, undefined, `${job.job} must not publish artifacts from a validationJob`);
   }
 
-  assert.strictEqual(templateJobs.length, 21);
+  assert.strictEqual(templateJobs.length, 25);
   for (const invocation of templateJobs) {
     assert.strictEqual(invocation.template, '/.config/templates/vscode-e2e-cli-run-suite.yml@self');
   }

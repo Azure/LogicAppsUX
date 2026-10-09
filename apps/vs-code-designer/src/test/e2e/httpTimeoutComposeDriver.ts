@@ -59,6 +59,72 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
     await this.click('[role="toolbar"] button, button[aria-label="Save"]', ['Save']);
   }
 
+  async configureHttpRequestSettings(timeout: string): Promise<void> {
+    await this.clickNode(['HTTP']);
+    await this.click('[role="tab"]', ['Settings']);
+    const requestTimeoutVisible = await this.evaluate<boolean>(`!!document.querySelector('[aria-label="Request options - Timeout"]')`);
+    if (!requestTimeoutVisible) {
+      await this.click('button[aria-label^="Collapsed Networking"]');
+    }
+    await this.click('[aria-label="Request options - Timeout"]');
+    await this.replaceFocused(timeout);
+    await pollHttpTimeoutCompose(
+      () =>
+        this.evaluate<string | null>(`(() => {
+          const field = document.querySelector('[aria-label="Request options - Timeout"]');
+          return field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement ? field.value : null;
+        })()`),
+      (value) => value === timeout,
+      this.deadline,
+      `Request options timeout ${timeout}`
+    );
+    const asyncPatternEnabled = await this.evaluate<boolean>(`(() => {
+      const element = document.querySelector('[aria-label="Asynchronous pattern"]');
+      if (element instanceof HTMLInputElement) return element.checked;
+      return element?.getAttribute('aria-checked') === 'true';
+    })()`);
+    if (asyncPatternEnabled) {
+      await this.click('[aria-label="Asynchronous pattern"]');
+    }
+    await pollHttpTimeoutCompose(
+      () =>
+        this.evaluate<boolean>(`(() => {
+          const element = document.querySelector('[aria-label="Asynchronous pattern"]');
+          if (element instanceof HTMLInputElement) return element.checked;
+          return element?.getAttribute('aria-checked') === 'true';
+        })()`),
+      (value) => value === false,
+      this.deadline,
+      'disabled Asynchronous pattern'
+    );
+  }
+
+  async visibleValidationMessages(): Promise<string[]> {
+    return this.evaluate<string[]>(`(() => {
+      const normalize = (text) => (text || '').replace(/\\s+/g, ' ').trim();
+      const visible = (element) => {
+        if (!(element instanceof HTMLElement)) return false;
+        const rect = element.getBoundingClientRect();
+        const style = getComputedStyle(element);
+        return rect.width > 0 && rect.height > 0 && style.display !== 'none' &&
+          style.visibility !== 'hidden' && style.opacity !== '0';
+      };
+      return Array.from(document.querySelectorAll('[role="alert"], [aria-live], [class*="error"], [class*="Error"]'))
+        .filter(visible)
+        .flatMap((element) => (element.innerText || '').split(/\\r?\\n/).map(normalize))
+        .filter(Boolean);
+    })()`);
+  }
+
+  async saveEnabled(): Promise<boolean> {
+    return this.evaluate<boolean>(`(() => {
+      const normalize = (text) => (text || '').replace(/\\s+/g, ' ').trim();
+      const button = Array.from(document.querySelectorAll('[role="toolbar"] button, button[aria-label="Save"]'))
+        .find((element) => normalize(element.getAttribute('aria-label') || element.textContent) === 'Save');
+      return button instanceof HTMLButtonElement && !button.disabled && button.getAttribute('aria-disabled') !== 'true';
+    })()`);
+  }
+
   async readCode(): Promise<string> {
     // MonacoEditor is a compatibility export of CodeMirrorEditor. Read only
     // actual .cm-line/gutter DOM, including viewport overlap, never EditorState.

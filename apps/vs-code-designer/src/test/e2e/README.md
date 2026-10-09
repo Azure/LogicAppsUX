@@ -178,11 +178,34 @@ Native acceptance requires the source-bound compiled producer artifact and
 actual Windows and Linux isolated consumer runs with their generated fixture,
 raw CLI results, saved-definition snapshot and accepted screenshots.
 
-Boundary: this is only the original built-in Compose authoring/Code/save/
-unsupported-timeout clause. HTTP timeout execution against the original service,
-HTTP PT24H terminal validation, Portal-specific errors/invalid durations and
-Consumption-only rejection remain uncovered. No original endpoint is used,
-published or replaced with a generic delayed local service.
+The Compose family remains scoped only to the original built-in Compose
+authoring/Code/save/unsupported-timeout clause. Two separate supplementary
+families preserve that meaning while covering the Standard HTTP clauses:
+
+- `httpTimeoutRequestExecution` creates an isolated Standard Stateless workspace,
+  authors Request + HTTP through Designer Settings with `PT1S` and asynchronous
+  pattern disabled, verifies the serialized definition, invokes the exact local
+  callback, correlates the returned run ID, and requires that run's HTTP action
+  to fail with timeout-specific evidence.
+- `httpTimeoutRequestValidation` creates another isolated workspace, saves
+  `PT24H`, requires the current Functions validation text from the real
+  `Azure Logic Apps (Standard)` Output channel, then proves the current V2
+  `InvalidString` ISO-8601 validation leaves Save disabled and the persisted
+  `PT24H` definition unchanged.
+
+Both use a runner-owned loopback delayed endpoint so Linux and Windows exercise
+real timeout behavior deterministically without publishing the retired signed
+service URL. That replacement is supplementary semantic coverage, not evidence
+for the original credential-bearing endpoint identity. Portal-only validation
+wording and the Consumption-only rejection remain host residuals; VS Code cannot
+create the required Consumption workflow.
+
+Run the new families explicitly with
+`node scripts/run-e2e-cli.js --http-timeout-request-execution` and
+`node scripts/run-e2e-cli.js --http-timeout-request-validation`, or select their
+suite IDs in a diagnostic batch. Each has bootstrap, isolated wizard-create, and
+fresh reopen/run phases with the same retained-original process and owned-root
+cleanup gates as other strict supplementary families.
 
 ### Stateless variables family (isolated native host only)
 

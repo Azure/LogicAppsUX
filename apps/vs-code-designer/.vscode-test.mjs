@@ -33,6 +33,8 @@ const includeRuntimeDependencyBootstrap =
 const includeAzureAuthWarmup = process.env.LA_E2E_CLI_INCLUDE_AZURE_AUTH_WARMUP === '1' || process.argv.includes('azureAuthWarmup');
 const includeHttpTimeoutComposeOriginal =
   process.env.LA_E2E_CLI_INCLUDE_HTTP_TIMEOUT_COMPOSE_ORIGINAL === '1' || process.argv.includes('httpTimeoutComposeOriginal');
+const includeHttpTimeoutRequestLifecycle =
+  process.env.LA_E2E_CLI_INCLUDE_HTTP_TIMEOUT_REQUEST_LIFECYCLE === '1' || process.argv.includes('httpTimeoutRequestLifecycle');
 const includeStatelessVariables =
   process.env.LA_E2E_CLI_INCLUDE_STATELESS_VARIABLES === '1' || process.argv.includes('statelessVariablesLifecycle');
 const includeNativeEditorClick = process.env.LA_E2E_CLI_INCLUDE_NATIVE_EDITOR_CLICK === '1' || process.argv.includes('nativeEditorClick');
@@ -163,6 +165,15 @@ if (includeHttpTimeoutComposeOriginal) {
     ...baseConfig,
     files: ['out/test/e2e/httpTimeoutComposeOriginal.test.js'],
     mocha: { ui: 'tdd', timeout: 600000 },
+  });
+}
+
+if (includeHttpTimeoutRequestLifecycle) {
+  configs.push({
+    label: 'httpTimeoutRequestLifecycle',
+    ...baseConfig,
+    files: ['out/test/e2e/httpTimeoutRequestLifecycle.test.js'],
+    mocha: { ui: 'tdd', timeout: 1200000 },
   });
 }
 

@@ -81,6 +81,8 @@
     "test:e2e-cli:workspace-lifecycle": "pnpm run test:e2e-cli:build && node scripts/run-e2e-cli.js --workspace-lifecycle",
     "test:e2e-cli:http-timeout-compose-original": "pnpm run test:e2e-cli:build && node scripts/run-e2e-cli.js --http-timeout-compose-original",
     "test:e2e-cli:http-timeout-compose-original:unit": "node out/test/e2e/httpTimeoutComposeOriginal.unit.js",
+    "test:e2e-cli:http-timeout-request-execution": "pnpm run test:e2e-cli:build && node scripts/run-e2e-cli.js --http-timeout-request-execution",
+    "test:e2e-cli:http-timeout-request-validation": "pnpm run test:e2e-cli:build && node scripts/run-e2e-cli.js --http-timeout-request-validation",
     "test:e2e-cli:native-editor-click": "pnpm run build:e2e-cli:extension && pnpm run test:e2e-cli:compile && vscode-test --label nativeEditorClick",
     "test:e2e-cli:nuget-conversion-lifecycle": "pnpm run test:e2e-cli:build && node scripts/run-e2e-cli.js --nuget-conversion-lifecycle",
     "test:e2e-cli:msn-weather-lifecycle": "pnpm run test:e2e-cli:build && node scripts/run-e2e-cli.js --msn-weather-lifecycle",

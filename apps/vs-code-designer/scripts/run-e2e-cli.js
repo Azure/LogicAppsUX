@@ -95,6 +95,22 @@ if (require.main === module) {
 }
 
 function main() {
+  const httpTimeoutRequestSelector = [
+    ['--http-timeout-request-execution', 'httpTimeoutRequestExecution', 'execution'],
+    ['--http-timeout-request-validation', 'httpTimeoutRequestValidation', 'validation'],
+  ].find(([selector]) => process.argv.includes(selector));
+  if (httpTimeoutRequestSelector) {
+    const [selector, suiteId, scenario] = httpTimeoutRequestSelector;
+    if (process.argv.length !== 3) {
+      exitWithError(new Error(`${selector} is a focused create + reopen route; do not combine it with other flags.`));
+      return;
+    }
+    const run = requiresDirectFamilyWrapper(process.env) ? runDirectFamily(suiteId) : runHttpTimeoutRequestLifecycle({ suiteId, scenario });
+    Promise.resolve(run)
+      .then((code) => process.exit(code))
+      .catch(exitWithError);
+    return;
+  }
   if (process.argv.includes('--http-timeout-compose-original')) {
     if (process.argv.length !== 3) {
       exitWithError(new Error('--http-timeout-compose-original is a focused create + reopen route; do not combine it with other flags.'));
@@ -1365,6 +1381,120 @@ async function runHttpTimeoutComposeOriginal({
     }
   } else if (lifecycleError) {
     throw lifecycleError;
+  }
+  return 0;
+}
+
+async function runHttpTimeoutRequestLifecycle({
+  suiteId,
+  scenario,
+  run = runVscodeTest,
+  createParent = createOwnedWorkspaceParent,
+  cleanup = cleanupOwnedWorkspaceParent,
+  createRuntimeRoot = createIsolatedRuntimeDependenciesRoot,
+  cleanupRuntime = cleanupRuntimeDependenciesRoot,
+  credentialEnvironment = getSuiteScopedCredentialEnv,
+} = {}) {
+  if (!['httpTimeoutRequestExecution', 'httpTimeoutRequestValidation'].includes(suiteId)) {
+    throw new Error(`Unknown HTTP timeout request suite: ${suiteId}`);
+  }
+  if (!['execution', 'validation'].includes(scenario)) {
+    throw new Error(`Unknown HTTP timeout request scenario: ${scenario}`);
+  }
+  const phaseResultsPath = process.env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH;
+  if (!phaseResultsPath || (fs.existsSync(phaseResultsPath) && fs.readFileSync(phaseResultsPath, 'utf8').trim())) {
+    throw new Error(`${suiteId} requires a fresh isolated wrapper phase journal`);
+  }
+  const artifactDir = getLifecycleArtifactDir(
+    suiteId === 'httpTimeoutRequestExecution' ? 'http-timeout-request-execution' : 'http-timeout-request-validation'
+  );
+  fs.mkdirSync(artifactDir, { recursive: true });
+  const workspaceParent = createParent(suiteId);
+  const manifestPath = path.join(artifactDir, `manifest-${scenario}-${Date.now()}.json`);
+  const runtimeDependenciesRoot = process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT ?? createRuntimeRoot(suiteId);
+  const failures = [];
+  try {
+    const azureCredentialEnv = await credentialEnvironment(process.env, SUITE_REGISTRY[suiteId], 45 * 60 * 1000);
+    const commonEnv = {
+      ...azureCredentialEnv,
+      LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: runtimeDependenciesRoot,
+      LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH: phaseResultsPath,
+      LA_E2E_CLI_WORKSPACE_PARENT: workspaceParent,
+      LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MANIFEST: manifestPath,
+      LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_SCENARIO: scenario,
+      LA_E2E_CLI_INCLUDE_HTTP_TIMEOUT_REQUEST_LIFECYCLE: '1',
+      LA_E2E_CLI_DISABLE_UNOWNED_PORT_KILL: '1',
+    };
+    const bootstrapExit = await run(['--label', 'runtimeDependencyBootstrap'], {
+      extraEnv: {
+        ...commonEnv,
+        LA_E2E_CLI_INCLUDE_RUNTIME_DEPENDENCY_BOOTSTRAP: '1',
+        LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
+        LA_E2E_CLI_VALIDATE_DEPENDENCIES: '1',
+        LA_E2E_CLI_USER_DATA_SUFFIX: `${suiteId}-bootstrap-${Date.now()}`,
+      },
+    });
+    if (bootstrapExit !== 0) {
+      throw new Error(`${suiteId} runtime dependency bootstrap host failed`);
+    }
+    const createExit = await run(['--label', 'httpTimeoutRequestLifecycle'], {
+      extraEnv: {
+        ...commonEnv,
+        LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MODE: 'create',
+        LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
+        LA_E2E_CLI_USER_DATA_SUFFIX: `${suiteId}-create-${Date.now()}`,
+      },
+    });
+    if (createExit !== 0) {
+      throw new Error(`${suiteId} fixture host failed`);
+    }
+    const { selectHttpTimeoutRequestWorkspace } = require('../out/test/e2e/httpTimeoutRequestOracle');
+    const expectedLabel = scenario === 'execution' ? 'http-timeout-request-execution' : 'http-timeout-request-validation';
+    const entry = selectHttpTimeoutRequestWorkspace(JSON.parse(fs.readFileSync(manifestPath, 'utf8')), expectedLabel);
+    for (const requiredPath of [entry.workspaceFilePath, entry.workflowJsonPath]) {
+      if (!fs.existsSync(requiredPath)) {
+        throw new Error(`${suiteId} generated fixture is missing: ${requiredPath}`);
+      }
+    }
+    const runExit = await run(['--label', 'httpTimeoutRequestLifecycle'], {
+      extraEnv: {
+        ...commonEnv,
+        LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MODE: 'run',
+        LA_E2E_CLI_MINIMAL_ACTIVATION: '0',
+        LA_E2E_CLI_VALIDATE_DEPENDENCIES: '1',
+        LA_E2E_STRICT_DEPENDENCY_VALIDATION: '1',
+        LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '1',
+        LA_E2E_CLI_USER_DATA_SUFFIX: `${suiteId}-run-${Date.now()}`,
+        LA_E2E_CLI_STARTUP_RESOURCE: entry.workspaceFilePath,
+      },
+    });
+    if (runExit !== 0) {
+      throw new Error(`${suiteId} observation host failed`);
+    }
+  } catch (error) {
+    failures.push(error);
+  }
+  try {
+    await cleanup(workspaceParent, suiteId, true);
+  } catch (error) {
+    failures.push(error);
+  }
+  if (!process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT && process.env.LA_E2E_CLI_PRESERVE_WORKSPACES !== '1') {
+    try {
+      await cleanupRuntime(runtimeDependenciesRoot);
+    } catch (error) {
+      failures.push(error);
+    }
+  }
+  if (
+    failures.length > 0 ||
+    !getOwnedRootCleanupVerified([
+      workspaceParent,
+      ...(!process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT ? [runtimeDependenciesRoot] : []),
+    ]) ||
+    !getDirectSuiteComplete(suiteId, readJsonLinesIfExists(phaseResultsPath))
+  ) {
+    throw new AggregateError(failures, `${suiteId} lifecycle evidence is inadmissible`);
   }
   return 0;
 }
@@ -3832,6 +3962,7 @@ module.exports = {
     getFuncCoreToolsCandidatePaths,
     getFuncCoreToolsBinaryPath,
     getMochaPassingCount,
+    runHttpTimeoutRequestLifecycle,
     beginDirectMsnEvidence,
     finalizeDirectMsnEvidence,
     finalizeMsnLifecycleCleanup,
@@ -4360,7 +4491,9 @@ function getDirectSuiteComplete(label, phaseResults) {
     missingPhaseIds.length === 0 &&
     unexpectedPhaseIds.length === 0 &&
     getDuplicateValues(observedPhaseIds).length === 0 &&
-    (!['httpTimeoutComposeOriginal', 'statelessVariablesLifecycle'].includes(label) ||
+    (!['httpTimeoutComposeOriginal', 'httpTimeoutRequestExecution', 'httpTimeoutRequestValidation', 'statelessVariablesLifecycle'].includes(
+      label
+    ) ||
       expectedPhaseIds.every((phaseId, index) => observedPhaseIds[index] === phaseId)) &&
     phaseResults.every(
       (phase) =>
@@ -4858,6 +4991,11 @@ function clearOgfScenarios(phase) {
 }
 
 function getSuitePhaseId(label, env) {
+  if (label === 'httpTimeoutRequestLifecycle' && env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_SCENARIO) {
+    const suiteId =
+      env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_SCENARIO === 'execution' ? 'httpTimeoutRequestExecution' : 'httpTimeoutRequestValidation';
+    return `${suiteId}:${env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MODE}`;
+  }
   if (
     label === 'createWorkspaceFixturesManifest' &&
     env.LA_E2E_CLI_HTTP_TIMEOUT_COMPOSE_PHASE === 'create' &&

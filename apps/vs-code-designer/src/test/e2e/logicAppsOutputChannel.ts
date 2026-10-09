@@ -61,6 +61,7 @@ export async function selectLogicAppsStandardOutputThroughWorkbench(cdp: CdpEval
   if (!trigger.trigger) {
     return false;
   }
+
   if (trigger.trigger.kind === 'select') {
     const result = await selectExactOutputOption(cdp);
     assert.ok(
@@ -79,6 +80,41 @@ export async function selectLogicAppsStandardOutputThroughWorkbench(cdp: CdpEval
   assert.strictEqual(selected.selected, true, `${logicAppsStandardOutputLabel} was not selected in the Output panel`);
   remaining();
   return true;
+}
+
+export async function readLogicAppsStandardOutputSnapshot(cdp: CdpEvaluator, deadline: number): Promise<string> {
+  return cdp.evaluate<string>(
+    undefined,
+    `(() => {
+      const visible = (element) => {
+        if (!(element instanceof HTMLElement)) return false;
+        const rect = element.getBoundingClientRect();
+        const style = getComputedStyle(element);
+        return rect.width > 0 && rect.height > 0 && style.display !== 'none' && style.visibility !== 'hidden';
+      };
+      return Array.from(document.querySelectorAll('.output-view, .panel .view-lines, .panel .monaco-editor'))
+        .filter(visible)
+        .map((element) => element.textContent || '')
+        .join('\\n');
+    })()`,
+    { timeoutMs: Math.min(3000, deadline - Date.now()) }
+  );
+}
+
+export async function readLogicAppsStandardOutputText(
+  cdp: CdpEvaluator,
+  deadline: number,
+  expectedText: string,
+  minimumOccurrences = 1
+): Promise<string> {
+  while (Date.now() < deadline) {
+    const text = await readLogicAppsStandardOutputSnapshot(cdp, deadline);
+    if (text.split(expectedText).length - 1 >= minimumOccurrences) {
+      return text;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+  throw new Error(`Expected ${logicAppsStandardOutputLabel} output text was not observed: ${expectedText}`);
 }
 
 interface WorkbenchOutputState {

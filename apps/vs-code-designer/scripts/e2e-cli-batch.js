@@ -81,6 +81,28 @@ const SUITE_REGISTRY = Object.freeze({
       'httpTimeoutComposeOriginal:reopen',
     ]),
   }),
+  httpTimeoutRequestExecution: Object.freeze({
+    id: 'httpTimeoutRequestExecution',
+    args: Object.freeze(['--http-timeout-request-execution']),
+    platforms: Object.freeze(['linux', 'win32']),
+    requiresAzure: true,
+    expectedPhases: Object.freeze([
+      'runtimeDependencyBootstrap:bootstrap',
+      'httpTimeoutRequestExecution:create',
+      'httpTimeoutRequestExecution:run',
+    ]),
+  }),
+  httpTimeoutRequestValidation: Object.freeze({
+    id: 'httpTimeoutRequestValidation',
+    args: Object.freeze(['--http-timeout-request-validation']),
+    platforms: Object.freeze(['linux', 'win32']),
+    requiresAzure: true,
+    expectedPhases: Object.freeze([
+      'runtimeDependencyBootstrap:bootstrap',
+      'httpTimeoutRequestValidation:create',
+      'httpTimeoutRequestValidation:run',
+    ]),
+  }),
   statelessVariablesLifecycle: Object.freeze({
     id: 'statelessVariablesLifecycle',
     args: Object.freeze(['--stateless-variables-lifecycle']),

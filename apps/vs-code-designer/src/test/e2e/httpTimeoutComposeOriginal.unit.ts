@@ -23,6 +23,11 @@ import {
   replaceHttpTimeoutComposeAction,
   selectHttpTimeoutComposeWorkspace,
 } from './httpTimeoutComposeOracle';
+import {
+  assertHttpTimeoutActionFailed,
+  assertHttpTimeoutRequestPersisted,
+  selectHttpTimeoutRequestWorkspace,
+} from './httpTimeoutRequestOracle';
 import { buildScreenshotReadinessExpression } from './screenshotReadiness';
 
 const authored: HttpTimeoutComposeWorkflow = {
@@ -240,6 +245,54 @@ async function main(): Promise<void> {
     assert.throws(() => assembleHttpTimeoutComposeCode(pages, 0));
     assert.throws(() => assembleHttpTimeoutComposeCode([{ ...full, lines: [] }], eof));
     assert.throws(() => assembleHttpTimeoutComposeCode([numbered('{"Compose":')], 1));
+  });
+  await control('HTTP request oracles require exact timeout, async option, URI, and failed action identity', () => {
+    const uri = 'http://127.0.0.1:12345/longresponse';
+    const workflow = {
+      kind: 'Stateless',
+      definition: {
+        triggers: { Request: { type: 'Request', kind: 'Http' } },
+        actions: {
+          HTTP: {
+            type: 'Http',
+            inputs: { method: 'GET', uri },
+            runAfter: {},
+            operationOptions: 'DisableAsyncPattern',
+            runtimeConfiguration: { requestOptions: { timeout: 'PT1S' } },
+          },
+        },
+      },
+    };
+    assertHttpTimeoutRequestPersisted(workflow, 'PT1S', uri);
+    assertHttpTimeoutActionFailed(
+      { value: [{ name: 'HTTP', properties: { status: 'Failed', error: { code: 'ActionTimedOut', message: 'Request timed out' } } }] },
+      'run-1'
+    );
+    assert.throws(() => assertHttpTimeoutRequestPersisted(workflow, 'PT24H', uri));
+    assert.throws(() =>
+      assertHttpTimeoutActionFailed(
+        { value: [{ name: 'HTTP', properties: { status: 'Failed', error: { code: 'ConnectionFailure', message: 'refused' } } }] },
+        'run-2'
+      )
+    );
+  });
+  await control('HTTP request fixture selector rejects shared or mislabeled workspaces', () => {
+    const workspaceDir = path.resolve(os.tmpdir(), 'http-timeout-request-execution');
+    const entry = {
+      label: 'http-timeout-request-execution',
+      appType: 'standard',
+      wsName: 'workspace',
+      appName: 'app',
+      wfName: 'workflow',
+      workspaceDir,
+      workspaceFilePath: path.join(workspaceDir, 'workspace.code-workspace'),
+      appDir: path.join(workspaceDir, 'app'),
+      workflowJsonPath: path.join(workspaceDir, 'app', 'workflow', 'workflow.json'),
+      folderPaths: [path.join(workspaceDir, 'app')],
+    };
+    assert.deepStrictEqual(selectHttpTimeoutRequestWorkspace([entry], entry.label), entry);
+    assert.throws(() => selectHttpTimeoutRequestWorkspace([entry, entry], entry.label));
+    assert.throws(() => selectHttpTimeoutRequestWorkspace([{ ...entry, label: 'other' }], entry.label));
   });
   await runHttpTimeoutComposeDomControls(control, authored);
   await control('replacement uses key dispatch and insertText only', async () => {

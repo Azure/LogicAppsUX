@@ -776,7 +776,7 @@ jobs:
           if ($missingRequiredFiles.Count -gt 0) {
             throw "Required suite diagnostics were missing after staging available evidence: $($missingRequiredFiles -join ', ')"
           }
-          if ('${{ parameters.suiteId }}' -in @('httpTimeoutComposeOriginal', 'statelessVariablesLifecycle', 'workspaceArtifactRegeneration', 'workspaceMultiRoot')) {
+          if ('${{ parameters.suiteId }}' -in @('httpTimeoutComposeOriginal', 'httpTimeoutRequestExecution', 'httpTimeoutRequestValidation', 'statelessVariablesLifecycle', 'workspaceArtifactRegeneration', 'workspaceMultiRoot')) {
             $nativeResultPath = Join-Path $resultDestination '${{ parameters.suiteId }}.json'
             $nativeResult = Get-Content $nativeResultPath -Raw | ConvertFrom-Json
             if ($nativeResult.outcome -eq 'success') {
