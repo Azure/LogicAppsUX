@@ -496,7 +496,7 @@ describe('WorkflowPreview', () => {
       Intl.createIntl({
         locale: 'fr',
         messages: {
-          'workflowPreview.label': 'Aperçu du flux',
+          kTelYy: 'Aperçu du flux',
           'LeR+TX': 'Agrandir',
           JyYLq1: 'Réduire',
           nAEN7n: 'Ajuster la vue',
@@ -513,9 +513,7 @@ describe('WorkflowPreview', () => {
   });
 
   it('renders a legible localized empty state without a canvas or navigation buttons', () => {
-    vi.spyOn(Intl, 'useIntl').mockReturnValue(
-      Intl.createIntl({ locale: 'fr', messages: { 'workflowPreview.empty': 'Aucune action à afficher.' } })
-    );
+    vi.spyOn(Intl, 'useIntl').mockReturnValue(Intl.createIntl({ locale: 'fr', messages: { tno80k: 'Aucune action à afficher.' } }));
     render(<WorkflowPreview nodes={[]} edges={[]} ariaLabel="Empty preview" />);
     expect(screen.getByRole('region', { name: 'Empty preview' })).toHaveTextContent('Aucune action à afficher.');
     expect(screen.getByTestId('flow-provider')).toBeInTheDocument();

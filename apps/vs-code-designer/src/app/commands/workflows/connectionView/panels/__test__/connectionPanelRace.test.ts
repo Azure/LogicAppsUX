@@ -27,6 +27,10 @@ vi.mock('../../../../azureConnectors/azureConnectorDetails', () => ({
   getAzureConnectorDetailsForLocalProject: vi.fn(),
 }));
 
+vi.mock('../../../../azureConnectors/enableAzureConnectors', () => ({
+  enableAzureConnectors: vi.fn(),
+}));
+
 vi.mock('../../../../../utils/codeless/startDesignTimeApi', () => ({
   startDesignTimeApi: vi.fn(),
 }));
@@ -246,5 +250,59 @@ describe('ConnectionPanel – getConnectionPanelMetadata reads localSettings aft
     await instance.getConnectionPanelMetadata();
 
     expect(getLocalSettingsJson).toHaveBeenCalled();
+  });
+});
+
+describe('ConnectionPanel – configure Azure connectors recovery', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('reloads the connection webview after Azure connector setup succeeds', async () => {
+    const { enableAzureConnectors } = await import('../../../../azureConnectors/enableAzureConnectors');
+    const instance = createInstance() as any;
+    const panelMetadata = {
+      artifacts: { maps: {}, schemas: [] },
+      azureDetails: { enabled: true, subscriptionId: 'sub-1' },
+      connectionsData: '{}',
+      localSettings: { WORKFLOWS_SUBSCRIPTION_ID: 'sub-1' },
+      parametersData: {},
+      workflowDetails: {},
+    };
+    instance.getConnectionPanelMetadata = vi.fn().mockResolvedValue(panelMetadata);
+    instance.getWebviewContent = vi.fn().mockResolvedValue('<html>configured</html>');
+
+    await handleMsg(instance, { command: 'configure-azure-connectors' });
+
+    expect(enableAzureConnectors).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ fsPath: '/test/workflow.cs' }));
+    expect(instance.getWebviewContent).toHaveBeenCalledWith(expect.objectContaining({ azureDetails: panelMetadata.azureDetails }));
+    expect(instance.panel.webview.html).toBe('<html>configured</html>');
+
+    instance.connectionData = { managedApiConnections: {} };
+    instance.apiHubServiceDetails = { subscriptionId: 'sub-1' };
+    await handleMsg(instance, { command: 'initialize' });
+
+    expect(instance.panel.webview.postMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        command: 'initialize-frame',
+        data: expect.objectContaining({
+          apiHubServiceDetails: { subscriptionId: 'sub-1' },
+          connectionData: { managedApiConnections: {} },
+          panelMetadata,
+        }),
+      })
+    );
+  });
+
+  it('keeps the terminal recovery state when Azure connector setup is skipped again', async () => {
+    const instance = createInstance() as any;
+    instance.panel.webview.html = '<html>not configured</html>';
+    instance.getConnectionPanelMetadata = vi.fn().mockResolvedValue({ azureDetails: { enabled: false } });
+    instance.getWebviewContent = vi.fn();
+
+    await handleMsg(instance, { command: 'configure-azure-connectors' });
+
+    expect(instance.getWebviewContent).not.toHaveBeenCalled();
+    expect(instance.panel.webview.html).toBe('<html>not configured</html>');
   });
 });

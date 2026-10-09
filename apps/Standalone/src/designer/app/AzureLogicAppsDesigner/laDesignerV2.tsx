@@ -20,6 +20,7 @@ import { StandaloneOAuthService } from './Services/OAuthService';
 import {
   getConnectionStandard,
   getCustomCodeAppFiles,
+  createOrUpdateConnection,
   listCallbackUrl,
   saveWorkflowStandard,
   fetchAgentUrl,
@@ -31,6 +32,7 @@ import {
   useWorkflowApp,
   validateWorkflowStandard,
   deployArtifacts,
+  uploadFileToKnowledgeHub,
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility, addConnectionInJson, addOrUpdateAppSettings } from './Utilities/Workflow';
@@ -58,6 +60,7 @@ import {
   isArmResourceId,
   optional,
   BaseCognitiveServiceService,
+  BaseResourceService,
   AGENT_MSI_REQUIRED_ROLE_DEFINITION_IDS,
   RoleService,
   normalizeAgentConnectionResourceIdForRoleAssignment,
@@ -91,7 +94,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { QueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import CodeViewEditor from './CodeViewV2';
-import { CustomConnectionParameterEditorService } from './Services/customConnectionParameterEditorService';
+import { CustomConnectionParameterEditorServiceV2 } from './Services/customConnectionParameterEditorServiceV2';
 import { CustomEditorService } from './Services/customEditorService';
 import { FloatingRunButton } from '../../../../../../libs/designer-v2/src/lib/ui/FloatingRunButton';
 
@@ -224,6 +227,9 @@ const DesignerEditor = () => {
     addConnectionInJson(connectionAndSetting, connectionsData ?? {});
     addOrUpdateAppSettings(connectionAndSetting.settings, settingsData?.properties ?? {});
   };
+
+  const persistKnowledgeHubConnection = async (): Promise<void> =>
+    createOrUpdateConnection(siteResourceId, connectionsData, settingsData?.properties, /* isDraft */ true);
 
   const switchWorkflowMode = useCallback((draftMode: boolean) => {
     setIsDraftMode(draftMode);
@@ -375,6 +381,7 @@ const DesignerEditor = () => {
         connectionsData ?? {},
         workflowAppData as WorkflowApp,
         addConnectionDataInternal,
+        persistKnowledgeHubConnection,
         getConnectionConfiguration,
         tenantId,
         objectId,
@@ -821,6 +828,7 @@ const getDesignerServices = (
   connectionsData: ConnectionsData,
   workflowApp: WorkflowApp,
   addConnection: (data: ConnectionAndAppSetting) => Promise<void>,
+  persistKnowledgeHubConnection: () => Promise<void>,
   getConfiguration: (connectionId: string) => Promise<any>,
   tenantId: string | undefined,
   objectId: string | undefined,
@@ -871,6 +879,7 @@ const getDesignerServices = (
       return resolveConnectionsReferences(JSON.stringify(clone(connectionsData ?? {})), undefined, appSettings);
     },
     writeConnection: addConnection as any,
+    persistKnowledgeHubConnection,
     connectionCreationClients: {
       FileSystem: new FileSystemConnectionCreationClient({
         baseUrl: armUrl,
@@ -1102,6 +1111,7 @@ const getDesignerServices = (
     getAgentUrl: (isDraftMode?: boolean) =>
       fetchAgentUrl(siteResourceId, workflowName, workflowApp?.properties?.defaultHostName ?? '', isDraftMode),
     getAppIdentity: () => workflowApp?.identity,
+    getLogicAppId: () => siteResourceId,
     isExplicitAuthRequiredForManagedIdentity: () => true,
     isSplitOnSupported: () => !!isStateful,
     resubmitWorkflow: async (runId, actionsToResubmit) => {
@@ -1131,6 +1141,8 @@ const getDesignerServices = (
     notifyCallbackUrlUpdate: (triggerName, newTriggerId) => {
       alert(`Callback URL for ${triggerName} trigger updated to ${newTriggerId}`);
     },
+    uploadFileArtifact: uploadFileToKnowledgeHub,
+    isKnowledgeHubEnabled: () => true,
   };
 
   const hostService: IHostService = {
@@ -1201,8 +1213,9 @@ const getDesignerServices = (
   // The proxy handles auth server-side via MSI (production) or Bearer token (local POC).
   cognitiveServiceService.foundryProxyBaseUrl = `${baseUrl}/foundryProxy`;
 
-  const connectionParameterEditorService = new CustomConnectionParameterEditorService();
+  const connectionParameterEditorService = new CustomConnectionParameterEditorServiceV2();
   const editorService = new CustomEditorService(areCustomEditorsEnabled ?? false);
+  const resourceService = new BaseResourceService({ baseUrl: armUrl, httpClient, apiVersion });
 
   return {
     appService,
@@ -1226,6 +1239,7 @@ const getDesignerServices = (
     cognitiveServiceService,
     connectionParameterEditorService,
     editorService,
+    resourceService,
     userPreferenceService: new BaseUserPreferenceService(),
     experimentationService: new BaseExperimentationService(),
   };

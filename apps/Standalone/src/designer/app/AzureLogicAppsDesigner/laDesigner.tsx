@@ -13,6 +13,7 @@ import { StandaloneOAuthService } from './Services/OAuthService';
 import {
   getConnectionStandard,
   getCustomCodeAppFiles,
+  createOrUpdateConnection,
   listCallbackUrl,
   saveWorkflowStandard,
   fetchAgentUrl,
@@ -146,6 +147,9 @@ const DesignerEditor = () => {
     addOrUpdateAppSettings(connectionAndSetting.settings, settingsData?.properties ?? {});
   };
 
+  const persistKnowledgeHubConnection = async (): Promise<void> =>
+    createOrUpdateConnection(siteResourceId, connectionsData, settingsData?.properties);
+
   const getConnectionConfiguration = async (connectionId: string, _manifest: any, useMcpConnections?: boolean): Promise<any> => {
     if (!connectionId) {
       return Promise.resolve();
@@ -205,6 +209,7 @@ const DesignerEditor = () => {
         connectionsData ?? {},
         workflowAppData as WorkflowApp,
         addConnectionDataInternal,
+        persistKnowledgeHubConnection,
         getConnectionConfiguration,
         tenantId,
         objectId,
@@ -566,6 +571,7 @@ const getDesignerServices = (
   connectionsData: ConnectionsData,
   workflowApp: WorkflowApp,
   addConnection: (data: ConnectionAndAppSetting) => Promise<void>,
+  persistKnowledgeHubConnection: () => Promise<void>,
   getConfiguration: (connectionId: string) => Promise<any>,
   tenantId: string | undefined,
   objectId: string | undefined,
@@ -615,6 +621,7 @@ const getDesignerServices = (
       return resolveConnectionsReferences(JSON.stringify(clone(connectionsData ?? {})), undefined, appSettings);
     },
     writeConnection: addConnection as any,
+    persistKnowledgeHubConnection,
     connectionCreationClients: {
       FileSystem: new FileSystemConnectionCreationClient({
         baseUrl: armUrl,

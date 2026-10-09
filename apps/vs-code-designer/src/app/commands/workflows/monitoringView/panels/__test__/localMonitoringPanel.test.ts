@@ -195,6 +195,7 @@ describe('LocalMonitoringPanel', () => {
 
     it('handles monitoring webview commands', async () => {
       const instance = createMessageHarness();
+      vi.mocked(workspace.getConfiguration).mockReturnValue({ get: vi.fn(() => 2) } as any);
 
       await (instance as any).handleWebviewMsg({ command: ExtensionCommand.initialize });
       await (instance as any).handleWebviewMsg({
@@ -235,7 +236,10 @@ describe('LocalMonitoringPanel', () => {
       );
       expect(openUrl).toHaveBeenCalledWith('https://github.com/Azure/LogicAppsUX/issues/new?template=bug_report.yml');
       expect((instance as any).panel.webview.postMessage).toHaveBeenCalledWith(
-        expect.objectContaining({ command: ExtensionCommand.getDesignerVersion })
+        expect.objectContaining({
+          command: ExtensionCommand.getDesignerVersion,
+          data: 1,
+        })
       );
     });
 

@@ -252,6 +252,7 @@ export default {
     DROPDOWN: 'dropdown',
     FILEPICKER: 'filepicker',
     FLOATINGACTIONMENU: 'floatingactionmenu',
+    KNOWLEDGE_BASE: 'knowledgebase',
     SCHEMA: 'schema',
     STRING: 'string',
     TABLE: 'table',
@@ -577,6 +578,10 @@ export default {
     CONNECTORS: 'CONNECTORS',
     OPERATIONS: 'OPERATIONS',
     CONNECTIONS: 'CONNECTIONS',
+  },
+  KNOWLEDGE_PANEL_TAB_NAMES: {
+    BASICS: 'BASICS',
+    MODEL: 'MODEL',
   },
   ERRORS_PANEL_TAB_NAMES: {
     ERRORS: 'ERRORS',

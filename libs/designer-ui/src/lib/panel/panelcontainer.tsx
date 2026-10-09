@@ -15,6 +15,7 @@ import constants from '../constants';
 import { TeachingPopup } from '../teachingPopup';
 
 export type PanelContainerProps = {
+  enableNodeNavigation?: boolean;
   panelScope: PanelScope;
   suppressDefaultNodeSelectFunctionality?: boolean;
   pivotDisabled?: boolean;
@@ -47,6 +48,7 @@ export type PanelContainerProps = {
 } & CommonPanelProps;
 
 export const PanelContainer = ({
+  enableNodeNavigation = false,
   isCollapsed,
   panelLocation,
   panelScope,
@@ -147,6 +149,7 @@ export const PanelContainer = ({
 
       return (
         <PanelHeader
+          enableNodeNavigation={enableNodeNavigation}
           nodeData={headerNode}
           headerItems={isAlternateNode ? alternateSelectedNodeHeaderItems : nodeHeaderItems}
           headerLocation={panelLocation}
@@ -172,6 +175,7 @@ export const PanelContainer = ({
       );
     },
     [
+      enableNodeNavigation,
       alternateSelectedNode,
       onUnpinAction,
       alternateSelectedNodePersistence,
@@ -247,13 +251,20 @@ export const PanelContainer = ({
                 </MessageBarBody>
               </MessageBar>
             ) : (
-              <PanelContent tabs={tabs} trackEvent={trackEvent} nodeId={nodeId} selectedTab={selectedTab} selectTab={onSelectTab} />
+              <PanelContent
+                enableNodeNavigation={enableNodeNavigation}
+                tabs={tabs}
+                trackEvent={trackEvent}
+                nodeId={nodeId}
+                selectedTab={selectedTab}
+                selectTab={onSelectTab}
+              />
             )}
           </div>
         </div>
       );
     },
-    [renderHeader, panelErrorMessage, trackEvent, panelErrorTitle, alternateSelectedNodeContainerId]
+    [renderHeader, panelErrorMessage, trackEvent, panelErrorTitle, alternateSelectedNodeContainerId, enableNodeNavigation]
   );
 
   const minWidth = isDualView ? Number.parseInt(PanelSize.DualView, 10) : undefined;

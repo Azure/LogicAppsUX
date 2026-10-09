@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 import { extensionCommand } from '../../constants';
 import { ext } from '../../extensionVariables';
-import { executeOnFunctions } from '../functionsExtension/executeOnFunctionsExt';
 import { LogicAppResourceTree } from '../tree/LogicAppResourceTree';
 import { downloadAppSettings } from './appSettings/downloadAppSettings';
 import { editAppSetting } from './appSettings/editAppSetting';
@@ -57,7 +56,7 @@ import { switchDebugMode } from './workflows/switchDebugMode/switchDebugMode';
 import { switchToDotnetProjectCommand } from './workflows/switchToDotnetProject';
 import { useSQLStorage } from './workflows/useSQLStorage';
 import { viewContent } from './workflows/viewContent';
-import { registerSiteCommand, type FileTreeItem } from '@microsoft/vscode-azext-azureappservice';
+import { registerSiteCommand } from '@microsoft/vscode-azext-azureappservice';
 import {
   parseError,
   registerCommand,
@@ -86,9 +85,7 @@ import { addCustomCode } from './addCustomCode/addCustomCode';
 
 export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openDesigner, openDesigner);
-  registerCommandWithTreeNodeUnwrapping(extensionCommand.openFile, (context: IActionContext, node: FileTreeItem) =>
-    executeOnFunctions(openFile, context, context, node)
-  );
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.openFile, openFile);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.viewContent, viewContent);
   registerCommand(extensionCommand.createProject, createProject);
   registerCommand(extensionCommand.createWorkspace, createWorkspace);

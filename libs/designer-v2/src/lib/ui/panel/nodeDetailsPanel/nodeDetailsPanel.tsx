@@ -218,6 +218,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     <PanelContainer
       key={undoRedoClickToggle}
       {...commonPanelProps}
+      enableNodeNavigation
       panelScope={PanelScope.CardLevel}
       suppressDefaultNodeSelectFunctionality={suppressDefaultNodeSelectFunctionality}
       node={selectedNodeData}

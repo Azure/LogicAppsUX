@@ -434,7 +434,7 @@ const addConnectionInJson = (
   connectionAndSetting: ConnectionAndAppSetting<LocalConnectionModel>,
   connectionsJson: ConnectionsData
 ): ConnectionsData => {
-  const { connectionData, connectionKey, pathLocation } = connectionAndSetting;
+  const { connectionData, connectionKey, pathLocation, isUpdate } = connectionAndSetting;
   const pathToSetConnectionsData: any = clone(connectionsJson);
 
   for (const path of pathLocation) {
@@ -442,7 +442,7 @@ const addConnectionInJson = (
       pathToSetConnectionsData[path] = {};
     }
 
-    if (pathToSetConnectionsData && pathToSetConnectionsData[path][connectionKey]) {
+    if (pathToSetConnectionsData && pathToSetConnectionsData[path][connectionKey] && !isUpdate) {
       break;
     }
     pathToSetConnectionsData[path][connectionKey] = connectionData;

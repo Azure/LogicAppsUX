@@ -1,9 +1,13 @@
+/**
+ * @vitest-environment jsdom
+ */
 import { BuiltinToolsEditor } from '../index';
 import type { BuiltinToolOption } from '../index';
-import { render, fireEvent, act } from '@testing-library/react';
+import { render, fireEvent, act, cleanup } from '@testing-library/react';
+import '@testing-library/jest-dom/vitest';
+import userEvent from '@testing-library/user-event';
 import { IntlProvider } from 'react-intl';
-import renderer from 'react-test-renderer';
-import { describe, vi, beforeEach, it, expect } from 'vitest';
+import { describe, vi, beforeEach, afterEach, it, expect } from 'vitest';
 import { createLiteralValueSegment } from '../../editor/base/utils/helper';
 
 const TestWrapper = ({ children }: { children: React.ReactNode }) => (
@@ -31,15 +35,18 @@ describe('lib/builtintools', () => {
     vi.clearAllMocks();
   });
 
+  afterEach(() => {
+    cleanup();
+  });
+
   it('should render with basic props', () => {
-    const tree = renderer
-      .create(
-        <TestWrapper>
-          <BuiltinToolsEditor {...defaultProps} />
-        </TestWrapper>
-      )
-      .toJSON();
-    expect(tree).toMatchSnapshot();
+    const { getByRole } = render(
+      <TestWrapper>
+        <BuiltinToolsEditor {...defaultProps} />
+      </TestWrapper>
+    );
+
+    expect(getByRole('switch')).toBeInTheDocument();
   });
 
   it('should render header text', () => {
@@ -145,8 +152,9 @@ describe('lib/builtintools', () => {
     expect(switchEl).toBeDisabled();
   });
 
-  it('should not call onChange when readonly and clicked', () => {
+  it('should not call onChange when readonly and clicked', async () => {
     const onChange = vi.fn();
+    const user = userEvent.setup();
     const { getByRole } = render(
       <TestWrapper>
         <BuiltinToolsEditor {...defaultProps} readonly={true} onChange={onChange} />
@@ -154,9 +162,7 @@ describe('lib/builtintools', () => {
     );
 
     const switchEl = getByRole('switch');
-    act(() => {
-      fireEvent.click(switchEl);
-    });
+    await user.click(switchEl);
 
     expect(onChange).not.toHaveBeenCalled();
   });

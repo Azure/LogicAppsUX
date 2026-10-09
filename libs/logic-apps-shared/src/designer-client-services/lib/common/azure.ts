@@ -5,7 +5,12 @@ export interface ContinuationTokenResponse<T> {
   nextLink: string;
 }
 
-export const getAzureResourceRecursive = async (httpClient: IHttpClient, uri: string, queryParams: any): Promise<any[]> => {
+export const getAzureResourceRecursive = async (
+  httpClient: IHttpClient,
+  uri: string,
+  queryParams: any,
+  options?: { throwOnError?: boolean }
+): Promise<any[]> => {
   const requestPage = async (uri: string, value: any[], queryParameters?: any): Promise<any> => {
     try {
       const { nextLink, value: newValue } = await httpClient.get<ContinuationTokenResponse<any[]>>({
@@ -18,7 +23,10 @@ export const getAzureResourceRecursive = async (httpClient: IHttpClient, uri: st
         return await requestPage(nextLink, value);
       }
       return value;
-    } catch (_error) {
+    } catch (error) {
+      if (options?.throwOnError) {
+        throw error;
+      }
       return value;
     }
   };

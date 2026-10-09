@@ -52,8 +52,17 @@ export const useNodeDescription = (id: string) =>
     useMemo(() => createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.operations, id)?.description), [id])
   );
 
-export const useShouldNodeFocus = (id: string) =>
-  useSelector(useMemo(() => createSelector(getWorkflowState, (state: WorkflowState) => state.focusedCanvasNodeId === id), [id]));
+export const useShouldNodeFocus = (id: string, canvasNodeId = id) =>
+  useSelector(
+    useMemo(
+      () =>
+        createSelector(
+          getWorkflowState,
+          (state: WorkflowState) => state.focusedCanvasNodeId === id || state.focusedCanvasNodeId === canvasNodeId
+        ),
+      [id, canvasNodeId]
+    )
+  );
 
 const selectFocusElement = createSelector(getWorkflowState, (state: WorkflowState) => state.focusElement);
 

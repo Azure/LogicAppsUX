@@ -5,9 +5,11 @@ import { ConnectionPanel } from '../connectionsPanel';
 import { autoCreateConnectionIfPossible, closeConnectionsFlow } from '../../../../core/actions/bjsworkflow/connections';
 import { updateNodeConnection, useOperationInfo, useOperationPanelSelectedNodeId } from '../../../../core';
 import { useConnectionsForConnector } from '../../../../core/queries/connections';
-import { useConnectionRefs, useConnectorByNodeId } from '../../../../core/state/connection/connectionSelector';
-import { useIsCreatingConnection } from '../../../../core/state/panel/panelSelectors';
+import { useConnectionRefs, useConnectorByNodeId, useNodeConnectionMapping } from '../../../../core/state/connection/connectionSelector';
+import { useMonitoringView, useReadOnly } from '../../../../core/state/designerOptions/designerOptionsSelectors';
+import { useConnectionPanelSelectedNodeIds, useIsCreatingConnection } from '../../../../core/state/panel/panelSelectors';
 import { setIsCreatingConnection } from '../../../../core/state/panel/panelSlice';
+import { useConnectionExpressionEnabled } from '../selectConnection/connectionExpression';
 
 const mocks = vi.hoisted(() => ({
   dispatch: vi.fn(),
@@ -70,10 +72,21 @@ vi.mock('../../../../core/queries/connections', () => ({
 vi.mock('../../../../core/state/connection/connectionSelector', () => ({
   useConnectionRefs: vi.fn(),
   useConnectorByNodeId: vi.fn(),
+  useNodeConnectionMapping: vi.fn(),
+}));
+
+vi.mock('../../../../core/state/designerOptions/designerOptionsSelectors', () => ({
+  useReadOnly: vi.fn(),
+  useMonitoringView: vi.fn(),
 }));
 
 vi.mock('../../../../core/state/panel/panelSelectors', () => ({
+  useConnectionPanelSelectedNodeIds: vi.fn(),
   useIsCreatingConnection: vi.fn(),
+}));
+
+vi.mock('../selectConnection/connectionExpression', () => ({
+  useConnectionExpressionEnabled: vi.fn(),
 }));
 
 vi.mock('../../../../core/state/panel/panelSlice', () => ({
@@ -89,7 +102,11 @@ vi.mock('../createConnection/createConnectionWrapper', () => ({
 }));
 
 vi.mock('../selectConnection/selectConnection', () => ({
-  SelectConnectionWrapper: () => <div data-testid="select-connection-wrapper" />,
+  SelectConnectionWrapper: () => (
+    <div data-testid="select-connection-wrapper">
+      <input aria-label="Connection selection draft" defaultValue="" />
+    </div>
+  ),
 }));
 
 const mockConnector = {
@@ -131,12 +148,127 @@ describe('ConnectionPanel (designer-v2)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     (useOperationPanelSelectedNodeId as Mock).mockReturnValue('node-id');
+    (useConnectionPanelSelectedNodeIds as Mock).mockReturnValue(['node-id']);
+    (useNodeConnectionMapping as Mock).mockReturnValue(null);
+    (useConnectionExpressionEnabled as Mock).mockReturnValue(false);
+    (useReadOnly as Mock).mockReturnValue(false);
+    (useMonitoringView as Mock).mockReturnValue(false);
     (useConnectorByNodeId as Mock).mockReturnValue(mockConnector);
     (useOperationInfo as Mock).mockReturnValue({ connectorId: 'connector-id', operationId: 'op-id' });
     (useConnectionRefs as Mock).mockReturnValue({ referenceOne: {}, referenceTwo: {} });
     (useIsCreatingConnection as Mock).mockReturnValue(false);
     (autoCreateConnectionIfPossible as Mock).mockResolvedValue(undefined);
     setConnectionsQuery();
+  });
+
+  describe('runtime-expression auto-create gate', () => {
+    const expectSelectionWithoutMutation = () => {
+      expect(screen.getByRole('heading', { name: 'Change connection' })).toBeInTheDocument();
+      expect(screen.getByTestId('select-connection-wrapper')).toBeInTheDocument();
+      expect(screen.queryByTestId('create-connection-wrapper')).not.toBeInTheDocument();
+      expect(autoCreateConnectionIfPossible).not.toHaveBeenCalled();
+      expect(updateNodeConnection).not.toHaveBeenCalled();
+      expect(closeConnectionsFlow).not.toHaveBeenCalled();
+      expect(setIsCreatingConnection).not.toHaveBeenCalled();
+      expect(mocks.dispatch).not.toHaveBeenCalled();
+    };
+
+    it('does not auto-create or force Create connection when new runtime authoring is eligible and no connections exist', () => {
+      (useConnectorByNodeId as Mock).mockReturnValue({ ...mockConnector, id: '/serviceProviders/sql' });
+      (useOperationInfo as Mock).mockReturnValue({
+        type: 'ServiceProvider',
+        connectorId: '/serviceProviders/sql',
+        operationId: 'executeQuery',
+      });
+      (useConnectionExpressionEnabled as Mock).mockReturnValue(true);
+      setConnectionsQuery({ isLoading: true });
+      const { rerender } = render(<ConnectionPanel {...panelProps} />);
+
+      setConnectionsQuery({ data: [], isLoading: false });
+      rerender(<ConnectionPanel {...panelProps} />);
+
+      expect(useConnectionExpressionEnabled).toHaveBeenCalledWith(['node-id']);
+      expectSelectionWithoutMutation();
+    });
+
+    it('preserves an imported expression in an unsupported context using the connection-panel selection', () => {
+      const expressionMapping = { kind: 'expression', expression: "@outputs('Resolve_Connection')" };
+      (useConnectionPanelSelectedNodeIds as Mock).mockReturnValue(['runtime-node']);
+      (useNodeConnectionMapping as Mock).mockImplementation((id: string) => (id === 'runtime-node' ? expressionMapping : 'static-ref'));
+      (autoCreateConnectionIfPossible as Mock).mockImplementation(({ applyNewConnection, onSuccess }) => {
+        applyNewConnection(newConnection);
+        onSuccess();
+        return Promise.resolve();
+      });
+      const { rerender } = render(<ConnectionPanel {...panelProps} />);
+      setConnectionsQuery({ data: [] });
+      rerender(<ConnectionPanel {...panelProps} />);
+
+      expect(useConnectionExpressionEnabled).toHaveBeenCalledWith(['runtime-node']);
+      expect(useNodeConnectionMapping).toHaveBeenCalledWith('runtime-node');
+      expectSelectionWithoutMutation();
+    });
+
+    it.each([
+      ['read-only', null],
+      ['read-only', 'static-ref'],
+      ['monitoring', null],
+      ['monitoring', 'static-ref'],
+    ] as const)('does not mutate connections in %s mode when the mapping is %s', (mode, mapping) => {
+      ((mode === 'monitoring' ? useMonitoringView : useReadOnly) as Mock).mockReturnValue(true);
+      (useNodeConnectionMapping as Mock).mockReturnValue(mapping);
+      (autoCreateConnectionIfPossible as Mock).mockImplementation(({ onManualConnectionCreation }) => {
+        onManualConnectionCreation();
+        return Promise.resolve();
+      });
+
+      render(<ConnectionPanel {...panelProps} />);
+
+      expectSelectionWithoutMutation();
+    });
+
+    it.each([
+      ['unsupported connector', 'connector-id'],
+      ['Consumption ServiceProvider', '/serviceProviders/sql'],
+    ])('retains static auto-create for %s when no runtime expression is mapped', (_case, connectorId) => {
+      const connector = { ...mockConnector, id: connectorId };
+      (useConnectorByNodeId as Mock).mockReturnValue(connector);
+      (useOperationInfo as Mock).mockReturnValue({
+        connectorId,
+        operationId: 'op-id',
+        type: connectorId.startsWith('/serviceProviders') ? 'ServiceProvider' : 'ApiConnection',
+      });
+      (useNodeConnectionMapping as Mock).mockReturnValue('static-ref');
+      (autoCreateConnectionIfPossible as Mock).mockImplementation(({ applyNewConnection, onSuccess }) => {
+        applyNewConnection(newConnection);
+        onSuccess();
+        return Promise.resolve();
+      });
+
+      render(<ConnectionPanel {...panelProps} />);
+
+      expect(autoCreateConnectionIfPossible).toHaveBeenCalledTimes(1);
+      expect(updateNodeConnection).toHaveBeenCalledWith({ nodeId: 'node-id', connection: newConnection, connector });
+      expect(mocks.dispatch).toHaveBeenCalledWith({
+        type: 'connections/updateNodeConnection',
+        payload: { nodeId: 'node-id', connection: newConnection, connector },
+      });
+      expect(closeConnectionsFlow).toHaveBeenCalledWith({ nodeId: 'node-id' });
+    });
+
+    it('does not latch the reentry guard while expression selection blocks auto-create', async () => {
+      (useConnectionExpressionEnabled as Mock).mockReturnValue(true);
+      (autoCreateConnectionIfPossible as Mock).mockReturnValue(new Promise(() => {}));
+      const { rerender } = render(<ConnectionPanel {...panelProps} />);
+      expectSelectionWithoutMutation();
+
+      (useConnectionExpressionEnabled as Mock).mockReturnValue(false);
+      rerender(<ConnectionPanel {...panelProps} />);
+      await waitFor(() => expect(autoCreateConnectionIfPossible).toHaveBeenCalledTimes(1));
+      setConnectionsQuery({ data: [] });
+      rerender(<ConnectionPanel {...panelProps} />);
+      expect(autoCreateConnectionIfPossible).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('panel rendering', () => {
@@ -162,15 +294,43 @@ describe('ConnectionPanel (designer-v2)', () => {
       expect(screen.queryByTestId('create-connection-wrapper')).not.toBeInTheDocument();
     });
 
-    it('renders the create-connection header and CreateConnectionWrapper when creating', () => {
+    it('keeps the Change connection header and selection wrapper when creating', () => {
       (useIsCreatingConnection as Mock).mockReturnValue(true);
       setConnectionsQuery({ data: [mockConnection] });
 
       render(<ConnectionPanel {...panelProps} />);
 
-      expect(screen.getByRole('heading', { name: 'Create connection' })).toBeInTheDocument();
-      expect(screen.getByTestId('create-connection-wrapper')).toBeInTheDocument();
-      expect(screen.queryByTestId('select-connection-wrapper')).not.toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Change connection' })).toBeInTheDocument();
+      expect(screen.getByTestId('select-connection-wrapper')).toBeInTheDocument();
+      expect(screen.queryByTestId('create-connection-wrapper')).not.toBeInTheDocument();
+    });
+
+    it('does not remount selection drafts when switching between selection and creation', () => {
+      setConnectionsQuery({ data: [mockConnection] });
+      const { rerender } = render(<ConnectionPanel {...panelProps} />);
+      const draft = screen.getByRole('textbox', { name: 'Connection selection draft' });
+      fireEvent.change(draft, { target: { value: 'unsaved expression' } });
+
+      for (const isCreating of [true, false]) {
+        (useIsCreatingConnection as Mock).mockReturnValue(isCreating);
+        rerender(<ConnectionPanel {...panelProps} />);
+        expect(screen.getByRole('heading', { name: 'Change connection' })).toBeInTheDocument();
+        expect(screen.getByRole('textbox', { name: 'Connection selection draft' })).toBe(draft);
+        expect(draft).toHaveValue('unsaved expression');
+      }
+    });
+
+    it('resets the selection draft when changing to a different selected action', () => {
+      setConnectionsQuery({ data: [mockConnection] });
+      const { rerender } = render(<ConnectionPanel {...panelProps} />);
+      const draft = screen.getByRole('textbox', { name: 'Connection selection draft' });
+      fireEvent.change(draft, { target: { value: 'previous action expression' } });
+
+      (useOperationPanelSelectedNodeId as Mock).mockReturnValue('second-node');
+      (useConnectionPanelSelectedNodeIds as Mock).mockReturnValue(['second-node']);
+      rerender(<ConnectionPanel {...panelProps} />);
+      expect(screen.getByRole('textbox', { name: 'Connection selection draft' })).not.toBe(draft);
+      expect(screen.getByRole('textbox', { name: 'Connection selection draft' })).toHaveValue('');
     });
 
     it('invokes the toggleCollapse prop when the close button is clicked', () => {
@@ -185,6 +345,26 @@ describe('ConnectionPanel (designer-v2)', () => {
   });
 
   describe('autoCreateConnectionIfPossible', () => {
+    it('does not restart automatic creation when manual creation is cancelled without changing connection inputs', () => {
+      (autoCreateConnectionIfPossible as Mock).mockImplementation(({ onManualConnectionCreation }) => {
+        onManualConnectionCreation();
+        return Promise.resolve();
+      });
+      const { rerender } = render(<ConnectionPanel {...panelProps} />);
+      expect(autoCreateConnectionIfPossible).toHaveBeenCalledTimes(1);
+
+      for (const isCreating of [true, false]) {
+        (useIsCreatingConnection as Mock).mockReturnValue(isCreating);
+        rerender(<ConnectionPanel {...panelProps} />);
+        expect(screen.getByRole('heading', { name: 'Change connection' })).toBeInTheDocument();
+        expect(screen.getByTestId('select-connection-wrapper')).toBeInTheDocument();
+        expect(autoCreateConnectionIfPossible).toHaveBeenCalledTimes(1);
+      }
+      expect(updateNodeConnection).not.toHaveBeenCalled();
+      expect(closeConnectionsFlow).not.toHaveBeenCalled();
+      expect(setIsCreatingConnection).toHaveBeenCalledExactlyOnceWith(true);
+    });
+
     it('does not run while connections are still loading', () => {
       setConnectionsQuery({ isLoading: true });
 
@@ -314,12 +494,8 @@ describe('ConnectionPanel (designer-v2)', () => {
 
       await waitFor(() => expect(autoCreateConnectionIfPossible).toHaveBeenCalledTimes(1));
 
-      // A new render with a fresh empty connections reference (e.g. cache refetch)
-      // should be allowed to re-trigger the auto-create flow now that the prior
-      // attempt has resolved via onManualConnectionCreation.
       setConnectionsQuery({ data: [] });
       rerender(<ConnectionPanel {...panelProps} />);
-
       await waitFor(() => expect(autoCreateConnectionIfPossible).toHaveBeenCalledTimes(2));
     });
 

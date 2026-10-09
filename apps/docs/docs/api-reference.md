@@ -61,6 +61,50 @@ interface DesignerProps {
 }
 ```
 
+### Runtime Connection Selection (Designer V2, Standard)
+
+Designer V2 supports expressions in a Standard `ServiceProvider` action's
+`inputs.serviceProviderConfiguration.connectionName`. The
+**Change connection > Use expression** editor is enabled by default for supported
+actions; no host option is required. Managed API connections, Consumption
+workflows, and triggers do not expose expression authoring. Imported expressions
+are preserved when their context does not support authoring. Designer V1 is
+unchanged and does not offer this editor.
+
+The connection panel places **Select existing**, **Create new**, and (when supported)
+**Use expression** tabs below the action name. Switching tabs preserves the
+expression draft until it is applied or the panel is closed. Saved expressions
+use token presentation in the connection editor. Action details show only
+**Connection selected at runtime**, with **Change connection** to view or edit
+the expression.
+The **Connections** panel groups runtime-selected actions under their connector,
+in a **Connection selected at runtime** block. Select an action to edit its
+expression, or use **Reassign** to move the block's actions to an existing or new
+connection together. Expression authoring remains per-action.
+The expression tab lists existing connection keys for the current connector as
+case-sensitive examples; this reference list does not select a connection.
+
+Expression editing is per action, not bulk connection reassignment. The token
+picker does not insert implicit loops. For per-item selection within an existing
+loop, enter an explicit expression such as `@items('For_each')?['connectionName']`.
+
+An expression such as `@parameters('connectionName')` must resolve at runtime to
+an existing, case-sensitive key in `connections.json`, for the action's service
+provider. Display names are not connection keys. The Designer does not create
+connections at runtime or change their credentials.
+
+The optional **Design-time connection** supplies resource browsing and schema
+discovery while editing. This selection is session-only and is not serialized as
+a runtime fallback. Without a design-time connection, enter parameter values
+manually; connection-dependent browsing is unavailable. Existing values are
+preserved. A schema discovered using one connection does not guarantee the same
+schema for every runtime target.
+
+Hosts must keep connection keys stable and preserve connections that may be
+selected dynamically, even if no action references them statically. For
+multi-tenant workflows, map authorized tenant context to permitted connection
+keys rather than accepting an arbitrary caller-supplied key as authorization.
+
 ### Service Configuration
 
 The designer requires several services to be configured:

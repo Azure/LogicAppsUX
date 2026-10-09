@@ -4,6 +4,13 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 const mockUpdateConnectionReferenceWithMSIInLocalSettings = vi.fn();
 const mockWriteLocalSettingsFile = vi.fn();
 const mockGetLocalSettingsJson = vi.fn();
+const mockPathExists = vi.fn();
+const mockPathExistsSync = vi.fn();
+const mockReadFile = vi.fn();
+const mockWriteFormattedJson = vi.fn();
+const mockIsCSharpProject = vi.fn();
+const mockAddNewFileInCSharpProject = vi.fn();
+const mockShouldParameterizeConnections = vi.fn();
 
 // Mock dependencies
 vi.mock('../../../appSettings/localSettings', () => ({
@@ -11,8 +18,109 @@ vi.mock('../../../appSettings/localSettings', () => ({
   writeLocalSettingsFile: mockWriteLocalSettingsFile,
 }));
 
+vi.mock('fs-extra', () => ({
+  pathExists: mockPathExists,
+  pathExistsSync: mockPathExistsSync,
+  readFile: mockReadFile,
+}));
+
+vi.mock('../../fs', () => ({
+  writeFormattedJson: mockWriteFormattedJson,
+}));
+
+vi.mock('../../detectProjectLanguage', () => ({
+  isCSharpProject: mockIsCSharpProject,
+}));
+
+vi.mock('../updateBuildFile', () => ({
+  addNewFileInCSharpProject: mockAddNewFileInCSharpProject,
+}));
+
+vi.mock('../../vsCodeConfig/settings', () => ({
+  shouldParameterizeConnections: mockShouldParameterizeConnections,
+}));
+
 // Import the module after mocks are set up
 const mockModule = await import('../connection');
+
+describe('addConnectionDataInJson', () => {
+  const context = {} as any;
+  const projectPath = 'C:\\test\\project';
+  const existingConnection = {
+    displayName: 'Old knowledge hub',
+    cosmosDB: {
+      endpoint: 'https://old.documents.azure.com',
+      authentication: { type: 'ManagedServiceIdentity' },
+    },
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockPathExists.mockResolvedValue(true);
+    mockPathExistsSync.mockReturnValue(true);
+    mockReadFile.mockResolvedValue(
+      Buffer.from(
+        JSON.stringify({
+          knowledgeHubConnections: {
+            HubConnection: existingConnection,
+          },
+        })
+      )
+    );
+    mockShouldParameterizeConnections.mockReturnValue(false);
+  });
+
+  it('preserves duplicate connections for create operations', async () => {
+    const connectionData = { displayName: 'New knowledge hub' };
+
+    await mockModule.addConnectionDataInJson(
+      context,
+      projectPath,
+      {
+        connectionKey: 'HubConnection',
+        connectionData,
+        settings: {},
+        pathLocation: ['knowledgeHubConnections'],
+      },
+      {}
+    );
+
+    expect(mockWriteFormattedJson).not.toHaveBeenCalled();
+  });
+
+  it('overwrites an existing connection for update operations', async () => {
+    const connectionData = {
+      displayName: 'Updated knowledge hub',
+      cosmosDB: {
+        endpoint: 'https://new.documents.azure.com',
+        resourceId: '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.DocumentDB/databaseAccounts/new',
+        authentication: { type: 'ManagedServiceIdentity' },
+      },
+    };
+
+    await mockModule.addConnectionDataInJson(
+      context,
+      projectPath,
+      {
+        connectionKey: 'HubConnection',
+        connectionData,
+        settings: {},
+        pathLocation: ['knowledgeHubConnections'],
+        isUpdate: true,
+      },
+      {}
+    );
+
+    expect(mockWriteFormattedJson).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        knowledgeHubConnections: {
+          HubConnection: connectionData,
+        },
+      })
+    );
+  });
+});
 
 describe('updateConnectionReferencesLocalMSI - parallel processing', () => {
   const testProjectPath = '/test/project';

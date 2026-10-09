@@ -59,6 +59,10 @@ __azurite_db_queue__.json
 __azurite_db_queue_extent__.json
 
 # Playwright
+/.ephemeral-site/
+/.ephemeral-artifact.zip
+/.ephemeral-state.json
+/playwright-report-ephemeral/
 **/test-results
 **/playwright-report
 **/playwright/.cache

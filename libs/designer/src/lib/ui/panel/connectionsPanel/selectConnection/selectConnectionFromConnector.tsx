@@ -36,7 +36,8 @@ export const SelectConnectionWrapper = ({
   const isXrmConnectionReferenceMode = useIsXrmConnectionReferenceMode();
   const [isInlineCreatingConnection, setIsInlineCreatingConnection] = useState(false);
 
-  const { data: connector } = useConnector(connectorId);
+  const connectorQuery = useConnector(connectorId);
+  const connector = connectorQuery.data;
   const connectorIconUri = useMemo(() => getIconUriFromConnector(connector), [connector]);
   const connectionQuery = useConnectionsForConnector(connector?.id ?? '');
   const connections = useMemo(() => connectionQuery?.data ?? [], [connectionQuery]);
@@ -80,10 +81,10 @@ export const SelectConnectionWrapper = ({
   }, [connector, dispatch, references, saveSelectionCallback]);
 
   useEffect(() => {
-    if (!connectionQuery.isLoading && !connectionQuery.isError && connections.length === 0) {
+    if (!connectorQuery.isError && !connectionQuery.isLoading && !connectionQuery.isError && connections.length === 0) {
       createConnectionCallback();
     }
-  }, [connectionQuery.isError, connectionQuery.isLoading, connections, connector, createConnectionCallback]);
+  }, [connectionQuery.isError, connectionQuery.isLoading, connections, connectorQuery.isError, createConnectionCallback]);
 
   const actionBar = useMemo(() => {
     return (

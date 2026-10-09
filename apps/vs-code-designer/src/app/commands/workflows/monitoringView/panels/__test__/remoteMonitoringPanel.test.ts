@@ -80,6 +80,13 @@ describe('openMonitoringViewForAzureResource', () => {
       const instance = new RemoteMonitoringPanel(mockContext, mockRunId, mockWorkflowFilePath, mockNode as any);
       expect(instance).toBeDefined();
     });
+
+    it('uses designer v1 for legacy monitoring panels', () => {
+      const mockNode = createMockNode();
+      const instance = new RemoteMonitoringPanel(mockContext, mockRunId, mockWorkflowFilePath, mockNode as any);
+
+      expect((instance as any).getDesignerVersion()).toBe(1);
+    });
   });
 
   describe('create', () => {

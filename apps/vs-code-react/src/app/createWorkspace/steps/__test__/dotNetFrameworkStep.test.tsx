@@ -4,7 +4,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { createWorkspaceSlice, type CreateWorkspaceState } from '../../../../state/createWorkspaceSlice';
-import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { Platform, ProjectType, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 
 vi.mock('../../createWorkspaceStyles', () => ({
   useCreateWorkspaceStyles: () =>
@@ -97,43 +97,26 @@ describe('DotNetFrameworkStep', () => {
       expect(screen.getByRole('combobox')).toBeInTheDocument();
     });
 
-    it('should render .NET 8 and .NET 10 options on non-Windows', () => {
-      renderWithStore({ logicAppType: ProjectType.customCode, platform: null });
+    it('should render only .NET 10 on non-Windows', () => {
+      renderWithStore({ logicAppType: ProjectType.customCode, platform: Platform.linux });
       const combobox = screen.getByRole('combobox');
       fireEvent.click(combobox);
-      expect(screen.getByText('.NET 8')).toBeInTheDocument();
       expect(screen.getByText('.NET 10')).toBeInTheDocument();
+      expect(screen.queryByText('.NET 8')).not.toBeInTheDocument();
+      expect(screen.queryByText('.NET Framework')).not.toBeInTheDocument();
+      expect(screen.getAllByRole('option').map((option) => option.textContent)).toEqual(['.NET 10']);
     });
 
     it('should also render .NET Framework option on Windows', () => {
-      renderWithStore({ logicAppType: ProjectType.customCode, platform: 'win32' as any });
+      renderWithStore({ logicAppType: ProjectType.customCode, platform: Platform.windows });
       const combobox = screen.getByRole('combobox');
       fireEvent.click(combobox);
-      // Positive Windows case: the dropdown must expose exactly the three correct options.
       expect(screen.getByText('.NET Framework')).toBeInTheDocument();
-      expect(screen.getByText('.NET 8')).toBeInTheDocument();
       expect(screen.getByText('.NET 10')).toBeInTheDocument();
+      expect(screen.queryByText('.NET 8')).not.toBeInTheDocument();
       const options = screen.getAllByRole('option');
-      expect(options).toHaveLength(3);
-      expect(options.map((option) => option.textContent)).toEqual(['.NET Framework', '.NET 8', '.NET 10']);
-    });
-
-    it('should not render .NET Framework option on non-Windows', () => {
-      renderWithStore({ logicAppType: ProjectType.customCode, platform: 'darwin' as any });
-      const combobox = screen.getByRole('combobox');
-      fireEvent.click(combobox);
-      expect(screen.queryByText('.NET Framework')).not.toBeInTheDocument();
-    });
-
-    it('should not render .NET Framework option on Linux', () => {
-      renderWithStore({ logicAppType: ProjectType.customCode, platform: 'linux' as any });
-      const combobox = screen.getByRole('combobox');
-      fireEvent.click(combobox);
-      expect(screen.queryByText('.NET Framework')).not.toBeInTheDocument();
-      expect(screen.getByText('.NET 8')).toBeInTheDocument();
-      expect(screen.getByText('.NET 10')).toBeInTheDocument();
-      const options = screen.getAllByRole('option');
-      expect(options.map((option) => option.textContent)).toEqual(['.NET 8', '.NET 10']);
+      expect(options).toHaveLength(2);
+      expect(options.map((option) => option.textContent)).toEqual(['.NET Framework', '.NET 10']);
     });
 
     it('should not render .NET Framework option when platform is not yet initialized (null)', () => {
@@ -141,10 +124,10 @@ describe('DotNetFrameworkStep', () => {
       const combobox = screen.getByRole('combobox');
       fireEvent.click(combobox);
       expect(screen.queryByText('.NET Framework')).not.toBeInTheDocument();
-      expect(screen.getByText('.NET 8')).toBeInTheDocument();
       expect(screen.getByText('.NET 10')).toBeInTheDocument();
+      expect(screen.queryByText('.NET 8')).not.toBeInTheDocument();
       const options = screen.getAllByRole('option');
-      expect(options.map((option) => option.textContent)).toEqual(['.NET 8', '.NET 10']);
+      expect(options.map((option) => option.textContent)).toEqual(['.NET 10']);
     });
   });
 
@@ -152,25 +135,16 @@ describe('DotNetFrameworkStep', () => {
     it('should show .NET 10 label when net10.0 is selected', () => {
       renderWithStore({
         logicAppType: ProjectType.customCode,
-        targetFramework: 'net10.0',
+        targetFramework: TargetFramework.Net10,
       });
       const combobox = screen.getByRole('combobox');
       expect(combobox).toHaveTextContent('.NET 10');
     });
 
-    it('should show .NET 8 label when net8 is selected', () => {
-      renderWithStore({
-        logicAppType: ProjectType.customCode,
-        targetFramework: 'net8',
-      });
-      const combobox = screen.getByRole('combobox');
-      expect(combobox).toHaveTextContent('.NET 8');
-    });
-
     it('should show description text when a framework is selected', () => {
       renderWithStore({
         logicAppType: ProjectType.customCode,
-        targetFramework: 'net10.0',
+        targetFramework: TargetFramework.Net10,
       });
       // Description text should appear below the dropdown
       expect(screen.getByText(/modern development and performance/)).toBeInTheDocument();
@@ -199,7 +173,7 @@ describe('DotNetFrameworkStep', () => {
   });
 
   describe('framework selection dispatch', () => {
-    it('should dispatch setTargetFramework when an option is selected', () => {
+    it('should dispatch setTargetFramework when .NET 10 is selected', () => {
       const { store } = renderWithStore({
         logicAppType: ProjectType.customCode,
         targetFramework: '',
@@ -212,7 +186,7 @@ describe('DotNetFrameworkStep', () => {
       fireEvent.click(net10Option);
 
       const state = store.getState().createWorkspace;
-      expect(state.targetFramework).toBe('net10.0');
+      expect(state.targetFramework).toBe(TargetFramework.Net10);
     });
   });
 
