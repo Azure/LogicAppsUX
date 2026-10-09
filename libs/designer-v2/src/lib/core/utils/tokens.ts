@@ -241,11 +241,13 @@ export const convertOutputsToTokens = (
   });
 };
 
-export const getExpressionTokenSections = (): TokenGroup[] => {
+export const getExpressionTokenSections = (supportedFunctions?: string[]): TokenGroup[] => {
+  const allowedFunctions = supportedFunctions?.length ? new Set(supportedFunctions.map((name) => name.toLowerCase())) : undefined;
   return TemplateFunctions.map((functionGroup) => {
     const { id, name, functions } = functionGroup;
-    const hasAdvanced = functions.some((func) => func.isAdvanced);
-    const tokens = functions.map(({ name, defaultSignature, description, isAdvanced }: FunctionDefinition) => ({
+    const includedFunctions = allowedFunctions ? functions.filter((func) => allowedFunctions.has(func.name.toLowerCase())) : functions;
+    const hasAdvanced = includedFunctions.some((func) => func.isAdvanced);
+    const tokens = includedFunctions.map(({ name, defaultSignature, description, isAdvanced }: FunctionDefinition) => ({
       key: name,
       brandColor: FxBrandColor,
       icon: FxIcon,
@@ -267,7 +269,7 @@ export const getExpressionTokenSections = (): TokenGroup[] => {
       showAdvanced: false,
       tokens,
     };
-  });
+  }).filter((group) => group.tokens.length > 0);
 };
 
 export const getOutputTokenSections = (
