@@ -41,6 +41,7 @@ interface ScreenshotFileSystem {
 }
 
 let screenshotFileSystem: ScreenshotFileSystem = fs;
+let failureScreenshotHookInstalled = false;
 
 export function setScreenshotFileSystemForTests(fileSystem?: Partial<ScreenshotFileSystem>): () => void {
   const previous = screenshotFileSystem;
@@ -83,6 +84,10 @@ interface OwnerBindingInvalidationLatch {
 }
 
 export function installFailureScreenshotHook(): void {
+  if (failureScreenshotHookInstalled) {
+    return;
+  }
+
   teardown(async function (this: { currentTest?: { state?: string; fullTitle?: () => string; title?: string } }) {
     if (this.currentTest?.state !== 'failed') {
       return;
@@ -92,6 +97,7 @@ export function installFailureScreenshotHook(): void {
     const label = process.env.LA_E2E_CLI_LABEL ?? 'unknown';
     await captureFailureDiagnosticAttachment(label, testTitle);
   });
+  failureScreenshotHookInstalled = true;
 }
 
 export async function captureCliScreenshot(name: string, options: ScreenshotCaptureOptions = {}): Promise<string | undefined> {

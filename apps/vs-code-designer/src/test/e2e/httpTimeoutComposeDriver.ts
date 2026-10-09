@@ -47,6 +47,7 @@ const visibleDom = `
 `;
 
 const httpSettingsPanelTimeoutMs = 45_000;
+const httpTimeoutFieldSelector = '[aria-label="Action timeout"], [aria-label="Request options - Timeout"]';
 
 interface HttpSettingsPanelObservation {
   httpPanelOpen: boolean;
@@ -85,16 +86,26 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
 
   async configureHttpRequestSettings(timeout: string): Promise<void> {
     await this.openHttpSettings();
-    const requestTimeoutVisible = await this.evaluate<boolean>(`!!document.querySelector('[aria-label="Request options - Timeout"]')`);
+    const requestTimeoutVisible = await this.evaluate<boolean>(`Array.from(document.querySelectorAll(${JSON.stringify(
+      httpTimeoutFieldSelector
+    )})).some((element) => {
+      const rect = element.getBoundingClientRect();
+      const style = getComputedStyle(element);
+      return rect.width > 0 && rect.height > 0 && style.visibility !== 'hidden' && style.display !== 'none';
+    })`);
     if (!requestTimeoutVisible) {
       await this.click('button[aria-label^="Collapsed Networking"]');
     }
-    await this.click('[aria-label="Request options - Timeout"]');
+    await this.click(httpTimeoutFieldSelector);
     await this.replaceFocused(timeout);
     await pollHttpTimeoutCompose(
       () =>
         this.evaluate<string | null>(`(() => {
-          const field = document.querySelector('[aria-label="Request options - Timeout"]');
+          const field = Array.from(document.querySelectorAll(${JSON.stringify(httpTimeoutFieldSelector)})).find((element) => {
+            const rect = element.getBoundingClientRect();
+            const style = getComputedStyle(element);
+            return rect.width > 0 && rect.height > 0 && style.visibility !== 'hidden' && style.display !== 'none';
+          });
           return field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement ? field.value : null;
         })()`),
       (value) => value === timeout,

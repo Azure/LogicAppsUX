@@ -176,7 +176,7 @@ async function provePt24hAndInvalidValidation(entry: CreatedWorkspace, endpoint:
           label: 'httpTimeoutRequestPt24hSettingsConfigured',
           actionTitle: 'HTTP',
           requiredText: ['Settings'],
-          fields: [{ labels: ['Request options - Timeout', 'Timeout'], value: 'PT24H' }],
+          fields: [{ labels: ['Action timeout', 'Request options - Timeout', 'Timeout'], value: 'PT24H' }],
         }),
       persisted: () =>
         captureHttpDesignerEvidence(activeSession, entry, deadline, 'http-timeout-request-pt24h-saved', {
@@ -301,7 +301,7 @@ async function authorHttpRequest(
     label: 'httpTimeoutRequestPt1sSettingsConfigured',
     actionTitle: 'HTTP',
     requiredText: ['Settings'],
-    fields: [{ labels: ['Request options - Timeout', 'Timeout'], value: timeout }],
+    fields: [{ labels: ['Action timeout', 'Request options - Timeout', 'Timeout'], value: timeout }],
   });
   await driver.closePanel();
   await driver.save();

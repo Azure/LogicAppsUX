@@ -9,8 +9,10 @@ const { JSDOM } = require('jsdom') as { JSDOM: new (html: string, options?: Reco
 async function main(): Promise<void> {
   const screenshotDir = fs.mkdtempSync(path.join(os.tmpdir(), 'la-screenshot-unit-'));
   process.env.LA_E2E_CLI_SCREENSHOT_DIR = screenshotDir;
-  const { appendFailureAttachmentSafely, captureCdpScreenshot, setScreenshotFileSystemForTests } = await import('./screenshot');
+  const { appendFailureAttachmentSafely, captureCdpScreenshot, installFailureScreenshotHook, setScreenshotFileSystemForTests } =
+    await import('./screenshot');
 
+  testFailureScreenshotHookInstallsOnce(installFailureScreenshotHook);
   await testStableCaptureAccepted(captureCdpScreenshot, screenshotDir);
   await testTransientInvalidationRetries(captureCdpScreenshot, screenshotDir);
   await testWorkbenchShellStructuralInvalidationRetries(captureCdpScreenshot, screenshotDir);
@@ -51,6 +53,28 @@ async function main(): Promise<void> {
   await testSemanticOwnerFrameMismatchRejects(captureCdpScreenshot);
   await testOwnerActiveTabMismatchRejects(captureCdpScreenshot);
   console.log('[screenshot.unit] all tests passed');
+}
+
+function testFailureScreenshotHookInstallsOnce(
+  installFailureScreenshotHook: typeof import('./screenshot').installFailureScreenshotHook
+): void {
+  const globalWithTeardown = globalThis as typeof globalThis & { teardown?: (callback: unknown) => void };
+  const previousTeardown = globalWithTeardown.teardown;
+  let registrations = 0;
+  globalWithTeardown.teardown = () => {
+    registrations++;
+  };
+  try {
+    installFailureScreenshotHook();
+    installFailureScreenshotHook();
+    assert.strictEqual(registrations, 1, 'Failure screenshot teardown must be registered once per extension-host process');
+  } finally {
+    if (previousTeardown) {
+      globalWithTeardown.teardown = previousTeardown;
+    } else {
+      Reflect.deleteProperty(globalWithTeardown, 'teardown');
+    }
+  }
 }
 
 async function testStableCaptureAccepted(

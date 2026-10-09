@@ -305,7 +305,12 @@ async function editorDomFixture(text: string, options: { readOnly?: boolean; del
   };
 }
 
-async function httpSettingsPanelDomFixture(options: { panelOpen: boolean; includeSettings?: boolean; overlayText?: string }) {
+async function httpSettingsPanelDomFixture(options: {
+  panelOpen: boolean;
+  includeSettings?: boolean;
+  overlayText?: string;
+  timeoutLabel?: string;
+}) {
   const { JSDOM } = require('jsdom');
   const dom = new JSDOM(
     '<html><body>' +
@@ -413,7 +418,7 @@ async function httpSettingsPanelDomFixture(options: { panelOpen: boolean; includ
                 ? ''
                 : '<button id="http-settings" role="tab" aria-selected="false"><span> Settings </span></button>'
             }
-            <input id="request-timeout" aria-label="Request options - Timeout" value="" />
+            <input id="request-timeout" aria-label="${options.timeoutLabel ?? 'Request options - Timeout'}" value="" />
             <input id="async-pattern" aria-label="Asynchronous pattern" type="checkbox" checked />
           </div>
         </div>
@@ -793,7 +798,7 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
     assert.ok(readiness.includes('layout.querySelector(\'[id^="msla-node-details-panel-"]'));
   });
   await control('HTTP Settings uses an already-open HTTP node-details panel without re-clicking the node', async () => {
-    const fixture = await httpSettingsPanelDomFixture({ panelOpen: true });
+    const fixture = await httpSettingsPanelDomFixture({ panelOpen: true, timeoutLabel: 'Action timeout' });
     try {
       await fixture.driver().configureHttpRequestSettings('PT1S');
       assert.strictEqual(fixture.clicked.filter((id) => id === 'msla-node-HTTP').length, 0);
