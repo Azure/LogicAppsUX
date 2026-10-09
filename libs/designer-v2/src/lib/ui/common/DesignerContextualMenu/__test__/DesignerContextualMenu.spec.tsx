@@ -34,17 +34,14 @@ vi.mock('react-intl', async () => {
 });
 
 // Mock @microsoft/designer-ui
-vi.mock('@microsoft/designer-ui', async () => {
-  const actual = await vi.importActual('@microsoft/designer-ui');
-  return {
-    ...actual,
-    CardContextMenu: ({ menuItems, title }: { menuItems: JSX.Element[]; title: string }) => (
-      <div data-testid="card-context-menu" data-title={title}>
-        {menuItems}
-      </div>
-    ),
-  };
-});
+vi.mock('@microsoft/designer-ui', () => ({
+  PanelLocation: { Left: 'left', Right: 'right' },
+  CardContextMenu: ({ menuItems, title }: { menuItems: JSX.Element[]; title: string }) => (
+    <div data-testid="card-context-menu" data-title={title}>
+      {menuItems}
+    </div>
+  ),
+}));
 
 // Mock logic-apps-shared
 vi.mock('@microsoft/logic-apps-shared', async () => {

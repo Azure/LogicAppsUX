@@ -11,6 +11,7 @@ import LogicAppsDesignerConsumption from '../AzureLogicAppsDesigner/laDesignerCo
 import { LocalDesigner } from '../LocalDesigner/localDesignerV2';
 import { ReactQueryProvider } from '@microsoft/logic-apps-designer-v2';
 import { useQuery } from '@tanstack/react-query';
+import { getWorkflowExtractionRoute } from './workflowExtractionRoute';
 
 const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
   const { isLoading } = useQuery(['armToken'], loadToken);
@@ -25,16 +26,15 @@ export const DesignerWrapper = () => {
   const hostingPlan = useHostingPlan();
   const queryCachePersist = useQueryCachePersist();
   useEffect(() => {
-    const params = new URLSearchParams(search);
-    if (params.get('extraction') !== 'true') {
+    const extractionRoute = getWorkflowExtractionRoute(search);
+    dispatch(setHostOptions({ enableWorkflowExtraction: extractionRoute.enabled }));
+    if (!extractionRoute.enabled) {
       return;
     }
-    dispatch(setHostOptions({ enableWorkflowExtraction: true }));
-    const localWorkflow = params.get('local');
-    if (localWorkflow) {
+    if (extractionRoute.localWorkflow) {
       dispatch(setHostingPlan('standard'));
       dispatch(setIsLocalSelected(true));
-      dispatch(setResourcePath(localWorkflow));
+      dispatch(setResourcePath(extractionRoute.localWorkflow));
       dispatch(loadWorkflow(undefined));
     }
   }, [dispatch, search]);

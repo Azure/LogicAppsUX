@@ -86,6 +86,9 @@ describe('offline local workflow registry', () => {
     });
     expect(storage.setItem).toHaveBeenCalledTimes(1);
     expect(changed).toHaveBeenCalledTimes(1);
+    const stored = JSON.parse(values.get(localWorkflowRegistryKey)!);
+    expect(stored.operations[0].planFingerprint).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(stored.operations[0].planFingerprint).not.toContain('"definition"');
     plan.child.definition.actions = {};
     const reloaded = createRegistry();
     expect(reloaded.get('ExtractSelection.json')).toEqual(plan.source);
@@ -236,14 +239,17 @@ describe('offline local workflow registry', () => {
     expect(registry.list().map((entry) => entry.id)).toEqual(['AnotherFixture.json', 'local:ExtractedCustomer', 'local:Grandchild']);
   });
 
-  it.each(['authentication', 'password', 'authorization', 'apiKey'])('refuses credential fields: %s', async (key) => {
-    const plan = makePlan();
-    (plan.child.definition.actions!.Build_message as LogicAppsV2.ComposeAction).inputs = { [key]: 'do-not-store' };
-    const service = createRegistry().createService('ExtractSelection.json', 'ExtractSelection');
-    expect(() => service.prepare!(plan)).toThrow('credential');
-    await expect(service.commit(request(plan))).rejects.toThrow('credential');
-    expect(storage.setItem).not.toHaveBeenCalled();
-  });
+  it.each(['authentication', 'password', 'authorization', 'apiKey', 'x-functions-key', 'Ocp-Apim-Subscription-Key'])(
+    'refuses credential fields: %s',
+    async (key) => {
+      const plan = makePlan();
+      (plan.child.definition.actions!.Build_message as LogicAppsV2.ComposeAction).inputs = { [key]: 'do-not-store' };
+      const service = createRegistry().createService('ExtractSelection.json', 'ExtractSelection');
+      expect(() => service.prepare!(plan)).toThrow('credential');
+      await expect(service.commit(request(plan))).rejects.toThrow('credential');
+      expect(storage.setItem).not.toHaveBeenCalled();
+    }
+  );
 
   it('persists connection metadata, managed identity, settings, and parameter references without resolving them', async () => {
     const plan = makePlan();
@@ -262,6 +268,7 @@ describe('offline local workflow registry', () => {
     plan.child.parameters = {
       endpoint: { type: 'String', value: 'https://example.test' },
       AuthHeader: { type: 'String', value: "@appsetting('HttpAuthorization')" },
+      FunctionKey: { type: 'String', value: "@appsetting('FunctionKey')" },
     };
     plan.child.definition.actions!.Call_service = {
       type: 'Http',
@@ -269,7 +276,11 @@ describe('offline local workflow registry', () => {
         uri: "@parameters('endpoint')",
         method: 'POST',
         authentication: { type: 'Basic', username: 'synthetic-user', password: "@appsetting('HttpPassword')" },
-        headers: { Authorization: "@parameters('AuthHeader')" },
+        headers: {
+          Authorization: "@parameters('AuthHeader')",
+          'x-functions-key': "@parameters('FunctionKey')",
+          'Ocp-Apim-Subscription-Key': "@appsetting('ApiManagementSubscriptionKey')",
+        },
       },
       runtimeConfiguration: { contentTransfer: { transferMode: 'Chunked' } },
       runAfter: {},

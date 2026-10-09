@@ -43,6 +43,13 @@ type RegistryExclusiveRunner = <T>(operation: () => Promise<T>) => Promise<T>;
 const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value));
 const normalize = (value: string) => value.toLowerCase();
 const isRecord = (value: unknown): value is Record<string, unknown> => !!value && typeof value === 'object' && !Array.isArray(value);
+const fingerprint = async (value: unknown): Promise<string> => {
+  if (!globalThis.crypto?.subtle) {
+    throw new Error('This browser cannot safely create a compact workflow extraction fingerprint.');
+  }
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify(value)));
+  return `sha256:${Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('')}`;
+};
 const runWithBrowserRegistryLock: RegistryExclusiveRunner = async (operation) => {
   if (!globalThis.navigator?.locks) {
     throw new Error('This browser cannot safely save local workflows because cross-tab locking is unavailable.');
@@ -148,10 +155,12 @@ function assertSafeWorkflow(workflow: Workflow): void {
       value.forEach(inspect);
     } else if (isRecord(value)) {
       for (const [key, child] of Object.entries(value)) {
+        const normalizedKey = normalize(key).replace(/[-_\s]/g, '');
         if (normalize(key) === 'authentication') {
           assertSafeAuthentication(child, isSafeCredentialReference);
         } else if (
-          /password|secret|credential|authorization|access.?token|api.?key|connectionstring|^pfx$/i.test(key) &&
+          (/password|secret|credential|authorization|access.?token|api.?key|connectionstring|^pfx$/i.test(key) ||
+            /^(xfunctionskey|ocpapimsubscriptionkey|subscriptionkey|xapikey)$/.test(normalizedKey)) &&
           normalize(key) !== 'credentialtype' &&
           !isSafeCredentialReference(child)
         ) {
@@ -344,7 +353,7 @@ export class LocalWorkflowRegistry {
           const { operationId, sourceFingerprint, plan } = request;
           const data = this.read();
           const previous = data.operations.find((operation) => operation.id === operationId);
-          const planFingerprint = JSON.stringify(plan);
+          const planFingerprint = await fingerprint(plan);
           if (previous) {
             if (
               previous.sourceId !== sourceId ||

@@ -136,6 +136,7 @@ vi.mock('../common/DesignerContextualMenu/DesignerContextualMenu', () => ({ Desi
 vi.mock('../common/EdgeContextualMenu/EdgeContextualMenu', () => ({ EdgeContextualMenu: () => null }));
 vi.mock('../common/DragPanMonitor/DragPanMonitor', () => ({ DragPanMonitor: () => null }));
 vi.mock('../CanvasSizeMonitor', () => ({ CanvasSizeMonitor: () => null }));
+vi.mock('../panel/multiSelectPanel/workflowExtraction', () => ({ WorkflowExtractionDialog: () => null }));
 vi.mock('../DesignerReactFlow', () => ({ default: ({ children }: any) => <div data-testid="designer-reactflow">{children}</div> }));
 vi.mock('../panel', () => ({ RunHistoryPanel: () => <div data-testid="run-history-panel" /> }));
 vi.mock('../Designer.styles', () => ({
