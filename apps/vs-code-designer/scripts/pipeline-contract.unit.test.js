@@ -519,6 +519,8 @@ function testPnpmStoreCacheContract() {
 
   const finalEvidence = setup.steps.find((step) => step.displayName === 'Verify installed dependency store evidence');
   assert.match(finalEvidence.pwsh, /pnpm store path/);
+  assert.match(finalEvidence.pwsh, /expectedResolvedStore/);
+  assert.match(finalEvidence.pwsh, /"v\$pnpmMajor"/);
   assert.match(finalEvidence.pwsh, /pnpm store status/);
   assert.match(finalEvidence.pwsh, /pnpmStoreCacheState/);
   assert.match(finalEvidence.pwsh, /pnpmStoreFallback/);

@@ -285,8 +285,10 @@ steps:
 
   - pwsh: |
       $resolvedStorePath = (pnpm store path --store-dir "$(pnpmStorePath)").Trim()
-      if ([IO.Path]::GetFullPath($resolvedStorePath) -ne [IO.Path]::GetFullPath('$(pnpmStorePath)')) {
-        throw "pnpm resolved an unexpected store path. expected='$(pnpmStorePath)' actual='$resolvedStorePath'"
+      $pnpmMajor = ([Version]'$(pnpmVersion)').Major
+      $expectedResolvedStore = Join-Path '$(pnpmStorePath)' "v$pnpmMajor"
+      if ([IO.Path]::GetFullPath($resolvedStorePath) -ne [IO.Path]::GetFullPath($expectedResolvedStore)) {
+        throw "pnpm resolved an unexpected versioned store path. expected='$expectedResolvedStore' actual='$resolvedStorePath'"
       }
       pnpm store status --store-dir "$(pnpmStorePath)"
       if ($LASTEXITCODE -ne 0) {
