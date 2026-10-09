@@ -100,7 +100,8 @@ function main() {
       exitWithError(new Error('--http-timeout-compose-original is a focused create + reopen route; do not combine it with other flags.'));
       return;
     }
-    runHttpTimeoutComposeOriginal()
+    const run = requiresDirectFamilyWrapper(process.env) ? runDirectFamily('httpTimeoutComposeOriginal') : runHttpTimeoutComposeOriginal();
+    Promise.resolve(run)
       .then((code) => process.exit(code))
       .catch(exitWithError);
     return;
@@ -260,6 +261,10 @@ function main() {
 function exitWithError(error) {
   console.error(error instanceof Error ? error.message : String(error));
   process.exit(1);
+}
+
+function requiresDirectFamilyWrapper(env = process.env) {
+  return env.LA_E2E_CLI_SUITE_WRAPPER_CHILD !== '1';
 }
 
 async function runSuitesBatch(suitesValue, visibleDelayMs) {
@@ -3851,6 +3856,7 @@ module.exports = {
     createLinePrefixer,
     readContainmentReceipt,
     requiresDirectHttpPhaseClosure,
+    requiresDirectFamilyWrapper,
     verifyFuncCoreToolsAtDependencyRoot,
     walkFiles,
     writeSuitePhaseResult,

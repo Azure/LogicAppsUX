@@ -8,6 +8,7 @@ const os = require('os');
 const path = require('path');
 
 const {
+  runDirectFamily,
   _test: {
     collectRuntimeDependencyDiagnostics,
     collectRegenerationProfileLogs,
@@ -43,6 +44,7 @@ const {
     redactGeneratedWorkspacePlainText,
     readContainmentReceipt,
     requiresDirectHttpPhaseClosure,
+    requiresDirectFamilyWrapper,
     runSuiteWrapperProcess,
     createLinePrefixer,
     sanitizeInheritedGitCommandConfigEnv,
@@ -103,11 +105,13 @@ const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
     testSanitizesInheritedGitCommandConfigEnv();
     testBatchSuiteRegistryValidation();
     testBatchSuiteEnvironmentIsolation();
+    testHttpDirectSelectorUsesRegisteredContainment();
     testHttpBatchDelegatesProcessClosureToSuiteContainment();
     await testBatchSuiteScopedCredentials();
     await testBatchContinuesAfterOrdinaryFailure();
     await testBatchStopsAfterContainmentBreach();
     await testRunSuiteWrapperProcessWritesStructuredResults();
+    await testDirectHttpFamilyRetainsWrapperPhaseJournal();
     await testRunSuiteWrapperProcessTimeoutCancelsDisposableChild();
     await testRunSuiteWrapperProcessTimeoutCancelsGrandchildListener();
     await testRunSuiteWrapperProcessTimeoutCancelsSignalResistantDescendant();
@@ -187,6 +191,17 @@ function testHttpBatchDelegatesProcessClosureToSuiteContainment() {
     requiresDirectHttpPhaseClosure({ ...invocation, LA_E2E_CLI_SUITE_WRAPPER_CHILD: '1' }),
     false,
     'Batch HTTP phases must rely on the exact suite containment receipt instead of reconstructing exited process ancestry'
+  );
+}
+
+function testHttpDirectSelectorUsesRegisteredContainment() {
+  assert.strictEqual(requiresDirectFamilyWrapper({}), true, 'The direct HTTP selector must launch the registered containment wrapper');
+  assert.strictEqual(
+    requiresDirectFamilyWrapper({
+      LA_E2E_CLI_SUITE_WRAPPER_CHILD: '1',
+    }),
+    false,
+    'The contained HTTP child must execute the scenario instead of recursively launching another wrapper'
   );
 }
 
@@ -1219,6 +1234,49 @@ async function testRunSuiteWrapperProcessWritesStructuredResults() {
   assert.strictEqual(cleanup.verified, true);
   assert.strictEqual(cleanup.processCleanup.retainedOriginalIdentitiesVerified, true);
   assert.match(cleanup.processCleanup.mechanism, /^(windows-job-object|linux-subreaper)$/);
+}
+
+async function testDirectHttpFamilyRetainsWrapperPhaseJournal() {
+  const resultsDir = path.join(tempRoot, 'direct-http-results');
+  const batchRoot = path.join(tempRoot, 'direct-http-batch');
+  const seedDir = path.join(tempRoot, 'direct-http-extensions');
+  fs.mkdirSync(batchRoot, { recursive: true });
+  fs.mkdirSync(seedDir, { recursive: true });
+  fs.writeFileSync(path.join(seedDir, 'extensions.json'), '[]');
+  const credentialKeys = [
+    'LA_E2E_CLI_AZURE_ACCESS_TOKEN',
+    'LA_E2E_CLI_AZURE_ACCESS_TOKEN_EXPIRES_ON',
+    'LA_E2E_CLI_AZURE_ACCESS_TOKEN_MINTED_AT',
+  ];
+  const previous = Object.fromEntries(credentialKeys.map((key) => [key, process.env[key]]));
+  process.env.LA_E2E_CLI_AZURE_ACCESS_TOKEN = 'unit-http-token';
+  process.env.LA_E2E_CLI_AZURE_ACCESS_TOKEN_EXPIRES_ON = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+  process.env.LA_E2E_CLI_AZURE_ACCESS_TOKEN_MINTED_AT = new Date().toISOString();
+  try {
+    const code = await runDirectFamily('httpTimeoutComposeOriginal', undefined, {
+      resultsDir,
+      batchRoot,
+      seedDir,
+      timeoutMs: 10_000,
+      scriptPath: createWrapperFixtureScript('success'),
+    });
+    assert.strictEqual(code, 0);
+    const terminal = JSON.parse(fs.readFileSync(path.join(resultsDir, 'httpTimeoutComposeOriginal.terminal-result.json'), 'utf8'));
+    assert.deepStrictEqual(terminal.expectedPhaseIds, SUITE_REGISTRY.httpTimeoutComposeOriginal.expectedPhases);
+    assert.deepStrictEqual(terminal.observedPhaseIds, SUITE_REGISTRY.httpTimeoutComposeOriginal.expectedPhases);
+    assert.strictEqual(terminal.complete, true);
+    assert.strictEqual(terminal.cleanupVerified, true);
+    assert.strictEqual(terminal.originalProcessClosureVerified, true);
+    assert.strictEqual(terminal.processClosureProof, 'retained-original-identities');
+  } finally {
+    for (const key of credentialKeys) {
+      if (previous[key] === undefined) {
+        delete process.env[key];
+      } else {
+        process.env[key] = previous[key];
+      }
+    }
+  }
 }
 
 async function testRunSuiteWrapperProcessTimeoutCancelsDisposableChild() {
@@ -2307,7 +2365,8 @@ function createWrapperFixtureScript(mode) {
       '  const target = process.env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH;',
       '  if (!target) { return; }',
       '  fs.mkdirSync(path.dirname(target), { recursive: true });',
-      "  fs.appendFileSync(target, `${JSON.stringify({ schemaVersion: 1, phaseId: 'unitTests', exitCode, signal: null, cleanupVerified: true, diagnosticsError: '', complete: true })}\\n`);",
+      '  const phaseIds = JSON.parse(process.env.LA_E2E_CLI_BATCH_EXPECTED_PHASES || \'["unitTests"]\');',
+      "  for (const phaseId of phaseIds) { fs.appendFileSync(target, `${JSON.stringify({ schemaVersion: 1, phaseId, exitCode, signal: null, cleanupVerified: true, diagnosticsError: '', complete: true })}\\n`); }",
       '}',
       "if (mode === 'sleep') { setInterval(() => undefined, 1000); }",
       "else if (mode === 'descendant') {",

@@ -206,6 +206,11 @@ root has exited: an intermediate process can disappear while its child remains,
 making an ordinary parent/child walk falsely report an empty tree. Per-phase
 checks may remain as direct-run diagnostics, but batch acceptance belongs to
 the Windows job-object or Linux subreaper receipt.
+Direct supplementary selectors that publish strict family lifecycle evidence
+must delegate through the registered suite containment wrapper before running
+their scenario. The wrapper child may retain the focused selector, but the
+outer process must own the Windows job object or Linux subreaper and write the
+stable terminal evidence only after the original identities have closed.
 
 For the Stateless variables family, use a preparation host with auto-start
 disabled to run real consistency generation and bind the approved fixture to

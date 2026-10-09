@@ -989,6 +989,7 @@ function testCanonicalSuiteParityContract() {
 
 function testSupplementaryFamilyRoutingContract() {
   const consumer = parseYaml('.config/vscode-e2e-cli.1es.yml');
+  const runner = read('apps/vs-code-designer/scripts/run-e2e-cli.js');
   const suiteSteps = parseYaml('.config/templates/vscode-e2e-cli-run-suite.yml').jobs[0].steps;
   const nativeBranches = suiteSteps.filter((step) => Object.keys(step).some((key) => key.includes('parameters.requiresAzureAccessToken')));
   assert.strictEqual(nativeBranches.length, 4, 'Both OS and authentication paths must retain diagnostic-only multi-root execution');
@@ -1021,6 +1022,11 @@ function testSupplementaryFamilyRoutingContract() {
   assert.match(
     staging.pwsh,
     /family-lifecycle-terminal\.js[\s\S]*if \(\$LASTEXITCODE -ne 0\)[\s\S]*throw 'Supplementary family native lifecycle/
+  );
+  assert.match(
+    runner,
+    /requiresDirectFamilyWrapper\(process\.env\)[\s\S]*runDirectFamily\('httpTimeoutComposeOriginal'\)[\s\S]*runHttpTimeoutComposeOriginal\(\)/,
+    'The direct HTTP selector must delegate to registered suite containment before the wrapper child runs the scenario'
   );
   assert.ok(
     staging.pwsh.includes('workspace-regeneration-${{ parameters.shortName }}'),
