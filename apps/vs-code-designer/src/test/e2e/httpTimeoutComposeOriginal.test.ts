@@ -193,10 +193,12 @@ async function provePt1sExecution(entry: CreatedWorkspace, endpoint: OwnedDelayE
 
 async function provePt24hAndInvalidValidation(entry: CreatedWorkspace, endpoint: string, deadline: number): Promise<void> {
   let session: DesignerSession | undefined;
+  let pt24hOwner: Awaited<ReturnType<HttpTimeoutComposeDriver['context']>> | undefined;
   try {
     const activeSession = await openDesigner(entry, deadline, 'HTTP PT24H actual designer');
     session = activeSession;
     await activeSession.driver.waitForDesignerReady(['When an HTTP request is received', 'When a HTTP request is received']);
+    pt24hOwner = await activeSession.driver.context();
     await captureHttpDesignerEvidence(activeSession, entry, deadline, 'http-timeout-request-pt24h-designer-reopened', {
       kind: 'designerCanvas',
       label: 'httpTimeoutRequestPt24hDesignerReopened',
@@ -277,6 +279,10 @@ async function provePt24hAndInvalidValidation(entry: CreatedWorkspace, endpoint:
     const activeSession = await openDesigner(entry, deadline, 'HTTP invalid duration actual designer');
     session = activeSession;
     await activeSession.driver.waitForDesignerReady(['When an HTTP request is received', 'When a HTTP request is received']);
+    const invalidOwner = await activeSession.driver.context();
+    assert.ok(pt24hOwner, 'PT24H Designer owner was not captured before reopening invalid-duration validation');
+    assert.notDeepStrictEqual(invalidOwner, pt24hOwner, 'Invalid-duration validation must use a fresh Designer owner');
+    assert.notStrictEqual(invalidOwner.targetId, pt24hOwner.targetId, 'Invalid-duration validation must use a fresh CDP target');
     await captureHttpDesignerEvidence(activeSession, entry, deadline, 'http-timeout-request-invalid-designer-reopened', {
       kind: 'designerCanvas',
       label: 'httpTimeoutRequestInvalidDesignerReopened',
@@ -446,32 +452,34 @@ async function updateHttpRequestTimeout(
     },
   });
   await driver.closePanel();
-  await pollHttpTimeoutCompose(() => driver.saveEnabled(), Boolean, deadline, `enabled Save after setting HTTP timeout ${timeout}`);
+  const saveDeadline = Math.min(deadline, Date.now() + 30_000);
+  await pollHttpTimeoutCompose(() => driver.saveEnabled(), Boolean, saveDeadline, `enabled Save after setting HTTP timeout ${timeout}`);
   const priorModifiedAt = fs.statSync(entry.workflowJsonPath).mtimeMs;
   await driver.save();
-  await pollHttpTimeoutCompose(
-    async () => ({
-      enabled: await driver.saveEnabled(),
-      modifiedAt: fs.statSync(entry.workflowJsonPath).mtimeMs,
-    }),
-    (state) => state.enabled === false && state.modifiedAt > priorModifiedAt,
-    deadline,
-    `persisted and clean designer after saving HTTP timeout ${timeout}`
-  );
   const persisted = await pollHttpTimeoutCompose(
-    async () => readWorkflow(entry),
-    (value) => {
+    async () => ({
+      modifiedAt: fs.statSync(entry.workflowJsonPath).mtimeMs,
+      workflow: readWorkflow(entry),
+    }),
+    (state) => {
+      if (state.modifiedAt <= priorModifiedAt) {
+        return false;
+      }
       try {
-        assertHttpTimeoutRequestPersisted(value, timeout, endpoint);
+        assertHttpTimeoutRequestPersisted(state.workflow, timeout, endpoint);
         return true;
       } catch {
         return false;
       }
     },
-    deadline,
-    `updated persisted HTTP timeout ${timeout}`
+    saveDeadline,
+    `fresh persisted HTTP timeout ${timeout}`
   );
-  assertHttpTimeoutRequestPersisted(persisted, timeout, endpoint);
+  assertHttpTimeoutRequestPersisted(persisted.workflow, timeout, endpoint);
+  console.log(
+    `[http-timeout][checkpoint] ${entry.wfName}: saved HTTP timeout ${timeout} through a fresh workflow.json write ` +
+      `(mtime ${priorModifiedAt} -> ${persisted.modifiedAt})`
+  );
   await checkpoints.persisted?.();
 }
 

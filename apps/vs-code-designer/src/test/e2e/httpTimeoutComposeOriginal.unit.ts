@@ -294,6 +294,50 @@ async function main(): Promise<void> {
     assert.ok(source.includes('semanticContextId: session.contextId'));
     assert.ok(source.includes("binding: { activeTabText: [entry.wfName, 'Workspace'], semanticText }"));
   });
+  await control('HTTP timeout updates prove a bounded fresh disk write without requiring unreliable V2 clean state', () => {
+    const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
+    const helperStart = source.indexOf('async function updateHttpRequestTimeout(');
+    const helperEnd = source.indexOf('async function captureHttpDesignerEvidence(', helperStart);
+    const helper = source.slice(helperStart, helperEnd);
+    const saveEnabled = helper.indexOf('await pollHttpTimeoutCompose(() => driver.saveEnabled()');
+    const watermark = helper.indexOf('const priorModifiedAt = fs.statSync(entry.workflowJsonPath).mtimeMs;');
+    const save = helper.indexOf('await driver.save();');
+    const freshWrite = helper.indexOf('state.modifiedAt <= priorModifiedAt');
+    const exactPersisted = helper.indexOf('assertHttpTimeoutRequestPersisted(state.workflow, timeout, endpoint);');
+    assert.ok(
+      helper.includes('const saveDeadline = Math.min(deadline, Date.now() + 30_000);'),
+      'Save activation and persistence must use a local deadline instead of consuming the family budget'
+    );
+    assert.ok(
+      saveEnabled >= 0 && saveEnabled < watermark && watermark < save && save < freshWrite && freshWrite < exactPersisted,
+      'The native Save click must follow an enabled control and precede a fresh exact workflow.json write'
+    );
+    assert.strictEqual(
+      (helper.match(/driver\.saveEnabled\(\)/g) ?? []).length,
+      1,
+      'V2 Save enabled state is only a pre-click readiness signal, not a post-click completion oracle'
+    );
+    assert.ok(!helper.includes('state.enabled === false'), 'V2 save completion must not require an unreliable clean-state transition');
+  });
+  await control('invalid-duration validation reopens on a fresh Designer target after PT24H persistence', () => {
+    const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
+    const scenarioStart = source.indexOf('async function provePt24hAndInvalidValidation(');
+    const scenarioEnd = source.indexOf('async function authorHttpRequest(', scenarioStart);
+    const scenario = source.slice(scenarioStart, scenarioEnd);
+    const pt24hOwner = scenario.indexOf('pt24hOwner = await activeSession.driver.context();');
+    const invalidOpen = scenario.indexOf("openDesigner(entry, deadline, 'HTTP invalid duration actual designer')");
+    const invalidOwner = scenario.indexOf('const invalidOwner = await activeSession.driver.context();', invalidOpen);
+    const targetAssertion = scenario.indexOf('assert.notStrictEqual(invalidOwner.targetId, pt24hOwner.targetId', invalidOwner);
+    const invalidConfiguration = scenario.indexOf("configureHttpRequestSettings('InvalidString')", targetAssertion);
+    assert.ok(
+      pt24hOwner >= 0 &&
+        pt24hOwner < invalidOpen &&
+        invalidOpen < invalidOwner &&
+        invalidOwner < targetAssertion &&
+        targetAssertion < invalidConfiguration,
+      'InvalidString must be entered only after proving a fresh Designer target'
+    );
+  });
   await control('failing HTTP evidence expectations use the shared local screenshot cap instead of the family deadline', () => {
     const lifecycle = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
     const screenshot = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/screenshot.ts'), 'utf8');
