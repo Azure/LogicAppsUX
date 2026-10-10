@@ -109,6 +109,7 @@ async function main(): Promise<void> {
       'http-timeout-request-pt1s-designer-ready',
       'http-timeout-request-pt1s-request-inserted',
       'http-timeout-request-pt1s-http-panel-ready',
+      'http-timeout-request-pt1s-method-selected',
       'http-timeout-request-pt1s-settings-configured',
       'http-timeout-request-pt1s-saved',
     ];
@@ -175,10 +176,34 @@ async function main(): Promise<void> {
     assert.ok(errorBar.includes("const role = type === 'error' || type === 'warning' ? 'alert' : undefined;"));
     assert.ok(readiness.includes('\'[role="alert"], [aria-live], .ms-MessageBar, [class*="error"], [class*="Error"]\''));
     const configured = lifecycle.indexOf('http-timeout-request-pt1s-settings-configured');
+    const addHttp = lifecycle.indexOf("await driver.addAction('HTTP', 'HTTP', ['http']);");
+    const selectGet = lifecycle.indexOf('await driver.selectHttpMethodGet();', addHttp);
+    const methodEvidence = lifecycle.indexOf('http-timeout-request-pt1s-method-selected', selectGet);
+    const enterUri = lifecycle.indexOf("await driver.fillParameter(['URI'], endpoint);", methodEvidence);
+    const configureSettings = lifecycle.indexOf('await driver.configureHttpRequestSettings(timeout);', enterUri);
     const closePanel = lifecycle.indexOf('await driver.closePanel();', configured);
     const saved = lifecycle.indexOf('http-timeout-request-pt1s-saved', closePanel);
     const persisted = lifecycle.lastIndexOf('assertHttpTimeoutRequestPersisted(persisted, timeout, endpoint);', saved);
-    assert.ok(configured >= 0 && configured < closePanel && closePanel < persisted && persisted < saved);
+    assert.ok(
+      addHttp >= 0 &&
+        addHttp < selectGet &&
+        selectGet < methodEvidence &&
+        methodEvidence < enterUri &&
+        enterUri < configureSettings &&
+        configureSettings < configured &&
+        configured < closePanel &&
+        closePanel < persisted &&
+        persisted < saved
+    );
+    assert.strictEqual(
+      (lifecycle.match(/await driver\.selectHttpMethodGet\(\);/g) ?? []).length,
+      1,
+      'Scenario 1 must explicitly select GET exactly once instead of relying on an implicit HTTP method'
+    );
+    assert.ok(
+      lifecycle.includes("fields: [{ labels: ['Method'], value: 'GET' }]"),
+      'Pre-save evidence must expose the selected Method GET value'
+    );
     const invalidConfigured = lifecycle.indexOf("await activeSession.driver.configureHttpRequestSettings('InvalidString')");
     const invalidEvidence = lifecycle.indexOf('http-timeout-request-invalid-duration', invalidConfigured);
     const restoration = lifecycle.indexOf('http-timeout-request-valid-state-restored', invalidEvidence);

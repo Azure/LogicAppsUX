@@ -300,7 +300,16 @@ async function authorHttpRequest(
     kind: 'designerPanel',
     label: 'httpTimeoutRequestPt1sHttpPanelReady',
     actionTitle: 'HTTP',
-    requiredText: ['URI'],
+    requiredText: ['Method', 'URI'],
+  });
+  await driver.selectHttpMethodGet();
+  console.log(`[http-timeout][checkpoint] ${entry.wfName}: HTTP Method explicitly selected as GET`);
+  await captureHttpDesignerEvidence(session, entry, deadline, 'http-timeout-request-pt1s-method-selected', {
+    kind: 'designerPanel',
+    label: 'httpTimeoutRequestPt1sMethodSelected',
+    actionTitle: 'HTTP',
+    requiredText: ['Method', 'GET', 'URI'],
+    fields: [{ labels: ['Method'], value: 'GET' }],
   });
   await driver.fillParameter(['URI'], endpoint);
   console.log(`[http-timeout][checkpoint] ${entry.wfName}: URI entered; waiting for HTTP panel Settings readiness`);

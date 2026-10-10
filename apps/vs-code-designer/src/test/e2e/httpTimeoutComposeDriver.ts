@@ -46,9 +46,60 @@ const visibleDom = `
   const normalize = (text) => (text || '').replace(/\\s+/g, ' ').trim();
 `;
 
+const httpPanelIdentityDom = `
+  const readPanelIdentity = (layout) => {
+    const nodePanels = Array.from(layout.querySelectorAll('[id^="msla-node-details-panel-"]')).filter(visible);
+    const titleInputs = Array.from(layout.querySelectorAll(
+      '.msla-panel-header input[aria-label="Card title"], .msla-panel-header input[id$="-title"]'
+    )).filter(visible);
+    const nodeId = nodePanels.length === 1
+      ? normalize(nodePanels[0].id || '').replace(/^msla-node-details-panel-/, '')
+      : '';
+    const titleInput = titleInputs.length === 1 ? titleInputs[0] : undefined;
+    const title = normalize(
+      titleInput instanceof HTMLInputElement ? titleInput.value : titleInput?.getAttribute('value') || ''
+    );
+    return {
+      nodeId,
+      title,
+      values: [nodeId, title].filter(Boolean),
+      isHttp:
+        nodePanels.length === 1 &&
+        titleInputs.length === 1 &&
+        nodeId.toLowerCase() === 'http' &&
+        title.toLowerCase() === 'http',
+    };
+  };
+`;
+
 const httpSettingsPanelTimeoutMs = 45_000;
+const httpMethodControlSelector = 'input[role="combobox"][aria-label="Method"]';
 const httpTimeoutFieldSelector = '[aria-label="Action timeout"], [aria-label="Request options - Timeout"]';
 const asyncPatternSwitchSelector = 'input[role="switch"][aria-label="Asynchronous pattern"]';
+
+interface HttpMethodControlObservation {
+  selectedNodeIdentity: string[];
+  panelCount: number;
+  controlCount: number;
+  enabled?: boolean;
+  value?: string;
+  point?: Point;
+  reason?: string;
+  obstruction?: string;
+  fatal?: boolean;
+}
+
+interface HttpMethodOptionObservation {
+  controlCount: number;
+  expandedControlCount: number;
+  listboxCount: number;
+  optionCount: number;
+  options: string[];
+  point?: Point;
+  reason?: string;
+  obstruction?: string;
+  fatal?: boolean;
+}
 
 interface HttpSettingsPanelObservation {
   httpPanelOpen: boolean;
@@ -96,6 +147,95 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
     await this.click('[role="toolbar"] button, button[aria-label="Save"]', ['Save']);
   }
 
+  async selectHttpMethodGet(): Promise<void> {
+    const startedAt = Date.now();
+    const deadline = Math.min(this.deadline, startedAt + this.settingsPanelTimeoutMs);
+    const localCdp = boundedCdp(this.cdp, deadline);
+    const localActions = new ProvenDesignerCdpActions(localCdp, this.contextId, deadline, this.assertActive);
+    let control: HttpMethodControlObservation = {
+      selectedNodeIdentity: [],
+      panelCount: 0,
+      controlCount: 0,
+    };
+    while (Date.now() < deadline) {
+      control = await this.httpMethodControlObservation(localActions);
+      if (control.fatal) {
+        assert.fail(`Cannot open HTTP Method safely. State: ${JSON.stringify(control)}`);
+      }
+      if (control.point) {
+        break;
+      }
+      const remaining = deadline - Date.now();
+      if (remaining <= 0) {
+        break;
+      }
+      await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining)));
+    }
+    if (!control.point) {
+      assert.fail(`Timed out waiting for exactly one visible, enabled HTTP Method control. State: ${JSON.stringify(control)}`);
+    }
+
+    await clickPoint(localCdp, control.point);
+
+    let option: HttpMethodOptionObservation = {
+      controlCount: 0,
+      expandedControlCount: 0,
+      listboxCount: 0,
+      optionCount: 0,
+      options: [],
+    };
+    while (Date.now() < deadline) {
+      option = await this.httpMethodGetOptionObservation(localActions);
+      if (option.fatal) {
+        assert.fail(`Cannot select HTTP Method GET safely. State: ${JSON.stringify(option)}`);
+      }
+      if (option.point) {
+        break;
+      }
+      const remaining = deadline - Date.now();
+      if (remaining <= 0) {
+        break;
+      }
+      await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining)));
+    }
+    if (!option.point) {
+      assert.fail(`Timed out waiting for exactly one visible, enabled HTTP Method GET option. State: ${JSON.stringify(option)}`);
+    }
+
+    await clickPoint(localCdp, option.point);
+    await pollHttpTimeoutCompose(
+      () =>
+        localActions.evaluate<HttpMethodControlObservation>(`(() => {
+          ${visibleDom}
+          ${httpPanelIdentityDom}
+          const selectedLayouts = Array.from(document.querySelectorAll('.msla-panel-layout.msla-panel-border-selected')).filter(visible);
+          const identities = selectedLayouts.map(readPanelIdentity);
+          if (selectedLayouts.length !== 1 || !identities[0].isHttp) {
+            return {
+              selectedNodeIdentity: identities.flatMap((identity) => identity.values),
+              panelCount: selectedLayouts.length,
+              controlCount: 0,
+            };
+          }
+          const controls = Array.from(selectedLayouts[0].querySelectorAll(${JSON.stringify(httpMethodControlSelector)})).filter(visible);
+          return {
+            selectedNodeIdentity: identities[0].values,
+            panelCount: 1,
+            controlCount: controls.length,
+            enabled:
+              controls.length === 1 &&
+              controls[0] instanceof HTMLInputElement &&
+              !controls[0].disabled &&
+              controls[0].getAttribute('aria-disabled') !== 'true',
+            value: controls.length === 1 && controls[0] instanceof HTMLInputElement ? controls[0].value : undefined,
+          };
+        })()`),
+      (value) => value.panelCount === 1 && value.controlCount === 1 && value.enabled === true && value.value === 'GET',
+      deadline,
+      'HTTP Method GET selected in the active HTTP panel'
+    );
+  }
+
   async configureHttpRequestSettings(timeout: string): Promise<void> {
     const startedAt = Date.now();
     const deadline = Math.min(this.deadline, startedAt + this.settingsPanelTimeoutMs);
@@ -129,6 +269,280 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
       `Request options timeout ${timeout}`
     );
     await this.disableAsyncPattern(localCdp, localActions, deadline);
+  }
+
+  private async httpMethodControlObservation(localActions: ProvenDesignerCdpActions): Promise<HttpMethodControlObservation> {
+    return localActions.evaluate<HttpMethodControlObservation>(`(() => {
+      ${visibleDom}
+      ${httpPanelIdentityDom}
+      const selectedLayouts = Array.from(document.querySelectorAll('.msla-panel-layout.msla-panel-border-selected')).filter(visible);
+      const identities = selectedLayouts.map(readPanelIdentity);
+      const selectedNodeIdentity = identities.flatMap((identity) => identity.values);
+      if (selectedLayouts.length !== 1) {
+        return {
+          selectedNodeIdentity,
+          panelCount: selectedLayouts.length,
+          controlCount: 0,
+          reason: selectedLayouts.length === 0 ? 'Active node-details panel not found' : 'Active node-details panel was ambiguous',
+          fatal: selectedLayouts.length > 1,
+        };
+      }
+      const layout = selectedLayouts[0];
+      if (!identities[0].isHttp) {
+        return {
+          selectedNodeIdentity,
+          panelCount: 1,
+          controlCount: 0,
+          reason: 'Active node-details panel is not HTTP',
+          fatal: true,
+        };
+      }
+      const controls = Array.from(layout.querySelectorAll(${JSON.stringify(httpMethodControlSelector)})).filter(visible);
+      if (controls.length !== 1) {
+        return {
+          selectedNodeIdentity,
+          panelCount: 1,
+          controlCount: controls.length,
+          reason: controls.length === 0 ? 'Production HTTP Method combobox not found' : 'Production HTTP Method combobox was ambiguous',
+          fatal: controls.length > 1,
+        };
+      }
+      const control = controls[0];
+      if (!(control instanceof HTMLInputElement)) {
+        return {
+          selectedNodeIdentity,
+          panelCount: 1,
+          controlCount: 1,
+          reason: 'Production HTTP Method selector did not resolve to an input',
+          fatal: true,
+        };
+      }
+      if (control.disabled || control.getAttribute('aria-disabled') === 'true') {
+        return {
+          selectedNodeIdentity,
+          panelCount: 1,
+          controlCount: 1,
+          value: control.value,
+          reason: 'Production HTTP Method combobox is disabled',
+          fatal: true,
+        };
+      }
+      control.scrollIntoView({ block: 'center', inline: 'center' });
+      const rect = control.getBoundingClientRect();
+      const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+      const hit = document.elementFromPoint(point.x, point.y);
+      const describe = (element) => normalize(
+        element?.getAttribute?.('aria-label') || element?.getAttribute?.('role') ||
+        element?.textContent || element?.className || ''
+      ).slice(0, 240);
+      if (hit !== control) {
+        return {
+          selectedNodeIdentity,
+          panelCount: 1,
+          controlCount: 1,
+          value: control.value,
+          reason: 'Production HTTP Method combobox is not hit-testable',
+          obstruction: describe(hit),
+          fatal: true,
+        };
+      }
+      return {
+        selectedNodeIdentity,
+        panelCount: 1,
+        controlCount: 1,
+        value: control.value,
+        point,
+      };
+    })()`);
+  }
+
+  private async httpMethodGetOptionObservation(localActions: ProvenDesignerCdpActions): Promise<HttpMethodOptionObservation> {
+    return localActions.evaluate<HttpMethodOptionObservation>(`(() => {
+      ${visibleDom}
+      ${httpPanelIdentityDom}
+      const selectedLayouts = Array.from(document.querySelectorAll('.msla-panel-layout.msla-panel-border-selected')).filter(visible);
+      const identities = selectedLayouts.map(readPanelIdentity);
+      if (selectedLayouts.length !== 1 || !identities[0].isHttp) {
+        return {
+          controlCount: 0,
+          expandedControlCount: 0,
+          listboxCount: 0,
+          optionCount: 0,
+          options: [],
+          reason: 'Active HTTP node-details panel changed while opening Method',
+          fatal: true,
+        };
+      }
+      const controls = Array.from(selectedLayouts[0].querySelectorAll(${JSON.stringify(httpMethodControlSelector)})).filter(visible);
+      if (controls.length !== 1 || !(controls[0] instanceof HTMLInputElement)) {
+        return {
+          controlCount: controls.length,
+          expandedControlCount: 0,
+          listboxCount: 0,
+          optionCount: 0,
+          options: [],
+          reason: controls.length === 0
+            ? 'HTTP Method combobox became stale or disappeared'
+            : 'HTTP Method combobox became ambiguous while opening',
+          fatal: true,
+        };
+      }
+      const control = controls[0];
+      if (control.disabled || control.getAttribute('aria-disabled') === 'true') {
+        return {
+          controlCount: 1,
+          expandedControlCount: 0,
+          listboxCount: 0,
+          optionCount: 0,
+          options: [],
+          reason: 'HTTP Method combobox became disabled while opening',
+          fatal: true,
+        };
+      }
+      const expandedControls = Array.from(document.querySelectorAll('[role="combobox"][aria-expanded="true"]')).filter(visible);
+      if (expandedControls.length > 1 || (expandedControls.length === 1 && expandedControls[0] !== control)) {
+        return {
+          controlCount: 1,
+          expandedControlCount: expandedControls.length,
+          listboxCount: 0,
+          optionCount: 0,
+          options: [],
+          reason: 'Expanded combobox did not uniquely belong to HTTP Method',
+          fatal: true,
+        };
+      }
+      if (expandedControls.length === 0) {
+        return {
+          controlCount: 1,
+          expandedControlCount: 0,
+          listboxCount: 0,
+          optionCount: 0,
+          options: [],
+          reason: 'HTTP Method combobox has not opened',
+        };
+      }
+      const relationshipIds = ['aria-controls', 'aria-owns']
+        .flatMap((attribute) => normalize(control.getAttribute(attribute)).split(/\\s+/))
+        .filter(Boolean);
+      const ownedIds = Array.from(new Set(relationshipIds));
+      if (ownedIds.length === 0) {
+        return {
+          controlCount: 1,
+          expandedControlCount: 1,
+          listboxCount: 0,
+          optionCount: 0,
+          options: [],
+          reason: 'HTTP Method listbox relationship is missing',
+        };
+      }
+      const ownedElements = ownedIds.map((id) => document.getElementById(id));
+      if (ownedElements.some((element) => !element)) {
+        return {
+          controlCount: 1,
+          expandedControlCount: 1,
+          listboxCount: 0,
+          optionCount: 0,
+          options: [],
+          reason: 'HTTP Method listbox relationship is stale',
+        };
+      }
+      if (ownedElements.some((element) => element?.getAttribute('role') !== 'listbox')) {
+        return {
+          controlCount: 1,
+          expandedControlCount: 1,
+          listboxCount: 0,
+          optionCount: 0,
+          options: [],
+          reason: 'HTTP Method relationship did not resolve to a listbox',
+        };
+      }
+      if (ownedElements.some((element) => !visible(element))) {
+        return {
+          controlCount: 1,
+          expandedControlCount: 1,
+          listboxCount: 0,
+          optionCount: 0,
+          options: [],
+          reason: 'HTTP Method listbox relationship resolved to a hidden listbox',
+        };
+      }
+      const listboxes = ownedElements;
+      if (listboxes.length !== 1) {
+        return {
+          controlCount: 1,
+          expandedControlCount: 1,
+          listboxCount: listboxes.length,
+          optionCount: 0,
+          options: [],
+          reason: 'HTTP Method listbox relationship was ambiguous',
+        };
+      }
+      const options = Array.from(listboxes[0].querySelectorAll('[role="option"]')).filter(visible);
+      const optionText = options.map((option) => normalize(option.textContent));
+      const matches = options.filter((option) => normalize(option.textContent) === 'GET');
+      if (matches.length !== 1) {
+        return {
+          controlCount: 1,
+          expandedControlCount: 1,
+          listboxCount: 1,
+          optionCount: matches.length,
+          options: optionText,
+          reason: matches.length === 0 ? 'Exact HTTP Method GET option not found' : 'Exact HTTP Method GET option was ambiguous',
+          fatal: matches.length > 1,
+        };
+      }
+      const option = matches[0];
+      if (!(option instanceof HTMLElement)) {
+        return {
+          controlCount: 1,
+          expandedControlCount: 1,
+          listboxCount: 1,
+          optionCount: 1,
+          options: optionText,
+          reason: 'HTTP Method GET option was not an HTML element',
+          fatal: true,
+        };
+      }
+      if (option.matches(':disabled') || option.getAttribute('aria-disabled') === 'true') {
+        return {
+          controlCount: 1,
+          expandedControlCount: 1,
+          listboxCount: 1,
+          optionCount: 1,
+          options: optionText,
+          reason: 'HTTP Method GET option is disabled',
+          fatal: true,
+        };
+      }
+      option.scrollIntoView({ block: 'center', inline: 'center' });
+      const rect = option.getBoundingClientRect();
+      const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+      const hit = document.elementFromPoint(point.x, point.y);
+      const describe = (element) => normalize(
+        element?.getAttribute?.('aria-label') || element?.getAttribute?.('role') ||
+        element?.textContent || element?.className || ''
+      ).slice(0, 240);
+      if (!hit || (hit !== option && !option.contains(hit))) {
+        return {
+          controlCount: 1,
+          expandedControlCount: 1,
+          listboxCount: 1,
+          optionCount: 1,
+          options: optionText,
+          reason: 'HTTP Method GET option is not hit-testable',
+          obstruction: describe(hit),
+          fatal: true,
+        };
+      }
+      return {
+        controlCount: 1,
+        expandedControlCount: 1,
+        listboxCount: 1,
+        optionCount: 1,
+        options: optionText,
+        point,
+      };
+    })()`);
   }
 
   private async disableAsyncPattern(localCdp: CdpEvaluator, localActions: ProvenDesignerCdpActions, deadline: number): Promise<void> {
@@ -337,22 +751,13 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
       this.contextId,
       `(() => {
       ${visibleDom}
+      ${httpPanelIdentityDom}
       const selectedLayouts = Array.from(document.querySelectorAll('.msla-panel-layout.msla-panel-border-selected'))
         .filter(visible)
         .map((layout) => {
-          const nodePanel = layout.querySelector('[id^="msla-node-details-panel-"]');
-          const titleInput = layout.querySelector(
-            '.msla-panel-header input[aria-label="Card title"], .msla-panel-header input[id$="-title"]'
-          );
-          const nodeId = normalize(nodePanel?.id || '').replace(/^msla-node-details-panel-/, '');
-          const title = normalize(
-            titleInput instanceof HTMLInputElement ? titleInput.value : titleInput?.getAttribute('value') || ''
-          );
-          return { layout, nodePanel, nodeId, title };
+          return { layout, ...readPanelIdentity(layout) };
         });
-      const identity = (entry) => [entry.nodeId, entry.title].map(normalize).filter(Boolean);
-      const isHttpPanel = (entry) => identity(entry).some((value) => value.toLowerCase() === 'http');
-      const httpPanels = selectedLayouts.filter(isHttpPanel);
+      const httpPanels = selectedLayouts.filter((entry) => entry.isHttp);
       const active = httpPanels.length === 1 ? httpPanels[0] : undefined;
       const tabs = active ? Array.from(active.layout.querySelectorAll('[role="tab"]')).filter(visible) : [];
       const tabIdentity = (tab) => [
@@ -382,7 +787,7 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
       });
       return {
         httpPanelOpen: !!active,
-        selectedNodeIdentity: selectedLayouts.flatMap(identity),
+        selectedNodeIdentity: selectedLayouts.flatMap((entry) => entry.values),
         panelText: selectedLayouts.map((entry) => normalize(entry.layout.textContent).slice(0, 1200)).join(' || '),
         tabText: tabs.map(tabIdentity).filter(Boolean),
         settingsPoint,

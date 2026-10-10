@@ -310,6 +310,18 @@ async function httpSettingsPanelDomFixture(options: {
   includeSettings?: boolean;
   overlayText?: string;
   timeoutLabel?: string;
+  activePanelId?: string;
+  activePanelTitle?: string;
+  methodControlCount?: number;
+  methodDisabled?: boolean;
+  methodCovered?: boolean;
+  methodListboxRelationship?: 'default' | 'owns' | 'both' | 'missing' | 'stale' | 'hidden' | 'not-listbox' | 'ambiguous';
+  includeUnrelatedGlobalListbox?: boolean;
+  duplicateGetOption?: boolean;
+  getOptionDisabled?: boolean;
+  getOptionCovered?: boolean;
+  staleMethodControl?: boolean;
+  staleGetOption?: boolean;
   switchTarget?: 'label' | 'indicator' | 'ambiguous' | 'missing' | 'covered';
   switchChecked?: boolean;
   switchDisabled?: boolean;
@@ -325,8 +337,42 @@ async function httpSettingsPanelDomFixture(options: {
     { pretendToBeVisual: true, runScripts: 'outside-only' }
   );
   const window = dom.window;
+  window.ResizeObserver = class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  } as any;
+  const globalKeys = [
+    'window',
+    'document',
+    'navigator',
+    'HTMLElement',
+    'Element',
+    'Node',
+    'NodeFilter',
+    'Event',
+    'CustomEvent',
+    'MouseEvent',
+    'KeyboardEvent',
+    'getComputedStyle',
+  ] as const;
+  const prior = globalKeys.map((key) => [key, Object.getOwnPropertyDescriptor(globalThis, key)] as const);
+  for (const key of globalKeys) {
+    Object.defineProperty(globalThis, key, {
+      configurable: true,
+      value: key === 'getComputedStyle' ? window.getComputedStyle.bind(window) : window[key],
+    });
+  }
+  const React = designerRequire('react');
+  const { createRoot } = designerRequire('react-dom/client');
+  const { flushSync } = designerRequire('react-dom');
+  const { Combobox: FluentCombobox, FluentProvider, Option, webLightTheme } = designerRequire('@fluentui/react-components');
   const clicked: string[] = [];
   let switchTransitionObserved = false;
+  let methodTransitionObserved = false;
+  let methodRoot: any;
+  let staleMethodControlApplied = false;
+  let staleGetOptionApplied = false;
   const mouseEvents: Array<{
     type: string;
     x: number;
@@ -341,6 +387,7 @@ async function httpSettingsPanelDomFixture(options: {
         x: number;
         y: number;
         targetId: string;
+        target: any;
         moved: boolean;
         pressed: boolean;
       }
@@ -355,7 +402,7 @@ async function httpSettingsPanelDomFixture(options: {
     x: left,
     y: top,
   });
-  const layout = (element: { id: string }) => {
+  const layout = (element: any) => {
     switch (element.id) {
       case 'msla-node-HTTP':
         return rect(20, 20, 160, 60);
@@ -365,6 +412,18 @@ async function httpSettingsPanelDomFixture(options: {
         return rect(520, 100, 120, 40);
       case 'http-settings':
         return rect(660, 100, 120, 40);
+      case 'method-cover':
+        return rect(520, 150, 260, 40);
+      case 'get-option-cover':
+        return rect(520, 330, 260, 36);
+      case 'unrelated-method-listbox':
+        return rect(20, 500, 240, 100);
+      case 'unrelated-get-option':
+        return rect(20, 510, 240, 36);
+      case 'ambiguous-method-listbox':
+        return rect(800, 320, 180, 100);
+      case 'ambiguous-get-option':
+        return rect(800, 330, 180, 36);
       case 'request-timeout':
         return rect(520, 180, 220, 40);
       case 'async-pattern':
@@ -378,8 +437,22 @@ async function httpSettingsPanelDomFixture(options: {
         return rect(650, 240, 48, 40);
       case 'blocking-menu':
         return rect(360, 20, 120, 60);
-      default:
+      default: {
+        if (element instanceof window.HTMLElement && element.matches('input[role="combobox"][aria-label="Method"]')) {
+          const controls = Array.from(window.document.querySelectorAll('input[role="combobox"][aria-label="Method"]'));
+          return rect(520, 150 + controls.indexOf(element) * 48, 260, 40);
+        }
+        if (element instanceof window.HTMLElement && element.getAttribute('role') === 'listbox') {
+          return rect(520, 320, 260, 220);
+        }
+        if (element instanceof window.HTMLElement && element.getAttribute('role') === 'option') {
+          const optionElements = Array.from(window.document.querySelectorAll('[role="option"]') as ArrayLike<any>).filter(
+            (option) => !option.closest('#unrelated-method-listbox') && !option.closest('#ambiguous-method-listbox')
+          );
+          return rect(520, 330 + optionElements.indexOf(element) * 36, 260, 36);
+        }
         return rect(0, 0, 1000, 800);
+      }
     }
   };
   window.HTMLElement.prototype.getBoundingClientRect = function () {
@@ -398,6 +471,31 @@ async function httpSettingsPanelDomFixture(options: {
     });
   }
   window.document.elementFromPoint = (x: number, y: number) => {
+    for (const coverId of ['method-cover', 'get-option-cover']) {
+      const cover = window.document.getElementById(coverId);
+      if (cover instanceof window.HTMLElement) {
+        const bounds = layout(cover);
+        if (x >= bounds.left && x <= bounds.right && y >= bounds.top && y <= bounds.bottom) {
+          return cover;
+        }
+      }
+    }
+    const methodControls = Array.from(window.document.querySelectorAll('input[role="combobox"][aria-label="Method"]'));
+    const methodControl = methodControls.find((element) => {
+      const bounds = layout(element);
+      return x >= bounds.left && x <= bounds.right && y >= bounds.top && y <= bounds.bottom;
+    });
+    if (methodControl) {
+      return methodControl;
+    }
+    const methodOptions = Array.from(window.document.querySelectorAll('[role="option"]'));
+    const methodOption = methodOptions.find((element) => {
+      const bounds = layout(element);
+      return x >= bounds.left && x <= bounds.right && y >= bounds.top && y <= bounds.bottom;
+    });
+    if (methodOption) {
+      return methodOption;
+    }
     const candidates = [
       'async-pattern-cover',
       'http-settings',
@@ -421,6 +519,49 @@ async function httpSettingsPanelDomFixture(options: {
       }) ?? window.document.body
     );
   };
+  const renderMethodControls = () => {
+    const host = window.document.getElementById('method-host');
+    assert.ok(host);
+    methodRoot ??= createRoot(host);
+    const count = options.methodControlCount ?? 1;
+    const MethodControl = ({ index }: { index: number }) => {
+      const [value, setValue] = React.useState('');
+      return React.createElement(
+        FluentCombobox,
+        {
+          'aria-label': 'Method',
+          disabled: options.methodDisabled,
+          placeholder: 'Enter method',
+          value,
+          selectedOptions: value ? [value] : [],
+          onOptionSelect: (_event: unknown, data: { optionText?: string; optionValue?: string }) => {
+            const selected = data.optionValue ?? data.optionText ?? '';
+            const apply = () => {
+              methodTransitionObserved = selected === 'GET';
+              setValue(selected);
+            };
+            window.setTimeout(apply, 0);
+          },
+          key: `method-${index}`,
+        },
+        React.createElement(Option, { value: 'GET', disabled: options.getOptionDisabled }, 'GET'),
+        options.duplicateGetOption ? React.createElement(Option, { value: 'GET-duplicate', text: 'GET' }, 'GET') : null,
+        React.createElement(Option, { value: 'PUT' }, 'PUT'),
+        React.createElement(Option, { value: 'POST' }, 'POST'),
+        React.createElement(Option, { value: 'PATCH' }, 'PATCH'),
+        React.createElement(Option, { value: 'DELETE' }, 'DELETE')
+      );
+    };
+    flushSync(() =>
+      methodRoot.render(
+        React.createElement(
+          FluentProvider,
+          { targetDocument: window.document, theme: webLightTheme },
+          Array.from({ length: count }, (_, index) => React.createElement(MethodControl, { index, key: index }))
+        )
+      )
+    );
+  };
   const mountPanel = () => {
     const host = window.document.getElementById('panel-host');
     assert.ok(host);
@@ -439,14 +580,17 @@ async function httpSettingsPanelDomFixture(options: {
     host.innerHTML = `
       <section class="msla-panel-container">
         <div class="msla-panel-layout msla-panel-border-selected">
-          <div class="msla-panel-header"><input aria-label="Card title" value="HTTP" /></div>
-          <div id="msla-node-details-panel-HTTP" class="msla-node-details-panel">
+          <div class="msla-panel-header"><input aria-label="Card title" value="${options.activePanelTitle ?? 'HTTP'}" /></div>
+          <div id="msla-node-details-panel-${options.activePanelId ?? 'HTTP'}" class="msla-node-details-panel">
             <button id="http-parameters" role="tab" aria-selected="true">Parameters</button>
             ${
               options.includeSettings === false
                 ? ''
                 : '<button id="http-settings" role="tab" aria-selected="false"><span> Settings </span></button>'
             }
+            <div id="method-host"></div>
+            ${options.methodCovered ? '<div id="method-cover">Blocking Method overlay</div>' : ''}
+            ${options.getOptionCovered ? '<div id="get-option-cover">Blocking GET overlay</div>' : ''}
             <input id="request-timeout" aria-label="${options.timeoutLabel ?? 'Request options - Timeout'}" value="" />
             <div id="async-pattern-root" class="fui-Switch">
               <input
@@ -467,7 +611,13 @@ async function httpSettingsPanelDomFixture(options: {
         </div>
       </section>
       ${options.overlayText ? `<div id="blocking-menu" role="menu">${options.overlayText}</div>` : ''}
+      ${
+        options.includeUnrelatedGlobalListbox
+          ? '<div id="unrelated-method-listbox" role="listbox"><div id="unrelated-get-option" role="option">GET</div></div>'
+          : ''
+      }
     `;
+    renderMethodControls();
     const settings = window.document.getElementById('http-settings');
     settings?.addEventListener('click', () => {
       window.document.getElementById('http-parameters')?.setAttribute('aria-selected', 'false');
@@ -484,8 +634,87 @@ async function httpSettingsPanelDomFixture(options: {
   if (options.panelOpen) {
     mountPanel();
   }
+  const configureMethodListboxRelationship = () => {
+    const control = window.document.querySelector('input[role="combobox"][aria-label="Method"][aria-expanded="true"]');
+    if (!(control instanceof window.HTMLInputElement)) {
+      return;
+    }
+    const listbox = Array.from(window.document.querySelectorAll('[role="listbox"]') as ArrayLike<any>).find(
+      (element) => element.id !== 'unrelated-method-listbox' && element.id !== 'ambiguous-method-listbox'
+    );
+    if (!(listbox instanceof window.HTMLElement)) {
+      return;
+    }
+    if (!listbox.id) {
+      listbox.id = 'method-owned-listbox';
+    }
+    const relationship = options.methodListboxRelationship ?? 'default';
+    const hideProductionListbox = () => {
+      if (options.includeUnrelatedGlobalListbox) {
+        listbox.style.display = 'none';
+      }
+    };
+    switch (relationship) {
+      case 'default':
+        break;
+      case 'owns': {
+        control.removeAttribute('aria-controls');
+        control.setAttribute('aria-owns', listbox.id);
+        break;
+      }
+      case 'both': {
+        control.setAttribute('aria-controls', listbox.id);
+        control.setAttribute('aria-owns', listbox.id);
+        break;
+      }
+      case 'missing': {
+        control.removeAttribute('aria-controls');
+        control.removeAttribute('aria-owns');
+        hideProductionListbox();
+        break;
+      }
+      case 'stale': {
+        control.setAttribute('aria-controls', 'missing-method-listbox');
+        control.removeAttribute('aria-owns');
+        hideProductionListbox();
+        break;
+      }
+      case 'hidden': {
+        control.setAttribute('aria-controls', listbox.id);
+        control.removeAttribute('aria-owns');
+        listbox.style.display = 'none';
+        break;
+      }
+      case 'not-listbox': {
+        let target = window.document.getElementById('method-owned-non-listbox');
+        if (!target) {
+          target = window.document.createElement('div');
+          target.id = 'method-owned-non-listbox';
+          window.document.body.appendChild(target);
+        }
+        control.setAttribute('aria-controls', target.id);
+        control.removeAttribute('aria-owns');
+        hideProductionListbox();
+        break;
+      }
+      case 'ambiguous': {
+        let second = window.document.getElementById('ambiguous-method-listbox');
+        if (!second) {
+          second = window.document.createElement('div');
+          second.id = 'ambiguous-method-listbox';
+          second.setAttribute('role', 'listbox');
+          second.innerHTML = '<div id="ambiguous-get-option" role="option">GET</div>';
+          window.document.body.appendChild(second);
+        }
+        control.setAttribute('aria-controls', listbox.id);
+        control.setAttribute('aria-owns', second.id);
+        break;
+      }
+    }
+  };
   const cdp = {
     async evaluate<T>(_context: number | undefined, expression: string) {
+      configureMethodListboxRelationship();
       return window.eval(expression) as T;
     },
     async send(method: string, params: Record<string, unknown>) {
@@ -497,10 +726,40 @@ async function httpSettingsPanelDomFixture(options: {
         const buttons = params.buttons === undefined ? undefined : Number(params.buttons);
         const clickCount = params.clickCount === undefined ? undefined : Number(params.clickCount);
         const element = window.document.elementFromPoint(x, y);
-        const targetId = element instanceof window.HTMLElement ? element.id : '';
+        const targetId =
+          element instanceof window.HTMLElement
+            ? element.getAttribute('role') === 'combobox' && element.getAttribute('aria-label') === 'Method'
+              ? 'combobox:Method'
+              : element.getAttribute('role') === 'option'
+                ? `option:${(element.textContent || '').trim()}`
+                : element.id ||
+                  `${element.getAttribute('role') || element.tagName.toLowerCase()}:${(element.textContent || element.getAttribute('aria-label') || '').trim()}`
+            : '';
         mouseEvents.push({ type, x, y, button, buttons, clickCount, targetId });
+        if (
+          type === 'mouseMoved' &&
+          options.staleMethodControl &&
+          !staleMethodControlApplied &&
+          element instanceof window.HTMLInputElement &&
+          element.getAttribute('role') === 'combobox' &&
+          element.getAttribute('aria-label') === 'Method'
+        ) {
+          staleMethodControlApplied = true;
+          element.replaceWith(element.cloneNode(true));
+        }
+        if (
+          type === 'mouseMoved' &&
+          options.staleGetOption &&
+          !staleGetOptionApplied &&
+          element instanceof window.HTMLElement &&
+          element.getAttribute('role') === 'option' &&
+          element.textContent?.trim() === 'GET'
+        ) {
+          staleGetOptionApplied = true;
+          element.replaceWith(element.cloneNode(true));
+        }
         if (type === 'mouseMoved' && button === 'none' && targetId) {
-          pendingMouse = { x, y, targetId, moved: true, pressed: false };
+          pendingMouse = { x, y, targetId, target: element, moved: true, pressed: false };
         } else if (
           type === 'mousePressed' &&
           button === 'left' &&
@@ -509,7 +768,8 @@ async function httpSettingsPanelDomFixture(options: {
           pendingMouse?.moved &&
           pendingMouse.x === x &&
           pendingMouse.y === y &&
-          pendingMouse.targetId === targetId
+          pendingMouse.targetId === targetId &&
+          pendingMouse.target === element
         ) {
           pendingMouse.pressed = true;
         } else if (
@@ -522,6 +782,7 @@ async function httpSettingsPanelDomFixture(options: {
           pendingMouse.x === x &&
           pendingMouse.y === y &&
           pendingMouse.targetId === targetId &&
+          pendingMouse.target === element &&
           element instanceof window.HTMLElement
         ) {
           clicked.push(element.id);
@@ -534,6 +795,7 @@ async function httpSettingsPanelDomFixture(options: {
             dispatchClick();
           }
           pendingMouse = undefined;
+          await new Promise((resolve) => window.setTimeout(resolve, 0));
         } else {
           pendingMouse = undefined;
         }
@@ -553,7 +815,26 @@ async function httpSettingsPanelDomFixture(options: {
     mouseEvents,
     window,
     driver: (settingsTimeoutMs = 45_000) => new HttpTimeoutComposeDriver(cdp, 17, Date.now() + 20_000, () => {}, settingsTimeoutMs),
+    methodTransitionObserved: () => methodTransitionObserved,
     switchTransitionObserved: () => switchTransitionObserved,
+    assertNativePointerShapes: () => {
+      assert.strictEqual(mouseEvents.length, clicked.length * 3, 'Every completed click requires exactly three native mouse events');
+      for (let index = 0; index < clicked.length; index++) {
+        const sequence = mouseEvents.slice(index * 3, index * 3 + 3);
+        assert.deepStrictEqual(
+          sequence.map(({ type, button, buttons, clickCount }) => ({ type, button, buttons, clickCount })),
+          [
+            { type: 'mouseMoved', button: 'none', buttons: undefined, clickCount: undefined },
+            { type: 'mousePressed', button: 'left', buttons: 1, clickCount: 1 },
+            { type: 'mouseReleased', button: 'left', buttons: 0, clickCount: 1 },
+          ]
+        );
+        assert.ok(
+          sequence.every(({ x, y }) => x === sequence[0].x && y === sequence[0].y),
+          'Native click coordinates changed'
+        );
+      }
+    },
     assertNativeClickSequences: () => {
       assert.strictEqual(mouseEvents.length, clicked.length * 3, 'Every synthesized click requires exactly three native mouse events');
       for (let index = 0; index < clicked.length; index++) {
@@ -576,7 +857,17 @@ async function httpSettingsPanelDomFixture(options: {
         );
       }
     },
-    dispose: () => window.close(),
+    dispose: () => {
+      methodRoot?.unmount();
+      window.close();
+      for (const [key, descriptor] of prior) {
+        if (descriptor) {
+          Object.defineProperty(globalThis, key, descriptor);
+        } else {
+          delete (globalThis as Record<string, unknown>)[key];
+        }
+      }
+    },
   };
 }
 
@@ -827,6 +1118,15 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       'utf8'
     );
     const networking = fs.readFileSync(path.join(repository, 'libs/designer-v2/src/lib/ui/settings/sections/networking.tsx'), 'utf8');
+    const manifest = fs.readFileSync(
+      path.join(repository, 'libs/logic-apps-shared/src/designer-client-services/lib/base/manifests/http.ts'),
+      'utf8'
+    );
+    const settingTokenField = fs.readFileSync(
+      path.join(repository, 'libs/designer-ui/src/lib/settings/settingsection/settingTokenField.tsx'),
+      'utf8'
+    );
+    const combobox = fs.readFileSync(path.join(repository, 'libs/designer-ui/src/lib/combobox/index.tsx'), 'utf8');
     const priorArt = fs.readFileSync(path.join(repository, 'apps/vs-code-designer/src/test/e2e/workspaceLifecycle.test.ts'), 'utf8');
     const readiness = fs.readFileSync(path.join(repository, 'apps/vs-code-designer/src/test/e2e/screenshotReadiness.ts'), 'utf8');
     assert.ok(panelContainer.includes("'msla-panel-layout', `msla-panel-border-${type}`"));
@@ -841,6 +1141,18 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
     assert.ok(networking.includes('ariaLabel: requestOptionsTitle'));
     assert.ok(networking.includes("defaultMessage: 'Asynchronous pattern'"));
     assert.ok(networking.includes('ariaLabel: asyncPatternTitle'));
+    assert.ok(manifest.includes("title: 'Method'"));
+    assert.ok(manifest.includes("description: 'Enter method'"));
+    assert.ok(manifest.includes("required: ['uri', 'method']"));
+    assert.ok(manifest.includes("{ value: 'GET', displayName: 'GET' }"));
+    assert.ok(settingTokenField.includes('case constants.PARAMETER.EDITOR.COMBOBOX:'));
+    assert.ok(settingTokenField.includes('label={label}'));
+    assert.ok(settingTokenField.includes('placeholder={placeholder}'));
+    assert.ok(settingTokenField.includes('options={dropdownOptions}'));
+    assert.ok(combobox.includes('<FluentCombobox'));
+    assert.ok(combobox.includes('aria-label={label}'));
+    assert.ok(combobox.includes('placeholder={baseEditorProps.placeholder}'));
+    assert.ok(combobox.includes('<Option key={option.key} value={option.key} text={option.displayName} disabled={option.disabled}>'));
     assert.ok(priorArt.includes("document.querySelectorAll('.msla-panel-layout.msla-panel-border-selected')"));
     assert.ok(
       priorArt.includes(
@@ -849,6 +1161,145 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
     );
     assert.ok(readiness.includes("visibleElements('.msla-panel-layout.msla-panel-border-selected')"));
     assert.ok(readiness.includes('layout.querySelector(\'[id^="msla-node-details-panel-"]'));
+  });
+  await control('HTTP Method uses the production Fluent combobox DOM and selects exact GET through native pointer input', async () => {
+    const fixture = await httpSettingsPanelDomFixture({ panelOpen: true });
+    try {
+      const method = fixture.window.document.querySelector('input[role="combobox"][aria-label="Method"]');
+      assert.ok(method instanceof fixture.window.HTMLInputElement);
+      assert.strictEqual(method.getAttribute('placeholder'), 'Enter method');
+      assert.strictEqual(method.value, '');
+      await fixture.driver().selectHttpMethodGet();
+      assert.strictEqual(method.value, 'GET');
+      assert.strictEqual(fixture.methodTransitionObserved(), true);
+      assert.strictEqual(fixture.clicked.length, 2, 'Method selection requires one native control click and one native GET click');
+      fixture.assertNativePointerShapes();
+    } finally {
+      fixture.dispose();
+    }
+  });
+  for (const methodListboxRelationship of ['owns', 'both'] as const) {
+    await control(`HTTP Method accepts one visible listbox through ${methodListboxRelationship}`, async () => {
+      const fixture = await httpSettingsPanelDomFixture({ panelOpen: true, methodListboxRelationship });
+      try {
+        await fixture.driver().selectHttpMethodGet();
+        const method = fixture.window.document.querySelector('input[role="combobox"][aria-label="Method"]');
+        assert.ok(method instanceof fixture.window.HTMLInputElement);
+        assert.strictEqual(method.value, 'GET');
+        assert.strictEqual(fixture.methodTransitionObserved(), true);
+        assert.strictEqual(fixture.clicked.length, 2);
+        fixture.assertNativePointerShapes();
+      } finally {
+        fixture.dispose();
+      }
+    });
+  }
+  for (const [name, fixtureOptions, expected] of [
+    ['missing', { methodControlCount: 0 }, /exactly one visible, enabled HTTP Method control/],
+    ['ambiguous', { methodControlCount: 2 }, /Production HTTP Method combobox was ambiguous/],
+    ['disabled', { methodDisabled: true }, /Production HTTP Method combobox is disabled/],
+    ['covered', { methodCovered: true }, /Production HTTP Method combobox is not hit-testable/],
+    ['non-http-stable-id', { activePanelId: 'Compose', activePanelTitle: 'HTTP' }, /Active node-details panel is not HTTP/],
+    ['inconsistent-http-title', { activePanelId: 'HTTP', activePanelTitle: 'Compose' }, /Active node-details panel is not HTTP/],
+  ] as const) {
+    await control(`${name} HTTP Method control fails closed without native selection`, async () => {
+      const fixture = await httpSettingsPanelDomFixture({ panelOpen: true, ...fixtureOptions });
+      try {
+        const startedAt = Date.now();
+        await assert.rejects(() => fixture.driver(120).selectHttpMethodGet(), expected);
+        assert.ok(Date.now() - startedAt < 1000, `${name} Method control must honor the local HTTP panel deadline`);
+        assert.strictEqual(fixture.methodTransitionObserved(), false);
+        assert.strictEqual(fixture.clicked.length, 0);
+      } finally {
+        fixture.dispose();
+      }
+    });
+  }
+  for (const [methodListboxRelationship, expected] of [
+    ['missing', /HTTP Method listbox relationship is missing/],
+    ['stale', /HTTP Method listbox relationship is stale/],
+    ['hidden', /HTTP Method listbox relationship resolved to a hidden listbox/],
+    ['not-listbox', /HTTP Method relationship did not resolve to a listbox/],
+    ['ambiguous', /HTTP Method listbox relationship was ambiguous/],
+  ] as const) {
+    await control(`${methodListboxRelationship} HTTP Method listbox ownership fails closed without global fallback`, async () => {
+      const fixture = await httpSettingsPanelDomFixture({
+        panelOpen: true,
+        methodListboxRelationship,
+        includeUnrelatedGlobalListbox: true,
+      });
+      try {
+        const startedAt = Date.now();
+        await assert.rejects(() => fixture.driver(220).selectHttpMethodGet(), expected);
+        assert.ok(Date.now() - startedAt < 1000, `${methodListboxRelationship} Method ownership must honor the local deadline`);
+        assert.strictEqual(fixture.clicked.length, 1, 'Only the expanded Method combobox may receive native input');
+        assert.ok(!fixture.clicked.includes('unrelated-get-option'), 'An unrelated global GET option must never be selected');
+        assert.strictEqual(fixture.methodTransitionObserved(), false);
+        fixture.assertNativePointerShapes();
+      } finally {
+        fixture.dispose();
+      }
+    });
+  }
+  for (const [name, fixtureOptions, expected] of [
+    ['ambiguous', { duplicateGetOption: true }, /Exact HTTP Method GET option was ambiguous/],
+    ['disabled', { getOptionDisabled: true }, /HTTP Method GET option is disabled/],
+    ['covered', { getOptionCovered: true }, /HTTP Method GET option is not hit-testable/],
+  ] as const) {
+    await control(`${name} HTTP Method GET option fails closed after one native control click`, async () => {
+      const fixture = await httpSettingsPanelDomFixture({ panelOpen: true, ...fixtureOptions });
+      try {
+        await assert.rejects(() => fixture.driver(500).selectHttpMethodGet(), expected);
+        assert.strictEqual(fixture.clicked.length, 1, 'Only the Method control may be clicked before an invalid GET option fails closed');
+        assert.strictEqual(fixture.methodTransitionObserved(), false);
+        fixture.assertNativePointerShapes();
+      } finally {
+        fixture.dispose();
+      }
+    });
+  }
+  await control('stale HTTP Method control fails closed on the local deadline after native moved/pressed/released input', async () => {
+    const fixture = await httpSettingsPanelDomFixture({ panelOpen: true, staleMethodControl: true });
+    try {
+      const startedAt = Date.now();
+      await assert.rejects(() => fixture.driver(180).selectHttpMethodGet(), /HTTP Method combobox has not opened/);
+      assert.ok(Date.now() - startedAt < 1000, 'Stale Method control must honor the local HTTP panel deadline');
+      assert.deepStrictEqual(
+        fixture.mouseEvents.slice(0, 3).map(({ type, button, buttons, clickCount }) => ({ type, button, buttons, clickCount })),
+        [
+          { type: 'mouseMoved', button: 'none', buttons: undefined, clickCount: undefined },
+          { type: 'mousePressed', button: 'left', buttons: 1, clickCount: 1 },
+          { type: 'mouseReleased', button: 'left', buttons: 0, clickCount: 1 },
+        ]
+      );
+      assert.strictEqual(fixture.clicked.length, 0);
+      assert.strictEqual(fixture.methodTransitionObserved(), false);
+    } finally {
+      fixture.dispose();
+    }
+  });
+  await control('stale HTTP Method GET option fails closed without accepting an implicit method', async () => {
+    const fixture = await httpSettingsPanelDomFixture({ panelOpen: true, staleGetOption: true });
+    try {
+      const startedAt = Date.now();
+      await assert.rejects(() => fixture.driver(220).selectHttpMethodGet(), /HTTP Method GET selected in the active HTTP panel/);
+      assert.ok(Date.now() - startedAt < 1000, 'Stale GET option must honor the local HTTP panel deadline');
+      assert.strictEqual(fixture.clicked.length, 1, 'Only the stable Method control click may complete');
+      assert.strictEqual(fixture.methodTransitionObserved(), false);
+      const method = fixture.window.document.querySelector('input[role="combobox"][aria-label="Method"]');
+      assert.ok(method instanceof fixture.window.HTMLInputElement);
+      assert.strictEqual(method.value, '', 'The unit must fail if HTTP authoring relies on an implicit Method');
+      assert.deepStrictEqual(
+        fixture.mouseEvents.slice(-3).map(({ type, button, buttons, clickCount }) => ({ type, button, buttons, clickCount })),
+        [
+          { type: 'mouseMoved', button: 'none', buttons: undefined, clickCount: undefined },
+          { type: 'mousePressed', button: 'left', buttons: 1, clickCount: 1 },
+          { type: 'mouseReleased', button: 'left', buttons: 0, clickCount: 1 },
+        ]
+      );
+    } finally {
+      fixture.dispose();
+    }
   });
   await control('HTTP Settings prefers the associated label over the overlaid native switch input', async () => {
     const fixture = await httpSettingsPanelDomFixture({ panelOpen: true, timeoutLabel: 'Action timeout' });
@@ -899,6 +1350,30 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       fixture.dispose();
     }
   });
+  for (const [name, fixtureOptions, selectedNodeIdentity] of [
+    ['non-http stable ID with HTTP title', { activePanelId: 'Compose', activePanelTitle: 'HTTP' }, '["Compose","HTTP"]'],
+    ['stable HTTP ID with inconsistent title', { activePanelId: 'HTTP', activePanelTitle: 'Compose' }, '["HTTP","Compose"]'],
+  ] as const) {
+    await control(`HTTP Settings rejects ${name}`, async () => {
+      const fixture = await httpSettingsPanelDomFixture({ panelOpen: true, ...fixtureOptions });
+      try {
+        const startedAt = Date.now();
+        await assert.rejects(
+          () => fixture.driver(100).configureHttpRequestSettings('PT1S'),
+          (error: Error) => {
+            assert.match(error.message, /visible hit-tested Settings tab inside the active HTTP node-details panel/);
+            assert.ok(error.message.includes(`selectedNodeIdentity=${selectedNodeIdentity}`));
+            return true;
+          }
+        );
+        assert.ok(Date.now() - startedAt < 1000, `${name} must fail on the local HTTP panel deadline`);
+        assert.ok(!fixture.clicked.includes('http-settings'));
+        assert.ok(!fixture.clicked.includes('unrelated-settings'));
+      } finally {
+        fixture.dispose();
+      }
+    });
+  }
   await control('HTTP Settings uses indicator coordinates when the same native switch input receives the pointer sequence', async () => {
     const fixture = await httpSettingsPanelDomFixture({ panelOpen: true, switchTarget: 'indicator' });
     try {
@@ -1055,6 +1530,9 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       const source = fs.readFileSync(path.join(repository, 'apps/vs-code-designer/src/test/e2e/httpTimeoutComposeDriver.ts'), 'utf8');
       assert.ok(source.includes('const httpSettingsPanelTimeoutMs = 45_000;'));
       assert.ok(source.includes('Math.min(this.deadline, startedAt + this.settingsPanelTimeoutMs)'));
+      assert.ok(source.includes('input[role="combobox"][aria-label="Method"]'));
+      assert.ok(source.includes("normalize(option.textContent) === 'GET'"));
+      assert.ok(source.includes("'HTTP Method GET selected in the active HTTP panel'"));
       assert.ok(source.includes('input[role="switch"][aria-label="Asynchronous pattern"]'));
       assert.ok(source.includes('input.labels?.[0]'));
       assert.ok(source.includes('Array.from(input.labels || []).filter(visible)'));
@@ -1066,6 +1544,18 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
         source.indexOf('private async disableAsyncPattern'),
         source.indexOf('private async openHttpSettings')
       );
+      const methodDriver = source.slice(source.indexOf('async selectHttpMethodGet'), source.indexOf('async configureHttpRequestSettings'));
+      const methodOptionDriver = source.slice(
+        source.indexOf('private async httpMethodGetOptionObservation'),
+        source.indexOf('private async disableAsyncPattern')
+      );
+      assert.ok(methodDriver.includes('const localCdp = boundedCdp(this.cdp, deadline);'));
+      assert.ok(methodDriver.includes('await clickPoint(localCdp, control.point);'));
+      assert.ok(methodDriver.includes('await clickPoint(localCdp, option.point);'));
+      assert.ok(methodOptionDriver.includes("['aria-controls', 'aria-owns']"));
+      assert.ok(!methodOptionDriver.includes('document.querySelectorAll(\'[role="listbox"]\')'));
+      assert.ok(!methodDriver.includes('.click('), 'Method driver must not invoke a DOM or generic element click');
+      assert.ok(!/\.value\s*=(?!=)/.test(methodDriver), 'Method driver must not assign the production combobox value');
       assert.ok(!switchDriver.includes('.click('), 'Switch driver must not invoke a DOM or generic element click');
       assert.ok(!/\.checked\s*=(?!=)/.test(switchDriver), 'Switch driver must not mutate native checked state');
       fixture.assertNativeClickSequences();
