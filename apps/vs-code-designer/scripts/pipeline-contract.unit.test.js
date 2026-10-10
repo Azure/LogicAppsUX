@@ -99,8 +99,11 @@ function testCohortTemplateContract() {
   assert.match(containmentHost, /CONTAINMENT_DRAIN_ATTEMPTS = 100/);
   assert.match(containmentHost, /CONTAINMENT_DRAIN_DELAY_MS = 100/);
   const linuxContainmentHost = read('apps/vs-code-designer/scripts/e2e-cli-containment-host.c');
-  assert.match(linuxContainmentHost, /CONTAINMENT_DRAIN_ATTEMPTS = 300/);
+  assert.match(linuxContainmentHost, /CONTAINMENT_DRAIN_ATTEMPTS = 100/);
   assert.match(linuxContainmentHost, /CONTAINMENT_DRAIN_DELAY_MS = 100/);
+  assert.match(linuxContainmentHost, /MANAGED_LANGUAGE_SERVER = "Microsoft\.CodeAnalysis\.LanguageServer"/);
+  assert.match(linuxContainmentHost, /metadata\.st_dev == identity->device && metadata\.st_ino == identity->inode/);
+  assert.match(linuxContainmentHost, /ms-dotnettools\.csharp-/);
   assert.strictEqual((text.match(/LA_E2E_CLI_BATCH_DIAGNOSTIC_ONLY: '\$\{\{ parameters\.diagnosticOnly \}\}'/g) || []).length, 3);
   const pipeline = read('.config/vscode-e2e-cli.1es.yml');
   assert.strictEqual((pipeline.match(/diagnosticOnly: \$\{\{ parameters\.diagnosticOnly \}\}/g) || []).length, 4);

@@ -125,6 +125,8 @@ const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
     await testRunSuiteWrapperProcessTimeoutCancelsGrandchildListener();
     await testRunSuiteWrapperProcessTimeoutCancelsSignalResistantDescendant();
     await testContainedWrapperRejectsEscapedDescendant();
+    await testContainedWrapperRejectsSpoofedLanguageServer();
+    await testContainedWrapperCleansManagedLanguageServer();
     testContainmentReceiptMustMatchHostOutcome();
     testDirectSuitePhaseResultRetainsOgfAcrossMatrixPhases();
     testDirectSuitePhaseResultClearsOgfOnLaterFailure();
@@ -1584,7 +1586,7 @@ async function testContainedWrapperRejectsEscapedDescendant() {
       ...process.env,
       LA_E2E_CLI_PROCESS_RECORDS_PATH: processRecordsPath,
     },
-    timeoutMs: process.platform === 'linux' ? 45_000 : 15_000,
+    timeoutMs: 15_000,
     scriptPath: createWrapperFixtureScript('escaped-descendant'),
   });
   assert.notStrictEqual(result.exitCode, 0);
@@ -1603,6 +1605,78 @@ async function testContainedWrapperRejectsEscapedDescendant() {
   assert.strictEqual(isAlive(escaped.pid), false, 'containment host must terminate the rejected escaped descendant');
 }
 
+async function testContainedWrapperCleansManagedLanguageServer() {
+  if (process.platform !== 'linux') {
+    return;
+  }
+  const batchRoot = path.join(tempRoot, 'wrapper-process-managed-language-server');
+  fs.mkdirSync(batchRoot, { recursive: true });
+  const context = createSuiteContext({ batchRoot, suite: SUITE_REGISTRY.unitTests, index: 0, total: 1 });
+  const processRecordsPath = path.join(context.reportsRoot, 'managed-language-server-processes.jsonl');
+  const executablePath = path.join(
+    context.extensionsDir,
+    'ms-dotnettools.csharp-test-linux-x64',
+    '.roslyn',
+    'Microsoft.CodeAnalysis.LanguageServer'
+  );
+  fs.mkdirSync(path.dirname(executablePath), { recursive: true });
+  fs.copyFileSync('/bin/sleep', executablePath);
+  fs.chmodSync(executablePath, 0o755);
+  const result = await runSuiteWrapperProcess({
+    suite: SUITE_REGISTRY.unitTests,
+    context,
+    env: {
+      ...process.env,
+      LA_E2E_CLI_EXTENSIONS_DIR: context.extensionsDir,
+      LA_E2E_CLI_FIXTURE_EXECUTABLE: executablePath,
+      LA_E2E_CLI_PROCESS_RECORDS_PATH: processRecordsPath,
+    },
+    timeoutMs: 15_000,
+    scriptPath: createWrapperFixtureScript('managed-language-server-descendant'),
+  });
+  assert.strictEqual(result.exitCode, 0);
+  assert.strictEqual(result.error, undefined);
+  assert.strictEqual(result.processCleanup.verified, true);
+  assert.strictEqual(result.processCleanup.managedResidualCount, 1);
+  assert.match(result.output, /\[containment\] terminating managed residual pid=\d+ name=Microsoft\.CodeAnalysis\.LanguageServer/);
+  const managed = readJsonLines(processRecordsPath).find((record) => record.role === 'managed-language-server');
+  assert.ok(managed?.pid, 'fixture must record the managed language server');
+  await delay(250);
+  assert.strictEqual(isAlive(managed.pid), false, 'managed language server must be terminated by exact containment ownership');
+}
+
+async function testContainedWrapperRejectsSpoofedLanguageServer() {
+  if (process.platform !== 'linux') {
+    return;
+  }
+  const batchRoot = path.join(tempRoot, 'wrapper-process-spoofed-language-server');
+  fs.mkdirSync(batchRoot, { recursive: true });
+  const context = createSuiteContext({ batchRoot, suite: SUITE_REGISTRY.unitTests, index: 0, total: 1 });
+  const processRecordsPath = path.join(context.reportsRoot, 'spoofed-language-server-processes.jsonl');
+  const executablePath = path.join(context.suiteRoot, 'Microsoft.CodeAnalysis.LanguageServer');
+  fs.copyFileSync('/bin/sleep', executablePath);
+  fs.chmodSync(executablePath, 0o755);
+  const result = await runSuiteWrapperProcess({
+    suite: SUITE_REGISTRY.unitTests,
+    context,
+    env: {
+      ...process.env,
+      LA_E2E_CLI_FIXTURE_EXECUTABLE: executablePath,
+      LA_E2E_CLI_PROCESS_RECORDS_PATH: processRecordsPath,
+    },
+    timeoutMs: 15_000,
+    scriptPath: createWrapperFixtureScript('managed-language-server-descendant'),
+  });
+  assert.notStrictEqual(result.exitCode, 0);
+  assert.ok(result.error instanceof Error);
+  assert.match(result.error.message, /ownership containment was not empty/i);
+  assert.strictEqual(result.processCleanup.managedResidualCount, 0);
+  const spoofed = readJsonLines(processRecordsPath).find((record) => record.role === 'managed-language-server');
+  assert.ok(spoofed?.pid, 'fixture must record the spoofed language server');
+  await delay(250);
+  assert.strictEqual(isAlive(spoofed.pid), false, 'containment host must terminate the rejected spoofed descendant');
+}
+
 function testContainmentReceiptMustMatchHostOutcome() {
   const receiptPath = path.join(tempRoot, 'forged-containment-receipt.json');
   fs.writeFileSync(
@@ -1618,6 +1692,7 @@ function testContainmentReceiptMustMatchHostOutcome() {
       retainedOriginalIdentitiesVerified: true,
       escapedDescendants: [],
       activeContainedProcessCount: 0,
+      managedResidualCount: 0,
     })
   );
   const cleanup = readContainmentReceipt(receiptPath, 126, null);
@@ -2674,6 +2749,13 @@ function createWrapperFixtureScript(mode) {
       '    escaped.unref();',
       '    setTimeout(() => { appendPhase(0); process.exit(0); }, 250);',
       '  }',
+      '}',
+      "else if (mode === 'managed-language-server-descendant') {",
+      '  const executable = process.env.LA_E2E_CLI_FIXTURE_EXECUTABLE || process.env.LA_E2E_CLI_MANAGED_RESIDUAL_EXECUTABLE;',
+      "  const managed = spawn(executable, ['60'], { detached: true, stdio: 'ignore', env: process.env });",
+      "  record({ pid: managed.pid, role: 'managed-language-server' });",
+      '  managed.unref();',
+      '  setTimeout(() => { appendPhase(0); process.exit(0); }, 250);',
       '}',
       'else { setTimeout(() => { appendPhase(0); process.exit(0); }, 1500); }',
     ].join('\n')

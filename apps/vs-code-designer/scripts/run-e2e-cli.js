@@ -803,8 +803,31 @@ function getContainmentHost() {
   return hostPath;
 }
 
+function resolveManagedResidualExecutable(env) {
+  if (process.platform !== 'linux' || !env.LA_E2E_CLI_EXTENSIONS_DIR) {
+    return undefined;
+  }
+  const extensionsDir = fs.realpathSync.native(env.LA_E2E_CLI_EXTENSIONS_DIR);
+  const candidates = fs
+    .readdirSync(extensionsDir, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory() && entry.name.startsWith('ms-dotnettools.csharp-'))
+    .map((entry) => path.join(extensionsDir, entry.name, '.roslyn', 'Microsoft.CodeAnalysis.LanguageServer'))
+    .filter((candidate) => fs.existsSync(candidate))
+    .map((candidate) => fs.realpathSync.native(candidate));
+  if (candidates.length > 1) {
+    throw new Error(`Expected at most one managed C# language server executable, found ${candidates.length}`);
+  }
+  return candidates[0];
+}
+
 function spawnContainedSuiteProcess({ childArgs, cwd, env, reportsRoot }) {
   const hostPath = getContainmentHost();
+  const managedResidualExecutable = resolveManagedResidualExecutable(env);
+  const containedEnv = { ...env };
+  delete containedEnv.LA_E2E_CLI_MANAGED_RESIDUAL_EXECUTABLE;
+  if (managedResidualExecutable) {
+    containedEnv.LA_E2E_CLI_MANAGED_RESIDUAL_EXECUTABLE = managedResidualExecutable;
+  }
   const containmentReceiptPath = path.join(
     os.tmpdir(),
     'logicappsux-e2e-containment-receipts',
@@ -812,7 +835,7 @@ function spawnContainedSuiteProcess({ childArgs, cwd, env, reportsRoot }) {
   );
   fs.mkdirSync(path.dirname(containmentReceiptPath), { recursive: true });
   const child = spawn(hostPath, [containmentReceiptPath, process.execPath, ...childArgs], {
-    env,
+    env: containedEnv,
     cwd,
   });
   return { child, containmentReceiptPath };
@@ -833,7 +856,9 @@ function readContainmentReceipt(receiptPath, hostExitCode, hostSignal) {
       Number.isSafeInteger(receipt.rootPid) &&
       receipt.rootPid > 0 &&
       Number.isInteger(receipt.rootExitCode) &&
-      (receipt.rootSignal === null || Number.isInteger(rootSignalNumber));
+      (receipt.rootSignal === null || Number.isInteger(rootSignalNumber)) &&
+      (expectedMechanism !== 'linux-subreaper' ||
+        (Number.isSafeInteger(receipt.managedResidualCount) && receipt.managedResidualCount >= 0));
     const containmentEmpty =
       receipt.containmentEmpty === true &&
       receipt.retainedOriginalIdentitiesVerified === true &&
