@@ -60,6 +60,7 @@ const {
   buildBatchAggregate,
   buildSuiteEnvironment,
   classifySuiteRunResult,
+  createBatchRoot,
   createSuiteContext,
   getSuiteScopedCredentialEnv,
   normalizeSuiteSelection,
@@ -107,6 +108,7 @@ const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
     testBatchMsnWeatherDisablesLocalCliFallback();
     testSanitizesInheritedGitCommandConfigEnv();
     testBatchSuiteRegistryValidation();
+    testBatchRuntimePathsStayShort();
     testBatchSuiteEnvironmentIsolation();
     testHttpDirectSelectorUsesRegisteredContainment();
     testHttpBatchDelegatesProcessClosureToSuiteContainment();
@@ -1149,6 +1151,20 @@ function testBatchSuiteEnvironmentIsolation() {
   fs.writeFileSync(path.join(seedDir, 'extensions.json'), '[]');
   prepareSuiteExtensionsDirectory({ seedDir, targetDir: context.extensionsDir });
   assert.ok(fs.existsSync(path.join(context.extensionsDir, 'extensions.json')), 'suite extensions dir should be copied from seed');
+}
+
+function testBatchRuntimePathsStayShort() {
+  const rootParent = path.join(tempRoot, 'b');
+  const batchRoot = createBatchRoot({ batchRoot: rootParent });
+  const context = createSuiteContext({
+    batchRoot,
+    suite: SUITE_REGISTRY.createWorkspaceCoreMatrix,
+    index: 2,
+    total: 5,
+  });
+  assert.match(path.basename(batchRoot), /^b-[A-Za-z0-9]{6}$/);
+  assert.match(path.basename(context.suiteRoot), /^03-[A-Za-z0-9]{6}$/);
+  assert.ok(!context.suiteRoot.includes('createWorkspaceCoreMatrix'));
 }
 
 async function testBatchSuiteScopedCredentials() {

@@ -243,10 +243,6 @@ function normalizeSuiteSelection(value, options = {}) {
   return suites;
 }
 
-function sanitizeSegment(value) {
-  return String(value).replace(/[^a-z0-9_-]+/gi, '-');
-}
-
 function ensureDirectory(directory) {
   fs.mkdirSync(directory, { recursive: true });
   return directory;
@@ -255,11 +251,11 @@ function ensureDirectory(directory) {
 function createBatchRoot(options = {}) {
   const rootParent = options.batchRoot ? path.resolve(options.batchRoot) : os.tmpdir();
   ensureDirectory(rootParent);
-  return fs.mkdtempSync(path.join(rootParent, 'la-e2e-cli-batch-'));
+  return fs.mkdtempSync(path.join(rootParent, 'b-'));
 }
 
 function createSuiteContext({ batchRoot, suite, index, total, now = Date.now() }) {
-  const suiteRoot = fs.mkdtempSync(path.join(batchRoot, `${String(index + 1).padStart(2, '0')}-${sanitizeSegment(suite.id)}-`));
+  const suiteRoot = fs.mkdtempSync(path.join(batchRoot, `${String(index + 1).padStart(2, '0')}-`));
   const tempRoot = ensureDirectory(path.join(suiteRoot, 'temp'));
   const runtimeRoot = ensureDirectory(path.join(suiteRoot, 'runtime-dependencies'));
   const userDataParent = ensureDirectory(path.join(suiteRoot, 'profiles'));

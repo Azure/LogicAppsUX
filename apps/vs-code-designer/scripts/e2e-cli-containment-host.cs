@@ -12,6 +12,8 @@ public static class E2eCliContainmentHost
     private const uint JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE = 0x00002000;
     private const int JobObjectBasicAccountingInformation = 1;
     private const int JobObjectExtendedLimitInformation = 9;
+    private const int CONTAINMENT_DRAIN_ATTEMPTS = 100;
+    private const int CONTAINMENT_DRAIN_DELAY_MS = 100;
     private const uint INFINITE = 0xffffffff;
 
     [StructLayout(LayoutKind.Sequential)]
@@ -293,9 +295,9 @@ public static class E2eCliContainmentHost
             }
 
             uint active = ActiveProcesses(job);
-            for (var attempt = 0; attempt < 50 && active > 0; attempt++)
+            for (var attempt = 0; attempt < CONTAINMENT_DRAIN_ATTEMPTS && active > 0; attempt++)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(CONTAINMENT_DRAIN_DELAY_MS);
                 active = ActiveProcesses(job);
             }
             WriteReceipt(receiptPath, process.dwProcessId, rootExitCode, active);

@@ -99,8 +99,8 @@ jobs:
       ExpectedRepositoryUri: ${{ parameters.expectedRepositoryUri }}
       ExpectedCheckoutRef: ${{ parameters.checkoutRef }}
       TimingFile: $(Agent.TempDirectory)/vscode-e2e-cli-timing-${{ parameters.cohortId }}.jsonl
-      BatchRoot: $(Agent.TempDirectory)/la-b-${{ parameters.cohortId }}
-      BatchResultsRoot: $(Agent.TempDirectory)/la-br-${{ parameters.cohortId }}
+      BatchRoot: $(Agent.TempDirectory)/b
+      BatchResultsRoot: $(Agent.TempDirectory)/br
       DiagnosticsRoot: $(Build.ArtifactStagingDirectory)/vscode-e2e-cli/${{ parameters.artifactName }}
     templateContext:
       outputs:
