@@ -322,6 +322,7 @@ async function httpSettingsPanelDomFixture(options: {
   getOptionCovered?: boolean;
   staleMethodControl?: boolean;
   staleGetOption?: boolean;
+  methodOwnershipDeadlineRace?: boolean;
   switchTarget?: 'label' | 'indicator' | 'ambiguous' | 'missing' | 'covered';
   switchChecked?: boolean;
   switchDisabled?: boolean;
@@ -373,6 +374,7 @@ async function httpSettingsPanelDomFixture(options: {
   let methodRoot: any;
   let staleMethodControlApplied = false;
   let staleGetOptionApplied = false;
+  let methodOwnershipObservationCount = 0;
   const mouseEvents: Array<{
     type: string;
     x: number;
@@ -713,8 +715,17 @@ async function httpSettingsPanelDomFixture(options: {
     }
   };
   const cdp = {
-    async evaluate<T>(_context: number | undefined, expression: string) {
+    async evaluate<T>(_context: number | undefined, expression: string, cdpOptions?: { timeoutMs?: number }) {
       configureMethodListboxRelationship();
+      const isMethodOwnershipObservation = expression.includes('HTTP Method listbox relationship is missing');
+      if (isMethodOwnershipObservation) {
+        methodOwnershipObservationCount++;
+        if (options.methodOwnershipDeadlineRace && methodOwnershipObservationCount === 2) {
+          const timeoutMs = cdpOptions?.timeoutMs ?? 1;
+          await new Promise((resolve) => window.setTimeout(resolve, timeoutMs + 5));
+          throw new Error('Designer CDP action deadline expired');
+        }
+      }
       return window.eval(expression) as T;
     },
     async send(method: string, params: Record<string, unknown>) {
@@ -816,6 +827,7 @@ async function httpSettingsPanelDomFixture(options: {
     window,
     driver: (settingsTimeoutMs = 45_000) => new HttpTimeoutComposeDriver(cdp, 17, Date.now() + 20_000, () => {}, settingsTimeoutMs),
     methodTransitionObserved: () => methodTransitionObserved,
+    methodOwnershipObservationCount: () => methodOwnershipObservationCount,
     switchTransitionObserved: () => switchTransitionObserved,
     assertNativePointerShapes: () => {
       assert.strictEqual(mouseEvents.length, clicked.length * 3, 'Every completed click requires exactly three native mouse events');
@@ -1227,11 +1239,25 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
         panelOpen: true,
         methodListboxRelationship,
         includeUnrelatedGlobalListbox: true,
+        methodOwnershipDeadlineRace: true,
       });
       try {
         const startedAt = Date.now();
-        await assert.rejects(() => fixture.driver(220).selectHttpMethodGet(), expected);
+        await assert.rejects(
+          () => fixture.driver(220).selectHttpMethodGet(),
+          (error: Error) => {
+            assert.match(error.message, /Timed out waiting for exactly one visible, enabled HTTP Method GET option/);
+            assert.match(error.message, expected);
+            assert.match(error.message, /Last bounded error: Error: Designer CDP action deadline expired/);
+            return true;
+          }
+        );
         assert.ok(Date.now() - startedAt < 1000, `${methodListboxRelationship} Method ownership must honor the local deadline`);
+        assert.strictEqual(
+          fixture.methodOwnershipObservationCount(),
+          2,
+          'Ownership polling must stop after the in-flight bounded observation reaches the local deadline'
+        );
         assert.strictEqual(fixture.clicked.length, 1, 'Only the expanded Method combobox may receive native input');
         assert.ok(!fixture.clicked.includes('unrelated-get-option'), 'An unrelated global GET option must never be selected');
         assert.strictEqual(fixture.methodTransitionObserved(), false);

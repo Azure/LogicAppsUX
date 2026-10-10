@@ -503,7 +503,7 @@ async function main(): Promise<void> {
           deadline,
           'late readiness'
         ),
-      /expired/
+      /Timed out waiting for late readiness/
     );
     await assert.rejects(
       () =>

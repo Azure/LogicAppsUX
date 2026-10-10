@@ -176,14 +176,30 @@ export async function pollHttpTimeoutCompose<T>(
   deadline: number,
   description: string
 ): Promise<T> {
-  while (true) {
-    httpTimeoutComposeRemaining(deadline);
-    const value = await read(); // RPC/read failures propagate; they are not treated as readiness.
-    httpTimeoutComposeRemaining(deadline);
+  httpTimeoutComposeRemaining(deadline);
+  let lastBoundedError: unknown;
+  while (Date.now() < deadline) {
+    let value: T;
+    try {
+      value = await read(); // RPC/read failures before the deadline remain actionable and propagate.
+    } catch (error) {
+      if (Date.now() < deadline) {
+        throw error;
+      }
+      lastBoundedError = error;
+      break;
+    }
+    if (Date.now() >= deadline) {
+      break;
+    }
     if (ready(value)) {
       return value;
     }
-    await new Promise((resolve) => setTimeout(resolve, Math.min(100, httpTimeoutComposeRemaining(deadline))));
-    assert.ok(Date.now() < deadline, `Timed out waiting for ${description}`);
+    const remaining = deadline - Date.now();
+    if (remaining <= 0) {
+      break;
+    }
+    await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining)));
   }
+  assert.fail(`Timed out waiting for ${description}${lastBoundedError ? `. Last bounded error: ${String(lastBoundedError)}` : ''}`);
 }

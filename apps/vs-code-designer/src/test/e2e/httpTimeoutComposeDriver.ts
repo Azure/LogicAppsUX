@@ -157,8 +157,17 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
       panelCount: 0,
       controlCount: 0,
     };
+    let controlDeadlineError: unknown;
     while (Date.now() < deadline) {
-      control = await this.httpMethodControlObservation(localActions);
+      try {
+        control = await this.httpMethodControlObservation(localActions);
+      } catch (error) {
+        if (Date.now() < deadline) {
+          throw error;
+        }
+        controlDeadlineError = error;
+        break;
+      }
       if (control.fatal) {
         assert.fail(`Cannot open HTTP Method safely. State: ${JSON.stringify(control)}`);
       }
@@ -171,8 +180,12 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
       }
       await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining)));
     }
-    if (!control.point) {
-      assert.fail(`Timed out waiting for exactly one visible, enabled HTTP Method control. State: ${JSON.stringify(control)}`);
+    if (!control.point || Date.now() >= deadline) {
+      assert.fail(
+        `Timed out waiting for exactly one visible, enabled HTTP Method control. State: ${JSON.stringify(control)}${
+          controlDeadlineError ? `. Last bounded error: ${String(controlDeadlineError)}` : ''
+        }`
+      );
     }
 
     await clickPoint(localCdp, control.point);
@@ -184,8 +197,17 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
       optionCount: 0,
       options: [],
     };
+    let optionDeadlineError: unknown;
     while (Date.now() < deadline) {
-      option = await this.httpMethodGetOptionObservation(localActions);
+      try {
+        option = await this.httpMethodGetOptionObservation(localActions);
+      } catch (error) {
+        if (Date.now() < deadline) {
+          throw error;
+        }
+        optionDeadlineError = error;
+        break;
+      }
       if (option.fatal) {
         assert.fail(`Cannot select HTTP Method GET safely. State: ${JSON.stringify(option)}`);
       }
@@ -198,8 +220,12 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
       }
       await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining)));
     }
-    if (!option.point) {
-      assert.fail(`Timed out waiting for exactly one visible, enabled HTTP Method GET option. State: ${JSON.stringify(option)}`);
+    if (!option.point || Date.now() >= deadline) {
+      assert.fail(
+        `Timed out waiting for exactly one visible, enabled HTTP Method GET option. State: ${JSON.stringify(option)}${
+          optionDeadlineError ? `. Last bounded error: ${String(optionDeadlineError)}` : ''
+        }`
+      );
     }
 
     await clickPoint(localCdp, option.point);
