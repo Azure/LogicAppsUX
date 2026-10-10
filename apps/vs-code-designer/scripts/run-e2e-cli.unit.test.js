@@ -1913,7 +1913,10 @@ function testMsnBatchLifecycleEvidence() {
       exitCode: Object.prototype.hasOwnProperty.call(options, 'exitCode') ? options.exitCode : 0,
       signal: options.signal ?? null,
       error: options.error,
-      processCleanup: { verified: options.cleanupVerified ?? true },
+      processCleanup: {
+        verified: options.cleanupVerified ?? true,
+        retainedOriginalIdentitiesVerified: options.originalProcessClosureVerified ?? false,
+      },
     });
     return JSON.parse(fs.readFileSync(context.terminalResultPath, 'utf8'));
   };
@@ -1924,6 +1927,28 @@ function testMsnBatchLifecycleEvidence() {
   assert.strictEqual(diagnostic.originalProcessClosureVerified, false);
   assert.throws(() => assertSuccessfulMsnTerminal(msnSummary(), diagnostic), /incomplete-or-unclean-terminal/);
   assert.strictEqual(JSON.parse(fs.readFileSync(context.cleanupLedgerPath)).verified, false);
+  fs.writeFileSync(
+    context.terminalResultPath,
+    `${JSON.stringify({
+      schemaVersion: 1,
+      label: 'msnWeatherLifecycle',
+      complete: true,
+      lifecycleFinalized: true,
+      cleanupVerified: true,
+      filesystemCleanupVerified: true,
+      lifecycleBodySucceeded: true,
+      phaseCompleteness: true,
+    })}\n`
+  );
+  const contained = write(phases, { originalProcessClosureVerified: true });
+  assert.strictEqual(contained.complete, true);
+  assert.strictEqual(contained.cleanupVerified, true);
+  assert.strictEqual(contained.originalProcessClosureVerified, true);
+  assert.strictEqual(contained.filesystemCleanupVerified, true);
+  assertSuccessfulMsnTerminal(msnSummary(), contained);
+  const containedCleanup = JSON.parse(fs.readFileSync(context.cleanupLedgerPath, 'utf8'));
+  assert.strictEqual(containedCleanup.verified, true);
+  assert.strictEqual(containedCleanup.retainedCaseCleanupVerified, true);
   for (const badPhases of [
     phases.slice(1),
     [...phases, phases[0]],

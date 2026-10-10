@@ -89,6 +89,8 @@ function testCohortTemplateContract() {
   assert.match(text, /run-e2e-cli\.js --suites "\$\(CohortSuites\)"/);
   assert.match(text, /LA_E2E_CLI_BATCH_COHORT_ID/);
   assert.match(text, /LA_E2E_CLI_BATCH_RESULTS_DIR: \$\(BatchResultsRoot\)/);
+  assert.match(text, /BatchRoot: \$\(Agent\.TempDirectory\)\/la-b-\$\{\{ parameters\.cohortId \}\}/);
+  assert.doesNotMatch(text, /BatchRoot: \$\(Agent\.TempDirectory\)\/vscode-e2e-cli-batch-/);
   assert.match(text, /\$aggregate = Join-Path '\$\(BatchResultsRoot\)' 'e2e-cli-batch-result\.json'/);
   assert.match(text, /stage-e2e-cli-cohort\.js/);
   assert.match(text, /pipeline-timing\.js summary/);

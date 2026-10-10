@@ -884,7 +884,17 @@ function readJsonIfExists(filePath) {
 }
 
 function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, processCleanup, phaseResults: suppliedPhases }) {
-  const retainedCaseCleanupBlocked = ['workspaceMultiRoot', 'msnWeatherLifecycle'].includes(suite.id);
+  const retainedCaseEvidence = suite.id === 'msnWeatherLifecycle' ? readJsonIfExists(context.terminalResultPath) : undefined;
+  const retainedMsnCleanupVerified =
+    retainedCaseEvidence?.label === 'msnWeatherLifecycle' &&
+    retainedCaseEvidence.complete === true &&
+    retainedCaseEvidence.lifecycleFinalized === true &&
+    retainedCaseEvidence.cleanupVerified === true &&
+    retainedCaseEvidence.filesystemCleanupVerified === true &&
+    retainedCaseEvidence.lifecycleBodySucceeded === true &&
+    retainedCaseEvidence.phaseCompleteness === true;
+  const retainedCaseCleanupBlocked =
+    suite.id === 'workspaceMultiRoot' || (suite.id === 'msnWeatherLifecycle' && !retainedMsnCleanupVerified);
   const retainedCaseCleanupError =
     suite.id === 'workspaceMultiRoot'
       ? require('./workspace-multi-root').nativeCleanupBlocker
@@ -990,6 +1000,9 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
       (!context.invocation || (context.provenanceVerified === true && context.ownedRootCleanup?.verified === true)) &&
       (!context.directFamily || directSucceeded),
     ...(context.directFamily ? { transientCleanupVerified: context.transientCleanupVerified === true } : {}),
+    ...(suite.id === 'msnWeatherLifecycle'
+      ? { filesystemCleanupVerified: retainedMsnCleanupVerified, retainedCaseCleanupVerified: retainedMsnCleanupVerified }
+      : {}),
     ...(retainedCaseCleanupBlocked ? { retainedCaseCleanupVerified: false, retainedCaseCleanupError } : {}),
     phases: finalizedPhaseResults,
     ...(context.invocation ? { invocation: context.invocation, ownedRootCleanup: context.ownedRootCleanup } : {}),
@@ -1012,14 +1025,14 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
                 ? phase.bodyAssertionsPassed === true
                 : phase.complete === true && phase.exitCode === 0 && !phase.signal
             ),
-          filesystemCleanupVerified: false,
+          filesystemCleanupVerified: retainedMsnCleanupVerified,
         }
       : {}),
     diagnosticsError: [
       error instanceof Error ? error.message : String(error || ''),
       journal.error,
       ...phaseDiagnosticsErrors,
-      retainedCaseCleanupError,
+      retainedCaseCleanupBlocked ? retainedCaseCleanupError : '',
     ]
       .filter(Boolean)
       .join('\n'),
@@ -4388,9 +4401,6 @@ function finalizeDirectMsnEvidence(
   env,
   { cleanupVerified, lifecycleSucceeded, lifecycleError, phaseResultsPath, ownedRoots = [], errors = [], processCleanup }
 ) {
-  if (env.LA_E2E_CLI_SUITE_WRAPPER_CHILD === '1' && env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH) {
-    return undefined;
-  }
   const terminal = readJsonIfExists(getSuiteTerminalResultPath(env, 'msnWeatherLifecycle'));
   const phaseResults = readJsonLinesIfExists(phaseResultsPath);
   const expectedPhaseIds = SUITE_REGISTRY.msnWeatherLifecycle.expectedPhases;
