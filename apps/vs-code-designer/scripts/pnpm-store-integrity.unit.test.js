@@ -38,6 +38,9 @@ try {
   fs.writeFileSync(path.join(store, 'v11', 'files', 'unexpected'), 'unexpected');
   assert.throws(() => _test.verifyManifest(store, manifest), /manifest mismatch/);
   assert.throws(() => _test.writeManifest(store, path.join(root, 'outside.json')), /inside the store root/);
+  const resolved = _test.resolveStoreAndManifest(store, manifest);
+  assert.equal(resolved.store, fs.realpathSync.native(store));
+  assert.equal(resolved.manifest, path.join(fs.realpathSync.native(store), '.logicappsux-store-manifest.json'));
   console.log('pnpm store integrity tests passed.');
 } finally {
   fs.rmSync(root, { recursive: true, force: true });

@@ -29,9 +29,7 @@ function main(args = process.argv.slice(2)) {
 }
 
 function writeManifest(storeRoot, manifestPath) {
-  const store = requireDirectory(storeRoot, 'pnpm store');
-  const manifest = path.resolve(requireValue(manifestPath, '--manifest'));
-  assertManifestInsideStore(store, manifest);
+  const { store, manifest } = resolveStoreAndManifest(storeRoot, manifestPath);
   const value = {
     schemaVersion: SCHEMA_VERSION,
     files: collectStoreFiles(store, manifest),
@@ -50,9 +48,7 @@ function writeManifest(storeRoot, manifestPath) {
 }
 
 function verifyManifest(storeRoot, manifestPath) {
-  const store = requireDirectory(storeRoot, 'pnpm store');
-  const manifest = path.resolve(requireValue(manifestPath, '--manifest'));
-  assertManifestInsideStore(store, manifest);
+  const { store, manifest } = resolveStoreAndManifest(storeRoot, manifestPath);
   if (!fs.existsSync(manifest)) {
     throw new Error(`pnpm store integrity manifest is missing: ${manifest}`);
   }
@@ -184,11 +180,18 @@ function requireValue(value, option) {
   return value;
 }
 
-function assertManifestInsideStore(storeRoot, manifestPath) {
-  const relative = path.relative(storeRoot, manifestPath);
+function resolveStoreAndManifest(storeRoot, manifestPath) {
+  const requestedStore = path.resolve(requireValue(storeRoot, '--store'));
+  const requestedManifest = path.resolve(requireValue(manifestPath, '--manifest'));
+  const relative = path.relative(requestedStore, requestedManifest);
   if (!relative || relative.startsWith('..') || path.isAbsolute(relative)) {
     throw new Error('pnpm store integrity manifest must be a file inside the store root.');
   }
+  const store = requireDirectory(requestedStore, 'pnpm store');
+  return {
+    store,
+    manifest: path.join(store, relative),
+  };
 }
 
 if (require.main === module) {
@@ -204,6 +207,7 @@ module.exports = {
   _test: {
     collectStoreFiles,
     pruneVolatileMetadata,
+    resolveStoreAndManifest,
     verifyManifest,
     writeManifest,
   },
