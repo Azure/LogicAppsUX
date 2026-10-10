@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 import { clickPoint, type CdpEvaluator, type Point } from './cdpFormHelpers';
 
 const terminalTaskName = 'func: host start';
+const terminalFocusFindCommand = 'workbench.action.terminal.focusFind';
 
 interface TerminalSearchState {
   findInput?: Point;
@@ -37,7 +38,15 @@ export async function findTextInFuncHostTerminal(cdp: CdpEvaluator, expectedText
   terminal.show(false);
 
   await pressControlShortcut(cdp, 'f', 'KeyF', 70);
-  const opened = await pollTerminalSearchState(cdp, expectedText, deadline, (state) => state.findInput);
+  const chordDeadline = Math.min(deadline, Date.now() + 3000);
+  let opened = await pollTerminalSearchState(cdp, expectedText, chordDeadline, (state) => state.findInput);
+  if (!opened.findInput) {
+    const commands = await vscode.commands.getCommands(true);
+    assert.ok(commands.includes(terminalFocusFindCommand), `${terminalFocusFindCommand} is not registered`);
+    console.log(`[workbench-terminal] Ctrl+F was not routed through CDP; invoking ${terminalFocusFindCommand}`);
+    await vscode.commands.executeCommand(terminalFocusFindCommand);
+    opened = await pollTerminalSearchState(cdp, expectedText, deadline, (state) => state.findInput);
+  }
   assert.ok(opened.findInput, `${terminalTaskName} terminal Find input did not open`);
   await clickPoint(cdp, opened.findInput);
   await replaceFocusedText(cdp, expectedText);

@@ -355,7 +355,11 @@ async function main(): Promise<void> {
     assert.ok(!scenario.includes('readLogicAppsStandardOutputText('));
     assert.ok(!scenario.includes('showLogicAppsStandardOutput('));
     assert.ok(helper.includes("const terminalTaskName = 'func: host start';"));
+    assert.ok(helper.includes("const terminalFocusFindCommand = 'workbench.action.terminal.focusFind';"));
     assert.ok(helper.includes("await pressControlShortcut(cdp, 'f', 'KeyF', 70);"));
+    assert.ok(helper.includes('const chordDeadline = Math.min(deadline, Date.now() + 3000);'));
+    assert.ok(helper.includes('commands.includes(terminalFocusFindCommand)'));
+    assert.ok(helper.includes('await vscode.commands.executeCommand(terminalFocusFindCommand);'));
     assert.ok(helper.includes("await pressControlShortcut(cdp, 'a', 'KeyA', 65);"));
     assert.ok(helper.includes("await cdp.send('Input.insertText', { text: value });"));
     assert.strictEqual((helper.match(/code: 'ControlLeft'/g) ?? []).length, 2);
