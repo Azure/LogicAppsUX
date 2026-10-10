@@ -18,6 +18,7 @@ import {
   replaceHttpTimeoutComposeAction,
   selectHttpTimeoutComposeDesignerV2,
 } from './httpTimeoutComposeOracle';
+import { buildScreenshotReadinessExpression, type ScreenshotExpectation, type ScreenshotReadinessSnapshot } from './screenshotReadiness';
 
 type Control = (name: string, run: () => void | Promise<void>) => Promise<void>;
 const repository = path.resolve(__dirname, '../../../../..');
@@ -312,6 +313,16 @@ async function httpSettingsPanelDomFixture(options: {
   timeoutLabel?: string;
   activePanelId?: string;
   activePanelTitle?: string;
+  activePanelHeaderTitle?: string;
+  panelTitleMode?: 'editable' | 'visible-header' | 'none';
+  omitNodeDetailsId?: boolean;
+  hideSelectedPanel?: boolean;
+  methodValue?: string;
+  globalText?: string;
+  includeUri?: boolean;
+  methodLabelMode?: 'visible' | 'hidden' | 'missing';
+  uriLabelMode?: 'visible' | 'hidden' | 'missing';
+  semanticDecoy?: 'menu' | 'listbox' | 'dialog' | 'layer' | 'overlay';
   methodControlCount?: number;
   methodDisabled?: boolean;
   methodCovered?: boolean;
@@ -330,11 +341,7 @@ async function httpSettingsPanelDomFixture(options: {
 }) {
   const { JSDOM } = require('jsdom');
   const dom = new JSDOM(
-    '<html><body>' +
-      '<button id="msla-node-HTTP" class="react-flow__node">HTTP</button>' +
-      '<button id="unrelated-settings" role="tab" aria-selected="false">Settings</button>' +
-      '<div id="panel-host"></div>' +
-      '</body></html>',
+    `<html><body><button id="msla-node-HTTP" class="react-flow__node">HTTP</button><button id="unrelated-settings" role="tab" aria-selected="false">Settings</button><div id="global-text">${options.globalText ?? ''}</div><div id="panel-host"></div></body></html>`,
     { pretendToBeVisual: true, runScripts: 'outside-only' }
   );
   const window = dom.window;
@@ -527,7 +534,7 @@ async function httpSettingsPanelDomFixture(options: {
     methodRoot ??= createRoot(host);
     const count = options.methodControlCount ?? 1;
     const MethodControl = ({ index }: { index: number }) => {
-      const [value, setValue] = React.useState('');
+      const [value, setValue] = React.useState(options.methodValue ?? '');
       return React.createElement(
         FluentCombobox,
         {
@@ -579,20 +586,48 @@ async function httpSettingsPanelDomFixture(options: {
       switchTarget === 'missing'
         ? ''
         : '<div id="async-pattern-indicator" class="fui-Switch__indicator" style="pointer-events: none" aria-hidden="true"><span></span></div>';
+    const panelTitleMode = options.panelTitleMode ?? 'editable';
+    const panelTitle =
+      panelTitleMode === 'editable'
+        ? `<input aria-label="Card title" value="${options.activePanelTitle ?? 'HTTP'}" />`
+        : panelTitleMode === 'visible-header'
+          ? `<div class="msla-panel-card-title-container"><span role="heading">${options.activePanelHeaderTitle ?? 'HTTP'}</span></div>`
+          : '';
+    const nodeDetailsId = options.omitNodeDetailsId ? '' : `id="msla-node-details-panel-${options.activePanelId ?? 'HTTP'}"`;
+    const semanticLabel = (label: string, mode: 'visible' | 'hidden' | 'missing') =>
+      mode === 'missing' ? '' : `<label ${mode === 'hidden' ? 'style="display: none"' : ''}>${label}</label>`;
+    const semanticDecoy =
+      options.semanticDecoy === 'menu'
+        ? '<div role="menu"><span>Method URI</span></div>'
+        : options.semanticDecoy === 'listbox'
+          ? '<div role="listbox"><span>Method URI</span></div>'
+          : options.semanticDecoy === 'dialog'
+            ? '<div role="dialog"><span>Method URI</span></div>'
+            : options.semanticDecoy === 'layer'
+              ? '<div class="ms-Layer"><span>Method URI</span></div>'
+              : options.semanticDecoy === 'overlay'
+                ? '<div class="webview-overlay-content"><span>Method URI</span></div>'
+                : '';
     host.innerHTML = `
       <section class="msla-panel-container">
-        <div class="msla-panel-layout msla-panel-border-selected">
-          <div class="msla-panel-header"><input aria-label="Card title" value="${options.activePanelTitle ?? 'HTTP'}" /></div>
-          <div id="msla-node-details-panel-${options.activePanelId ?? 'HTTP'}" class="msla-node-details-panel">
+        <div class="msla-panel-layout msla-panel-border-selected" ${options.hideSelectedPanel ? 'style="display: none"' : ''}>
+          <div class="msla-panel-header">${panelTitle}</div>
+          <div ${nodeDetailsId} class="msla-node-details-panel">
             <button id="http-parameters" role="tab" aria-selected="true">Parameters</button>
             ${
               options.includeSettings === false
                 ? ''
                 : '<button id="http-settings" role="tab" aria-selected="false"><span> Settings </span></button>'
             }
-            <div id="method-host"></div>
+            <div class="fui-Field">${semanticLabel('Method', options.methodLabelMode ?? 'visible')}<div id="method-host"></div></div>
             ${options.methodCovered ? '<div id="method-cover">Blocking Method overlay</div>' : ''}
             ${options.getOptionCovered ? '<div id="get-option-cover">Blocking GET overlay</div>' : ''}
+            ${
+              options.includeUri === false
+                ? ''
+                : `<div class="fui-Field">${semanticLabel('URI', options.uriLabelMode ?? 'visible')}<input id="request-uri" aria-label="URI" value="" /></div>`
+            }
+            ${semanticDecoy}
             <input id="request-timeout" aria-label="${options.timeoutLabel ?? 'Request options - Timeout'}" value="" />
             <div id="async-pattern-root" class="fui-Switch">
               <input
@@ -826,6 +861,8 @@ async function httpSettingsPanelDomFixture(options: {
     mouseEvents,
     window,
     driver: (settingsTimeoutMs = 45_000) => new HttpTimeoutComposeDriver(cdp, 17, Date.now() + 20_000, () => {}, settingsTimeoutMs),
+    screenshotSnapshot: (expectation: ScreenshotExpectation) =>
+      window.eval(buildScreenshotReadinessExpression(expectation, 1, 1)) as ScreenshotReadinessSnapshot,
     methodTransitionObserved: () => methodTransitionObserved,
     methodOwnershipObservationCount: () => methodOwnershipObservationCount,
     switchTransitionObserved: () => switchTransitionObserved,
@@ -1172,8 +1209,180 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       )
     );
     assert.ok(readiness.includes("visibleElements('.msla-panel-layout.msla-panel-border-selected')"));
-    assert.ok(readiness.includes('layout.querySelector(\'[id^="msla-node-details-panel-"]'));
+    assert.ok(readiness.includes('layout.querySelectorAll(\'[id^="msla-node-details-panel-"]'));
   });
+  const methodSelectedExpectation: ScreenshotExpectation = {
+    kind: 'designerPanel',
+    label: 'httpTimeoutRequestPt1sMethodSelected',
+    actionTitle: 'HTTP',
+    requiredText: ['Method', 'URI'],
+    fields: [{ labels: ['Method'], value: 'GET' }],
+  };
+  await control(
+    'HTTP method-selected screenshot accepts the production visible header fallback without editable title or stable ID',
+    async () => {
+      const fixture = await httpSettingsPanelDomFixture({
+        panelOpen: true,
+        panelTitleMode: 'visible-header',
+        omitNodeDetailsId: true,
+        activePanelHeaderTitle: '  hTtP  ',
+        methodValue: 'GET',
+      });
+      try {
+        const snapshot = fixture.screenshotSnapshot(methodSelectedExpectation);
+        const details = snapshot.details?.designerPanel as
+          | {
+              identitySourceKinds?: string[];
+              usedVisibleHeaderFallback?: boolean;
+              requiredTextMatches?: boolean;
+              fieldsMatch?: boolean;
+            }
+          | undefined;
+        assert.strictEqual(snapshot.ready, true, JSON.stringify(snapshot));
+        assert.ok(snapshot.reasonCodes.includes('designer-panel-state-visible'));
+        assert.strictEqual(Array.from(details?.identitySourceKinds ?? []).join(','), 'visible-header');
+        assert.strictEqual(details?.usedVisibleHeaderFallback, true);
+        assert.strictEqual(details?.requiredTextMatches, true);
+        assert.strictEqual(details?.fieldsMatch, true);
+      } finally {
+        fixture.dispose();
+      }
+    }
+  );
+  await control('HTTP method-selected screenshot accepts normalized editable title and stable node ID slug matching', async () => {
+    const normalizedTitleFixture = await httpSettingsPanelDomFixture({
+      panelOpen: true,
+      activePanelTitle: '  hTtP  ',
+      methodValue: 'GET',
+    });
+    const stableNodeIdFixture = await httpSettingsPanelDomFixture({
+      panelOpen: true,
+      panelTitleMode: 'none',
+      activePanelId: 'HTTP_request',
+      methodValue: 'GET',
+    });
+    try {
+      assert.strictEqual(normalizedTitleFixture.screenshotSnapshot(methodSelectedExpectation).ready, true);
+      assert.strictEqual(stableNodeIdFixture.screenshotSnapshot({ ...methodSelectedExpectation, actionTitle: 'HTTP request' }).ready, true);
+    } finally {
+      stableNodeIdFixture.dispose();
+      normalizedTitleFixture.dispose();
+    }
+  });
+  for (const [name, fixtureOptions, expectedReason] of [
+    [
+      'wrong visible panel header',
+      { panelTitleMode: 'visible-header', omitNodeDetailsId: true, activePanelHeaderTitle: 'Compose', methodValue: 'GET' },
+      'designer-panel-identity-mismatch',
+    ],
+    [
+      'hidden stale selected panel',
+      {
+        panelTitleMode: 'visible-header',
+        omitNodeDetailsId: true,
+        hideSelectedPanel: true,
+        methodValue: 'GET',
+        globalText: 'HTTP Method GET URI',
+      },
+      'selected-panel-missing',
+    ],
+    [
+      'conflicting stable ID and visible header',
+      { panelTitleMode: 'visible-header', activePanelId: 'Compose', activePanelHeaderTitle: 'HTTP', methodValue: 'GET' },
+      'designer-panel-identity-mismatch',
+    ],
+    [
+      'conflicting stable ID and editable title',
+      { panelTitleMode: 'editable', activePanelId: 'Compose', activePanelTitle: 'HTTP', methodValue: 'GET' },
+      'designer-panel-identity-mismatch',
+    ],
+    [
+      'unrelated global and overlay HTTP text',
+      {
+        panelTitleMode: 'visible-header',
+        omitNodeDetailsId: true,
+        activePanelHeaderTitle: 'Compose',
+        methodValue: 'GET',
+        globalText: 'HTTP Method GET URI',
+        overlayText: 'HTTP',
+      },
+      'designer-panel-identity-mismatch',
+    ],
+    [
+      'visible panel header punctuation collision',
+      { panelTitleMode: 'visible-header', omitNodeDetailsId: true, activePanelHeaderTitle: 'HTTP!', methodValue: 'GET' },
+      'designer-panel-identity-mismatch',
+    ],
+    [
+      'editable panel title punctuation collision',
+      { panelTitleMode: 'editable', activePanelTitle: 'HTTP!', methodValue: 'GET' },
+      'designer-panel-identity-mismatch',
+    ],
+    [
+      'required URI semantic text missing',
+      { panelTitleMode: 'visible-header', omitNodeDetailsId: true, methodValue: 'GET', includeUri: false },
+      'designer-panel-required-text-mismatch',
+    ],
+    [
+      'hidden Method and URI labels with unrelated global substitutes',
+      {
+        panelTitleMode: 'visible-header',
+        omitNodeDetailsId: true,
+        methodValue: 'GET',
+        methodLabelMode: 'hidden',
+        uriLabelMode: 'hidden',
+        globalText: 'Method URI',
+      },
+      'designer-panel-required-text-mismatch',
+    ],
+    [
+      'unrelated global Method and URI text',
+      {
+        panelTitleMode: 'visible-header',
+        omitNodeDetailsId: true,
+        methodValue: 'GET',
+        methodLabelMode: 'missing',
+        uriLabelMode: 'missing',
+        globalText: 'Method URI',
+      },
+      'designer-panel-required-text-mismatch',
+    ],
+    ['GET value missing', { panelTitleMode: 'visible-header', omitNodeDetailsId: true, methodValue: '' }, 'field-value-mismatch'],
+    ['GET value wrong', { panelTitleMode: 'visible-header', omitNodeDetailsId: true, methodValue: 'PUT' }, 'field-value-mismatch'],
+  ] as const) {
+    await control(`HTTP method-selected screenshot rejects ${name}`, async () => {
+      const fixture = await httpSettingsPanelDomFixture({ panelOpen: true, ...fixtureOptions });
+      try {
+        const snapshot = fixture.screenshotSnapshot(methodSelectedExpectation);
+        assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
+        assert.ok(snapshot.reasonCodes.includes(expectedReason), JSON.stringify(snapshot));
+        assert.ok(!snapshot.reasonCodes.includes('designer-panel-state-missing'), JSON.stringify(snapshot));
+      } finally {
+        fixture.dispose();
+      }
+    });
+  }
+  for (const semanticDecoy of ['menu', 'listbox', 'dialog', 'layer', 'overlay'] as const) {
+    await control(`HTTP method-selected screenshot rejects Method and URI supplied only by an in-panel ${semanticDecoy}`, async () => {
+      const fixture = await httpSettingsPanelDomFixture({
+        panelOpen: true,
+        panelTitleMode: 'visible-header',
+        omitNodeDetailsId: true,
+        methodValue: 'GET',
+        methodLabelMode: 'missing',
+        uriLabelMode: 'missing',
+        semanticDecoy,
+      });
+      try {
+        const snapshot = fixture.screenshotSnapshot(methodSelectedExpectation);
+        assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
+        assert.ok(snapshot.reasonCodes.includes('designer-panel-required-text-mismatch'), JSON.stringify(snapshot));
+        assert.ok(!snapshot.reasonCodes.includes('designer-panel-field-mismatch'), JSON.stringify(snapshot));
+      } finally {
+        fixture.dispose();
+      }
+    });
+  }
   await control('HTTP Method uses the production Fluent combobox DOM and selects exact GET through native pointer input', async () => {
     const fixture = await httpSettingsPanelDomFixture({ panelOpen: true });
     try {

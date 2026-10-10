@@ -418,9 +418,27 @@ export const screenshotReadinessDomScript = `
   addAnchor('designerCanvas', designerCanvas);
   const selectedLayouts = visibleElements('.msla-panel-layout.msla-panel-border-selected')
     .map((layout) => {
-      const content = layout.querySelector('[id^="msla-node-details-panel-"], .msla-panel-content-container');
-      const titleInput = layout.querySelector('.msla-panel-header input[aria-label="Card title"], .msla-panel-header input[id$="-title"]');
-      const nodePanel = layout.querySelector('[id^="msla-node-details-panel-"]');
+      const nodePanels = Array.from(layout.querySelectorAll('[id^="msla-node-details-panel-"]')).filter(isVisible);
+      const content =
+        nodePanels[0] ||
+        Array.from(layout.querySelectorAll('.msla-panel-content-container, .msla-node-details-panel')).find(isVisible);
+      const titleInputs = Array.from(
+        layout.querySelectorAll('.msla-panel-header input[aria-label="Card title"], .msla-panel-header input[id$="-title"]')
+      ).filter(isVisible);
+      const headerTitleElements = Array.from(
+        layout.querySelectorAll(
+          [
+            '.msla-panel-header .msla-panel-card-title-container',
+            '.msla-panel-header [data-automation-id*="panel-header-title"]',
+            '.msla-panel-header [data-testid*="panel-header-title"]',
+            '.msla-panel-header [role="heading"]',
+            '.msla-panel-header h1',
+            '.msla-panel-header h2',
+            '.msla-panel-header h3',
+          ].join(', ')
+        )
+      ).filter(isVisible);
+      const nodePanel = nodePanels[0];
       const panelId = nodePanel?.id || '';
       const nodeId = panelId.replace(/^msla-node-details-panel-/, '');
       return {
@@ -428,11 +446,20 @@ export const screenshotReadinessDomScript = `
         rect: layout.getBoundingClientRect(),
         content,
         nodeId,
-        title: normalize(titleInput instanceof HTMLInputElement ? titleInput.value : titleInput?.getAttribute('value') || ''),
+        titles: Array.from(
+          new Set(
+            titleInputs
+              .map((titleInput) =>
+                normalize(titleInput instanceof HTMLInputElement ? titleInput.value : titleInput?.getAttribute('value') || '')
+              )
+              .filter(Boolean)
+          )
+        ),
+        headerTitles: Array.from(new Set(headerTitleElements.map(visibleText).map(normalize).filter(Boolean))),
         text: visibleText(layout),
       };
     })
-    .filter(({ rect }) => rect.width > 200 && rect.height > 100);
+    .filter(({ content, rect }) => !!content && rect.width > 200 && rect.height > 100);
   const selectedPanel = selectedLayouts.length === 1 ? selectedLayouts[0] : undefined;
   const panels = visibleElements('[id^="msla-node-details-panel"], .msla-node-details-panel, .msla-panel-container, [class*="node-details-panel"]');
   addAnchor('selectedPanelLayout', selectedPanel?.layout);
@@ -682,12 +709,98 @@ export const screenshotReadinessDomScript = `
     return result;
   };
   const slug = (value) => normalize(value).replace(/\\W+/g, '_').replace(/^_+|_+$/g, '').toLowerCase();
-  const matchesExactPanelIdentity = (panel, expectedTitle) => {
+  const panelIdentityState = (panel, expectedTitle) => {
     const expectedText = normalize(expectedTitle).toLowerCase();
     const expectedSlug = slug(expectedTitle);
-    const title = normalize(panel?.title || '').toLowerCase();
-    const nodeId = slug(panel?.nodeId || '');
-    return title === expectedText || nodeId === expectedSlug;
+    const sources = [];
+    const nodeId = normalize(panel?.nodeId || '');
+    if (nodeId) {
+      sources.push({ kind: 'stable-id', matches: slug(nodeId) === expectedSlug });
+    }
+    const titles = Array.from(new Set((panel?.titles || []).map(normalize).filter(Boolean)));
+    for (const title of titles) {
+      const normalizedTitle = title.toLowerCase();
+      sources.push({ kind: 'editable-title', matches: normalizedTitle === expectedText });
+    }
+    const headerTitles = titles.length === 0 ? Array.from(new Set((panel?.headerTitles || []).map(normalize).filter(Boolean))) : [];
+    for (const headerTitle of headerTitles) {
+      const normalizedHeaderTitle = headerTitle.toLowerCase();
+      sources.push({
+        kind: 'visible-header',
+        matches: normalizedHeaderTitle === expectedText,
+      });
+    }
+    return {
+      matches: sources.length > 0 && sources.every((source) => source.matches),
+      sourceCount: sources.length,
+      matchedSourceCount: sources.filter((source) => source.matches).length,
+      sourceKinds: Array.from(new Set(sources.map((source) => source.kind))),
+      usedVisibleHeaderFallback: titles.length === 0 && headerTitles.length > 0,
+    };
+  };
+  const matchesExactPanelIdentity = (panel, expectedTitle) => panelIdentityState(panel, expectedTitle).matches;
+  const panelSemanticTextState = (root, requiredValues) => {
+    const excludedRoles = new Set(['menu', 'menuitem', 'listbox', 'option', 'dialog', 'alertdialog']);
+    const isExcludedSemanticSubtree = (element) => {
+      let current = element;
+      while (current instanceof HTMLElement && current !== root) {
+        const role = normalize(current.getAttribute('role')).toLowerCase();
+        const className = normalize(current.getAttribute('class') || current.className || '');
+        const id = normalize(current.id || '');
+        const automationId = normalize(
+          [current.getAttribute('data-automation-id'), current.getAttribute('data-testid')].filter(Boolean).join(' ')
+        );
+        if (
+          excludedRoles.has(role) ||
+          current.getAttribute('aria-modal') === 'true' ||
+          /(?:^|\\s)[^\\s]*(?:layer|overlay|modal|popover)[^\\s]*(?:\\s|$)/i.test(className) ||
+          /(?:layer|overlay|modal|popover)/i.test(id) ||
+          /(?:layer|overlay|modal|popover)/i.test(automationId)
+        ) {
+          return true;
+        }
+        current = current.parentElement;
+      }
+      return false;
+    };
+    const directRenderedText = (element) => {
+      if (!(element instanceof HTMLElement) || !isVisible(element) || isExcludedSemanticSubtree(element)) {
+        return '';
+      }
+      if (typeof Node === 'undefined' || !element.childNodes) {
+        return Array.from(element.children || []).length === 0 ? normalize(element.textContent || '') : '';
+      }
+      return normalize(
+        Array.from(element.childNodes)
+          .filter((node) => node.nodeType === Node.TEXT_NODE)
+          .map((node) => node.textContent || '')
+          .join(' ')
+      );
+    };
+    const isUnobscuredSemanticElement = (element) => {
+      const clipped = getClippedRect(element);
+      if (!clipped) {
+        return false;
+      }
+      const sampleX = Math.min(Math.max(clipped.left + clipped.width / 2, 0), Math.max(window.innerWidth - 1, 0));
+      const sampleY = Math.min(Math.max(clipped.top + clipped.height / 2, 0), Math.max(window.innerHeight - 1, 0));
+      return pointHitsElement(element, sampleX, sampleY);
+    };
+    const candidates = Array.from(root?.querySelectorAll?.('*') || [])
+      .filter((element) => element instanceof HTMLElement && isUnobscuredSemanticElement(element))
+      .map((element) => ({ element, text: directRenderedText(element) }))
+      .filter((candidate) => candidate.text.length > 0);
+    const matches = (requiredValues || []).map((required) => {
+      const variants = Array.isArray(required) ? required : [required];
+      return candidates.some((candidate) => variants.some((variant) => normalizedIncludes(candidate.text, variant)));
+    });
+    return {
+      ok: matches.every(Boolean),
+      candidateCount: candidates.length,
+      requiredCount: matches.length,
+      matchedCount: matches.filter(Boolean).length,
+      missingCount: matches.filter((matched) => !matched).length,
+    };
   };
   const isReadableFieldControl = (control) => {
     if (!isVisible(control)) {
@@ -1433,21 +1546,59 @@ export const screenshotReadinessDomScript = `
       const panelFieldStates = (expectation.fields || []).map((field) => fieldMatches(field, selectedPanel?.layout));
       const editorState = findEditorState(expectation.editor, selectedPanel?.layout);
       const pickerState = findPickerState(expectation.picker, editorState);
+      const identityState = panelIdentityState(selectedPanel, expectation.actionTitle);
+      const requiredTextState = panelSemanticTextState(selectedPanel?.content, expectation.requiredText || []);
+      const requiredTextMatches = !!selectedPanel && requiredTextState.ok;
+      const panelFieldsMatch = panelFieldStates.every((fieldState) => fieldState.ok);
       ready =
         !!selectedPanel &&
-        matchesExactPanelIdentity(selectedPanel, expectation.actionTitle) &&
-        hasRequiredText(selectedPanel.text, expectation.requiredText || []) &&
-        panelFieldStates.every((fieldState) => fieldState.ok) &&
+        identityState.matches &&
+        requiredTextMatches &&
+        panelFieldsMatch &&
         editorState.ok &&
         pickerState.ok;
-      if (selectedLayouts.length !== 1) {
+      details.designerPanel = {
+        selectedLayoutCount: selectedLayouts.length,
+        identitySourceCount: identityState.sourceCount,
+        matchedIdentitySourceCount: identityState.matchedSourceCount,
+        identitySourceKinds: identityState.sourceKinds,
+        usedVisibleHeaderFallback: identityState.usedVisibleHeaderFallback,
+        requiredTextCandidateCount: requiredTextState.candidateCount,
+        requiredTextCount: requiredTextState.requiredCount,
+        matchedRequiredTextCount: requiredTextState.matchedCount,
+        missingRequiredTextCount: requiredTextState.missingCount,
+        requiredTextMatches,
+        fieldCount: panelFieldStates.length,
+        fieldsMatch: panelFieldsMatch,
+      };
+      if (selectedLayouts.length === 0) {
+        reasonCodes.push('selected-panel-missing');
+      } else if (selectedLayouts.length !== 1) {
         reasonCodes.push('selected-panel-ambiguous');
       }
-      for (const fieldState of panelFieldStates) {
-        reasonCodes.push(fieldState.reason);
+      if (!identityState.matches) {
+        reasonCodes.push('designer-panel-identity-mismatch');
       }
-      reasonCodes.push(editorState.reason, pickerState.reason);
-      reasonCodes.push(ready ? 'designer-panel-state-visible' : 'designer-panel-state-missing');
+      if (!requiredTextMatches) {
+        reasonCodes.push('designer-panel-required-text-mismatch');
+      }
+      if (!panelFieldsMatch) {
+        reasonCodes.push('designer-panel-field-mismatch');
+      }
+      for (const fieldState of panelFieldStates) {
+        if (!fieldState.ok) {
+          reasonCodes.push(fieldState.reason);
+        }
+      }
+      if (!editorState.ok) {
+        reasonCodes.push(editorState.reason);
+      }
+      if (!pickerState.ok) {
+        reasonCodes.push(pickerState.reason);
+      }
+      if (ready) {
+        reasonCodes.push('designer-panel-state-visible');
+      }
       break;
     case 'overview':
       ready = overviewEvidence && (!expectation.workflowName || normalizedIncludes(text, expectation.workflowName));

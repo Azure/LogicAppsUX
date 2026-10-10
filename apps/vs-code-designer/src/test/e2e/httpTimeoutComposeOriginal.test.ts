@@ -308,7 +308,7 @@ async function authorHttpRequest(
     kind: 'designerPanel',
     label: 'httpTimeoutRequestPt1sMethodSelected',
     actionTitle: 'HTTP',
-    requiredText: ['Method', 'GET', 'URI'],
+    requiredText: ['Method', 'URI'],
     fields: [{ labels: ['Method'], value: 'GET' }],
   });
   await driver.fillParameter(['URI'], endpoint);

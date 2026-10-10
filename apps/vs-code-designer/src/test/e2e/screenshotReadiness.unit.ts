@@ -38,6 +38,9 @@ async function main(): Promise<void> {
   testDesignerCanvasPrefersCanvasOverSelectedPanel();
   testDesignerCanvasBlocksScopedLoadersOnly();
   testDesignerPanelRequiresExactFieldValue();
+  testDesignerPanelUsesVisibleHeaderFallbackOnlyInsideActivePanel();
+  testDesignerPanelRequiresConcreteScopedSemanticText();
+  testDesignerPanelReportsSplitIdentitySemanticAndFieldDiagnostics();
   testDesignerPanelRequiresFocusedEditorTokenSource();
   testDesignerPanelRejectsAncestorFocusAndPlainTextToken();
   testDesignerPanelRequiresVisiblePickerSectionAndToken();
@@ -717,6 +720,207 @@ function testDesignerPanelRequiresExactFieldValue(): void {
   assert.strictEqual(rejected.ready, false, JSON.stringify(rejected));
 }
 
+function testDesignerPanelUsesVisibleHeaderFallbackOnlyInsideActivePanel(): void {
+  const expectation: ScreenshotExpectation = {
+    kind: 'designerPanel',
+    label: 'http-method-selected',
+    actionTitle: 'HTTP',
+    requiredText: ['Method', 'URI'],
+    fields: [{ labels: ['Method'], value: 'GET' }],
+  };
+  const accepted = runProbe(
+    new FakeDocument(
+      new FakeElement('body', {}, [
+        designerPanelWithVisibleHeader({
+          headerTitle: '  hTtP  ',
+          text: 'Method URI',
+          fields: [visibleMethodControl('GET')],
+        }),
+      ])
+    ),
+    expectation
+  );
+  const punctuationCollision = runProbe(
+    new FakeDocument(
+      new FakeElement('body', {}, [
+        designerPanelWithVisibleHeader({
+          headerTitle: 'HTTP!',
+          text: 'Method URI',
+          fields: [visibleMethodControl('GET')],
+        }),
+      ])
+    ),
+    expectation
+  );
+  const editablePunctuationCollision = runProbe(
+    new FakeDocument(
+      new FakeElement('body', {}, [
+        designerPanel({
+          title: 'HTTP!',
+          nodeId: 'HTTP',
+          text: 'Method URI',
+          fields: [visibleMethodControl('GET')],
+        }),
+      ])
+    ),
+    expectation
+  );
+  const stableNodeIdSlug = runProbe(
+    new FakeDocument(
+      new FakeElement('body', {}, [
+        designerPanel({
+          title: '',
+          nodeId: 'Get_current_weather',
+          text: 'Location',
+        }),
+      ])
+    ),
+    {
+      kind: 'designerPanel',
+      label: 'stable-node-id-slug',
+      actionTitle: 'Get current weather',
+      requiredText: ['Location'],
+    }
+  );
+  const unrelatedGlobalHeader = runProbe(
+    new FakeDocument(
+      new FakeElement('body', {}, [
+        new FakeElement('h1', {}, [], 'HTTP'),
+        designerPanelWithVisibleHeader({
+          headerTitle: 'Compose',
+          text: 'Method URI',
+          fields: [visibleMethodControl('GET')],
+        }),
+      ])
+    ),
+    expectation
+  );
+  const conflictingStableId = runProbe(
+    new FakeDocument(
+      new FakeElement('body', {}, [
+        designerPanelWithVisibleHeader({
+          headerTitle: 'HTTP',
+          nodeId: 'Compose',
+          text: 'Method URI',
+          fields: [visibleMethodControl('GET')],
+        }),
+      ])
+    ),
+    expectation
+  );
+  const hiddenPanel = designerPanelWithVisibleHeader({
+    headerTitle: 'HTTP',
+    text: 'Method URI',
+    fields: [visibleMethodControl('GET')],
+  });
+  hiddenPanel.attributes.style = 'display: none';
+  const hidden = runProbe(new FakeDocument(new FakeElement('body', {}, [new FakeElement('h1', {}, [], 'HTTP'), hiddenPanel])), expectation);
+
+  assert.strictEqual(accepted.ready, true, JSON.stringify(accepted));
+  assert.strictEqual(stableNodeIdSlug.ready, true, JSON.stringify(stableNodeIdSlug));
+  assert.strictEqual((accepted.details?.designerPanel as { usedVisibleHeaderFallback?: boolean })?.usedVisibleHeaderFallback, true);
+  for (const snapshot of [punctuationCollision, editablePunctuationCollision, unrelatedGlobalHeader, conflictingStableId, hidden]) {
+    assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
+  }
+  assert.ok(punctuationCollision.reasonCodes.includes('designer-panel-identity-mismatch'));
+  assert.ok(editablePunctuationCollision.reasonCodes.includes('designer-panel-identity-mismatch'));
+  assert.ok(unrelatedGlobalHeader.reasonCodes.includes('designer-panel-identity-mismatch'));
+  assert.ok(conflictingStableId.reasonCodes.includes('designer-panel-identity-mismatch'));
+  assert.ok(hidden.reasonCodes.includes('selected-panel-missing'));
+}
+
+function testDesignerPanelRequiresConcreteScopedSemanticText(): void {
+  const expectation: ScreenshotExpectation = {
+    kind: 'designerPanel',
+    label: 'http-method-selected',
+    actionTitle: 'HTTP',
+    requiredText: ['Method', 'URI'],
+    fields: [{ labels: ['Method'], value: 'GET' }],
+  };
+  const httpPanel = (semanticChildren: FakeElement[], globalChildren: FakeElement[] = []) =>
+    new FakeDocument(
+      new FakeElement('body', {}, [
+        ...globalChildren,
+        new FakeElement('section', { class: 'msla-panel-layout msla-panel-border-selected' }, [
+          new FakeElement('div', { class: 'msla-panel-header' }, [
+            new FakeInputElement('input', { 'aria-label': 'Card title', id: 'HTTP-title', value: 'HTTP' }),
+          ]),
+          new FakeElement('div', { id: 'msla-node-details-panel-HTTP', class: 'msla-node-details-panel' }, [
+            new FakeElement('div', { class: 'fui-Field' }, [...semanticChildren, visibleMethodControl('GET')]),
+          ]),
+        ]),
+      ])
+    );
+  const visibleLabels = runProbe(httpPanel([visibleSemanticText('Method', 100), visibleSemanticText('URI', 120)]), expectation);
+  const hiddenLabels = runProbe(
+    httpPanel(
+      [new FakeElement('label', { style: 'display: none' }, [], 'Method'), new FakeElement('label', { 'aria-hidden': 'true' }, [], 'URI')],
+      [new FakeElement('div', {}, [], 'Method URI')]
+    ),
+    expectation
+  );
+  const unrelatedGlobalText = runProbe(
+    httpPanel([], [new FakeElement('div', {}, [new FakeElement('span', {}, [], 'Method URI')])]),
+    expectation
+  );
+  const excludedDecoys = [
+    new FakeElement('div', { role: 'menu' }, [new FakeElement('span', {}, [], 'Method URI')]),
+    new FakeElement('div', { role: 'listbox' }, [new FakeElement('span', {}, [], 'Method URI')]),
+    new FakeElement('div', { role: 'dialog' }, [new FakeElement('span', {}, [], 'Method URI')]),
+    new FakeElement('div', { class: 'ms-Layer' }, [new FakeElement('span', {}, [], 'Method URI')]),
+    new FakeElement('div', { class: 'webview-overlay-content' }, [new FakeElement('span', {}, [], 'Method URI')]),
+  ].map((decoy) => runProbe(httpPanel([decoy]), expectation));
+
+  assert.strictEqual(visibleLabels.ready, true, JSON.stringify(visibleLabels));
+  for (const snapshot of [hiddenLabels, unrelatedGlobalText, ...excludedDecoys]) {
+    assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
+    assert.ok(snapshot.reasonCodes.includes('designer-panel-required-text-mismatch'), JSON.stringify(snapshot));
+    assert.ok(!snapshot.reasonCodes.includes('designer-panel-field-mismatch'), JSON.stringify(snapshot));
+  }
+}
+
+function testDesignerPanelReportsSplitIdentitySemanticAndFieldDiagnostics(): void {
+  const expectation: ScreenshotExpectation = {
+    kind: 'designerPanel',
+    label: 'http-method-selected',
+    actionTitle: 'HTTP',
+    requiredText: ['Method', 'URI'],
+    fields: [{ labels: ['Method'], value: 'GET' }],
+  };
+  const snapshotFor = (options: { headerTitle: string; text: string; methodValue: string }) =>
+    runProbe(
+      new FakeDocument(
+        new FakeElement('body', {}, [
+          designerPanelWithVisibleHeader({
+            headerTitle: options.headerTitle,
+            text: options.text,
+            fields: [visibleMethodControl(options.methodValue)],
+          }),
+        ])
+      ),
+      expectation
+    );
+  const identity = snapshotFor({ headerTitle: 'Compose', text: 'Method URI', methodValue: 'GET' });
+  const semantic = snapshotFor({ headerTitle: 'HTTP', text: 'Method', methodValue: 'GET' });
+  const field = snapshotFor({ headerTitle: 'HTTP', text: 'Method URI', methodValue: 'PUT' });
+
+  assert.deepStrictEqual(
+    [identity, semantic, field].map((snapshot) => snapshot.ready),
+    [false, false, false]
+  );
+  assert.ok(identity.reasonCodes.includes('designer-panel-identity-mismatch'));
+  assert.ok(!identity.reasonCodes.includes('designer-panel-required-text-mismatch'));
+  assert.ok(!identity.reasonCodes.includes('designer-panel-field-mismatch'));
+  assert.ok(semantic.reasonCodes.includes('designer-panel-required-text-mismatch'));
+  assert.ok(!semantic.reasonCodes.includes('designer-panel-identity-mismatch'));
+  assert.ok(!semantic.reasonCodes.includes('designer-panel-field-mismatch'));
+  assert.ok(field.reasonCodes.includes('designer-panel-field-mismatch'));
+  assert.ok(field.reasonCodes.includes('field-value-mismatch'));
+  assert.ok(!field.reasonCodes.includes('designer-panel-identity-mismatch'));
+  assert.ok(!field.reasonCodes.includes('designer-panel-required-text-mismatch'));
+  assert.ok([identity, semantic, field].every((snapshot) => !snapshot.reasonCodes.includes('designer-panel-state-missing')));
+}
+
 function testDesignerPanelRequiresFocusedEditorTokenSource(): void {
   const token = new FakeElement(
     'span',
@@ -1180,7 +1384,7 @@ function testDesignerPanelRejectsUnassociatedPickerAndInvisibleContributors(): v
   for (const snapshot of snapshots) {
     assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
   }
-  assert.ok(snapshots[0].reasonCodes.includes('designer-panel-state-missing'));
+  assert.ok(snapshots[0].reasonCodes.includes('designer-panel-identity-mismatch'));
   assert.ok(snapshots[1].reasonCodes.includes('editor-missing'));
   assert.ok(snapshots[2].reasonCodes.includes('picker-editor-association-missing'));
   assert.ok(snapshots.slice(3).every((snapshot) => snapshot.reasonCodes.some((code) => code.startsWith('picker-'))));
@@ -2358,13 +2562,46 @@ function designerPanel(options: { title: string; nodeId: string; text: string; f
     new FakeElement('div', { class: 'msla-panel-header' }, [
       new FakeInputElement('input', { 'aria-label': 'Card title', id: `${options.nodeId}-title`, value: options.title }),
     ]),
+    new FakeElement('div', { id: `msla-node-details-panel-${options.nodeId}`, class: 'msla-panel-content-container' }, [
+      ...(options.text ? [visibleSemanticText(options.text, 80)] : []),
+      ...(options.fields ?? []),
+    ]),
+  ]);
+}
+
+function designerPanelWithVisibleHeader(options: {
+  headerTitle: string;
+  nodeId?: string;
+  text: string;
+  fields?: FakeElement[];
+}): FakeElement {
+  return new FakeElement('section', { class: 'msla-panel-layout msla-panel-border-selected' }, [
+    new FakeElement('div', { class: 'msla-panel-header' }, [
+      new FakeElement('div', { class: 'msla-panel-card-title-container' }, [
+        new FakeElement('h2', { role: 'heading' }, [], options.headerTitle),
+      ]),
+    ]),
     new FakeElement(
       'div',
-      { id: `msla-node-details-panel-${options.nodeId}`, class: 'msla-panel-content-container' },
-      options.fields ?? [],
-      options.text
+      {
+        ...(options.nodeId ? { id: `msla-node-details-panel-${options.nodeId}` } : {}),
+        class: 'msla-node-details-panel',
+      },
+      [...(options.text ? [visibleSemanticText(options.text, 80)] : []), ...(options.fields ?? [])]
     ),
   ]);
+}
+
+function visibleSemanticText(text: string, top: number): FakeElement {
+  const element = new FakeElement('span', {}, [], text);
+  element.bounds = { left: 20, top, width: 200, height: 20, right: 220, bottom: top + 20 };
+  return element;
+}
+
+function visibleMethodControl(value: string): FakeInputElement {
+  const control = new FakeInputElement('input', { 'aria-label': 'Method', value });
+  control.bounds = { left: 20, top: 160, width: 260, height: 40, right: 280, bottom: 200 };
+  return control;
 }
 
 function createAssociatedPickerDocument(options: {
@@ -2707,6 +2944,14 @@ class FakeInputElement extends FakeElement {
 function matchesSelector(element: FakeElement, selector: string): boolean {
   if (selector === '*') {
     return true;
+  }
+  const panelHeaderDescendant = selector.match(/^\.msla-panel-header\s+(.+)$/);
+  if (panelHeaderDescendant && !panelHeaderDescendant[1].startsWith('input[')) {
+    let ancestor = element.parentElement;
+    while (ancestor && !hasClass(ancestor, 'msla-panel-header')) {
+      ancestor = ancestor.parentElement;
+    }
+    return !!ancestor && matchesSelector(element, panelHeaderDescendant[1]);
   }
   if (selector === 'iframe') {
     return element.tagName === 'iframe';
