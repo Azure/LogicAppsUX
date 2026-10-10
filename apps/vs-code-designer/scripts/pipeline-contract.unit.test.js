@@ -94,6 +94,9 @@ function testCohortTemplateContract() {
   const containmentHost = read('apps/vs-code-designer/scripts/e2e-cli-containment-host.cs');
   assert.match(containmentHost, /CONTAINMENT_DRAIN_ATTEMPTS = 100/);
   assert.match(containmentHost, /CONTAINMENT_DRAIN_DELAY_MS = 100/);
+  const linuxContainmentHost = read('apps/vs-code-designer/scripts/e2e-cli-containment-host.c');
+  assert.match(linuxContainmentHost, /CONTAINMENT_DRAIN_ATTEMPTS = 100/);
+  assert.match(linuxContainmentHost, /CONTAINMENT_DRAIN_DELAY_MS = 100/);
   assert.match(text, /\$aggregate = Join-Path '\$\(BatchResultsRoot\)' 'e2e-cli-batch-result\.json'/);
   assert.match(text, /stage-e2e-cli-cohort\.js/);
   assert.match(text, /pipeline-timing\.js summary/);

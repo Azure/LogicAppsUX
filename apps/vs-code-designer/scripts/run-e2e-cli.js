@@ -359,7 +359,7 @@ function buildBatchAggregateJUnitXml(aggregate) {
   return [
     '<?xml version="1.0" encoding="UTF-8"?>',
     `<testsuites name="@vscode/test-cli batch" tests="${suites.length}" failures="${failures}">`,
-    ...suites.map((suite) => buildBatchSuiteJUnitXml(suite).split('\n').slice(1, -2).join('\n')),
+    ...suites.map((suite) => buildBatchSuiteJUnitXml(suite).split('\n').slice(1, -1).join('\n')),
     '</testsuites>',
     '',
   ].join('\n');
@@ -939,6 +939,7 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
       'msnWeatherLifecycle',
       'httpTimeoutComposeOriginal',
       'httpTimeoutLifecycle',
+      'createWorkspaceCoreMatrix',
       'statelessVariablesLifecycle',
       'workspaceArtifactRegeneration',
       'workspaceMultiRoot',
@@ -1051,6 +1052,7 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
       'msnWeatherLifecycle',
       'httpTimeoutComposeOriginal',
       'httpTimeoutLifecycle',
+      'createWorkspaceCoreMatrix',
       'statelessVariablesLifecycle',
       'workspaceArtifactRegeneration',
       'workspaceMultiRoot',
@@ -3966,6 +3968,7 @@ module.exports = {
     getSuiteTerminalResultPath,
     getWorkspaceSourcesFromManifestPath,
     buildOgfScenariosForPhase,
+    buildBatchAggregateJUnitXml,
     clearOgfScenarios,
     collectOgfScenarios,
     safeReadDirectory,

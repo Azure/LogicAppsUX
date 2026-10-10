@@ -32,6 +32,7 @@ const {
     getOwnedRootCleanupVerified,
     getSuiteTerminalResultPath,
     hasOwnedWorkspaceParentDiagnosticFailure,
+    buildBatchAggregateJUnitXml,
     buildOgfScenariosForPhase,
     collectOgfScenarios,
     getMsnWeatherLifecycleRunExtraEnv,
@@ -128,6 +129,8 @@ const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
     testDirectSuitePhaseResultRetainsOgfAcrossMatrixPhases();
     testDirectSuitePhaseResultClearsOgfOnLaterFailure();
     testDirectSuitePhaseResultDoesNotEmitOgfForCleanupFailure();
+    testCoreMatrixBatchFinalEvidenceRetainsPhaseResults();
+    testBatchAggregateJunitClosesEverySuite();
     testMsnDirectLifecycleEvidence();
     await testMsnLifecycleCleanupRetainsOriginalErrors();
     testMsnBatchLifecycleEvidence();
@@ -1747,6 +1750,53 @@ function testDirectSuitePhaseResultDoesNotEmitOgfForCleanupFailure() {
   } finally {
     process.chdir(previousCwd);
   }
+}
+
+function testCoreMatrixBatchFinalEvidenceRetainsPhaseResults() {
+  const root = path.join(tempRoot, 'core-matrix-batch-final-evidence');
+  fs.mkdirSync(root, { recursive: true });
+  const suite = SUITE_REGISTRY.createWorkspaceCoreMatrix;
+  const context = {
+    expectedPhaseIds: suite.expectedPhases,
+    phaseResultsPath: path.join(root, 'phase-results.jsonl'),
+    cleanupLedgerPath: path.join(root, 'cleanup-ledger.json'),
+    terminalResultPath: path.join(root, 'terminal-result.json'),
+  };
+  const phaseResults = suite.expectedPhases.map((phaseId) => ({
+    phaseId,
+    label: suite.id,
+    exitCode: 0,
+    signal: null,
+    cleanupVerified: true,
+    diagnosticsError: '',
+    complete: true,
+    mochaPassingCount: 1,
+  }));
+  const terminal = writeSuiteFinalEvidence({
+    context,
+    suite,
+    exitCode: 0,
+    signal: null,
+    processCleanup: { verified: true, retainedOriginalIdentitiesVerified: true },
+    phaseResults,
+  });
+  assert.strictEqual(terminal.complete, true);
+  assert.deepStrictEqual(
+    terminal.phaseResults.map((phase) => phase.phaseId),
+    suite.expectedPhases
+  );
+}
+
+function testBatchAggregateJunitClosesEverySuite() {
+  const xml = buildBatchAggregateJUnitXml({
+    suites: [
+      { id: 'unitTests', finalOutcome: 'success' },
+      { id: 'createWorkspacePreviewMatrix', finalOutcome: 'failed', reason: 'exit 1' },
+    ],
+  });
+  assert.strictEqual((xml.match(/<testsuite /g) || []).length, 2);
+  assert.strictEqual((xml.match(/<\/testsuite>/g) || []).length, 2);
+  assert.match(xml, /<\/testsuite>\n<testsuite name="createWorkspacePreviewMatrix"/);
 }
 
 function msnPhase(phaseId, override = {}) {

@@ -12,6 +12,8 @@
 #include <unistd.h>
 
 static volatile sig_atomic_t requested_signal = 0;
+static const int CONTAINMENT_DRAIN_ATTEMPTS = 100;
+static const long CONTAINMENT_DRAIN_DELAY_MS = 100;
 
 static void request_termination(int signal_number) {
   if (requested_signal == 0) {
@@ -107,13 +109,13 @@ static int wait_for_root(pid_t root_pid, int *root_status) {
 
 static int wait_for_natural_descendant_exit(pid_t owner, pid_t *children, int capacity) {
   int count = 0;
-  for (int attempt = 0; attempt < 50 && requested_signal == 0; attempt++) {
+  for (int attempt = 0; attempt < CONTAINMENT_DRAIN_ATTEMPTS && requested_signal == 0; attempt++) {
     reap_exited_children();
     count = read_children(owner, children, capacity);
     if (count <= 0) {
       return count;
     }
-    sleep_milliseconds(100);
+    sleep_milliseconds(CONTAINMENT_DRAIN_DELAY_MS);
   }
   return read_children(owner, children, capacity);
 }
