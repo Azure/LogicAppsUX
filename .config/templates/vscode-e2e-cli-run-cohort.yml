@@ -24,6 +24,9 @@ parameters:
     type: string
   - name: trustedFullExecution
     type: string
+  - name: diagnosticOnly
+    type: boolean
+    default: false
   - name: requiresAzureAccessToken
     type: boolean
     default: false
@@ -330,6 +333,7 @@ jobs:
             env:
               LA_E2E_CLI_ADMISSION_CONTEXT_PATH: $(AdmissionContextPath)
               LA_E2E_CLI_BATCH_COHORT_ID: ${{ parameters.cohortId }}
+              LA_E2E_CLI_BATCH_DIAGNOSTIC_ONLY: '${{ parameters.diagnosticOnly }}'
               LA_E2E_CLI_BATCH_ROOT: $(BatchRoot)
               LA_E2E_CLI_BATCH_RESULTS_DIR: $(BatchResultsRoot)
               LA_E2E_CLI_BATCH_TRUSTED_FULL_EXECUTION: $(TrustedFullExecution)
@@ -350,6 +354,7 @@ jobs:
             env:
               LA_E2E_CLI_ADMISSION_CONTEXT_PATH: $(AdmissionContextPath)
               LA_E2E_CLI_BATCH_COHORT_ID: ${{ parameters.cohortId }}
+              LA_E2E_CLI_BATCH_DIAGNOSTIC_ONLY: '${{ parameters.diagnosticOnly }}'
               LA_E2E_CLI_BATCH_ROOT: $(BatchRoot)
               LA_E2E_CLI_BATCH_RESULTS_DIR: $(BatchResultsRoot)
               LA_E2E_CLI_BATCH_TRUSTED_FULL_EXECUTION: $(TrustedFullExecution)
@@ -411,6 +416,7 @@ jobs:
               LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL: ${{ parameters.azureManagementBaseUrl }}
               LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME: ${{ parameters.azureResourceGroupName }}
               LA_E2E_CLI_BATCH_COHORT_ID: ${{ parameters.cohortId }}
+              LA_E2E_CLI_BATCH_DIAGNOSTIC_ONLY: '${{ parameters.diagnosticOnly }}'
               LA_E2E_CLI_BATCH_ROOT: $(BatchRoot)
               LA_E2E_CLI_BATCH_RESULTS_DIR: $(BatchResultsRoot)
               LA_E2E_CLI_BATCH_TRUSTED_FULL_EXECUTION: $(TrustedFullExecution)

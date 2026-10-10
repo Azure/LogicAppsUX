@@ -12,7 +12,7 @@
 #include <unistd.h>
 
 static volatile sig_atomic_t requested_signal = 0;
-static const int CONTAINMENT_DRAIN_ATTEMPTS = 100;
+static const int CONTAINMENT_DRAIN_ATTEMPTS = 300;
 static const long CONTAINMENT_DRAIN_DELAY_MS = 100;
 
 static void request_termination(int signal_number) {

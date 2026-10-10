@@ -1584,7 +1584,7 @@ async function testContainedWrapperRejectsEscapedDescendant() {
       ...process.env,
       LA_E2E_CLI_PROCESS_RECORDS_PATH: processRecordsPath,
     },
-    timeoutMs: 15_000,
+    timeoutMs: process.platform === 'linux' ? 45_000 : 15_000,
     scriptPath: createWrapperFixtureScript('escaped-descendant'),
   });
   assert.notStrictEqual(result.exitCode, 0);

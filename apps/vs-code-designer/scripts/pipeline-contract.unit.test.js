@@ -79,6 +79,10 @@ function testCohortTemplateContract() {
   assert.strictEqual(job.condition, "and(not(failed()), not(canceled()), eq(variables['SelectedCohort'], 'true'))");
   assert.strictEqual(job.templateContext.outputs.length, 1);
   assert.strictEqual(job.templateContext.outputs[0].artifactName, 'vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}');
+  assert.deepStrictEqual(
+    cohort.parameters.find((parameter) => parameter.name === 'diagnosticOnly'),
+    { name: 'diagnosticOnly', type: 'boolean', default: false }
+  );
   assert.strictEqual(job.steps.filter((step) => step.task === 'UseNode@1').length, 1, 'cohort must provision trusted Node exactly once');
   const setup = job.steps.find((step) => step.template === '/.azure-pipelines/templates/vscode-e2e-cli-setup.yml@self');
   assert.strictEqual(setup.parameters.provisionNode, false);
@@ -95,8 +99,11 @@ function testCohortTemplateContract() {
   assert.match(containmentHost, /CONTAINMENT_DRAIN_ATTEMPTS = 100/);
   assert.match(containmentHost, /CONTAINMENT_DRAIN_DELAY_MS = 100/);
   const linuxContainmentHost = read('apps/vs-code-designer/scripts/e2e-cli-containment-host.c');
-  assert.match(linuxContainmentHost, /CONTAINMENT_DRAIN_ATTEMPTS = 100/);
+  assert.match(linuxContainmentHost, /CONTAINMENT_DRAIN_ATTEMPTS = 300/);
   assert.match(linuxContainmentHost, /CONTAINMENT_DRAIN_DELAY_MS = 100/);
+  assert.strictEqual((text.match(/LA_E2E_CLI_BATCH_DIAGNOSTIC_ONLY: '\$\{\{ parameters\.diagnosticOnly \}\}'/g) || []).length, 3);
+  const pipeline = read('.config/vscode-e2e-cli.1es.yml');
+  assert.strictEqual((pipeline.match(/diagnosticOnly: \$\{\{ parameters\.diagnosticOnly \}\}/g) || []).length, 4);
   assert.match(text, /\$aggregate = Join-Path '\$\(BatchResultsRoot\)' 'e2e-cli-batch-result\.json'/);
   assert.match(text, /stage-e2e-cli-cohort\.js/);
   assert.match(text, /pipeline-timing\.js summary/);
