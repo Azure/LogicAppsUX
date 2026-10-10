@@ -59,6 +59,37 @@ static void reap_exited_children(void) {
   }
 }
 
+static void report_residual_descendant(pid_t pid) {
+  char path[128];
+  snprintf(path, sizeof(path), "/proc/%d/stat", pid);
+  FILE *stream = fopen(path, "r");
+  if (!stream) {
+    fprintf(stderr, "[containment] residual pid=%d metadata=unavailable\n", pid);
+    return;
+  }
+  int parsed_pid = 0;
+  int parent_pid = 0;
+  int process_group_id = 0;
+  int session_id = 0;
+  char name[256] = {0};
+  char state = '?';
+  int fields = fscanf(stream, "%d (%255[^)]) %c %d %d %d", &parsed_pid, name, &state, &parent_pid, &process_group_id, &session_id);
+  fclose(stream);
+  if (fields != 6) {
+    fprintf(stderr, "[containment] residual pid=%d metadata=malformed\n", pid);
+    return;
+  }
+  fprintf(
+      stderr,
+      "[containment] residual pid=%d ppid=%d pgrp=%d session=%d state=%c name=%s\n",
+      parsed_pid,
+      parent_pid,
+      process_group_id,
+      session_id,
+      state,
+      name);
+}
+
 static void sleep_milliseconds(long milliseconds) {
   struct timespec duration = {
       .tv_sec = milliseconds / 1000,
@@ -246,6 +277,9 @@ int main(int argc, char **argv) {
     if (requested_signal != 0) {
       escaped_count = terminate_all_descendants(getpid(), escaped, 4096);
     } else if (escaped_count > 0) {
+      for (int index = 0; index < escaped_count; index++) {
+        report_residual_descendant(escaped[index]);
+      }
       pid_t remaining[4096];
       terminate_all_descendants(getpid(), remaining, 4096);
     }

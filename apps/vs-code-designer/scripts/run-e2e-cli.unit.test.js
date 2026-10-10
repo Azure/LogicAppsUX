@@ -1593,6 +1593,9 @@ async function testContainedWrapperRejectsEscapedDescendant() {
   assert.strictEqual(result.processCleanup.verified, false);
   assert.strictEqual(result.processCleanup.retainedOriginalIdentitiesVerified, false);
   assert.strictEqual(result.processCleanup.containmentEmpty, false);
+  if (process.platform === 'linux') {
+    assert.match(result.output, /\[containment\] residual pid=\d+ ppid=\d+ pgrp=\d+ session=\d+ state=\w name=.+/);
+  }
   const records = readJsonLines(processRecordsPath);
   const escaped = records.find((record) => record.role === 'grandchild');
   assert.ok(escaped?.pid, 'fixture must record the detached descendant');
