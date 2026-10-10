@@ -29,12 +29,6 @@ import {
   selectHttpTimeoutRequestWorkspace,
 } from './httpTimeoutRequestOracle';
 import {
-  readLogicAppsStandardOutputSnapshot,
-  readLogicAppsStandardOutputText,
-  selectLogicAppsStandardOutputThroughWorkbench,
-  showLogicAppsStandardOutput,
-} from './logicAppsOutputChannel';
-import {
   captureDiagnosticScreenshot,
   captureEvidenceScreenshot,
   defaultEvidenceScreenshotTimeoutMs,
@@ -68,6 +62,7 @@ import {
   pasteJsonValueIntoActiveNativeEditor,
   saveAndCloseActiveNativeEditor,
 } from './workbenchEditorActions';
+import { disposeStoppedFuncHostTerminals, findTextInFuncHostTerminal } from './workbenchTerminalSearch';
 
 const managementRoot = 'http://localhost:7071/runtime/webhooks/workflow/api/management';
 const apiVersion = '2019-10-01-edge-preview';
@@ -251,26 +246,27 @@ async function provePt24hAndInvalidValidation(entry: CreatedWorkspace, endpoint:
     await closeAllTabs();
   }
 
-  const outputWorkbench = await connectToVsCodeWorkbenchCdp({ activate: false, timeoutMs: 15_000 });
+  const terminalWorkbench = await connectToVsCodeWorkbenchCdp({ activate: false, timeoutMs: 15_000 });
   try {
-    const outputDeadline = Math.min(deadline, Date.now() + 30_000);
-    await showLogicAppsStandardOutput(
-      () => vscode.commands.getCommands(true),
-      (command, ...args) => vscode.commands.executeCommand(command, ...args),
-      outputDeadline,
-      () => selectLogicAppsStandardOutputThroughWorkbench(outputWorkbench, outputDeadline)
-    );
-    const baselineOutput = await readLogicAppsStandardOutputSnapshot(outputWorkbench, outputDeadline);
-    const baselineOccurrences = baselineOutput.split(httpTimeoutPt24hRuntimeError).length - 1;
+    await disposeStoppedFuncHostTerminals(Math.min(deadline, Date.now() + 10_000));
     await helpers.startDebuggingGeneratedWorkspace(entry);
-    await readLogicAppsStandardOutputText(outputWorkbench, deadline, httpTimeoutPt24hRuntimeError, baselineOccurrences + 1);
+    const terminalValidationDeadline = Math.min(deadline, Date.now() + 90_000);
+    await findTextInFuncHostTerminal(terminalWorkbench, httpTimeoutPt24hRuntimeError, terminalValidationDeadline);
+    const terminalScreenshotDeadline = Math.min(deadline, Date.now() + defaultEvidenceScreenshotTimeoutMs);
     await captureEvidenceScreenshot(
       'http-timeout-request-pt24h-runtime-validation',
-      { kind: 'workbenchShell', label: 'httpTimeoutRequestValidationOutput' },
-      { deadlineMs: deadline, binding: { semanticText: [httpTimeoutPt24hRuntimeError] } }
+      { kind: 'workbenchShell', label: 'httpTimeoutRequestValidationTerminal' },
+      { deadlineMs: terminalScreenshotDeadline, binding: { semanticText: [httpTimeoutPt24hRuntimeError] } }
     );
+  } catch (error) {
+    console.warn(`[http-timeout][checkpoint] PT24H terminal validation failed before debug cleanup: ${String(error)}`);
+    await captureDiagnosticScreenshot(`http-timeout-request-pt24h-terminal-validation-before-cleanup-${Date.now()}`, {
+      reason: 'HTTP PT24H validation was not found in the func host terminal through Ctrl+F',
+      timeoutMs: 5000,
+    });
+    throw error;
   } finally {
-    outputWorkbench.dispose();
+    terminalWorkbench.dispose();
     await helpers.stopDebuggingAndTasks();
   }
 

@@ -338,6 +338,31 @@ async function main(): Promise<void> {
       'InvalidString must be entered only after proving a fresh Designer target'
     );
   });
+  await control('PT24H runtime validation uses bounded native Ctrl+F search in the func host terminal', () => {
+    const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
+    const helper = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/workbenchTerminalSearch.ts'), 'utf8');
+    const scenarioStart = source.indexOf('async function provePt24hAndInvalidValidation(');
+    const scenarioEnd = source.indexOf('async function authorHttpRequest(', scenarioStart);
+    const scenario = source.slice(scenarioStart, scenarioEnd);
+    const dispose = scenario.indexOf('await disposeStoppedFuncHostTerminals(');
+    const start = scenario.indexOf('await helpers.startDebuggingGeneratedWorkspace(entry);');
+    const search = scenario.indexOf('await findTextInFuncHostTerminal(');
+    assert.ok(dispose >= 0 && dispose < start && start < search);
+    assert.ok(scenario.includes('await findTextInFuncHostTerminal('));
+    assert.ok(scenario.includes('Date.now() + 90_000'));
+    assert.ok(scenario.includes('Date.now() + defaultEvidenceScreenshotTimeoutMs'));
+    assert.ok(scenario.includes('pt24h-terminal-validation-before-cleanup'));
+    assert.ok(!scenario.includes('readLogicAppsStandardOutputText('));
+    assert.ok(!scenario.includes('showLogicAppsStandardOutput('));
+    assert.ok(helper.includes("const terminalTaskName = 'func: host start';"));
+    assert.ok(helper.includes("await pressControlShortcut(cdp, 'f', 'KeyF', 70);"));
+    assert.ok(helper.includes("await pressControlShortcut(cdp, 'a', 'KeyA', 65);"));
+    assert.ok(helper.includes("await cdp.send('Input.insertText', { text: value });"));
+    assert.ok(helper.includes("terminal.querySelectorAll('.xterm-rows, .xterm-accessibility-tree')"));
+    assert.ok(helper.includes('findInput.value === expected'));
+    assert.ok(helper.includes('state.findValue === expectedText && state.found'));
+    assert.ok(helper.includes('Refusing to dispose ${terminalTaskName} terminals while matching task executions remain active'));
+  });
   await control('failing HTTP evidence expectations use the shared local screenshot cap instead of the family deadline', () => {
     const lifecycle = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
     const screenshot = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/screenshot.ts'), 'utf8');
