@@ -41,11 +41,17 @@ import {
   installFailureScreenshotHook,
 } from './screenshot';
 import type { ScreenshotExpectation } from './screenshotReadiness';
-import { installStatelessHistorySettings } from './statelessVariablesControls';
+import { installStatelessHistorySettings, runWithOrderedCleanup } from './statelessVariablesControls';
 import { normalizeFsPath, uniqueName } from './testUtils';
 import { closeAllTabs, getWebviewTabs, waitForWebviewTab } from './webviewTabs';
 import { statelessLifecycleHelpers as helpers, type CreatedWorkspace } from './workspaceLifecycle.test';
 import { activeWebview } from './workspaceMultiRootWorkbench';
+import {
+  isLocalWorkflowManagementTimeout,
+  requestLocalWorkflowManagement,
+  type LocalWorkflowManagementPhase,
+  type LocalWorkflowManagementResult,
+} from './localWorkflowManagement';
 import {
   assertApprovedAzureConnectorFixtureSaved,
   assertAzureConnectorAccountTreePrerequisite,
@@ -140,32 +146,49 @@ async function provePt1sExecution(entry: CreatedWorkspace, endpoint: OwnedDelayE
   }
 
   const historyLease = installStatelessHistorySettings(entry.appDir, entry.wfName);
-  try {
-    historyLease.assertInstalled();
-    await helpers.startDebuggingGeneratedWorkspace(entry);
-    const run = await invokeAndWaitForRun(entry, deadline);
-    assert.strictEqual(run.status, 'Failed', `Exact HTTP timeout run ${run.name} must fail`);
-    assertHttpTimeoutActionFailed(run.actions, run.name);
-    const endpointRequests = endpoint.requests();
-    assert.ok(endpointRequests.length > 0, 'The exact run must reach the runner-owned delayed endpoint');
-    assert.ok(
-      endpointRequests.some((request) => request.method === 'GET' && request.path === '/longresponse'),
-      'The exact run must issue GET /longresponse'
-    );
-    assert.ok(
-      endpointRequests.every((request) => request.responseCompletedAt === undefined),
-      'The owned endpoint must still be delaying every response when the HTTP action fails'
-    );
-    await openOverview(entry, deadline);
-    await captureEvidenceScreenshot(
-      'http-timeout-request-pt1s-run-failed',
-      { kind: 'workbenchShell', label: 'httpTimeoutRequestExecutionHistory' },
-      { deadlineMs: deadline, binding: { activeTabText: [entry.wfName] } }
-    );
-  } finally {
-    await helpers.stopDebuggingAndTasks();
-    historyLease.restore();
-  }
+  let runtimeStopped = false;
+  await runWithOrderedCleanup(
+    async () => {
+      historyLease.assertInstalled();
+      await helpers.startDebuggingGeneratedWorkspace(entry);
+      const run = await invokeAndWaitForRun(entry, deadline);
+      assert.strictEqual(run.status, 'Failed', `Exact HTTP timeout run ${run.name} must fail`);
+      assertHttpTimeoutActionFailed(run.actions, run.name);
+      const endpointRequests = endpoint.requests();
+      assert.ok(endpointRequests.length > 0, 'The exact run must reach the runner-owned delayed endpoint');
+      assert.ok(
+        endpointRequests.some((request) => request.method === 'GET' && request.path === '/longresponse'),
+        'The exact run must issue GET /longresponse'
+      );
+      assert.ok(
+        endpointRequests.every((request) => request.responseCompletedAt === undefined),
+        'The owned endpoint must still be delaying every response when the HTTP action fails'
+      );
+      await openOverview(entry, deadline);
+      await captureEvidenceScreenshot(
+        'http-timeout-request-pt1s-run-failed',
+        { kind: 'workbenchShell', label: 'httpTimeoutRequestExecutionHistory' },
+        { deadlineMs: deadline, binding: { activeTabText: [entry.wfName] } }
+      );
+    },
+    [
+      {
+        phase: 'stop Scenario 1 debug/tasks',
+        action: async () => {
+          await helpers.stopDebuggingAndTasks();
+          runtimeStopped = true;
+        },
+      },
+      {
+        phase: 'restore Scenario 1 local settings',
+        action: () => {
+          assert.ok(runtimeStopped, 'Scenario 1 local settings restore skipped because runtime cleanup did not complete');
+          historyLease.restore();
+        },
+      },
+    ],
+    'HTTP timeout Scenario 1 failed; body and cleanup failures are retained'
+  );
 }
 
 async function provePt24hAndInvalidValidation(entry: CreatedWorkspace, endpoint: string, deadline: number): Promise<void> {
@@ -777,20 +800,21 @@ async function startOwnedDelayEndpoint(): Promise<OwnedDelayEndpoint> {
   };
 }
 
-interface HttpResult {
-  status: number;
-  body: string;
-  headers: http.IncomingHttpHeaders;
-}
-
 async function invokeAndWaitForRun(entry: CreatedWorkspace, deadline: number): Promise<{ name: string; status: string; actions: unknown }> {
   const workflowUrl = `${managementRoot}/workflows/${encodeURIComponent(entry.wfName)}`;
   const triggerName = Object.keys(readWorkflow(entry).definition?.triggers ?? {})[0];
   assert.ok(triggerName, 'Saved HTTP timeout workflow must contain the Request trigger');
   let callbackUrl = '';
+  let callbackUrlAttempt = 0;
   await pollHttpTimeoutCompose(
     async () =>
-      request(`${workflowUrl}/triggers/${encodeURIComponent(triggerName)}/listCallbackUrl?api-version=${apiVersion}`, 'POST', deadline),
+      requestLocalManagementForPoll(
+        'callback-url',
+        `${workflowUrl}/triggers/${encodeURIComponent(triggerName)}/listCallbackUrl?api-version=${apiVersion}`,
+        'POST',
+        deadline,
+        ++callbackUrlAttempt
+      ),
     (result) => {
       if (result.status === 0 || result.status === 404 || result.status === 503) {
         return false;
@@ -804,16 +828,24 @@ async function invokeAndWaitForRun(entry: CreatedWorkspace, deadline: number): P
     deadline,
     'HTTP timeout Request callback URL'
   );
-  const callback = await request(callbackUrl, 'POST', deadline, '{}');
+  const callback = await requestLocalWorkflowManagement({
+    phase: 'trigger-invocation',
+    url: callbackUrl,
+    method: 'POST',
+    deadline,
+    attempt: 1,
+    body: '{}',
+  });
   assert.ok(callback.status === 202 || callback.status === 500, `Unexpected callback status ${callback.status}`);
   const runName = callback.headers['x-ms-workflow-run-id'];
   assert.ok(typeof runName === 'string' && runName.length > 0, 'Callback must identify the exact workflow run');
   const runUrl = `${workflowUrl}/runs/${encodeURIComponent(runName)}`;
   let status = '';
+  let runStatusAttempt = 0;
   await pollHttpTimeoutCompose(
-    async () => request(`${runUrl}?api-version=${apiVersion}`, 'GET', deadline),
+    async () => requestLocalManagementForPoll('run-status', `${runUrl}?api-version=${apiVersion}`, 'GET', deadline, ++runStatusAttempt),
     (result) => {
-      if (result.status === 404) {
+      if (result.status === 0 || result.status === 404 || result.status === 503) {
         return false;
       }
       assert.strictEqual(result.status, 200);
@@ -823,8 +855,26 @@ async function invokeAndWaitForRun(entry: CreatedWorkspace, deadline: number): P
     deadline,
     `exact HTTP timeout run ${runName}`
   );
-  const actions = await request(`${runUrl}/actions?api-version=${apiVersion}`, 'GET', deadline);
-  assert.strictEqual(actions.status, 200);
+  let actionHistoryAttempt = 0;
+  const actions = await pollHttpTimeoutCompose(
+    async () =>
+      requestLocalManagementForPoll(
+        'action-history',
+        `${runUrl}/actions?api-version=${apiVersion}`,
+        'GET',
+        deadline,
+        ++actionHistoryAttempt
+      ),
+    (result) => {
+      if (result.status === 0 || result.status === 404 || result.status === 503) {
+        return false;
+      }
+      assert.strictEqual(result.status, 200);
+      return true;
+    },
+    deadline,
+    `exact HTTP timeout action history ${runName}`
+  );
   return { name: runName, status, actions: JSON.parse(actions.body) };
 }
 
@@ -834,32 +884,19 @@ async function openOverview(entry: CreatedWorkspace, deadline: number): Promise<
   await waitForWebviewTab('workflowOverview', 0, Math.min(90_000, httpTimeoutComposeRemaining(deadline)));
 }
 
-function request(url: string, method: string, deadline: number, body?: string): Promise<HttpResult> {
-  return new Promise((resolve, reject) => {
-    const requestUrl = new URL(url);
-    const operation = http.request(
-      {
-        hostname: requestUrl.hostname,
-        port: requestUrl.port,
-        path: `${requestUrl.pathname}${requestUrl.search}`,
-        method,
-        headers: body === undefined ? undefined : { 'content-type': 'application/json', 'content-length': Buffer.byteLength(body) },
-        timeout: Math.min(10_000, httpTimeoutComposeRemaining(deadline)),
-      },
-      (response) => {
-        const chunks: Buffer[] = [];
-        response.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
-        response.on('end', () =>
-          resolve({
-            status: response.statusCode ?? 0,
-            body: Buffer.concat(chunks).toString('utf8'),
-            headers: response.headers,
-          })
-        );
-      }
-    );
-    operation.on('timeout', () => operation.destroy(new Error('Local workflow management request timed out')));
-    operation.on('error', reject);
-    operation.end(body);
-  });
+async function requestLocalManagementForPoll(
+  phase: Exclude<LocalWorkflowManagementPhase, 'trigger-invocation'>,
+  url: string,
+  method: string,
+  deadline: number,
+  attempt: number
+): Promise<LocalWorkflowManagementResult> {
+  try {
+    return await requestLocalWorkflowManagement({ phase, url, method, deadline, attempt });
+  } catch (error) {
+    if (isLocalWorkflowManagementTimeout(error)) {
+      return { status: 0, body: '', headers: {} };
+    }
+    throw error;
+  }
 }

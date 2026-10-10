@@ -15,10 +15,14 @@ import {
   assertStatelessDefinition,
   assertStatelessResponse,
   assertStatelessRun,
+  installOwnedLocalSettings,
   installStatelessHistorySettings,
   listValues,
+  objectValue,
   recoverStateless,
   remainingMs,
+  runWithOrderedCleanup,
+  statelessHistoryOption,
   statelessSettingsTargets,
   withinDeadline,
   type RecoveryHooks,
@@ -31,6 +35,7 @@ async function main(): Promise<void> {
   testSavedDefinition();
   testResponseAndHistory();
   testBothSettings();
+  await testCleanupOrdering();
   await testRecovery();
   testNativeWiring();
   await testNativeRowScopingAndTransport();
@@ -296,17 +301,242 @@ function testBothSettings(): void {
     lease.restore();
     statelessSettingsTargets(dir).forEach((file, index) => assert.ok(fs.readFileSync(file).equals(originals[index])));
   });
-  for (const foreignIndex of [0, 1]) {
-    check(() => {
-      const dir = app(`foreign-${foreignIndex}`);
-      const files = statelessSettingsTargets(dir);
-      const lease = installStatelessHistorySettings(dir, 'testwf');
-      fs.appendFileSync(files[foreignIndex], '\n ');
-      const foreign = files.map((file) => fs.readFileSync(file));
-      assert.throws(() => lease.restore(), /Foreign settings edit/);
-      files.forEach((file, index) => assert.ok(fs.readFileSync(file).equals(foreign[index]), 'Neither file may be partly restored'));
+  check(() => {
+    const dir = app('unrelated-addition');
+    const files = statelessSettingsTargets(dir);
+    const lease = installStatelessHistorySettings(dir, 'testwf');
+    const current = JSON.parse(fs.readFileSync(files[0], 'utf8'));
+    current.Values.languageWorkers__node__defaultExecutablePath = 'C:\\runtime\\node.exe';
+    fs.writeFileSync(files[0], `${JSON.stringify(current, null, 4)}\r\n`);
+    lease.restore();
+    const restoredText = fs.readFileSync(files[0], 'utf8');
+    const restored = JSON.parse(restoredText);
+    assert.strictEqual(restored.Values['Workflows.testwf.OperationOptions'], 'PriorOption');
+    assert.strictEqual(restored.Values.languageWorkers__node__defaultExecutablePath, 'C:\\runtime\\node.exe');
+    assert.ok(restoredText.includes('\r\n    "Values"'), 'Runtime formatting and CRLF convention must be retained');
+  });
+  check(() => {
+    const dir = app('unrelated-modification');
+    const files = statelessSettingsTargets(dir);
+    const lease = installStatelessHistorySettings(dir, 'testwf');
+    const current = JSON.parse(fs.readFileSync(files[1], 'utf8'));
+    current.Values.unrelated = 'runtime-modified';
+    fs.writeFileSync(files[1], JSON.stringify(current));
+    lease.restore();
+    const restoredText = fs.readFileSync(files[1], 'utf8');
+    const restored = JSON.parse(restoredText);
+    assert.strictEqual(restored.Values.unrelated, 'runtime-modified');
+    assert.strictEqual(restored.Values['Workflows.testwf.OperationOptions'], 'PriorOption');
+    assert.ok(!restoredText.includes('\n'), 'Compact runtime formatting must be retained');
+  });
+  check(() => {
+    const dir = app('owned-conflict');
+    const files = statelessSettingsTargets(dir);
+    const lease = installStatelessHistorySettings(dir, 'testwf');
+    const current = JSON.parse(fs.readFileSync(files[0], 'utf8'));
+    current.Values['Workflows.testwf.OperationOptions'] = 'ForeignOption';
+    fs.writeFileSync(files[0], JSON.stringify(current));
+    const foreign = files.map((file) => fs.readFileSync(file));
+    assert.throws(() => lease.restore(), /owned path Values\.Workflows\.testwf\.OperationOptions/);
+    files.forEach((file, index) => assert.ok(fs.readFileSync(file).equals(foreign[index]), 'Neither file may be partly restored'));
+  });
+  check(() => {
+    const dir = app('owned-addition');
+    const files = statelessSettingsTargets(dir);
+    const lease = installStatelessHistorySettings(dir, 'newwf');
+    files.forEach((file) => {
+      assert.strictEqual(JSON.parse(fs.readFileSync(file, 'utf8')).Values['Workflows.newwf.OperationOptions'], statelessHistoryOption);
     });
-  }
+    lease.restore();
+    files.forEach((file) => {
+      assert.strictEqual(JSON.parse(fs.readFileSync(file, 'utf8')).Values['Workflows.newwf.OperationOptions'], undefined);
+    });
+  });
+  check(() => {
+    const dir = app('owned-deletion');
+    const files = statelessSettingsTargets(dir);
+    for (const file of files) {
+      const settings = JSON.parse(fs.readFileSync(file, 'utf8'));
+      settings.Values.nested = { owned: 'restore-me', unrelated: 'preserve-me' };
+      fs.writeFileSync(file, `${JSON.stringify(settings, null, 2)}\n`);
+    }
+    const lease = installOwnedLocalSettings(files, (settings) => {
+      delete objectValue(objectValue(settings.Values, 'Values').nested, 'nested').owned;
+    });
+    const current = JSON.parse(fs.readFileSync(files[0], 'utf8'));
+    current.Values.nested.runtime = 'runtime-added';
+    fs.writeFileSync(files[0], `${JSON.stringify(current, null, 2)}\n`);
+    lease.restore();
+    const restored = JSON.parse(fs.readFileSync(files[0], 'utf8'));
+    assert.deepStrictEqual(restored.Values.nested, {
+      unrelated: 'preserve-me',
+      runtime: 'runtime-added',
+      owned: 'restore-me',
+    });
+  });
+  check(() => {
+    const dir = app('owned-object-addition');
+    const files = statelessSettingsTargets(dir);
+    const lease = installOwnedLocalSettings(files, (settings) => {
+      objectValue(settings.Values, 'Values').testOwned = { value: 'remove-me' };
+    });
+    const current = JSON.parse(fs.readFileSync(files[0], 'utf8'));
+    current.Values.testOwned.runtime = 'preserve-me';
+    fs.writeFileSync(files[0], `${JSON.stringify(current, null, 2)}\n`);
+    lease.restore();
+    const restored = JSON.parse(fs.readFileSync(files[0], 'utf8'));
+    assert.deepStrictEqual(restored.Values.testOwned, { runtime: 'preserve-me' });
+    assert.strictEqual(JSON.parse(fs.readFileSync(files[1], 'utf8')).Values.testOwned, undefined);
+  });
+  check(() => {
+    const dir = app('array-mutation');
+    assert.throws(
+      () =>
+        installOwnedLocalSettings(statelessSettingsTargets(dir), (settings) => {
+          objectValue(settings.Values, 'Values').ownedArray = ['unsupported'];
+        }),
+      /Array mutations are unsupported/
+    );
+  });
+  check(() => {
+    const dir = app('metadata-preserved');
+    const files = statelessSettingsTargets(dir);
+    for (const file of files) {
+      fs.chmodSync(file, 0o600);
+    }
+    const modes = files.map((file) => fs.statSync(file).mode);
+    const lease = installStatelessHistorySettings(dir, 'testwf');
+    files.forEach((file, index) => assert.strictEqual(fs.statSync(file).mode, modes[index]));
+    lease.restore();
+    files.forEach((file, index) => assert.strictEqual(fs.statSync(file).mode, modes[index]));
+  });
+  check(() => {
+    const dir = app('linked-target');
+    const files = statelessSettingsTargets(dir);
+    const external = path.join(tempRoot, 'linked-target-external');
+    fs.mkdirSync(external, { recursive: true });
+    fs.writeFileSync(path.join(external, 'local.settings.json'), fs.readFileSync(files[1]));
+    fs.rmSync(path.dirname(files[1]), { recursive: true });
+    fs.symlinkSync(external, path.dirname(files[1]), process.platform === 'win32' ? 'junction' : 'dir');
+    assert.throws(() => installStatelessHistorySettings(dir, 'testwf'), /must not contain links/);
+  });
+  check(() => {
+    const dir = app('hard-linked-target');
+    const files = statelessSettingsTargets(dir);
+    const external = path.join(tempRoot, 'hard-linked-target-external.json');
+    fs.writeFileSync(external, fs.readFileSync(files[1]));
+    fs.rmSync(files[1]);
+    fs.linkSync(external, files[1]);
+    assert.throws(() => installStatelessHistorySettings(dir, 'testwf'), /must not have hard links/);
+  });
+  check(() => {
+    const dir = app('transaction-rollback');
+    const files = statelessSettingsTargets(dir);
+    let restoring = false;
+    const lease = installOwnedLocalSettings(
+      files,
+      (settings) => {
+        objectValue(settings.Values, 'Values')['Workflows.testwf.OperationOptions'] = statelessHistoryOption;
+      },
+      {
+        afterWrite: (_file, index) => {
+          if (restoring && index === 1) {
+            throw new Error('unit second-target write failure');
+          }
+        },
+      }
+    );
+    const installed = files.map((file) => fs.readFileSync(file));
+    restoring = true;
+    assert.throws(() => lease.restore(), /unit second-target write failure/);
+    restoring = false;
+    files.forEach((file, index) =>
+      assert.ok(fs.readFileSync(file).equals(installed[index]), 'A failed second write must roll back both targets')
+    );
+    lease.restore();
+  });
+  check(() => {
+    const dir = app('transaction-open-failure');
+    const files = statelessSettingsTargets(dir);
+    let restoring = false;
+    const lease = installOwnedLocalSettings(
+      files,
+      (settings) => {
+        objectValue(settings.Values, 'Values')['Workflows.testwf.OperationOptions'] = statelessHistoryOption;
+      },
+      {
+        beforeOpen: (_file, index) => {
+          if (restoring && index === 1) {
+            throw new Error('unit second-target open failure');
+          }
+        },
+      }
+    );
+    const installed = files.map((file) => fs.readFileSync(file));
+    restoring = true;
+    assert.throws(() => lease.restore(), /unit second-target open failure/);
+    restoring = false;
+    files.forEach((file, index) =>
+      assert.ok(fs.readFileSync(file).equals(installed[index]), 'Opening validation failure must not rewrite either target')
+    );
+    lease.restore();
+  });
+  check(() => {
+    const dir = app('same-inode-edit');
+    const files = statelessSettingsTargets(dir);
+    let restoring = false;
+    let foreign = Buffer.alloc(0);
+    const lease = installOwnedLocalSettings(
+      files,
+      (settings) => {
+        objectValue(settings.Values, 'Values')['Workflows.testwf.OperationOptions'] = statelessHistoryOption;
+      },
+      {
+        beforeOpen: (file, index) => {
+          if (restoring && index === 0) {
+            const current = JSON.parse(fs.readFileSync(file, 'utf8'));
+            current.Values.runtimeConcurrentEdit = 'preserve';
+            foreign = Buffer.from(JSON.stringify(current));
+            fs.writeFileSync(file, foreign);
+          }
+        },
+      }
+    );
+    const secondInstalled = fs.readFileSync(files[1]);
+    restoring = true;
+    assert.throws(() => lease.restore(), /Foreign settings edit during write/);
+    assert.ok(fs.readFileSync(files[0]).equals(foreign), 'Same-inode foreign content must survive rejected restoration');
+    assert.ok(fs.readFileSync(files[1]).equals(secondInstalled), 'Same-inode conflict must fail before writing the other target');
+  });
+  check(() => {
+    if (process.platform === 'win32') {
+      return;
+    }
+    const dir = app('path-replacement');
+    const files = statelessSettingsTargets(dir);
+    let restoring = false;
+    const detached = `${files[0]}.detached`;
+    const replacement = Buffer.from('{"IsEncrypted":false,"Values":{"foreign":"preserve"}}');
+    const lease = installOwnedLocalSettings(
+      files,
+      (settings) => {
+        objectValue(settings.Values, 'Values')['Workflows.testwf.OperationOptions'] = statelessHistoryOption;
+      },
+      {
+        afterWrite: (file, index) => {
+          if (restoring && index === 0) {
+            fs.renameSync(file, detached);
+            fs.writeFileSync(file, replacement);
+          }
+        },
+      }
+    );
+    const installed = files.map((file) => fs.readFileSync(file));
+    restoring = true;
+    assert.throws(() => lease.restore(), /Foreign settings replacement during write/);
+    assert.ok(fs.readFileSync(files[0]).equals(replacement), 'Foreign replacement must remain untouched');
+    assert.ok(fs.readFileSync(files[1]).equals(installed[1]), 'Other mutated targets must roll back after path replacement');
+  });
   check(() => {
     const dir = app('missing');
     const files = statelessSettingsTargets(dir);
@@ -335,9 +565,71 @@ function testBothSettings(): void {
     const dir = app('deleted-after-install');
     const lease = installStatelessHistorySettings(dir, 'testwf');
     fs.unlinkSync(statelessSettingsTargets(dir)[1]);
-    assert.throws(() => lease.restore(), /Foreign settings edit/);
+    assert.throws(() => lease.restore(), /refusing to recreate/);
     assert.ok(!fs.existsSync(statelessSettingsTargets(dir)[1]), 'Do not recreate a foreign-deleted file');
   });
+  check(() => {
+    const dir = app('malformed-after-install');
+    const files = statelessSettingsTargets(dir);
+    const lease = installStatelessHistorySettings(dir, 'testwf');
+    fs.writeFileSync(files[1], '{"Values":{"secret":"UNIT_PRIVATE_MARKER",}');
+    const before = files.map((file) => fs.readFileSync(file));
+    assert.throws(
+      () => lease.restore(),
+      (error: Error) => error.message.includes('invalid JSON') && !error.message.includes('UNIT_PRIVATE_MARKER')
+    );
+    files.forEach((file, index) => assert.ok(fs.readFileSync(file).equals(before[index]), 'Malformed preflight must prevent every write'));
+  });
+}
+
+async function testCleanupOrdering(): Promise<void> {
+  const order: string[] = [];
+  const diagnostics: string[] = [];
+  const originalConsoleError = console.error;
+  console.error = (...values: unknown[]) => diagnostics.push(values.map(String).join(' '));
+  try {
+    await assert.rejects(
+      () =>
+        runWithOrderedCleanup(
+          async () => {
+            order.push('body');
+            throw new Error('body failure');
+          },
+          [
+            {
+              phase: 'first cleanup',
+              action: () => {
+                order.push('cleanup-1');
+                throw new Error('cleanup failure 1');
+              },
+            },
+            {
+              phase: 'second cleanup',
+              action: () => {
+                order.push('cleanup-2');
+                throw new Error('cleanup failure 2');
+              },
+            },
+          ],
+          'unit body and cleanup failure'
+        ),
+      (error: AggregateError) =>
+        error.errors.length === 3 &&
+        error.errors[0].message === 'body failure' &&
+        error.errors[1].message === 'cleanup failure 1' &&
+        error.errors[2].message === 'cleanup failure 2' &&
+        error.cause === error.errors[0]
+    );
+  } finally {
+    console.error = originalConsoleError;
+  }
+  check(() => assert.deepStrictEqual(order, ['body', 'cleanup-1', 'cleanup-2']));
+  check(() =>
+    assert.deepStrictEqual(diagnostics, [
+      '[cleanup][first cleanup] Error: cleanup failure 1',
+      '[cleanup][second cleanup] Error: cleanup failure 2',
+    ])
+  );
 }
 
 async function testRecovery(): Promise<void> {

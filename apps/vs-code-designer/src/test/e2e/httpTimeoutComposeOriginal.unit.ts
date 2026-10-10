@@ -1,6 +1,7 @@
 import * as assert from 'assert';
 import './approvedAzureFixture.unit';
 import * as fs from 'fs';
+import * as http from 'http';
 import * as os from 'os';
 import * as path from 'path';
 import type { CdpConnection } from './cdpClient';
@@ -27,6 +28,12 @@ import {
   assertHttpTimeoutRequestPersisted,
   selectHttpTimeoutRequestWorkspace,
 } from './httpTimeoutRequestOracle';
+import {
+  localWorkflowManagementRequestTimeoutMs,
+  localWorkflowManagementTimeoutCode,
+  requestLocalWorkflowManagement,
+  type LocalWorkflowManagementRequestError,
+} from './localWorkflowManagement';
 import { buildScreenshotReadinessExpression } from './screenshotReadiness';
 
 const authored: HttpTimeoutComposeWorkflow = {
@@ -82,6 +89,155 @@ async function main(): Promise<void> {
     assert.ok(!source.includes('createComposeWorkflow'));
     assert.ok(!source.includes("executeCommand('azureLogicAppsStandard.createWorkflow'"));
     assert.ok(!source.includes('LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_SCENARIO'));
+  });
+  await control('Scenario 1 management calls use phase policy, sanitized structured logs and exact-correlation retry rules', () => {
+    const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
+    assert.deepStrictEqual(localWorkflowManagementRequestTimeoutMs, {
+      'callback-url': 30_000,
+      'trigger-invocation': 20_000,
+      'run-status': 20_000,
+      'action-history': 30_000,
+    });
+    for (const phase of ['callback-url', 'trigger-invocation', 'run-status', 'action-history']) {
+      assert.ok(source.includes(`'${phase}'`), `Scenario 1 must classify ${phase}`);
+    }
+    assert.ok(source.includes("phase: 'trigger-invocation'"));
+    assert.ok(source.includes('attempt: 1'), 'Trigger invocation must remain a single fail-closed request');
+    assert.ok(/requestLocalManagementForPoll\(\s*'callback-url'/.test(source));
+    assert.ok(/requestLocalManagementForPoll\(\s*'run-status'/.test(source));
+    assert.ok(/requestLocalManagementForPoll\(\s*'action-history'/.test(source));
+    assert.ok(!source.includes('Math.min(10_000, httpTimeoutComposeRemaining(deadline))'));
+    assert.ok(!source.includes('Local workflow management request timed out'));
+  });
+  await control('local management timeout classification logs no query values and retains family budget evidence', async () => {
+    const logs: string[] = [];
+    let now = 1000;
+    let requests = 0;
+    await assert.rejects(
+      () =>
+        requestLocalWorkflowManagement(
+          {
+            phase: 'callback-url',
+            method: 'POST',
+            url: 'http://localhost:7071/runtime/webhooks/workflow/api/management/workflows/unit/triggers/manual/listCallbackUrl?sig=UNIT_SECRET',
+            deadline: 61_000,
+            attempt: 2,
+            timeoutMs: 50,
+          },
+          {
+            now: () => now,
+            log: (line) => logs.push(line),
+            transport: async () => {
+              requests++;
+              now = 1075;
+              const error = new Error('unit timeout') as NodeJS.ErrnoException;
+              error.code = localWorkflowManagementTimeoutCode;
+              throw error;
+            },
+          }
+        ),
+      (error: LocalWorkflowManagementRequestError) =>
+        error.classification === 'timeout' &&
+        error.phase === 'callback-url' &&
+        error.relativePath === '/workflows/unit/triggers/manual/listCallbackUrl'
+    );
+    assert.strictEqual(requests, 1);
+    assert.strictEqual(logs.length, 2);
+    assert.ok(logs.every((line) => !line.includes('UNIT_SECRET') && !line.includes('sig=')));
+    const start = JSON.parse(logs[0].slice(logs[0].indexOf('{')));
+    const finish = JSON.parse(logs[1].slice(logs[1].indexOf('{')));
+    assert.deepStrictEqual(
+      {
+        event: start.event,
+        phase: start.phase,
+        method: start.method,
+        path: start.path,
+        attempt: start.attempt,
+        elapsedMs: start.elapsedMs,
+        remainingFamilyMs: start.remainingFamilyMs,
+        requestTimeoutMs: start.requestTimeoutMs,
+      },
+      {
+        event: 'start',
+        phase: 'callback-url',
+        method: 'POST',
+        path: '/workflows/unit/triggers/manual/listCallbackUrl',
+        attempt: 2,
+        elapsedMs: 0,
+        remainingFamilyMs: 60_000,
+        requestTimeoutMs: 50,
+      }
+    );
+    assert.strictEqual(finish.outcome, 'timeout');
+    assert.strictEqual(finish.error, 'request-timeout');
+    assert.strictEqual(finish.elapsedMs, 75);
+    assert.strictEqual(finish.remainingFamilyMs, 59_925);
+  });
+  await control('local management transport enforces a wall-clock timeout through response completion', async () => {
+    const server = http.createServer(() => undefined);
+    await new Promise<void>((resolve, reject) => {
+      server.once('error', reject);
+      server.listen(0, '127.0.0.1', resolve);
+    });
+    const address = server.address();
+    assert.ok(address && typeof address === 'object');
+    const logs: string[] = [];
+    const startedAt = Date.now();
+    try {
+      await assert.rejects(
+        () =>
+          requestLocalWorkflowManagement(
+            {
+              phase: 'action-history',
+              method: 'GET',
+              url: `http://127.0.0.1:${address.port}/runtime/webhooks/workflow/api/management/workflows/unit/runs/exact/actions?sig=UNIT_SECRET`,
+              deadline: Date.now() + 1000,
+              attempt: 1,
+              timeoutMs: 25,
+            },
+            { log: (line) => logs.push(line) }
+          ),
+        (error: LocalWorkflowManagementRequestError) => error.classification === 'timeout'
+      );
+      assert.ok(Date.now() - startedAt < 1000, 'A stalled response body must not inherit the family deadline');
+      assert.ok(logs.some((line) => line.includes('"outcome":"timeout"')));
+      assert.ok(logs.every((line) => !line.includes('UNIT_SECRET') && !line.includes('sig=')));
+    } finally {
+      server.closeAllConnections();
+      await new Promise<void>((resolve, reject) => server.close((error) => (error ? reject(error) : resolve())));
+    }
+  });
+  await control('expired family deadline logs rejection without starting a request', async () => {
+    const logs: string[] = [];
+    let requests = 0;
+    await assert.rejects(
+      () =>
+        requestLocalWorkflowManagement(
+          {
+            phase: 'run-status',
+            method: 'GET',
+            url: 'http://127.0.0.1:7071/runtime/webhooks/workflow/api/management/workflows/unit/runs/exact?api-version=secret',
+            deadline: 1000,
+            attempt: 1,
+          },
+          {
+            now: () => 1000,
+            log: (line) => logs.push(line),
+            transport: async () => {
+              requests++;
+              return { status: 200, body: '{}', headers: {} };
+            },
+          }
+        ),
+      (error: LocalWorkflowManagementRequestError) => error.classification === 'deadline'
+    );
+    assert.strictEqual(requests, 0, 'No transport request may start at or after the family deadline');
+    assert.strictEqual(logs.length, 1);
+    assert.ok(!logs[0].includes('api-version'));
+    const rejection = JSON.parse(logs[0].slice(logs[0].indexOf('{')));
+    assert.strictEqual(rejection.event, 'rejected');
+    assert.strictEqual(rejection.outcome, 'deadline');
+    assert.strictEqual(rejection.remainingFamilyMs, 0);
   });
   await control('all scenarios mutate one physical workflow only after prior evidence passes', () => {
     const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
