@@ -38,6 +38,7 @@ async function main(): Promise<void> {
   testDesignerCanvasPrefersCanvasOverSelectedPanel();
   testDesignerCanvasBlocksScopedLoadersOnly();
   testDesignerPanelRequiresExactFieldValue();
+  testDesignerPanelRequiresExactAccessibleFieldSection();
   testDesignerPanelUsesVisibleHeaderFallbackOnlyInsideActivePanel();
   testDesignerPanelRequiresConcreteScopedSemanticText();
   testDesignerPanelReportsSplitIdentitySemanticAndFieldDiagnostics();
@@ -718,6 +719,93 @@ function testDesignerPanelRequiresExactFieldValue(): void {
 
   assert.strictEqual(accepted.ready, true, JSON.stringify(accepted));
   assert.strictEqual(rejected.ready, false, JSON.stringify(rejected));
+}
+
+function testDesignerPanelRequiresExactAccessibleFieldSection(): void {
+  const timeoutInput = (ariaLabel: string, value: string, top: number) => {
+    const input = new FakeInputElement('input', { 'aria-label': ariaLabel, value });
+    input.bounds = { left: 20, top, width: 260, height: 32, right: 280, bottom: top + 32 };
+    return input;
+  };
+  const actionTimeout = timeoutInput('Action timeout', 'PT1S', 150);
+  const requestOptionsTimeout = timeoutInput('Request options - Timeout', 'PT24H', 250);
+  const section = (title: string, control: FakeElement) =>
+    new FakeElement('div', { class: 'msla-setting-section' }, [
+      new FakeElement('div', { class: 'msla-setting-section-content' }, [
+        new FakeElement(
+          'button',
+          {
+            class: 'msla-setting-section-header',
+            'aria-label': `Expanded ${title}, Select to collapse`,
+          },
+          [],
+          title
+        ),
+        new FakeElement('div', { class: 'msla-setting-section-settings' }, [control]),
+      ]),
+    ]);
+  const expectation: ScreenshotExpectation = {
+    kind: 'designerPanel',
+    label: 'http-request-options-timeout-configured',
+    actionTitle: 'HTTP',
+    requiredText: ['Settings'],
+    fields: [
+      {
+        labels: ['Request options - Timeout'],
+        exactAriaLabel: 'Request options - Timeout',
+        sectionTitle: 'Networking',
+        value: 'PT24H',
+      },
+    ],
+  };
+  const accepted = runProbe(
+    new FakeDocument(
+      new FakeElement('body', {}, [
+        designerPanel({
+          title: 'HTTP',
+          nodeId: 'HTTP',
+          text: 'Settings',
+          fields: [section('General', actionTimeout), section('Networking', requestOptionsTimeout)],
+        }),
+      ])
+    ),
+    expectation
+  );
+  const actionSubstitution = runProbe(
+    new FakeDocument(
+      new FakeElement('body', {}, [
+        designerPanel({
+          title: 'HTTP',
+          nodeId: 'HTTP',
+          text: 'Settings',
+          fields: [
+            section('General', timeoutInput('Action timeout', 'PT24H', 150)),
+            section('Networking', timeoutInput('Request options - Timeout', '', 250)),
+          ],
+        }),
+      ])
+    ),
+    expectation
+  );
+  const wrongSection = runProbe(
+    new FakeDocument(
+      new FakeElement('body', {}, [
+        designerPanel({
+          title: 'HTTP',
+          nodeId: 'HTTP',
+          text: 'Settings',
+          fields: [section('General', timeoutInput('Request options - Timeout', 'PT24H', 150))],
+        }),
+      ])
+    ),
+    expectation
+  );
+
+  assert.strictEqual(accepted.ready, true, JSON.stringify(accepted));
+  assert.strictEqual(actionSubstitution.ready, false, JSON.stringify(actionSubstitution));
+  assert.ok(actionSubstitution.reasonCodes.includes('field-value-mismatch'), JSON.stringify(actionSubstitution));
+  assert.strictEqual(wrongSection.ready, false, JSON.stringify(wrongSection));
+  assert.ok(wrongSection.reasonCodes.includes('field-section-mismatch'), JSON.stringify(wrongSection));
 }
 
 function testDesignerPanelUsesVisibleHeaderFallbackOnlyInsideActivePanel(): void {
@@ -2933,6 +3021,17 @@ class FakeElement {
   matches(selector: string): boolean {
     return matchesSelector(this, selector);
   }
+
+  closest(selector: string): FakeElement | undefined {
+    let current: FakeElement | undefined = this;
+    while (current) {
+      if (current.matches(selector)) {
+        return current;
+      }
+      current = current.parentElement;
+    }
+    return undefined;
+  }
 }
 
 class FakeInputElement extends FakeElement {
@@ -2991,6 +3090,9 @@ function matchesSelector(element: FakeElement, selector: string): boolean {
   }
   if (selector === '.msla-trace-values[aria-labelledby^="properties-"]') {
     return hasClass(element, 'msla-trace-values') && String(element.getAttribute('aria-labelledby') ?? '').startsWith('properties-');
+  }
+  if (selector === 'button.msla-setting-section-header') {
+    return element.tagName === 'button' && hasClass(element, 'msla-setting-section-header');
   }
   if (selector.startsWith('.')) {
     return hasClass(element, selector.slice(1));

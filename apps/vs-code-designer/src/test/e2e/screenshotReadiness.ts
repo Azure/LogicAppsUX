@@ -1,12 +1,20 @@
 export type ScreenshotClassification = 'evidence' | 'diagnostic';
 
+export interface ScreenshotFieldExpectation {
+  labels: string[];
+  value?: string;
+  validationMessage?: string;
+  exactAriaLabel?: string;
+  sectionTitle?: string;
+}
+
 export type ScreenshotExpectation =
   | { kind: 'workbenchShell'; label: string }
   | {
       kind: 'createWorkspace';
       label: string;
       stage: 'initial' | 'partial-fields' | 'fields-valid' | 'review' | 'created' | 'scrolled' | 'validation';
-      fields?: Array<{ labels: string[]; value?: string; validationMessage?: string }>;
+      fields?: ScreenshotFieldExpectation[];
       nextButton?: 'enabled' | 'disabled';
       createButton?: 'enabled' | 'disabled';
       requiredText?: string[];
@@ -19,7 +27,7 @@ export type ScreenshotExpectation =
       label: string;
       actionTitle: string;
       requiredText?: string[];
-      fields?: Array<{ labels: string[]; value?: string; validationMessage?: string }>;
+      fields?: ScreenshotFieldExpectation[];
       editor?: { labels: string[]; focused?: boolean; token?: { titles: string[]; sourceAction: string } };
       picker?: { sectionLabels: string[]; tokenTitles?: string[] };
       allowLoading?: boolean;
@@ -820,14 +828,23 @@ export const screenshotReadinessDomScript = `
     const sampleYs = [0.3, 0.5, 0.7].map((ratio) => Math.min(Math.max(rect.top + rect.height * ratio, clipped.top + 1), clipped.bottom - 1));
     return sampleYs.every((sampleY) => pointHitsElement(control, sampleX, sampleY));
   };
-  const findFieldState = (labels, root, expectedValue) => {
+  const findFieldState = (labels, root, expectedValue, exactAriaLabel, sectionTitle) => {
     const normalizedLabels = labels.map((label) => normalize(label).toLowerCase());
+    const normalizedExactAriaLabel = normalize(exactAriaLabel).toLowerCase();
+    const normalizedSectionTitle = normalize(sectionTitle).toLowerCase();
     const controls = Array.from(
       (root || document).querySelectorAll('input, textarea, [contenteditable="true"], [role="textbox"], [role="combobox"]')
     ).filter(isVisible);
     const candidates = [];
     let clippedMatch = false;
+    let exactAriaLabelMismatch = false;
+    let sectionMismatch = false;
     for (const control of controls) {
+      const controlAriaLabel = normalize(control.getAttribute('aria-label')).toLowerCase();
+      if (normalizedExactAriaLabel && controlAriaLabel !== normalizedExactAriaLabel) {
+        exactAriaLabelMismatch = true;
+        continue;
+      }
       const labelledBy = (control.getAttribute('aria-labelledby') || '')
         .split(/\\s+/)
         .map((id) => document.getElementById(id)?.textContent || '')
@@ -851,6 +868,19 @@ export const screenshotReadinessDomScript = `
         .toLowerCase();
       if (!normalizedLabels.some((label) => identity.includes(label))) {
         continue;
+      }
+      if (normalizedSectionTitle) {
+        const section = control.closest?.('.msla-setting-section');
+        const headers = Array.from(section?.querySelectorAll?.('button.msla-setting-section-header') || [])
+          .filter((header) => header.closest?.('.msla-setting-section') === section);
+        const sectionMatches =
+          headers.length === 1 &&
+          normalize(headers[0].textContent).toLowerCase() === normalizedSectionTitle &&
+          normalize(headers[0].getAttribute('aria-label')).toLowerCase().includes(normalizedSectionTitle);
+        if (!sectionMatches) {
+          sectionMismatch = true;
+          continue;
+        }
       }
       if (!isReadableFieldControl(control)) {
         clippedMatch = true;
@@ -876,12 +906,35 @@ export const screenshotReadinessDomScript = `
         return exactValue;
       }
     }
-    return candidates[0] || { found: false, clipped: clippedMatch, value: '', validationText: '', text: '' };
+    return candidates[0] || {
+      found: false,
+      clipped: clippedMatch,
+      exactAriaLabelMismatch,
+      sectionMismatch,
+      value: '',
+      validationText: '',
+      text: '',
+    };
   };
   const fieldMatches = (field, root) => {
-    const state = findFieldState(field.labels || [], root, field.value);
+    const state = findFieldState(
+      field.labels || [],
+      root,
+      field.value,
+      field.exactAriaLabel,
+      field.sectionTitle
+    );
     if (!state.found) {
-      return { ok: false, reason: state.clipped ? 'field-clipped' : 'field-missing' };
+      return {
+        ok: false,
+        reason: state.clipped
+          ? 'field-clipped'
+          : state.sectionMismatch
+            ? 'field-section-mismatch'
+            : state.exactAriaLabelMismatch
+              ? 'field-accessibility-mismatch'
+              : 'field-missing',
+      };
     }
     if (field.value !== undefined && state.value !== normalize(field.value)) {
       return { ok: false, reason: 'field-value-mismatch' };

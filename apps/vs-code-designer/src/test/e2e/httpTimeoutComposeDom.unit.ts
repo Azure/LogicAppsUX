@@ -310,7 +310,15 @@ async function httpSettingsPanelDomFixture(options: {
   panelOpen: boolean;
   includeSettings?: boolean;
   overlayText?: string;
-  timeoutLabel?: string;
+  includeRequestOptionsTimeout?: boolean;
+  requestOptionsTimeoutSection?: 'networking' | 'general' | 'outside';
+  requestOptionsTimeoutCount?: number;
+  requestOptionsTimeoutDisabled?: boolean;
+  requestOptionsTimeoutCovered?: boolean;
+  requestOptionsTimeoutValue?: string;
+  actionTimeoutValue?: string;
+  networkingExpanded?: boolean;
+  staleRequestOptionsTimeout?: boolean;
   activePanelId?: string;
   activePanelTitle?: string;
   activePanelHeaderTitle?: string;
@@ -376,11 +384,13 @@ async function httpSettingsPanelDomFixture(options: {
   const { flushSync } = designerRequire('react-dom');
   const { Combobox: FluentCombobox, FluentProvider, Option, webLightTheme } = designerRequire('@fluentui/react-components');
   const clicked: string[] = [];
+  const scrolledIntoView: string[] = [];
   let switchTransitionObserved = false;
   let methodTransitionObserved = false;
   let methodRoot: any;
   let staleMethodControlApplied = false;
   let staleGetOptionApplied = false;
+  let staleRequestOptionsTimeoutApplied = false;
   let methodOwnershipObservationCount = 0;
   const mouseEvents: Array<{
     type: string;
@@ -421,6 +431,14 @@ async function httpSettingsPanelDomFixture(options: {
         return rect(520, 100, 120, 40);
       case 'http-settings':
         return rect(660, 100, 120, 40);
+      case 'general-header':
+        return rect(520, 150, 260, 40);
+      case 'action-timeout':
+        return rect(520, 200, 220, 40);
+      case 'networking-header':
+        return rect(520, 260, 260, 40);
+      case 'request-timeout-cover':
+        return rect(520, 320, 220, 40);
       case 'method-cover':
         return rect(520, 150, 260, 40);
       case 'get-option-cover':
@@ -434,16 +452,18 @@ async function httpSettingsPanelDomFixture(options: {
       case 'ambiguous-get-option':
         return rect(800, 330, 180, 36);
       case 'request-timeout':
-        return rect(520, 180, 220, 40);
+      case 'request-timeout-0':
+      case 'request-timeout-1':
+        return rect(520, 320 + (element.id === 'request-timeout' ? 0 : Number(element.id.split('-').at(-1) || 0)) * 48, 220, 40);
       case 'async-pattern':
-        return rect(650, 240, 48, 40);
+        return rect(650, 420, 48, 40);
       case 'async-pattern-label':
       case 'async-pattern-label-secondary':
-        return rect(520, 240, 110, 40);
+        return rect(520, 420, 110, 40);
       case 'async-pattern-cover':
       case 'async-pattern-indicator':
       case 'async-pattern-indicator-secondary':
-        return rect(650, 240, 48, 40);
+        return rect(650, 420, 48, 40);
       case 'blocking-menu':
         return rect(360, 20, 120, 60);
       default: {
@@ -470,7 +490,9 @@ async function httpSettingsPanelDomFixture(options: {
   window.HTMLElement.prototype.getClientRects = function () {
     return [layout(this)];
   };
-  window.HTMLElement.prototype.scrollIntoView = () => {};
+  window.HTMLElement.prototype.scrollIntoView = function () {
+    scrolledIntoView.push(this.id || this.getAttribute('aria-label') || this.tagName.toLowerCase());
+  };
   for (const dimension of ['offsetWidth', 'clientWidth', 'offsetHeight', 'clientHeight']) {
     Object.defineProperty(window.HTMLElement.prototype, dimension, {
       configurable: true,
@@ -480,7 +502,7 @@ async function httpSettingsPanelDomFixture(options: {
     });
   }
   window.document.elementFromPoint = (x: number, y: number) => {
-    for (const coverId of ['method-cover', 'get-option-cover']) {
+    for (const coverId of ['method-cover', 'get-option-cover', 'request-timeout-cover']) {
       const cover = window.document.getElementById(coverId);
       if (cover instanceof window.HTMLElement) {
         const bounds = layout(cover);
@@ -505,11 +527,21 @@ async function httpSettingsPanelDomFixture(options: {
     if (methodOption) {
       return methodOption;
     }
+    const requestOptionsControls = Array.from(window.document.querySelectorAll('input[aria-label="Request options - Timeout"]'));
+    const requestOptionsControl = requestOptionsControls.find((element) => {
+      const bounds = layout(element);
+      return x >= bounds.left && x <= bounds.right && y >= bounds.top && y <= bounds.bottom;
+    });
+    if (requestOptionsControl) {
+      return requestOptionsControl;
+    }
     const candidates = [
       'async-pattern-cover',
       'http-settings',
       'http-parameters',
-      'request-timeout',
+      'general-header',
+      'action-timeout',
+      'networking-header',
       'async-pattern-label',
       'async-pattern-label-secondary',
       'async-pattern-indicator',
@@ -608,6 +640,25 @@ async function httpSettingsPanelDomFixture(options: {
               : options.semanticDecoy === 'overlay'
                 ? '<div class="webview-overlay-content"><span>Method URI</span></div>'
                 : '';
+    const requestOptionsCount = options.requestOptionsTimeoutCount ?? 1;
+    const requestOptionsInputs = () =>
+      options.includeRequestOptionsTimeout === false
+        ? ''
+        : Array.from(
+            { length: requestOptionsCount },
+            (_, index) =>
+              `<input
+                id="${requestOptionsCount === 1 ? 'request-timeout' : `request-timeout-${index}`}"
+                aria-label="Request options - Timeout"
+                value="${options.requestOptionsTimeoutValue ?? ''}"
+                ${options.requestOptionsTimeoutDisabled ? 'disabled' : ''}
+              />`
+          ).join('');
+    const requestOptionsSection = options.requestOptionsTimeoutSection ?? 'networking';
+    const initialNetworkingExpanded = options.networkingExpanded ?? false;
+    const generalRequestOptions = requestOptionsSection === 'general' ? requestOptionsInputs() : '';
+    const outsideRequestOptions = requestOptionsSection === 'outside' ? requestOptionsInputs() : '';
+    const networkingRequestOptions = requestOptionsSection === 'networking' ? requestOptionsInputs() : '';
     host.innerHTML = `
       <section class="msla-panel-container">
         <div class="msla-panel-layout msla-panel-border-selected" ${options.hideSelectedPanel ? 'style="display: none"' : ''}>
@@ -628,22 +679,58 @@ async function httpSettingsPanelDomFixture(options: {
                 : `<div class="fui-Field">${semanticLabel('URI', options.uriLabelMode ?? 'visible')}<input id="request-uri" aria-label="URI" value="" /></div>`
             }
             ${semanticDecoy}
-            <input id="request-timeout" aria-label="${options.timeoutLabel ?? 'Request options - Timeout'}" value="" />
-            <div id="async-pattern-root" class="fui-Switch">
-              <input
-                id="async-pattern"
-                class="fui-Switch__input"
-                role="switch"
-                aria-label="Asynchronous pattern"
-                type="checkbox"
-                style="opacity: 0; position: absolute; inset: 0"
-                ${options.switchChecked === false ? '' : 'checked'}
-                ${options.switchDisabled ? 'disabled' : ''}
-              />
-              ${labels}
-              ${indicators}
+            <div class="msla-setting-section">
+              <div class="msla-setting-section-content">
+                <button
+                  id="general-header"
+                  class="msla-setting-section-header"
+                  aria-label="Expanded General, Select to collapse"
+                >General</button>
+                <div class="msla-setting-section-settings">
+                  <input id="action-timeout" aria-label="Action timeout" value="${options.actionTimeoutValue ?? ''}" />
+                  ${generalRequestOptions}
+                </div>
+              </div>
             </div>
-            ${switchTarget === 'covered' ? '<div id="async-pattern-cover">Blocking overlay</div>' : ''}
+            <div class="msla-setting-section">
+              <div class="msla-setting-section-content">
+                <button
+                  id="networking-header"
+                  class="msla-setting-section-header"
+                  aria-label="${
+                    initialNetworkingExpanded ? 'Expanded Networking, Select to collapse' : 'Collapsed Networking, Select to expand'
+                  }"
+                >Networking</button>
+                <div id="networking-settings" class="msla-setting-section-settings">
+                  ${initialNetworkingExpanded ? networkingRequestOptions : ''}
+                  ${
+                    initialNetworkingExpanded
+                      ? `<div id="async-pattern-root" class="fui-Switch">
+                          <input
+                            id="async-pattern"
+                            class="fui-Switch__input"
+                            role="switch"
+                            aria-label="Asynchronous pattern"
+                            type="checkbox"
+                            style="opacity: 0; position: absolute; inset: 0"
+                            ${options.switchChecked === false ? '' : 'checked'}
+                            ${options.switchDisabled ? 'disabled' : ''}
+                          />
+                          ${labels}
+                          ${indicators}
+                        </div>
+                        ${switchTarget === 'covered' ? '<div id="async-pattern-cover">Blocking overlay</div>' : ''}`
+                      : ''
+                  }
+                  ${
+                    initialNetworkingExpanded && options.requestOptionsTimeoutCovered
+                      ? '<div id="request-timeout-cover">Blocking Request options timeout overlay</div>'
+                      : ''
+                  }
+                </div>
+              </div>
+            </div>
+            ${outsideRequestOptions}
           </div>
         </div>
       </section>
@@ -655,13 +742,61 @@ async function httpSettingsPanelDomFixture(options: {
       }
     `;
     renderMethodControls();
+    const installRequestOptionsFocusHandlers = () => {
+      for (const timeout of Array.from(
+        window.document.querySelectorAll('input[aria-label="Request options - Timeout"]') as ArrayLike<any>
+      )) {
+        timeout.addEventListener('click', () => timeout.focus());
+      }
+    };
+    const renderNetworkingSettings = () => {
+      const settingsRoot = window.document.getElementById('networking-settings');
+      assert.ok(settingsRoot);
+      settingsRoot.innerHTML = `
+        ${networkingRequestOptions}
+        <div id="async-pattern-root" class="fui-Switch">
+          <input
+            id="async-pattern"
+            class="fui-Switch__input"
+            role="switch"
+            aria-label="Asynchronous pattern"
+            type="checkbox"
+            style="opacity: 0; position: absolute; inset: 0"
+            ${options.switchChecked === false ? '' : 'checked'}
+            ${options.switchDisabled ? 'disabled' : ''}
+          />
+          ${labels}
+          ${indicators}
+        </div>
+        ${switchTarget === 'covered' ? '<div id="async-pattern-cover">Blocking overlay</div>' : ''}
+        ${options.requestOptionsTimeoutCovered ? '<div id="request-timeout-cover">Blocking Request options timeout overlay</div>' : ''}
+      `;
+      const asyncPattern = window.document.getElementById('async-pattern');
+      asyncPattern?.addEventListener('change', () => {
+        switchTransitionObserved = true;
+      });
+      installRequestOptionsFocusHandlers();
+    };
     const settings = window.document.getElementById('http-settings');
     settings?.addEventListener('click', () => {
       window.document.getElementById('http-parameters')?.setAttribute('aria-selected', 'false');
       settings.setAttribute('aria-selected', 'true');
     });
-    const timeout = window.document.getElementById('request-timeout');
-    timeout?.addEventListener('click', () => timeout.focus());
+    const networkingHeader = window.document.getElementById('networking-header');
+    networkingHeader?.addEventListener('click', () => {
+      const expanded = networkingHeader.getAttribute('aria-label') === 'Expanded Networking, Select to collapse';
+      if (expanded) {
+        networkingHeader.setAttribute('aria-label', 'Collapsed Networking, Select to expand');
+        const settingsRoot = window.document.getElementById('networking-settings');
+        if (settingsRoot) {
+          settingsRoot.innerHTML = '';
+        }
+      } else {
+        networkingHeader.setAttribute('aria-label', 'Expanded Networking, Select to collapse');
+        renderNetworkingSettings();
+      }
+    });
+    installRequestOptionsFocusHandlers();
     const asyncPattern = window.document.getElementById('async-pattern');
     asyncPattern?.addEventListener('change', () => {
       switchTransitionObserved = true;
@@ -804,6 +939,16 @@ async function httpSettingsPanelDomFixture(options: {
           staleGetOptionApplied = true;
           element.replaceWith(element.cloneNode(true));
         }
+        if (
+          type === 'mouseMoved' &&
+          options.staleRequestOptionsTimeout &&
+          !staleRequestOptionsTimeoutApplied &&
+          element instanceof window.HTMLInputElement &&
+          element.getAttribute('aria-label') === 'Request options - Timeout'
+        ) {
+          staleRequestOptionsTimeoutApplied = true;
+          element.replaceWith(element.cloneNode(true));
+        }
         if (type === 'mouseMoved' && button === 'none' && targetId) {
           pendingMouse = { x, y, targetId, target: element, moved: true, pressed: false };
         } else if (
@@ -858,6 +1003,7 @@ async function httpSettingsPanelDomFixture(options: {
   return {
     cdp,
     clicked,
+    scrolledIntoView,
     mouseEvents,
     window,
     driver: (settingsTimeoutMs = 45_000) => new HttpTimeoutComposeDriver(cdp, 17, Date.now() + 20_000, () => {}, settingsTimeoutMs),
@@ -1536,17 +1682,34 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       fixture.dispose();
     }
   });
-  await control('HTTP Settings prefers the associated label over the overlaid native switch input', async () => {
-    const fixture = await httpSettingsPanelDomFixture({ panelOpen: true, timeoutLabel: 'Action timeout' });
+  await control('HTTP Settings targets Request options timeout after Action timeout in production DOM order', async () => {
+    const fixture = await httpSettingsPanelDomFixture({ panelOpen: true });
     try {
       await fixture.driver().configureHttpRequestSettings('PT1S');
       assert.strictEqual(fixture.clicked.filter((id) => id === 'msla-node-HTTP').length, 0);
       assert.strictEqual(fixture.clicked.filter((id) => id === 'http-settings').length, 1);
+      assert.strictEqual(fixture.clicked.filter((id) => id === 'networking-header').length, 1);
+      assert.strictEqual(fixture.clicked.filter((id) => id === 'request-timeout').length, 1);
+      assert.strictEqual(fixture.clicked.filter((id) => id === 'action-timeout').length, 0);
       assert.strictEqual(fixture.clicked.filter((id) => id === 'async-pattern-label').length, 1);
       assert.ok(!fixture.clicked.includes('async-pattern'), 'The opacity-zero native switch input must not be the click target');
       const timeoutInput = fixture.window.document.getElementById('request-timeout');
       assert.ok(timeoutInput instanceof fixture.window.HTMLInputElement);
       assert.strictEqual(timeoutInput.value, 'PT1S');
+      const actionTimeoutInput = fixture.window.document.getElementById('action-timeout');
+      assert.ok(actionTimeoutInput instanceof fixture.window.HTMLInputElement);
+      assert.strictEqual(actionTimeoutInput.value, '', 'Action timeout must remain unchanged and empty');
+      assert.deepStrictEqual(
+        Array.from(
+          fixture.window.document.querySelectorAll('input[aria-label="Action timeout"], input[aria-label="Request options - Timeout"]')
+        ).map((input: any) => input.id),
+        ['action-timeout', 'request-timeout'],
+        'Production-shaped Settings DOM must keep Action timeout before Request options - Timeout'
+      );
+      assert.ok(
+        fixture.scrolledIntoView.includes('request-timeout'),
+        'The lower Request options control must be scrolled into view before native input'
+      );
       const asyncPattern = fixture.window.document.getElementById('async-pattern');
       assert.ok(asyncPattern instanceof fixture.window.HTMLInputElement);
       assert.strictEqual(asyncPattern.getAttribute('role'), 'switch');
@@ -1559,6 +1722,86 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       assert.strictEqual(asyncPattern.checked, false);
       assert.strictEqual(fixture.switchTransitionObserved(), true, 'Driver must observe the native checked-state transition');
       fixture.assertNativeClickSequences();
+    } finally {
+      fixture.dispose();
+    }
+  });
+  await control('Action-timeout-only HTTP Settings fail closed without entering text', async () => {
+    const fixture = await httpSettingsPanelDomFixture({
+      panelOpen: true,
+      includeRequestOptionsTimeout: false,
+    });
+    try {
+      const startedAt = Date.now();
+      await assert.rejects(
+        () => fixture.driver(700).configureHttpRequestSettings('PT1S'),
+        (error: Error) => {
+          assert.match(error.message, /Action timeout is not a compatible fallback/);
+          assert.match(error.message, /actionTimeoutControlCount/);
+          return true;
+        }
+      );
+      assert.ok(Date.now() - startedAt < 1500, 'Action-only Settings must honor the local HTTP panel deadline');
+      const actionTimeoutInput = fixture.window.document.getElementById('action-timeout');
+      assert.ok(actionTimeoutInput instanceof fixture.window.HTMLInputElement);
+      assert.strictEqual(actionTimeoutInput.value, '');
+      assert.ok(!fixture.clicked.includes('action-timeout'));
+    } finally {
+      fixture.dispose();
+    }
+  });
+  await control('Request options timeout in the wrong Settings section fails closed', async () => {
+    const fixture = await httpSettingsPanelDomFixture({
+      panelOpen: true,
+      requestOptionsTimeoutSection: 'general',
+    });
+    try {
+      await assert.rejects(
+        () => fixture.driver(500).configureHttpRequestSettings('PT1S'),
+        /Request options - Timeout control was found outside the Networking section/
+      );
+      const requestTimeoutInput = fixture.window.document.getElementById('request-timeout');
+      assert.ok(requestTimeoutInput instanceof fixture.window.HTMLInputElement);
+      assert.strictEqual(requestTimeoutInput.value, '');
+      assert.ok(!fixture.clicked.includes('request-timeout'));
+      assert.ok(!fixture.clicked.includes('action-timeout'));
+    } finally {
+      fixture.dispose();
+    }
+  });
+  for (const [name, fixtureOptions, expected] of [
+    ['ambiguous', { requestOptionsTimeoutCount: 2 }, /Expanded Networking section contains ambiguous Request options - Timeout controls/],
+    ['disabled', { requestOptionsTimeoutDisabled: true }, /Production Request options - Timeout input is disabled or read-only/],
+    ['covered', { requestOptionsTimeoutCovered: true }, /Production Request options - Timeout input is not hit-testable/],
+  ] as const) {
+    await control(`${name} Request options timeout fails closed`, async () => {
+      const fixture = await httpSettingsPanelDomFixture({ panelOpen: true, ...fixtureOptions });
+      try {
+        await assert.rejects(() => fixture.driver(500).configureHttpRequestSettings('PT1S'), expected);
+        assert.ok(!fixture.clicked.includes('request-timeout'));
+        assert.ok(!fixture.clicked.includes('request-timeout-0'));
+        assert.ok(!fixture.clicked.includes('request-timeout-1'));
+        assert.ok(!fixture.clicked.includes('action-timeout'));
+      } finally {
+        fixture.dispose();
+      }
+    });
+  }
+  await control('stale Request options timeout fails closed without entering text', async () => {
+    const fixture = await httpSettingsPanelDomFixture({
+      panelOpen: true,
+      staleRequestOptionsTimeout: true,
+    });
+    try {
+      await assert.rejects(
+        () => fixture.driver(500).configureHttpRequestSettings('PT1S'),
+        /Request options - Timeout became stale or did not retain native focus/
+      );
+      const requestTimeoutInput = fixture.window.document.getElementById('request-timeout');
+      assert.ok(requestTimeoutInput instanceof fixture.window.HTMLInputElement);
+      assert.strictEqual(requestTimeoutInput.value, '');
+      assert.ok(!fixture.clicked.includes('request-timeout'));
+      assert.ok(!fixture.clicked.includes('action-timeout'));
     } finally {
       fixture.dispose();
     }
@@ -1610,7 +1853,7 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
     });
   }
   await control('HTTP Settings uses indicator coordinates when the same native switch input receives the pointer sequence', async () => {
-    const fixture = await httpSettingsPanelDomFixture({ panelOpen: true, switchTarget: 'indicator' });
+    const fixture = await httpSettingsPanelDomFixture({ panelOpen: true, networkingExpanded: true, switchTarget: 'indicator' });
     try {
       const indicator = fixture.window.document.getElementById('async-pattern-indicator');
       const asyncPattern = fixture.window.document.getElementById('async-pattern');
@@ -1688,7 +1931,11 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
     ['covered', 'Visible Fluent switch indicator was not enabled and hit-testable'],
   ] as const) {
     await control(`${switchTarget} asynchronous-pattern target fails closed on the local HTTP Settings deadline`, async () => {
-      const fixture = await httpSettingsPanelDomFixture({ panelOpen: true, switchTarget });
+      const fixture = await httpSettingsPanelDomFixture({
+        panelOpen: true,
+        networkingExpanded: switchTarget === 'covered',
+        switchTarget,
+      });
       try {
         if (switchTarget === 'covered') {
           const indicator = fixture.window.document.getElementById('async-pattern-indicator');
@@ -1766,6 +2013,12 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       assert.ok(source.includes('const httpSettingsPanelTimeoutMs = 45_000;'));
       assert.ok(source.includes('Math.min(this.deadline, startedAt + this.settingsPanelTimeoutMs)'));
       assert.ok(source.includes('input[role="combobox"][aria-label="Method"]'));
+      assert.ok(source.includes('input[aria-label="Request options - Timeout"]'));
+      assert.ok(source.includes('input[aria-label="Action timeout"]'));
+      assert.ok(source.includes("entry.title === 'Networking'"));
+      assert.ok(source.includes('Action timeout is not a compatible fallback'));
+      assert.ok(source.includes("control.scrollIntoView({ block: 'center', inline: 'center' });"));
+      assert.ok(!source.includes('[aria-label="Action timeout"], [aria-label="Request options - Timeout"]'));
       assert.ok(source.includes("normalize(option.textContent) === 'GET'"));
       assert.ok(source.includes("'HTTP Method GET selected in the active HTTP panel'"));
       assert.ok(source.includes('input[role="switch"][aria-label="Asynchronous pattern"]'));
@@ -1784,6 +2037,10 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
         source.indexOf('private async httpMethodGetOptionObservation'),
         source.indexOf('private async disableAsyncPattern')
       );
+      const requestOptionsDriver = source.slice(
+        source.indexOf('async configureHttpRequestSettings'),
+        source.indexOf('private async httpMethodControlObservation')
+      );
       assert.ok(methodDriver.includes('const localCdp = boundedCdp(this.cdp, deadline);'));
       assert.ok(methodDriver.includes('await clickPoint(localCdp, control.point);'));
       assert.ok(methodDriver.includes('await clickPoint(localCdp, option.point);'));
@@ -1791,6 +2048,8 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       assert.ok(!methodOptionDriver.includes('document.querySelectorAll(\'[role="listbox"]\')'));
       assert.ok(!methodDriver.includes('.click('), 'Method driver must not invoke a DOM or generic element click');
       assert.ok(!/\.value\s*=(?!=)/.test(methodDriver), 'Method driver must not assign the production combobox value');
+      assert.ok(!requestOptionsDriver.includes('localActions.click('), 'Request options timeout must use native hit-tested CDP input');
+      assert.ok(!/\.value\s*=(?!=)/.test(requestOptionsDriver), 'Request options timeout driver must not assign the input value');
       assert.ok(!switchDriver.includes('.click('), 'Switch driver must not invoke a DOM or generic element click');
       assert.ok(!/\.checked\s*=(?!=)/.test(switchDriver), 'Switch driver must not mutate native checked state');
       fixture.assertNativeClickSequences();

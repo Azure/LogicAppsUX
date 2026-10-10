@@ -14,6 +14,10 @@ interface HttpAction {
   };
   runAfter?: unknown;
   operationOptions?: unknown;
+  limit?: {
+    timeout?: unknown;
+    count?: unknown;
+  };
   runtimeConfiguration?: {
     requestOptions?: {
       timeout?: unknown;
@@ -60,7 +64,16 @@ export function assertHttpTimeoutRequestPersisted(
   assert.strictEqual(action.inputs?.uri, expectedUri);
   assert.deepStrictEqual(action.runAfter, {});
   assert.strictEqual(action.operationOptions, 'DisableAsyncPattern');
+  assert.ok(
+    action.runtimeConfiguration?.requestOptions,
+    'runtimeConfiguration.requestOptions must be present; Action timeout limit is not a substitute'
+  );
   assert.strictEqual(action.runtimeConfiguration?.requestOptions?.timeout, expectedTimeout);
+  assert.strictEqual(
+    action.limit?.timeout,
+    undefined,
+    'Action limit.timeout must remain absent; it cannot substitute for runtimeConfiguration.requestOptions.timeout'
+  );
 }
 
 export function assertHttpTimeoutActionFailed(actions: unknown, runName: string): void {

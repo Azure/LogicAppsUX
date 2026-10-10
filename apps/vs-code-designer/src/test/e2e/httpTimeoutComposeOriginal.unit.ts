@@ -204,6 +204,9 @@ async function main(): Promise<void> {
       lifecycle.includes("fields: [{ labels: ['Method'], value: 'GET' }]"),
       'Pre-save evidence must expose the selected Method GET value'
     );
+    assert.ok(lifecycle.includes("exactAriaLabel: 'Request options - Timeout'"));
+    assert.ok(lifecycle.includes("sectionTitle: 'Networking'"));
+    assert.ok(!lifecycle.includes("labels: ['Action timeout', 'Request options - Timeout', 'Timeout']"));
     const invalidConfigured = lifecycle.indexOf("await activeSession.driver.configureHttpRequestSettings('InvalidString')");
     const invalidEvidence = lifecycle.indexOf('http-timeout-request-invalid-duration', invalidConfigured);
     const restoration = lifecycle.indexOf('http-timeout-request-valid-state-restored', invalidEvidence);
@@ -425,6 +428,25 @@ async function main(): Promise<void> {
       },
     };
     assertHttpTimeoutRequestPersisted(workflow, 'PT1S', uri);
+    const unrelatedLimit: any = structuredClone(workflow);
+    unrelatedLimit.definition.actions.HTTP = {
+      ...unrelatedLimit.definition.actions.HTTP,
+      limit: { count: 1 },
+    };
+    assertHttpTimeoutRequestPersisted(unrelatedLimit, 'PT1S', uri);
+    const actionTimeoutSubstitution: any = structuredClone(workflow);
+    actionTimeoutSubstitution.definition.actions.HTTP = {
+      ...actionTimeoutSubstitution.definition.actions.HTTP,
+      limit: { timeout: 'PT1S' },
+    };
+    delete actionTimeoutSubstitution.definition.actions.HTTP.runtimeConfiguration;
+    assert.throws(() => assertHttpTimeoutRequestPersisted(actionTimeoutSubstitution, 'PT1S', uri), /runtimeConfiguration|requestOptions/);
+    const bothTimeoutFields: any = structuredClone(workflow);
+    bothTimeoutFields.definition.actions.HTTP = {
+      ...bothTimeoutFields.definition.actions.HTTP,
+      limit: { timeout: 'PT1S' },
+    };
+    assert.throws(() => assertHttpTimeoutRequestPersisted(bothTimeoutFields, 'PT1S', uri), /Action limit\.timeout must remain absent/);
     assertHttpTimeoutActionFailed(
       { value: [{ name: 'HTTP', properties: { status: 'Failed', error: { code: 'ActionTimedOut', message: 'Request timed out' } } }] },
       'run-1'

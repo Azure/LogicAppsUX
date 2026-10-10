@@ -74,7 +74,8 @@ const httpPanelIdentityDom = `
 
 const httpSettingsPanelTimeoutMs = 45_000;
 const httpMethodControlSelector = 'input[role="combobox"][aria-label="Method"]';
-const httpTimeoutFieldSelector = '[aria-label="Action timeout"], [aria-label="Request options - Timeout"]';
+const httpRequestOptionsTimeoutSelector = 'input[aria-label="Request options - Timeout"]';
+const httpActionTimeoutSelector = 'input[aria-label="Action timeout"]';
 const asyncPatternSwitchSelector = 'input[role="switch"][aria-label="Asynchronous pattern"]';
 
 interface HttpMethodControlObservation {
@@ -119,6 +120,27 @@ interface AsyncPatternSwitchObservation {
   targetText?: string;
   point?: Point;
   reason?: string;
+  fatal?: boolean;
+}
+
+interface HttpRequestOptionsTimeoutObservation {
+  selectedNodeIdentity: string[];
+  panelCount: number;
+  settingsSelected: boolean;
+  sectionTitles: string[];
+  networkingSectionCount: number;
+  networkingExpanded?: boolean;
+  networkingHeaderPoint?: Point;
+  requestOptionsControlCount: number;
+  wrongSectionRequestOptionsControlCount: number;
+  actionTimeoutControlCount: number;
+  actionTimeoutValue?: string;
+  requestOptionsValue?: string;
+  enabled?: boolean;
+  focused?: boolean;
+  point?: Point;
+  reason?: string;
+  obstruction?: string;
   fatal?: boolean;
 }
 
@@ -268,33 +290,329 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
     const localCdp = boundedCdp(this.cdp, deadline);
     const localActions = new ProvenDesignerCdpActions(localCdp, this.contextId, deadline, this.assertActive);
     await this.openHttpSettings(localCdp, localActions, startedAt, deadline);
-    const requestTimeoutVisible = await localActions.evaluate<boolean>(`Array.from(document.querySelectorAll(${JSON.stringify(
-      httpTimeoutFieldSelector
-    )})).some((element) => {
-      const rect = element.getBoundingClientRect();
-      const style = getComputedStyle(element);
-      return rect.width > 0 && rect.height > 0 && style.visibility !== 'hidden' && style.display !== 'none';
-    })`);
-    if (!requestTimeoutVisible) {
-      await localActions.click('button[aria-label^="Collapsed Networking"]');
+    const initial = await this.waitForHttpRequestOptionsTimeout(localCdp, localActions, deadline);
+    const actionTimeoutBaseline = initial.actionTimeoutValue;
+    assert.strictEqual(
+      actionTimeoutBaseline ?? '',
+      '',
+      `Action timeout must remain empty while configuring Request options - Timeout. State: ${JSON.stringify(initial)}`
+    );
+    console.log(
+      `[http-timeout][fields] before input requestOptions=${JSON.stringify(
+        initial.requestOptionsValue ?? ''
+      )} actionTimeout=${JSON.stringify(actionTimeoutBaseline ?? '')} section=Networking`
+    );
+    assert.ok(initial.point);
+    await clickPoint(localCdp, initial.point);
+    const focusDeadline = Math.min(deadline, Date.now() + 2_000);
+    let focused = initial;
+    while (Date.now() < focusDeadline) {
+      focused = await this.httpRequestOptionsTimeoutObservation(localActions);
+      if (focused.fatal) {
+        assert.fail(`Request options - Timeout became unsafe after native focus. State: ${JSON.stringify(focused)}`);
+      }
+      if (focused.focused) {
+        break;
+      }
+      const remaining = focusDeadline - Date.now();
+      if (remaining <= 0) {
+        break;
+      }
+      await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining)));
     }
-    await localActions.click(httpTimeoutFieldSelector);
+    if (!focused.focused) {
+      assert.fail(`Request options - Timeout became stale or did not retain native focus. State: ${JSON.stringify(focused)}`);
+    }
     await localActions.replaceFocused(timeout);
     await pollHttpTimeoutCompose(
-      () =>
-        localActions.evaluate<string | null>(`(() => {
-          const field = Array.from(document.querySelectorAll(${JSON.stringify(httpTimeoutFieldSelector)})).find((element) => {
-            const rect = element.getBoundingClientRect();
-            const style = getComputedStyle(element);
-            return rect.width > 0 && rect.height > 0 && style.visibility !== 'hidden' && style.display !== 'none';
-          });
-          return field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement ? field.value : null;
-        })()`),
-      (value) => value === timeout,
+      () => this.httpRequestOptionsTimeoutObservation(localActions),
+      (value) =>
+        !value.fatal &&
+        value.requestOptionsControlCount === 1 &&
+        value.requestOptionsValue === timeout &&
+        (value.actionTimeoutValue ?? '') === (actionTimeoutBaseline ?? ''),
       deadline,
-      `Request options timeout ${timeout}`
+      `Networking Request options - Timeout ${timeout} with unchanged Action timeout`
     );
     await this.disableAsyncPattern(localCdp, localActions, deadline);
+    const final = await this.httpRequestOptionsTimeoutObservation(localActions);
+    assert.strictEqual(
+      final.fatal,
+      undefined,
+      `Request options - Timeout became unsafe after async-pattern update: ${JSON.stringify(final)}`
+    );
+    assert.strictEqual(
+      final.requestOptionsValue,
+      timeout,
+      `Request options - Timeout changed after async-pattern update: ${JSON.stringify(final)}`
+    );
+    assert.strictEqual(
+      final.actionTimeoutValue ?? '',
+      actionTimeoutBaseline ?? '',
+      `Action timeout changed while configuring Request options - Timeout. State: ${JSON.stringify(final)}`
+    );
+    console.log(
+      `[http-timeout][fields] after input requestOptions=${JSON.stringify(
+        final.requestOptionsValue ?? ''
+      )} actionTimeout=${JSON.stringify(final.actionTimeoutValue ?? '')} section=Networking`
+    );
+  }
+
+  private async waitForHttpRequestOptionsTimeout(
+    localCdp: CdpEvaluator,
+    localActions: ProvenDesignerCdpActions,
+    deadline: number
+  ): Promise<HttpRequestOptionsTimeoutObservation> {
+    let observation: HttpRequestOptionsTimeoutObservation = {
+      selectedNodeIdentity: [],
+      panelCount: 0,
+      settingsSelected: false,
+      sectionTitles: [],
+      networkingSectionCount: 0,
+      requestOptionsControlCount: 0,
+      wrongSectionRequestOptionsControlCount: 0,
+      actionTimeoutControlCount: 0,
+    };
+    let networkingClickDispatched = false;
+    while (Date.now() < deadline) {
+      observation = await this.httpRequestOptionsTimeoutObservation(localActions);
+      if (observation.fatal) {
+        assert.fail(`Cannot target Request options - Timeout safely. State: ${JSON.stringify(observation)}`);
+      }
+      if (observation.point) {
+        return observation;
+      }
+      if (observation.networkingExpanded === false && observation.networkingHeaderPoint && !networkingClickDispatched) {
+        await clickPoint(localCdp, observation.networkingHeaderPoint);
+        networkingClickDispatched = true;
+      }
+      const remaining = deadline - Date.now();
+      if (remaining <= 0) {
+        break;
+      }
+      await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining)));
+    }
+    assert.fail(
+      `Timed out waiting for exactly one visible, enabled, hit-testable Request options - Timeout input in the expanded Networking section of the active HTTP Settings panel. Action timeout is not a compatible fallback. State: ${JSON.stringify(
+        observation
+      )}`
+    );
+  }
+
+  private async httpRequestOptionsTimeoutObservation(
+    localActions: ProvenDesignerCdpActions
+  ): Promise<HttpRequestOptionsTimeoutObservation> {
+    return localActions.evaluate<HttpRequestOptionsTimeoutObservation>(`(() => {
+      ${visibleDom}
+      ${httpPanelIdentityDom}
+      const selectedLayouts = Array.from(document.querySelectorAll('.msla-panel-layout.msla-panel-border-selected')).filter(visible);
+      const identities = selectedLayouts.map(readPanelIdentity);
+      const selectedNodeIdentity = identities.flatMap((identity) => identity.values);
+      const empty = (reason, fatal = false) => ({
+        selectedNodeIdentity,
+        panelCount: selectedLayouts.length,
+        settingsSelected: false,
+        sectionTitles: [],
+        networkingSectionCount: 0,
+        requestOptionsControlCount: 0,
+        wrongSectionRequestOptionsControlCount: 0,
+        actionTimeoutControlCount: 0,
+        reason,
+        fatal,
+      });
+      if (selectedLayouts.length !== 1) {
+        return empty(
+          selectedLayouts.length === 0 ? 'Active node-details panel not found' : 'Active node-details panel was ambiguous',
+          selectedLayouts.length > 1
+        );
+      }
+      const layout = selectedLayouts[0];
+      if (!identities[0].isHttp) {
+        return empty('Active node-details panel is not HTTP', true);
+      }
+      const nodePanels = Array.from(layout.querySelectorAll('[id^="msla-node-details-panel-"]')).filter(visible);
+      if (nodePanels.length !== 1) {
+        return empty(
+          nodePanels.length === 0 ? 'Visible HTTP node-details content not found' : 'Visible HTTP node-details content was ambiguous',
+          nodePanels.length > 1
+        );
+      }
+      const nodePanel = nodePanels[0];
+      const settingsTabs = Array.from(layout.querySelectorAll('[role="tab"]')).filter(visible).filter((tab) => {
+        const identity = normalize(tab.textContent || tab.getAttribute('aria-label') || tab.getAttribute('title'));
+        return identity.toLowerCase().startsWith('settings');
+      });
+      if (settingsTabs.length !== 1 || settingsTabs[0].getAttribute('aria-selected') !== 'true') {
+        return empty(
+          settingsTabs.length !== 1 ? 'Scoped Settings tab was missing or ambiguous' : 'Scoped Settings tab is not selected',
+          true
+        );
+      }
+      const sectionIdentity = (section) => {
+        const headers = Array.from(section.querySelectorAll('button.msla-setting-section-header')).filter(
+          (header) => header.closest('.msla-setting-section') === section
+        );
+        const header = headers.length === 1 ? headers[0] : undefined;
+        return {
+          header,
+          headerCount: headers.length,
+          title: normalize(header?.textContent),
+          aria: normalize(header?.getAttribute('aria-label')),
+        };
+      };
+      const sections = Array.from(nodePanel.querySelectorAll('.msla-setting-section'));
+      const sectionEntries = sections.map((section) => ({ section, ...sectionIdentity(section) }));
+      const sectionTitles = sectionEntries.map((entry) => entry.title).filter(Boolean);
+      const networkingEntries = sectionEntries.filter((entry) =>
+        entry.title === 'Networking' &&
+        /^(Expanded|Collapsed) Networking, Select to (collapse|expand)$/.test(entry.aria)
+      );
+      const generalEntries = sectionEntries.filter((entry) =>
+        entry.title === 'General' &&
+        /^(Expanded|Collapsed) General, Select to (collapse|expand)$/.test(entry.aria)
+      );
+      const allRequestOptionsControls = Array.from(nodePanel.querySelectorAll(${JSON.stringify(httpRequestOptionsTimeoutSelector)}));
+      const actionTimeoutControls = generalEntries.flatMap((entry) =>
+        Array.from(entry.section.querySelectorAll(${JSON.stringify(httpActionTimeoutSelector)}))
+      );
+      const base = {
+        selectedNodeIdentity,
+        panelCount: 1,
+        settingsSelected: true,
+        sectionTitles,
+        networkingSectionCount: networkingEntries.length,
+        requestOptionsControlCount: 0,
+        wrongSectionRequestOptionsControlCount: allRequestOptionsControls.length,
+        actionTimeoutControlCount: actionTimeoutControls.length,
+        actionTimeoutValue:
+          actionTimeoutControls.length === 1 && actionTimeoutControls[0] instanceof HTMLInputElement
+            ? actionTimeoutControls[0].value
+            : undefined,
+      };
+      if (networkingEntries.length !== 1) {
+        return {
+          ...base,
+          reason: networkingEntries.length === 0
+            ? 'Production Networking settings section not found by its accessible header'
+            : 'Production Networking settings section was ambiguous',
+          fatal: true,
+        };
+      }
+      if (generalEntries.length > 1 || actionTimeoutControls.length > 1) {
+        return {
+          ...base,
+          reason: generalEntries.length > 1
+            ? 'Production General settings section was ambiguous'
+            : 'Production Action timeout control was ambiguous',
+          fatal: true,
+        };
+      }
+      const networking = networkingEntries[0];
+      const networkingExpanded = networking.aria === 'Expanded Networking, Select to collapse';
+      const networkingCollapsed = networking.aria === 'Collapsed Networking, Select to expand';
+      if (!networkingExpanded && !networkingCollapsed) {
+        return { ...base, reason: 'Networking section accessible expansion state was invalid', fatal: true };
+      }
+      const requestOptionsControls = Array.from(
+        networking.section.querySelectorAll(${JSON.stringify(httpRequestOptionsTimeoutSelector)})
+      );
+      const wrongSectionRequestOptionsControlCount = allRequestOptionsControls.filter(
+        (control) => !networking.section.contains(control)
+      ).length;
+      const withSection = {
+        ...base,
+        networkingExpanded,
+        requestOptionsControlCount: requestOptionsControls.length,
+        wrongSectionRequestOptionsControlCount,
+      };
+      if (wrongSectionRequestOptionsControlCount > 0) {
+        return {
+          ...withSection,
+          reason: 'Request options - Timeout control was found outside the Networking section',
+          fatal: true,
+        };
+      }
+      if (!networkingExpanded) {
+        if (requestOptionsControls.length > 0) {
+          return {
+            ...withSection,
+            reason: 'Collapsed Networking section exposed a Request options - Timeout control',
+            fatal: true,
+          };
+        }
+        const header = networking.header;
+        if (!(header instanceof HTMLElement) || header.matches(':disabled') || header.getAttribute('aria-disabled') === 'true') {
+          return { ...withSection, reason: 'Collapsed Networking section header is disabled or invalid', fatal: true };
+        }
+        header.scrollIntoView({ block: 'center', inline: 'center' });
+        const rect = header.getBoundingClientRect();
+        const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+        const hit = document.elementFromPoint(point.x, point.y);
+        return hit && (hit === header || header.contains(hit))
+          ? { ...withSection, networkingHeaderPoint: point, reason: 'Networking section is collapsed' }
+          : {
+              ...withSection,
+              reason: 'Collapsed Networking section header is not hit-testable',
+              obstruction: normalize(hit?.getAttribute?.('aria-label') || hit?.textContent || hit?.className || '').slice(0, 240),
+              fatal: true,
+            };
+      }
+      if (requestOptionsControls.length !== 1) {
+        return {
+          ...withSection,
+          reason: requestOptionsControls.length === 0
+            ? 'Expanded Networking section does not contain Request options - Timeout; Action timeout is not compatible'
+            : 'Expanded Networking section contains ambiguous Request options - Timeout controls',
+          fatal: requestOptionsControls.length > 1,
+        };
+      }
+      const control = requestOptionsControls[0];
+      if (!(control instanceof HTMLInputElement)) {
+        return { ...withSection, reason: 'Request options - Timeout selector did not resolve to an input', fatal: true };
+      }
+      const requestOptionsValue = control.value;
+      if (
+        control.disabled ||
+        control.readOnly ||
+        control.matches(':disabled') ||
+        control.getAttribute('aria-disabled') === 'true' ||
+        control.getAttribute('aria-readonly') === 'true'
+      ) {
+        return {
+          ...withSection,
+          requestOptionsValue,
+          reason: 'Production Request options - Timeout input is disabled or read-only',
+          fatal: true,
+        };
+      }
+      control.scrollIntoView({ block: 'center', inline: 'center' });
+      if (!fullyVisible(control)) {
+        return {
+          ...withSection,
+          requestOptionsValue,
+          reason: 'Production Request options - Timeout input is clipped after scrolling',
+        };
+      }
+      const rect = control.getBoundingClientRect();
+      const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+      const hit = document.elementFromPoint(point.x, point.y);
+      if (hit !== control) {
+        return {
+          ...withSection,
+          requestOptionsValue,
+          reason: 'Production Request options - Timeout input is not hit-testable',
+          obstruction: normalize(hit?.getAttribute?.('aria-label') || hit?.textContent || hit?.className || '').slice(0, 240),
+          fatal: true,
+        };
+      }
+      return {
+        ...withSection,
+        requestOptionsValue,
+        enabled: true,
+        focused: document.activeElement === control,
+        point,
+      };
+    })()`);
   }
 
   private async httpMethodControlObservation(localActions: ProvenDesignerCdpActions): Promise<HttpMethodControlObservation> {
