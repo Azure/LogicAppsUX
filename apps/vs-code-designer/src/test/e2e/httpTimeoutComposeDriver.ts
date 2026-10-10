@@ -48,6 +48,7 @@ const visibleDom = `
 
 const httpSettingsPanelTimeoutMs = 45_000;
 const httpTimeoutFieldSelector = '[aria-label="Action timeout"], [aria-label="Request options - Timeout"]';
+const asyncPatternSwitchSelector = 'input[role="switch"][aria-label="Asynchronous pattern"]';
 
 interface HttpSettingsPanelObservation {
   httpPanelOpen: boolean;
@@ -57,6 +58,17 @@ interface HttpSettingsPanelObservation {
   settingsPoint?: Point;
   settingsSelected: boolean;
   overlays: string[];
+}
+
+interface AsyncPatternSwitchObservation {
+  inputCount: number;
+  checked?: boolean;
+  targetKind?: 'label' | 'indicator';
+  targetCount?: number;
+  targetText?: string;
+  point?: Point;
+  reason?: string;
+  fatal?: boolean;
 }
 
 export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
@@ -85,8 +97,12 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
   }
 
   async configureHttpRequestSettings(timeout: string): Promise<void> {
-    await this.openHttpSettings();
-    const requestTimeoutVisible = await this.evaluate<boolean>(`Array.from(document.querySelectorAll(${JSON.stringify(
+    const startedAt = Date.now();
+    const deadline = Math.min(this.deadline, startedAt + this.settingsPanelTimeoutMs);
+    const localCdp = boundedCdp(this.cdp, deadline);
+    const localActions = new ProvenDesignerCdpActions(localCdp, this.contextId, deadline, this.assertActive);
+    await this.openHttpSettings(localCdp, localActions, startedAt, deadline);
+    const requestTimeoutVisible = await localActions.evaluate<boolean>(`Array.from(document.querySelectorAll(${JSON.stringify(
       httpTimeoutFieldSelector
     )})).some((element) => {
       const rect = element.getBoundingClientRect();
@@ -94,13 +110,13 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
       return rect.width > 0 && rect.height > 0 && style.visibility !== 'hidden' && style.display !== 'none';
     })`);
     if (!requestTimeoutVisible) {
-      await this.click('button[aria-label^="Collapsed Networking"]');
+      await localActions.click('button[aria-label^="Collapsed Networking"]');
     }
-    await this.click(httpTimeoutFieldSelector);
-    await this.replaceFocused(timeout);
+    await localActions.click(httpTimeoutFieldSelector);
+    await localActions.replaceFocused(timeout);
     await pollHttpTimeoutCompose(
       () =>
-        this.evaluate<string | null>(`(() => {
+        localActions.evaluate<string | null>(`(() => {
           const field = Array.from(document.querySelectorAll(${JSON.stringify(httpTimeoutFieldSelector)})).find((element) => {
             const rect = element.getBoundingClientRect();
             const style = getComputedStyle(element);
@@ -109,35 +125,148 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
           return field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement ? field.value : null;
         })()`),
       (value) => value === timeout,
-      this.deadline,
+      deadline,
       `Request options timeout ${timeout}`
     );
-    const asyncPatternEnabled = await this.evaluate<boolean>(`(() => {
-      const element = document.querySelector('[aria-label="Asynchronous pattern"]');
-      if (element instanceof HTMLInputElement) return element.checked;
-      return element?.getAttribute('aria-checked') === 'true';
-    })()`);
-    if (asyncPatternEnabled) {
-      await this.click('[aria-label="Asynchronous pattern"]');
+    await this.disableAsyncPattern(localCdp, localActions, deadline);
+  }
+
+  private async disableAsyncPattern(localCdp: CdpEvaluator, localActions: ProvenDesignerCdpActions, deadline: number): Promise<void> {
+    let observation: AsyncPatternSwitchObservation = { inputCount: 0 };
+    while (Date.now() < deadline) {
+      observation = await localActions.evaluate<AsyncPatternSwitchObservation>(`(() => {
+        ${visibleDom}
+        const inputs = Array.from(document.querySelectorAll(${JSON.stringify(asyncPatternSwitchSelector)}));
+        if (inputs.length !== 1) {
+          return {
+            inputCount: inputs.length,
+            reason: inputs.length === 0
+              ? 'Production switch input not found'
+              : 'Production switch input was ambiguous',
+            fatal: inputs.length > 1,
+          };
+        }
+        const input = inputs[0];
+        if (!(input instanceof HTMLInputElement)) {
+          return { inputCount: 1, reason: 'Production switch selector did not resolve to an input', fatal: true };
+        }
+        if (!input.checked) return { inputCount: 1, checked: false };
+        if (input.disabled || input.getAttribute('aria-disabled') === 'true') {
+          return { inputCount: 1, checked: true, reason: 'Production switch input is disabled', fatal: true };
+        }
+        const pointFor = (target, acceptInputHit = false) => {
+          if (!(target instanceof HTMLElement) || !visible(target) ||
+            target.matches(':disabled') || target.getAttribute('aria-disabled') === 'true') {
+            return undefined;
+          }
+          target.scrollIntoView({ block: 'center', inline: 'center' });
+          const rect = target.getBoundingClientRect();
+          const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+          const hit = document.elementFromPoint(point.x, point.y);
+          return hit && (hit === target || target.contains(hit) || (acceptInputHit && hit === input)) ? point : undefined;
+        };
+        const describe = (target) => normalize(
+          target?.getAttribute('aria-label') || target?.textContent || target?.className || ''
+        ).slice(0, 240);
+        const preferredLabel = input.labels?.[0];
+        const labels = Array.from(input.labels || []).filter(visible);
+        if (labels.length > 1) {
+          return {
+            inputCount: 1,
+            checked: true,
+            targetKind: 'label',
+            targetCount: labels.length,
+            reason: 'Visible associated switch label was ambiguous',
+            fatal: true,
+          };
+        }
+        if (labels.length === 1) {
+          const target = preferredLabel && labels.includes(preferredLabel) ? preferredLabel : labels[0];
+          const point = pointFor(target);
+          return {
+            inputCount: 1,
+            checked: true,
+            targetKind: 'label',
+            targetCount: 1,
+            targetText: describe(target),
+            point,
+            reason: point ? undefined : 'Visible associated switch label was not enabled and hit-testable',
+          };
+        }
+        const switchRoot = input.closest('.fui-Switch');
+        const indicators = switchRoot
+          ? Array.from(switchRoot.querySelectorAll('.fui-Switch__indicator')).filter(visible)
+          : [];
+        if (indicators.length > 1) {
+          return {
+            inputCount: 1,
+            checked: true,
+            targetKind: 'indicator',
+            targetCount: indicators.length,
+            reason: 'Visible Fluent switch indicator was ambiguous',
+            fatal: true,
+          };
+        }
+        if (indicators.length === 1) {
+          const point = pointFor(indicators[0], true);
+          return {
+            inputCount: 1,
+            checked: true,
+            targetKind: 'indicator',
+            targetCount: 1,
+            targetText: describe(indicators[0]),
+            point,
+            reason: point ? undefined : 'Visible Fluent switch indicator was not enabled and hit-testable',
+          };
+        }
+        return {
+          inputCount: 1,
+          checked: true,
+          targetCount: 0,
+          reason: 'No visible associated label or Fluent switch indicator found',
+        };
+      })()`);
+      if (observation.fatal) {
+        assert.fail(`Cannot disable Asynchronous pattern safely. State: ${JSON.stringify(observation)}`);
+      }
+      if (observation.checked === false) {
+        return;
+      }
+      if (observation.point) {
+        await clickPoint(localCdp, observation.point);
+        break;
+      }
+      const remaining = deadline - Date.now();
+      if (remaining <= 0) {
+        break;
+      }
+      await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining)));
+    }
+    if (!observation.point) {
+      assert.fail(
+        `Timed out waiting for one visible, enabled, hit-testable Asynchronous pattern target. State: ${JSON.stringify(observation)}`
+      );
     }
     await pollHttpTimeoutCompose(
       () =>
-        this.evaluate<boolean>(`(() => {
-          const element = document.querySelector('[aria-label="Asynchronous pattern"]');
-          if (element instanceof HTMLInputElement) return element.checked;
-          return element?.getAttribute('aria-checked') === 'true';
+        localActions.evaluate<{ inputCount: number; checked?: boolean }>(`(() => {
+          const inputs = Array.from(document.querySelectorAll(${JSON.stringify(asyncPatternSwitchSelector)}));
+          return inputs.length === 1 && inputs[0] instanceof HTMLInputElement
+            ? { inputCount: 1, checked: inputs[0].checked }
+            : { inputCount: inputs.length };
         })()`),
-      (value) => value === false,
-      this.deadline,
+      (value) => value.inputCount === 1 && value.checked === false,
+      deadline,
       'disabled Asynchronous pattern'
     );
   }
 
-  private async openHttpSettings(): Promise<void> {
-    const startedAt = Date.now();
-    const deadline = Math.min(this.deadline, startedAt + this.settingsPanelTimeoutMs);
-    const localCdp = boundedCdp(this.cdp, deadline);
-    const localActions = new ProvenDesignerCdpActions(localCdp, this.contextId, deadline, this.assertActive);
+  private async openHttpSettings(
+    localCdp: CdpEvaluator,
+    localActions: ProvenDesignerCdpActions,
+    startedAt: number,
+    deadline: number
+  ): Promise<void> {
     let observation: HttpSettingsPanelObservation = {
       httpPanelOpen: false,
       selectedNodeIdentity: [],

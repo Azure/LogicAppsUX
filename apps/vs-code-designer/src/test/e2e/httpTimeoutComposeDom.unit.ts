@@ -310,6 +310,10 @@ async function httpSettingsPanelDomFixture(options: {
   includeSettings?: boolean;
   overlayText?: string;
   timeoutLabel?: string;
+  switchTarget?: 'label' | 'indicator' | 'ambiguous' | 'missing' | 'covered';
+  switchChecked?: boolean;
+  switchDisabled?: boolean;
+  switchTransitionDelayMs?: number;
 }) {
   const { JSDOM } = require('jsdom');
   const dom = new JSDOM(
@@ -322,6 +326,7 @@ async function httpSettingsPanelDomFixture(options: {
   );
   const window = dom.window;
   const clicked: string[] = [];
+  let switchTransitionObserved = false;
   const mouseEvents: Array<{
     type: string;
     x: number;
@@ -363,7 +368,14 @@ async function httpSettingsPanelDomFixture(options: {
       case 'request-timeout':
         return rect(520, 180, 220, 40);
       case 'async-pattern':
-        return rect(520, 240, 40, 40);
+        return rect(650, 240, 48, 40);
+      case 'async-pattern-label':
+      case 'async-pattern-label-secondary':
+        return rect(520, 240, 110, 40);
+      case 'async-pattern-cover':
+      case 'async-pattern-indicator':
+      case 'async-pattern-indicator-secondary':
+        return rect(650, 240, 48, 40);
       case 'blocking-menu':
         return rect(360, 20, 120, 60);
       default:
@@ -387,16 +399,21 @@ async function httpSettingsPanelDomFixture(options: {
   }
   window.document.elementFromPoint = (x: number, y: number) => {
     const candidates = [
+      'async-pattern-cover',
       'http-settings',
       'http-parameters',
       'request-timeout',
+      'async-pattern-label',
+      'async-pattern-label-secondary',
+      'async-pattern-indicator',
+      'async-pattern-indicator-secondary',
       'async-pattern',
       'blocking-menu',
       'unrelated-settings',
       'msla-node-HTTP',
     ]
       .map((id) => window.document.getElementById(id))
-      .filter((element) => element instanceof window.HTMLElement);
+      .filter((element) => element instanceof window.HTMLElement && window.getComputedStyle(element).pointerEvents !== 'none');
     return (
       candidates.find((element) => {
         const bounds = layout(element);
@@ -407,6 +424,18 @@ async function httpSettingsPanelDomFixture(options: {
   const mountPanel = () => {
     const host = window.document.getElementById('panel-host');
     assert.ok(host);
+    const switchTarget = options.switchTarget ?? 'label';
+    const labels =
+      switchTarget === 'label'
+        ? '<label id="async-pattern-label" class="fui-Switch__label" for="async-pattern">On</label>'
+        : switchTarget === 'ambiguous'
+          ? '<label id="async-pattern-label" class="fui-Switch__label" for="async-pattern">On</label>' +
+            '<label id="async-pattern-label-secondary" class="fui-Switch__label" for="async-pattern">Enabled</label>'
+          : '';
+    const indicators =
+      switchTarget === 'missing'
+        ? ''
+        : '<div id="async-pattern-indicator" class="fui-Switch__indicator" style="pointer-events: none" aria-hidden="true"><span></span></div>';
     host.innerHTML = `
       <section class="msla-panel-container">
         <div class="msla-panel-layout msla-panel-border-selected">
@@ -419,7 +448,21 @@ async function httpSettingsPanelDomFixture(options: {
                 : '<button id="http-settings" role="tab" aria-selected="false"><span> Settings </span></button>'
             }
             <input id="request-timeout" aria-label="${options.timeoutLabel ?? 'Request options - Timeout'}" value="" />
-            <input id="async-pattern" aria-label="Asynchronous pattern" type="checkbox" checked />
+            <div id="async-pattern-root" class="fui-Switch">
+              <input
+                id="async-pattern"
+                class="fui-Switch__input"
+                role="switch"
+                aria-label="Asynchronous pattern"
+                type="checkbox"
+                style="opacity: 0; position: absolute; inset: 0"
+                ${options.switchChecked === false ? '' : 'checked'}
+                ${options.switchDisabled ? 'disabled' : ''}
+              />
+              ${labels}
+              ${indicators}
+            </div>
+            ${switchTarget === 'covered' ? '<div id="async-pattern-cover">Blocking overlay</div>' : ''}
           </div>
         </div>
       </section>
@@ -433,10 +476,8 @@ async function httpSettingsPanelDomFixture(options: {
     const timeout = window.document.getElementById('request-timeout');
     timeout?.addEventListener('click', () => timeout.focus());
     const asyncPattern = window.document.getElementById('async-pattern');
-    asyncPattern?.addEventListener('click', () => {
-      if (asyncPattern instanceof window.HTMLInputElement) {
-        asyncPattern.checked = false;
-      }
+    asyncPattern?.addEventListener('change', () => {
+      switchTransitionObserved = true;
     });
   };
   window.document.getElementById('msla-node-HTTP')?.addEventListener('click', mountPanel);
@@ -484,7 +525,14 @@ async function httpSettingsPanelDomFixture(options: {
           element instanceof window.HTMLElement
         ) {
           clicked.push(element.id);
-          element.dispatchEvent(new window.MouseEvent('click', { bubbles: true, button: 0 }));
+          const dispatchClick = () => element.dispatchEvent(new window.MouseEvent('click', { bubbles: true, cancelable: true, button: 0 }));
+          const switchActivationDelay =
+            element.id === 'async-pattern' || element.id === 'async-pattern-label' ? (options.switchTransitionDelayMs ?? 0) : 0;
+          if (switchActivationDelay > 0) {
+            window.setTimeout(dispatchClick, switchActivationDelay);
+          } else {
+            dispatchClick();
+          }
           pendingMouse = undefined;
         } else {
           pendingMouse = undefined;
@@ -505,6 +553,7 @@ async function httpSettingsPanelDomFixture(options: {
     mouseEvents,
     window,
     driver: (settingsTimeoutMs = 45_000) => new HttpTimeoutComposeDriver(cdp, 17, Date.now() + 20_000, () => {}, settingsTimeoutMs),
+    switchTransitionObserved: () => switchTransitionObserved,
     assertNativeClickSequences: () => {
       assert.strictEqual(mouseEvents.length, clicked.length * 3, 'Every synthesized click requires exactly three native mouse events');
       for (let index = 0; index < clicked.length; index++) {
@@ -801,15 +850,28 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
     assert.ok(readiness.includes("visibleElements('.msla-panel-layout.msla-panel-border-selected')"));
     assert.ok(readiness.includes('layout.querySelector(\'[id^="msla-node-details-panel-"]'));
   });
-  await control('HTTP Settings uses an already-open HTTP node-details panel without re-clicking the node', async () => {
+  await control('HTTP Settings prefers the associated label over the overlaid native switch input', async () => {
     const fixture = await httpSettingsPanelDomFixture({ panelOpen: true, timeoutLabel: 'Action timeout' });
     try {
       await fixture.driver().configureHttpRequestSettings('PT1S');
       assert.strictEqual(fixture.clicked.filter((id) => id === 'msla-node-HTTP').length, 0);
       assert.strictEqual(fixture.clicked.filter((id) => id === 'http-settings').length, 1);
+      assert.strictEqual(fixture.clicked.filter((id) => id === 'async-pattern-label').length, 1);
+      assert.ok(!fixture.clicked.includes('async-pattern'), 'The opacity-zero native switch input must not be the click target');
       const timeoutInput = fixture.window.document.getElementById('request-timeout');
       assert.ok(timeoutInput instanceof fixture.window.HTMLInputElement);
       assert.strictEqual(timeoutInput.value, 'PT1S');
+      const asyncPattern = fixture.window.document.getElementById('async-pattern');
+      assert.ok(asyncPattern instanceof fixture.window.HTMLInputElement);
+      assert.strictEqual(asyncPattern.getAttribute('role'), 'switch');
+      assert.strictEqual(asyncPattern.getAttribute('aria-label'), 'Asynchronous pattern');
+      assert.strictEqual(fixture.window.getComputedStyle(asyncPattern).opacity, '0');
+      assert.strictEqual(asyncPattern.labels?.[0]?.id, 'async-pattern-label');
+      const indicator = fixture.window.document.getElementById('async-pattern-indicator');
+      assert.ok(indicator instanceof fixture.window.HTMLElement);
+      assert.strictEqual(fixture.window.getComputedStyle(indicator).pointerEvents, 'none');
+      assert.strictEqual(asyncPattern.checked, false);
+      assert.strictEqual(fixture.switchTransitionObserved(), true, 'Driver must observe the native checked-state transition');
       fixture.assertNativeClickSequences();
     } finally {
       fixture.dispose();
@@ -837,6 +899,140 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       fixture.dispose();
     }
   });
+  await control('HTTP Settings uses indicator coordinates when the same native switch input receives the pointer sequence', async () => {
+    const fixture = await httpSettingsPanelDomFixture({ panelOpen: true, switchTarget: 'indicator' });
+    try {
+      const indicator = fixture.window.document.getElementById('async-pattern-indicator');
+      const asyncPattern = fixture.window.document.getElementById('async-pattern');
+      assert.ok(indicator instanceof fixture.window.HTMLElement);
+      assert.ok(asyncPattern instanceof fixture.window.HTMLInputElement);
+      assert.strictEqual(asyncPattern.checked, true);
+      const indicatorRect = indicator.getBoundingClientRect();
+      assert.strictEqual(
+        fixture.window.document.elementFromPoint(
+          indicatorRect.left + indicatorRect.width / 2,
+          indicatorRect.top + indicatorRect.height / 2
+        ),
+        asyncPattern,
+        'The opacity-zero native input must overlay the non-hit-testable Fluent indicator'
+      );
+      await fixture.driver().configureHttpRequestSettings('PT1S');
+      assert.strictEqual(fixture.clicked.filter((id) => id === 'async-pattern').length, 1);
+      assert.ok(!fixture.clicked.includes('async-pattern-indicator'));
+      assert.deepStrictEqual(
+        fixture.mouseEvents
+          .filter(({ targetId }) => targetId === 'async-pattern')
+          .map(({ type, button, buttons, clickCount }) => ({ type, button, buttons, clickCount })),
+        [
+          { type: 'mouseMoved', button: 'none', buttons: undefined, clickCount: undefined },
+          { type: 'mousePressed', button: 'left', buttons: 1, clickCount: 1 },
+          { type: 'mouseReleased', button: 'left', buttons: 0, clickCount: 1 },
+        ]
+      );
+      assert.strictEqual(asyncPattern.checked, false);
+      assert.strictEqual(fixture.switchTransitionObserved(), true);
+      fixture.assertNativeClickSequences();
+    } finally {
+      fixture.dispose();
+    }
+  });
+  await control('HTTP Settings does not click an already-disabled asynchronous-pattern switch', async () => {
+    const fixture = await httpSettingsPanelDomFixture({ panelOpen: true, switchChecked: false });
+    try {
+      await fixture.driver().configureHttpRequestSettings('PT1S');
+      assert.ok(!fixture.clicked.includes('async-pattern-label'));
+      assert.ok(!fixture.clicked.includes('async-pattern-indicator'));
+      assert.ok(!fixture.clicked.includes('async-pattern'));
+      assert.strictEqual(fixture.switchTransitionObserved(), false);
+      fixture.assertNativeClickSequences();
+    } finally {
+      fixture.dispose();
+    }
+  });
+  await control('ambiguous asynchronous-pattern labels fail closed without clicking either target', async () => {
+    const fixture = await httpSettingsPanelDomFixture({ panelOpen: true, switchTarget: 'ambiguous' });
+    try {
+      await assert.rejects(() => fixture.driver().configureHttpRequestSettings('PT1S'), /Visible associated switch label was ambiguous/);
+      assert.ok(!fixture.clicked.includes('async-pattern-label'));
+      assert.ok(!fixture.clicked.includes('async-pattern-label-secondary'));
+      assert.ok(!fixture.clicked.includes('async-pattern'));
+      fixture.assertNativeClickSequences();
+    } finally {
+      fixture.dispose();
+    }
+  });
+  await control('disabled asynchronous-pattern switch fails closed without native input', async () => {
+    const fixture = await httpSettingsPanelDomFixture({ panelOpen: true, switchDisabled: true });
+    try {
+      await assert.rejects(() => fixture.driver().configureHttpRequestSettings('PT1S'), /Production switch input is disabled/);
+      assert.ok(!fixture.clicked.includes('async-pattern-label'));
+      assert.ok(!fixture.clicked.includes('async-pattern-indicator'));
+      assert.ok(!fixture.clicked.includes('async-pattern'));
+      fixture.assertNativeClickSequences();
+    } finally {
+      fixture.dispose();
+    }
+  });
+  for (const [switchTarget, expectedReason] of [
+    ['missing', 'No visible associated label or Fluent switch indicator found'],
+    ['covered', 'Visible Fluent switch indicator was not enabled and hit-testable'],
+  ] as const) {
+    await control(`${switchTarget} asynchronous-pattern target fails closed on the local HTTP Settings deadline`, async () => {
+      const fixture = await httpSettingsPanelDomFixture({ panelOpen: true, switchTarget });
+      try {
+        if (switchTarget === 'covered') {
+          const indicator = fixture.window.document.getElementById('async-pattern-indicator');
+          const cover = fixture.window.document.getElementById('async-pattern-cover');
+          assert.ok(indicator instanceof fixture.window.HTMLElement);
+          assert.ok(cover instanceof fixture.window.HTMLElement);
+          const indicatorRect = indicator.getBoundingClientRect();
+          assert.strictEqual(
+            fixture.window.document.elementFromPoint(
+              indicatorRect.left + indicatorRect.width / 2,
+              indicatorRect.top + indicatorRect.height / 2
+            ),
+            cover,
+            'An unrelated overlay at indicator coordinates must remain the hit target'
+          );
+        }
+        const startedAt = Date.now();
+        await assert.rejects(
+          () => fixture.driver(500).configureHttpRequestSettings('PT1S'),
+          (error: Error) => {
+            assert.match(error.message, /one visible, enabled, hit-testable Asynchronous pattern target/);
+            assert.ok(error.message.includes(expectedReason));
+            return true;
+          }
+        );
+        assert.ok(Date.now() - startedAt < 1500, `${switchTarget} target must honor the local HTTP Settings deadline`);
+        assert.ok(!fixture.clicked.includes('async-pattern-label'));
+        assert.ok(!fixture.clicked.includes('async-pattern-indicator'));
+        assert.ok(!fixture.clicked.includes('async-pattern'));
+        fixture.assertNativeClickSequences();
+      } finally {
+        fixture.dispose();
+      }
+    });
+  }
+  await control('asynchronous-pattern checked-state polling honors the local HTTP Settings deadline', async () => {
+    const fixture = await httpSettingsPanelDomFixture({
+      panelOpen: true,
+      switchTransitionDelayMs: 1000,
+    });
+    try {
+      const startedAt = Date.now();
+      await assert.rejects(
+        () => fixture.driver(500).configureHttpRequestSettings('PT1S'),
+        /Timed out waiting for disabled Asynchronous pattern/
+      );
+      assert.ok(Date.now() - startedAt < 1500, 'Checked-state polling must not inherit the suite-wide deadline');
+      assert.strictEqual(fixture.clicked.filter((id) => id === 'async-pattern-label').length, 1);
+      assert.ok(!fixture.clicked.includes('async-pattern'));
+      fixture.assertNativeClickSequences();
+    } finally {
+      fixture.dispose();
+    }
+  });
   await control('missing scoped HTTP Settings tab fails on its local bound with panel and overlay diagnostics', async () => {
     const fixture = await httpSettingsPanelDomFixture({
       panelOpen: true,
@@ -859,6 +1055,19 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       const source = fs.readFileSync(path.join(repository, 'apps/vs-code-designer/src/test/e2e/httpTimeoutComposeDriver.ts'), 'utf8');
       assert.ok(source.includes('const httpSettingsPanelTimeoutMs = 45_000;'));
       assert.ok(source.includes('Math.min(this.deadline, startedAt + this.settingsPanelTimeoutMs)'));
+      assert.ok(source.includes('input[role="switch"][aria-label="Asynchronous pattern"]'));
+      assert.ok(source.includes('input.labels?.[0]'));
+      assert.ok(source.includes('Array.from(input.labels || []).filter(visible)'));
+      assert.ok(source.includes("switchRoot.querySelectorAll('.fui-Switch__indicator')"));
+      assert.ok(source.includes('acceptInputHit && hit === input'));
+      assert.ok(source.includes('pointFor(indicators[0], true)'));
+      assert.ok(source.includes('await clickPoint(localCdp, observation.point);'));
+      const switchDriver = source.slice(
+        source.indexOf('private async disableAsyncPattern'),
+        source.indexOf('private async openHttpSettings')
+      );
+      assert.ok(!switchDriver.includes('.click('), 'Switch driver must not invoke a DOM or generic element click');
+      assert.ok(!/\.checked\s*=(?!=)/.test(switchDriver), 'Switch driver must not mutate native checked state');
       fixture.assertNativeClickSequences();
     } finally {
       fixture.dispose();
