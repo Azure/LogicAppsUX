@@ -1263,6 +1263,10 @@ function deriveSemanticText(expectation: ScreenshotExpectation): SemanticTextGro
         expectation.actionTitle,
         ...(expectation.requiredText ?? []),
         ...(expectation.fields ?? []).flatMap((field) => field.value ?? []),
+        ...(expectation.switches ?? []).flatMap((expected) => [
+          ...(expected.labels ?? []),
+          ...(expected.stateText ? [expected.stateText] : []),
+        ]),
       ];
     case 'overview':
       return [expectation.workflowName, expectation.runName, expectation.runStatus].filter((value): value is string => !!value);

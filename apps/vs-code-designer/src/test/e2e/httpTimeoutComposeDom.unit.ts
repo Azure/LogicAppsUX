@@ -343,8 +343,14 @@ async function httpSettingsPanelDomFixture(options: {
   staleGetOption?: boolean;
   methodOwnershipDeadlineRace?: boolean;
   switchTarget?: 'label' | 'indicator' | 'ambiguous' | 'missing' | 'covered';
+  switchLabelHit?: 'label' | 'descendant';
+  switchIndicatorHit?: 'input' | 'indicator' | 'descendant';
   switchChecked?: boolean;
   switchDisabled?: boolean;
+  switchInputGeometry?: 'onscreen' | 'scrollable-offscreen' | 'offscreen' | 'zero' | 'clipped' | 'border-client-clipped';
+  staleSwitchInput?: boolean;
+  switchReplacementRace?: 'label-after-move' | 'label-after-press' | 'indicator-after-move' | 'indicator-after-press';
+  switchPressResponse?: 'reject-once' | 'timeout-once';
   switchTransitionDelayMs?: number;
 }) {
   const { JSDOM } = require('jsdom');
@@ -391,7 +397,13 @@ async function httpSettingsPanelDomFixture(options: {
   let staleMethodControlApplied = false;
   let staleGetOptionApplied = false;
   let staleRequestOptionsTimeoutApplied = false;
+  let staleSwitchInputApplied = false;
+  let switchReplacementApplied = false;
+  let switchPressResponseApplied = false;
+  let asyncPatternScrolled = false;
   let methodOwnershipObservationCount = 0;
+  let nextHandle = 0;
+  const handles = new Map<string, any>();
   const mouseEvents: Array<{
     type: string;
     x: number;
@@ -405,10 +417,9 @@ async function httpSettingsPanelDomFixture(options: {
     | {
         x: number;
         y: number;
-        targetId: string;
-        target: any;
         moved: boolean;
         pressed: boolean;
+        pressTarget?: any;
       }
     | undefined;
   const rect = (left: number, top: number, width: number, height: number) => ({
@@ -455,15 +466,39 @@ async function httpSettingsPanelDomFixture(options: {
       case 'request-timeout-0':
       case 'request-timeout-1':
         return rect(520, 320 + (element.id === 'request-timeout' ? 0 : Number(element.id.split('-').at(-1) || 0)) * 48, 220, 40);
-      case 'async-pattern':
-        return rect(650, 420, 48, 40);
+      case 'async-pattern': {
+        switch (options.switchInputGeometry ?? 'onscreen') {
+          case 'scrollable-offscreen':
+            return asyncPatternScrolled ? rect(650, 420, 48, 40) : rect(650, 900, 48, 40);
+          case 'offscreen':
+            return rect(650, 900, 48, 40);
+          case 'zero':
+            return rect(650, 420, 0, 0);
+          default:
+            return rect(650, 420, 48, 40);
+        }
+      }
+      case 'async-pattern-root': {
+        if (options.switchInputGeometry === 'clipped') {
+          return rect(650, 420, 24, 40);
+        }
+        if (options.switchInputGeometry === 'border-client-clipped') {
+          return rect(650, 420, 64, 56);
+        }
+        return rect(520, 410, 190, 60);
+      }
       case 'async-pattern-label':
       case 'async-pattern-label-secondary':
         return rect(520, 420, 110, 40);
+      case 'async-pattern-label-child':
+        return rect(550, 430, 50, 20);
       case 'async-pattern-cover':
+        return rect(650, 420, 48, 40);
       case 'async-pattern-indicator':
       case 'async-pattern-indicator-secondary':
-        return rect(650, 420, 48, 40);
+        return rect(650, 425, 20, 30);
+      case 'async-pattern-indicator-child':
+        return rect(654, 430, 12, 20);
       case 'blocking-menu':
         return rect(360, 20, 120, 60);
       default: {
@@ -492,12 +527,32 @@ async function httpSettingsPanelDomFixture(options: {
   };
   window.HTMLElement.prototype.scrollIntoView = function () {
     scrolledIntoView.push(this.id || this.getAttribute('aria-label') || this.tagName.toLowerCase());
+    if (this.id === 'async-pattern' && options.switchInputGeometry === 'scrollable-offscreen') {
+      asyncPatternScrolled = true;
+    }
   };
-  for (const dimension of ['offsetWidth', 'clientWidth', 'offsetHeight', 'clientHeight']) {
+  for (const dimension of ['offsetWidth', 'offsetHeight', 'clientWidth', 'clientHeight']) {
     Object.defineProperty(window.HTMLElement.prototype, dimension, {
       configurable: true,
       get() {
-        return dimension.endsWith('Width') ? layout(this).width : layout(this).height;
+        const bounds = layout(this);
+        if (this.id === 'async-pattern-root' && options.switchInputGeometry === 'border-client-clipped') {
+          if (dimension === 'clientWidth') {
+            return bounds.width - 16;
+          }
+          if (dimension === 'clientHeight') {
+            return bounds.height - 16;
+          }
+        }
+        return dimension.endsWith('Width') ? bounds.width : bounds.height;
+      },
+    });
+  }
+  for (const dimension of ['clientLeft', 'clientTop']) {
+    Object.defineProperty(window.HTMLElement.prototype, dimension, {
+      configurable: true,
+      get() {
+        return this.id === 'async-pattern-root' && options.switchInputGeometry === 'border-client-clipped' ? 8 : 0;
       },
     });
   }
@@ -534,6 +589,24 @@ async function httpSettingsPanelDomFixture(options: {
     });
     if (requestOptionsControl) {
       return requestOptionsControl;
+    }
+    if (options.switchLabelHit === 'descendant') {
+      const labelChild = window.document.getElementById('async-pattern-label-child');
+      if (labelChild instanceof window.HTMLElement) {
+        const bounds = layout(labelChild);
+        if (x >= bounds.left && x <= bounds.right && y >= bounds.top && y <= bounds.bottom) {
+          return labelChild;
+        }
+      }
+    }
+    if (options.switchIndicatorHit === 'descendant') {
+      const indicatorChild = window.document.getElementById('async-pattern-indicator-child');
+      if (indicatorChild instanceof window.HTMLElement) {
+        const bounds = layout(indicatorChild);
+        if (x >= bounds.left && x <= bounds.right && y >= bounds.top && y <= bounds.bottom) {
+          return indicatorChild;
+        }
+      }
     }
     const candidates = [
       'async-pattern-cover',
@@ -609,7 +682,9 @@ async function httpSettingsPanelDomFixture(options: {
     const switchTarget = options.switchTarget ?? 'label';
     const labels =
       switchTarget === 'label'
-        ? '<label id="async-pattern-label" class="fui-Switch__label" for="async-pattern">On</label>'
+        ? `<label id="async-pattern-label" class="fui-Switch__label" for="async-pattern">${
+            options.switchLabelHit === 'descendant' ? '<span id="async-pattern-label-child">On</span>' : 'On'
+          }</label>`
         : switchTarget === 'ambiguous'
           ? '<label id="async-pattern-label" class="fui-Switch__label" for="async-pattern">On</label>' +
             '<label id="async-pattern-label-secondary" class="fui-Switch__label" for="async-pattern">Enabled</label>'
@@ -617,7 +692,15 @@ async function httpSettingsPanelDomFixture(options: {
     const indicators =
       switchTarget === 'missing'
         ? ''
-        : '<div id="async-pattern-indicator" class="fui-Switch__indicator" style="pointer-events: none" aria-hidden="true"><span></span></div>';
+        : `<div id="async-pattern-indicator" class="fui-Switch__indicator" style="pointer-events: ${
+            options.switchIndicatorHit === 'indicator' || options.switchIndicatorHit === 'descendant' ? 'auto' : 'none'
+          }" aria-hidden="true"><span id="async-pattern-indicator-child"></span></div>`;
+    const switchRootStyle =
+      options.switchInputGeometry === 'border-client-clipped'
+        ? 'style="border: 8px solid transparent; overflow-x: hidden; overflow-y: hidden"'
+        : options.switchInputGeometry === 'clipped'
+          ? 'style="overflow-x: hidden; overflow-y: hidden"'
+          : '';
     const panelTitleMode = options.panelTitleMode ?? 'editable';
     const panelTitle =
       panelTitleMode === 'editable'
@@ -705,7 +788,7 @@ async function httpSettingsPanelDomFixture(options: {
                   ${initialNetworkingExpanded ? networkingRequestOptions : ''}
                   ${
                     initialNetworkingExpanded
-                      ? `<div id="async-pattern-root" class="fui-Switch">
+                      ? `<div id="async-pattern-root" class="fui-Switch" ${switchRootStyle}>
                           <input
                             id="async-pattern"
                             class="fui-Switch__input"
@@ -749,12 +832,38 @@ async function httpSettingsPanelDomFixture(options: {
         timeout.addEventListener('click', () => timeout.focus());
       }
     };
+    const installAsyncPatternChangeHandler = () => {
+      const asyncPattern = window.document.getElementById('async-pattern');
+      if (!(asyncPattern instanceof window.HTMLInputElement)) {
+        return;
+      }
+      const updateVisibleStateLabel = () => {
+        const label = window.document.getElementById('async-pattern-label');
+        if (label instanceof window.HTMLElement) {
+          const labelChild = window.document.getElementById('async-pattern-label-child');
+          if (labelChild instanceof window.HTMLElement) {
+            labelChild.textContent = asyncPattern.checked ? 'On' : 'Off';
+          } else {
+            label.textContent = asyncPattern.checked ? 'On' : 'Off';
+          }
+        }
+      };
+      updateVisibleStateLabel();
+      asyncPattern.addEventListener('change', () => {
+        switchTransitionObserved = true;
+        updateVisibleStateLabel();
+      });
+      const indicator = window.document.getElementById('async-pattern-indicator');
+      indicator?.addEventListener('click', () => {
+        asyncPattern.click();
+      });
+    };
     const renderNetworkingSettings = () => {
       const settingsRoot = window.document.getElementById('networking-settings');
       assert.ok(settingsRoot);
       settingsRoot.innerHTML = `
         ${networkingRequestOptions}
-        <div id="async-pattern-root" class="fui-Switch">
+        <div id="async-pattern-root" class="fui-Switch" ${switchRootStyle}>
           <input
             id="async-pattern"
             class="fui-Switch__input"
@@ -771,10 +880,7 @@ async function httpSettingsPanelDomFixture(options: {
         ${switchTarget === 'covered' ? '<div id="async-pattern-cover">Blocking overlay</div>' : ''}
         ${options.requestOptionsTimeoutCovered ? '<div id="request-timeout-cover">Blocking Request options timeout overlay</div>' : ''}
       `;
-      const asyncPattern = window.document.getElementById('async-pattern');
-      asyncPattern?.addEventListener('change', () => {
-        switchTransitionObserved = true;
-      });
+      installAsyncPatternChangeHandler();
       installRequestOptionsFocusHandlers();
     };
     const settings = window.document.getElementById('http-settings');
@@ -797,10 +903,7 @@ async function httpSettingsPanelDomFixture(options: {
       }
     });
     installRequestOptionsFocusHandlers();
-    const asyncPattern = window.document.getElementById('async-pattern');
-    asyncPattern?.addEventListener('change', () => {
-      switchTransitionObserved = true;
-    });
+    installAsyncPatternChangeHandler();
   };
   window.document.getElementById('msla-node-HTTP')?.addEventListener('click', mountPanel);
   if (options.panelOpen) {
@@ -898,7 +1001,41 @@ async function httpSettingsPanelDomFixture(options: {
       }
       return window.eval(expression) as T;
     },
-    async send(method: string, params: Record<string, unknown>) {
+    async send(method: string, params: Record<string, unknown>, cdpOptions?: { timeoutMs?: number }) {
+      if (method === 'Runtime.evaluate') {
+        const value = window.eval(String(params.expression));
+        if (value && (typeof value === 'object' || typeof value === 'function')) {
+          const objectId = `http-settings-dom-${++nextHandle}`;
+          handles.set(objectId, value);
+          return { result: { result: { objectId } } };
+        }
+        return { result: { result: { value } } };
+      }
+      if (method === 'Runtime.callFunctionOn') {
+        const target = handles.get(String(params.objectId));
+        if (!target) {
+          throw new Error(`Unknown Runtime object ${String(params.objectId)}`);
+        }
+        const args = Array.isArray(params.arguments)
+          ? params.arguments.map((argument: { objectId?: string; value?: unknown }) =>
+              argument.objectId ? handles.get(argument.objectId) : argument.value
+            )
+          : [];
+        const value = window.eval(`(${String(params.functionDeclaration)})`).call(target, ...args);
+        if (params.returnByValue === false && value && (typeof value === 'object' || typeof value === 'function')) {
+          const objectId = `http-settings-dom-${++nextHandle}`;
+          handles.set(objectId, value);
+          return { result: { result: { objectId } } };
+        }
+        return { result: { result: { value } } };
+      }
+      if (method === 'Runtime.releaseObject') {
+        const objectId = String(params.objectId);
+        if (!handles.delete(objectId)) {
+          throw new Error(`Unknown Runtime object ${objectId}`);
+        }
+        return {};
+      }
       if (method === 'Input.dispatchMouseEvent') {
         const type = String(params.type);
         const x = Number(params.x);
@@ -917,6 +1054,22 @@ async function httpSettingsPanelDomFixture(options: {
                   `${element.getAttribute('role') || element.tagName.toLowerCase()}:${(element.textContent || element.getAttribute('aria-label') || '').trim()}`
             : '';
         mouseEvents.push({ type, x, y, button, buttons, clickCount, targetId });
+        const applySwitchReplacement = (stage: 'after-move' | 'after-press') => {
+          const race = options.switchReplacementRace;
+          if (!race || switchReplacementApplied || !race.endsWith(stage)) {
+            return;
+          }
+          const id = race.startsWith('label') ? 'async-pattern-label' : 'async-pattern-indicator';
+          const target = window.document.getElementById(id);
+          if (target instanceof window.HTMLElement) {
+            const targetBounds = layout(target);
+            if (x < targetBounds.left || x > targetBounds.right || y < targetBounds.top || y > targetBounds.bottom) {
+              return;
+            }
+            switchReplacementApplied = true;
+            target.replaceWith(target.cloneNode(true));
+          }
+        };
         if (
           type === 'mouseMoved' &&
           options.staleMethodControl &&
@@ -949,8 +1102,22 @@ async function httpSettingsPanelDomFixture(options: {
           staleRequestOptionsTimeoutApplied = true;
           element.replaceWith(element.cloneNode(true));
         }
+        if (
+          type === 'mouseMoved' &&
+          options.staleSwitchInput &&
+          !staleSwitchInputApplied &&
+          element instanceof window.HTMLInputElement &&
+          element.getAttribute('role') === 'switch' &&
+          element.getAttribute('aria-label') === 'Asynchronous pattern'
+        ) {
+          staleSwitchInputApplied = true;
+          element.replaceWith(element.cloneNode(true));
+        }
+        if (type === 'mouseMoved') {
+          applySwitchReplacement('after-move');
+        }
         if (type === 'mouseMoved' && button === 'none' && targetId) {
-          pendingMouse = { x, y, targetId, target: element, moved: true, pressed: false };
+          pendingMouse = { x, y, moved: true, pressed: false };
         } else if (
           type === 'mousePressed' &&
           button === 'left' &&
@@ -958,11 +1125,26 @@ async function httpSettingsPanelDomFixture(options: {
           clickCount === 1 &&
           pendingMouse?.moved &&
           pendingMouse.x === x &&
-          pendingMouse.y === y &&
-          pendingMouse.targetId === targetId &&
-          pendingMouse.target === element
+          pendingMouse.y === y
         ) {
           pendingMouse.pressed = true;
+          pendingMouse.pressTarget = element;
+          applySwitchReplacement('after-press');
+          const switchPress =
+            element instanceof window.HTMLElement &&
+            (element.id === 'async-pattern' ||
+              element.id === 'async-pattern-label' ||
+              element.id === 'async-pattern-indicator' ||
+              element.closest('#async-pattern-label') !== null ||
+              element.closest('#async-pattern-indicator') !== null);
+          if (switchPress && options.switchPressResponse && !switchPressResponseApplied) {
+            switchPressResponseApplied = true;
+            if (options.switchPressResponse === 'timeout-once') {
+              await new Promise((resolve) => window.setTimeout(resolve, (cdpOptions?.timeoutMs ?? 1) + 5));
+              throw new Error(`Timed out waiting for CDP Input.dispatchMouseEvent response after ${cdpOptions?.timeoutMs ?? 1}ms`);
+            }
+            throw new Error('Simulated rejected CDP mousePressed response after dispatch');
+          }
         } else if (
           type === 'mouseReleased' &&
           button === 'left' &&
@@ -972,8 +1154,7 @@ async function httpSettingsPanelDomFixture(options: {
           pendingMouse.pressed &&
           pendingMouse.x === x &&
           pendingMouse.y === y &&
-          pendingMouse.targetId === targetId &&
-          pendingMouse.target === element &&
+          pendingMouse.pressTarget === element &&
           element instanceof window.HTMLElement
         ) {
           clicked.push(element.id);
@@ -1012,6 +1193,8 @@ async function httpSettingsPanelDomFixture(options: {
     methodTransitionObserved: () => methodTransitionObserved,
     methodOwnershipObservationCount: () => methodOwnershipObservationCount,
     switchTransitionObserved: () => switchTransitionObserved,
+    activeHandleCount: () => handles.size,
+    heldMouseButton: () => pendingMouse?.pressed === true,
     assertNativePointerShapes: () => {
       assert.strictEqual(mouseEvents.length, clicked.length * 3, 'Every completed click requires exactly three native mouse events');
       for (let index = 0; index < clicked.length; index++) {
@@ -1639,7 +1822,7 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       }
     });
   }
-  await control('stale HTTP Method control fails closed on the local deadline after native moved/pressed/released input', async () => {
+  await control('stale HTTP Method control replacement receives re-hit pointer input but cannot open the listbox', async () => {
     const fixture = await httpSettingsPanelDomFixture({ panelOpen: true, staleMethodControl: true });
     try {
       const startedAt = Date.now();
@@ -1653,7 +1836,7 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
           { type: 'mouseReleased', button: 'left', buttons: 0, clickCount: 1 },
         ]
       );
-      assert.strictEqual(fixture.clicked.length, 0);
+      assert.strictEqual(fixture.clicked.length, 1, 'Chromium re-hit-testing may click the replacement Method control');
       assert.strictEqual(fixture.methodTransitionObserved(), false);
     } finally {
       fixture.dispose();
@@ -1665,7 +1848,11 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       const startedAt = Date.now();
       await assert.rejects(() => fixture.driver(220).selectHttpMethodGet(), /HTTP Method GET selected in the active HTTP panel/);
       assert.ok(Date.now() - startedAt < 1000, 'Stale GET option must honor the local HTTP panel deadline');
-      assert.strictEqual(fixture.clicked.length, 1, 'Only the stable Method control click may complete');
+      assert.strictEqual(
+        fixture.clicked.length,
+        2,
+        'Chromium re-hit-testing may click the replacement GET option after the stable control'
+      );
       assert.strictEqual(fixture.methodTransitionObserved(), false);
       const method = fixture.window.document.querySelector('input[role="combobox"][aria-label="Method"]');
       assert.ok(method instanceof fixture.window.HTMLInputElement);
@@ -1716,12 +1903,87 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       assert.strictEqual(asyncPattern.getAttribute('aria-label'), 'Asynchronous pattern');
       assert.strictEqual(fixture.window.getComputedStyle(asyncPattern).opacity, '0');
       assert.strictEqual(asyncPattern.labels?.[0]?.id, 'async-pattern-label');
+      const inputScrollIndex = fixture.scrolledIntoView.indexOf('async-pattern');
+      const labelScrollIndex = fixture.scrolledIntoView.indexOf('async-pattern-label');
+      assert.ok(inputScrollIndex >= 0, 'The exact native switch input must be scrolled into view');
+      assert.ok(labelScrollIndex >= 0, 'The preferred associated label must remain the click target');
+      assert.ok(inputScrollIndex < labelScrollIndex, 'The exact native switch input must be scrolled before preferred-target resolution');
       const indicator = fixture.window.document.getElementById('async-pattern-indicator');
       assert.ok(indicator instanceof fixture.window.HTMLElement);
       assert.strictEqual(fixture.window.getComputedStyle(indicator).pointerEvents, 'none');
       assert.strictEqual(asyncPattern.checked, false);
       assert.strictEqual(fixture.switchTransitionObserved(), true, 'Driver must observe the native checked-state transition');
       fixture.assertNativeClickSequences();
+    } finally {
+      fixture.dispose();
+    }
+  });
+  await control('HTTP Settings captures ordered timeout value then exact visible Asynchronous pattern Off evidence', async () => {
+    const fixture = await httpSettingsPanelDomFixture({ panelOpen: true, networkingExpanded: true });
+    const timeoutExpectation: ScreenshotExpectation = {
+      kind: 'designerPanel',
+      label: 'httpTimeoutRequestPt1sTimeoutConfigured',
+      actionTitle: 'HTTP',
+      requiredText: ['Settings'],
+      fields: [
+        {
+          labels: ['Request options - Timeout'],
+          exactAriaLabel: 'Request options - Timeout',
+          sectionTitle: 'Networking',
+          value: 'PT1S',
+        },
+      ],
+    };
+    const asyncOffExpectation: ScreenshotExpectation = {
+      kind: 'designerPanel',
+      label: 'httpTimeoutRequestPt1sAsyncPatternOff',
+      actionTitle: 'HTTP',
+      requiredText: ['Settings'],
+      switches: [
+        {
+          labels: ['Asynchronous pattern'],
+          exactAriaLabel: 'Asynchronous pattern',
+          sectionTitle: 'Networking',
+          checked: false,
+          stateText: 'Off',
+        },
+      ],
+    };
+    const checkpoints: string[] = [];
+    try {
+      await fixture.driver().configureHttpRequestSettings('PT1S', {
+        timeoutConfigured: async () => {
+          checkpoints.push('timeout');
+          assert.strictEqual(fixture.screenshotSnapshot(timeoutExpectation).ready, true);
+          const prematureAsync = fixture.screenshotSnapshot(asyncOffExpectation);
+          assert.strictEqual(prematureAsync.ready, false, 'Timeout evidence must not claim the still-On switch is Off');
+          assert.ok(prematureAsync.reasonCodes.includes('switch-checked-mismatch'));
+        },
+        asyncPatternDisabled: async () => {
+          checkpoints.push('async-off');
+          assert.strictEqual(
+            fixture.scrolledIntoView.at(-1),
+            'async-pattern',
+            'Off evidence must be captured immediately after scrolling the exact bound input'
+          );
+          const asyncOff = fixture.screenshotSnapshot(asyncOffExpectation);
+          assert.strictEqual(asyncOff.ready, true);
+          assert.strictEqual(
+            fixture.screenshotSnapshot({
+              ...asyncOffExpectation,
+              switches: [{ ...asyncOffExpectation.switches![0], stateText: 'On' }],
+            }).ready,
+            false,
+            'Switch evidence must bind the visible Off label, not generic panel text'
+          );
+        },
+      });
+      assert.deepStrictEqual(checkpoints, ['timeout', 'async-off']);
+      assert.ok(
+        fixture.scrolledIntoView.indexOf('request-timeout') < fixture.scrolledIntoView.lastIndexOf('async-pattern'),
+        'The suite must capture timeout evidence before scrolling back to Asynchronous pattern evidence'
+      );
+      assert.strictEqual(fixture.activeHandleCount(), 0);
     } finally {
       fixture.dispose();
     }
@@ -1800,7 +2062,11 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       const requestTimeoutInput = fixture.window.document.getElementById('request-timeout');
       assert.ok(requestTimeoutInput instanceof fixture.window.HTMLInputElement);
       assert.strictEqual(requestTimeoutInput.value, '');
-      assert.ok(!fixture.clicked.includes('request-timeout'));
+      assert.strictEqual(
+        fixture.clicked.filter((id) => id === 'request-timeout').length,
+        1,
+        'Chromium re-hit-testing may click the stale replacement before focus validation fails closed'
+      );
       assert.ok(!fixture.clicked.includes('action-timeout'));
     } finally {
       fixture.dispose();
@@ -1852,6 +2118,42 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       }
     });
   }
+  await control('HTTP Settings accepts an associated-label descendant as the independently hit-tested retained target', async () => {
+    const fixture = await httpSettingsPanelDomFixture({
+      panelOpen: true,
+      networkingExpanded: true,
+      switchTarget: 'label',
+      switchLabelHit: 'descendant',
+    });
+    try {
+      const label = fixture.window.document.getElementById('async-pattern-label');
+      const labelChild = fixture.window.document.getElementById('async-pattern-label-child');
+      const asyncPattern = fixture.window.document.getElementById('async-pattern');
+      assert.ok(label instanceof fixture.window.HTMLLabelElement);
+      assert.ok(labelChild instanceof fixture.window.HTMLElement);
+      assert.ok(asyncPattern instanceof fixture.window.HTMLInputElement);
+      const labelRect = label.getBoundingClientRect();
+      assert.strictEqual(
+        fixture.window.document.elementFromPoint(labelRect.left + labelRect.width / 2, labelRect.top + labelRect.height / 2),
+        labelChild
+      );
+      await fixture.driver().configureHttpRequestSettings('PT1S');
+      assert.strictEqual(fixture.clicked.filter((id) => id === 'async-pattern-label-child').length, 1);
+      assert.strictEqual(asyncPattern.checked, false);
+      assert.strictEqual(fixture.switchTransitionObserved(), true);
+      assert.strictEqual(fixture.activeHandleCount(), 0);
+      assert.deepStrictEqual(
+        fixture.mouseEvents.slice(-3).map(({ type, targetId }) => ({ type, targetId })),
+        [
+          { type: 'mouseMoved', targetId: 'async-pattern-label-child' },
+          { type: 'mousePressed', targetId: 'async-pattern-label-child' },
+          { type: 'mouseReleased', targetId: 'async-pattern-label-child' },
+        ]
+      );
+    } finally {
+      fixture.dispose();
+    }
+  });
   await control('HTTP Settings uses indicator coordinates when the same native switch input receives the pointer sequence', async () => {
     const fixture = await httpSettingsPanelDomFixture({ panelOpen: true, networkingExpanded: true, switchTarget: 'indicator' });
     try {
@@ -1882,6 +2184,112 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
           { type: 'mouseReleased', button: 'left', buttons: 0, clickCount: 1 },
         ]
       );
+      assert.strictEqual(asyncPattern.checked, false);
+      assert.strictEqual(fixture.switchTransitionObserved(), true);
+      const inputRect = asyncPattern.getBoundingClientRect();
+      const inputCenter = { x: inputRect.left + inputRect.width / 2, y: inputRect.top + inputRect.height / 2 };
+      const indicatorCenter = {
+        x: indicatorRect.left + indicatorRect.width / 2,
+        y: indicatorRect.top + indicatorRect.height / 2,
+      };
+      assert.notDeepStrictEqual(indicatorCenter, inputCenter, 'Indicator preference must be observable independently of input fallback');
+      assert.ok(
+        fixture.mouseEvents
+          .filter(({ targetId }) => targetId === 'async-pattern')
+          .every(({ x, y }) => x === indicatorCenter.x && y === indicatorCenter.y),
+        'Native input must receive the pointer sequence at the preferred indicator coordinates'
+      );
+      fixture.assertNativeClickSequences();
+    } finally {
+      fixture.dispose();
+    }
+  });
+  for (const indicatorHit of ['indicator', 'descendant'] as const) {
+    await control(
+      `HTTP Settings accepts the retained Fluent indicator ${indicatorHit} as the independently hit-tested target`,
+      async () => {
+        const fixture = await httpSettingsPanelDomFixture({
+          panelOpen: true,
+          networkingExpanded: true,
+          switchTarget: 'indicator',
+          switchIndicatorHit: indicatorHit,
+        });
+        try {
+          const indicator = fixture.window.document.getElementById('async-pattern-indicator');
+          const expectedHit =
+            indicatorHit === 'descendant' ? fixture.window.document.getElementById('async-pattern-indicator-child') : indicator;
+          const asyncPattern = fixture.window.document.getElementById('async-pattern');
+          assert.ok(indicator instanceof fixture.window.HTMLElement);
+          assert.ok(expectedHit instanceof fixture.window.HTMLElement);
+          assert.ok(asyncPattern instanceof fixture.window.HTMLInputElement);
+          const indicatorRect = indicator.getBoundingClientRect();
+          assert.strictEqual(
+            fixture.window.document.elementFromPoint(
+              indicatorRect.left + indicatorRect.width / 2,
+              indicatorRect.top + indicatorRect.height / 2
+            ),
+            expectedHit
+          );
+          await fixture.driver().configureHttpRequestSettings('PT1S');
+          assert.strictEqual(fixture.clicked.filter((id) => id === expectedHit.id).length, 1);
+          assert.strictEqual(asyncPattern.checked, false);
+          assert.strictEqual(fixture.switchTransitionObserved(), true);
+          assert.strictEqual(fixture.activeHandleCount(), 0);
+          const sequence = fixture.mouseEvents.slice(-3);
+          assert.deepStrictEqual(
+            sequence.map(({ type, targetId }) => ({ type, targetId })),
+            [
+              { type: 'mouseMoved', targetId: expectedHit.id },
+              { type: 'mousePressed', targetId: expectedHit.id },
+              { type: 'mouseReleased', targetId: expectedHit.id },
+            ],
+            'Chromium must independently hit-test the retained indicator relationship for every native event'
+          );
+        } finally {
+          fixture.dispose();
+        }
+      }
+    );
+  }
+  await control('HTTP Settings uses exact opacity-zero native input geometry when no label or indicator exists', async () => {
+    const fixture = await httpSettingsPanelDomFixture({ panelOpen: true, networkingExpanded: true, switchTarget: 'missing' });
+    try {
+      const asyncPattern = fixture.window.document.getElementById('async-pattern');
+      assert.ok(asyncPattern instanceof fixture.window.HTMLInputElement);
+      assert.strictEqual(fixture.window.getComputedStyle(asyncPattern).opacity, '0');
+      assert.strictEqual(asyncPattern.labels?.length, 0);
+      assert.strictEqual(fixture.window.document.querySelectorAll('.fui-Switch__indicator').length, 0);
+      const inputRect = asyncPattern.getBoundingClientRect();
+      assert.strictEqual(
+        fixture.window.document.elementFromPoint(inputRect.left + inputRect.width / 2, inputRect.top + inputRect.height / 2),
+        asyncPattern,
+        'Input-only production switch center must resolve to the exact native input'
+      );
+      await fixture.driver().configureHttpRequestSettings('PT1S');
+      assert.strictEqual(fixture.clicked.filter((id) => id === 'async-pattern').length, 1);
+      assert.strictEqual(asyncPattern.checked, false);
+      assert.strictEqual(fixture.switchTransitionObserved(), true);
+      assert.strictEqual(fixture.activeHandleCount(), 0, 'Successful exact-input fallback must release its Runtime handle');
+      fixture.assertNativeClickSequences();
+    } finally {
+      fixture.dispose();
+    }
+  });
+  await control('HTTP Settings scrolls an offscreen input-only switch before exact native input targeting', async () => {
+    const fixture = await httpSettingsPanelDomFixture({
+      panelOpen: true,
+      networkingExpanded: true,
+      switchTarget: 'missing',
+      switchInputGeometry: 'scrollable-offscreen',
+    });
+    try {
+      const asyncPattern = fixture.window.document.getElementById('async-pattern');
+      assert.ok(asyncPattern instanceof fixture.window.HTMLInputElement);
+      assert.ok(asyncPattern.getBoundingClientRect().top > fixture.window.innerHeight);
+      await fixture.driver().configureHttpRequestSettings('PT1S');
+      assert.ok(fixture.scrolledIntoView.includes('async-pattern'));
+      assert.ok(asyncPattern.getBoundingClientRect().bottom <= fixture.window.innerHeight);
+      assert.strictEqual(fixture.clicked.filter((id) => id === 'async-pattern').length, 1);
       assert.strictEqual(asyncPattern.checked, false);
       assert.strictEqual(fixture.switchTransitionObserved(), true);
       fixture.assertNativeClickSequences();
@@ -1926,18 +2334,40 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       fixture.dispose();
     }
   });
-  for (const [switchTarget, expectedReason] of [
-    ['missing', 'No visible associated label or Fluent switch indicator found'],
-    ['covered', 'Visible Fluent switch indicator was not enabled and hit-testable'],
+  for (const [name, fixtureOptions, expectedReason] of [
+    [
+      'unrelated overlay',
+      { networkingExpanded: true, switchTarget: 'covered' },
+      'Native switch input center did not resolve to the exact input',
+    ],
+    [
+      'zero-size native input',
+      { networkingExpanded: true, switchTarget: 'missing', switchInputGeometry: 'zero' },
+      'Native switch input has zero-size geometry',
+    ],
+    [
+      'offscreen native input',
+      { networkingExpanded: true, switchTarget: 'missing', switchInputGeometry: 'offscreen' },
+      'Native switch input is outside the viewport',
+    ],
+    [
+      'clipped native input',
+      { networkingExpanded: true, switchTarget: 'missing', switchInputGeometry: 'clipped' },
+      'Native switch input is clipped by an ancestor',
+    ],
+    [
+      'bordered client-clipped native input',
+      { networkingExpanded: true, switchTarget: 'missing', switchInputGeometry: 'border-client-clipped' },
+      'Native switch input is clipped by an ancestor',
+    ],
   ] as const) {
-    await control(`${switchTarget} asynchronous-pattern target fails closed on the local HTTP Settings deadline`, async () => {
+    await control(`${name} asynchronous-pattern native target fails closed on the local HTTP Settings deadline`, async () => {
       const fixture = await httpSettingsPanelDomFixture({
         panelOpen: true,
-        networkingExpanded: switchTarget === 'covered',
-        switchTarget,
+        ...fixtureOptions,
       });
       try {
-        if (switchTarget === 'covered') {
+        if (name === 'unrelated overlay') {
           const indicator = fixture.window.document.getElementById('async-pattern-indicator');
           const cover = fixture.window.document.getElementById('async-pattern-cover');
           assert.ok(indicator instanceof fixture.window.HTMLElement);
@@ -1952,6 +2382,22 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
             'An unrelated overlay at indicator coordinates must remain the hit target'
           );
         }
+        if (name === 'bordered client-clipped native input') {
+          const root = fixture.window.document.getElementById('async-pattern-root');
+          const input = fixture.window.document.getElementById('async-pattern');
+          assert.ok(root instanceof fixture.window.HTMLElement);
+          assert.ok(input instanceof fixture.window.HTMLInputElement);
+          const rootRect = root.getBoundingClientRect();
+          const inputRect = input.getBoundingClientRect();
+          const clientLeft = rootRect.left + root.clientLeft;
+          const clientTop = rootRect.top + root.clientTop;
+          assert.ok(inputRect.left < clientLeft || inputRect.top < clientTop, 'Input must extend into the clipped border area');
+          assert.strictEqual(
+            fixture.window.document.elementFromPoint(inputRect.left + inputRect.width / 2, inputRect.top + inputRect.height / 2),
+            input,
+            'Border-clipped input center must remain independently hit-testable'
+          );
+        }
         const startedAt = Date.now();
         await assert.rejects(
           () => fixture.driver(500).configureHttpRequestSettings('PT1S'),
@@ -1961,15 +2407,153 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
             return true;
           }
         );
-        assert.ok(Date.now() - startedAt < 1500, `${switchTarget} target must honor the local HTTP Settings deadline`);
+        assert.ok(Date.now() - startedAt < 1500, `${name} target must honor the local HTTP Settings deadline`);
         assert.ok(!fixture.clicked.includes('async-pattern-label'));
         assert.ok(!fixture.clicked.includes('async-pattern-indicator'));
         assert.ok(!fixture.clicked.includes('async-pattern'));
+        if (name === 'unrelated overlay') {
+          assert.strictEqual(fixture.activeHandleCount(), 0, 'Overlay failure must release its Runtime handle');
+        }
         fixture.assertNativeClickSequences();
       } finally {
         fixture.dispose();
       }
     });
+  }
+  await control('stale asynchronous-pattern native input fails closed after move without pressing the replacement', async () => {
+    const fixture = await httpSettingsPanelDomFixture({
+      panelOpen: true,
+      networkingExpanded: true,
+      switchTarget: 'missing',
+      staleSwitchInput: true,
+    });
+    try {
+      await assert.rejects(
+        () => fixture.driver(500).configureHttpRequestSettings('PT1S'),
+        /Production switch input became stale or was replaced before native input/
+      );
+      assert.strictEqual(fixture.clicked.filter((id) => id === 'async-pattern').length, 0);
+      assert.strictEqual(fixture.switchTransitionObserved(), false);
+      assert.deepStrictEqual(
+        fixture.mouseEvents
+          .filter(({ targetId }) => targetId === 'async-pattern')
+          .map(({ type, button, buttons, clickCount }) => ({ type, button, buttons, clickCount })),
+        [{ type: 'mouseMoved', button: 'none', buttons: undefined, clickCount: undefined }]
+      );
+      assert.strictEqual(fixture.activeHandleCount(), 0, 'Stale replacement failure must release its Runtime handle');
+    } finally {
+      fixture.dispose();
+    }
+  });
+  for (const targetKind of ['label', 'indicator'] as const) {
+    for (const stage of ['after-move', 'after-press'] as const) {
+      await control(`stale asynchronous-pattern ${targetKind} fails closed ${stage} without activating its replacement`, async () => {
+        const fixture = await httpSettingsPanelDomFixture({
+          panelOpen: true,
+          networkingExpanded: true,
+          switchTarget: targetKind,
+          switchReplacementRace: `${targetKind}-${stage}`,
+        });
+        try {
+          await assert.rejects(
+            () => fixture.driver(500).configureHttpRequestSettings('PT1S'),
+            /Selected (production switch target became stale or was replaced|associated switch label identity or relationship changed|Fluent switch indicator identity or relationship changed) before native input/
+          );
+          assert.strictEqual(fixture.switchTransitionObserved(), false);
+          assert.ok(!fixture.clicked.includes('async-pattern-label'));
+          assert.ok(!fixture.clicked.includes('async-pattern-indicator'));
+          assert.ok(!fixture.clicked.includes('async-pattern'));
+          assert.strictEqual(fixture.heldMouseButton(), false, 'Replacement races must not leave Chromium with a held mouse button');
+          const switchSequence = fixture.mouseEvents.slice(stage === 'after-move' ? -1 : -3);
+          if (stage === 'after-move') {
+            assert.deepStrictEqual(
+              switchSequence.map(({ type, button }) => ({ type, button })),
+              [{ type: 'mouseMoved', button: 'none' }],
+              'A target replaced by mouseMoved must fail before mousePressed'
+            );
+          } else {
+            assert.deepStrictEqual(
+              switchSequence.map(({ type, x, y, button, buttons }) => ({ type, x, y, button, buttons })),
+              [
+                {
+                  type: 'mouseMoved',
+                  x: switchSequence[0].x,
+                  y: switchSequence[0].y,
+                  button: 'none',
+                  buttons: undefined,
+                },
+                {
+                  type: 'mousePressed',
+                  x: switchSequence[0].x,
+                  y: switchSequence[0].y,
+                  button: 'left',
+                  buttons: 1,
+                },
+                { type: 'mouseReleased', x: -1, y: -1, button: 'left', buttons: 0 },
+              ],
+              'A target replaced by mousePressed must receive only an outside-viewport cancellation release'
+            );
+          }
+          assert.strictEqual(fixture.activeHandleCount(), 0, 'Replacement failure must release input and target Runtime handles');
+        } finally {
+          fixture.dispose();
+        }
+      });
+    }
+  }
+  for (const pressResponse of ['reject-once', 'timeout-once'] as const) {
+    await control(
+      `asynchronous-pattern ${pressResponse} cancels a potentially dispatched press without leaking held-button state`,
+      async () => {
+        const fixture = await httpSettingsPanelDomFixture({
+          panelOpen: true,
+          networkingExpanded: true,
+          switchPressResponse: pressResponse,
+        });
+        try {
+          await assert.rejects(
+            () => fixture.driver(500).configureHttpRequestSettings('PT1S'),
+            pressResponse === 'reject-once'
+              ? /Simulated rejected CDP mousePressed response after dispatch/
+              : /Timed out waiting for CDP Input\.dispatchMouseEvent response/
+          );
+          assert.strictEqual(fixture.heldMouseButton(), false, 'Cancellation must clear the browser-side pressed state');
+          assert.strictEqual(fixture.switchTransitionObserved(), false);
+          assert.ok(!fixture.clicked.includes('async-pattern-label'));
+          const failedSequence = fixture.mouseEvents.slice(-3);
+          assert.deepStrictEqual(
+            failedSequence.map(({ type, x, y, button, buttons }) => ({ type, x, y, button, buttons })),
+            [
+              {
+                type: 'mouseMoved',
+                x: failedSequence[0].x,
+                y: failedSequence[0].y,
+                button: 'none',
+                buttons: undefined,
+              },
+              {
+                type: 'mousePressed',
+                x: failedSequence[0].x,
+                y: failedSequence[0].y,
+                button: 'left',
+                buttons: 1,
+              },
+              { type: 'mouseReleased', x: -1, y: -1, button: 'left', buttons: 0 },
+            ],
+            'A rejected or timed-out press acknowledgment must still be cancelled outside the viewport'
+          );
+          assert.strictEqual(fixture.activeHandleCount(), 0, 'Press-response failure must release input and target Runtime handles');
+
+          await fixture.driver().configureHttpRequestSettings('PT1S');
+          assert.strictEqual(fixture.heldMouseButton(), false);
+          assert.strictEqual(fixture.clicked.filter((id) => id === 'async-pattern-label').length, 1);
+          assert.strictEqual(fixture.switchTransitionObserved(), true);
+          assert.strictEqual(fixture.activeHandleCount(), 0);
+        } finally {
+          fixture.dispose();
+        }
+      }
+    );
   }
   await control('asynchronous-pattern checked-state polling honors the local HTTP Settings deadline', async () => {
     const fixture = await httpSettingsPanelDomFixture({
@@ -1985,6 +2569,7 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       assert.ok(Date.now() - startedAt < 1500, 'Checked-state polling must not inherit the suite-wide deadline');
       assert.strictEqual(fixture.clicked.filter((id) => id === 'async-pattern-label').length, 1);
       assert.ok(!fixture.clicked.includes('async-pattern'));
+      assert.strictEqual(fixture.activeHandleCount(), 0, 'Checked-state deadline must release its Runtime handle');
       fixture.assertNativeClickSequences();
     } finally {
       fixture.dispose();
@@ -2027,7 +2612,20 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       assert.ok(source.includes("switchRoot.querySelectorAll('.fui-Switch__indicator')"));
       assert.ok(source.includes('acceptInputHit && hit === input'));
       assert.ok(source.includes('pointFor(indicators[0], true)'));
-      assert.ok(source.includes('await clickPoint(localCdp, observation.point);'));
+      assert.ok(source.includes("input.scrollIntoView({ block: 'center', inline: 'center' });"));
+      assert.ok(source.includes('Native switch input center did not resolve to the exact input'));
+      assert.ok(source.includes('hit !== input'));
+      assert.ok(source.includes('inputs.length === 1 && inputs[0] === this'));
+      assert.ok(source.includes("'Runtime.callFunctionOn'"));
+      assert.ok(source.includes("'Runtime.releaseObject'"));
+      assert.ok(source.includes('parent.clientLeft'));
+      assert.ok(source.includes('parent.clientWidth'));
+      assert.ok(source.includes('bindAsyncPatternTarget'));
+      assert.ok(source.includes('boundAsyncPatternTargetObservation'));
+      assert.ok(source.includes('clickBoundAsyncPatternTarget'));
+      assert.ok(source.includes('pressMayHaveDispatched = true'));
+      assert.ok(source.includes('await this.cancelBoundAsyncPatternPress();'));
+      assert.ok(source.includes('x: -1,\n          y: -1'));
       const switchDriver = source.slice(
         source.indexOf('private async disableAsyncPattern'),
         source.indexOf('private async openHttpSettings')

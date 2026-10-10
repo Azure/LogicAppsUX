@@ -8,6 +8,14 @@ export interface ScreenshotFieldExpectation {
   sectionTitle?: string;
 }
 
+export interface ScreenshotSwitchExpectation {
+  labels: string[];
+  checked: boolean;
+  exactAriaLabel?: string;
+  sectionTitle?: string;
+  stateText?: string;
+}
+
 export type ScreenshotExpectation =
   | { kind: 'workbenchShell'; label: string }
   | {
@@ -28,6 +36,7 @@ export type ScreenshotExpectation =
       actionTitle: string;
       requiredText?: string[];
       fields?: ScreenshotFieldExpectation[];
+      switches?: ScreenshotSwitchExpectation[];
       editor?: { labels: string[]; focused?: boolean; token?: { titles: string[]; sourceAction: string } };
       picker?: { sectionLabels: string[]; tokenTitles?: string[] };
       allowLoading?: boolean;
@@ -944,6 +953,108 @@ export const screenshotReadinessDomScript = `
     }
     return { ok: true, reason: 'field-visible' };
   };
+  const findSwitchState = (expected, root) => {
+    const normalizedLabels = (expected.labels || []).map((label) => normalize(label).toLowerCase());
+    const normalizedExactAriaLabel = normalize(expected.exactAriaLabel).toLowerCase();
+    const normalizedSectionTitle = normalize(expected.sectionTitle).toLowerCase();
+    const normalizedStateText = normalize(expected.stateText).toLowerCase();
+    const controls = Array.from((root || document).querySelectorAll('[role="switch"]')).filter(
+      (control) => control instanceof HTMLElement
+    );
+    let exactAriaLabelMismatch = false;
+    let sectionMismatch = false;
+    for (const control of controls) {
+      const controlAriaLabel = normalize(control.getAttribute('aria-label')).toLowerCase();
+      if (normalizedExactAriaLabel && controlAriaLabel !== normalizedExactAriaLabel) {
+        exactAriaLabelMismatch = true;
+        continue;
+      }
+      const labelledBy = (control.getAttribute('aria-labelledby') || '')
+        .split(/\\s+/)
+        .map((id) => document.getElementById(id)?.textContent || '')
+        .join(' ');
+      const identity = normalize([control.getAttribute('aria-label'), control.getAttribute('title'), labelledBy].join(' ')).toLowerCase();
+      if (!normalizedLabels.some((label) => identity.includes(label))) {
+        continue;
+      }
+      if (normalizedSectionTitle) {
+        const section = control.closest?.('.msla-setting-section');
+        const headers = Array.from(section?.querySelectorAll?.('button.msla-setting-section-header') || []).filter(
+          (header) => header.closest?.('.msla-setting-section') === section
+        );
+        const sectionMatches =
+          headers.length === 1 &&
+          normalize(headers[0].textContent).toLowerCase() === normalizedSectionTitle &&
+          normalize(headers[0].getAttribute('aria-label')).toLowerCase().includes(normalizedSectionTitle);
+        if (!sectionMatches) {
+          sectionMismatch = true;
+          continue;
+        }
+      }
+      const checked =
+        control instanceof HTMLInputElement
+          ? control.checked
+          : control.getAttribute('aria-checked') === 'true'
+            ? true
+            : control.getAttribute('aria-checked') === 'false'
+              ? false
+              : undefined;
+      const associatedLabels =
+        control instanceof HTMLInputElement
+          ? Array.from(control.labels || [])
+          : (control.getAttribute('aria-labelledby') || '')
+              .split(/\\s+/)
+              .map((id) => document.getElementById(id))
+              .filter((element) => element instanceof HTMLElement);
+      const switchRoot = control.closest?.('.fui-Switch');
+      const visualLabels = [
+        ...associatedLabels,
+        ...Array.from(switchRoot?.querySelectorAll?.('.fui-Switch__label, label') || []),
+      ].filter(
+        (element, index, all) =>
+          element instanceof HTMLElement &&
+          all.indexOf(element) === index &&
+          isVisible(element) &&
+          !!getClippedRect(element)
+      );
+      const visibleStateText = visualLabels.map((element) => normalize(visibleText(element))).filter(Boolean);
+      return {
+        found: true,
+        checked,
+        stateTextVisible:
+          !normalizedStateText || visibleStateText.some((text) => text.toLowerCase().includes(normalizedStateText)),
+        visibleStateText,
+      };
+    }
+    return {
+      found: false,
+      exactAriaLabelMismatch,
+      sectionMismatch,
+      checked: undefined,
+      stateTextVisible: false,
+      visibleStateText: [],
+    };
+  };
+  const switchMatches = (expected, root) => {
+    const state = findSwitchState(expected, root);
+    if (!state.found) {
+      return {
+        ok: false,
+        reason: state.sectionMismatch
+          ? 'switch-section-mismatch'
+          : state.exactAriaLabelMismatch
+            ? 'switch-accessibility-mismatch'
+            : 'switch-missing',
+      };
+    }
+    if (state.checked !== expected.checked) {
+      return { ok: false, reason: 'switch-checked-mismatch' };
+    }
+    if (!state.stateTextVisible) {
+      return { ok: false, reason: 'switch-state-text-missing' };
+    }
+    return { ok: true, reason: 'switch-state-visible' };
+  };
   const controlMatchesLabels = (control, labels) => {
     const normalizedLabels = (labels || []).map((label) => normalize(label).toLowerCase());
     const labelledBy = (control.getAttribute('aria-labelledby') || '')
@@ -1597,17 +1708,20 @@ export const screenshotReadinessDomScript = `
       break;
     case 'designerPanel':
       const panelFieldStates = (expectation.fields || []).map((field) => fieldMatches(field, selectedPanel?.layout));
+      const panelSwitchStates = (expectation.switches || []).map((expected) => switchMatches(expected, selectedPanel?.layout));
       const editorState = findEditorState(expectation.editor, selectedPanel?.layout);
       const pickerState = findPickerState(expectation.picker, editorState);
       const identityState = panelIdentityState(selectedPanel, expectation.actionTitle);
       const requiredTextState = panelSemanticTextState(selectedPanel?.content, expectation.requiredText || []);
       const requiredTextMatches = !!selectedPanel && requiredTextState.ok;
       const panelFieldsMatch = panelFieldStates.every((fieldState) => fieldState.ok);
+      const panelSwitchesMatch = panelSwitchStates.every((switchState) => switchState.ok);
       ready =
         !!selectedPanel &&
         identityState.matches &&
         requiredTextMatches &&
         panelFieldsMatch &&
+        panelSwitchesMatch &&
         editorState.ok &&
         pickerState.ok;
       details.designerPanel = {
@@ -1623,6 +1737,8 @@ export const screenshotReadinessDomScript = `
         requiredTextMatches,
         fieldCount: panelFieldStates.length,
         fieldsMatch: panelFieldsMatch,
+        switchCount: panelSwitchStates.length,
+        switchesMatch: panelSwitchesMatch,
       };
       if (selectedLayouts.length === 0) {
         reasonCodes.push('selected-panel-missing');
@@ -1638,9 +1754,17 @@ export const screenshotReadinessDomScript = `
       if (!panelFieldsMatch) {
         reasonCodes.push('designer-panel-field-mismatch');
       }
+      if (!panelSwitchesMatch) {
+        reasonCodes.push('designer-panel-switch-mismatch');
+      }
       for (const fieldState of panelFieldStates) {
         if (!fieldState.ok) {
           reasonCodes.push(fieldState.reason);
+        }
+      }
+      for (const switchState of panelSwitchStates) {
+        if (!switchState.ok) {
+          reasonCodes.push(switchState.reason);
         }
       }
       if (!editorState.ok) {

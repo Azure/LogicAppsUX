@@ -110,12 +110,14 @@ async function main(): Promise<void> {
       'http-timeout-request-pt1s-request-inserted',
       'http-timeout-request-pt1s-http-panel-ready',
       'http-timeout-request-pt1s-method-selected',
-      'http-timeout-request-pt1s-settings-configured',
+      'http-timeout-request-pt1s-timeout-configured',
+      'http-timeout-request-pt1s-async-pattern-off',
       'http-timeout-request-pt1s-saved',
     ];
     const scenario2 = [
       'http-timeout-request-pt24h-designer-reopened',
-      'http-timeout-request-pt24h-settings-configured',
+      'http-timeout-request-pt24h-timeout-configured',
+      'http-timeout-request-pt24h-async-pattern-off',
       'http-timeout-request-pt24h-saved',
       'http-timeout-request-invalid-designer-reopened',
       'http-timeout-request-invalid-duration',
@@ -152,6 +154,8 @@ async function main(): Promise<void> {
   });
   await control('HTTP screenshot expectations are satisfiable at their exact production lifecycle checkpoints', () => {
     const lifecycle = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
+    const driver = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeDriver.ts'), 'utf8');
+    const screenshot = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/screenshot.ts'), 'utf8');
     const readiness = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/screenshotReadiness.ts'), 'utf8');
     const networking = fs.readFileSync(
       path.resolve(__dirname, '../../../../../libs/designer-v2/src/lib/ui/settings/sections/networking.tsx'),
@@ -175,13 +179,14 @@ async function main(): Promise<void> {
     assert.ok(validation.includes("defaultMessage: 'Timeout value is invalid, must match ISO 8601 duration format'"));
     assert.ok(errorBar.includes("const role = type === 'error' || type === 'warning' ? 'alert' : undefined;"));
     assert.ok(readiness.includes('\'[role="alert"], [aria-live], .ms-MessageBar, [class*="error"], [class*="Error"]\''));
-    const configured = lifecycle.indexOf('http-timeout-request-pt1s-settings-configured');
+    const timeoutConfigured = lifecycle.indexOf('http-timeout-request-pt1s-timeout-configured');
+    const asyncPatternOff = lifecycle.indexOf('http-timeout-request-pt1s-async-pattern-off', timeoutConfigured);
     const addHttp = lifecycle.indexOf("await driver.addAction('HTTP', 'HTTP', ['http']);");
     const selectGet = lifecycle.indexOf('await driver.selectHttpMethodGet();', addHttp);
     const methodEvidence = lifecycle.indexOf('http-timeout-request-pt1s-method-selected', selectGet);
     const enterUri = lifecycle.indexOf("await driver.fillParameter(['URI'], endpoint);", methodEvidence);
-    const configureSettings = lifecycle.indexOf('await driver.configureHttpRequestSettings(timeout);', enterUri);
-    const closePanel = lifecycle.indexOf('await driver.closePanel();', configured);
+    const configureSettings = lifecycle.indexOf('await driver.configureHttpRequestSettings(timeout, {', enterUri);
+    const closePanel = lifecycle.indexOf('await driver.closePanel();', asyncPatternOff);
     const saved = lifecycle.indexOf('http-timeout-request-pt1s-saved', closePanel);
     const persisted = lifecycle.lastIndexOf('assertHttpTimeoutRequestPersisted(persisted, timeout, endpoint);', saved);
     assert.ok(
@@ -190,8 +195,9 @@ async function main(): Promise<void> {
         selectGet < methodEvidence &&
         methodEvidence < enterUri &&
         enterUri < configureSettings &&
-        configureSettings < configured &&
-        configured < closePanel &&
+        configureSettings < timeoutConfigured &&
+        timeoutConfigured < asyncPatternOff &&
+        asyncPatternOff < closePanel &&
         closePanel < persisted &&
         persisted < saved
     );
@@ -206,7 +212,27 @@ async function main(): Promise<void> {
     );
     assert.ok(lifecycle.includes("exactAriaLabel: 'Request options - Timeout'"));
     assert.ok(lifecycle.includes("sectionTitle: 'Networking'"));
+    assert.ok(lifecycle.includes("labels: ['Asynchronous pattern']"));
+    assert.ok(lifecycle.includes("exactAriaLabel: 'Asynchronous pattern'"));
+    assert.ok(lifecycle.includes('checked: false'));
+    assert.ok(lifecycle.includes("stateText: 'Off'"));
     assert.ok(!lifecycle.includes("labels: ['Action timeout', 'Request options - Timeout', 'Timeout']"));
+    const timeoutCallback = driver.indexOf('await checkpoints.timeoutConfigured?.();');
+    const disableAsync = driver.indexOf('await this.disableAsyncPattern', timeoutCallback);
+    const evidenceScroll = driver.indexOf(
+      "input.scrollIntoView({ block: 'center', inline: 'center' });",
+      driver.indexOf('prepareBoundAsyncPatternOffEvidence')
+    );
+    const asyncCallback = driver.indexOf('await asyncPatternDisabled?.();', evidenceScroll);
+    assert.ok(
+      timeoutCallback >= 0 && timeoutCallback < disableAsync && disableAsync < evidenceScroll && evidenceScroll < asyncCallback,
+      'Timeout evidence must precede exact-input async-pattern scrolling and Off evidence'
+    );
+    assert.ok(readiness.includes('querySelectorAll(\'[role="switch"]\')'));
+    assert.ok(readiness.includes("'switch-checked-mismatch'"));
+    assert.ok(readiness.includes("'switch-state-text-missing'"));
+    assert.ok(screenshot.includes('(expectation.switches ?? []).flatMap'));
+    assert.ok(screenshot.includes('...(expected.stateText ? [expected.stateText] : [])'));
     const invalidConfigured = lifecycle.indexOf("await activeSession.driver.configureHttpRequestSettings('InvalidString')");
     const invalidEvidence = lifecycle.indexOf('http-timeout-request-invalid-duration', invalidConfigured);
     const restoration = lifecycle.indexOf('http-timeout-request-valid-state-restored', invalidEvidence);

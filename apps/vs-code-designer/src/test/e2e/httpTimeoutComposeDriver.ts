@@ -20,11 +20,15 @@ const visibleDom = `
       const style = getComputedStyle(parent);
       if (style.opacity === '0' || style.visibility === 'hidden' || style.display === 'none') return null;
       const rect = parent.getBoundingClientRect();
+      const clientLeft = rect.left + parent.clientLeft;
+      const clientTop = rect.top + parent.clientTop;
+      const clientRight = clientLeft + parent.clientWidth;
+      const clientBottom = clientTop + parent.clientHeight;
       if (/(hidden|clip|auto|scroll)/.test(style.overflowX)) {
-        left = Math.max(left, rect.left); right = Math.min(right, rect.right);
+        left = Math.max(left, clientLeft); right = Math.min(right, clientRight);
       }
       if (/(hidden|clip|auto|scroll)/.test(style.overflowY)) {
-        top = Math.max(top, rect.top); bottom = Math.min(bottom, rect.bottom);
+        top = Math.max(top, clientTop); bottom = Math.min(bottom, clientBottom);
       }
     }
     return { left, top, right, bottom };
@@ -115,12 +119,25 @@ interface HttpSettingsPanelObservation {
 interface AsyncPatternSwitchObservation {
   inputCount: number;
   checked?: boolean;
-  targetKind?: 'label' | 'indicator';
+  original?: boolean;
+  targetKind?: 'label' | 'indicator' | 'input';
   targetCount?: number;
   targetText?: string;
+  inputRect?: DomRectSnapshot;
+  targetRect?: DomRectSnapshot;
   point?: Point;
   reason?: string;
+  obstruction?: string;
   fatal?: boolean;
+}
+
+interface DomRectSnapshot {
+  left: number;
+  top: number;
+  right: number;
+  bottom: number;
+  width: number;
+  height: number;
 }
 
 interface HttpRequestOptionsTimeoutObservation {
@@ -142,6 +159,11 @@ interface HttpRequestOptionsTimeoutObservation {
   reason?: string;
   obstruction?: string;
   fatal?: boolean;
+}
+
+interface HttpRequestSettingsCheckpoints {
+  timeoutConfigured?: () => Promise<void>;
+  asyncPatternDisabled?: () => Promise<void>;
 }
 
 export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
@@ -284,7 +306,7 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
     );
   }
 
-  async configureHttpRequestSettings(timeout: string): Promise<void> {
+  async configureHttpRequestSettings(timeout: string, checkpoints: HttpRequestSettingsCheckpoints = {}): Promise<void> {
     const startedAt = Date.now();
     const deadline = Math.min(this.deadline, startedAt + this.settingsPanelTimeoutMs);
     const localCdp = boundedCdp(this.cdp, deadline);
@@ -334,7 +356,8 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
       deadline,
       `Networking Request options - Timeout ${timeout} with unchanged Action timeout`
     );
-    await this.disableAsyncPattern(localCdp, localActions, deadline);
+    await checkpoints.timeoutConfigured?.();
+    await this.disableAsyncPattern(localCdp, localActions, deadline, checkpoints.asyncPatternDisabled);
     const final = await this.httpRequestOptionsTimeoutObservation(localActions);
     assert.strictEqual(
       final.fatal,
@@ -889,11 +912,394 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
     })()`);
   }
 
-  private async disableAsyncPattern(localCdp: CdpEvaluator, localActions: ProvenDesignerCdpActions, deadline: number): Promise<void> {
-    let observation: AsyncPatternSwitchObservation = { inputCount: 0 };
-    while (Date.now() < deadline) {
-      observation = await localActions.evaluate<AsyncPatternSwitchObservation>(`(() => {
+  private async bindAsyncPatternTarget(
+    localCdp: CdpEvaluator,
+    inputObjectId: string,
+    targetKind: NonNullable<AsyncPatternSwitchObservation['targetKind']>
+  ): Promise<string> {
+    const response = (await localCdp.send('Runtime.callFunctionOn', {
+      objectId: inputObjectId,
+      functionDeclaration: `function() {
         ${visibleDom}
+        const input = this;
+        if (!(input instanceof HTMLInputElement) || !input.isConnected) return null;
+        const targetKind = ${JSON.stringify(targetKind)};
+        if (targetKind === 'input') return input;
+        if (targetKind === 'label') {
+          const labels = Array.from(input.labels || []).filter(visible);
+          if (labels.length !== 1) return null;
+          const preferredLabel = input.labels?.[0];
+          return preferredLabel && labels.includes(preferredLabel) ? preferredLabel : labels[0];
+        }
+        const switchRoot = input.closest('.fui-Switch');
+        const indicators = switchRoot
+          ? Array.from(switchRoot.querySelectorAll('.fui-Switch__indicator')).filter(visible)
+          : [];
+        return indicators.length === 1 ? indicators[0] : null;
+      }`,
+      returnByValue: false,
+    })) as { result?: { result?: { objectId?: string } } };
+    const targetObjectId = response.result?.result?.objectId;
+    assert.ok(targetObjectId, `Could not bind the selected Asynchronous pattern ${targetKind} target`);
+    return targetObjectId;
+  }
+
+  private async boundAsyncPatternTargetObservation(
+    localCdp: CdpEvaluator,
+    inputObjectId: string,
+    targetObjectId: string,
+    expected: Pick<AsyncPatternSwitchObservation, 'targetKind' | 'inputRect' | 'targetRect' | 'point'>
+  ): Promise<AsyncPatternSwitchObservation> {
+    const response = (await localCdp.send('Runtime.callFunctionOn', {
+      objectId: inputObjectId,
+      arguments: [{ objectId: targetObjectId }],
+      functionDeclaration: `function(target) {
+        ${visibleDom}
+        const input = this;
+        const expected = ${JSON.stringify(expected)};
+        const point = expected.point;
+        const inputs = Array.from(document.querySelectorAll(${JSON.stringify(asyncPatternSwitchSelector)}));
+        const describe = (target) => normalize(
+          target?.getAttribute?.('aria-label') || target?.textContent || target?.className || ''
+        ).slice(0, 240);
+        const snapshot = (rect) => ({
+          left: rect.left,
+          top: rect.top,
+          right: rect.right,
+          bottom: rect.bottom,
+          width: rect.width,
+          height: rect.height,
+        });
+        const sameRect = (actual, prior) =>
+          prior &&
+          ['left', 'top', 'right', 'bottom', 'width', 'height'].every((key) => Math.abs(actual[key] - prior[key]) <= 0.5);
+        if (!(input instanceof HTMLInputElement) || !input.isConnected || inputs.length !== 1 || inputs[0] !== input) {
+          return {
+            inputCount: inputs.length,
+            checked: input instanceof HTMLInputElement ? input.checked : undefined,
+            original: false,
+            reason: 'Production switch input became stale or was replaced before native input',
+            fatal: true,
+          };
+        }
+        if (!input.checked) {
+          return { inputCount: 1, checked: false, original: true, targetKind: expected.targetKind };
+        }
+        if (input.disabled || input.getAttribute('aria-disabled') === 'true') {
+          return {
+            inputCount: 1,
+            checked: true,
+            original: true,
+            targetKind: expected.targetKind,
+            reason: 'Production switch input became disabled before native input',
+            fatal: true,
+          };
+        }
+        const inputRect = input.getBoundingClientRect();
+        const inputClip = bounds(input);
+        const inputCenter = { x: inputRect.left + inputRect.width / 2, y: inputRect.top + inputRect.height / 2 };
+        if (
+          inputRect.width <= 0 ||
+          inputRect.height <= 0 ||
+          inputRect.left < 0 ||
+          inputRect.top < 0 ||
+          inputRect.right > innerWidth ||
+          inputRect.bottom > innerHeight ||
+          !inputClip ||
+          inputRect.left < inputClip.left ||
+          inputRect.top < inputClip.top ||
+          inputRect.right > inputClip.right ||
+          inputRect.bottom > inputClip.bottom ||
+          !sameRect(inputRect, expected.inputRect)
+        ) {
+          return {
+            inputCount: 1,
+            checked: true,
+            original: true,
+            targetKind: expected.targetKind,
+            reason: 'Production switch input moved or became clipped before native input',
+            fatal: true,
+          };
+        }
+        if (!(target instanceof HTMLElement) || !target.isConnected) {
+          return {
+            inputCount: 1,
+            checked: true,
+            original: true,
+            targetKind: expected.targetKind,
+            reason: 'Selected production switch target became stale or was replaced before native input',
+            fatal: true,
+          };
+        }
+        if (target.matches(':disabled') || target.getAttribute('aria-disabled') === 'true') {
+          return {
+            inputCount: 1,
+            checked: true,
+            original: true,
+            targetKind: expected.targetKind,
+            reason: 'Selected production switch target became disabled before native input',
+            fatal: true,
+          };
+        }
+        if (expected.targetKind === 'label') {
+          const labels = Array.from(input.labels || []).filter(visible);
+          if (!(target instanceof HTMLLabelElement) || labels.length !== 1 || labels[0] !== target) {
+            return {
+              inputCount: 1,
+              checked: true,
+              original: true,
+              targetKind: 'label',
+              targetCount: labels.length,
+              reason: 'Selected associated switch label identity or relationship changed before native input',
+              fatal: true,
+            };
+          }
+        } else if (expected.targetKind === 'indicator') {
+          const switchRoot = input.closest('.fui-Switch');
+          const indicators = switchRoot
+            ? Array.from(switchRoot.querySelectorAll('.fui-Switch__indicator')).filter(visible)
+            : [];
+          if (!target.matches('.fui-Switch__indicator') || indicators.length !== 1 || indicators[0] !== target) {
+            return {
+              inputCount: 1,
+              checked: true,
+              original: true,
+              targetKind: 'indicator',
+              targetCount: indicators.length,
+              reason: 'Selected Fluent switch indicator identity or relationship changed before native input',
+              fatal: true,
+            };
+          }
+        } else if (target !== input) {
+          return {
+            inputCount: 1,
+            checked: true,
+            original: true,
+            targetKind: 'input',
+            reason: 'Selected native switch input identity changed before native input',
+            fatal: true,
+          };
+        }
+        if (expected.targetKind !== 'input' && !visible(target)) {
+          return {
+            inputCount: 1,
+            checked: true,
+            original: true,
+            targetKind: expected.targetKind,
+            reason: 'Selected production switch target became hidden before native input',
+            fatal: true,
+          };
+        }
+        const targetRect = target.getBoundingClientRect();
+        const targetClip = bounds(target);
+        const targetCenter = { x: targetRect.left + targetRect.width / 2, y: targetRect.top + targetRect.height / 2 };
+        if (
+          targetRect.width <= 0 ||
+          targetRect.height <= 0 ||
+          targetRect.left < 0 ||
+          targetRect.top < 0 ||
+          targetRect.right > innerWidth ||
+          targetRect.bottom > innerHeight ||
+          !targetClip ||
+          targetRect.left < targetClip.left ||
+          targetRect.top < targetClip.top ||
+          targetRect.right > targetClip.right ||
+          targetRect.bottom > targetClip.bottom ||
+          !sameRect(targetRect, expected.targetRect) ||
+          Math.abs(targetCenter.x - point.x) > 0.5 ||
+          Math.abs(targetCenter.y - point.y) > 0.5
+        ) {
+          return {
+            inputCount: 1,
+            checked: true,
+            original: true,
+            targetKind: expected.targetKind,
+            reason: 'Selected production switch target moved or became clipped before native input',
+            fatal: true,
+          };
+        }
+        const hit = document.elementFromPoint(point.x, point.y);
+        const targetHit =
+          expected.targetKind === 'label'
+            ? hit && (hit === target || target.contains(hit))
+            : expected.targetKind === 'indicator'
+              ? hit && (hit === target || target.contains(hit) || hit === input)
+              : hit === input;
+        if (!targetHit) {
+          return {
+            inputCount: 1,
+            checked: true,
+            original: true,
+            targetKind: expected.targetKind,
+            reason: 'Selected production switch target became covered before native input',
+            obstruction: describe(hit),
+            fatal: true,
+          };
+        }
+        const inputHit = document.elementFromPoint(inputCenter.x, inputCenter.y);
+        const acceptableInputHit =
+          expected.targetKind === 'indicator'
+            ? inputHit === input || inputHit === target || target.contains(inputHit)
+            : inputHit === input;
+        if (!acceptableInputHit) {
+          return {
+            inputCount: 1,
+            checked: true,
+            original: true,
+            targetKind: expected.targetKind,
+            reason: 'Production switch input became covered before native input',
+            obstruction: describe(inputHit),
+            fatal: true,
+          };
+        }
+        return {
+          inputCount: 1,
+          checked: true,
+          original: true,
+          targetKind: expected.targetKind,
+          inputRect: snapshot(inputRect),
+          targetRect: snapshot(targetRect),
+          point,
+        };
+      }`,
+      returnByValue: true,
+    })) as { result?: { result?: { value?: AsyncPatternSwitchObservation } } };
+    return (
+      response.result?.result?.value ?? {
+        inputCount: 0,
+        original: false,
+        reason: 'Bound production switch revalidation returned no value',
+        fatal: true,
+      }
+    );
+  }
+
+  private async cancelBoundAsyncPatternPress(): Promise<void> {
+    try {
+      await this.cdp.send(
+        'Input.dispatchMouseEvent',
+        {
+          type: 'mouseReleased',
+          x: -1,
+          y: -1,
+          button: 'left',
+          buttons: 0,
+          clickCount: 1,
+        },
+        { timeoutMs: 1000 }
+      );
+    } catch (releaseError) {
+      console.warn(`[http-timeout][async-pattern] Failed to cancel native mouse press: ${String(releaseError)}`);
+    }
+  }
+
+  private async clickBoundAsyncPatternTarget(
+    localCdp: CdpEvaluator,
+    inputObjectId: string,
+    targetObjectId: string,
+    observation: AsyncPatternSwitchObservation
+  ): Promise<void> {
+    assert.ok(observation.targetKind && observation.inputRect && observation.targetRect && observation.point);
+    const expected = {
+      targetKind: observation.targetKind,
+      inputRect: observation.inputRect,
+      targetRect: observation.targetRect,
+      point: observation.point,
+    };
+    const beforeMove = await this.boundAsyncPatternTargetObservation(localCdp, inputObjectId, targetObjectId, expected);
+    if (beforeMove.checked === false && beforeMove.original) {
+      return;
+    }
+    if (beforeMove.fatal || !beforeMove.original || !beforeMove.point) {
+      assert.fail(`Cannot move to Asynchronous pattern safely. State: ${JSON.stringify(beforeMove)}`);
+    }
+    await localCdp.send('Input.dispatchMouseEvent', {
+      type: 'mouseMoved',
+      x: observation.point.x,
+      y: observation.point.y,
+      button: 'none',
+    });
+    const beforePress = await this.boundAsyncPatternTargetObservation(localCdp, inputObjectId, targetObjectId, expected);
+    if (beforePress.checked === false && beforePress.original) {
+      return;
+    }
+    if (beforePress.fatal || !beforePress.original || !beforePress.point) {
+      assert.fail(`Cannot press Asynchronous pattern safely after native mouse move. State: ${JSON.stringify(beforePress)}`);
+    }
+
+    let pressMayHaveDispatched = false;
+    try {
+      pressMayHaveDispatched = true;
+      await localCdp.send('Input.dispatchMouseEvent', {
+        type: 'mousePressed',
+        x: observation.point.x,
+        y: observation.point.y,
+        button: 'left',
+        buttons: 1,
+        clickCount: 1,
+      });
+      const beforeRelease = await this.boundAsyncPatternTargetObservation(localCdp, inputObjectId, targetObjectId, expected);
+      if (beforeRelease.fatal || !beforeRelease.original || beforeRelease.checked === false || !beforeRelease.point) {
+        assert.fail(`Cannot release Asynchronous pattern safely after native mouse press. State: ${JSON.stringify(beforeRelease)}`);
+      }
+      await localCdp.send('Input.dispatchMouseEvent', {
+        type: 'mouseReleased',
+        x: observation.point.x,
+        y: observation.point.y,
+        button: 'left',
+        buttons: 0,
+        clickCount: 1,
+      });
+      pressMayHaveDispatched = false;
+    } catch (error) {
+      if (pressMayHaveDispatched) {
+        await this.cancelBoundAsyncPatternPress();
+      }
+      throw error;
+    }
+  }
+
+  private async prepareBoundAsyncPatternOffEvidence(localCdp: CdpEvaluator, inputObjectId: string): Promise<void> {
+    const response = (await localCdp.send('Runtime.callFunctionOn', {
+      objectId: inputObjectId,
+      functionDeclaration: `function() {
+        const input = this;
+        const inputs = Array.from(document.querySelectorAll(${JSON.stringify(asyncPatternSwitchSelector)}));
+        if (!(input instanceof HTMLInputElement) || !input.isConnected || inputs.length !== 1 || inputs[0] !== input) {
+          return {
+            inputCount: inputs.length,
+            checked: input instanceof HTMLInputElement ? input.checked : undefined,
+            original: false,
+          };
+        }
+        input.scrollIntoView({ block: 'center', inline: 'center' });
+        return {
+          inputCount: 1,
+          checked: input.checked,
+          original: true,
+          targetKind: 'input',
+        };
+      }`,
+      returnByValue: true,
+    })) as { result?: { result?: { value?: AsyncPatternSwitchObservation } } };
+    const state = response.result?.result?.value;
+    assert.ok(state?.original, `Production switch input became stale before Off evidence. State: ${JSON.stringify(state)}`);
+    assert.strictEqual(state.checked, false, `Asynchronous pattern must be Off before evidence. State: ${JSON.stringify(state)}`);
+  }
+
+  private async disableAsyncPattern(
+    localCdp: CdpEvaluator,
+    localActions: ProvenDesignerCdpActions,
+    deadline: number,
+    asyncPatternDisabled?: () => Promise<void>
+  ): Promise<void> {
+    let observation: AsyncPatternSwitchObservation = { inputCount: 0 };
+    let inputObjectId: string | undefined;
+    let targetObjectId: string | undefined;
+    try {
+      while (Date.now() < deadline) {
+        if (!inputObjectId) {
+          observation = await localActions.evaluate<AsyncPatternSwitchObservation>(`(() => {
         const inputs = Array.from(document.querySelectorAll(${JSON.stringify(asyncPatternSwitchSelector)}));
         if (inputs.length !== 1) {
           return {
@@ -909,8 +1315,79 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
           return { inputCount: 1, reason: 'Production switch selector did not resolve to an input', fatal: true };
         }
         if (!input.checked) return { inputCount: 1, checked: false };
+        return { inputCount: 1, checked: true };
+      })()`);
+          if (observation.fatal) {
+            assert.fail(`Cannot disable Asynchronous pattern safely. State: ${JSON.stringify(observation)}`);
+          }
+          if (observation.inputCount === 1) {
+            const response = (await localCdp.send('Runtime.evaluate', {
+              contextId: this.contextId,
+              expression: `(() => {
+              const inputs = Array.from(document.querySelectorAll(${JSON.stringify(asyncPatternSwitchSelector)}));
+              return inputs.length === 1 && inputs[0] instanceof HTMLInputElement ? inputs[0] : null;
+            })()`,
+              returnByValue: false,
+            })) as { result?: { result?: { objectId?: string } } };
+            inputObjectId = response.result?.result?.objectId;
+          }
+          if (!inputObjectId) {
+            const remaining = deadline - Date.now();
+            if (remaining <= 0) {
+              break;
+            }
+            await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining)));
+            continue;
+          }
+        }
+
+        const response = (await localCdp.send('Runtime.callFunctionOn', {
+          objectId: inputObjectId,
+          functionDeclaration: `function() {
+        ${visibleDom}
+        const input = this;
+        const inputs = Array.from(document.querySelectorAll(${JSON.stringify(asyncPatternSwitchSelector)}));
+        if (!(input instanceof HTMLInputElement) || !input.isConnected || inputs.length !== 1 || inputs[0] !== input) {
+          return {
+            inputCount: inputs.length,
+            checked: input instanceof HTMLInputElement ? input.checked : undefined,
+            reason: 'Production switch input became stale or was replaced',
+            fatal: true,
+          };
+        }
+        input.scrollIntoView({ block: 'center', inline: 'center' });
+        if (!input.checked) return { inputCount: 1, checked: false };
         if (input.disabled || input.getAttribute('aria-disabled') === 'true') {
           return { inputCount: 1, checked: true, reason: 'Production switch input is disabled', fatal: true };
+        }
+        const snapshot = (rect) => ({
+          left: rect.left,
+          top: rect.top,
+          right: rect.right,
+          bottom: rect.bottom,
+          width: rect.width,
+          height: rect.height,
+        });
+        const inputRect = input.getBoundingClientRect();
+        const inputStyle = getComputedStyle(input);
+        const inputClip = bounds(input);
+        if (inputStyle.display === 'none' || inputStyle.visibility === 'hidden' || input.getClientRects().length === 0) {
+          return { inputCount: 1, checked: true, targetKind: 'input', reason: 'Native switch input is hidden' };
+        }
+        if (inputRect.width <= 0 || inputRect.height <= 0) {
+          return { inputCount: 1, checked: true, targetKind: 'input', reason: 'Native switch input has zero-size geometry' };
+        }
+        if (inputRect.left < 0 || inputRect.top < 0 || inputRect.right > innerWidth || inputRect.bottom > innerHeight) {
+          return { inputCount: 1, checked: true, targetKind: 'input', reason: 'Native switch input is outside the viewport' };
+        }
+        if (
+          !inputClip ||
+          inputRect.left < inputClip.left ||
+          inputRect.top < inputClip.top ||
+          inputRect.right > inputClip.right ||
+          inputRect.bottom > inputClip.bottom
+        ) {
+          return { inputCount: 1, checked: true, targetKind: 'input', reason: 'Native switch input is clipped by an ancestor' };
         }
         const pointFor = (target, acceptInputHit = false) => {
           if (!(target instanceof HTMLElement) || !visible(target) ||
@@ -921,7 +1398,9 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
           const rect = target.getBoundingClientRect();
           const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
           const hit = document.elementFromPoint(point.x, point.y);
-          return hit && (hit === target || target.contains(hit) || (acceptInputHit && hit === input)) ? point : undefined;
+          return hit && (hit === target || target.contains(hit) || (acceptInputHit && hit === input))
+            ? { point, targetRect: snapshot(rect) }
+            : undefined;
         };
         const describe = (target) => normalize(
           target?.getAttribute('aria-label') || target?.textContent || target?.className || ''
@@ -940,16 +1419,18 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
         }
         if (labels.length === 1) {
           const target = preferredLabel && labels.includes(preferredLabel) ? preferredLabel : labels[0];
-          const point = pointFor(target);
-          return {
-            inputCount: 1,
-            checked: true,
-            targetKind: 'label',
-            targetCount: 1,
-            targetText: describe(target),
-            point,
-            reason: point ? undefined : 'Visible associated switch label was not enabled and hit-testable',
-          };
+          const targetObservation = pointFor(target);
+          if (targetObservation) {
+            return {
+              inputCount: 1,
+              checked: true,
+              targetKind: 'label',
+              targetCount: 1,
+              targetText: describe(target),
+              inputRect: snapshot(inputRect),
+              ...targetObservation,
+            };
+          }
         }
         const switchRoot = input.closest('.fui-Switch');
         const indicators = switchRoot
@@ -966,57 +1447,130 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
           };
         }
         if (indicators.length === 1) {
-          const point = pointFor(indicators[0], true);
+          const targetObservation = pointFor(indicators[0], true);
+          if (targetObservation) {
+            return {
+              inputCount: 1,
+              checked: true,
+              targetKind: 'indicator',
+              targetCount: 1,
+              targetText: describe(indicators[0]),
+              inputRect: snapshot(inputRect),
+              ...targetObservation,
+            };
+          }
+        }
+        const rect = input.getBoundingClientRect();
+        const style = getComputedStyle(input);
+        const clip = bounds(input);
+        const inputTarget = {
+          inputCount: 1,
+          checked: true,
+          targetKind: 'input',
+          targetCount: 1,
+          targetText: describe(input),
+          inputRect: snapshot(rect),
+        };
+        if (style.display === 'none' || style.visibility === 'hidden' || input.getClientRects().length === 0) {
+          return { ...inputTarget, reason: 'Native switch input is hidden' };
+        }
+        if (rect.width <= 0 || rect.height <= 0) {
+          return { ...inputTarget, reason: 'Native switch input has zero-size geometry' };
+        }
+        if (rect.left < 0 || rect.top < 0 || rect.right > innerWidth || rect.bottom > innerHeight) {
+          return { ...inputTarget, reason: 'Native switch input is outside the viewport' };
+        }
+        if (!clip || rect.left < clip.left || rect.top < clip.top || rect.right > clip.right || rect.bottom > clip.bottom) {
+          return { ...inputTarget, reason: 'Native switch input is clipped by an ancestor' };
+        }
+        const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+        const hit = document.elementFromPoint(point.x, point.y);
+        if (hit !== input) {
           return {
-            inputCount: 1,
-            checked: true,
-            targetKind: 'indicator',
-            targetCount: 1,
-            targetText: describe(indicators[0]),
-            point,
-            reason: point ? undefined : 'Visible Fluent switch indicator was not enabled and hit-testable',
+            ...inputTarget,
+            reason: 'Native switch input center did not resolve to the exact input',
+            obstruction: describe(hit),
           };
         }
         return {
-          inputCount: 1,
-          checked: true,
-          targetCount: 0,
-          reason: 'No visible associated label or Fluent switch indicator found',
+          ...inputTarget,
+          targetRect: snapshot(rect),
+          point,
         };
-      })()`);
-      if (observation.fatal) {
-        assert.fail(`Cannot disable Asynchronous pattern safely. State: ${JSON.stringify(observation)}`);
+      }`,
+          returnByValue: true,
+        })) as { result?: { result?: { value?: AsyncPatternSwitchObservation } } };
+        observation = response.result?.result?.value ?? {
+          inputCount: 0,
+          reason: 'Bound production switch observation returned no value',
+          fatal: true,
+        };
+        if (observation.fatal) {
+          assert.fail(`Cannot disable Asynchronous pattern safely. State: ${JSON.stringify(observation)}`);
+        }
+        if (observation.checked === false) {
+          await this.prepareBoundAsyncPatternOffEvidence(localCdp, inputObjectId);
+          await asyncPatternDisabled?.();
+          return;
+        }
+        if (observation.point) {
+          assert.ok(observation.targetKind, 'Selected Asynchronous pattern target kind missing before native click');
+          targetObjectId = await this.bindAsyncPatternTarget(localCdp, inputObjectId, observation.targetKind);
+          await this.clickBoundAsyncPatternTarget(localCdp, inputObjectId, targetObjectId, observation);
+          break;
+        }
+        const remaining = deadline - Date.now();
+        if (remaining <= 0) {
+          break;
+        }
+        await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining)));
       }
-      if (observation.checked === false) {
-        return;
+      if (!observation.point) {
+        assert.fail(
+          `Timed out waiting for one visible, enabled, hit-testable Asynchronous pattern target. State: ${JSON.stringify(observation)}`
+        );
       }
-      if (observation.point) {
-        await clickPoint(localCdp, observation.point);
-        break;
-      }
-      const remaining = deadline - Date.now();
-      if (remaining <= 0) {
-        break;
-      }
-      await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining)));
-    }
-    if (!observation.point) {
-      assert.fail(
-        `Timed out waiting for one visible, enabled, hit-testable Asynchronous pattern target. State: ${JSON.stringify(observation)}`
+      assert.ok(inputObjectId, 'Bound production switch input identity missing before native click');
+      await pollHttpTimeoutCompose(
+        async () => {
+          const response = (await localCdp.send('Runtime.callFunctionOn', {
+            objectId: inputObjectId,
+            functionDeclaration: `function() {
+            const inputs = Array.from(document.querySelectorAll(${JSON.stringify(asyncPatternSwitchSelector)}));
+            return {
+              inputCount: inputs.length,
+              checked: this instanceof HTMLInputElement ? this.checked : undefined,
+              original: this instanceof HTMLInputElement && this.isConnected && inputs.length === 1 && inputs[0] === this,
+            };
+          }`,
+            returnByValue: true,
+          })) as { result?: { result?: { value?: { inputCount: number; checked?: boolean; original: boolean } } } };
+          const state = response.result?.result?.value;
+          assert.ok(state?.original, `Production switch input became stale after native input. State: ${JSON.stringify(state)}`);
+          return state;
+        },
+        (value) => value.inputCount === 1 && value.checked === false,
+        deadline,
+        'disabled Asynchronous pattern'
       );
+      await this.prepareBoundAsyncPatternOffEvidence(localCdp, inputObjectId);
+      await asyncPatternDisabled?.();
+    } finally {
+      if (targetObjectId) {
+        try {
+          await this.cdp.send('Runtime.releaseObject', { objectId: targetObjectId });
+        } catch (releaseError) {
+          console.warn(`[http-timeout][async-pattern] Failed to release bound switch target Runtime object: ${String(releaseError)}`);
+        }
+      }
+      if (inputObjectId) {
+        try {
+          await this.cdp.send('Runtime.releaseObject', { objectId: inputObjectId });
+        } catch (releaseError) {
+          console.warn(`[http-timeout][async-pattern] Failed to release bound switch Runtime object: ${String(releaseError)}`);
+        }
+      }
     }
-    await pollHttpTimeoutCompose(
-      () =>
-        localActions.evaluate<{ inputCount: number; checked?: boolean }>(`(() => {
-          const inputs = Array.from(document.querySelectorAll(${JSON.stringify(asyncPatternSwitchSelector)}));
-          return inputs.length === 1 && inputs[0] instanceof HTMLInputElement
-            ? { inputCount: 1, checked: inputs[0].checked }
-            : { inputCount: inputs.length };
-        })()`),
-      (value) => value.inputCount === 1 && value.checked === false,
-      deadline,
-      'disabled Asynchronous pattern'
-    );
   }
 
   private async openHttpSettings(

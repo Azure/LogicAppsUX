@@ -180,10 +180,10 @@ async function provePt24hAndInvalidValidation(entry: CreatedWorkspace, endpoint:
       requiredNodes: [['When an HTTP request is received', 'When a HTTP request is received'], 'HTTP'],
     });
     await updateHttpRequestTimeout(activeSession.driver, endpoint, 'PT24H', entry, deadline, {
-      configured: () =>
-        captureHttpDesignerEvidence(activeSession, entry, deadline, 'http-timeout-request-pt24h-settings-configured', {
+      timeoutConfigured: () =>
+        captureHttpDesignerEvidence(activeSession, entry, deadline, 'http-timeout-request-pt24h-timeout-configured', {
           kind: 'designerPanel',
-          label: 'httpTimeoutRequestPt24hSettingsConfigured',
+          label: 'httpTimeoutRequestPt24hTimeoutConfigured',
           actionTitle: 'HTTP',
           requiredText: ['Settings'],
           fields: [
@@ -192,6 +192,22 @@ async function provePt24hAndInvalidValidation(entry: CreatedWorkspace, endpoint:
               exactAriaLabel: 'Request options - Timeout',
               sectionTitle: 'Networking',
               value: 'PT24H',
+            },
+          ],
+        }),
+      asyncPatternDisabled: () =>
+        captureHttpDesignerEvidence(activeSession, entry, deadline, 'http-timeout-request-pt24h-async-pattern-off', {
+          kind: 'designerPanel',
+          label: 'httpTimeoutRequestPt24hAsyncPatternOff',
+          actionTitle: 'HTTP',
+          requiredText: ['Settings'],
+          switches: [
+            {
+              labels: ['Asynchronous pattern'],
+              exactAriaLabel: 'Asynchronous pattern',
+              sectionTitle: 'Networking',
+              checked: false,
+              stateText: 'Off',
             },
           ],
         }),
@@ -320,21 +336,42 @@ async function authorHttpRequest(
   });
   await driver.fillParameter(['URI'], endpoint);
   console.log(`[http-timeout][checkpoint] ${entry.wfName}: URI entered; waiting for HTTP panel Settings readiness`);
-  await driver.configureHttpRequestSettings(timeout);
-  console.log(`[http-timeout][checkpoint] ${entry.wfName}: HTTP panel Settings ready and timeout ${timeout} configured`);
-  await captureHttpDesignerEvidence(session, entry, deadline, 'http-timeout-request-pt1s-settings-configured', {
-    kind: 'designerPanel',
-    label: 'httpTimeoutRequestPt1sSettingsConfigured',
-    actionTitle: 'HTTP',
-    requiredText: ['Settings'],
-    fields: [
-      {
-        labels: ['Request options - Timeout'],
-        exactAriaLabel: 'Request options - Timeout',
-        sectionTitle: 'Networking',
-        value: timeout,
-      },
-    ],
+  await driver.configureHttpRequestSettings(timeout, {
+    timeoutConfigured: async () => {
+      console.log(`[http-timeout][checkpoint] ${entry.wfName}: Networking Request options timeout visibly configured as ${timeout}`);
+      await captureHttpDesignerEvidence(session, entry, deadline, 'http-timeout-request-pt1s-timeout-configured', {
+        kind: 'designerPanel',
+        label: 'httpTimeoutRequestPt1sTimeoutConfigured',
+        actionTitle: 'HTTP',
+        requiredText: ['Settings'],
+        fields: [
+          {
+            labels: ['Request options - Timeout'],
+            exactAriaLabel: 'Request options - Timeout',
+            sectionTitle: 'Networking',
+            value: timeout,
+          },
+        ],
+      });
+    },
+    asyncPatternDisabled: async () => {
+      console.log(`[http-timeout][checkpoint] ${entry.wfName}: exact Asynchronous pattern input scrolled into view and visibly Off`);
+      await captureHttpDesignerEvidence(session, entry, deadline, 'http-timeout-request-pt1s-async-pattern-off', {
+        kind: 'designerPanel',
+        label: 'httpTimeoutRequestPt1sAsyncPatternOff',
+        actionTitle: 'HTTP',
+        requiredText: ['Settings'],
+        switches: [
+          {
+            labels: ['Asynchronous pattern'],
+            exactAriaLabel: 'Asynchronous pattern',
+            sectionTitle: 'Networking',
+            checked: false,
+            stateText: 'Off',
+          },
+        ],
+      });
+    },
   });
   await driver.closePanel();
   await driver.save();
@@ -360,7 +397,8 @@ async function authorHttpRequest(
 }
 
 interface HttpTimeoutUpdateCheckpoints {
-  configured?: () => Promise<void>;
+  timeoutConfigured?: () => Promise<void>;
+  asyncPatternDisabled?: () => Promise<void>;
   persisted?: () => Promise<void>;
 }
 
@@ -374,9 +412,16 @@ async function updateHttpRequestTimeout(
 ): Promise<void> {
   await driver.waitForDesignerReady(['When an HTTP request is received', 'When a HTTP request is received']);
   console.log(`[http-timeout][checkpoint] ${entry.wfName}: reopening HTTP panel Settings for timeout ${timeout}`);
-  await driver.configureHttpRequestSettings(timeout);
-  console.log(`[http-timeout][checkpoint] ${entry.wfName}: HTTP panel Settings ready and timeout ${timeout} configured`);
-  await checkpoints.configured?.();
+  await driver.configureHttpRequestSettings(timeout, {
+    timeoutConfigured: async () => {
+      console.log(`[http-timeout][checkpoint] ${entry.wfName}: Networking Request options timeout visibly configured as ${timeout}`);
+      await checkpoints.timeoutConfigured?.();
+    },
+    asyncPatternDisabled: async () => {
+      console.log(`[http-timeout][checkpoint] ${entry.wfName}: exact Asynchronous pattern input scrolled into view and visibly Off`);
+      await checkpoints.asyncPatternDisabled?.();
+    },
+  });
   await driver.closePanel();
   await pollHttpTimeoutCompose(() => driver.saveEnabled(), Boolean, deadline, `enabled Save after setting HTTP timeout ${timeout}`);
   const priorModifiedAt = fs.statSync(entry.workflowJsonPath).mtimeMs;
