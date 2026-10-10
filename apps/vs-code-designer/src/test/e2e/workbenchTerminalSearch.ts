@@ -144,6 +144,14 @@ async function replaceFocusedText(cdp: CdpEvaluator, value: string): Promise<voi
 }
 
 async function pressControlShortcut(cdp: CdpEvaluator, key: string, code: string, virtualKeyCode: number): Promise<void> {
+  await cdp.send('Input.dispatchKeyEvent', {
+    type: 'keyDown',
+    key: 'Control',
+    code: 'ControlLeft',
+    modifiers: 2,
+    windowsVirtualKeyCode: 17,
+    nativeVirtualKeyCode: 17,
+  });
   for (const type of ['keyDown', 'keyUp']) {
     await cdp.send('Input.dispatchKeyEvent', {
       type,
@@ -154,4 +162,11 @@ async function pressControlShortcut(cdp: CdpEvaluator, key: string, code: string
       nativeVirtualKeyCode: virtualKeyCode,
     });
   }
+  await cdp.send('Input.dispatchKeyEvent', {
+    type: 'keyUp',
+    key: 'Control',
+    code: 'ControlLeft',
+    windowsVirtualKeyCode: 17,
+    nativeVirtualKeyCode: 17,
+  });
 }

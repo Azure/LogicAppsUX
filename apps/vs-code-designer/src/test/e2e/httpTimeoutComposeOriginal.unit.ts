@@ -358,6 +358,8 @@ async function main(): Promise<void> {
     assert.ok(helper.includes("await pressControlShortcut(cdp, 'f', 'KeyF', 70);"));
     assert.ok(helper.includes("await pressControlShortcut(cdp, 'a', 'KeyA', 65);"));
     assert.ok(helper.includes("await cdp.send('Input.insertText', { text: value });"));
+    assert.strictEqual((helper.match(/code: 'ControlLeft'/g) ?? []).length, 2);
+    assert.ok(helper.includes("key: 'Control'"));
     assert.ok(helper.includes("terminal.querySelectorAll('.xterm-rows, .xterm-accessibility-tree')"));
     assert.ok(helper.includes('findInput.value === expected'));
     assert.ok(helper.includes('state.findValue === expectedText && state.found'));
