@@ -155,6 +155,7 @@ async function teardownHttpTimeoutHost(entry: CreatedWorkspace, endpoint: OwnedD
     },
     [
       () => helpers.stopDebuggingAndTasks(),
+      () => disposeStoppedFuncHostTerminals(Date.now() + 10_000),
       () => endpoint.close(),
       () => closeAllTabs(),
       () => assertNoDialogAttempts('HTTP timeout request lifecycle'),

@@ -549,16 +549,22 @@ async function main(): Promise<void> {
     assert.ok(lifecycle.includes("fields: [{ labels: ['Request options - Timeout'], value: 'InvalidString' }]"));
     assert.ok(driver.includes("element.scrollIntoView({ block: 'center', inline: 'nearest' });"));
   });
-  await control('HTTP lifecycle tears down the exact owned extension host before wrapper filesystem cleanup', () => {
+  await control('HTTP lifecycle releases the stopped func terminal before exact owned extension deactivation', () => {
     const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
     assert.ok(source.includes("import { findLoadedCachedExtensionEntry, teardownOwnedExtensionHost } from './ownedMsnShutdown';"));
     const finalizer = source.indexOf('async function teardownHttpTimeoutHost');
     const stopRuntime = source.indexOf('() => helpers.stopDebuggingAndTasks()', finalizer);
-    const closeEndpoint = source.indexOf('() => endpoint.close()', stopRuntime);
+    const disposeTerminal = source.indexOf('() => disposeStoppedFuncHostTerminals(Date.now() + 10_000)', stopRuntime);
+    const closeEndpoint = source.indexOf('() => endpoint.close()', disposeTerminal);
     const closeTabs = source.indexOf('() => closeAllTabs()', closeEndpoint);
     const dialogAssertion = source.indexOf("() => assertNoDialogAttempts('HTTP timeout request lifecycle')", closeTabs);
     assert.ok(
-      finalizer >= 0 && stopRuntime > finalizer && closeEndpoint > stopRuntime && closeTabs > closeEndpoint && dialogAssertion > closeTabs
+      finalizer >= 0 &&
+        stopRuntime > finalizer &&
+        disposeTerminal > stopRuntime &&
+        closeEndpoint > disposeTerminal &&
+        closeTabs > closeEndpoint &&
+        dialogAssertion > closeTabs
     );
     assert.ok(source.includes("workspaceParentPrefix: 'la-e2e-cli-httpTimeoutLifecycle'"));
     assert.ok(source.includes('workspaceRoots: [entry.appDir]'));
