@@ -68,7 +68,7 @@ import {
   pasteJsonValueIntoActiveNativeEditor,
   saveAndCloseActiveNativeEditor,
 } from './workbenchEditorActions';
-import { disposeStoppedFuncHostTerminals, findTextInFuncHostTerminal } from './workbenchTerminalSearch';
+import { disposeStoppedFuncHostTerminals, findTextInFuncHostTerminal, prepareFuncHostTerminalEvidence } from './workbenchTerminalSearch';
 
 const managementRoot = 'http://localhost:7071/runtime/webhooks/workflow/api/management';
 const apiVersion = '2019-10-01-edge-preview';
@@ -375,6 +375,7 @@ async function provePt24hAndInvalidValidation(entry: CreatedWorkspace, endpoint:
       httpTimeoutPt24hTerminalVisibleText,
       terminalValidationDeadline
     );
+    await prepareFuncHostTerminalEvidence(terminalWorkbench, Math.min(deadline, Date.now() + 5000));
     const terminalScreenshotDeadline = Math.min(deadline, Date.now() + defaultEvidenceScreenshotTimeoutMs);
     await captureEvidenceScreenshot(
       'http-timeout-request-pt24h-runtime-validation',

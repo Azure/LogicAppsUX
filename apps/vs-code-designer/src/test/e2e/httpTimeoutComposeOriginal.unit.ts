@@ -393,7 +393,9 @@ async function main(): Promise<void> {
     const dispose = scenario.indexOf('await disposeStoppedFuncHostTerminals(');
     const start = scenario.indexOf('await helpers.startDebuggingGeneratedWorkspace(entry);');
     const search = scenario.indexOf('await findTextInFuncHostTerminal(');
+    const prepareEvidence = scenario.indexOf('await prepareFuncHostTerminalEvidence(');
     assert.ok(dispose >= 0 && dispose < start && start < search);
+    assert.ok(search < prepareEvidence);
     assert.ok(scenario.includes('httpTimeoutPt24hTerminalFindText'));
     assert.ok(scenario.includes('httpTimeoutPt24hTerminalVisibleText'));
     assert.ok(source.includes('const httpTimeoutPt24hTerminalVisibleText = [httpTimeoutPt24hRuntimeError] as const;'));
@@ -409,7 +411,14 @@ async function main(): Promise<void> {
     assert.ok(helper.includes("await pressControlShortcut(cdp, 'f', 'KeyF', 70);"));
     assert.ok(helper.includes("document.querySelectorAll('.xterm-rows, .xterm-accessibility-tree')"));
     assert.ok(helper.includes('!/no results/i.test(findWidgetText)'));
-    assert.ok(helper.includes('missingRequiredText.length === 0'));
+    assert.ok(helper.includes('!terminalTextAvailable || missingRequiredText.length === 0'));
+    assert.ok(helper.includes('await waitForTerminalBufferText(terminal, requiredVisibleText, deadline)'));
+    assert.ok(helper.includes("const terminalSelectAllCommand = 'workbench.action.terminal.selectAll';"));
+    assert.ok(helper.includes("const terminalCopySelectionCommand = 'workbench.action.terminal.copySelection';"));
+    assert.ok(helper.includes('await vscode.env.clipboard.readText()'));
+    assert.ok(helper.includes('await vscode.env.clipboard.writeText(previousClipboard)'));
+    assert.ok(helper.includes("const toggleMaximizedPanelCommand = 'workbench.action.toggleMaximizedPanel';"));
+    assert.ok(helper.includes("await vscode.commands.executeCommand('notifications.hideToasts');"));
     assert.ok(helper.includes('const chordDeadline = Math.min(deadline, Date.now() + 3000);'));
     assert.ok(helper.includes('commands.includes(terminalFocusFindCommand)'));
     assert.ok(helper.includes('await vscode.commands.executeCommand(terminalFocusFindCommand);'));
