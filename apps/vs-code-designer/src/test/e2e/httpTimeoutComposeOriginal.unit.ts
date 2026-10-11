@@ -285,6 +285,7 @@ async function main(): Promise<void> {
       'http-timeout-request-pt24h-async-pattern-off',
       'http-timeout-request-pt24h-saved',
       'http-timeout-request-invalid-designer-reopened',
+      'http-timeout-request-invalid-value-entered',
       'http-timeout-request-invalid-duration',
       'http-timeout-request-valid-state-restored',
     ];
@@ -534,9 +535,19 @@ async function main(): Promise<void> {
     assert.ok(screenshot.includes('(expectation.switches ?? []).flatMap'));
     assert.ok(screenshot.includes('...(expected.stateText ? [expected.stateText] : [])'));
     const invalidConfigured = lifecycle.indexOf("await activeSession.driver.configureHttpRequestSettings('InvalidString')");
-    const invalidEvidence = lifecycle.indexOf('http-timeout-request-invalid-duration', invalidConfigured);
+    const invalidEnteredEvidence = lifecycle.indexOf('http-timeout-request-invalid-value-entered', invalidConfigured);
+    const revealValidation = lifecycle.indexOf('revealValidationMessage(httpTimeoutInvalidDurationError)', invalidEnteredEvidence);
+    const invalidEvidence = lifecycle.indexOf('http-timeout-request-invalid-duration', revealValidation);
     const restoration = lifecycle.indexOf('http-timeout-request-valid-state-restored', invalidEvidence);
-    assert.ok(invalidConfigured >= 0 && invalidConfigured < invalidEvidence && invalidEvidence < restoration);
+    assert.ok(
+      invalidConfigured >= 0 &&
+        invalidConfigured < invalidEnteredEvidence &&
+        invalidEnteredEvidence < revealValidation &&
+        revealValidation < invalidEvidence &&
+        invalidEvidence < restoration
+    );
+    assert.ok(lifecycle.includes("fields: [{ labels: ['Request options - Timeout'], value: 'InvalidString' }]"));
+    assert.ok(driver.includes("element.scrollIntoView({ block: 'center', inline: 'nearest' });"));
   });
   await control('Designer acquisition and later failures capture before optional disposal and tab cleanup', () => {
     const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');

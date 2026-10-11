@@ -1713,6 +1713,35 @@ export class HttpTimeoutComposeDriver extends ProvenDesignerCdpActions {
     })()`);
   }
 
+  async revealValidationMessage(message: string): Promise<void> {
+    const deadline = Math.min(this.deadline, Date.now() + 15_000);
+    await pollHttpTimeoutCompose(
+      () =>
+        this.evaluate<{ found: boolean; fullyVisible: boolean; text: string }>(`(() => {
+          ${visibleDom}
+          const expected = ${JSON.stringify(message)};
+          const candidates = Array.from(document.querySelectorAll(
+            '[role="alert"], [aria-live], .ms-MessageBar, [class*="error"], [class*="Error"]'
+          ))
+            .filter((element) => normalize(element.innerText || '').includes(normalize(expected)))
+            .sort((left, right) => normalize(left.innerText || '').length - normalize(right.innerText || '').length);
+          const element = candidates[0];
+          if (!(element instanceof HTMLElement)) {
+            return { found: false, fullyVisible: false, text: '' };
+          }
+          element.scrollIntoView({ block: 'center', inline: 'nearest' });
+          return {
+            found: true,
+            fullyVisible: fullyVisible(element),
+            text: normalize(element.innerText || ''),
+          };
+        })()`),
+      (value) => value.found && value.fullyVisible && value.text.includes(message),
+      deadline,
+      `visible validation message ${message}`
+    );
+  }
+
   async saveEnabled(): Promise<boolean> {
     return this.evaluate<boolean>(`(() => {
       const normalize = (text) => (text || '').replace(/\\s+/g, ' ').trim();

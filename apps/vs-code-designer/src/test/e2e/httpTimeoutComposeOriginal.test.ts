@@ -454,6 +454,14 @@ async function provePt24hAndInvalidValidation(entry: CreatedWorkspace, endpoint:
     assert.ok(messages.includes(httpTimeoutInvalidDurationError));
     assert.strictEqual(await activeSession.driver.saveEnabled(), false, 'InvalidString must not become a persisted workflow definition');
     assertHttpTimeoutRequestPersisted(readWorkflow(entry), 'PT24H', endpoint);
+    await captureHttpDesignerEvidence(activeSession, entry, deadline, 'http-timeout-request-invalid-value-entered', {
+      kind: 'designerPanel',
+      label: 'httpTimeoutRequestInvalidDurationEntered',
+      actionTitle: 'HTTP',
+      requiredText: ['Settings'],
+      fields: [{ labels: ['Request options - Timeout'], value: 'InvalidString' }],
+    });
+    await activeSession.driver.revealValidationMessage(httpTimeoutInvalidDurationError);
     await captureHttpDesignerEvidence(
       activeSession,
       entry,
