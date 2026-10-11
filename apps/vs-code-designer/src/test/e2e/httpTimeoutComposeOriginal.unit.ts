@@ -549,15 +549,47 @@ async function main(): Promise<void> {
     assert.ok(lifecycle.includes("fields: [{ labels: ['Request options - Timeout'], value: 'InvalidString' }]"));
     assert.ok(driver.includes("element.scrollIntoView({ block: 'center', inline: 'nearest' });"));
   });
-  await control('HTTP lifecycle releases the stopped func terminal before exact owned extension deactivation', () => {
+  await control('HTTP lifecycle captures each live runtime before stop and finalizes after exact extension deactivation', () => {
     const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
-    assert.ok(source.includes("import { findLoadedCachedExtensionEntry, teardownOwnedExtensionHost } from './ownedMsnShutdown';"));
+    assert.ok(source.includes('type OwnedMsnProcessCleanup'));
     assert.ok(source.includes("import { createHttpTimeoutProcessCleanup } from './ownedMsnProcessCleanup';"));
-    const finalizer = source.indexOf('async function teardownHttpTimeoutHost');
+    const endpoint = source.indexOf('const endpoint = await startOwnedDelayEndpoint();');
     const createProcessCleanup = source.indexOf(
       "const processCleanup = process.platform === 'win32' ? createHttpTimeoutProcessCleanup(process.env) : undefined;",
-      finalizer
+      endpoint
     );
+    const scenario1Call = source.indexOf('await provePt1sExecution(entry, endpoint, deadline, processCleanup)', createProcessCleanup);
+    const scenario2Call = source.indexOf(
+      'await provePt24hAndInvalidValidation(entry, endpoint.url, deadline, processCleanup)',
+      scenario1Call
+    );
+    const composeCall = source.indexOf('await proveComposeUnsupportedTimeoutOnSameWorkflow', scenario2Call);
+    const finalizerCall = source.indexOf('await teardownHttpTimeoutHost(entry, endpoint, processCleanup)', composeCall);
+    assert.ok(
+      endpoint >= 0 &&
+        endpoint < createProcessCleanup &&
+        createProcessCleanup < scenario1Call &&
+        scenario1Call < scenario2Call &&
+        scenario2Call < composeCall &&
+        composeCall < finalizerCall
+    );
+
+    const scenario1Start = source.indexOf('async function provePt1sExecution');
+    const scenario2Start = source.indexOf('async function provePt24hAndInvalidValidation');
+    const scenario1 = source.slice(scenario1Start, scenario2Start);
+    const scenario1Healthy = scenario1.indexOf('await helpers.waitForWorkflowHealthy');
+    const scenario1Capture = scenario1.indexOf('await processCleanup?.capture()', scenario1Healthy);
+    const scenario1Stop = scenario1.indexOf("phase: 'stop Scenario 1 debug/tasks'", scenario1Capture);
+    assert.ok(scenario1Healthy >= 0 && scenario1Healthy < scenario1Capture && scenario1Capture < scenario1Stop);
+
+    const scenario2End = source.indexOf('async function authorHttpRequest(', scenario2Start);
+    const scenario2 = source.slice(scenario2Start, scenario2End);
+    const terminalEvidence = scenario2.indexOf('await findTextInFuncHostTerminal(');
+    const scenario2Capture = scenario2.indexOf('await processCleanup?.capture()', terminalEvidence);
+    const scenario2Stop = scenario2.indexOf('await helpers.stopDebuggingAndTasks()', scenario2Capture);
+    assert.ok(terminalEvidence >= 0 && terminalEvidence < scenario2Capture && scenario2Capture < scenario2Stop);
+
+    const finalizer = source.indexOf('async function teardownHttpTimeoutHost');
     const stopRuntime = source.indexOf('() => helpers.stopDebuggingAndTasks()', finalizer);
     const disposeTerminal = source.indexOf('() => disposeStoppedFuncHostTerminals(Date.now() + 10_000)', stopRuntime);
     const closeEndpoint = source.indexOf('() => endpoint.close()', disposeTerminal);
@@ -566,7 +598,6 @@ async function main(): Promise<void> {
     const exactProcessCleanup = source.indexOf('processCleanup', dialogAssertion);
     assert.ok(
       finalizer >= 0 &&
-        createProcessCleanup > finalizer &&
         stopRuntime > finalizer &&
         disposeTerminal > stopRuntime &&
         closeEndpoint > disposeTerminal &&
@@ -578,7 +609,7 @@ async function main(): Promise<void> {
     assert.ok(source.includes('workspaceRoots: [entry.appDir]'));
     assert.ok(source.includes('resolveEntry: require.resolve'));
     assert.ok(source.includes('findLoadedCachedExtensionEntry(filename, require.cache)'));
-    assert.ok(source.includes('await teardownHttpTimeoutHost(entry, endpoint);'));
+    assert.ok(!source.slice(finalizer).includes('createHttpTimeoutProcessCleanup(process.env)'));
     const terminalHelper = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/workbenchTerminalSearch.ts'), 'utf8');
     assert.ok(terminalHelper.includes('stopped-host cleanup found ${terminals.length} matching terminal(s)'));
     assert.ok(terminalHelper.includes('stopped-host cleanup removed ${terminals.length} matching terminal handle(s)'));

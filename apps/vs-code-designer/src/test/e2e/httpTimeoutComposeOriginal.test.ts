@@ -52,7 +52,7 @@ import {
   type LocalWorkflowManagementPhase,
   type LocalWorkflowManagementResult,
 } from './localWorkflowManagement';
-import { findLoadedCachedExtensionEntry, teardownOwnedExtensionHost } from './ownedMsnShutdown';
+import { findLoadedCachedExtensionEntry, type OwnedMsnProcessCleanup, teardownOwnedExtensionHost } from './ownedMsnShutdown';
 import { createHttpTimeoutProcessCleanup } from './ownedMsnProcessCleanup';
 import {
   assertApprovedAzureConnectorFixtureSaved,
@@ -120,25 +120,29 @@ suite('HTTP timeout original clauses on one workflow', () => {
     assert.deepStrictEqual(initial.definition?.actions, {});
 
     const endpoint = await startOwnedDelayEndpoint();
+    const processCleanup = process.platform === 'win32' ? createHttpTimeoutProcessCleanup(process.env) : undefined;
     try {
-      await provePt1sExecution(entry, endpoint, deadline);
-      await provePt24hAndInvalidValidation(entry, endpoint.url, deadline);
+      await provePt1sExecution(entry, endpoint, deadline, processCleanup);
+      await provePt24hAndInvalidValidation(entry, endpoint.url, deadline, processCleanup);
       await proveComposeUnsupportedTimeoutOnSameWorkflow(entry, endpoint.url, deadline);
       console.log(
         '[http-timeout] Scenarios 1-3 passed sequentially in one VS Code session; Portal wording and Consumption rejection remain residual.'
       );
     } finally {
-      await teardownHttpTimeoutHost(entry, endpoint);
+      await teardownHttpTimeoutHost(entry, endpoint, processCleanup);
     }
   });
 });
 
-async function teardownHttpTimeoutHost(entry: CreatedWorkspace, endpoint: OwnedDelayEndpoint): Promise<void> {
+async function teardownHttpTimeoutHost(
+  entry: CreatedWorkspace,
+  endpoint: OwnedDelayEndpoint,
+  processCleanup: OwnedMsnProcessCleanup | undefined
+): Promise<void> {
   const workspaceParent = process.env.LA_E2E_CLI_WORKSPACE_PARENT;
   const extension = vscode.extensions.getExtension('ms-azuretools.vscode-azurelogicapps');
   assert.ok(workspaceParent, 'HTTP timeout shutdown requires the runner-owned workspace parent');
   assert.ok(extension, 'HTTP timeout shutdown requires the installed Logic Apps extension');
-  const processCleanup = process.platform === 'win32' ? createHttpTimeoutProcessCleanup(process.env) : undefined;
   await teardownOwnedExtensionHost(
     {
       dedicatedRunHost: mode === 'run',
@@ -166,7 +170,12 @@ async function teardownHttpTimeoutHost(entry: CreatedWorkspace, endpoint: OwnedD
   );
 }
 
-async function provePt1sExecution(entry: CreatedWorkspace, endpoint: OwnedDelayEndpoint, deadline: number): Promise<void> {
+async function provePt1sExecution(
+  entry: CreatedWorkspace,
+  endpoint: OwnedDelayEndpoint,
+  deadline: number,
+  processCleanup: OwnedMsnProcessCleanup | undefined
+): Promise<void> {
   let session: DesignerSession | undefined;
   try {
     const activeSession = await openDesigner(entry, deadline, 'HTTP PT1S actual designer');
@@ -187,6 +196,7 @@ async function provePt1sExecution(entry: CreatedWorkspace, endpoint: OwnedDelayE
       historyLease.assertInstalled();
       await helpers.startDebuggingGeneratedWorkspace(entry);
       await helpers.waitForWorkflowHealthy(entry.wfName, Math.min(120_000, httpTimeoutComposeRemaining(deadline)));
+      await processCleanup?.capture();
       const previousRunName = await helpers.waitForRunHistoryBaseline(
         entry.wfName,
         Math.min(60_000, httpTimeoutComposeRemaining(deadline))
@@ -372,7 +382,12 @@ function isRecoverableFailedHttpMonitoringEvidenceError(error: unknown): boolean
   );
 }
 
-async function provePt24hAndInvalidValidation(entry: CreatedWorkspace, endpoint: string, deadline: number): Promise<void> {
+async function provePt24hAndInvalidValidation(
+  entry: CreatedWorkspace,
+  endpoint: string,
+  deadline: number,
+  processCleanup: OwnedMsnProcessCleanup | undefined
+): Promise<void> {
   let session: DesignerSession | undefined;
   let pt24hOwner: Awaited<ReturnType<HttpTimeoutComposeDriver['context']>> | undefined;
   try {
@@ -443,6 +458,7 @@ async function provePt24hAndInvalidValidation(entry: CreatedWorkspace, endpoint:
       httpTimeoutPt24hTerminalVisibleText,
       terminalValidationDeadline
     );
+    await processCleanup?.capture();
     await prepareFuncHostTerminalEvidence(terminalWorkbench, Math.min(deadline, Date.now() + 5000));
     const terminalScreenshotDeadline = Math.min(deadline, Date.now() + defaultEvidenceScreenshotTimeoutMs);
     await captureEvidenceScreenshot(

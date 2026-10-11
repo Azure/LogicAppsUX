@@ -1474,12 +1474,75 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
     await this.key('Delete', 'Delete', 46);
 
     let confirmationDispatched = false;
+    let settledObservations = 0;
+    let settledSignature = '';
+    let lastSettleState: unknown;
     while (Date.now() < this.deadline) {
       const clickedNodeRemoved = await this.evaluate<boolean>(
         `(() => document.getElementById(${JSON.stringify(clickedNodeId)}) === null)()`
       );
       if (clickedNodeRemoved) {
-        return;
+        const settleState = await this.evaluate<{
+          canvasVisible: boolean;
+          loaderCount: number;
+          blockerCount: number;
+          remainingNodeIds: string[];
+          addTriggerCount: number;
+        }>(`(() => {
+          const visible = (element) => {
+            if (!(element instanceof HTMLElement)) return false;
+            const rect = element.getBoundingClientRect();
+            const style = getComputedStyle(element);
+            return rect.width > 0 && rect.height > 0 && style.display !== 'none' &&
+              style.visibility !== 'hidden' && style.opacity !== '0';
+          };
+          const visibleElements = (selector) => Array.from(document.querySelectorAll(selector)).filter(visible);
+          const canvasVisible = visibleElements(
+            '.react-flow, .msla-designer-canvas, [data-automation-id="msla-designer-canvas"]'
+          ).length > 0;
+          const loaderCount = visibleElements(
+            '.monaco-progress-container, .codicon-loading, .ms-Spinner, .fui-Spinner, .ms-Shimmer-container, ' +
+            '[aria-busy="true"], [role="progressbar"], [class*="spinner"], [class*="loading"]'
+          ).length;
+          const blockerCount = visibleElements(
+            '[role="dialog"], [role="alertdialog"], [aria-modal="true"], ' +
+            '[class*="modal"], [class*="dialog"], [class*="blocking-overlay"]'
+          ).length;
+          const remainingNodeIds = visibleElements(
+            '[data-automation-id^="msla-node"], [id^="msla-node"], [data-testid*="node"], .msla-card, .react-flow__node'
+          )
+            .map((element) => element.id || element.getAttribute('data-automation-id') ||
+              element.getAttribute('data-testid') || (element.textContent || '').replace(/\\s+/g, ' ').trim())
+            .filter(Boolean)
+            .sort();
+          const addTriggerCount = visibleElements(
+            '[data-testid="card-Add a trigger"], [data-testid="card-Add trigger"], ' +
+            '[data-automation-id="card-Add_a_trigger"], [data-automation-id="card-Add_trigger"], ' +
+            '[aria-label="Add a trigger"], [aria-label="Add trigger"]'
+          ).length;
+          return { canvasVisible, loaderCount, blockerCount, remainingNodeIds, addTriggerCount };
+        })()`);
+        lastSettleState = settleState;
+        const settled =
+          settleState.canvasVisible &&
+          settleState.loaderCount === 0 &&
+          settleState.blockerCount === 0 &&
+          (settleState.remainingNodeIds.length > 0 || settleState.addTriggerCount > 0);
+        const signature = settled
+          ? JSON.stringify({
+              remainingNodeIds: settleState.remainingNodeIds,
+              addTriggerCount: settleState.addTriggerCount,
+            })
+          : '';
+        if (settled && signature === settledSignature) {
+          settledObservations++;
+        } else {
+          settledSignature = signature;
+          settledObservations = settled ? 1 : 0;
+        }
+        if (settledObservations >= 3) {
+          return;
+        }
       }
       const state = await this.evaluate<{ dialogCount: number; deleteButtonCount: number }>(`(() => {
         const visible = (element) => {
@@ -1505,7 +1568,7 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
       }
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
-    assert.fail(`Timed out deleting Designer node ${titles.join('/')}`);
+    assert.fail(`Timed out deleting Designer node ${titles.join('/')}; last settle state=${JSON.stringify(lastSettleState)}`);
   }
 
   override async closePanel(): Promise<void> {

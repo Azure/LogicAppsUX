@@ -52,6 +52,7 @@ async function run(): Promise<void> {
       evidenceBase,
       owner,
       child,
+      creationIdentity,
       env,
       input,
       budgets,
@@ -74,7 +75,7 @@ async function run(): Promise<void> {
     const cleanup = positive.create();
     positive.env.LA_E2E_CLI_MSN_PROCESS_OWNER_JSON = 'malformed-after-binding';
     await cleanup.capture();
-    positive.setTime(5100);
+    positive.setTime(60_100);
     positive.setRecords([positive.owner]);
     await cleanup.finalize();
     const before = JSON.parse(fs.readFileSync(`${positive.evidenceBase}.before-teardown.json`, 'utf8'));
@@ -84,7 +85,7 @@ async function run(): Promise<void> {
     assert.strictEqual(after.filesystemCleanupVerified, false);
     assert.strictEqual(before.invocationId, after.invocationId);
     assert.deepStrictEqual(after.actions, []);
-    assert.deepStrictEqual(positive.budgets, [10_000, 5000, 5000]);
+    assert.deepStrictEqual(positive.budgets, [10_000, 10_000, 10_000]);
     assert.ok(fs.existsSync(positive.workspace) && fs.existsSync(positive.dependencies));
     await assert.rejects(cleanup.capture(), reason('duplicate-process-capture'));
     await assert.rejects(cleanup.finalize(), reason('duplicate-process-finalization'));
@@ -92,6 +93,7 @@ async function run(): Promise<void> {
 
     const http = fixture();
     const terminated: OwnedProcessIdentity[] = [];
+    const terminationBudgets: number[] = [];
     const httpEnv: NodeJS.ProcessEnv = {
       LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_INVOCATION: http.env.LA_E2E_CLI_MSN_PROCESS_INVOCATION,
       LA_E2E_CLI_WORKSPACE_PARENT: http.workspace,
@@ -103,7 +105,7 @@ async function run(): Promise<void> {
       now: http.input.now,
       provider: () => ({
         snapshot: http.input.provider().snapshot,
-        terminateExact: async (record) => {
+        terminateExact: async (record, budget) => {
           assert.deepStrictEqual(
             {
               pid: record.pid,
@@ -114,17 +116,22 @@ async function run(): Promise<void> {
             http.child
           );
           terminated.push(record);
+          terminationBudgets.push(budget);
           http.setRecords([http.owner]);
         },
       }),
     });
     await httpCleanup.capture();
+    http.setTime(60_100);
     await httpCleanup.finalize();
-    const httpAfter = JSON.parse(fs.readFileSync(`${http.evidenceBase}.after-teardown.json`, 'utf8'));
+    const httpAfter = JSON.parse(fs.readFileSync(`${http.evidenceBase}.runtime-1.after-teardown.json`, 'utf8'));
     assert.strictEqual(terminated.length, 1);
     assert.deepStrictEqual(httpAfter.actions, [{ pid: http.child.pid, creationIdentity: http.child.creationIdentity, requested: true }]);
     assert.strictEqual(httpAfter.processExitVerified, true);
     assert.strictEqual(httpAfter.filesystemCleanupVerified, false);
+    assert.strictEqual(httpCleanup.captureAtTeardown, false);
+    assert.deepStrictEqual(http.budgets, [10_000, 10_000, 10_000]);
+    assert.deepStrictEqual(terminationBudgets, [10_000]);
 
     const alreadyStopped = fixture();
     alreadyStopped.setRecords([alreadyStopped.owner]);
@@ -138,12 +145,91 @@ async function run(): Promise<void> {
       },
       alreadyStopped.input
     );
-    await alreadyStoppedCleanup.capture();
-    await alreadyStoppedCleanup.finalize();
-    const alreadyStoppedAfter = JSON.parse(fs.readFileSync(`${alreadyStopped.evidenceBase}.after-teardown.json`, 'utf8'));
-    assert.deepStrictEqual(alreadyStoppedAfter.observedProcesses, []);
-    assert.deepStrictEqual(alreadyStoppedAfter.actions, []);
-    assert.strictEqual(alreadyStoppedAfter.processExitVerified, true);
+    await assert.rejects(alreadyStoppedCleanup.capture(), reason('missing-live-owned-process-observation'));
+    const alreadyStoppedBefore = JSON.parse(fs.readFileSync(`${alreadyStopped.evidenceBase}.runtime-1.before-teardown.json`, 'utf8'));
+    assert.deepStrictEqual(alreadyStoppedBefore.observedProcesses, []);
+    assert.strictEqual(alreadyStoppedBefore.failureReason, 'missing-live-owned-process-observation');
+    await assert.rejects(alreadyStoppedCleanup.finalize(), reason('missing-live-owned-process-observation'));
+
+    const repeated = fixture();
+    const designTime = { ...repeated.child, pid: 103 };
+    const runtimeOne = { ...repeated.child, pid: 104 };
+    const runtimeTwo = {
+      ...repeated.child,
+      pid: 105,
+      parentPid: designTime.pid,
+      creationIdentity: repeated.creationIdentity(300),
+    };
+    repeated.setRecords([repeated.owner, designTime, runtimeOne]);
+    const repeatedTerminated: number[] = [];
+    const repeatedCleanup = createHttpTimeoutProcessCleanup(
+      {
+        LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_INVOCATION: repeated.env.LA_E2E_CLI_MSN_PROCESS_INVOCATION,
+        LA_E2E_CLI_WORKSPACE_PARENT: repeated.workspace,
+        LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: repeated.dependencies,
+        LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_EVIDENCE_BASE: repeated.evidenceBase,
+        LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_OWNER_JSON: repeated.env.LA_E2E_CLI_MSN_PROCESS_OWNER_JSON,
+      },
+      {
+        now: repeated.input.now,
+        provider: () => ({
+          snapshot: repeated.input.provider().snapshot,
+          terminateExact: async (record) => {
+            repeatedTerminated.push(record.pid);
+            repeated.setRecords(
+              [repeated.owner, designTime, { ...runtimeOne, parentPid: 999 }, runtimeTwo].filter(
+                (candidate) => !repeatedTerminated.includes(candidate.pid)
+              )
+            );
+          },
+        }),
+      }
+    );
+    await repeatedCleanup.capture();
+    repeated.setRecords([repeated.owner, designTime, { ...runtimeOne, parentPid: 999 }, runtimeTwo]);
+    await repeatedCleanup.capture();
+    const repeatedFirstBefore = JSON.parse(fs.readFileSync(`${repeated.evidenceBase}.runtime-1.before-teardown.json`, 'utf8'));
+    const repeatedSecondBefore = JSON.parse(fs.readFileSync(`${repeated.evidenceBase}.runtime-2.before-teardown.json`, 'utf8'));
+    assert.deepStrictEqual(
+      repeatedFirstBefore.observedProcesses.map((record: OwnedProcessIdentity) => record.pid),
+      [designTime.pid, runtimeOne.pid]
+    );
+    assert.deepStrictEqual(
+      repeatedSecondBefore.observedProcesses.map((record: OwnedProcessIdentity) => record.pid),
+      [runtimeTwo.pid],
+      'A later live-boundary capture must exclude only exact identities already proven by an earlier capture'
+    );
+    await assert.rejects(repeatedCleanup.capture(), reason('too-many-http-runtime-captures'));
+    await repeatedCleanup.finalize();
+    assert.deepStrictEqual(
+      repeatedTerminated,
+      [runtimeTwo.pid, designTime.pid, runtimeOne.pid],
+      'Runtime captures must finalize newest-first so an earlier guard never sees an uncaptured later runtime'
+    );
+    for (const capture of [1, 2]) {
+      assert.ok(fs.existsSync(`${repeated.evidenceBase}.runtime-${capture}.before-teardown.json`));
+      assert.ok(fs.existsSync(`${repeated.evidenceBase}.runtime-${capture}.after-teardown.json`));
+    }
+
+    const replacementDuringSecondCapture = fixture();
+    const original = { ...replacementDuringSecondCapture.child, pid: 106 };
+    replacementDuringSecondCapture.setRecords([replacementDuringSecondCapture.owner, original]);
+    const replacementCapture = createHttpTimeoutProcessCleanup(
+      {
+        LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_INVOCATION: replacementDuringSecondCapture.env.LA_E2E_CLI_MSN_PROCESS_INVOCATION,
+        LA_E2E_CLI_WORKSPACE_PARENT: replacementDuringSecondCapture.workspace,
+        LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: replacementDuringSecondCapture.dependencies,
+        LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_EVIDENCE_BASE: replacementDuringSecondCapture.evidenceBase,
+        LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_OWNER_JSON: replacementDuringSecondCapture.env.LA_E2E_CLI_MSN_PROCESS_OWNER_JSON,
+      },
+      replacementDuringSecondCapture.input
+    );
+    await replacementCapture.capture();
+    replacementDuringSecondCapture.setRecords([
+      replacementDuringSecondCapture.owner,
+      { ...original, parentPid: 999, creationIdentity: `${original.creationIdentity}-replacement` },
+    ]);
+    await assert.rejects(replacementCapture.capture(), reason('unproven-process-ancestry'));
 
     for (const text of ['', 'not-json', '{}', 'null', '{"pid":"101"}']) {
       const malformed = fixture();
@@ -175,14 +261,18 @@ async function run(): Promise<void> {
     assert.strictEqual(collision.budgets.length, 1, 'Failed persistence cannot authorize process finalization');
 
     const timeout = fixture();
-    const timeoutCleanup = timeout.create();
-    await timeoutCleanup.capture();
-    timeout.setTime(10_100);
-    await assert.rejects(timeoutCleanup.finalize(), reason('observation-budget-exhausted'));
-    const timeoutEvidence = JSON.parse(fs.readFileSync(`${timeout.evidenceBase}.after-teardown.json`, 'utf8'));
+    timeout.input.provider = () => ({
+      snapshot: async (budget: number) => {
+        timeout.budgets.push(budget);
+        timeout.setTime(10_100);
+        return [timeout.owner, timeout.child];
+      },
+    });
+    await assert.rejects(timeout.create().capture(), reason('observation-budget-exhausted'));
+    const timeoutEvidence = JSON.parse(fs.readFileSync(`${timeout.evidenceBase}.before-teardown.json`, 'utf8'));
     assert.strictEqual(timeoutEvidence.failureReason, 'observation-budget-exhausted');
     assert.strictEqual(timeoutEvidence.processExitVerified, false);
-    assert.strictEqual(timeout.budgets.length, 1, 'An expired original deadline cannot start a read');
+    assert.deepStrictEqual(timeout.budgets, [10_000], 'Capture keeps its original bounded observation deadline');
 
     const unavailable = fixture();
     unavailable.input.provider = () => ({

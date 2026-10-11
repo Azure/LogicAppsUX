@@ -1180,6 +1180,9 @@ async function runHttpTimeoutLifecycle({
   const processOwner = await observeProcessOwner();
   const artifactDir = getLifecycleArtifactDir('http-timeout-lifecycle');
   fs.mkdirSync(artifactDir, { recursive: true });
+  const vscodeLogRoot = process.env.LA_E2E_CLI_VSCODE_LOG_DIR ?? path.resolve(__dirname, '..', '.vscode-test', 'vscode-logs', 'cli');
+  const processEvidenceDir = path.join(vscodeLogRoot, suiteId, 'owned-processes');
+  fs.mkdirSync(processEvidenceDir, { recursive: true });
   const workspaceParent = createParent(suiteId);
   const manifestPath = path.join(artifactDir, `manifest-${Date.now()}.json`);
   const runtimeDependenciesRoot = process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT ?? createRuntimeRoot(suiteId);
@@ -1193,7 +1196,7 @@ async function runHttpTimeoutLifecycle({
       LA_E2E_CLI_WORKSPACE_PARENT: workspaceParent,
       LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MANIFEST: manifestPath,
       LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_INVOCATION: processInvocation,
-      LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_EVIDENCE_BASE: path.join(artifactDir, `owned-processes-${processInvocation}`),
+      LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_EVIDENCE_BASE: path.join(processEvidenceDir, `owned-processes-${processInvocation}`),
       LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_OWNER_JSON: JSON.stringify(processOwner),
       LA_E2E_CLI_INCLUDE_HTTP_TIMEOUT_REQUEST_LIFECYCLE: '1',
       LA_E2E_CLI_DISABLE_UNOWNED_PORT_KILL: '1',

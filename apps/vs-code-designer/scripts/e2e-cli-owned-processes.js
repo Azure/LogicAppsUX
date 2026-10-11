@@ -90,6 +90,8 @@ function createOwnedProcessCleanup({
   deadline,
   maxObservations = 20,
   allowEmptyCapture = false,
+  previouslyCapturedProcesses = [],
+  finalizationBudgetMs,
 }) {
   if (
     typeof invocationId !== 'string' ||
@@ -107,6 +109,9 @@ function createOwnedProcessCleanup({
     maxObservations < 1 ||
     maxObservations > 20 ||
     typeof allowEmptyCapture !== 'boolean' ||
+    !Array.isArray(previouslyCapturedProcesses) ||
+    (finalizationBudgetMs !== undefined &&
+      (!Number.isInteger(finalizationBudgetMs) || finalizationBudgetMs < 1 || finalizationBudgetMs > 10_000)) ||
     (terminateExact !== undefined && typeof terminateExact !== 'function')
   ) {
     fail('invalid-ownership-contract');
@@ -128,10 +133,19 @@ function createOwnedProcessCleanup({
   if (ownedRoots[0].comparisonIdentity === ownedRoots[1].comparisonIdentity) {
     fail('ambiguous-owned-roots');
   }
+  const dependenciesRoot = ownedRoots.find((root) => root.kind === 'dependencies');
+  const previousIdentities = previouslyCapturedProcesses.map((record) => {
+    const previous = { ...identity(record), executable: physicalPath(record.executable) };
+    if (!inside(dependenciesRoot.comparisonIdentity, canonical(previous.executable, platform))) {
+      fail('foreign-previously-captured-process');
+    }
+    return previous;
+  });
   let captured;
   let captureStarted = false;
   let observations = 0;
   let previousTime = now();
+  let activeDeadline = deadline;
   let finalized = false;
   const actions = [];
 
@@ -141,10 +155,26 @@ function createOwnedProcessCleanup({
       fail('invalid-observation-clock');
     }
     previousTime = current;
-    if (current >= deadline) {
+    if (current >= activeDeadline) {
       fail('observation-budget-exhausted');
     }
-    return deadline - current;
+    return activeDeadline - current;
+  }
+
+  function beginFinalizationBudget() {
+    if (finalizationBudgetMs === undefined) {
+      return;
+    }
+    const current = now();
+    if (!Number.isFinite(current) || current < previousTime) {
+      fail('invalid-observation-clock');
+    }
+    const finalizationDeadline = current + finalizationBudgetMs;
+    if (!Number.isFinite(finalizationDeadline) || finalizationDeadline <= current) {
+      fail('invalid-observation-clock');
+    }
+    previousTime = current;
+    activeDeadline = finalizationDeadline;
   }
 
   async function read() {
@@ -241,21 +271,23 @@ function createOwnedProcessCleanup({
   }
 
   function scopedProcesses(table) {
-    const dependencies = ownedRoots.find((root) => root.kind === 'dependencies');
     const candidates = [];
     for (const record of table.values()) {
       if (record.pid === ownerIdentity.pid || typeof record.executable !== 'string' || !path.isAbsolute(record.executable)) {
         continue;
       }
       const lexical = platform === 'win32' ? path.resolve(record.executable).toLowerCase() : path.resolve(record.executable);
-      if (!inside(dependencies.comparisonIdentity, lexical)) {
+      if (!inside(dependenciesRoot.comparisonIdentity, lexical)) {
         continue;
       }
       const executable = physicalPath(record.executable);
-      if (!inside(dependencies.comparisonIdentity, canonical(executable, platform))) {
+      if (!inside(dependenciesRoot.comparisonIdentity, canonical(executable, platform))) {
         fail('foreign-executable-scope');
       }
-      candidates.push({ ...identity(record), executable });
+      const candidate = { ...identity(record), executable };
+      if (!previousIdentities.some((previous) => sameProcess(previous, candidate, platform))) {
+        candidates.push(candidate);
+      }
     }
     return candidates;
   }
@@ -301,6 +333,7 @@ function createOwnedProcessCleanup({
     if (!captured) {
       fail('missing-live-owned-process-observation');
     }
+    beginFinalizationBudget();
     for (const record of [...captured].sort((left, right) => right.ancestry.length - left.ancestry.length)) {
       assertRoots();
       const table = await read();

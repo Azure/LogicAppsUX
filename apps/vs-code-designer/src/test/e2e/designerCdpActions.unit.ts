@@ -101,7 +101,23 @@ function testProvenAdapterCompatibility(): void {
     deleteNode.includes('document.getElementById(${JSON.stringify(clickedNodeId)}) === null'),
     'Node deletion must wait for the exact clicked node ID to disappear'
   );
+  assert.ok(deleteNode.includes('settledObservations >= 3'), 'Node deletion must require bounded consecutive settled observations');
+  assert.ok(
+    deleteNode.includes('settleState.canvasVisible') &&
+      deleteNode.includes('settleState.loaderCount === 0') &&
+      deleteNode.includes('settleState.blockerCount === 0'),
+    'Node deletion must require a visible unblocked canvas without loaders'
+  );
+  assert.ok(
+    deleteNode.includes('settleState.remainingNodeIds.length > 0 || settleState.addTriggerCount > 0'),
+    'Node deletion must require another workflow node or the Add-trigger empty state'
+  );
   assert.ok(!deleteNode.includes('if (!(await this.hasNode(titles)))'), 'Node deletion must not poll substring-based node titles');
+  assert.strictEqual(
+    (deleteNode.match(/await this\.key\('Delete', 'Delete', 46\)/g) ?? []).length,
+    1,
+    'Canvas stabilization must never redispatch Delete'
+  );
 }
 
 function testHelperConsumersDoNotRegisterCanonicalLifecycleSuite(): void {
@@ -360,6 +376,8 @@ async function testExactNodeIdentity(): Promise<void> {
 async function testDeleteWaitsForExactClickedNode(): Promise<void> {
   let substringPresenceChecks = 0;
   let exactDisappearanceChecks = 0;
+  let settleChecks = 0;
+  let deleteKeyDispatches = 0;
   const actions = new ProvenDesignerCdpActions(
     {
       evaluate: async <T>(_contextId: number | undefined, expression: string) => {
@@ -382,9 +400,26 @@ async function testDeleteWaitsForExactClickedNode(): Promise<void> {
           exactDisappearanceChecks++;
           return true as T;
         }
+        if (expression.includes('const canvasVisible = visibleElements')) {
+          settleChecks++;
+          return {
+            canvasVisible: settleChecks > 1,
+            loaderCount: 0,
+            blockerCount: 0,
+            remainingNodeIds: settleChecks > 1 ? ['msla-node-Request'] : [],
+            addTriggerCount: 0,
+          } as T;
+        }
+        if (expression.includes('const dialogs = Array.from')) {
+          return { dialogCount: 0, deleteButtonCount: 0 } as T;
+        }
         throw new Error(`Unexpected CDP expression: ${expression.slice(0, 200)}`);
       },
-      send: async () => undefined,
+      send: async (method) => {
+        if (method === 'Input.dispatchKeyEvent') {
+          deleteKeyDispatches++;
+        }
+      },
     },
     7,
     Date.now() + 5000
@@ -396,7 +431,9 @@ async function testDeleteWaitsForExactClickedNode(): Promise<void> {
     1,
     'The remaining "When an HTTP request is received" trigger must not keep exact HTTP action deletion pending'
   );
-  assert.strictEqual(exactDisappearanceChecks, 1);
+  assert.strictEqual(exactDisappearanceChecks, 4);
+  assert.strictEqual(settleChecks, 4, 'Transient full-canvas absence must not complete deletion');
+  assert.strictEqual(deleteKeyDispatches, 2, 'One native Delete key press consists of exactly keyDown and keyUp');
 }
 
 function testParameterAndSaveParity(): void {

@@ -53,10 +53,18 @@ interface OwnedExtensionProcessCleanupInput {
   allowEmptyCapture?: boolean;
 }
 
+interface InitializedOwnedExtensionProcessCleanup extends OwnedMsnProcessCleanup {
+  evidence(): OwnedProcessEvidence;
+}
+
 function initializeOwnedExtensionProcessCleanup(
   input: OwnedExtensionProcessCleanupInput,
-  dependenciesInput: ProcessCleanupDependencies
-): OwnedMsnProcessCleanup {
+  dependenciesInput: ProcessCleanupDependencies,
+  options: {
+    evidenceStagePrefix?: string;
+    excludedProcesses?: readonly OwnedProcessIdentity[];
+  } = {}
+): InitializedOwnedExtensionProcessCleanup {
   const invocationId = input.invocationId ?? '';
   const workspace = input.workspace;
   const dependencies = input.dependencies;
@@ -83,7 +91,9 @@ function initializeOwnedExtensionProcessCleanup(
     ...provider,
     now: dependenciesInput.now,
     deadline: dependenciesInput.now() + 10_000,
+    finalizationBudgetMs: 10_000,
     allowEmptyCapture: input.allowEmptyCapture,
+    previouslyCapturedProcesses: [...(options.excludedProcesses ?? [])],
   });
 
   function persist(stage: string, evidence: OwnedProcessEvidence, reason?: string): void {
@@ -107,24 +117,45 @@ function initializeOwnedExtensionProcessCleanup(
   }
 
   async function observe(stage: string, operation: () => Promise<OwnedProcessEvidence>): Promise<void> {
+    const persistedStage = options.evidenceStagePrefix ? `${options.evidenceStagePrefix}.${stage}` : stage;
     let evidence: OwnedProcessEvidence;
     try {
       evidence = await operation();
     } catch (error) {
       try {
-        persist(stage, guard.evidence(), error instanceof OwnedProcessEvidenceError ? error.reason : 'process-cleanup-operation-failed');
+        const reason = error instanceof OwnedProcessEvidenceError ? error.reason : 'process-cleanup-operation-failed';
+        const failedEvidence = guard.evidence();
+        persist(persistedStage, failedEvidence, reason);
+        logOwnedProcessEvidence(persistedStage, failedEvidence, reason);
       } catch (persistenceError) {
         throw new AggregateError([error, persistenceError], 'Owned process observation and evidence persistence failed');
       }
       throw error;
     }
-    persist(stage, evidence);
+    persist(persistedStage, evidence);
+    logOwnedProcessEvidence(persistedStage, evidence);
   }
 
   return {
     capture: () => observe('before-teardown', guard.capture),
     finalize: () => observe('after-teardown', guard.finalize),
+    evidence: guard.evidence,
   };
+}
+
+function logOwnedProcessEvidence(stage: string, evidence: OwnedProcessEvidence, failureReason?: string): void {
+  console.log(
+    `[owned-process-cleanup] ${JSON.stringify({
+      stage,
+      invocationId: evidence.invocationId,
+      observedPids: evidence.observedProcesses.map((record) => record.pid),
+      actionPids: evidence.actions.map((action) => action.pid),
+      observations: evidence.observations,
+      processExitVerified: evidence.processExitVerified,
+      filesystemCleanupVerified: evidence.filesystemCleanupVerified,
+      ...(failureReason ? { failureReason } : {}),
+    })}`
+  );
 }
 
 export function createOwnedExtensionProcessCleanup(
@@ -180,15 +211,53 @@ export function createHttpTimeoutProcessCleanup(
   env: NodeJS.ProcessEnv,
   dependencies: ProcessCleanupDependencies = { provider: createProcessObservationProvider, now: Date.now }
 ): OwnedMsnProcessCleanup {
-  return createOwnedExtensionProcessCleanup(
-    {
-      invocationId: env.LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_INVOCATION,
-      workspace: env.LA_E2E_CLI_WORKSPACE_PARENT,
-      dependencies: env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT,
-      evidenceBase: env.LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_EVIDENCE_BASE,
-      ownerJson: env.LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_OWNER_JSON,
-      allowEmptyCapture: true,
+  const input = {
+    invocationId: env.LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_INVOCATION,
+    workspace: env.LA_E2E_CLI_WORKSPACE_PARENT,
+    dependencies: env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT,
+    evidenceBase: env.LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_EVIDENCE_BASE,
+    ownerJson: env.LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_OWNER_JSON,
+  };
+  const captures: InitializedOwnedExtensionProcessCleanup[] = [];
+  const observedProcesses: OwnedProcessIdentity[] = [];
+  let finalized = false;
+  return {
+    captureAtTeardown: false,
+    capture: async () => {
+      if (finalized) {
+        throw new OwnedProcessEvidenceError('process-capture-after-finalization');
+      }
+      if (captures.length >= 2) {
+        throw new OwnedProcessEvidenceError('too-many-http-runtime-captures');
+      }
+      const cleanup = initializeOwnedExtensionProcessCleanup(input, dependencies, {
+        evidenceStagePrefix: `runtime-${captures.length + 1}`,
+        excludedProcesses: observedProcesses,
+      });
+      await cleanup.capture();
+      const evidence = cleanup.evidence();
+      captures.push(cleanup);
+      observedProcesses.push(...evidence.observedProcesses);
     },
-    dependencies
-  );
+    finalize: async () => {
+      if (finalized) {
+        throw new OwnedProcessEvidenceError('duplicate-process-finalization');
+      }
+      finalized = true;
+      if (captures.length === 0) {
+        throw new OwnedProcessEvidenceError('missing-live-owned-process-observation');
+      }
+      const errors: unknown[] = [];
+      for (const cleanup of [...captures].reverse()) {
+        try {
+          await cleanup.finalize();
+        } catch (error) {
+          errors.push(error);
+        }
+      }
+      if (errors.length > 0) {
+        throw new AggregateError(errors, 'Owned HTTP runtime process finalization failed');
+      }
+    },
+  };
 }

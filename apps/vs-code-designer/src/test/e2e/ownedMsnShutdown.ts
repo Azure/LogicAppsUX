@@ -20,6 +20,7 @@ interface ExtensionEntryExports {
 }
 
 export interface OwnedMsnProcessCleanup {
+  captureAtTeardown?: boolean;
   capture(): Promise<unknown>;
   finalize(): Promise<unknown>;
 }
@@ -80,8 +81,8 @@ export async function teardownOwnedExtensionHost(
 ): Promise<void> {
   const shutdown = bindOwnedCachedShutdown(host);
   const errors: unknown[] = [];
-  let capturedProcesses = false;
-  if (processCleanup) {
+  let capturedProcesses = processCleanup?.captureAtTeardown === false;
+  if (processCleanup && processCleanup.captureAtTeardown !== false) {
     try {
       await processCleanup.capture();
       capturedProcesses = true;
@@ -109,8 +110,66 @@ export async function teardownOwnedExtensionHost(
     }
   }
   if (errors.length > 0) {
+    logRetainedTeardownErrors(host.familyLabel, errors);
     throw new AggregateError(errors, `${host.familyLabel} host teardown failed; teardown and deactivation errors were retained`);
   }
+}
+
+function logRetainedTeardownErrors(familyLabel: string, errors: readonly unknown[]): void {
+  errors.forEach((error, index) => {
+    console.error(
+      `[owned-extension-shutdown] retained-error ${JSON.stringify({
+        family: familyLabel,
+        index: index + 1,
+        error: describeRetainedError(error),
+      })}`
+    );
+  });
+}
+
+function describeRetainedError(error: unknown): Record<string, unknown> {
+  if (error instanceof AggregateError) {
+    return {
+      name: 'AggregateError',
+      message: sanitizeRetainedErrorText(error.message),
+      errors: error.errors.map(describeRetainedError),
+    };
+  }
+  const reason =
+    typeof error === 'object' && error !== null && 'reason' in error && typeof error.reason === 'string' ? error.reason : undefined;
+  if (error instanceof Error) {
+    return {
+      name: error.name,
+      ...(reason ? { reason } : {}),
+      message: sanitizeRetainedErrorText(error.message),
+    };
+  }
+  return {
+    name: 'NonError',
+    message: sanitizeRetainedErrorText(String(error)),
+  };
+}
+
+function sanitizeRetainedErrorText(value: string): string {
+  return sanitizeCommonSecretForms(value)
+    .replace(/("Authorization"\s*:\s*")[^"]*(")/gi, '$1<redacted>$2')
+    .replace(/(\bAuthorization\s*:\s*)[^\r\n,;"'}]+/gi, '$1<redacted>')
+    .replace(
+      /([?&](?:access[_-]?token|refresh[_-]?token|id[_-]?token|client[_-]?secret|client[_-]?assertion|api[_-]?key|account[_-]?key|sig|signature|token|code|key|secret|password|sas)=)[^&\s"'<>]+/gi,
+      '$1<redacted>'
+    )
+    .replace(
+      /("(?:access[_-]?token|refresh[_-]?token|id[_-]?token|client[_-]?secret|client[_-]?assertion|api[_-]?key|account[_-]?key|password|secret|sas)"\s*:\s*")[^"]*(")/gi,
+      '$1<redacted>$2'
+    );
+}
+
+function sanitizeCommonSecretForms(value: string): string {
+  return value
+    .replace(/([?&](?:sig|token|code|key|secret|password)=)[^&\s]+/gi, '$1<redacted>')
+    .replace(/\bBearer\s+[A-Za-z0-9._~+/-]+=*/gi, 'Bearer <redacted>')
+    .replace(/(Authorization\s*:\s*)[^\s,;]+/gi, '$1<redacted>')
+    .replace(/("(?:accessToken|refreshToken|clientSecret|password|secret)"\s*:\s*")[^"]*(")/gi, '$1<redacted>$2');
 }
 
 /** Scope validation for existing VS Code handles; never OS PID admission. */

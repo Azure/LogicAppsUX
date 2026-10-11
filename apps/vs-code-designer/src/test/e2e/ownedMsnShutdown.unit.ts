@@ -11,6 +11,7 @@ import {
   teardownOwnedExtensionHost,
   teardownOwnedMsnHost,
 } from './ownedMsnShutdown';
+import { OwnedProcessEvidenceError } from '../../../scripts/e2e-cli-owned-processes';
 
 async function run(): Promise<void> {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'la-e2e-cli-msn-weather-lifecycle-'));
@@ -120,6 +121,25 @@ async function run(): Promise<void> {
     );
     assert.deepStrictEqual(sequence, ['capture-process-identities', 'panels', 'deactivate', 'deactivate', 'observe-owned-process-exit']);
     assert.ok(fs.existsSync(root), 'Process observation success must not manufacture root absence');
+    sequence.length = 0;
+    await teardownOwnedMsnHost(
+      host,
+      [
+        async () => {
+          sequence.push('panels');
+        },
+      ],
+      {
+        captureAtTeardown: false,
+        capture: async () => {
+          sequence.push('unexpected-late-capture');
+        },
+        finalize: async () => {
+          sequence.push('finalize-early-captures');
+        },
+      }
+    );
+    assert.deepStrictEqual(sequence, ['panels', 'deactivate', 'deactivate', 'finalize-early-captures']);
     for (const failedStage of ['capture', 'finalize']) {
       sequence.length = 0;
       const observationError = new Error(`process-${failedStage}-control`);
@@ -195,6 +215,59 @@ async function run(): Promise<void> {
       }
     );
     assert.strictEqual(finalizationCalls, 1, 'Earlier errors must not skip or retry captured-process finalization');
+
+    const retainedLogs: string[] = [];
+    const originalConsoleError = console.error;
+    console.error = (...args: unknown[]) => retainedLogs.push(args.map(String).join(' '));
+    try {
+      await assert.rejects(
+        teardownOwnedMsnHost(
+          host,
+          [
+            async () => {
+              throw new Error(
+                'Authorization: Basic basic-credential, reason=safe-reason; Authorization: SharedKey account:shared-key-signature, status=safe-status https://example.test/path?sig=secret-sas&client_secret=oauth-client-secret&access_token=oauth-access-token&refresh_token=oauth-refresh-token quoted-basic={"Authorization":"Basic quoted-basic-secret","reason":"safe-quoted-reason"} quoted-shared={"Authorization":"SharedKey account:quoted-shared-secret","status":"safe-quoted-status"}'
+              );
+            },
+          ],
+          {
+            capture: async () => {
+              throw new AggregateError([new OwnedProcessEvidenceError('unproven-process-ancestry')], 'nested process capture failure');
+            },
+            finalize: async () => undefined,
+          }
+        ),
+        /teardown failed/
+      );
+    } finally {
+      console.error = originalConsoleError;
+    }
+    assert.ok(retainedLogs.some((line) => line.includes('"reason":"unproven-process-ancestry"')));
+    assert.ok(retainedLogs.some((line) => line.includes('Authorization: <redacted>')));
+    assert.ok(retainedLogs.some((line) => line.includes('sig=<redacted>')));
+    assert.ok(retainedLogs.some((line) => line.includes('client_secret=<redacted>')));
+    assert.ok(retainedLogs.some((line) => line.includes('access_token=<redacted>')));
+    assert.ok(retainedLogs.some((line) => line.includes('refresh_token=<redacted>')));
+    assert.ok(retainedLogs.some((line) => line.includes('reason=safe-reason') && line.includes('status=safe-status')));
+    assert.ok(
+      retainedLogs.some((line) => line.includes('safe-quoted-reason') && line.includes('safe-quoted-status')),
+      'Sanitization must preserve adjacent safe JSON fields'
+    );
+    for (const secret of [
+      'basic-credential',
+      'shared-key-signature',
+      'quoted-basic-secret',
+      'quoted-shared-secret',
+      'secret-sas',
+      'oauth-client-secret',
+      'oauth-access-token',
+      'oauth-refresh-token',
+    ]) {
+      assert.ok(
+        retainedLogs.every((line) => !line.includes(secret)),
+        `${secret} must be redacted from retained teardown logs`
+      );
+    }
 
     const rejectedHosts: { host: OwnedMsnShutdownHost; reason: RegExp }[] = [
       { host: { ...host, dedicatedMsnRunHost: false }, reason: /dedicated run-phase/ },

@@ -23,6 +23,7 @@ testFullRollupGateScriptRejectsNonExecutedResults();
 testAzureCliIdentityScriptBehavior();
 testPipelineSafetyGuards();
 testDiagnosticsStagingScriptHandlesDirectSuiteLayout();
+testDiagnosticsStagingScriptHandlesDirectSuiteLayout({ http: true });
 testDiagnosticsStagingScriptHandlesDirectSuiteLayout({ msn: true });
 testDiagnosticsStagingScriptHandlesDirectSuiteLayout({
   msn: true,
@@ -839,6 +840,10 @@ function testConsumerAdmissionContract() {
   assert.doesNotMatch(legacyStagedRunCli, /name: azureSubscriptionId/);
   assert.doesNotMatch(legacyStagedRunCli, /LA_E2E_CLI_AZURE_TENANT_ID: \$\{\{ parameters\.azureTenantId \}\}/);
   assert.doesNotMatch(legacyStagedRunCli, /LA_E2E_CLI_AZURE_SUBSCRIPTION_ID: \$\{\{ parameters\.azureSubscriptionId \}\}/);
+  assert.match(
+    legacyStagedRunCli,
+    /vscode-logs\/cli\/\$\{\{ parameters\.label \}\}'[\s\S]*Copy-Item \(Join-Path \$vscodeLogsRoot '\*'\)[\s\S]*-Recurse/
+  );
   assertNoGuidLiteralsInExplicitPipelineDocs(
     consumerEntry,
     runSuitesTemplate,
@@ -1938,7 +1943,13 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
     const agentTempDirectory = path.join(tempRoot, 'agent-temp');
     const artifactStagingDirectory = path.join(tempRoot, 'artifact-staging');
     const artifactName = 'linux-unit-tests';
-    const suiteId = options.msn ? 'msnWeatherLifecycle' : options.privatePlatform ? 'createWorkspaceCoreMatrix' : 'unitTests';
+    const suiteId = options.http
+      ? 'httpTimeoutLifecycle'
+      : options.msn
+        ? 'msnWeatherLifecycle'
+        : options.privatePlatform
+          ? 'createWorkspaceCoreMatrix'
+          : 'unitTests';
     const resultRoot = path.join(sourcesDirectory, 'apps', 'vs-code-designer', '.vscode-test', 'results');
     const ogfScenarios = options.privatePlatform
       ? getOgfScenariosForPhase('createWorkspaceCoreMatrix:standard-stateful', {
@@ -2012,7 +2023,15 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
     }
     fs.writeFileSync(
       path.join(resultRoot, `${suiteId}.json`),
-      `${JSON.stringify({ label: suiteId, outcome: 'success', total: options.msn ? 1 : options.privatePlatform ? 6 : 12, passing: options.msn ? 1 : options.privatePlatform ? 6 : 12, failing: 0, pending: 0, ogfScenarios })}\n`
+      `${JSON.stringify({
+        label: suiteId,
+        outcome: options.http ? 'failure' : 'success',
+        total: options.msn ? 1 : options.privatePlatform ? 6 : options.http ? 1 : 12,
+        passing: options.msn ? 1 : options.privatePlatform ? 6 : options.http ? 0 : 12,
+        failing: options.http ? 1 : 0,
+        pending: 0,
+        ogfScenarios,
+      })}\n`
     );
     fs.writeFileSync(path.join(resultRoot, `${suiteId}.junit.xml`), '<testsuite tests="12" failures="0" />\n');
     fs.writeFileSync(path.join(resultRoot, `${suiteId}.summary.md`), '# summary\n');
@@ -2054,6 +2073,14 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
     fs.mkdirSync(vscodeLogsRoot, { recursive: true });
     fs.mkdirSync(workspaceSnapshotsRoot, { recursive: true });
     fs.writeFileSync(path.join(vscodeLogsRoot, 'profile.log'), 'already redacted log\n');
+    if (options.http) {
+      const httpProcessEvidenceRoot = path.join(vscodeLogsRoot, 'owned-processes');
+      fs.mkdirSync(httpProcessEvidenceRoot);
+      fs.writeFileSync(
+        path.join(httpProcessEvidenceRoot, 'owned-processes-fixture.runtime-1.before-teardown.json'),
+        '{"processExitVerified":false,"filesystemCleanupVerified":false}\n'
+      );
+    }
     const screenshotFixture = writeScreenshotSidecarFixture(screenshotsRoot);
     fs.writeFileSync(path.join(workspaceSnapshotsRoot, 'index.md'), '# redacted workspace\n');
     if (options.privatePlatform) {
@@ -2242,6 +2269,16 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
     assert.match(sanitizedLog, /<redacted>/);
 
     assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'log', 'vscode-logs', 'profile.log')));
+    if (options.http) {
+      assert.strictEqual(
+        fs.readFileSync(
+          path.join(diagnosticsRoot, 'log', 'vscode-logs', 'owned-processes', 'owned-processes-fixture.runtime-1.before-teardown.json'),
+          'utf8'
+        ),
+        '{"processExitVerified":false,"filesystemCleanupVerified":false}\n',
+        'HTTP teardown evidence must remain published even when it is nested beside the suite profile logs'
+      );
+    }
     assertScreenshotSidecarFixturePreserved(path.join(diagnosticsRoot, 'screenshots'), screenshotFixture);
     assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'generated-workspaces', 'index.md')));
     if (options.msn) {

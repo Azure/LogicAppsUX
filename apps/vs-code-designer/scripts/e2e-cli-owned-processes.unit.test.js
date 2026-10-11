@@ -203,6 +203,44 @@ test('reparenting without prior ancestry proof is not ownership', async (t) => {
   );
 });
 
+test('a later capture ignores only exact earlier identities while retaining them as ancestry evidence', async (t) => {
+  const context = fixture(t);
+  const laterChild = {
+    ...context.child,
+    pid: 104,
+    parentPid: context.child.pid,
+    creationIdentity: context.creationIdentity(400),
+  };
+  context.setTable([context.owner, context.ancestor, context.child, laterChild]);
+  const guard = createOwnedProcessCleanup({
+    ...context.contract,
+    previouslyCapturedProcesses: [context.child],
+  });
+  const captured = await guard.capture();
+  assert.deepEqual(
+    captured.observedProcesses.map((record) => record.pid),
+    [laterChild.pid]
+  );
+  assert.deepEqual(
+    captured.observedProcesses[0].ancestry.map((record) => record.pid),
+    [context.child.pid, context.ancestor.pid]
+  );
+});
+
+test('a changed identity is not hidden by a prior-capture exclusion', async (t) => {
+  const context = fixture(t);
+  context.setTable([
+    context.owner,
+    context.ancestor,
+    { ...context.child, parentPid: 999, creationIdentity: context.creationIdentity(400) },
+  ]);
+  const guard = createOwnedProcessCleanup({
+    ...context.contract,
+    previouslyCapturedProcesses: [context.child],
+  });
+  await assert.rejects(guard.capture(), (error) => error.reason === 'unproven-process-ancestry');
+});
+
 test('an observation-only provider retains the failure instead of manufacturing termination', async (t) => {
   const context = fixture(t, undefined, { terminateExact: undefined });
   const guard = context.guard();
@@ -277,6 +315,28 @@ test('original deadline and actual remaining timeout are preserved across captur
   );
   assert.equal(context.calls.find((call) => call.kind === 'terminate').budget, 500);
 });
+
+test('live capture identities can finalize after a long delay within one fresh bounded cleanup budget', async (t) => {
+  const context = fixture(t, undefined, { finalizationBudgetMs: 1000 });
+  const guard = context.guard();
+  await guard.capture();
+  context.setTime(60_100);
+  await guard.finalize();
+  assert.deepEqual(
+    context.calls.filter((call) => call.kind === 'snapshot').map((call) => call.budget),
+    [1000, 1000, 1000]
+  );
+  assert.equal(context.calls.find((call) => call.kind === 'terminate').budget, 1000);
+  await assert.rejects(guard.finalize(), (error) => error.reason === 'duplicate-process-finalization');
+  assert.equal(context.calls.length, 4, 'Duplicate finalization cannot renew the cleanup budget or retry an action');
+});
+
+for (const finalizationBudgetMs of [0, -1, 10_001, 1.5, Number.NaN]) {
+  test(`invalid finalization budget ${String(finalizationBudgetMs)} is rejected`, (t) => {
+    const context = fixture(t, undefined, { finalizationBudgetMs });
+    assert.throws(context.guard, (error) => error.reason === 'invalid-ownership-contract');
+  });
+}
 
 test('no observation or action starts at an expired deadline', async (t) => {
   const context = fixture(t);

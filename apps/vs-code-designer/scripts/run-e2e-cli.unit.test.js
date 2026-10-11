@@ -726,6 +726,7 @@ async function testHttpTimeoutRequestLifecycleUsesIsolatedStartupResources() {
   fs.mkdirSync(runtimeRoot, { recursive: true });
   const priorPhaseResultsPath = process.env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH;
   const priorRuntimeRoot = process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT;
+  const priorVscodeLogRoot = process.env.LA_E2E_CLI_VSCODE_LOG_DIR;
   const calls = [];
   const processOwner = {
     pid: 101,
@@ -736,6 +737,7 @@ async function testHttpTimeoutRequestLifecycleUsesIsolatedStartupResources() {
 
   process.env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH = phaseResultsPath;
   process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT = runtimeRoot;
+  process.env.LA_E2E_CLI_VSCODE_LOG_DIR = path.join(root, 'vscode-logs');
   try {
     await runHttpTimeoutLifecycle({
       createParent: () => workspaceParent,
@@ -803,6 +805,11 @@ async function testHttpTimeoutRequestLifecycleUsesIsolatedStartupResources() {
     } else {
       process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT = priorRuntimeRoot;
     }
+    if (priorVscodeLogRoot === undefined) {
+      delete process.env.LA_E2E_CLI_VSCODE_LOG_DIR;
+    } else {
+      process.env.LA_E2E_CLI_VSCODE_LOG_DIR = priorVscodeLogRoot;
+    }
   }
 
   assert.strictEqual(calls.length, 3);
@@ -816,6 +823,11 @@ async function testHttpTimeoutRequestLifecycleUsesIsolatedStartupResources() {
   assert.strictEqual(
     path.basename(run.env.LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_EVIDENCE_BASE),
     `owned-processes-${run.env.LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_INVOCATION}`
+  );
+  assert.strictEqual(
+    path.dirname(run.env.LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_EVIDENCE_BASE),
+    path.join(root, 'vscode-logs', suiteId, 'owned-processes'),
+    'HTTP ownership evidence must be staged under the already-published suite VS Code log root'
   );
   assert.strictEqual(create.env.LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_INVOCATION, run.env.LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_INVOCATION);
   assert.strictEqual(bootstrap.env.LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_OWNER_JSON, run.env.LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_OWNER_JSON);
