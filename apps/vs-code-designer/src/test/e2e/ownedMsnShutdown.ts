@@ -38,6 +38,22 @@ export interface OwnedMsnShutdownHost {
   cachedEntry(filename: string): CachedExtensionSelection | undefined;
 }
 
+export interface OwnedExtensionShutdownHost {
+  dedicatedRunHost: boolean;
+  familyLabel: string;
+  workspaceParentPrefix: string;
+  extension: {
+    id: string;
+    isActive: boolean;
+    extensionPath: string;
+    main: unknown;
+  };
+  workspaceParent: string;
+  workspaceRoots: readonly string[];
+  resolveEntry(filename: string): string;
+  cachedEntry(filename: string): CachedExtensionSelection | undefined;
+}
+
 export function findLoadedCachedExtensionEntry(
   filename: string,
   cache: Readonly<Record<string, CachedExtensionEntry | undefined>>
@@ -51,6 +67,14 @@ export function findLoadedCachedExtensionEntry(
 
 export async function teardownOwnedMsnHost(
   host: OwnedMsnShutdownHost,
+  teardownSteps: readonly (() => Promise<void>)[],
+  processCleanup?: OwnedMsnProcessCleanup
+): Promise<void> {
+  return teardownOwnedExtensionHost(asOwnedExtensionShutdownHost(host), teardownSteps, processCleanup);
+}
+
+export async function teardownOwnedExtensionHost(
+  host: OwnedExtensionShutdownHost,
   teardownSteps: readonly (() => Promise<void>)[],
   processCleanup?: OwnedMsnProcessCleanup
 ): Promise<void> {
@@ -85,7 +109,7 @@ export async function teardownOwnedMsnHost(
     }
   }
   if (errors.length > 0) {
-    throw new AggregateError(errors, 'Owned MSN host teardown failed; teardown and deactivation errors were retained');
+    throw new AggregateError(errors, `${host.familyLabel} host teardown failed; teardown and deactivation errors were retained`);
   }
 }
 
@@ -98,7 +122,8 @@ export function assertOwnedMsnHandleScopes(
     session?: { workspacePath: string | undefined; invocation: unknown };
   }
 ): void {
-  assertOwnedWorkspaceHost(host);
+  const extensionHost = asOwnedExtensionShutdownHost(host);
+  assertOwnedWorkspaceHost(extensionHost);
   assert.ok(invocation, 'Owned MSN handles require the current invocation marker');
   const roots = new Set(host.workspaceRoots.map((root) => normalizePath(fs.realpathSync(root))));
   const assertScope = (workspacePath: string | undefined): void => {
@@ -114,34 +139,37 @@ export function assertOwnedMsnHandleScopes(
   }
 }
 
-function bindOwnedCachedShutdown(host: OwnedMsnShutdownHost): () => Promise<void> {
+function bindOwnedCachedShutdown(host: OwnedExtensionShutdownHost): () => Promise<void> {
   const canonicalParent = assertOwnedWorkspaceHost(host);
   assert.ok(
     typeof host.extension.main === 'string' && host.extension.main.length > 0 && !path.isAbsolute(host.extension.main),
-    'Owned MSN shutdown requires the extension-relative main entry'
+    `${host.familyLabel} shutdown requires the extension-relative main entry`
   );
   const extensionRoot = fs.realpathSync(host.extension.extensionPath);
   const mainCandidate = path.resolve(host.extension.extensionPath, host.extension.main);
-  assertInsideDirectory(host.extension.extensionPath, mainCandidate, 'Owned MSN extension main escapes the extension directory');
+  assertInsideDirectory(host.extension.extensionPath, mainCandidate, `${host.familyLabel} extension main escapes the extension directory`);
   const resolvedEntry = host.resolveEntry(mainCandidate);
   const canonicalEntry = fs.realpathSync(resolvedEntry);
   const configuredEntry = path.extname(mainCandidate) ? mainCandidate : `${mainCandidate}.js`;
-  assert.ok(sameCanonicalFile(configuredEntry, canonicalEntry), 'Owned MSN resolved entry does not match the configured main file');
-  assert.ok(fs.lstatSync(canonicalEntry).isFile(), 'Owned MSN extension main must be a file');
-  assertInsideDirectory(extensionRoot, canonicalEntry, 'Owned MSN extension main resolves outside the extension directory');
+  assert.ok(
+    sameCanonicalFile(configuredEntry, canonicalEntry),
+    `${host.familyLabel} resolved entry does not match the configured main file`
+  );
+  assert.ok(fs.lstatSync(canonicalEntry).isFile(), `${host.familyLabel} extension main must be a file`);
+  assertInsideDirectory(extensionRoot, canonicalEntry, `${host.familyLabel} extension main resolves outside the extension directory`);
   const selection = host.cachedEntry(resolvedEntry);
-  assert.ok(selection?.entry?.loaded, 'Owned MSN shutdown requires the already-loaded original extension entry');
+  assert.ok(selection?.entry?.loaded, `${host.familyLabel} shutdown requires the already-loaded original extension entry`);
   const entry = selection.entry;
   const originalCacheKey = selection.cacheKey;
   assert.ok(
     normalizePath(originalCacheKey) === normalizePath(resolvedEntry),
-    'Owned MSN selected cache key does not match the resolved main entry'
+    `${host.familyLabel} selected cache key does not match the resolved main entry`
   );
   assert.ok(
     sameCanonicalFile(entry.filename, canonicalEntry) && sameCanonicalFile(entry.id, canonicalEntry),
-    'Owned MSN cached extension entry identity does not match the verified main file'
+    `${host.familyLabel} cached extension entry identity does not match the verified main file`
   );
-  assert.ok(isExtensionEntryExports(entry.exports), 'Owned MSN cached entry must expose the original lifecycle functions');
+  assert.ok(isExtensionEntryExports(entry.exports), `${host.familyLabel} cached entry must expose the original lifecycle functions`);
   const originalExports = entry.exports;
   const originalActivate = originalExports.activate;
   const originalDeactivate = originalExports.deactivate;
@@ -152,7 +180,7 @@ function bindOwnedCachedShutdown(host: OwnedMsnShutdownHost): () => Promise<void
       normalizePath(assertOwnedWorkspaceHost(host)) === normalizePath(canonicalParent) &&
         normalizePath(fs.realpathSync(host.extension.extensionPath)) === normalizePath(extensionRoot) &&
         host.extension.main === originalMain,
-      'Owned MSN host ownership changed during teardown'
+      `${host.familyLabel} host ownership changed during teardown`
     );
     const currentSelection = host.cachedEntry(resolvedEntry);
     assert.ok(
@@ -164,7 +192,7 @@ function bindOwnedCachedShutdown(host: OwnedMsnShutdownHost): () => Promise<void
         entry.exports === originalExports &&
         originalExports.activate === originalActivate &&
         originalExports.deactivate === originalDeactivate,
-      'Owned MSN cached lifecycle exports changed during teardown'
+      `${host.familyLabel} cached lifecycle exports changed during teardown`
     );
   };
   return async () => {
@@ -177,25 +205,47 @@ function bindOwnedCachedShutdown(host: OwnedMsnShutdownHost): () => Promise<void
   };
 }
 
-function assertOwnedWorkspaceHost(host: OwnedMsnShutdownHost): string {
-  assert.ok(host.dedicatedMsnRunHost, 'Owned MSN shutdown requires the dedicated run-phase host');
+function assertOwnedWorkspaceHost(host: OwnedExtensionShutdownHost): string {
+  assert.ok(host.dedicatedRunHost, `${host.familyLabel} shutdown requires the dedicated run-phase host`);
   assert.ok(
     host.extension.id === 'ms-azuretools.vscode-azurelogicapps' && host.extension.isActive,
-    'Owned MSN shutdown requires the active Logic Apps extension'
+    `${host.familyLabel} shutdown requires the active Logic Apps extension`
   );
   assert.ok(
-    /^la-e2e-cli-msn-weather-lifecycle-[a-z0-9]+$/i.test(path.basename(host.workspaceParent)),
-    'Owned MSN shutdown requires the runner-created workspace parent'
+    path.basename(host.workspaceParent).toLowerCase().startsWith(`${host.workspaceParentPrefix.toLowerCase()}-`) &&
+      /^[a-z0-9]+$/i.test(path.basename(host.workspaceParent).slice(host.workspaceParentPrefix.length + 1)),
+    `${host.familyLabel} shutdown requires the runner-created workspace parent`
   );
   const parentStat = fs.lstatSync(host.workspaceParent);
-  assert.ok(parentStat.isDirectory() && !parentStat.isSymbolicLink(), 'Owned MSN workspace parent must be a real directory');
+  assert.ok(parentStat.isDirectory() && !parentStat.isSymbolicLink(), `${host.familyLabel} workspace parent must be a real directory`);
   const canonicalParent = fs.realpathSync(host.workspaceParent);
-  assert.ok(host.workspaceRoots.length > 0, 'Owned MSN shutdown requires workspace roots');
+  assert.ok(host.workspaceRoots.length > 0, `${host.familyLabel} shutdown requires workspace roots`);
   for (const root of host.workspaceRoots) {
-    assert.ok(fs.statSync(root).isDirectory(), 'Owned MSN workspace roots must be directories');
-    assertInsideDirectory(canonicalParent, fs.realpathSync(root), 'Owned MSN workspace root escapes the runner-owned parent');
+    assert.ok(fs.statSync(root).isDirectory(), `${host.familyLabel} workspace roots must be directories`);
+    assertInsideDirectory(canonicalParent, fs.realpathSync(root), `${host.familyLabel} workspace root escapes the runner-owned parent`);
   }
   return canonicalParent;
+}
+
+function asOwnedExtensionShutdownHost(host: OwnedMsnShutdownHost): OwnedExtensionShutdownHost {
+  return {
+    get dedicatedRunHost() {
+      return host.dedicatedMsnRunHost;
+    },
+    familyLabel: 'Owned MSN',
+    workspaceParentPrefix: 'la-e2e-cli-msn-weather-lifecycle',
+    get extension() {
+      return host.extension;
+    },
+    get workspaceParent() {
+      return host.workspaceParent;
+    },
+    get workspaceRoots() {
+      return host.workspaceRoots;
+    },
+    resolveEntry: (filename) => host.resolveEntry(filename),
+    cachedEntry: (filename) => host.cachedEntry(filename),
+  };
 }
 
 function isExtensionEntryExports(value: unknown): value is ExtensionEntryExports {

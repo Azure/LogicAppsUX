@@ -4,14 +4,17 @@ import * as os from 'os';
 import * as path from 'path';
 import {
   type CachedExtensionEntry,
+  type OwnedExtensionShutdownHost,
   type OwnedMsnShutdownHost,
   assertOwnedMsnHandleScopes,
   findLoadedCachedExtensionEntry,
+  teardownOwnedExtensionHost,
   teardownOwnedMsnHost,
 } from './ownedMsnShutdown';
 
 async function run(): Promise<void> {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'la-e2e-cli-msn-weather-lifecycle-'));
+  const httpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'la-e2e-cli-httpTimeoutLifecycle-'));
   const extensionRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'la-msn-shutdown-extension-'));
   const outside = fs.mkdtempSync(path.join(os.tmpdir(), 'la-msn-shutdown-unowned-'));
   const prefixSibling = `${root}-foreign`;
@@ -72,6 +75,31 @@ async function run(): Promise<void> {
     ]);
     assert.deepStrictEqual(sequence, ['panels', 'debug-and-tasks', 'deactivate', 'deactivate']);
     assert.ok(fs.existsSync(root), 'Awaited deactivation must not manufacture filesystem cleanup success');
+
+    const httpApp = path.join(httpRoot, 'workspace', 'app');
+    fs.mkdirSync(httpApp, { recursive: true });
+    const httpHost: OwnedExtensionShutdownHost = {
+      dedicatedRunHost: true,
+      familyLabel: 'Owned HTTP timeout',
+      workspaceParentPrefix: 'la-e2e-cli-httpTimeoutLifecycle',
+      extension: host.extension,
+      workspaceParent: httpRoot,
+      workspaceRoots: [httpApp],
+      resolveEntry: host.resolveEntry,
+      cachedEntry: host.cachedEntry,
+    };
+    sequence.length = 0;
+    await teardownOwnedExtensionHost(httpHost, [
+      async () => {
+        sequence.push('http-cleanup');
+      },
+    ]);
+    assert.deepStrictEqual(sequence, ['http-cleanup', 'deactivate', 'deactivate']);
+    assert.ok(fs.existsSync(httpRoot), 'Owned HTTP deactivation must not manufacture filesystem cleanup success');
+    await assert.rejects(
+      teardownOwnedExtensionHost({ ...httpHost, dedicatedRunHost: false }, []),
+      /Owned HTTP timeout shutdown requires the dedicated run-phase host/
+    );
 
     sequence.length = 0;
     await teardownOwnedMsnHost(
@@ -474,6 +502,7 @@ async function run(): Promise<void> {
     console.log('[ownedMsnShutdown.unit] all tests passed');
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
+    fs.rmSync(httpRoot, { recursive: true, force: true });
     fs.rmSync(extensionRoot, { recursive: true, force: true });
     fs.rmSync(outside, { recursive: true, force: true });
     fs.rmSync(prefixSibling, { recursive: true, force: true });

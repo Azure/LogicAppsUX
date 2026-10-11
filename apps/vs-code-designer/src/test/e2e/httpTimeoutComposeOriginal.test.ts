@@ -52,6 +52,7 @@ import {
   type LocalWorkflowManagementPhase,
   type LocalWorkflowManagementResult,
 } from './localWorkflowManagement';
+import { findLoadedCachedExtensionEntry, teardownOwnedExtensionHost } from './ownedMsnShutdown';
 import {
   assertApprovedAzureConnectorFixtureSaved,
   assertAzureConnectorAccountTreePrerequisite,
@@ -126,13 +127,40 @@ suite('HTTP timeout original clauses on one workflow', () => {
         '[http-timeout] Scenarios 1-3 passed sequentially in one VS Code session; Portal wording and Consumption rejection remain residual.'
       );
     } finally {
-      await helpers.stopDebuggingAndTasks();
-      await endpoint.close();
-      await closeAllTabs();
-      await assertNoDialogAttempts('HTTP timeout request lifecycle');
+      await teardownHttpTimeoutHost(entry, endpoint);
     }
   });
 });
+
+async function teardownHttpTimeoutHost(entry: CreatedWorkspace, endpoint: OwnedDelayEndpoint): Promise<void> {
+  const workspaceParent = process.env.LA_E2E_CLI_WORKSPACE_PARENT;
+  const extension = vscode.extensions.getExtension('ms-azuretools.vscode-azurelogicapps');
+  assert.ok(workspaceParent, 'HTTP timeout shutdown requires the runner-owned workspace parent');
+  assert.ok(extension, 'HTTP timeout shutdown requires the installed Logic Apps extension');
+  await teardownOwnedExtensionHost(
+    {
+      dedicatedRunHost: mode === 'run',
+      familyLabel: 'Owned HTTP timeout',
+      workspaceParentPrefix: 'la-e2e-cli-httpTimeoutLifecycle',
+      extension: {
+        id: extension.id,
+        isActive: extension.isActive,
+        extensionPath: extension.extensionPath,
+        main: extension.packageJSON.main,
+      },
+      workspaceParent,
+      workspaceRoots: [entry.appDir],
+      resolveEntry: require.resolve,
+      cachedEntry: (filename) => findLoadedCachedExtensionEntry(filename, require.cache),
+    },
+    [
+      () => helpers.stopDebuggingAndTasks(),
+      () => endpoint.close(),
+      () => closeAllTabs(),
+      () => assertNoDialogAttempts('HTTP timeout request lifecycle'),
+    ]
+  );
+}
 
 async function provePt1sExecution(entry: CreatedWorkspace, endpoint: OwnedDelayEndpoint, deadline: number): Promise<void> {
   let session: DesignerSession | undefined;

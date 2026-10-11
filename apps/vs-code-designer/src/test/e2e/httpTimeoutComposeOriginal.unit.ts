@@ -549,6 +549,23 @@ async function main(): Promise<void> {
     assert.ok(lifecycle.includes("fields: [{ labels: ['Request options - Timeout'], value: 'InvalidString' }]"));
     assert.ok(driver.includes("element.scrollIntoView({ block: 'center', inline: 'nearest' });"));
   });
+  await control('HTTP lifecycle tears down the exact owned extension host before wrapper filesystem cleanup', () => {
+    const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
+    assert.ok(source.includes("import { findLoadedCachedExtensionEntry, teardownOwnedExtensionHost } from './ownedMsnShutdown';"));
+    const finalizer = source.indexOf('async function teardownHttpTimeoutHost');
+    const stopRuntime = source.indexOf('() => helpers.stopDebuggingAndTasks()', finalizer);
+    const closeEndpoint = source.indexOf('() => endpoint.close()', stopRuntime);
+    const closeTabs = source.indexOf('() => closeAllTabs()', closeEndpoint);
+    const dialogAssertion = source.indexOf("() => assertNoDialogAttempts('HTTP timeout request lifecycle')", closeTabs);
+    assert.ok(
+      finalizer >= 0 && stopRuntime > finalizer && closeEndpoint > stopRuntime && closeTabs > closeEndpoint && dialogAssertion > closeTabs
+    );
+    assert.ok(source.includes("workspaceParentPrefix: 'la-e2e-cli-httpTimeoutLifecycle'"));
+    assert.ok(source.includes('workspaceRoots: [entry.appDir]'));
+    assert.ok(source.includes('resolveEntry: require.resolve'));
+    assert.ok(source.includes('findLoadedCachedExtensionEntry(filename, require.cache)'));
+    assert.ok(source.includes('await teardownHttpTimeoutHost(entry, endpoint);'));
+  });
   await control('Designer acquisition and later failures capture before optional disposal and tab cleanup', () => {
     const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
     const pt1sStart = source.indexOf('async function provePt1sExecution');
