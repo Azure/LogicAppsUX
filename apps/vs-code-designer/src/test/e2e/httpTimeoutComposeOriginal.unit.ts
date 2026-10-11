@@ -298,9 +298,12 @@ async function main(): Promise<void> {
       }
     }
     assert.strictEqual(new Set([...scenario1, ...scenario2]).size, scenario1.length + scenario2.length);
-    assert.ok(source.includes('await captureEvidenceScreenshot(name, expectation, {'));
-    assert.ok(source.includes('semanticCdp: session.cdp'));
-    assert.ok(source.includes('semanticContextId: session.contextId'));
+    assert.ok(source.includes('captureEvidenceScreenshot(name, expectation, {'));
+    assert.ok(source.includes("error.message !== 'Screenshot binding failed: semantic frame is not owned by the workbench frame tree'"));
+    assert.ok(source.includes('rebinding screenshot evidence to the visible Designer iframe'));
+    assert.ok(source.includes("['Workflow', 'Code', 'HTTP', ...(semanticText ?? [])]"));
+    assert.ok(source.includes('await capture(rebound.cdp, rebound.contextId)'));
+    assert.ok(source.includes('await capture(session.cdp, session.contextId)'));
     assert.ok(source.includes("binding: { activeTabText: [entry.wfName, 'Workspace'], semanticText }"));
   });
   await control('PT1S evidence binds empty history, triggered run, failed run, and failed HTTP action to live webviews', () => {

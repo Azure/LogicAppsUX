@@ -1359,7 +1359,7 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       ts.forEachChild(node, visit);
     };
     visit(syntax);
-    assert.strictEqual(bindings, 4, 'Every original/reopened launch owner assertion binds V2');
+    assert.strictEqual(bindings, 5, 'Every original/reopened launch and screenshot rebind owner assertion binds V2');
     assert.strictEqual(saves, 3, 'Each authored lifecycle state uses the tested enabled production toolbar selector');
     assert.deepStrictEqual(
       [...nativeSteps].sort(),

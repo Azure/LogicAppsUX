@@ -623,12 +623,45 @@ async function captureHttpDesignerEvidence(
   semanticText?: string[]
 ): Promise<void> {
   console.log(`[http-timeout][checkpoint] capturing ${name}`);
-  await captureEvidenceScreenshot(name, expectation, {
-    semanticCdp: session.cdp,
-    semanticContextId: session.contextId,
-    deadlineMs: Math.min(deadline, Date.now() + defaultEvidenceScreenshotTimeoutMs),
-    binding: { activeTabText: [entry.wfName, 'Workspace'], semanticText },
-  });
+  const capture = (semanticCdp: CdpConnection, semanticContextId: number) =>
+    captureEvidenceScreenshot(name, expectation, {
+      semanticCdp,
+      semanticContextId,
+      deadlineMs: Math.min(deadline, Date.now() + defaultEvidenceScreenshotTimeoutMs),
+      binding: { activeTabText: [entry.wfName, 'Workspace'], semanticText },
+    });
+  try {
+    await capture(session.cdp, session.contextId);
+  } catch (error) {
+    if (
+      !(error instanceof Error) ||
+      error.message !== 'Screenshot binding failed: semantic frame is not owned by the workbench frame tree'
+    ) {
+      throw error;
+    }
+    console.warn(`[http-timeout][checkpoint] ${name}: rebinding screenshot evidence to the visible Designer iframe`);
+    const workbench = await connectToVsCodeWorkbenchCdp({
+      activate: false,
+      timeoutMs: Math.min(15_000, httpTimeoutComposeRemaining(deadline)),
+    });
+    let reboundCdp: CdpConnection | undefined;
+    try {
+      const tabs = getWebviewTabs(httpTimeoutComposeDesignerViewType);
+      assert.strictEqual(tabs.length, 1, `${name} requires exactly one Designer tab before screenshot rebinding`);
+      assert.ok(tabs[0].isActive, `${name} requires the Designer tab to remain active before screenshot rebinding`);
+      const rebound = await activeWebview(
+        workbench,
+        tabs[0].label,
+        ['Workflow', 'Code', 'HTTP', ...(semanticText ?? [])],
+        Math.min(deadline, Date.now() + defaultEvidenceScreenshotTimeoutMs)
+      );
+      reboundCdp = rebound.cdp;
+      await capture(rebound.cdp, rebound.contextId);
+    } finally {
+      reboundCdp?.dispose();
+      workbench.dispose();
+    }
+  }
 }
 
 async function captureHttpDesignerFailure(stage: string, error: unknown): Promise<void> {
