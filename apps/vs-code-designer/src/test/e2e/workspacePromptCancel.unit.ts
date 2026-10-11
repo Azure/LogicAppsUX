@@ -297,7 +297,7 @@ class CancelCaptureFixture {
     return { result: {} };
   }
 
-  async evaluate<T>(_context: number | undefined, expression: string): Promise<T> {
+  async evaluate<T>(_context: number | undefined, expression: string, options?: { timeoutMs?: number }): Promise<T> {
     if (expression.includes('visibleWorkbench:')) {
       return { visibleWorkbench: true } as T;
     }
@@ -306,6 +306,12 @@ class CancelCaptureFixture {
       expression.includes('delete globalThis.__logicAppsScreenshotInvalidation')
     ) {
       return { revision: 0 } as T;
+    }
+    if (this.mode === 'deadline') {
+      const evaluationDeadline = Date.now() + Math.max(0, options?.timeoutMs ?? 0);
+      do {
+        await new Promise((resolve) => setTimeout(resolve, 1));
+      } while (Date.now() <= evaluationDeadline);
     }
     const sample: ScreenshotReadinessSnapshot = {
       ready: true,
