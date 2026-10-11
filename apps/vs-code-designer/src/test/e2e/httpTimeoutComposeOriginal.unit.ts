@@ -386,6 +386,7 @@ async function main(): Promise<void> {
   await control('PT24H runtime validation uses bounded native Ctrl+F search in the func host terminal', () => {
     const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
     const helper = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/workbenchTerminalSearch.ts'), 'utf8');
+    const oracle = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutRequestOracle.ts'), 'utf8');
     const scenarioStart = source.indexOf('async function provePt24hAndInvalidValidation(');
     const scenarioEnd = source.indexOf('async function authorHttpRequest(', scenarioStart);
     const scenario = source.slice(scenarioStart, scenarioEnd);
@@ -395,6 +396,9 @@ async function main(): Promise<void> {
     assert.ok(dispose >= 0 && dispose < start && start < search);
     assert.ok(scenario.includes('httpTimeoutPt24hTerminalFindText'));
     assert.ok(scenario.includes('httpTimeoutPt24hTerminalVisibleText'));
+    assert.ok(source.includes('const httpTimeoutPt24hTerminalVisibleText = [httpTimeoutPt24hRuntimeError] as const;'));
+    assert.ok(oracle.includes("must be less '00:03:45'"));
+    assert.ok(!oracle.includes('must be less than'));
     assert.ok(scenario.includes('Date.now() + 90_000'));
     assert.ok(scenario.includes('Date.now() + defaultEvidenceScreenshotTimeoutMs'));
     assert.ok(scenario.includes('pt24h-terminal-validation-before-cleanup'));

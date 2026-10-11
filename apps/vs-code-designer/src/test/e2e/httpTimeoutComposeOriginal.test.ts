@@ -74,11 +74,7 @@ const managementRoot = 'http://localhost:7071/runtime/webhooks/workflow/api/mana
 const apiVersion = '2019-10-01-edge-preview';
 const mode = process.env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MODE;
 const httpTimeoutPt24hTerminalFindText = '1.00:00:00';
-const httpTimeoutPt24hTerminalVisibleText = [
-  'The provided request options timeout of',
-  "'1.00:00:00'",
-  "for action 'HTTP' must be less than",
-] as const;
+const httpTimeoutPt24hTerminalVisibleText = [httpTimeoutPt24hRuntimeError] as const;
 
 installDialogGuard();
 installFailureScreenshotHook();

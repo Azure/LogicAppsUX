@@ -4,7 +4,8 @@ import type { CreatedWorkspace } from './workspaceLifecycle.test';
 
 export const httpTimeoutRequestActionName = 'HTTP';
 export const httpTimeoutInvalidDurationError = 'Timeout value is invalid, must match ISO 8601 duration format';
-export const httpTimeoutPt24hRuntimeError = "The provided request options timeout of '1.00:00:00' for action 'HTTP' must be less than";
+export const httpTimeoutPt24hRuntimeError =
+  "The provided request options timeout of '1.00:00:00' for action 'HTTP' must be less '00:03:45'";
 
 interface HttpAction {
   type?: unknown;
