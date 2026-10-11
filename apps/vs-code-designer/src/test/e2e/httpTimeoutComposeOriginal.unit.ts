@@ -336,6 +336,11 @@ async function main(): Promise<void> {
     assert.ok(source.includes('semanticCdp: monitoring.cdp'));
     assert.ok(source.includes('semanticContextId: monitoring.contextId'));
     assert.ok(source.includes("binding: { activeTabText: [entry.wfName, 'Workspace'] }"));
+    assert.ok(source.includes('for (let attempt = 1; attempt <= 2; attempt++)'));
+    assert.ok(source.includes('!isRecoverableFailedHttpMonitoringEvidenceError(error)'));
+    assert.ok(source.includes("error.message.includes('monitoring-action-state-missing')"));
+    assert.ok(source.includes('lost readiness; reselecting exact HTTP'));
+    assert.ok(source.includes('http-timeout-request-pt1s-http-action-retry-'));
     assert.ok(
       source.includes("{ kind: 'overview', label: 'httpTimeoutRequestRunTriggered', workflowName: entry.wfName }"),
       'Immediate post-click evidence must not require the run row before Overview renders it'

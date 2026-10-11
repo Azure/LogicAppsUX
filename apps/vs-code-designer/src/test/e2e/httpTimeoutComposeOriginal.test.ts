@@ -259,24 +259,7 @@ async function provePt1sExecution(entry: CreatedWorkspace, endpoint: OwnedDelayE
           },
         });
         try {
-          await helpers.clickMonitoringActionCardByTitle(monitoring.cdp, monitoring.contextId, 'HTTP');
-          await helpers.waitForMonitoringActionDetails(
-            monitoring.cdp,
-            monitoring.contextId,
-            'HTTP',
-            Math.min(90_000, httpTimeoutComposeRemaining(deadline)),
-            'HTTP timeout failed action monitoring details'
-          );
-          await captureEvidenceScreenshot(
-            'http-timeout-request-pt1s-http-action-failed',
-            { kind: 'monitoringAction', label: 'httpTimeoutRequestFailedAction', actionTitle: 'HTTP', expectedStatus: 'Failed' },
-            {
-              deadlineMs: deadline,
-              semanticCdp: monitoring.cdp,
-              semanticContextId: monitoring.contextId,
-              binding: { activeTabText: [entry.wfName, 'Workspace'] },
-            }
-          );
+          await captureFailedHttpMonitoringEvidence(monitoring, entry, deadline);
         } finally {
           monitoring.cdp.dispose();
         }
@@ -301,6 +284,59 @@ async function provePt1sExecution(entry: CreatedWorkspace, endpoint: OwnedDelayE
       },
     ],
     'HTTP timeout Scenario 1 failed; body and cleanup failures are retained'
+  );
+}
+
+async function captureFailedHttpMonitoringEvidence(
+  monitoring: { cdp: CdpConnection; contextId: number },
+  entry: CreatedWorkspace,
+  deadline: number
+): Promise<void> {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      await helpers.clickMonitoringActionCardByTitle(monitoring.cdp, monitoring.contextId, 'HTTP');
+      await helpers.waitForMonitoringActionDetails(
+        monitoring.cdp,
+        monitoring.contextId,
+        'HTTP',
+        Math.min(90_000, httpTimeoutComposeRemaining(deadline)),
+        `HTTP timeout failed action monitoring details attempt ${attempt}`
+      );
+      await captureEvidenceScreenshot(
+        'http-timeout-request-pt1s-http-action-failed',
+        { kind: 'monitoringAction', label: 'httpTimeoutRequestFailedAction', actionTitle: 'HTTP', expectedStatus: 'Failed' },
+        {
+          deadlineMs: deadline,
+          semanticCdp: monitoring.cdp,
+          semanticContextId: monitoring.contextId,
+          binding: { activeTabText: [entry.wfName, 'Workspace'] },
+        }
+      );
+      return;
+    } catch (error) {
+      lastError = error;
+      if (attempt === 2 || !isRecoverableFailedHttpMonitoringEvidenceError(error)) {
+        break;
+      }
+      console.warn(`[http-timeout][checkpoint] failed HTTP action evidence attempt ${attempt} lost readiness; reselecting exact HTTP`);
+      await captureDiagnosticScreenshot(`http-timeout-request-pt1s-http-action-retry-${Date.now()}`, {
+        reason: `Failed HTTP action evidence attempt ${attempt} lost its selected monitoring result`,
+        timeoutMs: 5000,
+      });
+    }
+  }
+  throw lastError;
+}
+
+function isRecoverableFailedHttpMonitoringEvidenceError(error: unknown): boolean {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+  return (
+    error.message.includes('Timed out waiting for HTTP timeout failed action monitoring details') ||
+    (error.message.includes('Screenshot readiness failed for http-timeout-request-pt1s-http-action-failed') &&
+      error.message.includes('monitoring-action-state-missing'))
   );
 }
 
