@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import { OwnedProcessEvidenceError, type OwnedProcessIdentity } from '../../../scripts/e2e-cli-owned-processes';
-import { createMsnProcessCleanup } from './ownedMsnProcessCleanup';
+import { createHttpTimeoutProcessCleanup, createMsnProcessCleanup } from './ownedMsnProcessCleanup';
 
 async function run(): Promise<void> {
   const roots: string[] = [];
@@ -89,6 +89,61 @@ async function run(): Promise<void> {
     await assert.rejects(cleanup.capture(), reason('duplicate-process-capture'));
     await assert.rejects(cleanup.finalize(), reason('duplicate-process-finalization'));
     assert.strictEqual(positive.budgets.length, 3, 'Repeated calls cannot reset the deadline or start more observations');
+
+    const http = fixture();
+    const terminated: OwnedProcessIdentity[] = [];
+    const httpEnv: NodeJS.ProcessEnv = {
+      LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_INVOCATION: http.env.LA_E2E_CLI_MSN_PROCESS_INVOCATION,
+      LA_E2E_CLI_WORKSPACE_PARENT: http.workspace,
+      LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: http.dependencies,
+      LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_EVIDENCE_BASE: http.evidenceBase,
+      LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_OWNER_JSON: http.env.LA_E2E_CLI_MSN_PROCESS_OWNER_JSON,
+    };
+    const httpCleanup = createHttpTimeoutProcessCleanup(httpEnv, {
+      now: http.input.now,
+      provider: () => ({
+        snapshot: http.input.provider().snapshot,
+        terminateExact: async (record) => {
+          assert.deepStrictEqual(
+            {
+              pid: record.pid,
+              parentPid: record.parentPid,
+              creationIdentity: record.creationIdentity,
+              executable: record.executable,
+            },
+            http.child
+          );
+          terminated.push(record);
+          http.setRecords([http.owner]);
+        },
+      }),
+    });
+    await httpCleanup.capture();
+    await httpCleanup.finalize();
+    const httpAfter = JSON.parse(fs.readFileSync(`${http.evidenceBase}.after-teardown.json`, 'utf8'));
+    assert.strictEqual(terminated.length, 1);
+    assert.deepStrictEqual(httpAfter.actions, [{ pid: http.child.pid, creationIdentity: http.child.creationIdentity, requested: true }]);
+    assert.strictEqual(httpAfter.processExitVerified, true);
+    assert.strictEqual(httpAfter.filesystemCleanupVerified, false);
+
+    const alreadyStopped = fixture();
+    alreadyStopped.setRecords([alreadyStopped.owner]);
+    const alreadyStoppedCleanup = createHttpTimeoutProcessCleanup(
+      {
+        LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_INVOCATION: alreadyStopped.env.LA_E2E_CLI_MSN_PROCESS_INVOCATION,
+        LA_E2E_CLI_WORKSPACE_PARENT: alreadyStopped.workspace,
+        LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: alreadyStopped.dependencies,
+        LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_EVIDENCE_BASE: alreadyStopped.evidenceBase,
+        LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_OWNER_JSON: alreadyStopped.env.LA_E2E_CLI_MSN_PROCESS_OWNER_JSON,
+      },
+      alreadyStopped.input
+    );
+    await alreadyStoppedCleanup.capture();
+    await alreadyStoppedCleanup.finalize();
+    const alreadyStoppedAfter = JSON.parse(fs.readFileSync(`${alreadyStopped.evidenceBase}.after-teardown.json`, 'utf8'));
+    assert.deepStrictEqual(alreadyStoppedAfter.observedProcesses, []);
+    assert.deepStrictEqual(alreadyStoppedAfter.actions, []);
+    assert.strictEqual(alreadyStoppedAfter.processExitVerified, true);
 
     for (const text of ['', 'not-json', '{}', 'null', '{"pid":"101"}']) {
       const malformed = fixture();

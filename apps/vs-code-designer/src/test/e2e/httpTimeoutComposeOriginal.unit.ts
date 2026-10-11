@@ -552,25 +552,36 @@ async function main(): Promise<void> {
   await control('HTTP lifecycle releases the stopped func terminal before exact owned extension deactivation', () => {
     const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
     assert.ok(source.includes("import { findLoadedCachedExtensionEntry, teardownOwnedExtensionHost } from './ownedMsnShutdown';"));
+    assert.ok(source.includes("import { createHttpTimeoutProcessCleanup } from './ownedMsnProcessCleanup';"));
     const finalizer = source.indexOf('async function teardownHttpTimeoutHost');
+    const createProcessCleanup = source.indexOf(
+      "const processCleanup = process.platform === 'win32' ? createHttpTimeoutProcessCleanup(process.env) : undefined;",
+      finalizer
+    );
     const stopRuntime = source.indexOf('() => helpers.stopDebuggingAndTasks()', finalizer);
     const disposeTerminal = source.indexOf('() => disposeStoppedFuncHostTerminals(Date.now() + 10_000)', stopRuntime);
     const closeEndpoint = source.indexOf('() => endpoint.close()', disposeTerminal);
     const closeTabs = source.indexOf('() => closeAllTabs()', closeEndpoint);
     const dialogAssertion = source.indexOf("() => assertNoDialogAttempts('HTTP timeout request lifecycle')", closeTabs);
+    const exactProcessCleanup = source.indexOf('processCleanup', dialogAssertion);
     assert.ok(
       finalizer >= 0 &&
+        createProcessCleanup > finalizer &&
         stopRuntime > finalizer &&
         disposeTerminal > stopRuntime &&
         closeEndpoint > disposeTerminal &&
         closeTabs > closeEndpoint &&
-        dialogAssertion > closeTabs
+        dialogAssertion > closeTabs &&
+        exactProcessCleanup > dialogAssertion
     );
     assert.ok(source.includes("workspaceParentPrefix: 'la-e2e-cli-httpTimeoutLifecycle'"));
     assert.ok(source.includes('workspaceRoots: [entry.appDir]'));
     assert.ok(source.includes('resolveEntry: require.resolve'));
     assert.ok(source.includes('findLoadedCachedExtensionEntry(filename, require.cache)'));
     assert.ok(source.includes('await teardownHttpTimeoutHost(entry, endpoint);'));
+    const terminalHelper = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/workbenchTerminalSearch.ts'), 'utf8');
+    assert.ok(terminalHelper.includes('stopped-host cleanup found ${terminals.length} matching terminal(s)'));
+    assert.ok(terminalHelper.includes('stopped-host cleanup removed ${terminals.length} matching terminal handle(s)'));
   });
   await control('Designer acquisition and later failures capture before optional disposal and tab cleanup', () => {
     const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');

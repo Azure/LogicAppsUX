@@ -27,11 +27,18 @@ export async function disposeStoppedFuncHostTerminals(deadline: number): Promise
     `Refusing to dispose ${terminalTaskName} terminals while matching task executions remain active`
   );
   const terminals = vscode.window.terminals.filter((terminal) => terminal.name.toLowerCase().includes(terminalTaskName));
+  console.log(
+    `[workbench-terminal] stopped-host cleanup found ${terminals.length} matching terminal(s): ${JSON.stringify(
+      terminals.map((terminal) => terminal.name)
+    )}`
+  );
   for (const terminal of terminals) {
     terminal.dispose();
   }
   while (Date.now() < deadline) {
-    if (!vscode.window.terminals.some((terminal) => terminal.name.toLowerCase().includes(terminalTaskName))) {
+    const remaining = vscode.window.terminals.filter((terminal) => terminal.name.toLowerCase().includes(terminalTaskName));
+    if (remaining.length === 0) {
+      console.log(`[workbench-terminal] stopped-host cleanup removed ${terminals.length} matching terminal handle(s)`);
       return;
     }
     await new Promise((resolve) => setTimeout(resolve, 100));

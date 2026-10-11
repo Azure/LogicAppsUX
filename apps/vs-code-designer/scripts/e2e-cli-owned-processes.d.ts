@@ -39,6 +39,7 @@ export function createOwnedProcessCleanup(contract: {
   now(): number;
   deadline: number;
   maxObservations?: number;
+  allowEmptyCapture?: boolean;
 }): OwnedProcessCleanup;
 
 export class OwnedProcessEvidenceError extends Error {

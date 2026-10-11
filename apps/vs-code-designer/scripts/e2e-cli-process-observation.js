@@ -7,6 +7,54 @@ const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const { OwnedProcessEvidenceError } = require('./e2e-cli-owned-processes');
 
+const windowsTerminateExactScript = String.raw`
+$ErrorActionPreference='Stop'
+Add-Type -TypeDefinition @'
+using System;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
+public static class ExactProcessTermination {
+  [DllImport("kernel32.dll", SetLastError=true)]
+  [return: MarshalAs(UnmanagedType.Bool)]
+  private static extern bool TerminateProcess(IntPtr processHandle, uint exitCode);
+  public static void Terminate(IntPtr processHandle, uint exitCode) {
+    if(!TerminateProcess(processHandle, exitCode)) {
+      throw new Win32Exception(Marshal.GetLastWin32Error());
+    }
+  }
+}
+'@
+$expected=[Console]::In.ReadToEnd()|ConvertFrom-Json
+$clock=[Diagnostics.Stopwatch]::StartNew()
+$held=$null
+try {
+  $held=[Diagnostics.Process]::GetProcessById([int]$expected.pid)
+  $handle=$held.Handle
+  $current=Get-CimInstance Win32_Process -Filter ('ProcessId = '+[int]$expected.pid)
+  if(
+    !$current -or
+    $current.CreationDate.ToUniversalTime().Ticks.ToString() -cne [string]$expected.creationIdentity -or
+    [IO.Path]::GetFullPath([string]$current.ExecutablePath).ToLowerInvariant() -cne [string]$expected.executable
+  ) {
+    throw 'Exact process identity changed'
+  }
+  $remaining=[int]$expected.budget-$clock.ElapsedMilliseconds
+  if($remaining -le 0) {
+    throw 'Process cleanup budget expired'
+  }
+  [ExactProcessTermination]::Terminate($handle, 125)
+  $remaining=[int]$expected.budget-$clock.ElapsedMilliseconds
+  if($remaining -le 0 -or !$held.WaitForExit([int]$remaining)) {
+    throw 'Exact process exit not observed'
+  }
+}
+finally {
+  if($held) {
+    $held.Dispose()
+  }
+}
+`;
+
 function fail(reason) {
   throw new OwnedProcessEvidenceError(reason);
 }
@@ -105,7 +153,7 @@ function createProcessObservationProvider(platform = process.platform, execute =
               fail('invalid-exact-process-identity');
             }
             execute(
-              "$ErrorActionPreference='Stop'; $expected=[Console]::In.ReadToEnd()|ConvertFrom-Json; $clock=[Diagnostics.Stopwatch]::StartNew(); $held=$null; try { $held=[Diagnostics.Process]::GetProcessById([int]$expected.pid); $null=$held.Handle; $current=Get-CimInstance Win32_Process -Filter ('ProcessId = '+[int]$expected.pid); if(!$current -or $current.CreationDate.ToUniversalTime().Ticks.ToString() -cne [string]$expected.creationIdentity -or [IO.Path]::GetFullPath([string]$current.ExecutablePath).ToLowerInvariant() -cne [string]$expected.executable){throw 'Exact process identity changed'}; $remaining=[int]$expected.budget-$clock.ElapsedMilliseconds; if($remaining -le 0){throw 'Process cleanup budget expired'}; Stop-Process -Id ([int]$expected.pid) -ErrorAction Stop; if(!$held.WaitForExit([int]$remaining)){throw 'Exact process exit not observed'} } finally {if($held){$held.Dispose()}}",
+              windowsTerminateExactScript,
               budget,
               JSON.stringify({
                 pid: record.pid,

@@ -44,11 +44,23 @@ interface ProcessCleanupDependencies {
   now(): number;
 }
 
-function initializeMsnProcessCleanup(env: NodeJS.ProcessEnv, dependenciesInput: ProcessCleanupDependencies): OwnedMsnProcessCleanup {
-  const invocationId = env.LA_E2E_CLI_MSN_PROCESS_INVOCATION ?? '';
-  const workspace = env.LA_E2E_CLI_WORKSPACE_PARENT;
-  const dependencies = env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT;
-  const evidenceBase = env.LA_E2E_CLI_MSN_PROCESS_EVIDENCE_BASE;
+interface OwnedExtensionProcessCleanupInput {
+  invocationId: string | undefined;
+  workspace: string | undefined;
+  dependencies: string | undefined;
+  evidenceBase: string | undefined;
+  ownerJson: string | undefined;
+  allowEmptyCapture?: boolean;
+}
+
+function initializeOwnedExtensionProcessCleanup(
+  input: OwnedExtensionProcessCleanupInput,
+  dependenciesInput: ProcessCleanupDependencies
+): OwnedMsnProcessCleanup {
+  const invocationId = input.invocationId ?? '';
+  const workspace = input.workspace;
+  const dependencies = input.dependencies;
+  const evidenceBase = input.evidenceBase;
   if (!workspace || !dependencies || !evidenceBase || !path.isAbsolute(evidenceBase)) {
     throw new OwnedProcessEvidenceError('missing-owned-process-environment');
   }
@@ -63,7 +75,7 @@ function initializeMsnProcessCleanup(env: NodeJS.ProcessEnv, dependenciesInput: 
   const guard = createOwnedProcessCleanup({
     invocationId,
     platform: process.platform,
-    owner: parseOwner(env.LA_E2E_CLI_MSN_PROCESS_OWNER_JSON),
+    owner: parseOwner(input.ownerJson),
     roots: [
       { kind: 'workspace', directory: workspace },
       { kind: 'dependencies', directory: dependencies },
@@ -71,6 +83,7 @@ function initializeMsnProcessCleanup(env: NodeJS.ProcessEnv, dependenciesInput: 
     ...provider,
     now: dependenciesInput.now,
     deadline: dependenciesInput.now() + 10_000,
+    allowEmptyCapture: input.allowEmptyCapture,
   });
 
   function persist(stage: string, evidence: OwnedProcessEvidence, reason?: string): void {
@@ -114,17 +127,11 @@ function initializeMsnProcessCleanup(env: NodeJS.ProcessEnv, dependenciesInput: 
   };
 }
 
-export function createMsnProcessCleanup(
-  env: NodeJS.ProcessEnv,
+export function createOwnedExtensionProcessCleanup(
+  input: OwnedExtensionProcessCleanupInput,
   dependencies: ProcessCleanupDependencies = { provider: createProcessObservationProvider, now: Date.now }
 ): OwnedMsnProcessCleanup {
-  const input = {
-    LA_E2E_CLI_MSN_PROCESS_INVOCATION: env.LA_E2E_CLI_MSN_PROCESS_INVOCATION,
-    LA_E2E_CLI_WORKSPACE_PARENT: env.LA_E2E_CLI_WORKSPACE_PARENT,
-    LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT,
-    LA_E2E_CLI_MSN_PROCESS_EVIDENCE_BASE: env.LA_E2E_CLI_MSN_PROCESS_EVIDENCE_BASE,
-    LA_E2E_CLI_MSN_PROCESS_OWNER_JSON: env.LA_E2E_CLI_MSN_PROCESS_OWNER_JSON,
-  };
+  const boundInput = { ...input };
   let cleanup: OwnedMsnProcessCleanup | undefined;
   let captureStarted = false;
   let captureCompleted = false;
@@ -135,7 +142,7 @@ export function createMsnProcessCleanup(
         throw new OwnedProcessEvidenceError('duplicate-process-capture');
       }
       captureStarted = true;
-      cleanup = initializeMsnProcessCleanup(input, dependencies);
+      cleanup = initializeOwnedExtensionProcessCleanup(boundInput, dependencies);
       await cleanup.capture();
       captureCompleted = true;
     },
@@ -151,4 +158,37 @@ export function createMsnProcessCleanup(
       await cleanup.finalize();
     },
   };
+}
+
+export function createMsnProcessCleanup(
+  env: NodeJS.ProcessEnv,
+  dependencies: ProcessCleanupDependencies = { provider: createProcessObservationProvider, now: Date.now }
+): OwnedMsnProcessCleanup {
+  return createOwnedExtensionProcessCleanup(
+    {
+      invocationId: env.LA_E2E_CLI_MSN_PROCESS_INVOCATION,
+      workspace: env.LA_E2E_CLI_WORKSPACE_PARENT,
+      dependencies: env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT,
+      evidenceBase: env.LA_E2E_CLI_MSN_PROCESS_EVIDENCE_BASE,
+      ownerJson: env.LA_E2E_CLI_MSN_PROCESS_OWNER_JSON,
+    },
+    dependencies
+  );
+}
+
+export function createHttpTimeoutProcessCleanup(
+  env: NodeJS.ProcessEnv,
+  dependencies: ProcessCleanupDependencies = { provider: createProcessObservationProvider, now: Date.now }
+): OwnedMsnProcessCleanup {
+  return createOwnedExtensionProcessCleanup(
+    {
+      invocationId: env.LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_INVOCATION,
+      workspace: env.LA_E2E_CLI_WORKSPACE_PARENT,
+      dependencies: env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT,
+      evidenceBase: env.LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_EVIDENCE_BASE,
+      ownerJson: env.LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_OWNER_JSON,
+      allowEmptyCapture: true,
+    },
+    dependencies
+  );
 }

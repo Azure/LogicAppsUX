@@ -1169,12 +1169,15 @@ async function runHttpTimeoutLifecycle({
   createRuntimeRoot = createIsolatedRuntimeDependenciesRoot,
   cleanupRuntime = cleanupRuntimeDependenciesRoot,
   credentialEnvironment = getSuiteScopedCredentialEnv,
+  observeProcessOwner = observeCurrentProcessIdentity,
 } = {}) {
   const suiteId = 'httpTimeoutLifecycle';
   const phaseResultsPath = process.env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH;
   if (!phaseResultsPath || (fs.existsSync(phaseResultsPath) && fs.readFileSync(phaseResultsPath, 'utf8').trim())) {
     throw new Error(`${suiteId} requires a fresh isolated wrapper phase journal`);
   }
+  const processInvocation = randomUUID();
+  const processOwner = await observeProcessOwner();
   const artifactDir = getLifecycleArtifactDir('http-timeout-lifecycle');
   fs.mkdirSync(artifactDir, { recursive: true });
   const workspaceParent = createParent(suiteId);
@@ -1189,6 +1192,9 @@ async function runHttpTimeoutLifecycle({
       LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH: phaseResultsPath,
       LA_E2E_CLI_WORKSPACE_PARENT: workspaceParent,
       LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MANIFEST: manifestPath,
+      LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_INVOCATION: processInvocation,
+      LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_EVIDENCE_BASE: path.join(artifactDir, `owned-processes-${processInvocation}`),
+      LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_OWNER_JSON: JSON.stringify(processOwner),
       LA_E2E_CLI_INCLUDE_HTTP_TIMEOUT_REQUEST_LIFECYCLE: '1',
       LA_E2E_CLI_DISABLE_UNOWNED_PORT_KILL: '1',
       LA_E2E_CLI_STARTUP_RESOURCE: '',
@@ -1264,6 +1270,26 @@ async function runHttpTimeoutLifecycle({
     throw new AggregateError(failures, `${suiteId} lifecycle evidence is inadmissible`);
   }
   return 0;
+}
+
+async function observeCurrentProcessIdentity(provider = require('./e2e-cli-process-observation').createProcessObservationProvider()) {
+  const records = await provider.snapshot(10_000);
+  const matches = records.filter((record) => record?.pid === process.pid);
+  if (matches.length !== 1) {
+    throw new Error('HTTP timeout lifecycle could not establish the exact suite-wrapper process identity');
+  }
+  const [owner] = matches;
+  if (
+    !Number.isSafeInteger(owner.parentPid) ||
+    owner.parentPid < 0 ||
+    typeof owner.creationIdentity !== 'string' ||
+    !owner.creationIdentity ||
+    typeof owner.executable !== 'string' ||
+    !path.isAbsolute(owner.executable)
+  ) {
+    throw new Error('HTTP timeout lifecycle observed an invalid suite-wrapper process identity');
+  }
+  return owner;
 }
 
 // Additive family selector, intentionally outside the canonical baseline/OGF

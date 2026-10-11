@@ -211,6 +211,22 @@ test('an observation-only provider retains the failure instead of manufacturing 
   assert.equal(guard.evidence().processExitVerified, false);
 });
 
+test('an explicitly optional capture can prove that no scoped process was live without taking action', async (t) => {
+  const context = fixture(t, undefined, { allowEmptyCapture: true });
+  context.setTable([context.owner, context.ancestor]);
+  const guard = context.guard();
+  const before = await guard.capture();
+  const after = await guard.finalize();
+  assert.deepEqual(before.observedProcesses, []);
+  assert.deepEqual(after.observedProcesses, []);
+  assert.deepEqual(after.actions, []);
+  assert.equal(after.processExitVerified, true);
+  assert.equal(
+    context.calls.some((call) => call.kind === 'terminate'),
+    false
+  );
+});
+
 test('termination failure is fatal and sanitized', async (t) => {
   const context = fixture(t, undefined, {
     terminateExact: async () => {

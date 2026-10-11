@@ -727,6 +727,12 @@ async function testHttpTimeoutRequestLifecycleUsesIsolatedStartupResources() {
   const priorPhaseResultsPath = process.env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH;
   const priorRuntimeRoot = process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT;
   const calls = [];
+  const processOwner = {
+    pid: 101,
+    parentPid: 1,
+    creationIdentity: '123456789',
+    executable: process.execPath,
+  };
 
   process.env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH = phaseResultsPath;
   process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT = runtimeRoot;
@@ -736,6 +742,7 @@ async function testHttpTimeoutRequestLifecycleUsesIsolatedStartupResources() {
       createRuntimeRoot: () => runtimeRoot,
       cleanupRuntime: async () => undefined,
       credentialEnvironment: async () => ({}),
+      observeProcessOwner: async () => processOwner,
       cleanup: async (ownedRoot) => {
         fs.rmSync(ownedRoot, { recursive: true, force: true });
       },
@@ -804,6 +811,14 @@ async function testHttpTimeoutRequestLifecycleUsesIsolatedStartupResources() {
   assert.strictEqual(create.env.LA_E2E_CLI_STARTUP_RESOURCE, '');
   assert.strictEqual(create.env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MODE, 'create');
   assert.strictEqual(run.env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MODE, 'run');
+  assert.deepStrictEqual(JSON.parse(run.env.LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_OWNER_JSON), processOwner);
+  assert.match(run.env.LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_INVOCATION, /^[a-f0-9-]{36}$/);
+  assert.strictEqual(
+    path.basename(run.env.LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_EVIDENCE_BASE),
+    `owned-processes-${run.env.LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_INVOCATION}`
+  );
+  assert.strictEqual(create.env.LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_INVOCATION, run.env.LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_INVOCATION);
+  assert.strictEqual(bootstrap.env.LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_OWNER_JSON, run.env.LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_OWNER_JSON);
   const manifest = JSON.parse(fs.readFileSync(create.env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MANIFEST, 'utf8'));
   assert.strictEqual(run.env.LA_E2E_CLI_STARTUP_RESOURCE, manifest[0].workspaceFilePath);
   assert.notStrictEqual(create.env.LA_E2E_CLI_USER_DATA_SUFFIX, run.env.LA_E2E_CLI_USER_DATA_SUFFIX);

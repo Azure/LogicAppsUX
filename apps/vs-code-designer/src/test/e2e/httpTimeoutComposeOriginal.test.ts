@@ -53,6 +53,7 @@ import {
   type LocalWorkflowManagementResult,
 } from './localWorkflowManagement';
 import { findLoadedCachedExtensionEntry, teardownOwnedExtensionHost } from './ownedMsnShutdown';
+import { createHttpTimeoutProcessCleanup } from './ownedMsnProcessCleanup';
 import {
   assertApprovedAzureConnectorFixtureSaved,
   assertAzureConnectorAccountTreePrerequisite,
@@ -137,6 +138,7 @@ async function teardownHttpTimeoutHost(entry: CreatedWorkspace, endpoint: OwnedD
   const extension = vscode.extensions.getExtension('ms-azuretools.vscode-azurelogicapps');
   assert.ok(workspaceParent, 'HTTP timeout shutdown requires the runner-owned workspace parent');
   assert.ok(extension, 'HTTP timeout shutdown requires the installed Logic Apps extension');
+  const processCleanup = process.platform === 'win32' ? createHttpTimeoutProcessCleanup(process.env) : undefined;
   await teardownOwnedExtensionHost(
     {
       dedicatedRunHost: mode === 'run',
@@ -159,7 +161,8 @@ async function teardownHttpTimeoutHost(entry: CreatedWorkspace, endpoint: OwnedD
       () => endpoint.close(),
       () => closeAllTabs(),
       () => assertNoDialogAttempts('HTTP timeout request lifecycle'),
-    ]
+    ],
+    processCleanup
   );
 }
 

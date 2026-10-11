@@ -89,6 +89,7 @@ function createOwnedProcessCleanup({
   now,
   deadline,
   maxObservations = 20,
+  allowEmptyCapture = false,
 }) {
   if (
     typeof invocationId !== 'string' ||
@@ -105,6 +106,7 @@ function createOwnedProcessCleanup({
     !Number.isInteger(maxObservations) ||
     maxObservations < 1 ||
     maxObservations > 20 ||
+    typeof allowEmptyCapture !== 'boolean' ||
     (terminateExact !== undefined && typeof terminateExact !== 'function')
   ) {
     fail('invalid-ownership-contract');
@@ -269,7 +271,7 @@ function createOwnedProcessCleanup({
     for (const record of scopedProcesses(table)) {
       candidates.push({ ...record, ancestry: ancestry(record, table) });
     }
-    if (!candidates.length) {
+    if (!allowEmptyCapture && !candidates.length) {
       fail('missing-live-owned-process-observation');
     }
     captured = candidates;
