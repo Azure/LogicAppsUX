@@ -1626,7 +1626,7 @@ async function testRunSuiteWrapperProcessTimeoutCancelsSignalResistantDescendant
       ...process.env,
       LA_E2E_CLI_PROCESS_RECORDS_PATH: processRecordsPath,
     },
-    timeoutMs: 1500,
+    timeoutMs: 10_000,
     scriptPath: createWrapperFixtureScript('signal-resistant-descendant'),
   });
 
