@@ -10,12 +10,8 @@ public static class E2eCliContainmentHost
     private const uint CREATE_SUSPENDED = 0x00000004;
     private const uint STARTF_USESTDHANDLES = 0x00000100;
     private const uint JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE = 0x00002000;
-    private const uint PROCESS_QUERY_LIMITED_INFORMATION = 0x00001000;
     private const int JobObjectBasicAccountingInformation = 1;
-    private const int JobObjectBasicProcessIdList = 3;
     private const int JobObjectExtendedLimitInformation = 9;
-    private const int CONTAINMENT_DRAIN_ATTEMPTS = 100;
-    private const int CONTAINMENT_DRAIN_DELAY_MS = 100;
     private const uint INFINITE = 0xffffffff;
 
     [StructLayout(LayoutKind.Sequential)]
@@ -107,25 +103,6 @@ public static class E2eCliContainmentHost
         public uint TotalTerminatedProcesses;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
-    private struct PROCESS_BASIC_INFORMATION
-    {
-        public IntPtr Reserved1;
-        public IntPtr PebBaseAddress;
-        public IntPtr Reserved2_0;
-        public IntPtr Reserved2_1;
-        public IntPtr UniqueProcessId;
-        public IntPtr InheritedFromUniqueProcessId;
-    }
-
-    private struct RESIDUAL_PROCESS_INFORMATION
-    {
-        public uint ProcessId;
-        public uint ParentProcessId;
-        public uint SessionId;
-        public string Name;
-    }
-
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     private static extern bool CreateProcess(
         string lpApplicationName,
@@ -165,23 +142,6 @@ public static class E2eCliContainmentHost
 
     [DllImport("kernel32.dll", SetLastError = true)]
     private static extern bool TerminateProcess(IntPtr hProcess, uint exitCode);
-
-    [DllImport("kernel32.dll", SetLastError = true)]
-    private static extern IntPtr OpenProcess(uint dwDesiredAccess, bool bInheritHandle, uint dwProcessId);
-
-    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-    private static extern bool QueryFullProcessImageName(IntPtr hProcess, uint dwFlags, StringBuilder lpExeName, ref uint lpdwSize);
-
-    [DllImport("kernel32.dll", SetLastError = true)]
-    private static extern bool ProcessIdToSessionId(uint dwProcessId, out uint pSessionId);
-
-    [DllImport("ntdll.dll")]
-    private static extern int NtQueryInformationProcess(
-        IntPtr processHandle,
-        int processInformationClass,
-        ref PROCESS_BASIC_INFORMATION processInformation,
-        uint processInformationLength,
-        out uint returnLength);
 
     [DllImport("kernel32.dll")]
     private static extern IntPtr GetStdHandle(int nStdHandle);
@@ -241,135 +201,15 @@ public static class E2eCliContainmentHost
         }
     }
 
-    private static List<uint> ActiveProcessIds(IntPtr job)
-    {
-        const int capacity = 4096;
-        var size = 8 + capacity * IntPtr.Size;
-        var pointer = Marshal.AllocHGlobal(size);
-        try
-        {
-            uint returned;
-            if (!QueryInformationJobObject(job, JobObjectBasicProcessIdList, pointer, (uint)size, out returned))
-            {
-                throw new InvalidOperationException("QueryInformationJobObject process list failed: " + Marshal.GetLastWin32Error());
-            }
-            var count = Marshal.ReadInt32(pointer, 4);
-            var processIds = new List<uint>(Math.Min(count, capacity));
-            for (var index = 0; index < count && index < capacity; index++)
-            {
-                processIds.Add(unchecked((uint)Marshal.ReadIntPtr(pointer, 8 + index * IntPtr.Size).ToInt64()));
-            }
-            return processIds;
-        }
-        finally
-        {
-            Marshal.FreeHGlobal(pointer);
-        }
-    }
-
-    private static RESIDUAL_PROCESS_INFORMATION ResidualProcessInformation(uint processId)
-    {
-        var information = new RESIDUAL_PROCESS_INFORMATION
-        {
-            ProcessId = processId,
-            Name = "unavailable",
-        };
-        var processHandle = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, false, processId);
-        if (processHandle == IntPtr.Zero)
-        {
-            return information;
-        }
-        try
-        {
-            uint sessionId;
-            if (ProcessIdToSessionId(processId, out sessionId))
-            {
-                information.SessionId = sessionId;
-            }
-            var basic = new PROCESS_BASIC_INFORMATION();
-            uint returned;
-            if (NtQueryInformationProcess(
-                processHandle,
-                0,
-                ref basic,
-                (uint)Marshal.SizeOf(typeof(PROCESS_BASIC_INFORMATION)),
-                out returned) == 0)
-            {
-                information.ParentProcessId = unchecked((uint)basic.InheritedFromUniqueProcessId.ToInt64());
-            }
-            var executable = new StringBuilder(1024);
-            var executableLength = (uint)executable.Capacity;
-            if (QueryFullProcessImageName(processHandle, 0, executable, ref executableLength))
-            {
-                information.Name = Path.GetFileName(executable.ToString());
-            }
-            return information;
-        }
-        finally
-        {
-            CloseHandle(processHandle);
-        }
-    }
-
-    private static List<RESIDUAL_PROCESS_INFORMATION> ResidualProcesses(IntPtr job)
-    {
-        var residuals = new List<RESIDUAL_PROCESS_INFORMATION>();
-        try
-        {
-            foreach (var processId in ActiveProcessIds(job))
-            {
-                var information = ResidualProcessInformation(processId);
-                residuals.Add(information);
-                Console.Error.WriteLine(
-                    "[containment] residual pid={0} ppid={1} session={2} name={3}",
-                    information.ProcessId,
-                    information.ParentProcessId,
-                    information.SessionId,
-                    information.Name);
-            }
-        }
-        catch (Exception error)
-        {
-            Console.Error.WriteLine("[containment] residual metadata unavailable: {0}", error.Message);
-        }
-        return residuals;
-    }
-
-    private static string JsonString(string value)
-    {
-        return "\"" + value.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"";
-    }
-
-    private static void WriteReceipt(
-        string path,
-        uint rootPid,
-        uint rootExitCode,
-        uint activeProcesses,
-        IList<RESIDUAL_PROCESS_INFORMATION> residualProcesses)
+    private static void WriteReceipt(string path, uint rootPid, uint rootExitCode, uint activeProcesses)
     {
         var empty = activeProcesses == 0 ? "true" : "false";
-        var residualJson = new StringBuilder("[");
-        for (var index = 0; index < residualProcesses.Count; index++)
-        {
-            var residual = residualProcesses[index];
-            if (index > 0)
-            {
-                residualJson.Append(',');
-            }
-            residualJson.Append("{\"pid\":").Append(residual.ProcessId)
-                .Append(",\"parentPid\":").Append(residual.ParentProcessId)
-                .Append(",\"sessionId\":").Append(residual.SessionId)
-                .Append(",\"name\":").Append(JsonString(residual.Name))
-                .Append('}');
-        }
-        residualJson.Append(']');
         File.WriteAllText(
             path,
             "{\"schemaVersion\":1,\"mechanism\":\"windows-job-object\",\"containmentEstablished\":true," +
             "\"rootPid\":" + rootPid + ",\"rootExitCode\":" + rootExitCode + ",\"rootSignal\":null," +
             "\"containmentEmpty\":" + empty + ",\"retainedOriginalIdentitiesVerified\":" + empty + "," +
-            "\"escapedDescendants\":[],\"activeContainedProcessCount\":" + activeProcesses + "," +
-            "\"activeContainedProcesses\":" + residualJson + "}\n");
+            "\"escapedDescendants\":[],\"activeContainedProcessCount\":" + activeProcesses + "}\n");
     }
 
     public static int Main(string[] args)
@@ -453,13 +293,12 @@ public static class E2eCliContainmentHost
             }
 
             uint active = ActiveProcesses(job);
-            for (var attempt = 0; attempt < CONTAINMENT_DRAIN_ATTEMPTS && active > 0; attempt++)
+            for (var attempt = 0; attempt < 50 && active > 0; attempt++)
             {
-                Thread.Sleep(CONTAINMENT_DRAIN_DELAY_MS);
+                Thread.Sleep(100);
                 active = ActiveProcesses(job);
             }
-            var residualProcesses = active > 0 ? ResidualProcesses(job) : new List<RESIDUAL_PROCESS_INFORMATION>();
-            WriteReceipt(receiptPath, process.dwProcessId, rootExitCode, active, residualProcesses);
+            WriteReceipt(receiptPath, process.dwProcessId, rootExitCode, active);
             if (active > 0)
             {
                 TerminateJobObject(job, 125);

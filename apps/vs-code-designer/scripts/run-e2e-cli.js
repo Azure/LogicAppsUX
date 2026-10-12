@@ -300,7 +300,6 @@ async function runSuitesBatch(suitesValue, visibleDelayMs) {
     diagnosticOnly: isEnabledEnv(process.env.LA_E2E_CLI_BATCH_DIAGNOSTIC_ONLY),
     trustedFullExecution: isEnabledEnv(process.env.LA_E2E_CLI_BATCH_TRUSTED_FULL_EXECUTION),
     admissionContext: readJsonIfExists(process.env.LA_E2E_CLI_ADMISSION_CONTEXT_PATH),
-    cohortId: process.env.LA_E2E_CLI_BATCH_COHORT_ID,
     runSuite: ({ suite, context, env, timeoutMs }) => runSuiteWrapperProcess({ suite, context, env, visibleDelayMs, timeoutMs }),
   });
   fs.writeFileSync(path.join(resultsDir, 'e2e-cli-batch-result.json'), `${JSON.stringify(aggregate, null, 2)}\n`);
@@ -359,7 +358,7 @@ function buildBatchAggregateJUnitXml(aggregate) {
   return [
     '<?xml version="1.0" encoding="UTF-8"?>',
     `<testsuites name="@vscode/test-cli batch" tests="${suites.length}" failures="${failures}">`,
-    ...suites.map((suite) => buildBatchSuiteJUnitXml(suite).split('\n').slice(1, -1).join('\n')),
+    ...suites.map((suite) => buildBatchSuiteJUnitXml(suite).split('\n').slice(1, -2).join('\n')),
     '</testsuites>',
     '',
   ].join('\n');
@@ -803,31 +802,8 @@ function getContainmentHost() {
   return hostPath;
 }
 
-function resolveManagedResidualExecutable(env) {
-  if (process.platform !== 'linux' || !env.LA_E2E_CLI_EXTENSIONS_DIR) {
-    return undefined;
-  }
-  const extensionsDir = fs.realpathSync.native(env.LA_E2E_CLI_EXTENSIONS_DIR);
-  const candidates = fs
-    .readdirSync(extensionsDir, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory() && entry.name.startsWith('ms-dotnettools.csharp-'))
-    .map((entry) => path.join(extensionsDir, entry.name, '.roslyn', 'Microsoft.CodeAnalysis.LanguageServer'))
-    .filter((candidate) => fs.existsSync(candidate))
-    .map((candidate) => fs.realpathSync.native(candidate));
-  if (candidates.length > 1) {
-    throw new Error(`Expected at most one managed C# language server executable, found ${candidates.length}`);
-  }
-  return candidates[0];
-}
-
 function spawnContainedSuiteProcess({ childArgs, cwd, env, reportsRoot }) {
   const hostPath = getContainmentHost();
-  const managedResidualExecutable = resolveManagedResidualExecutable(env);
-  const containedEnv = { ...env };
-  delete containedEnv.LA_E2E_CLI_MANAGED_RESIDUAL_EXECUTABLE;
-  if (managedResidualExecutable) {
-    containedEnv.LA_E2E_CLI_MANAGED_RESIDUAL_EXECUTABLE = managedResidualExecutable;
-  }
   const containmentReceiptPath = path.join(
     os.tmpdir(),
     'logicappsux-e2e-containment-receipts',
@@ -835,7 +811,7 @@ function spawnContainedSuiteProcess({ childArgs, cwd, env, reportsRoot }) {
   );
   fs.mkdirSync(path.dirname(containmentReceiptPath), { recursive: true });
   const child = spawn(hostPath, [containmentReceiptPath, process.execPath, ...childArgs], {
-    env: containedEnv,
+    env,
     cwd,
   });
   return { child, containmentReceiptPath };
@@ -856,9 +832,7 @@ function readContainmentReceipt(receiptPath, hostExitCode, hostSignal) {
       Number.isSafeInteger(receipt.rootPid) &&
       receipt.rootPid > 0 &&
       Number.isInteger(receipt.rootExitCode) &&
-      (receipt.rootSignal === null || Number.isInteger(rootSignalNumber)) &&
-      (expectedMechanism !== 'linux-subreaper' ||
-        (Number.isSafeInteger(receipt.managedResidualCount) && receipt.managedResidualCount >= 0));
+      (receipt.rootSignal === null || Number.isInteger(rootSignalNumber));
     const containmentEmpty =
       receipt.containmentEmpty === true &&
       receipt.retainedOriginalIdentitiesVerified === true &&
@@ -909,17 +883,7 @@ function readJsonIfExists(filePath) {
 }
 
 function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, processCleanup, phaseResults: suppliedPhases }) {
-  const retainedCaseEvidence = suite.id === 'msnWeatherLifecycle' ? readJsonIfExists(context.terminalResultPath) : undefined;
-  const retainedMsnCleanupVerified =
-    retainedCaseEvidence?.label === 'msnWeatherLifecycle' &&
-    retainedCaseEvidence.complete === true &&
-    retainedCaseEvidence.lifecycleFinalized === true &&
-    retainedCaseEvidence.cleanupVerified === true &&
-    retainedCaseEvidence.filesystemCleanupVerified === true &&
-    retainedCaseEvidence.lifecycleBodySucceeded === true &&
-    retainedCaseEvidence.phaseCompleteness === true;
-  const retainedCaseCleanupBlocked =
-    suite.id === 'workspaceMultiRoot' || (suite.id === 'msnWeatherLifecycle' && !retainedMsnCleanupVerified);
+  const retainedCaseCleanupBlocked = ['workspaceMultiRoot', 'msnWeatherLifecycle'].includes(suite.id);
   const retainedCaseCleanupError =
     suite.id === 'workspaceMultiRoot'
       ? require('./workspace-multi-root').nativeCleanupBlocker
@@ -964,7 +928,6 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
       'msnWeatherLifecycle',
       'httpTimeoutComposeOriginal',
       'httpTimeoutLifecycle',
-      'createWorkspaceCoreMatrix',
       'statelessVariablesLifecycle',
       'workspaceArtifactRegeneration',
       'workspaceMultiRoot',
@@ -1026,9 +989,6 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
       (!context.invocation || (context.provenanceVerified === true && context.ownedRootCleanup?.verified === true)) &&
       (!context.directFamily || directSucceeded),
     ...(context.directFamily ? { transientCleanupVerified: context.transientCleanupVerified === true } : {}),
-    ...(suite.id === 'msnWeatherLifecycle'
-      ? { filesystemCleanupVerified: retainedMsnCleanupVerified, retainedCaseCleanupVerified: retainedMsnCleanupVerified }
-      : {}),
     ...(retainedCaseCleanupBlocked ? { retainedCaseCleanupVerified: false, retainedCaseCleanupError } : {}),
     phases: finalizedPhaseResults,
     ...(context.invocation ? { invocation: context.invocation, ownedRootCleanup: context.ownedRootCleanup } : {}),
@@ -1051,14 +1011,14 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
                 ? phase.bodyAssertionsPassed === true
                 : phase.complete === true && phase.exitCode === 0 && !phase.signal
             ),
-          filesystemCleanupVerified: retainedMsnCleanupVerified,
+          filesystemCleanupVerified: false,
         }
       : {}),
     diagnosticsError: [
       error instanceof Error ? error.message : String(error || ''),
       journal.error,
       ...phaseDiagnosticsErrors,
-      retainedCaseCleanupBlocked ? retainedCaseCleanupError : '',
+      retainedCaseCleanupError,
     ]
       .filter(Boolean)
       .join('\n'),
@@ -1077,7 +1037,6 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
       'msnWeatherLifecycle',
       'httpTimeoutComposeOriginal',
       'httpTimeoutLifecycle',
-      'createWorkspaceCoreMatrix',
       'statelessVariablesLifecycle',
       'workspaceArtifactRegeneration',
       'workspaceMultiRoot',
@@ -3993,7 +3952,6 @@ module.exports = {
     getSuiteTerminalResultPath,
     getWorkspaceSourcesFromManifestPath,
     buildOgfScenariosForPhase,
-    buildBatchAggregateJUnitXml,
     clearOgfScenarios,
     collectOgfScenarios,
     safeReadDirectory,
@@ -4429,6 +4387,9 @@ function finalizeDirectMsnEvidence(
   env,
   { cleanupVerified, lifecycleSucceeded, lifecycleError, phaseResultsPath, ownedRoots = [], errors = [], processCleanup }
 ) {
+  if (env.LA_E2E_CLI_SUITE_WRAPPER_CHILD === '1' && env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH) {
+    return undefined;
+  }
   const terminal = readJsonIfExists(getSuiteTerminalResultPath(env, 'msnWeatherLifecycle'));
   const phaseResults = readJsonLinesIfExists(phaseResultsPath);
   const expectedPhaseIds = SUITE_REGISTRY.msnWeatherLifecycle.expectedPhases;

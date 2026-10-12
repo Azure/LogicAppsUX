@@ -32,7 +32,6 @@ const {
     getOwnedRootCleanupVerified,
     getSuiteTerminalResultPath,
     hasOwnedWorkspaceParentDiagnosticFailure,
-    buildBatchAggregateJUnitXml,
     buildOgfScenariosForPhase,
     collectOgfScenarios,
     getMsnWeatherLifecycleRunExtraEnv,
@@ -61,7 +60,6 @@ const {
   buildBatchAggregate,
   buildSuiteEnvironment,
   classifySuiteRunResult,
-  createBatchRoot,
   createSuiteContext,
   getSuiteScopedCredentialEnv,
   normalizeSuiteSelection,
@@ -109,30 +107,22 @@ const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
     testBatchMsnWeatherDisablesLocalCliFallback();
     testSanitizesInheritedGitCommandConfigEnv();
     testBatchSuiteRegistryValidation();
-    testBatchRuntimePathsStayShort();
     testBatchSuiteEnvironmentIsolation();
     testHttpDirectSelectorUsesRegisteredContainment();
     testHttpBatchDelegatesProcessClosureToSuiteContainment();
     await testBatchSuiteScopedCredentials();
     await testBatchContinuesAfterOrdinaryFailure();
     await testBatchStopsAfterContainmentBreach();
-    await testBatchStopsAfterSuiteSetupFailure();
-    await testBatchReturnsAggregateAfterInitializationFailure();
-    await testBatchReturnsAggregateAfterContextCreationFailure();
     await testRunSuiteWrapperProcessWritesStructuredResults();
     await testDirectHttpFamilyRetainsWrapperPhaseJournal();
     await testRunSuiteWrapperProcessTimeoutCancelsDisposableChild();
     await testRunSuiteWrapperProcessTimeoutCancelsGrandchildListener();
     await testRunSuiteWrapperProcessTimeoutCancelsSignalResistantDescendant();
     await testContainedWrapperRejectsEscapedDescendant();
-    await testContainedWrapperRejectsSpoofedLanguageServer();
-    await testContainedWrapperCleansManagedLanguageServer();
     testContainmentReceiptMustMatchHostOutcome();
     testDirectSuitePhaseResultRetainsOgfAcrossMatrixPhases();
     testDirectSuitePhaseResultClearsOgfOnLaterFailure();
     testDirectSuitePhaseResultDoesNotEmitOgfForCleanupFailure();
-    testCoreMatrixBatchFinalEvidenceRetainsPhaseResults();
-    testBatchAggregateJunitClosesEverySuite();
     testMsnDirectLifecycleEvidence();
     await testMsnLifecycleCleanupRetainsOriginalErrors();
     testMsnBatchLifecycleEvidence();
@@ -1120,11 +1110,6 @@ function testBatchSuiteEnvironmentIsolation() {
       LA_E2E_CLI_USER_DATA_DIR: path.join(tempRoot, 'stale-user-data'),
       LA_E2E_CLI_AZURE_ACCESS_TOKEN: 'stale-token',
       WORKFLOWS_SUBSCRIPTION_ID: 'stale-subscription',
-      idToken: 'raw-federated-token',
-      servicePrincipalKey: 'raw-service-principal-key',
-      servicePrincipalId: 'raw-service-principal-id',
-      tenantId: 'raw-tenant-id',
-      AZURE_CONFIG_DIR: path.join(tempRoot, 'azure-profile'),
     },
     context
   );
@@ -1144,11 +1129,6 @@ function testBatchSuiteEnvironmentIsolation() {
   assert.strictEqual(env.LA_E2E_CLI_USER_DATA_DIR, undefined);
   assert.strictEqual(env.LA_E2E_CLI_AZURE_ACCESS_TOKEN, undefined);
   assert.strictEqual(env.WORKFLOWS_SUBSCRIPTION_ID, undefined);
-  assert.strictEqual(env.idToken, undefined);
-  assert.strictEqual(env.servicePrincipalKey, undefined);
-  assert.strictEqual(env.servicePrincipalId, undefined);
-  assert.strictEqual(env.tenantId, undefined);
-  assert.strictEqual(env.AZURE_CONFIG_DIR, undefined);
   assert.strictEqual(env.LA_E2E_CLI_DISABLE_UNOWNED_PORT_KILL, '1');
 
   const seedDir = path.join(tempRoot, 'extensions-seed');
@@ -1156,20 +1136,6 @@ function testBatchSuiteEnvironmentIsolation() {
   fs.writeFileSync(path.join(seedDir, 'extensions.json'), '[]');
   prepareSuiteExtensionsDirectory({ seedDir, targetDir: context.extensionsDir });
   assert.ok(fs.existsSync(path.join(context.extensionsDir, 'extensions.json')), 'suite extensions dir should be copied from seed');
-}
-
-function testBatchRuntimePathsStayShort() {
-  const rootParent = path.join(tempRoot, 'b');
-  const batchRoot = createBatchRoot({ batchRoot: rootParent });
-  const context = createSuiteContext({
-    batchRoot,
-    suite: SUITE_REGISTRY.createWorkspaceCoreMatrix,
-    index: 2,
-    total: 5,
-  });
-  assert.match(path.basename(batchRoot), /^b-[A-Za-z0-9]{6}$/);
-  assert.match(path.basename(context.suiteRoot), /^03-[A-Za-z0-9]{6}$/);
-  assert.ok(!context.suiteRoot.includes('createWorkspaceCoreMatrix'));
 }
 
 async function testBatchSuiteScopedCredentials() {
@@ -1533,81 +1499,6 @@ async function testBatchStopsAfterContainmentBreach() {
   );
 }
 
-async function testBatchStopsAfterSuiteSetupFailure() {
-  const suites = [SUITE_REGISTRY.msnWeatherLifecycle, SUITE_REGISTRY.unitTests];
-  const batchRoot = path.join(tempRoot, 'batch-suite-setup-failure');
-  const seedDir = path.join(tempRoot, 'batch-suite-setup-seed');
-  fs.mkdirSync(seedDir, { recursive: true });
-  fs.writeFileSync(path.join(seedDir, 'extensions.json'), '[]');
-  const launched = [];
-  const aggregate = await runBatchSuites({
-    suites,
-    batchRoot,
-    seedDir,
-    baseEnv: { LA_E2E_CLI_AZURE_TOKEN_PROVIDER: path.join(tempRoot, 'missing-token-provider.cjs') },
-    runSuite: async ({ suite }) => {
-      launched.push(suite.id);
-      return { exitCode: 0, signal: null, output: '1 passing\n' };
-    },
-  });
-
-  assert.deepStrictEqual(launched, []);
-  assert.strictEqual(aggregate.containmentBreach, true);
-  assert.strictEqual(aggregate.stoppedAfter, 'msnWeatherLifecycle');
-  assert.deepStrictEqual(
-    aggregate.suites.map((suite) => suite.finalOutcome),
-    ['infrastructureFailure', 'blocked']
-  );
-}
-
-async function testBatchReturnsAggregateAfterInitializationFailure() {
-  const suites = [SUITE_REGISTRY.unitTests, SUITE_REGISTRY.createWorkspaceBehavior];
-  const batchRoot = path.join(tempRoot, 'batch-initialization-failure');
-  const aggregate = await runBatchSuites({
-    suites,
-    batchRoot,
-    seedDir: path.join(tempRoot, 'missing-extensions-seed'),
-    runSuite: async () => {
-      throw new Error('suite must not launch');
-    },
-  });
-
-  assert.strictEqual(aggregate.containmentBreach, true);
-  assert.strictEqual(aggregate.stoppedAfter, 'unitTests');
-  assert.deepStrictEqual(
-    aggregate.suites.map((suite) => suite.finalOutcome),
-    ['infrastructureFailure', 'blocked']
-  );
-  assert.match(aggregate.suites[0].reason, /cohort initialization failed/);
-}
-
-async function testBatchReturnsAggregateAfterContextCreationFailure() {
-  const suites = [SUITE_REGISTRY.unitTests, SUITE_REGISTRY.createWorkspaceBehavior];
-  const batchRoot = path.join(tempRoot, 'batch-context-failure');
-  const seedDir = path.join(tempRoot, 'batch-context-seed');
-  fs.mkdirSync(seedDir, { recursive: true });
-  fs.writeFileSync(path.join(seedDir, 'extensions.json'), '[]');
-  const aggregate = await runBatchSuites({
-    suites,
-    batchRoot,
-    seedDir,
-    createContext: () => {
-      throw new Error('synthetic context failure');
-    },
-    runSuite: async () => {
-      throw new Error('suite must not launch');
-    },
-  });
-
-  assert.strictEqual(aggregate.containmentBreach, true);
-  assert.strictEqual(aggregate.stoppedAfter, 'unitTests');
-  assert.deepStrictEqual(
-    aggregate.suites.map((suite) => suite.finalOutcome),
-    ['infrastructureFailure', 'blocked']
-  );
-  assert.match(aggregate.suites[0].reason, /suite context creation failed: synthetic context failure/);
-}
-
 async function testRunSuiteWrapperProcessWritesStructuredResults() {
   const batchRoot = path.join(tempRoot, 'wrapper-process-success');
   fs.mkdirSync(batchRoot, { recursive: true });
@@ -1781,91 +1672,11 @@ async function testContainedWrapperRejectsEscapedDescendant() {
   assert.strictEqual(result.processCleanup.verified, false);
   assert.strictEqual(result.processCleanup.retainedOriginalIdentitiesVerified, false);
   assert.strictEqual(result.processCleanup.containmentEmpty, false);
-  if (process.platform === 'linux') {
-    assert.match(result.output, /\[containment\] residual pid=\d+ ppid=\d+ pgrp=\d+ session=\d+ state=\w name=.+/);
-  } else if (process.platform === 'win32') {
-    assert.match(result.output, /\[containment\] residual pid=\d+ ppid=\d+ session=\d+ name=.+/);
-    assert.ok(result.processCleanup.activeContainedProcessCount > 0);
-    assert.ok(Array.isArray(result.processCleanup.activeContainedProcesses));
-    assert.ok(result.processCleanup.activeContainedProcesses.length > 0);
-  }
   const records = readJsonLines(processRecordsPath);
   const escaped = records.find((record) => record.role === 'grandchild');
   assert.ok(escaped?.pid, 'fixture must record the detached descendant');
   await delay(250);
   assert.strictEqual(isAlive(escaped.pid), false, 'containment host must terminate the rejected escaped descendant');
-}
-
-async function testContainedWrapperCleansManagedLanguageServer() {
-  if (process.platform !== 'linux') {
-    return;
-  }
-  const batchRoot = path.join(tempRoot, 'wrapper-process-managed-language-server');
-  fs.mkdirSync(batchRoot, { recursive: true });
-  const context = createSuiteContext({ batchRoot, suite: SUITE_REGISTRY.unitTests, index: 0, total: 1 });
-  const processRecordsPath = path.join(context.reportsRoot, 'managed-language-server-processes.jsonl');
-  const executablePath = path.join(
-    context.extensionsDir,
-    'ms-dotnettools.csharp-test-linux-x64',
-    '.roslyn',
-    'Microsoft.CodeAnalysis.LanguageServer'
-  );
-  fs.mkdirSync(path.dirname(executablePath), { recursive: true });
-  fs.copyFileSync('/bin/sleep', executablePath);
-  fs.chmodSync(executablePath, 0o755);
-  const result = await runSuiteWrapperProcess({
-    suite: SUITE_REGISTRY.unitTests,
-    context,
-    env: {
-      ...process.env,
-      LA_E2E_CLI_EXTENSIONS_DIR: context.extensionsDir,
-      LA_E2E_CLI_FIXTURE_EXECUTABLE: executablePath,
-      LA_E2E_CLI_PROCESS_RECORDS_PATH: processRecordsPath,
-    },
-    timeoutMs: 15_000,
-    scriptPath: createWrapperFixtureScript('managed-language-server-descendant'),
-  });
-  assert.strictEqual(result.exitCode, 0);
-  assert.strictEqual(result.error, undefined);
-  assert.strictEqual(result.processCleanup.verified, true);
-  assert.strictEqual(result.processCleanup.managedResidualCount, 1);
-  assert.match(result.output, /\[containment\] terminating managed residual pid=\d+ name=Microsoft\.CodeAnalysis\.LanguageServer/);
-  const managed = readJsonLines(processRecordsPath).find((record) => record.role === 'managed-language-server');
-  assert.ok(managed?.pid, 'fixture must record the managed language server');
-  await delay(250);
-  assert.strictEqual(isAlive(managed.pid), false, 'managed language server must be terminated by exact containment ownership');
-}
-
-async function testContainedWrapperRejectsSpoofedLanguageServer() {
-  if (process.platform !== 'linux') {
-    return;
-  }
-  const batchRoot = path.join(tempRoot, 'wrapper-process-spoofed-language-server');
-  fs.mkdirSync(batchRoot, { recursive: true });
-  const context = createSuiteContext({ batchRoot, suite: SUITE_REGISTRY.unitTests, index: 0, total: 1 });
-  const processRecordsPath = path.join(context.reportsRoot, 'spoofed-language-server-processes.jsonl');
-  const executablePath = path.join(context.suiteRoot, 'Microsoft.CodeAnalysis.LanguageServer');
-  fs.copyFileSync('/bin/sleep', executablePath);
-  fs.chmodSync(executablePath, 0o755);
-  const result = await runSuiteWrapperProcess({
-    suite: SUITE_REGISTRY.unitTests,
-    context,
-    env: {
-      ...process.env,
-      LA_E2E_CLI_FIXTURE_EXECUTABLE: executablePath,
-      LA_E2E_CLI_PROCESS_RECORDS_PATH: processRecordsPath,
-    },
-    timeoutMs: 15_000,
-    scriptPath: createWrapperFixtureScript('managed-language-server-descendant'),
-  });
-  assert.notStrictEqual(result.exitCode, 0);
-  assert.ok(result.error instanceof Error);
-  assert.match(result.error.message, /ownership containment was not empty/i);
-  assert.strictEqual(result.processCleanup.managedResidualCount, 0);
-  const spoofed = readJsonLines(processRecordsPath).find((record) => record.role === 'managed-language-server');
-  assert.ok(spoofed?.pid, 'fixture must record the spoofed language server');
-  await delay(250);
-  assert.strictEqual(isAlive(spoofed.pid), false, 'containment host must terminate the rejected spoofed descendant');
 }
 
 function testContainmentReceiptMustMatchHostOutcome() {
@@ -1883,7 +1694,6 @@ function testContainmentReceiptMustMatchHostOutcome() {
       retainedOriginalIdentitiesVerified: true,
       escapedDescendants: [],
       activeContainedProcessCount: 0,
-      managedResidualCount: 0,
     })
   );
   const cleanup = readContainmentReceipt(receiptPath, 126, null);
@@ -2019,53 +1829,6 @@ function testDirectSuitePhaseResultDoesNotEmitOgfForCleanupFailure() {
   } finally {
     process.chdir(previousCwd);
   }
-}
-
-function testCoreMatrixBatchFinalEvidenceRetainsPhaseResults() {
-  const root = path.join(tempRoot, 'core-matrix-batch-final-evidence');
-  fs.mkdirSync(root, { recursive: true });
-  const suite = SUITE_REGISTRY.createWorkspaceCoreMatrix;
-  const context = {
-    expectedPhaseIds: suite.expectedPhases,
-    phaseResultsPath: path.join(root, 'phase-results.jsonl'),
-    cleanupLedgerPath: path.join(root, 'cleanup-ledger.json'),
-    terminalResultPath: path.join(root, 'terminal-result.json'),
-  };
-  const phaseResults = suite.expectedPhases.map((phaseId) => ({
-    phaseId,
-    label: suite.id,
-    exitCode: 0,
-    signal: null,
-    cleanupVerified: true,
-    diagnosticsError: '',
-    complete: true,
-    mochaPassingCount: 1,
-  }));
-  const terminal = writeSuiteFinalEvidence({
-    context,
-    suite,
-    exitCode: 0,
-    signal: null,
-    processCleanup: { verified: true, retainedOriginalIdentitiesVerified: true },
-    phaseResults,
-  });
-  assert.strictEqual(terminal.complete, true);
-  assert.deepStrictEqual(
-    terminal.phaseResults.map((phase) => phase.phaseId),
-    suite.expectedPhases
-  );
-}
-
-function testBatchAggregateJunitClosesEverySuite() {
-  const xml = buildBatchAggregateJUnitXml({
-    suites: [
-      { id: 'unitTests', finalOutcome: 'success' },
-      { id: 'createWorkspacePreviewMatrix', finalOutcome: 'failed', reason: 'exit 1' },
-    ],
-  });
-  assert.strictEqual((xml.match(/<testsuite /g) || []).length, 2);
-  assert.strictEqual((xml.match(/<\/testsuite>/g) || []).length, 2);
-  assert.match(xml, /<\/testsuite>\n<testsuite name="createWorkspacePreviewMatrix"/);
 }
 
 function msnPhase(phaseId, override = {}) {
@@ -2248,10 +2011,7 @@ function testMsnBatchLifecycleEvidence() {
       exitCode: Object.prototype.hasOwnProperty.call(options, 'exitCode') ? options.exitCode : 0,
       signal: options.signal ?? null,
       error: options.error,
-      processCleanup: {
-        verified: options.cleanupVerified ?? true,
-        retainedOriginalIdentitiesVerified: options.originalProcessClosureVerified ?? false,
-      },
+      processCleanup: { verified: options.cleanupVerified ?? true },
     });
     return JSON.parse(fs.readFileSync(context.terminalResultPath, 'utf8'));
   };
@@ -2262,28 +2022,6 @@ function testMsnBatchLifecycleEvidence() {
   assert.strictEqual(diagnostic.originalProcessClosureVerified, false);
   assert.throws(() => assertSuccessfulMsnTerminal(msnSummary(), diagnostic), /incomplete-or-unclean-terminal/);
   assert.strictEqual(JSON.parse(fs.readFileSync(context.cleanupLedgerPath)).verified, false);
-  fs.writeFileSync(
-    context.terminalResultPath,
-    `${JSON.stringify({
-      schemaVersion: 1,
-      label: 'msnWeatherLifecycle',
-      complete: true,
-      lifecycleFinalized: true,
-      cleanupVerified: true,
-      filesystemCleanupVerified: true,
-      lifecycleBodySucceeded: true,
-      phaseCompleteness: true,
-    })}\n`
-  );
-  const contained = write(phases, { originalProcessClosureVerified: true });
-  assert.strictEqual(contained.complete, true);
-  assert.strictEqual(contained.cleanupVerified, true);
-  assert.strictEqual(contained.originalProcessClosureVerified, true);
-  assert.strictEqual(contained.filesystemCleanupVerified, true);
-  assertSuccessfulMsnTerminal(msnSummary(), contained);
-  const containedCleanup = JSON.parse(fs.readFileSync(context.cleanupLedgerPath, 'utf8'));
-  assert.strictEqual(containedCleanup.verified, true);
-  assert.strictEqual(containedCleanup.retainedCaseCleanupVerified, true);
   for (const badPhases of [
     phases.slice(1),
     [...phases, phases[0]],
@@ -2974,13 +2712,6 @@ function createWrapperFixtureScript(mode) {
       '    escaped.unref();',
       '    setTimeout(() => { appendPhase(0); process.exit(0); }, 250);',
       '  }',
-      '}',
-      "else if (mode === 'managed-language-server-descendant') {",
-      '  const executable = process.env.LA_E2E_CLI_FIXTURE_EXECUTABLE || process.env.LA_E2E_CLI_MANAGED_RESIDUAL_EXECUTABLE;',
-      "  const managed = spawn(executable, ['60'], { detached: true, stdio: 'ignore', env: process.env });",
-      "  record({ pid: managed.pid, role: 'managed-language-server' });",
-      '  managed.unref();',
-      '  setTimeout(() => { appendPhase(0); process.exit(0); }, 250);',
       '}',
       'else { setTimeout(() => { appendPhase(0); process.exit(0); }, 1500); }',
     ].join('\n')

@@ -13,43 +13,12 @@ parameters:
   - name: includeLinuxDisplayDependencies
     type: boolean
     default: false
-  - name: provisionNode
-    type: boolean
-    default: true
-  - name: pnpmStoreCacheNamespace
-    type: string
-    default: vscode-e2e-pnpm-store-v3
-  - name: telemetryFile
-    type: string
-    default: ''
-  - name: measureNodeSetup
-    type: boolean
-    default: true
 
 steps:
-  - ${{ if and(ne(parameters.telemetryFile, ''), eq(parameters.measureNodeSetup, true)) }}:
-      - pwsh: node apps/vs-code-designer/scripts/pipeline-timing.js start '${{ parameters.telemetryFile }}' nodeSetup
-        displayName: Start Node setup timing
-        workingDirectory: $(working_directory)
-        condition: always()
-
-  - ${{ if eq(parameters.provisionNode, true) }}:
-      - task: UseNode@1
-        displayName: Use Node.js ${{ parameters.nodeVersion }}
-        inputs:
-          version: ${{ parameters.nodeVersion }}
-
-  - ${{ if and(ne(parameters.telemetryFile, ''), eq(parameters.measureNodeSetup, true)) }}:
-      - pwsh: node apps/vs-code-designer/scripts/pipeline-timing.js finish '${{ parameters.telemetryFile }}' nodeSetup '$(Agent.JobStatus)'
-        displayName: Finish Node setup timing
-        workingDirectory: $(working_directory)
-        condition: always()
-
-  - ${{ if ne(parameters.telemetryFile, '') }}:
-      - pwsh: node apps/vs-code-designer/scripts/pipeline-timing.js start '${{ parameters.telemetryFile }}' platformSetup
-        displayName: Start platform setup timing
-        workingDirectory: $(working_directory)
-        condition: always()
+  - task: UseNode@1
+    displayName: Use Node.js ${{ parameters.nodeVersion }}
+    inputs:
+      version: ${{ parameters.nodeVersion }}
 
   - ${{ if eq(parameters.includeDotNet, true) }}:
       - task: UseDotNet@2
@@ -119,75 +88,6 @@ steps:
         displayName: Install Linux virtual display and .NET runtime dependencies
         condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
 
-  - ${{ if ne(parameters.telemetryFile, '') }}:
-      - pwsh: node apps/vs-code-designer/scripts/pipeline-timing.js finish '${{ parameters.telemetryFile }}' platformSetup '$(Agent.JobStatus)'
-        displayName: Finish platform setup timing
-        workingDirectory: $(working_directory)
-        condition: always()
-
-      - pwsh: node apps/vs-code-designer/scripts/pipeline-timing.js start '${{ parameters.telemetryFile }}' cacheRestore
-        displayName: Start pnpm cache timing
-        workingDirectory: $(working_directory)
-        condition: always()
-
-  - pwsh: |
-      $packageManager = (Get-Content 'package.json' -Raw | ConvertFrom-Json).packageManager
-      if (-not $packageManager -or -not $packageManager.StartsWith('pnpm@')) {
-        Write-Error "package.json 'packageManager' must specify pnpm@<version>."
-        exit 1
-      }
-
-      $pnpmVersion = ($packageManager -replace '^pnpm@', '') -replace '\+.*$', ''
-      $lockfileHeader = Get-Content 'pnpm-lock.yaml' -TotalCount 1
-      if ($lockfileHeader -notmatch "^lockfileVersion:\s*['""]?([^'""\s]+)") {
-        Write-Error "pnpm-lock.yaml must start with a lockfileVersion declaration."
-        exit 1
-      }
-
-      $nodeVersion = (node --version).TrimStart('v')
-      $lockfileVersion = $Matches[1]
-      $storePath = Join-Path '$(Pipeline.Workspace)' '.pnpm-store'
-      New-Item -ItemType Directory -Force -Path $storePath | Out-Null
-      Write-Host "Resolved pnpm cache identity: os=$(Agent.OS) arch=$(Agent.OSArchitecture) node=$nodeVersion pnpm=$pnpmVersion lockfile=$lockfileVersion"
-      Write-Host "##vso[task.setvariable variable=pnpmVersion]$pnpmVersion"
-      Write-Host "##vso[task.setvariable variable=pnpmNodeVersion]$nodeVersion"
-      Write-Host "##vso[task.setvariable variable=pnpmLockfileVersion]$lockfileVersion"
-      Write-Host "##vso[task.setvariable variable=pnpmStorePath]$storePath"
-    displayName: Resolve deterministic pnpm store cache identity
-    workingDirectory: $(working_directory)
-
-  - task: Cache@2
-    displayName: Restore pnpm content-addressed store
-    inputs:
-      key: '"${{ parameters.pnpmStoreCacheNamespace }}" | "$(Agent.OS)" | "$(Agent.OSArchitecture)" | "$(pnpmNodeVersion)" | "$(pnpmVersion)" | "$(pnpmLockfileVersion)" | pnpm-lock.yaml'
-      restoreKeys: |
-        "${{ parameters.pnpmStoreCacheNamespace }}" | "$(Agent.OS)" | "$(Agent.OSArchitecture)" | "$(pnpmNodeVersion)" | "$(pnpmVersion)" | "$(pnpmLockfileVersion)"
-      path: $(pnpmStorePath)
-      cacheHitVar: pnpmStoreCacheHit
-    continueOnError: true
-
-  - pwsh: |
-      $state = 'miss'
-      if ('$(pnpmStoreCacheHit)' -eq 'true') {
-        $state = 'exact'
-      } elseif ('$(pnpmStoreCacheHit)' -eq 'inexact') {
-        $state = 'inexact'
-      }
-      Write-Host "pnpm store cache restore state: $state"
-      Write-Host "##vso[task.setvariable variable=pnpmStoreCacheState]$state"
-    displayName: Record pnpm store cache restore evidence
-
-  - ${{ if ne(parameters.telemetryFile, '') }}:
-      - pwsh: node apps/vs-code-designer/scripts/pipeline-timing.js finish '${{ parameters.telemetryFile }}' cacheRestore '$(Agent.JobStatus)'
-        displayName: Finish pnpm cache timing
-        workingDirectory: $(working_directory)
-        condition: always()
-
-      - pwsh: node apps/vs-code-designer/scripts/pipeline-timing.js start '${{ parameters.telemetryFile }}' cfsAuthentication
-        displayName: Start CFS authentication timing
-        workingDirectory: $(working_directory)
-        condition: always()
-
   - pwsh: |
       $feedBaseUrl = '${{ parameters.feedBaseUrl }}'.TrimEnd('/')
       if ([string]::IsNullOrWhiteSpace($feedBaseUrl) -or $feedBaseUrl.StartsWith('__OWNER_PROVIDED')) {
@@ -218,20 +118,16 @@ steps:
     inputs:
       workingFile: $(npmrcFile)
 
-  - ${{ if ne(parameters.telemetryFile, '') }}:
-      - pwsh: node apps/vs-code-designer/scripts/pipeline-timing.js finish '${{ parameters.telemetryFile }}' cfsAuthentication '$(Agent.JobStatus)'
-        displayName: Finish CFS authentication timing
-        workingDirectory: $(working_directory)
-        condition: always()
-
-      - pwsh: node apps/vs-code-designer/scripts/pipeline-timing.js start '${{ parameters.telemetryFile }}' pinnedPnpmInstallation
-        displayName: Start pinned pnpm installation timing
-        workingDirectory: $(working_directory)
-        condition: always()
-
   - pwsh: |
+      $packageManager = (Get-Content 'package.json' -Raw | ConvertFrom-Json).packageManager
+      if (-not $packageManager -or -not $packageManager.StartsWith('pnpm@')) {
+        Write-Error "package.json 'packageManager' must specify pnpm@<version>."
+        exit 1
+      }
+
+      $pnpmVersion = ($packageManager -replace '^pnpm@', '') -replace '\+.*$', ''
       corepack disable pnpm 2>$null
-      npm install -g "pnpm@$(pnpmVersion)" --registry="$(npmRegistry)" --userconfig="$(npmrcFile)"
+      npm install -g "pnpm@$pnpmVersion" --registry="$(npmRegistry)" --userconfig="$(npmrcFile)"
       if ($LASTEXITCODE -ne 0) {
         exit $LASTEXITCODE
       }
@@ -241,44 +137,6 @@ steps:
     displayName: Install pinned pnpm from CFS
     workingDirectory: $(working_directory)
 
-  - ${{ if ne(parameters.telemetryFile, '') }}:
-      - pwsh: node apps/vs-code-designer/scripts/pipeline-timing.js finish '${{ parameters.telemetryFile }}' pinnedPnpmInstallation '$(Agent.JobStatus)'
-        displayName: Finish pinned pnpm installation timing
-        workingDirectory: $(working_directory)
-        condition: always()
-
-      - pwsh: node apps/vs-code-designer/scripts/pipeline-timing.js start '${{ parameters.telemetryFile }}' recursiveInstall
-        displayName: Start recursive install timing
-        workingDirectory: $(working_directory)
-        condition: always()
-
-  - pwsh: |
-      $storePath = '$(pnpmStorePath)'
-      $manifestPath = Join-Path $storePath '.logicappsux-store-manifest.json'
-      $cacheState = '$(pnpmStoreCacheState)'
-      $fallback = 'none'
-
-      if ($cacheState -eq 'miss') {
-        Remove-Item -LiteralPath $storePath -Recurse -Force -ErrorAction SilentlyContinue
-        New-Item -ItemType Directory -Force -Path $storePath | Out-Null
-        Write-Host 'pnpm store cache miss; initialized an empty store root.'
-      } else {
-        node apps/vs-code-designer/scripts/pnpm-store-integrity.js verify --store $storePath --manifest $manifestPath
-        if ($LASTEXITCODE -ne 0) {
-          Write-Warning "pnpm store integrity manifest verification failed for cache state '$cacheState'; clearing the content-addressed store and falling back to authenticated network restore."
-          Remove-Item -LiteralPath $storePath -Recurse -Force -ErrorAction Stop
-          New-Item -ItemType Directory -Force -Path $storePath | Out-Null
-          $fallback = 'corrupt-store-cleared'
-        } else {
-          Write-Host "pnpm store integrity manifest passed for cache state '$cacheState'."
-        }
-      }
-
-      Write-Host "##vso[task.setvariable variable=pnpmStoreManifestPath]$manifestPath"
-      Write-Host "##vso[task.setvariable variable=pnpmStoreFallback]$fallback"
-    displayName: Validate cached pnpm store integrity
-    workingDirectory: $(working_directory)
-
   - script: pnpm install --frozen-lockfile --strict-peer-dependencies --recursive
     displayName: Install dependencies with pnpm
     workingDirectory: $(working_directory)
@@ -286,34 +144,3 @@ steps:
     env:
       NPM_CONFIG_USERCONFIG: $(npmrcFile)
       PNPM_CONFIG_FETCH_TIMEOUT: '300000'
-      PNPM_CONFIG_PACKAGE_IMPORT_METHOD: clone-or-copy
-      PNPM_CONFIG_STORE_DIR: $(pnpmStorePath)
-
-  - ${{ if ne(parameters.telemetryFile, '') }}:
-      - pwsh: node apps/vs-code-designer/scripts/pipeline-timing.js finish '${{ parameters.telemetryFile }}' recursiveInstall '$(Agent.JobStatus)'
-        displayName: Finish recursive install timing
-        workingDirectory: $(working_directory)
-        condition: always()
-
-  - pwsh: |
-      $resolvedStorePath = (pnpm store path --store-dir "$(pnpmStorePath)").Trim()
-      $pnpmMajor = ([Version]'$(pnpmVersion)').Major
-      $expectedResolvedStore = Join-Path '$(pnpmStorePath)' "v$pnpmMajor"
-      if ([IO.Path]::GetFullPath($resolvedStorePath) -ne [IO.Path]::GetFullPath($expectedResolvedStore)) {
-        throw "pnpm resolved an unexpected versioned store path. expected='$expectedResolvedStore' actual='$resolvedStorePath'"
-      }
-      node apps/vs-code-designer/scripts/pnpm-store-integrity.js prune --store '$(pnpmStorePath)'
-      if ($LASTEXITCODE -ne 0) {
-        exit $LASTEXITCODE
-      }
-      node apps/vs-code-designer/scripts/pnpm-store-integrity.js write --store '$(pnpmStorePath)' --manifest '$(pnpmStoreManifestPath)'
-      if ($LASTEXITCODE -ne 0) {
-        exit $LASTEXITCODE
-      }
-      node apps/vs-code-designer/scripts/pnpm-store-integrity.js verify --store '$(pnpmStorePath)' --manifest '$(pnpmStoreManifestPath)'
-      if ($LASTEXITCODE -ne 0) {
-        exit $LASTEXITCODE
-      }
-      Write-Host "pnpm store cache evidence: state=$(pnpmStoreCacheState) fallback=$(pnpmStoreFallback) path=$resolvedStorePath"
-    displayName: Verify installed dependency store evidence
-    workingDirectory: $(working_directory)

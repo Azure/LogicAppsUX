@@ -12,9 +12,6 @@ const repoRoot = path.resolve(__dirname, '..', '..', '..');
 
 testAzureToolsWrapperContract();
 testE2eDependencyInstallRetryContract();
-testPnpmStoreCacheContract();
-testConsumerNodeProvisioningContract();
-testCohortTemplateContract();
 testPackageLocalLintStagedRoutingContract();
 testRootNpmrcSourceGuardAllowsGeneratedRuntimeFile();
 testLocalAzureToolsWrapperContractIfAvailable();
@@ -70,50 +67,6 @@ console.log('[pipeline-contract.unit] all tests passed');
 
 function read(relativePath) {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');
-}
-
-function testCohortTemplateContract() {
-  const cohort = parseYaml('.config/templates/vscode-e2e-cli-run-cohort.yml');
-  assert.strictEqual(cohort.jobs.length, 1);
-  const job = cohort.jobs[0];
-  assert.strictEqual(job.condition, "and(not(failed()), not(canceled()), eq(variables['SelectedCohort'], 'true'))");
-  assert.strictEqual(job.templateContext.outputs.length, 1);
-  assert.strictEqual(job.templateContext.outputs[0].artifactName, 'vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}');
-  assert.deepStrictEqual(
-    cohort.parameters.find((parameter) => parameter.name === 'diagnosticOnly'),
-    { name: 'diagnosticOnly', type: 'boolean', default: false }
-  );
-  assert.strictEqual(job.steps.filter((step) => step.task === 'UseNode@1').length, 1, 'cohort must provision trusted Node exactly once');
-  const setup = job.steps.find((step) => step.template === '/.azure-pipelines/templates/vscode-e2e-cli-setup.yml@self');
-  assert.strictEqual(setup.parameters.provisionNode, false);
-  assert.strictEqual(setup.parameters.telemetryFile, '$(TimingFile)');
-  const text = read('.config/templates/vscode-e2e-cli-run-cohort.yml');
-  assert.match(text, /Prepare VS Code extension dependencies once/);
-  assert.match(text, /Stage and validate stable cohort evidence/);
-  assert.match(text, /run-e2e-cli\.js --suites "\$\(CohortSuites\)"/);
-  assert.match(text, /LA_E2E_CLI_BATCH_COHORT_ID/);
-  assert.match(text, /LA_E2E_CLI_BATCH_RESULTS_DIR: \$\(BatchResultsRoot\)/);
-  assert.match(text, /BatchRoot: \$\(Agent\.TempDirectory\)\/b/);
-  assert.doesNotMatch(text, /BatchRoot: \$\(Agent\.TempDirectory\)\/vscode-e2e-cli-batch-/);
-  const containmentHost = read('apps/vs-code-designer/scripts/e2e-cli-containment-host.cs');
-  assert.match(containmentHost, /CONTAINMENT_DRAIN_ATTEMPTS = 100/);
-  assert.match(containmentHost, /CONTAINMENT_DRAIN_DELAY_MS = 100/);
-  assert.match(containmentHost, /JobObjectBasicProcessIdList = 3/);
-  assert.match(containmentHost, /activeContainedProcesses/);
-  assert.match(containmentHost, /\[containment\] residual pid=\{0\} ppid=\{1\} session=\{2\} name=\{3\}/);
-  const linuxContainmentHost = read('apps/vs-code-designer/scripts/e2e-cli-containment-host.c');
-  assert.match(linuxContainmentHost, /CONTAINMENT_DRAIN_ATTEMPTS = 100/);
-  assert.match(linuxContainmentHost, /CONTAINMENT_DRAIN_DELAY_MS = 100/);
-  assert.match(linuxContainmentHost, /MANAGED_LANGUAGE_SERVER = "Microsoft\.CodeAnalysis\.LanguageServer"/);
-  assert.match(linuxContainmentHost, /metadata\.st_dev == identity->device && metadata\.st_ino == identity->inode/);
-  assert.match(linuxContainmentHost, /ms-dotnettools\.csharp-/);
-  assert.strictEqual((text.match(/LA_E2E_CLI_BATCH_DIAGNOSTIC_ONLY: '\$\{\{ parameters\.diagnosticOnly \}\}'/g) || []).length, 3);
-  const pipeline = read('.config/vscode-e2e-cli.1es.yml');
-  assert.strictEqual((pipeline.match(/diagnosticOnly: \$\{\{ parameters\.diagnosticOnly \}\}/g) || []).length, 4);
-  assert.match(text, /\$aggregate = Join-Path '\$\(BatchResultsRoot\)' 'e2e-cli-batch-result\.json'/);
-  assert.match(text, /stage-e2e-cli-cohort\.js/);
-  assert.match(text, /pipeline-timing\.js summary/);
-  assert.doesNotMatch(text, /Cache@2[\s\S]*(node_modules|\.npmrc|credentials|profiles|workspaces)/);
 }
 
 function testPackageLocalLintStagedRoutingContract() {
@@ -452,16 +405,6 @@ function findObjectByDisplayName(value, displayName) {
   return undefined;
 }
 
-function findObjects(value, predicate) {
-  if (Array.isArray(value)) {
-    return value.flatMap((entry) => findObjects(entry, predicate));
-  }
-  if (!value || typeof value !== 'object') {
-    return [];
-  }
-  return [...(predicate(value) ? [value] : []), ...Object.values(value).flatMap((entry) => findObjects(entry, predicate))];
-}
-
 function extractFullRollupGateScript(consumer) {
   const fullGateJob = getConsumerDirectJob(consumer, 'verify_both_os_full_rollup');
   const step = fullGateJob.steps.find((entry) => entry.displayName === 'Enforce twelve-suite both-OS full rollup gate');
@@ -476,7 +419,6 @@ function parseYaml(relativePath) {
 
 function testE2eDependencyInstallRetryContract() {
   const setup = parseYaml('.azure-pipelines/templates/vscode-e2e-cli-setup.yml');
-  assert.equal(setup.parameters.find((parameter) => parameter.name === 'pnpmStoreCacheNamespace')?.default, 'vscode-e2e-pnpm-store-v3');
   assert.doesNotMatch(JSON.stringify(setup), /pnpm config set --global fetchTimeout/);
   const installSteps = setup.steps.filter((step) => step.displayName === 'Install dependencies with pnpm');
   assert.strictEqual(installSteps.length, 1, 'E2E setup must have one unambiguous pnpm dependency install step');
@@ -487,113 +429,12 @@ function testE2eDependencyInstallRetryContract() {
   assert.strictEqual(install.timeoutInMinutes, undefined, 'The containing job remains the install retry time limit');
   assert.strictEqual(install.env?.NPM_CONFIG_USERCONFIG, '$(npmrcFile)');
   assert.strictEqual(install.env?.PNPM_CONFIG_FETCH_TIMEOUT, '300000');
-  assert.strictEqual(
-    install.env?.PNPM_CONFIG_PACKAGE_IMPORT_METHOD,
-    'clone-or-copy',
-    'Pipeline installs must isolate lifecycle-mutated node_modules files from the cached content-addressed store'
-  );
-  assert.strictEqual(install.env?.PNPM_CONFIG_STORE_DIR, '$(pnpmStorePath)');
   const fetchTimeoutOwners = setup.steps.filter((step) => step.env?.PNPM_CONFIG_FETCH_TIMEOUT !== undefined);
   assert.deepStrictEqual(
     fetchTimeoutOwners.map((step) => step.displayName),
     ['Install dependencies with pnpm'],
     'The process-scoped fetch timeout must apply only to the dependency install'
   );
-}
-
-function testPnpmStoreCacheContract() {
-  const setup = parseYaml('.azure-pipelines/templates/vscode-e2e-cli-setup.yml');
-  const cacheSteps = setup.steps.filter((step) => step.task === 'Cache@2');
-  assert.strictEqual(cacheSteps.length, 1, 'E2E setup must restore one pnpm content-addressed store cache');
-  const cache = cacheSteps[0];
-  assert.strictEqual(cache.displayName, 'Restore pnpm content-addressed store');
-  assert.strictEqual(cache.inputs.path, '$(pnpmStorePath)');
-  assert.strictEqual(cache.inputs.cacheHitVar, 'pnpmStoreCacheHit');
-  assert.strictEqual(cache.continueOnError, true, 'Cache service failures must fall back to authenticated install');
-  for (const identity of [
-    '$(Agent.OS)',
-    '$(Agent.OSArchitecture)',
-    '$(pnpmNodeVersion)',
-    '$(pnpmVersion)',
-    '$(pnpmLockfileVersion)',
-    'pnpm-lock.yaml',
-  ]) {
-    assert.match(cache.inputs.key, new RegExp(identity.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
-  }
-  assert.match(cache.inputs.restoreKeys, /\$\(Agent\.OS\)/);
-  assert.match(cache.inputs.restoreKeys, /\$\(Agent\.OSArchitecture\)/);
-  assert.match(cache.inputs.restoreKeys, /\$\(pnpmNodeVersion\)/);
-  assert.match(cache.inputs.restoreKeys, /\$\(pnpmVersion\)/);
-  assert.match(cache.inputs.restoreKeys, /\$\(pnpmLockfileVersion\)/);
-  assert.doesNotMatch(cache.inputs.restoreKeys, /pnpm-lock\.yaml/);
-  assert.doesNotMatch(JSON.stringify(cache), /node_modules|\.npmrc|credentials|azure|profiles|runtime-dependencies|results/i);
-
-  const identityStep = setup.steps.find((step) => step.displayName === 'Resolve deterministic pnpm store cache identity');
-  assert.ok(identityStep?.pwsh);
-  assert.match(identityStep.pwsh, /Join-Path '\$\(Pipeline\.Workspace\)' '\.pnpm-store'/);
-  assert.match(identityStep.pwsh, /lockfileVersion/);
-  assert.match(identityStep.pwsh, /packageManager/);
-
-  const restoreEvidence = setup.steps.find((step) => step.displayName === 'Record pnpm store cache restore evidence');
-  assert.match(restoreEvidence.pwsh, /'exact'/);
-  assert.match(restoreEvidence.pwsh, /'inexact'/);
-  assert.match(restoreEvidence.pwsh, /'miss'/);
-
-  const integrity = setup.steps.find((step) => step.displayName === 'Validate cached pnpm store integrity');
-  assert.match(integrity.pwsh, /pnpm-store-integrity\.js verify/);
-  assert.match(integrity.pwsh, /cacheState -eq 'miss'/);
-  assert.match(integrity.pwsh, /corrupt-store-cleared/);
-  assert.match(integrity.pwsh, /authenticated network restore/);
-
-  const finalEvidence = setup.steps.find((step) => step.displayName === 'Verify installed dependency store evidence');
-  assert.match(finalEvidence.pwsh, /pnpm store path/);
-  assert.match(finalEvidence.pwsh, /expectedResolvedStore/);
-  assert.match(finalEvidence.pwsh, /"v\$pnpmMajor"/);
-  assert.match(finalEvidence.pwsh, /pnpm-store-integrity\.js prune/);
-  assert.match(finalEvidence.pwsh, /pnpm-store-integrity\.js write/);
-  assert.match(finalEvidence.pwsh, /pnpm-store-integrity\.js verify/);
-  assert.match(finalEvidence.pwsh, /pnpmStoreCacheState/);
-  assert.match(finalEvidence.pwsh, /pnpmStoreFallback/);
-}
-
-function testConsumerNodeProvisioningContract() {
-  const setup = parseYaml('.azure-pipelines/templates/vscode-e2e-cli-setup.yml');
-  const runSuites = parseYaml('.config/templates/vscode-e2e-cli-run-suite.yml');
-  const consumer = parseYaml('.config/vscode-e2e-cli.1es.yml');
-  const setupNodeTasks = findObjects(setup.steps, (entry) => entry.task === 'UseNode@1');
-  assert.strictEqual(setupNodeTasks.length, 1, 'The shared setup template keeps one optional Node provisioning task');
-  assert.ok(
-    setup.parameters.some((parameter) => parameter.name === 'provisionNode' && parameter.default === true),
-    'Shared setup provisions Node by default for build and standalone setup consumers'
-  );
-
-  const runSuiteNodeTasks = findObjects(runSuites.jobs, (entry) => entry.task === 'UseNode@1');
-  assert.strictEqual(runSuiteNodeTasks.length, 1, 'Each suite consumer job must provision trusted Node exactly once');
-  assert.strictEqual(runSuiteNodeTasks[0].displayName, 'Use trusted Node.js for E2E artifact admission');
-
-  const setupInvocation = findObjects(
-    runSuites.jobs,
-    (entry) => entry.template === '/.azure-pipelines/templates/vscode-e2e-cli-setup.yml@self'
-  );
-  assert.strictEqual(setupInvocation.length, 1);
-  assert.strictEqual(setupInvocation[0].parameters.provisionNode, false);
-  assertRunSuitesProvisionsTrustedNodeBeforeVerifier(runSuites);
-
-  const fullRollupJob = getConsumerDirectJob(consumer, 'verify_both_os_full_rollup');
-  const cohortNodeIndex = fullRollupJob.steps.findIndex(
-    (step) => step.task === 'UseNode@1' && step.displayName === 'Use trusted Node.js for cohort rollup validation'
-  );
-  const cohortNodeVersionIndex = fullRollupJob.steps.findIndex(
-    (step) => step.pwsh === 'node --version' && step.displayName === 'Print cohort rollup Node.js version'
-  );
-  const cohortGateIndex = fullRollupJob.steps.findIndex(
-    (step) => step.displayName === 'Enforce registry-driven both-OS cohort rollup gate'
-  );
-  assert.ok(cohortNodeIndex >= 0, 'cohort rollup must provision trusted Node');
-  assert.strictEqual(fullRollupJob.steps[cohortNodeIndex].inputs.version, '22.x');
-  assert.strictEqual(fullRollupJob.steps[cohortNodeIndex].condition, "and(always(), eq('${{ parameters.executionTopology }}', 'cohort'))");
-  assert.ok(cohortNodeVersionIndex > cohortNodeIndex, 'cohort rollup must print the selected Node version');
-  assert.ok(cohortGateIndex > cohortNodeVersionIndex, 'cohort verifier must run after trusted Node is selected');
 }
 
 function testAzureToolsWrapperContract() {
@@ -1057,12 +898,9 @@ function testConsumerAdmissionContract() {
 function assertConsumerPublicParametersAreMinimal(consumer) {
   assert.deepStrictEqual(
     consumer.parameters.map((parameter) => parameter.name),
-    ['diagnosticOnly', 'executionTopology', 'runLinux', 'runWindows', 'linuxSuites', 'windowsSuites'],
-    'consumer Run pipeline surface must expose only genuine topology/OS/suite selectors'
+    ['diagnosticOnly', 'runLinux', 'runWindows', 'linuxSuites', 'windowsSuites'],
+    'consumer Run pipeline surface must expose only genuine OS/suite selectors'
   );
-  const executionTopology = consumer.parameters.find((parameter) => parameter.name === 'executionTopology');
-  assert.strictEqual(executionTopology.default, 'cohort', 'cohort topology must remain the validated default');
-  assert.deepStrictEqual(executionTopology.values, ['perSuite', 'cohort'], 'per-suite topology must remain available as rollback');
 }
 
 function testSelectorResolutionScriptBehavior() {
@@ -1083,40 +921,12 @@ function testSelectorResolutionScriptBehavior() {
     fullResult.output,
     /variable=windowsSelectedSuites;isOutput=true]unitTests,createWorkspaceBehavior,createWorkspaceCoreMatrix,createWorkspacePreviewMatrix,createWorkspaceCodeful,msnWeatherLifecycle/
   );
-  assert.match(fullResult.output, /variable=linux_msnWeatherLifecycle;isOutput=true]false/);
-  assert.match(fullResult.output, /variable=windows_createWorkspaceCoreMatrix;isOutput=true]false/);
+  assert.match(fullResult.output, /variable=linux_msnWeatherLifecycle;isOutput=true]true/);
+  assert.match(fullResult.output, /variable=windows_createWorkspaceCoreMatrix;isOutput=true]true/);
   assert.match(fullResult.output, /variable=windows_createWorkspaceBehaviorSmoke;isOutput=true]false/);
-  assert.match(
-    fullResult.output,
-    /variable=linux_nonAzureSuites;isOutput=true]unitTests,createWorkspaceBehavior,createWorkspaceCoreMatrix,createWorkspacePreviewMatrix,createWorkspaceCodeful/
-  );
-  assert.match(fullResult.output, /variable=linux_azureSuites;isOutput=true]msnWeatherLifecycle/);
-  assert.match(fullResult.output, /variable=windows_nonAzureSelected;isOutput=true]true/);
-  assert.match(fullResult.output, /variable=windows_azureSelected;isOutput=true]true/);
-  assert.match(fullResult.output, /variable=linux_nonAzureRunsContracts;isOutput=true]true/);
-  assert.match(fullResult.output, /variable=linux_azureRunsContracts;isOutput=true]false/);
-  assert.match(fullResult.output, /variable=windowsPnpmSeedRequired;isOutput=true]true/);
-  assert.match(fullResult.output, /variable=linux_unitTests;isOutput=true]false/);
-
-  const cohortFullResult = runSelectorScript(scriptPath, {
-    LA_E2E_CLI_DIAGNOSTIC_ONLY: 'false',
-    LA_E2E_CLI_EXECUTION_TOPOLOGY: 'cohort',
-    LA_E2E_CLI_RUN_LINUX: 'true',
-    LA_E2E_CLI_RUN_WINDOWS: 'true',
-    LA_E2E_CLI_LINUX_SUITES: 'linux',
-    LA_E2E_CLI_WINDOWS_SUITES: 'windows',
-  });
-  assert.strictEqual(cohortFullResult.status, 0, cohortFullResult.output);
-  assert.match(cohortFullResult.output, /variable=windows_nonAzureSelected;isOutput=true]true/);
-  assert.match(cohortFullResult.output, /variable=windows_azureSelected;isOutput=true]true/);
-  assert.match(cohortFullResult.output, /variable=linux_nonAzureRunsContracts;isOutput=true]true/);
-  assert.match(cohortFullResult.output, /variable=linux_azureRunsContracts;isOutput=true]false/);
-  assert.match(cohortFullResult.output, /variable=windowsPnpmSeedRequired;isOutput=true]true/);
-  assert.match(cohortFullResult.output, /variable=linux_unitTests;isOutput=true]false/);
 
   const explicitCanonicalResult = runSelectorScript(scriptPath, {
     LA_E2E_CLI_DIAGNOSTIC_ONLY: 'false',
-    LA_E2E_CLI_EXECUTION_TOPOLOGY: 'perSuite',
     LA_E2E_CLI_RUN_LINUX: 'true',
     LA_E2E_CLI_RUN_WINDOWS: 'true',
     LA_E2E_CLI_LINUX_SUITES:
@@ -1125,11 +935,6 @@ function testSelectorResolutionScriptBehavior() {
       'unitTests,createWorkspaceBehavior,createWorkspaceCoreMatrix,createWorkspacePreviewMatrix,createWorkspaceCodeful,msnWeatherLifecycle',
   });
   assert.strictEqual(explicitCanonicalResult.status, 0, explicitCanonicalResult.output);
-  assert.match(explicitCanonicalResult.output, /variable=windows_nonAzureSelected;isOutput=true]false/);
-  assert.match(explicitCanonicalResult.output, /variable=windowsPnpmSeedRequired;isOutput=true]false/);
-  assert.match(explicitCanonicalResult.output, /variable=linux_unitTests;isOutput=true]true/);
-  assert.match(explicitCanonicalResult.output, /variable=linux_msnWeatherLifecycle;isOutput=true]true/);
-  assert.match(explicitCanonicalResult.output, /variable=windows_createWorkspaceCoreMatrix;isOutput=true]true/);
 
   const diagnosticWindowsSmokeResult = runSelectorScript(scriptPath, {
     LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true',
@@ -1138,40 +943,8 @@ function testSelectorResolutionScriptBehavior() {
     LA_E2E_CLI_WINDOWS_SUITES: 'createWorkspaceBehaviorSmoke',
   });
   assert.strictEqual(diagnosticWindowsSmokeResult.status, 0, diagnosticWindowsSmokeResult.output);
-  assert.match(diagnosticWindowsSmokeResult.output, /variable=executionTopology;isOutput=true]cohort/);
-  assert.match(diagnosticWindowsSmokeResult.output, /variable=windows_createWorkspaceBehaviorSmoke;isOutput=true]false/);
+  assert.match(diagnosticWindowsSmokeResult.output, /variable=windows_createWorkspaceBehaviorSmoke;isOutput=true]true/);
   assert.match(diagnosticWindowsSmokeResult.output, /variable=windows_createWorkspaceBehavior;isOutput=true]false/);
-  assert.match(diagnosticWindowsSmokeResult.output, /variable=windows_nonAzureSuites;isOutput=true]createWorkspaceBehaviorSmoke/);
-  assert.match(diagnosticWindowsSmokeResult.output, /variable=windows_nonAzureSelected;isOutput=true]true/);
-  assert.match(diagnosticWindowsSmokeResult.output, /variable=windows_azureSuites;isOutput=true]/);
-  assert.match(diagnosticWindowsSmokeResult.output, /variable=windows_nonAzureRunsContracts;isOutput=true]true/);
-  assert.match(diagnosticWindowsSmokeResult.output, /variable=windowsPnpmSeedRequired;isOutput=true]false/);
-
-  const diagnosticWindowsCohortResult = runSelectorScript(scriptPath, {
-    LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true',
-    LA_E2E_CLI_EXECUTION_TOPOLOGY: 'cohort',
-    LA_E2E_CLI_RUN_LINUX: 'false',
-    LA_E2E_CLI_RUN_WINDOWS: 'true',
-    LA_E2E_CLI_WINDOWS_SUITES: 'createWorkspaceBehaviorSmoke',
-  });
-  assert.strictEqual(diagnosticWindowsCohortResult.status, 0, diagnosticWindowsCohortResult.output);
-  assert.match(diagnosticWindowsCohortResult.output, /variable=windows_nonAzureSuites;isOutput=true]createWorkspaceBehaviorSmoke/);
-  assert.match(diagnosticWindowsCohortResult.output, /variable=windows_nonAzureSelected;isOutput=true]true/);
-  assert.match(diagnosticWindowsCohortResult.output, /variable=windows_azureSelected;isOutput=true]false/);
-  assert.match(diagnosticWindowsCohortResult.output, /variable=windows_nonAzureRunsContracts;isOutput=true]true/);
-  assert.match(diagnosticWindowsCohortResult.output, /variable=windowsPnpmSeedRequired;isOutput=true]false/);
-
-  const diagnosticLinuxAzureCohortResult = runSelectorScript(scriptPath, {
-    LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true',
-    LA_E2E_CLI_EXECUTION_TOPOLOGY: 'cohort',
-    LA_E2E_CLI_RUN_LINUX: 'true',
-    LA_E2E_CLI_RUN_WINDOWS: 'false',
-    LA_E2E_CLI_LINUX_SUITES: 'msnWeatherLifecycle',
-  });
-  assert.strictEqual(diagnosticLinuxAzureCohortResult.status, 0, diagnosticLinuxAzureCohortResult.output);
-  assert.match(diagnosticLinuxAzureCohortResult.output, /variable=linux_nonAzureSelected;isOutput=true]false/);
-  assert.match(diagnosticLinuxAzureCohortResult.output, /variable=linux_azureSelected;isOutput=true]true/);
-  assert.match(diagnosticLinuxAzureCohortResult.output, /variable=linux_azureRunsContracts;isOutput=true]true/);
 
   const diagnosticPartialResult = runSelectorScript(scriptPath, {
     LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true',
@@ -1180,12 +953,8 @@ function testSelectorResolutionScriptBehavior() {
     LA_E2E_CLI_LINUX_SUITES: 'unitTests',
   });
   assert.strictEqual(diagnosticPartialResult.status, 0, diagnosticPartialResult.output);
-  assert.match(diagnosticPartialResult.output, /variable=executionTopology;isOutput=true]cohort/);
-  assert.match(diagnosticPartialResult.output, /variable=linux_unitTests;isOutput=true]false/);
+  assert.match(diagnosticPartialResult.output, /variable=linux_unitTests;isOutput=true]true/);
   assert.match(diagnosticPartialResult.output, /variable=linux_createWorkspaceBehavior;isOutput=true]false/);
-  assert.match(diagnosticPartialResult.output, /variable=linux_nonAzureSuites;isOutput=true]unitTests/);
-  assert.match(diagnosticPartialResult.output, /variable=linux_nonAzureSelected;isOutput=true]true/);
-  assert.match(diagnosticPartialResult.output, /variable=linux_nonAzureRunsContracts;isOutput=true]true/);
   assert.match(diagnosticPartialResult.output, /variable=windowsSelectedSuites;isOutput=true]/);
 
   const fullPartialResult = runSelectorScript(scriptPath, {
@@ -1215,16 +984,6 @@ function testSelectorResolutionScriptBehavior() {
   });
   assert.notStrictEqual(wrongOsResult.status, 0);
   assert.match(wrongOsResult.output, /is not available on linux/);
-
-  const invalidTopologyResult = runSelectorScript(scriptPath, {
-    LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true',
-    LA_E2E_CLI_EXECUTION_TOPOLOGY: 'invalid',
-    LA_E2E_CLI_RUN_LINUX: 'true',
-    LA_E2E_CLI_RUN_WINDOWS: 'false',
-    LA_E2E_CLI_LINUX_SUITES: 'unitTests',
-  });
-  assert.notStrictEqual(invalidTopologyResult.status, 0);
-  assert.match(invalidTopologyResult.output, /Unsupported executionTopology/);
 
   const noOsResult = runSelectorScript(scriptPath, {
     LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true',
@@ -1348,7 +1107,6 @@ function testSupplementaryFamilyRoutingContract() {
   }
   const selected = runSelectorScript(path.join(__dirname, 'resolve-e2e-cli-suite-selection.js'), {
     LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true',
-    LA_E2E_CLI_EXECUTION_TOPOLOGY: 'perSuite',
     LA_E2E_CLI_RUN_LINUX: 'true',
     LA_E2E_CLI_RUN_WINDOWS: 'true',
     LA_E2E_CLI_LINUX_SUITES: 'httpTimeoutLifecycle,statelessVariablesLifecycle,workspaceArtifactRegeneration,workspaceMultiRoot',
@@ -1404,9 +1162,7 @@ function assertConsumerCurrentRunArtifactContract(consumer) {
   );
   assert.strictEqual(buildTemplate?.parameters?.artifactStagingPath, '$(Build.ArtifactStagingDirectory)/vscode-e2e');
 
-  const templateInvocations = flattenAzureList(consumer.extends.parameters.stages[0].jobs).filter(
-    (entry) => entry.template === '/.config/templates/vscode-e2e-cli-run-suite.yml@self'
-  );
+  const templateInvocations = flattenAzureList(consumer.extends.parameters.stages[0].jobs).filter((entry) => entry.template);
   assert.strictEqual(templateInvocations.length, 21);
   assert.deepStrictEqual(
     templateInvocations.map((invocation) => invocation.parameters.jobName).sort(),
@@ -1467,21 +1223,6 @@ function assertConsumerCurrentRunArtifactContract(consumer) {
     assert.strictEqual(invocation.parameters.azureTenantId, undefined);
     assert.strictEqual(invocation.parameters.azureSubscriptionId, undefined);
   }
-  const cohortInvocations = flattenAzureList(consumer.extends.parameters.stages[0].jobs).filter(
-    (entry) => entry.template === '/.config/templates/vscode-e2e-cli-run-cohort.yml@self'
-  );
-  assert.deepStrictEqual(
-    cohortInvocations.map((invocation) => invocation.parameters.jobName).sort(),
-    ['linux_non_azure_cohort', 'linux_azure_cohort', 'windows_non_azure_cohort', 'windows_azure_cohort'].sort()
-  );
-  for (const invocation of cohortInvocations) {
-    assert.ok(invocation.parameters.selected.includes('validateSuiteSelection.'));
-    assert.ok(invocation.parameters.suites.includes('validateSuiteSelection.'));
-    assert.ok(invocation.parameters.runRegisteredContracts.includes('validateSuiteSelection.'));
-    assert.ok(invocation.parameters.trustedFullExecution.includes('validateSuiteSelection.trustedFullExecution'));
-    assert.strictEqual(invocation.parameters.expectedProducerDefinitionId, '$(System.DefinitionId)');
-    assert.strictEqual(invocation.parameters.expectedProducerRunId, '$(Build.BuildId)');
-  }
 
   const diagnosticJob = getConsumerDirectJob(consumer, 'report_diagnostic_selected_rerun');
   assert.deepStrictEqual(diagnosticJob.dependsOn, [
@@ -1507,10 +1248,6 @@ function assertConsumerCurrentRunArtifactContract(consumer) {
     'windows_workspace_regeneration',
     'linux_workspace_multi_root',
     'windows_workspace_multi_root',
-    'linux_non_azure_cohort',
-    'linux_azure_cohort',
-    'windows_non_azure_cohort',
-    'windows_azure_cohort',
   ]);
 }
 
@@ -1586,7 +1323,7 @@ function assertConsumerParameterGuardRejectsMutations(consumer) {
           copy.parameters.push({ name: 'expectedProducerRunId', type: 'string', default: '' });
         })
       ),
-    /consumer Run pipeline surface must expose only genuine topology\/OS\/suite selectors/
+    /consumer Run pipeline surface must expose only genuine OS\/suite selectors/
   );
   assert.throws(
     () =>
@@ -1595,7 +1332,7 @@ function assertConsumerParameterGuardRejectsMutations(consumer) {
           copy.parameters.unshift({ name: 'variableGroups', type: 'object', default: [] });
         })
       ),
-    /consumer Run pipeline surface must expose only genuine topology\/OS\/suite selectors/
+    /consumer Run pipeline surface must expose only genuine OS\/suite selectors/
   );
   assert.throws(
     () =>
@@ -1646,13 +1383,7 @@ function assertConsumerJobRoutingContract(consumer, runSuites) {
 
   assert.deepStrictEqual(
     directJobs.map((entry) => entry.job).sort(),
-    [
-      'build_current_run_e2e_artifact',
-      'report_diagnostic_selected_rerun',
-      'resolve_consumer_context',
-      'seed_windows_pnpm_store',
-      'verify_both_os_full_rollup',
-    ].sort()
+    ['build_current_run_e2e_artifact', 'report_diagnostic_selected_rerun', 'resolve_consumer_context', 'verify_both_os_full_rollup'].sort()
   );
   for (const job of directJobs) {
     if (job.job === 'build_current_run_e2e_artifact') {
@@ -1673,15 +1404,10 @@ function assertConsumerJobRoutingContract(consumer, runSuites) {
     assert.strictEqual(job.templateContext.outputs, undefined, `${job.job} must not publish artifacts from a validationJob`);
   }
 
-  assert.strictEqual(templateJobs.length, 25);
-  assert.strictEqual(
-    templateJobs.filter((invocation) => invocation.template === '/.config/templates/vscode-e2e-cli-run-suite.yml@self').length,
-    21
-  );
-  assert.strictEqual(
-    templateJobs.filter((invocation) => invocation.template === '/.config/templates/vscode-e2e-cli-run-cohort.yml@self').length,
-    4
-  );
+  assert.strictEqual(templateJobs.length, 21);
+  for (const invocation of templateJobs) {
+    assert.strictEqual(invocation.template, '/.config/templates/vscode-e2e-cli-run-suite.yml@self');
+  }
 
   assert.strictEqual(runSuites.jobs.length, 1);
   const suiteJob = runSuites.jobs[0];
