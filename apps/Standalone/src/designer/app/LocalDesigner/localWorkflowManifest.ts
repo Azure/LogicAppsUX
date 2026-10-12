@@ -7,6 +7,7 @@ import {
   type OperationManifest,
 } from '@microsoft/logic-apps-shared';
 import {
+  hasLocalWorkflowInvocationMarker,
   type LocalWorkflowRegistry,
   localWorkflowOperation,
   localWorkflowRegistry,
@@ -117,7 +118,9 @@ export class LocalWorkflowManifestService extends StandardOperationManifestServi
   override async getOperationInfo(definition: LogicAppsV2.OperationDefinition, isTrigger: boolean) {
     const workflowId =
       definition.type?.toLowerCase() === 'workflow' && 'inputs' in definition ? definition.inputs?.host?.workflow?.id : undefined;
-    return typeof workflowId === 'string' && this.registry.isLocalWorkflowReference(workflowId)
+    return typeof workflowId === 'string' &&
+      hasLocalWorkflowInvocationMarker(definition) &&
+      this.registry.isLocalWorkflowReference(workflowId)
       ? localWorkflowOperation
       : super.getOperationInfo(definition, isTrigger);
   }

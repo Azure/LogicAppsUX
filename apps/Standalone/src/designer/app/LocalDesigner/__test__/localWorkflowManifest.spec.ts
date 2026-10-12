@@ -17,7 +17,7 @@ import {
   localWorkflowManifest,
   localWorkflowOperation,
 } from '../localWorkflowManifest';
-import { LocalWorkflowRegistry } from '../localWorkflowRegistry';
+import { LocalWorkflowRegistry, localWorkflowInvocationMarker, localWorkflowInvocationMarkerKey } from '../localWorkflowRegistry';
 import type { Workflow, WorkflowExtractionPlan } from '@microsoft/logic-apps-designer-v2';
 import fixture from '../../../../../../../__mocks__/workflows/ExtractSelection.json';
 import { getReactQueryClient } from '../../../../../../../libs/designer-v2/src/lib/core/ReactQueryProvider';
@@ -67,15 +67,45 @@ describe('offline Standard workflow manifest', () => {
     const registry = new LocalWorkflowRegistry(() => ({ getItem: () => null, setItem: () => undefined }));
     const cleanup = registry.prepare(makeSchemaPlan('Child', 'string'));
     const service = new LocalWorkflowManifestService({ baseUrl: '/url', apiVersion: '2018-11-01', httpClient: http }, registry);
-    expect(await service.getOperationInfo({ type: 'Workflow', inputs: { host: { workflow: { id: 'Child' } } } }, false)).toEqual(
-      localWorkflowOperation
-    );
+    expect(
+      await service.getOperationInfo(
+        {
+          type: 'Workflow',
+          inputs: { host: { workflow: { id: 'Child' } } },
+          metadata: { [localWorkflowInvocationMarkerKey]: localWorkflowInvocationMarker },
+        },
+        false
+      )
+    ).toEqual(localWorkflowOperation);
     expect(await service.getOperationManifest(localWorkflowOperation.connectorId, localWorkflowOperation.operationId)).toBe(
       localWorkflowManifest
     );
     expect(localWorkflowManifest.properties.inputs?.properties?.host.required).toEqual(['workflow']);
     expect(localWorkflowManifest.properties.settings).toEqual({});
     expect(get).not.toHaveBeenCalled();
+    cleanup();
+  });
+
+  it('delegates an unmarked Standard invocation even when a local workflow has the same name', async () => {
+    const http = new HttpClient();
+    vi.spyOn(http, 'get').mockResolvedValue({
+      properties: {
+        brandColor: '#000000',
+        description: 'Standard workflow invocation',
+        iconUri: 'standard-workflow.svg',
+        api: { properties: { displayName: 'Workflow' } },
+      },
+    });
+    const options = { baseUrl: '/url', apiVersion: '2018-11-01', httpClient: http };
+    const registry = new LocalWorkflowRegistry(() => ({ getItem: () => null, setItem: () => undefined }));
+    const cleanup = registry.prepare(makeSchemaPlan('Child', 'string'));
+    const service = new LocalWorkflowManifestService(options, registry);
+    const standard = new StandardOperationManifestService(options);
+    const definition = { type: 'Workflow', inputs: { host: { workflow: { id: 'Child' } } } };
+
+    const operationInfo = await service.getOperationInfo(definition, false);
+    expect(operationInfo).toEqual(await standard.getOperationInfo(definition, false));
+    expect(operationInfo).not.toEqual(localWorkflowOperation);
     cleanup();
   });
 

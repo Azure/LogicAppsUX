@@ -41,6 +41,32 @@ describe('offline registry workflow loading', () => {
     expect(store.getState().workflowLoader.workflowLoadError).toBeUndefined();
   });
 
+  it('keeps the active load when mounted source controls repeat their current selections', () => {
+    const store = storeFor('ExtractSelection.json');
+    store.dispatch(loadWorkflow.pending('request-a', undefined));
+
+    store.dispatch(setHostingPlan('standard'));
+    store.dispatch(setIsLocalSelected(true));
+    store.dispatch(
+      loadWorkflow.fulfilled(
+        {
+          resourcePath: 'ExtractSelection.json',
+          workflowDefinition: fixture.definition,
+          notes: undefined,
+          connectionReferences: {},
+          parameters: {},
+          runFiles: [],
+          workflowKind: 'Stateful',
+        },
+        'request-a',
+        undefined
+      )
+    );
+
+    expect(store.getState().workflowLoader.workflowDefinition).toEqual(fixture.definition);
+    expect(store.getState().workflowLoader.loadedResourcePath).toBe('ExtractSelection.json');
+  });
+
   it('unmounts the previous workflow while loading and ignores stale completions after a resource switch', () => {
     const store = storeFor('ExtractSelection.json');
     const payload = (resourcePath: string, marker: string) => ({

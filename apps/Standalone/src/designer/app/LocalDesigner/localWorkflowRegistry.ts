@@ -5,7 +5,7 @@ import type {
   WorkflowExtractionResult,
   WorkflowExtractionService,
 } from '@microsoft/logic-apps-designer-v2';
-import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
+import type { LogicAppsV2, OpenAPIV2 } from '@microsoft/logic-apps-shared';
 import { generateUniqueName } from '@microsoft/logic-apps-shared';
 import { getReactQueryClient } from '../../../../../../libs/designer-v2/src/lib/core/ReactQueryProvider';
 
@@ -17,6 +17,8 @@ export const localWorkflowOperation = {
   operationId: 'invokelocalworkflow',
 };
 export const localWorkflowSchemaOperation = 'getLocalWorkflowSchema';
+export const localWorkflowInvocationMarkerKey = 'logicAppsUxLocalWorkflowExtraction';
+export const localWorkflowInvocationMarker = { version: 1 } as const;
 
 interface RegistryEntry {
   id: string;
@@ -43,6 +45,10 @@ type RegistryExclusiveRunner = <T>(operation: () => Promise<T>) => Promise<T>;
 const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value));
 const normalize = (value: string) => value.toLowerCase();
 const isRecord = (value: unknown): value is Record<string, unknown> => !!value && typeof value === 'object' && !Array.isArray(value);
+export const hasLocalWorkflowInvocationMarker = (definition: LogicAppsV2.OperationDefinition): boolean => {
+  const marker = isRecord(definition.metadata) ? definition.metadata[localWorkflowInvocationMarkerKey] : undefined;
+  return isRecord(marker) && marker.version === localWorkflowInvocationMarker.version;
+};
 const credentialQueryParameterNames = new Set([
   'code',
   'sig',
@@ -418,6 +424,7 @@ export class LocalWorkflowRegistry {
         type: 'Workflow',
         inputs: { host: { workflow: { id: childName } }, body: clone(body) },
         runAfter: clone(runAfter ?? {}),
+        metadata: { [localWorkflowInvocationMarkerKey]: clone(localWorkflowInvocationMarker) },
       }),
       validateName: (name) => this.validateName(name, sourceName),
       getSuggestedName: (baseName) =>

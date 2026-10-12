@@ -1,7 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Workflow, WorkflowExtractionPlan } from '@microsoft/logic-apps-designer-v2';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { LocalWorkflowRegistry, localWorkflowRegistryKey } from '../localWorkflowRegistry';
+import {
+  LocalWorkflowRegistry,
+  localWorkflowInvocationMarker,
+  localWorkflowInvocationMarkerKey,
+  localWorkflowRegistryKey,
+} from '../localWorkflowRegistry';
 import fixture from '../../../../../../../__mocks__/workflows/ExtractSelection.json';
 
 const workflow: Workflow = { ...fixture, connectionReferences: {} };
@@ -68,7 +73,12 @@ describe('offline local workflow registry', () => {
     const body = { customer: "@outputs('Read_customer')" };
     const runAfter = { Read_customer: ['Succeeded'] };
     const action = service.createInvocation('Child', body, runAfter);
-    expect(action).toEqual({ type: 'Workflow', inputs: { host: { workflow: { id: 'Child' } }, body }, runAfter });
+    expect(action).toEqual({
+      type: 'Workflow',
+      inputs: { host: { workflow: { id: 'Child' } }, body },
+      runAfter,
+      metadata: { [localWorkflowInvocationMarkerKey]: localWorkflowInvocationMarker },
+    });
     body.customer = 'mutated';
     runAfter.Read_customer.push('Failed');
     expect((action as LogicAppsV2.ComposeAction).inputs.body.customer).toBe("@outputs('Read_customer')");

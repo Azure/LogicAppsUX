@@ -223,6 +223,9 @@ export const workflowLoadingSlice = createSlice({
       state.isDarkMode = action.payload;
     },
     setHostingPlan: (state, action: PayloadAction<HostingPlanTypes>) => {
+      if (state.hostingPlan === action.payload) {
+        return;
+      }
       state.hostingPlan = action.payload;
       state.appId = undefined;
       state.workflowName = undefined;
@@ -231,6 +234,9 @@ export const workflowLoadingSlice = createSlice({
       state.workflowLoadRequestId = undefined;
     },
     setIsLocalSelected: (state, action: PayloadAction<boolean>) => {
+      if (state.isLocal === action.payload) {
+        return;
+      }
       state.isLocal = action.payload;
       state.appId = undefined;
       state.workflowName = undefined;
