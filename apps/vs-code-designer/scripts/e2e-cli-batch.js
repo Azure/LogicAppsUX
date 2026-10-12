@@ -378,7 +378,7 @@ function prepareSuiteExtensionsDirectory({ seedDir, targetDir, expectedManifest 
   return targetDir;
 }
 
-function classifySuiteRunResult({ exitCode, signal, error, output = '', terminalResult, cleanupLedger }) {
+function classifySuiteRunResult({ suiteId, exitCode, signal, error, output = '', terminalResult, cleanupLedger }) {
   if (error) {
     return {
       category: 'containmentBreach',
@@ -393,11 +393,18 @@ function classifySuiteRunResult({ exitCode, signal, error, output = '', terminal
       reason: `process exited without numeric code${signal ? ` (${signal})` : ''}`,
     };
   }
-  if (!terminalResult || terminalResult.schemaVersion !== 1 || terminalResult.complete !== true) {
+  if (!terminalResult || terminalResult.schemaVersion !== 1) {
     return {
       category: 'containmentBreach',
       outcome: 'infrastructureFailure',
-      reason: 'missing or incomplete structured suite terminal result',
+      reason: 'missing or invalid structured suite terminal result',
+    };
+  }
+  if ('lifecycleFinalized' in terminalResult && terminalResult.lifecycleFinalized !== true) {
+    return {
+      category: 'containmentBreach',
+      outcome: 'infrastructureFailure',
+      reason: `structured suite terminal result reported lifecycleFinalized=${terminalResult.lifecycleFinalized}`,
     };
   }
   if (!cleanupLedger || cleanupLedger.schemaVersion !== 1 || cleanupLedger.verified !== true) {
@@ -456,6 +463,18 @@ function classifySuiteRunResult({ exitCode, signal, error, output = '', terminal
   const matchedBreach = CONTAINMENT_BREACH_PATTERNS.find((pattern) => pattern.test(output));
   if (matchedBreach) {
     return { category: 'containmentBreach', outcome: 'infrastructureFailure', reason: `matched containment pattern: ${matchedBreach}` };
+  }
+  const finalizedOrdinaryFailure =
+    SUPPLEMENTARY_LIFECYCLE_SUITES.has(suiteId) &&
+    terminalResult.complete === false &&
+    terminalResult.lifecycleFinalized === true &&
+    exitCode !== 0;
+  if (terminalResult.complete !== true && !finalizedOrdinaryFailure) {
+    return {
+      category: 'containmentBreach',
+      outcome: 'infrastructureFailure',
+      reason: 'incomplete or unfinalized structured suite terminal result',
+    };
   }
   if (exitCode === 0) {
     if (/(^|\n)\s*0 passing\b/i.test(output) || /No tests (found|encountered)/i.test(output)) {
@@ -661,7 +680,7 @@ async function runBatchSuites({
         error,
       };
     }
-    let classification = classifySuiteRunResult(runResult);
+    let classification = classifySuiteRunResult({ ...runResult, suiteId: suite.id });
     fs.writeFileSync(context.logPath, runResult.output ?? '');
     try {
       const { _test: resultSummary } = require('./summarize-e2e-cli-results');

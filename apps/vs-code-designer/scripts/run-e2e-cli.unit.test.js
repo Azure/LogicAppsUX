@@ -1227,7 +1227,7 @@ async function testBatchSuiteScopedCredentials() {
 }
 
 async function testBatchContinuesAfterOrdinaryFailure() {
-  const suites = [SUITE_REGISTRY.unitTests, SUITE_REGISTRY.createWorkspaceBehavior];
+  const suites = [SUITE_REGISTRY.workspaceArtifactRegeneration, SUITE_REGISTRY.createWorkspaceBehavior];
   const batchRoot = path.join(tempRoot, 'batch-ordinary-failure');
   const seedDir = path.join(tempRoot, 'batch-ordinary-seed');
   fs.mkdirSync(seedDir, { recursive: true });
@@ -1239,20 +1239,25 @@ async function testBatchContinuesAfterOrdinaryFailure() {
     seedDir,
     runSuite: async ({ suite, context }) => {
       launched.push(suite.id);
-      writeSuiteTerminalAndCleanup(context, { exitCode: suite.id === 'unitTests' ? 1 : 0 });
-      return suite.id === 'unitTests'
+      writeSuiteTerminalAndCleanup(
+        context,
+        suite.id === 'workspaceArtifactRegeneration' ? { complete: false, exitCode: 1, lifecycleFinalized: true } : { exitCode: 0 }
+      );
+      return suite.id === 'workspaceArtifactRegeneration'
         ? { exitCode: 1, signal: null, output: '1 failing\n' }
         : { exitCode: 0, signal: null, output: '1 passing\n' };
     },
   });
 
-  assert.deepStrictEqual(launched, ['unitTests', 'createWorkspaceBehavior']);
+  assert.deepStrictEqual(launched, ['workspaceArtifactRegeneration', 'createWorkspaceBehavior']);
   assert.strictEqual(aggregate.aggregateOutcome, 'failed');
   assert.strictEqual(aggregate.complete, true);
   assert.deepStrictEqual(
     aggregate.suites.map((suite) => suite.classification),
     ['ordinaryFailure', 'success']
   );
+  assert.strictEqual(aggregate.stoppedAfter, null);
+  assert.strictEqual(aggregate.containmentBreach, false);
 }
 
 async function testBatchStopsAfterContainmentBreach() {
@@ -1303,6 +1308,70 @@ async function testBatchStopsAfterContainmentBreach() {
       cleanupLedger: verifiedCleanup,
     }).category,
     'ordinaryFailure'
+  );
+  assert.strictEqual(
+    classifySuiteRunResult({
+      suiteId: 'httpTimeoutLifecycle',
+      exitCode: 1,
+      signal: null,
+      output: '1 failing\n',
+      terminalResult: { ...completeTerminal, complete: false, lifecycleFinalized: true },
+      cleanupLedger: verifiedCleanup,
+    }).category,
+    'ordinaryFailure'
+  );
+  assert.strictEqual(
+    classifySuiteRunResult({
+      suiteId: 'unitTests',
+      exitCode: 1,
+      signal: null,
+      output: '1 failing\n',
+      terminalResult: { ...completeTerminal, complete: false, lifecycleFinalized: true },
+      cleanupLedger: verifiedCleanup,
+    }).category,
+    'containmentBreach'
+  );
+  for (const terminalResult of [
+    { ...completeTerminal, complete: false },
+    { ...completeTerminal, complete: false, lifecycleFinalized: false },
+    { ...completeTerminal, complete: false, lifecycleFinalized: true, cleanupVerified: false },
+    { ...completeTerminal, complete: false, lifecycleFinalized: true, diagnosticsError: 'diagnostics failed' },
+    { ...completeTerminal, complete: false, lifecycleFinalized: true, phaseCompleteness: false },
+    { ...completeTerminal, complete: false, lifecycleFinalized: true, duplicatePhaseIds: ['phase-a'] },
+  ]) {
+    assert.strictEqual(
+      classifySuiteRunResult({
+        suiteId: 'httpTimeoutLifecycle',
+        exitCode: 1,
+        signal: null,
+        output: '1 failing\n',
+        terminalResult,
+        cleanupLedger: verifiedCleanup,
+      }).category,
+      'containmentBreach'
+    );
+  }
+  assert.strictEqual(
+    classifySuiteRunResult({
+      suiteId: 'httpTimeoutLifecycle',
+      exitCode: 0,
+      signal: null,
+      output: '1 passing\n',
+      terminalResult: { ...completeTerminal, complete: false, lifecycleFinalized: true, exitCode: 0 },
+      cleanupLedger: verifiedCleanup,
+    }).category,
+    'containmentBreach'
+  );
+  assert.strictEqual(
+    classifySuiteRunResult({
+      suiteId: 'httpTimeoutLifecycle',
+      exitCode: 1,
+      signal: null,
+      output: 'source is outside wrapper-created owned roots',
+      terminalResult: { ...completeTerminal, complete: false, lifecycleFinalized: true },
+      cleanupLedger: verifiedCleanup,
+    }).category,
+    'containmentBreach'
   );
   assert.strictEqual(
     classifySuiteRunResult({
@@ -2686,7 +2755,8 @@ function writeSuiteTerminalAndCleanup(context, options = {}) {
     `${JSON.stringify(
       {
         schemaVersion: 1,
-        complete: true,
+        complete: options.complete ?? true,
+        ...(options.lifecycleFinalized === undefined ? {} : { lifecycleFinalized: options.lifecycleFinalized }),
         cleanupVerified: options.cleanupVerified !== false,
         exitCode: options.exitCode ?? 0,
         signal: null,
