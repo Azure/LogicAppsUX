@@ -1060,6 +1060,9 @@ function assertConsumerPublicParametersAreMinimal(consumer) {
     ['diagnosticOnly', 'executionTopology', 'runLinux', 'runWindows', 'linuxSuites', 'windowsSuites'],
     'consumer Run pipeline surface must expose only genuine topology/OS/suite selectors'
   );
+  const executionTopology = consumer.parameters.find((parameter) => parameter.name === 'executionTopology');
+  assert.strictEqual(executionTopology.default, 'cohort', 'cohort topology must remain the validated default');
+  assert.deepStrictEqual(executionTopology.values, ['perSuite', 'cohort'], 'per-suite topology must remain available as rollback');
 }
 
 function testSelectorResolutionScriptBehavior() {
@@ -1080,19 +1083,20 @@ function testSelectorResolutionScriptBehavior() {
     fullResult.output,
     /variable=windowsSelectedSuites;isOutput=true]unitTests,createWorkspaceBehavior,createWorkspaceCoreMatrix,createWorkspacePreviewMatrix,createWorkspaceCodeful,msnWeatherLifecycle/
   );
-  assert.match(fullResult.output, /variable=linux_msnWeatherLifecycle;isOutput=true]true/);
-  assert.match(fullResult.output, /variable=windows_createWorkspaceCoreMatrix;isOutput=true]true/);
+  assert.match(fullResult.output, /variable=linux_msnWeatherLifecycle;isOutput=true]false/);
+  assert.match(fullResult.output, /variable=windows_createWorkspaceCoreMatrix;isOutput=true]false/);
   assert.match(fullResult.output, /variable=windows_createWorkspaceBehaviorSmoke;isOutput=true]false/);
   assert.match(
     fullResult.output,
     /variable=linux_nonAzureSuites;isOutput=true]unitTests,createWorkspaceBehavior,createWorkspaceCoreMatrix,createWorkspacePreviewMatrix,createWorkspaceCodeful/
   );
   assert.match(fullResult.output, /variable=linux_azureSuites;isOutput=true]msnWeatherLifecycle/);
-  assert.match(fullResult.output, /variable=windows_nonAzureSelected;isOutput=true]false/);
-  assert.match(fullResult.output, /variable=windows_azureSelected;isOutput=true]false/);
-  assert.match(fullResult.output, /variable=linux_nonAzureRunsContracts;isOutput=true]false/);
+  assert.match(fullResult.output, /variable=windows_nonAzureSelected;isOutput=true]true/);
+  assert.match(fullResult.output, /variable=windows_azureSelected;isOutput=true]true/);
+  assert.match(fullResult.output, /variable=linux_nonAzureRunsContracts;isOutput=true]true/);
   assert.match(fullResult.output, /variable=linux_azureRunsContracts;isOutput=true]false/);
-  assert.match(fullResult.output, /variable=windowsPnpmSeedRequired;isOutput=true]false/);
+  assert.match(fullResult.output, /variable=windowsPnpmSeedRequired;isOutput=true]true/);
+  assert.match(fullResult.output, /variable=linux_unitTests;isOutput=true]false/);
 
   const cohortFullResult = runSelectorScript(scriptPath, {
     LA_E2E_CLI_DIAGNOSTIC_ONLY: 'false',
@@ -1112,6 +1116,7 @@ function testSelectorResolutionScriptBehavior() {
 
   const explicitCanonicalResult = runSelectorScript(scriptPath, {
     LA_E2E_CLI_DIAGNOSTIC_ONLY: 'false',
+    LA_E2E_CLI_EXECUTION_TOPOLOGY: 'perSuite',
     LA_E2E_CLI_RUN_LINUX: 'true',
     LA_E2E_CLI_RUN_WINDOWS: 'true',
     LA_E2E_CLI_LINUX_SUITES:
@@ -1120,6 +1125,11 @@ function testSelectorResolutionScriptBehavior() {
       'unitTests,createWorkspaceBehavior,createWorkspaceCoreMatrix,createWorkspacePreviewMatrix,createWorkspaceCodeful,msnWeatherLifecycle',
   });
   assert.strictEqual(explicitCanonicalResult.status, 0, explicitCanonicalResult.output);
+  assert.match(explicitCanonicalResult.output, /variable=windows_nonAzureSelected;isOutput=true]false/);
+  assert.match(explicitCanonicalResult.output, /variable=windowsPnpmSeedRequired;isOutput=true]false/);
+  assert.match(explicitCanonicalResult.output, /variable=linux_unitTests;isOutput=true]true/);
+  assert.match(explicitCanonicalResult.output, /variable=linux_msnWeatherLifecycle;isOutput=true]true/);
+  assert.match(explicitCanonicalResult.output, /variable=windows_createWorkspaceCoreMatrix;isOutput=true]true/);
 
   const diagnosticWindowsSmokeResult = runSelectorScript(scriptPath, {
     LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true',
@@ -1128,11 +1138,13 @@ function testSelectorResolutionScriptBehavior() {
     LA_E2E_CLI_WINDOWS_SUITES: 'createWorkspaceBehaviorSmoke',
   });
   assert.strictEqual(diagnosticWindowsSmokeResult.status, 0, diagnosticWindowsSmokeResult.output);
-  assert.match(diagnosticWindowsSmokeResult.output, /variable=windows_createWorkspaceBehaviorSmoke;isOutput=true]true/);
+  assert.match(diagnosticWindowsSmokeResult.output, /variable=executionTopology;isOutput=true]cohort/);
+  assert.match(diagnosticWindowsSmokeResult.output, /variable=windows_createWorkspaceBehaviorSmoke;isOutput=true]false/);
   assert.match(diagnosticWindowsSmokeResult.output, /variable=windows_createWorkspaceBehavior;isOutput=true]false/);
   assert.match(diagnosticWindowsSmokeResult.output, /variable=windows_nonAzureSuites;isOutput=true]createWorkspaceBehaviorSmoke/);
+  assert.match(diagnosticWindowsSmokeResult.output, /variable=windows_nonAzureSelected;isOutput=true]true/);
   assert.match(diagnosticWindowsSmokeResult.output, /variable=windows_azureSuites;isOutput=true]/);
-  assert.match(diagnosticWindowsSmokeResult.output, /variable=windows_nonAzureRunsContracts;isOutput=true]false/);
+  assert.match(diagnosticWindowsSmokeResult.output, /variable=windows_nonAzureRunsContracts;isOutput=true]true/);
   assert.match(diagnosticWindowsSmokeResult.output, /variable=windowsPnpmSeedRequired;isOutput=true]false/);
 
   const diagnosticWindowsCohortResult = runSelectorScript(scriptPath, {
@@ -1168,8 +1180,12 @@ function testSelectorResolutionScriptBehavior() {
     LA_E2E_CLI_LINUX_SUITES: 'unitTests',
   });
   assert.strictEqual(diagnosticPartialResult.status, 0, diagnosticPartialResult.output);
-  assert.match(diagnosticPartialResult.output, /variable=linux_unitTests;isOutput=true]true/);
+  assert.match(diagnosticPartialResult.output, /variable=executionTopology;isOutput=true]cohort/);
+  assert.match(diagnosticPartialResult.output, /variable=linux_unitTests;isOutput=true]false/);
   assert.match(diagnosticPartialResult.output, /variable=linux_createWorkspaceBehavior;isOutput=true]false/);
+  assert.match(diagnosticPartialResult.output, /variable=linux_nonAzureSuites;isOutput=true]unitTests/);
+  assert.match(diagnosticPartialResult.output, /variable=linux_nonAzureSelected;isOutput=true]true/);
+  assert.match(diagnosticPartialResult.output, /variable=linux_nonAzureRunsContracts;isOutput=true]true/);
   assert.match(diagnosticPartialResult.output, /variable=windowsSelectedSuites;isOutput=true]/);
 
   const fullPartialResult = runSelectorScript(scriptPath, {
@@ -1332,6 +1348,7 @@ function testSupplementaryFamilyRoutingContract() {
   }
   const selected = runSelectorScript(path.join(__dirname, 'resolve-e2e-cli-suite-selection.js'), {
     LA_E2E_CLI_DIAGNOSTIC_ONLY: 'true',
+    LA_E2E_CLI_EXECUTION_TOPOLOGY: 'perSuite',
     LA_E2E_CLI_RUN_LINUX: 'true',
     LA_E2E_CLI_RUN_WINDOWS: 'true',
     LA_E2E_CLI_LINUX_SUITES: 'httpTimeoutLifecycle,statelessVariablesLifecycle,workspaceArtifactRegeneration,workspaceMultiRoot',

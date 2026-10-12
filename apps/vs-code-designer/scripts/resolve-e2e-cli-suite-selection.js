@@ -15,7 +15,7 @@ function main() {
   const diagnosticOnly = parseBoolean(process.env.LA_E2E_CLI_DIAGNOSTIC_ONLY);
   const runLinux = parseBoolean(process.env.LA_E2E_CLI_RUN_LINUX);
   const runWindows = parseBoolean(process.env.LA_E2E_CLI_RUN_WINDOWS);
-  const executionTopology = String(process.env.LA_E2E_CLI_EXECUTION_TOPOLOGY || 'perSuite').trim();
+  const executionTopology = String(process.env.LA_E2E_CLI_EXECUTION_TOPOLOGY || 'cohort').trim();
   const linuxSelection = process.env.LA_E2E_CLI_LINUX_SUITES ?? 'linux';
   const windowsSelection = process.env.LA_E2E_CLI_WINDOWS_SUITES ?? 'windows';
 
