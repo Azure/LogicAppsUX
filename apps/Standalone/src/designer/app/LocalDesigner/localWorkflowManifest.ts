@@ -154,3 +154,14 @@ export const createLocalWorkflowConnectorService = (httpClient: IHttpClient, reg
         normalizeLocalDisplaySchema(registry.schema(parameters.name, !!isInput)),
     },
   });
+
+export const createStandardWorkflowConnectorService = (httpClient: IHttpClient) =>
+  new StandardConnectorService({
+    baseUrl: '/url',
+    apiVersion: '2018-11-01',
+    httpClient,
+    getConfiguration: async () => ({}),
+    clientSupportedOperations: [],
+    valuesClient: {},
+    schemaClient: {},
+  });

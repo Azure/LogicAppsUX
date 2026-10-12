@@ -281,6 +281,37 @@ describe('offline local workflow registry', () => {
     expect(storage.setItem).not.toHaveBeenCalled();
   });
 
+  it.each(['code', 'c%6Fde'])('refuses literal credentials in structured query maps: %s', async (key) => {
+    const plan = makePlan();
+    plan.child.definition.actions!.Call_service = {
+      type: 'Http',
+      inputs: { method: 'POST', uri: 'https://example.test/api/run', queries: { [key]: 'literal-function-key' } },
+      runAfter: {},
+    };
+    const service = createRegistry().createService('ExtractSelection.json', 'ExtractSelection');
+    expect(() => service.prepare!(plan)).toThrow('credential');
+    await expect(service.commit(request(plan))).rejects.toThrow('credential');
+    expect(storage.setItem).not.toHaveBeenCalled();
+  });
+
+  it('allows safe references in structured query maps and ordinary payload fields with credential-like names', async () => {
+    const safePlan = makePlan();
+    safePlan.child.definition.actions!.Call_service = {
+      type: 'Http',
+      inputs: {
+        method: 'POST',
+        uri: 'https://example.test/api/run',
+        queries: { code: "@appsetting('FunctionKey')" },
+        body: { code: 'ordinary-business-value' },
+      },
+      runAfter: {},
+    };
+    const safeService = createRegistry().createService('ExtractSelection.json', 'ExtractSelection');
+    const cleanup = safeService.prepare!(safePlan);
+    await expect(safeService.commit(request(safePlan))).resolves.toMatchObject({ status: 'completed' });
+    cleanup();
+  });
+
   it('persists connection metadata, managed identity, settings, and parameter references without resolving them', async () => {
     const plan = makePlan();
     const references = {

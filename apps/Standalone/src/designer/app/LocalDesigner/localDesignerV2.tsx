@@ -4,7 +4,11 @@ import { CustomConnectionParameterEditorService } from './customConnection/custo
 import { CustomEditorService } from './customEditorService';
 import { HttpClient } from './httpClient';
 import { PseudoCommandBarV2 } from './pseudoCommandBar';
-import { createLocalWorkflowConnectorService, LocalWorkflowManifestService } from './localWorkflowManifest';
+import {
+  createLocalWorkflowConnectorService,
+  createStandardWorkflowConnectorService,
+  LocalWorkflowManifestService,
+} from './localWorkflowManifest';
 import { localWorkflowPrefix, localWorkflowRegistry } from './localWorkflowRegistry';
 import {
   StandardConnectionService,
@@ -80,6 +84,7 @@ const operationManifestServiceLocal = new LocalWorkflowManifestService(
   localWorkflowRegistry
 );
 const connectorServiceLocal = createLocalWorkflowConnectorService(httpClient, localWorkflowRegistry);
+const connectorServiceStandard = createStandardWorkflowConnectorService(httpClient);
 
 const operationManifestServiceConsumption = new ConsumptionOperationManifestService({
   apiVersion: '2018-11-01',
@@ -249,7 +254,7 @@ export const LocalDesigner = () => {
         : enableWorkflowExtraction
           ? operationManifestServiceLocal
           : operationManifestServiceStandard,
-      connectorService: enableWorkflowExtraction ? connectorServiceLocal : undefined,
+      connectorService: enableWorkflowExtraction ? connectorServiceLocal : connectorServiceStandard,
       workflowExtractionService,
       searchService: isConsumption ? searchServiceConsumption : searchServiceStandard,
       oAuthService,

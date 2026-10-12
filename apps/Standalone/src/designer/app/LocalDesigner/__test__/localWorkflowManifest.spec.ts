@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+  ConnectorService,
   InitConnectorService,
   InitOperationManifestService,
   SchemaProcessor,
@@ -11,6 +12,7 @@ import {
 import { HttpClient } from '../httpClient';
 import {
   createLocalWorkflowConnectorService,
+  createStandardWorkflowConnectorService,
   LocalWorkflowManifestService,
   localWorkflowManifest,
   localWorkflowOperation,
@@ -180,6 +182,19 @@ describe('offline Standard workflow manifest', () => {
     }
     expect(post).not.toHaveBeenCalled();
     cleanup();
+  });
+
+  it('restores the regular Standard connector service after workflow extraction is disabled', () => {
+    const http = new HttpClient();
+    const registry = new LocalWorkflowRegistry(() => ({ getItem: () => null, setItem: () => undefined }));
+    const localService = createLocalWorkflowConnectorService(http, registry);
+    const standardService = createStandardWorkflowConnectorService(http);
+
+    InitConnectorService(localService);
+    expect(ConnectorService()).toBe(localService);
+
+    InitConnectorService(standardService);
+    expect(ConnectorService()).toBe(standardService);
   });
 
   it('evicts the actual input/output query keys before prepare and after a failed commit, then reloads changed schemas', async () => {

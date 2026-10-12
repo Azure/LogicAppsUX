@@ -53,15 +53,22 @@ const credentialQueryParameterNames = new Set([
   'xfunctionskey',
   'ocpapimsubscriptionkey',
 ]);
+const isCredentialQueryParameterName = (value: string): boolean => {
+  let decodedValue = value;
+  try {
+    decodedValue = decodeURIComponent(value.replace(/\+/g, ' '));
+  } catch {
+    // Preserve malformed names for the normal comparison rather than weakening validation.
+  }
+  return credentialQueryParameterNames.has(normalize(decodedValue).replace(/[-_\s]/g, ''));
+};
 const containsCredentialQueryParameter = (value: string): boolean => {
   const queryStart = value.indexOf('?');
   if (queryStart < 0) {
     return false;
   }
   const query = value.slice(queryStart + 1).split('#', 1)[0];
-  return Array.from(new URLSearchParams(query).keys()).some((key) =>
-    credentialQueryParameterNames.has(normalize(key).replace(/[-_\s]/g, ''))
-  );
+  return Array.from(new URLSearchParams(query).keys()).some(isCredentialQueryParameterName);
 };
 const containsCredentialUrlUserInfo = (value: string): boolean => {
   try {
@@ -174,7 +181,7 @@ function assertSafeWorkflow(workflow: Workflow): void {
     );
     return values.length > 0 && values.every((entry) => isSafeCredentialReference(entry, new Set([...seen, name])));
   };
-  const inspect = (value: unknown): void => {
+  const inspect = (value: unknown, parentKey?: string, grandparentKey?: string): void => {
     if (typeof value === 'string') {
       if (
         /SharedAccessSignature=|AccountKey=|Bearer\s+\S+|-----BEGIN .*PRIVATE KEY-----/i.test(value) ||
@@ -184,12 +191,19 @@ function assertSafeWorkflow(workflow: Workflow): void {
         throw new Error('Offline extraction cannot store credential-bearing workflows.');
       }
     } else if (Array.isArray(value)) {
-      value.forEach(inspect);
+      value.forEach((child) => inspect(child, parentKey, grandparentKey));
     } else if (isRecord(value)) {
       for (const [key, child] of Object.entries(value)) {
         const normalizedKey = normalize(key).replace(/[-_\s]/g, '');
         if (normalize(key) === 'authentication') {
           assertSafeAuthentication(child, isSafeCredentialReference);
+        } else if (
+          normalize(parentKey ?? '') === 'queries' &&
+          normalize(grandparentKey ?? '') === 'inputs' &&
+          isCredentialQueryParameterName(key) &&
+          !isSafeCredentialReference(child)
+        ) {
+          throw new Error('Offline extraction cannot store credential-bearing workflows. Reference app settings or parameters instead.');
         } else if (
           (/password|secret|credential|authorization|access.?token|api.?key|connectionstring|^pfx$/i.test(key) ||
             /^(cookie|setcookie|xfunctionskey|ocpapimsubscriptionkey|subscriptionkey|xapikey)$/.test(normalizedKey)) &&
@@ -201,7 +215,7 @@ function assertSafeWorkflow(workflow: Workflow): void {
         if (key === 'type' && typeof child === 'string' && /^secure/i.test(child)) {
           throw new Error('Offline extraction cannot store secure workflow parameters.');
         }
-        inspect(child);
+        inspect(child, key, parentKey);
       }
     }
   };
