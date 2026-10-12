@@ -146,6 +146,17 @@ failure screenshots separate from required evidence, and add source/readiness
 controls that prevent required checkpoints from being removed, reordered or
 weakened.
 
+Step-heavy suites must also publish a deterministic artifact-local evidence
+report and machine-readable manifest. Define the canonical sequence from the
+actual production interaction order, correlate every step with its PNG and
+semantic JSON sidecar, and require the sidecar's internal checkpoint identity
+to match the catalog entry. The report must expose missing, ambiguous, invalid,
+mismatched, disabled or rejected evidence without treating diagnostic captures
+as semantic credit. Keep retries and other non-catalog captures in a separate
+diagnostics section. Generate the report for failed and incomplete runs so it
+remains useful for investigation, but never use it to replace the suite's
+strict result, phase, cleanup or process-closure gates.
+
 `WorkspaceConfiguration` is a snapshot. After awaiting `update`, call
 `workspace.getConfiguration` again before checking the effective value.
 

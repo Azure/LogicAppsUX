@@ -179,6 +179,22 @@ Native acceptance requires the source-bound compiled producer artifact and
 actual Windows and Linux isolated consumer runs with their generated fixture,
 raw CLI results, saved-definition snapshot and accepted screenshots.
 
+The staged `httpTimeoutLifecycle` diagnostics artifact also writes
+`HTTP_TIMEOUT_LIFECYCLE_EVIDENCE.md` and
+`HTTP_TIMEOUT_LIFECYCLE_EVIDENCE.json` at the artifact root. The Markdown report
+orders the 38 expected checkpoints across workspace setup, Scenario 1 PT1S
+execution, Scenario 2 PT24H/`InvalidString` validation, and Scenario 3 Compose
+native-editor validation. Every step correlates the user/test action and expected
+proof with an artifact-local PNG link and its semantic JSON sidecar, including
+classification, verdict, and reason codes when available. Bounded retries and
+other non-catalog captures appear in a separate diagnostic-extras section.
+Generation runs after results and screenshots are staged and still publishes a
+useful report when a run is failed or incomplete, explicitly marking missing,
+ambiguous, invalid, mismatched, disabled, or rejected evidence. The report consumes only
+allowlisted structured result/admission/sidecar fields and never raw logs. It is
+traceability output only: the existing ordered phase, process-closure, cleanup,
+and accepted-evidence gates remain authoritative.
+
 The reopened host runs the three Standard VS Code scenarios sequentially:
 
 1. The first workflow authors Request + HTTP through Designer Settings with

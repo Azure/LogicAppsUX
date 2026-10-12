@@ -671,6 +671,14 @@ jobs:
             Copy-Item (Join-Path $screenshotsRoot '*') -Destination $screenshotDestination -Recurse -Force -ErrorAction Stop
           }
 
+          if ('${{ parameters.suiteId }}' -eq 'httpTimeoutLifecycle') {
+            node "$(Build.SourcesDirectory)/apps/vs-code-designer/scripts/http-timeout-lifecycle-evidence.js" `
+              --artifact-root "$diagnosticsRoot"
+            if ($LASTEXITCODE -ne 0) {
+              throw 'HTTP timeout lifecycle evidence report generation failed.'
+            }
+          }
+
           if (Test-Path $workspaceSnapshotsRoot) {
             Get-ChildItem -Path $workspaceSnapshotsRoot -Force -ErrorAction Stop | Copy-Item -Destination $workspaceDestination -Recurse -Force -ErrorAction Stop
           }

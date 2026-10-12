@@ -62,6 +62,7 @@ testDiagnosticsStagingScriptHandlesDirectSuiteLayout({
   expectedPrivateFailure: 'incomplete-or-unclean-execution',
 });
 testPrivateTraceabilityConfigurationContract();
+testHttpTimeoutEvidencePipelineContract();
 testDiagnosticsStagingScriptPreservesEvidenceBeforeFailing();
 
 console.log('[pipeline-contract.unit] all tests passed');
@@ -1969,19 +1970,18 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
               assertionIdentities: ['launch-configuration-name-ends-with-created-logic-app-name'],
             },
           ];
-    if (options.privatePlatform || options.msn) {
+    if (options.privatePlatform || options.msn || options.http) {
       const scriptsRoot = path.join(sourcesDirectory, 'apps', 'vs-code-designer', 'scripts');
       fs.mkdirSync(scriptsRoot, { recursive: true });
       fs.mkdirSync(agentTempDirectory, { recursive: true });
-      for (const file of [
-        'enrich-e2e-traceability.js',
-        'ogf-e2e-registry.js',
-        'e2e-cli-batch.js',
-        'e2e-cli-terminal.js',
-        'workspace-prompt-cancel.js',
-      ]) {
+      const scripts = options.http
+        ? ['http-timeout-lifecycle-evidence.js']
+        : ['enrich-e2e-traceability.js', 'ogf-e2e-registry.js', 'e2e-cli-batch.js', 'e2e-cli-terminal.js', 'workspace-prompt-cancel.js'];
+      for (const file of scripts) {
         fs.copyFileSync(path.join(__dirname, file), path.join(scriptsRoot, file));
       }
+    }
+    if (options.privatePlatform || options.msn) {
       const scenario = OGF_E2E_SCENARIOS[0];
       fs.writeFileSync(
         path.join(agentTempDirectory, `e2e-traceability-crosswalk-${suiteId}.json`),
@@ -2278,6 +2278,16 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
         '{"processExitVerified":false,"filesystemCleanupVerified":false}\n',
         'HTTP teardown evidence must remain published even when it is nested beside the suite profile logs'
       );
+      const reportPath = path.join(diagnosticsRoot, 'HTTP_TIMEOUT_LIFECYCLE_EVIDENCE.md');
+      const manifestPath = path.join(diagnosticsRoot, 'HTTP_TIMEOUT_LIFECYCLE_EVIDENCE.json');
+      assert.ok(fs.existsSync(reportPath), 'HTTP timeout Markdown evidence must be retained at the artifact root');
+      assert.ok(fs.existsSync(manifestPath), 'HTTP timeout machine-readable evidence must be retained at the artifact root');
+      const evidenceManifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+      assert.strictEqual(evidenceManifest.canonicalStepCount, 38);
+      assert.strictEqual(evidenceManifest.summary.testResult.outcome, 'failure');
+      assert.strictEqual(evidenceManifest.groups[0].steps[0].status, 'missing');
+      assert.strictEqual(evidenceManifest.diagnosticExtras.length, 1);
+      assert.match(fs.readFileSync(reportPath, 'utf8'), /Additional diagnostic screenshots/);
     }
     assertScreenshotSidecarFixturePreserved(path.join(diagnosticsRoot, 'screenshots'), screenshotFixture);
     assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'generated-workspaces', 'index.md')));
@@ -2329,6 +2339,22 @@ function testPrivateTraceabilityConfigurationContract() {
   assert.match(template, /--build-id "\$\(Build\.BuildId\)"/);
   assert.match(template, /--platform '\$\{\{ parameters\.platform \}\}'/);
   assert.match(template, /--vscode-version "\$\(\$admissionContext\.resolvedVSCodeBuild\)"/);
+}
+
+function testHttpTimeoutEvidencePipelineContract() {
+  const template = read('.config/templates/vscode-e2e-cli-run-suite.yml');
+  const screenshotCopy = template.indexOf("Copy-Item (Join-Path $screenshotsRoot '*') -Destination $screenshotDestination");
+  const suiteGuard = template.indexOf("if ('${{ parameters.suiteId }}' -eq 'httpTimeoutLifecycle')", screenshotCopy);
+  const generator = template.indexOf('scripts/http-timeout-lifecycle-evidence.js', suiteGuard);
+  const missingEvidenceFailure = template.indexOf('if ($missingRequiredFiles.Count -gt 0)', generator);
+  const strictAcceptance = template.indexOf('scripts/family-lifecycle-terminal.js', generator);
+  assert.ok(screenshotCopy >= 0 && screenshotCopy < suiteGuard, 'Screenshots must be staged before report generation');
+  assert.ok(suiteGuard >= 0 && suiteGuard < generator, 'Generator must be scoped to httpTimeoutLifecycle');
+  assert.ok(generator < missingEvidenceFailure, 'Incomplete runs must publish the report before staging fails closed');
+  assert.ok(generator < strictAcceptance, 'The report must not replace or follow strict lifecycle acceptance');
+  assert.strictEqual((template.match(/scripts\/http-timeout-lifecycle-evidence\.js/g) || []).length, 1);
+  assert.match(template, /--artifact-root "\$diagnosticsRoot"/);
+  assert.match(template, /throw 'HTTP timeout lifecycle evidence report generation failed\.'/);
 }
 
 function testDiagnosticsStagingScriptPreservesEvidenceBeforeFailing() {
