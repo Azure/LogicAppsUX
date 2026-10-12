@@ -259,6 +259,8 @@ function createSuiteContext({ batchRoot, suite, index, total, now = Date.now() }
   const workspaceRoot = ensureDirectory(path.join(suiteRoot, 'workspaces'));
   const reportsRoot = ensureDirectory(path.join(suiteRoot, 'reports'));
   const lifecycleRoot = ensureDirectory(path.join(suiteRoot, 'lifecycle'));
+  const evidenceDir = ensureDirectory(path.join(reportsRoot, 'ordered-evidence'));
+  const evidenceInvocation = `${suite.id}-${crypto.randomUUID()}`;
   const resultPath = path.join(reportsRoot, 'suite-result.json');
   const terminalResultPath = path.join(reportsRoot, 'suite-terminal-result.json');
   const cleanupLedgerPath = path.join(reportsRoot, 'suite-cleanup-ledger.json');
@@ -278,6 +280,8 @@ function createSuiteContext({ batchRoot, suite, index, total, now = Date.now() }
     workspaceRoot,
     reportsRoot,
     lifecycleRoot,
+    evidenceDir,
+    evidenceInvocation,
     resultPath,
     terminalResultPath,
     cleanupLedgerPath,
@@ -307,6 +311,9 @@ function buildSuiteEnvironment(baseEnv, context, extraEnv = {}) {
       : {}),
     LA_E2E_CLI_BATCH_MODE: '1',
     LA_E2E_CLI_BATCH_SUITE_ID: context.id,
+    LA_E2E_CLI_EVIDENCE_SUITE_ID: context.id,
+    LA_E2E_CLI_EVIDENCE_DIR: context.evidenceDir,
+    LA_E2E_CLI_EVIDENCE_INVOCATION: context.evidenceInvocation,
     LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: context.runtimeRoot,
     LA_E2E_CLI_USER_DATA_PARENT: context.userDataParent,
     LA_E2E_CLI_EXTENSIONS_DIR: context.extensionsDir,

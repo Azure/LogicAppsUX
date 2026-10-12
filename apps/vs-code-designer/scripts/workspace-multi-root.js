@@ -1,4 +1,4 @@
-/* global __dirname, console, module, process, require, setTimeout, clearTimeout */
+/* global Buffer, __dirname, console, module, process, require, setTimeout, clearTimeout */
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
 const { createHash, randomUUID } = require('node:crypto');
@@ -291,6 +291,7 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, 
     const bootstrapCode = await runVscodeTest(['--label', 'runtimeDependencyBootstrap'], {
       extraEnv: {
         ...phaseEnv,
+        LA_E2E_CLI_ORDERED_EVIDENCE_ENABLED: '0',
         LA_E2E_CLI_INCLUDE_RUNTIME_DEPENDENCY_BOOTSTRAP: '1',
         LA_E2E_CLI_MULTI_ROOT_BOOTSTRAP_CONTEXT: JSON.stringify(context),
         LA_E2E_CLI_MULTI_ROOT_BOOTSTRAP_ATTESTATION: bootstrapAttestationPath,
@@ -319,6 +320,7 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, 
       multiRootCreatePhase: true,
       extraEnv: {
         ...phaseEnv,
+        LA_E2E_CLI_ORDERED_EVIDENCE_ENABLED: '0',
         LA_E2E_CLI_CREATE_WORKSPACE_CASE: 'standard-stateful',
         LA_E2E_CLI_PRESERVE_WORKSPACES: '1',
         LA_E2E_CLI_MULTI_ROOT_CONTEXT: JSON.stringify(context),

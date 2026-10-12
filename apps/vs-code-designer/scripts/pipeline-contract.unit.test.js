@@ -7,6 +7,13 @@ const os = require('os');
 const path = require('path');
 const { SUITE_ALIASES, SUITE_REGISTRY } = require('./e2e-cli-batch');
 const { OGF_E2E_SCENARIOS, getOgfScenariosForPhase } = require('./ogf-e2e-registry');
+const {
+  declareMultiRootEvidenceCheckpoints,
+  initializeSuiteEvidenceManifest,
+  manifestFileName,
+  recordScreenshotMetadata,
+} = require('./vscode-e2e-evidence-manifest');
+const { getSuiteDescriptor } = require('./vscode-e2e-evidence-plans');
 
 const repoRoot = path.resolve(__dirname, '..', '..', '..');
 
@@ -1041,6 +1048,8 @@ function testSupplementaryFamilyRoutingContract() {
     const multiRootEnvironment = nativeStep.env["${{ if eq(parameters.suiteId, 'workspaceMultiRoot') }}"];
     assert.strictEqual(multiRootEnvironment?.LA_E2E_CLI_MULTI_ROOT_ISOLATED, '1');
     assert.strictEqual(multiRootEnvironment?.LA_E2E_CLI_MULTI_ROOT_DIAGNOSTIC_ONLY, '1');
+    assert.strictEqual(nativeStep.env.LA_E2E_CLI_EVIDENCE_SUITE_ID, '${{ parameters.suiteId }}');
+    assert.match(nativeStep.env.LA_E2E_CLI_EVIDENCE_DIR, /\.vscode-test[\\/]evidence[\\/]\$\{\{ parameters\.suiteId \}\}$/);
   }
   const staging = suiteSteps.find((step) => step.displayName === 'Stage vscode-test CLI results (${{ parameters.suiteId }})');
   assert.ok(
@@ -1066,11 +1075,15 @@ function testSupplementaryFamilyRoutingContract() {
     "'phase-results.jsonl'",
     "'code.log'",
     "'prompt-observations.jsonl'",
-    "'screenshots', 'vscode-logs'",
     "'vscode-logs'",
   ]) {
     assert.ok(staging.pwsh.includes(evidencePattern), `Regeneration staging must preserve ${evidencePattern}`);
   }
+  assert.ok(
+    staging.pwsh.includes('scripts/stage-vscode-e2e-evidence.js'),
+    'Ordered evidence screenshots must be staged by the cross-platform manifest allowlist'
+  );
+  assert.ok(!staging.pwsh.includes("Copy-Item (Join-Path $screenshotsRoot '*')"));
   assert.ok(!staging.pwsh.includes("Name -like '*-code.log'"), 'Raw per-phase Code logs must never enter the diagnostics artifact');
   assert.ok(!staging.pwsh.includes("Name -like '*-profile.json'"), 'Raw profile descriptors must never enter the diagnostics artifact');
   assert.match(
@@ -1976,6 +1989,9 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
     fs.mkdirSync(agentTempDirectory, { recursive: true });
     const scripts = [
       'vscode-e2e-evidence-report.js',
+      'vscode-e2e-evidence-manifest.js',
+      'vscode-e2e-evidence-plans.js',
+      'stage-vscode-e2e-evidence.js',
       'e2e-cli-batch.js',
       ...(options.privatePlatform || options.msn
         ? ['enrich-e2e-traceability.js', 'ogf-e2e-registry.js', 'e2e-cli-terminal.js', 'workspace-prompt-cancel.js']
@@ -2085,6 +2101,12 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
       );
     }
     const screenshotFixture = writeScreenshotSidecarFixture(screenshotsRoot);
+    const orderedEvidenceFixture = writeOrderedEvidenceFixture({
+      extensionRoot: path.join(sourcesDirectory, 'apps', 'vs-code-designer'),
+      suiteId,
+      outcome: options.http ? 'failure' : 'success',
+      diagnosticFixture: screenshotFixture,
+    });
     fs.writeFileSync(path.join(workspaceSnapshotsRoot, 'index.md'), '# redacted workspace\n');
     if (options.privatePlatform) {
       const cancelRoot = path.join(sourcesDirectory, 'apps', 'vs-code-designer', '.vscode-test', 'workspace-cancel');
@@ -2293,11 +2315,11 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
       const evidenceManifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
       assert.strictEqual(evidenceManifest.canonicalStepCount, 38);
       assert.strictEqual(evidenceManifest.summary.testResult.outcome, 'failure');
-      assert.strictEqual(evidenceManifest.groups[0].steps[0].status, 'missing');
+      assert.strictEqual(evidenceManifest.groups[0].steps[0].status, 'not-reached');
       assert.strictEqual(evidenceManifest.diagnosticExtras.length, 1);
       assert.match(fs.readFileSync(reportPath, 'utf8'), /Additional diagnostic screenshots/);
     }
-    assertScreenshotSidecarFixturePreserved(path.join(diagnosticsRoot, 'screenshots'), screenshotFixture);
+    assertOrderedEvidenceFixturePreserved(diagnosticsRoot, orderedEvidenceFixture);
     assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'generated-workspaces', 'index.md')));
     if (options.msn) {
       const stagedCleanup = fs.readFileSync(path.join(diagnosticsRoot, 'log', cleanupReportName), 'utf8');
@@ -2351,18 +2373,16 @@ function testPrivateTraceabilityConfigurationContract() {
 
 function testGenericEvidencePipelineContract() {
   const template = read('.config/templates/vscode-e2e-cli-run-suite.yml');
-  const screenshotCopy = template.indexOf("Copy-Item (Join-Path $screenshotsRoot '*') -Destination $screenshotDestination");
-  const regenerationStaging = template.indexOf("if ('${{ parameters.suiteId }}' -eq 'workspaceArtifactRegeneration')", screenshotCopy);
+  const regenerationStaging = template.indexOf("if ('${{ parameters.suiteId }}' -eq 'workspaceArtifactRegeneration')");
   const multiRootStaging = template.indexOf("if ('${{ parameters.suiteId }}' -eq 'workspaceMultiRoot')", regenerationStaging);
-  const generator = template.indexOf('scripts/vscode-e2e-evidence-report.js', multiRootStaging);
+  const manifestStaging = template.indexOf('scripts/stage-vscode-e2e-evidence.js', multiRootStaging);
+  const generator = template.indexOf('scripts/vscode-e2e-evidence-report.js', manifestStaging);
   const missingEvidenceFailure = template.indexOf('if ($missingRequiredFiles.Count -gt 0)', generator);
   const strictAcceptance = template.indexOf('scripts/family-lifecycle-terminal.js', generator);
-  assert.ok(
-    screenshotCopy >= 0 && screenshotCopy < regenerationStaging,
-    'Primary screenshots must be staged before suite-specific evidence'
-  );
+  assert.doesNotMatch(template, /Copy-Item \(Join-Path \$screenshotsRoot '\*'\)/);
   assert.ok(regenerationStaging < multiRootStaging, 'Regeneration staging must precede multi-root staging');
-  assert.ok(multiRootStaging < generator, 'All suite-specific evidence must be staged before report generation');
+  assert.ok(multiRootStaging < manifestStaging, 'Suite diagnostics must precede ordered evidence staging');
+  assert.ok(manifestStaging < generator, 'Manifest allowlisting must precede report generation');
   assert.ok(generator < missingEvidenceFailure, 'Incomplete runs must publish the report before staging fails closed');
   assert.ok(generator < strictAcceptance, 'The report must not replace or follow strict lifecycle acceptance');
   assert.strictEqual((template.match(/scripts\/vscode-e2e-evidence-report\.js/g) || []).length, 1);
@@ -2373,6 +2393,7 @@ function testGenericEvidencePipelineContract() {
   );
   assert.match(template, /--suite-id '\$\{\{ parameters\.suiteId \}\}'/);
   assert.match(template, /--artifact-root "\$diagnosticsRoot"/);
+  assert.match(template, /--evidence-manifest "\$diagnosticsRoot\/suite-evidence-manifest\.json"/);
   assert.match(template, /throw 'VS Code CLI evidence report generation failed\.'/);
   const coreGuardStart = template.indexOf("if ('${{ parameters.suiteId }}' -eq 'createWorkspaceCoreMatrix')");
   const coreGuardEnd = template.indexOf("if ('${{ parameters.suiteId }}' -eq 'workspaceMultiRoot')", coreGuardStart);
@@ -2412,7 +2433,13 @@ function testAllPlatformLaneEvidenceStagingFixtures() {
       for (const directory of [scriptsRoot, resultRoot, screenshotsRoot, vscodeLogsRoot, workspaceRoot, agentTempDirectory]) {
         fs.mkdirSync(directory, { recursive: true });
       }
-      for (const file of ['vscode-e2e-evidence-report.js', 'e2e-cli-batch.js']) {
+      for (const file of [
+        'vscode-e2e-evidence-report.js',
+        'vscode-e2e-evidence-manifest.js',
+        'vscode-e2e-evidence-plans.js',
+        'stage-vscode-e2e-evidence.js',
+        'e2e-cli-batch.js',
+      ]) {
         fs.copyFileSync(path.join(__dirname, file), path.join(scriptsRoot, file));
       }
       fs.writeFileSync(
@@ -2443,6 +2470,13 @@ function testAllPlatformLaneEvidenceStagingFixtures() {
       fs.writeFileSync(path.join(resultRoot, `${lane.suiteId}.log`), 'sanitized lane fixture\n');
       fs.writeFileSync(path.join(vscodeLogsRoot, 'profile.log'), 'sanitized profile fixture\n');
       fs.writeFileSync(path.join(workspaceRoot, 'index.md'), '# workspace fixture\n');
+      const laneScreenshotFixture = writeScreenshotSidecarFixture(screenshotsRoot);
+      writeOrderedEvidenceFixture({
+        extensionRoot,
+        suiteId: lane.suiteId,
+        outcome: 'failure',
+        diagnosticFixture: laneScreenshotFixture,
+      });
 
       if (lane.suiteId === 'createWorkspaceCoreMatrix') {
         const cancelRoot = path.join(extensionRoot, '.vscode-test', 'workspace-cancel');
@@ -2562,7 +2596,13 @@ function testDiagnosticsStagingScriptPreservesEvidenceBeforeFailing() {
     const scriptsRoot = path.join(sourcesDirectory, 'apps', 'vs-code-designer', 'scripts');
     const resultRoot = path.join(sourcesDirectory, 'apps', 'vs-code-designer', '.vscode-test', 'results');
     fs.mkdirSync(scriptsRoot, { recursive: true });
-    for (const file of ['vscode-e2e-evidence-report.js', 'e2e-cli-batch.js']) {
+    for (const file of [
+      'vscode-e2e-evidence-report.js',
+      'vscode-e2e-evidence-manifest.js',
+      'vscode-e2e-evidence-plans.js',
+      'stage-vscode-e2e-evidence.js',
+      'e2e-cli-batch.js',
+    ]) {
       fs.copyFileSync(path.join(__dirname, file), path.join(scriptsRoot, file));
     }
     fs.mkdirSync(resultRoot, { recursive: true });
@@ -2582,6 +2622,12 @@ function testDiagnosticsStagingScriptPreservesEvidenceBeforeFailing() {
     fs.mkdirSync(workspaceSnapshotsRoot, { recursive: true });
     fs.writeFileSync(path.join(vscodeLogsRoot, 'profile.log'), 'already redacted log\n');
     const screenshotFixture = writeScreenshotSidecarFixture(screenshotsRoot);
+    const orderedEvidenceFixture = writeOrderedEvidenceFixture({
+      extensionRoot: path.join(sourcesDirectory, 'apps', 'vs-code-designer'),
+      suiteId,
+      outcome: 'failure',
+      diagnosticFixture: screenshotFixture,
+    });
     fs.writeFileSync(path.join(workspaceSnapshotsRoot, 'index.md'), '# redacted workspace\n');
 
     const result = runPowerShellScript(
@@ -2606,7 +2652,7 @@ function testDiagnosticsStagingScriptPreservesEvidenceBeforeFailing() {
     assert.doesNotMatch(sanitizedLog, /raw-token|secret-sas/);
     assert.match(sanitizedLog, /<redacted>/);
     assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'log', 'vscode-logs', 'profile.log')));
-    assertScreenshotSidecarFixturePreserved(path.join(diagnosticsRoot, 'screenshots'), screenshotFixture);
+    assertOrderedEvidenceFixturePreserved(diagnosticsRoot, orderedEvidenceFixture);
     assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'generated-workspaces', 'index.md')));
   } finally {
     fs.rmSync(tempRoot, { recursive: true, force: true });
@@ -2641,11 +2687,91 @@ function writeScreenshotSidecarFixture(screenshotsRoot) {
   };
 }
 
-function assertScreenshotSidecarFixturePreserved(screenshotsRoot, fixture) {
-  const pngPath = path.join(screenshotsRoot, fixture.relativeDirectory, fixture.fileName);
-  const sidecarPath = path.join(screenshotsRoot, fixture.relativeDirectory, fixture.sidecarName);
-  assert.deepStrictEqual(fs.readFileSync(pngPath), fixture.pngBytes);
-  assert.strictEqual(fs.readFileSync(sidecarPath, 'utf-8'), fixture.sidecarJson);
+function writeOrderedEvidenceFixture({ extensionRoot, suiteId, outcome, diagnosticFixture }) {
+  const evidenceDir = path.join(extensionRoot, '.vscode-test', 'evidence', suiteId);
+  const manifestPath = path.join(evidenceDir, manifestFileName);
+  initializeSuiteEvidenceManifest({
+    suiteId,
+    invocation: `pipeline-contract-${suiteId}`,
+    platform: 'linux',
+    evidenceDir,
+    expectedPhaseIds: SUITE_REGISTRY[suiteId].expectedPhases,
+  });
+  if (suiteId === 'workspaceMultiRoot') {
+    declareMultiRootEvidenceCheckpoints({
+      manifestPath,
+      rootLabels: ['alpha', 'zeta', 'omega'],
+      expectedInvocation: `pipeline-contract-${suiteId}`,
+    });
+  }
+  const sourceRoot = path.join(extensionRoot, '.vscode-test', 'ordered-evidence-fixture-source', suiteId);
+  fs.mkdirSync(sourceRoot, { recursive: true });
+  const checkpoints = getSuiteDescriptor(suiteId)
+    .buildCatalog({})
+    .flatMap((group) => group.steps);
+  if (suiteId === 'workspaceMultiRoot') {
+    checkpoints.splice(
+      2,
+      0,
+      ...['01', '02', '03'].map((ordinal) => ({
+        checkpoint: `workspace-multi-root-debug-root-${ordinal}`,
+        expectedClassification: 'evidence',
+      }))
+    );
+  }
+  if (outcome === 'success') {
+    for (const checkpoint of checkpoints) {
+      const metadataPath = path.join(sourceRoot, `${checkpoint.checkpoint}.json`);
+      fs.writeFileSync(path.join(sourceRoot, `${checkpoint.checkpoint}.png`), diagnosticFixture.pngBytes);
+      const metadata = {
+        schemaVersion: 1,
+        checkpoint: checkpoint.checkpoint,
+        phase: 'pipeline-contract',
+        classification: checkpoint.expectedClassification,
+        verdict: checkpoint.expectedClassification === 'diagnostic' ? 'diagnostic' : 'accepted',
+        reasonCodes: [],
+      };
+      fs.writeFileSync(metadataPath, `${JSON.stringify(metadata)}\n`);
+      recordScreenshotMetadata({
+        manifestPath,
+        metadataPath,
+        metadata,
+        expectedInvocation: `pipeline-contract-${suiteId}`,
+      });
+    }
+  } else {
+    const diagnosticRoot = path.join(extensionRoot, '.vscode-test', 'screenshots', 'cli', suiteId, diagnosticFixture.relativeDirectory);
+    const metadataPath = path.join(diagnosticRoot, diagnosticFixture.sidecarName);
+    const metadata = {
+      schemaVersion: 1,
+      checkpoint: path.basename(diagnosticFixture.sidecarName, '.json'),
+      phase: 'pipeline-contract-failure',
+      classification: 'diagnostic',
+      verdict: 'diagnostic',
+      reasonCodes: ['fixture-failure'],
+    };
+    recordScreenshotMetadata({
+      manifestPath,
+      metadataPath,
+      metadata,
+      expectedInvocation: `pipeline-contract-${suiteId}`,
+    });
+  }
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  const reference =
+    outcome === 'success'
+      ? manifest.groups.flatMap((group) => group.checkpoints).find((checkpoint) => checkpoint.evidence)?.evidence.screenshot
+      : manifest.attachments[0].evidence.screenshot;
+  return {
+    path: reference.path,
+    bytes: fs.readFileSync(path.join(evidenceDir, ...reference.path.split('/'))),
+  };
+}
+
+function assertOrderedEvidenceFixturePreserved(diagnosticsRoot, fixture) {
+  assert.deepStrictEqual(fs.readFileSync(path.join(diagnosticsRoot, ...fixture.path.split('/'))), fixture.bytes);
+  assert.ok(fs.existsSync(path.join(diagnosticsRoot, manifestFileName)));
+  assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'ORDERED_EVIDENCE_VALIDATION.json')));
 }
 
 function extractStageDiagnosticsScript(templateText) {

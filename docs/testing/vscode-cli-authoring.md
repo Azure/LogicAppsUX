@@ -146,49 +146,63 @@ failure screenshots separate from required evidence, and add source/readiness
 controls that prevent required checkpoints from being removed, reordered or
 weakened.
 
-Step-heavy suites must also publish a deterministic artifact-local evidence
-report and machine-readable manifest. Define the canonical sequence from the
-actual production interaction order, correlate every step with its PNG and
-semantic JSON sidecar, and require the sidecar's internal checkpoint identity
-to match the catalog entry. The report must expose missing, ambiguous, invalid,
-mismatched, disabled or rejected evidence without treating diagnostic captures
-as semantic credit. Keep retries and other non-catalog captures in a separate
-diagnostics section. Generate the report for failed and incomplete runs so it
-remains useful for investigation, but never use it to replace the suite's
-strict result, phase, cleanup or process-closure gates.
+Every registered CLI suite must publish one versioned ordered-evidence manifest
+for its complete logical invocation. Define the canonical sequence in
+`apps/vs-code-designer/scripts/vscode-e2e-evidence-plans.js` using stable
+semantic checkpoint IDs that exactly match the names passed to the shared
+screenshot helpers. The runner initializes
+`suite-evidence-manifest.json` under `LA_E2E_CLI_EVIDENCE_DIR`, and the shared
+metadata-write boundary in `screenshot.ts` records accepted, failed, disabled,
+and diagnostic outcomes. Do not update manifests from individual test methods
+or create family-specific report logic. Every mutation is fenced by
+`LA_E2E_CLI_EVIDENCE_INVOCATION` under the manifest lock so a surviving host
+from an earlier invocation cannot write into a newer run.
 
-The registered CLI suites use
-`apps/vs-code-designer/scripts/vscode-e2e-evidence-report.js`. Invoke it with
-`--suite-id <SUITE_REGISTRY id>` and `--artifact-root <staged diagnostics
-root>` exactly once, after suite-specific evidence is staged. It always writes
+The evidence directory is a self-contained producer bundle:
+
+- `suite-evidence-manifest.json`;
+- allowlisted public PNG/JSON pairs under `screenshots/`;
+- diagnostic PNG/JSON pairs under `diagnostics/`.
+
+Public sidecars contain only checkpoint, phase, classification, verdict, and
+reason codes. Rich readiness metadata remains private runtime evidence. Failed
+and aborted finalization preserves recorded outcomes and marks pending required
+checkpoints `not-reached`, including the known static portion of a dynamic plan
+that failed before expansion. Successful finalization requires the dynamic plan
+to be complete and every declared checkpoint to have a terminal acceptable
+status.
+
+Helper hosts that do not own the logical suite's checkpoint plan must set
+`LA_E2E_CLI_ORDERED_EVIDENCE_ENABLED=0`. They may still capture private
+diagnostic screenshots, but they must not write their local checkpoint names
+into the parent suite manifest. Re-enable recording only in the phase that owns
+the declared plan.
+
+Never derive checkpoint identity or order from filesystem paths, directory
+enumeration, timestamps, generated run IDs, or lexical sorting. Dynamic suites
+must extend the producer manifest from authoritative semantic data before their
+dynamic captures begin. `workspaceMultiRoot` calls
+`declareMultiRootEvidenceCheckpoints` with ordered display labels and captures
+stable ordinal IDs such as `workspace-multi-root-debug-root-01`; root basenames
+are labels only, never IDs or paths.
+
+CI finalizes and stages the bundle through
+`apps/vs-code-designer/scripts/stage-vscode-e2e-evidence.js`. The staging
+boundary copies only manifest-referenced regular files after containment,
+extension, size, hash, duplicate-reference, and symlink checks. It must not
+bulk-copy screenshot trees or private sidecars. The manifest-only renderer,
+`vscode-e2e-evidence-report.js`, then receives
+`--evidence-manifest <staged suite-evidence-manifest.json>` and writes
 `VS_CODE_CLI_EVIDENCE.md` and `VS_CODE_CLI_EVIDENCE.json`; HTTP timeout also
-writes its historical `HTTP_TIMEOUT_LIFECYCLE_EVIDENCE.*` aliases. Descriptor
-IDs must exactly equal `SUITE_REGISTRY`, and output names are fixed rather than
-derived from command-line text.
+writes its historical `HTTP_TIMEOUT_LIFECYCLE_EVIDENCE.*` aliases. The renderer
+validates and presents the producer contract; it does not construct checkpoint
+plans or scan directories.
 
-Use explicit descriptor modes:
-
-- `catalog` for finite production checkpoint contracts, including startup-only
-  evidence such as the `unitTests` empty-window proof;
-- `dynamic-catalog` only when ordered identities come from a staged structured
-  contract, such as multi-root `final-result.json`.
-
-Never infer canonical order from directory enumeration, timestamps, generated
-run IDs, or lexical sorting. Finite Create Workspace variants follow the
-existing case/phase order. Regeneration is baseline plus six declared variants
-times four checkpoints. Multi-root follows the root array recorded by its final
-result and emits only safe basenames. Stateless history uses stable occurrence
-1/2 checkpoint names while semantic readiness still binds each screenshot to
-the exact callback run.
-
-The report allowlist is intentionally narrow: admitted build/source identity,
-native count/outcome fields, terminal phase status, and screenshot
-classification/verdict/reason codes. Do not add raw logs, exception excerpts,
-absolute paths, runtime roots, credentials, target/frame IDs, event arrays, DOM
-details, auth stores, or arbitrary nested input data. Missing or malformed
-runtime evidence must render as report state; unknown descriptors, invalid
-descriptor definitions, unsafe output paths, and write failures remain
-programmer/output errors.
+The report allowlist remains intentionally narrow. Do not add raw logs,
+exception excerpts, absolute paths, runtime roots, credentials, target/frame
+IDs, event arrays, DOM details, auth stores, or arbitrary nested input data.
+Ordered evidence is explanatory and investigative; it never replaces strict
+native result, phase, test-count, cleanup, process-closure, or terminal gates.
 
 `WorkspaceConfiguration` is a snapshot. After awaiting `update`, call
 `workspace.getConfiguration` again before checking the effective value.

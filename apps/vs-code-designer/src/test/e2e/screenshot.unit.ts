@@ -14,6 +14,7 @@ async function main(): Promise<void> {
 
   testFailureScreenshotHookInstallsOnce(installFailureScreenshotHook);
   await testStableCaptureAccepted(captureCdpScreenshot, screenshotDir);
+  await testAcceptedCaptureUpdatesOrderedEvidenceManifest(captureCdpScreenshot);
   await testTransientInvalidationRetries(captureCdpScreenshot, screenshotDir);
   await testWorkbenchShellStructuralInvalidationRetries(captureCdpScreenshot, screenshotDir);
   await testCaptureRpcFailureRetries(captureCdpScreenshot, screenshotDir);
@@ -53,6 +54,90 @@ async function main(): Promise<void> {
   await testSemanticOwnerFrameMismatchRejects(captureCdpScreenshot);
   await testOwnerActiveTabMismatchRejects(captureCdpScreenshot);
   console.log('[screenshot.unit] all tests passed');
+}
+
+async function testAcceptedCaptureUpdatesOrderedEvidenceManifest(
+  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot
+): Promise<void> {
+  const evidenceDir = fs.mkdtempSync(path.join(os.tmpdir(), 'la-screenshot-evidence-unit-'));
+  const previousEvidenceDir = process.env.LA_E2E_CLI_EVIDENCE_DIR;
+  const previousEvidenceInvocation = process.env.LA_E2E_CLI_EVIDENCE_INVOCATION;
+  const previousEvidenceEnabled = process.env.LA_E2E_CLI_ORDERED_EVIDENCE_ENABLED;
+  const { initializeSuiteEvidenceManifest, manifestFileName, readEvidenceManifest } =
+    require('../../../scripts/vscode-e2e-evidence-manifest') as {
+      initializeSuiteEvidenceManifest: (options: {
+        suiteId: string;
+        invocation: string;
+        platform: string;
+        evidenceDir: string;
+      }) => unknown;
+      manifestFileName: string;
+      readEvidenceManifest: (manifestPath: string) => {
+        attachments: Array<{ id: string }>;
+        groups: Array<{
+          checkpoints: Array<{
+            id: string;
+            status: string;
+            evidence?: {
+              screenshot?: { path: string };
+              sidecar?: { path: string };
+            };
+          }>;
+        }>;
+      };
+    };
+
+  try {
+    initializeSuiteEvidenceManifest({
+      suiteId: 'unitTests',
+      invocation: 'screenshot-bridge-unit',
+      platform: process.platform,
+      evidenceDir,
+    });
+    process.env.LA_E2E_CLI_EVIDENCE_DIR = evidenceDir;
+    process.env.LA_E2E_CLI_EVIDENCE_INVOCATION = 'screenshot-bridge-unit';
+
+    const cdp = new FakeCaptureCdp([snapshot({ revision: 0 }), snapshot({ revision: 0 }), snapshot({ revision: 0 })]);
+    await captureCdpScreenshot(cdp, 'empty-window-startup', {
+      expectation: { kind: 'workbenchShell', label: 'empty-window-startup' },
+      timeoutMs: 5000,
+    });
+
+    const manifest = readEvidenceManifest(path.join(evidenceDir, manifestFileName));
+    const checkpoint = manifest.groups.flatMap((group) => group.checkpoints).find((candidate) => candidate.id === 'empty-window-startup');
+    assert.strictEqual(checkpoint?.status, 'accepted');
+    assert.ok(checkpoint?.evidence?.screenshot?.path);
+    assert.ok(checkpoint?.evidence?.sidecar?.path);
+    assert.ok(fs.existsSync(path.join(evidenceDir, checkpoint?.evidence?.screenshot?.path ?? '')));
+    assert.ok(fs.existsSync(path.join(evidenceDir, checkpoint?.evidence?.sidecar?.path ?? '')));
+
+    process.env.LA_E2E_CLI_ORDERED_EVIDENCE_ENABLED = '0';
+    const helperCdp = new FakeCaptureCdp([snapshot({ revision: 0 }), snapshot({ revision: 0 }), snapshot({ revision: 0 })]);
+    await captureCdpScreenshot(helperCdp, 'helper-host-setup', {
+      expectation: { kind: 'workbenchShell', label: 'helper-host-setup' },
+      timeoutMs: 5000,
+    });
+    const unchanged = readEvidenceManifest(path.join(evidenceDir, manifestFileName));
+    assert.ok(!unchanged.groups.flatMap((group) => group.checkpoints).some((candidate) => candidate.id === 'helper-host-setup'));
+    assert.ok(!unchanged.attachments.some((attachment) => attachment.id === 'helper-host-setup'));
+  } finally {
+    if (previousEvidenceDir === undefined) {
+      Reflect.deleteProperty(process.env, 'LA_E2E_CLI_EVIDENCE_DIR');
+    } else {
+      process.env.LA_E2E_CLI_EVIDENCE_DIR = previousEvidenceDir;
+    }
+    if (previousEvidenceInvocation === undefined) {
+      Reflect.deleteProperty(process.env, 'LA_E2E_CLI_EVIDENCE_INVOCATION');
+    } else {
+      process.env.LA_E2E_CLI_EVIDENCE_INVOCATION = previousEvidenceInvocation;
+    }
+    if (previousEvidenceEnabled === undefined) {
+      Reflect.deleteProperty(process.env, 'LA_E2E_CLI_ORDERED_EVIDENCE_ENABLED');
+    } else {
+      process.env.LA_E2E_CLI_ORDERED_EVIDENCE_ENABLED = previousEvidenceEnabled;
+    }
+    fs.rmSync(evidenceDir, { recursive: true, force: true });
+  }
 }
 
 function testFailureScreenshotHookInstallsOnce(

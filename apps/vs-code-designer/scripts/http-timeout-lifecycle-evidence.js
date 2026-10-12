@@ -6,13 +6,8 @@
 /* global console, module, process, require */
 const fs = require('node:fs');
 const path = require('node:path');
-const {
-  generateVscodeE2eEvidenceReport,
-  getSuiteDescriptor,
-  httpCatalogGroups,
-  parseArgs,
-  _test,
-} = require('./vscode-e2e-evidence-report');
+const { generateVscodeE2eEvidenceReport, parseArgs, _test } = require('./vscode-e2e-evidence-report');
+const { getSuiteDescriptor, httpCatalogGroups } = require('./vscode-e2e-evidence-plans');
 
 function generateHttpTimeoutLifecycleEvidence(options) {
   const result = generateVscodeE2eEvidenceReport({ ...options, suiteId: 'httpTimeoutLifecycle' });
@@ -38,7 +33,7 @@ if (require.main === module) {
       resultPath: options.result,
       terminalResultPath: options['terminal-result'],
       admissionContextPath: options['admission-context'],
-      screenshotsDir: options.screenshots,
+      evidenceManifest: options['evidence-manifest'],
     });
     console.log(`[http-timeout-evidence] Wrote ${path.basename(result.markdownPath)} and ${path.basename(result.manifestPath)}`);
   } catch (error) {

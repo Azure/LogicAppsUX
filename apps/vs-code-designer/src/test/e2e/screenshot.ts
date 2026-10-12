@@ -1436,6 +1436,39 @@ function getMainFrameId(frameTree: unknown): string | undefined {
 function writeScreenshotMetadata(metadataPath: string, metadata: ScreenshotReadinessMetadata): void {
   screenshotFileSystem.mkdirSync(path.dirname(metadataPath), { recursive: true });
   screenshotFileSystem.writeFileSync(metadataPath, `${JSON.stringify(metadata, null, 2)}\n`);
+  recordOrderedEvidenceMetadata(metadataPath, metadata);
+}
+
+function recordOrderedEvidenceMetadata(metadataPath: string, metadata: ScreenshotReadinessMetadata): void {
+  const evidenceDir = process.env.LA_E2E_CLI_EVIDENCE_DIR;
+  const expectedInvocation = process.env.LA_E2E_CLI_EVIDENCE_INVOCATION;
+  if (!evidenceDir || !expectedInvocation || process.env.LA_E2E_CLI_ORDERED_EVIDENCE_ENABLED === '0') {
+    return;
+  }
+  try {
+    const manifestModulePath = path.resolve(__dirname, '..', '..', '..', 'scripts', 'vscode-e2e-evidence-manifest.js');
+    const { manifestFileName, recordScreenshotMetadata } = require(manifestModulePath) as {
+      manifestFileName: string;
+      recordScreenshotMetadata: (options: {
+        manifestPath: string;
+        metadataPath: string;
+        metadata: ScreenshotReadinessMetadata;
+        expectedInvocation: string;
+      }) => void;
+    };
+    recordScreenshotMetadata({
+      manifestPath: path.join(path.resolve(evidenceDir), manifestFileName),
+      metadataPath,
+      metadata,
+      expectedInvocation,
+    });
+  } catch (error) {
+    if (metadata.classification === 'diagnostic') {
+      console.warn(`[screenshot] Ordered diagnostic evidence update failed: ${error instanceof Error ? error.message : String(error)}`);
+      return;
+    }
+    throw error;
+  }
 }
 
 function removeStaleArtifacts(screenshotPath: string, metadataPath: string): void {

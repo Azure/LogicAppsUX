@@ -1,3 +1,4 @@
+/* global process */
 import { defineConfig } from '@vscode/test-cli';
 import { createHash } from 'crypto';
 import * as fs from 'fs';
@@ -263,6 +264,12 @@ function getForwardedTestEnvironment() {
     'LA_E2E_CLI_AZURE_LOCATION_NAME',
     'LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL',
     'LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT',
+    'LA_E2E_CLI_SCREENSHOT_DIR',
+    'LA_E2E_CLI_CAPTURE_FIELD_VALIDATION_SCREENSHOTS',
+    'LA_E2E_CLI_EVIDENCE_DIR',
+    'LA_E2E_CLI_EVIDENCE_INVOCATION',
+    'LA_E2E_CLI_EVIDENCE_SUITE_ID',
+    'LA_E2E_CLI_ORDERED_EVIDENCE_ENABLED',
     'LA_E2E_CLI_CREATE_WORKSPACE_FIXTURE_MANIFEST',
     'LA_E2E_CLI_CREATE_WORKSPACE_PARENT',
     'LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MANIFEST',

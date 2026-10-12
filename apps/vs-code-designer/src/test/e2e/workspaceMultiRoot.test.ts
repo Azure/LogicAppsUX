@@ -102,6 +102,7 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
       createdRoots.push(fs.realpathSync(folder));
     }
     const roots = readLogicAppRoots(workspace.wsFilePath, createdRoots);
+    declareOrderedRootEvidence(roots.map((root) => path.basename(root)));
     await command(workbench, 'View: Show Explorer', phaseDeadline(30000));
     await poll(
       () => readWorkbench(workbench),
@@ -156,7 +157,7 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
     );
     screenshots.push(await capture('workspace-multi-root-reloaded'));
 
-    for (const folder of roots) {
+    for (const [rootIndex, folder] of roots.entries()) {
       const phase = phaseDeadline(180000);
       const launch: { configurations: { name: string; type: string; request: string }[] } = JSON.parse(
         fs.readFileSync(path.join(folder, '.vscode/launch.json'), 'utf8')
@@ -185,7 +186,7 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
         (state) => state.debugToolbar,
         phase
       );
-      screenshots.push(await capture(`workspace-multi-root-debug-${path.basename(folder)}`));
+      screenshots.push(await capture(`workspace-multi-root-debug-root-${String(rootIndex + 1).padStart(2, '0')}`));
       await command(workbench, 'Debug: Stop', phase);
       await poll(
         async () => debugEvents(options.eventsFile).some((event) => event.kind === 'terminated' && event.id === started[0].id),
@@ -198,6 +199,7 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
         phase
       );
     }
+
     const events = debugEvents(options.eventsFile);
     assertSequentialDebug(events, roots);
 
@@ -259,4 +261,27 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
   } finally {
     cdp.dispose();
   }
+}
+
+function declareOrderedRootEvidence(rootLabels: string[]): void {
+  const evidenceDir = process.env.LA_E2E_CLI_EVIDENCE_DIR;
+  if (!evidenceDir) {
+    throw new Error('workspaceMultiRoot requires LA_E2E_CLI_EVIDENCE_DIR before declaring ordered root evidence');
+  }
+  const manifestModulePath = path.resolve(__dirname, '..', '..', '..', 'scripts', 'vscode-e2e-evidence-manifest.js');
+  const { declareMultiRootEvidenceCheckpoints, manifestFileName } = require(manifestModulePath) as {
+    manifestFileName: string;
+    declareMultiRootEvidenceCheckpoints: (options: {
+      manifestPath: string;
+      rootLabels: string[];
+      expectedInvocation: string;
+    }) => void;
+  };
+  const expectedInvocation = process.env.LA_E2E_CLI_EVIDENCE_INVOCATION;
+  assert.ok(expectedInvocation, 'workspaceMultiRoot ordered evidence requires an invocation identity');
+  declareMultiRootEvidenceCheckpoints({
+    manifestPath: path.join(path.resolve(evidenceDir), manifestFileName),
+    rootLabels,
+    expectedInvocation,
+  });
 }

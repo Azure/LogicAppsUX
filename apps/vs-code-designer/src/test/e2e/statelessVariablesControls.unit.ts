@@ -946,6 +946,7 @@ async function testRegisteredRunner(): Promise<void> {
       exit: (code: number) => reportExit(code),
     },
     console: { error: () => undefined },
+    initializeOrderedEvidenceForProcess: () => undefined,
     getOwnedRootCleanupVerified: () => cleanupRoots.length === 2,
     getDirectSuiteComplete: () => admissionComplete,
     readJsonLinesIfExists: () => calls,

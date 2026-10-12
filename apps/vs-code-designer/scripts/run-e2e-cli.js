@@ -24,6 +24,7 @@ const {
 } = require('./e2e-cli-batch');
 const { getOgfScenariosForPhase } = require('./ogf-e2e-registry');
 const cancelCheck = require('./workspace-prompt-cancel');
+const { getEvidenceManifestPath, initializeSuiteEvidenceManifest } = require('./vscode-e2e-evidence-manifest');
 
 const forbiddenOutputPatterns = [
   {
@@ -95,6 +96,7 @@ if (require.main === module) {
 }
 
 function main() {
+  initializeOrderedEvidenceForProcess();
   const httpTimeoutSelector = [
     '--http-timeout-lifecycle',
     '--http-timeout-request-execution',
@@ -106,6 +108,7 @@ function main() {
       exitWithError(new Error(`${httpTimeoutSelector} is a focused create + reopen route; do not combine it with other flags.`));
       return;
     }
+
     const run = requiresDirectFamilyWrapper(process.env) ? runDirectFamily('httpTimeoutLifecycle') : runHttpTimeoutLifecycle();
     Promise.resolve(run)
       .then((code) => process.exit(code))
@@ -142,6 +145,7 @@ function main() {
     beginDirectRegenerationEvidence();
     runVscodeTest(['--label', 'createWorkspaceCoreMatrix'], {
       extraEnv: {
+        LA_E2E_CLI_ORDERED_EVIDENCE_ENABLED: '0',
         LA_E2E_CLI_REQUIRE_WORKSPACE_REGENERATION: '1',
         LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL: '0',
         LA_E2E_CLI_CREATE_WORKSPACE_CASE: 'standard-stateful',
@@ -262,6 +266,48 @@ function main() {
       .then((code) => process.exit(code))
       .catch(exitWithError);
   }
+}
+
+function initializeOrderedEvidenceForProcess(argv = process.argv.slice(2), env = process.env) {
+  const suiteId = env.LA_E2E_CLI_EVIDENCE_SUITE_ID || inferOrderedEvidenceSuiteId(argv);
+  if (!suiteId || !Object.hasOwn(SUITE_REGISTRY, suiteId)) {
+    return undefined;
+  }
+  const evidenceDir = env.LA_E2E_CLI_EVIDENCE_DIR || path.resolve(__dirname, '..', '.vscode-test', 'evidence', suiteId);
+  env.LA_E2E_CLI_EVIDENCE_SUITE_ID = suiteId;
+  env.LA_E2E_CLI_EVIDENCE_DIR = evidenceDir;
+  env.LA_E2E_CLI_EVIDENCE_INVOCATION ||= `${suiteId}-${randomUUID()}`;
+  const manifestPath = getEvidenceManifestPath(env);
+  initializeSuiteEvidenceManifest({
+    suiteId,
+    invocation: env.LA_E2E_CLI_EVIDENCE_INVOCATION,
+    platform: process.platform,
+    evidenceDir,
+    expectedPhaseIds: SUITE_REGISTRY[suiteId].expectedPhases,
+  });
+  return manifestPath;
+}
+
+function inferOrderedEvidenceSuiteId(argv) {
+  const flagMap = new Map([
+    ['--http-timeout-lifecycle', 'httpTimeoutLifecycle'],
+    ['--http-timeout-request-execution', 'httpTimeoutLifecycle'],
+    ['--http-timeout-request-validation', 'httpTimeoutLifecycle'],
+    ['--http-timeout-compose-original', 'httpTimeoutLifecycle'],
+    ['--workspace-artifact-regeneration', 'workspaceArtifactRegeneration'],
+    ['--workspace-multi-root', 'workspaceMultiRoot'],
+    ['--stateless-variables-lifecycle', 'statelessVariablesLifecycle'],
+    ['--msn-weather-lifecycle', 'msnWeatherLifecycle'],
+    ['--workspace-prompt-cancel', 'createWorkspaceCoreMatrix'],
+  ]);
+  for (const [flag, suiteId] of flagMap) {
+    if (argv.includes(flag)) {
+      return suiteId;
+    }
+  }
+  const labelIndex = argv.indexOf('--label');
+  const label = labelIndex >= 0 ? argv[labelIndex + 1] : undefined;
+  return label && Object.hasOwn(SUITE_REGISTRY, label) ? label : undefined;
 }
 
 function exitWithError(error) {

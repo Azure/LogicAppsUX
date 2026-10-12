@@ -180,34 +180,41 @@ actual Windows and Linux isolated consumer runs with their generated fixture,
 raw CLI results, saved-definition snapshot and accepted screenshots.
 
 Every registered CLI suite diagnostics artifact writes root-level
-`VS_CODE_CLI_EVIDENCE.md` and `VS_CODE_CLI_EVIDENCE.json`. The generic generator
-uses an explicit descriptor whose ID must match `SUITE_REGISTRY`; it runs once
-after all suite-specific evidence is staged and before missing-file or strict
-terminal acceptance. Every suite uses an ordered production checkpoint
-contract: unit tests 1, behavior 74, behavior smoke 42, core matrix 38, preview
-matrix 34, codeful 10, MSN Weather 36, HTTP timeout 38, Stateless variables 19,
-regeneration 25, and multi-root `3 + ordered root count`. The Create Workspace
-catalogs include every completed-form region, post-create diagnostic, and the
-four required core-matrix Cancel checkpoints, while
-MSN Weather retains both action-result loading transitions in their execution
-positions. HTTP additionally retains `HTTP_TIMEOUT_LIFECYCLE_EVIDENCE.md` and
-`HTTP_TIMEOUT_LIFECYCLE_EVIDENCE.json` as compatibility aliases.
+`VS_CODE_CLI_EVIDENCE.md` and `VS_CODE_CLI_EVIDENCE.json`. Each logical suite
+owns one schema-v2 producer manifest initialized by `run-e2e-cli.js` from the
+checkpoint plan in `scripts/vscode-e2e-evidence-plans.js`. The shared
+`screenshot.ts` metadata boundary records every accepted, failed, disabled, or
+diagnostic capture into that manifest, so suites do not implement local
+reporting or staging. Manifest mutations require the current invocation ID;
+stale extension hosts are rejected under the shared lock. Setup/helper hosts
+whose checkpoint names are outside the logical suite plan run with ordered
+evidence recording disabled and cannot contaminate the parent manifest.
 
-Every catalog entry correlates the user/test action and expected proof with an
-artifact-local PNG link and semantic JSON sidecar. Basename, catalog checkpoint,
-and `sidecar.checkpoint` must agree; duplicate candidates are ambiguous, and
-non-catalog captures remain separate diagnostic extras. Regeneration uses the
-baseline plus six declared cases times four checkpoints. Multi-root derives its
-debug order from staged `workspace-multi-root/final-result.json`. Stateless
-history captures stable occurrence 1/2 checkpoint identities while retaining
-the exact runtime run name only inside the semantic readiness assertion.
-Generation remains tolerant for failed or incomplete runs and visibly reports
-missing, ambiguous, invalid, mismatched, disabled, or rejected evidence. Only
-allowlisted result/admission/sidecar fields are emitted; raw logs, exception
-text, absolute/runtime paths, credentials, target IDs, event streams, and
-arbitrary nested metadata are excluded. Reports are explanatory only and never
-replace ordered phase, process-closure, cleanup, test, or accepted-evidence
-gates.
+The current ordered contracts are: unit tests 1, behavior 74, behavior smoke
+42, core matrix 38, preview matrix 34, codeful 10, MSN Weather 36, HTTP timeout
+38, Stateless variables 19, regeneration 25, and multi-root
+`3 + ordered root count`. Multi-root declares its authoritative root order
+before root captures and uses stable ordinal checkpoint IDs; filesystem
+basenames are display labels only. Stateless history similarly uses stable
+occurrence 1/2 IDs while semantic readiness remains bound to the exact runtime
+run.
+
+The evidence bundle contains only its manifest and referenced public PNG/JSON
+files. CI finalizes and validates it with
+`scripts/stage-vscode-e2e-evidence.js`, copies only the manifest allowlist, and
+then renders the staged manifest with
+`scripts/vscode-e2e-evidence-report.js`. The renderer never enumerates
+screenshot directories or reconstructs semantic order. Failed runs retain
+recorded evidence and show remaining checkpoints as `not-reached`, even when a
+dynamic suite fails before its ordered expansion is declared. HTTP also retains
+`HTTP_TIMEOUT_LIFECYCLE_EVIDENCE.md` and
+`HTTP_TIMEOUT_LIFECYCLE_EVIDENCE.json` as compatibility projections.
+
+Only allowlisted manifest, result, admission, and public-sidecar fields are
+published; rich readiness sidecars, raw logs, exception text, absolute/runtime
+paths, credentials, target IDs, event streams, and arbitrary nested metadata
+are excluded. Reports are explanatory only and never replace ordered phase,
+process-closure, cleanup, test, or accepted-evidence gates.
 
 The reopened host runs the three Standard VS Code scenarios sequentially:
 
