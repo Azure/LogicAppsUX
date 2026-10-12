@@ -57,9 +57,9 @@ if [[ "\${UNIT_PLAINTEXT:-}" == 1 ]]; then
 else
   printf 'GnomeKeyring\\n\\r\\0\\n' > "$XDG_DATA_HOME/keyrings/login.keyring"
 fi
-printf 'started\\n' > "$UNIT_ROOT/provider-started"
-printf '%s\\n' "$BASHPID" > "$UNIT_ROOT/provider-pid"
 trap 'printf "stopped\\n" > "$UNIT_ROOT/provider-stopped"; exit 0' TERM
+printf '%s\\n' "$BASHPID" > "$UNIT_ROOT/provider-pid"
+printf 'started\\n' > "$UNIT_ROOT/provider-started"
 while true; do sleep 0.02; done
 `
   );
