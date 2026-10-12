@@ -135,7 +135,7 @@ const dataFunctions = new Set(
 );
 
 const sensitiveName =
-  /^(?:\$content|\$content-type|password|passwd|secret|token|access_token|accessToken|refresh_token|authorization|authentication|apiKey|connectionString|clientSecret)$/i;
+  /^(?:\$content|\$content-type|password|passwd|secret|token|access_token|accessToken|refresh_token|authorization|authentication|apiKey|connectionString|clientSecret|accountKey|storageAccountKey|sharedAccessKey)$/i;
 const builder = new ExpressionBuilder();
 type Schema = OpenAPIV2.SchemaObject;
 type Site = { actionId?: string; child?: boolean; workflowOutput?: boolean };

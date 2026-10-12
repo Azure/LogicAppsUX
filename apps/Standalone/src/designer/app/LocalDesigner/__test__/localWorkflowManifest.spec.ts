@@ -2,6 +2,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   ConnectorService,
+  ConsumptionConnectorService,
   InitConnectorService,
   InitOperationManifestService,
   SchemaProcessor,
@@ -11,11 +12,13 @@ import {
 } from '@microsoft/logic-apps-shared';
 import { HttpClient } from '../httpClient';
 import {
+  createConsumptionWorkflowConnectorService,
   createLocalWorkflowConnectorService,
   createStandardWorkflowConnectorService,
   LocalWorkflowManifestService,
   localWorkflowManifest,
   localWorkflowOperation,
+  selectWorkflowConnectorService,
 } from '../localWorkflowManifest';
 import { LocalWorkflowRegistry, localWorkflowInvocationMarker, localWorkflowInvocationMarkerKey } from '../localWorkflowRegistry';
 import type { Workflow, WorkflowExtractionPlan } from '@microsoft/logic-apps-designer-v2';
@@ -225,6 +228,21 @@ describe('offline Standard workflow manifest', () => {
 
     InitConnectorService(standardService);
     expect(ConnectorService()).toBe(standardService);
+  });
+
+  it('always selects a Consumption connector before local extraction or Standard connectors', () => {
+    const consumptionService = createConsumptionWorkflowConnectorService(new HttpClient());
+    expect(consumptionService).toBeInstanceOf(ConsumptionConnectorService);
+    expect(
+      selectWorkflowConnectorService(true, true, {
+        consumption: consumptionService,
+        local: createLocalWorkflowConnectorService(
+          new HttpClient(),
+          new LocalWorkflowRegistry(() => ({ getItem: () => null, setItem: () => undefined }))
+        ),
+        standard: createStandardWorkflowConnectorService(new HttpClient()),
+      })
+    ).toBe(consumptionService);
   });
 
   it('evicts the actual input/output query keys before prepare and after a failed commit, then reloads changed schemas', async () => {

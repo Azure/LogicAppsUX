@@ -193,6 +193,9 @@ export const workflowLoadingSlice = createSlice({
       setStateHistory(state);
     },
     setResourcePath: (state, action: PayloadAction<string>) => {
+      if (state.resourcePath !== action.payload) {
+        state.workflowDefinition = null;
+      }
       state.resourcePath = action.payload;
       state.loadedResourcePath = undefined;
       state.appliedWorkflow = undefined;
@@ -304,8 +307,9 @@ export const workflowLoadingSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(loadWorkflow.pending, (state, action) => {
       state.workflowLoadRequestId = action.meta.requestId;
-      state.loadedResourcePath = undefined;
-      state.workflowDefinition = null;
+      if (state.loadedResourcePath !== state.resourcePath) {
+        state.workflowDefinition = null;
+      }
       state.appliedWorkflow = undefined;
       state.workflowLoadError = undefined;
     });

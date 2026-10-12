@@ -5,9 +5,11 @@ import { CustomEditorService } from './customEditorService';
 import { HttpClient } from './httpClient';
 import { PseudoCommandBarV2 } from './pseudoCommandBar';
 import {
+  createConsumptionWorkflowConnectorService,
   createLocalWorkflowConnectorService,
   createStandardWorkflowConnectorService,
   LocalWorkflowManifestService,
+  selectWorkflowConnectorService,
 } from './localWorkflowManifest';
 import { localWorkflowPrefix, localWorkflowRegistry } from './localWorkflowRegistry';
 import {
@@ -85,6 +87,7 @@ const operationManifestServiceLocal = new LocalWorkflowManifestService(
 );
 const connectorServiceLocal = createLocalWorkflowConnectorService(httpClient, localWorkflowRegistry);
 const connectorServiceStandard = createStandardWorkflowConnectorService(httpClient);
+const connectorServiceConsumption = createConsumptionWorkflowConnectorService(httpClient);
 
 const operationManifestServiceConsumption = new ConsumptionOperationManifestService({
   apiVersion: '2018-11-01',
@@ -214,6 +217,7 @@ export const LocalDesigner = () => {
     appliedWorkflow,
     resourcePath,
     loadedResourcePath,
+    workflowLoadRequestId,
     workflowLoadError,
     notes,
     parameters,
@@ -234,7 +238,7 @@ export const LocalDesigner = () => {
   connectionParameterEditorService.areCustomEditorsEnabled = !!areCustomEditorsEnabled;
   const isConsumption = hostingPlan === 'consumption';
   const enableWorkflowExtraction =
-    hostingPlan === 'standard' && !!hostOptions.enableWorkflowExtraction && loadedResourcePath === resourcePath;
+    hostingPlan === 'standard' && !!hostOptions.enableWorkflowExtraction && !workflowLoadRequestId && loadedResourcePath === resourcePath;
   const workflowExtractionService = useMemo(
     () =>
       enableWorkflowExtraction && resourcePath
@@ -256,7 +260,11 @@ export const LocalDesigner = () => {
         : enableWorkflowExtraction
           ? operationManifestServiceLocal
           : operationManifestServiceStandard,
-      connectorService: enableWorkflowExtraction ? connectorServiceLocal : connectorServiceStandard,
+      connectorService: selectWorkflowConnectorService(isConsumption, enableWorkflowExtraction, {
+        consumption: connectorServiceConsumption,
+        local: connectorServiceLocal,
+        standard: connectorServiceStandard,
+      }),
       workflowExtractionService,
       searchService: isConsumption ? searchServiceConsumption : searchServiceStandard,
       oAuthService,

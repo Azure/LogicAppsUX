@@ -1,6 +1,8 @@
 import {
+  ConsumptionConnectorService,
   StandardConnectorService,
   StandardOperationManifestService,
+  type IConnectorService,
   type IHttpClient,
   type LogicAppsV2,
   type OpenAPIV2,
@@ -168,3 +170,20 @@ export const createStandardWorkflowConnectorService = (httpClient: IHttpClient) 
     valuesClient: {},
     schemaClient: {},
   });
+
+export const createConsumptionWorkflowConnectorService = (httpClient: IHttpClient) =>
+  new ConsumptionConnectorService({
+    baseUrl: '/baseUrl',
+    apiVersion: '2018-07-01-preview',
+    httpClient,
+    workflowReferenceId: '/subscriptions/subid/resourceGroups/resourceGroup/providers/Microsoft.Logic/workflows/workflow',
+    clientSupportedOperations: [],
+    valuesClient: {},
+    schemaClient: {},
+  });
+
+export const selectWorkflowConnectorService = (
+  isConsumption: boolean,
+  enableWorkflowExtraction: boolean,
+  services: { consumption: IConnectorService; local: IConnectorService; standard: IConnectorService }
+): IConnectorService => (isConsumption ? services.consumption : enableWorkflowExtraction ? services.local : services.standard);

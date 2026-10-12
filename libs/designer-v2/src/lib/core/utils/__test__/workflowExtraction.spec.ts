@@ -715,6 +715,12 @@ describe('buildWorkflowExtractionPlan', () => {
     expectCode(() => plan(workflow), 'unsafe-data');
   });
 
+  it.each(['accountKey', 'storageAccountKey', 'sharedAccessKey'])('rejects selected Azure Storage credential literals in %s', (key) => {
+    const workflow = fixture();
+    workflow.definition.actions = { A: compose({ [key]: 'not-a-real-secret' }), B: compose('unused', 'A') };
+    expectCode(() => plan(workflow), 'unsafe-data');
+  });
+
   it.each([{ operationOptions: 'DisableAsyncPattern' }, { trackedProperties: { a: 'value' } }])(
     'preserves safe operation settings %j',
     (settings) => {

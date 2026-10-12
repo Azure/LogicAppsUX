@@ -67,6 +67,16 @@ describe('offline registry workflow loading', () => {
     expect(store.getState().workflowLoader.loadedResourcePath).toBe('ExtractSelection.json');
   });
 
+  it('keeps the current workflow mounted while reloading the same resource', async () => {
+    const store = storeFor('ExtractSelection.json');
+    await store.dispatch(loadWorkflow(undefined));
+
+    store.dispatch(loadWorkflow.pending('request-a', undefined));
+
+    expect(store.getState().workflowLoader.workflowDefinition).toEqual(fixture.definition);
+    expect(store.getState().workflowLoader.loadedResourcePath).toBe('ExtractSelection.json');
+  });
+
   it('unmounts the previous workflow while loading and ignores stale completions after a resource switch', () => {
     const store = storeFor('ExtractSelection.json');
     const payload = (resourcePath: string, marker: string) => ({

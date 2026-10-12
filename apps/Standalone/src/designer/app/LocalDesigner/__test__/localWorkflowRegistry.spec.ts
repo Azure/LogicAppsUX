@@ -263,6 +263,9 @@ describe('offline local workflow registry', () => {
     'Ocp-Apim-Subscription-Key',
     'X-Amz-Signature',
     'X-Amz-Security-Token',
+    'accountKey',
+    'storageAccountKey',
+    'sharedAccessKey',
   ])('refuses credential fields: %s', async (key) => {
     const plan = makePlan();
     (plan.child.definition.actions!.Build_message as LogicAppsV2.ComposeAction).inputs = { [key]: 'do-not-store' };
@@ -350,6 +353,9 @@ describe('offline local workflow registry', () => {
           code: 'ordinary-business-value',
           refresh_token: "@appsetting('BodyRefreshToken')",
           client_assertion: "@parameters('OAuthValue')",
+          accountKey: "@appsetting('StorageAccountKey')",
+          storageAccountKey: "@parameters('StorageValue')",
+          sharedAccessKey: "@appsetting('StorageSharedAccessKey')",
         },
       },
       runAfter: {},
@@ -358,6 +364,10 @@ describe('offline local workflow registry', () => {
       OAuthValue: {
         type: 'String',
         value: "@appsetting('ClientSecret')",
+      },
+      StorageValue: {
+        type: 'String',
+        value: "@appsetting('StorageCredential')",
       },
     };
     const safeService = createRegistry().createService('ExtractSelection.json', 'ExtractSelection');
