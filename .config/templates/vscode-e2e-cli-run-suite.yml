@@ -779,7 +779,7 @@ jobs:
                   @($multiRootFinal.observation.roots) |
                     ForEach-Object {
                       $root = [string]$_
-                      [IO.Path]::GetFileName($root.TrimEnd([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar))
+                      [IO.Path]::GetFileName(($root -replace '\\', '/').TrimEnd('/'))
                     } |
                     Where-Object { $_ }
                 )
