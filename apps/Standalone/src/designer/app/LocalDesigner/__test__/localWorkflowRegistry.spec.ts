@@ -87,6 +87,8 @@ describe('offline local workflow registry', () => {
     expect(storage.setItem).toHaveBeenCalledTimes(1);
     expect(changed).toHaveBeenCalledTimes(1);
     const stored = JSON.parse(values.get(localWorkflowRegistryKey)!);
+    expect(stored.operations[0].sourceFingerprint).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(stored.operations[0].sourceFingerprint).not.toBe('source-before');
     expect(stored.operations[0].planFingerprint).toMatch(/^sha256:[0-9a-f]{64}$/);
     expect(stored.operations[0].planFingerprint).not.toContain('"definition"');
     plan.child.definition.actions = {};
@@ -105,6 +107,7 @@ describe('offline local workflow registry', () => {
     expect(await service.commit(args)).toEqual(result);
     expect(await createRegistry().createService('ExtractSelection.json', 'ExtractSelection').commit(args)).toEqual(result);
     expect(storage.setItem).toHaveBeenCalledTimes(1);
+    await expect(service.commit({ ...args, sourceFingerprint: 'source-after' })).rejects.toThrow('different plan');
     await expect(service.commit(request(makePlan('Different')))).rejects.toThrow('different plan');
   });
 
@@ -248,6 +251,8 @@ describe('offline local workflow registry', () => {
     'Set-Cookie',
     'x-functions-key',
     'Ocp-Apim-Subscription-Key',
+    'X-Amz-Signature',
+    'X-Amz-Security-Token',
   ])('refuses credential fields: %s', async (key) => {
     const plan = makePlan();
     (plan.child.definition.actions!.Build_message as LogicAppsV2.ComposeAction).inputs = { [key]: 'do-not-store' };
@@ -277,6 +282,7 @@ describe('offline local workflow registry', () => {
     'https://login.example.test/oauth2/token?client_assertion=literal-client-assertion',
     'https://login.example.test/oauth2/token?password=literal-password',
     'https://login.example.test/oauth2/token?id_token=literal-id-token',
+    'https://storage.example.test/object?X-Amz-Security-Token=literal-session-token',
   ])('refuses credential-bearing URL query parameters: %s', async (uri) => {
     const plan = makePlan();
     (plan.child.definition.actions!.Build_message as LogicAppsV2.ComposeAction).inputs = { uri };
@@ -286,7 +292,7 @@ describe('offline local workflow registry', () => {
     expect(storage.setItem).not.toHaveBeenCalled();
   });
 
-  it.each(['code', 'c%6Fde', 'refresh_token', 'client_secret', 'client_assertion', 'password', 'id_token'])(
+  it.each(['code', 'c%6Fde', 'refresh_token', 'client_secret', 'client_assertion', 'password', 'id_token', 'X-Amz-Security-Token'])(
     'refuses literal credentials in structured query maps: %s',
     async (key) => {
       const plan = makePlan();
@@ -361,6 +367,8 @@ describe('offline local workflow registry', () => {
           Cookie: "@appsetting('SessionCookie')",
           'x-functions-key': "@parameters('FunctionKey')",
           'Ocp-Apim-Subscription-Key': "@appsetting('ApiManagementSubscriptionKey')",
+          'X-Amz-Signature': "@appsetting('AwsSignature')",
+          'X-Amz-Security-Token': "@appsetting('AwsSessionToken')",
         },
       },
       runtimeConfiguration: { contentTransfer: { transferMode: 'Chunked' } },

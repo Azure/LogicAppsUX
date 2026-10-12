@@ -60,6 +60,11 @@ const credentialQueryParameterNames = new Set([
   'connectionstring',
   'pfx',
   'privatekey',
+  'signature',
+  'securitytoken',
+  'xamzcredential',
+  'xamzsignature',
+  'xamzsecuritytoken',
   'apikey',
   'subscriptionkey',
   'xfunctionskey',
@@ -218,7 +223,9 @@ function assertSafeWorkflow(workflow: Workflow): void {
           throw new Error('Offline extraction cannot store credential-bearing workflows. Reference app settings or parameters instead.');
         } else if (
           (/password|secret|credential|authorization|access.?token|api.?key|connectionstring|^pfx$/i.test(key) ||
-            /^(cookie|setcookie|xfunctionskey|ocpapimsubscriptionkey|subscriptionkey|xapikey)$/.test(normalizedKey)) &&
+            /^(cookie|setcookie|xfunctionskey|ocpapimsubscriptionkey|subscriptionkey|xapikey|xamzcredential|xamzsignature|xamzsecuritytoken)$/.test(
+              normalizedKey
+            )) &&
           normalize(key) !== 'credentialtype' &&
           !isSafeCredentialReference(child)
         ) {
@@ -411,11 +418,12 @@ export class LocalWorkflowRegistry {
           const { operationId, sourceFingerprint, plan } = request;
           const data = this.read();
           const previous = data.operations.find((operation) => operation.id === operationId);
+          const sourceFingerprintDigest = await fingerprint(sourceFingerprint);
           const planFingerprint = await fingerprint(plan);
           if (previous) {
             if (
               previous.sourceId !== sourceId ||
-              previous.sourceFingerprint !== sourceFingerprint ||
+              previous.sourceFingerprint !== sourceFingerprintDigest ||
               previous.planFingerprint !== planFingerprint
             ) {
               throw new Error('This extraction operation was already used for a different plan.');
@@ -440,7 +448,7 @@ export class LocalWorkflowRegistry {
             { id: sourceId, name: sourceName, workflow: clone(plan.source) },
             { id: childId, name: plan.childName, workflow: clone(plan.child) }
           );
-          data.operations.push({ id: operationId, sourceId, sourceFingerprint, planFingerprint, childId });
+          data.operations.push({ id: operationId, sourceId, sourceFingerprint: sourceFingerprintDigest, planFingerprint, childId });
           try {
             this.storage().setItem(localWorkflowRegistryKey, JSON.stringify(data));
           } catch {
