@@ -41,6 +41,30 @@ describe('designer store', () => {
     expect(store.getState().workflow.isDirty).toBe(false);
   });
 
+  it('discards thunk callbacks from the previous graph after extraction unlocks', async () => {
+    const store = createDesignerStore();
+    let resume: (() => void) | undefined;
+    const staleUpdate = async (dispatch: typeof store.dispatch) => {
+      await new Promise<void>((resolve) => {
+        resume = resolve;
+      });
+      dispatch(setIsWorkflowDirty(true));
+    };
+
+    const pending = store.dispatch(staleUpdate);
+    store.dispatch(setWorkflowExtractionBusy(true));
+    store.dispatch(setWorkflowExtractionBusy(false));
+    resume?.();
+    await pending;
+
+    expect(store.getState().workflow.isDirty).toBe(false);
+
+    await store.dispatch(async (dispatch) => {
+      dispatch(setIsWorkflowDirty(true));
+    });
+    expect(store.getState().workflow.isDirty).toBe(true);
+  });
+
   it('exposes the development store and records dispatched action types', async () => {
     vi.stubEnv('NODE_ENV', 'development');
 

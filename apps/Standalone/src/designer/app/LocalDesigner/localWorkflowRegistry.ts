@@ -63,6 +63,14 @@ const containsCredentialQueryParameter = (value: string): boolean => {
     credentialQueryParameterNames.has(normalize(key).replace(/[-_\s]/g, ''))
   );
 };
+const containsCredentialUrlUserInfo = (value: string): boolean => {
+  try {
+    const url = new URL(value);
+    return !!url.username || !!url.password;
+  } catch {
+    return false;
+  }
+};
 const fingerprint = async (value: unknown): Promise<string> => {
   if (!globalThis.crypto?.subtle) {
     throw new Error('This browser cannot safely create a compact workflow extraction fingerprint.');
@@ -170,7 +178,8 @@ function assertSafeWorkflow(workflow: Workflow): void {
     if (typeof value === 'string') {
       if (
         /SharedAccessSignature=|AccountKey=|Bearer\s+\S+|-----BEGIN .*PRIVATE KEY-----/i.test(value) ||
-        containsCredentialQueryParameter(value)
+        containsCredentialQueryParameter(value) ||
+        containsCredentialUrlUserInfo(value)
       ) {
         throw new Error('Offline extraction cannot store credential-bearing workflows.');
       }
@@ -183,7 +192,7 @@ function assertSafeWorkflow(workflow: Workflow): void {
           assertSafeAuthentication(child, isSafeCredentialReference);
         } else if (
           (/password|secret|credential|authorization|access.?token|api.?key|connectionstring|^pfx$/i.test(key) ||
-            /^(xfunctionskey|ocpapimsubscriptionkey|subscriptionkey|xapikey)$/.test(normalizedKey)) &&
+            /^(cookie|setcookie|xfunctionskey|ocpapimsubscriptionkey|subscriptionkey|xapikey)$/.test(normalizedKey)) &&
           normalize(key) !== 'credentialtype' &&
           !isSafeCredentialReference(child)
         ) {

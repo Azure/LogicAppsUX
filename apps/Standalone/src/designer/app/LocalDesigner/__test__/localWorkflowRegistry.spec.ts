@@ -239,11 +239,29 @@ describe('offline local workflow registry', () => {
     expect(registry.list().map((entry) => entry.id)).toEqual(['AnotherFixture.json', 'local:ExtractedCustomer', 'local:Grandchild']);
   });
 
-  it.each(['authentication', 'password', 'authorization', 'apiKey', 'x-functions-key', 'Ocp-Apim-Subscription-Key'])(
-    'refuses credential fields: %s',
-    async (key) => {
+  it.each([
+    'authentication',
+    'password',
+    'authorization',
+    'apiKey',
+    'Cookie',
+    'Set-Cookie',
+    'x-functions-key',
+    'Ocp-Apim-Subscription-Key',
+  ])('refuses credential fields: %s', async (key) => {
+    const plan = makePlan();
+    (plan.child.definition.actions!.Build_message as LogicAppsV2.ComposeAction).inputs = { [key]: 'do-not-store' };
+    const service = createRegistry().createService('ExtractSelection.json', 'ExtractSelection');
+    expect(() => service.prepare!(plan)).toThrow('credential');
+    await expect(service.commit(request(plan))).rejects.toThrow('credential');
+    expect(storage.setItem).not.toHaveBeenCalled();
+  });
+
+  it.each(['https://user:password@example.test/path', 'https://user@example.test/path'])(
+    'refuses credentials embedded in URL userinfo: %s',
+    async (uri) => {
       const plan = makePlan();
-      (plan.child.definition.actions!.Build_message as LogicAppsV2.ComposeAction).inputs = { [key]: 'do-not-store' };
+      (plan.child.definition.actions!.Build_message as LogicAppsV2.ComposeAction).inputs = { uri };
       const service = createRegistry().createService('ExtractSelection.json', 'ExtractSelection');
       expect(() => service.prepare!(plan)).toThrow('credential');
       await expect(service.commit(request(plan))).rejects.toThrow('credential');
@@ -290,6 +308,7 @@ describe('offline local workflow registry', () => {
         authentication: { type: 'Basic', username: 'synthetic-user', password: "@appsetting('HttpPassword')" },
         headers: {
           Authorization: "@parameters('AuthHeader')",
+          Cookie: "@appsetting('SessionCookie')",
           'x-functions-key': "@parameters('FunctionKey')",
           'Ocp-Apim-Subscription-Key': "@appsetting('ApiManagementSubscriptionKey')",
         },
