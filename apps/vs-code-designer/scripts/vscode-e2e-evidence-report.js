@@ -886,7 +886,7 @@ function multiRootCatalog(dynamicInputs) {
         : [];
   const safeRootNames = roots
     .filter((root) => typeof root === 'string')
-    .map((root) => path.basename(root))
+    .map((root) => path.win32.basename(root))
     .filter((name) => name && !name.includes('/') && !name.includes('\\'));
   return [
     group(
