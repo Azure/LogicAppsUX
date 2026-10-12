@@ -37,7 +37,34 @@ describe('offline registry workflow loading', () => {
     const store = storeFor('ExtractSelection.json');
     await store.dispatch(loadWorkflow(undefined));
     expect(store.getState().workflowLoader.workflowDefinition).toEqual(fixture.definition);
+    expect(store.getState().workflowLoader.loadedResourcePath).toBe('ExtractSelection.json');
     expect(store.getState().workflowLoader.workflowLoadError).toBeUndefined();
+  });
+
+  it('unmounts the previous workflow while loading and ignores stale completions after a resource switch', () => {
+    const store = storeFor('ExtractSelection.json');
+    const payload = (resourcePath: string, marker: string) => ({
+      resourcePath,
+      workflowDefinition: { ...structuredClone(fixture.definition), contentVersion: marker },
+      notes: undefined,
+      connectionReferences: {},
+      parameters: {},
+      runFiles: [],
+      workflowKind: 'Stateful',
+    });
+
+    store.dispatch(loadWorkflow.pending('request-a', undefined));
+    expect(store.getState().workflowLoader.workflowDefinition).toBeNull();
+    store.dispatch(setResourcePath('ExtractActions.json'));
+    store.dispatch(loadWorkflow.pending('request-b', undefined));
+
+    store.dispatch(loadWorkflow.fulfilled(payload('ExtractSelection.json', 'stale'), 'request-a', undefined));
+    expect(store.getState().workflowLoader.workflowDefinition).toBeNull();
+    expect(store.getState().workflowLoader.loadedResourcePath).toBeUndefined();
+
+    store.dispatch(loadWorkflow.fulfilled(payload('ExtractActions.json', 'current'), 'request-b', undefined));
+    expect(store.getState().workflowLoader.workflowDefinition?.contentVersion).toBe('current');
+    expect(store.getState().workflowLoader.loadedResourcePath).toBe('ExtractActions.json');
   });
 
   it('synchronizes an applied source without reloading and keeps it when read-only changes', async () => {

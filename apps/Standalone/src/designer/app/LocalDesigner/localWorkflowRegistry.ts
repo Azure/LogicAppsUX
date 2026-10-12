@@ -79,13 +79,25 @@ const isCredentialQueryParameterName = (value: string): boolean => {
   }
   return credentialQueryParameterNames.has(normalize(decodedValue).replace(/[-_\s]/g, ''));
 };
+const isCredentialFieldName = (value: string): boolean => {
+  const normalizedValue = normalize(value).replace(/[-_\s]/g, '');
+  return normalizedValue !== 'code' && normalizedValue !== 'sig' && isCredentialQueryParameterName(value);
+};
 const containsCredentialQueryParameter = (value: string): boolean => {
   const queryStart = value.indexOf('?');
-  if (queryStart < 0) {
+  if (queryStart >= 0) {
+    const query = value.slice(queryStart + 1).split('#', 1)[0];
+    if (Array.from(new URLSearchParams(query).keys()).some(isCredentialQueryParameterName)) {
+      return true;
+    }
+  }
+  const fragmentStart = value.indexOf('#');
+  if (fragmentStart < 0) {
     return false;
   }
-  const query = value.slice(queryStart + 1).split('#', 1)[0];
-  return Array.from(new URLSearchParams(query).keys()).some(isCredentialQueryParameterName);
+  const fragment = value.slice(fragmentStart + 1);
+  const fragmentParameters = fragment.includes('?') ? fragment.slice(fragment.indexOf('?') + 1) : fragment;
+  return Array.from(new URLSearchParams(fragmentParameters).keys()).some(isCredentialQueryParameterName);
 };
 const containsCredentialUrlUserInfo = (value: string): boolean => {
   try {
@@ -223,6 +235,7 @@ function assertSafeWorkflow(workflow: Workflow): void {
           throw new Error('Offline extraction cannot store credential-bearing workflows. Reference app settings or parameters instead.');
         } else if (
           (/password|secret|credential|authorization|access.?token|api.?key|connectionstring|^pfx$/i.test(key) ||
+            isCredentialFieldName(key) ||
             /^(cookie|setcookie|xfunctionskey|ocpapimsubscriptionkey|subscriptionkey|xapikey|xamzcredential|xamzsignature|xamzsecuritytoken)$/.test(
               normalizedKey
             )) &&

@@ -213,6 +213,7 @@ export const LocalDesigner = () => {
     workflowDefinition,
     appliedWorkflow,
     resourcePath,
+    loadedResourcePath,
     workflowLoadError,
     notes,
     parameters,
@@ -232,7 +233,8 @@ export const LocalDesigner = () => {
   editorService.areCustomEditorsEnabled = !!areCustomEditorsEnabled;
   connectionParameterEditorService.areCustomEditorsEnabled = !!areCustomEditorsEnabled;
   const isConsumption = hostingPlan === 'consumption';
-  const enableWorkflowExtraction = hostingPlan === 'standard' && !!hostOptions.enableWorkflowExtraction;
+  const enableWorkflowExtraction =
+    hostingPlan === 'standard' && !!hostOptions.enableWorkflowExtraction && loadedResourcePath === resourcePath;
   const workflowExtractionService = useMemo(
     () =>
       enableWorkflowExtraction && resourcePath

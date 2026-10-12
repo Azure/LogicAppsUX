@@ -283,6 +283,8 @@ describe('offline local workflow registry', () => {
     'https://login.example.test/oauth2/token?password=literal-password',
     'https://login.example.test/oauth2/token?id_token=literal-id-token',
     'https://storage.example.test/object?X-Amz-Security-Token=literal-session-token',
+    'https://app.example.test/callback#access_token=literal-access-token',
+    'https://app.example.test/#/callback?refresh_token=literal-refresh-token',
   ])('refuses credential-bearing URL query parameters: %s', async (uri) => {
     const plan = makePlan();
     (plan.child.definition.actions!.Build_message as LogicAppsV2.ComposeAction).inputs = { uri };
@@ -308,6 +310,19 @@ describe('offline local workflow registry', () => {
     }
   );
 
+  it.each(['refresh_token', 'id_token', 'client_assertion'])('refuses literal credentials in ordinary payload fields: %s', async (key) => {
+    const plan = makePlan();
+    plan.child.definition.actions!.Call_service = {
+      type: 'Http',
+      inputs: { method: 'POST', uri: 'https://example.test/api/run', body: { [key]: 'literal-credential' } },
+      runAfter: {},
+    };
+    const service = createRegistry().createService('ExtractSelection.json', 'ExtractSelection');
+    expect(() => service.prepare!(plan)).toThrow('credential');
+    await expect(service.commit(request(plan))).rejects.toThrow('credential');
+    expect(storage.setItem).not.toHaveBeenCalled();
+  });
+
   it('allows safe references in structured OAuth query maps and ordinary payload fields with credential-like names', async () => {
     const plan = makePlan();
     plan.child.definition.actions!.Call_service = {
@@ -321,7 +336,11 @@ describe('offline local workflow registry', () => {
           client_secret: "@parameters('OAuthValue')",
           client_assertion: "@appsetting('ClientAssertion')",
         },
-        body: { code: 'ordinary-business-value' },
+        body: {
+          code: 'ordinary-business-value',
+          refresh_token: "@appsetting('BodyRefreshToken')",
+          client_assertion: "@parameters('OAuthValue')",
+        },
       },
       runAfter: {},
     };

@@ -12,6 +12,8 @@ export type HostingPlanTypes = 'standard' | 'consumption' | 'hybrid';
 
 export interface WorkflowLoadingState {
   resourcePath?: string;
+  loadedResourcePath?: string;
+  workflowLoadRequestId?: string;
   appId?: string;
   workflowName?: string;
   runId?: string;
@@ -81,6 +83,7 @@ const initialState: WorkflowLoadingState = {
 };
 
 type WorkflowPayload = {
+  resourcePath?: string;
   workflowDefinition: LogicAppsV2.WorkflowDefinition;
   notes: Record<string, any> | undefined;
   connectionReferences: ConnectionReferences;
@@ -109,6 +112,7 @@ export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow'
     const persisted = localWorkflowRegistry.get(resourcePath ?? '');
     if (persisted) {
       return {
+        resourcePath,
         workflowDefinition: persisted.definition,
         notes: persisted.notes ?? persisted.definition.metadata?.notes,
         connectionReferences: persisted.connectionReferences,
@@ -127,6 +131,7 @@ export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow'
   const runFiles = isMonitoringView && fileName ? await readJsonFiles(fileName) : [];
   const wf = await import(`../../../../../__mocks__/workflows/${fileName}.json`);
   return {
+    resourcePath,
     workflowDefinition: wf.definition as LogicAppsV2.WorkflowDefinition,
     // Notes are stored on the definition metadata, which is user-writable and may not be well-formed
     notes: wf?.notes ?? wf?.definition?.metadata?.notes,
@@ -158,7 +163,12 @@ export const workflowLoadingSlice = createSlice({
   initialState,
   reducers: {
     synchronizeAppliedLocalWorkflow: (state, action: PayloadAction<{ sourceId: string; workflow: Workflow }>) => {
-      if (!state.isLocal || state.hostingPlan !== 'standard' || state.resourcePath !== action.payload.sourceId) {
+      if (
+        !state.isLocal ||
+        state.hostingPlan !== 'standard' ||
+        state.resourcePath !== action.payload.sourceId ||
+        state.loadedResourcePath !== action.payload.sourceId
+      ) {
         throw new Error('The local workflow changed before its saved definition could be synchronized.');
       }
       const { workflow } = action.payload;
@@ -169,6 +179,7 @@ export const workflowLoadingSlice = createSlice({
       state.workflowKind = workflow.kind;
       state.workflowLoadError = undefined;
       state.appliedWorkflow = workflow;
+      state.loadedResourcePath = action.payload.sourceId;
     },
     setAppid: (state, action: PayloadAction<string>) => {
       state.appId = action.payload;
@@ -183,6 +194,8 @@ export const workflowLoadingSlice = createSlice({
     },
     setResourcePath: (state, action: PayloadAction<string>) => {
       state.resourcePath = action.payload;
+      state.loadedResourcePath = undefined;
+      state.appliedWorkflow = undefined;
       // Set resource path to history
       setStateHistory(state);
     },
@@ -191,6 +204,8 @@ export const workflowLoadingSlice = createSlice({
       state.workflowName = undefined;
       state.runId = undefined;
       state.resourcePath = '';
+      state.loadedResourcePath = undefined;
+      state.workflowLoadRequestId = undefined;
     },
     setLanguage: (state, action: PayloadAction<string | undefined>) => {
       state.language = action.payload ?? 'en';
@@ -212,11 +227,15 @@ export const workflowLoadingSlice = createSlice({
       state.appId = undefined;
       state.workflowName = undefined;
       state.resourcePath = '';
+      state.loadedResourcePath = undefined;
+      state.workflowLoadRequestId = undefined;
     },
     setIsLocalSelected: (state, action: PayloadAction<boolean>) => {
       state.isLocal = action.payload;
       state.appId = undefined;
       state.workflowName = undefined;
+      state.loadedResourcePath = undefined;
+      state.workflowLoadRequestId = undefined;
     },
     setIsChatBotEnabled: (state, action: PayloadAction<boolean>) => {
       state.showChatBot = action.payload;
@@ -245,6 +264,8 @@ export const workflowLoadingSlice = createSlice({
       state.isMonitoringView = lastWorkflow.isMonitoringView;
       // Clear these state values, they get built with the other values
       state.workflowDefinition = null;
+      state.loadedResourcePath = undefined;
+      state.workflowLoadRequestId = undefined;
       state.notes = undefined;
       state.runInstance = null;
       state.connections = {};
@@ -275,10 +296,19 @@ export const workflowLoadingSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(loadWorkflow.fulfilled, (state, action: PayloadAction<WorkflowPayload | null>) => {
-      if (!action.payload) {
+    builder.addCase(loadWorkflow.pending, (state, action) => {
+      state.workflowLoadRequestId = action.meta.requestId;
+      state.loadedResourcePath = undefined;
+      state.workflowDefinition = null;
+      state.appliedWorkflow = undefined;
+      state.workflowLoadError = undefined;
+    });
+    builder.addCase(loadWorkflow.fulfilled, (state, action) => {
+      if (!action.payload || state.workflowLoadRequestId !== action.meta.requestId || state.resourcePath !== action.payload.resourcePath) {
         return;
       }
+      state.workflowLoadRequestId = undefined;
+      state.loadedResourcePath = action.payload.resourcePath;
       state.workflowDefinition = action.payload?.workflowDefinition;
       state.appliedWorkflow = undefined;
       state.workflowLoadError = undefined;
@@ -289,6 +319,11 @@ export const workflowLoadingSlice = createSlice({
       state.workflowKind = action.payload?.workflowKind ?? (state.hostingPlan === 'consumption' ? undefined : 'stateful');
     });
     builder.addCase(loadWorkflow.rejected, (state, action) => {
+      if (state.workflowLoadRequestId !== action.meta.requestId) {
+        return;
+      }
+      state.workflowLoadRequestId = undefined;
+      state.loadedResourcePath = undefined;
       state.workflowDefinition = null;
       state.appliedWorkflow = undefined;
       state.workflowLoadError = action.error.message ?? 'Unable to load the workflow.';
