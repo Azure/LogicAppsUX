@@ -11,6 +11,14 @@ const path = require('path');
 const BATCH_SCHEMA_VERSION = 1;
 const DEFAULT_SUITE_TIMEOUT_MS = 45 * 60 * 1000;
 const MIN_AZURE_TOKEN_REMAINING_MS = DEFAULT_SUITE_TIMEOUT_MS + 5 * 60 * 1000;
+const LIFECYCLE_FINALIZED_SUITES = new Set([
+  'msnWeatherLifecycle',
+  'httpTimeoutLifecycle',
+  'createWorkspaceCoreMatrix',
+  'statelessVariablesLifecycle',
+  'workspaceArtifactRegeneration',
+  'workspaceMultiRoot',
+]);
 const SUPPLEMENTARY_LIFECYCLE_SUITES = new Set([
   'httpTimeoutLifecycle',
   'statelessVariablesLifecycle',
@@ -378,6 +386,89 @@ function prepareSuiteExtensionsDirectory({ seedDir, targetDir, expectedManifest 
   return targetDir;
 }
 
+function phaseEvidenceMatches(left, right) {
+  return (
+    Array.isArray(left) &&
+    Array.isArray(right) &&
+    left.length === right.length &&
+    left.every(
+      (phase, index) =>
+        phase?.phaseId === right[index]?.phaseId &&
+        phase.exitCode === right[index].exitCode &&
+        (phase.signal ?? null) === (right[index].signal ?? null) &&
+        phase.cleanupVerified === right[index].cleanupVerified &&
+        phase.diagnosticsError === right[index].diagnosticsError &&
+        phase.complete === right[index].complete
+    )
+  );
+}
+
+function hasVerifiedOrdinaryFailureEvidence({ suiteId, exitCode, signal, terminalResult, cleanupLedger }) {
+  const suite = SUITE_REGISTRY[suiteId];
+  if (
+    !suite ||
+    terminalResult.complete !== false ||
+    exitCode === 0 ||
+    terminalResult.suiteId !== suiteId ||
+    cleanupLedger.suiteId !== suiteId ||
+    terminalResult.diagnosticsError !== '' ||
+    (LIFECYCLE_FINALIZED_SUITES.has(suiteId) && terminalResult.lifecycleFinalized !== true)
+  ) {
+    return false;
+  }
+  const expectedPhaseIds = [...suite.expectedPhases];
+  const observedPhaseIds = terminalResult.observedPhaseIds;
+  const inventoryFields = [
+    'expectedPhaseIds',
+    'observedPhaseIds',
+    'missingPhaseIds',
+    'unexpectedPhaseIds',
+    'duplicatePhaseIds',
+    'blockedPhaseIds',
+  ];
+  if (
+    !arraysEqual(terminalResult.expectedPhaseIds, expectedPhaseIds) ||
+    !inventoryFields.every((field) => arraysEqual(terminalResult[field], cleanupLedger[field])) ||
+    !Array.isArray(observedPhaseIds) ||
+    observedPhaseIds.length === 0 ||
+    !observedPhaseIds.every((phaseId, index) => phaseId === expectedPhaseIds[index])
+  ) {
+    return false;
+  }
+  const missingPhaseIds = expectedPhaseIds.slice(observedPhaseIds.length);
+  if (
+    !arraysEqual(terminalResult.missingPhaseIds, missingPhaseIds) ||
+    !arraysEqual(terminalResult.blockedPhaseIds, missingPhaseIds) ||
+    !arraysEqual(terminalResult.unexpectedPhaseIds, []) ||
+    !arraysEqual(terminalResult.duplicatePhaseIds, [])
+  ) {
+    return false;
+  }
+  const phaseResults = Array.isArray(terminalResult.phaseResults) ? terminalResult.phaseResults : cleanupLedger.phases;
+  if (
+    !Array.isArray(phaseResults) ||
+    phaseResults.length !== observedPhaseIds.length ||
+    !phaseResults.every(
+      (phase, index) => phase?.phaseId === observedPhaseIds[index] && phase.cleanupVerified === true && phase.diagnosticsError === ''
+    )
+  ) {
+    return false;
+  }
+  if (Array.isArray(terminalResult.phaseResults) && !phaseEvidenceMatches(terminalResult.phaseResults, cleanupLedger.phases)) {
+    return false;
+  }
+  const completedPhases = phaseResults.slice(0, -1);
+  const failedPhase = phaseResults.at(-1);
+  return (
+    completedPhases.every(
+      (phase) => phase.complete === true && phase.exitCode === 0 && (phase.signal === null || phase.signal === undefined)
+    ) &&
+    failedPhase.complete === false &&
+    failedPhase.exitCode === exitCode &&
+    (failedPhase.signal ?? null) === (signal ?? null)
+  );
+}
+
 function classifySuiteRunResult({ suiteId, exitCode, signal, error, output = '', terminalResult, cleanupLedger }) {
   if (error) {
     return {
@@ -464,11 +555,13 @@ function classifySuiteRunResult({ suiteId, exitCode, signal, error, output = '',
   if (matchedBreach) {
     return { category: 'containmentBreach', outcome: 'infrastructureFailure', reason: `matched containment pattern: ${matchedBreach}` };
   }
-  const finalizedOrdinaryFailure =
-    SUPPLEMENTARY_LIFECYCLE_SUITES.has(suiteId) &&
-    terminalResult.complete === false &&
-    terminalResult.lifecycleFinalized === true &&
-    exitCode !== 0;
+  const finalizedOrdinaryFailure = hasVerifiedOrdinaryFailureEvidence({
+    suiteId,
+    exitCode,
+    signal,
+    terminalResult,
+    cleanupLedger,
+  });
   if (terminalResult.complete !== true && !finalizedOrdinaryFailure) {
     return {
       category: 'containmentBreach',
@@ -968,7 +1061,9 @@ function readJsonIfExists(filePath) {
 }
 
 function arraysEqual(left, right) {
-  return left.length === right.length && left.every((value, index) => value === right[index]);
+  return (
+    Array.isArray(left) && Array.isArray(right) && left.length === right.length && left.every((value, index) => value === right[index])
+  );
 }
 
 module.exports = {

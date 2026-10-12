@@ -1299,6 +1299,48 @@ async function testBatchStopsAfterContainmentBreach() {
     diagnosticsError: '',
     phaseCompleteness: true,
   };
+  const buildFinalizedFailureEvidence = (suiteId, observedPhaseCount = 1, lifecycleFinalized = true) => {
+    const expectedPhaseIds = [...SUITE_REGISTRY[suiteId].expectedPhases];
+    const observedPhaseIds = expectedPhaseIds.slice(0, observedPhaseCount);
+    const missingPhaseIds = expectedPhaseIds.slice(observedPhaseIds.length);
+    const phaseResults = observedPhaseIds.map((phaseId, index) => ({
+      phaseId,
+      exitCode: index === observedPhaseIds.length - 1 ? 1 : 0,
+      signal: null,
+      cleanupVerified: true,
+      diagnosticsError: '',
+      complete: index !== observedPhaseIds.length - 1,
+    }));
+    return {
+      terminalResult: {
+        ...completeTerminal,
+        suiteId,
+        complete: false,
+        ...(lifecycleFinalized === undefined ? {} : { lifecycleFinalized }),
+        expectedPhaseIds,
+        observedPhaseIds,
+        missingPhaseIds,
+        unexpectedPhaseIds: [],
+        duplicatePhaseIds: [],
+        blockedPhaseIds: missingPhaseIds,
+        phaseResults,
+      },
+      cleanupLedger: {
+        ...verifiedCleanup,
+        suiteId,
+        expectedPhaseIds,
+        observedPhaseIds,
+        missingPhaseIds,
+        unexpectedPhaseIds: [],
+        duplicatePhaseIds: [],
+        blockedPhaseIds: missingPhaseIds,
+        phases: phaseResults,
+      },
+    };
+  };
+  const httpFailureEvidence = buildFinalizedFailureEvidence('httpTimeoutLifecycle', 2);
+  const unitFailureEvidence = buildFinalizedFailureEvidence('unitTests', 1, undefined);
+  const coreMatrixFailureEvidence = buildFinalizedFailureEvidence('createWorkspaceCoreMatrix', 4);
   assert.strictEqual(
     classifySuiteRunResult({
       exitCode: 1,
@@ -1315,8 +1357,27 @@ async function testBatchStopsAfterContainmentBreach() {
       exitCode: 1,
       signal: null,
       output: '1 failing\n',
-      terminalResult: { ...completeTerminal, complete: false, lifecycleFinalized: true },
-      cleanupLedger: verifiedCleanup,
+      ...httpFailureEvidence,
+    }).category,
+    'ordinaryFailure'
+  );
+  assert.strictEqual(
+    classifySuiteRunResult({
+      suiteId: 'unitTests',
+      exitCode: 1,
+      signal: null,
+      output: '1 failing\n',
+      ...unitFailureEvidence,
+    }).category,
+    'ordinaryFailure'
+  );
+  assert.strictEqual(
+    classifySuiteRunResult({
+      suiteId: 'createWorkspaceCoreMatrix',
+      exitCode: 1,
+      signal: null,
+      output: '1 failing\n',
+      ...coreMatrixFailureEvidence,
     }).category,
     'ordinaryFailure'
   );
@@ -1331,6 +1392,63 @@ async function testBatchStopsAfterContainmentBreach() {
     }).category,
     'containmentBreach'
   );
+  for (const { terminalResult, cleanupLedger } of [
+    {
+      terminalResult: { ...httpFailureEvidence.terminalResult, expectedPhaseIds: ['unexpected-phase'] },
+      cleanupLedger: httpFailureEvidence.cleanupLedger,
+    },
+    {
+      terminalResult: { ...httpFailureEvidence.terminalResult, blockedPhaseIds: [] },
+      cleanupLedger: httpFailureEvidence.cleanupLedger,
+    },
+    {
+      terminalResult: {
+        ...httpFailureEvidence.terminalResult,
+        phaseResults: httpFailureEvidence.terminalResult.phaseResults.map((phase) => ({ ...phase, complete: true })),
+      },
+      cleanupLedger: httpFailureEvidence.cleanupLedger,
+    },
+    {
+      terminalResult: { ...httpFailureEvidence.terminalResult, phaseResults: undefined },
+      cleanupLedger: { ...httpFailureEvidence.cleanupLedger, phases: undefined },
+    },
+    {
+      terminalResult: { ...httpFailureEvidence.terminalResult, lifecycleFinalized: undefined },
+      cleanupLedger: httpFailureEvidence.cleanupLedger,
+    },
+    {
+      terminalResult: {
+        ...httpFailureEvidence.terminalResult,
+        phaseResults: httpFailureEvidence.terminalResult.phaseResults.map((phase) => ({ ...phase, diagnosticsError: undefined })),
+      },
+      cleanupLedger: httpFailureEvidence.cleanupLedger,
+    },
+    {
+      terminalResult: { ...httpFailureEvidence.terminalResult, suiteId: 'unitTests' },
+      cleanupLedger: { ...httpFailureEvidence.cleanupLedger, suiteId: 'unitTests' },
+    },
+    {
+      terminalResult: httpFailureEvidence.terminalResult,
+      cleanupLedger: {
+        ...httpFailureEvidence.cleanupLedger,
+        phases: httpFailureEvidence.cleanupLedger.phases.map((phase, index) =>
+          index === httpFailureEvidence.cleanupLedger.phases.length - 1 ? { ...phase, exitCode: 0 } : phase
+        ),
+      },
+    },
+  ]) {
+    assert.strictEqual(
+      classifySuiteRunResult({
+        suiteId: 'httpTimeoutLifecycle',
+        exitCode: 1,
+        signal: null,
+        output: '1 failing\n',
+        terminalResult,
+        cleanupLedger,
+      }).category,
+      'containmentBreach'
+    );
+  }
   for (const terminalResult of [
     { ...completeTerminal, complete: false },
     { ...completeTerminal, complete: false, lifecycleFinalized: false },
@@ -1368,8 +1486,7 @@ async function testBatchStopsAfterContainmentBreach() {
       exitCode: 1,
       signal: null,
       output: 'source is outside wrapper-created owned roots',
-      terminalResult: { ...completeTerminal, complete: false, lifecycleFinalized: true },
-      cleanupLedger: verifiedCleanup,
+      ...httpFailureEvidence,
     }).category,
     'containmentBreach'
   );
@@ -2749,19 +2866,44 @@ function testSummarizerDoesNotMergeFailedOgfTerminalResult() {
 }
 
 function writeSuiteTerminalAndCleanup(context, options = {}) {
+  const complete = options.complete ?? true;
+  const exitCode = options.exitCode ?? 0;
+  const expectedPhaseIds = [...context.expectedPhaseIds];
+  const observedPhaseCount = options.observedPhaseCount ?? (complete ? expectedPhaseIds.length : 1);
+  const observedPhaseIds = expectedPhaseIds.slice(0, observedPhaseCount);
+  const missingPhaseIds = expectedPhaseIds.slice(observedPhaseIds.length);
+  const phaseResults = observedPhaseIds.map((phaseId, index) => {
+    const failed = exitCode !== 0 && index === observedPhaseIds.length - 1;
+    return {
+      phaseId,
+      exitCode: failed ? exitCode : 0,
+      signal: null,
+      cleanupVerified: options.cleanupVerified !== false,
+      diagnosticsError: '',
+      complete: !failed,
+    };
+  });
   fs.mkdirSync(path.dirname(context.terminalResultPath), { recursive: true });
   fs.writeFileSync(
     context.terminalResultPath,
     `${JSON.stringify(
       {
         schemaVersion: 1,
-        complete: options.complete ?? true,
+        suiteId: context.id,
+        complete,
         ...(options.lifecycleFinalized === undefined ? {} : { lifecycleFinalized: options.lifecycleFinalized }),
         cleanupVerified: options.cleanupVerified !== false,
-        exitCode: options.exitCode ?? 0,
+        exitCode,
         signal: null,
         diagnosticsError: '',
+        expectedPhaseIds,
+        observedPhaseIds,
+        missingPhaseIds,
+        unexpectedPhaseIds: [],
+        duplicatePhaseIds: [],
+        blockedPhaseIds: exitCode === 0 ? [] : missingPhaseIds,
         phaseCompleteness: true,
+        phaseResults,
       },
       null,
       2
@@ -2772,9 +2914,17 @@ function writeSuiteTerminalAndCleanup(context, options = {}) {
     `${JSON.stringify(
       {
         schemaVersion: 1,
+        suiteId: context.id,
         verified: options.cleanupVerified !== false,
         phaseCleanupVerified: options.cleanupVerified !== false,
         processTreeVerified: options.cleanupVerified !== false,
+        expectedPhaseIds,
+        observedPhaseIds,
+        missingPhaseIds,
+        unexpectedPhaseIds: [],
+        duplicatePhaseIds: [],
+        blockedPhaseIds: exitCode === 0 ? [] : missingPhaseIds,
+        phases: phaseResults,
       },
       null,
       2
