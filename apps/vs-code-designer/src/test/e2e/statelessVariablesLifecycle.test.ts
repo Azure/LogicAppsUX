@@ -160,14 +160,14 @@ suite('Stateless variables lifecycle', () => {
         lease.assertInstalled();
         await start(entry, getOwnedDebug(), positiveDeadline, signal, azureFixture);
         lease.assertInstalled();
-        await proveExactHistoryRun(entry, operations, positiveDeadline, signal);
+        await proveExactHistoryRun(entry, operations, 1, positiveDeadline, signal);
         await getOwnedDebug().quiesce(positiveDeadline);
         await waitForRuntimePortReleased(positiveDeadline, signal);
         assertPhaseActive(positiveDeadline, signal);
         lease.assertInstalled();
         await start(entry, getOwnedDebug(), positiveDeadline, signal, azureFixture);
         lease.assertInstalled();
-        await proveExactHistoryRun(entry, operations, positiveDeadline, signal);
+        await proveExactHistoryRun(entry, operations, 2, positiveDeadline, signal);
         await assertNoDialogAttempts('Stateless variables lifecycle');
       });
     } catch (error) {
@@ -711,6 +711,7 @@ async function invoke(
 async function proveExactHistoryRun(
   entry: CreatedWorkspace,
   operations: StatelessOperations,
+  occurrence: 1 | 2,
   deadline: number,
   signal: AbortSignal
 ): Promise<void> {
@@ -784,7 +785,7 @@ async function proveExactHistoryRun(
       'Succeeded',
       remainingMs(deadline, 90_000)
     );
-    await helpers.captureLifecycleScreenshot(`stateless-variables-history-${runName}`, {
+    await helpers.captureLifecycleScreenshot(`stateless-variables-history-occurrence-${occurrence}`, {
       expectation: { kind: 'overview', label: entry.label, workflowName: entry.wfName, runName, runStatus: 'Succeeded' },
       semanticCdp: history.cdp,
       semanticContextId: history.context,

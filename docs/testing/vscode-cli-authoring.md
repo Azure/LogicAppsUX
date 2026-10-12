@@ -157,6 +157,39 @@ diagnostics section. Generate the report for failed and incomplete runs so it
 remains useful for investigation, but never use it to replace the suite's
 strict result, phase, cleanup or process-closure gates.
 
+The registered CLI suites use
+`apps/vs-code-designer/scripts/vscode-e2e-evidence-report.js`. Invoke it with
+`--suite-id <SUITE_REGISTRY id>` and `--artifact-root <staged diagnostics
+root>` exactly once, after suite-specific evidence is staged. It always writes
+`VS_CODE_CLI_EVIDENCE.md` and `VS_CODE_CLI_EVIDENCE.json`; HTTP timeout also
+writes its historical `HTTP_TIMEOUT_LIFECYCLE_EVIDENCE.*` aliases. Descriptor
+IDs must exactly equal `SUITE_REGISTRY`, and output names are fixed rather than
+derived from command-line text.
+
+Use explicit descriptor modes:
+
+- `catalog` for finite production checkpoint contracts, including startup-only
+  evidence such as the `unitTests` empty-window proof;
+- `dynamic-catalog` only when ordered identities come from a staged structured
+  contract, such as multi-root `final-result.json`.
+
+Never infer canonical order from directory enumeration, timestamps, generated
+run IDs, or lexical sorting. Finite Create Workspace variants follow the
+existing case/phase order. Regeneration is baseline plus six declared variants
+times four checkpoints. Multi-root follows the root array recorded by its final
+result and emits only safe basenames. Stateless history uses stable occurrence
+1/2 checkpoint names while semantic readiness still binds each screenshot to
+the exact callback run.
+
+The report allowlist is intentionally narrow: admitted build/source identity,
+native count/outcome fields, terminal phase status, and screenshot
+classification/verdict/reason codes. Do not add raw logs, exception excerpts,
+absolute paths, runtime roots, credentials, target/frame IDs, event arrays, DOM
+details, auth stores, or arbitrary nested input data. Missing or malformed
+runtime evidence must render as report state; unknown descriptors, invalid
+descriptor definitions, unsafe output paths, and write failures remain
+programmer/output errors.
+
 `WorkspaceConfiguration` is a snapshot. After awaiting `update`, call
 `workspace.getConfiguration` again before checking the effective value.
 

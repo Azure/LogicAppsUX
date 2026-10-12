@@ -62,7 +62,8 @@ testDiagnosticsStagingScriptHandlesDirectSuiteLayout({
   expectedPrivateFailure: 'incomplete-or-unclean-execution',
 });
 testPrivateTraceabilityConfigurationContract();
-testHttpTimeoutEvidencePipelineContract();
+testGenericEvidencePipelineContract();
+testAllPlatformLaneEvidenceStagingFixtures();
 testDiagnosticsStagingScriptPreservesEvidenceBeforeFailing();
 
 console.log('[pipeline-contract.unit] all tests passed');
@@ -1970,16 +1971,18 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
               assertionIdentities: ['launch-configuration-name-ends-with-created-logic-app-name'],
             },
           ];
-    if (options.privatePlatform || options.msn || options.http) {
-      const scriptsRoot = path.join(sourcesDirectory, 'apps', 'vs-code-designer', 'scripts');
-      fs.mkdirSync(scriptsRoot, { recursive: true });
-      fs.mkdirSync(agentTempDirectory, { recursive: true });
-      const scripts = options.http
-        ? ['http-timeout-lifecycle-evidence.js']
-        : ['enrich-e2e-traceability.js', 'ogf-e2e-registry.js', 'e2e-cli-batch.js', 'e2e-cli-terminal.js', 'workspace-prompt-cancel.js'];
-      for (const file of scripts) {
-        fs.copyFileSync(path.join(__dirname, file), path.join(scriptsRoot, file));
-      }
+    const scriptsRoot = path.join(sourcesDirectory, 'apps', 'vs-code-designer', 'scripts');
+    fs.mkdirSync(scriptsRoot, { recursive: true });
+    fs.mkdirSync(agentTempDirectory, { recursive: true });
+    const scripts = [
+      'vscode-e2e-evidence-report.js',
+      'e2e-cli-batch.js',
+      ...(options.privatePlatform || options.msn
+        ? ['enrich-e2e-traceability.js', 'ogf-e2e-registry.js', 'e2e-cli-terminal.js', 'workspace-prompt-cancel.js']
+        : []),
+    ];
+    for (const file of scripts) {
+      fs.copyFileSync(path.join(__dirname, file), path.join(scriptsRoot, file));
     }
     if (options.privatePlatform || options.msn) {
       const scenario = OGF_E2E_SCENARIOS[0];
@@ -2200,6 +2203,8 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
       const failedDiagnosticsRoot = path.join(artifactStagingDirectory, 'vscode-e2e-cli', artifactName);
       assert.ok(fs.existsSync(path.join(failedDiagnosticsRoot, 'results', `${suiteId}.json`)));
       assert.ok(fs.existsSync(path.join(failedDiagnosticsRoot, 'log', `${suiteId}.log`)));
+      assert.ok(fs.existsSync(path.join(failedDiagnosticsRoot, 'VS_CODE_CLI_EVIDENCE.md')));
+      assert.ok(fs.existsSync(path.join(failedDiagnosticsRoot, 'VS_CODE_CLI_EVIDENCE.json')));
       assert.ok(
         !fs.existsSync(path.join(artifactStagingDirectory, 'vscode-e2e-cli', artifactName, 'private-traceability', `${suiteId}.json`))
       );
@@ -2269,6 +2274,9 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
     assert.match(sanitizedLog, /<redacted>/);
 
     assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'log', 'vscode-logs', 'profile.log')));
+    assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'VS_CODE_CLI_EVIDENCE.md')));
+    assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'VS_CODE_CLI_EVIDENCE.json')));
+    assert.strictEqual(JSON.parse(fs.readFileSync(path.join(diagnosticsRoot, 'VS_CODE_CLI_EVIDENCE.json'), 'utf8')).suiteId, suiteId);
     if (options.http) {
       assert.strictEqual(
         fs.readFileSync(
@@ -2341,20 +2349,204 @@ function testPrivateTraceabilityConfigurationContract() {
   assert.match(template, /--vscode-version "\$\(\$admissionContext\.resolvedVSCodeBuild\)"/);
 }
 
-function testHttpTimeoutEvidencePipelineContract() {
+function testGenericEvidencePipelineContract() {
   const template = read('.config/templates/vscode-e2e-cli-run-suite.yml');
   const screenshotCopy = template.indexOf("Copy-Item (Join-Path $screenshotsRoot '*') -Destination $screenshotDestination");
-  const suiteGuard = template.indexOf("if ('${{ parameters.suiteId }}' -eq 'httpTimeoutLifecycle')", screenshotCopy);
-  const generator = template.indexOf('scripts/http-timeout-lifecycle-evidence.js', suiteGuard);
+  const regenerationStaging = template.indexOf("if ('${{ parameters.suiteId }}' -eq 'workspaceArtifactRegeneration')", screenshotCopy);
+  const multiRootStaging = template.indexOf("if ('${{ parameters.suiteId }}' -eq 'workspaceMultiRoot')", regenerationStaging);
+  const generator = template.indexOf('scripts/vscode-e2e-evidence-report.js', multiRootStaging);
   const missingEvidenceFailure = template.indexOf('if ($missingRequiredFiles.Count -gt 0)', generator);
   const strictAcceptance = template.indexOf('scripts/family-lifecycle-terminal.js', generator);
-  assert.ok(screenshotCopy >= 0 && screenshotCopy < suiteGuard, 'Screenshots must be staged before report generation');
-  assert.ok(suiteGuard >= 0 && suiteGuard < generator, 'Generator must be scoped to httpTimeoutLifecycle');
+  assert.ok(
+    screenshotCopy >= 0 && screenshotCopy < regenerationStaging,
+    'Primary screenshots must be staged before suite-specific evidence'
+  );
+  assert.ok(regenerationStaging < multiRootStaging, 'Regeneration staging must precede multi-root staging');
+  assert.ok(multiRootStaging < generator, 'All suite-specific evidence must be staged before report generation');
   assert.ok(generator < missingEvidenceFailure, 'Incomplete runs must publish the report before staging fails closed');
   assert.ok(generator < strictAcceptance, 'The report must not replace or follow strict lifecycle acceptance');
-  assert.strictEqual((template.match(/scripts\/http-timeout-lifecycle-evidence\.js/g) || []).length, 1);
+  assert.strictEqual((template.match(/scripts\/vscode-e2e-evidence-report\.js/g) || []).length, 1);
+  assert.doesNotMatch(
+    template.slice(Math.max(0, generator - 200), generator),
+    /httpTimeoutLifecycle/,
+    'Generic report invocation must not be HTTP guarded'
+  );
+  assert.match(template, /--suite-id '\$\{\{ parameters\.suiteId \}\}'/);
   assert.match(template, /--artifact-root "\$diagnosticsRoot"/);
-  assert.match(template, /throw 'HTTP timeout lifecycle evidence report generation failed\.'/);
+  assert.match(template, /throw 'VS Code CLI evidence report generation failed\.'/);
+  const coreGuardStart = template.indexOf("if ('${{ parameters.suiteId }}' -eq 'createWorkspaceCoreMatrix')");
+  const coreGuardEnd = template.indexOf("if ('${{ parameters.suiteId }}' -eq 'workspaceMultiRoot')", coreGuardStart);
+  assert.ok(coreGuardStart >= 0 && coreGuardEnd > coreGuardStart);
+  assert.doesNotMatch(
+    template.slice(coreGuardStart, coreGuardEnd),
+    /workspaceMultiRoot/,
+    'workspaceMultiRoot staging must not remain nested under createWorkspaceCoreMatrix'
+  );
+}
+
+function testAllPlatformLaneEvidenceStagingFixtures() {
+  const template = read('.config/templates/vscode-e2e-cli-run-suite.yml');
+  const script = extractStageDiagnosticsScript(template);
+  const lanes = Object.values(SUITE_REGISTRY).flatMap((suite) => suite.platforms.map((platform) => ({ suiteId: suite.id, platform })));
+  assert.strictEqual(lanes.length, 21);
+  assert.deepStrictEqual(
+    [...new Set(lanes.map((lane) => lane.suiteId))],
+    Object.keys(SUITE_REGISTRY),
+    'Every registered descriptor must have at least one executable platform lane'
+  );
+
+  for (const lane of lanes) {
+    const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), `pipeline-evidence-${lane.platform}-${lane.suiteId}-`));
+    try {
+      const sourcesDirectory = path.join(tempRoot, 'sources');
+      const agentTempDirectory = path.join(tempRoot, 'agent-temp');
+      const artifactStagingDirectory = path.join(tempRoot, 'artifact-staging');
+      const shortName = `${lane.platform}-${lane.suiteId}`;
+      const artifactName = `evidence-${shortName}`;
+      const extensionRoot = path.join(sourcesDirectory, 'apps', 'vs-code-designer');
+      const scriptsRoot = path.join(extensionRoot, 'scripts');
+      const resultRoot = path.join(extensionRoot, '.vscode-test', 'results');
+      const screenshotsRoot = path.join(extensionRoot, '.vscode-test', 'screenshots', 'cli', lane.suiteId);
+      const vscodeLogsRoot = path.join(extensionRoot, '.vscode-test', 'vscode-logs', 'cli', lane.suiteId);
+      const workspaceRoot = path.join(extensionRoot, '.vscode-test', 'generated-workspaces', lane.suiteId);
+      for (const directory of [scriptsRoot, resultRoot, screenshotsRoot, vscodeLogsRoot, workspaceRoot, agentTempDirectory]) {
+        fs.mkdirSync(directory, { recursive: true });
+      }
+      for (const file of ['vscode-e2e-evidence-report.js', 'e2e-cli-batch.js']) {
+        fs.copyFileSync(path.join(__dirname, file), path.join(scriptsRoot, file));
+      }
+      fs.writeFileSync(
+        path.join(resultRoot, `${lane.suiteId}.json`),
+        `${JSON.stringify({ label: lane.suiteId, outcome: 'failure', total: 1, passing: 0, failing: 1, pending: 0 })}\n`
+      );
+      fs.writeFileSync(path.join(resultRoot, `${lane.suiteId}.junit.xml`), '<testsuite tests="1" failures="1" />\n');
+      fs.writeFileSync(path.join(resultRoot, `${lane.suiteId}.summary.md`), '# failed fixture\n');
+      fs.writeFileSync(
+        path.join(resultRoot, `${lane.suiteId}.terminal-result.json`),
+        `${JSON.stringify({
+          label: lane.suiteId,
+          complete: false,
+          cleanupVerified: false,
+          exitCode: 1,
+          phaseResults: SUITE_REGISTRY[lane.suiteId].expectedPhases.map((phaseId) => ({
+            phaseId,
+            complete: false,
+            cleanupVerified: false,
+            exitCode: 1,
+          })),
+        })}\n`
+      );
+      fs.writeFileSync(
+        path.join(resultRoot, `admission-context-${lane.suiteId}.json`),
+        `${JSON.stringify({ sourceSHA: 'a'.repeat(40), resolvedVSCodeBuild: '1.140.0' })}\n`
+      );
+      fs.writeFileSync(path.join(resultRoot, `${lane.suiteId}.log`), 'sanitized lane fixture\n');
+      fs.writeFileSync(path.join(vscodeLogsRoot, 'profile.log'), 'sanitized profile fixture\n');
+      fs.writeFileSync(path.join(workspaceRoot, 'index.md'), '# workspace fixture\n');
+
+      if (lane.suiteId === 'createWorkspaceCoreMatrix') {
+        const cancelRoot = path.join(extensionRoot, '.vscode-test', 'workspace-cancel');
+        for (const name of ['invocation.json', 'wizard-handoff.json', 'final-result.json']) {
+          fs.mkdirSync(cancelRoot, { recursive: true });
+          fs.writeFileSync(path.join(cancelRoot, name), '{}\n');
+        }
+        for (const name of ['code.log', 'cancel.log']) {
+          fs.writeFileSync(path.join(cancelRoot, name), 'sanitized\n');
+        }
+        fs.mkdirSync(path.join(cancelRoot, 'screenshots'));
+        fs.mkdirSync(path.join(cancelRoot, 'vscode-logs'));
+      }
+      if (lane.suiteId === 'workspaceArtifactRegeneration') {
+        const regenerationRoot = path.join(extensionRoot, '.vscode-test', `workspace-regeneration-${shortName}`);
+        fs.mkdirSync(regenerationRoot, { recursive: true });
+        for (const name of [
+          'invocation.json',
+          'final-result.json',
+          'terminal-result.json',
+          'cleanup-ledger.json',
+          'phase-results.jsonl',
+          'code.log',
+          'prompt-observations.jsonl',
+        ]) {
+          fs.writeFileSync(path.join(regenerationRoot, name), name.endsWith('.log') || name.endsWith('.jsonl') ? 'sanitized\n' : '{}\n');
+        }
+        fs.mkdirSync(path.join(regenerationRoot, 'screenshots'));
+        fs.mkdirSync(path.join(regenerationRoot, 'vscode-logs'));
+      }
+      if (lane.suiteId === 'workspaceMultiRoot') {
+        const invocationRoot = path.join(extensionRoot, '.vscode-test', 'lifecycle', 'workspaceMultiRoot', 'multi-root-fixture');
+        fs.mkdirSync(invocationRoot, { recursive: true });
+        for (const name of ['invocation.json', 'func-bootstrap.json', 'wizard-handoff.json']) {
+          fs.writeFileSync(path.join(invocationRoot, name), '{}\n');
+        }
+        fs.writeFileSync(path.join(invocationRoot, 'debug-events.jsonl'), '{"targetId":"must-not-stage"}\n');
+        fs.writeFileSync(
+          path.join(invocationRoot, 'code.log'),
+          'D:\\agent\\_work\\1\\s\\private-workspace\\app /home/agent/private-workspace/app token=must-redact\n'
+        );
+        fs.writeFileSync(
+          path.join(invocationRoot, 'final-result.json'),
+          `${JSON.stringify(
+            {
+              complete: true,
+              observationPassed: true,
+              evidenceVerified: true,
+              diagnosticsVerified: true,
+              cleanupVerified: false,
+              lifecycleFinalized: true,
+              exitCode: 1,
+              signal: null,
+              expectedPhaseIds: ['workspaceMultiRoot:create', 'workspaceMultiRoot:reopen'],
+              observedPhaseIds: ['workspaceMultiRoot:create', 'workspaceMultiRoot:reopen'],
+              observation: { roots: ['D:\\private\\alpha', 'D:\\private\\beta'] },
+              runtimeRoot: 'D:\\private\\runtime',
+              targetId: 'must-not-stage',
+            },
+            null,
+            2
+          )}\n`
+        );
+        fs.mkdirSync(path.join(invocationRoot, 'screenshots'));
+        fs.mkdirSync(path.join(invocationRoot, 'vscode-logs'));
+        fs.writeFileSync(path.join(invocationRoot, 'vscode-logs', 'private.log'), 'credential=must-not-stage\n');
+      }
+
+      const result = runPowerShellScript(
+        script
+          .replaceAll('$(Build.ArtifactStagingDirectory)', artifactStagingDirectory)
+          .replaceAll('$(Build.SourcesDirectory)', sourcesDirectory)
+          .replaceAll('$(Agent.TempDirectory)', agentTempDirectory)
+          .replaceAll('$(Build.BuildId)', '42')
+          .replaceAll('${{ parameters.platform }}', lane.platform === 'win32' ? 'windows' : 'linux')
+          .replaceAll('${{ parameters.shortName }}', shortName)
+          .replaceAll('${{ parameters.artifactName }}', artifactName)
+          .replaceAll('${{ parameters.suiteId }}', lane.suiteId)
+      );
+      assert.strictEqual(result.status, 0, `${lane.platform}/${lane.suiteId}\n${result.output}`);
+      const diagnosticsRoot = path.join(artifactStagingDirectory, 'vscode-e2e-cli', artifactName);
+      const manifest = JSON.parse(fs.readFileSync(path.join(diagnosticsRoot, 'VS_CODE_CLI_EVIDENCE.json'), 'utf8'));
+      assert.strictEqual(manifest.suiteId, lane.suiteId);
+      assert.ok(fs.existsSync(path.join(diagnosticsRoot, 'VS_CODE_CLI_EVIDENCE.md')));
+      if (lane.suiteId === 'workspaceMultiRoot') {
+        const multiRootDestination = path.join(diagnosticsRoot, 'workspace-multi-root');
+        const projection = JSON.parse(fs.readFileSync(path.join(multiRootDestination, 'final-result.json'), 'utf8'));
+        assert.deepStrictEqual(projection.observation.roots, ['alpha', 'beta']);
+        assert.doesNotMatch(JSON.stringify(projection), /private|runtimeRoot|targetId/);
+        for (const omitted of [
+          'invocation.json',
+          'func-bootstrap.json',
+          'wizard-handoff.json',
+          'debug-events.jsonl',
+          'code.log',
+          'vscode-logs',
+        ]) {
+          assert.ok(!fs.existsSync(path.join(multiRootDestination, omitted)), `Raw multi-root ${omitted} must not be staged`);
+        }
+      }
+    } finally {
+      fs.rmSync(tempRoot, { recursive: true, force: true });
+    }
+  }
 }
 
 function testDiagnosticsStagingScriptPreservesEvidenceBeforeFailing() {
@@ -2367,7 +2559,12 @@ function testDiagnosticsStagingScriptPreservesEvidenceBeforeFailing() {
     const artifactStagingDirectory = path.join(tempRoot, 'artifact-staging');
     const artifactName = 'linux-unit-tests';
     const suiteId = 'unitTests';
+    const scriptsRoot = path.join(sourcesDirectory, 'apps', 'vs-code-designer', 'scripts');
     const resultRoot = path.join(sourcesDirectory, 'apps', 'vs-code-designer', '.vscode-test', 'results');
+    fs.mkdirSync(scriptsRoot, { recursive: true });
+    for (const file of ['vscode-e2e-evidence-report.js', 'e2e-cli-batch.js']) {
+      fs.copyFileSync(path.join(__dirname, file), path.join(scriptsRoot, file));
+    }
     fs.mkdirSync(resultRoot, { recursive: true });
     fs.writeFileSync(path.join(resultRoot, `${suiteId}.junit.xml`), '<testsuite tests="12" failures="0" />\n');
     fs.writeFileSync(path.join(resultRoot, `${suiteId}.summary.md`), '# summary\n');

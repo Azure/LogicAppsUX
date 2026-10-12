@@ -747,6 +747,13 @@ function testNativeWiring(): void {
     assert.ok(native.includes('normalizeFsPath(entry.workspaceFilePath)'));
     assert.ok(native.includes('installStatelessHistorySettings(entry.appDir, entry.wfName)'));
     assert.ok(native.includes("callback.headers['x-ms-workflow-run-id']"));
+    assert.ok(native.includes('proveExactHistoryRun(entry, operations, 1, positiveDeadline, signal)'));
+    assert.ok(native.includes('proveExactHistoryRun(entry, operations, 2, positiveDeadline, signal)'));
+    assert.ok(native.includes('stateless-variables-history-occurrence-${occurrence}'));
+    assert.ok(
+      !native.includes('stateless-variables-history-${runName}'),
+      'Published checkpoint identity must not expose or sort runtime run IDs'
+    );
     assert.ok(native.includes('assertStatelessRun(runName, previous, run, JSON.parse(actions.body), operations)'));
     assert.ok(native.includes('await recoverStateless('));
     assert.ok(

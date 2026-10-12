@@ -671,14 +671,6 @@ jobs:
             Copy-Item (Join-Path $screenshotsRoot '*') -Destination $screenshotDestination -Recurse -Force -ErrorAction Stop
           }
 
-          if ('${{ parameters.suiteId }}' -eq 'httpTimeoutLifecycle') {
-            node "$(Build.SourcesDirectory)/apps/vs-code-designer/scripts/http-timeout-lifecycle-evidence.js" `
-              --artifact-root "$diagnosticsRoot"
-            if ($LASTEXITCODE -ne 0) {
-              throw 'HTTP timeout lifecycle evidence report generation failed.'
-            }
-          }
-
           if (Test-Path $workspaceSnapshotsRoot) {
             Get-ChildItem -Path $workspaceSnapshotsRoot -Force -ErrorAction Stop | Copy-Item -Destination $workspaceDestination -Recurse -Force -ErrorAction Stop
           }
@@ -752,27 +744,76 @@ jobs:
                   $missingRequiredFiles += $cancelSource
                 }
               }
-              if ('${{ parameters.suiteId }}' -eq 'workspaceMultiRoot') {
-                $familyParent = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/lifecycle/workspaceMultiRoot'
-                $familyRoots = @(Get-ChildItem -LiteralPath $familyParent -Directory -Filter 'multi-root-*' -ErrorAction SilentlyContinue)
-                if ($familyRoots.Count -ne 1) {
-                  $missingRequiredFiles += "Exactly one current multi-root diagnostic invocation is required: $familyParent"
-                } else {
-                  $familyDestination = Join-Path $diagnosticsRoot 'workspace-multi-root'
-                  New-Item -ItemType Directory -Force -Path $familyDestination | Out-Null
-                  foreach ($name in @('invocation.json', 'func-bootstrap.json', 'wizard-handoff.json', 'debug-events.jsonl', 'code.log', 'final-result.json', 'screenshots', 'vscode-logs')) {
-                    $source = Join-Path $familyRoots[0].FullName $name
-                    if (Test-Path $source) {
-                      Copy-Item -LiteralPath $source -Destination $familyDestination -Recurse -Force -ErrorAction Stop
-                    } else {
-                      $missingRequiredFiles += $source
-                    }
-                  }
-                }
-              }
             } else {
               $missingRequiredFiles += $cancelRoot
             }
+          }
+          if ('${{ parameters.suiteId }}' -eq 'workspaceMultiRoot') {
+            $familyParent = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/lifecycle/workspaceMultiRoot'
+            $familyRoots = @(Get-ChildItem -LiteralPath $familyParent -Directory -Filter 'multi-root-*' -ErrorAction SilentlyContinue)
+            if ($familyRoots.Count -ne 1) {
+              $missingRequiredFiles += "Exactly one current multi-root diagnostic invocation is required: $familyParent"
+            } else {
+              $familyDestination = Join-Path $diagnosticsRoot 'workspace-multi-root'
+              New-Item -ItemType Directory -Force -Path $familyDestination | Out-Null
+              $requiredMultiRootEvidence = @(
+                'invocation.json',
+                'func-bootstrap.json',
+                'wizard-handoff.json',
+                'debug-events.jsonl',
+                'code.log',
+                'final-result.json',
+                'screenshots',
+                'vscode-logs'
+              )
+              foreach ($name in $requiredMultiRootEvidence) {
+                $source = Join-Path $familyRoots[0].FullName $name
+                if (-not (Test-Path $source)) {
+                  $missingRequiredFiles += $source
+                }
+              }
+              $multiRootFinalSource = Join-Path $familyRoots[0].FullName 'final-result.json'
+              if (Test-Path -LiteralPath $multiRootFinalSource) {
+                $multiRootFinal = Get-Content -LiteralPath $multiRootFinalSource -Raw | ConvertFrom-Json
+                $rootNames = @(
+                  @($multiRootFinal.observation.roots) |
+                    ForEach-Object {
+                      $root = [string]$_
+                      [IO.Path]::GetFileName($root.TrimEnd([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar))
+                    } |
+                    Where-Object { $_ }
+                )
+                $multiRootProjection = [ordered]@{
+                  schemaVersion = 1
+                  suiteId = 'workspaceMultiRoot'
+                  complete = $multiRootFinal.complete -eq $true
+                  observationPassed = $multiRootFinal.observationPassed -eq $true
+                  evidenceVerified = $multiRootFinal.evidenceVerified -eq $true
+                  diagnosticsVerified = $multiRootFinal.diagnosticsVerified -eq $true
+                  cleanupVerified = $multiRootFinal.cleanupVerified -eq $true
+                  lifecycleFinalized = $multiRootFinal.lifecycleFinalized -eq $true
+                  exitCode = $multiRootFinal.exitCode
+                  signal = $multiRootFinal.signal
+                  expectedPhaseIds = @($multiRootFinal.expectedPhaseIds)
+                  observedPhaseIds = @($multiRootFinal.observedPhaseIds)
+                  observation = [ordered]@{ roots = $rootNames }
+                }
+                $multiRootProjection |
+                  ConvertTo-Json -Depth 5 |
+                  Set-Content -LiteralPath (Join-Path $familyDestination 'final-result.json') -Encoding utf8
+              }
+              $multiRootScreenshots = Join-Path $familyRoots[0].FullName 'screenshots'
+              if (Test-Path -LiteralPath $multiRootScreenshots) {
+                Copy-Item -LiteralPath $multiRootScreenshots -Destination $familyDestination -Recurse -Force -ErrorAction Stop
+              }
+            }
+          }
+
+          node "$(Build.SourcesDirectory)/apps/vs-code-designer/scripts/vscode-e2e-evidence-report.js" `
+            --suite-id '${{ parameters.suiteId }}' `
+            --artifact-root "$diagnosticsRoot"
+          if ($LASTEXITCODE -ne 0) {
+            throw 'VS Code CLI evidence report generation failed.'
           }
 
           foreach ($directory in @($logDestination, $screenshotDestination, $workspaceDestination)) {
