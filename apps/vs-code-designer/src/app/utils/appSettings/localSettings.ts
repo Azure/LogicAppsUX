@@ -13,7 +13,6 @@ import {
 import { localize } from '../../../localize';
 import { decryptLocalSettings } from '../../commands/appSettings/decryptLocalSettings';
 import { encryptLocalSettings } from '../../commands/appSettings/encryptLocalSettings';
-import { executeOnFunctions } from '../../functionsExtension/executeOnFunctionsExt';
 import { writeFormattedJson } from '../fs';
 import { parseJson } from '../parseJson';
 import { generateDesignTimeLocalSettingsJson, generateLocalSettingsJson } from '../../projectConsistency/fileGenerators';
@@ -59,7 +58,7 @@ export async function addOrUpdateLocalAppSettings(
 
   await writeFormattedJson(localSettingsPath, settings);
   if (wasEncrypted) {
-    await executeOnFunctions(encryptLocalSettings, context, Uri.file(localSettingsPath));
+    await encryptLocalSettings(Uri.file(localSettingsPath));
   }
 }
 
@@ -151,11 +150,11 @@ async function getDecryptedLocalSettings(
   localSettingsPath: string
 ): Promise<ILocalSettingsJson> {
   if (localSettings.IsEncrypted) {
-    await executeOnFunctions(decryptLocalSettings, context, localSettingsUri);
+    await decryptLocalSettings(localSettingsUri);
     try {
       return (await fse.readJson(localSettingsPath)) as ILocalSettingsJson;
     } finally {
-      await executeOnFunctions(encryptLocalSettings, context, localSettingsUri);
+      await encryptLocalSettings(localSettingsUri);
     }
   }
   return localSettings;

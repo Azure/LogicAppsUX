@@ -2,26 +2,26 @@
 // Licensed under the MIT License.
 
 /**
- * Custom-code .NET version E2E — net8 workspace creation and net10 picker
+ * Custom-code .NET version E2E — net10 workspace creation and net8 picker
  * exclusion (create phase).
  *
- * The `net8` target drives the REAL Create Workspace webview to create a
+ * The `net10` target drives the REAL Create Workspace webview to create a
  * `Logic app with custom code` + Stateful workspace and provides the fixture
- * used by the assert phase. The `net10` target only proves that `.NET 10` is
+ * used by the assert phase. The `net8` target only proves that `.NET 8` is
  * absent from the custom-code framework picker; it does not create a workspace
  * and has no runtime/assert phase.
  *
  * This is a create/assert pair, the same shape as
  * azuriteAutostartFailure.test.ts / azuriteAutostartFailureAssert.test.ts and
  * codefulDebugTasksModern/Legacy.test.ts: this file (Phase 4.15A) creates the
- * net8 workspace through the wizard in one fresh VS Code session, and
- * customCodeDotNetVersionAssert.test.ts (Phase 4.15B) reopens the generated
- * `.code-workspace` in a SEPARATE fresh session and asserts the
- * .NET 8 settings plus a full debug/run lifecycle.
+ * net10 workspace through the wizard in one fresh VS Code session, and
+ * customCodeDotNetVersionAssert.test.ts (Phase 4.15B) validates the generated
+ * workspace files in a separate phase without building the project while the
+ * required Workflows SDK 1.4.0 package is pending release.
  *
  * DELIBERATELY not manifest-backed: the shared `created-workspaces.json`
  * manifest (workspaceManifest.ts / createWorkspaceShared.ts) already holds a
- * single net8 CustomCode + Stateful entry written by
+ * single CustomCode + Stateful entry written by
  * createWorkspace.fixtures.test.ts (Phase 4.1a), with no dotnet-version
  * disambiguation. Appending net8/net10 entries here would collide with that
  * entry and make unrelated scenarios (p42-customcode, p43-customcode, ...)
@@ -139,8 +139,8 @@ describe(`Create Workspace: CustomCode dotnet version (${TARGET})`, function () 
     await sleep(1000);
   });
 
-  it(TARGET === 'net10'
-    ? 'does not show .NET 10 for custom code'
+  it(TARGET === 'net8'
+    ? 'does not show .NET 8 for custom code'
     : `creates a CustomCode + Stateful workspace targeting ${DOTNET_VERSION_LABEL}`, async () => {
     log('Opening Create Workspace command...');
     await selectCreateWorkspaceCommand(workbench);
@@ -163,7 +163,7 @@ describe(`Create Workspace: CustomCode dotnet version (${TARGET})`, function () 
     await selectRadioOption(driver, 'Logic app with custom code');
     await sleep(2000);
 
-    if (TARGET === 'net10') {
+    if (TARGET === 'net8') {
       const dotNetDropdown = await findDropdownByLabel(driver, '.NET Version');
       await driver.actions().move({ origin: dotNetDropdown }).click().perform();
       await sleep(500);
@@ -171,15 +171,15 @@ describe(`Create Workspace: CustomCode dotnet version (${TARGET})`, function () 
         (await driver.findElements(By.css('[role="option"]'))).map((option) => option.getText().catch(() => ''))
       );
       assert.ok(
-        optionTexts.some((option) => option.includes('.NET 8')),
-        `.NET 8 should remain available. Options: ${optionTexts.join(', ')}`
+        optionTexts.some((option) => option.includes('.NET 10')),
+        `.NET 10 should remain available. Options: ${optionTexts.join(', ')}`
       );
       assert.ok(
-        !optionTexts.some((option) => option.includes('.NET 10')),
-        `.NET 10 should not appear for custom code. Options: ${optionTexts.join(', ')}`
+        !optionTexts.some((option) => option.includes('.NET 8')),
+        `.NET 8 should not appear for custom code. Options: ${optionTexts.join(', ')}`
       );
-      await captureScreenshot(driver, 'customcode-dotnet-net10-hidden-passed');
-      log('PASSED: .NET 10 is hidden from the custom-code framework picker');
+      await captureScreenshot(driver, 'customcode-dotnet-net8-hidden-passed');
+      log('PASSED: .NET 8 is hidden from the custom-code framework picker');
       return;
     }
 

@@ -45,6 +45,7 @@ export const CreateConnectionInternal = (props: {
   updateConnectionInState: (payload: CreatedConnectionPayload) => void;
   onConnectionCreated: (connection: Connection) => void;
   onConnectionCancelled?: () => void;
+  onCreatingChange?: (isCreating: boolean) => void;
   createButtonTexts?: CreateButtonTexts;
   description?: string;
   nodeIds?: string[];
@@ -74,6 +75,7 @@ export const CreateConnectionInternal = (props: {
     updateConnectionInState,
     onConnectionCreated,
     onConnectionCancelled,
+    onCreatingChange,
     updateOperationParameterValues,
     isAgentSubgraph,
     operationManifest,
@@ -176,6 +178,7 @@ export const CreateConnectionInternal = (props: {
       }
 
       setIsCreating(true);
+      onCreatingChange?.(true);
       setErrorMessage(undefined);
 
       let outputParameterValues = parameterValues;
@@ -296,6 +299,7 @@ export const CreateConnectionInternal = (props: {
         });
       }
       setIsCreating(false);
+      onCreatingChange?.(false);
     },
     [
       applyNewConnection,
@@ -304,6 +308,7 @@ export const CreateConnectionInternal = (props: {
       connectionName,
       connector,
       existingReferences,
+      onCreatingChange,
       selectedSubResource,
       updateNewConnectionInCache,
       updateOperationParameterValues,

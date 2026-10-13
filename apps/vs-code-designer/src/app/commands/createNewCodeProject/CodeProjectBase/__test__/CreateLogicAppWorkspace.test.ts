@@ -265,7 +265,7 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
 
     it('should create stateful provider workflow without adding a Program.cs AddWorkflow call', async () => {
       const statefulTemplate = 'namespace <%= logicAppNamespace %>\npublic static class <%= flowNameClass %> { stateful content }';
-      const programTemplate = 'namespace <%= logicAppNamespace %>\nclass Program { <%= workflowBuilders %> }';
+      const programTemplate = 'namespace <%= logicAppNamespace %>\nclass Program { }';
 
       vi.mocked(fse.readFile).mockImplementation((filePath: string) => {
         if (filePath.includes('StatefulCodefulWorkflow')) {
@@ -330,7 +330,7 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
 
     it('should create workflow file with workflow name (not Program.cs) for first workflow', async () => {
       const agentCodefulTemplate = 'namespace <%= logicAppNamespace %>\npublic static class <%= flowNameClass %> { }';
-      const programTemplate = 'namespace <%= logicAppNamespace %>\nclass Program { <%= workflowBuilders %> }';
+      const programTemplate = 'namespace <%= logicAppNamespace %>\nclass Program { }';
 
       vi.mocked(fse.readFile).mockImplementation((filePath: string) => {
         if (filePath.includes('AgentCodefulWorkflow')) {
@@ -471,7 +471,7 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
 
     it('should create StatefulCodeful workflow file correctly with namespace', async () => {
       const statefulTemplate = 'namespace <%= logicAppNamespace %>\npublic static class <%= flowNameClass %> { stateful content }';
-      const programTemplate = 'namespace <%= logicAppNamespace %>\nclass Program { <%= workflowBuilders %> }';
+      const programTemplate = 'namespace <%= logicAppNamespace %>\nclass Program { }';
 
       vi.mocked(fse.readFile).mockImplementation((filePath: string) => {
         if (filePath.includes('StatefulCodefulWorkflow')) {
@@ -512,7 +512,7 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
 
     it('should create .csproj and nuget.config files', async () => {
       const agentCodefulTemplate = 'public static class <%= flowName %> { }';
-      const programTemplate = 'class Program { <%= workflowBuilders %> }';
+      const programTemplate = 'class Program { }';
       const projTemplate = '<Project>test proj</Project>';
       const nugetTemplate = '<configuration><%= lspDirectory %></configuration>';
 

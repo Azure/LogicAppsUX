@@ -1097,7 +1097,6 @@
     ]
   },
   "extensionDependencies": [
-    "ms-azuretools.vscode-azurefunctions",
     "azurite.azurite",
     "ms-azuretools.vscode-azureresourcegroups",
     "ms-dotnettools.csharp",

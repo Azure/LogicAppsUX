@@ -334,6 +334,13 @@ async function waitForRepairNotification(driver: WebDriver, timeoutMs: number): 
   return '';
 }
 
+function isElementNotInteractableError(error: unknown): boolean {
+  return (
+    error instanceof Error &&
+    (error.name === 'ElementNotInteractableError' || error.message.toLowerCase().includes('element not interactable'))
+  );
+}
+
 describe('Bundle on-disk integrity gate — repair after tamper (E2E)', () => {
   let driver: WebDriver;
   let workbench: Workbench;
@@ -379,7 +386,23 @@ describe('Bundle on-disk integrity gate — repair after tamper (E2E)', () => {
     // `workbench.action.reloadWindow` (which the harness intentionally
     // avoids — see designerHelpers.ts:2334).
     console.log('[bundleRepair] Step 3: invoking Validate and install dependency binaries command…');
-    await workbench.executeCommand('Azure Logic Apps: Validate and install dependency binaries');
+    try {
+      await workbench.executeCommand('Azure Logic Apps: Validate and install dependency binaries');
+    } catch (error) {
+      if (!isElementNotInteractableError(error)) {
+        throw error;
+      }
+
+      // ExTester's QuickPickItem can become zero-sized after the command has
+      // already been dispatched and the palette starts closing. Do not treat
+      // that DOM race as authoritative; the on-disk repair assertions below
+      // still fail if the command did not actually run.
+      console.warn(
+        `[bundleRepair] Command palette item became non-interactable during dispatch; continuing with disk verification: ${
+          error instanceof Error ? error.message : String(error)
+        }`
+      );
+    }
 
     // ── Step 4 (best-effort): scrape visible notifications ─────────────────
     // Don't fail the test on this — it's UX evidence, but timing is racy and

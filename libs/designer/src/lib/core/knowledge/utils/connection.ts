@@ -39,7 +39,7 @@ const getAllConnectionParameters = (intl: IntlShape) => {
         constraints: {
           clearText: true,
           required: 'true',
-          serialize: false,
+          serializationPath: ['cosmosDB', 'resourceId'],
         },
       },
     } as ConnectionParameter,
@@ -374,7 +374,7 @@ export const createOrUpdateConnection = async (parameterValues: Record<string, a
     const connection = await ConnectionService().createConnection(
       'HubConnection',
       { id: '/dummy/knowledgehub' } as unknown as Connector,
-      { displayName, connectionParameters: parameterValues },
+      { displayName, connectionParameters: parameterValues, isUpdate: !isCreate },
       { connectionParameters, connectionMetadata: { required: true, type: ConnectionType.KnowledgeHub } }
     );
 

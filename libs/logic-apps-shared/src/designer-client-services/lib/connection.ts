@@ -22,6 +22,7 @@ export interface ConnectionCreationInfo {
   operationParameterValues?: Record<string, any>;
   alternativeParameterValues?: Record<string, any>;
   displayName?: string;
+  isUpdate?: boolean;
   features?: ConnectionFeatureType;
   parameterName?: string;
   appSettings?: Record<string, string>;

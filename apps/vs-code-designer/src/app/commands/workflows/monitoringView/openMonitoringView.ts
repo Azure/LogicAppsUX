@@ -25,7 +25,10 @@ export async function openMonitoringView(
   }
 
   const designerVersion = workspace.getConfiguration(ext.prefix).get<number>(designerVersionSetting) ?? defaultDesignerVersion;
-  if (designerVersion === 2) {
+  const isLocalCodefulWorkflow = node instanceof Uri && node.fsPath.toLowerCase().endsWith('.cs');
+
+  // NOTE(aeldridge): Using the v1 monitoring panel for codeful workflows since the v2 designer panel reads definition from workflow.json.
+  if (designerVersion === 2 && !isLocalCodefulWorkflow) {
     return openDesignerV2(context, node, runId);
   }
 

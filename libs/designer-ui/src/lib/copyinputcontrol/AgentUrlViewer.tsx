@@ -5,6 +5,7 @@ import { useIntl } from 'react-intl';
 import { useCopyInputControlStyles } from './styles';
 import type { AgentQueryParams } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
+import { isSafeAgentPreviewUrl } from './agentPreviewUrl';
 
 export interface AgentUrlViewerProps {
   url: string;
@@ -58,6 +59,14 @@ export const AgentUrlViewer: React.FC<AgentUrlViewerProps> = ({ url, isOpen, que
   };
 
   const linkUrl = useMemo(() => {
+    // Destination-safety boundary: block before any query credential (e.g. apiKey) is
+    // assembled onto the destination, and before the iframe/fallback-popup sinks below
+    // ever see it. Absent/invalid metadata must never produce a blank/undefined-navigating
+    // destination -- it must produce no destination at all.
+    if (!isSafeAgentPreviewUrl(url)) {
+      return undefined;
+    }
+
     if (!queryParams) {
       return url;
     }
@@ -82,13 +91,20 @@ export const AgentUrlViewer: React.FC<AgentUrlViewerProps> = ({ url, isOpen, que
     }
   };
 
-  // Reset iframe state when dialog opens
+  // Reset iframe state when dialog opens. An unsafe/absent destination (blocked by the
+  // parsed-protocol check above) reuses the existing iframe-failure error UI rather than
+  // ever attempting to mount an iframe/popup with no safe destination.
   React.useEffect(() => {
     if (isOpen) {
-      setIframeState('loading');
-      setIframeError('');
+      if (linkUrl) {
+        setIframeState('loading');
+        setIframeError('');
+      } else {
+        setIframeState('error');
+        setIframeError(DISPLAY_TEXT_ERROR);
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, linkUrl, DISPLAY_TEXT_ERROR]);
 
   const renderIframeContent = () => {
     if (iframeState === 'error') {
@@ -96,9 +112,11 @@ export const AgentUrlViewer: React.FC<AgentUrlViewerProps> = ({ url, isOpen, que
         <div className={styles.errorContainer}>
           <ErrorCircle24Regular />
           <Text className={styles.errorMessage}>{iframeError}</Text>
-          <Button appearance="primary" onClick={handleOpenInNewTab}>
-            {DISPLAY_TEXT_RETRY}
-          </Button>
+          {linkUrl ? (
+            <Button appearance="primary" onClick={handleOpenInNewTab}>
+              {DISPLAY_TEXT_RETRY}
+            </Button>
+          ) : null}
         </div>
       );
     }

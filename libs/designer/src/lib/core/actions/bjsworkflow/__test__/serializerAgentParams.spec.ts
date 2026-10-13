@@ -389,3 +389,41 @@ describe('constructInputValues – agent deploymentModelProperties', () => {
     });
   });
 });
+
+// ---------------------------------------------------------------------------
+// constructInputValues — agentUrlMetadata trust-boundary leak prevention
+// ---------------------------------------------------------------------------
+
+describe('constructInputValues – agentUrlMetadata must never leak into the serialized workflow definition', () => {
+  it('omits agentUrlMetadata from serialized output even when populated with trusted runtime values', () => {
+    // agentUrlMetadata is runtime-only navigation trust data (populated by
+    // updateAgentUrlInInputs from WorkflowService().getAgentUrl()). It must never be
+    // written into the persisted workflow definition: constructInputValues derives its
+    // output exclusively from each parameter's `value`/`type`, never from arbitrary
+    // ParameterInfo fields, so agentUrlMetadata has no path into the serialized JSON.
+    const secretChatUrl = 'https://trusted.example.invalid/chat?token=SHOULD-NEVER-SERIALIZE';
+    const parameters: SerializedParameter[] = [
+      {
+        parameterKey: 'inputs.$.agentUrl',
+        parameterName: 'agentUrl',
+        id: 'agentUrl',
+        info: { format: '', isDynamic: false },
+        label: 'Agent URL',
+        required: false,
+        type: 'string',
+        value: 'https://runtime.example.invalid/agent',
+        agentUrlMetadata: {
+          chatUrl: secretChatUrl,
+          queryParams: { apiKey: 'SHOULD-NEVER-SERIALIZE-EITHER' },
+        },
+      } as unknown as SerializedParameter,
+    ];
+
+    const result = constructInputValues('inputs.$', parameters, false);
+    const serializedJson = JSON.stringify(result);
+
+    expect(serializedJson).not.toContain('SHOULD-NEVER-SERIALIZE');
+    expect(serializedJson).not.toContain(secretChatUrl);
+    expect(result).toEqual({ agentUrl: 'https://runtime.example.invalid/agent' });
+  });
+});

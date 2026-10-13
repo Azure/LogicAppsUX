@@ -17,7 +17,17 @@ import { CreateConnectionInternal } from './createConnectionInternal';
 import { useIsAgentSubGraph } from '../../../../common/hooks/agent';
 import { updateNodeParameters } from '../../../../core/state/operation/operationMetadataSlice';
 
-export const CreateConnectionWrapper = () => {
+interface CreateConnectionWrapperProps {
+  showActionBar?: boolean;
+  onConnectionCancelled?: () => void;
+  onCreatingChange?: (isCreating: boolean) => void;
+}
+
+export const CreateConnectionWrapper = ({
+  showActionBar = true,
+  onConnectionCancelled,
+  onCreatingChange,
+}: CreateConnectionWrapperProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const nodeId: string = useOperationPanelSelectedNodeId();
   const isAgentSubgraph = useIsAgentSubGraph(nodeId);
@@ -96,8 +106,10 @@ export const CreateConnectionWrapper = () => {
       nodeIds={nodeIds}
       assistedConnectionProps={assistedConnectionProps}
       connectionMetadata={connectionMetadata}
-      showActionBar={true}
-      hideCancelButton={!hasExistingConnection}
+      showActionBar={showActionBar}
+      hideCancelButton={!hasExistingConnection && !onConnectionCancelled}
+      onConnectionCancelled={onConnectionCancelled}
+      onCreatingChange={onCreatingChange}
       updateConnectionInState={updateConnectionInState}
       onConnectionCreated={() => dispatch(closeConnectionsFlow({ nodeId, panelMode: referencePanelMode }))}
       updateOperationParameterValues={updateOperationParameterValues}
