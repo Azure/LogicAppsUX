@@ -208,7 +208,7 @@ async function main(): Promise<void> {
     for (const mode of ['unstable', 'rpc-failure', 'deadline'] as const) {
       const name = `cancel-${mode}`;
       const fixture = new CancelCaptureFixture(mode);
-      const originalDeadline = Date.now() + (mode === 'deadline' ? 10 : 700);
+      const originalDeadline = Date.now() + (mode === 'deadline' ? 300 : 700);
       await assert.rejects(
         captureRequiredCancelScreenshot(fixture, name, originalDeadline),
         /Screenshot readiness failed|deadline/,
@@ -298,6 +298,9 @@ class CancelCaptureFixture {
   }
 
   async evaluate<T>(_context: number | undefined, expression: string): Promise<T> {
+    if (this.mode === 'deadline') {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    }
     if (expression.includes('visibleWorkbench:')) {
       return { visibleWorkbench: true } as T;
     }
