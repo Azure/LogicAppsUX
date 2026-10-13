@@ -12,7 +12,7 @@ testAzureToolsWrapperContract();
 testRootNpmrcSourceGuardAllowsGeneratedRuntimeFile();
 testLocalAzureToolsWrapperContractIfAvailable();
 testConsumerAdmissionContract();
-testComponentGovernanceExcludesDownloadedVSCode();
+testDownloadedVSCodeRuntimeCleanupContract();
 testInterpretedCodeQLContract();
 testSelectorResolutionScriptBehavior();
 testCanonicalSuiteParityContract();
@@ -1697,10 +1697,39 @@ function testInterpretedCodeQLContract() {
   assert.strictEqual(sdl.enableProductionSDL, undefined, 'source scanning must not change the unofficial build policy');
 }
 
-function testComponentGovernanceExcludesDownloadedVSCode() {
+function testDownloadedVSCodeRuntimeCleanupContract() {
+  const runSuitesTemplate = read('.config/templates/vscode-e2e-cli-run-suite.yml');
   const { componentgovernance } = parseYaml('.config/vscode-e2e-cli.1es.yml').extends.parameters.sdl;
+  const { removeDownloadedVSCodeRuntime } = require('./remove-downloaded-vscode-runtime');
+  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'vscode-runtime-cleanup-'));
 
-  assert.strictEqual(componentgovernance.ignoreDirectories.trim(), 'apps/vs-code-designer/.vscode-test');
+  try {
+    const downloadedRuntime = path.join(tempRoot, 'vscode-win32-x64-archive-1.141.0');
+    const preservedResults = path.join(tempRoot, 'results');
+    const preservedLookalike = path.join(tempRoot, 'vscode-win32-x64-archive-current');
+    fs.mkdirSync(downloadedRuntime);
+    fs.mkdirSync(preservedResults);
+    fs.mkdirSync(preservedLookalike);
+
+    assert.deepStrictEqual(removeDownloadedVSCodeRuntime(tempRoot), [downloadedRuntime]);
+    assert.ok(!fs.existsSync(downloadedRuntime));
+    assert.ok(fs.existsSync(preservedResults));
+    assert.ok(fs.existsSync(preservedLookalike));
+  } finally {
+    fs.rmSync(tempRoot, { recursive: true, force: true });
+  }
+
+  assert.match(runSuitesTemplate, /\$\{\{ if eq\(parameters\.platform, 'windows'\) \}\}:/);
+  assert.match(
+    runSuitesTemplate,
+    /remove-downloaded-vscode-runtime\.js" "\$\(Build\.SourcesDirectory\)\\apps\\vs-code-designer\\\.vscode-test"/
+  );
+  assert.match(runSuitesTemplate, /displayName: Remove downloaded VS Code runtime before Component Governance/);
+  assert.match(
+    runSuitesTemplate,
+    /displayName: Stage vscode-test CLI results[\s\S]*displayName: Remove downloaded VS Code runtime before Component Governance[\s\S]*condition: always\(\)/
+  );
+  assert.strictEqual(componentgovernance, undefined, 'the ignored Component Governance task input must not be treated as protection');
 }
 
 function testDiagnosticsStagingScriptHandlesDirectSuiteLayout() {
