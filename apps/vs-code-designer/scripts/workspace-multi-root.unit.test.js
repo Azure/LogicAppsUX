@@ -303,6 +303,8 @@ test('direct supplementary route invalidates stale terminal and uses exact regis
           'Old success must be invalidated before wrapper launch'
         );
         assert.equal(env.LA_E2E_CLI_DIRECT_WRAPPED_SUITE, 'workspaceMultiRoot');
+        assert.equal(typeof context.invocation, 'string');
+        assert.ok(context.invocation.length > 0);
         assert.equal(context.reportsRoot, path.resolve(reportRoot));
         assert.equal(context.terminalResultPath, terminalPath);
         assert.deepEqual(context.expectedPhaseIds, expectedPhases);
@@ -342,6 +344,8 @@ test('direct supplementary route invalidates stale terminal and uses exact regis
     assert.equal(provenance.accepted, false);
     assert.deepEqual(provenance.identity, { source: 'unit-source', run: 'unit-run', job: 'unit-job' });
     assert.ok(provenance.invocation && provenance.phaseResultsPath.includes(provenance.invocation));
+    assert.equal(terminal.invocation, provenance.invocation);
+    assert.equal(cleanup.invocation, provenance.invocation);
   } finally {
     fs.rmSync(reportRoot, { recursive: true, force: true });
   }
@@ -369,8 +373,13 @@ test('direct supplementary route invalidates stale evidence before workspace-roo
       /ENOENT|ENOTDIR|EEXIST/
     );
     assert.equal(wrapperCalled, false);
-    assert.equal(JSON.parse(fs.readFileSync(terminalPath, 'utf8')).complete, false);
-    assert.equal(JSON.parse(fs.readFileSync(cleanupPath, 'utf8')).verified, false);
+    const terminal = JSON.parse(fs.readFileSync(terminalPath, 'utf8'));
+    const cleanup = JSON.parse(fs.readFileSync(cleanupPath, 'utf8'));
+    const provenance = JSON.parse(fs.readFileSync(path.join(reportRoot, 'workspaceMultiRoot.terminal-invocation.json'), 'utf8'));
+    assert.equal(terminal.complete, false);
+    assert.equal(cleanup.verified, false);
+    assert.equal(terminal.invocation, provenance.invocation);
+    assert.equal(cleanup.invocation, provenance.invocation);
   } finally {
     fs.rmSync(reportRoot, { recursive: true, force: true });
   }

@@ -557,6 +557,7 @@ async function runDirectRegisteredSuite(
   const invocation = require('crypto').randomUUID();
   const context = {
     id: suite.id,
+    invocation,
     reportsRoot: path.resolve(reportRoot),
     startedAt: new Date().toISOString(),
     expectedPhaseIds: [...suite.expectedPhases],
@@ -581,6 +582,7 @@ async function runDirectRegisteredSuite(
     { LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH: context.terminalResultPath },
     {
       suiteId: suite.id,
+      invocation,
       complete: false,
       lifecycleFinalized: false,
       exitCode: null,
