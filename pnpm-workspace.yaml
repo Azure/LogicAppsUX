@@ -173,6 +173,7 @@ allowBuilds:
 patchedDependencies:
   # Azure App Service 3.6.6 calls the simple-git v3 default export; v4 exposes simpleGit as a named export.
   '@microsoft/vscode-azext-azureappservice@3.6.6': patches/@microsoft__vscode-azext-azureappservice@3.6.6.patch
+  braces@3.0.3: patches/braces@3.0.3.patch
   flat-cache@4.0.1: patches/flat-cache@4.0.1.patch
   # Preserve untested-file discovery and project-root boundaries in Vitest 4 coverage.
   tinyglobby@0.2.17: patches/tinyglobby@0.2.17.patch

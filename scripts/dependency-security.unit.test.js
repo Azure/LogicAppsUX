@@ -22,6 +22,7 @@ const requireAzureAppService = createRequire(requireExtension.resolve('@microsof
 const requireDocs = createRequire(join(dirname(fileURLToPath(import.meta.url)), '..', 'apps', 'docs', 'package.json'));
 const requireDocusaurusCore = createRequire(requireDocs.resolve('@docusaurus/core/package.json'));
 const requireDocusaurusBundler = createRequire(requireDocusaurusCore.resolve('@docusaurus/bundler/package.json'));
+const requireChokidar = createRequire(requireDocusaurusCore.resolve('chokidar/package.json'));
 const requireDocusaurusThemeMermaid = createRequire(requireDocs.resolve('@docusaurus/theme-mermaid'));
 const requireMermaid = createRequire(requireDocusaurusThemeMermaid.resolve('mermaid'));
 const requireMocha = createRequire(requireExtension.resolve('mocha'));
@@ -278,6 +279,27 @@ test('Docusaurus selector minification works with the secured parser major', asy
   assert.match(result.css, /:not\(\[aria-disabled=true\]\)/);
   assert.match(result.css, />\.icon/);
   assert.match(result.css, /color:red/);
+});
+
+test('braces rejects deeply nested patterns and cyclic ASTs without changing ordinary expansion', () => {
+  const braces = requireChokidar('braces');
+  const nestedPattern = `${'{'.repeat(101)}a,b${'}'.repeat(101)}`;
+  assert.throws(() => braces(nestedPattern), /exceeds max depth/);
+  assert.throws(() => braces('{{a,b},c}', { maxDepth: 1 }), /exceeds max depth/);
+  assert.deepEqual(braces('src/{app,lib}/**/*.ts', { expand: true }), ['src/app/**/*.ts', 'src/lib/**/*.ts']);
+
+  let nestedAst = { type: 'text', value: 'a' };
+  for (let index = 0; index < 101; index++) {
+    nestedAst = { type: 'brace', nodes: [nestedAst] };
+  }
+  nestedAst = { type: 'root', nodes: [nestedAst] };
+  assert.throws(() => braces.compile(nestedAst), /exceeds max depth/);
+  assert.throws(() => braces.expand(nestedAst), /exceeds max depth/);
+  assert.throws(() => braces.stringify(nestedAst), /exceeds max depth/);
+
+  const cyclicAst = { type: 'paren', nodes: [{ type: 'text', value: 'a' }] };
+  cyclicAst.parent = cyclicAst;
+  assert.throws(() => braces.expand(cyclicAst), /parent chain contains a cycle/);
 });
 
 for (const hook of ['afterSanitizeElements', 'afterSanitizeAttributes']) {

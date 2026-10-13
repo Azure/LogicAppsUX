@@ -20,7 +20,12 @@ import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import packagejson from '../../../package.json';
 import { type AdditionalContext, LoggerService } from '../services/Logger';
-import * as path from 'path';
+
+const getFileExtension = (fileName: string): string => {
+  const baseName = fileName.split(/[\\/]/).at(-1) ?? '';
+  const extensionIndex = baseName.lastIndexOf('.');
+  return extensionIndex > 0 ? baseName.slice(extensionIndex) : '';
+};
 
 export const DataMapperAppV2 = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -68,8 +73,8 @@ export const DataMapperAppV2 = () => {
   useEffect(() => {
     const additionalContext: AdditionalContext = {
       dataMapName: dataMapFilename,
-      sourceType: sourceSchemaFilename ? path.extname(sourceSchemaFilename) : undefined,
-      targetType: targetSchemaFilename ? path.extname(targetSchemaFilename) : undefined,
+      sourceType: sourceSchemaFilename ? getFileExtension(sourceSchemaFilename) : undefined,
+      targetType: targetSchemaFilename ? getFileExtension(targetSchemaFilename) : undefined,
     };
     if (dataMapperLoggerService) {
       dataMapperLoggerService.addPropertyToContext(additionalContext);
