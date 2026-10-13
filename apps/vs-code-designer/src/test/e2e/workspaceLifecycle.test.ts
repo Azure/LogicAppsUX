@@ -4986,6 +4986,7 @@ async function openMonitoringActionResultThroughOverview(
 }
 
 async function clickMonitoringActionCardByTitle(cdp: CdpEvaluator, contextId: number, actionTitle: string): Promise<void> {
+  const expectedNodeId = actionTitle.replace(/\W+/g, '_').replace(/^_+|_+$/g, '');
   const result = await cdp.evaluate<{
     ok: boolean;
     reason?: string;
@@ -4996,7 +4997,7 @@ async function clickMonitoringActionCardByTitle(cdp: CdpEvaluator, contextId: nu
     contextId,
     `(() => {
       const actionTitle = ${JSON.stringify(actionTitle.toLowerCase())};
-      const exactId = 'msla-node-' + ${JSON.stringify(actionTitle)};
+      const exactId = 'msla-node-' + ${JSON.stringify(expectedNodeId)};
       const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim();
       const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
       const exactNode = document.getElementById(exactId);

@@ -11,6 +11,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { URL } = require('url');
+const { formatErrorForDiagnostics } = require('./e2e-cli-diagnostics');
 const {
   createBatchRoot,
   createSuiteContext,
@@ -317,7 +318,7 @@ function inferOrderedEvidenceSuiteId(argv) {
 }
 
 function exitWithError(error) {
-  console.error(error instanceof Error ? error.message : String(error));
+  console.error(formatErrorForDiagnostics(error));
   process.exit(1);
 }
 
@@ -556,6 +557,7 @@ async function runDirectRegisteredSuite(
   const invocation = require('crypto').randomUUID();
   const context = {
     id: suite.id,
+    reportsRoot: path.resolve(reportRoot),
     startedAt: new Date().toISOString(),
     expectedPhaseIds: [...suite.expectedPhases],
     phaseResultsPath: path.join(reportRoot, `${suite.id}.phases-${invocation}.jsonl`),
@@ -679,12 +681,14 @@ function runSuiteWrapperProcess({ suite, context, env, visibleDelayMs, timeoutMs
       reportsRoot: context.reportsRoot,
     });
   } catch (error) {
+    const diagnosticError = formatErrorForDiagnostics(error);
+    console.error(diagnosticError);
     const processCleanup = {
       schemaVersion: 1,
       verified: false,
       retainedOriginalIdentitiesVerified: false,
       containmentEstablished: false,
-      error: error instanceof Error ? error.message : String(error),
+      error: diagnosticError,
       checkedAt: new Date().toISOString(),
     };
     writeSuiteFinalEvidence({ context, suite, exitCode: null, signal: null, output: '', error, processCleanup });
@@ -1077,12 +1081,7 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
           filesystemCleanupVerified: false,
         }
       : {}),
-    diagnosticsError: [
-      error instanceof Error ? error.message : String(error || ''),
-      journal.error,
-      ...phaseDiagnosticsErrors,
-      retainedCaseCleanupError,
-    ]
+    diagnosticsError: [error ? formatErrorForDiagnostics(error) : '', journal.error, ...phaseDiagnosticsErrors, retainedCaseCleanupError]
       .filter(Boolean)
       .join('\n'),
     expectedPhaseIds,

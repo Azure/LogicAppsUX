@@ -578,10 +578,20 @@ function formatAttachmentPath(value) {
 }
 
 function buildFailureExcerpt(logText) {
-  return logText
-    .split(/\r?\n/)
-    .filter((line) => /^[ \t]*\d+\)|AssertionError|Error:|Timed out|failed|failing/i.test(line))
-    .slice(-80);
+  const excerpt = [];
+  let retainingStack = false;
+  for (const line of logText.split(/\r?\n/)) {
+    const classifiedLine = line.replace(/^(?:\[[^\]\r\n]+\][ \t]?)+/, '');
+    const isErrorHeader =
+      /^[ \t]*(?:AssertionError|[A-Za-z]*Error(?:\s*\[[^\]]+\])?):/i.test(classifiedLine) || /^[ \t]*Timed out/i.test(classifiedLine);
+    const isSelectedLine = /^[ \t]*\d+\)|failed|failing/i.test(classifiedLine) || isErrorHeader;
+    const isStackLine = retainingStack && /^[ \t]+at\b/.test(classifiedLine);
+    if (isSelectedLine || isStackLine) {
+      excerpt.push(line);
+    }
+    retainingStack = isErrorHeader || isStackLine;
+  }
+  return excerpt.slice(-80);
 }
 
 function lastNumberMatch(text, pattern) {

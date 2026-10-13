@@ -5,6 +5,7 @@ const os = require('node:os');
 const path = require('node:path');
 const { createHash } = require('node:crypto');
 const { test } = require('node:test');
+const { formatErrorForDiagnostics } = require('./e2e-cli-diagnostics');
 const {
   assertAssets,
   assertEvidence,
@@ -48,6 +49,11 @@ test('diagnostics root creation creates an absent configured parent', () => {
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
   }
+});
+test('diagnostic error formatting preserves actionable stack frames', () => {
+  const error = new Error('synthetic multi-root failure');
+  error.stack = 'Error: synthetic multi-root failure\n    at unitMultiRootCaller (workspace-multi-root.unit.test.js:1:1)';
+  assert.match(formatErrorForDiagnostics(error), /unitMultiRootCaller/);
 });
 test('isolated flag alone cannot authorize the unresolved retained native cleanup gate', async () => {
   await assert.rejects(runWorkspaceMultiRoot({}, { LA_E2E_CLI_MULTI_ROOT_ISOLATED: '1' }), /native finalization blocked/);
@@ -290,6 +296,7 @@ test('direct supplementary route invalidates stale terminal and uses exact regis
           'Old success must be invalidated before wrapper launch'
         );
         assert.equal(env.LA_E2E_CLI_DIRECT_WRAPPED_SUITE, 'workspaceMultiRoot');
+        assert.equal(context.reportsRoot, path.resolve(reportRoot));
         assert.equal(context.terminalResultPath, terminalPath);
         assert.deepEqual(context.expectedPhaseIds, expectedPhases);
         assert.equal(fs.existsSync(context.phaseResultsPath), false);

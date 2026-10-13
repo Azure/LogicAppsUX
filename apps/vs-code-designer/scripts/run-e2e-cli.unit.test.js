@@ -109,6 +109,7 @@ const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
     testSanitizesInheritedGitCommandConfigEnv();
     testBatchSuiteRegistryValidation();
     testBatchSuiteEnvironmentIsolation();
+    testSummarizerRetainsErrorStackFrames();
     testHttpDirectSelectorUsesRegisteredContainment();
     testDirectFamilyInheritsCanonicalOrderedEvidenceContext();
     testOrderedEvidenceInitializationRejectsMismatchBeforeMutation();
@@ -2503,6 +2504,24 @@ function testSummarizerDoesNotMergeFailedOgfTerminalResult() {
   assert.strictEqual(result.ogfScenarios, undefined);
   assert.strictEqual(terminal.ogfScenarios, undefined);
   assert.strictEqual(terminal.phaseResults[0].ogfScenarios, undefined);
+}
+
+function testSummarizerRetainsErrorStackFrames() {
+  const result = parseMochaLog(
+    'workspaceMultiRoot',
+    'failure',
+    [
+      '[workspaceMultiRoot] TypeError [ERR_INVALID_ARG_TYPE]: The "path" argument must be of type string. Received undefined',
+      '[workspaceMultiRoot]     at spawnContainedSuiteProcess (run-e2e-cli.js:874:13)',
+      '[workspaceMultiRoot]     at runSuiteWrapperProcess (run-e2e-cli.js:675:14)',
+      '[workspaceMultiRoot] unrelated output',
+    ].join('\n')
+  );
+  assert.deepStrictEqual(result.failureExcerpt, [
+    '[workspaceMultiRoot] TypeError [ERR_INVALID_ARG_TYPE]: The "path" argument must be of type string. Received undefined',
+    '[workspaceMultiRoot]     at spawnContainedSuiteProcess (run-e2e-cli.js:874:13)',
+    '[workspaceMultiRoot]     at runSuiteWrapperProcess (run-e2e-cli.js:675:14)',
+  ]);
 }
 
 function writeSuiteTerminalAndCleanup(context, options = {}) {

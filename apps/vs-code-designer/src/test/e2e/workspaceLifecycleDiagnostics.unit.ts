@@ -38,6 +38,7 @@ async function main(): Promise<void> {
   testDynamicContentPickerOpenAcceptsAlternativeLabels();
   testDynamicContentPickerEvidenceForwardsTokenTitles();
   await testDynamicContentPickerOpenUsesBoundedEvaluation();
+  await testMonitoringActionCardUsesStableNodeIdentity();
   await testCopilotChatCleanupDoesNotRunDuringPickerEvidenceCapture();
   await testCanvasViewportNormalizationUsesStructuralDiagnosticsAndOwnedControls();
   testMsnWeatherSkipsOnlyRedundantFinalCanvasCheckpoint();
@@ -124,6 +125,30 @@ function loadFinalCanvasCheckpointHarness() {
   });
 
   return { exported };
+}
+
+function loadMonitoringActionHarness() {
+  const selected = source.statements.filter(
+    (node): node is ts.FunctionDeclaration => ts.isFunctionDeclaration(node) && node.name?.text === 'clickMonitoringActionCardByTitle'
+  );
+  assert.strictEqual(selected.length, 1, 'Expected clickMonitoringActionCardByTitle to be extracted');
+
+  const implementation = ts.transpileModule(selected.map((node) => `export ${node.getText(source)}`).join('\n'), {
+    compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS },
+  }).outputText;
+
+  const clickedPoints: Array<{ x: number; y: number }> = [];
+  const exported: Record<string, any> = {};
+  vm.runInNewContext(implementation, {
+    exports: exported,
+    assert,
+    console,
+    clickPoint: async (_cdp: unknown, point: { x: number; y: number }) => {
+      clickedPoints.push({ x: Number(point.x), y: Number(point.y) });
+    },
+  });
+
+  return { exported, clickedPoints };
 }
 
 function loadRuntimeHarness(status: string, options: { malformedActions?: boolean } = {}) {
@@ -288,6 +313,54 @@ function runPickerExpression(expression: string, pickerText: string): { visible:
     },
   };
   return vm.runInNewContext(expression, { document, Array }) as { visible: boolean; text?: string };
+}
+
+async function testMonitoringActionCardUsesStableNodeIdentity(): Promise<void> {
+  const { exported, clickedPoints } = loadMonitoringActionHarness();
+  for (const duration of ['0.9s', '3s']) {
+    const dom = new JSDOM(
+      `<html><body><div class="react-flow__node" id="msla-node-Get_current_weather">${duration}Get current weather</div></body></html>`,
+      { runScripts: 'outside-only' }
+    );
+    configureElementGeometry(dom.window, {
+      'msla-node-Get_current_weather': { left: 20, top: 40, width: 200, height: 80 },
+    });
+    await exported.clickMonitoringActionCardByTitle(
+      { evaluate: async (_contextId: number, expression: string) => dom.window.eval(expression) },
+      1,
+      'Get current weather'
+    );
+  }
+  assert.deepStrictEqual(clickedPoints, [
+    { x: 120, y: 80 },
+    { x: 120, y: 80 },
+  ]);
+
+  const collisionDom = new JSDOM(
+    '<html><body><div class="react-flow__node" id="msla-node-Get_current_weather_2">Get current weather</div></body></html>',
+    { runScripts: 'outside-only' }
+  );
+  configureElementGeometry(collisionDom.window, {});
+  await assert.rejects(
+    exported.clickMonitoringActionCardByTitle(
+      { evaluate: async (_contextId: number, expression: string) => collisionDom.window.eval(expression) },
+      1,
+      'Get current weather'
+    ),
+    /Monitoring action card not found/
+  );
+
+  const fallbackDom = new JSDOM(
+    '<html><body><div class="react-flow__node"><span class="msla-card-title">Response</span></div></body></html>',
+    { runScripts: 'outside-only' }
+  );
+  configureElementGeometry(fallbackDom.window, {});
+  await exported.clickMonitoringActionCardByTitle(
+    { evaluate: async (_contextId: number, expression: string) => fallbackDom.window.eval(expression) },
+    1,
+    'Response'
+  );
+  assert.strictEqual(clickedPoints.length, 3, 'Expected the existing exact-title fallback to remain supported');
 }
 
 async function testCopilotChatCleanupDoesNotRunDuringPickerEvidenceCapture(): Promise<void> {
@@ -493,6 +566,7 @@ function configureElementGeometry(
   htmlElementPrototype.getClientRects = function () {
     return [this.getBoundingClientRect()];
   };
+  htmlElementPrototype.scrollIntoView = () => undefined;
   htmlElementPrototype.getBoundingClientRect = function () {
     const rect = geometry[this.id] ?? { left: 0, top: 0, width: 100, height: 40 };
     return {

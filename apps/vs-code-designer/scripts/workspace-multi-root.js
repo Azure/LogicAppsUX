@@ -5,6 +5,7 @@ const { createHash, randomUUID } = require('node:crypto');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
+const { formatErrorForDiagnostics } = require('./e2e-cli-diagnostics');
 
 const extensionRoot = path.resolve(__dirname, '..');
 const hash = (file) => createHash('sha256').update(fs.readFileSync(file)).digest('hex');
@@ -381,13 +382,13 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, 
         resolve(result.originalCodeClose);
       });
     });
-    completion.catch((error) => result.errors.push(String(error)));
+    completion.catch((error) => result.errors.push(formatErrorForDiagnostics(error)));
     for (const stream of [child.stdout, child.stderr]) {
       stream.on('data', (data) => {
         try {
           fs.appendFileSync(path.join(diagnosticRoot, 'code.log'), data);
         } catch (error) {
-          result.errors.push(String(error));
+          result.errors.push(formatErrorForDiagnostics(error));
         }
       });
     }
@@ -401,7 +402,7 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, 
     result.evidenceVerified = true;
     result.observationPassed = true;
   } catch (error) {
-    result.errors.push(String(error));
+    result.errors.push(formatErrorForDiagnostics(error));
   } finally {
     if (completion && !result.originalCodeClose) {
       try {
@@ -418,7 +419,7 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, 
           clearTimeout(timer);
         }
       } catch (error) {
-        result.errors.push(String(error));
+        result.errors.push(formatErrorForDiagnostics(error));
         child.unref();
         child.stdout.destroy();
         child.stderr.destroy();
@@ -434,7 +435,7 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, 
         });
         result.diagnosticsVerified = fs.existsSync(path.join(diagnosticRoot, 'vscode-logs'));
       } catch (error) {
-        result.errors.push(String(error));
+        result.errors.push(formatErrorForDiagnostics(error));
       }
     }
     // Unknown original-process closure must not destroy fixture/history proof.
@@ -486,7 +487,7 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, 
       }
       result.phaseResults = readFamilyPhases(phaseFile);
     } catch (error) {
-      result.errors.push(String(error));
+      result.errors.push(formatErrorForDiagnostics(error));
       result.phaseResults = [];
     }
     result.observedPhaseIds = result.phaseResults.map((phase) => phase.phaseId);
