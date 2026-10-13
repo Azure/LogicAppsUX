@@ -15,7 +15,6 @@ export default defineConfig({
     'react-dom',
     '@microsoft/logic-apps-shared',
     '@azure/arm-appcontainers',
-    '@microsoft/vscode-azext-azureappservice',
     '@microsoft/vscode-azext-utils',
     '@xyflow/react',
     'axios',

@@ -20,6 +20,7 @@ overrides:
   '@azure/core-xml@>=1.0.0 <1.6.0': 1.6.0
   '@azure/identity@>=4.0.0 <4.13.3': 4.13.3
   '@azure/msal-browser@>=5.0.0 <5.6.3': 5.6.3
+  '@simple-git/argv-parser@>=1.0.0 <2.0.1': 2.0.1
   '@nevware21/ts-utils@>=0.9.0 <0.14.0': 0.14.0
   '@microsoft/vscode-azext-utils@3>uuid': 11.1.1
   '@microsoft/vscode-azext-azureutils@3>uuid': 11.1.1
@@ -32,6 +33,7 @@ overrides:
   # The accompanying flat-cache patch preserves ESLint's legacy cache API with Keyv 5.
   flat-cache@4>keyv: 5.6.0
   terser-webpack-plugin@>=5.0.0 <5.6.1: 5.6.1
+  tinypool@>=1.0.0 <2.1.2: 2.1.2
   '@babel/core@>=7.0.0 <7.29.6': 7.29.6
   '@babel/plugin-transform-modules-systemjs@>=7.0.0 <7.29.4': 7.29.4
   '@hono/node-server@>=1.0.0 <1.19.15': 1.19.15
@@ -61,12 +63,13 @@ overrides:
   http-proxy-middleware@>=2.0.0 <2.0.10: 2.0.10
   image-size@>=2.0.0 <2.0.3: 2.0.3
   ip-address@>=10.0.0 <10.7.1: 10.7.1
-  joi@>=17.0.0 <17.13.7: 17.13.7
+  joi@>=17.0.0 <17.13.8: 17.13.8
   js-cookie@>=3.0.0 <3.0.7: 3.0.7
   js-yaml@>=3.0.0 <3.15.2: 3.15.2
   js-yaml@>=4.0.0 <4.3.2: 4.3.2
   jws@>=3.0.0 <3.2.3: 3.2.3
   jws@>=4.0.0 <4.0.1: 4.0.1
+  katex@>=0.16.0 <0.18.2: 0.18.2
   launch-editor@>=2.0.0 <2.14.1: 2.14.1
   linkify-it@>=5.0.0 <5.0.2: 5.0.2
   lodash-es@>=4.0.0 <4.18.1: 4.18.1
@@ -83,7 +86,8 @@ overrides:
   path-to-regexp@>=0.1.0 <0.1.13: 0.1.13
   path-to-regexp@>=8.0.0 <8.4.0: 8.4.0
   picomatch@>=2.0.0 <2.3.2: 2.3.2
-  postcss-selector-parser@>=7.0.0 <7.1.3: 7.1.3
+  postcss-selector-parser@>=6.0.0 <7.1.6: 7.1.6
+  proxy-addr@>=2.0.0 <2.0.8: 2.0.8
   postcss@>=8.0.0 <8.5.23: 8.5.23
   qs@>=6.0.0 <6.16.0: 6.16.0
   rollup@>=4.0.0 <4.59.0: 4.59.0
@@ -100,8 +104,9 @@ overrides:
   ws@>=8.0.0 <8.21.0: 8.21.0
   yaml@>=2.0.0 <2.8.3: 2.8.3
   fast-xml-parser@>=5.0.0 <5.7.0: 5.7.0
-  simple-git@>=3.0.0 <3.36.0: 3.36.0
-  shell-quote@>=1.0.0 <1.9.0: 1.9.0
+  simple-git@>=3.0.0 <4.0.1: 4.0.1
+  shell-quote@>=1.0.0 <1.11.0: 1.11.0
+  source-map-js@>=1.0.0 <1.2.2: 1.2.2
   websocket-driver@>=0.7.0 <0.7.5: 0.7.5
   cipher-base@>=1.0.0 <1.0.5: 1.0.5
   sha.js@>=2.0.0 <2.4.12: 2.4.12
@@ -136,7 +141,7 @@ overrides:
   prismjs@<1.30.0: '>=1.30.0'
   '@octokit/request@>=1.0.0 <8.4.1': '>=8.4.1'
   '@octokit/plugin-paginate-rest@>=1.0.0 <9.2.2': '>=9.2.2'
-  axios@>=1.0.0 <1.8.2: '>=1.8.2'
+  axios@>=1.0.0 <1.20.0: 1.20.0
   estree-util-value-to-estree@<3.3.3: '>=3.3.3'
   '@babel/runtime-corejs3@<7.26.10': ^7.26.10
   '@babel/runtime@<7.26.10': ^7.26.10
@@ -166,6 +171,8 @@ allowBuilds:
   keytar: true
 
 patchedDependencies:
+  # Azure App Service 3.6.6 calls the simple-git v3 default export; v4 exposes simpleGit as a named export.
+  '@microsoft/vscode-azext-azureappservice@3.6.6': patches/@microsoft__vscode-azext-azureappservice@3.6.6.patch
   flat-cache@4.0.1: patches/flat-cache@4.0.1.patch
   # Preserve untested-file discovery and project-root boundaries in Vitest 4 coverage.
   tinyglobby@0.2.17: patches/tinyglobby@0.2.17.patch

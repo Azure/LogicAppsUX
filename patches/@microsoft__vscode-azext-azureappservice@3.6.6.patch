@@ -1,0 +1,13 @@
+diff --git a/out/src/deploy/localGitDeploy.js b/out/src/deploy/localGitDeploy.js
+index 63c2a9f851040e66ca393f6de20a1ed40afc7583..edbbc9128b29281fbdb4498b54be1211ac6f1039 100644
+--- a/out/src/deploy/localGitDeploy.js
++++ b/out/src/deploy/localGitDeploy.js
+@@ -29,7 +29,7 @@ function localGitDeploy(site, options, context) {
+         const publishingUserName = (0, vscode_azext_utils_1.nonNullProp)(publishCredentials, 'publishingUserName');
+         yield (0, vscode_azext_utils_1.callWithMaskHandling)(() => __awaiter(this, void 0, void 0, function* () {
+             const remote = `https://${encodeURIComponent(publishingUserName)}:${encodeURIComponent(publishingPassword)}@${site.gitUrl}`;
+-            const localGit = (0, simple_git_1.default)(options.fsPath);
++            const localGit = (0, simple_git_1.simpleGit)(options.fsPath);
+             let status;
+             try {
+                 status = yield localGit.status();

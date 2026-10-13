@@ -2,12 +2,15 @@
   "name": "@microsoft/vscode-extension-logic-apps",
   "version": "5.110.0",
   "dependencies": {
+    "@azure/arm-appinsights": "^5.0.0-beta.7",
+    "@azure/arm-appservice": "^15.0.0",
     "@azure/arm-appcontainers": "^2.0.0-beta.3",
+    "@azure/arm-operationalinsights": "^8.0.1",
     "@microsoft/logic-apps-shared": "workspace:*",
-    "@microsoft/vscode-azext-azureappservice": "^3.6.6",
+    "@microsoft/vscode-azext-azureutils": "^3.5.2",
     "@microsoft/vscode-azext-utils": "^3.5.0",
     "@xyflow/react": "^12.3.5",
-    "axios": "1.18.0",
+    "axios": "1.20.0",
     "react-intl": "6.3.0",
     "tslib": "2.4.0"
   },

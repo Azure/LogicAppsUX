@@ -5,17 +5,25 @@ import { once } from 'node:events';
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { createRequire } from 'node:module';
+import { createConnection } from 'node:net';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import process from 'node:process';
 import { test } from 'node:test';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { runInNewContext } from 'node:vm';
 import { ESLint } from 'eslint';
 import { createAzuriteBlobClient } from '../apps/vs-code-designer/src/app/debug/azuriteClient.ts';
 import { coverageDefaults } from '../libs/shared-test-utils/vitestCoverage.ts';
 
 const requireExtension = createRequire(join(dirname(fileURLToPath(import.meta.url)), '..', 'apps', 'vs-code-designer', 'package.json'));
+const requireShared = createRequire(join(dirname(fileURLToPath(import.meta.url)), '..', 'libs', 'logic-apps-shared', 'package.json'));
+const requireAzureAppService = createRequire(requireExtension.resolve('@microsoft/vscode-azext-azureappservice/package.json'));
+const requireDocs = createRequire(join(dirname(fileURLToPath(import.meta.url)), '..', 'apps', 'docs', 'package.json'));
+const requireDocusaurusCore = createRequire(requireDocs.resolve('@docusaurus/core/package.json'));
+const requireDocusaurusBundler = createRequire(requireDocusaurusCore.resolve('@docusaurus/bundler/package.json'));
+const requireDocusaurusThemeMermaid = createRequire(requireDocs.resolve('@docusaurus/theme-mermaid'));
+const requireMermaid = createRequire(requireDocusaurusThemeMermaid.resolve('mermaid'));
 const requireMocha = createRequire(requireExtension.resolve('mocha'));
 const requireVitest = createRequire(requireExtension.resolve('vitest/package.json'));
 const requireVsce = createRequire(requireExtension.resolve('@vscode/vsce'));
@@ -53,6 +61,223 @@ test('DOMPurify preserves ordinary links and tables while removing executable ma
   assert.equal(result.querySelector('a')?.href, 'https://example.invalid/docs');
   assert.equal(result.querySelector('td')?.textContent, 'value');
   assert.equal(result.querySelector('script, [onerror]'), null);
+});
+
+test('Axios Node requests ignore inherited method and socket options', async (t) => {
+  const axiosModule = requireShared('axios');
+  const axios = axiosModule.default ?? axiosModule;
+  const legitimateRequests = [];
+  const attackerRequests = [];
+  const legitimate = createServer((request, response) => {
+    legitimateRequests.push({ authorization: request.headers.authorization, method: request.method, url: request.url });
+    response.end('legitimate');
+  });
+  const attacker = createServer((request, response) => {
+    attackerRequests.push({ authorization: request.headers.authorization, method: request.method, url: request.url });
+    response.end('attacker');
+  });
+  const close = (server) =>
+    new Promise((resolve, reject) => {
+      server.closeAllConnections();
+      server.close((error) => (error ? reject(error) : resolve()));
+    });
+  t.after(async () => {
+    await Promise.all([close(legitimate), close(attacker)]);
+  });
+  legitimate.listen(0, '127.0.0.1');
+  attacker.listen(0, '127.0.0.1');
+  await Promise.all([once(legitimate, 'listening'), once(attacker, 'listening')]);
+  const previousCreateConnection = Object.getOwnPropertyDescriptor(Object.prototype, 'createConnection');
+  const previousMethod = Object.getOwnPropertyDescriptor(Object.prototype, 'method');
+  Object.defineProperties(Object.prototype, {
+    createConnection: {
+      configurable: true,
+      value(_options, callback) {
+        const socket = createConnection({ host: '127.0.0.1', port: attacker.address().port }, () => callback?.(null, socket));
+        return socket;
+      },
+      writable: true,
+    },
+    method: { configurable: true, value: 'DELETE', writable: true },
+  });
+  try {
+    const response = await axios.get(`http://127.0.0.1:${legitimate.address().port}/secret`, {
+      headers: { Authorization: 'Bearer local-test-only' },
+      proxy: false,
+    });
+    assert.equal(response.data, 'legitimate');
+  } finally {
+    if (previousCreateConnection) {
+      Object.defineProperty(Object.prototype, 'createConnection', previousCreateConnection);
+    } else {
+      delete Object.prototype.createConnection;
+    }
+    if (previousMethod) {
+      Object.defineProperty(Object.prototype, 'method', previousMethod);
+    } else {
+      delete Object.prototype.method;
+    }
+  }
+  assert.deepEqual(legitimateRequests, [{ authorization: 'Bearer local-test-only', method: 'GET', url: '/secret' }]);
+  assert.deepEqual(attackerRequests, []);
+});
+
+test('Azure App Service local Git deployment APIs work with the secured simple-git major', async (t) => {
+  const simpleGitModule = requireAzureAppService('simple-git');
+  assert.equal(simpleGitModule.default, undefined);
+  assert.equal(typeof simpleGitModule.simpleGit, 'function');
+  const directory = fixtureDirectory(t);
+  const working = join(directory, 'working repository');
+  const remote = join(directory, 'remote repository.git');
+  const deploymentError = new Error('deployment test reached the secured simple-git client');
+  const simpleGitCalls = [];
+  const localGitDeployPath = join(
+    dirname(requireAzureAppService.resolve('@microsoft/vscode-azext-azureappservice/package.json')),
+    'out',
+    'src',
+    'deploy',
+    'localGitDeploy.js'
+  );
+  const localGitDeployModule = { exports: {} };
+  runInNewContext(readFileSync(localGitDeployPath, 'utf8'), {
+    exports: localGitDeployModule.exports,
+    module: localGitDeployModule,
+    require(request) {
+      if (request === 'simple-git') {
+        return {
+          simpleGit(path) {
+            simpleGitCalls.push(path);
+            return {
+              status: async () => {
+                throw deploymentError;
+              },
+            };
+          },
+        };
+      }
+      if (request === '@microsoft/vscode-azext-utils') {
+        return {
+          callWithMaskHandling: (callback) => callback(),
+          nonNullProp: (value, property) => value[property],
+        };
+      }
+      if (request === 'vscode') {
+        return {};
+      }
+      if (
+        request === '../extensionVariables' ||
+        request === '../utils/openUrl' ||
+        request === '../verifyNoRunFromPackageSetting' ||
+        request === './waitForDeploymentToComplete'
+      ) {
+        return {};
+      }
+      throw new Error(`Unexpected localGitDeploy dependency: ${request}`);
+    },
+  });
+  await assert.rejects(
+    localGitDeployModule.exports.localGitDeploy(
+      {
+        createClient: async () => ({
+          getWebAppPublishCredential: async () => ({ publishingPassword: 'password', publishingUserName: 'user' }),
+        }),
+        gitUrl: 'example.invalid/repository.git',
+      },
+      { fsPath: working },
+      {}
+    ),
+    (error) => error === deploymentError
+  );
+  assert.deepEqual(simpleGitCalls, [working]);
+
+  const simpleGit = simpleGitModule.simpleGit;
+  mkdirSync(working);
+  mkdirSync(remote);
+  await simpleGit(remote).init(true);
+  const git = simpleGit(working);
+  await git.init();
+  await git.addConfig('user.email', 'logicapps-dependency-test@example.invalid');
+  await git.addConfig('user.name', 'Logic Apps Dependency Test');
+  writeFileSync(join(working, 'example.txt'), 'first\n');
+  await git.add('example.txt');
+  const firstCommit = await git.commit('initial commit');
+  assert.match(firstCommit.commit, /^[0-9a-f]+$/);
+  assert.equal((await git.status()).isClean(), true);
+  writeFileSync(join(working, 'example.txt'), 'second\n');
+  assert.equal((await git.status()).modified.includes('example.txt'), true);
+  const secondCommit = await git.commit('tracked update', undefined, { '-a': null });
+  assert.match(secondCommit.commit, /^[0-9a-f]+$/);
+  assert.equal((await git.status()).isClean(), true);
+  assert.equal((await git.log()).latest?.hash, secondCommit.commit);
+  await git.addRemote('origin', remote);
+  await git.push('origin', 'HEAD:master', { '-f': null });
+  const remoteGit = simpleGit(remote);
+  assert.equal((await remoteGit.revparse(['refs/heads/master'])).trim(), secondCommit.commit);
+});
+
+test('Docusaurus worker APIs work with the secured Tinypool major', async (t) => {
+  const directory = fixtureDirectory(t);
+  const worker = join(directory, 'worker.mjs');
+  writeFileSync(
+    worker,
+    `import { workerData } from 'node:worker_threads';
+export default ({ value }) => ({
+  value: workerData?.[1]?.prefix + value,
+  workerId: process.__tinypool_state__?.workerId,
+});`
+  );
+  const tinypoolEntry = requireDocusaurusCore.resolve('tinypool');
+  const tinypoolModule = await import(pathToFileURL(tinypoolEntry).href);
+  const Tinypool = tinypoolModule.default;
+  const pool = new Tinypool({
+    filename: worker,
+    isolateWorkers: false,
+    maxThreads: 1,
+    minThreads: 1,
+    runtime: 'worker_threads',
+    workerData: { prefix: 'processed-' },
+  });
+  try {
+    assert.deepEqual(await pool.run({ value: 'first' }), { value: 'processed-first', workerId: 1 });
+    assert.deepEqual(await pool.run({ value: 'second' }), { value: 'processed-second', workerId: 1 });
+  } finally {
+    await pool.destroy();
+  }
+});
+
+test('Mermaid math rendering works with the secured KaTeX major', () => {
+  const katexModule = requireMermaid('katex');
+  const katex = katexModule.default ?? katexModule;
+  const inline = katex.renderToString('E = mc^2', { throwOnError: true, trust: false });
+  const display = katex.renderToString('\\int_0^1 x^2\\,dx = \\frac{1}{3}', {
+    displayMode: true,
+    throwOnError: true,
+    trust: false,
+  });
+  assert.match(inline, /class="katex"/);
+  assert.match(inline, /class="katex-mathml"/);
+  assert.match(inline, /aria-hidden="true"/);
+  assert.match(display, /class="katex-display"/);
+  assert.throws(() => katex.renderToString('\\notARealCommand', { throwOnError: true, trust: false }), /Undefined control sequence/);
+});
+
+test('Docusaurus selector minification works with the secured parser major', async () => {
+  const cssnanoModule = requireDocusaurusBundler('cssnano');
+  const postcssModule = requireDocusaurusBundler('postcss');
+  const cssnano = cssnanoModule.default ?? cssnanoModule;
+  const postcss = postcssModule.default ?? postcssModule;
+  const input = `.button\\:escaped:is(.primary, .secondary):not([aria-disabled="true"]) > .icon,
+.button\\:escaped.primary > .icon {
+  color: #ff0000;
+}`;
+  const result = await postcss([cssnano({ preset: requireDocusaurusBundler.resolve('@docusaurus/cssnano-preset') })]).process(input, {
+    from: undefined,
+  });
+  assert.match(result.css, /\.button\\:escaped/);
+  assert.match(result.css, /:is\(\.primary,\.secondary\)/);
+  assert.match(result.css, /:not\(\[aria-disabled=true\]\)/);
+  assert.match(result.css, />\.icon/);
+  assert.match(result.css, /color:red/);
 });
 
 for (const hook of ['afterSanitizeElements', 'afterSanitizeAttributes']) {
