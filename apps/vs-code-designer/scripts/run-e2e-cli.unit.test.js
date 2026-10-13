@@ -1456,14 +1456,17 @@ function testOrderedEvidenceInitializationRejectsMismatchBeforeMutation() {
     /does not match selected suite httpTimeoutLifecycle/
   );
   assert.equal(fs.readFileSync(markerPath, 'utf8'), 'existing-evidence');
-  assert.throws(
-    () =>
-      initializeOrderedEvidenceForProcess(['--http-timeout-lifecycle'], {
-        LA_E2E_CLI_EVIDENCE_DIR: evidenceDir,
-      }),
-    /context is incomplete/
-  );
-  assert.equal(fs.readFileSync(markerPath, 'utf8'), 'existing-evidence');
+
+  const pipelineEvidenceDir = path.join(tempRoot, 'pipeline-initialized-evidence');
+  const pipelineEnv = {
+    LA_E2E_CLI_EVIDENCE_DIR: pipelineEvidenceDir,
+    LA_E2E_CLI_EVIDENCE_SUITE_ID: 'httpTimeoutLifecycle',
+  };
+  const manifestPath = initializeOrderedEvidenceForProcess(['--http-timeout-lifecycle'], pipelineEnv);
+  assert.equal(typeof pipelineEnv.LA_E2E_CLI_EVIDENCE_INVOCATION, 'string');
+  assert.ok(pipelineEnv.LA_E2E_CLI_EVIDENCE_INVOCATION);
+  assert.equal(manifestPath, path.join(pipelineEvidenceDir, 'suite-evidence-manifest.json'));
+  assert.equal(fs.existsSync(manifestPath), true);
 }
 
 async function testRunSuiteWrapperProcessTimeoutCancelsDisposableChild() {

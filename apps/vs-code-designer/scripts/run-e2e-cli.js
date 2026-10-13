@@ -272,13 +272,8 @@ function initializeOrderedEvidenceForProcess(argv = process.argv.slice(2), env =
   const inferredSuiteId = inferOrderedEvidenceSuiteId(argv);
   const inheritedSuiteId = env.LA_E2E_CLI_EVIDENCE_SUITE_ID;
   const inheritedEvidenceDir = env.LA_E2E_CLI_EVIDENCE_DIR;
-  const inheritedInvocation = env.LA_E2E_CLI_EVIDENCE_INVOCATION;
-  const hasInheritedContext = Boolean(inheritedSuiteId || inheritedEvidenceDir || inheritedInvocation);
   if (inheritedSuiteId && inferredSuiteId && inheritedSuiteId !== inferredSuiteId) {
     throw new Error(`Ordered evidence suite ${inheritedSuiteId} does not match selected suite ${inferredSuiteId}`);
-  }
-  if (hasInheritedContext && (!inheritedSuiteId || !inheritedEvidenceDir || !inheritedInvocation)) {
-    throw new Error('Inherited ordered evidence context is incomplete');
   }
   const suiteId = inheritedSuiteId || inferredSuiteId;
   if (!suiteId || !Object.hasOwn(SUITE_REGISTRY, suiteId)) {
