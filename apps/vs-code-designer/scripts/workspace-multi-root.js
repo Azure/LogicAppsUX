@@ -10,6 +10,11 @@ const extensionRoot = path.resolve(__dirname, '..');
 const hash = (file) => createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 const suiteId = 'workspaceMultiRoot';
 const expectedPhases = Object.freeze(['runtimeDependencyBootstrap:bootstrap', 'workspaceMultiRoot:create', 'workspaceMultiRoot:reopen']);
+
+function createMultiRootDiagnosticRoot(parent) {
+  fs.mkdirSync(parent, { recursive: true });
+  return fs.mkdtempSync(path.join(parent, 'multi-root-'));
+}
 const nativeCleanupBlocker =
   'workspaceMultiRoot native finalization blocked: missing live retained Code/Func/task/Azurite identities; post-exit ancestry is not exit proof';
 function caseExecutionMode(env) {
@@ -235,9 +240,8 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, 
     assert.ok(fs.statSync(path.join(recorder, file)).size > 0, 'Current-source multi-root debug observer fixture is required');
   }
   const root = fs.mkdtempSync(path.join(env.LA_E2E_CLI_WORKSPACE_ROOT || os.tmpdir(), 'la-multi-root-'));
-  const diagnosticRoot = fs.mkdtempSync(
-    path.join(env.LA_E2E_CLI_MULTI_ROOT_DIAGNOSTICS_PARENT || path.join(extensionRoot, '.vscode-test'), 'multi-root-')
-  );
+  const diagnosticsParent = env.LA_E2E_CLI_MULTI_ROOT_DIAGNOSTICS_PARENT || path.join(extensionRoot, '.vscode-test');
+  const diagnosticRoot = createMultiRootDiagnosticRoot(diagnosticsParent);
   const context = {
     diagnosticOnly: mode.diagnosticOnly,
     suiteId,
@@ -504,6 +508,7 @@ module.exports = {
   suiteId,
   expectedPhases,
   exactPhasesComplete,
+  createMultiRootDiagnosticRoot,
   assertAssets,
   validateHandoff,
   assertEvidence,

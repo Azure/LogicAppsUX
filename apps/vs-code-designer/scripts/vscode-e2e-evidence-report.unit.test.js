@@ -54,6 +54,20 @@ test('producer plans preserve the expected finite checkpoint counts', () => {
   assert.equal(httpCatalogGroups.flatMap((group) => group.steps).length, 38);
 });
 
+test('core matrix places Cancel evidence immediately after Standard Stateful', () => {
+  const checkpointIds = getSuiteDescriptor('createWorkspaceCoreMatrix')
+    .buildCatalog({})
+    .flatMap((group) => group.steps.map((step) => step.checkpoint));
+  const statefulCreated = checkpointIds.indexOf('create-workspace-standard-stateful-created');
+  const cancelStart = checkpointIds.indexOf('workspace-prompt-cancel-ui-open-folder');
+  const cancelEnd = checkpointIds.indexOf('workspace-prompt-cancel-ui-after');
+  const statelessStart = checkpointIds.indexOf('create-workspace-standard-stateless-fields-verified-top');
+  assert.ok(statefulCreated >= 0);
+  assert.equal(cancelStart, statefulCreated + 1);
+  assert.equal(cancelEnd, cancelStart + 3);
+  assert.equal(statelessStart, cancelEnd + 1);
+});
+
 test('manifest initialization assigns stable producer ordinals without filesystem identities', () => {
   withFixture(({ evidenceDir, manifestPath }) => {
     initializeSuiteEvidenceManifest({

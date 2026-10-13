@@ -18,6 +18,7 @@ const {
   nativeCleanupBlocker,
   retainedIdentityExitFacts,
   caseExecutionMode,
+  createMultiRootDiagnosticRoot,
 } = require('./workspace-multi-root');
 const { SUITE_REGISTRY, normalizeSuiteSelection } = require('./e2e-cli-batch');
 const {
@@ -36,6 +37,17 @@ const phaseFixtures = () =>
 
 test('native family cannot run on a shared host; rejection precedes any native operation', async () => {
   await assert.rejects(runWorkspaceMultiRoot({}, {}), /isolated native consumer/);
+});
+test('diagnostics root creation creates an absent configured parent', () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'multi-root-diagnostics-unit-'));
+  try {
+    const parent = path.join(root, 'nested', 'diagnostics');
+    const diagnosticRoot = createMultiRootDiagnosticRoot(parent);
+    assert.equal(path.dirname(diagnosticRoot), parent);
+    assert.equal(fs.statSync(diagnosticRoot).isDirectory(), true);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
 });
 test('isolated flag alone cannot authorize the unresolved retained native cleanup gate', async () => {
   await assert.rejects(runWorkspaceMultiRoot({}, { LA_E2E_CLI_MULTI_ROOT_ISOLATED: '1' }), /native finalization blocked/);

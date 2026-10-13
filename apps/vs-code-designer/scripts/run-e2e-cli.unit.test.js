@@ -10,6 +10,7 @@ const path = require('path');
 const {
   runDirectFamily,
   _test: {
+    applyInheritedOrderedEvidenceContext,
     collectRuntimeDependencyDiagnostics,
     collectRegenerationProfileLogs,
     cleanupDeferredWorkspaceAfterCancel,
@@ -41,6 +42,7 @@ const {
     getNoGeneratedWorkspaceSnapshotReason,
     getVscodeUserDataDir,
     getWorkspaceSourcesFromManifestPath,
+    initializeOrderedEvidenceForProcess,
     redactGeneratedWorkspaceJsonValue,
     redactGeneratedWorkspacePlainText,
     readContainmentReceipt,
@@ -108,6 +110,8 @@ const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
     testBatchSuiteRegistryValidation();
     testBatchSuiteEnvironmentIsolation();
     testHttpDirectSelectorUsesRegisteredContainment();
+    testDirectFamilyInheritsCanonicalOrderedEvidenceContext();
+    testOrderedEvidenceInitializationRejectsMismatchBeforeMutation();
     await testBatchSuiteScopedCredentials();
     await testBatchContinuesAfterOrdinaryFailure();
     await testBatchStopsAfterContainmentBreach();
@@ -1394,6 +1398,72 @@ async function testDirectHttpFamilyRetainsWrapperPhaseJournal() {
       }
     }
   }
+}
+
+function testDirectFamilyInheritsCanonicalOrderedEvidenceContext() {
+  const suite = SUITE_REGISTRY.httpTimeoutLifecycle;
+  const generated = {
+    evidenceDir: path.join(tempRoot, 'generated-evidence'),
+    evidenceInvocation: 'generated-invocation',
+    stableField: 'preserved',
+  };
+  assert.strictEqual(applyInheritedOrderedEvidenceContext(generated, suite, {}), generated);
+
+  const inheritedDir = path.join(tempRoot, 'canonical-evidence');
+  assert.deepStrictEqual(
+    applyInheritedOrderedEvidenceContext(generated, suite, {
+      LA_E2E_CLI_EVIDENCE_DIR: inheritedDir,
+      LA_E2E_CLI_EVIDENCE_INVOCATION: 'canonical-invocation',
+      LA_E2E_CLI_EVIDENCE_SUITE_ID: suite.id,
+    }),
+    {
+      ...generated,
+      evidenceDir: path.resolve(inheritedDir),
+      evidenceInvocation: 'canonical-invocation',
+    }
+  );
+  assert.throws(
+    () =>
+      applyInheritedOrderedEvidenceContext(generated, suite, {
+        LA_E2E_CLI_EVIDENCE_DIR: inheritedDir,
+      }),
+    /incomplete or mismatched/
+  );
+  assert.throws(
+    () =>
+      applyInheritedOrderedEvidenceContext(generated, suite, {
+        LA_E2E_CLI_EVIDENCE_DIR: inheritedDir,
+        LA_E2E_CLI_EVIDENCE_INVOCATION: 'canonical-invocation',
+        LA_E2E_CLI_EVIDENCE_SUITE_ID: 'statelessVariablesLifecycle',
+      }),
+    /incomplete or mismatched/
+  );
+}
+
+function testOrderedEvidenceInitializationRejectsMismatchBeforeMutation() {
+  const evidenceDir = path.join(tempRoot, 'mismatched-inherited-evidence');
+  const screenshotDir = path.join(evidenceDir, 'screenshots');
+  const markerPath = path.join(screenshotDir, 'existing.png');
+  fs.mkdirSync(screenshotDir, { recursive: true });
+  fs.writeFileSync(markerPath, 'existing-evidence');
+  const env = {
+    LA_E2E_CLI_EVIDENCE_DIR: evidenceDir,
+    LA_E2E_CLI_EVIDENCE_INVOCATION: 'existing-invocation',
+    LA_E2E_CLI_EVIDENCE_SUITE_ID: 'statelessVariablesLifecycle',
+  };
+  assert.throws(
+    () => initializeOrderedEvidenceForProcess(['--http-timeout-lifecycle'], env),
+    /does not match selected suite httpTimeoutLifecycle/
+  );
+  assert.equal(fs.readFileSync(markerPath, 'utf8'), 'existing-evidence');
+  assert.throws(
+    () =>
+      initializeOrderedEvidenceForProcess(['--http-timeout-lifecycle'], {
+        LA_E2E_CLI_EVIDENCE_DIR: evidenceDir,
+      }),
+    /context is incomplete/
+  );
+  assert.equal(fs.readFileSync(markerPath, 'utf8'), 'existing-evidence');
 }
 
 async function testRunSuiteWrapperProcessTimeoutCancelsDisposableChild() {

@@ -483,65 +483,66 @@ function loadCreateWorkspaceCaseLabels(suiteId, factoryName) {
 
 function matrixCatalog(suiteId, title, factoryName) {
   const cases = loadCreateWorkspaceCaseLabels(suiteId, factoryName);
-  const groups = [
-    group(
-      'workspace-variants',
-      title,
-      'Uses the finite ordered variant contract registered for the suite; runtime-generated workspace names are not used as identities.',
-      cases.flatMap((caseLabel) => [
-        ...createWorkspaceCompletedFieldSteps(caseLabel),
-        simpleStep(
-          `create-workspace-${caseLabel}-review`,
-          caseLabel,
-          'Complete the variant and advance to Review + create.',
-          'The review page reflects the declared variant and Create is enabled.'
-        ),
-        simpleStep(
-          `create-workspace-${caseLabel}-created`,
-          caseLabel,
-          'Verify the generated workspace artifacts after creation.',
-          'A retained diagnostic records the workbench after durable artifact verification.',
-          'diagnostic'
-        ),
-      ])
-    ),
-  ];
-  if (suiteId === 'createWorkspaceCoreMatrix') {
-    groups.push(
-      group(
-        'workspace-cancel',
-        'Workspace prompt Cancel',
-        'Preserves the required supplementary prompt sequence after the core matrix has created the original Standard Stateful workspace.',
-        [
-          simpleStep(
-            'workspace-prompt-cancel-ui-open-folder',
-            'Supplementary Cancel',
-            'Open the exact existing Logic App folder.',
-            'The native folder picker retains the existing application path before submission.'
-          ),
-          simpleStep(
-            'workspace-prompt-cancel-ui-preceding-no',
-            'Supplementary Cancel',
-            'Choose No on the preceding existing-app prompt.',
-            'The real enabled No option is visible before continuing to the target prompt.'
-          ),
-          simpleStep(
-            'workspace-prompt-cancel-ui-before',
-            'Supplementary Cancel',
-            'Observe the target workspace prompt before Cancel.',
-            'The prompt remains visible over the unchanged original application.'
-          ),
-          simpleStep(
-            'workspace-prompt-cancel-ui-after',
-            'Supplementary Cancel',
-            'Cancel the target workspace prompt.',
-            'The prompt is dismissed while the original application files and view remain unchanged.'
-          ),
-        ]
-      )
-    );
+  const caseSteps = (caseLabels) =>
+    caseLabels.flatMap((caseLabel) => [
+      ...createWorkspaceCompletedFieldSteps(caseLabel),
+      simpleStep(
+        `create-workspace-${caseLabel}-review`,
+        caseLabel,
+        'Complete the variant and advance to Review + create.',
+        'The review page reflects the declared variant and Create is enabled.'
+      ),
+      simpleStep(
+        `create-workspace-${caseLabel}-created`,
+        caseLabel,
+        'Verify the generated workspace artifacts after creation.',
+        'A retained diagnostic records the workbench after durable artifact verification.',
+        'diagnostic'
+      ),
+    ]);
+  const description =
+    'Uses the finite ordered variant contract registered for the suite; runtime-generated workspace names are not used as identities.';
+  if (suiteId !== 'createWorkspaceCoreMatrix') {
+    return [group('workspace-variants', title, description, caseSteps(cases))];
   }
-  return groups;
+  if (cases[0] !== 'standard-stateful') {
+    throw new Error('createWorkspaceCoreMatrix ordered evidence requires Standard Stateful first');
+  }
+  return [
+    group('workspace-variants', title, description, caseSteps(cases.slice(0, 1))),
+    group(
+      'workspace-cancel',
+      'Workspace prompt Cancel',
+      'Preserves the required supplementary prompt sequence after the core matrix has created the original Standard Stateful workspace.',
+      [
+        simpleStep(
+          'workspace-prompt-cancel-ui-open-folder',
+          'Supplementary Cancel',
+          'Open the exact existing Logic App folder.',
+          'The native folder picker retains the existing application path before submission.'
+        ),
+        simpleStep(
+          'workspace-prompt-cancel-ui-preceding-no',
+          'Supplementary Cancel',
+          'Choose No on the preceding existing-app prompt.',
+          'The real enabled No option is visible before continuing to the target prompt.'
+        ),
+        simpleStep(
+          'workspace-prompt-cancel-ui-before',
+          'Supplementary Cancel',
+          'Observe the target workspace prompt before Cancel.',
+          'The prompt remains visible over the unchanged original application.'
+        ),
+        simpleStep(
+          'workspace-prompt-cancel-ui-after',
+          'Supplementary Cancel',
+          'Cancel the target workspace prompt.',
+          'The prompt is dismissed while the original application files and view remain unchanged.'
+        ),
+      ]
+    ),
+    group('workspace-variants-remaining', 'Remaining core variants', description, caseSteps(cases.slice(1))),
+  ];
 }
 
 function workspaceLifecycleCreationSteps(label) {

@@ -269,11 +269,22 @@ function main() {
 }
 
 function initializeOrderedEvidenceForProcess(argv = process.argv.slice(2), env = process.env) {
-  const suiteId = env.LA_E2E_CLI_EVIDENCE_SUITE_ID || inferOrderedEvidenceSuiteId(argv);
+  const inferredSuiteId = inferOrderedEvidenceSuiteId(argv);
+  const inheritedSuiteId = env.LA_E2E_CLI_EVIDENCE_SUITE_ID;
+  const inheritedEvidenceDir = env.LA_E2E_CLI_EVIDENCE_DIR;
+  const inheritedInvocation = env.LA_E2E_CLI_EVIDENCE_INVOCATION;
+  const hasInheritedContext = Boolean(inheritedSuiteId || inheritedEvidenceDir || inheritedInvocation);
+  if (inheritedSuiteId && inferredSuiteId && inheritedSuiteId !== inferredSuiteId) {
+    throw new Error(`Ordered evidence suite ${inheritedSuiteId} does not match selected suite ${inferredSuiteId}`);
+  }
+  if (hasInheritedContext && (!inheritedSuiteId || !inheritedEvidenceDir || !inheritedInvocation)) {
+    throw new Error('Inherited ordered evidence context is incomplete');
+  }
+  const suiteId = inheritedSuiteId || inferredSuiteId;
   if (!suiteId || !Object.hasOwn(SUITE_REGISTRY, suiteId)) {
     return undefined;
   }
-  const evidenceDir = env.LA_E2E_CLI_EVIDENCE_DIR || path.resolve(__dirname, '..', '.vscode-test', 'evidence', suiteId);
+  const evidenceDir = inheritedEvidenceDir || path.resolve(__dirname, '..', '.vscode-test', 'evidence', suiteId);
   env.LA_E2E_CLI_EVIDENCE_SUITE_ID = suiteId;
   env.LA_E2E_CLI_EVIDENCE_DIR = evidenceDir;
   env.LA_E2E_CLI_EVIDENCE_INVOCATION ||= `${suiteId}-${randomUUID()}`;
@@ -405,6 +416,23 @@ function escapeXml(value) {
   return String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 }
 
+function applyInheritedOrderedEvidenceContext(context, suite, env) {
+  const evidenceDir = env.LA_E2E_CLI_EVIDENCE_DIR;
+  const evidenceInvocation = env.LA_E2E_CLI_EVIDENCE_INVOCATION;
+  const evidenceSuiteId = env.LA_E2E_CLI_EVIDENCE_SUITE_ID;
+  if (!evidenceDir && !evidenceInvocation && !evidenceSuiteId) {
+    return context;
+  }
+  if (!evidenceDir || !evidenceInvocation || evidenceSuiteId !== suite.id) {
+    throw new Error(`Direct ${suite.id} execution inherited an incomplete or mismatched ordered evidence context`);
+  }
+  return {
+    ...context,
+    evidenceDir: path.resolve(evidenceDir),
+    evidenceInvocation,
+  };
+}
+
 /** Shared direct-family entry point. Native work stays in the existing suite
  * wrapper; this caller never invents a successful process-cleanup observation. */
 async function runDirectFamily(suiteId, visibleDelayMs, options = {}) {
@@ -415,13 +443,17 @@ async function runDirectFamily(suiteId, visibleDelayMs, options = {}) {
   const resultsDir = path.resolve(options.resultsDir || path.join(__dirname, '..', '.vscode-test', 'results'));
   fs.mkdirSync(resultsDir, { recursive: true });
   const batchRoot = createBatchRoot({ batchRoot: options.batchRoot || process.env.LA_E2E_CLI_BATCH_ROOT });
-  const context = {
-    ...createSuiteContext({ batchRoot, suite, index: 0, total: 1 }),
-    directFamily: true,
-    transientCleanupVerified: false,
-    terminalResultPath: path.join(resultsDir, `${suiteId}.terminal-result.json`),
-    cleanupLedgerPath: path.join(resultsDir, `${suiteId}.cleanup-ledger.json`),
-  };
+  const context = applyInheritedOrderedEvidenceContext(
+    {
+      ...createSuiteContext({ batchRoot, suite, index: 0, total: 1 }),
+      directFamily: true,
+      transientCleanupVerified: false,
+      terminalResultPath: path.join(resultsDir, `${suiteId}.terminal-result.json`),
+      cleanupLedgerPath: path.join(resultsDir, `${suiteId}.cleanup-ledger.json`),
+    },
+    suite,
+    process.env
+  );
   // Fresh unique phase journal and label-specific receipts, even when callers
   // inherited an old JSONL or a previously successful terminal artifact.
   fs.writeFileSync(context.phaseResultsPath, '');
@@ -3657,6 +3689,8 @@ module.exports = {
     getFuncCoreToolsCandidatePaths,
     getFuncCoreToolsBinaryPath,
     getMochaPassingCount,
+    applyInheritedOrderedEvidenceContext,
+    initializeOrderedEvidenceForProcess,
     runHttpTimeoutLifecycle,
     beginDirectMsnEvidence,
     finalizeDirectMsnEvidence,

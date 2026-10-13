@@ -1553,7 +1553,7 @@ async function addMsnWeatherActionThroughDesigner(cdp: CdpEvaluator, contextId: 
   const label = createdWorkspace.label;
 
   await runLifecyclePhase(createdWorkspace, 'MsnWeatherDiscoveryready', async () => {
-    await openActionDiscoveryPanelThroughDesigner(cdp, contextId, label);
+    await openActionDiscoveryPanelThroughDesigner(cdp, contextId, label, false);
     console.log(`[workspace-lifecycle] ${label}: searching for MSN Weather current weather action`);
     await searchInDiscoveryPanelThroughDesigner(cdp, contextId, 'current weather');
     await captureLifecycleScreenshot(`workspace-lifecycle-${label}-msn-weather-search-entered`, {
@@ -1616,9 +1616,17 @@ async function addMsnWeatherActionThroughDesigner(cdp: CdpEvaluator, contextId: 
   console.log(`[workspace-lifecycle] ${label}: milestone azure-action-ready-for-next-action action="Get current weather"`);
 }
 
-async function openActionDiscoveryPanelThroughDesigner(cdp: CdpEvaluator, contextId: number, label: string): Promise<void> {
+async function openActionDiscoveryPanelThroughDesigner(
+  cdp: CdpEvaluator,
+  contextId: number,
+  label: string,
+  captureEvidence = true
+): Promise<void> {
   const actions = getMsnDesignerActions(cdp, contextId);
   await actions.openActionDiscovery(label, (stage, point) => logDesignerDiscoveryDiagnostics(cdp, contextId, label, stage, point));
+  if (!captureEvidence) {
+    return;
+  }
   await captureLifecycleScreenshot(`workspace-lifecycle-${label}-action-panel-open`, {
     expectation: { kind: 'discovery', label, allowLoading: true },
     semanticCdp: cdp,
