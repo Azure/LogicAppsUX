@@ -40,6 +40,7 @@ async function main(): Promise<void> {
   await testCopilotChatInitialReadRetryStopsAfterBoundAndRedactsErrors();
   await testCopilotChatInitialReadRetryRespectsDeadline();
   await testCopilotChatInitialReadRetryUsesSharedAttachBudget();
+  await testCopilotChatDefaultBudgetRetriesAfterStalledAttach();
   await testCopilotChatInitialReadRetryDoesNotRetryOtherErrors();
   await testCopilotChatReadRetryDoesNotRetryAfterVisibleObservation();
   await testCopilotChatAbsentSettlingRetryRecoversWithoutResettingWindow();
@@ -584,13 +585,25 @@ async function testCopilotChatInitialReadRetryUsesSharedAttachBudget(): Promise<
     states: [{ visible: false, matchCount: 0, owners: [] }],
   });
 
-  await closeCopilotChatIfVisibleWithAttachRetry('initial-read-shared-budget-test', harness);
+  await closeCopilotChatIfVisibleWithAttachRetry('initial-read-shared-budget-test', harness, { timeoutMs: 8000 });
 
   assert.deepStrictEqual(harness.connectTimeouts, [5000, 2750]);
   assert.deepStrictEqual(harness.readTimeouts, [1500, 1000]);
   assert.deepStrictEqual(harness.sleepDurations, [250, 250]);
   assert.strictEqual(harness.now(), 7000);
   assert.strictEqual(harness.connections[0]?.disposeCalls, 1);
+}
+
+async function testCopilotChatDefaultBudgetRetriesAfterStalledAttach(): Promise<void> {
+  const harness = new FakeCopilotChatAttachHarness({
+    connectDurationsMs: [8500, 0],
+    connectFailuresBeforeSuccess: 1,
+    states: [{ visible: false, matchCount: 0, owners: [] }],
+  });
+
+  await closeCopilotChatIfVisibleWithAttachRetry('default-budget-stalled-attach-test', harness);
+
+  assert.deepStrictEqual(harness.connectTimeouts, [5000, 5000]);
 }
 
 async function testCopilotChatInitialReadRetryDoesNotRetryOtherErrors(): Promise<void> {
