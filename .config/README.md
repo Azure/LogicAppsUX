@@ -55,6 +55,14 @@ Each suite publishes its own JUnit results and one consolidated sanitized diagno
 
 The E2E Run Pipeline form intentionally exposes only test-selection controls: `diagnosticOnly`, `runLinux`, `runWindows`, `linuxSuites`, and `windowsSuites`. Selection is validated before the artifact build. A normal run requires the full canonical inventory on both OSes, expressed through the `linux`/`windows` aliases or complete explicit lists; partial runs must be diagnostic. Unknown, duplicate, overlapping, or OS-incompatible selections are rejected. Diagnostic selection only schedules the selected independent jobs and cannot satisfy the full gate.
 
+Use diagnostic selection as the first native proof step, not the last. Bind the
+run to the full admitted source SHA, inspect native JSON/JUnit, phase and
+terminal receipts, cleanup ledgers, ordered-evidence validation and staged
+reports, then queue the complete non-diagnostic Linux/Windows aliases against
+that SHA or a newer explicitly recorded SHA containing the fix. Overall job
+status does not identify whether the failure occurred in build/bootstrap,
+native execution, cleanup/finalization, evidence staging or publication.
+
 The supplementary `httpTimeoutLifecycle`, `statelessVariablesLifecycle`
 and `workspaceArtifactRegeneration`/`workspaceMultiRoot`
 families have independent Linux and Windows jobs using the same admitted payload,
@@ -82,6 +90,13 @@ only after its parent exits can miss reparented descendants, so supplementary
 publication also requires verified retained-original-identity closure evidence.
 Until that evidence is available, native execution is diagnostic only and result
 staging rejects acceptance even if the GUI bodies and ordinary exits succeeded.
+
+The registered Multi-root direct orchestration owns the complete wrapper
+context, including `reportsRoot`, invocation and result paths, expected phases
+and the configured workspace-root parent. Stable terminal and cleanup receipts
+are invalidated before any setup operation that can fail, so an old success
+cannot survive a workspace/dependency/preflight error. Multi-root body or
+evidence success never bypasses its retained-original-identity closure gate.
 
 Multi-root jobs explicitly opt into complete native process observation only on
 their dedicated ADO worker. The real dependency bootstrap attests the configured

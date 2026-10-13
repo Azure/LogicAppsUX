@@ -1,6 +1,7 @@
 # VS Code E2E Testing Knowledge
 
-Curated durable learnings for VS Code ExTester UI E2E tests. Add entries through `session-knowledge-curator`.
+Curated durable learnings for VS Code ExTester UI E2E and `@vscode/test-cli` native tests. Add entries through
+`session-knowledge-curator`.
 
 ## Triggers → use this file
 
@@ -9,9 +10,11 @@ Curated durable learnings for VS Code ExTester UI E2E tests. Add entries through
 - CI matrix shards `independent`, `designer`, `newtests`, `conversion`, `scenarios-pilot`
 - VS Code webview iframe switching, overview/run lifecycle, modal dialog interaction on xvfb
 - Adding a new E2E test, debugging a CI-only failure, writing diagnostic dumps
+- `apps/vs-code-designer/src/test/e2e/**`, `scripts/run-e2e-cli.js`, ordered evidence, native ADO selectors
 - See also: [`runtime-readiness-probes.md`](runtime-readiness-probes.md) for runtime/HTTP probe rules,
   [`vscode-task-env-propagation.md`](vscode-task-env-propagation.md) for `func: host start` env bugs,
-  [`ci-patterns.md`](ci-patterns.md) for the shard matrix workflow and coverage gate.
+  [`ci-patterns.md`](ci-patterns.md) for CI proof and failure classification, and
+  [`../../docs/testing/vscode-cli-authoring.md`](../../docs/testing/vscode-cli-authoring.md) for the canonical CLI contracts.
 
 ## Core Sources
 
@@ -20,8 +23,28 @@ Curated durable learnings for VS Code ExTester UI E2E tests. Add entries through
 - `apps/vs-code-designer/src/test/ui/designerHelpers.ts`
 - `apps/vs-code-designer/src/test/ui/runHelpers.ts`
 - `apps/vs-code-designer/src/test/ui/workspaceManifest.ts`
+- `apps/vs-code-designer/src/test/e2e/README.md`
+- `docs/testing/vscode-cli-authoring.md`
+- `apps/vs-code-designer/scripts/run-e2e-cli.js`
+- `.config/README.md`
 
 ## Current Learnings
+
+### CLI monitoring uses stable product identity, not presentation text
+
+- Learning: Monitoring-card text can include duration, status, or other changing presentation. Resolve the exact product node ID derived from the action identity first, and retain the existing exact-title matching only as a fallback.
+- Why it matters: Containers such as `0.9sGet current weather` and `3sGet current weather` are valid presentations of the same action; presentation equality misses the action and broad substring matching risks selecting a duplicate.
+- Source: `workspaceLifecycle.test.ts` monitoring-card helper and `workspaceLifecycleDiagnostics.unit.ts`.
+- Applies to: `vscode-test-specialist`, `test`, `senior-swe-reviewer`.
+- Status: regression-tested; native revalidation is required whenever shared harness behavior changes.
+
+### Post-F5 diagnostic evidence waits for target stability
+
+- Learning: Completing known prompts does not mean the VS Code workbench/CDP target is stable. Keep early transition diagnostics, but capture the final post-prompt checkpoint only after `waitForDebugStartup` or an equivalent target-stability condition.
+- Why it matters: Capturing during navigation can let the native lifecycle pass while a required ordered-evidence checkpoint remains failed or missing on one operating system.
+- Source: `workspaceLifecycle.test.ts` debug startup ordering and `workspaceLifecycleDiagnostics.unit.ts`.
+- Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`.
+- Status: source/control verified; native validation follows the canonical proof ladder after shared harness changes.
 
 ### `@vscode/test-cli` Create Workspace CI publishes structured results
 

@@ -5,7 +5,7 @@ Use this playbook when adding, fixing, or reviewing tests for the VS Code Logic 
 ## Entry Points
 
 - `test` is the primary test owner.
-- `vscode-test-specialist` is the focused specialist for VS Code extension unit tests and ExTester UI E2E tests.
+- `vscode-test-specialist` is the focused specialist for VS Code extension unit tests, ExTester UI E2E tests, and CLI-native `@vscode/test-cli` tests.
 - `customer-repro-tester` owns customer-facing reproduction and can request VS Code E2E coverage when the repro requires VS Code shell/webview behavior.
 - `vscode` owns product code and extension infrastructure decisions.
 
@@ -16,6 +16,7 @@ Use this playbook when adding, fixing, or reviewing tests for the VS Code Logic 
 | Pure host-side logic | VS Code extension unit test |
 | Webview state/rendering behavior | React webview unit test |
 | User-visible VS Code workflow | ExTester UI E2E through `run-e2e.js` |
+| CLI-native extension lifecycle, evidence or cleanup | Registered `@vscode/test-cli` suite |
 | Standalone designer browser flow | Playwright E2E under `/e2e` |
 | Customer-reported VS Code behavior | `customer-repro-tester` plus ExTester through `run-e2e.js` |
 | CI failure with artifacts | Failure diagnosis with `ci-sentinel`, then targeted unit/E2E fix |
@@ -65,6 +66,41 @@ Use this playbook when adding, fixing, or reviewing tests for the VS Code Logic 
 4. Cover edge cases introduced by the change.
 5. Avoid broad snapshots unless the repo already uses them for the same surface.
 
+## VS Code CLI E2E Workflow
+
+Use this workflow for `apps/vs-code-designer/src/test/e2e/**`,
+`apps/vs-code-designer/scripts/run-e2e-cli.js`, ordered evidence, or the ADO
+CLI-native selectors. It is separate from the ExTester `run-e2e.js` workflow.
+
+1. Read `docs/testing/vscode-cli-authoring.md`,
+   `apps/vs-code-designer/src/test/e2e/README.md`, and `.config/README.md` when
+   ADO/native proof is involved.
+2. Identify the registered suite, exact expected phases, cleanup/terminal gates,
+   and producer-owned evidence plan before editing.
+3. Keep pipeline bootstrap distinct from inherited active evidence ownership:
+   the owner creates the invocation; descendants require the complete
+   suite/directory/invocation tuple and invocation-fenced writes.
+4. For the registered Multi-root direct selector, use
+   `runDirectRegisteredSuite` as the complete context boundary. Other direct
+   families retain their existing owning orchestrators and must provide
+   equivalent complete context there.
+5. Invalidate stale terminal and cleanup success before workspace setup,
+   dependency preparation, native preflight or child launch.
+6. Use stable product identity rather than duration/status-prefixed presentation
+   text. Synchronize required post-F5 evidence with runtime/workbench target
+   stability.
+7. Run focused controls, strict CLI compilation, and the complete registered
+   `test:e2e-cli:unit` chain after shared infrastructure changes.
+8. Queue exact-full-SHA Linux and Windows diagnostic selectors for affected
+   suites. Download artifacts and classify build, native, cleanup/terminal,
+   evidence-staging and publication outcomes separately.
+9. After focused proof, run the complete canonical non-diagnostic matrix and
+   inspect every artifact. Diagnostic green never satisfies the protected full
+   rollup.
+10. Preserve family-specific fail-closed gates. Multi-root body success and
+    evidence completeness do not replace phase order, retained-identity closure
+    or cleanup verification.
+
 ## Validation Commands
 
 Run commands from the repo root unless the command explicitly changes directory.
@@ -84,6 +120,13 @@ node src\test\ui\run-e2e.js
 
 For focused unit tests, use the package's existing command or a targeted Vitest run.
 
+For CLI E2E infrastructure:
+
+```powershell
+pnpm --dir apps\vs-code-designer run test:e2e-cli:compile
+pnpm --dir apps\vs-code-designer run test:e2e-cli:unit
+```
+
 ## Coverage Review
 
 Before final status, the test agent should answer:
@@ -91,7 +134,7 @@ Before final status, the test agent should answer:
 - What behavior changed?
 - Which unit tests prove the logic?
 - Which E2E tests prove the user-critical flow?
-- Which `run-e2e.js` phase covers the E2E path?
+- Which suite model covers the E2E path: an ExTester `run-e2e.js` phase or a registered CLI-native suite?
 - If this was a focused scenario, were its fixture prerequisites satisfied first?
 - What validation commands ran?
 - Are any gaps intentional, blocked, or follow-up work?
@@ -108,3 +151,5 @@ When a new stable pattern is discovered, ask `session-knowledge-curator` to upda
 - `.squad/knowledge/unit-testing.md`;
 - `.squad/knowledge/customer-repro.md` when the learning came from customer reproduction;
 - `.squad/knowledge/ci-patterns.md` when the learning came from CI.
+- `docs/testing/vscode-cli-authoring.md` when the learning changes the canonical
+  CLI authoring or evidence contract.

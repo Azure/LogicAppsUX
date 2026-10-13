@@ -158,6 +158,15 @@ or create family-specific report logic. Every mutation is fenced by
 `LA_E2E_CLI_EVIDENCE_INVOCATION` under the manifest lock so a surviving host
 from an earlier invocation cannot write into a newer run.
 
+Pipeline bootstrap and inherited active ownership are different contracts. The
+pipeline may supply only `LA_E2E_CLI_EVIDENCE_SUITE_ID` and
+`LA_E2E_CLI_EVIDENCE_DIR`; the owning runner then creates the invocation token
+and initializes the manifest. A descendant that inherits an active manifest
+must receive the complete suite/directory/invocation tuple. Reject a selected
+suite mismatch before mutating evidence, and rely on invocation fencing for
+active writes; do not infer authoritative ownership from a directory path alone
+or reject the legitimate producer bootstrap shape.
+
 The evidence directory is a self-contained producer bundle:
 
 - `suite-evidence-manifest.json`;
@@ -315,6 +324,20 @@ child exit zero cannot manufacture missing later GUI/runtime phases.
 Shared direct orchestration is in `scripts/run-e2e-cli.js`; supplementary
 publication is checked by `scripts/family-lifecycle-terminal.js`.
 
+For the registered direct selector currently used by Multi-root,
+`runDirectRegisteredSuite` is the ownership boundary. It must provide
+`reportsRoot`, invocation identity in the child context, exact expected phases,
+and stable phase/result/cleanup/terminal paths. Terminal and cleanup receipts
+must carry the same invocation recorded by provenance. It must also create the configured
+workspace-root parent before child launch. Other direct families retain their
+existing owning orchestrators and must provide equivalent complete context
+there. Do not assume that setting an environment path creates its directory.
+
+Invalidate any stable terminal and cleanup receipts before workspace-root
+creation, dependency setup, native preflight, or child launch. If setup fails,
+the current invocation must remain visibly incomplete; an earlier success must
+never survive as the apparent result.
+
 Collect required profile diagnostics and validate required screenshots and
 other non-cleanup evidence before removing the original generated fixture.
 A failure discovered only after deletion cannot satisfy failure retention.
@@ -328,23 +351,24 @@ closure, report `originalProcessClosureVerified: false` and keep execution
 diagnostic-only. Directory removal and an empty post-exit tree are not stronger
 proof. Do not revive abandoned process-owner frameworks to disguise this gap.
 
-### Canonical MSN cleanup: fail-closed diagnostic boundary
+### Canonical MSN cleanup: fail-closed exact-root boundary
 
-**Source/control correction; native lock-holder diagnosis pending.** A successful
-MSN response and a passing extension-host scenario are body evidence, not final
-root-cleanup or original-process acceptance. The direct orchestrator now starts
+**Source/control and isolated Linux/Windows native validated.** A successful MSN
+response and a passing extension-host scenario are body evidence, not final
+root-cleanup or original-process acceptance. The direct orchestrator starts
 with incomplete receipts and a fresh three-phase JSONL journal. Only its outer
 finalizer publishes the finalized verdict, after required shutdown observations,
-workspace/profile diagnostics and exact-root absence observation. Original body
-and cleanup/instrumentation errors remain separate and are retained.
+workspace/profile diagnostics and exact-root owned-identity absence observation.
+Original body and cleanup/instrumentation errors remain separate and are retained.
 
-The current path cannot prove original Functions/Code descendant identity
-closure. It therefore deliberately retains the original generated workspace
-and isolated dependency root and exits nonzero. Direct and batch results report
-`complete: false`, `cleanupVerified: false`,
-`originalProcessClosureVerified: false` and
-`processClosureProof: "original-identities-unverified"`, even if every body phase
-passed. `lifecycleBodySucceeded` records the independent body verdict.
+Accepted direct results require `complete: true`,
+`cleanupVerified: true`, `originalProcessClosureVerified: true` and
+`processClosureProof: "exact-root-owned-identities-absent"`. If any original
+identity or required observation remains unproven, the path still fails closed,
+retains diagnostics, and reports the independent `lifecycleBodySucceeded`
+verdict without promoting it to native acceptance. The current batch finalizer
+still keeps MSN diagnostic/fail-closed rather than propagating the direct
+selector's exact-root proof.
 The current-invocation `body-assertions.json` is written only after the actual
 MSN body and required response screenshot assertions, before runtime teardown.
 It keeps passing assertions visible even when later inner shutdown fails;
@@ -410,6 +434,59 @@ artifact's `log/` before terminal rejection. Non-native controls verify the
 actual summarizer/JUnit association, token redaction, successful-image rejection
 and failed-run staging; actual ADO attachment upload remains native/CI-owned.
 
+## 8. Diagnose and validate shared CLI infrastructure by layer
+
+Do not collapse all pipeline failures into "the E2E failed." Classify the first
+failing boundary:
+
+1. build/bootstrap/preflight, where no native lane ran;
+2. native scenario execution and assertions;
+3. phase, terminal, process-closure and cleanup finalization;
+4. ordered-evidence finalization and staging;
+5. report, artifact publication and protected rollup.
+
+Use native JSON/JUnit, phase journals, terminal receipts, cleanup ledgers,
+`ORDERED_EVIDENCE_VALIDATION.json` and the staged report to make that
+classification. A native pass followed by staging rejection is not an
+interaction regression. A skipped lane after a build failure is unverifiable,
+not a failed native scenario.
+
+Use stable product identity before presentation text. Monitoring containers may
+prefix action titles with duration or status text. Resolve the exact node ID
+derived from the action identity; use the existing exact-title fallback only
+when the product ID is unavailable. Never replace identity with broad substring
+matching, and do not claim fallback uniqueness unless the helper verifies it.
+
+Prompt completion is not target stability. F5 can navigate or replace the
+workbench/CDP target after known prompts are handled. Preserve early transition
+diagnostics, but capture required post-prompt evidence only after
+`waitForDebugStartup` or an equivalent stable-target condition.
+
+Keep actionable diagnostics private and complete. Serialize `Error.stack` when
+available. When wrapper logs prefix lines with `[suite]`, strip prefixes only
+for detecting an error header and its contiguous stack frames; retain the
+original prefixed lines in the failure excerpt. Do not add raw stacks or
+absolute paths to the public ordered-evidence allowlist.
+
+Source-string, order and AST controls are explicit implementation-shape
+contracts. Update dependent controls in the same change when the implementation
+shape changes, and prefer executing extracted production functions or DOM
+expressions where practical. A stale source-shape assertion must not masquerade
+as a product regression.
+
+Use this proof ladder for shared runner, evidence or lifecycle changes:
+
+1. focused local controls;
+2. the complete registered `test:e2e-cli:unit` chain;
+3. exact-full-SHA targeted Linux and Windows diagnostic selectors;
+4. downloaded artifact inspection at every gate above;
+5. the complete canonical non-diagnostic Linux/Windows inventory.
+
+A targeted green accelerates iteration but never certifies unrelated suites or
+satisfies the protected full rollup. Preserve stricter family gates such as
+Multi-root phase order and retained-identity cleanup even when body assertions
+and ordered evidence are complete.
+
 ## Validation and maintenance
 
 1. Read this guide and the relevant suite/fixture prerequisites.
@@ -421,7 +498,9 @@ and failed-run staging; actual ADO attachment upload remains native/CI-owned.
 5. Validate the actual native selector on isolated source-bound consumers.
    Parallel worktrees do not isolate localhost ports, Code profiles or runtime
    processes on a shared machine.
-6. For each lesson, record symptom, root cause, reusable helper/control paths,
+6. After shared runner/evidence/lifecycle changes, inspect targeted artifacts
+   and run the complete canonical Linux/Windows inventory.
+7. For each lesson, record symptom, root cause, reusable helper/control paths,
    verification level and any remaining limitation. Update this guide after
    meaningful investigation, not only after a green run.
 

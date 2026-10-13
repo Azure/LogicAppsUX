@@ -83,6 +83,12 @@ published artifacts.
   directory scanning or checkpoint-plan construction.
 - Pipeline contract and evidence unit tests reject raw screenshot-tree copying,
   unsafe references, integrity mismatches, and unstable multi-root identities.
+- Native execution, terminal/cleanup acceptance, evidence staging, and protected
+  rollup remain separate gates. Diagnostic selectors prove affected suites but
+  never replace the complete canonical Linux/Windows inventory.
+- Registered direct orchestration owns complete wrapper context and invalidates
+  prior stable receipts before any setup operation that can fail; current
+  Multi-root enforcement lives in `runDirectRegisteredSuite`.
 
 ---
 

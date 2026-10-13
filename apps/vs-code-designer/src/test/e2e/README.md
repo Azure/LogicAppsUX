@@ -12,12 +12,15 @@ helpers and regression controls before introducing another local workaround.
 
 These tests follow the pattern from [helloworld-test-cli-sample](https://github.com/microsoft/vscode-extension-samples/tree/main/helloworld-test-cli-sample) and run directly inside VS Code's extension host environment on latest stable VS Code. They intentionally start from an empty VS Code window with no folder or `.code-workspace` loaded, then cover activation, command registration, Create Workspace, focused generated-workspace designer/runtime lifecycle, bundle-to-NuGet debug/run lifecycle, and codeful modern-vs-legacy debug task behavior. Keep ExTester webview DOM scenarios in `src/test/ui/` for deeper designer and wizard UI coverage.
 
-## Canonical MSN finalization limitation
+## Canonical MSN finalization boundary
 
-The MSN direct and batch selectors currently fail closed after recording body
-results because original-process closure has not been established. Generated
-workspace and dependency roots are retained; passing scenario assertions never
-override `complete: false` / `cleanupVerified: false`.
+The MSN direct and batch selectors keep body assertions separate from
+original-process and root cleanup. The direct selector requires exact-root
+owned identities to be absent after shutdown, together with complete phases,
+terminal and cleanup receipts. The current batch finalizer remains
+diagnostic/fail-closed rather than propagating that direct proof. If required
+proof is unavailable, the selector fails closed and retains diagnostics;
+passing scenario assertions never override an incomplete cleanup verdict.
 Read the canonical guide's **Canonical MSN cleanup** boundary before interpreting
 these results or changing cleanup. Its read-only Windows lock instrumentation
 and exact-source ADO diagnostic procedure are not an ownership/termination API.
