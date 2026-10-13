@@ -3711,12 +3711,12 @@ async function startDebuggingGeneratedWorkspace(
         { matchText: 'Failed to verify "AzureWebJobsStorage" connection', optionText: 'Debug anyway' },
       ]),
     ]);
+    await waitForDebugStartup(createdWorkspace, () => startDebuggingOutcome, 300000, { requireHostRunning });
+    await Promise.race([startDebuggingMonitor, Promise.resolve(undefined)]);
     await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-debug-prompts-handled`, {
       expectation: { kind: 'diagnostic', label: createdWorkspace.label, reason: 'debug-prompts-transition' },
       diagnostic: true,
     });
-    await waitForDebugStartup(createdWorkspace, () => startDebuggingOutcome, 300000, { requireHostRunning });
-    await Promise.race([startDebuggingMonitor, Promise.resolve(undefined)]);
   } catch (error) {
     await logAzuriteDiagnostics('debug autostart failure', createdWorkspace.appDir);
     try {

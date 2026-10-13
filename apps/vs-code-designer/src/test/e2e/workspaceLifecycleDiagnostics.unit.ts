@@ -35,6 +35,7 @@ async function main(): Promise<void> {
   testRuntimeDiagnosticsRedactSensitiveSubtrees();
   testRuntimeDiagnosticsRedactSensitiveStrings();
   testEarlyMsnWeatherPhaseWiring();
+  testDebugPromptEvidenceWaitsForStableRuntime();
   testDynamicContentPickerOpenAcceptsAlternativeLabels();
   testDynamicContentPickerEvidenceForwardsTokenTitles();
   await testDynamicContentPickerOpenUsesBoundedEvaluation();
@@ -44,6 +45,24 @@ async function main(): Promise<void> {
   testMsnWeatherSkipsOnlyRedundantFinalCanvasCheckpoint();
   testDesignerConnectionActionExpressionScopesCreateActions();
   console.log('[workspaceLifecycleDiagnostics.unit] all tests passed');
+}
+
+function testDebugPromptEvidenceWaitsForStableRuntime(): void {
+  const start = sourceText.indexOf('async function startDebuggingGeneratedWorkspace(');
+  const end = sourceText.indexOf('\nasync function waitForDebugStartup(', start);
+  assert.ok(start >= 0 && end > start, 'Expected startDebuggingGeneratedWorkspace source');
+  const implementation = sourceText.slice(start, end);
+  const debugStarting = implementation.indexOf('-debug-starting');
+  const promptHandling = implementation.indexOf('handleWorkbenchPrompts([');
+  const runtimeReady = implementation.indexOf('await waitForDebugStartup(');
+  const promptsHandled = implementation.indexOf('-debug-prompts-handled');
+  assert.ok(
+    [debugStarting, promptHandling, runtimeReady, promptsHandled].every((position) => position >= 0),
+    'Expected debug transition steps'
+  );
+  assert.ok(debugStarting < promptHandling, 'Debug-starting evidence must precede prompt handling');
+  assert.ok(promptHandling < runtimeReady, 'Known prompts must be handled while debug startup proceeds');
+  assert.ok(runtimeReady < promptsHandled, 'Post-prompt evidence must wait for the workbench target to stabilize');
 }
 
 function loadCaptureHarness(sourceOverride = sourceText) {

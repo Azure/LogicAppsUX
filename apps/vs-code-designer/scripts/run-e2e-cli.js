@@ -610,6 +610,9 @@ async function runDirectRegisteredSuite(
     }
   );
   fs.writeFileSync(provenancePath, JSON.stringify(provenance, null, 2));
+  if (env.LA_E2E_CLI_WORKSPACE_ROOT) {
+    fs.mkdirSync(path.resolve(env.LA_E2E_CLI_WORKSPACE_ROOT), { recursive: true });
+  }
   const result = await runWrapper({
     suite,
     context,

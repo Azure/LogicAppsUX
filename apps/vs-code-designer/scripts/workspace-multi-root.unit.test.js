@@ -285,11 +285,18 @@ test('direct supplementary route invalidates stale terminal and uses exact regis
   const reportRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'multi-root-direct-terminal-unit-'));
   try {
     const terminalPath = path.join(reportRoot, 'workspaceMultiRoot.terminal-result.json');
+    const workspaceRoot = path.join(reportRoot, 'missing', 'workspaces');
     fs.writeFileSync(terminalPath, JSON.stringify({ complete: true, stale: true }));
     const code = await runDirectRegisteredSuite(SUITE_REGISTRY.workspaceMultiRoot, {
       reportRoot,
-      env: { BUILD_SOURCEVERSION: 'unit-source', BUILD_BUILDID: 'unit-run', SYSTEM_JOBID: 'unit-job' },
+      env: {
+        BUILD_SOURCEVERSION: 'unit-source',
+        BUILD_BUILDID: 'unit-run',
+        SYSTEM_JOBID: 'unit-job',
+        LA_E2E_CLI_WORKSPACE_ROOT: workspaceRoot,
+      },
       runWrapper: async ({ suite, context, env }) => {
+        assert.equal(fs.statSync(workspaceRoot).isDirectory(), true);
         assert.equal(
           JSON.parse(fs.readFileSync(terminalPath, 'utf8')).complete,
           false,
@@ -335,6 +342,35 @@ test('direct supplementary route invalidates stale terminal and uses exact regis
     assert.equal(provenance.accepted, false);
     assert.deepEqual(provenance.identity, { source: 'unit-source', run: 'unit-run', job: 'unit-job' });
     assert.ok(provenance.invocation && provenance.phaseResultsPath.includes(provenance.invocation));
+  } finally {
+    fs.rmSync(reportRoot, { recursive: true, force: true });
+  }
+});
+
+test('direct supplementary route invalidates stale evidence before workspace-root setup', async () => {
+  const reportRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'multi-root-direct-setup-failure-unit-'));
+  try {
+    const terminalPath = path.join(reportRoot, 'workspaceMultiRoot.terminal-result.json');
+    const cleanupPath = path.join(reportRoot, 'workspaceMultiRoot.cleanup-ledger.json');
+    const blockingFile = path.join(reportRoot, 'workspace-root-blocker');
+    fs.writeFileSync(terminalPath, JSON.stringify({ complete: true, stale: true }));
+    fs.writeFileSync(cleanupPath, JSON.stringify({ verified: true, stale: true }));
+    fs.writeFileSync(blockingFile, 'not-a-directory');
+    let wrapperCalled = false;
+    await assert.rejects(
+      runDirectRegisteredSuite(SUITE_REGISTRY.workspaceMultiRoot, {
+        reportRoot,
+        env: { LA_E2E_CLI_WORKSPACE_ROOT: path.join(blockingFile, 'child') },
+        runWrapper: async () => {
+          wrapperCalled = true;
+          return { exitCode: 0, signal: null };
+        },
+      }),
+      /ENOENT|ENOTDIR|EEXIST/
+    );
+    assert.equal(wrapperCalled, false);
+    assert.equal(JSON.parse(fs.readFileSync(terminalPath, 'utf8')).complete, false);
+    assert.equal(JSON.parse(fs.readFileSync(cleanupPath, 'utf8')).verified, false);
   } finally {
     fs.rmSync(reportRoot, { recursive: true, force: true });
   }
