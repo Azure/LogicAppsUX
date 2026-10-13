@@ -19,7 +19,7 @@ const {
   validateEvidenceManifest,
 } = require('./vscode-e2e-evidence-manifest');
 const { getSuiteDescriptor, httpCatalogGroups, suiteDescriptors } = require('./vscode-e2e-evidence-plans');
-const { generateVscodeE2eEvidenceReport } = require('./vscode-e2e-evidence-report');
+const { generateVscodeE2eEvidenceReport, _test: evidenceReportTest } = require('./vscode-e2e-evidence-report');
 const { stageVscodeE2eEvidence, validationFileName } = require('./stage-vscode-e2e-evidence');
 
 const pngBytes = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=', 'base64');
@@ -27,6 +27,10 @@ const pngBytes = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0
 test('producer plan IDs exactly match the registered suite IDs', () => {
   assert.deepEqual(Object.keys(suiteDescriptors), Object.keys(SUITE_REGISTRY));
   assert.throws(() => getSuiteDescriptor('unknownSuite'), /Unknown suite-id/);
+});
+
+test('inline code escaping handles backslashes before backticks', () => {
+  assert.equal(evidenceReportTest.escapeInlineCode('C:\\temp\\`evidence`'), 'C:\\\\temp\\\\\\`evidence\\`');
 });
 
 test('producer plans preserve the expected finite checkpoint counts', () => {

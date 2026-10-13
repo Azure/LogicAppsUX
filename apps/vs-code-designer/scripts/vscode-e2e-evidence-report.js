@@ -913,7 +913,7 @@ function escapeMarkdown(value) {
 }
 
 function escapeInlineCode(value) {
-  return String(value).replace(/`/g, '\\`');
+  return String(value).replace(/\\/g, '\\\\').replace(/`/g, '\\`');
 }
 
 if (require.main === module) {
@@ -951,6 +951,7 @@ module.exports = {
     buildSummary,
     buildManifestAttachments,
     buildManifestEvidence,
+    escapeInlineCode,
     humanizeCheckpoint,
     requireManifestReferencePath,
   },

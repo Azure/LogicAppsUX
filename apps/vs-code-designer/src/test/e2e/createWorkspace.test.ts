@@ -37,6 +37,12 @@ import {
   getPreviewCreationCases,
   getReviewBackCases,
 } from './createWorkspaceCases';
+import {
+  functionAppExtensionRecommendations,
+  logicAppExtensionRecommendations,
+  sanitizeCreateWorkspaceCheckpoint,
+  supportedCustomCodeDotNetVersionLabel,
+} from './createWorkspaceContracts';
 import type { FieldLabels, WorkspaceAppType, WorkspaceCreationCase, WorkflowType } from './createWorkspaceTypes';
 import { closeCopilotChatIfVisible } from './copilotChat';
 import { assertNoDialogAttempts, installDialogGuard } from './dialogGuard';
@@ -63,9 +69,6 @@ const emptyValidationMessage = 'cannot be empty';
 const reservedNameValidationMessage = 'reserved and cannot be used';
 const sameAsLogicAppValidationMessage = 'cannot be the same as the logic app name';
 const namespaceValidationMessage = 'valid C# namespace';
-const functionsExtensionId = 'ms-azuretools.vscode-azurefunctions';
-const dotnetExtensionId = 'ms-dotnettools.csharp';
-const csDevKitExtensionId = 'ms-dotnettools.csdevkit';
 const logicAppsProjectLanguageSetting = 'azureLogicAppsStandard.projectLanguage';
 const logicAppsProjectRuntimeSetting = 'azureLogicAppsStandard.projectRuntime';
 const logicAppsDeploySubpathSetting = 'azureLogicAppsStandard.deploySubpath';
@@ -597,7 +600,7 @@ async function runCustomCodeFieldValidationCases(cdp: CdpEvaluator, contextId: n
   await seedStandardFields(cdp, contextId, validPath);
   await selectRadioOption(cdp, contextId, 'Logic app with custom code');
   await waitForFieldVisible(cdp, contextId, ['Custom code folder name', 'custom code folder', 'Code folder name', 'Folder name']);
-  await selectDropdownOption(cdp, contextId, '.NET Version', '.NET 8');
+  await selectDropdownOption(cdp, contextId, '.NET Version', supportedCustomCodeDotNetVersionLabel);
 
   const customCodeFolderLabels = ['Custom code folder name', 'custom code folder', 'Code folder name', 'Folder name'];
   await runNameFieldCases(cdp, contextId, 'custom code folder name', customCodeFolderLabels, 'validfolder', [
@@ -752,22 +755,13 @@ async function createWorkspaceThroughWebview(creationCase: WorkspaceCreationCase
 
 async function captureCreateWorkspaceFailureBeforeCleanup(cdp: CdpEvaluator | undefined, label: string): Promise<void> {
   try {
-    await captureDiagnosticScreenshot(`create-workspace-before-cleanup-${sanitizeDiagnosticName(label)}`, {
+    await captureDiagnosticScreenshot(sanitizeCreateWorkspaceCheckpoint(`create-workspace-before-cleanup-${label}`), {
       reason: 'create-workspace-before-cleanup',
       timeoutMs: 2000,
     });
   } catch (error) {
     console.warn(`[create-workspace-smoke] Failed to capture pre-cleanup failure screenshot: ${String(error)}`);
   }
-}
-
-function sanitizeDiagnosticName(value: string): string {
-  return (
-    value
-      .replace(/[^a-z0-9_-]+/gi, '-')
-      .replace(/^-+|-+$/g, '')
-      .slice(0, 80) || 'failure'
-  );
 }
 
 function isRetryableBlankCreateWorkspaceError(error: unknown): boolean {
@@ -817,7 +811,7 @@ async function fillWorkspaceCreationFields(
 
   if (creationCase.appType === 'customCode') {
     await waitForFieldVisible(cdp, contextId, ['Custom code folder name', 'custom code folder', 'Code folder name', 'Folder name']);
-    await selectDropdownOption(cdp, contextId, '.NET Version', '.NET 8');
+    await selectDropdownOption(cdp, contextId, '.NET Version', supportedCustomCodeDotNetVersionLabel);
     await enterFieldValue(
       cdp,
       contextId,
@@ -901,7 +895,10 @@ async function assertWorkspaceCreationFields(
   );
 
   if (creationCase.appType === 'customCode') {
-    assert.ok(await isDropdownValueSelected(cdp, contextId, '.NET Version', '.NET 8'), 'Expected custom-code .NET Version to be .NET 8');
+    assert.ok(
+      await isDropdownValueSelected(cdp, contextId, '.NET Version', supportedCustomCodeDotNetVersionLabel),
+      `Expected custom-code .NET Version to be ${supportedCustomCodeDotNetVersionLabel}`
+    );
   }
 }
 
@@ -1595,9 +1592,10 @@ function verifyLogicAppSettings(settings: Record<string, unknown>, creationCase:
 }
 
 function verifyLogicAppExtensionRecommendations(extensions: ExtensionsJson, creationCase: WorkspaceCreationCase): void {
-  assertRecommendations(
+  assertRecommendations(extensions, logicAppExtensionRecommendations, `${creationCase.label} .vscode/extensions.json`);
+  assertRecommendationsAbsent(
     extensions,
-    [logicAppsExtensionId, dotnetExtensionId, functionsExtensionId, csDevKitExtensionId],
+    functionAppExtensionRecommendations.filter((recommendation) => !logicAppExtensionRecommendations.includes(recommendation)),
     `${creationCase.label} .vscode/extensions.json`
   );
 }
@@ -2237,9 +2235,10 @@ function verifyFunctionVsCodeArtifacts(functionDir: string, creationCase: Worksp
   assert.ok(deploySubpathValue.endsWith('/publish'), `${creationCase.label} function app deploySubpath should point to publish output`);
 
   const extensions = readJsonFile<ExtensionsJson>(path.join(vscodeDir, 'extensions.json'));
-  assertRecommendations(
+  assertRecommendations(extensions, functionAppExtensionRecommendations, `${creationCase.label} function app .vscode/extensions.json`);
+  assertRecommendationsAbsent(
     extensions,
-    [functionsExtensionId, dotnetExtensionId],
+    logicAppExtensionRecommendations.filter((recommendation) => !functionAppExtensionRecommendations.includes(recommendation)),
     `${creationCase.label} function app .vscode/extensions.json`
   );
 
@@ -2267,10 +2266,20 @@ function readJsonFile<T>(filePath: string): T {
   return JSON.parse(fs.readFileSync(filePath, 'utf-8')) as T;
 }
 
-function assertRecommendations(extensions: ExtensionsJson, expectedRecommendations: string[], context: string): void {
+function assertRecommendations(extensions: ExtensionsJson, expectedRecommendations: readonly string[], context: string): void {
   const recommendations = assertStringArray(extensions.recommendations, `${context} recommendations`);
   for (const expected of expectedRecommendations) {
     assert.ok(recommendations.includes(expected), `${context} should recommend ${expected}. Actual: ${JSON.stringify(recommendations)}`);
+  }
+}
+
+function assertRecommendationsAbsent(extensions: ExtensionsJson, excludedRecommendations: readonly string[], context: string): void {
+  const recommendations = assertStringArray(extensions.recommendations, `${context} recommendations`);
+  for (const excluded of excludedRecommendations) {
+    assert.ok(
+      !recommendations.includes(excluded),
+      `${context} should not recommend ${excluded}. Actual: ${JSON.stringify(recommendations)}`
+    );
   }
 }
 

@@ -3,6 +3,13 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as ts from 'typescript';
 import * as vm from 'vm';
+import {
+  functionAppExtensionRecommendations,
+  logicAppExtensionRecommendations,
+  sanitizeCreateWorkspaceCheckpoint,
+  supportedCustomCodeDotNetVersionLabel,
+  supportedCustomCodeTarget,
+} from './createWorkspaceContracts';
 
 const sourcePath = path.resolve(__dirname, '..', '..', '..', 'src', 'test', 'e2e', 'createWorkspace.test.ts');
 const sourceText = fs.readFileSync(sourcePath, 'utf-8');
@@ -16,9 +23,33 @@ const runtimeFunctionNames = new Set([
 
 function main(): void {
   const { exported } = loadRuntimeHarness();
+  testCreateWorkspaceContractConstants();
+  testCreateWorkspaceDiagnosticCheckpointNormalization();
   testFunctionNameCheckpointContract(exported);
   testCoreScrollPositionContractIsPreserved(exported);
   console.log('[createWorkspaceDiagnostics.unit] all tests passed');
+}
+
+function testCreateWorkspaceDiagnosticCheckpointNormalization(): void {
+  const prefix = 'failure-createWorkspaceBehavior-Create Workspace Experience Tests Should validate fields_';
+  const checkpoint = sanitizeCreateWorkspaceCheckpoint(`${prefix}${'x'.repeat(220)}`);
+  const differentCheckpoint = sanitizeCreateWorkspaceCheckpoint(`${prefix}${'y'.repeat(220)}`);
+  assert.match(checkpoint, /^[a-z0-9][a-z0-9-]{0,199}$/);
+  assert.ok(!checkpoint.includes('_'));
+  assert.strictEqual(checkpoint, checkpoint.toLowerCase());
+  assert.notStrictEqual(checkpoint, differentCheckpoint);
+}
+
+function testCreateWorkspaceContractConstants(): void {
+  assert.strictEqual(supportedCustomCodeTarget, 'net10');
+  assert.strictEqual(supportedCustomCodeDotNetVersionLabel, '.NET 10');
+  assert.deepStrictEqual(
+    [...logicAppExtensionRecommendations],
+    ['ms-azuretools.vscode-azurelogicapps', 'ms-dotnettools.csharp', 'ms-dotnettools.csdevkit']
+  );
+  assert.deepStrictEqual([...functionAppExtensionRecommendations], ['ms-azuretools.vscode-azurefunctions', 'ms-dotnettools.csharp']);
+  assert.ok(!logicAppExtensionRecommendations.includes('ms-azuretools.vscode-azurefunctions'));
+  assert.ok(!functionAppExtensionRecommendations.includes('ms-azuretools.vscode-azurelogicapps'));
 }
 
 function loadRuntimeHarness(): { exported: Record<string, any> } {
