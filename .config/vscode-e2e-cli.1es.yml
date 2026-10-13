@@ -55,6 +55,11 @@ extends:
     sdl:
       credscan:
         suppressionsFile: $(Build.SourcesDirectory)\.azure-pipelines\compliance\CredScanSuppressions.json
+      componentgovernance:
+        # VS Code is downloaded into this directory during E2E setup. Its bundled dependencies
+        # are owned and scanned by VS Code, not by LogicAppsUX.
+        ignoreDirectories: |
+          apps/vs-code-designer/.vscode-test
       codeql:
         # Unofficial pipelines must opt in to interpreted source scanning.
         interpreted:

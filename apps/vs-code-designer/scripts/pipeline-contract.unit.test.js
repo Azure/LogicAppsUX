@@ -12,6 +12,7 @@ testAzureToolsWrapperContract();
 testRootNpmrcSourceGuardAllowsGeneratedRuntimeFile();
 testLocalAzureToolsWrapperContractIfAvailable();
 testConsumerAdmissionContract();
+testComponentGovernanceExcludesDownloadedVSCode();
 testInterpretedCodeQLContract();
 testSelectorResolutionScriptBehavior();
 testCanonicalSuiteParityContract();
@@ -1694,6 +1695,12 @@ function testInterpretedCodeQLContract() {
   assert.strictEqual(sdl.codeql.analyzeInPipeline, undefined, 'keep the CodeQL database upload path for SDL compliance');
   assert.strictEqual(sdl.enableAllTools, undefined, 'CodeQL opt-in must not enable unrelated scanners');
   assert.strictEqual(sdl.enableProductionSDL, undefined, 'source scanning must not change the unofficial build policy');
+}
+
+function testComponentGovernanceExcludesDownloadedVSCode() {
+  const { componentgovernance } = parseYaml('.config/vscode-e2e-cli.1es.yml').extends.parameters.sdl;
+
+  assert.strictEqual(componentgovernance.ignoreDirectories.trim(), 'apps/vs-code-designer/.vscode-test');
 }
 
 function testDiagnosticsStagingScriptHandlesDirectSuiteLayout() {
