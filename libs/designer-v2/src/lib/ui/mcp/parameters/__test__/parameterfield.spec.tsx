@@ -8,7 +8,7 @@ import {
   createMcpHarness,
   createMcpState,
   createParameter,
-  expressionMapping,
+  mcpConnectionMappingCaseNames,
   reference,
 } from '../../../../core/state/mcp/__test__/fixtures';
 
@@ -65,42 +65,33 @@ const selectInputType = (name: string) => {
 };
 
 describe('MCP parameter field', () => {
-  it.each(['concrete', 'expression', 'null', 'missing', 'dangling reference'] as const)(
-    'dispatches user edits with only a concrete connection reference (%s)',
-    (kind) => {
-      const state = createMcpState();
-      if (kind === 'missing') {
-        delete state.connection.connectionsMapping.Query;
-      } else {
-        state.connection.connectionsMapping.Query =
-          kind === 'expression' ? expressionMapping : kind === 'null' ? null : kind === 'concrete' ? 'Sql' : 'Unknown';
-      }
-      const { props, actions } = renderField({}, state);
-      expect(screen.getByText('Value is required')).toBeInTheDocument();
-      fireEvent.change(screen.getByRole('textbox', { name: 'Parameter value' }), { target: { value: 'new value' } });
-      expect(actions).toEqual([
-        {
-          type: 'test/updateParameter',
-          payload: {
-            nodeId: 'Query',
-            groupId: 'default',
-            parameterId: 'body',
-            properties: { value: [{ id: 'edited', type: 'literal', value: 'new value' }], preservedValue: undefined },
-            isTrigger: false,
-            operationInfo: state.operations.operationInfo.Query,
-            connectionReference: kind === 'concrete' ? reference : undefined,
-            nodeInputs: state.operations.inputParameters.Query,
-            dependencies: state.operations.dependencies.Query,
-            updateTokenMetadata: false,
-            loadDynamicOutputs: false,
-            loadDefaultValues: false,
-          },
+  it.each(mcpConnectionMappingCaseNames)('dispatches user edits with only a concrete connection reference (%s)', (kind) => {
+    const state = createMcpState(kind);
+    const { props, actions } = renderField({}, state);
+    expect(screen.getByText('Value is required')).toBeInTheDocument();
+    fireEvent.change(screen.getByRole('textbox', { name: 'Parameter value' }), { target: { value: 'new value' } });
+    expect(actions).toEqual([
+      {
+        type: 'test/updateParameter',
+        payload: {
+          nodeId: 'Query',
+          groupId: 'default',
+          parameterId: 'body',
+          properties: { value: [{ id: 'edited', type: 'literal', value: 'new value' }], preservedValue: undefined },
+          isTrigger: false,
+          operationInfo: state.operations.operationInfo.Query,
+          connectionReference: kind === 'concrete' ? reference : undefined,
+          nodeInputs: state.operations.inputParameters.Query,
+          dependencies: state.operations.dependencies.Query,
+          updateTokenMetadata: false,
+          loadDynamicOutputs: false,
+          loadDefaultValues: false,
         },
-      ]);
-      expect(props.removeParameterError).toHaveBeenCalledExactlyOnceWith('body');
-      expect(props.onParameterVisibilityUpdate).toHaveBeenCalledOnce();
-    }
-  );
+      },
+    ]);
+    expect(props.removeParameterError).toHaveBeenCalledExactlyOnceWith('body');
+    expect(props.onParameterVisibilityUpdate).toHaveBeenCalledOnce();
+  });
 
   it('keeps required errors when a user clears the value, but drops preserved imported values', () => {
     const { props, actions } = renderField();
@@ -143,12 +134,7 @@ describe('MCP parameter field', () => {
   it.each(['concrete', 'expression', 'missing'] as const)(
     'switches to model, clears errors and values, and never promotes %s mappings',
     (kind) => {
-      const state = createMcpState();
-      if (kind === 'missing') {
-        delete state.connection.connectionsMapping.Query;
-      } else if (kind === 'expression') {
-        state.connection.connectionsMapping.Query = expressionMapping;
-      }
+      const state = createMcpState(kind);
       const { props, actions, rerender } = renderField({}, state);
       selectInputType('Model');
       expect(props.onParameterInputTypeChange).toHaveBeenCalledWith('body', 'model');
