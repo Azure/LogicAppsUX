@@ -1,15 +1,17 @@
-import type { AppDispatch } from '../../../state/store';
+import type { AppDispatch, RootState } from '../../../state/store';
 import { useResourcePath, useIsMonitoringView, useRunFiles } from '../../../state/workflowLoadingSelectors';
 import { setResourcePath, loadWorkflow, loadRun } from '../../../state/workflowLoadingSlice';
 import type { IDropdownOption } from '@fluentui/react';
 import { Dropdown, DropdownMenuItemType } from '@fluentui/react';
-import { useCallback, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { isLocalExtractionEnabled, localWorkflowHref, localWorkflowRegistry, localWorkflowRegistryEvent } from '../localWorkflowRegistry';
 
 const fileOptions = [
   // General
   { key: 'GeneralHeader', text: 'General Workflows', itemType: DropdownMenuItemType.Header },
   { key: 'Empty.json', text: 'Empty/New' },
+  { key: 'ExtractSelection.json', text: 'Extract Selection' },
   { key: 'Panel.json', text: 'Panel' },
   { key: 'DynamicOutputsOverflow.json', text: 'Dynamic Outputs Overflow' },
   { key: 'Recurrence.json', text: 'Recurrence' },
@@ -86,13 +88,56 @@ export const LocalLogicAppSelector: React.FC = () => {
   const isMonitoringView = useIsMonitoringView();
   const dispatch = useDispatch<AppDispatch>();
   const runFiles = useRunFiles();
+  const enableWorkflowExtraction = useSelector(
+    (state: RootState) =>
+      window.location.pathname === '/v2' &&
+      state.workflowLoader.hostingPlan === 'standard' &&
+      (state.workflowLoader.hostOptions.enableWorkflowExtraction || isLocalExtractionEnabled())
+  );
+  const [registryOptions, setRegistryOptions] = useState<IDropdownOption[]>([]);
+  const [registryError, setRegistryError] = useState<string>();
+  useEffect(() => {
+    const refresh = () => {
+      if (!enableWorkflowExtraction) {
+        setRegistryOptions([]);
+        setRegistryError(undefined);
+        return;
+      }
+      try {
+        setRegistryOptions(localWorkflowRegistry.list().map((entry) => ({ key: entry.id, text: `${entry.name} (saved locally)` })));
+        setRegistryError(undefined);
+      } catch (error) {
+        setRegistryError(error instanceof Error ? error.message : 'Unable to read local workflows.');
+      }
+    };
+    refresh();
+    window.addEventListener(localWorkflowRegistryEvent, refresh);
+    window.addEventListener('storage', refresh);
+    return () => {
+      window.removeEventListener(localWorkflowRegistryEvent, refresh);
+      window.removeEventListener('storage', refresh);
+    };
+  }, [enableWorkflowExtraction]);
+  const options = useMemo(
+    () => [
+      ...fileOptions.filter((option) => !registryOptions.some((entry) => entry.key === option.key)),
+      ...(registryOptions.length
+        ? [{ key: 'LocalRegistryHeader', text: 'Offline local workflows', itemType: DropdownMenuItemType.Header }, ...registryOptions]
+        : []),
+    ],
+    [registryOptions]
+  );
 
   const changeResourcePathDropdownCB = useCallback(
     (_: unknown, item: IDropdownOption | undefined) => {
-      dispatch(setResourcePath((item?.key as string) ?? ''));
+      const id = (item?.key as string) ?? '';
+      if (enableWorkflowExtraction) {
+        window.history.replaceState(window.history.state, '', localWorkflowHref(id));
+      }
+      dispatch(setResourcePath(id));
       dispatch(loadWorkflow(_));
     },
-    [dispatch]
+    [dispatch, enableWorkflowExtraction]
   );
 
   const onChangeRunInstance = useCallback(
@@ -120,9 +165,10 @@ export const LocalLogicAppSelector: React.FC = () => {
           selectedKey={resourcePath}
           onChange={changeResourcePathDropdownCB}
           placeholder="Select an option"
-          options={fileOptions}
+          options={options}
           styles={{ callout: { maxHeight: 800 } }}
         />
+        {registryError ? <div role="alert">{registryError}</div> : null}
         {isMonitoringView ? (
           <div style={{ position: 'relative' }}>
             <Dropdown

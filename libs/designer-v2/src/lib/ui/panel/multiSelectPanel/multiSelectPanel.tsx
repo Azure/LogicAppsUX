@@ -16,6 +16,7 @@ import { wrapSelectedNodesInScope } from '../../../core/actions/bjsworkflow/wrap
 import { copyOperations, cutOperations } from '../../../core/actions/bjsworkflow/copypaste';
 import { CopyTooltip } from '../../common/DesignerContextualMenu/CopyTooltip';
 import { useMultiSelectPanelStyles } from './multiSelectPanel.styles';
+import { WorkflowExtractionAction } from './workflowExtraction';
 
 const MultiSelectTag = ({ nodeId }: { nodeId: string }): JSX.Element => {
   const styles = useMultiSelectPanelStyles();
@@ -215,7 +216,7 @@ const MultiSelectPanelBody = ({ panelLocation, onClose }: MultiSelectPanelBodyPr
                 <MultiSelectTag key={nodeId} nodeId={nodeId} />
               ))}
             </TagGroup>
-            <div className={styles.actionButtons}>
+            <div className={styles.actionButtons} data-automation-id="multi-select-action-buttons">
               <Button icon={<Cut24Regular />} onClick={onCut}>
                 {intlText.cutLabel}
               </Button>
@@ -304,6 +305,7 @@ const MultiSelectPanelBody = ({ panelLocation, onClose }: MultiSelectPanelBodyPr
                   </MenuButton>
                 </Tooltip>
               )}
+              <WorkflowExtractionAction />
               <Button icon={<Delete24Regular />} onClick={onDelete}>
                 {intlText.deleteLabel}
               </Button>
