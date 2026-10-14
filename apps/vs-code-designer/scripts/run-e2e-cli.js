@@ -173,7 +173,12 @@ function main() {
       return;
     }
     require('./workspace-multi-root')
-      .runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, writeSuitePhaseResult })
+      .runWorkspaceMultiRoot({
+        runVscodeTest,
+        collectVscodeProfileLogs,
+        writeSuitePhaseResult,
+        createWorkspaceParent: createOwnedWorkspaceParent,
+      })
       .then((code) => process.exit(code))
       .catch(exitWithError);
     return;

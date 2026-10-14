@@ -215,7 +215,10 @@ function assertEvidence(observation, funcExecutable, funcSha256) {
   }
 }
 
-async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, writeSuitePhaseResult }, env = process.env) {
+async function runWorkspaceMultiRoot(
+  { runVscodeTest, collectVscodeProfileLogs, writeSuitePhaseResult, createWorkspaceParent },
+  env = process.env
+) {
   assert.equal(
     env.LA_E2E_CLI_MULTI_ROOT_ISOLATED,
     '1',
@@ -232,6 +235,7 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, 
   );
   assertNoCallerFuncAdmission(env);
   assert.equal(typeof writeSuitePhaseResult, 'function', 'Official suite phase reporter is required');
+  assert.equal(typeof createWorkspaceParent, 'function', 'Owned workspace parent factory is required');
   const ui = require('../out/test/e2e/workspaceMultiRoot.test');
   const { readBootstrapAttestation } = require('../out/test/e2e/workspaceMultiRootBootstrap');
   const { multiRootRegularLaunch } = require('../out/test/e2e/workspaceMultiRootLaunch');
@@ -240,7 +244,7 @@ async function runWorkspaceMultiRoot({ runVscodeTest, collectVscodeProfileLogs, 
   for (const file of ['package.json', 'extension.js']) {
     assert.ok(fs.statSync(path.join(recorder, file)).size > 0, 'Current-source multi-root debug observer fixture is required');
   }
-  const root = fs.mkdtempSync(path.join(env.LA_E2E_CLI_WORKSPACE_ROOT || os.tmpdir(), 'la-multi-root-'));
+  const root = createWorkspaceParent('multi-root');
   const diagnosticsParent = env.LA_E2E_CLI_MULTI_ROOT_DIAGNOSTICS_PARENT || path.join(extensionRoot, '.vscode-test');
   const diagnosticRoot = createMultiRootDiagnosticRoot(diagnosticsParent);
   const context = {

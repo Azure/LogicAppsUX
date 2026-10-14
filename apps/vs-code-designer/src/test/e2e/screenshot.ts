@@ -447,6 +447,7 @@ async function captureCdpScreenshotCore(
       })
     );
     if (classification === 'diagnostic') {
+      console.warn(`[screenshot] Diagnostic capture unavailable for ${safeName}: ${reasonCodes.join(', ')}`);
       return undefined;
     }
     throw new Error(`Screenshot readiness failed for ${name}: ${reasonCodes.join(', ')}`);

@@ -3716,6 +3716,7 @@ async function startDebuggingGeneratedWorkspace(
     await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-debug-prompts-handled`, {
       expectation: { kind: 'diagnostic', label: createdWorkspace.label, reason: 'debug-prompts-transition' },
       diagnostic: true,
+      diagnosticTimeoutMs: 5000,
     });
   } catch (error) {
     await logAzuriteDiagnostics('debug autostart failure', createdWorkspace.appDir);
@@ -6209,6 +6210,7 @@ async function captureLifecycleScreenshot(
     semanticCdp?: CdpEvaluator;
     semanticContextId?: number;
     diagnostic?: boolean;
+    diagnosticTimeoutMs?: number;
     activeTabText?: string[];
     skipNotificationHousekeeping?: boolean;
   } = {}
@@ -6217,7 +6219,7 @@ async function captureLifecycleScreenshot(
     // Best effort includes connection failures; never replace the original test error.
     await captureDiagnosticScreenshot(name, {
       reason: options.expectation?.kind === 'diagnostic' ? options.expectation.reason : 'lifecycle-diagnostic',
-      timeoutMs: 1000,
+      timeoutMs: options.diagnosticTimeoutMs ?? 1000,
     });
     return;
   }
