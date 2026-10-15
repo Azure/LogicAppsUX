@@ -97,10 +97,11 @@ describe('undo redo actions', () => {
     };
 
     getState = vi.fn().mockReturnValue(mockedInitialRootState);
+    const currentCompressedSlices = getCompressedSlicesFromRootState(mockedInitialRootState, true);
     await action(dispatch, getState, undefined);
 
     expect(setStateAfterUndoRedoMock).toHaveBeenCalledWith(decompressedState);
-    expect(updateStateHistoryOnUndoClickMock).toHaveBeenCalledWith({ compressedSlices });
+    expect(updateStateHistoryOnUndoClickMock).toHaveBeenCalledWith({ compressedSlices: currentCompressedSlices });
     expect(changePanelNode).not.toHaveBeenCalled();
     expect(setSelectedPanelActiveTab).not.toHaveBeenCalled();
 
@@ -118,7 +119,7 @@ describe('undo redo actions', () => {
     await action(dispatch, getState, undefined);
 
     expect(setStateAfterUndoRedoMock).toHaveBeenCalledWith(decompressedState);
-    expect(updateStateHistoryOnUndoClickMock).toHaveBeenCalledWith({ compressedSlices });
+    expect(updateStateHistoryOnUndoClickMock).toHaveBeenCalledWith({ compressedSlices: currentCompressedSlices });
     expect(changePanelNode).toHaveBeenCalledWith('Initialize_Variable');
     expect(setSelectedPanelActiveTab).toHaveBeenCalledWith('PARAMETERS');
   });

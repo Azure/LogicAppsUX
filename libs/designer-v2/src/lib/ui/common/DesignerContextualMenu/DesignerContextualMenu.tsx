@@ -64,6 +64,7 @@ import { addNote } from '../../../core/state/notes/notesSlice';
 import { useReactFlow } from '@xyflow/react';
 import { getChildRunNameFromOutputs, getChildWorkflowIdFromInputs } from '../../panel/nodeDetailsPanel/childWorkflowHelpers';
 import { useRawInputsOutputs } from '../../panel/nodeDetailsPanel/useRawInputsOutputs';
+import { WorkflowExtractionAction } from '../../panel/multiSelectPanel/workflowExtraction';
 
 const BulkDeleteIcon = bundleIcon(Delete24Filled, Delete24Regular);
 const BulkCopyIcon = bundleIcon(Clipboard24Filled, Clipboard24Regular);
@@ -338,6 +339,7 @@ export const DesignerContextualMenu = () => {
       <MenuItem key={'bulk-copy'} icon={<BulkCopyIcon />} onClick={bulkCopyClick} data-automation-id={'msla-bulk-copy-menu-option'}>
         {copyText}
       </MenuItem>,
+      <WorkflowExtractionAction key="bulk-extract" variant="menuItem" onClick={() => setOpen(false)} />,
       <MenuItem key={'bulk-delete'} icon={<BulkDeleteIcon />} onClick={bulkDeleteClick} data-automation-id={'msla-bulk-delete-menu-option'}>
         {deleteText}
       </MenuItem>,
