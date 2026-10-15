@@ -39,8 +39,14 @@ test.describe(
       await buttons.first().click();
       const swatches = page.locator('.fui-SwatchPicker').getByRole('radio');
       await expect(swatches).toHaveCount(6);
+      await swatches.first().hover();
+      await swatches.first().focus();
+      await expect(swatches.first()).toBeFocused();
+      await expect(toolbar).toHaveCSS('opacity', '1');
+      await expect(toolbar).toHaveCSS('pointer-events', 'auto');
       await swatches.nth(1).click();
       await expect(note.locator('.note-drag-handle').locator('..')).toHaveCSS('background-color', 'rgb(204, 229, 255)');
+      await expect(toolbar).toHaveCSS('opacity', '1');
       await page.keyboard.press('Escape');
       await buttons.first().blur();
       await page.mouse.move(0, 0);

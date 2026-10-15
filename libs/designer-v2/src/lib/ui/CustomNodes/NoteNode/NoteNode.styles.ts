@@ -91,4 +91,8 @@ export const useNoteNodeStyles = makeStyles({
     opacity: 0,
     pointerEvents: 'none',
   },
+  noteToolbarVisible: {
+    opacity: 1,
+    pointerEvents: 'auto',
+  },
 });

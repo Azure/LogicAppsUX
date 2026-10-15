@@ -27,6 +27,7 @@ const NoteNode = ({ id, dragging }: NodeProps) => {
   const noteData = useNote(id);
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
 
   const deleteCallback = useCallback(() => {
     if (isReadOnly) {
@@ -95,8 +96,8 @@ const NoteNode = ({ id, dragging }: NodeProps) => {
       </Card>
       {/* Note Action Buttons */}
       {!isReadOnly && (
-        <div className={mergeClasses(styles.noteToolbar, 'msla-note-toolbar')}>
-          <ColorButton id={id} selectedColor={noteData?.color} />
+        <div className={mergeClasses(styles.noteToolbar, isColorPickerOpen && styles.noteToolbarVisible, 'msla-note-toolbar')}>
+          <ColorButton id={id} selectedColor={noteData?.color} onOpenChange={(_, data) => setIsColorPickerOpen(data.open)} />
           <Button icon={<DeleteIcon />} size="small" appearance="transparent" onClick={deleteCallback} />
         </div>
       )}
