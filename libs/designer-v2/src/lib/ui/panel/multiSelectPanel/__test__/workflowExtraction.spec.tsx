@@ -697,6 +697,49 @@ describe('WorkflowExtractionDialog', () => {
     expect(mockCommitWorkflowExtraction).toHaveBeenCalledTimes(2);
   });
 
+  it.each([new Error(), '', ' \n ', undefined, null])(
+    'keeps recovery controls and a contextual fallback for empty rejection %s',
+    async (cause) => {
+      const user = userEvent.setup();
+      mockCommitWorkflowExtraction.mockRejectedValueOnce(cause).mockResolvedValueOnce(completedResult);
+      await renderPreparedDialog();
+      await user.click(screen.getByRole('button', { name: 'Confirm' }));
+
+      expect(await screen.findByText('Extraction could not be completed. Review both workflows before continuing.')).toBeInTheDocument();
+      expect(within(screen.getByRole('list')).getAllByRole('listitem')[0]).toHaveTextContent('Error');
+      expect(screen.getByRole('button', { name: 'Cancel' })).toBeEnabled();
+      await user.click(screen.getByRole('button', { name: 'Confirm' }));
+      expect(await screen.findByRole('button', { name: 'Close' })).toBeEnabled();
+    }
+  );
+
+  it.each([
+    ['child-created', ''],
+    ['child-created', ' \n '],
+    ['source-saved', ''],
+    ['source-saved', ' \n '],
+  ] as const)('keeps %s recovery semantics for an empty partial message %s', async (status, message) => {
+    const user = userEvent.setup();
+    mockCommitWorkflowExtraction.mockResolvedValue({ status, message, child: completedResult.child });
+    await renderPreparedDialog();
+    await user.click(screen.getByRole('button', { name: 'Confirm' }));
+
+    const steps = within(screen.getByRole('list')).getAllByRole('listitem');
+    await within(steps[1]).findByText('Extraction could not be completed. Review both workflows before continuing.');
+    expect(steps[1]).toHaveTextContent('Error');
+    expect(steps[1]).not.toHaveTextContent('Completed');
+    expect(screen.getByRole('link', { name: 'Open child workflow' })).toBeInTheDocument();
+    expect(screen.queryByText('The child workflow was created and the source workflow was saved.')).not.toBeInTheDocument();
+    if (status === 'source-saved') {
+      expect(steps[2]).toHaveTextContent('Error');
+      expect(screen.getByRole('button', { name: 'Close' })).toBeEnabled();
+      expect(screen.queryByRole('button', { name: 'Retry source update' })).not.toBeInTheDocument();
+    } else {
+      expect(screen.getByRole('button', { name: 'Retry source update' })).toBeEnabled();
+      expect(screen.getByRole('button', { name: 'Cancel' })).toBeEnabled();
+    }
+  });
+
   it('keeps long unconfirmed saved-source recovery in a focusable progress region with Close outside it', async () => {
     const user = userEvent.setup();
     const message = 'Both workflows were saved; child readiness is unknown. Reload and review before editing. '.repeat(30);

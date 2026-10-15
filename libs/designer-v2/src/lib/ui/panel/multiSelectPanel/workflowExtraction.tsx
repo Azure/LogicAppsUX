@@ -147,6 +147,11 @@ const useStyles = makeStyles({
   },
 });
 
+const getExtractionErrorMessage = (cause: unknown, fallback: string): string => {
+  const message = cause instanceof Error ? cause.message : cause === null || cause === undefined ? '' : String(cause);
+  return message.trim() ? message : fallback;
+};
+
 const ExtractionStepper = ({ progress }: { progress: ExtractionProgress }) => {
   const intl = useIntl();
   const labels = {
@@ -390,17 +395,24 @@ export const WorkflowExtractionDialog = () => {
     setProgress(startExtractionAttempt);
     setStage('preparing');
     request.current ??= { operationId: guid(), sourceFingerprint: source.fingerprint, plan: preview.plan };
+    const fallbackError = intl.formatMessage({
+      defaultMessage: 'Extraction could not be completed. Review both workflows before continuing.',
+      id: 'snw6B2',
+      description: 'Extraction failure or partial result without host-provided error or recovery details',
+    });
     try {
       const outcome = await commitWorkflowExtraction(store, service, request.current, setStage, (notification) => {
         setProgress((previous) => reportExtractionProgress(previous ?? initialExtractionProgress(), notification));
       });
-      setProgress((previous) => settleExtractionProgress(previous ?? initialExtractionProgress(), outcome));
-      setResult(outcome);
-      if (outcome.status !== 'completed') {
-        setError(outcome.message);
+      const normalizedOutcome =
+        outcome.status === 'completed' ? outcome : { ...outcome, message: getExtractionErrorMessage(outcome.message, fallbackError) };
+      setProgress((previous) => settleExtractionProgress(previous ?? initialExtractionProgress(), normalizedOutcome));
+      setResult(normalizedOutcome);
+      if (normalizedOutcome.status !== 'completed') {
+        setError(normalizedOutcome.message);
       }
     } catch (cause) {
-      const message = cause instanceof Error ? cause.message : String(cause);
+      const message = getExtractionErrorMessage(cause, fallbackError);
       setProgress((previous) => settleExtractionProgress(previous ?? initialExtractionProgress(), undefined, message));
       setError(message);
     } finally {

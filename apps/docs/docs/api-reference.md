@@ -149,6 +149,8 @@ after live application, preserving the existing terminal/reload behavior.
 
 `persistenceDescription` remains concise host-provided submission copy. Contextual
 partial-result and error messages retain host-specific recovery instructions.
+Empty failure or partial-result messages use a localized fallback without changing
+durability, retry, or terminal recovery semantics.
 The progress footer follows the complete input/output bindings accordion and
 precedes the action buttons, staying visible while the preview/bindings scroll.
 Long recovery details have a bounded keyboard-scrollable progress region, separate
