@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { Workflow, WorkflowExtractionPlan } from '@microsoft/logic-apps-designer-v2';
+import type { Workflow, WorkflowExtractionPlan, WorkflowExtractionProgress } from '@microsoft/logic-apps-designer-v2';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import { InitLoggerService } from '@microsoft/logic-apps-shared';
 import {
   LocalWorkflowRegistry,
   localWorkflowInvocationMarker,
@@ -64,6 +65,7 @@ describe('offline local workflow registry', () => {
   };
 
   beforeEach(() => {
+    InitLoggerService([]);
     values.clear();
     vi.clearAllMocks();
   });
@@ -119,6 +121,63 @@ describe('offline local workflow registry', () => {
     expect(storage.setItem).toHaveBeenCalledTimes(1);
     await expect(service.commit({ ...args, sourceFingerprint: 'source-after' })).rejects.toThrow('different plan');
     await expect(service.commit(request(makePlan('Different')))).rejects.toThrow('different plan');
+  });
+
+  it('reports real validation and the atomic child/source write, including verified retries', async () => {
+    const service = createRegistry().createService('ExtractSelection.json', 'ExtractSelection');
+    const progress: WorkflowExtractionProgress[] = [];
+    const onProgress = vi.fn((notification: WorkflowExtractionProgress) => {
+      if (notification.status === 'completed' && notification.step !== 'validating-child') {
+        expect(storage.setItem).toHaveBeenCalledOnce();
+      }
+      progress.push(notification);
+    });
+    const args = { ...request(), onProgress };
+    await service.commit(args);
+    expect(progress).toEqual([
+      { step: 'validating-child', status: 'in-progress' },
+      { step: 'validating-child', status: 'completed' },
+      { step: 'creating-child', status: 'in-progress' },
+      { step: 'saving-source', status: 'in-progress' },
+      { step: 'creating-child', status: 'completed' },
+      { step: 'saving-source', status: 'completed' },
+    ]);
+    progress.length = 0;
+    await service.commit(args);
+    expect(progress).toEqual([
+      { step: 'validating-child', status: 'in-progress' },
+      { step: 'validating-child', status: 'completed' },
+      { step: 'creating-child', status: 'completed' },
+      { step: 'saving-source', status: 'completed' },
+    ]);
+    expect(storage.setItem).toHaveBeenCalledOnce();
+  });
+
+  it('never reports durable completion on storage failure', async () => {
+    storage.setItem.mockImplementationOnce(() => {
+      throw new Error('quota');
+    });
+    const notify = vi.fn();
+    const service = createRegistry().createService('ExtractSelection.json', 'ExtractSelection');
+    await expect(service.commit({ ...request(), onProgress: notify })).rejects.toThrow('Neither workflow');
+    expect(notify).not.toHaveBeenCalledWith({ step: 'creating-child', status: 'completed' });
+    expect(notify).not.toHaveBeenCalledWith({ step: 'saving-source', status: 'completed' });
+  });
+
+  it('logs progress observer failures without changing persistence or exposing exception details', async () => {
+    const log = vi.fn();
+    InitLoggerService([{ log, startTrace: vi.fn(), endTrace: vi.fn(), logErrorWithFormatting: vi.fn() }]);
+    const service = createRegistry().createService('ExtractSelection.json', 'ExtractSelection');
+    const result = await service.commit({
+      ...request(),
+      onProgress: () => {
+        throw new Error('sensitive observer details');
+      },
+    });
+    expect(result.status).toBe('completed');
+    expect(storage.setItem).toHaveBeenCalledOnce();
+    expect(log).toHaveBeenCalled();
+    expect(JSON.stringify(log.mock.calls)).not.toContain('sensitive observer details');
   });
 
   it('rejects fixture, source and stored child collisions case-insensitively', async () => {

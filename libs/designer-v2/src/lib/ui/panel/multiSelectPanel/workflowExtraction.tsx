@@ -15,7 +15,6 @@ import {
   DialogTitle,
   Field,
   Input,
-  Link,
   MenuItem,
   MessageBar,
   MessageBarBody,
@@ -23,6 +22,7 @@ import {
   Text,
   Tooltip,
   makeStyles,
+  mergeClasses,
   tokens,
 } from '@fluentui/react-components';
 import { ArrowExport24Regular } from '@fluentui/react-icons';
@@ -47,6 +47,14 @@ import { setFocusNode } from '../../../core/state/workflow/workflowSlice';
 import { getOrderedSelectedChain, getTopLevelSelectedNodes } from '../../../core/utils/multiselect';
 import { buildWorkflowExtractionPlan } from '../../../core/utils/workflowExtraction';
 import { getWorkflowExtractionPreview, type WorkflowExtractionPreviewVisuals } from './workflowExtractionPreview';
+import {
+  extractionSteps,
+  initialExtractionProgress,
+  reportExtractionProgress,
+  settleExtractionProgress,
+  startExtractionAttempt,
+  type ExtractionProgress,
+} from './workflowExtractionProgress';
 
 const useStyles = makeStyles({
   surface: { width: '720px', maxWidth: 'calc(100vw - 32px)', padding: tokens.spacingHorizontalL, overflow: 'hidden' },
@@ -108,7 +116,119 @@ const useStyles = makeStyles({
     borderCollapse: 'collapse',
     '& th, & td': { padding: tokens.spacingVerticalXS, borderBottom: `1px solid ${tokens.colorNeutralStroke2}`, overflowWrap: 'anywhere' },
   },
+  progress: {
+    margin: 0,
+    paddingLeft: tokens.spacingHorizontalXL,
+    listStyleType: 'decimal',
+    color: tokens.colorNeutralForeground2,
+  },
+  step: { paddingBlock: tokens.spacingVerticalXS, paddingLeft: tokens.spacingHorizontalXS },
+  stepContent: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: tokens.spacingHorizontalM },
+  stepStatus: { flexShrink: 0, fontSize: tokens.fontSizeBase200 },
+  active: { color: tokens.colorBrandForeground1 },
+  completed: { color: tokens.colorStatusSuccessForeground1 },
+  failed: { color: tokens.colorStatusDangerForeground1 },
+  partial: { color: tokens.colorStatusWarningForeground1 },
+  childAction: { alignSelf: 'flex-start' },
 });
+
+const ExtractionChecklist = ({ progress }: { progress: ExtractionProgress }) => {
+  const intl = useIntl();
+  const styles = useStyles();
+  const labels = {
+    preparing: intl.formatMessage({
+      id: '9cR5H9',
+      defaultMessage: 'Prepare workflows',
+      description: 'Extraction step: hydrate and check isolated child and source workflows',
+    }),
+    'validating-child': intl.formatMessage({
+      id: '2AqJa0',
+      defaultMessage: 'Validate child workflow',
+      description: 'Extraction host validation step',
+    }),
+    'creating-child': intl.formatMessage({
+      id: 'kcHo9Y',
+      defaultMessage: 'Create child workflow',
+      description: 'Extraction child persistence and host readiness step',
+    }),
+    'saving-source': intl.formatMessage({
+      id: 'aV244E',
+      defaultMessage: 'Save source workflow',
+      description: 'Extraction durable source persistence step',
+    }),
+    'applying-source': intl.formatMessage({
+      id: 'Ex15eR',
+      defaultMessage: 'Apply source workflow',
+      description: 'Extraction live designer and host refresh step',
+    }),
+  };
+  const statuses = {
+    pending: intl.formatMessage({
+      id: 'KACXg4',
+      defaultMessage: 'Pending',
+      description: 'Extraction step has not reported progress',
+    }),
+    'in-progress': intl.formatMessage({
+      id: 'SsbKcx',
+      defaultMessage: 'In progress',
+      description: 'Extraction step is executing',
+    }),
+    completed: intl.formatMessage({
+      id: 'KQmix0',
+      defaultMessage: 'Completed',
+      description: 'Extraction checkpoint confirmed complete',
+    }),
+    failed: intl.formatMessage({
+      id: 's0yHlw',
+      defaultMessage: 'Failed',
+      description: 'Extraction step did not finish successfully',
+    }),
+    partial: intl.formatMessage({
+      id: 'ybMx0l',
+      defaultMessage: 'Partially completed',
+      description: 'Child exists but host readiness is not confirmed',
+    }),
+    unconfirmed: intl.formatMessage({
+      id: 'scHpV+',
+      defaultMessage: 'Not confirmed',
+      description: 'Host did not report the extraction checkpoint outcome',
+    }),
+  };
+  return (
+    <ol
+      className={styles.progress}
+      aria-label={intl.formatMessage({
+        id: 'hjOlrC',
+        defaultMessage: 'Extraction progress',
+        description: 'Numbered extraction execution checklist',
+      })}
+      aria-live="polite"
+      aria-relevant="text"
+    >
+      {extractionSteps.map((step) => {
+        const status = progress[step];
+        return (
+          <li
+            key={step}
+            className={mergeClasses(
+              styles.step,
+              status === 'in-progress' && styles.active,
+              status === 'completed' && styles.completed,
+              status === 'failed' && styles.failed,
+              (status === 'partial' || status === 'unconfirmed') && styles.partial
+            )}
+            aria-current={status === 'in-progress' ? 'step' : undefined}
+          >
+            <div className={styles.stepContent}>
+              <span>{labels[step]}</span>
+              <span className={styles.stepStatus}>{statuses[status]}</span>
+            </div>
+          </li>
+        );
+      })}
+    </ol>
+  );
+};
 
 export const WorkflowExtractionAction = ({ variant = 'button', onClick }: { variant?: 'button' | 'menuItem'; onClick?: () => void }) => {
   const service = useContext(ProviderWrappedContext)?.workflowExtractionService;
@@ -221,6 +341,7 @@ export const WorkflowExtractionDialog = () => {
   const [loading, setLoading] = useState(false);
   const [stage, setStage] = useState<'preparing' | 'saving' | 'refreshing'>();
   const [result, setResult] = useState<WorkflowExtractionResult>();
+  const [progress, setProgress] = useState<ExtractionProgress>();
   const submitting = useRef(false);
   const request = useRef<WorkflowExtractionRequest>();
 
@@ -239,6 +360,7 @@ export const WorkflowExtractionDialog = () => {
     setResult(undefined);
     setError(undefined);
     setStage(undefined);
+    setProgress(undefined);
     setName('Extracted_workflow');
     request.current = undefined;
     const state = store.getState();
@@ -317,15 +439,20 @@ export const WorkflowExtractionDialog = () => {
     }
     submitting.current = true;
     setError(undefined);
+    setProgress(startExtractionAttempt);
     setStage('preparing');
     request.current ??= { operationId: guid(), sourceFingerprint: source.fingerprint, plan: preview.plan };
     try {
-      const outcome = await commitWorkflowExtraction(store, service, request.current, setStage);
+      const outcome = await commitWorkflowExtraction(store, service, request.current, setStage, (notification) => {
+        setProgress((previous) => reportExtractionProgress(previous ?? initialExtractionProgress(), notification));
+      });
+      setProgress((previous) => settleExtractionProgress(previous ?? initialExtractionProgress(), outcome));
       setResult(outcome);
       if (outcome.status !== 'completed') {
         setError(outcome.message);
       }
     } catch (cause) {
+      setProgress((previous) => settleExtractionProgress(previous ?? initialExtractionProgress()));
       setError(cause instanceof Error ? cause.message : String(cause));
     } finally {
       submitting.current = false;
@@ -338,24 +465,6 @@ export const WorkflowExtractionDialog = () => {
   }
   const complete = result?.status === 'completed';
   const terminal = complete || result?.status === 'source-saved';
-  const stageLabel =
-    stage === 'saving'
-      ? intl.formatMessage({
-          id: 'rJ7aUk',
-          defaultMessage: 'Creating child and saving source...',
-          description: 'Extraction host persistence progress',
-        })
-      : stage === 'refreshing'
-        ? intl.formatMessage({
-            id: 'JOpYf5',
-            defaultMessage: 'Refreshing designer...',
-            description: 'Extraction apply progress',
-          })
-        : intl.formatMessage({
-            id: 'ZW5spf',
-            defaultMessage: 'Preparing workflows...',
-            description: 'Extraction preparation progress',
-          });
   return (
     <Dialog
       open={open}
@@ -379,6 +488,13 @@ export const WorkflowExtractionDialog = () => {
             <MessageBar intent="info" layout="multiline">
               <MessageBarBody>{service.persistenceDescription}</MessageBarBody>
             </MessageBar>
+            <Text>
+              {intl.formatMessage({
+                id: '5shKlY',
+                defaultMessage: 'The child can remain published if updating the source fails. Undo does not delete the child.',
+                description: 'Extraction partial persistence and undo safety notice, separate from the host submission description',
+              })}
+            </Text>
             {complete ? (
               <MessageBar intent="success" layout="multiline">
                 <MessageBarBody>
@@ -405,11 +521,13 @@ export const WorkflowExtractionDialog = () => {
                   onChange={(_, data) => {
                     setName(data.value);
                     setError(undefined);
+                    setProgress(undefined);
                     request.current = undefined;
                   }}
                 />
               </Field>
             )}
+            {progress ? <ExtractionChecklist progress={progress} /> : null}
             <div className={styles.preview} data-automation-id="extraction-workflow-preview">
               <div className={styles.previewFrame} data-automation-id="extraction-workflow-preview-frame">
                 <Text weight="semibold" size={400} className={styles.previewTitle}>
@@ -480,16 +598,26 @@ export const WorkflowExtractionDialog = () => {
               </Accordion>
             ) : null}
             {error || preview.error ? (
-              <MessageBar intent="error" layout="multiline">
+              <MessageBar intent={result && !complete ? 'warning' : 'error'} layout="multiline">
                 <MessageBarBody>{error ?? preview.error}</MessageBarBody>
               </MessageBar>
             ) : null}
-            {busy ? (
-              <div role="status" aria-live="polite">
-                <Spinner label={stageLabel} />
-              </div>
+            {result ? (
+              <Button
+                as="a"
+                href={result.child.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                appearance="secondary"
+                className={styles.childAction}
+              >
+                {intl.formatMessage({
+                  id: 'vuOf8W',
+                  defaultMessage: 'Open child workflow',
+                  description: 'Open the extracted child workflow in a new browser tab',
+                })}
+              </Button>
             ) : null}
-            {result ? <Link href={result.child.href}>{result.child.name}</Link> : null}
           </DialogContent>
           <DialogActions>
             {terminal ? (

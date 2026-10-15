@@ -105,6 +105,44 @@ selected dynamically, even if no action references them statically. For
 multi-tenant workflows, map authorized tenant context to permitted connection
 keys rather than accepting an arbitrary caller-supplied key as authorization.
 
+### Workflow Extraction Progress (Designer V2, Standard)
+
+The optional `workflowExtractionService` host boundary supports an attempt-scoped
+callback on `WorkflowExtractionRequest`. Existing hosts do not need to implement it:
+
+```typescript
+type WorkflowExtractionHostStep = 'validating-child' | 'creating-child' | 'saving-source';
+interface WorkflowExtractionProgress {
+  step: WorkflowExtractionHostStep;
+  status: 'in-progress' | 'completed';
+}
+// Additional optional field on WorkflowExtractionRequest:
+// onProgress?: (progress: WorkflowExtractionProgress) => void;
+
+request.onProgress?.({ step: 'saving-source', status: 'in-progress' });
+// After the durable source write has been confirmed:
+request.onProgress?.({ step: 'saving-source', status: 'completed' });
+```
+
+Emit notifications at real validation, child creation/readiness, and durable source
+save checkpoints. For hosts that publish children, `creating-child/completed` must
+wait for publication and callable-child readiness, not merely file creation.
+Protect persistence from observer exceptions using the host's sanitized operational
+logging. Do not retain callbacks or share them across operations or retries.
+
+The designer owns isolated preparation/hydration and live source application.
+The numbered checklist retains completed steps, and reports unconfirmed checkpoints
+instead of inventing progress for older hosts. `child-created` and `source-saved`
+alone do not establish child readiness; only explicit child completion or an overall
+`completed` result does. `source-saved` confirms durable source persistence but does
+not imply successful live application. Application completion waits for `onApplied`;
+cleanup errors still preserve the existing terminal/reload behavior.
+
+`persistenceDescription` remains concise host-provided submission copy. A separate
+notice explains that a child can remain published after a source failure and Undo
+does not delete the child. The child navigation action opens a new tab without
+replacing the source editor.
+
 ### Service Configuration
 
 The designer requires several services to be configured:

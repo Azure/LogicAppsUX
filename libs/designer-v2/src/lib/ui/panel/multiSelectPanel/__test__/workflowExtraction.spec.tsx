@@ -3,7 +3,7 @@
  */
 import { configureStore, type UnknownAction } from '@reduxjs/toolkit';
 import '@testing-library/jest-dom/vitest';
-import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import { IntlProvider } from 'react-intl';
@@ -29,23 +29,16 @@ import { buildWorkflowExtractionPlan } from '../../../../core/utils/workflowExtr
 import { WorkflowExtractionAction, WorkflowExtractionDialog } from '../workflowExtraction';
 import { getWorkflowExtractionPreview } from '../workflowExtractionPreview';
 
-vi.mock('@fluentui/react-components', () => {
+vi.mock('@fluentui/react-components', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@fluentui/react-components')>();
   const passthrough = ({ children }: { children?: ReactNode }) => <div>{children}</div>;
   return {
     Accordion: passthrough,
     AccordionHeader: passthrough,
     AccordionItem: passthrough,
     AccordionPanel: passthrough,
-    Button: ({
-      appearance: _appearance,
-      children,
-      icon: _icon,
-      ...props
-    }: React.ButtonHTMLAttributes<HTMLButtonElement> & { appearance?: string; icon?: ReactNode }) => (
-      <button type="button" {...props}>
-        {children}
-      </button>
-    ),
+    Button: actual.Button,
+    mergeClasses: actual.mergeClasses,
     Dialog: ({
       children,
       modalType,
@@ -532,16 +525,24 @@ describe('WorkflowExtractionDialog', () => {
     expect(screen.getByRole('button', { name: 'Confirm' })).toBeDisabled();
   });
 
-  it('shows each busy stage, blocks navigation, and focuses the invocation after a completed extraction closes', async () => {
+  it('retains numbered checkpoint statuses, blocks navigation, and focuses the invocation only after completion', async () => {
     const user = userEvent.setup();
     const preparing = createDeferred<void>();
     const saving = createDeferred<void>();
     const refreshing = createDeferred<void>();
-    mockCommitWorkflowExtraction.mockImplementation(async (_store, _service, _request, setStage) => {
+    mockCommitWorkflowExtraction.mockImplementation(async (_store, _service, _request, setStage, onProgress) => {
       await preparing.promise;
+      onProgress?.({ step: 'preparing', status: 'completed' });
       setStage('saving');
+      onProgress?.({ step: 'validating-child', status: 'in-progress' });
+      onProgress?.({ step: 'validating-child', status: 'completed' });
+      onProgress?.({ step: 'creating-child', status: 'in-progress' });
       await saving.promise;
+      onProgress?.({ step: 'creating-child', status: 'completed' });
+      onProgress?.({ step: 'saving-source', status: 'in-progress' });
+      onProgress?.({ step: 'saving-source', status: 'completed' });
       setStage('refreshing');
+      onProgress?.({ step: 'applying-source', status: 'in-progress' });
       await refreshing.promise;
       return completedResult;
     });
@@ -549,7 +550,18 @@ describe('WorkflowExtractionDialog', () => {
 
     await user.click(screen.getByRole('button', { name: 'Confirm' }));
 
-    expect(await screen.findByText('Preparing workflows...')).toBeInTheDocument();
+    const list = screen.getByRole('list', { name: 'Extraction progress' });
+    expect(list.tagName).toBe('OL');
+    expect(list).toHaveAttribute('aria-live', 'polite');
+    const steps = within(list).getAllByRole('listitem');
+    expect(steps.map((step) => step.textContent)).toEqual([
+      'Prepare workflowsIn progress',
+      'Validate child workflowPending',
+      'Create child workflowPending',
+      'Save source workflowPending',
+      'Apply source workflowPending',
+    ]);
+    expect(steps[0]).toHaveAttribute('aria-current', 'step');
     expect(screen.getByRole('button', { name: 'Confirm' })).toBeDisabled();
     expect(screen.getByRole('button', { name: 'Cancel' })).toBeDisabled();
     const beforeUnload = new Event('beforeunload', { cancelable: true });
@@ -560,13 +572,18 @@ describe('WorkflowExtractionDialog', () => {
       preparing.resolve();
       await preparing.promise;
     });
-    expect(await screen.findByText('Creating child and saving source...')).toBeInTheDocument();
+    expect(steps[0]).toHaveTextContent('Completed');
+    expect(steps[1]).toHaveTextContent('Completed');
+    expect(steps[2]).toHaveTextContent('In progress');
+    expect(steps[3]).toHaveTextContent('Pending');
 
     await act(async () => {
       saving.resolve();
       await saving.promise;
     });
-    expect(await screen.findByText('Refreshing designer...')).toBeInTheDocument();
+    expect(steps[2]).toHaveTextContent('Completed');
+    expect(steps[3]).toHaveTextContent('Completed');
+    expect(steps[4]).toHaveTextContent('In progress');
 
     await act(async () => {
       refreshing.resolve();
@@ -583,8 +600,24 @@ describe('WorkflowExtractionDialog', () => {
         }),
         sourceFingerprint: 'workflow-fingerprint',
       }),
+      expect.any(Function),
       expect.any(Function)
     );
+    expect(within(list).getAllByText('Completed')).toHaveLength(5);
+    expect(screen.queryByTestId('spinner')).not.toBeInTheDocument();
+    const openChild = screen.getByRole('link', { name: 'Open child workflow' });
+    expect(openChild.tagName).toBe('A');
+    expect(openChild).toHaveAttribute('href', '/workflows/Suggested_workflow');
+    expect(openChild).toHaveAttribute('target', '_blank');
+    expect(openChild).toHaveAttribute('rel', 'noopener noreferrer');
+    const activate = vi.fn((event: Event) => event.preventDefault());
+    openChild.addEventListener('click', activate);
+    openChild.focus();
+    expect(openChild).toHaveFocus();
+    await user.keyboard(' ');
+    expect(activate).toHaveBeenCalledOnce();
+    await user.keyboard('{Enter}');
+    expect(activate).toHaveBeenCalledTimes(2);
 
     await user.click(screen.getByRole('button', { name: 'Close' }));
 
@@ -605,7 +638,10 @@ describe('WorkflowExtractionDialog', () => {
     await user.click(screen.getByRole('button', { name: 'Confirm' }));
 
     expect(await screen.findByText(partialResult.message)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Suggested_workflow' })).toHaveAttribute('href', '/workflows/Suggested_workflow');
+    expect(screen.getByRole('link', { name: 'Open child workflow' })).toHaveAttribute('href', '/workflows/Suggested_workflow');
+    const steps = within(screen.getByRole('list', { name: 'Extraction progress' })).getAllByRole('listitem');
+    expect(steps[2]).toHaveTextContent('Partially completed');
+    expect(steps[3]).not.toHaveTextContent('Completed');
     const firstRequest = mockCommitWorkflowExtraction.mock.calls[0][2];
 
     await user.click(screen.getByRole('button', { name: 'Retry source update' }));
@@ -628,6 +664,11 @@ describe('WorkflowExtractionDialog', () => {
     await user.click(screen.getByRole('button', { name: 'Confirm' }));
 
     expect(await screen.findByText(result.message)).toBeInTheDocument();
+    expect(screen.queryByText('The child workflow was created and the source workflow was saved.')).not.toBeInTheDocument();
+    const steps = within(screen.getByRole('list', { name: 'Extraction progress' })).getAllByRole('listitem');
+    expect(steps[2]).toHaveTextContent('Partially completed');
+    expect(steps[3]).toHaveTextContent('Completed');
+    expect(steps[4]).toHaveTextContent('Not confirmed');
     expect(screen.queryByRole('button', { name: 'Retry source update' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Cancel' })).not.toBeInTheDocument();
 
@@ -645,12 +686,45 @@ describe('WorkflowExtractionDialog', () => {
     await user.click(screen.getByRole('button', { name: 'Confirm' }));
 
     expect(await screen.findByText('Source write failed')).toBeInTheDocument();
+    expect(within(screen.getByRole('list')).getAllByRole('listitem')[0]).toHaveTextContent('Failed');
     expect(screen.getByRole('button', { name: 'Confirm' })).toBeEnabled();
 
     await user.click(screen.getByRole('button', { name: 'Confirm' }));
 
     expect(await screen.findByRole('button', { name: 'Close' })).toBeInTheDocument();
     expect(mockCommitWorkflowExtraction).toHaveBeenCalledTimes(2);
+  });
+
+  it('retains confirmed child readiness on source failure, resets failures on retry, and resets the checklist on reopen', async () => {
+    const user = userEvent.setup();
+    const retry = createDeferred<WorkflowExtractionResult>();
+    mockCommitWorkflowExtraction
+      .mockImplementationOnce(async (_store, _service, _request, _setStage, notify) => {
+        notify?.({ step: 'preparing', status: 'completed' });
+        notify?.({ step: 'validating-child', status: 'completed' });
+        notify?.({ step: 'creating-child', status: 'completed' });
+        notify?.({ step: 'saving-source', status: 'in-progress' });
+        return { status: 'child-created', child: completedResult.child, message: 'Source conflict: review before retrying.' };
+      })
+      .mockImplementationOnce(() => retry.promise);
+    const { store } = await renderPreparedDialog();
+    await user.click(screen.getByRole('button', { name: 'Confirm' }));
+    await screen.findByText('Source conflict: review before retrying.');
+    const steps = within(screen.getByRole('list')).getAllByRole('listitem');
+    expect(steps[2]).toHaveTextContent('Completed');
+    expect(steps[3]).toHaveTextContent('Failed');
+    expect(screen.getByText('Source conflict: review before retrying.').closest('[data-intent]')).toHaveAttribute('data-intent', 'warning');
+
+    await user.click(screen.getByRole('button', { name: 'Retry source update' }));
+    expect(steps[0]).toHaveTextContent('In progress');
+    expect(steps[2]).toHaveTextContent('Completed');
+    expect(steps[3]).toHaveTextContent('Pending');
+    await act(async () => retry.resolve(completedResult));
+    await user.click(await screen.findByRole('button', { name: 'Close' }));
+    act(() => store.dispatch(setWorkflowExtractionDialogOpen(true)));
+    await screen.findByDisplayValue('Suggested_workflow');
+    expect(screen.queryByRole('list', { name: 'Extraction progress' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Open child workflow' })).not.toBeInTheDocument();
   });
 
   it('clears the open state when the extraction service is lost so the designer is not left read-only', async () => {

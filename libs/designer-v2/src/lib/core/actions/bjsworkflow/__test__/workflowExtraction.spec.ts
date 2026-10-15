@@ -426,6 +426,81 @@ describe('workflow extraction transaction', () => {
     expect(service.onApplied).toHaveBeenCalledOnce();
   });
 
+  it('reports actual hydration and host checkpoints without applying early, and ignores late host notifications', async () => {
+    const notify = vi.fn();
+    let hostNotify: WorkflowExtractionRequest['onProgress'];
+    vi.mocked(service.commit).mockImplementation(async (hostRequest) => {
+      hostNotify = hostRequest.onProgress;
+      expect(hostRequest.operationId).toBe(request.operationId);
+      expect(hostRequest.plan).toBe(request.plan);
+      expect(notify.mock.calls.map(([progress]) => progress)).toEqual([
+        { step: 'preparing', status: 'in-progress' },
+        { step: 'preparing', status: 'completed' },
+      ]);
+      expect(live.getState().workflow.originalDefinition).toEqual(original.definition);
+      hostNotify?.({ step: 'validating-child', status: 'completed' });
+      hostNotify?.({ step: 'creating-child', status: 'completed' });
+      hostNotify?.({ step: 'saving-source', status: 'completed' });
+      return completed;
+    });
+    service.onApplied = vi.fn(() => {
+      expect(notify).toHaveBeenLastCalledWith({ step: 'applying-source', status: 'in-progress' });
+    });
+
+    await expect(commitWorkflowExtraction(live, service, request, stages, notify)).resolves.toEqual(completed);
+
+    expect(notify.mock.calls.map(([progress]) => progress)).toEqual([
+      { step: 'preparing', status: 'in-progress' },
+      { step: 'preparing', status: 'completed' },
+      { step: 'validating-child', status: 'completed' },
+      { step: 'creating-child', status: 'completed' },
+      { step: 'saving-source', status: 'completed' },
+      { step: 'creating-child', status: 'completed' },
+      { step: 'saving-source', status: 'completed' },
+      { step: 'applying-source', status: 'in-progress' },
+      { step: 'applying-source', status: 'completed' },
+    ]);
+    hostNotify?.({ step: 'saving-source', status: 'in-progress' });
+    expect(notify).toHaveBeenCalledTimes(9);
+    expect(request).not.toHaveProperty('onProgress');
+  });
+
+  it('does not report apply completion if onApplied fails, while preserving durable results and cleanup', async () => {
+    const notify = vi.fn();
+    service.onApplied = vi.fn(() => {
+      throw new Error('Host refresh failed');
+    });
+
+    const result = await commitWorkflowExtraction(live, service, request, stages, notify);
+
+    expect(result.status).toBe('source-saved');
+    expect(notify).toHaveBeenLastCalledWith({ step: 'applying-source', status: 'in-progress' });
+    expect(notify).not.toHaveBeenCalledWith({ step: 'applying-source', status: 'completed' });
+    expect(release).toHaveBeenCalledOnce();
+    expect(live.getState().designerView.workflowExtractionBusy).toBe(false);
+  });
+
+  it('expires failed-attempt callbacks before an idempotent retry can receive progress', async () => {
+    const notify = vi.fn();
+    const hostCallbacks: NonNullable<WorkflowExtractionRequest['onProgress']>[] = [];
+    vi.mocked(service.commit).mockImplementation(async (hostRequest) => {
+      hostCallbacks.push(hostRequest.onProgress!);
+      if (hostCallbacks.length === 1) {
+        throw new Error('Validation failed');
+      }
+      hostCallbacks[0]({ step: 'creating-child', status: 'completed' });
+      expect(notify).not.toHaveBeenCalledWith({ step: 'creating-child', status: 'completed' });
+      hostCallbacks[1]({ step: 'saving-source', status: 'completed' });
+      return completed;
+    });
+
+    await expect(commitWorkflowExtraction(live, service, request, stages, notify)).rejects.toThrow('Validation failed');
+    notify.mockClear();
+    await expect(commitWorkflowExtraction(live, service, request, stages, notify)).resolves.toEqual(completed);
+    expect(hostCallbacks[0]).not.toBe(hostCallbacks[1]);
+    expect(notify).toHaveBeenCalledWith({ step: 'saving-source', status: 'completed' });
+  });
+
   it('returns a terminal source-saved result if refresh fails before the live swap', async () => {
     const before = live.getState();
     service.onApplied = vi.fn();

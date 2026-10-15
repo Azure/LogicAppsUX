@@ -66,7 +66,27 @@ const openSelectionMenu = async (page: Page, name: string) => {
   await expect(page.getByTestId('msla-bulk-copy-menu-option')).toBeVisible();
 };
 
+const ensureDarkMode = async (page: Page) => {
+  const isDarkMode = () =>
+    page.evaluate(
+      () => (window as Window & { DesignerStoreV2: { getState(): RootState } }).DesignerStoreV2.getState().designerOptions.isDarkMode
+    );
+  if (await isDarkMode()) {
+    return;
+  }
+  const contextSettings = page.getByRole('heading', { name: /Context Settings/ });
+  const bounds = await contextSettings.boundingBox();
+  if (!bounds || bounds.y < 0) {
+    await page.getByRole('button', { name: 'Toolbox' }).click();
+  }
+  await contextSettings.click();
+  await page.getByText('Dark Mode', { exact: true }).click();
+  await expect.poll(isDarkMode).toBe(true);
+  await page.getByRole('button', { name: 'Toolbox' }).click();
+};
+
 const openPreview = async (page: Page, names = ['Build_message', 'Build_result']) => {
+  await ensureDarkMode(page);
   await selectActions(page, names);
   if (names.length === 2) {
     await expect(page.locator('.msla-panel-container-nested-dual')).toBeVisible();
@@ -81,23 +101,34 @@ const openPreview = async (page: Page, names = ['Build_message', 'Build_result']
   }
   const dialog = page.getByRole('dialog', { name: 'Extract to new workflow' });
   await expect(dialog).toBeVisible();
+  await expect
+    .poll(() =>
+      dialog.evaluate((element) => {
+        const channels = getComputedStyle(element).backgroundColor.match(/\d+/g);
+        if (!channels || channels.length < 3) {
+          throw new Error('The extraction dialog must have an opaque dark surface before capturing screenshots.');
+        }
+        return Math.max(...channels.slice(0, 3).map(Number));
+      })
+    )
+    .toBeLessThan(128);
   await expect(dialog.getByRole('button', { name: 'Confirm', exact: true })).toBeEnabled();
   return dialog;
 };
 
 test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => {
-  test.beforeEach(async ({ page, baseURL }) => {
+  test.beforeEach(async ({ page, baseURL, context }) => {
     if (!baseURL) {
       throw new Error('A local standalone baseURL is required.');
     }
     const localOrigin = new URL(baseURL).origin;
-    await page.route('**/*', (route) => {
+    await context.route('**/*', (route) => {
       const url = new URL(route.request().url());
       return url.origin === localOrigin ? route.continue() : route.abort();
     });
     await page.goto('/v2?extraction=true&local=ExtractSelection.json');
     await expect(page.getByTestId('card-consume_result')).toBeVisible();
-    await page.getByRole('button', { name: 'Toolbox' }).click();
+    await ensureDarkMode(page);
   });
 
   test('previews two selected actions and cancels without changing the source', async ({ page }) => {
@@ -311,8 +342,22 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
     await testInfo.attach('extraction-preview', { body: await dialog.screenshot(), contentType: 'image/png' });
     await dialog.getByRole('button', { name: 'Confirm', exact: true }).click();
 
-    const childLink = dialog.getByRole('link', { name: childName, exact: true });
-    await expect(childLink).toBeVisible();
+    const openChild = dialog.getByRole('link', { name: 'Open child workflow', exact: true });
+    await expect(openChild).toBeVisible();
+    await expect(openChild).toHaveAttribute('target', '_blank');
+    await expect(openChild).toHaveAttribute('rel', 'noopener noreferrer');
+    const checklist = dialog.getByRole('list', { name: 'Extraction progress', exact: true });
+    await expect(checklist).toHaveCSS('list-style-type', 'decimal');
+    await expect(checklist.getByRole('listitem')).toHaveText([
+      'Prepare workflowsCompleted',
+      'Validate child workflowCompleted',
+      'Create child workflowCompleted',
+      'Save source workflowCompleted',
+      'Apply source workflowCompleted',
+    ]);
+    const completedScreenshot = testInfo.outputPath('extraction-complete-dark.png');
+    await dialog.screenshot({ path: completedScreenshot });
+    await testInfo.attach('extraction-complete-dark', { path: completedScreenshot, contentType: 'image/png' });
     await expect(dialog.getByRole('button', { name: 'Close', exact: true })).toBeEnabled();
     const source = await readWorkflow(page);
     const invocations = Object.entries(source.definition.actions).filter(([, action]) => action.type.toLowerCase() === 'workflow');
@@ -340,11 +385,14 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
     });
     expectInvocationOutputs(invocationMetadata, invocationName);
 
-    await childLink.click();
-    await page.getByText('Local', { exact: true }).waitFor({ timeout: 120_000 });
-    await expect(page.getByTestId('card-build_message')).toBeVisible();
-    await expect(page.getByTestId('card-build_result')).toBeVisible();
-    const child = await readWorkflow(page);
+    await openChild.focus();
+    const [childPage] = await Promise.all([page.waitForEvent('popup'), openChild.press('Enter')]);
+    await expect(dialog).toBeVisible();
+    expect(await readWorkflow(page)).toEqual(source);
+    await childPage.getByText('Local', { exact: true }).waitFor({ timeout: 120_000 });
+    await expect(childPage.getByTestId('card-build_message')).toBeVisible();
+    await expect(childPage.getByTestId('card-build_result')).toBeVisible();
+    const child = await readWorkflow(childPage);
     const requestTriggers = Object.values(child.definition.triggers).filter((trigger) => trigger.type.toLowerCase() === 'request');
     const responses = Object.values(child.definition.actions).filter((action) => action.type.toLowerCase() === 'response');
     expect(requestTriggers).toHaveLength(1);
@@ -370,10 +418,11 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
     expect(child.kind).toBe(source.kind);
     await testInfo.attach('created-child', { body: JSON.stringify(child, null, 2), contentType: 'application/json' });
 
-    await page.reload();
-    await page.getByText('Local', { exact: true }).waitFor({ timeout: 120_000 });
-    await expect(page.getByTestId('card-build_result')).toBeVisible();
-    expect(await readWorkflow(page)).toEqual(child);
+    await childPage.reload();
+    await childPage.getByText('Local', { exact: true }).waitFor({ timeout: 120_000 });
+    await expect(childPage.getByTestId('card-build_result')).toBeVisible();
+    expect(await readWorkflow(childPage)).toEqual(child);
+    await childPage.close();
 
     await page.goto('/v2?extraction=true&local=ExtractSelection.json');
     await page.getByText('Local', { exact: true }).waitFor({ timeout: 120_000 });
@@ -410,7 +459,7 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
     await actions.getByRole('button', { name: 'Extract to new workflow', exact: true }).click();
     await dialog.getByLabel('Workflow name', { exact: true }).fill('Extracted_Three_Actions');
     await dialog.getByRole('button', { name: 'Confirm', exact: true }).click();
-    await expect(dialog.getByRole('link', { name: 'Extracted_Three_Actions', exact: true })).toBeVisible();
+    await expect(dialog.getByRole('link', { name: 'Open child workflow', exact: true })).toBeVisible();
     await dialog.getByRole('button', { name: 'Close', exact: true }).click();
     await expect(dialog).not.toBeVisible();
 
@@ -453,7 +502,7 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
         await expect(dialog.getByRole('cell', { name: "@body('Parse_JSON')", exact: true })).toBeVisible();
       }
       await dialog.getByRole('button', { name: 'Confirm', exact: true }).click();
-      const childLink = dialog.getByRole('link', { name: childName, exact: true });
+      const childLink = dialog.getByRole('link', { name: 'Open child workflow', exact: true });
       await expect(childLink).toBeVisible();
       const childHref = await childLink.getAttribute('href');
       expect(childHref).toBeTruthy();
@@ -574,14 +623,15 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
     await expect(preview.locator('.react-flow__node')).toHaveCount(4);
     await expect(preview.getByText('Processing', { exact: true })).toBeVisible();
     await dialog.getByRole('button', { name: 'Confirm', exact: true }).click();
-    await expect(dialog.getByRole('link', { name: 'Extracted_Scope', exact: true })).toBeVisible();
+    const openChild = dialog.getByRole('link', { name: 'Open child workflow', exact: true });
+    await expect(openChild).toBeVisible();
     const source = await readWorkflow(page);
     expect(source.definition.actions.Processing).toBeUndefined();
     expect(source.definition.actions.Build_result).toBeUndefined();
-    await dialog.getByRole('link', { name: 'Extracted_Scope', exact: true }).click();
-    await expect(page.getByTestId('card-processing')).toBeVisible();
-    await expect(page.getByTestId('card-http')).toBeVisible();
-    const child = await readWorkflow(page);
+    const [childPage] = await Promise.all([page.waitForEvent('popup'), openChild.click()]);
+    await expect(childPage.getByTestId('card-processing')).toBeVisible();
+    await expect(childPage.getByTestId('card-http')).toBeVisible();
+    const child = await readWorkflow(childPage);
     expect(child.definition.actions.Processing).toMatchObject({
       type: 'Scope',
       runAfter: {},
@@ -601,9 +651,10 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
     expect(child.definition.actions.Processing.actions?.Filter_array.runAfter ?? {}).toEqual({});
     expect(child.definition.actions.Build_result.inputs).toEqual(Consume_result.inputs);
     expect(child.parameters?.Minimum).toEqual(workflow.parameters?.Minimum);
-    await page.reload();
-    await expect(page.getByTestId('card-http')).toBeVisible();
-    expect(await readWorkflow(page)).toEqual(child);
+    await childPage.reload();
+    await expect(childPage.getByTestId('card-http')).toBeVisible();
+    expect(await readWorkflow(childPage)).toEqual(child);
+    await childPage.close();
   });
 
   test('rejects a selection with an unselected action in the gap', async ({ page }) => {
@@ -714,7 +765,7 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
       await expect(dialog.getByRole('table')).toHaveCount(Number(inputs) + Number(outputs));
       if (!inputs && !outputs) {
         await dialog.getByRole('button', { name: 'Confirm', exact: true }).click();
-        await expect(dialog.getByRole('link', { name: 'Extracted_workflow', exact: true })).toBeVisible();
+        await expect(dialog.getByRole('link', { name: 'Open child workflow', exact: true })).toBeVisible();
         await expect(dialog.getByRole('button', { name: 'Close', exact: true })).toBeEnabled();
       } else {
         await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
@@ -741,7 +792,7 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
     const dialog = await openPreview(page);
     await dialog.getByLabel('Workflow name', { exact: true }).fill('Extracted_Readonly_Regression');
     await dialog.getByRole('button', { name: 'Confirm', exact: true }).click();
-    await expect(dialog.getByRole('link', { name: 'Extracted_Readonly_Regression', exact: true })).toBeVisible();
+    await expect(dialog.getByRole('link', { name: 'Open child workflow', exact: true })).toBeVisible();
     await dialog.getByRole('button', { name: 'Close', exact: true }).click();
     const savedSource = await readWorkflow(page);
 
