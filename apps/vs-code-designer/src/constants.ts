@@ -317,6 +317,7 @@ export const onStartLanguageServer = 'onStartLanguageServer';
 export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
 export const targetBundleKey = 'FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI';
 export const bundleInstallCompleteFile = '.install-complete';
+export const legacyBundleInstallMarkerFile = '.bundle-source-md5';
 
 // local.settings.json
 export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';

@@ -10,6 +10,7 @@ import {
   useExperimentalExtensionBundleSettingKey,
   experimentalExtensionBundleSourceUriSettingKey,
   experimentalExtensionBundleVersionSettingKey,
+  legacyBundleInstallMarkerFile,
 } from '../../constants';
 import { getLocalSettingsJson } from './appSettings/localSettings';
 import { downloadAndExtractDependency } from './binaries';
@@ -159,49 +160,30 @@ function buildExtensionBundleZipUrl(baseUrl: string, extensionVersion: string): 
   return `${baseUrl}/ExtensionBundles/${extensionBundleId}/${extensionVersion}/${extensionBundleId}.${extensionVersion}_any-any.zip`;
 }
 
-interface BundleInstallMarker {
-  version: number;
-  bundleVersion: string;
+async function tryMigrateLegacyBundleInstallMarker(version: string): Promise<boolean> {
+  if (!(await hasLegacyBundleInstallMarker(version))) {
+    return false;
+  }
+
+  await writeBundleInstallMarker(version);
+  return true;
 }
 
-const BUNDLE_INSTALL_MARKER_VERSION = 1;
-
-function getBundleInstallMarkerPath(version: string): string {
-  return path.join(defaultExtensionBundlePathValue, version, bundleInstallCompleteFile);
-}
-
-async function readBundleInstallMarker(version: string): Promise<BundleInstallMarker | undefined> {
-  const markerPath = getBundleInstallMarkerPath(version);
+async function hasLegacyBundleInstallMarker(version: string): Promise<boolean> {
+  const markerPath = path.join(defaultExtensionBundlePathValue, version, legacyBundleInstallMarkerFile);
   try {
-    if (!(await fse.pathExists(markerPath))) {
-      return undefined;
-    }
-    const parsed: unknown = JSON.parse(await fse.readFile(markerPath, 'utf8'));
-    if (
-      typeof parsed === 'object' &&
-      parsed !== null &&
-      (parsed as Record<string, unknown>).version === BUNDLE_INSTALL_MARKER_VERSION &&
-      (parsed as Record<string, unknown>).bundleVersion === version
-    ) {
-      return parsed as BundleInstallMarker;
-    }
-    return undefined;
+    return await fse.pathExists(markerPath);
   } catch {
-    return undefined;
+    return false;
   }
 }
 
 async function writeBundleInstallMarker(version: string): Promise<void> {
   const markerPath = getBundleInstallMarkerPath(version);
   const temporaryMarkerPath = `${markerPath}.${process.pid}.${Date.now()}.tmp`;
-  const payload: BundleInstallMarker = {
-    version: BUNDLE_INSTALL_MARKER_VERSION,
-    bundleVersion: version,
-  };
   try {
-    await fse.outputFile(temporaryMarkerPath, JSON.stringify(payload), 'utf8');
+    await fse.outputFile(temporaryMarkerPath, '', 'utf8');
     await fse.move(temporaryMarkerPath, markerPath, { overwrite: true });
-    await fse.remove(path.join(defaultExtensionBundlePathValue, version, '.bundle-source-md5'));
   } catch (writeError) {
     await fse.remove(temporaryMarkerPath).catch(() => undefined);
     const message = localize(
@@ -213,6 +195,22 @@ async function writeBundleInstallMarker(version: string): Promise<void> {
     ext.outputChannel?.appendLog(message);
     throw new Error(message);
   }
+
+  try {
+    await fse.remove(path.join(defaultExtensionBundlePathValue, version, legacyBundleInstallMarkerFile));
+  } catch {
+    ext.outputChannel?.appendLog(
+      localize(
+        'legacyBundleInstallMarkerRemovalFailed',
+        'Failed to remove legacy extension-bundle installation marker at "{0}"',
+        path.join(defaultExtensionBundlePathValue, version, legacyBundleInstallMarkerFile)
+      )
+    );
+  }
+}
+
+function getBundleInstallMarkerPath(version: string): string {
+  return path.join(defaultExtensionBundlePathValue, version, bundleInstallCompleteFile);
 }
 
 async function hasRequiredBundleContent(bundleDir: string): Promise<boolean> {
@@ -544,8 +542,8 @@ let lastBundleInstallResult: BundleInstallResult = 'unknown';
 let lastBundleInstallError: Error | undefined;
 
 /**
- * Version of the extension bundle whose completion marker and required files
- * were already checked this session.
+ * Version of the extension bundle whose completion marker was already checked
+ * this session.
  */
 let healthyBundleVersion: string | null = null;
 
@@ -605,7 +603,7 @@ export function isInsideBundleDownloadScope(): boolean {
  */
 export type BundleOnDiskHealthResult =
   | { ok: true; version: string }
-  | { ok: false; reason: 'noBundle' | 'markerMissing' | 'requiredContentMissing'; version?: string };
+  | { ok: false; reason: 'noBundle' | 'markerMissing'; version?: string };
 
 type BundleOnDiskHealthFailure = Extract<BundleOnDiskHealthResult, { ok: false }>;
 
@@ -634,13 +632,21 @@ export async function assertExtensionBundleOnDiskHealthy(version?: string): Prom
   if (!(await fse.pathExists(bundleDir))) {
     return { ok: false, reason: 'noBundle', version: targetVersion };
   }
-  if (!(await readBundleInstallMarker(targetVersion))) {
+  if (!(await hasBundleInstallMarker(targetVersion))) {
+    if (await tryMigrateLegacyBundleInstallMarker(targetVersion)) {
+      return { ok: true, version: targetVersion };
+    }
     return { ok: false, reason: 'markerMissing', version: targetVersion };
   }
-  if (!(await hasRequiredBundleContent(bundleDir))) {
-    return { ok: false, reason: 'requiredContentMissing', version: targetVersion };
-  }
   return { ok: true, version: targetVersion };
+}
+
+async function hasBundleInstallMarker(version: string): Promise<boolean> {
+  try {
+    return await fse.pathExists(getBundleInstallMarkerPath(version));
+  } catch {
+    return false;
+  }
 }
 
 async function evaluateBundleFastGate(version?: string): Promise<BundleOnDiskHealthResult> {
@@ -738,8 +744,8 @@ function scheduleBackgroundBundleFeedRefresh(context: IActionContext, options: B
  * (e.g. design-time host startup, runtime dependency validation) should
  * call this rather than the lower-level `waitForExtensionBundleReady`.
  *
- * Readiness is based only on a successful-install marker and required runtime
- * entry points. Installed files are not hashed after download.
+ * Readiness is based only on a successful-install marker. Installed files are
+ * not inspected or hashed after download.
  *
  * Callers without a context (legacy) still get the old await-only behavior.
  */

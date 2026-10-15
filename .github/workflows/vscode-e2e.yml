@@ -280,14 +280,6 @@ jobs:
           if (!fs.existsSync(markerPath)) {
             throw new Error(`Bundle completion marker missing: ${markerPath}`);
           }
-          const marker = JSON.parse(fs.readFileSync(markerPath, 'utf8'));
-          if (marker?.version !== 1 || marker?.bundleVersion !== versions[0]) {
-            throw new Error(`Bundle completion marker invalid: ${markerPath}`);
-          }
-          const depsPath = path.join(bundleDir, 'bin', 'function.deps.json');
-          if (!fs.existsSync(depsPath)) {
-            throw new Error(`Bundle dependency manifest missing: ${depsPath}`);
-          }
           console.log(`Bundle ready: ${bundleDir}`);
           console.log(`Marker: ${markerPath}`);
           NODE

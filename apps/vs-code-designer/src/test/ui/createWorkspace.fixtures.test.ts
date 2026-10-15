@@ -101,43 +101,6 @@ function findLatestWorkflowsBundle(): { version: string; bundleDir: string; mark
   return { version, bundleDir, markerPath: path.join(bundleDir, BUNDLE_INSTALL_MARKER_FILE) };
 }
 
-function hasRequiredBundleContent(bundleDir: string): boolean {
-  const binDir = path.join(bundleDir, 'bin');
-  const depsPath = path.join(binDir, 'function.deps.json');
-  if (!fs.existsSync(depsPath)) {
-    return false;
-  }
-  let parsedDeps: unknown;
-  try {
-    parsedDeps = JSON.parse(fs.readFileSync(depsPath, 'utf8'));
-  } catch {
-    return false;
-  }
-  const requiredRuntimeFiles = new Set<string>();
-  const targets = (parsedDeps as { targets?: unknown })?.targets;
-  if (typeof targets === 'object' && targets !== null) {
-    for (const target of Object.values(targets as Record<string, unknown>)) {
-      if (typeof target !== 'object' || target === null) {
-        continue;
-      }
-      for (const dependency of Object.values(target as Record<string, unknown>)) {
-        const runtime = (dependency as { runtime?: unknown })?.runtime;
-        if (typeof runtime !== 'object' || runtime === null) {
-          continue;
-        }
-        Object.keys(runtime as Record<string, unknown>).forEach((relativePath) => requiredRuntimeFiles.add(relativePath));
-      }
-    }
-  }
-  return (
-    requiredRuntimeFiles.size > 0 &&
-    [...requiredRuntimeFiles].every((relativePath) => {
-      const candidates = [path.join(binDir, ...relativePath.split('/')), path.join(binDir, path.basename(relativePath))];
-      return candidates.some((candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isFile());
-    })
-  );
-}
-
 function assertWorkflowsBundleReady(): void {
   const bundle = findLatestWorkflowsBundle();
   if (!bundle) {
@@ -145,13 +108,6 @@ function assertWorkflowsBundleReady(): void {
   }
   if (!fs.existsSync(bundle.markerPath)) {
     throw new Error(`[fixtures:setup] Logic Apps extension bundle completion marker is missing: ${bundle.markerPath}`);
-  }
-  const marker = JSON.parse(fs.readFileSync(bundle.markerPath, 'utf8'));
-  if (marker?.version !== 1 || marker?.bundleVersion !== bundle.version) {
-    throw new Error(`[fixtures:setup] Logic Apps extension bundle completion marker is invalid: ${bundle.markerPath}`);
-  }
-  if (!hasRequiredBundleContent(bundle.bundleDir)) {
-    throw new Error(`[fixtures:setup] Logic Apps extension bundle is missing required runtime content: ${bundle.bundleDir}`);
   }
 }
 function dumpBundleDirectoryState(label: string): void {

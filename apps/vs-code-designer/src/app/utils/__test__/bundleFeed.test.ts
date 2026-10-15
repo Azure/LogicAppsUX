@@ -649,6 +649,7 @@ describe('downloadExtensionBundle readiness model', () => {
   const mockedDownloadAndExtract = vi.mocked(binariesModule.downloadAndExtractDependency);
   const localVersions = new Set<string>();
   const completedVersions = new Set<string>();
+  const legacyCompletedVersions = new Set<string>();
   const depsJson = JSON.stringify({
     targets: { bundle: { 'bundle/1.0.0': { runtime: { 'lib/netstandard2.0/bundle.dll': {} } } } },
   });
@@ -657,11 +658,13 @@ describe('downloadExtensionBundle readiness model', () => {
     telemetry: { properties: {} as Record<string, string>, measurements: {} as Record<string, number> },
   });
 
-  const configureDisk = (versions: string[] = [], completed: string[] = versions): void => {
+  const configureDisk = (versions: string[] = [], completed: string[] = versions, legacyCompleted: string[] = []): void => {
     localVersions.clear();
     completedVersions.clear();
+    legacyCompletedVersions.clear();
     versions.forEach((version) => localVersions.add(version));
     completed.forEach((version) => completedVersions.add(version));
+    legacyCompleted.forEach((version) => legacyCompletedVersions.add(version));
 
     mockedFse.readdirSync.mockImplementation(((directoryPath: string) =>
       directoryPath === defaultExtensionBundlePathValue ? [...localVersions] : []) as any);
@@ -671,6 +674,9 @@ describe('downloadExtensionBundle readiness model', () => {
       if (normalized.endsWith(bundleInstallCompleteFile)) {
         return completedVersions.has(path.basename(path.dirname(normalized)));
       }
+      if (normalized.endsWith('.bundle-source-md5')) {
+        return legacyCompletedVersions.has(path.basename(path.dirname(normalized)));
+      }
       const version = [...localVersions].find(
         (candidate) =>
           normalized === path.join(defaultExtensionBundlePathValue, candidate) || normalized.includes(`${path.sep}${candidate}${path.sep}`)
@@ -679,10 +685,6 @@ describe('downloadExtensionBundle readiness model', () => {
     }) as any);
     mockedFse.readFile.mockImplementation((async (filePath: string) => {
       const normalized = String(filePath);
-      if (normalized.endsWith(bundleInstallCompleteFile)) {
-        const version = path.basename(path.dirname(normalized));
-        return JSON.stringify({ version: 1, bundleVersion: version }) as any;
-      }
       if (normalized.endsWith('function.deps.json')) {
         return depsJson as any;
       }
@@ -696,6 +698,9 @@ describe('downloadExtensionBundle readiness model', () => {
       const normalized = String(filePath);
       if (normalized.endsWith(bundleInstallCompleteFile)) {
         completedVersions.delete(path.basename(path.dirname(normalized)));
+      }
+      if (normalized.endsWith('.bundle-source-md5')) {
+        legacyCompletedVersions.delete(path.basename(path.dirname(normalized)));
       }
     }) as any);
     mockedFse.move.mockImplementation((async (_source: string, destination: string) => {
@@ -737,15 +742,33 @@ describe('downloadExtensionBundle readiness model', () => {
     expect(getLastBundleInstallResult()).toBe('ok');
   });
 
-  it('trusts a completed local bundle without post-install hashing or a feed lookup', async () => {
+  it('trusts a completed local bundle without reading marker or bundle contents', async () => {
     configureDisk(['1.2.0']);
     const dependencyState = await import('../../state/dependencies');
     vi.mocked(dependencyState.shouldCheckForDependencyUpdates).mockReturnValue(false);
+    mockedFse.readFile.mockRejectedValue(new Error('marker and bundle contents must not be read'));
 
     await expect(downloadExtensionBundle(createMockContext() as any)).resolves.toBe(false);
 
     expect(mockedGetJsonFeed).not.toHaveBeenCalled();
     expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+    expect(mockedFse.readFile).not.toHaveBeenCalled();
+  });
+
+  it('migrates a completed legacy bundle while offline without inspecting bundle contents', async () => {
+    configureDisk(['1.2.0'], [], ['1.2.0']);
+    mockedGetJsonFeed.mockRejectedValue(new Error('offline'));
+    mockedFse.readFile.mockRejectedValue(new Error('legacy marker and bundle contents must not be read'));
+
+    await expect(downloadExtensionBundle(createMockContext() as any)).resolves.toBe(false);
+    await awaitBackgroundBundleFeedRefresh();
+
+    expect(mockedGetJsonFeed).toHaveBeenCalledOnce();
+    expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+    expect(completedVersions.has('1.2.0')).toBe(true);
+    expect(legacyCompletedVersions.has('1.2.0')).toBe(false);
+    expect(mockedFse.outputFile).toHaveBeenCalledWith(expect.any(String), '', 'utf8');
+    expect(mockedFse.readFile).not.toHaveBeenCalled();
   });
 
   it('reinstalls a local version when its completion marker is missing', async () => {
@@ -756,26 +779,6 @@ describe('downloadExtensionBundle readiness model', () => {
 
     expect(mockedDownloadAndExtract).toHaveBeenCalledOnce();
     expect(completedVersions.has('1.2.0')).toBe(true);
-  });
-
-  it('reinstalls when required bundle content is missing', async () => {
-    configureDisk(['1.2.0']);
-    let downloadCompleted = false;
-    mockedFse.pathExists.mockImplementation((async (filePath: string) => {
-      if (String(filePath).endsWith(bundleInstallCompleteFile)) {
-        return true;
-      }
-      return downloadCompleted || !String(filePath).endsWith('bundle.dll');
-    }) as any);
-    mockedDownloadAndExtract.mockImplementationOnce(async () => {
-      downloadCompleted = true;
-      return { actualSize: 1, actualMd5: 'download-md5' };
-    });
-    mockedGetJsonFeed.mockResolvedValue(['1.2.0']);
-
-    await expect(downloadExtensionBundle(createMockContext() as any)).resolves.toBe(true);
-
-    expect(mockedDownloadAndExtract).toHaveBeenCalledOnce();
   });
 
   it('uses a completed environment-pinned bundle without consulting the feed', async () => {
@@ -792,7 +795,7 @@ describe('downloadExtensionBundle readiness model', () => {
     expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
   });
 
-  it('reports marker and required-content readiness', async () => {
+  it('reports marker presence readiness', async () => {
     configureDisk(['1.2.0']);
     await expect(assertExtensionBundleOnDiskHealthy()).resolves.toEqual({ ok: true, version: '1.2.0' });
 

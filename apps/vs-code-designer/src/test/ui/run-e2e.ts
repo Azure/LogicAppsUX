@@ -216,47 +216,6 @@ function findLatestExtensionBundle(): ExtensionBundleState | undefined {
   };
 }
 
-function hasRequiredBundleContent(bundleDir: string): boolean {
-  const binDir = path.join(bundleDir, 'bin');
-  const depsPath = path.join(binDir, 'function.deps.json');
-  if (!fs.existsSync(depsPath)) {
-    return false;
-  }
-
-  let parsedDeps: unknown;
-  try {
-    parsedDeps = JSON.parse(fs.readFileSync(depsPath, 'utf8'));
-  } catch {
-    return false;
-  }
-
-  const requiredRuntimeFiles = new Set<string>();
-  const targets = (parsedDeps as { targets?: unknown })?.targets;
-  if (typeof targets === 'object' && targets !== null) {
-    for (const target of Object.values(targets as Record<string, unknown>)) {
-      if (typeof target !== 'object' || target === null) {
-        continue;
-      }
-      for (const dependency of Object.values(target as Record<string, unknown>)) {
-        const runtime = (dependency as { runtime?: unknown })?.runtime;
-        if (typeof runtime !== 'object' || runtime === null) {
-          continue;
-        }
-        Object.keys(runtime as Record<string, unknown>).forEach((relativePath) => requiredRuntimeFiles.add(relativePath));
-      }
-    }
-  }
-
-  if (requiredRuntimeFiles.size === 0) {
-    return false;
-  }
-
-  return [...requiredRuntimeFiles].every((relativePath) => {
-    const candidates = [path.join(binDir, ...relativePath.split('/')), path.join(binDir, path.basename(relativePath))];
-    return candidates.some((candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isFile());
-  });
-}
-
 function verifyLogicAppsExtensionBundle(label: string): ExtensionBundleState {
   const state = findLatestExtensionBundle();
   if (!state) {
@@ -264,13 +223,6 @@ function verifyLogicAppsExtensionBundle(label: string): ExtensionBundleState {
   }
   if (!fs.existsSync(state.markerPath)) {
     throw new Error(`[${label}] Logic Apps extension bundle completion marker is missing: ${state.markerPath}`);
-  }
-  const marker = JSON.parse(fs.readFileSync(state.markerPath, 'utf8'));
-  if (marker?.version !== 1 || marker?.bundleVersion !== state.version) {
-    throw new Error(`[${label}] Logic Apps extension bundle completion marker is invalid: ${state.markerPath}`);
-  }
-  if (!hasRequiredBundleContent(state.bundleDir)) {
-    throw new Error(`[${label}] Logic Apps extension bundle is missing required runtime content: ${state.bundleDir}`);
   }
   console.log(`[${label}] Logic Apps extension bundle ready: version=${state.version}, marker=${state.markerPath}`);
   return state;
@@ -293,8 +245,7 @@ function pruneUnhealthyLogicAppsExtensionBundles(label: string): void {
     const bundleDir = path.join(EXTENSION_BUNDLE_ROOT, version);
     const markerPath = path.join(bundleDir, BUNDLE_INSTALL_MARKER_FILE);
     try {
-      const marker = fs.existsSync(markerPath) ? JSON.parse(fs.readFileSync(markerPath, 'utf8')) : undefined;
-      if (marker?.version !== 1 || marker?.bundleVersion !== version || !hasRequiredBundleContent(bundleDir)) {
+      if (!fs.existsSync(markerPath)) {
         console.log(`[${label}] Removing incomplete bundle ${version}`);
         fs.rmSync(bundleDir, { recursive: true, force: true });
       }
