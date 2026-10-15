@@ -63,7 +63,7 @@ const NoteNode = ({ id, dragging }: NodeProps) => {
   );
 
   return (
-    <>
+    <div className={styles.noteNode}>
       <Card
         className={mergeClasses(styles.noteCard, dragging && styles.draggingNote)}
         style={{
@@ -95,12 +95,12 @@ const NoteNode = ({ id, dragging }: NodeProps) => {
       </Card>
       {/* Note Action Buttons */}
       {!isReadOnly && (
-        <div className={styles.noteToolbar}>
+        <div className={mergeClasses(styles.noteToolbar, 'msla-note-toolbar')}>
           <ColorButton id={id} selectedColor={noteData?.color} />
           <Button icon={<DeleteIcon />} size="small" appearance="transparent" onClick={deleteCallback} />
         </div>
       )}
-    </>
+    </div>
   );
 };
 
