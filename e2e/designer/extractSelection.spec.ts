@@ -101,6 +101,9 @@ const openPreview = async (page: Page, names = ['Build_message', 'Build_result']
   }
   const dialog = page.getByRole('dialog', { name: 'Extract to new workflow' });
   await expect(dialog).toBeVisible();
+  const milestones = dialog.getByRole('list', { name: 'Extraction progress', exact: true });
+  await expect(milestones.getByRole('listitem')).toHaveCount(3);
+  await expect(milestones.getByText(/^(Not started|Pending|Not confirmed)$/)).toHaveCount(0);
   await expect
     .poll(() =>
       dialog.evaluate((element) => {
@@ -327,6 +330,12 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
     await expect(dialog.getByRole('table')).toHaveCount(2);
     expect(await dialog.evaluate((element) => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
     const narrowScreenshot = testInfo.outputPath('workflow-preview-dialog-narrow.png');
+    expect(
+      await dialog
+        .locator('.fui-MessageBar')
+        .first()
+        .evaluate((banner) => banner.scrollHeight <= banner.clientHeight)
+    ).toBe(true);
     await dialog.screenshot({ path: narrowScreenshot });
     await testInfo.attach('workflow-preview-dialog-narrow', { path: narrowScreenshot, contentType: 'image/png' });
     await expect(dialog.getByRole('button', { name: 'Confirm', exact: true })).toBeVisible();
@@ -347,13 +356,10 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
     await expect(openChild).toHaveAttribute('target', '_blank');
     await expect(openChild).toHaveAttribute('rel', 'noopener noreferrer');
     const checklist = dialog.getByRole('list', { name: 'Extraction progress', exact: true });
-    await expect(checklist).toHaveCSS('list-style-type', 'decimal');
-    await expect(checklist.getByRole('listitem')).toHaveText([
+    await expect(checklist.getByRole('listitem')).toContainText([
       'Prepare workflowsCompleted',
-      'Validate child workflowCompleted',
       'Create child workflowCompleted',
-      'Save source workflowCompleted',
-      'Apply source workflowCompleted',
+      'Update parent workflowCompleted',
     ]);
     const completedScreenshot = testInfo.outputPath('extraction-complete-dark.png');
     await dialog.screenshot({ path: completedScreenshot });
@@ -806,7 +812,7 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
     await expect(async () => expect(await readWorkflow(page)).toEqual(savedSource)).toPass({ timeout: 30_000 });
   });
 
-  test('keeps the original workflow when local persistence fails', async ({ page }) => {
+  test('keeps the original workflow when local persistence fails', async ({ page }, testInfo) => {
     const original = await readWorkflow(page);
     const dialog = await openPreview(page);
     await page.evaluate(() => {
@@ -819,9 +825,14 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
       };
     });
     await dialog.getByRole('button', { name: 'Confirm', exact: true }).click();
-    await expect(
-      dialog.getByText('Could not save local workflows (storage unavailable or full). Neither workflow was changed.')
-    ).toBeVisible();
+    const milestones = dialog.getByRole('list', { name: 'Extraction progress', exact: true }).getByRole('listitem');
+    const failure = 'Could not save local workflows (storage unavailable or full). Neither workflow was changed.';
+    await expect(milestones.nth(0)).toContainText('Completed');
+    await expect(milestones.nth(1)).toContainText(failure);
+    await expect(milestones.nth(2)).toContainText(failure);
+    const screenshot = testInfo.outputPath('extraction-error-dark.png');
+    await dialog.screenshot({ path: screenshot });
+    await testInfo.attach('extraction-error-dark', { path: screenshot, contentType: 'image/png' });
     expect(await readWorkflow(page)).toEqual(original);
     expect(await page.evaluate(() => localStorage.getItem('msla-standalone-workflow-extraction-v1'))).toBeNull();
     await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();

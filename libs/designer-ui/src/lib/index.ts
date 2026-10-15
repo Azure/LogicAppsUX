@@ -63,6 +63,7 @@ export * from './pager';
 export * from './panel';
 export * from './peek';
 export * from './picker/filepickerEditor';
+export * from './progressstepper';
 export * from './querybuilder';
 export * from './querybuilder/HybridQueryBuilder';
 export * from './querybuilder/SimpleQueryBuilder';

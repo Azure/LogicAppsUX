@@ -131,17 +131,47 @@ Protect persistence from observer exceptions using the host's sanitized operatio
 logging. Do not retain callbacks or share them across operations or retries.
 
 The designer owns isolated preparation/hydration and live source application.
-The numbered checklist retains completed steps, and reports unconfirmed checkpoints
-instead of inventing progress for older hosts. `child-created` and `source-saved`
+The reusable `ProgressStepper` from `@microsoft/designer-ui` presents three connected
+milestones: **Prepare workflows** (hydration and validation), **Create child workflow**
+(persistence and host readiness), and **Update parent workflow** (durable source save,
+live application, and required finalization). Unstarted milestones have no status
+message. In-progress, success, and error states are controlled by real checkpoints;
+errors show the host's contextual recovery message at the affected milestone.
+
+Completed milestones remain visible. Older hosts without notifications do not
+produce fictional intermediate progress; an overall completed transaction confirms
+all three milestones. `child-created` and `source-saved`
 alone do not establish child readiness; only explicit child completion or an overall
 `completed` result does. `source-saved` confirms durable source persistence but does
-not imply successful live application. Application completion waits for `onApplied`;
-cleanup errors still preserve the existing terminal/reload behavior.
+not imply successful live application. Parent-update success waits for `onApplied`
+and successful transaction finalization. Cleanup failures remain an error even
+after live application, preserving the existing terminal/reload behavior.
 
 `persistenceDescription` remains concise host-provided submission copy. A separate
 notice explains that a child can remain published after a source failure and Undo
 does not delete the child. The child navigation action opens a new tab without
 replacing the source editor.
+
+### ProgressStepper (Designer UI)
+
+`ProgressStepper` is a controlled, informational ordered list, not wizard navigation.
+Steps have stable IDs and labels, and accept an omitted status, `in-progress`,
+`success`, or `error`. Error steps require contextual error text. The component has
+no workflow, persistence, or timing logic; callers own state and announcements are
+derived from those controlled steps. It uses Fluent tokens and becomes vertical
+in narrow containers.
+
+```tsx
+import { ProgressStepper, type ProgressStepperStep } from '@microsoft/designer-ui';
+
+const steps: ProgressStepperStep[] = [
+  { id: 'prepare', label: 'Prepare workflows', status: 'success' },
+  { id: 'create', label: 'Create child workflow', status: 'error', error: 'Child readiness could not be confirmed.' },
+  { id: 'update', label: 'Update parent workflow' },
+];
+
+<ProgressStepper aria-label="Extraction progress" steps={steps} />;
+```
 
 ### Service Configuration
 
