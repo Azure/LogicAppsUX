@@ -104,6 +104,9 @@ const openPreview = async (page: Page, names = ['Build_message', 'Build_result']
   const milestones = dialog.getByRole('list', { name: 'Extraction progress', exact: true });
   await expect(milestones.getByRole('listitem')).toHaveCount(3);
   await expect(milestones.getByText(/^(Not started|Pending|Not confirmed)$/)).toHaveCount(0);
+  await expect(
+    dialog.getByText('The child can remain published if updating the source fails. Undo does not delete the child.', { exact: true })
+  ).toHaveCount(0);
   await expect
     .poll(() =>
       dialog.evaluate((element) => {
@@ -316,6 +319,21 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
     await expect(bindings).toHaveAttribute('aria-expanded', 'false');
     await bindings.click();
     await expect(dialog.getByRole('table')).toHaveCount(2);
+    expect(
+      await dialog.evaluate((element) => {
+        const list = element.querySelector('ol');
+        return (
+          !!list &&
+          [...element.querySelectorAll('table')].every((table) => table.compareDocumentPosition(list) & Node.DOCUMENT_POSITION_FOLLOWING)
+        );
+      })
+    ).toBe(true);
+    await dialog.getByRole('table').last().scrollIntoViewIfNeeded();
+    await expect(dialog.getByRole('list', { name: 'Extraction progress', exact: true })).toBeInViewport();
+    await expect(dialog.getByRole('button', { name: 'Confirm', exact: true })).toBeInViewport();
+    const expandedScreenshot = testInfo.outputPath('extraction-bindings-footer-dark.png');
+    await dialog.screenshot({ path: expandedScreenshot });
+    await testInfo.attach('extraction-bindings-footer-dark', { path: expandedScreenshot, contentType: 'image/png' });
     await bindings.click();
     await expect(dialog.getByRole('table')).toHaveCount(0);
 
@@ -328,6 +346,8 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
     expect(narrowName.y + narrowName.height).toBeLessThan(narrowPreview.y);
     await bindings.click();
     await expect(dialog.getByRole('table')).toHaveCount(2);
+    await dialog.getByRole('table').last().scrollIntoViewIfNeeded();
+    await expect(dialog.getByRole('list', { name: 'Extraction progress', exact: true })).toBeInViewport();
     expect(await dialog.evaluate((element) => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
     const narrowScreenshot = testInfo.outputPath('workflow-preview-dialog-narrow.png');
     expect(

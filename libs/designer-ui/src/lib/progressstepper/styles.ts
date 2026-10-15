@@ -48,11 +48,12 @@ export const useProgressStepperStyles = makeStyles({
     [horizontalLayout]: {
       minWidth: 0,
       flexDirection: 'column',
+      alignItems: 'center',
       rowGap: tokens.spacingVerticalS,
       paddingBottom: 0,
       ':not(:last-child)::after': {
-        insetInlineStart: `calc(${indicatorSize} + ${tokens.spacingHorizontalS})`,
-        insetInlineEnd: `calc(-1 * ${tokens.spacingHorizontalS})`,
+        insetInlineStart: `calc(50% + ${indicatorSize} / 2 + ${tokens.spacingHorizontalS})`,
+        insetInlineEnd: `calc(-50% - ${tokens.spacingHorizontalL} + ${indicatorSize} / 2 + ${tokens.spacingHorizontalS})`,
         top: `calc(${indicatorSize} / 2 - ${tokens.strokeWidthThin} / 2)`,
         bottom: 'auto',
         borderInlineStartWidth: 0,
@@ -101,12 +102,20 @@ export const useProgressStepperStyles = makeStyles({
     minWidth: 0,
     width: '100%',
     overflowWrap: 'anywhere',
+    textAlign: 'start',
+    [horizontalLayout]: {
+      textAlign: 'center',
+    },
   },
   label: {
     display: 'flex',
     alignItems: 'center',
     minHeight: indicatorSize,
     color: tokens.colorNeutralForeground1,
+    [horizontalLayout]: {
+      justifyContent: 'center',
+      textAlign: 'center',
+    },
   },
   details: {
     display: 'flex',
@@ -118,8 +127,14 @@ export const useProgressStepperStyles = makeStyles({
   },
   status: {
     color: tokens.colorNeutralForeground2,
+    [horizontalLayout]: {
+      textAlign: 'center',
+    },
   },
   errorMessage: {
     color: tokens.colorStatusDangerForeground1,
+    [horizontalLayout]: {
+      textAlign: 'center',
+    },
   },
 });

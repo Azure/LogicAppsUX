@@ -697,7 +697,21 @@ describe('WorkflowExtractionDialog', () => {
     expect(mockCommitWorkflowExtraction).toHaveBeenCalledTimes(2);
   });
 
-  it('shows three neutral noninteractive milestones before submission', async () => {
+  it('places three neutral noninteractive milestones after all bindings and before confirmation without a generic warning', async () => {
+    mockBuildWorkflowExtractionPlan.mockReturnValue({
+      ...basePlan,
+      inputs: [
+        { expression: "@actions('Before')", name: 'input', rewrittenExpression: "@triggerBody()?['input']", schema: { type: 'string' } },
+      ],
+      outputs: [
+        {
+          expression: "@body('ActionB')",
+          name: 'output',
+          rewrittenExpression: "@body('Invoke_child')?['output']",
+          schema: { type: 'string' },
+        },
+      ],
+    });
     await renderPreparedDialog();
     const list = screen.getByRole('list', { name: 'Extraction progress' });
     const items = within(list).getAllByRole('listitem');
@@ -709,6 +723,13 @@ describe('WorkflowExtractionDialog', () => {
     expect(within(list).queryByText(/Pending|Not started|In progress|Completed|Failed/)).not.toBeInTheDocument();
     expect(within(list).queryByRole('button')).not.toBeInTheDocument();
     expect(within(list).queryByRole('link')).not.toBeInTheDocument();
+    for (const table of screen.getAllByRole('table')) {
+      expect(table.compareDocumentPosition(list) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    }
+    expect(list.compareDocumentPosition(screen.getByRole('button', { name: 'Confirm' })) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(
+      screen.queryByText('The child can remain published if updating the source fails. Undo does not delete the child.')
+    ).not.toBeInTheDocument();
   });
 
   it('keeps parent update active through finalization and shows a cleanup failure locally rather than success', async () => {

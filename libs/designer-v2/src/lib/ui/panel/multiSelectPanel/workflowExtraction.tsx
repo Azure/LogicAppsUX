@@ -118,6 +118,18 @@ const useStyles = makeStyles({
     '& th, & td': { padding: tokens.spacingVerticalXS, borderBottom: `1px solid ${tokens.colorNeutralStroke2}`, overflowWrap: 'anywhere' },
   },
   childAction: { alignSelf: 'flex-start' },
+  footer: {
+    gridColumn: '1 / -1',
+    gridRow: '3',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: tokens.spacingVerticalM,
+    minWidth: 0,
+  },
+  actions: {
+    alignSelf: 'flex-end',
+    '@media (max-width: 480px)': { alignSelf: 'stretch' },
+  },
 });
 
 const ExtractionStepper = ({ progress }: { progress: ExtractionProgress }) => {
@@ -410,13 +422,6 @@ export const WorkflowExtractionDialog = () => {
             <MessageBar intent="info" layout="multiline">
               <MessageBarBody>{service.persistenceDescription}</MessageBarBody>
             </MessageBar>
-            <Text>
-              {intl.formatMessage({
-                id: '5shKlY',
-                defaultMessage: 'The child can remain published if updating the source fails. Undo does not delete the child.',
-                description: 'Extraction partial persistence and undo safety notice, separate from the host submission description',
-              })}
-            </Text>
             {complete ? (
               <MessageBar intent="success" layout="multiline">
                 <MessageBarBody>
@@ -449,7 +454,6 @@ export const WorkflowExtractionDialog = () => {
                 />
               </Field>
             )}
-            <ExtractionStepper progress={progress ?? initialExtractionProgress()} />
             <div className={styles.preview} data-automation-id="extraction-workflow-preview">
               <div className={styles.previewFrame} data-automation-id="extraction-workflow-preview-frame">
                 <Text weight="semibold" size={400} className={styles.previewTitle}>
@@ -541,40 +545,43 @@ export const WorkflowExtractionDialog = () => {
               </Button>
             ) : null}
           </DialogContent>
-          <DialogActions>
-            {terminal ? (
-              <Button appearance="primary" onClick={close}>
-                {intl.formatMessage({ id: 'jLPSdk', defaultMessage: 'Close', description: 'Close extraction dialog' })}
-              </Button>
-            ) : (
-              <>
-                <Button
-                  appearance="primary"
-                  onClick={confirm}
-                  disabled={busy || loading || !preview.plan || (!!nameError && !request.current)}
-                >
-                  {result
-                    ? intl.formatMessage({
-                        id: 'o3W99k',
-                        defaultMessage: 'Retry source update',
-                        description: 'Retry partially completed extraction',
-                      })
-                    : intl.formatMessage({
-                        id: 'qEm9sp',
-                        defaultMessage: 'Confirm',
-                        description: 'Confirm workflow extraction',
-                      })}
+          <div className={styles.footer}>
+            <ExtractionStepper progress={progress ?? initialExtractionProgress()} />
+            <DialogActions className={styles.actions}>
+              {terminal ? (
+                <Button appearance="primary" onClick={close}>
+                  {intl.formatMessage({ id: 'jLPSdk', defaultMessage: 'Close', description: 'Close extraction dialog' })}
                 </Button>
-                <Button onClick={close} disabled={busy}>
-                  {intl.formatMessage({
-                    id: 'n2PLrh',
-                    defaultMessage: 'Cancel',
-                    description: 'Cancel workflow extraction',
-                  })}
-                </Button>
-              </>
-            )}
-          </DialogActions>
+              ) : (
+                <>
+                  <Button
+                    appearance="primary"
+                    onClick={confirm}
+                    disabled={busy || loading || !preview.plan || (!!nameError && !request.current)}
+                  >
+                    {result
+                      ? intl.formatMessage({
+                          id: 'o3W99k',
+                          defaultMessage: 'Retry source update',
+                          description: 'Retry partially completed extraction',
+                        })
+                      : intl.formatMessage({
+                          id: 'qEm9sp',
+                          defaultMessage: 'Confirm',
+                          description: 'Confirm workflow extraction',
+                        })}
+                  </Button>
+                  <Button onClick={close} disabled={busy}>
+                    {intl.formatMessage({
+                      id: 'n2PLrh',
+                      defaultMessage: 'Cancel',
+                      description: 'Cancel workflow extraction',
+                    })}
+                  </Button>
+                </>
+              )}
+            </DialogActions>
+          </div>
         </DialogBody>
       </DialogSurface>
     </Dialog>

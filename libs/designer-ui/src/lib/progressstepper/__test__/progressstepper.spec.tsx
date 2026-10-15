@@ -153,6 +153,31 @@ describe('ProgressStepper', () => {
     expect(within(items[4]).getByText(error)).toBeVisible();
   });
 
+  it('centers each horizontal indicator and its content without centering the narrow vertical layout', () => {
+    render(<ProgressStepper steps={steps} aria-label="Progress" />, { wrapper: Providers });
+    const step = screen.getByRole('listitem', { name: 'Validate workflow' });
+    const label = document.getElementById(step.getAttribute('aria-labelledby')!)!;
+    const content = label.parentElement!;
+    const rules = Array.from(document.styleSheets).flatMap((sheet) => Array.from(sheet.cssRules));
+    const horizontalRules = rules
+      .filter((rule) => rule.cssText.startsWith('@container progress-stepper'))
+      .flatMap((rule) => Array.from((rule as CSSGroupingRule).cssRules))
+      .filter((rule): rule is CSSStyleRule => 'selectorText' in rule);
+    const propertyValues = (element: Element, property: string) =>
+      horizontalRules.filter((rule) => element.matches(rule.selectorText)).map((rule) => rule.style.getPropertyValue(property));
+
+    expect(propertyValues(step, 'align-items')).toContain('center');
+    expect(propertyValues(label, 'justify-content')).toContain('center');
+    expect(propertyValues(label, 'text-align')).toContain('center');
+    expect(propertyValues(content, 'text-align')).toContain('center');
+    expect(propertyValues(screen.getByText('Completed'), 'text-align')).toContain('center');
+    expect(propertyValues(screen.getByText('The workflow could not be saved. Try again.'), 'text-align')).toContain('center');
+    const baseContentRules = rules.filter(
+      (rule): rule is CSSStyleRule => 'selectorText' in rule && content.matches((rule as CSSStyleRule).selectorText)
+    );
+    expect(baseContentRules.map((rule) => rule.style.getPropertyValue('text-align'))).toContain('start');
+  });
+
   it('localizes status text through the real IntlProvider without changing supplied labels and errors', () => {
     render(
       <FluentProvider theme={webDarkTheme}>

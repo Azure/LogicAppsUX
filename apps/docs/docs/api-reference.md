@@ -147,10 +147,11 @@ not imply successful live application. Parent-update success waits for `onApplie
 and successful transaction finalization. Cleanup failures remain an error even
 after live application, preserving the existing terminal/reload behavior.
 
-`persistenceDescription` remains concise host-provided submission copy. A separate
-notice explains that a child can remain published after a source failure and Undo
-does not delete the child. The child navigation action opens a new tab without
-replacing the source editor.
+`persistenceDescription` remains concise host-provided submission copy. Contextual
+partial-result and error messages retain host-specific recovery instructions.
+The progress footer follows the complete input/output bindings accordion and
+precedes the action buttons, staying visible while the preview/bindings scroll.
+The child navigation action opens a new tab without replacing the source editor.
 
 ### ProgressStepper (Designer UI)
 
