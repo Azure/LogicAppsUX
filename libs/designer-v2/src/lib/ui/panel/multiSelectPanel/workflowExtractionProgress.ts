@@ -9,22 +9,24 @@ type PhaseStatus = 'pending' | WorkflowExtractionExecutionProgress['status'];
 
 export interface ExtractionProgress {
   phases: Record<ExtractionPhase, PhaseStatus>;
+  attemptPhases: Record<ExtractionPhase, PhaseStatus>;
   activePhase: ExtractionPhase;
-  childReadyThisAttempt: boolean;
   errors: Partial<Record<ExtractionStep, string>>;
   settled: boolean;
 }
 
+const pendingPhases = (): Record<ExtractionPhase, PhaseStatus> => ({
+  preparing: 'pending',
+  'validating-child': 'pending',
+  'creating-child': 'pending',
+  'saving-source': 'pending',
+  'applying-source': 'pending',
+});
+
 export const initialExtractionProgress = (): ExtractionProgress => ({
-  phases: {
-    preparing: 'pending',
-    'validating-child': 'pending',
-    'creating-child': 'pending',
-    'saving-source': 'pending',
-    'applying-source': 'pending',
-  },
+  phases: pendingPhases(),
+  attemptPhases: pendingPhases(),
   activePhase: 'preparing',
-  childReadyThisAttempt: false,
   errors: {},
   settled: false,
 });
@@ -32,10 +34,11 @@ export const initialExtractionProgress = (): ExtractionProgress => ({
 export const startExtractionAttempt = (previous?: ExtractionProgress): ExtractionProgress => ({
   ...initialExtractionProgress(),
   phases: {
-    ...initialExtractionProgress().phases,
+    ...pendingPhases(),
     ...Object.fromEntries(Object.entries(previous?.phases ?? {}).filter(([, status]) => status === 'completed')),
     preparing: 'in-progress',
   },
+  attemptPhases: { ...pendingPhases(), preparing: 'in-progress' },
 });
 
 export const reportExtractionProgress = (
@@ -44,8 +47,8 @@ export const reportExtractionProgress = (
 ): ExtractionProgress => ({
   ...previous,
   phases: { ...previous.phases, [progress.step]: progress.status },
+  attemptPhases: { ...previous.attemptPhases, [progress.step]: progress.status },
   activePhase: progress.step,
-  childReadyThisAttempt: progress.step === 'creating-child' ? progress.status === 'completed' : previous.childReadyThisAttempt,
 });
 
 export const settleExtractionProgress = (
@@ -53,12 +56,18 @@ export const settleExtractionProgress = (
   result?: WorkflowExtractionResult,
   failure?: string
 ): ExtractionProgress => {
-  const next = { ...previous, phases: { ...previous.phases }, errors: { ...previous.errors }, settled: true };
+  const next = {
+    ...previous,
+    phases: { ...previous.phases },
+    attemptPhases: { ...previous.attemptPhases },
+    errors: { ...previous.errors },
+    settled: true,
+  };
   if (result?.status === 'completed') {
     next.errors = {};
-    next.childReadyThisAttempt = true;
     for (const phase of Object.keys(next.phases) as ExtractionPhase[]) {
       next.phases[phase] = 'completed';
+      next.attemptPhases[phase] = 'completed';
     }
     return next;
   }
@@ -66,25 +75,31 @@ export const settleExtractionProgress = (
   if (!message) {
     throw new Error('An unsuccessful extraction must include its contextual failure message.');
   }
+  const childReadyThisAttempt = previous.attemptPhases['creating-child'] === 'completed';
   if (result) {
     next.phases.preparing = 'completed';
-    if (!next.childReadyThisAttempt) {
-      next.errors['creating-child'] = message;
-    }
+    next.attemptPhases.preparing = 'completed';
     if (result.status === 'source-saved') {
       next.phases['saving-source'] = 'completed';
+      next.attemptPhases['saving-source'] = 'completed';
       // Durable persistence is not successful local application or finalization.
       next.errors['updating-parent'] = message;
     }
   }
+  if (
+    !childReadyThisAttempt &&
+    (result || (previous.attemptPhases.preparing === 'completed' && previous.phases['creating-child'] !== 'pending'))
+  ) {
+    next.errors['creating-child'] = message;
+  }
   const validationConfirmed =
-    previous.phases['validating-child'] === 'completed' ||
-    previous.phases['creating-child'] !== 'pending' ||
-    previous.phases['saving-source'] !== 'pending' ||
-    previous.phases['applying-source'] !== 'pending';
-  if (next.phases.preparing !== 'completed' || next.phases['validating-child'] === 'in-progress' || !validationConfirmed) {
+    previous.attemptPhases['validating-child'] === 'completed' ||
+    previous.attemptPhases['creating-child'] !== 'pending' ||
+    previous.attemptPhases['saving-source'] !== 'pending' ||
+    previous.attemptPhases['applying-source'] !== 'pending';
+  if (next.attemptPhases.preparing !== 'completed' || next.attemptPhases['validating-child'] === 'in-progress' || !validationConfirmed) {
     next.errors.preparing = message;
-  } else if (next.childReadyThisAttempt) {
+  } else if (childReadyThisAttempt) {
     next.errors['updating-parent'] = message;
   } else {
     next.errors['creating-child'] = message;
@@ -100,18 +115,18 @@ export const getExtractionStep = (progress: ExtractionProgress, id: ExtractionSt
   if (error) {
     return { id, label, status: 'error', error };
   }
-  const { phases } = progress;
+  const { phases, attemptPhases } = progress;
   if (id === 'preparing') {
-    const preparing = phases.preparing === 'in-progress' || phases['validating-child'] === 'in-progress';
+    const preparing = attemptPhases.preparing === 'in-progress' || attemptPhases['validating-child'] === 'in-progress';
     if (preparing && !progress.settled) {
       return { id, label, status: 'in-progress' };
     }
-    if (phases.preparing === 'completed') {
-      const hostAdvanced = phases['creating-child'] !== 'pending' || phases['saving-source'] !== 'pending';
+    if (attemptPhases.preparing === 'completed') {
+      const hostAdvanced = attemptPhases['creating-child'] !== 'pending' || attemptPhases['saving-source'] !== 'pending';
       return {
         id,
         label,
-        status: progress.settled || phases['validating-child'] === 'completed' || hostAdvanced ? 'success' : 'in-progress',
+        status: progress.settled || attemptPhases['validating-child'] === 'completed' || hostAdvanced ? 'success' : 'in-progress',
       };
     }
   } else if (id === 'creating-child') {
@@ -121,9 +136,9 @@ export const getExtractionStep = (progress: ExtractionProgress, id: ExtractionSt
     if (phases['creating-child'] === 'in-progress' && !progress.settled) {
       return { id, label, status: 'in-progress' };
     }
-  } else if (phases['applying-source'] === 'completed' && progress.settled) {
+  } else if (attemptPhases['applying-source'] === 'completed' && progress.settled) {
     return { id, label, status: 'success' };
-  } else if ((phases['saving-source'] !== 'pending' || phases['applying-source'] !== 'pending') && !progress.settled) {
+  } else if ((attemptPhases['saving-source'] !== 'pending' || attemptPhases['applying-source'] !== 'pending') && !progress.settled) {
     return { id, label, status: 'in-progress' };
   }
   return { id, label };

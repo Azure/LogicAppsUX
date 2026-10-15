@@ -697,6 +697,21 @@ describe('WorkflowExtractionDialog', () => {
     expect(mockCommitWorkflowExtraction).toHaveBeenCalledTimes(2);
   });
 
+  it('keeps long unconfirmed saved-source recovery in a focusable progress region with Close outside it', async () => {
+    const user = userEvent.setup();
+    const message = 'Both workflows were saved; child readiness is unknown. Reload and review before editing. '.repeat(30);
+    mockCommitWorkflowExtraction.mockResolvedValue({ status: 'source-saved', child: completedResult.child, message });
+    await renderPreparedDialog();
+    await user.click(screen.getByRole('button', { name: 'Confirm' }));
+    const region = screen.getByRole('region', { name: 'Extraction progress details' });
+    expect(region).toHaveAttribute('tabindex', '0');
+    await waitFor(() => expect(within(region).getAllByText(message.trim())).toHaveLength(3));
+    const close = screen.getByRole('button', { name: 'Close' });
+    expect(within(region).queryByRole('button')).not.toBeInTheDocument();
+    expect(region.compareDocumentPosition(close) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(close).toBeEnabled();
+  });
+
   it('places three neutral noninteractive milestones after all bindings and before confirmation without a generic warning', async () => {
     mockBuildWorkflowExtractionPlan.mockReturnValue({
       ...basePlan,

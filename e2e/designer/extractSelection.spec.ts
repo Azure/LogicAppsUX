@@ -832,6 +832,59 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
     await expect(async () => expect(await readWorkflow(page)).toEqual(savedSource)).toPass({ timeout: 30_000 });
   });
 
+  test('keeps long saved-source recovery details and Close reachable in narrow short viewports', async ({ page }, testInfo) => {
+    const dialog = await openPreview(page);
+    const details = 'Keep the durable child and parent workflows, review their bindings, and reload before editing. '.repeat(40);
+    await page.evaluate((message) => {
+      const store = (
+        window as Window & {
+          DesignerStoreV2: { dispatch(action: unknown): unknown };
+        }
+      ).DesignerStoreV2;
+      const dispatch = store.dispatch;
+      store.dispatch = (action) => {
+        if (
+          typeof action === 'object' &&
+          action !== null &&
+          'type' in action &&
+          action.type === 'workflow/setIsWorkflowDirty' &&
+          'meta' in action &&
+          typeof action.meta === 'object' &&
+          action.meta !== null &&
+          'workflowExtraction' in action.meta &&
+          action.meta.workflowExtraction
+        ) {
+          store.dispatch = dispatch;
+          throw new Error(message);
+        }
+        return dispatch(action);
+      };
+    }, details);
+    await dialog.getByRole('button', { name: 'Confirm', exact: true }).click();
+    const progress = dialog.getByRole('region', { name: 'Extraction progress details', exact: true });
+    const parent = progress.getByRole('listitem').nth(2);
+    await expect(parent).toContainText('Reload the source before editing.');
+    await expect(parent).toContainText(details);
+    for (const height of [520, 320]) {
+      await page.setViewportSize({ width: 500, height });
+      await progress.scrollIntoViewIfNeeded();
+      expect(await progress.evaluate((area) => area.clientHeight > 0 && area.scrollHeight > area.clientHeight)).toBe(true);
+      await progress.focus();
+      await progress.press('End');
+      await expect.poll(() => progress.evaluate((area) => area.scrollTop)).toBeGreaterThan(0);
+      const close = dialog.getByRole('button', { name: 'Close', exact: true });
+      await close.scrollIntoViewIfNeeded();
+      await expect(close).toBeInViewport();
+      await close.focus();
+      await expect(close).toBeFocused();
+    }
+    const screenshot = testInfo.outputPath('extraction-long-recovery-short-dark.png');
+    await dialog.screenshot({ path: screenshot });
+    await testInfo.attach('extraction-long-recovery-short-dark', { path: screenshot, contentType: 'image/png' });
+    await dialog.getByRole('button', { name: 'Close', exact: true }).click();
+    await expect(dialog).not.toBeVisible();
+  });
+
   test('keeps the original workflow when local persistence fails', async ({ page }, testInfo) => {
     const original = await readWorkflow(page);
     const dialog = await openPreview(page);

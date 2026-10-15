@@ -93,19 +93,41 @@ describe('ProgressStepper', () => {
     expect(updated).toBe(original);
     expect(updated).toHaveAttribute('aria-labelledby', labelId);
     expect(updated.querySelector('[aria-live]')).toBe(liveRegion);
+    expect(liveRegion).toContainElement(document.getElementById(labelId));
+    expect(liveRegion).toHaveTextContent('Create resourcesErrorResource quota exceeded.');
     expect(document.getElementById(labelId)).toHaveTextContent('Create resources');
     expect(updated).not.toHaveAttribute('aria-current');
     expect(updated).toHaveAccessibleDescription('Error Resource quota exceeded.');
 
     rerender(<ProgressStepper steps={[{ id: 'create workspace', label: 'Create resources', status: 'success' }]} aria-label="Progress" />);
     expect(updated).toHaveAccessibleDescription('Completed');
+    expect(liveRegion).toHaveTextContent('Create resourcesCompleted');
     expect(screen.queryByText('Resource quota exceeded.')).not.toBeInTheDocument();
 
     rerender(<ProgressStepper steps={[{ id: 'create workspace', label: 'Create resources' }]} aria-label="Progress" />);
     expect(updated).not.toHaveAttribute('aria-describedby');
-    expect(updated.querySelector('[aria-live]')).toBeEmptyDOMElement();
+    expect(updated.querySelector('[aria-live]')).toBe(liveRegion);
+    expect(liveRegion?.textContent).toBe('Create resources');
+    expect(liveRegion?.querySelector('[id$="-status"], [id$="-error"]')).toBeNull();
     expect(within(updated).getByText('1')).toBeVisible();
     expect(screen.queryByText(/completed|in progress|error/i)).not.toBeInTheDocument();
+  });
+
+  it('keeps milestone context inside one polite atomic region when a neutral milestone starts', () => {
+    const { rerender } = render(<ProgressStepper steps={[{ id: 'create', label: 'Create resources' }]} aria-label="Progress" />, {
+      wrapper: Providers,
+    });
+    const item = screen.getByRole('listitem', { name: 'Create resources' });
+    const liveRegion = item.querySelector('[aria-live="polite"][aria-atomic="true"]');
+    expect(liveRegion?.textContent).toBe('Create resources');
+
+    rerender(<ProgressStepper steps={[{ id: 'create', label: 'Create resources', status: 'in-progress' }]} aria-label="Progress" />);
+
+    expect(item.querySelectorAll('[aria-live]')).toHaveLength(1);
+    expect(item.querySelector('[aria-live]')).toBe(liveRegion);
+    expect(liveRegion).toContainElement(screen.getByText('Create resources'));
+    expect(liveRegion).toContainElement(screen.getByText('In progress'));
+    expect(liveRegion).toHaveTextContent('Create resourcesIn progress');
   });
 
   it('does not collide IDs between instances with the same step IDs', () => {

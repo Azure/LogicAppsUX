@@ -93,11 +93,11 @@ export const ProgressStepper = ({ steps, 'aria-label': ariaLabel, className }: P
                   <Text size={200}>{index + 1}</Text>
                 )}
               </span>
-              <div className={styles.content}>
+              <div className={styles.content} aria-live="polite" aria-atomic="true">
                 <Text id={labelId} size={300} weight="semibold" className={styles.label}>
                   {step.label}
                 </Text>
-                <div className={styles.details} aria-live="polite" aria-atomic="true">
+                <div className={styles.details}>
                   {step.status && (
                     <Text id={statusId} size={200} className={styles.status}>
                       {statusLabels[step.status]}

@@ -57,8 +57,17 @@ import {
 } from './workflowExtractionProgress';
 
 const useStyles = makeStyles({
-  surface: { width: '720px', maxWidth: 'calc(100vw - 32px)', padding: tokens.spacingHorizontalL, overflow: 'hidden' },
-  body: { maxHeight: 'calc(100vh - 80px)' },
+  surface: {
+    width: '720px',
+    maxWidth: 'calc(100vw - 32px)',
+    padding: tokens.spacingHorizontalL,
+    overflowX: 'hidden',
+    overflowY: 'auto',
+  },
+  body: {
+    maxHeight: 'calc(100vh - 80px)',
+    '@media (max-height: 480px)': { maxHeight: 'none' },
+  },
   content: {
     display: 'flex',
     flexDirection: 'column',
@@ -126,8 +135,14 @@ const useStyles = makeStyles({
     gap: tokens.spacingVerticalM,
     minWidth: 0,
   },
+  progressArea: {
+    maxHeight: '40vh',
+    minHeight: 0,
+    overflowY: 'auto',
+  },
   actions: {
     alignSelf: 'flex-end',
+    flexShrink: 0,
     '@media (max-width: 480px)': { alignSelf: 'stretch' },
   },
 });
@@ -546,7 +561,18 @@ export const WorkflowExtractionDialog = () => {
             ) : null}
           </DialogContent>
           <div className={styles.footer}>
-            <ExtractionStepper progress={progress ?? initialExtractionProgress()} />
+            <div
+              className={styles.progressArea}
+              role="region"
+              tabIndex={0}
+              aria-label={intl.formatMessage({
+                id: '5N/tfe',
+                defaultMessage: 'Extraction progress details',
+                description: 'Keyboard-scrollable extraction milestones and contextual recovery details',
+              })}
+            >
+              <ExtractionStepper progress={progress ?? initialExtractionProgress()} />
+            </div>
             <DialogActions className={styles.actions}>
               {terminal ? (
                 <Button appearance="primary" onClick={close}>

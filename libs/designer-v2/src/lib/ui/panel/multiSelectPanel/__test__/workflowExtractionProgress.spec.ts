@@ -117,4 +117,18 @@ describe('three extraction milestones', () => {
     expect(failed.phases['saving-source']).toBe('completed');
     expect(steps(failed)[0]).toMatchObject({ error: 'Retry validation failed.' });
   });
+
+  it.each([false, true])('separates retained success from retry validation evidence when validation starts = %s', (reportsValidation) => {
+    const previous = settleExtractionProgress(readyChild(), { status: 'child-created', child, message: 'Parent conflict.' });
+    let retry = reportExtractionProgress(startExtractionAttempt(previous), { step: 'preparing', status: 'completed' });
+    expect(statuses(retry)).toEqual(['in-progress', 'success', undefined]);
+    expect(retry.attemptPhases['validating-child']).toBe('pending');
+    if (reportsValidation) {
+      retry = reportExtractionProgress(retry, { step: 'validating-child', status: 'in-progress' });
+    }
+    const failed = settleExtractionProgress(retry, undefined, 'Child revalidation failed; reload.');
+    expect(statuses(failed)).toEqual(['error', 'error', undefined]);
+    expect(steps(failed)[0]).toMatchObject({ error: 'Child revalidation failed; reload.' });
+    expect(steps(failed)[1]).toMatchObject({ error: 'Child revalidation failed; reload.' });
+  });
 });

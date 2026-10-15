@@ -151,6 +151,8 @@ after live application, preserving the existing terminal/reload behavior.
 partial-result and error messages retain host-specific recovery instructions.
 The progress footer follows the complete input/output bindings accordion and
 precedes the action buttons, staying visible while the preview/bindings scroll.
+Long recovery details have a bounded keyboard-scrollable progress region, separate
+from the actions; short viewports allow whole-dialog scrolling so Close remains reachable.
 The child navigation action opens a new tab without replacing the source editor.
 
 ### ProgressStepper (Designer UI)
