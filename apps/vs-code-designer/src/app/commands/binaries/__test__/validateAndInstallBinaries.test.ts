@@ -181,11 +181,11 @@ describe('validateAndInstallBinaries', () => {
       }),
       '8.0.100'
     );
-    expect(installLSPSDK).toHaveBeenCalled();
+    expect(installLSPSDK).toHaveBeenCalledWith();
     expect(setNodeJsCommand).toHaveBeenCalled();
     expect(setFunctionsCommand).toHaveBeenCalled();
     expect(setDotNetCommand).toHaveBeenCalledTimes(2);
-    expect(ensureExtensionBundleHealthy).toHaveBeenCalledWith(context, { requireInstalled: false, forceRecheck: true });
+    expect(ensureExtensionBundleHealthy).toHaveBeenCalledWith(context, { requireInstalled: false });
     expect(recordDependencyUpdateCheck).toHaveBeenCalledOnce();
     expect(progress.report).toHaveBeenCalledWith({ increment: 20, message: 'NodeJS' });
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
@@ -212,11 +212,11 @@ describe('validateAndInstallBinaries', () => {
 
   it('requires an installed bundle and rethrows dependency validation errors in strict E2E mode', async () => {
     (shouldRequireStrictDependencyValidation as Mock).mockReturnValue(true);
-    (ensureExtensionBundleHealthy as Mock).mockRejectedValueOnce(new Error('Bundle sidecar missing'));
+    (ensureExtensionBundleHealthy as Mock).mockRejectedValueOnce(new Error('Bundle installation marker missing'));
 
-    await expect(validateAndInstallBinaries(context)).rejects.toThrow('Bundle sidecar missing');
+    await expect(validateAndInstallBinaries(context)).rejects.toThrow('Bundle installation marker missing');
 
-    expect(ensureExtensionBundleHealthy).toHaveBeenCalledWith(context, { requireInstalled: true, forceRecheck: true });
+    expect(ensureExtensionBundleHealthy).toHaveBeenCalledWith(context, { requireInstalled: true });
     expect(context.telemetry.properties).toMatchObject({
       lastStep: 'ensureExtensionBundleHealthy',
     });

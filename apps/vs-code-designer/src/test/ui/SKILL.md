@@ -72,7 +72,6 @@ Current manifest-backed scenarios:
 | `p48e-conversionsubfolder` | Standard Stateful app directory (`use: 'appDir'`) |
 | `p49-descriptionpersistence` | Standard Stateful `.code-workspace` |
 | `p49-nugetdebugconversion` | Standard Stateful manifest entry, but no startup resource (`use: 'none'`) because the test clones and opens its own workspace |
-| `p412-bundlerepair` | Standard Stateful `.code-workspace` |
 
 No Phase 4.1 fixture manifest required: `p40-nonlogicapp`, `p41a-fixtures`, `p41b-createworkspace-behavior`, `p48b-conversioncreate`, and standalone `p48d-conversionyes`. The grouped `conversiononly` mode still needs the manifest because its p48a/p48c/p48e phases and workspace-dir resource selection are manifest-backed.
 
@@ -182,7 +181,7 @@ You can also use the root VS Code Run and Debug menu:
 
 - `E2E: p49 NuGet debug conversion` runs `E2E_MODE=nugetdebugonly`.
 - `E2E: Select mode (run-e2e)` opens a picker for supported `E2E_MODE` values.
-- Manifest-backed Debug menu modes (`designeronly`, `newtestsonly`, `conversiononly`, `nugetdebugonly`, `bundlerepaironly`, and selected `LA_E2E_SCENARIO` runs) detect a missing/stale Phase 4.1 fixture manifest and run `p41a-fixtures` automatically before the focused scenario.
+- Manifest-backed Debug menu modes (`designeronly`, `newtestsonly`, `conversiononly`, `nugetdebugonly`, and selected `LA_E2E_SCENARIO` runs) detect a missing/stale Phase 4.1 fixture manifest and run `p41a-fixtures` automatically before the focused scenario.
 
 ### Build Scripts
 
