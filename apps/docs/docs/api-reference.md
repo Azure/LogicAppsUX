@@ -152,7 +152,10 @@ partial-result and error messages retain host-specific recovery instructions.
 Empty failure or partial-result messages use a localized fallback without changing
 durability, retry, or terminal recovery semantics.
 The progress footer follows the complete input/output bindings accordion and
-precedes the action buttons, staying visible while the preview/bindings scroll.
+adds dialog-specific vertical breathing room while the preview/bindings scroll.
+The completion banner follows the stepper, above the action row. Available child
+navigation stays in that row next to Close (or the existing retry/cancel actions
+for partial results), with an accessible new-tab description.
 Long recovery details have a bounded keyboard-scrollable progress region, separate
 from the actions; short viewports allow whole-dialog scrolling so Close remains reachable.
 The child navigation action opens a new tab without replacing the source editor.

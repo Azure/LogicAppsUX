@@ -312,6 +312,16 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
     ).toEqual(selection);
     await preview.getByRole('button', { name: 'Zoom view to fit', exact: true }).click();
     const screenshotPath = testInfo.outputPath('workflow-preview-dialog.png');
+    const progressRegion = dialog.getByRole('region', { name: 'Extraction progress details', exact: true });
+    await expect(progressRegion).toHaveCSS('padding-top', '16px');
+    await expect(progressRegion).toHaveCSS('padding-bottom', '16px');
+    const stepperSpacing = await progressRegion.evaluate((region) => {
+      const bounds = region.getBoundingClientRect();
+      const list = region.querySelector('ol')!.getBoundingClientRect();
+      return { top: list.top - bounds.top, bottom: bounds.bottom - list.bottom };
+    });
+    expect(stepperSpacing.top).toBeGreaterThanOrEqual(16);
+    expect(stepperSpacing.bottom).toBeGreaterThanOrEqual(16);
     await dialog.screenshot({ path: screenshotPath });
     await testInfo.attach('workflow-preview-dialog', { path: screenshotPath, contentType: 'image/png' });
 
@@ -375,15 +385,57 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
     await expect(openChild).toBeVisible();
     await expect(openChild).toHaveAttribute('target', '_blank');
     await expect(openChild).toHaveAttribute('rel', 'noopener noreferrer');
+    await expect(openChild).toHaveAccessibleDescription('Opens in a new tab');
     const checklist = dialog.getByRole('list', { name: 'Extraction progress', exact: true });
     await expect(checklist.getByRole('listitem')).toContainText([
       'Prepare workflowsCompleted',
       'Create child workflowCompleted',
       'Update parent workflowCompleted',
     ]);
+    const success = dialog.getByText('The child workflow was created and the source workflow was saved.', { exact: true });
+    const close = dialog.getByRole('button', { name: 'Close', exact: true });
+    await expect(success).toHaveCount(1);
+    expect(
+      await dialog.evaluate((element) => {
+        const stepper = element.querySelector('ol')!;
+        const banner = element.querySelector('[data-automation-id="extraction-workflow-success"]')!;
+        const actions = element.querySelector('.fui-DialogActions')!;
+        const link = actions.querySelector('a')!;
+        return (
+          !!(stepper.compareDocumentPosition(banner) & Node.DOCUMENT_POSITION_FOLLOWING) &&
+          !!(banner.compareDocumentPosition(actions) & Node.DOCUMENT_POSITION_FOLLOWING) &&
+          link.nextElementSibling?.textContent === 'Close'
+        );
+      })
+    ).toBe(true);
+    const linkBounds = await openChild.boundingBox();
+    const closeBounds = await close.boundingBox();
+    const stepperBounds = await checklist.boundingBox();
+    const bannerBounds = await success.boundingBox();
+    if (!linkBounds || !closeBounds || !stepperBounds || !bannerBounds) {
+      throw new Error('Completed extraction milestones, success banner and adjacent actions must be visible.');
+    }
+    expect(linkBounds.y).toBeCloseTo(closeBounds.y, 0);
+    expect(stepperBounds.y + stepperBounds.height).toBeLessThan(bannerBounds.y);
+    expect(bannerBounds.y + bannerBounds.height).toBeLessThan(linkBounds.y);
+    await openChild.focus();
+    await page.keyboard.press('Tab');
+    await expect(close).toBeFocused();
     const completedScreenshot = testInfo.outputPath('extraction-complete-dark.png');
     await dialog.screenshot({ path: completedScreenshot });
     await testInfo.attach('extraction-complete-dark', { path: completedScreenshot, contentType: 'image/png' });
+    for (const height of [520, 320]) {
+      await page.setViewportSize({ width: 500, height });
+      await close.scrollIntoViewIfNeeded();
+      await expect(close).toBeInViewport();
+      await expect(openChild).toBeInViewport();
+      const banner = dialog.getByTestId('extraction-workflow-success');
+      expect(await banner.evaluate((element) => element.scrollHeight <= element.clientHeight)).toBe(true);
+      await openChild.focus();
+      await page.keyboard.press('Tab');
+      await expect(close).toBeFocused();
+    }
+    await page.setViewportSize({ width: 1280, height: 900 });
     await expect(dialog.getByRole('button', { name: 'Close', exact: true })).toBeEnabled();
     const source = await readWorkflow(page);
     const invocations = Object.entries(source.definition.actions).filter(([, action]) => action.type.toLowerCase() === 'workflow');
@@ -865,6 +917,11 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
     const parent = progress.getByRole('listitem').nth(2);
     await expect(parent).toContainText('Reload the source before editing.');
     await expect(parent).toContainText(details);
+    const openChild = dialog.getByRole('link', { name: 'Open child workflow', exact: true });
+    await expect(openChild).toHaveAttribute('target', '_blank');
+    await expect(openChild).toHaveAttribute('rel', 'noopener noreferrer');
+    await expect(openChild).toHaveAccessibleDescription('Opens in a new tab');
+    await expect(dialog.getByText('The child workflow was created and the source workflow was saved.', { exact: true })).toHaveCount(0);
     for (const height of [520, 320]) {
       await page.setViewportSize({ width: 500, height });
       await progress.scrollIntoViewIfNeeded();
@@ -875,6 +932,11 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
       const close = dialog.getByRole('button', { name: 'Close', exact: true });
       await close.scrollIntoViewIfNeeded();
       await expect(close).toBeInViewport();
+      await expect(openChild).toBeInViewport();
+      expect(await openChild.evaluate((link) => link.nextElementSibling?.textContent)).toBe('Close');
+      await openChild.focus();
+      await page.keyboard.press('Tab');
+      await expect(close).toBeFocused();
       await close.focus();
       await expect(close).toBeFocused();
     }

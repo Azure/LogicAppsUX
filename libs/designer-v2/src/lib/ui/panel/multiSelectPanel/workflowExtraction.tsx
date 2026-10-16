@@ -126,7 +126,6 @@ const useStyles = makeStyles({
     borderCollapse: 'collapse',
     '& th, & td': { padding: tokens.spacingVerticalXS, borderBottom: `1px solid ${tokens.colorNeutralStroke2}`, overflowWrap: 'anywhere' },
   },
-  childAction: { alignSelf: 'flex-start' },
   footer: {
     gridColumn: '1 / -1',
     gridRow: '3',
@@ -136,11 +135,18 @@ const useStyles = makeStyles({
     minWidth: 0,
   },
   progressArea: {
+    boxSizing: 'border-box',
+    paddingTop: tokens.spacingVerticalL,
+    paddingBottom: tokens.spacingVerticalL,
     maxHeight: '40vh',
     minHeight: 0,
     overflowY: 'auto',
   },
   actions: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-end',
+    gap: tokens.spacingHorizontalS,
     alignSelf: 'flex-end',
     flexShrink: 0,
     '@media (max-width: 480px)': { alignSelf: 'stretch' },
@@ -449,17 +455,7 @@ export const WorkflowExtractionDialog = () => {
             <MessageBar intent="info" layout="multiline">
               <MessageBarBody>{service.persistenceDescription}</MessageBarBody>
             </MessageBar>
-            {complete ? (
-              <MessageBar intent="success" layout="multiline">
-                <MessageBarBody>
-                  {intl.formatMessage({
-                    defaultMessage: 'The child workflow was created and the source workflow was saved.',
-                    id: 'VVtXY/',
-                    description: 'Extraction completed',
-                  })}
-                </MessageBarBody>
-              </MessageBar>
-            ) : (
+            {complete ? null : (
               <Field
                 label={intl.formatMessage({
                   id: 'DG3b2e',
@@ -555,22 +551,6 @@ export const WorkflowExtractionDialog = () => {
                 <MessageBarBody>{error ?? preview.error}</MessageBarBody>
               </MessageBar>
             ) : null}
-            {result ? (
-              <Button
-                as="a"
-                href={result.child.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                appearance="secondary"
-                className={styles.childAction}
-              >
-                {intl.formatMessage({
-                  id: 'vuOf8W',
-                  defaultMessage: 'Open child workflow',
-                  description: 'Open the extracted child workflow in a new browser tab',
-                })}
-              </Button>
-            ) : null}
           </DialogContent>
           <div className={styles.footer}>
             <div
@@ -585,7 +565,38 @@ export const WorkflowExtractionDialog = () => {
             >
               <ExtractionStepper progress={progress ?? initialExtractionProgress()} />
             </div>
+            {complete ? (
+              <MessageBar intent="success" layout="multiline" data-automation-id="extraction-workflow-success">
+                <MessageBarBody>
+                  {intl.formatMessage({
+                    defaultMessage: 'The child workflow was created and the source workflow was saved.',
+                    id: 'VVtXY/',
+                    description: 'Extraction completed',
+                  })}
+                </MessageBarBody>
+              </MessageBar>
+            ) : null}
             <DialogActions className={styles.actions}>
+              {result ? (
+                <Button
+                  as="a"
+                  href={result.child.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  appearance="secondary"
+                  title={intl.formatMessage({
+                    defaultMessage: 'Opens in a new tab',
+                    id: '/nKih3',
+                    description: 'Accessible description for the extracted child workflow navigation action',
+                  })}
+                >
+                  {intl.formatMessage({
+                    id: 'vuOf8W',
+                    defaultMessage: 'Open child workflow',
+                    description: 'Open the extracted child workflow in a new browser tab',
+                  })}
+                </Button>
+              ) : null}
               {terminal ? (
                 <Button appearance="primary" onClick={close}>
                   {intl.formatMessage({ id: 'jLPSdk', defaultMessage: 'Close', description: 'Close extraction dialog' })}

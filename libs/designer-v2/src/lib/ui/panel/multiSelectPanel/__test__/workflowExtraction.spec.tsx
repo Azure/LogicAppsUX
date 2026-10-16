@@ -612,6 +612,14 @@ describe('WorkflowExtractionDialog', () => {
     expect(openChild).toHaveAttribute('href', '/workflows/Suggested_workflow');
     expect(openChild).toHaveAttribute('target', '_blank');
     expect(openChild).toHaveAttribute('rel', 'noopener noreferrer');
+    expect(openChild).toHaveAccessibleDescription('Opens in a new tab');
+    const closeButton = screen.getByRole('button', { name: 'Close' });
+    const success = screen.getByText('The child workflow was created and the source workflow was saved.');
+    expect(screen.getAllByText(success.textContent!)).toHaveLength(1);
+    expect(list.compareDocumentPosition(success) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(success.compareDocumentPosition(openChild) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(openChild.nextElementSibling).toBe(closeButton);
+    expect(openChild.parentElement).toBe(closeButton.parentElement);
     const activate = vi.fn((event: Event) => event.preventDefault());
     openChild.addEventListener('click', activate);
     openChild.focus();
@@ -620,6 +628,8 @@ describe('WorkflowExtractionDialog', () => {
     expect(activate).toHaveBeenCalledOnce();
     await user.keyboard('{Enter}');
     expect(activate).toHaveBeenCalledTimes(2);
+    await user.tab();
+    expect(closeButton).toHaveFocus();
 
     await user.click(screen.getByRole('button', { name: 'Close' }));
 
@@ -641,6 +651,9 @@ describe('WorkflowExtractionDialog', () => {
 
     await waitFor(() => expect(screen.getAllByText(partialResult.message)).toHaveLength(2));
     expect(screen.getByRole('link', { name: 'Open child workflow' })).toHaveAttribute('href', '/workflows/Suggested_workflow');
+    const childLink = screen.getByRole('link', { name: 'Open child workflow' });
+    expect(childLink.nextElementSibling).toBe(screen.getByRole('button', { name: 'Retry source update' }));
+    expect(childLink).toHaveAccessibleDescription('Opens in a new tab');
     const steps = within(screen.getByRole('list', { name: 'Extraction progress' })).getAllByRole('listitem');
     expect(steps[1]).toHaveTextContent(partialResult.message);
     expect(steps[2]).not.toHaveTextContent('Completed');
@@ -673,6 +686,9 @@ describe('WorkflowExtractionDialog', () => {
     expect(steps[2]).not.toHaveTextContent('Completed');
     expect(screen.queryByRole('button', { name: 'Retry source update' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Cancel' })).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Open child workflow' }).nextElementSibling).toBe(
+      screen.getByRole('button', { name: 'Close' })
+    );
 
     await user.click(screen.getByRole('button', { name: 'Close' }));
 
@@ -751,6 +767,8 @@ describe('WorkflowExtractionDialog', () => {
     await waitFor(() => expect(within(region).getAllByText(message.trim())).toHaveLength(3));
     const close = screen.getByRole('button', { name: 'Close' });
     expect(within(region).queryByRole('button')).not.toBeInTheDocument();
+    expect(within(region).queryByRole('link')).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Open child workflow' }).nextElementSibling).toBe(close);
     expect(region.compareDocumentPosition(close) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(close).toBeEnabled();
   });
@@ -839,6 +857,11 @@ describe('WorkflowExtractionDialog', () => {
     expect(steps[0]).toHaveTextContent('In progress');
     expect(steps[1]).toHaveTextContent('Completed');
     expect(steps[2]).not.toHaveTextContent('Source conflict');
+    const retainedChildLink = screen.getByRole('link', { name: 'Open child workflow' });
+    expect(retainedChildLink).toHaveAttribute('href', '/workflows/Suggested_workflow');
+    expect(retainedChildLink.nextElementSibling).toBe(screen.getByRole('button', { name: 'Retry source update' }));
+    expect(screen.getByRole('button', { name: 'Retry source update' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeDisabled();
     await act(async () => retry.resolve(completedResult));
     await user.click(await screen.findByRole('button', { name: 'Close' }));
     act(() => store.dispatch(setWorkflowExtractionDialogOpen(true)));
