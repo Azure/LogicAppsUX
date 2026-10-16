@@ -21,6 +21,7 @@ import {
   equals,
   getObjectPropertyValue,
   getPropertyValue,
+  isObject,
   OperationOptions,
   SettingScope,
   ValidationErrorCode,
@@ -859,7 +860,43 @@ const getDownloadChunkSize = (definition?: LogicAppsV2.OperationDefinition): num
 
 const getTrackedProperties = (isTrigger: boolean, manifest?: OperationManifest, definition?: LogicAppsV2.ActionDefinition): any => {
   const supported = areTrackedPropertiesSupported(isTrigger, manifest);
-  return supported && definition ? getPropertyValue(definition as any, 'trackedProperties') : undefined;
+  const trackedProperties = supported && definition ? getPropertyValue(definition as any, 'trackedProperties') : undefined;
+  return isObject(trackedProperties) ? cloneTrackedProperties(trackedProperties) : trackedProperties;
+};
+
+const cloneTrackedProperties = (trackedProperties: Record<string, any>): Record<string, any> => {
+  const safeClone: Record<string, any> = {};
+
+  for (const key of Object.keys(trackedProperties)) {
+    if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+      continue;
+    }
+
+    const value = trackedProperties[key];
+    if (Array.isArray(value)) {
+      safeClone[key] = cloneTrackedPropertiesArray(value);
+    } else if (isObject(value)) {
+      safeClone[key] = cloneTrackedProperties(value);
+    } else {
+      safeClone[key] = value;
+    }
+  }
+
+  return safeClone;
+};
+
+const cloneTrackedPropertiesArray = (trackedProperties: any[]): any[] => {
+  return trackedProperties.map((item) => {
+    if (Array.isArray(item)) {
+      return cloneTrackedPropertiesArray(item);
+    }
+
+    if (isObject(item)) {
+      return cloneTrackedProperties(item);
+    }
+
+    return item;
+  });
 };
 
 const areTrackedPropertiesSupported = (isTrigger: boolean, manifest?: OperationManifest): boolean => {

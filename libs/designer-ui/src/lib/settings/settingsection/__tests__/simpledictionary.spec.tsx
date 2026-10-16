@@ -1,0 +1,42 @@
+import { SimpleDictionary } from '../dictionary/simpledictionary';
+import { IntlProvider } from 'react-intl';
+import userEvent from '@testing-library/user-event';
+import { render, screen, waitFor } from '@testing-library/react';
+import type { ReactElement } from 'react';
+import { describe, expect, it, vi } from 'vitest';
+
+const renderWithIntl = (ui: ReactElement) => render(<IntlProvider locale="en">{ui}</IntlProvider>);
+
+describe('ui/settings/simpledictionary', () => {
+  it('keeps the editor in sync when the incoming dictionary value changes', async () => {
+    const onChange = vi.fn();
+
+    const { rerender } = renderWithIntl(<SimpleDictionary value={{ ClientId: 'first-value' }} onChange={onChange} />);
+
+    await waitFor(() => expect(screen.getByDisplayValue('first-value')).toBeInTheDocument());
+    expect(onChange).not.toHaveBeenCalled();
+
+    rerender(
+      <IntlProvider locale="en">
+        <SimpleDictionary value={{ ClientId: 'second-value' }} onChange={onChange} />
+      </IntlProvider>
+    );
+
+    await waitFor(() => expect(screen.getByDisplayValue('second-value')).toBeInTheDocument());
+    expect(screen.queryByDisplayValue('first-value')).not.toBeInTheDocument();
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it('ignores unsafe dictionary keys when emitting changes', async () => {
+    const onChange = vi.fn();
+    const user = userEvent.setup();
+
+    renderWithIntl(<SimpleDictionary onChange={onChange} />);
+
+    const [keyInput] = screen.getAllByRole('textbox');
+    await user.type(keyInput, '__proto__');
+
+    await waitFor(() => expect(onChange).toHaveBeenCalled());
+    expect(onChange).toHaveBeenLastCalledWith(undefined);
+  });
+});
