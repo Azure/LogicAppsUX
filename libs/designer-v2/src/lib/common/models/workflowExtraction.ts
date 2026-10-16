@@ -22,6 +22,15 @@ export interface WorkflowExtractionRequest {
   operationId: string;
   sourceFingerprint: string;
   plan: WorkflowExtractionPlan;
+  /** Attempt-scoped notifications. Report completion only after the host confirms the checkpoint. */
+  onProgress?: (progress: WorkflowExtractionProgress) => void;
+}
+
+export type WorkflowExtractionHostStep = 'validating-child' | 'creating-child' | 'saving-source';
+
+export interface WorkflowExtractionProgress {
+  step: WorkflowExtractionHostStep;
+  status: 'in-progress' | 'completed';
 }
 
 export interface ExtractedWorkflowReference {
