@@ -75,7 +75,6 @@ Curated durable learnings for VS Code ExTester UI E2E tests. Add entries through
   | `p48e-conversionsubfolder` | Standard Stateful app directory (`use: 'appDir'`) |
   | `p49-descriptionpersistence` | Standard Stateful `.code-workspace` |
   | `p49-nugetdebugconversion` | Standard Stateful manifest entry, but no startup resource (`use: 'none'`) because the test clones and opens its own workspace |
-  | `p412-bundlerepair` | Standard Stateful `.code-workspace` |
 
 - Current scenarios that do **not** require the Phase 4.1 fixture manifest: `p40-nonlogicapp` (`plain-folder`), `p41a-fixtures` (`self-creates`), `p41b-createworkspace-behavior` (`self-creates`), `p48b-conversioncreate` (`self-contained`), and standalone `p48d-conversionyes` (`plain-folder`). The grouped `conversiononly` mode still needs the manifest because its p48a/p48c/p48e phases and workspace-dir resource selection are manifest-backed.
 - Debug-pane/focused runner support: `run-e2e.ts` automatically runs `p41a-fixtures` when manifest-backed focused modes or `LA_E2E_SCENARIO` selections detect a missing/stale manifest before continuing to the requested scenario.

@@ -147,19 +147,6 @@
       }
     },
     {
-      "name": "E2E: bundle repair only",
-      "type": "node",
-      "request": "launch",
-      "cwd": "${workspaceFolder}/apps/vs-code-designer",
-      "program": "${workspaceFolder}/apps/vs-code-designer/out/test/run-e2e.js",
-      "preLaunchTask": "E2E: build extension and compile VS Code UI tests",
-      "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen",
-      "env": {
-        "E2E_MODE": "bundlerepaironly"
-      }
-    },
-    {
       "name": "E2E: bundle integrity only",
       "type": "node",
       "request": "launch",
@@ -280,7 +267,6 @@
         "conversioncreateonly",
         "nonlogicappstartup",
         "codefuldebugonly",
-        "bundlerepaironly",
         "bundleintegrityonly",
         "lspeperm",
         "scenarios",

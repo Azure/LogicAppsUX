@@ -1,12 +1,7 @@
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { validateFuncCoreToolsIsLatest } from '../validateFuncCoreToolsIsLatest';
-import {
-  useBinariesDependencies,
-  binariesExist,
-  verifyDependencyIntegrity,
-  getLatestFunctionCoreToolsVersion,
-} from '../../../utils/binaries';
+import { useBinariesDependencies, binariesExist, getLatestFunctionCoreToolsVersion } from '../../../utils/binaries';
 import { shouldCheckForDependencyUpdates } from '../../../state/dependencies';
 import { isDevContainerWorkspace } from '../../../utils/devContainerUtils';
 import { getLocalFuncCoreToolsVersion } from '../../../utils/funcCoreTools/funcVersion';
@@ -19,7 +14,6 @@ vi.mock('../../../utils/binaries', () => ({
   useBinariesDependencies: vi.fn(),
   binariesExist: vi.fn(),
   getLatestFunctionCoreToolsVersion: vi.fn(),
-  verifyDependencyIntegrity: vi.fn(),
   installBinaries: vi.fn(),
   getCpuArchitecture: vi.fn(),
 }));
@@ -134,26 +128,11 @@ describe('validateFuncCoreToolsIsLatest', () => {
     });
   });
 
-  describe('on-disk integrity behavior', () => {
-    it('reinstalls when binaries exist but the on-disk integrity check fails', async () => {
+  describe('managed install behavior', () => {
+    it('does not reinstall when binaries exist and the version is current', async () => {
       vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
       vi.mocked(useBinariesDependencies).mockResolvedValue(true);
       vi.mocked(binariesExist).mockResolvedValue(true);
-      vi.mocked(verifyDependencyIntegrity).mockReturnValue(false);
-
-      await validateFuncCoreToolsIsLatest(context, '4');
-
-      expect(verifyDependencyIntegrity).toHaveBeenCalledWith(context, 'FuncCoreTools');
-      expect(getLocalFuncCoreToolsVersion).not.toHaveBeenCalled();
-      expect(getLatestFunctionCoreToolsVersion).not.toHaveBeenCalled();
-      expect(installFuncCoreToolsBinaries).toHaveBeenCalled();
-    });
-
-    it('does not reinstall when binaries exist, integrity passes, and the version is current', async () => {
-      vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
-      vi.mocked(useBinariesDependencies).mockResolvedValue(true);
-      vi.mocked(binariesExist).mockResolvedValue(true);
-      vi.mocked(verifyDependencyIntegrity).mockReturnValue(true);
       vi.mocked(getLocalFuncCoreToolsVersion).mockResolvedValue('4.0.0');
       vi.mocked(getLatestFunctionCoreToolsVersion).mockResolvedValue('4.0.0');
 
@@ -169,28 +148,12 @@ describe('validateFuncCoreToolsIsLatest', () => {
       vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
       vi.mocked(useBinariesDependencies).mockResolvedValue(true);
       vi.mocked(binariesExist).mockResolvedValue(true);
-      vi.mocked(verifyDependencyIntegrity).mockReturnValue(true);
       vi.mocked(getLocalFuncCoreToolsVersion).mockResolvedValue('4.0.0');
 
       await validateFuncCoreToolsIsLatest(context, '4');
 
-      // Local presence + integrity still run, but the network version lookup and reinstall are skipped.
       expect(getLatestFunctionCoreToolsVersion).not.toHaveBeenCalled();
       expect(installFuncCoreToolsBinaries).not.toHaveBeenCalled();
-    });
-
-    it('still reinstalls when integrity fails even if the update check is throttled', async () => {
-      vi.mocked(shouldCheckForDependencyUpdates).mockReturnValue(false);
-      vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
-      vi.mocked(useBinariesDependencies).mockResolvedValue(true);
-      vi.mocked(binariesExist).mockResolvedValue(true);
-      vi.mocked(verifyDependencyIntegrity).mockReturnValue(false);
-
-      await validateFuncCoreToolsIsLatest(context, '4');
-
-      // A failed integrity check must force a reinstall regardless of the throttle.
-      expect(getLatestFunctionCoreToolsVersion).not.toHaveBeenCalled();
-      expect(installFuncCoreToolsBinaries).toHaveBeenCalled();
     });
   });
 });
