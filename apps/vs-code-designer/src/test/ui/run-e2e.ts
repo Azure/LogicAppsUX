@@ -9,8 +9,8 @@
  * Uses an isolated extensions directory so no other user extensions
  * (Claude Code, etc.) interfere.
  *
- * Installs extensionDependencies from the marketplace into the same
- * isolated directory.
+ * Installs extensionDependencies and extensionPack members from the
+ * marketplace into the same isolated directory.
  */
 
 import * as path from 'path';
@@ -690,6 +690,7 @@ async function main(): Promise<void> {
   // Read extension metadata from dist/package.json
   const pkgJson = JSON.parse(fs.readFileSync(path.join(distDir, 'package.json'), 'utf8'));
   const extDeps: string[] = pkgJson.extensionDependencies || [];
+  const extPack: string[] = pkgJson.extensionPack || [];
   const devContainersDependency = 'ms-vscode-remote.remote-containers';
   if (extDeps.some((dep) => dep.toLowerCase() === devContainersDependency)) {
     throw new Error(
@@ -702,6 +703,12 @@ async function main(): Promise<void> {
       throw new Error(`${prereq} must be listed in extensionDependencies because the E2E extension activation requires it.`);
     }
   }
+  const requiredE2ePackMembers = ['azurite.azurite'];
+  for (const packMember of requiredE2ePackMembers) {
+    if (!extPack.some((extensionId) => extensionId.toLowerCase() === packMember)) {
+      throw new Error(`${packMember} must be listed in extensionPack because Logic Apps debug scenarios require it.`);
+    }
+  }
   // Transitive dependencies that the VS Code CLI's --install-extension does NOT
   // reliably auto-resolve. Installing ms-dotnettools.csdevkit pulls in
   // ms-dotnettools.csharp, but csharp's own dependency
@@ -712,10 +719,7 @@ async function main(): Promise<void> {
   // activation — so azureLogicAppsStandard.createWorkspace / Open Designer are
   // never registered. Install these explicitly to guarantee activation.
   const transitiveE2eDependencies = ['ms-dotnettools.vscode-dotnet-runtime'];
-  const allE2eDependencies = [
-    ...extDeps,
-    ...transitiveE2eDependencies.filter((dep) => !extDeps.some((d) => d.toLowerCase() === dep.toLowerCase())),
-  ];
+  const allE2eDependencies = [...new Set([...extDeps, ...extPack, ...transitiveE2eDependencies].map((dep) => dep.toLowerCase()))];
   const extDirName = `${pkgJson.publisher}.${pkgJson.name}-${pkgJson.version}`;
   const ourExtTarget = path.join(extDir, extDirName);
 
@@ -733,7 +737,7 @@ async function main(): Promise<void> {
   // state from a VS Code archive layout that changed during download.
   const extest = createExTester();
 
-  // Step 2: Install extension dependencies from the marketplace.
+  // Step 2: Install extension dependencies and extension-pack members from the marketplace.
   // Skip deps already present in test-extensions/. For uncached deps,
   // run VS Code CLI --install-extension sequentially. Parallel CLI installs
   // race on shared extension/cache directories and can leave VS Code with
