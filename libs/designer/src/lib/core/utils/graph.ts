@@ -210,12 +210,14 @@ export const getFirstParentOfType = (
 export const isOperationNameValid = (
   nodeId: string,
   newName: string,
+  oldName: string,
   isTrigger: boolean,
   nodesMetadata: NodesMetadata,
   idReplacements: Record<string, string>,
   intl: IntlShape
 ): { isValid: boolean; message: string } => {
   const name = transformOperationTitle(newName);
+  const previousName = transformOperationTitle(oldName);
   const subgraphType = getRecordEntry(nodesMetadata, nodeId)?.subgraphType;
 
   const messages = {
@@ -248,12 +250,17 @@ export const isOperationNameValid = (
     }
   }
 
-  // Check for name uniqueness.
-  const existingNames = Object.keys(nodesMetadata).map((id) => getRecordEntry(idReplacements, id) ?? id);
-  const isDuplicateName = existingNames.some((nodeName) => equals(nodeName, name));
-  if (isDuplicateName) {
-    return { isValid: false, message: messages.DEFAULT };
+  // Check for name uniqueness only when previous and new names of the selected node are not equal
+  const previousAndNewNamesNotSame = !equals(previousName, name);
+
+  if (previousAndNewNamesNotSame) {
+    const existingNames = Object.keys(nodesMetadata).map((id) => getRecordEntry(idReplacements, id) ?? id);
+    const isDuplicateName = existingNames.some((nodeName) => equals(nodeName, name));
+    if (isDuplicateName) {
+      return { isValid: false, message: messages.DEFAULT };
+    }
   }
+
   return { isValid: true, message: '' };
 };
 
