@@ -1,5 +1,6 @@
 import type { ChatWidgetProps, ChatTheme, IdentityProvider } from '@microsoft/logic-apps-chat';
 import { THEME_PRESETS } from './theme-presets';
+import { ALLOWED_LOGIC_APPS_DOMAINS } from './trusted-domains';
 
 export interface IframeConfig {
   props: ChatWidgetProps;
@@ -73,7 +74,8 @@ function validatePortalSecurity(params: URLSearchParams): PortalValidationResult
   return { trustedParentOrigin: parsedAuthority.origin };
 }
 
-const ALLOWED_AGENT_CARD_DOMAINS = ['.logic.azure.com', '.logic-apps.azure.com'];
+// Shared trusted Logic Apps domain allowlist (see ./trusted-domains).
+const ALLOWED_AGENT_CARD_DOMAINS = ALLOWED_LOGIC_APPS_DOMAINS;
 
 export type AgentCardPayload = ChatWidgetProps['agentCard'];
 
