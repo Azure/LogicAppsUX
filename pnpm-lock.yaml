@@ -349,8 +349,8 @@ importers:
         specifier: 4.36.1
         version: 4.36.1(@tanstack/react-query@4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       axios:
-        specifier: 1.18.0
-        version: 1.18.0(debug@4.4.3)
+        specifier: 1.20.0
+        version: 1.20.0(debug@4.4.3)
       axios-retry:
         specifier: ^3.5.0
         version: 3.9.1
@@ -619,8 +619,8 @@ importers:
         specifier: ^0.6.0
         version: 0.6.0
       axios:
-        specifier: 1.18.0
-        version: 1.18.0(debug@4.4.3)
+        specifier: 1.20.0
+        version: 1.20.0(debug@4.4.3)
       azure-storage:
         specifier: ^2.10.3
         version: 2.10.7
@@ -1656,8 +1656,8 @@ importers:
         specifier: ^0.0.37
         version: 0.0.37
       axios:
-        specifier: 1.18.0
-        version: 1.18.0(debug@4.4.3)
+        specifier: 1.20.0
+        version: 1.20.0(debug@4.4.3)
       react:
         specifier: 18.3.1
         version: 18.3.1
@@ -1712,8 +1712,8 @@ importers:
         specifier: ^12.3.5
         version: 12.3.5(@types/react@18.3.0)(immer@9.0.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       axios:
-        specifier: 1.18.0
-        version: 1.18.0(debug@4.4.3)
+        specifier: 1.20.0
+        version: 1.20.0(debug@4.4.3)
       react:
         specifier: 18.3.1
         version: 18.3.1
@@ -3155,8 +3155,8 @@ packages:
     resolution: {integrity: sha512-JiDShH45zKHWyGe4ZNVRrCjBz8Nh9TMmZG1kh4QTK8hCBTWBi8Da+i7s1fJw7/lYpM4ccepSNfqzZ/QvABBi5g==}
     engines: {node: '>=6.9.0'}
 
-  '@babel/runtime@8.0.0':
-    resolution: {integrity: sha512-sL6cvO2IfkSu/iU+zs2S/w01B7A8V7suXSIKEN4hPFFdZoiPGxrj5pAG0lCaqLWiEIrjKzdznIWuaLcxPR53qw==}
+  '@babel/runtime@8.0.5':
+    resolution: {integrity: sha512-7NK+Lz3spQ52XsUGTxIEVU4jYN2/dIaX8sTxRFAUtYmttYZnVh3aehiihv+/Gb7+duMNHl2OrFcBQRyOHScxpg==}
 
   '@babel/template@7.27.2':
     resolution: {integrity: sha512-LPDZ85aEJyYSd18/DkjNh4/y1ntkE5KwUHWTiqgRxruuZL2F1yuHligVHLvcHY2vMHXttKFpJn6LwfI7cw7ODw==}
@@ -7469,8 +7469,8 @@ packages:
   axios-retry@3.9.1:
     resolution: {integrity: sha512-8PJDLJv7qTTMMwdnbMvrLYuvB47M81wRtxQmEdV5w4rgbTXTt+vtPkXwajOfOdSyv/wZICJOC+/UhXH4aQ/R+w==}
 
-  axios@1.18.0:
-    resolution: {integrity: sha512-E32NzpYKp++W7XRe52rHiXV2ehxmh3wbdgO7MHeFM+vqxLBYHzt0ElkiImtOBxtOmyp0yoC8C6uESVV84Y2/hw==}
+  axios@1.20.0:
+    resolution: {integrity: sha512-r8aOh8j9cGKpgQAqpzrUHnSIc6a59Y3Xf/cv8sy1DrHCkZHzQGEuoq1tARk6qSyDdtQGSDgpb9kFlruzPvrgwg==}
 
   azure-devops-node-api@12.5.0:
     resolution: {integrity: sha512-R5eFskGvOm3U/GzeAuxRkUsAl0hrAwGgWn6zAd2KrZmrEhWZVqLew4OOupbQlXUuojUzpGtq62SmdhJ06N88og==}
@@ -9188,6 +9188,7 @@ packages:
   eslint@9.26.0:
     resolution: {integrity: sha512-Hx0MOjPh6uK9oq9nVsATZKE/Wlbai7KFjfCuw9UHaguDW3x+HF0O5nIi3ud39TWgrTjTO5nHxmL3R1eANinWHQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
     peerDependencies:
       jiti: '*'
@@ -9493,8 +9494,8 @@ packages:
   flatted@3.3.3:
     resolution: {integrity: sha512-GX+ysw4PBCz0PzosHDepZGANEuFCMLrnRTiEy9McGjmkCQYwRq4A/X786G/fjM/+OjsWSU1ZrY5qyARZmO/uwg==}
 
-  follow-redirects@1.16.0:
-    resolution: {integrity: sha512-y5rN/uOsadFT/JfYwhxRS5R7Qce+g3zG97+JrtFZlC9klX/W5hD7iiLzScI4nZqUS7DNUdhPgw4xI8W2LuXlUw==}
+  follow-redirects@1.16.1:
+    resolution: {integrity: sha512-FNvFGzoMLWmE6Yj9spb/zjd7yiNCHiAW9/Tg9CXrQ8wuu32HtlJOwWO11OJafl5FfY3DxTdQ0vj42zU1kvv5jg==}
     engines: {node: '>=4.0'}
     peerDependencies:
       debug: '*'
@@ -10884,8 +10885,8 @@ packages:
   lexical@0.33.1:
     resolution: {integrity: sha512-+kiCS/GshQmCs/meMb8MQT4AMvw3S3Ef0lSCv2Xi6Itvs59OD+NjQWNfYkDteIbKtVE/w0Yiqh56VyGwIb8UcA==}
 
-  lib0@0.2.117:
-    resolution: {integrity: sha512-DeXj9X5xDCjgKLU/7RR+/HQEVzuuEUiwldwOGsHK/sfAfELGWEyTcf0x+uOvCvK3O2zPmZePXWL85vtia6GyZw==}
+  lib0@0.2.119:
+    resolution: {integrity: sha512-vh+TiejVy8Xm+hCdnRfn9BthGNvNUZdEXltNjVZL3TzRIKP3s1lnQh8pWd/Q0wCgY0FPAGVVjFF4ZiHUV3LFgA==}
     engines: {node: '>=16'}
     hasBin: true
 
@@ -17168,7 +17169,7 @@ snapshots:
 
   '@babel/runtime@7.29.2': {}
 
-  '@babel/runtime@8.0.0': {}
+  '@babel/runtime@8.0.5': {}
 
   '@babel/template@7.27.2':
     dependencies:
@@ -23504,9 +23505,9 @@ snapshots:
       '@babel/runtime': 7.27.6
       is-retry-allowed: 2.2.0
 
-  axios@1.18.0(debug@4.4.3):
+  axios@1.20.0(debug@4.4.3):
     dependencies:
-      follow-redirects: 1.16.0(debug@4.4.3)
+      follow-redirects: 1.16.1(debug@4.4.3)
       form-data: 4.0.6
       https-proxy-agent: 5.0.1
       proxy-from-env: 2.1.0
@@ -24987,7 +24988,7 @@ snapshots:
   docusaurus-plugin-remote-content@4.0.0(@docusaurus/core@3.6.1(@mdx-js/react@3.1.0(@types/react@18.3.0)(react@18.3.1))(esbuild@0.25.5)(eslint@9.26.0(jiti@1.21.0))(lightningcss@1.32.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)):
     dependencies:
       '@docusaurus/core': 3.6.1(@mdx-js/react@3.1.0(@types/react@18.3.0)(react@18.3.1))(esbuild@0.25.5)(eslint@9.26.0(jiti@1.21.0))(lightningcss@1.32.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)
-      axios: 1.18.0(debug@4.4.3)
+      axios: 1.20.0(debug@4.4.3)
       picocolors: 1.0.0
       pretty-ms: 7.0.1
       rimraf: 5.0.5
@@ -25005,7 +25006,7 @@ snapshots:
 
   dom-helpers@5.2.1:
     dependencies:
-      '@babel/runtime': 8.0.0
+      '@babel/runtime': 8.0.5
       csstype: 3.2.3
 
   dom-serializer@1.4.1:
@@ -26057,7 +26058,7 @@ snapshots:
 
   flatted@3.3.3: {}
 
-  follow-redirects@1.16.0(debug@4.4.3):
+  follow-redirects@1.16.1(debug@4.4.3):
     optionalDependencies:
       debug: 4.4.3(supports-color@8.1.1)
 
@@ -26619,7 +26620,7 @@ snapshots:
 
   history@5.3.0:
     dependencies:
-      '@babel/runtime': 8.0.0
+      '@babel/runtime': 8.0.5
 
   hmac-drbg@1.0.1:
     dependencies:
@@ -26766,7 +26767,7 @@ snapshots:
   http-proxy@1.18.1:
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.16.0(debug@4.4.3)
+      follow-redirects: 1.16.1(debug@4.4.3)
       requires-port: 1.0.0
     transitivePeerDependencies:
       - debug
@@ -27616,7 +27617,7 @@ snapshots:
 
   lexical@0.33.1: {}
 
-  lib0@0.2.117:
+  lib0@0.2.119:
     dependencies:
       isomorphic.js: 0.2.5
 
@@ -30178,7 +30179,7 @@ snapshots:
 
   react-virtualized@9.22.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
-      '@babel/runtime': 8.0.0
+      '@babel/runtime': 8.0.5
       clsx: 1.2.1
       dom-helpers: 5.2.1
       loose-envify: 1.4.0
@@ -32336,7 +32337,7 @@ snapshots:
 
   vite-plugin-mkcert@1.17.8(vite@6.4.3(@types/node@24.7.2)(jiti@1.21.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3)):
     dependencies:
-      axios: 1.18.0(debug@4.4.3)
+      axios: 1.20.0(debug@4.4.3)
       debug: 4.4.3(supports-color@8.1.1)
       picocolors: 1.1.1
       vite: 6.4.3(@types/node@24.7.2)(jiti@1.21.0)(less@4.2.0)(lightningcss@1.32.0)(terser@5.30.2)(yaml@2.8.3)
@@ -32900,7 +32901,7 @@ snapshots:
 
   yjs@13.6.14:
     dependencies:
-      lib0: 0.2.117
+      lib0: 0.2.119
 
   yn@3.1.1: {}
 
