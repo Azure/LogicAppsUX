@@ -13,6 +13,7 @@ export interface NetworkingSectionProps extends SectionProps {
   uploadChunkMetadata: UploadChunkMetadata | undefined;
   downloadChunkMetadata: DownloadChunkMetadata | undefined;
   hideContentTransferSettings: boolean | undefined;
+  hideRetryPolicyStatusCodes: boolean | undefined;
   onAsyncPatternToggle: ToggleHandler;
   onAsyncResponseToggle: ToggleHandler;
   onRequestOptionsChange: TextChangeHandler;
@@ -49,6 +50,7 @@ export const Networking = ({
   requestOptions,
   chunkedTransferMode,
   hideContentTransferSettings,
+  hideRetryPolicyStatusCodes,
   onAsyncPatternToggle,
   onAsyncResponseToggle,
   onRequestOptionsChange,
@@ -594,6 +596,7 @@ export const Networking = ({
         ariaLabel: retryPolicyHttpStatusCodesTitle,
       },
       visible:
+        !hideRetryPolicyStatusCodes &&
         retryPolicy?.isSupported &&
         retryPolicy?.value?.type !== constants.RETRY_POLICY_TYPE.NONE &&
         retryPolicy?.value?.type !== constants.RETRY_POLICY_TYPE.DEFAULT,
