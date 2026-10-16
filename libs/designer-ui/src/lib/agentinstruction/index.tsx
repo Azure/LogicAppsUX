@@ -1,4 +1,4 @@
-import { MessageBar, MessageBarBody, MessageBarTitle, Text, mergeClasses } from '@fluentui/react-components';
+import { Link, MessageBar, MessageBarBody, MessageBarTitle, Text, mergeClasses } from '@fluentui/react-components';
 import type { BaseEditorProps, CastHandler, ChangeHandler, ChangeState, GetTokenPickerHandler } from '../editor/base';
 import { useIntl } from 'react-intl';
 import { bundleIcon, Open12Regular, Open12Filled } from '@fluentui/react-icons';
@@ -50,6 +50,17 @@ export const AgentInstructionEditor = ({
       serializeValue?.({ value: reserialized });
     }
   }, [hideSystemInstructions, systemMessage, userMessage, serializeValue]);
+  const systemInstructionDescription = intl.formatMessage({
+    defaultMessage:
+      'Add instructions so the agent understands its role and tasks. Include helpful information about workflow structure, restrictions, tools, and interactions in specific scenarios.',
+    description: 'Description for agent instruction editor',
+    id: 'hRLAFg',
+  });
+  const descriptionLink = intl.formatMessage({
+    defaultMessage: 'Tips for writing agent instructions',
+    description: 'Description link for agent instruction editor',
+    id: 'Vp5rnF',
+  });
   const userInstructionDescription = intl.formatMessage({
     defaultMessage:
       'Add optional prompts or questions for the agent. For better results, focus each item on a single specific prompt or question.',
@@ -89,15 +100,22 @@ export const AgentInstructionEditor = ({
     <div className="msla-agent-instruction-editor-container">
       <div className={mergeClasses(styles.editors)}>
         {!hideSystemInstructions && (
-          <StringEditor
-            {...props}
-            className={mergeClasses(styles.systemEditor, css(className, 'msla-agent-instruction-system-editor editor-custom'))}
-            placeholder={systemPlaceholder}
-            initialValue={systemMessage}
-            editorBlur={(newState: ChangeState) => handleValueChange(newState, AGENT_INSTRUCTION_TYPES.SYSTEM)}
-            valueType={constants.SWAGGER.TYPE.STRING}
-            spellCheck={true}
-          />
+          <>
+            <Text size={200}>{systemInstructionDescription} </Text>
+            <Link href="https://aka.ms/LogicApps/Agents" target="_blank" rel="noreferrer" style={{ fontSize: 12 }}>
+              {descriptionLink}
+              <NavigateIcon style={{ position: 'relative', top: '2px', left: '2px' }} />
+            </Link>
+            <StringEditor
+              {...props}
+              className={mergeClasses(styles.systemEditor, css(className, 'msla-agent-instruction-system-editor editor-custom'))}
+              placeholder={systemPlaceholder}
+              initialValue={systemMessage}
+              editorBlur={(newState: ChangeState) => handleValueChange(newState, AGENT_INSTRUCTION_TYPES.SYSTEM)}
+              valueType={constants.SWAGGER.TYPE.STRING}
+              spellCheck={true}
+            />
+          </>
         )}
         {!hideUserInstructions && (
           <>
