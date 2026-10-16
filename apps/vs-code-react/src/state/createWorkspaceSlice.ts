@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import type { Platform } from '@microsoft/vscode-extension-logic-apps';
-import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectType, WorkflowType } from '@microsoft/vscode-extension-logic-apps';
 import type { PayloadAction, SliceCaseReducers } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import type { ITargetDirectory } from '../run-service';
@@ -92,6 +92,25 @@ const initialState: CreateWorkspaceState = {
   currentFolderPath: '',
 };
 
+const codelessToCodefulWorkflowType: Record<string, string> = {
+  [WorkflowType.stateful]: WorkflowType.statefulCodeful,
+  [WorkflowType.stateless]: WorkflowType.statelessCodeful,
+  [WorkflowType.agentic]: WorkflowType.agenticCodeful,
+  [WorkflowType.agent]: WorkflowType.agentCodeful,
+};
+
+const codefulToCodelessWorkflowType = Object.fromEntries(
+  Object.entries(codelessToCodefulWorkflowType).map(([codelessType, codefulType]) => [codefulType, codelessType])
+);
+
+const normalizeWorkflowType = (workflowType: string, logicAppType: string): string => {
+  if (logicAppType === ProjectType.codeful) {
+    return codelessToCodefulWorkflowType[workflowType] ?? (codefulToCodelessWorkflowType[workflowType] ? workflowType : '');
+  }
+
+  return codefulToCodelessWorkflowType[workflowType] ?? (codelessToCodefulWorkflowType[workflowType] ? workflowType : '');
+};
+
 export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseReducers<CreateWorkspaceState>, 'createWorkspace'>({
   name: 'createWorkspace',
   initialState,
@@ -174,6 +193,7 @@ export const createWorkspaceSlice = createSlice<CreateWorkspaceState, SliceCaseR
     },
     setLogicAppType: (state, action: PayloadAction<string>) => {
       state.logicAppType = action.payload;
+      state.workflowType = normalizeWorkflowType(state.workflowType, action.payload);
     },
     setFunctionNamespace: (state, action: PayloadAction<string>) => {
       state.functionNamespace = action.payload;

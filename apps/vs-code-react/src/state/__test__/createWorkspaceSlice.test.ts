@@ -8,11 +8,12 @@ import createWorkspaceReducer, {
   initializeWorkspace,
   resetState,
   setCurrentStep,
+  setLogicAppType,
   setWorkspaceName,
   setTargetFramework,
 } from '../createWorkspaceSlice';
 import type { CreateWorkspaceState } from '../createWorkspaceSlice';
-import { Platform } from '@microsoft/vscode-extension-logic-apps';
+import { Platform, ProjectType, WorkflowType } from '@microsoft/vscode-extension-logic-apps';
 
 const getState = (overrides: Partial<CreateWorkspaceState> = {}): CreateWorkspaceState => ({
   ...(createWorkspaceReducer(undefined, { type: '@@INIT' } as any) as CreateWorkspaceState),
@@ -132,6 +133,32 @@ describe('createWorkspaceSlice', () => {
       expect(result.logicAppName).toBe('MyLogicApp');
       // Non-preserved form field still cleared.
       expect(result.workspaceName).toBe('');
+    });
+  });
+
+  describe('setLogicAppType', () => {
+    it('preserves the selected workflow semantics when switching between codeless and codeful projects', () => {
+      let state = getState({
+        logicAppType: ProjectType.logicApp,
+        workflowType: WorkflowType.stateless,
+      });
+
+      state = createWorkspaceReducer(state, setLogicAppType(ProjectType.codeful));
+      expect(state.workflowType).toBe(WorkflowType.statelessCodeful);
+
+      state = createWorkspaceReducer(state, setLogicAppType(ProjectType.logicApp));
+      expect(state.workflowType).toBe(WorkflowType.stateless);
+    });
+
+    it('clears an incompatible workflow type instead of preserving a hidden selection', () => {
+      const state = getState({
+        logicAppType: ProjectType.logicApp,
+        workflowType: 'Unsupported-Workflow-Type',
+      });
+
+      const result = createWorkspaceReducer(state, setLogicAppType(ProjectType.codeful));
+
+      expect(result.workflowType).toBe('');
     });
   });
 

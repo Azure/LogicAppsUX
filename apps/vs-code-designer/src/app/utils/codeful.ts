@@ -1,7 +1,13 @@
 import path from 'path';
 import * as fse from 'fs-extra';
 import * as vscode from 'vscode';
-import { autoRuntimeDependenciesPathSettingKey, defaultDependencyPathValue, localSettingsFileName, lspDirectory, workflowCodefulEnabledKey } from '../../constants';
+import {
+  autoRuntimeDependenciesPathSettingKey,
+  defaultDependencyPathValue,
+  localSettingsFileName,
+  lspDirectory,
+  workflowCodefulEnabledKey,
+} from '../../constants';
 import { ext } from '../../extensionVariables';
 import { getGlobalSetting } from './vsCodeConfig/settings';
 
@@ -296,28 +302,13 @@ export const inspectCodefulCsprojBuildHooks = async (folderPath: string): Promis
   return parseCsprojCopyToCodefulInfo(content);
 };
 
-/**
- * Detects if a C# file contains a CreateStatefulWorkflow call and extracts the workflow name.
- * @param fileContent - The content of the C# file
- * @returns The workflow name if detected, undefined otherwise
- */
-export const detectStatefulCodefulWorkflow = (fileContent: string): string | undefined => {
-  // Pattern to match: WorkflowBuilderFactory.CreateStatefulWorkflow(<workflowName>, ...)
-  // or WorkflowFactory.CreateStatefulWorkflow(<workflowName>, ...)
-  // This handles: variables, string literals, template placeholders like <%= flowName %>
-  // Using [\s\S]*? to match across line breaks
-  const pattern = /Workflow(?:Builder)?Factory[\s\S]*?\.CreateStatefulWorkflow\s*\(\s*([^,)]+)/;
+const detectWorkflowName = (fileContent: string, pattern: RegExp): string | undefined => {
   const match = fileContent.match(pattern);
 
   if (match && match[1]) {
-    // Extract the workflow name and clean it up (remove quotes, trim whitespace)
     let workflowName = match[1].trim();
-
-    // Remove string quotes if present
     workflowName = workflowName.replace(/^["']|["']$/g, '');
 
-    // If it's a template placeholder like <%= flowName %>, we can't determine the actual name
-    // In this case, return undefined since it's a template
     if (workflowName.includes('<%=') || workflowName.includes('%>')) {
       return undefined;
     }
@@ -326,6 +317,40 @@ export const detectStatefulCodefulWorkflow = (fileContent: string): string | und
   }
 
   return undefined;
+};
+
+/**
+ * Detects if a C# file contains a CreateStatefulWorkflow call and extracts the workflow name.
+ * @param fileContent - The content of the C# file
+ * @returns The workflow name if detected, undefined otherwise
+ */
+export const detectStatefulCodefulWorkflow = (fileContent: string): string | undefined =>
+  detectWorkflowName(fileContent, /Workflow(?:Builder)?Factory\s*\.CreateStatefulWorkflow\s*\(\s*([^,)]+)/);
+
+/**
+ * Detects if a C# file contains a CreateStatelessWorkflow call and extracts the workflow name.
+ * @param fileContent - The content of the C# file
+ * @returns The workflow name if detected, undefined otherwise
+ */
+export const detectStatelessCodefulWorkflow = (fileContent: string): string | undefined =>
+  detectWorkflowName(fileContent, /Workflow(?:Builder)?Factory\s*\.CreateStatelessWorkflow\s*\(\s*([^,)]+)/);
+
+/**
+ * Detects all stateless codeful workflows declared with literal workflow names in a C# file.
+ * @param fileContent - The content of the C# file
+ * @returns The unique workflow names found in the file
+ */
+export const detectStatelessCodefulWorkflows = (fileContent: string): string[] => {
+  const uncommentedContent = fileContent.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*/g, '');
+  const pattern = /Workflow(?:Builder)?Factory\s*\.CreateStatelessWorkflow\s*\(\s*["']([^"']+)["']/g;
+  const workflowNames = new Set<string>();
+  let match: RegExpExecArray | null;
+
+  while ((match = pattern.exec(uncommentedContent)) !== null) {
+    workflowNames.add(match[1]);
+  }
+
+  return [...workflowNames];
 };
 
 /**
@@ -334,40 +359,24 @@ export const detectStatefulCodefulWorkflow = (fileContent: string): string | und
  * @returns The workflow name if detected, undefined otherwise
  */
 export const detectAgentCodefulWorkflow = (fileContent: string): string | undefined => {
-  // Pattern to match: WorkflowBuilderFactory.CreateConversationalAgent(<workflowName>)
-  // or WorkflowFactory.CreateAgentWorkflow(<workflowName>, ...)
-  // This handles: variables, string literals, template placeholders like <%= flowName %>
-  // Using [\s\S]*? to match across line breaks
-  const pattern =
-    /(?:WorkflowBuilderFactory[\s\S]*?\.CreateConversationalAgent|WorkflowFactory[\s\S]*?\.CreateAgentWorkflow)\s*\(\s*([^,)]+)/;
-  const match = fileContent.match(pattern);
-
-  if (match && match[1]) {
-    // Extract the workflow name and clean it up (remove quotes, trim whitespace)
-    let workflowName = match[1].trim();
-
-    // Remove string quotes if present
-    workflowName = workflowName.replace(/^["']|["']$/g, '');
-
-    // If it's a template placeholder like <%= flowName %>, we can't determine the actual name
-    // In this case, return undefined since it's a template
-    if (workflowName.includes('<%=') || workflowName.includes('%>')) {
-      return undefined;
-    }
-
-    return workflowName;
-  }
-
-  return undefined;
+  const pattern = /(?:WorkflowBuilderFactory\s*\.CreateConversationalAgent|WorkflowFactory\s*\.CreateAgentWorkflow)\s*\(\s*([^,)]+)/;
+  return detectWorkflowName(fileContent, pattern);
 };
 
 /**
  * Detects if a C# file is a codeful workflow file and extracts the workflow name.
- * Checks for both stateful and agent workflow patterns.
+ * Checks for stateful, stateless, and agent workflow patterns.
  * @param fileContent - The content of the C# file
  * @returns An object with the workflow name and type if detected, undefined otherwise
  */
-export const detectCodefulWorkflow = (fileContent: string): { workflowName: string; workflowType: 'stateful' | 'agent' } | undefined => {
+export const detectCodefulWorkflow = (
+  fileContent: string
+): { workflowName: string; workflowType: 'stateful' | 'stateless' | 'agent' } | undefined => {
+  const statelessWorkflowName = detectStatelessCodefulWorkflow(fileContent);
+  if (statelessWorkflowName) {
+    return { workflowName: statelessWorkflowName, workflowType: 'stateless' };
+  }
+
   const statefulWorkflowName = detectStatefulCodefulWorkflow(fileContent);
   if (statefulWorkflowName) {
     return { workflowName: statefulWorkflowName, workflowType: 'stateful' };
