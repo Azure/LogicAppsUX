@@ -175,6 +175,7 @@ export const ParametersTab: React.FC<ParametersTabProps> = (props) => {
   }));
   const nodeType = useSelector((state: RootState) => state.operations.operationInfo[selectedNodeId]?.type);
   const readOnly = useReadOnly() || isTabReadOnly;
+  const { supportedExpressionFunctions } = useHostOptions();
   const nodesInitialized = useNodesInitialized();
 
   const connectionName = useNodeConnectionName(selectedNodeId);
@@ -238,7 +239,7 @@ export const ParametersTab: React.FC<ParametersTabProps> = (props) => {
     workflowState,
     replacedIds
   );
-  const expressionGroup = getExpressionTokenSections();
+  const expressionGroup = getExpressionTokenSections(supportedExpressionFunctions);
 
   return (
     <>
