@@ -33,9 +33,12 @@ Changes to both `apps/vs-code-designer/` and `apps/vs-code-react/` are handled b
 - `docs/ai-setup/packages/vs-code-react.md` — Webview app architecture
 - `docs/ai-setup/packages/vscode-extension.md` — Shared extension utilities
 - `apps/vs-code-designer/src/test/ui/SKILL.md` — E2E test knowledge base
+- `docs/testing/vscode-cli-authoring.md` — CLI-native authoring, evidence, direct-selector and cleanup contracts
+- `apps/vs-code-designer/src/test/e2e/README.md` — CLI-native suite guide
 
 ## Collaboration
 
 - Read `../../decisions.md` before starting any work.
 - Write a decision entry when changing the webview ↔ extension message protocol — both sides must stay in sync.
 - Coordinate with designer-core and designer-ui when upgrading the designer version consumed by the extension.
+- For CLI-native infrastructure, keep wrapper context centralized, invalidate stale receipts before fallible setup, and coordinate targeted plus canonical ADO proof with `vscode-test-specialist`, `test`, and `ci-sentinel`.

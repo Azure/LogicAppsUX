@@ -77,6 +77,25 @@ The extension is packaged with dependencies:
 
 ## Testing
 
+### Required knowledge before authoring native tests
+
+Read `docs/testing/vscode-cli-authoring.md` and the applicable
+`apps/vs-code-designer/src/test/e2e/README.md` or `src/test/ui/SKILL.md` first.
+Search the documented shared helper and regression controls before adding a
+local workaround.
+
+For standard **Enable connectors in Azure** setup, always choose the affirmative
+**Use connectors from Azure** / exact **Yes** option through real UI. Reuse
+`affirmativeAzureConnectorPrompt` in `workbenchPromptSelection.ts`; never silently
+fall back to Skip, No, Cancel or Escape. Complete any ensuing authentication and
+resource selection using existing approved fixtures/service connections only.
+Intentional workspace No/Cancel tests retain their own original actions.
+
+The guide distinguishes policy, regression-tested behavior, actual native proof
+and open limitations. Add new durable lessons there after investigations,
+keeping private case text, run identities, screenshots and credentials out of
+public authoring instructions.
+
 ### Unit Tests
 ```bash
 pnpm run test:extension-unit
@@ -239,4 +258,3 @@ Do NOT stop after pushing and tell the user "I'll wait" — proactively check an
 ## Graphify
 
 Read `apps/vs-code-designer/src/graphify-out/GRAPH_REPORT.md` for structural context (god nodes, communities, surprising connections).
-

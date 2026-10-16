@@ -13,7 +13,7 @@ export const logSubscriptions = async (context: IActionContext) => {
     const isSignedIn = await ext.subscriptionProvider.isSignedIn();
     context.telemetry.properties.isSignedIn = isSignedIn.toString();
     if (isSignedIn) {
-      const subscriptions = await ext.subscriptionProvider.getSubscriptions();
+      const subscriptions = await ext.subscriptionProvider.getSubscriptions(true);
       azureSubscriptions = subscriptions.map((subscription) => {
         return {
           subscriptionId: subscription.subscriptionId,

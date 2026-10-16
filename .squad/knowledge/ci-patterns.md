@@ -52,6 +52,32 @@ Curated CI, E2E, and workflow-failure learnings. Add entries through `session-kn
 - Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`.
 - Status: verified.
 
+### VS Code CLI outcomes must be classified by gate
+
+- Learning: Distinguish build/bootstrap failure, native test failure, native pass with terminal/cleanup rejection, ordered-evidence staging rejection, and final publication/rollup failure. Overall job status alone is not the native verdict.
+- Why it matters: A suite can pass its JSON/JUnit body and cleanup while the job correctly fails because a required manifest checkpoint was not accepted; conversely, a preflight failure can skip every native lane.
+- Pattern: inspect native JSON/JUnit, phase and terminal receipts, cleanup ledgers, `ORDERED_EVIDENCE_VALIDATION.json`, and the staged evidence report before assigning ownership.
+- Source: Source-bound VS Code CLI ADO investigations and `docs/testing/vscode-cli-authoring.md`.
+- Applies to: `ci-sentinel`, `vscode-test-specialist`, `test`, `release-scribe`.
+- Status: verified.
+
+### Preserve actionable stacks through suite-prefixed logs
+
+- Learning: Diagnostic serialization should retain `Error.stack`. Summarizers should remove one or more `[suite]` prefixes only for classifying error headers and contiguous `at ...` frames, while preserving the original prefixed lines in failure excerpts.
+- Why it matters: Reducing errors to `String(error)` or requiring unprefixed stack frames hides the call site that distinguishes wrapper setup failures from native test failures.
+- Source: `e2e-cli-diagnostics.js`, `summarize-e2e-cli-results.js`, and their regression controls.
+- Applies to: `ci-sentinel`, `vscode-test-specialist`.
+- Status: verified.
+
+### Targeted native proof must be followed by the canonical matrix
+
+- Learning: First prove affected suites on isolated Linux and Windows consumers bound to an immutable full SHA. After focused success, run the complete canonical inventory; a diagnostic selection never satisfies the protected full rollup.
+- Why it matters: Targeted runs shorten iteration but do not exercise unrelated suites, shared build gates, or complete rollup inventory.
+- Pattern: record the admitted source SHA, inspect downloaded artifacts rather than only job status, then queue the full non-diagnostic aliases against that SHA or a newer explicitly recorded SHA containing the fix.
+- Source: `.config/README.md` E2E branch-driven validation contract.
+- Applies to: `chief-engineer`, `ci-sentinel`, `vscode-test-specialist`, `test`.
+- Status: verified workflow.
+
 ## Triggers → use this file
 
 - GitHub Actions failure triage, branch protection, required checks
