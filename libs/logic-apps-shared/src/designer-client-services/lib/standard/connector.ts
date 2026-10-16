@@ -105,9 +105,9 @@ export class StandardConnectorService extends BaseConnectorService {
     operationPath?: string,
     identity?: string
   ): Promise<ListDynamicValue[]> {
-    const { baseUrl, apiVersion, httpClient, getConfiguration } = this.options;
+    const { baseUrl, apiVersion, httpClient, getConfiguration, workflowName } = this.options;
     const { operationId: dynamicOperation, apiType } = dynamicState;
-    const invokeParameters = this._getInvokeParameters(parameters, dynamicState);
+    const invokeParameters = this._getInvokeParameters(parameters, dynamicState, workflowName);
     const isMcpConnection = apiType === 'mcp' && dynamicOperation === 'listMcpTools';
 
     if (this._isClientSupportedOperation(connectorId, operationId)) {
