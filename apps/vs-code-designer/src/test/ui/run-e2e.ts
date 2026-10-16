@@ -697,27 +697,20 @@ async function main(): Promise<void> {
       `${devContainersDependency} must not be listed in extensionDependencies. It causes VS Code to install/start Dev Containers for users who only installed Azure Logic Apps.`
     );
   }
-  const requiredE2ePrereqs = ['ms-dotnettools.csdevkit'];
-  for (const prereq of requiredE2ePrereqs) {
-    if (!extDeps.some((dep) => dep.toLowerCase() === prereq)) {
-      throw new Error(`${prereq} must be listed in extensionDependencies because the E2E extension activation requires it.`);
-    }
-  }
-  const requiredE2ePackMembers = ['azurite.azurite'];
+  const requiredE2ePackMembers = ['azurite.azurite', 'ms-dotnettools.csharp', 'ms-dotnettools.csdevkit'];
   for (const packMember of requiredE2ePackMembers) {
     if (!extPack.some((extensionId) => extensionId.toLowerCase() === packMember)) {
-      throw new Error(`${packMember} must be listed in extensionPack because Logic Apps debug scenarios require it.`);
+      throw new Error(`${packMember} must be listed in extensionPack because Logic Apps authoring or debug scenarios require it.`);
     }
   }
   // Transitive dependencies that the VS Code CLI's --install-extension does NOT
   // reliably auto-resolve. Installing ms-dotnettools.csdevkit pulls in
   // ms-dotnettools.csharp, but csharp's own dependency
   // ms-dotnettools.vscode-dotnet-runtime is not always installed (observed on
-  // Windows). Without it, the C#/C# Dev Kit extensions fail to activate
-  // ("depends on an unknown 'ms-dotnettools.vscode-dotnet-runtime' extension"),
-  // which cascades into the Azure Logic Apps extension never finishing
-  // activation — so azureLogicAppsStandard.createWorkspace / Open Designer are
-  // never registered. Install these explicitly to guarantee activation.
+  // Windows). Without it, the C#/C# Dev Kit extensions fail when VS Code
+  // activates them for C# project or debug scenarios ("depends on an unknown
+  // 'ms-dotnettools.vscode-dotnet-runtime' extension"). Install it explicitly
+  // so those scenarios do not depend on transitive marketplace resolution.
   const transitiveE2eDependencies = ['ms-dotnettools.vscode-dotnet-runtime'];
   const allE2eDependencies = [...new Set([...extDeps, ...extPack, ...transitiveE2eDependencies].map((dep) => dep.toLowerCase()))];
   const extDirName = `${pkgJson.publisher}.${pkgJson.name}-${pkgJson.version}`;

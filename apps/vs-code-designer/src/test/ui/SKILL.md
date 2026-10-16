@@ -311,8 +311,8 @@ dist/test-extensions/
 ├── ms-azuretools.vscode-azurelogicapps-5.110.0/ ← OUR extension (copied from dist/)
 ├── azurite.azurite-3.35.0/                      ← extension pack member
 ├── ms-azuretools.vscode-azureresourcegroups-.../ ← dependency
-├── ms-dotnettools.csharp-.../                   ← dependency
-└── ms-dotnettools.csdevkit-.../                  ← dependency
+├── ms-dotnettools.csharp-.../                   ← extension pack member
+└── ms-dotnettools.csdevkit-.../                  ← extension pack member
 ```
 
 ## 5. Known Issues & Pitfalls (Debugging Guide)
@@ -550,8 +550,8 @@ Must call `webview.switchToFrame(timeout)` before any element interaction. Must 
 These are installed from the marketplace into `test-extensions/`:
 1. `azurite.azurite` (`extensionPack`)
 2. `ms-azuretools.vscode-azureresourcegroups` (`extensionDependencies`)
-3. `ms-dotnettools.csharp` (`extensionDependencies`)
-4. `ms-dotnettools.csdevkit` (`extensionDependencies`)
+3. `ms-dotnettools.csharp` (`extensionPack`)
+4. `ms-dotnettools.csdevkit` (`extensionPack`)
 
 ## 9. Timing Constants
 
