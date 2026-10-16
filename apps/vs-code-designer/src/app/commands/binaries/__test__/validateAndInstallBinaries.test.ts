@@ -210,6 +210,37 @@ describe('validateAndInstallBinaries', () => {
     expect(recordDependencyUpdateCheck).not.toHaveBeenCalled();
   });
 
+  it('opens user settings when invalid configuration blocks dependency validation', async () => {
+    const openUserSettings = 'Open User Settings (JSON)';
+    const invalidConfigurationError = Object.assign(new Error('Les paramètres utilisateur contiennent des erreurs.'), { code: 11 });
+    (ensureRuntimeDependenciesDir as Mock).mockRejectedValueOnce(invalidConfigurationError);
+    (vscode.window.showErrorMessage as Mock).mockResolvedValueOnce(openUserSettings);
+
+    await expect(validateAndInstallBinaries(context)).rejects.toThrow('Les paramètres utilisateur contiennent des erreurs.');
+
+    expect(context.telemetry.properties).toMatchObject({
+      result: 'Failed',
+      errorMessage: 'Les paramètres utilisateur contiennent des erreurs.',
+      dependencySettingsInitializationError: 'userSettings',
+    });
+    expect(vscode.window.showErrorMessage).toHaveBeenCalledWith(
+      'Unable to validate runtime dependencies because User Settings contains errors. Correct the errors and try again.',
+      openUserSettings
+    );
+    expect(vscode.commands.executeCommand).toHaveBeenCalledWith('workbench.action.openSettingsJson');
+    expect(getBundleDependencyFeed).not.toHaveBeenCalled();
+    expect(context.errorHandling.suppressDisplay).toBe(true);
+  });
+
+  it('rethrows unrelated dependency directory errors', async () => {
+    (ensureRuntimeDependenciesDir as Mock).mockRejectedValueOnce(new Error('Unable to create runtime dependency directory'));
+
+    await expect(validateAndInstallBinaries(context)).rejects.toThrow('Unable to create runtime dependency directory');
+
+    expect(context.telemetry.properties.dependencySettingsInitializationError).toBe('unrecognized');
+    expect(vscode.window.showErrorMessage).not.toHaveBeenCalled();
+  });
+
   it('requires an installed bundle and rethrows dependency validation errors in strict E2E mode', async () => {
     (shouldRequireStrictDependencyValidation as Mock).mockReturnValue(true);
     (ensureExtensionBundleHealthy as Mock).mockRejectedValueOnce(new Error('Bundle sidecar missing'));
