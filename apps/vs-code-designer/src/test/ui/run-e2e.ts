@@ -9,8 +9,8 @@
  * Uses an isolated extensions directory so no other user extensions
  * (Claude Code, etc.) interfere.
  *
- * Installs extensionDependencies from the marketplace into the same
- * isolated directory.
+ * Installs extensionDependencies and extensionPack members from the
+ * marketplace into the same isolated directory.
  */
 
 import * as path from 'path';
@@ -620,32 +620,29 @@ async function main(): Promise<void> {
   // Read extension metadata from dist/package.json
   const pkgJson = JSON.parse(fs.readFileSync(path.join(distDir, 'package.json'), 'utf8'));
   const extDeps: string[] = pkgJson.extensionDependencies || [];
+  const extPack: string[] = pkgJson.extensionPack || [];
   const devContainersDependency = 'ms-vscode-remote.remote-containers';
   if (extDeps.some((dep) => dep.toLowerCase() === devContainersDependency)) {
     throw new Error(
       `${devContainersDependency} must not be listed in extensionDependencies. It causes VS Code to install/start Dev Containers for users who only installed Azure Logic Apps.`
     );
   }
-  const requiredE2ePrereqs = ['ms-dotnettools.csdevkit'];
-  for (const prereq of requiredE2ePrereqs) {
-    if (!extDeps.some((dep) => dep.toLowerCase() === prereq)) {
-      throw new Error(`${prereq} must be listed in extensionDependencies because the E2E extension activation requires it.`);
+  const requiredE2ePackMembers = ['azurite.azurite', 'ms-dotnettools.csharp', 'ms-dotnettools.csdevkit'];
+  for (const packMember of requiredE2ePackMembers) {
+    if (!extPack.some((extensionId) => extensionId.toLowerCase() === packMember)) {
+      throw new Error(`${packMember} must be listed in extensionPack because Logic Apps authoring or debug scenarios require it.`);
     }
   }
   // Transitive dependencies that the VS Code CLI's --install-extension does NOT
   // reliably auto-resolve. Installing ms-dotnettools.csdevkit pulls in
   // ms-dotnettools.csharp, but csharp's own dependency
   // ms-dotnettools.vscode-dotnet-runtime is not always installed (observed on
-  // Windows). Without it, the C#/C# Dev Kit extensions fail to activate
-  // ("depends on an unknown 'ms-dotnettools.vscode-dotnet-runtime' extension"),
-  // which cascades into the Azure Logic Apps extension never finishing
-  // activation — so azureLogicAppsStandard.createWorkspace / Open Designer are
-  // never registered. Install these explicitly to guarantee activation.
+  // Windows). Without it, the C#/C# Dev Kit extensions fail when VS Code
+  // activates them for C# project or debug scenarios ("depends on an unknown
+  // 'ms-dotnettools.vscode-dotnet-runtime' extension"). Install it explicitly
+  // so those scenarios do not depend on transitive marketplace resolution.
   const transitiveE2eDependencies = ['ms-dotnettools.vscode-dotnet-runtime'];
-  const allE2eDependencies = [
-    ...extDeps,
-    ...transitiveE2eDependencies.filter((dep) => !extDeps.some((d) => d.toLowerCase() === dep.toLowerCase())),
-  ];
+  const allE2eDependencies = [...new Set([...extDeps, ...extPack, ...transitiveE2eDependencies].map((dep) => dep.toLowerCase()))];
   const extDirName = `${pkgJson.publisher}.${pkgJson.name}-${pkgJson.version}`;
   const ourExtTarget = path.join(extDir, extDirName);
 
@@ -663,7 +660,7 @@ async function main(): Promise<void> {
   // state from a VS Code archive layout that changed during download.
   const extest = createExTester();
 
-  // Step 2: Install extension dependencies from the marketplace.
+  // Step 2: Install extension dependencies and extension-pack members from the marketplace.
   // Skip deps already present in test-extensions/. For uncached deps,
   // run VS Code CLI --install-extension sequentially. Parallel CLI installs
   // race on shared extension/cache directories and can leave VS Code with

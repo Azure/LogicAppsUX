@@ -1096,12 +1096,8 @@
       }
     ]
   },
-  "extensionDependencies": [
-    "azurite.azurite",
-    "ms-azuretools.vscode-azureresourcegroups",
-    "ms-dotnettools.csharp",
-    "ms-dotnettools.csdevkit"
-  ],
+  "extensionDependencies": ["ms-azuretools.vscode-azureresourcegroups"],
+  "extensionPack": ["azurite.azurite", "ms-dotnettools.csharp", "ms-dotnettools.csdevkit"],
   "activationEvents": [
     "onView:azureWorkspace",
     "onView:azureResourceGroups",

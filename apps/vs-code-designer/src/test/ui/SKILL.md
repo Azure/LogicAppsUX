@@ -308,10 +308,10 @@ And `run-e2e.ts` removes any stale auto-updated versions of our extension on sta
 dist/test-extensions/
 ├── extensions.json                              ← VS Code reads this
 ├── ms-azuretools.vscode-azurelogicapps-5.110.0/ ← OUR extension (copied from dist/)
-├── azurite.azurite-3.35.0/                      ← dependency
+├── azurite.azurite-3.35.0/                      ← extension pack member
 ├── ms-azuretools.vscode-azureresourcegroups-.../ ← dependency
-├── ms-dotnettools.csharp-.../                   ← dependency
-└── ms-dotnettools.csdevkit-.../                  ← dependency
+├── ms-dotnettools.csharp-.../                   ← extension pack member
+└── ms-dotnettools.csdevkit-.../                  ← extension pack member
 ```
 
 ## 5. Known Issues & Pitfalls (Debugging Guide)
@@ -544,13 +544,13 @@ Fluent UI Dropdown renders a `<button role="combobox">` as the trigger. Options 
 ### Webview iframe switching
 Must call `webview.switchToFrame(timeout)` before any element interaction. Must call `webview.switchBack()` before interacting with VS Code chrome.
 
-## 8. Extension Dependencies
+## 8. Extension Dependencies and Pack Members
 
 These are installed from the marketplace into `test-extensions/`:
-1. `azurite.azurite`
-2. `ms-azuretools.vscode-azureresourcegroups`
-3. `ms-dotnettools.csharp`
-4. `ms-dotnettools.csdevkit`
+1. `azurite.azurite` (`extensionPack`)
+2. `ms-azuretools.vscode-azureresourcegroups` (`extensionDependencies`)
+3. `ms-dotnettools.csharp` (`extensionPack`)
+4. `ms-dotnettools.csdevkit` (`extensionPack`)
 
 ## 9. Timing Constants
 
