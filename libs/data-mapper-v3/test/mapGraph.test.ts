@@ -1,3 +1,4 @@
+import { describe, test, expect } from 'vitest';
 import { FunctoidCategory, LinkEndpointType, type MapPage, ParameterType, reconcilePageFunctoidLinks } from '../src/model';
 
 function createPage(): MapPage {

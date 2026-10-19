@@ -1,3 +1,4 @@
+import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import * as vscode from 'vscode';
 import { disposeDataMapperLogger, errorCategory, getDataMapperLogger } from '../src/logger';
 import { MapEditorProvider } from '../src/mapEditorProvider';
@@ -8,7 +9,7 @@ import { activate } from '../src/extension';
 describe('dedicated Data Mapper log channel', () => {
   beforeEach(() => {
     disposeDataMapperLogger();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockWindow.createOutputChannel.mockReturnValue(outputChannel);
   });
   afterEach(disposeDataMapperLogger);
@@ -16,7 +17,7 @@ describe('dedicated Data Mapper log channel', () => {
   test('activation registers Show Data Mapper Logs and owns channel disposal', () => {
     const subscriptions: vscode.Disposable[] = [];
     activate({ subscriptions } as vscode.ExtensionContext);
-    const command = jest.mocked(vscode.commands.registerCommand).mock.calls.find(([name]) => name === 'biztalkDataMapper.showLogs');
+    const command = vi.mocked(vscode.commands.registerCommand).mock.calls.find(([name]) => name === 'biztalkDataMapper.showLogs');
     expect(command).toBeDefined();
     command?.[1]();
     expect(outputChannel.show).toHaveBeenCalledWith(true);

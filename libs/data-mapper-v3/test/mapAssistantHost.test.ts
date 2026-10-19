@@ -1,36 +1,37 @@
+import { describe, test, expect, beforeEach, vi } from 'vitest';
 import * as vscode from 'vscode';
 import { MapEditorProvider } from '../src/mapEditorProvider';
 import { BtmSerializer } from '../src/schema/btmSerializer';
 import { DEFAULT_MAP_OPTIONS, FunctoidCategory } from '../src/model/mapModel';
 import type { MapDocument } from '../src/model/mapModel';
 
-jest.mock('vscode', () => {
-  const base = jest.requireActual('vscode');
+vi.mock('vscode', async () => {
+  const base = await vi.importActual<typeof import('vscode')>('vscode');
   return {
     ...base,
-    lm: { selectChatModels: jest.fn() },
+    lm: { selectChatModels: vi.fn() },
     LanguageModelChatMessage: {
       User: (content: string) => ({ role: 'user', content }),
       Assistant: (content: string) => ({ role: 'assistant', content }),
     },
     Range: class {},
     WorkspaceEdit: class {
-      replace = jest.fn();
+      replace = vi.fn();
     },
     workspace: {
       ...base.workspace,
-      onDidChangeTextDocument: jest.fn(() => ({ dispose: jest.fn() })),
-      applyEdit: jest.fn(),
+      onDidChangeTextDocument: vi.fn(() => ({ dispose: vi.fn() })),
+      applyEdit: vi.fn(),
     },
   };
 });
 
-jest.mock('../src/worker/compilerWorkerClient', () => ({
+vi.mock('../src/worker/compilerWorkerClient', () => ({
   CompilerWorkerClient: class {},
 }));
 
 const serializer = new BtmSerializer();
-const confirm = jest.mocked<(message: string, options: vscode.MessageOptions, ...items: string[]) => Thenable<string | undefined>>(
+const confirm = vi.mocked<(message: string, options: vscode.MessageOptions, ...items: string[]) => Thenable<string | undefined>>(
   vscode.window.showInformationMessage
 );
 
@@ -66,8 +67,8 @@ async function setup(layoutOnly = false) {
     lineCount: 1,
     getText: () => serializer.serialize(map),
   };
-  const onDidReceiveMessage = jest.fn();
-  const postMessage = jest.fn().mockResolvedValue(true);
+  const onDidReceiveMessage = vi.fn();
+  const postMessage = vi.fn().mockResolvedValue(true);
   const panel: vscode.WebviewPanel = {
     viewType: 'test',
     title: 'test',
@@ -75,9 +76,9 @@ async function setup(layoutOnly = false) {
     viewColumn: undefined,
     visible: true,
     active: true,
-    onDidChangeViewState: jest.fn(),
-    reveal: jest.fn(),
-    dispose: jest.fn(),
+    onDidChangeViewState: vi.fn(),
+    reveal: vi.fn(),
+    dispose: vi.fn(),
     webview: {
       options: {},
       html: '',
@@ -86,18 +87,18 @@ async function setup(layoutOnly = false) {
       postMessage,
       asWebviewUri: () => vscode.Uri.file('script'),
     },
-    onDidDispose: jest.fn(),
+    onDidDispose: vi.fn(),
   };
-  const countTokens = jest
+  const countTokens = vi
     .fn()
     .mockImplementation(async (prompt: string) => (layoutOnly && prompt.includes('Current MapDocument:') ? 20000 : 100));
   let responseText = '{"summary":"Arrange all pages","patches":[{"op":"layout","path":"/pages"}]}';
-  const sendRequest = jest.fn().mockImplementation(async () => ({
+  const sendRequest = vi.fn().mockImplementation(async () => ({
     text: (async function* () {
       yield responseText;
     })(),
   }));
-  jest.mocked(vscode.lm.selectChatModels).mockResolvedValue([
+  vi.mocked(vscode.lm.selectChatModels).mockResolvedValue([
     {
       name: 'test',
       id: 'test',
@@ -109,11 +110,11 @@ async function setup(layoutOnly = false) {
       sendRequest,
     },
   ]);
-  jest.mocked(vscode.workspace.applyEdit).mockResolvedValue(true);
+  vi.mocked(vscode.workspace.applyEdit).mockResolvedValue(true);
   const provider = new MapEditorProvider({ extensionUri: vscode.Uri.file('.') } as vscode.ExtensionContext);
   await provider.resolveCustomTextEditor(document as vscode.TextDocument, panel, {
     isCancellationRequested: false,
-    onCancellationRequested: jest.fn(),
+    onCancellationRequested: vi.fn(),
   });
   return {
     document,
@@ -133,16 +134,16 @@ async function setup(layoutOnly = false) {
 }
 
 describe('Assistant layout host integration', () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => vi.clearAllMocks());
 
   test.each([false, true])('applies all pages in one confirmed edit (compact context: %s)', async (compact) => {
     const host = await setup(compact);
     confirm.mockResolvedValue('Apply Changes');
     await host.submit();
     expect(vscode.workspace.applyEdit).toHaveBeenCalledTimes(1);
-    const edit = jest.mocked(vscode.workspace.applyEdit).mock.calls[0][0];
+    const edit = vi.mocked(vscode.workspace.applyEdit).mock.calls[0][0];
     expect(edit.replace).toHaveBeenCalledTimes(1);
-    const [uri, , xml] = jest.mocked(edit.replace).mock.calls[0];
+    const [uri, , xml] = vi.mocked(edit.replace).mock.calls[0];
     expect(uri).toEqual(host.document.uri);
     const updated = serializer.deserialize(xml);
     expect(updated.pages.every((page) => page.functoids[0].x !== 1 && page.functoids[0].y !== 1)).toBe(true);
@@ -257,7 +258,7 @@ describe('Assistant layout host integration', () => {
   test('reports failed document application instead of success', async () => {
     const host = await setup();
     confirm.mockResolvedValue('Apply Changes');
-    jest.mocked(vscode.workspace.applyEdit).mockResolvedValue(false);
+    vi.mocked(vscode.workspace.applyEdit).mockResolvedValue(false);
     await host.submit();
     expect(host.postMessage).toHaveBeenLastCalledWith(
       expect.objectContaining({

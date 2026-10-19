@@ -1,3 +1,4 @@
+import { describe, test, expect } from 'vitest';
 /**
  * BizTalk Data Mapper - Functoid category integration tests.
  *

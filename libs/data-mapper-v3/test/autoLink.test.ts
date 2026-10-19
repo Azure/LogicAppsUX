@@ -1,3 +1,4 @@
+import { describe, test, expect } from 'vitest';
 import { findUniqueNameMatches } from '../webview/src/components/autoLink';
 
 describe('Auto Link by Name', () => {

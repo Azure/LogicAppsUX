@@ -1,3 +1,4 @@
+import { describe, test, expect } from 'vitest';
 import { SchemaParser } from '../src/schema/schemaParser';
 import { XMLParser, XMLValidator } from 'fast-xml-parser';
 import { InstanceGenerator } from '../src/schema/instanceGenerator';

@@ -1,3 +1,4 @@
+import { describe, test, expect } from 'vitest';
 import { XMLValidator } from 'fast-xml-parser';
 import { XsltCompiler } from '../src/compiler/xsltCompiler';
 import { FunctoidRegistry } from '../src/functoids';

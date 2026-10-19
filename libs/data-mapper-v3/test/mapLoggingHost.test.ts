@@ -1,24 +1,30 @@
+import { describe, test, expect, beforeEach, afterEach, vi, type Mocked } from 'vitest';
 import * as vscode from 'vscode';
-import fs from 'fs';
+import * as fs from 'fs';
 import { MapEditorProvider } from '../src/mapEditorProvider';
 import { BtmSerializer } from '../src/schema/btmSerializer';
 import { CompilerWorkerClient } from '../src/worker/compilerWorkerClient';
 import { disposeDataMapperLogger } from '../src/logger';
 import { outputChannel, window as mockWindow } from './__mocks__/vscode';
 
-jest.mock('../src/worker/compilerWorkerClient', () => ({
-  CompilerWorkerClient: jest.fn(() => ({ compileMap: jest.fn(), testMap: jest.fn() })),
+// ESM namespace exports can't be spied on, so the two fs functions the provider writes/reads are wrapped here and default to the real ones.
+vi.mock('fs', async () => {
+  const actual = await vi.importActual<typeof import('fs')>('fs');
+  return { ...actual, default: actual, writeFileSync: vi.fn(actual.writeFileSync), readFileSync: vi.fn(actual.readFileSync) };
+});
+vi.mock('../src/worker/compilerWorkerClient', () => ({
+  CompilerWorkerClient: vi.fn(() => ({ compileMap: vi.fn(), testMap: vi.fn() })),
 }));
-jest.mock('vscode', () => {
-  const base = jest.requireActual('vscode');
+vi.mock('vscode', async () => {
+  const base = await vi.importActual<typeof import('vscode')>('vscode');
   return {
     ...base,
     ViewColumn: { Beside: 2 },
-    window: { ...base.window, showTextDocument: jest.fn() },
+    window: { ...base.window, showTextDocument: vi.fn() },
     workspace: {
       ...base.workspace,
-      openTextDocument: jest.fn(),
-      onDidChangeTextDocument: jest.fn(() => ({ dispose: jest.fn() })),
+      openTextDocument: vi.fn(),
+      onDidChangeTextDocument: vi.fn(() => ({ dispose: vi.fn() })),
     },
   };
 });
@@ -40,23 +46,23 @@ async function setup() {
     isClosed: false,
     eol: 1,
     save: async () => true,
-    lineAt: jest.fn(),
-    offsetAt: jest.fn(),
-    positionAt: jest.fn(),
-    getWordRangeAtPosition: jest.fn(),
-    validateRange: jest.fn(),
-    validatePosition: jest.fn(),
+    lineAt: vi.fn(),
+    offsetAt: vi.fn(),
+    positionAt: vi.fn(),
+    getWordRangeAtPosition: vi.fn(),
+    validateRange: vi.fn(),
+    validatePosition: vi.fn(),
   };
-  jest.mocked(vscode.workspace.openTextDocument).mockResolvedValue(document);
-  const onDidReceiveMessage = jest.fn();
-  const postMessage = jest.fn().mockResolvedValue(true);
+  vi.mocked(vscode.workspace.openTextDocument).mockResolvedValue(document);
+  const onDidReceiveMessage = vi.fn();
+  const postMessage = vi.fn().mockResolvedValue(true);
   const panel = {
     webview: { options: {}, html: '', cspSource: '', onDidReceiveMessage, postMessage, asWebviewUri: () => vscode.Uri.file('script') },
-    onDidDispose: jest.fn(),
+    onDidDispose: vi.fn(),
   };
   const provider = new MapEditorProvider({ extensionUri: vscode.Uri.file('.') } as vscode.ExtensionContext);
   await provider.resolveCustomTextEditor(document, panel as unknown as vscode.WebviewPanel, {} as vscode.CancellationToken);
-  const worker = jest.mocked(CompilerWorkerClient).mock.results.at(-1)?.value as jest.Mocked<CompilerWorkerClient>;
+  const worker = vi.mocked(CompilerWorkerClient).mock.results.at(-1)?.value as Mocked<CompilerWorkerClient>;
   return { map, worker, postMessage, submit: (message: unknown) => onDidReceiveMessage.mock.calls[0][0](message) };
 }
 
@@ -71,11 +77,11 @@ const logs = () =>
 describe('map compilation and Test Map logging', () => {
   beforeEach(() => {
     disposeDataMapperLogger();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockWindow.createOutputChannel.mockReturnValue(outputChannel);
   });
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     disposeDataMapperLogger();
   });
 
@@ -133,8 +139,8 @@ describe('map compilation and Test Map logging', () => {
       xslt: '<stylesheet>private-script</stylesheet>',
     });
     host.worker.testMap.mockResolvedValue({ outputXml: '<Root>private-output</Root>', diagnostics: [] });
-    jest.spyOn(fs, 'writeFileSync').mockImplementation(() => undefined);
-    jest.spyOn(fs, 'readFileSync').mockReturnValue('<stylesheet>private-script</stylesheet>');
+    vi.mocked(fs.writeFileSync).mockImplementation(() => undefined);
+    vi.mocked(fs.readFileSync).mockReturnValue('<stylesheet>private-script</stylesheet>');
     await host.submit({ type: 'testMapWithInput', data: { map: host.map, inputXml: '<Root>private-input</Root>' } });
     expect(logs()).toContain('parsing input XML');
     expect(logs()).toContain('compiled XSLT saved');
@@ -150,7 +156,7 @@ describe('map compilation and Test Map logging', () => {
   test('logs and reports save failures that happen before transformation', async () => {
     const host = await setup();
     host.worker.compileMap.mockResolvedValue({ success: true, errors: [], warnings: [], xslt: '<stylesheet/>' });
-    jest.spyOn(fs, 'writeFileSync').mockImplementation(() => {
+    vi.mocked(fs.writeFileSync).mockImplementation(() => {
       throw Object.assign(new Error('private-path'), { code: 'EACCES' });
     });
     await host.submit({ type: 'testMapWithInput', data: { map: host.map, inputXml: '<Root/>' } });

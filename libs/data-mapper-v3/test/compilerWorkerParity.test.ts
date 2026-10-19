@@ -1,3 +1,4 @@
+import { describe, test, expect, vi } from 'vitest';
 import { XsltCompiler } from '../src/compiler/xsltCompiler';
 import { FunctoidRegistry } from '../src/functoids';
 import { DEFAULT_MAP_OPTIONS, LinkEndpointType, type MapDocument } from '../src/model';
@@ -95,7 +96,7 @@ describe('compiler worker parity', () => {
                 <xs:element name="Value" type="xs:string"/>
               </xs:sequence></xs:complexType></xs:element>
             </xs:schema>`;
-    const parseSpy = jest.spyOn(SchemaParser.prototype, 'parseWithImports');
+    const parseSpy = vi.spyOn(SchemaParser.prototype, 'parseWithImports');
     const map: MapDocument = {
       name: 'Reference transport',
       version: '1',

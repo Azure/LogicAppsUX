@@ -1,46 +1,49 @@
+import { vi } from 'vitest';
 // VS Code API mock for testing
 import * as path from 'path';
 
 export const window = {
-    showInformationMessage: jest.fn(),
-    showErrorMessage: jest.fn(),
-    showWarningMessage: jest.fn(),
-    showOpenDialog: jest.fn(),
-    showSaveDialog: jest.fn(),
-    showInputBox: jest.fn(),
-    createOutputChannel: jest.fn(() => outputChannel),
-    registerCustomEditorProvider: jest.fn(() => ({ dispose: jest.fn() })),
-    registerTreeDataProvider: jest.fn(() => ({ dispose: jest.fn() }))
+    showInformationMessage: vi.fn(),
+    showErrorMessage: vi.fn(),
+    showWarningMessage: vi.fn(),
+    showOpenDialog: vi.fn(),
+    showSaveDialog: vi.fn(),
+    showInputBox: vi.fn(),
+    createOutputChannel: vi.fn(() => outputChannel),
+    registerCustomEditorProvider: vi.fn(() => ({ dispose: vi.fn() })),
+    registerTreeDataProvider: vi.fn(() => ({ dispose: vi.fn() }))
 };
 
 export const outputChannel = {
-    appendLine: jest.fn(),
-    show: jest.fn(),
-    dispose: jest.fn(),
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-    debug: jest.fn(),
-    trace: jest.fn()
+    appendLine: vi.fn(),
+    show: vi.fn(),
+    dispose: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    debug: vi.fn(),
+    trace: vi.fn()
 };
 
 export const workspace = {
     fs: {
-        readFile: jest.fn(),
-        writeFile: jest.fn(),
-        readDirectory: jest.fn().mockResolvedValue([]),
-        createDirectory: jest.fn(),
-        copy: jest.fn(),
-        delete: jest.fn()
+        readFile: vi.fn(),
+        writeFile: vi.fn(),
+        readDirectory: vi.fn(async () => []),
+        createDirectory: vi.fn(),
+        copy: vi.fn(),
+        delete: vi.fn()
     },
-    createFileSystemWatcher: jest.fn(() => ({
-        onDidCreate: jest.fn(),
-        onDidDelete: jest.fn(),
-        dispose: jest.fn()
+    createFileSystemWatcher: vi.fn(() => ({
+        onDidCreate: vi.fn(),
+        onDidDelete: vi.fn(),
+        dispose: vi.fn()
     })),
-    findFiles: jest.fn(),
-    asRelativePath: jest.fn()
+    findFiles: vi.fn(),
+    asRelativePath: vi.fn()
 };
+
+export const FileType = { Unknown: 0, File: 1, Directory: 2, SymbolicLink: 64 };
 
 export const Uri = {
     file: (filePath: string) => ({ scheme: 'file', fsPath: filePath, path: filePath.replace(/\\/g, '/'), toString: () => filePath }),
@@ -63,8 +66,8 @@ export const Uri = {
 };
 
 export const commands = {
-    registerCommand: jest.fn(),
-    executeCommand: jest.fn()
+    registerCommand: vi.fn(),
+    executeCommand: vi.fn()
 };
 
 export class RelativePattern {
@@ -75,9 +78,9 @@ export class RelativePattern {
 }
 
 export class EventEmitter<T> {
-    public readonly event = jest.fn();
-    public fire = jest.fn<void, [T]>();
-    public dispose = jest.fn();
+    public readonly event = vi.fn();
+    public fire = vi.fn<void, [T]>();
+    public dispose = vi.fn();
 }
 
 export class TreeItem {
@@ -104,7 +107,7 @@ export class ThemeIcon {
 }
 
 export const Disposable = {
-    from: jest.fn((...items: Array<{ dispose(): void }>) => ({
+    from: vi.fn((...items: Array<{ dispose(): void }>) => ({
         dispose: () => items.forEach(item => item.dispose())
     }))
 };

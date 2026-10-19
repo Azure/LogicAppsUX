@@ -1,3 +1,4 @@
+import { describe, test, expect } from 'vitest';
 import { getGlobalSchemaRootNames, resolveLooseSchemaReference } from '../src/schema/schemaReferenceResolver';
 
 describe('loose BizTalk schema reference resolution', () => {

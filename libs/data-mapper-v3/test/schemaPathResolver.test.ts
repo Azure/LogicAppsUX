@@ -1,3 +1,4 @@
+import { describe, test, expect } from 'vitest';
 import { SchemaParser } from '../src/schema/schemaParser';
 import { SchemaPathResolver, simplifySchemaPath } from '../src/schema/schemaPathResolver';
 import { BtmSerializer } from '../src/schema/btmSerializer';

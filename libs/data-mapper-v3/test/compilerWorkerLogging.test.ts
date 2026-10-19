@@ -1,3 +1,4 @@
+import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import * as childProcess from 'child_process';
 import type * as vscode from 'vscode';
 import { CompilerWorkerClient } from '../src/worker/compilerWorkerClient';
@@ -6,18 +7,18 @@ import { DEFAULT_MAP_OPTIONS, type MapDocument } from '../src/model';
 import { SchemaNodeType, type SchemaTree } from '../src/model/schemaModel';
 import { outputChannel } from './__mocks__/vscode';
 
-jest.mock('child_process', () => {
-  const { EventEmitter } = jest.requireActual('events');
-  const { PassThrough } = jest.requireActual('stream');
+vi.mock('child_process', async () => {
+  const { EventEmitter } = await vi.importActual<typeof import('events')>('events');
+  const { PassThrough } = await vi.importActual<typeof import('stream')>('stream');
   return {
-    spawn: jest.fn(() =>
+    spawn: vi.fn(() =>
       Object.assign(new EventEmitter(), {
         stdin: new PassThrough(),
         stdout: new PassThrough(),
         stderr: new PassThrough(),
         exitCode: null,
         killed: false,
-        kill: jest.fn(),
+        kill: vi.fn(),
       })
     ),
   };
@@ -33,23 +34,23 @@ describe('compiler worker logging', () => {
   let client: CompilerWorkerClient;
   beforeEach(() => {
     disposeDataMapperLogger();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     client = new CompilerWorkerClient({
       asAbsolutePath: (file: string) => file,
       extensionPath: '.',
     } as vscode.ExtensionContext);
   });
   afterEach(() => {
-    const worker = jest.mocked(childProcess.spawn).mock.results[0]?.value;
+    const worker = vi.mocked(childProcess.spawn).mock.results[0]?.value;
     worker?.emit('exit', 0, null);
     client.dispose();
     disposeDataMapperLogger();
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   test('records lifecycle, request IDs and timing without stdout/stderr payloads', async () => {
     const pending = client.testMap({ xslt: 'private-xslt', inputXml: 'private-input' });
-    const worker = jest.mocked(childProcess.spawn).mock.results[0].value;
+    const worker = vi.mocked(childProcess.spawn).mock.results[0].value;
     worker.stdout.write('private-invalid-response\n');
     worker.stderr.write('private-stderr');
     worker.stdout.write(`${JSON.stringify({ id: 1, result: { protocolVersion: 1 } })}\n`);
@@ -65,7 +66,7 @@ describe('compiler worker logging', () => {
 
   test('logs worker errors without leaking response details', async () => {
     const pending = client.testMap({ xslt: '', inputXml: '' });
-    const worker = jest.mocked(childProcess.spawn).mock.results[0].value;
+    const worker = vi.mocked(childProcess.spawn).mock.results[0].value;
     worker.stdout.write(`${JSON.stringify({ id: 1, result: { protocolVersion: 1 } })}\n`);
     await flush();
     worker.stdout.write(
@@ -98,7 +99,7 @@ describe('compiler worker logging', () => {
       },
     };
     const pending = client.compileMap({ map, sourceSchema: schema, targetSchema: schema });
-    const worker = jest.mocked(childProcess.spawn).mock.results[0].value;
+    const worker = vi.mocked(childProcess.spawn).mock.results[0].value;
     const writes: string[] = [];
     worker.stdin.on('data', (chunk: Buffer) => writes.push(chunk.toString()));
     worker.stdout.write(`${JSON.stringify({ id: 1, result: { protocolVersion: 1 } })}\n`);
@@ -129,13 +130,13 @@ describe('compiler worker logging', () => {
   });
 
   test('logs timed out requests and terminates the worker', async () => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
     const pending = client.testMap({ xslt: '', inputXml: '' });
     const rejection = expect(pending).rejects.toThrow('timed out');
-    const worker = jest.mocked(childProcess.spawn).mock.results[0].value;
+    const worker = vi.mocked(childProcess.spawn).mock.results[0].value;
     worker.stdout.write(`${JSON.stringify({ id: 1, result: { protocolVersion: 1 } })}\n`);
     await flush();
-    await jest.advanceTimersByTimeAsync(60_000);
+    await vi.advanceTimersByTimeAsync(60_000);
     await rejection;
     expect(outputChannel.error).toHaveBeenCalledWith(expect.stringContaining('testMap timed out'));
     expect(worker.kill).toHaveBeenCalled();

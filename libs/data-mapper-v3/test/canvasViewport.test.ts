@@ -1,3 +1,4 @@
+import { describe, test, expect } from 'vitest';
 import { constrainZoomToWidth, fitLinkViewport, getCanvasBounds, zoomToCanvasBox } from '../webview/src/components/canvasViewport';
 
 describe('canvas horizontal fit', () => {

@@ -1,3 +1,4 @@
+import { describe, test, expect } from 'vitest';
 import { DEFAULT_MAP_OPTIONS, FunctoidCategory, LinkEndpointType, type MapDocument, ParameterType } from '../src/model/mapModel';
 import { SchemaParser } from '../src/schema/schemaParser';
 import { replaceSchema } from '../src/schema/schemaReplacement';

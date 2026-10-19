@@ -1,3 +1,4 @@
+import { describe, test, expect } from 'vitest';
 import { applyMapPatches, createMapLayoutPrompt, createMapPrompt, parseMapPromptResponse } from '../src/copilot/mapPrompt';
 import { DEFAULT_MAP_OPTIONS, FunctoidCategory, LinkEndpointType, ParameterType, ScriptType } from '../src/model/mapModel';
 import type { MapDocument, MapFunctoid, MapPage } from '../src/model/mapModel';

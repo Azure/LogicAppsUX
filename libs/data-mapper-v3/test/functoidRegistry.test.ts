@@ -1,3 +1,4 @@
+import { describe, test, expect, beforeEach } from 'vitest';
 /**
  * BizTalk Data Mapper - Unit Tests for Functoid Registry
  * Uses official BizTalk Server FIDs

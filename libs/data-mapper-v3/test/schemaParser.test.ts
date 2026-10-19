@@ -1,3 +1,4 @@
+import { describe, test, expect, beforeEach } from 'vitest';
 /**
  * BizTalk Data Mapper - Unit Tests for Schema Parser
  */

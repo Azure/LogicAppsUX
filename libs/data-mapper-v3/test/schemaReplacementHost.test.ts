@@ -1,46 +1,47 @@
+import { describe, test, expect, beforeEach, vi } from 'vitest';
 import * as vscode from 'vscode';
 import { MapEditorProvider } from '../src/mapEditorProvider';
 import { BtmSerializer } from '../src/schema/btmSerializer';
 import type { MapDocument } from '../src/model/mapModel';
 import { outputChannel, window as mockWindow } from './__mocks__/vscode';
 
-jest.mock('vscode', () => {
-  const base = jest.requireActual('vscode');
+vi.mock('vscode', async () => {
+  const base = await vi.importActual<typeof import('vscode')>('vscode');
   return {
     ...base,
     Range: class {},
     WorkspaceEdit: class {
-      replace = jest.fn();
+      replace = vi.fn();
     },
     workspace: {
       ...base.workspace,
-      onDidChangeTextDocument: jest.fn(() => ({ dispose: jest.fn() })),
-      applyEdit: jest.fn(),
+      onDidChangeTextDocument: vi.fn(() => ({ dispose: vi.fn() })),
+      applyEdit: vi.fn(),
     },
   };
 });
-jest.mock('../src/worker/compilerWorkerClient', () => ({ CompilerWorkerClient: class {} }));
+vi.mock('../src/worker/compilerWorkerClient', () => ({ CompilerWorkerClient: class {} }));
 
 const serializer = new BtmSerializer();
 const xsd = (field: string) =>
   `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:element name="Root"><xs:complexType><xs:sequence><xs:element name="${field}" type="xs:string"/></xs:sequence></xs:complexType></xs:element></xs:schema>`;
-const confirm = jest.mocked<(message: string, options: vscode.MessageOptions, ...items: string[]) => Thenable<string | undefined>>(
+const confirm = vi.mocked<(message: string, options: vscode.MessageOptions, ...items: string[]) => Thenable<string | undefined>>(
   vscode.window.showWarningMessage
 );
 
 async function setup(inlineSource = false, existingSide?: 'source' | 'target') {
-  jest.mocked(vscode.workspace.onDidChangeTextDocument).mockReturnValue({ dispose: jest.fn() });
-  const onDidCreate = jest.fn();
-  jest.mocked(vscode.workspace.createFileSystemWatcher).mockReturnValue({
+  vi.mocked(vscode.workspace.onDidChangeTextDocument).mockReturnValue({ dispose: vi.fn() });
+  const onDidCreate = vi.fn();
+  vi.mocked(vscode.workspace.createFileSystemWatcher).mockReturnValue({
     onDidCreate,
-    onDidChange: jest.fn(),
-    onDidDelete: jest.fn(),
-    dispose: jest.fn(),
+    onDidChange: vi.fn(),
+    onDidDelete: vi.fn(),
+    dispose: vi.fn(),
   } as unknown as vscode.FileSystemWatcher);
-  jest.mocked(vscode.workspace.fs.readDirectory).mockResolvedValue([]);
-  jest.mocked(vscode.workspace.fs.createDirectory).mockResolvedValue(undefined);
-  jest.mocked(vscode.workspace.fs.copy).mockResolvedValue(undefined);
-  jest.mocked(vscode.workspace.fs.delete).mockResolvedValue(undefined);
+  vi.mocked(vscode.workspace.fs.readDirectory).mockResolvedValue([]);
+  vi.mocked(vscode.workspace.fs.createDirectory).mockResolvedValue(undefined);
+  vi.mocked(vscode.workspace.fs.copy).mockResolvedValue(undefined);
+  vi.mocked(vscode.workspace.fs.delete).mockResolvedValue(undefined);
   const initial = serializer.createNew('', '', 'Replacement');
   if (inlineSource) {
     initial.sourceSchema.inlineSchemaXml = xsd('Drop');
@@ -59,27 +60,27 @@ async function setup(inlineSource = false, existingSide?: 'source' | 'target') {
   })) as MapDocument['pages'];
   let text = serializer.serialize(initial);
   const document = { uri: vscode.Uri.file('replacement-test.btm'), version: 1, lineCount: 1, getText: () => text };
-  const onDidReceiveMessage = jest.fn();
-  const postMessage = jest.fn().mockResolvedValue(true);
-  const onDidDispose = jest.fn();
+  const onDidReceiveMessage = vi.fn();
+  const postMessage = vi.fn().mockResolvedValue(true);
+  const onDidDispose = vi.fn();
   const panel = {
     webview: { options: {}, html: '', cspSource: '', onDidReceiveMessage, postMessage, asWebviewUri: () => vscode.Uri.file('script') },
     onDidDispose,
   } as unknown as vscode.WebviewPanel;
-  jest.mocked(vscode.workspace.fs.readFile).mockResolvedValue(Buffer.from(xsd('Keep')));
-  jest.mocked(vscode.window.showOpenDialog).mockResolvedValue([vscode.Uri.file('new.xsd')]);
+  vi.mocked(vscode.workspace.fs.readFile).mockResolvedValue(Buffer.from(xsd('Keep')));
+  vi.mocked(vscode.window.showOpenDialog).mockResolvedValue([vscode.Uri.file('new.xsd')]);
   const workspaceState = {
-    get: jest.fn(),
-    update: jest.fn().mockResolvedValue(undefined),
+    get: vi.fn(),
+    update: vi.fn().mockResolvedValue(undefined),
   };
   const changeDocument = async (newText: string) => {
     text = newText;
     document.version++;
-    const handler = jest.mocked(vscode.workspace.onDidChangeTextDocument).mock.calls[0][0];
+    const handler = vi.mocked(vscode.workspace.onDidChangeTextDocument).mock.calls[0][0];
     await handler({ document } as unknown as vscode.TextDocumentChangeEvent);
   };
-  jest.mocked(vscode.workspace.applyEdit).mockImplementation(async (edit) => {
-    const xml = jest.mocked(edit.replace).mock.calls[0][2];
+  vi.mocked(vscode.workspace.applyEdit).mockImplementation(async (edit) => {
+    const xml = vi.mocked(edit.replace).mock.calls[0][2];
     await changeDocument(xml);
     return true;
   });
@@ -102,7 +103,7 @@ async function setup(inlineSource = false, existingSide?: 'source' | 'target') {
 
 describe('schema replacement host transaction', () => {
   beforeEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
     mockWindow.createOutputChannel.mockReturnValue(outputChannel);
   });
 
@@ -166,7 +167,7 @@ describe('schema replacement host transaction', () => {
 
   test('refreshes available schemas when an XSD is added to the Schemas folder', async () => {
     const host = await setup();
-    jest.mocked(vscode.workspace.fs.readDirectory).mockResolvedValue([['added.XSD', 1]]);
+    vi.mocked(vscode.workspace.fs.readDirectory).mockResolvedValue([['added.XSD', 1]]);
 
     await host.refreshSchemas();
 
@@ -183,20 +184,19 @@ describe('schema replacement host transaction', () => {
       const before = host.document.getText();
       confirm.mockResolvedValue('Replace Schema');
       if (failure === 'browse') {
-        jest.mocked(vscode.window.showOpenDialog).mockResolvedValue(undefined);
+        vi.mocked(vscode.window.showOpenDialog).mockResolvedValue(undefined);
       }
       if (failure === 'confirm') {
         confirm.mockResolvedValue(undefined);
       }
       if (failure === 'read') {
-        jest.mocked(vscode.workspace.fs.readFile).mockRejectedValue(new Error('Not found'));
+        vi.mocked(vscode.workspace.fs.readFile).mockRejectedValue(new Error('Not found'));
       }
       if (failure === 'parse') {
-        jest.mocked(vscode.workspace.fs.readFile).mockResolvedValue(Buffer.from('<bad/>'));
+        vi.mocked(vscode.workspace.fs.readFile).mockResolvedValue(Buffer.from('<bad/>'));
       }
       if (failure === 'dependency') {
-        jest
-          .mocked(vscode.workspace.fs.readFile)
+        vi.mocked(vscode.workspace.fs.readFile)
           .mockResolvedValueOnce(
             Buffer.from(
               '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:include schemaLocation="missing.xsd"/><xs:element name="Root"/></xs:schema>'
@@ -205,10 +205,10 @@ describe('schema replacement host transaction', () => {
           .mockRejectedValue(new Error('Missing dependency'));
       }
       if (failure === 'edit') {
-        jest.mocked(vscode.workspace.applyEdit).mockResolvedValue(false);
+        vi.mocked(vscode.workspace.applyEdit).mockResolvedValue(false);
       }
       if (failure === 'edit-error') {
-        jest.mocked(vscode.workspace.applyEdit).mockRejectedValue(new Error('Edit rejected'));
+        vi.mocked(vscode.workspace.applyEdit).mockRejectedValue(new Error('Edit rejected'));
       }
       await host.submit();
       expect(host.document.getText()).toBe(before);
@@ -229,12 +229,12 @@ describe('schema replacement host transaction', () => {
     };
     confirm.mockResolvedValue('Replace Schema');
     if (phase === 'browse') {
-      jest.mocked(vscode.window.showOpenDialog).mockImplementation(async () => {
+      vi.mocked(vscode.window.showOpenDialog).mockImplementation(async () => {
         stale();
         return [vscode.Uri.file('new.xsd')];
       });
     } else if (phase === 'parse') {
-      jest.mocked(vscode.workspace.fs.readFile).mockImplementation(async () => {
+      vi.mocked(vscode.workspace.fs.readFile).mockImplementation(async () => {
         stale();
         return Buffer.from(xsd('Keep'));
       });
@@ -252,8 +252,7 @@ describe('schema replacement host transaction', () => {
   test('superseded request and disposed editor cannot apply', async () => {
     const host = await setup();
     let resolveFirst!: (value: vscode.Uri[] | undefined) => void;
-    jest
-      .mocked(vscode.window.showOpenDialog)
+    vi.mocked(vscode.window.showOpenDialog)
       .mockImplementationOnce(
         () =>
           new Promise((resolve) => {
@@ -266,7 +265,7 @@ describe('schema replacement host transaction', () => {
     resolveFirst([vscode.Uri.file('new.xsd')]);
     await pending;
     expect(vscode.workspace.applyEdit).not.toHaveBeenCalled();
-    jest.mocked(vscode.window.showOpenDialog).mockImplementationOnce(async () => {
+    vi.mocked(vscode.window.showOpenDialog).mockImplementationOnce(async () => {
       host.dispose();
       return [vscode.Uri.file('new.xsd')];
     });
@@ -276,8 +275,7 @@ describe('schema replacement host transaction', () => {
 
   test('adding the first schema loads includes and skips confirmation when all paths survive', async () => {
     const host = await setup();
-    jest
-      .mocked(vscode.workspace.fs.readFile)
+    vi.mocked(vscode.workspace.fs.readFile)
       .mockResolvedValueOnce(
         Buffer.from(
           '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:include schemaLocation="types.xsd"/><xs:element name="Root" type="Fields"/></xs:schema>'
@@ -298,7 +296,7 @@ describe('schema replacement host transaction', () => {
     const host = await setup(false, side);
     const before = host.document.getText();
     const compatibleSchema = xsd('Keep').replace('</xs:sequence>', '<xs:element name="Drop" type="xs:string"/></xs:sequence>');
-    jest.mocked(vscode.workspace.fs.readFile).mockResolvedValue(Buffer.from(compatibleSchema));
+    vi.mocked(vscode.workspace.fs.readFile).mockResolvedValue(Buffer.from(compatibleSchema));
     let accept!: (choice: string | undefined) => void;
     let warningShown!: () => void;
     const shown = new Promise<void>((resolve) => {
@@ -383,7 +381,7 @@ describe('schema replacement host transaction', () => {
   test('a slow schema refresh cannot overwrite a newer document after undo', async () => {
     const host = await setup(true);
     let resolveRead!: (value: Uint8Array) => void;
-    jest.mocked(vscode.workspace.fs.readFile).mockImplementationOnce(
+    vi.mocked(vscode.workspace.fs.readFile).mockImplementationOnce(
       () =>
         new Promise((resolve) => {
           resolveRead = resolve;

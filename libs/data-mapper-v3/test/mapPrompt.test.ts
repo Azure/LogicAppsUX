@@ -1,3 +1,4 @@
+import { describe, test, expect } from 'vitest';
 import { applyMapPatches, createMapPatchValidationContext, createMapPrompt, parseMapPromptResponse } from '../src/copilot/mapPrompt';
 import type { MapDocument } from '../src/model/mapModel';
 

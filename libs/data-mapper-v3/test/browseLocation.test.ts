@@ -1,3 +1,4 @@
+import { describe, test, expect } from 'vitest';
 import * as path from 'path';
 import { getSelectedFileDirectory, resolveBrowseDirectory } from '../src/browseLocation';
 

@@ -1,3 +1,4 @@
+import { describe, test, expect } from 'vitest';
 import * as path from 'path';
 import { resolveSchemaDependencies } from '../src/schema/schemaDependencyResolver';
 import { SchemaParser } from '../src/schema/schemaParser';

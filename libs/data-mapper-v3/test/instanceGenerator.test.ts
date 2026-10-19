@@ -1,3 +1,4 @@
+import { describe, test, expect } from 'vitest';
 import { XMLParser } from 'fast-xml-parser';
 import { XmlParser, Xslt } from 'xslt-processor';
 import { XsltCompiler } from '../src/compiler/xsltCompiler';
