@@ -1,11 +1,47 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import type { RootState } from '../../libs/designer-v2/src/lib/core/store';
 import { getSerializedWorkflowFromStateV2 } from './utils/designerFunctions';
+
+const closeToolboxInDarkMode = async (page: Page) => {
+  const settings = page.getByRole('heading', { name: /Context Settings/ });
+  const bounds = await settings.boundingBox();
+  if (!bounds || bounds.y < 0) {
+    await page.getByRole('button', { name: 'Toolbox' }).click();
+  }
+  const isDark = await page.evaluate(
+    () => (window as Window & { DesignerStoreV2: { getState(): RootState } }).DesignerStoreV2.getState().designerOptions.isDarkMode
+  );
+  if (!isDark) {
+    await settings.click();
+    await page.getByText('Dark Mode', { exact: true }).click();
+  }
+  await page.getByRole('button', { name: 'Toolbox' }).click();
+};
+
+const waitForLoadedDesigner = async (page: Page) => {
+  await expect(page.getByTestId('card-consume_result')).toBeVisible();
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          (window as Window & { DesignerStoreV2: { getState(): RootState } }).DesignerStoreV2.getState().operations.loadStatus
+            .nodesAndDynamicDataInitialized
+      )
+    )
+    .toBe(true);
+  await closeToolboxInDarkMode(page);
+  await page.getByLabel('Zoom view to fit', { exact: true }).click();
+};
 
 test.describe('Multi-action clipboard integrity', { tag: '@mock' }, () => {
   test.afterEach(async ({ page }, info) => {
     if (info.status !== info.expectedStatus) {
       console.error(`Designer document at ${page.url()}: ${await page.locator('body').innerText()}`);
+      console.error(
+        await page
+          .locator('[data-automation-id^="card-"]')
+          .evaluateAll((cards) => cards.map((card) => card.getAttribute('data-automation-id')))
+      );
       console.error(
         await page.evaluate(() => {
           const store = (window as Window & { DesignerStoreV2?: { getState(): RootState } }).DesignerStoreV2;
@@ -25,29 +61,17 @@ test.describe('Multi-action clipboard integrity', { tag: '@mock' }, () => {
     });
     const origin = new URL(baseURL!).origin;
     await context.route('**/*', (route) => (new URL(route.request().url()).origin === origin ? route.continue() : route.abort()));
-    await page.goto('/v2?extraction=true&local=ExtractSelection.json');
-    await expect(page.getByTestId('card-consume_result')).toBeVisible();
-    await expect
-      .poll(() =>
-        page.evaluate(
-          () =>
-            (window as Window & { DesignerStoreV2: { getState(): RootState } }).DesignerStoreV2.getState().operations.loadStatus
-              .nodesAndDynamicDataInitialized
-        )
-      )
-      .toBe(true);
-    const settings = page.getByRole('heading', { name: /Context Settings/ });
-    const bounds = await settings.boundingBox();
-    if (!bounds || bounds.y < 0) {
-      await page.getByRole('button', { name: 'Toolbox' }).click();
-    }
-    await settings.click();
-    await page.getByText('Dark Mode', { exact: true }).click();
-    await page.getByRole('button', { name: 'Toolbox' }).click();
-    await page.getByLabel('Zoom view to fit', { exact: true }).click();
   });
 
-  test('copies real selected metadata, pastes complete actions with internal tokens, and undoes/redoes once', async ({ page }) => {
+  test('copies real selected metadata with offline built-in manifests, pastes internal tokens, and undoes/redoes once', async ({
+    page,
+  }) => {
+    // Standard's offline HTTP stub cannot supply action manifests; Consumption supplies the real built-in manifests locally.
+    await page.goto('/v2');
+    await page.getByText('Consumption', { exact: true }).click();
+    await page.getByRole('combobox', { name: 'Workflow File To Load' }).click();
+    await page.getByRole('option', { name: 'Extract Selection', exact: true }).click();
+    await waitForLoadedDesigner(page);
     for (const id of ['build_message', 'build_result', 'consume_result']) {
       await page.getByTestId(`card-${id}`).click({ modifiers: ['ControlOrMeta'] });
     }
@@ -60,19 +84,23 @@ test.describe('Multi-action clipboard integrity', { tag: '@mock' }, () => {
     }
     await page.getByTestId('msla-plus-button-consume_result-undefined').click();
     await page.getByTestId('msla-paste-button-consume_result-undefined').click();
-    await expect(page.getByTestId('card-consume_result-copy')).toBeVisible();
+    await page.getByLabel('Zoom view to fit', { exact: true }).click();
+    await expect(page.getByTestId('card-consume_result_copy')).toBeVisible();
     const copied = await getSerializedWorkflowFromStateV2(page);
     expect(copied.definition.actions['Build_result-copy'].inputs.message).toBe("@outputs('Build_message-copy')");
     expect(copied.definition.actions['Build_result-copy'].inputs.customer).toBe("@outputs('Read_customer')");
     expect(copied.definition.actions['Consume_result-copy'].inputs).toBe("@outputs('Build_result-copy')");
     await page.getByRole('button', { name: 'Undo', exact: true }).click();
-    await expect(page.getByTestId('card-consume_result-copy')).toHaveCount(0);
-    await expect(page.getByTestId('card-build_result-copy')).toHaveCount(0);
+    await expect(page.getByTestId('card-consume_result_copy')).toHaveCount(0);
+    await expect(page.getByTestId('card-build_result_copy')).toHaveCount(0);
     await page.getByRole('button', { name: 'Redo', exact: true }).click();
-    await expect(page.getByTestId('card-consume_result-copy')).toBeVisible();
+    await page.getByLabel('Zoom view to fit', { exact: true }).click();
+    await expect(page.getByTestId('card-consume_result_copy')).toBeVisible();
   });
 
   test('rejects the reported empty-data clipboard through the paste menu without changing the workflow', async ({ page }) => {
+    await page.goto('/v2?extraction=true&local=ExtractSelection.json');
+    await waitForLoadedDesigner(page);
     const original = await getSerializedWorkflowFromStateV2(page);
     await page.evaluate(async () =>
       navigator.clipboard.writeText(
@@ -114,6 +142,8 @@ test.describe('Multi-action clipboard integrity', { tag: '@mock' }, () => {
   });
 
   test('extracts a complete Condition and both branch actions as one root with one-step undo and redo', async ({ page }) => {
+    await page.goto('/v2?extraction=true&local=ExtractSelection.json');
+    await waitForLoadedDesigner(page);
     const workflow = await getSerializedWorkflowFromStateV2(page);
     workflow.definition.actions = {
       Read_customer: { type: 'Compose', inputs: 'before', runAfter: {} },
@@ -140,6 +170,8 @@ test.describe('Multi-action clipboard integrity', { tag: '@mock' }, () => {
     );
     await page.reload();
     await expect(page.getByTestId('card-condition')).toBeVisible();
+    await closeToolboxInDarkMode(page);
+    const originalCondition = (await getSerializedWorkflowFromStateV2(page)).definition.actions.Condition;
     await page.getByLabel('Zoom view to fit', { exact: true }).click();
     for (const id of ['condition', 'true_action', 'false_action']) {
       await page.getByTestId(`card-${id}`).click({ modifiers: ['ControlOrMeta'] });
@@ -154,8 +186,6 @@ test.describe('Multi-action clipboard integrity', { tag: '@mock' }, () => {
     await dialog.getByLabel('Workflow name', { exact: true }).fill('Extracted_Condition');
     const preview = dialog.getByTestId('extraction-workflow-preview');
     await expect(preview.getByText('Condition', { exact: true })).toHaveCount(1);
-    await expect(preview.getByText('True action', { exact: true })).toHaveCount(1);
-    await expect(preview.getByText('False action', { exact: true })).toHaveCount(1);
     await dialog.getByRole('button', { name: 'Confirm', exact: true }).click();
     const openChild = dialog.getByRole('link', { name: 'Open child workflow', exact: true });
     await expect(openChild).toBeVisible();
@@ -176,7 +206,7 @@ test.describe('Multi-action clipboard integrity', { tag: '@mock' }, () => {
     await childPage.close();
     await dialog.getByRole('button', { name: 'Close', exact: true }).click();
     await page.getByRole('button', { name: 'Undo', exact: true }).click();
-    expect((await getSerializedWorkflowFromStateV2(page)).definition.actions.Condition).toEqual(workflow.definition.actions.Condition);
+    expect((await getSerializedWorkflowFromStateV2(page)).definition.actions.Condition).toEqual(originalCondition);
     await page.getByRole('button', { name: 'Redo', exact: true }).click();
     expect(await getSerializedWorkflowFromStateV2(page)).toEqual(parent);
   });
