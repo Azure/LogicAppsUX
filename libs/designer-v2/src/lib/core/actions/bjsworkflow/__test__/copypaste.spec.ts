@@ -6,6 +6,7 @@ import * as serializer from '../serializer';
 import type { RootState } from '../../..';
 import { createWorkflowEdge, createWorkflowNode } from '../../../utils/graph';
 import { clone, LOCAL_STORAGE_KEYS, type LogicAppsV2, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
+import { DynamicLoadStatus } from '../../../state/operation/operationMetadataSlice';
 import { getMockedInitialRootState } from '../../../../__test__/mock-root-state';
 
 // Graph shape:
@@ -137,6 +138,12 @@ describe('copyOperations clipboard payload', () => {
       Follow: { type: 'Compose', connectorId: 'connectionless', operationId: 'compose' },
     };
     state.operations.inputParameters = { Query: { parameterGroups: {} }, Follow: { parameterGroups: {} } };
+    for (const id of ['Query', 'Follow', 'Container']) {
+      state.operations.outputParameters[id] = { outputs: {} };
+      state.operations.dependencies[id] = { inputs: {}, outputs: {} };
+      state.operations.operationMetadata[id] = { iconUri: '', brandColor: '' };
+    }
+    state.operations.inputParameters.Container = { parameterGroups: {} };
     state.connections.connectionsMapping = {
       Query: { kind: 'expression', expression: "@outputs('Resolve')", designTimeReferenceKey: 'SqlDesign' },
       Follow: null,
@@ -180,10 +187,38 @@ describe('copyOperations clipboard payload', () => {
         expression: "@outputs('Resolve_Renamed')",
         designTimeReferenceKey: 'SqlDesign',
       },
-      nodeData: { nodeInputs: { preservedConnectionInputs: (state.workflow.operations.Query as LogicAppsV2.ServiceProvider).inputs } },
+      nodeData: {
+        nodeInputs: {
+          preservedConnectionInputs: {
+            parameters: { query: 'select 1' },
+            serviceProviderConfiguration: {
+              connectionName: "@outputs('Resolve_Renamed')",
+              operationId: 'executeQuery',
+              serviceProviderId: '/serviceProviders/sql',
+            },
+          },
+        },
+      },
     });
     expect(copied.nodes[1]).toMatchObject({ nodeId: 'Follow-copy', isScopeNode: false, nodeConnectionData: null });
     expect(state).toEqual(original);
+  });
+
+  it('retains complete runtime-expression inputs when design-time dynamic loading is unavailable', async () => {
+    vi.stubGlobal('navigator', { clipboard: undefined });
+    const state = createState();
+    state.operations.inputParameters.Query = {
+      ...state.operations.inputParameters.Query,
+      dynamicLoadStatus: DynamicLoadStatus.NOTSTARTED,
+      preservedConnectionInputs: (state.workflow.operations.Query as LogicAppsV2.ServiceProvider).inputs,
+    };
+    await createStore(state)
+      .dispatch(copyOperations({ nodeIds: ['Query'] }))
+      .unwrap();
+    expect(readClipboard().nodes[0].nodeData.nodeInputs.preservedConnectionInputs).toMatchObject({
+      parameters: { query: 'select 1' },
+      serviceProviderConfiguration: { connectionName: "@outputs('Resolve_Renamed')" },
+    });
   });
 
   it('embeds selected scope children only once and retains their connection binding and static result', async () => {
@@ -218,12 +253,8 @@ describe('copyOperations clipboard payload', () => {
       },
       staticResults: { Query: staticResult },
     });
-    expect(serialize).toHaveBeenCalledTimes(2);
+    expect(serialize).toHaveBeenCalledTimes(1);
     expect(serialize).toHaveBeenNthCalledWith(1, store.getState(), 'Container', {
-      skipValidation: true,
-      ignoreNonCriticalErrors: true,
-    });
-    expect(serialize).toHaveBeenNthCalledWith(2, store.getState(), 'Container', {
       skipValidation: true,
       ignoreNonCriticalErrors: true,
     });

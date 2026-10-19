@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import React from 'react';
-import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mockDispatch = vi.fn();
@@ -178,6 +178,7 @@ const renderPanel = (panelLocation?: 'Left' | 'Right') =>
 describe('MultiSelectPanel', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockDispatch.mockResolvedValue({ meta: { requestStatus: 'fulfilled' } });
     mockSelectedNodeIds = ['first', 'second'];
     mockCanWrap = true;
   });
@@ -198,22 +199,37 @@ describe('MultiSelectPanel', () => {
     expect(container.querySelector('[data-automation-id="multi-select-action-buttons"]')).not.toBeNull();
   });
 
-  it('copies, cuts, and deletes the selected actions with user-visible feedback', () => {
+  it('copies, cuts, and deletes the selected actions with user-visible feedback', async () => {
     renderPanel();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Copy' }));
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Copy' }));
+    });
     expect(copyOperations).toHaveBeenCalledWith({ nodeIds: ['first', 'second'] });
     expect(screen.getByTestId('copy-tooltip')).toBeDefined();
 
     fireEvent.click(screen.getByRole('button', { name: 'Hide copied tooltip' }));
     expect(screen.queryByTestId('copy-tooltip')).toBeNull();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Cut' }));
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Cut' }));
+    });
     expect(cutOperations).toHaveBeenCalledWith({ nodeIds: ['first', 'second'] });
     expect(screen.getByTestId('copy-tooltip')).toBeDefined();
 
     fireEvent.click(screen.getByRole('button', { name: 'Delete' }));
     expect(setShowMultiSelectDeleteModal).toHaveBeenCalledWith(true);
+  });
+
+  it('does not show copied feedback when copy or cut rejects', async () => {
+    mockDispatch.mockResolvedValue({ meta: { requestStatus: 'rejected' } });
+    renderPanel();
+    for (const name of ['Copy', 'Cut']) {
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button', { name }));
+      });
+      expect(screen.queryByTestId('copy-tooltip')).toBeNull();
+    }
   });
 
   it('removes only the dismissed action from the current selection', () => {

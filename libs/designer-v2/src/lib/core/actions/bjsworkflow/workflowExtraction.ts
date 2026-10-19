@@ -19,13 +19,13 @@ import { saveStateToHistory } from '../../state/undoRedo/undoRedoSlice';
 import { initWorkflowSpec, setIsWorkflowDirty, setWorkflowKind } from '../../state/workflow/workflowSlice';
 import { createDesignerStore, type AppStore, type RootState } from '../../store';
 import { getCompressedSlicesFromRootState } from '../../utils/undoredo';
-import { getTopLevelSelectedNodes } from '../../utils/multiselect';
+import { getWorkflowExtractionSelection } from '../../utils/workflowExtractionSelection';
 import { parseWorkflowKind } from '../../utils/workflow';
 import { getConnectionsApiAndMapping } from './connections';
 import { updateWorkflowParameters } from './initialize';
 import { initializeDynamicDataInNodes, initializeOperationMetadata } from './operationdeserializer';
 import { serializeWorkflow } from './serializer';
-import { getIntl } from '@microsoft/logic-apps-shared';
+import { getIntl, getRecordEntry } from '@microsoft/logic-apps-shared';
 
 export const workflowExtractionFingerprint = (workflow: Workflow): string => JSON.stringify(workflow);
 
@@ -243,8 +243,8 @@ export async function commitWorkflowExtraction(
 }
 
 export const getExtractionSelectedIds = (state: RootState): string[] =>
-  getTopLevelSelectedNodes(state.workflow, state.panel.operationContent.selectedNodeIds ?? []).map(
-    (id) => state.workflow.idReplacements[id] ?? id
+  getWorkflowExtractionSelection(state.workflow, state.panel.operationContent.selectedNodeIds ?? []).map(
+    (id) => getRecordEntry(state.workflow.idReplacements, id) ?? id
   );
 
 export type { WorkflowExtractionPlan };

@@ -16,6 +16,9 @@ export const designerViewSlice = createSlice({
   name: 'designerView',
   initialState,
   reducers: {
+    clearClipboardError: (state) => {
+      state.clipboardError = undefined;
+    },
     setWorkflowExtractionDialogOpen: (state, action: PayloadAction<boolean>) => {
       state.workflowExtractionDialogOpen = action.payload;
     },
@@ -44,10 +47,19 @@ export const designerViewSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialState);
+    const clipboardAction =
+      /^(copyOperation|copyScopeOperation|copyOperations|cutOperations|duplicateOperations|pasteClipboard|pasteOperation|pasteScopeOperation)\/(pending|rejected)$/;
+    builder.addMatcher(
+      (action): action is PayloadAction<unknown, string, unknown, { message?: string }> => clipboardAction.test(action.type),
+      (state, action) => {
+        state.clipboardError = action.type.endsWith('/rejected') ? action.error?.message : undefined;
+      }
+    );
   },
 });
 
 export const {
+  clearClipboardError,
   setWorkflowExtractionDialogOpen,
   setWorkflowExtractionBusy,
   toggleMinimap,

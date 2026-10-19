@@ -14,7 +14,7 @@ import {
 } from '@microsoft/logic-apps-shared';
 
 import type { AppDispatch } from '../../core';
-import { pasteOperation, pasteScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
+import { pasteClipboard } from '../../core/actions/bjsworkflow/copypaste';
 import { useUpstreamNodes } from '../../core/state/tokens/tokenSelectors';
 import {
   useHasUpstreamAgenticLoop,
@@ -74,41 +74,15 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
     if (!copiedNode) {
       return;
     }
-    const pasteSingleNode = async (node: any) => {
-      if (node?.isScopeNode) {
-        await dispatch(
-          pasteScopeOperation({
-            relationshipIds,
-            nodeId: node.nodeId,
-            serializedValue: node.serializedOperation,
-            allConnectionData: node.allConnectionData,
-            staticResults: node.staticResults,
-            upstreamNodeIds: upstreamNodesOfChild,
-          })
-        );
-      } else {
-        await dispatch(
-          pasteOperation({
-            relationshipIds,
-            nodeId: node.nodeId,
-            nodeData: node.nodeData,
-            nodeTokenData: node.nodeTokenData,
-            operationInfo: node.nodeOperationInfo,
-            connectionData: node.nodeConnectionData,
-            comment: node.nodeComment,
-          })
-        );
-      }
-    };
-
-    if (copiedNode?.isMultiNode && Array.isArray(copiedNode.nodes)) {
-      // Paste in reverse so the inserted nodes keep their original top-to-bottom order
-      // (each paste inserts between the same parent/child edge).
-      for (let i = copiedNode.nodes.length - 1; i >= 0; i--) {
-        await pasteSingleNode(copiedNode.nodes[i]);
-      }
-    } else {
-      await pasteSingleNode(copiedNode);
+    const result = await dispatch(
+      pasteClipboard({
+        clipboard: copiedNode,
+        relationshipIds,
+        upstreamNodeIds: upstreamNodesOfChild,
+      })
+    );
+    if (!pasteClipboard.fulfilled.match(result)) {
+      return;
     }
 
     LoggerService().log({

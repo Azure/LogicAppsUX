@@ -7,6 +7,39 @@ import { buildWorkflowExtractionPlan } from '../../../../core/utils/workflowExtr
 import { getWorkflowExtractionPreview } from '../workflowExtractionPreview';
 
 describe('getWorkflowExtractionPreview', () => {
+  it('renders a complete Condition once, without duplicating selected branch actions at the top level', () => {
+    const workflow: Workflow = {
+      kind: 'Stateful',
+      definition: {
+        triggers: { Request: { type: 'Request', kind: 'Http', inputs: {} } },
+        actions: {
+          Condition: {
+            type: 'If',
+            expression: '@true',
+            actions: { Then: { type: 'Compose', inputs: 'then', runAfter: {} } },
+            else: { actions: { Otherwise: { type: 'Compose', inputs: 'else', runAfter: {} } } },
+            runAfter: {},
+          },
+        },
+      },
+    };
+    const plan = buildWorkflowExtractionPlan(workflow, ['Otherwise', 'Then', 'Condition'], 'Child', (_name, body, runAfter) => ({
+      type: 'Workflow',
+      inputs: { body },
+      runAfter,
+    }));
+    const preview = getWorkflowExtractionPreview(plan);
+    expect(plan.selectedIds).toEqual(['Condition']);
+    expect(preview.nodes.map(({ id }) => id)).toEqual(['Request', 'Condition', 'Response']);
+    expect(preview.edges.map(({ source, target }) => [source, target])).toEqual([
+      ['Request', 'Condition'],
+      ['Condition', 'Response'],
+    ]);
+    expect(plan.child.definition.actions.Condition).toEqual(workflow.definition.actions.Condition);
+    expect(plan.child.definition.actions.Then).toBeUndefined();
+    expect(plan.child.definition.actions.Otherwise).toBeUndefined();
+  });
+
   it('uses generated IDs, ordered actions, and actual child dependencies without including source-only actions', () => {
     const workflow: Workflow = {
       kind: 'Stateful',

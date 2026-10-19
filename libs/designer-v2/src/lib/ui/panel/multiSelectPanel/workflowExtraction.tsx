@@ -26,7 +26,7 @@ import {
 } from '@fluentui/react-components';
 import { ArrowExport24Regular } from '@fluentui/react-icons';
 import { ProgressStepper, WorkflowPreview } from '@microsoft/designer-ui';
-import { guid } from '@microsoft/logic-apps-shared';
+import { getRecordEntry, guid } from '@microsoft/logic-apps-shared';
 import type { Workflow } from '../../../common/models/workflow';
 import type {
   WorkflowExtractionBinding,
@@ -43,8 +43,9 @@ import {
 } from '../../../core/actions/bjsworkflow/workflowExtraction';
 import { setWorkflowExtractionDialogOpen } from '../../../core/state/designerView/designerViewSlice';
 import { setFocusNode } from '../../../core/state/workflow/workflowSlice';
-import { getOrderedSelectedChain, getTopLevelSelectedNodes } from '../../../core/utils/multiselect';
+import { getOrderedSelectedChain } from '../../../core/utils/multiselect';
 import { buildWorkflowExtractionPlan } from '../../../core/utils/workflowExtraction';
+import { getWorkflowExtractionSelection } from '../../../core/utils/workflowExtractionSelection';
 import { getWorkflowExtractionPreview, type WorkflowExtractionPreviewVisuals } from './workflowExtractionPreview';
 import {
   extractionSteps,
@@ -199,11 +200,20 @@ export const WorkflowExtractionAction = ({ variant = 'button', onClick }: { vari
     readOnly: state.designerOptions.readOnly,
     monitoring: state.designerOptions.isMonitoringView,
   }));
-  if (!service || service.hostingPlan !== 'standard' || readOnly || monitoring || selectedIds.length < 2) {
+  if (!service || service.hostingPlan !== 'standard' || readOnly || monitoring || !selectedIds.length) {
     return null;
   }
-  const topLevelIds = getTopLevelSelectedNodes(workflow, selectedIds);
-  const valid = topLevelIds.length >= 2 && !!getOrderedSelectedChain(workflow, topLevelIds);
+  let selectionError: string | undefined;
+  let valid = false;
+  try {
+    const topLevelIds = getWorkflowExtractionSelection(workflow, selectedIds);
+    valid = !!getOrderedSelectedChain(workflow, topLevelIds);
+  } catch (cause) {
+    selectionError = cause instanceof Error ? cause.message : String(cause);
+  }
+  if (selectedIds.length === 1 && selectionError) {
+    return null;
+  }
   const label = intl.formatMessage({
     id: 'PHpOlN',
     defaultMessage: 'Extract to new workflow',
@@ -219,7 +229,7 @@ export const WorkflowExtractionAction = ({ variant = 'button', onClick }: { vari
     dispatch(setWorkflowExtractionDialogOpen(true));
   };
   return (
-    <Tooltip content={valid ? label : reason} relationship="description">
+    <Tooltip content={valid ? label : (selectionError ?? reason)} relationship="description">
       {variant === 'menuItem' ? (
         <MenuItem icon={<ArrowExport24Regular />} disabled={!valid} onClick={onExtract}>
           {label}
@@ -335,7 +345,7 @@ export const WorkflowExtractionDialog = () => {
             fingerprint: workflowExtractionFingerprint(workflow),
             visuals: Object.fromEntries(
               Object.entries(state.operations.operationMetadata).map(([id, { iconUri, brandColor }]) => [
-                state.workflow.idReplacements[id] ?? id,
+                getRecordEntry(state.workflow.idReplacements, id) ?? id,
                 { iconUri, brandColor },
               ])
             ),

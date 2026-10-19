@@ -1044,6 +1044,12 @@ describe('ServiceProvider runtime connection expressions', () => {
       type: 'Scope',
       actions: { Query: state.workflow.operations.Query as LogicAppsV2.ServiceProvider },
     };
+    state.workflow.operations.Container = scope;
+    state.operations.operationInfo.Container = { type: 'Scope', connectorId: 'connectionProviders/control', operationId: 'scope' };
+    state.operations.inputParameters.Container = { parameterGroups: {} };
+    state.operations.outputParameters.Container = { outputs: {} };
+    state.operations.dependencies.Container = { inputs: {}, outputs: {} };
+    state.operations.operationMetadata.Container = { iconUri: '', brandColor: '' };
     const serialize = vi.spyOn(await import('../serializer'), 'serializeOperation').mockResolvedValue(scope);
     const store = makeStore(state);
     await store.dispatch(copyScopeOperation({ nodeId: 'Container-#scope' })).unwrap();

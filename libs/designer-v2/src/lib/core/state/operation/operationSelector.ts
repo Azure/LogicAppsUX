@@ -57,6 +57,7 @@ export const getNodeOperationData = (state: OperationMetadataState, nodeId: stri
     staticResult: getRecordEntry(state.staticResults, nodeId),
     actionMetadata: getRecordEntry(state.actionMetadata, nodeId),
     repetitionInfo: getRecordEntry(state.repetitionInfos, nodeId),
+    supportedChannels: getRecordEntry(state.supportedChannels, nodeId),
   };
 };
 

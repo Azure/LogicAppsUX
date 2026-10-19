@@ -2,6 +2,7 @@
  * @vitest-environment jsdom
  */
 import { configureStore, type UnknownAction } from '@reduxjs/toolkit';
+import { InitLoggerService } from '@microsoft/logic-apps-shared';
 import '@testing-library/jest-dom/vitest';
 import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -24,8 +25,9 @@ import {
 } from '../../../../core/actions/bjsworkflow/workflowExtraction';
 import { setWorkflowExtractionDialogOpen } from '../../../../core/state/designerView/designerViewSlice';
 import { setFocusNode } from '../../../../core/state/workflow/workflowSlice';
-import { getOrderedSelectedChain, getTopLevelSelectedNodes } from '../../../../core/utils/multiselect';
+import { Deserialize } from '../../../../core/parsers/BJSWorkflow/BJSDeserializer';
 import { buildWorkflowExtractionPlan } from '../../../../core/utils/workflowExtraction';
+import { getWorkflowExtractionSelection } from '../../../../core/utils/workflowExtractionSelection';
 import { WorkflowExtractionAction, WorkflowExtractionDialog } from '../workflowExtraction';
 import { getWorkflowExtractionPreview } from '../workflowExtractionPreview';
 
@@ -176,11 +178,6 @@ vi.mock('../../../../core/state/workflow/workflowSlice', () => {
   return { setFocusNode };
 });
 
-vi.mock('../../../../core/utils/multiselect', () => ({
-  getOrderedSelectedChain: vi.fn(),
-  getTopLevelSelectedNodes: vi.fn(),
-}));
-
 vi.mock('../../../../core/utils/workflowExtraction', () => ({
   buildWorkflowExtractionPlan: vi.fn(),
 }));
@@ -193,8 +190,6 @@ const mockSerializeWorkflow = vi.mocked(serializeWorkflow);
 const mockCommitWorkflowExtraction = vi.mocked(commitWorkflowExtraction);
 const mockGetExtractionSelectedIds = vi.mocked(getExtractionSelectedIds);
 const mockWorkflowExtractionFingerprint = vi.mocked(workflowExtractionFingerprint);
-const mockGetOrderedSelectedChain = vi.mocked(getOrderedSelectedChain);
-const mockGetTopLevelSelectedNodes = vi.mocked(getTopLevelSelectedNodes);
 const mockBuildWorkflowExtractionPlan = vi.mocked(buildWorkflowExtractionPlan);
 const mockGetWorkflowExtractionPreview = vi.mocked(getWorkflowExtractionPreview);
 
@@ -264,6 +259,7 @@ interface TestStateOptions {
   open?: boolean;
   readOnly?: boolean;
   selectedIds?: string[];
+  workflow?: Workflow;
 }
 
 const createState = ({
@@ -271,38 +267,45 @@ const createState = ({
   open = false,
   readOnly = false,
   selectedIds = ['ActionA', 'ActionB'],
-}: TestStateOptions = {}) => ({
-  designerOptions: {
-    isMonitoringView: monitoring,
-    readOnly,
-  },
-  designerView: {
-    workflowExtractionDialogOpen: open,
-  },
-  operations: {
-    operationMetadata: {
-      ActionA: {
-        brandColor: '#111111',
-        iconUri: 'action-a.svg',
+  workflow = serializedWorkflow,
+}: TestStateOptions = {}) => {
+  const deserialized = Deserialize(workflow.definition);
+  return {
+    designerOptions: {
+      isMonitoringView: monitoring,
+      readOnly,
+    },
+    designerView: {
+      workflowExtractionDialogOpen: open,
+    },
+    operations: {
+      operationMetadata: {
+        ActionA: {
+          brandColor: '#111111',
+          iconUri: 'action-a.svg',
+        },
+        ActionB: {
+          brandColor: '#222222',
+          iconUri: 'action-b.svg',
+        },
       },
-      ActionB: {
-        brandColor: '#222222',
-        iconUri: 'action-b.svg',
+    },
+    panel: {
+      operationContent: {
+        selectedNodeIds: selectedIds,
       },
     },
-  },
-  panel: {
-    operationContent: {
-      selectedNodeIds: selectedIds,
+    workflow: {
+      graph: deserialized.graph,
+      nodesMetadata: deserialized.nodesMetadata,
+      operations: deserialized.actionData,
+      focusedCanvasNodeId: undefined as string | undefined,
+      idReplacements: {
+        ActionA: 'RenamedActionA',
+      },
     },
-  },
-  workflow: {
-    focusedCanvasNodeId: undefined as string | undefined,
-    idReplacements: {
-      ActionA: 'RenamedActionA',
-    },
-  },
-});
+  };
+};
 
 const createTestStore = (options: TestStateOptions = {}) => {
   const initialState = createState(options);
@@ -370,8 +373,18 @@ describe('WorkflowExtractionAction', () => {
   });
 
   it('renders disabled with the selection requirement when the selected actions are not a contiguous chain', () => {
-    mockGetOrderedSelectedChain.mockReturnValue(undefined);
-    const store = createTestStore();
+    const store = createTestStore({
+      workflow: {
+        ...serializedWorkflow,
+        definition: {
+          ...serializedWorkflow.definition,
+          actions: {
+            ...serializedWorkflow.definition.actions,
+            ActionB: { ...serializedWorkflow.definition.actions.ActionB, runAfter: {} },
+          },
+        },
+      },
+    });
     renderWithProviders(<WorkflowExtractionAction />, store, createService());
 
     expect(screen.getByRole('button', { name: 'Extract to new workflow' })).toBeDisabled();
@@ -391,7 +404,6 @@ describe('WorkflowExtractionAction', () => {
 
     expect(onClick).toHaveBeenCalledOnce();
     expect(store.getState().designerView.workflowExtractionDialogOpen).toBe(true);
-    expect(mockGetTopLevelSelectedNodes).toHaveBeenCalledWith(store.getState().workflow, ['ActionA', 'ActionB']);
   });
 
   it('renders and opens from the menu-item variant', async () => {
@@ -403,9 +415,137 @@ describe('WorkflowExtractionAction', () => {
 
     expect(store.getState().designerView.workflowExtractionDialogOpen).toBe(true);
   });
+
+  it.each([
+    { variant: 'button' as const, selectedIds: ['Condition', 'Then', 'Otherwise'] },
+    { variant: 'menuItem' as const, selectedIds: ['Condition', 'Then', 'Otherwise'] },
+    { variant: 'button' as const, selectedIds: ['Condition'] },
+    { variant: 'menuItem' as const, selectedIds: ['Condition'] },
+  ])(
+    'enables a complete Condition selection from the $variant with real graph ancestry ($selectedIds)',
+    async ({ variant, selectedIds }) => {
+      const user = userEvent.setup();
+      const workflow: Workflow = {
+        ...serializedWorkflow,
+        definition: {
+          ...serializedWorkflow.definition,
+          actions: {
+            Condition: {
+              type: 'If',
+              expression: '@true',
+              actions: { Then: { type: 'Compose', inputs: 'then', runAfter: {} } },
+              else: { actions: { Otherwise: { type: 'Compose', inputs: 'else', runAfter: {} } } },
+              runAfter: {},
+            },
+          },
+        },
+      };
+      const store = createTestStore({ workflow, selectedIds });
+      renderWithProviders(<WorkflowExtractionAction variant={variant} />, store, createService());
+      expect(screen.getByRole('button', { name: 'Extract to new workflow' })).toBeEnabled();
+      await user.click(screen.getByRole('button', { name: 'Extract to new workflow' }));
+      expect(store.getState().designerView.workflowExtractionDialogOpen).toBe(true);
+    }
+  );
+
+  it('disables incomplete expanded containers with a contextual coverage explanation', () => {
+    const workflow: Workflow = {
+      ...serializedWorkflow,
+      definition: {
+        ...serializedWorkflow.definition,
+        actions: {
+          Condition: {
+            type: 'If',
+            expression: '@true',
+            actions: { Then: { type: 'Compose', inputs: 'then', runAfter: {} } },
+            else: { actions: { Otherwise: { type: 'Compose', inputs: 'else', runAfter: {} } } },
+            runAfter: {},
+          },
+        },
+      },
+    };
+    const store = createTestStore({ workflow, selectedIds: ['Condition', 'Then'] });
+    renderWithProviders(<WorkflowExtractionAction />, store, createService());
+    expect(screen.getByRole('button', { name: 'Extract to new workflow' })).toBeDisabled();
+    expect(screen.getByText('Extract').parentElement).toHaveAttribute(
+      'data-tooltip',
+      expect.stringContaining('Select every action inside "Condition"')
+    );
+  });
 });
 
 describe('WorkflowExtractionDialog', () => {
+  it('previews and submits one normalized container, keeping its branch actions nested', async () => {
+    const { buildWorkflowExtractionPlan: actualPlanner } = await vi.importActual<
+      typeof import('../../../../core/utils/workflowExtraction')
+    >('../../../../core/utils/workflowExtraction');
+    const user = userEvent.setup();
+    const workflow: Workflow = {
+      ...serializedWorkflow,
+      definition: {
+        ...serializedWorkflow.definition,
+        actions: {
+          Condition: {
+            type: 'If',
+            expression: '@true',
+            actions: { Then: { type: 'Compose', inputs: 'then', runAfter: {} } },
+            else: { actions: { Otherwise: { type: 'Compose', inputs: 'else', runAfter: {} } } },
+            runAfter: {},
+          },
+        },
+      },
+    };
+    const store = createTestStore({ open: true, workflow, selectedIds: ['Otherwise', 'Condition', 'Then'] });
+    mockSerializeWorkflow.mockResolvedValue(workflow);
+    mockGetExtractionSelectedIds.mockImplementation((state) =>
+      getWorkflowExtractionSelection(state.workflow, state.panel.operationContent.selectedNodeIds ?? [])
+    );
+    mockBuildWorkflowExtractionPlan.mockImplementation(actualPlanner);
+    renderWithProviders(<WorkflowExtractionDialog />, store, createService());
+    await screen.findByDisplayValue('Suggested_workflow');
+    expect(mockBuildWorkflowExtractionPlan).toHaveBeenLastCalledWith(workflow, ['Condition'], 'Suggested_workflow', expect.any(Function));
+    expect(screen.getByRole('button', { name: 'Confirm' })).toBeEnabled();
+    await user.click(screen.getByRole('button', { name: 'Confirm' }));
+    const submitted = mockCommitWorkflowExtraction.mock.calls[0][2].plan;
+    expect(submitted.selectedIds).toEqual(['Condition']);
+    expect(Object.keys(submitted.child.definition.actions)).toEqual(['Condition', 'Response']);
+    expect(submitted.child.definition.actions.Condition).toEqual(workflow.definition.actions.Condition);
+    expect(submitted.source.definition.actions.Condition).toBeUndefined();
+    expect(submitted.source.definition.actions.Then).toBeUndefined();
+  });
+
+  it('shows the actual planner restriction after structural validation, not an invalid-selection message', async () => {
+    const { buildWorkflowExtractionPlan: actualPlanner } = await vi.importActual<
+      typeof import('../../../../core/utils/workflowExtraction')
+    >('../../../../core/utils/workflowExtraction');
+    const workflow: Workflow = {
+      ...serializedWorkflow,
+      definition: {
+        ...serializedWorkflow.definition,
+        actions: {
+          Condition: {
+            type: 'If',
+            expression: '@true',
+            actions: { Stop: { type: 'Terminate', inputs: { runStatus: 'Succeeded' }, runAfter: {} } },
+            else: { actions: {} },
+            runAfter: {},
+          },
+        },
+      },
+    };
+    const store = createTestStore({ open: true, workflow, selectedIds: ['Condition', 'Stop'] });
+    mockSerializeWorkflow.mockResolvedValue(workflow);
+    mockGetExtractionSelectedIds.mockImplementation((state) =>
+      getWorkflowExtractionSelection(state.workflow, state.panel.operationContent.selectedNodeIds ?? [])
+    );
+    mockBuildWorkflowExtractionPlan.mockImplementation(actualPlanner);
+    renderWithProviders(<WorkflowExtractionDialog />, store, createService());
+    expect(await screen.findByText(/Action "Stop" responds to or terminates the original workflow/)).toBeInTheDocument();
+    expect(screen.queryByText(/Select at least two distinct actions/)).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Confirm' })).toBeDisabled();
+    expect(mockCommitWorkflowExtraction).not.toHaveBeenCalled();
+  });
+
   it('does not prepare or render while closed', () => {
     const store = createTestStore();
     renderWithProviders(<WorkflowExtractionDialog />, store, createService());
@@ -892,20 +1032,17 @@ describe('WorkflowExtractionDialog', () => {
 });
 
 beforeEach(() => {
+  InitLoggerService([]);
   mockSerializeWorkflow.mockReset();
   mockCommitWorkflowExtraction.mockReset();
   mockGetExtractionSelectedIds.mockReset();
   mockWorkflowExtractionFingerprint.mockReset();
-  mockGetTopLevelSelectedNodes.mockReset();
-  mockGetOrderedSelectedChain.mockReset();
   mockBuildWorkflowExtractionPlan.mockReset();
   mockGetWorkflowExtractionPreview.mockReset();
   mockSerializeWorkflow.mockResolvedValue(serializedWorkflow);
   mockCommitWorkflowExtraction.mockResolvedValue(completedResult);
   mockGetExtractionSelectedIds.mockReturnValue(['ActionA', 'ActionB']);
   mockWorkflowExtractionFingerprint.mockReturnValue('workflow-fingerprint');
-  mockGetTopLevelSelectedNodes.mockReturnValue(['ActionA', 'ActionB']);
-  mockGetOrderedSelectedChain.mockReturnValue(['ActionA', 'ActionB']);
   mockBuildWorkflowExtractionPlan.mockImplementation((_workflow, _ids, name) => ({
     ...basePlan,
     childName: name,

@@ -436,7 +436,7 @@ describe('Designer', () => {
       mockSelectedNodeId = 'only-node';
       render(<Designer />);
       invokeHotkey('ctrl+c');
-      expect(copyOperation).toHaveBeenCalledWith({ nodeId: 'only-node' });
+      expect(copyOperations).toHaveBeenLastCalledWith({ nodeIds: ['only-node'] });
     });
 
     it('cuts the current multi-selection or single selection', () => {

@@ -83,5 +83,4 @@ export const undoablePanelActionTypes = [
 export const undoableActionTypes = undoableWorkflowActionTypes.concat(undoablePanelActionTypes, [
   'updateNodeConnectionExpression/pending',
   'updateNodeConnection/pending',
-  'pasteScopeOperation/pending',
 ]);
