@@ -2,9 +2,11 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { cleanup, render } from '@testing-library/react';
+import type { Workflow } from '../../common/models/workflow';
 
 const mockDispatch = vi.fn();
 let mockHasMultipleTriggers = false;
+let mockReadOnly = false;
 
 vi.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
@@ -22,7 +24,7 @@ vi.mock('../state/designerOptions/designerOptionsSelectors', () => ({
   useAreDesignerOptionsInitialized: () => true,
   useAreServicesInitialized: () => true,
   useMonitoringView: () => mockIsMonitoringView,
-  useReadOnly: () => false,
+  useReadOnly: () => mockReadOnly,
 }));
 
 vi.mock('../state/designerOptions/designerOptionsSlice', () => ({
@@ -98,6 +100,7 @@ describe('BJSWorkflowProvider', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockHasMultipleTriggers = false;
+    mockReadOnly = false;
     mockRunDeepCompareEffect = true;
     mockUseRealCompareEffect = false;
     mockIsMonitoringView = false;
@@ -105,13 +108,12 @@ describe('BJSWorkflowProvider', () => {
 
   afterEach(cleanup);
 
-  const renderProvider = (workflow: unknown) =>
+  const renderProvider = (workflow: unknown, externallyAppliedWorkflow?: Workflow) =>
     render(
-      <ProviderWrappedContext.Provider value={{} as any}>
-        <BJSWorkflowProvider workflow={workflow as any}>
-          <div data-testid="shell-child" />
-        </BJSWorkflowProvider>
-      </ProviderWrappedContext.Provider>
+      <BJSWorkflowProvider workflow={workflow as any} externallyAppliedWorkflow={externallyAppliedWorkflow}>
+        <div data-testid="shell-child" />
+      </BJSWorkflowProvider>,
+      { wrapper: ({ children }) => <ProviderWrappedContext.Provider value={{} as any}>{children}</ProviderWrappedContext.Provider> }
     );
 
   it('compares monitoring workflows with a schema field named toString without crashing or losing change detection', () => {
@@ -180,6 +182,30 @@ describe('BJSWorkflowProvider', () => {
 
     const dispatchedActionTypes = mockDispatch.mock.calls.map(([action]) => action.type);
     expect(dispatchedActionTypes).not.toContain('resetWorkflowState');
+  });
+
+  it('acknowledges an applied workflow without reinitializing, then uses the new source on read-only changes', () => {
+    const original: Workflow = { definition: { actions: {} }, connectionReferences: {} };
+    const updated: Workflow = {
+      definition: {
+        actions: { Invocation: { type: 'Workflow', inputs: { host: { workflow: { id: 'Child' } }, body: {} }, runAfter: {} } },
+      },
+      connectionReferences: {},
+    };
+    const { rerender } = renderProvider(original);
+    vi.clearAllMocks();
+    rerender(<BJSWorkflowProvider workflow={updated} externallyAppliedWorkflow={updated} />);
+    expect(initializeGraphState).not.toHaveBeenCalled();
+    expect(mockDispatch.mock.calls.map(([action]) => action.type)).not.toContain('clearAllErrors');
+    mockReadOnly = true;
+    rerender(<BJSWorkflowProvider workflow={updated} externallyAppliedWorkflow={updated} />);
+    expect(initializeGraphState).toHaveBeenCalledWith(expect.objectContaining({ workflowDefinition: updated }));
+  });
+
+  it('does not skip initialization after a provider remount carrying a previous acknowledgement', () => {
+    const workflow: Workflow = { definition: { actions: {} }, connectionReferences: {} };
+    renderProvider(workflow, workflow);
+    expect(initializeGraphState).toHaveBeenCalled();
   });
 
   it('does not dispatch initializeGraphState for a multiple-trigger workflow, but still flags it and dispatches other shell state', () => {

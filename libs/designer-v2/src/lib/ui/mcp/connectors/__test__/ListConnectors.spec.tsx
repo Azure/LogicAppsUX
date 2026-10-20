@@ -6,7 +6,13 @@ import { useConnectionById } from '../../../../core/queries/connections';
 import * as mcpActions from '../../../../core/actions/bjsworkflow/mcp';
 import { McpPanelView, openConnectorPanelView } from '../../../../core/state/mcp/panel/mcpPanelSlice';
 import { selectConnectorId, selectOperations } from '../../../../core/state/mcp/mcpselectionslice';
-import { connectorId, createMcpHarness, createMcpState, expressionMapping } from '../../../../core/state/mcp/__test__/fixtures';
+import {
+  connectorId,
+  createMcpHarness,
+  createMcpState,
+  expressionMapping,
+  mcpConnectionMappingCaseNames,
+} from '../../../../core/state/mcp/__test__/fixtures';
 
 vi.mock('../../../../core/queries/connections', () => ({ useConnectionById: vi.fn() }));
 vi.mock('../../../templates/connections/connector', () => ({
@@ -37,29 +43,20 @@ describe('MCP connector list', () => {
     expect(screen.queryByRole('table')).not.toBeInTheDocument();
   });
 
-  it.each(['concrete', 'expression', 'null', 'missing', 'dangling reference'] as const)(
-    'shows connection status for a %s mapping without promoting a design-time reference',
-    (kind) => {
-      const state = createMcpState();
-      if (kind === 'missing') {
-        delete state.connection.connectionsMapping.Query;
-      } else {
-        state.connection.connectionsMapping.Query =
-          kind === 'expression' ? expressionMapping : kind === 'null' ? null : kind === 'concrete' ? 'Sql' : 'Unknown';
-      }
-      const harness = createMcpHarness(state);
-      render(<ListConnectors addConnectors={vi.fn()} addDisabled={false} />, harness);
-      expect(screen.getByRole('table', { name: 'List of connectors with their connections' })).toBeInTheDocument();
-      expect(screen.getByText(kind === 'concrete' ? 'Connected' : 'Disconnected')).toBeInTheDocument();
-      expect(screen.getByText(kind === 'concrete' ? 'Production SQL' : 'No Connection')).toBeInTheDocument();
-      if (kind === 'concrete') {
-        expect(useConnectionById).toHaveBeenCalledWith('/connections/Sql', connectorId);
-      } else {
-        expect(useConnectionById).not.toHaveBeenCalled();
-      }
-      expect(harness.actions).toEqual([]);
+  it.each(mcpConnectionMappingCaseNames)('shows connection status for a %s mapping without promoting a design-time reference', (kind) => {
+    const state = createMcpState(kind);
+    const harness = createMcpHarness(state);
+    render(<ListConnectors addConnectors={vi.fn()} addDisabled={false} />, harness);
+    expect(screen.getByRole('table', { name: 'List of connectors with their connections' })).toBeInTheDocument();
+    expect(screen.getByText(kind === 'concrete' ? 'Connected' : 'Disconnected')).toBeInTheDocument();
+    expect(screen.getByText(kind === 'concrete' ? 'Production SQL' : 'No Connection')).toBeInTheDocument();
+    if (kind === 'concrete') {
+      expect(useConnectionById).toHaveBeenCalledWith('/connections/Sql', connectorId);
+    } else {
+      expect(useConnectionById).not.toHaveBeenCalled();
     }
-  );
+    expect(harness.actions).toEqual([]);
+  });
 
   it.each(['name', 'edit button'])('edits all operations belonging to the connector via its %s', (entrypoint) => {
     const state = createMcpState();

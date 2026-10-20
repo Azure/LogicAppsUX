@@ -217,6 +217,20 @@ export function getEditorForParameter(
   return 'combobox';
 }
 
+// Schema/manifest authors can declare arbitrary x-ms-editor-options. chatUrl/queryParams are only
+// ever trustworthy when sourced at runtime from WorkflowService().getAgentUrl(), so any
+// schema-declared value for these keys must never reach the Agent-preview navigation UI. Other
+// options (e.g. showAgentViewer, a static visibility flag with no navigation authority) are preserved.
+function stripAgentPreviewTrustFields(editorOptions: any): any {
+  if (!editorOptions || typeof editorOptions !== 'object' || (!('chatUrl' in editorOptions) && !('queryParams' in editorOptions))) {
+    return editorOptions;
+  }
+  const filteredOptions = { ...editorOptions };
+  delete filteredOptions.chatUrl;
+  delete filteredOptions.queryParams;
+  return filteredOptions;
+}
+
 export function getEditorOptionsForParameter(
   parameter: SchemaObject,
   dynamicValues: ParameterDynamicValues | undefined,
@@ -224,16 +238,16 @@ export function getEditorOptionsForParameter(
 ): any {
   const editorOptions = parameter[Constants.ExtensionProperties.EditorOptions];
   if (!dynamicValues && !$enum) {
-    return editorOptions;
+    return stripAgentPreviewTrustFields(editorOptions);
   }
 
   // Dynamic Values - preserve existing editorOptions (like multiSelect, serialization) and just set empty options
   if (dynamicValues) {
-    return { ...editorOptions, options: [] };
+    return stripAgentPreviewTrustFields({ ...editorOptions, options: [] });
   }
 
   // Static Enum
-  return { ...editorOptions, options: $enum?.map((value) => ({ ...value, key: value.displayName })) };
+  return stripAgentPreviewTrustFields({ ...editorOptions, options: $enum?.map((value) => ({ ...value, key: value.displayName })) });
 }
 
 type MakeDefinitionReducer = (previous: Record<string, any>, current: string) => Record<string, any>;

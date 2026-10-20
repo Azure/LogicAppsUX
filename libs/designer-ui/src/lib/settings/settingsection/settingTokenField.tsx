@@ -13,7 +13,7 @@ import { DropdownEditor } from '../../dropdown';
 import constants from '../../constants';
 import { CopyInputControlWithAgent } from '../../copyinputcontrol/CopyInputControlWithAgent';
 import { DictionaryEditor } from '../../dictionary';
-import type { ValueSegment } from '../../editor';
+import type { AgentUrlMetadata, ValueSegment } from '../../editor';
 import type {
   CallbackHandler,
   CastHandler,
@@ -67,6 +67,9 @@ export interface SettingTokenFieldProps extends SettingProps {
   editor?: string;
   editorOptions?: any;
   editorViewModel?: any;
+  // Trusted Agent-preview navigation data, populated exclusively at runtime from
+  // WorkflowService().getAgentUrl(). Never sourced from schema-provided editorOptions.
+  agentUrlMetadata?: AgentUrlMetadata;
   defaultValue?: string;
   placeholder?: string;
   label: string;
@@ -180,6 +183,7 @@ export const TokenField = ({
   editor,
   editorOptions,
   editorViewModel,
+  agentUrlMetadata,
   placeholder,
   readOnly,
   value,
@@ -340,8 +344,8 @@ export const TokenField = ({
           placeholder={placeholder}
           text={value[0].value}
           showAgentViewer={editorOptions?.showAgentViewer}
-          queryParams={editorOptions?.queryParams}
-          chatUrl={editorOptions?.chatUrl}
+          queryParams={agentUrlMetadata?.queryParams}
+          chatUrl={agentUrlMetadata?.chatUrl}
         />
       );
 

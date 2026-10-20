@@ -17,6 +17,11 @@
 // Wall time target: a short fixture-only run (vs ~12 minutes for the 12-shape behavior file).
 // This is the critical-path test that Step 3's per-scenario shards depend on; the
 // full behavior coverage runs independently in createWorkspace.behavior.test.ts.
+//
+// The CustomCode fixture is created through the public .NET 10 wizard option,
+// then run-e2e.ts converts only the shared downstream fixture to the existing
+// .NET 8 project shape. This preserves existing-project lifecycle coverage
+// while Workflows SDK 1.4.0 is pending release.
 
 import * as fs from 'fs';
 import * as crypto from 'crypto';
@@ -624,7 +629,7 @@ describe('Create Workspace Fixtures', function () {
     await sleep(2000);
 
     await fillCustomCodeFields(driver, {
-      dotNetVersion: '.NET 8',
+      dotNetVersion: '.NET 10',
       folderName: ccFolderName,
       namespace: fnNamespace,
       functionName: fnName,

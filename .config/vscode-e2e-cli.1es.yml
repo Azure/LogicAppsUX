@@ -1,0 +1,41 @@
+# Registration-only scaffold for Azure DevOps. This pipeline does not run E2E tests.
+# E2E suites, authentication, and artifacts will be added in a later change.
+trigger: none
+pr: none
+
+resources:
+  repositories:
+    - repository: 1esPipelines
+      type: git
+      name: 1ESPipelineTemplates/MicroBuildTemplate
+      ref: refs/heads/release
+
+variables:
+  TeamName: Azure Logic Apps for VS Code
+
+extends:
+  template: azure-pipelines/MicroBuild.1ES.Unofficial.yml@1esPipelines
+  parameters:
+    pool:
+      name: VSEngSS-MicroBuild2022-1ES
+      image: server2022-microbuildVS2022-1es
+      os: windows
+    stages:
+      - stage: Bootstrap
+        displayName: Bootstrap ADO registration
+        jobs:
+          - job: RegisterPipeline
+            displayName: Registration bootstrap
+            pool:
+              name: VSEngSS-MicroBuild2022-1ES
+              image: server2022-microbuildVS2022-1es
+              os: windows
+            templateContext:
+              type: validationJob
+            steps:
+              - checkout: none
+              - pwsh: |
+                  Write-Host 'This pipeline currently only bootstraps ADO registration.'
+                  Write-Host 'No E2E tests are executed.'
+                  Write-Host 'E2E suites, authentication, and artifacts will be added later.'
+                displayName: Explain registration-only scope

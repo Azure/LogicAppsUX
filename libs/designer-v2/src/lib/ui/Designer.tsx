@@ -44,6 +44,7 @@ import { RunHistoryPanel } from './panel';
 import { useDesignerStyles } from './Designer.styles';
 import { RunDisplay } from './RunDisplay';
 import { KindChangeDialog } from './common/KindChangeDialog/KindChangeDialog';
+import { WorkflowExtractionDialog } from './panel/multiSelectPanel/workflowExtraction';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -62,7 +63,9 @@ export const Designer = (props: DesignerProps) => {
   const { backgroundProps, panelLocation = PanelLocation.Right, customPanelLocations } = props;
 
   const isVSCode = useIsVSCode();
-  const isReadOnly = useReadOnly();
+  const readOnly = useReadOnly();
+  const extractionOpen = useSelector((state: RootState) => !!state.designerView.workflowExtractionDialogOpen);
+  const isReadOnly = readOnly || extractionOpen;
   const dispatch = useDispatch<AppDispatch>();
 
   const isDarkMode = useIsDarkMode();
@@ -88,7 +91,7 @@ export const Designer = (props: DesignerProps) => {
       event.preventDefault();
       dispatch(openPanel({ panelMode: 'NodeSearch' }));
     },
-    { enabled: !isVSCode }
+    { enabled: !isVSCode && !extractionOpen }
   );
 
   useHotkeys(
@@ -97,7 +100,7 @@ export const Designer = (props: DesignerProps) => {
       event.preventDefault();
       dispatch(openPanel({ panelMode: 'NodeSearch' }));
     },
-    { enabled: isVSCode }
+    { enabled: isVSCode && !extractionOpen }
   );
 
   const canUndo = useCanUndo();
@@ -296,6 +299,7 @@ export const Designer = (props: DesignerProps) => {
           <CanvasSizeMonitor canvasRef={canvasRef} />
           <DragPanMonitor canvasRef={canvasRef} />
           <KindChangeDialog />
+          <WorkflowExtractionDialog />
         </ReactFlowProvider>
         <div id={'msla-layer-host'} className={styles.layerHost} />
       </div>
