@@ -1,4 +1,5 @@
 import { isExpressionConnectionMapping, type ConnectionMapping } from '../../../common/models/workflow';
+import Constants from '../../../common/constants';
 import {
   getServiceProviderConnectionMapping,
   remapConnectionExpression,
@@ -110,15 +111,51 @@ const resolveCopyNodeId = (state: RootState, id: string): string => {
   return matches[0];
 };
 
-const resolveSerializedCopyNodeId = (state: RootState, id: string): string => {
-  const normalized = removeIdTag(id).toLowerCase();
-  const matches = Object.keys(state.workflow.operations).filter(
-    (original) => (getRecordEntry(state.workflow.idReplacements, original) ?? original).toLowerCase() === normalized
-  );
-  if (matches.length !== 1) {
+const getAgentChannelOperations = (
+  nodeId: string,
+  operation: LogicAppsV2.OperationDefinition
+): Record<string, LogicAppsV2.OperationDefinition> => {
+  if (operation.type.toLowerCase() !== Constants.NODE.TYPE.AGENT) {
+    return {};
+  }
+  const { channels } = operation as LogicAppsV2.AgentAction;
+  return Object.fromEntries([
+    ...Object.values(channels?.in ?? {}).map((channel) => {
+      const trigger = channel?.trigger;
+      if (!trigger || typeof trigger.type !== 'string' || !trigger.type) {
+        throw clipboardError();
+      }
+      return [`${nodeId}${Constants.CHANNELS.INPUT}${trigger.type}`, trigger];
+    }),
+    ...Object.values(channels?.out ?? {}).map((channel) => {
+      const action = channel?.action;
+      if (!action || typeof action.type !== 'string' || !action.type) {
+        throw clipboardError();
+      }
+      return [`${nodeId}${Constants.CHANNELS.OUTPUT}${action.type}`, action];
+    }),
+  ]);
+};
+
+const getScopeOperationNames = (state: RootState, scopeId: string): Map<string, string> => {
+  const graph = getWorkflowNodeFromGraphState(state.workflow, scopeId);
+  if (!graph) {
     throw clipboardError(true);
   }
-  return matches[0];
+  const names = new Map<string, string>();
+  const visit = (node: WorkflowNode) => {
+    const operation = getRecordEntry(state.workflow.operations, node.id);
+    if (operation) {
+      const currentName = getRecordEntry(state.workflow.idReplacements, node.id) ?? node.id;
+      names.set(node.id, currentName);
+      for (const channelId of Object.keys(getAgentChannelOperations(node.id, operation))) {
+        names.set(channelId, `${currentName}${channelId.slice(node.id.length)}`);
+      }
+    }
+    node.children?.forEach(visit);
+  };
+  visit(graph);
+  return names;
 };
 
 const assertCopyReady = (state: RootState, nodeId: string): void => {
@@ -184,15 +221,9 @@ const buildScopeClipboardEntry = async (state: RootState, scopeNodeId: string): 
   const normalizedScopeId = resolveCopyNodeId(state, scopeNodeId);
   const newNodeId = createIdCopy(normalizedScopeId);
   assertCopyReady(state, normalizedScopeId);
-  const assertDescendantsReady = (node: WorkflowNode): void => {
-    if (Object.hasOwn(state.workflow.operations, node.id)) {
-      assertCopyReady(state, node.id);
-    }
-    node.children?.forEach(assertDescendantsReady);
-  };
-  const graph = getWorkflowNodeFromGraphState(state.workflow, normalizedScopeId);
-  if (graph) {
-    assertDescendantsReady(graph);
+  const operationNames = getScopeOperationNames(state, normalizedScopeId);
+  for (const id of operationNames.keys()) {
+    assertCopyReady(state, id);
   }
 
   const serializedOperation = await serializeOperation(state, normalizedScopeId, {
@@ -201,17 +232,10 @@ const buildScopeClipboardEntry = async (state: RootState, scopeNodeId: string): 
   });
 
   const sourceNodeId = getRecordEntry(state.workflow.idReplacements, normalizedScopeId);
-  const serializedScopeId = sourceNodeId ?? normalizedScopeId;
-  const allActionNames = getAllActionNames({ [serializedScopeId]: serializedOperation as ActionDefinition });
-  for (const name of allActionNames) {
-    const originalId = resolveSerializedCopyNodeId(state, name);
-    assertCopyReady(state, originalId);
-  }
   const allConnectionData: Record<string, CopiedConnectionData> = {};
   const staticResults: Record<string, any> = {};
 
-  allActionNames.forEach((actionName) => {
-    const originalId = resolveSerializedCopyNodeId(state, actionName);
+  operationNames.forEach((actionName, originalId) => {
     const connectionReference = getConnectionReferenceForNodeId(state.connections, originalId);
     if (connectionReference) {
       allConnectionData[actionName] = connectionReference.mapping
@@ -290,11 +314,9 @@ const buildOperationsClipboard = async (state: RootState, nodeIds: string[]) => 
       const normalizedId = removeIdTag(nodeId);
       const entry = await buildScopeClipboardEntry(state, normalizedId);
       scopes.set(nodeId, entry);
-      const serializedScopeId = entry.sourceNodeId ?? normalizedId;
-      const childNames = getAllActionNames({ [serializedScopeId]: entry.serializedOperation });
-      for (const name of childNames) {
-        if (name !== serializedScopeId) {
-          scopeChildIds.add(resolveSerializedCopyNodeId(state, name));
+      for (const id of getScopeOperationNames(state, normalizedId).keys()) {
+        if (id !== normalizedId) {
+          scopeChildIds.add(id);
         }
       }
     }
@@ -504,6 +526,9 @@ const pasteScopeInDraft = createAsyncThunk('pasteScopeInDraft', async (payload: 
     true /* shouldAppendAddCase */,
     pasteParams
   );
+  if (Object.keys(actions).some((id) => Object.hasOwn(state.workflow.operations, id))) {
+    throw clipboardError();
+  }
   // parentNodeId must reference a nodesMetadata key (the containing graph/scope) so the
   // parent-chain walk in getUpstreamNodeIds can climb to ancestor scopes. `parentId` from
   // relationshipIds is an edge-placement node (e.g. a `<scope>-#subgraph` card) and is not a
@@ -586,7 +611,9 @@ const pasteScopeInDraft = createAsyncThunk('pasteScopeInDraft', async (payload: 
       true /* awaitResultSchemas */
     ),
   ]);
-  await initializeDynamicDataInNodes(getState as () => RootState, dispatch, pasteParams.pasteActionNames);
+  await initializeDynamicDataInNodes(getState as () => RootState, dispatch, [
+    ...new Set([...pasteParams.pasteActionNames, ...Object.keys(actions)]),
+  ]);
 
   updateAllUpstreamNodes(getState() as RootState, dispatch);
   dispatch(setIsPanelLoading(false));
@@ -654,7 +681,7 @@ export const pasteClipboard = createAsyncThunk(
       for (const reservedId of plan.pasteActionNames) {
         reservedMetadata[reservedId] = { graphId: relationshipIds.graphId };
       }
-      for (const sourceId of getAllActionNames(actions)) {
+      for (const sourceId of getAllActionNames(actions, [], true)) {
         const targetId = plan.renamedNodes[sourceId];
         if (sourceId !== id) {
           replacements[sourceId] = targetId;
@@ -791,12 +818,34 @@ export const pasteClipboard = createAsyncThunk(
       }
     }
     const after = draft.getState();
-    for (const id of Object.keys(after.workflow.operations)) {
+    const channelIds = new Set(
+      addedIds.flatMap((ownerId) => {
+        if (!getWorkflowNodeFromGraphState(after.workflow, ownerId)) {
+          return [];
+        }
+        const operation = after.workflow.operations[ownerId];
+        return Object.entries(getAgentChannelOperations(ownerId, operation))
+          .filter(([channelId, channel]) => {
+            const stored = getRecordEntry(after.workflow.operations, channelId);
+            const direction = channelId.startsWith(`${ownerId}${Constants.CHANNELS.INPUT}`) ? 'input' : 'output';
+            return (
+              stored?.type.toLowerCase() === channel.type.toLowerCase() &&
+              (stored.kind ?? '').toLowerCase() === (channel.kind ?? '').toLowerCase() &&
+              getRecordEntry(after.operations.supportedChannels, ownerId)?.some(
+                (supported) =>
+                  supported[direction].type.toLowerCase() === channel.type.toLowerCase() &&
+                  (!supported[direction].kind || supported[direction].kind.toLowerCase() === channel.kind?.toLowerCase())
+              )
+            );
+          })
+          .map(([channelId]) => channelId);
+      })
+    );
+    for (const id of addedIds) {
       if (
-        !Object.hasOwn(before.workflow.operations, id) &&
-        (!hasCompleteActionData(getNodeOperationData(after.operations, id)) ||
-          !after.operations.operationInfo[id] ||
-          !getWorkflowNodeFromGraphState(after.workflow, id))
+        !hasCompleteActionData(getNodeOperationData(after.operations, id)) ||
+        !after.operations.operationInfo[id] ||
+        (!getWorkflowNodeFromGraphState(after.workflow, id) && !channelIds.has(id))
       ) {
         throw clipboardError();
       }

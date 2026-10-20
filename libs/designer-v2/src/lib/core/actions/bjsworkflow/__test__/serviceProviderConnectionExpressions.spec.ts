@@ -1046,6 +1046,9 @@ describe('ServiceProvider runtime connection expressions', () => {
       actions: { Query: state.workflow.operations.Query as LogicAppsV2.ServiceProvider },
     };
     state.workflow.operations.Container = scope;
+    const parsed = Deserialize({ actions: { Container: scope }, triggers: {} }, null);
+    state.workflow.graph = parsed.graph;
+    state.workflow.nodesMetadata = parsed.nodesMetadata;
     state.operations.operationInfo.Container = { type: 'Scope', connectorId: 'connectionProviders/control', operationId: 'scope' };
     state.operations.inputParameters.Container = { parameterGroups: {} };
     state.operations.outputParameters.Container = { outputs: {} };

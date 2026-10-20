@@ -54,20 +54,24 @@ const isRecord = (value: unknown): value is Record<string, unknown> => typeof va
 
 export const remapClipboardNodeData = (data: Omit<NodeData, 'id'>, replacements: Record<string, string>): Omit<NodeData, 'id'> => {
   const result = clone(data);
-  const visit = (value: unknown): void => {
+  const parameters = new Set<unknown>([
+    ...Object.values(result.nodeInputs.parameterGroups).flatMap((group) => group.parameters),
+    ...(result.nodeInputs.stashedDynamicParameterValues ?? []),
+  ]);
+  const visit = (value: unknown, editorValues = false): void => {
     if (Array.isArray(value)) {
       for (let index = 0; index < value.length; index++) {
         if (typeof value[index] === 'string') {
           value[index] = remapConnectionExpression(value[index], replacements);
         } else {
-          visit(value[index]);
+          visit(value[index], editorValues);
         }
       }
     } else if (isRecord(value)) {
-      if (value.type === 'literal' && typeof value.id === 'string' && typeof value.value === 'string') {
+      if (editorValues && value.type === 'literal' && typeof value.id === 'string' && typeof value.value === 'string') {
         return;
       }
-      if (value.type === 'token' && typeof value.value === 'string' && isRecord(value.token)) {
+      if (editorValues && value.type === 'token' && typeof value.value === 'string' && isRecord(value.token)) {
         const prefixed = !value.value.startsWith('@');
         const expression = remapConnectionExpression(prefixed ? `@${value.value}` : value.value, replacements);
         value.value = prefixed ? expression.slice(1) : expression;
@@ -88,7 +92,7 @@ export const remapClipboardNodeData = (data: Omit<NodeData, 'id'>, replacements:
           if (typeof child === 'string') {
             value[key] = remapConnectionExpression(child, replacements);
           } else {
-            visit(child);
+            visit(child, editorValues || (parameters.has(value) && (key === 'value' || key === 'editorViewModel')));
           }
         }
       }

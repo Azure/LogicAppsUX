@@ -3,6 +3,7 @@ import { waitFor } from '@testing-library/react';
 import {
   clone,
   InitOperationManifestService,
+  InitExperimentationServiceService,
   InitWorkflowService,
   LOCAL_STORAGE_KEYS,
   StaticResultService,
@@ -22,6 +23,9 @@ import scopeManifest from '../../../../../../../logic-apps-shared/src/designer-c
 import conditionManifest from '../../../../../../../logic-apps-shared/src/designer-client-services/lib/base/manifests/condition';
 import switchManifest from '../../../../../../../logic-apps-shared/src/designer-client-services/lib/base/manifests/switch';
 import requestManifest from '../../../../../../../logic-apps-shared/src/designer-client-services/lib/base/manifests/request';
+import responseManifest from '../../../../../../../logic-apps-shared/src/designer-client-services/lib/base/manifests/response';
+import agentManifest from '../../../../../../../logic-apps-shared/src/designer-client-services/lib/consumption/manifests/agentloop';
+import mcpManifest from '../../../../../../../logic-apps-shared/src/designer-client-services/lib/consumption/manifests/builtinmcpclient';
 import { getMockedInitialRootState } from '../../../../__test__/mock-root-state';
 import { getReactQueryClient } from '../../../ReactQueryProvider';
 import { Deserialize } from '../../../parsers/BJSWorkflow/BJSDeserializer';
@@ -33,7 +37,7 @@ import {
   updateNodeDynamicInputLoadStatus,
   updateOutputs,
 } from '../../../state/operation/operationMetadataSlice';
-import { setNodeConnectionMapping } from '../../../state/connection/connectionSlice';
+import { initializeConnectionReferences, setNodeConnectionMapping } from '../../../state/connection/connectionSlice';
 import { initializeParameters } from '../../../state/workflowparameters/workflowparametersSlice';
 import { updateTokens } from '../../../state/tokens/tokensSlice';
 import { getNodeOperationData } from '../../../state/operation/operationSelector';
@@ -78,6 +82,9 @@ const manifests: Record<string, OperationManifest> = {
   if: conditionManifest,
   switch: switchManifest,
   request: requestManifest,
+  response: responseManifest,
+  agent: agentManifest,
+  mcpclienttool: mcpManifest,
 };
 const manifestService: IOperationManifestService = {
   isSupported: () => true,
@@ -122,6 +129,7 @@ beforeEach(() => {
   vi.stubGlobal('navigator', { clipboard: undefined });
   localStorage.clear();
   InitOperationManifestService(manifestService);
+  InitExperimentationServiceService(undefined);
   InitWorkflowService({
     getCallbackUrl: async () => {
       throw new Error('Unexpected callback URL request in action-only workflow');
@@ -131,6 +139,263 @@ beforeEach(() => {
 });
 
 describe('clipboard integrity with real designer initialization and reducers', () => {
+  it('keeps dynamic copied inputs in the internal ID namespace through overlapping renames and Undo/Redo', async () => {
+    const store = await prepareSource({
+      triggers: {},
+      actions: {
+        Initialize_variables: {
+          type: 'InitializeVariable',
+          inputs: { variables: [{ name: 'counter', type: 'string', value: '' }] },
+          runAfter: {},
+        },
+        A: { type: 'Compose', inputs: 'first', runAfter: { Initialize_variables: ['Succeeded'] } },
+        B: { type: 'Compose', inputs: 'second', runAfter: { A: ['Succeeded'] } },
+        Set_variable: { type: 'SetVariable', inputs: { name: 'counter', value: "@outputs('A')" }, runAfter: { B: ['Succeeded'] } },
+      },
+    });
+    store.dispatch(replaceId({ originalId: 'B', newId: 'C' }));
+    store.dispatch(replaceId({ originalId: 'A', newId: 'B' }));
+    await store.dispatch(copyOperation({ nodeId: 'Set_variable' })).unwrap();
+    await store
+      .dispatch(
+        pasteClipboard({
+          clipboard: readClipboard(),
+          relationshipIds: { graphId: 'root', parentId: 'Set_variable' },
+          upstreamNodeIds: ['Initialize_variables', 'A', 'B', 'Set_variable'],
+        })
+      )
+      .unwrap();
+    const check = async () => {
+      expect(await serializeOperation(store.getState(), 'Set_variable-copy')).toMatchObject({
+        inputs: { name: 'counter', value: "@outputs('B')" },
+      });
+      expect((await serializeWorkflow(store.getState())).definition.actions['Set_variable-copy']).toMatchObject({
+        inputs: { name: 'counter', value: "@outputs('B')" },
+      });
+    };
+    await check();
+    await store.dispatch(onUndoClick()).unwrap();
+    expect(store.getState().workflow.operations['Set_variable-copy']).toBeUndefined();
+    await store.dispatch(onRedoClick()).unwrap();
+    await check();
+  });
+
+  it.each(['literal', 'token'])('remaps raw %s-shaped JSON without treating it as an editor segment', async (type) => {
+    const raw = {
+      type,
+      id: 'record',
+      value: "@outputs('A')",
+      token: { tokenType: 'outputs', actionName: 'A', value: "outputs('A')" },
+    };
+    const store = await prepareSource({
+      triggers: {},
+      actions: {
+        A: { type: 'Compose', inputs: 'first', runAfter: {} },
+        Reader: { type: 'Compose', inputs: raw, runAfter: { A: ['Succeeded'] } },
+      },
+    });
+    await store.dispatch(copyOperations({ nodeIds: ['A', 'Reader'] })).unwrap();
+    await store
+      .dispatch(
+        pasteClipboard({
+          clipboard: readClipboard(),
+          relationshipIds: { graphId: 'root', parentId: 'Reader' },
+          upstreamNodeIds: ['A', 'Reader'],
+        })
+      )
+      .unwrap();
+    expect(await serializeOperation(store.getState(), 'Reader-copy')).toMatchObject({
+      inputs: { ...raw, value: "@outputs('A-copy')" },
+    });
+  });
+
+  it.each(['copy', 'duplicate'])('includes a selected real MCP tool exactly once inside its Agent during %s', async (mode) => {
+    const source = createSource({
+      triggers: {},
+      actions: {
+        Agent: {
+          type: 'Agent',
+          inputs: { parameters: { agentModelType: 'AzureOpenAI', messages: [] } },
+          tools: { Mcp_tool: { type: 'McpClientTool', inputs: { parameters: { headers: { 'x-test': 'preserve' } } } } },
+          runAfter: {},
+        },
+      },
+    });
+    const { store } = source;
+    store.dispatch(
+      initializeConnectionReferences({
+        mcpConnection: {
+          api: { id: 'connectionProviders/mcpclient' },
+          connection: { id: 'connectionProviders/mcpclient/mcpConnection' },
+        },
+      })
+    );
+    store.dispatch(setNodeConnectionMapping({ nodeId: 'Mcp_tool', mapping: 'mcpConnection' }));
+    await source.initialize();
+    expect(store.getState().operations.errors).toEqual({});
+    if (mode === 'copy') {
+      await store.dispatch(copyOperations({ nodeIds: ['Agent', 'Mcp_tool'] })).unwrap();
+      expect(readClipboard().nodes).toHaveLength(1);
+      await store
+        .dispatch(pasteClipboard({ clipboard: readClipboard(), relationshipIds: { graphId: 'root' }, upstreamNodeIds: [] }))
+        .unwrap();
+    } else {
+      await store.dispatch(duplicateOperations({ nodeIds: ['Agent', 'Mcp_tool'] })).unwrap();
+    }
+    const copied = await serializeOperation(store.getState(), 'Agent-copy');
+    expect(Object.keys(copied.tools ?? {})).toEqual(['Mcp_tool_1']);
+    expect(copied.tools?.Mcp_tool_1).toMatchObject({
+      type: 'McpClientTool',
+      inputs: { parameters: { headers: { 'x-test': 'preserve' } } },
+    });
+    expect(Object.keys(store.getState().workflow.operations).filter((id) => id.startsWith('Mcp_tool'))).toEqual(['Mcp_tool', 'Mcp_tool_1']);
+    expect(store.getState().connections.connectionsMapping.Mcp_tool_1).toBe('mcpConnection');
+    await store.dispatch(onUndoClick()).unwrap();
+    expect(store.getState().workflow.operations['Agent-copy']).toBeUndefined();
+    await store.dispatch(onRedoClick()).unwrap();
+    expect(await serializeOperation(store.getState(), 'Agent-copy')).toEqual(copied);
+  });
+
+  it.each(['copy', 'duplicate', 'cut'])('preserves owned noncanvas Agent channel operations during %s', async (mode) => {
+    const agent = {
+      type: 'Agent',
+      inputs: { parameters: { agentModelType: 'AzureOpenAI', messages: [] } },
+      tools: {},
+      channels: {
+        in: { 'in-channel-1': { trigger: { type: 'Request', kind: 'Http', inputs: { schema: { type: 'object' } } } } },
+        out: { 'out-channel-1': { action: { type: 'Response', inputs: { statusCode: 200, body: 'preserve channel' } } } },
+      },
+      runAfter: {},
+    };
+    const store = await prepareSource({ triggers: {}, actions: { Agent: agent } });
+    if (mode === 'duplicate') {
+      await store.dispatch(duplicateOperations({ nodeIds: ['Agent'] })).unwrap();
+    } else {
+      await store.dispatch((mode === 'cut' ? cutOperations : copyOperations)({ nodeIds: ['Agent'] })).unwrap();
+      expect(!!store.getState().workflow.operations.Agent).toBe(mode !== 'cut');
+      await store
+        .dispatch(pasteClipboard({ clipboard: readClipboard(), relationshipIds: { graphId: 'root' }, upstreamNodeIds: [] }))
+        .unwrap();
+    }
+    const copied = await serializeOperation(store.getState(), 'Agent-copy');
+    expect(copied).toMatchObject({ channels: agent.channels });
+    expect((await serializeWorkflow(store.getState())).definition.actions['Agent-copy']).toMatchObject({
+      channels: agent.channels,
+    });
+    for (const id of ['Agent-copy-inputchannel-Request', 'Agent-copy-outputchannel-Response']) {
+      expect(store.getState().operations.inputParameters[id].parameterGroups).toBeDefined();
+      expect(store.getState().operations.operationInfo[id]).toBeDefined();
+    }
+    await store.dispatch(onUndoClick()).unwrap();
+    expect(store.getState().workflow.operations['Agent-copy']).toBeUndefined();
+    await store.dispatch(onRedoClick()).unwrap();
+    expect(await serializeOperation(store.getState(), 'Agent-copy')).toEqual(copied);
+  });
+
+  it('pastes an Agent whose serialized channels contain only an input channel', async () => {
+    const store = await prepareSource({
+      triggers: {},
+      actions: {
+        Agent: {
+          type: 'Agent',
+          inputs: { parameters: { agentModelType: 'AzureOpenAI', messages: [] } },
+          tools: {},
+          channels: { in: { 'in-channel-1': { trigger: { type: 'Request', kind: 'Http', inputs: {} } } }, out: {} },
+          runAfter: {},
+        },
+      },
+    });
+    await store.dispatch(copyScopeOperation({ nodeId: 'Agent' })).unwrap();
+    expect(readClipboard().serializedOperation.channels.out).toBeUndefined();
+    await store
+      .dispatch(pasteClipboard({ clipboard: readClipboard(), relationshipIds: { graphId: 'root' }, upstreamNodeIds: [] }))
+      .unwrap();
+    expect((await serializeWorkflow(store.getState())).definition.actions['Agent-copy']).toMatchObject({
+      channels: { in: { 'in-channel-1': { trigger: { type: 'Request', kind: 'Http' } } } },
+    });
+  });
+
+  it('rejects a derived Agent channel ID collision without replacing an existing canvas action', async () => {
+    const store = await prepareSource({
+      triggers: {},
+      actions: {
+        Agent: {
+          type: 'Agent',
+          inputs: { parameters: { agentModelType: 'AzureOpenAI', messages: [] } },
+          tools: {},
+          channels: { in: { 'in-channel-1': { trigger: { type: 'Request', kind: 'Http', inputs: {} } } }, out: {} },
+          runAfter: {},
+        },
+        'Agent-copy-inputchannel-Request': { type: 'Compose', inputs: 'keep this canvas action', runAfter: {} },
+      },
+    });
+    await store.dispatch(copyScopeOperation({ nodeId: 'Agent' })).unwrap();
+    const before = store.getState();
+    await expect(
+      store.dispatch(pasteClipboard({ clipboard: readClipboard(), relationshipIds: { graphId: 'root' }, upstreamNodeIds: [] })).unwrap()
+    ).rejects.toThrow('complete action data');
+    for (const name of UNDO_REDO_SLICE_NAMES) {
+      expect(store.getState()[name]).toBe(before[name]);
+    }
+    expect(await serializeOperation(store.getState(), 'Agent-copy-inputchannel-Request')).toMatchObject({
+      type: 'Compose',
+      inputs: 'keep this canvas action',
+    });
+  });
+
+  it('rejects noncanvas channel definitions unsupported by their owning Agent without changing the editor', async () => {
+    const store = await prepareSource({
+      triggers: {},
+      actions: {
+        Agent: { type: 'Agent', inputs: { parameters: { agentModelType: 'AzureOpenAI', messages: [] } }, tools: {}, runAfter: {} },
+      },
+    });
+    await store.dispatch(copyScopeOperation({ nodeId: 'Agent' })).unwrap();
+    const clipboard = readClipboard();
+    clipboard.serializedOperation.channels = {
+      in: { invalid: { trigger: { type: 'Compose', inputs: 'not an Agent input channel' } } },
+      out: {},
+    };
+    const before = store.getState();
+    await expect(
+      store.dispatch(pasteClipboard({ clipboard, relationshipIds: { graphId: 'root' }, upstreamNodeIds: [] })).unwrap()
+    ).rejects.toThrow('complete action data');
+    for (const name of UNDO_REDO_SLICE_NAMES) {
+      expect(store.getState()[name]).toBe(before[name]);
+    }
+  });
+
+  it('does not cut an Agent whose channel configuration failed to initialize', async () => {
+    vi.spyOn(manifestService, 'getOperationManifest').mockImplementation(async (_connector, operation) => {
+      if (operation === 'request') {
+        throw new Error('Channel manifest unavailable');
+      }
+      return manifests[operation];
+    });
+    const source = createSource({
+      triggers: {},
+      actions: {
+        Agent: {
+          type: 'Agent',
+          inputs: { parameters: { agentModelType: 'AzureOpenAI', messages: [] } },
+          tools: {},
+          channels: { in: { 'in-channel-1': { trigger: { type: 'Request', kind: 'Http', inputs: {} } } }, out: {} },
+          runAfter: {},
+        },
+      },
+    });
+    await source.initialize();
+    const { store } = source;
+    expect(getNodeOperationData(store.getState().operations, 'Agent').nodeInputs.parameterGroups).toBeDefined();
+    const before = store.getState();
+    localStorage.setItem(LOCAL_STORAGE_KEYS.CLIPBOARD, 'prior clipboard');
+    await expect(store.dispatch(cutOperations({ nodeIds: ['Agent'] })).unwrap()).rejects.toThrow('not ready to copy');
+    expect(localStorage.getItem(LOCAL_STORAGE_KEYS.CLIPBOARD)).toBe('prior clipboard');
+    for (const name of UNDO_REDO_SLICE_NAMES) {
+      expect(store.getState()[name]).toBe(before[name]);
+    }
+  });
+
   it('reproduces the empty producer data while metadata loads, rejects copy, then copies and pastes all three configured actions', async () => {
     let release!: (manifest: OperationManifest) => void;
     const pendingCompose = new Promise<OperationManifest>((resolve) => {

@@ -8,6 +8,7 @@ import { createWorkflowEdge, createWorkflowNode } from '../../../utils/graph';
 import { clone, LOCAL_STORAGE_KEYS, type LogicAppsV2, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
 import { DynamicLoadStatus } from '../../../state/operation/operationMetadataSlice';
 import { getMockedInitialRootState } from '../../../../__test__/mock-root-state';
+import { Deserialize } from '../../../parsers/BJSWorkflow/BJSDeserializer';
 
 // Graph shape:
 //   root
@@ -230,6 +231,9 @@ describe('copyOperations clipboard payload', () => {
       runAfter: {},
     } as LogicAppsV2.ScopeAction;
     state.workflow.operations.Container = scope;
+    const parsed = Deserialize({ actions: { Container: scope, Follow: state.workflow.operations.Follow }, triggers: {} }, null);
+    state.workflow.graph = parsed.graph;
+    state.workflow.nodesMetadata = parsed.nodesMetadata;
     state.operations.operationInfo.Container = { type: 'Scope', connectorId: 'connectionless', operationId: 'scope' };
     const staticResult = { outputs: { body: 'mocked SQL result' } };
     state.staticResults.properties.Query0 = staticResult;

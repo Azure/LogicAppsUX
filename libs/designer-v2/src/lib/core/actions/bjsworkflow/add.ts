@@ -504,9 +504,9 @@ export const initializeOperationDetails = async (
   }
 
   if (copiedNodeData) {
-    // Rehydrate dynamic fields from copied values instead of fresh-add defaults.
-    const operation = await serializeOperation(getState(), nodeId);
+    // Dynamic deserialization consumes internal IDs, not pending serialized action names.
     const prepared = getState();
+    const operation = await serializeOperation({ ...prepared, workflow: { ...prepared.workflow, idReplacements: {} } }, nodeId);
     await updateDynamicDataInNode(
       nodeId,
       isTrigger,

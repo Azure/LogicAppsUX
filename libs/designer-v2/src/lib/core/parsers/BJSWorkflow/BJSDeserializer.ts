@@ -221,7 +221,7 @@ export const buildGraphFromActions = (
             }
           }
 
-          const outputChannelKeys = Object.keys(action.channels.out);
+          const outputChannelKeys = Object.keys(action.channels.out ?? {});
           for (const key of outputChannelKeys) {
             const channelAction = action.channels.out?.[key];
             if (channelAction && channelAction?.action) {
@@ -546,7 +546,7 @@ export const processScopeActions = (
           }
         }
 
-        const outputChannelKeys = Object.keys(action.channels.out);
+        const outputChannelKeys = Object.keys(action.channels.out ?? {});
         for (const key of outputChannelKeys) {
           const channelAction: any = action.channels.out?.[key];
           if (channelAction && channelAction?.action) {
