@@ -371,7 +371,9 @@ describe('workflow extraction transaction', () => {
       workflow.parameters,
       {},
       'stateful',
-      expect.any(Function)
+      expect.any(Function),
+      undefined,
+      true
     );
     expect(service.commit).not.toHaveBeenCalled();
   });

@@ -178,12 +178,17 @@ const renderPanel = (panelLocation?: 'Left' | 'Right') =>
 describe('MultiSelectPanel', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.useFakeTimers();
     mockDispatch.mockResolvedValue({ meta: { requestStatus: 'fulfilled' } });
     mockSelectedNodeIds = ['first', 'second'];
     mockCanWrap = true;
   });
 
-  afterEach(cleanup);
+  afterEach(() => {
+    cleanup();
+    vi.clearAllTimers();
+    vi.useRealTimers();
+  });
 
   it('renders selected actions, count, visuals, extraction action, and the requested panel side', () => {
     const { container } = renderPanel('Left');
@@ -216,6 +221,8 @@ describe('MultiSelectPanel', () => {
     });
     expect(cutOperations).toHaveBeenCalledWith({ nodeIds: ['first', 'second'] });
     expect(screen.getByTestId('copy-tooltip')).toBeDefined();
+    act(() => vi.advanceTimersByTime(1500));
+    expect(screen.queryByTestId('copy-tooltip')).toBeNull();
 
     fireEvent.click(screen.getByRole('button', { name: 'Delete' }));
     expect(setShowMultiSelectDeleteModal).toHaveBeenCalledWith(true);

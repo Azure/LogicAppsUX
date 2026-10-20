@@ -60,7 +60,9 @@ export async function prepareExtractedWorkflow(snapshot: RootState, workflow: Wo
     workflow.parameters ?? {},
     {},
     parseWorkflowKind(workflow.kind),
-    isolated.dispatch
+    isolated.dispatch,
+    undefined,
+    true /* awaitResultSchemas */
   );
   await getConnectionsApiAndMapping(deserializedWorkflow, isolated.dispatch);
   await initializeDynamicDataInNodes(isolated.getState, isolated.dispatch);

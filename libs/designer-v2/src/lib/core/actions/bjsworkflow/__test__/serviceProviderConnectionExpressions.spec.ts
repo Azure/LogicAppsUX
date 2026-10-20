@@ -27,6 +27,7 @@ import {
   type OperationManifest,
 } from '@microsoft/logic-apps-shared';
 import { getMockedInitialRootState } from '../../../../__test__/mock-root-state';
+import scopeManifest from '../../../../../../../logic-apps-shared/src/designer-client-services/lib/base/manifests/scope';
 import { isExpressionConnectionMapping, type ConnectionMapping } from '../../../../common/models/workflow';
 import { getReactQueryClient } from '../../../ReactQueryProvider';
 import { Deserialize } from '../../../parsers/BJSWorkflow/BJSDeserializer';
@@ -1089,6 +1090,12 @@ describe('ServiceProvider runtime connection expressions', () => {
   });
 
   it('remaps runtime references during a real scope paste and restores connection state on undo', async () => {
+    vi.spyOn(OperationManifestService(), 'getOperationInfo').mockImplementation(async (operation) =>
+      operation.type === 'Scope' ? { connectorId: 'connectionProviders/control', operationId: 'scope' } : operationInfo
+    );
+    vi.spyOn(OperationManifestService(), 'getOperationManifest').mockImplementation(async (_connector, operation) =>
+      operation === 'scope' ? scopeManifest : manifest
+    );
     const state = await buildState();
     const store = makeStore(state);
     const source = state.workflow.operations.Query as LogicAppsV2.ServiceProvider;
@@ -1119,6 +1126,7 @@ describe('ServiceProvider runtime connection expressions', () => {
       )
       .unwrap();
     const mappings = store.getState().connections.connectionsMapping;
+    expect(store.getState().operations.errors.Container).toBeUndefined();
     const renamedQuery = Object.keys(mappings).find((id) => {
       const mapping = mappings[id];
       return id !== nodeId && isExpressionConnectionMapping(mapping) && mapping.expression === '@triggerBody()';

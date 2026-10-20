@@ -12,7 +12,7 @@ import {
   type CopiedConnectionData,
 } from '../../state/connection/connectionSlice';
 import type { NodeData, NodeOperation } from '../../state/operation/operationMetadataSlice';
-import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
+import { DynamicLoadStatus, ErrorLevel, initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelTypes';
 import { setIsPanelLoading } from '../../state/panel/panelSlice';
 import {
@@ -583,7 +583,8 @@ const pasteScopeInDraft = createAsyncThunk('pasteScopeInDraft', async (payload: 
         renamedNodes: Object.fromEntries(remappedActionIds.map((id) => [id, id])),
         existingOutputTokens: upstreamOutputTokens,
         rootTriggerId: triggerId,
-      }
+      },
+      true /* awaitResultSchemas */
     ),
   ]);
   await initializeDynamicDataInNodes(getState as () => RootState, dispatch, pasteParams.pasteActionNames);
@@ -769,8 +770,18 @@ export const pasteClipboard = createAsyncThunk(
     const addedIds = Object.keys(draft.getState().workflow.operations).filter((id) => !Object.hasOwn(before.workflow.operations, id));
     for (const id of addedIds) {
       const state = draft.getState();
+      const errors = getRecordEntry(state.operations.errors, id);
+      for (const level of [ErrorLevel.Critical, ErrorLevel.Connection, ErrorLevel.DynamicInputs, ErrorLevel.DynamicOutputs]) {
+        if (errors?.[level]) {
+          throw new Error(errors[level].message);
+        }
+      }
       const data = getNodeOperationData(state.operations, id);
-      if (!hasCompleteActionData(data)) {
+      if (
+        !hasCompleteActionData(data) ||
+        data.nodeInputs.dynamicLoadStatus === DynamicLoadStatus.FAILED ||
+        data.nodeOutputs.dynamicLoadStatus === DynamicLoadStatus.FAILED
+      ) {
         throw clipboardError();
       }
       if (scopeActionIds.has(id)) {

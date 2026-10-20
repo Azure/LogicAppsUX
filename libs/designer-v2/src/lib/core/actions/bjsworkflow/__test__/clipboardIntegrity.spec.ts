@@ -6,6 +6,8 @@ import {
   InitWorkflowService,
   LOCAL_STORAGE_KEYS,
   StaticResultService,
+  SwaggerParser,
+  type Connector,
   type IOperationManifestService,
   type LogicAppsV2,
   type OperationManifest,
@@ -22,8 +24,14 @@ import switchManifest from '../../../../../../../logic-apps-shared/src/designer-
 import { getMockedInitialRootState } from '../../../../__test__/mock-root-state';
 import { getReactQueryClient } from '../../../ReactQueryProvider';
 import { Deserialize } from '../../../parsers/BJSWorkflow/BJSDeserializer';
+import * as connectionQueries from '../../../queries/connections';
 import { createDesignerStore, store as singletonStore } from '../../../store';
-import { DynamicLoadStatus, initializeNodes } from '../../../state/operation/operationMetadataSlice';
+import {
+  DynamicLoadStatus,
+  initializeNodes,
+  updateNodeDynamicInputLoadStatus,
+  updateOutputs,
+} from '../../../state/operation/operationMetadataSlice';
 import { setNodeConnectionMapping } from '../../../state/connection/connectionSlice';
 import { updateTokens } from '../../../state/tokens/tokensSlice';
 import { getNodeOperationData } from '../../../state/operation/operationSelector';
@@ -397,6 +405,187 @@ describe('clipboard integrity with real designer initialization and reducers', (
     expect(store.getState().designerView.clipboardError).toContain('Dynamic schema unavailable');
   });
 
+  it('awaits a nested container result schema without mutating live or singleton state, then commits it with history', async () => {
+    const store = await prepareSource({
+      triggers: {},
+      actions: {
+        Container: {
+          type: 'Scope',
+          runAfter: {},
+          actions: { Nested: { type: 'Compose', inputs: { preserved: 42 }, runAfter: {} } },
+        },
+      },
+    });
+    await store.dispatch(copyOperations({ nodeIds: ['Container', 'Nested'] })).unwrap();
+    let release!: (schema: OpenApiSchema) => void;
+    const pending = new Promise<OpenApiSchema>((resolve) => {
+      release = resolve;
+    });
+    const schemaRequest = vi
+      .spyOn(StaticResultService(), 'getOperationResultSchema')
+      .mockImplementation(async (_connector, operation) => (operation === 'compose' ? pending : undefined));
+    const before = store.getState();
+    const singletonBefore = singletonStore.getState();
+    let finished = false;
+    const paste = store
+      .dispatch(
+        pasteClipboard({
+          clipboard: readClipboard(),
+          relationshipIds: { graphId: 'root', parentId: 'Container' },
+          upstreamNodeIds: [],
+        })
+      )
+      .unwrap()
+      .then((ids) => {
+        finished = true;
+        return ids;
+      });
+    const schema: OpenApiSchema = { type: 'object', properties: { completed: { type: 'boolean' } } };
+    try {
+      await waitFor(() => expect(schemaRequest.mock.calls.some(([, operation]) => operation === 'compose')).toBe(true));
+      expect(finished).toBe(false);
+      for (const name of UNDO_REDO_SLICE_NAMES) {
+        expect(store.getState()[name]).toBe(before[name]);
+        expect(singletonStore.getState()[name]).toBe(singletonBefore[name]);
+      }
+      expect(store.getState().undoRedo).toBe(before.undoRedo);
+    } finally {
+      release(schema);
+      await paste;
+    }
+    expect(store.getState().staticResults.schemas['connectionProviders/dataOperationNew-compose']).toEqual(schema);
+    expect(await serializeOperation(store.getState(), 'Container-copy')).toMatchObject({
+      actions: { Nested_1: { inputs: { preserved: 42 } } },
+    });
+    await store.dispatch(onUndoClick()).unwrap();
+    expect(store.getState().staticResults.schemas['connectionProviders/dataOperationNew-compose']).toBeUndefined();
+    await store.dispatch(onRedoClick()).unwrap();
+    expect(store.getState().staticResults.schemas['connectionProviders/dataOperationNew-compose']).toEqual(schema);
+  });
+
+  it('awaits Swagger result schemas in transactional container metadata initialization', async () => {
+    const connectorId = '/managedApis/test';
+    const workflow: LogicAppsV2.WorkflowDefinition = {
+      triggers: {},
+      actions: {
+        Container: {
+          type: 'Scope',
+          runAfter: {},
+          actions: {
+            Nested: {
+              type: 'ApiConnection',
+              inputs: {
+                host: { connection: { name: "@parameters('$connections')['test']['connectionId']" } },
+                method: 'get',
+                path: '/items',
+              },
+              runAfter: {},
+            },
+          },
+        },
+      },
+    };
+    const parsedSwagger = new SwaggerParser(
+      await SwaggerParser.parse({
+        swagger: '2.0',
+        info: { title: 'Test', version: '1.0' },
+        paths: {
+          '/items': {
+            get: {
+              operationId: 'getItems',
+              parameters: [],
+              responses: { '200': { schema: { type: 'array', items: { type: 'string' } } } },
+            },
+          },
+        },
+      })
+    );
+    const connector: Connector = {
+      id: connectorId,
+      name: 'test',
+      type: 'Microsoft.Web/locations/managedApis',
+      properties: { displayName: 'Test', iconUri: '', brandColor: '#000000' },
+    };
+    vi.spyOn(connectionQueries, 'getConnectorWithSwagger').mockResolvedValue({ connector, parsedSwagger });
+    vi.spyOn(connectionQueries, 'getSwaggerForConnector').mockResolvedValue(parsedSwagger);
+    vi.spyOn(manifestService, 'isSupported').mockImplementation((type) => type !== 'ApiConnection');
+    let release!: (schema: OpenApiSchema) => void;
+    const pending = new Promise<OpenApiSchema>((resolve) => {
+      release = resolve;
+    });
+    const schemaRequest = vi
+      .spyOn(StaticResultService(), 'getOperationResultSchema')
+      .mockImplementation(async (id) => (id === connectorId ? pending : undefined));
+    const { store } = createSource(workflow);
+    let finished = false;
+    const preparation = initializeOperationMetadata(
+      Deserialize(clone(workflow), null),
+      { test: { api: { id: connectorId }, connection: { id: '/connections/test' } } },
+      {},
+      {},
+      'stateful',
+      store.dispatch,
+      undefined,
+      true
+    ).then(() => {
+      finished = true;
+    });
+    const schema: OpenApiSchema = { type: 'object', properties: { completed: { type: 'boolean' } } };
+    try {
+      await waitFor(() => expect(schemaRequest.mock.calls.some(([id]) => id === connectorId)).toBe(true));
+      expect(finished).toBe(false);
+      expect(store.getState().operations.inputParameters.Nested).toBeUndefined();
+    } finally {
+      release(schema);
+      await preparation;
+    }
+    expect(store.getState().operations.errors).toEqual({});
+    expect(store.getState().operations.inputParameters.Nested.parameterGroups).toBeDefined();
+    expect(store.getState().staticResults.schemas[`${connectorId}-getItems`]).toEqual(schema);
+  });
+
+  it.each(['dynamic', 'result'])('aborts a nested %s schema failure without committing any container state', async (failure) => {
+    const store = await prepareSource({
+      triggers: {},
+      actions: {
+        Initialize_variables: definition.actions.Initialize_variables,
+        Container: {
+          type: 'Scope',
+          runAfter: { Initialize_variables: ['Succeeded'] },
+          actions: { Nested: { ...definition.actions.Set_variable, runAfter: {} } },
+        },
+      },
+    });
+    await store.dispatch(copyOperations({ nodeIds: ['Container', 'Nested'] })).unwrap();
+    if (failure === 'dynamic') {
+      vi.spyOn(dynamicData, 'getDynamicSchema').mockRejectedValue(new Error('Nested dynamic schema unavailable'));
+    } else {
+      vi.spyOn(StaticResultService(), 'getOperationResultSchema').mockImplementation(async (_connector, operation) => {
+        if (operation === 'setvariable') {
+          throw new Error('Nested result schema unavailable');
+        }
+        return undefined;
+      });
+    }
+    const before = store.getState();
+    await expect(
+      store
+        .dispatch(
+          pasteClipboard({
+            clipboard: readClipboard(),
+            relationshipIds: { graphId: 'root', parentId: 'Container' },
+            upstreamNodeIds: ['Initialize_variables', 'Container'],
+          })
+        )
+        .unwrap()
+    ).rejects.toThrow(`Nested ${failure} schema unavailable`);
+    for (const name of UNDO_REDO_SLICE_NAMES) {
+      expect(store.getState()[name]).toBe(before[name]);
+    }
+    expect(store.getState().undoRedo).toBe(before.undoRedo);
+    expect(store.getState().designerView.clipboardError).toContain(`Nested ${failure} schema unavailable`);
+  });
+
   it('aborts a rejected result-schema request without installing any prepared state', async () => {
     const store = await prepareSource();
     await store.dispatch(copyOperation({ nodeId: 'Compose' })).unwrap();
@@ -413,6 +602,53 @@ describe('clipboard integrity with real designer initialization and reducers', (
         )
         .unwrap()
     ).rejects.toThrow('Result schema unavailable');
+    for (const name of UNDO_REDO_SLICE_NAMES) {
+      expect(store.getState()[name]).toBe(before[name]);
+    }
+    expect(store.getState().undoRedo).toBe(before.undoRedo);
+  });
+
+  it.each(['inputs', 'outputs'])('rejects a failed nested %s load status even without recorded error details', async (kind) => {
+    const store = await prepareSource({
+      triggers: {},
+      actions: {
+        Container: {
+          type: 'Scope',
+          runAfter: {},
+          actions: { Nested: { type: 'Compose', inputs: 42, runAfter: {} } },
+        },
+      },
+    });
+    await store.dispatch(copyOperations({ nodeIds: ['Container'] })).unwrap();
+    const initializeDynamic = parameterHelpers.updateDynamicDataInNode;
+    vi.spyOn(parameterHelpers, 'updateDynamicDataInNode').mockImplementation(async (...args) => {
+      await initializeDynamic(...args);
+      const [id, , , , , dispatch, getState] = args;
+      if (id === 'Nested_1') {
+        if (kind === 'inputs') {
+          dispatch(updateNodeDynamicInputLoadStatus({ nodeId: id, status: DynamicLoadStatus.FAILED }));
+        } else {
+          dispatch(
+            updateOutputs({
+              id,
+              nodeOutputs: { ...getState().operations.outputParameters[id], dynamicLoadStatus: DynamicLoadStatus.FAILED },
+            })
+          );
+        }
+      }
+    });
+    const before = store.getState();
+    await expect(
+      store
+        .dispatch(
+          pasteClipboard({
+            clipboard: readClipboard(),
+            relationshipIds: { graphId: 'root', parentId: 'Container' },
+            upstreamNodeIds: [],
+          })
+        )
+        .unwrap()
+    ).rejects.toThrow('complete action data');
     for (const name of UNDO_REDO_SLICE_NAMES) {
       expect(store.getState()[name]).toBe(before[name]);
     }
