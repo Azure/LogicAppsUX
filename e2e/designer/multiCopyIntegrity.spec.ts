@@ -40,6 +40,48 @@ const waitForLoadedDesigner = async (page: Page) => {
   await fitWorkflowToCard(page, 'card-consume_result');
 };
 
+const capturePreviewSource = (page: Page) =>
+  page.evaluate(() => {
+    const browser = window as Window & {
+      DesignerStoreV2: { getState(): RootState };
+      previewSource?: { slices: Record<string, unknown>; json: string };
+    };
+    const state = browser.DesignerStoreV2.getState();
+    const slices = Object.fromEntries(
+      [
+        'workflow',
+        'operations',
+        'tokens',
+        'connections',
+        'panel',
+        'customCode',
+        'settings',
+        'staticResults',
+        'workflowParameters',
+        'notes',
+        'undoRedo',
+      ].map((key) => [key, state[key as keyof RootState]])
+    );
+    browser.previewSource = { slices, json: JSON.stringify(slices) };
+  });
+
+const expectPreviewSourceUnchanged = async (page: Page) =>
+  expect(
+    await page.evaluate(() => {
+      const browser = window as Window & {
+        DesignerStoreV2: { getState(): RootState };
+        previewSource?: { slices: Record<string, unknown>; json: string };
+      };
+      const state = browser.DesignerStoreV2.getState();
+      const before = browser.previewSource!;
+      const slices = Object.fromEntries(Object.keys(before.slices).map((key) => [key, state[key as keyof RootState]]));
+      return {
+        references: Object.entries(slices).every(([key, value]) => value === before.slices[key]),
+        bytes: JSON.stringify(slices) === before.json,
+      };
+    })
+  ).toEqual({ references: true, bytes: true });
+
 test.describe('Multi-action clipboard integrity', { tag: '@mock' }, () => {
   test.afterEach(async ({ page }, info) => {
     if (info.status !== info.expectedStatus) {
@@ -160,12 +202,46 @@ test.describe('Multi-action clipboard integrity', { tag: '@mock' }, () => {
       .getByTestId('multi-select-action-buttons')
       .getByRole('button', { name: 'Extract to new workflow', exact: true });
     await expect(extraction).toBeEnabled();
+    await capturePreviewSource(page);
     await extraction.click();
     const dialog = page.getByRole('dialog', { name: 'Extract to new workflow' });
     await expect(dialog.getByRole('button', { name: 'Confirm', exact: true })).toBeEnabled();
     await dialog.getByLabel('Workflow name', { exact: true }).fill('Extracted_Condition');
     const preview = dialog.getByTestId('extraction-workflow-preview');
     await expect(preview.getByText('Condition', { exact: true })).toHaveCount(1);
+    await expect(preview.getByText('True', { exact: true })).toBeVisible();
+    await expect(preview.getByText('False', { exact: true })).toBeVisible();
+    await expect(preview.getByText('True action', { exact: true })).toBeVisible();
+    await expect(preview.getByText('False action', { exact: true })).toBeVisible();
+    await expect(preview.locator('.react-flow__node')).toHaveCount(10);
+    expect(
+      await preview.evaluate((element) => {
+        const parents = Array.from(element.querySelectorAll('.react-flow__node-workflowPreviewContainer'), (node) =>
+          Number(getComputedStyle(node).zIndex)
+        );
+        return Array.from(element.querySelectorAll('.react-flow__edge'), (edge) =>
+          Number(getComputedStyle(edge.parentElement!).zIndex)
+        ).every((zIndex) => zIndex > Math.max(...parents));
+      })
+    ).toBe(true);
+    const sourceViewport = page.locator('.react-flow__viewport').first();
+    const sourceTransform = await sourceViewport.getAttribute('style');
+    await preview.getByRole('button', { name: 'Zoom in', exact: true }).click();
+    await preview.getByRole('button', { name: 'Zoom out', exact: true }).click();
+    await preview.getByRole('button', { name: 'Zoom view to fit', exact: true }).click();
+    const navigation = preview.getByRole('group', { name: 'Workflow preview navigation. Use arrow keys to pan.', exact: true });
+    await navigation.focus();
+    await navigation.press('ArrowLeft');
+    await preview.getByText('Condition', { exact: true }).dblclick();
+    await expect(preview.locator('.react-flow__node')).toHaveCount(10);
+    await expect(sourceViewport).toHaveAttribute('style', sourceTransform!);
+    await expectPreviewSourceUnchanged(page);
+    await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
+    await expect(dialog).not.toBeVisible();
+    await expectPreviewSourceUnchanged(page);
+    await extraction.click();
+    await dialog.getByLabel('Workflow name', { exact: true }).fill('Extracted_Condition');
+    await expect(dialog.getByRole('button', { name: 'Confirm', exact: true })).toBeEnabled();
     await dialog.getByRole('button', { name: 'Confirm', exact: true }).click();
     const openChild = dialog.getByRole('link', { name: 'Open child workflow', exact: true });
     await expect(openChild).toBeVisible();
@@ -189,5 +265,125 @@ test.describe('Multi-action clipboard integrity', { tag: '@mock' }, () => {
     expect((await getSerializedWorkflowFromStateV2(page)).definition.actions.Condition).toEqual(originalCondition);
     await page.getByRole('button', { name: 'Redo', exact: true }).click();
     expect(await getSerializedWorkflowFromStateV2(page)).toEqual(parent);
+  });
+
+  test('previews nested scopes, empty condition branches, switch cases, loops and parallel dependencies without editing the source', async ({
+    page,
+  }) => {
+    await page.goto('/v2?extraction=true&local=ExtractCondition.json');
+    await waitForLoadedDesigner(page);
+    const workflow = await getSerializedWorkflowFromStateV2(page);
+    workflow.definition.actions = {
+      Envelope: {
+        type: 'Scope',
+        runAfter: {},
+        actions: {
+          Condition: {
+            type: 'If',
+            expression: { equals: [1, 1] },
+            runAfter: {},
+            actions: { True_action: { type: 'Compose', inputs: 'true', runAfter: {} } },
+            else: { actions: {} },
+          },
+          First: { type: 'Compose', inputs: 'first', runAfter: { Condition: ['Succeeded'] } },
+          Second: { type: 'Compose', inputs: 'second', runAfter: { Condition: ['Succeeded'] } },
+          Join: { type: 'Compose', inputs: 'join', runAfter: { First: ['Succeeded'], Second: ['Succeeded'] } },
+          Case_switch: {
+            type: 'Switch',
+            expression: 'named',
+            runAfter: { Join: ['Succeeded'] },
+            cases: {
+              Named_case: { case: 'named', actions: { Named_action: { type: 'Compose', inputs: 'named', runAfter: {} } } },
+              Empty_case: { case: 'empty', actions: {} },
+            },
+            default: { actions: { Default_action: { type: 'Compose', inputs: 'default', runAfter: {} } } },
+          },
+          For_each: {
+            type: 'Foreach',
+            foreach: '@createArray(1)',
+            runAfter: { Case_switch: ['Succeeded'] },
+            actions: { Each_action: { type: 'Compose', inputs: 'each', runAfter: {} } },
+          },
+          Until: {
+            type: 'Until',
+            expression: '@true',
+            limit: { count: 2, timeout: 'PT1H' },
+            runAfter: { For_each: ['Succeeded'] },
+            actions: { Until_action: { type: 'Compose', inputs: 'until', runAfter: {} } },
+          },
+        },
+      },
+      Consume_result: { type: 'Compose', inputs: 'after', runAfter: { Envelope: ['Succeeded'] } },
+    };
+    await page.evaluate(
+      (workflow) =>
+        localStorage.setItem(
+          'msla-standalone-workflow-extraction-v1',
+          JSON.stringify({
+            version: 1,
+            workflows: [{ id: 'ExtractCondition.json', name: 'ExtractCondition', workflow }],
+            operations: [],
+          })
+        ),
+      workflow
+    );
+    await page.reload();
+    await waitForLoadedDesigner(page);
+    const original = await getSerializedWorkflowFromStateV2(page);
+    await page.evaluate(() => {
+      const browser = window as Window & { DesignerStoreV2: { dispatch(action: { type: string; payload: string[] }): void } };
+      // Use the real box-selection reducer; deep descendants may be virtualized outside the live viewport.
+      browser.DesignerStoreV2.dispatch({
+        type: 'panel/setNodeSelection',
+        payload: [
+          'Envelope',
+          'Condition',
+          'True_action',
+          'First',
+          'Second',
+          'Join',
+          'Case_switch',
+          'Named_action',
+          'Default_action',
+          'For_each',
+          'Each_action',
+          'Until',
+          'Until_action',
+        ],
+      });
+    });
+    await capturePreviewSource(page);
+    await page.getByTestId('multi-select-action-buttons').getByRole('button', { name: 'Extract to new workflow', exact: true }).click();
+    const dialog = page.getByRole('dialog', { name: 'Extract to new workflow' });
+    await expect(dialog.getByRole('button', { name: 'Confirm', exact: true })).toBeEnabled();
+    const preview = dialog.getByTestId('extraction-workflow-preview');
+    for (const label of [
+      'Envelope',
+      'Condition',
+      'True',
+      'False',
+      'Named case',
+      'Empty case',
+      'Default',
+      'Each action',
+      'Do',
+      'Until action',
+    ]) {
+      await expect(preview.getByText(label, { exact: true })).toHaveCount(1);
+    }
+    await expect(preview.locator('.react-flow__edge[data-id="First-Join"]')).toHaveCount(1);
+    await expect(preview.locator('.react-flow__edge[data-id="Second-Join"]')).toHaveCount(1);
+    expect(
+      await preview.evaluate((element) => {
+        const first = element.querySelector('.react-flow__node[data-id="First"]')!.getBoundingClientRect();
+        const second = element.querySelector('.react-flow__node[data-id="Second"]')!.getBoundingClientRect();
+        const join = element.querySelector('.react-flow__node[data-id="Join"]')!.getBoundingClientRect();
+        return first.x !== second.x && join.y > first.y && join.y > second.y;
+      })
+    ).toBe(true);
+    await expectPreviewSourceUnchanged(page);
+    await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
+    await expectPreviewSourceUnchanged(page);
+    expect(await getSerializedWorkflowFromStateV2(page)).toEqual(original);
   });
 });

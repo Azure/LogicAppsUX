@@ -4,7 +4,8 @@
 import { configureStore, type UnknownAction } from '@reduxjs/toolkit';
 import { InitLoggerService } from '@microsoft/logic-apps-shared';
 import '@testing-library/jest-dom/vitest';
-import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import type { WorkflowPreviewNode } from '@microsoft/designer-ui';
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import { IntlProvider } from 'react-intl';
@@ -138,7 +139,13 @@ vi.mock('@microsoft/designer-ui', async () => {
   const { ProgressStepper } = await import('../../../../../../../designer-ui/src/lib/progressstepper');
   return {
     ProgressStepper,
-    WorkflowPreview: ({ ariaLabel }: { ariaLabel: string }) => <div role="img" aria-label={ariaLabel} />,
+    WorkflowPreview: ({ ariaLabel, nodes }: { ariaLabel: string; nodes: WorkflowPreviewNode[] }) => (
+      <div role="img" aria-label={ariaLabel}>
+        {nodes.map(({ id, label }) => (
+          <span key={id}>{label}</span>
+        ))}
+      </div>
+    ),
   };
 });
 
@@ -654,6 +661,57 @@ describe('WorkflowExtractionDialog', () => {
 
     expect(await screen.findByText('Preview failed')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Confirm' })).toBeDisabled();
+    cleanup();
+    mockBuildWorkflowExtractionPlan.mockReturnValue(basePlan);
+    mockGetWorkflowExtractionPreview.mockRejectedValueOnce(new Error('Layout failed'));
+    renderWithProviders(<WorkflowExtractionDialog />, createTestStore({ open: true }), createService());
+    expect(await screen.findByText('The child workflow preview could not be rendered: Layout failed')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Confirm' })).toBeDisabled();
+  });
+
+  it('ignores stale asynchronous layouts after a definition update and preserves the live editor on cancel', async () => {
+    const first = createDeferred<Awaited<ReturnType<typeof getWorkflowExtractionPreview>>>();
+    const latest = createDeferred<Awaited<ReturnType<typeof getWorkflowExtractionPreview>>>();
+    mockGetWorkflowExtractionPreview.mockImplementation((plan) =>
+      plan.childName === 'Suggested_workflow' ? first.promise : latest.promise
+    );
+    const { store } = await renderPreparedDialog();
+    const before = store.getState();
+    expect(screen.getByRole('button', { name: 'Confirm' })).toBeDisabled();
+    fireEvent.change(screen.getByRole('textbox', { name: 'Workflow name' }), { target: { value: 'Updated_workflow' } });
+    await act(async () => {
+      latest.resolve({ nodes: [{ id: 'latest', label: 'Latest nested graph', position: { x: 0, y: 0 } }], edges: [] });
+      await latest.promise;
+    });
+    expect(screen.getByText('Latest nested graph')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Confirm' })).toBeEnabled();
+    await act(async () => {
+      first.resolve({ nodes: [{ id: 'stale', label: 'Stale nested graph', position: { x: 0, y: 0 } }], edges: [] });
+      await first.promise;
+    });
+    expect(screen.queryByText('Stale nested graph')).not.toBeInTheDocument();
+    expect(screen.getByText('Latest nested graph')).toBeInTheDocument();
+    expect(store.getState()).toBe(before);
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Cancel' }));
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(store.getState().workflow).toBe(before.workflow);
+    expect(store.getState().operations).toBe(before.operations);
+    expect(mockCommitWorkflowExtraction).not.toHaveBeenCalled();
+  });
+
+  it('discards a pending layout after unmount without changing the original editor or invoking extraction', async () => {
+    const layout = createDeferred<Awaited<ReturnType<typeof getWorkflowExtractionPreview>>>();
+    mockGetWorkflowExtractionPreview.mockReturnValue(layout.promise);
+    const { store, unmount } = await renderPreparedDialog();
+    const before = store.getState();
+    unmount();
+    await act(async () => {
+      layout.resolve({ nodes: [{ id: 'late', label: 'Late graph', position: { x: 0, y: 0 } }], edges: [] });
+      await layout.promise;
+    });
+    expect(screen.queryByText('Late graph')).not.toBeInTheDocument();
+    expect(store.getState()).toBe(before);
+    expect(mockCommitWorkflowExtraction).not.toHaveBeenCalled();
   });
 
   it('validates edited names and disables confirmation for invalid input', async () => {
@@ -1047,7 +1105,7 @@ beforeEach(() => {
     ...basePlan,
     childName: name,
   }));
-  mockGetWorkflowExtractionPreview.mockReturnValue({
+  mockGetWorkflowExtractionPreview.mockResolvedValue({
     edges: [],
     nodes: [],
   });

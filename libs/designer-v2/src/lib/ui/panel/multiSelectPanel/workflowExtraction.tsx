@@ -25,11 +25,12 @@ import {
   tokens,
 } from '@fluentui/react-components';
 import { ArrowExport24Regular } from '@fluentui/react-icons';
-import { ProgressStepper, WorkflowPreview } from '@microsoft/designer-ui';
+import { ProgressStepper, WorkflowPreview, type WorkflowPreviewProps } from '@microsoft/designer-ui';
 import { getRecordEntry, guid } from '@microsoft/logic-apps-shared';
 import type { Workflow } from '../../../common/models/workflow';
 import type {
   WorkflowExtractionBinding,
+  WorkflowExtractionPlan,
   WorkflowExtractionRequest,
   WorkflowExtractionResult,
 } from '../../../common/models/workflowExtraction';
@@ -311,6 +312,11 @@ export const WorkflowExtractionDialog = () => {
   const [stage, setStage] = useState<'preparing' | 'saving' | 'refreshing'>();
   const [result, setResult] = useState<WorkflowExtractionResult>();
   const [progress, setProgress] = useState<ExtractionProgress>();
+  const [previewLayout, setPreviewLayout] = useState<{
+    plan: WorkflowExtractionPlan;
+    graph?: Pick<WorkflowPreviewProps, 'nodes' | 'edges'>;
+    error?: string;
+  }>();
   const submitting = useRef(false);
   const request = useRef<WorkflowExtractionRequest>();
 
@@ -377,10 +383,39 @@ export const WorkflowExtractionDialog = () => {
       return { error: cause instanceof Error ? cause.message : String(cause) };
     }
   }, [source, service, name]);
-  const previewGraph = useMemo(
-    () => (preview.plan ? getWorkflowExtractionPreview(preview.plan, source?.visuals) : undefined),
-    [preview.plan, source?.visuals]
-  );
+  useEffect(() => {
+    const plan = preview.plan;
+    if (!open || !plan) {
+      return;
+    }
+    let current = true;
+    getWorkflowExtractionPreview(plan, source?.visuals)
+      .then((graph) => {
+        if (current) {
+          setPreviewLayout({ plan, graph });
+        }
+      })
+      .catch((cause: unknown) => {
+        if (current) {
+          setPreviewLayout({
+            plan,
+            error: intl.formatMessage(
+              {
+                defaultMessage: 'The child workflow preview could not be rendered: {reason}',
+                id: 'FgEWPi',
+                description: 'Workflow extraction preview graph layout failure',
+              },
+              { reason: cause instanceof Error ? cause.message : String(cause) }
+            ),
+          });
+        }
+      });
+    return () => {
+      current = false;
+    };
+  }, [intl, open, preview.plan, source?.visuals]);
+  const previewGraph = previewLayout?.plan === preview.plan ? previewLayout?.graph : undefined;
+  const previewError = previewLayout?.plan === preview.plan ? previewLayout?.error : undefined;
   const nameError = loading || !source ? undefined : service?.validateName(name);
   const busy = !!stage;
   useEffect(() => {
@@ -403,7 +438,7 @@ export const WorkflowExtractionDialog = () => {
     }
   };
   const confirm = async () => {
-    if (submitting.current || !service || !preview.plan || !source || (nameError && !request.current)) {
+    if (submitting.current || !service || !preview.plan || !previewGraph || !source || (nameError && !request.current)) {
       return;
     }
     submitting.current = true;
@@ -508,7 +543,7 @@ export const WorkflowExtractionDialog = () => {
                   />
                 ) : (
                   <div className={styles.previewUnavailable}>
-                    {loading ? (
+                    {loading || (preview.plan && !previewError) ? (
                       <Spinner />
                     ) : (
                       <Text>
@@ -556,9 +591,9 @@ export const WorkflowExtractionDialog = () => {
                 </AccordionItem>
               </Accordion>
             ) : null}
-            {!progress && (error || preview.error) ? (
+            {!progress && (error || preview.error || previewError) ? (
               <MessageBar intent="error" layout="multiline">
-                <MessageBarBody>{error ?? preview.error}</MessageBarBody>
+                <MessageBarBody>{error ?? preview.error ?? previewError}</MessageBarBody>
               </MessageBar>
             ) : null}
           </DialogContent>
@@ -616,7 +651,7 @@ export const WorkflowExtractionDialog = () => {
                   <Button
                     appearance="primary"
                     onClick={confirm}
-                    disabled={busy || loading || !preview.plan || (!!nameError && !request.current)}
+                    disabled={busy || loading || !preview.plan || !previewGraph || (!!nameError && !request.current)}
                   >
                     {result
                       ? intl.formatMessage({

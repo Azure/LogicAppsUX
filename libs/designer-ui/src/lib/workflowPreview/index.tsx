@@ -12,18 +12,22 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import type { Edge, Node, NodeProps, NodeTypes } from '@xyflow/react';
-import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { RefObject } from 'react';
 import { useIntl } from 'react-intl';
-import { WORKFLOW_PREVIEW_NODE_WIDTH } from './types';
+import { WORKFLOW_PREVIEW_NODE_HEIGHT, WORKFLOW_PREVIEW_NODE_WIDTH } from './types';
 import type { WorkflowPreviewNode, WorkflowPreviewProps } from './types';
 import { useWorkflowPreviewStyles } from './workflowPreview.styles';
 import { useWorkflowPreviewNodeInternals } from './useWorkflowPreviewNodeInternals';
+import { GraphContainer } from '../card/graphContainer';
 import '@xyflow/react/dist/style.css';
 
 export * from './types';
 
-type PreviewNode = Node<Pick<WorkflowPreviewNode, 'label' | 'iconUri' | 'brandColor'>, 'workflowPreview'>;
+type PreviewNode = Node<
+  Pick<WorkflowPreviewNode, 'label' | 'iconUri' | 'brandColor' | 'height' | 'kind' | 'branchType'>,
+  'workflowPreview' | 'workflowPreviewContainer'
+>;
 
 const FIT_VIEW_OPTIONS = { padding: 0.2, minZoom: 0.1, maxZoom: 1 };
 const EDGE_OPTIONS = {
@@ -53,18 +57,49 @@ const PreviewIcon = ({ iconUri, brandColor }: Pick<WorkflowPreviewNode, 'iconUri
 
 const PreviewCard = ({ data }: NodeProps<PreviewNode>) => {
   const styles = useWorkflowPreviewStyles();
+  const scope = data.kind === 'scope';
+  const branch = data.kind === 'branch';
 
   return (
-    <div className={styles.card} title={data.label}>
+    <div
+      className={mergeClasses(
+        styles.card,
+        scope && styles.scope,
+        branch && styles.branch,
+        branch && data.branchType === 'true' && styles.trueBranch,
+        branch && data.branchType === 'false' && styles.falseBranch
+      )}
+      style={{ height: data.height, ...(branch && { width: '100%' }), ...(scope && { backgroundColor: data.brandColor }) }}
+      title={data.label}
+    >
       <Handle type="target" position={Position.Top} isConnectable={false} className={styles.handle} />
-      <PreviewIcon key={data.iconUri} iconUri={data.iconUri} brandColor={data.brandColor} />
-      <span className={styles.label}>{data.label}</span>
+      {!branch && <PreviewIcon key={data.iconUri} iconUri={data.iconUri} brandColor={data.brandColor} />}
+      <span
+        className={mergeClasses(
+          styles.label,
+          (scope || branch) && styles.scopeLabel,
+          data.height === WORKFLOW_PREVIEW_NODE_HEIGHT && styles.singleLine
+        )}
+      >
+        {data.label}
+      </span>
       <Handle type="source" position={Position.Bottom} isConnectable={false} className={styles.handle} />
     </div>
   );
 };
 
-const NODE_TYPES: NodeTypes = { workflowPreview: PreviewCard };
+const PreviewContainer = ({ id, data }: NodeProps<PreviewNode>) => {
+  const styles = useWorkflowPreviewStyles();
+  return (
+    <div className={styles.container} role="group" aria-label={data.label}>
+      <Handle type="target" position={Position.Top} isConnectable={false} className={styles.handle} />
+      <GraphContainer id={`preview-${id}`} />
+      <Handle type="source" position={Position.Bottom} isConnectable={false} className={styles.handle} />
+    </div>
+  );
+};
+
+const NODE_TYPES: NodeTypes = { workflowPreview: PreviewCard, workflowPreviewContainer: PreviewContainer };
 
 const PreviewNavigation = () => {
   const styles = useWorkflowPreviewStyles();
@@ -124,27 +159,64 @@ const PreviewCanvas = ({
   const styles = useWorkflowPreviewStyles();
   const intl = useIntl();
   const id = useId();
-  const { fitView } = useReactFlow();
+  // React Flow raises nested parents by depth. Keep every connector above those backgrounds and below cards.
+  const containerCount = nodes.filter(({ kind }) => kind === 'container').length;
+  const { fitView, getViewport, setViewport } = useReactFlow();
+  const panWithKeyboard = useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.target !== event.currentTarget || event.altKey || event.ctrlKey || event.metaKey) {
+        return;
+      }
+      const offsets: Record<string, { x: number; y: number }> = {
+        ArrowLeft: { x: 40, y: 0 },
+        ArrowRight: { x: -40, y: 0 },
+        ArrowUp: { x: 0, y: 40 },
+        ArrowDown: { x: 0, y: -40 },
+      };
+      const offset = offsets[event.key];
+      if (offset) {
+        event.preventDefault();
+        const viewport = getViewport();
+        setViewport({ ...viewport, x: viewport.x + offset.x, y: viewport.y + offset.y });
+      }
+    },
+    [getViewport, setViewport]
+  );
   const nodesMeasured = useWorkflowPreviewNodeInternals(containerRef, nodes);
   const previewNodes = useMemo<PreviewNode[]>(
     () =>
-      nodes.map(({ id, label, position, iconUri, brandColor }) => ({
+      nodes.map(({ id, label, position, iconUri, brandColor, parentId, width, height, kind, branchType }) => ({
         id,
-        type: 'workflowPreview',
+        type: kind === 'container' ? 'workflowPreviewContainer' : 'workflowPreview',
         position: { x: position.x, y: position.y },
-        data: { label, iconUri, brandColor },
-        width: WORKFLOW_PREVIEW_NODE_WIDTH,
+        data: { label, iconUri, brandColor, ...(kind && { kind }), ...(branchType && { branchType }), ...(height && { height }) },
+        width: width ?? WORKFLOW_PREVIEW_NODE_WIDTH,
+        ...(height && { height }),
+        ...(parentId && { parentId }),
+        ...(containerCount && { zIndex: kind === 'container' ? 0 : containerCount + 2 }),
         draggable: false,
         connectable: false,
         selectable: false,
         focusable: false,
         deletable: false,
       })),
-    [nodes]
+    [nodes, containerCount]
   );
-  const previewEdges = useMemo<Edge[]>(() => edges.map(({ id, source, target }) => ({ id, source, target, ...EDGE_OPTIONS })), [edges]);
+  const previewEdges = useMemo<Edge[]>(
+    () =>
+      edges.map(({ id, source, target }) => ({
+        id,
+        source,
+        target,
+        ...EDGE_OPTIONS,
+        ...(containerCount && { zIndex: containerCount + 1 }),
+      })),
+    [edges, containerCount]
+  );
   // Only geometry changes should reset the user's viewport, not label updates or new array references.
-  const layoutKey = JSON.stringify(nodes.map(({ id, position }) => [id, position.x, position.y]));
+  const layoutKey = JSON.stringify(
+    nodes.map(({ id, position, parentId, width, height }) => [id, position.x, position.y, parentId, width, height])
+  );
 
   useEffect(() => {
     const container = containerRef.current;
@@ -186,7 +258,15 @@ const PreviewCanvas = ({
   return (
     <ReactFlow
       id={id}
-      className={styles.flow}
+      className={mergeClasses(styles.flow, styles.keyboardNavigation)}
+      role="group"
+      tabIndex={0}
+      aria-label={intl.formatMessage({
+        defaultMessage: 'Workflow preview navigation. Use arrow keys to pan.',
+        id: 'xik+HE',
+        description: 'Accessible instructions for keyboard panning in the read-only workflow preview',
+      })}
+      onKeyDown={panWithKeyboard}
       nodes={previewNodes}
       edges={previewEdges}
       nodeTypes={NODE_TYPES}

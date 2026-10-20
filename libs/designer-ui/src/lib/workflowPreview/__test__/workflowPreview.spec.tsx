@@ -14,8 +14,20 @@ const mocks = vi.hoisted(() => ({
   updateNodeInternals: vi.fn(),
   nestedUpdateNodeInternals: vi.fn(),
   nodesMeasured: true,
-  viewport: { fitView: vi.fn(), zoomIn: vi.fn(), zoomOut: vi.fn() },
-  nestedViewport: { fitView: vi.fn(), zoomIn: vi.fn(), zoomOut: vi.fn() },
+  viewport: {
+    fitView: vi.fn(),
+    zoomIn: vi.fn(),
+    zoomOut: vi.fn(),
+    getViewport: vi.fn(() => ({ x: 10, y: 20, zoom: 1 })),
+    setViewport: vi.fn(),
+  },
+  nestedViewport: {
+    fitView: vi.fn(),
+    zoomIn: vi.fn(),
+    zoomOut: vi.fn(),
+    getViewport: vi.fn(() => ({ x: 10, y: 20, zoom: 1 })),
+    setViewport: vi.fn(),
+  },
 }));
 
 vi.mock('@xyflow/react', async () => {
@@ -33,10 +45,17 @@ vi.mock('@xyflow/react', async () => {
     ReactFlow: (props: ReactFlowProps) => {
       mocks.flow(props);
       return (
-        <div data-testid="flow" data-provider-depth={React.useContext(ProviderDepth)} className={props.className}>
+        <div
+          role="group"
+          data-testid="flow"
+          data-provider-depth={React.useContext(ProviderDepth)}
+          className={props.className}
+          tabIndex={props.tabIndex}
+          onKeyDown={props.onKeyDown}
+        >
           {props.nodes?.map((node) => {
-            const Card = props.nodeTypes?.[node.type ?? ''] as ComponentType<Pick<NodeProps, 'data'>>;
-            return <Card key={node.id} data={node.data} />;
+            const Card = props.nodeTypes?.[node.type ?? ''] as ComponentType<Pick<NodeProps, 'id' | 'data'>>;
+            return <Card key={node.id} id={node.id} data={node.data} />;
           })}
           {props.children}
         </div>
@@ -186,7 +205,7 @@ describe('WorkflowPreview', () => {
       zoomOnDoubleClick: false,
       fitView: true,
     });
-    expect(Object.keys(flowProps()).filter((key) => key.startsWith('on'))).toEqual([]);
+    expect(Object.keys(flowProps()).filter((key) => key.startsWith('on'))).toEqual(['onKeyDown']);
     fireEvent.click(screen.getByText('Request'));
     fireEvent.doubleClick(screen.getByText('Response'));
     fireEvent.contextMenu(screen.getByTestId('flow'));
@@ -271,6 +290,112 @@ describe('WorkflowPreview', () => {
     for (const operation of Object.values(mocks.viewport)) {
       expect(operation).not.toHaveBeenCalled();
     }
+  });
+
+  it('renders nested boundaries and branch headers while keeping every graph element inert', () => {
+    const nestedNodes: WorkflowPreviewNode[] = [
+      nodes[0],
+      { id: 'condition', label: 'Condition', kind: 'container', width: 520, height: 300, position: { x: 0, y: 100 } },
+      {
+        id: 'header',
+        label: 'Condition',
+        kind: 'scope',
+        brandColor: '#484F58',
+        parentId: 'condition',
+        width: 200,
+        height: 60,
+        position: { x: 160, y: 0 },
+      },
+      { id: 'true', label: 'True branch', kind: 'container', parentId: 'condition', width: 240, height: 200, position: { x: 20, y: 80 } },
+      {
+        id: 'true-header',
+        label: 'True',
+        kind: 'branch',
+        branchType: 'true',
+        parentId: 'true',
+        width: 200,
+        height: 60,
+        position: { x: 20, y: 0 },
+      },
+      { id: 'true-action', label: 'True action', parentId: 'true', height: 60, position: { x: 20, y: 100 } },
+      {
+        id: 'false-header',
+        label: 'False',
+        kind: 'branch',
+        branchType: 'false',
+        parentId: 'condition',
+        height: 60,
+        position: { x: 280, y: 80 },
+      },
+    ];
+    const before = structuredClone(nestedNodes);
+    render(<WorkflowPreview nodes={nestedNodes} edges={[{ id: 'branch-edge', source: 'true-header', target: 'true-action' }]} />);
+    expect(screen.getByRole('group', { name: 'Condition' })).toBeInTheDocument();
+    expect(screen.getByRole('group', { name: 'True branch' })).toBeInTheDocument();
+    expect(screen.getByText('True')).toBeInTheDocument();
+    expect(screen.getByText('False')).toBeInTheDocument();
+    expect(screen.getByText('True action')).toBeInTheDocument();
+    expect(flowProps().nodes?.find(({ id }) => id === 'true-action')).toMatchObject({ parentId: 'true', height: 60 });
+    expect(flowProps().nodes?.find(({ id }) => id === 'condition')).toMatchObject({
+      type: 'workflowPreviewContainer',
+      width: 520,
+      height: 300,
+    });
+    for (const node of flowProps().nodes ?? []) {
+      expect(node).toMatchObject({ draggable: false, connectable: false, selectable: false, focusable: false, deletable: false });
+    }
+    expect(flowProps().edges?.[0]).toMatchObject({ selectable: false, focusable: false, reconnectable: false, zIndex: 3 });
+    expect(flowProps().nodes?.find(({ id }) => id === 'true-action')).toMatchObject({ zIndex: 4 });
+    expect(nestedNodes).toEqual(before);
+  });
+
+  it('pans only its own viewport with arrow keys, without intercepting navigation-button keys', () => {
+    render(
+      <ReactFlowProvider>
+        <WorkflowPreview nodes={nodes} edges={edges} />
+      </ReactFlowProvider>
+    );
+    const canvas = screen.getByTestId('flow');
+    fireEvent.keyDown(canvas, { key: 'ArrowLeft' });
+    fireEvent.keyDown(canvas, { key: 'ArrowDown' });
+    expect(mocks.nestedViewport.setViewport).toHaveBeenNthCalledWith(1, { x: 50, y: 20, zoom: 1 });
+    expect(mocks.nestedViewport.setViewport).toHaveBeenNthCalledWith(2, { x: 10, y: -20, zoom: 1 });
+    fireEvent.keyDown(screen.getByRole('button', { name: 'Zoom in' }), { key: 'ArrowRight' });
+    fireEvent.keyDown(canvas, { key: 'Delete' });
+    fireEvent.keyDown(canvas, { key: 'ArrowRight', ctrlKey: true });
+    expect(mocks.nestedViewport.setViewport).toHaveBeenCalledTimes(2);
+    expect(mocks.viewport.getViewport).not.toHaveBeenCalled();
+    expect(mocks.viewport.setViewport).not.toHaveBeenCalled();
+  });
+
+  it('refits changed container dimensions in its private viewport and cancels work on unmount', () => {
+    const container: WorkflowPreviewNode = {
+      id: 'condition',
+      kind: 'container',
+      label: 'Condition',
+      position: { x: 0, y: 100 },
+      width: 520,
+      height: 300,
+    };
+    const view = render(
+      <ReactFlowProvider>
+        <WorkflowPreview nodes={[nodes[0], container]} edges={[]} />
+      </ReactFlowProvider>
+    );
+    flushFrames();
+    const before = mocks.nestedViewport.fitView.mock.calls.length;
+    view.rerender(
+      <ReactFlowProvider>
+        <WorkflowPreview nodes={[nodes[0], { ...container, width: 760, height: 460 }]} edges={[]} />
+      </ReactFlowProvider>
+    );
+    flushFrames();
+    expect(mocks.nestedViewport.fitView.mock.calls.length).toBeGreaterThan(before);
+    expect(mocks.viewport.fitView).not.toHaveBeenCalled();
+    view.unmount();
+    const calls = mocks.nestedViewport.fitView.mock.calls.length;
+    flushFrames();
+    expect(mocks.nestedViewport.fitView).toHaveBeenCalledTimes(calls);
   });
 
   it('renders compact connector cards with full titles and inert, hidden handles', () => {
@@ -500,6 +625,7 @@ describe('WorkflowPreview', () => {
           'LeR+TX': 'Agrandir',
           JyYLq1: 'Réduire',
           nAEN7n: 'Ajuster la vue',
+          'xik+HE': 'Navigation de l’aperçu. Utilisez les flèches pour déplacer la vue.',
         },
       })
     );
