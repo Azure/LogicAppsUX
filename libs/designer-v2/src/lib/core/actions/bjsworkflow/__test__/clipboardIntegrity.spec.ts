@@ -563,6 +563,89 @@ describe('clipboard integrity with real designer initialization and reducers', (
     });
   });
 
+  it.each([false, true])(
+    'resolves serialized descendants after overlapping renames without suppressing a sibling (renamed root: %s)',
+    async (renamedRoot) => {
+      const source = await prepareSource({
+        triggers: {},
+        actions: {
+          S: { type: 'Scope', actions: { A: { type: 'Compose', inputs: 'inside', runAfter: {} } }, runAfter: {} },
+          B: { type: 'Compose', inputs: 'outside', runAfter: { S: ['Succeeded'] } },
+        },
+      });
+      source.dispatch(replaceId({ originalId: 'B', newId: 'C' }));
+      if (renamedRoot) {
+        source.dispatch(replaceId({ originalId: 'S', newId: 'B' }));
+      }
+      const childName = renamedRoot ? 'S' : 'B';
+      source.dispatch(replaceId({ originalId: 'A', newId: childName }));
+      await source.dispatch(copyOperations({ nodeIds: ['S', 'A', 'B'] })).unwrap();
+      const clipboard = readClipboard();
+      expect(clipboard.nodes.map((entry: { nodeId: string }) => entry.nodeId)).toEqual(['S-copy', 'B-copy']);
+      const target = await prepareSource({ triggers: {}, actions: { Anchor: { type: 'Compose', inputs: 'existing', runAfter: {} } } });
+      await target
+        .dispatch(pasteClipboard({ clipboard, relationshipIds: { graphId: 'root', parentId: 'Anchor' }, upstreamNodeIds: ['Anchor'] }))
+        .unwrap();
+      expect(await serializeOperation(target.getState(), 'S-copy')).toMatchObject({ actions: { [childName]: { inputs: 'inside' } } });
+      expect(await serializeOperation(target.getState(), 'B-copy')).toMatchObject({ inputs: 'outside' });
+      expect(target.getState().workflow.operations['A-copy']).toBeUndefined();
+    }
+  );
+
+  it('maps renamed roots by current source identity without overwriting another roots reference', async () => {
+    const source = await prepareSource({
+      triggers: {},
+      actions: {
+        A: { type: 'Compose', inputs: 'first', runAfter: {} },
+        B: { type: 'Compose', inputs: 'second', runAfter: { A: ['Succeeded'] } },
+        Reader: { type: 'Compose', inputs: "@outputs('A')", runAfter: { B: ['Succeeded'] } },
+      },
+    });
+    source.dispatch(replaceId({ originalId: 'B', newId: 'C' }));
+    source.dispatch(replaceId({ originalId: 'A', newId: 'B' }));
+    await source.dispatch(copyOperations({ nodeIds: ['A', 'B', 'Reader'] })).unwrap();
+    const clipboard = readClipboard();
+    const target = await prepareSource({ triggers: {}, actions: { Anchor: { type: 'Compose', inputs: 'existing', runAfter: {} } } });
+    await target
+      .dispatch(pasteClipboard({ clipboard, relationshipIds: { graphId: 'root', parentId: 'Anchor' }, upstreamNodeIds: ['Anchor'] }))
+      .unwrap();
+    expect(await serializeOperation(target.getState(), 'A-copy')).toMatchObject({ inputs: 'first' });
+    expect(await serializeOperation(target.getState(), 'B-copy')).toMatchObject({ inputs: 'second' });
+    expect(await serializeOperation(target.getState(), 'Reader-copy')).toMatchObject({ inputs: "@outputs('A-copy')" });
+  });
+
+  it('honors future root reservations when a Switch case collides with a later pasted action', async () => {
+    const source = await prepareSource({
+      triggers: {},
+      actions: {
+        Switch: {
+          type: 'Switch',
+          expression: 'one',
+          cases: { 'B-copy': { case: 'one', actions: { First: { type: 'Compose', inputs: 'inside', runAfter: {} } } } },
+          default: { actions: {} },
+          runAfter: {},
+        },
+        B: { type: 'Compose', inputs: 'outside', runAfter: { Switch: ['Succeeded'] } },
+      },
+    });
+    await source.dispatch(copyOperations({ nodeIds: ['Switch', 'B'] })).unwrap();
+    const clipboard = readClipboard();
+    const target = await prepareSource({ triggers: {}, actions: { Anchor: { type: 'Compose', inputs: 'existing', runAfter: {} } } });
+    await target
+      .dispatch(pasteClipboard({ clipboard, relationshipIds: { graphId: 'root', parentId: 'Anchor' }, upstreamNodeIds: ['Anchor'] }))
+      .unwrap();
+    const copied = await serializeOperation(target.getState(), 'Switch-copy');
+    expect(copied).toMatchObject({
+      cases: { 'B-copy_1': { case: 'one', actions: { First: { inputs: 'inside' } } } },
+    });
+    expect(await serializeOperation(target.getState(), 'B-copy')).toMatchObject({ inputs: 'outside' });
+    expect(target.getState().workflow.operations['B-copy_1']).toBeUndefined();
+    await target.dispatch(onUndoClick()).unwrap();
+    expect(target.getState().workflow.operations['Switch-copy']).toBeUndefined();
+    await target.dispatch(onRedoClick()).unwrap();
+    expect(await serializeOperation(target.getState(), 'Switch-copy')).toEqual(copied);
+  });
+
   it('preserves escaped interpolation literal editor segments through source renames and multi-paste', async () => {
     const store = await prepareSource({
       triggers: {},

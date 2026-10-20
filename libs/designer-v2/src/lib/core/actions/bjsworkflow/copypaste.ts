@@ -108,6 +108,17 @@ const resolveCopyNodeId = (state: RootState, id: string): string => {
   return matches[0];
 };
 
+const resolveSerializedCopyNodeId = (state: RootState, id: string): string => {
+  const normalized = removeIdTag(id).toLowerCase();
+  const matches = Object.keys(state.workflow.operations).filter(
+    (original) => (state.workflow.idReplacements[original] ?? original).toLowerCase() === normalized
+  );
+  if (matches.length !== 1) {
+    throw clipboardError(true);
+  }
+  return matches[0];
+};
+
 const assertCopyReady = (state: RootState, nodeId: string): void => {
   const data = getNodeOperationData(state.operations, nodeId);
   if (
@@ -186,17 +197,17 @@ const buildScopeClipboardEntry = async (state: RootState, scopeNodeId: string): 
     ignoreNonCriticalErrors: true,
   });
 
-  const allActionNames = getAllActionNames({ [normalizedScopeId]: serializedOperation as ActionDefinition });
+  const serializedScopeId = state.workflow.idReplacements[normalizedScopeId] ?? normalizedScopeId;
+  const allActionNames = getAllActionNames({ [serializedScopeId]: serializedOperation as ActionDefinition });
   for (const name of allActionNames) {
-    const originalId = resolveCopyNodeId(state, name);
+    const originalId = resolveSerializedCopyNodeId(state, name);
     assertCopyReady(state, originalId);
   }
   const allConnectionData: Record<string, CopiedConnectionData> = {};
   const staticResults: Record<string, any> = {};
 
   allActionNames.forEach((actionName) => {
-    const originalId =
-      Object.keys(state.workflow.idReplacements).find((id) => state.workflow.idReplacements[id] === actionName) ?? actionName;
+    const originalId = resolveSerializedCopyNodeId(state, actionName);
     const connectionReference = getConnectionReferenceForNodeId(state.connections, originalId);
     if (connectionReference) {
       allConnectionData[actionName] = connectionReference.mapping
@@ -210,7 +221,7 @@ const buildScopeClipboardEntry = async (state: RootState, scopeNodeId: string): 
         : connectionReference;
     }
 
-    const staticResult = getStaticResultForNodeId(state.staticResults, actionName);
+    const staticResult = getStaticResultForNodeId(state.staticResults, originalId);
     if (staticResult) {
       staticResults[actionName] = staticResult;
     }
@@ -275,10 +286,11 @@ const buildOperationsClipboard = async (state: RootState, nodeIds: string[]) => 
       const normalizedId = removeIdTag(nodeId);
       const entry = await buildScopeClipboardEntry(state, normalizedId);
       scopes.set(nodeId, entry);
-      const childNames = getAllActionNames({ [normalizedId]: entry.serializedOperation });
+      const serializedScopeId = entry.sourceNodeId ?? normalizedId;
+      const childNames = getAllActionNames({ [serializedScopeId]: entry.serializedOperation });
       for (const name of childNames) {
-        if (name !== normalizedId) {
-          scopeChildIds.add(resolveCopyNodeId(state, name));
+        if (name !== serializedScopeId) {
+          scopeChildIds.add(resolveSerializedCopyNodeId(state, name));
         }
       }
     }
@@ -475,11 +487,16 @@ const pasteScopeInDraft = createAsyncThunk('pasteScopeInDraft', async (payload: 
   const workflowActions = { [nodeId]: { ...serializedValue } as ActionDefinition };
   const allActionNames = getAllActionNames(workflowActions, [], true);
 
+  // Case/tool collisions must honor planned renames against roots that have not been inserted yet.
+  const reservedActionNames = [
+    ...Object.keys(existingNodesMetadata),
+    ...Object.keys(pasteParams.renamedNodes).filter((id) => pasteParams.renamedNodes[id] !== id),
+  ];
   const [nodes, _edges, actions, actionNodesMetadata] = buildGraphFromActions(
     workflowActions,
     graphId,
     parentId,
-    Object.keys(existingNodesMetadata),
+    reservedActionNames,
     true /* shouldAppendAddCase */,
     pasteParams
   );
@@ -612,10 +629,7 @@ export const pasteClipboard = createAsyncThunk(
       const id = getNonDuplicateNodeId(reservedMetadata, entry.nodeId, before.workflow.idReplacements);
       reservedMetadata[id] = { graphId: relationshipIds.graphId };
       plannedIds.set(entry.nodeId, id);
-      rootReplacements[entry.nodeId.replace(/-copy$/, '')] = id;
-      if (entry.sourceNodeId) {
-        rootReplacements[entry.sourceNodeId] = id;
-      }
+      rootReplacements[entry.sourceNodeId ?? entry.nodeId.replace(/-copy$/, '')] = id;
     }
     const replacements: Record<string, string> = { ...rootReplacements };
     const scopePlans = new Map<string, PasteScopeParams>();
