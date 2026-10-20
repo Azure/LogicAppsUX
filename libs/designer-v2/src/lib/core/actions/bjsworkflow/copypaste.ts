@@ -559,7 +559,7 @@ const pasteScopeInDraft = createAsyncThunk('pasteScopeInDraft', async (payload: 
     nodeMap[id] = id;
   }
   const extendedIds = extendUpstreamNodeIdsForScopePaste(upstreamNodeIds, graphId, parentId, state, nodeMap);
-  const upstreamOutputTokens = replaceIdsOfExistingNodes(filterRecordByArray(state.tokens.outputTokens, extendedIds), idReplacements);
+  const upstreamOutputTokens = filterRecordByArray(state.tokens.outputTokens, extendedIds);
   const triggerId = getTriggerNodeId(state.workflow);
 
   await Promise.all([

@@ -34,6 +34,7 @@ import {
   updateOutputs,
 } from '../../../state/operation/operationMetadataSlice';
 import { setNodeConnectionMapping } from '../../../state/connection/connectionSlice';
+import { initializeParameters } from '../../../state/workflowparameters/workflowparametersSlice';
 import { updateTokens } from '../../../state/tokens/tokensSlice';
 import { getNodeOperationData } from '../../../state/operation/operationSelector';
 import { setNodeSelection } from '../../../state/panel/panelSlice';
@@ -53,7 +54,7 @@ import {
   pasteOperation,
 } from '../copypaste';
 import { initializeDynamicDataInNodes, initializeOperationMetadata } from '../operationdeserializer';
-import { serializeOperation } from '../serializer';
+import { serializeOperation, serializeWorkflow } from '../serializer';
 import { onRedoClick, onUndoClick } from '../undoRedo';
 
 const definition: LogicAppsV2.WorkflowDefinition = {
@@ -103,7 +104,7 @@ const createSource = (workflowDefinition = definition) => {
   state.workflow.workflowKind = 'stateful';
   const store = createDesignerStore(state);
   const initialize = async () => {
-    await initializeOperationMetadata(parsed, {}, {}, {}, 'stateful', store.dispatch);
+    await initializeOperationMetadata(parsed, {}, store.getState().workflowParameters.definitions, {}, 'stateful', store.dispatch);
     await initializeDynamicDataInNodes(store.getState, store.dispatch);
   };
   return { store, initialize };
@@ -933,12 +934,54 @@ describe('clipboard integrity with real designer initialization and reducers', (
       const copied = await serializeOperation(store.getState(), `${root}-copy`);
       const expected = { inputs: { simple: "@outputs('B')", composite: "@concat(string(outputs('B')), string(outputs('C')))" } };
       expect(copied).toMatchObject(container ? { actions: { Reader_1: expected } } : expected);
+      const copiedReader = store.getState().operations.inputParameters[container ? 'Reader_1' : 'Reader-copy'];
+      expect(
+        Object.values(copiedReader.parameterGroups).flatMap((group) =>
+          group.parameters.flatMap((parameter) => parameter.validationErrors ?? [])
+        )
+      ).toEqual([]);
+      const serialized = await serializeWorkflow(store.getState());
+      expect(serialized.definition.actions?.[`${root}-copy`]).toEqual(copied);
       await store.dispatch(onUndoClick()).unwrap();
       expect(store.getState().workflow.operations).toEqual(before.workflow.operations);
       await store.dispatch(onRedoClick()).unwrap();
       expect(await serializeOperation(store.getState(), `${root}-copy`)).toEqual(copied);
+      expect(await serializeWorkflow(store.getState())).toEqual(serialized);
     }
   );
+
+  it('preserves non-action expression and workflow-parameter tokens when pasting a container', async () => {
+    const inputs = { expression: "@concat('first', 'second')", parameter: "@parameters('workflowValue')" };
+    const source = createSource({
+      triggers: {},
+      actions: { Container: { type: 'Scope', actions: { Reader: { type: 'Compose', inputs, runAfter: {} } }, runAfter: {} } },
+    });
+    const { store } = source;
+    store.dispatch(initializeParameters({ workflowValue: { type: 'String', value: 'parameter value' } }));
+    await source.initialize();
+    await store.dispatch(copyOperations({ nodeIds: ['Container'] })).unwrap();
+    await store
+      .dispatch(
+        pasteClipboard({
+          clipboard: readClipboard(),
+          relationshipIds: { graphId: 'root', parentId: 'Container' },
+          upstreamNodeIds: [],
+        })
+      )
+      .unwrap();
+    const serialized = await serializeWorkflow(store.getState());
+    expect(serialized.definition.actions?.['Container-copy']).toMatchObject({ actions: { Reader_1: { inputs } } });
+    const copiedReader = store.getState().operations.inputParameters.Reader_1;
+    expect(
+      Object.values(copiedReader.parameterGroups).flatMap((group) =>
+        group.parameters.flatMap((parameter) => parameter.validationErrors ?? [])
+      )
+    ).toEqual([]);
+    await store.dispatch(onUndoClick()).unwrap();
+    expect(store.getState().workflow.operations['Container-copy']).toBeUndefined();
+    await store.dispatch(onRedoClick()).unwrap();
+    expect(await serializeWorkflow(store.getState())).toEqual(serialized);
+  });
 
   it('preserves fan-out after a secondary predecessor has already been attached to a join', async () => {
     const sourceActions: LogicAppsV2.Actions = {
