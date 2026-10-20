@@ -1,6 +1,7 @@
 import type { Workflow } from '../../../common/models/workflow';
 import type {
   WorkflowExtractionPlan,
+  WorkflowExtractionProgress,
   WorkflowExtractionRequest,
   WorkflowExtractionResult,
   WorkflowExtractionService,
@@ -27,6 +28,11 @@ import { serializeWorkflow } from './serializer';
 import { getIntl } from '@microsoft/logic-apps-shared';
 
 export const workflowExtractionFingerprint = (workflow: Workflow): string => JSON.stringify(workflow);
+
+export interface WorkflowExtractionExecutionProgress {
+  step: WorkflowExtractionProgress['step'] | 'preparing' | 'applying-source';
+  status: WorkflowExtractionProgress['status'];
+}
 
 /**
  * Prepare against the current services, but never publish intermediate Redux state.
@@ -90,7 +96,8 @@ export async function commitWorkflowExtraction(
   liveStore: AppStore,
   service: WorkflowExtractionService,
   request: WorkflowExtractionRequest,
-  onStage: (stage: 'preparing' | 'saving' | 'refreshing') => void
+  onStage: (stage: 'preparing' | 'saving' | 'refreshing') => void,
+  onProgress?: (progress: WorkflowExtractionExecutionProgress) => void
 ): Promise<WorkflowExtractionResult> {
   const snapshot = liveStore.getState();
   const intl = getIntl();
@@ -128,6 +135,7 @@ export async function commitWorkflowExtraction(
       );
     }
     onStage('preparing');
+    onProgress?.({ step: 'preparing', status: 'in-progress' });
     release = service.prepare?.(request.plan);
     await prepareExtractedWorkflow(snapshot, request.plan.child);
     const prepared = await prepareExtractedWorkflow(snapshot, request.plan.source);
@@ -136,11 +144,32 @@ export async function commitWorkflowExtraction(
       historyLimit > 0
         ? getCompressedSlicesFromRootState({ ...snapshot, workflow: { ...snapshot.workflow, isDirty: true } }, true)
         : undefined;
+    onProgress?.({ step: 'preparing', status: 'completed' });
     onStage('saving');
-    result = await service.commit(request);
+    let acceptingHostProgress = true;
+    try {
+      result = await service.commit(
+        onProgress || request.onProgress
+          ? {
+              ...request,
+              onProgress: (progress) => {
+                if (acceptingHostProgress) {
+                  onProgress?.(progress);
+                  request.onProgress?.(progress);
+                }
+              },
+            }
+          : request
+      );
+    } finally {
+      acceptingHostProgress = false;
+    }
     if (result.status === 'completed') {
       try {
+        onProgress?.({ step: 'creating-child', status: 'completed' });
+        onProgress?.({ step: 'saving-source', status: 'completed' });
         onStage('refreshing');
+        onProgress?.({ step: 'applying-source', status: 'in-progress' });
         // A single Redux action swaps every authoring slice. The host has durably saved
         // the definitions; no remaining async initialization targets the live store.
         liveStore.dispatch({ ...setStateAfterUndoRedo(prepared), meta: { workflowExtraction: true } });
@@ -153,6 +182,7 @@ export async function commitWorkflowExtraction(
         liveStore.dispatch({ ...setIsWorkflowDirty(false), meta: { workflowExtraction: true } });
         liveStore.dispatch({ ...setNodeSelection([request.plan.invocationId]), meta: { workflowExtraction: true } });
         service.onApplied?.(request.plan.source);
+        onProgress?.({ step: 'applying-source', status: 'completed' });
       } catch (cause) {
         result = {
           status: 'source-saved',

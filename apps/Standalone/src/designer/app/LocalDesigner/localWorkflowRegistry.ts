@@ -1,12 +1,13 @@
 import type {
   Workflow,
   WorkflowExtractionPlan,
+  WorkflowExtractionProgress,
   WorkflowExtractionRequest,
   WorkflowExtractionResult,
   WorkflowExtractionService,
 } from '@microsoft/logic-apps-designer-v2';
 import type { LogicAppsV2, OpenAPIV2 } from '@microsoft/logic-apps-shared';
-import { generateUniqueName } from '@microsoft/logic-apps-shared';
+import { generateUniqueName, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { getReactQueryClient } from '../../../../../../libs/designer-v2/src/lib/core/ReactQueryProvider';
 
 export const localWorkflowRegistryKey = 'msla-standalone-workflow-extraction-v1';
@@ -435,6 +436,18 @@ export class LocalWorkflowRegistry {
       prepare: (plan: WorkflowExtractionPlan) => this.prepare(plan),
       commit: (request: WorkflowExtractionRequest): Promise<WorkflowExtractionResult> =>
         this.runExclusive(async () => {
+          const notify = (progress: WorkflowExtractionProgress) => {
+            try {
+              request.onProgress?.(progress);
+            } catch {
+              LoggerService().log({
+                level: LogEntryLevel.Warning,
+                area: 'workflowExtraction',
+                message: 'The local workflow extraction progress observer failed.',
+              });
+            }
+          };
+          notify({ step: 'validating-child', status: 'in-progress' });
           if (baselineError) {
             throw baselineError;
           }
@@ -455,6 +468,9 @@ export class LocalWorkflowRegistry {
             if (!child) {
               throw new Error('The previously created local child workflow is missing.');
             }
+            notify({ step: 'validating-child', status: 'completed' });
+            notify({ step: 'creating-child', status: 'completed' });
+            notify({ step: 'saving-source', status: 'completed' });
             return { status: 'completed', child: { name: child.name, href: localWorkflowHref(child.id) } };
           }
           const invalidName = this.validateName(plan.childName, sourceName);
@@ -465,6 +481,8 @@ export class LocalWorkflowRegistry {
             throw new Error('The stored source changed. Reopen it before extracting again.');
           }
           assertSafePlan(plan);
+          notify({ step: 'validating-child', status: 'completed' });
+          notify({ step: 'creating-child', status: 'in-progress' });
           const childId = `${localWorkflowPrefix}${plan.childName}`;
           data.workflows = data.workflows.filter((entry) => normalize(entry.id) !== normalize(sourceId));
           data.workflows.push(
@@ -472,11 +490,14 @@ export class LocalWorkflowRegistry {
             { id: childId, name: plan.childName, workflow: clone(plan.child) }
           );
           data.operations.push({ id: operationId, sourceId, sourceFingerprint: sourceFingerprintDigest, planFingerprint, childId });
+          notify({ step: 'saving-source', status: 'in-progress' });
           try {
             this.storage().setItem(localWorkflowRegistryKey, JSON.stringify(data));
           } catch {
             throw new Error('Could not save local workflows (storage unavailable or full). Neither workflow was changed.');
           }
+          notify({ step: 'creating-child', status: 'completed' });
+          notify({ step: 'saving-source', status: 'completed' });
           baseline = JSON.stringify(plan.source);
           this.onChanged();
           return { status: 'completed', child: { name: plan.childName, href: localWorkflowHref(childId) } };
