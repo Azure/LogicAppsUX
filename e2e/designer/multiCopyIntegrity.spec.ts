@@ -82,6 +82,26 @@ const expectPreviewSourceUnchanged = async (page: Page) =>
     })
   ).toEqual({ references: true, bytes: true });
 
+const nativeCardGeometry = (page: Page, selector: string) =>
+  page.locator(selector).evaluate((node) => {
+    const card = node.querySelector<HTMLElement>('[role="button"], [role="img"]')!;
+    const title = card.querySelector<HTMLElement>('.fui-Text')!;
+    const style = getComputedStyle(card);
+    const typography = getComputedStyle(title);
+    return {
+      width: card.offsetWidth,
+      height: card.offsetHeight,
+      padding: style.padding,
+      radius: style.borderRadius,
+      background: style.backgroundColor,
+      fontSize: typography.fontSize,
+      fontWeight: typography.fontWeight,
+      lineHeight: typography.lineHeight,
+      fontFamily: typography.fontFamily,
+      icon: card.querySelector('img')?.getAttribute('src') ?? null,
+    };
+  });
+
 test.describe('Multi-action clipboard integrity', { tag: '@mock' }, () => {
   test.afterEach(async ({ page }, info) => {
     if (info.status !== info.expectedStatus) {
@@ -193,6 +213,13 @@ test.describe('Multi-action clipboard integrity', { tag: '@mock' }, () => {
     await page.goto('/v2?extraction=true&local=ExtractCondition.json');
     await waitForLoadedDesigner(page);
     await expect(page.getByTestId('card-condition')).toBeVisible();
+    const nativeSelectors = [
+      '.react-flow__node-SCOPE_CARD_NODE[data-id="Condition-#scope"]',
+      '.react-flow__node-SUBGRAPH_CARD_NODE[data-id="Condition-actions-#subgraph"]',
+      '.react-flow__node-SUBGRAPH_CARD_NODE[data-id="Condition-elseActions-#subgraph"]',
+      '.react-flow__node-OPERATION_NODE[data-id="True_action"]',
+    ];
+    const nativeGeometry = await Promise.all(nativeSelectors.map((selector) => nativeCardGeometry(page, selector)));
     const originalCondition = (await getSerializedWorkflowFromStateV2(page)).definition.actions.Condition;
     await page.getByLabel('Zoom view to fit', { exact: true }).click();
     for (const id of ['condition', 'true_action', 'false_action']) {
@@ -214,9 +241,21 @@ test.describe('Multi-action clipboard integrity', { tag: '@mock' }, () => {
     await expect(preview.getByText('True action', { exact: true })).toBeVisible();
     await expect(preview.getByText('False action', { exact: true })).toBeVisible();
     await expect(preview.locator('.react-flow__node')).toHaveCount(10);
+    for (const [index, selector] of nativeSelectors.entries()) {
+      expect(await nativeCardGeometry(page, `[data-automation-id="extraction-workflow-preview"] ${selector}`)).toEqual(
+        nativeGeometry[index]
+      );
+    }
+    expect(nativeGeometry[0]).toMatchObject({ width: 200, height: 44, fontSize: '14px', fontWeight: '600', lineHeight: '20px' });
+    expect(nativeGeometry[1]).toMatchObject({ width: 120, height: 32, fontSize: '14px', lineHeight: '16px' });
+    expect(nativeGeometry[2]).toMatchObject({ width: 120, height: 32 });
+    await expect(preview.locator('.react-flow__edge-ONLY_EDGE')).toHaveCount(2);
+    await expect(preview.locator('.react-flow__edge-HEADING_EDGE path.react-flow__edge-path')).toHaveCount(2);
+    await expect(preview.locator('.react-flow__edge-BUTTON_EDGE path[marker-end]')).toHaveCount(2);
+    await expect(preview.locator('button:not([disabled])')).toHaveCount(3);
     expect(
       await preview.evaluate((element) => {
-        const parents = Array.from(element.querySelectorAll('.react-flow__node-workflowPreviewContainer'), (node) =>
+        const parents = Array.from(element.querySelectorAll('.react-flow__node-GRAPH_NODE, .react-flow__node-SUBGRAPH_NODE'), (node) =>
           Number(getComputedStyle(node).zIndex)
         );
         return Array.from(element.querySelectorAll('.react-flow__edge'), (edge) =>
@@ -287,7 +326,7 @@ test.describe('Multi-action clipboard integrity', { tag: '@mock' }, () => {
           },
           First: { type: 'Compose', inputs: 'first', runAfter: { Condition: ['Succeeded'] } },
           Second: { type: 'Compose', inputs: 'second', runAfter: { Condition: ['Succeeded'] } },
-          Join: { type: 'Compose', inputs: 'join', runAfter: { First: ['Succeeded'], Second: ['Succeeded'] } },
+          Join: { type: 'Compose', inputs: 'join', runAfter: { First: ['Succeeded'], Second: ['Failed', 'TimedOut'] } },
           Case_switch: {
             type: 'Switch',
             expression: 'named',
@@ -309,7 +348,14 @@ test.describe('Multi-action clipboard integrity', { tag: '@mock' }, () => {
             expression: '@true',
             limit: { count: 2, timeout: 'PT1H' },
             runAfter: { For_each: ['Succeeded'] },
-            actions: { Until_action: { type: 'Compose', inputs: 'until', runAfter: {} } },
+            actions: {
+              Until_action: { type: 'Compose', inputs: 'until', runAfter: {} },
+              Long_action_title_that_wraps_across_several_lines: {
+                type: 'Compose',
+                inputs: 'long title',
+                runAfter: { Until_action: ['Succeeded'] },
+              },
+            },
           },
         },
       },
@@ -349,6 +395,7 @@ test.describe('Multi-action clipboard integrity', { tag: '@mock' }, () => {
           'Each_action',
           'Until',
           'Until_action',
+          'Long_action_title_that_wraps_across_several_lines',
         ],
       });
     });
@@ -373,6 +420,27 @@ test.describe('Multi-action clipboard integrity', { tag: '@mock' }, () => {
     }
     await expect(preview.locator('.react-flow__edge[data-id="First-Join"]')).toHaveCount(1);
     await expect(preview.locator('.react-flow__edge[data-id="Second-Join"]')).toHaveCount(1);
+    await expect(preview.locator('.react-flow__edge[data-id="Second-Join"] path.react-flow__edge-path')).toHaveAttribute(
+      'stroke-dasharray',
+      '4 6'
+    );
+    await expect(preview.locator('.msla-run-after-dot')).toHaveCount(4);
+    await expect
+      .poll(() =>
+        preview.evaluate((element) => {
+          const action = element.querySelector<HTMLElement>(
+            '.react-flow__node[data-id="Long_action_title_that_wraps_across_several_lines"]'
+          )!;
+          const card = action.querySelector<HTMLElement>('[role="img"]')!;
+          const footer = element.querySelector<HTMLElement>('.react-flow__node[data-id="Until-#footer"]')!;
+          return (
+            card.offsetHeight > 44 &&
+            action.offsetHeight === card.offsetHeight &&
+            footer.getBoundingClientRect().top > card.getBoundingClientRect().bottom
+          );
+        })
+      )
+      .toBe(true);
     expect(
       await preview.evaluate((element) => {
         const first = element.querySelector('.react-flow__node[data-id="First"]')!.getBoundingClientRect();

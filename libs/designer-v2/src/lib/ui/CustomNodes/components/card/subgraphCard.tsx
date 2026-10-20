@@ -19,6 +19,7 @@ interface SubgraphCardProps {
   collapsed?: boolean;
   handleCollapse?: (includeNested?: boolean) => void;
   readOnly?: boolean;
+  inert?: boolean;
   onClick?(id?: string): void;
   onContextMenu?: MouseEventHandler<HTMLElement>;
   onDeleteClick?(): void;
@@ -41,6 +42,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
   collapsed,
   handleCollapse,
   readOnly = false,
+  inert = false,
   onClick,
   onContextMenu,
   onDeleteClick,
@@ -167,10 +169,10 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
   const restoreFocusTargetAttribute = useRestoreFocusTarget();
 
   useEffect(() => {
-    if (setFocus) {
+    if (setFocus && !inert) {
       focusRef.current?.focus();
     }
-  }, [setFocus]);
+  }, [setFocus, inert]);
 
   const colorVars = {
     ['--action-brand-color' as any]: SubgraphTypeData[subgraphType].color,
@@ -182,7 +184,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
   );
 
   if (subgraphType === SUBGRAPH_TYPES['SWITCH_ADD_CASE'] || subgraphType === SUBGRAPH_TYPES['AGENT_ADD_CONDITON']) {
-    if (readOnly) {
+    if (readOnly || inert) {
       return null;
     }
     const title = subgraphType === SUBGRAPH_TYPES['AGENT_ADD_CONDITON'] ? addToolLabel : addCaseLabel;
@@ -203,13 +205,13 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
   if (data.size === 'large') {
     return (
       <div
-        {...restoreFocusTargetAttribute}
+        {...(!inert && restoreFocusTargetAttribute)}
         ref={(node) => {
           focusRef.current = node;
         }}
-        role="button"
+        role={inert ? 'img' : 'button'}
         id={`msla-node-${id}`}
-        aria-label={cardAltText}
+        aria-label={inert ? data.title : cardAltText}
         className={mergeClasses(
           styles.root,
           styles.scope,
@@ -219,26 +221,26 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
         )}
         data-testid={`card-${title}`}
         data-automation-id={`card-${replaceWhiteSpaceWithUnderscore(title)}`}
-        onClick={handleTitleClick}
-        onContextMenu={onContextMenu}
-        onKeyDown={mainKeyboardInteraction.keyDown}
-        onKeyUp={mainKeyboardInteraction.keyUp}
+        onClick={inert ? undefined : handleTitleClick}
+        onContextMenu={inert ? undefined : onContextMenu}
+        onKeyDown={inert ? undefined : mainKeyboardInteraction.keyDown}
+        onKeyUp={inert ? undefined : mainKeyboardInteraction.keyUp}
         style={colorVars}
-        tabIndex={nodeIndex}
+        tabIndex={inert ? undefined : nodeIndex}
       >
         {errorMessages?.length > 0 ? <CardErrorBadge messages={errorMessages} /> : null}
         {cardIcon ? <div className={mergeClasses(styles.icon, styles.toolIcon)}>{cardIcon}</div> : null}
         <Text className={mergeClasses(styles.title, styles.scopeTitle)}>{data.title}</Text>
         {isLoading ? <Spinner size={'extra-tiny'} /> : null}
-        <CollapseToggle id={id} collapsed={collapsed} handleCollapse={handleCollapse!} tabIndex={nodeIndex} />
+        <CollapseToggle id={id} collapsed={collapsed} handleCollapse={handleCollapse} tabIndex={nodeIndex} disabled={inert} />
       </div>
     );
   }
   if (data.size === 'small') {
     return (
       <div
-        role="button"
-        aria-label={cardAltText}
+        role={inert ? 'img' : 'button'}
+        aria-label={inert ? data.title : cardAltText}
         className={mergeClasses(
           styles.root,
           styles.scope,
@@ -248,15 +250,15 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
           isSelected && styles.selected
         )}
         style={colorVars}
-        onClick={(e) => handleCollapse?.(e.shiftKey)}
-        onContextMenu={onContextMenu}
-        onKeyDown={collapseKeyboardInteraction.keyDown}
-        onKeyUp={collapseKeyboardInteraction.keyUp}
+        onClick={inert ? undefined : (e) => handleCollapse?.(e.shiftKey)}
+        onContextMenu={inert ? undefined : onContextMenu}
+        onKeyDown={inert ? undefined : collapseKeyboardInteraction.keyDown}
+        onKeyUp={inert ? undefined : collapseKeyboardInteraction.keyUp}
         data-automation-id={`${id}-collapse-toggle-small`}
-        tabIndex={nodeIndex}
+        tabIndex={inert ? undefined : nodeIndex}
       >
         <Text className={mergeClasses(styles.title, styles.scopeTitle, styles.smallTitle)}>{data.title}</Text>
-        <CollapseToggle id={id} collapsed={collapsed} handleCollapse={handleCollapse!} tabIndex={nodeIndex} isSmall />
+        <CollapseToggle id={id} collapsed={collapsed} handleCollapse={handleCollapse} tabIndex={nodeIndex} isSmall disabled={inert} />
       </div>
     );
   }

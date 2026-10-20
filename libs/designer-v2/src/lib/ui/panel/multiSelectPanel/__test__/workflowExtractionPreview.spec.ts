@@ -57,10 +57,27 @@ describe('getWorkflowExtractionPreview', () => {
     expect(preview.nodes.filter(({ parentId }) => !parentId).map(({ id }) => id)).toEqual(['Request', 'Condition', 'Response']);
     expect(preview.nodes).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ id: 'Condition', kind: 'container' }),
-        expect.objectContaining({ id: 'Condition-#scope', kind: 'scope', parentId: 'Condition', label: 'Condition' }),
-        expect.objectContaining({ id: 'Condition-actions-#subgraph', kind: 'branch', branchType: 'true', label: 'True' }),
-        expect.objectContaining({ id: 'Condition-elseActions-#subgraph', kind: 'branch', branchType: 'false', label: 'False' }),
+        expect.objectContaining({ id: 'Condition', type: 'GRAPH_NODE' }),
+        expect.objectContaining({
+          id: 'Condition-#scope',
+          type: 'SCOPE_CARD_NODE',
+          parentId: 'Condition',
+          data: expect.objectContaining({ label: 'Condition' }),
+        }),
+        expect.objectContaining({
+          id: 'Condition-actions-#subgraph',
+          type: 'SUBGRAPH_CARD_NODE',
+          width: 120,
+          height: 32,
+          data: expect.objectContaining({ subgraphType: 'CONDITIONAL_TRUE' }),
+        }),
+        expect.objectContaining({
+          id: 'Condition-elseActions-#subgraph',
+          type: 'SUBGRAPH_CARD_NODE',
+          width: 120,
+          height: 32,
+          data: expect.objectContaining({ subgraphType: 'CONDITIONAL_FALSE' }),
+        }),
         expect.objectContaining({ id: 'Then', parentId: 'Condition-actions' }),
         expect.objectContaining({ id: 'Otherwise', parentId: 'Condition-elseActions' }),
       ])
@@ -116,7 +133,7 @@ describe('getWorkflowExtractionPreview', () => {
     const preview = await getWorkflowExtractionPreview(plan);
 
     expect(preview.nodes.map(({ id }) => id)).toEqual(['Request_2', 'Request', 'Response', 'Response_2']);
-    expect(preview.nodes.map(({ label }) => label)).toEqual(['Request 2', 'Request', 'Response', 'Response 2']);
+    expect(preview.nodes.map(({ data }) => data.label)).toEqual(['Request 2', 'Request', 'Response', 'Response 2']);
     expect(preview.nodes.map(({ position }) => position.y)).toEqual(
       [...preview.nodes.map(({ position }) => position.y)].sort((a, b) => a - b)
     );
@@ -126,15 +143,15 @@ describe('getWorkflowExtractionPreview', () => {
       ['Response', 'Response_2'],
     ]);
     expect(new Set(preview.edges.map(({ id }) => id)).size).toBe(3);
-    expect(preview.nodes[0]).toMatchObject({
+    expect(preview.nodes[0].data).toMatchObject({
       iconUri: requestOperation.properties.iconUri,
       brandColor: requestOperation.properties.brandColor,
     });
-    expect(preview.nodes[1]).toMatchObject({
+    expect(preview.nodes[1].data).toMatchObject({
       iconUri: composeOperation.properties.iconUri,
       brandColor: composeOperation.properties.brandColor,
     });
-    expect(preview.nodes[3]).toMatchObject({
+    expect(preview.nodes[3].data).toMatchObject({
       iconUri: responseOperation.properties.iconUri,
       brandColor: responseOperation.properties.brandColor,
     });
@@ -173,17 +190,17 @@ describe('getWorkflowExtractionPreview', () => {
     const preview = await getWorkflowExtractionPreview(plan, visuals);
 
     expect(preview.nodes.map(({ id }) => id)).toEqual(['Request', 'Call_connector', 'Filter', 'Response']);
-    expect(preview.nodes[1]).toMatchObject(visuals.Call_connector);
-    expect(preview.nodes[2]).toMatchObject(visuals.Filter);
-    expect(preview.nodes[0]).toMatchObject({
+    expect(preview.nodes[1].data).toMatchObject(visuals.Call_connector);
+    expect(preview.nodes[2].data).toMatchObject(visuals.Filter);
+    expect(preview.nodes[0].data).toMatchObject({
       iconUri: requestOperation.properties.iconUri,
       brandColor: requestOperation.properties.brandColor,
     });
-    expect(preview.nodes[3]).toMatchObject({
+    expect(preview.nodes[3].data).toMatchObject({
       iconUri: responseOperation.properties.iconUri,
       brandColor: responseOperation.properties.brandColor,
     });
-    expect((await getWorkflowExtractionPreview(plan)).nodes[1]).toMatchObject({ iconUri: undefined, brandColor: undefined });
+    expect((await getWorkflowExtractionPreview(plan)).nodes[1].data).toMatchObject({ iconUri: undefined, brandColor: undefined });
     expect({ plan, visuals }).toEqual(before);
   });
 
@@ -237,26 +254,35 @@ describe('getWorkflowExtractionPreview', () => {
     expect(ids).toEqual(expect.arrayContaining(['Request', 'Container', 'Response', ...expected]));
     expect(ids.some((id) => id.endsWith('-addCase') || id.endsWith('-addCase-#subgraph'))).toBe(false);
     expect(preview.nodes.filter(({ id }) => expected.includes(id)).every(({ parentId }) => !!parentId)).toBe(true);
-    expect(preview.nodes.find(({ id }) => id === 'Container')).toMatchObject({ kind: 'container' });
+    expect(preview.nodes.find(({ id }) => id === 'Container')).toMatchObject({ type: 'GRAPH_NODE' });
     for (const edge of preview.edges) {
       expect(ids).toContain(edge.source);
       expect(ids).toContain(edge.target);
     }
     if (operation.type === 'Switch') {
-      expect(preview.nodes.find(({ id }) => id === 'Named_case-#subgraph')).toMatchObject({ label: 'Named case', branchType: 'case' });
-      expect(preview.nodes.find(({ id }) => id === 'Container-defaultCase-#subgraph')).toMatchObject({
-        label: 'Default',
-        branchType: 'default',
+      expect(preview.nodes.find(({ id }) => id === 'Named_case-#subgraph')?.data).toMatchObject({
+        label: 'Named case',
+        subgraphType: 'SWITCH_CASE',
+      });
+      expect(preview.nodes.find(({ id }) => id === 'Container-defaultCase-#subgraph')?.data).toMatchObject({
+        subgraphType: 'SWITCH_DEFAULT',
       });
     }
     if (operation.type === 'Until') {
-      expect(preview.nodes.find(({ id }) => id === 'Container-#subgraph')).toMatchObject({ label: 'Do', branchType: 'do' });
+      expect(preview.nodes.find(({ id }) => id === 'Container-#subgraph')?.data).toMatchObject({ subgraphType: 'UNTIL_DO' });
+      expect(preview.edges.some(({ type }) => type === 'HIDDEN_EDGE')).toBe(true);
     }
     if (operation.type === 'Agent') {
-      expect(preview.nodes.find(({ id }) => id === 'Named_tool-#subgraph')).toMatchObject({ label: 'Named tool', branchType: 'tool' });
+      expect(preview.nodes.find(({ id }) => id === 'Named_tool-#subgraph')?.data).toMatchObject({
+        label: 'Named tool',
+        subgraphType: 'AGENT_CONDITION',
+      });
     }
     if (operation.type === 'Foreach' || operation.type === 'Until') {
-      expect(preview.nodes.find(({ id }) => id === 'Loop_action')).toMatchObject({ iconUri: 'loop-action.svg', brandColor: '#123456' });
+      expect(preview.nodes.find(({ id }) => id === 'Loop_action')?.data).toMatchObject({
+        iconUri: 'loop-action.svg',
+        brandColor: '#123456',
+      });
     }
     expect(plan).toEqual(before);
   });
@@ -288,6 +314,13 @@ describe('getWorkflowExtractionPreview', () => {
         ['Second', 'Tail'],
       ])
     );
+    expect(preview.edges.find(({ source, target }) => source === 'Second' && target === 'Join')).toMatchObject({
+      type: 'BUTTON_EDGE',
+      data: { runAfter: { First: ['Succeeded'], Second: ['Failed'] } },
+    });
+    expect(preview.edges.find(({ source, target }) => source === 'Container-#scope' && target === 'First')).toMatchObject({
+      type: 'HEADING_EDGE',
+    });
   });
 
   it('does not initialize services or mutate the live singleton while building and laying out a preview', async () => {
@@ -303,5 +336,60 @@ describe('getWorkflowExtractionPreview', () => {
     expect(initializeConnections).not.toHaveBeenCalled();
     expect(initializeWorkflow).not.toHaveBeenCalled();
     vi.restoreAllMocks();
+  });
+
+  it('retains MCP agent tools as native operation nodes rather than inventing branch cards', async () => {
+    const plan = planFor({
+      Container: {
+        type: 'Agent',
+        runAfter: {},
+        tools: {
+          Mcp_tool: { type: 'McpClientTool', inputs: { server: { url: 'https://example.invalid' } } },
+        },
+      },
+    });
+    const before = structuredClone(plan);
+    const graph = await getWorkflowExtractionPreview(plan);
+    expect(graph.nodes.find(({ id }) => id === 'Mcp_tool')).toMatchObject({
+      type: 'OPERATION_NODE',
+      parentId: 'Container',
+      data: { subgraphType: 'MCP_CLIENT' },
+    });
+    expect(graph.edges.find(({ target }) => target === 'Mcp_tool')).toMatchObject({ type: 'ONLY_EDGE' });
+    expect(plan).toEqual(before);
+  });
+
+  it.each([false, true])('shares native Agent handoff topology with the live renderer (additional tool action: %s)', async (hasAction) => {
+    const plan = planFor({
+      Container: {
+        type: 'Agent',
+        runAfter: {},
+        tools: {
+          Transfer: {
+            actions: {
+              ...(hasAction ? { Prepare: { type: 'Compose', inputs: 'prepare', runAfter: {} } } : {}),
+              Handoff: { type: 'AgentHandoff', inputs: { name: 'Destination' }, runAfter: hasAction ? { Prepare: ['Succeeded'] } : {} },
+            },
+          },
+        },
+      },
+      Destination: { type: 'Agent', runAfter: {}, tools: {} },
+    });
+    const before = structuredClone(plan);
+    const graph = await getWorkflowExtractionPreview(plan);
+    const handoff = graph.edges.find(({ type }) => type === 'HANDOFF_EDGE');
+    expect(handoff).toMatchObject({
+      source: 'Container',
+      target: 'Destination',
+      data: { elkEdge: { sections: expect.any(Array) } },
+    });
+    expect(graph.nodes.some(({ id }) => id === 'Transfer')).toBe(hasAction);
+    expect(graph.nodes.some(({ id }) => id === 'Handoff')).toBe(hasAction);
+    expect(graph.nodes.every(({ width, height }) => width! > 0 && height! > 0)).toBe(true);
+    for (const edge of graph.edges) {
+      expect(graph.nodes.some(({ id }) => id === edge.source)).toBe(true);
+      expect(graph.nodes.some(({ id }) => id === edge.target)).toBe(true);
+    }
+    expect(plan).toEqual(before);
   });
 });

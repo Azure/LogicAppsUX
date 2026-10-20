@@ -25,7 +25,8 @@ import {
   tokens,
 } from '@fluentui/react-components';
 import { ArrowExport24Regular } from '@fluentui/react-icons';
-import { ProgressStepper, WorkflowPreview, type WorkflowPreviewProps } from '@microsoft/designer-ui';
+import { ProgressStepper } from '@microsoft/designer-ui';
+import { ReadOnlyWorkflowGraph, type ReadOnlyWorkflowGraphData } from '../../ReadOnlyWorkflowGraph';
 import { getRecordEntry, guid } from '@microsoft/logic-apps-shared';
 import type { Workflow } from '../../../common/models/workflow';
 import type {
@@ -314,8 +315,9 @@ export const WorkflowExtractionDialog = () => {
   const [progress, setProgress] = useState<ExtractionProgress>();
   const [previewLayout, setPreviewLayout] = useState<{
     plan: WorkflowExtractionPlan;
-    graph?: Pick<WorkflowPreviewProps, 'nodes' | 'edges'>;
+    graph?: ReadOnlyWorkflowGraphData;
     error?: string;
+    settling?: boolean;
   }>();
   const submitting = useRef(false);
   const request = useRef<WorkflowExtractionRequest>();
@@ -438,7 +440,15 @@ export const WorkflowExtractionDialog = () => {
     }
   };
   const confirm = async () => {
-    if (submitting.current || !service || !preview.plan || !previewGraph || !source || (nameError && !request.current)) {
+    if (
+      submitting.current ||
+      !service ||
+      !preview.plan ||
+      !previewGraph ||
+      previewLayout?.settling ||
+      !source ||
+      (nameError && !request.current)
+    ) {
       return;
     }
     submitting.current = true;
@@ -532,8 +542,28 @@ export const WorkflowExtractionDialog = () => {
                   })}
                 </Text>
                 {previewGraph ? (
-                  <WorkflowPreview
-                    {...previewGraph}
+                  <ReadOnlyWorkflowGraph
+                    graph={previewGraph}
+                    onLayoutStateChange={({ loading, error }) =>
+                      setPreviewLayout((current) => {
+                        if (current?.graph !== previewGraph || current.plan !== preview.plan) {
+                          return current;
+                        }
+                        return error
+                          ? {
+                              plan: current.plan,
+                              error: intl.formatMessage(
+                                {
+                                  defaultMessage: 'The child workflow preview could not be rendered: {reason}',
+                                  id: 'FgEWPi',
+                                  description: 'Workflow extraction preview graph layout failure',
+                                },
+                                { reason: error instanceof Error ? error.message : String(error) }
+                              ),
+                            }
+                          : { ...current, settling: loading };
+                      })
+                    }
                     className={styles.canvas}
                     ariaLabel={intl.formatMessage({
                       defaultMessage: 'Child workflow preview',
@@ -651,7 +681,9 @@ export const WorkflowExtractionDialog = () => {
                   <Button
                     appearance="primary"
                     onClick={confirm}
-                    disabled={busy || loading || !preview.plan || !previewGraph || (!!nameError && !request.current)}
+                    disabled={
+                      busy || loading || previewLayout?.settling || !preview.plan || !previewGraph || (!!nameError && !request.current)
+                    }
                   >
                     {result
                       ? intl.formatMessage({

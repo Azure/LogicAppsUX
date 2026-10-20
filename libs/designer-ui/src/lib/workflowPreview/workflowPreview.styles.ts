@@ -35,31 +35,6 @@ export const useWorkflowPreviewStyles = makeStyles({
     ...workflowCardStyles.root,
     pointerEvents: 'auto',
   },
-  scope: {
-    color: tokens.colorNeutralForegroundOnBrand,
-  },
-  scopeLabel: {
-    color: 'inherit',
-  },
-  branch: {
-    justifyContent: 'center',
-    textAlign: 'center',
-    backgroundColor: tokens.colorNeutralBackgroundInverted,
-    color: tokens.colorNeutralForegroundInverted,
-  },
-  trueBranch: {
-    backgroundColor: tokens.colorPaletteGreenBackground3,
-    color: tokens.colorNeutralForegroundOnBrand,
-  },
-  falseBranch: {
-    backgroundColor: tokens.colorPaletteRedBackground3,
-    color: tokens.colorNeutralForegroundOnBrand,
-  },
-  container: {
-    width: '100%',
-    height: '100%',
-    pointerEvents: 'none',
-  },
   keyboardNavigation: {
     '&:focus-visible': {
       outline: `2px solid ${tokens.colorStrokeFocus2}`,

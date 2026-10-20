@@ -5,7 +5,7 @@ import { configureStore, type UnknownAction } from '@reduxjs/toolkit';
 import { InitLoggerService } from '@microsoft/logic-apps-shared';
 import '@testing-library/jest-dom/vitest';
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
-import type { WorkflowPreviewNode } from '@microsoft/designer-ui';
+import type { ReadOnlyWorkflowGraphData } from '../../../ReadOnlyWorkflowGraph';
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import { IntlProvider } from 'react-intl';
@@ -31,6 +31,8 @@ import { buildWorkflowExtractionPlan } from '../../../../core/utils/workflowExtr
 import { getWorkflowExtractionSelection } from '../../../../core/utils/workflowExtractionSelection';
 import { WorkflowExtractionAction, WorkflowExtractionDialog } from '../workflowExtraction';
 import { getWorkflowExtractionPreview } from '../workflowExtractionPreview';
+
+const nativePreview = vi.hoisted(() => ({ render: vi.fn() }));
 
 vi.mock('@fluentui/react-components', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@fluentui/react-components')>();
@@ -139,15 +141,22 @@ vi.mock('@microsoft/designer-ui', async () => {
   const { ProgressStepper } = await import('../../../../../../../designer-ui/src/lib/progressstepper');
   return {
     ProgressStepper,
-    WorkflowPreview: ({ ariaLabel, nodes }: { ariaLabel: string; nodes: WorkflowPreviewNode[] }) => (
-      <div role="img" aria-label={ariaLabel}>
-        {nodes.map(({ id, label }) => (
-          <span key={id}>{label}</span>
-        ))}
-      </div>
-    ),
   };
 });
+
+vi.mock('../../../ReadOnlyWorkflowGraph', () => ({
+  ReadOnlyWorkflowGraph: (props: { ariaLabel: string; graph: ReadOnlyWorkflowGraphData }) => {
+    nativePreview.render(props);
+    const { ariaLabel, graph } = props;
+    return (
+      <div role="img" aria-label={ariaLabel}>
+        {graph.nodes.map(({ id, data }) => (
+          <span key={id}>{data.label}</span>
+        ))}
+      </div>
+    );
+  },
+}));
 
 vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@microsoft/logic-apps-shared')>();
@@ -680,13 +689,13 @@ describe('WorkflowExtractionDialog', () => {
     expect(screen.getByRole('button', { name: 'Confirm' })).toBeDisabled();
     fireEvent.change(screen.getByRole('textbox', { name: 'Workflow name' }), { target: { value: 'Updated_workflow' } });
     await act(async () => {
-      latest.resolve({ nodes: [{ id: 'latest', label: 'Latest nested graph', position: { x: 0, y: 0 } }], edges: [] });
+      latest.resolve({ nodes: [{ id: 'latest', data: { label: 'Latest nested graph' }, position: { x: 0, y: 0 } }], edges: [] });
       await latest.promise;
     });
     expect(screen.getByText('Latest nested graph')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Confirm' })).toBeEnabled();
     await act(async () => {
-      first.resolve({ nodes: [{ id: 'stale', label: 'Stale nested graph', position: { x: 0, y: 0 } }], edges: [] });
+      first.resolve({ nodes: [{ id: 'stale', data: { label: 'Stale nested graph' }, position: { x: 0, y: 0 } }], edges: [] });
       await first.promise;
     });
     expect(screen.queryByText('Stale nested graph')).not.toBeInTheDocument();
@@ -699,6 +708,17 @@ describe('WorkflowExtractionDialog', () => {
     expect(mockCommitWorkflowExtraction).not.toHaveBeenCalled();
   });
 
+  it('blocks confirmation during native-size layout and surfaces its failure without invoking extraction', async () => {
+    await renderPreparedDialog();
+    const onLayoutStateChange = nativePreview.render.mock.lastCall![0].onLayoutStateChange;
+    await act(async () => onLayoutStateChange({ loading: true }));
+    expect(screen.getByRole('button', { name: 'Confirm' })).toBeDisabled();
+    await act(async () => onLayoutStateChange({ loading: false, error: new Error('Native layout failed') }));
+    expect(screen.getByText('The child workflow preview could not be rendered: Native layout failed')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Confirm' })).toBeDisabled();
+    expect(mockCommitWorkflowExtraction).not.toHaveBeenCalled();
+  });
+
   it('discards a pending layout after unmount without changing the original editor or invoking extraction', async () => {
     const layout = createDeferred<Awaited<ReturnType<typeof getWorkflowExtractionPreview>>>();
     mockGetWorkflowExtractionPreview.mockReturnValue(layout.promise);
@@ -706,7 +726,7 @@ describe('WorkflowExtractionDialog', () => {
     const before = store.getState();
     unmount();
     await act(async () => {
-      layout.resolve({ nodes: [{ id: 'late', label: 'Late graph', position: { x: 0, y: 0 } }], edges: [] });
+      layout.resolve({ nodes: [{ id: 'late', data: { label: 'Late graph' }, position: { x: 0, y: 0 } }], edges: [] });
       await layout.promise;
     });
     expect(screen.queryByText('Late graph')).not.toBeInTheDocument();

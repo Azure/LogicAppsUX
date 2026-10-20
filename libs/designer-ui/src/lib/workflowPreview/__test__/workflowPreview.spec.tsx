@@ -5,7 +5,7 @@ import type { ComponentType, PropsWithChildren } from 'react';
 import * as Intl from 'react-intl';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { WORKFLOW_PREVIEW_NODE_HEIGHT, WORKFLOW_PREVIEW_NODE_WIDTH, WorkflowPreview } from '..';
-import type { WorkflowPreviewEdge, WorkflowPreviewNode } from '..';
+import type { WorkflowPreviewEdge, WorkflowPreviewNode, WorkflowPreviewGraph } from '..';
 import { workflowCardStyles } from '../../card/workflowCardStyles';
 
 const mocks = vi.hoisted(() => ({
@@ -293,51 +293,69 @@ describe('WorkflowPreview', () => {
   });
 
   it('renders nested boundaries and branch headers while keeping every graph element inert', () => {
-    const nestedNodes: WorkflowPreviewNode[] = [
-      nodes[0],
-      { id: 'condition', label: 'Condition', kind: 'container', width: 520, height: 300, position: { x: 0, y: 100 } },
+    const nestedNodes: WorkflowPreviewGraph['nodes'] = [
+      { id: 'condition', type: 'container', data: { label: 'Condition' }, width: 520, height: 300, position: { x: 0, y: 100 }, zIndex: 0 },
       {
-        id: 'header',
-        label: 'Condition',
-        kind: 'scope',
-        brandColor: '#484F58',
+        id: 'true',
+        type: 'container',
+        data: { label: 'True branch' },
         parentId: 'condition',
-        width: 200,
-        height: 60,
-        position: { x: 160, y: 0 },
+        width: 240,
+        height: 200,
+        position: { x: 20, y: 80 },
+        zIndex: 0,
       },
-      { id: 'true', label: 'True branch', kind: 'container', parentId: 'condition', width: 240, height: 200, position: { x: 20, y: 80 } },
       {
         id: 'true-header',
-        label: 'True',
-        kind: 'branch',
-        branchType: 'true',
+        type: 'branch',
+        data: { label: 'True' },
+        parentId: 'true',
+        width: 120,
+        height: 32,
+        position: { x: 60, y: 0 },
+        zIndex: 4,
+      },
+      {
+        id: 'true-action',
+        type: 'operation',
+        data: { label: 'True action' },
         parentId: 'true',
         width: 200,
-        height: 60,
-        position: { x: 20, y: 0 },
+        height: 44,
+        position: { x: 20, y: 72 },
+        zIndex: 4,
       },
-      { id: 'true-action', label: 'True action', parentId: 'true', height: 60, position: { x: 20, y: 100 } },
       {
         id: 'false-header',
-        label: 'False',
-        kind: 'branch',
-        branchType: 'false',
+        type: 'branch',
+        data: { label: 'False' },
         parentId: 'condition',
-        height: 60,
+        width: 120,
+        height: 32,
         position: { x: 280, y: 80 },
+        zIndex: 4,
       },
     ];
     const before = structuredClone(nestedNodes);
-    render(<WorkflowPreview nodes={nestedNodes} edges={[{ id: 'branch-edge', source: 'true-header', target: 'true-action' }]} />);
+    const Container = ({ data }: NodeProps) => <div role="group" aria-label={String(data.label)} />;
+    const Card = ({ data }: NodeProps) => <span>{String(data.label)}</span>;
+    const graph: WorkflowPreviewGraph = {
+      nodes: nestedNodes,
+      edges: [
+        { id: 'branch-edge', source: 'true-header', target: 'true-action', type: 'native', data: { statuses: ['Failed'] }, zIndex: 3 },
+      ],
+      nodeTypes: { container: Container, branch: Card, operation: Card },
+      edgeTypes: { native: () => null },
+    };
+    render(<WorkflowPreview graph={graph} />);
     expect(screen.getByRole('group', { name: 'Condition' })).toBeInTheDocument();
     expect(screen.getByRole('group', { name: 'True branch' })).toBeInTheDocument();
     expect(screen.getByText('True')).toBeInTheDocument();
     expect(screen.getByText('False')).toBeInTheDocument();
     expect(screen.getByText('True action')).toBeInTheDocument();
-    expect(flowProps().nodes?.find(({ id }) => id === 'true-action')).toMatchObject({ parentId: 'true', height: 60 });
+    expect(flowProps().nodes?.find(({ id }) => id === 'true-action')).toMatchObject({ parentId: 'true', height: 44 });
     expect(flowProps().nodes?.find(({ id }) => id === 'condition')).toMatchObject({
-      type: 'workflowPreviewContainer',
+      type: 'container',
       width: 520,
       height: 300,
     });
@@ -345,6 +363,10 @@ describe('WorkflowPreview', () => {
       expect(node).toMatchObject({ draggable: false, connectable: false, selectable: false, focusable: false, deletable: false });
     }
     expect(flowProps().edges?.[0]).toMatchObject({ selectable: false, focusable: false, reconnectable: false, zIndex: 3 });
+    expect(flowProps().nodeTypes).toBe(graph.nodeTypes);
+    expect(flowProps().edgeTypes).toBe(graph.edgeTypes);
+    expect(flowProps().edges?.[0]).toMatchObject({ type: 'native', data: { statuses: ['Failed'] } });
+    expect(flowProps().edges?.[0].markerEnd).toBeUndefined();
     expect(flowProps().nodes?.find(({ id }) => id === 'true-action')).toMatchObject({ zIndex: 4 });
     expect(nestedNodes).toEqual(before);
   });
@@ -368,10 +390,26 @@ describe('WorkflowPreview', () => {
     expect(mocks.viewport.setViewport).not.toHaveBeenCalled();
   });
 
+  it('reports only private native node dimensions, without exposing editor change callbacks', () => {
+    const onNodeSizesChange = vi.fn();
+    render(
+      <WorkflowPreview
+        graph={{
+          nodes: [{ id: 'request', type: 'native', data: { label: 'Request' }, position: { x: 0, y: 0 } }],
+          edges: [],
+          nodeTypes: { native: ({ data }: NodeProps) => <span>{String(data.label)}</span> },
+          edgeTypes: {},
+          onNodeSizesChange,
+        }}
+      />
+    );
+    expect(onNodeSizesChange).toHaveBeenCalledExactlyOnceWith({ request: { width: 200, height: 44 } });
+    expect(Object.keys(flowProps()).filter((key) => key.startsWith('on'))).toEqual(['onKeyDown']);
+  });
+
   it('refits changed container dimensions in its private viewport and cancels work on unmount', () => {
     const container: WorkflowPreviewNode = {
       id: 'condition',
-      kind: 'container',
       label: 'Condition',
       position: { x: 0, y: 100 },
       width: 520,
