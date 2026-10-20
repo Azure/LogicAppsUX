@@ -18,19 +18,26 @@ const closeToolboxInDarkMode = async (page: Page) => {
   await page.getByRole('button', { name: 'Toolbox' }).click();
 };
 
+const fitWorkflowToCard = async (page: Page, cardId: string) => {
+  await expect(async () => {
+    await page.getByLabel('Zoom view to fit', { exact: true }).click();
+    await expect(page.getByTestId(cardId)).toBeVisible({ timeout: 1_000 });
+  }).toPass({ timeout: 20_000 });
+};
+
 const waitForLoadedDesigner = async (page: Page) => {
-  await expect(page.getByTestId('card-consume_result')).toBeVisible();
   await expect
     .poll(() =>
       page.evaluate(
         () =>
-          (window as Window & { DesignerStoreV2: { getState(): RootState } }).DesignerStoreV2.getState().operations.loadStatus
+          (window as Window & { DesignerStoreV2?: { getState(): RootState } }).DesignerStoreV2?.getState().operations.loadStatus
             .nodesAndDynamicDataInitialized
       )
     )
     .toBe(true);
+  await expect(page.getByTestId('card-request')).toBeVisible();
   await closeToolboxInDarkMode(page);
-  await page.getByLabel('Zoom view to fit', { exact: true }).click();
+  await fitWorkflowToCard(page, 'card-consume_result');
 };
 
 test.describe('Multi-action clipboard integrity', { tag: '@mock' }, () => {
@@ -84,8 +91,7 @@ test.describe('Multi-action clipboard integrity', { tag: '@mock' }, () => {
     }
     await page.getByTestId('msla-plus-button-consume_result-undefined').click();
     await page.getByTestId('msla-paste-button-consume_result-undefined').click();
-    await page.getByLabel('Zoom view to fit', { exact: true }).click();
-    await expect(page.getByTestId('card-consume_result_copy')).toBeVisible();
+    await fitWorkflowToCard(page, 'card-consume_result_copy');
     const copied = await getSerializedWorkflowFromStateV2(page);
     expect(copied.definition.actions['Build_result-copy'].inputs.message).toBe("@outputs('Build_message-copy')");
     expect(copied.definition.actions['Build_result-copy'].inputs.customer).toBe("@outputs('Read_customer')");
@@ -94,8 +100,8 @@ test.describe('Multi-action clipboard integrity', { tag: '@mock' }, () => {
     await expect(page.getByTestId('card-consume_result_copy')).toHaveCount(0);
     await expect(page.getByTestId('card-build_result_copy')).toHaveCount(0);
     await page.getByRole('button', { name: 'Redo', exact: true }).click();
-    await page.getByLabel('Zoom view to fit', { exact: true }).click();
-    await expect(page.getByTestId('card-consume_result_copy')).toBeVisible();
+    await fitWorkflowToCard(page, 'card-consume_result_copy');
+    expect(await getSerializedWorkflowFromStateV2(page)).toEqual(copied);
   });
 
   test('rejects the reported empty-data clipboard through the paste menu without changing the workflow', async ({ page }) => {
