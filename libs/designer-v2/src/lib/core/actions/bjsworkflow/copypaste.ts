@@ -94,13 +94,16 @@ type CopyOperationsPayload = {
 const resolveCopyNodeId = (state: RootState, id: string): string => {
   const normalized = removeIdTag(id);
   const ids = Object.keys(state.workflow.operations);
-  const original = ids.includes(normalized) ? normalized : ids.find((key) => state.workflow.idReplacements[key] === normalized);
+  const original = ids.includes(normalized)
+    ? normalized
+    : ids.find((key) => getRecordEntry(state.workflow.idReplacements, key) === normalized);
   if (original) {
     return original;
   }
   const matches = ids.filter(
     (key) =>
-      key.toLowerCase() === normalized.toLowerCase() || state.workflow.idReplacements[key]?.toLowerCase() === normalized.toLowerCase()
+      key.toLowerCase() === normalized.toLowerCase() ||
+      getRecordEntry(state.workflow.idReplacements, key)?.toLowerCase() === normalized.toLowerCase()
   );
   if (matches.length !== 1) {
     throw clipboardError(true);
@@ -111,7 +114,7 @@ const resolveCopyNodeId = (state: RootState, id: string): string => {
 const resolveSerializedCopyNodeId = (state: RootState, id: string): string => {
   const normalized = removeIdTag(id).toLowerCase();
   const matches = Object.keys(state.workflow.operations).filter(
-    (original) => (state.workflow.idReplacements[original] ?? original).toLowerCase() === normalized
+    (original) => (getRecordEntry(state.workflow.idReplacements, original) ?? original).toLowerCase() === normalized
   );
   if (matches.length !== 1) {
     throw clipboardError(true);
@@ -135,6 +138,7 @@ const assertCopyReady = (state: RootState, nodeId: string): void => {
 const buildActionClipboardEntry = (state: RootState, selectedId: string): ActionClipboardEntry => {
   const nodeId = resolveCopyNodeId(state, selectedId);
   const newNodeId = createIdCopy(nodeId);
+  const sourceNodeId = getRecordEntry(state.workflow.idReplacements, nodeId);
   const nodeData = getNodeOperationData(state.operations, nodeId);
   const nodeOperationInfo = getRecordEntry(state.operations.operationInfo, nodeId);
   if (
@@ -168,7 +172,7 @@ const buildActionClipboardEntry = (state: RootState, selectedId: string): Action
     nodeOperationInfo,
     nodeConnectionData,
     nodeComment,
-    ...(state.workflow.idReplacements[nodeId] ? { sourceNodeId: state.workflow.idReplacements[nodeId] } : {}),
+    ...(sourceNodeId ? { sourceNodeId } : {}),
     isScopeNode: false as const,
   };
   if (!isClipboardEntry(entry)) {
@@ -197,7 +201,8 @@ const buildScopeClipboardEntry = async (state: RootState, scopeNodeId: string): 
     ignoreNonCriticalErrors: true,
   });
 
-  const serializedScopeId = state.workflow.idReplacements[normalizedScopeId] ?? normalizedScopeId;
+  const sourceNodeId = getRecordEntry(state.workflow.idReplacements, normalizedScopeId);
+  const serializedScopeId = sourceNodeId ?? normalizedScopeId;
   const allActionNames = getAllActionNames({ [serializedScopeId]: serializedOperation as ActionDefinition });
   for (const name of allActionNames) {
     const originalId = resolveSerializedCopyNodeId(state, name);
@@ -232,7 +237,7 @@ const buildScopeClipboardEntry = async (state: RootState, scopeNodeId: string): 
     serializedOperation: serializedOperation as ActionDefinition,
     allConnectionData,
     staticResults,
-    ...(state.workflow.idReplacements[normalizedScopeId] ? { sourceNodeId: state.workflow.idReplacements[normalizedScopeId] } : {}),
+    ...(sourceNodeId ? { sourceNodeId } : {}),
     isScopeNode: true as const,
   };
   if (!isClipboardEntry(entry)) {
@@ -867,7 +872,7 @@ const replaceIdsOfExistingNodes = (nodesMetadata: Record<string, any>, idReplace
   const newNodesMetadata: NodesMetadata = {};
   Object.keys(nodesMetadata).forEach((key) => {
     const nodeMetadata = nodesMetadata[key];
-    const newNodeId = idReplacements[key] ?? key;
+    const newNodeId = getRecordEntry(idReplacements, key) ?? key;
     newNodesMetadata[newNodeId] = nodeMetadata;
   });
   return newNodesMetadata;

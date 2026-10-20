@@ -34,7 +34,15 @@ import { updateParameterAndDependencies } from '../../../utils/parameters/helper
 import * as parameterHelpers from '../../../utils/parameters/helper';
 import * as dynamicData from '../../../utils/parameters/dynamicdata';
 import { retrieveClipboardData } from '../../../utils/clipboard';
-import { copyOperation, copyOperations, cutOperations, duplicateOperations, pasteClipboard, pasteOperation } from '../copypaste';
+import {
+  copyOperation,
+  copyOperations,
+  copyScopeOperation,
+  cutOperations,
+  duplicateOperations,
+  pasteClipboard,
+  pasteOperation,
+} from '../copypaste';
 import { initializeDynamicDataInNodes, initializeOperationMetadata } from '../operationdeserializer';
 import { serializeOperation } from '../serializer';
 import { onRedoClick, onUndoClick } from '../undoRedo';
@@ -207,6 +215,44 @@ describe('clipboard integrity with real designer initialization and reducers', (
     });
     await store.dispatch(copyOperation({ nodeId: 'compose' })).unwrap();
     expect(readClipboard().nodeData.nodeInputs).toEqual(store.getState().operations.inputParameters.Compose);
+  });
+
+  it.each(['constructor', 'toString'])('copies, duplicates and cuts a prototype-named action: %s', async (name) => {
+    const store = await prepareSource({
+      triggers: {},
+      actions: { [name]: { type: 'Compose', inputs: 'configured action', runAfter: {} } },
+    });
+    await store.dispatch(copyOperation({ nodeId: name })).unwrap();
+    expect(readClipboard().sourceNodeId).toBeUndefined();
+    await store.dispatch(copyOperations({ nodeIds: [name.toUpperCase()] })).unwrap();
+    expect(readClipboard().nodes).toHaveLength(1);
+    await store.dispatch(duplicateOperations({ nodeIds: [name] })).unwrap();
+    expect(await serializeOperation(store.getState(), `${name}-copy`)).toMatchObject({ inputs: 'configured action' });
+    await store.dispatch(cutOperations({ nodeIds: [name.toUpperCase()] })).unwrap();
+    expect(Object.hasOwn(store.getState().workflow.operations, name)).toBe(false);
+    await store.dispatch(onUndoClick()).unwrap();
+    expect(await serializeOperation(store.getState(), name)).toMatchObject({ inputs: 'configured action' });
+  });
+
+  it.each(['constructor', 'toString'])('copies, duplicates and cuts a prototype-named container: %s', async (name) => {
+    const store = await prepareSource({
+      triggers: {},
+      actions: {
+        [name]: { type: 'Scope', actions: { Nested: { type: 'Compose', inputs: 'configured child', runAfter: {} } }, runAfter: {} },
+      },
+    });
+    await store.dispatch(copyScopeOperation({ nodeId: name })).unwrap();
+    expect(readClipboard().sourceNodeId).toBeUndefined();
+    await store.dispatch(copyOperations({ nodeIds: [name.toUpperCase(), 'Nested'] })).unwrap();
+    expect(readClipboard().nodes).toHaveLength(1);
+    await store.dispatch(duplicateOperations({ nodeIds: [name] })).unwrap();
+    expect(await serializeOperation(store.getState(), `${name}-copy`)).toMatchObject({
+      actions: { Nested_1: { inputs: 'configured child' } },
+    });
+    await store.dispatch(cutOperations({ nodeIds: [name.toUpperCase()] })).unwrap();
+    expect(Object.hasOwn(store.getState().workflow.operations, name)).toBe(false);
+    await store.dispatch(onUndoClick()).unwrap();
+    expect(await serializeOperation(store.getState(), name)).toMatchObject({ actions: { Nested: { inputs: 'configured child' } } });
   });
 
   it('does not cut originals when source data is unavailable or native clipboard writing rejects', async () => {
