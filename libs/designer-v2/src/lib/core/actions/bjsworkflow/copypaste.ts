@@ -158,23 +158,7 @@ const getScopeOperationNames = (state: RootState, scopeId: string): Map<string, 
   return names;
 };
 
-const assertCopyReady = (state: RootState, nodeId: string): void => {
-  const data = getNodeOperationData(state.operations, nodeId);
-  if (
-    !hasCompleteActionData(data) ||
-    !state.operations.operationInfo[nodeId] ||
-    (data.nodeInputs.dynamicLoadStatus !== undefined &&
-      data.nodeInputs.dynamicLoadStatus !== 'succeeded' &&
-      !data.nodeInputs.preservedConnectionInputs)
-  ) {
-    throw clipboardError(true);
-  }
-};
-
-const buildActionClipboardEntry = (state: RootState, selectedId: string): ActionClipboardEntry => {
-  const nodeId = resolveCopyNodeId(state, selectedId);
-  const newNodeId = createIdCopy(nodeId);
-  const sourceNodeId = getRecordEntry(state.workflow.idReplacements, nodeId);
+const getCopyReadyData = (state: RootState, nodeId: string): { nodeData: Omit<NodeData, 'id'>; nodeOperationInfo: NodeOperation } => {
   const nodeData = getNodeOperationData(state.operations, nodeId);
   const nodeOperationInfo = getRecordEntry(state.operations.operationInfo, nodeId);
   if (
@@ -186,6 +170,14 @@ const buildActionClipboardEntry = (state: RootState, selectedId: string): Action
   ) {
     throw clipboardError(true);
   }
+  return { nodeData, nodeOperationInfo };
+};
+
+const buildActionClipboardEntry = (state: RootState, selectedId: string): ActionClipboardEntry => {
+  const nodeId = resolveCopyNodeId(state, selectedId);
+  const newNodeId = createIdCopy(nodeId);
+  const sourceNodeId = getRecordEntry(state.workflow.idReplacements, nodeId);
+  const { nodeData, nodeOperationInfo } = getCopyReadyData(state, nodeId);
   const nodeComment = getRecordEntry(state.workflow.operations, nodeId)?.description;
   const mapping = getRecordEntry(state.connections.connectionsMapping, nodeId);
   const nodeConnectionData = isExpressionConnectionMapping(mapping)
@@ -220,10 +212,10 @@ const buildActionClipboardEntry = (state: RootState, selectedId: string): Action
 const buildScopeClipboardEntry = async (state: RootState, scopeNodeId: string): Promise<ScopeClipboardEntry> => {
   const normalizedScopeId = resolveCopyNodeId(state, scopeNodeId);
   const newNodeId = createIdCopy(normalizedScopeId);
-  assertCopyReady(state, normalizedScopeId);
+  getCopyReadyData(state, normalizedScopeId);
   const operationNames = getScopeOperationNames(state, normalizedScopeId);
   for (const id of operationNames.keys()) {
-    assertCopyReady(state, id);
+    getCopyReadyData(state, id);
   }
 
   const serializedOperation = await serializeOperation(state, normalizedScopeId, {
@@ -271,30 +263,20 @@ const buildScopeClipboardEntry = async (state: RootState, scopeNodeId: string): 
 
 const writeClipboardItem = async (clipboardItem: string) => {
   const intl = getIntl();
-  if (navigator.clipboard && typeof navigator.clipboard.readText === 'function') {
-    try {
+  try {
+    if (navigator.clipboard && typeof navigator.clipboard.readText === 'function') {
       await navigator.clipboard.writeText(clipboardItem);
-    } catch {
-      throw new Error(
-        intl.formatMessage({
-          defaultMessage: 'The actions could not be written to the clipboard. Allow clipboard access and try again. No actions were cut.',
-          id: '21wfZu',
-          description: 'Error when clipboard writing fails during copy or cut',
-        })
-      );
-    }
-  } else {
-    try {
+    } else {
       localStorage.setItem(LOCAL_STORAGE_KEYS.CLIPBOARD, clipboardItem);
-    } catch {
-      throw new Error(
-        intl.formatMessage({
-          defaultMessage: 'The actions could not be written to the clipboard. Allow clipboard access and try again. No actions were cut.',
-          id: '21wfZu',
-          description: 'Error when clipboard writing fails during copy or cut',
-        })
-      );
     }
+  } catch {
+    throw new Error(
+      intl.formatMessage({
+        defaultMessage: 'The actions could not be written to the clipboard. Allow clipboard access and try again. No actions were cut.',
+        id: '21wfZu',
+        description: 'Error when clipboard writing fails during copy or cut',
+      })
+    );
   }
 };
 
@@ -302,7 +284,7 @@ const writeClipboardItem = async (clipboardItem: string) => {
 // pasted together. Scope nodes are serialized in full; plain actions copy their operation data.
 const buildOperationsClipboard = async (state: RootState, nodeIds: string[]) => {
   const sourceIds = [...new Set(nodeIds.map((id) => resolveCopyNodeId(state, id)))];
-  sourceIds.forEach((id) => assertCopyReady(state, id));
+  sourceIds.forEach((id) => getCopyReadyData(state, id));
 
   // First pass: identify scope nodes and collect all action names nested inside them.
   // Children already embedded in a scope's serialized definition should not be copied again.
@@ -587,30 +569,28 @@ const pasteScopeInDraft = createAsyncThunk('pasteScopeInDraft', async (payload: 
   const upstreamOutputTokens = filterRecordByArray(state.tokens.outputTokens, extendedIds);
   const triggerId = getTriggerNodeId(state.workflow);
 
-  await Promise.all([
-    initializeOperationMetadata(
-      {
-        graph: nodes[0],
-        actionData: actions,
-        nodesMetadata: actionNodesMetadata,
-        staticResults: staticResults,
-      },
-      connectionReference,
-      workflowParameters,
-      {},
-      workflowKind,
-      dispatch,
-      {
-        ...pasteParams,
-        // Definitions already reference final IDs. Keep scope-token binding without renaming
-        // those references a second time when old and new action names overlap.
-        renamedNodes: Object.fromEntries(remappedActionIds.map((id) => [id, id])),
-        existingOutputTokens: upstreamOutputTokens,
-        rootTriggerId: triggerId,
-      },
-      true /* awaitResultSchemas */
-    ),
-  ]);
+  await initializeOperationMetadata(
+    {
+      graph: nodes[0],
+      actionData: actions,
+      nodesMetadata: actionNodesMetadata,
+      staticResults: staticResults,
+    },
+    connectionReference,
+    workflowParameters,
+    {},
+    workflowKind,
+    dispatch,
+    {
+      ...pasteParams,
+      // Definitions already reference final IDs. Keep scope-token binding without renaming
+      // those references a second time when old and new action names overlap.
+      renamedNodes: Object.fromEntries(remappedActionIds.map((id) => [id, id])),
+      existingOutputTokens: upstreamOutputTokens,
+      rootTriggerId: triggerId,
+    },
+    true /* awaitResultSchemas */
+  );
   await initializeDynamicDataInNodes(getState as () => RootState, dispatch, [
     ...new Set([...pasteParams.pasteActionNames, ...Object.keys(actions)]),
   ]);
@@ -913,8 +893,8 @@ export const pasteScopeOperation = createAsyncThunk('pasteScopeOperation', async
   return ids[0];
 });
 
-const replaceIdsOfExistingNodes = (nodesMetadata: Record<string, any>, idReplacements: Record<string, string>): Record<string, any> => {
-  const newNodesMetadata: NodesMetadata = {};
+const replaceIdsOfExistingNodes = <T>(nodesMetadata: Record<string, T>, idReplacements: Record<string, string>): Record<string, T> => {
+  const newNodesMetadata: Record<string, T> = {};
   Object.keys(nodesMetadata).forEach((key) => {
     const nodeMetadata = nodesMetadata[key];
     const newNodeId = getRecordEntry(idReplacements, key) ?? key;

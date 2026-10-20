@@ -1,6 +1,6 @@
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector, useStore } from 'react-redux';
-import { useIntl } from 'react-intl';
+import { useIntl, type IntlShape } from 'react-intl';
 import {
   Accordion,
   AccordionHeader,
@@ -160,6 +160,16 @@ const getExtractionErrorMessage = (cause: unknown, fallback: string): string => 
   const message = cause instanceof Error ? cause.message : cause === null || cause === undefined ? '' : String(cause);
   return message.trim() ? message : fallback;
 };
+
+const formatPreviewLayoutError = (intl: IntlShape, cause: unknown): string =>
+  intl.formatMessage(
+    {
+      defaultMessage: 'The child workflow preview could not be rendered: {reason}',
+      id: 'FgEWPi',
+      description: 'Workflow extraction preview graph layout failure',
+    },
+    { reason: cause instanceof Error ? cause.message : String(cause) }
+  );
 
 const ExtractionStepper = ({ progress }: { progress: ExtractionProgress }) => {
   const intl = useIntl();
@@ -401,14 +411,7 @@ export const WorkflowExtractionDialog = () => {
         if (current) {
           setPreviewLayout({
             plan,
-            error: intl.formatMessage(
-              {
-                defaultMessage: 'The child workflow preview could not be rendered: {reason}',
-                id: 'FgEWPi',
-                description: 'Workflow extraction preview graph layout failure',
-              },
-              { reason: cause instanceof Error ? cause.message : String(cause) }
-            ),
+            error: formatPreviewLayoutError(intl, cause),
           });
         }
       });
@@ -552,14 +555,7 @@ export const WorkflowExtractionDialog = () => {
                         return error
                           ? {
                               plan: current.plan,
-                              error: intl.formatMessage(
-                                {
-                                  defaultMessage: 'The child workflow preview could not be rendered: {reason}',
-                                  id: 'FgEWPi',
-                                  description: 'Workflow extraction preview graph layout failure',
-                                },
-                                { reason: error instanceof Error ? error.message : String(error) }
-                              ),
+                              error: formatPreviewLayoutError(intl, error),
                             }
                           : { ...current, settling: loading };
                       })

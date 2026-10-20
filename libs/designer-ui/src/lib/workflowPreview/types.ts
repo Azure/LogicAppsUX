@@ -10,11 +10,6 @@ export interface WorkflowPreviewNode {
   position: { x: number; y: number };
   iconUri?: string;
   brandColor?: string;
-  /** Hierarchical positions are parent-relative; containers must precede their children. */
-  parentId?: string;
-  width?: number;
-  /** Omit for natural card height. Laid-out containers require explicit width and height. */
-  height?: number;
 }
 
 export interface WorkflowPreviewEdge {

@@ -122,7 +122,8 @@ vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => ({
   WorkflowService: () => ({ resubmitWorkflow: mocks.resubmit }),
   HostService: () => (mocks.hostAvailable ? { openMonitorView: mocks.monitorAvailable ? mocks.monitor : undefined } : undefined),
 }));
-vi.mock('@microsoft/designer-ui', () => ({
+vi.mock('@microsoft/designer-ui', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@microsoft/designer-ui')>()),
   PanelScope: { CardLevel: 'CARD_LEVEL' },
   PanelLocation: { Left: 'LEFT', Right: 'RIGHT' },
   PanelContainer: vi.fn((props: PanelContainerProps) => (

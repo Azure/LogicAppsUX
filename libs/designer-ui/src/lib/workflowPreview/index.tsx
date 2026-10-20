@@ -16,7 +16,7 @@ import type { Edge, Node, NodeProps, NodeTypes } from '@xyflow/react';
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { RefObject } from 'react';
 import { useIntl } from 'react-intl';
-import { WORKFLOW_PREVIEW_NODE_HEIGHT, WORKFLOW_PREVIEW_NODE_WIDTH } from './types';
+import { WORKFLOW_PREVIEW_NODE_WIDTH } from './types';
 import type { WorkflowPreviewGraph, WorkflowPreviewNode, WorkflowPreviewProps } from './types';
 import { useWorkflowPreviewStyles } from './workflowPreview.styles';
 import { useWorkflowPreviewNodeInternals } from './useWorkflowPreviewNodeInternals';
@@ -42,9 +42,16 @@ const NodeMeasurements = ({ onSizesChange }: { onSizesChange: NonNullable<Workfl
   return null;
 };
 
-type PreviewNode = Node<Pick<WorkflowPreviewNode, 'label' | 'iconUri' | 'brandColor' | 'height'>, 'workflowPreview'>;
+type PreviewNode = Node<Pick<WorkflowPreviewNode, 'label' | 'iconUri' | 'brandColor'>, 'workflowPreview'>;
 
 const FIT_VIEW_OPTIONS = { padding: 0.2, minZoom: 0.1, maxZoom: 1 };
+const INERT_NODE_OPTIONS = {
+  draggable: false,
+  connectable: false,
+  selectable: false,
+  focusable: false,
+  deletable: false,
+};
 const EDGE_OPTIONS = {
   type: 'smoothstep',
   markerEnd: { type: MarkerType.ArrowClosed, color: tokens.colorNeutralStroke1 },
@@ -73,10 +80,10 @@ const PreviewIcon = ({ iconUri, brandColor }: Pick<WorkflowPreviewNode, 'iconUri
 const PreviewCard = ({ data }: NodeProps<PreviewNode>) => {
   const styles = useWorkflowPreviewStyles();
   return (
-    <div className={styles.card} style={{ height: data.height }} title={data.label}>
+    <div className={styles.card} title={data.label}>
       <Handle type="target" position={Position.Top} isConnectable={false} className={styles.handle} />
       <PreviewIcon key={data.iconUri} iconUri={data.iconUri} brandColor={data.brandColor} />
-      <span className={mergeClasses(styles.label, data.height === WORKFLOW_PREVIEW_NODE_HEIGHT && styles.singleLine)}>{data.label}</span>
+      <span className={styles.label}>{data.label}</span>
       <Handle type="source" position={Position.Bottom} isConnectable={false} className={styles.handle} />
     </div>
   );
@@ -134,16 +141,11 @@ const PreviewNavigation = () => {
   );
 };
 
-const PreviewCanvas = ({
-  nodes = [],
-  edges = [],
-  graph,
-  containerRef,
-}: WorkflowPreviewProps & { containerRef: RefObject<HTMLDivElement> }) => {
+const PreviewCanvas = (props: WorkflowPreviewProps & { containerRef: RefObject<HTMLDivElement> }) => {
+  const { graph, containerRef } = props;
   const styles = useWorkflowPreviewStyles();
   const intl = useIntl();
   const id = useId();
-  const inputNodes = graph?.nodes ?? nodes;
   const { fitView, getViewport, setViewport } = useReactFlow();
   const panWithKeyboard = useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -165,54 +167,55 @@ const PreviewCanvas = ({
     },
     [getViewport, setViewport]
   );
-  const nodesMeasured = useWorkflowPreviewNodeInternals(containerRef, inputNodes);
-  const previewNodes = useMemo<Node[]>(
+  const { nodes: previewNodes, edges: previewEdges } = useMemo<{ nodes: Node[]; edges: Edge[] }>(
     () =>
-      inputNodes.map((node) => ({
-        ...('data' in node && graph
-          ? { type: node.type, data: node.data, zIndex: node.zIndex }
-          : {
+      props.graph
+        ? {
+            nodes: props.graph.nodes.map((node) => ({
+              id: node.id,
+              type: node.type,
+              data: node.data,
+              zIndex: node.zIndex,
+              position: { x: node.position.x, y: node.position.y },
+              width: node.width ?? WORKFLOW_PREVIEW_NODE_WIDTH,
+              ...(node.height && { height: node.height }),
+              ...(node.parentId && { parentId: node.parentId }),
+              ...INERT_NODE_OPTIONS,
+            })),
+            edges: props.graph.edges.map((edge) => ({
+              id: edge.id,
+              source: edge.source,
+              target: edge.target,
+              ...EDGE_OPTIONS,
+              type: edge.type,
+              data: edge.data,
+              zIndex: edge.zIndex,
+              markerEnd: undefined,
+              style: { pointerEvents: 'none' },
+            })),
+          }
+        : {
+            nodes: props.nodes.map((node) => ({
+              id: node.id,
               type: 'workflowPreview',
-              data: {
-                label: (node as WorkflowPreviewNode).label,
-                iconUri: (node as WorkflowPreviewNode).iconUri,
-                brandColor: (node as WorkflowPreviewNode).brandColor,
-                ...(node.height && { height: node.height }),
-              },
-            }),
-        id: node.id,
-        position: { x: node.position.x, y: node.position.y },
-        width: node.width ?? WORKFLOW_PREVIEW_NODE_WIDTH,
-        ...(node.height && { height: node.height }),
-        ...(node.parentId && { parentId: node.parentId }),
-        draggable: false,
-        connectable: false,
-        selectable: false,
-        focusable: false,
-        deletable: false,
-      })),
-    [inputNodes, graph]
+              data: { label: node.label, iconUri: node.iconUri, brandColor: node.brandColor },
+              position: { x: node.position.x, y: node.position.y },
+              width: WORKFLOW_PREVIEW_NODE_WIDTH,
+              ...INERT_NODE_OPTIONS,
+            })),
+            edges: props.edges.map((edge) => ({
+              id: edge.id,
+              source: edge.source,
+              target: edge.target,
+              ...EDGE_OPTIONS,
+            })),
+          },
+    [props.graph, props.nodes, props.edges]
   );
-  const previewEdges = useMemo<Edge[]>(
-    () =>
-      (graph?.edges ?? edges).map((edge) => ({
-        id: edge.id,
-        source: edge.source,
-        target: edge.target,
-        ...EDGE_OPTIONS,
-        ...(graph && {
-          type: (edge as Edge).type,
-          data: (edge as Edge).data,
-          zIndex: (edge as Edge).zIndex,
-          markerEnd: undefined,
-          style: { pointerEvents: 'none' },
-        }),
-      })),
-    [edges, graph]
-  );
+  const nodesMeasured = useWorkflowPreviewNodeInternals(containerRef, previewNodes);
   // Only geometry changes should reset the user's viewport, not label updates or new array references.
   const layoutKey = JSON.stringify(
-    inputNodes.map(({ id, position, parentId, width, height }) => [id, position.x, position.y, parentId, width, height])
+    previewNodes.map(({ id, position, parentId, width, height }) => [id, position.x, position.y, parentId, width, height])
   );
 
   useEffect(() => {
@@ -240,7 +243,7 @@ const PreviewCanvas = ({
     };
   }, [containerRef, fitView, layoutKey, nodesMeasured]);
 
-  if (!inputNodes.length) {
+  if (!previewNodes.length) {
     return (
       <div className={styles.empty}>
         {intl.formatMessage({

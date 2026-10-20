@@ -57,9 +57,6 @@ export const useWorkflowPreviewStyles = makeStyles({
     overflow: 'hidden',
     overflowWrap: 'anywhere',
   },
-  singleLine: {
-    WebkitLineClamp: 1,
-  },
   handle: {
     visibility: 'hidden',
     pointerEvents: 'none',

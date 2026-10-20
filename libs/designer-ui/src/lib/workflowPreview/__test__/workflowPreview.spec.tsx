@@ -408,26 +408,35 @@ describe('WorkflowPreview', () => {
   });
 
   it('refits changed container dimensions in its private viewport and cancels work on unmount', () => {
-    const container: WorkflowPreviewNode = {
-      id: 'condition',
-      label: 'Condition',
-      position: { x: 0, y: 100 },
-      width: 520,
-      height: 300,
+    const graph: WorkflowPreviewGraph = {
+      nodes: [
+        {
+          id: 'condition',
+          type: 'container',
+          data: { label: 'Condition' },
+          position: { x: 0, y: 100 },
+          width: 520,
+          height: 300,
+        },
+      ],
+      edges: [],
+      nodeTypes: { container: ({ data }: NodeProps) => <div>{String(data.label)}</div> },
+      edgeTypes: {},
     };
     const view = render(
       <ReactFlowProvider>
-        <WorkflowPreview nodes={[nodes[0], container]} edges={[]} />
+        <WorkflowPreview graph={graph} />
       </ReactFlowProvider>
     );
     flushFrames();
     const before = mocks.nestedViewport.fitView.mock.calls.length;
     view.rerender(
       <ReactFlowProvider>
-        <WorkflowPreview nodes={[nodes[0], { ...container, width: 760, height: 460 }]} edges={[]} />
+        <WorkflowPreview graph={{ ...graph, nodes: [{ ...graph.nodes[0], width: 760, height: 460 }] }} />
       </ReactFlowProvider>
     );
     flushFrames();
+    expect(flowProps().nodes?.[0]).toMatchObject({ width: 760, height: 460 });
     expect(mocks.nestedViewport.fitView.mock.calls.length).toBeGreaterThan(before);
     expect(mocks.viewport.fitView).not.toHaveBeenCalled();
     view.unmount();
