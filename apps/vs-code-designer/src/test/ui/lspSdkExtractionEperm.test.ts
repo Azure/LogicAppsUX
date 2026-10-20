@@ -43,7 +43,7 @@ describe('LSP SDK extraction EPERM repro', function () {
     const lspServerPath = path.join(depsRoot, 'LSPServer');
     const lspServerDllPath = path.join(lspServerPath, 'SdkLspServer.dll');
     fs.rmSync(lspServerPath, { recursive: true, force: true, maxRetries: 3, retryDelay: 1000 });
-    fs.rmSync(path.join(depsRoot, '.lspserver-hash'), { force: true });
+    fs.rmSync(path.join(depsRoot, '.lspserver-revision'), { force: true });
 
     denyCreateDirectoryPermission();
 

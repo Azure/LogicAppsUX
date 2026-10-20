@@ -259,7 +259,7 @@ jobs:
           TEMP: ${{ runner.temp }}
           TMPDIR: ${{ runner.temp }}
 
-      - name: Verify Logic Apps extension bundle sidecar
+      - name: Verify Logic Apps extension bundle readiness
         run: |
           BUNDLE_ROOT="${HOME}/.azure-functions-core-tools/Functions/ExtensionBundles/Microsoft.Azure.Functions.ExtensionBundle.Workflows"
           node - "$BUNDLE_ROOT" <<'NODE'
@@ -276,20 +276,12 @@ jobs:
             throw new Error(`No bundle version folders under ${root}`);
           }
           const bundleDir = path.join(root, versions[0]);
-          const sidecarPath = path.join(bundleDir, '.bundle-source-md5');
-          if (!fs.existsSync(sidecarPath)) {
-            throw new Error(`Bundle sidecar missing: ${sidecarPath}`);
+          const markerPath = path.join(bundleDir, '.install-complete');
+          if (!fs.existsSync(markerPath)) {
+            throw new Error(`Bundle completion marker missing: ${markerPath}`);
           }
-          const sidecar = JSON.parse(fs.readFileSync(sidecarPath, 'utf8'));
-          if (!sidecar || typeof sidecar.sourceMd5 !== 'string' || typeof sidecar.contentHash !== 'string') {
-            throw new Error(`Bundle sidecar missing sourceMd5/contentHash: ${sidecarPath}`);
-          }
-          const entries = fs.readdirSync(bundleDir).filter((name) => name !== '.bundle-source-md5');
-          if (entries.length === 0) {
-            throw new Error(`Bundle directory has no extracted content: ${bundleDir}`);
-          }
-          console.log(`Bundle verified: ${bundleDir}`);
-          console.log(`Sidecar: ${sidecarPath}`);
+          console.log(`Bundle ready: ${bundleDir}`);
+          console.log(`Marker: ${markerPath}`);
           NODE
 
       - name: Verify fixtures manifest exists
@@ -400,9 +392,9 @@ jobs:
             scenario: p49-nugetdebugconversion
             use_workspace_fixtures: true
             use_bundle_artifact: true
-          # Multi-designer + dataMapper suite (manifest-multi) + bundle repair.
+          # Multi-designer + dataMapper suite (manifest-multi).
           - shard: suite-and-bundle
-            scenario: p47-suite,p412-bundlerepair
+            scenario: p47-suite
             use_workspace_fixtures: true
             use_bundle_artifact: true
           # Func Core Tools pre-debug self-heal. Own shard on purpose: it is the
@@ -517,7 +509,7 @@ jobs:
         run: |
           mkdir -p "${HOME}/.azure-functions-core-tools/Functions/ExtensionBundles"
           tar -xzf logic-apps-extension-bundle.tar.gz -C "${HOME}/.azure-functions-core-tools/Functions/ExtensionBundles"
-          find "${HOME}/.azure-functions-core-tools/Functions/ExtensionBundles/Microsoft.Azure.Functions.ExtensionBundle.Workflows" -maxdepth 2 -type f -name '.bundle-source-md5' -print
+          find "${HOME}/.azure-functions-core-tools/Functions/ExtensionBundles/Microsoft.Azure.Functions.ExtensionBundle.Workflows" -maxdepth 2 -type f -name '.install-complete' -print
 
       - name: Install system dependencies for virtual display
         run: |

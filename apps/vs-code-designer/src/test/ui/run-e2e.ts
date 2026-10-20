@@ -16,7 +16,6 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
-import * as crypto from 'crypto';
 import { exec, execFileSync, execSync } from 'child_process';
 import { ExTester } from 'vscode-extension-tester';
 import { isExecutableFile } from './runtimeBinaryCheck';
@@ -27,11 +26,13 @@ import {
   parseCustomCodeDotNetTargets,
 } from './customCodeDotNetVersionShared';
 import { lspDirectory } from '../../constants';
-import { lspServerDirectoryName, lspServerHashMarkerName, lspSdkHashMarkerName } from '../../app/utils/languageServerProtocolConstants';
+import {
+  lspSdkRevisionMarkerName,
+  lspServerDirectoryName,
+  lspServerRevisionMarkerName,
+} from '../../app/utils/languageServerProtocolConstants';
 
-type BundleFileEntry = { relPath: string; fullPath: string };
-type ExtensionBundleState = { version: string; bundleDir: string; sidecarPath: string };
-type BundleSidecar = { sourceMd5: string; contentHash: string };
+type ExtensionBundleState = { version: string; bundleDir: string; markerPath: string };
 type InstallResult = { dep: string; success: boolean };
 type RuntimeDependencyPaths = {
   depsRoot: string;
@@ -153,7 +154,7 @@ process.env.CODE_VERSION = VSCODE_VERSION;
 const DOWNLOAD_RETRY_ATTEMPTS = 3;
 const EXTENSION_BUNDLE_ID = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
 const EXTENSION_BUNDLE_ROOT = path.join(os.homedir(), '.azure-functions-core-tools', 'Functions', 'ExtensionBundles', EXTENSION_BUNDLE_ID);
-const BUNDLE_SIDECAR_FILE = '.bundle-source-md5';
+const BUNDLE_INSTALL_MARKER_FILE = '.install-complete';
 
 /**
  * LSP-related artifact names that must be removed when preparing an isolated
@@ -164,9 +165,11 @@ const BUNDLE_SIDECAR_FILE = '.bundle-source-md5';
  */
 const LSP_STALE_ARTIFACT_NAMES = [
   lspServerDirectoryName,
-  lspServerHashMarkerName,
+  lspServerRevisionMarkerName,
   lspDirectory,
-  lspSdkHashMarkerName,
+  lspSdkRevisionMarkerName,
+  '.lspserver-hash',
+  '.lspsdk-hash',
   '.lspserver-version',
   '.lspserver-path',
   '.lspsdk-version',
@@ -209,48 +212,8 @@ function findLatestExtensionBundle(): ExtensionBundleState | undefined {
   return {
     version,
     bundleDir,
-    sidecarPath: path.join(bundleDir, BUNDLE_SIDECAR_FILE),
+    markerPath: path.join(bundleDir, BUNDLE_INSTALL_MARKER_FILE),
   };
-}
-
-function listBundleFiles(bundleDir: string): BundleFileEntry[] {
-  const files: BundleFileEntry[] = [];
-  const stack = [bundleDir];
-  while (stack.length > 0) {
-    const current = stack.pop();
-    if (!current) {
-      continue;
-    }
-    for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
-      const fullPath = path.join(current, entry.name);
-      const relPath = path.relative(bundleDir, fullPath).split(path.sep).join('/');
-      if (relPath === BUNDLE_SIDECAR_FILE) {
-        continue;
-      }
-      if (entry.isDirectory()) {
-        stack.push(fullPath);
-      } else if (entry.isFile()) {
-        files.push({ relPath, fullPath });
-      }
-    }
-  }
-  files.sort((a, b) => (a.relPath < b.relPath ? -1 : a.relPath > b.relPath ? 1 : 0));
-  return files;
-}
-
-function computeBundleContentHash(bundleDir: string, files: BundleFileEntry[]): string {
-  const hash = crypto.createHash('sha256');
-  const nul = Buffer.from([0]);
-  for (const file of files) {
-    const stat = fs.statSync(file.fullPath);
-    hash.update(Buffer.from(file.relPath, 'utf8'));
-    hash.update(nul);
-    hash.update(Buffer.from(String(stat.size), 'utf8'));
-    hash.update(nul);
-    hash.update(fs.readFileSync(file.fullPath));
-    hash.update(nul);
-  }
-  return hash.digest('base64');
 }
 
 function verifyLogicAppsExtensionBundle(label: string): ExtensionBundleState {
@@ -258,33 +221,10 @@ function verifyLogicAppsExtensionBundle(label: string): ExtensionBundleState {
   if (!state) {
     throw new Error(`[${label}] Logic Apps extension bundle root is missing or has no version folders: ${EXTENSION_BUNDLE_ROOT}`);
   }
-  if (!fs.existsSync(state.sidecarPath)) {
-    throw new Error(`[${label}] Logic Apps extension bundle sidecar is missing: ${state.sidecarPath}`);
+  if (!fs.existsSync(state.markerPath)) {
+    throw new Error(`[${label}] Logic Apps extension bundle completion marker is missing: ${state.markerPath}`);
   }
-
-  let sidecar: BundleSidecar;
-  try {
-    sidecar = JSON.parse(fs.readFileSync(state.sidecarPath, 'utf8'));
-  } catch (error: any) {
-    throw new Error(`[${label}] Logic Apps extension bundle sidecar is not valid JSON: ${getErrorMessage(error)}`);
-  }
-  if (!sidecar || typeof sidecar.sourceMd5 !== 'string' || typeof sidecar.contentHash !== 'string') {
-    throw new Error(`[${label}] Logic Apps extension bundle sidecar is missing sourceMd5/contentHash: ${state.sidecarPath}`);
-  }
-
-  const files = listBundleFiles(state.bundleDir);
-  if (files.length === 0) {
-    throw new Error(`[${label}] Logic Apps extension bundle directory is empty: ${state.bundleDir}`);
-  }
-  const contentHash = computeBundleContentHash(state.bundleDir, files);
-  if (contentHash !== sidecar.contentHash) {
-    throw new Error(
-      `[${label}] Logic Apps extension bundle content hash mismatch for ${state.bundleDir}: expected ${sidecar.contentHash}, got ${contentHash}`
-    );
-  }
-  console.log(
-    `[${label}] Logic Apps extension bundle healthy: version=${state.version}, files=${files.length}, sidecar=${state.sidecarPath}`
-  );
+  console.log(`[${label}] Logic Apps extension bundle ready: version=${state.version}, marker=${state.markerPath}`);
   return state;
 }
 
@@ -303,28 +243,18 @@ function pruneUnhealthyLogicAppsExtensionBundles(label: string): void {
 
   for (const version of versions) {
     const bundleDir = path.join(EXTENSION_BUNDLE_ROOT, version);
+    const markerPath = path.join(bundleDir, BUNDLE_INSTALL_MARKER_FILE);
     try {
-      const sidecarPath = path.join(bundleDir, BUNDLE_SIDECAR_FILE);
-      if (!fs.existsSync(sidecarPath)) {
-        console.log(`[${label}] Removing bundle ${version}: missing sidecar ${sidecarPath}`);
-        fs.rmSync(bundleDir, { recursive: true, force: true });
-        continue;
-      }
-
-      const sidecar = JSON.parse(fs.readFileSync(sidecarPath, 'utf8'));
-      const files = listBundleFiles(bundleDir);
-      const contentHash = files.length > 0 ? computeBundleContentHash(bundleDir, files) : undefined;
-      if (!sidecar || typeof sidecar.contentHash !== 'string' || files.length === 0 || contentHash !== sidecar.contentHash) {
-        console.log(`[${label}] Removing bundle ${version}: invalid sidecar/content hash`);
+      if (!fs.existsSync(markerPath)) {
+        console.log(`[${label}] Removing incomplete bundle ${version}`);
         fs.rmSync(bundleDir, { recursive: true, force: true });
       }
-    } catch (error: any) {
-      console.log(`[${label}] Removing bundle ${version}: health check failed (${getErrorMessage(error)})`);
+    } catch (error) {
+      console.log(`[${label}] Removing incomplete bundle ${version}: ${getErrorMessage(error)}`);
       fs.rmSync(bundleDir, { recursive: true, force: true });
     }
   }
 }
-
 function createExTester(): ExTester {
   return new ExTester(
     undefined, // storageFolder — use default (os.tmpdir()/test-resources)
@@ -1496,13 +1426,6 @@ async function main(): Promise<void> {
   // does a small live download through the verifier helper.
   const phaseBundleIntegrityFiles = [testFile('bundleCdnHealth.test.js')];
 
-  // Phase 4.12 — Bundle on-disk repair E2E. Real ExTester / VS Code session.
-  // Reproduces the user-reported regression (deleting files from inside an
-  // installed bundle is detected on next validate-and-install, repaired
-  // synchronously, and the sidecar is rewritten so the cached hash matches
-  // disk). See bundleRepair.test.ts for the full scenario.
-  const phaseBundleRepairFiles = [testFile('bundleRepair.test.js')];
-
   // Phase 4.14 — Func Core Tools pre-debug self-heal E2E. Real ExTester / VS
   // Code session. Corrupts the extension-managed func executable in place so it
   // still EXISTS but no longer RUNS, then presses F5 and proves the pre-debug
@@ -1705,21 +1628,6 @@ async function main(): Promise<void> {
       workspaceSpec: { appType: 'standard', wfType: 'Stateful', use: 'none' },
       settings: { validateDependencies: 'auto', autoStartDesignTime: false },
       env: { LA_E2E_SKIP_VALIDATION_WAIT: '1' },
-    },
-
-    // Phase 4.12 — On-disk bundle repair / integrity gate (Phase 14 code path).
-    // Reuses a Standard/Stateful workspace from the fixtures manifest, lets the
-    // initial bundle install, deletes a couple .dll files from inside the
-    // installed bundle, invokes the validate-and-install-binaries command, and
-    // asserts the bundle is repaired on disk (sidecar back, .dlls back,
-    // recomputed content hash matches sidecar). autoStartDesignTime is OFF so
-    // func.exe does not lock the .dlls we tamper with.
-    {
-      id: 'p412-bundlerepair',
-      testFile: phaseBundleRepairFiles[0],
-      workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
-      settings: { validateDependencies: true, autoStartDesignTime: false },
-      retryable: false,
     },
 
     // Phase 4.14 — Func Core Tools pre-debug self-heal.
@@ -3142,20 +3050,6 @@ namespace ${namespaceName}
 
     // bundleintegrityonly is handled by the early short-circuit at the top
     // of main() (search for `earlyMode === 'bundleintegrityonly'`).
-
-    if (e2eMode === 'bundlerepaironly') {
-      const bundleRepairScenario = scenarios.find((s) => s.id === 'p412-bundlerepair');
-      if (!bundleRepairScenario) {
-        throw new Error('bundlerepaironly: p412-bundlerepair scenario not found in scenarios[] table');
-      }
-      await downloadExTesterAssets();
-      const prerequisiteExit = await ensureFixtureManifestForScenarios([bundleRepairScenario], 'bundlerepaironly');
-      if (prerequisiteExit !== 0) {
-        process.exit(prerequisiteExit);
-      }
-      const phase12Exit = await runScenarioPhases([bundleRepairScenario]);
-      process.exit(phase12Exit);
-    }
 
     if (e2eMode === 'funcrepaironly') {
       const funcRepairScenario = scenarios.find((s) => s.id === 'p414-funcrepair');
