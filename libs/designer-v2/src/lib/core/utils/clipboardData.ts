@@ -203,6 +203,7 @@ export const isClipboardEntry = (value: unknown): value is ClipboardEntry => {
     isRecord(info) &&
     typeof info.type === 'string' &&
     !!info.type &&
+    !isScopeOperation(info.type) &&
     typeof info.connectorId === 'string' &&
     typeof info.operationId === 'string' &&
     isConnectionMapping(value.nodeConnectionData) &&

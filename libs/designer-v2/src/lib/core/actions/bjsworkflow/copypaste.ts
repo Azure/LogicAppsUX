@@ -22,7 +22,6 @@ import {
   pasteNode,
   pasteScopeNode,
   setNodeDescription,
-  replaceOperationDefinition,
 } from '../../state/workflow/workflowSlice';
 import { getNonDuplicateId, getNonDuplicateNodeId, initializeOperationDetails } from './add';
 import {
@@ -639,7 +638,6 @@ export const pasteClipboard = createAsyncThunk(
     }
     const replacements: Record<string, string> = { ...rootReplacements };
     const scopePlans = new Map<string, PasteScopeParams>();
-    const scopeActionIds = new Set<string>();
     // Reserve every descendant before parsing scope inputs, so all references are rewritten
     // from their original identities exactly once, including references across copied roots.
     for (const entry of nodes) {
@@ -648,7 +646,8 @@ export const pasteClipboard = createAsyncThunk(
       }
       const id = plannedIds.get(entry.nodeId)!;
       const actions = { [id]: entry.serializedOperation };
-      const metadata = replaceIdsOfExistingNodes(reservedMetadata, before.workflow.idReplacements);
+      // Pending renames do not free the original Redux storage keys.
+      const metadata = { ...reservedMetadata, ...replaceIdsOfExistingNodes(reservedMetadata, before.workflow.idReplacements) };
       delete metadata[id];
       const plan = buildScopeParams(metadata, getAllActionNames(actions, [], true));
       scopePlans.set(entry.nodeId, plan);
@@ -657,12 +656,17 @@ export const pasteClipboard = createAsyncThunk(
       }
       for (const sourceId of getAllActionNames(actions)) {
         const targetId = plan.renamedNodes[sourceId];
-        scopeActionIds.add(targetId);
         if (sourceId !== id) {
           replacements[sourceId] = targetId;
         }
       }
     }
+    // Clipboard expressions use current serialized names; editor tokens use internal IDs.
+    // Copied producers override external bindings, and this conversion must happen only once.
+    const clipboardReferences = {
+      ...Object.fromEntries(Object.entries(before.workflow.idReplacements).map(([internalId, currentName]) => [currentName, internalId])),
+      ...replacements,
+    };
     const pasteEntry = async (entry: ClipboardEntry, ids: RelationshipIds, parallel: boolean) => {
       let id: string;
       if (entry.isScopeNode) {
@@ -672,8 +676,8 @@ export const pasteClipboard = createAsyncThunk(
               nodeId: plannedIds.get(entry.nodeId)!,
               relationshipIds: ids,
               isParallelBranch: parallel,
-              serializedValue: remapConnectionExpressionValue(entry.serializedOperation, replacements),
-              allConnectionData: remapConnectionExpressionValue(entry.allConnectionData, replacements),
+              serializedValue: remapConnectionExpressionValue(entry.serializedOperation, clipboardReferences),
+              allConnectionData: remapConnectionExpressionValue(entry.allConnectionData, clipboardReferences),
               staticResults: entry.staticResults,
               upstreamNodeIds,
               pasteParams: scopePlans.get(entry.nodeId)!,
@@ -689,10 +693,10 @@ export const pasteClipboard = createAsyncThunk(
               nodeId: plannedIds.get(entry.nodeId)!,
               relationshipIds: ids,
               isParallelBranch: parallel,
-              nodeData: entry.nodeData,
+              nodeData: remapClipboardNodeData(entry.nodeData, clipboardReferences),
               nodeTokenData: entry.nodeTokenData,
               operationInfo: entry.nodeOperationInfo,
-              connectionData: entry.nodeConnectionData,
+              connectionData: remapConnectionExpressionValue(entry.nodeConnectionData, clipboardReferences),
               comment: entry.nodeComment,
             })
           )
@@ -734,6 +738,7 @@ export const pasteClipboard = createAsyncThunk(
           predecessorUsed.add(firstPredecessor);
           for (const predecessor of predecessors.slice(1)) {
             draft.dispatch(addRunAfter({ childOperationId: id, parentOperationId: pasted.get(predecessor)! }));
+            predecessorUsed.add(predecessor);
           }
         } else {
           firstRoot ??= id;
@@ -748,7 +753,7 @@ export const pasteClipboard = createAsyncThunk(
       }
       if (!isParallelBranch && childId) {
         // Reconnect every terminal branch, including additional independent roots.
-        if (firstRoot) {
+        if (firstRoot && edges.some((edge) => pasted.get(edge.source) === firstRoot)) {
           draft.dispatch(removeRunAfter({ childOperationId: childId, parentOperationId: firstRoot }));
         }
         for (const entry of nodes.filter((node) => !edges.some((edge) => edge.source === node.nodeId))) {
@@ -783,26 +788,6 @@ export const pasteClipboard = createAsyncThunk(
         data.nodeOutputs.dynamicLoadStatus === DynamicLoadStatus.FAILED
       ) {
         throw clipboardError();
-      }
-      if (scopeActionIds.has(id)) {
-        continue;
-      }
-      const remapped = remapClipboardNodeData(data, replacements);
-      draft.dispatch(initializeNodes({ nodes: [{ ...remapped, id }] }));
-      draft.dispatch(
-        replaceOperationDefinition({
-          nodeId: id,
-          operationDefinition: remapConnectionExpressionValue(state.workflow.operations[id], replacements),
-        })
-      );
-      const mapping = state.connections.connectionsMapping[id];
-      if (isExpressionConnectionMapping(mapping)) {
-        draft.dispatch(
-          setNodeConnectionMapping({
-            nodeId: id,
-            mapping: { ...mapping, expression: remapConnectionExpression(mapping.expression, replacements) },
-          })
-        );
       }
     }
     const after = draft.getState();

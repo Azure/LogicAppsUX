@@ -21,6 +21,7 @@ import {
 import scopeManifest from '../../../../../../../logic-apps-shared/src/designer-client-services/lib/base/manifests/scope';
 import conditionManifest from '../../../../../../../logic-apps-shared/src/designer-client-services/lib/base/manifests/condition';
 import switchManifest from '../../../../../../../logic-apps-shared/src/designer-client-services/lib/base/manifests/switch';
+import requestManifest from '../../../../../../../logic-apps-shared/src/designer-client-services/lib/base/manifests/request';
 import { getMockedInitialRootState } from '../../../../__test__/mock-root-state';
 import { getReactQueryClient } from '../../../ReactQueryProvider';
 import { Deserialize } from '../../../parsers/BJSWorkflow/BJSDeserializer';
@@ -75,6 +76,7 @@ const manifests: Record<string, OperationManifest> = {
   scope: scopeManifest,
   if: conditionManifest,
   switch: switchManifest,
+  request: requestManifest,
 };
 const manifestService: IOperationManifestService = {
   isSupported: () => true,
@@ -894,6 +896,176 @@ describe('clipboard integrity with real designer initialization and reducers', (
     expect(await serializeOperation(target.getState(), 'A-copy')).toMatchObject({ inputs: 'first' });
     expect(await serializeOperation(target.getState(), 'B-copy')).toMatchObject({ inputs: 'second' });
     expect(await serializeOperation(target.getState(), 'Reader-copy')).toMatchObject({ inputs: "@outputs('A-copy')" });
+  });
+
+  it.each([false, true])(
+    'preserves reader-only external bindings across pending overlapping renames (container: %s)',
+    async (container) => {
+      const reader = {
+        type: 'Compose',
+        inputs: { simple: "@outputs('A')", composite: "@concat(string(outputs('A')), string(outputs('B')))" },
+        runAfter: {},
+      };
+      const store = await prepareSource({
+        triggers: {},
+        actions: {
+          A: { type: 'Compose', inputs: 'first', runAfter: {} },
+          B: { type: 'Compose', inputs: 'second', runAfter: { A: ['Succeeded'] } },
+          ...(container
+            ? { Container: { type: 'Scope', actions: { Reader: reader }, runAfter: { B: ['Succeeded'] } } }
+            : { Reader: { ...reader, runAfter: { B: ['Succeeded'] } } }),
+        },
+      });
+      store.dispatch(replaceId({ originalId: 'B', newId: 'C' }));
+      store.dispatch(replaceId({ originalId: 'A', newId: 'B' }));
+      const root = container ? 'Container' : 'Reader';
+      await store.dispatch(copyOperations({ nodeIds: [root] })).unwrap();
+      const before = store.getState();
+      await store
+        .dispatch(
+          pasteClipboard({
+            clipboard: readClipboard(),
+            relationshipIds: { graphId: 'root', parentId: root },
+            upstreamNodeIds: ['A', 'B'],
+          })
+        )
+        .unwrap();
+      const copied = await serializeOperation(store.getState(), `${root}-copy`);
+      const expected = { inputs: { simple: "@outputs('B')", composite: "@concat(string(outputs('B')), string(outputs('C')))" } };
+      expect(copied).toMatchObject(container ? { actions: { Reader_1: expected } } : expected);
+      await store.dispatch(onUndoClick()).unwrap();
+      expect(store.getState().workflow.operations).toEqual(before.workflow.operations);
+      await store.dispatch(onRedoClick()).unwrap();
+      expect(await serializeOperation(store.getState(), `${root}-copy`)).toEqual(copied);
+    }
+  );
+
+  it('preserves fan-out after a secondary predecessor has already been attached to a join', async () => {
+    const sourceActions: LogicAppsV2.Actions = {
+      A: { type: 'Compose', inputs: 'A', runAfter: {} },
+      B: { type: 'Compose', inputs: 'B', runAfter: { A: ['Succeeded'] } },
+      C: { type: 'Compose', inputs: 'C', runAfter: { A: ['Succeeded'] } },
+      X: { type: 'Compose', inputs: 'X', runAfter: { B: ['Succeeded'] } },
+      D: { type: 'Compose', inputs: 'D', runAfter: { X: ['Succeeded'], C: ['Succeeded'] } },
+      E: { type: 'Compose', inputs: 'E', runAfter: { C: ['Succeeded'] } },
+    };
+    const store = await prepareSource({
+      triggers: {},
+      actions: {
+        Anchor: { type: 'Compose', inputs: 'anchor', runAfter: {} },
+        Target: { type: 'Compose', inputs: 'target', runAfter: { Anchor: ['Succeeded'] } },
+        ...sourceActions,
+      },
+    });
+    await store.dispatch(copyOperations({ nodeIds: Object.keys(sourceActions) })).unwrap();
+    await store
+      .dispatch(
+        pasteClipboard({
+          clipboard: readClipboard(),
+          relationshipIds: { graphId: 'root', parentId: 'Anchor', childId: 'Target' },
+          upstreamNodeIds: ['Anchor'],
+        })
+      )
+      .unwrap();
+    for (const [id, operation] of Object.entries(sourceActions)) {
+      const expected = Object.fromEntries(
+        Object.entries(operation.runAfter ?? {}).map(([parent, statuses]) => [`${parent}-copy`, statuses])
+      );
+      expect((await serializeOperation(store.getState(), `${id}-copy`)).runAfter).toEqual(
+        id === 'A' ? { Anchor: ['Succeeded'] } : expected
+      );
+    }
+    expect((await serializeOperation(store.getState(), 'Target')).runAfter).toEqual({
+      'D-copy': ['SUCCEEDED'],
+      'E-copy': ['SUCCEEDED'],
+    });
+  });
+
+  it('reserves existing internal identities as well as pending names when pasting a container from another workflow', async () => {
+    const source = await prepareSource({
+      triggers: {},
+      actions: { Container: { type: 'Scope', actions: { A: { type: 'Compose', inputs: 'copied child', runAfter: {} } }, runAfter: {} } },
+    });
+    await source.dispatch(copyOperations({ nodeIds: ['Container'] })).unwrap();
+    const clipboard = readClipboard();
+    const target = await prepareSource({
+      triggers: {},
+      actions: { A: { type: 'Compose', inputs: 'existing destination action', runAfter: {} } },
+    });
+    target.dispatch(replaceId({ originalId: 'A', newId: 'B' }));
+    const before = target.getState();
+    await target
+      .dispatch(pasteClipboard({ clipboard, relationshipIds: { graphId: 'root', parentId: 'A' }, upstreamNodeIds: ['A'] }))
+      .unwrap();
+    expect(await serializeOperation(target.getState(), 'A')).toMatchObject({ inputs: 'existing destination action' });
+    expect(target.getState().operations.inputParameters.A).toBe(before.operations.inputParameters.A);
+    expect(await serializeOperation(target.getState(), 'Container-copy')).toMatchObject({
+      actions: { A_1: { inputs: 'copied child' } },
+    });
+    await target.dispatch(onUndoClick()).unwrap();
+    expect(target.getState().workflow.operations).toEqual(before.workflow.operations);
+  });
+
+  it('does not inject a trigger dependency when the first pasted independent root is also a leaf', async () => {
+    InitWorkflowService({ getCallbackUrl: async () => ({ value: 'https://example.invalid/local-fixture' }) });
+    const store = await prepareSource({
+      triggers: { Request: { type: 'Request', kind: 'Http', inputs: { schema: {} } } },
+      actions: {
+        Anchor: { type: 'Compose', inputs: 'anchor', runAfter: {} },
+        Target: { type: 'Compose', inputs: 'target', runAfter: { Anchor: ['Succeeded'] } },
+        A: { type: 'Compose', inputs: 'A', runAfter: {} },
+        B: { type: 'Compose', inputs: 'B', runAfter: {} },
+        C: { type: 'Compose', inputs: 'C', runAfter: { B: ['Succeeded'] } },
+      },
+    });
+    await store.dispatch(copyOperations({ nodeIds: ['A', 'B', 'C'] })).unwrap();
+    await store
+      .dispatch(
+        pasteClipboard({
+          clipboard: readClipboard(),
+          relationshipIds: { graphId: 'root', parentId: 'Anchor', childId: 'Target' },
+          upstreamNodeIds: ['Request', 'Anchor'],
+        })
+      )
+      .unwrap();
+    expect((await serializeOperation(store.getState(), 'Target')).runAfter).toEqual({
+      'A-copy': ['SUCCEEDED'],
+      'C-copy': ['SUCCEEDED'],
+    });
+  });
+
+  it.each(['Scope', 'If'])('rejects complete action metadata without serialized descendants for a legacy %s entry', async (type) => {
+    const store = await prepareSource({
+      triggers: {},
+      actions: {
+        Before: { type: 'Compose', inputs: 'complete action', runAfter: {} },
+        Container: {
+          type,
+          ...(type === 'If' ? { expression: { equals: [1, 1] }, else: { actions: {} } } : {}),
+          actions: { Nested: { type: 'Compose', inputs: 'must not disappear', runAfter: {} } },
+          runAfter: { Before: ['Succeeded'] },
+        },
+      },
+    });
+    await store.dispatch(copyOperation({ nodeId: 'Before' })).unwrap();
+    const complete = readClipboard();
+    const legacy = {
+      mslaNode: true,
+      isScopeNode: false,
+      nodeId: 'Container-copy',
+      nodeData: getNodeOperationData(store.getState().operations, 'Container'),
+      nodeOperationInfo: store.getState().operations.operationInfo.Container,
+    };
+    const before = store.getState();
+    for (const clipboard of [legacy, { mslaNode: true, isMultiNode: true, nodes: [complete, legacy], edges: [] }]) {
+      await expect(
+        store.dispatch(pasteClipboard({ clipboard, relationshipIds: { graphId: 'root' }, upstreamNodeIds: [] })).unwrap()
+      ).rejects.toThrow('complete action data');
+      for (const name of UNDO_REDO_SLICE_NAMES) {
+        expect(store.getState()[name]).toBe(before[name]);
+      }
+      expect(store.getState().undoRedo).toBe(before.undoRedo);
+    }
   });
 
   it('honors future root reservations when a Switch case collides with a later pasted action', async () => {
