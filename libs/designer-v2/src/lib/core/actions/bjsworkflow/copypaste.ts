@@ -275,7 +275,7 @@ const buildOperationsClipboard = async (state: RootState, nodeIds: string[]) => 
       const normalizedId = removeIdTag(nodeId);
       const entry = await buildScopeClipboardEntry(state, normalizedId);
       scopes.set(nodeId, entry);
-      const childNames = getAllActionNames({ [normalizedId]: entry.serializedOperation }, [], true);
+      const childNames = getAllActionNames({ [normalizedId]: entry.serializedOperation });
       for (const name of childNames) {
         if (name !== normalizedId) {
           scopeChildIds.add(resolveCopyNodeId(state, name));
@@ -435,10 +435,14 @@ interface PasteScopeOperationPayload {
   staticResults: Record<string, any>;
   upstreamNodeIds: string[];
   isParallelBranch?: boolean;
-  reservedIds?: string[];
 }
 
-const pasteScopeInDraft = createAsyncThunk('pasteScopeInDraft', async (payload: PasteScopeOperationPayload, { dispatch, getState }) => {
+interface PasteScopeInDraftPayload extends PasteScopeOperationPayload {
+  pasteParams: PasteScopeParams;
+  remappedActionIds: string[];
+}
+
+const pasteScopeInDraft = createAsyncThunk('pasteScopeInDraft', async (payload: PasteScopeInDraftPayload, { dispatch, getState }) => {
   const {
     nodeId: actionId,
     relationshipIds,
@@ -447,7 +451,8 @@ const pasteScopeInDraft = createAsyncThunk('pasteScopeInDraft', async (payload: 
     allConnectionData,
     staticResults,
     isParallelBranch,
-    reservedIds = [],
+    pasteParams,
+    remappedActionIds,
   } = payload;
   if (!actionId || !relationshipIds || !serializedValue) {
     throw new Error('Operation does not exist');
@@ -461,13 +466,6 @@ const pasteScopeInDraft = createAsyncThunk('pasteScopeInDraft', async (payload: 
   const workflowActions = { [nodeId]: { ...serializedValue } as ActionDefinition };
   const allActionNames = getAllActionNames(workflowActions, [], true);
 
-  const reservedMetadata = { ...existingNodesMetadata };
-  for (const id of reservedIds) {
-    if (id !== nodeId) {
-      reservedMetadata[id] = { graphId: 'root' };
-    }
-  }
-  const pasteParams = buildScopeParams(reservedMetadata, allActionNames);
   const [nodes, _edges, actions, actionNodesMetadata] = buildGraphFromActions(
     workflowActions,
     graphId,
@@ -484,21 +482,7 @@ const pasteScopeInDraft = createAsyncThunk('pasteScopeInDraft', async (payload: 
   const scopeParentNodeId = graphId && graphId !== 'root' ? graphId : undefined;
   actionNodesMetadata[nodeId] = { ...actionNodesMetadata[actionId], isRoot: false, parentNodeId: scopeParentNodeId, graphId };
   if (Object.keys(allConnectionData).length > 0) {
-    const copiedConnections = replaceIdsOfExistingNodes(allConnectionData, pasteParams.renamedNodes);
-    for (const [id, data] of Object.entries(copiedConnections)) {
-      if (data.mapping) {
-        const action = actions[id];
-        const inputs = (action as LogicAppsV2.ServiceProvider)?.inputs;
-        if (inputs) {
-          actions[id] = { ...action, inputs: remapConnectionExpressionValue(inputs, pasteParams.renamedNodes) };
-        }
-        copiedConnections[id] = {
-          ...data,
-          mapping: { ...data.mapping, expression: remapConnectionExpression(data.mapping.expression, pasteParams.renamedNodes) },
-        };
-      }
-    }
-    dispatch(initScopeCopiedConnections(copiedConnections));
+    dispatch(initScopeCopiedConnections(replaceIdsOfExistingNodes(allConnectionData, pasteParams.renamedNodes)));
   }
   for (const [id, action] of Object.entries(actions)) {
     const connectionName = (action as LogicAppsV2.ServiceProvider).inputs?.serviceProviderConfiguration?.connectionName;
@@ -512,13 +496,9 @@ const pasteScopeInDraft = createAsyncThunk('pasteScopeInDraft', async (payload: 
         dispatch(
           setNodeConnectionMapping({
             nodeId: id,
-            mapping: { ...mapping, expression: remapConnectionExpression(mapping.expression, pasteParams.renamedNodes) },
+            mapping,
           })
         );
-        actions[id] = {
-          ...action,
-          inputs: remapConnectionExpressionValue((action as LogicAppsV2.ServiceProvider).inputs, pasteParams.renamedNodes),
-        };
       }
     }
   }
@@ -565,7 +545,14 @@ const pasteScopeInDraft = createAsyncThunk('pasteScopeInDraft', async (payload: 
       {},
       workflowKind,
       dispatch,
-      { ...pasteParams, existingOutputTokens: upstreamOutputTokens, rootTriggerId: triggerId }
+      {
+        ...pasteParams,
+        // Definitions already reference final IDs. Keep scope-token binding without renaming
+        // those references a second time when old and new action names overlap.
+        renamedNodes: Object.fromEntries(remappedActionIds.map((id) => [id, id])),
+        existingOutputTokens: upstreamOutputTokens,
+        rootTriggerId: triggerId,
+      }
     ),
   ]);
   await initializeDynamicDataInNodes(getState as () => RootState, dispatch, pasteParams.pasteActionNames);
@@ -622,6 +609,31 @@ export const pasteClipboard = createAsyncThunk(
       }
     }
     const replacements: Record<string, string> = { ...rootReplacements };
+    const scopePlans = new Map<string, PasteScopeParams>();
+    const scopeActionIds = new Set<string>();
+    // Reserve every descendant before parsing scope inputs, so all references are rewritten
+    // from their original identities exactly once, including references across copied roots.
+    for (const entry of nodes) {
+      if (!entry.isScopeNode) {
+        continue;
+      }
+      const id = plannedIds.get(entry.nodeId)!;
+      const actions = { [id]: entry.serializedOperation };
+      const metadata = replaceIdsOfExistingNodes(reservedMetadata, before.workflow.idReplacements);
+      delete metadata[id];
+      const plan = buildScopeParams(metadata, getAllActionNames(actions, [], true));
+      scopePlans.set(entry.nodeId, plan);
+      for (const reservedId of plan.pasteActionNames) {
+        reservedMetadata[reservedId] = { graphId: relationshipIds.graphId };
+      }
+      for (const sourceId of getAllActionNames(actions)) {
+        const targetId = plan.renamedNodes[sourceId];
+        scopeActionIds.add(targetId);
+        if (sourceId !== id) {
+          replacements[sourceId] = targetId;
+        }
+      }
+    }
     const pasteEntry = async (entry: ClipboardEntry, ids: RelationshipIds, parallel: boolean) => {
       let id: string;
       if (entry.isScopeNode) {
@@ -631,16 +643,16 @@ export const pasteClipboard = createAsyncThunk(
               nodeId: plannedIds.get(entry.nodeId)!,
               relationshipIds: ids,
               isParallelBranch: parallel,
-              serializedValue: remapConnectionExpressionValue(entry.serializedOperation, rootReplacements),
-              allConnectionData: remapConnectionExpressionValue(entry.allConnectionData, rootReplacements),
+              serializedValue: remapConnectionExpressionValue(entry.serializedOperation, replacements),
+              allConnectionData: remapConnectionExpressionValue(entry.allConnectionData, replacements),
               staticResults: entry.staticResults,
               upstreamNodeIds,
-              reservedIds: [...plannedIds.values()],
+              pasteParams: scopePlans.get(entry.nodeId)!,
+              remappedActionIds: Object.values(replacements),
             })
           )
           .unwrap();
         id = result.nodeId;
-        Object.assign(replacements, result.renamedNodes);
       } else {
         id = await draft
           .dispatch(
@@ -657,7 +669,12 @@ export const pasteClipboard = createAsyncThunk(
           )
           .unwrap();
       }
-      if (!id || !draft.getState().workflow.operations[id] || !getWorkflowNodeFromGraphState(draft.getState().workflow, id)) {
+      if (
+        !id ||
+        id !== plannedIds.get(entry.nodeId) ||
+        !draft.getState().workflow.operations[id] ||
+        !getWorkflowNodeFromGraphState(draft.getState().workflow, id)
+      ) {
         throw clipboardError();
       }
       return id;
@@ -721,19 +738,15 @@ export const pasteClipboard = createAsyncThunk(
         pasted.set(entry.nodeId, await pasteEntry(entry, relationshipIds, false));
       }
     }
-    for (const entry of nodes) {
-      const id = pasted.get(entry.nodeId)!;
-      replacements[entry.nodeId.replace(/-copy$/, '')] = id;
-      if (entry.sourceNodeId) {
-        replacements[entry.sourceNodeId] = id;
-      }
-    }
     const addedIds = Object.keys(draft.getState().workflow.operations).filter((id) => !Object.hasOwn(before.workflow.operations, id));
     for (const id of addedIds) {
       const state = draft.getState();
       const data = getNodeOperationData(state.operations, id);
       if (!hasCompleteActionData(data)) {
         throw clipboardError();
+      }
+      if (scopeActionIds.has(id)) {
+        continue;
       }
       const remapped = remapClipboardNodeData(data, replacements);
       draft.dispatch(initializeNodes({ nodes: [{ ...remapped, id }] }));

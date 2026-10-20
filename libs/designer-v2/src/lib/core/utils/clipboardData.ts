@@ -4,7 +4,7 @@ import type { ConnectionMapping } from '../../common/models/workflow';
 import type { CopiedConnectionData } from '../state/connection/connectionSlice';
 import type { NodeData, NodeOperation } from '../state/operation/operationMetadataSlice';
 import type { NodeTokens } from '../state/tokens/tokensSlice';
-import { remapConnectionExpression, remapConnectionExpressionValue } from './connectors/connectionExpression';
+import { remapConnectionExpression } from './connectors/connectionExpression';
 
 export interface ActionClipboardEntry {
   nodeId: string;
@@ -56,8 +56,17 @@ export const remapClipboardNodeData = (data: Omit<NodeData, 'id'>, replacements:
   const result = clone(data);
   const visit = (value: unknown): void => {
     if (Array.isArray(value)) {
-      value.forEach(visit);
+      for (let index = 0; index < value.length; index++) {
+        if (typeof value[index] === 'string') {
+          value[index] = remapConnectionExpression(value[index], replacements);
+        } else {
+          visit(value[index]);
+        }
+      }
     } else if (isRecord(value)) {
+      if (value.type === 'literal' && typeof value.id === 'string' && typeof value.value === 'string') {
+        return;
+      }
       if (value.type === 'token' && typeof value.value === 'string' && isRecord(value.token)) {
         const prefixed = !value.value.startsWith('@');
         const expression = remapConnectionExpression(prefixed ? `@${value.value}` : value.value, replacements);
@@ -75,12 +84,18 @@ export const remapClipboardNodeData = (data: Omit<NodeData, 'id'>, replacements:
           token.arrayDetails.loopSource = replacements[token.arrayDetails.loopSource];
         }
       } else {
-        Object.values(value).forEach(visit);
+        for (const [key, child] of Object.entries(value)) {
+          if (typeof child === 'string') {
+            value[key] = remapConnectionExpression(child, replacements);
+          } else {
+            visit(child);
+          }
+        }
       }
     }
   };
   visit(result);
-  return remapConnectionExpressionValue(result, replacements);
+  return result;
 };
 
 const isParameter = (parameter: unknown): boolean =>

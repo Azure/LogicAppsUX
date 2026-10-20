@@ -16,6 +16,7 @@ import {
 } from '../../../../../../../logic-apps-shared/src/designer-client-services/lib/base/manifests/variables';
 import scopeManifest from '../../../../../../../logic-apps-shared/src/designer-client-services/lib/base/manifests/scope';
 import conditionManifest from '../../../../../../../logic-apps-shared/src/designer-client-services/lib/base/manifests/condition';
+import switchManifest from '../../../../../../../logic-apps-shared/src/designer-client-services/lib/base/manifests/switch';
 import { getMockedInitialRootState } from '../../../../__test__/mock-root-state';
 import { getReactQueryClient } from '../../../ReactQueryProvider';
 import { Deserialize } from '../../../parsers/BJSWorkflow/BJSDeserializer';
@@ -27,7 +28,8 @@ import { getNodeOperationData } from '../../../state/operation/operationSelector
 import { setNodeSelection } from '../../../state/panel/panelSlice';
 import { replaceId, setNodeDescription } from '../../../state/workflow/workflowSlice';
 import { UNDO_REDO_SLICE_NAMES } from '../../../state/undoRedo/undoRedoTypes';
-import { copyOperation, copyOperations, cutOperations, pasteClipboard, pasteOperation } from '../copypaste';
+import { updateParameterAndDependencies } from '../../../utils/parameters/helper';
+import { copyOperation, copyOperations, cutOperations, duplicateOperations, pasteClipboard, pasteOperation } from '../copypaste';
 import { initializeDynamicDataInNodes, initializeOperationMetadata } from '../operationdeserializer';
 import { serializeOperation } from '../serializer';
 import { onRedoClick, onUndoClick } from '../undoRedo';
@@ -51,6 +53,7 @@ const manifests: Record<string, OperationManifest> = {
   compose: composeManifest,
   scope: scopeManifest,
   if: conditionManifest,
+  switch: switchManifest,
 };
 const manifestService: IOperationManifestService = {
   isSupported: () => true,
@@ -356,6 +359,141 @@ describe('clipboard integrity with real designer initialization and reducers', (
     expect(store.getState().workflow.operations).toEqual(before.workflow.operations);
     await store.dispatch(onRedoClick()).unwrap();
     expect(await serializeOperation(store.getState(), 'Container-copy')).toEqual(copied);
+  });
+
+  it.each([false, true])(
+    'copies, duplicates and cuts named Switch cases without resolving virtual case names (nested: %s)',
+    async (nested) => {
+      const switchAction: LogicAppsV2.ActionDefinition = {
+        type: 'Switch',
+        expression: 'one',
+        cases: { Named_case: { case: 'one', actions: { First: { type: 'Compose', inputs: 1, runAfter: {} } } } },
+        default: { actions: { Other: { type: 'Compose', inputs: 2, runAfter: {} } } },
+        runAfter: {},
+      };
+      const root = nested ? 'Container' : 'Switch';
+      const actions = nested ? { Container: { type: 'Scope', actions: { Switch: switchAction }, runAfter: {} } } : { Switch: switchAction };
+      const store = await prepareSource({ triggers: {}, actions });
+      await store.dispatch(copyOperations({ nodeIds: [root, 'First', 'Other'] })).unwrap();
+      expect(readClipboard().nodes).toHaveLength(1);
+      const original = await serializeOperation(store.getState(), root);
+      await store.dispatch(duplicateOperations({ nodeIds: [root] })).unwrap();
+      const duplicate = await serializeOperation(store.getState(), `${root}-copy`);
+      expect(JSON.stringify(duplicate)).toContain('"case":"one"');
+      expect(JSON.stringify(duplicate)).toContain('"inputs":1');
+      await store.dispatch(cutOperations({ nodeIds: [root] })).unwrap();
+      expect(store.getState().workflow.operations[root]).toBeUndefined();
+      await store.dispatch(onUndoClick()).unwrap();
+      expect(await serializeOperation(store.getState(), root)).toEqual(original);
+    }
+  );
+
+  it('remaps overlapping scope source and destination names once for simple tokens and composite expressions', async () => {
+    const source = await prepareSource({
+      triggers: {},
+      actions: {
+        Container: {
+          type: 'Scope',
+          runAfter: {},
+          actions: {
+            A: { type: 'Compose', inputs: 'first', runAfter: {} },
+            A_1: { type: 'Compose', inputs: 'second', runAfter: { A: ['Succeeded'] } },
+            Reader: {
+              type: 'Compose',
+              inputs: { simple: "@outputs('A')", composite: "@concat(string(outputs('A')), string(outputs('A_1')))" },
+              runAfter: { A_1: ['Succeeded'] },
+            },
+          },
+        },
+      },
+    });
+    await source.dispatch(copyOperations({ nodeIds: ['Container'] })).unwrap();
+    const clipboard = readClipboard();
+    const target = await prepareSource({ triggers: {}, actions: { A: { type: 'Compose', inputs: 'existing', runAfter: {} } } });
+    await target
+      .dispatch(pasteClipboard({ clipboard, relationshipIds: { graphId: 'root', parentId: 'A' }, upstreamNodeIds: ['A'] }))
+      .unwrap();
+    expect(await serializeOperation(target.getState(), 'Container-copy')).toMatchObject({
+      actions: {
+        A_1: { inputs: 'first' },
+        A_2: { inputs: 'second' },
+        Reader: { inputs: { simple: "@outputs('A_1')", composite: "@concat(string(outputs('A_1')), string(outputs('A_2')))" } },
+      },
+    });
+  });
+
+  it('preserves escaped interpolation literal editor segments through source renames and multi-paste', async () => {
+    const store = await prepareSource({
+      triggers: {},
+      actions: {
+        A: { type: 'Compose', inputs: 'first', runAfter: {} },
+        Reader: { type: 'Compose', inputs: "@@{outputs('A')}", runAfter: { A: ['Succeeded'] } },
+        Real_reader: { type: 'Compose', inputs: "@outputs('A')", runAfter: { Reader: ['Succeeded'] } },
+      },
+    });
+    const nodeInputs = store.getState().operations.inputParameters.Reader;
+    const parameter = nodeInputs.parameterGroups.default.parameters[0];
+    await store
+      .dispatch(
+        updateParameterAndDependencies({
+          nodeId: 'Reader',
+          groupId: 'default',
+          parameterId: parameter.id,
+          properties: { value: [{ id: 'edited-literal', type: 'literal', value: "@{outputs('A')}" }], preservedValue: undefined },
+          isTrigger: false,
+          operationInfo: store.getState().operations.operationInfo.Reader,
+          connectionReference: undefined,
+          nodeInputs,
+          dependencies: store.getState().operations.dependencies.Reader,
+        })
+      )
+      .unwrap();
+    store.dispatch(replaceId({ originalId: 'A', newId: 'Renamed_A' }));
+    const original = await serializeOperation(store.getState(), 'Reader');
+    const literalSegments = store.getState().operations.inputParameters.Reader.parameterGroups.default.parameters[0].value;
+    expect(literalSegments).toEqual([expect.objectContaining({ type: 'literal', value: "@{outputs('A')}" })]);
+    await store.dispatch(copyOperations({ nodeIds: ['A', 'Reader', 'Real_reader'] })).unwrap();
+    const clipboard = readClipboard();
+    await store
+      .dispatch(pasteClipboard({ clipboard, relationshipIds: { graphId: 'root', parentId: 'Reader' }, upstreamNodeIds: ['A', 'Reader'] }))
+      .unwrap();
+    expect(store.getState().operations.inputParameters['Reader-copy'].parameterGroups.default.parameters[0].value).toEqual(literalSegments);
+    expect(await serializeOperation(store.getState(), 'Reader-copy')).toMatchObject({ inputs: original.inputs });
+    expect(await serializeOperation(store.getState(), 'Real_reader-copy')).toMatchObject({ inputs: "@outputs('A-copy')" });
+  });
+
+  it('plans descendant identities across copied scope roots before initializing their references', async () => {
+    const source = await prepareSource({
+      triggers: {},
+      actions: {
+        Left: { type: 'Scope', actions: { A: { type: 'Compose', inputs: 'first', runAfter: {} } }, runAfter: {} },
+        Right: {
+          type: 'Scope',
+          actions: {
+            A_1: { type: 'Compose', inputs: 'second', runAfter: {} },
+            Reader: {
+              type: 'Compose',
+              inputs: { simple: "@outputs('A')", composite: "@concat(string(outputs('A')), string(outputs('A_1')))" },
+              runAfter: { A_1: ['Succeeded'] },
+            },
+          },
+          runAfter: { Left: ['Succeeded'] },
+        },
+      },
+    });
+    await source.dispatch(copyOperations({ nodeIds: ['Right', 'Left'] })).unwrap();
+    const clipboard = readClipboard();
+    const target = await prepareSource({ triggers: {}, actions: { A: { type: 'Compose', inputs: 'existing', runAfter: {} } } });
+    await target
+      .dispatch(pasteClipboard({ clipboard, relationshipIds: { graphId: 'root', parentId: 'A' }, upstreamNodeIds: ['A'] }))
+      .unwrap();
+    expect(await serializeOperation(target.getState(), 'Left-copy')).toMatchObject({ actions: { A_1: { inputs: 'first' } } });
+    expect(await serializeOperation(target.getState(), 'Right-copy')).toMatchObject({
+      actions: {
+        A_2: { inputs: 'second' },
+        Reader: { inputs: { simple: "@outputs('A_1')", composite: "@concat(string(outputs('A_1')), string(outputs('A_2')))" } },
+      },
+    });
   });
 
   it('isolates async preparation and aborts rather than overwriting interleaved live edits to graph, metadata, tokens or connections', async () => {

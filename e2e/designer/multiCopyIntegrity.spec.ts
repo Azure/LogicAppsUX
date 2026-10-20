@@ -142,35 +142,9 @@ test.describe('Multi-action clipboard integrity', { tag: '@mock' }, () => {
   });
 
   test('extracts a complete Condition and both branch actions as one root with one-step undo and redo', async ({ page }) => {
-    await page.goto('/v2?extraction=true&local=ExtractSelection.json');
+    await page.goto('/v2?extraction=true&local=ExtractCondition.json');
     await waitForLoadedDesigner(page);
-    const workflow = await getSerializedWorkflowFromStateV2(page);
-    workflow.definition.actions = {
-      Read_customer: { type: 'Compose', inputs: 'before', runAfter: {} },
-      Condition: {
-        type: 'If',
-        expression: { equals: [1, 1] },
-        actions: { True_action: { type: 'Compose', inputs: 'true branch', runAfter: {} } },
-        else: { actions: { False_action: { type: 'Compose', inputs: 'false branch', runAfter: {} } } },
-        runAfter: { Read_customer: ['Succeeded'] },
-      },
-      Consume_result: { type: 'Compose', inputs: 'after', runAfter: { Condition: ['Succeeded'] } },
-    };
-    await page.evaluate(
-      (workflow) =>
-        localStorage.setItem(
-          'msla-standalone-workflow-extraction-v1',
-          JSON.stringify({
-            version: 1,
-            workflows: [{ id: 'ExtractSelection.json', name: 'ExtractSelection', workflow }],
-            operations: [],
-          })
-        ),
-      workflow
-    );
-    await page.reload();
     await expect(page.getByTestId('card-condition')).toBeVisible();
-    await closeToolboxInDarkMode(page);
     const originalCondition = (await getSerializedWorkflowFromStateV2(page)).definition.actions.Condition;
     await page.getByLabel('Zoom view to fit', { exact: true }).click();
     for (const id of ['condition', 'true_action', 'false_action']) {
