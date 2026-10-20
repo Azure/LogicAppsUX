@@ -4,7 +4,7 @@ import type { ConnectionMapping } from '../../common/models/workflow';
 import type { CopiedConnectionData } from '../state/connection/connectionSlice';
 import type { NodeData, NodeOperation } from '../state/operation/operationMetadataSlice';
 import type { NodeTokens } from '../state/tokens/tokensSlice';
-import { remapConnectionExpression } from './connectors/connectionExpression';
+import { getReferenceNameReplacement, remapConnectionExpression } from './connectors/connectionExpression';
 
 export interface ActionClipboardEntry {
   nodeId: string;
@@ -77,15 +77,12 @@ export const remapClipboardNodeData = (data: Omit<NodeData, 'id'>, replacements:
         value.value = prefixed ? expression.slice(1) : expression;
         value.token.value = value.value;
         const token = value.token;
-        if (typeof token.actionName === 'string' && Object.hasOwn(replacements, token.actionName)) {
-          token.actionName = replacements[token.actionName];
+        if (typeof token.actionName === 'string') {
+          token.actionName = getReferenceNameReplacement(replacements, token.actionName) ?? token.actionName;
         }
-        if (
-          isRecord(token.arrayDetails) &&
-          typeof token.arrayDetails.loopSource === 'string' &&
-          Object.hasOwn(replacements, token.arrayDetails.loopSource)
-        ) {
-          token.arrayDetails.loopSource = replacements[token.arrayDetails.loopSource];
+        if (isRecord(token.arrayDetails) && typeof token.arrayDetails.loopSource === 'string') {
+          token.arrayDetails.loopSource =
+            getReferenceNameReplacement(replacements, token.arrayDetails.loopSource) ?? token.arrayDetails.loopSource;
         }
       } else {
         for (const [key, child] of Object.entries(value)) {

@@ -2,6 +2,7 @@ import { isExpressionConnectionMapping, type ConnectionMapping } from '../../../
 import Constants from '../../../common/constants';
 import {
   getServiceProviderConnectionMapping,
+  getReferenceNameReplacement,
   remapConnectionExpression,
   remapConnectionExpressionValue,
 } from '../../utils/connectors/connectionExpression';
@@ -657,6 +658,12 @@ export const pasteClipboard = createAsyncThunk(
       const metadata = { ...reservedMetadata, ...replaceIdsOfExistingNodes(reservedMetadata, before.workflow.idReplacements) };
       delete metadata[id];
       const plan = buildScopeParams(metadata, getAllActionNames(actions, [], true));
+      const sourceRootId = entry.sourceNodeId ?? entry.nodeId.replace(/-copy$/, '');
+      const existingRootTarget = getReferenceNameReplacement(plan.renamedNodes, sourceRootId);
+      if (existingRootTarget !== undefined && existingRootTarget !== id) {
+        throw clipboardError();
+      }
+      plan.renamedNodes = { ...plan.renamedNodes, [sourceRootId]: id };
       scopePlans.set(entry.nodeId, plan);
       for (const reservedId of plan.pasteActionNames) {
         reservedMetadata[reservedId] = { graphId: relationshipIds.graphId };

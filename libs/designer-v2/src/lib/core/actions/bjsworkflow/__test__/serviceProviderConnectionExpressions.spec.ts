@@ -1001,6 +1001,26 @@ describe('ServiceProvider runtime connection expressions', () => {
     );
   });
 
+  it('remaps case-varied references using only own names and preserves literal text', () => {
+    const replacements = { A: 'A-copy', a: 'exact-lower-copy' };
+    Object.setPrototypeOf(replacements, { inherited: 'incorrect' });
+    expect(remapConnectionExpression("@concat(outputs('a'), outputs('A'), outputs('INHERITED'), 'outputs(''a'')')", replacements)).toBe(
+      "@concat(outputs('exact-lower-copy'), outputs('A-copy'), outputs('INHERITED'), 'outputs(''a'')')"
+    );
+    expect(
+      remapConnectionExpression(
+        "@concat(outputs('a'), body('a'), actions('a'), actionOutputs('a'), actionBody('a'), items('a'), iterationIndexes('a'), result('a'))",
+        { A: 'A-copy' }
+      )
+    ).toBe(
+      "@concat(outputs('A-copy'), body('A-copy'), actions('A-copy'), actionOutputs('A-copy'), actionBody('A-copy'), items('A-copy'), iterationIndexes('A-copy'), result('A-copy'))"
+    );
+    expect(remapConnectionExpression("@outputs('CONSTRUCTOR')", {})).toBe("@outputs('CONSTRUCTOR')");
+    expect(remapConnectionExpression("@outputs('CONSTRUCTOR')", { constructor: 'own-copy' })).toBe("@outputs('own-copy')");
+    expect(remapConnectionExpression("@parameters('VALUE')", {}, { value: 'renamed' })).toBe("@parameters('renamed')");
+    expect(remapConnectionExpression("@@{outputs('a')}", { A: 'A-copy' })).toBe("@@{outputs('a')}");
+  });
+
   it('retains expression mappings through single and scope clipboard state, even without references', async () => {
     const state = await buildState();
     const store = makeStore(state);

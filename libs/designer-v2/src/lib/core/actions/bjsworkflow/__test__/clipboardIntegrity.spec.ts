@@ -40,6 +40,7 @@ import {
 import { initializeConnectionReferences, setNodeConnectionMapping } from '../../../state/connection/connectionSlice';
 import { initializeParameters } from '../../../state/workflowparameters/workflowparametersSlice';
 import { updateTokens } from '../../../state/tokens/tokensSlice';
+import { updateStaticResultProperties } from '../../../state/staticresultschema/staticresultsSlice';
 import { getNodeOperationData } from '../../../state/operation/operationSelector';
 import { setNodeSelection } from '../../../state/panel/panelSlice';
 import { replaceId, setNodeDescription } from '../../../state/workflow/workflowSlice';
@@ -48,6 +49,7 @@ import { updateParameterAndDependencies } from '../../../utils/parameters/helper
 import * as parameterHelpers from '../../../utils/parameters/helper';
 import * as dynamicData from '../../../utils/parameters/dynamicdata';
 import { retrieveClipboardData } from '../../../utils/clipboard';
+import { remapClipboardNodeData } from '../../../utils/clipboardData';
 import {
   copyOperation,
   copyOperations,
@@ -139,6 +141,167 @@ beforeEach(() => {
 });
 
 describe('clipboard integrity with real designer initialization and reducers', () => {
+  it('keeps renamed Agent root bindings separate from overlapping internal tool IDs', async () => {
+    const source = createSource({
+      triggers: {},
+      actions: {
+        A: {
+          type: 'Agent',
+          inputs: { parameters: { agentModelType: 'AzureOpenAI', messages: [] } },
+          tools: { B: { type: 'McpClientTool', inputs: { parameters: { headers: { 'x-test': 'preserve' } } } } },
+          runAfter: {},
+        },
+      },
+    });
+    const { store } = source;
+    store.dispatch(
+      initializeConnectionReferences({
+        agentConnection: {
+          api: { id: 'connectionProviders/agent' },
+          connection: { id: 'connectionProviders/agent/agentConnection' },
+        },
+        mcpConnection: {
+          api: { id: 'connectionProviders/mcpclient' },
+          connection: { id: 'connectionProviders/mcpclient/mcpConnection' },
+        },
+      })
+    );
+    store.dispatch(setNodeConnectionMapping({ nodeId: 'A', mapping: 'agentConnection' }));
+    store.dispatch(setNodeConnectionMapping({ nodeId: 'B', mapping: 'mcpConnection' }));
+    await source.initialize();
+    expect(store.getState().operations.errors).toEqual({});
+    const rootResult = { status: 'Succeeded', outputs: { body: 'root result' } };
+    const toolResult = { status: 'Succeeded', outputs: { body: 'tool result' } };
+    store.dispatch(updateStaticResultProperties({ name: 'A0', properties: rootResult }));
+    store.dispatch(updateStaticResultProperties({ name: 'B0', properties: toolResult }));
+    store.dispatch(replaceId({ originalId: 'B', newId: 'C' }));
+    store.dispatch(replaceId({ originalId: 'A', newId: 'B' }));
+    await store.dispatch(copyScopeOperation({ nodeId: 'A' })).unwrap();
+    const clipboard = readClipboard();
+    expect(clipboard.sourceNodeId).toBe('B');
+    expect(clipboard.allConnectionData.B.referenceKey).toBe('agentConnection');
+    expect(clipboard.staticResults.B).toEqual(rootResult);
+    const before = store.getState();
+    await store
+      .dispatch(pasteClipboard({ clipboard, relationshipIds: { graphId: 'root', parentId: 'A' }, upstreamNodeIds: ['A'] }))
+      .unwrap();
+    const check = async () => {
+      expect(store.getState().connections.connectionsMapping['A-copy']).toBe('agentConnection');
+      expect(store.getState().connections.connectionsMapping.B).toBe('mcpConnection');
+      expect(store.getState().connections.connectionsMapping.C_1).toBe('mcpConnection');
+      expect(store.getState().staticResults.properties['A-copy0']).toEqual(rootResult);
+      expect(store.getState().staticResults.properties.B0).toEqual(toolResult);
+      expect((await serializeWorkflow(store.getState())).definition.actions['A-copy']).toMatchObject({
+        type: 'Agent',
+        tools: { C_1: { type: 'McpClientTool' } },
+      });
+    };
+    await check();
+    await store.dispatch(onUndoClick()).unwrap();
+    expect(store.getState().connections).toEqual(before.connections);
+    expect(store.getState().staticResults).toEqual(before.staticResults);
+    await store.dispatch(onRedoClick()).unwrap();
+    await check();
+  });
+
+  it.each([false, true])('remaps differently cased copied producer references (container: %s)', async (container) => {
+    const actions = {
+      A: { type: 'Compose', inputs: 'producer', runAfter: {} },
+      Reader: {
+        type: 'Compose',
+        inputs: { simple: "@outputs('a')", composite: "@concat(string(outputs('a')), string(outputs('A')))" },
+        runAfter: { A: ['Succeeded'] },
+      },
+    };
+    const store = await prepareSource({
+      triggers: {},
+      actions: container ? { Container: { type: 'Scope', actions, runAfter: {} } } : actions,
+    });
+    await store.dispatch(copyOperations({ nodeIds: container ? ['Container'] : ['A', 'Reader'] })).unwrap();
+    const before = store.getState();
+    await store
+      .dispatch(
+        pasteClipboard({
+          clipboard: readClipboard(),
+          relationshipIds: { graphId: 'root', parentId: container ? 'Container' : 'Reader' },
+          upstreamNodeIds: container ? ['Container'] : ['A', 'Reader'],
+        })
+      )
+      .unwrap();
+    const check = async () => {
+      const copiedId = container ? 'Reader_1' : 'Reader-copy';
+      const producerId = container ? 'A_1' : 'A-copy';
+      const copied = await serializeOperation(store.getState(), copiedId);
+      expect(copied).toMatchObject({
+        inputs: {
+          simple: `@outputs('${producerId}')`,
+          composite: `@concat(string(outputs('${producerId}')), string(outputs('${producerId}')))`,
+        },
+      });
+      const saved = await serializeWorkflow(store.getState());
+      expect(container ? saved.definition.actions['Container-copy'].actions[copiedId] : saved.definition.actions[copiedId]).toEqual(copied);
+      expect(await serializeOperation(store.getState(), 'Reader')).toMatchObject({ inputs: actions.Reader.inputs });
+    };
+    await check();
+    await store.dispatch(onUndoClick()).unwrap();
+    expect(store.getState().workflow.operations).toEqual(before.workflow.operations);
+    await store.dispatch(onRedoClick()).unwrap();
+    await check();
+  });
+
+  it('rejects a scope root alias that collides with a descendant without changing persisted state', async () => {
+    const store = await prepareSource({
+      triggers: {},
+      actions: {
+        Container: { type: 'Scope', actions: { Child: { type: 'Compose', inputs: 'preserve', runAfter: {} } }, runAfter: {} },
+      },
+    });
+    await store.dispatch(copyScopeOperation({ nodeId: 'Container' })).unwrap();
+    const before = store.getState();
+    await expect(
+      store
+        .dispatch(
+          pasteClipboard({
+            clipboard: { ...readClipboard(), sourceNodeId: 'child' },
+            relationshipIds: { graphId: 'root', parentId: 'Container' },
+            upstreamNodeIds: ['Container'],
+          })
+        )
+        .unwrap()
+    ).rejects.toThrow('complete action data');
+    for (const name of UNDO_REDO_SLICE_NAMES) {
+      expect(store.getState()[name]).toBe(before[name]);
+    }
+    expect(store.getState().undoRedo).toBe(before.undoRedo);
+  });
+
+  it('remaps case-varied editor action and loop identities without changing literal segments or source data', async () => {
+    const store = await prepareSource({
+      triggers: {},
+      actions: {
+        A: { type: 'Compose', inputs: 'producer', runAfter: {} },
+        Reader: { type: 'Compose', inputs: "@outputs('a')", runAfter: { A: ['Succeeded'] } },
+      },
+    });
+    const data = clone(getNodeOperationData(store.getState().operations, 'Reader'));
+    const parameter = Object.values(data.nodeInputs.parameterGroups).flatMap((group) => group.parameters)[0];
+    const segment = parameter.value.find((value) => value.type === 'token');
+    if (!segment?.token) {
+      throw new Error('Expected initialized output token');
+    }
+    Object.assign(segment.token, { actionName: 'a', arrayDetails: { loopSource: 'a' } });
+    parameter.value.push({ id: 'literal', type: 'literal', value: "@outputs('a')" });
+    const before = clone(data);
+    const remapped = remapClipboardNodeData(data, { A: 'A-copy' });
+    const values = Object.values(remapped.nodeInputs.parameterGroups).flatMap((group) => group.parameters.flatMap((entry) => entry.value));
+    expect(values.find((value) => value.type === 'token')).toMatchObject({
+      value: "outputs('A-copy')",
+      token: { actionName: 'A-copy', arrayDetails: { loopSource: 'A-copy' } },
+    });
+    expect(values.find((value) => value.id === 'literal')).toEqual({ id: 'literal', type: 'literal', value: "@outputs('a')" });
+    expect(data).toEqual(before);
+  });
+
   it('keeps dynamic copied inputs in the internal ID namespace through overlapping renames and Undo/Redo', async () => {
     const store = await prepareSource({
       triggers: {},
