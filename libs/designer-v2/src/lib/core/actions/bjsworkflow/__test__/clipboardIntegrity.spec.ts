@@ -5,9 +5,11 @@ import {
   InitOperationManifestService,
   InitWorkflowService,
   LOCAL_STORAGE_KEYS,
+  StaticResultService,
   type IOperationManifestService,
   type LogicAppsV2,
   type OperationManifest,
+  type OpenApiSchema,
 } from '@microsoft/logic-apps-shared';
 import { composeManifest } from '../../../../../../../logic-apps-shared/src/designer-client-services/lib/consumption/manifests/compose';
 import {
@@ -21,7 +23,7 @@ import { getMockedInitialRootState } from '../../../../__test__/mock-root-state'
 import { getReactQueryClient } from '../../../ReactQueryProvider';
 import { Deserialize } from '../../../parsers/BJSWorkflow/BJSDeserializer';
 import { createDesignerStore, store as singletonStore } from '../../../store';
-import { initializeNodes } from '../../../state/operation/operationMetadataSlice';
+import { DynamicLoadStatus, initializeNodes } from '../../../state/operation/operationMetadataSlice';
 import { setNodeConnectionMapping } from '../../../state/connection/connectionSlice';
 import { updateTokens } from '../../../state/tokens/tokensSlice';
 import { getNodeOperationData } from '../../../state/operation/operationSelector';
@@ -29,6 +31,9 @@ import { setNodeSelection } from '../../../state/panel/panelSlice';
 import { replaceId, setNodeDescription } from '../../../state/workflow/workflowSlice';
 import { UNDO_REDO_SLICE_NAMES } from '../../../state/undoRedo/undoRedoTypes';
 import { updateParameterAndDependencies } from '../../../utils/parameters/helper';
+import * as parameterHelpers from '../../../utils/parameters/helper';
+import * as dynamicData from '../../../utils/parameters/dynamicdata';
+import { retrieveClipboardData } from '../../../utils/clipboard';
 import { copyOperation, copyOperations, cutOperations, duplicateOperations, pasteClipboard, pasteOperation } from '../copypaste';
 import { initializeDynamicDataInNodes, initializeOperationMetadata } from '../operationdeserializer';
 import { serializeOperation } from '../serializer';
@@ -230,6 +235,142 @@ describe('clipboard integrity with real designer initialization and reducers', (
     await store.dispatch(onUndoClick()).unwrap();
     expect(store.getState().workflow.operations).toEqual(before.workflow.operations);
     expect(await serializeOperation(store.getState(), 'Set_variable')).toMatchObject({ inputs: definition.actions.Set_variable.inputs });
+  });
+
+  it('uses the readable local backend for a write-only native clipboard, including cut and paste', async () => {
+    const store = await prepareSource();
+    const nativeWrite = vi.fn().mockResolvedValue(undefined);
+    vi.stubGlobal('navigator', { clipboard: { writeText: nativeWrite } });
+    localStorage.setItem(LOCAL_STORAGE_KEYS.CLIPBOARD, JSON.stringify({ mslaNode: true, stale: true }));
+    await store.dispatch(cutOperations({ nodeIds })).unwrap();
+    expect(nativeWrite).not.toHaveBeenCalled();
+    const clipboard = await retrieveClipboardData();
+    expect(clipboard.nodes).toHaveLength(3);
+    await store.dispatch(pasteClipboard({ clipboard, relationshipIds: { graphId: 'root' }, upstreamNodeIds: [] })).unwrap();
+    expect(await serializeOperation(store.getState(), 'Compose-copy')).toMatchObject({ inputs: definition.actions.Compose.inputs });
+  });
+
+  it('rejects a missing native writer when paste uses the native reader, without cutting originals', async () => {
+    const store = await prepareSource();
+    vi.stubGlobal('navigator', { clipboard: { readText: vi.fn().mockResolvedValue('') } });
+    const before = store.getState();
+    await expect(store.dispatch(cutOperations({ nodeIds })).unwrap()).rejects.toThrow('No actions were cut');
+    expect(store.getState().workflow).toBe(before.workflow);
+    expect(store.getState().undoRedo).toBe(before.undoRedo);
+  });
+
+  it('awaits copied-input dynamic initialization without dispatching into the live or singleton store', async () => {
+    const store = await prepareSource();
+    await store.dispatch(copyOperation({ nodeId: 'Set_variable' })).unwrap();
+    let release!: () => void;
+    const pending = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const initializeDynamic = parameterHelpers.updateDynamicDataInNode;
+    const dynamic = vi.spyOn(parameterHelpers, 'updateDynamicDataInNode').mockImplementation(async (...args) => {
+      await pending;
+      await initializeDynamic(...args);
+    });
+    const before = store.getState();
+    const singletonBefore = singletonStore.getState();
+    let finished = false;
+    const paste = store
+      .dispatch(
+        pasteClipboard({ clipboard: readClipboard(), relationshipIds: { graphId: 'root', parentId: 'Compose' }, upstreamNodeIds: nodeIds })
+      )
+      .unwrap()
+      .then((ids) => {
+        finished = true;
+        return ids;
+      });
+    await waitFor(() => expect(dynamic).toHaveBeenCalled());
+    expect(finished).toBe(false);
+    const [id, , , , , , getDraftState] = dynamic.mock.calls[0];
+    expect(getDraftState().operations.inputParameters[id]).toEqual(before.operations.inputParameters.Set_variable);
+    for (const name of UNDO_REDO_SLICE_NAMES) {
+      expect(store.getState()[name]).toBe(before[name]);
+      expect(singletonStore.getState()[name]).toBe(singletonBefore[name]);
+    }
+    release();
+    await paste;
+    expect(store.getState().operations.inputParameters['Set_variable-copy'].dynamicLoadStatus).toBe(DynamicLoadStatus.SUCCEEDED);
+    expect(await serializeOperation(store.getState(), 'Set_variable-copy')).toMatchObject({
+      inputs: definition.actions.Set_variable.inputs,
+    });
+  });
+
+  it('includes a deferred result schema in the final transaction rather than abandoning its draft update', async () => {
+    const store = await prepareSource();
+    await store.dispatch(copyOperation({ nodeId: 'Compose' })).unwrap();
+    let release!: (schema: OpenApiSchema) => void;
+    const pending = new Promise<OpenApiSchema>((resolve) => {
+      release = resolve;
+    });
+    const schemaRequest = vi.spyOn(StaticResultService(), 'getOperationResultSchema').mockReturnValue(pending);
+    const before = store.getState();
+    let finished = false;
+    const paste = store
+      .dispatch(
+        pasteClipboard({ clipboard: readClipboard(), relationshipIds: { graphId: 'root', parentId: 'Compose' }, upstreamNodeIds: nodeIds })
+      )
+      .unwrap()
+      .then((ids) => {
+        finished = true;
+        return ids;
+      });
+    await waitFor(() => expect(schemaRequest).toHaveBeenCalled());
+    expect(finished).toBe(false);
+    expect(store.getState().workflow).toBe(before.workflow);
+    expect(store.getState().staticResults).toBe(before.staticResults);
+    const schema: OpenApiSchema = { type: 'object', properties: { completed: { type: 'boolean' } } };
+    release(schema);
+    await paste;
+    expect(store.getState().staticResults.schemas['connectionProviders/dataOperationNew-compose']).toEqual(schema);
+  });
+
+  it('aborts failed dynamic rehydration without clearing copied configuration or committing partial state', async () => {
+    const store = await prepareSource();
+    await store.dispatch(copyOperation({ nodeId: 'Set_variable' })).unwrap();
+    vi.spyOn(dynamicData, 'getDynamicSchema').mockRejectedValue(new Error('Dynamic schema unavailable'));
+    const before = store.getState();
+    await expect(
+      store
+        .dispatch(
+          pasteClipboard({
+            clipboard: readClipboard(),
+            relationshipIds: { graphId: 'root', parentId: 'Compose' },
+            upstreamNodeIds: nodeIds,
+          })
+        )
+        .unwrap()
+    ).rejects.toThrow('Dynamic schema unavailable');
+    for (const name of UNDO_REDO_SLICE_NAMES) {
+      expect(store.getState()[name]).toBe(before[name]);
+    }
+    expect(store.getState().undoRedo).toBe(before.undoRedo);
+    expect(store.getState().designerView.clipboardError).toContain('Dynamic schema unavailable');
+  });
+
+  it('aborts a rejected result-schema request without installing any prepared state', async () => {
+    const store = await prepareSource();
+    await store.dispatch(copyOperation({ nodeId: 'Compose' })).unwrap();
+    vi.spyOn(StaticResultService(), 'getOperationResultSchema').mockRejectedValue(new Error('Result schema unavailable'));
+    const before = store.getState();
+    await expect(
+      store
+        .dispatch(
+          pasteClipboard({
+            clipboard: readClipboard(),
+            relationshipIds: { graphId: 'root', parentId: 'Compose' },
+            upstreamNodeIds: nodeIds,
+          })
+        )
+        .unwrap()
+    ).rejects.toThrow('Result schema unavailable');
+    for (const name of UNDO_REDO_SLICE_NAMES) {
+      expect(store.getState()[name]).toBe(before[name]);
+    }
+    expect(store.getState().undoRedo).toBe(before.undoRedo);
   });
 
   it('validates direct single-action paste before mutation and tolerates omitted legacy output tokens', async () => {

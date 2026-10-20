@@ -232,7 +232,7 @@ const buildScopeClipboardEntry = async (state: RootState, scopeNodeId: string): 
 
 const writeClipboardItem = async (clipboardItem: string) => {
   const intl = getIntl();
-  if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+  if (navigator.clipboard && typeof navigator.clipboard.readText === 'function') {
     try {
       await navigator.clipboard.writeText(clipboardItem);
     } catch {
@@ -389,13 +389,6 @@ const pasteActionInDraft = createAsyncThunk('pasteActionInDraft', async (payload
 
   dispatch(setFocusNode(nodeId));
   dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo }));
-  if (!isExpressionConnectionMapping(connectionData)) {
-    await initializeOperationDetails(nodeId, operationInfo, getState as () => RootState, dispatch);
-  }
-
-  // replace new nodeId if there exists a copy of the copied node
-  dispatch(initializeNodes({ nodes: [{ ...nodeData, id: nodeId }] }));
-
   const updatedTokens = (nodeTokenData?.tokens ?? []).map((token) => {
     // Modify the actionName to a unique value
     return {
@@ -416,6 +409,22 @@ const pasteActionInDraft = createAsyncThunk('pasteActionInDraft', async (payload
 
   if (connectionData) {
     dispatch(initCopiedConnectionMap({ connectionReferences: { [nodeId]: connectionData } }));
+  }
+  if (isExpressionConnectionMapping(connectionData)) {
+    dispatch(initializeNodes({ nodes: [{ ...nodeData, id: nodeId }] }));
+  } else {
+    await initializeOperationDetails(
+      nodeId,
+      operationInfo,
+      getState as () => RootState,
+      dispatch,
+      undefined,
+      undefined,
+      true,
+      undefined,
+      undefined,
+      nodeData
+    );
   }
   if (comment) {
     dispatch(setNodeDescription({ nodeId, description: comment }));
