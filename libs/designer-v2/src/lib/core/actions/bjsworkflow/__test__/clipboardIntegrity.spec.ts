@@ -49,7 +49,7 @@ import { updateParameterAndDependencies } from '../../../utils/parameters/helper
 import * as parameterHelpers from '../../../utils/parameters/helper';
 import * as dynamicData from '../../../utils/parameters/dynamicdata';
 import { retrieveClipboardData } from '../../../utils/clipboard';
-import { remapClipboardNodeData } from '../../../utils/clipboardData';
+import { remapClipboardNodeData, remapClipboardOperation } from '../../../utils/clipboardData';
 import {
   copyOperation,
   copyOperations,
@@ -211,6 +211,139 @@ beforeEach(() => {
 });
 
 describe('clipboard integrity with real designer initialization and reducers', () => {
+  it('remaps Switch/tools/channels without treating input data shaped like an action as a workflow definition', () => {
+    const description = "@outputs('A')";
+    const action = { type: 'Compose', description, inputs: { description }, runAfter: {} };
+    const operation: LogicAppsV2.ActionDefinition = {
+      type: 'Scope',
+      description,
+      actions: {
+        Switch: {
+          type: 'Switch',
+          description,
+          expression: 'one',
+          cases: { named: { case: 'one', actions: { Named: action } } },
+          default: { actions: { Default: action } },
+        },
+        Agent: {
+          type: 'Agent',
+          description,
+          tools: {
+            Condition: { type: 'AgentCondition', description, actions: { Child: action } },
+            Mcp: { type: 'McpClientTool', description, inputs: { description } },
+          },
+          channels: {
+            in: { request: { trigger: { type: 'Request', description }, mapping: { message: "@outputs('A')" } } },
+            out: { response: { action: { type: 'Response', description, inputs: { description } } } },
+          },
+        },
+        Data: { type: 'Compose', description, inputs: { actions: { Fake: action }, description } },
+      },
+    };
+    const before = JSON.stringify(operation);
+    const remapped = remapClipboardOperation(operation, { A: 'A_1' });
+    const copiedAction = { ...action, inputs: { description: "@outputs('A_1')" } };
+    expect(remapped).toMatchObject({
+      description,
+      actions: {
+        Switch: {
+          description,
+          cases: { named: { actions: { Named: copiedAction } } },
+          default: { actions: { Default: copiedAction } },
+        },
+        Agent: {
+          description,
+          tools: {
+            Condition: { description, actions: { Child: copiedAction } },
+            Mcp: { description, inputs: { description: "@outputs('A_1')" } },
+          },
+          channels: {
+            in: { request: { trigger: { description }, mapping: { message: "@outputs('A_1')" } } },
+            out: { response: { action: { description, inputs: { description: "@outputs('A_1')" } } } },
+          },
+        },
+        Data: {
+          description,
+          inputs: { description: "@outputs('A_1')", actions: { Fake: { description: "@outputs('A_1')" } } },
+        },
+      },
+    });
+    expect(JSON.stringify(operation)).toBe(before);
+  });
+
+  it.each(['paste', 'duplicate'])(
+    'preserves literal container/action descriptions while remapping input descriptions (%s)',
+    async (mode) => {
+      const literalDescription = "@outputs('A')";
+      const store = await prepareSource({
+        triggers: {},
+        actions: {
+          Container: {
+            type: 'Scope',
+            description: literalDescription,
+            runAfter: {},
+            actions: {
+              A: { type: 'Compose', description: literalDescription, inputs: 'producer', runAfter: {} },
+              Nested: {
+                type: 'If',
+                description: literalDescription,
+                expression: { equals: [1, 1] },
+                actions: {
+                  Reader: {
+                    type: 'Compose',
+                    description: literalDescription,
+                    inputs: { description: "@outputs('A')" },
+                    runAfter: {},
+                  },
+                },
+                else: { actions: { Other: { type: 'Compose', description: literalDescription, inputs: 'false branch', runAfter: {} } } },
+                runAfter: { A: ['Succeeded'] },
+              },
+            },
+          },
+        },
+      });
+      const before = store.getState();
+      const original = await serializeOperation(before, 'Container');
+      if (mode === 'duplicate') {
+        await store.dispatch(duplicateOperations({ nodeIds: ['Container'] })).unwrap();
+      } else {
+        await store.dispatch(copyOperations({ nodeIds: ['Container'] })).unwrap();
+        await store
+          .dispatch(
+            pasteClipboard({
+              clipboard: readClipboard(),
+              relationshipIds: { graphId: 'root', parentId: 'Container' },
+              upstreamNodeIds: ['Container'],
+            })
+          )
+          .unwrap();
+      }
+      const check = async () => {
+        const copied = await serializeOperation(store.getState(), 'Container-copy');
+        expect(copied).toMatchObject({
+          description: literalDescription,
+          actions: {
+            A_1: { description: literalDescription },
+            Nested_1: {
+              description: literalDescription,
+              actions: { Reader_1: { description: literalDescription, inputs: { description: "@outputs('A_1')" } } },
+              else: { actions: { Other_1: { description: literalDescription } } },
+            },
+          },
+        });
+        const saved = await serializeWorkflow(store.getState());
+        expect(saved.definition.actions['Container-copy']).toEqual(copied);
+        expect(saved.definition.actions.Container).toEqual(original);
+      };
+      await check();
+      await store.dispatch(onUndoClick()).unwrap();
+      expect(store.getState().workflow.operations).toEqual(before.workflow.operations);
+      await store.dispatch(onRedoClick()).unwrap();
+      await check();
+    }
+  );
+
   it.each([
     ['test', false],
     ['test', true],

@@ -4,7 +4,7 @@ import type { ConnectionMapping } from '../../common/models/workflow';
 import type { CopiedConnectionData } from '../state/connection/connectionSlice';
 import type { NodeData, NodeOperation } from '../state/operation/operationMetadataSlice';
 import type { NodeTokens } from '../state/tokens/tokensSlice';
-import { getReferenceNameReplacement, remapConnectionExpression } from './connectors/connectionExpression';
+import { getReferenceNameReplacement, remapConnectionExpression, remapConnectionExpressionValue } from './connectors/connectionExpression';
 
 export interface ActionClipboardEntry {
   nodeId: string;
@@ -51,6 +51,33 @@ export const clipboardError = (source = false) => {
 };
 
 const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null && !Array.isArray(value);
+
+export const remapClipboardOperation = (
+  operation: LogicAppsV2.ActionDefinition,
+  replacements: Record<string, string>
+): LogicAppsV2.ActionDefinition => {
+  const result = clone(operation);
+  const visit = (definition: unknown): void => {
+    if (!isRecord(definition)) {
+      return;
+    }
+    for (const [key, value] of Object.entries(definition)) {
+      if (key === 'description') {
+        continue;
+      }
+      // Follow workflow containers, not identically named fields inside expression-bearing inputs.
+      if (['actions', 'tools', 'cases', 'in', 'out'].includes(key) && isRecord(value)) {
+        Object.values(value).forEach(visit);
+      } else if (['else', 'default', 'channels', 'trigger', 'action'].includes(key) && isRecord(value)) {
+        visit(value);
+      } else {
+        definition[key] = remapConnectionExpressionValue(value, replacements);
+      }
+    }
+  };
+  visit(result);
+  return result;
+};
 
 export const remapClipboardNodeData = (data: Omit<NodeData, 'id'>, replacements: Record<string, string>): Omit<NodeData, 'id'> => {
   const result = clone(data);
