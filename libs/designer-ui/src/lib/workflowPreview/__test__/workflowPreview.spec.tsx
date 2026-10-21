@@ -5,7 +5,7 @@ import type { ComponentType, PropsWithChildren } from 'react';
 import * as Intl from 'react-intl';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { WORKFLOW_PREVIEW_NODE_HEIGHT, WORKFLOW_PREVIEW_NODE_WIDTH, WorkflowPreview } from '..';
-import type { WorkflowPreviewEdge, WorkflowPreviewNode } from '..';
+import type { WorkflowPreviewEdge, WorkflowPreviewNode, WorkflowPreviewGraph } from '..';
 import { workflowCardStyles } from '../../card/workflowCardStyles';
 
 const mocks = vi.hoisted(() => ({
@@ -14,8 +14,20 @@ const mocks = vi.hoisted(() => ({
   updateNodeInternals: vi.fn(),
   nestedUpdateNodeInternals: vi.fn(),
   nodesMeasured: true,
-  viewport: { fitView: vi.fn(), zoomIn: vi.fn(), zoomOut: vi.fn() },
-  nestedViewport: { fitView: vi.fn(), zoomIn: vi.fn(), zoomOut: vi.fn() },
+  viewport: {
+    fitView: vi.fn(),
+    zoomIn: vi.fn(),
+    zoomOut: vi.fn(),
+    getViewport: vi.fn(() => ({ x: 10, y: 20, zoom: 1 })),
+    setViewport: vi.fn(),
+  },
+  nestedViewport: {
+    fitView: vi.fn(),
+    zoomIn: vi.fn(),
+    zoomOut: vi.fn(),
+    getViewport: vi.fn(() => ({ x: 10, y: 20, zoom: 1 })),
+    setViewport: vi.fn(),
+  },
 }));
 
 vi.mock('@xyflow/react', async () => {
@@ -33,10 +45,17 @@ vi.mock('@xyflow/react', async () => {
     ReactFlow: (props: ReactFlowProps) => {
       mocks.flow(props);
       return (
-        <div data-testid="flow" data-provider-depth={React.useContext(ProviderDepth)} className={props.className}>
+        <div
+          role="group"
+          data-testid="flow"
+          data-provider-depth={React.useContext(ProviderDepth)}
+          className={props.className}
+          tabIndex={props.tabIndex}
+          onKeyDown={props.onKeyDown}
+        >
           {props.nodes?.map((node) => {
-            const Card = props.nodeTypes?.[node.type ?? ''] as ComponentType<Pick<NodeProps, 'data'>>;
-            return <Card key={node.id} data={node.data} />;
+            const Card = props.nodeTypes?.[node.type ?? ''] as ComponentType<Pick<NodeProps, 'id' | 'data'>>;
+            return <Card key={node.id} id={node.id} data={node.data} />;
           })}
           {props.children}
         </div>
@@ -186,7 +205,7 @@ describe('WorkflowPreview', () => {
       zoomOnDoubleClick: false,
       fitView: true,
     });
-    expect(Object.keys(flowProps()).filter((key) => key.startsWith('on'))).toEqual([]);
+    expect(Object.keys(flowProps()).filter((key) => key.startsWith('on'))).toEqual(['onKeyDown']);
     fireEvent.click(screen.getByText('Request'));
     fireEvent.doubleClick(screen.getByText('Response'));
     fireEvent.contextMenu(screen.getByTestId('flow'));
@@ -271,6 +290,159 @@ describe('WorkflowPreview', () => {
     for (const operation of Object.values(mocks.viewport)) {
       expect(operation).not.toHaveBeenCalled();
     }
+  });
+
+  it('renders nested boundaries and branch headers while keeping every graph element inert', () => {
+    const nestedNodes: WorkflowPreviewGraph['nodes'] = [
+      { id: 'condition', type: 'container', data: { label: 'Condition' }, width: 520, height: 300, position: { x: 0, y: 100 }, zIndex: 0 },
+      {
+        id: 'true',
+        type: 'container',
+        data: { label: 'True branch' },
+        parentId: 'condition',
+        width: 240,
+        height: 200,
+        position: { x: 20, y: 80 },
+        zIndex: 0,
+      },
+      {
+        id: 'true-header',
+        type: 'branch',
+        data: { label: 'True' },
+        parentId: 'true',
+        width: 120,
+        height: 32,
+        position: { x: 60, y: 0 },
+        zIndex: 4,
+      },
+      {
+        id: 'true-action',
+        type: 'operation',
+        data: { label: 'True action' },
+        parentId: 'true',
+        width: 200,
+        height: 44,
+        position: { x: 20, y: 72 },
+        zIndex: 4,
+      },
+      {
+        id: 'false-header',
+        type: 'branch',
+        data: { label: 'False' },
+        parentId: 'condition',
+        width: 120,
+        height: 32,
+        position: { x: 280, y: 80 },
+        zIndex: 4,
+      },
+    ];
+    const before = structuredClone(nestedNodes);
+    const Container = ({ data }: NodeProps) => <div role="group" aria-label={String(data.label)} />;
+    const Card = ({ data }: NodeProps) => <span>{String(data.label)}</span>;
+    const graph: WorkflowPreviewGraph = {
+      nodes: nestedNodes,
+      edges: [
+        { id: 'branch-edge', source: 'true-header', target: 'true-action', type: 'native', data: { statuses: ['Failed'] }, zIndex: 3 },
+      ],
+      nodeTypes: { container: Container, branch: Card, operation: Card },
+      edgeTypes: { native: () => null },
+    };
+    render(<WorkflowPreview graph={graph} />);
+    expect(screen.getByRole('group', { name: 'Condition' })).toBeInTheDocument();
+    expect(screen.getByRole('group', { name: 'True branch' })).toBeInTheDocument();
+    expect(screen.getByText('True')).toBeInTheDocument();
+    expect(screen.getByText('False')).toBeInTheDocument();
+    expect(screen.getByText('True action')).toBeInTheDocument();
+    expect(flowProps().nodes?.find(({ id }) => id === 'true-action')).toMatchObject({ parentId: 'true', height: 44 });
+    expect(flowProps().nodes?.find(({ id }) => id === 'condition')).toMatchObject({
+      type: 'container',
+      width: 520,
+      height: 300,
+    });
+    for (const node of flowProps().nodes ?? []) {
+      expect(node).toMatchObject({ draggable: false, connectable: false, selectable: false, focusable: false, deletable: false });
+    }
+    expect(flowProps().edges?.[0]).toMatchObject({ selectable: false, focusable: false, reconnectable: false, zIndex: 3 });
+    expect(flowProps().nodeTypes).toBe(graph.nodeTypes);
+    expect(flowProps().edgeTypes).toBe(graph.edgeTypes);
+    expect(flowProps().edges?.[0]).toMatchObject({ type: 'native', data: { statuses: ['Failed'] } });
+    expect(flowProps().edges?.[0].markerEnd).toBeUndefined();
+    expect(flowProps().nodes?.find(({ id }) => id === 'true-action')).toMatchObject({ zIndex: 4 });
+    expect(nestedNodes).toEqual(before);
+  });
+
+  it('pans only its own viewport with arrow keys, without intercepting navigation-button keys', () => {
+    render(
+      <ReactFlowProvider>
+        <WorkflowPreview nodes={nodes} edges={edges} />
+      </ReactFlowProvider>
+    );
+    const canvas = screen.getByTestId('flow');
+    fireEvent.keyDown(canvas, { key: 'ArrowLeft' });
+    fireEvent.keyDown(canvas, { key: 'ArrowDown' });
+    expect(mocks.nestedViewport.setViewport).toHaveBeenNthCalledWith(1, { x: 50, y: 20, zoom: 1 });
+    expect(mocks.nestedViewport.setViewport).toHaveBeenNthCalledWith(2, { x: 10, y: -20, zoom: 1 });
+    fireEvent.keyDown(screen.getByRole('button', { name: 'Zoom in' }), { key: 'ArrowRight' });
+    fireEvent.keyDown(canvas, { key: 'Delete' });
+    fireEvent.keyDown(canvas, { key: 'ArrowRight', ctrlKey: true });
+    expect(mocks.nestedViewport.setViewport).toHaveBeenCalledTimes(2);
+    expect(mocks.viewport.getViewport).not.toHaveBeenCalled();
+    expect(mocks.viewport.setViewport).not.toHaveBeenCalled();
+  });
+
+  it('reports only private native node dimensions, without exposing editor change callbacks', () => {
+    const onNodeSizesChange = vi.fn();
+    render(
+      <WorkflowPreview
+        graph={{
+          nodes: [{ id: 'request', type: 'native', data: { label: 'Request' }, position: { x: 0, y: 0 } }],
+          edges: [],
+          nodeTypes: { native: ({ data }: NodeProps) => <span>{String(data.label)}</span> },
+          edgeTypes: {},
+          onNodeSizesChange,
+        }}
+      />
+    );
+    expect(onNodeSizesChange).toHaveBeenCalledExactlyOnceWith({ request: { width: 200, height: 44 } });
+    expect(Object.keys(flowProps()).filter((key) => key.startsWith('on'))).toEqual(['onKeyDown']);
+  });
+
+  it('refits changed container dimensions in its private viewport and cancels work on unmount', () => {
+    const graph: WorkflowPreviewGraph = {
+      nodes: [
+        {
+          id: 'condition',
+          type: 'container',
+          data: { label: 'Condition' },
+          position: { x: 0, y: 100 },
+          width: 520,
+          height: 300,
+        },
+      ],
+      edges: [],
+      nodeTypes: { container: ({ data }: NodeProps) => <div>{String(data.label)}</div> },
+      edgeTypes: {},
+    };
+    const view = render(
+      <ReactFlowProvider>
+        <WorkflowPreview graph={graph} />
+      </ReactFlowProvider>
+    );
+    flushFrames();
+    const before = mocks.nestedViewport.fitView.mock.calls.length;
+    view.rerender(
+      <ReactFlowProvider>
+        <WorkflowPreview graph={{ ...graph, nodes: [{ ...graph.nodes[0], width: 760, height: 460 }] }} />
+      </ReactFlowProvider>
+    );
+    flushFrames();
+    expect(flowProps().nodes?.[0]).toMatchObject({ width: 760, height: 460 });
+    expect(mocks.nestedViewport.fitView.mock.calls.length).toBeGreaterThan(before);
+    expect(mocks.viewport.fitView).not.toHaveBeenCalled();
+    view.unmount();
+    const calls = mocks.nestedViewport.fitView.mock.calls.length;
+    flushFrames();
+    expect(mocks.nestedViewport.fitView).toHaveBeenCalledTimes(calls);
   });
 
   it('renders compact connector cards with full titles and inert, hidden handles', () => {
@@ -500,6 +672,7 @@ describe('WorkflowPreview', () => {
           'LeR+TX': 'Agrandir',
           JyYLq1: 'Réduire',
           nAEN7n: 'Ajuster la vue',
+          'xik+HE': 'Navigation de l’aperçu. Utilisez les flèches pour déplacer la vue.',
         },
       })
     );

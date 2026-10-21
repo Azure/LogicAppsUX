@@ -159,9 +159,12 @@ export const DesignerContextualMenu = () => {
   }, [rawInputsOutputs?.inputs, runName]);
 
   const [showCopyCallout, setShowCopyCallout] = useState(false);
-  const copyClick = useCallback(() => {
+  const copyClick = useCallback(async () => {
+    const result = await dispatch((isScopeNode ? copyScopeOperation : copyOperation)({ nodeId }));
+    if (result?.meta?.requestStatus !== 'fulfilled') {
+      return;
+    }
     setShowCopyCallout(true);
-    dispatch((isScopeNode ? copyScopeOperation : copyOperation)?.({ nodeId }));
     setCopyCalloutTimeout(setTimeout(() => setShowCopyCallout(false), 3000));
   }, [dispatch, nodeId, isScopeNode]);
 
@@ -293,17 +296,23 @@ export const DesignerContextualMenu = () => {
     dispatch(setShowMultiSelectDeleteModal(true));
   }, [dispatch]);
 
-  const bulkCopyClick = useCallback(() => {
+  const bulkCopyClick = useCallback(async () => {
     setOpen(false);
+    const result = await dispatch(copyOperations({ nodeIds: selectedNodeIds }));
+    if (result?.meta?.requestStatus !== 'fulfilled') {
+      return;
+    }
     setShowCopyCallout(true);
-    dispatch(copyOperations({ nodeIds: selectedNodeIds }));
     setCopyCalloutTimeout(setTimeout(() => setShowCopyCallout(false), 3000));
   }, [dispatch, selectedNodeIds]);
 
-  const bulkCutClick = useCallback(() => {
+  const bulkCutClick = useCallback(async () => {
     setOpen(false);
+    const result = await dispatch(cutOperations({ nodeIds: selectedNodeIds }));
+    if (result?.meta?.requestStatus !== 'fulfilled') {
+      return;
+    }
     setShowCopyCallout(true);
-    dispatch(cutOperations({ nodeIds: selectedNodeIds }));
     setCopyCalloutTimeout(setTimeout(() => setShowCopyCallout(false), 3000));
   }, [dispatch, selectedNodeIds]);
 

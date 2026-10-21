@@ -131,14 +131,18 @@ const MultiSelectPanelBody = ({ panelLocation, onClose }: MultiSelectPanelBodyPr
     dispatch(setShowMultiSelectDeleteModal(true));
   }, [dispatch]);
 
-  const onCut = useCallback(() => {
-    dispatch(cutOperations({ nodeIds: selectedNodeIds }));
-    showCopiedTooltip();
+  const onCut = useCallback(async () => {
+    const result = await dispatch(cutOperations({ nodeIds: selectedNodeIds }));
+    if (result?.meta?.requestStatus === 'fulfilled') {
+      showCopiedTooltip();
+    }
   }, [dispatch, selectedNodeIds, showCopiedTooltip]);
 
-  const onCopy = useCallback(() => {
-    dispatch(copyOperations({ nodeIds: selectedNodeIds }));
-    showCopiedTooltip();
+  const onCopy = useCallback(async () => {
+    const result = await dispatch(copyOperations({ nodeIds: selectedNodeIds }));
+    if (result?.meta?.requestStatus === 'fulfilled') {
+      showCopiedTooltip();
+    }
   }, [dispatch, selectedNodeIds, showCopiedTooltip]);
 
   const onWrapInScope = useCallback(() => {

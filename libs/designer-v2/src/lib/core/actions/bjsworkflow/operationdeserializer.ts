@@ -123,7 +123,8 @@ export const initializeOperationMetadata = async (
   customCode: CustomCodeFileNameMapping,
   workflowKind: WorkflowKind,
   dispatch: Dispatch,
-  pasteParams?: PasteScopeAdditionalParams
+  pasteParams?: PasteScopeAdditionalParams,
+  awaitResultSchemas = false
 ): Promise<void> => {
   initializeConnectorsForReferences(references);
 
@@ -159,9 +160,25 @@ export const initializeOperationMetadata = async (
     } else if (operation.type === Constants.NODE.TYPE.CONNECTOR) {
       operationPromise = initializeConnectorOperationDetails(operationId, operation as LogicAppsV2.ConnectorAction, workflowKind, dispatch);
     } else if (operationManifestService.isSupported(operation.type, operation.kind)) {
-      operationPromise = initializeOperationDetailsForManifest(operationId, operation, customCode, !!isTrigger, workflowKind, dispatch);
+      operationPromise = initializeOperationDetailsForManifest(
+        operationId,
+        operation,
+        customCode,
+        !!isTrigger,
+        workflowKind,
+        dispatch,
+        awaitResultSchemas
+      );
     } else {
-      operationPromise = initializeOperationDetailsForSwagger(operationId, operation, references, !!isTrigger, workflowKind, dispatch);
+      operationPromise = initializeOperationDetailsForSwagger(
+        operationId,
+        operation,
+        references,
+        !!isTrigger,
+        workflowKind,
+        dispatch,
+        awaitResultSchemas
+      );
     }
 
     promiseNodeIds.push(operationId);
@@ -395,7 +412,8 @@ export const initializeOperationDetailsForManifest = async (
   customCode: CustomCodeFileNameMapping,
   isTrigger: boolean,
   workflowKind: WorkflowKind,
-  dispatch: Dispatch
+  dispatch: Dispatch,
+  awaitResultSchemas = false
 ): Promise<NodeDataWithOperationMetadata[] | undefined> => {
   const operation = { ..._operation };
   try {
@@ -413,12 +431,14 @@ export const initializeOperationDetailsForManifest = async (
 
     const { connectorId, operationId } = nodeOperationInfo;
     const parsedManifest = new ManifestParser(manifest, OperationManifestService().isAliasingSupported(operation.type, operation.kind));
-    const schema = staticResultService.getOperationResultSchema(connectorId, operationId, parsedManifest);
-    schema.then((schema) => {
+    const resultSchema = staticResultService.getOperationResultSchema(connectorId, operationId, parsedManifest).then((schema) => {
       if (schema) {
         dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema }));
       }
     });
+    if (awaitResultSchemas) {
+      await resultSchema;
+    }
 
     const customSwagger = await getCustomSwaggerIfNeeded(manifest.properties, operation);
     const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(

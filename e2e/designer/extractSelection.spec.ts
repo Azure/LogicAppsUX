@@ -215,8 +215,8 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
     for (const node of await nodes.all()) {
       await expect(node).not.toHaveClass(/\b(draggable|selectable)\b/);
     }
-    const previewCard = nodes.nth(1).locator('[title="Build message"]');
-    const designerCard = page.getByTestId('card-build_message');
+    const previewCard = nodes.nth(1).getByTestId('card-build_message');
+    const designerCard = editor.getByTestId('card-build_message');
     const cardStyle = (card: Locator) =>
       card.evaluate((element) => {
         const style = getComputedStyle(element);
@@ -240,12 +240,12 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
     );
     const geometry = await previewCard.evaluate((card) => {
       const bounds = card.getBoundingClientRect();
-      const icon = card.querySelector('span[aria-hidden="true"]')!.getBoundingClientRect();
-      const label = card.querySelector('span:not([aria-hidden])')!.getBoundingClientRect();
+      const label = card.querySelector('.fui-Text')!.getBoundingClientRect();
+      const icon = card.querySelector('.fui-Text')!.previousElementSibling!.getBoundingClientRect();
       return {
         iconCenter: icon.y + icon.height / 2 - bounds.y,
         labelCenter: label.y + label.height / 2 - bounds.y,
-        handleCenters: Array.from(card.querySelectorAll('.react-flow__handle'), (handle) => {
+        handleCenters: Array.from(card.parentElement!.querySelectorAll('.react-flow__handle'), (handle) => {
           const handleBounds = handle.getBoundingClientRect();
           return (handleBounds.x + handleBounds.width / 2 - bounds.x) / bounds.width;
         }),
@@ -257,7 +257,7 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
     }
     const readEdgeGeometry = () =>
       preview.evaluate((element) => {
-        const cards = Array.from(element.querySelectorAll('.react-flow__node [title]'), (card) => card.getBoundingClientRect());
+        const cards = Array.from(element.querySelectorAll('.react-flow__node [role="img"]'), (card) => card.getBoundingClientRect());
         return Array.from(element.querySelectorAll<SVGPathElement>('.react-flow__edge-path'), (path, index) => {
           const matrix = path.getScreenCTM()!;
           const start = path.getPointAtLength(0).matrixTransform(matrix);
@@ -698,7 +698,25 @@ test.describe('Extract selected actions in standalone', { tag: '@mock' }, () => 
     await expect(dialog.getByRole('button', { name: 'Confirm', exact: true })).toBeEnabled();
     await dialog.getByLabel('Workflow name', { exact: true }).fill('Extracted_Scope');
     const preview = dialog.getByTestId('extraction-workflow-preview');
-    await expect(preview.locator('.react-flow__node')).toHaveCount(4);
+    await expect(preview.locator('.react-flow__node')).toHaveCount(7);
+    expect(
+      await preview.locator('.react-flow__node').evaluateAll((nodes) => nodes.map((node) => node.getAttribute('data-id')).sort())
+    ).toEqual(['Request', 'Processing', 'Processing-#scope', 'Filter_array', 'HTTP', 'Build_result', 'Response'].sort());
+    await expect(preview.locator('.react-flow__node-GRAPH_NODE[data-id="Processing"]')).toBeVisible();
+    await expect(preview.locator('.react-flow__node-SCOPE_CARD_NODE[data-id="Processing-#scope"]')).toBeVisible();
+    await expect(preview.locator('.react-flow__node-OPERATION_NODE[data-id="Filter_array"]')).toBeVisible();
+    await expect(preview.locator('.react-flow__node-OPERATION_NODE[data-id="HTTP"]')).toBeVisible();
+    expect(
+      await preview.evaluate((element) => {
+        const parent = element.querySelector('.react-flow__node[data-id="Processing"]')!.getBoundingClientRect();
+        return ['Processing-#scope', 'Filter_array', 'HTTP'].every((id) => {
+          const child = element.querySelector(`.react-flow__node[data-id="${id}"]`)!.getBoundingClientRect();
+          return (
+            child.left >= parent.left && child.right <= parent.right + 1 && child.top >= parent.top && child.bottom <= parent.bottom + 1
+          );
+        });
+      })
+    ).toBe(true);
     await expect(preview.getByText('Processing', { exact: true })).toBeVisible();
     await dialog.getByRole('button', { name: 'Confirm', exact: true }).click();
     const openChild = dialog.getByRole('link', { name: 'Open child workflow', exact: true });

@@ -2,6 +2,7 @@ import type { ConnectionMapping } from '../../../common/models/workflow';
 import {
   ExpressionBuilder,
   ExpressionParser,
+  equals,
   isFunction,
   isStringInterpolation,
   isStringLiteral,
@@ -36,6 +37,11 @@ export function isConnectionExpressionValid(expression: string): boolean {
   }
 }
 
+export const getReferenceNameReplacement = (replacements: Record<string, string>, name: string): string | undefined => {
+  const key = Object.hasOwn(replacements, name) ? name : Object.keys(replacements).find((candidate) => equals(candidate, name, true));
+  return key === undefined ? undefined : replacements[key];
+};
+
 export function remapConnectionExpression(
   value: string,
   actionNames: Record<string, string> = {},
@@ -58,9 +64,12 @@ export function remapConnectionExpression(
             ? actionNames
             : {};
       const argument = node.arguments[0];
-      if (argument && isStringLiteral(argument) && Object.hasOwn(replacements, argument.value)) {
-        argument.value = replacements[argument.value];
-        changed = true;
+      if (argument && isStringLiteral(argument)) {
+        const replacement = getReferenceNameReplacement(replacements, argument.value);
+        if (replacement !== undefined) {
+          argument.value = replacement;
+          changed = true;
+        }
       }
       node.arguments.forEach(visit);
       node.dereferences.forEach((dereference) => visit(dereference.expression));

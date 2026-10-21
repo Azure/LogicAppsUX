@@ -1,6 +1,13 @@
 import { makeStyles } from '@fluentui/react-components';
 
 export const useDesignerStyles = makeStyles({
+  clipboardError: {
+    position: 'absolute',
+    top: '8px',
+    left: '8px',
+    right: '8px',
+    zIndex: 10,
+  },
   layerHost: {
     position: 'absolute',
     inset: '0px',

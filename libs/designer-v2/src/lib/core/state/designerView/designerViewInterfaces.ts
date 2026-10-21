@@ -5,6 +5,7 @@ export interface DesignerViewState {
   showMultiSelectDeleteModal?: boolean;
   workflowExtractionDialogOpen?: boolean;
   workflowExtractionBusy?: boolean;
+  clipboardError?: string;
   nodeContextMenuData?: NodeContextMenuObject;
   edgeContextMenuData?: EdgeContextMenuObject;
 }

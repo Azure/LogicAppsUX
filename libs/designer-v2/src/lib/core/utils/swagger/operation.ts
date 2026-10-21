@@ -1,6 +1,3 @@
-/* eslint-disable no-param-reassign */
-
-/* eslint-disable no-case-declarations */
 import Constants from '../../../common/constants';
 import type { ConnectionReferences } from '../../../common/models/workflow';
 import { getLegacyConnectionReferenceKey } from '../../actions/bjsworkflow/connections';
@@ -67,7 +64,8 @@ export const initializeOperationDetailsForSwagger = async (
   references: ConnectionReferences,
   isTrigger: boolean,
   workflowKind: WorkflowKind,
-  dispatch: Dispatch
+  dispatch: Dispatch,
+  awaitResultSchemas = false
 ): Promise<NodeDataWithOperationMetadata[] | undefined> => {
   try {
     const staticResultService = StaticResultService();
@@ -78,12 +76,14 @@ export const initializeOperationDetailsForSwagger = async (
       const nodeOperationInfo = { ...operationInfo, type: operation.type, kind: operation.kind };
       dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
       const { connector, parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
-      const schemaService = staticResultService.getOperationResultSchema(connectorId, operationId, parsedSwagger);
-      schemaService.then((schema) => {
+      const resultSchema = staticResultService.getOperationResultSchema(connectorId, operationId, parsedSwagger).then((schema) => {
         if (schema) {
           dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
         }
       });
+      if (awaitResultSchemas) {
+        await resultSchema;
+      }
 
       const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromSwagger(
         nodeId,

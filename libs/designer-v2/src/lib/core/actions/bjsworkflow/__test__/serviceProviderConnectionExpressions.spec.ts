@@ -27,6 +27,7 @@ import {
   type OperationManifest,
 } from '@microsoft/logic-apps-shared';
 import { getMockedInitialRootState } from '../../../../__test__/mock-root-state';
+import scopeManifest from '../../../../../../../logic-apps-shared/src/designer-client-services/lib/base/manifests/scope';
 import { isExpressionConnectionMapping, type ConnectionMapping } from '../../../../common/models/workflow';
 import { getReactQueryClient } from '../../../ReactQueryProvider';
 import { Deserialize } from '../../../parsers/BJSWorkflow/BJSDeserializer';
@@ -1000,6 +1001,26 @@ describe('ServiceProvider runtime connection expressions', () => {
     );
   });
 
+  it('remaps case-varied references using only own names and preserves literal text', () => {
+    const replacements = { A: 'A-copy', a: 'exact-lower-copy' };
+    Object.setPrototypeOf(replacements, { inherited: 'incorrect' });
+    expect(remapConnectionExpression("@concat(outputs('a'), outputs('A'), outputs('INHERITED'), 'outputs(''a'')')", replacements)).toBe(
+      "@concat(outputs('exact-lower-copy'), outputs('A-copy'), outputs('INHERITED'), 'outputs(''a'')')"
+    );
+    expect(
+      remapConnectionExpression(
+        "@concat(outputs('a'), body('a'), actions('a'), actionOutputs('a'), actionBody('a'), items('a'), iterationIndexes('a'), result('a'))",
+        { A: 'A-copy' }
+      )
+    ).toBe(
+      "@concat(outputs('A-copy'), body('A-copy'), actions('A-copy'), actionOutputs('A-copy'), actionBody('A-copy'), items('A-copy'), iterationIndexes('A-copy'), result('A-copy'))"
+    );
+    expect(remapConnectionExpression("@outputs('CONSTRUCTOR')", {})).toBe("@outputs('CONSTRUCTOR')");
+    expect(remapConnectionExpression("@outputs('CONSTRUCTOR')", { constructor: 'own-copy' })).toBe("@outputs('own-copy')");
+    expect(remapConnectionExpression("@parameters('VALUE')", {}, { value: 'renamed' })).toBe("@parameters('renamed')");
+    expect(remapConnectionExpression("@@{outputs('a')}", { A: 'A-copy' })).toBe("@@{outputs('a')}");
+  });
+
   it('retains expression mappings through single and scope clipboard state, even without references', async () => {
     const state = await buildState();
     const store = makeStore(state);
@@ -1044,6 +1065,15 @@ describe('ServiceProvider runtime connection expressions', () => {
       type: 'Scope',
       actions: { Query: state.workflow.operations.Query as LogicAppsV2.ServiceProvider },
     };
+    state.workflow.operations.Container = scope;
+    const parsed = Deserialize({ actions: { Container: scope }, triggers: {} }, null);
+    state.workflow.graph = parsed.graph;
+    state.workflow.nodesMetadata = parsed.nodesMetadata;
+    state.operations.operationInfo.Container = { type: 'Scope', connectorId: 'connectionProviders/control', operationId: 'scope' };
+    state.operations.inputParameters.Container = { parameterGroups: {} };
+    state.operations.outputParameters.Container = { outputs: {} };
+    state.operations.dependencies.Container = { inputs: {}, outputs: {} };
+    state.operations.operationMetadata.Container = { iconUri: '', brandColor: '' };
     const serialize = vi.spyOn(await import('../serializer'), 'serializeOperation').mockResolvedValue(scope);
     const store = makeStore(state);
     await store.dispatch(copyScopeOperation({ nodeId: 'Container-#scope' })).unwrap();
@@ -1083,6 +1113,12 @@ describe('ServiceProvider runtime connection expressions', () => {
   });
 
   it('remaps runtime references during a real scope paste and restores connection state on undo', async () => {
+    vi.spyOn(OperationManifestService(), 'getOperationInfo').mockImplementation(async (operation) =>
+      operation.type === 'Scope' ? { connectorId: 'connectionProviders/control', operationId: 'scope' } : operationInfo
+    );
+    vi.spyOn(OperationManifestService(), 'getOperationManifest').mockImplementation(async (_connector, operation) =>
+      operation === 'scope' ? scopeManifest : manifest
+    );
     const state = await buildState();
     const store = makeStore(state);
     const source = state.workflow.operations.Query as LogicAppsV2.ServiceProvider;
@@ -1113,6 +1149,7 @@ describe('ServiceProvider runtime connection expressions', () => {
       )
       .unwrap();
     const mappings = store.getState().connections.connectionsMapping;
+    expect(store.getState().operations.errors.Container).toBeUndefined();
     const renamedQuery = Object.keys(mappings).find((id) => {
       const mapping = mappings[id];
       return id !== nodeId && isExpressionConnectionMapping(mapping) && mapping.expression === '@triggerBody()';

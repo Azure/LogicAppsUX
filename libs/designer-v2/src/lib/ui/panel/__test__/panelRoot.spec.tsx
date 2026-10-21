@@ -89,7 +89,12 @@ vi.mock('@microsoft/designer-ui', async (importOriginal) => {
   };
 });
 
-import { useCurrentPanelMode, useIsPanelCollapsed, useIsPanelLoading } from '../../../core/state/panel/panelSelectors';
+import {
+  useCurrentPanelMode,
+  useIsPanelCollapsed,
+  useIsPanelLoading,
+  useOperationPanelSelectedNodeIds,
+} from '../../../core/state/panel/panelSelectors';
 
 const mockUseCurrentPanelMode = vi.mocked(useCurrentPanelMode);
 const mockUseIsPanelCollapsed = vi.mocked(useIsPanelCollapsed);
@@ -136,8 +141,14 @@ describe('PanelRoot', () => {
     expect(container.innerHTML).toBe('');
   });
 
-  test('should render NodeDetailsPanel when mode is Operation', () => {
+  test.each([
+    { selectedNodeIds: [] },
+    { selectedNodeIds: ['Scope'] },
+    { selectedNodeIds: ['Condition'] },
+    { selectedNodeIds: ['Condition', 'Then'] },
+  ])('should render NodeDetailsPanel for Operation selection $selectedNodeIds', ({ selectedNodeIds }) => {
     mockUseCurrentPanelMode.mockReturnValue('Operation');
+    vi.mocked(useOperationPanelSelectedNodeIds).mockReturnValue(selectedNodeIds);
 
     render(<PanelRoot {...defaultProps} />, { wrapper: createWrapper() });
 

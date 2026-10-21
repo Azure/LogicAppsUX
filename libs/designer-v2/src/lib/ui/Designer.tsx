@@ -10,9 +10,9 @@ import {
 } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useOperationPanelSelectedNodeId, useOperationPanelSelectedNodeIds } from '../core/state/panel/panelSelectors';
 import { setNodeSelection } from '../core/state/panel/panelSlice';
-import { setShowDeleteModalNodeId, setShowMultiSelectDeleteModal } from '../core/state/designerView/designerViewSlice';
+import { clearClipboardError, setShowDeleteModalNodeId, setShowMultiSelectDeleteModal } from '../core/state/designerView/designerViewSlice';
 import { useAllSelectableNodeIds, useRunInstance } from '../core/state/workflow/workflowSelectors';
-import { copyOperation, copyOperations, cutOperations, duplicateOperations } from '../core/actions/bjsworkflow/copypaste';
+import { copyOperations, cutOperations, duplicateOperations } from '../core/actions/bjsworkflow/copypaste';
 import type { AppDispatch, RootState } from '../core/store';
 import Controls from './Controls';
 import Minimap from './Minimap';
@@ -45,6 +45,7 @@ import { useDesignerStyles } from './Designer.styles';
 import { RunDisplay } from './RunDisplay';
 import { KindChangeDialog } from './common/KindChangeDialog/KindChangeDialog';
 import { WorkflowExtractionDialog } from './panel/multiSelectPanel/workflowExtraction';
+import { CustomizableMessageBar } from './settings/validation/errorbar';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -65,6 +66,7 @@ export const Designer = (props: DesignerProps) => {
   const isVSCode = useIsVSCode();
   const readOnly = useReadOnly();
   const extractionOpen = useSelector((state: RootState) => !!state.designerView.workflowExtractionDialogOpen);
+  const clipboardError = useSelector((state: RootState) => state.designerView.clipboardError);
   const isReadOnly = readOnly || extractionOpen;
   const dispatch = useDispatch<AppDispatch>();
 
@@ -164,7 +166,7 @@ export const Designer = (props: DesignerProps) => {
       if (selectedNodeIds.length > 1) {
         dispatch(copyOperations({ nodeIds: selectedNodeIds }));
       } else if (selectedNodeId) {
-        dispatch(copyOperation({ nodeId: selectedNodeId }));
+        dispatch(copyOperations({ nodeIds: [selectedNodeId] }));
       }
     },
     { enabled: !isReadOnly }
@@ -254,6 +256,11 @@ export const Designer = (props: DesignerProps) => {
         className={mergeClasses('msla-designer-canvas', 'msla-panel-mode', styles.vars, isDarkMode ? styles.darkVars : styles.lightVars)}
       >
         <ReactFlowProvider>
+          {clipboardError && (
+            <div className={styles.clipboardError}>
+              <CustomizableMessageBar type="error" message={clipboardError} onWarningDismiss={() => dispatch(clearClipboardError())} />
+            </div>
+          )}
           <RunHistoryPanel />
           <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'row', position: 'relative' }} ref={canvasRef}>
             {hasUnsupportedMultipleTriggers ? (
