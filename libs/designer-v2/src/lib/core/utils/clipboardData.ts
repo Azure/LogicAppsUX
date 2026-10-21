@@ -5,6 +5,8 @@ import type { CopiedConnectionData } from '../state/connection/connectionSlice';
 import type { NodeData, NodeOperation } from '../state/operation/operationMetadataSlice';
 import type { NodeTokens } from '../state/tokens/tokensSlice';
 import { getReferenceNameReplacement, remapConnectionExpression, remapConnectionExpressionValue } from './connectors/connectionExpression';
+import Constants from '../../common/constants';
+import { getAllActionNames } from '../parsers/BJSWorkflow/BJSDeserializer';
 
 export interface ActionClipboardEntry {
   nodeId: string;
@@ -51,6 +53,65 @@ export const clipboardError = (source = false) => {
 };
 
 const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null && !Array.isArray(value);
+
+export const getAgentChannelOperations = (
+  nodeId: string,
+  operation: LogicAppsV2.OperationDefinition
+): Record<string, LogicAppsV2.OperationDefinition> => {
+  if (operation.type?.toLowerCase() !== Constants.NODE.TYPE.AGENT) {
+    return {};
+  }
+  const { channels } = operation as LogicAppsV2.AgentAction;
+  return Object.fromEntries([
+    ...Object.values(channels?.in ?? {}).map((channel) => {
+      const trigger = channel?.trigger;
+      if (!trigger || typeof trigger.type !== 'string' || !trigger.type) {
+        throw clipboardError();
+      }
+      return [`${nodeId}${Constants.CHANNELS.INPUT}${trigger.type}`, trigger];
+    }),
+    ...Object.values(channels?.out ?? {}).map((channel) => {
+      const action = channel?.action;
+      if (!action || typeof action.type !== 'string' || !action.type) {
+        throw clipboardError();
+      }
+      return [`${nodeId}${Constants.CHANNELS.OUTPUT}${action.type}`, action];
+    }),
+  ]);
+};
+
+const validateScopeDataOwnership = (entry: ScopeClipboardEntry): void => {
+  const actions = { [entry.sourceNodeId ?? entry.nodeId.replace(/-copy$/, '')]: entry.serializedOperation };
+  const names = new Set(getAllActionNames(actions, [], false /* includeCase */, true /* includeMcpTools */));
+  const visit = (definitions: LogicAppsV2.Actions | undefined): void => {
+    for (const [id, operation] of Object.entries(definitions ?? {})) {
+      if (!isScopeOperation(operation.type)) {
+        continue;
+      }
+      Object.keys(getAgentChannelOperations(id, operation)).forEach((name) => names.add(name));
+      visit((operation as LogicAppsV2.ScopeAction).actions);
+      if (operation.type.toLowerCase() === Constants.NODE.TYPE.IF) {
+        visit((operation as LogicAppsV2.IfAction).else?.actions);
+      }
+      if (operation.type.toLowerCase() === Constants.NODE.TYPE.SWITCH) {
+        const container = operation as LogicAppsV2.SwitchAction;
+        visit(container.default?.actions);
+        Object.values(container.cases ?? {}).forEach((branch) => visit(branch.actions));
+      }
+      if (operation.type.toLowerCase() === Constants.NODE.TYPE.AGENT) {
+        for (const tool of Object.values((operation as LogicAppsV2.AgentAction).tools ?? {})) {
+          if (tool.type?.toLowerCase() === Constants.NODE.TYPE.AGENT_CONDITION) {
+            visit((tool as LogicAppsV2.AgentCondition).actions);
+          }
+        }
+      }
+    }
+  };
+  visit(actions);
+  if ([...Object.keys(entry.allConnectionData), ...Object.keys(entry.staticResults)].some((name) => !names.has(name))) {
+    throw clipboardError();
+  }
+};
 
 export const remapClipboardOperation = (
   operation: LogicAppsV2.ActionDefinition,
@@ -252,6 +313,11 @@ export const validateClipboard = (value: unknown): { nodes: ClipboardEntry[]; ed
   const edges = value.isMultiNode === true ? (value.edges ?? []) : [];
   if (!Array.isArray(nodes) || !nodes.length || !nodes.every(isClipboardEntry) || !Array.isArray(edges)) {
     throw clipboardError();
+  }
+  for (const entry of nodes) {
+    if (entry.isScopeNode) {
+      validateScopeDataOwnership(entry);
+    }
   }
   const ids = new Set(nodes.map((node) => node.nodeId));
   if (

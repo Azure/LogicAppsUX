@@ -49,7 +49,7 @@ import { updateParameterAndDependencies } from '../../../utils/parameters/helper
 import * as parameterHelpers from '../../../utils/parameters/helper';
 import * as dynamicData from '../../../utils/parameters/dynamicdata';
 import { retrieveClipboardData } from '../../../utils/clipboard';
-import { remapClipboardNodeData, remapClipboardOperation } from '../../../utils/clipboardData';
+import { remapClipboardNodeData, remapClipboardOperation, validateClipboard } from '../../../utils/clipboardData';
 import {
   copyOperation,
   copyOperations,
@@ -62,6 +62,8 @@ import {
 import { initializeDynamicDataInNodes, initializeOperationMetadata } from '../operationdeserializer';
 import { serializeOperation, serializeWorkflow } from '../serializer';
 import { onRedoClick, onUndoClick } from '../undoRedo';
+import { buildWorkflowExtractionPlan } from '../../../utils/workflowExtraction';
+import { getWorkflowExtractionPreview } from '../../../../ui/panel/multiSelectPanel/workflowExtractionPreview';
 
 const definition: LogicAppsV2.WorkflowDefinition = {
   triggers: {},
@@ -211,6 +213,123 @@ beforeEach(() => {
 });
 
 describe('clipboard integrity with real designer initialization and reducers', () => {
+  it.each([
+    ['allConnectionData', false],
+    ['staticResults', false],
+    ['allConnectionData', true],
+    ['staticResults', true],
+  ] as const)('rejects out-of-container %s before changing an unrelated destination action (multi: %s)', async (field, multi) => {
+    const source = await prepareSource({
+      triggers: {},
+      actions: { Container: { type: 'Scope', actions: { Child: { type: 'Compose', inputs: 'child', runAfter: {} } }, runAfter: {} } },
+    });
+    await source.dispatch(copyScopeOperation({ nodeId: 'Container' })).unwrap();
+    const scopeClipboard = readClipboard();
+    scopeClipboard[field].Existing =
+      field === 'allConnectionData'
+        ? { referenceKey: 'other', connectionReference: { api: { id: 'other' }, connection: { id: 'other' } } }
+        : { status: 'Failed', outputs: { body: 'overwritten' } };
+    let clipboard = scopeClipboard;
+    if (multi) {
+      await source.dispatch(copyOperation({ nodeId: 'Child' })).unwrap();
+      clipboard = { mslaNode: true, isMultiNode: true, nodes: [readClipboard(), scopeClipboard], edges: [] };
+    }
+    const target = await prepareSource({
+      triggers: {},
+      actions: { Existing: { type: 'Compose', inputs: 'destination', runAfter: {} } },
+    });
+    target.dispatch(initializeConnectionReferences({ original: { api: { id: 'original' }, connection: { id: 'original' } } }));
+    target.dispatch(setNodeConnectionMapping({ nodeId: 'Existing', mapping: 'original' }));
+    target.dispatch(
+      updateStaticResultProperties({ name: 'Existing0', properties: { status: 'Succeeded', outputs: { body: 'original' } } })
+    );
+    const before = target.getState();
+    await expect(
+      target
+        .dispatch(pasteClipboard({ clipboard, relationshipIds: { graphId: 'root', parentId: 'Existing' }, upstreamNodeIds: ['Existing'] }))
+        .unwrap()
+    ).rejects.toThrow(/complete action data/);
+    for (const slice of UNDO_REDO_SLICE_NAMES) {
+      expect(target.getState()[slice]).toBe(before[slice]);
+    }
+    expect(target.getState().undoRedo).toBe(before.undoRedo);
+  });
+
+  it('limits scope binding and static-result ownership to real actions and supported Agent channels', () => {
+    const clipboard = {
+      mslaNode: true,
+      nodeId: 'Container-copy',
+      isScopeNode: true,
+      serializedOperation: {
+        type: 'Scope',
+        actions: {
+          Switch: {
+            type: 'Switch',
+            cases: { Virtual_case: { case: 'one', actions: { Named: { type: 'Compose', inputs: 'one' } } } },
+            default: { actions: { Default: { type: 'Compose', inputs: 'default' } } },
+          },
+          Agent: {
+            type: 'Agent',
+            tools: {
+              Virtual_tool: { type: 'AgentCondition', actions: { Tool_action: { type: 'Compose', inputs: 'tool' } } },
+              Mcp: { type: 'McpClientTool', inputs: {} },
+            },
+            channels: {
+              in: { request: { trigger: { type: 'Request' } } },
+              out: { response: { action: { type: 'Response' } } },
+            },
+          },
+        },
+      },
+      allConnectionData: Object.fromEntries(
+        ['Container', 'Named', 'Default', 'Agent', 'Tool_action', 'Mcp', 'Agent-inputchannel-Request', 'Agent-outputchannel-Response'].map(
+          (name) => [name, { mapping: null }]
+        )
+      ),
+      staticResults: { Tool_action: { status: 'Succeeded' } },
+    };
+    expect(() => validateClipboard(clipboard)).not.toThrow();
+    for (const field of ['allConnectionData', 'staticResults'] as const) {
+      for (const invalidId of ['Virtual_case', 'Virtual_tool', 'Agent-inputchannel-Unknown', 'Existing']) {
+        expect(() =>
+          validateClipboard({
+            ...clipboard,
+            [field]: { ...clipboard[field], [invalidId]: field === 'allConnectionData' ? { mapping: null } : {} },
+          })
+        ).toThrow(/complete action data/);
+      }
+    }
+  });
+
+  it('previews a nested producer renamed to constructor without changing its internal source identity', async () => {
+    const source = await prepareSource({
+      triggers: { Request: { type: 'Request', kind: 'Http', inputs: {} } },
+      actions: {
+        Container: {
+          type: 'Scope',
+          runAfter: {},
+          actions: {
+            Producer: { type: 'Compose', inputs: 'producer', runAfter: {} },
+            Reader: { type: 'Compose', inputs: "@outputs('Producer')", runAfter: { Producer: ['Succeeded'] } },
+          },
+        },
+      },
+    });
+    source.dispatch(replaceId({ originalId: 'Producer', newId: 'constructor' }));
+    const before = source.getState();
+    const workflow = await serializeWorkflow(before);
+    const plan = buildWorkflowExtractionPlan(workflow, ['Container', 'constructor', 'Reader'], 'Child', (_name, body, runAfter) => ({
+      type: 'Workflow',
+      inputs: { body },
+      runAfter,
+    }));
+    const preview = await getWorkflowExtractionPreview(plan);
+    expect(preview.nodes.find(({ id }) => id === 'constructor')).toMatchObject({ parentId: 'Container' });
+    expect(preview.edges.find(({ source, target }) => source === 'constructor' && target === 'Reader')).toBeDefined();
+    expect(source.getState()).toBe(before);
+    expect(source.getState().workflow.operations.Producer).toBeDefined();
+  });
+
   it('remaps Switch/tools/channels without treating input data shaped like an action as a workflow definition', () => {
     const description = "@outputs('A')";
     const action = { type: 'Compose', description, inputs: { description }, runAfter: {} };

@@ -68,6 +68,7 @@ vi.mock('../runAfterIndicator', () => ({
 import ButtonEdge from '../edge';
 import HandoffEdge from '../handoffEdge';
 import designerViewReducer from '../../../core/state/designerView/designerViewSlice';
+import { filterRunAfters, WorkflowEdgeView } from '../workflowEdgeView';
 
 describe('ButtonEdge', () => {
   const defaultProps: EdgeProps<LogicAppsEdgeProps> = {
@@ -122,6 +123,22 @@ describe('ButtonEdge', () => {
       </svg>
     );
     expect(container).toBeTruthy();
+  });
+
+  it.each(['constructor', 'toString'])('does not render inherited run-after statuses for a succeeded-only %s source', (source) => {
+    const { container } = render(
+      <svg>
+        <WorkflowEdgeView
+          {...defaultProps}
+          source={source}
+          filteredRunAfters={filterRunAfters({ [source]: ['Succeeded'] })}
+          runAfterIndex={0}
+        />
+      </svg>
+    );
+    expect(container.querySelector('.react-flow__edge-path')).toBeTruthy();
+    expect(screen.queryByTestId('run-after-indicator')).toBeNull();
+    expect(screen.queryByTestId('collapsed-run-after-indicator')).toBeNull();
   });
 
   it('should render edge path', () => {

@@ -80,7 +80,7 @@ const convertElkGraphToReactFlow = (graph: ElkNode): LayoutContextType => {
   let nodeIndex = 1;
 
   const processChildren = (node: ElkNode) => {
-    const edgesBySource: Record<string, Edge[]> = {};
+    const edgesBySource: Record<string, Edge[]> = Object.create(null);
     if (node.edges) {
       // Put edge objects into a record by sourceId
       for (const edge of node.edges as ElkExtendedEdge[]) {

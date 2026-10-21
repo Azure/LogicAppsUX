@@ -53,6 +53,7 @@ import { initScopeCopiedStaticResultProperties } from '../../state/staticresults
 import { storeStateToUndoRedoHistory } from './undoRedo';
 import {
   clipboardError,
+  getAgentChannelOperations,
   hasCompleteActionData,
   isClipboardEntry,
   remapClipboardNodeData,
@@ -111,32 +112,6 @@ const resolveCopyNodeId = (state: RootState, id: string): string => {
     throw clipboardError(true);
   }
   return matches[0];
-};
-
-const getAgentChannelOperations = (
-  nodeId: string,
-  operation: LogicAppsV2.OperationDefinition
-): Record<string, LogicAppsV2.OperationDefinition> => {
-  if (operation.type.toLowerCase() !== Constants.NODE.TYPE.AGENT) {
-    return {};
-  }
-  const { channels } = operation as LogicAppsV2.AgentAction;
-  return Object.fromEntries([
-    ...Object.values(channels?.in ?? {}).map((channel) => {
-      const trigger = channel?.trigger;
-      if (!trigger || typeof trigger.type !== 'string' || !trigger.type) {
-        throw clipboardError();
-      }
-      return [`${nodeId}${Constants.CHANNELS.INPUT}${trigger.type}`, trigger];
-    }),
-    ...Object.values(channels?.out ?? {}).map((channel) => {
-      const action = channel?.action;
-      if (!action || typeof action.type !== 'string' || !action.type) {
-        throw clipboardError();
-      }
-      return [`${nodeId}${Constants.CHANNELS.OUTPUT}${action.type}`, action];
-    }),
-  ]);
 };
 
 const getScopeOperationNames = (state: RootState, scopeId: string): Map<string, string> => {

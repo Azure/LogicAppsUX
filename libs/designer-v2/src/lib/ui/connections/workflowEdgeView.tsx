@@ -1,5 +1,5 @@
 import { css } from '@fluentui/utilities';
-import { getEdgeCenter, RUN_AFTER_STATUS, useGuid } from '@microsoft/logic-apps-shared';
+import { getEdgeCenter, getRecordEntry, RUN_AFTER_STATUS, useGuid } from '@microsoft/logic-apps-shared';
 import { getSmoothStepPath, type EdgeProps } from '@xyflow/react';
 import type { PropsWithChildren } from 'react';
 import { useMemo } from 'react';
@@ -37,7 +37,7 @@ export const WorkflowEdgeView = ({
   children,
 }: PropsWithChildren<WorkflowEdgeViewProps>) => {
   const numRunAfters = Object.keys(filteredRunAfters).length;
-  const statuses = filteredRunAfters[source] ?? [];
+  const statuses = getRecordEntry(filteredRunAfters, source) ?? [];
   const showRunAfter = statuses.length > 0 && numRunAfters < 6;
   const showCollapsedRunAfter = statuses.length > 0 && numRunAfters > 5 && Object.keys(filteredRunAfters)[0] === source;
   const [, centerY] = getEdgeCenter({ sourceX, sourceY, targetX, targetY });
