@@ -249,6 +249,121 @@ describe('clipboard integrity with real designer initialization and reducers', (
     await check();
   });
 
+  it.each([false, true])('prefers copied producers over case-varied destination aliases (container: %s)', async (container) => {
+    const actions = {
+      B: { type: 'Compose', inputs: 'copied producer', runAfter: {} },
+      Reader: {
+        type: 'Compose',
+        inputs: "@concat(string(outputs('b')), string(outputs('B')))",
+        runAfter: { B: ['Succeeded'] },
+      },
+    };
+    const source = await prepareSource({
+      triggers: {},
+      actions: container ? { Container: { type: 'Scope', actions, runAfter: {} } } : actions,
+    });
+    await source.dispatch(copyOperations({ nodeIds: container ? ['Container'] : ['B', 'Reader'] })).unwrap();
+    const clipboard = readClipboard();
+    expect(JSON.stringify(clipboard)).toContain("outputs('b')");
+    const target = await prepareSource({
+      triggers: {},
+      actions: { Existing: { type: 'Compose', inputs: 'destination producer', runAfter: {} } },
+    });
+    target.dispatch(replaceId({ originalId: 'Existing', newId: 'b' }));
+    const before = target.getState();
+    await target
+      .dispatch(
+        pasteClipboard({
+          clipboard,
+          relationshipIds: { graphId: 'root', parentId: 'Existing' },
+          upstreamNodeIds: ['Existing'],
+        })
+      )
+      .unwrap();
+    const check = async () => {
+      const producerId = container ? 'B' : 'B-copy';
+      const readerId = container ? 'Reader' : 'Reader-copy';
+      const copied = await serializeOperation(target.getState(), readerId);
+      expect(copied).toMatchObject({
+        inputs: `@concat(string(outputs('${producerId}')), string(outputs('${producerId}')))`,
+      });
+      const saved = await serializeWorkflow(target.getState());
+      expect(container ? saved.definition.actions['Container-copy'].actions[readerId] : saved.definition.actions[readerId]).toEqual(copied);
+      expect(saved.definition.actions.b).toMatchObject({ inputs: 'destination producer' });
+    };
+    await check();
+    await target.dispatch(onUndoClick()).unwrap();
+    expect(target.getState().workflow.operations).toEqual(before.workflow.operations);
+    await target.dispatch(onRedoClick()).unwrap();
+    await check();
+  });
+
+  it.each([
+    [false, 'paste'],
+    [false, 'duplicate'],
+    [true, 'paste'],
+    [true, 'duplicate'],
+  ] as const)('keeps virtual Switch case names out of action aliases (nested: %s, mode: %s)', async (nested, mode) => {
+    const actions = {
+      Switch: {
+        type: 'Switch',
+        expression: 'one',
+        cases: { switch: { case: 'one', actions: { First: { type: 'Compose', inputs: 1, runAfter: {} } } } },
+        default: { actions: { Other: { type: 'Compose', inputs: 2, runAfter: {} } } },
+        runAfter: {},
+      },
+      Reader: {
+        type: 'Compose',
+        inputs: "@concat(string(outputs('switch')), string(outputs('Switch')))",
+        runAfter: { Switch: ['Succeeded'] },
+      },
+    };
+    const store = await prepareSource({
+      triggers: {},
+      actions: nested ? { Container: { type: 'Scope', actions, runAfter: {} } } : actions,
+    });
+    const roots = nested ? ['Container'] : ['Switch', 'Reader'];
+    const before = store.getState();
+    if (mode === 'duplicate') {
+      await store.dispatch(duplicateOperations({ nodeIds: roots })).unwrap();
+    } else {
+      await store.dispatch(copyOperations({ nodeIds: roots })).unwrap();
+      await store
+        .dispatch(
+          pasteClipboard({
+            clipboard: readClipboard(),
+            relationshipIds: { graphId: 'root', parentId: nested ? 'Container' : 'Reader' },
+            upstreamNodeIds: roots,
+          })
+        )
+        .unwrap();
+    }
+    const check = async () => {
+      const switchId = nested ? 'Switch_1' : 'Switch-copy';
+      const readerId = nested ? 'Reader_1' : 'Reader-copy';
+      const copiedSwitch = await serializeOperation(store.getState(), switchId);
+      expect(copiedSwitch).toMatchObject({
+        type: 'Switch',
+        cases: { switch_1: { case: 'one', actions: { First_1: { inputs: 1 } } } },
+        default: { actions: { Other_1: { inputs: 2 } } },
+      });
+      const copiedReader = await serializeOperation(store.getState(), readerId);
+      expect(copiedReader).toMatchObject({
+        inputs: `@concat(string(outputs('${switchId}')), string(outputs('${switchId}')))`,
+        runAfter: !nested && mode === 'duplicate' ? { Reader: ['SUCCEEDED'] } : { [switchId]: ['Succeeded'] },
+      });
+      const saved = await serializeWorkflow(store.getState());
+      const savedActions = nested ? saved.definition.actions['Container-copy'].actions : saved.definition.actions;
+      expect(savedActions[switchId]).toEqual(copiedSwitch);
+      expect(savedActions[readerId]).toEqual(copiedReader);
+    };
+    await check();
+    await store.dispatch(onUndoClick()).unwrap();
+    expect(store.getState().workflow.operations).toEqual(before.workflow.operations);
+    await store.dispatch(onRedoClick()).unwrap();
+    await check();
+  });
+
   it('rejects a scope root alias that collides with a descendant without changing persisted state', async () => {
     const store = await prepareSource({
       triggers: {},

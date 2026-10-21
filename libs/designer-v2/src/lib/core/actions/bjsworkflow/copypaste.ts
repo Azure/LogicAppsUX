@@ -469,6 +469,7 @@ interface PasteScopeOperationPayload {
 
 interface PasteScopeInDraftPayload extends PasteScopeOperationPayload {
   pasteParams: PasteScopeParams;
+  actionReplacements: Record<string, string>;
   remappedActionIds: string[];
 }
 
@@ -482,6 +483,7 @@ const pasteScopeInDraft = createAsyncThunk('pasteScopeInDraft', async (payload: 
     staticResults,
     isParallelBranch,
     pasteParams,
+    actionReplacements,
     remappedActionIds,
   } = payload;
   if (!actionId || !relationshipIds || !serializedValue) {
@@ -520,7 +522,7 @@ const pasteScopeInDraft = createAsyncThunk('pasteScopeInDraft', async (payload: 
   const scopeParentNodeId = graphId && graphId !== 'root' ? graphId : undefined;
   actionNodesMetadata[nodeId] = { ...actionNodesMetadata[actionId], isRoot: false, parentNodeId: scopeParentNodeId, graphId };
   if (Object.keys(allConnectionData).length > 0) {
-    dispatch(initScopeCopiedConnections(replaceIdsOfExistingNodes(allConnectionData, pasteParams.renamedNodes)));
+    dispatch(initScopeCopiedConnections(replaceIdsOfExistingNodes(allConnectionData, actionReplacements)));
   }
   for (const [id, action] of Object.entries(actions)) {
     const connectionName = (action as LogicAppsV2.ServiceProvider).inputs?.serviceProviderConfiguration?.connectionName;
@@ -541,7 +543,7 @@ const pasteScopeInDraft = createAsyncThunk('pasteScopeInDraft', async (payload: 
     }
   }
   if (Object.keys(staticResults).length > 0) {
-    dispatch(initScopeCopiedStaticResultProperties(replaceIdsOfExistingNodes(staticResults, pasteParams.renamedNodes)));
+    dispatch(initScopeCopiedStaticResultProperties(replaceIdsOfExistingNodes(staticResults, actionReplacements)));
   }
   dispatch(
     pasteScopeNode({
@@ -658,18 +660,18 @@ export const pasteClipboard = createAsyncThunk(
       const metadata = { ...reservedMetadata, ...replaceIdsOfExistingNodes(reservedMetadata, before.workflow.idReplacements) };
       delete metadata[id];
       const plan = buildScopeParams(metadata, getAllActionNames(actions, [], true));
+      const actionNames = new Set(getAllActionNames(actions, [], false /* includeCase */, true /* includeMcpTools */));
+      const actionReplacements = Object.fromEntries(Object.entries(plan.renamedNodes).filter(([sourceId]) => actionNames.has(sourceId)));
       const sourceRootId = entry.sourceNodeId ?? entry.nodeId.replace(/-copy$/, '');
-      const existingRootTarget = getReferenceNameReplacement(plan.renamedNodes, sourceRootId);
+      const existingRootTarget = getReferenceNameReplacement(actionReplacements, sourceRootId);
       if (existingRootTarget !== undefined && existingRootTarget !== id) {
         throw clipboardError();
       }
-      plan.renamedNodes = { ...plan.renamedNodes, [sourceRootId]: id };
       scopePlans.set(entry.nodeId, plan);
       for (const reservedId of plan.pasteActionNames) {
         reservedMetadata[reservedId] = { graphId: relationshipIds.graphId };
       }
-      for (const sourceId of getAllActionNames(actions, [], true)) {
-        const targetId = plan.renamedNodes[sourceId];
+      for (const [sourceId, targetId] of Object.entries(actionReplacements)) {
         if (sourceId !== id) {
           replacements[sourceId] = targetId;
         }
@@ -678,7 +680,11 @@ export const pasteClipboard = createAsyncThunk(
     // Clipboard expressions use current serialized names; editor tokens use internal IDs.
     // Copied producers override external bindings, and this conversion must happen only once.
     const clipboardReferences = {
-      ...Object.fromEntries(Object.entries(before.workflow.idReplacements).map(([internalId, currentName]) => [currentName, internalId])),
+      ...Object.fromEntries(
+        Object.entries(before.workflow.idReplacements)
+          .filter(([, currentName]) => getReferenceNameReplacement(replacements, currentName) === undefined)
+          .map(([internalId, currentName]) => [currentName, internalId])
+      ),
       ...replacements,
     };
     const pasteEntry = async (entry: ClipboardEntry, ids: RelationshipIds, parallel: boolean) => {
@@ -695,6 +701,7 @@ export const pasteClipboard = createAsyncThunk(
               staticResults: entry.staticResults,
               upstreamNodeIds,
               pasteParams: scopePlans.get(entry.nodeId)!,
+              actionReplacements: replacements,
               remappedActionIds: Object.values(replacements),
             })
           )
