@@ -52,6 +52,15 @@ export const clipboardError = (source = false) => {
   );
 };
 
+export const copiedConnectionError = () =>
+  new Error(
+    getIntl().formatMessage({
+      defaultMessage: 'The copied action requires a connection that is not available in this workflow. No actions were pasted.',
+      id: 'ySiISY',
+      description: 'Error when a copied action requires a connection reference missing from the destination workflow',
+    })
+  );
+
 const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null && !Array.isArray(value);
 
 export const getAgentChannelOperations = (
@@ -80,15 +89,13 @@ export const getAgentChannelOperations = (
   ]);
 };
 
-const validateScopeDataOwnership = (entry: ScopeClipboardEntry): void => {
-  const actions = { [entry.sourceNodeId ?? entry.nodeId.replace(/-copy$/, '')]: entry.serializedOperation };
-  const names = new Set(getAllActionNames(actions, [], false /* includeCase */, true /* includeMcpTools */));
+export const getScopeAgentOperations = (actions: LogicAppsV2.Actions): Map<string, LogicAppsV2.AgentAction> => {
+  const agents = new Map<string, LogicAppsV2.AgentAction>();
   const visit = (definitions: LogicAppsV2.Actions | undefined): void => {
     for (const [id, operation] of Object.entries(definitions ?? {})) {
       if (!isScopeOperation(operation.type)) {
         continue;
       }
-      Object.keys(getAgentChannelOperations(id, operation)).forEach((name) => names.add(name));
       visit((operation as LogicAppsV2.ScopeAction).actions);
       if (operation.type.toLowerCase() === Constants.NODE.TYPE.IF) {
         visit((operation as LogicAppsV2.IfAction).else?.actions);
@@ -99,7 +106,9 @@ const validateScopeDataOwnership = (entry: ScopeClipboardEntry): void => {
         Object.values(container.cases ?? {}).forEach((branch) => visit(branch.actions));
       }
       if (operation.type.toLowerCase() === Constants.NODE.TYPE.AGENT) {
-        for (const tool of Object.values((operation as LogicAppsV2.AgentAction).tools ?? {})) {
+        const agent = operation as LogicAppsV2.AgentAction;
+        agents.set(id, agent);
+        for (const tool of Object.values(agent.tools ?? {})) {
           if (tool.type?.toLowerCase() === Constants.NODE.TYPE.AGENT_CONDITION) {
             visit((tool as LogicAppsV2.AgentCondition).actions);
           }
@@ -108,6 +117,15 @@ const validateScopeDataOwnership = (entry: ScopeClipboardEntry): void => {
     }
   };
   visit(actions);
+  return agents;
+};
+
+const validateScopeDataOwnership = (entry: ScopeClipboardEntry): void => {
+  const actions = { [entry.sourceNodeId ?? entry.nodeId.replace(/-copy$/, '')]: entry.serializedOperation };
+  const names = new Set(getAllActionNames(actions, [], false /* includeCase */, true /* includeMcpTools */));
+  for (const [id, agent] of getScopeAgentOperations(actions)) {
+    Object.keys(getAgentChannelOperations(id, agent)).forEach((name) => names.add(name));
+  }
   if ([...Object.keys(entry.allConnectionData), ...Object.keys(entry.staticResults)].some((name) => !names.has(name))) {
     throw clipboardError();
   }

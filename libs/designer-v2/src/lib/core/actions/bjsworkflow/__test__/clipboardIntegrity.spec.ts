@@ -213,6 +213,143 @@ beforeEach(() => {
 });
 
 describe('clipboard integrity with real designer initialization and reducers', () => {
+  it.each(['single', 'multi', 'scope'])('rejects a same-key connection belonging to another connector (%s)', async (mode) => {
+    const { store: source } = await prepareSwaggerSource(mode === 'scope');
+    await source
+      .dispatch(
+        mode === 'scope'
+          ? copyScopeOperation({ nodeId: 'Container' })
+          : copyOperations({ nodeIds: mode === 'multi' ? ['Compose', 'Get_items'] : ['Get_items'] })
+      )
+      .unwrap();
+    const clipboard = readClipboard();
+    const target = await prepareSource({ triggers: {}, actions: { Existing: { type: 'Compose', inputs: 'keep', runAfter: {} } } });
+    target.dispatch(
+      initializeConnectionReferences({ test: { api: { id: '/managedApis/other' }, connection: { id: '/connections/other' } } })
+    );
+    const before = target.getState();
+    await expect(
+      target
+        .dispatch(pasteClipboard({ clipboard, relationshipIds: { graphId: 'root', parentId: 'Existing' }, upstreamNodeIds: ['Existing'] }))
+        .unwrap()
+    ).rejects.toThrow();
+    for (const slice of UNDO_REDO_SLICE_NAMES) {
+      expect(target.getState()[slice]).toBe(before[slice]);
+    }
+    expect(target.getState().undoRedo).toBe(before.undoRedo);
+  });
+
+  it.each([
+    [false, false],
+    [true, false],
+    [false, true],
+    [true, true],
+  ])(
+    'remaps channel bindings and static results without changing destination channel state (nested: %s, renamed: %s)',
+    async (nested, renamed) => {
+      const agent = (body: string) => ({
+        type: 'Agent',
+        inputs: { parameters: { agentModelType: 'AzureOpenAI', messages: [] } },
+        tools: {},
+        channels: { in: {}, out: { response: { action: { type: 'Response', inputs: { statusCode: 200, body } } } } },
+        runAfter: {},
+      });
+      const source = await prepareSource({
+        triggers: {},
+        actions: nested ? { Container: { type: 'Scope', actions: { Agent: agent('source') }, runAfter: {} } } : { Agent: agent('source') },
+      });
+      const channelId = 'Agent-outputchannel-Response';
+      source.dispatch(initializeConnectionReferences({ source: { api: { id: 'channel' }, connection: { id: 'source' } } }));
+      source.dispatch(setNodeConnectionMapping({ nodeId: channelId, mapping: 'source' }));
+      source.dispatch(
+        updateStaticResultProperties({ name: `${channelId}0`, properties: { status: 'Succeeded', outputs: { body: 'source' } } })
+      );
+      if (renamed) {
+        source.dispatch(replaceId({ originalId: 'Agent', newId: 'Renamed' }));
+      }
+      await source.dispatch(copyScopeOperation({ nodeId: nested ? 'Container' : 'Agent' })).unwrap();
+      const clipboard = readClipboard();
+      const target = await prepareSource({ triggers: {}, actions: { Agent: agent('destination') } });
+      target.dispatch(initializeConnectionReferences({ destination: { api: { id: 'channel' }, connection: { id: 'destination' } } }));
+      target.dispatch(setNodeConnectionMapping({ nodeId: channelId, mapping: 'destination' }));
+      target.dispatch(
+        updateStaticResultProperties({ name: `${channelId}0`, properties: { status: 'Failed', outputs: { body: 'destination' } } })
+      );
+      const before = target.getState();
+      await target
+        .dispatch(pasteClipboard({ clipboard, relationshipIds: { graphId: 'root', parentId: 'Agent' }, upstreamNodeIds: ['Agent'] }))
+        .unwrap();
+      const newChannelId = `${nested ? (renamed ? 'Renamed' : 'Agent_1') : 'Agent-copy'}-outputchannel-Response`;
+      const check = () => {
+        expect(target.getState().connections.connectionsMapping[channelId]).toBe('destination');
+        expect(target.getState().staticResults.properties[`${channelId}0`]).toEqual(before.staticResults.properties[`${channelId}0`]);
+        expect(target.getState().connections.connectionsMapping[newChannelId]).toBe('source');
+        expect(target.getState().staticResults.properties[`${newChannelId}0`]).toEqual(
+          source.getState().staticResults.properties[`${channelId}0`]
+        );
+      };
+      check();
+      await serializeWorkflow(target.getState());
+      await target.dispatch(onUndoClick()).unwrap();
+      expect(target.getState().connections).toEqual(before.connections);
+      expect(target.getState().staticResults).toEqual(before.staticResults);
+      await target.dispatch(onRedoClick()).unwrap();
+      check();
+    }
+  );
+
+  it.each([false, true])('preserves insertion dependencies on every independent pasted root (join: %s)', async (join) => {
+    const source = await prepareSource({
+      triggers: {},
+      actions: {
+        A: { type: 'Compose', inputs: 'A', runAfter: {} },
+        B: { type: 'Compose', inputs: 'B', runAfter: {} },
+        C: { type: 'Compose', inputs: 'C', runAfter: { B: ['Succeeded'] } },
+      },
+    });
+    await source.dispatch(copyOperations({ nodeIds: ['A', 'B', 'C'] })).unwrap();
+    const target = await prepareSource({
+      triggers: {},
+      actions: {
+        X: { type: 'Compose', inputs: 'X', runAfter: {} },
+        Y: { type: 'Compose', inputs: 'Y', runAfter: {} },
+        Target: { type: 'Compose', inputs: 'target', runAfter: { X: ['Failed'], ...(join ? { Y: ['Skipped'] } : {}) } },
+      },
+    });
+    const before = target.getState();
+    await target
+      .dispatch(
+        pasteClipboard({
+          clipboard: readClipboard(),
+          relationshipIds: { graphId: 'root', childId: 'Target', ...(join ? {} : { parentId: 'X' }) },
+          upstreamNodeIds: join ? ['X', 'Y'] : ['X'],
+        })
+      )
+      .unwrap();
+    const check = async () => {
+      for (const id of ['A-copy', 'B-copy']) {
+        expect((await serializeOperation(target.getState(), id)).runAfter).toEqual({
+          X: ['Failed'],
+          ...(join ? { Y: ['Skipped'] } : {}),
+        });
+        for (const parent of join ? ['X', 'Y'] : ['X']) {
+          expect(target.getState().workflow.graph?.edges?.some((edge) => edge.source === parent && edge.target === id)).toBe(true);
+        }
+      }
+      expect((await serializeOperation(target.getState(), 'C-copy')).runAfter).toEqual({ 'B-copy': ['Succeeded'] });
+      expect((await serializeOperation(target.getState(), 'Target')).runAfter).toEqual({
+        'A-copy': ['SUCCEEDED'],
+        'C-copy': ['SUCCEEDED'],
+      });
+      await serializeWorkflow(target.getState());
+    };
+    await check();
+    await target.dispatch(onUndoClick()).unwrap();
+    expect(target.getState().workflow.operations).toEqual(before.workflow.operations);
+    await target.dispatch(onRedoClick()).unwrap();
+    await check();
+  });
+
   it.each([
     ['allConnectionData', false],
     ['staticResults', false],

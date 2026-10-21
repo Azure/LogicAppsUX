@@ -34,6 +34,7 @@ import {
   removeIdTag,
   type LogicAppsV2,
   getIntl,
+  equals,
 } from '@microsoft/logic-apps-shared';
 import { configureStore, createAsyncThunk } from '@reduxjs/toolkit';
 import { getNodeOperationData } from '../../state/operation/operationSelector';
@@ -53,7 +54,9 @@ import { initScopeCopiedStaticResultProperties } from '../../state/staticresults
 import { storeStateToUndoRedoHistory } from './undoRedo';
 import {
   clipboardError,
+  copiedConnectionError,
   getAgentChannelOperations,
+  getScopeAgentOperations,
   hasCompleteActionData,
   isClipboardEntry,
   remapClipboardNodeData,
@@ -498,6 +501,17 @@ const pasteScopeInDraft = createAsyncThunk('pasteScopeInDraft', async (payload: 
   const scopeParentNodeId = graphId && graphId !== 'root' ? graphId : undefined;
   actionNodesMetadata[nodeId] = { ...actionNodesMetadata[actionId], isRoot: false, parentNodeId: scopeParentNodeId, graphId };
   if (Object.keys(allConnectionData).length > 0) {
+    for (const { referenceKey, connectionReference, mapping } of Object.values(allConnectionData)) {
+      const existing = referenceKey ? getRecordEntry(state.connections.connectionReferences, referenceKey) : undefined;
+      if (
+        !isExpressionConnectionMapping(mapping) &&
+        existing &&
+        connectionReference &&
+        !equals(existing.api?.id, connectionReference.api?.id)
+      ) {
+        throw copiedConnectionError();
+      }
+    }
     dispatch(initScopeCopiedConnections(replaceIdsOfExistingNodes(allConnectionData, actionReplacements)));
   }
   for (const [id, action] of Object.entries(actions)) {
@@ -653,6 +667,34 @@ export const pasteClipboard = createAsyncThunk(
         }
       }
     }
+    // Channel IDs derive from allocated Agent IDs, but are absent from graph metadata.
+    const occupiedIds = {
+      ...reservedMetadata,
+      ...Object.fromEntries(Object.keys(before.workflow.operations).map((id) => [id, { graphId: relationshipIds.graphId }])),
+    };
+    for (const entry of nodes) {
+      if (!entry.isScopeNode) {
+        continue;
+      }
+      const sourceRootId = entry.sourceNodeId ?? entry.nodeId.replace(/-copy$/, '');
+      for (const [ownerId, agent] of getScopeAgentOperations({ [sourceRootId]: entry.serializedOperation })) {
+        const targetOwnerId = getReferenceNameReplacement(replacements, ownerId);
+        if (!targetOwnerId) {
+          throw clipboardError();
+        }
+        for (const channelId of Object.keys(getAgentChannelOperations(ownerId, agent))) {
+          const targetChannelId = `${targetOwnerId}${channelId.slice(ownerId.length)}`;
+          if (
+            getReferenceNameReplacement(replacements, channelId) !== undefined ||
+            getNonDuplicateNodeId(occupiedIds, targetChannelId, before.workflow.idReplacements) !== targetChannelId
+          ) {
+            throw clipboardError();
+          }
+          occupiedIds[targetChannelId] = { graphId: relationshipIds.graphId };
+          replacements[channelId] = targetChannelId;
+        }
+      }
+    }
     // Clipboard expressions use current serialized names; editor tokens use internal IDs.
     // Copied producers override external bindings, and this conversion must happen only once.
     const clipboardReferences = {
@@ -721,16 +763,42 @@ export const pasteClipboard = createAsyncThunk(
         pasted.set(entry.nodeId, await pasteEntry(entry, { graphId: sourceGraph, parentId: source }, false));
       }
     } else if (edges.length) {
+      // The first root rewires this boundary; later roots must inherit the original bindings.
+      const originalChild = childId ? getRecordEntry(before.workflow.operations, childId) : undefined;
+      const originalRunAfter = originalChild && 'runAfter' in originalChild ? originalChild.runAfter : undefined;
+      const insertionRunAfter =
+        childId && !isParallelBranch
+          ? Object.fromEntries(Object.entries(originalRunAfter ?? {}).filter(([id]) => !parentId || id === parentId))
+          : undefined;
+      const firstIncomingSource = getWorkflowNodeFromGraphState(before.workflow, graphId)?.edges?.find(
+        (edge) => edge.target === childId
+      )?.source;
       const predecessorUsed = new Set<string>();
       let firstRoot: string | undefined;
       for (const entry of nodes) {
         const predecessors = edges.filter((edge) => edge.target === entry.nodeId).map((edge) => edge.source);
         const firstPredecessor = predecessors[0];
         const predecessorId = firstPredecessor ? pasted.get(firstPredecessor) : undefined;
-        const ids = firstPredecessor ? { graphId, parentId: predecessorId } : firstRoot ? { graphId, parentId } : relationshipIds;
+        const ids = firstPredecessor
+          ? { graphId, parentId: predecessorId }
+          : firstRoot
+            ? { graphId, parentId: parentId ?? (isParallelBranch ? undefined : firstIncomingSource) }
+            : relationshipIds;
         const parallel = firstPredecessor ? predecessorUsed.has(firstPredecessor) : !!firstRoot || isParallelBranch;
         const id = await pasteEntry(entry, ids, parallel);
         pasted.set(entry.nodeId, id);
+        if (!firstPredecessor && firstRoot && insertionRunAfter) {
+          for (const [parentOperation, statuses] of Object.entries(insertionRunAfter)) {
+            draft.dispatch(addRunAfter({ childOperationId: id, parentOperationId: parentOperation }));
+            draft.dispatch(updateRunAfter({ childOperation: id, parentOperation, statuses }));
+          }
+          const root = draft.getState().workflow.operations[id];
+          for (const parentOperationId of Object.keys(('runAfter' in root ? root.runAfter : undefined) ?? {})) {
+            if (!Object.hasOwn(insertionRunAfter, parentOperationId)) {
+              draft.dispatch(removeRunAfter({ childOperationId: id, parentOperationId }));
+            }
+          }
+        }
         if (firstPredecessor) {
           predecessorUsed.add(firstPredecessor);
           for (const predecessor of predecessors.slice(1)) {

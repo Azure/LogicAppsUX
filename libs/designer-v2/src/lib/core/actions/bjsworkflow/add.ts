@@ -51,7 +51,6 @@ import {
   equals,
   getBrandColorFromConnector,
   getIconUriFromConnector,
-  getIntl,
   getRecordEntry,
   isNumber,
   UserPreferenceService,
@@ -77,6 +76,7 @@ import { openKindChangeDialog } from '../../state/modal/modalSlice';
 import constants from '../../../common/constants';
 import { addOperationRunAfter, removeOperationRunAfter } from './runafter';
 import { AgentUtils } from '../../../common/utilities/Utils';
+import { copiedConnectionError } from '../../utils/clipboardData';
 
 type AddOperationPayload = {
   operation: DiscoveryOperation<DiscoveryResultTypes> | undefined;
@@ -514,15 +514,10 @@ export const initializeOperationDetails = async (
       !isExpressionConnectionMapping(mapping) &&
       (!mapping ||
         !Object.hasOwn(prepared.connections.connectionReferences, mapping) ||
-        !prepared.connections.connectionReferences[mapping])
+        !prepared.connections.connectionReferences[mapping] ||
+        !equals(prepared.connections.connectionReferences[mapping].api?.id, connector?.id ?? operationInfo.connectorId))
     ) {
-      throw new Error(
-        getIntl().formatMessage({
-          defaultMessage: 'The copied action requires a connection that is not available in this workflow. No actions were pasted.',
-          id: 'ySiISY',
-          description: 'Error when a copied action requires a connection reference missing from the destination workflow',
-        })
-      );
+      throw copiedConnectionError();
     }
     const operation = await serializeOperation({ ...prepared, workflow: { ...prepared.workflow, idReplacements: {} } }, nodeId);
     await updateDynamicDataInNode(
