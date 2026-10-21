@@ -24,6 +24,7 @@ import conditionManifest from '../../../../../../../logic-apps-shared/src/design
 import switchManifest from '../../../../../../../logic-apps-shared/src/designer-client-services/lib/base/manifests/switch';
 import requestManifest from '../../../../../../../logic-apps-shared/src/designer-client-services/lib/base/manifests/request';
 import responseManifest from '../../../../../../../logic-apps-shared/src/designer-client-services/lib/base/manifests/response';
+import { httpManifest } from '../../../../../../../logic-apps-shared/src/designer-client-services/lib/base/manifests/http';
 import agentManifest from '../../../../../../../logic-apps-shared/src/designer-client-services/lib/consumption/manifests/agentloop';
 import mcpManifest from '../../../../../../../logic-apps-shared/src/designer-client-services/lib/consumption/manifests/builtinmcpclient';
 import { getMockedInitialRootState } from '../../../../__test__/mock-root-state';
@@ -87,6 +88,7 @@ const manifests: Record<string, OperationManifest> = {
   switch: switchManifest,
   request: requestManifest,
   response: responseManifest,
+  http: httpManifest,
   agent: agentManifest,
   mcpclienttool: mcpManifest,
 };
@@ -525,6 +527,153 @@ describe('clipboard integrity with real designer initialization and reducers', (
       },
     });
     expect(JSON.stringify(operation)).toBe(before);
+  });
+
+  it('remaps input dictionary keys without changing structural names, metadata or literal descriptions', () => {
+    const expression = "@{outputs('A')}";
+    const literal = "@@{outputs('A')}";
+    const operation: LogicAppsV2.ActionDefinition = {
+      type: 'Scope',
+      description: expression,
+      metadata: { [expression]: expression },
+      actions: {
+        [expression]: {
+          type: 'Switch',
+          expression: 'one',
+          cases: {
+            [expression]: {
+              case: 'one',
+              actions: {
+                Reader: {
+                  type: 'Http',
+                  description: expression,
+                  inputs: {
+                    headers: { [expression]: expression, [literal]: literal },
+                    body: [{ nested: { [expression]: expression } }],
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    };
+    const before = JSON.stringify(operation);
+    const remappedExpression = "@{outputs('A_1')}";
+    expect(remapClipboardOperation(operation, { A: 'A_1' })).toMatchObject({
+      description: expression,
+      metadata: { [expression]: remappedExpression },
+      actions: {
+        [expression]: {
+          cases: {
+            [expression]: {
+              actions: {
+                Reader: {
+                  description: expression,
+                  inputs: {
+                    headers: { [remappedExpression]: remappedExpression, [literal]: literal },
+                    body: [{ nested: { [remappedExpression]: remappedExpression } }],
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+    expect(JSON.stringify(operation)).toBe(before);
+  });
+
+  it.each(['paste', 'duplicate'])('preserves scope HTTP dictionary key/value references through save and Undo/Redo (%s)', async (mode) => {
+    const expression = "@{outputs('A')}";
+    const store = await prepareSource({
+      triggers: {},
+      actions: {
+        Container: {
+          type: 'Scope',
+          runAfter: {},
+          actions: {
+            A: { type: 'Compose', inputs: 'header-name', runAfter: {} },
+            Reader: {
+              type: 'Http',
+              inputs: {
+                uri: 'https://example.test',
+                method: 'GET',
+                headers: { [expression]: expression },
+                queries: { [expression]: expression },
+              },
+              runAfter: { A: ['Succeeded'] },
+            },
+          },
+        },
+      },
+    });
+    const before = store.getState();
+    const original = await serializeOperation(before, 'Container');
+    if (mode === 'duplicate') {
+      await store.dispatch(duplicateOperations({ nodeIds: ['Container'] })).unwrap();
+    } else {
+      await store.dispatch(copyOperations({ nodeIds: ['Container'] })).unwrap();
+      await store
+        .dispatch(
+          pasteClipboard({
+            clipboard: readClipboard(),
+            relationshipIds: { graphId: 'root', parentId: 'Container' },
+            upstreamNodeIds: ['Container'],
+          })
+        )
+        .unwrap();
+    }
+    const check = async () => {
+      const copied = await serializeOperation(store.getState(), 'Container-copy');
+      const remappedExpression = "@{outputs('A_1')}";
+      expect(copied).toMatchObject({
+        actions: {
+          A_1: { inputs: 'header-name' },
+          Reader_1: {
+            inputs: {
+              headers: { [remappedExpression]: remappedExpression },
+              queries: { [remappedExpression]: remappedExpression },
+            },
+            runAfter: { A_1: ['Succeeded'] },
+          },
+        },
+      });
+      const saved = await serializeWorkflow(store.getState());
+      expect(saved.definition.actions['Container-copy']).toEqual(copied);
+      expect(saved.definition.actions.Container).toEqual(original);
+    };
+    await check();
+    await store.dispatch(onUndoClick()).unwrap();
+    expect(store.getState().workflow.operations).toEqual(before.workflow.operations);
+    await store.dispatch(onRedoClick()).unwrap();
+    await check();
+  });
+
+  it('rejects scope input keys that collide after remapping without changing destination state', async () => {
+    const store = await prepareSource({
+      triggers: {},
+      actions: { Container: { type: 'Scope', actions: { A: { type: 'Compose', inputs: 'producer', runAfter: {} } }, runAfter: {} } },
+    });
+    await store.dispatch(copyOperations({ nodeIds: ['Container'] })).unwrap();
+    const clipboard = readClipboard();
+    clipboard.nodes[0].serializedOperation.actions.A.inputs = { "@{outputs('A')}": 'first', "@{outputs('a')}": 'second' };
+    const before = store.getState();
+    await expect(
+      store
+        .dispatch(
+          pasteClipboard({
+            clipboard,
+            relationshipIds: { graphId: 'root', parentId: 'Container' },
+            upstreamNodeIds: ['Container'],
+          })
+        )
+        .unwrap()
+    ).rejects.toThrow(/complete action data/);
+    for (const name of UNDO_REDO_SLICE_NAMES) {
+      expect(store.getState()[name]).toBe(before[name]);
+    }
+    expect(store.getState().undoRedo).toBe(before.undoRedo);
   });
 
   it.each(['paste', 'duplicate'])(

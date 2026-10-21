@@ -136,6 +136,26 @@ export const remapClipboardOperation = (
   replacements: Record<string, string>
 ): LogicAppsV2.ActionDefinition => {
   const result = clone(operation);
+  const remapInputValue = (value: unknown): unknown => {
+    if (typeof value === 'string') {
+      return remapConnectionExpression(value, replacements);
+    }
+    if (Array.isArray(value)) {
+      return value.map(remapInputValue);
+    }
+    if (isRecord(value)) {
+      const entries = new Map<string, unknown>();
+      for (const [key, child] of Object.entries(value)) {
+        const remappedKey = remapConnectionExpression(key, replacements);
+        if (entries.has(remappedKey)) {
+          throw clipboardError();
+        }
+        entries.set(remappedKey, remapInputValue(child));
+      }
+      return Object.fromEntries(entries);
+    }
+    return value;
+  };
   const visit = (definition: unknown): void => {
     if (!isRecord(definition)) {
       return;
@@ -149,6 +169,8 @@ export const remapClipboardOperation = (
         Object.values(value).forEach(visit);
       } else if (['else', 'default', 'channels', 'trigger', 'action'].includes(key) && isRecord(value)) {
         visit(value);
+      } else if (key === 'inputs') {
+        definition[key] = remapInputValue(value);
       } else {
         definition[key] = remapConnectionExpressionValue(value, replacements);
       }
