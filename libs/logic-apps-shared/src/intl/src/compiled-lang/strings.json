@@ -10186,5 +10186,11 @@
       "type": 0,
       "value": "Workflow preview navigation. Use arrow keys to pan."
     }
+  ],
+  "ySiISY": [
+    {
+      "type": 0,
+      "value": "The copied action requires a connection that is not available in this workflow. No actions were pasted."
+    }
   ]
 }

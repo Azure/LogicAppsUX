@@ -1,4 +1,5 @@
 import { isCustomCodeParameter } from '@microsoft/designer-ui';
+import { isExpressionConnectionMapping } from '../../../common/models/workflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectionsForConnector, getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
@@ -50,6 +51,7 @@ import {
   equals,
   getBrandColorFromConnector,
   getIconUriFromConnector,
+  getIntl,
   getRecordEntry,
   isNumber,
   UserPreferenceService,
@@ -506,6 +508,22 @@ export const initializeOperationDetails = async (
   if (copiedNodeData) {
     // Dynamic deserialization consumes internal IDs, not pending serialized action names.
     const prepared = getState();
+    const mapping = getRecordEntry(prepared.connections.connectionsMapping, nodeId);
+    if (
+      isConnectionRequired &&
+      !isExpressionConnectionMapping(mapping) &&
+      (!mapping ||
+        !Object.hasOwn(prepared.connections.connectionReferences, mapping) ||
+        !prepared.connections.connectionReferences[mapping])
+    ) {
+      throw new Error(
+        getIntl().formatMessage({
+          defaultMessage: 'The copied action requires a connection that is not available in this workflow. No actions were pasted.',
+          id: 'ySiISY',
+          description: 'Error when a copied action requires a connection reference missing from the destination workflow',
+        })
+      );
+    }
     const operation = await serializeOperation({ ...prepared, workflow: { ...prepared.workflow, idReplacements: {} } }, nodeId);
     await updateDynamicDataInNode(
       nodeId,

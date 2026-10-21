@@ -126,6 +126,76 @@ const prepareSource = async (workflowDefinition = definition) => {
   return source.store;
 };
 
+const mockStaticSwaggerConnector = async () => {
+  const connectorId = '/managedApis/test';
+  const parsedSwagger = new SwaggerParser(
+    await SwaggerParser.parse({
+      swagger: '2.0',
+      info: { title: 'Test', version: '1.0' },
+      paths: {
+        '/items': {
+          get: {
+            operationId: 'getItems',
+            parameters: [],
+            responses: { '200': { schema: { type: 'array', items: { type: 'string' } } } },
+          },
+        },
+      },
+    })
+  );
+  const connector: Connector = {
+    id: connectorId,
+    name: 'test',
+    type: 'Microsoft.Web/locations/managedApis',
+    properties: { displayName: 'Test', iconUri: '', brandColor: '#000000' },
+  };
+  vi.spyOn(connectionQueries, 'getConnectorWithSwagger').mockResolvedValue({ connector, parsedSwagger });
+  vi.spyOn(connectionQueries, 'getSwaggerForConnector').mockResolvedValue(parsedSwagger);
+  vi.spyOn(connectionQueries, 'getConnection').mockResolvedValue({
+    id: '/connections/test',
+    name: 'test',
+    type: 'Microsoft.Web/connections',
+    properties: { api: connector, displayName: 'Test', overallStatus: 'Connected', createdTime: '', statuses: [] },
+  });
+  vi.spyOn(manifestService, 'isSupported').mockImplementation((type) => type !== 'ApiConnection');
+  return connectorId;
+};
+
+const prepareSwaggerSource = async (container = false) => {
+  const connectorId = await mockStaticSwaggerConnector();
+  const actions = {
+    Compose: { type: 'Compose', inputs: 'valid earlier action', runAfter: {} },
+    Get_items: {
+      type: 'ApiConnection',
+      inputs: {
+        host: { connection: { name: "@parameters('$connections')['test']['connectionId']" } },
+        method: 'get',
+        path: '/items',
+      },
+      runAfter: { Compose: ['Succeeded'] },
+    },
+  };
+  const workflow = {
+    triggers: {},
+    actions: container ? { Container: { type: 'Scope', actions, runAfter: {} } } : actions,
+  };
+  const { store } = createSource(workflow);
+  const references = { test: { api: { id: connectorId }, connection: { id: '/connections/test' } } };
+  store.dispatch(initializeConnectionReferences(references));
+  store.dispatch(setNodeConnectionMapping({ nodeId: 'Get_items', mapping: 'test' }));
+  await initializeOperationMetadata(
+    Deserialize(clone(workflow), null),
+    references,
+    store.getState().workflowParameters.definitions,
+    {},
+    'stateful',
+    store.dispatch
+  );
+  await initializeDynamicDataInNodes(store.getState, store.dispatch);
+  expect(store.getState().operations.errors).toEqual({});
+  return { store, references };
+};
+
 beforeEach(() => {
   vi.restoreAllMocks();
   vi.stubGlobal('navigator', { clipboard: undefined });
@@ -141,6 +211,85 @@ beforeEach(() => {
 });
 
 describe('clipboard integrity with real designer initialization and reducers', () => {
+  it.each([
+    ['test', false],
+    ['test', true],
+    ['constructor', false],
+  ] as const)('rejects an unavailable destination Swagger connection %s without partial paste (multi: %s)', async (referenceKey, multi) => {
+    const { store: source } = await prepareSwaggerSource();
+    await source.dispatch(copyOperations({ nodeIds: multi ? ['Compose', 'Get_items'] : ['Get_items'] })).unwrap();
+    const clipboard = readClipboard();
+    expect(clipboard.nodes.at(-1).nodeConnectionData).toBe('test');
+    clipboard.nodes.at(-1).nodeConnectionData = referenceKey;
+    const target = await prepareSource({
+      triggers: {},
+      actions: { Anchor: { type: 'Compose', inputs: 'destination', runAfter: {} } },
+    });
+    const defaultConnections = vi.spyOn(connectionQueries, 'getConnectionsForConnector');
+    const before = target.getState();
+    await expect(
+      target
+        .dispatch(
+          pasteClipboard({
+            clipboard,
+            relationshipIds: { graphId: 'root', parentId: 'Anchor' },
+            upstreamNodeIds: ['Anchor'],
+          })
+        )
+        .unwrap()
+    ).rejects.toThrow('The copied action requires a connection that is not available in this workflow. No actions were pasted.');
+    expect(defaultConnections).not.toHaveBeenCalled();
+    for (const name of UNDO_REDO_SLICE_NAMES) {
+      expect(target.getState()[name]).toBe(before[name]);
+    }
+    expect(target.getState().undoRedo).toBe(before.undoRedo);
+    expect(target.getState().designerView).toEqual({
+      ...before.designerView,
+      clipboardError: 'The copied action requires a connection that is not available in this workflow. No actions were pasted.',
+    });
+  });
+
+  it.each([false, true])('preserves valid copied Swagger connections through save and Undo/Redo (container: %s)', async (container) => {
+    const { store: source, references } = await prepareSwaggerSource(container);
+    await source.dispatch(copyOperations({ nodeIds: container ? ['Container'] : ['Get_items'] })).unwrap();
+    const clipboard = readClipboard();
+    const target = await prepareSource({
+      triggers: {},
+      actions: { Anchor: { type: 'Compose', inputs: 'destination', runAfter: {} } },
+    });
+    if (!container) {
+      target.dispatch(initializeConnectionReferences(references));
+    }
+    const before = target.getState();
+    await target
+      .dispatch(
+        pasteClipboard({
+          clipboard,
+          relationshipIds: { graphId: 'root', parentId: 'Anchor' },
+          upstreamNodeIds: ['Anchor'],
+        })
+      )
+      .unwrap();
+    const copiedId = container ? 'Get_items' : 'Get_items-copy';
+    const check = async () => {
+      expect(target.getState().connections.connectionsMapping[copiedId]).toBe('test');
+      expect(target.getState().connections.connectionReferences).toEqual(references);
+      const copied = await serializeOperation(target.getState(), copiedId);
+      expect(copied).toMatchObject({
+        type: 'ApiConnection',
+        inputs: { host: { connection: { referenceName: 'test' } }, method: 'get', path: '/items' },
+      });
+      const saved = await serializeWorkflow(target.getState());
+      expect(container ? saved.definition.actions['Container-copy'].actions[copiedId] : saved.definition.actions[copiedId]).toEqual(copied);
+    };
+    await check();
+    await target.dispatch(onUndoClick()).unwrap();
+    expect(target.getState().connections).toEqual(before.connections);
+    expect(target.getState().workflow.operations).toEqual(before.workflow.operations);
+    await target.dispatch(onRedoClick()).unwrap();
+    await check();
+  });
+
   it('keeps renamed Agent root bindings separate from overlapping internal tool IDs', async () => {
     const source = createSource({
       triggers: {},
@@ -1010,7 +1159,7 @@ describe('clipboard integrity with real designer initialization and reducers', (
   });
 
   it('awaits Swagger result schemas in transactional container metadata initialization', async () => {
-    const connectorId = '/managedApis/test';
+    const connectorId = await mockStaticSwaggerConnector();
     const workflow: LogicAppsV2.WorkflowDefinition = {
       triggers: {},
       actions: {
@@ -1031,30 +1180,6 @@ describe('clipboard integrity with real designer initialization and reducers', (
         },
       },
     };
-    const parsedSwagger = new SwaggerParser(
-      await SwaggerParser.parse({
-        swagger: '2.0',
-        info: { title: 'Test', version: '1.0' },
-        paths: {
-          '/items': {
-            get: {
-              operationId: 'getItems',
-              parameters: [],
-              responses: { '200': { schema: { type: 'array', items: { type: 'string' } } } },
-            },
-          },
-        },
-      })
-    );
-    const connector: Connector = {
-      id: connectorId,
-      name: 'test',
-      type: 'Microsoft.Web/locations/managedApis',
-      properties: { displayName: 'Test', iconUri: '', brandColor: '#000000' },
-    };
-    vi.spyOn(connectionQueries, 'getConnectorWithSwagger').mockResolvedValue({ connector, parsedSwagger });
-    vi.spyOn(connectionQueries, 'getSwaggerForConnector').mockResolvedValue(parsedSwagger);
-    vi.spyOn(manifestService, 'isSupported').mockImplementation((type) => type !== 'ApiConnection');
     let release!: (schema: OpenApiSchema) => void;
     const pending = new Promise<OpenApiSchema>((resolve) => {
       release = resolve;
