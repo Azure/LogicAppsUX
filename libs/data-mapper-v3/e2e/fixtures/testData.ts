@@ -1,6 +1,11 @@
+import path from 'node:path';
 import type { MapDocument, MapFunctoid, MapLink } from '../../src/model/mapModel';
 import type { FunctoidSummary } from '../../src/protocol/mapEditorProtocol';
 import type { SchemaNode, SchemaTree } from '../../src/model/schemaModel';
+import { BtmSerializer } from '../../src/schema/btmSerializer';
+import { resolveSchemaDependencies } from '../../src/schema/schemaDependencyResolver';
+import { readTextFileSync, resolveSchemaFilePath } from '../../src/schema/schemaFileResolver';
+import { SchemaParser } from '../../src/schema/schemaParser';
 
 export type TestSchemaNode = SchemaNode;
 export type TestSchema = SchemaTree;
@@ -154,4 +159,30 @@ export function createInitPayload(overrides: Partial<InitPayload> = {}): InitPay
     functoids,
     ...overrides,
   };
+}
+
+export async function loadSampleMap(relativePath: string, serializedContent?: string): Promise<InitPayload> {
+  const mapPath = path.resolve(__dirname, '../samples', relativePath);
+  const content = serializedContent ?? readTextFileSync(mapPath);
+  if (!content) {
+    throw new Error(`Sample map not found: ${mapPath}`);
+  }
+  const map = new BtmSerializer().deserialize(content);
+  const loadSchema = async (reference: MapDocument['sourceSchema']): Promise<SchemaTree | null> => {
+    const schemaPath = reference.location ? resolveSchemaFilePath(path.dirname(mapPath), reference.location, reference.rootName) : mapPath;
+    const schemaXml = reference.location ? readTextFileSync(schemaPath) : reference.inlineSchemaXml;
+    if (!schemaXml) {
+      throw new Error(`Sample schema not found: ${reference.location || mapPath}`);
+    }
+    const dependencies = await resolveSchemaDependencies(
+      schemaXml,
+      schemaPath,
+      async (dependencyPath) => readTextFileSync(dependencyPath),
+      (containingPath, location) => resolveSchemaFilePath(path.dirname(containingPath), location)
+    );
+    return new SchemaParser().parseWithImports(schemaXml, schemaPath, dependencies, reference.rootName);
+  };
+  const sourceSchema = await loadSchema(map.sourceSchema);
+  const targetSchema = await loadSchema(map.targetSchema);
+  return createInitPayload({ map, sourceSchema, targetSchema });
 }

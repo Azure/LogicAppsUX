@@ -148,6 +148,9 @@ UI. Input/output parsing logs do not imply XSD validation.
 
 ## Building from Source
 
+For browser UI scenarios, known regressions, coverage measurement, and native-host
+testing limitations, see the [Playwright coverage guide](e2e/README.md).
+
 ```bash
 cd src/BizTalk.DataMapper.VsCode
 npm install

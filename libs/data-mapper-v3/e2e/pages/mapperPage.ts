@@ -23,8 +23,8 @@ export class MapperPage {
 
   /** Schemas rendered, palette populated, canvas mounted. */
   async waitUntilReady(): Promise<void> {
-    await this.treeNode('source', '/Order').waitFor();
-    await this.treeNode('target', '/Invoice').waitFor();
+    await this.tree('source').locator('.tree-node').first().waitFor();
+    await this.tree('target').locator('.tree-node').first().waitFor();
     await this.page.locator('biztalk-functoid-palette .palette-item').first().waitFor();
     await this.page.locator('biztalk-mapping-canvas svg.mapping-svg').waitFor();
   }

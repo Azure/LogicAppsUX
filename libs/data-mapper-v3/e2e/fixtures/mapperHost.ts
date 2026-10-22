@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import type { MapDocument } from '../../src/model/mapModel';
 import type { HostToWebviewMessage, WebviewToHostMessage } from '../../src/protocol/mapEditorProtocol';
+import { coverageEnabled, createCoverageReport } from '../coverage';
 import { MapperPage } from '../pages/mapperPage';
 import { createInitPayload, type InitPayload } from './testData';
 
@@ -136,10 +137,14 @@ export interface MapperFixture {
 }
 
 export const test = base.extend<{ mapper: MapperFixture }>({
-  mapper: async ({ page }, use) => {
+  mapper: async ({ page }, provideMapper) => {
     const host = new MockHost(page);
     const ui = new MapperPage(page);
     const pageErrors: string[] = [];
+
+    if (coverageEnabled) {
+      await page.coverage.startJSCoverage({ resetOnNavigation: false });
+    }
 
     page.on('pageerror', (error) => pageErrors.push(`pageerror: ${error.message}`));
     page.on('console', (message) => {
@@ -181,7 +186,18 @@ export const test = base.extend<{ mapper: MapperFixture }>({
       }
     };
 
-    await use({ host, ui, pageErrors, open, loadWithoutInit });
+    try {
+      await provideMapper({ host, ui, pageErrors, open, loadWithoutInit });
+    } finally {
+      if (coverageEnabled) {
+        const entries = await page.coverage.stopJSCoverage();
+        const sourceMap = JSON.parse(fs.readFileSync(`${bundlePath}.map`, 'utf8'));
+        const mapperEntries = entries.filter((entry) => entry.url === scriptUrl).map((entry) => ({ ...entry, sourceMap }));
+        if (mapperEntries.length > 0) {
+          await createCoverageReport().add(mapperEntries);
+        }
+      }
+    }
 
     expect(pageErrors, 'webview logged uncaught errors or console errors').toEqual([]);
   },

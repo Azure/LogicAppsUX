@@ -568,14 +568,11 @@ function MappingCanvasView({
       padding: canvasEdgePadding,
       snap: snapToGrid,
     });
-    const moves = functoids.flatMap((functoid) => {
-      const next = layout.get(functoid.id);
-      if (!next) {
-        return [];
-      }
+    const moves = functoids.map((functoid) => {
+      const next = layout.get(functoid.id)!;
       functoid.x = next.x;
       functoid.y = next.y;
-      return [{ id: functoid.id, x: next.x, y: next.y }];
+      return { id: functoid.id, x: next.x, y: next.y };
     });
     extraRoom.current = { page: page.id, x: 0, y: 0 };
     pendingScroll.current = { left: 0, top: 0 };

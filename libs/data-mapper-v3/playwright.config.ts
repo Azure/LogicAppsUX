@@ -5,6 +5,7 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: './e2e',
   globalSetup: './e2e/globalSetup.ts',
+  globalTeardown: './e2e/coverage.ts',
   testMatch: '**/*.spec.ts',
   outputDir: './test-results',
   fullyParallel: true,
@@ -13,7 +14,9 @@ export default defineConfig({
   workers: process.env.CI ? 2 : undefined,
   timeout: 30_000,
   expect: { timeout: 5_000 },
-  reporter: process.env.CI ? [['list'], ['html', { open: 'never', outputFolder: './playwright-report' }]] : [['list']],
+  reporter: process.env.CI
+    ? [['list'], ['html', { open: 'never', outputFolder: './playwright-report' }], ['json', { outputFile: './test-results/results.json' }]]
+    : [['list'], ['json', { outputFile: './test-results/results.json' }]],
   use: {
     trace: 'on-first-retry',
     video: 'off',

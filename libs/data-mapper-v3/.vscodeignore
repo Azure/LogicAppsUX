@@ -4,6 +4,7 @@ src/**
 webview/**
 node_modules/**
 test/**
+e2e/**
 .gitignore
 tsconfig.json
 webpack.*.js

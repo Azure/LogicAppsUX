@@ -7,7 +7,7 @@ import { BtmSerializer } from '../src/schema/btmSerializer';
 import { SchemaParser } from '../src/schema/schemaParser';
 
 describe('Looping functoids sample', () => {
-  const sampleDirectory = path.join(__dirname, '..', 'samples', 'LoopingFunctoids');
+  const sampleDirectory = path.join(__dirname, '..', 'e2e', 'samples', 'LoopingFunctoids');
 
   test('loads and compiles every looping scenario', () => {
     const map = new BtmSerializer().deserialize(fs.readFileSync(path.join(sampleDirectory, 'LoopingFunctoids.btm'), 'utf8'));

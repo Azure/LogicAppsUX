@@ -62,4 +62,33 @@ test.describe('shell and schemas @p0', () => {
     await expect(ui.connector('source', paths.source.orderId)).toHaveClass(/connected/);
     await expect(ui.connector('target', paths.target.invoiceId)).toHaveClass(/connected/);
   });
+
+  test('ignores malformed host messages without losing the loaded map or blocking subsequent replies', async ({ mapper }) => {
+    const map = createMap();
+    map.pages[0].links.push(createSchemaLink('link-1', paths.source.orderId, paths.target.invoiceId));
+    await mapper.open({ map });
+    const { ui, host } = mapper;
+    const invalidMessages = [
+      null,
+      42,
+      [],
+      {},
+      { type: 'unknown' },
+      { type: 'init', data: {} },
+      { type: 'compileResult', data: null },
+      { type: 'schemaLoaded', data: { side: 'neither' } },
+      { type: 'schemaStateChanged', data: { map: null } },
+      { type: 'copilotResult', data: { success: 'yes' } },
+    ];
+    for (const message of invalidMessages) {
+      await host.send(message as never);
+      await expect(ui.links).toHaveCount(1);
+      await expect(ui.pageTabs.first()).toHaveText('Page 1');
+      await expect(ui.treeNode('source', paths.source.root)).toBeVisible();
+    }
+    expect(host.messages('update')).toHaveLength(0);
+    await host.send({ type: 'compileResult', data: { success: true, xslt: '<xsl:stylesheet/>', errors: [], warnings: [] } });
+    await expect(ui.notification).toContainText('Compiled');
+    await expect(ui.links).toHaveCount(1);
+  });
 });

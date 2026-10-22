@@ -162,46 +162,6 @@ const AbsoluteValue32RegularIcon = (props: FluentIconsProps) => {
 
 export const AbsoluteValue32Regular = wrapIcon(AbsoluteValue32RegularIcon, 'AbsoluteValue32Regular');
 
-const FloorValue32RegularIcon = (props: FluentIconsProps) => {
-  const { fill: primaryFill = 'currentColor', className } = props;
-  return React.createElement(
-    'svg',
-    Object.assign({}, props, {
-      width: 12,
-      height: 12,
-      viewBox: '0 0 2048 2048',
-      xmlns: 'http://www.w3.org/2000/svg',
-      className: className,
-    }),
-    <path
-      d="M251 1920q-50 0-95-20t-80-55-55-80-21-96V192q0-26 19-45t45-19q26 0 45 19t19 45v1472q0 27 10 50t27 41 40 27 51 10h320q26 0 45 19t19 45q0 26-19 45t-45 19H251zm1166-64q0-26 19-45t45-19h311q27 0 50-10t40-27 28-41 10-50V192q0-26 19-45t45-19q26 0 45 19t19 45v1477q0 50-20 95t-55 80-80 55-96 21h-316q-26 0-45-19t-19-45zm-948-417q0-37 23-61t61-24q19 0 36 9t31 21 27 21 25 10q17 0 43-25t55-63 58-82 53-82 39-65 17-29q14-24 27-53l-49-191q-13-49-25-90t-33-71-57-46-96-17q-29 0-59 3v-40l295-52q35 38 57 75t38 75 26 81 25 92l97-145q18-26 46-57t63-58 70-45 70-18q19 0 38 5t33 17 24 27 9 38q0 42-23 63t-64 22q-16 0-30-4t-29-10-30-9-30-5q-20 0-43 16t-46 40-45 55-40 58-32 51-20 33l90 379q3 11 7 31t12 40 19 35 26 15q21 0 45-18t47-43 39-51 27-45l38 19q-18 30-49 75t-68 87-80 73-81 30q-34 0-56-17t-37-44-24-56-16-56q-5-20-9-38t-10-39q-11-48-22-95t-20-95q-18 32-43 77t-57 93-68 97-76 87-81 62-81 24q-21 0-40-7t-34-19-24-31-9-40z"
-      fill={primaryFill}
-    />
-  );
-};
-
-export const FloorValue32Regular = wrapIcon(FloorValue32RegularIcon, 'FloorValue32Regular');
-
-const CeilingValue32RegularIcon = (props: FluentIconsProps) => {
-  const { fill: primaryFill = 'currentColor', className } = props;
-  return React.createElement(
-    'svg',
-    Object.assign({}, props, {
-      width: 32,
-      height: 32,
-      viewBox: '0 0 2048 2048',
-      xmlns: 'http://www.w3.org/2000/svg',
-      className: className,
-    }),
-    <path
-      d="M0 1856V379q0-50 20-95t55-80 80-55 96-21h325q26 0 45 19t19 45q0 26-19 45t-45 19H256q-27 0-50 10t-40 27-28 41-10 50v1472q0 26-19 45t-45 19q-26 0-45-19t-19-45zM1417 192q0-26 19-45t45-19h316q50 0 95 20t80 55 55 80 21 96v1477q0 26-19 45t-45 19q-26 0-45-19t-19-45V384q0-26-10-49t-28-41q-18-18-41-28t-49-10h-311q-26 0-45-19t-19-45zM469 1439q0-37 23-61t61-24q19 0 36 9t31 21 27 21 25 10q17 0 43-25t55-63 58-82 53-82 39-65 17-29q14-24 27-53l-49-191q-13-49-25-90t-33-71-57-46-96-17q-29 0-59 3v-40l295-52q35 38 57 75t38 75 26 81 25 92l97-145q18-26 46-57t63-58 70-45 70-18q19 0 38 5t33 17 24 27 9 38q0 42-23 63t-64 22q-16 0-30-4t-29-10-30-9-30-5q-20 0-43 16t-46 40-45 55-40 58-32 51-20 33l90 379q3 11 7 31t12 40 19 35 26 15q21 0 45-18t47-43 39-51 27-45l38 19q-18 30-49 75t-68 87-80 73-81 30q-34 0-56-17t-37-44-24-56-16-56q-5-20-9-38t-10-39q-11-48-22-95t-20-95q-18 32-43 77t-57 93-68 97-76 87-81 62-81 24q-21 0-40-7t-34-19-24-31-9-40z"
-      fill={primaryFill}
-    />
-  );
-};
-
-export const CeilingValue32Regular = wrapIcon(CeilingValue32RegularIcon, 'CeilingValue32Regular');
-
 const SquareRoot32RegularIcon = (props: FluentIconsProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
@@ -324,27 +284,6 @@ const TenPowerX32RegularIcon = (props: FluentIconsProps) => {
 };
 
 export const TenPowerX32Regular = wrapIcon(TenPowerX32RegularIcon, 'TenPowerX32Regular');
-
-const XDivide132RegularIcon = (props: FluentIconsProps) => {
-  const { fill: primaryFill = 'currentColor', className } = props;
-  return React.createElement(
-    'svg',
-    Object.assign({}, props, {
-      width: 32,
-      height: 32,
-      viewBox: '0 0 2048 2048',
-      xmlns: 'http://www.w3.org/2000/svg',
-      className: className,
-    }),
-
-    <path
-      d="M1597 1165l90 379q3 11 7 31t12 41 19 34 26 15q22 0 46-18t46-43 39-51 27-45l38 19q-11 20-29 47t-40 57-49 59-53 51-54 37-53 14q-35 0-58-20t-41-49q-7-12-16-39t-18-63-19-75-17-77-15-69-10-48q-24 42-56 96t-69 108-76 103-75 78q-28 23-60 39t-70 16q-21 0-40-7t-34-19-24-31-9-40q0-37 23-61t61-24q21 0 38 9t31 21 27 21 23 10q16 0 42-25t57-63 61-86 58-91 47-81 27-53l-47-187q-6-24-12-49t-15-48q-11-28-25-55t-41-46q-26-19-57-24t-63-6q-29 0-59 3v-40l295-52q35 37 57 74t38 77 27 82 24 90l97-145q17-26 46-57t63-58 70-45 70-18q20 0 38 5t33 17 24 27 9 38q0 42-22 63t-65 22q-16 0-30-4t-29-10-29-9-31-5q-20 0-41 14t-44 37-43 51-40 57-34 53-24 41zM384 1024H270V159q-21 18-49 36t-61 35-64 28-59 19V161q38-10 79-26t81-38 77-46 67-51h43v1024zm-9 736l-110-64 896-1536 110 64-896 1536z"
-      fill={primaryFill}
-    />
-  );
-};
-
-export const XDivide132Regular = wrapIcon(XDivide132RegularIcon, 'XDivide132Regular');
 
 const LogYX32RegularIcon = (props: FluentIconsProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;

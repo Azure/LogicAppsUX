@@ -6,3 +6,5 @@ tools/compiler-worker/publish/
 tools/compiler-worker/runtime/
 tools/compiler-worker/**/bin/
 tools/compiler-worker/**/obj/
+tools/xslt-transform/**/bin/
+tools/xslt-transform/**/obj/

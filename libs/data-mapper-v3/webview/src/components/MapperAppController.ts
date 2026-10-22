@@ -77,9 +77,8 @@ export class MapperAppController {
   private initialized = false;
   private sourceTree: SchemaTreeRenderer | null = null;
   private targetTree: SchemaTreeRenderer | null = null;
-  private canvas: MappingCanvas | null = null;
+  private readonly canvas: MappingCanvas;
   private palette: FunctoidPalette | null = null;
-  private mappingAreaEl: HTMLElement | null = null;
   private pendingLink: { type: 'schemaNode' | 'functoid'; id: string; side: 'source' | 'target' } | null = null;
   private scriptingConfigDraft: ScriptingConfigDraft | null = null;
   private scriptingDialog: ScriptingConfigDialog | null = null;
@@ -124,7 +123,6 @@ export class MapperAppController {
     this.state = createInitialMapperViewState();
     this.toolbarEl = elements.toolbar;
     this.palette = elements.palette;
-    this.mappingAreaEl = elements.mappingArea;
     this.canvas = elements.canvas;
     this.pageBarEl = elements.pageBar;
     this.bottomPanel = elements.bottomPanel;
@@ -187,7 +185,7 @@ export class MapperAppController {
       this.linkPreviewFrame = requestAnimationFrame(() => {
         this.linkPreviewFrame = null;
         if (this.pendingLinkPreviewPoint) {
-          this.canvas?.updateLinkPreview(this.pendingLinkPreviewPoint.x, this.pendingLinkPreviewPoint.y);
+          this.canvas.updateLinkPreview(this.pendingLinkPreviewPoint.x, this.pendingLinkPreviewPoint.y);
           this.pendingLinkPreviewPoint = null;
         }
       });
@@ -208,13 +206,13 @@ export class MapperAppController {
       cancelAnimationFrame(this.linkPreviewFrame);
       this.linkPreviewFrame = null;
     }
-    this.canvas?.clearLinkPreview();
+    this.canvas.clearLinkPreview();
   }
 
   private beginLinkPointer(clientX: number, clientY: number): void {
     this.linkPointerStart = { x: clientX, y: clientY };
     this.linkPointerMoved = false;
-    this.canvas?.beginLinkPreview(clientX, clientY);
+    this.canvas.beginLinkPreview(clientX, clientY);
   }
 
   private readonly handleKeyDown = (event: KeyboardEvent): void => {
@@ -605,7 +603,7 @@ export class MapperAppController {
   }
 
   private configureCanvas(): void {
-    this.canvas?.configure(this.state, {
+    this.canvas.configure(this.state, {
       onLinkSelect: (linkId) => {
         this.state.selectedLink = linkId;
         this.state.selectedFunctoid = null;
@@ -947,7 +945,7 @@ export class MapperAppController {
   }
 
   private redrawLinksNow(renderFullCanvas: boolean): void {
-    if (!this.canvas || !this.state.map || !this.mappingAreaEl) {
+    if (!this.state.map) {
       return;
     }
 

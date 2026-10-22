@@ -130,7 +130,7 @@ Helpers live in `src\browseLocation.ts` (unit tested in `test\browseLocation.tes
 | Element refs, named types, complexContent extension/restriction, simpleContent | Yes | `src\schema\schemaParser.ts` |
 | Attribute groups, group refs, `xs:any`, `anyAttribute`, substitution groups, facets, choice branches | Yes | `src\schema\schemaParser.ts` |
 | `xs:import` / `xs:include` resolution | Yes | `src\schema\schemaDependencyResolver.ts`: recursive with a case-insensitive visited set (handles diamond and circular), chameleon include adopts the includer's namespace |
-| Import without `schemaLocation` | No | Throws "does not specify schemaLocation" (matches sample case 16 in `samples\SchemaReferences\README.md`) |
+| Import without `schemaLocation` | No | Throws "does not specify schemaLocation" (matches sample case 16 in `e2e\samples\SchemaReferences\README.md`) |
 | `xs:redefine` | No | No handling in dependency resolution, import planner or parser; a grep for "redefine" over all `.ts`, `.tsx` and `.cs` found nothing |
 | `xs:key` / `keyref` / `unique` | No | Not handled by the parser |
 | Multi-root schemas and change-root | Yes | `availableRoots` in `schemaParser.ts`; `SchemaReference.rootName`; root change handled in `src\mapEditorProvider.ts` |
@@ -284,7 +284,7 @@ Files: `src\copilot\mapPrompt.ts`, `src\copilot\mapLayout.ts` (only these two ex
 | Jest unit tests (`test\`) | browseLocation, schemaParser, autoLink, canvasViewport, instanceGenerator, logger, mapAssistantHost, mapLayout, mapLoggingHost, schemaReplacement, stringFind, xsltLiteralEscaping, btmSerializer, compilerWorkerParity, functoidRegistry, loopingFunctoidsSample, mapGraph, compilerWorkerLogging, schemaDependencyResolver, mapPrompt, schemaReferenceResolver, schemaPathResolver, xsltCompilerP1, schemaP1, bts2020ManualMaps, functoidCategories, xsltCompilerFunctoids, workspaceStructure, schemaReplacementHost, mapEditorProtocol; VS Code mock in `test\__mocks__\vscode.ts` |
 | .NET tests | `tools\compiler-worker\BizTalk.DataMapper.Core.Tests\TransformServiceTests.cs` |
 | Webview smoke | `test\webview-smoke\run.js` (via `pnpm run test:webview`) |
-| Samples | `samples\LoopingFunctoids` (btm, xslt, xsd); `samples\PerformanceLargeMap` (README, large xsd, btm); `samples\SchemaReferences` (maps 01-23 and `Maps\04_FileRef_ParentRelative.btm`, README covering file path, bare filename, subfolder, parent-relative, .NET type name, Schema suffix, RootNode multi-root, inline source/target and aggregate, transitive/diamond/circular imports, include same-namespace/chameleon, redefine, missing reference/import) |
+| Samples | `e2e\samples\LoopingFunctoids` (btm, xslt, xsd); `e2e\samples\PerformanceLargeMap` (README, large xsd, btm); `e2e\samples\SchemaReferences` (maps 01-23 and `Maps\04_FileRef_ParentRelative.btm`, README covering file path, bare filename, subfolder, parent-relative, .NET type name, Schema suffix, RootNode multi-root, inline source/target and aggregate, transitive/diamond/circular imports, include same-namespace/chameleon, redefine, missing reference/import) |
 
 The SchemaReferences README states case 16 (no `schemaLocation`) likely fails and case 21 (`xs:redefine`) is likely incomplete; both statements are consistent with the code read. The samples were not executed for this document.
 

@@ -16,8 +16,8 @@ test.describe('validate, compile and test map @p0', () => {
 
     await ui.validateButton.click();
 
-    await expect(ui.notification).toContainText('Validation failed');
-    await expect(ui.notification).toContainText('not connected');
+    await expect(ui.notification).toContainText('Validation failed: 1 error(s), 0 warning(s) \u2014 compilation aborted');
+    await expect(ui.notification).toContainText('\u2717 Functoid "String Concatenate" (f1): not connected \u2014 no input or output links');
     expect(host.messages('compile')).toHaveLength(0);
   });
 
@@ -120,5 +120,137 @@ test.describe('validate, compile and test map @p0', () => {
     await host.send({ type: 'executeTestMap', data: {} });
 
     expect((await posted).side).toBe('source');
+  });
+
+  for (const missing of ['source', 'target', 'both'] as const) {
+    test(`missing ${missing} schema blocks compilation with exact validation errors`, async ({ mapper }) => {
+      await mapper.open({
+        map: validMap(),
+        ...(missing !== 'target' ? { sourceSchema: null } : {}),
+        ...(missing !== 'source' ? { targetSchema: null } : {}),
+      });
+      const { ui, host } = mapper;
+      await ui.validateButton.click();
+
+      await expect(ui.notification).toContainText(
+        `Validation failed: ${missing === 'both' ? 2 : 1} error(s), 0 warning(s) \u2014 compilation aborted`
+      );
+      if (missing !== 'target') {
+        await expect(ui.notification).toContainText('\u2717 No source schema loaded');
+      }
+      if (missing !== 'source') {
+        await expect(ui.notification).toContainText('\u2717 No target schema loaded');
+      }
+      expect(host.messages('compile')).toHaveLength(0);
+      expect(host.messages('update')).toHaveLength(0);
+    });
+  }
+
+  for (const warning of ['missing endpoint', 'no input links', 'no output link'] as const) {
+    test(`${warning} shows the exact warning but still compiles`, async ({ mapper }) => {
+      const map = createMap();
+      let detail: string;
+      if (warning === 'missing endpoint') {
+        map.pages[0].links.push(createSchemaLink('broken', '', paths.target.invoiceId));
+        detail = '\u26a0 Link broken: missing endpoint';
+      } else {
+        map.pages[0].functoids.push(createMapFunctoid('f1'));
+        if (warning === 'no input links') {
+          map.pages[0].links.push({
+            ...createSchemaLink('output', 'f1', paths.target.billToName),
+            sourceType: 'functoid' as never,
+            sourcePath: undefined,
+          });
+          detail = '\u26a0 Functoid "String Concatenate" (f1): no input links';
+        } else {
+          map.pages[0].links.push({
+            ...createSchemaLink('input', paths.source.customerName, 'f1'),
+            targetType: 'functoid' as never,
+            targetPath: undefined,
+          });
+          detail = '\u26a0 Functoid "String Concatenate" (f1): no output link \u2014 result is not connected to target';
+        }
+      }
+      await mapper.open({ map });
+      const { ui, host } = mapper;
+      const compiled = host.waitForNext('compile');
+      await ui.validateButton.click();
+
+      expect((await compiled).data.pages[0].links).toEqual(map.pages[0].links);
+      await expect(ui.notification).toContainText('Validation: 1 warning(s) \u2014 compiling...');
+      await expect(ui.notification).toContainText(detail);
+      expect(host.messages('compile')).toHaveLength(1);
+      expect(host.messages('update')).toHaveLength(0);
+    });
+  }
+
+  for (const name of ['Date', 'Time', 'Date and Time', 'Iteration', 'Scripting']) {
+    test(`${name} compiles with an output link and no input warning`, async ({ mapper }) => {
+      const map = createMap();
+      map.pages[0].functoids.push(createMapFunctoid('f1', { name }));
+      map.pages[0].links.push({
+        ...createSchemaLink('output', 'f1', paths.target.billToName),
+        sourceType: 'functoid' as never,
+        sourcePath: undefined,
+      });
+      await mapper.open({ map });
+      const { ui, host } = mapper;
+      const compiled = host.waitForNext('compile');
+      await ui.validateButton.click();
+      await compiled;
+
+      await expect(ui.notification).toBeHidden();
+      expect(host.messages('compile')).toHaveLength(1);
+    });
+  }
+
+  test('failed instance generation shows the exact error and permits a successful retry', async ({ mapper }) => {
+    await mapper.open({ map: validMap() });
+    const { ui, host } = mapper;
+    const generated = host.waitForNext('generateInstance');
+    await ui.testMapButton.click();
+    await generated;
+    await host.send({ type: 'instanceGenerated', data: { side: 'source', xml: '', error: 'No source schema loaded' } });
+
+    await expect(ui.instanceEditor).toHaveValue('No source schema loaded');
+    expect(host.messages('testMapWithInput')).toHaveLength(0);
+    await ui.instanceEditor.selectText();
+    await ui.instanceEditor.press('Backspace');
+    const retry = host.waitForNext('generateInstance');
+    await ui.testMapButton.click();
+    await retry;
+    const transformed = host.waitForNext('testMapWithInput');
+    await host.send({ type: 'instanceGenerated', data: { side: 'source', xml: '<Order/>' } });
+
+    expect((await transformed).data.inputXml).toBe('<Order/>');
+    expect(host.messages('testMapWithInput')).toHaveLength(1);
+  });
+
+  for (const error of [
+    'Input validation failed: XML is not well-formed.\nUnexpected closing tag',
+    'Compilation failed:\nUnbound prefix ns0',
+    'No target schema loaded',
+  ]) {
+    test(`shows the complete transform error: ${error.split('\n')[0]}`, async ({ mapper }) => {
+      await mapper.open({ map: validMap() });
+      const { ui, host } = mapper;
+      await host.send({ type: 'testMapResult', data: { output: '', error } });
+
+      await expect(ui.testOutput).toHaveJSProperty('textContent', `Error: ${error}`);
+      expect(host.messages('update')).toHaveLength(0);
+    });
+  }
+
+  test('shows every compiler error without replacing it with a generic failure', async ({ mapper }) => {
+    await mapper.open({ map: validMap() });
+    const { ui, host } = mapper;
+    await host.send({
+      type: 'compileResult',
+      data: { success: false, errors: [{ message: 'Unbound prefix ns0' }, { message: 'Missing target root' }], warnings: [] },
+    });
+
+    await expect(ui.notification).toContainText('Compilation failed');
+    await expect.poll(() => ui.notification.textContent()).toContain('Unbound prefix ns0\nMissing target root');
+    expect(host.messages('update')).toHaveLength(0);
   });
 });

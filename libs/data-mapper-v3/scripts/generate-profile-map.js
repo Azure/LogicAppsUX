@@ -5,7 +5,7 @@ const path = require('node:path');
 const { XMLValidator } = require('fast-xml-parser');
 
 const packageRoot = path.resolve(__dirname, '..');
-const outputDirectory = path.join(packageRoot, 'samples', 'PerformanceLargeMap');
+const outputDirectory = path.join(packageRoot, 'e2e', 'samples', 'PerformanceLargeMap');
 
 function readPositiveInteger(name, fallback) {
   const argument = process.argv.find((value) => value.startsWith(`--${name}=`));

@@ -89,7 +89,7 @@ export function layoutFunctoids(input: FunctoidLayoutInput): Map<string, Point> 
   const desired = new Map<string, number>();
   for (const functoid of functoids) {
     const values = anchors.get(functoid.id);
-    if (values?.length) {
+    if (values) {
       desired.set(functoid.id, average(values));
     }
   }
@@ -136,7 +136,7 @@ export function layoutFunctoids(input: FunctoidLayoutInput): Map<string, Point> 
   for (let column = 0; column < dependencyColumnCount; column++) {
     const members = functoids
       .filter((functoid) => depths.get(functoid.id) === column)
-      .sort((a, b) => (normalized.get(a.id) ?? 0) - (normalized.get(b.id) ?? 0) || a.y - b.y);
+      .sort((a, b) => normalized.get(a.id)! - normalized.get(b.id)! || a.y - b.y);
     for (let start = 0; start < members.length; start += capacity) {
       columns.push(members.slice(start, start + capacity));
     }
@@ -157,10 +157,10 @@ export function layoutFunctoids(input: FunctoidLayoutInput): Map<string, Point> 
         : preferredRowStep;
     const placed: number[] = [];
     for (const member of members) {
-      const wanted = normalized.get(member.id) ?? top;
+      const wanted = normalized.get(member.id)!;
       placed.push(placed.length === 0 ? Math.max(top, wanted) : Math.max(wanted, placed[placed.length - 1] + rowStep));
     }
-    const drift = average(members.map((member, index) => (normalized.get(member.id) ?? top) - placed[index]));
+    const drift = average(members.map((member, index) => normalized.get(member.id)! - placed[index]));
     const shift = Math.max(Math.min(drift, top + availableHeight - placed[placed.length - 1]), top - placed[0]);
     members.forEach((member, index) => {
       result.set(member.id, { x: snap(firstX + column * columnStep), y: snap(placed[index] + shift) });
