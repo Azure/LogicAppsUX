@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import type { IProjectWizardContext, ITemplates } from '@microsoft/vscode-extension-logic-apps';
-import { FuncVersion, ProjectLanguage, ProjectPackageType, ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { FuncVersion, ProjectPackageType, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import { UserCancelledError } from '@microsoft/vscode-azext-utils';
 
 // Hoisted mock variables

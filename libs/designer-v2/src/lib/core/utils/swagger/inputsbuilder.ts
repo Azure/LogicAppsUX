@@ -12,6 +12,7 @@ import {
   isFunction,
   isStringInterpolation,
   isTemplateExpression,
+  parseCodefulConnectorPath,
   ParameterLocations,
   parseEx,
   PropertyName,
@@ -545,7 +546,7 @@ export function processPathInputs(pathValue: string, pathTemplate: string): Reco
   if (pathKeys && pathKeys.length) {
     const sanitizedTemplateString = pathTemplate.replace(regex, operationPathDelimiter);
     let sanitizedValueString = pathValue;
-    let functionSegments: ExpressionFunction[] = [];
+    let expressionValues: string[] = [];
 
     const errorMessage = intl.formatMessage(
       {
@@ -555,7 +556,14 @@ export function processPathInputs(pathValue: string, pathTemplate: string): Reco
       },
       { pathValue, pathTemplate }
     );
-    if (isTemplateExpression(pathValue)) {
+    const codefulSegments = parseCodefulConnectorPath(pathValue);
+    if (codefulSegments) {
+      // Match with placeholders, but bind the original encoded expressions just as for native paths.
+      expressionValues = codefulSegments.filter((segment) => segment.type === 'expression').map((segment) => `#{${segment.value}}`);
+      sanitizedValueString = codefulSegments
+        .map((segment) => (segment.type === 'expression' ? operationPathDelimiter : segment.value))
+        .join('');
+    } else if (isTemplateExpression(pathValue)) {
       let result: Expression;
       try {
         result = ExpressionParser.parseTemplateExpression(pathValue);
@@ -570,7 +578,7 @@ export function processPathInputs(pathValue: string, pathTemplate: string): Reco
         throw new Error(errorMessage);
       }
 
-      functionSegments = result.segments.filter(isFunction) as ExpressionFunction[];
+      expressionValues = result.segments.filter(isFunction).map(getStringInterpolatedFunctionExpression);
       const sanitizedSegments = result.segments.map((segment) => {
         if (isFunction(segment)) {
           return { type: ExpressionType.StringLiteral, value: operationPathDelimiter };
@@ -599,6 +607,13 @@ export function processPathInputs(pathValue: string, pathTemplate: string): Reco
 
     let parameterIndex = 0;
     let functionIndex = 0;
+    const nextExpressionValue = (): string => {
+      const value = expressionValues[functionIndex++];
+      if (value === undefined) {
+        throw new Error(errorMismatchSegments);
+      }
+      return value;
+    };
     for (let i = 0; i < templateSections.length; i++) {
       const templateSection = templateSections[i];
       const valueSection = valueSections[i];
@@ -625,9 +640,7 @@ export function processPathInputs(pathValue: string, pathTemplate: string): Reco
 
           if (templateSection === operationPathDelimiter) {
             if (valueSection === operationPathDelimiter) {
-              const functionSegment = functionSegments[functionIndex];
-              parameterValue = getStringInterpolatedFunctionExpression(functionSegment);
-              functionIndex++;
+              parameterValue = nextExpressionValue();
             } else {
               parameterValue = valueSection;
             }
@@ -641,9 +654,7 @@ export function processPathInputs(pathValue: string, pathTemplate: string): Reco
             if (valueSection.indexOf(operationPathDelimiter) < 0) {
               parameterValue = valueSection.substring(prefix.length, valueSection.length - suffix.length);
             } else {
-              const functionSegment = functionSegments[functionIndex];
-              parameterValue = getStringInterpolatedFunctionExpression(functionSegment);
-              functionIndex++;
+              parameterValue = nextExpressionValue();
             }
           }
 
@@ -665,14 +676,16 @@ export function processPathInputs(pathValue: string, pathTemplate: string): Reco
               throw new Error(errorMismatchSegments);
             }
 
-            const functionSegment = functionSegments[functionIndex++];
-            const parameterValue = getStringInterpolatedFunctionExpression(functionSegment);
+            const parameterValue = nextExpressionValue();
             pathInputs[pathParameterName] = parameterValue;
             startPos = pos + 1;
             pos = templateSection.indexOf(operationPathDelimiter, startPos);
           }
         }
       }
+    }
+    if (codefulSegments && functionIndex !== expressionValues.length) {
+      throw new Error(errorMismatchSegments);
     }
   }
 

@@ -1,9 +1,14 @@
 import AdmZip from 'adm-zip';
 import type { ChildProcessWithoutNullStreams } from 'child_process';
 import { mkdtemp, rm } from 'fs/promises';
+import { tmpdir } from 'os';
 import path from 'path';
-import { pathToFileURL } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { codefulSdkPackageFileName } from '../../../constants';
+
+const lspServerAssetsDirectory = fileURLToPath(new URL('../../../assets/LSPServer/', import.meta.url));
+const processShutdownTimeoutMs = 5_000;
 
 interface JsonRpcMessage {
   id?: number | string;
@@ -33,9 +38,11 @@ class LspProcess {
     }
   >();
   private readonly stderrChunks: string[] = [];
+  private readonly closePromise: Promise<void>;
   private disposed = false;
 
   public constructor(private readonly child: ChildProcessWithoutNullStreams) {
+    this.closePromise = new Promise((resolve) => child.once('close', () => resolve()));
     child.stdout.on('data', (chunk: Buffer) => this.handleStdout(chunk));
     child.stderr.on('data', (chunk: Buffer) => this.stderrChunks.push(chunk.toString('utf8')));
     child.on('exit', (code, signal) => {
@@ -90,8 +97,32 @@ class LspProcess {
       // The process is being torn down; a failed shutdown request should not hide the test assertion.
     }
 
-    if (!this.child.killed) {
+    if (await this.waitForClose(processShutdownTimeoutMs)) {
+      return;
+    }
+
+    if (this.child.exitCode === null && this.child.signalCode === null) {
       this.child.kill();
+    }
+
+    if (!(await this.waitForClose(processShutdownTimeoutMs))) {
+      throw new Error(`Timed out waiting for the LSP server process to exit.\n${this.stderr}`);
+    }
+  }
+
+  private async waitForClose(timeoutMs: number): Promise<boolean> {
+    let timeout: NodeJS.Timeout | undefined;
+    try {
+      return await Promise.race([
+        this.closePromise.then(() => true),
+        new Promise<boolean>((resolve) => {
+          timeout = setTimeout(() => resolve(false), timeoutMs);
+        }),
+      ]);
+    } finally {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
     }
   }
 
@@ -204,11 +235,11 @@ describe('bundled LSP server CodeLens', () => {
 
   async function startBundledLspServer(initializationOptions?: Record<string, unknown>): Promise<LspProcess> {
     const extractDirectory = await createTempDirectory();
-    const zipPath = path.join(process.cwd(), 'src', 'assets', 'LSPServer', 'LSPServer.zip');
+    const zipPath = path.join(lspServerAssetsDirectory, 'LSPServer.zip');
     new AdmZip(zipPath).extractAllTo(extractDirectory, true, true);
 
     const serverDllPath = path.join(extractDirectory, 'LSPServer', 'SdkLspServer.dll');
-    const sdkPackagePath = path.join(process.cwd(), 'src', 'assets', 'LSPServer', 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg');
+    const sdkPackagePath = path.join(lspServerAssetsDirectory, codefulSdkPackageFileName);
     const { spawn: realSpawn } = await vi.importActual<typeof import('child_process')>('child_process');
     const child = realSpawn('dotnet', [serverDllPath, '--sdk', sdkPackagePath], {
       stdio: ['pipe', 'pipe', 'pipe'],
@@ -234,7 +265,7 @@ describe('bundled LSP server CodeLens', () => {
   }
 
   async function createTempDirectory(): Promise<string> {
-    const directory = await mkdtemp(path.join(process.cwd(), 'logicapps-lsp-codelens-'));
+    const directory = await mkdtemp(path.join(tmpdir(), 'logicapps-lsp-codelens-'));
     tempDirectories.push(directory);
     return directory;
   }
