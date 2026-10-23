@@ -88,6 +88,8 @@ const addNewSchemaValue = '__add_new_schema__';
 const useStyles = makeStyles({
   option: { fontSize: tokens.fontSizeBase200 },
   picker: { width: '100%', minWidth: 0, maxWidth: '100%', boxSizing: 'border-box' },
+  pickerButton: { minWidth: 0 },
+  pickerText: { display: 'block', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
   rootRow: {
     display: 'flex',
     alignItems: 'baseline',
@@ -129,6 +131,7 @@ function SchemaTreeView({
 }: SchemaTreeViewProps): React.ReactElement {
   const styles = useStyles();
   const [expandedPaths, setExpandedPaths] = useState(() => new Set(initialExpanded));
+  const panelRef = useRef<HTMLDivElement>(null);
   const pointerStartedPath = useRef<string | null>(null);
   const expandablePaths = new Set<string>();
   collectExpandablePaths(schema.rootElement, expandablePaths);
@@ -136,6 +139,71 @@ function SchemaTreeView({
 
   useLayoutEffect(() => {
     onExpansionChange();
+  }, [expandedPaths, onExpansionChange]);
+
+  useLayoutEffect(() => {
+    const panel = panelRef.current;
+    const viewport = panel?.closest('biztalk-schema-tree');
+    if (!panel || !viewport) {
+      return;
+    }
+    let frame: number | undefined;
+    const updateWidth = (): void => {
+      frame = undefined;
+      const bounds = viewport.getBoundingClientRect();
+      const viewportBottom = bounds.top + viewport.clientTop + viewport.clientHeight;
+      const headerBottom = panel.querySelector('.schema-sticky')?.getBoundingClientRect().bottom ?? bounds.top;
+      let width = viewport.clientWidth;
+      for (const row of Array.from(panel.querySelectorAll<HTMLElement>('.tree-node'))) {
+        const rowBounds = row.getBoundingClientRect();
+        if (rowBounds.bottom <= headerBottom || rowBounds.top >= viewportBottom) {
+          continue;
+        }
+        const rowStyle = getComputedStyle(row);
+        const children = Array.from(row.children).filter((child) => getComputedStyle(child).display !== 'none');
+        const contentWidth = children.reduce((total, child) => {
+          const style = getComputedStyle(child);
+          const margin = child.classList.contains('node-connector')
+            ? 0
+            : (Number.parseFloat(style.marginLeft) || 0) + (Number.parseFloat(style.marginRight) || 0);
+          return total + child.getBoundingClientRect().width + margin;
+        }, 0);
+        width = Math.max(
+          width,
+          Math.ceil(
+            contentWidth +
+              Math.max(0, children.length - 1) * (Number.parseFloat(rowStyle.columnGap) || 0) +
+              Number.parseFloat(rowStyle.paddingLeft) +
+              Number.parseFloat(rowStyle.paddingRight)
+          )
+        );
+      }
+      const needsHorizontalScroll = width > viewport.clientWidth + 1;
+      viewport.style.overflowX = needsHorizontalScroll ? 'auto' : 'hidden';
+      const value = `${needsHorizontalScroll ? width : viewport.clientWidth}px`;
+      if (panel.style.getPropertyValue('--schema-content-width') !== value) {
+        panel.style.setProperty('--schema-content-width', value);
+        onExpansionChange();
+      }
+    };
+    const scheduleWidth = (): void => {
+      frame ??= requestAnimationFrame(updateWidth);
+    };
+    const observer = new ResizeObserver(scheduleWidth);
+    observer.observe(viewport);
+    viewport.addEventListener('scroll', scheduleWidth, { passive: true });
+    viewport.addEventListener('pointerover', scheduleWidth);
+    viewport.addEventListener('pointerout', scheduleWidth);
+    updateWidth();
+    return () => {
+      observer.disconnect();
+      viewport.removeEventListener('scroll', scheduleWidth);
+      viewport.removeEventListener('pointerover', scheduleWidth);
+      viewport.removeEventListener('pointerout', scheduleWidth);
+      if (frame !== undefined) {
+        cancelAnimationFrame(frame);
+      }
+    };
   }, [expandedPaths, onExpansionChange]);
 
   const toggleNode = (event: React.MouseEvent, path: string): void => {
@@ -257,7 +325,7 @@ function SchemaTreeView({
   const filePath = schema.filePath || '';
   return (
     <FluentProvider theme={getVsCodeFluentTheme()} style={{ display: 'contents' }}>
-      <div className="schema-panel">
+      <div className="schema-panel" ref={panelRef}>
         <div className="schema-sticky">
           <div className="schema-header">
             <div className="schema-header-row">
@@ -299,6 +367,11 @@ function SchemaTreeView({
             <Dropdown
               aria-label={`Choose ${side} schema`}
               className={styles.picker}
+              button={{
+                className: styles.pickerButton,
+                title: filePath,
+                children: <span className={styles.pickerText}>{filePath.split(/[/\\]/).pop() || ''}</span>,
+              }}
               size="small"
               value={filePath.split(/[/\\]/).pop() || ''}
               selectedOptions={[]}

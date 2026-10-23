@@ -442,12 +442,23 @@
 }
 
 .schema-tree-container {
-	width: clamp(180px, 22%, 320px);
-	min-width: 180px;
-	max-width: 320px;
+	width: var(--schema-pane-width, clamp(180px, 22%, 320px));
+	min-width: min(180px, 25%);
+	max-width: calc(100% - 212px);
 	overflow: hidden;
-	flex: 0 0 clamp(180px, 22%, 320px);
+	flex: 0 1 var(--schema-pane-width, clamp(180px, 22%, 320px));
 	background: var(--vscode-editor-background);
+}
+.schema-pane-divider {
+	flex: 0 0 6px;
+	cursor: col-resize;
+	touch-action: none;
+	background: var(--vscode-editor-background);
+}
+.schema-pane-divider:hover,
+.schema-pane-divider:focus-visible {
+	background: var(--vscode-focusBorder);
+	outline: none;
 }
 .schema-tree-container > biztalk-schema-tree,
 .schema-tree-container > biztalk-empty-schema {
@@ -455,6 +466,7 @@
 	height: 100%;
 }
 .schema-tree-container > biztalk-schema-tree {
+	container-type: inline-size;
 	overflow-x: hidden;
 	overflow-y: auto;
 }
@@ -480,11 +492,16 @@
 
 .schema-panel {
 	display: block;
+	width: var(--schema-content-width, 100%);
+	min-width: 100%;
 	min-height: 100%;
 }
 .schema-sticky {
 	position: sticky;
 	top: 0;
+	left: 0;
+	width: 100cqw;
+	box-sizing: border-box;
 	z-index: 20;
 	background: var(--vscode-editor-background);
 }
@@ -495,6 +512,7 @@
 }
 .schema-header-row {
 	display: flex;
+	flex-wrap: wrap;
 	align-items: center;
 	justify-content: space-between;
 	gap: 6px;
@@ -532,10 +550,14 @@
 }
 .schema-tree {
 	padding: 4px 0;
+	width: 100%;
+	min-width: 100%;
+	box-sizing: border-box;
 }
 
 .tree-node {
 	display: flex;
+	overflow: clip;
 	position: relative;
 	align-items: center;
 	justify-content: flex-start;
@@ -549,10 +571,10 @@
 	text-align: left;
 }
 .source-tree .tree-node {
-	padding-right: 22px;
+	padding-right: 6px;
 }
 .target-tree .tree-node {
-	padding-left: 22px;
+	padding-left: 6px;
 }
 .tree-node:hover {
 	background: var(--vscode-list-hoverBackground, #2a2d2e);
@@ -587,6 +609,7 @@
 }
 
 .node-name {
+	flex-shrink: 0;
 	color: var(--vscode-foreground);
 	font-weight: 400;
 }
@@ -637,15 +660,15 @@
 }
 .source-tree .node-connector {
 	right: 4px;
+	margin-left: auto;
 }
 .target-tree .node-connector {
 	left: 4px;
+	order: -1;
 }
 .source-tree .node-connector,
 .target-tree .node-connector {
-	position: absolute;
-	top: 50%;
-	transform: translateY(-50%);
+	position: sticky;
 }
 .tree-node:hover .node-connector,
 .node-connector:hover {

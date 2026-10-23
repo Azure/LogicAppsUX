@@ -68,17 +68,17 @@ export interface FunctoidConfigCallbacks {
 const useStyles = makeStyles({
   surface: {
     width: '580px',
-    height: '540px',
+    height: '640px',
     maxWidth: '90vw',
     maxHeight: '90vh',
     overflow: 'hidden',
   },
-  body: { height: '100%', minHeight: 0 },
+  body: { height: '100%', minHeight: 0, minWidth: 0, gridTemplateRows: 'auto minmax(0, 1fr) auto' },
   content: {
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100%',
+    display: 'grid',
+    gridTemplateRows: 'auto auto minmax(0, 1fr)',
     minHeight: 0,
+    minWidth: 0,
     overflow: 'hidden',
   },
   meta: {
@@ -107,10 +107,13 @@ const useStyles = makeStyles({
   tabPanel: {
     display: 'flex',
     flexDirection: 'column',
+    minHeight: 0,
+    overflowY: 'auto',
+    overflowX: 'hidden',
     gap: tokens.spacingVerticalS,
     paddingTop: tokens.spacingVerticalL,
   },
-  inputTabPanel: { flex: 1, minHeight: 0, overflow: 'hidden' },
+  inputTabPanel: { minWidth: 0 },
   toolbar: {
     display: 'flex',
     alignItems: 'center',
@@ -128,47 +131,54 @@ const useStyles = makeStyles({
     padding: 0,
     listStyle: 'none',
   },
-  scrollableInputList: {
-    flex: 1,
-    minHeight: 0,
-    overflowY: 'auto',
-    scrollbarGutter: 'stable',
-    paddingRight: tokens.spacingHorizontalXS,
-  },
   inputRow: {
     display: 'grid',
-    gridTemplateColumns: '54px minmax(0, 1fr) 64px 104px',
+    gridTemplateColumns: 'minmax(0, 1fr) auto auto',
+    flexShrink: 0,
+    minWidth: 0,
     alignItems: 'center',
     gap: tokens.spacingHorizontalS,
     padding: `${tokens.spacingVerticalXS} 0`,
     borderBottom: `1px solid ${tokens.colorNeutralStroke2}`,
   },
-  inputName: { fontWeight: tokens.fontWeightSemibold },
+  inputName: { fontWeight: tokens.fontWeightSemibold, gridRow: 1, gridColumn: 1 },
   inputContent: {
+    gridRow: 2,
+    gridColumn: '1 / -1',
     display: 'flex',
     flexDirection: 'column',
     gap: tokens.spacingVerticalXS,
     minWidth: 0,
     padding: `${tokens.spacingVerticalXS} 0`,
   },
-  inputKind: { color: tokens.colorNeutralForeground3, textAlign: 'center' },
-  constantInput: { width: '84%' },
-  defaultInput: { height: '26px', fontSize: '11px', width: '84%', boxSizing: 'border-box', padding: '2px 6px' },
+  inputKind: { color: tokens.colorNeutralForeground3, textAlign: 'center', gridRow: 1, gridColumn: 2 },
+  sourceLabel: { overflowWrap: 'anywhere' },
+  defaultInput: { minWidth: 0, width: '100%' },
   rowActions: {
+    gridRow: 1,
+    gridColumn: 3,
     display: 'grid',
     gridTemplateColumns: 'repeat(3, 32px)',
     gap: tokens.spacingHorizontalXS,
   },
   fallbackLabel: {
-    display: 'flex',
+    display: 'grid',
+    gridTemplateColumns: 'auto minmax(0, 1fr)',
     alignItems: 'center',
     gap: tokens.spacingHorizontalS,
     color: tokens.colorNeutralForeground3,
   },
-  fallbackInput: { width: '70%' },
   empty: { color: tokens.colorNeutralForeground3, padding: `${tokens.spacingVerticalS} 0` },
-  fields: { display: 'flex', flexDirection: 'column', gap: tokens.spacingVerticalM, paddingTop: tokens.spacingVerticalM },
-  actions: { paddingBottom: '18px' },
+  fields: {
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: 0,
+    overflowY: 'auto',
+    overflowX: 'hidden',
+    gap: tokens.spacingVerticalM,
+    paddingTop: tokens.spacingVerticalM,
+  },
+  actions: { flexShrink: 0 },
 });
 
 function expectedInputsText(minInputs: number, maxInputs: number): string {
@@ -246,13 +256,13 @@ function FunctoidConfigDialogView({ model, onSave, onCancel }: FunctoidConfigDia
         }}
       >
         <DialogSurface className={`${styles.surface} ${typographyStyles.base}`}>
-          <DialogBody className={`functoid-properties-panel ${styles.body}`}>
+          <DialogBody className={styles.body}>
             <DialogTitle className={styles.title}>
               <span className="config-title">{model.title}</span>
               <div className={`${styles.meta} ${typographyStyles.base}`}>{model.meta}</div>
             </DialogTitle>
             <DialogContent className={styles.content}>
-              <div className={`functoid-dialog-description ${styles.descriptionBlock}`}>
+              <div className={styles.descriptionBlock}>
                 <div className={`config-label ${styles.heading}`}>Description</div>
                 <div className={`${styles.description} ${typographyStyles.base}`}>{model.description}</div>
               </div>
@@ -300,29 +310,31 @@ function FunctoidConfigDialogView({ model, onSave, onCancel }: FunctoidConfigDia
                       No inputs configured. Add a value or connect a source node.
                     </div>
                   ) : (
-                    <ol className={`${styles.inputList} ${styles.scrollableInputList}`}>
+                    <ol className={styles.inputList}>
                       {inputs.map((input, index) => (
-                        <li className={`functoid-input-row ${styles.inputRow}`} key={index}>
+                        <li data-functoid-input={index} className={styles.inputRow} key={index}>
                           <span className={`${styles.inputName} ${typographyStyles.base}`}>Input[{index}]</span>
                           <div className={styles.inputContent}>
                             {input.isConstant ? (
-                              <input
-                                className={`functoid-default-input ${styles.defaultInput}`}
+                              <Input
+                                className={styles.defaultInput}
+                                size="small"
                                 value={input.value}
                                 placeholder="Enter a value"
                                 aria-label={`Value for input ${index + 1}`}
-                                onChange={(event) => updateInput(index, { value: event.target.value })}
+                                onChange={(_event, data) => updateInput(index, { value: data.value })}
                               />
                             ) : (
                               <>
-                                <span className={typographyStyles.base}>{input.sourceLabel}</span>
+                                <span className={`${styles.sourceLabel} ${typographyStyles.base}`}>{input.sourceLabel}</span>
                                 <label className={`${styles.fallbackLabel} ${typographyStyles.base}`}>
                                   Fallback
-                                  <input
-                                    className={`functoid-default-input ${styles.defaultInput}`}
+                                  <Input
+                                    className={styles.defaultInput}
+                                    size="small"
                                     value={input.defaultValue}
                                     aria-label={`Fallback value for input ${index + 1}`}
-                                    onChange={(event) => updateInput(index, { defaultValue: event.target.value })}
+                                    onChange={(_event, data) => updateInput(index, { defaultValue: data.value })}
                                   />
                                 </label>
                               </>
@@ -418,7 +430,7 @@ function FunctoidConfigDialogView({ model, onSave, onCancel }: FunctoidConfigDia
                 </div>
               )}
             </DialogContent>
-            <DialogActions className={`config-actions ${styles.actions}`}>
+            <DialogActions className={styles.actions}>
               <Button className={typographyStyles.base} size="small" appearance="secondary" onClick={onCancel}>
                 Cancel
               </Button>

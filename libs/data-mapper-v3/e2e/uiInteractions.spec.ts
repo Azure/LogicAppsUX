@@ -3,6 +3,8 @@ import { expect, test } from './fixtures/mapperHost';
 import type { MapperPage } from './pages/mapperPage';
 import { createInitPayload, createMap, createMapFunctoid, createSchemaLink, paths } from './fixtures/testData';
 
+test.use({ launchOptions: { ignoreDefaultArgs: ['--hide-scrollbars'] } });
+
 async function openContextMenu(ui: MapperPage): Promise<void> {
   await ui.page.locator('svg.mapping-svg').click({ button: 'right', position: { x: 20, y: 70 } });
   await expect(ui.page.getByRole('menu')).toBeVisible();
@@ -54,6 +56,95 @@ test.describe('additional UI interactions', () => {
       expect((await compile).data.name).toBe('OrderToInvoice');
       expect(host.messages('update')).toHaveLength(0);
     });
+
+    for (const viewport of [
+      { width: 1600, height: 900 },
+      { width: 640, height: 480 },
+    ]) {
+      test(`functoid dialog fits linked inputs and themes fallbacks in ${name} at ${viewport.width}px`, async ({ mapper }) => {
+        await mapper.ui.page.setViewportSize(viewport);
+        const map = linkedFunctoidMap();
+        map.pages[0].links[0].sourcePath = `${paths.source.customerName}/CustomerAccountBillingAndDeliveryInstructionsForInternationalOrders`;
+        await mapper.open({ map });
+        const { ui, host } = mapper;
+        await ui.page.evaluate(
+          ({ className, background, foreground }) => {
+            document.body.className = className;
+            document.documentElement.style.setProperty('--vscode-editor-background', background);
+            document.documentElement.style.setProperty('--vscode-foreground', foreground);
+          },
+          { className, background: theme.colorNeutralBackground1, foreground: theme.colorNeutralForeground1 }
+        );
+        await ui.functoidNode().dblclick();
+        const dialog = ui.page.getByRole('dialog');
+        expect(await dialog.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);
+        await expect(dialog.getByRole('button', { name: 'OK', exact: true })).toBeInViewport();
+        await expect(dialog.getByRole('button', { name: 'Cancel', exact: true })).toBeInViewport();
+        const fallback = dialog.getByRole('textbox', { name: 'Fallback value for input 1', exact: true });
+        const colors = await fallback.evaluate(
+          (element, expected) => {
+            const reference = document.createElement('span');
+            reference.style.backgroundColor = expected.background;
+            reference.style.color = expected.foreground;
+            const control = element.closest('.fui-Input');
+            return {
+              background: control ? getComputedStyle(control).backgroundColor : null,
+              foreground: getComputedStyle(element).color,
+              expectedBackground: reference.style.backgroundColor,
+              expectedForeground: reference.style.color,
+            };
+          },
+          { background: theme.colorNeutralBackground1, foreground: theme.colorNeutralForeground1 }
+        );
+        expect(colors.background).toBe(colors.expectedBackground);
+        expect(colors.foreground).toBe(colors.expectedForeground);
+        for (const input of await dialog.getByRole('textbox', { name: /Fallback value for input/ }).all()) {
+          expect(
+            await input.evaluate((element) => {
+              const row = element.closest('li')!.getBoundingClientRect();
+              const field = element.getBoundingClientRect();
+              return field.bottom < row.bottom && field.right <= row.right && field.left >= row.left;
+            })
+          ).toBe(true);
+        }
+        expect(
+          await dialog
+            .locator('[data-functoid-input]')
+            .evaluateAll((rows) =>
+              rows.every((row, index) => index === 0 || row.getBoundingClientRect().top >= rows[index - 1].getBoundingClientRect().bottom)
+            )
+        ).toBe(true);
+        const content = dialog.locator('[data-functoid-panel="inputs"]');
+        await expect(dialog.locator('.fui-DialogContent')).toHaveCSS('overflow-y', 'hidden');
+        if (viewport.height === 900) {
+          expect(await content.evaluate((element) => element.scrollHeight <= element.clientHeight + 1)).toBe(true);
+        }
+        for (let index = 0; index < 3; index++) {
+          await dialog.getByRole('button', { name: 'Add input', exact: true }).click();
+        }
+        if (viewport.height === 480) {
+          expect(await content.evaluate((element) => element.scrollHeight > element.clientHeight)).toBe(true);
+          await expect(content).toHaveCSS('overflow-y', 'auto');
+          expect(await content.evaluate((element) => element.offsetWidth - element.clientWidth)).toBeGreaterThan(0);
+        }
+        const lastInput = dialog.getByRole('textbox', { name: 'Value for input 5', exact: true });
+        const description = dialog.locator('.fui-DialogContent > div').first();
+        const descriptionBefore = await description.boundingBox();
+        const tabsBefore = await dialog.getByRole('tablist').boundingBox();
+        await lastInput.fill('visible-last-input');
+        await expect(lastInput).toBeInViewport();
+        expect(await description.boundingBox()).toEqual(descriptionBefore);
+        expect(await dialog.getByRole('tablist').boundingBox()).toEqual(tabsBefore);
+        expect(await dialog.locator('.fui-DialogContent').evaluate((element) => element.scrollTop)).toBe(0);
+        if (viewport.height === 480) {
+          expect(await content.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
+        }
+        await expect(dialog.getByRole('button', { name: 'OK', exact: true })).toBeInViewport();
+        await dialog.screenshot({ path: test.info().outputPath('functoid-dialog-layout.png') });
+        await dialog.getByRole('button', { name: 'OK', exact: true }).click();
+        expect(host.lastUpdatedMap()!.pages[0].functoids[0].parameters[4].value).toBe('visible-last-input');
+      });
+    }
   }
 
   for (const side of ['source', 'target'] as const) {
@@ -439,7 +530,7 @@ test.describe('additional UI interactions', () => {
     ]);
     expect(saved.links).toEqual(map.pages[0].links);
     await ui.functoidNode().dblclick();
-    await expect(dialog.locator('.functoid-input-row').first()).toContainText(paths.source.customerEmail);
+    await expect(dialog.locator('[data-functoid-input]').first()).toContainText(paths.source.customerEmail);
     await expect(dialog.getByRole('textbox', { name: 'Fallback value for input 2', exact: true })).toHaveValue('Unknown');
     await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
   });
@@ -455,7 +546,7 @@ test.describe('additional UI interactions', () => {
     await expect(dialog).toHaveCount(0);
     expect(host.messages('update')).toHaveLength(0);
     await ui.functoidNode().dblclick();
-    await expect(dialog.locator('.functoid-input-row').first()).toContainText(paths.source.customerName);
+    await expect(dialog.locator('[data-functoid-input]').first()).toContainText(paths.source.customerName);
     await expect(dialog.getByRole('textbox', { name: 'Fallback value for input 1', exact: true })).toHaveValue('Unknown');
     await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
   });

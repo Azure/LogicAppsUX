@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import type { HostToWebviewMessage, MapEditorVsCodeApi } from '../../../src/protocol/mapEditorProtocol';
 import './CopilotPanel';
 import './EmptySchemaPlaceholder';
@@ -146,6 +146,78 @@ function useMapperAppController(
   }, [onReady, refs, vscode]);
 }
 
+function SchemaPaneDivider({ side }: { side: 'source' | 'target' }): React.ReactElement {
+  const dividerRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<{ clientX: number; width: number } | null>(null);
+  const [dimensions, setDimensions] = useState({ width: 180, min: 180, max: 320 });
+  const getPane = (): HTMLElement | null => dividerRef.current?.parentElement?.querySelector(`.schema-tree-container.${side}-tree`) ?? null;
+
+  useLayoutEffect(() => {
+    const area = dividerRef.current?.parentElement;
+    const pane = area?.querySelector<HTMLElement>(`.schema-tree-container.${side}-tree`);
+    const otherPane = area?.querySelector<HTMLElement>(`.schema-tree-container.${side === 'source' ? 'target' : 'source'}-tree`);
+    if (!area || !pane || !otherPane) {
+      return;
+    }
+    const observer = new ResizeObserver(() => {
+      const max = Math.max(0, Math.floor(area.clientWidth - otherPane.getBoundingClientRect().width - 212));
+      setDimensions({ width: Math.round(pane.getBoundingClientRect().width), min: Math.min(180, max), max });
+    });
+    observer.observe(area);
+    observer.observe(pane);
+    observer.observe(otherPane);
+    return () => observer.disconnect();
+  }, [side]);
+
+  const resize = (width: number): void => {
+    getPane()?.style.setProperty('--schema-pane-width', `${Math.max(dimensions.min, Math.min(dimensions.max, width))}px`);
+  };
+
+  return (
+    <div
+      ref={dividerRef}
+      className="schema-pane-divider"
+      role="separator"
+      tabIndex={0}
+      aria-label={`${side === 'source' ? 'Source' : 'Target'} schema width`}
+      aria-orientation="vertical"
+      aria-valuemin={dimensions.min}
+      aria-valuemax={dimensions.max}
+      aria-valuenow={dimensions.width}
+      title="Resize schema pane"
+      onPointerDown={(event) => {
+        if (event.button !== 0) {
+          return;
+        }
+        event.preventDefault();
+        event.currentTarget.setPointerCapture(event.pointerId);
+        dragRef.current = { clientX: event.clientX, width: getPane()?.getBoundingClientRect().width ?? dimensions.width };
+      }}
+      onPointerMove={(event) => {
+        if (dragRef.current) {
+          resize(dragRef.current.width + (event.clientX - dragRef.current.clientX) * (side === 'source' ? 1 : -1));
+        }
+      }}
+      onLostPointerCapture={() => {
+        dragRef.current = null;
+      }}
+      onDoubleClick={() => getPane()?.style.removeProperty('--schema-pane-width')}
+      onKeyDown={(event) => {
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+          event.preventDefault();
+          resize(dimensions.width + (event.key === 'ArrowRight' ? 20 : -20) * (side === 'source' ? 1 : -1));
+        } else if (event.key === 'Home') {
+          event.preventDefault();
+          resize(dimensions.min);
+        } else if (event.key === 'End') {
+          event.preventDefault();
+          resize(dimensions.max);
+        }
+      }}
+    />
+  );
+}
+
 export function MapperApp({ vscode, onReady }: MapperAppProps): React.ReactElement {
   const containerRef = useRef<HTMLDivElement>(null);
   const copilotRef = useRef<CopilotPanel>(null);
@@ -207,10 +279,12 @@ export function MapperApp({ vscode, onReady }: MapperAppProps): React.ReactEleme
                 class: 'source-tree',
               })}
             </div>
+            <SchemaPaneDivider side="source" />
             <div className="canvas-workspace">
               {React.createElement('biztalk-mapping-canvas', { ref: canvasRef, class: 'canvas-container' })}
               {React.createElement('biztalk-mapper-page-bar', { ref: pageBarRef, class: 'page-sheet-bar' })}
             </div>
+            <SchemaPaneDivider side="target" />
             <div className="schema-tree-container target-tree">
               {React.createElement('biztalk-schema-tree', {
                 ref: targetTreeRef,

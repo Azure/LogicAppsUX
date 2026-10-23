@@ -69,7 +69,136 @@ const schemaCases = [
   },
 ];
 
+test.use({ launchOptions: { ignoreDefaultArgs: ['--hide-scrollbars'] } });
+
 test.describe('XSD structures and schema interactions @p0', () => {
+  for (const width of [1600, 1000]) {
+    test(`only scrolls schema names horizontally when expanded rows need it at ${width}px`, async ({ mapper }) => {
+      await mapper.ui.page.setViewportSize({ width, height: 700 });
+      const name = 'CustomerAccountBillingAddressAndDeliveryInstructionsForInternationalOrdersWithAdditionalReferenceInformation';
+      const rows = Array.from({ length: 35 }, (_, index) => `<xs:element name="Field${index}" type="xs:string"/>`).join('');
+      const schema = new SchemaParser().parse(
+        `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+          <xs:element name="Record"><xs:complexType><xs:sequence>
+            ${rows}
+            <xs:element name="Details"><xs:complexType><xs:sequence>
+              <xs:element name="${name}" type="xs:string"/>
+            </xs:sequence></xs:complexType></xs:element>
+          </xs:sequence></xs:complexType></xs:element>
+        </xs:schema>`,
+        'Schemas/ConditionalOverflow.xsd'
+      );
+      schema.availableRoots = ['Record', 'AnotherRoot'];
+      await mapper.open({ sourceSchema: schema, targetSchema: schema });
+      await mapper.ui.page.addStyleTag({ content: 'biztalk-schema-tree { scrollbar-gutter: stable; }' });
+      for (const side of ['source', 'target'] as const) {
+        const tree = mapper.ui.tree(side);
+        const branch = mapper.ui.treeNode(side, '/Record/Details').locator('.tree-icon.expandable');
+        await expect(mapper.ui.treeNode(side, `/Record/Details/${name}`)).toHaveCount(1);
+        await expect.poll(() => tree.evaluate((element) => element.scrollWidth - element.clientWidth)).toBeLessThanOrEqual(1);
+        await mapper.ui.treeNode(side, `/Record/Details/${name}`).scrollIntoViewIfNeeded();
+        await expect.poll(() => tree.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(true);
+        await tree.evaluate((element) => {
+          element.scrollTop = 0;
+        });
+        await expect.poll(() => tree.evaluate((element) => element.scrollWidth - element.clientWidth)).toBeLessThanOrEqual(1);
+        await mapper.ui.page.setViewportSize({ width: width - 100, height: 700 });
+        await expect.poll(() => tree.evaluate((element) => element.scrollWidth - element.clientWidth)).toBeLessThanOrEqual(1);
+        await mapper.ui.page.setViewportSize({ width, height: 700 });
+        await mapper.ui.treeNode(side, `/Record/Details/${name}`).scrollIntoViewIfNeeded();
+        await expect.poll(() => tree.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(true);
+        await branch.click();
+        expect(await tree.evaluate((element) => element.offsetWidth - element.clientWidth)).toBeGreaterThan(0);
+        expect(await tree.evaluate((element) => element.scrollHeight > element.clientHeight)).toBe(true);
+        await expect.poll(() => tree.evaluate((element) => element.scrollWidth - element.clientWidth)).toBeLessThanOrEqual(1);
+        const labelOffset = await mapper.ui
+          .treeNode(side, '/Record/Field0')
+          .locator('.node-name')
+          .evaluate((element) => {
+            const viewport = element.closest('biztalk-schema-tree')!;
+            return element.getBoundingClientRect().left - viewport.getBoundingClientRect().left;
+          });
+        expect(labelOffset).toBeLessThan(80);
+        await mapper.ui.treeNode(side, '/Record').locator('.tree-icon.expandable').click();
+        await expect.poll(() => tree.evaluate((element) => element.scrollWidth - element.clientWidth)).toBeLessThanOrEqual(1);
+        await tree.getByRole('button', { name: 'Expand all schema nodes', exact: true }).click();
+        await expect(mapper.ui.treeNode(side, `/Record/Details/${name}`)).toHaveCount(1);
+        await mapper.ui.treeNode(side, `/Record/Details/${name}`).scrollIntoViewIfNeeded();
+        await expect.poll(() => tree.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(true);
+        await tree.evaluate((element) => {
+          element.scrollLeft = element.scrollWidth;
+        });
+        await branch.click();
+        await expect.poll(() => tree.evaluate((element) => element.scrollWidth - element.clientWidth)).toBeLessThanOrEqual(1);
+        expect(await tree.evaluate((element) => element.scrollLeft)).toBe(0);
+      }
+      expect(mapper.host.messages('update')).toHaveLength(0);
+      await mapper.ui.page.screenshot({ path: test.info().outputPath('schema-fitting-names.png') });
+    });
+
+    test(`scrolls long schema node names horizontally without truncating at ${width}px`, async ({ mapper }) => {
+      await mapper.ui.page.setViewportSize({ width, height: 700 });
+      const name = 'CustomerAccountBillingAddressAndDeliveryInstructionsForInternationalOrdersWithAdditionalReferenceInformation';
+      const nodePath = `/Record/Details/${name}`;
+      const schema = new SchemaParser().parse(
+        `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+          <xs:element name="Record"><xs:complexType><xs:sequence>
+            <xs:element name="Details"><xs:complexType><xs:sequence>
+              <xs:element name="${name}" type="xs:string"/>
+            </xs:sequence></xs:complexType></xs:element>
+          </xs:sequence></xs:complexType></xs:element>
+        </xs:schema>`,
+        'Schemas/LongNames.xsd'
+      );
+      await mapper.open({ sourceSchema: schema, targetSchema: schema });
+      for (const side of ['source', 'target'] as const) {
+        const tree = mapper.ui.tree(side);
+        const label = mapper.ui.treeNode(side, nodePath).locator('.node-name');
+        const otherTree = mapper.ui.tree(side === 'source' ? 'target' : 'source');
+        const otherScrollLeft = await otherTree.evaluate((element) => element.scrollLeft);
+        await expect(label).toHaveText(name);
+        await expect(tree).toHaveCSS('overflow-x', 'auto');
+        expect(await tree.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(true);
+        for (const end of [false, true]) {
+          await tree.evaluate((element, scrollToEnd) => {
+            element.scrollLeft = scrollToEnd ? element.scrollWidth : 0;
+          }, end);
+          for (const control of [tree.locator('.schema-sticky'), mapper.ui.connector(side, nodePath)]) {
+            expect(
+              await control.evaluate((element) => {
+                const viewport = element.closest('biztalk-schema-tree')!.getBoundingClientRect();
+                const bounds = element.getBoundingClientRect();
+                return bounds.left >= viewport.left - 1 && bounds.right <= viewport.right + 1;
+              })
+            ).toBe(true);
+          }
+        }
+        await tree.evaluate((element) => {
+          element.scrollLeft = element.scrollWidth;
+        });
+        expect(await tree.evaluate((element) => element.scrollLeft)).toBeGreaterThan(0);
+        const trailingEdgeIsVisible = await label.evaluate((element) => {
+          const viewport = element.closest('biztalk-schema-tree')!;
+          return element.getBoundingClientRect().right <= viewport.getBoundingClientRect().right;
+        });
+        expect(trailingEdgeIsVisible).toBe(true);
+        expect(await otherTree.evaluate((element) => element.scrollLeft)).toBe(otherScrollLeft);
+        await mapper.ui.schemaPicker(side).click();
+        await expect(mapper.ui.page.getByRole('listbox')).toBeVisible();
+        await mapper.ui.page.keyboard.press('Escape');
+      }
+      expect(mapper.host.messages('update')).toHaveLength(0);
+      expect(await mapper.ui.page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+      const updated = mapper.host.waitForNext('update');
+      await mapper.ui.connectSchemaNodes(nodePath, nodePath);
+      expect((await updated).data.pages[0].links).toEqual([
+        expect.objectContaining({ sourcePath: nodePath, targetPath: nodePath, sourceType: 'schemaNode', targetType: 'schemaNode' }),
+      ]);
+      await expect(mapper.ui.links).toHaveCount(1);
+      await mapper.ui.page.screenshot({ path: test.info().outputPath('schema-horizontal-scroll.png') });
+    });
+  }
+
   for (const side of ['source', 'target'] as const) {
     for (const schemaCase of schemaCases) {
       test(`loads ${schemaCase.name} on the ${side} side and shows node properties`, async ({ mapper }) => {
