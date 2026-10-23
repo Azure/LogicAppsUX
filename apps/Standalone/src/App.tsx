@@ -17,6 +17,14 @@ export const App = () => {
       <Route index element={<DesignerStandalone />} />
       <Route path="/" element={<DesignerStandalone />} />
       <Route path="/v2" element={<DesignerStandaloneV2 />} />
+      <Route
+        path="/standard-management"
+        element={
+          <Suspense fallback={null}>
+            <StandardManagementTestHostLazy />
+          </Suspense>
+        }
+      />
       <Route path="/datamapperv1" element={<DataMapperV1 />} />
       <Route path="/datamapperv2" element={<DataMapperV2 />} />
       <Route path="/templates" element={<TemplatesStandalone />} />
@@ -33,6 +41,10 @@ export const App = () => {
     </Routes>
   );
 };
+
+const StandardManagementTestHostLazy = lazy(() =>
+  import('./designer/app/LocalDesigner/StandardManagementTestHost').then((m) => ({ default: m.StandardManagementTestHost }))
+);
 
 const DesignerStandalone = () => (
   <Provider store={designerStore}>

@@ -84,11 +84,13 @@ import { useHostingPlan } from '../../state/workflowLoadingSelectors';
 import CodeViewEditor from './CodeView';
 import { CustomConnectionParameterEditorService } from './Services/customConnectionParameterEditorService';
 import { CustomEditorService } from './Services/customEditorService';
+import { useAzureStandardManagement, type AzureStandardManagementHostConfiguration } from './Services/StandardManagement';
+import type { StandardManagementHttpClient } from '@microsoft/logic-apps-shared';
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
 
-const DesignerEditor = () => {
+const DesignerEditor = ({ managementHost }: { managementHost?: AzureStandardManagementHostConfiguration } = {}) => {
   const { id: workflowId } = useSelector((state: RootState) => ({
     id: state.workflowLoader.resourcePath!,
   }));
@@ -119,6 +121,14 @@ const DesignerEditor = () => {
   const { data: workflowAppData, isLoading: appLoading } = useWorkflowApp(siteResourceId, useHostingPlan());
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
+  const standardManagement = useAzureStandardManagement(
+    {
+      resourceId: siteResourceId,
+      runtimeHostName: workflowAppData?.properties?.defaultHostName,
+      isHybrid: isHybridLogicApp,
+    },
+    managementHost
+  );
   const [designerID, setDesignerID] = useState(guid());
   const [workflow, setWorkflow] = useState<Workflow>({
     ...data?.properties.files[Artifact.WorkflowFile],
@@ -218,10 +228,25 @@ const DesignerEditor = () => {
         queryClient,
         settingsData?.properties ?? {},
         dispatch,
-        areCustomEditorsEnabled
+        areCustomEditorsEnabled,
+        standardManagement,
+        managementHost?.experimentationService
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workflow, workflowId, connectionsData, settingsData, workflowAppData, tenantId, designerID, runId, language, areCustomEditorsEnabled]
+    [
+      workflow,
+      workflowId,
+      connectionsData,
+      settingsData,
+      workflowAppData,
+      tenantId,
+      designerID,
+      runId,
+      language,
+      areCustomEditorsEnabled,
+      standardManagement,
+      managementHost?.experimentationService,
+    ]
   );
 
   // Our iframe root element is given a strange padding (not in this repo), this removes it
@@ -233,7 +258,7 @@ const DesignerEditor = () => {
     }
   }, []);
 
-  const { data: runInstanceData } = useRunInstanceStandard(workflowName, appId, runId);
+  const { data: runInstanceData } = useRunInstanceStandard(workflowName, appId, runId, standardManagement);
 
   useEffect(() => {
     if (isMonitoringView && runInstanceData) {
@@ -394,7 +419,8 @@ const DesignerEditor = () => {
       customCodeToUpdate,
       /*notes*/ undefined,
       /*mcpServer*/ undefined,
-      clearDirtyState
+      clearDirtyState,
+      { standardManagement }
     );
   };
 
@@ -412,7 +438,8 @@ const DesignerEditor = () => {
         /*customcode*/ undefined,
         /*notes*/ undefined,
         /*mcpServer*/ undefined,
-        clearDirtyState
+        clearDirtyState,
+        { standardManagement }
       );
     } catch (error: any) {
       if (error.status !== 404) {
@@ -446,7 +473,7 @@ const DesignerEditor = () => {
       try {
         const codeToConvert = JSON.parse(codeEditorRef.current?.getValue() ?? '');
         if (codeEditorRef.current?.hasChanges() && !isEqual(codeToConvert, { definition: workflow?.definition, kind: workflow?.kind })) {
-          await validateWorkflowStandard(siteResourceId, workflowName, codeToConvert);
+          await validateWorkflowStandard(siteResourceId, workflowName, codeToConvert, undefined, undefined, undefined, standardManagement);
         }
         setWorkflow((prevState) => ({
           ...prevState,
@@ -580,7 +607,9 @@ const getDesignerServices = (
   queryClient: QueryClient,
   appSettings: Record<string, string>,
   dispatch: AppDispatch,
-  areCustomEditorsEnabled?: boolean
+  areCustomEditorsEnabled?: boolean,
+  standardManagement?: StandardManagementHttpClient,
+  experimentationService = new BaseExperimentationService()
 ): any => {
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
   const armUrl = 'https://management.azure.com';
@@ -590,9 +619,10 @@ const getDesignerServices = (
   const appName = siteResourceId.split('/').splice(-1)[0];
   const { subscriptionId, resourceGroup } = new ArmParser(workflowId);
 
-  const defaultServiceParams = { baseUrl, httpClient, apiVersion };
+  const defaultServiceParams = { baseUrl, httpClient: standardManagement ?? httpClient, apiVersion, standardManagement };
   const armServiceParams = {
     ...defaultServiceParams,
+    httpClient,
     baseUrl: armUrl,
     siteResourceId,
   };
@@ -849,8 +879,9 @@ const getDesignerServices = (
   });
 
   const workflowService: IWorkflowService = {
-    getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowIdWithHostRuntime, triggerName),
-    getAgentUrl: () => fetchAgentUrl(siteResourceId, workflowName, workflowApp?.properties?.defaultHostName ?? ''),
+    getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowIdWithHostRuntime, triggerName, false, standardManagement),
+    getAgentUrl: () =>
+      fetchAgentUrl(siteResourceId, workflowName, workflowApp?.properties?.defaultHostName ?? '', false, standardManagement),
     getLogicAppId: () => siteResourceId,
     getAppIdentity: () => workflowApp?.identity,
     isExplicitAuthRequiredForManagedIdentity: () => true,
@@ -905,6 +936,7 @@ const getDesignerServices = (
     baseUrl,
     workflowName,
     httpClient,
+    standardManagement,
   });
 
   const roleService = new BaseRoleService({
@@ -946,7 +978,7 @@ const getDesignerServices = (
 
   const connectionParameterEditorService = new CustomConnectionParameterEditorService();
   const editorService = new CustomEditorService(areCustomEditorsEnabled ?? false);
-  const resourceService = new BaseResourceService({ baseUrl: armUrl, httpClient, apiVersion });
+  const resourceService = new BaseResourceService({ baseUrl: armUrl, httpClient, apiVersion, standardManagement });
 
   return {
     appService,
@@ -971,7 +1003,7 @@ const getDesignerServices = (
     editorService,
     resourceService,
     userPreferenceService: new BaseUserPreferenceService(),
-    experimentationService: new BaseExperimentationService(),
+    experimentationService,
   };
 };
 const hasNewKeys = (original: Record<string, any>, updated: Record<string, any>) => {

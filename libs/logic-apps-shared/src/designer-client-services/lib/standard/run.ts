@@ -16,6 +16,7 @@ import {
 import { hybridApiVersion, isHybridLogicApp } from './hybrid';
 import { LogEntryLevel } from '../logging/logEntry';
 import { LoggerService } from '../logger';
+import { StandardManagementError, type StandardManagementHttpClient } from './management';
 
 export interface RunServiceOptions {
   apiVersion: string;
@@ -24,6 +25,7 @@ export interface RunServiceOptions {
   updateCors?: () => void;
   workflowName: string;
   isDev?: boolean;
+  standardManagement?: StandardManagementHttpClient;
 }
 
 export class StandardRunService implements IRunService {
@@ -73,9 +75,11 @@ export class StandardRunService implements IRunService {
     const { httpClient } = this.options;
 
     try {
-      const response = await httpClient.get<ArmResources<Run>>({
+      const request = {
         uri: continuationToken,
-      });
+      };
+      const response = await (this.options.standardManagement?.listRuns<ArmResources<Run>>(request) ??
+        httpClient.get<ArmResources<Run>>(request));
 
       const { nextLink, value: runs }: ArmResources<Run> = response;
       return { nextLink, runs };
@@ -109,9 +113,8 @@ export class StandardRunService implements IRunService {
         uri = `${baseUrl}/workflows/${workflowName}/runs/${onlyRunId}?$expand=properties/actions,workflow/properties`;
         return this.fetchHybridLogicAppRunRepetitions<Run>(uri, 'GET', httpClient);
       }
-      const response = await httpClient.get<Run>({
-        uri,
-      });
+      const request = { uri };
+      const response = await (this.options.standardManagement?.getRun<Run>(request) ?? httpClient.get<Run>(request));
       return response;
     } catch (e: any) {
       throw new Error(e.message);
@@ -145,9 +148,9 @@ export class StandardRunService implements IRunService {
     const filterParam = filterString ? `&$filter=${encodeURIComponent(filterString)}` : '';
     const uri = `${baseUrl}/workflows/${workflowName}/runs?api-version=${apiVersion}${filterParam}`;
     try {
-      const response = await httpClient.get<ArmResources<Run>>({
-        uri,
-      });
+      const request = { uri };
+      const response = await (this.options.standardManagement?.listRuns<ArmResources<Run>>(request) ??
+        httpClient.get<ArmResources<Run>>(request));
 
       const { nextLink, value: runs }: ArmResources<Run> = response;
       return { nextLink, runs };
@@ -454,14 +457,17 @@ export class StandardRunService implements IRunService {
         }
       }
 
-      return await this.getHttpRequestByMethod(httpClient, method, {
+      const request = {
         uri: baseUri,
         noAuth,
         returnHeaders: true,
         headers: options?.headers,
         queryParameters: mergedParams,
         content: bodyContent,
-      });
+      };
+      return await (method.toLowerCase() === 'post' && this.options.standardManagement
+        ? this.options.standardManagement.runTrigger(request)
+        : this.getHttpRequestByMethod(httpClient, method, request));
     } catch (e: any) {
       throw new Error(parseErrorMessage(e));
     }
@@ -640,12 +646,16 @@ export class StandardRunService implements IRunService {
       };
       const headers = isHybrid ? hybridHeaders : { 'If-Match': '*' };
 
-      const response = await httpClient.post({
+      const request = {
         uri: resubmitUrl,
         headers,
-      });
+      };
+      const response = await (this.options.standardManagement?.resubmitTrigger(request) ?? httpClient.post(request));
       return response;
     } catch (e: any) {
+      if (e instanceof StandardManagementError) {
+        throw e;
+      }
       return new Error(e.message);
     }
   }
@@ -660,11 +670,13 @@ export class StandardRunService implements IRunService {
 
         return this.fetchHybridLogicAppRunRepetitions(uri, 'POST', httpClient);
       }
-      const response = await httpClient.post({
-        uri,
-      });
+      const request = { uri };
+      const response = await (this.options.standardManagement?.cancelRun(request) ?? httpClient.post(request));
       return response;
     } catch (e: any) {
+      if (e instanceof StandardManagementError) {
+        throw e;
+      }
       return new Error(e.message);
     }
   }
