@@ -2,7 +2,7 @@ import * as assert from 'assert';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { connectToVsCodeCdpByText, connectToVsCodeWorkbenchCdp } from './cdpClient';
+import { connectToVsCodeCdpByText, connectToVsCodeWorkbenchCdp, hasExactVisibleWorkbenchIframeForTarget } from './cdpClient';
 import { ProvenDesignerCdpActions } from './designerCdpActions';
 import { designerV2ViewType, selectDesignerV2 } from './designerVersion';
 import { assertNoDialogAttempts, installDialogGuard } from './dialogGuard';
@@ -296,16 +296,26 @@ async function openExactDesignerV2(
         }
       },
       acceptCandidate: async (cdp, contextId) => {
-        const candidate = await cdp.evaluate<{ visible: boolean; canvasCount: number }>(
+        const currentTabs = getWebviewTabs(designerV2ViewType);
+        assert.strictEqual(currentTabs.length, 1, `Expected one exact ${designerV2ViewType} tab while binding the frame`);
+        assert.ok(
+          currentTabs[0].isActive && currentTabs[0].label.includes(entry.wfName),
+          `Expected active Designer V2 tab for ${entry.wfName} while binding the frame`
+        );
+        const candidate = await cdp.evaluate<{ canvasCount: number }>(
           contextId,
           `(() => ({
-            visible: document.visibilityState === 'visible',
             canvasCount: Array.from(document.querySelectorAll('.react-flow, .msla-designer-canvas'))
               .filter((element) => element instanceof HTMLElement &&
                 element.getBoundingClientRect().width > 0 && element.getBoundingClientRect().height > 0).length,
           }))()`
         );
-        assert.ok(candidate.visible && candidate.canvasCount === 1, 'Candidate must be the visible active Designer V2 iframe');
+        const ownedByVisibleWorkbenchFrame = await hasExactVisibleWorkbenchIframeForTarget(
+          workbench,
+          cdp.targetUrl,
+          Math.min(2000, Math.max(1, deadline - Date.now()))
+        );
+        assert.ok(ownedByVisibleWorkbenchFrame && candidate.canvasCount === 1, 'Candidate must be the visible active Designer V2 iframe');
       },
     });
   } finally {

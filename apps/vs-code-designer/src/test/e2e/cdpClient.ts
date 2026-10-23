@@ -423,6 +423,83 @@ export function chooseVsCodeWorkbenchTargetForCapture(targets: CdpTarget[]): Cdp
   return workbenchTargets.length === 1 ? workbenchTargets[0] : undefined;
 }
 
+export async function hasExactVisibleWorkbenchIframeForTarget(
+  ownerCdp: Pick<CdpConnection, 'evaluate'>,
+  targetUrl: string | undefined,
+  timeoutMs: number
+): Promise<boolean> {
+  if (!targetUrl || timeoutMs <= 0) {
+    return false;
+  }
+
+  const result = await ownerCdp
+    .evaluate<{ count: number; visible: boolean }>(
+      undefined,
+      `(() => {
+        const targetUrl = ${JSON.stringify(targetUrl)};
+        const isVisible = (element) => {
+          if (!(element instanceof HTMLIFrameElement) || !(element.offsetWidth || element.offsetHeight || element.getClientRects().length)) {
+            return false;
+          }
+          let current = element;
+          while (current instanceof HTMLElement) {
+            if (current.hidden || current.getAttribute('aria-hidden') === 'true') {
+              return false;
+            }
+            const style = getComputedStyle(current);
+            if (style.display === 'none' || style.visibility === 'hidden' || style.visibility === 'collapse' || Number.parseFloat(style.opacity || '1') === 0) {
+              return false;
+            }
+            current = current.parentElement;
+          }
+          const rect = element.getBoundingClientRect();
+          if (rect.width <= 0 || rect.height <= 0 || rect.bottom <= 0 || rect.right <= 0 || rect.top >= window.innerHeight || rect.left >= window.innerWidth) {
+            return false;
+          }
+          const visibleRect = {
+            left: Math.max(rect.left, 0),
+            top: Math.max(rect.top, 0),
+            right: Math.min(rect.right, window.innerWidth),
+            bottom: Math.min(rect.bottom, window.innerHeight),
+          };
+          if (visibleRect.right <= visibleRect.left || visibleRect.bottom <= visibleRect.top) {
+            return false;
+          }
+          const intersects = (first, second) =>
+            first.left < second.right && first.right > second.left && first.top < second.bottom && first.bottom > second.top;
+          const visibleNotifications = Array.from(document.querySelectorAll('.notification-toast, .notification-list-item')).filter((candidate) => {
+            if (!(candidate instanceof HTMLElement) || !(candidate.offsetWidth || candidate.offsetHeight || candidate.getClientRects().length)) {
+              return false;
+            }
+            const style = getComputedStyle(candidate);
+            if (style.display === 'none' || style.visibility === 'hidden' || Number.parseFloat(style.opacity || '1') === 0) {
+              return false;
+            }
+            const notificationRect = candidate.getBoundingClientRect();
+            return notificationRect.width > 0 && notificationRect.height > 0;
+          });
+          if (
+            visibleNotifications.some((notification) => {
+              const notificationRect = notification.getBoundingClientRect();
+              return intersects(visibleRect, notificationRect);
+            })
+          ) {
+            return false;
+          }
+          const x = Math.min(Math.max((visibleRect.left + visibleRect.right) / 2, 0), Math.max(window.innerWidth - 1, 0));
+          const y = Math.min(Math.max((visibleRect.top + visibleRect.bottom) / 2, 0), Math.max(window.innerHeight - 1, 0));
+          const topElement = document.elementFromPoint(x, y);
+          return topElement === element || element.contains(topElement);
+        };
+        const matches = Array.from(document.querySelectorAll('iframe')).filter((frame) => frame.src === targetUrl);
+        return { count: matches.length, visible: matches.length === 1 && isVisible(matches[0]) };
+      })()`,
+      { timeoutMs }
+    )
+    .catch(() => undefined);
+  return result?.count === 1 && result.visible === true;
+}
+
 export async function waitForCreateWorkspaceFrameContext(cdp: CdpConnection, timeoutMs = 15000): Promise<number> {
   return waitForWebviewFrameContext(cdp, {
     allTextIncludes: ['Create logic app workspace', 'Workspace parent folder path', 'Workspace name'],

@@ -139,6 +139,22 @@ function testLifecycleUsesProductWizardAndFreshHostContract(): void {
   assert.match(source, /approvedTarget: azureFixture/);
   assert.match(source, /must never persist the access token/);
   assert.match(source, /allTextIncludes: \['Save'\]/, 'Designer frame selection must use the proven stable Save marker');
+  assert.match(
+    source,
+    /hasExactVisibleWorkbenchIframeForTarget\(\s*workbench,\s*cdp\.targetUrl,/,
+    'Designer frame selection must prove exact ownership from the visible workbench iframe'
+  );
+  const openDesignerBody = source.slice(
+    source.indexOf('async function openExactDesignerV2'),
+    source.indexOf('async function prepareApprovedAzureTarget')
+  );
+  assert.doesNotMatch(
+    openDesignerBody,
+    /document\.visibilityState|document\.hidden/,
+    'Designer binding must not use target-local Page Visibility state before the candidate is accepted and activated'
+  );
+  assert.match(openDesignerBody, /currentTabs\[0\]\.isActive && currentTabs\[0\]\.label\.includes\(entry\.wfName\)/);
+  assert.match(openDesignerBody, /candidate\.canvasCount === 1/);
   assert.match(source, /Fresh-host UI verification must not save or mutate workflow\.json/);
   assert.doesNotMatch(source, /Skip for now|optionText: 'No'|optionText: 'Cancel'/);
   const reopenBody = source.slice(source.indexOf('async function reopenAndVerify'), source.indexOf('async function openExactDesignerV2'));
