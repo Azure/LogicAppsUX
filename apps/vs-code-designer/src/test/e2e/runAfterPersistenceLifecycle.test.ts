@@ -96,16 +96,16 @@ async function authorAndPersist(entry: CreatedWorkspace, azureFixture: ApprovedA
     const request = await session.actions.addRequestTriggerAndGetIdentity();
     const firstCompose = await session.actions.addActionAndGetIdentity({
       search: 'Compose',
-      operationId: 'composeNew',
       operationName: 'Compose',
+      variants: ['compose'],
       afterNodeId: request.nodeId,
     });
     const firstComposeInput = `run-after-upstream-${Date.now()}`;
     await session.actions.fillParameter(['Inputs', 'inputs'], firstComposeInput);
     const secondCompose = await session.actions.addActionAndGetIdentity({
       search: 'Compose',
-      operationId: 'composeNew',
       operationName: 'Compose',
+      variants: ['compose'],
       afterNodeId: firstCompose.nodeId,
     });
     const secondComposeInput = `run-after-downstream-${Date.now()}`;

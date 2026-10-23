@@ -140,8 +140,9 @@ function testHelperConsumersDoNotRegisterCanonicalLifecycleSuite(): void {
 
 function testRunAfterIdentityAndStatusContracts(): void {
   const addRequest = getMethod('ProvenDesignerCdpActions', 'addRequestTriggerAndGetIdentity');
-  assert.match(addRequest, /selectOperationById\('request'\)/, 'Request insertion must use the exact product operation ID');
+  assert.match(addRequest, /await this\.addRequestTrigger\(\)/, 'Request insertion must reuse the proven shared Request flow');
   assert.match(addRequest, /waitForSingleNewNodeIdentity/, 'Request insertion must return one stable new node identity');
+  assert.doesNotMatch(addRequest, /selectOperationById|msla-op-search-result-request/);
 
   const addAction = getMethod('ProvenDesignerCdpActions', 'addActionAndGetIdentity');
   assertOrdered(
@@ -149,11 +150,12 @@ function testRunAfterIdentityAndStatusContracts(): void {
     [
       'readExactNodeIdentities()',
       'openActionDiscoveryAfterNode(options.afterNodeId)',
-      'selectOperationById(options.operationId)',
+      'this.proven.selectOperation(options.operationName',
       'waitForSingleNewNodeIdentity',
     ],
     'Stable action insertion'
   );
+  assert.doesNotMatch(addAction, /selectOperationById|msla-op-search-result-/);
 
   const insertAfter = getMethod('ProvenDesignerCdpActions', 'openActionDiscoveryAfterNode');
   assert.match(insertAfter, /path\.react-flow__edge-path\[id\]/);

@@ -23,6 +23,10 @@ test('secure OS preparation and original handoff capture are wired into both exi
   assert.doesNotMatch(suites, /Copy-Item.*(?:XDG_DATA_HOME|XDG_RUNTIME_DIR|la-keyring)/);
   assert.match(source, /--foreground --unlock --components=secrets/);
   assert.match(source, /exec dbus-run-session -- bash/);
+  assert.match(source, /provider_pid=\$!/);
+  assert.match(source, /kill -TERM "\$provider_pid"/);
+  assert.match(source, /wait "\$provider_pid"/);
+  assert.doesNotMatch(source, /kill -TERM %1|wait %1/);
   assert.doesNotMatch(source, /password-store=basic|use-inmemory-secretstorage|--replace|--components=.*(?:ssh|pkcs11)/);
   execFileSync(bash, ['-n', shellPath(script)], { stdio: 'pipe' });
 });
@@ -57,9 +61,9 @@ if [[ "\${UNIT_PLAINTEXT:-}" == 1 ]]; then
 else
   printf 'GnomeKeyring\\n\\r\\0\\n' > "$XDG_DATA_HOME/keyrings/login.keyring"
 fi
+trap 'printf "stopped\\n" > "$UNIT_ROOT/provider-stopped"; exit 0' TERM
 printf 'started\\n' > "$UNIT_ROOT/provider-started"
 printf '%s\\n' "$BASHPID" > "$UNIT_ROOT/provider-pid"
-trap 'printf "stopped\\n" > "$UNIT_ROOT/provider-stopped"; exit 0' TERM
 while true; do sleep 0.02; done
 `
   );

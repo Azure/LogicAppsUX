@@ -30,24 +30,25 @@ shift
   fail 'The new job-scoped D-Bus session and original test command are required.'
 
 provider_started=0
+provider_pid=''
 finish() {
   original_status=$?
   trap - EXIT
   if [[ "$provider_started" == 1 ]]; then
     provider_status=0
-    if [[ -n "$(jobs -pr)" ]]; then
-      # Only this shell's sole foreground-provider job; never Code or a name/PID sweep.
-      kill -TERM %1 || {
+    if kill -0 "$provider_pid" 2>/dev/null; then
+      # Only the exact provider launched by this shell; never Code or a name-based sweep.
+      kill -TERM "$provider_pid" || {
         printf '[linux-secure-session] Original provider shutdown request failed.\n' >&2
         if [[ "$original_status" == 0 ]]; then original_status=1; fi
       }
-      wait %1 || provider_status=$?
+      wait "$provider_pid" || provider_status=$?
       if [[ "$provider_status" != 0 && "$provider_status" != 143 ]]; then
         printf '[linux-secure-session] Original provider shutdown failed: %s\n' "$provider_status" >&2
         if [[ "$original_status" == 0 ]]; then original_status=1; fi
       fi
     else
-      wait %1 || provider_status=$?
+      wait "$provider_pid" || provider_status=$?
       printf '[linux-secure-session] Original secure provider exited before session completion: %s\n' "$provider_status" >&2
       if [[ "$original_status" == 0 ]]; then original_status=1; fi
     fi
@@ -60,6 +61,7 @@ password="$(node -e 'process.stdout.write(require("node:crypto").randomBytes(32)
 [[ "$password" =~ ^[a-f0-9]{64}$ ]] || fail 'Nonempty cryptographic job-only keyring password generation failed.'
 gnome-keyring-daemon --foreground --unlock --components=secrets \
   --control-directory="$GNOME_KEYRING_CONTROL" <<< "$password" &
+provider_pid=$!
 provider_started=1
 unset password
 

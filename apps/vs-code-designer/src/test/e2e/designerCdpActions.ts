@@ -1448,24 +1448,8 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
 
   async addRequestTriggerAndGetIdentity(): Promise<DesignerNodeIdentity> {
     const before = await this.readExactNodeIdentities();
-    await this.proven.clickElement(
-      [
-        '[data-testid="card-Add a trigger"]',
-        '[data-testid="card-Add trigger"]',
-        '[data-automation-id="card-Add_a_trigger"]',
-        '[data-automation-id="card-Add_trigger"]',
-        '[aria-label="Add a trigger"]',
-        '[aria-label="Add trigger"]',
-      ],
-      'Add a trigger',
-      { requireTextMatch: false }
-    );
-    await this.proven.waitForDiscoveryPanel(60000, 'Request trigger discovery panel');
-    await this.proven.search('Request');
-    await this.proven.waitForSearchResults(60000, 'Request search results');
-    await this.selectOperationById('request');
+    await this.addRequestTrigger();
     const identity = await this.waitForSingleNewNodeIdentity(before, 'Request trigger');
-    await this.proven.closePanel('Request trigger panel');
     return identity;
   }
 
@@ -1481,8 +1465,8 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
 
   async addActionAndGetIdentity(options: {
     search: string;
-    operationId: string;
     operationName: string;
+    variants?: string[];
     afterNodeId?: string;
   }): Promise<DesignerNodeIdentity> {
     const before = await this.readExactNodeIdentities();
@@ -1495,7 +1479,7 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
     }
     await this.proven.search(options.search);
     await this.proven.waitForSearchResults(60000, `${options.search} search results`);
-    await this.selectOperationById(options.operationId);
+    await this.proven.selectOperation(options.operationName, options.variants ?? [options.operationName.toLowerCase()]);
     return this.waitForSingleNewNodeIdentity(before, options.operationName);
   }
 
@@ -1886,31 +1870,6 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
 
   override async fillParameter(labels: string[], value: string): Promise<void> {
     await this.proven.fillParameter(labels, value, labels.join('/'));
-  }
-
-  private async selectOperationById(operationId: string): Promise<void> {
-    const automationId = `msla-op-search-result-${operationId.replace(/\s+/g, '_')}`;
-    const point = await this.waitForPoint(
-      `(() => {
-        ${visibleDom}
-        const automationId = ${JSON.stringify(automationId)};
-        const candidates = Array.from(document.querySelectorAll(
-          '[data-automation-id="' + automationId + '"], [data-testid="' + automationId + '"], #' + CSS.escape(automationId)
-        )).filter((element, index, values) => values.indexOf(element) === index);
-        const enabled = candidates
-          .filter(visible)
-          .filter((element) => !element.disabled && element.getAttribute('aria-disabled') !== 'true');
-        if (enabled.length !== 1) return null;
-        const element = enabled[0];
-        element.scrollIntoView({ block: 'center', inline: 'center' });
-        const rect = element.getBoundingClientRect();
-        const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-        const hit = document.elementFromPoint(point.x, point.y);
-        return hit && (hit === element || element.contains(hit)) ? point : null;
-      })()`,
-      `exact product operation ${operationId}`
-    );
-    await this.dispatchTrustedPoint(point);
   }
 
   private async openActionDiscoveryAfterNode(nodeId: string): Promise<void> {
