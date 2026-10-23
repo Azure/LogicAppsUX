@@ -92,7 +92,7 @@ async function main(): Promise<void> {
   });
   await control('Scenario 1 runs through Overview and uses management only for exact run and action correlation', () => {
     const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
-    const sharedSource = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/workspaceLifecycle.test.ts'), 'utf8');
+    const sharedSource = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/workspaceLifecycle.ts'), 'utf8');
     assert.deepStrictEqual(localWorkflowManagementRequestTimeoutMs, {
       'callback-url': 30_000,
       'trigger-invocation': 20_000,
@@ -472,10 +472,14 @@ async function main(): Promise<void> {
       'utf8'
     );
     assert.ok(
-      readiness.includes(
-        'ready = !!designerCanvas && hasRequiredText(visibleText(designerCanvas), expectation.requiredNodes || []) && concreteNodeState.ok'
-      ),
-      'Designer-ready evidence must permit an empty required-node list while requiring the real canvas'
+      readiness.includes('const concreteNodeState = concreteRequiredNodeMatches(expectation.requiredNodes || [])') &&
+        readiness.includes('const concreteNodeIdState = concreteRequiredNodeIdMatches(expectation.requiredNodeIds || [])') &&
+        readiness.includes('!!designerCanvas &&') &&
+        readiness.includes('hasRequiredText(visibleText(designerCanvas), expectation.requiredNodes || []) &&') &&
+        readiness.includes('concreteNodeState.ok &&') &&
+        readiness.includes('concreteNodeIdState.ok') &&
+        readiness.includes('if ((expectation.requiredNodes || []).length > 0)'),
+      'Designer-ready evidence must permit an empty required-node list while requiring the real canvas and every exact requested node ID'
     );
     assert.ok(networking.includes("defaultMessage: 'Request options - Timeout'") && networking.includes('ariaLabel: requestOptionsTitle'));
     assert.ok(validation.includes("defaultMessage: 'Timeout value is invalid, must match ISO 8601 duration format'"));

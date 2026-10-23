@@ -599,7 +599,7 @@ Write-Output 'interop-declaration-compiled-without-native-invocation'
 });
 
 test('MSN native lifecycle resolves environment values instead of treating variable names as paths or identities', () => {
-  const source = fs.readFileSync(path.join(__dirname, '..', 'src', 'test', 'e2e', 'workspaceLifecycle.test.ts'), 'utf8');
+  const source = fs.readFileSync(path.join(__dirname, '..', 'src', 'test', 'e2e', 'workspaceLifecycle.ts'), 'utf8');
   assert.doesNotMatch(source, /requiredValue\('LA_E2E_CLI_(?:MSN_|RUNTIME_DEPENDENCIES_ROOT|WORKSPACE_PARENT)/);
   for (const key of [
     'LA_E2E_CLI_MSN_LIFECYCLE_INVOCATION',

@@ -565,11 +565,26 @@ export interface MsnDesignerClickResult {
   viewport?: { width: number; height: number; devicePixelRatio: number; frameUrl?: string; title?: string };
 }
 
+export interface DesignerNodeIdentity {
+  nodeId: string;
+  title: string;
+}
+
+export type RunAfterStatus = 'Succeeded' | 'TimedOut' | 'Skipped' | 'Failed';
+
+export interface RunAfterState {
+  childNodeId: string;
+  predecessorNodeId: string;
+  predecessorTitle: string;
+  expanded: boolean;
+  statuses: Record<RunAfterStatus, { checked: boolean; disabled: boolean }>;
+}
+
 /**
  * Behavioral-parity implementation for the MSN Weather workspace lifecycle.
  *
  * Keep this path independent from DesignerCdpActions. This class preserves the
- * exact interaction semantics from workspaceLifecycle.test.ts before
+ * exact interaction semantics from workspaceLifecycle.ts before
  * 7b0422eb19d36e6e98ac179161074e09796548c6.
  */
 export class MsnDesignerCdpActions {
@@ -1431,6 +1446,29 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
     await this.proven.closePanel('Request trigger panel');
   }
 
+  async addRequestTriggerAndGetIdentity(): Promise<DesignerNodeIdentity> {
+    const before = await this.readExactNodeIdentities();
+    await this.proven.clickElement(
+      [
+        '[data-testid="card-Add a trigger"]',
+        '[data-testid="card-Add trigger"]',
+        '[data-automation-id="card-Add_a_trigger"]',
+        '[data-automation-id="card-Add_trigger"]',
+        '[aria-label="Add a trigger"]',
+        '[aria-label="Add trigger"]',
+      ],
+      'Add a trigger',
+      { requireTextMatch: false }
+    );
+    await this.proven.waitForDiscoveryPanel(60000, 'Request trigger discovery panel');
+    await this.proven.search('Request');
+    await this.proven.waitForSearchResults(60000, 'Request search results');
+    await this.selectOperationById('request');
+    const identity = await this.waitForSingleNewNodeIdentity(before, 'Request trigger');
+    await this.proven.closePanel('Request trigger panel');
+    return identity;
+  }
+
   override async addAction(search: string, operationName: string, variants: string[] = [operationName.toLowerCase()]): Promise<void> {
     await this.proven.openActionDiscovery(operationName, async (stage, point) => {
       console.log(`[designer-actions] ${operationName}: ${stage}${point ? ` point=${JSON.stringify(point)}` : ''}`);
@@ -1439,6 +1477,277 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
     await this.proven.waitForSearchResults(60000, `${search} search results`);
     await this.proven.selectOperation(operationName, variants);
     await this.proven.waitForText([operationName], 90000, `${operationName} action on canvas`);
+  }
+
+  async addActionAndGetIdentity(options: {
+    search: string;
+    operationId: string;
+    operationName: string;
+    afterNodeId?: string;
+  }): Promise<DesignerNodeIdentity> {
+    const before = await this.readExactNodeIdentities();
+    if (options.afterNodeId) {
+      await this.openActionDiscoveryAfterNode(options.afterNodeId);
+    } else {
+      await this.proven.openActionDiscovery(options.operationName, async (stage, point) => {
+        console.log(`[designer-actions] ${options.operationName}: ${stage}${point ? ` point=${JSON.stringify(point)}` : ''}`);
+      });
+    }
+    await this.proven.search(options.search);
+    await this.proven.waitForSearchResults(60000, `${options.search} search results`);
+    await this.selectOperationById(options.operationId);
+    return this.waitForSingleNewNodeIdentity(before, options.operationName);
+  }
+
+  async clickNodeById(nodeId: string): Promise<DesignerNodeIdentity> {
+    const identity = await this.readNodeIdentity(nodeId);
+    const point = await this.waitForPoint(
+      `(() => {
+        ${visibleDom}
+        const nodeId = ${JSON.stringify(nodeId)};
+        const element = document.getElementById('msla-node-' + nodeId);
+        if (!(element instanceof HTMLElement) || !visible(element)) return null;
+        if (element.getAttribute('aria-disabled') === 'true') return null;
+        element.scrollIntoView({ block: 'center', inline: 'center' });
+        const rect = element.getBoundingClientRect();
+        const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+        const hit = document.elementFromPoint(point.x, point.y);
+        return hit && (hit === element || element.contains(hit)) ? point : null;
+      })()`,
+      `exact Designer node ${nodeId}`
+    );
+    await this.dispatchTrustedPoint(point);
+    await this.waitForCondition(
+      `(() => {
+        ${visibleDom}
+        const expectedId = ${JSON.stringify(`msla-node-details-panel-${nodeId}`)};
+        const visiblePanels = Array.from(document.querySelectorAll('[id^="msla-node-details-panel-"]')).filter(visible);
+        return visiblePanels.length === 1 && visiblePanels[0].id === expectedId;
+      })()`,
+      `details panel owned by Designer node ${nodeId}`
+    );
+    return identity;
+  }
+
+  async openSettingsTab(nodeId: string): Promise<void> {
+    await this.assertExactPanelOwnership(nodeId);
+    const point = await this.waitForPoint(
+      `(() => {
+        ${visibleDom}
+        const panel = document.getElementById(${JSON.stringify(`msla-node-details-panel-${nodeId}`)});
+        if (!(panel instanceof HTMLElement) || !visible(panel)) return null;
+        const tabs = Array.from(panel.querySelectorAll('[role="tab"]'))
+          .filter(visible)
+          .filter((tab) => normalize(tab.textContent || tab.getAttribute('aria-label')) === 'Settings')
+          .filter((tab) => !tab.disabled && tab.getAttribute('aria-disabled') !== 'true');
+        if (tabs.length !== 1) return null;
+        const tab = tabs[0];
+        tab.scrollIntoView({ block: 'center', inline: 'center' });
+        const rect = tab.getBoundingClientRect();
+        const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+        const hit = document.elementFromPoint(point.x, point.y);
+        return hit && (hit === tab || tab.contains(hit)) ? point : null;
+      })()`,
+      `Settings tab for Designer node ${nodeId}`
+    );
+    await this.dispatchTrustedPoint(point);
+    await this.waitForCondition(
+      `(() => {
+        ${visibleDom}
+        const panel = document.getElementById(${JSON.stringify(`msla-node-details-panel-${nodeId}`)});
+        if (!(panel instanceof HTMLElement) || !visible(panel)) return false;
+        const tabs = Array.from(panel.querySelectorAll('[role="tab"]'))
+          .filter(visible)
+          .filter((tab) => normalize(tab.textContent || tab.getAttribute('aria-label')) === 'Settings');
+        return tabs.length === 1 && tabs[0].getAttribute('aria-selected') === 'true';
+      })()`,
+      `active Settings tab for Designer node ${nodeId}`
+    );
+  }
+
+  async openRunAfterSection(nodeId: string): Promise<void> {
+    await this.assertExactPanelOwnership(nodeId);
+    const state = await this.evaluate<{ count: number; expanded: boolean; point?: Point }>(`(() => {
+      ${visibleDom}
+      const panel = document.getElementById(${JSON.stringify(`msla-node-details-panel-${nodeId}`)});
+      if (!(panel instanceof HTMLElement) || !visible(panel)) return { count: 0, expanded: false };
+      const headers = Array.from(panel.querySelectorAll('.msla-setting-section-header'))
+        .filter(visible)
+        .filter((header) => normalize(
+          header.textContent || header.getAttribute('aria-label')
+        ).toLowerCase().includes('run after'));
+      if (headers.length !== 1) return { count: headers.length, expanded: false };
+      const header = headers[0];
+      const aria = normalize(header.getAttribute('aria-label'));
+      const expanded = aria.startsWith('Expanded Run after');
+      if (expanded) return { count: 1, expanded: true };
+      if (!aria.startsWith('Collapsed Run after')) return { count: 1, expanded: false };
+      if (header.disabled || header.getAttribute('aria-disabled') === 'true') return { count: 1, expanded: false };
+      header.scrollIntoView({ block: 'center', inline: 'center' });
+      const rect = header.getBoundingClientRect();
+      const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+      const hit = document.elementFromPoint(point.x, point.y);
+      return hit && (hit === header || header.contains(hit))
+        ? { count: 1, expanded: false, point }
+        : { count: 1, expanded: false };
+    })()`);
+    assert.strictEqual(state.count, 1, `Expected exactly one visible Run after section for ${nodeId}, found ${state.count}`);
+    if (!state.expanded) {
+      assert.ok(state.point, `Run after section for ${nodeId} was not enabled and hit-testable`);
+      await this.dispatchTrustedPoint(state.point);
+    }
+    await this.waitForCondition(
+      `(() => {
+        ${visibleDom}
+        const panel = document.getElementById(${JSON.stringify(`msla-node-details-panel-${nodeId}`)});
+        if (!(panel instanceof HTMLElement) || !visible(panel)) return false;
+        const headers = Array.from(panel.querySelectorAll('.msla-setting-section-header'))
+          .filter(visible)
+          .filter((header) => normalize(
+            header.textContent || header.getAttribute('aria-label')
+          ).toLowerCase().includes('run after'));
+        return headers.length === 1 &&
+          normalize(headers[0].getAttribute('aria-label')).startsWith('Expanded Run after');
+      })()`,
+      `expanded Run after section for Designer node ${nodeId}`
+    );
+  }
+
+  async expandRunAfterPredecessor(childNodeId: string, predecessorNodeId: string): Promise<void> {
+    const predecessor = await this.readNodeIdentity(predecessorNodeId);
+    await this.assertExactPanelOwnership(childNodeId);
+    const state = await this.evaluate<{ count: number; expanded: boolean; point?: Point }>(`(() => {
+      ${visibleDom}
+      const panel = document.getElementById(${JSON.stringify(`msla-node-details-panel-${childNodeId}`)});
+      if (!(panel instanceof HTMLElement) || !visible(panel)) return { count: 0, expanded: false };
+      const title = ${JSON.stringify(predecessor.title)};
+      const headers = Array.from(panel.querySelectorAll('.msla-run-after-edge-header'))
+        .filter(visible)
+        .filter((header) => normalize(header.querySelector('.msla-run-after-node-title')?.textContent) === title);
+      if (headers.length !== 1) return { count: headers.length, expanded: false };
+      const button = headers[0].querySelector('button');
+      if (!(button instanceof HTMLElement) || !visible(button)) return { count: 1, expanded: false };
+      const aria = normalize(button.getAttribute('aria-label'));
+      const expanded = aria === 'Collapse ' + title;
+      if (expanded) return { count: 1, expanded: true };
+      if (aria !== 'Expand ' + title || button.getAttribute('aria-disabled') === 'true' || button.disabled) {
+        return { count: 1, expanded: false };
+      }
+      button.scrollIntoView({ block: 'center', inline: 'center' });
+      const rect = button.getBoundingClientRect();
+      const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+      const hit = document.elementFromPoint(point.x, point.y);
+      return hit && (hit === button || button.contains(hit))
+        ? { count: 1, expanded: false, point }
+        : { count: 1, expanded: false };
+    })()`);
+    assert.strictEqual(
+      state.count,
+      1,
+      `Expected exact Run after predecessor ${predecessorNodeId} (${predecessor.title}) in ${childNodeId}, found ${state.count}`
+    );
+    if (!state.expanded) {
+      assert.ok(state.point, `Run after predecessor ${predecessorNodeId} was not enabled and hit-testable`);
+      await this.dispatchTrustedPoint(state.point);
+    }
+    await this.waitForCondition(
+      `(() => {
+        ${visibleDom}
+        const panel = document.getElementById(${JSON.stringify(`msla-node-details-panel-${childNodeId}`)});
+        if (!(panel instanceof HTMLElement) || !visible(panel)) return false;
+        const title = ${JSON.stringify(predecessor.title)};
+        const buttons = Array.from(panel.querySelectorAll('.msla-run-after-edge-header button'))
+          .filter(visible)
+          .filter((button) => normalize(button.getAttribute('aria-label')) === 'Collapse ' + title);
+        return buttons.length === 1;
+      })()`,
+      `expanded Run after predecessor ${predecessorNodeId} for ${childNodeId}`
+    );
+  }
+
+  async readRunAfterState(childNodeId: string, predecessorNodeId: string): Promise<RunAfterState> {
+    const predecessor = await this.readNodeIdentity(predecessorNodeId);
+    await this.assertExactPanelOwnership(childNodeId);
+    const state = await this.evaluate<{
+      predecessorCount: number;
+      expanded: boolean;
+      controls: Array<{ label: string; checked: boolean; disabled: boolean; visible: boolean }>;
+    }>(`(() => {
+      ${visibleDom}
+      const panel = document.getElementById(${JSON.stringify(`msla-node-details-panel-${childNodeId}`)});
+      if (!(panel instanceof HTMLElement) || !visible(panel)) return { predecessorCount: 0, expanded: false, controls: [] };
+      const title = ${JSON.stringify(predecessor.title)};
+      const headers = Array.from(panel.querySelectorAll('.msla-run-after-edge-header'))
+        .filter(visible)
+        .filter((header) => normalize(header.querySelector('.msla-run-after-node-title')?.textContent) === title);
+      if (headers.length !== 1) return { predecessorCount: headers.length, expanded: false, controls: [] };
+      const button = headers[0].querySelector('button');
+      const expanded = normalize(button?.getAttribute('aria-label')) === 'Collapse ' + title;
+      const statusRoot = headers[0].nextElementSibling;
+      const controls = statusRoot?.classList.contains('msla-run-after-statuses')
+        ? Array.from(statusRoot.querySelectorAll('input[type="checkbox"]')).map((input) => {
+            const owner = input.closest('label') || input.parentElement;
+            return {
+              label: normalize(owner?.textContent || input.getAttribute('aria-label')),
+              checked: input.checked === true,
+              disabled: input.disabled === true || input.getAttribute('aria-disabled') === 'true',
+              visible: visible(input) || (owner instanceof HTMLElement && visible(owner)),
+            };
+          })
+        : [];
+      return { predecessorCount: headers.length, expanded, controls };
+    })()`);
+    assert.strictEqual(
+      state.predecessorCount,
+      1,
+      `Expected exact Run after predecessor ${predecessorNodeId} (${predecessor.title}) in ${childNodeId}`
+    );
+    assert.ok(state.expanded, `Run after predecessor ${predecessorNodeId} is not expanded`);
+    const labels: Record<RunAfterStatus, string> = {
+      Succeeded: 'Is successful',
+      TimedOut: 'Has timed out',
+      Skipped: 'Is skipped',
+      Failed: 'Has failed',
+    };
+    const statuses = {} as RunAfterState['statuses'];
+    for (const [status, label] of Object.entries(labels) as [RunAfterStatus, string][]) {
+      const matches = state.controls.filter((control) => control.label === label && control.visible);
+      assert.strictEqual(matches.length, 1, `Expected one visible ${label} Run after control, found ${matches.length}`);
+      statuses[status] = { checked: matches[0].checked, disabled: matches[0].disabled };
+    }
+    assert.strictEqual(state.controls.filter((control) => control.visible).length, 4, 'Expected exactly four Run after status controls');
+    return {
+      childNodeId,
+      predecessorNodeId,
+      predecessorTitle: predecessor.title,
+      expanded: true,
+      statuses,
+    };
+  }
+
+  async setRunAfterStatuses(childNodeId: string, predecessorNodeId: string, statuses: RunAfterStatus[]): Promise<RunAfterState> {
+    const expected = [...new Set(statuses)];
+    assert.ok(expected.length > 0, 'Run after must retain at least one status');
+    const ordered: RunAfterStatus[] = ['Failed', 'TimedOut', 'Skipped', 'Succeeded'];
+    for (const status of ordered) {
+      const state = await this.readRunAfterState(childNodeId, predecessorNodeId);
+      const shouldBeChecked = expected.includes(status);
+      if (state.statuses[status].checked === shouldBeChecked) {
+        continue;
+      }
+      assert.ok(!state.statuses[status].disabled, `Run after ${status} control is disabled before required toggle`);
+      await this.clickRunAfterStatus(childNodeId, predecessorNodeId, status);
+      await this.waitForRunAfterStatus(childNodeId, predecessorNodeId, status, shouldBeChecked);
+    }
+    const finalState = await this.readRunAfterState(childNodeId, predecessorNodeId);
+    for (const status of ['Succeeded', 'TimedOut', 'Skipped', 'Failed'] as RunAfterStatus[]) {
+      assert.strictEqual(
+        finalState.statuses[status].checked,
+        expected.includes(status),
+        `Run after ${status} final state did not match the required semantic state`
+      );
+    }
+    return finalState;
   }
 
   override async search(search: string): Promise<void> {
@@ -1577,6 +1886,252 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
 
   override async fillParameter(labels: string[], value: string): Promise<void> {
     await this.proven.fillParameter(labels, value, labels.join('/'));
+  }
+
+  private async selectOperationById(operationId: string): Promise<void> {
+    const automationId = `msla-op-search-result-${operationId.replace(/\s+/g, '_')}`;
+    const point = await this.waitForPoint(
+      `(() => {
+        ${visibleDom}
+        const automationId = ${JSON.stringify(automationId)};
+        const candidates = Array.from(document.querySelectorAll(
+          '[data-automation-id="' + automationId + '"], [data-testid="' + automationId + '"], #' + CSS.escape(automationId)
+        )).filter((element, index, values) => values.indexOf(element) === index);
+        const enabled = candidates
+          .filter(visible)
+          .filter((element) => !element.disabled && element.getAttribute('aria-disabled') !== 'true');
+        if (enabled.length !== 1) return null;
+        const element = enabled[0];
+        element.scrollIntoView({ block: 'center', inline: 'center' });
+        const rect = element.getBoundingClientRect();
+        const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+        const hit = document.elementFromPoint(point.x, point.y);
+        return hit && (hit === element || element.contains(hit)) ? point : null;
+      })()`,
+      `exact product operation ${operationId}`
+    );
+    await this.dispatchTrustedPoint(point);
+  }
+
+  private async openActionDiscoveryAfterNode(nodeId: string): Promise<void> {
+    await this.closePanel();
+    const point = await this.waitForPoint(
+      `(() => {
+        ${visibleDom}
+        const nodeId = ${JSON.stringify(nodeId)};
+        const node = document.getElementById('msla-node-' + nodeId);
+        if (!(node instanceof HTMLElement) || !visible(node)) return null;
+        const outgoingEdges = Array.from(document.querySelectorAll('path.react-flow__edge-path[id]'))
+          .filter((path) => {
+            if (!(path instanceof SVGGraphicsElement)) return false;
+            const rect = path.getBoundingClientRect();
+            const style = getComputedStyle(path);
+            return (rect.width > 0 || rect.height > 0) && style.display !== 'none' &&
+              style.visibility !== 'hidden' && style.opacity !== '0';
+          })
+          .filter((path) => path.id.startsWith(nodeId + '-'));
+        if (outgoingEdges.length !== 1) return null;
+        const edge = outgoingEdges[0];
+        const total = typeof edge.getTotalLength === 'function' ? edge.getTotalLength() : 0;
+        if (!(total > 0)) return null;
+        const midpoint = edge.getPointAtLength(total / 2);
+        const matrix = edge.getScreenCTM();
+        if (!matrix) return null;
+        const screenMidpoint = new DOMPoint(midpoint.x, midpoint.y).matrixTransform(matrix);
+        const buttons = Array.from(document.querySelectorAll(
+          '[data-automation-id^="msla-plus-button-"], [id^="msla-edge-button-"]'
+        ))
+          .filter((element, index, values) => values.indexOf(element) === index)
+          .filter(visible)
+          .filter((element) => !element.disabled && element.getAttribute('aria-disabled') !== 'true')
+          .map((element) => {
+            const rect = element.getBoundingClientRect();
+            const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+            return {
+              element,
+              point,
+              distance: Math.hypot(point.x - screenMidpoint.x, point.y - screenMidpoint.y),
+            };
+          })
+          .filter((candidate) => candidate.distance <= 70)
+          .sort((left, right) => left.distance - right.distance);
+        const [candidate] = buttons;
+        if (!candidate || buttons.length !== 1) return null;
+        candidate.element.scrollIntoView({ block: 'center', inline: 'center' });
+        const rect = candidate.element.getBoundingClientRect();
+        const click = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+        const hit = document.elementFromPoint(click.x, click.y);
+        return hit && (hit === candidate.element || candidate.element.contains(hit)) ? click : null;
+      })()`,
+      `ID-scoped outgoing edge control after Designer node ${nodeId}`
+    );
+    await this.dispatchTrustedPoint(point);
+    await this.proven.waitForDiscoveryPanel(60000, `action discovery after ${nodeId}`);
+  }
+
+  private async clickRunAfterStatus(childNodeId: string, predecessorNodeId: string, status: RunAfterStatus): Promise<void> {
+    const predecessor = await this.readNodeIdentity(predecessorNodeId);
+    const label: Record<RunAfterStatus, string> = {
+      Succeeded: 'Is successful',
+      TimedOut: 'Has timed out',
+      Skipped: 'Is skipped',
+      Failed: 'Has failed',
+    };
+    const point = await this.waitForPoint(
+      `(() => {
+        ${visibleDom}
+        const panel = document.getElementById(${JSON.stringify(`msla-node-details-panel-${childNodeId}`)});
+        if (!(panel instanceof HTMLElement) || !visible(panel)) return null;
+        const title = ${JSON.stringify(predecessor.title)};
+        const headers = Array.from(panel.querySelectorAll('.msla-run-after-edge-header'))
+          .filter(visible)
+          .filter((header) => normalize(header.querySelector('.msla-run-after-node-title')?.textContent) === title);
+        if (headers.length !== 1) return null;
+        const statusRoot = headers[0].nextElementSibling;
+        if (!statusRoot?.classList.contains('msla-run-after-statuses')) return null;
+        const expectedLabel = ${JSON.stringify(label[status])};
+        const controls = Array.from(statusRoot.querySelectorAll('input[type="checkbox"]'))
+          .filter((input) => {
+            const owner = input.closest('label') || input.parentElement;
+            return normalize(owner?.textContent || input.getAttribute('aria-label')) === expectedLabel;
+          })
+          .filter((input) => !input.disabled && input.getAttribute('aria-disabled') !== 'true');
+        if (controls.length !== 1) return null;
+        const input = controls[0];
+        const owner = input.closest('label') || input;
+        if (!(owner instanceof HTMLElement) || !visible(owner)) return null;
+        owner.scrollIntoView({ block: 'center', inline: 'center' });
+        const rect = owner.getBoundingClientRect();
+        const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+        const hit = document.elementFromPoint(point.x, point.y);
+        return hit && (hit === owner || owner.contains(hit)) ? point : null;
+      })()`,
+      `${label[status]} Run after control for ${childNodeId}`
+    );
+    await this.dispatchTrustedPoint(point);
+  }
+
+  private async waitForRunAfterStatus(
+    childNodeId: string,
+    predecessorNodeId: string,
+    status: RunAfterStatus,
+    checked: boolean
+  ): Promise<void> {
+    while (Date.now() < this.deadline) {
+      const state = await this.readRunAfterState(childNodeId, predecessorNodeId);
+      if (state.statuses[status].checked === checked) {
+        return;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    assert.fail(`Timed out waiting for Run after ${status}=${checked} on ${childNodeId}`);
+  }
+
+  private async readExactNodeIdentities(): Promise<DesignerNodeIdentity[]> {
+    return this.evaluate<DesignerNodeIdentity[]>(`(() => {
+      ${visibleDom}
+      return Array.from(document.querySelectorAll('[id^="msla-node-"]'))
+        .filter((element) => /^msla-node-[^-].*/.test(element.id))
+        .filter((element) => !element.id.startsWith('msla-node-details-panel-'))
+        .filter(visible)
+        .map((element) => ({
+          nodeId: element.id.slice('msla-node-'.length),
+          title: normalize(
+            element.querySelector('[data-automation-id="msla-card-title"]')?.textContent ||
+            element.querySelector('.msla-card-title')?.textContent ||
+            (element.getAttribute('data-testid') || '').replace(/^card-/, '') ||
+            element.getAttribute('aria-label') ||
+            element.textContent
+          ),
+        }))
+        .filter((identity, index, values) =>
+          identity.nodeId && values.findIndex((candidate) => candidate.nodeId === identity.nodeId) === index
+        );
+    })()`);
+  }
+
+  private async readNodeIdentity(nodeId: string): Promise<DesignerNodeIdentity> {
+    const identities = await this.readExactNodeIdentities();
+    const matches = identities.filter((identity) => identity.nodeId === nodeId);
+    assert.strictEqual(matches.length, 1, `Expected exact visible Designer node ${nodeId}, found ${matches.length}`);
+    assert.ok(matches[0].title, `Designer node ${nodeId} had no semantic title`);
+    return matches[0];
+  }
+
+  private async waitForSingleNewNodeIdentity(before: DesignerNodeIdentity[], description: string): Promise<DesignerNodeIdentity> {
+    const beforeIds = new Set(before.map((identity) => identity.nodeId));
+    while (Date.now() < this.deadline) {
+      const current = await this.readExactNodeIdentities();
+      const added = current.filter((identity) => !beforeIds.has(identity.nodeId));
+      if (added.length === 1) {
+        assert.ok(added[0].title, `${description} node ${added[0].nodeId} had no semantic title`);
+        return added[0];
+      }
+      assert.ok(added.length <= 1, `${description} added ambiguous Designer nodes: ${added.map((identity) => identity.nodeId).join(', ')}`);
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    assert.fail(`Timed out waiting for exactly one new ${description} Designer node`);
+  }
+
+  private async assertExactPanelOwnership(nodeId: string): Promise<void> {
+    const state = await this.evaluate<{ visiblePanelIds: string[] }>(`(() => {
+      ${visibleDom}
+      return {
+        visiblePanelIds: Array.from(document.querySelectorAll('[id^="msla-node-details-panel-"]'))
+          .filter(visible)
+          .map((panel) => panel.id),
+      };
+    })()`);
+    assert.deepStrictEqual(
+      state.visiblePanelIds,
+      [`msla-node-details-panel-${nodeId}`],
+      `Expected one visible details panel owned by ${nodeId}`
+    );
+  }
+
+  private async waitForPoint(expression: string, description: string): Promise<Point> {
+    let lastError: unknown;
+    while (Date.now() < this.deadline) {
+      this.assertActive();
+      try {
+        const point = await this.evaluate<Point | null>(expression);
+        if (point) {
+          return point;
+        }
+      } catch (error) {
+        lastError = error;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    assert.fail(`Timed out waiting for ${description}${lastError ? `. Last error: ${String(lastError)}` : ''}`);
+  }
+
+  private async waitForCondition(expression: string, description: string): Promise<void> {
+    let lastError: unknown;
+    while (Date.now() < this.deadline) {
+      this.assertActive();
+      try {
+        if (await this.evaluate<boolean>(expression)) {
+          return;
+        }
+      } catch (error) {
+        lastError = error;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    assert.fail(`Timed out waiting for ${description}${lastError ? `. Last error: ${String(lastError)}` : ''}`);
+  }
+
+  private async dispatchTrustedPoint(point: Point): Promise<void> {
+    this.assertActive();
+    assert.ok(Date.now() < this.deadline, 'Designer action scenario deadline expired');
+    await clickPoint(
+      {
+        evaluate: <T>(_contextId: number | undefined, expression: string) => this.evaluate<T>(expression),
+        send: (method, params) => this.send(method, params ?? {}),
+      },
+      point
+    );
   }
 }
 

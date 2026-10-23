@@ -63,15 +63,15 @@ that SHA or a newer explicitly recorded SHA containing the fix. Overall job
 status does not identify whether the failure occurred in build/bootstrap,
 native execution, cleanup/finalization, evidence staging or publication.
 
-The supplementary `httpTimeoutLifecycle`, `statelessVariablesLifecycle`
-and `workspaceArtifactRegeneration`/`workspaceMultiRoot`
+The supplementary `httpTimeoutLifecycle`, `statelessVariablesLifecycle`,
+`runAfterPersistenceLifecycle`, and `workspaceArtifactRegeneration`/`workspaceMultiRoot`
 families have independent Linux and Windows jobs using the same admitted payload,
 isolated dependencies/profiles, secure Linux session and required result staging.
 Select either or both by their suite IDs in each OS selector with
 `diagnosticOnly=true`. Their bootstrap/create/reopen prerequisites run inside
-their owning family. The HTTP lifecycle receives only the approved WIF-backed
-Azure fixture context required by its affirmative connector setup; workspace-only
-families do not receive live Azure credentials. The diagnostic
+their owning family. HTTP, Stateless variables, and Run After persistence receive
+only the approved WIF-backed Azure fixture context required by their affirmative
+connector setup; workspace-only families do not receive live Azure credentials. The diagnostic
 reporter depends on these jobs and fails if any selected family fails or skips.
 They remain outside the established six-suite aliases and twelve-job protected
 gate until actual native evidence and explicit baseline promotion are complete.

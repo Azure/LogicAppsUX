@@ -7,11 +7,14 @@ import { runInNewContext } from 'vm';
 import { MsnDesignerCdpActions, ProvenDesignerCdpActions, resolveDesignerActionProfile } from './designerCdpActions';
 
 const actionsSourcePath = path.resolve(__dirname, '..', '..', '..', 'src', 'test', 'e2e', 'designerCdpActions.ts');
-const lifecycleSourcePath = path.resolve(__dirname, '..', '..', '..', 'src', 'test', 'e2e', 'workspaceLifecycle.test.ts');
+const lifecycleSourcePath = path.resolve(__dirname, '..', '..', '..', 'src', 'test', 'e2e', 'workspaceLifecycle.ts');
+const lifecycleWrapperSourcePath = path.resolve(__dirname, '..', '..', '..', 'src', 'test', 'e2e', 'workspaceLifecycle.test.ts');
 const actionsSourceText = fs.readFileSync(actionsSourcePath, 'utf-8');
 const lifecycleSourceText = fs.readFileSync(lifecycleSourcePath, 'utf-8');
+const lifecycleWrapperSourceText = fs.readFileSync(lifecycleWrapperSourcePath, 'utf-8');
 const actionsSource = ts.createSourceFile(actionsSourcePath, actionsSourceText, ts.ScriptTarget.Latest, true);
 const lifecycleSource = ts.createSourceFile(lifecycleSourcePath, lifecycleSourceText, ts.ScriptTarget.Latest, true);
+const lifecycleWrapperSource = ts.createSourceFile(lifecycleWrapperSourcePath, lifecycleWrapperSourceText, ts.ScriptTarget.Latest, true);
 
 const generalizedHelperSha256 = 'e2fa4c863c79409d4150912a11566a95c0d0ee6814e42caefc3650b9853470a6';
 
@@ -29,8 +32,11 @@ async function main(): Promise<void> {
   await testExactNodeIdentity();
   await testDeleteWaitsForExactClickedNode();
   await testProvenAdapterCancellation();
+  await testRunAfterToggleOrderingAndRerenderReacquisition();
+  await testRunAfterRejectsDisabledAndWrongFinalState();
   testProvenAdapterUsesUnmodifiedMsnHelper();
   testProvenAdapterCompatibility();
+  testRunAfterIdentityAndStatusContracts();
   testHelperConsumersDoNotRegisterCanonicalLifecycleSuite();
   testWorkspaceLifecycleWrapperParity();
   console.log('[designerCdpActions.unit] all tests passed');
@@ -121,14 +127,150 @@ function testProvenAdapterCompatibility(): void {
 }
 
 function testHelperConsumersDoNotRegisterCanonicalLifecycleSuite(): void {
-  const registration = lifecycleSource.statements.find(
+  const registration = lifecycleWrapperSource.statements.find(
     (node): node is ts.IfStatement =>
-      ts.isIfStatement(node) && node.thenStatement.getText(lifecycleSource).includes('registerWorkspaceLifecycleSuite()')
+      ts.isIfStatement(node) && node.thenStatement.getText(lifecycleWrapperSource).includes('registerWorkspaceLifecycleSuite()')
   );
   assert.ok(registration, 'Expected canonical workspace lifecycle registration guard');
-  const condition = registration.expression.getText(lifecycleSource);
+  const condition = registration.expression.getText(lifecycleWrapperSource);
   assert.match(condition, /!process\.env\.LA_E2E_CLI_STATELESS_VARIABLES_MODE/);
   assert.match(condition, /!process\.env\.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MODE/);
+  assert.match(condition, /!process\.env\.LA_E2E_CLI_RUN_AFTER_PERSISTENCE_MODE/);
+}
+
+function testRunAfterIdentityAndStatusContracts(): void {
+  const addRequest = getMethod('ProvenDesignerCdpActions', 'addRequestTriggerAndGetIdentity');
+  assert.match(addRequest, /selectOperationById\('request'\)/, 'Request insertion must use the exact product operation ID');
+  assert.match(addRequest, /waitForSingleNewNodeIdentity/, 'Request insertion must return one stable new node identity');
+
+  const addAction = getMethod('ProvenDesignerCdpActions', 'addActionAndGetIdentity');
+  assertOrdered(
+    addAction,
+    [
+      'readExactNodeIdentities()',
+      'openActionDiscoveryAfterNode(options.afterNodeId)',
+      'selectOperationById(options.operationId)',
+      'waitForSingleNewNodeIdentity',
+    ],
+    'Stable action insertion'
+  );
+
+  const insertAfter = getMethod('ProvenDesignerCdpActions', 'openActionDiscoveryAfterNode');
+  assert.match(insertAfter, /path\.react-flow__edge-path\[id\]/);
+  assert.match(insertAfter, /path\.id\.startsWith\(nodeId \+ '-'\)/);
+  assert.match(insertAfter, /outgoingEdges\.length !== 1/);
+  assert.match(insertAfter, /elementFromPoint/);
+  assert.match(insertAfter, /aria-disabled/);
+  assert.doesNotMatch(insertAfter, /buttons\[[01]\]/, 'Insert-after must not select an edge control by array position');
+
+  const exactNode = getMethod('ProvenDesignerCdpActions', 'clickNodeById');
+  assert.match(exactNode, /document\.getElementById\('msla-node-' \+ nodeId\)/);
+  assert.match(exactNode, /visiblePanels\.length === 1/);
+  assert.match(exactNode, /visiblePanels\[0\]\.id === expectedId/);
+  assert.match(exactNode, /elementFromPoint/);
+
+  const settings = getMethod('ProvenDesignerCdpActions', 'openSettingsTab');
+  assert.match(settings, /tabs\.length !== 1/);
+  assert.match(settings, /aria-disabled/);
+  assert.match(settings, /elementFromPoint/);
+
+  const predecessor = getMethod('ProvenDesignerCdpActions', 'expandRunAfterPredecessor');
+  assert.match(predecessor, /readNodeIdentity\(predecessorNodeId\)/);
+  assert.match(predecessor, /headers\.length !== 1/);
+  assert.match(predecessor, /msla-run-after-node-title/);
+
+  const readState = getMethod('ProvenDesignerCdpActions', 'readRunAfterState');
+  for (const label of ['Is successful', 'Has timed out', 'Is skipped', 'Has failed']) {
+    assert.ok(readState.includes(label), `Run After state must bind exact ${label} control`);
+  }
+
+  assert.match(readState, /controls\.filter\(\(control\) => control\.visible\)\.length, 4/);
+
+  const setStatuses = getMethod('ProvenDesignerCdpActions', 'setRunAfterStatuses');
+  assertOrdered(
+    setStatuses,
+    ["['Failed', 'TimedOut', 'Skipped', 'Succeeded']", 'readRunAfterState', 'clickRunAfterStatus'],
+    'Toggle order'
+  );
+  assert.match(setStatuses, /const state = await this\.readRunAfterState/, 'Every toggle must reacquire state after React rerenders');
+  assert.match(setStatuses, /finalState\.statuses\[status\]\.checked/);
+  assert.match(setStatuses, /expected\.includes\(status\)/);
+}
+
+async function testRunAfterToggleOrderingAndRerenderReacquisition(): Promise<void> {
+  const actions = new ProvenDesignerCdpActions(
+    { evaluate: async () => undefined as never, send: async () => undefined },
+    1,
+    Date.now() + 10_000
+  ) as any;
+  const checked = { Succeeded: true, TimedOut: false, Skipped: false, Failed: false };
+  let generation = 0;
+  const clickGenerations: number[] = [];
+  const clicked: string[] = [];
+  actions.readRunAfterState = async () => {
+    generation++;
+    return {
+      childNodeId: 'Compose_2',
+      predecessorNodeId: 'Compose',
+      predecessorTitle: 'Compose',
+      expanded: true,
+      statuses: Object.fromEntries(Object.entries(checked).map(([status, value]) => [status, { checked: value, disabled: false }])),
+    };
+  };
+  actions.clickRunAfterStatus = async (_child: string, _predecessor: string, status: keyof typeof checked) => {
+    clickGenerations.push(generation);
+    clicked.push(status);
+    checked[status] = !checked[status];
+  };
+  actions.waitForRunAfterStatus = async () => undefined;
+
+  const state = await actions.setRunAfterStatuses('Compose_2', 'Compose', ['Failed']);
+  assert.deepStrictEqual(clicked, ['Failed', 'Succeeded'], 'Failed must be selected before Succeeded is cleared');
+  assert.ok(clickGenerations[1] > clickGenerations[0], 'Each toggle must use state reacquired after the prior React rerender');
+  assert.strictEqual(state.statuses.Failed.checked, true);
+  assert.strictEqual(state.statuses.Succeeded.checked, false);
+}
+
+async function testRunAfterRejectsDisabledAndWrongFinalState(): Promise<void> {
+  const disabled = new ProvenDesignerCdpActions(
+    { evaluate: async () => undefined as never, send: async () => undefined },
+    1,
+    Date.now() + 10_000
+  ) as any;
+  disabled.readRunAfterState = async () => ({
+    childNodeId: 'Compose_2',
+    predecessorNodeId: 'Compose',
+    predecessorTitle: 'Compose',
+    expanded: true,
+    statuses: {
+      Succeeded: { checked: true, disabled: false },
+      TimedOut: { checked: false, disabled: false },
+      Skipped: { checked: false, disabled: false },
+      Failed: { checked: false, disabled: true },
+    },
+  });
+  await assert.rejects(() => disabled.setRunAfterStatuses('Compose_2', 'Compose', ['Failed']), /disabled/);
+
+  const wrongFinal = new ProvenDesignerCdpActions(
+    { evaluate: async () => undefined as never, send: async () => undefined },
+    1,
+    Date.now() + 10_000
+  ) as any;
+  wrongFinal.readRunAfterState = async () => ({
+    childNodeId: 'Compose_2',
+    predecessorNodeId: 'Compose',
+    predecessorTitle: 'Compose',
+    expanded: true,
+    statuses: {
+      Succeeded: { checked: true, disabled: false },
+      TimedOut: { checked: false, disabled: false },
+      Skipped: { checked: false, disabled: false },
+      Failed: { checked: false, disabled: false },
+    },
+  });
+  wrongFinal.clickRunAfterStatus = async () => undefined;
+  wrongFinal.waitForRunAfterStatus = async () => undefined;
+  await assert.rejects(() => wrongFinal.setRunAfterStatuses('Compose_2', 'Compose', ['Failed']), /final state did not match/);
 }
 
 function testActionProfileResolution(): void {

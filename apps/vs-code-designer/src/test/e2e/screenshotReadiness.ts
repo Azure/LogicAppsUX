@@ -28,15 +28,26 @@ export type ScreenshotExpectation =
       requiredText?: string[];
       scrollPosition?: 'top' | 'middle' | 'bottom' | { target?: 'window' | 'largest-scrollable'; minY?: number; maxY?: number };
     }
-  | { kind: 'designerCanvas'; label: string; requiredNodes?: Array<string | string[]>; allowLoading?: boolean }
+  | {
+      kind: 'designerCanvas';
+      label: string;
+      requiredNodes?: Array<string | string[]>;
+      requiredNodeIds?: string[];
+      allowLoading?: boolean;
+    }
   | { kind: 'designerValidationError'; label: string; message: string }
   | {
       kind: 'designerPanel';
       label: string;
       actionTitle: string;
+      nodeId?: string;
       requiredText?: string[];
       fields?: ScreenshotFieldExpectation[];
       switches?: ScreenshotSwitchExpectation[];
+      runAfter?: {
+        predecessorNodeId: string;
+        statuses: Array<'Succeeded' | 'TimedOut' | 'Skipped' | 'Failed'>;
+      };
       editor?: { labels: string[]; focused?: boolean; token?: { titles: string[]; sourceAction: string } };
       picker?: { sectionLabels: string[]; tokenTitles?: string[] };
       allowLoading?: boolean;
@@ -623,6 +634,10 @@ export const screenshotReadinessDomScript = `
     const hit = document.elementFromPoint?.(x, y);
     return !hit || hit === element || element.contains?.(hit) || hit.contains?.(element);
   };
+  const pointStrictlyHitsElement = (element, x, y) => {
+    const hit = document.elementFromPoint?.(x, y);
+    return !!hit && (hit === element || element.contains?.(hit) || hit.contains?.(element));
+  };
   const concreteRequiredNodeMatches = (requiredNodes) => {
     const isSubstantiallyVisible = (element, visibleRatio = 0.98) => {
       if (!(element instanceof HTMLElement)) {
@@ -726,6 +741,39 @@ export const screenshotReadinessDomScript = `
     }
     return result;
   };
+  const concreteRequiredNodeIdMatches = (requiredNodeIds) => {
+    const matched = [];
+    const missing = [];
+    const clipped = [];
+    const covered = [];
+    for (const nodeId of requiredNodeIds || []) {
+      const element = document.getElementById('msla-node-' + nodeId);
+      if (!(element instanceof HTMLElement) || !isVisible(element)) {
+        missing.push(nodeId);
+        continue;
+      }
+      matched.push(nodeId);
+      const rect = element.getBoundingClientRect();
+      const visibleRect = getClippedRect(element);
+      if (!visibleRect || visibleRect.width < rect.width * 0.98 || visibleRect.height < rect.height * 0.98) {
+        clipped.push(nodeId);
+      }
+      if (visibleRect) {
+        const centerX = visibleRect.left + visibleRect.width / 2;
+        const centerY = visibleRect.top + visibleRect.height / 2;
+        if (!pointStrictlyHitsElement(element, centerX, centerY)) {
+          covered.push(nodeId);
+        }
+      }
+    }
+    return {
+      ok: missing.length === 0 && clipped.length === 0 && covered.length === 0 && matched.length === (requiredNodeIds || []).length,
+      matched,
+      missing,
+      clipped,
+      covered,
+    };
+  };
   const slug = (value) => normalize(value).replace(/\\W+/g, '_').replace(/^_+|_+$/g, '').toLowerCase();
   const panelIdentityState = (panel, expectedTitle) => {
     const expectedText = normalize(expectedTitle).toLowerCase();
@@ -757,6 +805,78 @@ export const screenshotReadinessDomScript = `
     };
   };
   const matchesExactPanelIdentity = (panel, expectedTitle) => panelIdentityState(panel, expectedTitle).matches;
+  const exactRunAfterState = (panel, expectation) => {
+    if (!expectation) {
+      return { ok: true, reason: 'not-requested' };
+    }
+    const predecessor = document.getElementById('msla-node-' + expectation.predecessorNodeId);
+    const predecessorTitle = normalize(
+      predecessor?.querySelector?.('[data-automation-id="msla-card-title"], .msla-card-title, [class*="card-title" i]')?.textContent ||
+        (predecessor?.getAttribute?.('data-testid') || '').replace(/^card-/, '') ||
+        predecessor?.getAttribute?.('aria-label') ||
+        predecessor?.textContent ||
+        ''
+    );
+    const headers = Array.from(panel?.layout?.querySelectorAll?.('.msla-run-after-edge-header') || []).filter(isVisible);
+    const matchingHeaders = headers.filter(
+      (header) => normalize(header.querySelector('.msla-run-after-node-title')?.textContent) === predecessorTitle
+    );
+    const header = matchingHeaders.length === 1 ? matchingHeaders[0] : undefined;
+    const button = header?.querySelector?.('button');
+    const expanded = normalize(button?.getAttribute?.('aria-label')) === 'Collapse ' + predecessorTitle;
+    const statusRoot = header?.nextElementSibling;
+    const controls = statusRoot?.classList?.contains('msla-run-after-statuses')
+      ? Array.from(statusRoot.querySelectorAll('input[type="checkbox"]')).map((input) => {
+          const owner = input.closest('label') || input.parentElement;
+          const rect = owner?.getBoundingClientRect?.();
+          const centerX = rect ? rect.left + rect.width / 2 : -1;
+          const centerY = rect ? rect.top + rect.height / 2 : -1;
+          return {
+            label: normalize(owner?.textContent || input.getAttribute('aria-label')),
+            checked: input.checked === true,
+            visible: !!owner && isVisible(owner),
+            hitTestable: !!owner && pointStrictlyHitsElement(owner, centerX, centerY),
+          };
+        })
+      : [];
+    const labels = {
+      Succeeded: 'Is successful',
+      TimedOut: 'Has timed out',
+      Skipped: 'Is skipped',
+      Failed: 'Has failed',
+    };
+    const requested = new Set(expectation.statuses || []);
+    const statusStates = Object.entries(labels).map(([status, label]) => {
+      const matches = controls.filter((control) => control.label === label);
+      return {
+        status,
+        count: matches.length,
+        checked: matches.length === 1 && matches[0].checked,
+        visible: matches.length === 1 && matches[0].visible,
+        hitTestable: matches.length === 1 && matches[0].hitTestable,
+        expectedChecked: requested.has(status),
+      };
+    });
+    return {
+      ok:
+        !!predecessor &&
+        !!predecessorTitle &&
+        headers.length === 1 &&
+        matchingHeaders.length === 1 &&
+        expanded &&
+        controls.length === 4 &&
+        statusStates.every(
+          (state) =>
+            state.count === 1 && state.visible && state.hitTestable && state.checked === state.expectedChecked
+        ),
+      predecessorNodeId: expectation.predecessorNodeId,
+      predecessorTitle,
+      headerCount: headers.length,
+      matchingHeaderCount: matchingHeaders.length,
+      expanded,
+      statusStates,
+    };
+  };
   const panelSemanticTextState = (root, requiredValues) => {
     const excludedRoles = new Set(['menu', 'menuitem', 'listbox', 'option', 'dialog', 'alertdialog']);
     const isExcludedSemanticSubtree = (element) => {
@@ -1697,7 +1817,12 @@ export const screenshotReadinessDomScript = `
       break;
     case 'designerCanvas':
       const concreteNodeState = concreteRequiredNodeMatches(expectation.requiredNodes || []);
-      ready = !!designerCanvas && hasRequiredText(visibleText(designerCanvas), expectation.requiredNodes || []) && concreteNodeState.ok;
+      const concreteNodeIdState = concreteRequiredNodeIdMatches(expectation.requiredNodeIds || []);
+      ready =
+        !!designerCanvas &&
+        hasRequiredText(visibleText(designerCanvas), expectation.requiredNodes || []) &&
+        concreteNodeState.ok &&
+        concreteNodeIdState.ok;
       if ((expectation.requiredNodes || []).length > 0) {
         ready = ready && canvasNodes.length >= 1;
       }
@@ -1705,7 +1830,10 @@ export const screenshotReadinessDomScript = `
       if (!concreteNodeState.ok) {
         reasonCodes.push('designer-canvas-required-node-missing');
       }
-      details.designerCanvas = concreteNodeState;
+      if (!concreteNodeIdState.ok) {
+        reasonCodes.push('designer-canvas-required-node-id-missing');
+      }
+      details.designerCanvas = { ...concreteNodeState, ids: concreteNodeIdState };
       break;
     case 'designerPanel':
       const panelFieldStates = (expectation.fields || []).map((field) => fieldMatches(field, selectedPanel?.layout));
@@ -1713,6 +1841,8 @@ export const screenshotReadinessDomScript = `
       const editorState = findEditorState(expectation.editor, selectedPanel?.layout);
       const pickerState = findPickerState(expectation.picker, editorState);
       const identityState = panelIdentityState(selectedPanel, expectation.actionTitle);
+      const exactNodeIdentityMatches = !expectation.nodeId || selectedPanel?.nodeId === expectation.nodeId;
+      const runAfterState = exactRunAfterState(selectedPanel, expectation.runAfter);
       const requiredTextState = panelSemanticTextState(selectedPanel?.content, expectation.requiredText || []);
       const requiredTextMatches = !!selectedPanel && requiredTextState.ok;
       const panelFieldsMatch = panelFieldStates.every((fieldState) => fieldState.ok);
@@ -1720,9 +1850,11 @@ export const screenshotReadinessDomScript = `
       ready =
         !!selectedPanel &&
         identityState.matches &&
+        exactNodeIdentityMatches &&
         requiredTextMatches &&
         panelFieldsMatch &&
         panelSwitchesMatch &&
+        runAfterState.ok &&
         editorState.ok &&
         pickerState.ok;
       details.designerPanel = {
@@ -1731,6 +1863,8 @@ export const screenshotReadinessDomScript = `
         matchedIdentitySourceCount: identityState.matchedSourceCount,
         identitySourceKinds: identityState.sourceKinds,
         usedVisibleHeaderFallback: identityState.usedVisibleHeaderFallback,
+        exactNodeIdentityMatches,
+        runAfterState,
         requiredTextCandidateCount: requiredTextState.candidateCount,
         requiredTextCount: requiredTextState.requiredCount,
         matchedRequiredTextCount: requiredTextState.matchedCount,
@@ -1748,6 +1882,12 @@ export const screenshotReadinessDomScript = `
       }
       if (!identityState.matches) {
         reasonCodes.push('designer-panel-identity-mismatch');
+      }
+      if (!exactNodeIdentityMatches) {
+        reasonCodes.push('designer-panel-node-id-mismatch');
+      }
+      if (!runAfterState.ok) {
+        reasonCodes.push('designer-panel-run-after-mismatch');
       }
       if (!requiredTextMatches) {
         reasonCodes.push('designer-panel-required-text-mismatch');

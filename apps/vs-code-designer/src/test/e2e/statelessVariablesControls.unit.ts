@@ -740,7 +740,7 @@ function sourcePath(name: string): string {
 
 function testNativeWiring(): void {
   const native = fs.readFileSync(sourcePath('statelessVariablesLifecycle.test.ts'), 'utf8');
-  const shared = fs.readFileSync(sourcePath('workspaceLifecycle.test.ts'), 'utf8');
+  const shared = fs.readFileSync(sourcePath('workspaceLifecycle.ts'), 'utf8');
   check(() => {
     assert.ok(native.includes("wfType: 'Stateless'"));
     assert.ok(!/seed[A-Z]\w*Workflow/.test(native), 'Native family must not seed the requested UI operations');

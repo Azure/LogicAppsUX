@@ -845,6 +845,62 @@ function statelessVariablesCatalog() {
   ];
 }
 
+function runAfterPersistenceCatalog() {
+  const label = 'run-after-persistence';
+  return [
+    group(
+      'workspace-setup',
+      'Workspace setup',
+      'Creates the Standard Stateful workspace exclusively through the production wizard.',
+      workspaceLifecycleCreationSteps(label)
+    ),
+    group(
+      'author-save',
+      'Author and save',
+      'Authors Request, Compose, and Compose 2 by stable node identity, then persists Failed-only Run After.',
+      [
+        simpleStep(
+          'run-after-persistence-author-canvas',
+          'Author phase',
+          'Show the exact authored node identities.',
+          'The Designer canvas contains the captured Request and two Compose node IDs.'
+        ),
+        simpleStep(
+          'run-after-persistence-author-failed-only',
+          'Author phase',
+          'Configure Compose 2 Run After.',
+          'The exact downstream panel shows only Failed checked for the exact Compose predecessor.'
+        ),
+        simpleStep(
+          'run-after-persistence-author-saved',
+          'Author phase',
+          'Save the strict semantic workflow.',
+          'The Failed-only UI remains visible after workflow.json passes the semantic oracle and its hash is recorded.'
+        ),
+      ]
+    ),
+    group(
+      'fresh-reopen',
+      'Fresh stable-host reopen',
+      'Reopens the exact .code-workspace in a distinct official latest-stable host and verifies UI plus unchanged disk state.',
+      [
+        simpleStep(
+          'run-after-persistence-reopen-canvas',
+          'Reopen phase',
+          'Open the persisted workflow in a fresh Designer V2 host.',
+          'The canvas contains the same exact Request and Compose node IDs.'
+        ),
+        simpleStep(
+          'run-after-persistence-reopen-failed-only',
+          'Reopen phase',
+          'Inspect persisted Run After without saving.',
+          'The exact downstream panel still shows Failed only for the exact predecessor before the unchanged hash is asserted.'
+        ),
+      ]
+    ),
+  ];
+}
+
 function regenerationCatalog() {
   return [
     group('baseline', 'Baseline', 'Captures the untouched wizard-generated workspace before any regeneration case.', [
@@ -968,6 +1024,12 @@ const suiteDescriptors = Object.freeze({
     title: 'Stateless Variables Lifecycle',
     mode: 'catalog',
     buildCatalog: statelessVariablesCatalog,
+  }),
+  runAfterPersistenceLifecycle: Object.freeze({
+    id: 'runAfterPersistenceLifecycle',
+    title: 'Run After Persistence Lifecycle',
+    mode: 'catalog',
+    buildCatalog: runAfterPersistenceCatalog,
   }),
   workspaceArtifactRegeneration: Object.freeze({
     id: 'workspaceArtifactRegeneration',

@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 import * as path from 'path';
-import type { CreatedWorkspace } from './workspaceLifecycle.test';
+import type { CreatedWorkspace } from './workspaceLifecycle';
 
 export const httpTimeoutRequestActionName = 'HTTP';
 export const httpTimeoutInvalidDurationError = 'Timeout value is invalid, must match ISO 8601 duration format';

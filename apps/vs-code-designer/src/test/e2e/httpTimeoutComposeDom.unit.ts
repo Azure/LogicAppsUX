@@ -1505,7 +1505,7 @@ export async function runHttpTimeoutComposeDomControls(control: Control, authore
       'utf8'
     );
     const combobox = fs.readFileSync(path.join(repository, 'libs/designer-ui/src/lib/combobox/index.tsx'), 'utf8');
-    const priorArt = fs.readFileSync(path.join(repository, 'apps/vs-code-designer/src/test/e2e/workspaceLifecycle.test.ts'), 'utf8');
+    const priorArt = fs.readFileSync(path.join(repository, 'apps/vs-code-designer/src/test/e2e/workspaceLifecycle.ts'), 'utf8');
     const readiness = fs.readFileSync(path.join(repository, 'apps/vs-code-designer/src/test/e2e/screenshotReadiness.ts'), 'utf8');
     assert.ok(panelContainer.includes("'msla-panel-layout', `msla-panel-border-${type}`"));
     assert.ok(panelContainer.includes("renderPanelContents(node, 'selected', false)"));

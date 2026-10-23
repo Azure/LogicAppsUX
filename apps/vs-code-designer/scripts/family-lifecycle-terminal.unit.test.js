@@ -1,4 +1,4 @@
-/* global require, structuredClone */
+/* global __dirname, process, require, structuredClone */
 const assert = require('node:assert/strict');
 const test = require('node:test');
 const fs = require('node:fs');
@@ -41,7 +41,13 @@ function fixture(suiteId) {
   };
 }
 
-for (const suiteId of ['httpTimeoutLifecycle', 'statelessVariablesLifecycle', 'workspaceArtifactRegeneration', 'workspaceMultiRoot']) {
+for (const suiteId of [
+  'httpTimeoutLifecycle',
+  'statelessVariablesLifecycle',
+  'runAfterPersistenceLifecycle',
+  'workspaceArtifactRegeneration',
+  'workspaceMultiRoot',
+]) {
   test(`${suiteId}: every real ordered phase and final cleanup are required`, () => {
     const { result, terminal } = fixture(suiteId);
     assertFamilyLifecycleTerminal(result, terminal, suiteId);

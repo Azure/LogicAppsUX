@@ -6,6 +6,7 @@ const fs = require('fs');
 const net = require('net');
 const os = require('os');
 const path = require('path');
+const runE2eCliSource = fs.readFileSync(path.join(__dirname, 'run-e2e-cli.js'), 'utf8');
 
 const {
   runDirectFamily,
@@ -48,6 +49,7 @@ const {
     readContainmentReceipt,
     requiresDirectFamilyWrapper,
     runHttpTimeoutLifecycle,
+    runRunAfterPersistenceLifecycle,
     runSuiteWrapperProcess,
     createLinePrefixer,
     sanitizeInheritedGitCommandConfigEnv,
@@ -96,7 +98,10 @@ const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
     testGeneratedWorkspaceSnapshotFailsAndPreservesRejectedRunCaseWithOwnedRoot();
     testGeneratedWorkspaceSnapshotExplainsRejectedRunCaseWithoutOwnedRoot();
     testMsnWeatherLifecycleRunEnvCarriesOwnedRoot();
+    testRunAfterFocusedRoutePrecedesHttpRouting();
     await testHttpTimeoutRequestLifecycleUsesIsolatedStartupResources();
+    await testRunAfterPersistenceLifecycleUsesFreshOfficialHosts();
+    await testRunAfterLifecycleFinalizationRejectsFailedOrMissingPhases();
     testCodefulDebugTasksRunEnvCarriesOwnedRoot();
     testGeneratedWorkspaceSnapshotFallsBackToOwnedRootForPartialManifest();
     testGeneratedWorkspaceSnapshotSourcesSupportLifecycleAndManifestShapes();
@@ -199,6 +204,14 @@ function testHttpDirectSelectorUsesRegisteredContainment() {
     false,
     'The contained HTTP child must execute the scenario instead of recursively launching another wrapper'
   );
+}
+
+function testRunAfterFocusedRoutePrecedesHttpRouting() {
+  const mainStart = runE2eCliSource.indexOf('function main()');
+  const runAfterRoute = runE2eCliSource.indexOf("if (process.argv.includes('--run-after-persistence-lifecycle'))", mainStart);
+  const httpSelector = runE2eCliSource.indexOf('const httpTimeoutSelector =', mainStart);
+  assert.ok(mainStart >= 0 && runAfterRoute > mainStart, 'Expected the focused Run After route in main');
+  assert.ok(httpSelector > runAfterRoute, 'Focused Run After routing must execute before and outside HTTP selector routing');
 }
 
 function testFailFastMissingFuncDiagnostics() {
@@ -841,6 +854,231 @@ async function testHttpTimeoutRequestLifecycleUsesIsolatedStartupResources() {
   assert.notStrictEqual(create.env.LA_E2E_CLI_USER_DATA_SUFFIX, run.env.LA_E2E_CLI_USER_DATA_SUFFIX);
 }
 
+async function testRunAfterPersistenceLifecycleUsesFreshOfficialHosts() {
+  assert.deepStrictEqual(getDirectExpectedPhaseIds('runAfterPersistenceLifecycle'), [
+    'runtimeDependencyBootstrap:bootstrap',
+    'runAfterPersistenceLifecycle:create',
+    'runAfterPersistenceLifecycle:author',
+    'runAfterPersistenceLifecycle:reopen',
+  ]);
+
+  const suiteId = 'runAfterPersistenceLifecycle';
+  const root = fs.mkdtempSync(path.join(tempRoot, 'run-after-persistence-'));
+  const workspaceParent = path.join(root, 'workspaces');
+  const runtimeRoot = path.join(root, 'runtime');
+  const phaseResultsPath = path.join(root, 'phases.jsonl');
+  fs.mkdirSync(workspaceParent, { recursive: true });
+  fs.mkdirSync(runtimeRoot, { recursive: true });
+  const priorPhaseResultsPath = process.env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH;
+  const priorRuntimeRoot = process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT;
+  const azureEnv = {
+    LA_E2E_CLI_AZURE_ACCESS_TOKEN: 'unit-run-after-token',
+    LA_E2E_CLI_AZURE_ACCESS_TOKEN_EXPIRES_ON: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+    LA_E2E_CLI_AZURE_ACCESS_TOKEN_MINTED_AT: new Date().toISOString(),
+    LA_E2E_CLI_AZURE_TENANT_ID: '00000000-0000-4000-8000-000000000002',
+    LA_E2E_CLI_AZURE_SUBSCRIPTION_ID: '00000000-0000-4000-8000-000000000001',
+    LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME: 'LogicAppsVSCode-E2E-Fixtures',
+    LA_E2E_CLI_AZURE_LOCATION_NAME: 'westus',
+    LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL: 'https://management.azure.com',
+    FC_SERVICE_CONNECTION_TENANT_ID: '00000000-0000-4000-8000-000000000002',
+    AzCode_UseAzureFederatedCredentials: 'true',
+  };
+  const priorAzureEnv = Object.fromEntries(Object.keys(azureEnv).map((key) => [key, process.env[key]]));
+  const calls = [];
+
+  process.env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH = phaseResultsPath;
+  process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT = runtimeRoot;
+  Object.assign(process.env, azureEnv);
+  try {
+    await runRunAfterPersistenceLifecycle({
+      createParent: () => workspaceParent,
+      createRuntimeRoot: () => runtimeRoot,
+      cleanupRuntime: async () => undefined,
+      cleanup: async (ownedRoot) => {
+        fs.rmSync(ownedRoot, { recursive: true, force: true });
+      },
+      run: async (args, options) => {
+        const env = options.extraEnv;
+        calls.push({ args, env: { ...env } });
+        const mode = env.LA_E2E_CLI_RUN_AFTER_PERSISTENCE_MODE;
+        const phaseId = mode ? `${suiteId}:${mode}` : 'runtimeDependencyBootstrap:bootstrap';
+        if (mode === 'create') {
+          const wsName = 'runafterws';
+          const appName = 'runafterapp';
+          const wfName = 'runafterwf';
+          const workspaceDir = path.join(workspaceParent, wsName);
+          const appDir = path.join(workspaceDir, appName);
+          const workspaceFilePath = path.join(workspaceDir, `${wsName}.code-workspace`);
+          const workflowJsonPath = path.join(appDir, wfName, 'workflow.json');
+          fs.mkdirSync(path.dirname(workflowJsonPath), { recursive: true });
+          fs.writeFileSync(workspaceFilePath, '{}');
+          fs.writeFileSync(workflowJsonPath, '{"kind":"Stateful"}');
+          fs.writeFileSync(
+            env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_MANIFEST,
+            JSON.stringify([
+              {
+                label: 'run-after-persistence',
+                appType: 'standard',
+                wsName,
+                appName,
+                wfName,
+                workspaceDir,
+                workspaceFilePath,
+                appDir,
+                workflowJsonPath,
+              },
+            ])
+          );
+        } else if (mode === 'author') {
+          fs.writeFileSync(env.LA_E2E_CLI_RUN_AFTER_PERSISTENCE_HANDOFF, JSON.stringify({ schemaVersion: 1, savedSha256: 'unit-hash' }));
+        }
+        fs.appendFileSync(
+          phaseResultsPath,
+          `${JSON.stringify({
+            phaseId,
+            complete: true,
+            exitCode: 0,
+            signal: null,
+            cleanupVerified: true,
+          })}\n`
+        );
+        return 0;
+      },
+    });
+  } finally {
+    if (priorPhaseResultsPath === undefined) {
+      delete process.env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH;
+    } else {
+      process.env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH = priorPhaseResultsPath;
+    }
+    if (priorRuntimeRoot === undefined) {
+      delete process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT;
+    } else {
+      process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT = priorRuntimeRoot;
+    }
+    for (const [key, value] of Object.entries(priorAzureEnv)) {
+      if (value === undefined) {
+        delete process.env[key];
+      } else {
+        process.env[key] = value;
+      }
+    }
+  }
+
+  assert.strictEqual(calls.length, 4);
+  const [bootstrap, create, author, reopen] = calls;
+  assert.strictEqual(bootstrap.env.LA_E2E_CLI_STARTUP_RESOURCE, '');
+  assert.strictEqual(create.env.LA_E2E_CLI_RUN_AFTER_PERSISTENCE_MODE, 'create');
+  assert.strictEqual(author.env.LA_E2E_CLI_RUN_AFTER_PERSISTENCE_MODE, 'author');
+  assert.strictEqual(reopen.env.LA_E2E_CLI_RUN_AFTER_PERSISTENCE_MODE, 'reopen');
+  assert.strictEqual(create.env.LA_E2E_CLI_STARTUP_RESOURCE, '');
+  assert.ok(author.env.LA_E2E_CLI_STARTUP_RESOURCE.endsWith('.code-workspace'));
+  assert.strictEqual(reopen.env.LA_E2E_CLI_STARTUP_RESOURCE, author.env.LA_E2E_CLI_STARTUP_RESOURCE);
+  assert.strictEqual(reopen.env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE, author.env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE);
+  assert.strictEqual(reopen.env.LA_E2E_CLI_RUN_AFTER_PERSISTENCE_HANDOFF, author.env.LA_E2E_CLI_RUN_AFTER_PERSISTENCE_HANDOFF);
+  assert.strictEqual(new Set(calls.map((call) => call.env.LA_E2E_CLI_USER_DATA_SUFFIX)).size, 4);
+  assert.ok(calls.every((call) => call.env.LA_E2E_CLI_INCLUDE_RUN_AFTER_PERSISTENCE_LIFECYCLE === '1'));
+  for (const [key, value] of Object.entries(azureEnv)) {
+    assert.ok(
+      calls.every((call) => call.env[key] === value),
+      `${key} must reach every Run After child phase`
+    );
+  }
+}
+
+async function testRunAfterLifecycleFinalizationRejectsFailedOrMissingPhases() {
+  const suite = SUITE_REGISTRY.runAfterPersistenceLifecycle;
+  const expected = [...suite.expectedPhases];
+  const azureEnv = {
+    LA_E2E_CLI_AZURE_ACCESS_TOKEN: 'unit-run-after-finalization-token',
+    LA_E2E_CLI_AZURE_ACCESS_TOKEN_EXPIRES_ON: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+    LA_E2E_CLI_AZURE_ACCESS_TOKEN_MINTED_AT: new Date().toISOString(),
+    LA_E2E_CLI_AZURE_TENANT_ID: '00000000-0000-4000-8000-000000000002',
+    LA_E2E_CLI_AZURE_SUBSCRIPTION_ID: '00000000-0000-4000-8000-000000000001',
+    LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME: 'LogicAppsVSCode-E2E-Fixtures',
+    LA_E2E_CLI_AZURE_LOCATION_NAME: 'westus',
+    LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL: 'https://management.azure.com',
+  };
+  const seedDir = path.join(tempRoot, 'run-after-finalization-seed');
+  fs.mkdirSync(seedDir, { recursive: true });
+  fs.writeFileSync(path.join(seedDir, 'extensions.json'), '[]');
+  const phase = (phaseId, exitCode = 0) => ({
+    phaseId,
+    complete: exitCode === 0,
+    exitCode,
+    signal: null,
+    cleanupVerified: true,
+    diagnosticsError: '',
+  });
+
+  for (const [name, phases] of [
+    ['missing-author-reopen', expected.slice(0, 2).map((phaseId) => phase(phaseId))],
+    ['failed-author', expected.map((phaseId) => phase(phaseId, phaseId.endsWith(':author') ? 1 : 0))],
+    ['failed-reopen', expected.map((phaseId) => phase(phaseId, phaseId.endsWith(':reopen') ? 1 : 0))],
+  ]) {
+    const batchRoot = path.join(tempRoot, `run-after-finalization-batch-${name}`);
+    const aggregate = await runBatchSuites({
+      suites: [suite],
+      batchRoot,
+      seedDir,
+      baseEnv: azureEnv,
+      diagnosticOnly: true,
+      runSuite: async ({ context }) => {
+        fs.writeFileSync(context.phaseResultsPath, phases.map((value) => JSON.stringify(value)).join('\n'));
+        writeSuiteFinalEvidence({
+          context,
+          suite,
+          exitCode: 1,
+          signal: null,
+          processCleanup: { verified: true, retainedOriginalIdentitiesVerified: true },
+        });
+        return { exitCode: 1, signal: null, output: `${name}\n` };
+      },
+    });
+    const terminalPath = aggregate.suites[0].terminalResultPath;
+    const terminal = JSON.parse(fs.readFileSync(terminalPath, 'utf8'));
+    assert.strictEqual(terminal.complete, false, `${name} must not produce complete batch terminal evidence`);
+    assert.strictEqual(terminal.lifecycleFinalized, true);
+    assert.deepStrictEqual(
+      terminal.phaseResults.map((value) => value.phaseId),
+      phases.map((value) => value.phaseId),
+      `${name} must retain the actual incomplete/failed phase evidence`
+    );
+    assert.notStrictEqual(aggregate.suites[0].classification, 'success');
+  }
+
+  const resultsDir = path.join(tempRoot, 'run-after-finalization-direct-results');
+  const directBatchRoot = path.join(tempRoot, 'run-after-finalization-direct-batch');
+  const previous = Object.fromEntries(Object.keys(azureEnv).map((key) => [key, process.env[key]]));
+  Object.assign(process.env, azureEnv);
+  try {
+    const code = await runDirectFamily('runAfterPersistenceLifecycle', undefined, {
+      resultsDir,
+      batchRoot: directBatchRoot,
+      seedDir,
+      timeoutMs: 10_000,
+      scriptPath: createWrapperFixtureScript('missing-run-after-author-reopen'),
+    });
+    assert.strictEqual(code, 1, 'Direct Run After execution must fail when author/reopen phase evidence is missing');
+    const terminal = JSON.parse(fs.readFileSync(path.join(resultsDir, 'runAfterPersistenceLifecycle.terminal-result.json'), 'utf8'));
+    assert.strictEqual(terminal.complete, false);
+    assert.strictEqual(terminal.lifecycleFinalized, true);
+    assert.deepStrictEqual(terminal.missingPhaseIds, ['runAfterPersistenceLifecycle:author', 'runAfterPersistenceLifecycle:reopen']);
+    assert.deepStrictEqual(
+      terminal.phaseResults.map((value) => value.phaseId),
+      expected.slice(0, 2)
+    );
+  } finally {
+    for (const [key, value] of Object.entries(previous)) {
+      if (value === undefined) {
+        delete process.env[key];
+      } else {
+        process.env[key] = value;
+      }
+    }
+  }
+}
+
 function testCodefulDebugTasksRunEnvCarriesOwnedRoot() {
   const workspaceParent = path.join(tempRoot, 'codeful-run-parent');
   const entry = {
@@ -1110,6 +1348,21 @@ function testBatchSuiteRegistryValidation() {
     normalizeSuiteSelection('createWorkspaceBehaviorSmoke', { platform: 'win32' }).map((suite) => suite.id),
     ['createWorkspaceBehaviorSmoke']
   );
+  assert.deepStrictEqual(
+    normalizeSuiteSelection('runAfterPersistenceLifecycle', { platform: 'linux' }).map((suite) => suite.id),
+    ['runAfterPersistenceLifecycle']
+  );
+  assert.deepStrictEqual(
+    normalizeSuiteSelection('runAfterPersistenceLifecycle', { platform: 'win32' }).map((suite) => suite.id),
+    ['runAfterPersistenceLifecycle']
+  );
+  assert.strictEqual(SUITE_REGISTRY.runAfterPersistenceLifecycle.requiresAzure, true);
+  assert.deepStrictEqual(SUITE_REGISTRY.runAfterPersistenceLifecycle.expectedPhases, [
+    'runtimeDependencyBootstrap:bootstrap',
+    'runAfterPersistenceLifecycle:create',
+    'runAfterPersistenceLifecycle:author',
+    'runAfterPersistenceLifecycle:reopen',
+  ]);
   assert.throws(() => normalizeSuiteSelection('', { platform: 'linux' }), /requires at least one/);
   assert.throws(() => normalizeSuiteSelection('unitTests,unitTests', { platform: 'linux' }), /Duplicate/);
   assert.throws(() => normalizeSuiteSelection('doesNotExist', { platform: 'linux' }), /Unknown/);
@@ -1468,6 +1721,16 @@ function testOrderedEvidenceInitializationRejectsMismatchBeforeMutation() {
   assert.ok(pipelineEnv.LA_E2E_CLI_EVIDENCE_INVOCATION);
   assert.equal(manifestPath, path.join(pipelineEvidenceDir, 'suite-evidence-manifest.json'));
   assert.equal(fs.existsSync(manifestPath), true);
+
+  const runAfterEvidenceDir = path.join(tempRoot, 'run-after-initialized-evidence');
+  const runAfterEnv = {
+    LA_E2E_CLI_EVIDENCE_DIR: runAfterEvidenceDir,
+    LA_E2E_CLI_EVIDENCE_SUITE_ID: 'runAfterPersistenceLifecycle',
+  };
+  const runAfterManifest = initializeOrderedEvidenceForProcess(['--run-after-persistence-lifecycle'], runAfterEnv);
+  assert.equal(runAfterManifest, path.join(runAfterEvidenceDir, 'suite-evidence-manifest.json'));
+  assert.equal(typeof runAfterEnv.LA_E2E_CLI_EVIDENCE_INVOCATION, 'string');
+  assert.ok(runAfterEnv.LA_E2E_CLI_EVIDENCE_INVOCATION);
 }
 
 async function testRunSuiteWrapperProcessTimeoutCancelsDisposableChild() {
@@ -2574,7 +2837,8 @@ function createWrapperFixtureScript(mode) {
       '  const target = process.env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH;',
       '  if (!target) { return; }',
       '  fs.mkdirSync(path.dirname(target), { recursive: true });',
-      '  const phaseIds = JSON.parse(process.env.LA_E2E_CLI_BATCH_EXPECTED_PHASES || \'["unitTests"]\');',
+      '  let phaseIds = JSON.parse(process.env.LA_E2E_CLI_BATCH_EXPECTED_PHASES || \'["unitTests"]\');',
+      "  if (mode === 'missing-run-after-author-reopen') { phaseIds = phaseIds.filter((phaseId) => !phaseId.endsWith(':author') && !phaseId.endsWith(':reopen')); }",
       "  for (const phaseId of phaseIds) { fs.appendFileSync(target, `${JSON.stringify({ schemaVersion: 1, phaseId, exitCode, signal: null, cleanupVerified: true, diagnosticsError: '', complete: true })}\\n`); }",
       '}',
       "if (mode === 'sleep') { setInterval(() => undefined, 1000); }",

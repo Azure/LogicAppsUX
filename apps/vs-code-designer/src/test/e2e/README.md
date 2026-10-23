@@ -35,7 +35,8 @@ src/test/e2e/
 ├── extension.test.ts       # Basic extension activation tests
 ├── commands.test.ts        # Command registration and execution tests
 ├── createWorkspace.test.ts # Latest-VS Code Create Workspace webview behavior, matrix, and artifact checks
-├── workspaceLifecycle.test.ts # Generated workspace, NuGet conversion, and codeful debug-task lifecycle checks
+├── workspaceLifecycle.ts      # Shared wizard, generated workspace, designer, runtime, and lifecycle helpers
+├── workspaceLifecycle.test.ts # Thin conditional registration wrapper for canonical lifecycle labels
 ├── runTest.ts              # Test runner entry point
 └── integration/            # Legacy prototypes; not wired into the default CLI baseline
 ```
@@ -50,12 +51,13 @@ only author built-in operations. Reuse `affirmativeAzureConnectorPrompt`; missin
 authentication or fixture context is blocked setup, not permission to choose Skip.
 Intentional workspace No/Cancel tests keep their original actions.
 
-The opt-in HTTP Compose and Stateless variables consumers reuse the existing
-approved MSN service connection and fixture context on both operating systems.
-The shared Azure CLI template supplies tenant, subscription, resource group and
-location through `LA_E2E_CLI_AZURE_*`. Use only the existing approved target; do
-not create resources or expand permissions. Workspace-only consumers remain
-credential-free, and canonical selectors and native acceptance gates are unchanged.
+The opt-in HTTP Compose, Stateless variables, and Run After persistence consumers
+reuse the existing approved MSN service connection and fixture context on both
+operating systems. The shared Azure CLI template supplies tenant, subscription,
+resource group and location through `LA_E2E_CLI_AZURE_*`. Use only the existing
+approved target; do not create resources or expand permissions. Workspace-only
+consumers remain credential-free, and canonical selectors and native acceptance
+gates are unchanged.
 
 Workspace lifecycle/MSN Weather, HTTP timeout Compose and Stateless variables
 also share `designerCdpActions.ts` for native Designer mechanics. This helper
@@ -388,14 +390,52 @@ execution/Core Tools probing replaced. They exercise real bounded Node child
 process observation and are not native GUI/runtime coverage.
 Existing canonical labels and Stateful defaults are unchanged.
 
-Boundary: private source text asks for “both” local-settings files without naming
-their paths; the pair above follows the extension's two established generated
-settings targets. Embedded source images were used only as a private authoring
-oracle, not copied into the repository. Portal environment-variable configuration
-and the original external HTTP-client UI are not driven here. The local HTTP client
-is a transport substitute, not external-client certification. Native screenshots,
-actual Windows/Linux consumer results, generated design-time readiness, runtime
-restart/recovery and any source-image visual parity remain parent-owned validation.
+### Run After persistence family (supplementary native lifecycle)
+
+`pnpm --dir apps/vs-code-designer run test:e2e-cli:run-after-persistence-lifecycle`
+runs the registered supplementary `runAfterPersistenceLifecycle` suite. It is
+explicit-only and remains outside the canonical `linux` and `windows` aliases.
+Its ordered phases are:
+
+1. `runtimeDependencyBootstrap:bootstrap`;
+2. `runAfterPersistenceLifecycle:create`;
+3. `runAfterPersistenceLifecycle:author`;
+4. `runAfterPersistenceLifecycle:reopen`.
+
+The create host drives the production wizard to generate one Standard Stateful
+workspace. Before Designer opens, a distinct author host reads the existing
+approved resource group through WIF, generates the product design-time settings,
+and binds the same verified non-secret target metadata into both
+`local.settings.json` and `workflow-designtime/local.settings.json`; the access
+token is never written. The author host opens exact `designerLocalV2`, captures
+stable node IDs while authoring Request → Compose → Compose 2, and configures
+Compose 2 to run after the exact Compose predecessor on `Failed` only. Any
+connector prompt is handled affirmatively but fail-closed: only the exact approved
+subscription and existing resource group may be selected; sign-in, resource
+creation, permission/grant, foreign-target, ambiguous, or negative fallback
+choices are rejected. The save is admitted only after a strict workflow oracle
+proves one Request trigger, exactly two Compose actions with unique inputs, exact
+`{ predecessor: ['Failed'] }` semantics, and unchanged approved target bindings.
+A third latest-stable host/profile reopens the exact `.code-workspace` without
+saving, re-verifies both settings bindings and the non-secret target handoff,
+verifies the exact node/panel/predecessor/status UI, and requires the final
+`workflow.json` SHA-256 to equal the post-save hash.
+
+Reusable Designer V2 interaction belongs in `ProvenDesignerCdpActions`.
+`addRequestTriggerAndGetIdentity`, `addActionAndGetIdentity`, `clickNodeById`,
+`openSettingsTab`, `openRunAfterSection`, `expandRunAfterPredecessor`,
+`readRunAfterState`, and `setRunAfterStatuses` use exact product/node ownership,
+visible geometry, `elementFromPoint`, trusted CDP input, and the caller's single
+absolute deadline. Insert-after selection is bound to the exact source node's
+unique outgoing edge; it never selects an edge control by array position.
+
+Boundary: the two settings paths follow the extension's established generated
+targets. Embedded source images were used only as a private authoring oracle, not
+copied into the repository. Portal environment-variable configuration and the
+original external HTTP-client UI are not driven here. The local HTTP client is a
+transport substitute, not external-client certification. Native screenshots,
+actual Windows/Linux consumer results, runtime restart/recovery and any
+source-image visual parity remain parent-owned validation.
 Source catalogue metadata, screenshots, private assets and signed endpoints must
 not be published. This additive family does not change canonical baseline counts,
 the existing OGF rollup or any previously earned native coverage.

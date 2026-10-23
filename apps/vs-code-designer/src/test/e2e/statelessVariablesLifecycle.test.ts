@@ -21,7 +21,7 @@ import {
 } from './azureConnectorFixture';
 import { uniqueName, normalizeFsPath } from './testUtils';
 import { closeAllTabs, waitForWebviewTab } from './webviewTabs';
-import { statelessLifecycleHelpers as helpers, type CreatedWorkspace } from './workspaceLifecycle.test';
+import { statelessLifecycleHelpers as helpers, type CreatedWorkspace } from './workspaceLifecycle';
 import {
   assertStatelessDefinition,
   assertStatelessResponse,

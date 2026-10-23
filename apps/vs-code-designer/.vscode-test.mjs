@@ -38,6 +38,8 @@ const includeHttpTimeoutRequestLifecycle =
   (httpTimeoutRequestMode === 'create' || httpTimeoutRequestMode === 'run');
 const includeStatelessVariables =
   process.env.LA_E2E_CLI_INCLUDE_STATELESS_VARIABLES === '1' || process.argv.includes('statelessVariablesLifecycle');
+const includeRunAfterPersistenceLifecycle =
+  process.env.LA_E2E_CLI_INCLUDE_RUN_AFTER_PERSISTENCE_LIFECYCLE === '1' || process.argv.includes('runAfterPersistenceLifecycle');
 const includeNativeEditorClick = process.env.LA_E2E_CLI_INCLUDE_NATIVE_EDITOR_CLICK === '1' || process.argv.includes('nativeEditorClick');
 const nativeEditorClickWorkspace = path.join(__dirname, 'scripts', 'fixtures', 'native-editor-click');
 const vscodeVersion = process.env.LA_E2E_CLI_VSCODE_VERSION || 'stable';
@@ -131,6 +133,18 @@ if (includeStatelessVariables) {
     mocha: {
       ui: 'tdd',
       timeout: 1500000,
+    },
+  });
+}
+
+if (includeRunAfterPersistenceLifecycle) {
+  configs.push({
+    label: 'runAfterPersistenceLifecycle',
+    ...baseConfig,
+    files: ['out/test/e2e/runAfterPersistenceLifecycle.test.js'],
+    mocha: {
+      ui: 'tdd',
+      timeout: 900000,
     },
   });
 }
@@ -250,6 +264,8 @@ function createWorkspaceConfig(group, timeout, extraEnv = {}) {
 function getForwardedTestEnvironment() {
   const names = [
     'LA_E2E_CLI_STATELESS_VARIABLES_MODE',
+    'LA_E2E_CLI_RUN_AFTER_PERSISTENCE_MODE',
+    'LA_E2E_CLI_RUN_AFTER_PERSISTENCE_HANDOFF',
     'LA_E2E_CLI_WORKSPACE_PARENT',
     'LA_E2E_CLI_MSN_LIFECYCLE_INVOCATION',
     'LA_E2E_CLI_MSN_DIAGNOSTICS_DIR',

@@ -34,6 +34,8 @@ async function main(): Promise<void> {
   testDesignerCanvasRejectsHiddenRequiredTitleInRealDom();
   testDesignerCanvasRejectsObservedNarrowViewportRequiredCardClipping();
   testDesignerCanvasRejectsNonCanvasSubstituteNode();
+  testDesignerCanvasRequiresExactNodeIds();
+  testDesignerCanvasRejectsCoveredExactNodeId();
   testDesignerCanvasRejectsOffCenterLoaderOverRequiredNode();
   testDesignerCanvasPrefersCanvasOverSelectedPanel();
   testDesignerCanvasBlocksScopedLoadersOnly();
@@ -42,6 +44,9 @@ async function main(): Promise<void> {
   testDesignerPanelUsesVisibleHeaderFallbackOnlyInsideActivePanel();
   testDesignerPanelRequiresConcreteScopedSemanticText();
   testDesignerPanelReportsSplitIdentitySemanticAndFieldDiagnostics();
+  testDesignerPanelRequiresExactFailedOnlyRunAfter();
+  testDesignerPanelRejectsWrongRunAfterPanelPredecessorAndStatuses();
+  testDesignerPanelRejectsCoveredRunAfterControl();
   testDesignerPanelRequiresFocusedEditorTokenSource();
   testDesignerPanelRejectsAncestorFocusAndPlainTextToken();
   testDesignerPanelRequiresVisiblePickerSectionAndToken();
@@ -579,6 +584,152 @@ function configureJsdomElementGeometry(
       .reverse()
       .find(({ element, rect }) => element && x >= rect.left && x <= rect.left + rect.width && y >= rect.top && y <= rect.top + rect.height)
       ?.element as any) ?? null;
+}
+
+function testDesignerCanvasRequiresExactNodeIds(): void {
+  const accepted = runJsdomExactNodeProbe(['Request', 'Compose', 'Compose_2'], false);
+  assert.strictEqual(accepted.ready, true);
+  const rejected = runJsdomExactNodeProbe(['Request', 'Compose', 'WrongCompose'], false);
+  assert.strictEqual(rejected.ready, false);
+  assert.ok(rejected.reasonCodes.includes('designer-canvas-required-node-id-missing'));
+}
+
+function testDesignerCanvasRejectsCoveredExactNodeId(): void {
+  const snapshot = runJsdomExactNodeProbe(['Request', 'Compose', 'Compose_2'], true);
+  assert.strictEqual(snapshot.ready, false);
+  const ids = (snapshot.details?.designerCanvas as { ids?: { covered?: string[] } } | undefined)?.ids;
+  assert.ok(ids?.covered?.includes('Compose_2'));
+}
+
+function runJsdomExactNodeProbe(requiredNodeIds: string[], coverCompose2: boolean): ScreenshotReadinessSnapshot {
+  const dom = new JSDOM(
+    `<html><body>
+      <div class="react-flow" id="canvas">
+        <div id="msla-node-Request" data-testid="card-When an HTTP request is received">Request</div>
+        <div id="msla-node-Compose" data-testid="card-Compose">Compose</div>
+        <div id="msla-node-Compose_2" data-testid="card-Compose 2">Compose 2</div>
+        ${coverCompose2 ? '<div id="cover"></div>' : ''}
+      </div>
+    </body></html>`,
+    { runScripts: 'outside-only' }
+  );
+  const windowAny = dom.window as any;
+  configureJsdomElementGeometry(windowAny, {
+    canvas: { left: 0, top: 0, width: 800, height: 700 },
+    'msla-node-Request': { left: 100, top: 80, width: 220, height: 80 },
+    'msla-node-Compose': { left: 100, top: 240, width: 220, height: 80 },
+    'msla-node-Compose_2': { left: 100, top: 400, width: 220, height: 80 },
+    ...(coverCompose2 ? { cover: { left: 100, top: 400, width: 220, height: 80 } } : {}),
+  });
+  return vm.runInNewContext(
+    buildScreenshotReadinessExpression({ kind: 'designerCanvas', label: 'exact-node-ids', requiredNodeIds }, 1, 1),
+    {
+      document: windowAny.document,
+      window: windowAny,
+      HTMLElement: windowAny.HTMLElement,
+      HTMLInputElement: windowAny.HTMLInputElement,
+      HTMLButtonElement: windowAny.HTMLButtonElement,
+      Node: windowAny.Node,
+      getComputedStyle: windowAny.getComputedStyle.bind(windowAny),
+    }
+  ) as ScreenshotReadinessSnapshot;
+}
+
+function testDesignerPanelRequiresExactFailedOnlyRunAfter(): void {
+  const snapshot = runJsdomRunAfterProbe();
+  assert.strictEqual(snapshot.ready, true);
+}
+
+function testDesignerPanelRejectsWrongRunAfterPanelPredecessorAndStatuses(): void {
+  const wrongPanel = runJsdomRunAfterProbe({ expectedNodeId: 'WrongPanel' });
+  assert.strictEqual(wrongPanel.ready, false);
+  assert.ok(wrongPanel.reasonCodes.includes('designer-panel-node-id-mismatch'));
+
+  const wrongPredecessor = runJsdomRunAfterProbe({ predecessorNodeId: 'WrongCompose' });
+  assert.strictEqual(wrongPredecessor.ready, false);
+  assert.ok(wrongPredecessor.reasonCodes.includes('designer-panel-run-after-mismatch'));
+
+  const multipleStatuses = runJsdomRunAfterProbe({ succeeded: true });
+  assert.strictEqual(multipleStatuses.ready, false);
+  assert.ok(multipleStatuses.reasonCodes.includes('designer-panel-run-after-mismatch'));
+}
+
+function testDesignerPanelRejectsCoveredRunAfterControl(): void {
+  const snapshot = runJsdomRunAfterProbe({ coverFailed: true });
+  assert.strictEqual(snapshot.ready, false);
+  assert.ok(snapshot.reasonCodes.includes('designer-panel-run-after-mismatch'));
+}
+
+function runJsdomRunAfterProbe(
+  options: {
+    expectedNodeId?: string;
+    predecessorNodeId?: string;
+    succeeded?: boolean;
+    coverFailed?: boolean;
+  } = {}
+): ScreenshotReadinessSnapshot {
+  const dom = new JSDOM(
+    `<html><body>
+      <div class="react-flow" id="canvas">
+        <div id="msla-node-Compose" data-testid="card-Compose">Compose</div>
+        <div id="msla-node-Compose_2" data-testid="card-Compose 2">Compose 2</div>
+      </div>
+      <div class="msla-panel-layout msla-panel-border-selected" id="panel-layout">
+        <div id="msla-node-details-panel-Compose_2">
+          <div class="msla-panel-header"><input id="title" aria-label="Card title" value="Compose 2" /></div>
+          <div class="msla-run-after-edge-header" id="run-after-header">
+            <button id="predecessor-button" aria-label="Collapse Compose"><span class="msla-run-after-node-title">Compose</span></button>
+          </div>
+          <div class="msla-run-after-statuses" id="statuses">
+            <label id="succeeded-label"><input id="succeeded" type="checkbox" ${options.succeeded ? 'checked' : ''}/>Is successful</label>
+            <label id="timedout-label"><input id="timedout" type="checkbox" />Has timed out</label>
+            <label id="skipped-label"><input id="skipped" type="checkbox" />Is skipped</label>
+            <label id="failed-label"><input id="failed" type="checkbox" checked />Has failed</label>
+          </div>
+          ${options.coverFailed ? '<div id="failed-cover"></div>' : ''}
+        </div>
+      </div>
+    </body></html>`,
+    { runScripts: 'outside-only' }
+  );
+  const windowAny = dom.window as any;
+  Object.defineProperty(windowAny, 'innerWidth', { configurable: true, value: 1200 });
+  Object.defineProperty(windowAny, 'innerHeight', { configurable: true, value: 800 });
+  configureJsdomElementGeometry(windowAny, {
+    canvas: { left: 0, top: 0, width: 700, height: 800 },
+    'msla-node-Compose': { left: 100, top: 180, width: 220, height: 80 },
+    'msla-node-Compose_2': { left: 100, top: 360, width: 220, height: 80 },
+    'panel-layout': { left: 720, top: 0, width: 480, height: 800 },
+    'msla-node-details-panel-Compose_2': { left: 720, top: 0, width: 480, height: 800 },
+    title: { left: 760, top: 40, width: 240, height: 32 },
+    'run-after-header': { left: 760, top: 140, width: 360, height: 48 },
+    'predecessor-button': { left: 760, top: 140, width: 300, height: 48 },
+    statuses: { left: 760, top: 200, width: 360, height: 220 },
+    'succeeded-label': { left: 780, top: 210, width: 220, height: 32 },
+    'timedout-label': { left: 780, top: 255, width: 220, height: 32 },
+    'skipped-label': { left: 780, top: 300, width: 220, height: 32 },
+    'failed-label': { left: 780, top: 345, width: 220, height: 32 },
+    ...(options.coverFailed ? { 'failed-cover': { left: 780, top: 345, width: 220, height: 32 } } : {}),
+  });
+  const expectation: ScreenshotExpectation = {
+    kind: 'designerPanel',
+    label: 'run-after-failed-only',
+    actionTitle: 'Compose 2',
+    nodeId: options.expectedNodeId ?? 'Compose_2',
+    runAfter: {
+      predecessorNodeId: options.predecessorNodeId ?? 'Compose',
+      statuses: ['Failed'],
+    },
+  };
+  return vm.runInNewContext(buildScreenshotReadinessExpression(expectation, 1, 1), {
+    document: windowAny.document,
+    window: windowAny,
+    HTMLElement: windowAny.HTMLElement,
+    HTMLInputElement: windowAny.HTMLInputElement,
+    HTMLButtonElement: windowAny.HTMLButtonElement,
+    Node: windowAny.Node,
+    getComputedStyle: windowAny.getComputedStyle.bind(windowAny),
+  }) as ScreenshotReadinessSnapshot;
 }
 
 function testDesignerCanvasRejectsNonCanvasSubstituteNode(): void {

@@ -9,7 +9,7 @@ const { JSDOM } = require('jsdom') as {
   JSDOM: new (html: string, options?: Record<string, unknown>) => { window: Window & typeof globalThis };
 };
 
-const sourcePath = path.resolve(__dirname, '..', '..', '..', 'src', 'test', 'e2e', 'workspaceLifecycle.test.ts');
+const sourcePath = path.resolve(__dirname, '..', '..', '..', 'src', 'test', 'e2e', 'workspaceLifecycle.ts');
 const sourceText = fs.readFileSync(sourcePath, 'utf-8');
 const source = ts.createSourceFile(sourcePath, sourceText, ts.ScriptTarget.Latest, true);
 

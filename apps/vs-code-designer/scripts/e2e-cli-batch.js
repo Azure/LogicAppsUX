@@ -89,6 +89,18 @@ const SUITE_REGISTRY = Object.freeze({
       'statelessVariablesLifecycle:reopen',
     ]),
   }),
+  runAfterPersistenceLifecycle: Object.freeze({
+    id: 'runAfterPersistenceLifecycle',
+    args: Object.freeze(['--run-after-persistence-lifecycle']),
+    platforms: Object.freeze(['linux', 'win32']),
+    requiresAzure: true,
+    expectedPhases: Object.freeze([
+      'runtimeDependencyBootstrap:bootstrap',
+      'runAfterPersistenceLifecycle:create',
+      'runAfterPersistenceLifecycle:author',
+      'runAfterPersistenceLifecycle:reopen',
+    ]),
+  }),
   workspaceArtifactRegeneration: Object.freeze({
     id: 'workspaceArtifactRegeneration',
     args: Object.freeze(['--workspace-artifact-regeneration']),
@@ -166,6 +178,7 @@ const SUITE_ALIASES = Object.freeze({
 const SUITE_CONTROL_ENV_PATTERNS = [
   /^LA_E2E_CLI_SUITE_WRAPPER_CHILD$/,
   /^LA_E2E_CLI_STATELESS_VARIABLES_MODE$/,
+  /^LA_E2E_CLI_RUN_AFTER_PERSISTENCE_(?:MODE|HANDOFF)$/,
   /^LA_E2E_CLI_(?:REQUIRE_WORKSPACE_REGENERATION|REGENERATION_DIAGNOSTICS_DIR)$/,
   /^LA_E2E_CLI_(?:INCLUDE_|WORKSPACE_LIFECYCLE_|STARTUP_RESOURCE$|CREATE_WORKSPACE_CASE$|CREATE_WORKSPACE_GROUP$|CREATE_WORKSPACE_PARENT$|DEFER_WORKSPACE_CLEANUP$|PROFILE_PHASE$|USER_DATA_SUFFIX$|USER_DATA_DIR$|VSCODE_LOG_ARTIFACT_LABEL$|CODEFUL_EVIDENCE_NOT_BEFORE$|MINIMAL_ACTIVATION$|SKIP_ACTIVATION_WORKSPACE_ENSURE$|EXPECT_EMPTY_RUNTIME_DEPENDENCIES_ROOT$|EMPTY_RUNTIME_DEPENDENCIES_ROOT_CONFIRMED$|AZURE_ACCESS_TOKEN$|AZURE_CLIENT_ID$|AZURE_TENANT_ID$|AZURE_SUBSCRIPTION_ID$|AZURE_RESOURCE_GROUP_NAME$|AZURE_LOCATION_NAME$|AZURE_MANAGEMENT_BASE_URL$)/,
   /^(WORKFLOWS_TENANT_ID|WORKFLOWS_SUBSCRIPTION_ID|WORKFLOWS_RESOURCE_GROUP_NAME|WORKFLOWS_LOCATION_NAME|WORKFLOWS_MANAGEMENT_BASE_URI)$/,
@@ -625,16 +638,21 @@ async function getSuiteScopedCredentialEnv(baseEnv, suite, requiredRemainingMs =
     return {};
   }
 
+  const scoped = getSuiteScopedAzureEnv(baseEnv);
+  if (!scoped.LA_E2E_CLI_AZURE_ACCESS_TOKEN) {
+    Object.assign(scoped, await mintAzureAccessTokenForSuite(suite, baseEnv));
+  }
+  validateAzureAccessTokenFreshness(scoped, suite, Date.now(), requiredRemainingMs + 5 * 60 * 1000);
+  return scoped;
+}
+
+function getSuiteScopedAzureEnv(baseEnv) {
   const scoped = {};
   for (const key of SUITE_SCOPED_AZURE_ENV_KEYS) {
     if (baseEnv[key] !== undefined) {
       scoped[key] = baseEnv[key];
     }
   }
-  if (!scoped.LA_E2E_CLI_AZURE_ACCESS_TOKEN) {
-    Object.assign(scoped, await mintAzureAccessTokenForSuite(suite, baseEnv));
-  }
-  validateAzureAccessTokenFreshness(scoped, suite, Date.now(), requiredRemainingMs + 5 * 60 * 1000);
   return scoped;
 }
 
@@ -809,6 +827,7 @@ module.exports = {
   prepareSuiteExtensionsDirectory,
   runBatchSuites,
   buildDirectoryIntegrityManifest,
+  getSuiteScopedAzureEnv,
   getSuiteScopedCredentialEnv,
   mintAzureAccessTokenForSuite,
   parseAzureDate,

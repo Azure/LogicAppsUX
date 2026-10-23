@@ -18,6 +18,7 @@ const {
   buildSuiteEnvironment,
   prepareSuiteExtensionsDirectory,
   cleanupSuiteTransientRoots,
+  getSuiteScopedAzureEnv,
   getSuiteScopedCredentialEnv,
   normalizeSuiteSelection,
   runBatchSuites,
@@ -98,6 +99,21 @@ if (require.main === module) {
 
 function main() {
   initializeOrderedEvidenceForProcess();
+  if (process.argv.includes('--run-after-persistence-lifecycle')) {
+    if (process.argv.length !== 3) {
+      exitWithError(
+        new Error('--run-after-persistence-lifecycle is a focused bootstrap/create/author/reopen route; do not combine flags.')
+      );
+      return;
+    }
+    const run = requiresDirectFamilyWrapper(process.env)
+      ? runDirectFamily('runAfterPersistenceLifecycle')
+      : runRunAfterPersistenceLifecycle();
+    Promise.resolve(run)
+      .then((code) => process.exit(code))
+      .catch(exitWithError);
+    return;
+  }
   const httpTimeoutSelector = [
     '--http-timeout-lifecycle',
     '--http-timeout-request-execution',
@@ -109,7 +125,6 @@ function main() {
       exitWithError(new Error(`${httpTimeoutSelector} is a focused create + reopen route; do not combine it with other flags.`));
       return;
     }
-
     const run = requiresDirectFamilyWrapper(process.env) ? runDirectFamily('httpTimeoutLifecycle') : runHttpTimeoutLifecycle();
     Promise.resolve(run)
       .then((code) => process.exit(code))
@@ -309,6 +324,7 @@ function inferOrderedEvidenceSuiteId(argv) {
     ['--workspace-artifact-regeneration', 'workspaceArtifactRegeneration'],
     ['--workspace-multi-root', 'workspaceMultiRoot'],
     ['--stateless-variables-lifecycle', 'statelessVariablesLifecycle'],
+    ['--run-after-persistence-lifecycle', 'runAfterPersistenceLifecycle'],
     ['--msn-weather-lifecycle', 'msnWeatherLifecycle'],
     ['--workspace-prompt-cancel', 'createWorkspaceCoreMatrix'],
   ]);
@@ -1006,6 +1022,7 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
       'msnWeatherLifecycle',
       'httpTimeoutLifecycle',
       'statelessVariablesLifecycle',
+      'runAfterPersistenceLifecycle',
       'workspaceArtifactRegeneration',
       'workspaceMultiRoot',
     ].includes(suite.id) ||
@@ -1109,6 +1126,7 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
       'msnWeatherLifecycle',
       'httpTimeoutLifecycle',
       'statelessVariablesLifecycle',
+      'runAfterPersistenceLifecycle',
       'workspaceArtifactRegeneration',
       'workspaceMultiRoot',
     ].includes(suite.id) || context.directFamily
@@ -1375,6 +1393,144 @@ async function observeCurrentProcessIdentity(provider = require('./e2e-cli-proce
     throw new Error('HTTP timeout lifecycle observed an invalid suite-wrapper process identity');
   }
   return owner;
+}
+
+async function runRunAfterPersistenceLifecycle({
+  run = runVscodeTest,
+  createParent = createOwnedWorkspaceParent,
+  cleanup = cleanupOwnedWorkspaceParent,
+  createRuntimeRoot = createIsolatedRuntimeDependenciesRoot,
+  cleanupRuntime = cleanupRuntimeDependenciesRoot,
+} = {}) {
+  const suiteId = 'runAfterPersistenceLifecycle';
+  const phaseResultsPath = process.env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH;
+  if (!phaseResultsPath || (fs.existsSync(phaseResultsPath) && fs.readFileSync(phaseResultsPath, 'utf8').trim())) {
+    throw new Error(`${suiteId} requires a fresh isolated wrapper phase journal`);
+  }
+  const lifecycleDir = getLifecycleArtifactDir('run-after-persistence-lifecycle');
+  fs.mkdirSync(lifecycleDir, { recursive: true });
+  const workspaceParent = createParent(suiteId);
+  const manifestPath = path.join(lifecycleDir, `manifest-${Date.now()}.json`);
+  const handoffPath = path.join(lifecycleDir, `handoff-${Date.now()}.json`);
+  const runtimeDependenciesRoot = process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT ?? createRuntimeRoot(suiteId);
+  const failures = [];
+  try {
+    const commonEnv = {
+      ...getSuiteScopedAzureEnv(process.env),
+      LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: runtimeDependenciesRoot,
+      LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH: phaseResultsPath,
+      LA_E2E_CLI_WORKSPACE_PARENT: workspaceParent,
+      LA_E2E_CLI_WORKSPACE_LIFECYCLE_MANIFEST: manifestPath,
+      LA_E2E_CLI_RUN_AFTER_PERSISTENCE_HANDOFF: handoffPath,
+      LA_E2E_CLI_INCLUDE_RUN_AFTER_PERSISTENCE_LIFECYCLE: '1',
+      LA_E2E_CLI_DISABLE_UNOWNED_PORT_KILL: '1',
+      LA_E2E_CLI_AUTO_START_DESIGN_TIME: '0',
+      LA_E2E_CLI_STARTUP_RESOURCE: '',
+    };
+    const bootstrapExit = await run(['--label', 'runtimeDependencyBootstrap'], {
+      extraEnv: {
+        ...commonEnv,
+        LA_E2E_CLI_INCLUDE_RUNTIME_DEPENDENCY_BOOTSTRAP: '1',
+        LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
+        LA_E2E_CLI_VALIDATE_DEPENDENCIES: '1',
+        LA_E2E_CLI_USER_DATA_SUFFIX: `${suiteId}-bootstrap-${Date.now()}`,
+      },
+    });
+    if (bootstrapExit !== 0) {
+      throw new Error(`${suiteId} runtime dependency bootstrap host failed`);
+    }
+    const createExit = await run(['--label', suiteId], {
+      extraEnv: {
+        ...commonEnv,
+        LA_E2E_CLI_RUN_AFTER_PERSISTENCE_MODE: 'create',
+        LA_E2E_CLI_MINIMAL_ACTIVATION: '1',
+        LA_E2E_CLI_VALIDATE_DEPENDENCIES: '1',
+        LA_E2E_CLI_USER_DATA_SUFFIX: `${suiteId}-create-${Date.now()}`,
+      },
+    });
+    if (createExit !== 0) {
+      throw new Error(`${suiteId} wizard fixture host failed`);
+    }
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    if (!Array.isArray(manifest) || manifest.length !== 1) {
+      throw new Error(`${suiteId} requires exactly one wizard-generated workspace manifest entry`);
+    }
+    const entry = manifest[0];
+    if (
+      entry?.appType !== 'standard' ||
+      path.resolve(entry.workspaceDir) !== path.resolve(workspaceParent, entry.wsName) ||
+      !entry.workspaceFilePath ||
+      !entry.workflowJsonPath
+    ) {
+      throw new Error(`${suiteId} received an invalid or foreign wizard workspace manifest entry`);
+    }
+    for (const requiredPath of [entry.workspaceFilePath, entry.workflowJsonPath]) {
+      if (!fs.existsSync(requiredPath)) {
+        throw new Error(`${suiteId} generated fixture is missing: ${requiredPath}`);
+      }
+    }
+    const workspaceCase = JSON.stringify(entry);
+    const authorExit = await run(['--label', suiteId], {
+      extraEnv: {
+        ...commonEnv,
+        LA_E2E_CLI_RUN_AFTER_PERSISTENCE_MODE: 'author',
+        LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE: workspaceCase,
+        LA_E2E_CLI_MINIMAL_ACTIVATION: '0',
+        LA_E2E_CLI_VALIDATE_DEPENDENCIES: '1',
+        LA_E2E_STRICT_DEPENDENCY_VALIDATION: '1',
+        LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '1',
+        LA_E2E_CLI_USER_DATA_SUFFIX: `${suiteId}-author-${Date.now()}`,
+        LA_E2E_CLI_STARTUP_RESOURCE: entry.workspaceFilePath,
+      },
+    });
+    if (authorExit !== 0) {
+      throw new Error(`${suiteId} author host failed`);
+    }
+    if (!fs.existsSync(handoffPath)) {
+      throw new Error(`${suiteId} author host did not publish the semantic hash handoff`);
+    }
+    const reopenExit = await run(['--label', suiteId], {
+      extraEnv: {
+        ...commonEnv,
+        LA_E2E_CLI_RUN_AFTER_PERSISTENCE_MODE: 'reopen',
+        LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE: workspaceCase,
+        LA_E2E_CLI_MINIMAL_ACTIVATION: '0',
+        LA_E2E_CLI_VALIDATE_DEPENDENCIES: '1',
+        LA_E2E_STRICT_DEPENDENCY_VALIDATION: '1',
+        LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '1',
+        LA_E2E_CLI_USER_DATA_SUFFIX: `${suiteId}-reopen-${Date.now()}`,
+        LA_E2E_CLI_STARTUP_RESOURCE: entry.workspaceFilePath,
+      },
+    });
+    if (reopenExit !== 0) {
+      throw new Error(`${suiteId} fresh reopen host failed`);
+    }
+  } catch (error) {
+    failures.push(error);
+  }
+  try {
+    await cleanup(workspaceParent, suiteId, true);
+  } catch (error) {
+    failures.push(error);
+  }
+  if (!process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT && process.env.LA_E2E_CLI_PRESERVE_WORKSPACES !== '1') {
+    try {
+      await cleanupRuntime(runtimeDependenciesRoot);
+    } catch (error) {
+      failures.push(error);
+    }
+  }
+  if (
+    failures.length > 0 ||
+    !getOwnedRootCleanupVerified([
+      workspaceParent,
+      ...(!process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT ? [runtimeDependenciesRoot] : []),
+    ]) ||
+    !getDirectSuiteComplete(suiteId, readJsonLinesIfExists(phaseResultsPath))
+  ) {
+    throw new AggregateError(failures, `${suiteId} lifecycle evidence is inadmissible`);
+  }
+  return 0;
 }
 
 // Additive family selector, intentionally outside the canonical baseline/OGF
@@ -3696,6 +3852,7 @@ module.exports = {
     applyInheritedOrderedEvidenceContext,
     initializeOrderedEvidenceForProcess,
     runHttpTimeoutLifecycle,
+    runRunAfterPersistenceLifecycle,
     beginDirectMsnEvidence,
     finalizeDirectMsnEvidence,
     finalizeMsnLifecycleCleanup,
@@ -4223,7 +4380,7 @@ function getDirectSuiteComplete(label, phaseResults) {
     missingPhaseIds.length === 0 &&
     unexpectedPhaseIds.length === 0 &&
     getDuplicateValues(observedPhaseIds).length === 0 &&
-    (!['httpTimeoutLifecycle', 'statelessVariablesLifecycle'].includes(label) ||
+    (!['httpTimeoutLifecycle', 'statelessVariablesLifecycle', 'runAfterPersistenceLifecycle'].includes(label) ||
       expectedPhaseIds.every((phaseId, index) => observedPhaseIds[index] === phaseId)) &&
     phaseResults.every(
       (phase) =>
@@ -4628,7 +4785,7 @@ function getDirectExpectedPhaseIds(label) {
   if (label === 'msnWeatherLifecycle') {
     return SUITE_REGISTRY[label].expectedPhases.filter((phaseId) => phaseId.startsWith(`${label}:`));
   }
-  if (label === 'workspaceArtifactRegeneration' || label === 'statelessVariablesLifecycle') {
+  if (label === 'workspaceArtifactRegeneration' || label === 'statelessVariablesLifecycle' || label === 'runAfterPersistenceLifecycle') {
     return [...SUITE_REGISTRY[label].expectedPhases];
   }
   if (label === 'runtimeDependencyBootstrap') {
@@ -4740,6 +4897,9 @@ function getSuitePhaseId(label, env) {
   }
   if (label === 'statelessVariablesLifecycle' && env.LA_E2E_CLI_STATELESS_VARIABLES_MODE === 'run') {
     return 'statelessVariablesLifecycle:reopen';
+  }
+  if (label === 'runAfterPersistenceLifecycle' && env.LA_E2E_CLI_RUN_AFTER_PERSISTENCE_MODE) {
+    return `runAfterPersistenceLifecycle:${env.LA_E2E_CLI_RUN_AFTER_PERSISTENCE_MODE}`;
   }
   const createWorkspaceLabel = env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_CREATE_LABEL;
   const lifecycleMode = env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE;

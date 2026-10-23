@@ -44,7 +44,7 @@ import type { ScreenshotExpectation } from './screenshotReadiness';
 import { installStatelessHistorySettings, runWithOrderedCleanup } from './statelessVariablesControls';
 import { normalizeFsPath, uniqueName } from './testUtils';
 import { closeAllTabs, getWebviewTabs, waitForWebviewTab } from './webviewTabs';
-import { statelessLifecycleHelpers as helpers, type CreatedWorkspace } from './workspaceLifecycle.test';
+import { statelessLifecycleHelpers as helpers, type CreatedWorkspace } from './workspaceLifecycle';
 import { activeWebview } from './workspaceMultiRootWorkbench';
 import {
   isLocalWorkflowManagementTimeout,

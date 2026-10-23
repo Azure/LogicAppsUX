@@ -1,5 +1,6 @@
 import * as assert from 'assert';
 import * as path from 'path';
+import { designerV2ViewType, selectDesignerV2 } from './designerVersion';
 
 // Only the connector-free Compose clause. HTTP execution, Portal and Consumption
 // validation are deliberately not represented by a replacement endpoint.
@@ -13,7 +14,7 @@ export const httpTimeoutComposeAction = {
 export const httpTimeoutComposeError =
   "The request options timeout parameter is not supported for action 'Compose' of type 'Compose'. Actions of type 'HTTP' are supported.";
 
-export const httpTimeoutComposeDesignerViewType = 'designerLocalV2';
+export const httpTimeoutComposeDesignerViewType = designerV2ViewType;
 
 export async function selectHttpTimeoutComposeDesignerV2(
   getConfiguration: () => {
@@ -22,8 +23,7 @@ export async function selectHttpTimeoutComposeDesignerV2(
   },
   workspaceTarget: number
 ): Promise<void> {
-  await getConfiguration().update('designerVersion', 2, workspaceTarget);
-  assert.strictEqual(getConfiguration().get<number>('designerVersion'), 2, 'Family requires the V2 global Code/Workflow views');
+  await selectDesignerV2(getConfiguration, workspaceTarget);
 }
 
 export interface HttpTimeoutComposeWorkflow {
