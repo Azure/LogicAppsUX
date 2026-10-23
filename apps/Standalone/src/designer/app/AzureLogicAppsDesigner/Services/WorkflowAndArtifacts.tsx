@@ -15,6 +15,8 @@ import { fetchFileData, fetchFilesFromFolder } from './vfsService';
 import { HybridAppUtility, hybridApiVersion } from '../Utilities/HybridAppUtilities';
 import type { HostingPlanTypes } from '../../../state/workflowLoadingSlice';
 import { ArmParser } from '../Utilities/ArmParser';
+import { armOnlyStandardManagement, getStandardManagementCacheKey } from './StandardManagement';
+import type { StandardManagementHttpClient } from '@microsoft/logic-apps-shared';
 
 const baseUrl = 'https://management.azure.com';
 const standardApiVersion = '2020-06-01';
@@ -206,9 +208,14 @@ export const getWorkflowAndArtifactsConsumption = async (workflowId: string, isD
   return response.data;
 };
 
-export const useRunInstanceStandard = (workflowName: string, appId?: string, runId?: string) => {
+export const useRunInstanceStandard = (
+  workflowName: string,
+  appId?: string,
+  runId?: string,
+  standardManagement = armOnlyStandardManagement
+) => {
   return useQuery(
-    [runsQueriesKeys.useRunInstance, appId, workflowName, runId],
+    [runsQueriesKeys.useRunInstance, appId, workflowName, runId, getStandardManagementCacheKey(standardManagement)],
     async () => {
       if (!appId) {
         return;
@@ -223,15 +230,7 @@ export const useRunInstanceStandard = (workflowName: string, appId?: string, run
         );
       }
 
-      const results = await axios.get<LogicAppsV2.RunInstanceDefinition>(
-        `${baseUrl}${appId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/runs/${runId}?api-version=2018-11-01&$expand=properties/actions,workflow/properties`,
-        {
-          headers: {
-            Authorization: `Bearer ${environment.armToken}`,
-          },
-        }
-      );
-      return results.data;
+      return getRunInstanceStandard(workflowName, appId, runId, standardManagement);
     },
     {
       enabled: !!workflowName && !!runId,
@@ -241,6 +240,16 @@ export const useRunInstanceStandard = (workflowName: string, appId?: string, run
     }
   );
 };
+
+export const getRunInstanceStandard = (
+  workflowName: string,
+  appId: string,
+  runId?: string,
+  standardManagement = armOnlyStandardManagement
+): Promise<LogicAppsV2.RunInstanceDefinition> =>
+  standardManagement.getRun<LogicAppsV2.RunInstanceDefinition>({
+    uri: `${baseUrl}${appId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/runs/${runId}?api-version=2018-11-01&$expand=properties/actions,workflow/properties`,
+  });
 
 export const useRunInstanceConsumption = (workflowname: string, appId?: string, runId?: string) => {
   return useQuery(
@@ -268,60 +277,88 @@ export const useRunInstanceConsumption = (workflowname: string, appId?: string, 
 export const listCallbackUrl = async (
   workflowId: string,
   triggerName: string | undefined,
-  isConsumption = false
+  isConsumption = false,
+  standardManagement = armOnlyStandardManagement
 ): Promise<CallbackInfo> => {
-  return getReactQueryClient().fetchQuery(['callbackUrl', { triggerName }], async () => {
-    let callbackInfo: any;
-    if (triggerName) {
-      const authToken = {
-        Authorization: `Bearer ${environment.armToken}`,
-      };
-      if (HybridAppUtility.isHybridLogicApp(workflowId)) {
-        callbackInfo = await HybridAppUtility.postProxy(`${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl`, null, authToken);
+  return getReactQueryClient().fetchQuery(
+    ['callbackUrl', workflowId, triggerName, getStandardManagementCacheKey(standardManagement)],
+    async () => {
+      let callbackInfo: any;
+      if (triggerName) {
+        const authToken = {
+          Authorization: `Bearer ${environment.armToken}`,
+        };
+        if (HybridAppUtility.isHybridLogicApp(workflowId)) {
+          callbackInfo = await HybridAppUtility.postProxy(
+            `${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl`,
+            null,
+            authToken
+          );
+        } else if (isConsumption) {
+          const result = await axios.post(
+            `${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl?api-version=${
+              isConsumption ? '2016-10-01' : standardApiVersion
+            }`,
+            null,
+            {
+              headers: {
+                ...authToken,
+              },
+            }
+          );
+          callbackInfo = result.data;
+        } else {
+          callbackInfo = await standardManagement.getCallbackUrl({
+            uri: `${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl?api-version=${standardApiVersion}`,
+            content: null,
+            headers: authToken,
+          });
+        }
       } else {
-        const result = await axios.post(
-          `${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl?api-version=${
-            isConsumption ? '2016-10-01' : standardApiVersion
-          }`,
-          null,
-          {
-            headers: {
-              ...authToken,
-            },
-          }
-        );
-        callbackInfo = result.data;
+        callbackInfo = {
+          basePath: '',
+          method: '',
+          queries: {},
+          value: '',
+        };
       }
-    } else {
-      callbackInfo = {
-        basePath: '',
-        method: '',
-        queries: {},
-        value: '',
+
+      let callbackUri: URL;
+      if (callbackInfo.relativePath) {
+        callbackUri = new URL(`${callbackInfo.basePath}${validateResourceId(callbackInfo.relativePath)}`);
+        Object.entries(callbackInfo.queries).forEach(([key, value]) => callbackUri.searchParams.append(key, (value as any) ?? ''));
+      } else {
+        callbackUri = callbackInfo.value;
+      }
+
+      return {
+        method: callbackInfo.method,
+        value: callbackUri.toString(),
       };
     }
-
-    let callbackUri: URL;
-    if (callbackInfo.relativePath) {
-      callbackUri = new URL(`${callbackInfo.basePath}${validateResourceId(callbackInfo.relativePath)}`);
-      Object.entries(callbackInfo.queries).forEach(([key, value]) => callbackUri.searchParams.append(key, (value as any) ?? ''));
-    } else {
-      callbackUri = callbackInfo.value;
-    }
-
-    return {
-      method: callbackInfo.method,
-      value: callbackUri.toString(),
-    };
-  });
+  );
 };
 
 // Helper function to fetch A2A authentication key
-const fetchA2AAuthKey = async (siteResourceId: string, workflowName: string, isDraftMode?: boolean) => {
+export const fetchA2AAuthKey = async (
+  siteResourceId: string,
+  workflowName: string,
+  isDraftMode?: boolean,
+  standardManagement = armOnlyStandardManagement
+) => {
   const currentDate: Date = new Date();
+  if (isDraftMode) {
+    return standardManagement.getDraftAgentKeys({
+      uri: `${baseUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/listDraftApiKeys?api-version=2018-11-01`,
+      content: {
+        expiry: new Date(currentDate.getTime() + 86400000).toISOString(),
+        keyType: 'Primary',
+      },
+    });
+  }
 
   const response = await axios.post(
-    `${baseUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/${isDraftMode ? 'listDraftApiKeys' : 'listApiKeys'}?api-version=2018-11-01`,
+    `${baseUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/listApiKeys?api-version=2018-11-01`,
     {
       expiry: new Date(currentDate.getTime() + 86400000).toISOString(),
       keyType: 'Primary',
@@ -440,92 +477,101 @@ const fetchOBODataConsumption = async (workflowId: string): Promise<string | nul
 };
 
 // Async function to get Agent URL with authentication tokens (uses React Query for memoization)
-export const fetchAgentUrl = (siteResourceId: string, workflowName: string, hostName: string, isDraftMode?: boolean): Promise<AgentURL> => {
+export const fetchAgentUrl = (
+  siteResourceId: string,
+  workflowName: string,
+  hostName: string,
+  isDraftMode?: boolean,
+  standardManagement = armOnlyStandardManagement
+): Promise<AgentURL> => {
   const queryClient = getReactQueryClient();
 
-  return queryClient.fetchQuery(['agentUrl', siteResourceId, workflowName, hostName, isDraftMode], async (): Promise<AgentURL> => {
-    if (!workflowName || !hostName) {
-      return { agentUrl: '', chatUrl: '', hostName: '' };
-    }
+  return queryClient.fetchQuery(
+    ['agentUrl', siteResourceId, workflowName, hostName, isDraftMode, getStandardManagementCacheKey(standardManagement)],
+    async (): Promise<AgentURL> => {
+      if (!workflowName || !hostName) {
+        return { agentUrl: '', chatUrl: '', hostName: '' };
+      }
 
-    try {
-      let queryParams: AgentQueryParams | undefined = undefined;
-      let a2aKey = '';
-      let a2aCodeForDraft = '';
-      const authentication = await fetchAuthentication(siteResourceId);
+      try {
+        let queryParams: AgentQueryParams | undefined = undefined;
+        let a2aKey = '';
+        let a2aCodeForDraft = '';
+        const authentication = await fetchAuthentication(siteResourceId);
 
-      if (!authentication?.properties?.enabled || isDraftMode) {
-        // Get A2A authentication key
-        const a2aData = await fetchA2AAuthKey(siteResourceId, workflowName, isDraftMode);
-        const endpoint = a2aData?.endpoint as string;
-        if (isDraftMode && endpoint) {
-          const endpointData = endpoint.split('?');
-          a2aCodeForDraft = endpointData.pop() ?? '';
-        }
-        // Get OBO data if available
-        const oboData = await fetchOBOData(siteResourceId);
+        if (!authentication?.properties?.enabled || isDraftMode) {
+          // Get A2A authentication key
+          const a2aData: any = await fetchA2AAuthKey(siteResourceId, workflowName, isDraftMode, standardManagement);
+          const endpoint = a2aData?.endpoint as string;
+          if (isDraftMode && endpoint) {
+            const endpointData = endpoint.split('?');
+            a2aCodeForDraft = endpointData.pop() ?? '';
+          }
+          // Get OBO data if available
+          const oboData = await fetchOBOData(siteResourceId);
 
-        // Add authentication tokens if available
-        a2aKey = a2aData?.key;
-        if (a2aKey) {
-          queryParams = { apiKey: a2aKey };
+          // Add authentication tokens if available
+          a2aKey = a2aData?.key;
+          if (a2aKey) {
+            queryParams = { apiKey: a2aKey };
 
-          // Add OBO token if available
-          const oboKey = oboData?.properties?.key || oboData?.key;
-          if (oboKey) {
-            queryParams.oboUserToken = oboKey;
+            // Add OBO token if available
+            const oboKey = oboData?.properties?.key || oboData?.key;
+            if (oboKey) {
+              queryParams.oboUserToken = oboKey;
+            }
           }
         }
-      }
 
-      const agentBaseUrl = hostName.startsWith('https://') ? hostName : `https://${hostName}`;
+        const agentBaseUrl = hostName.startsWith('https://') ? hostName : `https://${hostName}`;
 
-      const agentUrl = `${agentBaseUrl}/api/Agents/${workflowName}`;
-      const prodChatUrl = `${agentBaseUrl}/api/agentsChat/${workflowName}/IFrame`;
+        const agentUrl = `${agentBaseUrl}/api/Agents/${workflowName}`;
+        const prodChatUrl = `${agentBaseUrl}/api/agentsChat/${workflowName}/IFrame`;
 
-      const agentCardUrlForDraft = new URL(
-        `${agentBaseUrl}/runtime/webhooks/workflow/scaleUnits/prod-00/agents/${workflowName}/draft/.well-known/agent-card.json`
-      );
-      if (a2aKey) {
-        agentCardUrlForDraft.searchParams.append('x-api-key', a2aKey);
-      }
-      if (a2aCodeForDraft) {
-        const codeParamParts = a2aCodeForDraft.split('=');
-        if (codeParamParts.length > 1 && codeParamParts[1]) {
-          agentCardUrlForDraft.searchParams.append('code', decodeURIComponent(codeParamParts[1]));
+        const agentCardUrlForDraft = new URL(
+          `${agentBaseUrl}/runtime/webhooks/workflow/scaleUnits/prod-00/agents/${workflowName}/draft/.well-known/agent-card.json`
+        );
+        if (a2aKey) {
+          agentCardUrlForDraft.searchParams.append('x-api-key', a2aKey);
         }
+        if (a2aCodeForDraft) {
+          const codeParamParts = a2aCodeForDraft.split('=');
+          if (codeParamParts.length > 1 && codeParamParts[1]) {
+            agentCardUrlForDraft.searchParams.append('code', decodeURIComponent(codeParamParts[1]));
+          }
+        }
+
+        const draftChatUrl = new URL(`${agentBaseUrl}/api/draftAgentsChat/${workflowName}/IFrame`);
+        draftChatUrl.searchParams.append('api-version', '2022-05-01');
+        draftChatUrl.searchParams.append('agentCard', agentCardUrlForDraft.href);
+
+        const localChatUrl = new URL('https://localhost:3001');
+        if (isDraftMode) {
+          localChatUrl.searchParams.append('agentCard', agentCardUrlForDraft.href);
+        } else {
+          const agentCardUrlForLocal = new URL(`${agentBaseUrl}/api/agents/${workflowName}/.well-known/agent-card.json`);
+          localChatUrl.searchParams.append('agentCard', agentCardUrlForLocal.href);
+        }
+
+        const isDev = process.env.NODE_ENV === 'development';
+        const chatUrl = isDev ? localChatUrl.href : isDraftMode ? draftChatUrl.href : prodChatUrl;
+
+        return {
+          agentUrl,
+          chatUrl,
+          queryParams,
+          hostName,
+        };
+      } catch (error) {
+        LoggerService().log({
+          level: LogEntryLevel.Error,
+          message: `Failed to get agent URL: ${error}`,
+          area: 'fetchAgentUrl',
+        });
+        return { agentUrl: '', chatUrl: '', hostName };
       }
-
-      const draftChatUrl = new URL(`${agentBaseUrl}/api/draftAgentsChat/${workflowName}/IFrame`);
-      draftChatUrl.searchParams.append('api-version', '2022-05-01');
-      draftChatUrl.searchParams.append('agentCard', agentCardUrlForDraft.href);
-
-      const localChatUrl = new URL('https://localhost:3001');
-      if (isDraftMode) {
-        localChatUrl.searchParams.append('agentCard', agentCardUrlForDraft.href);
-      } else {
-        const agentCardUrlForLocal = new URL(`${agentBaseUrl}/api/agents/${workflowName}/.well-known/agent-card.json`);
-        localChatUrl.searchParams.append('agentCard', agentCardUrlForLocal.href);
-      }
-
-      const isDev = process.env.NODE_ENV === 'development';
-      const chatUrl = isDev ? localChatUrl.href : isDraftMode ? draftChatUrl.href : prodChatUrl;
-
-      return {
-        agentUrl,
-        chatUrl,
-        queryParams,
-        hostName,
-      };
-    } catch (error) {
-      LoggerService().log({
-        level: LogEntryLevel.Error,
-        message: `Failed to get agent URL: ${error}`,
-        area: 'fetchAgentUrl',
-      });
-      return { agentUrl: '', chatUrl: '', hostName };
     }
-  });
+  );
 };
 
 export const fetchAgentUrlConsumption = async (
@@ -852,9 +898,10 @@ export const createMcpServer = async (
     workflow: any;
   }[],
   connectionsData: ConnectionsData | undefined,
-  serverInfo: { name: string; description: string }
+  serverInfo: { name: string; description: string },
+  standardManagement = armOnlyStandardManagement
 ): Promise<{ name: string; description: string; url: string; tools: { name: string }[] }> => {
-  const mcpServers = await listMcpServers(siteResourceId);
+  const mcpServers = await listMcpServers(siteResourceId, standardManagement);
 
   mcpServers.push({ name: serverInfo.name, description: serverInfo.description, tools: workflows.map((wf) => ({ name: wf.name })) });
 
@@ -873,7 +920,7 @@ export const createMcpServer = async (
       { skipValidation: true, throwError: true }
     );
 
-    const finalServers = await listMcpServers(siteResourceId);
+    const finalServers = await listMcpServers(siteResourceId, standardManagement);
     const formedServer = finalServers.find((server: any) => server.name === serverInfo.name);
     return formedServer;
   } catch (error) {
@@ -974,6 +1021,7 @@ export const saveWorkflowStandard = async (
   options?: {
     skipValidation?: boolean;
     throwError?: boolean;
+    standardManagement?: StandardManagementHttpClient;
   },
   isDraftSave?: boolean
 ): Promise<any> => {
@@ -1028,7 +1076,15 @@ export const saveWorkflowStandard = async (
     if (!options?.skipValidation) {
       for (const { name, workflow } of workflows) {
         try {
-          await validateWorkflowStandard(siteResourceId, name, workflow, connectionsData, parametersData, settings);
+          await validateWorkflowStandard(
+            siteResourceId,
+            name,
+            workflow,
+            connectionsData,
+            parametersData,
+            settings,
+            options?.standardManagement
+          );
         } catch (error: any) {
           if (error.status !== 404) {
             return;
@@ -1149,7 +1205,8 @@ export const validateWorkflowStandard = async (
   workflow: any,
   connectionsData?: ConnectionsData,
   parametersData?: ParametersData,
-  settings?: Record<string, string>
+  settings?: Record<string, string>,
+  standardManagement = armOnlyStandardManagement
 ): Promise<any> => {
   const requestPayload = { properties: { ...workflow } };
 
@@ -1175,16 +1232,12 @@ export const validateWorkflowStandard = async (
       }
     );
   } else {
-    response = await axios.post(
-      `${baseUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/validate?api-version=${standardApiVersion}`,
-      requestPayload,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${environment.armToken}`,
-        },
-      }
-    );
+    await standardManagement.validateWorkflow({
+      uri: `${baseUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/validate?api-version=${standardApiVersion}`,
+      content: requestPayload,
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return;
   }
 
   if (response.status !== 200) {
@@ -1362,19 +1415,13 @@ export const deployArtifacts = async (
   return response;
 };
 
-const listMcpServers = async (siteResourceId: string): Promise<any[]> => {
+export const listMcpServers = async (siteResourceId: string, standardManagement = armOnlyStandardManagement): Promise<any[]> => {
   let mcpServers: any[] = [];
   try {
-    const response = await axios.post(
-      `${baseUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/listMcpServers?api-version=2024-11-01`,
-      undefined,
-      {
-        headers: {
-          Authorization: `Bearer ${environment.armToken}`,
-        },
-      }
-    );
-    mcpServers = [...(response.data?.value ?? [])];
+    const response = await standardManagement.listMcpServers<{ value?: any[] }>({
+      uri: `${baseUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/listMcpServers?api-version=2024-11-01`,
+    });
+    mcpServers = [...(response?.value ?? [])];
   } catch (error: any) {
     console.error('Error fetching MCP servers:', error);
 

@@ -13,6 +13,14 @@ export { StandardConnectorService, type StandardConnectorServiceOptions } from '
 export { StandardOperationManifestService, isServiceProviderOperation } from './operationmanifest';
 export { StandardSearchService } from './search';
 export { StandardRunService } from './run';
+export {
+  StandardManagementHttpClient,
+  StandardManagementError,
+  standardDirectManagementFeatureGate,
+  standardManagementApiVersion,
+  type StandardManagementContext,
+  type StandardManagementHttpClientOptions,
+} from './management';
 export { StandardArtifactService } from './artifact';
 export { StandardCustomCodeService } from './customcode';
 export {

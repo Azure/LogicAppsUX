@@ -14,10 +14,12 @@ import type { ContinuationTokenResponse } from '../common/azure';
 import type { QueryParameters } from '../httpClient';
 import { getHybridAppBaseRelativeUrl, hybridApiVersion, isHybridLogicApp } from './hybrid';
 import * as ClientOperationsData from '../base/operations';
+import type { StandardManagementHttpClient } from './management';
 
 const ISE_RESOURCE_ID = 'properties/integrationServiceEnvironmentResourceId';
 
 interface StandardSearchServiceOptions extends BaseSearchServiceOptions {
+  standardManagement?: StandardManagementHttpClient;
   apiVersion: string;
   baseUrl: string;
   showStatefulOperations?: boolean;
@@ -68,7 +70,9 @@ export class StandardSearchService extends BaseSearchService {
         },
       });
     } else {
-      response = await httpClient.get<AzureOperationsFetchResponse>({ uri, queryParameters, headers });
+      const request = { uri, queryParameters, headers };
+      response = await (this.options.standardManagement?.listOperations<AzureOperationsFetchResponse>(request) ??
+        httpClient.get<AzureOperationsFetchResponse>(request));
     }
 
     const isAzureConnectorsEnabled = this.options.apiHubServiceDetails.subscriptionId !== undefined;
@@ -161,7 +165,9 @@ export class StandardSearchService extends BaseSearchService {
         },
       });
     } else {
-      response = await httpClient.get<{ value: Connector[] }>({ uri, queryParameters, headers });
+      const request = { uri, queryParameters, headers };
+      response = await (this.options.standardManagement?.listConnectorGroups<{ value: Connector[] }>(request) ??
+        httpClient.get<{ value: Connector[] }>(request));
     }
 
     const isAzureConnectorsEnabled = this.options.apiHubServiceDetails.subscriptionId !== undefined;
