@@ -141,8 +141,18 @@ function testLifecycleUsesProductWizardAndFreshHostContract(): void {
   assert.match(source, /allTextIncludes: \['Save'\]/, 'Designer frame selection must use the proven stable Save marker');
   assert.match(
     source,
-    /hasExactVisibleWorkbenchIframeForTarget\(\s*workbench,\s*cdp\.targetUrl,/,
-    'Designer frame selection must prove exact ownership from the visible workbench iframe'
+    /designerCdp = await connectToVsCodeCdp\(\{ targetName \}\)/,
+    'Designer frame selection must use the common activated Logic Apps CDP target path'
+  );
+  assert.match(
+    source,
+    /contextId = await waitForWebviewFrameContext\(designerCdp,\s*\{\s*allTextIncludes: \['Save'\]/,
+    'Designer frame selection must use the common shared webview frame binding'
+  );
+  assert.match(
+    source,
+    /beforePoll: async \(\) => \{\s*await handlePrompt\(\);\s*if \(commandError\) \{\s*throw commandError;/,
+    'Designer frame binding must continue servicing delayed affirmative connector prompts and command rejection'
   );
   const openDesignerBody = source.slice(
     source.indexOf('async function openExactDesignerV2'),
@@ -153,8 +163,9 @@ function testLifecycleUsesProductWizardAndFreshHostContract(): void {
     /document\.visibilityState|document\.hidden/,
     'Designer binding must not use target-local Page Visibility state before the candidate is accepted and activated'
   );
-  assert.match(openDesignerBody, /currentTabs\[0\]\.isActive && currentTabs\[0\]\.label\.includes\(entry\.wfName\)/);
-  assert.match(openDesignerBody, /candidate\.canvasCount === 1/);
+  assert.doesNotMatch(openDesignerBody, /connectToVsCodeCdpByText|acceptCandidate/);
+  assert.match(openDesignerBody, /openingTabs\[0\]\.isActive && openingTabs\[0\]\.label\.includes\(entry\.wfName\)/);
+  assert.match(openDesignerBody, /actions\.waitForDesignerReady\(existingNodeTitles\)/);
   assert.match(source, /Fresh-host UI verification must not save or mutate workflow\.json/);
   assert.doesNotMatch(source, /Skip for now|optionText: 'No'|optionText: 'Cancel'/);
   const reopenBody = source.slice(source.indexOf('async function reopenAndVerify'), source.indexOf('async function openExactDesignerV2'));

@@ -2,7 +2,7 @@ import * as assert from 'assert';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { connectToVsCodeCdpByText, connectToVsCodeWorkbenchCdp, hasExactVisibleWorkbenchIframeForTarget } from './cdpClient';
+import { connectToVsCodeCdp, connectToVsCodeWorkbenchCdp, waitForWebviewFrameContext } from './cdpClient';
 import { ProvenDesignerCdpActions } from './designerCdpActions';
 import { designerV2ViewType, selectDesignerV2 } from './designerVersion';
 import { assertNoDialogAttempts, installDialogGuard } from './dialogGuard';
@@ -239,7 +239,7 @@ async function openExactDesignerV2(
   azureFixture: ApprovedAzureConnectorFixture,
   existingNodeTitles: string[] = []
 ): Promise<{
-  cdp: Awaited<ReturnType<typeof connectToVsCodeCdpByText>>['cdp'];
+  cdp: Awaited<ReturnType<typeof connectToVsCodeCdp>>;
   contextId: number;
   actions: ProvenDesignerCdpActions;
 }> {
@@ -269,7 +269,8 @@ async function openExactDesignerV2(
   command.then(undefined, (error) => {
     commandError = error;
   });
-  let connected: Awaited<ReturnType<typeof connectToVsCodeCdpByText>>;
+  let designerCdp: Awaited<ReturnType<typeof connectToVsCodeCdp>> | undefined;
+  let contextId: number | undefined;
   try {
     while (Date.now() < deadline) {
       await handlePrompt();
@@ -285,9 +286,16 @@ async function openExactDesignerV2(
     if (commandError) {
       throw commandError;
     }
-    connected = await connectToVsCodeCdpByText({
-      targetName,
+    const openingTabs = getWebviewTabs(designerV2ViewType);
+    assert.strictEqual(openingTabs.length, 1, `Expected one exact ${designerV2ViewType} tab before binding the frame`);
+    assert.ok(
+      openingTabs[0].isActive && openingTabs[0].label.includes(entry.wfName),
+      `Expected active Designer V2 tab for ${entry.wfName} before binding the frame`
+    );
+    designerCdp = await connectToVsCodeCdp({ targetName });
+    contextId = await waitForWebviewFrameContext(designerCdp, {
       allTextIncludes: ['Save'],
+      description: `${targetName} DOM context`,
       timeoutMs: Math.min(90_000, Math.max(1, deadline - Date.now())),
       beforePoll: async () => {
         await handlePrompt();
@@ -295,32 +303,14 @@ async function openExactDesignerV2(
           throw commandError;
         }
       },
-      acceptCandidate: async (cdp, contextId) => {
-        const currentTabs = getWebviewTabs(designerV2ViewType);
-        assert.strictEqual(currentTabs.length, 1, `Expected one exact ${designerV2ViewType} tab while binding the frame`);
-        assert.ok(
-          currentTabs[0].isActive && currentTabs[0].label.includes(entry.wfName),
-          `Expected active Designer V2 tab for ${entry.wfName} while binding the frame`
-        );
-        const candidate = await cdp.evaluate<{ canvasCount: number }>(
-          contextId,
-          `(() => ({
-            canvasCount: Array.from(document.querySelectorAll('.react-flow, .msla-designer-canvas'))
-              .filter((element) => element instanceof HTMLElement &&
-                element.getBoundingClientRect().width > 0 && element.getBoundingClientRect().height > 0).length,
-          }))()`
-        );
-        const ownedByVisibleWorkbenchFrame = await hasExactVisibleWorkbenchIframeForTarget(
-          workbench,
-          cdp.targetUrl,
-          Math.min(2000, Math.max(1, deadline - Date.now()))
-        );
-        assert.ok(ownedByVisibleWorkbenchFrame && candidate.canvasCount === 1, 'Candidate must be the visible active Designer V2 iframe');
-      },
     });
+  } catch (error) {
+    designerCdp?.dispose();
+    throw error;
   } finally {
     workbench.dispose();
   }
+  assert.ok(designerCdp && contextId !== undefined, `Expected ${targetName} shared Designer CDP session`);
   const tabs = getWebviewTabs(designerV2ViewType);
   assert.strictEqual(tabs.length, 1, `Expected one exact ${designerV2ViewType} tab`);
   const tab = tabs[0];
@@ -335,9 +325,9 @@ async function openExactDesignerV2(
       throw commandError;
     }
   };
-  const actions = new ProvenDesignerCdpActions(connected.cdp, connected.contextId, deadline, assertActive);
+  const actions = new ProvenDesignerCdpActions(designerCdp, contextId, deadline, assertActive);
   await actions.waitForDesignerReady(existingNodeTitles);
-  return { ...connected, actions };
+  return { cdp: designerCdp, contextId, actions };
 }
 
 async function prepareApprovedAzureTarget(entry: CreatedWorkspace, deadline: number): Promise<ApprovedAzureConnectorFixture> {
