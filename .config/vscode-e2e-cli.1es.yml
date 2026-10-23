@@ -58,8 +58,7 @@ extends:
       codeql:
         language: javascript
     pool:
-      name: VSEngSS-MicroBuild2022-1ES
-      image: server2022-microbuildVS2022-1es
+      name: VSEng-MicroBuildVSStable
       os: windows
     stages:
       - stage: VSCodeE2EConsumer
@@ -68,8 +67,7 @@ extends:
           - job: resolve_consumer_context
             displayName: Resolve shared VS Code E2E consumer context
             pool:
-              name: VSEngSS-MicroBuild2022-1ES
-              image: server2022-microbuildVS2022-1es
+              name: VSEng-MicroBuildVSStable
               os: windows
             templateContext:
               type: validationJob
@@ -308,8 +306,7 @@ extends:
               expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
               feedBaseUrl: ${{ variables.feedBaseUrl }}
               pool:
-                name: VSEngSS-MicroBuild2022-1ES
-                image: server2022-microbuildVS2022-1es
+                name: VSEng-MicroBuildVSStable
                 os: windows
               platform: windows
               expectedProducerDefinitionId: $(System.DefinitionId)
@@ -330,8 +327,7 @@ extends:
               expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
               feedBaseUrl: ${{ variables.feedBaseUrl }}
               pool:
-                name: VSEngSS-MicroBuild2022-1ES
-                image: server2022-microbuildVS2022-1es
+                name: VSEng-MicroBuildVSStable
                 os: windows
               platform: windows
               expectedProducerDefinitionId: $(System.DefinitionId)
@@ -352,8 +348,7 @@ extends:
               expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
               feedBaseUrl: ${{ variables.feedBaseUrl }}
               pool:
-                name: VSEngSS-MicroBuild2022-1ES
-                image: server2022-microbuildVS2022-1es
+                name: VSEng-MicroBuildVSStable
                 os: windows
               platform: windows
               expectedProducerDefinitionId: $(System.DefinitionId)
@@ -374,8 +369,7 @@ extends:
               expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
               feedBaseUrl: ${{ variables.feedBaseUrl }}
               pool:
-                name: VSEngSS-MicroBuild2022-1ES
-                image: server2022-microbuildVS2022-1es
+                name: VSEng-MicroBuildVSStable
                 os: windows
               platform: windows
               expectedProducerDefinitionId: $(System.DefinitionId)
@@ -396,8 +390,7 @@ extends:
               expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
               feedBaseUrl: ${{ variables.feedBaseUrl }}
               pool:
-                name: VSEngSS-MicroBuild2022-1ES
-                image: server2022-microbuildVS2022-1es
+                name: VSEng-MicroBuildVSStable
                 os: windows
               platform: windows
               expectedProducerDefinitionId: $(System.DefinitionId)
@@ -418,8 +411,7 @@ extends:
               expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
               feedBaseUrl: ${{ variables.feedBaseUrl }}
               pool:
-                name: VSEngSS-MicroBuild2022-1ES
-                image: server2022-microbuildVS2022-1es
+                name: VSEng-MicroBuildVSStable
                 os: windows
               platform: windows
               expectedProducerDefinitionId: $(System.DefinitionId)
@@ -441,8 +433,7 @@ extends:
               expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
               feedBaseUrl: ${{ variables.feedBaseUrl }}
               pool:
-                name: VSEngSS-MicroBuild2022-1ES
-                image: server2022-microbuildVS2022-1es
+                name: VSEng-MicroBuildVSStable
                 os: windows
               platform: windows
               expectedProducerDefinitionId: $(System.DefinitionId)
@@ -496,8 +487,7 @@ extends:
               expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
               feedBaseUrl: ${{ variables.feedBaseUrl }}
               pool:
-                name: VSEngSS-MicroBuild2022-1ES
-                image: server2022-microbuildVS2022-1es
+                name: VSEng-MicroBuildVSStable
                 os: windows
               platform: windows
               expectedProducerDefinitionId: $(System.DefinitionId)
@@ -548,8 +538,7 @@ extends:
               expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
               feedBaseUrl: ${{ variables.feedBaseUrl }}
               pool:
-                name: VSEngSS-MicroBuild2022-1ES
-                image: server2022-microbuildVS2022-1es
+                name: VSEng-MicroBuildVSStable
                 os: windows
               platform: windows
               expectedProducerDefinitionId: $(System.DefinitionId)
@@ -600,8 +589,7 @@ extends:
               expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
               feedBaseUrl: ${{ variables.feedBaseUrl }}
               pool:
-                name: VSEngSS-MicroBuild2022-1ES
-                image: server2022-microbuildVS2022-1es
+                name: VSEng-MicroBuildVSStable
                 os: windows
               platform: windows
               expectedProducerDefinitionId: $(System.DefinitionId)
@@ -644,8 +632,7 @@ extends:
               expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
               feedBaseUrl: ${{ variables.feedBaseUrl }}
               pool:
-                name: VSEngSS-MicroBuild2022-1ES
-                image: server2022-microbuildVS2022-1es
+                name: VSEng-MicroBuildVSStable
                 os: windows
               platform: windows
               expectedProducerDefinitionId: $(System.DefinitionId)
@@ -688,8 +675,7 @@ extends:
               expectedSourceSha: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
               feedBaseUrl: ${{ variables.feedBaseUrl }}
               pool:
-                name: VSEngSS-MicroBuild2022-1ES
-                image: server2022-microbuildVS2022-1es
+                name: VSEng-MicroBuildVSStable
                 os: windows
               platform: windows
               expectedProducerDefinitionId: $(System.DefinitionId)
@@ -714,8 +700,7 @@ extends:
                   - windows_msn_weather_lifecycle
                 condition: always()
                 pool:
-                  name: VSEngSS-MicroBuild2022-1ES
-                  image: server2022-microbuildVS2022-1es
+                  name: VSEng-MicroBuildVSStable
                   os: windows
                 variables:
                   - name: linuxUnitTestsResult
@@ -909,8 +894,7 @@ extends:
                   - windows_workspace_multi_root
                 condition: always()
                 pool:
-                  name: VSEngSS-MicroBuild2022-1ES
-                  image: server2022-microbuildVS2022-1es
+                  name: VSEng-MicroBuildVSStable
                   os: windows
                 variables:
                   - name: linuxWorkspaceMultiRootSelected

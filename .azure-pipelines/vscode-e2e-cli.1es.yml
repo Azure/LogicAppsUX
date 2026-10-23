@@ -103,8 +103,7 @@ parameters:
     displayName: Owner-approved 1ES SDL pool
     type: object
     default:
-      name: VSEngSS-MicroBuild2022-1ES
-      image: server2022-microbuildVS2022-1es
+      name: VSEng-MicroBuildVSStable
       os: windows
 
   - name: linuxPool

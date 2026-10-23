@@ -23,6 +23,8 @@ testPackageLocalLintStagedRoutingContract();
 testRootNpmrcSourceGuardAllowsGeneratedRuntimeFile();
 testLocalAzureToolsWrapperContractIfAvailable();
 testConsumerAdmissionContract();
+testVSStablePoolContract();
+testDownloadedVSCodeRuntimeCleanupContract();
 testSelectorResolutionScriptBehavior();
 testCanonicalSuiteParityContract();
 testSupplementaryFamilyRoutingContract();
@@ -425,6 +427,223 @@ function extractFullRollupGateScript(consumer) {
 function parseYaml(relativePath) {
   const { parse } = require(path.join(repoRoot, 'apps', 'vs-code-designer', 'node_modules', 'yaml'));
   return parse(read(relativePath));
+}
+
+function testVSStablePoolContract() {
+  const pipelinePaths = [
+    '.config/vscode-e2e-cli.1es.yml',
+    '.azure-pipelines/vscode-e2e-cli.1es.yml',
+    '.azure-pipelines/templates/vscode-e2e-stage.yml',
+  ];
+  const explicitPools = pipelinePaths.flatMap((pipelinePath) => collectExplicitPools(parseYaml(pipelinePath), pipelinePath));
+  const windowsPools = explicitPools.filter(({ pool }) => pool.os === 'windows');
+  const linuxPools = explicitPools.filter(({ pool }) => pool.os === 'linux');
+
+  assert.strictEqual(windowsPools.length, 18, 'all 18 explicit Windows pool blocks must remain present');
+  for (const { pipelinePath, objectPath, pool } of windowsPools) {
+    assert.strictEqual(pool.name, 'VSEng-MicroBuildVSStable', `${pipelinePath}:${objectPath} must use VSStable`);
+    assert.strictEqual(pool.image, undefined, `${pipelinePath}:${objectPath} must not pin a Windows image`);
+  }
+
+  assert.ok(linuxPools.length > 0, 'the pipeline topology must retain explicit Linux pool blocks');
+  for (const { pipelinePath, objectPath, pool } of linuxPools) {
+    assert.strictEqual(pool.name, 'AzurePipelines-EO', `${pipelinePath}:${objectPath} must retain the Linux pool`);
+    assert.strictEqual(pool.image, '1ESPT-Ubuntu22.04', `${pipelinePath}:${objectPath} must retain the Linux image`);
+  }
+
+  for (const pipelinePath of pipelinePaths) {
+    const pipelineText = read(pipelinePath);
+    assert.doesNotMatch(pipelineText, /VSEngSS-MicroBuild2022-1ES/);
+    assert.doesNotMatch(pipelineText, /server2022-microbuildVS2022-1es/);
+  }
+
+  const legacyStage = parseYaml('.azure-pipelines/templates/vscode-e2e-stage.yml');
+  const cliInvocations = collectTemplateInvocations(legacyStage).filter(({ template }) => template === 'vscode-e2e-run-cli.yml');
+  const windowsInvocations = cliInvocations.filter(({ parameters }) => parameters.platform === 'windows');
+  const linuxInvocations = cliInvocations.filter(({ parameters }) => parameters.platform === 'linux');
+  assert.ok(windowsInvocations.length > 0, 'legacy stage must retain Windows vscode-test CLI invocations');
+  assert.ok(linuxInvocations.length > 0, 'legacy stage must retain Linux vscode-test CLI invocations');
+  for (const { objectPath, parameters } of windowsInvocations) {
+    assert.strictEqual(parameters.pool, '${{ parameters.windowsPool }}', `${objectPath} must bind Windows execution to windowsPool`);
+  }
+  for (const { objectPath, parameters } of linuxInvocations) {
+    assert.strictEqual(parameters.pool, '${{ parameters.pool }}', `${objectPath} must bind Linux execution to the Linux pool`);
+  }
+
+  const registeredPipeline = parseYaml('.config/vscode-e2e-cli.1es.yml');
+  const registeredInvocations = collectTemplateInvocations(registeredPipeline).filter(
+    ({ template }) => template === '/.config/templates/vscode-e2e-cli-run-suite.yml@self'
+  );
+  assert.ok(registeredInvocations.length > 0, 'registered pipeline must retain vscode-test CLI suite invocations');
+  for (const { objectPath, parameters } of registeredInvocations) {
+    assert.ok(
+      parameters.platform === 'windows' || parameters.platform === 'linux',
+      `${objectPath} must declare a supported execution platform`
+    );
+    if (parameters.platform === 'windows') {
+      assert.strictEqual(parameters.pool?.name, 'VSEng-MicroBuildVSStable', `${objectPath} must bind Windows execution to VSStable`);
+      assert.strictEqual(parameters.pool?.os, 'windows', `${objectPath} must retain the Windows pool OS`);
+      assert.strictEqual(parameters.pool?.image, undefined, `${objectPath} must not pin a Windows image`);
+    } else {
+      assert.strictEqual(parameters.pool?.name, 'AzurePipelines-EO', `${objectPath} must bind Linux execution to the Linux pool`);
+      assert.strictEqual(parameters.pool?.os, 'linux', `${objectPath} must retain the Linux pool OS`);
+      assert.strictEqual(parameters.pool?.image, '1ESPT-Ubuntu22.04', `${objectPath} must retain the Linux image`);
+    }
+  }
+}
+
+function collectExplicitPools(value, pipelinePath, objectPath = '$') {
+  if (Array.isArray(value)) {
+    return value.flatMap((entry, index) => collectExplicitPools(entry, pipelinePath, `${objectPath}[${index}]`));
+  }
+  if (!value || typeof value !== 'object') {
+    return [];
+  }
+
+  const pools = [];
+  if (typeof value.name === 'string' && typeof value.os === 'string') {
+    pools.push({ pipelinePath, objectPath, pool: value });
+  }
+  for (const [key, entry] of Object.entries(value)) {
+    pools.push(...collectExplicitPools(entry, pipelinePath, `${objectPath}.${key}`));
+  }
+  return pools;
+}
+
+function collectTemplateInvocations(value, objectPath = '$') {
+  if (Array.isArray(value)) {
+    return value.flatMap((entry, index) => collectTemplateInvocations(entry, `${objectPath}[${index}]`));
+  }
+  if (!value || typeof value !== 'object') {
+    return [];
+  }
+
+  const invocations = [];
+  if (typeof value.template === 'string' && value.parameters && typeof value.parameters === 'object') {
+    invocations.push({ objectPath, template: value.template, parameters: value.parameters });
+  }
+  for (const [key, entry] of Object.entries(value)) {
+    invocations.push(...collectTemplateInvocations(entry, `${objectPath}.${key}`));
+  }
+  return invocations;
+}
+
+function testDownloadedVSCodeRuntimeCleanupContract() {
+  const runSuitesTemplate = read('.config/templates/vscode-e2e-cli-run-suite.yml');
+  const runSuites = parseYaml('.config/templates/vscode-e2e-cli-run-suite.yml');
+  const legacyRunSuitesTemplate = read('.azure-pipelines/templates/vscode-e2e-run-cli.yml');
+  const legacyRunSuites = parseYaml('.azure-pipelines/templates/vscode-e2e-run-cli.yml');
+  const consumer = parseYaml('.config/vscode-e2e-cli.1es.yml');
+  const legacyConsumer = parseYaml('.azure-pipelines/vscode-e2e-cli.1es.yml');
+  const cleanupScriptPath = path.join(__dirname, 'remove-downloaded-vscode-runtime.js');
+  const cleanupScript = fs.readFileSync(cleanupScriptPath, 'utf8');
+  const { removeDownloadedVSCodeRuntime } = require(cleanupScriptPath);
+  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'vscode-runtime-cleanup-'));
+
+  try {
+    const runtimeRoot = path.join(tempRoot, '.vscode-test');
+    const missingRoot = path.join(tempRoot, 'missing-runtime-root');
+    const downloadedX64Runtime = path.join(runtimeRoot, 'vscode-win32-x64-archive-1.141.0');
+    const downloadedArm64Runtime = path.join(runtimeRoot, 'vscode-win32-arm64-archive-1.142.3');
+    const preservedResults = path.join(runtimeRoot, 'results');
+    const preservedEvidence = path.join(runtimeRoot, 'evidence');
+    const preservedNestedRuntime = path.join(preservedEvidence, 'vscode-win32-x64-archive-9.9.9');
+    const preservedLookalikes = [
+      path.join(runtimeRoot, 'vscode-win32-x64-archive-current'),
+      path.join(runtimeRoot, 'vscode-win32-arm64-archive-1.141.0-preview'),
+      path.join(runtimeRoot, 'vscode-win32-ia32-archive-1.141.0'),
+      path.join(runtimeRoot, 'vscode-linux-x64-archive-1.141.0'),
+    ];
+    const preservedMatchingFile = path.join(runtimeRoot, 'vscode-win32-x64-archive-7.8.9');
+
+    fs.mkdirSync(downloadedX64Runtime, { recursive: true });
+    fs.mkdirSync(downloadedArm64Runtime, { recursive: true });
+    fs.mkdirSync(preservedResults, { recursive: true });
+    fs.mkdirSync(preservedNestedRuntime, { recursive: true });
+    for (const preservedLookalike of preservedLookalikes) {
+      fs.mkdirSync(preservedLookalike, { recursive: true });
+    }
+    fs.writeFileSync(preservedMatchingFile, 'not a directory\n');
+
+    assert.deepStrictEqual(removeDownloadedVSCodeRuntime(missingRoot), []);
+    assert.deepStrictEqual(new Set(removeDownloadedVSCodeRuntime(runtimeRoot)), new Set([downloadedX64Runtime, downloadedArm64Runtime]));
+    assert.ok(!fs.existsSync(downloadedX64Runtime));
+    assert.ok(!fs.existsSync(downloadedArm64Runtime));
+    for (const preservedPath of [
+      preservedResults,
+      preservedEvidence,
+      preservedNestedRuntime,
+      preservedMatchingFile,
+      ...preservedLookalikes,
+    ]) {
+      assert.ok(fs.existsSync(preservedPath), `cleanup must preserve ${preservedPath}`);
+    }
+
+    const cliRuntime = path.join(runtimeRoot, 'vscode-win32-x64-archive-2.3.4');
+    fs.mkdirSync(cliRuntime);
+    const cliOutput = execFileSync(process.execPath, [cleanupScriptPath, runtimeRoot], { encoding: 'utf8' });
+    assert.match(cliOutput, /Removed downloaded VS Code runtime:/);
+    assert.ok(!fs.existsSync(cliRuntime));
+  } finally {
+    fs.rmSync(tempRoot, { recursive: true, force: true });
+  }
+
+  assert.match(cleanupScript, /maxRetries: 5/);
+  assert.match(cleanupScript, /retryDelay: 100/);
+  assert.match(cleanupScript, /path\.dirname\(runtimeDirectory\) !== resolvedRoot/);
+
+  const windowsCondition = "${{ if eq(parameters.platform, 'windows') }}";
+  const cleanupDisplayName = 'Remove downloaded VS Code runtime before Component Governance';
+  const expectedCleanupScript =
+    'node "$(Build.SourcesDirectory)\\apps\\vs-code-designer\\scripts\\remove-downloaded-vscode-runtime.js" "$(Build.SourcesDirectory)\\apps\\vs-code-designer\\.vscode-test"';
+  const templates = [
+    {
+      name: 'registered suite',
+      text: runSuitesTemplate,
+      parsed: runSuites,
+      stagingDisplayName: 'Stage vscode-test CLI results (${{ parameters.suiteId }})',
+    },
+    {
+      name: 'legacy suite',
+      text: legacyRunSuitesTemplate,
+      parsed: legacyRunSuites,
+      stagingDisplayName: 'Stage vscode-test CLI results (${{ parameters.label }})',
+    },
+  ];
+
+  for (const template of templates) {
+    const suiteSteps = template.parsed.jobs[0].steps;
+    const stagingIndex = suiteSteps.findIndex((step) => step.displayName === template.stagingDisplayName);
+    const cleanupContainerIndex = suiteSteps.findIndex((step) =>
+      step[windowsCondition]?.some((conditionalStep) => conditionalStep.displayName === cleanupDisplayName)
+    );
+    assert.ok(stagingIndex >= 0, `${template.name} template must stage vscode-test CLI results`);
+    assert.strictEqual(
+      cleanupContainerIndex,
+      stagingIndex + 1,
+      `${template.name} Windows runtime cleanup must immediately follow result staging`
+    );
+
+    const cleanupSteps = suiteSteps[cleanupContainerIndex][windowsCondition];
+    assert.strictEqual(cleanupSteps.length, 1, `${template.name} Windows conditional must contain exactly one runtime cleanup step`);
+    const cleanupStep = cleanupSteps[0];
+    assert.strictEqual(cleanupStep.displayName, cleanupDisplayName);
+    assert.strictEqual(cleanupStep.condition, 'always()');
+    assert.strictEqual(cleanupStep.script, expectedCleanupScript);
+    assert.match(template.text, /\$\{\{ if eq\(parameters\.platform, 'windows'\) \}\}:/);
+  }
+
+  for (const [name, pipelinePath, pipeline] of [
+    ['registered consumer', '.config/vscode-e2e-cli.1es.yml', consumer],
+    ['legacy consumer', '.azure-pipelines/vscode-e2e-cli.1es.yml', legacyConsumer],
+  ]) {
+    assert.strictEqual(
+      pipeline.extends.parameters.sdl.componentgovernance,
+      undefined,
+      `${name} Component Governance ignoreDirectories must not bypass runtime cleanup`
+    );
+    assert.doesNotMatch(read(pipelinePath), /componentgovernance[\s\S]*ignoreDirectories/);
+  }
 }
 
 function testE2eDependencyInstallRetryContract() {

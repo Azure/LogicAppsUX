@@ -885,3 +885,8 @@ jobs:
           }
         displayName: Stage vscode-test CLI results (${{ parameters.suiteId }})
         condition: always()
+
+      - ${{ if eq(parameters.platform, 'windows') }}:
+          - script: node "$(Build.SourcesDirectory)\apps\vs-code-designer\scripts\remove-downloaded-vscode-runtime.js" "$(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test"
+            displayName: Remove downloaded VS Code runtime before Component Governance
+            condition: always()
