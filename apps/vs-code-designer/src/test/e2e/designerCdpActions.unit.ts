@@ -6,6 +6,21 @@ import * as ts from 'typescript';
 import { runInNewContext } from 'vm';
 import { MsnDesignerCdpActions, ProvenDesignerCdpActions, resolveDesignerActionProfile } from './designerCdpActions';
 
+interface TestDomWindow {
+  document: {
+    getElementById: (id: string) => object | null;
+  };
+  HTMLElement: {
+    prototype: object;
+  };
+  eval: (source: string) => unknown;
+  close: () => void;
+}
+
+const { JSDOM } = require('jsdom') as {
+  JSDOM: new (html: string, options?: Record<string, unknown>) => { window: TestDomWindow };
+};
+
 const actionsSourcePath = path.resolve(__dirname, '..', '..', '..', 'src', 'test', 'e2e', 'designerCdpActions.ts');
 const lifecycleSourcePath = path.resolve(__dirname, '..', '..', '..', 'src', 'test', 'e2e', 'workspaceLifecycle.ts');
 const lifecycleWrapperSourcePath = path.resolve(__dirname, '..', '..', '..', 'src', 'test', 'e2e', 'workspaceLifecycle.test.ts');
@@ -36,6 +51,7 @@ async function main(): Promise<void> {
   await testSettingsTabPaths();
   await testRunAfterToggleOrderingAndRerenderReacquisition();
   await testRunAfterRejectsDisabledAndWrongFinalState();
+  testRunAfterCheckboxOwnerDom();
   testProvenAdapterUsesUnmodifiedMsnHelper();
   testProvenAdapterCompatibility();
   testRunAfterIdentityAndStatusContracts();
@@ -340,8 +356,22 @@ function testRunAfterIdentityAndStatusContracts(): void {
   for (const label of ['Is successful', 'Has timed out', 'Is skipped', 'Has failed']) {
     assert.ok(readState.includes(label), `Run After state must bind exact ${label} control`);
   }
+  assert.match(actionsSourceText, /const runAfterCheckboxOwnerDom =/);
+  assert.match(actionsSourceText, /Array\.from\(input\.labels \|\| \[\]\)\.filter\(visible\)/);
+  assert.match(actionsSourceText, /const preferredLabel = input\.labels\?\.\[0\]/);
+  assert.match(actionsSourceText, /if \(labels\.length > 1\) return null/);
+  assert.match(actionsSourceText, /associatedLabel instanceof HTMLElement/);
+  assert.match(actionsSourceText, /fallback instanceof HTMLElement && visible\(fallback\)/);
+  assert.match(actionsSourceText, /const runAfterCheckboxPoint = \(input\)/);
+  assert.match(readState, /\$\{runAfterCheckboxOwnerDom\}/);
+  assert.match(readState, /const owner = runAfterCheckboxOwner\(input\)/);
 
   assert.match(readState, /controls\.filter\(\(control\) => control\.visible\)\.length, 4/);
+
+  const clickStatus = getMethod('ProvenDesignerCdpActions', 'clickRunAfterStatus');
+  assert.match(clickStatus, /\$\{runAfterCheckboxOwnerDom\}/);
+  assert.match(clickStatus, /runAfterCheckboxPoint\(controls\[0\]\)/);
+  assert.doesNotMatch(clickStatus, /input\.closest\('label'\) \|\| input/);
 
   const setStatuses = getMethod('ProvenDesignerCdpActions', 'setRunAfterStatuses');
   assertOrdered(
@@ -430,6 +460,85 @@ async function testRunAfterRejectsDisabledAndWrongFinalState(): Promise<void> {
   await assert.rejects(() => wrongFinal.setRunAfterStatuses('Compose_2', 'Compose', ['Failed']), /final state did not match/);
 }
 
+function testRunAfterCheckboxOwnerDom(): void {
+  const dom = new JSDOM(
+    `<html><body>
+      <span id="failed-root" data-visible="true">
+        <input id="failed" type="checkbox" />
+        <span aria-hidden="true"></span>
+        <label id="failed-label" for="failed" data-visible="true"><span id="failed-text">Has failed</span></label>
+      </span>
+      <span id="fallback-root" data-visible="true"><input id="fallback" type="checkbox" /></span>
+      <span id="hidden-root"><input id="hidden-fallback" type="checkbox" /></span>
+      <span id="ambiguous-root" data-visible="true">
+        <input id="ambiguous" type="checkbox" />
+        <label id="ambiguous-label-a" for="ambiguous" data-visible="true">Has failed</label>
+        <label id="ambiguous-label-b" for="ambiguous" data-visible="true">Has failed</label>
+      </span>
+    </body></html>`,
+    { runScripts: 'outside-only' }
+  );
+  const { document, HTMLElement } = dom.window;
+  Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
+    configurable: true,
+    value: () => undefined,
+  });
+  const rect = { left: 10, top: 20, right: 110, bottom: 40, width: 100, height: 20, x: 10, y: 20, toJSON: () => ({}) };
+  for (const id of ['failed-label', 'fallback-root']) {
+    Object.defineProperty(document.getElementById(id), 'getBoundingClientRect', {
+      configurable: true,
+      value: () => rect,
+    });
+  }
+  let hitTarget = document.getElementById('failed-text');
+  Object.defineProperty(document, 'elementFromPoint', {
+    configurable: true,
+    value: () => hitTarget,
+  });
+
+  const helper = getStringConstant('runAfterCheckboxOwnerDom');
+  const evaluate = (inputId: string) =>
+    JSON.parse(
+      JSON.stringify(
+        dom.window.eval(`(() => {
+      const visible = (element) => element instanceof HTMLElement && element.getAttribute('data-visible') === 'true';
+      ${helper}
+      const input = document.getElementById(${JSON.stringify(inputId)});
+      const owner = runAfterCheckboxOwner(input);
+      return {
+        ownerId: owner?.id || null,
+        point: runAfterCheckboxPoint(input),
+      };
+    })()`)
+      )
+    ) as { ownerId: string | null; point: { x: number; y: number } | null };
+
+  assert.deepStrictEqual(
+    evaluate('failed'),
+    { ownerId: 'failed-label', point: { x: 60, y: 30 } },
+    'Fluent sibling checkbox labels must own semantic matching and trusted point geometry'
+  );
+
+  hitTarget = document.getElementById('fallback-root');
+  assert.deepStrictEqual(
+    evaluate('fallback'),
+    { ownerId: 'fallback-root', point: { x: 60, y: 30 } },
+    'A visible parent may remain the compatibility fallback when no visible associated label exists'
+  );
+  assert.deepStrictEqual(evaluate('hidden-fallback'), { ownerId: null, point: null });
+  assert.deepStrictEqual(evaluate('ambiguous'), { ownerId: null, point: null }, 'Multiple visible associated labels must fail closed');
+
+  const failed = document.getElementById('failed') as { disabled: boolean };
+  failed.disabled = true;
+  hitTarget = document.getElementById('failed-label');
+  assert.deepStrictEqual(
+    evaluate('failed'),
+    { ownerId: 'failed-label', point: null },
+    'Disabled checkbox inputs must not produce a trusted click point'
+  );
+  dom.window.close();
+}
+
 function testActionProfileResolution(): void {
   assert.strictEqual(resolveDesignerActionProfile(undefined, false), 'generalized');
   assert.strictEqual(resolveDesignerActionProfile(undefined, true), 'msn');
@@ -453,6 +562,25 @@ function getMethod(className: string, methodName: string): string {
   );
   assert.ok(method, `Expected ${className}.${methodName}`);
   return method.getText(actionsSource);
+}
+
+function getStringConstant(name: string): string {
+  for (const statement of actionsSource.statements) {
+    if (!ts.isVariableStatement(statement)) {
+      continue;
+    }
+    for (const declaration of statement.declarationList.declarations) {
+      if (
+        ts.isIdentifier(declaration.name) &&
+        declaration.name.text === name &&
+        declaration.initializer &&
+        ts.isNoSubstitutionTemplateLiteral(declaration.initializer)
+      ) {
+        return declaration.initializer.text;
+      }
+    }
+  }
+  assert.fail(`Expected string constant ${name}`);
 }
 
 function getFunction(name: string): string {

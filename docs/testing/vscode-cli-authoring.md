@@ -154,6 +154,11 @@ rerenders and persistence, use `ProvenDesignerCdpActions`:
   the transition exposes a clickable target. The product ARIA contract is exactly
   `Expand <title>` / `Collapse <title>`; do not use `util.format` with an already
   interpolated label because unused arguments are appended to the accessible name.
+  Fluent v9 checkboxes render the native input and its label as siblings. Read
+  and click each status through the input's one visible associated label from
+  `input.labels`; reject multiple visible labels, and use the visible parent only
+  as a compatibility fallback. Never require the hidden native input itself to
+  be visible or center-point hit-testable.
   `openSettingsTab` supports both a directly visible Settings tab and Fluent's
   panel-owned `<count> more tabs` overflow trigger plus portal menu item. Resolve
   those controls through the exact panel content element's enclosing

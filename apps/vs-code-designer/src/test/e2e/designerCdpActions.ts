@@ -576,6 +576,29 @@ interface ActionInsertionSnapshot {
   loaderCount: number;
 }
 
+const runAfterCheckboxOwnerDom = `
+  const runAfterCheckboxOwner = (input) => {
+    if (!(input instanceof HTMLInputElement)) return null;
+    const labels = Array.from(input.labels || []).filter(visible);
+    if (labels.length > 1) return null;
+    const preferredLabel = input.labels?.[0];
+    const associatedLabel = preferredLabel && labels.includes(preferredLabel) ? preferredLabel : labels[0];
+    if (associatedLabel instanceof HTMLElement) return associatedLabel;
+    const fallback = input.parentElement;
+    return fallback instanceof HTMLElement && visible(fallback) ? fallback : null;
+  };
+  const runAfterCheckboxPoint = (input) => {
+    if (!(input instanceof HTMLInputElement) || input.disabled || input.getAttribute('aria-disabled') === 'true') return null;
+    const owner = runAfterCheckboxOwner(input);
+    if (!(owner instanceof HTMLElement) || !visible(owner)) return null;
+    owner.scrollIntoView({ block: 'center', inline: 'center' });
+    const rect = owner.getBoundingClientRect();
+    const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+    const hit = document.elementFromPoint(point.x, point.y);
+    return hit && (hit === owner || owner.contains(hit)) ? point : null;
+  };
+`;
+
 const exactVisibleElementByIdDom = `
   const exactVisibleElementById = (id) => {
     const matches = Array.from(document.querySelectorAll('[id]'))
@@ -1908,6 +1931,7 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
     }>(`(() => {
       ${visibleDom}
       ${exactVisibleElementByIdDom}
+      ${runAfterCheckboxOwnerDom}
       const panel = exactVisibleElementById(${JSON.stringify(`msla-node-details-panel-${childNodeId}`)});
       if (!(panel instanceof HTMLElement) || !visible(panel)) return { predecessorCount: 0, expanded: false, controls: [] };
       const title = ${JSON.stringify(predecessor.title)};
@@ -1920,7 +1944,7 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
       const statusRoot = headers[0].nextElementSibling;
       const controls = statusRoot?.classList.contains('msla-run-after-statuses')
         ? Array.from(statusRoot.querySelectorAll('input[type="checkbox"]')).map((input) => {
-            const owner = input.closest('label') || input.parentElement;
+            const owner = runAfterCheckboxOwner(input);
             return {
               label: normalize(owner?.textContent || input.getAttribute('aria-label')),
               checked: input.checked === true,
@@ -2134,6 +2158,7 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
       `(() => {
         ${visibleDom}
         ${exactVisibleElementByIdDom}
+        ${runAfterCheckboxOwnerDom}
         const panel = exactVisibleElementById(${JSON.stringify(`msla-node-details-panel-${childNodeId}`)});
         if (!(panel instanceof HTMLElement) || !visible(panel)) return null;
         const title = ${JSON.stringify(predecessor.title)};
@@ -2146,19 +2171,11 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
         const expectedLabel = ${JSON.stringify(label[status])};
         const controls = Array.from(statusRoot.querySelectorAll('input[type="checkbox"]'))
           .filter((input) => {
-            const owner = input.closest('label') || input.parentElement;
+            const owner = runAfterCheckboxOwner(input);
             return normalize(owner?.textContent || input.getAttribute('aria-label')) === expectedLabel;
           })
-          .filter((input) => !input.disabled && input.getAttribute('aria-disabled') !== 'true');
         if (controls.length !== 1) return null;
-        const input = controls[0];
-        const owner = input.closest('label') || input;
-        if (!(owner instanceof HTMLElement) || !visible(owner)) return null;
-        owner.scrollIntoView({ block: 'center', inline: 'center' });
-        const rect = owner.getBoundingClientRect();
-        const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-        const hit = document.elementFromPoint(point.x, point.y);
-        return hit && (hit === owner || owner.contains(hit)) ? point : null;
+        return runAfterCheckboxPoint(controls[0]);
       })()`,
       `${label[status]} Run after control for ${childNodeId}`
     );
