@@ -151,7 +151,9 @@ rerenders and persistence, use `ProvenDesignerCdpActions`:
   the default state to Failed-only, select `Failed` before clearing `Succeeded`.
   After opening the Run After section, reacquire the exact predecessor row until
   its Fluent expand button is enabled and hit-testable; the row can render before
-  the transition exposes a clickable target.
+  the transition exposes a clickable target. The product ARIA contract is exactly
+  `Expand <title>` / `Collapse <title>`; do not use `util.format` with an already
+  interpolated label because unused arguments are appended to the accessible name.
   `openSettingsTab` supports both a directly visible Settings tab and Fluent's
   panel-owned `<count> more tabs` overflow trigger plus portal menu item. Resolve
   those controls through the exact panel content element's enclosing
