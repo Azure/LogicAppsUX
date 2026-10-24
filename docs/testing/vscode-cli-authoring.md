@@ -152,7 +152,9 @@ rerenders and persistence, use `ProvenDesignerCdpActions`:
   `openSettingsTab` supports both a directly visible Settings tab and Fluent's
   panel-owned `<count> more tabs` overflow trigger plus portal menu item. Resolve
   those controls through the exact panel content element's enclosing
-  `.msla-panel-layout`, not an assumed narrower descendant subtree.
+  `.msla-panel-layout`, not an assumed narrower descendant subtree. Match Fluent
+  tab buttons semantically by exact title instead of requiring a serialized
+  `role="tab"` attribute that may not be present in every host render.
   Panel interactions resolve the one visible element with the exact panel ID;
   do not use `document.getElementById` because a hidden stale React instance can
   precede the current visible panel in document order.
