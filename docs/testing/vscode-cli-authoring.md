@@ -137,6 +137,9 @@ rerenders and persistence, use `ProvenDesignerCdpActions`:
   not from descendants of `msla-node-details-panel-*`. A new panel ID can still
   precede header-title hydration; treat an empty title as pending and start
   stability counting only after the same ID has a nonempty matching title.
+  Before capturing the insertion baseline, close any existing responsive
+  details panel and wait for the canvas to remount; otherwise a pre-existing
+  node that reappears during insertion can be misclassified as another new node.
 - Opening Request discovery is non-mutating. If the Add trigger click receives
   focus but no discovery panel appears, the shared flow may retry only after a
   bounded explicit no-panel acknowledgement.
@@ -147,7 +150,9 @@ rerenders and persistence, use `ProvenDesignerCdpActions`:
   implementations reacquire controls after every React render; when moving from
   the default state to Failed-only, select `Failed` before clearing `Succeeded`.
   `openSettingsTab` supports both a directly visible Settings tab and Fluent's
-  panel-owned `<count> more tabs` overflow trigger plus portal menu item.
+  panel-owned `<count> more tabs` overflow trigger plus portal menu item. Resolve
+  those controls through the exact panel content element's enclosing
+  `.msla-panel-layout`, not an assumed narrower descendant subtree.
   Panel interactions resolve the one visible element with the exact panel ID;
   do not use `document.getElementById` because a hidden stale React instance can
   precede the current visible panel in document order.

@@ -1507,6 +1507,7 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
     operationName: string;
     variants?: string[];
   }): Promise<DesignerNodeIdentity> {
+    await this.proven.closePanel(`${options.operationName} insertion snapshot`);
     const before = (await this.readActionInsertionSnapshot()).nodes;
     await this.proven.openActionDiscovery(options.operationName, async (stage, point) => {
       console.log(`[designer-actions] ${options.operationName}: ${stage}${point ? ` point=${JSON.stringify(point)}` : ''}`);
@@ -1579,7 +1580,9 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
           ${exactVisibleElementByIdDom}
           const panel = exactVisibleElementById(${JSON.stringify(`msla-node-details-panel-${nodeId}`)});
           if (!(panel instanceof HTMLElement) || !visible(panel)) return false;
-          const triggers = Array.from(panel.querySelectorAll('[role="tab"][aria-label]'))
+          const panelLayout = panel.closest('.msla-panel-layout');
+          if (!(panelLayout instanceof HTMLElement)) return false;
+          const triggers = Array.from(panelLayout.querySelectorAll('[role="tab"][aria-label]'))
             .filter(visible)
             .filter((tab) => /^\\d+ more tabs$/i.test(normalize(tab.getAttribute('aria-label'))));
           return triggers.length === 1 && triggers[0].getAttribute('aria-expanded') === 'true';
@@ -1593,7 +1596,9 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
           ${exactVisibleElementByIdDom}
           const panel = exactVisibleElementById(${JSON.stringify(`msla-node-details-panel-${nodeId}`)});
           if (!(panel instanceof HTMLElement) || !visible(panel)) return null;
-          const triggers = Array.from(panel.querySelectorAll('[role="tab"][aria-label]'))
+          const panelLayout = panel.closest('.msla-panel-layout');
+          if (!(panelLayout instanceof HTMLElement)) return null;
+          const triggers = Array.from(panelLayout.querySelectorAll('[role="tab"][aria-label]'))
             .filter(visible)
             .filter((tab) => /^\\d+ more tabs$/i.test(normalize(tab.getAttribute('aria-label')))
               && tab.getAttribute('aria-expanded') === 'true');
@@ -1628,7 +1633,9 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
         ${exactVisibleElementByIdDom}
         const panel = exactVisibleElementById(${JSON.stringify(`msla-node-details-panel-${nodeId}`)});
         if (!(panel instanceof HTMLElement) || !visible(panel)) return false;
-        const tabs = Array.from(panel.querySelectorAll('[role="tab"]'))
+        const panelLayout = panel.closest('.msla-panel-layout');
+        if (!(panelLayout instanceof HTMLElement)) return false;
+        const tabs = Array.from(panelLayout.querySelectorAll('[role="tab"]'))
           .filter((tab) => normalize(tab.textContent || tab.getAttribute('aria-label')) === 'Settings');
         return tabs.length === 1 && tabs[0].getAttribute('aria-selected') === 'true';
       })()`,
@@ -1656,7 +1663,11 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
         if (!(panel instanceof HTMLElement) || !visible(panel)) {
           return { directSettingsCount: 0, overflowTriggerCount: 0 };
         }
-        const settingsTabs = Array.from(panel.querySelectorAll('[role="tab"]'))
+        const panelLayout = panel.closest('.msla-panel-layout');
+        if (!(panelLayout instanceof HTMLElement)) {
+          return { directSettingsCount: 0, overflowTriggerCount: 0 };
+        }
+        const settingsTabs = Array.from(panelLayout.querySelectorAll('[role="tab"]'))
           .filter((tab) => normalize(tab.textContent || tab.getAttribute('aria-label')) === 'Settings');
         if (settingsTabs.length === 1 && settingsTabs[0].getAttribute('aria-selected') === 'true') {
           return { kind: 'selected', directSettingsCount: 1, overflowTriggerCount: 0 };
@@ -1674,7 +1685,7 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
             return { kind: 'direct', point, directSettingsCount: settingsTabs.length, overflowTriggerCount: 0 };
           }
         }
-        const overflowTriggers = Array.from(panel.querySelectorAll('[role="tab"][aria-label]'))
+        const overflowTriggers = Array.from(panelLayout.querySelectorAll('[role="tab"][aria-label]'))
           .filter(visible)
           .filter((tab) => /^\\d+ more tabs$/i.test(normalize(tab.getAttribute('aria-label'))))
           .filter((tab) => !tab.disabled && tab.getAttribute('aria-disabled') !== 'true');

@@ -99,8 +99,12 @@ async function testStableActionInsertionAcknowledgement(): Promise<void> {
   );
 
   let selectCalls = 0;
+  let closeCalls = 0;
   actions.readExactNodeIdentities = async () => before;
   actions.proven = {
+    closePanel: async () => {
+      closeCalls++;
+    },
     openActionDiscovery: async () => undefined,
     search: async () => undefined,
     waitForSearchResults: async () => undefined,
@@ -118,6 +122,7 @@ async function testStableActionInsertionAcknowledgement(): Promise<void> {
     () => actions.insertActionAndGetIdentity({ search: 'Compose', operationName: 'Compose', variants: ['compose'] }),
     /insertion-not-acknowledged/
   );
+  assert.strictEqual(closeCalls, 1, 'Insertion baseline must close the responsive panel before reading existing nodes');
   assert.strictEqual(selectCalls, 1, 'Missing insertion acknowledgement must not redispatch an operation click');
 }
 
@@ -274,6 +279,7 @@ function testRunAfterIdentityAndStatusContracts(): void {
   assertOrdered(
     insertion,
     [
+      'this.proven.closePanel',
       'readActionInsertionSnapshot()',
       'this.proven.openActionDiscovery',
       'this.proven.search',
@@ -312,6 +318,7 @@ function testRunAfterIdentityAndStatusContracts(): void {
   assert.match(settings, /waitForSettingsTabTarget/);
   assert.match(settings, /Math\.min\(this\.deadline, Date\.now\(\) \+ 90000\)/);
   assert.match(settings, /settingsDeadline/);
+  assert.match(settings, /closest\('\.msla-panel-layout'\)/);
   assert.match(settings, /\^\\\\d\+ more tabs\$/);
   assert.match(settings, /aria-controls/);
   assert.match(settings, /\[role="menuitem"\]/);
