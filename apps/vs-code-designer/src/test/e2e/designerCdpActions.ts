@@ -576,6 +576,15 @@ interface ActionInsertionSnapshot {
   loaderCount: number;
 }
 
+const exactVisibleElementByIdDom = `
+  const exactVisibleElementById = (id) => {
+    const matches = Array.from(document.querySelectorAll('[id]'))
+      .filter((element) => element.id === id)
+      .filter(visible);
+    return matches.length === 1 ? matches[0] : null;
+  };
+`;
+
 export type RunAfterStatus = 'Succeeded' | 'TimedOut' | 'Skipped' | 'Failed';
 
 export interface RunAfterState {
@@ -1524,8 +1533,9 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
     const point = await this.waitForPoint(
       `(() => {
         ${visibleDom}
+        ${exactVisibleElementByIdDom}
         const nodeId = ${JSON.stringify(nodeId)};
-        const element = document.getElementById('msla-node-' + nodeId);
+        const element = exactVisibleElementById('msla-node-' + nodeId);
         if (!(element instanceof HTMLElement) || !visible(element)) return null;
         if (element.getAttribute('aria-disabled') === 'true') return null;
         element.scrollIntoView({ block: 'center', inline: 'center' });
@@ -1562,7 +1572,8 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
       await this.waitForCondition(
         `(() => {
           ${visibleDom}
-          const panel = document.getElementById(${JSON.stringify(`msla-node-details-panel-${nodeId}`)});
+          ${exactVisibleElementByIdDom}
+          const panel = exactVisibleElementById(${JSON.stringify(`msla-node-details-panel-${nodeId}`)});
           if (!(panel instanceof HTMLElement) || !visible(panel)) return false;
           const triggers = Array.from(panel.querySelectorAll('[role="tab"][aria-label]'))
             .filter(visible)
@@ -1575,7 +1586,8 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
       const menuPoint = await this.waitForPoint(
         `(() => {
           ${visibleDom}
-          const panel = document.getElementById(${JSON.stringify(`msla-node-details-panel-${nodeId}`)});
+          ${exactVisibleElementByIdDom}
+          const panel = exactVisibleElementById(${JSON.stringify(`msla-node-details-panel-${nodeId}`)});
           if (!(panel instanceof HTMLElement) || !visible(panel)) return null;
           const triggers = Array.from(panel.querySelectorAll('[role="tab"][aria-label]'))
             .filter(visible)
@@ -1583,7 +1595,7 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
               && tab.getAttribute('aria-expanded') === 'true');
           if (triggers.length !== 1) return null;
           const controlledId = triggers[0].getAttribute('aria-controls');
-          const controlledMenu = controlledId ? document.getElementById(controlledId) : null;
+          const controlledMenu = controlledId ? exactVisibleElementById(controlledId) : null;
           const menus = controlledMenu instanceof HTMLElement && visible(controlledMenu)
             ? [controlledMenu]
             : Array.from(document.querySelectorAll('[role="menu"]')).filter(visible);
@@ -1609,7 +1621,8 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
     await this.waitForCondition(
       `(() => {
         ${visibleDom}
-        const panel = document.getElementById(${JSON.stringify(`msla-node-details-panel-${nodeId}`)});
+        ${exactVisibleElementByIdDom}
+        const panel = exactVisibleElementById(${JSON.stringify(`msla-node-details-panel-${nodeId}`)});
         if (!(panel instanceof HTMLElement) || !visible(panel)) return false;
         const tabs = Array.from(panel.querySelectorAll('[role="tab"]'))
           .filter((tab) => normalize(tab.textContent || tab.getAttribute('aria-label')) === 'Settings');
@@ -1634,7 +1647,8 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
         overflowTriggerCount: number;
       }>(`(() => {
         ${visibleDom}
-        const panel = document.getElementById(${JSON.stringify(`msla-node-details-panel-${nodeId}`)});
+        ${exactVisibleElementByIdDom}
+        const panel = exactVisibleElementById(${JSON.stringify(`msla-node-details-panel-${nodeId}`)});
         if (!(panel instanceof HTMLElement) || !visible(panel)) {
           return { directSettingsCount: 0, overflowTriggerCount: 0 };
         }
@@ -1696,7 +1710,8 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
     await this.assertExactPanelOwnership(nodeId);
     const state = await this.evaluate<{ count: number; expanded: boolean; point?: Point }>(`(() => {
       ${visibleDom}
-      const panel = document.getElementById(${JSON.stringify(`msla-node-details-panel-${nodeId}`)});
+      ${exactVisibleElementByIdDom}
+      const panel = exactVisibleElementById(${JSON.stringify(`msla-node-details-panel-${nodeId}`)});
       if (!(panel instanceof HTMLElement) || !visible(panel)) return { count: 0, expanded: false };
       const headers = Array.from(panel.querySelectorAll('.msla-setting-section-header'))
         .filter(visible)
@@ -1726,7 +1741,8 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
     await this.waitForCondition(
       `(() => {
         ${visibleDom}
-        const panel = document.getElementById(${JSON.stringify(`msla-node-details-panel-${nodeId}`)});
+        ${exactVisibleElementByIdDom}
+        const panel = exactVisibleElementById(${JSON.stringify(`msla-node-details-panel-${nodeId}`)});
         if (!(panel instanceof HTMLElement) || !visible(panel)) return false;
         const headers = Array.from(panel.querySelectorAll('.msla-setting-section-header'))
           .filter(visible)
@@ -1745,7 +1761,8 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
     await this.assertExactPanelOwnership(childNodeId);
     const state = await this.evaluate<{ count: number; expanded: boolean; point?: Point }>(`(() => {
       ${visibleDom}
-      const panel = document.getElementById(${JSON.stringify(`msla-node-details-panel-${childNodeId}`)});
+      ${exactVisibleElementByIdDom}
+      const panel = exactVisibleElementById(${JSON.stringify(`msla-node-details-panel-${childNodeId}`)});
       if (!(panel instanceof HTMLElement) || !visible(panel)) return { count: 0, expanded: false };
       const title = ${JSON.stringify(predecessor.title)};
       const headers = Array.from(panel.querySelectorAll('.msla-run-after-edge-header'))
@@ -1780,7 +1797,8 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
     await this.waitForCondition(
       `(() => {
         ${visibleDom}
-        const panel = document.getElementById(${JSON.stringify(`msla-node-details-panel-${childNodeId}`)});
+        ${exactVisibleElementByIdDom}
+        const panel = exactVisibleElementById(${JSON.stringify(`msla-node-details-panel-${childNodeId}`)});
         if (!(panel instanceof HTMLElement) || !visible(panel)) return false;
         const title = ${JSON.stringify(predecessor.title)};
         const buttons = Array.from(panel.querySelectorAll('.msla-run-after-edge-header button'))
@@ -1801,7 +1819,8 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
       controls: Array<{ label: string; checked: boolean; disabled: boolean; visible: boolean }>;
     }>(`(() => {
       ${visibleDom}
-      const panel = document.getElementById(${JSON.stringify(`msla-node-details-panel-${childNodeId}`)});
+      ${exactVisibleElementByIdDom}
+      const panel = exactVisibleElementById(${JSON.stringify(`msla-node-details-panel-${childNodeId}`)});
       if (!(panel instanceof HTMLElement) || !visible(panel)) return { predecessorCount: 0, expanded: false, controls: [] };
       const title = ${JSON.stringify(predecessor.title)};
       const headers = Array.from(panel.querySelectorAll('.msla-run-after-edge-header'))
@@ -2026,7 +2045,8 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
     const point = await this.waitForPoint(
       `(() => {
         ${visibleDom}
-        const panel = document.getElementById(${JSON.stringify(`msla-node-details-panel-${childNodeId}`)});
+        ${exactVisibleElementByIdDom}
+        const panel = exactVisibleElementById(${JSON.stringify(`msla-node-details-panel-${childNodeId}`)});
         if (!(panel instanceof HTMLElement) || !visible(panel)) return null;
         const title = ${JSON.stringify(predecessor.title)};
         const headers = Array.from(panel.querySelectorAll('.msla-run-after-edge-header'))
@@ -2096,11 +2116,26 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
   }
 
   private async readNodeIdentity(nodeId: string): Promise<DesignerNodeIdentity> {
-    const identities = await this.readExactNodeIdentities();
-    const matches = identities.filter((identity) => identity.nodeId === nodeId);
-    assert.strictEqual(matches.length, 1, `Expected exact visible Designer node ${nodeId}, found ${matches.length}`);
-    assert.ok(matches[0].title, `Designer node ${nodeId} had no semantic title`);
-    return matches[0];
+    const identity = await this.evaluate<DesignerNodeIdentity | null>(`(() => {
+      ${visibleDom}
+      ${exactVisibleElementByIdDom}
+      const nodeId = ${JSON.stringify(nodeId)};
+      const element = exactVisibleElementById('msla-node-' + nodeId);
+      if (!(element instanceof HTMLElement)) return null;
+      return {
+        nodeId,
+        title: normalize(
+          element.querySelector('[data-automation-id="msla-card-title"]')?.textContent ||
+          element.querySelector('.msla-card-title')?.textContent ||
+          (element.getAttribute('data-testid') || '').replace(/^card-/, '') ||
+          element.getAttribute('aria-label') ||
+          element.textContent
+        ),
+      };
+    })()`);
+    assert.ok(identity, `Expected exactly one visible Designer node ${nodeId}`);
+    assert.ok(identity.title, `Designer node ${nodeId} had no semantic title`);
+    return identity;
   }
 
   private async readActionInsertionSnapshot(): Promise<ActionInsertionSnapshot> {

@@ -280,12 +280,18 @@ function testRunAfterIdentityAndStatusContracts(): void {
   );
 
   const exactNode = getMethod('ProvenDesignerCdpActions', 'clickNodeById');
-  assert.match(exactNode, /document\.getElementById\('msla-node-' \+ nodeId\)/);
+  assert.match(exactNode, /exactVisibleElementById\('msla-node-' \+ nodeId\)/);
   assert.match(exactNode, /visiblePanels\.length === 1/);
   assert.match(exactNode, /visiblePanels\[0\]\.id === expectedId/);
   assert.match(exactNode, /elementFromPoint/);
 
+  const nodeIdentity = getMethod('ProvenDesignerCdpActions', 'readNodeIdentity');
+  assert.match(nodeIdentity, /exactVisibleElementById\('msla-node-' \+ nodeId\)/);
+  assert.doesNotMatch(nodeIdentity, /readExactNodeIdentities/);
+
   const settings = getMethod('ProvenDesignerCdpActions', 'openSettingsTab');
+  assert.match(actionsSourceText, /const exactVisibleElementById = \(id\)/);
+  assert.doesNotMatch(settings, /document\.getElementById/);
   assert.match(settings, /waitForSettingsTabTarget/);
   assert.match(settings, /Math\.min\(this\.deadline, Date\.now\(\) \+ 90000\)/);
   assert.match(settings, /settingsDeadline/);

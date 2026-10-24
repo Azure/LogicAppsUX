@@ -138,6 +138,9 @@ rerenders and persistence, use `ProvenDesignerCdpActions`:
   the default state to Failed-only, select `Failed` before clearing `Succeeded`.
   `openSettingsTab` supports both a directly visible Settings tab and Fluent's
   panel-owned `<count> more tabs` overflow trigger plus portal menu item.
+  Panel interactions resolve the one visible element with the exact panel ID;
+  do not use `document.getElementById` because a hidden stale React instance can
+  precede the current visible panel in document order.
 - Sequential insertion must reuse the shared append-action discovery flow, then
   derive exact node identity from the before/after canvas state. Do not infer
   React Flow edge IDs or introduce a family-local edge-plus selector.
