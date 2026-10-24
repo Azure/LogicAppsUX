@@ -1,0 +1,892 @@
+parameters:
+  - name: jobName
+    type: string
+  - name: displayName
+    type: string
+  - name: suiteId
+    type: string
+  - name: shortName
+    type: string
+  - name: cliArguments
+    type: string
+  - name: artifactName
+    type: string
+  - name: feedBaseUrl
+    type: string
+  - name: pool
+    type: object
+  - name: platform
+    type: string
+    values:
+      - linux
+      - windows
+  - name: selected
+    type: string
+  - name: requiresAzureAccessToken
+    type: boolean
+    default: false
+  - name: dependsOn
+    type: object
+    default: []
+  - name: resolvedVSCodeVersion
+    type: string
+    default: ''
+  - name: e2eBuildArtifactName
+    type: string
+    default: vscode-e2e-build
+  - name: expectedProducerDefinitionId
+    type: string
+    default: ''
+  - name: expectedProducerRunId
+    type: string
+    default: ''
+  - name: expectedSourceSha
+    type: string
+    default: ''
+  - name: expectedRepositoryName
+    type: string
+    default: 'Azure/LogicAppsUX'
+  - name: expectedRepositoryUri
+    type: string
+    default: 'https://github.com/Azure/LogicAppsUX'
+  - name: checkoutRef
+    type: string
+    default: ''
+  - name: nodeVersion
+    type: string
+    default: '22.x'
+  - name: dotnetVersion
+    type: string
+    default: '8.0.x'
+  - name: timeoutInMinutes
+    type: number
+    default: 90
+  - name: testARMServiceConnection
+    type: string
+    default: ''
+  - name: azureResourceGroupName
+    type: string
+    default: ''
+  - name: azureLocationName
+    type: string
+    default: ''
+  - name: azureManagementBaseUrl
+    type: string
+    default: 'https://management.azure.com'
+  - name: designerApiLoadTimeoutMs
+    type: string
+    default: '600000'
+
+jobs:
+  - job: ${{ parameters.jobName }}
+    displayName: ${{ parameters.displayName }}
+    dependsOn: ${{ parameters.dependsOn }}
+    condition: and(succeeded(), eq(variables['SelectedSuite'], 'true'))
+    timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
+    pool: ${{ parameters.pool }}
+    variables:
+      SelectedSuite: ${{ parameters.selected }}
+      ResolvedVSCodeVersion: ${{ parameters.resolvedVSCodeVersion }}
+      ExpectedProducerDefinitionId: ${{ parameters.expectedProducerDefinitionId }}
+      ExpectedProducerRunId: ${{ parameters.expectedProducerRunId }}
+      ExpectedSourceSha: ${{ parameters.expectedSourceSha }}
+      ExpectedRepositoryName: ${{ parameters.expectedRepositoryName }}
+      ExpectedRepositoryUri: ${{ parameters.expectedRepositoryUri }}
+      ExpectedCheckoutRef: ${{ parameters.checkoutRef }}
+    templateContext:
+      outputs:
+        - output: pipelineArtifact
+          targetPath: $(Build.ArtifactStagingDirectory)/vscode-e2e-cli/${{ parameters.artifactName }}
+          artifactName: vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}
+          condition: always()
+    steps:
+      - checkout: self
+        fetchDepth: 0
+
+      - task: UseNode@1
+        displayName: Use trusted Node.js for E2E artifact admission
+        inputs:
+          version: ${{ parameters.nodeVersion }}
+
+      - pwsh: node --version
+        displayName: Print E2E artifact admission Node.js version
+
+      - pwsh: |
+          $trustedVerifier = Join-Path '$(Agent.TempDirectory)' 'trusted-vscode-e2e-artifact-manifest.js'
+          Copy-Item '$(Build.SourcesDirectory)/apps/vs-code-designer/scripts/vscode-e2e-artifact-manifest.js' $trustedVerifier -Force
+          Write-Host "##vso[task.setvariable variable=TrustedArtifactVerifier]$trustedVerifier"
+        displayName: Capture trusted artifact verifier before source checkout
+
+      - download: current
+        artifact: ${{ parameters.e2eBuildArtifactName }}
+        displayName: Download current-run E2E artifact
+
+      - pwsh: |
+          $artifactRoot = Join-Path '$(Pipeline.Workspace)' '${{ parameters.e2eBuildArtifactName }}'
+          $artifactPath = Join-Path $artifactRoot 'extension-build.tar.gz'
+          $manifestPath = Join-Path $artifactRoot 'vscode-e2e-build-manifest.json'
+          if (-not (Test-Path $artifactPath)) {
+            throw "Missing current-run E2E artifact payload: $artifactPath"
+          }
+          if (-not (Test-Path $manifestPath)) {
+            throw "Missing current-run E2E artifact manifest: $manifestPath"
+          }
+
+          $verifyArgs = @(
+            '$(TrustedArtifactVerifier)'
+            'verify'
+            '--artifact'
+            $artifactPath
+            '--manifest'
+            $manifestPath
+            '--privileged-admission'
+          )
+          if ('$(ExpectedSourceSha)') {
+            $verifyArgs += @('--expected-source-sha', '$(ExpectedSourceSha)')
+          }
+          if ('$(ExpectedProducerRunId)') {
+            $verifyArgs += @('--expected-producer-run-id', '$(ExpectedProducerRunId)')
+          }
+          if ('$(ExpectedProducerDefinitionId)') {
+            $verifyArgs += @('--expected-producer-definition-id', '$(ExpectedProducerDefinitionId)')
+          }
+          if ('$(ExpectedRepositoryName)') {
+            $verifyArgs += @('--expected-repository-name', '$(ExpectedRepositoryName)')
+          }
+          if ('$(ExpectedRepositoryUri)') {
+            $verifyArgs += @('--expected-repository-uri', '$(ExpectedRepositoryUri)')
+          }
+          if ('$(ExpectedCheckoutRef)') {
+            $verifyArgs += @('--expected-checkout-ref', '$(ExpectedCheckoutRef)')
+          }
+          & node @verifyArgs
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+        displayName: Verify current-run E2E artifact admission
+
+      - pwsh: |
+          $checkoutRef = '$(ExpectedCheckoutRef)'
+          if (-not $checkoutRef) {
+            $checkoutRef = '$(ExpectedSourceSha)'
+          }
+          if (-not $checkoutRef) {
+            throw 'Expected checkout ref or source SHA is required for trusted E2E artifact admission.'
+          }
+          git checkout "$checkoutRef"
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+        displayName: Checkout admitted source SHA
+
+      - pwsh: |
+          $rawHead = git rev-parse HEAD
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+          $head = ([string]$rawHead).Trim()
+          $expectedSourceSha = '$(ExpectedSourceSha)'
+          if ($expectedSourceSha -and $head -ne $expectedSourceSha) {
+            throw "Consumer checkout HEAD '$head' does not match expected source SHA '$expectedSourceSha'."
+          }
+          $artifactRoot = Join-Path '$(Pipeline.Workspace)' '${{ parameters.e2eBuildArtifactName }}'
+          $manifestPath = Join-Path $artifactRoot 'vscode-e2e-build-manifest.json'
+          $manifest = Get-Content $manifestPath -Raw | ConvertFrom-Json
+          if ($manifest.artifact.name -ne 'vscode-e2e-build') {
+            throw "Unexpected logical E2E artifact name. expected=vscode-e2e-build actual=$($manifest.artifact.name)"
+          }
+          if ($manifest.producer.actualArtifactBuildSha -ne $head) {
+            throw "Consumer checkout HEAD '$head' does not match E2E artifact SHA '$($manifest.producer.actualArtifactBuildSha)'."
+          }
+        displayName: Verify exact admitted source checkout
+
+      - template: /.azure-pipelines/templates/vscode-e2e-cli-setup.yml@self
+        parameters:
+          feedBaseUrl: ${{ parameters.feedBaseUrl }}
+          nodeVersion: ${{ parameters.nodeVersion }}
+          dotnetVersion: ${{ parameters.dotnetVersion }}
+          includeDotNet: true
+          includeLinuxDisplayDependencies: ${{ eq(parameters.platform, 'linux') }}
+
+      - pwsh: |
+          $artifactRoot = Join-Path '$(Pipeline.Workspace)' '${{ parameters.e2eBuildArtifactName }}'
+          tar -xzf (Join-Path $artifactRoot 'extension-build.tar.gz') -C '$(Build.SourcesDirectory)'
+          if (-not (Test-Path '$(Build.SourcesDirectory)/apps/vs-code-designer/out/test/e2e/createWorkspace.test.js')) {
+            throw 'Extracted artifact is missing compiled @vscode/test-cli E2E tests.'
+          }
+          if (-not (Test-Path '$(Build.SourcesDirectory)/apps/vs-code-designer/out/test/run-e2e.js')) {
+            throw 'Extracted artifact is missing the compiled ExTester dependency-prep harness.'
+          }
+          if (-not (Test-Path '$(Build.SourcesDirectory)/apps/vs-code-designer/dist')) {
+            throw 'Extracted artifact is missing VS Code extension dist payload.'
+          }
+        displayName: Extract verified E2E artifact
+
+      - ${{ if eq(parameters.suiteId, 'unitTests') }}:
+          - pwsh: |
+              $diagnosticsRoot = Join-Path '$(Build.ArtifactStagingDirectory)' 'vscode-e2e-cli/${{ parameters.artifactName }}'
+              New-Item -ItemType Directory -Force -Path $diagnosticsRoot | Out-Null
+              $contractLog = Join-Path $diagnosticsRoot 'registered-contract-chain.log'
+              pnpm --dir apps/vs-code-designer run test:e2e-cli:unit *>&1 | Tee-Object -FilePath $contractLog
+              $contractExitCode = $LASTEXITCODE
+              if ($contractExitCode -ne 0) {
+                exit $contractExitCode
+              }
+            displayName: Run registered E2E contracts on consumer OS
+            workingDirectory: $(Build.SourcesDirectory)
+
+      - pwsh: |
+          if (-not '$(ResolvedVSCodeVersion)') {
+            throw 'ResolvedVSCodeVersion must be supplied by the shared consumer context job.'
+          }
+          $resultRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/results'
+          New-Item -ItemType Directory -Force -Path $resultRoot | Out-Null
+          $artifactRoot = Join-Path '$(Pipeline.Workspace)' '${{ parameters.e2eBuildArtifactName }}'
+          $manifest = Get-Content (Join-Path $artifactRoot 'vscode-e2e-build-manifest.json') -Raw | ConvertFrom-Json
+          $context = [ordered]@{
+            schemaVersion = 1
+            producerDefinitionId = [string]$manifest.producer.definitionId
+            producerRunId = [string]$manifest.producer.runId
+            producerBuildNumber = [string]$manifest.producer.buildNumber
+            sourceSHA = [string]$manifest.producer.actualArtifactBuildSha
+            checkoutRef = [string]$manifest.producer.checkoutRef
+            repositoryName = [string]$manifest.producer.repositoryName
+            repositoryUri = [string]$manifest.producer.repositoryUri
+            artifactName = [string]$manifest.artifact.name
+            artifactSHA256 = [string]$manifest.artifact.sha256
+            resolvedVSCodeBuild = '$(ResolvedVSCodeVersion)'
+          }
+          $contextPath = Join-Path $resultRoot 'admission-context-${{ parameters.suiteId }}.json'
+          $context | ConvertTo-Json -Depth 5 | Set-Content -Path $contextPath -NoNewline
+          Write-Host "##vso[task.setvariable variable=AdmissionContextPath]$contextPath"
+        displayName: Write admitted E2E artifact identity context
+
+      - pwsh: |
+          node apps/vs-code-designer/scripts/enrich-e2e-traceability.js `
+            --prepare "$(Agent.TempDirectory)/e2e-traceability-crosswalk-${{ parameters.suiteId }}.json"
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+        displayName: Validate required private traceability configuration
+        env:
+          E2E_TRACEABILITY_CROSSWALK_JSON: $(E2E_TRACEABILITY_CROSSWALK_JSON)
+
+      - ${{ if eq(parameters.platform, 'linux') }}:
+          - bash: |
+              set -euo pipefail
+              export PATH="$(dirname "$(command -v node)"):/usr/local/bin:/usr/bin:/bin:$PATH"
+              xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
+                node apps/vs-code-designer/out/test/run-e2e.js
+            displayName: Prepare VS Code extension dependencies once
+            env:
+              LA_E2E_PREPARE_EXTENSION_DEPENDENCIES_ONLY: '1'
+              NODE_OPTIONS: --dns-result-order=ipv4first --no-network-family-autoselection --max-old-space-size=4096
+              TEMP: $(Agent.TempDirectory)
+              TMPDIR: $(Agent.TempDirectory)
+
+      - ${{ if eq(parameters.platform, 'windows') }}:
+          - pwsh: |
+              $env:PATH = "$(Build.SourcesDirectory)\apps\vs-code-designer\node_modules\.bin;$(Build.SourcesDirectory)\node_modules\.bin;$env:PATH"
+              node apps/vs-code-designer/out/test/run-e2e.js
+            displayName: Prepare VS Code extension dependencies once
+            env:
+              LA_E2E_PREPARE_EXTENSION_DEPENDENCIES_ONLY: '1'
+              NODE_OPTIONS: --max-old-space-size=4096
+              TEMP: $(Agent.TempDirectory)
+              TMP: $(Agent.TempDirectory)
+
+      - ${{ if and(eq(parameters.platform, 'linux'), eq(parameters.requiresAzureAccessToken, false)) }}:
+          - bash: |
+              set -euo pipefail
+              export PATH="$(Build.SourcesDirectory)/apps/vs-code-designer/node_modules/.bin:$(Build.SourcesDirectory)/node_modules/.bin:$PATH"
+              cd "$(Build.SourcesDirectory)/apps/vs-code-designer"
+              mkdir -p .vscode-test/results
+              short_profile_parent="$(mktemp -d "/tmp/la${{ parameters.shortName }}.XXXXXX")"
+              socket_probe="$short_profile_parent/user-data-${{ parameters.shortName }}/main.sock"
+              socket_bytes="$(printf '%s' "$socket_probe" | wc -c)"
+              if [ "$socket_bytes" -ge 100 ]; then
+                echo "Short Linux VS Code profile socket path budget exceeded: $socket_bytes bytes ($socket_probe)" >&2
+                exit 1
+              fi
+              mkdir -p "$(Agent.TempDirectory)/runtime-dependencies"
+              read -r -a cli_args <<< "$LA_E2E_CLI_DIRECT_ARGS"
+              set +e
+              LA_E2E_CLI_USER_DATA_PARENT="$short_profile_parent" \
+              bash scripts/run-e2e-cli-linux-secure-session.sh \
+                xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
+                node scripts/run-e2e-cli.js "${cli_args[@]}" 2>&1 | tee ".vscode-test/results/${{ parameters.suiteId }}.log"
+              status=${PIPESTATUS[0]}
+              set -e
+              outcome='success'
+              if [ "$status" -ne 0 ]; then
+                outcome='failure'
+              fi
+              node scripts/summarize-e2e-cli-results.js \
+                --label "${{ parameters.suiteId }}" \
+                --log ".vscode-test/results/${{ parameters.suiteId }}.log" \
+                --out-dir ".vscode-test/results" \
+                --outcome "$outcome" \
+                --diagnostics-artifact-name "vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}"
+              exit "$status"
+            displayName: Run vscode-test CLI (${{ parameters.suiteId }})
+            env:
+              LA_E2E_CLI_DIRECT_ARGS: ${{ parameters.cliArguments }}
+              ${{ if eq(parameters.suiteId, 'workspaceMultiRoot') }}:
+                LA_E2E_CLI_MULTI_ROOT_ISOLATED: '1'
+                LA_E2E_CLI_MULTI_ROOT_DIAGNOSTIC_ONLY: '1'
+                LA_E2E_CLI_MULTI_ROOT_DIAGNOSTICS_PARENT: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/lifecycle/workspaceMultiRoot
+              LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL: ${{ eq(parameters.suiteId, 'createWorkspaceCoreMatrix') }}
+              LA_E2E_CLI_EXTENSIONS_DIR: $(Agent.TempDirectory)/test-resources/test-extensions
+              LA_E2E_CLI_GENERATED_WORKSPACE_ARTIFACT_DIR: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/generated-workspaces/${{ parameters.suiteId }}
+              LA_E2E_CLI_LIFECYCLE_ARTIFACT_ROOT: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/lifecycle/${{ parameters.suiteId }}
+              LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: $(Agent.TempDirectory)/runtime-dependencies/${{ parameters.suiteId }}
+              LA_E2E_CLI_SCREENSHOT_DIR: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/screenshots/cli/${{ parameters.suiteId }}
+              LA_E2E_CLI_EVIDENCE_DIR: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/evidence/${{ parameters.suiteId }}
+              LA_E2E_CLI_EVIDENCE_SUITE_ID: ${{ parameters.suiteId }}
+              LA_E2E_CLI_USER_DATA_SUFFIX: ${{ parameters.shortName }}
+              LA_E2E_CLI_VSCODE_LOG_ARTIFACT_LABEL: ${{ parameters.suiteId }}
+              LA_E2E_CLI_VSCODE_LOG_DIR: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/vscode-logs/cli
+              LA_E2E_CLI_VSCODE_VERSION: $(ResolvedVSCodeVersion)
+              LA_E2E_CLI_WORKSPACE_ROOT: $(Agent.TempDirectory)/workspaces/${{ parameters.suiteId }}
+              NODE_OPTIONS: --dns-result-order=ipv4first --no-network-family-autoselection --max-old-space-size=4096
+              TEMP: $(Agent.TempDirectory)
+              TMPDIR: $(Agent.TempDirectory)
+
+      - ${{ if and(eq(parameters.platform, 'linux'), eq(parameters.requiresAzureAccessToken, true)) }}:
+          - task: AzureCLI@2
+            displayName: Run vscode-test CLI (${{ parameters.suiteId }})
+            inputs:
+              azureSubscription: ${{ parameters.testARMServiceConnection }}
+              scriptType: bash
+              scriptLocation: inlineScript
+              addSpnToEnvironment: true
+              useGlobalConfig: false
+              visibleAzLogin: false
+              inlineScript: |
+                set -euo pipefail
+                if [[ -z '${{ parameters.azureResourceGroupName }}' ]]; then
+                  echo 'azureResourceGroupName is required for live Azure E2E.' >&2
+                  exit 1
+                fi
+                if [[ -z "${tenantId:-}" ]]; then
+                  echo 'AzureCLI service connection did not provide WIF tenant metadata.' >&2
+                  exit 1
+                fi
+                accountSubscriptionId="$(az account show --query id --output tsv)"
+                accountTenantId="$(az account show --query tenantId --output tsv)"
+                guidPattern='^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+                if [[ -z "$accountSubscriptionId" || -z "$accountTenantId" ]]; then
+                  echo 'AzureCLI service connection did not provide subscription and tenant identity.' >&2
+                  exit 1
+                fi
+                if ! [[ "$accountSubscriptionId" =~ $guidPattern && "$accountTenantId" =~ $guidPattern && "$tenantId" =~ $guidPattern ]]; then
+                  echo 'AzureCLI service connection identity was malformed.' >&2
+                  exit 1
+                fi
+                if [[ "${accountTenantId,,}" != "${tenantId,,}" ]]; then
+                  echo 'AzureCLI account tenant does not match the service connection tenant.' >&2
+                  exit 1
+                fi
+                export FC_SERVICE_CONNECTION_ID="${AZURESUBSCRIPTION_SERVICE_CONNECTION_ID:-}"
+                export FC_SERVICE_CONNECTION_CLIENT_ID="${servicePrincipalId:-}"
+                export FC_SERVICE_CONNECTION_TENANT_ID="$accountTenantId"
+                export AzCode_UseAzureFederatedCredentials=true
+                export AzCode_ServiceConnectionID="$FC_SERVICE_CONNECTION_ID"
+                export AzCode_ServiceConnectionDomain="$FC_SERVICE_CONNECTION_TENANT_ID"
+                export AzCode_ServiceConnectionClientID="$FC_SERVICE_CONNECTION_CLIENT_ID"
+                export LA_E2E_CLI_AZURE_TENANT_ID="$accountTenantId"
+                export LA_E2E_CLI_AZURE_SUBSCRIPTION_ID="$accountSubscriptionId"
+                export PATH="$(Build.SourcesDirectory)/apps/vs-code-designer/node_modules/.bin:$(Build.SourcesDirectory)/node_modules/.bin:$PATH"
+                cd "$(Build.SourcesDirectory)/apps/vs-code-designer"
+                mkdir -p .vscode-test/results
+                short_profile_parent="$(mktemp -d "/tmp/la${{ parameters.shortName }}.XXXXXX")"
+                socket_probe="$short_profile_parent/user-data-${{ parameters.shortName }}/main.sock"
+                socket_bytes="$(printf '%s' "$socket_probe" | wc -c)"
+                if [ "$socket_bytes" -ge 100 ]; then
+                  echo "Short Linux VS Code profile socket path budget exceeded: $socket_bytes bytes ($socket_probe)" >&2
+                  exit 1
+                fi
+                mkdir -p "$(Agent.TempDirectory)/runtime-dependencies"
+                read -r -a cli_args <<< "$LA_E2E_CLI_DIRECT_ARGS"
+                set +e
+                LA_E2E_CLI_USER_DATA_PARENT="$short_profile_parent" \
+                bash scripts/run-e2e-cli-linux-secure-session.sh \
+                  xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
+                  node scripts/run-e2e-cli.js "${cli_args[@]}" 2>&1 | tee ".vscode-test/results/${{ parameters.suiteId }}.log"
+                status=${PIPESTATUS[0]}
+                set -e
+                outcome='success'
+                if [ "$status" -ne 0 ]; then
+                  outcome='failure'
+                fi
+                node scripts/summarize-e2e-cli-results.js \
+                  --label "${{ parameters.suiteId }}" \
+                  --log ".vscode-test/results/${{ parameters.suiteId }}.log" \
+                  --out-dir ".vscode-test/results" \
+                  --outcome "$outcome" \
+                  --diagnostics-artifact-name "vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}"
+                exit "$status"
+            env:
+              LA_E2E_CLI_DIRECT_ARGS: ${{ parameters.cliArguments }}
+              ${{ if eq(parameters.suiteId, 'workspaceMultiRoot') }}:
+                LA_E2E_CLI_MULTI_ROOT_ISOLATED: '1'
+                LA_E2E_CLI_MULTI_ROOT_DIAGNOSTIC_ONLY: '1'
+                LA_E2E_CLI_MULTI_ROOT_DIAGNOSTICS_PARENT: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/lifecycle/workspaceMultiRoot
+              LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL: ${{ eq(parameters.suiteId, 'createWorkspaceCoreMatrix') }}
+              LA_E2E_CLI_EXTENSIONS_DIR: $(Agent.TempDirectory)/test-resources/test-extensions
+              LA_E2E_CLI_GENERATED_WORKSPACE_ARTIFACT_DIR: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/generated-workspaces/${{ parameters.suiteId }}
+              LA_E2E_CLI_LIFECYCLE_ARTIFACT_ROOT: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/lifecycle/${{ parameters.suiteId }}
+              LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: $(Agent.TempDirectory)/runtime-dependencies/${{ parameters.suiteId }}
+              LA_E2E_CLI_SCREENSHOT_DIR: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/screenshots/cli/${{ parameters.suiteId }}
+              LA_E2E_CLI_EVIDENCE_DIR: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/evidence/${{ parameters.suiteId }}
+              LA_E2E_CLI_EVIDENCE_SUITE_ID: ${{ parameters.suiteId }}
+              LA_E2E_CLI_USER_DATA_SUFFIX: ${{ parameters.shortName }}
+              LA_E2E_CLI_VSCODE_LOG_ARTIFACT_LABEL: ${{ parameters.suiteId }}
+              LA_E2E_CLI_VSCODE_LOG_DIR: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/vscode-logs/cli
+              LA_E2E_CLI_VSCODE_VERSION: $(ResolvedVSCodeVersion)
+              LA_E2E_CLI_WORKSPACE_ROOT: $(Agent.TempDirectory)/workspaces/${{ parameters.suiteId }}
+              NODE_OPTIONS: --dns-result-order=ipv4first --no-network-family-autoselection --max-old-space-size=4096
+              TEMP: $(Agent.TempDirectory)
+              TMPDIR: $(Agent.TempDirectory)
+              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+              FC_SERVICE_CONNECTION_NAME: ${{ parameters.testARMServiceConnection }}
+              LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME: ${{ parameters.azureResourceGroupName }}
+              LA_E2E_CLI_AZURE_LOCATION_NAME: ${{ parameters.azureLocationName }}
+              LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL: ${{ parameters.azureManagementBaseUrl }}
+              LA_E2E_CLI_DISABLE_UNOWNED_PORT_KILL: '1'
+              LA_E2E_DESIGNER_API_LOAD_TIMEOUT_MS: ${{ parameters.designerApiLoadTimeoutMs }}
+
+      - ${{ if and(eq(parameters.platform, 'windows'), eq(parameters.requiresAzureAccessToken, false)) }}:
+          - pwsh: |
+              $env:PATH = "$(Build.SourcesDirectory)\apps\vs-code-designer\node_modules\.bin;$(Build.SourcesDirectory)\node_modules\.bin;$env:PATH"
+              Set-Location "$(Build.SourcesDirectory)\apps\vs-code-designer"
+              New-Item -ItemType Directory -Force -Path ".vscode-test\results" | Out-Null
+              New-Item -ItemType Directory -Force -Path "$(Agent.TempDirectory)\runtime-dependencies" | Out-Null
+              $cliArgs = $env:LA_E2E_CLI_DIRECT_ARGS -split ' '
+              & node scripts/run-e2e-cli.js @cliArgs 2>&1 | Tee-Object -FilePath ".vscode-test\results\${{ parameters.suiteId }}.log"
+              $status = $LASTEXITCODE
+              $outcome = if ($status -eq 0) { 'success' } else { 'failure' }
+              & node scripts/summarize-e2e-cli-results.js `
+                --label "${{ parameters.suiteId }}" `
+                --log ".vscode-test\results\${{ parameters.suiteId }}.log" `
+                --out-dir ".vscode-test\results" `
+                --outcome "$outcome" `
+                --diagnostics-artifact-name "vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}"
+              if ($LASTEXITCODE -ne 0 -and $status -eq 0) {
+                $status = $LASTEXITCODE
+              }
+              exit $status
+            displayName: Run vscode-test CLI (${{ parameters.suiteId }})
+            env:
+              LA_E2E_CLI_DIRECT_ARGS: ${{ parameters.cliArguments }}
+              ${{ if eq(parameters.suiteId, 'workspaceMultiRoot') }}:
+                LA_E2E_CLI_MULTI_ROOT_ISOLATED: '1'
+                LA_E2E_CLI_MULTI_ROOT_DIAGNOSTIC_ONLY: '1'
+                LA_E2E_CLI_MULTI_ROOT_DIAGNOSTICS_PARENT: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\lifecycle\workspaceMultiRoot
+              LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL: ${{ eq(parameters.suiteId, 'createWorkspaceCoreMatrix') }}
+              LA_E2E_CLI_EXTENSIONS_DIR: $(Agent.TempDirectory)\test-resources\test-extensions
+              LA_E2E_CLI_GENERATED_WORKSPACE_ARTIFACT_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\generated-workspaces\${{ parameters.suiteId }}
+              LA_E2E_CLI_LIFECYCLE_ARTIFACT_ROOT: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\lifecycle\${{ parameters.suiteId }}
+              LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: $(Agent.TempDirectory)\runtime-dependencies\${{ parameters.suiteId }}
+              LA_E2E_CLI_SCREENSHOT_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\screenshots\cli\${{ parameters.suiteId }}
+              LA_E2E_CLI_EVIDENCE_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\evidence\${{ parameters.suiteId }}
+              LA_E2E_CLI_EVIDENCE_SUITE_ID: ${{ parameters.suiteId }}
+              LA_E2E_CLI_USER_DATA_PARENT: $(Agent.TempDirectory)\profiles\${{ parameters.shortName }}
+              LA_E2E_CLI_USER_DATA_SUFFIX: ${{ parameters.shortName }}
+              LA_E2E_CLI_VSCODE_LOG_ARTIFACT_LABEL: ${{ parameters.suiteId }}
+              LA_E2E_CLI_VSCODE_LOG_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\vscode-logs\cli
+              LA_E2E_CLI_VSCODE_VERSION: $(ResolvedVSCodeVersion)
+              LA_E2E_CLI_WORKSPACE_ROOT: $(Agent.TempDirectory)\workspaces\${{ parameters.suiteId }}
+              NODE_OPTIONS: --dns-result-order=ipv4first --no-network-family-autoselection --max-old-space-size=4096
+              TEMP: $(Agent.TempDirectory)
+              TMP: $(Agent.TempDirectory)
+
+      - ${{ if and(eq(parameters.platform, 'windows'), eq(parameters.requiresAzureAccessToken, true)) }}:
+          - task: AzureCLI@2
+            displayName: Run vscode-test CLI (${{ parameters.suiteId }})
+            inputs:
+              azureSubscription: ${{ parameters.testARMServiceConnection }}
+              scriptType: pscore
+              scriptLocation: inlineScript
+              addSpnToEnvironment: true
+              useGlobalConfig: false
+              visibleAzLogin: false
+              inlineScript: |
+                $ErrorActionPreference = 'Stop'
+                if (-not '${{ parameters.azureResourceGroupName }}') {
+                  throw 'azureResourceGroupName is required for live Azure E2E.'
+                }
+                if (-not $env:tenantId) {
+                  throw 'AzureCLI service connection did not provide WIF tenant metadata.'
+                }
+                $rawAccountSubscriptionId = az account show --query id --output tsv
+                if ($LASTEXITCODE -ne 0) {
+                  throw 'AzureCLI failed to read subscription identity from the service connection.'
+                }
+                $rawAccountTenantId = az account show --query tenantId --output tsv
+                if ($LASTEXITCODE -ne 0) {
+                  throw 'AzureCLI failed to read tenant identity from the service connection.'
+                }
+                $accountSubscriptionId = ([string]$rawAccountSubscriptionId).Trim()
+                $accountTenantId = ([string]$rawAccountTenantId).Trim()
+                $tenantMetadata = ([string]$env:tenantId).Trim()
+                $guidPattern = '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+                if (-not $accountSubscriptionId -or -not $accountTenantId) {
+                  throw 'AzureCLI service connection did not provide subscription and tenant identity.'
+                }
+                if ($accountSubscriptionId -notmatch $guidPattern -or $accountTenantId -notmatch $guidPattern -or $tenantMetadata -notmatch $guidPattern) {
+                  throw 'AzureCLI service connection identity was malformed.'
+                }
+                if ($accountTenantId.ToLowerInvariant() -ne $tenantMetadata.ToLowerInvariant()) {
+                  throw 'AzureCLI account tenant does not match the service connection tenant.'
+                }
+                $env:FC_SERVICE_CONNECTION_ID = $env:AZURESUBSCRIPTION_SERVICE_CONNECTION_ID
+                $env:FC_SERVICE_CONNECTION_CLIENT_ID = $env:servicePrincipalId
+                $env:FC_SERVICE_CONNECTION_TENANT_ID = $accountTenantId
+                $env:AzCode_UseAzureFederatedCredentials = 'true'
+                $env:AzCode_ServiceConnectionID = $env:FC_SERVICE_CONNECTION_ID
+                $env:AzCode_ServiceConnectionDomain = $env:FC_SERVICE_CONNECTION_TENANT_ID
+                $env:AzCode_ServiceConnectionClientID = $env:FC_SERVICE_CONNECTION_CLIENT_ID
+                $env:LA_E2E_CLI_AZURE_TENANT_ID = $accountTenantId
+                $env:LA_E2E_CLI_AZURE_SUBSCRIPTION_ID = $accountSubscriptionId
+                $env:PATH = "$(Build.SourcesDirectory)\apps\vs-code-designer\node_modules\.bin;$(Build.SourcesDirectory)\node_modules\.bin;$env:PATH"
+                Set-Location "$(Build.SourcesDirectory)\apps\vs-code-designer"
+                New-Item -ItemType Directory -Force -Path ".vscode-test\results" | Out-Null
+                New-Item -ItemType Directory -Force -Path "$(Agent.TempDirectory)\runtime-dependencies" | Out-Null
+                $cliArgs = $env:LA_E2E_CLI_DIRECT_ARGS -split ' '
+                & node scripts/run-e2e-cli.js @cliArgs 2>&1 | Tee-Object -FilePath ".vscode-test\results\${{ parameters.suiteId }}.log"
+                $status = $LASTEXITCODE
+                $outcome = if ($status -eq 0) { 'success' } else { 'failure' }
+                & node scripts/summarize-e2e-cli-results.js `
+                  --label "${{ parameters.suiteId }}" `
+                  --log ".vscode-test\results\${{ parameters.suiteId }}.log" `
+                  --out-dir ".vscode-test\results" `
+                  --outcome "$outcome" `
+                  --diagnostics-artifact-name "vscode-e2e-cli-diagnostics-${{ parameters.artifactName }}"
+                if ($LASTEXITCODE -ne 0 -and $status -eq 0) {
+                  $status = $LASTEXITCODE
+                }
+                exit $status
+            env:
+              LA_E2E_CLI_DIRECT_ARGS: ${{ parameters.cliArguments }}
+              ${{ if eq(parameters.suiteId, 'workspaceMultiRoot') }}:
+                LA_E2E_CLI_MULTI_ROOT_ISOLATED: '1'
+                LA_E2E_CLI_MULTI_ROOT_DIAGNOSTIC_ONLY: '1'
+                LA_E2E_CLI_MULTI_ROOT_DIAGNOSTICS_PARENT: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\lifecycle\workspaceMultiRoot
+              LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL: ${{ eq(parameters.suiteId, 'createWorkspaceCoreMatrix') }}
+              LA_E2E_CLI_EXTENSIONS_DIR: $(Agent.TempDirectory)\test-resources\test-extensions
+              LA_E2E_CLI_GENERATED_WORKSPACE_ARTIFACT_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\generated-workspaces\${{ parameters.suiteId }}
+              LA_E2E_CLI_LIFECYCLE_ARTIFACT_ROOT: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\lifecycle\${{ parameters.suiteId }}
+              LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: $(Agent.TempDirectory)\runtime-dependencies\${{ parameters.suiteId }}
+              LA_E2E_CLI_SCREENSHOT_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\screenshots\cli\${{ parameters.suiteId }}
+              LA_E2E_CLI_EVIDENCE_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\evidence\${{ parameters.suiteId }}
+              LA_E2E_CLI_EVIDENCE_SUITE_ID: ${{ parameters.suiteId }}
+              LA_E2E_CLI_USER_DATA_PARENT: $(Agent.TempDirectory)\profiles\${{ parameters.shortName }}
+              LA_E2E_CLI_USER_DATA_SUFFIX: ${{ parameters.shortName }}
+              LA_E2E_CLI_VSCODE_LOG_ARTIFACT_LABEL: ${{ parameters.suiteId }}
+              LA_E2E_CLI_VSCODE_LOG_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\vscode-logs\cli
+              LA_E2E_CLI_VSCODE_VERSION: $(ResolvedVSCodeVersion)
+              LA_E2E_CLI_WORKSPACE_ROOT: $(Agent.TempDirectory)\workspaces\${{ parameters.suiteId }}
+              NODE_OPTIONS: --dns-result-order=ipv4first --no-network-family-autoselection --max-old-space-size=4096
+              TEMP: $(Agent.TempDirectory)
+              TMP: $(Agent.TempDirectory)
+              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+              FC_SERVICE_CONNECTION_NAME: ${{ parameters.testARMServiceConnection }}
+              LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME: ${{ parameters.azureResourceGroupName }}
+              LA_E2E_CLI_AZURE_LOCATION_NAME: ${{ parameters.azureLocationName }}
+              LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL: ${{ parameters.azureManagementBaseUrl }}
+              LA_E2E_CLI_DISABLE_UNOWNED_PORT_KILL: '1'
+              LA_E2E_DESIGNER_API_LOAD_TIMEOUT_MS: ${{ parameters.designerApiLoadTimeoutMs }}
+
+      - task: PublishTestResults@2
+        displayName: Publish JUnit result (${{ parameters.suiteId }})
+        condition: always()
+        inputs:
+          testResultsFormat: JUnit
+          testResultsFiles: apps/vs-code-designer/.vscode-test/results/${{ parameters.suiteId }}.junit.xml
+          testRunTitle: '@vscode/test-cli ${{ parameters.artifactName }}'
+          failTaskOnFailedTests: false
+          failTaskOnMissingResultsFile: true
+          publishRunAttachments: true
+
+      - pwsh: |
+          $diagnosticsRoot = "$(Build.ArtifactStagingDirectory)/vscode-e2e-cli/${{ parameters.artifactName }}"
+          $resultDestination = Join-Path $diagnosticsRoot 'results'
+          $logDestination = Join-Path $diagnosticsRoot 'log'
+          $screenshotDestination = Join-Path $diagnosticsRoot 'screenshots'
+          $workspaceDestination = Join-Path $diagnosticsRoot 'generated-workspaces'
+          New-Item -ItemType Directory -Force -Path $resultDestination, $logDestination, $screenshotDestination, $workspaceDestination | Out-Null
+
+          $resultRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/results'
+          $evidenceManifestSource = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/evidence/${{ parameters.suiteId }}/suite-evidence-manifest.json'
+          $vscodeLogsRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/vscode-logs/cli/${{ parameters.suiteId }}'
+          $workspaceSnapshotsRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/generated-workspaces/${{ parameters.suiteId }}'
+          $regenerationEvidenceRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/workspace-regeneration-${{ parameters.shortName }}'
+          $processEvidenceRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/lifecycle/${{ parameters.suiteId }}/msn-weather-lifecycle'
+          $cancelRoot = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/workspace-cancel'
+          $cancelDestination = Join-Path $diagnosticsRoot 'workspace-cancel'
+
+          function Redact-DiagnosticText {
+            param([string]$Value)
+            $redacted = $Value -replace '(Authorization\s*[:=]\s*Bearer\s+)[A-Za-z0-9._~+/=-]+', '$1<redacted>'
+            $redacted = $redacted -replace '(Bearer\s+)[A-Za-z0-9._~+/=-]+', '$1<redacted>'
+            $redacted = $redacted -replace '((?:access[_-]?token|account[_-]?key|api[_-]?key|authorization|authentication|azurewebjobsstorage|client[_-]?secret|connection[_-]?string|credential|password|sas|secret|sig|signature|token)\s*[=:]\s*)("[^"]*"|''[^'']*''|[^\s,;]+)', '$1<redacted>'
+            $redacted = $redacted -replace '([?&](?:code|sig|signature|se|sp|spr|sr|st|sv|skoid|sktid|skt|ske|sks|skv|access_token|refresh_token|id_token)=)[^&\s"''<>]+', '$1<redacted>'
+            return $redacted
+          }
+
+          $requiredResultFiles = @(
+            '${{ parameters.suiteId }}.json',
+            '${{ parameters.suiteId }}.junit.xml',
+            '${{ parameters.suiteId }}.summary.md',
+            'admission-context-${{ parameters.suiteId }}.json'
+          )
+          $missingRequiredFiles = @()
+          foreach ($fileName in $requiredResultFiles) {
+            $source = Join-Path $resultRoot $fileName
+            if (-not (Test-Path $source)) {
+              $missingRequiredFiles += $source
+              continue
+            }
+            Copy-Item $source -Destination $resultDestination -Force
+          }
+          $optionalTerminalResult = Join-Path $resultRoot '${{ parameters.suiteId }}.terminal-result.json'
+          if (Test-Path $optionalTerminalResult) {
+            Copy-Item $optionalTerminalResult -Destination $resultDestination -Force
+          }
+
+          $log = Join-Path $resultRoot '${{ parameters.suiteId }}.log'
+          if (Test-Path $log) {
+            Set-Content -Path (Join-Path $logDestination '${{ parameters.suiteId }}.log') -Value (Redact-DiagnosticText (Get-Content -Path $log -Raw)) -NoNewline
+          } else {
+            $missingRequiredFiles += $log
+          }
+          if ('${{ parameters.suiteId }}' -eq 'msnWeatherLifecycle') {
+            $cleanupEvidence = Join-Path $resultRoot 'msnWeatherLifecycle.cleanup-finalization.txt'
+            if (Test-Path -LiteralPath $cleanupEvidence) {
+              Set-Content -LiteralPath (Join-Path $logDestination 'msnWeatherLifecycle.cleanup-finalization.txt') `
+                -Value (Redact-DiagnosticText (Get-Content -LiteralPath $cleanupEvidence -Raw)) -NoNewline
+            }
+          }
+
+          if (Test-Path $vscodeLogsRoot) {
+            $vscodeLogDestination = Join-Path $logDestination 'vscode-logs'
+            New-Item -ItemType Directory -Force -Path $vscodeLogDestination | Out-Null
+            Copy-Item (Join-Path $vscodeLogsRoot '*') -Destination $vscodeLogDestination -Recurse -Force -ErrorAction Stop
+          }
+
+          if (Test-Path $workspaceSnapshotsRoot) {
+            Get-ChildItem -Path $workspaceSnapshotsRoot -Force -ErrorAction Stop | Copy-Item -Destination $workspaceDestination -Recurse -Force -ErrorAction Stop
+          }
+          if ('${{ parameters.suiteId }}' -eq 'workspaceArtifactRegeneration') {
+            if (Test-Path $regenerationEvidenceRoot) {
+              $regenerationDestination = Join-Path $logDestination 'regeneration'
+              New-Item -ItemType Directory -Force -Path $regenerationDestination | Out-Null
+              $requiredRegenerationFiles = @(
+                'invocation.json',
+                'final-result.json',
+                'terminal-result.json',
+                'cleanup-ledger.json',
+                'phase-results.jsonl',
+                'code.log',
+                'prompt-observations.jsonl'
+              )
+              foreach ($requiredName in $requiredRegenerationFiles) {
+                if (-not (Test-Path -LiteralPath (Join-Path $regenerationEvidenceRoot $requiredName))) {
+                  $missingRequiredFiles += (Join-Path $regenerationEvidenceRoot $requiredName)
+                }
+              }
+              foreach ($name in @($requiredRegenerationFiles + 'wizard-handoff.json')) {
+                $source = Join-Path $regenerationEvidenceRoot $name
+                if (Test-Path -LiteralPath $source) {
+                  Set-Content -LiteralPath (Join-Path $regenerationDestination $name) `
+                    -Value (Redact-DiagnosticText (Get-Content -LiteralPath $source -Raw)) -NoNewline
+                }
+              }
+              foreach ($directoryName in @('vscode-logs')) {
+                $source = Join-Path $regenerationEvidenceRoot $directoryName
+                if (Test-Path $source) {
+                  Copy-Item -LiteralPath $source -Destination $regenerationDestination -Recurse -Force -ErrorAction Stop
+                }
+              }
+            } else {
+              $missingRequiredFiles += $regenerationEvidenceRoot
+            }
+          }
+          if ('${{ parameters.suiteId }}' -eq 'msnWeatherLifecycle' -and (Test-Path $processEvidenceRoot)) {
+            $processDestination = Join-Path $diagnosticsRoot 'owned-processes'
+            New-Item -ItemType Directory -Force -Path $processDestination | Out-Null
+            Get-ChildItem -LiteralPath $processEvidenceRoot -File -Filter 'owned-processes-*.json' -ErrorAction Stop |
+              Copy-Item -Destination $processDestination -ErrorAction Stop
+            # Read-only lock diagnostics are separate from process ownership.
+            Get-ChildItem -LiteralPath $processEvidenceRoot -Directory -Filter 'msn-cleanup-observations-*' -ErrorAction Stop |
+              Copy-Item -Destination $logDestination -Recurse -ErrorAction Stop
+            if (Test-Path $optionalTerminalResult) {
+              $msnTerminal = Get-Content -LiteralPath $optionalTerminalResult -Raw | ConvertFrom-Json
+              if ($msnTerminal.phaseResultsPath) {
+                $journal = [IO.Path]::GetFullPath([string]$msnTerminal.phaseResultsPath)
+                $comparison = [StringComparison]::Ordinal
+                if ($IsWindows) { $comparison = [StringComparison]::OrdinalIgnoreCase }
+                if (-not [IO.Path]::GetDirectoryName($journal).Equals([IO.Path]::GetFullPath($resultRoot), $comparison) -or
+                    [IO.Path]::GetFileName($journal) -notmatch '^msnWeatherLifecycle\.phases-[a-f0-9-]{36}\.jsonl$') {
+                  throw 'MSN phase journal escapes the original result directory.'
+                }
+                if (Test-Path -LiteralPath $journal) {
+                  Copy-Item -LiteralPath $journal -Destination $logDestination -ErrorAction Stop
+                }
+              }
+            }
+          }
+          if ('${{ parameters.suiteId }}' -eq 'createWorkspaceCoreMatrix') {
+            if (Test-Path $cancelRoot) {
+              New-Item -ItemType Directory -Force -Path $cancelDestination | Out-Null
+              foreach ($cancelName in @('invocation.json', 'wizard-handoff.json', 'final-result.json', 'code.log', 'cancel.log', 'vscode-logs')) {
+                $cancelSource = Join-Path $cancelRoot $cancelName
+                if (Test-Path $cancelSource) {
+                  Copy-Item $cancelSource -Destination $cancelDestination -Recurse -Force -ErrorAction Stop
+                } else {
+                  $missingRequiredFiles += $cancelSource
+                }
+              }
+            } else {
+              $missingRequiredFiles += $cancelRoot
+            }
+          }
+          if ('${{ parameters.suiteId }}' -eq 'workspaceMultiRoot') {
+            $familyParent = Join-Path '$(Build.SourcesDirectory)' 'apps/vs-code-designer/.vscode-test/lifecycle/workspaceMultiRoot'
+            $familyRoots = @(Get-ChildItem -LiteralPath $familyParent -Directory -Filter 'multi-root-*' -ErrorAction SilentlyContinue)
+            if ($familyRoots.Count -ne 1) {
+              $missingRequiredFiles += "Exactly one current multi-root diagnostic invocation is required: $familyParent"
+            } else {
+              $familyDestination = Join-Path $diagnosticsRoot 'workspace-multi-root'
+              New-Item -ItemType Directory -Force -Path $familyDestination | Out-Null
+              $requiredMultiRootEvidence = @(
+                'invocation.json',
+                'func-bootstrap.json',
+                'wizard-handoff.json',
+                'debug-events.jsonl',
+                'code.log',
+                'final-result.json',
+                'vscode-logs'
+              )
+              foreach ($name in $requiredMultiRootEvidence) {
+                $source = Join-Path $familyRoots[0].FullName $name
+                if (-not (Test-Path $source)) {
+                  $missingRequiredFiles += $source
+                }
+              }
+              $multiRootFinalSource = Join-Path $familyRoots[0].FullName 'final-result.json'
+              if (Test-Path -LiteralPath $multiRootFinalSource) {
+                $multiRootFinal = Get-Content -LiteralPath $multiRootFinalSource -Raw | ConvertFrom-Json
+                $rootNames = @(
+                  @($multiRootFinal.observation.roots) |
+                    ForEach-Object {
+                      $root = [string]$_
+                      [IO.Path]::GetFileName(($root -replace '\\', '/').TrimEnd('/'))
+                    } |
+                    Where-Object { $_ }
+                )
+                $multiRootProjection = [ordered]@{
+                  schemaVersion = 1
+                  suiteId = 'workspaceMultiRoot'
+                  complete = $multiRootFinal.complete -eq $true
+                  observationPassed = $multiRootFinal.observationPassed -eq $true
+                  evidenceVerified = $multiRootFinal.evidenceVerified -eq $true
+                  diagnosticsVerified = $multiRootFinal.diagnosticsVerified -eq $true
+                  cleanupVerified = $multiRootFinal.cleanupVerified -eq $true
+                  lifecycleFinalized = $multiRootFinal.lifecycleFinalized -eq $true
+                  exitCode = $multiRootFinal.exitCode
+                  signal = $multiRootFinal.signal
+                  expectedPhaseIds = @($multiRootFinal.expectedPhaseIds)
+                  observedPhaseIds = @($multiRootFinal.observedPhaseIds)
+                  observation = [ordered]@{ roots = $rootNames }
+                }
+                $multiRootProjection |
+                  ConvertTo-Json -Depth 5 |
+                  Set-Content -LiteralPath (Join-Path $familyDestination 'final-result.json') -Encoding utf8
+              }
+            }
+          }
+
+          node "$(Build.SourcesDirectory)/apps/vs-code-designer/scripts/stage-vscode-e2e-evidence.js" `
+            --manifest "$evidenceManifestSource" `
+            --artifact-root "$diagnosticsRoot" `
+            --outcome-file "$resultRoot/${{ parameters.suiteId }}.json"
+          if ($LASTEXITCODE -ne 0) {
+            throw 'Ordered evidence manifest staging failed.'
+          }
+
+          node "$(Build.SourcesDirectory)/apps/vs-code-designer/scripts/vscode-e2e-evidence-report.js" `
+            --suite-id '${{ parameters.suiteId }}' `
+            --artifact-root "$diagnosticsRoot" `
+            --evidence-manifest "$diagnosticsRoot/suite-evidence-manifest.json"
+          if ($LASTEXITCODE -ne 0) {
+            throw 'VS Code CLI evidence report generation failed.'
+          }
+
+          foreach ($directory in @($logDestination, $screenshotDestination, $workspaceDestination)) {
+            if (-not (Get-ChildItem -Path $directory -Force -ErrorAction SilentlyContinue)) {
+              Set-Content -Path (Join-Path $directory '.empty') -Value 'No files were produced for this artifact.'
+            }
+          }
+
+          if ($missingRequiredFiles.Count -gt 0) {
+            throw "Required suite diagnostics were missing after staging available evidence: $($missingRequiredFiles -join ', ')"
+          }
+          if ('${{ parameters.suiteId }}' -in @('httpTimeoutLifecycle', 'statelessVariablesLifecycle', 'runAfterPersistenceLifecycle', 'workspaceArtifactRegeneration', 'workspaceMultiRoot')) {
+            $nativeResultPath = Join-Path $resultDestination '${{ parameters.suiteId }}.json'
+            $nativeResult = Get-Content $nativeResultPath -Raw | ConvertFrom-Json
+            if ($nativeResult.outcome -eq 'success') {
+              node "$(Build.SourcesDirectory)/apps/vs-code-designer/scripts/family-lifecycle-terminal.js" `
+                '${{ parameters.suiteId }}' `
+                "$nativeResultPath" `
+                "$resultDestination/${{ parameters.suiteId }}.terminal-result.json"
+              if ($LASTEXITCODE -ne 0) {
+                throw 'Supplementary family native lifecycle or final cleanup evidence is incomplete.'
+              }
+            }
+          }
+          if ('${{ parameters.suiteId }}' -eq 'msnWeatherLifecycle') {
+            $nativeResultPath = Join-Path $resultDestination '${{ parameters.suiteId }}.json'
+            $nativeResult = Get-Content $nativeResultPath -Raw | ConvertFrom-Json
+            if ($nativeResult.outcome -eq 'success') {
+              node "$(Build.SourcesDirectory)/apps/vs-code-designer/scripts/e2e-cli-terminal.js" `
+                "$nativeResultPath" "$resultDestination/${{ parameters.suiteId }}.terminal-result.json"
+              if ($LASTEXITCODE -ne 0) {
+                throw 'Published MSN lifecycle evidence failed required terminal validation.'
+              }
+            }
+          }
+          if ('${{ parameters.suiteId }}' -eq 'createWorkspaceCoreMatrix') {
+            $nativeResultPath = Join-Path $resultDestination '${{ parameters.suiteId }}.json'
+            $nativeResult = Get-Content $nativeResultPath -Raw | ConvertFrom-Json
+            if ($nativeResult.outcome -eq 'success') {
+              $admissionContext = Get-Content (Join-Path $resultDestination 'admission-context-${{ parameters.suiteId }}.json') -Raw | ConvertFrom-Json
+              node "$(Build.SourcesDirectory)/apps/vs-code-designer/scripts/enrich-e2e-traceability.js" `
+                --crosswalk "$(Agent.TempDirectory)/e2e-traceability-crosswalk-${{ parameters.suiteId }}.json" `
+                --input "$nativeResultPath" `
+                --terminal-result "$resultDestination/${{ parameters.suiteId }}.terminal-result.json" `
+                --supplementary-input "$cancelRoot/final-result.json" `
+                --output "$diagnosticsRoot/private-traceability/${{ parameters.suiteId }}.json" `
+                --source-version "$($admissionContext.sourceSHA)" `
+                --build-id "$(Build.BuildId)" `
+                --platform '${{ parameters.platform }}' `
+                --vscode-version "$($admissionContext.resolvedVSCodeBuild)"
+              if ($LASTEXITCODE -ne 0) {
+                exit $LASTEXITCODE
+              }
+              node "$(Build.SourcesDirectory)/apps/vs-code-designer/scripts/workspace-prompt-cancel.js" "$cancelRoot" '${{ parameters.platform }}'
+              if ($LASTEXITCODE -ne 0) {
+                throw 'Required supplementary workspace Cancel evidence failed; baseline-green/Cancel-missing cannot pass.'
+              }
+            } else {
+              Write-Host 'Private traceability join not emitted: native execution was not successful.'
+            }
+          }
+        displayName: Stage vscode-test CLI results (${{ parameters.suiteId }})
+        condition: always()
+
+      - ${{ if eq(parameters.platform, 'windows') }}:
+          - script: node "$(Build.SourcesDirectory)\apps\vs-code-designer\scripts\remove-downloaded-vscode-runtime.js" "$(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test"
+            displayName: Remove downloaded VS Code runtime before Component Governance
+            condition: always()

@@ -127,7 +127,7 @@ async function validateFuncCoreToolsInstalledBinaries(
   return false;
 }
 
-async function repairManagedFuncCoreTools(context: IActionContext): Promise<boolean> {
+async function repairManagedFuncCoreTools(_context: IActionContext): Promise<boolean> {
   let repaired = false;
   try {
     await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.repairFuncCoreTools', async (repairContext: IActionContext) => {

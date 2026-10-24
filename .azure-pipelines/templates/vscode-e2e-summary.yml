@@ -1,0 +1,45 @@
+parameters:
+  - name: jobName
+    type: string
+  - name: displayName
+    type: string
+  - name: dependsOn
+    type: object
+    default: []
+
+jobs:
+  - job: ${{ parameters.jobName }}
+    displayName: ${{ parameters.displayName }}
+    dependsOn: ${{ parameters.dependsOn }}
+    condition: always()
+    variables:
+      - ${{ each dependencyName in parameters.dependsOn }}:
+          - name: VSCODE_E2E_RESULT_${{ dependencyName }}
+            value: $[ dependencies.${{ dependencyName }}.result ]
+    steps:
+      - pwsh: |
+          $dependencyNames = '${{ convertToJson(parameters.dependsOn) }}' | ConvertFrom-Json
+          if ($null -eq $dependencyNames) {
+            $dependencyNames = @()
+          } elseif ($dependencyNames -isnot [array]) {
+            $dependencyNames = @($dependencyNames)
+          }
+
+          $failed = @()
+
+          foreach ($dependencyName in $dependencyNames) {
+            $envName = "VSCODE_E2E_RESULT_$dependencyName".ToUpperInvariant()
+            $result = [string][Environment]::GetEnvironmentVariable($envName)
+            Write-Host "${dependencyName}: $result"
+            if ($result -ne 'Succeeded') {
+              $failed += "$dependencyName=$result"
+            }
+          }
+
+          if ($failed.Count -gt 0) {
+            Write-Error "Required VS Code E2E shard(s) did not succeed: $($failed -join ', ')"
+            exit 1
+          }
+
+          Write-Host "All required VS Code E2E shards succeeded."
+        displayName: Fail closed on failed, skipped, or canceled shards

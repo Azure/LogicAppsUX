@@ -14,6 +14,9 @@ steps:
         package.json
         extension.manifest
         extension.signature.p7s
+        *.extension.manifest
+        *.extension.signature.p7s
+        *.release-metadata.json
         **/*.tar.gz
         **/*.tgz
       TargetFolder: "$(build.artifactstagingdirectory)/build/Root"

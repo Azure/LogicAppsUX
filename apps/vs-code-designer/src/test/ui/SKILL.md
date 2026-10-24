@@ -136,6 +136,7 @@ For debug lifecycle regressions, especially bundle → NuGet conversion, seed a 
 | `src/test/ui/designerActions.test.ts` | Designer full lifecycle tests (~2647 lines). Phase 4.2 |
 | `src/test/ui/designerOpen.test.ts` | Designer open tests (~1100 lines). Deprecated — Phase 4.2 now uses `designerActions.test.ts` only |
 | `src/test/ui/workspaceManifest.ts` | Shared manifest types and utilities (~110 lines) |
+| `src/test/e2e/designerCdpActions.ts` | CLI-native shared Designer CDP actions. `ProvenDesignerCdpActions` owns stable node identity, exact ID-scoped insertion, Settings/Run After navigation, semantic status reads, and rerender-safe toggles. Do not duplicate these in a family-local driver. |
 | `src/test/ui/run-e2e.ts` | Launcher script (~2600 lines). Orchestrates ExTester programmatically. Compiled by tsup to `out/test/run-e2e.js` |
 | `src/test/ui/run-clean.ps1` | PowerShell helper to kill stuck processes, compile, and run |
 | `src/test/ui/smoke.test.ts` | Extension smoke tests |

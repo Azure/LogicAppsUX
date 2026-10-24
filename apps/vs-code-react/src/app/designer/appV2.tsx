@@ -3,7 +3,8 @@ import type { AppDispatch, RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
 import { DesignerCommandBar } from './DesignerCommandBar/indexV2';
 import { getDesignerServices } from './servicesHelper';
-import { convertConnectionsDataToReferences } from './utilities/workflow';
+import { convertConnectionsDataToReferences, getCodeViewRequestOptionsValidationErrors } from './utilities/workflow';
+import { MessageBar, MessageBarBody } from '@fluentui/react-components';
 import type { ConnectionCreationInfo, Workflow } from '@microsoft/logic-apps-shared';
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer-v2';
 import {
@@ -26,6 +27,15 @@ import { commonMessages, useIntlMessages } from '../../intl';
 import { useAppStyles } from './appStyles';
 import { DesignerViewType } from './constants';
 import CodeViewEditor from './CodeViewEditor';
+
+interface DesignerWebviewState {
+  codeViewValidationErrors?: string[];
+}
+
+const readPersistedCodeViewValidationErrors = (state: unknown): string[] => {
+  const errors = (state as DesignerWebviewState | undefined)?.codeViewValidationErrors;
+  return Array.isArray(errors) && errors.every((error) => typeof error === 'string') ? errors : [];
+};
 
 export const DesignerApp = () => {
   const vscode = useContext(VSCodeContext);
@@ -68,6 +78,17 @@ export const DesignerApp = () => {
 
   const [designerID, setDesignerID] = useState(guid());
   const [workflowDefinitionId, setWorkflowDefinitionId] = useState<string>(guid());
+  const loadedCodeViewValidationErrors = useMemo(
+    () => getCodeViewRequestOptionsValidationErrors(panelMetaData?.standardApp?.definition),
+    [panelMetaData?.standardApp?.definition]
+  );
+  const initialPersistedCodeViewValidationErrors = useMemo(() => readPersistedCodeViewValidationErrors(vscode.getState()), [vscode]);
+  const codeViewValidationSource = useRef<'code' | 'loaded' | 'none'>(
+    initialPersistedCodeViewValidationErrors.length > 0 ? 'code' : loadedCodeViewValidationErrors.length > 0 ? 'loaded' : 'none'
+  );
+  const [codeViewValidationErrors, setCodeViewValidationErrors] = useState<string[]>(() =>
+    Array.from(new Set([...initialPersistedCodeViewValidationErrors, ...loadedCodeViewValidationErrors]))
+  );
 
   const codeEditorRef = useRef<{ getValue: () => string | undefined; hasChanges: () => boolean; resetChanges: () => void }>(null);
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
@@ -87,9 +108,29 @@ export const DesignerApp = () => {
     [vscode]
   );
 
+  const persistCodeViewValidationErrors = useCallback(
+    (errors: string[]) => {
+      codeViewValidationSource.current = errors.length > 0 ? 'code' : 'none';
+      setCodeViewValidationErrors(errors);
+      vscode.setState({
+        ...(vscode.getState() as DesignerWebviewState | undefined),
+        codeViewValidationErrors: errors,
+      });
+    },
+    [vscode]
+  );
+
+  useEffect(() => {
+    if (codeViewValidationSource.current !== 'code') {
+      codeViewValidationSource.current = loadedCodeViewValidationErrors.length > 0 ? 'loaded' : 'none';
+      setCodeViewValidationErrors(loadedCodeViewValidationErrors);
+    }
+  }, [loadedCodeViewValidationErrors]);
+
   const discardAllChanges = useCallback(() => {
+    persistCodeViewValidationErrors([]);
     setDesignerID(guid());
-  }, []);
+  }, [persistCodeViewValidationErrors]);
 
   const services = useMemo(() => {
     const fileSystemConnectionCreate = async (
@@ -156,8 +197,11 @@ export const DesignerApp = () => {
 
   useEffect(() => {
     setWorkflow(panelMetaData?.standardApp);
+  }, [panelMetaData?.standardApp]);
+
+  useEffect(() => {
     setCustomCode(panelMetaData?.customCodeData);
-  }, [panelMetaData]);
+  }, [panelMetaData?.customCodeData]);
 
   useEffect(() => {
     if (runInstance) {
@@ -177,6 +221,7 @@ export const DesignerApp = () => {
   const saveWorkflowFromDesigner = useCallback(
     async (workflowToSave: Workflow, customCodeData: Record<string, string> | undefined, _clearDirtyState?: () => void) => {
       const { definition, parameters, connectionReferences } = workflowToSave;
+      persistCodeViewValidationErrors(getCodeViewRequestOptionsValidationErrors(definition));
       vscode.postMessage({
         command: ExtensionCommand.save,
         definition,
@@ -200,17 +245,27 @@ export const DesignerApp = () => {
         customCodeData,
       };
     },
-    [vscode, workflow]
+    [persistCodeViewValidationErrors, vscode, workflow]
   );
 
   const validateAndSaveCodeView = useCallback(
     async (clearDirtyState?: () => void) => {
       try {
-        if (!codeEditorRef.current?.hasChanges()) {
+        const hasChanges = codeEditorRef.current?.hasChanges() ?? false;
+        const code = codeEditorRef.current?.getValue();
+        if (!hasChanges && !code) {
+          persistCodeViewValidationErrors(getCodeViewRequestOptionsValidationErrors(initialWorkflow?.definition));
           return workflow;
         }
-        const codeToConvert = JSON.parse(codeEditorRef.current?.getValue() ?? '');
+        const codeToConvert = JSON.parse(code ?? '');
         const { definition, parameters, connectionReferences } = codeToConvert;
+        persistCodeViewValidationErrors(getCodeViewRequestOptionsValidationErrors(definition));
+        if (!hasChanges) {
+          return {
+            ...workflow,
+            definition,
+          } as StandardApp;
+        }
         // code view editor cannot add/remove connections, parameters, settings, or customcode
         vscode.postMessage({
           command: ExtensionCommand.save,
@@ -223,7 +278,6 @@ export const DesignerApp = () => {
           definition,
         } as StandardApp;
         setWorkflow(newWorkflow);
-        setInitialWorkflow(newWorkflow);
 
         clearDirtyState?.();
         codeEditorRef.current?.resetChanges();
@@ -235,7 +289,7 @@ export const DesignerApp = () => {
       }
       return undefined;
     },
-    [vscode, workflow]
+    [initialWorkflow?.definition, persistCodeViewValidationErrors, vscode, workflow]
   );
 
   /////////////////////////////////////////////////////////////////////////////
@@ -252,7 +306,12 @@ export const DesignerApp = () => {
       return;
     }
     if (isCodeView) {
-      validateAndSaveCodeView().then(() => setCurrentView(DesignerViewType.Workflow));
+      validateAndSaveCodeView().then((savedWorkflow) => {
+        setCurrentView(DesignerViewType.Workflow);
+        if (savedWorkflow) {
+          setInitialWorkflow(savedWorkflow);
+        }
+      });
     }
     if (isMonitoringView) {
       hideMonitoringView();
@@ -284,7 +343,12 @@ export const DesignerApp = () => {
     }
 
     if (isCodeView) {
-      validateAndSaveCodeView().then(() => setCurrentView(DesignerViewType.Monitoring));
+      validateAndSaveCodeView().then((savedWorkflow) => {
+        setCurrentView(DesignerViewType.Monitoring);
+        if (savedWorkflow) {
+          setInitialWorkflow(savedWorkflow);
+        }
+      });
     }
   }, [isMonitoringView, isDesignerView, isCodeView, validateAndSaveCodeView]);
 
@@ -299,7 +363,7 @@ export const DesignerApp = () => {
   }
 
   return (
-    <div key={designerID} style={{ height: '100vh' }}>
+    <div key={designerID} data-code-view-validation-errors={JSON.stringify(codeViewValidationErrors)} style={{ height: '100vh' }}>
       <DesignerProvider
         id={workflowDefinitionId}
         key={designerID}
@@ -345,6 +409,11 @@ export const DesignerApp = () => {
               switchToMonitoringView={switchToMonitoringView}
               showRunHistory={!isCodefulWorkflow && isRuntimeAvailable}
             />
+            {codeViewValidationErrors.map((error) => (
+              <MessageBar key={error} intent="error" role="alert" style={{ boxSizing: 'border-box', maxWidth: '100%' }}>
+                <MessageBarBody style={{ minWidth: 0, overflowWrap: 'anywhere', whiteSpace: 'normal' }}>{error}</MessageBarBody>
+              </MessageBar>
+            ))}
 
             {!isCodeView && (
               <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1, height: '80%', position: 'relative' }}>

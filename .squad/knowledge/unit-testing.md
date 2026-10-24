@@ -43,3 +43,11 @@ Curated durable learnings for LogicAppsUX unit tests. Add entries through `sessi
 - Source: Azure/LogicAppsUX#9155.
 - Applies to: `test`, `vscode`, `vscode-test-specialist`.
 - Status: verified.
+
+### Source-shape controls must evolve with implementation
+
+- Learning: String, order, and AST assertions are implementation-shape contracts. Update every dependent control in the same change when the implementation shape changes, and prefer executing extracted production functions or production DOM expressions when practical.
+- Why it matters: A behavior fix can be correct while a stale source-string assertion blocks the build because it still requires superseded code text.
+- Source: VS Code CLI monitoring identity regression controls in `httpTimeoutComposeOriginal.unit.ts` and `workspaceLifecycleDiagnostics.unit.ts`.
+- Applies to: `test`, `vscode-test-specialist`, `senior-swe-reviewer`.
+- Status: verified.

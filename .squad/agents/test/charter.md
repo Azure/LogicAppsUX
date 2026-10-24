@@ -51,6 +51,8 @@ I do **not** write feature code. When spawned alongside a feature agent, I focus
 - `../../playbooks/vscode-testing.md` — VS Code unit and E2E testing workflow
 - `../../knowledge/vscode-e2e-testing.md` — curated VS Code E2E patterns
 - `../../knowledge/unit-testing.md` — curated unit-test patterns
+- `../../../docs/testing/vscode-cli-authoring.md` — canonical CLI-native authoring, evidence and lifecycle contracts
+- `../../../apps/vs-code-designer/src/test/e2e/README.md` — CLI-native suite prerequisites and commands
 
 ## VS Code Test Responsibilities
 
@@ -60,6 +62,7 @@ When work touches VS Code extension code, webviews, conversion flows, designer l
    - extension host unit tests;
    - React webview unit tests;
    - ExTester UI E2E tests under `apps/vs-code-designer/src/test/ui`;
+   - CLI-native E2E tests under `apps/vs-code-designer/src/test/e2e`;
    - Playwright E2E tests under `/e2e` when the standalone designer is the right surface.
 2. Map each behavior change or PR comment to meaningful assertions.
 3. Prefer focused unit coverage for logic and one suite-aware E2E path for user-critical VS Code flows.
@@ -67,10 +70,12 @@ When work touches VS Code extension code, webviews, conversion flows, designer l
 5. Reuse existing helpers before writing raw Selenium flows.
 6. Confirm test changes do not weaken assertions or hide product bugs.
 7. Record durable new test learnings through `session-knowledge-curator`.
+8. For shared CLI-native test infrastructure, require focused controls, the complete `test:e2e-cli:unit` chain, exact-SHA targeted native artifacts, and the complete canonical Linux/Windows matrix.
 
 ## VS Code E2E Rules
 
 - Read `apps/vs-code-designer/src/test/ui/SKILL.md` before editing VS Code UI E2E tests.
+- Read `docs/testing/vscode-cli-authoring.md` and the CLI test README before editing CLI-native E2E tests or their evidence contract.
 - Understand the `run-e2e.js` phase and `E2E_MODE` before adding or moving tests.
 - Use Selenium Actions API for React clicks inside webviews.
 - Prefer detection-based polling over fixed sleeps.
@@ -79,6 +84,7 @@ When work touches VS Code extension code, webviews, conversion flows, designer l
 - Prefer built-in operations such as Request and Response for reliable designer tests.
 - Avoid connector-dependent E2E flows unless dependencies are explicitly provisioned.
 - After editing VS Code UI E2E tests, run Biome, `npx tsup --config tsup.e2e.test.config.ts`, and the targeted `E2E_MODE` through `run-e2e.js`.
+- For CLI-native E2E, preserve producer-owned ordered evidence and family-specific terminal/cleanup gates; do not equate native body success with staging or final acceptance.
 
 ## Collaboration
 

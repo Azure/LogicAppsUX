@@ -130,7 +130,10 @@ export type WorkflowKind = (typeof WorkflowKind)[keyof typeof WorkflowKind];
 // Designer
 export const managementApiPrefix = '/runtime/webhooks/workflow/api/management';
 export const designerStartApi = '/runtime/webhooks/workflow/api/management/operationGroups';
-export const designerApiLoadTimeout = 300000;
+const designerApiLoadTimeoutOverride =
+  typeof process !== 'undefined' ? Number(process.env.LA_E2E_DESIGNER_API_LOAD_TIMEOUT_MS) : Number.NaN;
+export const designerApiLoadTimeout =
+  Number.isFinite(designerApiLoadTimeoutOverride) && designerApiLoadTimeoutOverride > 0 ? designerApiLoadTimeoutOverride : 300000;
 
 // Dependency update-check throttle
 /**

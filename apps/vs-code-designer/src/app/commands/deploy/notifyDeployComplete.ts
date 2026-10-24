@@ -17,7 +17,7 @@ import { window } from 'vscode';
  * @param {WorkspaceFolder} workspaceFolder - Workspace folder path.
  * @param {string[]} settingsToExclude - Array of settings to exclude from uploading.
  */
-export async function notifyDeployComplete(node: SlotTreeItem, isHybridLogiApp: boolean): Promise<void> {
+export async function notifyDeployComplete(node: SlotTreeItem, _isHybridLogiApp: boolean): Promise<void> {
   const deployComplete: string = localize(
     'deployComplete',
     'Deployment to "{0}" completed.',

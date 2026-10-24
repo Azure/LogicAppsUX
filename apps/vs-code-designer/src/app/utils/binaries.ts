@@ -186,13 +186,7 @@ export async function downloadAndExtractDependency(
         writeDependencyIntegrityManifest(context, targetFolder, dependencyName);
       }
       if (dependencyName === funcDependencyName) {
-        // Add execute permissions for func and gozip binaries
-        if (process.platform !== Platform.windows) {
-          fs.chmodSync(`${targetFolder}/func`, 0o755);
-          fs.chmodSync(`${targetFolder}/gozip`, 0o755);
-          fs.chmodSync(`${targetFolder}/in-proc8/func`, 0o755);
-          fs.chmodSync(`${targetFolder}/in-proc6/func`, 0o755);
-        }
+        setFuncCoreToolsExecutablePermissions(targetFolder);
         repairFuncCoreToolsExecutablePermissions(targetFolder);
         await setFunctionsCommand();
         await startAllDesignTimeApis();
@@ -290,6 +284,23 @@ export async function downloadFileWithTransportVerification(
       context.telemetry.properties[`${dependencyName}DownloadAttempts`] = String(attemptsUsed);
     }
     throw error;
+  }
+}
+
+export function setFuncCoreToolsExecutablePermissions(targetFolder: string, platform: NodeJS.Platform = process.platform): void {
+  if (platform === Platform.windows) {
+    return;
+  }
+
+  fs.chmodSync(path.join(targetFolder, 'func'), 0o755);
+  chmodIfExists(path.join(targetFolder, 'gozip'), 0o755);
+  fs.chmodSync(path.join(targetFolder, 'in-proc8', 'func'), 0o755);
+  chmodIfExists(path.join(targetFolder, 'in-proc6', 'func'), 0o755);
+}
+
+function chmodIfExists(filePath: string, mode: fs.Mode): void {
+  if (fs.existsSync(filePath)) {
+    fs.chmodSync(filePath, mode);
   }
 }
 

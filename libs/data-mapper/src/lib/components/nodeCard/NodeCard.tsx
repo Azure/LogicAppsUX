@@ -1,4 +1,5 @@
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
+import type { GriffelStyle } from '@fluentui/react-components';
 
 export interface CardProps {
   onClick?: () => void;
@@ -51,7 +52,7 @@ export const selectedCardStyles = {
   outlineStyle: 'solid',
   opacity: 1,
   boxShadow: tokens.shadow4,
-};
+} satisfies GriffelStyle;
 
 export const highlightedCardStyles = {
   outlineWidth: tokens.strokeWidthThick,

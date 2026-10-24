@@ -1,0 +1,1114 @@
+import * as assert from 'assert';
+import './approvedAzureFixture.unit';
+import * as fs from 'fs';
+import * as http from 'http';
+import * as os from 'os';
+import * as path from 'path';
+import type { CdpConnection } from './cdpClient';
+import { HttpTimeoutComposeDriver } from './httpTimeoutComposeDriver';
+import { runHttpTimeoutComposeDomControls } from './httpTimeoutComposeDom.unit';
+import { runHttpTimeoutEnvironmentControls } from './httpTimeoutComposeEnvironment.unit';
+import { runApprovedAzureConnectorFixtureControls } from './azureConnectorFixture.unit';
+import {
+  assembleHttpTimeoutComposeCode,
+  assertHttpTimeoutComposeAuthored,
+  assertHttpTimeoutComposePersisted,
+  assertHttpTimeoutComposeVisibleError,
+  httpTimeoutComposeAction,
+  httpTimeoutComposeError,
+  type HttpTimeoutComposeRenderedPage,
+  type HttpTimeoutComposeWorkflow,
+  httpTimeoutComposeRemaining,
+  pollHttpTimeoutCompose,
+  replaceHttpTimeoutComposeAction,
+  selectHttpTimeoutComposeWorkspace,
+} from './httpTimeoutComposeOracle';
+import {
+  assertHttpTimeoutActionFailed,
+  assertHttpTimeoutRequestPersisted,
+  selectHttpTimeoutRequestWorkspace,
+} from './httpTimeoutRequestOracle';
+import {
+  localWorkflowManagementRequestTimeoutMs,
+  localWorkflowManagementTimeoutCode,
+  requestLocalWorkflowManagement,
+  type LocalWorkflowManagementRequestError,
+} from './localWorkflowManagement';
+import { buildScreenshotReadinessExpression } from './screenshotReadiness';
+
+const authored: HttpTimeoutComposeWorkflow = {
+  kind: 'Stateless',
+  definition: {
+    $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+    contentVersion: '1.0.0.0',
+    triggers: { Request: { type: 'Request', kind: 'Http' } },
+    actions: { Compose: { inputs: 'test', runAfter: {}, type: 'Compose' } },
+    outputs: {},
+  },
+};
+const expected = replaceHttpTimeoutComposeAction(authored);
+const owner = { targetId: 'unit-target', frameId: 'unit-frame', contextId: 17, documentOrigin: 123 };
+const observation = { ...owner, visible: true, activeDesigner: true, messages: [httpTimeoutComposeError] };
+let passed = 0;
+
+async function control(name: string, run: () => void | Promise<void>): Promise<void> {
+  await run();
+  passed++;
+  console.log(`[http-timeout-compose-control] PASS ${name}`);
+}
+
+function numbered(text: string): HttpTimeoutComposeRenderedPage {
+  return { editorId: 'unit-editor-json', lines: text.split('\n').map((text, index) => ({ number: index + 1, text })) };
+}
+
+function inputDriverFixture(deadline = Date.now() + 5000) {
+  const sent: Array<{ method: string; params: Record<string, unknown> }> = [];
+  const cdp = {
+    async evaluate() {
+      throw new Error('Input-only control cannot supply synthetic editor DOM/pages');
+    },
+    async send(method: string, params: Record<string, unknown>) {
+      sent.push({ method, params });
+      return {};
+    },
+  } as unknown as CdpConnection;
+  return { driver: new HttpTimeoutComposeDriver(cdp, 17, deadline, () => {}), sent };
+}
+
+async function main(): Promise<void> {
+  await control('combined lifecycle executes request execution, validation, then Compose in one ordered test', () => {
+    const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
+    const pt1s = source.indexOf('await provePt1sExecution');
+    const pt24h = source.indexOf('await provePt24hAndInvalidValidation');
+    const compose = source.indexOf('await proveComposeUnsupportedTimeoutOnSameWorkflow');
+    assert.ok(pt1s >= 0 && pt1s < pt24h && pt24h < compose);
+    assert.strictEqual(
+      (source.match(/\btest\('proves HTTP execution, HTTP validation, then Compose unsupported timeout in one session'/g) ?? []).length,
+      1
+    );
+    assert.ok(!source.includes('createComposeWorkflow'));
+    assert.ok(!source.includes("executeCommand('azureLogicAppsStandard.createWorkflow'"));
+    assert.ok(!source.includes('LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_SCENARIO'));
+  });
+  await control('Scenario 1 runs through Overview and uses management only for exact run and action correlation', () => {
+    const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
+    const sharedSource = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/workspaceLifecycle.ts'), 'utf8');
+    assert.deepStrictEqual(localWorkflowManagementRequestTimeoutMs, {
+      'callback-url': 30_000,
+      'trigger-invocation': 20_000,
+      'run-status': 20_000,
+      'action-history': 30_000,
+    });
+    for (const phase of ['run-status', 'action-history']) {
+      assert.ok(source.includes(`'${phase}'`), `Scenario 1 must classify ${phase}`);
+    }
+    assert.ok(source.includes('await helpers.clickOverviewRunTrigger(overviewCdp, overviewContextId, entry)'));
+    assert.ok(source.includes("targetName: 'HTTP timeout Overview webview after Run trigger'"));
+    assert.ok(source.includes('overviewCdp = reboundOverview.cdp'));
+    assert.ok(sharedSource.includes("const expectedNodeId = actionTitle.replace(/\\W+/g, '_').replace(/^_+|_+$/g, '');"));
+    assert.ok(sharedSource.includes("const exactId = 'msla-node-' + ${JSON.stringify(expectedNodeId)};"));
+    assert.ok(sharedSource.includes('const exactNode = document.getElementById(exactId)'));
+    assert.ok(source.includes('await helpers.waitForWorkflowHealthy(entry.wfName'));
+    assert.ok(source.includes('await helpers.waitForRunHistoryBaseline('));
+    assert.ok(source.includes('await helpers.waitForNewRunStarted(entry.wfName, previousRunName, 60_000)'));
+    assert.ok(!source.includes("phase: 'trigger-invocation'"));
+    assert.ok(!/requestLocalManagementForPoll\(\s*'callback-url'/.test(source));
+    assert.ok(/requestLocalManagementForPoll\(\s*'run-status'/.test(source));
+    assert.ok(/requestLocalManagementForPoll\(\s*'action-history'/.test(source));
+    assert.ok(!source.includes('Math.min(10_000, httpTimeoutComposeRemaining(deadline))'));
+    assert.ok(!source.includes('Local workflow management request timed out'));
+  });
+  await control('local management timeout classification logs no query values and retains family budget evidence', async () => {
+    const logs: string[] = [];
+    let now = 1000;
+    let requests = 0;
+    await assert.rejects(
+      () =>
+        requestLocalWorkflowManagement(
+          {
+            phase: 'callback-url',
+            method: 'POST',
+            url: 'http://localhost:7071/runtime/webhooks/workflow/api/management/workflows/unit/triggers/manual/listCallbackUrl?sig=UNIT_SECRET',
+            deadline: 61_000,
+            attempt: 2,
+            timeoutMs: 50,
+          },
+          {
+            now: () => now,
+            log: (line) => logs.push(line),
+            transport: async () => {
+              requests++;
+              now = 1075;
+              const error = new Error('unit timeout') as NodeJS.ErrnoException;
+              error.code = localWorkflowManagementTimeoutCode;
+              throw error;
+            },
+          }
+        ),
+      (error: LocalWorkflowManagementRequestError) =>
+        error.classification === 'timeout' &&
+        error.phase === 'callback-url' &&
+        error.relativePath === '/workflows/unit/triggers/manual/listCallbackUrl'
+    );
+    assert.strictEqual(requests, 1);
+    assert.strictEqual(logs.length, 2);
+    assert.ok(logs.every((line) => !line.includes('UNIT_SECRET') && !line.includes('sig=')));
+    const start = JSON.parse(logs[0].slice(logs[0].indexOf('{')));
+    const finish = JSON.parse(logs[1].slice(logs[1].indexOf('{')));
+    assert.deepStrictEqual(
+      {
+        event: start.event,
+        phase: start.phase,
+        method: start.method,
+        path: start.path,
+        attempt: start.attempt,
+        elapsedMs: start.elapsedMs,
+        remainingFamilyMs: start.remainingFamilyMs,
+        requestTimeoutMs: start.requestTimeoutMs,
+      },
+      {
+        event: 'start',
+        phase: 'callback-url',
+        method: 'POST',
+        path: '/workflows/unit/triggers/manual/listCallbackUrl',
+        attempt: 2,
+        elapsedMs: 0,
+        remainingFamilyMs: 60_000,
+        requestTimeoutMs: 50,
+      }
+    );
+    assert.strictEqual(finish.outcome, 'timeout');
+    assert.strictEqual(finish.error, 'request-timeout');
+    assert.strictEqual(finish.elapsedMs, 75);
+    assert.strictEqual(finish.remainingFamilyMs, 59_925);
+  });
+  await control('local management transport enforces a wall-clock timeout through response completion', async () => {
+    const server = http.createServer(() => undefined);
+    await new Promise<void>((resolve, reject) => {
+      server.once('error', reject);
+      server.listen(0, '127.0.0.1', resolve);
+    });
+    const address = server.address();
+    assert.ok(address && typeof address === 'object');
+    const logs: string[] = [];
+    const startedAt = Date.now();
+    try {
+      await assert.rejects(
+        () =>
+          requestLocalWorkflowManagement(
+            {
+              phase: 'action-history',
+              method: 'GET',
+              url: `http://127.0.0.1:${address.port}/runtime/webhooks/workflow/api/management/workflows/unit/runs/exact/actions?sig=UNIT_SECRET`,
+              deadline: Date.now() + 1000,
+              attempt: 1,
+              timeoutMs: 25,
+            },
+            { log: (line) => logs.push(line) }
+          ),
+        (error: LocalWorkflowManagementRequestError) => error.classification === 'timeout'
+      );
+      assert.ok(Date.now() - startedAt < 1000, 'A stalled response body must not inherit the family deadline');
+      assert.ok(logs.some((line) => line.includes('"outcome":"timeout"')));
+      assert.ok(logs.every((line) => !line.includes('UNIT_SECRET') && !line.includes('sig=')));
+    } finally {
+      server.closeAllConnections();
+      await new Promise<void>((resolve, reject) => server.close((error) => (error ? reject(error) : resolve())));
+    }
+  });
+  await control('expired family deadline logs rejection without starting a request', async () => {
+    const logs: string[] = [];
+    let requests = 0;
+    await assert.rejects(
+      () =>
+        requestLocalWorkflowManagement(
+          {
+            phase: 'run-status',
+            method: 'GET',
+            url: 'http://127.0.0.1:7071/runtime/webhooks/workflow/api/management/workflows/unit/runs/exact?api-version=secret',
+            deadline: 1000,
+            attempt: 1,
+          },
+          {
+            now: () => 1000,
+            log: (line) => logs.push(line),
+            transport: async () => {
+              requests++;
+              return { status: 200, body: '{}', headers: {} };
+            },
+          }
+        ),
+      (error: LocalWorkflowManagementRequestError) => error.classification === 'deadline'
+    );
+    assert.strictEqual(requests, 0, 'No transport request may start at or after the family deadline');
+    assert.strictEqual(logs.length, 1);
+    assert.ok(!logs[0].includes('api-version'));
+    const rejection = JSON.parse(logs[0].slice(logs[0].indexOf('{')));
+    assert.strictEqual(rejection.event, 'rejected');
+    assert.strictEqual(rejection.outcome, 'deadline');
+    assert.strictEqual(rejection.remainingFamilyMs, 0);
+  });
+  await control('all scenarios mutate one physical workflow only after prior evidence passes', () => {
+    const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
+    const scenario2Complete = source.indexOf('http-timeout-request-scenario-2-complete-before-reset');
+    const deleteHttp = source.indexOf("await activeSession.driver.deleteNode(['HTTP'])", scenario2Complete);
+    const deleteRequest = source.indexOf('await activeSession.driver.deleteNode(requestTitles)', deleteHttp);
+    const transitionCleared = source.indexOf('http-timeout-transition-cleared', deleteRequest);
+    const addRequest = source.indexOf('await activeSession.driver.addRequestTrigger()', transitionCleared);
+    const addCompose = source.indexOf("await activeSession.driver.addAction('Compose', 'Compose')", addRequest);
+    assert.ok(
+      scenario2Complete >= 0 &&
+        scenario2Complete < deleteHttp &&
+        deleteHttp < deleteRequest &&
+        deleteRequest < transitionCleared &&
+        transitionCleared < addRequest &&
+        addRequest < addCompose
+    );
+    assert.ok(source.includes('openExactExplorerFileInNativeEditor(workbench, entry.workflowJsonPath, deadline)'));
+    assert.ok(source.includes('openDesignerFromExactExplorerFile('));
+    assert.ok(!source.includes("uniqueName('httpcomposewf')"));
+  });
+  await control('HTTP request evidence checkpoints are unique, ordered, and use the proven semantic screenshot binding', () => {
+    const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
+    const scenario1 = [
+      'http-timeout-request-pt1s-designer-ready',
+      'http-timeout-request-pt1s-request-inserted',
+      'http-timeout-request-pt1s-http-panel-ready',
+      'http-timeout-request-pt1s-method-selected',
+      'http-timeout-request-pt1s-uri-configured',
+      'http-timeout-request-pt1s-timeout-configured',
+      'http-timeout-request-pt1s-async-pattern-off',
+      'http-timeout-request-pt1s-saved',
+    ];
+    const scenario2 = [
+      'http-timeout-request-pt24h-designer-reopened',
+      'http-timeout-request-pt24h-timeout-configured',
+      'http-timeout-request-pt24h-async-pattern-off',
+      'http-timeout-request-pt24h-saved',
+      'http-timeout-request-invalid-designer-reopened',
+      'http-timeout-request-invalid-value-entered',
+      'http-timeout-request-invalid-duration',
+      'http-timeout-request-valid-state-restored',
+    ];
+    for (const labels of [scenario1, scenario2]) {
+      let previous = -1;
+      for (const label of labels) {
+        const index = source.indexOf(label);
+        assert.ok(index > previous, `Expected ordered HTTP evidence checkpoint ${label}`);
+        assert.strictEqual(source.indexOf(label, index + 1), -1, `HTTP evidence checkpoint ${label} must not overwrite itself`);
+        previous = index;
+      }
+    }
+    assert.strictEqual(new Set([...scenario1, ...scenario2]).size, scenario1.length + scenario2.length);
+    assert.ok(source.includes('captureEvidenceScreenshot(name, expectation, {'));
+    assert.ok(source.includes("error.message !== 'Screenshot binding failed: semantic frame is not owned by the workbench frame tree'"));
+    assert.ok(source.includes('rebinding screenshot evidence to the visible Designer iframe'));
+    assert.ok(source.includes("['Workflow', 'Code', 'HTTP', ...(semanticText ?? [])]"));
+    assert.ok(source.includes('await capture(rebound.cdp, rebound.contextId)'));
+    assert.ok(source.includes('await capture(session.cdp, session.contextId)'));
+    assert.ok(source.includes("binding: { activeTabText: [entry.wfName, 'Workspace'], semanticText }"));
+  });
+  await control('PT1S evidence binds empty history, triggered run, failed run, and failed HTTP action to live webviews', () => {
+    const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
+    const empty = source.indexOf('http-timeout-request-pt1s-overview-empty');
+    const click = source.indexOf('await helpers.clickOverviewRunTrigger', empty);
+    const triggered = source.indexOf('http-timeout-request-pt1s-overview-run-triggered', click);
+    const failedStatus = source.indexOf("'Failed',", triggered);
+    const failedOverview = source.indexOf('http-timeout-request-pt1s-overview-run-failed', failedStatus);
+    const failedAction = source.indexOf('http-timeout-request-pt1s-http-action-failed', failedOverview);
+    assert.ok(
+      empty >= 0 &&
+        empty < click &&
+        click < triggered &&
+        triggered < failedStatus &&
+        failedStatus < failedOverview &&
+        failedOverview < failedAction
+    );
+    assert.ok(
+      source.includes("assert.strictEqual(previousRunName, undefined, 'Scenario 1 must begin with an empty workflow run history')")
+    );
+    assert.ok(source.includes("runStatus: 'Failed'"));
+    assert.ok(source.includes("expectedStatus: 'Failed'"));
+    assert.ok(source.includes('emptyHistory: true'));
+    assert.ok(source.includes('candidate.hasMonitoringCanvas && !candidate.hasRunTrigger'));
+    assert.ok(source.includes("{ labels: ['URI'], value: endpoint }"));
+    assert.ok(source.includes('semanticCdp: overviewCdp'));
+    assert.ok(source.includes('semanticContextId: overviewContextId'));
+    assert.ok(source.includes('await waitForWebviewTab(httpTimeoutComposeDesignerViewType, 0,'));
+    assert.ok(source.includes('semanticCdp: monitoring.cdp'));
+    assert.ok(source.includes('semanticContextId: monitoring.contextId'));
+    assert.ok(source.includes("binding: { activeTabText: [entry.wfName, 'Workspace'] }"));
+    assert.ok(source.includes('for (let attempt = 1; attempt <= 2; attempt++)'));
+    assert.ok(source.includes('!isRecoverableFailedHttpMonitoringEvidenceError(error)'));
+    assert.ok(source.includes("error.message.includes('monitoring-action-state-missing')"));
+    assert.ok(source.includes('lost readiness; reselecting exact HTTP'));
+    assert.ok(source.includes('http-timeout-request-pt1s-http-action-retry-'));
+    assert.ok(
+      source.includes("{ kind: 'overview', label: 'httpTimeoutRequestRunTriggered', workflowName: entry.wfName }"),
+      'Immediate post-click evidence must not require the run row before Overview renders it'
+    );
+    assert.ok(!source.includes("kind: 'workbenchShell', label: 'httpTimeoutRequestExecutionHistory'"));
+  });
+  await control('HTTP timeout updates prove a bounded fresh disk write without requiring unreliable V2 clean state', () => {
+    const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
+    const helperStart = source.indexOf('async function updateHttpRequestTimeout(');
+    const helperEnd = source.indexOf('async function captureHttpDesignerEvidence(', helperStart);
+    const helper = source.slice(helperStart, helperEnd);
+    const saveEnabled = helper.indexOf('await pollHttpTimeoutCompose(() => driver.saveEnabled()');
+    const watermark = helper.indexOf('const priorModifiedAt = fs.statSync(entry.workflowJsonPath).mtimeMs;');
+    const save = helper.indexOf('await driver.save();');
+    const freshWrite = helper.indexOf('state.modifiedAt <= priorModifiedAt');
+    const exactPersisted = helper.indexOf('assertHttpTimeoutRequestPersisted(state.workflow, timeout, endpoint);');
+    assert.ok(
+      helper.includes('const saveDeadline = Math.min(deadline, Date.now() + 30_000);'),
+      'Save activation and persistence must use a local deadline instead of consuming the family budget'
+    );
+    assert.ok(
+      saveEnabled >= 0 && saveEnabled < watermark && watermark < save && save < freshWrite && freshWrite < exactPersisted,
+      'The native Save click must follow an enabled control and precede a fresh exact workflow.json write'
+    );
+    assert.strictEqual(
+      (helper.match(/driver\.saveEnabled\(\)/g) ?? []).length,
+      1,
+      'V2 Save enabled state is only a pre-click readiness signal, not a post-click completion oracle'
+    );
+    assert.ok(!helper.includes('state.enabled === false'), 'V2 save completion must not require an unreliable clean-state transition');
+  });
+  await control('invalid-duration validation reopens on a fresh Designer target after PT24H persistence', () => {
+    const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
+    const scenarioStart = source.indexOf('async function provePt24hAndInvalidValidation(');
+    const scenarioEnd = source.indexOf('async function authorHttpRequest(', scenarioStart);
+    const scenario = source.slice(scenarioStart, scenarioEnd);
+    const pt24hOwner = scenario.indexOf('pt24hOwner = await activeSession.driver.context();');
+    const invalidOpen = scenario.indexOf("openDesigner(entry, deadline, 'HTTP invalid duration actual designer')");
+    const invalidOwner = scenario.indexOf('const invalidOwner = await activeSession.driver.context();', invalidOpen);
+    const targetAssertion = scenario.indexOf('assert.notStrictEqual(invalidOwner.targetId, pt24hOwner.targetId', invalidOwner);
+    const invalidConfiguration = scenario.indexOf("configureHttpRequestSettings('InvalidString')", targetAssertion);
+    assert.ok(
+      pt24hOwner >= 0 &&
+        pt24hOwner < invalidOpen &&
+        invalidOpen < invalidOwner &&
+        invalidOwner < targetAssertion &&
+        targetAssertion < invalidConfiguration,
+      'InvalidString must be entered only after proving a fresh Designer target'
+    );
+  });
+  await control('PT24H runtime validation uses bounded native Ctrl+F search in the func host terminal', () => {
+    const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
+    const helper = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/workbenchTerminalSearch.ts'), 'utf8');
+    const oracle = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutRequestOracle.ts'), 'utf8');
+    const scenarioStart = source.indexOf('async function provePt24hAndInvalidValidation(');
+    const scenarioEnd = source.indexOf('async function authorHttpRequest(', scenarioStart);
+    const scenario = source.slice(scenarioStart, scenarioEnd);
+    const dispose = scenario.indexOf('await disposeStoppedFuncHostTerminals(');
+    const start = scenario.indexOf('await helpers.startDebuggingGeneratedWorkspace(entry);');
+    const search = scenario.indexOf('await findTextInFuncHostTerminal(');
+    const prepareEvidence = scenario.indexOf('await prepareFuncHostTerminalEvidence(');
+    assert.ok(dispose >= 0 && dispose < start && start < search);
+    assert.ok(search < prepareEvidence);
+    assert.ok(scenario.includes('httpTimeoutPt24hTerminalFindText'));
+    assert.ok(scenario.includes('httpTimeoutPt24hTerminalVisibleText'));
+    assert.ok(source.includes('const httpTimeoutPt24hTerminalVisibleText = [httpTimeoutPt24hRuntimeError] as const;'));
+    assert.ok(oracle.includes("must be less '00:03:45'"));
+    assert.ok(!oracle.includes('must be less than'));
+    assert.ok(scenario.includes('Date.now() + 90_000'));
+    assert.ok(scenario.includes('Date.now() + defaultEvidenceScreenshotTimeoutMs'));
+    assert.ok(scenario.includes('pt24h-terminal-validation-before-cleanup'));
+    assert.ok(!scenario.includes('readLogicAppsStandardOutputText('));
+    assert.ok(!scenario.includes('showLogicAppsStandardOutput('));
+    assert.ok(helper.includes("const terminalTaskName = 'func: host start';"));
+    assert.ok(helper.includes("const terminalFocusFindCommand = 'workbench.action.terminal.focusFind';"));
+    assert.ok(helper.includes("await pressControlShortcut(cdp, 'f', 'KeyF', 70);"));
+    assert.ok(helper.includes("document.querySelectorAll('.xterm-rows, .xterm-accessibility-tree')"));
+    assert.ok(helper.includes('!/no results/i.test(findWidgetText)'));
+    assert.ok(helper.includes('!terminalTextAvailable || missingRequiredText.length === 0'));
+    assert.ok(helper.includes('await waitForTerminalBufferText(terminal, requiredVisibleText, deadline)'));
+    assert.ok(helper.includes("const terminalSelectAllCommand = 'workbench.action.terminal.selectAll';"));
+    assert.ok(helper.includes("const terminalCopySelectionCommand = 'workbench.action.terminal.copySelection';"));
+    assert.ok(helper.includes('await vscode.env.clipboard.readText()'));
+    assert.ok(helper.includes('await vscode.env.clipboard.writeText(previousClipboard)'));
+    assert.ok(helper.includes("const toggleMaximizedPanelCommand = 'workbench.action.toggleMaximizedPanel';"));
+    assert.ok(helper.includes("await vscode.commands.executeCommand('notifications.hideToasts');"));
+    assert.ok(helper.includes('const chordDeadline = Math.min(deadline, Date.now() + 3000);'));
+    assert.ok(helper.includes('commands.includes(terminalFocusFindCommand)'));
+    assert.ok(helper.includes('await vscode.commands.executeCommand(terminalFocusFindCommand);'));
+    assert.ok(helper.includes("await pressControlShortcut(cdp, 'a', 'KeyA', 65);"));
+    assert.ok(helper.includes("await cdp.send('Input.insertText', { text: value });"));
+    assert.strictEqual((helper.match(/code: 'ControlLeft'/g) ?? []).length, 2);
+    assert.ok(helper.includes("key: 'Control'"));
+    assert.ok(helper.includes('findInput.value === searchText'));
+    assert.ok(helper.includes('state.findValue === searchText && state.found'));
+    assert.ok(helper.includes('Refusing to dispose ${terminalTaskName} terminals while matching task executions remain active'));
+  });
+  await control('failing HTTP evidence expectations use the shared local screenshot cap instead of the family deadline', () => {
+    const lifecycle = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
+    const screenshot = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/screenshot.ts'), 'utf8');
+    assert.ok(lifecycle.includes('defaultEvidenceScreenshotTimeoutMs'));
+    assert.ok(lifecycle.includes('deadlineMs: Math.min(deadline, Date.now() + defaultEvidenceScreenshotTimeoutMs)'));
+    const helperStart = lifecycle.indexOf('async function captureHttpDesignerEvidence');
+    const helperEnd = lifecycle.indexOf('async function captureHttpDesignerFailure', helperStart);
+    const helper = lifecycle.slice(helperStart, helperEnd);
+    assert.ok(!helper.includes('deadlineMs: deadline'));
+    assert.ok(screenshot.includes('export const defaultEvidenceScreenshotTimeoutMs = 15_000;'));
+    assert.ok(screenshot.includes("classification === 'diagnostic' ? 5000 : defaultEvidenceScreenshotTimeoutMs"));
+    const now = Date.now();
+    assert.strictEqual(Math.min(now + 1_680_000, now + 15_000), now + 15_000);
+  });
+  await control('HTTP screenshot expectations are satisfiable at their exact production lifecycle checkpoints', () => {
+    const lifecycle = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
+    const driver = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeDriver.ts'), 'utf8');
+    const screenshot = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/screenshot.ts'), 'utf8');
+    const readiness = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/screenshotReadiness.ts'), 'utf8');
+    const networking = fs.readFileSync(
+      path.resolve(__dirname, '../../../../../libs/designer-v2/src/lib/ui/settings/sections/networking.tsx'),
+      'utf8'
+    );
+    const validation = fs.readFileSync(
+      path.resolve(__dirname, '../../../../../libs/designer-v2/src/lib/ui/settings/validation/validation.ts'),
+      'utf8'
+    );
+    const errorBar = fs.readFileSync(
+      path.resolve(__dirname, '../../../../../libs/designer-v2/src/lib/ui/settings/validation/errorbar.tsx'),
+      'utf8'
+    );
+    assert.ok(
+      readiness.includes('const concreteNodeState = concreteRequiredNodeMatches(expectation.requiredNodes || [])') &&
+        readiness.includes('const concreteNodeIdState = concreteRequiredNodeIdMatches(expectation.requiredNodeIds || [])') &&
+        readiness.includes('!!designerCanvas &&') &&
+        readiness.includes('hasRequiredText(visibleText(designerCanvas), expectation.requiredNodes || []) &&') &&
+        readiness.includes('concreteNodeState.ok &&') &&
+        readiness.includes('concreteNodeIdState.ok') &&
+        readiness.includes('if ((expectation.requiredNodes || []).length > 0)'),
+      'Designer-ready evidence must permit an empty required-node list while requiring the real canvas and every exact requested node ID'
+    );
+    assert.ok(networking.includes("defaultMessage: 'Request options - Timeout'") && networking.includes('ariaLabel: requestOptionsTitle'));
+    assert.ok(validation.includes("defaultMessage: 'Timeout value is invalid, must match ISO 8601 duration format'"));
+    assert.ok(errorBar.includes("const role = type === 'error' || type === 'warning' ? 'alert' : undefined;"));
+    assert.ok(readiness.includes('\'[role="alert"], [aria-live], .ms-MessageBar, [class*="error"], [class*="Error"]\''));
+    const timeoutConfigured = lifecycle.indexOf('http-timeout-request-pt1s-timeout-configured');
+    const asyncPatternOff = lifecycle.indexOf('http-timeout-request-pt1s-async-pattern-off', timeoutConfigured);
+    const addHttp = lifecycle.indexOf("await driver.addAction('HTTP', 'HTTP', ['http']);");
+    const selectGet = lifecycle.indexOf('await driver.selectHttpMethodGet();', addHttp);
+    const methodEvidence = lifecycle.indexOf('http-timeout-request-pt1s-method-selected', selectGet);
+    const enterUri = lifecycle.indexOf("await driver.fillParameter(['URI'], endpoint);", methodEvidence);
+    const configureSettings = lifecycle.indexOf('await driver.configureHttpRequestSettings(timeout, {', enterUri);
+    const closePanel = lifecycle.indexOf('await driver.closePanel();', asyncPatternOff);
+    const saved = lifecycle.indexOf('http-timeout-request-pt1s-saved', closePanel);
+    const persisted = lifecycle.lastIndexOf('assertHttpTimeoutRequestPersisted(persisted, timeout, endpoint);', saved);
+    assert.ok(
+      addHttp >= 0 &&
+        addHttp < selectGet &&
+        selectGet < methodEvidence &&
+        methodEvidence < enterUri &&
+        enterUri < configureSettings &&
+        configureSettings < timeoutConfigured &&
+        timeoutConfigured < asyncPatternOff &&
+        asyncPatternOff < closePanel &&
+        closePanel < persisted &&
+        persisted < saved
+    );
+    assert.strictEqual(
+      (lifecycle.match(/await driver\.selectHttpMethodGet\(\);/g) ?? []).length,
+      1,
+      'Scenario 1 must explicitly select GET exactly once instead of relying on an implicit HTTP method'
+    );
+    assert.ok(
+      lifecycle.includes("fields: [{ labels: ['Method'], value: 'GET' }]"),
+      'Pre-save evidence must expose the selected Method GET value'
+    );
+    assert.ok(lifecycle.includes("exactAriaLabel: 'Request options - Timeout'"));
+    assert.ok(lifecycle.includes("sectionTitle: 'Networking'"));
+    assert.ok(lifecycle.includes("labels: ['Asynchronous pattern']"));
+    assert.ok(lifecycle.includes("exactAriaLabel: 'Asynchronous pattern'"));
+    assert.ok(lifecycle.includes('checked: false'));
+    assert.ok(lifecycle.includes("stateText: 'Off'"));
+    assert.ok(!lifecycle.includes("labels: ['Action timeout', 'Request options - Timeout', 'Timeout']"));
+    const timeoutCallback = driver.indexOf('await checkpoints.timeoutConfigured?.();');
+    const disableAsync = driver.indexOf('await this.disableAsyncPattern', timeoutCallback);
+    const evidenceScroll = driver.indexOf(
+      "input.scrollIntoView({ block: 'center', inline: 'center' });",
+      driver.indexOf('prepareBoundAsyncPatternOffEvidence')
+    );
+    const asyncCallback = driver.indexOf('await asyncPatternDisabled?.();', evidenceScroll);
+    assert.ok(
+      timeoutCallback >= 0 && timeoutCallback < disableAsync && disableAsync < evidenceScroll && evidenceScroll < asyncCallback,
+      'Timeout evidence must precede exact-input async-pattern scrolling and Off evidence'
+    );
+    assert.ok(readiness.includes('querySelectorAll(\'[role="switch"]\')'));
+    assert.ok(readiness.includes("'switch-checked-mismatch'"));
+    assert.ok(readiness.includes("'switch-state-text-missing'"));
+    assert.ok(screenshot.includes('(expectation.switches ?? []).flatMap'));
+    assert.ok(screenshot.includes('...(expected.stateText ? [expected.stateText] : [])'));
+    const invalidConfigured = lifecycle.indexOf("await activeSession.driver.configureHttpRequestSettings('InvalidString')");
+    const invalidEnteredEvidence = lifecycle.indexOf('http-timeout-request-invalid-value-entered', invalidConfigured);
+    const revealValidation = lifecycle.indexOf('revealValidationMessage(httpTimeoutInvalidDurationError)', invalidEnteredEvidence);
+    const invalidEvidence = lifecycle.indexOf('http-timeout-request-invalid-duration', revealValidation);
+    const restoration = lifecycle.indexOf('http-timeout-request-valid-state-restored', invalidEvidence);
+    assert.ok(
+      invalidConfigured >= 0 &&
+        invalidConfigured < invalidEnteredEvidence &&
+        invalidEnteredEvidence < revealValidation &&
+        revealValidation < invalidEvidence &&
+        invalidEvidence < restoration
+    );
+    assert.ok(lifecycle.includes("fields: [{ labels: ['Request options - Timeout'], value: 'InvalidString' }]"));
+    assert.ok(driver.includes("element.scrollIntoView({ block: 'center', inline: 'nearest' });"));
+  });
+  await control('HTTP lifecycle captures each live runtime before stop and finalizes after exact extension deactivation', () => {
+    const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
+    assert.ok(source.includes('type OwnedMsnProcessCleanup'));
+    assert.ok(source.includes("import { createHttpTimeoutProcessCleanup } from './ownedMsnProcessCleanup';"));
+    const endpoint = source.indexOf('const endpoint = await startOwnedDelayEndpoint();');
+    const createProcessCleanup = source.indexOf(
+      "const processCleanup = process.platform === 'win32' ? createHttpTimeoutProcessCleanup(process.env) : undefined;",
+      endpoint
+    );
+    const scenario1Call = source.indexOf('await provePt1sExecution(entry, endpoint, deadline, processCleanup)', createProcessCleanup);
+    const scenario2Call = source.indexOf(
+      'await provePt24hAndInvalidValidation(entry, endpoint.url, deadline, processCleanup)',
+      scenario1Call
+    );
+    const composeCall = source.indexOf('await proveComposeUnsupportedTimeoutOnSameWorkflow', scenario2Call);
+    const finalizerCall = source.indexOf('await teardownHttpTimeoutHost(entry, endpoint, processCleanup)', composeCall);
+    assert.ok(
+      endpoint >= 0 &&
+        endpoint < createProcessCleanup &&
+        createProcessCleanup < scenario1Call &&
+        scenario1Call < scenario2Call &&
+        scenario2Call < composeCall &&
+        composeCall < finalizerCall
+    );
+
+    const scenario1Start = source.indexOf('async function provePt1sExecution');
+    const scenario2Start = source.indexOf('async function provePt24hAndInvalidValidation');
+    const scenario1 = source.slice(scenario1Start, scenario2Start);
+    const scenario1Healthy = scenario1.indexOf('await helpers.waitForWorkflowHealthy');
+    const scenario1Capture = scenario1.indexOf('await processCleanup?.capture()', scenario1Healthy);
+    const scenario1Stop = scenario1.indexOf("phase: 'stop Scenario 1 debug/tasks'", scenario1Capture);
+    assert.ok(scenario1Healthy >= 0 && scenario1Healthy < scenario1Capture && scenario1Capture < scenario1Stop);
+
+    const scenario2End = source.indexOf('async function authorHttpRequest(', scenario2Start);
+    const scenario2 = source.slice(scenario2Start, scenario2End);
+    const terminalEvidence = scenario2.indexOf('await findTextInFuncHostTerminal(');
+    const scenario2Capture = scenario2.indexOf('await processCleanup?.capture()', terminalEvidence);
+    const scenario2Stop = scenario2.indexOf('await helpers.stopDebuggingAndTasks()', scenario2Capture);
+    assert.ok(terminalEvidence >= 0 && terminalEvidence < scenario2Capture && scenario2Capture < scenario2Stop);
+
+    const finalizer = source.indexOf('async function teardownHttpTimeoutHost');
+    const stopRuntime = source.indexOf('() => helpers.stopDebuggingAndTasks()', finalizer);
+    const disposeTerminal = source.indexOf('() => disposeStoppedFuncHostTerminals(Date.now() + 10_000)', stopRuntime);
+    const closeEndpoint = source.indexOf('() => endpoint.close()', disposeTerminal);
+    const closeTabs = source.indexOf('() => closeAllTabs()', closeEndpoint);
+    const dialogAssertion = source.indexOf("() => assertNoDialogAttempts('HTTP timeout request lifecycle')", closeTabs);
+    const exactProcessCleanup = source.indexOf('processCleanup', dialogAssertion);
+    assert.ok(
+      finalizer >= 0 &&
+        stopRuntime > finalizer &&
+        disposeTerminal > stopRuntime &&
+        closeEndpoint > disposeTerminal &&
+        closeTabs > closeEndpoint &&
+        dialogAssertion > closeTabs &&
+        exactProcessCleanup > dialogAssertion
+    );
+    assert.ok(source.includes("workspaceParentPrefix: 'la-e2e-cli-httpTimeoutLifecycle'"));
+    assert.ok(source.includes('workspaceRoots: [entry.appDir]'));
+    assert.ok(source.includes('resolveEntry: require.resolve'));
+    assert.ok(source.includes('findLoadedCachedExtensionEntry(filename, require.cache)'));
+    assert.ok(!source.slice(finalizer).includes('createHttpTimeoutProcessCleanup(process.env)'));
+    const terminalHelper = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/workbenchTerminalSearch.ts'), 'utf8');
+    assert.ok(terminalHelper.includes('stopped-host cleanup found ${terminals.length} matching terminal(s)'));
+    assert.ok(terminalHelper.includes('stopped-host cleanup removed ${terminals.length} matching terminal handle(s)'));
+  });
+  await control('Designer acquisition and later failures capture before optional disposal and tab cleanup', () => {
+    const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
+    const pt1sStart = source.indexOf('async function provePt1sExecution');
+    const scenario2Start = source.indexOf('async function provePt24hAndInvalidValidation');
+    const authorStart = source.indexOf('async function authorHttpRequest');
+    const pt1s = source.slice(pt1sStart, scenario2Start);
+    const scenario2 = source.slice(scenario2Start, authorStart);
+    for (const [body, failureCall] of [
+      [pt1s, "captureHttpDesignerFailure('pt1s-designer-lifecycle'"],
+      [scenario2, "captureHttpDesignerFailure('pt24h-designer-lifecycle'"],
+      [scenario2, "captureHttpDesignerFailure('invalid-duration-designer-lifecycle'"],
+    ] as const) {
+      const capture = body.indexOf(failureCall);
+      const dispose = body.indexOf('session?.dispose()', capture);
+      const closeTabs = body.indexOf('await closeAllTabs()', dispose);
+      assert.ok(capture >= 0 && capture < dispose && dispose < closeTabs, `${failureCall} must precede Designer cleanup`);
+    }
+    assert.ok(pt1s.indexOf('const activeSession = await openDesigner') > pt1s.indexOf('try {'));
+    assert.ok(scenario2.indexOf('const activeSession = await openDesigner') > scenario2.indexOf('try {'));
+    assert.ok(source.includes('let session: DesignerSession | undefined;'));
+    assert.ok(source.includes('captureDiagnosticScreenshot(`http-timeout-request-${stage}-before-cleanup-${Date.now()}`'));
+  });
+  await control('original replacement is exact and leaves authored source unchanged', () => {
+    assertHttpTimeoutComposeAuthored(authored);
+    assert.deepStrictEqual(expected.definition.actions.Compose, {
+      inputs: 'test',
+      runAfter: {},
+      runtimeConfiguration: { requestOptions: { timeout: 'PT24H' } },
+      type: 'Compose',
+    });
+    assert.deepStrictEqual(expected.definition.triggers, authored.definition.triggers);
+    assert.ok(!('runtimeConfiguration' in (authored.definition.actions.Compose as object)));
+    assertHttpTimeoutComposePersisted(structuredClone(expected), expected);
+    assertHttpTimeoutComposeVisibleError(observation, owner);
+  });
+  for (const [name, mutate] of [
+    [
+      'wrong kind',
+      (value: HttpTimeoutComposeWorkflow) => {
+        value.kind = 'Stateful';
+      },
+    ],
+    [
+      'missing Request',
+      (value: HttpTimeoutComposeWorkflow) => {
+        value.definition.triggers = {};
+      },
+    ],
+    [
+      'wrong trigger',
+      (value: HttpTimeoutComposeWorkflow) => {
+        value.definition.triggers.Request.type = 'Recurrence';
+      },
+    ],
+    [
+      'wrong input',
+      (value: HttpTimeoutComposeWorkflow) => {
+        (value.definition.actions.Compose as Record<string, unknown>).inputs = 'other';
+      },
+    ],
+    [
+      'extra action',
+      (value: HttpTimeoutComposeWorkflow) => {
+        value.definition.actions.HTTP = { type: 'Http' };
+      },
+    ],
+  ] as const) {
+    await control(`authored ${name} fails`, () => {
+      const value = structuredClone(authored);
+      mutate(value);
+      assert.throws(() => replaceHttpTimeoutComposeAction(value));
+    });
+  }
+  await control('stale initial persisted definition fails', () => {
+    assert.throws(() => assertHttpTimeoutComposePersisted(authored, expected));
+  });
+  for (const [name, mutate] of [
+    [
+      'timeout changed',
+      (value: HttpTimeoutComposeWorkflow) => {
+        value.definition.actions.Compose = { ...httpTimeoutComposeAction, runtimeConfiguration: { requestOptions: { timeout: 'PT1S' } } };
+      },
+    ],
+    [
+      'input changed',
+      (value: HttpTimeoutComposeWorkflow) => {
+        value.definition.actions.Compose = { ...httpTimeoutComposeAction, inputs: 'wrong' };
+      },
+    ],
+    [
+      'trigger changed',
+      (value: HttpTimeoutComposeWorkflow) => {
+        value.definition.triggers.Request.type = 'Recurrence';
+      },
+    ],
+    [
+      'partial action',
+      (value: HttpTimeoutComposeWorkflow) => {
+        value.definition.actions.Compose = { type: 'Compose' };
+      },
+    ],
+  ] as const) {
+    await control(`persisted ${name} fails`, () => {
+      const value = structuredClone(expected);
+      mutate(value);
+      assert.throws(() => assertHttpTimeoutComposePersisted(value, expected));
+    });
+  }
+  for (const key of ['targetId', 'frameId', 'contextId', 'documentOrigin'] as const) {
+    await control(`wrong ${key} error context fails`, () => {
+      const value = { ...observation, [key]: typeof owner[key] === 'string' ? 'other' : 999 };
+      assert.throws(() => assertHttpTimeoutComposeVisibleError(value, owner));
+    });
+  }
+  await control('hidden and inactive error fail', () => {
+    assert.throws(() => assertHttpTimeoutComposeVisibleError({ ...observation, visible: false }, owner));
+    assert.throws(() => assertHttpTimeoutComposeVisibleError({ ...observation, activeDesigner: false }, owner));
+  });
+  await control('incomplete original designer identity cannot accept an error', () => {
+    for (const identity of [
+      { ...owner, targetId: '' },
+      { ...owner, frameId: '' },
+      { ...owner, contextId: 0 },
+      { ...owner, documentOrigin: Number.NaN },
+    ]) {
+      assert.throws(() => assertHttpTimeoutComposeVisibleError({ ...observation, ...identity }, identity));
+    }
+  });
+  await control('mismatched, partial, and quoted editor error text fail', () => {
+    for (const message of [
+      httpTimeoutComposeError.replace("'Compose'", "'Other'"),
+      httpTimeoutComposeError.slice(0, -1),
+      `"${httpTimeoutComposeError}"`,
+    ]) {
+      assert.throws(() => assertHttpTimeoutComposeVisibleError({ ...observation, messages: [message] }, owner));
+    }
+  });
+  await control('actual screenshot readiness probe requires visible designer error, not a workbench shell', () => {
+    const { JSDOM } = require('jsdom');
+    for (const [html, ready] of [
+      [`<div role="alert">${httpTimeoutComposeError}</div>`, true],
+      [`<div role="alert" style="display:none">${httpTimeoutComposeError}</div>`, false],
+      ['<div role="alert">Unrelated validation error</div>', false],
+      [`<div class="monaco-editor"><div role="alert">${httpTimeoutComposeError}</div></div>`, false],
+    ] as const) {
+      const dom = new JSDOM(`<html><body>${html}</body></html>`, { runScripts: 'outside-only' });
+      try {
+        const prototype = dom.window.HTMLElement.prototype;
+        Object.defineProperty(prototype, 'offsetWidth', { configurable: true, get: () => 400 });
+        Object.defineProperty(prototype, 'offsetHeight', { configurable: true, get: () => 40 });
+        prototype.getBoundingClientRect = () => ({ left: 0, top: 0, right: 400, bottom: 40, width: 400, height: 40 });
+        prototype.getClientRects = function () {
+          return [this.getBoundingClientRect()];
+        };
+        const snapshot = dom.window.eval(
+          buildScreenshotReadinessExpression(
+            {
+              kind: 'designerValidationError',
+              label: 'http-timeout-compose-control',
+              message: httpTimeoutComposeError,
+            },
+            1,
+            1
+          )
+        );
+        assert.strictEqual(snapshot.ready, ready);
+      } finally {
+        dom.window.close();
+      }
+    }
+  });
+  const text = JSON.stringify(expected, null, 2);
+  const full = numbered(text);
+  const eof = full.lines.length;
+  const pages = [
+    { ...full, lines: full.lines.slice(0, 16) },
+    { ...full, lines: full.lines.slice(12, 28) },
+    { ...full, lines: full.lines.slice(24) },
+  ];
+  await control('complete overlapping rendered pages assemble exactly', () => {
+    assert.strictEqual(assembleHttpTimeoutComposeCode(pages, eof), text);
+  });
+  await control('incomplete Code editor virtualization fails without fixture fallback', () => {
+    const missing = pages.map((page) => ({ ...page, lines: page.lines.filter((line) => line.number !== 8) }));
+    assert.throws(() => assembleHttpTimeoutComposeCode(missing, eof), /missing line 8/);
+    assert.throws(() => assembleHttpTimeoutComposeCode([pages[0]], eof), /missing line/);
+  });
+  await control('changed overlapping text and editor identity fail', () => {
+    const changed = structuredClone(pages);
+    changed[1].lines[0] = { ...changed[1].lines[0], text: '"unexpected"' };
+    assert.throws(() => assembleHttpTimeoutComposeCode(changed, eof), /changed while reading/);
+    assert.throws(() => assembleHttpTimeoutComposeCode([pages[0], { ...pages[1], editorId: 'wrong' }, pages[2]], eof), /editor changed/);
+  });
+  await control('missing EOF, empty page, and invalid JSON fail', () => {
+    assert.throws(() => assembleHttpTimeoutComposeCode(pages, 0));
+    assert.throws(() => assembleHttpTimeoutComposeCode([{ ...full, lines: [] }], eof));
+    assert.throws(() => assembleHttpTimeoutComposeCode([numbered('{"Compose":')], 1));
+  });
+  await control('HTTP request oracles require exact timeout, async option, URI, and failed action identity', () => {
+    const uri = 'http://127.0.0.1:12345/longresponse';
+    const workflow = {
+      kind: 'Stateless',
+      definition: {
+        triggers: { Request: { type: 'Request', kind: 'Http' } },
+        actions: {
+          HTTP: {
+            type: 'Http',
+            inputs: { method: 'GET', uri },
+            runAfter: {},
+            operationOptions: 'DisableAsyncPattern',
+            runtimeConfiguration: { requestOptions: { timeout: 'PT1S' } },
+          },
+        },
+      },
+    };
+    assertHttpTimeoutRequestPersisted(workflow, 'PT1S', uri);
+    const unrelatedLimit: any = structuredClone(workflow);
+    unrelatedLimit.definition.actions.HTTP = {
+      ...unrelatedLimit.definition.actions.HTTP,
+      limit: { count: 1 },
+    };
+    assertHttpTimeoutRequestPersisted(unrelatedLimit, 'PT1S', uri);
+    const actionTimeoutSubstitution: any = structuredClone(workflow);
+    actionTimeoutSubstitution.definition.actions.HTTP = {
+      ...actionTimeoutSubstitution.definition.actions.HTTP,
+      limit: { timeout: 'PT1S' },
+    };
+    delete actionTimeoutSubstitution.definition.actions.HTTP.runtimeConfiguration;
+    assert.throws(() => assertHttpTimeoutRequestPersisted(actionTimeoutSubstitution, 'PT1S', uri), /runtimeConfiguration|requestOptions/);
+    const bothTimeoutFields: any = structuredClone(workflow);
+    bothTimeoutFields.definition.actions.HTTP = {
+      ...bothTimeoutFields.definition.actions.HTTP,
+      limit: { timeout: 'PT1S' },
+    };
+    assert.throws(() => assertHttpTimeoutRequestPersisted(bothTimeoutFields, 'PT1S', uri), /Action limit\.timeout must remain absent/);
+    assertHttpTimeoutActionFailed(
+      { value: [{ name: 'HTTP', properties: { status: 'Failed', error: { code: 'ActionTimedOut', message: 'Request timed out' } } }] },
+      'run-1'
+    );
+    assert.throws(() => assertHttpTimeoutRequestPersisted(workflow, 'PT24H', uri));
+    assert.throws(() =>
+      assertHttpTimeoutActionFailed(
+        { value: [{ name: 'HTTP', properties: { status: 'Failed', error: { code: 'ConnectionFailure', message: 'refused' } } }] },
+        'run-2'
+      )
+    );
+  });
+  await control('HTTP request fixture selector rejects shared or mislabeled workspaces', () => {
+    const workspaceDir = path.resolve(os.tmpdir(), 'http-timeout-request-execution');
+    const entry = {
+      label: 'http-timeout-request-execution',
+      appType: 'standard',
+      wsName: 'workspace',
+      appName: 'app',
+      wfName: 'workflow',
+      workspaceDir,
+      workspaceFilePath: path.join(workspaceDir, 'workspace.code-workspace'),
+      appDir: path.join(workspaceDir, 'app'),
+      workflowJsonPath: path.join(workspaceDir, 'app', 'workflow', 'workflow.json'),
+      folderPaths: [path.join(workspaceDir, 'app')],
+    };
+    assert.deepStrictEqual(selectHttpTimeoutRequestWorkspace([entry], entry.label), entry);
+    assert.throws(() => selectHttpTimeoutRequestWorkspace([entry, entry], entry.label));
+    assert.throws(() => selectHttpTimeoutRequestWorkspace([{ ...entry, label: 'other' }], entry.label));
+  });
+  await runHttpTimeoutComposeDomControls(control, authored);
+  await control('replacement uses key dispatch and insertText only', async () => {
+    const { driver, sent } = inputDriverFixture();
+    await driver.replaceFocused(text);
+    assert.deepStrictEqual(
+      sent.map((entry) => entry.method),
+      ['Input.dispatchKeyEvent', 'Input.dispatchKeyEvent', 'Input.insertText']
+    );
+    assert.strictEqual(sent[0].params.modifiers, 2);
+    assert.strictEqual(sent[2].params.text, text);
+  });
+  await control('input RPC failure cannot inject a fallback', async () => {
+    let reads = 0;
+    const cdp = {
+      async evaluate() {
+        reads++;
+        return {};
+      },
+      async send() {
+        throw new Error('original input RPC failure');
+      },
+    } as unknown as CdpConnection;
+    const driver = new HttpTimeoutComposeDriver(cdp, 17, Date.now() + 5000, () => {});
+    await assert.rejects(() => driver.replaceFocused(text), /original input RPC failure/);
+    assert.strictEqual(reads, 0);
+  });
+  await control('wrong active tab prevents every driver observation and input', async () => {
+    const { driver } = inputDriverFixture();
+    const inactive = new HttpTimeoutComposeDriver(driver.cdp, 17, Date.now() + 5000, () => {
+      throw new Error('wrong tab');
+    });
+    await assert.rejects(() => inactive.readCode(), /wrong tab/);
+  });
+  await control('expired deadline, late readiness and RPC failure fail', async () => {
+    assert.throws(() => httpTimeoutComposeRemaining(10, 10), /expired/);
+    await assert.rejects(() => pollHttpTimeoutCompose(async () => true, Boolean, Date.now() - 1, 'expired'), /expired/);
+    const deadline = Date.now() + 10;
+    await assert.rejects(
+      () =>
+        pollHttpTimeoutCompose(
+          async () => {
+            await new Promise((resolve) => setTimeout(resolve, 15));
+            return true;
+          },
+          Boolean,
+          deadline,
+          'late readiness'
+        ),
+      /Timed out waiting for late readiness/
+    );
+    await assert.rejects(
+      () =>
+        pollHttpTimeoutCompose(
+          async () => {
+            throw new Error('original read error');
+          },
+          Boolean,
+          Date.now() + 1000,
+          'RPC'
+        ),
+      /original read error/
+    );
+  });
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'http-timeout-compose-unit-'));
+  const environmentKeys = [
+    'LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT',
+    'LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH',
+    'LA_E2E_CLI_PRESERVE_WORKSPACES',
+    'LA_E2E_CLI_BATCH_MODE',
+    'LA_E2E_CLI_AZURE_ACCESS_TOKEN',
+    'LA_E2E_CLI_AZURE_ACCESS_TOKEN_EXPIRES_ON',
+    'LA_E2E_CLI_AZURE_ACCESS_TOKEN_MINTED_AT',
+  ] as const;
+  const priorEnvironment = Object.fromEntries(environmentKeys.map((key) => [key, process.env[key]]));
+  for (const key of environmentKeys) {
+    delete process.env[key];
+  }
+  process.env.LA_E2E_CLI_BATCH_MODE = '1'; // Existing callback-only controls leave finalization to the batch wrapper.
+  process.env.LA_E2E_CLI_AZURE_ACCESS_TOKEN = 'unit-token';
+  process.env.LA_E2E_CLI_AZURE_ACCESS_TOKEN_EXPIRES_ON = '2099-01-01T00:00:00.000Z';
+  process.env.LA_E2E_CLI_AZURE_ACCESS_TOKEN_MINTED_AT = new Date().toISOString();
+  try {
+    const makeEntry = (createdAt = new Date().toISOString()) => ({
+      appType: 'standard',
+      wfType: 'Stateless',
+      parentDir: root,
+      wsName: 'workspace',
+      appName: 'app',
+      wfName: 'workflow',
+      wsDir: path.join(root, 'workspace'),
+      wsFilePath: path.join(root, 'workspace', 'workspace.code-workspace'),
+      appDir: path.join(root, 'workspace', 'app'),
+      wfDir: path.join(root, 'workspace', 'app', 'workflow'),
+      createdAt,
+    });
+    await control('manifest rejects stale, wrong-root, ambiguous and mismatched fixtures', () => {
+      const now = Date.now();
+      const entry = makeEntry();
+      assert.deepStrictEqual(selectHttpTimeoutComposeWorkspace([entry], root, now - 1000), entry);
+      assert.throws(() => selectHttpTimeoutComposeWorkspace([], root, now - 1000));
+      assert.throws(() => selectHttpTimeoutComposeWorkspace([entry, entry], root, now - 1000));
+      assert.throws(() => selectHttpTimeoutComposeWorkspace([makeEntry(new Date(now - 2000).toISOString())], root, now - 1000));
+      assert.throws(() => selectHttpTimeoutComposeWorkspace([{ ...entry, parentDir: path.dirname(root) }], root, now - 1000));
+      assert.throws(() => selectHttpTimeoutComposeWorkspace([{ ...entry, wfType: 'Stateful' }], root, now - 1000));
+      assert.throws(() => selectHttpTimeoutComposeWorkspace([{ ...entry, wfDir: root }], root, now - 1000));
+    });
+    const runner = require(path.resolve(__dirname, '../../../scripts/run-e2e-cli.js'))._test;
+    const batch = require(path.resolve(__dirname, '../../../scripts/e2e-cli-batch.js'));
+    const expectedPhases = ['runtimeDependencyBootstrap:bootstrap', 'httpTimeoutLifecycle:create', 'httpTimeoutLifecycle:reopen'];
+    await control('combined HTTP family registers exact canonical phases without a legacy standalone label', () => {
+      const suite = batch.SUITE_REGISTRY.httpTimeoutLifecycle;
+      assert.deepStrictEqual(suite.args, ['--http-timeout-lifecycle']);
+      assert.deepStrictEqual(suite.expectedPhases, expectedPhases);
+      assert.deepStrictEqual(runner.getDirectExpectedPhaseIds('httpTimeoutLifecycle'), expectedPhases);
+      for (const platform of ['linux', 'win32']) {
+        assert.strictEqual(batch.normalizeSuiteSelection('httpTimeoutLifecycle', { platform })[0], suite);
+      }
+      for (const alias of ['linux', 'windows']) {
+        assert.ok(!batch.normalizeSuiteSelection(alias).some((entry: { id: string }) => entry.id === suite.id));
+      }
+      const vscodeTestSource = fs.readFileSync(path.resolve(__dirname, '../../../.vscode-test.mjs'), 'utf8');
+      assert.ok(vscodeTestSource.includes('const httpTimeoutRequestMode = process.env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MODE;'));
+      assert.ok(
+        vscodeTestSource.includes("(httpTimeoutRequestMode === 'create' || httpTimeoutRequestMode === 'run')"),
+        'Canonical HTTP test registration must require an exact valid lifecycle mode'
+      );
+      assert.ok(vscodeTestSource.includes("label: 'httpTimeoutLifecycle'"));
+      assert.ok(vscodeTestSource.includes("files: ['out/test/e2e/httpTimeoutComposeOriginal.test.js']"));
+      assert.ok(!vscodeTestSource.includes("label: 'httpTimeoutComposeOriginal'"));
+      assert.ok(!vscodeTestSource.includes('LA_E2E_CLI_INCLUDE_HTTP_TIMEOUT_COMPOSE_ORIGINAL'));
+    });
+    await control('all public HTTP timeout flags dispatch through the canonical lifecycle runner', () => {
+      const runnerSource = fs.readFileSync(path.resolve(__dirname, '../../../scripts/run-e2e-cli.js'), 'utf8');
+      const selectorStart = runnerSource.indexOf('const httpTimeoutSelector = [');
+      const selectorEnd = runnerSource.indexOf('].find((selector) => process.argv.includes(selector));', selectorStart);
+      assert.ok(selectorStart >= 0 && selectorStart < selectorEnd);
+      const selectorSource = runnerSource.slice(selectorStart, selectorEnd);
+      for (const flag of [
+        '--http-timeout-lifecycle',
+        '--http-timeout-request-execution',
+        '--http-timeout-request-validation',
+        '--http-timeout-compose-original',
+      ]) {
+        assert.ok(selectorSource.includes(`'${flag}'`), `${flag} must remain a canonical lifecycle alias`);
+      }
+      assert.ok(
+        runnerSource.includes(
+          "requiresDirectFamilyWrapper(process.env) ? runDirectFamily('httpTimeoutLifecycle') : runHttpTimeoutLifecycle()"
+        )
+      );
+      assert.ok(!runnerSource.includes('runHttpTimeoutComposeOriginal'), 'No public flag may dispatch through a legacy standalone runner');
+    });
+    await control('phase completion rejects missing, duplicate, mismatched and failed phases', () => {
+      const phases = expectedPhases.map((phaseId) => ({
+        phaseId,
+        complete: true,
+        exitCode: 0,
+        signal: null,
+        cleanupVerified: true,
+        diagnosticsError: '',
+      }));
+      assert.strictEqual(runner.getDirectSuiteComplete('httpTimeoutLifecycle', phases), true);
+      for (const invalid of [
+        phases.slice(1),
+        [...phases, phases[0]],
+        [phases[1], phases[0], phases[2]],
+        [{ ...phases[0], phaseId: 'wrong:bootstrap' }, ...phases.slice(1)],
+        [phases[0], phases[1], { ...phases[2], complete: false }],
+        [phases[0], phases[1], { ...phases[2], exitCode: 1 }],
+      ]) {
+        assert.strictEqual(runner.getDirectSuiteComplete('httpTimeoutLifecycle', invalid), false);
+      }
+    });
+    await control('batch terminal requires exact completed family phases and ordinary wrapper success', () => {
+      const suite = batch.SUITE_REGISTRY.httpTimeoutLifecycle;
+      const context = {
+        expectedPhaseIds: expectedPhases,
+        phaseResultsPath: path.join(root, 'batch-phases.jsonl'),
+        cleanupLedgerPath: path.join(root, 'batch-cleanup.json'),
+        terminalResultPath: path.join(root, 'batch-terminal.json'),
+      };
+      const phases = expectedPhases.map((phaseId) => ({
+        phaseId,
+        complete: true,
+        exitCode: 0,
+        signal: null,
+        cleanupVerified: true,
+        diagnosticsError: '',
+      }));
+      for (const [phaseResults, exitCode, complete] of [
+        [phases, 0, true],
+        [phases.slice(1), 1, false],
+        [[...phases, phases[0]], 0, false],
+        [[phases[1], phases[0], phases[2]], 0, false],
+        [[phases[0], phases[1], { ...phases[2], complete: false }], 0, false],
+        [phases, 1, false],
+      ] as const) {
+        fs.writeFileSync(context.phaseResultsPath, phaseResults.map((phase) => JSON.stringify(phase)).join('\n'));
+        runner.writeSuiteFinalEvidence({ context, suite, exitCode, signal: null, processCleanup: { verified: true } });
+        const terminal = JSON.parse(fs.readFileSync(context.terminalResultPath, 'utf8'));
+        assert.strictEqual(terminal.complete, complete);
+        assert.deepStrictEqual(terminal.expectedPhaseIds, expectedPhases);
+        assert.deepStrictEqual(
+          terminal.observedPhaseIds,
+          phaseResults.map((phase) => phase.phaseId)
+        );
+        assert.strictEqual(terminal.ogfScenarios, undefined, 'Phase controls must not create mapped source/native credit');
+      }
+    });
+  } finally {
+    for (const key of environmentKeys) {
+      if (priorEnvironment[key] === undefined) {
+        delete process.env[key];
+      } else {
+        process.env[key] = priorEnvironment[key];
+      }
+    }
+    fs.rmSync(root, { recursive: true, force: true }); // Unit-owned temporary command fixture only.
+  }
+  await runHttpTimeoutEnvironmentControls(control);
+  await runApprovedAzureConnectorFixtureControls(control);
+  console.log(`[http-timeout-compose-control] ${passed} non-GUI controls passed; no native host launched or credited.`);
+}
+
+main().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
