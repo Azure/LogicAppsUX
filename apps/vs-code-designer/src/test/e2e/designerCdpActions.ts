@@ -1467,19 +1467,9 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
     search: string;
     operationName: string;
     variants?: string[];
-    afterNodeId?: string;
   }): Promise<DesignerNodeIdentity> {
     const before = await this.readExactNodeIdentities();
-    if (options.afterNodeId) {
-      await this.openActionDiscoveryAfterNode(options.afterNodeId);
-    } else {
-      await this.proven.openActionDiscovery(options.operationName, async (stage, point) => {
-        console.log(`[designer-actions] ${options.operationName}: ${stage}${point ? ` point=${JSON.stringify(point)}` : ''}`);
-      });
-    }
-    await this.proven.search(options.search);
-    await this.proven.waitForSearchResults(60000, `${options.search} search results`);
-    await this.proven.selectOperation(options.operationName, options.variants ?? [options.operationName.toLowerCase()]);
+    await this.addAction(options.search, options.operationName, options.variants);
     return this.waitForSingleNewNodeIdentity(before, options.operationName);
   }
 
@@ -1870,62 +1860,6 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
 
   override async fillParameter(labels: string[], value: string): Promise<void> {
     await this.proven.fillParameter(labels, value, labels.join('/'));
-  }
-
-  private async openActionDiscoveryAfterNode(nodeId: string): Promise<void> {
-    await this.closePanel();
-    const point = await this.waitForPoint(
-      `(() => {
-        ${visibleDom}
-        const nodeId = ${JSON.stringify(nodeId)};
-        const node = document.getElementById('msla-node-' + nodeId);
-        if (!(node instanceof HTMLElement) || !visible(node)) return null;
-        const outgoingEdges = Array.from(document.querySelectorAll('path.react-flow__edge-path[id]'))
-          .filter((path) => {
-            if (!(path instanceof SVGGraphicsElement)) return false;
-            const rect = path.getBoundingClientRect();
-            const style = getComputedStyle(path);
-            return (rect.width > 0 || rect.height > 0) && style.display !== 'none' &&
-              style.visibility !== 'hidden' && style.opacity !== '0';
-          })
-          .filter((path) => path.id.startsWith(nodeId + '-'));
-        if (outgoingEdges.length !== 1) return null;
-        const edge = outgoingEdges[0];
-        const total = typeof edge.getTotalLength === 'function' ? edge.getTotalLength() : 0;
-        if (!(total > 0)) return null;
-        const midpoint = edge.getPointAtLength(total / 2);
-        const matrix = edge.getScreenCTM();
-        if (!matrix) return null;
-        const screenMidpoint = new DOMPoint(midpoint.x, midpoint.y).matrixTransform(matrix);
-        const buttons = Array.from(document.querySelectorAll(
-          '[data-automation-id^="msla-plus-button-"], [id^="msla-edge-button-"]'
-        ))
-          .filter((element, index, values) => values.indexOf(element) === index)
-          .filter(visible)
-          .filter((element) => !element.disabled && element.getAttribute('aria-disabled') !== 'true')
-          .map((element) => {
-            const rect = element.getBoundingClientRect();
-            const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-            return {
-              element,
-              point,
-              distance: Math.hypot(point.x - screenMidpoint.x, point.y - screenMidpoint.y),
-            };
-          })
-          .filter((candidate) => candidate.distance <= 70)
-          .sort((left, right) => left.distance - right.distance);
-        const [candidate] = buttons;
-        if (!candidate || buttons.length !== 1) return null;
-        candidate.element.scrollIntoView({ block: 'center', inline: 'center' });
-        const rect = candidate.element.getBoundingClientRect();
-        const click = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-        const hit = document.elementFromPoint(click.x, click.y);
-        return hit && (hit === candidate.element || candidate.element.contains(hit)) ? click : null;
-      })()`,
-      `ID-scoped outgoing edge control after Designer node ${nodeId}`
-    );
-    await this.dispatchTrustedPoint(point);
-    await this.proven.waitForDiscoveryPanel(60000, `action discovery after ${nodeId}`);
   }
 
   private async clickRunAfterStatus(childNodeId: string, predecessorNodeId: string, status: RunAfterStatus): Promise<void> {

@@ -124,6 +124,7 @@ function testLifecycleUsesProductWizardAndFreshHostContract(): void {
   assert.match(source, /wfType: 'Stateful'/);
   assert.strictEqual((source.match(/operationName: 'Compose',\s*variants: \['compose'\]/g) ?? []).length, 2);
   assert.doesNotMatch(source, /operationId:/, 'Run After insertion must not depend on internal operation automation IDs');
+  assert.doesNotMatch(source, /afterNodeId:/, 'Run After insertion must reuse the shared append-action flow');
   assert.match(source, /setRunAfterStatuses\(secondCompose\.nodeId, firstCompose\.nodeId, \['Failed'\]\)/);
   assert.match(source, /LA_E2E_CLI_RUN_AFTER_PERSISTENCE_MODE/);
   assert.match(source, /LA_E2E_CLI_RUN_AFTER_PERSISTENCE_HANDOFF/);

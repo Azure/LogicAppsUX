@@ -98,7 +98,6 @@ async function authorAndPersist(entry: CreatedWorkspace, azureFixture: ApprovedA
       search: 'Compose',
       operationName: 'Compose',
       variants: ['compose'],
-      afterNodeId: request.nodeId,
     });
     const firstComposeInput = `run-after-upstream-${Date.now()}`;
     await session.actions.fillParameter(['Inputs', 'inputs'], firstComposeInput);
@@ -106,7 +105,6 @@ async function authorAndPersist(entry: CreatedWorkspace, azureFixture: ApprovedA
       search: 'Compose',
       operationName: 'Compose',
       variants: ['compose'],
-      afterNodeId: firstCompose.nodeId,
     });
     const secondComposeInput = `run-after-downstream-${Date.now()}`;
     await session.actions.fillParameter(['Inputs', 'inputs'], secondComposeInput);

@@ -149,21 +149,12 @@ function testRunAfterIdentityAndStatusContracts(): void {
     addAction,
     [
       'readExactNodeIdentities()',
-      'openActionDiscoveryAfterNode(options.afterNodeId)',
-      'this.proven.selectOperation(options.operationName',
+      'this.addAction(options.search, options.operationName, options.variants)',
       'waitForSingleNewNodeIdentity',
     ],
     'Stable action insertion'
   );
-  assert.doesNotMatch(addAction, /selectOperationById|msla-op-search-result-/);
-
-  const insertAfter = getMethod('ProvenDesignerCdpActions', 'openActionDiscoveryAfterNode');
-  assert.match(insertAfter, /path\.react-flow__edge-path\[id\]/);
-  assert.match(insertAfter, /path\.id\.startsWith\(nodeId \+ '-'\)/);
-  assert.match(insertAfter, /outgoingEdges\.length !== 1/);
-  assert.match(insertAfter, /elementFromPoint/);
-  assert.match(insertAfter, /aria-disabled/);
-  assert.doesNotMatch(insertAfter, /buttons\[[01]\]/, 'Insert-after must not select an edge control by array position');
+  assert.doesNotMatch(addAction, /selectOperationById|msla-op-search-result-|openActionDiscoveryAfterNode|afterNodeId/);
 
   const exactNode = getMethod('ProvenDesignerCdpActions', 'clickNodeById');
   assert.match(exactNode, /document\.getElementById\('msla-node-' \+ nodeId\)/);
