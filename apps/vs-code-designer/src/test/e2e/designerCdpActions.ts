@@ -2148,11 +2148,12 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
       const panelNodes = Array.from(document.querySelectorAll('[id^="msla-node-details-panel-"]'))
         .filter(visible)
         .map((element) => {
-          const titleInput = element.querySelector('[aria-label="Card title"], .msla-card-title input');
+          const panelLayout = element.closest('.msla-panel-layout');
+          const titleInput = panelLayout?.querySelector('[aria-label="Card title"], .msla-card-title input, input[id$="-title"]');
           return {
             nodeId: element.id.slice('msla-node-details-panel-'.length),
             title: normalize(
-              element.querySelector('.msla-panel-header')?.id ||
+              panelLayout?.querySelector('.msla-panel-header')?.id ||
               (titleInput instanceof HTMLInputElement ? titleInput.value : titleInput?.textContent) ||
               element.getAttribute('aria-label')
             ),

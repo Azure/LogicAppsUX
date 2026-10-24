@@ -302,6 +302,7 @@ function testRunAfterIdentityAndStatusContracts(): void {
   const insertionSnapshot = getMethod('ProvenDesignerCdpActions', 'readActionInsertionSnapshot');
   assert.match(insertionSnapshot, /msla-node-details-panel-/);
   assert.match(insertionSnapshot, /filter\(visible\)/);
+  assert.match(insertionSnapshot, /closest\('\.msla-panel-layout'\)/);
   assert.match(insertionSnapshot, /msla-panel-header/);
   assert.match(insertionSnapshot, /\[\.\.\.panelNodes, \.\.\.cardNodes\]/);
 
