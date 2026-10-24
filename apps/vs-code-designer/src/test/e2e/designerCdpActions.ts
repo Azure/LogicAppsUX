@@ -570,6 +570,12 @@ export interface DesignerNodeIdentity {
   title: string;
 }
 
+interface ActionInsertionSnapshot {
+  nodes: DesignerNodeIdentity[];
+  discoveryVisible: boolean;
+  loaderCount: number;
+}
+
 export type RunAfterStatus = 'Succeeded' | 'TimedOut' | 'Skipped' | 'Failed';
 
 export interface RunAfterState {
@@ -923,13 +929,28 @@ export class MsnDesignerCdpActions {
           const aid = normalize(card.getAttribute('data-automation-id')).toLowerCase();
           return { title, text, aria, aid, combined: text + ' ' + aria + ' ' + aid };
         };
+        const getHitTestedPoint = (card) => {
+          if (card.disabled || card.getAttribute('aria-disabled') === 'true') return undefined;
+          card.scrollIntoView({ block: 'center', inline: 'center' });
+          const rect = card.getBoundingClientRect();
+          const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+          const hit = document.elementFromPoint(point.x, point.y);
+          return hit && (hit === card || card.contains(hit)) ? point : undefined;
+        };
         const exactCard = cards.find((card) => getCardDetails(card).text === exactOperationName);
         if (exactCard) {
-          exactCard.scrollIntoView({ block: 'center', inline: 'center' });
-          const rect = exactCard.getBoundingClientRect();
+          const point = getHitTestedPoint(exactCard);
+          if (!point) {
+            return {
+              ok: false,
+              reason: 'Exact operation card is not enabled and hit-testable',
+              text: normalize(getCardDetails(exactCard).title || exactCard.textContent || exactCard.getAttribute('aria-label') || ''),
+              candidates,
+            };
+          }
           return {
             ok: true,
-            point: { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 },
+            point,
             text: normalize(getCardDetails(exactCard).title || exactCard.textContent || exactCard.getAttribute('aria-label') || ''),
             candidates,
           };
@@ -945,11 +966,13 @@ export class MsnDesignerCdpActions {
           }
 
           if (variants.some((variant) => combined.includes(variant))) {
-            card.scrollIntoView({ block: 'center', inline: 'center' });
-            const rect = card.getBoundingClientRect();
+            const point = getHitTestedPoint(card);
+            if (!point) {
+              continue;
+            }
             return {
               ok: true,
-              point: { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 },
+              point,
               text: normalize(title || card.textContent || card.getAttribute('aria-label') || ''),
               candidates,
             };
@@ -1449,18 +1472,13 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
   async addRequestTriggerAndGetIdentity(): Promise<DesignerNodeIdentity> {
     const before = await this.readExactNodeIdentities();
     await this.addRequestTrigger();
-    const identity = await this.waitForSingleNewNodeIdentity(before, 'Request trigger');
+    const identity = await this.waitForStableSingleNewNodeIdentity(before, 'Request trigger', this.deadline);
+    assert.ok(identity, 'Timed out waiting for one stable new Request trigger Designer node');
     return identity;
   }
 
   override async addAction(search: string, operationName: string, variants: string[] = [operationName.toLowerCase()]): Promise<void> {
-    await this.proven.openActionDiscovery(operationName, async (stage, point) => {
-      console.log(`[designer-actions] ${operationName}: ${stage}${point ? ` point=${JSON.stringify(point)}` : ''}`);
-    });
-    await this.proven.search(search);
-    await this.proven.waitForSearchResults(60000, `${search} search results`);
-    await this.proven.selectOperation(operationName, variants);
-    await this.proven.waitForText([operationName], 90000, `${operationName} action on canvas`);
+    await this.insertActionAndGetIdentity({ search, operationName, variants });
   }
 
   async addActionAndGetIdentity(options: {
@@ -1468,9 +1486,37 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
     operationName: string;
     variants?: string[];
   }): Promise<DesignerNodeIdentity> {
+    return this.insertActionAndGetIdentity(options);
+  }
+
+  private async insertActionAndGetIdentity(options: {
+    search: string;
+    operationName: string;
+    variants?: string[];
+  }): Promise<DesignerNodeIdentity> {
     const before = await this.readExactNodeIdentities();
-    await this.addAction(options.search, options.operationName, options.variants);
-    return this.waitForSingleNewNodeIdentity(before, options.operationName);
+    await this.proven.openActionDiscovery(options.operationName, async (stage, point) => {
+      console.log(`[designer-actions] ${options.operationName}: ${stage}${point ? ` point=${JSON.stringify(point)}` : ''}`);
+    });
+    await this.proven.search(options.search);
+    await this.proven.waitForSearchResults(60000, `${options.search} search results`);
+    await this.proven.selectOperation(options.operationName, options.variants ?? [options.operationName.toLowerCase()]);
+
+    const insertionDeadline = Math.min(this.deadline, Date.now() + 90000);
+    const identity = await this.waitForStableSingleNewNodeIdentity(before, options.operationName, insertionDeadline, options.operationName);
+    if (identity) {
+      return identity;
+    }
+
+    const snapshot = await this.readActionInsertionSnapshot();
+    assert.fail(
+      `Timed out waiting for stable ${options.operationName} insertion ${JSON.stringify({
+        reason: 'insertion-not-acknowledged',
+        discoveryVisible: snapshot.discoveryVisible,
+        loaderCount: snapshot.loaderCount,
+        nodes: snapshot.nodes.slice(0, 20),
+      })}`
+    );
   }
 
   async clickNodeById(nodeId: string): Promise<DesignerNodeIdentity> {
@@ -1505,38 +1551,145 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
 
   async openSettingsTab(nodeId: string): Promise<void> {
     await this.assertExactPanelOwnership(nodeId);
-    const point = await this.waitForPoint(
-      `(() => {
-        ${visibleDom}
-        const panel = document.getElementById(${JSON.stringify(`msla-node-details-panel-${nodeId}`)});
-        if (!(panel instanceof HTMLElement) || !visible(panel)) return null;
-        const tabs = Array.from(panel.querySelectorAll('[role="tab"]'))
-          .filter(visible)
-          .filter((tab) => normalize(tab.textContent || tab.getAttribute('aria-label')) === 'Settings')
-          .filter((tab) => !tab.disabled && tab.getAttribute('aria-disabled') !== 'true');
-        if (tabs.length !== 1) return null;
-        const tab = tabs[0];
-        tab.scrollIntoView({ block: 'center', inline: 'center' });
-        const rect = tab.getBoundingClientRect();
-        const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-        const hit = document.elementFromPoint(point.x, point.y);
-        return hit && (hit === tab || tab.contains(hit)) ? point : null;
-      })()`,
-      `Settings tab for Designer node ${nodeId}`
-    );
-    await this.dispatchTrustedPoint(point);
+    const settingsDeadline = Math.min(this.deadline, Date.now() + 90000);
+    const target = await this.waitForSettingsTabTarget(nodeId, settingsDeadline);
+    if (target.kind === 'selected') {
+      return;
+    }
+
+    await this.dispatchTrustedPoint(target.point);
+    if (target.kind === 'overflow') {
+      await this.waitForCondition(
+        `(() => {
+          ${visibleDom}
+          const panel = document.getElementById(${JSON.stringify(`msla-node-details-panel-${nodeId}`)});
+          if (!(panel instanceof HTMLElement) || !visible(panel)) return false;
+          const triggers = Array.from(panel.querySelectorAll('[role="tab"][aria-label]'))
+            .filter(visible)
+            .filter((tab) => /^\\d+ more tabs$/i.test(normalize(tab.getAttribute('aria-label'))));
+          return triggers.length === 1 && triggers[0].getAttribute('aria-expanded') === 'true';
+        })()`,
+        `expanded Settings overflow menu for Designer node ${nodeId}`,
+        settingsDeadline
+      );
+      const menuPoint = await this.waitForPoint(
+        `(() => {
+          ${visibleDom}
+          const panel = document.getElementById(${JSON.stringify(`msla-node-details-panel-${nodeId}`)});
+          if (!(panel instanceof HTMLElement) || !visible(panel)) return null;
+          const triggers = Array.from(panel.querySelectorAll('[role="tab"][aria-label]'))
+            .filter(visible)
+            .filter((tab) => /^\\d+ more tabs$/i.test(normalize(tab.getAttribute('aria-label')))
+              && tab.getAttribute('aria-expanded') === 'true');
+          if (triggers.length !== 1) return null;
+          const controlledId = triggers[0].getAttribute('aria-controls');
+          const controlledMenu = controlledId ? document.getElementById(controlledId) : null;
+          const menus = controlledMenu instanceof HTMLElement && visible(controlledMenu)
+            ? [controlledMenu]
+            : Array.from(document.querySelectorAll('[role="menu"]')).filter(visible);
+          if (menus.length !== 1) return null;
+          const items = Array.from(menus[0].querySelectorAll('[role="menuitem"]'))
+            .filter(visible)
+            .filter((item) => normalize(item.textContent || item.getAttribute('aria-label')) === 'Settings')
+            .filter((item) => !item.disabled && item.getAttribute('aria-disabled') !== 'true');
+          if (items.length !== 1) return null;
+          const item = items[0];
+          item.scrollIntoView({ block: 'center', inline: 'center' });
+          const rect = item.getBoundingClientRect();
+          const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+          const hit = document.elementFromPoint(point.x, point.y);
+          return hit && (hit === item || item.contains(hit)) ? point : null;
+        })()`,
+        `Settings overflow menu item for Designer node ${nodeId}`,
+        settingsDeadline
+      );
+      await this.dispatchTrustedPoint(menuPoint);
+    }
+
     await this.waitForCondition(
       `(() => {
         ${visibleDom}
         const panel = document.getElementById(${JSON.stringify(`msla-node-details-panel-${nodeId}`)});
         if (!(panel instanceof HTMLElement) || !visible(panel)) return false;
         const tabs = Array.from(panel.querySelectorAll('[role="tab"]'))
-          .filter(visible)
           .filter((tab) => normalize(tab.textContent || tab.getAttribute('aria-label')) === 'Settings');
         return tabs.length === 1 && tabs[0].getAttribute('aria-selected') === 'true';
       })()`,
-      `active Settings tab for Designer node ${nodeId}`
+      `active Settings tab for Designer node ${nodeId}`,
+      settingsDeadline
     );
+  }
+
+  private async waitForSettingsTabTarget(
+    nodeId: string,
+    deadline: number
+  ): Promise<{ kind: 'selected' } | { kind: 'direct' | 'overflow'; point: Point }> {
+    let lastState: unknown;
+    while (Date.now() < deadline) {
+      this.assertActive();
+      const state = await this.evaluate<{
+        kind?: 'selected' | 'direct' | 'overflow';
+        point?: Point;
+        directSettingsCount: number;
+        overflowTriggerCount: number;
+      }>(`(() => {
+        ${visibleDom}
+        const panel = document.getElementById(${JSON.stringify(`msla-node-details-panel-${nodeId}`)});
+        if (!(panel instanceof HTMLElement) || !visible(panel)) {
+          return { directSettingsCount: 0, overflowTriggerCount: 0 };
+        }
+        const settingsTabs = Array.from(panel.querySelectorAll('[role="tab"]'))
+          .filter((tab) => normalize(tab.textContent || tab.getAttribute('aria-label')) === 'Settings');
+        if (settingsTabs.length === 1 && settingsTabs[0].getAttribute('aria-selected') === 'true') {
+          return { kind: 'selected', directSettingsCount: 1, overflowTriggerCount: 0 };
+        }
+        const visibleSettingsTabs = settingsTabs
+          .filter(visible)
+          .filter((tab) => !tab.disabled && tab.getAttribute('aria-disabled') !== 'true');
+        if (visibleSettingsTabs.length === 1) {
+          const tab = visibleSettingsTabs[0];
+          tab.scrollIntoView({ block: 'center', inline: 'center' });
+          const rect = tab.getBoundingClientRect();
+          const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+          const hit = document.elementFromPoint(point.x, point.y);
+          if (hit && (hit === tab || tab.contains(hit))) {
+            return { kind: 'direct', point, directSettingsCount: settingsTabs.length, overflowTriggerCount: 0 };
+          }
+        }
+        const overflowTriggers = Array.from(panel.querySelectorAll('[role="tab"][aria-label]'))
+          .filter(visible)
+          .filter((tab) => /^\\d+ more tabs$/i.test(normalize(tab.getAttribute('aria-label'))))
+          .filter((tab) => !tab.disabled && tab.getAttribute('aria-disabled') !== 'true');
+        if (overflowTriggers.length === 1) {
+          const trigger = overflowTriggers[0];
+          trigger.scrollIntoView({ block: 'center', inline: 'center' });
+          const rect = trigger.getBoundingClientRect();
+          const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+          const hit = document.elementFromPoint(point.x, point.y);
+          if (hit && (hit === trigger || trigger.contains(hit))) {
+            return {
+              kind: 'overflow',
+              point,
+              directSettingsCount: settingsTabs.length,
+              overflowTriggerCount: overflowTriggers.length,
+            };
+          }
+        }
+        return {
+          directSettingsCount: settingsTabs.length,
+          overflowTriggerCount: overflowTriggers.length,
+        };
+      })()`);
+      lastState = state;
+      if (state.kind === 'selected') {
+        return { kind: 'selected' };
+      }
+      if ((state.kind === 'direct' || state.kind === 'overflow') && state.point) {
+        return { kind: state.kind, point: state.point };
+      }
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    assert.fail(`Timed out waiting for Settings tab target for Designer node ${nodeId}. Last state: ${JSON.stringify(lastState)}`);
   }
 
   async openRunAfterSection(nodeId: string): Promise<void> {
@@ -1926,7 +2079,6 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
       return Array.from(document.querySelectorAll('[id^="msla-node-"]'))
         .filter((element) => /^msla-node-[^-].*/.test(element.id))
         .filter((element) => !element.id.startsWith('msla-node-details-panel-'))
-        .filter(visible)
         .map((element) => ({
           nodeId: element.id.slice('msla-node-'.length),
           title: normalize(
@@ -1951,19 +2103,89 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
     return matches[0];
   }
 
-  private async waitForSingleNewNodeIdentity(before: DesignerNodeIdentity[], description: string): Promise<DesignerNodeIdentity> {
+  private async readActionInsertionSnapshot(): Promise<ActionInsertionSnapshot> {
+    return this.evaluate<ActionInsertionSnapshot>(`(() => {
+      ${visibleDom}
+      const nodes = Array.from(document.querySelectorAll('[id^="msla-node-"]'))
+        .filter((element) => /^msla-node-[^-].*/.test(element.id))
+        .filter((element) => !element.id.startsWith('msla-node-details-panel-'))
+        .map((element) => ({
+          nodeId: element.id.slice('msla-node-'.length),
+          title: normalize(
+            element.querySelector('[data-automation-id="msla-card-title"]')?.textContent ||
+            element.querySelector('.msla-card-title')?.textContent ||
+            (element.getAttribute('data-testid') || '').replace(/^card-/, '') ||
+            element.getAttribute('aria-label') ||
+            element.textContent
+          ),
+        }))
+        .filter((identity, index, values) =>
+          identity.nodeId && values.findIndex((candidate) => candidate.nodeId === identity.nodeId) === index
+        );
+      const discoveryVisible = [
+        '.msla-panel-root-Discovery',
+        '[data-automation-id="msla-search-box"]',
+        '.msla-search-box',
+      ].some((selector) => Array.from(document.querySelectorAll(selector)).some(visible));
+      const loaderCount = [
+        '.monaco-progress-container',
+        '.codicon-loading',
+        '.ms-Spinner',
+        '.fui-Spinner',
+        '.ms-Shimmer-container',
+        '[aria-busy="true"]',
+        '[role="progressbar"]',
+        '[class*="spinner"]',
+        '[class*="loading"]',
+      ].flatMap((selector) => Array.from(document.querySelectorAll(selector))).filter(visible).length;
+      return { nodes, discoveryVisible, loaderCount };
+    })()`);
+  }
+
+  private async waitForStableSingleNewNodeIdentity(
+    before: DesignerNodeIdentity[],
+    description: string,
+    deadline: number,
+    expectedTitle?: string
+  ): Promise<DesignerNodeIdentity | undefined> {
     const beforeIds = new Set(before.map((identity) => identity.nodeId));
-    while (Date.now() < this.deadline) {
-      const current = await this.readExactNodeIdentities();
-      const added = current.filter((identity) => !beforeIds.has(identity.nodeId));
+    let stableNodeId = '';
+    let stableObservations = 0;
+    while (Date.now() < deadline) {
+      const snapshot = await this.readActionInsertionSnapshot();
+      const added = snapshot.nodes.filter((identity) => !beforeIds.has(identity.nodeId));
+      assert.ok(added.length <= 1, `${description} added ambiguous Designer nodes: ${added.map((identity) => identity.nodeId).join(', ')}`);
       if (added.length === 1) {
         assert.ok(added[0].title, `${description} node ${added[0].nodeId} had no semantic title`);
-        return added[0];
+        if (expectedTitle) {
+          const actual = added[0].title.toLowerCase();
+          const expected = expectedTitle.toLowerCase();
+          assert.ok(
+            actual === expected || actual.startsWith(`${expected} `),
+            `${description} inserted unexpected Designer node ${added[0].nodeId} (${added[0].title})`
+          );
+        }
+        if (!snapshot.discoveryVisible && snapshot.loaderCount === 0) {
+          if (stableNodeId === added[0].nodeId) {
+            stableObservations++;
+          } else {
+            stableNodeId = added[0].nodeId;
+            stableObservations = 1;
+          }
+          if (stableObservations >= 3) {
+            return added[0];
+          }
+        } else {
+          stableNodeId = '';
+          stableObservations = 0;
+        }
+      } else {
+        stableNodeId = '';
+        stableObservations = 0;
       }
-      assert.ok(added.length <= 1, `${description} added ambiguous Designer nodes: ${added.map((identity) => identity.nodeId).join(', ')}`);
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
-    assert.fail(`Timed out waiting for exactly one new ${description} Designer node`);
+    return undefined;
   }
 
   private async assertExactPanelOwnership(nodeId: string): Promise<void> {
@@ -1982,9 +2204,9 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
     );
   }
 
-  private async waitForPoint(expression: string, description: string): Promise<Point> {
+  private async waitForPoint(expression: string, description: string, deadline: number = this.deadline): Promise<Point> {
     let lastError: unknown;
-    while (Date.now() < this.deadline) {
+    while (Date.now() < deadline) {
       this.assertActive();
       try {
         const point = await this.evaluate<Point | null>(expression);
@@ -1999,9 +2221,9 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
     assert.fail(`Timed out waiting for ${description}${lastError ? `. Last error: ${String(lastError)}` : ''}`);
   }
 
-  private async waitForCondition(expression: string, description: string): Promise<void> {
+  private async waitForCondition(expression: string, description: string, deadline: number = this.deadline): Promise<void> {
     let lastError: unknown;
-    while (Date.now() < this.deadline) {
+    while (Date.now() < deadline) {
       this.assertActive();
       try {
         if (await this.evaluate<boolean>(expression)) {

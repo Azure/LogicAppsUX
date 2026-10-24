@@ -125,14 +125,19 @@ For Designer V2 scenarios that must retain stable identity across React
 rerenders and persistence, use `ProvenDesignerCdpActions`:
 
 - `addRequestTriggerAndGetIdentity` and `addActionAndGetIdentity` return the one
-  newly observed exact canvas node ID after selecting the operation through the
-  shared title/profile selector.
+  newly observed exact canvas node ID after selecting one enabled, hit-tested
+  operation card through the shared title/profile selector. Action insertion is
+  acknowledged only after the same sole new node remains stable, discovery is
+  closed, and insertion loaders are absent. Do not replay the operation click
+  merely because acknowledgement is delayed.
 - `clickNodeById` requires exact card and details-panel ownership.
 - `openSettingsTab`, `openRunAfterSection`,
   `expandRunAfterPredecessor`, `readRunAfterState`, and
   `setRunAfterStatuses` bind the exact child panel and predecessor. Toggle
   implementations reacquire controls after every React render; when moving from
   the default state to Failed-only, select `Failed` before clearing `Succeeded`.
+  `openSettingsTab` supports both a directly visible Settings tab and Fluent's
+  panel-owned `<count> more tabs` overflow trigger plus portal menu item.
 - Sequential insertion must reuse the shared append-action discovery flow, then
   derive exact node identity from the before/after canvas state. Do not infer
   React Flow edge IDs or introduce a family-local edge-plus selector.

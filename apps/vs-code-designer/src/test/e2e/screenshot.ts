@@ -1,4 +1,5 @@
 import { execFile } from 'child_process';
+import { createHash } from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
 import { promisify } from 'util';
@@ -138,7 +139,8 @@ export async function captureDiagnosticScreenshot(
 
 export async function captureFailureDiagnosticAttachment(label: string, testTitle: string): Promise<void> {
   try {
-    const screenshotPath = await captureDiagnosticScreenshot(`failure-${label}-${testTitle}-${Date.now()}`, {
+    const checkpoint = sanitizeDiagnosticCheckpointId(`failure-${label}-${testTitle}-${Date.now()}`);
+    const screenshotPath = await captureDiagnosticScreenshot(checkpoint, {
       reason: 'test-failure',
       timeoutMs: 5000,
       allowWindowsDiagnosticFallback: true,
@@ -156,6 +158,22 @@ export async function captureFailureDiagnosticAttachment(label: string, testTitl
   } catch (error) {
     console.warn(`[screenshot] Failure diagnostic attachment failed: ${error instanceof Error ? error.message : String(error)}`);
   }
+}
+
+export function sanitizeDiagnosticCheckpointId(value: string): string {
+  const normalized = value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  if (!normalized) {
+    return 'failure-screenshot';
+  }
+  if (normalized.length <= 200) {
+    return normalized;
+  }
+
+  const suffix = createHash('sha256').update(value).digest('hex').slice(0, 12);
+  return `${normalized.slice(0, 200 - suffix.length - 1).replace(/-+$/g, '')}-${suffix}`;
 }
 
 export function appendFailureAttachmentSafely(entry: FailureScreenshotAttachment): void {

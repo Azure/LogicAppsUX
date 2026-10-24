@@ -9,10 +9,16 @@ const { JSDOM } = require('jsdom') as { JSDOM: new (html: string, options?: Reco
 async function main(): Promise<void> {
   const screenshotDir = fs.mkdtempSync(path.join(os.tmpdir(), 'la-screenshot-unit-'));
   process.env.LA_E2E_CLI_SCREENSHOT_DIR = screenshotDir;
-  const { appendFailureAttachmentSafely, captureCdpScreenshot, installFailureScreenshotHook, setScreenshotFileSystemForTests } =
-    await import('./screenshot');
+  const {
+    appendFailureAttachmentSafely,
+    captureCdpScreenshot,
+    installFailureScreenshotHook,
+    sanitizeDiagnosticCheckpointId,
+    setScreenshotFileSystemForTests,
+  } = await import('./screenshot');
 
   testFailureScreenshotHookInstallsOnce(installFailureScreenshotHook);
+  testDiagnosticCheckpointNormalization(sanitizeDiagnosticCheckpointId);
   await testStableCaptureAccepted(captureCdpScreenshot, screenshotDir);
   await testAcceptedCaptureUpdatesOrderedEvidenceManifest(captureCdpScreenshot);
   await testTransientInvalidationRetries(captureCdpScreenshot, screenshotDir);
@@ -54,6 +60,16 @@ async function main(): Promise<void> {
   await testSemanticOwnerFrameMismatchRejects(captureCdpScreenshot);
   await testOwnerActiveTabMismatchRejects(captureCdpScreenshot);
   console.log('[screenshot.unit] all tests passed');
+}
+
+function testDiagnosticCheckpointNormalization(sanitizeDiagnosticCheckpointId: (value: string) => string): void {
+  const prefix = 'failure-runAfterPersistenceLifecycle-Run After Settings should persist_';
+  const checkpoint = sanitizeDiagnosticCheckpointId(`${prefix}${'x'.repeat(220)}`);
+  const differentCheckpoint = sanitizeDiagnosticCheckpointId(`${prefix}${'y'.repeat(220)}`);
+  assert.match(checkpoint, /^[a-z0-9][a-z0-9-]{0,199}$/);
+  assert.ok(!checkpoint.includes('_'));
+  assert.strictEqual(checkpoint, checkpoint.toLowerCase());
+  assert.notStrictEqual(checkpoint, differentCheckpoint);
 }
 
 async function testAcceptedCaptureUpdatesOrderedEvidenceManifest(

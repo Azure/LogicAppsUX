@@ -32,6 +32,8 @@ async function main(): Promise<void> {
   await testExactNodeIdentity();
   await testDeleteWaitsForExactClickedNode();
   await testProvenAdapterCancellation();
+  await testStableActionInsertionAcknowledgement();
+  await testSettingsTabPaths();
   await testRunAfterToggleOrderingAndRerenderReacquisition();
   await testRunAfterRejectsDisabledAndWrongFinalState();
   testProvenAdapterUsesUnmodifiedMsnHelper();
@@ -60,6 +62,115 @@ async function testProvenAdapterCancellation(): Promise<void> {
   );
   await assert.rejects(() => actions.waitForDesignerReady(), /scenario cancelled/);
   assert.strictEqual(evaluateCalls, 0, 'Cancelled scenarios must not issue delegated MSN CDP requests');
+}
+
+async function testStableActionInsertionAcknowledgement(): Promise<void> {
+  const actions = new ProvenDesignerCdpActions(
+    { evaluate: async () => undefined as never, send: async () => undefined },
+    1,
+    Date.now() + 10_000
+  ) as any;
+  const before = [{ nodeId: 'Request', title: 'When an HTTP request is received' }];
+  const compose = { nodeId: 'Compose', title: 'Compose' };
+  const snapshots = [1, 2, 3].map(() => ({
+    nodes: [...before, compose],
+    discoveryVisible: false,
+    loaderCount: 0,
+  }));
+  actions.readActionInsertionSnapshot = async () => snapshots.shift() ?? snapshots.at(-1);
+  const inserted = await actions.waitForStableSingleNewNodeIdentity(before, 'Compose', Date.now() + 1000, 'Compose');
+  assert.deepStrictEqual(inserted, compose, 'Insertion acknowledgement must require one stable exact new node');
+
+  actions.readActionInsertionSnapshot = async () => ({
+    nodes: [...before, compose, { nodeId: 'Compose_1', title: 'Compose 1' }],
+    discoveryVisible: false,
+    loaderCount: 0,
+  });
+  await assert.rejects(
+    () => actions.waitForStableSingleNewNodeIdentity(before, 'Compose', Date.now() + 1000, 'Compose'),
+    /ambiguous Designer nodes/
+  );
+
+  let selectCalls = 0;
+  actions.readExactNodeIdentities = async () => before;
+  actions.proven = {
+    openActionDiscovery: async () => undefined,
+    search: async () => undefined,
+    waitForSearchResults: async () => undefined,
+    selectOperation: async () => {
+      selectCalls++;
+    },
+  };
+  actions.waitForStableSingleNewNodeIdentity = async () => undefined;
+  actions.readActionInsertionSnapshot = async () => ({
+    nodes: before,
+    discoveryVisible: true,
+    loaderCount: 0,
+  });
+  await assert.rejects(
+    () => actions.insertActionAndGetIdentity({ search: 'Compose', operationName: 'Compose', variants: ['compose'] }),
+    /insertion-not-acknowledged/
+  );
+  assert.strictEqual(selectCalls, 1, 'Missing insertion acknowledgement must not redispatch an operation click');
+}
+
+async function testSettingsTabPaths(): Promise<void> {
+  const createActions = () =>
+    new ProvenDesignerCdpActions({ evaluate: async () => undefined as never, send: async () => undefined }, 1, Date.now() + 10_000) as any;
+
+  const direct = createActions();
+  const directClicks: unknown[] = [];
+  direct.assertExactPanelOwnership = async () => undefined;
+  direct.waitForSettingsTabTarget = async () => ({ kind: 'direct', point: { x: 1, y: 2 } });
+  direct.dispatchTrustedPoint = async (point: unknown) => directClicks.push(point);
+  direct.waitForCondition = async () => undefined;
+  await direct.openSettingsTab('Compose');
+  assert.deepStrictEqual(directClicks, [{ x: 1, y: 2 }], 'Visible Settings tab path must dispatch one trusted click');
+
+  const overflow = createActions();
+  const overflowClicks: unknown[] = [];
+  let conditions = 0;
+  overflow.assertExactPanelOwnership = async () => undefined;
+  overflow.waitForSettingsTabTarget = async () => ({ kind: 'overflow', point: { x: 3, y: 4 } });
+  overflow.waitForPoint = async () => ({ x: 5, y: 6 });
+  overflow.dispatchTrustedPoint = async (point: unknown) => overflowClicks.push(point);
+  overflow.waitForCondition = async () => {
+    conditions++;
+  };
+  await overflow.openSettingsTab('Compose_1');
+  assert.deepStrictEqual(
+    overflowClicks,
+    [
+      { x: 3, y: 4 },
+      { x: 5, y: 6 },
+    ],
+    'Overflow Settings path must click the panel trigger before the portal menu item'
+  );
+  assert.strictEqual(conditions, 2, 'Overflow Settings path must verify the expanded menu and selected tab');
+
+  const selected = createActions();
+  let selectedClicks = 0;
+  selected.assertExactPanelOwnership = async () => undefined;
+  selected.waitForSettingsTabTarget = async () => ({ kind: 'selected' });
+  selected.dispatchTrustedPoint = async () => {
+    selectedClicks++;
+  };
+  await selected.openSettingsTab('Compose_1');
+  assert.strictEqual(selectedClicks, 0, 'Already-selected Settings tab must not receive another click');
+
+  const ambiguous = new ProvenDesignerCdpActions(
+    {
+      evaluate: async () =>
+        ({
+          directSettingsCount: 0,
+          overflowTriggerCount: 2,
+        }) as never,
+      send: async () => undefined,
+    },
+    1,
+    Date.now() + 20
+  ) as any;
+  await assert.rejects(() => ambiguous.waitForSettingsTabTarget('Compose_1', Date.now() + 20), /overflowTriggerCount.*2/);
 }
 
 function testProvenAdapterUsesUnmodifiedMsnHelper(): void {
@@ -141,20 +252,32 @@ function testHelperConsumersDoNotRegisterCanonicalLifecycleSuite(): void {
 function testRunAfterIdentityAndStatusContracts(): void {
   const addRequest = getMethod('ProvenDesignerCdpActions', 'addRequestTriggerAndGetIdentity');
   assert.match(addRequest, /await this\.addRequestTrigger\(\)/, 'Request insertion must reuse the proven shared Request flow');
-  assert.match(addRequest, /waitForSingleNewNodeIdentity/, 'Request insertion must return one stable new node identity');
+  assert.match(addRequest, /waitForStableSingleNewNodeIdentity/, 'Request insertion must return one stable new node identity');
   assert.doesNotMatch(addRequest, /selectOperationById|msla-op-search-result-request/);
 
   const addAction = getMethod('ProvenDesignerCdpActions', 'addActionAndGetIdentity');
+  assert.match(addAction, /return this\.insertActionAndGetIdentity\(options\)/);
+  assert.doesNotMatch(addAction, /selectOperationById|msla-op-search-result-|openActionDiscoveryAfterNode|afterNodeId/);
+  const sharedAddAction = getMethod('ProvenDesignerCdpActions', 'addAction');
+  assert.match(sharedAddAction, /await this\.insertActionAndGetIdentity/);
+  const insertion = getMethod('ProvenDesignerCdpActions', 'insertActionAndGetIdentity');
   assertOrdered(
-    addAction,
+    insertion,
     [
       'readExactNodeIdentities()',
-      'this.addAction(options.search, options.operationName, options.variants)',
-      'waitForSingleNewNodeIdentity',
+      'this.proven.openActionDiscovery',
+      'this.proven.search',
+      'this.proven.waitForSearchResults',
+      'this.proven.selectOperation',
+      'waitForStableSingleNewNodeIdentity',
     ],
     'Stable action insertion'
   );
-  assert.doesNotMatch(addAction, /selectOperationById|msla-op-search-result-|openActionDiscoveryAfterNode|afterNodeId/);
+  assert.strictEqual(
+    (insertion.match(/this\.proven\.selectOperation/g) ?? []).length,
+    1,
+    'Insertion acknowledgement failure must never redispatch the operation click'
+  );
 
   const exactNode = getMethod('ProvenDesignerCdpActions', 'clickNodeById');
   assert.match(exactNode, /document\.getElementById\('msla-node-' \+ nodeId\)/);
@@ -163,7 +286,12 @@ function testRunAfterIdentityAndStatusContracts(): void {
   assert.match(exactNode, /elementFromPoint/);
 
   const settings = getMethod('ProvenDesignerCdpActions', 'openSettingsTab');
-  assert.match(settings, /tabs\.length !== 1/);
+  assert.match(settings, /waitForSettingsTabTarget/);
+  assert.match(settings, /Math\.min\(this\.deadline, Date\.now\(\) \+ 90000\)/);
+  assert.match(settings, /settingsDeadline/);
+  assert.match(settings, /\^\\\\d\+ more tabs\$/);
+  assert.match(settings, /aria-controls/);
+  assert.match(settings, /\[role="menuitem"\]/);
   assert.match(settings, /aria-disabled/);
   assert.match(settings, /elementFromPoint/);
 
@@ -408,6 +536,10 @@ function testSearchResultsAndOperationParity(): void {
     'Operation matching order'
   );
   assert.match(operation, /cards\.slice\(0, 12\)/);
+  assert.match(operation, /card\.disabled \|\| card\.getAttribute\('aria-disabled'\) === 'true'/);
+  assert.match(operation, /const hit = document\.elementFromPoint\(point\.x, point\.y\)/);
+  assert.match(operation, /hit === card \|\| card\.contains\(hit\)/);
+  assert.match(operation, /Exact operation card is not enabled and hit-testable/);
   assert.match(operation, /reason: 'Operation card not found'/);
   assert.match(operation, /for \(let attempt = 0; attempt < 20; attempt\+\+\)/);
   assert.match(operation, /setTimeout\(resolve, 300\)/);
