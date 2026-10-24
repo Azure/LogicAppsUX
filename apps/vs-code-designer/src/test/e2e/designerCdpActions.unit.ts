@@ -332,6 +332,9 @@ function testRunAfterIdentityAndStatusContracts(): void {
   assert.match(predecessor, /readNodeIdentity\(predecessorNodeId\)/);
   assert.match(predecessor, /headers\.length !== 1/);
   assert.match(predecessor, /msla-run-after-node-title/);
+  assert.match(predecessor, /while \(Date\.now\(\) < predecessorDeadline\)/);
+  assert.match(predecessor, /lastState/);
+  assert.match(predecessor, /state\.count === 1 && state\.point/);
 
   const readState = getMethod('ProvenDesignerCdpActions', 'readRunAfterState');
   for (const label of ['Is successful', 'Has timed out', 'Is skipped', 'Has failed']) {

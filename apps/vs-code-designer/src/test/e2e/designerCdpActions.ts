@@ -1824,40 +1824,62 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
   async expandRunAfterPredecessor(childNodeId: string, predecessorNodeId: string): Promise<void> {
     const predecessor = await this.readNodeIdentity(predecessorNodeId);
     await this.assertExactPanelOwnership(childNodeId);
-    const state = await this.evaluate<{ count: number; expanded: boolean; point?: Point }>(`(() => {
-      ${visibleDom}
-      ${exactVisibleElementByIdDom}
-      const panel = exactVisibleElementById(${JSON.stringify(`msla-node-details-panel-${childNodeId}`)});
-      if (!(panel instanceof HTMLElement) || !visible(panel)) return { count: 0, expanded: false };
-      const title = ${JSON.stringify(predecessor.title)};
-      const headers = Array.from(panel.querySelectorAll('.msla-run-after-edge-header'))
-        .filter(visible)
-        .filter((header) => normalize(header.querySelector('.msla-run-after-node-title')?.textContent) === title);
-      if (headers.length !== 1) return { count: headers.length, expanded: false };
-      const button = headers[0].querySelector('button');
-      if (!(button instanceof HTMLElement) || !visible(button)) return { count: 1, expanded: false };
-      const aria = normalize(button.getAttribute('aria-label'));
-      const expanded = aria === 'Collapse ' + title;
-      if (expanded) return { count: 1, expanded: true };
-      if (aria !== 'Expand ' + title || button.getAttribute('aria-disabled') === 'true' || button.disabled) {
-        return { count: 1, expanded: false };
+    const predecessorDeadline = Math.min(this.deadline, Date.now() + 90000);
+    let lastState: unknown;
+    let clicked = false;
+    while (Date.now() < predecessorDeadline) {
+      const state = await this.evaluate<{
+        count: number;
+        expanded: boolean;
+        point?: Point;
+        ariaLabel?: string;
+        buttonVisible?: boolean;
+        buttonDisabled?: boolean;
+      }>(`(() => {
+        ${visibleDom}
+        ${exactVisibleElementByIdDom}
+        const panel = exactVisibleElementById(${JSON.stringify(`msla-node-details-panel-${childNodeId}`)});
+        if (!(panel instanceof HTMLElement) || !visible(panel)) return { count: 0, expanded: false };
+        const title = ${JSON.stringify(predecessor.title)};
+        const headers = Array.from(panel.querySelectorAll('.msla-run-after-edge-header'))
+          .filter(visible)
+          .filter((header) => normalize(header.querySelector('.msla-run-after-node-title')?.textContent) === title);
+        if (headers.length !== 1) return { count: headers.length, expanded: false };
+        const button = headers[0].querySelector('button');
+        if (!(button instanceof HTMLElement)) return { count: 1, expanded: false, buttonVisible: false };
+        const ariaLabel = normalize(button.getAttribute('aria-label'));
+        const buttonVisible = visible(button);
+        const buttonDisabled = button.getAttribute('aria-disabled') === 'true' || button.disabled;
+        const expanded = ariaLabel === 'Collapse ' + title;
+        if (expanded) return { count: 1, expanded: true, ariaLabel, buttonVisible, buttonDisabled };
+        if (!buttonVisible || ariaLabel !== 'Expand ' + title || buttonDisabled) {
+          return { count: 1, expanded: false, ariaLabel, buttonVisible, buttonDisabled };
+        }
+        button.scrollIntoView({ block: 'center', inline: 'center' });
+        const rect = button.getBoundingClientRect();
+        const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+        const hit = document.elementFromPoint(point.x, point.y);
+        return hit && (hit === button || button.contains(hit))
+          ? { count: 1, expanded: false, point, ariaLabel, buttonVisible, buttonDisabled }
+          : { count: 1, expanded: false, ariaLabel, buttonVisible, buttonDisabled };
+      })()`);
+      lastState = state;
+      if (state.expanded) {
+        return;
       }
-      button.scrollIntoView({ block: 'center', inline: 'center' });
-      const rect = button.getBoundingClientRect();
-      const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-      const hit = document.elementFromPoint(point.x, point.y);
-      return hit && (hit === button || button.contains(hit))
-        ? { count: 1, expanded: false, point }
-        : { count: 1, expanded: false };
-    })()`);
-    assert.strictEqual(
-      state.count,
-      1,
-      `Expected exact Run after predecessor ${predecessorNodeId} (${predecessor.title}) in ${childNodeId}, found ${state.count}`
-    );
-    if (!state.expanded) {
-      assert.ok(state.point, `Run after predecessor ${predecessorNodeId} was not enabled and hit-testable`);
-      await this.dispatchTrustedPoint(state.point);
+      if (state.count === 1 && state.point) {
+        await this.dispatchTrustedPoint(state.point);
+        clicked = true;
+        break;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    if (!clicked) {
+      assert.fail(
+        `Timed out waiting for enabled Run after predecessor ${predecessorNodeId} (${predecessor.title}). Last state: ${JSON.stringify(
+          lastState
+        )}`
+      );
     }
     await this.waitForCondition(
       `(() => {
@@ -1871,7 +1893,8 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
           .filter((button) => normalize(button.getAttribute('aria-label')) === 'Collapse ' + title);
         return buttons.length === 1;
       })()`,
-      `expanded Run after predecessor ${predecessorNodeId} for ${childNodeId}`
+      `expanded Run after predecessor ${predecessorNodeId} for ${childNodeId}`,
+      predecessorDeadline
     );
   }
 

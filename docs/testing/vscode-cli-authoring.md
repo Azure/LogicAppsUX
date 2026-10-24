@@ -149,6 +149,9 @@ rerenders and persistence, use `ProvenDesignerCdpActions`:
   `setRunAfterStatuses` bind the exact child panel and predecessor. Toggle
   implementations reacquire controls after every React render; when moving from
   the default state to Failed-only, select `Failed` before clearing `Succeeded`.
+  After opening the Run After section, reacquire the exact predecessor row until
+  its Fluent expand button is enabled and hit-testable; the row can render before
+  the transition exposes a clickable target.
   `openSettingsTab` supports both a directly visible Settings tab and Fluent's
   panel-owned `<count> more tabs` overflow trigger plus portal menu item. Resolve
   those controls through the exact panel content element's enclosing
