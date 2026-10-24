@@ -585,6 +585,19 @@ const exactVisibleElementByIdDom = `
   };
 `;
 
+const semanticSettingsTabsDom = `
+  const semanticSettingsTabs = (root) => {
+    const owners = Array.from(root.querySelectorAll('*'))
+      .filter((element) =>
+        normalize(element.textContent) === 'Settings' ||
+        normalize(element.getAttribute('aria-label')) === 'Settings'
+      )
+      .map((element) => element.matches('button, [role="tab"]') ? element : element.closest('button, [role="tab"]'))
+      .filter((element) => element instanceof HTMLElement && root.contains(element));
+    return owners.filter((element, index) => owners.indexOf(element) === index);
+  };
+`;
+
 export type RunAfterStatus = 'Succeeded' | 'TimedOut' | 'Skipped' | 'Failed';
 
 export interface RunAfterState {
@@ -1631,12 +1644,12 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
       `(() => {
         ${visibleDom}
         ${exactVisibleElementByIdDom}
+        ${semanticSettingsTabsDom}
         const panel = exactVisibleElementById(${JSON.stringify(`msla-node-details-panel-${nodeId}`)});
         if (!(panel instanceof HTMLElement) || !visible(panel)) return false;
         const panelLayout = panel.closest('.msla-panel-layout');
         if (!(panelLayout instanceof HTMLElement)) return false;
-        const tabs = Array.from(panelLayout.querySelectorAll('button, [role="tab"]'))
-          .filter((tab) => normalize(tab.textContent || tab.getAttribute('aria-label')) === 'Settings');
+        const tabs = semanticSettingsTabs(panelLayout);
         return tabs.length === 1 && tabs[0].getAttribute('aria-selected') === 'true';
       })()`,
       `active Settings tab for Designer node ${nodeId}`,
@@ -1656,21 +1669,44 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
         point?: Point;
         directSettingsCount: number;
         overflowTriggerCount: number;
+        panelFound: boolean;
+        panelLayoutFound: boolean;
+        interactiveCandidates?: Array<{ tag: string; role: string; text: string; ariaLabel: string }>;
       }>(`(() => {
         ${visibleDom}
         ${exactVisibleElementByIdDom}
+        ${semanticSettingsTabsDom}
         const panel = exactVisibleElementById(${JSON.stringify(`msla-node-details-panel-${nodeId}`)});
         if (!(panel instanceof HTMLElement) || !visible(panel)) {
-          return { directSettingsCount: 0, overflowTriggerCount: 0 };
+          return { directSettingsCount: 0, overflowTriggerCount: 0, panelFound: false, panelLayoutFound: false };
         }
         const panelLayout = panel.closest('.msla-panel-layout');
         if (!(panelLayout instanceof HTMLElement)) {
-          return { directSettingsCount: 0, overflowTriggerCount: 0 };
+          return { directSettingsCount: 0, overflowTriggerCount: 0, panelFound: true, panelLayoutFound: false };
         }
-        const settingsTabs = Array.from(panelLayout.querySelectorAll('button, [role="tab"]'))
-          .filter((tab) => normalize(tab.textContent || tab.getAttribute('aria-label')) === 'Settings');
+        const settingsTabs = semanticSettingsTabs(panelLayout);
+        const interactiveCandidates = Array.from(panelLayout.querySelectorAll('button, [role="tab"]'))
+          .map((element) => ({
+            tag: element.tagName,
+            role: element.getAttribute('role') || '',
+            text: normalize(element.textContent),
+            ariaLabel: normalize(element.getAttribute('aria-label')),
+          }))
+          .filter((candidate) =>
+            candidate.text.toLowerCase().includes('setting') ||
+            candidate.ariaLabel.toLowerCase().includes('setting') ||
+            candidate.role === 'tab'
+          )
+          .slice(0, 12);
         if (settingsTabs.length === 1 && settingsTabs[0].getAttribute('aria-selected') === 'true') {
-          return { kind: 'selected', directSettingsCount: 1, overflowTriggerCount: 0 };
+          return {
+            kind: 'selected',
+            directSettingsCount: 1,
+            overflowTriggerCount: 0,
+            panelFound: true,
+            panelLayoutFound: true,
+            interactiveCandidates,
+          };
         }
         const visibleSettingsTabs = settingsTabs
           .filter(visible)
@@ -1682,7 +1718,15 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
           const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
           const hit = document.elementFromPoint(point.x, point.y);
           if (hit && (hit === tab || tab.contains(hit))) {
-            return { kind: 'direct', point, directSettingsCount: settingsTabs.length, overflowTriggerCount: 0 };
+            return {
+              kind: 'direct',
+              point,
+              directSettingsCount: settingsTabs.length,
+              overflowTriggerCount: 0,
+              panelFound: true,
+              panelLayoutFound: true,
+              interactiveCandidates,
+            };
           }
         }
         const overflowTriggers = Array.from(panelLayout.querySelectorAll('button[aria-label], [role="tab"][aria-label]'))
@@ -1701,12 +1745,18 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
               point,
               directSettingsCount: settingsTabs.length,
               overflowTriggerCount: overflowTriggers.length,
+              panelFound: true,
+              panelLayoutFound: true,
+              interactiveCandidates,
             };
           }
         }
         return {
           directSettingsCount: settingsTabs.length,
           overflowTriggerCount: overflowTriggers.length,
+          panelFound: true,
+          panelLayoutFound: true,
+          interactiveCandidates,
         };
       })()`);
       lastState = state;

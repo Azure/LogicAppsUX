@@ -319,7 +319,9 @@ function testRunAfterIdentityAndStatusContracts(): void {
   assert.match(settings, /Math\.min\(this\.deadline, Date\.now\(\) \+ 90000\)/);
   assert.match(settings, /settingsDeadline/);
   assert.match(settings, /closest\('\.msla-panel-layout'\)/);
-  assert.match(settings, /button, \[role="tab"\]/);
+  assert.match(actionsSourceText, /const semanticSettingsTabs = \(root\)/);
+  assert.match(settings, /semanticSettingsTabs\(panelLayout\)/);
+  assert.match(actionsSourceText, /interactiveCandidates/);
   assert.match(settings, /\^\\\\d\+ more tabs\$/);
   assert.match(settings, /aria-controls/);
   assert.match(settings, /\[role="menuitem"\]/);
