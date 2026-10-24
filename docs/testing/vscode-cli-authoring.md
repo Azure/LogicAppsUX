@@ -132,7 +132,9 @@ rerenders and persistence, use `ProvenDesignerCdpActions`:
   merely because acknowledgement is delayed. Responsive hosts may replace the
   canvas with the newly opened details panel; insertion identity therefore
   combines canvas-card IDs with the one visible exact details-panel ID and its
-  semantic header title.
+  semantic header title. A new panel ID can precede header-title hydration;
+  treat an empty title as pending and start stability counting only after the
+  same ID has a nonempty matching semantic title.
 - Opening Request discovery is non-mutating. If the Add trigger click receives
   focus but no discovery panel appears, the shared flow may retry only after a
   bounded explicit no-panel acknowledgement.

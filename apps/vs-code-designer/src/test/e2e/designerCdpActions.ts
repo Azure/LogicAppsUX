@@ -2209,24 +2209,28 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
       const added = snapshot.nodes.filter((identity) => !beforeIds.has(identity.nodeId));
       assert.ok(added.length <= 1, `${description} added ambiguous Designer nodes: ${added.map((identity) => identity.nodeId).join(', ')}`);
       if (added.length === 1) {
-        assert.ok(added[0].title, `${description} node ${added[0].nodeId} had no semantic title`);
-        if (expectedTitle) {
-          const actual = added[0].title.toLowerCase();
-          const expected = expectedTitle.toLowerCase();
-          assert.ok(
-            actual === expected || actual.startsWith(`${expected} `),
-            `${description} inserted unexpected Designer node ${added[0].nodeId} (${added[0].title})`
-          );
-        }
-        if (!snapshot.discoveryVisible && snapshot.loaderCount === 0) {
-          if (stableNodeId === added[0].nodeId) {
-            stableObservations++;
-          } else {
-            stableNodeId = added[0].nodeId;
-            stableObservations = 1;
+        if (added[0].title) {
+          if (expectedTitle) {
+            const actual = added[0].title.toLowerCase();
+            const expected = expectedTitle.toLowerCase();
+            assert.ok(
+              actual === expected || actual.startsWith(`${expected} `),
+              `${description} inserted unexpected Designer node ${added[0].nodeId} (${added[0].title})`
+            );
           }
-          if (stableObservations >= 3) {
-            return added[0];
+          if (!snapshot.discoveryVisible && snapshot.loaderCount === 0) {
+            if (stableNodeId === added[0].nodeId) {
+              stableObservations++;
+            } else {
+              stableNodeId = added[0].nodeId;
+              stableObservations = 1;
+            }
+            if (stableObservations >= 3) {
+              return added[0];
+            }
+          } else {
+            stableNodeId = '';
+            stableObservations = 0;
           }
         } else {
           stableNodeId = '';

@@ -72,11 +72,18 @@ async function testStableActionInsertionAcknowledgement(): Promise<void> {
   ) as any;
   const before = [{ nodeId: 'Request', title: 'When an HTTP request is received' }];
   const compose = { nodeId: 'Compose', title: 'Compose' };
-  const snapshots = [1, 2, 3].map(() => ({
-    nodes: [...before, compose],
-    discoveryVisible: false,
-    loaderCount: 0,
-  }));
+  const snapshots = [
+    {
+      nodes: [...before, { nodeId: 'Compose', title: '' }],
+      discoveryVisible: false,
+      loaderCount: 0,
+    },
+    ...[1, 2, 3].map(() => ({
+      nodes: [...before, compose],
+      discoveryVisible: false,
+      loaderCount: 0,
+    })),
+  ];
   actions.readActionInsertionSnapshot = async () => snapshots.shift() ?? snapshots.at(-1);
   const inserted = await actions.waitForStableSingleNewNodeIdentity(before, 'Compose', Date.now() + 1000, 'Compose');
   assert.deepStrictEqual(inserted, compose, 'Insertion acknowledgement must require one stable exact new node');
