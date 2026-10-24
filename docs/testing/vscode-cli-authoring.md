@@ -129,7 +129,13 @@ rerenders and persistence, use `ProvenDesignerCdpActions`:
   operation card through the shared title/profile selector. Action insertion is
   acknowledged only after the same sole new node remains stable, discovery is
   closed, and insertion loaders are absent. Do not replay the operation click
-  merely because acknowledgement is delayed.
+  merely because acknowledgement is delayed. Responsive hosts may replace the
+  canvas with the newly opened details panel; insertion identity therefore
+  combines canvas-card IDs with the one visible exact details-panel ID and its
+  semantic header title.
+- Opening Request discovery is non-mutating. If the Add trigger click receives
+  focus but no discovery panel appears, the shared flow may retry only after a
+  bounded explicit no-panel acknowledgement.
 - `clickNodeById` requires exact card and details-panel ownership.
 - `openSettingsTab`, `openRunAfterSection`,
   `expandRunAfterPredecessor`, `readRunAfterState`, and

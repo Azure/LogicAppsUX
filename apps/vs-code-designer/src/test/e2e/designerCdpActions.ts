@@ -1458,19 +1458,23 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
   }
 
   override async addRequestTrigger(): Promise<void> {
-    await this.proven.clickElement(
-      [
-        '[data-testid="card-Add a trigger"]',
-        '[data-testid="card-Add trigger"]',
-        '[data-automation-id="card-Add_a_trigger"]',
-        '[data-automation-id="card-Add_trigger"]',
-        '[aria-label="Add a trigger"]',
-        '[aria-label="Add trigger"]',
-      ],
-      'Add a trigger',
-      { requireTextMatch: false }
-    );
-    await this.proven.waitForDiscoveryPanel(60000, 'Request trigger discovery panel');
+    const selectors = [
+      '[data-testid="card-Add a trigger"]',
+      '[data-testid="card-Add trigger"]',
+      '[data-automation-id="card-Add_a_trigger"]',
+      '[data-automation-id="card-Add_trigger"]',
+      '[aria-label="Add a trigger"]',
+      '[aria-label="Add trigger"]',
+    ];
+    let discoveryOpened = await this.proven.hasDiscoveryPanel();
+    for (let attempt = 1; attempt <= 3 && !discoveryOpened; attempt += 1) {
+      await this.proven.clickElement(selectors, 'Add a trigger', { requireTextMatch: false });
+      discoveryOpened = await this.proven.waitForOptionalDiscoveryPanel(20000);
+      if (!discoveryOpened) {
+        console.log(`[designer-actions] Request trigger discovery did not open after attempt ${attempt}`);
+      }
+    }
+    assert.ok(discoveryOpened, 'Timed out waiting for Request trigger discovery panel after 3 acknowledged click attempts');
     await this.proven.search('Request');
     await this.proven.waitForSearchResults(60000, 'Request search results');
     await this.proven.selectOperation('Request', ['when a http request is received', 'when an http request is received', 'http request']);
@@ -1479,7 +1483,7 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
   }
 
   async addRequestTriggerAndGetIdentity(): Promise<DesignerNodeIdentity> {
-    const before = await this.readExactNodeIdentities();
+    const before = (await this.readActionInsertionSnapshot()).nodes;
     await this.addRequestTrigger();
     const identity = await this.waitForStableSingleNewNodeIdentity(before, 'Request trigger', this.deadline);
     assert.ok(identity, 'Timed out waiting for one stable new Request trigger Designer node');
@@ -1503,7 +1507,7 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
     operationName: string;
     variants?: string[];
   }): Promise<DesignerNodeIdentity> {
-    const before = await this.readExactNodeIdentities();
+    const before = (await this.readActionInsertionSnapshot()).nodes;
     await this.proven.openActionDiscovery(options.operationName, async (stage, point) => {
       console.log(`[designer-actions] ${options.operationName}: ${stage}${point ? ` point=${JSON.stringify(point)}` : ''}`);
     });
@@ -2141,7 +2145,20 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
   private async readActionInsertionSnapshot(): Promise<ActionInsertionSnapshot> {
     return this.evaluate<ActionInsertionSnapshot>(`(() => {
       ${visibleDom}
-      const nodes = Array.from(document.querySelectorAll('[id^="msla-node-"]'))
+      const panelNodes = Array.from(document.querySelectorAll('[id^="msla-node-details-panel-"]'))
+        .filter(visible)
+        .map((element) => {
+          const titleInput = element.querySelector('[aria-label="Card title"], .msla-card-title input');
+          return {
+            nodeId: element.id.slice('msla-node-details-panel-'.length),
+            title: normalize(
+              element.querySelector('.msla-panel-header')?.id ||
+              (titleInput instanceof HTMLInputElement ? titleInput.value : titleInput?.textContent) ||
+              element.getAttribute('aria-label')
+            ),
+          };
+        });
+      const cardNodes = Array.from(document.querySelectorAll('[id^="msla-node-"]'))
         .filter((element) => /^msla-node-[^-].*/.test(element.id))
         .filter((element) => !element.id.startsWith('msla-node-details-panel-'))
         .map((element) => ({
@@ -2153,7 +2170,8 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
             element.getAttribute('aria-label') ||
             element.textContent
           ),
-        }))
+        }));
+      const nodes = [...panelNodes, ...cardNodes]
         .filter((identity, index, values) =>
           identity.nodeId && values.findIndex((candidate) => candidate.nodeId === identity.nodeId) === index
         );

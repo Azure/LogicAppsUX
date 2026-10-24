@@ -206,6 +206,8 @@ function testProvenAdapterCompatibility(): void {
     /\{\s*requireTextMatch:\s*false\s*\}/,
     'Exact V2 Add-trigger selectors must not be rejected by the historical article-sensitive text filter'
   );
+  assert.match(addRequestTrigger, /attempt <= 3/, 'Request discovery may retry only after an explicit no-panel acknowledgement');
+  assert.match(addRequestTrigger, /waitForOptionalDiscoveryPanel\(20000\)/);
   const deleteNode = getMethod('ProvenDesignerCdpActions', 'deleteNode');
   assert.ok(deleteNode.includes("await this.key('Delete', 'Delete', 46)"), 'Node deletion must use the native Delete key');
   assert.ok(deleteNode.includes('\'[role="dialog"] button\''), 'Node deletion must bind confirmation to the visible modal');
@@ -252,6 +254,7 @@ function testHelperConsumersDoNotRegisterCanonicalLifecycleSuite(): void {
 function testRunAfterIdentityAndStatusContracts(): void {
   const addRequest = getMethod('ProvenDesignerCdpActions', 'addRequestTriggerAndGetIdentity');
   assert.match(addRequest, /await this\.addRequestTrigger\(\)/, 'Request insertion must reuse the proven shared Request flow');
+  assert.match(addRequest, /readActionInsertionSnapshot/, 'Request insertion must preserve responsive panel identities');
   assert.match(addRequest, /waitForStableSingleNewNodeIdentity/, 'Request insertion must return one stable new node identity');
   assert.doesNotMatch(addRequest, /selectOperationById|msla-op-search-result-request/);
 
@@ -264,7 +267,7 @@ function testRunAfterIdentityAndStatusContracts(): void {
   assertOrdered(
     insertion,
     [
-      'readExactNodeIdentities()',
+      'readActionInsertionSnapshot()',
       'this.proven.openActionDiscovery',
       'this.proven.search',
       'this.proven.waitForSearchResults',
@@ -288,6 +291,12 @@ function testRunAfterIdentityAndStatusContracts(): void {
   const nodeIdentity = getMethod('ProvenDesignerCdpActions', 'readNodeIdentity');
   assert.match(nodeIdentity, /exactVisibleElementById\('msla-node-' \+ nodeId\)/);
   assert.doesNotMatch(nodeIdentity, /readExactNodeIdentities/);
+
+  const insertionSnapshot = getMethod('ProvenDesignerCdpActions', 'readActionInsertionSnapshot');
+  assert.match(insertionSnapshot, /msla-node-details-panel-/);
+  assert.match(insertionSnapshot, /filter\(visible\)/);
+  assert.match(insertionSnapshot, /msla-panel-header/);
+  assert.match(insertionSnapshot, /\[\.\.\.panelNodes, \.\.\.cardNodes\]/);
 
   const settings = getMethod('ProvenDesignerCdpActions', 'openSettingsTab');
   assert.match(actionsSourceText, /const exactVisibleElementById = \(id\)/);
