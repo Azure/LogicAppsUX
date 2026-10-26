@@ -12,6 +12,8 @@ import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import { HybridAppUtility, hybridApiVersion } from '../Utilities/HybridAppUtilities';
+import { useStandaloneManagementClient } from '../../DesignerShell/standaloneManagementContext';
+import { armOnlyStandardManagement, getStandardManagementCacheKey } from '../Services/StandardManagement';
 
 const columnProps: Partial<IStackProps> = {
   tokens: { childrenGap: 15 },
@@ -36,6 +38,8 @@ export const AzureStandardLogicAppSelector = ({
   const { data: appList, isLoading: isAppsLoading } = hostingPlan === 'hybrid' ? hybridList : standardList;
   const validApp = appId ? resourceIdValidation.test(appId) : false;
   const dispatch = useDispatch<AppDispatch>();
+  const management = useStandaloneManagementClient();
+  const standardManagement = management.client ?? armOnlyStandardManagement;
 
   const { data: workflows, isLoading: isWorkflowsLoading } = useQuery(['getListOfWorkflows', appId], async () => {
     if (!validApp) {
@@ -60,7 +64,7 @@ export const AzureStandardLogicAppSelector = ({
     isLoading: isRunInstancesLoading,
     refetch: reloadRunIds,
   } = useQuery(
-    ['getListOfRunInstances', appId, workflowName],
+    ['getListOfRunInstances', appId, workflowName, getStandardManagementCacheKey(standardManagement)],
     async () => {
       if (!validApp) {
         return null;
@@ -78,15 +82,11 @@ export const AzureStandardLogicAppSelector = ({
         );
       }
 
-      const results = await axios.get<RunList>(
-        `https://management.azure.com${appId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/runs?api-version=2018-11-01`,
-        {
-          headers: {
-            ...authToken,
-          },
-        }
-      );
-      return results.data;
+      const uri = `https://management.azure.com${appId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/runs?api-version=2018-11-01`;
+      return standardManagement.listRuns<RunList>({ uri }, async () => {
+        const results = await axios.get<RunList>(uri, { headers: authToken });
+        return results.data;
+      });
     },
     { enabled: !!workflowName && !!isMonitoringView }
   );

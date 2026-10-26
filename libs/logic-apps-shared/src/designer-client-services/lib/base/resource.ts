@@ -2,11 +2,13 @@ import { getResourceNameFromId, getTriggerFromDefinition, HTTP_METHODS, type Arm
 import { fetchAppsByQuery, getAzureResourceRecursive } from '../common/azure';
 import type { IHttpClient } from '../httpClient';
 import type { Resource, IResourceService, LogicAppResource, WorkflowResource } from '../resource';
+import type { StandardManagementHttpClient } from '../standard/management';
 
 export interface BaseResourceServiceOptions {
   httpClient: IHttpClient;
   baseUrl: string;
   apiVersion: string;
+  standardManagement?: StandardManagementHttpClient;
 }
 
 export class BaseResourceService implements IResourceService {
@@ -85,7 +87,8 @@ export class BaseResourceService implements IResourceService {
     const { baseUrl, httpClient } = this.options;
     const uri = `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${logicAppName}/hostruntime/runtime/webhooks/workflow/api/management/workflows`;
     const queryParameters = { 'api-version': '2018-11-01' };
-    const response: any = await httpClient.get({ uri, queryParameters });
+    const request = { uri, queryParameters };
+    const response: any = await (this.options.standardManagement?.listWorkflows(request) ?? httpClient.get(request));
     const mapper = (item: any) => ({
       id: `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${logicAppName}/workflows/${item.name}`,
       name: getResourceNameFromId(item.name),
@@ -116,7 +119,7 @@ export class BaseResourceService implements IResourceService {
     const uri = `${baseUrl}${resourceId}`;
     switch (action) {
       case HTTP_METHODS.POST:
-        return httpClient.post({ uri, queryParameters, content });
+        return (this.options.standardManagement ?? httpClient).post({ uri, queryParameters, content });
       case HTTP_METHODS.PUT:
         return httpClient.put({ uri, queryParameters, content });
       case HTTP_METHODS.DELETE:
@@ -130,9 +133,9 @@ export class BaseResourceService implements IResourceService {
     const { httpClient } = this.options;
     switch (action) {
       case HTTP_METHODS.POST:
-        return httpClient.post({ uri, content });
+        return (this.options.standardManagement ?? httpClient).post({ uri, content });
       case HTTP_METHODS.GET:
-        return httpClient.get({ uri });
+        return (this.options.standardManagement ?? httpClient).get({ uri });
       case HTTP_METHODS.PUT:
         return httpClient.put({ uri, content });
       case HTTP_METHODS.DELETE:
