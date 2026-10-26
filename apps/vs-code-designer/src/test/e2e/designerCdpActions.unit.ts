@@ -4,11 +4,13 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as ts from 'typescript';
 import { runInNewContext } from 'vm';
+import type { Point } from './cdpFormHelpers';
 import { MsnDesignerCdpActions, ProvenDesignerCdpActions, resolveDesignerActionProfile } from './designerCdpActions';
 
 interface TestDomWindow {
   document: {
     getElementById: (id: string) => object | null;
+    querySelectorAll: (selector: string) => Iterable<object>;
   };
   HTMLElement: {
     prototype: object;
@@ -43,6 +45,7 @@ async function main(): Promise<void> {
   testActionMenuParity();
   testNodeAndPanelParity();
   testParameterAndSaveParity();
+  testProvenSaveButtonDom();
   await testReplacementKeySequence();
   await testExactNodeIdentity();
   await testDeleteWaitsForExactClickedNode();
@@ -882,6 +885,100 @@ function testParameterAndSaveParity(): void {
   assert.match(save, /document\.querySelector\('button\[aria-label\*="Sav"\]'\)/);
   assert.match(save, /visibleErrorText/);
   assert.match(save, /designer save did not complete/);
+
+  const provenSave = getMethod('ProvenDesignerCdpActions', 'save');
+  assert.match(provenSave, /\$\{provenSaveButtonDom\}/);
+  assert.match(provenSave, /provenSaveButtonPoint\(\)/);
+  assert.match(provenSave, /this\.dispatchTrustedPoint\(point\)/);
+  assert.match(provenSave, /state\.busy \|\| state\.disabled/);
+  assert.match(provenSave, /!state\.busy/);
+  assert.doesNotMatch(provenSave, /this\.proven\.save/);
+}
+
+function testProvenSaveButtonDom(): void {
+  const helper = getStringConstant('provenSaveButtonDom');
+  const evaluate = (body: string, hitTargetId: string) => {
+    const dom = new JSDOM(`<html><body>${body}</body></html>`, { runScripts: 'outside-only' });
+    const { document, HTMLElement } = dom.window;
+    Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
+      configurable: true,
+      value: () => undefined,
+    });
+    const rect = { left: 20, top: 30, right: 120, bottom: 60, width: 100, height: 30, x: 20, y: 30, toJSON: () => ({}) };
+    for (const button of Array.from(document.querySelectorAll('button'))) {
+      Object.defineProperty(button, 'getBoundingClientRect', {
+        configurable: true,
+        value: () => rect,
+      });
+    }
+    Object.defineProperty(document, 'elementFromPoint', {
+      configurable: true,
+      value: () => document.getElementById(hitTargetId),
+    });
+    const result = JSON.parse(
+      JSON.stringify(
+        dom.window.eval(`(() => {
+          const visible = (element) => element instanceof HTMLElement && element.getAttribute('data-visible') === 'true';
+          const normalize = (text) => (text || '').replace(/\\s+/g, ' ').trim();
+          ${helper}
+          const state = provenSaveButtonState();
+          return {
+            state: state ? {
+              ariaName: state.ariaName,
+              textName: state.textName,
+              disabled: state.disabled,
+              busy: state.busy,
+            } : null,
+            point: provenSaveButtonPoint(),
+          };
+        })()`)
+      )
+    ) as {
+      state: { ariaName: string; textName: string; disabled: boolean; busy: boolean } | null;
+      point: Point | null;
+    };
+    dom.window.close();
+    return result;
+  };
+
+  assert.deepStrictEqual(
+    evaluate(
+      '<div role="toolbar"><button id="v2-save" data-visible="true"><span id="v2-save-text">Save</span></button></div>',
+      'v2-save-text'
+    ),
+    {
+      state: { ariaName: '', textName: 'save', disabled: false, busy: false },
+      point: { x: 70, y: 45 },
+    },
+    'Designer V2 Save must resolve from exact visible toolbar text without requiring aria-label'
+  );
+  assert.deepStrictEqual(
+    evaluate('<button id="v1-save" aria-label="Save" data-visible="true"><span id="v1-save-text">Save</span></button>', 'v1-save-text'),
+    {
+      state: { ariaName: 'save', textName: 'save', disabled: false, busy: false },
+      point: { x: 70, y: 45 },
+    },
+    'The Proven resolver must retain compatibility with the historical aria-labeled Save button'
+  );
+  assert.deepStrictEqual(
+    evaluate(
+      '<div role="toolbar"><button id="saving" data-visible="true" disabled><span id="saving-text">Saving</span></button></div>',
+      'saving-text'
+    ),
+    {
+      state: { ariaName: '', textName: 'saving', disabled: true, busy: true },
+      point: null,
+    },
+    'Saving controls must acknowledge progress but never produce another click point'
+  );
+  assert.deepStrictEqual(
+    evaluate(
+      '<div role="toolbar"><button id="save-a" data-visible="true">Save</button><button id="save-b" data-visible="true">Save</button></div>',
+      'save-a'
+    ),
+    { state: null, point: null },
+    'Ambiguous visible Save controls must fail closed'
+  );
 }
 
 async function testReplacementKeySequence(): Promise<void> {

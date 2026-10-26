@@ -1433,6 +1433,39 @@ export class MsnDesignerCdpActions {
   }
 }
 
+const provenSaveButtonDom = `
+  const provenSaveButtonState = () => {
+    const toolbarButtons = Array.from(document.querySelectorAll('[role="toolbar"] button'));
+    const labeledButtons = Array.from(document.querySelectorAll('button[aria-label="Save"], button[aria-label="Saving"]'));
+    const candidates = Array.from(new Set([...toolbarButtons, ...labeledButtons]))
+      .filter(visible)
+      .map((button) => {
+        const ariaName = normalize(button.getAttribute('aria-label')).toLowerCase();
+        const textName = normalize(button.textContent).toLowerCase();
+        return {
+          button,
+          ariaName,
+          textName,
+          disabled: button.disabled || button.getAttribute('aria-disabled') === 'true',
+          busy: ariaName === 'saving' || textName === 'saving' || button.getAttribute('aria-busy') === 'true',
+        };
+      })
+      .filter(({ ariaName, textName }) => ['save', 'saving'].includes(ariaName) || ['save', 'saving'].includes(textName));
+    return candidates.length === 1 ? candidates[0] : null;
+  };
+  const provenSaveButtonPoint = () => {
+    const state = provenSaveButtonState();
+    if (!state || state.disabled || state.busy) return null;
+    if (state.ariaName !== 'save' && state.textName !== 'save') return null;
+    state.button.scrollIntoView({ block: 'center', inline: 'center' });
+    const rect = state.button.getBoundingClientRect();
+    const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+    const hit = document.elementFromPoint(point.x, point.y);
+    if (!(hit === state.button || state.button.contains(hit))) return null;
+    return point;
+  };
+`;
+
 /**
  * Compatibility surface for scenarios that need the proven MSN Designer
  * interactions plus the generalized helper's scenario-specific CDP utilities.
@@ -1482,7 +1515,37 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
   }
 
   override async save(): Promise<void> {
-    await this.proven.save('shared Designer actions');
+    console.log('[designer-actions] saving workflow through shared semantic Save control');
+    const point = await this.waitForPoint(
+      `(() => {
+        ${visibleDom}
+        ${provenSaveButtonDom}
+        return provenSaveButtonPoint();
+      })()`,
+      'one visible enabled Designer Save toolbar button',
+      Math.min(this.deadline, Date.now() + 30000)
+    );
+    await this.dispatchTrustedPoint(point);
+    await this.waitForCondition(
+      `(() => {
+        ${visibleDom}
+        ${provenSaveButtonDom}
+        const state = provenSaveButtonState();
+        return !!state && (state.busy || state.disabled);
+      })()`,
+      'Designer Save acknowledgement',
+      Math.min(this.deadline, Date.now() + 30000)
+    );
+    await this.waitForCondition(
+      `(() => {
+        ${visibleDom}
+        ${provenSaveButtonDom}
+        const state = provenSaveButtonState();
+        return !!state && !state.busy && (state.ariaName === 'save' || state.textName === 'save');
+      })()`,
+      'Designer Save completion',
+      Math.min(this.deadline, Date.now() + 60000)
+    );
   }
 
   override async waitForDesignerReady(existingNodeTitles: string[] = []): Promise<void> {
