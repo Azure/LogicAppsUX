@@ -213,71 +213,6 @@ function getBundleInstallMarkerPath(version: string): string {
   return path.join(defaultExtensionBundlePathValue, version, bundleInstallCompleteFile);
 }
 
-async function hasRequiredBundleContent(bundleDir: string): Promise<boolean> {
-  if (!(await fse.pathExists(bundleDir))) {
-    return false;
-  }
-
-  const binDir = path.join(bundleDir, 'bin');
-  const depsPath = path.join(binDir, 'function.deps.json');
-  if (!(await fse.pathExists(depsPath))) {
-    return false;
-  }
-
-  let parsedDeps: unknown;
-  try {
-    parsedDeps = JSON.parse(await fse.readFile(depsPath, 'utf8'));
-  } catch {
-    return false;
-  }
-
-  const requiredRuntimeFiles = new Set<string>();
-  const targets = (parsedDeps as { targets?: unknown })?.targets;
-  if (typeof targets === 'object' && targets !== null) {
-    for (const target of Object.values(targets as Record<string, unknown>)) {
-      if (typeof target !== 'object' || target === null) {
-        continue;
-      }
-      for (const dependency of Object.values(target as Record<string, unknown>)) {
-        const runtime = (dependency as { runtime?: unknown })?.runtime;
-        if (typeof runtime !== 'object' || runtime === null) {
-          continue;
-        }
-        for (const relPath of Object.keys(runtime as Record<string, unknown>)) {
-          requiredRuntimeFiles.add(relPath);
-        }
-      }
-    }
-  }
-
-  if (requiredRuntimeFiles.size === 0) {
-    return false;
-  }
-
-  const normalizedBinDir = path.normalize(binDir);
-  for (const relPath of requiredRuntimeFiles) {
-    const candidates = [
-      path.normalize(path.join(binDir, ...relPath.split('/'))),
-      path.normalize(path.join(binDir, path.basename(relPath))),
-    ];
-    const hasRuntimeFile = await candidates.reduce(async (previous, candidate) => {
-      if (await previous) {
-        return true;
-      }
-      if (!candidate.startsWith(`${normalizedBinDir}${path.sep}`)) {
-        return false;
-      }
-      return (await fse.pathExists(candidate)) && (await fse.stat(candidate)).isFile();
-    }, Promise.resolve(false));
-
-    if (!hasRuntimeFile) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
 /**
  * Gets the Extension Bundle Versions iterating through the default extension bundle path directory.
  * @param {string} directoryPath - extension bundle path directory.
@@ -318,10 +253,6 @@ async function downloadBundleAndWriteMarker(context: IActionContext, baseUrl: st
   await fse.remove(markerPath);
   const zipUrl = buildExtensionBundleZipUrl(baseUrl, version);
   await downloadAndExtractDependency(context, zipUrl, defaultExtensionBundlePathValue, extensionBundleId, version);
-  const bundleDir = path.join(defaultExtensionBundlePathValue, version);
-  if (!(await hasRequiredBundleContent(bundleDir))) {
-    throw new Error(`Bundle ${version} was downloaded but required runtime content is missing from ${bundleDir}.`);
-  }
   await writeBundleInstallMarker(version);
 }
 /**

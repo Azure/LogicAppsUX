@@ -650,9 +650,6 @@ describe('downloadExtensionBundle readiness model', () => {
   const localVersions = new Set<string>();
   const completedVersions = new Set<string>();
   const legacyCompletedVersions = new Set<string>();
-  const depsJson = JSON.stringify({
-    targets: { bundle: { 'bundle/1.0.0': { runtime: { 'lib/netstandard2.0/bundle.dll': {} } } } },
-  });
 
   const createMockContext = () => ({
     telemetry: { properties: {} as Record<string, string>, measurements: {} as Record<string, number> },
@@ -683,17 +680,7 @@ describe('downloadExtensionBundle readiness model', () => {
       );
       return Boolean(version) || normalized === defaultExtensionBundlePathValue;
     }) as any);
-    mockedFse.readFile.mockImplementation((async (filePath: string) => {
-      const normalized = String(filePath);
-      if (normalized.endsWith('function.deps.json')) {
-        return depsJson as any;
-      }
-      return '' as any;
-    }) as any);
-    mockedFse.stat.mockImplementation((async (filePath: string) => ({
-      isFile: () => String(filePath).endsWith('bundle.dll') || String(filePath).endsWith('function.deps.json'),
-      isDirectory: () => !String(filePath).endsWith('bundle.dll') && !String(filePath).endsWith('function.deps.json'),
-    })) as any);
+    mockedFse.readFile.mockResolvedValue('' as any);
     mockedFse.remove.mockImplementation((async (filePath: string) => {
       const normalized = String(filePath);
       if (normalized.endsWith(bundleInstallCompleteFile)) {
@@ -732,12 +719,14 @@ describe('downloadExtensionBundle readiness model', () => {
     configureDisk();
   });
 
-  it('downloads and marks the latest feed version when no local bundle exists', async () => {
+  it('marks a successfully extracted bundle without interpreting its dependency manifest', async () => {
     mockedGetJsonFeed.mockResolvedValue(['1.2.0']);
+    mockedFse.readFile.mockRejectedValue(new Error('function.deps.json must not be interpreted after archive verification'));
 
     await expect(downloadExtensionBundle(createMockContext() as any)).resolves.toBe(true);
 
     expect(mockedDownloadAndExtract).toHaveBeenCalledOnce();
+    expect(mockedFse.readFile).not.toHaveBeenCalled();
     expect(completedVersions.has('1.2.0')).toBe(true);
     expect(getLastBundleInstallResult()).toBe('ok');
   });
