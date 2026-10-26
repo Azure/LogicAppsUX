@@ -1466,6 +1466,11 @@ const provenSaveButtonDom = `
   };
 `;
 
+export interface DesignerInsertionEvidenceHooks {
+  onDiscoveryOpen?: () => Promise<void>;
+  onSearchEntered?: (search: string) => Promise<void>;
+}
+
 /**
  * Compatibility surface for scenarios that need the proven MSN Designer
  * interactions plus the generalized helper's scenario-specific CDP utilities.
@@ -1556,7 +1561,7 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
     );
   }
 
-  override async addRequestTrigger(): Promise<void> {
+  override async addRequestTrigger(hooks: DesignerInsertionEvidenceHooks = {}): Promise<void> {
     const selectors = [
       '[data-testid="card-Add a trigger"]',
       '[data-testid="card-Add trigger"]',
@@ -1574,16 +1579,18 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
       }
     }
     assert.ok(discoveryOpened, 'Timed out waiting for Request trigger discovery panel after 3 acknowledged click attempts');
+    await hooks.onDiscoveryOpen?.();
     await this.proven.search('Request');
+    await hooks.onSearchEntered?.('Request');
     await this.proven.waitForSearchResults(60000, 'Request search results');
     await this.proven.selectOperation('Request', ['when a http request is received', 'when an http request is received', 'http request']);
     await this.proven.waitForText(requestTriggerTitles, 90000, 'Request trigger on canvas');
     await this.proven.closePanel('Request trigger panel');
   }
 
-  async addRequestTriggerAndGetIdentity(): Promise<DesignerNodeIdentity> {
+  async addRequestTriggerAndGetIdentity(hooks: DesignerInsertionEvidenceHooks = {}): Promise<DesignerNodeIdentity> {
     const before = (await this.readActionInsertionSnapshot()).nodes;
-    await this.addRequestTrigger();
+    await this.addRequestTrigger(hooks);
     const identity = await this.waitForStableSingleNewNodeIdentity(before, 'Request trigger', this.deadline);
     assert.ok(identity, 'Timed out waiting for one stable new Request trigger Designer node');
     return identity;
@@ -1593,25 +1600,33 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
     await this.insertActionAndGetIdentity({ search, operationName, variants });
   }
 
-  async addActionAndGetIdentity(options: {
-    search: string;
-    operationName: string;
-    variants?: string[];
-  }): Promise<DesignerNodeIdentity> {
-    return this.insertActionAndGetIdentity(options);
+  async addActionAndGetIdentity(
+    options: {
+      search: string;
+      operationName: string;
+      variants?: string[];
+    },
+    hooks: DesignerInsertionEvidenceHooks = {}
+  ): Promise<DesignerNodeIdentity> {
+    return this.insertActionAndGetIdentity(options, hooks);
   }
 
-  private async insertActionAndGetIdentity(options: {
-    search: string;
-    operationName: string;
-    variants?: string[];
-  }): Promise<DesignerNodeIdentity> {
+  private async insertActionAndGetIdentity(
+    options: {
+      search: string;
+      operationName: string;
+      variants?: string[];
+    },
+    hooks: DesignerInsertionEvidenceHooks = {}
+  ): Promise<DesignerNodeIdentity> {
     await this.proven.closePanel(`${options.operationName} insertion snapshot`);
     const before = (await this.readActionInsertionSnapshot()).nodes;
     await this.proven.openActionDiscovery(options.operationName, async (stage, point) => {
       console.log(`[designer-actions] ${options.operationName}: ${stage}${point ? ` point=${JSON.stringify(point)}` : ''}`);
     });
+    await hooks.onDiscoveryOpen?.();
     await this.proven.search(options.search);
+    await hooks.onSearchEntered?.(options.search);
     await this.proven.waitForSearchResults(60000, `${options.search} search results`);
     await this.proven.selectOperation(options.operationName, options.variants ?? [options.operationName.toLowerCase()]);
 
@@ -2056,9 +2071,7 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
       if (state.statuses[status].checked === shouldBeChecked) {
         continue;
       }
-      assert.ok(!state.statuses[status].disabled, `Run after ${status} control is disabled before required toggle`);
-      await this.clickRunAfterStatus(childNodeId, predecessorNodeId, status);
-      await this.waitForRunAfterStatus(childNodeId, predecessorNodeId, status, shouldBeChecked);
+      await this.setRunAfterStatus(childNodeId, predecessorNodeId, status, shouldBeChecked);
     }
     const finalState = await this.readRunAfterState(childNodeId, predecessorNodeId);
     for (const status of ['Succeeded', 'TimedOut', 'Skipped', 'Failed'] as RunAfterStatus[]) {
@@ -2069,6 +2082,24 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
       );
     }
     return finalState;
+  }
+
+  async setRunAfterStatus(
+    childNodeId: string,
+    predecessorNodeId: string,
+    status: RunAfterStatus,
+    checked: boolean
+  ): Promise<RunAfterState> {
+    const state = await this.readRunAfterState(childNodeId, predecessorNodeId);
+    if (state.statuses[status].checked === checked) {
+      return state;
+    }
+    assert.ok(!state.statuses[status].disabled, `Run after ${status} control is disabled before required toggle`);
+    await this.clickRunAfterStatus(childNodeId, predecessorNodeId, status);
+    await this.waitForRunAfterStatus(childNodeId, predecessorNodeId, status, checked);
+    const updated = await this.readRunAfterState(childNodeId, predecessorNodeId);
+    assert.strictEqual(updated.statuses[status].checked, checked, `Run after ${status} did not reach the required state`);
+    return updated;
   }
 
   override async search(search: string): Promise<void> {

@@ -6338,11 +6338,17 @@ async function withTimeout<T>(promise: Thenable<T>, timeoutMs: number, descripti
   }
 }
 
+export const workspaceLifecycleEvidenceHelpers = {
+  createWorkspaceThroughWebview,
+  waitForGeneratedLogicAppFolder,
+  normalizeDesignerCanvasViewport,
+  captureLifecycleScreenshot,
+};
+
 // Narrow test-only seam for the stateless family. No workflow seeds or runtime
 // assertions are shared: those have stateless-specific contracts in that family.
 export const statelessLifecycleHelpers = {
-  createWorkspaceThroughWebview,
-  waitForGeneratedLogicAppFolder,
+  ...workspaceLifecycleEvidenceHelpers,
   openDesignerAndCreateWorkflow,
   addRequestTriggerThroughDesigner,
   addResponseActionThroughDesigner,
@@ -6360,7 +6366,6 @@ export const statelessLifecycleHelpers = {
   handleWorkbenchPrompts,
   saveWorkflowThroughDesigner,
   closeDesignerDetailsPanelThroughDesigner,
-  captureLifecycleScreenshot,
   startDebuggingGeneratedWorkspace,
   stopDebuggingAndTasks,
   clickMonitoringActionCardByTitle,

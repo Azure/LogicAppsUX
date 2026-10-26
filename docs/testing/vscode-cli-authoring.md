@@ -172,6 +172,12 @@ rerenders and persistence, use `ProvenDesignerCdpActions`:
 - Sequential insertion must reuse the shared append-action discovery flow, then
   derive exact node identity from the before/after canvas state. Do not infer
   React Flow edge IDs or introduce a family-local edge-plus selector.
+- When a custom lifecycle needs MSN-style discovery/search evidence around a
+  shared insertion, pass `DesignerInsertionEvidenceHooks` to
+  `addRequestTriggerAndGetIdentity` or `addActionAndGetIdentity`. The helper
+  retains ownership of the proven selectors and the single operation-card
+  dispatch; the caller owns only the ordered semantic captures at the exposed
+  discovery-open and search-entered boundaries.
 
 These methods use trusted CDP point input and inherit the caller's single
 absolute deadline and cancellation guard.
@@ -192,6 +198,25 @@ run initiation, status transitions and action-level monitoring. When a step
 enters a value, the screenshot expectation must validate that exact visible
 value; for example, HTTP authoring must prove the selected method and complete
 request URI before moving to Settings.
+
+Follow the proven MSN authoring sequence:
+
+```text
+interaction
+→ exact-state wait
+→ viewport normalization when the canvas is the subject
+→ semantic screenshot
+→ next interaction
+```
+
+For operation insertion, separately capture discovery open, the exact search
+text, the exact inserted node/panel identity, and every configured field value.
+For multi-step controls such as Run After, separately capture Settings open,
+the section open, the exact predecessor expansion, each required checkbox
+transition, and the final state. A final aggregate canvas screenshot supplements
+these intermediate checkpoints; it never replaces them. Before a canvas
+capture, call the shared `normalizeDesignerCanvasViewport` seam so Output,
+Terminal, or responsive details panels cannot clip required nodes.
 
 Bind every evidence screenshot to the already-owned semantic CDP target and
 frame. A tab title, workbench shell, blank webview or unrelated visible text is

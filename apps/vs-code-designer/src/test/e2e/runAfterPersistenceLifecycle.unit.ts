@@ -16,6 +16,15 @@ const identity: RunAfterPersistenceIdentity = {
   secondComposeInput: 'downstream-sentinel',
 };
 
+function assertOrdered(source: string, values: string[], label: string): void {
+  let cursor = 0;
+  for (const value of values) {
+    const index = source.indexOf(value, cursor);
+    assert.ok(index >= cursor, `${label} is missing or out of order: ${value}`);
+    cursor = index + value.length;
+  }
+}
+
 async function main(): Promise<void> {
   testAcceptsExactStatefulFailedOnlyWorkflow();
   testRejectsWrongKind();
@@ -125,7 +134,48 @@ function testLifecycleUsesProductWizardAndFreshHostContract(): void {
   assert.strictEqual((source.match(/operationName: 'Compose',\s*variants: \['compose'\]/g) ?? []).length, 2);
   assert.doesNotMatch(source, /operationId:/, 'Run After insertion must not depend on internal operation automation IDs');
   assert.doesNotMatch(source, /afterNodeId:/, 'Run After insertion must reuse the shared append-action flow');
-  assert.match(source, /setRunAfterStatuses\(secondCompose\.nodeId, firstCompose\.nodeId, \['Failed'\]\)/);
+  assertOrdered(
+    source,
+    [
+      'run-after-persistence-author-designer-ready',
+      'run-after-persistence-author-request-discovery-open',
+      'run-after-persistence-author-request-search-entered',
+      'run-after-persistence-author-request-inserted',
+      'run-after-persistence-author-first-compose-discovery-open',
+      'run-after-persistence-author-first-compose-search-entered',
+      'run-after-persistence-author-first-compose-inserted',
+      'run-after-persistence-author-first-compose-input-configured',
+      'run-after-persistence-author-second-compose-discovery-open',
+      'run-after-persistence-author-second-compose-search-entered',
+      'run-after-persistence-author-second-compose-inserted',
+      'run-after-persistence-author-second-compose-input-configured',
+      'run-after-persistence-author-canvas',
+      'run-after-persistence-author-settings-open',
+      'run-after-persistence-author-run-after-section-open',
+      'run-after-persistence-author-predecessor-expanded',
+      'run-after-persistence-author-failed-enabled',
+      'run-after-persistence-author-failed-only',
+      'run-after-persistence-author-saved',
+      'run-after-persistence-reopen-canvas',
+      'run-after-persistence-reopen-first-compose-input',
+      'run-after-persistence-reopen-second-compose-input',
+      'run-after-persistence-reopen-settings-open',
+      'run-after-persistence-reopen-run-after-section-open',
+      'run-after-persistence-reopen-predecessor-expanded',
+      'run-after-persistence-reopen-failed-only',
+    ],
+    'Run After ordered semantic evidence'
+  );
+  assert.match(source, /workspaceLifecycleEvidenceHelpers as helpers/);
+  assert.strictEqual(
+    (source.match(/normalizeRunAfterCanvas\(/g) ?? []).length,
+    5,
+    'Run After must normalize the canvas helper definition plus every author/reopen canvas capture'
+  );
+  assert.match(source, /fields: \[\{ labels: \['Inputs', 'inputs'\], value: firstComposeInput \}\]/);
+  assert.match(source, /fields: \[\{ labels: \['Inputs', 'inputs'\], value: secondComposeInput \}\]/);
+  assert.match(source, /setRunAfterStatus\(secondCompose\.nodeId, firstCompose\.nodeId, 'Failed', true\)/);
+  assert.match(source, /setRunAfterStatus\(secondCompose\.nodeId, firstCompose\.nodeId, 'Succeeded', false\)/);
   assert.match(source, /LA_E2E_CLI_RUN_AFTER_PERSISTENCE_MODE/);
   assert.match(source, /LA_E2E_CLI_RUN_AFTER_PERSISTENCE_HANDOFF/);
   assert.match(source, /requiredNodeIds/);

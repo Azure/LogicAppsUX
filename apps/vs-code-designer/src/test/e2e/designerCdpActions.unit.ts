@@ -284,13 +284,19 @@ function testHelperConsumersDoNotRegisterCanonicalLifecycleSuite(): void {
 
 function testRunAfterIdentityAndStatusContracts(): void {
   const addRequest = getMethod('ProvenDesignerCdpActions', 'addRequestTriggerAndGetIdentity');
-  assert.match(addRequest, /await this\.addRequestTrigger\(\)/, 'Request insertion must reuse the proven shared Request flow');
+  assert.match(addRequest, /await this\.addRequestTrigger\(hooks\)/, 'Request insertion must reuse the proven shared Request flow');
   assert.match(addRequest, /readActionInsertionSnapshot/, 'Request insertion must preserve responsive panel identities');
   assert.match(addRequest, /waitForStableSingleNewNodeIdentity/, 'Request insertion must return one stable new node identity');
   assert.doesNotMatch(addRequest, /selectOperationById|msla-op-search-result-request/);
+  const requestFlow = getMethod('ProvenDesignerCdpActions', 'addRequestTrigger');
+  assertOrdered(
+    requestFlow,
+    ['hooks.onDiscoveryOpen', "this.proven.search('Request')", "hooks.onSearchEntered?.('Request')", 'this.proven.selectOperation'],
+    'Request insertion evidence hooks'
+  );
 
   const addAction = getMethod('ProvenDesignerCdpActions', 'addActionAndGetIdentity');
-  assert.match(addAction, /return this\.insertActionAndGetIdentity\(options\)/);
+  assert.match(addAction, /return this\.insertActionAndGetIdentity\(options, hooks\)/);
   assert.doesNotMatch(addAction, /selectOperationById|msla-op-search-result-|openActionDiscoveryAfterNode|afterNodeId/);
   const sharedAddAction = getMethod('ProvenDesignerCdpActions', 'addAction');
   assert.match(sharedAddAction, /await this\.insertActionAndGetIdentity/);
@@ -301,7 +307,9 @@ function testRunAfterIdentityAndStatusContracts(): void {
       'this.proven.closePanel',
       'readActionInsertionSnapshot()',
       'this.proven.openActionDiscovery',
+      'hooks.onDiscoveryOpen',
       'this.proven.search',
+      'hooks.onSearchEntered',
       'this.proven.waitForSearchResults',
       'this.proven.selectOperation',
       'waitForStableSingleNewNodeIdentity',
@@ -312,6 +320,18 @@ function testRunAfterIdentityAndStatusContracts(): void {
     (insertion.match(/this\.proven\.selectOperation/g) ?? []).length,
     1,
     'Insertion acknowledgement failure must never redispatch the operation click'
+  );
+
+  const setStatus = getMethod('ProvenDesignerCdpActions', 'setRunAfterStatus');
+  assertOrdered(
+    setStatus,
+    ['readRunAfterState', 'clickRunAfterStatus', 'waitForRunAfterStatus', 'readRunAfterState'],
+    'Single Run After status transition'
+  );
+  assert.strictEqual(
+    (setStatus.match(/clickRunAfterStatus/g) ?? []).length,
+    1,
+    'One status transition must dispatch at most one checkbox click'
   );
 
   const exactNode = getMethod('ProvenDesignerCdpActions', 'clickNodeById');
@@ -377,11 +397,7 @@ function testRunAfterIdentityAndStatusContracts(): void {
   assert.doesNotMatch(clickStatus, /input\.closest\('label'\) \|\| input/);
 
   const setStatuses = getMethod('ProvenDesignerCdpActions', 'setRunAfterStatuses');
-  assertOrdered(
-    setStatuses,
-    ["['Failed', 'TimedOut', 'Skipped', 'Succeeded']", 'readRunAfterState', 'clickRunAfterStatus'],
-    'Toggle order'
-  );
+  assertOrdered(setStatuses, ["['Failed', 'TimedOut', 'Skipped', 'Succeeded']", 'readRunAfterState', 'setRunAfterStatus'], 'Toggle order');
   assert.match(setStatuses, /const state = await this\.readRunAfterState/, 'Every toggle must reacquire state after React rerenders');
   assert.match(setStatuses, /finalState\.statuses\[status\]\.checked/);
   assert.match(setStatuses, /expected\.includes\(status\)/);
@@ -460,7 +476,10 @@ async function testRunAfterRejectsDisabledAndWrongFinalState(): Promise<void> {
   });
   wrongFinal.clickRunAfterStatus = async () => undefined;
   wrongFinal.waitForRunAfterStatus = async () => undefined;
-  await assert.rejects(() => wrongFinal.setRunAfterStatuses('Compose_2', 'Compose', ['Failed']), /final state did not match/);
+  await assert.rejects(
+    () => wrongFinal.setRunAfterStatuses('Compose_2', 'Compose', ['Failed']),
+    /Run after Failed did not reach the required state/
+  );
 }
 
 function testRunAfterCheckboxOwnerDom(): void {

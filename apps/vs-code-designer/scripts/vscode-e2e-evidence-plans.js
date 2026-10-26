@@ -860,10 +860,106 @@ function runAfterPersistenceCatalog() {
       'Authors Request, Compose, and Compose 2 by stable node identity, then persists Failed-only Run After.',
       [
         simpleStep(
+          'run-after-persistence-author-designer-ready',
+          'Author phase',
+          'Open the empty workflow in Designer V2.',
+          'The semantic Designer canvas is ready before authoring begins.'
+        ),
+        simpleStep(
+          'run-after-persistence-author-request-discovery-open',
+          'Author phase',
+          'Open trigger discovery.',
+          'The trigger discovery surface is visibly open.'
+        ),
+        simpleStep(
+          'run-after-persistence-author-request-search-entered',
+          'Author phase',
+          'Search trigger discovery for Request.',
+          'The discovery search visibly contains Request.'
+        ),
+        simpleStep(
+          'run-after-persistence-author-request-inserted',
+          'Author phase',
+          'Insert the Request trigger.',
+          'The exact new Request node ID is visible on the normalized canvas.'
+        ),
+        simpleStep(
+          'run-after-persistence-author-first-compose-discovery-open',
+          'Author phase',
+          'Open action discovery for the first Compose.',
+          'The action discovery surface is visibly open.'
+        ),
+        simpleStep(
+          'run-after-persistence-author-first-compose-search-entered',
+          'Author phase',
+          'Search action discovery for the first Compose.',
+          'The discovery search visibly contains Compose.'
+        ),
+        simpleStep(
+          'run-after-persistence-author-first-compose-inserted',
+          'Author phase',
+          'Insert the first Compose action.',
+          'The exact new Compose panel and Inputs editor are visible.'
+        ),
+        simpleStep(
+          'run-after-persistence-author-first-compose-input-configured',
+          'Author phase',
+          'Configure the first Compose Inputs.',
+          'The exact first Compose panel visibly contains the generated upstream value.'
+        ),
+        simpleStep(
+          'run-after-persistence-author-second-compose-discovery-open',
+          'Author phase',
+          'Open action discovery for the second Compose.',
+          'The action discovery surface is visibly open.'
+        ),
+        simpleStep(
+          'run-after-persistence-author-second-compose-search-entered',
+          'Author phase',
+          'Search action discovery for the second Compose.',
+          'The discovery search visibly contains Compose.'
+        ),
+        simpleStep(
+          'run-after-persistence-author-second-compose-inserted',
+          'Author phase',
+          'Insert the second Compose action.',
+          'The exact new Compose 2 panel and Inputs editor are visible.'
+        ),
+        simpleStep(
+          'run-after-persistence-author-second-compose-input-configured',
+          'Author phase',
+          'Configure the second Compose Inputs.',
+          'The exact second Compose panel visibly contains the generated downstream value.'
+        ),
+        simpleStep(
           'run-after-persistence-author-canvas',
           'Author phase',
           'Show the exact authored node identities.',
           'The Designer canvas contains the captured Request and two Compose node IDs.'
+        ),
+        simpleStep(
+          'run-after-persistence-author-settings-open',
+          'Author phase',
+          'Open Settings for the exact downstream Compose.',
+          'The exact downstream panel visibly owns the Settings surface.'
+        ),
+        simpleStep(
+          'run-after-persistence-author-run-after-section-open',
+          'Author phase',
+          'Open the Run After section.',
+          'The exact downstream panel visibly shows Run after.'
+        ),
+        simpleStep(
+          'run-after-persistence-author-predecessor-expanded',
+          'Author phase',
+          'Expand the exact upstream Compose predecessor.',
+          'The exact predecessor shows the initial Succeeded-only status state.'
+        ),
+        simpleStep(
+          'run-after-persistence-author-failed-enabled',
+          'Author phase',
+          'Enable Failed before clearing the default status.',
+          'The exact predecessor visibly shows Succeeded and Failed checked.'
         ),
         simpleStep(
           'run-after-persistence-author-failed-only',
@@ -889,6 +985,36 @@ function runAfterPersistenceCatalog() {
           'Reopen phase',
           'Open the persisted workflow in a fresh Designer V2 host.',
           'The canvas contains the same exact Request and Compose node IDs.'
+        ),
+        simpleStep(
+          'run-after-persistence-reopen-first-compose-input',
+          'Reopen phase',
+          'Inspect the persisted first Compose Inputs.',
+          'The exact first Compose panel visibly contains the original upstream value.'
+        ),
+        simpleStep(
+          'run-after-persistence-reopen-second-compose-input',
+          'Reopen phase',
+          'Inspect the persisted second Compose Inputs.',
+          'The exact second Compose panel visibly contains the original downstream value.'
+        ),
+        simpleStep(
+          'run-after-persistence-reopen-settings-open',
+          'Reopen phase',
+          'Open persisted Settings for the exact downstream Compose.',
+          'The exact downstream panel visibly owns the Settings surface.'
+        ),
+        simpleStep(
+          'run-after-persistence-reopen-run-after-section-open',
+          'Reopen phase',
+          'Open the persisted Run After section.',
+          'The exact downstream panel visibly shows Run after.'
+        ),
+        simpleStep(
+          'run-after-persistence-reopen-predecessor-expanded',
+          'Reopen phase',
+          'Expand the persisted exact predecessor.',
+          'The exact predecessor visibly shows Failed only.'
         ),
         simpleStep(
           'run-after-persistence-reopen-failed-only',

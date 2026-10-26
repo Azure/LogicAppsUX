@@ -17,10 +17,11 @@ import {
 } from './azureConnectorFixture';
 import { type RunAfterPersistenceIdentity, readRunAfterPersistenceWorkflow } from './runAfterPersistenceOracle';
 import { installFailureScreenshotHook } from './screenshot';
+import type { ScreenshotExpectation } from './screenshotReadiness';
 import { normalizeFsPath, uniqueName } from './testUtils';
 import { getWebviewTabs } from './webviewTabs';
 import { handleAffirmativeConnectorWorkbenchPrompt } from './workbenchPrompts';
-import { statelessLifecycleHelpers as helpers, type CreatedWorkspace } from './workspaceLifecycle';
+import { workspaceLifecycleEvidenceHelpers as helpers, type CreatedWorkspace } from './workspaceLifecycle';
 
 interface RunAfterPersistenceHandoff {
   schemaVersion: 1;
@@ -30,6 +31,8 @@ interface RunAfterPersistenceHandoff {
   identity: RunAfterPersistenceIdentity;
   approvedTarget: ApprovedAzureConnectorFixture;
 }
+
+type RunAfterDesignerSession = Awaited<ReturnType<typeof openExactDesignerV2>>;
 
 const mode = process.env.LA_E2E_CLI_RUN_AFTER_PERSISTENCE_MODE;
 
@@ -93,52 +96,142 @@ async function authorAndPersist(entry: CreatedWorkspace, azureFixture: ApprovedA
   assertApprovedTargetBinding(entry, azureFixture);
   const session = await openExactDesignerV2(entry, deadline, 'Run After author Designer V2', azureFixture);
   try {
-    const request = await session.actions.addRequestTriggerAndGetIdentity();
-    const firstCompose = await session.actions.addActionAndGetIdentity({
-      search: 'Compose',
-      operationName: 'Compose',
-      variants: ['compose'],
+    await normalizeRunAfterCanvas(session, 'initial Designer readiness');
+    await captureRunAfterEvidence(session, 'run-after-persistence-author-designer-ready', {
+      kind: 'designerCanvas',
+      label: 'runAfterPersistenceAuthorDesignerReady',
+    });
+    const request = await session.actions.addRequestTriggerAndGetIdentity({
+      onDiscoveryOpen: async () => {
+        await captureRunAfterEvidence(session, 'run-after-persistence-author-request-discovery-open', {
+          kind: 'discovery',
+          label: 'runAfterPersistenceAuthorRequestDiscoveryOpen',
+        });
+      },
+      onSearchEntered: async (search) => {
+        await captureRunAfterEvidence(session, 'run-after-persistence-author-request-search-entered', {
+          kind: 'discovery',
+          label: 'runAfterPersistenceAuthorRequestSearchEntered',
+          searchText: search,
+        });
+      },
+    });
+    await normalizeRunAfterCanvas(session, 'Request insertion');
+    await captureRunAfterEvidence(session, 'run-after-persistence-author-request-inserted', {
+      kind: 'designerCanvas',
+      label: 'runAfterPersistenceAuthorRequestInserted',
+      requiredNodes: [[request.title]],
+      requiredNodeIds: [request.nodeId],
+    });
+    const firstCompose = await session.actions.addActionAndGetIdentity(
+      {
+        search: 'Compose',
+        operationName: 'Compose',
+        variants: ['compose'],
+      },
+      insertionEvidence(session, {
+        discoveryCheckpoint: 'run-after-persistence-author-first-compose-discovery-open',
+        searchCheckpoint: 'run-after-persistence-author-first-compose-search-entered',
+        label: 'FirstCompose',
+      })
+    );
+    await captureRunAfterEvidence(session, 'run-after-persistence-author-first-compose-inserted', {
+      kind: 'designerPanel',
+      label: 'runAfterPersistenceAuthorFirstComposeInserted',
+      actionTitle: firstCompose.title,
+      nodeId: firstCompose.nodeId,
+      requiredText: ['Inputs'],
     });
     const firstComposeInput = `run-after-upstream-${Date.now()}`;
     await session.actions.fillParameter(['Inputs', 'inputs'], firstComposeInput);
-    const secondCompose = await session.actions.addActionAndGetIdentity({
-      search: 'Compose',
-      operationName: 'Compose',
-      variants: ['compose'],
+    await captureRunAfterEvidence(session, 'run-after-persistence-author-first-compose-input-configured', {
+      kind: 'designerPanel',
+      label: 'runAfterPersistenceAuthorFirstComposeInputConfigured',
+      actionTitle: firstCompose.title,
+      nodeId: firstCompose.nodeId,
+      fields: [{ labels: ['Inputs', 'inputs'], value: firstComposeInput }],
+    });
+    const secondCompose = await session.actions.addActionAndGetIdentity(
+      {
+        search: 'Compose',
+        operationName: 'Compose',
+        variants: ['compose'],
+      },
+      insertionEvidence(session, {
+        discoveryCheckpoint: 'run-after-persistence-author-second-compose-discovery-open',
+        searchCheckpoint: 'run-after-persistence-author-second-compose-search-entered',
+        label: 'SecondCompose',
+      })
+    );
+    await captureRunAfterEvidence(session, 'run-after-persistence-author-second-compose-inserted', {
+      kind: 'designerPanel',
+      label: 'runAfterPersistenceAuthorSecondComposeInserted',
+      actionTitle: secondCompose.title,
+      nodeId: secondCompose.nodeId,
+      requiredText: ['Inputs'],
     });
     const secondComposeInput = `run-after-downstream-${Date.now()}`;
     await session.actions.fillParameter(['Inputs', 'inputs'], secondComposeInput);
+    await captureRunAfterEvidence(session, 'run-after-persistence-author-second-compose-input-configured', {
+      kind: 'designerPanel',
+      label: 'runAfterPersistenceAuthorSecondComposeInputConfigured',
+      actionTitle: secondCompose.title,
+      nodeId: secondCompose.nodeId,
+      fields: [{ labels: ['Inputs', 'inputs'], value: secondComposeInput }],
+    });
     await session.actions.closePanel();
 
     const nodeIds = [request.nodeId, firstCompose.nodeId, secondCompose.nodeId];
-    await helpers.captureLifecycleScreenshot('run-after-persistence-author-canvas', {
-      expectation: {
-        kind: 'designerCanvas',
-        label: 'runAfterPersistenceAuthorCanvas',
-        requiredNodes: [[request.title], [firstCompose.title], [secondCompose.title]],
-        requiredNodeIds: nodeIds,
-      },
-      semanticCdp: session.cdp,
-      semanticContextId: session.contextId,
+    await normalizeRunAfterCanvas(session, 'complete authoring canvas');
+    await captureRunAfterEvidence(session, 'run-after-persistence-author-canvas', {
+      kind: 'designerCanvas',
+      label: 'runAfterPersistenceAuthorCanvas',
+      requiredNodes: [[request.title], [firstCompose.title], [secondCompose.title]],
+      requiredNodeIds: nodeIds,
     });
 
     await session.actions.clickNodeById(secondCompose.nodeId);
     await session.actions.openSettingsTab(secondCompose.nodeId);
+    await captureRunAfterEvidence(session, 'run-after-persistence-author-settings-open', {
+      kind: 'designerPanel',
+      label: 'runAfterPersistenceAuthorSettingsOpen',
+      actionTitle: secondCompose.title,
+      nodeId: secondCompose.nodeId,
+      requiredText: ['Settings'],
+    });
     await session.actions.openRunAfterSection(secondCompose.nodeId);
+    await captureRunAfterEvidence(session, 'run-after-persistence-author-run-after-section-open', {
+      kind: 'designerPanel',
+      label: 'runAfterPersistenceAuthorRunAfterSectionOpen',
+      actionTitle: secondCompose.title,
+      nodeId: secondCompose.nodeId,
+      requiredText: ['Run after'],
+    });
     await session.actions.expandRunAfterPredecessor(secondCompose.nodeId, firstCompose.nodeId);
-    const runAfter = await session.actions.setRunAfterStatuses(secondCompose.nodeId, firstCompose.nodeId, ['Failed']);
+    await captureRunAfterEvidence(session, 'run-after-persistence-author-predecessor-expanded', {
+      kind: 'designerPanel',
+      label: 'runAfterPersistenceAuthorPredecessorExpanded',
+      actionTitle: secondCompose.title,
+      nodeId: secondCompose.nodeId,
+      runAfter: { predecessorNodeId: firstCompose.nodeId, statuses: ['Succeeded'] },
+    });
+    await session.actions.setRunAfterStatus(secondCompose.nodeId, firstCompose.nodeId, 'Failed', true);
+    await captureRunAfterEvidence(session, 'run-after-persistence-author-failed-enabled', {
+      kind: 'designerPanel',
+      label: 'runAfterPersistenceAuthorFailedEnabled',
+      actionTitle: secondCompose.title,
+      nodeId: secondCompose.nodeId,
+      runAfter: { predecessorNodeId: firstCompose.nodeId, statuses: ['Succeeded', 'Failed'] },
+    });
+    const runAfter = await session.actions.setRunAfterStatus(secondCompose.nodeId, firstCompose.nodeId, 'Succeeded', false);
     assertFailedOnly(runAfter.statuses);
-    await helpers.captureLifecycleScreenshot('run-after-persistence-author-failed-only', {
-      expectation: {
-        kind: 'designerPanel',
-        label: 'runAfterPersistenceAuthorFailedOnly',
-        actionTitle: secondCompose.title,
-        nodeId: secondCompose.nodeId,
-        requiredText: ['Run after', firstCompose.title],
-        runAfter: { predecessorNodeId: firstCompose.nodeId, statuses: ['Failed'] },
-      },
-      semanticCdp: session.cdp,
-      semanticContextId: session.contextId,
+    await captureRunAfterEvidence(session, 'run-after-persistence-author-failed-only', {
+      kind: 'designerPanel',
+      label: 'runAfterPersistenceAuthorFailedOnly',
+      actionTitle: secondCompose.title,
+      nodeId: secondCompose.nodeId,
+      requiredText: ['Run after', firstCompose.title],
+      runAfter: { predecessorNodeId: firstCompose.nodeId, statuses: ['Failed'] },
     });
 
     await session.actions.save();
@@ -159,17 +252,13 @@ async function authorAndPersist(entry: CreatedWorkspace, azureFixture: ApprovedA
       approvedTarget: azureFixture,
     });
     assertApprovedTargetBinding(entry, azureFixture);
-    await helpers.captureLifecycleScreenshot('run-after-persistence-author-saved', {
-      expectation: {
-        kind: 'designerPanel',
-        label: 'runAfterPersistenceAuthorSaved',
-        actionTitle: secondCompose.title,
-        nodeId: secondCompose.nodeId,
-        requiredText: ['Run after', firstCompose.title],
-        runAfter: { predecessorNodeId: firstCompose.nodeId, statuses: ['Failed'] },
-      },
-      semanticCdp: session.cdp,
-      semanticContextId: session.contextId,
+    await captureRunAfterEvidence(session, 'run-after-persistence-author-saved', {
+      kind: 'designerPanel',
+      label: 'runAfterPersistenceAuthorSaved',
+      actionTitle: secondCompose.title,
+      nodeId: secondCompose.nodeId,
+      requiredText: ['Run after', firstCompose.title],
+      runAfter: { predecessorNodeId: firstCompose.nodeId, statuses: ['Failed'] },
     });
   } finally {
     session.cdp.dispose();
@@ -192,34 +281,65 @@ async function reopenAndVerify(entry: CreatedWorkspace, azureFixture: ApprovedAz
 
   const session = await openExactDesignerV2(entry, deadline, 'Run After reopen Designer V2', azureFixture, ['Compose', 'Compose 2']);
   try {
-    await helpers.captureLifecycleScreenshot('run-after-persistence-reopen-canvas', {
-      expectation: {
-        kind: 'designerCanvas',
-        label: 'runAfterPersistenceReopenCanvas',
-        requiredNodes: ['Compose', 'Compose 2'],
-        requiredNodeIds: [handoff.identity.requestTriggerId, handoff.identity.firstComposeId, handoff.identity.secondComposeId],
-      },
-      semanticCdp: session.cdp,
-      semanticContextId: session.contextId,
+    await normalizeRunAfterCanvas(session, 'fresh reopen canvas');
+    await captureRunAfterEvidence(session, 'run-after-persistence-reopen-canvas', {
+      kind: 'designerCanvas',
+      label: 'runAfterPersistenceReopenCanvas',
+      requiredNodes: ['Compose', 'Compose 2'],
+      requiredNodeIds: [handoff.identity.requestTriggerId, handoff.identity.firstComposeId, handoff.identity.secondComposeId],
     });
 
+    const firstCompose = await session.actions.clickNodeById(handoff.identity.firstComposeId);
+    await captureRunAfterEvidence(session, 'run-after-persistence-reopen-first-compose-input', {
+      kind: 'designerPanel',
+      label: 'runAfterPersistenceReopenFirstComposeInput',
+      actionTitle: firstCompose.title,
+      nodeId: firstCompose.nodeId,
+      fields: [{ labels: ['Inputs', 'inputs'], value: handoff.identity.firstComposeInput }],
+    });
+    await session.actions.closePanel();
     const secondCompose = await session.actions.clickNodeById(handoff.identity.secondComposeId);
+    await captureRunAfterEvidence(session, 'run-after-persistence-reopen-second-compose-input', {
+      kind: 'designerPanel',
+      label: 'runAfterPersistenceReopenSecondComposeInput',
+      actionTitle: secondCompose.title,
+      nodeId: secondCompose.nodeId,
+      fields: [{ labels: ['Inputs', 'inputs'], value: handoff.identity.secondComposeInput }],
+    });
     await session.actions.openSettingsTab(secondCompose.nodeId);
+    await captureRunAfterEvidence(session, 'run-after-persistence-reopen-settings-open', {
+      kind: 'designerPanel',
+      label: 'runAfterPersistenceReopenSettingsOpen',
+      actionTitle: secondCompose.title,
+      nodeId: secondCompose.nodeId,
+      requiredText: ['Settings'],
+    });
     await session.actions.openRunAfterSection(secondCompose.nodeId);
+    await captureRunAfterEvidence(session, 'run-after-persistence-reopen-run-after-section-open', {
+      kind: 'designerPanel',
+      label: 'runAfterPersistenceReopenRunAfterSectionOpen',
+      actionTitle: secondCompose.title,
+      nodeId: secondCompose.nodeId,
+      requiredText: ['Run after'],
+    });
     await session.actions.expandRunAfterPredecessor(secondCompose.nodeId, handoff.identity.firstComposeId);
     const runAfter = await session.actions.readRunAfterState(secondCompose.nodeId, handoff.identity.firstComposeId);
     assertFailedOnly(runAfter.statuses);
-    await helpers.captureLifecycleScreenshot('run-after-persistence-reopen-failed-only', {
-      expectation: {
-        kind: 'designerPanel',
-        label: 'runAfterPersistenceReopenFailedOnly',
-        actionTitle: secondCompose.title,
-        nodeId: secondCompose.nodeId,
-        requiredText: ['Run after', runAfter.predecessorTitle],
-        runAfter: { predecessorNodeId: handoff.identity.firstComposeId, statuses: ['Failed'] },
-      },
-      semanticCdp: session.cdp,
-      semanticContextId: session.contextId,
+    await captureRunAfterEvidence(session, 'run-after-persistence-reopen-predecessor-expanded', {
+      kind: 'designerPanel',
+      label: 'runAfterPersistenceReopenPredecessorExpanded',
+      actionTitle: secondCompose.title,
+      nodeId: secondCompose.nodeId,
+      requiredText: ['Run after', runAfter.predecessorTitle],
+      runAfter: { predecessorNodeId: handoff.identity.firstComposeId, statuses: ['Failed'] },
+    });
+    await captureRunAfterEvidence(session, 'run-after-persistence-reopen-failed-only', {
+      kind: 'designerPanel',
+      label: 'runAfterPersistenceReopenFailedOnly',
+      actionTitle: secondCompose.title,
+      nodeId: secondCompose.nodeId,
+      requiredText: ['Run after', runAfter.predecessorTitle],
+      runAfter: { predecessorNodeId: handoff.identity.firstComposeId, statuses: ['Failed'] },
     });
 
     const after = await readRunAfterPersistenceWorkflow(entry.workflowJsonPath, handoff.identity);
@@ -228,6 +348,43 @@ async function reopenAndVerify(entry: CreatedWorkspace, azureFixture: ApprovedAz
   } finally {
     session.cdp.dispose();
   }
+}
+
+function insertionEvidence(
+  session: RunAfterDesignerSession,
+  options: { discoveryCheckpoint: string; searchCheckpoint: string; label: string }
+) {
+  return {
+    onDiscoveryOpen: async () => {
+      await captureRunAfterEvidence(session, options.discoveryCheckpoint, {
+        kind: 'discovery',
+        label: `runAfterPersistenceAuthor${options.label}DiscoveryOpen`,
+      });
+    },
+    onSearchEntered: async (search: string) => {
+      await captureRunAfterEvidence(session, options.searchCheckpoint, {
+        kind: 'discovery',
+        label: `runAfterPersistenceAuthor${options.label}SearchEntered`,
+        searchText: search,
+      });
+    },
+  };
+}
+
+async function normalizeRunAfterCanvas(session: RunAfterDesignerSession, description: string): Promise<void> {
+  await helpers.normalizeDesignerCanvasViewport(session.cdp, session.contextId, `Run After persistence ${description}`);
+}
+
+async function captureRunAfterEvidence(
+  session: RunAfterDesignerSession,
+  checkpoint: string,
+  expectation: ScreenshotExpectation
+): Promise<void> {
+  await helpers.captureLifecycleScreenshot(checkpoint, {
+    expectation,
+    semanticCdp: session.cdp,
+    semanticContextId: session.contextId,
+  });
 }
 
 async function openExactDesignerV2(
