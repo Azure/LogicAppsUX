@@ -4,6 +4,7 @@ import './CopilotPanel';
 import './EmptySchemaPlaceholder';
 import './FunctoidConfigDialog';
 import './FunctoidPalette';
+import './LinkPropertiesDialog';
 import './MapperBottomPanel';
 import './MapperContextMenu';
 import './MapperNotification';
@@ -28,6 +29,7 @@ import type { MapperToolbar } from './MapperToolbar';
 import type { MappingCanvas } from './MappingCanvas';
 import type { SchemaTreeRenderer } from './SchemaTreeRenderer';
 import type { SchemaNodePropertiesDialog } from './SchemaNodePropertiesDialog';
+import type { LinkPropertiesDialog } from './LinkPropertiesDialog';
 import type { ScriptingConfigDialog } from './ScriptingConfigDialog';
 import './MapperApp.css';
 
@@ -55,6 +57,7 @@ interface MapperAppElementRefs {
   bottomPanel: React.RefObject<MapperBottomPanel>;
   statusBar: React.RefObject<MapperStatusBar>;
   schemaDialog: React.RefObject<SchemaNodePropertiesDialog>;
+  linkDialog: React.RefObject<LinkPropertiesDialog>;
   scriptingDialog: React.RefObject<ScriptingConfigDialog>;
   functoidDialog: React.RefObject<FunctoidConfigDialog>;
   contextMenu: React.RefObject<MapperContextMenu>;
@@ -82,6 +85,7 @@ function useMapperAppController(
       bottomPanel,
       statusBar,
       schemaDialog,
+      linkDialog,
       scriptingDialog,
       functoidDialog,
       contextMenu,
@@ -102,6 +106,7 @@ function useMapperAppController(
       !bottomPanel.current ||
       !statusBar.current ||
       !schemaDialog.current ||
+      !linkDialog.current ||
       !scriptingDialog.current ||
       !functoidDialog.current ||
       !contextMenu.current ||
@@ -125,6 +130,7 @@ function useMapperAppController(
       bottomPanel: bottomPanel.current,
       statusBar: statusBar.current,
       schemaDialog: schemaDialog.current,
+      linkDialog: linkDialog.current,
       scriptingDialog: scriptingDialog.current,
       functoidDialog: functoidDialog.current,
       contextMenu: contextMenu.current,
@@ -233,6 +239,7 @@ export function MapperApp({ vscode, onReady }: MapperAppProps): React.ReactEleme
   const bottomPanelRef = useRef<MapperBottomPanel>(null);
   const statusBarRef = useRef<MapperStatusBar>(null);
   const schemaDialogRef = useRef<SchemaNodePropertiesDialog>(null);
+  const linkDialogRef = useRef<LinkPropertiesDialog>(null);
   const scriptingDialogRef = useRef<ScriptingConfigDialog>(null);
   const functoidDialogRef = useRef<FunctoidConfigDialog>(null);
   const contextMenuRef = useRef<MapperContextMenu>(null);
@@ -252,6 +259,7 @@ export function MapperApp({ vscode, onReady }: MapperAppProps): React.ReactEleme
     bottomPanel: bottomPanelRef,
     statusBar: statusBarRef,
     schemaDialog: schemaDialogRef,
+    linkDialog: linkDialogRef,
     scriptingDialog: scriptingDialogRef,
     functoidDialog: functoidDialogRef,
     contextMenu: contextMenuRef,
@@ -302,6 +310,7 @@ export function MapperApp({ vscode, onReady }: MapperAppProps): React.ReactEleme
       {React.createElement('biztalk-mapper-bottom-panel', { ref: bottomPanelRef })}
       {React.createElement('biztalk-mapper-statusbar', { ref: statusBarRef })}
       {React.createElement('biztalk-schema-node-properties-dialog', { ref: schemaDialogRef, hidden: true })}
+      {React.createElement('biztalk-link-properties-dialog', { ref: linkDialogRef, hidden: true })}
       {React.createElement('biztalk-scripting-config-dialog', { ref: scriptingDialogRef, hidden: true })}
       {React.createElement('biztalk-functoid-config-dialog', { ref: functoidDialogRef, hidden: true })}
       {React.createElement('biztalk-mapper-context-menu', { ref: contextMenuRef, class: 'context-menu', hidden: true })}

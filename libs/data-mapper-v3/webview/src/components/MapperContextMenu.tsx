@@ -1,4 +1,4 @@
-import { FluentProvider, MenuItem, MenuList, makeStyles, tokens } from '@fluentui/react-components';
+import { FluentProvider, Menu, MenuItem, MenuList, MenuPopover, MenuTrigger, makeStyles, tokens } from '@fluentui/react-components';
 // biome-ignore lint/style/useImportType: The classic JSX transform requires React at runtime.
 import React from 'react';
 import { createRoot, type Root } from 'react-dom/client';
@@ -9,6 +9,7 @@ export interface ContextMenuItem {
   shortcut?: string;
   disabled?: boolean;
   divider?: boolean;
+  children?: ContextMenuItem[];
   action(): void;
 }
 
@@ -24,6 +25,8 @@ const useStyles = makeStyles({
     borderRadius: tokens.borderRadiusMedium,
     boxShadow: tokens.shadow16,
     padding: tokens.spacingVerticalXS,
+    maxHeight: 'calc(100vh - 16px)',
+    overflowY: 'auto',
   },
   item: { display: 'flex', justifyContent: 'space-between', gap: tokens.spacingHorizontalL },
   shortcut: { color: tokens.colorNeutralForeground3 },
@@ -32,29 +35,38 @@ const useStyles = makeStyles({
 function ContextMenuView({ items, onClose }: { items: ContextMenuItem[] } & ContextMenuCallbacks): React.ReactElement {
   const styles = useStyles();
   const typographyStyles = useTypographyStyles();
+  const renderItems = (entries: ContextMenuItem[]): React.ReactNode =>
+    entries.map((item, index) =>
+      item.divider ? (
+        <div key={`divider-${index}`} role="separator" />
+      ) : item.children ? (
+        <Menu key={item.label} positioning="after-top">
+          <MenuTrigger disableButtonEnhancement>
+            <MenuItem disabled={item.disabled}>{item.label}</MenuItem>
+          </MenuTrigger>
+          <MenuPopover>
+            <MenuList>{renderItems(item.children)}</MenuList>
+          </MenuPopover>
+        </Menu>
+      ) : (
+        <MenuItem
+          key={item.label}
+          disabled={item.disabled}
+          onClick={() => {
+            onClose();
+            item.action();
+          }}
+        >
+          <span className={styles.item}>
+            <span>{item.label}</span>
+            {item.shortcut ? <span className={styles.shortcut}>{item.shortcut}</span> : null}
+          </span>
+        </MenuItem>
+      )
+    );
   return (
     <FluentProvider theme={getVsCodeFluentTheme()} style={{ display: 'contents' }}>
-      <MenuList className={`${styles.surface} ${typographyStyles.base}`}>
-        {items.map((item, index) =>
-          item.divider ? (
-            <div key={`divider-${index}`} role="separator" />
-          ) : (
-            <MenuItem
-              key={item.label}
-              disabled={item.disabled}
-              onClick={() => {
-                onClose();
-                item.action();
-              }}
-            >
-              <span className={styles.item}>
-                <span>{item.label}</span>
-                {item.shortcut ? <span className={styles.shortcut}>{item.shortcut}</span> : null}
-              </span>
-            </MenuItem>
-          )
-        )}
-      </MenuList>
+      <MenuList className={`${styles.surface} ${typographyStyles.base}`}>{renderItems(items)}</MenuList>
     </FluentProvider>
   );
 }

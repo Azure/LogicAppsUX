@@ -73,6 +73,8 @@ interface SchemaTreeViewProps {
   side: SchemaSide;
   initialExpanded: Set<string>;
   connectedPaths: Set<string>;
+  highlightedPaths: Set<string>;
+  revealPaths: Set<string>;
   onNodeClick(nodePath: string): void;
   onNodePointerUp(nodePath: string): void;
   onLinkPointerDown(clientX: number, clientY: number): void;
@@ -120,6 +122,8 @@ function SchemaTreeView({
   side,
   initialExpanded,
   connectedPaths,
+  highlightedPaths,
+  revealPaths,
   onNodeClick,
   onNodePointerUp,
   onLinkPointerDown,
@@ -140,6 +144,38 @@ function SchemaTreeView({
   useLayoutEffect(() => {
     onExpansionChange();
   }, [expandedPaths, onExpansionChange]);
+
+  useLayoutEffect(() => {
+    if (revealPaths.size === 0) {
+      return;
+    }
+    setExpandedPaths((current) => {
+      const next = new Set(current);
+      for (const path of revealPaths) {
+        let parent = path.substring(0, path.lastIndexOf('/'));
+        while (parent) {
+          next.add(parent);
+          parent = parent.substring(0, parent.lastIndexOf('/'));
+        }
+      }
+      return next.size === current.size ? current : next;
+    });
+  }, [revealPaths]);
+
+  useLayoutEffect(() => {
+    const panel = panelRef.current;
+    const viewport = panel?.closest('biztalk-schema-tree');
+    const row =
+      panel && Array.from(panel.querySelectorAll<HTMLElement>('.tree-node')).find((element) => revealPaths.has(element.dataset.path ?? ''));
+    if (viewport && row) {
+      const bounds = viewport.getBoundingClientRect();
+      const node = row.getBoundingClientRect();
+      const header = panel?.querySelector('.schema-sticky')?.getBoundingClientRect().height ?? 0;
+      if (node.top < bounds.top + header || node.bottom > bounds.bottom) {
+        viewport.scrollTop += node.top - bounds.top - header - (viewport.clientHeight - header) / 2;
+      }
+    }
+  }, [revealPaths, expandedPaths]);
 
   useLayoutEffect(() => {
     const panel = panelRef.current;
@@ -285,7 +321,7 @@ function SchemaTreeView({
     return (
       <React.Fragment key={node.path}>
         <div
-          className="tree-node"
+          className={`tree-node${highlightedPaths.has(node.path) ? ' link-traced' : ''}`}
           data-path={node.path}
           data-side={side}
           title="Double-click to view node properties"
@@ -439,6 +475,8 @@ export class SchemaTreeRenderer extends HTMLElement {
   private onRootSelect: (rootName: string) => void = () => {};
   private initialExpanded = new Set<string>();
   private connectedPaths = new Set<string>();
+  private highlightedPaths = new Set<string>();
+  private revealPaths = new Set<string>();
   private renderVersion = 0;
 
   public configure(
@@ -484,6 +522,16 @@ export class SchemaTreeRenderer extends HTMLElement {
   public disconnectedCallback(): void {
     this.reactRoot?.unmount();
     this.reactRoot = null;
+  }
+
+  public setLinkHighlights(paths: Set<string>, reveal = false): void {
+    const unchanged = paths.size === this.highlightedPaths.size && Array.from(paths).every((path) => this.highlightedPaths.has(path));
+    if (unchanged && !reveal) {
+      return;
+    }
+    this.highlightedPaths = new Set(paths);
+    this.revealPaths = reveal ? new Set(paths) : new Set();
+    this.renderReact();
   }
 
   public setConnectedPaths(paths: Set<string>): void {
@@ -558,6 +606,8 @@ export class SchemaTreeRenderer extends HTMLElement {
         side={this.side}
         initialExpanded={this.initialExpanded}
         connectedPaths={this.connectedPaths}
+        highlightedPaths={this.highlightedPaths}
+        revealPaths={this.revealPaths}
         onNodeClick={this.onNodeClick}
         onNodePointerUp={this.onNodePointerUp}
         onLinkPointerDown={this.onLinkPointerDown}

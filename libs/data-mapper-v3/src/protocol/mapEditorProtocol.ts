@@ -44,6 +44,18 @@ export interface MapperViewState {
   functoids: FunctoidSummary[];
   selectedLink: string | null;
   selectedFunctoid: string | null;
+  selectedLinks?: string[];
+  selectedFunctoids?: string[];
+  linkView?: {
+    scope: 'all' | 'partial' | 'complete';
+    colorPartial: boolean;
+    trace: boolean;
+    autoReveal: boolean;
+    compiler: boolean;
+  };
+  highlightedLinks?: string[];
+  highlightedFunctoids?: string[];
+  compilerLinks?: { id: string; sourcePath: string; targetPath: string }[];
   activePage: number;
 }
 

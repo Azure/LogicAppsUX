@@ -153,17 +153,25 @@ Sources: `webview\src\components\MappingCanvas.tsx`, `MapperAppController.ts`, `
 | Feature | Status | Evidence / notes |
 |---|---|---|
 | Manual linking (schema node to schema node, to/from functoids) | Yes | `MappingCanvas.tsx`, `MapperAppController.ts` |
-| Auto-link | Partial | `webview\src\components\autoLink.ts` exists and is unit tested (`test\autoLink.test.ts`) but no caller was found in the webview |
+| Auto-link | Yes | Whole-map Auto-Link by Name remains available. For scoped linking, right-click a source branch and choose Link from Here, then right-click a target branch for Direct Link, Link by Name, Link by Structure, or Mass Copy. Scoped name matching recurses through matching child names; structure matching pairs children by position. Attributes are included and duplicate links are skipped. |
 | Pages (add, switch via page bar) | Yes | `MapperPageBar.tsx`; the model holds `pages[]`; all pages are merged into one graph at compile time (see 2.14) |
 | Undo/redo | Partial | Edits go through `WorkspaceEdit`, so the VS Code text-document undo stack applies; no webview-owned undo stack was found (not verified at runtime) |
-| Copy/paste | Partial | Functoids only. Ctrl+X does not copy. Schema-node links cannot be pasted. |
+| Copy/paste | Yes | Ctrl/Cmd+C, X, V and context-menu commands support links, functoids and selected mapping graphs within the same map, including across its pages. Cross-map clipboard is intentionally excluded. Clones receive independent IDs and parameter GUIDs; link properties, ordered inputs, fallback values and table-grid references are preserved. Ineligible links are skipped through the shared validator. Text-field shortcuts remain native. |
+| Multi-selection and bulk operations | Yes | Ctrl/Cmd/Shift-click toggles links and functoids. Dragging canvas background rubber-band selects intersecting links and functoids; modifiers add to the selection. Middle-button, Space or Alt drag pans. Select All is available from the canvas menu or Ctrl/Cmd+A; Delete, Cut, Copy and Move to Page apply to the selection. |
+| Move mappings between pages | Yes | Move to Page offers existing destinations and New Page. Connected functoids and their related links move together, retaining IDs, configuration and input ordering rather than leaving dangling endpoints. |
+| Retarget link endpoints | Yes | Drag a selected link endpoint or use Change link source/target from its context menu. Retargeting retains the link identity, label and directives, validates duplicate links, cycles and functoid input limits, and updates input/output references. Escape cancels. |
+| Shared endpoint eligibility | Partial | Creation, paste, retarget, scoped linking and auto-link share validation for missing/duplicate endpoints, cycles, input capacity, element/attribute eligibility, fixed or assigned targets, zero-occurrence targets and supported functoid category/input-slot restrictions. Rejected retargets and Mass Copy operations do not partially mutate the map. Exact legacy connection-mask and record-content parity is limited by metadata absent from the V3 model. |
+| Connected-path tracing and reveal | Yes | Trace selection follows upstream and downstream functoid connections, highlighting links, functoids and schema endpoints. Auto-reveal expands schema ancestors and scrolls offscreen selected endpoints into view; it can be disabled independently. |
+| Link visibility and hover details | Yes | The canvas scope menu shows all links, links with at least one endpoint visible, or links with both endpoints visible. Visibility accounts for collapsed and scrolled schema rows. Partial-link coloring can be toggled. Hover titles include the label and source/target names. |
+| Compiler dependency links | Partial | The Compiler links toggle requests compilation and shows deduplicated dependencies returned by the resolved compile graph as dashed, noninteractive links. Edits and host map/schema replacements clear stale diagnostics. Dependencies are merged across pages; arbitrary script-internal source accesses and custom-XSLT overrides are not inferred. |
 | Fit view | Partial | The "Fit" action is an auto-layout (`functoidAutoLayout.ts`, `src\copilot\mapLayout.ts`), not a zoom-to-fit. Viewport logic is in `canvasViewport.ts` (`test\canvasViewport.test.ts`). |
 | Search/navigation | Partial | No schema-tree search was found. |
 | Functoid palette | Yes | `FunctoidPalette.tsx`, fed by registry summaries (`FunctoidSummary` in the protocol) |
 | Properties / config panel | Yes | `FunctoidConfigDialog.tsx`, `ScriptingConfigDialog.tsx`, `MapperBottomPanel.tsx` |
 | Validation | Partial | Toolbar Validate runs simple checks on the active page only (`MapperAppController.ts`). The compiler performs fuller validation at compile time (see 2.14). |
 | Map options UI | No | No webview UI for map options. They can only be changed by editing the `.btm` as text. |
-| Per-link source/target link options | Yes (model) | `MapLink.sourceLinkOption` (valueCopy/nameCopy/mixedCopy) and `targetLinkOption` (flattening/topDown/bottomUp), consumed by the compiler |
+| Link properties | Yes | Double-click a link, use its context-menu Link Properties command, or focus it and press Enter/Space. `LinkPropertiesDialog.tsx` shows read-only endpoints and edits the label and source/target directives. For multiple selected links, mixed fields are indicated and only changed fields are applied, preserving other per-link values. OK saves; Cancel/Escape discard edits. Saved labels render on the canvas. |
+| Per-link source/target link options | Yes | Link Properties edits `MapLink.sourceLinkOption` (valueCopy/nameCopy/mixedCopy) and `targetLinkOption` (flattening/topDown/bottomUp). Options are persisted by `BtmSerializer` and consumed by the compiler. |
 
 ### 2.9 Table Looping / Table Extractor
 
@@ -468,7 +476,7 @@ Registered ids are exactly the 76 listed above. Anything BizTalk defines in thes
 | 17 | Test Map output is not validated against the target schema | `mapEditorProvider.ts` (`testMapWithInput`) |
 | 18 | `validateMap` command only shows an informational message | `extension.ts` |
 | 19 | `refreshMaps` is registered but not contributed in `package.json` | `extension.ts`, `package.json` |
-| 20 | Editor gaps: Ctrl+X does not copy; only functoids can be pasted; `autoLink.ts` has no caller; "Fit" is a layout rather than zoom-to-fit; no schema-tree search; webview validation covers the active page only | `MapperAppController.ts`, `MappingCanvas.tsx`, `SchemaTreeRenderer.tsx`, grep results |
+| 20 | Editor gaps: "Fit" is a layout rather than zoom-to-fit; no schema-tree search; webview validation covers the active page only | `MapperAppController.ts`, `MappingCanvas.tsx`, `SchemaTreeRenderer.tsx`, grep results |
 | 21 | Copilot: full-map prompts exceed model context on large maps and fall back to layout-only | `createMapLayoutPrompt`, `mapEditorProvider.ts` |
 | 22 | Schema import across different drives cannot be consolidated into one `Schemas` folder | `mapImportPlanner.ts` (`buildSchemaFiles`) |
 

@@ -1,3 +1,15 @@
+import {
+  Button,
+  FluentProvider,
+  Menu,
+  MenuItemRadio,
+  MenuList,
+  MenuPopover,
+  MenuTrigger,
+  ToggleButton,
+  makeStyles,
+} from '@fluentui/react-components';
+import { ArrowRouting20Regular, Code20Regular, Color20Regular, Eye20Regular, Target20Regular } from '@fluentui/react-icons';
 import React, { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { getFunctoidBrand, getFunctoidIcon } from './functoidCategoryIcons';
@@ -6,10 +18,15 @@ import { layoutFunctoids } from './functoidAutoLayout';
 import { createPortal } from 'react-dom';
 import type { MapFunctoid, MapLink, MapPage } from '../../../src/model/mapModel';
 import type { MapperViewState } from '../../../src/protocol/mapEditorProtocol';
+import { getVsCodeFluentTheme } from '../fluentTheme';
 
 export interface CanvasCallbacks {
-  onLinkSelect?: (linkId: string) => void;
-  onFunctoidSelect?: (functoidId: string) => void;
+  onLinkViewChange?: (view: NonNullable<MapperViewState['linkView']>) => void;
+  onAreaSelect?: (linkIds: string[], functoidIds: string[], additive: boolean) => void;
+  onLinkSelect?: (linkId: string, additive?: boolean) => void;
+  onLinkDoubleClick?: (linkId: string) => void;
+  onLinkRetarget?: (linkId: string, end: 'source' | 'target', clientX: number, clientY: number) => void;
+  onFunctoidSelect?: (functoidId: string, additive?: boolean) => void;
   onFunctoidDoubleClick?: (functoidId: string) => void;
   onFunctoidDrop?: (functoid: unknown, x: number, y: number) => void;
   onFunctoidMove?: (functoidId: string, x: number, y: number) => void;
@@ -100,7 +117,7 @@ const gridSize = 10;
 const snapToGrid = (value: number): number => Math.max(0, Math.round(value / gridSize) * gridSize);
 const functoidHalfHeight = functoidHeight / 2;
 const canvasEdgePadding = 24;
-const dotRadius = 5;
+const dotRadius = 8;
 const panThreshold = 3;
 const dragHoldMs = 250;
 const dragHoldTolerance = 4;
@@ -108,6 +125,129 @@ const edgeScrollMargin = 40;
 const edgeScrollStep = 24;
 const minZoom = 0.1;
 const maxZoom = 2;
+const defaultLinkView: NonNullable<MapperViewState['linkView']> = {
+  scope: 'all',
+  colorPartial: true,
+  trace: false,
+  autoReveal: true,
+  compiler: false,
+};
+const useCanvasStyles = makeStyles({
+  tools: {
+    position: 'absolute',
+    top: '4px',
+    left: '4px',
+    width: 'fit-content',
+    maxWidth: 'calc(100% - 8px)',
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '2px',
+    zIndex: 12,
+    backgroundColor: 'var(--vscode-editor-background)',
+    borderRadius: '4px',
+  },
+});
+
+function endpointVisible(host: MappingCanvas, link: MapLink, end: 'source' | 'target', point: Point): boolean {
+  const { offsetX, offsetY } = host.getLinkRenderData();
+  if (link[`${end}Type`] === 'functoid') {
+    return point.x >= offsetX && point.x <= offsetX + host.clientWidth && point.y >= offsetY && point.y <= offsetY + host.clientHeight;
+  }
+  const side = end === 'source' ? 'source' : 'target';
+  const path = link[`${end}Path`];
+  const tree = host.closest('.mapping-area')?.querySelector<HTMLElement>(`.${side}-tree biztalk-schema-tree`);
+  const row = tree && Array.from(tree.querySelectorAll<HTMLElement>('.tree-node[data-path]')).find((node) => node.dataset.path === path);
+  const connector = row?.querySelector<HTMLElement>('.node-connector');
+  if (!tree || !row || !connector || connector.getClientRects().length === 0) {
+    return false;
+  }
+  const bounds = connector.getBoundingClientRect();
+  const center = { x: bounds.left + bounds.width / 2, y: bounds.top + bounds.height / 2 };
+  const treeBounds = tree.getBoundingClientRect();
+  const headerBottom = tree.querySelector('.schema-sticky')?.getBoundingClientRect().bottom ?? treeBounds.top;
+  if (center.y < headerBottom) {
+    return false;
+  }
+  for (let ancestor: HTMLElement | null = connector; ancestor; ancestor = ancestor.parentElement) {
+    const style = getComputedStyle(ancestor);
+    if (style.display === 'none' || style.visibility === 'hidden' || style.visibility === 'collapse') {
+      return false;
+    }
+    const rect = ancestor.getBoundingClientRect();
+    const clipsX = /auto|scroll|hidden|clip/.test(style.overflowX);
+    const clipsY = /auto|scroll|hidden|clip/.test(style.overflowY);
+    if (
+      (clipsX && (center.x < rect.left + ancestor.clientLeft || center.x > rect.left + ancestor.clientLeft + ancestor.clientWidth)) ||
+      (clipsY && (center.y < rect.top + ancestor.clientTop || center.y > rect.top + ancestor.clientTop + ancestor.clientHeight))
+    ) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function linkPresentation(
+  host: MappingCanvas,
+  link: MapLink,
+  points: { source: Point; target: Point },
+  scope: NonNullable<MapperViewState['linkView']>['scope']
+): { visible: boolean; partial: boolean } {
+  const source = endpointVisible(host, link, 'source', points.source);
+  const target = endpointVisible(host, link, 'target', points.target);
+  return { visible: scope === 'all' || (scope === 'partial' ? source || target : source && target), partial: !source || !target };
+}
+
+function linkTooltip(link: MapLink, functoids: Map<string, MapFunctoid>): string {
+  const source =
+    link.sourceType === 'functoid'
+      ? `${functoids.get(link.sourceId)?.name ?? 'Functoid'} (${link.sourceId})`
+      : link.sourcePath || link.sourceId;
+  const target =
+    link.targetType === 'functoid'
+      ? `${functoids.get(link.targetId)?.name ?? 'Functoid'} (${link.targetId})`
+      : link.targetPath || link.targetId;
+  return `${link.label ? `${link.label}\n` : ''}Source: ${source}\nTarget: ${target}`;
+}
+
+function curveIntersectsRect(source: Point, target: Point, rect: ClipRect): boolean {
+  const control = Math.max(Math.abs(target.x - source.x) * 0.4, 40);
+  let previous = source;
+  const steps = Math.max(32, Math.ceil((Math.abs(target.x - source.x) + Math.abs(target.y - source.y) + control * 2) / 4));
+  for (let index = 1; index <= steps; index++) {
+    const amount = index / steps;
+    const inverse = 1 - amount;
+    const point = {
+      x:
+        inverse ** 3 * source.x +
+        3 * inverse ** 2 * amount * (source.x + control) +
+        3 * inverse * amount ** 2 * (target.x - control) +
+        amount ** 3 * target.x,
+      y: inverse ** 3 * source.y + 3 * inverse ** 2 * amount * source.y + 3 * inverse * amount ** 2 * target.y + amount ** 3 * target.y,
+    };
+    let minimum = 0;
+    let maximum = 1;
+    for (const axis of ['x', 'y'] as const) {
+      const delta = point[axis] - previous[axis];
+      const low = rect[axis];
+      const high = low + (axis === 'x' ? rect.width : rect.height);
+      if (delta === 0) {
+        if (previous[axis] < low || previous[axis] > high) {
+          maximum = -1;
+        }
+      } else {
+        const first = (low - previous[axis]) / delta;
+        const last = (high - previous[axis]) / delta;
+        minimum = Math.max(minimum, Math.min(first, last));
+        maximum = Math.min(maximum, Math.max(first, last));
+      }
+    }
+    if (minimum <= maximum) {
+      return true;
+    }
+    previous = point;
+  }
+  return false;
+}
 
 function getLinkPoints(
   link: MapLink,
@@ -168,14 +308,24 @@ function LinkPath({
   to,
   clip,
   selected,
+  highlighted,
+  partial,
+  tooltip,
   onSelect,
+  onDoubleClick,
+  onRetarget,
 }: {
   link: MapLink;
   from: Point;
   to: Point;
   clip: ClipRect;
   selected: boolean;
-  onSelect(): void;
+  highlighted: boolean;
+  partial: boolean;
+  tooltip: string;
+  onSelect(additive?: boolean): void;
+  onDoubleClick(): void;
+  onRetarget(end: 'source' | 'target', clientX: number, clientY: number): void;
 }): React.ReactElement {
   const dx = Math.abs(to.x - from.x);
   const controlOffset = Math.max(dx * 0.4, 40);
@@ -184,7 +334,27 @@ function LinkPath({
   const clipId = `mapping-link-clip-${link.id.replace(/[^a-zA-Z0-9_-]/g, '_')}`;
 
   return (
-    <g data-link-id={link.id} clipPath={`url(#${clipId})`}>
+    <g
+      data-link-id={link.id}
+      clipPath={`url(#${clipId})`}
+      role="button"
+      tabIndex={0}
+      aria-label={`Link properties: ${tooltip}`}
+      aria-pressed={selected}
+      style={{ outline: 'none' }}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          event.stopPropagation();
+          onDoubleClick();
+        } else if (event.key.toLowerCase() === 's') {
+          event.preventDefault();
+          event.stopPropagation();
+          onSelect(event.ctrlKey || event.metaKey || event.shiftKey);
+        }
+      }}
+    >
+      <title>{tooltip}</title>
       <clipPath id={clipId}>
         <rect x={clip.x} y={clip.y} width={clip.width} height={clip.height} />
       </clipPath>
@@ -195,7 +365,11 @@ function LinkPath({
         strokeWidth="14"
         onClick={(event) => {
           event.stopPropagation();
-          onSelect();
+          onSelect(event.ctrlKey || event.metaKey || event.shiftKey);
+        }}
+        onDoubleClick={(event) => {
+          event.stopPropagation();
+          onDoubleClick();
         }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
@@ -205,14 +379,63 @@ function LinkPath({
         className="mapping-link"
         d={path}
         fill="none"
-        stroke={selected ? '#007fd4' : '#4fc1ff'}
-        strokeWidth={selected || hovered ? 3 : 2}
+        stroke={
+          selected
+            ? '#007fd4'
+            : highlighted
+              ? 'var(--vscode-charts-yellow, #cca700)'
+              : partial
+                ? 'var(--vscode-descriptionForeground, #999)'
+                : '#4fc1ff'
+        }
+        strokeWidth={selected || hovered || highlighted ? 3 : 2}
         strokeLinecap="round"
-        opacity={selected || hovered ? 1 : 0.75}
+        opacity={selected || hovered || highlighted ? 1 : partial ? 0.4 : 0.75}
         markerEnd="url(#arrowhead)"
       />
-      <circle cx={from.x} cy={from.y} r="4" fill="#89d185" />
-      <circle cx={to.x} cy={to.y} r="4" fill="#cca700" />
+      {(['source', 'target'] as const).map((end) => {
+        const point = end === 'source' ? from : to;
+        return (
+          <circle
+            key={end}
+            data-link-end={end}
+            cx={point.x}
+            cy={point.y}
+            r={selected ? 6 : 4}
+            fill={end === 'source' ? '#89d185' : '#cca700'}
+            stroke={selected ? 'var(--vscode-foreground, #ccc)' : 'none'}
+            strokeWidth="1"
+            style={{ pointerEvents: selected ? 'all' : 'none', cursor: 'grab' }}
+            onPointerDown={(event) => {
+              if (!selected || event.button !== 0) {
+                return;
+              }
+              event.preventDefault();
+              event.stopPropagation();
+              const bounds = event.currentTarget.ownerSVGElement!.getBoundingClientRect();
+              const fixed = end === 'source' ? to : from;
+              onRetarget(end, bounds.left + fixed.x, bounds.top + fixed.y);
+            }}
+          >
+            <title>{`Change link ${end}`}</title>
+          </circle>
+        );
+      })}
+      {link.label && (
+        <text
+          x={(from.x + to.x) / 2}
+          y={(from.y + to.y) / 2 - 6}
+          textAnchor="middle"
+          fontSize="12"
+          fill="var(--vscode-foreground, #ccc)"
+          stroke="var(--vscode-editor-background, #1e1e1e)"
+          strokeWidth="4"
+          paintOrder="stroke"
+          pointerEvents="none"
+        >
+          {link.label}
+        </text>
+      )}
     </g>
   );
 }
@@ -225,10 +448,16 @@ const MappingLinksOverlay = forwardRef<
     callbacks: CanvasCallbacks;
     previewRef: React.RefObject<LinkPreviewHandle>;
     selectedLinkId: string | null;
+    selectedLinkIds?: string[];
+    state: MapperViewState;
   }
->(function MappingLinksOverlay({ host, mappingArea, callbacks, previewRef, selectedLinkId }, ref): React.ReactElement {
+>(function MappingLinksOverlay(
+  { host, mappingArea, callbacks, previewRef, selectedLinkId, selectedLinkIds, state },
+  ref
+): React.ReactElement {
   const [, setRenderVersion] = useState(0);
   const { page, positions, functoidsById, offsetX, offsetY, zoom } = host.getLinkRenderData();
+  const view = state.linkView ?? defaultLinkView;
 
   useImperativeHandle(ref, () => ({
     redraw(): void {
@@ -249,6 +478,10 @@ const MappingLinksOverlay = forwardRef<
         if (!points) {
           return null;
         }
+        const presentation = linkPresentation(host, link, points, view.scope);
+        if (!presentation.visible) {
+          return null;
+        }
         // Links stay inside the drawing canvas; only a schema-node end may reach out to its own tree connector.
         const clipLeft = link.sourceType === 'schemaNode' ? Math.min(offsetX, points.source.x - dotRadius) : offsetX;
         const clipRight =
@@ -260,11 +493,53 @@ const MappingLinksOverlay = forwardRef<
             from={points.source}
             to={points.target}
             clip={{ x: clipLeft, y: offsetY, width: clipRight - clipLeft, height: host.clientHeight }}
-            selected={selectedLinkId === link.id}
-            onSelect={() => callbacks.onLinkSelect?.(link.id)}
+            selected={selectedLinkIds ? selectedLinkIds.includes(link.id) : selectedLinkId === link.id}
+            highlighted={state.highlightedLinks?.includes(link.id) ?? false}
+            partial={view.colorPartial && presentation.partial}
+            tooltip={linkTooltip(link, functoidsById)}
+            onSelect={(additive) => callbacks.onLinkSelect?.(link.id, additive)}
+            onDoubleClick={() => callbacks.onLinkDoubleClick?.(link.id)}
+            onRetarget={(end, clientX, clientY) => callbacks.onLinkRetarget?.(link.id, end, clientX, clientY)}
           />
         );
       })}
+      {view.compiler &&
+        state.compilerLinks?.map((link) => {
+          const source = positions.get(`src:${link.sourcePath}`);
+          const target = positions.get(`tgt:${link.targetPath}`);
+          if (!source || !target) {
+            return null;
+          }
+          const diagnostic: MapLink = {
+            ...link,
+            sourceId: link.sourcePath,
+            targetId: link.targetPath,
+            sourceType: 'schemaNode',
+            targetType: 'schemaNode',
+          };
+          if (!linkPresentation(host, diagnostic, { source, target }, view.scope).visible) {
+            return null;
+          }
+          const control = Math.max(Math.abs(target.x - source.x) * 0.4, 40);
+          const clipLeft = Math.min(offsetX, source.x - dotRadius);
+          const clipRight = Math.max(offsetX + host.clientWidth, target.x + dotRadius);
+          const clipId = `compiler-clip-${link.id.replace(/[^a-zA-Z0-9_-]/g, '_')}`;
+          return (
+            <g key={link.id} pointerEvents="none" aria-hidden="true" clipPath={`url(#${clipId})`}>
+              <clipPath id={clipId}>
+                <rect x={clipLeft} y={offsetY} width={clipRight - clipLeft} height={host.clientHeight} />
+              </clipPath>
+              <path
+                d={`M ${source.x} ${source.y} C ${source.x + control} ${source.y}, ${target.x - control} ${target.y}, ${target.x} ${target.y}`}
+                fill="none"
+                stroke="var(--vscode-charts-orange, #d18616)"
+                strokeWidth="2"
+                strokeDasharray="3 5"
+                opacity="0.8"
+              />
+            </g>
+          );
+        })}
     </svg>,
     mappingArea
   );
@@ -273,6 +548,7 @@ const MappingLinksOverlay = forwardRef<
 function FunctoidNode({
   functoid,
   selected,
+  highlighted,
   zoom,
   svgRef,
   callbacks,
@@ -284,6 +560,7 @@ function FunctoidNode({
 }: {
   functoid: MapFunctoid;
   selected: boolean;
+  highlighted: boolean;
   zoom: number;
   svgRef: React.RefObject<SVGSVGElement>;
   callbacks: CanvasCallbacks;
@@ -307,7 +584,8 @@ function FunctoidNode({
       transform={`translate(${functoid.x * zoom}, ${functoid.y * zoom}) scale(${zoom})`}
       onClick={(event) => {
         event.stopPropagation();
-        clickTimer.current = window.setTimeout(() => callbacks.onFunctoidSelect?.(functoid.id), 250);
+        const additive = event.ctrlKey || event.metaKey || event.shiftKey;
+        clickTimer.current = window.setTimeout(() => callbacks.onFunctoidSelect?.(functoid.id, additive), 250);
       }}
       onDoubleClick={(event) => {
         event.stopPropagation();
@@ -374,8 +652,8 @@ function FunctoidNode({
         rx={functoidHalfHeight}
         fill={brand.color}
         fillOpacity={0.2}
-        stroke={selected ? '#007fd4' : brand.color}
-        strokeWidth={selected ? 2 : 1}
+        stroke={selected ? '#007fd4' : highlighted ? 'var(--vscode-charts-yellow, #cca700)' : brand.color}
+        strokeWidth={selected || highlighted ? 2 : 1}
       />
       <foreignObject x={-functoidHalfWidth + 9} y={-iconSize / 2} width={iconSize} height={iconSize} style={{ pointerEvents: 'none' }}>
         <div
@@ -467,12 +745,19 @@ function MappingCanvasView({
   linksOverlayRef,
   onZoomChange,
 }: CanvasViewProps): React.ReactElement {
+  const styles = useCanvasStyles();
+  const linkView = state.linkView ?? defaultLinkView;
+  const changeLinkView = (change: Partial<NonNullable<MapperViewState['linkView']>>): void =>
+    callbacks.onLinkViewChange?.({ ...linkView, ...change });
   const svgRef = useRef<SVGSVGElement>(null);
   const dragTarget = useRef<DragTarget | null>(null);
   const [currentDrag, setCurrentDrag] = useState<DragTarget | null>(null);
   const lastPointer = useRef<Point | null>(null);
   const panState = useRef<{ clientX: number; clientY: number; scrollLeft: number; scrollTop: number; moved: boolean } | null>(null);
   const suppressClick = useRef(false);
+  const spacePressed = useRef(false);
+  const areaDrag = useRef<{ start: Point; end: Point; additive: boolean; pointerId: number } | null>(null);
+  const [selectionRect, setSelectionRect] = useState<ClipRect | null>(null);
   const extraRoom = useRef({ page: page?.id ?? null, x: 0, y: 0 });
   const pendingScroll = useRef<{ left: number; top: number } | null>(null);
   const [, setRoomVersion] = useState(0);
@@ -500,6 +785,63 @@ function MappingCanvasView({
     host.scrollTop = pending.top;
   });
   const mappingArea = host.closest('.mapping-area');
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent): void => {
+      const target = event.target as HTMLElement | null;
+      if (
+        event.code === 'Space' &&
+        !target?.closest('input, textarea, select, button, [contenteditable="true"], [role="button"], [role="menuitemradio"]')
+      ) {
+        spacePressed.current = event.type === 'keydown';
+        if (spacePressed.current && host.contains(target)) {
+          event.preventDefault();
+        }
+      }
+      if (event.key === 'Escape') {
+        const drag = areaDrag.current;
+        areaDrag.current = null;
+        setSelectionRect(null);
+        if (drag && svgRef.current?.hasPointerCapture(drag.pointerId)) {
+          svgRef.current.releasePointerCapture(drag.pointerId);
+        }
+      }
+    };
+    const onBlur = (): void => {
+      spacePressed.current = false;
+      areaDrag.current = null;
+      panState.current = null;
+      host.classList.remove('panning');
+      setSelectionRect(null);
+    };
+    window.addEventListener('keydown', onKey);
+    window.addEventListener('keyup', onKey);
+    window.addEventListener('blur', onBlur);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      window.removeEventListener('keyup', onKey);
+      window.removeEventListener('blur', onBlur);
+    };
+  }, [host]);
+  const areaPoint = (clientX: number, clientY: number): Point => {
+    const bounds = host.getBoundingClientRect();
+    const { offsetX, offsetY } = host.getLinkRenderData();
+    return {
+      x: offsetX + Math.max(0, Math.min(host.clientWidth, clientX - bounds.left)),
+      y: offsetY + Math.max(0, Math.min(host.clientHeight, clientY - bounds.top)),
+    };
+  };
+  const dragRect = (start: Point, end: Point): ClipRect => ({
+    x: Math.min(start.x, end.x),
+    y: Math.min(start.y, end.y),
+    width: Math.abs(end.x - start.x),
+    height: Math.abs(end.y - start.y),
+  });
+  const cancelPointer = (): void => {
+    areaDrag.current = null;
+    panState.current = null;
+    host.classList.remove('panning');
+    setSelectionRect(null);
+  };
   const connectedFunctoidInputs = new Set<string>();
   const connectedFunctoidOutputs = new Set<string>();
   for (const link of page?.links ?? []) {
@@ -635,6 +977,8 @@ function MappingCanvasView({
     <>
       <svg
         ref={svgRef}
+        tabIndex={0}
+        aria-label="Mapping canvas"
         className="mapping-svg"
         width={`${Math.max(100, zoomPercent)}%`}
         height={`${Math.max(100, zoomPercent)}%`}
@@ -651,6 +995,19 @@ function MappingCanvasView({
           if ((event.button !== 0 && event.button !== 1) || target.closest('.functoid-node')) {
             return;
           }
+          event.preventDefault();
+          svgRef.current?.focus({ preventScroll: true });
+          if (event.button === 0 && !spacePressed.current && !event.altKey) {
+            const start = areaPoint(event.clientX, event.clientY);
+            areaDrag.current = {
+              start,
+              end: start,
+              additive: event.ctrlKey || event.metaKey || event.shiftKey,
+              pointerId: event.pointerId,
+            };
+            svgRef.current?.setPointerCapture(event.pointerId);
+            return;
+          }
           panState.current = {
             clientX: event.clientX,
             clientY: event.clientY,
@@ -661,6 +1018,14 @@ function MappingCanvasView({
           svgRef.current?.setPointerCapture(event.pointerId);
         }}
         onPointerMove={(event) => {
+          const drag = areaDrag.current;
+          if (drag) {
+            drag.end = areaPoint(event.clientX, event.clientY);
+            if (Math.hypot(drag.end.x - drag.start.x, drag.end.y - drag.start.y) >= panThreshold) {
+              setSelectionRect(dragRect(drag.start, drag.end));
+            }
+            return;
+          }
           const pan = panState.current;
           if (!pan) {
             return;
@@ -690,6 +1055,47 @@ function MappingCanvasView({
           }
         }}
         onPointerUp={(event) => {
+          const drag = areaDrag.current;
+          if (drag) {
+            const end = areaPoint(event.clientX, event.clientY);
+            if (Math.hypot(end.x - drag.start.x, end.y - drag.start.y) >= panThreshold) {
+              const rect = dragRect(drag.start, end);
+              const { positions, functoidsById, offsetX, offsetY } = host.getLinkRenderData();
+              const linkIds = (page?.links ?? [])
+                .filter((link) => {
+                  const points = getLinkPoints(link, positions, functoidsById, offsetX, offsetY, host.scrollLeft, host.scrollTop, zoom);
+                  return (
+                    points &&
+                    linkPresentation(host, link, points, linkView.scope).visible &&
+                    curveIntersectsRect(points.source, points.target, rect)
+                  );
+                })
+                .map((link) => link.id);
+              const functoidIds = (page?.functoids ?? [])
+                .filter((functoid) => {
+                  const centerX = offsetX + functoid.x * zoom - host.scrollLeft;
+                  const centerY = offsetY + functoid.y * zoom - host.scrollTop;
+                  return (
+                    centerX + functoidHalfWidth * zoom >= rect.x &&
+                    centerX - functoidHalfWidth * zoom <= rect.x + rect.width &&
+                    centerY + functoidHalfHeight * zoom >= rect.y &&
+                    centerY - functoidHalfHeight * zoom <= rect.y + rect.height
+                  );
+                })
+                .map((functoid) => functoid.id);
+              suppressClick.current = true;
+              window.setTimeout(() => {
+                suppressClick.current = false;
+              }, 0);
+              callbacks.onAreaSelect?.(linkIds, functoidIds, drag.additive);
+            }
+            areaDrag.current = null;
+            setSelectionRect(null);
+            if (svgRef.current?.hasPointerCapture(event.pointerId)) {
+              svgRef.current.releasePointerCapture(event.pointerId);
+            }
+            return;
+          }
           const pan = panState.current;
           if (!pan) {
             return;
@@ -706,6 +1112,8 @@ function MappingCanvasView({
             }, 0);
           }
         }}
+        onPointerCancel={cancelPointer}
+        onLostPointerCapture={cancelPointer}
         onDragOver={(event) => {
           event.preventDefault();
           event.dataTransfer.dropEffect = 'copy';
@@ -733,7 +1141,8 @@ function MappingCanvasView({
           <FunctoidNode
             key={functoid.id}
             functoid={functoid}
-            selected={state.selectedFunctoid === functoid.id}
+            selected={state.selectedFunctoids ? state.selectedFunctoids.includes(functoid.id) : state.selectedFunctoid === functoid.id}
+            highlighted={state.highlightedFunctoids?.includes(functoid.id) ?? false}
             zoom={zoom}
             svgRef={svgRef}
             callbacks={callbacks}
@@ -747,6 +1156,19 @@ function MappingCanvasView({
             }}
           />
         ))}
+        {selectionRect && (
+          <rect
+            x={selectionRect.x - host.getLinkRenderData().offsetX + host.scrollLeft}
+            y={selectionRect.y - host.getLinkRenderData().offsetY + host.scrollTop}
+            width={selectionRect.width}
+            height={selectionRect.height}
+            fill="var(--vscode-editor-selectionBackground, #264f78)"
+            fillOpacity="0.25"
+            stroke="var(--vscode-focusBorder, #007fd4)"
+            strokeDasharray="4 3"
+            pointerEvents="none"
+          />
+        )}
         <text x="8" y="16" fill="#888" fontSize="10">
           {page ? `${page.links.length} link${page.links.length === 1 ? '' : 's'}` : '0 links'}
         </text>
@@ -766,6 +1188,87 @@ function MappingCanvasView({
           Fit
         </button>
       </div>
+      {mappingArea &&
+        createPortal(
+          <FluentProvider
+            theme={getVsCodeFluentTheme()}
+            className={styles.tools}
+            style={{
+              left: host.getLinkRenderData().offsetX + 4,
+              top: host.getLinkRenderData().offsetY + 40,
+              maxWidth: Math.max(0, host.clientWidth - 8),
+            }}
+          >
+            <Menu
+              checkedValues={{ scope: [linkView.scope] }}
+              onCheckedValueChange={(_event, data) => {
+                const scope = data.checkedItems[0];
+                if (scope === 'all' || scope === 'partial' || scope === 'complete') {
+                  changeLinkView({ scope });
+                }
+              }}
+            >
+              <MenuTrigger disableButtonEnhancement>
+                <Button
+                  size="small"
+                  appearance="subtle"
+                  icon={<Eye20Regular />}
+                  title="Link viewport scope"
+                >{`Links: ${linkView.scope}`}</Button>
+              </MenuTrigger>
+              <MenuPopover>
+                <MenuList>
+                  <MenuItemRadio name="scope" value="all">
+                    All links
+                  </MenuItemRadio>
+                  <MenuItemRadio name="scope" value="partial">
+                    At least one endpoint visible
+                  </MenuItemRadio>
+                  <MenuItemRadio name="scope" value="complete">
+                    Both endpoints visible
+                  </MenuItemRadio>
+                </MenuList>
+              </MenuPopover>
+            </Menu>
+            <ToggleButton
+              size="small"
+              appearance="subtle"
+              icon={<Color20Regular />}
+              checked={linkView.colorPartial}
+              aria-label="Dim partial links"
+              title="Dim and recolor links with hidden endpoints"
+              onClick={() => changeLinkView({ colorPartial: !linkView.colorPartial })}
+            />
+            <ToggleButton
+              size="small"
+              appearance="subtle"
+              icon={<ArrowRouting20Regular />}
+              checked={linkView.trace}
+              aria-label="Trace selection"
+              title="Trace connected paths from selection"
+              onClick={() => changeLinkView({ trace: !linkView.trace })}
+            />
+            <ToggleButton
+              size="small"
+              appearance="subtle"
+              icon={<Target20Regular />}
+              checked={linkView.autoReveal}
+              aria-label="Auto-reveal selection"
+              title="Automatically reveal selected schema endpoints"
+              onClick={() => changeLinkView({ autoReveal: !linkView.autoReveal })}
+            />
+            <ToggleButton
+              size="small"
+              appearance="subtle"
+              icon={<Code20Regular />}
+              checked={linkView.compiler}
+              aria-label="Compiler links"
+              title="Show compiler diagnostic links"
+              onClick={() => changeLinkView({ compiler: !linkView.compiler })}
+            />
+          </FluentProvider>,
+          mappingArea
+        )}
       {mappingArea && (
         <MappingLinksOverlay
           ref={linksOverlayRef}
@@ -774,6 +1277,8 @@ function MappingCanvasView({
           callbacks={callbacks}
           previewRef={previewRef}
           selectedLinkId={state.selectedLink}
+          selectedLinkIds={state.selectedLinks}
+          state={state}
         />
       )}
     </>
@@ -789,6 +1294,7 @@ export class MappingCanvas extends HTMLElement {
   private page: MapPage | null = null;
   private offsetX = 0;
   private offsetY = 0;
+  private viewportWidth = 0;
   private zoom = 1;
   private revealedPageId: string | null = null;
   private scrollFrame: number | null = null;
@@ -830,9 +1336,13 @@ export class MappingCanvas extends HTMLElement {
     const mappingArea = this.closest('.mapping-area');
     const canvasRect = this.getBoundingClientRect();
     const areaRect = mappingArea?.getBoundingClientRect();
-    this.offsetX = areaRect ? canvasRect.left - areaRect.left : 0;
-    this.offsetY = areaRect ? canvasRect.top - areaRect.top : 0;
-    if (!renderFullCanvas && this.linksOverlayRef.current) {
+    const offsetX = areaRect ? canvasRect.left - areaRect.left : 0;
+    const offsetY = areaRect ? canvasRect.top - areaRect.top : 0;
+    const geometryChanged = this.offsetX !== offsetX || this.offsetY !== offsetY || this.viewportWidth !== this.clientWidth;
+    this.offsetX = offsetX;
+    this.offsetY = offsetY;
+    this.viewportWidth = this.clientWidth;
+    if (!renderFullCanvas && !geometryChanged && this.linksOverlayRef.current) {
       this.linksOverlayRef.current.redraw();
     } else {
       this.renderReact();

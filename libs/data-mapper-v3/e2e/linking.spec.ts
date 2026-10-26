@@ -82,7 +82,6 @@ test.describe('schema node linking @p0', () => {
     expect(host.lastUpdatedMap()!.pages[0].links).toEqual([]);
   });
 
-  // Known product bug: the status bar is only refreshed by a full renderView, not after link edits. Remove test.fail() once fixed.
   test('status bar link count follows in-session link changes', async ({ mapper }) => {
     await mapper.open();
     const { ui } = mapper;
@@ -90,7 +89,6 @@ test.describe('schema node linking @p0', () => {
     await ui.connectSchemaNodes(paths.source.orderId, paths.target.invoiceId);
 
     await expect(ui.links).toHaveCount(1);
-    test.fail(true, 'The status bar link count does not refresh after in-session link edits.');
     await expect(ui.statusBar).toContainText('Links: 1', { timeout: 1_000 });
   });
 

@@ -766,6 +766,21 @@
 	font-size: 10px;
 }
 
+.mapping-links-overlay [data-link-id]:focus {
+	outline: none;
+}
+.tree-node[data-link-source] {
+	background: var(--vscode-list-activeSelectionBackground, #094771);
+	color: var(--vscode-list-activeSelectionForeground, #fff);
+}
+.tree-node.link-traced {
+	background: var(--vscode-editor-findMatchHighlightBackground, #5a4c16);
+	box-shadow: inset 3px 0 var(--vscode-charts-yellow, #cca700);
+}
+.mapping-links-overlay [data-link-id]:focus-visible .mapping-link {
+	stroke-width: 3;
+	opacity: 1;
+}
 .mapping-link {
 	cursor: pointer;
 }
