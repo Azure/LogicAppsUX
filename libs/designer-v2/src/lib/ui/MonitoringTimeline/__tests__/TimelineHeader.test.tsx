@@ -83,9 +83,14 @@ describe('TimelineHeader', () => {
   });
 
   it('should render timeline icon in both expanded and collapsed states', () => {
+    // Only count rendered host elements (e.g. the icon's <span>/<svg>), not the wrapping
+    // component instance, which also carries the same className prop and would otherwise
+    // be double-counted by findAllByProps.
+    const isHostElement = (instance: { type: unknown }) => typeof instance.type === 'string';
+
     // Test expanded
     const expandedComponent = renderWithIntl(defaultProps);
-    const expandedIcons = expandedComponent.root.findAllByProps({ className: 'timeline-icon' });
+    const expandedIcons = expandedComponent.root.findAllByProps({ className: 'timeline-icon' }).filter(isHostElement);
     expect(expandedIcons).toHaveLength(1);
 
     // Test collapsed
@@ -93,7 +98,7 @@ describe('TimelineHeader', () => {
       ...defaultProps,
       isExpanded: false,
     });
-    const collapsedIcons = collapsedComponent.root.findAllByProps({ className: 'timeline-icon' });
+    const collapsedIcons = collapsedComponent.root.findAllByProps({ className: 'timeline-icon' }).filter(isHostElement);
     expect(collapsedIcons).toHaveLength(1);
   });
 

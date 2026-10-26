@@ -41,6 +41,7 @@ export interface UseA2AOptions {
   oboUserToken?: string;
   storageConfig?: StorageConfig;
   initialContextId?: string; // Initial context ID for resuming existing conversations
+  initialMessages?: ChatMessage[];
 }
 
 export interface UseA2AReturn {
@@ -67,7 +68,7 @@ export interface UseA2AReturn {
 export function useA2A(options: UseA2AOptions = {}): UseA2AReturn {
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>(options.initialMessages ?? []);
   const [agentCard, setAgentCard] = useState<AgentCard>();
   const [error, setError] = useState<Error>();
   const [authState, setAuthState] = useState<{ isRequired: boolean; authEvent?: any }>({
@@ -79,6 +80,11 @@ export function useA2A(options: UseA2AOptions = {}): UseA2AReturn {
   const authMessageIdRef = useRef<string | undefined>(undefined);
   const authTaskIdRef = useRef<string | undefined>(undefined);
   const currentAgentUrlRef = useRef<string | undefined>(undefined);
+  const initialMessagesRef = useRef(options.initialMessages);
+  const initialContextIdRef = useRef(options.initialContextId);
+
+  initialMessagesRef.current = options.initialMessages;
+  initialContextIdRef.current = options.initialContextId;
 
   const initializeStorage = useChatStore((state) => state.initializeStorage);
   const loadSessions = useChatStore((state) => state.loadSessions);
@@ -90,6 +96,40 @@ export function useA2A(options: UseA2AOptions = {}): UseA2AReturn {
       contextIdRef.current = options.initialContextId;
     }
   }, [options.initialContextId]);
+
+  useEffect(() => {
+    const initialMessages = options.initialMessages;
+    if (initialMessages) {
+      setMessages((currentMessages) => {
+        const initialMessageIds = new Set(initialMessages.map((message) => message.id));
+        const latestInitialTimestamp = Math.max(...initialMessages.map((message) => message.timestamp.getTime()), Number.NEGATIVE_INFINITY);
+        const newerMessages = currentMessages.filter(
+          (message) =>
+            !initialMessageIds.has(message.id) && message.timestamp instanceof Date && message.timestamp.getTime() > latestInitialTimestamp
+        );
+        const reconciledMessages = [...initialMessages, ...newerMessages];
+        const isUnchanged =
+          reconciledMessages.length === currentMessages.length &&
+          reconciledMessages.every((message, index) => {
+            const currentMessage = currentMessages[index];
+            if (!currentMessage || !(currentMessage.timestamp instanceof Date)) {
+              return false;
+            }
+            return (
+              message.id === currentMessage.id &&
+              message.role === currentMessage.role &&
+              message.content === currentMessage.content &&
+              message.timestamp.getTime() === currentMessage.timestamp.getTime() &&
+              message.isStreaming === currentMessage.isStreaming &&
+              JSON.stringify(message.metadata) === JSON.stringify(currentMessage.metadata) &&
+              JSON.stringify(message.files) === JSON.stringify(currentMessage.files) &&
+              JSON.stringify(message.authEvent) === JSON.stringify(currentMessage.authEvent)
+            );
+          });
+        return isUnchanged ? currentMessages : reconciledMessages;
+      });
+    }
+  }, [options.initialMessages]);
 
   // Initialize storage when storageConfig is provided
   useEffect(() => {
@@ -265,7 +305,7 @@ export function useA2A(options: UseA2AOptions = {}): UseA2AReturn {
           const savedMessages = messagesKey ? localStorage.getItem(messagesKey) : null;
           const savedContextId = contextKey ? localStorage.getItem(contextKey) : null;
 
-          if (savedMessages) {
+          if (savedMessages && initialMessagesRef.current === undefined) {
             try {
               const parsedMessages = JSON.parse(savedMessages);
               setMessages(parsedMessages);
@@ -282,7 +322,7 @@ export function useA2A(options: UseA2AOptions = {}): UseA2AReturn {
             }
           }
 
-          if (savedContextId) {
+          if (savedContextId && initialContextIdRef.current === undefined) {
             try {
               contextIdRef.current = savedContextId;
             } catch (e) {

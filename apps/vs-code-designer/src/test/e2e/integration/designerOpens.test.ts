@@ -28,7 +28,6 @@ const WEBVIEW_KEYS = {
   monitoring: 'monitoring',
   export: 'export',
   overview: 'overview',
-  unitTest: 'unitTest',
   createWorkspace: 'createWorkspace',
   createWorkspaceFromPackage: 'createWorkspaceFromPackage',
   createLogicApp: 'createLogicApp',
@@ -117,8 +116,8 @@ function createDesignerHTML(workflowName: string): string {
 }
 
 /** Build the expected panel name (matching OpenDesignerForLocalProject logic). */
-function buildPanelName(workspaceName: string, logicAppName: string, workflowName: string, unitTestName?: string): string {
-  return `${workspaceName}-${logicAppName}-${workflowName}${unitTestName ? `-${unitTestName}` : ''}`;
+function buildPanelName(workspaceName: string, logicAppName: string, workflowName: string): string {
+  return `${workspaceName}-${logicAppName}-${workflowName}`;
 }
 
 // =====================================================================
@@ -204,11 +203,6 @@ suite('Designer Opens Properly', () => {
       createdPanels.push(panel);
 
       assert.strictEqual(panel.title, 'MyWorkspace-MyLogicApp-StatefulWorkflow');
-    });
-
-    test('Unit test panel appends test name to title', () => {
-      const panelName = buildPanelName('WS', 'LA', 'Wf', 'MyTestCase');
-      assert.strictEqual(panelName, 'WS-LA-Wf-MyTestCase');
     });
   });
 
@@ -564,7 +558,6 @@ suite('Designer Opens Properly', () => {
         'monitoring',
         'export',
         'overview',
-        'unitTest',
         'createWorkspace',
         'createWorkspaceFromPackage',
         'createLogicApp',

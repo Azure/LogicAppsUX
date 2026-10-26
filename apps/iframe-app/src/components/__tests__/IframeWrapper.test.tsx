@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, act } from '@testing-library/react';
 import { IframeWrapper } from '../IframeWrapper';
-import type { IframeConfig } from '../../lib/utils/config-parser';
+import type { AgentCardPayload, IframeConfig } from '../../lib/utils/config-parser';
 import * as authHandler from '../../lib/authHandler';
 
 // Mock the dependencies
@@ -143,8 +143,9 @@ describe('IframeWrapper', () => {
 
   it('should handle agent card from postMessage', async () => {
     const { useParentCommunication } = await import('../../lib/hooks/useParentCommunication');
+    const { useAgentCard } = await import('../../hooks/useAgentCard');
 
-    let capturedCallback: ((agentCard: any) => void) | undefined;
+    let capturedCallback: ((agentCard: AgentCardPayload) => void) | undefined;
 
     vi.mocked(useParentCommunication).mockImplementation(({ onAgentCardReceived }) => {
       capturedCallback = onAgentCardReceived;
@@ -161,7 +162,7 @@ describe('IframeWrapper', () => {
     // Simulate receiving agent card
     act(() => {
       if (capturedCallback) {
-        capturedCallback({ name: 'New Agent', endpoint: 'https://new.api.com' });
+        capturedCallback('https://new-agent.logic.azure.com/.well-known/agent-card.json');
       }
     });
 
@@ -169,6 +170,28 @@ describe('IframeWrapper', () => {
 
     // Wait for auth check to complete
     await screen.findByTestId('chat-widget');
+    expect(useAgentCard).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        apiUrl: 'https://new-agent.logic.azure.com/.well-known/agent-card.json',
+      })
+    );
+  });
+
+  it('passes the validated trusted parent origin to parent communication', async () => {
+    const { useParentCommunication } = await import('../../lib/hooks/useParentCommunication');
+    const portalConfig: IframeConfig = {
+      ...defaultConfig,
+      inPortal: true,
+      trustedParentOrigin: 'https://portal.azure.com',
+    };
+
+    render(<IframeWrapper config={portalConfig} />);
+
+    expect(useParentCommunication).toHaveBeenCalledWith(
+      expect.objectContaining({
+        trustedParentOrigin: 'https://portal.azure.com',
+      })
+    );
   });
 
   it('should handle theme changes from Frame Blade', async () => {
@@ -258,6 +281,7 @@ describe('IframeWrapper', () => {
 
   it('should handle chat history from Frame Blade', async () => {
     const { useFrameBlade } = await import('../../lib/hooks/useFrameBlade');
+    const { ChatWidget } = await import('@microsoft/logic-apps-chat');
 
     let capturedHistoryCallback: ((history: any) => void) | undefined;
 
@@ -289,6 +313,12 @@ describe('IframeWrapper', () => {
           content: 'Test message',
           timestamp: '2024-01-01T00:00:00Z',
         },
+        {
+          id: 'msg-2',
+          role: 'assistant',
+          content: 'Test response',
+          timestamp: '2024-01-01T00:00:05Z',
+        },
       ],
     };
 
@@ -299,9 +329,16 @@ describe('IframeWrapper', () => {
       }
     });
 
-    // Verify contextId is handled (not stored in localStorage, but passed as initialContextId prop)
-    // The actual verification happens when the component re-renders with the contextId
-    expect(chatHistory.contextId).toBe('test-context-123');
+    expect(ChatWidget).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        initialContextId: 'test-context-123',
+        initialMessages: [
+          expect.objectContaining({ id: 'msg-1', role: 'user', timestamp: new Date('2024-01-01T00:00:00Z') }),
+          expect.objectContaining({ id: 'msg-2', role: 'assistant', timestamp: new Date('2024-01-01T00:00:05Z') }),
+        ],
+      }),
+      {}
+    );
   });
 
   it('should pass contextId from URL config to ChatWidget', async () => {

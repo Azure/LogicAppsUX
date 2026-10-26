@@ -130,12 +130,6 @@ This document provides a detailed analysis of all 124 LESS files in the LogicApp
 - [x] `tip/tip.less` (33 lines) - **SIMPLE** - Tooltip/tip component - ✅ COMPLETED
 - [ ] `agentinstruction/agentinstruction.less` (21 lines) - **SIMPLE** - Agent instruction editor
 
-**Unit Testing Components**
-- [ ] `unitTesting/assertionsPanel/assertions.less` (72 lines) - **MEDIUM** - Assertions panel
-- [ ] `unitTesting/conditionExpression/conditionExpression.less` (18 lines) - **SIMPLE** - Condition expression
-- [ ] `unitTesting/mockStatusIcon/mockStatusIcon.less` (6 lines) - **SIMPLE** - Mock status icon
-- [ ] `unitTesting/outputMocks/outputMocks.less` (5 lines) - **SIMPLE** - Output mocks
-
 ### 2. libs/designer (14 files)
 
 **Main Aggregator**
@@ -176,7 +170,6 @@ This document provides a detailed analysis of all 124 LESS files in the LogicApp
 - [ ] `app/designer/app.less` (11 lines) - **SIMPLE** - Designer app
 - [x] `app/export/export.less` (120 lines) - **COMPLEX** - Export functionality - ✅ COMPLETED → exportStyles.ts
 - [x] `app/overview/overview.less` (4 lines) - **SIMPLE** - Overview app - ✅ COMPLETED → overviewStyles.ts
-- [ ] `app/unitTest/unitTest.less` (25 lines) - **SIMPLE** - Unit test app
 
 **Component Styles**
 - [x] `app/components/reviewList/styles.less` (32 lines) - **SIMPLE** - Review list component - ✅ COMPLETED → reviewListStyles.ts (PR #7907)

@@ -1,7 +1,5 @@
 /* eslint-disable react/display-name */
 import { StatusPill } from '../monitoring';
-import { MockStatusIcon } from '../unitTesting/mockStatusIcon';
-import type { OutputMock } from '../unitTesting/outputMocks';
 import { CardFooter } from './cardfooter';
 import { ErrorBanner } from './errorbanner';
 import { useCardKeyboardInteraction } from './hooks';
@@ -33,7 +31,6 @@ export interface CardProps {
   icon?: string;
   id: string;
   isDragging?: boolean;
-  isUnitTest?: boolean;
   isLoading?: boolean;
   nodeIndex?: number;
   readOnly?: boolean;
@@ -48,8 +45,6 @@ export interface CardProps {
   runData?: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger;
   setFocus?: boolean;
   isSecureInputsOutputs?: boolean;
-  nodeMockResults?: OutputMock;
-  isMockSupported?: boolean;
   isLoadingDynamicData?: boolean;
   showStatusPill?: boolean;
   subtleBackground?: boolean;
@@ -78,9 +73,6 @@ export const Card: React.FC<CardProps> = memo(
     icon,
     id,
     isDragging,
-    isUnitTest,
-    nodeMockResults,
-    isMockSupported,
     isLoading,
     nodeIndex,
     onClick,
@@ -207,7 +199,6 @@ export const Card: React.FC<CardProps> = memo(
             resubmittedResults={runData?.executionMode === 'ResubmittedResults'}
           />
         ) : null}
-        {isUnitTest && isMockSupported ? <MockStatusIcon id={`${title}-status`} nodeMockResults={nodeMockResults} /> : null}
         <div className={css('msla-selection-box', selectionMode)} />
         <div className="panel-card-main">
           <div className="panel-card-header" role="button">

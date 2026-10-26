@@ -1,4 +1,5 @@
 import { getReactQueryClient } from '../ReactQueryProvider';
+import { getConnectionQueryKey } from './connections';
 import type {
   ListDynamicValue,
   ManagedIdentityRequestProperties,
@@ -37,7 +38,7 @@ export const getLegacyDynamicValues = async (
   const response = await queryClient.fetchQuery(
     [
       'legacydynamicValues',
-      connectionId.toLowerCase(),
+      getConnectionQueryKey(connectionId),
       connectorId.toLowerCase(),
       extension.operationId?.toLowerCase(),
       getParametersKey(parameters).toLowerCase(),
@@ -115,12 +116,12 @@ export const getListDynamicValues = async (
   return queryClient.fetchQuery(
     [
       'listdynamicvalues',
-      (connectionId ?? '').toLowerCase(),
+      getConnectionQueryKey(connectionId),
       connectorId.toLowerCase(),
       operationId.toLowerCase(),
       dynamicState.operationId?.toLowerCase(),
       getParametersKey({ ...dynamicState.parameters, ...parameters }),
-      identity ?? '',
+      (identity ?? '').toLowerCase(),
     ],
     () => service.getListDynamicValues(connectionId, connectorId, operationId, parameters, dynamicState, undefined, operationPath, identity)
   );
@@ -139,7 +140,7 @@ export const getLegacyDynamicSchema = async (
   const response = await queryClient.fetchQuery(
     [
       'legacydynamicschema',
-      connectionId.toLowerCase(),
+      getConnectionQueryKey(connectionId),
       connectorId.toLowerCase(),
       extension.operationId?.toLowerCase(),
       getParametersKey(parameters).toLowerCase(),
@@ -168,7 +169,7 @@ export const getDynamicSchemaProperties = async (
   return queryClient.fetchQuery(
     [
       'dynamicschemaproperties',
-      (connectionId ?? '').toLowerCase(),
+      getConnectionQueryKey(connectionId),
       connectorId.toLowerCase(),
       operationId.toLowerCase(),
       dynamicState.extension.operationId?.toLowerCase(),
@@ -193,7 +194,7 @@ export const getLegacyDynamicTreeItems = async (
   const response = await queryClient.fetchQuery(
     [
       'legacydynamictreeitems',
-      connectionId.toLowerCase(),
+      getConnectionQueryKey(connectionId),
       connectorId.toLowerCase(),
       operationId?.toLowerCase(),
       getParametersKey(parameters).toLowerCase(),
@@ -245,7 +246,7 @@ export const getDynamicTreeItems = async (
   const values = await queryClient.fetchQuery(
     [
       'dynamictreeitems',
-      connectionId.toLowerCase(),
+      getConnectionQueryKey(connectionId),
       connectorId.toLowerCase(),
       operationId?.toLowerCase(),
       getParametersKey(parameters).toLowerCase(),

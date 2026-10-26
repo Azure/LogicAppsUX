@@ -27,13 +27,15 @@ export default function OpenTokenPicker({ openTokenPicker }: OpenTokenPickerProp
       OPEN_TOKEN_PICKER,
       (payload: OPEN_TOKEN_PICKER_PAYLOAD) => {
         const { token } = payload;
-        if (token?.tokenType === TokenType.FX) {
-          openTokenPicker(TokenPickerMode.EXPRESSION, () => {
-            editor.dispatchCommand(INITIALIZE_TOKENPICKER_EXPRESSION, payload);
-          });
-        } else if (token?.tokenType === TokenType.AGENTPARAMETER) {
+        if (token?.tokenType === TokenType.AGENTPARAMETER) {
           openTokenPicker(TokenPickerMode.AGENT_PARAMETER_CREATE, () => {
             editor.dispatchCommand(INITIALIZE_TOKENPICKER_AGENT_PARAMETER, payload);
+          });
+        } else {
+          // FX expressions and dynamic content tokens (outputs, variables, parameters, items)
+          // all open the function/expression editor so they can be edited.
+          openTokenPicker(TokenPickerMode.EXPRESSION, () => {
+            editor.dispatchCommand(INITIALIZE_TOKENPICKER_EXPRESSION, payload);
           });
         }
         return true;

@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { EditorView } from '@codemirror/view';
+import { findNext, setSearchQuery, SearchQuery } from '@codemirror/search';
 import { CodeMirrorEditor } from '../CodeMirrorEditor';
 import { createRef } from 'react';
 import type { CodeMirrorEditorRef } from '../types';
@@ -49,6 +51,35 @@ describe('CodeMirrorEditor', () => {
     ref.current?.setValue('new content');
 
     expect(onContentChanged).toHaveBeenCalled();
+  });
+
+  describe('search', () => {
+    it('centers the match in the viewport when navigating with Find Next', () => {
+      const ref = createRef<CodeMirrorEditorRef>();
+      // A tall document so there is room to scroll the match into the center.
+      const doc = Array.from({ length: 200 }, (_, i) => (i === 150 ? 'line NEEDLE here' : `line ${i} filler`)).join('\n');
+      render(<CodeMirrorEditor ref={ref} defaultValue={doc} />);
+
+      const view = ref.current?.getView() as EditorView | null;
+      expect(view).not.toBeNull();
+
+      const scrollSpy = vi.spyOn(EditorView, 'scrollIntoView');
+      try {
+        view?.dispatch({ effects: setSearchQuery.of(new SearchQuery({ search: 'NEEDLE' })) });
+        scrollSpy.mockClear();
+
+        const found = findNext(view as EditorView);
+
+        expect(found).toBe(true);
+        expect(scrollSpy).toHaveBeenCalled();
+        // The default search reveal uses { y: 'nearest' }, which pins matches to the
+        // viewport edge. Our override centers them so users don't have to scroll (issue #9327).
+        const lastCall = scrollSpy.mock.calls.at(-1);
+        expect(lastCall?.[1]).toMatchObject({ y: 'center' });
+      } finally {
+        scrollSpy.mockRestore();
+      }
+    });
   });
 
   describe('showMerge', () => {

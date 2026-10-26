@@ -2,14 +2,17 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { extensionCommand } from '../../../constants';
-import { commands, type Uri } from 'vscode';
+import { ext } from '../../../extensionVariables';
+import { executeCommand } from '../../utils/funcCoreTools/cpUtils';
+import { getFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
+import * as path from 'path';
+import type { Uri } from 'vscode';
 
 /**
- * Executes command to decrypt local settings file.
- * @param {IActionContext} context - Command context.
+ * Decrypts a local settings file using Azure Functions Core Tools.
  * @param {Uri} uri - Uri of local settings file.
  */
-export async function decryptLocalSettings(uri?: Uri): Promise<void> {
-  await commands.executeCommand(extensionCommand.azureFunctionsAppSettingsDecrypt, uri);
+export async function decryptLocalSettings(uri: Uri): Promise<void> {
+  ext.outputChannel.show(true);
+  await executeCommand(ext.outputChannel, path.dirname(uri.fsPath), getFunctionsCommand(), 'settings', 'decrypt');
 }

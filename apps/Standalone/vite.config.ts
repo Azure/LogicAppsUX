@@ -4,6 +4,7 @@ import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfil
 import nodePolyfills from 'rollup-plugin-polyfill-node';
 import { nodePolyfills as np } from 'vite-plugin-node-polyfills';
 import mkcert from 'vite-plugin-mkcert';
+import { armTokenDevServer } from './vite-plugins/armTokenDevServer';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -23,6 +24,7 @@ export default defineConfig({
     }),
     np(),
     mkcert(),
+    armTokenDevServer(),
   ],
   server: {
     port: 4200,

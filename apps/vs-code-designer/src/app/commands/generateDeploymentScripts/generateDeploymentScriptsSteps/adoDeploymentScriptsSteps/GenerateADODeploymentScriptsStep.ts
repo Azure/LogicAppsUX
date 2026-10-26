@@ -3,7 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { isEmptyString } from '@microsoft/logic-apps-shared';
-import { AzureWizardExecuteStep, DialogResponses, UserCancelledError } from '@microsoft/vscode-azext-utils';
+import {
+  AzureWizardExecuteStep,
+  callWithTelemetryAndErrorHandling,
+  DialogResponses,
+  type IActionContext,
+  UserCancelledError,
+} from '@microsoft/vscode-azext-utils';
 import type { ConnectionsData } from '@microsoft/vscode-extension-logic-apps';
 import { getBaseGraphApi, OpenBehavior, DeploymentTargetType } from '@microsoft/vscode-extension-logic-apps';
 import { getConnectionsJson } from '../../../../utils/codeless/connection';
@@ -15,7 +21,7 @@ import * as vscode from 'vscode';
 import { v4 as uuidv4 } from 'uuid';
 import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
-import { parameterizeConnections } from '../../../parameterizeConnections';
+import { parameterizeProjectConnections } from '../../../parameterizeConnections';
 import { FileManagement } from '../../iacGestureHelperFunctions';
 import { deploymentDirectory, managementApiPrefix, workflowFileName } from '../../../../../constants';
 import { unzipLogicAppArtifacts } from '../../../../utils/taskUtils';
@@ -77,7 +83,11 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
       );
       if (shouldParameterizeConnections === DialogResponses.yes) {
         context.telemetry.properties.lastStep = 'parameterizeConnections';
-        await parameterizeConnections(context);
+        await callWithTelemetryAndErrorHandling('GenerateADODeploymentScriptsStep.parameterizeProjectConnections', async (actionContext: IActionContext) => {
+          actionContext.errorHandling.rethrow = true;
+          actionContext.errorHandling.suppressDisplay = true;
+          await parameterizeProjectConnections(actionContext);
+        });
         context.telemetry.properties.parameterizeConnectionsInDeploymentScripts = 'true';
       } else {
         context.telemetry.properties.parameterizeConnectionsInDeploymentScripts = 'false';
@@ -307,14 +317,20 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
   private static async getLogicAppDeploymentArtifactsBuffer(context: IAzureDeploymentScriptsContext): Promise<Buffer> {
     try {
       ext.outputChannel.appendLog(localize('initApiWorkflowDesignerPort', 'Initiating API connection through workflow designer port...'));
-      await startDesignTimeApi(context.projectPath);
+
+      await callWithTelemetryAndErrorHandling('GenerateADODeploymentScriptsStep.getLogicAppDeploymentArtifactsBuffer.startDesignTimeApi', async (actionContext: IActionContext) => {
+        await startDesignTimeApi(actionContext, context.projectPath);
+      });
+
       if (!ext.designTimeInstances.has(context.projectPath)) {
         throw new Error('Design time API is undefined. Please retry once Azure Functions Core Tools has started.');
       }
+
       const designTimeInst = ext.designTimeInstances.get(context.projectPath);
       if (designTimeInst.port === undefined) {
         throw new Error('Design time port is undefined. Please retry once Azure Functions Core Tools has started.');
       }
+
       const apiUrl = `http://localhost:${designTimeInst.port}${managementApiPrefix}/generateDeploymentArtifacts`;
 
       ext.outputChannel.appendLog(
@@ -429,7 +445,10 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
         location: { type: 'string' },
         connectedEnvironmentName: { type: 'string' },
         connectedEnvironmentResourceGroup: { type: 'string' },
-        customLocationId: { type: 'string', metadata: { description: 'Resource ID of the custom location tied to the connected environment' } },
+        customLocationId: {
+          type: 'string',
+          metadata: { description: 'Resource ID of the custom location tied to the connected environment' },
+        },
         sqlConnectionString: { type: 'securestring' },
         fileShareHostName: { type: 'string' },
         fileSharePath: { type: 'string' },
@@ -544,9 +563,7 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
           apiVersion: '2024-02-02-preview',
           name: "[parameters('logicAppName')]",
           scope: "[concat('Microsoft.App/containerApps/', parameters('logicAppName'))]",
-          dependsOn: [
-            "[concat('Microsoft.App/containerApps/', parameters('logicAppName'))]",
-          ],
+          dependsOn: ["[concat('Microsoft.App/containerApps/', parameters('logicAppName'))]"],
           properties: {},
         },
       ],
@@ -561,9 +578,7 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
       return;
     }
 
-    const templateFiles = fs
-      .readdirSync(infraFolder)
-      .filter((f) => f.endsWith('.template.json') && f !== 'hybrid-logicapp-template.json');
+    const templateFiles = fs.readdirSync(infraFolder).filter((f) => f.endsWith('.template.json') && f !== 'hybrid-logicapp-template.json');
 
     for (const file of templateFiles) {
       const filePath = path.join(infraFolder, file);
@@ -586,9 +601,7 @@ export class GenerateADODeploymentScriptsStep extends AzureWizardExecuteStep<IAz
     }
 
     // Also update corresponding parameter files
-    const paramFiles = fs
-      .readdirSync(infraFolder)
-      .filter((f) => f.endsWith('.parameters.json') && f !== 'hybrid-logicapp-parameters.json');
+    const paramFiles = fs.readdirSync(infraFolder).filter((f) => f.endsWith('.parameters.json') && f !== 'hybrid-logicapp-parameters.json');
 
     for (const file of paramFiles) {
       const filePath = path.join(infraFolder, file);
@@ -675,7 +688,7 @@ jobs:
   - task: AzureLogicAppsHybridBuild@0
     displayName: 'Azure Logic Apps Hybrid Build'
     inputs:
-      sourceFolder: '${'$'}(Build.SourcesDirectory)/${'$'}(logicAppName)'
+      sourceFolder: '${'$'}(Build.SourcesDirectory)/${'$'}(sourceFolderName)'
       deploymentFolder: '${'$'}(System.DefaultWorkingDirectory)/deployment/${'$'}(logicAppName)/'
       archiveFile: '${'$'}(Build.ArtifactStagingDirectory)/${'$'}(Build.BuildId).zip'
 
@@ -798,8 +811,11 @@ jobs:
     fs.writeFileSync(path.join(pipelinesFolder, 'CD-pipeline-variables.yml'), cdVariablesContent);
 
     // CI variables
+    // sourceFolderName is the local project folder in the repo (host.json, workflows). It can differ from
+    // logicAppName, which is the deployed Logic App (Container App) name entered in the wizard.
     const ciVariablesContent = `variables:
   logicAppName: '${context.logicAppName}'
+  sourceFolderName: '${path.basename(context.projectPath)}'
   logicAppCIArtifactName: 'logic-app-artifact'
 `;
 

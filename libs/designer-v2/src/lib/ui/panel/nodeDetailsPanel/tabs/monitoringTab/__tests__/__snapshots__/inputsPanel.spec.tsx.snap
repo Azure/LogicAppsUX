@@ -20,34 +20,9 @@ exports[`InputsPanel > should render error state 1`] = `
         <span
           class="fui-Button__icon rywnvv2 ___963sj20_1qpm2bl f1nizpg2"
         >
-          <svg
-            aria-hidden="true"
-            class="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-            fill="currentColor"
-            height="24"
-            viewBox="0 0 24 24"
-            width="24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M4.3 8.3a1 1 0 0 1 1.4 0l6.3 6.29 6.3-6.3a1 1 0 1 1 1.4 1.42l-7 7a1 1 0 0 1-1.4 0l-7-7a1 1 0 0 1 0-1.42Z"
-              fill="currentColor"
-            />
-          </svg>
-          <svg
-            aria-hidden="true"
-            class="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-            fill="currentColor"
-            height="24"
-            viewBox="0 0 24 24"
-            width="24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M4.22 8.47c.3-.3.77-.3 1.06 0L12 15.19l6.72-6.72a.75.75 0 1 1 1.06 1.06l-7.25 7.25c-.3.3-.77.3-1.06 0L4.22 9.53a.75.75 0 0 1 0-1.06Z"
-              fill="currentColor"
-            />
-          </svg>
+          <span
+            data-testid="fluent-icon"
+          />
         </span>
         Inputs
       </button>
@@ -59,34 +34,9 @@ exports[`InputsPanel > should render error state 1`] = `
         <span
           class="fui-Button__icon rywnvv2 ___1yz413i_pen21v0 f1a695kz"
         >
-          <svg
-            aria-hidden="true"
-            class="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-            fill="currentColor"
-            height="1em"
-            viewBox="0 0 20 20"
-            width="1em"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M7.73 4.2a.75.75 0 0 1 1.06.03l5 5.25c.28.3.28.75 0 1.04l-5 5.25a.75.75 0 1 1-1.08-1.04L12.2 10l-4.5-4.73a.75.75 0 0 1 .02-1.06Z"
-              fill="currentColor"
-            />
-          </svg>
-          <svg
-            aria-hidden="true"
-            class="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-            fill="currentColor"
-            height="1em"
-            viewBox="0 0 20 20"
-            width="1em"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M7.65 4.15c.2-.2.5-.2.7 0l5.49 5.46c.21.22.21.57 0 .78l-5.49 5.46a.5.5 0 0 1-.7-.7L12.8 10 7.65 4.85a.5.5 0 0 1 0-.7Z"
-              fill="currentColor"
-            />
-          </svg>
+          <span
+            data-testid="fluent-icon"
+          />
         </span>
       </button>
     </div>
@@ -120,34 +70,9 @@ exports[`InputsPanel > should render error state 1`] = `
                 <span
                   class="fui-Button__icon rywnvv2"
                 >
-                  <svg
-                    aria-hidden="true"
-                    class="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                    fill="currentColor"
-                    height="1em"
-                    viewBox="0 0 20 20"
-                    width="1em"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                      fill="currentColor"
-                    />
-                  </svg>
-                  <svg
-                    aria-hidden="true"
-                    class="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                    fill="currentColor"
-                    height="1em"
-                    viewBox="0 0 20 20"
-                    width="1em"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                      fill="currentColor"
-                    />
-                  </svg>
+                  <span
+                    data-testid="fluent-icon"
+                  />
                 </span>
               </button>
             </div>
@@ -199,34 +124,9 @@ exports[`InputsPanel > should render loading state 1`] = `
         <span
           class="fui-Button__icon rywnvv2 ___963sj20_1qpm2bl f1nizpg2"
         >
-          <svg
-            aria-hidden="true"
-            class="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-            fill="currentColor"
-            height="24"
-            viewBox="0 0 24 24"
-            width="24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M4.3 8.3a1 1 0 0 1 1.4 0l6.3 6.29 6.3-6.3a1 1 0 1 1 1.4 1.42l-7 7a1 1 0 0 1-1.4 0l-7-7a1 1 0 0 1 0-1.42Z"
-              fill="currentColor"
-            />
-          </svg>
-          <svg
-            aria-hidden="true"
-            class="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-            fill="currentColor"
-            height="24"
-            viewBox="0 0 24 24"
-            width="24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M4.22 8.47c.3-.3.77-.3 1.06 0L12 15.19l6.72-6.72a.75.75 0 1 1 1.06 1.06l-7.25 7.25c-.3.3-.77.3-1.06 0L4.22 9.53a.75.75 0 0 1 0-1.06Z"
-              fill="currentColor"
-            />
-          </svg>
+          <span
+            data-testid="fluent-icon"
+          />
         </span>
         Inputs
       </button>
@@ -238,34 +138,9 @@ exports[`InputsPanel > should render loading state 1`] = `
         <span
           class="fui-Button__icon rywnvv2 ___1yz413i_pen21v0 f1a695kz"
         >
-          <svg
-            aria-hidden="true"
-            class="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-            fill="currentColor"
-            height="1em"
-            viewBox="0 0 20 20"
-            width="1em"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M7.73 4.2a.75.75 0 0 1 1.06.03l5 5.25c.28.3.28.75 0 1.04l-5 5.25a.75.75 0 1 1-1.08-1.04L12.2 10l-4.5-4.73a.75.75 0 0 1 .02-1.06Z"
-              fill="currentColor"
-            />
-          </svg>
-          <svg
-            aria-hidden="true"
-            class="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-            fill="currentColor"
-            height="1em"
-            viewBox="0 0 20 20"
-            width="1em"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M7.65 4.15c.2-.2.5-.2.7 0l5.49 5.46c.21.22.21.57 0 .78l-5.49 5.46a.5.5 0 0 1-.7-.7L12.8 10 7.65 4.85a.5.5 0 0 1 0-.7Z"
-              fill="currentColor"
-            />
-          </svg>
+          <span
+            data-testid="fluent-icon"
+          />
         </span>
       </button>
     </div>
@@ -299,34 +174,9 @@ exports[`InputsPanel > should render loading state 1`] = `
                 <span
                   class="fui-Button__icon rywnvv2"
                 >
-                  <svg
-                    aria-hidden="true"
-                    class="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                    fill="currentColor"
-                    height="1em"
-                    viewBox="0 0 20 20"
-                    width="1em"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                      fill="currentColor"
-                    />
-                  </svg>
-                  <svg
-                    aria-hidden="true"
-                    class="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                    fill="currentColor"
-                    height="1em"
-                    viewBox="0 0 20 20"
-                    width="1em"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                      fill="currentColor"
-                    />
-                  </svg>
+                  <span
+                    data-testid="fluent-icon"
+                  />
                 </span>
               </button>
             </div>
@@ -378,34 +228,9 @@ exports[`InputsPanel > should render the InputsPanel with inputs 1`] = `
         <span
           class="fui-Button__icon rywnvv2 ___963sj20_1qpm2bl f1nizpg2"
         >
-          <svg
-            aria-hidden="true"
-            class="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-            fill="currentColor"
-            height="24"
-            viewBox="0 0 24 24"
-            width="24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M4.3 8.3a1 1 0 0 1 1.4 0l6.3 6.29 6.3-6.3a1 1 0 1 1 1.4 1.42l-7 7a1 1 0 0 1-1.4 0l-7-7a1 1 0 0 1 0-1.42Z"
-              fill="currentColor"
-            />
-          </svg>
-          <svg
-            aria-hidden="true"
-            class="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-            fill="currentColor"
-            height="24"
-            viewBox="0 0 24 24"
-            width="24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M4.22 8.47c.3-.3.77-.3 1.06 0L12 15.19l6.72-6.72a.75.75 0 1 1 1.06 1.06l-7.25 7.25c-.3.3-.77.3-1.06 0L4.22 9.53a.75.75 0 0 1 0-1.06Z"
-              fill="currentColor"
-            />
-          </svg>
+          <span
+            data-testid="fluent-icon"
+          />
         </span>
         Inputs
       </button>
@@ -417,34 +242,9 @@ exports[`InputsPanel > should render the InputsPanel with inputs 1`] = `
         <span
           class="fui-Button__icon rywnvv2 ___1yz413i_pen21v0 f1a695kz"
         >
-          <svg
-            aria-hidden="true"
-            class="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-            fill="currentColor"
-            height="1em"
-            viewBox="0 0 20 20"
-            width="1em"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M7.73 4.2a.75.75 0 0 1 1.06.03l5 5.25c.28.3.28.75 0 1.04l-5 5.25a.75.75 0 1 1-1.08-1.04L12.2 10l-4.5-4.73a.75.75 0 0 1 .02-1.06Z"
-              fill="currentColor"
-            />
-          </svg>
-          <svg
-            aria-hidden="true"
-            class="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-            fill="currentColor"
-            height="1em"
-            viewBox="0 0 20 20"
-            width="1em"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M7.65 4.15c.2-.2.5-.2.7 0l5.49 5.46c.21.22.21.57 0 .78l-5.49 5.46a.5.5 0 0 1-.7-.7L12.8 10 7.65 4.85a.5.5 0 0 1 0-.7Z"
-              fill="currentColor"
-            />
-          </svg>
+          <span
+            data-testid="fluent-icon"
+          />
         </span>
       </button>
     </div>
@@ -478,34 +278,9 @@ exports[`InputsPanel > should render the InputsPanel with inputs 1`] = `
                 <span
                   class="fui-Button__icon rywnvv2"
                 >
-                  <svg
-                    aria-hidden="true"
-                    class="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                    fill="currentColor"
-                    height="1em"
-                    viewBox="0 0 20 20"
-                    width="1em"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                      fill="currentColor"
-                    />
-                  </svg>
-                  <svg
-                    aria-hidden="true"
-                    class="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                    fill="currentColor"
-                    height="1em"
-                    viewBox="0 0 20 20"
-                    width="1em"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                      fill="currentColor"
-                    />
-                  </svg>
+                  <span
+                    data-testid="fluent-icon"
+                  />
                 </span>
               </button>
             </div>
@@ -557,34 +332,9 @@ exports[`InputsPanel > should render the InputsPanel with no inputs 1`] = `
         <span
           class="fui-Button__icon rywnvv2 ___963sj20_1qpm2bl f1nizpg2"
         >
-          <svg
-            aria-hidden="true"
-            class="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-            fill="currentColor"
-            height="24"
-            viewBox="0 0 24 24"
-            width="24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M4.3 8.3a1 1 0 0 1 1.4 0l6.3 6.29 6.3-6.3a1 1 0 1 1 1.4 1.42l-7 7a1 1 0 0 1-1.4 0l-7-7a1 1 0 0 1 0-1.42Z"
-              fill="currentColor"
-            />
-          </svg>
-          <svg
-            aria-hidden="true"
-            class="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-            fill="currentColor"
-            height="24"
-            viewBox="0 0 24 24"
-            width="24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M4.22 8.47c.3-.3.77-.3 1.06 0L12 15.19l6.72-6.72a.75.75 0 1 1 1.06 1.06l-7.25 7.25c-.3.3-.77.3-1.06 0L4.22 9.53a.75.75 0 0 1 0-1.06Z"
-              fill="currentColor"
-            />
-          </svg>
+          <span
+            data-testid="fluent-icon"
+          />
         </span>
         Inputs
       </button>

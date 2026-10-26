@@ -1,7 +1,7 @@
 import type { ICognitiveServiceService } from '../cognitiveService';
 import type { IHttpClient } from '../httpClient';
 import type { ManagedIdentity } from '../../../utils/src';
-import { AGENT_MODEL_CONFIG, ArgumentException } from '../../../utils/src';
+import { ArgumentException } from '../../../utils/src';
 import { fetchAppsByQuery, getAzureResourceRecursive } from '../common/azure';
 
 export interface BaseCognitiveServiceServiceOptions {
@@ -96,13 +96,33 @@ export class BaseCognitiveServiceService implements ICognitiveServiceService {
     return response;
   }
 
-  async fetchAllCognitiveServiceAccountDeployments(accountId: string): Promise<any[]> {
+  async fetchAllCognitiveServiceAccountDeployments(accountId: string, options?: { throwOnError?: boolean }): Promise<any[]> {
     const { httpClient, baseUrl, apiVersion } = this.options;
     const uri = `${baseUrl}${accountId}/deployments`;
-    const response = await getAzureResourceRecursive(httpClient, uri, {
-      'api-version': apiVersion,
-    });
+    const response = await getAzureResourceRecursive(
+      httpClient,
+      uri,
+      {
+        'api-version': apiVersion,
+      },
+      options
+    );
     return response;
+  }
+
+  async fetchAvailableModelsForAccount(accountId: string): Promise<any[]> {
+    const { httpClient, baseUrl } = this.options;
+    const account = await this.fetchCognitiveServiceAccountById(accountId);
+    const location = account?.location;
+    const subscriptionId = accountId.split('/')[2];
+    if (!location || !subscriptionId) {
+      return [];
+    }
+    const uri = `${baseUrl}/subscriptions/${subscriptionId}/providers/Microsoft.CognitiveServices/locations/${location}/models`;
+    const response = await getAzureResourceRecursive(httpClient, uri, {
+      'api-version': '2024-10-01',
+    });
+    return response ?? [];
   }
 
   async fetchAllSessionPoolAccounts(subscriptionId: string): Promise<any> {
@@ -190,10 +210,14 @@ export class BaseCognitiveServiceService implements ICognitiveServiceService {
     }
   }
 
-  async createNewDeployment(deploymentName: string, model: string, openAIResourceId: string): Promise<any> {
+  async createNewDeployment(
+    deploymentName: string,
+    model: string,
+    openAIResourceId: string,
+    modelProperties?: { name?: string; version?: string; format?: string }
+  ): Promise<any> {
     const { httpClient, baseUrl } = this.options;
     const uri = `${baseUrl}${openAIResourceId}/deployments/${deploymentName}`;
-    const config = AGENT_MODEL_CONFIG[model];
     try {
       return httpClient.put({
         uri,
@@ -203,9 +227,9 @@ export class BaseCognitiveServiceService implements ICognitiveServiceService {
         content: {
           properties: {
             model: {
-              name: config?.name ?? model,
-              version: config?.version ?? '2025-04-14',
-              format: config?.format ?? 'OpenAI',
+              name: modelProperties?.name ?? model,
+              version: modelProperties?.version,
+              format: modelProperties?.format ?? 'OpenAI',
             },
             raiPolicyName: 'Microsoft.DefaultV2',
             versionUpgradeOption: 'OnceNewDefaultVersionAvailable',

@@ -1,5 +1,5 @@
-import { useState, useCallback, useRef, useMemo, useEffect } from 'react';
-import { ChatWidget, type IdentityProvider, type ChatWidgetProps, type StorageConfig } from '@microsoft/logic-apps-chat';
+import { useState, useCallback, useMemo, useEffect } from 'react';
+import { ChatWidget, type ChatMessage, type IdentityProvider, type ChatWidgetProps, type StorageConfig } from '@microsoft/logic-apps-chat';
 import { MultiSessionChat } from './MultiSessionChat/MultiSessionChat';
 import { LoadingDisplay } from './LoadingDisplay';
 import { LoginPrompt } from './LoginPrompt';
@@ -19,7 +19,7 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
   const { props, multiSession, apiKey, oboUserToken, mode: initialMode = 'light', inPortal, trustedParentOrigin, contextId } = config;
 
   // State
-  const [agentCard, setAgentCard] = useState<any>(null);
+  const [agentCard, setAgentCard] = useState<ChatWidgetProps['agentCard'] | null>(null);
   const [currentTheme, setCurrentTheme] = useState<'light' | 'dark'>(initialMode);
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [needsLogin, setNeedsLogin] = useState(true);
@@ -27,7 +27,7 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | undefined>(props.userName);
-  const chatHistoryRef = useRef<ChatHistoryData | null>(null);
+  const [chatHistory, setChatHistory] = useState<ChatHistoryData | null>(null);
 
   // Check if we should wait for postMessage
   const params = new URLSearchParams(window.location.search);
@@ -81,7 +81,7 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
 
   // Handle chat history received from parent blade
   const handleChatHistoryReceived = useCallback((history: ChatHistoryData) => {
-    chatHistoryRef.current = history;
+    setChatHistory(history);
   }, []);
 
   // Check authentication status on mount
@@ -144,6 +144,7 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
   // Parent communication
   const { isWaitingForAgentCard } = useParentCommunication({
     enabled: expectPostMessage,
+    trustedParentOrigin,
     onAgentCardReceived: setAgentCard,
   });
 
@@ -180,6 +181,19 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
       oboUserToken: oboUserToken || propsWithAuth.oboUserToken,
     };
   }, [agentCardData, apiKey, propsWithAuth.apiKey, oboUserToken, propsWithAuth.oboUserToken]);
+
+  const initialMessages = useMemo<ChatMessage[] | undefined>(
+    () =>
+      chatHistory?.messages.map((message) => ({
+        id: message.id,
+        role: message.role,
+        content: message.content,
+        timestamp: message.timestamp instanceof Date ? message.timestamp : new Date(message.timestamp),
+        metadata: message.metadata,
+      })),
+    [chatHistory]
+  );
+  const initialContextId = chatHistory?.contextId || contextId;
 
   // Show loading states
   if (expectPostMessage && isWaitingForAgentCard) {
@@ -226,9 +240,6 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
   // For single-session mode, determine the initial context ID
   const sessionKey = propsWithAuth.sessionKey || 'default';
 
-  // Use contextId from URL config, or from chat history received via postMessage
-  const initialContextId = contextId || chatHistoryRef.current?.contextId;
-
   return (
     <FluentProvider theme={theme}>
       <ChatWidget
@@ -239,6 +250,7 @@ export function IframeWrapper({ config }: IframeWrapperProps) {
         sessionKey={sessionKey}
         storageConfig={storageConfig}
         initialContextId={initialContextId}
+        initialMessages={initialMessages}
       />
     </FluentProvider>
   );

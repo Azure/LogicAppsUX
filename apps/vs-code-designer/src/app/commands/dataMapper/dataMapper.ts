@@ -2,7 +2,6 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { extensionCommand } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import DataMapperExt from './DataMapperExt';
@@ -16,43 +15,35 @@ import { Uri, window } from 'vscode';
 import { getWorkspaceFolder } from '../../utils/workspace';
 import { verifyAndPromptToCreateProject } from '../../utils/verifyIsProject';
 
-export async function createNewDataMapCmd(context: IActionContext): Promise<void> {
-  if (isNullOrUndefined(ext.defaultLogicAppPath)) {
-    const workspaceFolder = await getWorkspaceFolder(
-      context,
-      localize('openLogicAppsProject', 'You must have a logic apps project open to use the Data Mapper.')
-    );
-    const projectPath: string | undefined =
-      !isNullOrUndefined(workspaceFolder) && (await verifyAndPromptToCreateProject(context, workspaceFolder?.uri?.fsPath));
-    if (!projectPath) {
-      return;
-    }
-    ext.defaultLogicAppPath = projectPath;
+export async function createDataMap(context: IActionContext): Promise<void> {
+  const workspaceFolder = await getWorkspaceFolder(
+    context,
+    localize('openLogicAppsProject', 'You must have a logic apps project open to use the Data Mapper.')
+  );
+  const projectPath = !isNullOrUndefined(workspaceFolder) && (await verifyAndPromptToCreateProject(context, workspaceFolder?.uri?.fsPath));
+  if (!projectPath) {
+    return;
   }
-  DataMapperExt.openDataMapperPanel(context);
+  DataMapperExt.openDataMapperPanel(context, projectPath);
 }
 
-export async function loadDataMapFileCmd(context: IActionContext, uri: Uri): Promise<void> {
+export async function loadDataMapFile(context: IActionContext, uri: Uri): Promise<void> {
   let mapDefinitionPath: string | undefined = uri?.fsPath;
   let draftFileIsFoundAndShouldBeUsed = false;
-  if (isNullOrUndefined(ext.defaultLogicAppPath)) {
-    const workspaceFolder = await getWorkspaceFolder(
-      context,
-      localize('openLogicAppsProject', 'You must have a logic apps project open to use the Data Mapper.')
-    );
-    const projectPath: string | undefined =
-      !isNullOrUndefined(workspaceFolder) && (await verifyAndPromptToCreateProject(context, workspaceFolder?.uri?.fsPath));
-    if (!projectPath) {
-      return;
-    }
-    ext.defaultLogicAppPath = projectPath;
+  const workspaceFolder = await getWorkspaceFolder(
+    context,
+    localize('openLogicAppsProject', 'You must have a logic apps project open to use the Data Mapper.')
+  );
+  const projectPath = !isNullOrUndefined(workspaceFolder) && (await verifyAndPromptToCreateProject(context, workspaceFolder?.uri?.fsPath));
+  if (!projectPath) {
+    return;
   }
 
   // Handle if Uri isn't provided/defined (cmd pallette or btn)
   if (!mapDefinitionPath) {
     const fileUris = await window.showOpenDialog({
       title: 'Select a data map definition to load',
-      defaultUri: Uri.file(path.join(ext.defaultLogicAppPath, dataMapDefinitionsPath)),
+      defaultUri: Uri.file(path.join(projectPath, dataMapDefinitionsPath)),
       canSelectMany: false,
       canSelectFiles: true,
       canSelectFolders: false,
@@ -112,13 +103,13 @@ export async function loadDataMapFileCmd(context: IActionContext, uri: Uri): Pro
   }
 
   // Attempt to load schema files if specified
-  const schemasFolder = path.join(ext.defaultLogicAppPath, schemasPath);
+  const schemasFolder = path.join(projectPath, schemasPath);
   const srcSchemaPath = path.join(schemasFolder, mapDefinition.$sourceSchema);
   const tgtSchemaPath = path.join(schemasFolder, mapDefinition.$targetSchema);
 
   const attemptToResolveMissingSchemaFile = async (schemaName: string, schemaPath: string): Promise<boolean> => {
     return !!(await callWithTelemetryAndErrorHandling(
-      extensionCommand.dataMapAttemptToResolveMissingSchemaFile,
+      'loadDataMapFile.attemptToResolveMissingSchemaFile',
       async (_context: IActionContext) => {
         const findSchemaFileButton = 'Find schema file';
         const clickedButton = await window.showErrorMessage(
@@ -138,8 +129,6 @@ export async function loadDataMapFileCmd(context: IActionContext, uri: Uri): Pro
           if (fileUris && fileUris.length > 0) {
             // Copy the schema file they selected to the Schemas folder (can safely continue map definition loading)
             await fs.copyFile(fileUris[0].fsPath, schemaPath);
-            context.telemetry.properties.result = 'Succeeded';
-
             return true;
           }
         }
@@ -181,7 +170,7 @@ export async function loadDataMapFileCmd(context: IActionContext, uri: Uri): Pro
   const dataMapName = path.basename(mapDefinitionPath, path.extname(mapDefinitionPath)).replace(draftMapDefinitionSuffix, ''); // Gets filename w/o ext (and w/o draft suffix)
 
   // Set map definition data to be loaded once webview sends webviewLoaded msg
-  DataMapperExt.openDataMapperPanel(context, dataMapName, {
+  DataMapperExt.openDataMapperPanel(context, projectPath, dataMapName, {
     mapDefinition,
     sourceSchemaFileName: path.basename(srcSchemaPath),
     targetSchemaFileName: path.basename(tgtSchemaPath),

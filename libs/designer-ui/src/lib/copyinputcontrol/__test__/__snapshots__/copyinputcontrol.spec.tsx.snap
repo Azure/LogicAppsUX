@@ -31,34 +31,9 @@ exports[`lib/copyinputcontrol > should construct the copyinputcontrol correctly 
     <span
       className="fui-Button__icon rywnvv2 ___hix1za0_wgffxm0 fe5j1ua fjamq6b f64fuq3 fbaiahx"
     >
-      <svg
-        aria-hidden={true}
-        className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-        fill="currentColor"
-        height="24"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M5.5 4.63V17.25c0 1.8 1.46 3.25 3.25 3.25h8.62c-.31.88-1.15 1.5-2.13 1.5H8.75A4.75 4.75 0 0 1 4 17.25V6.75c0-.98.63-1.81 1.5-2.12ZM17.75 2C18.99 2 20 3 20 4.25v13c0 1.24-1 2.25-2.25 2.25h-9c-1.24 0-2.25-1-2.25-2.25v-13C6.5 3.01 7.5 2 8.75 2h9Z"
-          fill="currentColor"
-        />
-      </svg>
-      <svg
-        aria-hidden={true}
-        className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-        fill="currentColor"
-        height="24"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M5.5 4.63V17.25c0 1.8 1.46 3.25 3.25 3.25h8.62c-.31.88-1.15 1.5-2.13 1.5H8.75A4.75 4.75 0 0 1 4 17.25V6.75c0-.98.63-1.81 1.5-2.12ZM17.75 2C18.99 2 20 3 20 4.25v13c0 1.24-1 2.25-2.25 2.25h-9c-1.24 0-2.25-1-2.25-2.25v-13C6.5 3.01 7.5 2 8.75 2h9Zm0 1.5h-9a.75.75 0 0 0-.75.75v13c0 .41.34.75.75.75h9c.41 0 .75-.34.75-.75v-13a.75.75 0 0 0-.75-.75Z"
-          fill="currentColor"
-        />
-      </svg>
+      <span
+        data-testid="fluent-icon"
+      />
     </span>
   </button>
 </div>
@@ -95,34 +70,9 @@ exports[`lib/copyinputcontrol > should render basic CopyInputControl without age
     <span
       className="fui-Button__icon rywnvv2 ___hix1za0_wgffxm0 fe5j1ua fjamq6b f64fuq3 fbaiahx"
     >
-      <svg
-        aria-hidden={true}
-        className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-        fill="currentColor"
-        height="24"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M5.5 4.63V17.25c0 1.8 1.46 3.25 3.25 3.25h8.62c-.31.88-1.15 1.5-2.13 1.5H8.75A4.75 4.75 0 0 1 4 17.25V6.75c0-.98.63-1.81 1.5-2.12ZM17.75 2C18.99 2 20 3 20 4.25v13c0 1.24-1 2.25-2.25 2.25h-9c-1.24 0-2.25-1-2.25-2.25v-13C6.5 3.01 7.5 2 8.75 2h9Z"
-          fill="currentColor"
-        />
-      </svg>
-      <svg
-        aria-hidden={true}
-        className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-        fill="currentColor"
-        height="24"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M5.5 4.63V17.25c0 1.8 1.46 3.25 3.25 3.25h8.62c-.31.88-1.15 1.5-2.13 1.5H8.75A4.75 4.75 0 0 1 4 17.25V6.75c0-.98.63-1.81 1.5-2.12ZM17.75 2C18.99 2 20 3 20 4.25v13c0 1.24-1 2.25-2.25 2.25h-9c-1.24 0-2.25-1-2.25-2.25v-13C6.5 3.01 7.5 2 8.75 2h9Zm0 1.5h-9a.75.75 0 0 0-.75.75v13c0 .41.34.75.75.75h9c.41 0 .75-.34.75-.75v-13a.75.75 0 0 0-.75-.75Z"
-          fill="currentColor"
-        />
-      </svg>
+      <span
+        data-testid="fluent-icon"
+      />
     </span>
   </button>
 </div>
@@ -159,34 +109,9 @@ exports[`lib/copyinputcontrol > should render with popup button when showAgentVi
     <span
       className="fui-Button__icon rywnvv2 ___hix1za0_wgffxm0 fe5j1ua fjamq6b f64fuq3 fbaiahx"
     >
-      <svg
-        aria-hidden={true}
-        className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-        fill="currentColor"
-        height="24"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M5.5 4.63V17.25c0 1.8 1.46 3.25 3.25 3.25h8.62c-.31.88-1.15 1.5-2.13 1.5H8.75A4.75 4.75 0 0 1 4 17.25V6.75c0-.98.63-1.81 1.5-2.12ZM17.75 2C18.99 2 20 3 20 4.25v13c0 1.24-1 2.25-2.25 2.25h-9c-1.24 0-2.25-1-2.25-2.25v-13C6.5 3.01 7.5 2 8.75 2h9Z"
-          fill="currentColor"
-        />
-      </svg>
-      <svg
-        aria-hidden={true}
-        className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-        fill="currentColor"
-        height="24"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M5.5 4.63V17.25c0 1.8 1.46 3.25 3.25 3.25h8.62c-.31.88-1.15 1.5-2.13 1.5H8.75A4.75 4.75 0 0 1 4 17.25V6.75c0-.98.63-1.81 1.5-2.12ZM17.75 2C18.99 2 20 3 20 4.25v13c0 1.24-1 2.25-2.25 2.25h-9c-1.24 0-2.25-1-2.25-2.25v-13C6.5 3.01 7.5 2 8.75 2h9Zm0 1.5h-9a.75.75 0 0 0-.75.75v13c0 .41.34.75.75.75h9c.41 0 .75-.34.75-.75v-13a.75.75 0 0 0-.75-.75Z"
-          fill="currentColor"
-        />
-      </svg>
+      <span
+        data-testid="fluent-icon"
+      />
     </span>
   </button>
   <button
@@ -202,20 +127,9 @@ exports[`lib/copyinputcontrol > should render with popup button when showAgentVi
     <span
       className="fui-Button__icon rywnvv2 ___hix1za0_wgffxm0 fe5j1ua fjamq6b f64fuq3 fbaiahx"
     >
-      <svg
-        aria-hidden={true}
-        className="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
-        fill="currentColor"
-        height="24"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M6.25 3A3.25 3.25 0 0 0 3 6.25v11.5C3 19.55 4.46 21 6.25 21h11.5c1.8 0 3.25-1.46 3.25-3.25V6.25C21 4.45 19.54 3 17.75 3H6.25ZM19.5 7h-15v-.75c0-.97.78-1.75 1.75-1.75h11.5c.97 0 1.75.78 1.75 1.75V7Zm-15 1.5h15v9.25c0 .97-.78 1.75-1.75 1.75H6.25c-.97 0-1.75-.78-1.75-1.75V8.5Z"
-          fill="currentColor"
-        />
-      </svg>
+      <span
+        data-icon-name="Window24Regular"
+      />
     </span>
   </button>
 </div>
@@ -253,34 +167,9 @@ exports[`lib/copyinputcontrol > should set the aria-labelledby attribute 1`] = `
     <span
       className="fui-Button__icon rywnvv2 ___hix1za0_wgffxm0 fe5j1ua fjamq6b f64fuq3 fbaiahx"
     >
-      <svg
-        aria-hidden={true}
-        className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-        fill="currentColor"
-        height="24"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M5.5 4.63V17.25c0 1.8 1.46 3.25 3.25 3.25h8.62c-.31.88-1.15 1.5-2.13 1.5H8.75A4.75 4.75 0 0 1 4 17.25V6.75c0-.98.63-1.81 1.5-2.12ZM17.75 2C18.99 2 20 3 20 4.25v13c0 1.24-1 2.25-2.25 2.25h-9c-1.24 0-2.25-1-2.25-2.25v-13C6.5 3.01 7.5 2 8.75 2h9Z"
-          fill="currentColor"
-        />
-      </svg>
-      <svg
-        aria-hidden={true}
-        className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-        fill="currentColor"
-        height="24"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M5.5 4.63V17.25c0 1.8 1.46 3.25 3.25 3.25h8.62c-.31.88-1.15 1.5-2.13 1.5H8.75A4.75 4.75 0 0 1 4 17.25V6.75c0-.98.63-1.81 1.5-2.12ZM17.75 2C18.99 2 20 3 20 4.25v13c0 1.24-1 2.25-2.25 2.25h-9c-1.24 0-2.25-1-2.25-2.25v-13C6.5 3.01 7.5 2 8.75 2h9Zm0 1.5h-9a.75.75 0 0 0-.75.75v13c0 .41.34.75.75.75h9c.41 0 .75-.34.75-.75v-13a.75.75 0 0 0-.75-.75Z"
-          fill="currentColor"
-        />
-      </svg>
+      <span
+        data-testid="fluent-icon"
+      />
     </span>
   </button>
 </div>

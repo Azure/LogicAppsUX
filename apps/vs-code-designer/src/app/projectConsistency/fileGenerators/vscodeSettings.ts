@@ -1,0 +1,52 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+import type { VSCodeProjectConfig } from './types';
+import { deploySubpathSetting, funcVersionSetting, preDeployTaskSetting, projectLanguageSetting } from '../../../constants';
+import { latestGAVersion, ProjectLanguage, ProjectPackageType, ProjectType, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
+import * as path from 'path';
+import { ext } from '../../../extensionVariables';
+
+/**
+ * Generates the canonical settings.json content for a Logic App project.
+ */
+export function generateSettingsJson(config: VSCodeProjectConfig): Record<string, unknown> {
+  const { projectType, projectPackageType, funcVersion, language, targetFramework } = config;
+  const resolvedLanguage = language ?? (projectType === ProjectType.codeful ? ProjectLanguage.CSharp : ProjectLanguage.JavaScript);
+  const resolvedVersion = funcVersion ?? latestGAVersion;
+
+  const baseSettings: Record<string, unknown> = {
+    [`${ext.prefix}.${projectLanguageSetting}`]: resolvedLanguage,
+    [`${ext.prefix}.${funcVersionSetting}`]: resolvedVersion,
+    'debug.internalConsoleOptions': 'neverOpen',
+    'azureFunctions.suppressProject': true,
+  };
+
+  if (projectType === ProjectType.codeful) {
+    return {
+      [`${ext.prefix}.${deploySubpathSetting}`]: '.',
+      ...baseSettings,
+      'omnisharp.enableMsBuildLoadProjectsOnDemand': false,
+      'omnisharp.disableMSBuildDiagnosticWarning': true,
+    };
+  }
+
+  if (projectPackageType === ProjectPackageType.Nuget) {
+    const deploySubPathValue = path.posix.join('bin', 'Release', targetFramework ?? TargetFramework.NetFx, 'publish');
+    return {
+      [`${ext.prefix}.${deploySubpathSetting}`]: deploySubPathValue,
+      [`${ext.prefix}.${preDeployTaskSetting}`]: 'publish',
+      ...baseSettings,
+    };
+  }
+
+  if (projectType === ProjectType.logicApp) {
+    return {
+      [`${ext.prefix}.${deploySubpathSetting}`]: '.',
+      ...baseSettings,
+    };
+  }
+
+  return baseSettings;
+}

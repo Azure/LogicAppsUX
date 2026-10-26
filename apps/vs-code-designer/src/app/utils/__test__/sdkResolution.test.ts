@@ -64,9 +64,7 @@ describe('resolveSdkFromProject', () => {
     vi.clearAllMocks();
     mocks.getDotNetCommand.mockReturnValue('dotnet');
     mocks.readdir.mockResolvedValue([csprojFileName]);
-    mocks.readFile.mockResolvedValue(
-      makeCsproj(`<PackageReference Include="Microsoft.Azure.Workflows.Sdk" Version="${sdkVersion}" />`)
-    );
+    mocks.readFile.mockResolvedValue(makeCsproj(`<PackageReference Include="Microsoft.Azure.Workflows.Sdk" Version="${sdkVersion}" />`));
     mocks.executeCommand.mockResolvedValue(`global-packages: ${nugetCacheRoot}\n`);
     setExistingPaths([expectedNupkgPath, nugetCacheRoot]);
   });
@@ -149,20 +147,16 @@ describe('resolveSdkFromProject', () => {
   // --- .csproj parsing ---
 
   it('returns undefined when .csproj has no SDK PackageReference', async () => {
-    mocks.readFile.mockResolvedValue(
-      makeCsproj(`<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />`)
-    );
+    mocks.readFile.mockResolvedValue(makeCsproj(`<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />`));
 
     const result = await resolveSdkFromProject(projectPath);
 
     expect(result).toBeUndefined();
-    expect(mocks.appendLog).toHaveBeenCalledWith(expect.stringContaining('No Microsoft.Azure.Workflows.Sdk PackageReference'));
+    expect(mocks.appendLog).toHaveBeenCalledWith(expect.stringContaining('No "Microsoft.Azure.Workflows.Sdk" PackageReference'));
   });
 
   it('matches SDK PackageReference case-insensitively', async () => {
-    mocks.readFile.mockResolvedValue(
-      makeCsproj(`<PackageReference Include="microsoft.azure.workflows.sdk" Version="${sdkVersion}" />`)
-    );
+    mocks.readFile.mockResolvedValue(makeCsproj(`<PackageReference Include="microsoft.azure.workflows.sdk" Version="${sdkVersion}" />`));
 
     const result = await resolveSdkFromProject(projectPath);
 
@@ -170,9 +164,7 @@ describe('resolveSdkFromProject', () => {
   });
 
   it('returns undefined when version is an MSBuild variable', async () => {
-    mocks.readFile.mockResolvedValue(
-      makeCsproj(`<PackageReference Include="Microsoft.Azure.Workflows.Sdk" Version="$(SdkVersion)" />`)
-    );
+    mocks.readFile.mockResolvedValue(makeCsproj(`<PackageReference Include="Microsoft.Azure.Workflows.Sdk" Version="$(SdkVersion)" />`));
 
     const result = await resolveSdkFromProject(projectPath);
 
@@ -181,9 +173,7 @@ describe('resolveSdkFromProject', () => {
   });
 
   it('returns undefined when version is an MSBuild item reference', async () => {
-    mocks.readFile.mockResolvedValue(
-      makeCsproj(`<PackageReference Include="Microsoft.Azure.Workflows.Sdk" Version="@(SdkVersion)" />`)
-    );
+    mocks.readFile.mockResolvedValue(makeCsproj(`<PackageReference Include="Microsoft.Azure.Workflows.Sdk" Version="@(SdkVersion)" />`));
 
     const result = await resolveSdkFromProject(projectPath);
 
@@ -191,9 +181,7 @@ describe('resolveSdkFromProject', () => {
   });
 
   it('returns undefined when Version attribute is empty', async () => {
-    mocks.readFile.mockResolvedValue(
-      makeCsproj(`<PackageReference Include="Microsoft.Azure.Workflows.Sdk" Version="" />`)
-    );
+    mocks.readFile.mockResolvedValue(makeCsproj(`<PackageReference Include="Microsoft.Azure.Workflows.Sdk" Version="" />`));
 
     const result = await resolveSdkFromProject(projectPath);
 

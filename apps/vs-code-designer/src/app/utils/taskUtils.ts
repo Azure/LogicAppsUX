@@ -99,9 +99,7 @@ export async function unzipLogicAppArtifacts(zipContent: Buffer | Buffer[], targ
  * @param commandIdentifier - The identifier of the command to check for preview status.
  */
 export function showPreviewWarning(commandIdentifier: string): void {
-  // Search for the command in the package.json "contributes.commands" array
   const targetCommand = packageJson.contributes.commands.find((command) => command.command === commandIdentifier) as any;
-  // If the command is found and it is marked as a preview, show a warning using its title
   if (targetCommand?.preview) {
     window.showInformationMessage(
       localize('previewFeatureWarning', 'The "{0}" command is a preview feature and might be subject to change.', targetCommand.title)

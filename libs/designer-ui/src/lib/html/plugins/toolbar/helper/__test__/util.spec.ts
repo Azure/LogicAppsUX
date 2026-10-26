@@ -1,3 +1,13 @@
+/**
+ * @vitest-environment jsdom
+ *
+ * These tests exercise DOMPurify-based HTML parsing (getDomFromHtmlEditorString ->
+ * isHtmlStringValueSafeForLexical -> cleanHtmlString). DOMPurify >= 3.4.11 is incompatible
+ * with happy-dom: sanitize() strips the outermost element (e.g. the wrapper <div>), so
+ * getDomFromHtmlEditorString().firstElementChild is null and querySelectorAll throws.
+ * jsdom (and real browsers) preserve the element structure, so we run this file under jsdom
+ * to match production behavior. See https://github.com/cure53/DOMPurify + happy-dom compat.
+ */
 import {
   cleanHtmlString,
   cleanStyleAttribute,

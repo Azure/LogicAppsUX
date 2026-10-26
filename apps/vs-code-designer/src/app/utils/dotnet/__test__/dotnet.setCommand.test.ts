@@ -28,11 +28,12 @@ vi.mock('../../vsCodeConfig/settings', () => ({
   getGlobalSetting: vi.fn(),
   updateGlobalSetting: vi.fn(),
   updateWorkspaceSetting: vi.fn(),
+  removeSharedSetting: vi.fn(),
 }));
 
 vi.mock('../../workspace', () => ({
   findFiles: vi.fn().mockResolvedValue([]),
-  getWorkspaceLogicAppFolders: vi.fn(),
+  getWorkspaceLogicAppRoots: vi.fn(),
 }));
 
 vi.mock('../../funcCoreTools/cpUtils', () => ({
@@ -61,8 +62,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as semver from 'semver';
 import { setDotNetCommand, getDotNetCommand, getLocalDotNetVersionFromBinaries } from '../dotnet';
-import { getGlobalSetting, updateGlobalSetting, updateWorkspaceSetting } from '../../vsCodeConfig/settings';
-import { getWorkspaceLogicAppFolders } from '../../workspace';
+import { getGlobalSetting, updateGlobalSetting, removeSharedSetting } from '../../vsCodeConfig/settings';
+import { getWorkspaceLogicAppRoots } from '../../workspace';
 
 const BIN_ROOT = '/usr/local/azurelogicapps/dependencies';
 const DOTNET_DIR = path.join(BIN_ROOT, 'DotNetSDK');
@@ -76,7 +77,7 @@ describe('dotnet command resolution', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(getWorkspaceLogicAppFolders).mockResolvedValue([]);
+    vi.mocked(getWorkspaceLogicAppRoots).mockResolvedValue([]);
   });
 
   afterEach(() => {
@@ -92,7 +93,7 @@ describe('dotnet command resolution', () => {
       await setDotNetCommand();
 
       expect(updateGlobalSetting).toHaveBeenCalledWith('dotNetBinaryPath', 'dotnet');
-      expect(getWorkspaceLogicAppFolders).not.toHaveBeenCalled();
+      expect(getWorkspaceLogicAppRoots).not.toHaveBeenCalled();
       expect(fs.existsSync).not.toHaveBeenCalled();
     });
 
@@ -104,71 +105,74 @@ describe('dotnet command resolution', () => {
 
       expect(updateGlobalSetting).toHaveBeenCalledWith('dotNetBinaryPath', 'dotnet');
       expect(fs.chmodSync).not.toHaveBeenCalled();
-      expect(getWorkspaceLogicAppFolders).not.toHaveBeenCalled();
+      expect(getWorkspaceLogicAppRoots).not.toHaveBeenCalled();
     });
 
     it('writes <dotNetBinariesPath>/dotnet.exe on Windows and updates terminal.integrated.env.windows for each workspace', async () => {
       setPlatform(Platform.windows as NodeJS.Platform);
       vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT);
       vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(getWorkspaceLogicAppFolders).mockResolvedValue(['C:/projects/logic-app']);
+      vi.mocked(getWorkspaceLogicAppRoots).mockResolvedValue(['C:/projects/logic-app']);
 
       await setDotNetCommand();
 
       expect(updateGlobalSetting).toHaveBeenCalledWith('dotNetBinaryPath', path.join(DOTNET_DIR, 'dotnet.exe'));
       expect(fs.chmodSync).toHaveBeenCalledWith(DOTNET_DIR, 0o777);
-      expect(updateWorkspaceSetting).toHaveBeenCalledWith(
+      expect(updateGlobalSetting).toHaveBeenCalledWith(
         'integrated.env.windows',
         expect.objectContaining({ PATH: expect.stringContaining(DOTNET_DIR) }),
-        'C:/projects/logic-app',
         'terminal'
       );
-      expect(updateWorkspaceSetting).toHaveBeenCalledWith('dotNetCliPaths', [DOTNET_DIR], 'C:/projects/logic-app', 'omnisharp');
+      expect(updateGlobalSetting).toHaveBeenCalledWith('dotNetCliPaths', [DOTNET_DIR], 'omnisharp');
+      expect(removeSharedSetting).toHaveBeenCalledWith('integrated.env.windows', 'terminal');
+      expect(removeSharedSetting).toHaveBeenCalledWith('dotNetCliPaths', 'omnisharp');
     });
 
     it('writes <dotNetBinariesPath>/dotnet on Linux and updates terminal.integrated.env.linux', async () => {
       setPlatform(Platform.linux as NodeJS.Platform);
       vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT);
       vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(getWorkspaceLogicAppFolders).mockResolvedValue(['/home/me/logic-app']);
+      vi.mocked(getWorkspaceLogicAppRoots).mockResolvedValue(['/home/me/logic-app']);
 
       await setDotNetCommand();
 
       expect(updateGlobalSetting).toHaveBeenCalledWith('dotNetBinaryPath', path.join(DOTNET_DIR, 'dotnet'));
-      expect(updateWorkspaceSetting).toHaveBeenCalledWith(
+      expect(updateGlobalSetting).toHaveBeenCalledWith(
         'integrated.env.linux',
         expect.objectContaining({ PATH: expect.stringContaining(DOTNET_DIR) }),
-        '/home/me/logic-app',
         'terminal'
       );
-      expect(updateWorkspaceSetting).toHaveBeenCalledWith('dotNetCliPaths', [DOTNET_DIR], '/home/me/logic-app', 'omnisharp');
+      expect(updateGlobalSetting).toHaveBeenCalledWith('dotNetCliPaths', [DOTNET_DIR], 'omnisharp');
+      expect(removeSharedSetting).toHaveBeenCalledWith('integrated.env.linux', 'terminal');
+      expect(removeSharedSetting).toHaveBeenCalledWith('dotNetCliPaths', 'omnisharp');
     });
 
     it('writes <dotNetBinariesPath>/dotnet on macOS and updates terminal.integrated.env.osx', async () => {
       setPlatform(Platform.mac as NodeJS.Platform);
       vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT);
       vi.mocked(fs.existsSync).mockReturnValue(true);
-      vi.mocked(getWorkspaceLogicAppFolders).mockResolvedValue(['/Users/me/logic-app']);
+      vi.mocked(getWorkspaceLogicAppRoots).mockResolvedValue(['/Users/me/logic-app']);
 
       await setDotNetCommand();
 
       expect(updateGlobalSetting).toHaveBeenCalledWith('dotNetBinaryPath', path.join(DOTNET_DIR, 'dotnet'));
-      expect(updateWorkspaceSetting).toHaveBeenCalledWith(
+      expect(updateGlobalSetting).toHaveBeenCalledWith(
         'integrated.env.osx',
         expect.objectContaining({ PATH: expect.stringContaining(DOTNET_DIR) }),
-        '/Users/me/logic-app',
         'terminal'
       );
-      expect(updateWorkspaceSetting).toHaveBeenCalledWith('dotNetCliPaths', [DOTNET_DIR], '/Users/me/logic-app', 'omnisharp');
+      expect(updateGlobalSetting).toHaveBeenCalledWith('dotNetCliPaths', [DOTNET_DIR], 'omnisharp');
+      expect(removeSharedSetting).toHaveBeenCalledWith('integrated.env.osx', 'terminal');
+      expect(removeSharedSetting).toHaveBeenCalledWith('dotNetCliPaths', 'omnisharp');
     });
 
-    it('still writes the global setting when getWorkspaceLogicAppFolders throws', async () => {
+    it('still writes the global setting when getWorkspaceLogicAppRoots throws', async () => {
       setPlatform(Platform.linux as NodeJS.Platform);
       const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
       vi.mocked(getGlobalSetting).mockReturnValue(BIN_ROOT);
       vi.mocked(fs.existsSync).mockReturnValue(true);
       const error = new Error('boom');
-      vi.mocked(getWorkspaceLogicAppFolders).mockRejectedValue(error);
+      vi.mocked(getWorkspaceLogicAppRoots).mockRejectedValue(error);
 
       await setDotNetCommand();
 

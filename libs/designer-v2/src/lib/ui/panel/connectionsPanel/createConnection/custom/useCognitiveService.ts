@@ -15,6 +15,7 @@ import {
   listAllFoundryAgentsViaProxy,
   listFoundryAgentVersionsViaProxy,
   listFoundryModelsViaProxy,
+  ResourceService,
 } from '@microsoft/logic-apps-shared';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSelectedConnection } from '../../../../../core/state/connection/connectionSelector';
@@ -30,6 +31,7 @@ const queryOpts = {
 export const queryKeys = {
   allCognitiveServiceAccounts: 'allCognitiveServiceAccounts',
   allCognitiveServiceAccountsDeployments: 'allCognitiveServiceAccountsDeployments',
+  availableModelsForAccount: 'availableModelsForAccount',
   allSessionPoolAccounts: 'allSessionPoolAccounts',
   allBuiltInRoleDefinitions: 'allBuiltInRoleDefinitions',
   allAPIMServiceAccounts: 'allAPIMServiceAccounts',
@@ -139,6 +141,40 @@ export const useCognitiveServiceAccountDeploymentsForNode = (nodeId: string, con
   );
 };
 
+export const getAvailableModelsForAccount = async (serviceAccountId: string | undefined): Promise<any[]> => {
+  if (!serviceAccountId) {
+    return [];
+  }
+  const queryClient = getReactQueryClient();
+  return queryClient.fetchQuery([queryKeys.availableModelsForAccount, { serviceAccountId }], async () => {
+    return (await CognitiveServiceService().fetchAvailableModelsForAccount(serviceAccountId)) ?? [];
+  });
+};
+
+export const getAvailableModelsForConnection = async (connection: Connection): Promise<any[]> => {
+  const resourceId = connection?.properties?.connectionParameters?.cognitiveServiceAccountId?.metadata?.value;
+  const isFoundryServiceConnection = foundryServiceConnectionRegex.test(resourceId ?? '');
+  const serviceAccountId = getServiceAccountId(resourceId, isFoundryServiceConnection);
+  return getAvailableModelsForAccount(serviceAccountId);
+};
+
+export const useAvailableModelsForAccount = (serviceAccountId: string | undefined, enabled = true) => {
+  return useQuery(
+    [queryKeys.availableModelsForAccount, { serviceAccountId }],
+    async () => {
+      if (serviceAccountId) {
+        return await CognitiveServiceService().fetchAvailableModelsForAccount(serviceAccountId);
+      }
+
+      return [];
+    },
+    {
+      ...queryOpts,
+      enabled: !!serviceAccountId && enabled,
+    }
+  );
+};
+
 export const useAllCognitiveServiceProjects = (subscriptionId: string, enabled = true) => {
   return useQuery(
     [queryKeys.allCognitiveServiceAccounts, { subscriptionId }],
@@ -179,6 +215,39 @@ export const useAllBuiltInRoleDefinitions = () => {
     {
       ...queryOpts,
       retryOnMount: true,
+    }
+  );
+};
+
+export interface CosmosDbAccount {
+  id: string;
+  name: string;
+  resourceGroup: string;
+  subscriptionId: string;
+  endpoint: string;
+}
+export const useAllCosmosDbServiceAccounts = (subscriptionId: string, enabled = true) => {
+  return useQuery(
+    ['allCosmosDbServiceAccounts', { subscriptionId }],
+    async (): Promise<CosmosDbAccount[]> => {
+      const allCosmosDbServiceAccounts = await ResourceService().listResources(
+        subscriptionId,
+        `resources | where type =~ 'Microsoft.DocumentDB/databaseAccounts' | where properties.provisioningState =~ 'Succeeded' | where array_length(todynamic(properties.capabilities)) > 0 | extend capabilities = tostring(properties.capabilities) | where capabilities contains 'EnableNoSQLVectorSearch'`
+      );
+      return (allCosmosDbServiceAccounts ?? []).map((account: any) => ({
+        id: account.id,
+        name: account.name,
+        resourceGroup: account.resourceGroup,
+        subscriptionId,
+        endpoint: account.properties.documentEndpoint,
+      }));
+    },
+    {
+      ...queryOpts,
+      retryOnMount: true,
+      enabled: !!subscriptionId && enabled,
+      refetchOnMount: true,
+      refetchOnReconnect: true,
     }
   );
 };

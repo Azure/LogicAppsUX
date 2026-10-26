@@ -10,7 +10,6 @@ import { Validation } from '../app/export/validation/validation';
 import { WorkflowsSelection } from '../app/export/workflowsSelection/workflowsSelection';
 import { OverviewApp } from '../app/overview/app';
 import { ReviewApp } from '../app/review';
-import { UnitTestResults } from '../app/unitTest';
 import {
   CreateWorkspace,
   CreateWorkspaceFromPackage,
@@ -38,7 +37,6 @@ export const Router: React.FC = () => {
         <Route path={`/${RouteName.overview}`} element={<OverviewApp />} />
         <Route path={`/${RouteName.dataMapper}`} element={<DataMapperApp />} />
         <Route path={`/${RouteName.designer}`} element={<DesignerApp />} />
-        <Route path={`/${RouteName.unitTest}`} element={<UnitTestResults />} />
         <Route path={`/${RouteName.languageServer}`} element={<LanguageServerConnectionView />}>
           <Route path={`${RouteName.connectionView}`} element={<LanguageServerConnectionView />} />
         </Route>

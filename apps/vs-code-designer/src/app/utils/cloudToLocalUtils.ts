@@ -5,11 +5,12 @@ import type {
   AzureConnectorDetails,
   ILocalSettingsJson,
 } from '@microsoft/vscode-extension-logic-apps';
-import { getAzureConnectorDetailsForLocalProject } from './codeless/common';
+import { getAzureConnectorDetailsForLocalProject } from '../commands/azureConnectors/azureConnectorDetails';
 import { getConnectionsAndSettingsToUpdate, getConnectionsJson, saveConnectionReferences } from './codeless/connection';
 import { extend, isEmptyString } from '@microsoft/logic-apps-shared';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
+import { setPostExtractCache, getPostExtractCache, clearPostExtractCache } from '../state/cloudToLocal';
 import { getParametersJson } from './codeless/parameter';
 import { areAllConnectionsParameterized, parameterizeConnection } from './codeless/parameterizer';
 import * as path from 'path';
@@ -21,7 +22,6 @@ import {
   funcIgnoreFileName,
   hostFileName,
   localSettingsFileName,
-  parameterizeConnectionsInProjectLoadSetting,
   parametersFileName,
   vscodeFolderName,
 } from '../../constants';
@@ -29,19 +29,12 @@ import { addNewFileInCSharpProject } from './codeless/updateBuildFile';
 import { writeFormattedJson } from './fs';
 import { Uri, window, workspace } from 'vscode';
 import { unzipLogicAppArtifacts } from './taskUtils';
-import { getGlobalSetting } from './vsCodeConfig/settings';
+import { shouldParameterizeConnections } from './vsCodeConfig/settings';
 import { getLocalSettingsJson } from './appSettings/localSettings';
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
-import { getContainingWorkspace } from './workspace';
+import { getContainingWorkspaceFolder } from './workspace';
 import { getExtensionAssetPath } from './extensionAssets';
 import AdmZip from 'adm-zip';
-
-interface ICachedTextDocument {
-  projectPath: string;
-  textDocumentPath: string;
-}
-
-const cacheKey = 'azLAPostExtractReadMe';
 
 export async function extractConnectionDetails(connections: any): Promise<any> {
   const SUBSCRIPTION_INDEX = 2;
@@ -103,7 +96,8 @@ export async function extractConnectionSettings(context: IFunctionWizardContext)
 
       return settings;
     } catch (error) {
-      context.telemetry.properties.error = error.message;
+      context.telemetry.properties.result = 'Failed';
+      context.telemetry.properties.errorMessage = error.message;
       console.error('Error encountered while extracting connection details:', error);
     }
   }
@@ -121,7 +115,7 @@ export async function getParametersArtifactData(projectRoot: string): Promise<st
   return '';
 }
 
-export async function changeAuthTypeToRaw(context: IFunctionWizardContext, parameterizeConnectionsSetting: any): Promise<any> {
+export async function changeAuthTypeToRaw(context: IFunctionWizardContext): Promise<any> {
   const logicAppPath = path.join(context.workspacePath, context.logicAppName || 'LogicApp');
   const connectionsPath = path.join(logicAppPath, connectionsFileName);
   const parametersPath = path.join(logicAppPath, parametersFileName);
@@ -136,7 +130,7 @@ export async function changeAuthTypeToRaw(context: IFunctionWizardContext, param
       }
       connectionsData = JSON.parse(connectionsJson);
       parametersJson = await getParametersJson(logicAppPath);
-      if (parameterizeConnectionsSetting) {
+      if (shouldParameterizeConnections()) {
         for (const referenceKey of Object.keys(connectionsData.managedApiConnections)) {
           parametersJson[`${referenceKey}-Authentication`].value = {
             type: 'Raw',
@@ -168,7 +162,8 @@ export async function changeAuthTypeToRaw(context: IFunctionWizardContext, param
         }
       }
     } catch (error) {
-      context.telemetry.properties.error = error.message;
+      context.telemetry.properties.result = 'Failed';
+      context.telemetry.properties.errorMessage = error.message;
       console.error(error);
     }
     await writeFormattedJson(connectionsPath, connectionsData);
@@ -212,7 +207,8 @@ export async function updateConnectionKeys(context: IFunctionWizardContext): Pro
         error.message ?? error
       );
       ext.outputChannel.appendLog(errorMessage);
-      context.telemetry.properties.error = errorMessage;
+      context.telemetry.properties.result = 'Failed';
+      context.telemetry.properties.errorMessage = errorMessage;
       throw new Error(errorMessage);
     }
   }
@@ -236,7 +232,7 @@ export async function parameterizeConnectionsDuringImport(
       const parametersJson = await getParametersJson(logicAppPath);
 
       if (areAllConnectionsParameterized(connectionsData)) {
-        window.showInformationMessage(localize('connectionsAlreadyParameterized', 'Connections are already parameterized.'));
+        ext.outputChannel.appendLog(localize('connectionsAlreadyParameterized', 'Connections are already parameterized.'));
         return;
       }
 
@@ -258,7 +254,7 @@ export async function parameterizeConnectionsDuringImport(
 
       if (parametersJson && Object.keys(parametersJson).length) {
         await writeFormattedJson(parametersFilePath, parametersJson);
-        if (!parametersFileExists && (await isCSharpProject(context, logicAppPath))) {
+        if (!parametersFileExists && (await isCSharpProject(logicAppPath))) {
           await addNewFileInCSharpProject(context, parametersFileName, logicAppPath);
         }
       } else if (parametersFileExists) {
@@ -273,7 +269,8 @@ export async function parameterizeConnectionsDuringImport(
         error.message ?? error
       );
       ext.outputChannel.appendLog(errorMessage);
-      context.telemetry.properties.error = errorMessage;
+      context.telemetry.properties.result = 'Failed';
+      context.telemetry.properties.errorMessage = errorMessage;
       throw new Error(errorMessage);
     }
   }
@@ -336,14 +333,14 @@ export async function unzipLogicAppPackageIntoWorkspace(context: IFunctionWizard
     const readMeContent = fse.readFileSync(readMePath, 'utf8');
     fse.writeFileSync(path.join(context.projectPath, 'README.md'), readMeContent);
   } catch (error) {
-    context.telemetry.properties.error = error.message;
+    context.telemetry.properties.result = 'Failed';
+    context.telemetry.properties.errorMessage = error.message;
     console.error(`Failed to extract contents of package to ${context.projectPath}`, error);
   }
 }
 
 export async function logicAppPackageProcessing(context: IFunctionWizardContext): Promise<void> {
   const localSettingsPath = path.join(context.projectPath, localSettingsFileName);
-  const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
 
   let appSettings: ILocalSettingsJson = {};
   let zipSettings: ILocalSettingsJson = {};
@@ -353,7 +350,7 @@ export async function logicAppPackageProcessing(context: IFunctionWizardContext)
     const connectionsString = await getConnectionsJson(context.projectPath);
 
     // merge the app settings from local.settings.json and the settings from the zip file
-    appSettings = await getLocalSettingsJson(context, localSettingsPath, false);
+    appSettings = await getLocalSettingsJson(context, context.projectPath, false);
     const zipEntries = await getPackageEntries(context.packagePath);
     const zipSettingsBuffer = zipEntries.find((entry) => entry.entryName === localSettingsFileName);
     if (zipSettingsBuffer) {
@@ -371,29 +368,29 @@ export async function logicAppPackageProcessing(context: IFunctionWizardContext)
     if (Object.keys(connectionsData).length && connectionsData.managedApiConnections) {
       /** Extract details from connections and add to local.settings.json
        * independent of the parameterizeConnectionsInProject setting */
-      appSettings = await getLocalSettingsJson(context, localSettingsPath, false);
+      appSettings = await getLocalSettingsJson(context, context.projectPath, false);
       await writeFormattedJson(localSettingsPath, extend(appSettings, await extractConnectionSettings(context)));
 
-      if (parameterizeConnectionsSetting) {
+      if (shouldParameterizeConnections()) {
         await parameterizeConnectionsDuringImport(context as IFunctionWizardContext, appSettings.Values);
       }
 
-      await changeAuthTypeToRaw(context, parameterizeConnectionsSetting);
+      await changeAuthTypeToRaw(context);
       await updateConnectionKeys(context);
       await cleanLocalSettings(context);
     }
 
     // OpenFolder will restart the extension host so we will cache README to open on next activation
     const readMePath = path.join(context.projectPath, 'README.md');
-    const postExtractCache: ICachedTextDocument = { projectPath: context.projectPath, textDocumentPath: readMePath };
-    ext.context.globalState.update(cacheKey, postExtractCache);
+    setPostExtractCache(context.projectPath, readMePath);
     // Delete cached information if the extension host was not restarted after 5 seconds
     setTimeout(() => {
-      ext.context.globalState.update(cacheKey, undefined);
+      clearPostExtractCache();
     }, 5 * 1000);
-    runPostExtractSteps(postExtractCache);
+    runPostExtractSteps({ projectPath: context.projectPath, textDocumentPath: readMePath });
   } catch (error) {
-    context.telemetry.properties.error = error.message;
+    context.telemetry.properties.result = 'Failed';
+    context.telemetry.properties.errorMessage = error.message;
   }
 }
 
@@ -403,26 +400,23 @@ export async function getPackageEntries(zipFilePath: string) {
 }
 
 export function runPostExtractStepsFromCache(): void {
-  const cachedDocument: ICachedTextDocument | undefined = ext.context.globalState.get(cacheKey);
+  const cachedDocument = getPostExtractCache();
   if (cachedDocument) {
     try {
       runPostExtractSteps(cachedDocument);
     } finally {
-      ext.context.globalState.update(cacheKey, undefined);
+      clearPostExtractCache();
     }
   }
 }
 
-function runPostExtractSteps(cache: ICachedTextDocument): void {
+function runPostExtractSteps(cache: { projectPath: string; textDocumentPath: string }): void {
   callWithTelemetryAndErrorHandling('postExtractPackage', async (context: IActionContext) => {
     context.telemetry.suppressIfSuccessful = true;
 
-    if (getContainingWorkspace(cache.projectPath)) {
-      if (await fse.pathExists(cache.textDocumentPath)) {
-        window.showTextDocument(await workspace.openTextDocument(Uri.file(cache.textDocumentPath)));
-      }
+    if (getContainingWorkspaceFolder(cache.projectPath) && (await fse.pathExists(cache.textDocumentPath))) {
+      window.showTextDocument(await workspace.openTextDocument(Uri.file(cache.textDocumentPath)));
     }
-    context.telemetry.properties.finishedImportingProject = 'Finished importing project';
-    window.showInformationMessage(localize('finishedImporting', 'Finished importing project.'));
+    ext.outputChannel.appendLog(localize('finishedImporting', 'Successfully imported project.'));
   });
 }

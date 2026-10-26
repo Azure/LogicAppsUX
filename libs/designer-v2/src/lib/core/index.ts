@@ -8,6 +8,7 @@ export { mcpStore } from './state/mcp/store';
 export { templateStore } from './state/templates/store';
 export {
   useConnectionMapping,
+  useNodeConnectionMapping,
   useConnectionRefs,
   useIsOperationMissingConnection,
 } from './state/connection/connectionSelector';
@@ -30,6 +31,7 @@ export {
   useIsWorkflowDirty,
   useNodeDisplayName,
   useNodeMetadata,
+  useIsWorkflowEmpty,
 } from './state/workflow/workflowSelectors';
 export {
   useIsWorkflowParametersDirty,
@@ -40,7 +42,6 @@ export { useAllSettingsValidationErrors } from './state/setting/settingSelector'
 export { useAllConnectionErrors } from './state/operation/operationSelector';
 export {
   serializeWorkflow,
-  serializeUnitTestDefinition,
   getNodeOutputOperations,
   parseWorkflowParameterValue,
 } from './actions/bjsworkflow/serializer';
@@ -99,7 +100,6 @@ export { downloadDocumentAsFile, getDocumentationMetadata } from './utils/docume
 export { getTriggerNodeId } from './utils/graph';
 export { updateParameterValidation } from './state/operation/operationMetadataSlice';
 export { updateWorkflowParameters } from './actions/bjsworkflow/initialize';
-export { useAssertionsValidationErrors } from './state/unitTest/unitTestSelectors';
 export { convertVariableTypeToSwaggerType } from './utils/variables';
 export {
   getBrandColorFromManifest,
@@ -107,7 +107,7 @@ export {
 } from './utils/card';
 export { addOperation } from './actions/bjsworkflow/add';
 export { addConnectorAsOperation } from './actions/bjsworkflow/agent';
-export { updateNodeConnection } from './actions/bjsworkflow/connections';
+export { updateNodeConnection, updateNodeConnectionExpression } from './actions/bjsworkflow/connections';
 export { storeStateToUndoRedoHistory, onUndoClick, onRedoClick } from './actions/bjsworkflow/undoRedo';
 export { initializeNotes } from './state/notes/notesSlice';
 export { useCanUndo, useCanRedo } from './state/undoRedo/undoRedoSelectors';

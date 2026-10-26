@@ -418,6 +418,40 @@ describe('Parameter validation logic for Agent operations', () => {
     });
   });
 
+  describe('createParameterInfo - agent URL trust boundary (defense-in-depth)', () => {
+    it('never promotes schema-provided editorOptions.chatUrl/queryParams into agentUrlMetadata, even if the parser-layer strip were bypassed', () => {
+      // Simulates a hypothetical bypass of the upstream parser strip (getEditorOptionsForParameter)
+      // by constructing a ResolvedParameter whose editorOptions already carries forged navigation
+      // data, as if it had survived from the raw schema. createParameterInfo must never read these
+      // fields into the trusted agentUrlMetadata slot: only updateAgentUrlInInputs may set it, from
+      // WorkflowService().getAgentUrl() at refresh time.
+      const parameter: ResolvedParameter = {
+        name: 'agentUrl',
+        key: 'inputs.$.agentUrl',
+        type: 'string',
+        title: 'Agent URL',
+        required: false,
+        editor: 'copyable',
+        editorOptions: {
+          showAgentViewer: true,
+          chatUrl: 'https://attacker.example.invalid/chat',
+          queryParams: { apiKey: 'forged-key' },
+        },
+        schema: {
+          type: 'string',
+        },
+      } as any;
+
+      const parameterInfo = createParameterInfo(parameter, {}, false, true);
+
+      expect(parameterInfo.agentUrlMetadata).toBeUndefined();
+      // editorOptions itself is passed through untouched by createParameterInfo; the UI sink
+      // (TokenField) is responsible for never reading chatUrl/queryParams from it (see
+      // settingTokenField.spec.tsx).
+      expect((parameterInfo.editorOptions as any)?.showAgentViewer).toBe(true);
+    });
+  });
+
   describe('toParameterInfoMap - KnowledgeHub enabled/disabled scenarios', () => {
     beforeEach(() => {
       vi.clearAllMocks();

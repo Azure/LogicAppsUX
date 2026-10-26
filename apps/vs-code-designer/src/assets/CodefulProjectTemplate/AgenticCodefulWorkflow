@@ -58,7 +58,7 @@ namespace <%= logicAppNamespace %>
 
             agent.AddTool(toolContext =>
                 {
-                    return WorkflowActions.ManagedConnectors.Msnweather("msnweather").CurrentWeather(
+                    return WorkflowActions.Managed.Msnweather("msnweather").CurrentWeather(
                         location: () => toolContext.Parameters.Location,
                         units: () => unitsInput.Imperial
                     );
@@ -68,7 +68,7 @@ namespace <%= logicAppNamespace %>
 
             agent.AddTool(toolContext =>
                 {
-                    return WorkflowActions.ManagedConnectors.Office365("outlook").SendEmailV2(
+                    return WorkflowActions.Managed.Office365("outlook").SendEmail(
                         emailMessageto: () => toolContext.Parameters.Recipient,
                         emailMessagesubject: () => toolContext.Parameters.Subject,
                         emailMessagebody: () => toolContext.Parameters.Body);

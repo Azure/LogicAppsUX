@@ -13,6 +13,20 @@
         "kind": "build",
         "isDefault": true
       }
+    },
+    {
+      "label": "E2E: compile VS Code UI tests",
+      "type": "shell",
+      "command": "pnpm --dir apps/vs-code-designer run build:ui",
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "E2E: build extension and compile VS Code UI tests",
+      "type": "shell",
+      "command": "pnpm run build:extension && pnpm --dir apps/vs-code-designer run build:ui",
+      "problemMatcher": [],
+      "group": "build"
     }
   ]
 }

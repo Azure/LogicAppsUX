@@ -167,6 +167,7 @@ export function ChatWindow(props: ChatWindowProps) {
     onRenameSession,
     storageConfig,
     initialContextId,
+    initialMessages,
     mode = 'light',
   } = props;
 
@@ -188,6 +189,7 @@ export function ChatWindow(props: ChatWindowProps) {
     oboUserToken,
     storageConfig,
     initialContextId,
+    initialMessages,
     sessionId: props.sessionId, // Pass through sessionId for multi-session mode
   });
 

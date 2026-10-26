@@ -24,34 +24,9 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
           <span
             className="fui-Button__icon rywnvv2"
           >
-            <svg
-              aria-hidden={true}
-              className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-              fill="currentColor"
-              height="1em"
-              viewBox="0 0 20 20"
-              width="1em"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M12.27 15.8a.75.75 0 0 1-1.06-.03l-5-5.25a.75.75 0 0 1 0-1.04l5-5.25a.75.75 0 1 1 1.08 1.04L7.8 10l4.5 4.73c.29.3.28.78-.02 1.06Z"
-                fill="currentColor"
-              />
-            </svg>
-            <svg
-              aria-hidden={true}
-              className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-              fill="currentColor"
-              height="1em"
-              viewBox="0 0 20 20"
-              width="1em"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M12.35 15.85a.5.5 0 0 1-.7 0L6.16 10.4a.55.55 0 0 1 0-.78l5.49-5.46a.5.5 0 1 1 .7.7L7.2 10l5.16 5.15c.2.2.2.5 0 .7Z"
-                fill="currentColor"
-              />
-            </svg>
+            <span
+              data-testid="fluent-icon"
+            />
           </span>
         </button>
         <div
@@ -77,34 +52,9 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
           <span
             className="fui-Button__icon rywnvv2"
           >
-            <svg
-              aria-hidden={true}
-              className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-              fill="currentColor"
-              height="1em"
-              viewBox="0 0 20 20"
-              width="1em"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M7.73 4.2a.75.75 0 0 1 1.06.03l5 5.25c.28.3.28.75 0 1.04l-5 5.25a.75.75 0 1 1-1.08-1.04L12.2 10l-4.5-4.73a.75.75 0 0 1 .02-1.06Z"
-                fill="currentColor"
-              />
-            </svg>
-            <svg
-              aria-hidden={true}
-              className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-              fill="currentColor"
-              height="1em"
-              viewBox="0 0 20 20"
-              width="1em"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M7.65 4.15c.2-.2.5-.2.7 0l5.49 5.46c.21.22.21.57 0 .78l-5.49 5.46a.5.5 0 0 1-.7-.7L12.8 10 7.65 4.85a.5.5 0 0 1 0-.7Z"
-                fill="currentColor"
-              />
-            </svg>
+            <span
+              data-testid="fluent-icon"
+            />
           </span>
         </button>
       </div>
@@ -162,34 +112,9 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   <span
                     className="fui-Button__icon rywnvv2"
                   >
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
+                    <span
+                      data-testid="fluent-icon"
+                    />
                   </span>
                 </button>
               </div>
@@ -255,34 +180,9 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   <span
                     className="fui-Button__icon rywnvv2"
                   >
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M17 5.5A2.5 2.5 0 0 0 14.5 3h-9A2.5 2.5 0 0 0 3 5.5V6h14v-.5Zm0 4.1V7H3v7.5A2.5 2.5 0 0 0 5.5 17h4.1A5.5 5.5 0 0 1 17 9.6ZM14.5 19a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm-.5-6.5a.5.5 0 0 1 1 0V14h1a.5.5 0 0 1 0 1h-1.5a.5.5 0 0 1-.5-.5v-2Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M17 5.5A2.5 2.5 0 0 0 14.5 3h-9A2.5 2.5 0 0 0 3 5.5v9A2.5 2.5 0 0 0 5.5 17h4.1c-.16-.32-.3-.65-.4-1H5.5A1.5 1.5 0 0 1 4 14.5V7h12v2.2c.35.1.68.24 1 .4V5.5ZM5.5 4h9c.83 0 1.5.67 1.5 1.5V6H4v-.5C4 4.67 4.67 4 5.5 4Zm9 15a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm-.5-6.5a.5.5 0 0 1 1 0V14h1a.5.5 0 0 1 0 1h-1.5a.5.5 0 0 1-.5-.5v-2Z"
-                        fill="currentColor"
-                      />
-                    </svg>
+                    <span
+                      data-testid="fluent-icon"
+                    />
                   </span>
                 </button>
                 <button
@@ -298,34 +198,9 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   <span
                     className="fui-Button__icon rywnvv2"
                   >
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
+                    <span
+                      data-testid="fluent-icon"
+                    />
                   </span>
                 </button>
               </div>
@@ -391,34 +266,9 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   <span
                     className="fui-Button__icon rywnvv2"
                   >
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M17 5.5A2.5 2.5 0 0 0 14.5 3h-9A2.5 2.5 0 0 0 3 5.5V6h14v-.5Zm0 4.1V7H3v7.5A2.5 2.5 0 0 0 5.5 17h4.1A5.5 5.5 0 0 1 17 9.6ZM14.5 19a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm-.5-6.5a.5.5 0 0 1 1 0V14h1a.5.5 0 0 1 0 1h-1.5a.5.5 0 0 1-.5-.5v-2Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M17 5.5A2.5 2.5 0 0 0 14.5 3h-9A2.5 2.5 0 0 0 3 5.5v9A2.5 2.5 0 0 0 5.5 17h4.1c-.16-.32-.3-.65-.4-1H5.5A1.5 1.5 0 0 1 4 14.5V7h12v2.2c.35.1.68.24 1 .4V5.5ZM5.5 4h9c.83 0 1.5.67 1.5 1.5V6H4v-.5C4 4.67 4.67 4 5.5 4Zm9 15a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm-.5-6.5a.5.5 0 0 1 1 0V14h1a.5.5 0 0 1 0 1h-1.5a.5.5 0 0 1-.5-.5v-2Z"
-                        fill="currentColor"
-                      />
-                    </svg>
+                    <span
+                      data-testid="fluent-icon"
+                    />
                   </span>
                 </button>
                 <button
@@ -434,34 +284,9 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   <span
                     className="fui-Button__icon rywnvv2"
                   >
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
+                    <span
+                      data-testid="fluent-icon"
+                    />
                   </span>
                 </button>
               </div>
@@ -527,34 +352,9 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   <span
                     className="fui-Button__icon rywnvv2"
                   >
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
+                    <span
+                      data-testid="fluent-icon"
+                    />
                   </span>
                 </button>
               </div>
@@ -620,34 +420,9 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   <span
                     className="fui-Button__icon rywnvv2"
                   >
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
+                    <span
+                      data-testid="fluent-icon"
+                    />
                   </span>
                 </button>
               </div>
@@ -709,34 +484,9 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
           <span
             className="fui-Button__icon rywnvv2"
           >
-            <svg
-              aria-hidden={true}
-              className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-              fill="currentColor"
-              height="1em"
-              viewBox="0 0 20 20"
-              width="1em"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M12.27 15.8a.75.75 0 0 1-1.06-.03l-5-5.25a.75.75 0 0 1 0-1.04l5-5.25a.75.75 0 1 1 1.08 1.04L7.8 10l4.5 4.73c.29.3.28.78-.02 1.06Z"
-                fill="currentColor"
-              />
-            </svg>
-            <svg
-              aria-hidden={true}
-              className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-              fill="currentColor"
-              height="1em"
-              viewBox="0 0 20 20"
-              width="1em"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M12.35 15.85a.5.5 0 0 1-.7 0L6.16 10.4a.55.55 0 0 1 0-.78l5.49-5.46a.5.5 0 1 1 .7.7L7.2 10l5.16 5.15c.2.2.2.5 0 .7Z"
-                fill="currentColor"
-              />
-            </svg>
+            <span
+              data-testid="fluent-icon"
+            />
           </span>
         </button>
         <div
@@ -762,34 +512,9 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
           <span
             className="fui-Button__icon rywnvv2"
           >
-            <svg
-              aria-hidden={true}
-              className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-              fill="currentColor"
-              height="1em"
-              viewBox="0 0 20 20"
-              width="1em"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M7.73 4.2a.75.75 0 0 1 1.06.03l5 5.25c.28.3.28.75 0 1.04l-5 5.25a.75.75 0 1 1-1.08-1.04L12.2 10l-4.5-4.73a.75.75 0 0 1 .02-1.06Z"
-                fill="currentColor"
-              />
-            </svg>
-            <svg
-              aria-hidden={true}
-              className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-              fill="currentColor"
-              height="1em"
-              viewBox="0 0 20 20"
-              width="1em"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M7.65 4.15c.2-.2.5-.2.7 0l5.49 5.46c.21.22.21.57 0 .78l-5.49 5.46a.5.5 0 0 1-.7-.7L12.8 10 7.65 4.85a.5.5 0 0 1 0-.7Z"
-                fill="currentColor"
-              />
-            </svg>
+            <span
+              data-testid="fluent-icon"
+            />
           </span>
         </button>
       </div>
@@ -847,34 +572,9 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   <span
                     className="fui-Button__icon rywnvv2"
                   >
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
+                    <span
+                      data-testid="fluent-icon"
+                    />
                   </span>
                 </button>
               </div>
@@ -940,34 +640,9 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   <span
                     className="fui-Button__icon rywnvv2"
                   >
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M17 5.5A2.5 2.5 0 0 0 14.5 3h-9A2.5 2.5 0 0 0 3 5.5V6h14v-.5Zm0 4.1V7H3v7.5A2.5 2.5 0 0 0 5.5 17h4.1A5.5 5.5 0 0 1 17 9.6ZM14.5 19a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm-.5-6.5a.5.5 0 0 1 1 0V14h1a.5.5 0 0 1 0 1h-1.5a.5.5 0 0 1-.5-.5v-2Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M17 5.5A2.5 2.5 0 0 0 14.5 3h-9A2.5 2.5 0 0 0 3 5.5v9A2.5 2.5 0 0 0 5.5 17h4.1c-.16-.32-.3-.65-.4-1H5.5A1.5 1.5 0 0 1 4 14.5V7h12v2.2c.35.1.68.24 1 .4V5.5ZM5.5 4h9c.83 0 1.5.67 1.5 1.5V6H4v-.5C4 4.67 4.67 4 5.5 4Zm9 15a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm-.5-6.5a.5.5 0 0 1 1 0V14h1a.5.5 0 0 1 0 1h-1.5a.5.5 0 0 1-.5-.5v-2Z"
-                        fill="currentColor"
-                      />
-                    </svg>
+                    <span
+                      data-testid="fluent-icon"
+                    />
                   </span>
                 </button>
                 <button
@@ -983,34 +658,9 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   <span
                     className="fui-Button__icon rywnvv2"
                   >
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
+                    <span
+                      data-testid="fluent-icon"
+                    />
                   </span>
                 </button>
               </div>
@@ -1076,34 +726,9 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   <span
                     className="fui-Button__icon rywnvv2"
                   >
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M17 5.5A2.5 2.5 0 0 0 14.5 3h-9A2.5 2.5 0 0 0 3 5.5V6h14v-.5Zm0 4.1V7H3v7.5A2.5 2.5 0 0 0 5.5 17h4.1A5.5 5.5 0 0 1 17 9.6ZM14.5 19a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm-.5-6.5a.5.5 0 0 1 1 0V14h1a.5.5 0 0 1 0 1h-1.5a.5.5 0 0 1-.5-.5v-2Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M17 5.5A2.5 2.5 0 0 0 14.5 3h-9A2.5 2.5 0 0 0 3 5.5v9A2.5 2.5 0 0 0 5.5 17h4.1c-.16-.32-.3-.65-.4-1H5.5A1.5 1.5 0 0 1 4 14.5V7h12v2.2c.35.1.68.24 1 .4V5.5ZM5.5 4h9c.83 0 1.5.67 1.5 1.5V6H4v-.5C4 4.67 4.67 4 5.5 4Zm9 15a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm-.5-6.5a.5.5 0 0 1 1 0V14h1a.5.5 0 0 1 0 1h-1.5a.5.5 0 0 1-.5-.5v-2Z"
-                        fill="currentColor"
-                      />
-                    </svg>
+                    <span
+                      data-testid="fluent-icon"
+                    />
                   </span>
                 </button>
                 <button
@@ -1119,34 +744,9 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   <span
                     className="fui-Button__icon rywnvv2"
                   >
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
+                    <span
+                      data-testid="fluent-icon"
+                    />
                   </span>
                 </button>
               </div>
@@ -1212,34 +812,9 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   <span
                     className="fui-Button__icon rywnvv2"
                   >
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
+                    <span
+                      data-testid="fluent-icon"
+                    />
                   </span>
                 </button>
               </div>
@@ -1305,34 +880,9 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   <span
                     className="fui-Button__icon rywnvv2"
                   >
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
+                    <span
+                      data-testid="fluent-icon"
+                    />
                   </span>
                 </button>
               </div>
@@ -1398,34 +948,9 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   <span
                     className="fui-Button__icon rywnvv2"
                   >
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
+                    <span
+                      data-testid="fluent-icon"
+                    />
                   </span>
                 </button>
               </div>
@@ -1487,34 +1012,9 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
           <span
             className="fui-Button__icon rywnvv2"
           >
-            <svg
-              aria-hidden={true}
-              className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-              fill="currentColor"
-              height="1em"
-              viewBox="0 0 20 20"
-              width="1em"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M12.27 15.8a.75.75 0 0 1-1.06-.03l-5-5.25a.75.75 0 0 1 0-1.04l5-5.25a.75.75 0 1 1 1.08 1.04L7.8 10l4.5 4.73c.29.3.28.78-.02 1.06Z"
-                fill="currentColor"
-              />
-            </svg>
-            <svg
-              aria-hidden={true}
-              className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-              fill="currentColor"
-              height="1em"
-              viewBox="0 0 20 20"
-              width="1em"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M12.35 15.85a.5.5 0 0 1-.7 0L6.16 10.4a.55.55 0 0 1 0-.78l5.49-5.46a.5.5 0 1 1 .7.7L7.2 10l5.16 5.15c.2.2.2.5 0 .7Z"
-                fill="currentColor"
-              />
-            </svg>
+            <span
+              data-testid="fluent-icon"
+            />
           </span>
         </button>
         <div
@@ -1540,34 +1040,9 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
           <span
             className="fui-Button__icon rywnvv2"
           >
-            <svg
-              aria-hidden={true}
-              className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-              fill="currentColor"
-              height="1em"
-              viewBox="0 0 20 20"
-              width="1em"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M7.73 4.2a.75.75 0 0 1 1.06.03l5 5.25c.28.3.28.75 0 1.04l-5 5.25a.75.75 0 1 1-1.08-1.04L12.2 10l-4.5-4.73a.75.75 0 0 1 .02-1.06Z"
-                fill="currentColor"
-              />
-            </svg>
-            <svg
-              aria-hidden={true}
-              className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-              fill="currentColor"
-              height="1em"
-              viewBox="0 0 20 20"
-              width="1em"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M7.65 4.15c.2-.2.5-.2.7 0l5.49 5.46c.21.22.21.57 0 .78l-5.49 5.46a.5.5 0 0 1-.7-.7L12.8 10 7.65 4.85a.5.5 0 0 1 0-.7Z"
-                fill="currentColor"
-              />
-            </svg>
+            <span
+              data-testid="fluent-icon"
+            />
           </span>
         </button>
       </div>
@@ -1625,34 +1100,9 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   <span
                     className="fui-Button__icon rywnvv2"
                   >
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
+                    <span
+                      data-testid="fluent-icon"
+                    />
                   </span>
                 </button>
               </div>
@@ -1718,34 +1168,9 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   <span
                     className="fui-Button__icon rywnvv2"
                   >
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M17 5.5A2.5 2.5 0 0 0 14.5 3h-9A2.5 2.5 0 0 0 3 5.5V6h14v-.5Zm0 4.1V7H3v7.5A2.5 2.5 0 0 0 5.5 17h4.1A5.5 5.5 0 0 1 17 9.6ZM14.5 19a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm-.5-6.5a.5.5 0 0 1 1 0V14h1a.5.5 0 0 1 0 1h-1.5a.5.5 0 0 1-.5-.5v-2Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M17 5.5A2.5 2.5 0 0 0 14.5 3h-9A2.5 2.5 0 0 0 3 5.5v9A2.5 2.5 0 0 0 5.5 17h4.1c-.16-.32-.3-.65-.4-1H5.5A1.5 1.5 0 0 1 4 14.5V7h12v2.2c.35.1.68.24 1 .4V5.5ZM5.5 4h9c.83 0 1.5.67 1.5 1.5V6H4v-.5C4 4.67 4.67 4 5.5 4Zm9 15a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm-.5-6.5a.5.5 0 0 1 1 0V14h1a.5.5 0 0 1 0 1h-1.5a.5.5 0 0 1-.5-.5v-2Z"
-                        fill="currentColor"
-                      />
-                    </svg>
+                    <span
+                      data-testid="fluent-icon"
+                    />
                   </span>
                 </button>
                 <button
@@ -1761,34 +1186,9 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   <span
                     className="fui-Button__icon rywnvv2"
                   >
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
+                    <span
+                      data-testid="fluent-icon"
+                    />
                   </span>
                 </button>
               </div>
@@ -1854,34 +1254,9 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   <span
                     className="fui-Button__icon rywnvv2"
                   >
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M17 5.5A2.5 2.5 0 0 0 14.5 3h-9A2.5 2.5 0 0 0 3 5.5V6h14v-.5Zm0 4.1V7H3v7.5A2.5 2.5 0 0 0 5.5 17h4.1A5.5 5.5 0 0 1 17 9.6ZM14.5 19a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm-.5-6.5a.5.5 0 0 1 1 0V14h1a.5.5 0 0 1 0 1h-1.5a.5.5 0 0 1-.5-.5v-2Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M17 5.5A2.5 2.5 0 0 0 14.5 3h-9A2.5 2.5 0 0 0 3 5.5v9A2.5 2.5 0 0 0 5.5 17h4.1c-.16-.32-.3-.65-.4-1H5.5A1.5 1.5 0 0 1 4 14.5V7h12v2.2c.35.1.68.24 1 .4V5.5ZM5.5 4h9c.83 0 1.5.67 1.5 1.5V6H4v-.5C4 4.67 4.67 4 5.5 4Zm9 15a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm-.5-6.5a.5.5 0 0 1 1 0V14h1a.5.5 0 0 1 0 1h-1.5a.5.5 0 0 1-.5-.5v-2Z"
-                        fill="currentColor"
-                      />
-                    </svg>
+                    <span
+                      data-testid="fluent-icon"
+                    />
                   </span>
                 </button>
                 <button
@@ -1897,34 +1272,9 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   <span
                     className="fui-Button__icon rywnvv2"
                   >
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
+                    <span
+                      data-testid="fluent-icon"
+                    />
                   </span>
                 </button>
               </div>
@@ -1990,34 +1340,9 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   <span
                     className="fui-Button__icon rywnvv2"
                   >
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
+                    <span
+                      data-testid="fluent-icon"
+                    />
                   </span>
                 </button>
               </div>
@@ -2083,34 +1408,9 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   <span
                     className="fui-Button__icon rywnvv2"
                   >
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
+                    <span
+                      data-testid="fluent-icon"
+                    />
                   </span>
                 </button>
               </div>
@@ -2172,34 +1472,9 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
           <span
             className="fui-Button__icon rywnvv2"
           >
-            <svg
-              aria-hidden={true}
-              className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-              fill="currentColor"
-              height="1em"
-              viewBox="0 0 20 20"
-              width="1em"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M12.27 15.8a.75.75 0 0 1-1.06-.03l-5-5.25a.75.75 0 0 1 0-1.04l5-5.25a.75.75 0 1 1 1.08 1.04L7.8 10l4.5 4.73c.29.3.28.78-.02 1.06Z"
-                fill="currentColor"
-              />
-            </svg>
-            <svg
-              aria-hidden={true}
-              className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-              fill="currentColor"
-              height="1em"
-              viewBox="0 0 20 20"
-              width="1em"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M12.35 15.85a.5.5 0 0 1-.7 0L6.16 10.4a.55.55 0 0 1 0-.78l5.49-5.46a.5.5 0 1 1 .7.7L7.2 10l5.16 5.15c.2.2.2.5 0 .7Z"
-                fill="currentColor"
-              />
-            </svg>
+            <span
+              data-testid="fluent-icon"
+            />
           </span>
         </button>
         <div
@@ -2225,34 +1500,9 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
           <span
             className="fui-Button__icon rywnvv2"
           >
-            <svg
-              aria-hidden={true}
-              className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-              fill="currentColor"
-              height="1em"
-              viewBox="0 0 20 20"
-              width="1em"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M7.73 4.2a.75.75 0 0 1 1.06.03l5 5.25c.28.3.28.75 0 1.04l-5 5.25a.75.75 0 1 1-1.08-1.04L12.2 10l-4.5-4.73a.75.75 0 0 1 .02-1.06Z"
-                fill="currentColor"
-              />
-            </svg>
-            <svg
-              aria-hidden={true}
-              className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-              fill="currentColor"
-              height="1em"
-              viewBox="0 0 20 20"
-              width="1em"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M7.65 4.15c.2-.2.5-.2.7 0l5.49 5.46c.21.22.21.57 0 .78l-5.49 5.46a.5.5 0 0 1-.7-.7L12.8 10 7.65 4.85a.5.5 0 0 1 0-.7Z"
-                fill="currentColor"
-              />
-            </svg>
+            <span
+              data-testid="fluent-icon"
+            />
           </span>
         </button>
       </div>
@@ -2353,34 +1603,9 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   <span
                     className="fui-Button__icon rywnvv2"
                   >
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
+                    <span
+                      data-testid="fluent-icon"
+                    />
                   </span>
                 </button>
               </div>
@@ -2446,34 +1671,9 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   <span
                     className="fui-Button__icon rywnvv2"
                   >
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M17 5.5A2.5 2.5 0 0 0 14.5 3h-9A2.5 2.5 0 0 0 3 5.5V6h14v-.5Zm0 4.1V7H3v7.5A2.5 2.5 0 0 0 5.5 17h4.1A5.5 5.5 0 0 1 17 9.6ZM14.5 19a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm-.5-6.5a.5.5 0 0 1 1 0V14h1a.5.5 0 0 1 0 1h-1.5a.5.5 0 0 1-.5-.5v-2Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M17 5.5A2.5 2.5 0 0 0 14.5 3h-9A2.5 2.5 0 0 0 3 5.5v9A2.5 2.5 0 0 0 5.5 17h4.1c-.16-.32-.3-.65-.4-1H5.5A1.5 1.5 0 0 1 4 14.5V7h12v2.2c.35.1.68.24 1 .4V5.5ZM5.5 4h9c.83 0 1.5.67 1.5 1.5V6H4v-.5C4 4.67 4.67 4 5.5 4Zm9 15a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm-.5-6.5a.5.5 0 0 1 1 0V14h1a.5.5 0 0 1 0 1h-1.5a.5.5 0 0 1-.5-.5v-2Z"
-                        fill="currentColor"
-                      />
-                    </svg>
+                    <span
+                      data-testid="fluent-icon"
+                    />
                   </span>
                 </button>
                 <button
@@ -2489,34 +1689,9 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   <span
                     className="fui-Button__icon rywnvv2"
                   >
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
+                    <span
+                      data-testid="fluent-icon"
+                    />
                   </span>
                 </button>
               </div>
@@ -2582,34 +1757,9 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   <span
                     className="fui-Button__icon rywnvv2"
                   >
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M17 5.5A2.5 2.5 0 0 0 14.5 3h-9A2.5 2.5 0 0 0 3 5.5V6h14v-.5Zm0 4.1V7H3v7.5A2.5 2.5 0 0 0 5.5 17h4.1A5.5 5.5 0 0 1 17 9.6ZM14.5 19a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm-.5-6.5a.5.5 0 0 1 1 0V14h1a.5.5 0 0 1 0 1h-1.5a.5.5 0 0 1-.5-.5v-2Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M17 5.5A2.5 2.5 0 0 0 14.5 3h-9A2.5 2.5 0 0 0 3 5.5v9A2.5 2.5 0 0 0 5.5 17h4.1c-.16-.32-.3-.65-.4-1H5.5A1.5 1.5 0 0 1 4 14.5V7h12v2.2c.35.1.68.24 1 .4V5.5ZM5.5 4h9c.83 0 1.5.67 1.5 1.5V6H4v-.5C4 4.67 4.67 4 5.5 4Zm9 15a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm-.5-6.5a.5.5 0 0 1 1 0V14h1a.5.5 0 0 1 0 1h-1.5a.5.5 0 0 1-.5-.5v-2Z"
-                        fill="currentColor"
-                      />
-                    </svg>
+                    <span
+                      data-testid="fluent-icon"
+                    />
                   </span>
                 </button>
                 <button
@@ -2625,34 +1775,9 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   <span
                     className="fui-Button__icon rywnvv2"
                   >
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
+                    <span
+                      data-testid="fluent-icon"
+                    />
                   </span>
                 </button>
               </div>
@@ -2718,34 +1843,9 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   <span
                     className="fui-Button__icon rywnvv2"
                   >
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
+                    <span
+                      data-testid="fluent-icon"
+                    />
                   </span>
                 </button>
               </div>
@@ -2811,34 +1911,9 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   <span
                     className="fui-Button__icon rywnvv2"
                   >
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-filled ___yt8pzc0_14cuo7n fjseox fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M6 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                    <svg
-                      aria-hidden={true}
-                      className="fui-Icon-regular ___9ctc0p0_17npts5 f1w7gpdv fez10in f1dd5bof"
-                      fill="currentColor"
-                      height="1em"
-                      viewBox="0 0 20 20"
-                      width="1em"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M8 2a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8ZM7 4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4ZM4 6a2 2 0 0 1 1-1.73V14.5A2.5 2.5 0 0 0 7.5 17h6.23A2 2 0 0 1 12 18H7.5A3.5 3.5 0 0 1 4 14.5V6Z"
-                        fill="currentColor"
-                      />
-                    </svg>
+                    <span
+                      data-testid="fluent-icon"
+                    />
                   </span>
                 </button>
               </div>

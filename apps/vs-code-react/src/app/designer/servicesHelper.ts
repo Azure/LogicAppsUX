@@ -31,7 +31,7 @@ import type {
   LocalConnectionModel,
   OperationManifest,
 } from '@microsoft/logic-apps-shared';
-import type { IDesignerPanelMetadata, MessageToVsix } from '@microsoft/vscode-extension-logic-apps';
+import type { DesignerPanelMetadata, MessageToVsix } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-apps';
 import type { QueryClient } from '@tanstack/react-query';
 import type { WebviewApi } from 'vscode-webview';
@@ -70,7 +70,7 @@ export const getDesignerServices = (
   apiHubDetails: ApiHubServiceDetails,
   isLocal: boolean,
   connectionData: ConnectionsData,
-  panelMetadata: IDesignerPanelMetadata | null,
+  panelMetadata: DesignerPanelMetadata | null,
   createFileSystemConnection: (connectionInfo: ConnectionCreationInfo, connectionName: string) => Promise<ConnectionCreationInfo>,
   vscode: WebviewApi<unknown>,
   oauthRedirectUrl: string,
@@ -91,9 +91,7 @@ export const getDesignerServices = (
   const { subscriptionId = 'subscriptionId', resourceGroup, location } = apiHubDetails;
 
   const armUrl = 'https://management.azure.com';
-
   const emptyArmId = '00000000-0000-0000-0000-000000000000';
-
   if (panelMetadata) {
     authToken = panelMetadata.accessToken ?? '';
     panelId = panelMetadata.panelId;
@@ -436,7 +434,7 @@ const addConnectionInJson = (
   connectionAndSetting: ConnectionAndAppSetting<LocalConnectionModel>,
   connectionsJson: ConnectionsData
 ): ConnectionsData => {
-  const { connectionData, connectionKey, pathLocation } = connectionAndSetting;
+  const { connectionData, connectionKey, pathLocation, isUpdate } = connectionAndSetting;
   const pathToSetConnectionsData: any = clone(connectionsJson);
 
   for (const path of pathLocation) {
@@ -444,7 +442,7 @@ const addConnectionInJson = (
       pathToSetConnectionsData[path] = {};
     }
 
-    if (pathToSetConnectionsData && pathToSetConnectionsData[path][connectionKey]) {
+    if (pathToSetConnectionsData && pathToSetConnectionsData[path][connectionKey] && !isUpdate) {
       break;
     }
     pathToSetConnectionsData[path][connectionKey] = connectionData;

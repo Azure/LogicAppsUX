@@ -8,7 +8,7 @@ import { ext } from '../../extensionVariables';
 import { getWorkspaceRoot } from '../utils/workspace';
 import * as vscode from 'vscode';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import { inspectCodefulCsprojBuildHooks, isCodefulProject } from '../utils/codeful';
+import { inspectCodefulCsprojBuildHooks, hasCodefulWorkflowSetting } from '../utils/codeful';
 
 /**
  * Optional behaviors for {@link publishCodefulProject}.
@@ -24,7 +24,7 @@ export interface PublishCodefulProjectOptions {
    * the subsequent Debug build.
    *
    * Used by the debug (F5) pipeline. Deploy paths must leave this `false` so
-   * `bin/Release/<tfm>/publish/` is always produced for `azureFunctions.deploySubpath`.
+   * `bin/Release/<tfm>/publish/` is always produced for the configured deployment subpath.
    */
   skipIfBuildPopulatesCodeful?: boolean;
 }
@@ -52,7 +52,7 @@ export async function publishCodefulProject(
     return;
   }
 
-  const isCodeful = await isCodefulProject(nodePath);
+  const isCodeful = await hasCodefulWorkflowSetting(nodePath);
   if (!isCodeful) {
     const message = `Skipping publish: Path "${nodePath}" is not a codeful project.`;
     ext.outputChannel.appendLog(message);

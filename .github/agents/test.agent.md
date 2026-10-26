@@ -13,7 +13,7 @@ Own test strategy and coverage quality:
 - map behavior changes and PR comments to meaningful assertions;
 - reuse existing helpers, mocks, and fixtures;
 - avoid weakening assertions to hide product bugs;
-- for VS Code E2E, ensure tests are wired through `apps/vs-code-designer/src/test/ui/run-e2e.js` and follow `apps/vs-code-designer/src/test/ui/SKILL.md`;
+- for VS Code E2E, ensure tests are wired through `apps/vs-code-designer/src/test/ui/run-e2e.ts` and follow `apps/vs-code-designer/src/test/ui/SKILL.md`;
 - provide a coverage verdict before final status when tests are part of the plan.
 
 Do not write production feature code unless explicitly asked. Coordinate with the owning domain agent for product changes.

@@ -1,30 +1,98 @@
-# React + TypeScript + Vite
+# Logic Apps UX Standalone
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The Standalone app is the Vite development host for the Logic Apps designers, data mappers, template experiences, MCP tools, and VS Code webview previews. It provides a fast local shell for developing workspace libraries without loading them through Azure Portal or the VS Code extension host.
 
-Currently, two official plugins are available:
+## Run locally
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+From the repository root:
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+```bash
+pnpm install
+pnpm --filter standalone dev
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+Open [http://localhost:4200](http://localhost:4200). Running `pnpm run start` from the repository root also starts the Standalone app as part of the workspace development tasks.
+
+To develop against Azure Resource Manager, run `pnpm run start:arm` from the repository root. The command generates an ARM token before starting the development tasks.
+
+For local-only PR deployments triggered by the `ephemeral` label, see [PR preview setup and lifecycle](EPHEMERAL.md).
+
+## Commands
+
+| Command | Run from | Description |
+|---|---|---|
+| `pnpm --filter standalone dev` | Repository root | Start the Vite development server |
+| `pnpm --filter standalone build` | Repository root | Create a production build |
+| `pnpm --filter standalone preview` | Repository root | Preview the production build |
+| `pnpm --filter standalone lint` | Repository root | Lint the Standalone workspace |
+| `pnpm --filter standalone e2e` | Repository root | Start the E2E-configured development server |
+| `pnpm run test:e2e` | Repository root | Run Playwright end-to-end tests |
+| `pnpm run test:e2e:ui` | Repository root | Open the Playwright test UI |
+
+## Routes
+
+| Route | Experience |
+|---|---|
+| `/` | Production designer development shell |
+| `/v2` | Designer v2 development shell |
+| `/datamapperv1` | Legacy data mapper |
+| `/datamapperv2` | Current data mapper |
+| `/templates` | Template gallery |
+| `/configuretemplate` | Template configuration |
+| `/mcp` | MCP experience |
+| `/mcpserver` | MCP server experience |
+| `/knowledge` | Knowledge hub |
+| `/clonetostandard` | Clone-to-Standard experience |
+| `/vscode/*` | VS Code webview previews |
+
+Unknown routes fall back to the production designer development shell.
+
+## Extract selected actions (local only)
+
+Open `/v2?extraction=true&local=ExtractSelection.json` on the running development server. The **Extract Selection** fixture uses a Standard workflow. Ctrl-click (Cmd-click on macOS) **Build message** and **Build result**, then right-click either selected action and choose **Extract to new workflow**. Two selected actions retain their side-by-side details. Selecting **Read customer** as well opens the larger multi-select panel, where **Extract** sits alongside Cut, Copy, Group, and Delete.
+
+The compact, single-column dialog places the workflow name above a 320px-high, pan/zoom-only child workflow preview. The preview has a 1px border, 4px corners, and a muted floating label. Input/output bindings appear in a collapsed section below the preview, omitted when there are no bindings. The preview uses the reusable `WorkflowPreview` component from `@microsoft/designer-ui` and shares the V2 designer's card styling, with its own React Flow viewport and no action/edge editing or shared designer state. Confirmation saves the child and rewritten source together in browser storage, replacing the selected actions with a workflow invocation. The child uses Request/Response actions, and the completion link opens its editable workflow. Both saved documents and their dynamic-content schemas survive reload.
+
+Binding names identify their source action or trigger, such as `input_Read_customer`, `output_Build_result`, or `input_Request`. Spaces and punctuation become underscores, and numeric suffixes distinguish colliding names. Repeated references to the same data root share a binding. This naming applies to new extractions; existing saved workflows keep their original bindings.
+
+The initial workflow name is the first available choice among `Extracted_workflow`, `Extracted_workflow_1`, `Extracted_workflow_2`, and so on, checking existing names case-insensitively. Manually entered names and names at save time still undergo collision validation. Empty input/output sections are hidden independently; nonempty sections show only the original expression and its replacement, where the binding name is already visible.
+
+Extraction is action-type independent: data operations, HTTP, connector actions, and other ordinary action definitions keep their settings and metadata. Entire selected control-flow containers move with their nested actions. The preview uses the selected actions' existing connector icons and colors; containers appear as single cards. Referenced workflow parameters, connection references, and static results are carried into the child without resolving app-setting expressions or creating new connections. Connector metadata must be available to the local designer before saving.
+
+Open `/v2?extraction=true&local=ExtractActions.json` for a mixed-action example: Initialize variable, Parse JSON, Filter array, HTTP, and a downstream consumer. Extract **Filter array** and **HTTP** to see incoming variable and Parse JSON bindings, distinct `body()`/`outputs()` return values, and preserved chunking/retry settings. Selecting the first four actions instead keeps the variable declaration inside the child.
+
+Eligibility is based on dependencies, not a built-in action allowlist. Selections must still form a connected top-level linear region with success-only boundaries. Shared variable writes, escaping variable declarations, partial nested selections, ambiguous loop/conditional output values, secure/binary data transport, and opaque execution-context references are rejected with specific explanations. Existing Response and Terminate actions cannot move because that would change the caller they respond to or the workflow they stop. A child always gets its own generated Request and Response. Schemas are inferred where known; unknown output shapes remain untyped rather than being guessed.
+
+This opt-in is unavailable for Consumption workflows. Storage is local to the browser origin: nothing is deployed, published, or run in Azure, and cloud invocation semantics are not established by this prototype. Use synthetic data only; literal credentials and secure parameter values cannot be persisted. Managed identity and unresolved credential references are preserved. Undo/Redo changes the current source editor without deleting the saved child or rolling back browser storage.
+
+Browser regression coverage is in `e2e/designer/extractSelection.spec.ts`.
+
+## Designer v2 keyboard navigation
+
+In designer v2 (`/v2`), click a card on the canvas and use
+**Ctrl/Cmd + Down** to select the next action or trigger, or **Ctrl/Cmd + Up**
+to select the previous one. Selection follows the existing tab order, including
+scope cards and nested actions, rather than recalculating graph connections.
+Edges, add buttons, notes, and collapsed content are skipped.
+
+Navigation stops at the first and last nodes. With no current selection, Down
+starts at the first node and Up at the last. The selected card receives focus
+and is brought into view, including off-screen cards. Selection uses the usual
+operation-panel behavior and remains available in read-only and monitoring views.
+The shortcuts also work while a non-editing control in the selected node's
+details panel has focus, including the Close button focused after clicking a card.
+They do not override typing in form fields or content-editable controls, or handle
+keys from pinned panels, other designers, dialogs, or menus.
+
+The operation details panel retains your selected tab when you click or navigate
+to another node. If that node does not offer the tab, its first available tab is
+shown instead; your preferred tab is restored on the next node that supports it.
+
+The legacy designer (`/`) does not enable these shortcuts or retain the selected
+details tab across node selections. Its existing keyboard and panel behavior is unchanged.
+
+## Development model
+
+`src/App.tsx` owns route registration and lazy-loads each experience with its Redux store. `src/designer/app/DesignerShell` configures the designer host and its environment-specific services. Changes to workspace libraries are picked up by Vite during local development.
+
+Use browser DevTools together with Redux DevTools and React Query DevTools to inspect state and service requests. Playwright tests that exercise this host live under the repository-level `e2e` directory.

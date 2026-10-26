@@ -161,7 +161,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
 
   const dismissPanel = () => dispatch(clearPanel());
 
-  const unpinAction = () => dispatch(setAlternateSelectedNode({ nodeId: '' }));
+  const unpinAction = () => dispatch(setAlternateSelectedNode({ nodeId: '', updatePanelOpenState: true }));
 
   const runInstance = useRunInstance();
 
@@ -218,6 +218,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     <PanelContainer
       key={undoRedoClickToggle}
       {...commonPanelProps}
+      enableNodeNavigation
       panelScope={PanelScope.CardLevel}
       suppressDefaultNodeSelectFunctionality={suppressDefaultNodeSelectFunctionality}
       node={selectedNodeData}
@@ -250,7 +251,19 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
             );
           });
         });
-        collapse();
+        // Closing the non-pinned (selected) action should keep a distinct pinned action open;
+        // clearPanel preserves the pinned alternate node. When the pinned node is the same as the
+        // selected node (single-pane), there is no separate pane to keep, so collapse the panel.
+        if (alternateSelectedNodeId && alternateSelectedNodeId !== selectedNode && alternateSelectedNodePersistence === 'pinned') {
+          dispatch(clearPanel());
+        } else {
+          // When the pinned action is the currently selected node (single-pane), closing the panel
+          // should also unpin it so its context menu no longer shows "Unpin".
+          if (alternateSelectedNodeId === selectedNode && alternateSelectedNodePersistence === 'pinned') {
+            dispatch(setAlternateSelectedNode({ nodeId: '' }));
+          }
+          collapse();
+        }
       }}
       showTriggerInfo={showTriggerInfo && !readOnly}
       isTrigger={isTrigger}

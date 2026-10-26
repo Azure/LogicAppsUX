@@ -132,7 +132,7 @@ describe('History Transformers', () => {
         id: 'msg-123',
         role: 'assistant', // Transformed from 'agent'
         content: [{ type: 'text', text: 'Hello, how can I help?' }],
-        timestamp: new Date('10/29/2025 2:00:00 PM'),
+        timestamp: new Date('2025-10-29T14:00:00Z'),
         contextId: 'context-789',
       });
     });
@@ -167,7 +167,7 @@ describe('History Transformers', () => {
       const result = transformMessage(serverMessage);
 
       expect(result.timestamp).toBeInstanceOf(Date);
-      expect(result.timestamp.toISOString()).toBe(new Date('10/29/2025 3:30:45 PM').toISOString());
+      expect(result.timestamp.toISOString()).toBe('2025-10-29T15:30:45.000Z');
     });
   });
 
@@ -396,6 +396,80 @@ describe('History Transformers', () => {
       // Should be sorted to chronological order
       expect(result[0].id).toBe('msg-1'); // Earlier message first
       expect(result[1].id).toBe('msg-2'); // Later message second
+    });
+
+    it('should preserve task exchanges when message timestamps are equal', () => {
+      const timestamp = '10/29/2025 12:00:00 PM';
+      const createMessage = (messageId: string, taskId: string, role: 'user' | 'agent'): ServerMessage => ({
+        messageId,
+        taskId,
+        contextId: 'context-1',
+        role,
+        parts: [{ kind: 'text', text: messageId }],
+        metadata: { timestamp },
+        kind: 'message',
+      });
+      const createTask = (taskId: string, userMessageId: string, agentMessageId: string): ServerTask => {
+        const agentMessage = createMessage(agentMessageId, taskId, 'agent');
+        const userMessage = createMessage(userMessageId, taskId, 'user');
+        const taskStatus = {
+          state: 'completed',
+          message: agentMessage,
+          timestamp,
+        };
+
+        return {
+          id: taskId,
+          contextId: 'context-1',
+          taskStatus,
+          status: taskStatus,
+          history: [agentMessage, userMessage],
+          kind: 'task',
+        };
+      };
+      const serverTasks = [createTask('task-1', 'user-1', 'agent-1'), createTask('task-2', 'user-2', 'agent-2')];
+
+      const result = transformTasksToMessages(serverTasks);
+
+      expect(result.map((message) => message.id)).toEqual(['user-1', 'agent-1', 'user-2', 'agent-2']);
+    });
+
+    it('should keep messages chronological when task times overlap', () => {
+      const createMessage = (messageId: string, taskId: string, role: 'user' | 'agent', timestamp: string): ServerMessage => ({
+        messageId,
+        taskId,
+        contextId: 'context-1',
+        role,
+        parts: [{ kind: 'text', text: messageId }],
+        metadata: { timestamp },
+        kind: 'message',
+      });
+      const createTask = (taskId: string, userTime: string, agentTime: string): ServerTask => {
+        const agentMessage = createMessage(`${taskId}-agent`, taskId, 'agent', agentTime);
+        const userMessage = createMessage(`${taskId}-user`, taskId, 'user', userTime);
+        const taskStatus = {
+          state: 'completed',
+          message: agentMessage,
+          timestamp: agentTime,
+        };
+
+        return {
+          id: taskId,
+          contextId: 'context-1',
+          taskStatus,
+          status: taskStatus,
+          history: [agentMessage, userMessage],
+          kind: 'task',
+        };
+      };
+      const serverTasks = [
+        createTask('task-1', '10/29/2025 12:00:00 PM', '10/29/2025 12:10:00 PM'),
+        createTask('task-2', '10/29/2025 12:05:00 PM', '10/29/2025 12:06:00 PM'),
+      ];
+
+      const result = transformTasksToMessages(serverTasks);
+
+      expect(result.map((message) => message.id)).toEqual(['task-1-user', 'task-2-user', 'task-2-agent', 'task-1-agent']);
     });
   });
 

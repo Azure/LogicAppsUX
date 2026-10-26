@@ -5,7 +5,7 @@ import type {
   MapDefinitionData,
   ExtensionCommand,
   ConnectionsData,
-  IDesignerPanelMetadata,
+  DesignerPanelMetadata,
   CompleteFileSystemConnectionData,
   ICallbackUrlResponse,
 } from '@microsoft/vscode-extension-logic-apps';
@@ -271,10 +271,15 @@ export interface CompleteFileSystemConnectionMessage {
 export interface UpdatePanelMetadataMessage {
   command: typeof ExtensionCommand.update_panel_metadata;
   data: {
-    panelMetadata: IDesignerPanelMetadata;
+    panelMetadata: DesignerPanelMetadata;
     connectionData: ConnectionsData;
     apiHubServiceDetails: ApiHubServiceDetails;
   };
+}
+
+export interface SelectRunMessage {
+  command: typeof ExtensionCommand.selectRun;
+  runId: string;
 }
 
 // Rest of Message Interfaces

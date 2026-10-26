@@ -75,7 +75,6 @@ const getInitialWorkflowParametersContentState = (): WorkflowParametersPanelCont
 const reconcileNodeSelection = (state: PanelState): void => {
   const ids = state.operationContent.selectedNodeIds ?? [];
   state.operationContent.selectedNodeId = ids[0];
-  state.operationContent.selectedNodeActiveTabId = undefined;
   if (ids.length === 2) {
     state.operationContent.alternateSelectedNode = {
       nodeId: ids[1],
@@ -206,7 +205,6 @@ export const panelSlice = createSlice({
       state.connectionContent.selectedNodeIds = selectedNodes;
       state.operationContent.selectedNodeId = selectedNodes[0];
       state.operationContent.selectedNodeIds = selectedNodes;
-      state.operationContent.selectedNodeActiveTabId = undefined;
       if (state.operationContent.alternateSelectedNode?.persistence === 'selected') {
         state.operationContent.alternateSelectedNode.nodeId = '';
       }
@@ -233,7 +231,7 @@ export const panelSlice = createSlice({
         args: [uniqueIds.join(',')],
       });
     },
-    // Toggles a single node in the multi-selection set (used by shift-click).
+    // Toggles a single node in the multi-selection set (used by shift/ctrl/cmd-click on the card body).
     toggleNodeSelection: (state, action: PayloadAction<string>) => {
       const nodeId = action.payload;
       const current = state.operationContent.selectedNodeIds ?? [];

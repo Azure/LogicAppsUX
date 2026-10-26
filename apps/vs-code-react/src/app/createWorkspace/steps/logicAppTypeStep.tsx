@@ -26,11 +26,13 @@ export const LogicAppTypeStep: React.FC = () => {
     workspaceProjectPath,
     workspaceFileJson,
     logicAppsWithoutCustomCode,
+    existingFolders,
     flowType,
     separator,
+    isAddCustomCodeFlow,
   } = createWorkspaceState;
 
-  const shouldShowLogicAppSection = flowType === 'createWorkspace' || flowType === 'createLogicApp';
+  const shouldShowLogicAppSection = !isAddCustomCodeFlow && (flowType === 'createWorkspace' || flowType === 'createLogicApp');
 
   // Validation state
   const [logicAppNameError, setLogicAppNameError] = useState<string | undefined>(undefined);
@@ -63,10 +65,16 @@ export const LogicAppTypeStep: React.FC = () => {
         return undefined; // Valid - existing logic app for custom code/rules engine
       }
 
-      // Check if the logic app name already exists in workspace folders (for new names)
+      // Check if the logic app name already exists in workspace folders
       if (workspaceFileJson?.folders && workspaceFileJson.folders.some((folder: { name: string }) => folder.name === name)) {
         return intlText.PROJECT_NAME_EXISTS;
       }
+
+      // Check if the name collides with any existing folder on disk (case-insensitive)
+      if (existingFolders.some((folder: string) => folder.toLowerCase() === name.trim().toLowerCase())) {
+        return intlText.PROJECT_NAME_EXISTS;
+      }
+
       return undefined;
     },
     [
@@ -78,6 +86,7 @@ export const LogicAppTypeStep: React.FC = () => {
       logicAppType,
       logicAppsWithoutCustomCode,
       workspaceFileJson,
+      existingFolders,
     ]
   );
 
@@ -131,6 +140,7 @@ export const LogicAppTypeStep: React.FC = () => {
               placeholder={intlText.ENTER_LOGIC_APP_NAME}
               className={styles.inputControl}
               freeform
+              disabled={isAddCustomCodeFlow}
             >
               {logicAppsWithoutCustomCode.map((app: { label: string }) => (
                 <Option key={app.label} value={app.label}>
@@ -144,6 +154,7 @@ export const LogicAppTypeStep: React.FC = () => {
               onChange={handleLogicAppNameChange}
               placeholder={intlText.ENTER_LOGIC_APP_NAME}
               className={styles.inputControl}
+              disabled={isAddCustomCodeFlow}
             />
           )}
           {logicAppName && workspaceName && workspaceProjectPath.fsPath && (

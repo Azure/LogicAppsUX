@@ -1,3 +1,4 @@
+import { AGENT_MSI_REQUIRED_ROLE_DEFINITION_IDS } from '../../../../utils/src';
 import type { Connector } from '../../../../utils/src';
 
 export default {
@@ -90,7 +91,7 @@ export default {
             cognitiveServiceAccountId: {
               type: 'string',
               managedIdentitySettings: {
-                requiredRoles: ['Azure AI User', 'Azure AI Administrator', 'Cognitive Services Contributor'],
+                requiredRoleDefinitionIds: AGENT_MSI_REQUIRED_ROLE_DEFINITION_IDS,
               },
               uiDefinition: {
                 displayName: 'Azure Cognitive Service Account',

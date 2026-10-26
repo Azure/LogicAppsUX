@@ -7,6 +7,7 @@ import { useHostOptions, useReadOnly } from '../../core/state/designerOptions/de
 import { updateNodeSettings } from '../../core/state/operation/operationMetadataSlice';
 import { useRawInputParameters } from '../../core/state/operation/operationSelector';
 import { useOperationDownloadChunkMetadata, useOperationUploadChunkMetadata } from '../../core/state/selectors/actionMetadataSelector';
+import { SettingSectionName } from '../../core/state/setting/settingInterface';
 import { useExpandedSections } from '../../core/state/setting/settingSelector';
 import { setExpandedSections } from '../../core/state/setting/settingSlice';
 import { updateTokenSecureStatus } from '../../core/state/tokens/tokensSlice';
@@ -16,6 +17,7 @@ import { isTriggerNode } from '../../core/utils/graph';
 import { isSecureOutputsLinkedToInputs } from '../../core/utils/setting';
 import { DataHandling } from './sections/datahandling';
 import { General } from './sections/general';
+import { HostSettings } from './sections/hostsettings';
 import { Networking } from './sections/networking';
 import { RunAfter } from './sections/runafter';
 import { Security } from './sections/security';
@@ -31,15 +33,7 @@ export type TextChangeHandler = (newVal: string) => void;
 export type NumberChangeHandler = (newVal: number) => void;
 export type DropdownSelectionChangeHandler = (selectedOption: IDropdownOption) => void;
 
-export const SettingSectionName = {
-  DATAHANDLING: 'datahandling',
-  GENERAL: 'general',
-  NETWORKING: 'networking',
-  RUNAFTER: 'runafter',
-  SECURITY: 'security',
-  TRACKING: 'tracking',
-} as const;
-export type SettingSectionName = (typeof SettingSectionName)[keyof typeof SettingSectionName];
+export { SettingSectionName } from '../../core/state/setting/settingInterface';
 
 export interface SectionProps extends Settings {
   readOnly: boolean | undefined;
@@ -179,6 +173,14 @@ export const SettingsPanel: React.FC<PanelTabProps> = (props) => {
         updateSettings={(settings, validateSetting) => handleUpdateSettings(settings, SettingSectionName.TRACKING, validateSetting)}
         {...getPropsBasedOnSection(SettingSectionName.TRACKING)}
       />
+      {nodeSettings.hostSettings && Object.keys(nodeSettings.hostSettings).length > 0 && (
+        <HostSettings
+          nodeId={selectedNode}
+          expanded={expandedSections.includes(SettingSectionName.HOSTSETTINGS)}
+          hostSettings={nodeSettings.hostSettings}
+          onHeaderClick={(sectionName) => dispatch(setExpandedSections(sectionName))}
+        />
+      )}
     </div>
   );
 };

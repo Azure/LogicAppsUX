@@ -11,14 +11,16 @@ import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-
 import { openMcpToolWizard } from '../../../../core/state/panel/panelSlice';
 import { builtinMcpServerOperation, connectionToOperation, getOperationCardDataFromOperation, MCP_CLIENT_CONNECTOR_ID } from '../helpers';
 import { useDisableNativeMcpClientTools } from '../../../../core/state/designerOptions/designerOptionsSelectors';
+import { filterMcpServersBySearchTerm } from './helper';
 
 type McpServerTab = 'all' | 'microsoft' | 'custom' | 'others';
 
 export interface McpServersBrowseProps {
   onOperationClick?: (operationId: string, apiId?: string) => void;
+  searchTerm?: string;
 }
 
-export const McpServersBrowse = ({ onOperationClick: _onOperationClick }: McpServersBrowseProps) => {
+export const McpServersBrowse = ({ onOperationClick: _onOperationClick, searchTerm }: McpServersBrowseProps) => {
   const intl = useIntl();
   const classes = useMcpServersBrowseStyles();
   const dispatch = useDispatch<AppDispatch>();
@@ -55,6 +57,12 @@ export const McpServersBrowse = ({ onOperationClick: _onOperationClick }: McpSer
     defaultMessage: 'No MCP servers available',
     id: 'FEucgA',
     description: 'Text shown when no MCP servers are available',
+  });
+
+  const noSearchResultsText = intl.formatMessage({
+    defaultMessage: 'No MCP servers match your search',
+    id: 'ZR9yjf',
+    description: 'Text shown when no MCP servers match the current search term',
   });
 
   const allTabDescriptionText = intl.formatMessage({
@@ -150,13 +158,13 @@ export const McpServersBrowse = ({ onOperationClick: _onOperationClick }: McpSer
     });
 
     if (selectedTab === 'all' && !disableNativeMcpClientTools) {
-      return [builtinMcpServerOperation, ...filtered];
+      return filterMcpServersBySearchTerm([builtinMcpServerOperation, ...filtered], searchTerm);
     }
     if (selectedTab === 'others') {
-      return disableNativeMcpClientTools ? filtered : [builtinMcpServerOperation, ...filtered];
+      return filterMcpServersBySearchTerm(disableNativeMcpClientTools ? filtered : [builtinMcpServerOperation, ...filtered], searchTerm);
     }
-    return filtered;
-  }, [mcpServers, mcpConnections, selectedTab, sortOrder, isMicrosoftServer, disableNativeMcpClientTools]);
+    return filterMcpServersBySearchTerm(filtered, searchTerm);
+  }, [mcpServers, mcpConnections, selectedTab, sortOrder, isMicrosoftServer, disableNativeMcpClientTools, searchTerm]);
 
   const displayingItemsText = intl.formatMessage(
     {
@@ -217,7 +225,7 @@ export const McpServersBrowse = ({ onOperationClick: _onOperationClick }: McpSer
 
       {filteredAndSortedServers.length === 0 ? (
         <div className={classes.emptyStateContainer}>
-          <Text>{noServersText}</Text>
+          <Text>{searchTerm?.trim() ? noSearchResultsText : noServersText}</Text>
         </div>
       ) : (
         <Grid

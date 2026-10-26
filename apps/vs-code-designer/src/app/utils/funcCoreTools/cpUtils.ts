@@ -9,13 +9,21 @@ import { Platform, type ICommandResult } from '@microsoft/vscode-extension-logic
 import * as cp from 'child_process';
 import * as os from 'os';
 
+export interface ExecuteCommandOptions {
+  sanitizedCommandForLogging?: string;
+  timeoutMs?: number;
+}
+
+type ExecuteCommandArgument = string | ExecuteCommandOptions;
+
 export async function executeCommand(
   outputChannel: IAzExtOutputChannel | undefined,
   workingDirectory: string | undefined,
   command: string,
-  ...args: string[]
+  ...args: ExecuteCommandArgument[]
 ): Promise<string> {
-  return executeCommandInternal(outputChannel, workingDirectory, undefined, command, ...args);
+  const { commandArgs, options } = parseExecuteCommandArgs(args);
+  return executeCommandInternal(outputChannel, workingDirectory, options, command, ...commandArgs);
 }
 
 export async function executeCommandWithSanityLogging(
@@ -25,19 +33,19 @@ export async function executeCommandWithSanityLogging(
   command: string,
   ...args: string[]
 ): Promise<string> {
-  return executeCommandInternal(outputChannel, workingDirectory, sanitizedCommandForLogging, command, ...args);
+  return executeCommand(outputChannel, workingDirectory, command, ...args, { sanitizedCommandForLogging });
 }
 
 async function executeCommandInternal(
   outputChannel: IAzExtOutputChannel | undefined,
   workingDirectory: string | undefined,
-  sanitizedCommandForLogging: string | undefined,
+  options: ExecuteCommandOptions,
   command: string,
   ...args: string[]
 ): Promise<string> {
-  const result: ICommandResult = await tryExecuteCommand(outputChannel, workingDirectory, command, ...args);
+  const result: ICommandResult = await tryExecuteCommandInternal(outputChannel, workingDirectory, options, command, ...args);
 
-  const commandForLogging = sanitizedCommandForLogging ?? `${command} ${result.formattedArgs}`;
+  const commandForLogging = options.sanitizedCommandForLogging ?? `${command} ${result.formattedArgs}`;
   if (result.code !== 0) {
     // We want to make sure the full error message is displayed to the user, not just the error code.
     // If outputChannel is defined, then we simply call 'outputChannel.show()' and throw a generic error telling the user to check the output window
@@ -69,22 +77,98 @@ export async function tryExecuteCommand(
   outputChannel: IAzExtOutputChannel | undefined,
   workingDirectory: string | undefined,
   command: string,
+  ...args: ExecuteCommandArgument[]
+): Promise<ICommandResult> {
+  const { commandArgs, options } = parseExecuteCommandArgs(args);
+  return await tryExecuteCommandInternal(outputChannel, workingDirectory, options, command, ...commandArgs);
+}
+
+function parseExecuteCommandArgs(args: ExecuteCommandArgument[]): { commandArgs: string[]; options: ExecuteCommandOptions } {
+  const maybeOptions = args[args.length - 1];
+  const options = isExecuteCommandOptions(maybeOptions) ? maybeOptions : {};
+  const commandArgValues = isExecuteCommandOptions(maybeOptions) ? args.slice(0, -1) : args;
+  const commandArgs: string[] = [];
+
+  for (const arg of commandArgValues) {
+    if (!isString(arg)) {
+      throw new Error(localize('invalidCommandArgument', 'Command arguments must be strings.'));
+    }
+    commandArgs.push(arg);
+  }
+
+  return { commandArgs, options };
+}
+
+function isExecuteCommandOptions(arg: ExecuteCommandArgument | undefined): arg is ExecuteCommandOptions {
+  return typeof arg === 'object' && arg !== null && !Array.isArray(arg);
+}
+
+/**
+ * Terminates a spawned command. Because commands are spawned with `shell: true`, the tracked pid is
+ * the shell, and on Windows killing it leaves the actual command running — and still holding its
+ * file handles — so the whole tree has to be taken down.
+ * @param {cp.ChildProcess} childProc - The spawned shell process.
+ */
+function killProcessTree(childProc: cp.ChildProcess): void {
+  try {
+    if (process.platform === Platform.windows && childProc.pid !== undefined) {
+      cp.exec(`taskkill /pid ${childProc.pid} /t /f`);
+    } else {
+      childProc.kill('SIGKILL');
+    }
+  } catch {
+    // Best effort only: the process may have exited between the timeout firing and the kill.
+  }
+}
+
+async function tryExecuteCommandInternal(
+  outputChannel: IAzExtOutputChannel | undefined,
+  workingDirectory: string | undefined,
+  options: ExecuteCommandOptions,
+  command: string,
   ...args: string[]
 ): Promise<ICommandResult> {
   return await new Promise((resolve: (res: ICommandResult) => void, reject: (e: Error) => void): void => {
     let cmdOutput = '';
     let cmdOutputIncludingStderr = '';
     const formattedArgs: string = args.join(' ');
+    const commandForLogging = options.sanitizedCommandForLogging ?? `${command} ${formattedArgs}`;
 
     workingDirectory = workingDirectory || os.tmpdir();
-    const options: cp.SpawnOptions = {
+    const spawnOptions: cp.SpawnOptions = {
       cwd: workingDirectory,
       shell: true,
     };
-    const childProc: cp.ChildProcess = cp.spawn(command, args, options);
+    const childProc: cp.ChildProcess = cp.spawn(command, args, spawnOptions);
+
+    let timedOut = false;
+    let timer: NodeJS.Timeout | undefined;
+    if (options.timeoutMs !== undefined) {
+      timer = setTimeout(() => {
+        timedOut = true;
+        killProcessTree(childProc);
+        reject(
+          new Error(
+            localize(
+              'commandTimedOutWithOptions',
+              'Command "{0}" did not complete within {1} ms and was terminated.',
+              commandForLogging,
+              options.timeoutMs
+            )
+          )
+        );
+      }, options.timeoutMs);
+    }
+
+    const settle = (): void => {
+      if (timer !== undefined) {
+        clearTimeout(timer);
+        timer = undefined;
+      }
+    };
 
     if (outputChannel && command !== 'echo') {
-      outputChannel.appendLog(localize('runningCommand', 'Running command: "{0} {1}"...', command, formattedArgs));
+      outputChannel.appendLog(localize('runningCommandWithOptions', 'Running command: "{0}"...', commandForLogging));
     }
 
     childProc.stdout.on('data', (data: string | Buffer) => {
@@ -104,8 +188,17 @@ export async function tryExecuteCommand(
       }
     });
 
-    childProc.on('error', reject);
+    childProc.on('error', (error: Error) => {
+      settle();
+      if (!timedOut) {
+        reject(error);
+      }
+    });
     childProc.on('close', (code: number) => {
+      settle();
+      if (timedOut) {
+        return;
+      }
       resolve({
         code,
         cmdOutput,

@@ -635,6 +635,12 @@
 	text-decoration: underline;
 }
 
+.markdownContent img {
+	max-width: 100%;
+	height: auto;
+	border-radius: var(--chat-radius-small);
+}
+
 .messageWrapper.user .markdownContent code {
 	background-color: rgba(255, 255, 255, 0.2);
 }

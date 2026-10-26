@@ -13,7 +13,7 @@
  *   3. The Create Workspace form can be filled out (path, names, etc.)
  *   4. A single Create click starts creation and disables/shows pending UI
  *   5. Completing the wizard creates a .code-workspace file on disk
- *   6. The original legacy project files remain untouched
+ *   6. The original legacy project core values are preserved (activation may add git-ignored files)
  *
  * Phase 4.8b — own session, startup resource = temp legacy project folder
  */
@@ -1070,40 +1070,58 @@ describe('Workspace Conversion — Create Workspace from Legacy Project', functi
       assert.fail(`Single Create click should create .code-workspace at ${expectedWsFile}`);
     }
 
-    // ── Step 8: Verify the original legacy project is completely untouched ──
-    // The conversion should COPY the project into the new workspace directory.
-    // The ORIGINAL legacy project folder must remain exactly as it was — same
-    // files, same content. If new files appear in the original folder, that's
-    // a product bug (the extension modified the source instead of the copy).
-    console.log('[createWs] Verifying original legacy project is untouched...');
+    // ── Step 8: Verify the original legacy project after activation consistency checks ──
+    // The conversion COPIES the project into the new workspace directory.
+    // The extension's activation then runs project file consistency checks on the
+    // original folder (which is still open), adding git-ignored files and settings
+    // required for the project to be runnable (e.g. workflow-designtime/, additional
+    // local.settings.json values like FUNCTIONS_INPROC_NET8_ENABLED, ProjectDirectoryPath).
+    console.log('[createWs] Verifying original legacy project after consistency checks...');
     assert.ok(fs.existsSync(LEGACY_PROJECT_DIR), 'Legacy project directory should still exist');
 
     const currentSnapshot = snapshotLegacyProject(LEGACY_PROJECT_DIR);
 
-    // Log differences for debugging if they exist
+    // Log differences for debugging
     const addedFiles = currentSnapshot.files.filter((f) => !legacySnapshot.files.includes(f));
     const removedFiles = legacySnapshot.files.filter((f) => !currentSnapshot.files.includes(f));
     if (addedFiles.length > 0) {
-      console.log(`[createWs] WARNING: Files ADDED to original legacy project (should not happen): ${JSON.stringify(addedFiles)}`);
-    }
-    if (removedFiles.length > 0) {
-      console.log(`[createWs] WARNING: Files REMOVED from original legacy project (should not happen): ${JSON.stringify(removedFiles)}`);
+      console.log(`[createWs] Files added by project consistency checks: ${JSON.stringify(addedFiles)}`);
     }
 
-    // Verify content files are unchanged
+    // host.json and workflow.json should be strictly unchanged
     assert.strictEqual(currentSnapshot.hostJson, legacySnapshot.hostJson, 'host.json content should be unchanged');
-    assert.strictEqual(currentSnapshot.localSettings, legacySnapshot.localSettings, 'local.settings.json content should be unchanged');
     assert.strictEqual(currentSnapshot.workflowJson, legacySnapshot.workflowJson, 'workflow.json content should be unchanged');
 
-    // Verify no files were REMOVED from the legacy project.
-    // Files may be ADDED by the extension's background processing (e.g.
-    // .funcignore, .vscode/settings.json, workflow-designtime/) — that is
-    // expected and unrelated to the conversion itself.
+    // local.settings.json should have original values preserved plus expected additions
+    // from ensureProjectFiles (FUNCTIONS_INPROC_NET8_ENABLED, ProjectDirectoryPath)
+    const currentSettings = JSON.parse(currentSnapshot.localSettings);
+    assert.strictEqual(currentSettings.IsEncrypted, false, 'IsEncrypted should remain false');
+    assert.strictEqual(currentSettings.Values.AzureWebJobsStorage, 'UseDevelopmentStorage=true', 'AzureWebJobsStorage should be preserved');
+    assert.strictEqual(currentSettings.Values.FUNCTIONS_WORKER_RUNTIME, 'dotnet', 'FUNCTIONS_WORKER_RUNTIME should be preserved');
+    assert.strictEqual(currentSettings.Values.APP_KIND, 'workflowApp', 'APP_KIND should be preserved');
+    assert.strictEqual(
+      currentSettings.Values.FUNCTIONS_INPROC_NET8_ENABLED,
+      '1',
+      'FUNCTIONS_INPROC_NET8_ENABLED should be added by consistency check'
+    );
+    assert.strictEqual(
+      currentSettings.Values.ProjectDirectoryPath,
+      LEGACY_PROJECT_DIR,
+      'ProjectDirectoryPath should be added by consistency check'
+    );
+
+    // workflow-designtime/ should be created by design-time project file generation
+    assert.ok(
+      addedFiles.some((f) => f.startsWith('workflow-designtime')),
+      `Expected workflow-designtime/ to be created by consistency checks. Added files: ${JSON.stringify(addedFiles)}`
+    );
+
+    // No files should be REMOVED
     assert.strictEqual(removedFiles.length, 0, `Files were removed from original legacy project: ${JSON.stringify(removedFiles)}`);
-    console.log('[createWs] Original legacy project verified untouched ✓');
+    console.log('[createWs] Original legacy project verified after consistency checks ✓');
 
     await captureScreenshot(driver, 'create-ws-completed', EXPLICIT_SCREENSHOT_DIR);
-    console.log('[createWs] PASSED — dialog → webview → fill form → create → verify disk + legacy untouched');
+    console.log('[createWs] PASSED — dialog → webview → fill form → create → verify disk + consistency checks');
 
     // Clean up created workspace
     try {

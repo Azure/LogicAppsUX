@@ -1,8 +1,10 @@
 import { MockHttpClient } from '../../../../__test__/mock-http-client';
+import { getMockedInitialRootState } from '../../../../__test__/mock-root-state';
 import Constants from '../../../../common/constants';
 import { getReactQueryClient } from '../../../ReactQueryProvider';
 import {
   getConnectionMappingForNode,
+  getConnectionPropertiesIfRequired,
   getLegacyConnectionReferenceKey,
   getManifestBasedConnectionMapping,
   isOpenApiConnectionType,
@@ -10,15 +12,30 @@ import {
   isConnectionAutoSelectionDisabled,
   getConnectionMetadata,
   needsConnection,
+  updateNodeConnectionAndProperties,
 } from '../../../actions/bjsworkflow/connections';
+import connectionsReducer, { changeConnectionMapping } from '../../../state/connection/connectionSlice';
+import workflowReducer, { setIsWorkflowDirty } from '../../../state/workflow/workflowSlice';
+import type { RootState } from '../../../store';
 import {
   InitOperationManifestService,
   StandardOperationManifestService,
   OperationManifestService,
   createItem,
   ConnectionReferenceKeyFormat,
+  ConnectionParameterTypes,
+  InitLoggerService,
+  InitWorkflowService,
+  ResourceIdentityType,
 } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2, OperationManifest, Connector } from '@microsoft/logic-apps-shared';
+
+const updateDynamicDataInNodeMock = vi.hoisted(() => vi.fn());
+
+vi.mock('../../../utils/parameters/helper', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../../../utils/parameters/helper')>()),
+  updateDynamicDataInNode: updateDynamicDataInNodeMock,
+}));
 
 const nodeId = '1';
 const connectionName = 'name123';
@@ -31,6 +48,11 @@ const serviceOptions: any = {
 
 let spy: any;
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+
+beforeAll(() => {
+  InitLoggerService([]);
+});
+
 describe('connection workflow mappings', () => {
   afterEach(() => {
     if (spy) {
@@ -110,6 +132,64 @@ describe('connection workflow mappings', () => {
     };
     const key = getLegacyConnectionReferenceKey(mockLegacyConnection);
     expect(key).toEqual('123');
+  });
+});
+
+describe('connection update dirty state', () => {
+  const connectorId = '/subscriptions/subscription/providers/Microsoft.Web/locations/westus/managedApis/test';
+  const connectionId = '/subscriptions/subscription/resourceGroups/group/providers/Microsoft.Web/connections/connection-b';
+  const updatePayload = {
+    nodeId,
+    connectorId,
+    connectionId,
+  };
+
+  beforeEach(() => {
+    updateDynamicDataInNodeMock.mockReset();
+  });
+
+  it('marks the mapping dirty before dynamic data loads and again after it settles', async () => {
+    const deferredDynamicData = createDeferred<void>();
+    updateDynamicDataInNodeMock.mockReturnValue(deferredDynamicData.promise);
+    const harness = createConnectionUpdateHarness();
+
+    const updatePromise = updateNodeConnectionAndProperties(updatePayload, harness.dispatch, harness.getState);
+
+    const pendingState = harness.getState();
+    const referenceKey = pendingState.connections.connectionsMapping[nodeId];
+    expect(referenceKey).toBeTruthy();
+    expect(pendingState.connections.connectionReferences[referenceKey as string].connection.id).toBe(connectionId);
+    expect(pendingState.workflow.isDirty).toBe(true);
+    expect(getDirtyActions(harness.actions)).toHaveLength(1);
+
+    harness.dispatch(setIsWorkflowDirty(false));
+    deferredDynamicData.resolve();
+    await updatePromise;
+
+    expect(harness.getState().workflow.isDirty).toBe(true);
+    expect(getDirtyActions(harness.actions)).toHaveLength(2);
+  });
+
+  it('marks the connection change dirty again when dynamic data loading rejects', async () => {
+    const deferredDynamicData = createDeferred<void>();
+    updateDynamicDataInNodeMock.mockReturnValue(deferredDynamicData.promise);
+    const harness = createConnectionUpdateHarness();
+
+    const updatePromise = updateNodeConnectionAndProperties(updatePayload, harness.dispatch, harness.getState);
+    harness.dispatch(setIsWorkflowDirty(false));
+    deferredDynamicData.reject(new Error('Dynamic data failed.'));
+
+    await expect(updatePromise).rejects.toThrow('Dynamic data failed.');
+    expect(harness.getState().workflow.isDirty).toBe(true);
+    expect(getDirtyActions(harness.actions)).toHaveLength(2);
+  });
+
+  it('does not mark initialization mapping actions dirty', () => {
+    const mappingAction = changeConnectionMapping(updatePayload);
+
+    const workflowState = workflowReducer(harnessInitialState().workflow, mappingAction);
+
+    expect(workflowState.isDirty).toBe(false);
   });
 });
 
@@ -235,3 +315,126 @@ function makeMockStdOperationManifestService(referenceKeyFormat: ConnectionRefer
     });
   InitOperationManifestService(new StandardOperationManifestService(serviceOptions));
 }
+
+function harnessInitialState(): RootState {
+  const state = getMockedInitialRootState();
+  return {
+    ...state,
+    connections: { ...state.connections, connectionsMapping: {}, connectionReferences: {} },
+    operations: {
+      ...state.operations,
+      operationInfo: {
+        ...state.operations.operationInfo,
+        [nodeId]: {
+          connectorId: 'connector-id',
+          operationId: 'operation-id',
+          type: Constants.NODE.TYPE.OPEN_API_CONNECTION,
+        } as any,
+      },
+      dependencies: {
+        ...state.operations.dependencies,
+        [nodeId]: { inputs: {}, outputs: {} },
+      },
+    },
+    workflow: { ...state.workflow, isDirty: false },
+  };
+}
+
+function createConnectionUpdateHarness() {
+  let state = harnessInitialState();
+  const actions: any[] = [];
+  const dispatch = (action: any) => {
+    actions.push(action);
+    state = {
+      ...state,
+      connections: connectionsReducer(state.connections, action),
+      workflow: workflowReducer(state.workflow, action),
+    };
+    return action;
+  };
+
+  return {
+    actions,
+    dispatch,
+    getState: () => state,
+  };
+}
+
+function getDirtyActions(actions: any[]) {
+  return actions.filter((action) => action.type === setIsWorkflowDirty.type && action.payload === true);
+}
+
+function createDeferred<T>() {
+  let resolve!: (value: T | PromiseLike<T>) => void;
+  let reject!: (reason?: any) => void;
+  const promise = new Promise<T>((resolvePromise, rejectPromise) => {
+    resolve = resolvePromise;
+    reject = rejectPromise;
+  });
+  return { promise, reject, resolve };
+}
+
+describe('getConnectionPropertiesIfRequired', () => {
+  const mcpConnectorId = '/subscriptions/sub/providers/Microsoft.Web/locations/eastus2/managedApis/foundrygithubmcp';
+  const oauthConnection: any = { id: '/connections/foundrygithubmcp', properties: { parameterValues: {} } };
+
+  beforeEach(() => {
+    InitWorkflowService({
+      getAppIdentity: () => ({ type: ResourceIdentityType.SYSTEM_ASSIGNED, principalId: 'principal', tenantId: 'tenant' }),
+      isExplicitAuthRequiredForManagedIdentity: () => true,
+    } as any);
+  });
+
+  it('should not force managed identity properties on an OAuth-backed managed MCP connector', () => {
+    const connector: any = {
+      id: mcpConnectorId,
+      properties: {
+        capabilities: [],
+        connectionParameters: { token: { type: 'oauthSetting', oAuthSettings: { identityProvider: 'oauth2pkce' } } },
+      },
+    };
+
+    expect(getConnectionPropertiesIfRequired(oauthConnection, connector)).toBeUndefined();
+  });
+
+  it('should add managed identity properties for a managed MCP connector that declares no auth of its own', () => {
+    const connector: any = { id: mcpConnectorId, properties: { capabilities: [] } };
+
+    expect(getConnectionPropertiesIfRequired(oauthConnection, connector)).toEqual({
+      authentication: { type: 'ManagedServiceIdentity' },
+    });
+  });
+
+  it('should return undefined for a non-MCP OAuth connector', () => {
+    const connector: any = {
+      id: '/subscriptions/sub/providers/Microsoft.Web/locations/eastus2/managedApis/github',
+      properties: { capabilities: [], connectionParameters: { token: { type: 'oauthSetting' } } },
+    };
+
+    expect(getConnectionPropertiesIfRequired(oauthConnection, connector)).toBeUndefined();
+  });
+
+  it('should still add managed identity properties when the MCP connection itself uses a managed identity', () => {
+    const connector: any = {
+      id: mcpConnectorId,
+      properties: {
+        capabilities: [],
+        connectionParameterSets: {
+          uiDefinition: {},
+          values: [
+            { name: 'oauth', uiDefinition: {}, parameters: { token: { type: 'oauthSetting' } } },
+            { name: 'managedIdentity', uiDefinition: {}, parameters: { identity: { type: ConnectionParameterTypes.managedIdentity } } },
+          ],
+        },
+      },
+    };
+    const msiConnection: any = {
+      id: '/connections/foundrygithubmcp',
+      properties: { parameterValues: {}, parameterValueSet: { name: 'managedIdentity', values: {} } },
+    };
+
+    expect(getConnectionPropertiesIfRequired(msiConnection, connector)).toEqual({
+      authentication: { type: 'ManagedServiceIdentity' },
+    });
+  });
+});

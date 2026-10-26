@@ -309,6 +309,15 @@ function isMultiAuthConnection(connection: Connection | undefined): boolean {
   return connection !== undefined && (connection.properties as any).parameterValueSet !== undefined;
 }
 
+// MSI is stored under parameterValueSet.values.identity.value (multi-auth),
+// parameterValues.identity (single-auth), or parameterValues.authentication.identity (managed MCP).
+export function getManagedIdentityFromConnection(connection: Connection | undefined): string | undefined {
+  const properties = connection?.properties as any;
+  const nestedAuth = properties?.parameterValues?.authentication;
+  const nestedIdentity = nestedAuth?.type === 'ManagedServiceIdentity' ? nestedAuth?.identity : undefined;
+  return properties?.parameterValueSet?.values?.identity?.value ?? properties?.parameterValues?.identity ?? nestedIdentity;
+}
+
 function containsManagedIdentityParameter(parameterSet: ConnectionParameterSet): boolean {
   const { parameters } = parameterSet;
   return Object.keys(parameters).some(

@@ -9,7 +9,6 @@ import {
   useOperationPanelSelectedNodeIds,
 } from '../../core/state/panel/panelSelectors';
 import { clearPanel } from '../../core/state/panel/panelSlice';
-import { AssertionsPanel } from './assertionsPanel/assertionsPanel';
 import { ConnectionPanel } from './connectionsPanel/connectionsPanel';
 import { ErrorsPanel } from './errorsPanel/errorsPanel';
 import { NodeDetailsPanel } from './nodeDetailsPanel/nodeDetailsPanel';
@@ -136,7 +135,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element | null => {
     [currentPanelMode]
   );
 
-  const nonBlockingPanels = useMemo(() => ['Connection', 'Assertions', 'Discovery'], []);
+  const nonBlockingPanels = useMemo(() => ['Connection', 'Discovery'], []);
 
   const dialogModes = useMemo(() => ['NodeSearch'], []);
 
@@ -160,8 +159,6 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element | null => {
     <ConnectionPanel {...commonPanelProps} />
   ) : currentPanelMode === 'Error' ? (
     <ErrorsPanel {...commonPanelProps} />
-  ) : currentPanelMode === 'Assertions' ? (
-    <AssertionsPanel {...commonPanelProps} />
   ) : null; // Caught above
 
   if (isUndefined(currentPanelMode)) {

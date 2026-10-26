@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { dataMapperVersionSetting, defaultDataMapperVersion, extensionCommand, vscodeFolderName } from '../../../constants';
+import { dataMapperVersionSetting, defaultDataMapperVersion, vscodeFolderName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
@@ -22,7 +22,7 @@ import { LogEntryLevel } from '@microsoft/logic-apps-shared';
 import type { SchemaType, MapMetadata, IFileSysTreeItem } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandlingSync } from '@microsoft/vscode-azext-utils';
-import type { MapDefinitionData, MessageToVsix, MessageToWebview } from '@microsoft/vscode-extension-logic-apps';
+import type { MapDefinitionData, MessageToVsix } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, Platform, ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import {
   copyFileSync,
@@ -45,15 +45,19 @@ export default class DataMapperPanel {
   public panel: WebviewPanel;
   public dataMapVersion: number;
   public dataMapName: string;
+  public panelKey: string;
+  public projectPath: string;
   public dataMapStateIsDirty: boolean;
   public mapDefinitionData: MapDefinitionData | undefined;
 
   private telemetryPrefix = 'data-mapper-vscode-extension';
 
-  constructor(panel: WebviewPanel, dataMapName: string) {
+  constructor(panel: WebviewPanel, dataMapName: string, panelKey: string, projectPath: string) {
     this.panel = panel;
     this.dataMapVersion = this.getDataMapperVersion();
     this.dataMapName = dataMapName;
+    this.panelKey = panelKey;
+    this.projectPath = projectPath;
     this.dataMapStateIsDirty = false;
     this.handleReadSchemaFileOptions = this.handleReadSchemaFileOptions.bind(this); // Bind these as they're used as callbacks
     this._handleWebviewMsg = this._handleWebviewMsg.bind(this);
@@ -80,7 +84,7 @@ export default class DataMapperPanel {
 
     this.panel.onDidDispose(
       () => {
-        delete ext.dataMapPanelManagers[this.dataMapName];
+        delete ext.dataMapPanelManagers[this.panelKey];
         if (schemaFolderWatcher) {
           schemaFolderWatcher.dispose();
         }
@@ -97,7 +101,7 @@ export default class DataMapperPanel {
 
   private watchFolderForChanges(folderPath: string, fileExtensions: string[], fn: () => void) {
     // Watch folder for changes to update available file list within Data Mapper
-    const absoluteFolderPath = path.join(ext.defaultLogicAppPath, folderPath);
+    const absoluteFolderPath = path.join(this.projectPath, folderPath);
     if (fileExistsSync(absoluteFolderPath)) {
       const folderWatcher = workspace.createFileSystemWatcher(new RelativePattern(absoluteFolderPath, `**/*.{${fileExtensions.join()}}`));
       folderWatcher.onDidCreate(fn);
@@ -108,10 +112,10 @@ export default class DataMapperPanel {
   }
 
   private setCustomFolders() {
-    const customXsltFullPath = path.join(ext.defaultLogicAppPath, customXsltPath);
+    const customXsltFullPath = path.join(this.projectPath, customXsltPath);
     mkdirSync(customXsltFullPath, { recursive: true });
 
-    const customFunctionsFullPath = path.join(ext.defaultLogicAppPath, customFunctionsPath);
+    const customFunctionsFullPath = path.join(this.projectPath, customFunctionsPath);
     mkdirSync(customFunctionsFullPath, { recursive: true });
   }
 
@@ -119,14 +123,10 @@ export default class DataMapperPanel {
     this.panel.webview.html = await getWebViewHTML('vs-code-react', this.panel);
   }
 
-  public sendMsgToWebview(msg: MessageToWebview) {
-    this.panel.webview.postMessage(msg);
-  }
-
   private _handleWebviewMsg(msg: MessageToVsix) {
     switch (msg.command) {
       case ExtensionCommand.initialize: {
-        this.sendMsgToWebview({
+        this.panel.webview.postMessage({
           command: ExtensionCommand.initialize_frame,
           data: {
             project: ProjectName.dataMapper,
@@ -136,9 +136,9 @@ export default class DataMapperPanel {
       }
       case ExtensionCommand.webviewLoaded: {
         // Send runtime port to webview
-        this.sendMsgToWebview({
+        this.panel.webview.postMessage({
           command: ExtensionCommand.setRuntimePort,
-          data: `${ext.designTimeInstances.get(ext.defaultLogicAppPath)?.port}`,
+          data: `${ext.designTimeInstances.get(this.projectPath)?.port}`,
         });
 
         // If loading a data map, handle that + xslt filename
@@ -205,7 +205,7 @@ export default class DataMapperPanel {
       }
       case ExtensionCommand.switchToDataMapperV2: {
         // Execute the switchToDataMapperV2 VS Code command with telemetry
-        this.callWithTelemetryAndErrorHandlingSyncForDM(extensionCommand.switchToDataMapperV2, () => {
+        this.callWithTelemetryAndErrorHandlingSyncForDM('DataMapperPanel.switchToDataMapperV2', () => {
           return switchToDataMapperV2();
         });
         break;
@@ -214,7 +214,7 @@ export default class DataMapperPanel {
   }
 
   public isTestDisabledForOS() {
-    this.sendMsgToWebview({
+    this.panel.webview.postMessage({
       command: ExtensionCommand.isTestDisabledForOS,
       data: process.platform === Platform.mac,
     });
@@ -237,7 +237,7 @@ export default class DataMapperPanel {
   public handleLoadMapDefinitionIfAny() {
     if (this.mapDefinitionData) {
       const mapMetadata = this.readMapMetadataFile();
-      this.sendMsgToWebview({
+      this.panel.webview.postMessage({
         command: ExtensionCommand.loadDataMap,
         data: {
           ...this.mapDefinitionData,
@@ -253,7 +253,7 @@ export default class DataMapperPanel {
   }
 
   public getNestedFilePaths(fileName: string, parentPath: string, relativePath: string, filesToDisplay: string[], filetypes: string[]) {
-    const rootPath = path.join(ext.defaultLogicAppPath, relativePath);
+    const rootPath = path.join(this.projectPath, relativePath);
     const absolutePath = path.join(rootPath, parentPath, fileName);
     if (statSync(absolutePath).isDirectory()) {
       readdirSync(absolutePath).forEach((childFileName) => {
@@ -276,7 +276,7 @@ export default class DataMapperPanel {
     filesToDisplay: IFileSysTreeItem[],
     filetypes: string[]
   ) {
-    const rootPath = path.join(ext.defaultLogicAppPath, relativePath);
+    const rootPath = path.join(this.projectPath, relativePath);
     const absolutePath = path.join(rootPath, parentPath, fileName);
     if (statSync(absolutePath).isDirectory()) {
       const childrenFilesToDisplay: IFileSysTreeItem[] = [];
@@ -315,7 +315,7 @@ export default class DataMapperPanel {
     if (this.dataMapVersion === 2) {
       return this.getFilesTreeForPath(customXsltPath, supportedCustomXsltFileExts, ExtensionCommand.getAvailableCustomXsltPathsV2);
     }
-    const absoluteFolderPath = path.join(ext.defaultLogicAppPath, customXsltPath);
+    const absoluteFolderPath = path.join(this.projectPath, customXsltPath);
     if (fileExistsSync(absoluteFolderPath)) {
       return this.getFilesForPath(customXsltPath, ExtensionCommand.getAvailableCustomXsltPaths, supportedCustomXsltFileExts);
     }
@@ -329,15 +329,15 @@ export default class DataMapperPanel {
         break;
       }
       case LogEntryLevel.Warning: {
-        ext.showWarning(msg);
+        window.showWarningMessage(msg);
         break;
       }
       case LogEntryLevel.Verbose: {
-        ext.showInformation(msg);
+        window.showInformationMessage(msg);
         break;
       }
       default: {
-        ext.log(msg);
+        ext.outputChannel.appendLine(msg);
         break;
       }
     }
@@ -348,12 +348,12 @@ export default class DataMapperPanel {
     command: typeof ExtensionCommand.showAvailableSchemas | typeof ExtensionCommand.getAvailableCustomXsltPaths,
     fileTypes: string[]
   ) {
-    fs.readdir(path.join(ext.defaultLogicAppPath, folderPath)).then((result) => {
+    fs.readdir(path.join(this.projectPath, folderPath)).then((result) => {
       const filesToDisplay: string[] = [];
       result.forEach((file) => {
         this.getNestedFilePaths(file, '', folderPath, filesToDisplay, fileTypes);
       });
-      this.sendMsgToWebview({
+      this.panel.webview.postMessage({
         command,
         data: filesToDisplay,
       });
@@ -365,12 +365,12 @@ export default class DataMapperPanel {
     fileTypes: string[],
     command: typeof ExtensionCommand.showAvailableSchemasV2 | typeof ExtensionCommand.getAvailableCustomXsltPathsV2
   ) {
-    fs.readdir(path.join(ext.defaultLogicAppPath, folderPath)).then((result) => {
+    fs.readdir(path.join(this.projectPath, folderPath)).then((result) => {
       const filesToDisplay: IFileSysTreeItem[] = [];
       result.forEach((file) => {
         this.getNestedFileTreePaths(file, '', folderPath, filesToDisplay, fileTypes);
       });
-      this.sendMsgToWebview({
+      this.panel.webview.postMessage({
         command: command,
         data: filesToDisplay,
       });
@@ -391,7 +391,7 @@ export default class DataMapperPanel {
   }
 
   public addSchemaFromFile(schemaType: SchemaType) {
-    this.callWithTelemetryAndErrorHandlingSyncForDM(extensionCommand.dataMapAddSchemaFromFile, (context: IActionContext) => {
+    this.callWithTelemetryAndErrorHandlingSyncForDM('DataMapperPanel.addSchemaFromFile', (context: IActionContext) => {
       this.setDataMapperVersionForLogging(context);
       const fileSelectOptions: vscode.OpenDialogOptions = {
         filters: { Schemas: ['xsd', 'json'] },
@@ -403,7 +403,7 @@ export default class DataMapperPanel {
         }
         const selectedFile = files[0];
 
-        const pathToWorkspaceSchemaFolder = path.join(ext.defaultLogicAppPath, schemasPath);
+        const pathToWorkspaceSchemaFolder = path.join(this.projectPath, schemasPath);
         const primarySchemaFullPath = selectedFile.fsPath;
         const pathToContainingFolder = path.dirname(primarySchemaFullPath);
         const primarySchemaFileName = path.basename(primarySchemaFullPath);
@@ -418,7 +418,7 @@ export default class DataMapperPanel {
             copyFileSync(primarySchemaFullPath, newPath);
           }
 
-          this.sendMsgToWebview({
+          this.panel.webview.postMessage({
             command: ExtensionCommand.fetchSchema,
             data: {
               fileName: primarySchemaFileName,
@@ -431,13 +431,13 @@ export default class DataMapperPanel {
   }
 
   public saveMapDefinition(mapDefinition: string) {
-    this.callWithTelemetryAndErrorHandlingSyncForDM(extensionCommand.dataMapSaveMapDefinition, (context: IActionContext) => {
+    this.callWithTelemetryAndErrorHandlingSyncForDM('DataMapperPanel.saveMapDefinition', (context: IActionContext) => {
       // Delete *draft* map definition as it's no longer needed
       this.deleteDraftDataMapDefinition();
       this.setDataMapperVersionForLogging(context);
 
       const fileName = `${this.dataMapName}${mapDefinitionExtension}`;
-      const dataMapFolderPath = path.join(ext.defaultLogicAppPath, dataMapDefinitionsPath);
+      const dataMapFolderPath = path.join(this.projectPath, dataMapDefinitionsPath);
       const filePath = path.join(dataMapFolderPath, fileName);
 
       // Mkdir as extra insurance that directory exists so file can be written
@@ -465,11 +465,11 @@ export default class DataMapperPanel {
   }
 
   public saveMapXslt(mapXslt: string) {
-    this.callWithTelemetryAndErrorHandlingSyncForDM(extensionCommand.dataMapSaveMapXslt, (context: IActionContext) => {
+    this.callWithTelemetryAndErrorHandlingSyncForDM('DataMapperPanel.saveMapXslt', (context: IActionContext) => {
       this.setDataMapperVersionForLogging(context);
 
       const fileName = `${this.dataMapName}${mapXsltExtension}`;
-      const dataMapFolderPath = path.join(ext.defaultLogicAppPath, dataMapsPath);
+      const dataMapFolderPath = path.join(this.projectPath, dataMapsPath);
       const filePath = path.join(dataMapFolderPath, fileName);
 
       // Mkdir as extra insurance that directory exists so file can be written
@@ -493,7 +493,7 @@ export default class DataMapperPanel {
 
   public saveDraftDataMapDefinition(mapDefFileContents: string) {
     const mapDefileName = `${this.dataMapName}${draftMapDefinitionSuffix}${mapDefinitionExtension}`;
-    const dataMapDefFolderPath = path.join(ext.defaultLogicAppPath, dataMapDefinitionsPath);
+    const dataMapDefFolderPath = path.join(this.projectPath, dataMapDefinitionsPath);
     const filePath = path.join(dataMapDefFolderPath, mapDefileName);
 
     // Mkdir as extra insurance that directory exists so file can be written
@@ -528,7 +528,7 @@ export default class DataMapperPanel {
           return undefined;
         }
       } else {
-        ext.showWarning(
+        window.showWarningMessage(
           localize(
             'MetadataNotFound',
             `Data map metadata not found at path "{0}". This file configures your function positioning and other info. Please save your map to regenerate the file.`,
@@ -546,7 +546,7 @@ export default class DataMapperPanel {
 
   public deleteDraftDataMapDefinition() {
     const draftMapDefinitionPath = path.join(
-      ext.defaultLogicAppPath,
+      this.projectPath,
       dataMapDefinitionsPath,
       `${this.dataMapName}${draftMapDefinitionSuffix}${mapDefinitionExtension}`
     );
@@ -556,11 +556,11 @@ export default class DataMapperPanel {
   }
 
   public checkAndSetXslt() {
-    const expectedXsltPath = path.join(ext.defaultLogicAppPath, dataMapsPath, `${this.dataMapName}${mapXsltExtension}`);
+    const expectedXsltPath = path.join(this.projectPath, dataMapsPath, `${this.dataMapName}${mapXsltExtension}`);
 
     if (fileExistsSync(expectedXsltPath)) {
       fs.readFile(expectedXsltPath, 'utf-8').then((fileContents) => {
-        this.sendMsgToWebview({
+        this.panel.webview.postMessage({
           command: ExtensionCommand.setXsltData,
           data: {
             filename: this.dataMapName,
@@ -569,21 +569,21 @@ export default class DataMapperPanel {
         });
       });
     } else {
-      ext.showWarning(localize('XSLTFileNotDetected', `XSLT file not detected for "{0}"`, this.dataMapName));
+      window.showWarningMessage(localize('XSLTFileNotDetected', `XSLT file not detected for "{0}"`, this.dataMapName));
     }
   }
 
   public getConfigurationSetting(configSetting: string) {
     const azureDataMapperConfig = workspace.getConfiguration(ext.prefix);
     const configValue = azureDataMapperConfig.get<boolean>(configSetting) ?? true;
-    this.sendMsgToWebview({
+    this.panel.webview.postMessage({
       command: ExtensionCommand.getConfigurationSetting,
       data: configValue,
     });
   }
 
   public handleGetDataMapperVersion() {
-    this.sendMsgToWebview({
+    this.panel.webview.postMessage({
       command: ExtensionCommand.getDataMapperVersion,
       data: this.dataMapVersion,
     });
@@ -596,12 +596,11 @@ export default class DataMapperPanel {
   }
 
   private getMapMetadataPath() {
-    const projectPath = ext.defaultLogicAppPath;
     let vscodeFolderPath = '';
     if (this.dataMapVersion === 2) {
-      vscodeFolderPath = path.join(projectPath, vscodeFolderName, `${this.dataMapName}DataMapMetadata-v2.json`);
+      vscodeFolderPath = path.join(this.projectPath, vscodeFolderName, `${this.dataMapName}DataMapMetadata-v2.json`);
     } else {
-      vscodeFolderPath = path.join(projectPath, vscodeFolderName, `${this.dataMapName}DataMapMetadata.json`);
+      vscodeFolderPath = path.join(this.projectPath, vscodeFolderName, `${this.dataMapName}DataMapMetadata.json`);
     }
     return vscodeFolderPath;
   }

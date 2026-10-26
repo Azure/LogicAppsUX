@@ -2,39 +2,40 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import {
-  autoStartAzuriteSetting,
-  verifyConnectionKeysSetting,
-  defaultFuncPort,
-  hostStartTaskName,
-  pickProcessTimeoutSetting,
-} from '../../constants';
+import { defaultFuncPort, hostStartTaskName, pickProcessTimeoutSetting } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { getMatchingWorkspaceFolder, preDebugValidate } from '../debug/validatePreDebug';
-import { verifyLocalConnectionKeys } from '../utils/appSettings/connectionKeys';
+import { refreshConnectionKeys } from '../utils/appSettings/connectionKeys';
 import { activateAzurite } from '../utils/azurite/activateAzurite';
-import { getFuncPortFromTaskOrProject, isFuncHostTask, runningFuncTaskMap } from '../utils/funcCoreTools/funcHostTask';
+import {
+  getFuncPortFromTaskOrProject,
+  getRunningFuncTaskForWorkspace,
+  isFuncHostTask,
+  scopeMatchesWorkspace,
+  stopFuncTaskForWorkspace,
+} from '../utils/funcCoreTools/funcHostTask';
 import type { IRunningFuncTask } from '../utils/funcCoreTools/funcHostTask';
 import { isTimeoutError } from '../utils/requestUtils';
 import { executeIfNotActive } from '../utils/taskUtils';
-import { runWithDurationTelemetry } from '../utils/telemetry';
 import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import { getWorkspaceSetting } from '../utils/vsCodeConfig/settings';
-import { getChildProcessesWithScript } from '../utils/findChildProcess/findChildProcess';
-import { getWindowsProcess } from '../utils/windowsProcess';
+import { getChildProcesses } from '../utils/findChildProcess/findChildProcess';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import type { AzExtRequestPrepareOptions } from '@microsoft/vscode-azext-azureutils';
 import { sendRequestWithTimeout } from '@microsoft/vscode-azext-azureutils';
-import { UserCancelledError, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { Platform, ProjectLanguage, type IProcessInfo } from '@microsoft/vscode-extension-logic-apps';
+import { UserCancelledError } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
+import { Platform, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import unixPsTree from 'ps-tree';
 import * as vscode from 'vscode';
 import parser from 'yargs-parser';
 import { tryBuildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProject';
 import { publishCodefulProject } from './publishCodefulProject';
+
+const funcTaskStartupTimeoutSeconds = 10 * 60;
 import { getProjFiles } from '../utils/dotnet/dotnet';
+import { hasCodefulWorkflowSetting } from '../utils/codeful';
 import { delay } from '../utils/delay';
 
 type OSAgnosticProcess = { command: string | undefined; pid: number | string };
@@ -47,7 +48,14 @@ const workflowProcessRegex = /(dotnet|func)(\.exe|)$/i;
  * @param debugConfig The debug configuration.
  * @returns A promise that resolves to the child process ID or undefined if not found.
  */
-export async function pickFuncProcess(context: IActionContext, debugConfig: vscode.DebugConfiguration): Promise<string | undefined> {
+export async function pickFuncProcess(
+  context: IActionContext,
+  debugConfig: vscode.DebugConfiguration | undefined
+): Promise<string | undefined> {
+  if (!debugConfig) {
+    throw new Error(localize('noDebugConfig', 'Debug configuration is undefined.'));
+  }
+
   const workspaceFolder: vscode.WorkspaceFolder = getMatchingWorkspaceFolder(debugConfig);
   const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspaceFolder);
   if (!projectPath) {
@@ -71,45 +79,75 @@ export async function pickFuncProcessInternal(
   workspaceFolder: vscode.WorkspaceFolder,
   projectPath: string
 ): Promise<string | undefined> {
-  await callWithTelemetryAndErrorHandling(autoStartAzuriteSetting, async (actionContext: IActionContext) => {
-    await runWithDurationTelemetry(actionContext, autoStartAzuriteSetting, async () => {
-      await activateAzurite(context, projectPath);
-    });
+  context.telemetry.properties.lastStep = 'activateAzurite';
+  const isAzuriteStarted = await callWithTelemetryAndErrorHandling(
+    'pickFuncProcess.startAzurite',
+    async (actionContext: IActionContext) => {
+      actionContext.errorHandling.rethrow = true;
+      actionContext.errorHandling.suppressDisplay = true;
+      await activateAzurite(actionContext, projectPath);
+      return true;
+    }
+  );
+
+  if (!isAzuriteStarted) {
+    throw new Error(localize('azuriteStartFailed', 'Failed to start Azurite.'));
+  }
+
+  context.telemetry.properties.lastStep = 'refreshConnectionKeys';
+  await callWithTelemetryAndErrorHandling('pickFuncProcess.refreshConnectionKeys', async (actionContext: IActionContext) => {
+    actionContext.errorHandling.rethrow = true;
+    actionContext.errorHandling.suppressDisplay = true;
+    await refreshConnectionKeys(actionContext, projectPath);
   });
 
-  await callWithTelemetryAndErrorHandling(verifyConnectionKeysSetting, async (actionContext: IActionContext) => {
-    await runWithDurationTelemetry(actionContext, verifyConnectionKeysSetting, async () => {
-      await verifyLocalConnectionKeys(context, projectPath);
-    });
-  });
-
+  context.telemetry.properties.lastStep = 'preDebugValidate';
   context.telemetry.properties.debugType = debugConfig.type;
   const shouldContinue: boolean = await preDebugValidate(context, projectPath);
   if (!shouldContinue) {
     throw new UserCancelledError('preDebugValidate');
   }
 
-  await tryBuildCustomCodeFunctionsProject(context, workspaceFolder.uri);
-  // For codeful projects, the `func: host start` task chains a Debug `build` via dependsOn,
-  // and the modern codeful template hooks `CopyToCodefulFolder`/`ReplaceLanguageNetCore` to
-  // `AfterTargets="Build;Publish"`. Running an explicit Release `publish` first would just
-  // duplicate the clean+build cycle and its output would be overwritten by the subsequent
-  // Debug build. Skip it when the .csproj confirms the build hooks are present. Deploy paths
-  // (deploy.ts) keep the unconditional publish so `bin/Release/<tfm>/publish/` is produced.
-  await publishCodefulProject(context, workspaceFolder.uri, { skipIfBuildPopulatesCodeful: true });
+  // Stop any previous func process BEFORE building to avoid file lock errors
+  // (e.g. GenerateFunctionMetadata failing on obj/Debug/net8/WorkerExtensions)
+  context.telemetry.properties.lastStep = 'stopPreviousFuncTask';
+  await stopFuncTaskForWorkspace(workspaceFolder);
 
-  await waitForPrevFuncTaskToStop(workspaceFolder);
-  const projectFiles = await getProjFiles(context, ProjectLanguage.CSharp, projectPath);
+  context.telemetry.properties.lastStep = 'buildProject';
+  if (await hasCodefulWorkflowSetting(projectPath)) {
+    // For codeful projects, the `func: host start` task chains a Debug `build` via dependsOn,
+    // and the modern codeful template hooks `CopyToCodefulFolder`/`ReplaceLanguageNetCore` to
+    // `AfterTargets="Build;Publish"`. Running an explicit Release `publish` first would just
+    // duplicate the clean+build cycle and its output would be overwritten by the subsequent
+    // Debug build. Skip it when the .csproj confirms the build hooks are present. Deploy paths
+    // (deploy.ts) keep the unconditional publish so `bin/Release/<tfm>/publish/` is produced.
+    await callWithTelemetryAndErrorHandling('pickFuncProcess.publishCodefulProject', async (actionContext: IActionContext) => {
+      actionContext.errorHandling.rethrow = true;
+      actionContext.errorHandling.suppressDisplay = true;
+      await publishCodefulProject(actionContext, workspaceFolder.uri, { skipIfBuildPopulatesCodeful: true });
+    });
+  } else {
+    await callWithTelemetryAndErrorHandling('pickFuncProcess.buildCustomCodeFunctionsProject', async (actionContext: IActionContext) => {
+      actionContext.errorHandling.rethrow = true;
+      actionContext.errorHandling.suppressDisplay = true;
+      await tryBuildCustomCodeFunctionsProject(actionContext, workspaceFolder.uri);
+    });
+  }
+
+  context.telemetry.properties.lastStep = 'startFuncTask';
+  const projectFiles = await getProjFiles(ProjectLanguage.CSharp, projectPath);
   const isBundleProject: boolean = projectFiles.length > 0 ? false : true;
 
   const preLaunchTaskName: string | undefined = debugConfig.preLaunchTask;
   const tasks: vscode.Task[] = await vscode.tasks.fetchTasks();
   const funcTask: vscode.Task | undefined = tasks.find((task) => {
-    return task.scope === workspaceFolder && (preLaunchTaskName ? task.name === preLaunchTaskName : isFuncHostTask(task));
+    return (
+      scopeMatchesWorkspace(task.scope, workspaceFolder) && (preLaunchTaskName ? task.name === preLaunchTaskName : isFuncHostTask(task))
+    );
   });
 
   const debugTask: vscode.Task | undefined = tasks.find((task) => {
-    return task.scope === workspaceFolder && task.name === 'generateDebugSymbols';
+    return scopeMatchesWorkspace(task.scope, workspaceFolder) && task.name === 'generateDebugSymbols';
   });
 
   if (!funcTask) {
@@ -120,7 +158,8 @@ export async function pickFuncProcessInternal(
 
   getPickProcessTimeout(context);
 
-  if (debugTask && !debugConfig['noDebug'] && (isBundleProject || !debugConfig.isCodeless)) {
+  const isCodelessNugetProject = !isBundleProject && debugConfig.isCodeless === true && !debugConfig.customCodeRuntime;
+  if (debugTask && !debugConfig['noDebug'] && (isBundleProject || !debugConfig.isCodeless || isCodelessNugetProject)) {
     await startDebugTask(debugTask, workspaceFolder);
   }
 
@@ -139,28 +178,6 @@ export async function pickFuncProcessInternal(
     )
   );
   return await pickWorkflowDebugProcess(taskInfo, preferHostChildProcess);
-}
-
-/**
- * Waits for functions tasks to stop.
- * @param {vscode.WorkspaceFolder} workspaceFolder - Workspace path.
- */
-async function waitForPrevFuncTaskToStop(workspaceFolder: vscode.WorkspaceFolder): Promise<void> {
-  const timeoutInSeconds = 30;
-  const maxTime: number = Date.now() + timeoutInSeconds * 1000;
-  while (Date.now() < maxTime) {
-    if (!runningFuncTaskMap.has(workspaceFolder)) {
-      return;
-    }
-    await delay(1000);
-  }
-  throw new Error(
-    localize(
-      'failedToFindFuncHost',
-      'Failed to stop previous running Functions host within "{0}" seconds. Make sure the task has stopped before you debug again.',
-      timeoutInSeconds
-    )
-  );
 }
 
 /**
@@ -213,7 +230,7 @@ async function startDebugTask(debugTask: vscode.Task, workspaceFolder: vscode.Wo
 
   return new Promise<void>((resolve) => {
     const disposable: vscode.Disposable = vscode.tasks.onDidEndTaskProcess((e) => {
-      if (e.execution.task.scope === workspaceFolder && e.execution.task === debugTask) {
+      if (scopeMatchesWorkspace(e.execution.task.scope, workspaceFolder) && e.execution.task.name === debugTask.name) {
         if (e.exitCode !== 0) {
           vscode.window.showWarningMessage(
             localize('azureLogicAppsStandard.debugSymbols', 'Unable to debug the workflow app. Debug symbols could not be generated.')
@@ -242,7 +259,7 @@ async function startFuncTask(
 
   let taskError: Error | undefined;
   const errorListener: vscode.Disposable = vscode.tasks.onDidEndTaskProcess((e: vscode.TaskProcessEndEvent) => {
-    if (e.execution.task.scope === workspaceFolder && e.exitCode !== 0) {
+    if (scopeMatchesWorkspace(e.execution.task.scope, workspaceFolder) && e.exitCode !== 0) {
       context.errorHandling.suppressReportIssue = true;
       // Throw if _any_ task fails, not just funcTask (since funcTask often depends on build/clean tasks)
       taskError = new Error(
@@ -259,45 +276,63 @@ async function startFuncTask(
 
   try {
     // The "IfNotActive" part helps when the user starts, stops and restarts debugging quickly in succession. We want to use the already-active task to avoid two func tasks causing a port conflict error
-    // The most common case we hit this is if the "clean" or "build" task is running when we get here. It's unlikely the "func host start" task is active, since we would've stopped it in `waitForPrevFuncTaskToStop` above
+    // The most common case we hit this is if the "clean" or "build" task is running when we get here. It's unlikely the "func host start" task is active, since we already stopped any previous workspace-scoped func task above.
     await executeIfNotActive(funcTask);
 
     const intervalMs = 500;
     const funcPort: string = await getFuncPortFromTaskOrProject(context, funcTask, workspaceFolder);
     let statusRequestTimeout: number = intervalMs;
+    const taskStartMaxTime: number = Date.now() + Math.max(pickProcessTimeout, funcTaskStartupTimeoutSeconds) * 1000;
+    let taskInfo: IRunningFuncTask | undefined = getRunningFuncTaskForWorkspace(workspaceFolder);
+    while (!taskInfo && Date.now() < taskStartMaxTime) {
+      if (taskError !== undefined) {
+        throw taskError;
+      }
+      await delay(intervalMs);
+      taskInfo = getRunningFuncTaskForWorkspace(workspaceFolder);
+    }
+
+    if (!taskInfo) {
+      throw new Error(
+        localize(
+          'failedToStartFuncHostTask',
+          'Failed to start the Functions host task within "{0}" seconds. View task output for build or restore details.',
+          Math.max(pickProcessTimeout, funcTaskStartupTimeoutSeconds)
+        )
+      );
+    }
+
     const maxTime: number = Date.now() + pickProcessTimeout * 1000;
     while (Date.now() < maxTime) {
       if (taskError !== undefined) {
         throw taskError;
       }
 
-      const taskInfo: IRunningFuncTask | undefined = runningFuncTaskMap.get(workspaceFolder);
-      if (taskInfo) {
-        for (const scheme of ['http', 'https']) {
-          const statusRequest: AzExtRequestPrepareOptions = {
-            url: `${scheme}://localhost:${funcPort}/admin/host/status`,
-            method: HTTP_METHODS.GET,
-          };
-          if (scheme === 'https') {
-            statusRequest.rejectUnauthorized = false;
-          }
+      taskInfo = getRunningFuncTaskForWorkspace(workspaceFolder) ?? taskInfo;
+      for (const scheme of ['http', 'https']) {
+        const statusRequest: AzExtRequestPrepareOptions = {
+          url: `${scheme}://localhost:${funcPort}/admin/host/status`,
+          method: HTTP_METHODS.GET,
+        };
+        if (scheme === 'https') {
+          statusRequest.rejectUnauthorized = false;
+        }
 
-          try {
-            // wait for status url to indicate functions host is running
-            const response = await sendRequestWithTimeout(context, statusRequest, statusRequestTimeout, undefined);
-            if (response.parsedBody.state.toLowerCase() === 'running') {
-              funcTaskReadyEmitter.fire(workspaceFolder);
-              taskInfo.childProcessId = await getWorkflowDebugProcessCandidates(taskInfo);
-              return taskInfo;
-            }
-          } catch (error) {
-            if (isTimeoutError(error)) {
-              // Timeout likely means localhost isn't ready yet, but we'll increase the timeout each time it fails just in case it's a slow computer that can't handle a request that fast
-              statusRequestTimeout *= 2;
-              context.telemetry.measurements.maxStatusTimeout = statusRequestTimeout;
-            } else {
-              // ignore
-            }
+        try {
+          // wait for status url to indicate functions host is running
+          const response = await sendRequestWithTimeout(context, statusRequest, statusRequestTimeout, undefined);
+          if (response.parsedBody.state.toLowerCase() === 'running') {
+            funcTaskReadyEmitter.fire(workspaceFolder);
+            taskInfo.childProcessId = await getWorkflowDebugProcessCandidates(taskInfo);
+            return taskInfo;
+          }
+        } catch (error) {
+          if (isTimeoutError(error)) {
+            // Timeout likely means localhost isn't ready yet, but we'll increase the timeout each time it fails just in case it's a slow computer that can't handle a request that fast
+            statusRequestTimeout *= 2;
+            context.telemetry.measurements.maxStatusTimeout = statusRequestTimeout;
+          } else {
+            // ignore
           }
         }
       }
@@ -457,35 +492,22 @@ export async function getUnixChildren(pid: number): Promise<OSAgnosticProcess[]>
 }
 
 export async function getWindowsChildren(pid: number): Promise<OSAgnosticProcess[]> {
-  try {
-    const processes = await getChildProcessesWithScript(pid);
-    if (processes.length > 0) {
-      ext.outputChannel.appendLog(
-        localize(
-          'workflowDebugProcessScript',
-          'Resolved Windows child processes for PID "{0}" using the PowerShell child-process script.',
-          pid
-        )
-      );
-      return processes.map((c) => {
-        return { command: c.name, pid: c.processId };
-      });
-    }
-  } catch (error) {
+  const processes = await getChildProcesses(pid);
+  if (processes.length > 0) {
     ext.outputChannel.appendLog(
       localize(
-        'workflowDebugProcessScriptFallback',
-        'Falling back to process-tree for Windows child process resolution on PID "{0}". Error: {1}',
-        pid,
-        error instanceof Error ? error.message : String(error)
+        'workflowDebugProcess',
+        'Resolved Windows child processes "{0}" for parent PID "{1}".',
+        processes.map((c) => c.name).join(', '),
+        pid
       )
     );
+    return processes.map((c) => {
+      return { command: c.name, pid: c.processId };
+    });
   }
 
-  const processes: IProcessInfo[] = await getWindowsProcess(pid);
-  return (processes || []).map((c) => {
-    return { command: c.name, pid: c.pid };
-  });
+  return [];
 }
 
 async function pickFuncHostChildProcess(taskInfo: IRunningFuncTask): Promise<string | undefined> {

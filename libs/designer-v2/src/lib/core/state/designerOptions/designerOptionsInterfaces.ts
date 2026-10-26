@@ -25,8 +25,10 @@ import type {
   IExperimentationService,
   ICognitiveServiceService,
   ICopilotWorkflowEditorService,
+  IResourceService,
 } from '@microsoft/logic-apps-shared';
 import type { MaximumWaitingRunsMetadata } from '../../../ui/settings';
+import type { WorkflowExtractionService } from '../../../common/models/workflowExtraction';
 
 type PANEL_TAB_NAMES = keyof typeof CONSTANTS.PANEL_TAB_NAMES;
 
@@ -35,7 +37,6 @@ export interface DesignerOptionsState {
   isMonitoringView?: boolean;
   isDraft?: boolean;
   isDarkMode?: boolean;
-  isUnitTest?: boolean;
   isVSCode?: boolean;
   servicesInitialized?: boolean;
   designerOptionsInitialized?: boolean;
@@ -55,6 +56,7 @@ export interface DesignerOptionsState {
     enableNestedAgentLoops?: boolean; // allow agent loops to be added inside regular loops (requires bundle version >= 1.115.0)
     disableMcpClientTools?: boolean; // hide MCP client tools from browse panel
     disableNativeMcpClientTools?: boolean; // hide native (built-in) MCP client tools tab from browse panel
+    enableEditableCodeView?: boolean; // allow editing an action's JSON inline from the node code view tab (opt-in per host)
     integrationAccount?: { id?: string; name?: string }; // integration account linked to the workflow
   };
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
@@ -64,6 +66,7 @@ export interface DesignerOptionsState {
 }
 
 export interface ServiceOptions {
+  workflowExtractionService?: WorkflowExtractionService;
   connectionService: IConnectionService;
   operationManifestService: IOperationManifestService;
   searchService: ISearchService;
@@ -88,4 +91,5 @@ export interface ServiceOptions {
   experimentationService?: IExperimentationService;
   cognitiveServiceService?: ICognitiveServiceService;
   copilotWorkflowEditorService?: ICopilotWorkflowEditorService;
+  resourceService?: IResourceService;
 }

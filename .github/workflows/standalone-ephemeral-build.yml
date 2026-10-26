@@ -1,0 +1,38 @@
+name: Build Standalone Ephemeral
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, synchronize, labeled]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: standalone-ephemeral-build-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    if: vars.EPHEMERAL_ENABLED == 'true' && contains(github.event.pull_request.labels.*.name, 'ephemeral')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - uses: pnpm/action-setup@v5
+      - run: pnpm install --frozen-lockfile --strict-peer-dependencies
+      - run: pnpm turbo run build:ephemeral --filter=standalone
+      - uses: actions/upload-artifact@v6
+        with:
+          name: standalone-ephemeral-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.event.pull_request.head.sha }}
+          path: apps/Standalone/dist
+          if-no-files-found: error
+          retention-days: 7
+          include-hidden-files: true

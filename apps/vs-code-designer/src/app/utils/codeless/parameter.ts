@@ -49,7 +49,7 @@ export async function saveWorkflowParameter(
 
   if (parameters && Object.keys(parameters).length) {
     await writeFormattedJson(parametersFilePath, parameters);
-    if (!parametersFileExists && (await isCSharpProject(context, projectPath))) {
+    if (!parametersFileExists && (await isCSharpProject(projectPath))) {
       await addNewFileInCSharpProject(context, parametersFileName, projectPath);
     }
   } else if (parametersFileExists) {

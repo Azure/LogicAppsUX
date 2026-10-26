@@ -76,20 +76,9 @@ exports[`OperationSearchHeader > renders correctly with isTriggerNode=false 1`] 
         <span
           class="fui-Button__icon rywnvv2 fui-MenuButton__icon"
         >
-          <svg
-            aria-hidden="true"
-            class="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
-            fill="currentColor"
-            height="1em"
-            viewBox="0 0 20 20"
-            width="1em"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M7.5 13h5a.5.5 0 0 1 .09 1H7.5a.5.5 0 0 1-.09-1h5.09-5Zm-2-4h9a.5.5 0 0 1 .09 1H5.5a.5.5 0 0 1-.09-1h9.09-9Zm-2-4h13a.5.5 0 0 1 .09 1H3.5a.5.5 0 0 1-.09-1H16.5h-13Z"
-              fill="currentColor"
-            />
-          </svg>
+          <span
+            data-icon-name="FilterRegular"
+          />
         </span>
       </button>
     </div>
@@ -174,20 +163,9 @@ exports[`OperationSearchHeader > renders correctly with isTriggerNode=true 1`] =
         <span
           class="fui-Button__icon rywnvv2 fui-MenuButton__icon"
         >
-          <svg
-            aria-hidden="true"
-            class="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
-            fill="currentColor"
-            height="1em"
-            viewBox="0 0 20 20"
-            width="1em"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M7.5 13h5a.5.5 0 0 1 .09 1H7.5a.5.5 0 0 1-.09-1h5.09-5Zm-2-4h9a.5.5 0 0 1 .09 1H5.5a.5.5 0 0 1-.09-1h9.09-9Zm-2-4h13a.5.5 0 0 1 .09 1H3.5a.5.5 0 0 1-.09-1H16.5h-13Z"
-              fill="currentColor"
-            />
-          </svg>
+          <span
+            data-icon-name="FilterRegular"
+          />
         </span>
       </button>
     </div>
@@ -271,20 +249,9 @@ exports[`OperationSearchHeader > renders correctly with search term and filters 
         <span
           class="fui-Button__icon rywnvv2 fui-MenuButton__icon"
         >
-          <svg
-            aria-hidden="true"
-            class="___9ctc0p0_1xvj9ao f1w7gpdv fez10in f1dd5bof"
-            fill="currentColor"
-            height="1em"
-            viewBox="0 0 20 20"
-            width="1em"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M7.5 13h5a.5.5 0 0 1 .09 1H7.5a.5.5 0 0 1-.09-1h5.09-5Zm-2-4h9a.5.5 0 0 1 .09 1H5.5a.5.5 0 0 1-.09-1h9.09-9Zm-2-4h13a.5.5 0 0 1 .09 1H3.5a.5.5 0 0 1-.09-1H16.5h-13Z"
-              fill="currentColor"
-            />
-          </svg>
+          <span
+            data-icon-name="FilterRegular"
+          />
         </span>
       </button>
     </div>

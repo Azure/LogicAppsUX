@@ -40,3 +40,11 @@ Curated improvements to Squad routing, prompts, playbooks, and agent behavior. A
 - Source: `.squad/playbooks/chronicle-driven-improvement.md`; Copilot CLI v1.0.40 changelog entry ("Session history, file tracking, and the /chronicle command are now available to all users"); CLI command reference ("/chronicle <standup|tips|improve|reindex> ... Only available in experimental mode").
 - Applies to: `chief-engineer`, `session-knowledge-curator`, `pr-orchestrator`, `plan-auditor`.
 - Status: verified.
+
+### VS Code debug lifecycle work must consult runtime and task-generation knowledge
+
+- Improvement: When a task mentions VS Code debug lifecycle, NuGet conversion, `func: host start`, or issue #7040-like behavior, `vscode-test-specialist` and `test` should read both `runtime-readiness-probes.md` and `vscode-task-env-propagation.md`, not only `vscode-e2e-testing.md`.
+- Why it matters: The root causes crossed E2E orchestration, runtime readiness, stale func task state, NuGet initialization, task-generation shape, and validation-disabled dependency paths. Reading only one doc causes agents to relearn the same failure chain.
+- Source: Issue #7040 NuGet debug lifecycle investigation.
+- Applies to: `chief-engineer`, `test`, `vscode-test-specialist`, `ci-sentinel`.
+- Status: verified.

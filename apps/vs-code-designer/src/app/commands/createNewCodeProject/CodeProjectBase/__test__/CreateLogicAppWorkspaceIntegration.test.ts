@@ -13,12 +13,17 @@ import { devContainerFolderName, devContainerFileName } from '../../../../../con
 // Unmock fs-extra to use real file operations for integration tests
 vi.unmock('fs-extra');
 
+// Mock binariesExistSync to avoid VS Code workspace API calls in test
+vi.mock('../../../../utils/binaries', () => ({
+  binariesExistSync: vi.fn().mockReturnValue(true),
+  binariesExist: vi.fn().mockReturnValue(true),
+}));
+
 // Import fs-extra after unmocking
 import * as fse from 'fs-extra';
 import * as CreateLogicAppWorkspaceModule from '../CreateLogicAppWorkspace';
 
-const { createWorkspaceStructure, getHostContent, createLibFolder, createLogicAppAndWorkflow, createLogicAppWorkspace } =
-  CreateLogicAppWorkspaceModule;
+const { createWorkspaceFiles, createLibFolder, createLogicAppAndWorkflow, createLogicAppWorkspace } = CreateLogicAppWorkspaceModule;
 
 describe('createLogicAppWorkspace - Integration Tests', () => {
   let tempDir: string;
@@ -66,7 +71,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
         targetFramework: 'net8',
       } as any;
 
-      await createWorkspaceStructure(options);
+      await createWorkspaceFiles(options);
 
       // Verify workspace file exists
       const workspaceFilePath = getWorkspaceFilePath(options.workspaceName);
@@ -95,7 +100,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
         targetFramework: 'net8',
       } as any;
 
-      await createWorkspaceStructure(options);
+      await createWorkspaceFiles(options);
 
       const workspaceFilePath = getWorkspaceFilePath(options.workspaceName);
       const workspaceExists = await fse.pathExists(workspaceFilePath);
@@ -125,7 +130,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
         targetFramework: 'net8',
       } as any;
 
-      await createWorkspaceStructure(options);
+      await createWorkspaceFiles(options);
 
       const workspaceFilePath = getWorkspaceFilePath(options.workspaceName);
       const workspaceExists = await fse.pathExists(workspaceFilePath);
@@ -148,7 +153,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
         targetFramework: 'net8',
       } as any;
 
-      await createWorkspaceStructure(options);
+      await createWorkspaceFiles(options);
 
       // Verify workspace root exists
       const workspaceRootFolder = getWorkspaceRootFolder(options.workspaceName);
@@ -282,50 +287,6 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
       expect(workflowContent.definition).toHaveProperty('triggers');
       expect(workflowContent.definition).toHaveProperty('actions');
       expect(workflowContent.definition).toHaveProperty('outputs');
-    });
-  });
-
-  describe('Host.json Integration', () => {
-    it('should verify host.json structure from getHostContent', async () => {
-      const hostContent = await getHostContent();
-
-      // Verify exact structure
-      expect(hostContent).toEqual({
-        version: '2.0',
-        logging: {
-          applicationInsights: {
-            samplingSettings: {
-              isEnabled: true,
-              excludedTypes: 'Request',
-            },
-          },
-        },
-        extensionBundle: {
-          id: 'Microsoft.Azure.Functions.ExtensionBundle.Workflows',
-          version: '[1.*, 2.0.0)',
-        },
-      });
-    });
-
-    it('should have correct version', async () => {
-      const hostContent = await getHostContent();
-      expect(hostContent.version).toBe('2.0');
-    });
-
-    it('should have application insights sampling enabled', async () => {
-      const hostContent = await getHostContent();
-      expect(hostContent.logging!.applicationInsights!.samplingSettings!.isEnabled).toBe(true);
-    });
-
-    it('should exclude Request type from sampling', async () => {
-      const hostContent = await getHostContent();
-      expect(hostContent.logging!.applicationInsights!.samplingSettings!.excludedTypes).toBe('Request');
-    });
-
-    it('should have workflows extension bundle', async () => {
-      const hostContent = await getHostContent();
-      expect(hostContent.extensionBundle!.id).toBe('Microsoft.Azure.Functions.ExtensionBundle.Workflows');
-      expect(hostContent.extensionBundle!.version).toBe('[1.*, 2.0.0)');
     });
   });
 
@@ -509,6 +470,54 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
     });
   });
 
+  describe('Custom Code DotNet Version Local Setting', () => {
+    const runWorkspaceCreation = async (workspaceName: string, logicAppName: string, targetFramework: string) => {
+      const options: IWebviewProjectContext = {
+        workspaceProjectPath: { fsPath: tempDir } as vscode.Uri,
+        workspaceName,
+        logicAppName,
+        logicAppType: ProjectType.customCode,
+        workflowName: 'MyWorkflow',
+        workflowType: 'Stateful',
+        functionFolderName: 'Functions',
+        targetFramework,
+      } as any;
+
+      await createLogicAppWorkspace(mockContext, options, false);
+
+      const logicAppFolderPath = getLogicAppFolderPath(workspaceName, logicAppName);
+      return fse.readJson(path.join(logicAppFolderPath, 'local.settings.json'));
+    };
+
+    it('writes LOGIC_APPS_CUSTOMCODE_DOTNETVERSION="net8" to the Logic App root local.settings.json when creating a Net8 custom code workspace', async () => {
+      const localSettings = await runWorkspaceCreation('Net8WorkspaceSetting', 'Net8WorkspaceApp', 'net8');
+
+      expect(localSettings.Values.LOGIC_APPS_CUSTOMCODE_DOTNETVERSION).toBe('net8');
+    });
+
+    it('writes LOGIC_APPS_CUSTOMCODE_DOTNETVERSION="net10.0" to the Logic App root local.settings.json when creating a Net10 custom code workspace', async () => {
+      const localSettings = await runWorkspaceCreation('Net10WorkspaceSetting', 'Net10WorkspaceApp', 'net10.0');
+
+      expect(localSettings.Values.LOGIC_APPS_CUSTOMCODE_DOTNETVERSION).toBe('net10.0');
+    });
+
+    it('does not write LOGIC_APPS_CUSTOMCODE_DOTNETVERSION for a NetFx custom code workspace', async () => {
+      const localSettings = await runWorkspaceCreation('NetFxWorkspaceSetting', 'NetFxWorkspaceApp', 'net472');
+
+      expect(localSettings.Values.LOGIC_APPS_CUSTOMCODE_DOTNETVERSION).toBeUndefined();
+    });
+
+    it('writes the setting to the Logic App folder (authoritative path), not the workspace root or function folder', async () => {
+      const workspaceName = 'AuthoritativePathWorkspace';
+      const logicAppName = 'AuthoritativePathApp';
+      await runWorkspaceCreation(workspaceName, logicAppName, 'net8');
+
+      const workspaceRootFolder = getWorkspaceRootFolder(workspaceName);
+      expect(await fse.pathExists(path.join(workspaceRootFolder, 'local.settings.json'))).toBe(false);
+      expect(await fse.pathExists(path.join(workspaceRootFolder, 'Functions', 'local.settings.json'))).toBe(false);
+    });
+  });
+
   describe('Edge Cases and Validation', () => {
     it('should handle workspace names with special characters', async () => {
       const options: IWebviewProjectContext = {
@@ -521,7 +530,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
         targetFramework: 'net8',
       } as any;
 
-      await createWorkspaceStructure(options);
+      await createWorkspaceFiles(options);
 
       const workspacePath = getWorkspaceFilePath(options.workspaceName);
       const workspaceExists = await fse.pathExists(workspacePath);
@@ -543,7 +552,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
         targetFramework: 'net8',
       } as any;
 
-      await createWorkspaceStructure(options);
+      await createWorkspaceFiles(options);
 
       const workspacePath = getWorkspaceFilePath(options.workspaceName);
       const workspaceExists = await fse.pathExists(workspacePath);
@@ -561,7 +570,7 @@ describe('createLogicAppWorkspace - Integration Tests', () => {
         targetFramework: 'net8',
       } as any;
 
-      await createWorkspaceStructure(options);
+      await createWorkspaceFiles(options);
 
       const workspacePath = getWorkspaceFilePath(options.workspaceName);
 

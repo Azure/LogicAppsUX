@@ -8,6 +8,8 @@ import {
   appKindSetting,
   designTimeDirectoryName,
   designerStartApi,
+  functionsInprocNet8Enabled,
+  functionsInprocNet8EnabledTrue,
   hostFileContent,
   hostFileName,
   localSettingsFileName,
@@ -16,7 +18,8 @@ import {
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { addOrUpdateLocalAppSettings, getLocalSettingsSchema } from '../../utils/appSettings/localSettings';
+import { addOrUpdateLocalAppSettings } from '../../utils/appSettings/localSettings';
+import { useNodeDesignTimeWorker } from '../../utils/vsCodeConfig/settings';
 import {
   createJsonFile,
   getOrCreateDesignTimeDirectory,
@@ -25,10 +28,12 @@ import {
   waitForDesignTimeStartUp,
 } from '../../utils/codeless/startDesignTimeApi';
 import { getFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
+import { reserveFreePort } from '../../utils/portReservation';
 import { backendRuntimeBaseUrl } from './extensionConfig';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import * as portfinder from 'portfinder';
 import { ProgressLocation, type Uri, window } from 'vscode';
+import { generateDesignTimeLocalSettingsJson } from '../../projectConsistency/fileGenerators';
+import { detectProjectType } from '../../utils/project';
 
 // NOTE: LA Standard ext does this in workflowFolder/workflow-designtime
 // For now at least, DM is just going to do everything in workflowFolder
@@ -37,13 +42,13 @@ export async function startBackendRuntime(context: IActionContext, projectPath: 
   const designTimeDirectory: Uri | undefined = await getOrCreateDesignTimeDirectory(designTimeDirectoryName, projectPath);
   if (!ext.designTimeInstances.has(projectPath)) {
     ext.designTimeInstances.set(projectPath, {
-      port: await portfinder.getPortPromise(),
+      port: await reserveFreePort(),
     });
   }
   const designTimeInst = ext.designTimeInstances.get(projectPath);
 
   if (!designTimeInst.port) {
-    designTimeInst.port = await portfinder.getPortPromise();
+    designTimeInst.port = await reserveFreePort();
   }
 
   // Note: Must append operationGroups as it's a valid endpoint to ping
@@ -53,26 +58,27 @@ export async function startBackendRuntime(context: IActionContext, projectPath: 
     progress.report({ message: 'Starting backend runtime, this may take a few seconds...' });
 
     if (await isDesignTimeUp(url)) {
-      ext.log(localize('RuntimeAlreadyRunning', 'Backend runtime is already running'));
+      ext.outputChannel.appendLine(localize('RuntimeAlreadyRunning', 'Backend runtime is already running'));
       return;
     }
 
-    const settingsFileContent = getLocalSettingsSchema(true, projectPath);
+    const logicAppType = await detectProjectType(projectPath);
+    const useNodeWorker = useNodeDesignTimeWorker(projectPath);
+    const settingsFileContent = generateDesignTimeLocalSettingsJson(projectPath, logicAppType, useNodeWorker);
 
     try {
       if (designTimeDirectory) {
         await createJsonFile(designTimeDirectory, hostFileName, hostFileContent);
         await createJsonFile(designTimeDirectory, localSettingsFileName, settingsFileContent);
-        await addOrUpdateLocalAppSettings(
-          context,
-          designTimeDirectory.fsPath,
-          {
-            [appKindSetting]: logicAppKind,
-            [ProjectDirectoryPathKey]: projectPath,
-            [workerRuntimeKey]: WorkerRuntime.Dotnet,
-          },
-          true
-        );
+        const runtimeSettings: Record<string, string> = {
+          [appKindSetting]: logicAppKind,
+          [ProjectDirectoryPathKey]: projectPath,
+          [workerRuntimeKey]: useNodeWorker ? WorkerRuntime.Node : WorkerRuntime.Dotnet,
+        };
+        if (!useNodeWorker) {
+          runtimeSettings[functionsInprocNet8Enabled] = functionsInprocNet8EnabledTrue;
+        }
+        await addOrUpdateLocalAppSettings(context, designTimeDirectory.fsPath, runtimeSettings, true);
         const cwd: string = designTimeDirectory.fsPath;
         const portArgs = `--port ${designTimeInst.port}`;
         startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), 'host', 'start', portArgs);
@@ -82,10 +88,8 @@ export async function startBackendRuntime(context: IActionContext, projectPath: 
         throw new Error("Workflow folder doesn't exist");
       }
     } catch (error) {
-      window.showErrorMessage('Backend runtime could not be started');
-
       const errMsg = error instanceof Error ? error.message : typeof error === 'string' ? error : 'Unknown error';
-      ext.log(localize('RuntimeFailedToStart', `Backend runtime failed to start: "{0}"`, errMsg));
+      ext.outputChannel.appendLine(localize('RuntimeFailedToStart', 'Backend runtime failed to start. Error: "{0}".', errMsg));
     }
   });
 }

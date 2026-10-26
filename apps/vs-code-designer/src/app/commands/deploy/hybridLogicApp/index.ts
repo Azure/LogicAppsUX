@@ -1,6 +1,7 @@
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ProgressLocation, window } from 'vscode';
 import type { SlotTreeItem } from '../../../tree/slotsTree/SlotTreeItem';
+import { getHybridSiteSecretsFromNode } from '../../../utils/tree/slotTreeUtils';
 import { localize } from '../../../../localize';
 import { connectToSMB } from './connectToSMB';
 import { cleanSMB, deleteSMBFolder, unMountSMB } from './cleanResources';
@@ -168,12 +169,14 @@ export async function zipDeployHybridLogicApp(context: IActionContext, node: Slo
       }
     );
   } catch (error) {
-    context.telemetry.properties.errorDeployingHybridLogicAppV2 = error instanceof Error ? error.message : String(error);
-    throw new Error(`${localize('errorDeployingHybridLogicAppV2', 'Error deploying hybrid logic app (v2)')} - ${error.message}`);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    context.telemetry.properties.result = 'Failed';
+    context.telemetry.properties.errorMessage = context.telemetry.properties.errorMessage || errorMessage;
+    throw new Error(localize('errorDeployingHybridLogicAppV2', 'Error deploying hybrid logic app (v2): "{0}".', errorMessage));
   }
 }
 
-async function waitForContainerAppProvisioning(fqdn: string, context, progress): Promise<void> {
+async function waitForContainerAppProvisioning(fqdn: string, context: IActionContext, progress): Promise<void> {
   progress.report({ increment: 40, message: `Waiting for logic app to be ready: ${fqdn}` });
   const maxRetries = 40; // Maximum number of retries
   const delay = 3000; // Delay between retries in milliseconds (3 seconds)
@@ -191,8 +194,9 @@ async function waitForContainerAppProvisioning(fqdn: string, context, progress):
 
     await new Promise((resolve) => setTimeout(resolve, delay)); // Wait before retrying
   }
+
   const errorMessage = 'Logic app is not ready to serve traffic after waiting.';
-  context.telemetry.properties.logicAppNotProvisionedError = errorMessage;
+  context.telemetry.properties.errorMessage = errorMessage;
   throw new Error(localize('logicAppNotReadyError', errorMessage));
 }
 
@@ -217,9 +221,10 @@ async function waitForIngressFqdn(
     // Wait before retrying
     await new Promise((resolve) => setTimeout(resolve, delay));
   }
+
   const errorMessage = 'Failed to retrieve ingress FQDN after waiting.';
-  context.telemetry.properties.ingressFqdnError = errorMessage;
-  throw new Error(localize('errorRetrievingIngressFqdn', errorMessage));
+  context.telemetry.properties.errorMessage = errorMessage;
+  throw new Error(localize('ingressFqdnNotReadyError', errorMessage));
 }
 
 async function createZipFileOnDisk(sourceDir: string): Promise<string> {
@@ -268,11 +273,11 @@ async function getAccessTokenForZipDeploy(node: SlotTreeItem, context: ILogicApp
   const tenantId = envVars.find((e) => e.name === workflowAppAADTenantId)?.value;
   const clientId = envVars.find((e) => e.name === workflowAppAADClientId)?.value;
   const clientSecretKey = envVars.find((e) => e.name === workflowAppAADClientSecret)?.secretRef;
-  const clientSecret = node.resourceTree?.hybridSiteSecrets?.find((s) => s.name === clientSecretKey)?.value ?? context.aad?.clientSecret;
+  const clientSecret = getHybridSiteSecretsFromNode(node)?.find((s) => s.name === clientSecretKey)?.value ?? context.aad?.clientSecret;
 
   if (!tenantId || !clientId || !clientSecret) {
     const errorMessage = 'Missing required environment variables for ZIP deploy: "{0}", "{1}", "{2}"';
-    context.telemetry.properties.getAccessTokenError = errorMessage
+    context.telemetry.properties.errorMessage = errorMessage
       .replace('{0}', workflowAppAADClientId)
       .replace('{1}', workflowAppAADTenantId)
       .replace('{2}', workflowAppAADClientSecret);
@@ -300,6 +305,7 @@ async function getSMBDetails(context: IActionContext, node: SlotTreeItem): Promi
   const smbError = new Error(
     localize('errorDeployingHybridLogicApp', `The logic app ${node.hybridSite.name} is not configured to use SMB`)
   );
+
   try {
     const volumeMount = node.hybridSite.template.containers[0]?.volumeMounts?.find((v) => v.mountPath === '/home/site/wwwroot');
     const smbVolume = node.hybridSite.template.volumes.find((v) => v.name === volumeMount.volumeName);
@@ -311,7 +317,9 @@ async function getSMBDetails(context: IActionContext, node: SlotTreeItem): Promi
     context.telemetry.properties.smbConfig = 'true';
     await getStorageInfoForConnectedEnv(node.hybridSite.environmentId, smbVolume.storageName, context, node);
   } catch (error) {
-    context.telemetry.properties.smbError = error instanceof Error ? error.message : error;
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    context.telemetry.properties.result = 'Failed';
+    context.telemetry.properties.errorMessage = errorMessage;
     context.telemetry.properties.smbConfig = 'false';
     throw smbError;
   }

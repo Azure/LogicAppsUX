@@ -60,7 +60,7 @@ export const onUndoClick = createAsyncThunk('onUndoClick', async (_, { dispatch,
 
   const previousStateHistoryItem = undoRedoState.past[undoRedoState.past.length - 1];
   const previousDecompressedState = getRootStateFromCompressedSlices(previousStateHistoryItem.compressedSlices, currentRootState);
-  const currentCompressedSlices = getCompressedSlicesFromRootState(currentRootState);
+  const currentCompressedSlices = getCompressedSlicesFromRootState(currentRootState, true);
 
   // Change current state to previous state
   dispatch(setStateAfterUndoRedo(previousDecompressedState));
@@ -98,7 +98,7 @@ export const onRedoClick = createAsyncThunk('onRedoClick', async (_, { dispatch,
 
   const nextStateHistoryItem = undoRedoState.future[0];
   const nextDecompressedState = getRootStateFromCompressedSlices(nextStateHistoryItem.compressedSlices, currentRootState);
-  const currentCompressedSlices = getCompressedSlicesFromRootState(currentRootState);
+  const currentCompressedSlices = getCompressedSlicesFromRootState(currentRootState, true);
 
   // Change current state to next state
   dispatch(setStateAfterUndoRedo(nextDecompressedState));

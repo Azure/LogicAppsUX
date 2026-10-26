@@ -1,0 +1,47 @@
+name: Standalone Ephemeral Checks
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/standalone-ephemeral*.yml'
+      - 'scripts/ephemeral/**'
+      - 'apps/Standalone/**'
+      - 'e2e/ephemeral/**'
+      - 'playwright.ephemeral.config.ts'
+      - 'turbo.json'
+      - 'pnpm-lock.yaml'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/standalone-ephemeral*.yml'
+      - 'scripts/ephemeral/**'
+      - 'apps/Standalone/**'
+      - 'e2e/ephemeral/**'
+      - 'playwright.ephemeral.config.ts'
+      - 'turbo.json'
+      - 'pnpm-lock.yaml'
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - uses: pnpm/action-setup@v5
+      - run: pnpm install --frozen-lockfile --strict-peer-dependencies
+      - run: pnpm exec vitest run --config scripts/vitest.config.ts scripts/ephemeral apps/Standalone/vite-plugins/__test__
+      - run: python3 -B -m unittest discover -s scripts/ephemeral -p 'test_*.py'
+      - run: pnpm turbo run build:ephemeral --filter=standalone
+      - name: Validate the production preview artifact
+        run: python3 -B scripts/ephemeral/validate.py --directory apps/Standalone/dist .ephemeral-site
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm exec playwright test --config playwright.ephemeral.config.ts

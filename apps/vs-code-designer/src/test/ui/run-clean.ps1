@@ -29,7 +29,7 @@ Get-ChildItem $extDir -Directory -ErrorAction SilentlyContinue | Where-Object {
 # Run the E2E tests, capturing output to a log file
 Write-Host "`n=== Running E2E tests ==="
 $logFile = Join-Path $appDir "out\test\e2e-results.log"
-node src/test/ui/run-e2e.js 2>&1 | Tee-Object -FilePath $logFile
+node out/test/run-e2e.js 2>&1 | Tee-Object -FilePath $logFile
 
 Write-Host "`n=== Test run complete ==="
 Write-Host "Results saved to: $logFile"

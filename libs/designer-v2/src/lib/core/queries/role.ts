@@ -1,5 +1,5 @@
 import type { ArmResource, RoleAssignment, RoleDefinition } from '@microsoft/logic-apps-shared';
-import { isUndefinedOrEmptyString, RoleService } from '@microsoft/logic-apps-shared';
+import { equals, isUndefinedOrEmptyString, RoleService } from '@microsoft/logic-apps-shared';
 import { useQuery } from '@tanstack/react-query';
 import { getReactQueryClient } from '../ReactQueryProvider';
 
@@ -66,31 +66,32 @@ export const useHasRoleAssignmentsWritePermissionQuery = (resourceId: string, _e
   );
 };
 
-export const useRoleDefinitionsByNameQuery = (definitionNames: string[]) =>
-  useQuery<Record<string, ArmResource<RoleDefinition>>>(roleDefinitionByNameQueryOpts(definitionNames));
-const roleDefinitionByNameQueryOpts = (definitionNames: string[]) => ({
-  queryKey: [roleQueryKeys.roleDefinitions, 'byName', definitionNames],
+export const useRoleDefinitionsByIdQuery = (definitionIds: string[]) =>
+  useQuery<Record<string, ArmResource<RoleDefinition>>>(roleDefinitionByIdQueryOpts(definitionIds));
+const roleDefinitionByIdQueryOpts = (definitionIds: string[]) => ({
+  queryKey: [roleQueryKeys.roleDefinitions, 'byId', definitionIds],
   queryFn: async () => {
     const builtInRoles = await RoleService().fetchRoleDefinitions('', { $filter: "type eq 'BuiltInRole'" });
     const output: Record<string, ArmResource<RoleDefinition>> = {};
-    for (const name of definitionNames) {
-      const roleDefinition = builtInRoles.find((role) => role.properties.roleName === name);
+    for (const definitionId of definitionIds) {
+      // ARM returns the role definition GUID as the resource `name`.
+      const roleDefinition = builtInRoles.find((role) => equals(role.name, definitionId));
       if (roleDefinition) {
-        output[name] = roleDefinition;
+        output[definitionId] = roleDefinition;
       }
     }
     return output;
   },
-  enabled: definitionNames.length > 0,
+  enabled: definitionIds.length > 0,
   ...queryOpts,
 });
 
-export const useHasRoleDefinitionsByNameQuery = (resourceId: string, definitionNames: string[], _enabled = true) => {
+export const useHasRequiredRoleDefinitionsQuery = (resourceId: string, definitionIds: string[], _enabled = true) => {
   return useQuery<boolean>(
-    [roleQueryKeys.roleDefinitions, 'userHasByName', resourceId, definitionNames],
+    [roleQueryKeys.roleDefinitions, 'userHasById', resourceId, definitionIds],
     async () => {
-      const missingDefinitions = await getMissingRoleDefinitions(resourceId, definitionNames);
-      return missingDefinitions.length === 0;
+      const rolesToAssign = await getRoleDefinitionsToAssign(resourceId, definitionIds);
+      return rolesToAssign.length === 0;
     },
     {
       enabled: _enabled && !!resourceId,
@@ -99,38 +100,52 @@ export const useHasRoleDefinitionsByNameQuery = (resourceId: string, definitionN
   );
 };
 
-export const getMissingRoleDefinitions = async (resourceId: string, definitionNames: string[]): Promise<ArmResource<RoleDefinition>[]> => {
-  if (!resourceId || definitionNames.length === 0) {
+/**
+ * Resolves the role definitions that still need to be assigned to the app identity at `resourceId`.
+ *
+ * `preferredDefinitionIds` is a **preference-ordered list of alternatives, not a set of roles that are
+ * all required** — the identity only needs one of them. The first entry that exists in the tenant wins.
+ *
+ * Returns an empty array when:
+ * - the identity already holds any one of the alternatives, or
+ * - none of them exist in this cloud (for example the Foundry roles in a sovereign or air-gapped
+ *   cloud), in which case there is nothing we can assign and the caller should not block on it.
+ *
+ * Roles are looked up by role definition ID rather than display name: Azure renamed the Foundry
+ * built-in roles (for example "Azure AI User" -> "Foundry User") without changing their IDs, so
+ * name-based lookups silently resolve to nothing once the rename reaches a tenant.
+ */
+export const getRoleDefinitionsToAssign = async (
+  resourceId: string,
+  preferredDefinitionIds: string[]
+): Promise<ArmResource<RoleDefinition>[]> => {
+  if (!resourceId || preferredDefinitionIds.length === 0) {
     return [];
   }
 
   const queryClient = getReactQueryClient();
   const assignments: ArmResource<RoleAssignment>[] = (await queryClient.fetchQuery(appIdentityRoleAssignmentsQueryOpts(resourceId))) ?? [];
   const definitions: Record<string, ArmResource<RoleDefinition>> = (await queryClient.fetchQuery(
-    roleDefinitionByNameQueryOpts(definitionNames)
+    roleDefinitionByIdQueryOpts(preferredDefinitionIds)
   )) ?? {};
 
-  if (Object.keys(definitions).length === 0) {
-    return []; // No definitions found
+  // Keep caller-supplied preference order, dropping any role that does not exist in this cloud.
+  const availableDefinitions = preferredDefinitionIds
+    .map((definitionId) => definitions[definitionId])
+    .filter((definition): definition is ArmResource<RoleDefinition> => !!definition);
+
+  if (availableDefinitions.length === 0) {
+    return [];
   }
 
-  if (assignments.length === 0) {
-    return Object.values(definitions); // No assignments found, return all definitions
+  const isAssignedAtScope = (definition: ArmResource<RoleDefinition>) =>
+    assignments.some(
+      (assignment) => assignment?.properties?.roleDefinitionId?.endsWith(definition.id) && assignment.properties.scope === resourceId
+    );
+
+  if (availableDefinitions.some(isAssignedAtScope)) {
+    return [];
   }
 
-  const missingDefinitions: ArmResource<RoleDefinition>[] = [];
-  for (const name of definitionNames) {
-    const definition = definitions[name];
-    if (!definition) {
-      continue; // Role definition does not exist in this environment, nothing to assign
-    }
-    if (
-      !assignments.some(
-        (assignment) => assignment?.properties?.roleDefinitionId?.endsWith(definition.id) && assignment.properties.scope === resourceId
-      )
-    ) {
-      missingDefinitions.push(definition);
-    }
-  }
-  return missingDefinitions;
+  return [availableDefinitions[0]];
 };

@@ -25,7 +25,8 @@ import { getParameterFromName, updateDynamicDataInNode } from '../../utils/param
 import { getInputParametersFromSwagger, getOutputParametersFromSwagger } from '../../utils/swagger/operation';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import { getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
-import { isConnectionRequiredForOperation, updateNodeConnection } from './connections';
+import { isConnectionMultiAuthManagedIdentityType, isConnectionSingleAuthManagedIdentityType } from '../../utils/connectors/connections';
+import { getApiHubAuthentication, getConnectionProperties, isConnectionRequiredForOperation, updateNodeConnection } from './connections';
 import {
   getInputParametersFromManifest,
   getOutputParametersFromManifest,
@@ -81,10 +82,20 @@ type AddOperationPayload = {
   isAddingHandoff?: boolean;
   isAddingMcpServer?: boolean;
   connectionId?: string;
+  connectionIdentity?: string;
 };
 
 export const addOperation = createAsyncThunk('addOperation', async (payload: AddOperationPayload, { dispatch, getState }) => {
-  const { operation, nodeId: actionId, presetParameterValues, actionMetadata, isAddingHandoff = false, isTrigger, connectionId } = payload;
+  const {
+    operation,
+    nodeId: actionId,
+    presetParameterValues,
+    actionMetadata,
+    isAddingHandoff = false,
+    isTrigger,
+    connectionId,
+    connectionIdentity,
+  } = payload;
   if (!operation) {
     throw new Error('Operation does not exist'); // Just an optional catch, should never happen
   }
@@ -166,7 +177,8 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
       presetParameterValues,
       actionMetadata,
       !isAddingHandoff,
-      connectionId
+      connectionId,
+      connectionIdentity
     );
 
     // Adjust workflow for kind change if needed
@@ -245,6 +257,24 @@ export const addDefaultSecureSettings = (settings: Settings, isSecureByDefault: 
   return settings;
 };
 
+/**
+ * Builds and stores editor state for a newly added workflow operation.
+ *
+ * Operation metadata is resolved through the managed MCP, manifest, or Swagger
+ * path before inputs, outputs, dependencies, settings, tokens, connections,
+ * and upstream state are initialized. Static result schema loading is
+ * intentionally scheduled without blocking completion.
+ *
+ * @param nodeId - Identifier assigned to the new workflow node.
+ * @param operationInfo - Connector and operation metadata used to resolve the operation.
+ * @param getState - Reads the latest designer state during initialization.
+ * @param dispatch - Dispatches node, panel, connection, token, and settings updates.
+ * @param presetParameterValues - Optional parameter values to apply to manifest-backed inputs.
+ * @param actionMetadata - Optional action metadata stored with the initialized node.
+ * @param openPanel - Whether to open the node details panel while initialization runs.
+ * @param connectionId - Optional connection to prefer even when the operation does not require one.
+ * @param connectionIdentity - Optional identity associated with the preferred connection.
+ */
 export const initializeOperationDetails = async (
   nodeId: string,
   operationInfo: NodeOperation,
@@ -253,7 +283,8 @@ export const initializeOperationDetails = async (
   presetParameterValues?: Record<string, any>,
   actionMetadata?: Record<string, any>,
   openPanel = true,
-  connectionId?: string
+  connectionId?: string,
+  connectionIdentity?: string
 ): Promise<void> => {
   const state = getState();
   const isTrigger = isTriggerNode(nodeId, state.workflow.nodesMetadata);
@@ -275,7 +306,7 @@ export const initializeOperationDetails = async (
   const isManagedMcpClient = isManagedMcpOperation({ type, kind });
 
   if (isManagedMcpClient) {
-    // managed mcp client ignores the swagger and uses a fixed set of parameters similar to manifest based native mcp client
+    // Swagger supplies connector identity and branding, but managed MCP parameters follow the fixed native MCP manifest.
     const { connector: swaggerConnector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
     connector = swaggerConnector;
     const iconUri = getIconUriFromConnector(connector);
@@ -334,6 +365,7 @@ export const initializeOperationDetails = async (
     dispatch(initializeNodes({ nodes: [initData] }));
     addTokensAndVariables(nodeId, type, { ...initData, manifest: nativeMcpManifest }, state, dispatch);
   } else if (operationManifestService.isSupported(type, kind)) {
+    // Manifest-backed operations use manifest dependencies and aliasing rules instead of Swagger parsing.
     manifest = await getOperationManifest(operationInfo);
     isConnectionRequired = isConnectionRequiredForOperation(manifest);
     connector = manifest.properties?.connector;
@@ -402,6 +434,7 @@ export const initializeOperationDetails = async (
     dispatch(initializeNodes({ nodes: [initData] }));
     addTokensAndVariables(nodeId, type, { ...initData, manifest }, state, dispatch);
   } else {
+    // Swagger remains the metadata fallback for operations without manifest support.
     const { connector: swaggerConnector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
     swagger = parsedSwagger;
     connector = swaggerConnector;
@@ -468,7 +501,8 @@ export const initializeOperationDetails = async (
         dispatch as AppDispatch,
         isConnectionRequired,
         (c: Connection) => AgentUtils.filterDynamicConnectionFeatures(c, nodeId, state),
-        connectionId
+        connectionId,
+        connectionIdentity
       );
     } catch (e: any) {
       dispatch(
@@ -501,6 +535,7 @@ export const initializeOperationDetails = async (
 
   dispatch(setIsPanelLoading(false));
 
+  // Result schemas enhance static-results editing but should not delay making the new node interactive.
   staticResultService.getOperationResultSchema(connectorId, operationId, swagger || parsedManifest).then((schema) => {
     if (schema) {
       dispatch(
@@ -561,7 +596,8 @@ export const trySetDefaultConnectionForNode = async (
   dispatch: AppDispatch,
   isConnectionRequired: boolean,
   connectionFilterFunc?: (connection: Connection) => boolean,
-  preferredConnectionId?: string
+  preferredConnectionId?: string,
+  preferredConnectionIdentity?: string
 ) => {
   const connectorId = connector.id;
   const connections = (await getConnectionsForConnector(connectorId)).filter(
@@ -571,8 +607,26 @@ export const trySetDefaultConnectionForNode = async (
     // Use preferred connection if provided and found, otherwise fall back to most recently used or first available
     const preferredConnection = preferredConnectionId ? connections.find((c) => c.id === preferredConnectionId) : undefined;
     const connection = preferredConnection ?? (await tryGetMostRecentlyUsedConnectionId(connectorId, connections)) ?? connections[0];
-    await ConnectionService().setupConnectionIfNeeded(connection);
-    dispatch(updateNodeConnection({ nodeId, connection, connector }));
+    const userAssignedIdentity =
+      preferredConnectionIdentity && preferredConnectionIdentity !== constants.SYSTEM_ASSIGNED_MANAGED_IDENTITY
+        ? preferredConnectionIdentity
+        : undefined;
+    await ConnectionService().setupConnectionIfNeeded(connection, userAssignedIdentity);
+    const connectorSupportsManagedIdentity =
+      isConnectionMultiAuthManagedIdentityType(connection, connector) || isConnectionSingleAuthManagedIdentityType(connection);
+    if (preferredConnectionIdentity && connectorSupportsManagedIdentity) {
+      dispatch(
+        updateNodeConnection({
+          nodeId,
+          connection,
+          connector,
+          connectionProperties: getConnectionProperties(connector, userAssignedIdentity),
+          authentication: getApiHubAuthentication(userAssignedIdentity),
+        })
+      );
+    } else {
+      dispatch(updateNodeConnection({ nodeId, connection, connector }));
+    }
   } else if (isConnectionRequired) {
     dispatch(initEmptyConnectionMap([nodeId]));
     dispatch(

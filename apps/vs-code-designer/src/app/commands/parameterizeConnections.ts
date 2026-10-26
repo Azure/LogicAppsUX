@@ -3,110 +3,101 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { isEmptyString } from '@microsoft/logic-apps-shared';
-import { localSettingsFileName, parameterizeConnectionsInProjectLoadSetting } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { getLocalSettingsJson } from '../utils/appSettings/localSettings';
 import { getConnectionsJson, saveConnectionReferences } from '../utils/codeless/connection';
 import { getParametersJson, saveWorkflowParameter } from '../utils/codeless/parameter';
 import { areAllConnectionsParameterized, parameterizeConnection } from '../utils/codeless/parameterizer';
-import { getGlobalSetting, updateGlobalSetting } from '../utils/vsCodeConfig/settings';
-import { getWorkspaceLogicAppFolders } from '../utils/workspace';
-import { DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
-import * as path from 'path';
-import { window, workspace } from 'vscode';
+import { getWorkspaceLogicAppRoots } from '../utils/workspace';
+import { UserCancelledError, type IActionContext } from '@microsoft/vscode-azext-utils';
+import { workspace } from 'vscode';
 import type { ConnectionsData } from '@microsoft/vscode-extension-logic-apps';
 
 /**
- * Prompts the user to parameterize connections at project load.
+ * Parameterizes the connections in all Logic Apps projects within the workspace.
  * @param {IActionContext} context - The action context.
- * @param {boolean} [showMessage] - A flag indicating whether to show information message to the user.
- * @returns A promise that resolves when the operation is complete.
+ * @returns A promise that resolves when all connections have been parameterized.
  */
-export async function promptParameterizeConnections(context: IActionContext, showMessage?: boolean): Promise<void> {
-  const parameterizeConnectionsStartTime = Date.now();
-  if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
-    const message = localize('allowParameterizeConnections', 'Allow parameterization for connections when your project loads?');
-    const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
-    let shouldParameterizeConnections = false;
-    if (parameterizeConnectionsSetting === null || parameterizeConnectionsSetting === undefined) {
-      const result = await window.showInformationMessage(message, DialogResponses.yes, DialogResponses.no, DialogResponses.dontWarnAgain);
-      if (result === DialogResponses.yes) {
-        await updateGlobalSetting(parameterizeConnectionsInProjectLoadSetting, true);
-        shouldParameterizeConnections = true;
-        context.telemetry.properties.parameterizeConnectionsInProjectLoadSetting = 'true';
-      } else if (result === DialogResponses.dontWarnAgain) {
-        await updateGlobalSetting(parameterizeConnectionsInProjectLoadSetting, false);
-        context.telemetry.properties.parameterizeConnectionsInProjectLoadSetting = 'false';
-      }
-    } else if (parameterizeConnectionsSetting) {
-      shouldParameterizeConnections = true;
-    }
+export async function parameterizeAllConnections(context: IActionContext): Promise<void> {
+  const projectPaths = await getWorkspaceLogicAppRoots();
+  context.telemetry.properties.projectPaths = projectPaths.join(';');
 
-    if (shouldParameterizeConnections) {
-      const projectPaths = await getWorkspaceLogicAppFolders();
-      await Promise.all(projectPaths.map((projectPath) => parameterizeConnections(context, projectPath, showMessage)));
-    }
+  const failedProjectPaths: string[] = [];
+  const errorMessages: string[] = [];
+  await Promise.all(
+    projectPaths.map(async (projectPath) => {
+      try {
+        await parameterizeProjectConnectionsInternal(context, projectPath);
+      } catch (error) {
+        if (error instanceof UserCancelledError) {
+          throw error;
+        }
+        failedProjectPaths.push(projectPath);
+        errorMessages.push(error instanceof Error ? error.message : String(error));
+      }
+    })
+  );
+
+  if (errorMessages.length > 0) {
+    const aggErrorMessage = localize(
+      'parameterizeConnectionsFailed',
+      'Failed to parameterize connections with the following errors:\n{0}',
+      errorMessages.map((error, index) => `Project: ${failedProjectPaths[index]}, Error: ${error}`).join('\n')
+    );
+    context.telemetry.properties.result = 'Failed';
+    context.telemetry.properties.errorMessage = aggErrorMessage;
+    throw new Error(aggErrorMessage);
   }
-  context.telemetry.measurements.parameterizeConnectionsDuration = (Date.now() - parameterizeConnectionsStartTime) / 1000;
 }
 
 /**
  * Parameterizes the connections in the Logic Apps project.
  * @param {IActionContext} context - The action context.
  * @param {string} projectPath - The path to the Logic App project, or all Logic App projects in the workspace by default.
- * @param {boolean} showMessage - A flag indicating whether to show information message to the user.
  * @returns A promise that resolves when the connections have been parameterized.
  */
-export async function parameterizeConnections(context: IActionContext, projectPath?: string, showMessage = true): Promise<void> {
+export async function parameterizeProjectConnections(context: IActionContext, projectPath?: string): Promise<void> {
   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
     if (!projectPath) {
-      const workspaceLogicAppFolders = await getWorkspaceLogicAppFolders();
-      await Promise.all(workspaceLogicAppFolders.map((projectPath) => parameterizeConnections(context, projectPath)));
+      const projectPaths = await getWorkspaceLogicAppRoots();
+      await Promise.all(projectPaths.map((projectPath) => parameterizeProjectConnections(context, projectPath)));
       return;
     }
 
-    try {
-      const connectionsJson = await getConnectionsJson(projectPath);
-      if (isEmptyString(connectionsJson)) {
-        return;
-      }
-      const connectionsData: ConnectionsData = JSON.parse(connectionsJson);
-      const parametersJson = await getParametersJson(projectPath);
-      const localSettingsJson = (await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName))) as Record<string, any>;
-
-      if (areAllConnectionsParameterized(connectionsData)) {
-        if (showMessage) {
-          window.showInformationMessage(localize('connectionsAlreadyParameterized', 'Connections are already parameterized.'));
-        }
-        return;
-      }
-
-      Object.keys(connectionsData).forEach((connectionType) => {
-        if (connectionType !== 'serviceProviderConnections') {
-          const connectionTypeJson = connectionsData[connectionType];
-          Object.keys(connectionTypeJson).forEach((connectionKey) => {
-            connectionTypeJson[connectionKey] = parameterizeConnection(
-              connectionTypeJson[connectionKey],
-              connectionKey,
-              parametersJson,
-              localSettingsJson.Values
-            );
-          });
-        }
-      });
-      await saveWorkflowParameter(context, projectPath, parametersJson);
-      await saveConnectionReferences(context, projectPath, { connections: connectionsData, settings: localSettingsJson.Values });
-      ext.outputChannel.appendLog(localize('connectionsParameterized', 'Successfully parameterized connections.'));
-    } catch (error) {
-      const errorMessage = localize(
-        'errorParameterizeConnections',
-        'Error while parameterizing existing connections: {0}',
-        error.message ?? error
-      );
-      ext.outputChannel.appendLog(errorMessage);
-      context.telemetry.properties.error = errorMessage;
-      throw new Error(errorMessage);
-    }
+    context.telemetry.properties.projectPath = projectPath;
+    await parameterizeProjectConnectionsInternal(context, projectPath);
   }
+}
+
+async function parameterizeProjectConnectionsInternal(context: IActionContext, projectPath: string): Promise<void> {
+  const connectionsJson = await getConnectionsJson(projectPath);
+  if (isEmptyString(connectionsJson)) {
+    return;
+  }
+  const connectionsData: ConnectionsData = JSON.parse(connectionsJson);
+  const parametersJson = await getParametersJson(projectPath);
+  const localSettingsJson = (await getLocalSettingsJson(context, projectPath)) as Record<string, any>;
+
+  if (areAllConnectionsParameterized(connectionsData)) {
+    ext.outputChannel.appendLog(localize('connectionsAlreadyParameterized', 'Connections already parameterized for project "{0}".', projectPath));
+    return;
+  }
+
+  Object.keys(connectionsData).forEach((connectionType) => {
+    if (connectionType !== 'serviceProviderConnections') {
+      const connectionTypeJson = connectionsData[connectionType];
+      Object.keys(connectionTypeJson).forEach((connectionKey) => {
+        connectionTypeJson[connectionKey] = parameterizeConnection(
+          connectionTypeJson[connectionKey],
+          connectionKey,
+          parametersJson,
+          localSettingsJson.Values
+        );
+      });
+    }
+  });
+  await saveWorkflowParameter(context, projectPath, parametersJson);
+  await saveConnectionReferences(context, projectPath, { connections: connectionsData, settings: localSettingsJson.Values });
+  ext.outputChannel.appendLog(localize('connectionsParameterized', 'Successfully parameterized connections for project "{0}".', projectPath));
 }

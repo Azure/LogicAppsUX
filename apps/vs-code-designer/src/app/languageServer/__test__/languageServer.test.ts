@@ -70,7 +70,9 @@ vi.mock('../../utils/vsCodeConfig/settings', () => ({
   getGlobalSetting: mocks.getGlobalSetting,
 }));
 
-vi.mock('../../utils/codeless/common', () => ({
+vi.mock('../../utils/codeless/common', () => ({}));
+
+vi.mock('../../commands/azureConnectors/azureConnectorDetails', () => ({
   getAzureConnectorDetailsForLocalProject: mocks.getAzureConnectorDetailsForLocalProject,
 }));
 
@@ -80,6 +82,9 @@ vi.mock('../../../extensionVariables', () => ({
       subscriptions: [],
     },
     languageClient: undefined,
+    outputChannel: {
+      appendLog: vi.fn(),
+    },
     telemetryString: 'setInGitHubBuild',
   },
 }));
@@ -146,7 +151,8 @@ describe('LogicAppsLanguageServer', () => {
   });
 
   it('starts the language client when SDK is resolved from the NuGet cache', async () => {
-    const resolvedNupkgPath = 'C:\\Users\\user\\.nuget\\packages\\microsoft.azure.workflows.sdk\\1.0.0-preview.2\\microsoft.azure.workflows.sdk.1.0.0-preview.2.nupkg';
+    const resolvedNupkgPath =
+      'C:\\Users\\user\\.nuget\\packages\\microsoft.azure.workflows.sdk\\1.0.0-preview.2\\microsoft.azure.workflows.sdk.1.0.0-preview.2.nupkg';
     const languageClient = { start: vi.fn().mockResolvedValue(undefined) };
     mocks.languageClient.mockReturnValue(languageClient);
     mocks.pathExists.mockImplementation(async (filePath: string) => filePath === lspServerPath);
@@ -181,5 +187,4 @@ describe('LogicAppsLanguageServer', () => {
     );
     expect(languageClient.start).toHaveBeenCalledOnce();
   });
-
 });

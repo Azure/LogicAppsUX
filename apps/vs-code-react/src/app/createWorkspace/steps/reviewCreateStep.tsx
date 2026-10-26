@@ -30,6 +30,7 @@ export const ReviewCreateStep: React.FC = () => {
     flowType,
     logicAppsWithoutCustomCode,
     separator,
+    workspaceRootFolder,
   } = createWorkspaceState;
 
   const needsDotNetFrameworkStep = logicAppType === ProjectType.customCode;
@@ -43,7 +44,7 @@ export const ReviewCreateStep: React.FC = () => {
   // Determine what sections to show based on flow type
   const shouldShowPackageSection = flowType === 'createWorkspaceFromPackage';
   const shouldShowWorkspaceSection =
-    flowType === 'createWorkspace' || flowType === 'convertToWorkspace' || flowType === 'createWorkspaceFromPackage';
+    flowType === 'createWorkspace' || flowType === 'ensureWorkspace' || flowType === 'createWorkspaceFromPackage';
   const shouldShowLogicAppSection =
     flowType === 'createWorkspace' || flowType === 'createLogicApp' || flowType === 'createWorkspaceFromPackage';
   const shouldShowWorkflowSection =
@@ -51,9 +52,10 @@ export const ReviewCreateStep: React.FC = () => {
 
   const workspaceBasePath =
     workspaceProjectPath.fsPath && workspaceName ? `${workspaceProjectPath.fsPath}${separator}${workspaceName}` : '';
+  const effectiveBasePath = workspaceBasePath || workspaceRootFolder;
   const workspaceFilePath = workspaceBasePath ? `${workspaceBasePath}${separator}${workspaceName}.code-workspace` : '';
-  const logicAppLocationPath = workspaceBasePath && logicAppName ? `${workspaceBasePath}${separator}${logicAppName}` : '';
-  const functionLocationPath = workspaceBasePath && functionFolderName ? `${workspaceBasePath}${separator}${functionFolderName}` : '';
+  const logicAppLocationPath = effectiveBasePath && logicAppName ? `${effectiveBasePath}${separator}${logicAppName}` : '';
+  const functionLocationPath = effectiveBasePath && functionFolderName ? `${effectiveBasePath}${separator}${functionFolderName}` : '';
 
   const getDotNetFrameworkDisplay = (framework: string) => {
     const frameworkDisplayMap: Record<string, string> = {

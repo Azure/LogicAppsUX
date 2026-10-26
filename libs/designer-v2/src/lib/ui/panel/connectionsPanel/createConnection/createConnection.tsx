@@ -407,14 +407,19 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     return output ?? {};
   }, [enabledCapabilities, parametersByCapability]);
 
-  // Show MI picker only when explicitly enabled by the caller (e.g. MCP wizard) AND
-  // there are no visible parameters (form would be empty without it).
+  // This dropdown stands in for `managedIdentity` typed parameters, which `isParamVisible` hides.
+  // It is opt-in per caller (e.g. the MCP wizard) and only rendered when the selected parameter set
+  // actually declares such a parameter - an OAuth-only set also filters down to nothing visible, but
+  // it is served by the sign-in flow rather than by an identity picker.
   const isMultiAuthManagedIdentitySet = useMemo(() => {
     if (!props.enableManagedIdentityPicker || !isMultiAuth) {
       return false;
     }
-    return Object.keys(capabilityEnabledParameters ?? {}).length === 0;
-  }, [props.enableManagedIdentityPicker, isMultiAuth, capabilityEnabledParameters]);
+    if (Object.keys(capabilityEnabledParameters ?? {}).length > 0) {
+      return false;
+    }
+    return Object.values(multiAuthParams).some((parameter) => parameter?.type === ConnectionParameterTypes.managedIdentity);
+  }, [props.enableManagedIdentityPicker, isMultiAuth, capabilityEnabledParameters, multiAuthParams]);
 
   // Don't show name for simple connections
   const showNameInput = useMemo(() => {

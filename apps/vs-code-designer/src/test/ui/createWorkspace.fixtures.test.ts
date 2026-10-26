@@ -17,10 +17,16 @@
 // Wall time target: a short fixture-only run (vs ~12 minutes for the 12-shape behavior file).
 // This is the critical-path test that Step 3's per-scenario shards depend on; the
 // full behavior coverage runs independently in createWorkspace.behavior.test.ts.
+//
+// The CustomCode fixture is created through the public .NET 10 wizard option,
+// then run-e2e.ts converts only the shared downstream fixture to the existing
+// .NET 8 project shape. This preserves existing-project lifecycle coverage
+// while Workflows SDK 1.4.0 is pending release.
 
 import * as fs from 'fs';
+import * as os from 'os';
 import * as path from 'path';
-import { By, EditorView, type WebDriver, Workbench } from 'vscode-extension-tester';
+import { By, EditorView, type InputBox, type QuickOpenBox, type WebDriver, Workbench } from 'vscode-extension-tester';
 import {
   appendToWorkspaceManifest,
   buildManifestEntry,
@@ -38,8 +44,10 @@ import {
   selectCreateWorkspaceCommand,
   selectDropdownOption,
   selectRadioOption,
+  safeCancelQuickInput,
   sleep,
   switchToWebviewFrame,
+  typeQuickInputQuery,
   uniqueName,
   waitForExtensionReady,
   waitForNextButton,
@@ -49,6 +57,235 @@ import {
 } from './createWorkspaceShared';
 
 const TEST_TIMEOUT = 180_000;
+const EXTENSION_BUNDLE_DIR = path.join(
+  os.homedir(),
+  '.azure-functions-core-tools',
+  'Functions',
+  'ExtensionBundles',
+  'Microsoft.Azure.Functions.ExtensionBundle.Workflows'
+);
+const BUNDLE_INSTALL_MARKER_FILE = '.install-complete';
+const VALIDATE_DEPENDENCIES_COMMAND = 'Azure Logic Apps: Validate and install dependency binaries';
+const VS_CODE_LOGS_DIR = path.join(os.tmpdir(), 'test-resources', 'settings', 'logs');
+
+function compareSemverDesc(a: string, b: string): number {
+  const pa = a.split('.').map((part) => Number.parseInt(part, 10));
+  const pb = b.split('.').map((part) => Number.parseInt(part, 10));
+  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+    const diff = (pb[i] || 0) - (pa[i] || 0);
+    if (diff !== 0) {
+      return diff;
+    }
+  }
+  return 0;
+}
+
+function findLatestWorkflowsBundle(): { version: string; bundleDir: string; markerPath: string } | undefined {
+  if (!fs.existsSync(EXTENSION_BUNDLE_DIR)) {
+    return undefined;
+  }
+
+  const version = fs
+    .readdirSync(EXTENSION_BUNDLE_DIR)
+    .filter((entry) => {
+      const fullPath = path.join(EXTENSION_BUNDLE_DIR, entry);
+      return /^\d+\.\d+\.\d+/.test(entry) && fs.existsSync(fullPath) && fs.statSync(fullPath).isDirectory();
+    })
+    .sort(compareSemverDesc)[0];
+
+  if (!version) {
+    return undefined;
+  }
+
+  const bundleDir = path.join(EXTENSION_BUNDLE_DIR, version);
+  return { version, bundleDir, markerPath: path.join(bundleDir, BUNDLE_INSTALL_MARKER_FILE) };
+}
+
+function assertWorkflowsBundleReady(): void {
+  const bundle = findLatestWorkflowsBundle();
+  if (!bundle) {
+    throw new Error(`[fixtures:setup] Logic Apps extension bundle is missing at ${EXTENSION_BUNDLE_DIR}`);
+  }
+  if (!fs.existsSync(bundle.markerPath)) {
+    throw new Error(`[fixtures:setup] Logic Apps extension bundle completion marker is missing: ${bundle.markerPath}`);
+  }
+}
+function dumpBundleDirectoryState(label: string): void {
+  console.log(`[fixtures:setup] ${label}: bundle root=${EXTENSION_BUNDLE_DIR}`);
+  if (!fs.existsSync(EXTENSION_BUNDLE_DIR)) {
+    console.log(`[fixtures:setup] ${label}: bundle root is missing`);
+    return;
+  }
+
+  const versions = fs
+    .readdirSync(EXTENSION_BUNDLE_DIR)
+    .filter((entry) => {
+      const fullPath = path.join(EXTENSION_BUNDLE_DIR, entry);
+      return fs.existsSync(fullPath) && fs.statSync(fullPath).isDirectory();
+    })
+    .sort(compareSemverDesc);
+  console.log(`[fixtures:setup] ${label}: versions=[${versions.join(', ')}]`);
+
+  for (const version of versions.slice(0, 5)) {
+    const bundleDir = path.join(EXTENSION_BUNDLE_DIR, version);
+    const markerPath = path.join(bundleDir, BUNDLE_INSTALL_MARKER_FILE);
+    const entries = fs.readdirSync(bundleDir).slice(0, 30);
+    console.log(`[fixtures:setup] ${label}: version=${version}, marker=${fs.existsSync(markerPath)}, entries=[${entries.join(', ')}]`);
+  }
+}
+
+function listFilesRecursive(root: string, limit = 200): string[] {
+  const files: string[] = [];
+  const stack = [root];
+  while (stack.length > 0 && files.length < limit) {
+    const current = stack.pop();
+    if (!current) {
+      continue;
+    }
+
+    for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
+      const fullPath = path.join(current, entry.name);
+      if (entry.isFile()) {
+        files.push(fullPath);
+      }
+      if (entry.isDirectory()) {
+        stack.push(fullPath);
+      }
+      if (files.length >= limit) {
+        break;
+      }
+    }
+  }
+  return files;
+}
+
+function dumpRelevantVSCodeLogs(label: string): void {
+  if (!fs.existsSync(VS_CODE_LOGS_DIR)) {
+    console.log(`[fixtures:setup] ${label}: VS Code logs dir is missing: ${VS_CODE_LOGS_DIR}`);
+    return;
+  }
+
+  const candidates = listFilesRecursive(VS_CODE_LOGS_DIR)
+    .filter((file) => /\.(log|txt)$/i.test(file))
+    .map((file) => ({ file, mtimeMs: fs.statSync(file).mtimeMs }))
+    .sort((a, b) => b.mtimeMs - a.mtimeMs)
+    .slice(0, 30);
+
+  console.log(`[fixtures:setup] ${label}: scanning ${candidates.length} recent VS Code log files under ${VS_CODE_LOGS_DIR}`);
+  let dumped = 0;
+  for (const { file } of candidates) {
+    const raw = fs.readFileSync(file, 'utf8');
+    if (!/Logic Apps|extension bundle|Runtime Dependencies|dependencies validation|validateAndInstallBinaries/i.test(raw)) {
+      continue;
+    }
+    const relativePath = path.relative(VS_CODE_LOGS_DIR, file);
+    console.log(`[fixtures:setup] ${label}: log tail from ${relativePath}\n${raw.slice(-6000)}`);
+    dumped++;
+  }
+
+  if (dumped === 0) {
+    console.log(`[fixtures:setup] ${label}: no recent VS Code logs contained Logic Apps dependency markers`);
+  }
+}
+
+async function captureSetupDiagnostics(label: string, driver: WebDriver): Promise<void> {
+  dumpBundleDirectoryState(label);
+  dumpRelevantVSCodeLogs(label);
+  try {
+    await driver.switchTo().defaultContent();
+    await captureScreenshot(driver, `fixtures-setup-${label.replace(/[^a-z0-9_-]+/gi, '-')}`);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.log(`[fixtures:setup] ${label}: screenshot capture failed: ${message}`);
+  }
+}
+
+async function waitForWorkflowsBundleSidecarReady(timeoutMs = 300_000): Promise<void> {
+  const startedAt = Date.now();
+  let lastError: Error | undefined;
+
+  while (Date.now() - startedAt < timeoutMs) {
+    try {
+      assertWorkflowsBundleReady();
+      return;
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error));
+      await sleep(5000);
+    }
+  }
+
+  throw lastError ?? new Error('[fixtures:setup] Timed out waiting for Logic Apps extension bundle completion marker');
+}
+
+async function waitForDependencyValidationCommand(workbench: Workbench, timeoutMs = 60_000): Promise<void> {
+  const deadline = Date.now() + timeoutMs;
+  const driver = workbench.getDriver();
+  let lastPickLabels: string[] = [];
+  let lastError = '';
+
+  while (Date.now() < deadline) {
+    let input: InputBox | QuickOpenBox | undefined;
+    try {
+      await dismissNotifications(driver);
+      input = await workbench.openCommandPrompt();
+      await sleep(500);
+      await typeQuickInputQuery(driver, '> Validate and install dependency binaries');
+      await sleep(1500);
+
+      const picks = await input.getQuickPicks();
+      lastPickLabels = [];
+      for (const pick of picks) {
+        const label = await pick.getLabel();
+        lastPickLabels.push(label);
+        if (label === VALIDATE_DEPENDENCIES_COMMAND) {
+          console.log(`[fixtures:setup] Found product dependency validation command: "${label}"`);
+          await safeCancelQuickInput(input, 'waitForDependencyValidationCommand:found');
+          return;
+        }
+      }
+
+      console.log(`[fixtures:setup] Dependency validation command not found yet. Picks: [${lastPickLabels.join(', ')}]`);
+      await safeCancelQuickInput(input, 'waitForDependencyValidationCommand:not-found');
+    } catch (error) {
+      lastError = error instanceof Error ? error.message : String(error);
+      console.log(`[fixtures:setup] Dependency validation command lookup failed: ${lastError}`);
+      await safeCancelQuickInput(input, 'waitForDependencyValidationCommand:error');
+    }
+
+    await sleep(3000);
+  }
+
+  throw new Error(
+    `[fixtures:setup] Timed out waiting for product dependency validation command. Last picks: [${lastPickLabels.join(', ')}]. Last error: ${lastError}`
+  );
+}
+
+async function validateDependenciesThroughProductCommand(workbench: Workbench, driver: WebDriver): Promise<void> {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      console.log(`[fixtures:setup] Invoking product dependency validation command (attempt ${attempt}/3)...`);
+      await waitForDependencyValidationCommand(workbench);
+      await workbench.executeCommand(VALIDATE_DEPENDENCIES_COMMAND);
+      console.log('[fixtures:setup] Product dependency validation command completed');
+      return;
+    } catch (error: unknown) {
+      lastError = error;
+      const message = error instanceof Error ? error.message : String(error);
+      console.log(`[fixtures:setup] Product dependency validation command failed on attempt ${attempt}/3: ${message}`);
+      try {
+        await driver.switchTo().defaultContent();
+        await dismissNotifications(driver);
+      } catch {
+        /* ignore cleanup failures between retries */
+      }
+      await sleep(2000);
+    }
+  }
+
+  const message = lastError instanceof Error ? lastError.message : String(lastError);
+  throw new Error(`[fixtures:setup] Product dependency validation command failed after retries: ${message}`);
+}
 
 /**
  * Minimal manifest-shape smoke assertion for a freshly created workspace.
@@ -130,12 +367,26 @@ describe('Create Workspace Fixtures', function () {
   const tempDir = createTempDir();
 
   before(async function () {
-    this.timeout(120_000);
+    this.timeout(600_000);
     workbench = new Workbench();
     driver = workbench.getDriver();
     console.log('[fixtures:setup] Waiting for extension to be ready...');
     await waitForExtensionReady(workbench);
     console.log('[fixtures:setup] Extension is ready');
+
+    if (process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1') {
+      try {
+        console.log('[fixtures:setup] Strict dependency validation enabled; invoking product validation before fixtures...');
+        dumpBundleDirectoryState('before-product-validation');
+        await validateDependenciesThroughProductCommand(workbench, driver);
+        dumpBundleDirectoryState('after-product-validation-command-returned');
+        await waitForWorkflowsBundleSidecarReady();
+        console.log('[fixtures:setup] Dependency/bundle validation produced a bundle completion marker before fixture creation');
+      } catch (error: unknown) {
+        await captureSetupDiagnostics('strict-validation-failed', driver);
+        throw error;
+      }
+    }
 
     // Clear any stale manifest from a previous run so this run starts fresh.
     try {
@@ -314,7 +565,7 @@ describe('Create Workspace Fixtures', function () {
     await sleep(2000);
 
     await fillCustomCodeFields(driver, {
-      dotNetVersion: '.NET 8',
+      dotNetVersion: '.NET 10',
       folderName: ccFolderName,
       namespace: fnNamespace,
       functionName: fnName,

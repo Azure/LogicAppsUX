@@ -83,6 +83,40 @@ export const isManagedMcpConnector = (connector: { id?: string; type?: string; p
   return isMcp && !connector.properties?.capabilities?.includes('builtin');
 };
 
+/**
+ * Checks whether a connector declares how to authenticate on its own - either through multi-auth
+ * parameter sets, or through single-auth connection parameters such as an OAuth `token`
+ * (first-party connectors like GitHub work this way).
+ */
+export const connectorDeclaresOwnAuth = (connector: {
+  properties?: { connectionParameterSets?: { values?: unknown[] }; connectionParameters?: Record<string, unknown> };
+}): boolean => {
+  const connectorProperties = connector?.properties;
+  if (!connectorProperties) {
+    return false;
+  }
+  return (
+    (connectorProperties.connectionParameterSets?.values?.length ?? 0) > 0 ||
+    Object.keys(connectorProperties.connectionParameters ?? {}).length > 0
+  );
+};
+
+/**
+ * `isManagedMcpConnector` matches on the connector name, so OAuth-backed MCP connectors
+ * (e.g. `foundrygithubmcp`) qualify as well. Only connectors that declare no auth of their own fall
+ * back to the generic managed-identity based MCP auth; the rest must keep their own auth flow and
+ * must not have managed identity properties forced onto their connections.
+ */
+export const usesMcpManagedIdentityFallback = (connector: {
+  id?: string;
+  type?: string;
+  properties?: {
+    capabilities?: string[];
+    connectionParameterSets?: { values?: unknown[] };
+    connectionParameters?: Record<string, unknown>;
+  };
+}): boolean => isManagedMcpConnector(connector) && !connectorDeclaresOwnAuth(connector);
+
 export default {
   API_TIER: {
     PREMIUM: 'PREMIUM',
@@ -218,6 +252,7 @@ export default {
     DROPDOWN: 'dropdown',
     FILEPICKER: 'filepicker',
     FLOATINGACTIONMENU: 'floatingactionmenu',
+    KNOWLEDGE_BASE: 'knowledgebase',
     SCHEMA: 'schema',
     STRING: 'string',
     TABLE: 'table',
@@ -519,7 +554,6 @@ export default {
     STATIC_RESULT: 'STATIC_RESULT',
     SWAGGER_ENDPOINT: 'SWAGGER_ENDPOINT',
     TESTING: 'TESTING',
-    MOCK_RESULTS: 'MOCK_RESULTS',
     HANDOFF: 'HANDOFF',
     AGENT_HARNESS: 'AGENT_HARNESS',
   },
@@ -544,6 +578,10 @@ export default {
     CONNECTORS: 'CONNECTORS',
     OPERATIONS: 'OPERATIONS',
     CONNECTIONS: 'CONNECTIONS',
+  },
+  KNOWLEDGE_PANEL_TAB_NAMES: {
+    BASICS: 'BASICS',
+    MODEL: 'MODEL',
   },
   ERRORS_PANEL_TAB_NAMES: {
     ERRORS: 'ERRORS',

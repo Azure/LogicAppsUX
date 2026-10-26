@@ -19,10 +19,6 @@ export const useIsDraft = () => {
   return useSelector((state: RootState) => state.designerOptions.isDraft);
 };
 
-export const useUnitTest = () => {
-  return useSelector((state: RootState) => state.designerOptions.isUnitTest);
-};
-
 export const useLegacyWorkflowParameters = () => {
   return useSelector((state: RootState) => state.designerOptions.useLegacyWorkflowParameters);
 };
@@ -72,6 +68,10 @@ export const useDisableMcpClientTools = () => {
 
 export const useDisableNativeMcpClientTools = () => {
   return useSelector((state: RootState) => state.designerOptions.hostOptions?.disableNativeMcpClientTools ?? false);
+};
+
+export const useEditableCodeViewEnabled = () => {
+  return useSelector((state: RootState) => state.designerOptions.hostOptions?.enableEditableCodeView ?? false);
 };
 
 export const useAreDesignerOptionsInitialized = () => {

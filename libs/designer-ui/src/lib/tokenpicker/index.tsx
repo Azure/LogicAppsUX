@@ -183,10 +183,10 @@ export function TokenPicker({
 
     setTimeout(() => {
       expressionEditorRef.current?.setSelection({
-        startLineNumber: escapedString.length + 1,
-        startColumn: 1,
-        endLineNumber: escapedString.length + 1,
-        endColumn: 1,
+        startLineNumber: 1,
+        startColumn: escapedString.length + 1,
+        endLineNumber: 1,
+        endColumn: escapedString.length + 1,
       });
       expressionEditorRef.current?.focus();
     }, 100);
@@ -309,6 +309,9 @@ export function TokenPicker({
         styles={styleWithMargin ? calloutStylesWithTopMargin : calloutStyles}
         layerProps={{
           hostId: 'msla-layer-host',
+          // Allow mouse events to bubble to `document` so CodeMirror's drag-to-select works
+          // inside the Callout's Fluent Layer (defaults to eventBubblingEnabled: false).
+          eventBubblingEnabled: true,
         }}
       >
         <div

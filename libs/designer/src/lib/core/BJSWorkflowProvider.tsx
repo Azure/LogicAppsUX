@@ -1,16 +1,15 @@
 import type { Workflow } from '../common/models/workflow';
 import { ProviderWrappedContext } from './ProviderWrappedContext';
-import { deserializeUnitTestDefinition } from './parsers/BJSWorkflow/BJSDeserializer';
 import { initializeGraphState } from './parsers/ParseReduxAction';
 import { initCustomCode } from './state/customcode/customcodeSlice';
 import { useAreDesignerOptionsInitialized, useAreServicesInitialized } from './state/designerOptions/designerOptionsSelectors';
 import { initializeServices } from './state/designerOptions/designerOptionsSlice';
-import { initUnitTestDefinition } from './state/unitTest/unitTestSlice';
 import { initWorkflowKind, initRunInstance, initWorkflowSpec } from './state/workflow/workflowSlice';
 import type { AppDispatch } from './store';
 import { parseWorkflowKind } from './utils/workflow';
-import type { LogicAppsV2, UnitTestDefinition } from '@microsoft/logic-apps-shared';
-import { useDeepCompareEffect } from '@react-hookz/web';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import { useCustomCompareEffect } from '@react-hookz/web';
+import isEqual from 'lodash.isequal';
 import type React from 'react';
 import { useContext, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -26,7 +25,6 @@ export interface BJSWorkflowProviderProps {
   runInstance?: LogicAppsV2.RunInstanceDefinition | null;
   children?: React.ReactNode;
   appSettings?: Record<string, any>;
-  unitTestDefinition?: UnitTestDefinition | null;
   isMultiVariableEnabled?: boolean;
 }
 
@@ -37,20 +35,23 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
   runInstance,
   customCode,
   appSettings,
-  unitTestDefinition,
   isMultiVariableEnabled,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  useDeepCompareEffect(() => {
-    dispatch(initWorkflowSpec('BJS'));
-    dispatch(initWorkflowKind(parseWorkflowKind(workflow?.kind)));
-    dispatch(initRunInstance(runInstance ?? null));
-    dispatch(initRunInPanel(runInstance ?? null));
-    dispatch(initCustomCode(customCode));
-    dispatch(initializeGraphState({ workflowDefinition: workflow, runInstance, isMultiVariableEnabled }));
-    dispatch(initUnitTestDefinition(deserializeUnitTestDefinition(unitTestDefinition ?? null, workflow)));
-  }, [workflowId, runInstance, workflow, customCode, unitTestDefinition]);
+  // Workflow schemas may define a non-callable property named toString, which breaks the default deep comparator.
+  useCustomCompareEffect(
+    () => {
+      dispatch(initWorkflowSpec('BJS'));
+      dispatch(initWorkflowKind(parseWorkflowKind(workflow?.kind)));
+      dispatch(initRunInstance(runInstance ?? null));
+      dispatch(initRunInPanel(runInstance ?? null));
+      dispatch(initCustomCode(customCode));
+      dispatch(initializeGraphState({ workflowDefinition: workflow, runInstance, isMultiVariableEnabled }));
+    },
+    [workflowId, runInstance, workflow, customCode],
+    isEqual
+  );
 
   // Store app settings in query to access outside of functional components
   useQuery({

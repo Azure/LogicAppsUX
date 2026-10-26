@@ -13,6 +13,7 @@ on:
 permissions:
   contents: read
   issues: read
+  copilot-requests: write
 
 tools:
   github:
@@ -115,7 +116,7 @@ boundaries, and common misattribution patterns.
 ### State Management Pattern
 - **Redux Toolkit** with feature-based slices in `core/state/`
 - **React Query** for server state with 24-hour cache
-- Key slices: `workflowSlice`, `operationMetadataSlice`, `connectionSlice`, `panelSlice`, `designerViewSlice`, `notesSlice` (v2), `unitTestSlice` (v2)
+- Key slices: `workflowSlice`, `operationMetadataSlice`, `connectionSlice`, `panelSlice`, `designerViewSlice`, `notesSlice` (v2)
 
 ## Issue Template Fields
 

@@ -3,22 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {
-  ProjectDirectoryPathKey,
-  autoStartDesignTimeSetting,
   defaultVersionRange,
   designTimeDirectoryName,
   designerStartApi,
   extensionBundleId,
   hostFileName,
-  localSettingsFileName,
-  logicAppKind,
-  showStartDesignTimeMessageSetting,
   designerApiLoadTimeout,
   type hostFileContent,
-  workerRuntimeKey,
-  appKindSetting,
 } from '../../../constants';
-import { ext } from '../../../extensionVariables';
+import { ext, type FuncInstance } from '../../../extensionVariables';
 
 // Cache validation results to avoid expensive process checks (3-4 seconds on Windows)
 // This balances safety (detecting wrong func process) with performance
@@ -26,36 +19,34 @@ import { ext } from '../../../extensionVariables';
 const processValidationCache = new Map<string, { timestamp: number; isValid: boolean }>();
 const VALIDATION_CACHE_TTL = 60000; // Cache for 60 seconds - revalidate every minute to catch process changes
 import { localize } from '../../../localize';
-import { addOrUpdateLocalAppSettings, getLocalSettingsSchema } from '../appSettings/localSettings';
 import { updateFuncIgnore } from '../codeless/common';
 import { writeFormattedJson } from '../fs';
 import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
-import { getWorkspaceSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
-import { getWorkspaceLogicAppFolders } from '../workspace';
+import { getWorkspaceLogicAppRoots } from '../workspace';
+import { ensureProjectFiles } from '../../projectConsistency/projectFilesConsistency';
 import { delay } from '../delay';
-import {
-  DialogResponses,
-  openUrl,
-  type IActionContext,
-  type IAzExtOutputChannel,
-  callWithTelemetryAndErrorHandling,
-} from '@microsoft/vscode-azext-utils';
+import { type IActionContext, type IAzExtOutputChannel, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
-import { Platform, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
+import { Platform } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
 import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import * as portfinder from 'portfinder';
-import * as vscode from 'vscode';
-import { Uri, window, workspace, type MessageItem } from 'vscode';
+import { Uri, workspace } from 'vscode';
 import { findChildProcess } from '../../commands/pickFuncProcess';
 import find_process from 'find-process';
-import { getChildProcessesWithScript } from '../findChildProcess/findChildProcess';
-import { isCodefulProject } from '../codeful';
+import { getChildProcesses } from '../findChildProcess/findChildProcess';
+import {
+  ensureExtensionBundleHealthy,
+  isExtensionBundleDownloadInFlight,
+  isInsideBundleDownloadScope,
+  waitForExtensionBundleReady,
+} from '../bundleFeed';
+import { releaseReservedPort, reserveFreePort } from '../portReservation';
+import { warnIfJdbcJavaRuntimeMissing } from '../java/jdbcConnector';
 
-const maxDesignTimeValidationRestarts = 1;
+const maxValidationRestarts = 3;
 
 function isFailingHealthCheckLogLine(line: string): boolean {
   const normalizedLine = line.toLowerCase();
@@ -169,7 +160,7 @@ function killTrackedUnixProcesses(process: cp.ChildProcess, childFuncPid?: strin
   }
 }
 
-function getDesignTimeInstance(projectPath: string) {
+function getDesignTimeInstance(projectPath: string): FuncInstance {
   let designTimeInst = ext.designTimeInstances.get(projectPath);
   if (!designTimeInst) {
     designTimeInst = {};
@@ -177,10 +168,6 @@ function getDesignTimeInstance(projectPath: string) {
   }
 
   return designTimeInst;
-}
-
-function getErrorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : String(error);
 }
 
 function stopTrackedDesignTimeProcess(projectPath: string): void {
@@ -203,150 +190,129 @@ function stopTrackedDesignTimeProcess(projectPath: string): void {
   }
 }
 
-function scheduleStartDesignTimeApi(projectPath: string): void {
-  startDesignTimeApi(projectPath).catch((error) => {
-    ext.outputChannel.appendLog(
-      localize(
-        'scheduleDesignTimeApiFailed',
-        'Background design-time startup failed for project "{0}". Error: {1}',
-        projectPath,
-        getErrorMessage(error)
-      )
-    );
-  });
-}
-
-export async function startDesignTimeApi(projectPath: string): Promise<void> {
+/**
+ * Starts the design-time API for the given project path.
+ * @param context - The action context for telemetry.
+ * @param projectPath - The Logic App project path.
+ * @param currRetry - Current retry depth from process-validation restarts. Defaults to 0.
+ */
+export async function startDesignTimeApi(context: IActionContext, projectPath: string, currRetry = 0): Promise<void> {
+  context.telemetry.properties.projectPath = projectPath;
   const designTimeInst = getDesignTimeInstance(projectPath);
 
   if (designTimeInst.startupPromise) {
+    context.telemetry.properties.skippingAlreadyInProgress = 'true';
+    context.errorHandling.suppressDisplay = true;
     await designTimeInst.startupPromise;
     return;
   }
 
-  designTimeInst.startupPromise = (async () => {
-    try {
-      await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.startDesignTimeApi', async (actionContext: IActionContext) => {
-        const loadDesignTimeStart = Date.now();
-        actionContext.telemetry.properties.startDesignTimeApi = 'false';
-
-        designTimeInst.startupError = undefined;
-        designTimeInst.isStarting = true;
-
-        if (!designTimeInst.port) {
-          designTimeInst.port = await portfinder.getPortPromise();
-        }
-
-        const url = `http://localhost:${designTimeInst.port}${designerStartApi}`;
-        if (await isDesignTimeUp(url)) {
-          designTimeInst.isStarting = false;
-          actionContext.telemetry.properties.isDesignTimeUp = 'true';
-          await validateRunningFuncProcess(projectPath);
-          return;
-        }
-
-        try {
-          ext.outputChannel.appendLog(localize('startingDesignTimeApi', 'Starting Design Time Api for project: {0}', projectPath));
-
-          const designTimeDirectory: Uri | undefined = await getOrCreateDesignTimeDirectory(designTimeDirectoryName, projectPath);
-          const isCodeful = (await isCodefulProject(projectPath)) ?? false;
-          const settingsFileContent = getLocalSettingsSchema(true, projectPath, isCodeful);
-
-          const hostFileContent: any = {
-            version: '2.0',
-            extensionBundle: {
-              id: extensionBundleId,
-              version: defaultVersionRange,
-            },
-            extensions: {
-              workflow: {
-                settings: {
-                  'Runtime.WorkflowOperationDiscoveryHostMode': 'true',
-                },
-              },
-            },
-          };
-
-          if (!designTimeDirectory) {
-            throw new Error(localize('DesignTimeDirectoryError', 'Failed to create design-time directory.'));
-          }
-
-          await createJsonFile(designTimeDirectory, hostFileName, hostFileContent);
-          await createJsonFile(designTimeDirectory, localSettingsFileName, settingsFileContent);
-          await addOrUpdateLocalAppSettings(
-            actionContext,
-            designTimeDirectory.fsPath,
-            {
-              [appKindSetting]: logicAppKind,
-              [ProjectDirectoryPathKey]: projectPath,
-              [workerRuntimeKey]: WorkerRuntime.Node,
-            },
-            true
-          );
-          const cwd: string = designTimeDirectory.fsPath;
-          const portArgs = `--port ${designTimeInst.port}`;
-          ext.outputChannel.appendLog(
-            localize(
-              'startingDesignTimeApiDetails',
-              'Launching design-time host for project "{0}" from "{1}" on port {2}.',
-              projectPath,
-              cwd,
-              designTimeInst.port
-            )
-          );
-
-          startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), 'host', 'start', portArgs);
-          await waitForDesignTimeStartUp(actionContext, projectPath, url, true);
-          actionContext.telemetry.properties.isDesignTimeUp = 'true';
-
-          ext.pinnedBundleVersion.set(projectPath, false);
-          const hostfilepath: Uri = Uri.file(path.join(cwd, hostFileName));
-          const data = JSON.parse(fs.readFileSync(hostfilepath.fsPath, 'utf-8'));
-          if (data.extensionBundle) {
-            const versionWithoutSpaces = data.extensionBundle.version.replace(/\s+/g, '');
-            const rangeWithoutSpaces = defaultVersionRange.replace(/\s+/g, '');
-            if (data.extensionBundle.id === extensionBundleId && versionWithoutSpaces === rangeWithoutSpaces) {
-              ext.currentBundleVersion.set(projectPath, ext.latestBundleVersion);
-            } else if (data.extensionBundle.id === extensionBundleId && versionWithoutSpaces !== rangeWithoutSpaces) {
-              ext.currentBundleVersion.set(projectPath, extractPinnedVersion(data.extensionBundle.version) ?? data.extensionBundle.version);
-              ext.pinnedBundleVersion.set(projectPath, true);
-            }
-          }
-          designTimeInst.startupError = undefined;
-          designTimeInst.validationRetryCount = 0;
-          actionContext.telemetry.properties.startDesignTimeApi = 'true';
-          updateFuncIgnore(projectPath, [`${designTimeDirectoryName}/`]);
-          actionContext.telemetry.measurements.startDesignTimeApiDuration = (Date.now() - loadDesignTimeStart) / 1000;
-        } catch (error) {
-          const errorMessage = getErrorMessage(error);
-          const viewOutput: MessageItem = { title: localize('viewOutput', 'View output') };
-          const message = localize('DesignTimeError', "Can't start the background design-time process.") + errorMessage;
-          designTimeInst.startupError = errorMessage;
-          designTimeInst.validationRetryCount = 0;
-          stopTrackedDesignTimeProcess(projectPath);
-          actionContext.telemetry.properties.startDesignTimeApiError = errorMessage;
-          ext.outputChannel.appendLog(
-            localize('designTimeApiFailed', 'Design-time startup failed for project "{0}". Error: {1}', projectPath, errorMessage)
-          );
-
-          window.showErrorMessage(message, viewOutput).then(async (result) => {
-            if (result === viewOutput) {
-              ext.outputChannel.show();
-            }
-          });
-        } finally {
-          designTimeInst.isStarting = false;
-        }
-      });
-    } finally {
-      const currentInst = ext.designTimeInstances.get(projectPath);
-      if (currentInst) {
-        currentInst.startupPromise = undefined;
-      }
-    }
-  })();
-
+  designTimeInst.startupPromise = startDesignTimeApiInternal(context, designTimeInst, projectPath, currRetry);
   await designTimeInst.startupPromise;
+}
+
+async function startDesignTimeApiInternal(
+  context: IActionContext,
+  designTimeInst: FuncInstance,
+  projectPath: string,
+  currRetry: number
+): Promise<void> {
+  try {
+    context.telemetry.properties.didStartDesignTime = 'false';
+
+    designTimeInst.startupError = undefined;
+    designTimeInst.isStarting = true;
+
+    if (!designTimeInst.port) {
+      designTimeInst.port = await reserveFreePort();
+    }
+
+    const url = `http://localhost:${designTimeInst.port}${designerStartApi}`;
+    if (await isDesignTimeUp(url)) {
+      designTimeInst.isStarting = false;
+      context.telemetry.properties.isDesignTimeUp = 'true';
+      await validateRunningFuncProcess(projectPath, currRetry);
+      return;
+    }
+
+    try {
+      ext.outputChannel.appendLog(localize('startingDesignTimeApi', 'Starting Design Time Api for project: {0}', projectPath));
+
+      await ensureProjectFiles(context, projectPath);
+
+      warnIfJdbcJavaRuntimeMissing(context, projectPath).catch(() => undefined);
+
+      const designTimeDirectory = path.join(projectPath, designTimeDirectoryName);
+      const portArgs = `--port ${designTimeInst.port}`;
+      ext.outputChannel.appendLog(
+        localize(
+          'startingDesignTimeApiDetails',
+          'Launching design-time host for project "{0}" from "{1}" on port {2}.',
+          projectPath,
+          designTimeDirectory,
+          designTimeInst.port
+        )
+      );
+
+      // If activation triggered a bundle (re)download (newer version or incomplete
+      // installation), wait for it to finish before spawning func.exe. Launching
+      // while the extension bundle is being re-extracted can lock the bundle folder
+      // on Windows and leave the design-time host pointing at a half-extracted bundle.
+      //
+      // When this call originates from inside `downloadExtensionBundle` itself
+      // (the post-install restart hook), `isInsideBundleDownloadScope()` is true
+      // and there is nothing to wait for — the bundle is on disk by then.
+      // Suppress the misleading "Waiting…" log in that case.
+      if (isExtensionBundleDownloadInFlight() && !isInsideBundleDownloadScope()) {
+        ext.outputChannel.appendLog(
+          localize(
+            'waitingForBundleReady',
+            'Waiting for Logic Apps extension bundle download to complete before starting design-time host for project "{0}"…',
+            projectPath
+          )
+        );
+        await waitForExtensionBundleReady();
+      }
+      // Refuse to spawn func.exe if the most recent bundle install attempt
+      // failed. Without a healthy bundle, func reports "No job functions
+      // found" and unhealthy storage forever — surfacing a clear, actionable
+      // error here is strictly better than letting the host start broken.
+      await ensureExtensionBundleHealthy(context);
+
+      startDesignTimeProcess(ext.outputChannel, designTimeDirectory, getFunctionsCommand(), 'host', 'start', portArgs);
+      await waitForDesignTimeStartUp(context, projectPath, url, true);
+      context.telemetry.properties.isDesignTimeUp = 'true';
+
+      ext.pinnedBundleVersion.set(projectPath, false);
+      const hostfilepath: Uri = Uri.file(path.join(designTimeDirectory, hostFileName));
+      const data = JSON.parse(fs.readFileSync(hostfilepath.fsPath, 'utf-8'));
+      if (data.extensionBundle) {
+        const versionWithoutSpaces = data.extensionBundle.version.replace(/\s+/g, '');
+        const rangeWithoutSpaces = defaultVersionRange.replace(/\s+/g, '');
+        if (data.extensionBundle.id === extensionBundleId && versionWithoutSpaces === rangeWithoutSpaces) {
+          ext.currentBundleVersion.set(projectPath, ext.latestBundleVersion);
+        } else if (data.extensionBundle.id === extensionBundleId && versionWithoutSpaces !== rangeWithoutSpaces) {
+          ext.currentBundleVersion.set(projectPath, extractPinnedVersion(data.extensionBundle.version) ?? data.extensionBundle.version);
+          ext.pinnedBundleVersion.set(projectPath, true);
+        }
+      }
+      designTimeInst.startupError = undefined;
+      context.telemetry.properties.didStartDesignTime = 'true';
+      updateFuncIgnore(projectPath, [`${designTimeDirectoryName}/`]);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      designTimeInst.startupError = errorMessage;
+      stopTrackedDesignTimeProcess(projectPath);
+      throw error;
+    } finally {
+      designTimeInst.isStarting = false;
+    }
+  } finally {
+    const currentInst = ext.designTimeInstances.get(projectPath);
+    if (currentInst) {
+      currentInst.startupPromise = undefined;
+    }
+  }
 }
 
 function extractPinnedVersion(input: string): string | null {
@@ -361,7 +327,7 @@ function extractPinnedVersion(input: string): string | null {
   return null;
 }
 
-async function validateRunningFuncProcess(projectPath: string): Promise<void> {
+async function validateRunningFuncProcess(projectPath: string, currRetry: number): Promise<void> {
   const designTimeInst = ext.designTimeInstances.get(projectPath);
   if (!designTimeInst) {
     return;
@@ -377,25 +343,21 @@ async function validateRunningFuncProcess(projectPath: string): Promise<void> {
 
   if (correctFuncProcess) {
     processValidationCache.set(projectPath, { timestamp: now, isValid: true });
-    designTimeInst.validationRetryCount = 0;
     return;
   }
 
-  const retryCount = designTimeInst.validationRetryCount ?? 0;
-  if (retryCount >= maxDesignTimeValidationRestarts) {
-    designTimeInst.validationRetryCount = 0;
+  if (currRetry >= maxValidationRestarts) {
     ext.outputChannel.appendLog(
       localize(
         'invalidChildFuncPidSkipRestart',
         'Unable to validate the func child process PID for project at "{0}" after {1} restart attempt(s). Keeping the current design-time host running.',
         projectPath,
-        retryCount
+        currRetry
       )
     );
     return;
   }
 
-  designTimeInst.validationRetryCount = retryCount + 1;
   ext.outputChannel.appendLog(
     localize(
       'invalidChildFuncPid',
@@ -404,8 +366,10 @@ async function validateRunningFuncProcess(projectPath: string): Promise<void> {
     )
   );
   processValidationCache.delete(projectPath);
-  stopDesignTimeApi(projectPath);
-  await startDesignTimeApi(projectPath);
+  await stopDesignTimeApi(projectPath);
+  await callWithTelemetryAndErrorHandling('validateRunningFuncProcess.startDesignTimeApi', async (actionContext: IActionContext) => {
+    await startDesignTimeApi(actionContext, projectPath, currRetry + 1);
+  });
 }
 
 async function checkFuncProcessId(projectPath: string): Promise<boolean> {
@@ -429,7 +393,7 @@ async function checkFuncProcessId(projectPath: string): Promise<boolean> {
     }
 
     if (!childFuncPid) {
-      const children = await getChildProcessesWithScript(processId);
+      const children = await getChildProcesses(processId);
       const funcChildProcess = [...children].reverse().find((p) => /func(\.exe)?$/i.test(p.name || ''));
       if (funcChildProcess) {
         designTimeInst.childFuncPid = funcChildProcess.processId.toString();
@@ -438,7 +402,7 @@ async function checkFuncProcessId(projectPath: string): Promise<boolean> {
       return false;
     }
 
-    const children = await getChildProcessesWithScript(processId);
+    const children = await getChildProcesses(processId);
     return children.some((p) => p.processId.toString() === childFuncPid && /func(\.exe)?$/i.test(p.name || ''));
   }
 
@@ -584,8 +548,19 @@ export function startDesignTimeProcess(
         'Language worker issue found when launching func most likely due to a conflicting port. Restarting design-time process.'
       );
 
-      stopDesignTimeApi(projectPath);
-      scheduleStartDesignTimeApi(projectPath);
+      // TODO(aeldridge): Double check if this is correct error handling for failed language worker start.
+      stopDesignTimeApi(projectPath)
+        .catch((error) => {
+          ext.outputChannel.appendLog(`Failed to stop design-time process before restart. Error: ${error}`);
+        })
+        .finally(() => {
+          callWithTelemetryAndErrorHandling(
+            'designTimeError.languageWorkerFailed.startDesignTimeApi',
+            async (actionContext: IActionContext) => {
+              await startDesignTimeApi(actionContext, projectPath);
+            }
+          );
+        });
     }
   });
   stdout?.on('end', () => appendStdout?.flush());
@@ -602,8 +577,15 @@ export function startDesignTimeProcess(
     if (data.toLowerCase().includes(portUnavailableText.toLowerCase())) {
       ext.outputChannel.appendLog('Conflicting port found when launching func. Restarting design-time process.');
 
-      stopDesignTimeApi(projectPath);
-      scheduleStartDesignTimeApi(projectPath);
+      stopDesignTimeApi(projectPath)
+        .catch((error) => {
+          ext.outputChannel.appendLog(`Failed to stop design-time process before restart. Error: ${error}`);
+        })
+        .finally(() => {
+          callWithTelemetryAndErrorHandling('designTimeError.portUnavailable.startDesignTimeApi', async (actionContext: IActionContext) => {
+            await startDesignTimeApi(actionContext, projectPath);
+          });
+        });
     }
   });
   stderr?.on('end', () => appendStderr?.flush());
@@ -615,33 +597,50 @@ export function startDesignTimeProcess(
   }
 }
 
-export function stopAllDesignTimeApis(): void {
-  for (const projectPath of ext.designTimeInstances.keys()) {
-    stopDesignTimeApi(projectPath);
-  }
+export async function stopAllDesignTimeApis(): Promise<void> {
+  await Promise.allSettled([...ext.designTimeInstances.keys()].map((projectPath) => stopDesignTimeApi(projectPath)));
 }
 
-export function stopDesignTimeApi(projectPath: string): void {
+export async function stopDesignTimeApi(projectPath: string): Promise<void> {
   ext.outputChannel.appendLog(`Stopping Design Time Api for project: ${projectPath}`);
   const designTimeInst = ext.designTimeInstances.get(projectPath);
   if (!designTimeInst) {
     return;
   }
 
-  const { process, childFuncPid } = designTimeInst;
+  const { process: proc, childFuncPid } = designTimeInst;
   ext.designTimeInstances.delete(projectPath);
-  if (process === null || process === undefined) {
+  releaseReservedPort(designTimeInst.port);
+  if (proc === null || proc === undefined) {
     return;
   }
 
   if (os.platform() === Platform.windows) {
+    const killPromises: Promise<void>[] = [];
     if (childFuncPid) {
-      cp.exec(`taskkill /pid ${childFuncPid} /t /f`);
+      killPromises.push(execTaskkill(childFuncPid));
     }
-    cp.exec(`taskkill /pid ${process.pid} /t /f`);
+    killPromises.push(execTaskkill(proc.pid));
+    await Promise.allSettled(killPromises);
   } else {
-    killTrackedUnixProcesses(process, childFuncPid);
+    killTrackedUnixProcesses(proc, childFuncPid);
   }
+}
+
+/**
+ * Runs taskkill and waits for it to complete so file locks are released
+ * before subsequent build steps.
+ */
+function execTaskkill(pid: number | string | undefined): Promise<void> {
+  if (pid === undefined) {
+    return Promise.resolve();
+  }
+
+  return new Promise((resolve) => {
+    cp.exec(`taskkill /pid ${pid} /t /f`, () => {
+      resolve();
+    });
+  });
 }
 
 export function scheduleStartAllDesignTimeApis(): void {
@@ -650,7 +649,11 @@ export function scheduleStartAllDesignTimeApis(): void {
   );
   startAllDesignTimeApis().catch((error) => {
     ext.outputChannel.appendLog(
-      localize('scheduleAllDesignTimeApisFailed', 'Background design-time startup encountered an error. Error: {0}', getErrorMessage(error))
+      localize(
+        'scheduleAllDesignTimeApisFailed',
+        'Background design-time startup encountered an error. Error: {0}',
+        error instanceof Error ? error.message : String(error)
+      )
     );
   });
 }
@@ -660,66 +663,29 @@ export function scheduleStartAllDesignTimeApis(): void {
  * @returns {Promise<void>} A promise that resolves when each design-time API is in the starting state.
  */
 export async function startAllDesignTimeApis(): Promise<void> {
-  if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-    const logicAppFolders = await getWorkspaceLogicAppFolders();
+  const projectPaths = await getWorkspaceLogicAppRoots();
+  if (projectPaths.length === 0) {
     ext.outputChannel.appendLog(
-      localize(
-        'startingAllDesignTimeApis',
-        'Starting design-time APIs for {0} Logic App project(s) in the current workspace.',
-        logicAppFolders.length
-      )
+      localize('noLogicAppsFound', 'No Logic App projects found in the current workspace, skipping design-time startup.')
     );
-    await Promise.all(logicAppFolders.map(startDesignTimeApi));
-  } else {
-    ext.outputChannel.appendLog(localize('noWorkspaceFoldersForDesignTime', 'No workspace folders found. Skipping design-time startup.'));
+    return;
   }
-}
 
-/**
- * Optionally prompts the user to automatically start the design-time process at launch. If auto start is enabled, start the design-time API for all Logic Apps in the workspace.
- * @param {IActionContext} context - The action context.
- * @returns {Promise<void>} A promise that resolves when each design-time API is in the starting state or the user rejects auto start.
- */
-export async function promptStartDesignTimeOption(context: IActionContext) {
-  if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-    const logicAppFolders = await getWorkspaceLogicAppFolders();
-    const showStartDesignTimeMessage = !!getWorkspaceSetting<boolean>(showStartDesignTimeMessageSetting);
-    let autoStartDesignTime = !!getWorkspaceSetting<boolean>(autoStartDesignTimeSetting);
+  ext.outputChannel.appendLog(
+    localize(
+      'startingAllDesignTimeApis',
+      'Starting design-time processes for {0} Logic App project(s) in the current workspace.',
+      projectPaths.length
+    )
+  );
 
-    if (logicAppFolders && logicAppFolders.length > 0) {
-      if (!autoStartDesignTime && showStartDesignTimeMessage) {
-        const message = localize(
-          'startDesignTimeApi',
-          'Always start the background design-time process at launch? The workflow designer will open faster.'
-        );
-        const confirm = { title: localize('yesRecommended', 'Yes (Recommended)') };
-        let result: MessageItem;
-        do {
-          result = await context.ui.showWarningMessage(message, confirm, DialogResponses.learnMore, DialogResponses.dontWarnAgain);
-          if (result === confirm) {
-            await updateGlobalSetting(autoStartDesignTimeSetting, true);
-            autoStartDesignTime = true;
-          } else if (result === DialogResponses.learnMore) {
-            await openUrl('https://learn.microsoft.com/en-us/azure/azure-functions/functions-develop-local');
-          } else if (result === DialogResponses.dontWarnAgain) {
-            await updateGlobalSetting(showStartDesignTimeMessageSetting, false);
-          }
-        } while (result === DialogResponses.learnMore);
-      }
-
-      for (const projectPath of logicAppFolders) {
-        if (!fs.existsSync(path.join(projectPath, localSettingsFileName))) {
-          const settingsFileContent = getLocalSettingsSchema(false, projectPath);
-          const projectUri: Uri = Uri.file(projectPath);
-          await createJsonFile(projectUri, localSettingsFileName, settingsFileContent);
-        }
-
-        if (autoStartDesignTime) {
-          scheduleStartDesignTimeApi(projectPath);
-        }
-      }
-    }
-  }
+  await Promise.all(
+    projectPaths.map(async (projectPath) => {
+      await callWithTelemetryAndErrorHandling('startAllDesignTimeApis.startDesignTimeApi', async (actionContext: IActionContext) => {
+        await startDesignTimeApi(actionContext, projectPath);
+      });
+    })
+  );
 }
 
 /**

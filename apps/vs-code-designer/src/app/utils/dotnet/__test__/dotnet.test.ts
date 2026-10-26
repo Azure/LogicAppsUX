@@ -47,11 +47,6 @@ vi.mock('semver', () => ({
 import { getTemplateKeyFromProjFile } from '../dotnet';
 
 describe('dotnet utilities', () => {
-  const createContext = () =>
-    ({
-      telemetry: { properties: {}, measurements: {} },
-    }) as any;
-
   beforeEach(() => {
     vi.clearAllMocks();
     mockPathExists.mockResolvedValue(false);
@@ -60,28 +55,28 @@ describe('dotnet utilities', () => {
 
   describe('getTemplateKeyFromProjFile', () => {
     it('should default to net10.0 for FuncVersion.v4 when no project path exists', async () => {
-      const result = await getTemplateKeyFromProjFile(createContext(), undefined, FuncVersion.v4, ProjectLanguage.CSharp);
+      const result = await getTemplateKeyFromProjFile(undefined, FuncVersion.v4, ProjectLanguage.CSharp);
       expect(result).toBe(DotnetVersion.net10);
     });
 
     it('should default to net10.0 for FuncVersion.v4 when project path does not exist', async () => {
       mockPathExists.mockResolvedValue(false);
-      const result = await getTemplateKeyFromProjFile(createContext(), '/nonexistent', FuncVersion.v4, ProjectLanguage.CSharp);
+      const result = await getTemplateKeyFromProjFile('/nonexistent', FuncVersion.v4, ProjectLanguage.CSharp);
       expect(result).toBe(DotnetVersion.net10);
     });
 
     it('should default to netcoreapp3.1 for FuncVersion.v3', async () => {
-      const result = await getTemplateKeyFromProjFile(createContext(), undefined, FuncVersion.v3, ProjectLanguage.CSharp);
+      const result = await getTemplateKeyFromProjFile(undefined, FuncVersion.v3, ProjectLanguage.CSharp);
       expect(result).toBe(DotnetVersion.net3);
     });
 
     it('should default to netcoreapp2.1 for FuncVersion.v2', async () => {
-      const result = await getTemplateKeyFromProjFile(createContext(), undefined, FuncVersion.v2, ProjectLanguage.CSharp);
+      const result = await getTemplateKeyFromProjFile(undefined, FuncVersion.v2, ProjectLanguage.CSharp);
       expect(result).toBe(DotnetVersion.net2);
     });
 
     it('should default to net48 for FuncVersion.v1', async () => {
-      const result = await getTemplateKeyFromProjFile(createContext(), undefined, FuncVersion.v1, ProjectLanguage.CSharp);
+      const result = await getTemplateKeyFromProjFile(undefined, FuncVersion.v1, ProjectLanguage.CSharp);
       expect(result).toBe(DotnetVersion.net48);
     });
   });

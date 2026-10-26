@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { selectWorkspaceFile } from '../../../utils/workspace';
@@ -14,22 +15,21 @@ import * as vscode from 'vscode';
 export async function switchDebugMode(context: IActionContext): Promise<void> {
   const workspacePath = await getWorkspaceFolderPath(context);
   const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspacePath, true /* suppressPrompt */);
-
-  if (projectPath) {
-    const wizardContext = { ...context, projectPath, workflowName: '' };
-    const wizard = new AzureWizard(wizardContext, {
-      promptSteps: [new StatelessWorkflowsListStep()],
-      executeSteps: [new UpdateDebugModeStep()],
-    });
-
-    await wizard.prompt();
-    await wizard.execute();
-    vscode.window.showInformationMessage(
-      localize('debugMode.debugModeUpdated', `Successfully updated debug mode for workflow ${wizardContext.workflowName}`)
-    );
-  } else {
+  if (!projectPath) {
     vscode.window.showErrorMessage(localize('debugMode.projectNotFound', 'No project found for the workspace'));
+    return;
   }
+
+  const wizardContext = { ...context, projectPath, workflowName: '' };
+  const wizard = new AzureWizard(wizardContext, {
+    promptSteps: [new StatelessWorkflowsListStep()],
+    executeSteps: [new UpdateDebugModeStep()],
+  });
+
+  await wizard.prompt();
+  await wizard.execute();
+
+  ext.outputChannel.appendLog(localize('debugMode.debugModeUpdated', `Successfully updated debug mode for workflow ${wizardContext.workflowName}`));
 }
 
 /**

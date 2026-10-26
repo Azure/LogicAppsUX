@@ -368,6 +368,22 @@ describe('FloatingRunButton', () => {
       expect(screen.getByText('Run draft')).toBeInTheDocument();
     });
   });
+
+  describe('Local Workflow (no siteResourceId)', () => {
+    it('should render the run button when siteResourceId is not provided', () => {
+      const { siteResourceId, workflowName, ...localProps } = defaultProps;
+      renderWithProviders(localProps);
+      expect(screen.getByText('Run')).toBeInTheDocument();
+    });
+
+    it('should render as non-draft mode when siteResourceId is not provided', () => {
+      const { siteResourceId, workflowName, ...localProps } = defaultProps;
+      renderWithProviders(localProps);
+      // Should show "Run" not "Run draft" since isDraftMode is not set
+      expect(screen.getByText('Run')).toBeInTheDocument();
+      expect(screen.queryByText('Run draft')).not.toBeInTheDocument();
+    });
+  });
 });
 
 describe('getPublishedRunUrl', () => {

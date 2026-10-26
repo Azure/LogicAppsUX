@@ -37,6 +37,7 @@ import {
 import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import type { Settings } from './settings';
 import { getOperationSettings, getSplitOnValue } from './settings';
+import { applySettingDefaults } from '../../queries/settingDefaults';
 import {
   ConnectionService,
   OperationManifestService,
@@ -158,6 +159,22 @@ export const addDefaultSecureSettings = (settings: Settings, isSecureByDefault: 
   return settings;
 };
 
+/**
+ * Builds and stores editor state for a newly added workflow operation.
+ *
+ * Operation metadata is resolved through the managed MCP, manifest, or Swagger
+ * path before inputs, outputs, dependencies, settings, tokens, connections,
+ * and upstream state are initialized. Static result schema loading is
+ * intentionally scheduled without blocking completion.
+ *
+ * @param nodeId - Identifier assigned to the new workflow node.
+ * @param operationInfo - Connector and operation metadata used to resolve the operation.
+ * @param getState - Reads the latest designer state during initialization.
+ * @param dispatch - Dispatches node, panel, connection, token, and settings updates.
+ * @param presetParameterValues - Optional parameter values to apply to manifest-backed inputs.
+ * @param actionMetadata - Optional action metadata stored with the initialized node.
+ * @param openPanel - Whether to open the node details panel while initialization runs.
+ */
 export const initializeOperationDetails = async (
   nodeId: string,
   operationInfo: NodeOperation,
@@ -187,7 +204,7 @@ export const initializeOperationDetails = async (
   const isManagedMcpClient = isManagedMcpOperation({ type, kind });
 
   if (isManagedMcpClient) {
-    // managed mcp client ignores the swagger and uses a fixed set of parameters similar to manifest based native mcp client
+    // Swagger supplies connector identity and branding, but managed MCP parameters follow the fixed native MCP manifest.
     const { connector: swaggerConnector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
     connector = swaggerConnector;
     const iconUri = getIconUriFromConnector(connector);
@@ -233,6 +250,7 @@ export const initializeOperationDetails = async (
       state.workflow.workflowKind
     );
     settings = addDefaultSecureSettings(settings, connector?.properties.isSecureByDefault ?? false);
+    settings = await applySettingDefaults(settings, connectorId, operationId, state.workflow.workflowKind, type);
     const updatedOutputs = nodeOutputs;
     initData = {
       id: nodeId,
@@ -246,6 +264,7 @@ export const initializeOperationDetails = async (
     dispatch(initializeNodes({ nodes: [initData] }));
     addTokensAndVariables(nodeId, type, initData, state, dispatch);
   } else if (operationManifestService.isSupported(type, kind)) {
+    // Manifest-backed operations use manifest dependencies and aliasing rules instead of Swagger parsing.
     const manifest = await getOperationManifest(operationInfo);
     isConnectionRequired = isConnectionRequiredForOperation(manifest);
     autoSelectionDisabled = isConnectionAutoSelectionDisabled(manifest);
@@ -289,6 +308,7 @@ export const initializeOperationDetails = async (
       state.workflow.workflowKind
     );
     settings = addDefaultSecureSettings(settings, connector?.properties.isSecureByDefault ?? false);
+    settings = await applySettingDefaults(settings, connectorId, operationId, state.workflow.workflowKind, type);
 
     // TODO: This seems redundant now since in line: 143 outputs are already updated with a splitOnExpression. Should remove it.
     // We should update the outputs when splitOn is enabled.
@@ -317,6 +337,7 @@ export const initializeOperationDetails = async (
     dispatch(initializeNodes({ nodes: [initData] }));
     addTokensAndVariables(nodeId, type, { ...initData, manifest }, state, dispatch);
   } else {
+    // Swagger remains the metadata fallback for operations without manifest support.
     const { connector: swaggerConnector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
     swagger = parsedSwagger;
     connector = swaggerConnector;
@@ -349,6 +370,7 @@ export const initializeOperationDetails = async (
     );
 
     settings = addDefaultSecureSettings(settings, connector?.properties?.isSecureByDefault ?? false);
+    settings = await applySettingDefaults(settings, connectorId, operationId, state.workflow.workflowKind, type);
 
     // We should update the outputs when splitOn is enabled.
     let updatedOutputs = nodeOutputs;
@@ -416,6 +438,7 @@ export const initializeOperationDetails = async (
 
   dispatch(setIsPanelLoading(false));
 
+  // Result schemas enhance static-results editing but should not delay making the new node interactive.
   staticResultService.getOperationResultSchema(connectorId, operationId, swagger || parsedManifest).then((schema) => {
     if (schema) {
       dispatch(

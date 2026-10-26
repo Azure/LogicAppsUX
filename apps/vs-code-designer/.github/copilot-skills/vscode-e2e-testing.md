@@ -101,7 +101,7 @@ The extension's workspace creation webview (`viewType: 'CreateWorkspace'`) uses 
 }
 ```
 
-## Conversion Flow (convertToWorkspace.ts)
+## Conversion Flow (ensureWorkspace.ts)
 Called during `activate()`. Three decision branches:
 - **Path A**: `.code-workspace` file exists but not opened → modal "Open existing workspace?"
 - **Path B**: No `.code-workspace` file → modal "Create workspace?" → if Yes → opens `CreateWorkspace` webview

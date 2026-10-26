@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import type { NodeProps } from '@xyflow/react';
 import { Button, Card, mergeClasses, Textarea } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
-import { isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
+import { DEFAULT_NOTE_COLOR, DEFAULT_NOTE_SIZE, isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
 
 import type { AppDispatch } from '../../../core';
 import { deleteNote, updateNote } from '../../../core/state/notes/notesSlice';
@@ -27,6 +27,7 @@ const NoteNode = ({ id, dragging }: NodeProps) => {
   const noteData = useNote(id);
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
 
   const deleteCallback = useCallback(() => {
     if (isReadOnly) {
@@ -63,12 +64,12 @@ const NoteNode = ({ id, dragging }: NodeProps) => {
   );
 
   return (
-    <>
+    <div className={styles.noteNode}>
       <Card
         className={mergeClasses(styles.noteCard, dragging && styles.draggingNote)}
         style={{
-          backgroundColor: noteData?.color || '#FFFBCC',
-          width: noteData?.metadata?.width ?? 200,
+          backgroundColor: noteData?.color || DEFAULT_NOTE_COLOR,
+          width: noteData?.metadata?.width ?? DEFAULT_NOTE_SIZE.width,
           resize: isReadOnly ? 'none' : 'horizontal',
         }}
       >
@@ -95,12 +96,12 @@ const NoteNode = ({ id, dragging }: NodeProps) => {
       </Card>
       {/* Note Action Buttons */}
       {!isReadOnly && (
-        <div className={styles.noteToolbar}>
-          <ColorButton id={id} selectedColor={noteData?.color} />
+        <div className={mergeClasses(styles.noteToolbar, isColorPickerOpen && styles.noteToolbarVisible, 'msla-note-toolbar')}>
+          <ColorButton id={id} selectedColor={noteData?.color} onOpenChange={(_, data) => setIsColorPickerOpen(data.open)} />
           <Button icon={<DeleteIcon />} size="small" appearance="transparent" onClick={deleteCallback} />
         </div>
       )}
-    </>
+    </div>
   );
 };
 

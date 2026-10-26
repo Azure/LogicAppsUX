@@ -1,4 +1,3 @@
-import { TokenType } from '../editor';
 import { CLOSE_TOKENPICKER } from '../editor/base/plugins/CloseTokenPicker';
 import { DELETE_TOKEN_NODE } from '../editor/base/plugins/DeleteTokenNode';
 import { OPEN_TOKEN_PICKER } from '../editor/base/plugins/OpenTokenPicker';
@@ -140,12 +139,11 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
   const styles = useStyles();
   const [isClickable, setIsClickable] = useState(false);
   useEffect(() => {
-    // Check if token is clickable (FX or AGENTPARAMETER)
+    // Any non-readonly token (function or dynamic content) can be opened in the function editor.
     editor.getEditorState().read(() => {
       const node: TokenNode | null = $getNodeByKey(nodeKey);
       const token = node?.['__data']?.token;
-      const tokenType = token?.tokenType;
-      setIsClickable(!readonly && (tokenType === TokenType.FX || tokenType === TokenType.AGENTPARAMETER));
+      setIsClickable(!readonly && !!token);
     });
   }, [editor, nodeKey, readonly]);
   useEffect(() => {
@@ -175,11 +173,11 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
     editor.getEditorState().read(() => {
       const node: TokenNode | null = $getNodeByKey(nodeKey);
       const token = node?.['__data']?.token;
-      const tokenType = token?.tokenType;
       if (!token) {
         return;
       }
-      if (!readonly && (tokenType === TokenType.FX || tokenType === TokenType.AGENTPARAMETER)) {
+      // Any non-readonly token (function or dynamic content) opens the function editor window.
+      if (!readonly) {
         editor.dispatchCommand(OPEN_TOKEN_PICKER, { token, nodeKey });
         return;
       }

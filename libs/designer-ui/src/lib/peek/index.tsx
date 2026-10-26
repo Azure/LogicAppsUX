@@ -2,6 +2,8 @@ import { MonacoEditor } from '../editor/monaco';
 import { EditorLanguage } from '@microsoft/logic-apps-shared';
 import { usePeekStyles } from './styles';
 
+export * from './editableCodeView';
+
 export interface PeekProps {
   input: string;
 }

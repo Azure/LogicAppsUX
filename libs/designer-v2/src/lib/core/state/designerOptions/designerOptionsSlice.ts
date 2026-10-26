@@ -26,6 +26,7 @@ import {
   InitExperimentationServiceService,
   InitCognitiveServiceService,
   InitCopilotWorkflowEditorService,
+  InitResourceService,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -35,7 +36,6 @@ export const initialDesignerOptionsState: DesignerOptionsState = {
   readOnly: false,
   isMonitoringView: false,
   isDraft: false,
-  isUnitTest: false,
   isDarkMode: false,
   isVSCode: false,
   servicesInitialized: false,
@@ -81,6 +81,7 @@ export const initializeServices = createAsyncThunk(
     experimentationService,
     cognitiveServiceService,
     copilotWorkflowEditorService,
+    resourceService,
   }: ServiceOptions) => {
     const loggerServices: ILoggerService[] = [];
     if (loggerService) {
@@ -149,6 +150,10 @@ export const initializeServices = createAsyncThunk(
       InitCopilotWorkflowEditorService(copilotWorkflowEditorService);
     }
 
+    if (resourceService) {
+      InitResourceService(resourceService);
+    }
+
     // Experimentation service is being used to A/B test features in the designer so in case client does not want to use the A/B test feature,
     // we are always defaulting to the false implementation of the experimentation service.
     InitExperimentationServiceService(experimentationService);
@@ -167,7 +172,6 @@ export const designerOptionsSlice = createSlice({
       state.readOnly = action.payload.readOnly;
       state.isMonitoringView = action.payload.isMonitoringView;
       state.isDraft = action.payload.isDraft;
-      state.isUnitTest = action.payload.isUnitTest;
       state.isDarkMode = action.payload.isDarkMode;
       state.useLegacyWorkflowParameters = action.payload.useLegacyWorkflowParameters;
       state.isXrmConnectionReferenceMode = action.payload.isXrmConnectionReferenceMode;

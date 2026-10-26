@@ -9,7 +9,6 @@ export interface RunHistoryProps {
   items: RunDisplayItem[];
   loading?: boolean;
   onOpenRun(run: RunDisplayItem): void;
-  supportsUnitTest: boolean;
   onCreateUnitTestFromRun?(run: RunDisplayItem): void;
 }
 

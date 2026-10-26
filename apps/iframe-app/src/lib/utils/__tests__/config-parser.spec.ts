@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { parseIframeConfig, parseIdentityProviders } from '../config-parser';
+import { parseIframeConfig, parseIdentityProviders, validateAgentCardPayload, validateAgentCardUrl } from '../config-parser';
 
 describe('config-parser', () => {
   const originalLocation = window.location;
@@ -139,6 +139,37 @@ describe('config-parser', () => {
       mockLocation('https://agents.logic.azure.com/api/agentsChat/myAgent/IFrame?agentCard=https://localhost:3000/agent-card.json');
 
       expect(() => parseIframeConfig()).toThrow('localhost are only allowed during local development');
+    });
+  });
+
+  describe('agent card payload validation', () => {
+    it('accepts a Microsoft HTTPS agent card URL', () => {
+      const agentCardUrl = 'https://agent.logic.azure.com/.well-known/agent-card.json';
+
+      expect(validateAgentCardUrl(agentCardUrl)).toBe(agentCardUrl);
+      expect(validateAgentCardPayload(agentCardUrl)).toBe(agentCardUrl);
+    });
+
+    it('accepts and preserves an object with a Microsoft HTTPS URL', () => {
+      const agentCard = {
+        name: 'Test Agent',
+        url: 'https://agent.logic-apps.azure.com/rpc',
+        capabilities: { streaming: true },
+      };
+
+      expect(validateAgentCardPayload(agentCard)).toBe(agentCard);
+    });
+
+    it.each([
+      ['external', 'https://attacker.example/agent-card.json'],
+      ['HTTP', 'http://agent.logic.azure.com/agent-card.json'],
+      ['malformed', 'not-a-url'],
+    ])('rejects a %s agent card URL', (_case, agentCard) => {
+      expect(() => validateAgentCardPayload(agentCard)).toThrow();
+    });
+
+    it.each([undefined, null, {}, { name: 'Missing URL' }, { url: 42 }])('rejects a malformed agent card payload: %s', (agentCard) => {
+      expect(() => validateAgentCardPayload(agentCard)).toThrow('Agent card must be a URL string or an object with a URL string.');
     });
   });
 

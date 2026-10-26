@@ -17,6 +17,8 @@ import type { ActionDefinition } from '@microsoft/logic-apps-shared/src/utils/sr
 import { initializeDynamicDataInNodes, initializeOperationMetadata } from './operationdeserializer';
 import type { NodesMetadata } from '../../state/workflow/workflowInterfaces';
 import { updateAllUpstreamNodes } from './initialize';
+import { getUpstreamNodeIds } from '../../utils/graph';
+import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import type { NodeTokens } from '../../state/tokens/tokensSlice';
 import { addDynamicTokens } from '../../state/tokens/tokensSlice';
 import { getConnectionReferenceForNodeId } from '../../state/connection/connectionSelector';
@@ -169,6 +171,7 @@ export const pasteOperation = createAsyncThunk('pasteOperation', async (payload:
     dispatch(setNodeDescription({ nodeId, description: comment }));
   }
 
+  updateAllUpstreamNodes(getState() as RootState, dispatch);
   dispatch(setIsPanelLoading(false));
 });
 
@@ -215,7 +218,13 @@ export const pasteScopeOperation = createAsyncThunk(
       true /* shouldAppendAddCase */,
       pasteParams
     );
-    actionNodesMetadata[nodeId] = { ...actionNodesMetadata[actionId], isRoot: false, parentNodeId: parentId, graphId };
+    // parentNodeId must reference a nodesMetadata key (the containing graph/scope) so the
+    // parent-chain walk in getUpstreamNodeIds can climb to ancestor scopes. `parentId` from
+    // relationshipIds is an edge-placement node (e.g. a `<scope>-#subgraph` card) and is not a
+    // valid metadata key, so use `graphId` (the containing graph) instead, matching how
+    // pasteScopeInWorkflow finalizes this node's metadata.
+    const scopeParentNodeId = graphId && graphId !== 'root' ? graphId : undefined;
+    actionNodesMetadata[nodeId] = { ...actionNodesMetadata[actionId], isRoot: false, parentNodeId: scopeParentNodeId, graphId };
     if (Object.keys(allConnectionData).length > 0) {
       dispatch(initScopeCopiedConnections(replaceIdsOfExistingNodes(allConnectionData, pasteParams.renamedNodes)));
     }
@@ -245,7 +254,8 @@ export const pasteScopeOperation = createAsyncThunk(
     for (const id of Object.keys(operations)) {
       nodeMap[id] = id;
     }
-    const upstreamOutputTokens = replaceIdsOfExistingNodes(filterRecordByArray(state.tokens.outputTokens, upstreamNodeIds), idReplacements);
+    const extendedIds = extendUpstreamNodeIdsForScopePaste(upstreamNodeIds, graphId, parentId, state, nodeMap);
+    const upstreamOutputTokens = replaceIdsOfExistingNodes(filterRecordByArray(state.tokens.outputTokens, extendedIds), idReplacements);
     const triggerId = getTriggerNodeId(state.workflow);
 
     await Promise.all([
@@ -316,4 +326,44 @@ const filterRecordByArray = (record: Record<string, NodeTokens>, upstreamNodeIds
     }
   }
   return filteredRecord;
+};
+
+/**
+ * Extends the upstream node id set used to seed a pasted scope's existing output tokens.
+ *
+ * When we paste a scope (e.g. a Condition) inside another scope, the `upstreamNodeIds`
+ * we receive from the caller only covers upstream nodes of the paste-site child/parent
+ * edge. It does not include the enclosing scope container itself or its ancestor chain,
+ * so nodes declared alongside (or outside) that container — such as an `InitializeVariable`
+ * at the workflow root — are absent from the fragment's initial upstream token slice.
+ *
+ * We fold in the enclosing scope container (`graphId`) and its full upstream context, plus
+ * the paste-site predecessor (`parentId`) when present. Relying on `graphId` is essential:
+ * when a scope is pasted as the first/only action inside a container (e.g. a For each body),
+ * `parentId` is `undefined` or a non-chaining header node, so extending only via `parentId`
+ * would miss the ancestor variables. The enclosing `graphId` always resolves to a node whose
+ * parent chain reaches the workflow root, so its upstream reliably surfaces ancestor tokens.
+ */
+export const extendUpstreamNodeIdsForScopePaste = (
+  upstreamNodeIds: string[],
+  graphId: string | undefined,
+  parentId: string | undefined,
+  state: RootState,
+  operationMap: Record<string, string>
+): string[] => {
+  const extended = new Set(upstreamNodeIds);
+  const rootGraph = state.workflow.graph as WorkflowNode | null;
+  if (!rootGraph) {
+    return Array.from(extended);
+  }
+  for (const containerId of [graphId, parentId]) {
+    if (!containerId || containerId === 'root') {
+      continue;
+    }
+    extended.add(containerId);
+    for (const id of getUpstreamNodeIds(containerId, rootGraph, state.workflow.nodesMetadata, operationMap)) {
+      extended.add(id);
+    }
+  }
+  return Array.from(extended);
 };

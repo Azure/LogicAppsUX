@@ -3,15 +3,13 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { callWithTelemetryAndErrorHandling, type IActionContext, UserCancelledError } from '@microsoft/vscode-azext-utils';
-import { runWithDurationTelemetry } from './telemetry';
 import { activateAzurite } from './azurite/activateAzurite';
-import { verifyLocalConnectionKeys } from './appSettings/connectionKeys';
-import { autoStartAzuriteSetting, designerApiLoadTimeout, designerStartApi, verifyConnectionKeysSetting } from '../../constants';
-import { getContainingWorkspace } from './workspace';
+import { refreshConnectionKeys } from './appSettings/connectionKeys';
+import { designerApiLoadTimeout, designerStartApi } from '../../constants';
+import { getContainingWorkspaceFolder } from './workspace';
 import { preDebugValidate } from '../debug/validatePreDebug';
 import { ext } from '../../extensionVariables';
 import * as vscode from 'vscode';
-import * as portfinder from 'portfinder';
 import * as os from 'os';
 import * as cp from 'child_process';
 import find_process from 'find-process';
@@ -20,76 +18,81 @@ import { localize } from '../../localize';
 import { delay } from './delay';
 import { findChildProcess } from '../commands/pickFuncProcess';
 import { getFunctionsCommand } from './funcCoreTools/funcVersion';
-import { getChildProcessesWithScript } from './findChildProcess/findChildProcess';
+import { getChildProcesses } from './findChildProcess/findChildProcess';
+import { releaseReservedPort, reserveFreePort } from './portReservation';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { Platform } from '@microsoft/vscode-extension-logic-apps';
 
-export async function startRuntimeApi(projectPath: string): Promise<void> {
-  await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.startRuntimeProcess', async (context: IActionContext) => {
-    await callWithTelemetryAndErrorHandling(autoStartAzuriteSetting, async (actionContext: IActionContext) => {
-      await runWithDurationTelemetry(actionContext, autoStartAzuriteSetting, async () => {
-        await activateAzurite(context, projectPath);
-      });
-    });
-
-    await callWithTelemetryAndErrorHandling(verifyConnectionKeysSetting, async (actionContext: IActionContext) => {
-      await runWithDurationTelemetry(actionContext, verifyConnectionKeysSetting, async () => {
-        await verifyLocalConnectionKeys(context, projectPath);
-      });
-    });
-
-    const shouldContinue: boolean = await preDebugValidate(context, projectPath);
-    if (!shouldContinue) {
-      throw new UserCancelledError('preDebugValidate');
-    }
-
-    const workspaceFolder = getContainingWorkspace(projectPath);
-    if (!workspaceFolder) {
-      throw new Error(localize('noWorkspace', 'Unable to find the workspace containing the project path "{0}".', projectPath));
-    }
-
-    let isNewRuntimeProcess = false;
-    if (!ext.runtimeInstances.has(projectPath)) {
-      ext.runtimeInstances.set(projectPath, {
-        port: await portfinder.getPortPromise(),
-        isStarting: true,
-      });
-      isNewRuntimeProcess = true;
-    }
-
-    const runtimeInst = ext.runtimeInstances.get(projectPath);
-    if (runtimeInst.isStarting && !isNewRuntimeProcess) {
-      await waitForRuntimeStartUp(context, projectPath, runtimeInst.port);
-      context.telemetry.properties.isRuntimeUp = 'true';
-      await validateRunningFuncProcess(projectPath);
-      return;
-    }
-
-    if (!isNewRuntimeProcess && (await isRuntimeUp(runtimeInst.port))) {
-      context.telemetry.properties.isRuntimeUp = 'true';
-      await validateRunningFuncProcess(projectPath);
-      return;
-    }
-
-    try {
-      ext.outputChannel.appendLog(localize('startingRuntime', 'Starting Runtime API for project: {0}', projectPath));
-      startRuntimeProcess(projectPath, getFunctionsCommand(), 'host', 'start', `--port ${runtimeInst.port}`);
-      await waitForRuntimeStartUp(context, projectPath, runtimeInst.port, true);
-      context.telemetry.properties.isRuntimeUp = 'true';
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : error;
-      const viewOutput: vscode.MessageItem = { title: localize('viewOutput', 'View output') };
-      const message = localize('DesignTimeError', "Can't start the background design-time process.") + errorMessage;
-      context.telemetry.properties.result = 'Failed';
-      context.telemetry.properties.errorMessage = errorMessage;
-
-      vscode.window.showErrorMessage(message, viewOutput).then(async (result) => {
-        if (result === viewOutput) {
-          ext.outputChannel.show();
-        }
-      });
-    }
+// TODO(aeldridge): Unused
+export async function startRuntimeApi(context: IActionContext, projectPath: string): Promise<void> {
+  const isAzuriteStarted = await callWithTelemetryAndErrorHandling('startRuntimeApi.startAzurite', async (actionContext: IActionContext) => {
+    actionContext.errorHandling.rethrow = true;
+    actionContext.errorHandling.suppressDisplay = true;
+    await activateAzurite(actionContext, projectPath);
+    return true;
   });
+
+  if (!isAzuriteStarted) {
+    throw new Error(localize('azuriteStartFailed', 'Failed to start Azurite.'));
+  }
+
+  await callWithTelemetryAndErrorHandling('startRuntimeApi.refreshConnectionKeys', async (actionContext: IActionContext) => {
+    actionContext.errorHandling.rethrow = true;
+    actionContext.errorHandling.suppressDisplay = true;
+    await refreshConnectionKeys(actionContext, projectPath);
+  });
+
+  const shouldContinue: boolean = await preDebugValidate(context, projectPath);
+  if (!shouldContinue) {
+    throw new UserCancelledError('preDebugValidate');
+  }
+
+  const workspaceFolder = getContainingWorkspaceFolder(projectPath);
+  if (!workspaceFolder) {
+    throw new Error(localize('noWorkspace', 'Unable to find the workspace containing the project path "{0}".', projectPath));
+  }
+
+  let isNewRuntimeProcess = false;
+  if (!ext.runtimeInstances.has(projectPath)) {
+    ext.runtimeInstances.set(projectPath, {
+      port: await reserveFreePort(),
+      isStarting: true,
+    });
+    isNewRuntimeProcess = true;
+  }
+
+  const runtimeInst = ext.runtimeInstances.get(projectPath);
+  if (runtimeInst.isStarting && !isNewRuntimeProcess) {
+    await waitForRuntimeStartUp(context, projectPath, runtimeInst.port);
+    context.telemetry.properties.isRuntimeUp = 'true';
+    await validateRunningFuncProcess(context, projectPath);
+    return;
+  }
+
+  if (!isNewRuntimeProcess && (await isRuntimeUp(runtimeInst.port))) {
+    context.telemetry.properties.isRuntimeUp = 'true';
+    await validateRunningFuncProcess(context, projectPath);
+    return;
+  }
+
+  try {
+    ext.outputChannel.appendLog(localize('startingRuntime', 'Starting Runtime API for project: {0}', projectPath));
+    startRuntimeProcess(context, projectPath, getFunctionsCommand(), 'host', 'start', `--port ${runtimeInst.port}`);
+    await waitForRuntimeStartUp(context, projectPath, runtimeInst.port, true);
+    context.telemetry.properties.isRuntimeUp = 'true';
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : error;
+    const viewOutput: vscode.MessageItem = { title: localize('viewOutput', 'View output') };
+    const message = localize('DesignTimeError', "Can't start the background design-time process.") + errorMessage;
+    context.telemetry.properties.result = 'Failed';
+    context.telemetry.properties.errorMessage = errorMessage;
+
+    vscode.window.showErrorMessage(message, viewOutput).then(async (result) => {
+      if (result === viewOutput) {
+        ext.outputChannel.show();
+      }
+    });
+  }
 }
 
 async function waitForRuntimeStartUp(context: IActionContext, projectPath: string, port: number, setRuntimeInst = false): Promise<void> {
@@ -134,7 +137,7 @@ export async function isRuntimeUp(port: number): Promise<boolean> {
   }
 }
 
-async function validateRunningFuncProcess(projectPath: string): Promise<void> {
+async function validateRunningFuncProcess(context: IActionContext, projectPath: string): Promise<void> {
   const correctFuncProcess = await checkFuncProcessId(projectPath);
   if (!correctFuncProcess) {
     ext.outputChannel.appendLog(
@@ -145,7 +148,7 @@ async function validateRunningFuncProcess(projectPath: string): Promise<void> {
       )
     );
     stopRuntimeApi(projectPath);
-    await startRuntimeApi(projectPath);
+    await startRuntimeApi(context, projectPath);
   }
 }
 
@@ -163,7 +166,7 @@ async function checkFuncProcessId(projectPath: string): Promise<boolean> {
   }
 
   if (os.platform() === Platform.windows) {
-    const children = await getChildProcessesWithScript(process.pid);
+    const children = await getChildProcesses(process.pid);
     const runtimeInst = ext.runtimeInstances.get(projectPath);
     const resolvedChildFuncPid =
       childFuncPid ??
@@ -214,8 +217,14 @@ async function resolveChildFuncPid(processId: number, retries = 5, delayMs = 500
 
 export function stopRuntimeApi(projectPath: string): void {
   ext.outputChannel.appendLog(`Stopping Runtime API for project: ${projectPath}`);
-  const { process, childFuncPid } = ext.runtimeInstances.get(projectPath);
+  const runtimeInstance = ext.runtimeInstances.get(projectPath);
+  if (!runtimeInstance) {
+    return;
+  }
+
+  const { process, childFuncPid, port } = runtimeInstance;
   ext.runtimeInstances.delete(projectPath);
+  releaseReservedPort(port);
   if (process === null || process === undefined) {
     return;
   }
@@ -230,7 +239,7 @@ export function stopRuntimeApi(projectPath: string): void {
   }
 }
 
-export function startRuntimeProcess(projectPath: string, command: string, ...args: string[]): void {
+export function startRuntimeProcess(context: IActionContext, projectPath: string, command: string, ...args: string[]): void {
   let cmdOutput = '';
   let cmdOutputIncludingStderr = '';
   const formattedArgs: string = args.join(' ');
@@ -260,7 +269,7 @@ export function startRuntimeProcess(projectPath: string, command: string, ...arg
       );
 
       stopRuntimeApi(projectPath);
-      startRuntimeApi(projectPath);
+      startRuntimeApi(context, projectPath);
     }
   });
 
@@ -273,7 +282,7 @@ export function startRuntimeProcess(projectPath: string, command: string, ...arg
       ext.outputChannel.appendLog('Conflicting port found when launching func. Restarting runtime process.');
 
       stopRuntimeApi(projectPath);
-      startRuntimeApi(projectPath);
+      startRuntimeApi(context, projectPath);
     }
   });
 

@@ -5,6 +5,6 @@ export {
   workflowHighlighting,
   workflowStreamLanguage,
   workflowCompletion,
-  workflowSignatureHelp,
   getSignatureAtPosition,
+  type SignatureInfo,
 } from './workflow';

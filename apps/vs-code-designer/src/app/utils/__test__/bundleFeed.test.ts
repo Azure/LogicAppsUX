@@ -1,21 +1,28 @@
 import {
   getBundleVersionNumber,
-  getDependenciesVersion,
+  getBundleDependencyFeed,
   getExtensionBundleFolder,
   getLatestVersionRange,
   addDefaultBundle,
   downloadExtensionBundle,
-  resetCachedBundleVersion
+  resetCachedBundleVersion,
+  isExtensionBundleDownloadInFlight,
+  waitForExtensionBundleReady,
+  getLastBundleInstallResult,
+  assertExtensionBundleOnDiskHealthy,
+  ensureExtensionBundleHealthy,
+  awaitBackgroundBundleFeedRefresh,
 } from '../bundleFeed';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as cp from 'child_process';
-import { extensionBundleId, defaultVersionRange, defaultExtensionBundlePathValue } from '../../../constants';
+import { extensionBundleId, defaultVersionRange, defaultExtensionBundlePathValue, bundleInstallCompleteFile } from '../../../constants';
 import type { IHostJsonV2 } from '@microsoft/vscode-extension-logic-apps';
 import * as cpUtils from '../funcCoreTools/cpUtils';
 import * as feedModule from '../feed';
 import * as binariesModule from '../binaries';
+import { ext } from '../../../extensionVariables';
 
 // Mock fs-extra
 vi.mock('fs-extra', async (importOriginal) => {
@@ -24,9 +31,15 @@ vi.mock('fs-extra', async (importOriginal) => {
     ...(actual as object),
     readdir: vi.fn(),
     stat: vi.fn(),
+    lstat: vi.fn(),
     pathExists: vi.fn(),
     readdirSync: vi.fn(),
     statSync: vi.fn(),
+    readFile: vi.fn(),
+    createReadStream: vi.fn(),
+    outputFile: vi.fn().mockResolvedValue(undefined),
+    move: vi.fn().mockResolvedValue(undefined),
+    remove: vi.fn().mockResolvedValue(undefined),
   };
 });
 
@@ -69,6 +82,12 @@ vi.mock('../../../extensionVariables', () => ({
     telemetryReporter: {
       sendTelemetryEvent: vi.fn(),
     },
+    context: {
+      globalState: {
+        get: vi.fn().mockReturnValue(undefined),
+        update: vi.fn().mockResolvedValue(undefined),
+      },
+    },
   },
 }));
 
@@ -83,6 +102,15 @@ vi.mock('vscode', () => ({
       },
     ],
   },
+  window: {
+    // Invoke the task immediately so the wrapped download still runs and
+    // produces its side effects (mockedDownloadAndExtract calls, etc.).
+    withProgress: vi.fn(async (_opts: unknown, task: (...args: unknown[]) => Promise<unknown>) => task()),
+    showInformationMessage: vi.fn(),
+    showWarningMessage: vi.fn(),
+    showErrorMessage: vi.fn(),
+  },
+  ProgressLocation: { Notification: 15, SourceControl: 1, Window: 10 },
 }));
 
 // Mock feed module
@@ -95,9 +123,50 @@ vi.mock('../binaries', () => ({
   downloadAndExtractDependency: vi.fn(),
 }));
 
+// Mock integrity error classification used by experimental-source fallback.
+vi.mock('../integrity', () => ({
+  isMissingPackageError: (error: unknown) => {
+    const status = (error as { response?: { status?: number } })?.response?.status;
+    if (typeof status === 'number') {
+      return status >= 400 && status < 500;
+    }
+    const code = (error as { code?: string })?.code;
+    if (typeof code === 'string') {
+      return code === 'ENOTFOUND' || code === 'ECONNREFUSED' || code === 'ETIMEDOUT' || code === 'EAI_AGAIN' || code === 'ECONNRESET';
+    }
+    return false;
+  },
+}));
+
+// Mock vsCodeConfig/settings — bundleFeed reads experimental settings from here.
+vi.mock('../vsCodeConfig/settings', () => ({
+  getGlobalSetting: vi.fn().mockReturnValue(undefined),
+}));
+
 // Mock localSettings
 vi.mock('../appSettings/localSettings', () => ({
   getLocalSettingsJson: vi.fn().mockResolvedValue({}),
+}));
+
+vi.mock('../verifyIsProject', () => ({
+  tryGetLogicAppProjectRoot: vi.fn().mockResolvedValue('/mock/project/path'),
+}));
+
+// Mock the design-time launcher so we can observe the deferred post-install
+// restart fire AFTER `inFlightBundleWork` is cleared and the install result
+// is settled.
+vi.mock('../codeless/startDesignTimeApi', () => ({
+  startAllDesignTimeApis: vi.fn(),
+}));
+
+// Mock the shared daily update-check throttle. `downloadExtensionBundleCore`
+// reads `shouldCheckForDependencyUpdates` to decide whether to skip the CDN
+// bundle-version feed lookup on the activation hot path. Default to `true` (the
+// check is due) so existing tests keep exercising the feed-backed flow; throttle
+// tests override it to `false` per-case.
+vi.mock('../../state/dependencies', () => ({
+  shouldCheckForDependencyUpdates: vi.fn(() => true),
+  recordDependencyUpdateCheck: vi.fn().mockResolvedValue(undefined),
 }));
 
 const mockedFse = vi.mocked(fse);
@@ -402,6 +471,7 @@ describe('getBundleVersionNumber', () => {
     const result = await getBundleVersionNumber();
 
     expect(result).toBe('2.1.0');
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('Current Logic Apps extension bundle version: 2.1.0');
     expect(mockedFse.readdir).toHaveBeenCalledWith(mockBundleFolder);
   });
 
@@ -506,8 +576,10 @@ describe('getLatestVersionRange', () => {
   });
 });
 
-describe('getDependenciesVersion', () => {
+describe('getBundleDependencyFeed', () => {
   it('loads dependency feed using a local settings source URI override', async () => {
+    const verifyIsProjectMod = await import('../verifyIsProject');
+    vi.mocked(verifyIsProjectMod.tryGetLogicAppProjectRoot).mockResolvedValue('/mock/project/path');
     const mockedGetLocalSettingsJson = await import('../appSettings/localSettings');
     vi.mocked(mockedGetLocalSettingsJson.getLocalSettingsJson).mockResolvedValue({
       Values: {
@@ -517,7 +589,7 @@ describe('getDependenciesVersion', () => {
     vi.mocked(feedModule.getJsonFeed).mockResolvedValue({ id: extensionBundleId } as any);
     const context = { telemetry: { properties: {}, measurements: {} } };
 
-    await expect(getDependenciesVersion(context as any)).resolves.toEqual({ id: extensionBundleId });
+    await expect(getBundleDependencyFeed(context as any)).resolves.toEqual({ id: extensionBundleId });
 
     expect(feedModule.getJsonFeed).toHaveBeenCalledWith(
       context,
@@ -572,124 +644,185 @@ describe('addDefaultBundle', () => {
   });
 });
 
-describe('downloadExtensionBundle', () => {
+describe('downloadExtensionBundle readiness model', () => {
   const mockedGetJsonFeed = vi.mocked(feedModule.getJsonFeed);
   const mockedDownloadAndExtract = vi.mocked(binariesModule.downloadAndExtractDependency);
+  const localVersions = new Set<string>();
+  const completedVersions = new Set<string>();
+  const legacyCompletedVersions = new Set<string>();
 
   const createMockContext = () => ({
-    telemetry: {
-      properties: {} as Record<string, string>,
-      measurements: {} as Record<string, number>,
-    },
+    telemetry: { properties: {} as Record<string, string>, measurements: {} as Record<string, number> },
   });
 
-  beforeEach(() => {
+  const configureDisk = (versions: string[] = [], completed: string[] = versions, legacyCompleted: string[] = []): void => {
+    localVersions.clear();
+    completedVersions.clear();
+    legacyCompletedVersions.clear();
+    versions.forEach((version) => localVersions.add(version));
+    completed.forEach((version) => completedVersions.add(version));
+    legacyCompleted.forEach((version) => legacyCompletedVersions.add(version));
+
+    mockedFse.readdirSync.mockImplementation(((directoryPath: string) =>
+      directoryPath === defaultExtensionBundlePathValue ? [...localVersions] : []) as any);
+    mockedFse.statSync.mockReturnValue({ isDirectory: () => true } as any);
+    mockedFse.pathExists.mockImplementation((async (filePath: string) => {
+      const normalized = String(filePath);
+      if (normalized.endsWith(bundleInstallCompleteFile)) {
+        return completedVersions.has(path.basename(path.dirname(normalized)));
+      }
+      if (normalized.endsWith('.bundle-source-md5')) {
+        return legacyCompletedVersions.has(path.basename(path.dirname(normalized)));
+      }
+      const version = [...localVersions].find(
+        (candidate) =>
+          normalized === path.join(defaultExtensionBundlePathValue, candidate) || normalized.includes(`${path.sep}${candidate}${path.sep}`)
+      );
+      return Boolean(version) || normalized === defaultExtensionBundlePathValue;
+    }) as any);
+    mockedFse.readFile.mockResolvedValue('' as any);
+    mockedFse.remove.mockImplementation((async (filePath: string) => {
+      const normalized = String(filePath);
+      if (normalized.endsWith(bundleInstallCompleteFile)) {
+        completedVersions.delete(path.basename(path.dirname(normalized)));
+      }
+      if (normalized.endsWith('.bundle-source-md5')) {
+        legacyCompletedVersions.delete(path.basename(path.dirname(normalized)));
+      }
+    }) as any);
+    mockedFse.move.mockImplementation((async (_source: string, destination: string) => {
+      if (String(destination).endsWith(bundleInstallCompleteFile)) {
+        completedVersions.add(path.basename(path.dirname(String(destination))));
+      }
+    }) as any);
+    mockedFse.outputFile.mockResolvedValue(undefined as any);
+    mockedDownloadAndExtract.mockImplementation(async (_context, _url, _target, _dependency, version) => {
+      localVersions.add(String(version));
+      return { actualSize: 1, actualMd5: 'download-md5' };
+    });
+  };
+
+  beforeEach(async () => {
+    await awaitBackgroundBundleFeedRefresh();
+    resetCachedBundleVersion();
     vi.clearAllMocks();
-    // Reset environment variables
     delete process.env.AzureFunctionsJobHost_extensionBundle_version;
     delete process.env.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
+    const settingsModule = await import('../vsCodeConfig/settings');
+    vi.mocked(settingsModule.getGlobalSetting).mockReturnValue(undefined);
+    const depUpdateCheckModule = await import('../../state/dependencies');
+    vi.mocked(depUpdateCheckModule.shouldCheckForDependencyUpdates).mockReturnValue(true);
+    const verifyIsProjectModule = await import('../verifyIsProject');
+    vi.mocked(verifyIsProjectModule.tryGetLogicAppProjectRoot).mockResolvedValue('/mock/project/path');
+    const localSettingsModule = await import('../appSettings/localSettings');
+    vi.mocked(localSettingsModule.getLocalSettingsJson).mockResolvedValue({} as any);
+    configureDisk();
   });
 
-  it('should download newer version when feed has higher version than local', async () => {
-    // Feed versions (simulating index.json format)
-    const feedVersions = ['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.95.0'];
+  it('marks a successfully extracted bundle without interpreting its dependency manifest', async () => {
+    mockedGetJsonFeed.mockResolvedValue(['1.2.0']);
+    mockedFse.readFile.mockRejectedValue(new Error('function.deps.json must not be interpreted after archive verification'));
 
-    // Local version is 1.75.0
-    mockedFse.pathExists.mockResolvedValue(true as never);
-    mockedFse.readdirSync.mockReturnValue(['1.75.0'] as any);
-    mockedFse.statSync.mockReturnValue({ isDirectory: () => true } as any);
+    await expect(downloadExtensionBundle(createMockContext() as any)).resolves.toBe(true);
 
-    // Mock the feed to return the versions array
-    mockedGetJsonFeed.mockResolvedValue(feedVersions as any);
-
-    // Mock download to succeed
-    mockedDownloadAndExtract.mockResolvedValue(undefined);
-
-    const context = createMockContext();
-    const result = await downloadExtensionBundle(context as any);
-
-    // Should have downloaded
-    expect(result).toBe(true);
-    expect(context.telemetry.properties.didUpdateExtensionBundle).toBe('true');
-
-    // Should download version 1.95.0 (the highest from feed)
-    expect(mockedDownloadAndExtract).toHaveBeenCalledWith(
-      expect.anything(),
-      expect.stringContaining('1.95.0'),
-      defaultExtensionBundlePathValue,
-      extensionBundleId,
-      '1.95.0'
-    );
+    expect(mockedDownloadAndExtract).toHaveBeenCalledOnce();
+    expect(mockedFse.readFile).not.toHaveBeenCalled();
+    expect(completedVersions.has('1.2.0')).toBe(true);
+    expect(getLastBundleInstallResult()).toBe('ok');
   });
 
-  it('should not download when local version is higher than feed versions', async () => {
-    // Feed only has older versions
-    const feedVersions = ['1.0.0', '1.1.0', '1.2.0'];
+  it('trusts a completed local bundle without reading marker or bundle contents', async () => {
+    configureDisk(['1.2.0']);
+    const dependencyState = await import('../../state/dependencies');
+    vi.mocked(dependencyState.shouldCheckForDependencyUpdates).mockReturnValue(false);
+    mockedFse.readFile.mockRejectedValue(new Error('marker and bundle contents must not be read'));
 
-    // Local version is already 1.75.0
-    mockedFse.pathExists.mockResolvedValue(true as never);
-    mockedFse.readdirSync.mockReturnValue(['1.75.0'] as any);
-    mockedFse.statSync.mockReturnValue({ isDirectory: () => true } as any);
+    await expect(downloadExtensionBundle(createMockContext() as any)).resolves.toBe(false);
 
-    mockedGetJsonFeed.mockResolvedValue(feedVersions as any);
+    expect(mockedGetJsonFeed).not.toHaveBeenCalled();
+    expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+    expect(mockedFse.readFile).not.toHaveBeenCalled();
+  });
 
-    const context = createMockContext();
-    const result = await downloadExtensionBundle(context as any);
+  it('migrates a completed legacy bundle while offline without inspecting bundle contents', async () => {
+    configureDisk(['1.2.0'], [], ['1.2.0']);
+    mockedGetJsonFeed.mockRejectedValue(new Error('offline'));
+    mockedFse.readFile.mockRejectedValue(new Error('legacy marker and bundle contents must not be read'));
 
-    // Should not download
-    expect(result).toBe(false);
-    expect(context.telemetry.properties.didUpdateExtensionBundle).toBe('false');
+    await expect(downloadExtensionBundle(createMockContext() as any)).resolves.toBe(false);
+    await awaitBackgroundBundleFeedRefresh();
+
+    expect(mockedGetJsonFeed).toHaveBeenCalledOnce();
+    expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
+    expect(completedVersions.has('1.2.0')).toBe(true);
+    expect(legacyCompletedVersions.has('1.2.0')).toBe(false);
+    expect(mockedFse.outputFile).toHaveBeenCalledWith(expect.any(String), '', 'utf8');
+    expect(mockedFse.readFile).not.toHaveBeenCalled();
+  });
+
+  it('reinstalls a local version when its completion marker is missing', async () => {
+    configureDisk(['1.2.0'], []);
+    mockedGetJsonFeed.mockResolvedValue(['1.2.0']);
+
+    await expect(downloadExtensionBundle(createMockContext() as any)).resolves.toBe(true);
+
+    expect(mockedDownloadAndExtract).toHaveBeenCalledOnce();
+    expect(completedVersions.has('1.2.0')).toBe(true);
+  });
+
+  it('uses a completed environment-pinned bundle without consulting the feed', async () => {
+    configureDisk(['1.1.0']);
+    process.env.AzureFunctionsJobHost_extensionBundle_version = '1.1.0';
+    const localSettingsModule = await import('../appSettings/localSettings');
+    vi.mocked(localSettingsModule.getLocalSettingsJson).mockResolvedValue({
+      Values: { AzureFunctionsJobHost_extensionBundle_version: '1.1.0' },
+    } as any);
+
+    await expect(downloadExtensionBundle(createMockContext() as any)).resolves.toBe(false);
+
+    expect(mockedGetJsonFeed).not.toHaveBeenCalled();
     expect(mockedDownloadAndExtract).not.toHaveBeenCalled();
   });
 
-  it('should correctly identify the latest version from an unordered feed list', async () => {
-    // Feed versions in random order
-    const feedVersions = ['1.3.0', '1.95.0', '1.0.0', '1.50.0', '1.1.0'];
+  it('reports marker presence readiness', async () => {
+    configureDisk(['1.2.0']);
+    await expect(assertExtensionBundleOnDiskHealthy()).resolves.toEqual({ ok: true, version: '1.2.0' });
 
-    // No local versions
-    mockedFse.pathExists.mockResolvedValue(true as never);
-    mockedFse.readdirSync.mockReturnValue([] as any);
-
-    mockedGetJsonFeed.mockResolvedValue(feedVersions as any);
-    mockedDownloadAndExtract.mockResolvedValue(undefined);
-
-    const context = createMockContext();
-    const result = await downloadExtensionBundle(context as any);
-
-    expect(result).toBe(true);
-    // Should download 1.95.0 (the actual highest version)
-    expect(mockedDownloadAndExtract).toHaveBeenCalledWith(
-      expect.anything(),
-      expect.stringContaining('1.95.0'),
-      defaultExtensionBundlePathValue,
-      extensionBundleId,
-      '1.95.0'
-    );
+    completedVersions.clear();
+    await expect(assertExtensionBundleOnDiskHealthy()).resolves.toEqual({
+      ok: false,
+      reason: 'markerMissing',
+      version: '1.2.0',
+    });
   });
 
-  it('should handle multiple local versions and compare against highest', async () => {
-    // Feed has 1.95.0
-    const feedVersions = ['1.0.0', '1.95.0'];
+  it('requires installation in strict mode when no local bundle exists', async () => {
+    mockedGetJsonFeed.mockResolvedValue(['1.2.0']);
 
-    // Multiple local versions, highest is 1.75.0
-    mockedFse.pathExists.mockResolvedValue(true as never);
-    mockedFse.readdirSync.mockReturnValue(['1.50.0', '1.75.0', '1.60.0'] as any);
-    mockedFse.statSync.mockReturnValue({ isDirectory: () => true } as any);
+    await expect(ensureExtensionBundleHealthy(createMockContext() as any, { requireInstalled: true })).resolves.toBeUndefined();
 
-    mockedGetJsonFeed.mockResolvedValue(feedVersions as any);
-    mockedDownloadAndExtract.mockResolvedValue(undefined);
+    expect(mockedDownloadAndExtract).toHaveBeenCalledOnce();
+  });
 
-    const context = createMockContext();
-    const result = await downloadExtensionBundle(context as any);
-
-    // Should download since 1.95.0 > 1.75.0
-    expect(result).toBe(true);
-    expect(mockedDownloadAndExtract).toHaveBeenCalledWith(
-      expect.anything(),
-      expect.stringContaining('1.95.0'),
-      defaultExtensionBundlePathValue,
-      extensionBundleId,
-      '1.95.0'
+  it('exposes in-flight bundle work to dependent callers', async () => {
+    mockedGetJsonFeed.mockResolvedValue(['1.2.0']);
+    let release: (() => void) | undefined;
+    mockedDownloadAndExtract.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          release = () => {
+            localVersions.add('1.2.0');
+            resolve({ actualSize: 1, actualMd5: 'download-md5' });
+          };
+        })
     );
+
+    const install = downloadExtensionBundle(createMockContext() as any);
+    await vi.waitFor(() => expect(release).toBeTypeOf('function'));
+    expect(isExtensionBundleDownloadInFlight()).toBe(true);
+    const waiter = waitForExtensionBundleReady();
+    release?.();
+    await Promise.all([install, waiter]);
+    expect(isExtensionBundleDownloadInFlight()).toBe(false);
   });
 });

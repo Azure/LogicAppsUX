@@ -19,6 +19,8 @@ import {
   updateWorkspaceFile,
 } from './CreateLogicAppWorkspace';
 import { devContainerFolderName, devContainerFileName } from '../../../../constants';
+import { ext } from '../../../../extensionVariables';
+import { addCustomCodeDotNetVersionSetting } from '../../../utils/appSettings/localSettings';
 
 export async function createLogicAppProject(context: IActionContext, options: any, workspaceRootFolder: any): Promise<void> {
   addLocalFuncTelemetry(context);
@@ -90,7 +92,13 @@ export async function createLogicAppProject(context: IActionContext, options: an
     const createFunctionAppFilesStep = new CreateFunctionAppFiles();
     await createFunctionAppFilesStep.setup(mySubContext);
   }
-  vscode.window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
+
+  // Records the .NET version used by the associated custom-code project (net8/net10.0) in the
+  // Logic App's own local.settings.json, at context.projectPath, the authoritative Logic App project
+  // directory. No-op for rulesEngine, codeful, standard, or NetFx.
+  await addCustomCodeDotNetVersionSetting(context, mySubContext.projectPath, mySubContext.projectType, mySubContext.targetFramework);
+
+  ext.outputChannel.appendLog(localize('finishedCreating', 'Finished creating project.'));
 }
 
 /**

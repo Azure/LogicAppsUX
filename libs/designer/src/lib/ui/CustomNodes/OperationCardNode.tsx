@@ -9,7 +9,6 @@ import {
   useNodeSelectAdditionalCallback,
   useReadOnly,
   useSuppressDefaultNodeSelectFunctionality,
-  useUnitTest,
 } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
 import { ErrorLevel } from '../../core/state/operation/operationMetadataSlice';
@@ -33,7 +32,6 @@ import {
   useOperationQuery,
 } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
-import { useIsMockSupported, useMocksByOperation } from '../../core/state/unitTest/unitTestSelectors';
 import {
   useNodeDescription,
   useNodeDisplayName,
@@ -74,7 +72,6 @@ import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 const DefaultNode = ({ id }: NodeProps) => {
   const readOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
-  const isUnitTest = useUnitTest();
 
   const intl = useIntl();
 
@@ -89,8 +86,6 @@ const DefaultNode = ({ id }: NodeProps) => {
   const runInstance = useRunInstance();
   const parentNodeId = useParentNodeId(id);
   const parentRunData = useRunData(parentNodeId ?? '');
-  const nodeMockResults = useMocksByOperation(isTrigger ? `&${id}` : id);
-  const isMockSupported = useIsMockSupported(id, isTrigger ?? false);
   const nodesMetaData = useNodesMetadata();
   const repetitionName = useMemo(
     () => getRepetitionName(parentRunIndex, id, nodesMetaData, operationsInfo),
@@ -374,9 +369,6 @@ const DefaultNode = ({ id }: NodeProps) => {
           errorLevel={errorLevel}
           isDragging={isDragging}
           isLoading={isLoading}
-          isUnitTest={isUnitTest}
-          nodeMockResults={nodeMockResults}
-          isMockSupported={isMockSupported}
           runData={selfRunData}
           readOnly={readOnly}
           onClick={nodeClick}

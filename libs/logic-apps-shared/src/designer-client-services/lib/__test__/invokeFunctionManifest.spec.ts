@@ -35,29 +35,43 @@ describe('InvokeFunction Manifest', () => {
   });
 
   describe('manifest inputs', () => {
-    it('should have required functionName input', () => {
+    it('should have required functionName and parameters inputs', () => {
       const { inputs } = invokeFunctionManifest.properties;
       expect(inputs).toBeDefined();
       expect(inputs?.type).toBe('object');
       expect(inputs?.required).toContain('functionName');
+      expect(inputs?.required).toContain('parameters');
     });
 
-    it('should have functionName and parameters properties', () => {
+    it('should have functionName with x-ms-dynamic-list', () => {
       const properties = invokeFunctionManifest.properties.inputs?.properties as Record<string, any>;
       expect(properties?.functionName).toBeDefined();
       expect(properties?.functionName?.type).toBe('string');
+      expect(properties?.functionName?.['x-ms-dynamic-list']).toBeDefined();
+      expect(properties?.functionName?.['x-ms-dynamic-list']?.dynamicState?.operationId).toBe('getFunctions');
+    });
+
+    it('should have parameters with x-ms-dynamic-properties', () => {
+      const properties = invokeFunctionManifest.properties.inputs?.properties as Record<string, any>;
       expect(properties?.parameters).toBeDefined();
       expect(properties?.parameters?.type).toBe('object');
+      expect(properties?.parameters?.['x-ms-dynamic-properties']).toBeDefined();
+      expect(properties?.parameters?.['x-ms-dynamic-properties']?.dynamicState?.extension?.operationId).toBe('getParameters');
+      expect(properties?.parameters?.['x-ms-dynamic-properties']?.dynamicState?.isInput).toBe(true);
+      expect(properties?.parameters?.['x-ms-dynamic-properties']?.parameters?.functionName?.parameterReference).toBe('functionName');
     });
   });
 
   describe('manifest outputs', () => {
-    it('should have body output', () => {
+    it('should have body output with x-ms-dynamic-properties', () => {
       const { outputs } = invokeFunctionManifest.properties;
       expect(outputs).toBeDefined();
       expect(outputs?.type).toBe('object');
       const outputProperties = outputs?.properties as Record<string, any>;
       expect(outputProperties?.body).toBeDefined();
+      expect(outputProperties?.body?.['x-ms-dynamic-properties']).toBeDefined();
+      expect(outputProperties?.body?.['x-ms-dynamic-properties']?.dynamicState?.extension?.operationId).toBe('getOutputSchema');
+      expect(outputProperties?.body?.['x-ms-dynamic-properties']?.parameters?.functionName?.parameterReference).toBe('functionName');
     });
   });
 
@@ -69,12 +83,6 @@ describe('InvokeFunction Manifest', () => {
       expect(settings?.retryPolicy?.scopes).toContain(SettingScope.Action);
     });
 
-    it('should have timeout setting with Action scope', () => {
-      const { settings } = invokeFunctionManifest.properties;
-      expect(settings?.timeout).toBeDefined();
-      expect(settings?.timeout?.scopes).toContain(SettingScope.Action);
-    });
-
     it('should have trackedProperties setting with Action scope', () => {
       const { settings } = invokeFunctionManifest.properties;
       expect(settings?.trackedProperties).toBeDefined();
@@ -84,6 +92,14 @@ describe('InvokeFunction Manifest', () => {
     it('should have secureData setting', () => {
       const { settings } = invokeFunctionManifest.properties;
       expect(settings?.secureData).toBeDefined();
+    });
+  });
+
+  describe('dynamic content', () => {
+    it('should have WorkflowAppLocation in payloadConfiguration', () => {
+      const { dynamicContent } = invokeFunctionManifest.properties as any;
+      expect(dynamicContent).toBeDefined();
+      expect(dynamicContent?.payloadConfiguration).toContain('WorkflowAppLocation');
     });
   });
 });

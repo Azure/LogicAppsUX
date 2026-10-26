@@ -11,7 +11,7 @@ jobs:
       issues: write
       pull-requests: write
     steps:
-      - uses: actions/stale@v4
+      - uses: actions/stale@v10
         with:
           only-labels: 'Needs More Info'
           days-before-issue-stale: 3
@@ -21,7 +21,7 @@ jobs:
           close-issue-message: "This issue has been closed because the information requested wasn't provided within 7 days."
           operations-per-run: 200
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/stale@v4
+      - uses: actions/stale@v10
         with:
           only-labels: 'daily-status'
           days-before-issue-stale: 1

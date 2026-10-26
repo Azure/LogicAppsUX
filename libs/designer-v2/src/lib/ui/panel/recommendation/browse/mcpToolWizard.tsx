@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { Text, Spinner, Button, MessageBar, MessageBarBody, Label, Radio, RadioGroup } from '@fluentui/react-components';
 import { AddRegular, CheckmarkLockRegular } from '@fluentui/react-icons';
 import { TemplatesPanelFooter, type TemplatePanelFooterProps, SimpleDictionary, SearchableDropdown } from '@microsoft/designer-ui';
-import { ConnectionType, ConnectorService, removeConnectionPrefix } from '@microsoft/logic-apps-shared';
+import { ConnectionType, ConnectorService, LoggerService, LogEntryLevel, removeConnectionPrefix } from '@microsoft/logic-apps-shared';
 import type { AppDispatch } from '../../../../core';
 import { ConnectionTable } from '../../../panel/connectionsPanel/selectConnection/connectionTable';
 import { CreateConnectionInternal } from '../../../panel/connectionsPanel/createConnection/createConnectionInternal';
@@ -25,19 +25,26 @@ import {
   setMcpWizardHeaders,
 } from '../../../../core/state/panel/panelSlice';
 import { MCP_WIZARD_STEP } from '../../../../core/state/panel/panelTypes';
-import { useConnectionsForConnector, getConnectorWithSwagger } from '../../../../core/queries/connections';
-import { isConnectionValid, getAssistedConnectionProps } from '../../../../core/utils/connectors/connections';
+import { useConnectionsForConnector, useConnectionResource, getConnectorWithSwagger } from '../../../../core/queries/connections';
+import {
+  isConnectionValid,
+  getAssistedConnectionProps,
+  getManagedIdentityFromConnection,
+} from '../../../../core/utils/connectors/connections';
 import { addOperation } from '../../../../core/actions/bjsworkflow/add';
 import { useMcpToolWizardStyles } from './styles/McpToolWizard.styles';
 import { useConnector } from '../../../../core/state/connection/connectionSelector';
+import { connectorDeclaresOwnAuth } from '../../../../common/constants';
 import type { Connection, ConnectionParameterSets, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { useQuery } from '@tanstack/react-query';
 import { MCP_CLIENT_CONNECTOR_ID } from '../helpers';
 
 /**
- * Connection parameter sets for MCP servers. Used as a fallback when a custom connector
- * doesn't have its own connectionParameterSets, so users can select auth type
- * (None, Basic, Key, or Managed Identity) during connection creation.
+ * Connection parameter sets for MCP servers. Used as a fallback when a connector declares no
+ * authentication of its own, so users can select auth type (None, Basic, Key, or Managed Identity)
+ * during connection creation. Connectors that declare their own authentication (multi-auth
+ * parameter sets, or single-auth connection parameters such as an OAuth `token`) must keep their
+ * own connection experience instead.
  */
 const mcpConnectionParameterSets: ConnectionParameterSets = {
   uiDefinition: {
@@ -148,6 +155,17 @@ export const McpToolWizard = () => {
   const { data: connector } = useConnector(connectorId);
   const assistedConnectionProps = useMemo(() => (connector ? getAssistedConnectionProps(connector) : undefined), [connector]);
 
+  // A managed MCP server can be backed by a connector that already declares how to authenticate -
+  // either multi-auth parameter sets, or single-auth connection parameters such as an OAuth `token`
+  // (first-party connectors like GitHub work this way). Those connectors must keep their own
+  // connection experience; forcing the generic MCP auth parameter sets onto them replaces the
+  // sign-in dialog with a "None / Basic / Key / Managed identity" form and produces an
+  // unauthenticated connection.
+  const usesMcpAuthFallback = useMemo(
+    () => isManagedMcpServer && !!connector && !connectorDeclaresOwnAuth(connector),
+    [isManagedMcpServer, connector]
+  );
+
   // Fetch connections for the appropriate connector
   const {
     data: connectionsData,
@@ -175,6 +193,54 @@ export const McpToolWizard = () => {
   // Track local selection before committing
   const [localConnectionId, setLocalConnectionId] = useState<string | undefined>(connectionId);
 
+  // Identity captured from the create-connection form. Microsoft.Web/connections resources
+  // do not persist the UAMI ARM id, so for newly created UAMI connections the only
+  // authoritative source is the payload the create flow emits.
+  const [createdIdentity, setCreatedIdentity] = useState<string | undefined>(undefined);
+
+  // The connection list response strips parameterValues, so the cached entry has no identity info.
+  // Fetch the full connection resource so we can detect UAMI for connections whose resource does
+  // expose it (some shapes do — e.g. via parameterValues.identity).
+  const { data: fullConnection, isLoading: isFullConnectionLoading } = useConnectionResource(localConnectionId ?? '');
+
+  // Identity threaded to both listMcpTools and addOperation. Prefer the create-form payload
+  // (authoritative for new UAMI connections); fall back to whatever the resource exposes.
+  const selectedIdentity = useMemo(() => {
+    if (createdIdentity) {
+      return createdIdentity;
+    }
+    const listEntry = connectionsData?.find((c) => c.id === localConnectionId);
+    return getManagedIdentityFromConnection(fullConnection) ?? getManagedIdentityFromConnection(listEntry);
+  }, [createdIdentity, fullConnection, connectionsData, localConnectionId]);
+
+  // Guard the Next button while the full connection resource is in-flight so we don't thread
+  // an undefined identity into addOperation.
+  const isFetchingFullConnection = !!localConnectionId && !createdIdentity && isFullConnectionLoading;
+
+  // Connections created through the MCP auth fallback must surface an identity, otherwise
+  // listMcpTools returns 401. Surface a non-blocking warning + disable Next when we know the
+  // connection has resolved but no identity is available. Connectors with their own auth (OAuth,
+  // key, etc.) carry their credentials on the connection, so no identity is expected there.
+  const needsManagedIdentityWarning = !!localConnectionId && !isFullConnectionLoading && !selectedIdentity && usesMcpAuthFallback;
+
+  useEffect(() => {
+    if (currentStep === MCP_WIZARD_STEP.CREATE_CONNECTION) {
+      // Defensive reset: starting a fresh create flow must not inherit identity from a prior create.
+      setCreatedIdentity(undefined);
+    }
+  }, [currentStep]);
+
+  useEffect(() => {
+    if (needsManagedIdentityWarning) {
+      LoggerService().log({
+        level: LogEntryLevel.Warning,
+        area: 'mcpToolWizard',
+        message: 'Managed MCP connection has no resolvable identity.',
+        args: [{ connectionId: localConnectionId, connectorId }],
+      });
+    }
+  }, [needsManagedIdentityWarning, localConnectionId, connectorId]);
+
   // Track if connection was pre-selected from browse when wizard opened (locked - can't go back to step 1)
   // Read from Redux state - this is set once when the wizard opens and survives re-mounts
   const isConnectionLocked = wizardState?.isConnectionLocked ?? false;
@@ -190,7 +256,14 @@ export const McpToolWizard = () => {
     error: toolsError,
     refetch: refetchTools,
   } = useQuery({
-    queryKey: ['mcpTools', localConnectionId, wizardState?.operation?.id, isManagedMcpServer, connectorId],
+    queryKey: [
+      'mcpTools',
+      localConnectionId,
+      wizardState?.operation?.id,
+      isManagedMcpServer,
+      connectorId,
+      (selectedIdentity ?? '').toLowerCase(),
+    ],
     queryFn: async () => {
       if (!localConnectionId) {
         return [];
@@ -219,7 +292,8 @@ export const McpToolWizard = () => {
         {}, // parameters
         dynamicState,
         false, // isManagedIdentityConnection
-        mcpServerPath
+        mcpServerPath,
+        selectedIdentity
       );
 
       return tools;
@@ -340,9 +414,13 @@ export const McpToolWizard = () => {
     }
   }, [dispatch, wasOpenedAtCreateConnection, validConnections.length]);
 
-  // No-op function for updateConnectionInState - we handle this separately
-  const updateConnectionInState = useCallback((_payload: CreatedConnectionPayload) => {
-    // Connection state is managed by the connection service
+  // Capture identity from the create-connection payload so it survives into addOperation.
+  // The connection resource itself often does not store the UAMI ARM id for managed-identity
+  // parameter sets. Identity can land in either payload.authentication (legacy MI flow) or
+  // payload.connectionProperties.authentication (multi-auth ManagedServiceIdentity parameter set
+  // used by managed MCP connectors).
+  const updateConnectionInState = useCallback((payload: CreatedConnectionPayload) => {
+    setCreatedIdentity(payload.authentication?.identity ?? payload.connectionProperties?.authentication?.identity);
   }, []);
 
   const handleNext = useCallback(async () => {
@@ -407,6 +485,7 @@ export const McpToolWizard = () => {
             isAddingMcpServer: true,
             presetParameterValues,
             connectionId: localConnectionId,
+            connectionIdentity: selectedIdentity,
           })
         );
 
@@ -424,11 +503,13 @@ export const McpToolWizard = () => {
     isManagedMcpServer,
     toolSelectionMode,
     toolsData,
+    selectedIdentity,
   ]);
 
   const handleConnectionSelect = useCallback(
     (id: string) => {
       setLocalConnectionId(id);
+      setCreatedIdentity(undefined);
       dispatch(setMcpWizardConnection(id));
       // Reset tool selection when connection changes
       setLocalAllowedTools([]);
@@ -499,6 +580,12 @@ export const McpToolWizard = () => {
         defaultMessage: 'No MCP connections available. Please create a connection first.',
         id: 'h6EWNm',
         description: 'Message when no connections are available',
+      }),
+      managedIdentityWarning: intl.formatMessage({
+        defaultMessage:
+          'This MCP connection has no resolvable managed identity. Re-create the connection and select a managed identity to load tools.',
+        id: 'yh8XAc',
+        description: 'Warning shown when a managed MCP connection does not expose an identity',
       }),
       noTools: intl.formatMessage({
         defaultMessage: 'No tools available for this connection.',
@@ -619,9 +706,10 @@ export const McpToolWizard = () => {
       },
     ];
 
-    // Disable Done button if in "selected tools" mode with no tools selected
+    // Disable Done button if connection is missing/loading/in-warning state or if no tools are selected
     const isDoneDisabled =
-      (isConnectionStep && !localConnectionId) || (isParametersStep && toolSelectionMode === 'selected' && localAllowedTools.length === 0);
+      (isConnectionStep && (!localConnectionId || isFetchingFullConnection || needsManagedIdentityWarning)) ||
+      (isParametersStep && toolSelectionMode === 'selected' && localAllowedTools.length === 0);
 
     buttonContents.push({
       type: 'action',
@@ -641,6 +729,8 @@ export const McpToolWizard = () => {
     handleAddConnectionClick,
     toolSelectionMode,
     localAllowedTools.length,
+    isFetchingFullConnection,
+    needsManagedIdentityWarning,
   ]);
 
   const handleConnectionTableSelect = useCallback(
@@ -671,6 +761,11 @@ export const McpToolWizard = () => {
 
     return (
       <div className={classes.connectionStepContainer}>
+        {needsManagedIdentityWarning && (
+          <MessageBar intent="warning">
+            <MessageBarBody>{INTL_TEXT.managedIdentityWarning}</MessageBarBody>
+          </MessageBar>
+        )}
         <ConnectionTable
           connections={validConnections}
           currentConnectionId={localConnectionId}
@@ -688,11 +783,15 @@ export const McpToolWizard = () => {
     // Managed MCP servers use the default Azure connection flow
     const connectionMetadata = isManagedMcpServer ? undefined : { type: ConnectionType.Mcp, required: true };
 
-    // For managed MCP servers (custom connectors), the connector from Azure API
-    // may not include connectionParameterSets (auth options). Provide MCP auth
-    // parameter sets as a fallback so users can select auth type (None, Basic,
-    // Managed Identity, etc.) when creating a connection.
-    const parameterSetsOverride = isManagedMcpServer ? mcpConnectionParameterSets : undefined;
+    // Managed MCP servers backed by a connector that declares no authentication of its own get the
+    // MCP auth parameter sets as a fallback, so users can pick an auth type (None, Basic, Key,
+    // Managed Identity). Connectors that do declare their own authentication keep their native
+    // experience - notably the OAuth sign-in dialog used by first-party connectors.
+    const parameterSetsOverride = usesMcpAuthFallback ? mcpConnectionParameterSets : undefined;
+
+    // Opt every managed MCP server into the standalone managed identity dropdown. CreateConnection
+    // only renders it for a parameter set that actually declares a `managedIdentity` typed
+    // parameter, so connectors keeping their own OAuth sets are unaffected.
 
     return (
       <div className={classes.createConnectionContainer}>

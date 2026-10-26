@@ -141,7 +141,7 @@ suite('Logic App Project to Workspace Conversion', () => {
     });
 
     test('createWorkspace command is registered (conversion entry point)', async () => {
-      // When convertToWorkspace() shows "Create workspace?" and user clicks "Yes",
+      // When setupWorkspaceTestData() shows "Create workspace?" and user clicks "Yes",
       // it calls createWorkspaceWebviewCommandHandler() — same as this command.
       const commands = await vscode.commands.getCommands(true);
       const hasCommand = commands.includes(COMMANDS.createWorkspace);
@@ -193,7 +193,7 @@ suite('Logic App Project to Workspace Conversion', () => {
   // ──────────────────────────────────────────────────────────────
   //  2. Execute createWorkspace command — this IS clicking "Yes"
   //
-  //  The convertToWorkspace() flow:
+  //  The setupWorkspaceTestData() flow:
   //    1. Detects Logic App project in workspace
   //    2. Shows modal: "Do you want to create the workspace now?"
   //    3. User clicks "Yes" → calls createWorkspaceWebviewCommandHandler()
@@ -304,14 +304,14 @@ suite('Logic App Project to Workspace Conversion', () => {
   // ──────────────────────────────────────────────────────────────
   //  3. Workspace state — the conversion decision tree
   //
-  //  convertToWorkspace() checks these conditions:
+  //  setupWorkspaceTestData() checks these conditions:
   //    A) workspaceFile exists + no workspaceRoot → "open existing workspace?"
   //    B) no workspaceFile + no workspaceRoot   → "create workspace?"
   //    C) both exist                            → already in workspace, done
   // ──────────────────────────────────────────────────────────────
   suite('Workspace State (Conversion Decision Tree)', () => {
-    test('Workspace has folders (prerequisite for convertToWorkspace)', () => {
-      // convertToWorkspace() starts with getWorkspaceFolderWithoutPrompting()
+    test('Workspace has folders (prerequisite for setupWorkspaceTestData)', () => {
+      // setupWorkspaceTestData() starts with getWorkspaceFolderWithoutPrompting()
       // which requires at least one workspace folder
       assert.ok(vscode.workspace.workspaceFolders, 'workspaceFolders should exist');
       assert.ok(vscode.workspace.workspaceFolders.length > 0, 'Should have ≥1 folder');
@@ -368,7 +368,7 @@ suite('Logic App Project to Workspace Conversion', () => {
   suite('Conversion Creates Workspace from Legacy Project', () => {
     /**
      * Create a legacy Logic App project (flat structure, no .code-workspace).
-     * This is the "before" state that convertToWorkspace() detects and offers
+     * This is the "before" state that setupWorkspaceTestData() detects and offers
      * to convert.
      */
     function createLegacyProject(projectPath: string, workflowName: string, workflowKind: string, projectType: ProjectType): void {
@@ -453,7 +453,7 @@ suite('Logic App Project to Workspace Conversion', () => {
      *  5. Create Artifacts/ and lib/ directories
      *  6. (For customCode/rulesEngine) create function app folder
      */
-    function convertToWorkspace(
+    function setupWorkspaceTestData(
       legacyPath: string,
       workspaceDir: string,
       workspaceName: string,
@@ -553,7 +553,7 @@ suite('Logic App Project to Workspace Conversion', () => {
       // "Create Workspace" — same output as filling form with:
       //   workspaceName=OrdersWorkspace, logicAppName=OrdersLogicApp, workflowType=Stateful
       const workspaceDir = path.join(tempDir, 'OrdersWorkspace');
-      const { workspaceFilePath, logicAppPath } = convertToWorkspace(
+      const { workspaceFilePath, logicAppPath } = setupWorkspaceTestData(
         legacyPath,
         workspaceDir,
         'OrdersWorkspace',
@@ -572,7 +572,7 @@ suite('Logic App Project to Workspace Conversion', () => {
       createLegacyProject(legacyPath, 'ProcessOrder', 'Stateful', 'logicApp');
 
       const workspaceDir = path.join(tempDir, 'ConvertedWS');
-      const { workspaceFilePath } = convertToWorkspace(legacyPath, workspaceDir, 'ConvertedWS', 'OrdersLogicApp', 'logicApp');
+      const { workspaceFilePath } = setupWorkspaceTestData(legacyPath, workspaceDir, 'ConvertedWS', 'OrdersLogicApp', 'logicApp');
 
       const ws = JSON.parse(fs.readFileSync(workspaceFilePath, 'utf-8'));
       assert.strictEqual(ws.folders.length, 1, 'logicApp workspace should have exactly 1 folder');
@@ -588,7 +588,7 @@ suite('Logic App Project to Workspace Conversion', () => {
       const originalWorkflow = fs.readFileSync(path.join(legacyPath, 'ProcessOrder', 'workflow.json'), 'utf-8');
 
       const workspaceDir = path.join(tempDir, 'PreserveWS');
-      const { logicAppPath } = convertToWorkspace(legacyPath, workspaceDir, 'PreserveWS', 'MyApp', 'logicApp');
+      const { logicAppPath } = setupWorkspaceTestData(legacyPath, workspaceDir, 'PreserveWS', 'MyApp', 'logicApp');
 
       // Verify workflow content is byte-for-byte identical after conversion
       const convertedWorkflow = fs.readFileSync(path.join(logicAppPath, 'ProcessOrder', 'workflow.json'), 'utf-8');
@@ -608,7 +608,7 @@ suite('Logic App Project to Workspace Conversion', () => {
       const originalSettings = fs.readFileSync(path.join(legacyPath, 'local.settings.json'), 'utf-8');
 
       const workspaceDir = path.join(tempDir, 'ConfigWS');
-      const { logicAppPath } = convertToWorkspace(legacyPath, workspaceDir, 'ConfigWS', 'ConfigApp', 'logicApp');
+      const { logicAppPath } = setupWorkspaceTestData(legacyPath, workspaceDir, 'ConfigWS', 'ConfigApp', 'logicApp');
 
       assert.strictEqual(fs.readFileSync(path.join(logicAppPath, 'host.json'), 'utf-8'), originalHost, 'host.json should be preserved');
       assert.strictEqual(
@@ -635,7 +635,7 @@ suite('Logic App Project to Workspace Conversion', () => {
       createLegacyProject(legacyPath, 'InvokeFunc', 'Stateful', 'customCode');
 
       const workspaceDir = path.join(tempDir, 'CustomCodeWS');
-      const { workspaceFilePath, logicAppPath, functionPath } = convertToWorkspace(
+      const { workspaceFilePath, logicAppPath, functionPath } = setupWorkspaceTestData(
         legacyPath,
         workspaceDir,
         'CustomCodeWS',
@@ -681,7 +681,7 @@ suite('Logic App Project to Workspace Conversion', () => {
       createLegacyProject(legacyPath, 'EvalRules', 'Stateful', 'rulesEngine');
 
       const workspaceDir = path.join(tempDir, 'RulesWS');
-      const { workspaceFilePath, logicAppPath, functionPath } = convertToWorkspace(
+      const { workspaceFilePath, logicAppPath, functionPath } = setupWorkspaceTestData(
         legacyPath,
         workspaceDir,
         'RulesWS',
@@ -719,7 +719,7 @@ suite('Logic App Project to Workspace Conversion', () => {
       createLegacyProject(legacyPath, 'SimpleFlow', 'Stateful', 'logicApp');
 
       const workspaceDir = path.join(tempDir, 'InfraWS');
-      const { logicAppPath } = convertToWorkspace(legacyPath, workspaceDir, 'InfraWS', 'InfraApp', 'logicApp');
+      const { logicAppPath } = setupWorkspaceTestData(legacyPath, workspaceDir, 'InfraWS', 'InfraApp', 'logicApp');
 
       // .vscode config files
       assert.ok(fs.existsSync(path.join(logicAppPath, '.vscode', 'settings.json')), '.vscode/settings.json');
@@ -793,7 +793,7 @@ suite('Logic App Project to Workspace Conversion', () => {
       );
 
       const workspaceDir = path.join(tempDir, 'MultiWS');
-      const { logicAppPath } = convertToWorkspace(legacyPath, workspaceDir, 'MultiWS', 'MultiApp', 'logicApp');
+      const { logicAppPath } = setupWorkspaceTestData(legacyPath, workspaceDir, 'MultiWS', 'MultiApp', 'logicApp');
 
       // All three workflows preserved
       const flowA = JSON.parse(fs.readFileSync(path.join(logicAppPath, 'FlowA', 'workflow.json'), 'utf-8'));

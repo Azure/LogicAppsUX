@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {
-  localSettingsFileName,
+  extensionCommand,
   workflowLocationKey,
   workflowResourceGroupNameKey,
   workflowSubscriptionIdKey,
@@ -14,10 +14,10 @@ import { localize } from '../../../localize';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
 import { isLogicAppProject, tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { getWorkspaceFolder, isMultiRootWorkspace } from '../../utils/workspace';
-import { AzureWizard, UserCancelledError, type IActionContext } from '@microsoft/vscode-azext-utils';
+import { AzureWizard, callWithTelemetryAndErrorHandling, UserCancelledError, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext, DeploymentTargetType } from '@microsoft/vscode-extension-logic-apps';
 import { DeploymentScriptTypeStep } from './generateDeploymentScriptsSteps/DeploymentScriptTypeStep';
-import { convertToWorkspace } from '../convertToWorkspace';
+import { ensureWorkspace } from '../ensureWorkspace';
 import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import type * as vscode from 'vscode';
 import * as path from 'path';
@@ -59,8 +59,14 @@ export async function generateDeploymentScripts(context: IActionContext, node?: 
     ext.outputChannel.appendLog(localize('initScriptGen', 'Starting deployment script generation...'));
     addLocalFuncTelemetry(context);
 
-    context.telemetry.properties.lastStep = 'convertToWorkspace';
-    if (!(await convertToWorkspace(context))) {
+    context.telemetry.properties.lastStep = 'ensureWorkspace';
+    const isWorkspaceReady = await callWithTelemetryAndErrorHandling('generateDeploymentScripts.ensureWorkspace', async (actionContext: IActionContext) => {
+      actionContext.errorHandling.rethrow = true;
+      actionContext.errorHandling.suppressDisplay = true;
+      return await ensureWorkspace(actionContext);
+    });
+    
+    if (!isWorkspaceReady) {
       ext.outputChannel.appendLog(localize('exitScriptGen', 'Exiting deployment script generation...'));
       context.telemetry.properties.result = 'Canceled';
       return;
@@ -89,7 +95,6 @@ export async function generateDeploymentScripts(context: IActionContext, node?: 
     await wizard.prompt();
     await wizard.execute();
 
-    context.telemetry.properties.result = 'Succeeded';
     ext.outputChannel.appendLog(localize('completeAzureDeploymentScriptsWizard', 'Azure deployment scripts wizard executed successfully.'));
   } catch (error) {
     context.telemetry.properties.pinnedBundleVersion = ext.pinnedBundleVersion.has(projectPath)
@@ -127,8 +132,7 @@ async function getDeploymentScriptsWizardContext(context: IActionContext, projec
   wizardContext.projectPath = path.normalize(projectPath);
   wizardContext.isValidWorkspace = isMultiRootWorkspace();
 
-  const localSettingsFilePath = path.join(projectPath, localSettingsFileName);
-  const localSettings = await getLocalSettingsJson(context, localSettingsFilePath);
+  const localSettings = await getLocalSettingsJson(context, projectPath);
 
   const {
     [workflowTenantIdKey]: defaultTenantId,

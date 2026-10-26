@@ -11,9 +11,9 @@ vi.mock('../../extensionAssets', () => ({
 }));
 
 import { getExtensionAssetPath } from '../../extensionAssets';
-import { getChildProcessesWithScript } from '../findChildProcess';
+import { getChildProcesses } from '../findChildProcess';
 
-describe('getChildProcessesWithScript', () => {
+describe('getChildProcesses', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(ext.outputChannel.appendLog).mockClear();
@@ -41,19 +41,9 @@ describe('getChildProcessesWithScript', () => {
       } as any;
     }) as any);
 
-    await expect(getChildProcessesWithScript(100)).resolves.toEqual([
+    await expect(getChildProcesses(100)).resolves.toEqual([
       { processId: 111, name: 'func.exe', parentProcessId: 100 },
       { processId: 222, name: 'dotnet.exe', parentProcessId: 111 },
     ]);
-  });
-
-  it('should wrap non-Error failures using String(error)', async () => {
-    vi.mocked(getExtensionAssetPath).mockImplementation(() => {
-      throw 'boom';
-    });
-
-    await expect(getChildProcessesWithScript(100)).rejects.toThrow(
-      'Failed to execute Powershell script to get the func child process: boom'
-    );
   });
 });

@@ -1,10 +1,11 @@
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
-import { isCodefulProject } from '../../../utils/codeful';
+import { hasCodefulWorkflowSetting } from '../../../utils/codeful';
 import { addLocalFuncTelemetry } from '../../../utils/funcCoreTools/funcVersion';
 import { createLogicAppAndWorkflow } from '../../createNewCodeProject/CodeProjectBase/CreateLogicAppWorkspace';
 import { createLogicAppWorkflow } from '../createLogicAppWorkflow';
+import { ext } from '../../../../extensionVariables';
 
 vi.mock('../../../../localize', () => ({
   localize: (_key: string, defaultValue: string, ...args: unknown[]) =>
@@ -16,7 +17,7 @@ vi.mock('../../../utils/funcCoreTools/funcVersion', () => ({
 }));
 
 vi.mock('../../../utils/codeful', () => ({
-  isCodefulProject: vi.fn(),
+  hasCodefulWorkflowSetting: vi.fn(),
 }));
 
 vi.mock('../../createNewCodeProject/CodeProjectBase/CreateLogicAppWorkspace', () => ({
@@ -32,7 +33,7 @@ describe('createLogicAppWorkflow', () => {
     vi.clearAllMocks();
     context = { telemetry: { properties: {}, measurements: {} } };
     (vscode.workspace as any).workspaceFile = { fsPath: workspaceFilePath };
-    (isCodefulProject as Mock).mockResolvedValue(true);
+    (hasCodefulWorkflowSetting as Mock).mockResolvedValue(true);
   });
 
   it('creates a workflow in the open workspace and infers codeful project metadata', async () => {
@@ -45,7 +46,7 @@ describe('createLogicAppWorkflow', () => {
     await createLogicAppWorkflow(context, options, logicAppFolderPath);
 
     expect(addLocalFuncTelemetry).toHaveBeenCalledWith(context);
-    expect(isCodefulProject).toHaveBeenCalledWith(logicAppFolderPath);
+    expect(hasCodefulWorkflowSetting).toHaveBeenCalledWith(logicAppFolderPath);
     expect(options).toMatchObject({
       logicAppType: ProjectType.codeful,
       workspaceFilePath,
@@ -59,18 +60,22 @@ describe('createLogicAppWorkflow', () => {
       targetFramework: 'net8.0',
     });
     expect(createLogicAppAndWorkflow).toHaveBeenCalledWith(options, logicAppFolderPath, context);
-    expect(vscode.window.showInformationMessage).toHaveBeenCalledWith('Finished creating workflow.');
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('Finished creating workflow.');
   });
 
-  it('shows an error and skips creation when no workspace file is open', async () => {
+  it('creates a workflow in a folder-opened Logic App project when no workspace file is open', async () => {
     (vscode.workspace as any).workspaceFile = undefined;
     const options: any = { logicAppName: 'Orders', logicAppType: ProjectType.logicApp };
 
     await createLogicAppWorkflow(context, options, logicAppFolderPath);
 
-    expect(vscode.window.showErrorMessage).toHaveBeenCalledWith(
-      'Please open an existing logic app workspace before trying to add a new logic app project.'
-    );
-    expect(createLogicAppAndWorkflow).not.toHaveBeenCalled();
+    expect(options).toMatchObject({
+      logicAppType: ProjectType.logicApp,
+      shouldCreateLogicAppProject: false,
+    });
+    expect(options.workspaceFilePath).toBeUndefined();
+    expect(createLogicAppAndWorkflow).toHaveBeenCalledWith(options, logicAppFolderPath, context);
+    expect(vscode.window.showErrorMessage).not.toHaveBeenCalled();
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('Finished creating workflow.');
   });
 });

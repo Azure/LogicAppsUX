@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { getCallbackUrl, getIsCallbackUrlSupported, getRequestTriggerName, getRunTriggerName, getTriggerName } from '../run';
+import {
+  getCallbackUrl,
+  getIsCallbackUrlSupported,
+  getRequestTriggerName,
+  getRunTriggerName,
+  getTriggerName,
+  hasMultipleTriggers,
+} from '../run';
 import { CallbackInfo, LogicAppsV2 } from '../../models';
 
 const requestDefinition: LogicAppsV2.WorkflowDefinition = {
@@ -200,6 +207,41 @@ describe('lib/utils/src/lib/helpers', () => {
 
       const triggerName = getRunTriggerName(definition);
       expect(triggerName).toBeUndefined();
+    });
+  });
+
+  describe('hasMultipleTriggers', () => {
+    it('should return false when there is only one trigger', () => {
+      expect(hasMultipleTriggers(requestDefinition)).toBe(false);
+    });
+
+    it('should return false when there are no triggers', () => {
+      expect(hasMultipleTriggers(emptyDefinition)).toBe(false);
+    });
+
+    it('should return false when the definition is undefined or null', () => {
+      expect(hasMultipleTriggers(undefined)).toBe(false);
+      expect(hasMultipleTriggers(null)).toBe(false);
+    });
+
+    it('should return true when there are multiple triggers', () => {
+      const definition: any = {
+        triggers: {
+          When_a_HTTP_request_is_received: {
+            kind: 'Http',
+            type: 'Request',
+          },
+          Recurrence: {
+            recurrence: {
+              frequency: 'Minute',
+              interval: 10,
+            },
+            type: 'Recurrence',
+          },
+        },
+      };
+
+      expect(hasMultipleTriggers(definition)).toBe(true);
     });
   });
 });

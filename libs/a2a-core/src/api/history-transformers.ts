@@ -45,30 +45,35 @@ export const transformContext = (serverContext: ServerContext): ChatSession => {
  * @returns Array of messages in chronological order
  */
 export const transformTasksToMessages = (serverTasks: ServerTask[]): Message[] => {
-  const messages: Message[] = [];
-
-  // Flatten all task histories
-  for (const task of serverTasks) {
+  const messages = serverTasks.flatMap((task, taskIndex) => {
     const taskState = task.taskStatus?.state;
-    for (const serverMessage of task.history) {
-      messages.push(transformMessage(serverMessage, taskState));
-    }
-  }
-
-  // Sort by timestamp to ensure chronological order
-  // This handles cases where history arrays might be reverse chronological
-  // When timestamps are equal, ensure user messages come before assistant messages
-  messages.sort((a, b) => {
-    const timeDiff = a.timestamp.getTime() - b.timestamp.getTime();
-    if (timeDiff !== 0) {
-      return timeDiff;
-    }
-    // Same timestamp: user messages (role='user') should come before assistant messages
-    // user=0, assistant=1, so 'user' sorts before 'assistant'
-    return a.role === 'user' ? -1 : b.role === 'user' ? 1 : 0;
+    const taskTime = parseServerDate(task.taskStatus.timestamp).getTime();
+    return task.history.map((serverMessage, messageIndex) => ({
+      message: transformMessage(serverMessage, taskState),
+      taskIndex,
+      taskTime,
+      messageIndex,
+    }));
   });
 
-  return messages;
+  messages.sort((firstEntry, secondEntry) => {
+    const timeDifference = firstEntry.message.timestamp.getTime() - secondEntry.message.timestamp.getTime();
+    if (timeDifference !== 0) {
+      return timeDifference;
+    }
+
+    if (firstEntry.taskIndex !== secondEntry.taskIndex) {
+      return firstEntry.taskTime - secondEntry.taskTime || firstEntry.taskIndex - secondEntry.taskIndex;
+    }
+
+    if (firstEntry.message.role !== secondEntry.message.role) {
+      return firstEntry.message.role === 'user' ? -1 : 1;
+    }
+
+    return firstEntry.messageIndex - secondEntry.messageIndex;
+  });
+
+  return messages.map((entry) => entry.message);
 };
 
 /**
@@ -182,11 +187,23 @@ const extractLastMessage = (task: ServerTask): Message | undefined => {
  * @returns Date object
  */
 const parseServerDate = (dateStr: string): Date => {
-  // JavaScript Date constructor handles this format natively
-  const date = new Date(dateStr);
+  // The history API emits UTC clock values without a timezone suffix.
+  const match = dateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4}) (\d{1,2}):(\d{2}):(\d{2}) (AM|PM)$/i);
+  if (!match) {
+    throw new Error(`Invalid date format: ${dateStr}`);
+  }
 
-  // Validate the date
-  if (Number.isNaN(date.getTime())) {
+  const [, monthText, dayText, yearText, hourText, minuteText, secondText, period] = match;
+  const month = Number(monthText);
+  const day = Number(dayText);
+  const year = Number(yearText);
+  const hour = Number(hourText);
+  const minute = Number(minuteText);
+  const second = Number(secondText);
+  const utcHour = (hour % 12) + (period.toUpperCase() === 'PM' ? 12 : 0);
+  const date = new Date(Date.UTC(year, month - 1, day, utcHour, minute, second));
+
+  if (month < 1 || month > 12 || day < 1 || hour < 1 || hour > 12 || minute > 59 || second > 59 || date.getUTCDate() !== day) {
     throw new Error(`Invalid date format: ${dateStr}`);
   }
 

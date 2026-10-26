@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { localize } from '../../../localize';
 import { ConnectionTreeItem } from '../../tree/configurationsTree/connectionsTree/ConnectionTreeItem';
 import { ParameterTreeItem } from '../../tree/configurationsTree/parametersTree/ParameterTreeItem';
 import { RemoteWorkflowTreeItem } from '../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
@@ -15,7 +16,11 @@ import type {
   IWorkflowFileContent,
 } from '@microsoft/vscode-extension-logic-apps';
 
-export async function viewContent(_context: IActionContext, node: ConnectionTreeItem | RemoteWorkflowTreeItem): Promise<void> {
+export async function viewContent(_context: IActionContext, node?: ConnectionTreeItem | RemoteWorkflowTreeItem): Promise<void> {
+  if (!node) {
+    throw new Error(localize('viewContent.noNode', 'No node provided to view content.'));
+  }
+
   let data:
     | Record<string, Parameter | ConnectionReferenceModel | FunctionConnectionModel | ServiceProviderConnectionModel>
     | IWorkflowFileContent = {};

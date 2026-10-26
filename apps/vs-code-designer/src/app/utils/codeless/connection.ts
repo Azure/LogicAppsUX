@@ -1,9 +1,8 @@
 import {
   azurePublicBaseUrl,
   connectionsFileName,
-  localSettingsFileName,
-  parameterizeConnectionsInProjectLoadSetting,
   workflowAuthenticationMethodKey,
+  workflowAuthenticationMethodMIValue,
 } from '../../../constants';
 import { localize } from '../../../localize';
 import { isCSharpProject } from '../detectProjectLanguage';
@@ -11,7 +10,7 @@ import { addOrUpdateLocalAppSettings, getLocalSettingsJson } from '../appSetting
 import { writeFormattedJson } from '../fs';
 import { sendAzureRequest } from '../requestUtils';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
-import { getContainingWorkspace } from '../workspace';
+import { getContainingWorkspaceFolder } from '../workspace';
 import { createJsonFileIfDoesNotExist, getWorkflowParameters } from './common';
 import { getAuthorizationToken, getAuthorizationTokenFromNode } from './getAuthorizationToken';
 import { getParametersJson, saveWorkflowParameterRecords } from './parameter';
@@ -40,7 +39,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { parameterizeConnection } from './parameterizer';
 import { window } from 'vscode';
-import { getGlobalSetting } from '../vsCodeConfig/settings';
+import { shouldParameterizeConnections } from '../vsCodeConfig/settings';
 import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import { ext } from '../../../extensionVariables';
 
@@ -80,7 +79,7 @@ export async function getConnectionsJson(projectRoot: string): Promise<string> {
   return '';
 }
 
-export async function addConnectionData(
+export async function addConnection(
   context: IActionContext,
   filePath: string,
   connectionAndAppSetting: ConnectionAndAppSetting<any>
@@ -96,11 +95,11 @@ export async function addConnectionData(
   await addOrUpdateLocalAppSettings(context, projectPath ?? '', settings);
   await saveWorkflowParameterRecords(context, filePath, workflowParameterRecords);
 
-  vscode.window.showInformationMessage(localize('azureFunctions.addConnection', 'Connection added.'));
+  ext.outputChannel.appendLog(localize('connectionAdded', 'Connection added.'));
 }
 
 export async function getLogicAppProjectRoot(context: IActionContext, workflowFilePath: string): Promise<string> {
-  const workspaceFolder = nonNullValue(getContainingWorkspace(workflowFilePath), 'workspaceFolder');
+  const workspaceFolder = nonNullValue(getContainingWorkspaceFolder(workflowFilePath), 'workspaceFolder');
   const workspacePath: string = workspaceFolder.uri.fsPath;
 
   const projectRoot: string | undefined = await tryGetLogicAppProjectRoot(context, workspacePath);
@@ -112,20 +111,19 @@ export async function getLogicAppProjectRoot(context: IActionContext, workflowFi
   return projectRoot;
 }
 
-async function addConnectionDataInJson(
+export async function addConnectionDataInJson(
   context: IActionContext,
   functionAppPath: string,
   connectionAndAppSetting: ConnectionAndAppSetting<any>,
   parametersData: Record<string, Parameter>
 ): Promise<void> {
-  const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
   const connectionsFilePath = path.join(functionAppPath, connectionsFileName);
   const connectionsFileExists = fse.pathExistsSync(connectionsFilePath);
 
   const connectionsJsonString = await getConnectionsJson(functionAppPath);
   const connectionsJson = connectionsJsonString === '' ? {} : JSON.parse(connectionsJsonString);
 
-  const { connectionData, connectionKey, pathLocation, settings } = connectionAndAppSetting;
+  const { connectionData, connectionKey, pathLocation, settings, isUpdate } = connectionAndAppSetting;
 
   let pathToSetConnectionsData = connectionsJson;
 
@@ -137,20 +135,20 @@ async function addConnectionDataInJson(
     pathToSetConnectionsData = pathToSetConnectionsData[path];
   }
 
-  if (pathToSetConnectionsData && pathToSetConnectionsData[connectionKey]) {
+  if (pathToSetConnectionsData && pathToSetConnectionsData[connectionKey] && !isUpdate) {
     const message: string = localize('ConnectionKeyAlreadyExist', "Connection key '{0}' already exists.", connectionKey);
     await vscode.window.showErrorMessage(message, localize('OK', 'OK'));
     return;
   }
 
-  if (parameterizeConnectionsSetting) {
+  if (shouldParameterizeConnections()) {
     parameterizeConnection(connectionData, connectionKey, parametersData, settings);
   }
 
   pathToSetConnectionsData[connectionKey] = connectionData;
   await writeFormattedJson(connectionsFilePath, connectionsJson);
 
-  if (!connectionsFileExists && (await isCSharpProject(context, functionAppPath))) {
+  if (!connectionsFileExists && (await isCSharpProject(functionAppPath))) {
     await addNewFileInCSharpProject(context, connectionsFileName, functionAppPath);
   }
 }
@@ -215,8 +213,7 @@ async function getConnectionReference(
   workflowBaseManagementUri: string,
   settingsToAdd: Record<string, string>,
   parametersToAdd: any,
-  parameterizeConnectionsSetting: any,
-  useMSI: boolean
+  isMIEnabled: boolean
 ): Promise<ConnectionReferenceModel> {
   const {
     api: { id: apiId },
@@ -244,13 +241,13 @@ async function getConnectionReference(
     )
     .then(({ data: response }) => {
       // Only add connection key to settings if NOT using MSI
-      if (!useMSI) {
+      if (!isMIEnabled) {
         const appSettingKey = `${referenceKey}-connectionKey`;
         settingsToAdd[appSettingKey] = response.connectionKey;
       }
 
       // Determine authentication based on ext.useMSI
-      const authValue = useMSI
+      const authValue = isMIEnabled
         ? { type: 'ManagedServiceIdentity' }
         : {
             type: 'Raw',
@@ -280,7 +277,7 @@ async function getConnectionReference(
         connectionReference.connectionProperties = connectionProperties;
       }
 
-      return parameterizeConnectionsSetting
+      return shouldParameterizeConnections()
         ? (parameterizeConnection(connectionReference, referenceKey, parametersToAdd, settingsToAdd) as ConnectionReferenceModel)
         : connectionReference;
     })
@@ -301,9 +298,8 @@ export async function getConnectionsAndSettingsToUpdate(
   try {
     const connectionsDataString = projectPath ? await getConnectionsJson(projectPath) : '';
     const connectionsData = connectionsDataString === '' ? {} : JSON.parse(connectionsDataString);
-    const localSettingsPath: string = path.join(projectPath, localSettingsFileName);
-    const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
-    const useMsi = await isMSIEnabled(projectPath, context);
+    const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, projectPath);
+    const isMIEnabled = await isMISettingEnabled(context, projectPath);
 
     let areKeysRefreshed = false;
     let areKeysGenerated = false;
@@ -312,7 +308,6 @@ export async function getConnectionsAndSettingsToUpdate(
     const settingsToAdd: Record<string, string> = {};
     const jwtTokenHelper: JwtTokenHelper = JwtTokenHelper.createInstance();
     let accessToken: string | undefined;
-    const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
 
     for (const referenceKey of Object.keys(connectionReferences)) {
       const reference = connectionReferences[referenceKey];
@@ -328,18 +323,17 @@ export async function getConnectionsAndSettingsToUpdate(
           workflowBaseManagementUri,
           settingsToAdd,
           parametersFromDefinition,
-          parameterizeConnectionsSetting,
-          useMsi
+          isMIEnabled
         );
 
-        context.telemetry.properties.connectionKeyGenerated = useMsi
+        context.telemetry.properties.connectionKeyGenerated = isMIEnabled
           ? `${referenceKey} configured for MSI authentication`
           : `${referenceKey}-connectionKey generated and is valid for 7 days`;
 
-        if (!useMsi) {
+        if (!isMIEnabled) {
           areKeysGenerated = true;
         }
-      } else if (!useMsi && isApiHubConnectionId(reference.connection.id) && !localSettings.Values[`${referenceKey}-connectionKey`]) {
+      } else if (!isMIEnabled && isApiHubConnectionId(reference.connection.id) && !localSettings.Values[`${referenceKey}-connectionKey`]) {
         const resolvedConnectionReference = resolveConnectionsReferences(JSON.stringify(reference), undefined, localSettings.Values);
 
         accessToken = accessToken ? accessToken : await getAuthorizationToken(azureTenantId);
@@ -353,14 +347,13 @@ export async function getConnectionsAndSettingsToUpdate(
           workflowBaseManagementUri,
           settingsToAdd,
           parametersFromDefinition,
-          parameterizeConnectionsSetting,
-          useMsi
+          isMIEnabled
         );
 
         context.telemetry.properties.connectionKeyGenerated = `${referenceKey}-connectionKey generated and is valid for 7 days`;
         areKeysGenerated = true;
       } else if (
-        !useMsi &&
+        !isMIEnabled &&
         isApiHubConnectionId(reference.connection.id) &&
         localSettings.Values[`${referenceKey}-connectionKey`] &&
         isKeyExpired(jwtTokenHelper, Date.now(), localSettings.Values[`${referenceKey}-connectionKey`], 3, context, referenceKey)
@@ -378,8 +371,7 @@ export async function getConnectionsAndSettingsToUpdate(
           workflowBaseManagementUri,
           settingsToAdd,
           parametersFromDefinition,
-          parameterizeConnectionsSetting,
-          useMsi
+          isMIEnabled
         );
 
         context.telemetry.properties.connectionKeyRegenerate = `${referenceKey}-connectionKey regenerated and is valid for 7 days`;
@@ -390,7 +382,7 @@ export async function getConnectionsAndSettingsToUpdate(
     }
 
     // Update MSI connection permissions if MSI is enabled
-    if (useMsi) {
+    if (isMIEnabled) {
       try {
         const updatedReferences = await updateConnectionReferencesLocalMSI(
           context,
@@ -452,25 +444,31 @@ export async function getCustomCodeToUpdate(
   return { customCodeFiles: filteredCustomCodeMapping, appFiles };
 }
 
-export async function saveCustomCodeStandard(filePath: string, allCustomCodeFiles?: AllCustomCodeFiles): Promise<void> {
+export async function saveCustomCodeStandard(
+  context: IActionContext,
+  workflowFilePath: string,
+  allCustomCodeFiles?: AllCustomCodeFiles
+): Promise<void> {
   const { customCodeFiles: customCode, appFiles } = allCustomCodeFiles ?? {};
   if (!customCode || Object.keys(customCode).length === 0) {
     return;
   }
   try {
-    const projectPath = await getLogicAppProjectRoot(this.context, filePath);
-    const workspaceFolder = path.dirname(filePath);
-    // to prevent 404's we first check which custom code files are already present before deleting
-    Object.entries(customCode).forEach(([fileName, customCodeData]) => {
+    const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
+    const workflowFolderPath = path.dirname(workflowFilePath);
+    const customCodePromises = Object.entries(customCode).map(([fileName, customCodeData]) => {
       const { isModified, isDeleted, fileData } = customCodeData;
       if (isDeleted) {
-        deleteCustomCode(workspaceFolder, fileName);
-      } else if (isModified && fileData) {
-        uploadCustomCode(workspaceFolder, fileName, fileData);
+        return deleteCustomCode(workflowFolderPath, fileName);
       }
+      if (isModified && fileData) {
+        return uploadCustomCode(workflowFolderPath, fileName, fileData);
+      }
+      return Promise.resolve();
     });
     // upload the app files needed for powershell actions
-    Object.entries(appFiles ?? {}).forEach(([fileName, fileData]) => uploadCustomCode(projectPath, fileName, fileData));
+    const appFilePromises = Object.entries(appFiles ?? {}).map(([fileName, fileData]) => uploadCustomCode(projectPath, fileName, fileData));
+    await Promise.all([...customCodePromises, ...appFilePromises]);
   } catch (error) {
     const errorMessage = `Failed to save custom code: ${error}`;
     throw new Error(errorMessage);
@@ -492,7 +490,7 @@ export async function saveConnectionReferences(
 
   if (connections && Object.keys(connections).length) {
     await writeFormattedJson(connectionsFilePath, connections);
-    if (!connectionsFileExists && (await isCSharpProject(context, projectPath))) {
+    if (!connectionsFileExists && (await isCSharpProject(projectPath))) {
       await addNewFileInCSharpProject(context, connectionsFileName, projectPath);
     }
   }
@@ -986,28 +984,18 @@ async function checkExistingPolicy(
 }
 
 /**
- * Checks if Managed Service Identity (MSI) authentication is enabled for a Logic Apps project.
+ * Checks if managed identity authentication is enabled in the local settings.
  *
- * @param projectPath - The absolute path to the project directory containing the local settings file
- * @param context - The action context used for reading local settings
- * @returns A promise that resolves to `true` if MSI authentication is enabled, `false` otherwise.
- *          Returns `false` if the settings file cannot be read or parsed.
+ * @param context - The action context.
+ * @param projectPath - The logic apps project path.
+ * @returns A promise that resolves to `true` if MSI authentication is enabled, `false` otherwise. Returns `false` if the settings file cannot be read or parsed.
  */
-async function isMSIEnabled(projectPath: string, context: IActionContext): Promise<boolean> {
+async function isMISettingEnabled(context: IActionContext, projectPath: string): Promise<boolean> {
   try {
-    const localSettingsPath = path.join(projectPath, localSettingsFileName);
-    const localSettings = await getLocalSettingsJson(context, localSettingsPath);
-
-    // Retrieve the configured authentication method
+    const localSettings = await getLocalSettingsJson(context, projectPath);
     const authMethod = localSettings.Values?.[workflowAuthenticationMethodKey];
-
-    // Explicitly check for MSI, using string literal comparison instead of enum
-    if (typeof authMethod === 'string' && authMethod.toLowerCase() === 'managedserviceidentity') {
-      return true;
-    }
-
-    return false; // Not MSI or invalid value
+    return authMethod?.toLowerCase() === workflowAuthenticationMethodMIValue.toLowerCase();
   } catch {
-    return false; // Default to false if settings can't be read or parsed
+    return false;
   }
 }

@@ -1,4 +1,4 @@
-import Constants, { isManagedMcpConnector, MCP_AUTH_PROPERTY_KEYS } from '../../../common/constants';
+import Constants, { MCP_AUTH_PROPERTY_KEYS, usesMcpManagedIdentityFallback } from '../../../common/constants';
 import type { ApiHubAuthentication } from '../../../common/models/workflow';
 import { AgentUtils, isOpenApiSchemaVersion } from '../../../common/utilities/Utils';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
@@ -16,6 +16,7 @@ import type { RootState as TemplateRootState } from '../../state/templates/store
 import type { RootState } from '../../store';
 import {
   getConnectionReference,
+  getManagedIdentityFromConnection,
   isConnectionMultiAuthManagedIdentityType,
   isConnectionSingleAuthManagedIdentityType,
 } from '../../utils/connectors/connections';
@@ -54,6 +55,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { openPanel, setIsCreatingConnection, setIsPanelLoading } from '../../state/panel/panelSlice';
 import type { PanelMode } from '../../state/panel/panelTypes';
 import { isBuiltInMcpOperation, isManagedMcpOperation } from '../../state/workflow/helper';
+import { setIsWorkflowDirty } from '../../state/workflow/workflowSlice';
 import { createLiteralValueSegment } from '../../utils/parameters/segment';
 export interface ConnectionPayload {
   nodeId: string;
@@ -289,13 +291,14 @@ export const reloadParametersTab = createAsyncThunk<void, void>('reloadParameter
   dispatch(setIsPanelLoading(false));
 });
 
-const updateNodeConnectionAndProperties = async (
+export const updateNodeConnectionAndProperties = async (
   payload: UpdateConnectionPayload,
   dispatch: Dispatch,
   getState: () => RootState
 ): Promise<void> => {
   const { nodeId } = payload;
   dispatch(changeConnectionMapping(payload));
+  dispatch(setIsWorkflowDirty(true));
 
   const newState = getState() as RootState;
   const operationInfo = getRecordEntry(newState.operations.operationInfo, nodeId);
@@ -308,30 +311,43 @@ const updateNodeConnectionAndProperties = async (
     return;
   }
 
-  return updateDynamicDataInNode(
-    nodeId,
-    isTriggerNode(nodeId, newState.workflow.nodesMetadata),
-    operationInfo,
-    getConnectionReference(newState.connections, nodeId),
-    dependencies,
-    dispatch,
-    getState,
-    newState.tokens?.variables ?? {},
-    newState.workflowParameters?.definitions ?? {},
-    !!newState.tokens /* updateTokenMetadata */,
-    newlyAddedOperations ? undefined : operation
-  );
+  try {
+    await updateDynamicDataInNode(
+      nodeId,
+      isTriggerNode(nodeId, newState.workflow.nodesMetadata),
+      operationInfo,
+      getConnectionReference(newState.connections, nodeId),
+      dependencies,
+      dispatch,
+      getState,
+      newState.tokens?.variables ?? {},
+      newState.workflowParameters?.definitions ?? {},
+      !!newState.tokens /* updateTokenMetadata */,
+      newlyAddedOperations ? undefined : operation
+    );
+  } finally {
+    dispatch(setIsWorkflowDirty(true));
+  }
 };
 
-const getConnectionPropertiesIfRequired = (connection: Connection, connector: Connector): Record<string, any> | undefined => {
-  // For managed MCP connections, always include MSI auth properties if the Logic App has a managed identity.
-  // These connectors don't follow the standard multi-auth/single-auth MSI detection patterns.
+export const getConnectionPropertiesIfRequired = (connection: Connection, connector: Connector): Record<string, any> | undefined => {
+  // Managed MCP connectors that declare no auth of their own rely on the generic MCP auth parameter
+  // sets, which are managed identity based, so they always need MSI auth properties when the Logic
+  // App has a managed identity. They don't follow the standard multi-auth/single-auth MSI detection
+  // patterns. Connectors that declare their own auth (e.g. OAuth-backed `foundrygithubmcp`) must
+  // fall through to the standard detection so their credentials aren't replaced by an MSI token.
   if (
-    !isManagedMcpConnector(connector) &&
+    !usesMcpManagedIdentityFallback(connector) &&
     !isConnectionMultiAuthManagedIdentityType(connection, connector) &&
     !isConnectionSingleAuthManagedIdentityType(connection)
   ) {
     return undefined;
+  }
+
+  // Prefer the identity stored on the connection so a UAMI selection isn't lost on hybrid 'SystemAssigned, UserAssigned' apps.
+  const connectionIdentity = getManagedIdentityFromConnection(connection);
+  if (connectionIdentity) {
+    return getConnectionProperties(connector, connectionIdentity);
   }
 
   const identity = WorkflowService().getAppIdentity?.();

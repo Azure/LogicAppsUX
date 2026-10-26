@@ -12,6 +12,7 @@ import type {
 } from '@xyflow/react';
 import { BezierEdge, ReactFlow, SelectionMode } from '@xyflow/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import {
   agentOperation,
   containsIdTag,
@@ -19,6 +20,7 @@ import {
   guid,
   removeIdTag,
   WORKFLOW_NODE_TYPES,
+  DEFAULT_NOTE_SIZE,
   type WorkflowNodeType,
 } from '@microsoft/logic-apps-shared';
 import { useDispatch } from 'react-redux';
@@ -33,7 +35,7 @@ import { clearPanel, expandDiscoveryPanel, setNodeSelection } from '../core/stat
 import { useOperationPanelSelectedNodeIds } from '../core/state/panel/panelSelectors';
 import { addOperationRunAfter, removeOperationRunAfter } from '../core/actions/bjsworkflow/runafter';
 import { useClampPan, useIsA2AWorkflow } from '../core/state/designerView/designerViewSelectors';
-import { DEFAULT_NODE_SIZE, DEFAULT_NOTE_SIZE } from '../core/utils/graph';
+import { DEFAULT_NODE_SIZE } from '../core/utils/graph';
 import { DraftEdge } from './connections/draftEdge';
 import { useIsDarkMode, useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useLayout } from '../core/graphlayout';
@@ -54,6 +56,7 @@ import NoteNode from './CustomNodes/NoteNode';
 import ButtonEdge from './connections/edge';
 import HandoffEdge from './connections/handoffEdge';
 import HiddenEdge from './connections/hiddenEdge';
+import { NodeNavigation } from './NodeNavigation';
 
 const DesignerReactFlow = (props: any) => {
   const { canvasRef } = props;
@@ -702,6 +705,15 @@ const DesignerReactFlow = (props: any) => {
         hideAttribution: true,
       }}
     >
+      <NodeNavigation
+        canvasRef={canvasRef}
+        onNavigate={() => {
+          if (!userInferredTabNavigation) {
+            // Mount off-screen cards before dispatching the one-shot canvas focus request.
+            flushSync(() => setUserInferredTabNavigation(true));
+          }
+        }}
+      />
       {props.children}
     </ReactFlow>
   );

@@ -893,9 +893,97 @@ describe('Create Workspace Tests', function () {
 
       await assertNextButtonDisabled(driver);
 
-      await clearAndType(wfNameInput, uniqueName('validwf'));
+      await clearAndType(wfNameInput, 'la-trigger-github');
+      await assertNoValidationMessage(driver, 'Workflow name must start with a letter and can only contain letters, digits');
+
       await captureScreenshot(driver, 'validWfSep-passed');
-      console.log('[validWfSep] PASSED');
+      console.log('[validWfSep] PASSED: invalid separators rejected and "la-trigger-github" accepted');
+    });
+
+    it('should show reserved name error for workflow name "Artifacts"', async () => {
+      const wfNameInput = await findInputByLabel(driver, 'Workflow name');
+      await clearAndType(wfNameInput, 'Artifacts');
+
+      await findValidationMessage(driver, 'reserved and cannot be used');
+      console.log('[validWfReserved] Error shown for "Artifacts"');
+
+      await assertNextButtonDisabled(driver);
+
+      // Restore valid value
+      await clearAndType(wfNameInput, uniqueName('validwf'));
+      await captureScreenshot(driver, 'validWfReserved-artifacts-passed');
+      console.log('[validWfReserved] PASSED: "Artifacts" blocked as reserved');
+    });
+
+    it('should show reserved name error for workflow name "lib"', async () => {
+      const wfNameInput = await findInputByLabel(driver, 'Workflow name');
+      await clearAndType(wfNameInput, 'lib');
+
+      await findValidationMessage(driver, 'reserved and cannot be used');
+      console.log('[validWfReservedLib] Error shown for "lib"');
+
+      await assertNextButtonDisabled(driver);
+
+      // Restore valid value
+      await clearAndType(wfNameInput, uniqueName('validwf'));
+      await captureScreenshot(driver, 'validWfReserved-lib-passed');
+      console.log('[validWfReservedLib] PASSED: "lib" blocked as reserved');
+    });
+
+    it('should show reserved name error case-insensitively for workflow name', async () => {
+      const wfNameInput = await findInputByLabel(driver, 'Workflow name');
+
+      // 'artifacts' (lowercase of 'Artifacts')
+      await clearAndType(wfNameInput, 'artifacts');
+      await findValidationMessage(driver, 'reserved and cannot be used');
+      console.log('[validWfReservedCase] Error shown for "artifacts" (lowercase)');
+
+      // 'ARTIFACTS' (uppercase)
+      await clearAndType(wfNameInput, 'ARTIFACTS');
+      await findValidationMessage(driver, 'reserved and cannot be used');
+      console.log('[validWfReservedCase] Error shown for "ARTIFACTS" (uppercase)');
+
+      await assertNextButtonDisabled(driver);
+
+      // Restore valid value
+      await clearAndType(wfNameInput, uniqueName('validwf'));
+      await assertNoValidationMessage(driver, 'reserved and cannot be used');
+      await captureScreenshot(driver, 'validWfReserved-case-passed');
+      console.log('[validWfReservedCase] PASSED: case-insensitive reserved name check works');
+    });
+
+    it('should show reserved name error for workflow name "workflow-designtime"', async () => {
+      const wfNameInput = await findInputByLabel(driver, 'Workflow name');
+      await clearAndType(wfNameInput, 'workflow-designtime');
+
+      await findValidationMessage(driver, 'reserved and cannot be used');
+      console.log('[validWfReservedDesigntime] Error shown for "workflow-designtime"');
+
+      await assertNextButtonDisabled(driver);
+
+      // Restore valid value
+      await clearAndType(wfNameInput, uniqueName('validwf'));
+      await captureScreenshot(driver, 'validWfReserved-designtime-passed');
+      console.log('[validWfReservedDesigntime] PASSED: "workflow-designtime" blocked as reserved');
+    });
+
+    it('should clear reserved name error when valid workflow name is typed', async () => {
+      const wfNameInput = await findInputByLabel(driver, 'Workflow name');
+
+      // Start with reserved name
+      await clearAndType(wfNameInput, 'custom');
+      await findValidationMessage(driver, 'reserved and cannot be used');
+      console.log('[validWfReservedClear] Error shown for "custom"');
+
+      await assertNextButtonDisabled(driver);
+
+      // Type a valid name
+      await clearAndType(wfNameInput, uniqueName('validwf'));
+      await assertNoValidationMessage(driver, 'reserved and cannot be used');
+      console.log('[validWfReservedClear] Error cleared after typing valid name');
+
+      await captureScreenshot(driver, 'validWfReserved-clear-passed');
+      console.log('[validWfReservedClear] PASSED: reserved error clears when valid name typed');
     });
 
     // -----------------------------------------------------------------------
@@ -1405,7 +1493,7 @@ describe('Create Workspace Tests', function () {
       await selectRadioOption(driver, 'Logic app with custom code');
       await sleep(1000);
       const dotNetDropdown = await findDropdownByLabel(driver, '.NET Version');
-      await selectDropdownOption(driver, dotNetDropdown, '.NET 8');
+      await selectDropdownOption(driver, dotNetDropdown, '.NET 10');
       await sleep(TYPE_SETTLE);
 
       const folderInput = await findCcFolderInput();
@@ -2208,7 +2296,7 @@ describe('Create Workspace Tests', function () {
       }
       console.log('[ccFields] Custom code configuration fields visible');
 
-      // --- .NET Version dropdown: verify options and select .NET 8 ---
+      // --- .NET Version dropdown: verify options and select .NET 10 ---
       let dotNetDropdown: WebElement | null = null;
       try {
         dotNetDropdown = await findDropdownByLabel(driver, '.NET Version');
@@ -2243,13 +2331,13 @@ describe('Create Workspace Tests', function () {
       await driver.actions().sendKeys(Key.ESCAPE).perform();
       await sleep(300);
 
-      if (!optionTexts.some((o) => o.includes('.NET 8'))) {
-        throw new Error(`.NET 8 not found in dropdown. Available: ${JSON.stringify(optionTexts)}`);
+      if (!optionTexts.some((o) => o.includes('.NET 10'))) {
+        throw new Error(`.NET 10 not found in dropdown. Available: ${JSON.stringify(optionTexts)}`);
       }
 
-      await selectDropdownOption(driver, dotNetDropdown, '.NET 8');
+      await selectDropdownOption(driver, dotNetDropdown, '.NET 10');
       await sleep(500);
-      console.log('[ccFields] Selected .NET 8');
+      console.log('[ccFields] Selected .NET 10');
 
       // --- Fill valid custom code field values (validation already tested above) ---
       const folderInput = await findFolderNameInput(driver, 'customCode');
@@ -2277,8 +2365,8 @@ describe('Create Workspace Tests', function () {
       if (reviewText.toLowerCase().includes('custom code')) {
         console.log('[ccFields] "Custom Code Configuration" section found in review ✓');
       }
-      if (reviewText.toLowerCase().includes('.net 8') || reviewText.toLowerCase().includes('net8')) {
-        console.log('[ccFields] .NET 8 framework shown in review ✓');
+      if (reviewText.toLowerCase().includes('.net 10') || reviewText.toLowerCase().includes('net10')) {
+        console.log('[ccFields] .NET 10 framework shown in review ✓');
       }
 
       await captureScreenshot(driver, 'ccFields-passed');
@@ -2758,7 +2846,7 @@ describe('Create Workspace Tests', function () {
       // Step 7: Fill all custom code fields
       console.log('[createCustomCode] Filling custom code configuration fields...');
       await fillCustomCodeFields(driver, {
-        dotNetVersion: '.NET 8',
+        dotNetVersion: '.NET 10',
         folderName: ccFolderName,
         namespace: fnNamespace,
         functionName: fnName,
@@ -2794,7 +2882,7 @@ describe('Create Workspace Tests', function () {
       const hasCcFolder = reviewText.includes(ccFolderName);
       const hasNs = reviewText.includes(fnNamespace);
       const hasFn = reviewText.includes(fnName);
-      const hasNet8 = reviewText.toLowerCase().includes('.net 8') || reviewText.toLowerCase().includes('net8');
+      const hasNet10 = reviewText.toLowerCase().includes('.net 10') || reviewText.toLowerCase().includes('net10');
 
       console.log(`[createCustomCode] Review has workspace name: ${hasWsName}`);
       console.log(`[createCustomCode] Review has app name: ${hasApp}`);
@@ -2802,7 +2890,7 @@ describe('Create Workspace Tests', function () {
       console.log(`[createCustomCode] Review has custom code folder: ${hasCcFolder}`);
       console.log(`[createCustomCode] Review has function namespace: ${hasNs}`);
       console.log(`[createCustomCode] Review has function name: ${hasFn}`);
-      console.log(`[createCustomCode] Review has .NET 8: ${hasNet8}`);
+      console.log(`[createCustomCode] Review has .NET 10: ${hasNet10}`);
 
       if (!hasWsName) {
         await webview.switchBack();
@@ -3274,7 +3362,7 @@ describe('Create Workspace Tests', function () {
       await selectRadioOption(driver, 'Logic app with custom code');
       await sleep(2000);
       await fillCustomCodeFields(driver, {
-        dotNetVersion: '.NET 8',
+        dotNetVersion: '.NET 10',
         folderName: ccFolderName,
         namespace: fnNamespace,
         functionName: fnName,
@@ -3354,7 +3442,7 @@ describe('Create Workspace Tests', function () {
       await selectRadioOption(driver, 'Logic app with custom code');
       await sleep(2000);
       await fillCustomCodeFields(driver, {
-        dotNetVersion: '.NET 8',
+        dotNetVersion: '.NET 10',
         folderName: ccFolderName,
         namespace: fnNamespace,
         functionName: fnName,
@@ -3429,7 +3517,7 @@ describe('Create Workspace Tests', function () {
       await selectRadioOption(driver, 'Logic app with custom code');
       await sleep(2000);
       await fillCustomCodeFields(driver, {
-        dotNetVersion: '.NET 8',
+        dotNetVersion: '.NET 10',
         folderName: ccFolderName,
         namespace: fnNamespace,
         functionName: fnName,

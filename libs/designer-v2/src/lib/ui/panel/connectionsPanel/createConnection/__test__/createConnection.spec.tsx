@@ -518,6 +518,86 @@ describe('ui/createConnection', () => {
     });
   });
 
+  describe('multi-auth managed identity picker', () => {
+    const oauthOnlyParameterSets: ConnectionParameterSets = {
+      uiDefinition: { displayName: 'Authentication type', description: 'Authentication type' },
+      values: [
+        {
+          name: 'certOauth',
+          uiDefinition: { displayName: 'OAuth', description: 'OAuth' },
+          parameters: {
+            token: {
+              type: 'oauthSetting',
+              uiDefinition: { displayName: 'Token', description: 'Token', tooltip: 'Token', constraints: { required: 'true' } },
+            },
+          },
+        },
+      ],
+    } as any;
+
+    const managedIdentityParameterSets: ConnectionParameterSets = {
+      uiDefinition: { displayName: 'Authentication type', description: 'Authentication type' },
+      values: [
+        {
+          name: 'oauthMI',
+          uiDefinition: { displayName: 'Managed identity', description: 'Managed identity' },
+          parameters: {
+            'token:managedIdentity': {
+              type: 'managedIdentity',
+              uiDefinition: {
+                displayName: 'Managed identity',
+                description: 'Managed identity',
+                tooltip: 'Managed identity',
+                constraints: { required: 'true' },
+              },
+            },
+          },
+        },
+      ],
+    } as any;
+
+    it('should not render the managed identity picker for an OAuth-only parameter set', () => {
+      const props: CreateConnectionProps = {
+        connector: baseConnector,
+        connectionParameterSets: oauthOnlyParameterSets,
+        enableManagedIdentityPicker: true,
+        checkOAuthCallback: vi.fn(),
+      };
+
+      renderer.render(<CreateConnection {...props} />);
+      const createConnection = findConnectionCreateDiv(renderer.getRenderOutput());
+
+      expect(findMultiAuthManagedIdentityPicker(createConnection)).toBeUndefined();
+    });
+
+    it('should render the managed identity picker when the selected parameter set declares a managed identity parameter', () => {
+      const props: CreateConnectionProps = {
+        connector: baseConnector,
+        connectionParameterSets: managedIdentityParameterSets,
+        enableManagedIdentityPicker: true,
+        checkOAuthCallback: vi.fn(),
+      };
+
+      renderer.render(<CreateConnection {...props} />);
+      const createConnection = findConnectionCreateDiv(renderer.getRenderOutput());
+
+      expect(findMultiAuthManagedIdentityPicker(createConnection)).toBeDefined();
+    });
+
+    it('should not render the managed identity picker when the caller has not opted in', () => {
+      const props: CreateConnectionProps = {
+        connector: baseConnector,
+        connectionParameterSets: managedIdentityParameterSets,
+        checkOAuthCallback: vi.fn(),
+      };
+
+      renderer.render(<CreateConnection {...props} />);
+      const createConnection = findConnectionCreateDiv(renderer.getRenderOutput());
+
+      expect(findMultiAuthManagedIdentityPicker(createConnection)).toBeUndefined();
+    });
+  });
+
   function findConnectionCreateDiv(createConnection: ReactElement) {
     return React.Children.toArray(createConnection.props.children).find(
       (child) => (child as ReactElement)?.props.className === 'msla-create-connection-container'
@@ -571,6 +651,15 @@ describe('ui/createConnection', () => {
 
   function findMultiAuthInput(createConnection: ReactElement) {
     return findInput(createConnection, 'connection-multi-auth-input');
+  }
+
+  function findMultiAuthManagedIdentityPicker(createConnection: ReactElement) {
+    const connectionsParamContainer = findConnectionsParamContainer(createConnection);
+    return React.Children.toArray(connectionsParamContainer.props.children).find((paramRow) =>
+      React.Children.toArray((paramRow as ReactElement)?.props?.children ?? []).some(
+        (child) => (child as ReactElement)?.props?.id === 'multi-auth-managed-identity-select'
+      )
+    ) as ReactElement | undefined;
   }
 
   function findInput(createConnection: ReactElement, inputDataTestId: string) {

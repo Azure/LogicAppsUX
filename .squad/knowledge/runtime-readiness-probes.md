@@ -76,6 +76,19 @@ reliably reflects "triggers compiled, workflow live."
   to disabled and race the click.
 - See `runHelpers.ts:389` `clickRunTrigger` and `runHelpers.ts:458` `waitForRunStatusInList`.
 
+### Post-trigger proof for debug lifecycle regressions
+
+- Learning: For debug/run lifecycle regressions, host readiness is only a precondition. The E2E must prove:
+  1. workflow health is `Healthy`;
+  2. `listCallbackUrl` returns a non-empty callback URL;
+  3. the Run trigger path creates or updates run history;
+  4. latest run history reaches `Succeeded`;
+  5. expected action evidence is present, for example `Response:Succeeded`.
+- Why it matters: Issue #7040 could pass `admin/host/status` while still failing the user-visible workflow execution path after NuGet conversion.
+- Source: Issue #7040 `p49-nugetdebugconversion`; `runHelpers.assertRunTriggerable`, `waitForRunStatusInList`, `verifyAllNodesSucceeded`.
+- Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`.
+- Status: verified.
+
 ## Anti-Patterns (each one was tried in PR #9164 and failed)
 
 1. **Trust `admin/host/status` alone.** Process up ≠ workflow ready.
@@ -86,6 +99,7 @@ reliably reflects "triggers compiled, workflow live."
 6. **Skip port hygiene before F5.** Orphan hosts answer fast and authoritatively wrong.
 7. **Use a 30s or 60s deadline.** Cold CI cache + bundle DLL load routinely exceeds 60s.
    Default deadline is **90s for clicks**, **240s for the workflow-health probe**.
+8. **Treat host `Running` as proof a converted/debugged workflow can run.** For lifecycle regressions, also verify callback URL, run history, and action-level success.
 
 ## Required Diagnostics When a Probe Times Out
 

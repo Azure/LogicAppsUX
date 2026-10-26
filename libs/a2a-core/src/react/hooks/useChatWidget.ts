@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { useA2A } from '../use-a2a';
+import { useA2A, type ChatMessage } from '../use-a2a';
 import { AgentDiscovery } from '../../discovery/agent-discovery';
 import type { AgentCard } from '../../types';
 import type { AuthConfig, AuthRequiredHandler, UnauthorizedHandler, AuthRequiredEvent } from '../../client/types';
@@ -23,6 +23,7 @@ interface UseChatWidgetProps {
   oboUserToken?: string;
   storageConfig?: StorageConfig;
   initialContextId?: string;
+  initialMessages?: ChatMessage[];
   sessionId?: string; // For multi-session mode - reads messages from sessionMessages map
 }
 
@@ -39,12 +40,14 @@ export function useChatWidget({
   oboUserToken,
   storageConfig,
   initialContextId,
+  initialMessages,
   sessionId,
 }: UseChatWidgetProps) {
   const processedMessageIds = useRef<Set<string>>(new Set());
   const messageIdMap = useRef<Map<string, string>>(new Map());
   const sentMessageContents = useRef<Set<string>>(new Set());
   const contextIdRef = useRef<string | undefined>(undefined);
+  const sdkMessagesRef = useRef<ChatMessage[]>([]);
 
   const {
     addMessage,
@@ -104,6 +107,7 @@ export function useChatWidget({
           oboUserToken,
           storageConfig,
           initialContextId,
+          initialMessages,
         }
       : sessionId
         ? (undefined as any) // Disable useA2A in multi-session mode
@@ -120,8 +124,10 @@ export function useChatWidget({
             oboUserToken,
             storageConfig,
             initialContextId,
+            initialMessages,
           }
   );
+  sdkMessagesRef.current = messages;
 
   // Update contextIdRef when contextId changes
   useEffect(() => {
@@ -138,6 +144,46 @@ export function useChatWidget({
   useEffect(() => {
     setTyping(isLoading, contextId);
   }, [isLoading, setTyping, contextId]);
+
+  useEffect(() => {
+    clearLocalMessages();
+    processedMessageIds.current.clear();
+    messageIdMap.current.clear();
+    sentMessageContents.current.clear();
+
+    const initialMessageIds = new Set(initialMessages?.map((message) => message.id));
+    const latestInitialTimestamp = Math.max(
+      ...(initialMessages?.map((message) => message.timestamp.getTime()) ?? []),
+      Number.NEGATIVE_INFINITY
+    );
+    const liveMessages = sdkMessagesRef.current.filter(
+      (message) =>
+        !initialMessageIds.has(message.id) && message.timestamp instanceof Date && message.timestamp.getTime() > latestInitialTimestamp
+    );
+    const messagesToHydrate = initialMessages ? [...initialMessages, ...liveMessages] : [];
+
+    messagesToHydrate.forEach((initialMessage) => {
+      const internalMessage = createMessage(
+        initialMessage.content,
+        initialMessage.role === 'system' ? 'system' : initialMessage.role === 'user' ? 'user' : 'assistant'
+      );
+      internalMessage.id = initialMessage.id;
+      internalMessage.timestamp = initialMessage.timestamp;
+      internalMessage.status = 'sent';
+      internalMessage.metadata = {
+        ...initialMessage.metadata,
+        sdkMessageId: initialMessage.id,
+        timestamp: initialMessage.timestamp,
+        isStreaming: false,
+      };
+      internalMessage.files = initialMessage.files;
+      internalMessage.authEvent = initialMessage.authEvent;
+
+      processedMessageIds.current.add(initialMessage.id);
+      messageIdMap.current.set(initialMessage.id, internalMessage.id);
+      addMessage(internalMessage);
+    });
+  }, [initialMessages, addMessage, clearLocalMessages]);
 
   // Handle incoming messages from SDK
   useEffect(() => {
@@ -230,20 +276,12 @@ export function useChatWidget({
 
   // Clear processed messages when disconnecting
   useEffect(() => {
-    if (!isConnected) {
+    if (!isConnected && !initialMessages) {
       processedMessageIds.current.clear();
       messageIdMap.current.clear();
       sentMessageContents.current.clear();
     }
-  }, [isConnected]);
-
-  // Clear messages on mount to ensure clean state for new sessions
-  useEffect(() => {
-    clearLocalMessages();
-    processedMessageIds.current.clear();
-    messageIdMap.current.clear();
-    sentMessageContents.current.clear();
-  }, [clearLocalMessages]);
+  }, [isConnected, initialMessages]);
 
   // Auto-connect when agentCard is provided
   useEffect(() => {

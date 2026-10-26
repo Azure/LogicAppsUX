@@ -40,6 +40,7 @@ export default [
             react: {
                 version: "detect",
             },
+            "import/ignore": ["node_modules"],
         },
         extends: ["eslint:recommended"],
         overrides: [

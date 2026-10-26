@@ -8,7 +8,6 @@ import {
   useNodeSelectAdditionalCallback,
   useReadOnly,
   useSuppressDefaultNodeSelectFunctionality,
-  useUnitTest,
 } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
 import { ErrorLevel } from '../../core/state/operation/operationMetadataSlice';
@@ -16,16 +15,21 @@ import {
   useOperationErrorInfo,
   useParameterStaticResult,
   useParameterValidationErrors,
+  useSecureInputsOutputs,
   useTokenDependencies,
   useOperationVisuals,
   useIsNodeLoadingDynamicData,
 } from '../../core/state/operation/operationSelector';
-import { useIsNodeSelectedInOperationPanel, useIsNodeInMultiSelection } from '../../core/state/panel/panelSelectors';
+import {
+  useIsNodeSelectedInOperationPanel,
+  useIsNodeInMultiSelection,
+  useIsNodePinnedToOperationPanel,
+} from '../../core/state/panel/panelSelectors';
 import { changePanelNode, setSelectedNodeId, toggleNodeSelection } from '../../core/state/panel/panelSlice';
 import { useAllOperations, useConnectorName, useOperationInfo, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
-import { useIsMockSupported, useMocksByOperation } from '../../core/state/unitTest/unitTestSelectors';
 import {
+  useNodeDescription,
   useNodeDisplayName,
   useNodeMetadata,
   useRunData,
@@ -63,7 +67,6 @@ import { ActionCard } from './components/card';
 const DefaultNode = ({ id }: NodeProps) => {
   const readOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
-  const isUnitTest = useUnitTest();
 
   const intl = useIntl();
 
@@ -78,8 +81,6 @@ const DefaultNode = ({ id }: NodeProps) => {
   const runInstance = useRunInstance();
   const parentNodeId = useParentNodeId(id);
   const parentRunData = useRunData(parentNodeId ?? '');
-  const nodeMockResults = useMocksByOperation(isTrigger ? `&${id}` : id);
-  const isMockSupported = useIsMockSupported(id, isTrigger ?? false);
   const repetitionName = useRepetitionName(parentRunIndex, id, operationsInfo);
   const isLoadingDynamicData = useIsNodeLoadingDynamicData(id);
   const copilotModified = useIsCopilotModifiedNode(id);
@@ -188,6 +189,7 @@ const DefaultNode = ({ id }: NodeProps) => {
 
   const isSelected = useIsNodeSelectedInOperationPanel(id);
   const isMultiSelected = useIsNodeInMultiSelection(id);
+  const isPinned = useIsNodePinnedToOperationPanel(id);
   const isLeaf = useIsLeafNode(id);
   const label = useNodeDisplayName(id);
 
@@ -326,6 +328,8 @@ const DefaultNode = ({ id }: NodeProps) => {
 
   const shouldFocus = useShouldNodeFocus(id);
   const staticResults = useParameterStaticResult(id);
+  const nodeComment = useNodeDescription(id);
+  const isSecureInputsOutputs = useSecureInputsOutputs(id);
 
   const nodeIndex = useNodeIndex(id);
   const isCardActive = isMonitoringView ? !isNullOrUndefined(selfRunData?.status) : true;
@@ -346,9 +350,7 @@ const DefaultNode = ({ id }: NodeProps) => {
           isDragging={isDragging}
           isLoading={isLoading}
           isSelected={isSelected || isMultiSelected}
-          isUnitTest={isUnitTest}
-          nodeMockResults={nodeMockResults}
-          isMockSupported={isMockSupported}
+          isPinned={isPinned}
           runData={selfRunData}
           readOnly={readOnly}
           onClick={nodeClick}
@@ -357,6 +359,8 @@ const DefaultNode = ({ id }: NodeProps) => {
           onCopyClick={copyClick}
           setFocus={shouldFocus}
           staticResultsEnabled={!!staticResults && staticResults.staticResultOptions === StaticResultOption.ENABLED}
+          comment={nodeComment}
+          isSecureInputsOutputs={isSecureInputsOutputs}
           isLoadingDynamicData={isLoadingDynamicData}
           nodeIndex={nodeIndex}
           subtleBackground={isA2AWorkflow && isTrigger}

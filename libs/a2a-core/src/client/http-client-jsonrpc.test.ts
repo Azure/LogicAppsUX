@@ -1,3 +1,6 @@
+// @vitest-environment node
+// These tests exercise the fetch/Request/AbortController stack; run them in the node
+// environment so AbortSignal and Request share the undici realm (Node 24 validates this).
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { HttpClient } from './http-client';
 import { JsonRpcErrorResponse, JsonRpcErrorCode } from '../types/errors';

@@ -2,11 +2,17 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { localSettingsFileName, logicAppFilter } from '../../../constants';
+import {
+  localSettingsFileName,
+  logicAppFilter,
+  workflowLocationKey,
+  workflowResourceGroupNameKey,
+  workflowSubscriptionIdKey,
+  workflowTenantIdKey,
+} from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
-import { getLocalSettingsFile } from './getLocalSettingsFile';
 import type { StringDictionary } from '@azure/arm-appservice';
 import { isString } from '@microsoft/logic-apps-shared';
 import { confirmOverwriteSettings } from '@microsoft/vscode-azext-azureappservice';
@@ -14,23 +20,28 @@ import { AppSettingsTreeItem, type IAppSettingsClient } from '@microsoft/vscode-
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
+import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 
 /**
  * Uploads local settings file to the portal.
  * @param {IActionContext} context - Command context.
  * @param {AppSettingsTreeItem} node - App settings node structure.
- * @param {vscode.WorkspaceFolder} workspacePath - Workspace folder path.
+ * @param {vscode.WorkspaceFolder} workspaceFolder - Workspace folder.
  * @param {(RegExp | string)[]} exclude - Array of settings to exclude from uploading.
  * @returns {Promise<string>} Workspace file path.
  */
 export async function uploadAppSettings(
   context: IActionContext,
   node?: AppSettingsTreeItem,
-  workspacePath?: vscode.WorkspaceFolder,
+  workspaceFolder?: vscode.WorkspaceFolder,
   exclude?: (RegExp | string)[]
 ): Promise<void> {
-  const message: string = localize('selectLocalSettings', 'Select the local settings file to upload.');
-  const localSettingsPath: string = await getLocalSettingsFile(context, message, workspacePath);
+  // TODO(aeldridge): Defaults to the first workspace folder. Should prompt to select logic app across all workspace folders.
+  workspaceFolder = workspaceFolder || vscode.workspace.workspaceFolders?.[0];
+  const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder, false /* suppressPrompt */);
+  if (!projectPath) {
+    throw new Error(localize('noProjectFound', 'No Logic App project found in the workspace.'));
+  }
 
   if (!node) {
     node = await ext.rgApi.pickAppResource<AppSettingsTreeItem>(context, {
@@ -42,7 +53,7 @@ export async function uploadAppSettings(
   const client: IAppSettingsClient = await node.clientProvider.createClient(context);
 
   ext.outputChannel.show(true);
-  const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
+  const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, projectPath);
 
   if (localSettings.Values) {
     const remoteSettings: StringDictionary = await client.listApplicationSettings();
@@ -52,18 +63,33 @@ export async function uploadAppSettings(
       remoteSettings.properties = {};
     }
 
-    if (exclude) {
-      Object.keys(localSettings.Values).forEach((settingName) => {
-        if (
-          exclude.some((exclusion) =>
-            isString(exclusion) ? settingName.toLowerCase() === exclusion.toLowerCase() : settingName.match(new RegExp(exclusion, 'i'))
-          )
-        ) {
-          delete localSettings.Values?.[settingName];
-          excludedAppSettings.push(settingName);
-        }
-      });
-    }
+    // Azure connector settings hold an empty-string sentinel locally when Azure connectors are
+    // disabled (or the user cancels the sign-in wizard). Uploading the empty value would overwrite
+    // the correct platform-provided value in the portal and break managed-connection resolution,
+    // so skip these keys whenever their local value is empty.
+    const skipWhenEmptySettings = [workflowSubscriptionIdKey, workflowTenantIdKey, workflowResourceGroupNameKey, workflowLocationKey];
+
+    Object.keys(localSettings.Values).forEach((settingName) => {
+      const isExcludedByName =
+        exclude?.some((exclusion) => {
+          if (isString(exclusion)) {
+            return settingName.toLowerCase() === exclusion.toLowerCase();
+          }
+          // `exclusion` is already a RegExp. Passing a RegExp into `new RegExp(pattern, flags)`
+          // throws a TypeError, so reuse it directly and only re-create it to add the
+          // case-insensitive flag when it is missing.
+          const caseInsensitiveExclusion = exclusion.ignoreCase ? exclusion : new RegExp(exclusion.source, `${exclusion.flags}i`);
+          return caseInsensitiveExclusion.test(settingName);
+        }) ?? false;
+      const isEmptyConnectorSetting =
+        skipWhenEmptySettings.some((key) => key.toLowerCase() === settingName.toLowerCase()) &&
+        (localSettings.Values?.[settingName] ?? '').trim() === '';
+
+      if (isExcludedByName || isEmptyConnectorSetting) {
+        delete localSettings.Values?.[settingName];
+        excludedAppSettings.push(settingName);
+      }
+    });
 
     ext.outputChannel.appendLog(localize('uploadingSettings', 'Uploading settings...'), { resourceName: client.fullName });
     await confirmOverwriteSettings(context, localSettings.Values, remoteSettings.properties, client.fullName);

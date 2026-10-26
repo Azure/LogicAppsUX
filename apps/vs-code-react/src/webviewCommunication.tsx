@@ -27,6 +27,8 @@ import type {
   UpdateRuntimeBaseUrlMessage,
   UpdateCallbackInfoMessage,
   UpdateWorkflowPropertiesMessage,
+  SelectRunMessage,
+  GetDesignerVersionMessage,
 } from './run-service';
 import {
   changeCustomXsltPathList,
@@ -56,7 +58,9 @@ import {
 } from './state/DataMapSliceV2';
 import {
   initializeDesigner,
+  selectRun,
   updateCallbackUrl,
+  updateDesignerAccessToken,
   updateFileSystemConnection,
   updatePanelMetadata,
   updateRuntimeBaseUrl,
@@ -100,7 +104,9 @@ type DesignerMessageType =
   | ReceiveCallbackMessage
   | ResetDesignerDirtyStateMessage
   | CompleteFileSystemConnectionMessage
-  | UpdatePanelMetadataMessage;
+  | UpdatePanelMetadataMessage
+  | GetDesignerVersionMessage
+  | SelectRunMessage;
 type DataMapperMessageType =
   | FetchSchemaMessage
   | LoadDataMapMessage
@@ -115,6 +121,7 @@ type DataMapperMessageType =
   | GetTestFeatureEnablementStatus;
 type WorkflowMessageType =
   | UpdateCallbackInfoMessage
+  | UpdateWorkflowPropertiesMessage
   | UpdateRuntimeBaseUrlMessage
   | UpdateAccessTokenMessage
   | UpdateExportPathMessage
@@ -192,6 +199,10 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
           }
           case ExtensionCommand.getDesignerVersion: {
             dispatch(changeDesignerVersion(message.data));
+            break;
+          }
+          case ExtensionCommand.selectRun: {
+            dispatch(selectRun((message as SelectRunMessage).runId));
             break;
           }
           default:
@@ -374,6 +385,7 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
           }
           case ExtensionCommand.update_access_token: {
             dispatch(updateAccessToken(message.data.accessToken));
+            dispatch(updateDesignerAccessToken(message.data.accessToken));
             break;
           }
           case ExtensionCommand.update_export_path: {

@@ -42,11 +42,6 @@ export const DEFAULT_NODE_SIZE = {
   height: 40,
 };
 
-export const DEFAULT_NOTE_SIZE = {
-  width: 200,
-  height: 140,
-};
-
 // Creating generic layout nodes and edges below
 
 export const createWorkflowNode = (id: string, type?: WorkflowNodeType): WorkflowNode => ({
@@ -243,7 +238,7 @@ export const isOperationNameValid = (
     return { isValid: false, message: messages.DEFAULT };
   }
 
-  if (!name || isTemplateExpression(name) || name.length > 80 || hasInvalidChars(name, [':', '#'])) {
+  if (!name || isTemplateExpression(name) || name.length > 80 || hasInvalidChars(name, [':', '#', '<', '>', '%', '&', '\\', '?', '/'])) {
     return { isValid: false, message: messages.DEFAULT };
   }
 

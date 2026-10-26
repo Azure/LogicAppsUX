@@ -32,13 +32,11 @@ let mockDesignerIsDirty = false;
 vi.mock('@microsoft/logic-apps-designer-v2', () => ({
   serializeWorkflow: vi.fn(),
   store: { dispatch: mockDispatch, getState: mockGetState },
-  serializeUnitTestDefinition: vi.fn(),
   getNodeOutputOperations: vi.fn(),
   useIsDesignerDirty: () => mockDesignerIsDirty,
   validateParameter: vi.fn(() => []),
   updateParameterValidation: vi.fn(),
   openPanel: vi.fn((arg: unknown) => ({ type: 'openPanel', payload: arg })),
-  useAssertionsValidationErrors: () => ({}),
   useWorkflowParameterValidationErrors: () => ({}),
   useAllSettingsValidationErrors: () => ({}),
   useAllConnectionErrors: () => ({}),
@@ -58,7 +56,6 @@ vi.mock('@microsoft/logic-apps-shared', () => ({
 
 vi.mock('@microsoft/vscode-extension-logic-apps', () => ({
   ExtensionCommand: {
-    saveUnitTest: 'saveUnitTest',
     createUnitTest: 'createUnitTest',
     createUnitTestFromRun: 'createUnitTestFromRun',
     logTelemetry: 'logTelemetry',
@@ -153,10 +150,8 @@ vi.mock('../../../../intl', () => ({
     UNDO: 'Undo',
     REDO: 'Redo',
     FILE_BUG: 'File a bug',
-    SAVE_UNIT_TEST: 'Save unit test definition',
     CREATE_UNIT_TEST: 'Create unit test',
     CREATE_UNIT_TEST_FROM_RUN: 'Create unit test from run',
-    UNIT_TEST_ASSERTIONS: 'Assertions',
   }),
   designerMessages: {},
 }));
@@ -166,7 +161,6 @@ import { onUndoClick, onRedoClick } from '@microsoft/logic-apps-designer-v2';
 
 const defaultProps = {
   isDarkMode: false,
-  isUnitTest: false,
   isLocal: false,
   runId: '',
   saveWorkflow: vi.fn(),
@@ -267,5 +261,79 @@ describe('DesignerCommandBar (V2)', () => {
     render(<DesignerCommandBar {...defaultProps} />);
     const saveButton = screen.getByText('Save').closest('button');
     expect(saveButton?.disabled).toBe(true);
+  });
+
+  describe('unit test menu items', () => {
+    it('should show "Create unit test" in designer view when isLocal is true', () => {
+      render(<DesignerCommandBar {...defaultProps} isLocal={true} isDesignerView={true} />);
+      expect(screen.getByText('Create unit test')).toBeDefined();
+    });
+
+    it('should not show "Create unit test" when isLocal is false', () => {
+      render(<DesignerCommandBar {...defaultProps} isLocal={false} isDesignerView={true} />);
+      expect(screen.queryByText('Create unit test')).toBeNull();
+    });
+
+    it('should not show "Create unit test" in monitoring view', () => {
+      render(<DesignerCommandBar {...defaultProps} isLocal={true} isDesignerView={false} isMonitoringView={true} />);
+      expect(screen.queryByText('Create unit test')).toBeNull();
+    });
+
+    it('should disable "Create unit test" when designer is dirty', () => {
+      mockDesignerIsDirty = true;
+      render(<DesignerCommandBar {...defaultProps} isLocal={true} isDesignerView={true} />);
+      const button = screen.getByText('Create unit test').closest('button');
+      expect(button?.disabled).toBe(true);
+    });
+
+    it('should post createUnitTest message and telemetry when clicked', async () => {
+      mockDesignerIsDirty = false;
+      render(<DesignerCommandBar {...defaultProps} isLocal={true} isDesignerView={true} />);
+      const button = screen.getByText('Create unit test').closest('button') as HTMLButtonElement;
+      await userEvent.click(button);
+      expect(mockPostMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          command: 'logTelemetry',
+          data: expect.objectContaining({ name: 'CreateUnitTest' }),
+        })
+      );
+      expect(mockPostMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          command: 'createUnitTest',
+        })
+      );
+    });
+
+    it('should show "Create unit test from run" in monitoring view when isLocal and runId is set', () => {
+      render(<DesignerCommandBar {...defaultProps} isLocal={true} isDesignerView={false} isMonitoringView={true} runId="run-123" />);
+      expect(screen.getByText('Create unit test from run')).toBeDefined();
+    });
+
+    it('should not show "Create unit test from run" when runId is empty', () => {
+      render(<DesignerCommandBar {...defaultProps} isLocal={true} isDesignerView={false} isMonitoringView={true} runId="" />);
+      expect(screen.queryByText('Create unit test from run')).toBeNull();
+    });
+
+    it('should not show "Create unit test from run" in designer view', () => {
+      render(<DesignerCommandBar {...defaultProps} isLocal={true} isDesignerView={true} isMonitoringView={false} runId="run-123" />);
+      expect(screen.queryByText('Create unit test from run')).toBeNull();
+    });
+
+    it('should not show "Create unit test from run" when isLocal is false', () => {
+      render(<DesignerCommandBar {...defaultProps} isLocal={false} isDesignerView={false} isMonitoringView={true} runId="run-123" />);
+      expect(screen.queryByText('Create unit test from run')).toBeNull();
+    });
+
+    it('should post createUnitTestFromRun message with runId when clicked', async () => {
+      render(<DesignerCommandBar {...defaultProps} isLocal={true} isDesignerView={false} isMonitoringView={true} runId="run-456" />);
+      const button = screen.getByText('Create unit test from run').closest('button') as HTMLButtonElement;
+      await userEvent.click(button);
+      expect(mockPostMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          command: 'createUnitTestFromRun',
+          runId: 'run-456',
+        })
+      );
+    });
   });
 });

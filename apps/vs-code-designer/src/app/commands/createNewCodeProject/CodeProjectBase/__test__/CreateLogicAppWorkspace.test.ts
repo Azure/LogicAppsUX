@@ -15,6 +15,7 @@ import * as cloudToLocalUtilsModule from '../../../../utils/cloudToLocalUtils';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IWebviewProjectContext } from '@microsoft/vscode-extension-logic-apps';
+import { ext } from '../../../../../extensionVariables';
 
 vi.mock('vscode', () => ({
   window: {
@@ -64,6 +65,7 @@ vi.mock('path', () => ({
 
 vi.mock('../../../../utils/vsCodeConfig/settings', () => ({
   getGlobalSetting: vi.fn(),
+  isManagedIdentityAuthEnabled: vi.fn(() => true),
 }));
 
 // Import actual path for test setup (not affected by mock)
@@ -85,7 +87,7 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
         'utf-8'
       );
 
-      expect(templateContent).toContain('WorkflowActions.ManagedConnectors.Msnweather("msnweather").CurrentWeather');
+      expect(templateContent).toContain('WorkflowActions.Managed.Msnweather("msnweather").CurrentWeather');
       expect(templateContent).toContain('location: () => "98058"');
       expect(templateContent).toContain('public class <%= flowNameClass %> : IWorkflowProvider');
       expect(templateContent).toContain('WorkflowActions.BuiltIn.Response(responseBody: () => $"{getCurrentWeatherAction.Body}")');
@@ -108,7 +110,10 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       expect(templateContent).toContain('WorkflowTriggers.BuiltIn.CreateConversationalAgentTrigger()');
       expect(templateContent).toContain('WorkflowActions.BuiltIn.Agent(');
       expect(templateContent).toContain('WorkflowFactory.CreateAgentWorkflow(<%= flowName %>, workflow)');
-      expect(templateContent).toContain('WorkflowActions.ManagedConnectors.Office365("outlook").SendEmailV2');
+      expect(templateContent).toContain('WorkflowActions.Managed.Office365("outlook").SendEmail');
+      expect(templateContent).not.toContain('AgentBuilder');
+      expect(templateContent).not.toContain('.Builder');
+      expect(templateContent).not.toContain('CreateAgentTrigger');
       expect(templateContent).not.toContain('WorkflowBuilderFactory.CreateConversationalAgent');
       expect(templateContent).not.toContain('AddWorkflow()');
     });
@@ -126,7 +131,11 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       expect(templateContent).toContain('WorkflowActions.BuiltIn.Agent(');
       expect(templateContent).toContain('WorkflowFactory.CreateStatefulWorkflow(<%= flowName %>, workflow)');
       expect(templateContent).toContain('MessageRole.User');
-      expect(templateContent).toContain('WorkflowActions.ManagedConnectors.Office365("outlook").SendEmailV2');
+      expect(templateContent).toContain('WorkflowActions.Managed.Office365("outlook").SendEmail');
+      expect(templateContent).not.toContain('AgentBuilder');
+      expect(templateContent).not.toContain('.Builder');
+      expect(templateContent).not.toContain('CreateAgentTrigger');
+      expect(templateContent).not.toContain('WorkflowBuilderFactory.CreateConversationalAgent');
       expect(templateContent).not.toContain('AddWorkflow()');
     });
   });
@@ -180,7 +189,12 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       expect(vi.mocked(fse.readFile)).toHaveBeenCalledWith(expect.stringContaining('AgentCodefulWorkflow'), 'utf-8');
       const workflowWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes(`${testWorkflowName}.cs`));
       expect(workflowWriteCall?.[1]).toContain(`public class ${testWorkflowName} : IWorkflowProvider`);
+      expect(workflowWriteCall?.[1]).toContain('WorkflowActions.BuiltIn.Agent(');
       expect(workflowWriteCall?.[1]).toContain(`WorkflowFactory.CreateAgentWorkflow("${testWorkflowName}", workflow)`);
+      expect(workflowWriteCall?.[1]).not.toContain('AgentBuilder');
+      expect(workflowWriteCall?.[1]).not.toContain('.Builder');
+      expect(workflowWriteCall?.[1]).not.toContain('CreateAgentTrigger');
+      expect(workflowWriteCall?.[1]).not.toContain('WorkflowBuilderFactory.CreateConversationalAgent');
 
       const programWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes('Program.cs'));
       expect(programWriteCall?.[1]).toContain(`namespace ${testProjectName}`);
@@ -222,7 +236,12 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       expect(vi.mocked(fse.readFile)).toHaveBeenCalledWith(expect.stringContaining('AgenticCodefulWorkflow'), 'utf-8');
       const workflowWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes(`${testWorkflowName}.cs`));
       expect(workflowWriteCall?.[1]).toContain(`public class ${testWorkflowName} : IWorkflowProvider`);
+      expect(workflowWriteCall?.[1]).toContain('WorkflowActions.BuiltIn.Agent(');
       expect(workflowWriteCall?.[1]).toContain(`WorkflowFactory.CreateStatefulWorkflow("${testWorkflowName}", workflow)`);
+      expect(workflowWriteCall?.[1]).not.toContain('AgentBuilder');
+      expect(workflowWriteCall?.[1]).not.toContain('.Builder');
+      expect(workflowWriteCall?.[1]).not.toContain('CreateAgentTrigger');
+      expect(workflowWriteCall?.[1]).not.toContain('WorkflowBuilderFactory.CreateConversationalAgent');
 
       const programWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes('Program.cs'));
       expect(programWriteCall?.[1]).not.toContain(`${testWorkflowName}.AddWorkflow()`);
@@ -320,8 +339,8 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       if (createAgentCodefulWorkflowFile) {
         await createAgentCodefulWorkflowFile(testProjectPath, testProjectName, testWorkflowName, WorkflowType.agentCodeful);
 
-        // Verify all 4 files were created for first workflow
-        expect(vi.mocked(fse.writeFile)).toHaveBeenCalledTimes(4);
+        // Verify workflow, Program.cs, and .csproj were created for the first workflow
+        expect(vi.mocked(fse.writeFile)).toHaveBeenCalledTimes(3);
 
         const writtenFiles = vi.mocked(fse.writeFile).mock.calls.map((call: any) => call[0]);
 
@@ -334,8 +353,8 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
         // Verify .csproj was created
         expect(writtenFiles).toEqual(expect.arrayContaining([expect.stringContaining(`${testProjectName}.csproj`)]));
 
-        // Verify nuget.config was created
-        expect(writtenFiles).toEqual(expect.arrayContaining([expect.stringContaining('nuget.config')]));
+        // SDK packages are restored from configured NuGet sources; no project nuget.config is generated.
+        expect(writtenFiles).not.toEqual(expect.arrayContaining([expect.stringContaining('nuget.config')]));
 
         // Verify workflow file has correct namespace
         const workflowWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes(`${testWorkflowName}.cs`));
@@ -630,46 +649,6 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
   });
 });
 
-describe('getHostContent', () => {
-  it('should return host.json with correct structure', async () => {
-    const hostJson = await CreateLogicAppWorkspaceModule.getHostContent();
-
-    expect(hostJson).toEqual({
-      version: '2.0',
-      logging: {
-        applicationInsights: {
-          samplingSettings: {
-            isEnabled: true,
-            excludedTypes: 'Request',
-          },
-        },
-      },
-      extensionBundle: {
-        id: expect.stringContaining('Microsoft.Azure.Functions.ExtensionBundle.Workflows'),
-        version: expect.any(String),
-      },
-    });
-  });
-
-  it('should return host.json with version 2.0', async () => {
-    const hostJson = await CreateLogicAppWorkspaceModule.getHostContent();
-    expect(hostJson.version).toBe('2.0');
-  });
-
-  it('should include application insights logging configuration', async () => {
-    const hostJson = await CreateLogicAppWorkspaceModule.getHostContent();
-    expect(hostJson.logging.applicationInsights.samplingSettings.isEnabled).toBe(true);
-    expect(hostJson.logging.applicationInsights.samplingSettings.excludedTypes).toBe('Request');
-  });
-
-  it('should include extension bundle configuration', async () => {
-    const hostJson = await CreateLogicAppWorkspaceModule.getHostContent();
-    expect(hostJson.extensionBundle).toBeDefined();
-    expect(hostJson.extensionBundle.id).toContain('Workflows');
-    expect(hostJson.extensionBundle.version).toBeTruthy();
-  });
-});
-
 describe('createLogicAppWorkspace', () => {
   const mockContext: IActionContext = {
     telemetry: { properties: {}, measurements: {} },
@@ -793,7 +772,7 @@ describe('createLogicAppWorkspace', () => {
   });
 
   it('should create workspace file with correct structure for standard logic app', async () => {
-    await CreateLogicAppWorkspaceModule.createWorkspaceStructure(mockOptionsLogicApp);
+    await CreateLogicAppWorkspaceModule.createWorkspaceFiles(mockOptionsLogicApp);
 
     const writeCall = vi.mocked(fse.writeJson).mock.calls[0];
     const workspaceData = writeCall[1];
@@ -820,7 +799,7 @@ describe('createLogicAppWorkspace', () => {
   it('should include function folder for custom code projects', async () => {
     const customCodeWorkspaceFilePath = path.join('test', 'workspace', 'TestWorkspaceCustomCode', 'TestWorkspaceCustomCode.code-workspace');
 
-    await CreateLogicAppWorkspaceModule.createWorkspaceStructure(mockOptionsCustomCode);
+    await CreateLogicAppWorkspaceModule.createWorkspaceFiles(mockOptionsCustomCode);
 
     const writeCall = vi.mocked(fse.writeJson).mock.calls[0];
     const workspaceData = writeCall[1];
@@ -851,7 +830,7 @@ describe('createLogicAppWorkspace', () => {
   it('should include function folder for rules engine projects', async () => {
     const rulesEngineWorkspaceFilePath = path.join('test', 'workspace', 'TestWorkspaceRules', 'TestWorkspaceRules.code-workspace');
 
-    await CreateLogicAppWorkspaceModule.createWorkspaceStructure(mockOptionsRulesEngine);
+    await CreateLogicAppWorkspaceModule.createWorkspaceFiles(mockOptionsRulesEngine);
 
     const writeCall = vi.mocked(fse.writeJson).mock.calls[0];
     const workspaceData = writeCall[1];
@@ -989,7 +968,7 @@ describe('createLogicAppWorkspace', () => {
     await CreateLogicAppWorkspaceModule.createLogicAppWorkspace(mockContext, mockOptionsLogicApp, true);
 
     expect(cloudToLocalUtilsModule.logicAppPackageProcessing).toHaveBeenCalled();
-    expect(vscode.window.showInformationMessage).toHaveBeenCalledWith(expect.stringContaining('Finished extracting package'));
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(expect.stringContaining('Finished extracting package'));
   });
 
   it('should create function app files for custom code projects when not from package', async () => {
@@ -1036,10 +1015,10 @@ describe('createLogicAppWorkspace', () => {
     );
   });
 
-  it('should show success message after workspace creation', async () => {
+  it('should log success message after workspace creation', async () => {
     await CreateLogicAppWorkspaceModule.createLogicAppWorkspace(mockContext, mockOptionsLogicApp, false);
 
-    expect(vscode.window.showInformationMessage).toHaveBeenCalledWith(expect.stringContaining('Finished creating project'));
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(expect.stringContaining('Finished creating project'));
   });
 });
 
@@ -1212,10 +1191,7 @@ describe('updateWorkspaceFile', () => {
   });
 });
 
-describe('createWorkspaceStructure - Testing Actual Implementation', () => {
-  // This suite tests the ACTUAL createWorkspaceStructure function
-  // Only file system operations are mocked, business logic is real
-
+describe('createWorkspaceFiles - Testing Actual Implementation', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     vi.mocked(path.join).mockImplementation((...args: string[]) => actualPath.join(...args));
@@ -1232,7 +1208,7 @@ describe('createWorkspaceStructure - Testing Actual Implementation', () => {
       logicAppType: ProjectType.logicApp,
     } as any;
 
-    await CreateLogicAppWorkspaceModule.createWorkspaceStructure(mockOptions);
+    await CreateLogicAppWorkspaceModule.createWorkspaceFiles(mockOptions);
 
     // Verify workspace folder creation - normalize path for cross-platform compatibility
     expect(fse.ensureDir).toHaveBeenCalledWith(actualPath.join('test', 'workspace', 'MyWorkspace'));
@@ -1254,7 +1230,7 @@ describe('createWorkspaceStructure - Testing Actual Implementation', () => {
       functionFolderName: 'MyFunctions',
     } as any;
 
-    await CreateLogicAppWorkspaceModule.createWorkspaceStructure(mockOptions);
+    await CreateLogicAppWorkspaceModule.createWorkspaceFiles(mockOptions);
 
     const writeCall = vi.mocked(fse.writeJson).mock.calls[0];
     expect(writeCall[1].folders).toHaveLength(2);
@@ -1284,6 +1260,13 @@ describe('createLocalConfigurationFiles', () => {
     workspaceName: 'TestWorkspace',
     logicAppName: 'TestLogicApp',
     logicAppType: ProjectType.rulesEngine,
+    workflowName: 'TestWorkflow',
+  } as any;
+
+  const mockContextCodeful: IWebviewProjectContext = {
+    workspaceName: 'TestWorkspace',
+    logicAppName: 'TestLogicApp',
+    logicAppType: ProjectType.codeful,
     workflowName: 'TestWorkflow',
   } as any;
 
@@ -1344,9 +1327,8 @@ describe('createLocalConfigurationFiles', () => {
     expect(funcIgnoreContent).toContain('.git*');
     expect(funcIgnoreContent).toContain('.vscode');
     expect(funcIgnoreContent).toContain('local.settings.json');
-    expect(funcIgnoreContent).toContain('test');
     expect(funcIgnoreContent).toContain('.debug');
-    expect(funcIgnoreContent).toContain('workflow-designtime/');
+    expect(funcIgnoreContent).toContain('workflow-designtime');
   });
 
   it('should NOT include global.json in .funcignore for standard logic app projects', async () => {
@@ -1387,10 +1369,11 @@ describe('createLocalConfigurationFiles', () => {
       FUNCTIONS_WORKER_RUNTIME: 'dotnet',
       APP_KIND: 'workflowapp',
       ProjectDirectoryPath: path.join('test', 'workspace', 'TestLogicApp'),
+      WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
     });
 
     // Verify no other properties exist
-    expect(Object.keys(localSettingsData.Values)).toHaveLength(5);
+    expect(Object.keys(localSettingsData.Values)).toHaveLength(6);
   });
 
   it('should include global.json in .funcignore for custom code projects', async () => {
@@ -1432,11 +1415,12 @@ describe('createLocalConfigurationFiles', () => {
       FUNCTIONS_WORKER_RUNTIME: 'dotnet',
       APP_KIND: 'workflowapp',
       ProjectDirectoryPath: path.join('test', 'workspace', 'TestLogicApp'),
+      WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
       AzureWebJobsFeatureFlags: 'EnableMultiLanguageWorker',
     });
 
-    // Verify exactly 6 properties exist (5 standard + 1 feature flag)
-    expect(Object.keys(localSettingsData.Values)).toHaveLength(6);
+    // Verify exactly 7 properties exist (5 standard + auth method + 1 feature flag)
+    expect(Object.keys(localSettingsData.Values)).toHaveLength(7);
   });
 
   it('should include global.json in .funcignore for rules engine projects', async () => {
@@ -1478,11 +1462,63 @@ describe('createLocalConfigurationFiles', () => {
       FUNCTIONS_WORKER_RUNTIME: 'dotnet',
       APP_KIND: 'workflowapp',
       ProjectDirectoryPath: path.join('test', 'workspace', 'TestLogicApp'),
+      WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
       AzureWebJobsFeatureFlags: 'EnableMultiLanguageWorker',
     });
 
-    // Verify exactly 6 properties exist (5 standard + 1 feature flag)
-    expect(Object.keys(localSettingsData.Values)).toHaveLength(6);
+    // Verify exactly 7 properties exist (5 standard + auth method + 1 feature flag)
+    expect(Object.keys(localSettingsData.Values)).toHaveLength(7);
+  });
+
+  it('should create local.settings.json with exact required values for codeful projects', async () => {
+    await CreateLogicAppWorkspaceModule.createLocalConfigurationFiles(mockContextCodeful, logicAppFolderPath);
+
+    const localSettingsCall = vi
+      .mocked(fsUtils.writeFormattedJson)
+      .mock.calls.find((call) => call[0].toString().includes('local.settings.json'));
+    expect(localSettingsCall).toBeDefined();
+    const localSettingsData = localSettingsCall![1] as any;
+
+    // Codeful is not a plain logic app (so it gets the multi-language worker flag) and additionally
+    // gets the codeful-enabled flag.
+    expect(localSettingsData.Values).toEqual({
+      AzureWebJobsStorage: 'UseDevelopmentStorage=true',
+      FUNCTIONS_INPROC_NET8_ENABLED: '1',
+      FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+      APP_KIND: 'workflowapp',
+      ProjectDirectoryPath: path.join('test', 'workspace', 'TestLogicApp'),
+      WORKFLOWS_AUTHENTICATION_METHOD: 'managedServiceIdentity',
+      AzureWebJobsFeatureFlags: 'EnableMultiLanguageWorker',
+      WORKFLOW_CODEFUL_ENABLED: 'true',
+    });
+
+    // Verify exactly 8 properties exist (5 standard + auth method + feature flag + codeful-enabled).
+    expect(Object.keys(localSettingsData.Values)).toHaveLength(8);
+  });
+
+  it('should include codeful-specific build artifact patterns in .funcignore for codeful projects', async () => {
+    await CreateLogicAppWorkspaceModule.createLocalConfigurationFiles(mockContextCodeful, logicAppFolderPath);
+
+    const funcIgnoreCall = vi.mocked(fse.writeFile).mock.calls.find((call) => call[0].toString().includes('.funcignore'));
+    expect(funcIgnoreCall).toBeDefined();
+    const funcIgnoreContent = funcIgnoreCall![1] as string;
+
+    expect(funcIgnoreContent).toContain('.nuget');
+    expect(funcIgnoreContent).toContain('obj');
+    expect(funcIgnoreContent).toContain('bin');
+  });
+
+  it('should NOT include codeful-specific build artifact patterns in .funcignore for standard logic app', async () => {
+    await CreateLogicAppWorkspaceModule.createLocalConfigurationFiles(mockContext, logicAppFolderPath);
+
+    const funcIgnoreCall = vi.mocked(fse.writeFile).mock.calls.find((call) => call[0].toString().includes('.funcignore'));
+    expect(funcIgnoreCall).toBeDefined();
+    const funcIgnoreContent = funcIgnoreCall![1] as string;
+    const lines = funcIgnoreContent.split(/\r?\n/);
+
+    expect(funcIgnoreContent).not.toContain('.nuget');
+    expect(lines).not.toContain('obj');
+    expect(lines).not.toContain('bin');
   });
 
   it('should include extension bundle configuration in host.json', async () => {

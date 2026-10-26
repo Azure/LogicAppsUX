@@ -146,6 +146,10 @@ describe('Connection prompt fallback E2E', function () {
     await driver.switchTo().defaultContent();
     const localSettings = JSON.parse(fs.readFileSync(path.join(entry.appDir, 'local.settings.json'), 'utf-8'));
     assert.strictEqual(localSettings.Values?.WORKFLOWS_SUBSCRIPTION_ID, '', 'Cancellation should persist Azure connectors disabled');
-    assert.strictEqual(localSettings.Values?.WORKFLOWS_AUTHENTICATION_METHOD, 'rawKeys', 'Cancellation should default to connection keys');
+    assert.strictEqual(
+      localSettings.Values?.WORKFLOWS_AUTHENTICATION_METHOD,
+      'managedServiceIdentity',
+      'Cancellation should default to managed service identity'
+    );
   });
 });

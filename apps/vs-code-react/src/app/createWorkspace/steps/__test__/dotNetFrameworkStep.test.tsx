@@ -4,7 +4,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { createWorkspaceSlice, type CreateWorkspaceState } from '../../../../state/createWorkspaceSlice';
-import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { Platform, ProjectType, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 
 vi.mock('../../createWorkspaceStyles', () => ({
   useCreateWorkspaceStyles: () =>
@@ -38,6 +38,7 @@ const createTestStore = (overrides: Partial<CreateWorkspaceState> = {}) => {
     isComplete: false,
     workspaceFileJson: '',
     logicAppsWithoutCustomCode: undefined,
+    existingFolders: [],
     flowType: 'createWorkspace',
     pathValidationResults: {},
     packageValidationResults: {},
@@ -47,6 +48,10 @@ const createTestStore = (overrides: Partial<CreateWorkspaceState> = {}) => {
     separator: '/',
     platform: null,
     isDevContainerProject: false,
+    availableProjects: [],
+    isAddCustomCodeFlow: false,
+    workspaceRootFolder: '',
+    currentFolderPath: '',
     ...overrides,
   };
 
@@ -72,6 +77,15 @@ const renderWithStore = (overrides: Partial<CreateWorkspaceState> = {}) => {
   };
 };
 
+const getCustomCodeInputs = () => {
+  const textboxes = screen.getAllByRole('textbox');
+  return {
+    folderInput: textboxes[0],
+    namespaceInput: textboxes[1],
+    functionNameInput: textboxes[2],
+  };
+};
+
 describe('DotNetFrameworkStep', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -83,28 +97,37 @@ describe('DotNetFrameworkStep', () => {
       expect(screen.getByRole('combobox')).toBeInTheDocument();
     });
 
-    it('should render .NET 8 and .NET 10 options on non-Windows', () => {
-      renderWithStore({ logicAppType: ProjectType.customCode, platform: null });
+    it('should render only .NET 10 on non-Windows', () => {
+      renderWithStore({ logicAppType: ProjectType.customCode, platform: Platform.linux });
       const combobox = screen.getByRole('combobox');
       fireEvent.click(combobox);
-      expect(screen.getByText('.NET 8')).toBeInTheDocument();
       expect(screen.getByText('.NET 10')).toBeInTheDocument();
+      expect(screen.queryByText('.NET 8')).not.toBeInTheDocument();
+      expect(screen.queryByText('.NET Framework')).not.toBeInTheDocument();
+      expect(screen.getAllByRole('option').map((option) => option.textContent)).toEqual(['.NET 10']);
     });
 
     it('should also render .NET Framework option on Windows', () => {
-      renderWithStore({ logicAppType: ProjectType.customCode, platform: 'win32' as any });
+      renderWithStore({ logicAppType: ProjectType.customCode, platform: Platform.windows });
       const combobox = screen.getByRole('combobox');
       fireEvent.click(combobox);
       expect(screen.getByText('.NET Framework')).toBeInTheDocument();
-      expect(screen.getByText('.NET 8')).toBeInTheDocument();
       expect(screen.getByText('.NET 10')).toBeInTheDocument();
+      expect(screen.queryByText('.NET 8')).not.toBeInTheDocument();
+      const options = screen.getAllByRole('option');
+      expect(options).toHaveLength(2);
+      expect(options.map((option) => option.textContent)).toEqual(['.NET Framework', '.NET 10']);
     });
 
-    it('should not render .NET Framework option on non-Windows', () => {
-      renderWithStore({ logicAppType: ProjectType.customCode, platform: 'darwin' as any });
+    it('should not render .NET Framework option when platform is not yet initialized (null)', () => {
+      renderWithStore({ logicAppType: ProjectType.customCode, platform: null });
       const combobox = screen.getByRole('combobox');
       fireEvent.click(combobox);
       expect(screen.queryByText('.NET Framework')).not.toBeInTheDocument();
+      expect(screen.getByText('.NET 10')).toBeInTheDocument();
+      expect(screen.queryByText('.NET 8')).not.toBeInTheDocument();
+      const options = screen.getAllByRole('option');
+      expect(options.map((option) => option.textContent)).toEqual(['.NET 10']);
     });
   });
 
@@ -112,25 +135,16 @@ describe('DotNetFrameworkStep', () => {
     it('should show .NET 10 label when net10.0 is selected', () => {
       renderWithStore({
         logicAppType: ProjectType.customCode,
-        targetFramework: 'net10.0',
+        targetFramework: TargetFramework.Net10,
       });
       const combobox = screen.getByRole('combobox');
       expect(combobox).toHaveTextContent('.NET 10');
     });
 
-    it('should show .NET 8 label when net8 is selected', () => {
-      renderWithStore({
-        logicAppType: ProjectType.customCode,
-        targetFramework: 'net8',
-      });
-      const combobox = screen.getByRole('combobox');
-      expect(combobox).toHaveTextContent('.NET 8');
-    });
-
     it('should show description text when a framework is selected', () => {
       renderWithStore({
         logicAppType: ProjectType.customCode,
-        targetFramework: 'net10.0',
+        targetFramework: TargetFramework.Net10,
       });
       // Description text should appear below the dropdown
       expect(screen.getByText(/modern development and performance/)).toBeInTheDocument();
@@ -159,7 +173,7 @@ describe('DotNetFrameworkStep', () => {
   });
 
   describe('framework selection dispatch', () => {
-    it('should dispatch setTargetFramework when an option is selected', () => {
+    it('should dispatch setTargetFramework when .NET 10 is selected', () => {
       const { store } = renderWithStore({
         logicAppType: ProjectType.customCode,
         targetFramework: '',
@@ -172,7 +186,58 @@ describe('DotNetFrameworkStep', () => {
       fireEvent.click(net10Option);
 
       const state = store.getState().createWorkspace;
-      expect(state.targetFramework).toBe('net10.0');
+      expect(state.targetFramework).toBe(TargetFramework.Net10);
+    });
+  });
+
+  describe('field validation messages', () => {
+    it('shows the function folder validation message for invalid folder names', () => {
+      renderWithStore({ logicAppType: ProjectType.customCode });
+      const { folderInput } = getCustomCodeInputs();
+
+      fireEvent.change(folderInput, { target: { value: '1folder' } });
+
+      expect(
+        screen.getByText('Function folder name must start with a letter and can only contain letters, digits, "_" and "-".')
+      ).toBeInTheDocument();
+    });
+
+    it('allows valid hyphenated function folder names', () => {
+      renderWithStore({ logicAppType: ProjectType.customCode });
+      const { folderInput } = getCustomCodeInputs();
+
+      fireEvent.change(folderInput, { target: { value: 'func-folder_01' } });
+
+      expect(
+        screen.queryByText('Function folder name must start with a letter and can only contain letters, digits, "_" and "-".')
+      ).not.toBeInTheDocument();
+    });
+
+    it('shows the function folder same-as-logic-app message', () => {
+      renderWithStore({ logicAppType: ProjectType.customCode, logicAppName: 'LogicApp' });
+      const { folderInput } = getCustomCodeInputs();
+
+      fireEvent.change(folderInput, { target: { value: 'logicapp' } });
+
+      expect(screen.getByText('Function folder name cannot be the same as the logic app name.')).toBeInTheDocument();
+    });
+
+    it('shows the namespace validation message for invalid namespaces', () => {
+      renderWithStore({ logicAppType: ProjectType.customCode });
+      const { namespaceInput } = getCustomCodeInputs();
+
+      fireEvent.change(namespaceInput, { target: { value: 'Invalid-Namespace' } });
+
+      expect(screen.getByText('Function namespace must be a valid C# namespace.')).toBeInTheDocument();
+    });
+
+    it('shows the function name validation message for invalid C# identifiers', () => {
+      renderWithStore({ logicAppType: ProjectType.customCode });
+      const { functionNameInput } = getCustomCodeInputs();
+
+      fireEvent.change(functionNameInput, { target: { value: 'my-function' } });
+
+      expect(screen.getByText('Function name must start with a letter and can only contain letters, digits, and "_".')).toBeInTheDocument();
     });
   });
 });

@@ -1,0 +1,48 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+import { workflowSubscriptionIdKey } from '../../../constants';
+import { localize } from '../../../localize';
+import type { IAzureConnectorsContext } from './azureConnectorWizard';
+import { createAzureWizard } from './azureConnectorWizard';
+import { getAzureConnectorDetailsForLocalProject, invalidateAzureDetailsCache } from './azureConnectorDetails';
+import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
+import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
+import type { AzureWizard, IActionContext } from '@microsoft/vscode-azext-utils';
+import type * as vscode from 'vscode';
+import { getLogicAppProjectRoot } from '../../utils/codeless/connection';
+import { getWorkspaceFolder } from '../../utils/workspace';
+import { isString } from '@microsoft/logic-apps-shared';
+import { ext } from '../../../extensionVariables';
+import { clearConnectorSetupSkipped } from '../../state/connectors';
+
+/**
+ * Enables Azure connectors for the project containing workflow node.
+ * @param {IActionContext} context - The action context for the command.
+ * @param {vscode.Uri | undefined} node - The URI of the workflow node.
+ */
+export async function enableAzureConnectors(context: IActionContext, node: vscode.Uri | undefined): Promise<void> {
+  const projectRoot = node !== undefined ? await getLogicAppProjectRoot(context, node.fsPath) : await getWorkspaceFolder(context);
+  const projectPath = isString(projectRoot) ? projectRoot : projectRoot.uri.fsPath;
+  const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, projectPath);
+
+  const subscriptionId: string | undefined = localSettings.Values?.[workflowSubscriptionIdKey];
+  if (subscriptionId) {
+    ext.outputChannel.appendLog(localize('logicapp.azureConnectorsEnabledForWorkflow', 'Azure connectors are enabled for the workflow.'));
+    return;
+  }
+
+  const connectorsContext: IAzureConnectorsContext = context as IAzureConnectorsContext;
+  const wizard: AzureWizard<IAzureConnectorsContext> = createAzureWizard(connectorsContext, projectPath);
+  await wizard.prompt();
+  await wizard.execute();
+
+  if (connectorsContext.enabled) {
+    await clearConnectorSetupSkipped(projectPath);
+    invalidateAzureDetailsCache(projectPath);
+    getAzureConnectorDetailsForLocalProject(context, projectPath).catch(() => {});
+
+    ext.outputChannel.appendLog(localize('logicapp.azureConnectorsEnabledForWorkflow', 'Azure connectors are enabled for the workflow.'));
+  }
+}

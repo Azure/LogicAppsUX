@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { buildWorkspaceCustomCodeFunctionsProjects } from '../buildCustomCodeFunctionsProject';
+import { tryBuildCustomCodeFunctionsProject } from '../buildCustomCodeFunctionsProject';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { window, tasks } from 'vscode';
+import { window, tasks, Uri } from 'vscode';
 import * as workspaceUtils from '../../utils/workspace';
 import * as customCodeUtils from '../../utils/customCodeUtils';
 import { ext } from '../../../extensionVariables';
@@ -22,6 +22,9 @@ class MockEventEmitter<T> {
 }
 
 vi.mock('vscode', () => ({
+  Uri: {
+    file: (p: string) => ({ fsPath: p, path: p }),
+  },
   window: {
     showWarningMessage: vi.fn(),
     showInformationMessage: vi.fn(),
@@ -41,7 +44,7 @@ vi.mock('../../../extensionVariables', () => ({
   },
 }));
 
-describe('buildWorkspaceCustomCodeFunctionsProjects', () => {
+describe('tryBuildCustomCodeFunctionsProject', () => {
   let context: IActionContext;
   const testWorkspaceFolder = path.join('test', 'workspace', 'folder');
   let executeTaskSpy: any;
@@ -49,8 +52,11 @@ describe('buildWorkspaceCustomCodeFunctionsProjects', () => {
 
   beforeEach(() => {
     context = {
-      telemetry: { properties: {} },
-    } as IActionContext;
+      telemetry: { properties: {}, measurements: {} },
+      errorHandling: { suppressDisplay: false, rethrow: false, issueProperties: {} },
+      ui: {} as any,
+      valuesToMask: [],
+    } as unknown as IActionContext;
     vi.restoreAllMocks();
 
     vi.spyOn(workspaceUtils, 'getWorkspaceRoot').mockResolvedValue(testWorkspaceFolder);
@@ -65,79 +71,80 @@ describe('buildWorkspaceCustomCodeFunctionsProjects', () => {
     });
   });
 
-  it('should log and return if no custom code functions projects are found', async () => {
-    vi.spyOn(customCodeUtils, 'tryGetCustomCodeFunctionsProjects').mockResolvedValue([]);
+  it('should return false when nodePath is null', async () => {
+    vi.spyOn(workspaceUtils, 'getWorkspaceRoot').mockResolvedValue(undefined);
 
-    await buildWorkspaceCustomCodeFunctionsProjects(context);
+    const result = await tryBuildCustomCodeFunctionsProject(context, undefined);
 
-    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('No custom code functions projects found.');
-    expect(context.telemetry.properties.result).toBe('Succeeded');
-    expect(context.telemetry.properties.lastStep).toBe('tryGetCustomCodeFunctionsProjects');
+    expect(result).toBe(false);
   });
 
-  it('should build all custom code functions projects successfully', async () => {
-    const projectPaths = ['project1', 'project2'];
-    const mockTasks = [
-      {
-        name: 'build',
-        scope: { uri: { fsPath: projectPaths[0] } },
-      },
-      {
-        name: 'build',
-        scope: { uri: { fsPath: projectPaths[1] } },
-      },
-    ];
-    vi.spyOn(customCodeUtils, 'tryGetCustomCodeFunctionsProjects').mockResolvedValue(projectPaths);
-    vi.spyOn(tasks, 'fetchTasks').mockResolvedValue(mockTasks);
-    const events = [
-      { exitCode: 0, execution: { task: mockTasks[0] } },
-      { exitCode: 0, execution: { task: mockTasks[1] } },
-    ];
+  it('should return false when not a custom code project and no logic app projects found', async () => {
+    vi.spyOn(customCodeUtils, 'isCustomCodeFunctionsProject').mockResolvedValue(false);
+    vi.spyOn(customCodeUtils, 'tryGetLogicAppCustomCodeFunctionsProjects').mockResolvedValue([]);
 
-    const buildPromise = buildWorkspaceCustomCodeFunctionsProjects(context);
+    const result = await tryBuildCustomCodeFunctionsProject(context, Uri.file(testWorkspaceFolder));
 
-    setTimeout(() => {
-      onDidEndTaskProcessEmitter.fire(events[0]);
-      onDidEndTaskProcessEmitter.fire(events[1]);
-    }, 100);
-
-    await buildPromise;
-
-    for (const projectPath of projectPaths) {
-      expect(executeTaskSpy).toHaveBeenCalledTimes(projectPaths.length);
-      expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(`Custom code functions project built successfully at ${projectPath}.`);
-    }
-    expect(ext.outputChannel.appendLog).toHaveBeenCalledTimes(projectPaths.length);
-    expect(window.showWarningMessage).not.toHaveBeenCalled();
-    expect(context.telemetry.properties.result).toBe('Succeeded');
-    expect(context.telemetry.properties.lastStep).toBe('buildCustomCodeProjects');
+    expect(result).toBe(false);
+    expect(context.telemetry.properties.lastStep).toBe('tryGetLogicAppCustomCodeFunctionsProjects');
   });
 
-  it('should handle errors during build for a custom code functions project', async () => {
-    const projectPaths = ['projectError'];
-    vi.spyOn(customCodeUtils, 'tryGetCustomCodeFunctionsProjects').mockResolvedValue(projectPaths);
+  it('should build a custom code functions project successfully', async () => {
+    const projectPath = path.join('test', 'project');
+    const mockTask = { name: 'build', scope: { uri: { fsPath: projectPath } } };
+    vi.spyOn(customCodeUtils, 'isCustomCodeFunctionsProject').mockResolvedValue(true);
+    vi.spyOn(tasks, 'fetchTasks').mockResolvedValue([mockTask]);
 
-    const mockTasks = [
-      {
-        name: 'build',
-        scope: { uri: { fsPath: projectPaths[0] } },
-      },
-    ];
-    vi.spyOn(tasks, 'fetchTasks').mockResolvedValue(mockTasks);
-
-    const buildPromise = buildWorkspaceCustomCodeFunctionsProjects(context);
+    const buildPromise = tryBuildCustomCodeFunctionsProject(context, Uri.file(projectPath));
 
     setTimeout(() => {
-      onDidEndTaskProcessEmitter.fire({ exitCode: 1, execution: { task: mockTasks[0] } });
-    }, 100);
+      onDidEndTaskProcessEmitter.fire({ exitCode: 0, execution: { task: mockTask } });
+    }, 50);
 
-    await buildPromise;
+    const result = await buildPromise;
 
-    const testErrorMessage = `Error building custom code functions project at "${projectPaths[0]}": 1`;
-    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(testErrorMessage);
-    expect(window.showWarningMessage).toHaveBeenCalledWith(testErrorMessage);
-    expect(window.showInformationMessage).not.toHaveBeenCalled();
+    expect(result).toBe(true);
+    expect(executeTaskSpy).toHaveBeenCalledTimes(1);
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(`Custom code functions project built successfully at ${projectPath}.`);
+    expect(context.telemetry.properties.lastStep).toBe('buildCustomCodeProject');
+  });
+
+  it('should return false and set telemetry on build failure', async () => {
+    const projectPath = path.join('test', 'project');
+    const mockTask = { name: 'build', scope: { uri: { fsPath: projectPath } } };
+    vi.spyOn(customCodeUtils, 'isCustomCodeFunctionsProject').mockResolvedValue(true);
+    vi.spyOn(tasks, 'fetchTasks').mockResolvedValue([mockTask]);
+
+    const buildPromise = tryBuildCustomCodeFunctionsProject(context, Uri.file(projectPath));
+
+    setTimeout(() => {
+      onDidEndTaskProcessEmitter.fire({ exitCode: 1, execution: { task: mockTask } });
+    }, 50);
+
+    const result = await buildPromise;
+
+    expect(result).toBe(false);
     expect(context.telemetry.properties.result).toBe('Failed');
     expect(context.telemetry.properties.errorMessage).toBeDefined();
+  });
+
+  it('should build logic app custom code projects when node is not itself a functions project', async () => {
+    const logicAppPath = path.join('test', 'logicapp');
+    const functionsPath = path.join('test', 'functions');
+    const mockTask = { name: 'build', scope: { uri: { fsPath: functionsPath } } };
+    vi.spyOn(customCodeUtils, 'isCustomCodeFunctionsProject').mockResolvedValue(false);
+    vi.spyOn(customCodeUtils, 'tryGetLogicAppCustomCodeFunctionsProjects').mockResolvedValue([functionsPath]);
+    vi.spyOn(tasks, 'fetchTasks').mockResolvedValue([mockTask]);
+
+    const buildPromise = tryBuildCustomCodeFunctionsProject(context, Uri.file(logicAppPath));
+
+    setTimeout(() => {
+      onDidEndTaskProcessEmitter.fire({ exitCode: 0, execution: { task: mockTask } });
+    }, 50);
+
+    const result = await buildPromise;
+
+    expect(result).toBe(true);
+    expect(context.telemetry.properties.lastStep).toBe('buildLogicAppCustomCodeProjects');
   });
 });

@@ -69,6 +69,14 @@ Use both:
 2. `languageWorkers__node__defaultExecutablePath` in `local.settings.json` (so a broken PATH
    does not cause inline-code dependency generation to fail).
 
+## Explicit Runtime Dependency Paths When Validation Is Disabled
+
+- Learning: `validateDependencies: false` or skipped validation must not cause generated debug tasks to fall back to provider-backed or generic `func` task shapes when explicit runtime dependency paths are available. Codeful/NuGet task generation should still emit shell/process tasks using `${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}` and `${config:azureLogicAppsStandard.dotnetBinaryPath}`.
+- Why it matters: In issue #7040, bundle -> NuGet conversion could change task type/shape after a prior debug run. Falling back to implicit task generation, or preserving duplicate stale generated tasks, can mask or reintroduce wrong runtime/task state and make `Debug: Start Debugging` fail to find the expected `func: host start` task.
+- Source: Issue #7040 investigation; `apps/vs-code-designer/src/app/utils/binaries.ts`; `apps/vs-code-designer/src/app/commands/initProjectForVSCode/initProjectStepBase.ts`; `apps/vs-code-designer/src/test/ui/nugetDebugConversion.test.ts`.
+- Applies to: `vscode`, `vscode-test-specialist`, `test`.
+- Status: verified.
+
 ## Verification Trick
 
 If a "node not on PATH" error reproduces despite the test step proving node is on PATH:

@@ -1,7 +1,11 @@
-import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { validateFuncCoreToolsIsLatest } from '../validateFuncCoreToolsIsLatest';
-import { useBinariesDependencies, binariesExist } from '../../../utils/binaries';
+import { useBinariesDependencies, binariesExist, getLatestFunctionCoreToolsVersion } from '../../../utils/binaries';
+import { shouldCheckForDependencyUpdates } from '../../../state/dependencies';
 import { isDevContainerWorkspace } from '../../../utils/devContainerUtils';
+import { getLocalFuncCoreToolsVersion } from '../../../utils/funcCoreTools/funcVersion';
+import { installFuncCoreToolsBinaries } from '../installFuncCoreTools';
 
 // Factory mocks required to break problematic import chains:
 // - binaries: circular dep with onboarding.ts
@@ -13,6 +17,9 @@ vi.mock('../../../utils/binaries', () => ({
   installBinaries: vi.fn(),
   getCpuArchitecture: vi.fn(),
 }));
+vi.mock('../../../state/dependencies', () => ({
+  shouldCheckForDependencyUpdates: vi.fn(),
+}));
 vi.mock('../../../utils/codeless/startDesignTimeApi', () => ({
   startAllDesignTimeApis: vi.fn(),
   stopAllDesignTimeApis: vi.fn(),
@@ -21,6 +28,10 @@ vi.mock('../../../utils/codeless/startDesignTimeApi', () => ({
 // Without these, the real code runs and hits unmocked vscode APIs (e.g. workspace.getConfiguration).
 vi.mock('../../../utils/devContainerUtils');
 vi.mock('../../../utils/vsCodeConfig/settings');
+vi.mock('../../../state/notifications', () => ({
+  isMultiCoreToolsWarningSuppressed: vi.fn(() => true),
+  suppressMultiCoreToolsWarning: vi.fn(),
+}));
 vi.mock('../../../utils/funcCoreTools/funcVersion');
 vi.mock('../installFuncCoreTools');
 vi.mock('../uninstallFuncCoreTools');
@@ -29,13 +40,23 @@ vi.mock('../../../utils/funcCoreTools/getFuncPackageManagers');
 vi.mock('../../../utils/funcCoreTools/getNpmDistTag');
 vi.mock('../../../utils/funcCoreTools/getBrewPackageName');
 vi.mock('../../../utils/requestUtils');
-vi.mock('../../../functionsExtension/executeOnFunctionsExt');
-// @microsoft/vscode-azext-utils is already mocked in test-setup.ts with
-// AzureWizardPromptStep, DialogResponses, parseError, callWithTelemetryAndErrorHandling, etc.
+
+const createContext = (): IActionContext =>
+  ({
+    telemetry: { properties: {}, measurements: {}, suppressIfSuccessful: false, suppressAll: false },
+    errorHandling: { suppressDisplay: false, rethrow: false, issueProperties: {} },
+    ui: {} as any,
+    valuesToMask: [],
+  }) as unknown as IActionContext;
 
 describe('validateFuncCoreToolsIsLatest', () => {
+  let context: IActionContext;
+
   beforeEach(() => {
     vi.clearAllMocks();
+    context = createContext();
+    // Default to performing update checks; throttled behavior is covered explicitly below.
+    vi.mocked(shouldCheckForDependencyUpdates).mockReturnValue(true);
   });
 
   describe('devContainer workspace', () => {
@@ -45,7 +66,7 @@ describe('validateFuncCoreToolsIsLatest', () => {
       vi.mocked(binariesExist).mockResolvedValue(false);
 
       // Should not throw and should call system validation
-      await validateFuncCoreToolsIsLatest('4');
+      await validateFuncCoreToolsIsLatest(context, '4');
 
       expect(useBinariesDependencies).toHaveBeenCalled();
       // binariesExist should not be called because useBinariesDependencies returned false
@@ -56,7 +77,7 @@ describe('validateFuncCoreToolsIsLatest', () => {
       vi.mocked(isDevContainerWorkspace).mockResolvedValue(true);
       vi.mocked(useBinariesDependencies).mockResolvedValue(false);
 
-      await validateFuncCoreToolsIsLatest();
+      await validateFuncCoreToolsIsLatest(context);
 
       expect(useBinariesDependencies).toHaveBeenCalled();
       expect(await useBinariesDependencies()).toBe(false);
@@ -69,7 +90,7 @@ describe('validateFuncCoreToolsIsLatest', () => {
       vi.mocked(useBinariesDependencies).mockResolvedValue(true);
       vi.mocked(binariesExist).mockResolvedValue(true);
 
-      await validateFuncCoreToolsIsLatest('4');
+      await validateFuncCoreToolsIsLatest(context, '4');
 
       expect(useBinariesDependencies).toHaveBeenCalled();
       expect(binariesExist).toHaveBeenCalled();
@@ -79,7 +100,7 @@ describe('validateFuncCoreToolsIsLatest', () => {
       vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
       vi.mocked(useBinariesDependencies).mockResolvedValue(false);
 
-      await validateFuncCoreToolsIsLatest();
+      await validateFuncCoreToolsIsLatest(context);
 
       expect(useBinariesDependencies).toHaveBeenCalled();
       expect(await useBinariesDependencies()).toBe(false);
@@ -92,7 +113,7 @@ describe('validateFuncCoreToolsIsLatest', () => {
       vi.mocked(useBinariesDependencies).mockResolvedValue(true);
       vi.mocked(binariesExist).mockResolvedValue(true);
 
-      await validateFuncCoreToolsIsLatest('4');
+      await validateFuncCoreToolsIsLatest(context, '4');
 
       expect(binariesExist).toHaveBeenCalledWith('FuncCoreTools');
     });
@@ -101,9 +122,38 @@ describe('validateFuncCoreToolsIsLatest', () => {
       vi.mocked(isDevContainerWorkspace).mockResolvedValue(true);
       vi.mocked(useBinariesDependencies).mockResolvedValue(false);
 
-      await validateFuncCoreToolsIsLatest();
+      await validateFuncCoreToolsIsLatest(context);
 
       expect(binariesExist).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('managed install behavior', () => {
+    it('does not reinstall when binaries exist and the version is current', async () => {
+      vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
+      vi.mocked(useBinariesDependencies).mockResolvedValue(true);
+      vi.mocked(binariesExist).mockResolvedValue(true);
+      vi.mocked(getLocalFuncCoreToolsVersion).mockResolvedValue('4.0.0');
+      vi.mocked(getLatestFunctionCoreToolsVersion).mockResolvedValue('4.0.0');
+
+      await validateFuncCoreToolsIsLatest(context, '4');
+
+      expect(installFuncCoreToolsBinaries).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('update-check throttle behavior', () => {
+    it('skips the newest-version lookup when the update check is throttled and binaries are valid', async () => {
+      vi.mocked(shouldCheckForDependencyUpdates).mockReturnValue(false);
+      vi.mocked(isDevContainerWorkspace).mockResolvedValue(false);
+      vi.mocked(useBinariesDependencies).mockResolvedValue(true);
+      vi.mocked(binariesExist).mockResolvedValue(true);
+      vi.mocked(getLocalFuncCoreToolsVersion).mockResolvedValue('4.0.0');
+
+      await validateFuncCoreToolsIsLatest(context, '4');
+
+      expect(getLatestFunctionCoreToolsVersion).not.toHaveBeenCalled();
+      expect(installFuncCoreToolsBinaries).not.toHaveBeenCalled();
     });
   });
 });

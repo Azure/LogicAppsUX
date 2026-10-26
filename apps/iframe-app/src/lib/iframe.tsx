@@ -2,16 +2,17 @@
  * Iframe integration for A2A Chat Widget
  *
  * Security: This component implements origin verification for postMessage communication.
- * To configure allowed origins, use one of these methods:
+ * To configure allowed origins, use one of these trusted methods:
  *
- * 1. URL parameter: ?allowedOrigins=https://example.com,https://app.example.com
- * 2. Data attribute: <html data-allowed-origins="https://example.com,https://app.example.com">
- * 3. Wildcard subdomains: ?allowedOrigins=*.example.com
+ * 1. Render a data attribute inside the served iframe document:
+ *    <html data-allowed-origins="https://example.com,https://app.example.com">
+ * 2. Use the validated trustedAuthority configuration for Azure Portal.
  *
  * If no origins are specified, the iframe will:
  * - Allow messages from its own origin
- * - Allow messages from the document referrer (parent frame)
  * - In development (localhost), allow common development ports
+ *
+ * Query parameters and document.referrer never authorize inbound messages.
  */
 
 import { useState, useMemo } from 'react';

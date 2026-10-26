@@ -5,7 +5,7 @@
 import { managementApiPrefix, workflowAppApiVersion } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { getWorkflow } from '../../utils/codeless/apiUtils';
+import { getCustomCodeFiles, getWorkflow } from '../../utils/codeless/apiUtils';
 import { resolveSettingsInConnection } from '../../utils/codeless/connection';
 import { sendAzureRequest } from '../../utils/requestUtils';
 import { getThemedIconPath } from '../../utils/tree/assets';
@@ -94,6 +94,10 @@ export class RemoteWorkflowTreeItem extends AzExtTreeItem {
     const client = await this.parent.parent.site.createClient(this.parent._context);
     const appSettings: StringDictionary = await client.listApplicationSettings();
     return appSettings.properties || {};
+  }
+
+  public async getCustomCodeData(): Promise<Record<string, string>> {
+    return getCustomCodeFiles(this.parent._context, this.parent.parent, this.name);
   }
 
   public async getCallbackUrl(

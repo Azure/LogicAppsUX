@@ -1,6 +1,7 @@
 import type { AgentCard } from '../../types';
 import type { AuthConfig, AuthRequiredPart, IdentityProvider } from '../../client/types';
 import type { StorageConfig } from '../../storage/history-storage';
+import type { ChatMessage } from '../use-a2a';
 
 // Re-export types from main module
 export type { AgentCard, AuthConfig, AuthRequiredPart, StorageConfig, IdentityProvider };
@@ -160,6 +161,7 @@ export interface ChatWidgetProps {
   onRenameSession?: (newName: string) => void | Promise<void>; // Callback for renaming the session
   storageConfig?: StorageConfig; // Optional storage configuration for server-side chat history
   initialContextId?: string; // Initial context ID for resuming existing server-side conversations
+  initialMessages?: ChatMessage[]; // Initial messages for hydrating an existing conversation
   sessionId?: string; // For multi-session mode - enables session-specific message isolation
   identityProviders?: Record<string, IdentityProvider>; // Identity providers configuration
 }

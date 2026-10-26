@@ -61,6 +61,101 @@ describe('useChatWidget', () => {
     expect(result.current.agentName).toBe('Agent');
   });
 
+  it('should replace visible messages when initial history changes', async () => {
+    const { useA2A } = await import('../use-a2a');
+    const { useChatStore } = await import('../store/chatStore');
+    const clearMessages = vi.fn();
+    const addMessage = vi.fn();
+    (useChatStore as any).mockReturnValue({
+      addMessage,
+      updateMessage: vi.fn(),
+      setConnected: vi.fn(),
+      setTyping: vi.fn(),
+      clearMessages,
+    });
+
+    const userMessage = {
+      id: 'message-1',
+      role: 'user' as const,
+      content: 'Hello',
+      timestamp: new Date('2024-01-01T10:00:00Z'),
+    };
+    const assistantMessage = {
+      id: 'message-2',
+      role: 'assistant' as const,
+      content: 'Hi there',
+      timestamp: new Date('2024-01-01T10:00:05Z'),
+    };
+    const { rerender } = renderHook(({ initialMessages }) => useChatWidget({ agentCard: 'https://example.com/agent', initialMessages }), {
+      initialProps: { initialMessages: [userMessage] },
+    });
+
+    expect(useA2A).toHaveBeenLastCalledWith(expect.objectContaining({ initialMessages: [userMessage] }));
+    expect(clearMessages).toHaveBeenCalledTimes(1);
+    expect(addMessage).toHaveBeenLastCalledWith(
+      expect.objectContaining({ id: 'message-1', sender: 'user', timestamp: userMessage.timestamp, status: 'sent' })
+    );
+
+    clearMessages.mockClear();
+    addMessage.mockClear();
+    rerender({ initialMessages: [userMessage, assistantMessage] });
+
+    expect(clearMessages).toHaveBeenCalledTimes(1);
+    expect(addMessage).toHaveBeenCalledTimes(2);
+    expect(addMessage).toHaveBeenNthCalledWith(1, expect.objectContaining({ id: 'message-1', timestamp: userMessage.timestamp }));
+    expect(addMessage).toHaveBeenNthCalledWith(2, expect.objectContaining({ id: 'message-2', timestamp: assistantMessage.timestamp }));
+  });
+
+  it('should preserve a live message when history arrives late', async () => {
+    const { useA2A } = await import('../use-a2a');
+    const { useChatStore } = await import('../store/chatStore');
+    const clearMessages = vi.fn();
+    const addMessage = vi.fn();
+    (useChatStore as any).mockReturnValue({
+      addMessage,
+      updateMessage: vi.fn(),
+      setConnected: vi.fn(),
+      setTyping: vi.fn(),
+      clearMessages,
+    });
+    const liveMessage = {
+      id: 'live-message',
+      role: 'assistant' as const,
+      content: 'Live response',
+      timestamp: new Date('2024-01-01T10:00:10Z'),
+      isStreaming: true,
+    };
+    (useA2A as any).mockReturnValue({
+      isConnected: true,
+      isLoading: true,
+      messages: [liveMessage],
+      agentCard: null,
+      contextId: 'context-1',
+      connect: vi.fn(),
+      disconnect: vi.fn(),
+      sendMessage: vi.fn(),
+      clearMessages: vi.fn(),
+    });
+    const historicalMessage = {
+      id: 'history-message',
+      role: 'user' as const,
+      content: 'Earlier request',
+      timestamp: new Date('2024-01-01T10:00:00Z'),
+    };
+    const { rerender } = renderHook(({ initialMessages }) => useChatWidget({ agentCard: 'https://example.com/agent', initialMessages }), {
+      initialProps: { initialMessages: undefined as (typeof historicalMessage)[] | undefined },
+    });
+
+    clearMessages.mockClear();
+    addMessage.mockClear();
+    rerender({ initialMessages: [historicalMessage] });
+
+    expect(clearMessages).toHaveBeenCalledTimes(1);
+    expect(addMessage).toHaveBeenCalledTimes(2);
+    expect(addMessage).toHaveBeenNthCalledWith(1, expect.objectContaining({ id: 'history-message' }));
+    expect(addMessage).toHaveBeenNthCalledWith(2, expect.objectContaining({ content: 'Live response' }));
+  });
+
   it('should handle connection changes', async () => {
     const onConnectionChange = vi.fn();
     const { useA2A } = await import('../use-a2a');

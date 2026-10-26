@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { isCustomCodeParameter } from '@microsoft/designer-ui';
 import type { CustomCodeFileNameMapping } from '../../..';
 import Constants from '../../../common/constants';
@@ -59,6 +58,7 @@ import {
 } from './initialize';
 import { getOperationSettings, getSplitOnValue } from './settings';
 import type { Settings } from './settings';
+import { applySettingDefaults } from '../../queries/settingDefaults';
 import {
   LogEntryLevel,
   LoggerService,
@@ -80,6 +80,7 @@ import {
   removeConnectionPrefix,
   getBrandColorFromConnector,
   getIconUriFromConnector,
+  isNullOrUndefined,
 } from '@microsoft/logic-apps-shared';
 import type { InputParameter, OutputParameter, LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
@@ -135,6 +136,15 @@ export const initializeOperationMetadata = async (
     if (operationId === Constants.NODE.TYPE.PLACEHOLDER_TRIGGER) {
       continue;
     }
+
+    // Guard against an undefined operation in the deserialized workflow data. Accessing
+    // operation.type below on an undefined value throws "Cannot read properties of undefined
+    // (reading 'type')" during load, which the portal error boundary surfaces as the generic
+    // "renderComponentIntoRoot" error and blanks the entire Designer/Run History/Code view.
+    if (isNullOrUndefined(operation)) {
+      continue;
+    }
+
     const isTrigger = isTriggerNode(operationId, nodesMetadata);
 
     if (isTrigger) {
@@ -195,7 +205,13 @@ export const initializeOperationMetadata = async (
 
   const variables = initializeVariables(operations, allNodeData);
   const agentParameters = initializeAgentParameters(nodesMetadata, allNodeData);
-  const outputTokens = initializeOutputTokensForOperations(allNodeData, operations, graph, nodesMetadata);
+  const outputTokens = initializeOutputTokensForOperations(
+    allNodeData,
+    operations,
+    graph,
+    nodesMetadata,
+    pasteParams ? Object.keys(pasteParams.existingOutputTokens) : []
+  );
   dispatch(
     initializeTokensAndVariables({
       outputTokens,
@@ -410,7 +426,14 @@ export const initializeOperationDetailsForManifest = async (
 
     const supportedChannels = getSupportedChannelsFromManifest(nodeId, nodeOperationInfo, manifest);
 
-    const settings = getOperationSettings(isTrigger, nodeOperationInfo, manifest, undefined /* swagger */, operation, workflowKind);
+    let settings = getOperationSettings(isTrigger, nodeOperationInfo, manifest, undefined /* swagger */, operation, workflowKind);
+    settings = await applySettingDefaults(
+      settings,
+      nodeOperationInfo.connectorId,
+      nodeOperationInfo.operationId,
+      workflowKind,
+      nodeOperationInfo.type
+    );
 
     const childGraphInputs = processChildGraphAndItsInputs(manifest, operation, dispatch);
 
@@ -576,7 +599,7 @@ const updateTokenMetadataInParameters = (
   }
 };
 
-const initializeOutputTokensForOperations = (
+export const initializeOutputTokensForOperations = (
   allNodesData: NodeDataWithOperationMetadata[],
   operations: Operations,
   graph: WorkflowNode,

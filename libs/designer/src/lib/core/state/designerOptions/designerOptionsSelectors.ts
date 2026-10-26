@@ -15,10 +15,6 @@ export const useMonitoringView = () => {
   return useSelector((state: RootState) => state.designerOptions.isMonitoringView);
 };
 
-export const useUnitTest = () => {
-  return useSelector((state: RootState) => state.designerOptions.isUnitTest);
-};
-
 export const useLegacyWorkflowParameters = () => {
   return useSelector((state: RootState) => state.designerOptions.useLegacyWorkflowParameters);
 };

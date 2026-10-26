@@ -61,6 +61,126 @@ interface DesignerProps {
 }
 ```
 
+### Runtime Connection Selection (Designer V2, Standard)
+
+Designer V2 supports expressions in a Standard `ServiceProvider` action's
+`inputs.serviceProviderConfiguration.connectionName`. The
+**Change connection > Use expression** editor is enabled by default for supported
+actions; no host option is required. Managed API connections, Consumption
+workflows, and triggers do not expose expression authoring. Imported expressions
+are preserved when their context does not support authoring. Designer V1 is
+unchanged and does not offer this editor.
+
+The connection panel places **Select existing**, **Create new**, and (when supported)
+**Use expression** tabs below the action name. Switching tabs preserves the
+expression draft until it is applied or the panel is closed. Saved expressions
+use token presentation in the connection editor. Action details show only
+**Connection selected at runtime**, with **Change connection** to view or edit
+the expression.
+The **Connections** panel groups runtime-selected actions under their connector,
+in a **Connection selected at runtime** block. Select an action to edit its
+expression, or use **Reassign** to move the block's actions to an existing or new
+connection together. Expression authoring remains per-action.
+The expression tab lists existing connection keys for the current connector as
+case-sensitive examples; this reference list does not select a connection.
+
+Expression editing is per action, not bulk connection reassignment. The token
+picker does not insert implicit loops. For per-item selection within an existing
+loop, enter an explicit expression such as `@items('For_each')?['connectionName']`.
+
+An expression such as `@parameters('connectionName')` must resolve at runtime to
+an existing, case-sensitive key in `connections.json`, for the action's service
+provider. Display names are not connection keys. The Designer does not create
+connections at runtime or change their credentials.
+
+The optional **Design-time connection** supplies resource browsing and schema
+discovery while editing. This selection is session-only and is not serialized as
+a runtime fallback. Without a design-time connection, enter parameter values
+manually; connection-dependent browsing is unavailable. Existing values are
+preserved. A schema discovered using one connection does not guarantee the same
+schema for every runtime target.
+
+Hosts must keep connection keys stable and preserve connections that may be
+selected dynamically, even if no action references them statically. For
+multi-tenant workflows, map authorized tenant context to permitted connection
+keys rather than accepting an arbitrary caller-supplied key as authorization.
+
+### Workflow Extraction Progress (Designer V2, Standard)
+
+The optional `workflowExtractionService` host boundary supports an attempt-scoped
+callback on `WorkflowExtractionRequest`. Existing hosts do not need to implement it:
+
+```typescript
+type WorkflowExtractionHostStep = 'validating-child' | 'creating-child' | 'saving-source';
+interface WorkflowExtractionProgress {
+  step: WorkflowExtractionHostStep;
+  status: 'in-progress' | 'completed';
+}
+// Additional optional field on WorkflowExtractionRequest:
+// onProgress?: (progress: WorkflowExtractionProgress) => void;
+
+request.onProgress?.({ step: 'saving-source', status: 'in-progress' });
+// After the durable source write has been confirmed:
+request.onProgress?.({ step: 'saving-source', status: 'completed' });
+```
+
+Emit notifications at real validation, child creation/readiness, and durable source
+save checkpoints. For hosts that publish children, `creating-child/completed` must
+wait for publication and callable-child readiness, not merely file creation.
+Protect persistence from observer exceptions using the host's sanitized operational
+logging. Do not retain callbacks or share them across operations or retries.
+
+The designer owns isolated preparation/hydration and live source application.
+The reusable `ProgressStepper` from `@microsoft/designer-ui` presents three connected
+milestones: **Prepare workflows** (hydration and validation), **Create child workflow**
+(persistence and host readiness), and **Update parent workflow** (durable source save,
+live application, and required finalization). Unstarted milestones have no status
+message. In-progress, success, and error states are controlled by real checkpoints;
+errors show the host's contextual recovery message at the affected milestone.
+
+Completed milestones remain visible. Older hosts without notifications do not
+produce fictional intermediate progress; an overall completed transaction confirms
+all three milestones. `child-created` and `source-saved`
+alone do not establish child readiness; only explicit child completion or an overall
+`completed` result does. `source-saved` confirms durable source persistence but does
+not imply successful live application. Parent-update success waits for `onApplied`
+and successful transaction finalization. Cleanup failures remain an error even
+after live application, preserving the existing terminal/reload behavior.
+
+`persistenceDescription` remains concise host-provided submission copy. Contextual
+partial-result and error messages retain host-specific recovery instructions.
+Empty failure or partial-result messages use a localized fallback without changing
+durability, retry, or terminal recovery semantics.
+The progress footer follows the complete input/output bindings accordion and
+adds dialog-specific vertical breathing room while the preview/bindings scroll.
+The completion banner follows the stepper, above the action row. Available child
+navigation stays in that row next to Close (or the existing retry/cancel actions
+for partial results), with an accessible new-tab description.
+Long recovery details have a bounded keyboard-scrollable progress region, separate
+from the actions; short viewports allow whole-dialog scrolling so Close remains reachable.
+The child navigation action opens a new tab without replacing the source editor.
+
+### ProgressStepper (Designer UI)
+
+`ProgressStepper` is a controlled, informational ordered list, not wizard navigation.
+Steps have stable IDs and labels, and accept an omitted status, `in-progress`,
+`success`, or `error`. Error steps require contextual error text. The component has
+no workflow, persistence, or timing logic; callers own state and announcements are
+derived from those controlled steps. It uses Fluent tokens and becomes vertical
+in narrow containers.
+
+```tsx
+import { ProgressStepper, type ProgressStepperStep } from '@microsoft/designer-ui';
+
+const steps: ProgressStepperStep[] = [
+  { id: 'prepare', label: 'Prepare workflows', status: 'success' },
+  { id: 'create', label: 'Create child workflow', status: 'error', error: 'Child readiness could not be confirmed.' },
+  { id: 'update', label: 'Update parent workflow' },
+];
+
+<ProgressStepper aria-label="Extraction progress" steps={steps} />;
+```
+
 ### Service Configuration
 
 The designer requires several services to be configured:

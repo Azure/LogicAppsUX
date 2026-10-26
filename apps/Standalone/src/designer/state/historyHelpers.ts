@@ -14,7 +14,6 @@ export const setStateHistory = (state: WorkflowLoadingState): void => {
       isDarkMode: state.isDarkMode,
       isReadOnly: state.isReadOnly,
       isMonitoringView: state.isMonitoringView,
-      isUnitTest: state.isUnitTest,
     };
     window.localStorage.setItem('msla-standalone-stateHistory', JSON.stringify(filteredState));
   } catch {

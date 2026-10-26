@@ -46,6 +46,11 @@ vi.mock('@fluentui/react-components', () => ({
       {children}
     </div>
   ),
+  Tooltip: ({ children, content, relationship: _relationship, withArrow: _withArrow, ...props }: any) => (
+    <div data-testid="tooltip" data-tooltip-content={content} {...props}>
+      {children}
+    </div>
+  ),
   Button: ({ children, onClick, disabled, icon, ...props }: any) => (
     <button
       data-testid={`button-${props['data-automation-id'] ?? 'refresh'}`}
@@ -122,10 +127,10 @@ vi.mock('../useCognitiveService', () => ({
 }));
 
 const mockUseHasRoleAssignmentsWritePermissionQuery = vi.fn();
-const mockUseHasRoleDefinitionsByNameQuery = vi.fn();
+const mockUseHasRequiredRoleDefinitionsQuery = vi.fn();
 vi.mock('../../../../../../core/queries/role', () => ({
   useHasRoleAssignmentsWritePermissionQuery: (...args: any[]) => mockUseHasRoleAssignmentsWritePermissionQuery(...args),
-  useHasRoleDefinitionsByNameQuery: (...args: any[]) => mockUseHasRoleDefinitionsByNameQuery(...args),
+  useHasRequiredRoleDefinitionsQuery: (...args: any[]) => mockUseHasRequiredRoleDefinitionsQuery(...args),
 }));
 
 vi.mock('../components/SubscriptionDropdown', () => ({
@@ -189,6 +194,15 @@ const defaultProps: ConnectionParameterProps = {
   },
   setKeyValue: vi.fn(),
   operationParameterValues: { agentModelType: 'AzureOpenAI' },
+  parameterSet: {
+    name: 'Key',
+    parameters: {
+      cognitiveServiceAccountId: { type: 'string' },
+      openAIEndpoint: { type: 'string' },
+      openAIKey: { type: 'securestring' },
+    },
+    uiDefinition: { displayName: 'URL and key-based authentication' },
+  } as any,
 };
 
 const wrapper = ({ children }: { children: React.ReactNode }) => <IntlProvider locale="en">{children}</IntlProvider>;
@@ -233,7 +247,7 @@ const setupDefaultMocks = () => {
     refetch: mockRefetchAPIMAccountApis,
   });
   mockUseHasRoleAssignmentsWritePermissionQuery.mockReturnValue({ data: false, isFetching: false });
-  mockUseHasRoleDefinitionsByNameQuery.mockReturnValue({ data: false, isFetching: false });
+  mockUseHasRequiredRoleDefinitionsQuery.mockReturnValue({ data: false, isFetching: false });
 };
 
 describe('CustomOpenAIConnector', () => {
@@ -362,6 +376,53 @@ describe('CustomOpenAIConnector', () => {
       });
 
       // Verify the service was called
+      expect(mockFetchAccountKeysById).toHaveBeenCalledWith(accountId);
+    });
+
+    it('does NOT fetch account keys (listKeys) when Managed Identity auth is selected', async () => {
+      mockFetchAccountById.mockResolvedValue({ properties: { endpoint: 'https://openai1.openai.azure.com/' } });
+      mockFetchAccountKeysById.mockResolvedValue({ key1: 'test-key-123' });
+
+      // Managed Identity auth set omits the `openAIKey` parameter, so no key fetch should occur.
+      const managedIdentityParameterSet = {
+        name: 'ManagedServiceIdentity',
+        parameters: {
+          cognitiveServiceAccountId: { type: 'string' },
+          openAIEndpoint: { type: 'string' },
+        },
+        uiDefinition: { displayName: 'Managed Service Identity' },
+      } as any;
+
+      const setKeyValue = vi.fn();
+      render(<CustomOpenAIConnector {...defaultProps} parameterSet={managedIdentityParameterSet} setKeyValue={setKeyValue} />, { wrapper });
+
+      const accountId = '/subscriptions/sub-1/resourceGroups/rg1/providers/Microsoft.CognitiveServices/accounts/openai1';
+      await act(async () => {
+        capturedOnOptionSelect['openai-combobox']?.({}, { optionValue: accountId });
+        await new Promise((r) => setTimeout(r, 50));
+      });
+
+      // Endpoint is still populated, but the key (listKeys) call must not be made.
+      expect(mockFetchAccountById).toHaveBeenCalledWith(accountId);
+      expect(setKeyValue).toHaveBeenCalledWith('openAIEndpoint', 'https://openai1.openai.azure.com/');
+      expect(mockFetchAccountKeysById).not.toHaveBeenCalled();
+      expect(setKeyValue).not.toHaveBeenCalledWith('openAIKey', expect.anything());
+    });
+
+    it('still fetches account keys when no auth parameter set is provided (conservative fallback)', async () => {
+      mockFetchAccountById.mockResolvedValue({ properties: { endpoint: 'https://openai1.openai.azure.com/' } });
+      mockFetchAccountKeysById.mockResolvedValue({ key1: 'test-key-123' });
+
+      const setKeyValue = vi.fn();
+      render(<CustomOpenAIConnector {...defaultProps} parameterSet={undefined} setKeyValue={setKeyValue} />, { wrapper });
+
+      const accountId = '/subscriptions/sub-1/resourceGroups/rg1/providers/Microsoft.CognitiveServices/accounts/openai1';
+      await act(async () => {
+        capturedOnOptionSelect['openai-combobox']?.({}, { optionValue: accountId });
+        await new Promise((r) => setTimeout(r, 50));
+      });
+
+      // Without a known auth set we cannot tell it is keyless, so preserve the legacy fetch.
       expect(mockFetchAccountKeysById).toHaveBeenCalledWith(accountId);
     });
 
@@ -575,14 +636,14 @@ describe('CustomOpenAIConnector', () => {
       parameter: {
         ...defaultProps.parameter,
         managedIdentitySettings: {
-          requiredRoles: ['Cognitive Services OpenAI Contributor'],
+          requiredRoleDefinitionIds: ['a001fd3d-188f-4b5d-821b-7da978bf7442'],
         },
       },
     };
 
     it('shows spinner + "Fetching resource details..." when fetching role data', async () => {
       mockUseHasRoleAssignmentsWritePermissionQuery.mockReturnValue({ data: false, isFetching: true });
-      mockUseHasRoleDefinitionsByNameQuery.mockReturnValue({ data: false, isFetching: true });
+      mockUseHasRequiredRoleDefinitionsQuery.mockReturnValue({ data: false, isFetching: true });
 
       const setKeyValue = vi.fn();
       render(<CustomOpenAIConnector {...roleProps} setKeyValue={setKeyValue} />, { wrapper });
@@ -605,7 +666,7 @@ describe('CustomOpenAIConnector', () => {
 
     it('shows "Missing role write permissions" warning when no permissions', async () => {
       mockUseHasRoleAssignmentsWritePermissionQuery.mockReturnValue({ data: false, isFetching: false });
-      mockUseHasRoleDefinitionsByNameQuery.mockReturnValue({ data: false, isFetching: false });
+      mockUseHasRequiredRoleDefinitionsQuery.mockReturnValue({ data: false, isFetching: false });
 
       const setKeyValue = vi.fn();
       render(<CustomOpenAIConnector {...roleProps} setKeyValue={setKeyValue} />, { wrapper });
@@ -625,9 +686,33 @@ describe('CustomOpenAIConnector', () => {
       });
     });
 
+    it('explains why role write permissions are needed in a tooltip', async () => {
+      mockUseHasRoleAssignmentsWritePermissionQuery.mockReturnValue({ data: false, isFetching: false });
+      mockUseHasRequiredRoleDefinitionsQuery.mockReturnValue({ data: false, isFetching: false });
+
+      const setKeyValue = vi.fn();
+      render(<CustomOpenAIConnector {...roleProps} setKeyValue={setKeyValue} />, { wrapper });
+
+      mockFetchAccountById.mockResolvedValue({ properties: { endpoint: 'https://openai1.openai.azure.com/' } });
+      mockFetchAccountKeysById.mockResolvedValue({ key1: 'k' });
+
+      const accountId = '/subscriptions/sub-1/resourceGroups/rg1/providers/Microsoft.CognitiveServices/accounts/openai1';
+      await waitFor(async () => {
+        await capturedOnOptionSelect['openai-combobox']?.({}, { optionValue: accountId });
+      });
+
+      await waitFor(() => {
+        const tooltip = screen.getByTestId('tooltip');
+        expect(tooltip).toHaveAttribute(
+          'data-tooltip-content',
+          expect.stringContaining('permission to create role assignments') as unknown as string
+        );
+      });
+    });
+
     it('hides role messages when has required roles', async () => {
       mockUseHasRoleAssignmentsWritePermissionQuery.mockReturnValue({ data: true, isFetching: false });
-      mockUseHasRoleDefinitionsByNameQuery.mockReturnValue({ data: true, isFetching: false });
+      mockUseHasRequiredRoleDefinitionsQuery.mockReturnValue({ data: true, isFetching: false });
 
       const setKeyValue = vi.fn();
       render(<CustomOpenAIConnector {...roleProps} setKeyValue={setKeyValue} />, { wrapper });

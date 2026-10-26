@@ -1,7 +1,6 @@
 import { mergeClasses, Text, Spinner, useRestoreFocusTarget } from '@fluentui/react-components';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { isUndefinedOrEmptyString, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
-import type { OutputMock } from '../../../../core/state/unitTest/unitTestInterfaces';
 import { useKeyboardInteraction } from './keyboardInteraction';
 import type { MouseEventHandler } from 'react';
 import { useEffect, useMemo, useRef } from 'react';
@@ -10,12 +9,14 @@ import { useIntl } from 'react-intl';
 import { useCardStyles } from './card.styles';
 import { CardRunStatusBadge } from './cardRunStatusBadge';
 import { CardErrorBadge } from './cardErrorBadge';
+import { CardIndicatorBadges } from './cardIndicatorBadges';
 import { CollapseToggle } from './collapseToggle';
 
 export interface ActionCardProps {
   active?: boolean;
   brandColor?: string;
   cloned?: boolean;
+  comment?: string;
   connectorName?: string;
   drag: ConnectDragSource;
   dragPreview: ConnectDragPreview;
@@ -23,9 +24,10 @@ export interface ActionCardProps {
   icon?: string;
   id: string;
   isDragging?: boolean;
-  isUnitTest?: boolean;
   isLoading?: boolean;
   isSelected?: boolean;
+  isPinned?: boolean;
+  isSecureInputsOutputs?: boolean;
   nodeIndex?: number;
   readOnly?: boolean;
   rootRef?: React.RefObject<HTMLDivElement>;
@@ -37,29 +39,27 @@ export interface ActionCardProps {
   onCopyClick?(): void;
   runData?: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger;
   setFocus?: boolean;
-  nodeMockResults?: OutputMock;
-  isMockSupported?: boolean;
   isLoadingDynamicData?: boolean;
   subtleBackground?: boolean;
   copilotModified?: boolean;
   isScope?: boolean;
   collapsed?: boolean;
-  handleCollapse?(): void;
+  handleCollapse?(includeNested?: boolean): void;
 }
 
 export const ActionCard: React.FC<ActionCardProps> = ({
   id,
   active = true,
   brandColor,
+  comment,
   connectorName,
   drag,
   errorMessages = [],
   icon,
-  // isUnitTest,
-  // nodeMockResults,
-  // isMockSupported,
   isLoading,
   isSelected,
+  isPinned,
+  isSecureInputsOutputs,
   nodeIndex,
   onClick,
   onDeleteClick,
@@ -73,6 +73,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   copilotModified,
   collapsed = false,
   handleCollapse,
+  staticResultsEnabled,
 }) => {
   const styles = useCardStyles();
 
@@ -86,7 +87,8 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 
   useEffect(() => {
     if (setFocus) {
-      focusRef.current?.focus();
+      // Canvas panning owns visibility; native scrolling would offset the viewport.
+      focusRef.current?.focus({ preventScroll: true });
     }
   }, [setFocus]);
 
@@ -152,6 +154,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         !active && styles.inactive,
         runData?.status === 'Succeeded' && styles.statusSuccess,
         runData?.status === 'Failed' && styles.statusError,
+        isPinned && styles.pinned,
         isSelected && styles.selected,
         isScope && styles.scope,
         copilotModified && styles.copilotModified
@@ -174,12 +177,15 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       ) : errorMessages?.length > 0 ? (
         <CardErrorBadge messages={errorMessages} />
       ) : null}
-      {/* {isUnitTest && isMockSupported ? (
-				<MockStatusIcon id={`${title}-status`} nodeMockResults={nodeMockResults} />
-			) : null} */}
       <div className={styles.icon}>{cardIcon}</div>
       <Text className={mergeClasses(styles.title, isScope && styles.scopeTitle)}>{title}</Text>
       {isLoadingDynamicData ? <Spinner size={'extra-tiny'} /> : null}
+      <CardIndicatorBadges
+        comment={comment}
+        isSecureInputsOutputs={isSecureInputsOutputs}
+        nodeIndex={nodeIndex}
+        staticResultsEnabled={staticResultsEnabled}
+      />
       {isScope ? (
         <CollapseToggle id={`${id}-collapse-toggle`} tabIndex={nodeIndex} collapsed={collapsed} handleCollapse={handleCollapse!} />
       ) : null}

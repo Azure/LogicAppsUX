@@ -38,6 +38,7 @@ const createTestStore = (overrides: Partial<CreateWorkspaceState> = {}) => {
     isComplete: false,
     workspaceFileJson: '',
     logicAppsWithoutCustomCode: undefined,
+    existingFolders: [],
     flowType: 'createWorkspace',
     pathValidationResults: {},
     packageValidationResults: {},
@@ -47,6 +48,10 @@ const createTestStore = (overrides: Partial<CreateWorkspaceState> = {}) => {
     separator: '/',
     platform: null,
     isDevContainerProject: false,
+    availableProjects: [],
+    isAddCustomCodeFlow: false,
+    workspaceRootFolder: '',
+    currentFolderPath: '',
     ...overrides,
   };
 
@@ -134,15 +139,15 @@ describe('ReviewCreateStep', () => {
     });
   });
 
-  describe('convertToWorkspace flow', () => {
+  describe('ensureWorkspace flow', () => {
     it('should render workspace section', () => {
-      renderWithStore({ flowType: 'convertToWorkspace' });
+      renderWithStore({ flowType: 'ensureWorkspace' });
       expect(screen.getByText('my-workspace')).toBeInTheDocument();
     });
 
     it('should not render workflow section', () => {
       renderWithStore({
-        flowType: 'convertToWorkspace',
+        flowType: 'ensureWorkspace',
         workflowName: 'test-workflow',
       });
       // The workflow section heading should not be rendered

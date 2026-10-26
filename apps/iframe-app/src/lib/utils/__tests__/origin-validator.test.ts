@@ -1,66 +1,83 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { getAllowedOrigins, isOriginAllowed, getParentOrigin } from '../origin-validator';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { getAllowedOrigins, getParentOrigin, isOriginAllowed } from '../origin-validator';
 
 describe('origin-validator', () => {
-  beforeEach(() => {
-    // Reset window.location
-    delete (window as any).location;
-    (window as any).location = new URL('http://localhost:3000');
+  const originalLocation = window.location;
 
-    // Reset document properties
+  const setLocation = (url: string) => {
+    Object.defineProperty(window, 'location', {
+      value: new URL(url),
+      configurable: true,
+    });
+  };
+
+  beforeEach(() => {
+    setLocation('https://iframe.logic.azure.com/iframe.html');
     Object.defineProperty(document, 'referrer', {
       value: '',
       configurable: true,
     });
-
-    // Clear dataset properties
     Object.keys(document.documentElement.dataset).forEach((key) => {
       delete document.documentElement.dataset[key];
     });
   });
 
+  afterEach(() => {
+    Object.defineProperty(window, 'location', {
+      value: originalLocation,
+      configurable: true,
+    });
+  });
+
   describe('getAllowedOrigins', () => {
-    it('should return current origin by default', () => {
-      const origins = getAllowedOrigins();
-      expect(origins).toContain('http://localhost:3000');
+    it('allows the iframe origin by default', () => {
+      expect(getAllowedOrigins()).toEqual(['https://iframe.logic.azure.com']);
     });
 
-    it('should add development origins when on localhost', () => {
-      const origins = getAllowedOrigins();
-      expect(origins).toContain('http://localhost:3000');
-      expect(origins).toContain('http://localhost:3001');
-      expect(origins).toContain('http://127.0.0.1:3000');
+    it('allows fixed development origins only when the iframe is local', () => {
+      setLocation('http://localhost:5173/iframe.html');
+
+      expect(getAllowedOrigins()).toEqual(
+        expect.arrayContaining(['http://localhost:5173', 'http://localhost:3000', 'http://localhost:3001', 'http://127.0.0.1:3000'])
+      );
     });
 
-    it('should parse allowed origins from URL parameter', () => {
-      (window as any).location = new URL('http://localhost:3000?allowedOrigins=https://example.com,https://app.example.com');
+    it('does not enable development origins for a localhost lookalike hostname', () => {
+      setLocation('https://localhost.attacker.example/iframe.html');
 
-      const origins = getAllowedOrigins();
-      expect(origins).toContain('https://example.com');
-      expect(origins).toContain('https://app.example.com');
+      expect(getAllowedOrigins()).toEqual(['https://localhost.attacker.example']);
     });
 
-    it('should parse allowed origins from data attribute', () => {
-      document.documentElement.dataset.allowedOrigins = 'https://data1.com,https://data2.com';
+    it('uses origins configured inside the iframe document', () => {
+      document.documentElement.dataset.allowedOrigins = 'https://designer.example.com,https://admin.example.com';
 
-      const origins = getAllowedOrigins();
-      expect(origins).toContain('https://data1.com');
-      expect(origins).toContain('https://data2.com');
+      expect(getAllowedOrigins()).toEqual(expect.arrayContaining(['https://designer.example.com', 'https://admin.example.com']));
     });
 
-    it('should include document referrer if present', () => {
+    it('uses an already validated trusted parent origin', () => {
+      expect(getAllowedOrigins('https://portal.azure.com')).toEqual(
+        expect.arrayContaining(['https://iframe.logic.azure.com', 'https://portal.azure.com'])
+      );
+    });
+
+    it('does not trust origins supplied only through the iframe query string', () => {
+      setLocation('https://iframe.logic.azure.com/iframe.html?allowedOrigins=https://attacker.example,https://other.example');
+
+      expect(getAllowedOrigins()).toEqual(['https://iframe.logic.azure.com']);
+    });
+
+    it('does not trust the document referrer by itself', () => {
       Object.defineProperty(document, 'referrer', {
-        value: 'https://parent.example.com/page',
+        value: 'https://attacker.example/embed',
         configurable: true,
       });
 
-      const origins = getAllowedOrigins();
-      expect(origins).toContain('https://parent.example.com');
+      expect(getAllowedOrigins()).toEqual(['https://iframe.logic.azure.com']);
     });
   });
 
   describe('isOriginAllowed', () => {
-    it('should allow direct match', () => {
+    it('allows direct matches only', () => {
       const allowedOrigins = ['https://example.com', 'https://app.example.com'];
 
       expect(isOriginAllowed('https://example.com', allowedOrigins)).toBe(true);
@@ -68,44 +85,61 @@ describe('origin-validator', () => {
       expect(isOriginAllowed('https://other.com', allowedOrigins)).toBe(false);
     });
 
-    it('should support wildcard subdomain patterns', () => {
+    it('supports explicitly configured wildcard subdomains', () => {
       const allowedOrigins = ['*.example.com'];
 
       expect(isOriginAllowed('https://app.example.com', allowedOrigins)).toBe(true);
-      expect(isOriginAllowed('https://admin.example.com', allowedOrigins)).toBe(true);
       expect(isOriginAllowed('https://deep.sub.example.com', allowedOrigins)).toBe(true);
       expect(isOriginAllowed('https://example.com', allowedOrigins)).toBe(false);
       expect(isOriginAllowed('https://notexample.com', allowedOrigins)).toBe(false);
     });
 
-    it('should handle invalid URLs gracefully', () => {
-      const allowedOrigins = ['*.example.com'];
-
-      expect(isOriginAllowed('not-a-url', allowedOrigins)).toBe(false);
+    it('handles invalid origins gracefully', () => {
+      expect(isOriginAllowed('not-a-url', ['*.example.com'])).toBe(false);
     });
   });
 
   describe('getParentOrigin', () => {
-    it('should return referrer origin if available', () => {
+    it('prefers an already validated trusted parent origin', () => {
+      expect(getParentOrigin('https://portal.azure.com')).toBe('https://portal.azure.com');
+    });
+
+    it('uses a referrer that is independently configured inside the iframe document', () => {
+      document.documentElement.dataset.allowedOrigins = 'https://parent.example.com';
       Object.defineProperty(document, 'referrer', {
-        value: 'https://parent.example.com/page',
+        value: 'https://parent.example.com/embed',
         configurable: true,
       });
 
       expect(getParentOrigin()).toBe('https://parent.example.com');
     });
 
-    it('should fallback to current origin if no referrer', () => {
+    it('uses a local development referrer covered by fixed defaults', () => {
+      setLocation('http://localhost:5173/iframe.html');
+      Object.defineProperty(document, 'referrer', {
+        value: 'http://localhost:3000/embed',
+        configurable: true,
+      });
+
       expect(getParentOrigin()).toBe('http://localhost:3000');
     });
 
-    it('should handle invalid referrer gracefully', () => {
+    it('does not use an untrusted referrer as the parent origin', () => {
+      Object.defineProperty(document, 'referrer', {
+        value: 'https://attacker.example/embed',
+        configurable: true,
+      });
+
+      expect(getParentOrigin()).toBe('https://iframe.logic.azure.com');
+    });
+
+    it('falls back to the current origin for an invalid referrer', () => {
       Object.defineProperty(document, 'referrer', {
         value: 'not-a-valid-url',
         configurable: true,
       });
 
-      expect(getParentOrigin()).toBe('http://localhost:3000');
+      expect(getParentOrigin()).toBe('https://iframe.logic.azure.com');
     });
   });
 });

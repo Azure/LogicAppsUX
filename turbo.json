@@ -15,11 +15,17 @@
       "dependsOn": ["^build:lib"],
       "outputs": ["build/**"]
     },
+    "standalone#build:ephemeral": {
+      "dependsOn": ["^build:lib"],
+      "outputs": ["dist/**"],
+      "cache": false
+    },
     "build:lib": {
       "outputs": ["build/**", "dist/**"]
     },
     "vscode-designer#build:extension": {
       "cache": false,
+      "env": ["NPM_CONFIG_USERCONFIG"],
       "dependsOn": ["build"]
     },
     "vscode-react#build:extension": {
@@ -48,6 +54,7 @@
     },
     "vscode:designer:pack": {
       "cache": false,
+      "env": ["NPM_CONFIG_USERCONFIG"],
       "dependsOn": ["vscode-react#build:extension"]
     },
     "vscode:designer:e2e:ui": {

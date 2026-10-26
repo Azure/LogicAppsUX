@@ -19,9 +19,9 @@ export const settingsFileName = 'settings.json';
 export const devContainerFileName = 'devcontainer.json';
 export const extensionsFileName = 'extensions.json';
 export const workflowFileName = 'workflow.json';
+export const workflowDraftFileName = 'workflow-draft.json';
 export const codefulWorkflowFileName = 'workflow.cs';
 export const funcIgnoreFileName = '.funcignore';
-export const unitTestsFileName = '.unit-test.json';
 export const powershellRequirementsFileName = 'requirements.psd1';
 export const sdkLspServer = 'SdkLspServer';
 
@@ -32,6 +32,10 @@ export const locksDirectory = 'locks';
 export const wwwrootDirectory = 'wwwroot';
 export const artifactsDirectory = 'Artifacts';
 export const libDirectory = 'lib';
+// Folder (under lib/) that holds the client SDK assemblies for Java/.NET built-in operations.
+export const builtinOperationSdksFolderName = 'builtinOperationSdks';
+// Folder (under lib/builtinOperationSdks/) where JDBC driver JAR files are placed.
+export const jarFolderName = 'JAR';
 export const customDirectory = 'custom';
 export const mapsDirectory = 'Maps';
 export const schemasDirectory = 'Schemas';
@@ -41,7 +45,6 @@ export const rulesDirectory = 'Rules';
 export const designTimeDirectoryName = 'workflow-designtime';
 export const testsDirectoryName = 'Tests';
 export const testMockOutputsDirectory = 'MockOutputs';
-export const testResultsDirectoryName = '.testResults';
 export const vscodeFolderName = '.vscode';
 export const devContainerFolderName = '.devcontainer';
 export const assetsFolderName = 'assets';
@@ -60,8 +63,11 @@ export const testMockClassTemplateName = 'TestMockClass';
 export const testCsprojFileTemplateName = 'TestCsprojFile';
 export const testSettingsConfigFileTemplateName = 'TestSettingsConfigFile';
 
-// Extension Id
+// VS Code Extensions
 export const logicAppsStandardExtensionId = 'ms-azuretools.vscode-azurelogicapps';
+export const functionsExtensionId = 'ms-azuretools.vscode-azurefunctions';
+export const dotnetExtensionId = 'ms-dotnettools.csharp';
+export const csDevKitExtensionId = 'ms-dotnettools.csdevkit';
 
 // Azurite
 export const azuriteExtensionId = 'Azurite.azurite';
@@ -70,7 +76,6 @@ export const azuriteLocationSetting = 'location';
 
 // Functions
 export const func = 'func';
-export const functionsExtensionId = 'ms-azuretools.vscode-azurefunctions';
 export const hostStartCommand = 'host start';
 export const hostStartTaskName = `${func}: ${hostStartCommand}`;
 export const funcPackageName = 'azure-functions-core-tools';
@@ -97,13 +102,14 @@ export const customConnectorResourceGroupNameKey = 'CUSTOM_CONNECTOR_RESOURCE_GR
 export const workflowSubscriptionIdKey = 'WORKFLOWS_SUBSCRIPTION_ID';
 export const workflowTenantIdKey = 'WORKFLOWS_TENANT_ID';
 export const workflowManagementBaseURIKey = 'WORKFLOWS_MANAGEMENT_BASE_URI';
+export const workflowCodefulEnabledKey = 'WORKFLOW_CODEFUL_ENABLED';
 export const workflowAppApiVersion = '2018-11-01';
 export const hybridAppApiVersion = '2024-02-02-preview';
 export const azureWebJobsStorageKey = 'AzureWebJobsStorage';
 export const functionsInprocNet8Enabled = 'FUNCTIONS_INPROC_NET8_ENABLED';
 export const functionsInprocNet8EnabledTrue = '1';
 export const azureWebJobsSecretStorageTypeKey = 'AzureWebJobsSecretStorageType';
-export const workflowappRuntime = 'node|20';
+export const workflowappRuntime = 'node|22';
 export const viewOutput = localize('viewOutput', 'View Output');
 export const webhookRedirectHostUri = 'Workflows.WebhookRedirectHostUri';
 export const workflowAppAADClientId = 'WORKFLOWAPP_AAD_CLIENTID';
@@ -111,14 +117,6 @@ export const workflowAppAADObjectId = 'WORKFLOWAPP_AAD_OBJECTID';
 export const workflowAppAADTenantId = 'WORKFLOWAPP_AAD_TENANTID';
 export const workflowAppAADClientSecret = 'WORKFLOWAPP_AAD_CLIENTSECRET';
 export const debugSymbolDll = 'Microsoft.Azure.Workflows.BuildTasks.DebugSymbolGenerator.dll';
-// Codeful settings
-export const workflowCodefulEnabled = 'WORKFLOW_CODEFUL_ENABLED';
-
-export const workflowCodeType = {
-  codeful: 'Codeful',
-  codeless: 'Codeless',
-} as const;
-export type workflowCodeType = (typeof workflowCodeType)[keyof typeof workflowCodeType];
 
 export const WorkflowKind = {
   stateful: 'Stateful',
@@ -133,21 +131,32 @@ export const managementApiPrefix = '/runtime/webhooks/workflow/api/management';
 export const designerStartApi = '/runtime/webhooks/workflow/api/management/operationGroups';
 export const designerApiLoadTimeout = 300000;
 
+// Dependency update-check throttle
+/**
+ * Key used to persist the timestamp (epoch ms) of the last time we checked whether the
+ * runtime dependencies (Node.js, Functions Core Tools, .NET SDK) had newer versions available.
+ */
+export const lastDependencyUpdateCheckKey = 'azureLogicAppsStandard.lastDependencyUpdateCheck';
+/**
+ * Minimum interval between "is there a newer version?" checks. Missing binaries are always
+ * installed regardless of this interval; only the network lookups that compare an already
+ * installed binary against the latest published version are throttled.
+ */
+export const dependencyUpdateCheckIntervalMs = 24 * 60 * 60 * 1000; // 24 hours
+
 // Commands
 export const extensionCommand = {
-  openDesigner: 'azureLogicAppsStandard.openDesigner',
   activate: 'azureLogicAppsStandard.activate',
+  openDesigner: 'azureLogicAppsStandard.openDesigner',
   viewContent: 'azureLogicAppsStandard.viewContent',
   openFile: 'azureLogicAppsStandard.openFile',
   createProject: 'azureLogicAppsStandard.createProject',
   createWorkspace: 'azureLogicAppsStandard.createWorkspace',
   cloudToLocal: 'azureLogicAppsStandard.cloudToLocal',
   buildCustomCodeFunctionsProject: 'azureLogicAppsStandard.buildCustomCodeFunctionsProject',
-  customCodeSetFunctionsFolders: 'azureLogicAppsStandard.customCode.setFunctionsFolders',
   createCustomCodeFunction: 'azureLogicAppsStandard.createCustomCodeFunction',
-  createNewDataMap: 'azureLogicAppsStandard.dataMap.createNewDataMap',
+  createDataMap: 'azureLogicAppsStandard.dataMap.createDataMap',
   createWorkflow: 'azureLogicAppsStandard.createWorkflow',
-  createCodeless: 'azureLogicAppsStandard.createCodeless',
   createLogicApp: 'azureLogicAppsStandard.createLogicApp',
   createLogicAppAdvanced: 'azureLogicAppsStandard.createLogicAppAdvanced',
   deploy: 'azureLogicAppsStandard.deploy',
@@ -158,16 +167,12 @@ export const extensionCommand = {
   startLogicApp: 'azureLogicAppsStandard.startLogicApp',
   stopLogicApp: 'azureLogicAppsStandard.stopLogicApp',
   restartLogicApp: 'azureLogicAppsStandard.restartLogicApp',
-  pickProcess: 'azureLogicAppsStandard.pickProcess',
-  pickCustomCodeNetHostProcess: 'azureLogicAppsStandard.pickCustomCodeNetHostProcess',
+  pickFuncProcess: 'azureLogicAppsStandard.pickFuncProcess',
   getDebugSymbolDll: 'azureLogicAppsStandard.getDebugSymbolDll',
   deleteLogicApp: 'azureLogicAppsStandard.deleteLogicApp',
   switchToDotnetProject: 'azureLogicAppsStandard.switchToDotnetProject',
+  toggleDesignTimeNodeWorker: 'azureLogicAppsStandard.toggleDesignTimeNodeWorker',
   openInPortal: 'azureLogicAppsStandard.openInPortal',
-  azureFunctionsOpenFile: 'azureFunctions.openFile',
-  azureFunctionsUninstallFuncCoreTools: 'azureFunctions.uninstallFuncCoreTools',
-  azureFunctionsAppSettingsEncrypt: 'azureFunctions.appSettings.encrypt',
-  azureFunctionsAppSettingsDecrypt: 'azureFunctions.appSettings.decrypt',
   openOverview: 'azureLogicAppsStandard.openOverview',
   exportLogicApp: 'azureLogicAppsStandard.exportLogicApp',
   reviewValidation: 'azureLogicAppsStandard.reviewValidation',
@@ -198,43 +203,64 @@ export const extensionCommand = {
   initProjectForVSCode: 'azureLogicAppsStandard.initProjectForVSCode',
   configureDeploymentSource: 'azureLogicAppsStandard.configureDeploymentSource',
   startRemoteDebug: 'azureLogicAppsStandard.startRemoteDebug',
-  validateLogicAppProjects: 'azureLogicAppsStandard.validateFunctionProjects',
   reportIssue: 'azureLogicAppsStandard.reportIssue',
   validateAndInstallBinaries: 'azureLogicAppsStandard.validateAndInstallBinaries',
   resetValidateAndInstallBinaries: 'azureLogicAppsStandard.resetValidateAndInstallBinaries',
   disableValidateAndInstallBinaries: 'azureLogicAppsStandard.disableValidateAndInstallBinaries',
-  azureAzuriteStart: 'azurite.start',
-  parameterizeConnections: 'azureLogicAppsStandard.parameterizeConnections',
+  parameterizeProjectConnections: 'azureLogicAppsStandard.parameterizeProjectConnections',
+  enableLocalManagedIdentityAuth: 'azureLogicAppsStandard.enableLocalManagedIdentityAuth',
   loadDataMapFile: 'azureLogicAppsStandard.dataMap.loadDataMapFile',
-  dataMapAddSchemaFromFile: 'azureLogicAppsStandard.dataMap.addSchemaFromFile',
-  dataMapAttemptToResolveMissingSchemaFile: 'azureLogicAppsStandard.dataMap.attemptToResolveMissingSchemaFile',
-  dataMapSetSupportedDataMapDefinitionFileExts: 'azureLogicAppsStandard.dataMap.setSupportedDataMapDefinitionFileExts',
-  dataMapSetSupportedSchemaFileExts: 'azureLogicAppsStandard.dataMap.setSupportedSchemaFileExts',
-  dataMapSetSupportedFileExts: 'azureLogicAppsStandard.dataMap.setSupportedFileExts',
-  dataMapSetDmFolders: 'azureLogicAppsStandard.dataMap.setDmFolders',
-  dataMapSaveMapDefinition: 'azureLogicAppsStandard.dataMap.saveMapDefinition',
-  dataMapSaveMapXslt: 'azureLogicAppsStandard.dataMap.saveMapXslt',
-  createUnitTestFromRun: 'azureLogicAppsStandard.createUnitTestFromRun',
-  createUnitTest: 'azureLogicAppsStandard.createUnitTest',
-  vscodeOpenFolder: 'vscode.openFolder',
   debugLogicApp: 'azureLogicAppsStandard.debugLogicApp',
   switchToDataMapperV2: 'azureLogicAppsStandard.dataMap.switchToDataMapperV2',
   openLanguageServerConnectionView: 'azureLogicAppsStandard.openLanguageServerConnectionView',
-  sdkLspApplyEdits: 'sdklsp.applyEdits',
+  sdkLspApplyEdits: 'azureLogicAppsStandard.sdklsp.applyEdits',
   enableDevContainer: 'azureLogicAppsStandard.enableDevContainer',
+  runProjectConsistencyCheck: 'azureLogicAppsStandard.runProjectConsistencyCheck',
+  addCustomCode: 'azureLogicAppsStandard.addCustomCode',
 } as const;
 export type extensionCommand = (typeof extensionCommand)[keyof typeof extensionCommand];
 
-// Extension context
-export const customExtensionContext = {
-  isCodeful: 'azureLogicAppsStandard.isCodeful',
-  isCodefulWorkflowFile: 'azureLogicAppsStandard.isCodefulWorkflowFile',
-  codefulWorkflowFiles: 'azureLogicAppsStandard.codefulWorkflowFiles',
+export const extensionEvent = {
+  onDidStartTask: 'azureLogicAppsStandard.onDidStartTask',
+  onDidEndTask: 'azureLogicAppsStandard.onDidEndTask',
+  onDidTerminateDebugSession: 'azureLogicAppsStandard.onDidTerminateDebugSession',
+  onDidChangeWorkspaceFolders: 'azureLogicAppsStandard.onDidChangeWorkspaceFolders',
 } as const;
-export type customExtensionContext = (typeof customExtensionContext)[keyof typeof customExtensionContext];
+export type extensionEvent = (typeof extensionEvent)[keyof typeof extensionEvent];
+
+export const extensionContext = {
+  hasProject: 'azureLogicAppsStandard.hasProject',
+  isCodeful: 'azureLogicAppsStandard.isCodeful',
+  customCodeFunctionsFolders: 'azureLogicAppsStandard.customCode.functionsFolders',
+  customCodeEligibleLogicAppFolders: 'azureLogicAppsStandard.customCode.eligibleLogicAppFolders',
+  dataMapSupportedDataMapDefinitionFileExts: 'azureLogicAppsStandard.dataMap.supportedDataMapDefinitionFileExts',
+  dataMapSupportedSchemaFileExts: 'azureLogicAppsStandard.dataMap.supportedSchemaFileExts',
+  dataMapSupportedFileExts: 'azureLogicAppsStandard.dataMap.supportedFileExts',
+  dataMapDmFolders: 'azureLogicAppsStandard.dataMap.dmFolders',
+} as const;
+export type extensionContext = (typeof extensionContext)[keyof typeof extensionContext];
+
+export const azuriteCommand = {
+  start: 'azurite.start',
+} as const;
+export type azuriteCommand = (typeof azuriteCommand)[keyof typeof azuriteCommand];
+
+export const vscodeCommand = {
+  openFolder: 'vscode.openFolder',
+} as const;
+export type vscodeCommand = (typeof vscodeCommand)[keyof typeof vscodeCommand];
 
 // Context
 export const contextValuePrefix = 'azLogicApps';
+
+// Global state
+export const suppressAutoStartAzuriteNotificationState = 'suppressAutoStartAzuriteNotification';
+export const suppressAutoStartDesignTimeNotificationState = 'suppressAutoStartDesignTimeNotification';
+export const suppressDesignerVersionNotificationState = 'suppressDesignerVersionNotification';
+export const suppressManagedIdentityAuthNotificationState = 'suppressManagedIdentityAuthNotification';
+export const suppressMultiCoreToolsWarningState = 'suppressMultiCoreToolsWarning';
+export const suppressNodeJsWarningState = 'suppressNodeJsWarning';
+export const suppressParameterizeConnectionsNotificationState = 'suppressParameterizeConnectionsNotification';
 
 // API
 export const defaultRoutePrefix = 'api';
@@ -255,6 +281,7 @@ export const projectSubpathSetting = 'projectSubpath';
 export const projectTemplateKeySetting = 'projectTemplateKey';
 export const projectOpenBehaviorSetting = 'projectOpenBehavior';
 export const stopFuncTaskPostDebugSetting = 'stopFuncTaskPostDebug';
+export const alwaysBuildCustomCodeSetting = 'alwaysBuildCustomCode';
 export const validateFuncCoreToolsSetting = 'validateFuncCoreTools';
 export const validateDotNetSDKSetting = 'validateDotNetSDK';
 export const validateNodeJsSetting = 'validateNodeJs';
@@ -263,34 +290,40 @@ export const deploySubpathSetting = 'deploySubpath';
 export const preDeployTaskSetting = 'preDeployTask';
 export const pickProcessTimeoutSetting = 'pickProcessTimeout';
 export const show64BitWarningSetting = 'show64BitWarning';
-export const showProjectWarningSetting = 'showProjectWarning';
-export const showTargetFrameworkWarningSetting = 'showTargetFrameworkWarning';
-export const showStartDesignTimeMessageSetting = 'showStartDesignTimeMessage';
+export const enableProjectConsistencyChecksSetting = 'enableProjectConsistencyChecks';
 export const autoStartDesignTimeSetting = 'autoStartDesignTime';
+export const useNodeDesignTimeWorkerSetting = 'useNodeDesignTimeWorker';
 export const autoRuntimeDependenciesValidationAndInstallationSetting = 'autoRuntimeDependenciesValidationAndInstallation';
 export const azuriteBinariesLocationSetting = 'azuriteLocationSetting';
 export const driveLetterSMBSetting = 'driveLetterSMB';
 export const parameterizeConnectionsInProjectLoadSetting = 'parameterizeConnectionsInProjectLoad';
-export const showAutoStartAzuriteWarning = 'showAutoStartAzuriteWarning';
 export const autoStartAzuriteSetting = 'autoStartAzurite';
 export const autoRuntimeDependenciesPathSettingKey = 'autoRuntimeDependenciesPath';
 export const dotNetBinaryPathSettingKey = 'dotnetBinaryPath';
 export const nodeJsBinaryPathSettingKey = 'nodeJsBinaryPath';
 export const funcCoreToolsBinaryPathSettingKey = 'funcCoreToolsBinaryPath';
 export const dependencyTimeoutSettingKey = 'dependencyTimeout';
-export const unitTestExplorer = 'unitTestExplorer';
-export const verifyConnectionKeysSetting = 'verifyConnectionKeys';
+export const e2eStrictDependencyValidationSettingKey = 'e2eStrictDependencyValidation';
+export const useExperimentalExtensionBundleSettingKey = 'useExperimentalExtensionBundle';
+export const experimentalExtensionBundleSourceUriSettingKey = 'experimentalExtensionBundleSourceUri';
+export const experimentalExtensionBundleVersionSettingKey = 'experimentalExtensionBundleVersion';
+export const enableManagedIdentityAuthSetting = 'enableManagedIdentityAuth';
+export const dependencyMetadataRequestTimeoutMs = 30 * 1000;
 export const useSmbDeployment = 'useSmbDeploymentForHybrid';
 export const onStartLanguageServer = 'onStartLanguageServer';
 
 // host.json
 export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
 export const targetBundleKey = 'FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI';
+export const bundleInstallCompleteFile = '.install-complete';
+export const legacyBundleInstallMarkerFile = '.bundle-source-md5';
 
 // local.settings.json
 export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
 export const appKindSetting = 'APP_KIND';
 export const sqlStorageConnectionStringKey = 'Workflows.Sql.ConnectionString';
+export const workflowAuthenticationMethodMIValue = 'managedServiceIdentity';
+export const customCodeDotNetVersionSettingKey = 'LOGIC_APPS_CUSTOMCODE_DOTNETVERSION';
 
 export const workerRuntimeKey = 'FUNCTIONS_WORKER_RUNTIME';
 export const ProjectDirectoryPathKey = 'ProjectDirectoryPath';
@@ -299,6 +332,8 @@ export const azureStorageTypeSetting = 'Files';
 export const isZipDeployEnabledSetting = 'IS_ZIP_DEPLOY_ENABLED';
 export const azureWebJobsFeatureFlagsKey = 'AzureWebJobsFeatureFlags';
 export const multiLanguageWorkerSetting = 'EnableMultiLanguageWorker';
+// Documentation for the JDBC built-in connector prerequisites (multi-language worker + JDK + driver JARs).
+export const jdbcConnectorDocsUrl = 'https://learn.microsoft.com/azure/logic-apps/connectors/built-in/reference/jdbc/';
 // Azure Functions runtime setting (passed as env var via local.settings.json
 // Values) that pins the absolute path of the `node` binary used by the
 // in-proc8 InlineCodeDependencyGenerator. Keeps inline-JS workflows working
@@ -328,13 +363,19 @@ export const defaultExtensionBundlePathValue = path.join(
 export const defaultDataMapperVersion = 2;
 export const defaultDesignerVersion = 1;
 
+// The design-time host.json enables workflow operation discovery host mode so the design-time API can
+// enumerate operations. Shared between the generated host.json content and its validation.
+export const workflowOperationDiscoveryHostModeKey = 'Runtime.WorkflowOperationDiscoveryHostMode';
+
 // Fallback Dependency Versions
 export const DependencyVersion = {
   dotnet8: '8.0.318',
   funcCoreTools: '4.0.7030',
-  nodeJs: '20.18.3',
+  nodeJs: '24.15.0',
 } as const;
 export type DependencyVersion = (typeof DependencyVersion)[keyof typeof DependencyVersion];
+
+export const defaultDotnetMajorVersion = '8';
 
 export const hostFileContent = {
   version: '2.0',
@@ -345,7 +386,7 @@ export const hostFileContent = {
   extensions: {
     workflow: {
       settings: {
-        'Runtime.WorkflowOperationDiscoveryHostMode': 'true',
+        [workflowOperationDiscoveryHostModeKey]: 'true',
       },
     },
   },
@@ -368,8 +409,6 @@ export const DotnetVersion = {
 } as const;
 export type DotnetVersion = (typeof DotnetVersion)[keyof typeof DotnetVersion];
 
-export const dotnetExtensionId = 'ms-dotnettools.csharp';
-
 // Packages Manager
 export const PackageManager = {
   npm: 'npm',
@@ -388,9 +427,6 @@ export const logicAppFilter = {
   kind: 'functionapp,workflowapp',
 };
 
-// Telemetry Events
-export const saveUnitTestEvent = 'saveUnitTestDefinition';
-export const runUnitTestEvent = 'runUnitTest';
 // Container Apps
 export const containerAppsId = 'containerApps';
 export const managedEnvironmentsId = 'managedEnvironments';

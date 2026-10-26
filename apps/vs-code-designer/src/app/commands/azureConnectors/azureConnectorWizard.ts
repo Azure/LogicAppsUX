@@ -1,0 +1,126 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+import { ResourceGroupListStep } from '@microsoft/vscode-azext-azureutils';
+import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep, parseError } from '@microsoft/vscode-azext-utils';
+import type { IActionContext, IAzureQuickPickItem, IWizardOptions } from '@microsoft/vscode-azext-utils';
+import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import * as path from 'path';
+import {
+  defaultMsiAudience,
+  workflowLocationKey,
+  workflowManagementBaseURIKey,
+  workflowResourceGroupNameKey,
+  workflowsDynamicConnectionDefaultAuthAudienceKey,
+  workflowSubscriptionIdKey,
+  workflowTenantIdKey,
+} from '../../../constants';
+import { ext } from '../../../extensionVariables';
+import { localize } from '../../../localize';
+import { addOrUpdateLocalAppSettings } from '../../utils/appSettings/localSettings';
+import { setConnectorSetupSkipped } from '../../state/connectors';
+
+export interface IAzureConnectorsContext extends IActionContext, IProjectWizardContext {
+  credentials: any;
+  subscriptionId: any;
+  resourceGroup: any;
+  enabled: boolean;
+  tenantId: any;
+  environment: any;
+  MSIenabled?: boolean;
+}
+
+//TODO: Update to be in webview after ignite redesign is done
+export function createAzureWizard(wizardContext: IAzureConnectorsContext, projectPath: string): AzureWizard<IAzureConnectorsContext> {
+  return new AzureWizard(wizardContext, {
+    promptSteps: [new GetSubscriptionDetailsStep(projectPath)],
+    executeSteps: [new SaveAzureContext(projectPath)],
+  });
+}
+
+class GetSubscriptionDetailsStep extends AzureWizardPromptStep<IAzureConnectorsContext> {
+  private _projectPath: string;
+
+  constructor(projectPath: string) {
+    super();
+    this._projectPath = projectPath;
+  }
+
+  public async prompt(context: IAzureConnectorsContext): Promise<void> {
+    const placeHolder: string = localize(
+      'enableAzureResource',
+      `Enable connectors in Azure for Logic App ${path.basename(this._projectPath)}`
+    );
+    const picks: IAzureQuickPickItem<string>[] = [
+      { label: localize('useConnectorsFromAzure', 'Use connectors from Azure'), data: 'yes' },
+      { label: localize('skipConnectorsFromAzure', 'Skip for now'), data: 'no' },
+    ];
+    const selectedAction = await context.ui.showQuickPick(picks, { placeHolder }).catch((error) => {
+      if (parseError(error).isUserCancelledError) {
+        return { data: 'no' };
+      }
+
+      throw error;
+    });
+
+    context.enabled = selectedAction.data === 'yes';
+  }
+
+  public shouldPrompt(context: IAzureConnectorsContext): boolean {
+    return context.enabled === undefined;
+  }
+
+  public async getSubWizard(context: IAzureConnectorsContext): Promise<IWizardOptions<IAzureConnectorsContext> | undefined> {
+    if (context.enabled) {
+      const azurePromptSteps: AzureWizardPromptStep<IActionContext>[] = [];
+      const subscriptionPromptStep: AzureWizardPromptStep<IActionContext> | undefined =
+        await ext.azureAccountTreeItem.getSubscriptionPromptStep(context);
+      if (subscriptionPromptStep) {
+        azurePromptSteps.push(subscriptionPromptStep);
+      }
+
+      azurePromptSteps.push(new ResourceGroupListStep());
+
+      return { promptSteps: azurePromptSteps };
+    }
+    return undefined;
+  }
+}
+
+class SaveAzureContext extends AzureWizardExecuteStep<IAzureConnectorsContext> {
+  public priority = 100;
+  private _projectPath: string;
+
+  constructor(projectPath: string) {
+    super();
+    this._projectPath = projectPath;
+  }
+
+  public async execute(context: IAzureConnectorsContext): Promise<void> {
+    if (context.enabled === false) {
+      await setConnectorSetupSkipped(this._projectPath);
+      return;
+    }
+
+    const valuesToUpdateInSettings: Record<string, string> = {};
+    const { resourceGroup, subscriptionId, tenantId, environment } = context;
+    valuesToUpdateInSettings[workflowTenantIdKey] = tenantId;
+    valuesToUpdateInSettings[workflowSubscriptionIdKey] = subscriptionId;
+    valuesToUpdateInSettings[workflowResourceGroupNameKey] = resourceGroup?.name || '';
+    valuesToUpdateInSettings[workflowLocationKey] = resourceGroup?.location || '';
+    valuesToUpdateInSettings[workflowManagementBaseURIKey] = environment.resourceManagerEndpointUrl;
+    valuesToUpdateInSettings[workflowsDynamicConnectionDefaultAuthAudienceKey] = defaultMsiAudience;
+
+    ext?.languageClient?.sendNotification('custom/updateApiConfig', {
+      subscriptionId: subscriptionId,
+      resourceGroup: resourceGroup,
+    });
+
+    await addOrUpdateLocalAppSettings(context, this._projectPath, valuesToUpdateInSettings);
+  }
+
+  public shouldExecute(context: IAzureConnectorsContext): boolean {
+    return context.enabled === false || !!context.subscriptionId || !!context.resourceGroup;
+  }
+}

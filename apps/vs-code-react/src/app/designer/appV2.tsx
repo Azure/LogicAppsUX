@@ -1,9 +1,8 @@
-import { createFileSystemConnection, updateUnitTestDefinition } from '../../state/DesignerSlice';
+import { createFileSystemConnection } from '../../state/DesignerSlice';
 import type { AppDispatch, RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
 import { DesignerCommandBar } from './DesignerCommandBar/indexV2';
 import { getDesignerServices } from './servicesHelper';
-import { getRunInstanceMocks } from './utilities/runInstance';
 import { convertConnectionsDataToReferences } from './utilities/workflow';
 import type { ConnectionCreationInfo, Workflow } from '@microsoft/logic-apps-shared';
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer-v2';
@@ -16,7 +15,7 @@ import {
   FloatingRunButton,
   useRun,
 } from '@microsoft/logic-apps-designer-v2';
-import { BundleVersionRequirements, guid, isNullOrUndefined, isVersionSupported, Theme } from '@microsoft/logic-apps-shared';
+import { BundleVersionRequirements, guid, isEmptyString, isVersionSupported, Theme } from '@microsoft/logic-apps-shared';
 import type { FileSystemConnectionInfo, MessageToVsix, StandardApp } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo, useState, useEffect, useCallback, useRef } from 'react';
@@ -32,7 +31,6 @@ export const DesignerApp = () => {
   const vscode = useContext(VSCodeContext);
   const dispatch: AppDispatch = useDispatch();
   const vscodeState = useSelector((state: RootState) => state.designer);
-  const { supportsUnitTest } = vscodeState;
   const styles = useAppStyles();
   const {
     panelMetaData,
@@ -46,8 +44,6 @@ export const DesignerApp = () => {
     isMonitoringView: _isMonitoringView,
     runId: _runId,
     hostVersion,
-    isUnitTest,
-    unitTestDefinition,
     workflowRuntimeBaseUrl,
   } = vscodeState;
 
@@ -58,6 +54,13 @@ export const DesignerApp = () => {
 
   const [runId, setRunId] = useState(_runId);
 
+  useEffect(() => {
+    if (_isMonitoringView && _runId && _runId !== runId) {
+      setRunId(_runId);
+      setCurrentView(DesignerViewType.Monitoring);
+    }
+  }, [_isMonitoringView, _runId]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const [initialWorkflow, setInitialWorkflow] = useState<StandardApp | undefined>(panelMetaData?.standardApp);
   const [workflow, setWorkflow] = useState<StandardApp | undefined>(panelMetaData?.standardApp);
   const [customCode, setCustomCode] = useState<Record<string, string> | undefined>(panelMetaData?.customCodeData);
@@ -66,12 +69,12 @@ export const DesignerApp = () => {
   const [designerID, setDesignerID] = useState(guid());
   const [workflowDefinitionId, setWorkflowDefinitionId] = useState<string>(guid());
 
-  const codeEditorRef = useRef<{ getValue: () => string | undefined; hasChanges: () => boolean }>(null);
-
+  const codeEditorRef = useRef<{ getValue: () => string | undefined; hasChanges: () => boolean; resetChanges: () => void }>(null);
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
   const queryClient = useQueryClient();
 
   const commonText = useIntlMessages(commonMessages);
+  const isRuntimeAvailable = !isEmptyString(workflowRuntimeBaseUrl);
 
   useThemeObserver(document.body, theme, setTheme, {
     attributes: true,
@@ -152,26 +155,6 @@ export const DesignerApp = () => {
   const { data: runInstance, isError: isErrorRunInstance } = useRun(runId);
 
   useEffect(() => {
-    if (isUnitTest && isNullOrUndefined(unitTestDefinition)) {
-      const updateTestDefinition = async () => {
-        if (!isNullOrUndefined(runInstance)) {
-          const { triggerMocks, actionMocks } = await getRunInstanceMocks(runInstance as any, services, false);
-          dispatch(
-            updateUnitTestDefinition({
-              unitTestDefinition: {
-                triggerMocks: triggerMocks,
-                actionMocks: actionMocks,
-                assertions: [],
-              },
-            })
-          );
-        }
-      };
-      updateTestDefinition();
-    }
-  }, [runInstance, isMonitoringView, isUnitTest, unitTestDefinition, services, dispatch]);
-
-  useEffect(() => {
     setWorkflow(panelMetaData?.standardApp);
     setCustomCode(panelMetaData?.customCodeData);
   }, [panelMetaData]);
@@ -192,7 +175,7 @@ export const DesignerApp = () => {
   // Saving
 
   const saveWorkflowFromDesigner = useCallback(
-    async (workflowToSave: Workflow, customCodeData: Record<string, string> | undefined, clearDirtyState?: () => void) => {
+    async (workflowToSave: Workflow, customCodeData: Record<string, string> | undefined, _clearDirtyState?: () => void) => {
       const { definition, parameters, connectionReferences } = workflowToSave;
       vscode.postMessage({
         command: ExtensionCommand.save,
@@ -207,7 +190,9 @@ export const DesignerApp = () => {
       } as StandardApp;
       setWorkflow(newWorkflow);
       setInitialWorkflow(newWorkflow);
-      clearDirtyState?.();
+      // clearDirtyState is intentionally NOT called here — the extension host
+      // sends resetDesignerDirtyState after a successful file write, which
+      // properly resets dirty state only on confirmed persistence.
       return {
         definition,
         parameters,
@@ -221,6 +206,9 @@ export const DesignerApp = () => {
   const validateAndSaveCodeView = useCallback(
     async (clearDirtyState?: () => void) => {
       try {
+        if (!codeEditorRef.current?.hasChanges()) {
+          return workflow;
+        }
         const codeToConvert = JSON.parse(codeEditorRef.current?.getValue() ?? '');
         const { definition, parameters, connectionReferences } = codeToConvert;
         // code view editor cannot add/remove connections, parameters, settings, or customcode
@@ -238,6 +226,7 @@ export const DesignerApp = () => {
         setInitialWorkflow(newWorkflow);
 
         clearDirtyState?.();
+        codeEditorRef.current?.resetChanges();
         return newWorkflow;
       } catch (error: any) {
         if (error.status !== 404) {
@@ -318,7 +307,6 @@ export const DesignerApp = () => {
         options={{
           isDarkMode: theme === Theme.Dark,
           isVSCode: true,
-          isUnitTest,
           readOnly: readOnly || isMonitoringView,
           isMonitoringView,
           services: services,
@@ -340,12 +328,10 @@ export const DesignerApp = () => {
             workflowId={workflowDefinitionId}
             customCode={customCode}
             runInstance={runInstance as any}
-            unitTestDefinition={unitTestDefinition}
             appSettings={panelMetaData?.localSettings}
           >
             <DesignerCommandBar
               isDarkMode={theme === Theme.Dark}
-              isUnitTest={isUnitTest}
               isLocal={isLocal}
               runId={runId}
               saveWorkflow={saveWorkflowFromDesigner}
@@ -357,25 +343,27 @@ export const DesignerApp = () => {
               switchToDesignerView={switchToDesignerView}
               switchToCodeView={switchToCodeView}
               switchToMonitoringView={switchToMonitoringView}
-              supportsUnitTest={supportsUnitTest}
-              showRunHistory={!isCodefulWorkflow}
+              showRunHistory={!isCodefulWorkflow && isRuntimeAvailable}
             />
 
             {!isCodeView && (
               <div style={{ display: 'flex', flexDirection: 'row', flexGrow: 1, height: '80%', position: 'relative' }}>
                 <Designer />
                 <FloatingRunButton
-                  id={workflowDefinitionId}
                   saveDraftWorkflow={saveWorkflowFromDesigner}
-                  onRun={(newRunId: string | undefined) => {
+                  onRun={(newRunId: string) => {
                     switchToMonitoringView();
-                    setRunId(newRunId ?? '');
+                    setRunId(newRunId);
                   }}
                   isDarkMode={theme === Theme.Dark}
+                  isDisabled={!isRuntimeAvailable}
+                  tooltipOverride={isRuntimeAvailable ? undefined : commonText.RUNTIME_NOT_AVAILABLE}
                 />
               </div>
             )}
-            {isCodeView && <CodeViewEditor ref={codeEditorRef} workflowKind={workflow?.kind} workflowFile={initialWorkflow} />}
+            {isCodeView && (
+              <CodeViewEditor ref={codeEditorRef} workflowKind={workflow?.kind} workflowFile={initialWorkflow} readOnly={readOnly} />
+            )}
           </BJSWorkflowProvider>
         ) : null}
       </DesignerProvider>

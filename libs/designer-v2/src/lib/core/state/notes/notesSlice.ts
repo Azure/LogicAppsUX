@@ -2,9 +2,8 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import { resetWorkflowState, setStateAfterUndoRedo } from '../global';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
-import { type DeepPartial, guid } from '@microsoft/logic-apps-shared';
+import { type DeepPartial, DEFAULT_NOTE_COLOR, DEFAULT_NOTE_SIZE, guid, sanitizeNotes } from '@microsoft/logic-apps-shared';
 import type { XYPosition } from '@xyflow/react';
-import { DEFAULT_NOTE_SIZE } from '../../../core/utils/graph';
 import type { Note } from '../../../common/models/workflow';
 
 export interface NotesState {
@@ -19,17 +18,24 @@ export const initialState: NotesState = {
   changeCount: 0,
 };
 
+const markDirty = (state: NotesState) => {
+  state.isDirty = true;
+  state.changeCount += 1;
+};
+
 const notesSlice = createSlice({
   name: 'notes',
   initialState,
   reducers: {
-    initializeNotes: (state, action: PayloadAction<Record<string, Note>>) => {
-      state.notes = action.payload;
+    initializeNotes: (state, action: PayloadAction<Record<string, Note> | undefined>) => {
+      // `definition.metadata.notes` is user-writable and may hold arbitrary content, so anything
+      // that isn't a well-formed note is dropped here rather than crashing the designer on load.
+      state.notes = sanitizeNotes(action.payload);
     },
     addNote: (state, action: PayloadAction<XYPosition>) => {
       state.notes[guid()] = {
         content: '',
-        color: '#FFFBCC',
+        color: DEFAULT_NOTE_COLOR,
         metadata: {
           position: action.payload,
           width: DEFAULT_NOTE_SIZE.width,
@@ -38,28 +44,38 @@ const notesSlice = createSlice({
       };
     },
     updateNote: (state, action: PayloadAction<{ id: string; note: DeepPartial<Note> }>) => {
+      const note = state.notes[action.payload.id];
+      if (!note) {
+        // React Flow can emit measurement events for nodes that are no longer in state; ignoring
+        // them here keeps the workflow from being marked dirty by a no-op.
+        return;
+      }
       if (action.payload.note?.color) {
-        state.notes[action.payload.id].color = action.payload.note.color;
+        note.color = action.payload.note.color;
       }
       if (action.payload.note?.content !== undefined) {
-        state.notes[action.payload.id].content = action.payload.note.content;
+        note.content = action.payload.note.content;
       }
       if (action.payload.note?.metadata) {
+        if (!note.metadata) {
+          note.metadata = { position: { x: 0, y: 0 }, width: DEFAULT_NOTE_SIZE.width, height: DEFAULT_NOTE_SIZE.height };
+        }
         if (action.payload.note.metadata.position) {
-          const existing = state.notes[action.payload.id].metadata.position;
+          const existing = note.metadata.position;
           const pos = action.payload.note.metadata.position;
-          state.notes[action.payload.id].metadata.position = {
+          note.metadata.position = {
             x: pos.x ?? existing.x,
             y: pos.y ?? existing.y,
           };
         }
         if (action.payload.note.metadata.width) {
-          state.notes[action.payload.id].metadata.width = action.payload.note.metadata.width;
+          note.metadata.width = action.payload.note.metadata.width;
         }
         if (action.payload.note.metadata.height) {
-          state.notes[action.payload.id].metadata.height = action.payload.note.metadata.height;
+          note.metadata.height = action.payload.note.metadata.height;
         }
       }
+      markDirty(state);
     },
     deleteNote: (state, action: PayloadAction<string>) => {
       delete state.notes[action.payload];
@@ -71,10 +87,7 @@ const notesSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialState);
     builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.notes);
-    builder.addMatcher(isAnyOf(addNote, updateNote, deleteNote), (state) => {
-      state.isDirty = true;
-      state.changeCount += 1;
-    });
+    builder.addMatcher(isAnyOf(addNote, deleteNote), markDirty);
   },
 });
 

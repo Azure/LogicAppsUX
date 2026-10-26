@@ -65,4 +65,10 @@ export interface WorkflowState {
   timelineRepetitionArray: string[][];
   flowErrors: Record<string, string[]>;
   copilotModifiedNodeIds: Record<string, boolean>;
+  /**
+   * True when the loaded workflow definition has more than one trigger, which neither the
+   * Consumption nor Standard designer/monitoring experiences support. When true, graph/designer
+   * state initialization is skipped entirely in favor of rendering an unsupported-workflow message.
+   */
+  hasUnsupportedMultipleTriggers: boolean;
 }

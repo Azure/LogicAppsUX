@@ -1,9 +1,10 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { autoRuntimeDependenciesPathSettingKey, defaultDependencyPathValue } from '../../../constants';
-import { ext } from '../../../extensionVariables';
-import { installLSPServer } from '../languageServerProtocol';
 import path from 'path';
-import { createHash } from 'crypto';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { defaultDependencyPathValue } from '../../../constants';
+import { ext } from '../../../extensionVariables';
+import { ensureRuntimeDependenciesDir } from '../binaries';
+import { formatLockedFileError, installLSPServer } from '../languageServerProtocol';
+import { lspServerAssetRevision, lspServerRevisionMarkerName } from '../languageServerProtocolConstants';
 
 const mocks = vi.hoisted(() => {
   const extractAllTo = vi.fn();
@@ -11,14 +12,11 @@ const mocks = vi.hoisted(() => {
 
   return {
     admZip,
-    ensureDir: vi.fn(),
     extractAllTo,
-    getGlobalSetting: vi.fn(),
     pathExists: vi.fn(),
     readdir: vi.fn(),
     readFile: vi.fn(),
     remove: vi.fn(),
-    updateGlobalSetting: vi.fn(),
     writeFile: vi.fn(),
   };
 });
@@ -28,7 +26,6 @@ vi.mock('adm-zip', () => ({
 }));
 
 vi.mock('fs-extra', () => ({
-  ensureDir: mocks.ensureDir,
   pathExists: mocks.pathExists,
   readdir: mocks.readdir,
   readFile: mocks.readFile,
@@ -36,9 +33,8 @@ vi.mock('fs-extra', () => ({
   writeFile: mocks.writeFile,
 }));
 
-vi.mock('../vsCodeConfig/settings', () => ({
-  getGlobalSetting: mocks.getGlobalSetting,
-  updateGlobalSetting: mocks.updateGlobalSetting,
+vi.mock('../binaries', () => ({
+  ensureRuntimeDependenciesDir: vi.fn(async () => 'D:\\runtime-dependencies'),
 }));
 
 vi.mock('../../../extensionVariables', () => ({
@@ -51,29 +47,23 @@ describe('installLSPServer', () => {
   const targetDirectory = 'D:\\runtime-dependencies';
   const lspServerPath = path.join(targetDirectory, 'LSPServer');
   const lspServerDllPath = path.join(lspServerPath, 'SdkLspServer.dll');
-  const lspHashMarker = path.join(targetDirectory, '.lspserver-hash');
-  const legacyLspVersionMarker = path.join(targetDirectory, '.lspserver-version');
+  const lspRevisionMarker = path.join(targetDirectory, lspServerRevisionMarkerName);
   const staleVersionedLspFolder = path.join(targetDirectory, 'LSPServer-1778130324219');
-  const serverZipContent = Buffer.from('server zip content');
-  const serverZipHash = createHash('sha256').update(serverZipContent).digest('hex');
-  const oldHash = 'old-hash';
+  const oldRevision = '0';
   let lspServerExtracted = false;
 
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.extractAllTo.mockReset();
-    mocks.getGlobalSetting.mockReturnValue(targetDirectory);
-    mocks.ensureDir.mockResolvedValue(undefined);
     mocks.extractAllTo.mockImplementation(() => {
       lspServerExtracted = true;
     });
     mocks.pathExists.mockResolvedValue(false);
     mocks.readdir.mockResolvedValue([]);
+    mocks.readFile.mockResolvedValue(oldRevision);
     mocks.remove.mockResolvedValue(undefined);
-    mocks.updateGlobalSetting.mockResolvedValue(undefined);
     mocks.writeFile.mockResolvedValue(undefined);
     lspServerExtracted = false;
-    configureReadFileMocks();
     ext.languageClient = undefined;
   });
 
@@ -84,46 +74,27 @@ describe('installLSPServer', () => {
     });
   }
 
-  function configureReadFileMocks(options?: { lspHashMarker?: string }): void {
-    mocks.readFile.mockImplementation(async (filePath: string, encoding?: BufferEncoding) => {
-      if (encoding === 'utf-8') {
-        if (filePath === lspHashMarker) {
-          return options?.lspHashMarker ?? oldHash;
-        }
-        return '';
-      }
-
-      if (filePath.includes('LSPServer.zip')) {
-        return serverZipContent;
-      }
-
-      return Buffer.from('');
-    });
-  }
-
-  it('extracts the LSP server when target directory is missing', async () => {
+  it('extracts the LSP server when the target is missing', async () => {
     setExistingPaths([]);
 
     await installLSPServer();
 
-    expect(mocks.ensureDir).toHaveBeenCalledWith(targetDirectory);
+    expect(ensureRuntimeDependenciesDir).toHaveBeenCalled();
     expect(mocks.admZip).toHaveBeenCalledWith(expect.stringContaining('LSPServer.zip'));
     expect(mocks.extractAllTo).toHaveBeenCalledWith(targetDirectory, true, true);
-    expect(mocks.writeFile).toHaveBeenCalledWith(lspHashMarker, serverZipHash);
+    expect(mocks.writeFile).toHaveBeenCalledWith(lspRevisionMarker, lspServerAssetRevision);
   });
 
-  it('defaults the dependencies path before extracting when the setting is unset', async () => {
-    mocks.getGlobalSetting.mockReturnValue(undefined);
+  it('uses the default dependencies path when configured dependencies are unavailable', async () => {
+    vi.mocked(ensureRuntimeDependenciesDir).mockResolvedValue(defaultDependencyPathValue);
     setExistingPaths([]);
 
     await installLSPServer();
 
-    expect(mocks.updateGlobalSetting).toHaveBeenCalledWith(autoRuntimeDependenciesPathSettingKey, defaultDependencyPathValue);
-    expect(mocks.ensureDir).toHaveBeenCalledWith(defaultDependencyPathValue);
     expect(mocks.extractAllTo).toHaveBeenCalledWith(defaultDependencyPathValue, true, true);
   });
 
-  it('extracts when target file exists but hash marker is missing', async () => {
+  it('refreshes the server when the revision marker is missing', async () => {
     setExistingPaths([lspServerPath, lspServerDllPath]);
 
     await installLSPServer();
@@ -132,37 +103,23 @@ describe('installLSPServer', () => {
     expect(mocks.extractAllTo).toHaveBeenCalledOnce();
   });
 
-  it('extracts when source hash differs from stored marker', async () => {
-    setExistingPaths([lspServerPath, lspServerDllPath, lspHashMarker]);
+  it('refreshes the server when its asset revision changes', async () => {
+    setExistingPaths([lspServerPath, lspServerDllPath, lspRevisionMarker]);
 
     await installLSPServer();
 
     expect(mocks.extractAllTo).toHaveBeenCalledOnce();
-    expect(mocks.writeFile).toHaveBeenCalledWith(lspHashMarker, serverZipHash);
+    expect(mocks.writeFile).toHaveBeenCalledWith(lspRevisionMarker, lspServerAssetRevision);
   });
 
-  it('does not extract when hash marker is current', async () => {
-    setExistingPaths([lspServerDllPath, lspHashMarker]);
-    configureReadFileMocks({ lspHashMarker: serverZipHash });
+  it('does not refresh the server when its revision is current', async () => {
+    setExistingPaths([lspServerDllPath, lspRevisionMarker]);
+    mocks.readFile.mockResolvedValue(lspServerAssetRevision);
 
     await installLSPServer();
 
     expect(mocks.extractAllTo).not.toHaveBeenCalled();
     expect(mocks.writeFile).not.toHaveBeenCalled();
-    expect(mocks.ensureDir).toHaveBeenCalledTimes(1);
-    expect(mocks.ensureDir).toHaveBeenCalledWith(targetDirectory);
-  });
-
-  it('treats legacy mtime markers as stale and refreshes', async () => {
-    setExistingPaths([lspServerPath, lspServerDllPath, legacyLspVersionMarker]);
-    configureReadFileMocks({
-      lspHashMarker: '2026-05-06T09:17:03.798Z',
-    });
-
-    await installLSPServer();
-
-    expect(mocks.extractAllTo).toHaveBeenCalledOnce();
-    expect(mocks.writeFile).toHaveBeenCalledWith(lspHashMarker, serverZipHash);
   });
 
   it('cleans stale versioned LSP folders after refreshing', async () => {
@@ -183,21 +140,27 @@ describe('installLSPServer', () => {
   });
 
   it('adds actionable guidance for locked LSP files during stable folder removal', async () => {
+    vi.useFakeTimers();
     const lockedError = Object.assign(new Error("EBUSY: resource busy or locked, open 'ICSharpCode.SharpZipLib.dll'"), {
       code: 'EBUSY',
     });
     setExistingPaths([lspServerPath]);
-    mocks.remove.mockImplementation(async (filePath: string) => {
-      if (filePath === lspServerPath) {
-        throw lockedError;
-      }
-    });
+    mocks.remove.mockRejectedValue(lockedError);
 
-    await expect(installLSPServer()).rejects.toThrow('stop the dotnet process running SdkLspServer.dll');
-    expect(mocks.extractAllTo).not.toHaveBeenCalled();
+    try {
+      const installPromise = installLSPServer();
+      const expectation = expect(installPromise).rejects.toThrow('stop the dotnet process running SdkLspServer.dll');
+      await vi.advanceTimersByTimeAsync(4000);
+      await expectation;
+      expect(mocks.remove).toHaveBeenCalledTimes(3);
+      expect(mocks.extractAllTo).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
-  it('adds actionable guidance for locked LSP files during extraction', async () => {
+  it('retries locked-file errors during extraction', async () => {
+    vi.useFakeTimers();
     const lockedError = Object.assign(new Error("EBUSY: resource busy or locked, open 'ICSharpCode.SharpZipLib.dll'"), {
       code: 'EBUSY',
     });
@@ -205,10 +168,71 @@ describe('installLSPServer', () => {
       throw lockedError;
     });
 
-    await expect(installLSPServer()).rejects.toThrow('stop the dotnet process running SdkLspServer.dll');
+    try {
+      const installPromise = installLSPServer();
+      const expectation = expect(installPromise).rejects.toThrow('stop the dotnet process running SdkLspServer.dll');
+      await vi.advanceTimersByTimeAsync(4000);
+      await expectation;
+      expect(mocks.extractAllTo).toHaveBeenCalledTimes(3);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
-  it('stops a running language client before replacing LSP assets', async () => {
+  it('retries a transient EPERM error during extraction', async () => {
+    vi.useFakeTimers();
+    const lockedError = Object.assign(new Error(`EPERM: operation not permitted, mkdir '${lspServerPath}'`), {
+      code: 'EPERM',
+    });
+    let attempts = 0;
+    mocks.extractAllTo.mockImplementation(() => {
+      attempts += 1;
+      if (attempts === 1) {
+        throw lockedError;
+      }
+      lspServerExtracted = true;
+    });
+    setExistingPaths([]);
+
+    try {
+      const installPromise = installLSPServer();
+      await vi.advanceTimersByTimeAsync(2000);
+      await installPromise;
+      expect(mocks.extractAllTo).toHaveBeenCalledTimes(2);
+      expect(mocks.writeFile).toHaveBeenCalledWith(lspRevisionMarker, lspServerAssetRevision);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('formatLockedFileError recognizes EPERM', () => {
+    const lockedError = Object.assign(new Error("EPERM: operation not permitted, unlink 'ICSharpCode.SharpZipLib.dll'"), {
+      code: 'EPERM',
+    });
+
+    expect(formatLockedFileError(lockedError)).toContain('stop the dotnet process running SdkLspServer.dll');
+  });
+
+  it('retries EPERM errors while removing the existing server', async () => {
+    vi.useFakeTimers();
+    const lockedError = Object.assign(new Error("EPERM: operation not permitted, unlink 'ICSharpCode.SharpZipLib.dll'"), {
+      code: 'EPERM',
+    });
+    setExistingPaths([lspServerPath]);
+    mocks.remove.mockRejectedValueOnce(lockedError).mockRejectedValueOnce(lockedError).mockResolvedValue(undefined);
+
+    try {
+      const installPromise = installLSPServer();
+      await vi.advanceTimersByTimeAsync(4000);
+      await installPromise;
+      const removeLspCalls = mocks.remove.mock.calls.filter(([filePath]) => filePath === lspServerPath);
+      expect(removeLspCalls).toHaveLength(3);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('stops a running language client before replacing the LSP server', async () => {
     const stop = vi.fn().mockResolvedValue(undefined);
     ext.languageClient = { stop } as any;
     setExistingPaths([]);

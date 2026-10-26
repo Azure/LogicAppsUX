@@ -1,4 +1,5 @@
 import { makeStyles, tokens } from '@fluentui/react-components';
+import { workflowCardStyles } from '@microsoft/designer-ui';
 
 export const colors = {
   success: tokens.colorStatusSuccessForeground1,
@@ -9,22 +10,7 @@ export const colors = {
 
 export const useCardStyles = makeStyles({
   root: {
-    margin: '0px auto',
-    position: 'relative',
-    border: '2px solid transparent',
-    boxSizing: 'border-box',
-    fontSize: '12px',
-    borderRadius: '6px',
-    width: '200px',
-    padding: '8px 10px',
-    webkitUserSelect: 'none',
-    userSelect: 'none',
-    backgroundColor: tokens.colorNeutralBackground1,
-    cursor: 'default',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px',
-    boxShadow: '0 0 2px rgba(0,0,0,0.24), 0 2px 4px rgba(0,0,0,0.28)',
+    ...workflowCardStyles.root,
 
     '&:hover': {
       background: tokens.colorNeutralBackground1Hover,
@@ -53,6 +39,9 @@ export const useCardStyles = makeStyles({
   selected: {
     border: `2px solid ${colors.brand}`,
   },
+  pinned: {
+    border: '2px solid #f2610c',
+  },
   statusSuccess: {
     border: `2px solid ${colors.success}`,
   },
@@ -60,18 +49,7 @@ export const useCardStyles = makeStyles({
     border: `2px solid ${colors.danger}`,
   },
   icon: {
-    alignSelf: 'flex-start',
-    height: '24px',
-    width: '24px',
-    borderRadius: '2px',
-    overflow: 'hidden',
-    flexShrink: 0,
-
-    '& > img': {
-      width: '100%',
-      height: '100%',
-      objectFit: 'contain',
-    },
+    ...workflowCardStyles.icon,
   },
   toolIcon: {
     padding: '4px',
@@ -79,12 +57,7 @@ export const useCardStyles = makeStyles({
     height: '16px',
   },
   title: {
-    fontSize: '14px',
-    fontWeight: '600',
-    color: tokens.colorNeutralForeground1,
-    lineHeight: '20px',
-    flexGrow: 1,
-    wordBreak: 'break-word',
+    ...workflowCardStyles.title,
   },
   scopeTitle: {
     color: '#fff',
@@ -145,6 +118,28 @@ export const useCardStyles = makeStyles({
     gap: '4px',
     padding: '4px',
     maxWidth: '200px',
+  },
+
+  // Indicators (testing / description / secure inputs & outputs)
+  indicators: {
+    position: 'absolute',
+    right: 0,
+    bottom: '-20px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px',
+    color: tokens.colorNeutralForeground3,
+    lineHeight: '20px',
+  },
+  indicator: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+
+    '& > svg': {
+      width: '14px',
+      height: '14px',
+    },
   },
   copilotModified: {
     overflow: 'visible',

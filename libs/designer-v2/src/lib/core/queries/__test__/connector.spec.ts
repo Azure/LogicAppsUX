@@ -1,4 +1,4 @@
-import { getLegacyDynamicValues } from '../connector';
+import { getLegacyDynamicValues, getListDynamicValues } from '../connector';
 import { ConnectorService, InitConnectorService, InitLoggerService } from '@microsoft/logic-apps-shared';
 import { expect, describe, test, beforeAll, vitest } from 'vitest';
 
@@ -111,6 +111,57 @@ describe('ConnectorDynamicQueries', () => {
       expect(dynamicValues).toBeDefined();
       expect(dynamicValues.length).toEqual(1);
       expect(dynamicValues).toEqual([{ value: 5, displayName: '5', disabled: false }]);
+    });
+  });
+
+  describe('getListDynamicValues', () => {
+    const connectionId = '/connections/test';
+    const connectorId = '/connectionProviders/test';
+    const operationId = 'listMcpTools';
+    const dynamicState = { operationId: 'listMcpTools', apiType: 'mcp' };
+
+    const loggerService: any = { log() {} };
+    const connectorService: any = {
+      getListDynamicValues: vitest.fn().mockResolvedValue([]),
+    };
+
+    beforeAll(() => {
+      InitLoggerService([loggerService]);
+      InitConnectorService(connectorService);
+    });
+
+    test('passes the identity through to the connector service as the 8th argument', async () => {
+      const spy = vitest.spyOn(ConnectorService(), 'getListDynamicValues').mockResolvedValue([]);
+      const uami = '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/u1';
+
+      await getListDynamicValues(connectionId, connectorId, operationId, {}, dynamicState, undefined, uami);
+
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith(connectionId, connectorId, operationId, {}, dynamicState, undefined, undefined, uami);
+    });
+
+    test('separates cache entries by identity so different identities trigger separate fetches', async () => {
+      const spy = vitest.spyOn(ConnectorService(), 'getListDynamicValues').mockResolvedValue([]);
+      const uamiA = '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uA';
+      const uamiB = '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uB';
+
+      await getListDynamicValues(connectionId, connectorId, operationId, {}, dynamicState, undefined, uamiA);
+      await getListDynamicValues(connectionId, connectorId, operationId, {}, dynamicState, undefined, uamiB);
+
+      expect(spy).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenNthCalledWith(1, connectionId, connectorId, operationId, {}, dynamicState, undefined, undefined, uamiA);
+      expect(spy).toHaveBeenNthCalledWith(2, connectionId, connectorId, operationId, {}, dynamicState, undefined, undefined, uamiB);
+    });
+
+    test('treats the identity case-insensitively in the cache key to avoid duplicate fetches', async () => {
+      const spy = vitest.spyOn(ConnectorService(), 'getListDynamicValues').mockResolvedValue([]);
+      const uamiLower = '/subscriptions/sub/resourcegroups/rg/providers/microsoft.managedidentity/userassignedidentities/case-test';
+      const uamiMixed = '/subscriptions/SUB/resourceGroups/RG/providers/Microsoft.ManagedIdentity/userAssignedIdentities/Case-Test';
+
+      await getListDynamicValues(connectionId, connectorId, operationId, {}, dynamicState, undefined, uamiLower);
+      await getListDynamicValues(connectionId, connectorId, operationId, {}, dynamicState, undefined, uamiMixed);
+
+      expect(spy).toHaveBeenCalledTimes(1);
     });
   });
 });

@@ -201,7 +201,7 @@ export async function deployLogicApp(context: IDeployContext): Promise<void> {
     await performDeployment(context);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    context.telemetry.properties.error = errorMessage;
+    context.telemetry.properties.errorMessage = errorMessage;
     throw new Error(localize('deploymentFailed', 'Failed to deploy Logic App: {0}', errorMessage));
   }
 }

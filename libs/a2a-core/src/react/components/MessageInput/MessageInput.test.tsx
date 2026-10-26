@@ -266,12 +266,7 @@ describe('MessageInput', () => {
 
     expect(screen.getByText('test.txt')).toBeInTheDocument();
 
-    // Find and click the remove button (it's an icon button inside the badge)
-    const removeButtons = screen.getAllByRole('button');
-    const removeButton = removeButtons.find((btn) => btn.querySelector('svg')); // Find button with icon
-    if (removeButton) {
-      await user.click(removeButton);
-    }
+    await user.click(screen.getByRole('button', { name: 'Remove test.txt' }));
 
     expect(screen.queryByText('test.txt')).not.toBeInTheDocument();
   });
@@ -417,15 +412,8 @@ describe('MessageInput', () => {
   it('renders send button with icon', () => {
     render(<MessageInput onSendMessage={mockOnSendMessage} />);
 
-    const buttons = screen.getAllByRole('button');
-    expect(buttons.length).toBeGreaterThanOrEqual(1);
-
-    // The send button is the last button
-    const sendButton = buttons[buttons.length - 1];
+    const sendButton = screen.getByRole('button', { name: 'Send message' });
     expect(sendButton).toBeInTheDocument();
-
-    // Fluent UI icons are rendered as SVG elements
-    const svg = sendButton.querySelector('svg');
-    expect(svg).toBeInTheDocument();
+    expect(sendButton.firstElementChild).toBeInTheDocument();
   });
 });

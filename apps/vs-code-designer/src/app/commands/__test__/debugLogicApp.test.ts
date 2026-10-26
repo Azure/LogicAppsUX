@@ -57,9 +57,12 @@ describe('debugLogicApp', () => {
     await debugLogicApp(
       context,
       {
+        type: 'logicapp',
+        name: 'Run/Debug logic app MyLogicApp',
+        request: 'launch',
         funcRuntime: 'coreclr',
         isCodeless: true,
-      } as vscode.DebugConfiguration,
+      },
       workspaceFolder
     );
 
@@ -83,9 +86,12 @@ describe('debugLogicApp', () => {
     await debugLogicApp(
       context,
       {
+        type: 'logicapp',
+        name: 'Run/Debug logic app MyLogicApp',
+        request: 'launch',
         funcRuntime: 'coreclr',
         isCodeless: false,
-      } as vscode.DebugConfiguration,
+      },
       workspaceFolder
     );
 
@@ -109,10 +115,13 @@ describe('debugLogicApp', () => {
     await debugLogicApp(
       context,
       {
+        type: 'logicapp',
+        name: 'Run/Debug logic app with local function MyLogicApp',
+        request: 'launch',
         funcRuntime: 'coreclr',
         customCodeRuntime: 'coreclr',
         isCodeless: true,
-      } as vscode.DebugConfiguration,
+      },
       workspaceFolder
     );
 
@@ -140,10 +149,13 @@ describe('debugLogicApp', () => {
     await debugLogicApp(
       context,
       {
+        type: 'logicapp',
+        name: 'Run/Debug logic app with local function MyLogicApp',
+        request: 'launch',
         funcRuntime: 'coreclr',
         customCodeRuntime: 'coreclr',
         isCodeless: true,
-      } as vscode.DebugConfiguration,
+      },
       workspaceFolder
     );
 
@@ -159,10 +171,13 @@ describe('debugLogicApp', () => {
     await debugLogicApp(
       context,
       {
+        type: 'logicapp',
+        name: 'Run/Debug logic app with local function MyLogicApp',
+        request: 'launch',
         funcRuntime: 'coreclr',
         customCodeRuntime: 'clr',
         isCodeless: true,
-      } as vscode.DebugConfiguration,
+      },
       workspaceFolder
     );
 
@@ -176,5 +191,64 @@ describe('debugLogicApp', () => {
         processId: '9012',
       })
     );
+  });
+
+  describe('custom code dual-attach contract', () => {
+    it('attaches to TWO DIFFERENT processes for coreclr custom code projects', async () => {
+      vi.mocked(pickFuncProcessInternal).mockResolvedValue('1234');
+      vi.mocked(pickCustomCodeNetHostProcessInternal).mockResolvedValue('5678');
+
+      await debugLogicApp(
+        context,
+        {
+          type: 'logicapp',
+          name: 'Run/Debug logic app with local function MyLogicApp',
+          request: 'launch',
+          funcRuntime: 'coreclr',
+          customCodeRuntime: 'coreclr',
+          isCodeless: true,
+        },
+        workspaceFolder
+      );
+
+      expect(vscode.debug.startDebugging).toHaveBeenCalledTimes(2);
+
+      const calls = vi.mocked(vscode.debug.startDebugging).mock.calls;
+      const workflowProcessId = (calls[0][1] as vscode.DebugConfiguration).processId;
+      const customCodeProcessId = (calls[1][1] as vscode.DebugConfiguration).processId;
+
+      // The workflow and custom-code debuggers must attach to DIFFERENT processes.
+      expect(workflowProcessId).toBe('1234');
+      expect(customCodeProcessId).toBe('5678');
+      expect(workflowProcessId).not.toBe(customCodeProcessId);
+    });
+
+    it('attaches to TWO DIFFERENT processes for clr (NetFx) custom code projects', async () => {
+      vi.mocked(pickFuncProcessInternal).mockResolvedValue('1234');
+      vi.mocked(pickCustomCodeNetFxWorkerProcessInternal).mockResolvedValue('9999');
+
+      await debugLogicApp(
+        context,
+        {
+          type: 'logicapp',
+          name: 'Run/Debug logic app with local function MyLogicApp',
+          request: 'launch',
+          funcRuntime: 'coreclr',
+          customCodeRuntime: 'clr',
+          isCodeless: true,
+        },
+        workspaceFolder
+      );
+
+      expect(vscode.debug.startDebugging).toHaveBeenCalledTimes(2);
+
+      const calls = vi.mocked(vscode.debug.startDebugging).mock.calls;
+      const workflowProcessId = (calls[0][1] as vscode.DebugConfiguration).processId;
+      const customCodeProcessId = (calls[1][1] as vscode.DebugConfiguration).processId;
+
+      expect(workflowProcessId).toBe('1234');
+      expect(customCodeProcessId).toBe('9999');
+      expect(workflowProcessId).not.toBe(customCodeProcessId);
+    });
   });
 });

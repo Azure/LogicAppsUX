@@ -20,6 +20,7 @@ import { StandaloneOAuthService } from './Services/OAuthService';
 import {
   getConnectionStandard,
   getCustomCodeAppFiles,
+  createOrUpdateConnection,
   listCallbackUrl,
   saveWorkflowStandard,
   fetchAgentUrl,
@@ -31,6 +32,7 @@ import {
   useWorkflowApp,
   validateWorkflowStandard,
   deployArtifacts,
+  uploadFileToKnowledgeHub,
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility, addConnectionInJson, addOrUpdateAppSettings } from './Utilities/Workflow';
@@ -58,6 +60,8 @@ import {
   isArmResourceId,
   optional,
   BaseCognitiveServiceService,
+  BaseResourceService,
+  AGENT_MSI_REQUIRED_ROLE_DEFINITION_IDS,
   RoleService,
   normalizeAgentConnectionResourceIdForRoleAssignment,
   resolveConnectionsReferences,
@@ -75,9 +79,8 @@ import {
   getSKUDefaultHostOptions,
   CombineInitializeVariableDialog,
   TriggerDescriptionDialog,
-  getMissingRoleDefinitions,
+  getRoleDefinitionsToAssign,
   roleQueryKeys,
-  isAgentWorkflow,
   useRun,
   setIsWorkflowDirty,
   setFocusNode,
@@ -91,12 +94,30 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { QueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import CodeViewEditor from './CodeViewV2';
-import { CustomConnectionParameterEditorService } from './Services/customConnectionParameterEditorService';
+import { CustomConnectionParameterEditorServiceV2 } from './Services/customConnectionParameterEditorServiceV2';
 import { CustomEditorService } from './Services/customEditorService';
 import { FloatingRunButton } from '../../../../../../libs/designer-v2/src/lib/ui/FloatingRunButton';
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
+
+// Merge server data with local mutations; local wins per category so in-flight new connections
+// survive re-sync when the workflow-artifacts fetch resolves.
+const mergeConnectionsData = (fromServer: ConnectionsData, local: ConnectionsData | undefined): ConnectionsData => {
+  if (!local) {
+    return fromServer;
+  }
+  return {
+    ...fromServer,
+    ...local,
+    managedApiConnections: { ...(fromServer?.managedApiConnections ?? {}), ...(local?.managedApiConnections ?? {}) },
+    serviceProviderConnections: { ...(fromServer?.serviceProviderConnections ?? {}), ...(local?.serviceProviderConnections ?? {}) },
+    functionConnections: { ...(fromServer?.functionConnections ?? {}), ...(local?.functionConnections ?? {}) },
+    apiManagementConnections: { ...(fromServer?.apiManagementConnections ?? {}), ...(local?.apiManagementConnections ?? {}) },
+    agentConnections: { ...(fromServer?.agentConnections ?? {}), ...(local?.agentConnections ?? {}) },
+    agentMcpConnections: { ...(fromServer?.agentMcpConnections ?? {}), ...(local?.agentMcpConnections ?? {}) },
+  };
+};
 
 const DesignerEditor = () => {
   const { id: workflowId } = useSelector((state: RootState) => ({
@@ -107,7 +128,6 @@ const DesignerEditor = () => {
   const {
     isReadOnly,
     isDarkMode,
-    isUnitTest,
     isMonitoringView,
     runId,
     appId,
@@ -185,11 +205,21 @@ const DesignerEditor = () => {
     setCurrentParameters(parameters ?? {});
   }, [parameters]);
   const queryClient = getReactQueryClient();
-  const connectionsData = useMemo(
-    () =>
-      resolveConnectionsReferences(JSON.stringify(clone(originalConnectionsData ?? {})), currentParameters, settingsData?.properties ?? {}),
-    [originalConnectionsData, currentParameters, settingsData?.properties]
+  // State + merge (not useMemo) so in-place mutations from addConnectionDataInternal survive the
+  // initial workflow-artifacts fetch. Pure useMemo would clone fresh server data on fetch complete.
+  const [connectionsData, setConnectionsData] = useState<ConnectionsData>(() =>
+    resolveConnectionsReferences(JSON.stringify(clone(originalConnectionsData ?? {})), currentParameters, settingsData?.properties ?? {})
   );
+  useEffect(() => {
+    setConnectionsData((prev) => {
+      const fromServer = resolveConnectionsReferences(
+        JSON.stringify(clone(originalConnectionsData ?? {})),
+        currentParameters,
+        settingsData?.properties ?? {}
+      );
+      return mergeConnectionsData(fromServer, prev);
+    });
+  }, [originalConnectionsData, currentParameters, settingsData?.properties]);
   const connectionReferences = WorkflowUtility.convertConnectionsDataToReferences(connectionsData);
   const { data: runInstanceData } = useRun(runId);
 
@@ -197,6 +227,9 @@ const DesignerEditor = () => {
     addConnectionInJson(connectionAndSetting, connectionsData ?? {});
     addOrUpdateAppSettings(connectionAndSetting.settings, settingsData?.properties ?? {});
   };
+
+  const persistKnowledgeHubConnection = async (): Promise<void> =>
+    createOrUpdateConnection(siteResourceId, connectionsData, settingsData?.properties, /* isDraft */ true);
 
   const switchWorkflowMode = useCallback((draftMode: boolean) => {
     setIsDraftMode(draftMode);
@@ -348,6 +381,7 @@ const DesignerEditor = () => {
         connectionsData ?? {},
         workflowAppData as WorkflowApp,
         addConnectionDataInternal,
+        persistKnowledgeHubConnection,
         getConnectionConfiguration,
         tenantId,
         objectId,
@@ -437,38 +471,37 @@ const DesignerEditor = () => {
           ...connectionsData?.serviceProviderConnections,
           ...newServiceProviderConnections,
         };
-        if (isAgentWorkflow(workflow?.kind ?? '') || Object.keys(newAgentConnections).length > 0) {
-          (connectionsData as ConnectionsData).agentConnections = {
-            ...connectionsData?.agentConnections,
-            ...newAgentConnections,
-          };
+        (connectionsData as ConnectionsData).agentConnections = {
+          ...connectionsData?.agentConnections,
+          ...newAgentConnections,
+        };
 
-          // Assign MSI roles if needed
-          /**
-           *  This is currently only for Agentic workflows,
-           *    but we should work to make this generic in the future
-           *  The issue with making it generic is that we don't have a good way of getting the required definition names for any given connection reference
-           *  The required roles are listed on connection parameters which we don't have access to here,
-           *    and would take several requests to check for each connection, when most will not need it, leading to unnecessary slowdown during save
-           *  One option is to populate that info somewhere in the connection reference for use here,
-           *    but that is unavailable at authoring time when we are populating the values that require the roles
-           */
-          for (const [_refKey, agentConnection] of Object.entries(newAgentConnections)) {
-            if (agentConnection?.authentication?.type === 'ManagedServiceIdentity') {
-              const roleAssignmentResourceId = normalizeAgentConnectionResourceIdForRoleAssignment(agentConnection?.resourceId);
-              const definitionNames = ['Azure AI User', 'Azure AI Administrator', 'Azure AI Developer', 'Cognitive Services Contributor'];
-              const missingRoleAssignments = await getMissingRoleDefinitions(roleAssignmentResourceId, definitionNames);
-              const assignmentPromises = [];
-              for (const roleDefinition of missingRoleAssignments) {
-                assignmentPromises.push(RoleService().addAppRoleAssignmentForResource(roleAssignmentResourceId, roleDefinition.id));
-              }
-              await Promise.all(assignmentPromises);
-
-              // Invalidate the cache for the role assignments
-              const cacheKey = [roleQueryKeys.appIdentityRoleAssignments, roleAssignmentResourceId];
-              const queryClient = getReactQueryClient();
-              queryClient.invalidateQueries(cacheKey);
+        // Assign MSI roles if needed.
+        /**
+         *  This is keyed off the connection, not the workflow kind: agent actions are allowed in
+         *  stateful workflows too (see `useIsAgenticWorkflow`), and the runtime needs the data-plane
+         *  role for any agent action regardless of the kind of workflow hosting it.
+         *  We should work to make this generic for all connection types in the future.
+         *  The issue with making it generic is that we don't have a good way of getting the required definition ids for any given connection reference
+         *  The required roles are listed on connection parameters which we don't have access to here,
+         *    and would take several requests to check for each connection, when most will not need it, leading to unnecessary slowdown during save
+         *  One option is to populate that info somewhere in the connection reference for use here,
+         *    but that is unavailable at authoring time when we are populating the values that require the roles
+         */
+        for (const [_refKey, agentConnection] of Object.entries(newAgentConnections)) {
+          if (agentConnection?.authentication?.type === 'ManagedServiceIdentity') {
+            const roleAssignmentResourceId = normalizeAgentConnectionResourceIdForRoleAssignment(agentConnection?.resourceId);
+            const rolesToAssign = await getRoleDefinitionsToAssign(roleAssignmentResourceId, AGENT_MSI_REQUIRED_ROLE_DEFINITION_IDS);
+            const assignmentPromises = [];
+            for (const roleDefinition of rolesToAssign) {
+              assignmentPromises.push(RoleService().addAppRoleAssignmentForResource(roleAssignmentResourceId, roleDefinition.id));
             }
+            await Promise.all(assignmentPromises);
+
+            // Invalidate the cache for the role assignments
+            const cacheKey = [roleQueryKeys.appIdentityRoleAssignments, roleAssignmentResourceId];
+            const queryClient = getReactQueryClient();
+            queryClient.invalidateQueries(cacheKey);
           }
         }
       }
@@ -494,10 +527,6 @@ const DesignerEditor = () => {
         isDraftSave
       );
 
-      // Invalidate cached workflow artifacts so the next load fetches fresh data
-      // (including any new connection references added during this session)
-      getReactQueryClient().invalidateQueries(['workflowArtifactsStandard', workflowId]);
-
       return workflowToSave;
     },
     [
@@ -511,7 +540,6 @@ const DesignerEditor = () => {
       settingsData?.properties,
       siteResourceId,
       workflow,
-      workflowId,
       workflowName,
     ]
   );
@@ -675,7 +703,6 @@ const DesignerEditor = () => {
           readOnly: derivedIsReadOnly,
           isMonitoringView,
           isDraft: isDraftMode,
-          isUnitTest,
           suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
           hostOptions: {
             ...hostOptions,
@@ -706,7 +733,6 @@ const DesignerEditor = () => {
               discard={discardAllChanges}
               location={canonicalLocation}
               isReadOnly={derivedIsReadOnly}
-              isUnitTest={isUnitTest}
               isDarkMode={isDarkMode}
               isMonitoringView={isMonitoringView}
               isDesignerView={isDesignerView}
@@ -802,6 +828,7 @@ const getDesignerServices = (
   connectionsData: ConnectionsData,
   workflowApp: WorkflowApp,
   addConnection: (data: ConnectionAndAppSetting) => Promise<void>,
+  persistKnowledgeHubConnection: () => Promise<void>,
   getConfiguration: (connectionId: string) => Promise<any>,
   tenantId: string | undefined,
   objectId: string | undefined,
@@ -852,6 +879,7 @@ const getDesignerServices = (
       return resolveConnectionsReferences(JSON.stringify(clone(connectionsData ?? {})), undefined, appSettings);
     },
     writeConnection: addConnection as any,
+    persistKnowledgeHubConnection,
     connectionCreationClients: {
       FileSystem: new FileSystemConnectionCreationClient({
         baseUrl: armUrl,
@@ -1083,6 +1111,7 @@ const getDesignerServices = (
     getAgentUrl: (isDraftMode?: boolean) =>
       fetchAgentUrl(siteResourceId, workflowName, workflowApp?.properties?.defaultHostName ?? '', isDraftMode),
     getAppIdentity: () => workflowApp?.identity,
+    getLogicAppId: () => siteResourceId,
     isExplicitAuthRequiredForManagedIdentity: () => true,
     isSplitOnSupported: () => !!isStateful,
     resubmitWorkflow: async (runId, actionsToResubmit) => {
@@ -1112,6 +1141,8 @@ const getDesignerServices = (
     notifyCallbackUrlUpdate: (triggerName, newTriggerId) => {
       alert(`Callback URL for ${triggerName} trigger updated to ${newTriggerId}`);
     },
+    uploadFileArtifact: uploadFileToKnowledgeHub,
+    isKnowledgeHubEnabled: () => true,
   };
 
   const hostService: IHostService = {
@@ -1182,8 +1213,9 @@ const getDesignerServices = (
   // The proxy handles auth server-side via MSI (production) or Bearer token (local POC).
   cognitiveServiceService.foundryProxyBaseUrl = `${baseUrl}/foundryProxy`;
 
-  const connectionParameterEditorService = new CustomConnectionParameterEditorService();
+  const connectionParameterEditorService = new CustomConnectionParameterEditorServiceV2();
   const editorService = new CustomEditorService(areCustomEditorsEnabled ?? false);
+  const resourceService = new BaseResourceService({ baseUrl: armUrl, httpClient, apiVersion });
 
   return {
     appService,
@@ -1207,6 +1239,7 @@ const getDesignerServices = (
     cognitiveServiceService,
     connectionParameterEditorService,
     editorService,
+    resourceService,
     userPreferenceService: new BaseUserPreferenceService(),
     experimentationService: new BaseExperimentationService(),
   };
@@ -1245,9 +1278,18 @@ const getConnectionsToUpdate = (
     connectionsJson.managedApiConnections ?? {}
   );
 
+  const hasNewMcpConnectionKeys = hasNewKeys(originalConnectionsJson.agentMcpConnections ?? {}, connectionsJson.agentMcpConnections ?? {});
+
   const hasNewAgentKeys = hasNewKeys(originalConnectionsJson.agentConnections ?? {}, connectionsJson.agentConnections ?? {});
 
-  if (!hasNewFunctionKeys && !hasNewApimKeys && !hasNewManagedApiKeys && !hasNewServiceProviderKeys && !hasNewAgentKeys) {
+  if (
+    !hasNewFunctionKeys &&
+    !hasNewApimKeys &&
+    !hasNewManagedApiKeys &&
+    !hasNewServiceProviderKeys &&
+    !hasNewAgentKeys &&
+    !hasNewMcpConnectionKeys
+  ) {
     return undefined;
   }
 
@@ -1300,6 +1342,15 @@ const getConnectionsToUpdate = (
     for (const agentConnectionName of Object.keys(connectionsJson.agentConnections ?? {})) {
       if (originalConnectionsJson.agentConnections?.[agentConnectionName]) {
         (connectionsJson.agentConnections as any)[agentConnectionName] = originalConnectionsJson.agentConnections[agentConnectionName];
+      }
+    }
+  }
+
+  if (hasNewMcpConnectionKeys) {
+    for (const agentMcpConnectionName of Object.keys(connectionsJson.agentMcpConnections ?? {})) {
+      if (originalConnectionsJson.agentMcpConnections?.[agentMcpConnectionName]) {
+        (connectionsToUpdate.agentMcpConnections as any)[agentMcpConnectionName] =
+          originalConnectionsJson.agentMcpConnections[agentMcpConnectionName];
       }
     }
   }

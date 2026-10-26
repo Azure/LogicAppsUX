@@ -97,6 +97,15 @@ describe('Parser common utilities tests', () => {
       expect(editorOptions).toEqual({ someOption: 'value' });
     });
 
+    it.each(['custom', true, 7])('should preserve non-object editor options without throwing: %s', (editorOptions) => {
+      const schema: SchemaObject = {
+        type: 'string',
+        [ExtensionProperties.EditorOptions]: editorOptions,
+      };
+
+      expect(getEditorOptionsForParameter(schema, undefined, undefined)).toBe(editorOptions);
+    });
+
     it('should preserve editorOptions when static enum is present', () => {
       const schema: SchemaObject = {
         type: 'string',
@@ -108,6 +117,73 @@ describe('Parser common utilities tests', () => {
 
       const editorOptions = getEditorOptionsForParameter(schema, undefined, enumValues);
 
+      expect(editorOptions.multiSelect).toBe(true);
+      expect(editorOptions.options).toEqual([{ value: 'a', displayName: 'A', key: 'A' }]);
+    });
+
+    it('should strip schema-declared chatUrl and queryParams but preserve showAgentViewer and other options when no dynamic values or enum', () => {
+      const schema: SchemaObject = {
+        type: 'string',
+        [ExtensionProperties.EditorOptions]: {
+          showAgentViewer: true,
+          someOption: 'value',
+          chatUrl: 'https://attacker.example.invalid/chat',
+          queryParams: { apiKey: 'forged-key' },
+        },
+      };
+
+      const editorOptions = getEditorOptionsForParameter(schema, undefined, undefined);
+
+      expect(editorOptions.chatUrl).toBeUndefined();
+      expect(editorOptions.queryParams).toBeUndefined();
+      expect(editorOptions.showAgentViewer).toBe(true);
+      expect(editorOptions.someOption).toBe('value');
+    });
+
+    it('should strip schema-declared chatUrl and queryParams but preserve showAgentViewer when dynamic values are present', () => {
+      const schema: SchemaObject = {
+        type: 'array',
+        [ExtensionProperties.EditorOptions]: {
+          showAgentViewer: true,
+          multiSelect: true,
+          chatUrl: 'https://attacker.example.invalid/chat',
+          queryParams: { apiKey: 'forged-key' },
+        },
+        [ExtensionProperties.DynamicList]: {
+          dynamicState: {
+            apiType: 'mcp',
+            operationId: 'listMcpTools',
+          },
+        },
+      };
+
+      const dynamicValues = getParameterDynamicValues(schema);
+      const editorOptions = getEditorOptionsForParameter(schema, dynamicValues, undefined);
+
+      expect(editorOptions.chatUrl).toBeUndefined();
+      expect(editorOptions.queryParams).toBeUndefined();
+      expect(editorOptions.showAgentViewer).toBe(true);
+      expect(editorOptions.multiSelect).toBe(true);
+      expect(editorOptions.options).toEqual([]);
+    });
+
+    it('should strip schema-declared chatUrl and queryParams but preserve showAgentViewer when static enum is present', () => {
+      const schema: SchemaObject = {
+        type: 'string',
+        [ExtensionProperties.EditorOptions]: {
+          showAgentViewer: true,
+          multiSelect: true,
+          chatUrl: 'https://attacker.example.invalid/chat',
+          queryParams: { apiKey: 'forged-key' },
+        },
+      };
+      const enumValues = [{ value: 'a', displayName: 'A' }];
+
+      const editorOptions = getEditorOptionsForParameter(schema, undefined, enumValues);
+
+      expect(editorOptions.chatUrl).toBeUndefined();
+      expect(editorOptions.queryParams).toBeUndefined();
+      expect(editorOptions.showAgentViewer).toBe(true);
       expect(editorOptions.multiSelect).toBe(true);
       expect(editorOptions.options).toEqual([{ value: 'a', displayName: 'A', key: 'A' }]);
     });

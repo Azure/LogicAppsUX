@@ -122,6 +122,7 @@ export interface ConnectionAndAppSetting {
   connectionData: ServiceProviderConnectionModel | FunctionConnectionModel;
   settings: Record<string, string>;
   pathLocation: string[];
+  isUpdate?: boolean;
 }
 
 export interface ConnectionsData {

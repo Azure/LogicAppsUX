@@ -1,11 +1,6 @@
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
-import {
-  autoRuntimeDependenciesPathSettingKey,
-  connectionsFileName,
-  onStartLanguageServer,
-  workflowAppApiVersion,
-} from '../../constants';
+import { autoRuntimeDependenciesPathSettingKey, connectionsFileName, onStartLanguageServer, workflowAppApiVersion } from '../../constants';
 import { workspace, window, MarkdownString } from 'vscode';
 import type { Executable, ServerOptions, LanguageClientOptions, HoverMiddleware, Middleware } from 'vscode-languageclient/node';
 import { LanguageClient } from 'vscode-languageclient/node';
@@ -16,7 +11,7 @@ import path from 'path';
 import * as fse from 'fs-extra';
 import { getGlobalSetting } from '../utils/vsCodeConfig/settings';
 import type { AzureConnectorDetails } from '@microsoft/vscode-extension-logic-apps';
-import { getAzureConnectorDetailsForLocalProject } from '../utils/codeless/common';
+import { getAzureConnectorDetailsForLocalProject } from '../commands/azureConnectors/azureConnectorDetails';
 import * as vscode from 'vscode';
 import { filterCompletionResult } from './completionFilter';
 import { getDotNetCommand } from '../utils/dotnet/dotnet';
@@ -80,7 +75,9 @@ export default class LogicAppsLanguageServer {
     // Support for debugger wait mode in development
     if (process.env.LSP_WAIT_FOR_DEBUGGER === 'true') {
       serverArgs.push('--wait-for-debugger');
-      window.showInformationMessage('LSP Server starting in debug mode - attach debugger and press any key in the server console');
+      ext.outputChannel.appendLog(
+        localize('lspWaitForDebugger', 'LSP Server starting in debug mode - attach debugger and press any key in the server console')
+      );
     }
 
     const fileSystemWatcher = workspace.createFileSystemWatcher('**/*.cs');
@@ -175,20 +172,35 @@ export default class LogicAppsLanguageServer {
   private async getSDKPaths() {
     const dependenciesPath = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
     if (!dependenciesPath) {
-      ext.outputChannel.appendLog(localize('dependenciesPathNotSet', '[LSP] Could not resolve SDK paths. The dependencies path is not set.'));
+      ext.outputChannel.appendLog(
+        localize('dependenciesPathNotSet', '[LSP] Could not resolve SDK paths. The dependencies path is not set.')
+      );
       return { lspServerDllPath: undefined, sdkNupkgPath: undefined };
     }
 
-    const lspServerDllPath = path.join(dependenciesPath, 'LSPServer', 'SdkLspServer.dll');
-    if (!(await fse.pathExists(lspServerDllPath))) {
-      ext.outputChannel.appendLog(localize('lspServerDllNotFound', '[LSP] Could not find LSP server DLL at "{0}".', lspServerDllPath));
-      return { lspServerDllPath: undefined, sdkNupkgPath: undefined };
+    const devLspServerPath = process.env.LSP_SERVER_DEV_PATH;
+    let lspServerDllPath: string | undefined;
+
+    if (devLspServerPath && (await fse.pathExists(devLspServerPath))) {
+      lspServerDllPath = devLspServerPath;
+      ext.outputChannel.appendLog(localize('lspDevelopmentServer', '[LSP] Using development server: "{0}".', lspServerDllPath));
+    } else {
+      const installedLspServerPath = path.join(dependenciesPath, 'LSPServer', 'SdkLspServer.dll');
+      if (!(await fse.pathExists(installedLspServerPath))) {
+        ext.outputChannel.appendLog(
+          localize('lspServerDllNotFound', '[LSP] Could not find LSP server DLL at "{0}".', installedLspServerPath)
+        );
+        return { lspServerDllPath: undefined, sdkNupkgPath: undefined };
+      }
+      lspServerDllPath = installedLspServerPath;
     }
 
     const resolvedSdk = await resolveSdkFromProject(this.projectPath!);
     const sdkNupkgPath = resolvedSdk ? resolvedSdk.sdkNupkgPath : undefined;
     if (!sdkNupkgPath) {
-      ext.outputChannel.appendLog(localize('sdkNupkgNotFound', '[LSP] Could not resolve SDK nupkg for project at "{0}".', this.projectPath));
+      ext.outputChannel.appendLog(
+        localize('sdkNupkgNotFound', '[LSP] Could not resolve SDK nupkg for project at "{0}".', this.projectPath)
+      );
     }
 
     return { lspServerDllPath, sdkNupkgPath };
@@ -251,12 +263,12 @@ export default class LogicAppsLanguageServer {
   }
 }
 
-export const startLanguageServer = async () => {
+export async function startLanguageServer(): Promise<void> {
   await callWithTelemetryAndErrorHandling(onStartLanguageServer, async (context: IActionContext) => {
     const languageServer = new LogicAppsLanguageServer(context);
     await languageServer.start();
   });
-};
+}
 
 /**
  * Gets workflow metadata from the LSP server including trigger names.

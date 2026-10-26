@@ -1,10 +1,10 @@
 import type { ApiHubServiceDetails, ConnectionsData } from '@microsoft/logic-apps-shared';
-import type { CompleteFileSystemConnectionData, IDesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
+import type { CompleteFileSystemConnectionData, DesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
 import type { PayloadAction, Slice } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface LanguageServerState {
-  panelMetaData: IDesignerPanelMetadata | null;
+  panelMetaData: DesignerPanelMetadata | null;
   connectionData: ConnectionsData;
   baseUrl: string;
   workflowRuntimeBaseUrl: string;

@@ -1,0 +1,48 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "metadata": {
+      "notes": {
+        "purpose": "Poll Microsoft Entra ID Protection risk detections and post medium/high-risk alerts to the configured Microsoft Teams group chat.",
+        "validNote": {
+          "content": "This is a **real** designer note.",
+          "color": "#FFFBCC",
+          "metadata": {
+            "position": { "x": -350, "y": 0 },
+            "width": 200,
+            "height": 140
+          }
+        }
+      }
+    },
+    "triggers": {
+      "Check_for_Entra_security_alerts": {
+        "type": "Recurrence",
+        "recurrence": {
+          "frequency": "Minute",
+          "interval": 5,
+          "timeZone": "W. Europe Standard Time"
+        }
+      }
+    },
+    "actions": {
+      "Initialize_variable": {
+        "runAfter": {},
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "riskCount",
+              "type": "integer",
+              "value": 0
+            }
+          ]
+        }
+      }
+    },
+    "outputs": {}
+  },
+  "connectionReferences": {},
+  "parameters": {}
+}

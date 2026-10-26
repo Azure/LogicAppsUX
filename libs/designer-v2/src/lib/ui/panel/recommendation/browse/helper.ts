@@ -48,6 +48,28 @@ export interface BrowseCategoryConfig {
   connectorFilters?: ConnectorFilterTypes;
 }
 
+export const MCP_SERVERS_CATEGORY_KEY = 'mcpServers';
+
+/**
+ * Filters MCP servers by a free-text search term. Matching is case-insensitive and
+ * checks the display name (summary), description and the raw operation name.
+ */
+export const filterMcpServersBySearchTerm = (
+  servers: DiscoveryOperation<DiscoveryResultTypes>[],
+  searchTerm: string | undefined
+): DiscoveryOperation<DiscoveryResultTypes>[] => {
+  const term = searchTerm?.trim().toLowerCase();
+  if (!term) {
+    return servers;
+  }
+
+  return servers.filter((server) =>
+    [server.properties?.summary, server.properties?.description, server.name].some(
+      (value) => typeof value === 'string' && value.toLowerCase().includes(term)
+    )
+  );
+};
+
 export const getTriggerCategories = (): BrowseCategoryConfig[] => {
   const intl = getIntl();
 
@@ -209,7 +231,7 @@ export const getActionCategories = (
       type: BrowseCategoryType.BROWSE,
     },
     {
-      key: 'mcpServers',
+      key: MCP_SERVERS_CATEGORY_KEY,
       visible: isAddingAgentTool && !(disableMcpClientTools ?? false),
       text: intl.formatMessage({
         defaultMessage: 'MCP servers',

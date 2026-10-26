@@ -602,11 +602,30 @@ async function clickEnabledButtonByText(driver: WebDriver, buttonTexts: string[]
   return false;
 }
 
-async function fillCreateWorkflowWebview(driver: WebDriver, newWorkflowName: string): Promise<boolean> {
+async function fillCreateWorkflowWebview(driver: WebDriver, newWorkflowName: string, expectedProjectName?: string): Promise<boolean> {
   let webview: WebView | undefined;
   try {
     webview = await switchToWebviewFrame(driver);
     console.log('[multiDesigner] Create workflow webview opened');
+
+    // Verify the Project dropdown is visible and has the expected project pre-selected
+    // (this validates our multi-root project dropdown fix)
+    const projectDropdown = await findDropdownByLabel(driver, 'Project').catch(() => null);
+    if (projectDropdown) {
+      console.log('[multiDesigner] Project dropdown is visible');
+      const dropdownText = await projectDropdown.getText().catch(() => '');
+      console.log(`[multiDesigner] Project dropdown value: "${dropdownText}"`);
+      if (expectedProjectName) {
+        assert.ok(
+          dropdownText.includes(expectedProjectName),
+          `Expected project dropdown to contain "${expectedProjectName}", got "${dropdownText}"`
+        );
+        console.log(`[multiDesigner] ✓ Project dropdown pre-selected: "${expectedProjectName}"`);
+      }
+    } else {
+      // Single-project workspaces may not show the dropdown (only 1 project auto-selected)
+      console.log('[multiDesigner] No Project dropdown visible (likely single-project workspace, auto-selected)');
+    }
 
     const nameInput = await findInputByLabel(driver, 'Workflow name');
     await clearAndType(nameInput, newWorkflowName);
@@ -685,7 +704,7 @@ async function addWorkflowViaRightClick(driver: WebDriver, appFolderName: string
 
           // Current product flow opens the Create workflow webview. Older
           // builds used Quick Input, so keep that path as fallback only.
-          if (await fillCreateWorkflowWebview(driver, newWorkflowName)) {
+          if (await fillCreateWorkflowWebview(driver, newWorkflowName, appFolderName)) {
             console.log(`[multiDesigner] Submitted Create workflow webview for "${newWorkflowName}"`);
             return true;
           }

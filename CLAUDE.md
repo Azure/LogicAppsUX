@@ -68,7 +68,7 @@ pnpm run vscode:designer:e2e:headless # Headless mode
 ```bash
 cd apps/vs-code-designer
 npx tsup --config tsup.e2e.test.config.ts
-node src/test/ui/run-e2e.js
+node out/test/run-e2e.js
 
 # Run specific phases via E2E_MODE env var
 E2E_MODE="createonly"    # Phase 4.1: workspace creation
@@ -86,7 +86,7 @@ Key knowledge files for E2E tests:
 - `apps/vs-code-designer/src/test/ui/SKILL.md` — Complete learning document (700+ lines)
 - `apps/vs-code-designer/src/test/ui/designerHelpers.ts` — Shared designer test helpers
 - `apps/vs-code-designer/src/test/ui/runHelpers.ts` — Shared debug/run test helpers
-- `apps/vs-code-designer/src/test/ui/run-e2e.js` — Test launcher (7 phases)
+- `apps/vs-code-designer/src/test/ui/run-e2e.ts` — Test launcher (7 phases)
 
 ### Code Quality
 ```bash
@@ -372,3 +372,4 @@ Each package has detailed guidance in `docs/ai-setup/packages/<name>.md`. Read t
 ## Squad Agents
 
 This repo uses Squad for AI agent specialization. See `.squad/README.md` for the team roster and `.squad/routing.md` for work dispatch.
+

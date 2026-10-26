@@ -13,6 +13,7 @@ import { StandaloneOAuthService } from './Services/OAuthService';
 import {
   getConnectionStandard,
   getCustomCodeAppFiles,
+  createOrUpdateConnection,
   listCallbackUrl,
   saveWorkflowStandard,
   fetchAgentUrl,
@@ -51,6 +52,7 @@ import {
   isArmResourceId,
   optional,
   BaseCognitiveServiceService,
+  AGENT_MSI_REQUIRED_ROLE_DEFINITION_IDS,
   RoleService,
   normalizeAgentConnectionResourceIdForRoleAssignment,
   resolveConnectionsReferences,
@@ -70,9 +72,8 @@ import {
   RunHistoryPanel,
   CombineInitializeVariableDialog,
   TriggerDescriptionDialog,
-  getMissingRoleDefinitions,
+  getRoleDefinitionsToAssign,
   roleQueryKeys,
-  isAgentWorkflow,
 } from '@microsoft/logic-apps-designer';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
@@ -96,7 +97,6 @@ const DesignerEditor = () => {
   const {
     isReadOnly,
     isDarkMode,
-    isUnitTest,
     isMonitoringView,
     runId,
     appId,
@@ -146,6 +146,9 @@ const DesignerEditor = () => {
     addConnectionInJson(connectionAndSetting, connectionsData ?? {});
     addOrUpdateAppSettings(connectionAndSetting.settings, settingsData?.properties ?? {});
   };
+
+  const persistKnowledgeHubConnection = async (): Promise<void> =>
+    createOrUpdateConnection(siteResourceId, connectionsData, settingsData?.properties);
 
   const getConnectionConfiguration = async (connectionId: string, _manifest: any, useMcpConnections?: boolean): Promise<any> => {
     if (!connectionId) {
@@ -206,6 +209,7 @@ const DesignerEditor = () => {
         connectionsData ?? {},
         workflowAppData as WorkflowApp,
         addConnectionDataInternal,
+        persistKnowledgeHubConnection,
         getConnectionConfiguration,
         tenantId,
         objectId,
@@ -340,38 +344,37 @@ const DesignerEditor = () => {
         ...connectionsData?.serviceProviderConnections,
         ...newServiceProviderConnections,
       };
-      if (isAgentWorkflow(workflow?.kind ?? '') || Object.keys(newAgentConnections).length > 0) {
-        (connectionsData as ConnectionsData).agentConnections = {
-          ...connectionsData?.agentConnections,
-          ...newAgentConnections,
-        };
+      (connectionsData as ConnectionsData).agentConnections = {
+        ...connectionsData?.agentConnections,
+        ...newAgentConnections,
+      };
 
-        // Assign MSI roles if needed
-        /**
-         *  This is currently only for Agentic workflows,
-         *    but we should work to make this generic in the future
-         *  The issue with making it generic is that we don't have a good way of getting the required definition names for any given connection reference
-         *  The required roles are listed on connection parameters which we don't have access to here,
-         *    and would take several requests to check for each connection, when most will not need it, leading to unnecessary slowdown during save
-         *  One option is to populate that info somewhere in the connection reference for use here,
-         *    but that is unavailable at authoring time when we are populating the values that require the roles
-         */
-        for (const [_refKey, agentConnection] of Object.entries(newAgentConnections)) {
-          if (agentConnection?.authentication?.type === 'ManagedServiceIdentity') {
-            const roleAssignmentResourceId = normalizeAgentConnectionResourceIdForRoleAssignment(agentConnection?.resourceId);
-            const definitionNames = ['Azure AI User', 'Azure AI Administrator', 'Azure AI Developer', 'Cognitive Services Contributor'];
-            const missingRoleAssignments = await getMissingRoleDefinitions(roleAssignmentResourceId, definitionNames);
-            const assignmentPromises = [];
-            for (const roleDefinition of missingRoleAssignments) {
-              assignmentPromises.push(RoleService().addAppRoleAssignmentForResource(roleAssignmentResourceId, roleDefinition.id));
-            }
-            await Promise.all(assignmentPromises);
-
-            // Invalidate the cache for the role assignments
-            const cacheKey = [roleQueryKeys.appIdentityRoleAssignments, roleAssignmentResourceId];
-            const queryClient = getReactQueryClient();
-            queryClient.invalidateQueries(cacheKey);
+      // Assign MSI roles if needed.
+      /**
+       *  This is keyed off the connection, not the workflow kind: agent actions are allowed in
+       *  stateful workflows too (see `useIsAgenticWorkflow`), and the runtime needs the data-plane
+       *  role for any agent action regardless of the kind of workflow hosting it.
+       *  We should work to make this generic for all connection types in the future.
+       *  The issue with making it generic is that we don't have a good way of getting the required definition ids for any given connection reference
+       *  The required roles are listed on connection parameters which we don't have access to here,
+       *    and would take several requests to check for each connection, when most will not need it, leading to unnecessary slowdown during save
+       *  One option is to populate that info somewhere in the connection reference for use here,
+       *    but that is unavailable at authoring time when we are populating the values that require the roles
+       */
+      for (const [_refKey, agentConnection] of Object.entries(newAgentConnections)) {
+        if (agentConnection?.authentication?.type === 'ManagedServiceIdentity') {
+          const roleAssignmentResourceId = normalizeAgentConnectionResourceIdForRoleAssignment(agentConnection?.resourceId);
+          const rolesToAssign = await getRoleDefinitionsToAssign(roleAssignmentResourceId, AGENT_MSI_REQUIRED_ROLE_DEFINITION_IDS);
+          const assignmentPromises = [];
+          for (const roleDefinition of rolesToAssign) {
+            assignmentPromises.push(RoleService().addAppRoleAssignmentForResource(roleAssignmentResourceId, roleDefinition.id));
           }
+          await Promise.all(assignmentPromises);
+
+          // Invalidate the cache for the role assignments
+          const cacheKey = [roleQueryKeys.appIdentityRoleAssignments, roleAssignmentResourceId];
+          const queryClient = getReactQueryClient();
+          queryClient.invalidateQueries(cacheKey);
         }
       }
     }
@@ -472,7 +475,6 @@ const DesignerEditor = () => {
           isDarkMode,
           readOnly: isReadOnly,
           isMonitoringView,
-          isUnitTest,
           suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
           hostOptions: {
             ...hostOptions,
@@ -535,7 +537,6 @@ const DesignerEditor = () => {
                   discard={discardAllChanges}
                   location={canonicalLocation}
                   isReadOnly={isReadOnly}
-                  isUnitTest={isUnitTest}
                   isDarkMode={isDarkMode}
                   isDesignerView={designerView}
                   enableCopilot={() => dispatch(setIsChatBotEnabled(!showChatBot))}
@@ -570,6 +571,7 @@ const getDesignerServices = (
   connectionsData: ConnectionsData,
   workflowApp: WorkflowApp,
   addConnection: (data: ConnectionAndAppSetting) => Promise<void>,
+  persistKnowledgeHubConnection: () => Promise<void>,
   getConfiguration: (connectionId: string) => Promise<any>,
   tenantId: string | undefined,
   objectId: string | undefined,
@@ -619,6 +621,7 @@ const getDesignerServices = (
       return resolveConnectionsReferences(JSON.stringify(clone(connectionsData ?? {})), undefined, appSettings);
     },
     writeConnection: addConnection as any,
+    persistKnowledgeHubConnection,
     connectionCreationClients: {
       FileSystem: new FileSystemConnectionCreationClient({
         baseUrl: armUrl,

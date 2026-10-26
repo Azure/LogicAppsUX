@@ -1,5 +1,11 @@
 import { describe, test, expect, vi } from 'vitest';
-import { BrowseCategoryType, getActionCategories, getTriggerCategories } from '../helper';
+import {
+  BrowseCategoryType,
+  filterMcpServersBySearchTerm,
+  getActionCategories,
+  getTriggerCategories,
+  MCP_SERVERS_CATEGORY_KEY,
+} from '../helper';
 
 vi.mock('@microsoft/logic-apps-shared', () => ({
   getIntl: vi.fn(() => ({
@@ -164,6 +170,61 @@ describe('browse helper', () => {
       expect(humanInTheLoop?.type).toBe(BrowseCategoryType.BROWSE);
       expect(humanInTheLoop?.connectorFilters?.name).toContain('approval');
       expect(humanInTheLoop?.connectorFilters?.name).toContain('teams');
+    });
+  });
+
+  describe('filterMcpServersBySearchTerm', () => {
+    const makeServer = (id: string, summary?: string, description?: string) =>
+      ({
+        id,
+        name: id,
+        type: 'custom',
+        properties: { summary, description, api: { id: 'connectionProviders/mcpclient' } },
+      }) as any;
+
+    const servers = [
+      makeServer('github-server', 'GitHub MCP', 'Tools for GitHub repositories'),
+      makeServer('weather-server', 'Weather', 'Get the current forecast'),
+      makeServer('no-summary-server'),
+    ];
+
+    test('should return all servers when the search term is empty', () => {
+      expect(filterMcpServersBySearchTerm(servers, '')).toEqual(servers);
+      expect(filterMcpServersBySearchTerm(servers, undefined)).toEqual(servers);
+      expect(filterMcpServersBySearchTerm(servers, '   ')).toEqual(servers);
+    });
+
+    test('should match on summary, case insensitively', () => {
+      const result = filterMcpServersBySearchTerm(servers, 'github');
+
+      expect(result).toHaveLength(1);
+      expect(result[0]?.id).toBe('github-server');
+    });
+
+    test('should match on description', () => {
+      const result = filterMcpServersBySearchTerm(servers, 'forecast');
+
+      expect(result).toHaveLength(1);
+      expect(result[0]?.id).toBe('weather-server');
+    });
+
+    test('should match on name when summary and description are missing', () => {
+      const result = filterMcpServersBySearchTerm(servers, 'no-summary');
+
+      expect(result).toHaveLength(1);
+      expect(result[0]?.id).toBe('no-summary-server');
+    });
+
+    test('should return an empty array when nothing matches', () => {
+      expect(filterMcpServersBySearchTerm(servers, 'zzzz')).toHaveLength(0);
+    });
+  });
+
+  describe('MCP_SERVERS_CATEGORY_KEY', () => {
+    test('should match the key used by the MCP servers category', () => {
+      const categories = getActionCategories();
+
+      expect(categories.find((c) => c.key === MCP_SERVERS_CATEGORY_KEY)).toBeDefined();
     });
   });
 });

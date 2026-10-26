@@ -11,6 +11,7 @@ import { getWorkspaceFolder } from '../../utils/workspace';
 import { validateSQLConnectionString } from '../../utils/sql';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
+import { ext } from '../../../extensionVariables';
 
 export async function useSQLStorage(context: IActionContext, target: vscode.Uri) {
   if (target === undefined || Object.keys(target).length === 0) {
@@ -34,7 +35,5 @@ export async function useSQLStorage(context: IActionContext, target: vscode.Uri)
   valuesToUpdateInSettings[sqlStorageConnectionStringKey] = sqlConnectionString;
 
   await addOrUpdateLocalAppSettings(context, projectPath, valuesToUpdateInSettings);
-  await vscode.window.showInformationMessage(
-    localize('logicapp.sqlstorageupdate', 'The logic app project settings are updated to use SQL storage.')
-  );
+  ext.outputChannel.appendLog(localize('logicapp.sqlstorageupdate', 'Logic app project settings updated to use SQL storage.'));
 }

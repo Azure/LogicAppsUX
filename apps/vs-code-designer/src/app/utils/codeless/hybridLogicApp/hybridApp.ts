@@ -2,7 +2,6 @@ import { isSuccessResponse, type ILogicAppWizardContext } from '@microsoft/vscod
 import axios from 'axios';
 import { getLocalSettingsJson } from '../../appSettings/localSettings';
 import { tryGetLogicAppProjectRoot } from '../../verifyIsProject';
-import path from 'path';
 import {
   appKindSetting,
   azurePublicBaseUrl,
@@ -10,7 +9,6 @@ import {
   clientSecretName,
   extensionVersionKey,
   hybridAppApiVersion,
-  localSettingsFileName,
   logicAppKind,
   ProjectDirectoryPathKey,
   sqlConnectionStringSecretName,
@@ -47,8 +45,12 @@ interface createHybridAppOptions {
 const getAppSettingsFromLocal = async (context): Promise<EnvironmentVar[]> => {
   const appSettingsToskip = [azureWebJobsStorageKey, ProjectDirectoryPathKey, workerRuntimeKey];
   const workspaceFolder = await getWorkspaceFolder(context);
-  const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspaceFolder, true /* suppressPrompt */);
-  const settings = await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName));
+  const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder, true /* suppressPrompt */);
+  if (!projectPath) {
+    return [];
+  }
+
+  const settings = await getLocalSettingsJson(context, projectPath);
   return Object.entries(settings.Values)
     .map((value) => ({
       name: value[0],

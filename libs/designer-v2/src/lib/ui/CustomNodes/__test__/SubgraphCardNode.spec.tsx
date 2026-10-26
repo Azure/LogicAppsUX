@@ -63,6 +63,7 @@ vi.mock('../../../core/state/selectors/actionMetadataSelector', () => ({
 
 vi.mock('../../../core/state/panel/panelSelectors', () => ({
   useIsNodeSelectedInOperationPanel: vi.fn().mockReturnValue(false),
+  useIsNodePinnedToOperationPanel: vi.fn().mockReturnValue(false),
 }));
 
 vi.mock('../../../core/state/panel/panelSlice', () => ({

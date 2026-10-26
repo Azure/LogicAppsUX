@@ -19,7 +19,7 @@ namespace <%= logicAppNamespace %>
         {
             var trigger = WorkflowTriggers.BuiltIn.CreateHttpTrigger();
 
-            var getCurrentWeatherAction = WorkflowActions.ManagedConnectors.Msnweather("msnweather").CurrentWeather(
+            var getCurrentWeatherAction = WorkflowActions.Managed.Msnweather("msnweather").CurrentWeather(
                 location: () => "98058",
                 units: () => unitsInput.Imperial);
 

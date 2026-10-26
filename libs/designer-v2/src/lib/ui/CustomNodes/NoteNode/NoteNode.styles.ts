@@ -1,6 +1,13 @@
 import { makeStyles } from '@fluentui/react-components';
 
 export const useNoteNodeStyles = makeStyles({
+  noteNode: {
+    position: 'relative',
+    '&:hover .msla-note-toolbar, &:focus-within .msla-note-toolbar': {
+      opacity: 1,
+      pointerEvents: 'auto',
+    },
+  },
   noteCard: {
     position: 'relative',
     boxShadow: '0 0 2px rgba(0,0,0,0.24), 0 2px 4px rgba(0,0,0,0.28)',
@@ -73,11 +80,19 @@ export const useNoteNodeStyles = makeStyles({
   },
   noteToolbar: {
     position: 'absolute',
-    bottom: '-32px',
+    top: '100%',
     left: '0',
+    width: '100%',
     margin: '-2px',
+    paddingTop: '12px',
     display: 'flex',
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-start',
     gap: '4px',
+    opacity: 0,
+    pointerEvents: 'none',
+  },
+  noteToolbarVisible: {
+    opacity: 1,
+    pointerEvents: 'auto',
   },
 });

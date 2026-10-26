@@ -2,31 +2,32 @@ import * as path from 'path';
 import * as fse from 'fs-extra';
 import { localize } from '../../../localize';
 import { parseError } from '@microsoft/vscode-azext-utils';
-import { hostFileName, powershellRequirementsFileName, workflowFileName } from '../../../constants';
+import { hostFileName, powershellRequirementsFileName, workflowDraftFileName, workflowFileName } from '../../../constants';
 import type { CustomCodeFileNameMapping } from '@microsoft/vscode-extension-logic-apps';
 import { parseJson } from '../parseJson';
 import { getAppFileForFileExtension } from '@microsoft/logic-apps-shared';
+
 /**
  * Retrieves the custom code files.
- * @param {string} workflowFilePath The path to the workflow folder.
+ * @param {string} workflowFolderPath The path to the workflow folder.
  * @returns A promise that resolves to a Record<string, string> object representing the custom code files.
  * @throws An error if the custom code files cannot be parsed.
  */
-export async function getCustomCode(workflowFilePath: string): Promise<Record<string, string>> {
+export async function getCustomCode(workflowFolderPath: string): Promise<Record<string, string>> {
   const customCodeFiles: Record<string, string> = {};
   try {
-    const subPaths: string[] = await fse.readdir(workflowFilePath);
+    const subPaths: string[] = await fse.readdir(workflowFolderPath);
     for (const subPath of subPaths) {
-      const fullPath: string = path.join(workflowFilePath, subPath);
+      const fullPath: string = path.join(workflowFolderPath, subPath);
 
-      if ((await fse.pathExists(fullPath)) && subPath !== workflowFileName) {
+      if ((await fse.pathExists(fullPath)) && subPath !== workflowFileName && subPath !== workflowDraftFileName) {
         if ((await fse.stat(fullPath)).isFile()) {
           customCodeFiles[subPath] = await fse.readFile(fullPath, 'utf8');
         }
       }
     }
   } catch (error) {
-    const message: string = localize('failedToParse', 'Failed to parse "{0}": {1}.', workflowFilePath, parseError(error).message);
+    const message: string = localize('failedToParse', 'Failed to parse "{0}": {1}.', workflowFolderPath, parseError(error).message);
     throw new Error(message);
   }
 
@@ -34,7 +35,7 @@ export async function getCustomCode(workflowFilePath: string): Promise<Record<st
 }
 
 export async function getCustomCodeAppFilesToUpdate(
-  workflowFilePath: string,
+  projectPath: string,
   customCodeFiles?: CustomCodeFileNameMapping
 ): Promise<Record<string, string>> {
   //   // only powershell files have custom app files
@@ -43,7 +44,7 @@ export async function getCustomCodeAppFilesToUpdate(
     return {};
   }
   const appFiles: Record<string, string> = {};
-  const hostFilePath: string = path.join(workflowFilePath, hostFileName);
+  const hostFilePath: string = path.join(projectPath, hostFileName);
   if (await fse.pathExists(hostFilePath)) {
     const data: string = (await fse.readFile(hostFilePath)).toString();
     if (/[^\s]/.test(data)) {
@@ -61,15 +62,15 @@ export async function getCustomCodeAppFilesToUpdate(
       }
     }
   }
-  const requirementsFilePath: string = path.join(workflowFilePath, powershellRequirementsFileName);
+  const requirementsFilePath: string = path.join(projectPath, powershellRequirementsFileName);
   if (!(await fse.pathExists(requirementsFilePath))) {
     appFiles[powershellRequirementsFileName] = getAppFileForFileExtension('.ps1');
   }
   return appFiles;
 }
 
-export async function uploadCustomCode(workflowFilePath: string, fileName: string, fileData: string): Promise<void> {
-  const filePath: string = path.join(workflowFilePath, fileName);
+export async function uploadCustomCode(workflowFolderPath: string, fileName: string, fileData: string): Promise<void> {
+  const filePath: string = path.join(workflowFolderPath, fileName);
   try {
     await fse.writeFile(filePath, fileData, 'utf8');
   } catch (error) {
@@ -78,8 +79,8 @@ export async function uploadCustomCode(workflowFilePath: string, fileName: strin
   }
 }
 
-export async function deleteCustomCode(workflowFilePath: string, fileName: string): Promise<void> {
-  const filePath: string = path.join(workflowFilePath, fileName);
+export async function deleteCustomCode(workflowFolderPath: string, fileName: string): Promise<void> {
+  const filePath: string = path.join(workflowFolderPath, fileName);
   try {
     if (await fse.pathExists(filePath)) {
       await fse.unlink(filePath);

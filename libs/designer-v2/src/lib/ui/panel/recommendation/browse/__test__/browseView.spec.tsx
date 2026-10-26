@@ -39,7 +39,7 @@ vi.mock('../connectorBrowse', () => ({
 }));
 
 vi.mock('../mcpServersBrowse', () => ({
-  McpServersBrowse: vi.fn(() => <div data-testid="mcp-servers-browse">MCP Servers Browse</div>),
+  McpServersBrowse: vi.fn(({ searchTerm }) => <div data-testid="mcp-servers-browse">MCP Servers Browse - Search: {searchTerm}</div>),
 }));
 
 vi.mock('../../categories/Favorites', () => ({
@@ -106,6 +106,7 @@ vi.mock('../helper', () => ({
     IMMEDIATE: 'immediate',
     BROWSE: 'browse',
   },
+  MCP_SERVERS_CATEGORY_KEY: 'mcpServers',
 }));
 
 import {
@@ -287,6 +288,14 @@ describe('BrowseView', () => {
       render(<BrowseView isTrigger={false} onOperationClick={mockOnOperationClick} />, { wrapper: createWrapper() });
 
       expect(screen.getByTestId('mcp-servers-browse')).toBeDefined();
+    });
+
+    test('should forward the search term to McpServersBrowse', () => {
+      mockUseDiscoveryPanelSelectedBrowseCategory.mockReturnValue({ key: 'mcpServers', title: 'MCP Servers' });
+
+      render(<BrowseView isTrigger={false} onOperationClick={mockOnOperationClick} searchTerm="github" />, { wrapper: createWrapper() });
+
+      expect(screen.getByTestId('mcp-servers-browse').textContent).toContain('Search: github');
     });
 
     test('should render ConnectorBrowse for other browse categories', () => {

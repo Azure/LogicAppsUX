@@ -20,6 +20,8 @@ import { Networking } from './sections/networking';
 import { RunAfter } from './sections/runafter';
 import { Security } from './sections/security';
 import { Tracking } from './sections/tracking';
+import { HostSettings } from './sections/hostsettings';
+import { SettingSectionName } from '../../core/state/setting/settingInterface';
 import type { ValidationError } from './validation/validation';
 import { ValidationErrorKeys, validateNodeSettings } from './validation/validation';
 import type { IDropdownOption } from '@fluentui/react';
@@ -31,15 +33,7 @@ export type TextChangeHandler = (newVal: string) => void;
 export type NumberChangeHandler = (newVal: number) => void;
 export type DropdownSelectionChangeHandler = (selectedOption: IDropdownOption) => void;
 
-export const SettingSectionName = {
-  DATAHANDLING: 'datahandling',
-  GENERAL: 'general',
-  NETWORKING: 'networking',
-  RUNAFTER: 'runafter',
-  SECURITY: 'security',
-  TRACKING: 'tracking',
-} as const;
-export type SettingSectionName = (typeof SettingSectionName)[keyof typeof SettingSectionName];
+export { SettingSectionName } from '../../core/state/setting/settingInterface';
 
 export interface SectionProps extends Settings {
   readOnly: boolean | undefined;
@@ -179,6 +173,14 @@ export const SettingsPanel: React.FC<PanelTabProps> = (props) => {
         updateSettings={(settings, validateSetting) => handleUpdateSettings(settings, SettingSectionName.TRACKING, validateSetting)}
         {...getPropsBasedOnSection(SettingSectionName.TRACKING)}
       />
+      {nodeSettings.hostSettings && Object.keys(nodeSettings.hostSettings).length > 0 && (
+        <HostSettings
+          nodeId={selectedNode}
+          expanded={expandedSections.includes(SettingSectionName.HOSTSETTINGS)}
+          hostSettings={nodeSettings.hostSettings}
+          onHeaderClick={(sectionName) => dispatch(setExpandedSections(sectionName))}
+        />
+      )}
     </div>
   );
 };

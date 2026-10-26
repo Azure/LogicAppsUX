@@ -208,3 +208,156 @@ describe('workflowSlice - setRepetitionRunData', () => {
     expect(updatedRunData.error).toBeUndefined();
   });
 });
+
+describe('workflowSlice - replaceOperationDefinition', () => {
+  const nodeId = 'testNode';
+
+  const buildState = (operations: Record<string, any>): WorkflowState =>
+    ({
+      graph: null,
+      operations,
+      nodesMetadata: {},
+      collapsedGraphIds: {},
+      collapsedActionIds: {},
+      idReplacements: {},
+      newlyAddedOperations: {},
+      runInstance: null,
+      isDirty: false,
+      workflowKind: undefined,
+      originalDefinition: {} as LogicAppsV2.WorkflowDefinition,
+      hostData: { errorMessages: {} },
+      agentsGraph: {},
+      timelineRepetitionIndex: 0,
+      changeCount: 0,
+      timelineRepetitionArray: [],
+      flowErrors: {},
+    }) as WorkflowState;
+
+  test('should replace the operation definition for an existing node', () => {
+    const initialState = buildState({
+      [nodeId]: { type: 'InitializeVariable', inputs: { variables: [{ name: 'old', type: 'String', value: 'a' }] } },
+    });
+
+    const operationDefinition = {
+      type: 'InitializeVariable',
+      inputs: { variables: [{ name: 'renamed', type: 'String', value: 'b' }] },
+    } as unknown as LogicAppsV2.OperationDefinition;
+
+    const newState = workflowSlice.reducer(initialState, workflowSlice.actions.replaceOperationDefinition({ nodeId, operationDefinition }));
+
+    expect(newState.operations[nodeId]).toEqual(operationDefinition);
+    expect(newState.isDirty).toBe(true);
+  });
+
+  test('should no-op when the node does not exist', () => {
+    const initialState = buildState({});
+
+    const operationDefinition = { type: 'Compose', inputs: {} } as unknown as LogicAppsV2.OperationDefinition;
+
+    const newState = workflowSlice.reducer(
+      initialState,
+      workflowSlice.actions.replaceOperationDefinition({ nodeId: 'missing', operationDefinition })
+    );
+
+    expect(newState.operations['missing']).toBeUndefined();
+  });
+});
+
+describe('workflowSlice - replaceOperationDefinition runAfter graph reconciliation', () => {
+  // Linear top-level workflow: manual (trigger) -> A -> B -> C
+  const buildLinearState = (): WorkflowState =>
+    ({
+      graph: {
+        id: 'root',
+        type: 'GRAPH_NODE',
+        children: [
+          { id: 'manual', type: 'OPERATION_NODE' },
+          { id: 'A', type: 'OPERATION_NODE' },
+          { id: 'B', type: 'OPERATION_NODE' },
+          { id: 'C', type: 'OPERATION_NODE' },
+        ],
+        edges: [
+          { id: 'manual-A', source: 'manual', target: 'A', type: 'BUTTON_EDGE' },
+          { id: 'A-B', source: 'A', target: 'B', type: 'BUTTON_EDGE' },
+          { id: 'B-C', source: 'B', target: 'C', type: 'BUTTON_EDGE' },
+        ],
+      },
+      operations: {
+        manual: { type: 'Request', kind: 'Http' },
+        A: { type: 'Compose', inputs: {} },
+        B: { type: 'Compose', inputs: {}, runAfter: { A: ['Succeeded'] } },
+        C: { type: 'Compose', inputs: {}, runAfter: { B: ['Succeeded'] } },
+      },
+      nodesMetadata: {
+        manual: { graphId: 'root', isRoot: true, isTrigger: true } as NodeMetadata,
+        A: { graphId: 'root' } as NodeMetadata,
+        B: { graphId: 'root' } as NodeMetadata,
+        C: { graphId: 'root' } as NodeMetadata,
+      },
+      collapsedGraphIds: {},
+      collapsedActionIds: {},
+      idReplacements: {},
+      newlyAddedOperations: {},
+      runInstance: null,
+      isDirty: false,
+      workflowKind: undefined,
+      originalDefinition: {} as LogicAppsV2.WorkflowDefinition,
+      hostData: { errorMessages: {} },
+      agentsGraph: {},
+      timelineRepetitionIndex: 0,
+      changeCount: 0,
+      timelineRepetitionArray: [],
+      flowErrors: {},
+    }) as unknown as WorkflowState;
+
+  const edgeIds = (state: WorkflowState) => (state.graph?.edges ?? []).map((edge) => edge.id).sort();
+
+  test('removing runAfter on a top-level node re-attaches it to the trigger', () => {
+    const initialState = buildLinearState();
+
+    const operationDefinition = { type: 'Compose', inputs: {} } as unknown as LogicAppsV2.OperationDefinition;
+
+    const newState = workflowSlice.reducer(
+      initialState,
+      workflowSlice.actions.replaceOperationDefinition({ nodeId: 'C', operationDefinition })
+    );
+
+    // The B->C edge is gone and a trigger->C edge is created.
+    expect(edgeIds(newState)).toEqual(['A-B', 'manual-A', 'manual-C']);
+  });
+
+  test('changing the runAfter parent moves the edge to the new parent', () => {
+    const initialState = buildLinearState();
+
+    const operationDefinition = {
+      type: 'Compose',
+      inputs: {},
+      runAfter: { A: ['Succeeded'] },
+    } as unknown as LogicAppsV2.OperationDefinition;
+
+    const newState = workflowSlice.reducer(
+      initialState,
+      workflowSlice.actions.replaceOperationDefinition({ nodeId: 'C', operationDefinition })
+    );
+
+    // C now runs after A instead of B: B->C replaced with A->C.
+    expect(edgeIds(newState)).toEqual(['A-B', 'A-C', 'manual-A']);
+  });
+
+  test('status-only runAfter changes do not alter the edges', () => {
+    const initialState = buildLinearState();
+
+    const operationDefinition = {
+      type: 'Compose',
+      inputs: {},
+      runAfter: { B: ['Failed'] },
+    } as unknown as LogicAppsV2.OperationDefinition;
+
+    const newState = workflowSlice.reducer(
+      initialState,
+      workflowSlice.actions.replaceOperationDefinition({ nodeId: 'C', operationDefinition })
+    );
+
+    expect(edgeIds(newState)).toEqual(['A-B', 'B-C', 'manual-A']);
+  });
+});

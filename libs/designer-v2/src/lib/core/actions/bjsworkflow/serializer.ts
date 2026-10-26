@@ -1,17 +1,26 @@
 import Constants, { MCP_AUTH_PROPERTY_KEYS } from '../../../common/constants';
-import type { ConnectionReferences, Workflow, WorkflowParameter } from '../../../common/models/workflow';
+import {
+  isExpressionConnectionMapping,
+  type ConnectionReferences,
+  type Workflow,
+  type WorkflowParameter,
+} from '../../../common/models/workflow';
+import {
+  isConnectionExpressionValid,
+  remapConnectionExpression,
+  remapConnectionExpressionValue,
+  serializeServiceProviderConnectionKey,
+} from '../../utils/connectors/connectionExpression';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
 import type { NodeInputs, NodeOperation, NodeOutputs, ParameterGroup } from '../../state/operation/operationMetadataSlice';
 import { DynamicLoadStatus, ErrorLevel } from '../../state/operation/operationMetadataSlice';
 import { getOperationInputParameters } from '../../state/operation/operationSelector';
-import type { OutputMock } from '../../state/unitTest/unitTestInterfaces';
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../../store';
 import { getNode, getTriggerNodeId, isRootNode, isTriggerNode } from '../../utils/graph';
 import {
-  castValueSegments,
   encodePathValue,
   getAndEscapeSegment,
   getEncodeValue,
@@ -60,21 +69,10 @@ import {
   getRecordEntry,
   RunAfterType,
 } from '@microsoft/logic-apps-shared';
-import type { ParameterInfo, ValueSegment } from '@microsoft/designer-ui';
-import { TokenType, UIConstants } from '@microsoft/designer-ui';
-import type {
-  Segment,
-  LocationSwapMap,
-  LogicAppsV2,
-  OperationManifest,
-  SubGraphDetail,
-  OperationMock,
-  AssertionDefinition,
-  Assertion,
-  UnitTestDefinition,
-} from '@microsoft/logic-apps-shared';
+import type { ParameterInfo } from '@microsoft/designer-ui';
+import { UIConstants } from '@microsoft/designer-ui';
+import type { Segment, LocationSwapMap, LogicAppsV2, OperationManifest, SubGraphDetail } from '@microsoft/logic-apps-shared';
 import merge from 'lodash.merge';
-import { createTokenValueSegment } from '../../utils/parameters/segment';
 import { ConnectorManifest } from './agent';
 import { isA2AWorkflow, isBuiltInMcpOperation, isManagedMcpOperation } from '../../../core/state/workflow/helper';
 
@@ -87,11 +85,18 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
   if (!options?.skipValidation) {
     const intl = getIntl();
 
-    const operationsWithConnectionErrors = Object.entries(rootState.operations.errors).filter(
-      ([_id, errors]) => !!errors[ErrorLevel.Connection]
-    );
+    const operationsWithConnectionErrors = Object.entries(rootState.operations.errors)
+      .filter(
+        ([id, errors]) => !isExpressionConnectionMapping(rootState.connections.connectionsMapping[id]) && !!errors[ErrorLevel.Connection]
+      )
+      .map(([id]) => id);
+    for (const [id, mapping] of Object.entries(rootState.connections.connectionsMapping)) {
+      if (isExpressionConnectionMapping(mapping) && !isConnectionExpressionValid(mapping.expression)) {
+        operationsWithConnectionErrors.push(id);
+      }
+    }
     if (operationsWithConnectionErrors.length > 0) {
-      const invalidNodes = operationsWithConnectionErrors.map(([id]) => id).join(', ');
+      const invalidNodes = operationsWithConnectionErrors.join(', ');
       throw new SerializationException(
         SerializationErrorCode.INVALID_CONNECTIONS,
         intl.formatMessage(
@@ -155,9 +160,12 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
   }
 
   const { connectionsMapping, connectionReferences: referencesObject } = rootState.connections;
+  const preservedReferences = Object.values(connectionsMapping ?? {}).some(isExpressionConnectionMapping)
+    ? filterRecord(referencesObject, (_key, reference) => /(^|\/)serviceProviders\//i.test(reference.api.id))
+    : {};
   const connectionReferences = Object.keys(connectionsMapping ?? {}).reduce((references: ConnectionReferences, nodeId: string) => {
     const referenceKey = getRecordEntry(connectionsMapping, nodeId);
-    if (!referenceKey) {
+    if (typeof referenceKey !== 'string' || !referenceKey) {
       return references;
     }
 
@@ -182,7 +190,7 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
 
     references[referenceKey] = reference;
     return references;
-  }, {});
+  }, preservedReferences);
 
   const parameters = getWorkflowParameters(filterRecord(rootState.workflowParameters.definitions, (key, _) => key !== '')) ?? {};
 
@@ -284,9 +292,9 @@ export const parseWorkflowParameterValue = (parameterType: any, parameterValue: 
         : typeof parameterValue !== 'string'
           ? parameterValue
           : JSON.parse(parameterValue);
-  } catch (error) {
-    console.log(error);
-    return undefined;
+  } catch {
+    // Return the raw value rather than undefined to avoid silently dropping parameter data
+    return parameterValue;
   }
 };
 
@@ -308,12 +316,14 @@ export const serializeOperation = async (
 
   let serializedOperation: LogicAppsV2.OperationDefinition;
   const isManagedMcpClient = isManagedMcpOperation(operation);
-  const isBuiltInMcpClient = isBuiltInMcpOperation(operation);
+  // Consumption-only: inline `inputs.Connection` (PR #8953). Standard has workflowKind set and
+  // falls through to the manifest branch, which emits `inputs.connectionReference.connectionName`.
+  const isConsumptionBuiltInMcpClient = isBuiltInMcpOperation(operation) && !rootState.workflow.workflowKind;
 
   if (isManagedMcpClient) {
     serializedOperation = await serializeManagedMcpOperation(rootState, operationId);
-  } else if (isBuiltInMcpClient) {
-    serializedOperation = await serializeBuiltInMcpOperation(rootState, operationId);
+  } else if (isConsumptionBuiltInMcpClient) {
+    serializedOperation = await serializeConsumptionBuiltInMcpOperation(rootState, operationId);
   } else if (OperationManifestService().isSupported(operation.type, operation.kind)) {
     serializedOperation = await serializeManifestBasedOperation(rootState, operationId);
   } else {
@@ -366,7 +376,13 @@ export const serializeOperation = async (
     nodeInputs?.dynamicLoadStatus !== undefined && nodeInputs.dynamicLoadStatus !== DynamicLoadStatus.SUCCEEDED;
   const hasStash = !!nodeInputs?.stashedDynamicParameterValues?.length;
   const hasDynamicParamsInGroups = getOperationInputParameters(nodeInputs as NodeInputs).some((p) => p.info.isDynamic);
-  if ((hasDynamicInputsError || nodeExpectsDynamicInputs) && !hasStash && !hasDynamicParamsInGroups) {
+  if (
+    !isExpressionConnectionMapping(rootState.connections.connectionsMapping[operationId]) &&
+    !nodeInputs?.preservedConnectionInputs &&
+    (hasDynamicInputsError || nodeExpectsDynamicInputs) &&
+    !hasStash &&
+    !hasDynamicParamsInGroups
+  ) {
     const originalDef = getRecordEntry(rootState.workflow.operations, operationId);
     if (originalDef && 'inputs' in originalDef && originalDef.inputs && 'inputs' in serializedOperation) {
       serializedOperation = {
@@ -470,7 +486,31 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
   const inputsToSerialize = getOperationInputsToSerialize(rootState, operationId);
   const nodeSettings = getRecordEntry(rootState.operations.settings, operationId) ?? {};
   const nodeStaticResults = getRecordEntry(rootState.operations.staticResults, operationId) ?? ({} as NodeStaticResults);
-  const inputPathValue = serializeParametersFromManifest(inputsToSerialize, manifest);
+  let inputPathValue = serializeParametersFromManifest(inputsToSerialize, manifest);
+  const nodeInputs = getRecordEntry(rootState.operations.inputParameters, operationId);
+  if (isExpressionConnectionMapping(rootState.connections.connectionsMapping[operationId]) || nodeInputs?.preservedConnectionInputs) {
+    const rawInputs: Record<string, unknown> = {
+      ...clone(
+        nodeInputs?.preservedConnectionInputs ??
+          (getRecordEntry(rootState.workflow.operations, operationId) as LogicAppsV2.ServiceProvider)?.inputs ??
+          {}
+      ),
+    };
+    delete rawInputs.serviceProviderConfiguration;
+    for (const input of inputsToSerialize) {
+      const segments = parseEx(input.parameterKey);
+      if (segments[0]?.value === 'inputs') {
+        deleteObjectProperty(rawInputs, [
+          ...(manifest.properties.inputsLocation?.slice(1) ?? []),
+          ...segments.slice(2).map((segment) => String(segment.value)),
+        ]);
+      }
+    }
+    inputPathValue = merge(
+      remapConnectionExpressionValue(rawInputs, idReplacements, getParameterNameReplacements(rootState)),
+      inputPathValue
+    );
+  }
 
   // For FoundryAgentServiceV2, strip system messages — instructions live on the Foundry agent definition
   if (inputPathValue?.parameters?.agentModelType === 'FoundryAgentServiceV2' && Array.isArray(inputPathValue?.parameters?.messages)) {
@@ -554,7 +594,9 @@ const serializeManagedMcpOperation = async (rootState: RootState, nodeId: string
   };
 };
 
-const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string): Promise<LogicAppsV2.OperationDefinition> => {
+// Consumption has no `agentMcpConnections` category, so the tool must inline
+// `inputs.Connection.{McpServerUrl,Authentication}`. Standard is routed via the manifest path.
+const serializeConsumptionBuiltInMcpOperation = async (rootState: RootState, nodeId: string): Promise<LogicAppsV2.OperationDefinition> => {
   const operationInfo = getRecordEntry(rootState.operations.operationInfo, nodeId) as NodeOperation;
   if (!operationInfo) {
     throw new AssertionException(AssertionErrorCode.OPERATION_NOT_FOUND, `Operation with id ${nodeId} not found`);
@@ -575,7 +617,7 @@ const serializeBuiltInMcpOperation = async (rootState: RootState, nodeId: string
   // incomplete Connection object that the backend would reject.
   const existingConnectionInput = (operationFromWorkflow as any)?.inputs?.Connection;
   const referenceKey = getRecordEntry(rootState.connections.connectionsMapping, nodeId);
-  const connectionReference = referenceKey ? getRecordEntry(rootState.connections.connectionReferences, referenceKey) : undefined;
+  const connectionReference = typeof referenceKey === 'string' ? rootState.connections.connectionReferences[referenceKey] : undefined;
   const connectionId = connectionReference?.connection?.id;
 
   // All auth-related property keys that can appear in parameterValues
@@ -1008,6 +1050,13 @@ interface ServiceProviderConnectionConfigInfo {
   };
 }
 
+const getParameterNameReplacements = (rootState: RootState): Record<string, string> =>
+  Object.fromEntries(
+    Object.entries(rootState.workflowParameters?.definitions ?? {})
+      .filter(([id, definition]) => definition.name && definition.name !== id)
+      .map(([id, definition]) => [id, definition.name])
+  );
+
 interface AgentConnectionInfo {
   modelConfigurations: {
     model1: {
@@ -1021,6 +1070,13 @@ interface McpConnectionInfo {
     connectionName: string;
   };
 }
+
+// Resolve the authoritative `agentMcpConnections` key from a Redux reference. Prefers connection.id's
+// last segment (which by construction matches the connections.json key) and falls back to the raw
+// referenceKey when the id is missing or produces an empty segment (e.g. trailing slash). Exported
+// for unit tests.
+export const resolveMcpConnectionName = (referenceKey: string, connectionId: string | undefined): string =>
+  connectionId?.split('/').pop() || referenceKey;
 
 const serializeHost = (
   nodeId: string,
@@ -1041,7 +1097,8 @@ const serializeHost = (
 
   const intl = getIntl();
   const { referenceKeyFormat } = manifest.properties.connectionReference;
-  const referenceKey = getRecordEntry(rootState.connections.connectionsMapping, nodeId) ?? ('' as any);
+  const mapping = getRecordEntry(rootState.connections.connectionsMapping, nodeId);
+  const referenceKey = typeof mapping === 'string' ? mapping : '';
   const { connectorId, operationId } = getRecordEntry(rootState.operations.operationInfo, nodeId) ?? ({} as any);
 
   switch (referenceKeyFormat) {
@@ -1080,7 +1137,9 @@ const serializeHost = (
     case ConnectionReferenceKeyFormat.ServiceProvider:
       return {
         serviceProviderConfiguration: {
-          connectionName: referenceKey,
+          connectionName: isExpressionConnectionMapping(mapping)
+            ? remapConnectionExpression(mapping.expression, rootState.workflow.idReplacements, getParameterNameReplacements(rootState))
+            : serializeServiceProviderConnectionKey(referenceKey),
           operationId,
           serviceProviderId: connectorId,
         },
@@ -1101,12 +1160,14 @@ const serializeHost = (
           },
         },
       };
-    case ConnectionReferenceKeyFormat.McpConnection:
+    case ConnectionReferenceKeyFormat.McpConnection: {
+      const reference = getRecordEntry(rootState.connections.connectionReferences, referenceKey);
       return {
         connectionReference: {
-          connectionName: referenceKey,
+          connectionName: resolveMcpConnectionName(referenceKey, reference?.connection?.id),
         },
       };
+    }
     default:
       throw new AssertionException(
         AssertionErrorCode.UNSUPPORTED_MANIFEST_CONNECTION_REFERENCE_FORMAT,
@@ -1477,6 +1538,11 @@ export const getRetryPolicy = (settings: Settings): LogicAppsV2.RetryPolicy | un
     return undefined;
   }
 
+  // If the value came from API defaults (defaultHint is set), treat as unset — omit from definition
+  if (settings.retryPolicy?.defaultHint) {
+    return undefined;
+  }
+
   const retryPolicyType = retryPolicy.type && retryPolicy.type.toLowerCase();
   switch (retryPolicyType) {
     case Constants.RETRY_POLICY_TYPE.DEFAULT:
@@ -1534,22 +1600,6 @@ const removeRunAfterTriggerFromOperation = (operation: LogicAppsV2.ActionDefinit
 };
 
 /**
- * Serializes the unit test definition based on the provided root state.
- * @param {RootState} rootState The root state object containing the unit test data.
- * @returns A promise that resolves to the serialized unit test definition.
- */
-export const serializeUnitTestDefinition = async (rootState: RootState): Promise<UnitTestDefinition> => {
-  const { mockResults, assertions } = rootState.unitTest;
-  const { triggerMocks, actionMocks } = getTriggerActionMocks(mockResults);
-
-  return {
-    triggerMocks: triggerMocks,
-    actionMocks: actionMocks,
-    assertions: getAssertions(assertions),
-  };
-};
-
-/**
  * Gets the node output operations based on the provided root state.
  * @param {RootState} rootState The root state object containing the current designer state.
  * @returns A promise that resolves to the serialized unit test definition.
@@ -1563,114 +1613,4 @@ export const getNodeOutputOperations = (state: RootState) => {
     outputParameters: state.operations.outputParameters,
   };
   return outputOperations;
-};
-
-/**
- * Retrieves an array of Assertion objects based on the provided Assertion definitions.
- * @param {Record<string, AssertionDefinition>} assertions - The Assertion definitions.
- * @returns An array of Assertion objects.
- */
-const getAssertions = (assertions: Record<string, AssertionDefinition>): Assertion[] => {
-  return Object.values(assertions).map((assertion) => {
-    const { name, description, assertionString } = assertion;
-    const assertionValueSegment = createTokenValueSegment(
-      {
-        title: assertionString,
-        key: assertionString,
-        tokenType: TokenType.FX,
-        type: Constants.SWAGGER.TYPE.STRING,
-      },
-      assertionString,
-      TokenType.FX
-    );
-    const castAsertionString = castValueSegments([assertionValueSegment], false, Constants.SWAGGER.TYPE.STRING, false);
-
-    return { name, description, assertionString: castAsertionString };
-  });
-};
-
-/**
- * Parses the output of a workflow into a more structured format.
- * @param {Record<string, ValueSegment[]>} outputs - The outputs of the workflow.
- * @returns The parsed outputs in a more structured format.
- */
-const parseOutputMock = (outputs: Record<string, ValueSegment[]>): Record<string, any> => {
-  const outputValues: Record<string, any> = {};
-  for (const [key, value] of Object.entries(outputs)) {
-    if (value && value.length > 0) {
-      outputValues[key] = value[0].value;
-    }
-  }
-  return unifyOutputs(outputValues);
-};
-
-/**
- * Unifies the outputs by converting a dot-separated key-value object into a nested object.
- * @param {Record<string, any>} outputs - The dot-separated key-value object to unify.
- * @returns The unified object with nested properties.
- */
-const unifyOutputs = (outputs: Record<string, any>): Record<string, any> => {
-  const result: Record<string, any> = {};
-
-  Object.keys(outputs).forEach((key) => {
-    const parts = key.split('.').filter((part) => part !== '$');
-    let currentLevel = result;
-
-    parts.forEach((part, index) => {
-      if (index === parts.length - 1) {
-        currentLevel[part] = outputs[key];
-      } else {
-        if (!currentLevel[part]) {
-          currentLevel[part] = {};
-        }
-        currentLevel = currentLevel[part];
-      }
-    });
-  });
-
-  return result;
-};
-
-/**
- * Retrieves the trigger and action mocks from the provided mock results.
- * @param {Record<string, OutputMock>} mockResults - The mock results containing the trigger and action mocks.
- * @returns An object containing the trigger mocks and action mocks.
- */
-const getTriggerActionMocks = (
-  mockResults: Record<string, OutputMock>
-): {
-  triggerMocks: Record<string, OperationMock>;
-  actionMocks: Record<string, OperationMock>;
-} => {
-  const triggerMocks: Record<string, OperationMock> = {};
-  const actionMocks: Record<string, OperationMock> = {};
-
-  Object.keys(mockResults).forEach((key) => {
-    const outputMock = mockResults[key];
-    if (outputMock) {
-      const outputsValue = parseOutputMock(outputMock.output);
-      const operationMock: OperationMock = {
-        properties: {
-          status: outputMock.actionResult,
-        },
-        ...outputsValue,
-      };
-
-      // Only add error property if errorCode or errorMessage exists
-      if (outputMock.errorCode || outputMock.errorMessage) {
-        operationMock.error = {
-          ...(outputMock.errorCode && { code: outputMock.errorCode }),
-          ...(outputMock.errorMessage && { message: outputMock.errorMessage }),
-        };
-      }
-
-      if (key.charAt(0) === '&') {
-        const triggerName = key.substring(1);
-        triggerMocks[triggerName] = operationMock;
-      } else {
-        actionMocks[key] = operationMock;
-      }
-    }
-  });
-  return { triggerMocks, actionMocks };
 };

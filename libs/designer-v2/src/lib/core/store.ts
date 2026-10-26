@@ -8,16 +8,16 @@ import panelReducer from './state/panel/panelSlice';
 import settingsReducer from './state/setting/settingSlice';
 import staticResultsSchemasReducer from './state/staticresultschema/staticresultsSlice';
 import tokens from './state/tokens/tokensSlice';
-import unitTestReducer from './state/unitTest/unitTestSlice';
 import undoRedoReducer from './state/undoRedo/undoRedoSlice';
 import workflowReducer from './state/workflow/workflowSlice';
 import workflowParametersReducer from './state/workflowparameters/workflowparametersSlice';
 import modalReducer from './state/modal/modalSlice';
 import notesReducer from './state/notes/notesSlice';
+import knowledgeHubOptionsReducer from './state/knowledge/optionsSlice';
 
-import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import type {} from 'redux-thunk';
-import { storeStateHistoryMiddleware } from './utils/middleware';
+import { extractionMutationGuardMiddleware, monitoringDirtyGuardMiddleware, storeStateHistoryMiddleware } from './utils/middleware';
 
 declare global {
   interface Window {
@@ -25,32 +25,39 @@ declare global {
   }
 }
 
-export const store = configureStore({
-  reducer: {
-    workflow: workflowReducer,
-    operations: operationMetadataReducer,
-    panel: panelReducer,
-    connections: connectionsReducer,
-    settings: settingsReducer,
-    designerOptions: designerOptionsReducer,
-    designerView: designerViewReducer,
-    tokens: tokens,
-    workflowParameters: workflowParametersReducer,
-    staticResults: staticResultsSchemasReducer,
-    unitTest: unitTestReducer,
-    customCode: customCodeReducer,
-    undoRedo: undoRedoReducer,
-    modal: modalReducer,
-    notes: notesReducer,
-    // if is in dev environment, add devSlice to store
-    ...(process.env.NODE_ENV === 'development' ? { dev: devReducer } : {}),
-  },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: false,
-    }).concat(storeStateHistoryMiddleware),
+export const designerReducer = combineReducers({
+  workflow: workflowReducer,
+  operations: operationMetadataReducer,
+  panel: panelReducer,
+  connections: connectionsReducer,
+  settings: settingsReducer,
+  designerOptions: designerOptionsReducer,
+  designerView: designerViewReducer,
+  tokens: tokens,
+  workflowParameters: workflowParametersReducer,
+  staticResults: staticResultsSchemasReducer,
+  customCode: customCodeReducer,
+  undoRedo: undoRedoReducer,
+  modal: modalReducer,
+  notes: notesReducer,
+  knowledgeHubOptions: knowledgeHubOptionsReducer,
+  // if is in dev environment, add devSlice to store
+  ...(process.env.NODE_ENV === 'development' ? { dev: devReducer } : {}),
 });
 
+export const createDesignerStore = (preloadedState?: ReturnType<typeof designerReducer>) =>
+  configureStore({
+    reducer: designerReducer,
+    preloadedState,
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({
+        serializableCheck: false,
+      })
+        .prepend(extractionMutationGuardMiddleware)
+        .concat(storeStateHistoryMiddleware, monitoringDirtyGuardMiddleware),
+  });
+
+export const store = createDesignerStore();
 if (process.env.NODE_ENV === 'development') {
   (window as any).DesignerStoreV2 = store;
 }

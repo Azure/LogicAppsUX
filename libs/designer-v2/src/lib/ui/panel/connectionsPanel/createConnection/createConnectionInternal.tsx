@@ -19,7 +19,15 @@ import type {
   ManagedIdentity,
   OperationManifest,
 } from '@microsoft/logic-apps-shared';
-import { ConnectionService, LogEntryLevel, LoggerService, WorkflowService, getIconUriFromConnector } from '@microsoft/logic-apps-shared';
+import {
+  ConnectionParameterTypes,
+  ConnectionService,
+  LogEntryLevel,
+  LoggerService,
+  WorkflowService,
+  equals,
+  getIconUriFromConnector,
+} from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -37,6 +45,7 @@ export const CreateConnectionInternal = (props: {
   updateConnectionInState: (payload: CreatedConnectionPayload) => void;
   onConnectionCreated: (connection: Connection) => void;
   onConnectionCancelled?: () => void;
+  onCreatingChange?: (isCreating: boolean) => void;
   createButtonTexts?: CreateButtonTexts;
   description?: string;
   nodeIds?: string[];
@@ -66,6 +75,7 @@ export const CreateConnectionInternal = (props: {
     updateConnectionInState,
     onConnectionCreated,
     onConnectionCancelled,
+    onCreatingChange,
     updateOperationParameterValues,
     isAgentSubgraph,
     operationManifest,
@@ -168,6 +178,7 @@ export const CreateConnectionInternal = (props: {
       }
 
       setIsCreating(true);
+      onCreatingChange?.(true);
       setErrorMessage(undefined);
 
       let outputParameterValues = parameterValues;
@@ -251,12 +262,17 @@ export const CreateConnectionInternal = (props: {
         if (connection) {
           updateNewConnectionInCache(connection);
 
-          // For multi-auth ManagedServiceIdentity parameter sets (e.g., managed MCP connectors),
-          // build connectionProperties.authentication from the user-provided values since these
-          // aren't handled by the legacy managed identity flow.
+          // For multi-auth managed identity parameter sets (e.g., managed MCP connectors), build
+          // connectionProperties.authentication from the user-provided values. Connectors can name
+          // the parameter set anything (e.g. 'oauthMI'), so detect by parameter type/editor.
           let msiConnectionProperties: Record<string, any> | undefined;
-          if (!identitySelected && selectedParameterSet?.name === 'ManagedServiceIdentity') {
-            const userIdentity = outputParameterValues['identity'];
+          const identityParameterKey = Object.entries(selectedParameterSet?.parameters ?? {}).find(
+            ([, p]: [string, any]) =>
+              p?.type === ConnectionParameterTypes.managedIdentity || equals(p?.uiDefinition?.constraints?.editor, 'identitypicker')
+          )?.[0];
+          const isMsiParameterSet = equals(selectedParameterSet?.name, 'ManagedServiceIdentity') || !!identityParameterKey;
+          if (!identitySelected && isMsiParameterSet) {
+            const userIdentity = identityParameterKey ? outputParameterValues[identityParameterKey] : outputParameterValues['identity'];
             const mcpAudience = outputParameterValues['audience'];
             msiConnectionProperties = {
               authentication: {
@@ -283,6 +299,7 @@ export const CreateConnectionInternal = (props: {
         });
       }
       setIsCreating(false);
+      onCreatingChange?.(false);
     },
     [
       applyNewConnection,
@@ -291,6 +308,7 @@ export const CreateConnectionInternal = (props: {
       connectionName,
       connector,
       existingReferences,
+      onCreatingChange,
       selectedSubResource,
       updateNewConnectionInCache,
       updateOperationParameterValues,
