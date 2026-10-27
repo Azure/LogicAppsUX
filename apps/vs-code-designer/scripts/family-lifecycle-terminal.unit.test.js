@@ -138,10 +138,10 @@ for (const suiteId of [
   });
 }
 
-test('supplementary evidence cannot bypass or replace the canonical gate', () => {
+test('family lifecycle evidence cannot bypass or replace unrelated canonical suites', () => {
   const { result, terminal } = fixture('httpTimeoutLifecycle');
-  assert.throws(() => assertFamilyLifecycleTerminal(result, terminal, 'unitTests'), /Canonical suites/);
-  assert.throws(() => assertFamilyLifecycleTerminal(result, terminal, 'unregistered'), /Unknown supplementary suite/);
+  assert.throws(() => assertFamilyLifecycleTerminal(result, terminal, 'unitTests'), /Unknown family lifecycle suite/);
+  assert.throws(() => assertFamilyLifecycleTerminal(result, terminal, 'unregistered'), /Unknown family lifecycle suite/);
 });
 
 test('publication CLI rejects absent/stale terminal evidence even after a successful native summary', () => {

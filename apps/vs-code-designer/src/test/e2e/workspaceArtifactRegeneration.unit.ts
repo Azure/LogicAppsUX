@@ -605,7 +605,7 @@ async function main(): Promise<void> {
         ['workspaceArtifactRegeneration']
       );
       const canonical = batch.normalizeSuiteSelection(platform === 'win32' ? 'windows' : 'linux', { platform });
-      assert.strictEqual(canonical.length, 6, 'Explicit new suite must not inflate canonical aliases');
+      assert.strictEqual(canonical.length, 7, 'Targeted regeneration suite must not inflate canonical aliases');
       assert.ok(canonical.every((suite) => suite.id !== 'workspaceArtifactRegeneration'));
     }
     checks++;

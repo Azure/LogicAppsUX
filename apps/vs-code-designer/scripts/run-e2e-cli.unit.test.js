@@ -1331,6 +1331,7 @@ function testBatchSuiteRegistryValidation() {
       'createWorkspacePreviewMatrix',
       'createWorkspaceCodeful',
       'msnWeatherLifecycle',
+      'runAfterPersistenceLifecycle',
     ]
   );
   assert.deepStrictEqual(
@@ -1342,6 +1343,7 @@ function testBatchSuiteRegistryValidation() {
       'createWorkspacePreviewMatrix',
       'createWorkspaceCodeful',
       'msnWeatherLifecycle',
+      'runAfterPersistenceLifecycle',
     ]
   );
   assert.deepStrictEqual(
@@ -2587,6 +2589,7 @@ function testAggregateCompletenessAndDiagnosticRerun() {
       SUITE_REGISTRY.createWorkspacePreviewMatrix,
       SUITE_REGISTRY.createWorkspaceCodeful,
       SUITE_REGISTRY.msnWeatherLifecycle,
+      SUITE_REGISTRY.runAfterPersistenceLifecycle,
     ],
     observed: [
       'unitTests',
@@ -2595,6 +2598,7 @@ function testAggregateCompletenessAndDiagnosticRerun() {
       'createWorkspacePreviewMatrix',
       'createWorkspaceCodeful',
       'msnWeatherLifecycle',
+      'runAfterPersistenceLifecycle',
     ].map((id) => ({ id, finalOutcome: 'success', classification: 'success' })),
     trustedFullExecution: true,
     platform: 'linux',

@@ -594,6 +594,14 @@ satisfies the protected full rollup. Preserve stricter family gates such as
 Multi-root phase order and retained-identity cleanup even when body assertions
 and ordered evidence are complete.
 
+`runAfterPersistenceLifecycle` is part of the canonical Linux and Windows
+inventory after exact-SHA targeted run 15827501 / 20261027.7 passed both
+operating systems at `1d89db5c3dfc33468b8144087afa2c274b4a8467` with all 35
+ordered checkpoints, all four phases, terminal completion, and cleanup verified.
+HTTP timeout, Stateless variables, workspace artifact regeneration, and
+Multi-root remain targeted-only until they receive separate evidence-backed
+baseline promotion.
+
 ## Validation and maintenance
 
 1. Read this guide and the relevant suite/fixture prerequisites.

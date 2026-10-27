@@ -16,6 +16,99 @@ const {
 const { getSuiteDescriptor } = require('./vscode-e2e-evidence-plans');
 
 const repoRoot = path.resolve(__dirname, '..', '..', '..');
+const CANONICAL_FULL_GATE_SUITES = [
+  ['linux_unit_tests', 'linuxUnitTestsResult', 'linux-unit-tests', 'unitTests', 1, false],
+  [
+    'linux_create_workspace_behavior',
+    'linuxCreateWorkspaceBehaviorResult',
+    'linux-create-workspace-behavior',
+    'createWorkspaceBehavior',
+    1,
+    false,
+  ],
+  [
+    'linux_create_workspace_core_matrix',
+    'linuxCreateWorkspaceCoreMatrixResult',
+    'linux-create-workspace-core-matrix',
+    'createWorkspaceCoreMatrix',
+    6,
+    true,
+  ],
+  [
+    'linux_create_workspace_preview_matrix',
+    'linuxCreateWorkspacePreviewMatrixResult',
+    'linux-create-workspace-preview-matrix',
+    'createWorkspacePreviewMatrix',
+    6,
+    true,
+  ],
+  [
+    'linux_create_workspace_codeful',
+    'linuxCreateWorkspaceCodefulResult',
+    'linux-create-workspace-codeful',
+    'createWorkspaceCodeful',
+    2,
+    true,
+  ],
+  ['linux_msn_weather_lifecycle', 'linuxMsnWeatherLifecycleResult', 'linux-msn-weather-lifecycle', 'msnWeatherLifecycle', 3, false],
+  [
+    'linux_run_after_persistence',
+    'linuxRunAfterPersistenceResult',
+    'linux-run-after-persistence',
+    'runAfterPersistenceLifecycle',
+    4,
+    false,
+  ],
+  ['windows_unit_tests', 'windowsUnitTestsResult', 'windows-unit-tests', 'unitTests', 1, false],
+  [
+    'windows_create_workspace_behavior',
+    'windowsCreateWorkspaceBehaviorResult',
+    'windows-create-workspace-behavior',
+    'createWorkspaceBehavior',
+    1,
+    false,
+  ],
+  [
+    'windows_create_workspace_core_matrix',
+    'windowsCreateWorkspaceCoreMatrixResult',
+    'windows-create-workspace-core-matrix',
+    'createWorkspaceCoreMatrix',
+    6,
+    true,
+  ],
+  [
+    'windows_create_workspace_preview_matrix',
+    'windowsCreateWorkspacePreviewMatrixResult',
+    'windows-create-workspace-preview-matrix',
+    'createWorkspacePreviewMatrix',
+    6,
+    true,
+  ],
+  [
+    'windows_create_workspace_codeful',
+    'windowsCreateWorkspaceCodefulResult',
+    'windows-create-workspace-codeful',
+    'createWorkspaceCodeful',
+    2,
+    true,
+  ],
+  ['windows_msn_weather_lifecycle', 'windowsMsnWeatherLifecycleResult', 'windows-msn-weather-lifecycle', 'msnWeatherLifecycle', 3, false],
+  [
+    'windows_run_after_persistence',
+    'windowsRunAfterPersistenceResult',
+    'windows-run-after-persistence',
+    'runAfterPersistenceLifecycle',
+    4,
+    false,
+  ],
+].map(([job, variable, artifactSuffix, suite, expectedMochaCompletions, subtractMatrixFooter]) => ({
+  job,
+  variable,
+  artifact: `vscode-e2e-cli-diagnostics-${artifactSuffix}`,
+  suite,
+  expectedMochaCompletions,
+  subtractMatrixFooter,
+}));
 
 testAzureToolsWrapperContract();
 testE2eDependencyInstallRetryContract();
@@ -27,7 +120,8 @@ testVSStablePoolContract();
 testDownloadedVSCodeRuntimeCleanupContract();
 testSelectorResolutionScriptBehavior();
 testCanonicalSuiteParityContract();
-testSupplementaryFamilyRoutingContract();
+testFullRollupGateCanonicalInventoryContract();
+testLifecycleFamilyRoutingContract();
 testFullRollupGateScriptRejectsNonExecutedResults();
 testAzureCliIdentityScriptBehavior();
 testPipelineSafetyGuards();
@@ -188,6 +282,40 @@ function testFullRollupGateScriptRejectsNonExecutedResults() {
   assert.notStrictEqual(missingArtifact.status, 0);
   assert.match(missingArtifact.output, /Missing required full-rollup artifact/);
 
+  const missingRunAfterArtifact = runFullRollupGateFixture(script, {
+    scenario: 'missing-linux-run-after-artifact',
+    baseContext: admittedContext,
+    omitArtifactJob: 'linux_run_after_persistence',
+  });
+  assert.notStrictEqual(missingRunAfterArtifact.status, 0);
+  assert.match(missingRunAfterArtifact.output, /Missing required full-rollup artifact for linux_run_after_persistence/);
+
+  const failedRunAfterJob = runFullRollupGateFixture(script, {
+    scenario: 'failed-windows-run-after-job',
+    baseContext: admittedContext,
+    jobResultOverride: { job: 'windows_run_after_persistence', result: 'Failed' },
+  });
+  assert.notStrictEqual(failedRunAfterJob.status, 0);
+  assert.match(failedRunAfterJob.output, /Canonical suite job did not succeed: windows_run_after_persistence result=Failed/);
+
+  for (const job of ['linux_run_after_persistence', 'windows_run_after_persistence']) {
+    const insufficientRunAfterPhases = runFullRollupGateFixture(script, {
+      scenario: `${job}-three-mocha-completions`,
+      baseContext: admittedContext,
+      logOverride: {
+        job,
+        text: `${Array.from({ length: 3 }, (_, index) => `phase ${index + 1} runAfterPersistenceLifecycle\n  12 passing (1s)`).join(
+          '\n'
+        )}\n`,
+      },
+    });
+    assert.notStrictEqual(insufficientRunAfterPhases.status, 0);
+    assert.match(
+      insufficientRunAfterPhases.output,
+      new RegExp(`Suite log does not contain enough positive real Mocha execution evidence: ${job} expected=4 actual=3`)
+    );
+  }
+
   const identityMismatch = runFullRollupGateFixture(script, {
     scenario: 'identity-mismatch',
     baseContext: admittedContext,
@@ -210,84 +338,14 @@ function runFullRollupGateFixture(script, options = {}) {
   try {
     const pipelineWorkspace = path.join(tempRoot, 'workspace');
     fs.mkdirSync(pipelineWorkspace, { recursive: true });
-    const suites = [
-      {
-        job: 'linux_unit_tests',
-        variable: 'linuxUnitTestsResult',
-        artifact: 'vscode-e2e-cli-diagnostics-linux-unit-tests',
-        suite: 'unitTests',
-      },
-      {
-        job: 'linux_create_workspace_behavior',
-        variable: 'linuxCreateWorkspaceBehaviorResult',
-        artifact: 'vscode-e2e-cli-diagnostics-linux-create-workspace-behavior',
-        suite: 'createWorkspaceBehavior',
-      },
-      {
-        job: 'linux_create_workspace_core_matrix',
-        variable: 'linuxCreateWorkspaceCoreMatrixResult',
-        artifact: 'vscode-e2e-cli-diagnostics-linux-create-workspace-core-matrix',
-        suite: 'createWorkspaceCoreMatrix',
-      },
-      {
-        job: 'linux_create_workspace_preview_matrix',
-        variable: 'linuxCreateWorkspacePreviewMatrixResult',
-        artifact: 'vscode-e2e-cli-diagnostics-linux-create-workspace-preview-matrix',
-        suite: 'createWorkspacePreviewMatrix',
-      },
-      {
-        job: 'linux_create_workspace_codeful',
-        variable: 'linuxCreateWorkspaceCodefulResult',
-        artifact: 'vscode-e2e-cli-diagnostics-linux-create-workspace-codeful',
-        suite: 'createWorkspaceCodeful',
-      },
-      {
-        job: 'linux_msn_weather_lifecycle',
-        variable: 'linuxMsnWeatherLifecycleResult',
-        artifact: 'vscode-e2e-cli-diagnostics-linux-msn-weather-lifecycle',
-        suite: 'msnWeatherLifecycle',
-      },
-      {
-        job: 'windows_unit_tests',
-        variable: 'windowsUnitTestsResult',
-        artifact: 'vscode-e2e-cli-diagnostics-windows-unit-tests',
-        suite: 'unitTests',
-      },
-      {
-        job: 'windows_create_workspace_behavior',
-        variable: 'windowsCreateWorkspaceBehaviorResult',
-        artifact: 'vscode-e2e-cli-diagnostics-windows-create-workspace-behavior',
-        suite: 'createWorkspaceBehavior',
-      },
-      {
-        job: 'windows_create_workspace_core_matrix',
-        variable: 'windowsCreateWorkspaceCoreMatrixResult',
-        artifact: 'vscode-e2e-cli-diagnostics-windows-create-workspace-core-matrix',
-        suite: 'createWorkspaceCoreMatrix',
-      },
-      {
-        job: 'windows_create_workspace_preview_matrix',
-        variable: 'windowsCreateWorkspacePreviewMatrixResult',
-        artifact: 'vscode-e2e-cli-diagnostics-windows-create-workspace-preview-matrix',
-        suite: 'createWorkspacePreviewMatrix',
-      },
-      {
-        job: 'windows_create_workspace_codeful',
-        variable: 'windowsCreateWorkspaceCodefulResult',
-        artifact: 'vscode-e2e-cli-diagnostics-windows-create-workspace-codeful',
-        suite: 'createWorkspaceCodeful',
-      },
-      {
-        job: 'windows_msn_weather_lifecycle',
-        variable: 'windowsMsnWeatherLifecycleResult',
-        artifact: 'vscode-e2e-cli-diagnostics-windows-msn-weather-lifecycle',
-        suite: 'msnWeatherLifecycle',
-      },
-    ];
+    const suites = CANONICAL_FULL_GATE_SUITES;
     const baseContext =
       options.baseContext ?? runAdmissionContextScriptFixture(parseYaml('.config/templates/vscode-e2e-cli-run-suite.yml'));
 
     for (const suite of suites) {
+      if (options.omitArtifactJob === suite.job) {
+        continue;
+      }
       const root = path.join(pipelineWorkspace, suite.artifact);
       const resultRoot = path.join(root, 'results');
       const logRoot = path.join(root, 'log');
@@ -322,7 +380,8 @@ function runFullRollupGateFixture(script, options = {}) {
 
     let preparedScript = script.replaceAll('$(Pipeline.Workspace)', pipelineWorkspace);
     for (const suite of suites) {
-      preparedScript = preparedScript.replaceAll(`$(${suite.variable})`, 'Succeeded');
+      const result = options.jobResultOverride?.job === suite.job ? options.jobResultOverride.result : 'Succeeded';
+      preparedScript = preparedScript.replaceAll(`$(${suite.variable})`, result);
     }
 
     function buildRealMochaEvidenceLog({ suiteId, phaseCount }) {
@@ -419,7 +478,7 @@ function findObjectByDisplayName(value, displayName) {
 
 function extractFullRollupGateScript(consumer) {
   const fullGateJob = getConsumerDirectJob(consumer, 'verify_both_os_full_rollup');
-  const step = fullGateJob.steps.find((entry) => entry.displayName === 'Enforce twelve-suite both-OS full rollup gate');
+  const step = fullGateJob.steps.find((entry) => entry.displayName === 'Enforce fourteen-suite both-OS full rollup gate');
   assert.ok(step?.pwsh, 'full rollup gate must have an executable PowerShell script');
   return step.pwsh;
 }
@@ -1107,7 +1166,7 @@ function testConsumerAdmissionContract() {
   assert.match(consumerEntry, /report_diagnostic_selected_rerun/);
   assert.match(consumerEntry, /protected checks must bind verify_both_os_full_rollup/);
   assert.match(consumerEntry, /Diagnostic selected rerun failed selected suite job/);
-  assert.match(consumerEntry, /Enforce twelve-suite both-OS full rollup gate/);
+  assert.match(consumerEntry, /Enforce fourteen-suite both-OS full rollup gate/);
   assert.match(consumerEntry, /Suite result is not a successful executed test run/);
   assert.match(consumerEntry, /Suite log does not contain enough positive real Mocha execution evidence/);
   assert.match(consumerEntry, /vscode-e2e-cli-diagnostics-linux-create-workspace-core-matrix/);
@@ -1148,14 +1207,16 @@ function testSelectorResolutionScriptBehavior() {
   assert.strictEqual(fullResult.status, 0, fullResult.output);
   assert.match(
     fullResult.output,
-    /variable=linuxSelectedSuites;isOutput=true]unitTests,createWorkspaceBehavior,createWorkspaceCoreMatrix,createWorkspacePreviewMatrix,createWorkspaceCodeful,msnWeatherLifecycle/
+    /variable=linuxSelectedSuites;isOutput=true]unitTests,createWorkspaceBehavior,createWorkspaceCoreMatrix,createWorkspacePreviewMatrix,createWorkspaceCodeful,msnWeatherLifecycle,runAfterPersistenceLifecycle/
   );
   assert.match(
     fullResult.output,
-    /variable=windowsSelectedSuites;isOutput=true]unitTests,createWorkspaceBehavior,createWorkspaceCoreMatrix,createWorkspacePreviewMatrix,createWorkspaceCodeful,msnWeatherLifecycle/
+    /variable=windowsSelectedSuites;isOutput=true]unitTests,createWorkspaceBehavior,createWorkspaceCoreMatrix,createWorkspacePreviewMatrix,createWorkspaceCodeful,msnWeatherLifecycle,runAfterPersistenceLifecycle/
   );
   assert.match(fullResult.output, /variable=linux_msnWeatherLifecycle;isOutput=true]true/);
+  assert.match(fullResult.output, /variable=linux_runAfterPersistenceLifecycle;isOutput=true]true/);
   assert.match(fullResult.output, /variable=windows_createWorkspaceCoreMatrix;isOutput=true]true/);
+  assert.match(fullResult.output, /variable=windows_runAfterPersistenceLifecycle;isOutput=true]true/);
   assert.match(fullResult.output, /variable=windows_createWorkspaceBehaviorSmoke;isOutput=true]false/);
 
   const explicitCanonicalResult = runSelectorScript(scriptPath, {
@@ -1163,9 +1224,9 @@ function testSelectorResolutionScriptBehavior() {
     LA_E2E_CLI_RUN_LINUX: 'true',
     LA_E2E_CLI_RUN_WINDOWS: 'true',
     LA_E2E_CLI_LINUX_SUITES:
-      'unitTests,createWorkspaceBehavior,createWorkspaceCoreMatrix,createWorkspacePreviewMatrix,createWorkspaceCodeful,msnWeatherLifecycle',
+      'unitTests,createWorkspaceBehavior,createWorkspaceCoreMatrix,createWorkspacePreviewMatrix,createWorkspaceCodeful,msnWeatherLifecycle,runAfterPersistenceLifecycle',
     LA_E2E_CLI_WINDOWS_SUITES:
-      'unitTests,createWorkspaceBehavior,createWorkspaceCoreMatrix,createWorkspacePreviewMatrix,createWorkspaceCodeful,msnWeatherLifecycle',
+      'unitTests,createWorkspaceBehavior,createWorkspaceCoreMatrix,createWorkspacePreviewMatrix,createWorkspaceCodeful,msnWeatherLifecycle,runAfterPersistenceLifecycle',
   });
   assert.strictEqual(explicitCanonicalResult.status, 0, explicitCanonicalResult.output);
 
@@ -1241,7 +1302,54 @@ function testCanonicalSuiteParityContract() {
   );
 }
 
-function testSupplementaryFamilyRoutingContract() {
+function testFullRollupGateCanonicalInventoryContract() {
+  const consumer = parseYaml('.config/vscode-e2e-cli.1es.yml');
+  const gate = getConsumerDirectJob(consumer, 'verify_both_os_full_rollup');
+  const script = extractFullRollupGateScript(consumer);
+
+  assert.deepStrictEqual(
+    gate.dependsOn,
+    CANONICAL_FULL_GATE_SUITES.map((suite) => suite.job),
+    'full gate must depend on exactly the fourteen canonical suite jobs'
+  );
+  assert.deepStrictEqual(
+    gate.variables.map((variable) => ({
+      name: variable.name,
+      value: variable.value,
+    })),
+    CANONICAL_FULL_GATE_SUITES.map((suite) => ({
+      name: suite.variable,
+      value: `$[ dependencies.${suite.job}.result ]`,
+    })),
+    'full gate must consume exactly one result variable for each canonical suite job'
+  );
+  assert.deepStrictEqual(
+    gate.steps.filter((step) => step.download === 'current').map((step) => step.artifact),
+    CANONICAL_FULL_GATE_SUITES.map((suite) => suite.artifact),
+    'full gate must download exactly the fourteen canonical diagnostics artifacts'
+  );
+
+  const validationRecords = Array.from(
+    script.matchAll(
+      /@\{ job = '([^']+)'; result = '\$\(([^)]+)\)'; artifact = '([^']+)'; suite = '([^']+)'; expectedMochaCompletions = (\d+); subtractMatrixFooter = \$(true|false) \}/g
+    ),
+    (match) => ({
+      job: match[1],
+      variable: match[2],
+      artifact: match[3],
+      suite: match[4],
+      expectedMochaCompletions: Number(match[5]),
+      subtractMatrixFooter: match[6] === 'true',
+    })
+  );
+  assert.deepStrictEqual(
+    validationRecords,
+    CANONICAL_FULL_GATE_SUITES,
+    'full gate must validate exactly all fourteen canonical suite records'
+  );
+}
+
+function testLifecycleFamilyRoutingContract() {
   const consumer = parseYaml('.config/vscode-e2e-cli.1es.yml');
   const runner = read('apps/vs-code-designer/scripts/run-e2e-cli.js');
   const suiteSteps = parseYaml('.config/templates/vscode-e2e-cli-run-suite.yml').jobs[0].steps;
@@ -1318,15 +1426,15 @@ function testSupplementaryFamilyRoutingContract() {
   const invocations = flattenAzureList(consumer.extends.parameters.stages[0].jobs).filter((entry) => entry.template);
   const diagnostic = getConsumerDirectJob(consumer, 'report_diagnostic_selected_rerun');
   const gate = getConsumerDirectJob(consumer, 'verify_both_os_full_rollup');
-  for (const [suiteId, jobSuffix] of [
-    ['httpTimeoutLifecycle', 'http_timeout_lifecycle'],
-    ['statelessVariablesLifecycle', 'stateless_variables'],
-    ['runAfterPersistenceLifecycle', 'run_after_persistence'],
-    ['workspaceArtifactRegeneration', 'workspace_regeneration'],
-    ['workspaceMultiRoot', 'workspace_multi_root'],
+  for (const [suiteId, jobSuffix, canonical] of [
+    ['httpTimeoutLifecycle', 'http_timeout_lifecycle', false],
+    ['statelessVariablesLifecycle', 'stateless_variables', false],
+    ['runAfterPersistenceLifecycle', 'run_after_persistence', true],
+    ['workspaceArtifactRegeneration', 'workspace_regeneration', false],
+    ['workspaceMultiRoot', 'workspace_multi_root', false],
   ]) {
-    assert.ok(SUITE_REGISTRY[suiteId], `Supplementary family ${suiteId} must have an executable registry entry`);
-    assert.ok(staging.pwsh.includes(`'${suiteId}'`), `Supplementary ${suiteId} must be covered by the terminal publication guard`);
+    assert.ok(SUITE_REGISTRY[suiteId], `Lifecycle family ${suiteId} must have an executable registry entry`);
+    assert.ok(staging.pwsh.includes(`'${suiteId}'`), `Lifecycle family ${suiteId} must be covered by the terminal publication guard`);
     for (const os of ['linux', 'windows']) {
       const jobName = `${os}_${jobSuffix}`;
       const job = invocations.find((entry) => entry.parameters.jobName === jobName)?.parameters;
@@ -1346,8 +1454,13 @@ function testSupplementaryFamilyRoutingContract() {
       }
       assert.ok(job.selected.includes(`validateSuiteSelection.${os}_${suiteId}`));
       assert.ok(diagnostic.dependsOn.includes(jobName));
-      assert.ok(!gate.dependsOn.includes(jobName), 'Unvalidated families must not silently replace the established canonical gate');
-      assert.ok(!SUITE_ALIASES[os].includes(suiteId));
+      if (canonical) {
+        assert.ok(gate.dependsOn.includes(jobName), `Canonical family ${suiteId} must participate in the full gate`);
+        assert.ok(SUITE_ALIASES[os].includes(suiteId), `Canonical family ${suiteId} must participate in the ${os} alias`);
+      } else {
+        assert.ok(!gate.dependsOn.includes(jobName), 'Unvalidated families must not silently replace the established canonical gate');
+        assert.ok(!SUITE_ALIASES[os].includes(suiteId));
+      }
     }
   }
   const selected = runSelectorScript(path.join(__dirname, 'resolve-e2e-cli-suite-selection.js'), {

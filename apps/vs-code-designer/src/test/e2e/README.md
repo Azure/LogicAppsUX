@@ -390,11 +390,14 @@ execution/Core Tools probing replaced. They exercise real bounded Node child
 process observation and are not native GUI/runtime coverage.
 Existing canonical labels and Stateful defaults are unchanged.
 
-### Run After persistence family (supplementary native lifecycle)
+### Run After persistence family (canonical native lifecycle)
 
 `pnpm --dir apps/vs-code-designer run test:e2e-cli:run-after-persistence-lifecycle`
-runs the registered supplementary `runAfterPersistenceLifecycle` suite. It is
-explicit-only and remains outside the canonical `linux` and `windows` aliases.
+runs the registered canonical `runAfterPersistenceLifecycle` suite. It is included
+in the canonical `linux` and `windows` aliases and protected full-rollup gate after
+exact-SHA targeted run 15827501 / 20261027.7 passed both operating systems at
+`1d89db5c3dfc33468b8144087afa2c274b4a8467` with all 35 ordered checkpoints,
+all four phases, terminal completion, and cleanup verified.
 Its ordered phases are:
 
 1. `runtimeDependencyBootstrap:bootstrap`;
@@ -1065,7 +1068,7 @@ The LogicAppsUX source can stay in GitHub while the VS Code E2E gate runs in Azu
 
 The staged checked-in starting point is `.config/vscode-e2e-cli.1es.yml`. It is a 1ES/MicroBuild pipeline for the latest-stable `@vscode/test-cli` baseline, with shared templates under `.config/templates/vscode-e2e-cli-*.yml`; legacy registered-path copies under `.azure-pipelines/` remain separate until an owner-approved cutover.
 
-The canonical full ADO inventory is twelve independent jobs: both Linux and Windows run `unitTests`, `createWorkspaceBehavior`, `createWorkspaceCoreMatrix`, `createWorkspacePreviewMatrix`, `createWorkspaceCodeful`, and `msnWeatherLifecycle`. Parity is defined by the same stable scenario/assertion/variant set on each OS, including the core matrix, preview matrix, and codeful variant identities, not by dummy tests or job-count padding. The Windows-only `createWorkspaceBehaviorSmoke` lane remains selectable in diagnostic mode for a shorter compatibility check, but it is not part of the `windows` alias or the protected `verify_both_os_full_rollup` gate.
+The canonical full ADO inventory is fourteen independent jobs: both Linux and Windows run `unitTests`, `createWorkspaceBehavior`, `createWorkspaceCoreMatrix`, `createWorkspacePreviewMatrix`, `createWorkspaceCodeful`, `msnWeatherLifecycle`, and `runAfterPersistenceLifecycle`. Parity is defined by the same stable scenario/assertion/variant set on each OS, including the core matrix, preview matrix, codeful variant identities, and the complete four-phase Run After lifecycle, not by dummy tests or job-count padding. The Windows-only `createWorkspaceBehaviorSmoke` lane remains selectable in diagnostic mode for a shorter compatibility check, but it is not part of the `windows` alias or the protected `verify_both_os_full_rollup` gate.
 
 Recommended first ADO gate:
 

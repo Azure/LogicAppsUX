@@ -164,6 +164,7 @@ const SUITE_ALIASES = Object.freeze({
     'createWorkspacePreviewMatrix',
     'createWorkspaceCodeful',
     'msnWeatherLifecycle',
+    'runAfterPersistenceLifecycle',
   ]),
   windows: Object.freeze([
     'unitTests',
@@ -172,6 +173,7 @@ const SUITE_ALIASES = Object.freeze({
     'createWorkspacePreviewMatrix',
     'createWorkspaceCodeful',
     'msnWeatherLifecycle',
+    'runAfterPersistenceLifecycle',
   ]),
 });
 

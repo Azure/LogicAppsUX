@@ -1,12 +1,19 @@
 /* global console, module, process, require */
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
-const { SUITE_REGISTRY, SUITE_ALIASES } = require('./e2e-cli-batch');
+const { SUITE_REGISTRY } = require('./e2e-cli-batch');
+
+const FAMILY_LIFECYCLE_SUITES = new Set([
+  'httpTimeoutLifecycle',
+  'statelessVariablesLifecycle',
+  'runAfterPersistenceLifecycle',
+  'workspaceArtifactRegeneration',
+  'workspaceMultiRoot',
+]);
 
 function assertFamilyLifecycleTerminal(nativeResult, terminal, suiteId) {
   const suite = SUITE_REGISTRY[suiteId];
-  assert.ok(suite, `Unknown supplementary suite: ${suiteId}`);
-  assert.ok(!SUITE_ALIASES.linux.includes(suiteId), 'Canonical suites retain their existing full-rollup contract');
+  assert.ok(suite && FAMILY_LIFECYCLE_SUITES.has(suiteId), `Unknown family lifecycle suite: ${suiteId}`);
   assert.equal(nativeResult.outcome, 'success', 'Supplementary native execution did not succeed');
   assert.ok(Number.isInteger(nativeResult.passing) && nativeResult.passing > 0, 'Supplementary suite must execute real test bodies');
   assert.equal(nativeResult.failing, 0, 'Supplementary suite contains failing test bodies');
