@@ -15,8 +15,8 @@ import {
 
 describe('Custom-code .NET version shared helpers', () => {
   describe('parseCustomCodeDotNetTarget', () => {
-    it('defaults the singular target to net10 and normalizes valid input', () => {
-      assert.strictEqual(parseCustomCodeDotNetTarget(undefined), 'net10');
+    it('defaults the singular target to net8 and normalizes valid input', () => {
+      assert.strictEqual(parseCustomCodeDotNetTarget(undefined), 'net8');
       assert.strictEqual(parseCustomCodeDotNetTarget(' NET10 '), 'net10');
     });
 
