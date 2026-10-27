@@ -277,7 +277,7 @@ async function reopenAndVerify(entry: CreatedWorkspace, azureFixture: ApprovedAz
   const before = await readRunAfterPersistenceWorkflow(entry.workflowJsonPath, handoff.identity);
   assert.strictEqual(before.sha256, handoff.savedSha256, 'Fresh host must start from the exact post-save workflow hash');
 
-  const session = await openExactDesignerV2(entry, deadline, 'Run After reopen Designer V2', azureFixture, ['Compose', 'Compose 2']);
+  const session = await openExactDesignerV2(entry, deadline, 'Run After reopen Designer V2', azureFixture);
   try {
     await normalizeRunAfterCanvas(session, 'fresh reopen canvas', [
       handoff.identity.requestTriggerId,
@@ -287,7 +287,6 @@ async function reopenAndVerify(entry: CreatedWorkspace, azureFixture: ApprovedAz
     await captureRunAfterEvidence(session, 'run-after-persistence-reopen-canvas', {
       kind: 'designerCanvas',
       label: 'runAfterPersistenceReopenCanvas',
-      requiredNodes: ['Compose', 'Compose 2'],
       requiredNodeIds: [handoff.identity.requestTriggerId, handoff.identity.firstComposeId, handoff.identity.secondComposeId],
     });
 

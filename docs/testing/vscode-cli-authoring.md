@@ -223,6 +223,10 @@ trusted Zoom Out recovery, reacquiring the control after every transform, until
 every required node ID is mounted and stable.
 Do not replace it with `HTMLElement.click()`, which can leave the React Flow
 transform unchanged while logging a false click success.
+For fresh-host evidence, persisted workflow action IDs are authoritative.
+Generated display titles can differ from insertion-time assumptions (for
+example, `Compose_1` renders as **Compose 1**, not **Compose 2**), so do not
+guess titles when exact node IDs are available.
 
 When a lifecycle has a strict persisted-file semantic oracle, use
 `ProvenDesignerCdpActions.saveWithExternalOracle()` and immediately run that

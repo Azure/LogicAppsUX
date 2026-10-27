@@ -194,6 +194,7 @@ function testLifecycleUsesProductWizardAndFreshHostContract(): void {
   assert.match(source, /LA_E2E_CLI_RUN_AFTER_PERSISTENCE_MODE/);
   assert.match(source, /LA_E2E_CLI_RUN_AFTER_PERSISTENCE_HANDOFF/);
   assert.match(source, /requiredNodeIds/);
+  assert.doesNotMatch(source, /Compose 2/, 'Fresh-host readiness must use persisted node IDs instead of guessing generated display titles');
   assert.match(source, /readRunAfterPersistenceWorkflow/);
   assert.match(source, /session\.actions\.saveWithExternalOracle\(\)/);
   assert.doesNotMatch(source, /session\.actions\.save\(\)/);
