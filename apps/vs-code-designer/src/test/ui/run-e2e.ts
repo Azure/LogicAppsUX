@@ -71,9 +71,6 @@ type ManifestEntry = {
   label?: string;
   appType?: string;
   wfType?: string;
-  appName?: string;
-  ccFolderName?: string;
-  fnName?: string;
   wsFilePath?: string;
   wsDir?: string;
   appDir?: string;
@@ -1229,10 +1226,6 @@ async function main(): Promise<void> {
     experimentalBundleSourceUri = '',
     experimentalBundleVersion = '',
   }: TestSettingsOptions = {}): void => {
-    const configuredDotnetBinaryPath = process.env.CUSTOMCODE_DOTNET_BINARY_PATH?.trim();
-    const resolvedDotnetBinaryPathOverride =
-      dotnetBinaryPathOverride ??
-      (configuredDotnetBinaryPath ? canonicalizeDotNetBinary(configuredDotnetBinaryPath, 'CUSTOMCODE_DOTNET_BINARY_PATH') : undefined);
     const settings = {
       'extensions.autoUpdate': false,
       'extensions.autoCheckUpdates': false,
@@ -1291,7 +1284,7 @@ async function main(): Promise<void> {
         // the design-time API process (func host start) without relying on PATH.
         'azureLogicAppsStandard.autoRuntimeDependenciesPath': depsRoot,
         'azureLogicAppsStandard.funcCoreToolsBinaryPath': funcBinary,
-        'azureLogicAppsStandard.dotnetBinaryPath': resolvedDotnetBinaryPathOverride || dotnetBinary,
+        'azureLogicAppsStandard.dotnetBinaryPath': dotnetBinaryPathOverride || dotnetBinary,
         'azureLogicAppsStandard.nodeJsBinaryPath': nodeBinary,
       });
     }
@@ -1302,8 +1295,8 @@ async function main(): Promise<void> {
     if (runtimeDependenciesPathOverride) {
       console.log(`  Settings dependency path override: ${runtimeDependenciesPathOverride}`);
     }
-    if (resolvedDotnetBinaryPathOverride) {
-      console.log(`  Settings dotnet binary override: ${resolvedDotnetBinaryPathOverride}`);
+    if (dotnetBinaryPathOverride) {
+      console.log(`  Settings dotnet binary override: ${dotnetBinaryPathOverride}`);
     }
   };
 
@@ -1340,19 +1333,12 @@ async function main(): Promise<void> {
   // where only the extension-managed copy exists.
   // Also include the system dotnet if actions/setup-dotnet installed one.
   const pathSep = process.platform === 'win32' ? ';' : ':';
-  const useConfiguredSystemDotnet = Boolean(process.env.CUSTOMCODE_DOTNET_BINARY_PATH?.trim() && systemDotnetBinary);
-  const systemDotnetRoot = useConfiguredSystemDotnet && systemDotnetBinary ? path.dirname(systemDotnetBinary) : undefined;
-  const extraPaths = [funcToolsDir, systemDotnetRoot, dotnetSdkDir, nodeJsDir].filter((directory): directory is string =>
-    Boolean(directory && fs.existsSync(directory))
-  );
+  const extraPaths = [funcToolsDir, dotnetSdkDir, nodeJsDir].filter((d) => fs.existsSync(d));
   if (extraPaths.length > 0) {
     process.env.PATH = extraPaths.join(pathSep) + pathSep + (process.env.PATH || '');
     console.log(`  Prepended to PATH: ${extraPaths.join(', ')}`);
   }
-  if (systemDotnetRoot) {
-    process.env.DOTNET_ROOT = systemDotnetRoot;
-    console.log(`  DOTNET_ROOT: ${systemDotnetRoot}`);
-  } else if (fs.existsSync(dotnetSdkDir)) {
+  if (fs.existsSync(dotnetSdkDir)) {
     process.env.DOTNET_ROOT = dotnetSdkDir;
     console.log(`  DOTNET_ROOT: ${dotnetSdkDir}`);
   }
@@ -1437,9 +1423,9 @@ async function main(): Promise<void> {
   // free number and is named phaseFuncRepair* rather than phase414*.
   const phaseFuncRepairFiles = [testFile('funcRepair.test.js')];
 
-  // Phase 4.15 — Custom-code .NET picker and net10 generation coverage.
-  // 4.15A creates a net10 workspace or asserts net8 is hidden. For net10 only,
-  // 4.15B validates the generated settings, project template, and workflow.
+  // Phase 4.15 — Custom-code .NET picker and net8 runtime coverage.
+  // 4.15A creates a net8 workspace or asserts net10 is hidden. For net8 only,
+  // 4.15B reopens the generated .code-workspace and proves the full lifecycle.
   const phaseCustomCodeDotNetCreateFiles = [testFile('customCodeDotNetVersionCreate.test.js')];
   const phaseCustomCodeDotNetAssertFiles = [testFile('customCodeDotNetVersionAssert.test.js')];
 
@@ -2388,11 +2374,11 @@ namespace ${namespaceName}
     return worstExit;
   };
 
-  // Phase 4.15 — Custom-code .NET picker and net10 generation coverage.
+  // Phase 4.15 — Custom-code .NET picker and net8 runtime coverage.
   //
-  //   4.15A net10 — creates a CustomCode workspace through the real wizard.
-  //   4.15B net10 — validates settings, the project template, and workflow shape.
-  //   4.15A net8 — asserts .NET 8 is absent from the real wizard picker.
+  //   4.15A net8 — creates a CustomCode workspace through the real wizard.
+  //   4.15B net8 — reopens it and proves settings plus the full debug/run lifecycle.
+  //   4.15A net10 — asserts .NET 10 is absent from the real wizard picker.
   //
   // The target consumers read CUSTOMCODE_DOTNET_E2E_VERSION when their modules
   // load. Target parsing and fixed, disjoint layout derivation are shared and
@@ -2403,17 +2389,17 @@ namespace ${namespaceName}
     const workspaceFile = layout.workspaceFilePath;
     process.env.CUSTOMCODE_DOTNET_E2E_VERSION = target;
 
-    if (target === 'net8') {
+    if (target === 'net10') {
       try {
         writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
-        await prepareFreshSession(`${labelPrefix}-phase415a-net8-hidden`);
-        return await runPhase('Phase 4.15A: assert CustomCode net8 option is hidden', phaseCustomCodeDotNetCreateFiles);
+        await prepareFreshSession(`${labelPrefix}-phase415a-net10-hidden`);
+        return await runPhase('Phase 4.15A: assert CustomCode net10 option is hidden', phaseCustomCodeDotNetCreateFiles);
       } finally {
         delete process.env.CUSTOMCODE_DOTNET_E2E_VERSION;
       }
     }
 
-    const requiredSdkMajor = '10';
+    const requiredSdkMajor = '8';
     if (!systemDotnetBinary || !fs.existsSync(systemDotnetBinary)) {
       throw new Error(
         `Custom-code ${target} E2E requires a system dotnet binary with SDK ${requiredSdkMajor}.x. Set CUSTOMCODE_DOTNET_BINARY_PATH to the dotnet installed by actions/setup-dotnet.`
@@ -2456,15 +2442,22 @@ namespace ${namespaceName}
         return 1;
       }
 
-      // The required Workflows SDK 1.4.0 package is pending release, so 4.15B
-      // verifies generated artifacts without dependency validation or runtime
-      // startup.
+      // 4.15B needs autoStartDesignTime ON so `workflow-designtime/` evidence exists
+      // before F5, and validateDependencies 'auto' since func/node were already
+      // hydrated by 4.15A on the same runner.
       writeTestSettings({
-        validateDependencies: false,
-        autoStartDesignTime: false,
+        validateDependencies: shouldValidateRuntimeDependencies(),
+        autoStartDesignTime: true,
+        dotnetBinaryPathOverride: systemDotnetBinary,
       });
       await prepareFreshSession(`${labelPrefix}-phase415b-assert`);
-      const assertExit = await runPhase(`Phase 4.15B: assert CustomCode ${target} generated workspace`, phaseCustomCodeDotNetAssertFiles);
+      const assertExit = await runPhase(
+        `Phase 4.15B: assert CustomCode ${target} dotnet version + run lifecycle`,
+        phaseCustomCodeDotNetAssertFiles,
+        {
+          resources: [workspaceFile],
+        }
+      );
 
       return Math.max(createExit, assertExit);
     } finally {
@@ -2479,10 +2472,10 @@ namespace ${namespaceName}
   };
 
   /**
-   * Runs the target-specific Phase 4.15 group: 4.15A+4.15B for net10 and only
-   * the 4.15A picker-negative check for net8. `withPhaseGroupRetries` wraps
-   * EACH target rather than the whole sweep, so a net8 flake does not rerun
-   * an already-green net10 create/assert pair.
+   * Runs the target-specific Phase 4.15 group: 4.15A+4.15B for net8 and only
+   * the 4.15A picker-negative check for net10. `withPhaseGroupRetries` wraps
+   * EACH target rather than the whole sweep, so a net10 flake does not rerun
+   * an already-green net8 create/runtime pair.
    */
   const runCustomCodeDotNetPhases = async (labelPrefix: string): Promise<number> => {
     const targets = parseCustomCodeDotNetTargets(process.env.CUSTOMCODE_DOTNET_E2E_VERSIONS);
@@ -2557,56 +2550,6 @@ namespace ${namespaceName}
       }
     };
 
-    /**
-     * New custom-code workspaces intentionally target .NET 10, but the shared
-     * Phase 4.1 fixture feeds existing-project lifecycle coverage that must stay
-     * runnable while Workflows SDK 1.4.0 is pending release. After the wizard
-     * proves .NET 10 creation, convert only that shared fixture to the existing
-     * .NET 8 project shape consumed by p42-customcode and p43-customcode.
-     */
-    const normalizeCustomCodeFixtureForNet8Compatibility = (): void => {
-      const { manifest, error } = readFixtureManifest();
-      if (!manifest) {
-        throw new Error(`Cannot normalize the custom-code fixture: ${error}`);
-      }
-
-      const entry = manifest.find((candidate) => candidate.appType === 'customCode' && candidate.wfType === 'Stateful');
-      const { appDir, appName, ccFolderName, fnName, wsDir } = entry ?? {};
-      if (!appDir || !appName || !ccFolderName || !fnName || !wsDir) {
-        throw new Error(`Custom-code fixture manifest entry is incomplete: ${JSON.stringify(entry)}`);
-      }
-
-      const functionDirectory = path.join(wsDir, ccFolderName);
-      const csprojPath = path.join(functionDirectory, `${fnName}.csproj`);
-      const net8TemplatePath = path.join(projectDir, 'src', 'assets', 'FunctionProjectTemplate', 'FunctionsProjNet8');
-      const net8Template = fs
-        .readFileSync(net8TemplatePath, 'utf8')
-        .replace(
-          /<LogicAppFolderToPublish>\$\(MSBuildProjectDirectory\)\\\.\.\\LogicApp<\/LogicAppFolderToPublish>/g,
-          `<LogicAppFolderToPublish>$(MSBuildProjectDirectory)\\..\\${appName}</LogicAppFolderToPublish>`
-        );
-      fs.writeFileSync(csprojPath, net8Template);
-      fs.rmSync(path.join(functionDirectory, 'Program.cs'), { force: true });
-
-      const functionSettingsPath = path.join(functionDirectory, '.vscode', 'settings.json');
-      const functionSettings = JSON.parse(fs.readFileSync(functionSettingsPath, 'utf8')) as Record<string, unknown>;
-      functionSettings['azureFunctions.deploySubpath'] = 'bin/Release/net8/publish';
-      fs.writeFileSync(functionSettingsPath, `${JSON.stringify(functionSettings, null, 2)}\n`);
-
-      const localSettingsPath = path.join(appDir, 'local.settings.json');
-      const localSettings = JSON.parse(fs.readFileSync(localSettingsPath, 'utf8')) as {
-        Values?: Record<string, string>;
-        [key: string]: unknown;
-      };
-      localSettings.Values = {
-        ...(localSettings.Values ?? {}),
-        LOGIC_APPS_CUSTOMCODE_DOTNETVERSION: 'net8',
-      };
-      fs.writeFileSync(localSettingsPath, `${JSON.stringify(localSettings, null, 2)}\n`);
-
-      console.log(`  Normalized shared custom-code fixture to .NET 8 compatibility shape: ${csprojPath}`);
-    };
-
     const isManifestBackedWorkspaceSpec = (spec: WorkspaceSpec): boolean =>
       spec === 'manifest-multi' || (typeof spec === 'object' && spec !== null);
 
@@ -2679,7 +2622,6 @@ namespace ${namespaceName}
         console.error(`\n⚠ Phase 4.1a fixture setup failed with exit code ${fixtureExit}; focused scenario cannot proceed.`);
         return fixtureExit;
       }
-      normalizeCustomCodeFixtureForNet8Compatibility();
       verifyLogicAppsExtensionBundle('p41a-fixtures');
 
       const remainingIssues = getFixtureManifestIssues(scenarioList);
@@ -2902,7 +2844,6 @@ namespace ${namespaceName}
             // count as a successful attempt; a failure here is retryable and
             // must not emit a "passed" flake annotation below.
             if (exit === 0 && id === 'p41a-fixtures') {
-              normalizeCustomCodeFixtureForNet8Compatibility();
               verifyLogicAppsExtensionBundle('p41a-fixtures');
             }
           } catch (e) {
