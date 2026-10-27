@@ -3122,9 +3122,15 @@ async function normalizeDesignerCanvasViewport(
   description: string,
   requiredNodeIds: string[] = []
 ): Promise<void> {
-  const normalizationDeadline = Date.now() + 10000;
+  const normalizationDeadline = Date.now() + 7000;
   const bounded = boundedCdp(cdp, normalizationDeadline);
-  const state = await bounded.evaluate<Record<string, unknown> & { fitButtonPoint?: { x: number; y: number }; renderedNodeIds?: string[] }>(
+  const state = await bounded.evaluate<
+    Record<string, unknown> & {
+      fitButtonPoint?: { x: number; y: number };
+      renderedNodeIds?: string[];
+      zoomOutButtonPoint?: { x: number; y: number };
+    }
+  >(
     contextId,
     `(() => {
       const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
@@ -3185,6 +3191,13 @@ async function normalizeDesignerCanvasViewport(
       const fitButtonPoint = fitButtonRect
         ? { x: fitButtonRect.left + fitButtonRect.width / 2, y: fitButtonRect.top + fitButtonRect.height / 2 }
         : undefined;
+      const zoomOutButton = Array.from(
+        canvasControlOwner?.querySelectorAll?.('#control-zoom-out-button, [data-testid="control-zoom-out-button"]') || []
+      ).find((element) => element instanceof HTMLElement && isVisible(element) && pointHitsElement(element));
+      const zoomOutButtonRect = zoomOutButton instanceof HTMLElement ? zoomOutButton.getBoundingClientRect() : undefined;
+      const zoomOutButtonPoint = zoomOutButtonRect
+        ? { x: zoomOutButtonRect.left + zoomOutButtonRect.width / 2, y: zoomOutButtonRect.top + zoomOutButtonRect.height / 2 }
+        : undefined;
 
       const cards = Array.from(
         designerCanvas?.querySelectorAll?.('[data-automation-id^="msla-node"], [id^="msla-node"], [data-testid*="node"], .msla-card, .react-flow__node') || []
@@ -3203,6 +3216,7 @@ async function normalizeDesignerCanvasViewport(
         fitButtonFound: !!fitButton,
         fitButtonPoint,
         renderedNodeIds,
+        zoomOutButtonPoint,
         scrollStateBefore,
         canvasRect: summarizeRect(designerCanvas),
         cards,
@@ -3216,81 +3230,91 @@ async function normalizeDesignerCanvasViewport(
   }
 
   await clickPoint(bounded, state.fitButtonPoint);
-  await new Promise((resolve) => setTimeout(resolve, 350));
+  await new Promise((resolve) => setTimeout(resolve, 250));
   const expectedNodeIds = requiredNodeIds.length > 0 ? requiredNodeIds : (state.renderedNodeIds ?? []);
   let settledState: (Record<string, unknown> & { settled?: boolean; missingExpectedNodeIds?: string[] }) | undefined;
-  let settledObservations = 0;
-  let previousGeometry = '';
-  do {
-    settledState = await bounded.evaluate<Record<string, unknown> & { settled?: boolean; missingExpectedNodeIds?: string[] }>(
-      contextId,
-      `(() => {
-        const expectedNodeIds = ${JSON.stringify(expectedNodeIds)};
-        const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
-        const designerCanvas = Array.from(document.querySelectorAll('.react-flow, .msla-designer-canvas, [data-automation-id="msla-designer-canvas"]'))
-          .filter(isVisible)
-          .at(-1);
-        const canvasRect = designerCanvas?.getBoundingClientRect?.();
-        const nodes = Array.from(document.querySelectorAll('[id^="msla-node-"]'))
-          .filter((element) =>
-            element instanceof HTMLElement &&
-            isVisible(element) &&
-            !element.id.startsWith('msla-node-details-panel-')
-          )
-          .map((element) => {
-            const rect = element.getBoundingClientRect();
-            return {
-              id: element.id,
-              rect: {
-                left: Math.round(rect.left),
-                top: Math.round(rect.top),
-                width: Math.round(rect.width),
-                height: Math.round(rect.height),
-                right: Math.round(rect.right),
-                bottom: Math.round(rect.bottom),
-              },
-            };
-          });
-        const renderedNodeIds = new Set(nodes.map(({ id }) => id.slice('msla-node-'.length)));
-        const missingExpectedNodeIds = expectedNodeIds.filter((nodeId) => !renderedNodeIds.has(nodeId));
-        const settled =
-          !!canvasRect &&
-          missingExpectedNodeIds.length === 0 &&
-          nodes.every(({ rect }) =>
-            rect.left >= canvasRect.left &&
-            rect.top >= canvasRect.top &&
-            rect.right <= canvasRect.right &&
-            rect.bottom <= canvasRect.bottom
-          );
-        return {
-          settled,
-          missingExpectedNodeIds,
-          canvasRect: canvasRect
-            ? {
-                left: Math.round(canvasRect.left),
-                top: Math.round(canvasRect.top),
-                width: Math.round(canvasRect.width),
-                height: Math.round(canvasRect.height),
-                right: Math.round(canvasRect.right),
-                bottom: Math.round(canvasRect.bottom),
-              }
-            : undefined,
-          nodes,
-        };
-      })()`
-    );
-    const geometry = JSON.stringify({
-      canvasRect: settledState.canvasRect,
-      nodes: settledState.nodes,
-      missingExpectedNodeIds: settledState.missingExpectedNodeIds,
-    });
-    settledObservations = settledState.settled && geometry === previousGeometry ? settledObservations + 1 : 0;
-    previousGeometry = geometry;
-    if (settledObservations >= 3) {
-      break;
-    }
-    await new Promise((resolve) => setTimeout(resolve, 100));
-  } while (Date.now() < normalizationDeadline);
+  const waitForStableGeometry = async (observationDeadline: number): Promise<boolean> => {
+    let settledObservations = 0;
+    let previousGeometry = '';
+    do {
+      settledState = await bounded.evaluate<Record<string, unknown> & { settled?: boolean; missingExpectedNodeIds?: string[] }>(
+        contextId,
+        `(() => {
+          const expectedNodeIds = ${JSON.stringify(expectedNodeIds)};
+          const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
+          const designerCanvas = Array.from(document.querySelectorAll('.react-flow, .msla-designer-canvas, [data-automation-id="msla-designer-canvas"]'))
+            .filter(isVisible)
+            .at(-1);
+          const canvasRect = designerCanvas?.getBoundingClientRect?.();
+          const nodes = Array.from(document.querySelectorAll('[id^="msla-node-"]'))
+            .filter((element) =>
+              element instanceof HTMLElement &&
+              isVisible(element) &&
+              !element.id.startsWith('msla-node-details-panel-')
+            )
+            .map((element) => {
+              const rect = element.getBoundingClientRect();
+              return {
+                id: element.id,
+                rect: {
+                  left: Math.round(rect.left),
+                  top: Math.round(rect.top),
+                  width: Math.round(rect.width),
+                  height: Math.round(rect.height),
+                  right: Math.round(rect.right),
+                  bottom: Math.round(rect.bottom),
+                },
+              };
+            });
+          const renderedNodeIds = new Set(nodes.map(({ id }) => id.slice('msla-node-'.length)));
+          const missingExpectedNodeIds = expectedNodeIds.filter((nodeId) => !renderedNodeIds.has(nodeId));
+          const settled =
+            !!canvasRect &&
+            missingExpectedNodeIds.length === 0 &&
+            nodes.every(({ rect }) =>
+              rect.left >= canvasRect.left &&
+              rect.top >= canvasRect.top &&
+              rect.right <= canvasRect.right &&
+              rect.bottom <= canvasRect.bottom
+            );
+          return {
+            settled,
+            missingExpectedNodeIds,
+            canvasRect: canvasRect
+              ? {
+                  left: Math.round(canvasRect.left),
+                  top: Math.round(canvasRect.top),
+                  width: Math.round(canvasRect.width),
+                  height: Math.round(canvasRect.height),
+                  right: Math.round(canvasRect.right),
+                  bottom: Math.round(canvasRect.bottom),
+                }
+              : undefined,
+            nodes,
+          };
+        })()`
+      );
+      const geometry = JSON.stringify({
+        canvasRect: settledState.canvasRect,
+        nodes: settledState.nodes,
+        missingExpectedNodeIds: settledState.missingExpectedNodeIds,
+      });
+      settledObservations = settledState.settled && geometry === previousGeometry ? settledObservations + 1 : 0;
+      previousGeometry = geometry;
+      if (settledObservations >= 3) {
+        return true;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    } while (Date.now() < observationDeadline);
+    return false;
+  };
+
+  let settled = await waitForStableGeometry(Math.min(normalizationDeadline, Date.now() + 1200));
+  for (let attempt = 1; attempt <= 4 && !settled && state.zoomOutButtonPoint; attempt += 1) {
+    await clickPoint(bounded, state.zoomOutButtonPoint);
+    await new Promise((resolve) => setTimeout(resolve, 150));
+    settled = await waitForStableGeometry(Math.min(normalizationDeadline, Date.now() + 900));
+  }
   console.log(`[workspace-lifecycle][canvas-viewport] ${description} settled: ${JSON.stringify(settledState).slice(0, 2000)}`);
 }
 

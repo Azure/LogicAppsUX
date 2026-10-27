@@ -218,7 +218,9 @@ these intermediate checkpoints; it never replaces them. Before a canvas
 capture, call the shared `normalizeDesignerCanvasViewport` seam so Output,
 Terminal, or responsive details panels cannot clip required nodes. That seam
 uses trusted CDP input for Fit view and waits for stable in-canvas node geometry;
-do not replace it with `HTMLElement.click()`, which can leave the React Flow
+when React Flow Fit excludes an unmounted virtualized node, it uses bounded
+trusted Zoom Out recovery until every required node ID is mounted and stable.
+Do not replace it with `HTMLElement.click()`, which can leave the React Flow
 transform unchanged while logging a false click success.
 
 Bind every evidence screenshot to the already-owned semantic CDP target and

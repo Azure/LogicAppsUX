@@ -435,6 +435,7 @@ async function testCanvasViewportNormalizationUsesStructuralDiagnosticsAndOwnedC
   assert.match(normalizeSource, /const bounded = boundedCdp\(cdp, normalizationDeadline\)/, 'Fit must retain one bounded CDP budget');
   assert.match(normalizeSource, /missingExpectedNodeIds/, 'Fit must wait for every caller-required node identity');
   assert.match(normalizeSource, /geometry === previousGeometry/, 'Fit must require consecutive stable geometry observations');
+  assert.match(normalizeSource, /attempt <= 4 && !settled && state\.zoomOutButtonPoint/, 'Fit must use bounded Zoom Out recovery');
   assert.doesNotMatch(normalizeSource, /fitButton\.click\(\)/, 'Fit must not use a synthetic DOM click');
   assert.match(normalizeSource, /settledObservations >= 3/, 'Fit must wait for stable in-canvas node geometry');
   const dom = new JSDOM(
@@ -552,6 +553,47 @@ async function testCanvasViewportNormalizationUsesStructuralDiagnosticsAndOwnedC
     'unit offscreen fit'
   );
   assert.strictEqual(offscreenFitClicked, 0, 'Normalization must not click Fit controls when hit testing returns null');
+
+  const zoomRecoveryDom = new JSDOM(
+    `
+    <html><body>
+      <div class="react-flow" id="canvas">
+        <button id="control-zoom-fit-button" aria-label="Zoom view to fit"></button>
+        <button id="control-zoom-out-button" aria-label="Zoom out"></button>
+        <div id="msla-node-Request"></div>
+      </div>
+    </body></html>
+  `,
+    { runScripts: 'outside-only' }
+  );
+  const zoomRecoveryGeometry = {
+    'control-zoom-fit-button': { left: 20, top: 80, width: 40, height: 30 },
+    'control-zoom-out-button': { left: 20, top: 120, width: 40, height: 30 },
+    'msla-node-Request': { left: 100, top: -100, width: 200, height: 80 },
+    canvas: { left: 0, top: 50, width: 458, height: 593 },
+  };
+  configureElementGeometry(zoomRecoveryDom.window, zoomRecoveryGeometry);
+  let zoomOutDispatches = 0;
+  await exported.normalizeDesignerCanvasViewport(
+    {
+      evaluate: async (_contextId: number | undefined, expression: string) =>
+        zoomRecoveryDom.window.eval(expression) as Record<string, unknown>,
+      send: async (_method: string, params: Record<string, unknown>) => {
+        if (params.type !== 'mouseReleased') {
+          return;
+        }
+        if (params.y === 135) {
+          zoomOutDispatches++;
+          zoomRecoveryGeometry['msla-node-Request'].top = 100;
+        }
+      },
+    },
+    1,
+    'unit zoom recovery',
+    ['Request']
+  );
+  assert.strictEqual(zoomOutDispatches, 1, 'Normalization should use one trusted Zoom Out recovery when Fit excludes a required node');
+  assert.match(logs.join('\n'), /unit zoom recovery settled: \{"settled":true/);
 }
 
 function testMsnWeatherSkipsOnlyRedundantFinalCanvasCheckpoint(): void {
