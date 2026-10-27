@@ -81,7 +81,7 @@ export function assertRunAfterPersistenceWorkflow(
   assert.deepStrictEqual(first.runAfter ?? {}, {}, 'First Compose must not contain an action predecessor');
   assert.deepStrictEqual(
     second.runAfter,
-    { [identity.firstComposeId]: ['Failed'] },
+    { [identity.firstComposeId]: ['FAILED'] },
     'Second Compose must run after exactly the first Compose on Failed only'
   );
 }

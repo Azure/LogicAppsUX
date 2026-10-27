@@ -30,6 +30,7 @@ async function main(): Promise<void> {
   testRejectsWrongKind();
   testRejectsWrongPredecessor();
   testRejectsMultipleStatuses();
+  testRejectsDisplayStatusCasing();
   testRejectsMissingExtraAndWrongActions();
   testRejectsFalsePositiveStatusMatching();
   await testHashTracksExactSavedBytes();
@@ -59,7 +60,7 @@ function workflow(): {
         [identity.secondComposeId]: {
           type: 'Compose',
           inputs: identity.secondComposeInput,
-          runAfter: { [identity.firstComposeId]: ['Failed'] },
+          runAfter: { [identity.firstComposeId]: ['FAILED'] },
         },
       },
     },
@@ -76,14 +77,22 @@ function testRejectsWrongKind(): void {
 
 function testRejectsWrongPredecessor(): void {
   const value = workflow();
-  value.definition.actions[identity.secondComposeId].runAfter = { WrongCompose: ['Failed'] };
+  value.definition.actions[identity.secondComposeId].runAfter = { WrongCompose: ['FAILED'] };
   assert.throws(() => assertRunAfterPersistenceWorkflow(value, identity), /Failed only/);
 }
 
 function testRejectsMultipleStatuses(): void {
   const value = workflow();
   value.definition.actions[identity.secondComposeId].runAfter = {
-    [identity.firstComposeId]: ['Failed', 'Succeeded'],
+    [identity.firstComposeId]: ['FAILED', 'SUCCEEDED'],
+  };
+  assert.throws(() => assertRunAfterPersistenceWorkflow(value, identity), /Failed only/);
+}
+
+function testRejectsDisplayStatusCasing(): void {
+  const value = workflow();
+  value.definition.actions[identity.secondComposeId].runAfter = {
+    [identity.firstComposeId]: ['Failed'],
   };
   assert.throws(() => assertRunAfterPersistenceWorkflow(value, identity), /Failed only/);
 }
