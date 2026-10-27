@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const { SUITE_REGISTRY } = require('./e2e-cli-batch');
 
 const FAMILY_LIFECYCLE_SUITES = new Set([
+  'msnWeatherLifecycle',
   'httpTimeoutLifecycle',
   'statelessVariablesLifecycle',
   'runAfterPersistenceLifecycle',
@@ -47,6 +48,9 @@ function assertFamilyLifecycleTerminal(nativeResult, terminal, suiteId) {
     assert.equal(phase.signal, null, `Supplementary phase was terminated: ${phase.phaseId}`);
     assert.equal(phase.cleanupVerified, true, `Supplementary phase cleanup failed: ${phase.phaseId}`);
     assert.equal(phase.diagnosticsError, '', `Supplementary phase diagnostics failed: ${phase.phaseId}`);
+    if (suiteId === 'msnWeatherLifecycle' && phase.phaseId === 'msnWeatherLifecycle:run') {
+      assert.equal(phase.bodyAssertionsPassed, true, 'MSN Weather run body assertions did not pass');
+    }
   }
 }
 

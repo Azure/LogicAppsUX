@@ -36,12 +36,14 @@ function fixture(suiteId) {
         signal: null,
         cleanupVerified: true,
         diagnosticsError: '',
+        ...(phaseId === 'msnWeatherLifecycle:run' ? { bodyAssertionsPassed: true } : {}),
       })),
     },
   };
 }
 
 for (const suiteId of [
+  'msnWeatherLifecycle',
   'httpTimeoutLifecycle',
   'statelessVariablesLifecycle',
   'runAfterPersistenceLifecycle',
@@ -122,6 +124,11 @@ for (const suiteId of [
       const invalid = structuredClone(terminal);
       mutate(invalid);
       assert.throws(() => assertFamilyLifecycleTerminal(result, invalid, suiteId));
+    }
+    if (suiteId === 'msnWeatherLifecycle') {
+      const missingBodyAssertion = structuredClone(terminal);
+      missingBodyAssertion.phaseResults.find((phase) => phase.phaseId === 'msnWeatherLifecycle:run').bodyAssertionsPassed = false;
+      assert.throws(() => assertFamilyLifecycleTerminal(result, missingBodyAssertion, suiteId));
     }
     for (const field of ['missingPhaseIds', 'unexpectedPhaseIds', 'duplicatePhaseIds', 'blockedPhaseIds']) {
       assert.throws(() => assertFamilyLifecycleTerminal(result, { ...terminal, [field]: ['invalid'] }, suiteId));

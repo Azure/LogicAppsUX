@@ -16,7 +16,6 @@ const {
   expectedPhases,
   exactPhasesComplete,
   assertNoCallerFuncAdmission,
-  nativeCleanupBlocker,
   retainedIdentityExitFacts,
   caseExecutionMode,
   createMultiRootDiagnosticRoot,
@@ -68,6 +67,10 @@ test('explicit isolated diagnostic execution never authorizes native-clean accep
   );
   assert.throws(() => caseExecutionMode({ LA_E2E_CLI_MULTI_ROOT_DIAGNOSTIC_ONLY: '1' }), /isolated native worker/);
   assert.throws(() => caseExecutionMode({ LA_E2E_CLI_MULTI_ROOT_ISOLATED: '1' }), /native finalization blocked/);
+  assert.deepEqual(caseExecutionMode({ LA_E2E_CLI_MULTI_ROOT_ISOLATED: '1', LA_E2E_CLI_SUITE_WRAPPER_CHILD: '1' }), {
+    diagnosticOnly: false,
+    acceptanceAuthorized: true,
+  });
   const callerModel = { ...passing(), originalProcessClosureVerified: true, processClosureProof: 'retained-original-identities' };
   const final = finalizeResult(callerModel);
   assert.equal(final.originalProcessClosureVerified, false);
@@ -142,6 +145,11 @@ const passing = () => ({
 test('final result stays blocked even with observation/phase/ordinary-close booleans until live retained ownership coverage exists', () => {
   assert.equal(finalizeResult(passing()).complete, false);
   assert.equal(finalizeResult(passing()).retainedCaseCleanupVerified, false);
+  const contained = finalizeResult(passing(), { acceptanceAuthorized: true });
+  assert.equal(contained.complete, true);
+  assert.equal(contained.retainedCaseCleanupVerified, true);
+  assert.equal(contained.originalProcessClosureVerified, false);
+  assert.equal(contained.processClosureProof, 'outer-containment-pending');
   for (const field of ['observationPassed', 'evidenceVerified', 'diagnosticsVerified', 'cleanupVerified']) {
     assert.equal(finalizeResult({ ...passing(), [field]: false }).complete, false);
   }
@@ -186,7 +194,8 @@ test('registration is additive and leaves baseline CLI labels untouched', () => 
     !config.includes("label: 'workspaceMultiRoot'"),
     'Supplementary native evidence must not alter canonical Mocha label/count baselines'
   );
-  assert.ok(runner.includes('options.retainWorkspaceForSupplement && childEnv.LA_E2E_CLI_MULTI_ROOT_HANDOFF'));
+  assert.ok(runner.includes('shouldRetainDeferredWorkspaceForOuterContainment('));
+  assert.ok(runner.includes('Boolean(env.LA_E2E_CLI_MULTI_ROOT_HANDOFF)'));
   const family = fs.readFileSync(path.join(__dirname, 'workspace-multi-root.js'), 'utf8');
   assert.ok(family.includes('retainWorkspaceForSupplement: true'));
   const packageJson = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
@@ -227,9 +236,9 @@ test('phase reporting fails closed for missing, duplicate, unexpected, out-of-or
   }
 });
 
-test('additive family does not expand legacy full-suite aliases or invent an OGF mapping', () => {
+test('full-suite aliases include the supported family without inventing an OGF mapping', () => {
   for (const alias of ['linux', 'windows']) {
-    assert.ok(!normalizeSuiteSelection(alias).some((suite) => suite.id === suiteId));
+    assert.ok(normalizeSuiteSelection(alias, { platform: alias === 'windows' ? 'win32' : 'linux' }).some((suite) => suite.id === suiteId));
   }
   const family = fs.readFileSync(path.join(__dirname, 'workspace-multi-root.js'), 'utf8');
   assert.ok(family.includes("runVscodeTest(['--label', 'runtimeDependencyBootstrap']"));
@@ -253,17 +262,17 @@ test('batch terminal reports the exact family lifecycle and cannot credit blocke
         suite: SUITE_REGISTRY.workspaceMultiRoot,
         exitCode,
         signal: null,
-        processCleanup: { verified: true },
+        processCleanup: { verified: true, retainedOriginalIdentitiesVerified: true },
       });
       return JSON.parse(fs.readFileSync(context.terminalResultPath, 'utf8'));
     };
     const good = finalize(phaseFixtures(), 0);
     assert.equal(good.suiteId, suiteId);
-    assert.equal(good.complete, false);
-    assert.equal(good.cleanupVerified, false);
-    assert.equal(good.originalProcessClosureVerified, false);
-    assert.equal(good.processClosureProof, 'original-identities-unverified');
-    assert.ok(good.diagnosticsError.includes(nativeCleanupBlocker));
+    assert.equal(good.complete, true);
+    assert.equal(good.cleanupVerified, true);
+    assert.equal(good.originalProcessClosureVerified, true);
+    assert.equal(good.processClosureProof, 'retained-original-identities');
+    assert.equal(good.diagnosticsError, '');
     assert.equal(good.lifecycleFinalized, true);
     assert.deepEqual(
       good.phaseResults.map((phase) => phase.phaseId),
@@ -322,23 +331,23 @@ test('direct supplementary route invalidates stale terminal and uses exact regis
           suite,
           exitCode: 0,
           signal: null,
-          processCleanup: { verified: true, checkedAt: 'unit-observation' },
+          processCleanup: { verified: true, retainedOriginalIdentitiesVerified: true, checkedAt: 'unit-observation' },
         });
         return { exitCode: 0, signal: null };
       },
     });
-    assert.equal(code, 1, 'Even existing general ancestry success cannot bypass the retained case cleanup block');
+    assert.equal(code, 1, 'The legacy direct supplementary route still lacks owned-root provenance finalization');
     const terminal = JSON.parse(fs.readFileSync(terminalPath, 'utf8'));
     assert.equal(terminal.suiteId, 'workspaceMultiRoot');
     assert.equal(terminal.lifecycleFinalized, true);
     assert.equal(terminal.complete, false);
     assert.equal(terminal.cleanupVerified, false);
-    assert.equal(terminal.originalProcessClosureVerified, false);
-    assert.equal(terminal.processClosureProof, 'original-identities-unverified');
+    assert.equal(terminal.originalProcessClosureVerified, true);
+    assert.equal(terminal.processClosureProof, 'retained-original-identities');
     const cleanup = JSON.parse(fs.readFileSync(path.join(reportRoot, 'workspaceMultiRoot.cleanup-ledger.json'), 'utf8'));
     assert.equal(cleanup.verified, false);
-    assert.equal(cleanup.processTreeVerified, false);
-    assert.equal(cleanup.processCleanup.verified, false);
+    assert.equal(cleanup.processTreeVerified, true);
+    assert.equal(cleanup.processCleanup.verified, true);
     assert.deepEqual(terminal.expectedPhaseIds, terminal.observedPhaseIds);
     const provenance = JSON.parse(fs.readFileSync(path.join(reportRoot, 'workspaceMultiRoot.terminal-invocation.json'), 'utf8'));
     assert.equal(provenance.accepted, false);

@@ -80,10 +80,10 @@ CLI-native selectors. It is separate from the ExTester `run-e2e.js` workflow.
 3. Keep pipeline bootstrap distinct from inherited active evidence ownership:
    the owner creates the invocation; descendants require the complete
    suite/directory/invocation tuple and invocation-fenced writes.
-4. For the registered Multi-root direct selector, use
-   `runDirectRegisteredSuite` as the complete context boundary. Other direct
-   families retain their existing owning orchestrators and must provide
-   equivalent complete context there.
+4. Route protected MSN Weather, workspace regeneration, and Multi-root direct
+   selectors through `runDirectFamily`. The inner worker proves ordered body
+   phases; the outer native containment host owns retained original-process
+   closure, transient-root cleanup, and final terminal publication.
 5. Invalidate stale terminal and cleanup success before workspace setup,
    dependency preparation, native preflight or child launch.
 6. Use stable product identity rather than duration/status-prefixed presentation
@@ -94,12 +94,18 @@ CLI-native selectors. It is separate from the ExTester `run-e2e.js` workflow.
 8. Queue exact-full-SHA Linux and Windows diagnostic selectors for affected
    suites. Download artifacts and classify build, native, cleanup/terminal,
    evidence-staging and publication outcomes separately.
-9. After focused proof, run the complete canonical non-diagnostic matrix and
-   inspect every artifact. Diagnostic green never satisfies the protected full
-   rollup.
+9. After focused proof, run the complete registered non-diagnostic inventory:
+   11 Linux lanes plus 12 Windows lanes. Verify aliases, job dependencies,
+   result variables, artifact downloads, and validation records all equal
+   `SUITE_REGISTRY.platforms`. Diagnostic green never satisfies the protected
+   full rollup.
 10. Preserve family-specific fail-closed gates. Multi-root body success and
     evidence completeness do not replace phase order, retained-identity closure
     or cleanup verification.
+11. For UI authoring flows, require a semantic screenshot after every
+    meaningful interaction and resulting state: action insertion, field entry,
+    Settings transition, save acknowledgement, run transition, and monitoring
+    selection. Final-state screenshots never replace intermediate checkpoints.
 
 ## Validation Commands
 

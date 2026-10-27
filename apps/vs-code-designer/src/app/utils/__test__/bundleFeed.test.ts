@@ -599,7 +599,8 @@ describe('getBundleDependencyFeed', () => {
 
     expect(feedModule.getJsonFeed).toHaveBeenCalledWith(
       context,
-      `https://bundles.example.com/ExtensionBundles/${extensionBundleId}/dependency.json`
+      `https://bundles.example.com/ExtensionBundles/${extensionBundleId}/dependency.json`,
+      { retry: {} }
     );
   });
 });

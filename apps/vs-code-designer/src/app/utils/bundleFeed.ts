@@ -117,7 +117,7 @@ export async function getExtensionBundleBaseUrl(context: IActionContext): Promis
 async function getWorkflowBundleFeed(context: IActionContext): Promise<string[]> {
   const { baseUrl } = await getExtensionBundleBaseUrl(context);
   const url = `${baseUrl}/ExtensionBundles/${extensionBundleId}/index.json`;
-  return getJsonFeed(context, url);
+  return getJsonFeed(context, url, { retry: {} });
 }
 
 /**
@@ -133,7 +133,7 @@ export async function getBundleDependencyFeed(
   const bundleId: string = (bundleMetadata && bundleMetadata?.id) || extensionBundleId;
   const { baseUrl } = await getExtensionBundleBaseUrl(context);
   const url = `${baseUrl}/ExtensionBundles/${bundleId}/dependency.json`;
-  return getJsonFeed(context, url);
+  return getJsonFeed(context, url, { retry: {} });
 }
 
 /**

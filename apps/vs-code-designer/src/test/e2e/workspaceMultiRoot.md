@@ -1,44 +1,32 @@
-# Multi-root workspace supplementary native family
+# Multi-root workspace native family
 
-> **BLOCKED — native finalization gate.** Post-exit ancestry reconstruction
-> cannot prove that reparented former children exited. The family currently
-> lacks a live retained native-identity set covering its actual Code/Func/task/
-> Azurite ownership. The direct and batch terminals are forced incomplete with
-> unverified cleanup. An isolated parent-owned diagnostic execution is allowed
-> only with both `LA_E2E_CLI_MULTI_ROOT_ISOLATED=1` and
-> `LA_E2E_CLI_MULTI_ROOT_DIAGNOSTIC_ONLY=1`; it does not authorize acceptance.
-> Existing source/evidence and diagnostic fixtures/history are preserved.
->
-> The existing owned-cleanup helper requires its owner to stay alive and scopes
-> candidates to dependency-root executables. It does not currently establish
-> this case's Code/Azurite/task identity coverage after ordinary Code closure.
-> Reusing only the Func count or the wrapper's empty post-exit ancestry list
-> would relabel unknown ownership as success. No V1–V22 framework, provider,
-> broker, broad-name kill or caller proof is introduced here. The review's
-> retained-identity comparison controls are diagnostic only and cannot authorize
-> cleanup, even if every supplied identity is absent.
+The protected selector runs inside the shared outer native containment host.
+That owner retains the original child process identities while the Multi-root
+worker runs, waits for worker closure, verifies those exact identities are
+absent, and only then performs bounded transient-root cleanup and publishes the
+final suite terminal. The inner family proves the three ordered native phases
+and reports `processClosureProof="outer-containment-pending"`; it cannot claim
+final retained-process closure itself.
 
-The required direct terminal and family final result report
-`originalProcessClosureVerified=false` and
-`processClosureProof="original-identities-unverified"`. They never derive true
-from the current verifier's post-exit empty tree, ordinary exit zero, directory
-absence or a caller model. Parent acceptance must require actual retained
-original identities and `processClosureProof="retained-original-identities"`.
-The diagnostic route retains its fixture instead of deleting it, preserves
-actual GUI observation plus phase/history failures, and remains exit-nonzero /
-incomplete while original process closure is unproven. Its exact three phase
-IDs and all existing Mocha/native-credit boundaries remain unchanged.
+Parent acceptance requires
+`originalProcessClosureVerified=true` and
+`processClosureProof="retained-original-identities"`. These values never derive
+from post-exit empty ancestry, ordinary exit zero, directory absence or a caller
+model. If retained identity closure, diagnostics, or cleanup cannot be verified,
+the run fails closed and preserves the fixture. No V1–V22 framework, provider,
+broker, broad-name kill or caller-supplied process proof is introduced.
 
 Selector: `node scripts/run-e2e-cli.js --workspace-multi-root` from
 `apps/vs-code-designer`, or `pnpm --dir apps/vs-code-designer run
 test:e2e-cli:workspace-multi-root`. It uses the official CLI wizard setup and the
 same admitted Code executable, extensions, dependency root and generated
-`.code-workspace`. It is **not** another baseline Mocha label: all existing
-labels, canonical counts and rollup contracts remain unchanged.
+`.code-workspace`. It is a registered lifecycle suite whose protected credit
+comes from the strict family terminal, not from aggregate Mocha counts.
 
 The shared suite ID is **`workspaceMultiRoot`**. It is also explicitly selectable
-with `node scripts/run-e2e-cli.js --suites workspaceMultiRoot`; legacy `linux` /
-`windows` aliases are deliberately unchanged. Its exact ordered phase IDs are:
+with `node scripts/run-e2e-cli.js --suites workspaceMultiRoot`; it participates
+in both full platform aliases and the protected rollup. Its exact ordered phase
+IDs are:
 
 1. `runtimeDependencyBootstrap:bootstrap` — real official CLI managed-runtime
    validation, including its native executable probes; never inferred from
@@ -104,9 +92,9 @@ tracked files. The public names above describe only observable behavior.
 ## Native consumer requirements — parent-owned
 
 No native run is authorized on a shared development host. The parent must
-merge the bounded family and add this supplementary requirement to an
-**isolated Windows/Linux Azure DevOps consumer**, without adding a new
-canonical baseline label or reusing baseline Mocha counts as GUI credit.
+merge the bounded family into an **isolated Windows/Linux Azure DevOps
+consumer**. Protected credit comes from the registered phases and strict
+terminal receipt; baseline Mocha counts are not GUI or cleanup credit.
 
 The consumer must supply:
 

@@ -78,6 +78,24 @@ Curated CI, E2E, and workflow-failure learnings. Add entries through `session-kn
 - Applies to: `chief-engineer`, `ci-sentinel`, `vscode-test-specialist`, `test`.
 - Status: verified workflow.
 
+### Full VS Code CLI rollup topology must equal the suite registry
+
+- Learning: Treat `SUITE_REGISTRY.platforms` as the inventory source. The `linux`/`windows` aliases, ADO jobs, protected dependencies, result variables, artifact downloads, and validation records must be promoted atomically and compared as exact sets.
+- Why it matters: A green rollup can otherwise cover only a historical subset while appearing to represent the full suite.
+- Pattern: derive aliases from the registry; contract-test 11 Linux plus 12 Windows lanes; require strict terminal validation for every lifecycle family; provision and print Node 22 inside the rollup job before any Node validator runs.
+- Source: `apps/vs-code-designer/scripts/e2e-cli-batch.js`, `pipeline-contract.unit.test.js`, `.config/vscode-e2e-cli.1es.yml`.
+- Applies to: `chief-engineer`, `ci-sentinel`, `vscode-test-specialist`, `test`.
+- Status: source/control verified; native 23-lane ADO proof required after changes.
+
+### Keep native-body and cleanup verdicts separate
+
+- Learning: A passing native JSON/JUnit body followed by retained-process or path-cleanup rejection is an infrastructure finalization failure, not a feature regression.
+- Why it matters: Collapsing the verdicts causes interaction code to be changed even when the real failure is Windows `EBUSY`/`EPERM`, unverified process closure, or artifact staging.
+- Pattern: report both verdicts; use one bounded cleanup owner with an absolute deadline and explicit path-absence verification; preserve owned workspaces when diagnostics or ordinary Code closure is unconfirmed.
+- Source: `e2e-cli-path-cleanup.js`, `run-e2e-cli.js`, and `docs/testing/vscode-cli-authoring.md`.
+- Applies to: `ci-sentinel`, `vscode-test-specialist`, `test`.
+- Status: verified by focused controls.
+
 ## Triggers → use this file
 
 - GitHub Actions failure triage, branch protection, required checks

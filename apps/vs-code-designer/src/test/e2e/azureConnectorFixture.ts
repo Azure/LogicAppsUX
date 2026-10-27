@@ -18,6 +18,101 @@ export interface ApprovedAzureConnectorFixture extends ApprovedAzureFixture {
   resourceGroupLocationVerified?: boolean;
 }
 
+interface ApprovedArmReadRetryOptions {
+  maxAttempts?: number;
+  retryDelayMs?: number;
+  attemptTimeoutMs?: number;
+  sleep?: (delayMs: number) => Promise<void>;
+}
+
+function isRetryableArmStatus(status: number): boolean {
+  return status === 408 || status === 429 || status >= 500;
+}
+
+function isRetryableArmTransportError(error: unknown): boolean {
+  const codes = new Set(['EAI_AGAIN', 'ECONNRESET', 'ENETUNREACH', 'ETIMEDOUT']);
+  let current = error;
+  while (current && typeof current === 'object') {
+    const candidate = current as { code?: unknown; cause?: unknown; name?: unknown };
+    if ((typeof candidate.code === 'string' && codes.has(candidate.code)) || candidate.name === 'AbortError') {
+      return true;
+    }
+    if (current instanceof AggregateError && current.errors.some(isRetryableArmTransportError)) {
+      return true;
+    }
+    current = candidate.cause;
+  }
+  return false;
+}
+
+interface ApprovedArmReadResult<T> {
+  response: Response;
+  body?: T;
+}
+
+async function getApprovedArmRead<T>(
+  endpoint: URL,
+  deadline: number,
+  token: string,
+  get: typeof fetch,
+  signal: AbortSignal | undefined,
+  context: string,
+  attemptTimeoutLimitMs: number,
+  {
+    maxAttempts = 3,
+    retryDelayMs = 250,
+    attemptTimeoutMs = attemptTimeoutLimitMs,
+    sleep = (delayMs) => new Promise((resolve) => setTimeout(resolve, delayMs)),
+  }: ApprovedArmReadRetryOptions = {}
+): Promise<ApprovedArmReadResult<T>> {
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    signal?.throwIfAborted();
+    const remainingMs = deadline - Date.now();
+    assert.ok(remainingMs > 0, `${context} deadline expired`);
+    const request = new AbortController();
+    const cancelRequest = () => request.abort(signal?.reason);
+    signal?.addEventListener('abort', cancelRequest, { once: true });
+    if (signal?.aborted) {
+      cancelRequest();
+    }
+    const timeout = setTimeout(
+      () => {
+        request.abort(Object.assign(new Error(`${context} timed out`), { code: 'ETIMEDOUT' }));
+      },
+      Math.min(attemptTimeoutLimitMs, attemptTimeoutMs, remainingMs)
+    );
+    try {
+      const response = await get(endpoint, {
+        method: 'GET',
+        headers: { Authorization: `Bearer ${token}` },
+        signal: request.signal,
+      });
+      signal?.throwIfAborted();
+      if (!isRetryableArmStatus(response.status) || attempt === maxAttempts) {
+        if (!response.ok) {
+          return { response };
+        }
+        const body = (await response.json()) as T;
+        signal?.throwIfAborted();
+        assert.ok(Date.now() < deadline, `${context} response arrived after the original deadline`);
+        return { response, body };
+      }
+    } catch (error) {
+      signal?.throwIfAborted();
+      if (!isRetryableArmTransportError(error) || attempt === maxAttempts) {
+        throw error;
+      }
+    } finally {
+      clearTimeout(timeout);
+      signal?.removeEventListener('abort', cancelRequest);
+    }
+    const retryWaitMs = Math.min(retryDelayMs, deadline - Date.now());
+    assert.ok(retryWaitMs > 0, `${context} deadline expired`);
+    await sleep(retryWaitMs);
+  }
+  throw new Error(`${context} retry contract exhausted unexpectedly`);
+}
+
 export function readApprovedAzureConnectorFixture(env: NodeJS.ProcessEnv = process.env): ApprovedAzureConnectorFixture {
   assert.ok(env.LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL?.trim(), 'Approved HTTP fixture missing LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL');
   const result = approvedAzureFixtureFromEnvironment(env);
@@ -45,41 +140,29 @@ export async function readApprovedExistingResourceGroup(
   deadline: number,
   token = process.env.LA_E2E_CLI_AZURE_ACCESS_TOKEN,
   get = fetch,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  retryOptions?: ApprovedArmReadRetryOptions
 ): Promise<ApprovedAzureConnectorFixture> {
-  assert.ok(token?.trim(), 'Approved ARM access token missing for existing resource-group verification');
+  const approvedToken = token?.trim();
+  assert.ok(approvedToken, 'Approved ARM access token missing for existing resource-group verification');
   signal?.throwIfAborted();
   assert.ok(Date.now() < deadline, 'Existing resource-group verification deadline expired');
   const endpoint = new URL(
     `${fixture.managementBaseUrl}/subscriptions/${encodeURIComponent(fixture.subscriptionId)}/resourceGroups/${encodeURIComponent(fixture.resourceGroupName)}`
   );
   endpoint.searchParams.set('api-version', '2022-09-01');
-  const timeoutMs = Math.min(30_000, deadline - Date.now());
-  assert.ok(timeoutMs > 0, 'Existing resource-group verification deadline expired');
-  const request = new AbortController();
-  const cancelRequest = () => request.abort(signal?.reason);
-  signal?.addEventListener('abort', cancelRequest, { once: true });
-  if (signal?.aborted) {
-    cancelRequest();
-  }
-  const timeout = setTimeout(() => request.abort(new Error('Existing approved resource-group lookup timed out')), timeoutMs);
-  let response: Response;
-  let group: { id?: string; name?: string; location?: string };
-  try {
-    response = await get(endpoint, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-      signal: request.signal,
-    });
-    signal?.throwIfAborted();
-    assert.ok(response.ok, `Existing approved resource-group read failed: HTTP ${response.status}; WIF access/fixture remains blocked`);
-    group = (await response.json()) as { id?: string; name?: string; location?: string };
-    signal?.throwIfAborted();
-  } finally {
-    clearTimeout(timeout);
-    signal?.removeEventListener('abort', cancelRequest);
-  }
-  assert.ok(Date.now() < deadline, 'Existing resource-group response arrived after the original deadline');
+  const { response, body: group } = await getApprovedArmRead<{ id?: string; name?: string; location?: string }>(
+    endpoint,
+    deadline,
+    approvedToken,
+    get,
+    signal,
+    'Existing resource-group verification',
+    30_000,
+    retryOptions
+  );
+  assert.ok(response.ok, `Existing approved resource-group read failed: HTTP ${response.status}; WIF access/fixture remains blocked`);
+  assert.ok(group, 'Existing approved resource-group response body unavailable');
   const expectedId = `/subscriptions/${fixture.subscriptionId}/resourceGroups/${fixture.resourceGroupName}`;
   assert.strictEqual(group.id?.toLowerCase(), expectedId.toLowerCase(), 'ARM returned another existing resource group/subscription');
   assert.strictEqual(group.name?.toLowerCase(), fixture.resourceGroupName.toLowerCase(), 'ARM returned another group name');
@@ -267,9 +350,11 @@ export async function readApprovedAzureSubscriptionName(
   deadline: number,
   token = process.env.LA_E2E_CLI_AZURE_ACCESS_TOKEN,
   get = fetch,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  retryOptions?: ApprovedArmReadRetryOptions
 ): Promise<string> {
-  assert.ok(token?.trim(), 'Approved ARM access token missing; parent must enable requiresAzureAccessToken using existing WIF connection');
+  const approvedToken = token?.trim();
+  assert.ok(approvedToken, 'Approved ARM access token missing; parent must enable requiresAzureAccessToken using existing WIF connection');
   signal?.throwIfAborted();
   const timeoutMs = Math.min(5000, deadline - Date.now());
   assert.ok(timeoutMs > 0, 'Approved subscription lookup deadline expired');
@@ -277,32 +362,16 @@ export async function readApprovedAzureSubscriptionName(
   // mutate resources or use Azure CLI/ambient sign-in as a fallback.
   const endpoint = new URL(`${fixture.managementBaseUrl}/subscriptions/${encodeURIComponent(fixture.subscriptionId)}`);
   endpoint.searchParams.set('api-version', '2022-12-01');
-  const request = new AbortController();
-  const cancelRequest = () => request.abort(signal?.reason);
-  signal?.addEventListener('abort', cancelRequest, { once: true });
-  if (signal?.aborted) {
-    cancelRequest();
-  }
-  const timeout = setTimeout(() => request.abort(new Error('Approved subscription lookup timed out')), timeoutMs);
-  let response: Response;
-  try {
-    response = await get(endpoint, {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` },
-      signal: request.signal,
-    });
-  } finally {
-    clearTimeout(timeout);
-    signal?.removeEventListener('abort', cancelRequest);
-  }
-  signal?.throwIfAborted();
+  const { response, body: subscription } = await getApprovedArmRead<{
+    subscriptionId?: string;
+    tenantId?: string;
+    displayName?: string;
+  }>(endpoint, deadline, approvedToken, get, signal, 'Approved subscription lookup', timeoutMs, retryOptions);
   assert.ok(
     response.ok,
     `Approved subscription read-only lookup failed: HTTP ${response.status}; existing auth/fixture access is required`
   );
-  const subscription = (await response.json()) as { subscriptionId?: string; tenantId?: string; displayName?: string };
-  signal?.throwIfAborted();
-  assert.ok(Date.now() < deadline, 'Approved subscription lookup completed after the original observation deadline');
+  assert.ok(subscription, 'Approved subscription response body unavailable');
   assert.strictEqual(subscription.subscriptionId?.toLowerCase(), fixture.subscriptionId.toLowerCase(), 'ARM returned another subscription');
   assert.strictEqual(subscription.tenantId?.toLowerCase(), fixture.tenantId.toLowerCase(), 'ARM returned another tenant');
   const displayName = subscription.displayName;

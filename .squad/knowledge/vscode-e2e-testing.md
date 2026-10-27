@@ -341,6 +341,33 @@ Curated durable learnings for VS Code ExTester UI E2E and `@vscode/test-cli` nat
 - Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`.
 - Status: verified.
 
+### Capture semantic evidence after every meaningful interaction
+
+- Learning: Use `interaction -> exact-state wait -> viewport normalization when needed -> semantic screenshot -> next interaction`.
+- Why it matters: Final-state-only screenshots cannot identify whether action insertion, field entry, Settings changes, save acknowledgement, or monitoring selection failed. MSN Weather established the reliable pattern.
+- Pattern: capture separately after each operation insertion and field value, then after save and every state transition the scenario depends on. Bind each capture to the owned Designer/workbench target and exact visible semantic state; a workspace-creation screenshot is not Designer authoring proof.
+- Source: `docs/testing/vscode-cli-authoring.md` and the MSN Weather/Run After evidence plans.
+- Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`.
+- Status: verified.
+
+### Pre-command Chat failure is not a product interaction regression
+
+- Learning: If Copilot Chat cleanup cannot attach or determine workbench state before the Create Workspace command runs, classify the lane as pre-command infrastructure failure.
+- Why it matters: The wizard or Designer never received the interaction, so changing product assertions cannot fix the first failure boundary.
+- Pattern: retain two bounded attach attempts under one 20-second deadline; preserve diagnostics; keep unknown state fatal.
+- Source: `copilotChatController.ts`, `copilotChat.unit.ts`.
+- Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`.
+- Status: verified by compiled controls.
+
+### Lifecycle families use outer retained-identity containment
+
+- Learning: The inner MSN, regeneration, and Multi-root workers prove ordered body phases but the outer native containment host owns final retained-process closure, transient-root cleanup, and terminal publication.
+- Why it matters: Post-exit ancestry can miss reparented children, and inner cleanup booleans cannot prove original identity closure.
+- Pattern: retain original child identities while the worker runs; require `processClosureProof="retained-original-identities"` before protected acceptance; preserve fixtures on unconfirmed closure or diagnostics failure.
+- Source: `run-e2e-cli.js`, `family-lifecycle-terminal.js`, `workspaceMultiRoot.md`.
+- Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`.
+- Status: source/control verified; native ADO proof required.
+
 ### Debug-toolbar readiness ≠ Functions host readiness
 
 - Learning: `waitForRuntimeReady` can return as soon as the VS Code debug toolbar is visible (~1-2s after attach), while `func` is still loading bundle DLLs and port 7071 is not yet `running`. Downstream operations that touch the runtime (Run trigger, list runs) must either poll the 7071 admin endpoint themselves, pass `requireHostRunning: true`, or use a 90s+ deadline.

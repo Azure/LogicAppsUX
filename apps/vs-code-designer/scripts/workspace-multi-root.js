@@ -23,6 +23,9 @@ function caseExecutionMode(env) {
   if (env.LA_E2E_CLI_MULTI_ROOT_DIAGNOSTIC_ONLY === '1') {
     return { diagnosticOnly: true, acceptanceAuthorized: false };
   }
+  if (env.LA_E2E_CLI_SUITE_WRAPPER_CHILD === '1') {
+    return { diagnosticOnly: false, acceptanceAuthorized: true };
+  }
   throw new Error(nativeCleanupBlocker);
 }
 
@@ -118,13 +121,13 @@ function validateHandoff(value, context) {
   return { entry, launch };
 }
 
-function finalizeResult(result) {
-  result.retainedCaseCleanupVerified = false;
+function finalizeResult(result, mode = { acceptanceAuthorized: false }) {
+  result.retainedCaseCleanupVerified = mode.acceptanceAuthorized === true && result.cleanupVerified === true;
   result.originalProcessClosureVerified = false;
-  result.processClosureProof = 'original-identities-unverified';
+  result.processClosureProof = mode.acceptanceAuthorized ? 'outer-containment-pending' : 'original-identities-unverified';
   result.cleanupBlocker = nativeCleanupBlocker;
   result.complete =
-    result.retainedCaseCleanupVerified === true &&
+    (mode.acceptanceAuthorized ? result.retainedCaseCleanupVerified === true : false) &&
     result.observationPassed === true &&
     result.evidenceVerified === true &&
     result.originalCodeClose?.code === 0 &&
@@ -442,11 +445,15 @@ async function runWorkspaceMultiRoot(
         result.errors.push(formatErrorForDiagnostics(error));
       }
     }
-    // Unknown original-process closure must not destroy fixture/history proof.
-    // Diagnostic execution observes GUI/ordinary closure but cannot certify
-    // retained Code/Func/task/Azurite exit or perform destructive final cleanup.
+    // The isolated outer containment owner verifies retained identities and
+    // removes the suite-owned roots after this worker exits.
     result.fixturePreservedForDiagnostic = fs.existsSync(root);
-    result.cleanupVerified = false;
+    result.cleanupVerified =
+      mode.acceptanceAuthorized === true &&
+      result.fixturePreservedForDiagnostic &&
+      result.originalCodeClose?.code === 0 &&
+      result.originalCodeClose?.signal === null &&
+      result.diagnosticsVerified === true;
     if (previousPort === undefined) {
       delete process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT;
     } else {
@@ -478,7 +485,7 @@ async function runWorkspaceMultiRoot(
             result.originalCodeClose?.signal === null &&
             result.diagnosticsVerified,
           originalProcessClosureVerified: false,
-          processClosureProof: 'original-identities-unverified',
+          processClosureProof: mode.acceptanceAuthorized ? 'outer-containment-pending' : 'original-identities-unverified',
           suiteId,
           label: suiteId,
           phaseId: 'workspaceMultiRoot:reopen',
@@ -495,7 +502,7 @@ async function runWorkspaceMultiRoot(
       result.phaseResults = [];
     }
     result.observedPhaseIds = result.phaseResults.map((phase) => phase.phaseId);
-    finalizeResult(result);
+    finalizeResult(result, mode);
     result.lifecycleFinalized = true;
     result.exitCode = result.complete ? 0 : 1;
     result.signal = result.originalCodeClose?.signal ?? null;

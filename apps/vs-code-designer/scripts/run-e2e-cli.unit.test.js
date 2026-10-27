@@ -48,9 +48,11 @@ const {
     redactGeneratedWorkspacePlainText,
     readContainmentReceipt,
     requiresDirectFamilyWrapper,
+    publishRegenerationDiagnostics,
     runHttpTimeoutLifecycle,
     runRunAfterPersistenceLifecycle,
     runSuiteWrapperProcess,
+    shouldRetainDeferredWorkspaceForOuterContainment,
     createLinePrefixer,
     sanitizeInheritedGitCommandConfigEnv,
     verifyFuncCoreToolsAtDependencyRoot,
@@ -80,6 +82,8 @@ const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
 (async () => {
   try {
     await testUnconfirmedCancelClosePreservesExistingApp();
+    testDeferredWorkspaceCleanupOwnership();
+    testRegenerationDiagnosticsPublication();
     testCreatesEmptyIsolatedDependencyRoot();
     testAppliesControlledFuncAfterFinalEnvironmentMerge();
     testFailFastMissingFuncDiagnostics();
@@ -172,6 +176,58 @@ async function testUnconfirmedCancelClosePreservesExistingApp() {
   assert.strictEqual(closed.verified, true);
   assert.strictEqual(closed.action, 'removed');
   assert.ok(!fs.existsSync(closedRoot));
+}
+
+function testDeferredWorkspaceCleanupOwnership() {
+  const options = { retainWorkspaceForSupplement: true };
+  assert.strictEqual(
+    shouldRetainDeferredWorkspaceForOuterContainment(options, { LA_E2E_CLI_MULTI_ROOT_HANDOFF: '1' }),
+    true,
+    'Multi-root retains its workspace for the supplementary outer owner'
+  );
+  assert.strictEqual(
+    shouldRetainDeferredWorkspaceForOuterContainment(options, { LA_E2E_CLI_SUITE_WRAPPER_CHILD: '1' }, {}),
+    true,
+    'Regeneration wrapper children retain their workspace for outer containment cleanup'
+  );
+  assert.strictEqual(
+    shouldRetainDeferredWorkspaceForOuterContainment(options, { LA_E2E_CLI_SUITE_WRAPPER_CHILD: '1' }),
+    false,
+    'Ordinary wrapper children do not retain deferred workspaces without regeneration ownership'
+  );
+  assert.strictEqual(
+    shouldRetainDeferredWorkspaceForOuterContainment({ retainWorkspaceForSupplement: false }, { LA_E2E_CLI_SUITE_WRAPPER_CHILD: '1' }, {}),
+    false,
+    'Explicit retention ownership is required'
+  );
+}
+
+function testRegenerationDiagnosticsPublication() {
+  const reportsRoot = path.join(tempRoot, 'regeneration-publication-reports');
+  const source = path.join(reportsRoot, 'workspace-regeneration');
+  const destination = path.join(tempRoot, 'regeneration-publication-stable');
+  fs.mkdirSync(source, { recursive: true });
+  fs.writeFileSync(path.join(source, 'final-result.json'), '{"complete":true}');
+  assert.strictEqual(
+    publishRegenerationDiagnostics({ reportsRoot }, { LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR: destination }),
+    destination
+  );
+  assert.strictEqual(fs.readFileSync(path.join(destination, 'final-result.json'), 'utf8'), '{"complete":true}');
+  assert.throws(
+    () => publishRegenerationDiagnostics({ reportsRoot }, { LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR: destination }),
+    /Refusing to overwrite/
+  );
+  assert.throws(
+    () =>
+      publishRegenerationDiagnostics(
+        { reportsRoot: path.join(tempRoot, 'missing-regeneration-publication') },
+        { LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR: path.join(tempRoot, 'missing-regeneration-destination') }
+      ),
+    /were not produced/
+  );
+  const cleanupIndex = runE2eCliSource.indexOf('await cleanupSuiteTransientRoots(context);');
+  const publicationIndex = runE2eCliSource.indexOf('publishRegenerationDiagnostics(context, process.env);');
+  assert.ok(cleanupIndex >= 0 && publicationIndex > cleanupIndex, 'Stable evidence publication must follow verified outer cleanup');
 }
 
 function testCreatesEmptyIsolatedDependencyRoot() {
@@ -1324,27 +1380,15 @@ function testSanitizesInheritedGitCommandConfigEnv() {
 function testBatchSuiteRegistryValidation() {
   assert.deepStrictEqual(
     normalizeSuiteSelection('linux', { platform: 'linux' }).map((suite) => suite.id),
-    [
-      'unitTests',
-      'createWorkspaceBehavior',
-      'createWorkspaceCoreMatrix',
-      'createWorkspacePreviewMatrix',
-      'createWorkspaceCodeful',
-      'msnWeatherLifecycle',
-      'runAfterPersistenceLifecycle',
-    ]
+    Object.values(SUITE_REGISTRY)
+      .filter((suite) => suite.platforms.includes('linux'))
+      .map((suite) => suite.id)
   );
   assert.deepStrictEqual(
     normalizeSuiteSelection('windows', { platform: 'win32' }).map((suite) => suite.id),
-    [
-      'unitTests',
-      'createWorkspaceBehavior',
-      'createWorkspaceCoreMatrix',
-      'createWorkspacePreviewMatrix',
-      'createWorkspaceCodeful',
-      'msnWeatherLifecycle',
-      'runAfterPersistenceLifecycle',
-    ]
+    Object.values(SUITE_REGISTRY)
+      .filter((suite) => suite.platforms.includes('win32'))
+      .map((suite) => suite.id)
   );
   assert.deepStrictEqual(
     normalizeSuiteSelection('createWorkspaceBehaviorSmoke', { platform: 'win32' }).map((suite) => suite.id),
@@ -1595,7 +1639,7 @@ async function testRunSuiteWrapperProcessWritesStructuredResults() {
   const result = await runSuiteWrapperProcess({
     suite: SUITE_REGISTRY.unitTests,
     context,
-    env: process.env,
+    env: buildSuiteEnvironment(process.env, context),
     timeoutMs: 10_000,
     scriptPath: createWrapperFixtureScript('success'),
   });
@@ -1611,6 +1655,8 @@ async function testRunSuiteWrapperProcessWritesStructuredResults() {
   assert.strictEqual(cleanup.verified, true);
   assert.strictEqual(cleanup.processCleanup.retainedOriginalIdentitiesVerified, true);
   assert.match(cleanup.processCleanup.mechanism, /^(windows-job-object|linux-subreaper)$/);
+  assert.strictEqual(fs.existsSync(path.join(context.workspaceRoot, 'wrapper-owned-control.txt')), true);
+  assert.strictEqual(fs.existsSync(path.join(context.runtimeRoot, 'wrapper-owned-control.txt')), true);
 }
 
 async function testDirectHttpFamilyRetainsWrapperPhaseJournal() {
@@ -1645,6 +1691,9 @@ async function testDirectHttpFamilyRetainsWrapperPhaseJournal() {
     assert.strictEqual(terminal.cleanupVerified, true);
     assert.strictEqual(terminal.originalProcessClosureVerified, true);
     assert.strictEqual(terminal.processClosureProof, 'retained-original-identities');
+    const suiteRoot = fs.readdirSync(batchRoot).map((entry) => path.join(batchRoot, entry))[0];
+    assert.strictEqual(fs.existsSync(path.join(suiteRoot, 'workspaces')), false);
+    assert.strictEqual(fs.existsSync(path.join(suiteRoot, 'runtime-dependencies')), false);
   } finally {
     for (const key of credentialKeys) {
       if (previous[key] === undefined) {
@@ -2179,19 +2228,23 @@ function testMsnBatchLifecycleEvidence() {
       exitCode: Object.prototype.hasOwnProperty.call(options, 'exitCode') ? options.exitCode : 0,
       signal: options.signal ?? null,
       error: options.error,
-      processCleanup: { verified: options.cleanupVerified ?? true },
+      processCleanup: {
+        verified: options.cleanupVerified ?? true,
+        retainedOriginalIdentitiesVerified: options.cleanupVerified ?? true,
+      },
     });
     return JSON.parse(fs.readFileSync(context.terminalResultPath, 'utf8'));
   };
-  const diagnostic = write(phases);
-  assert.strictEqual(diagnostic.lifecycleBodySucceeded, true);
-  assert.strictEqual(diagnostic.complete, false);
-  assert.strictEqual(diagnostic.cleanupVerified, false);
-  assert.strictEqual(diagnostic.originalProcessClosureVerified, false);
-  assert.throws(() => assertSuccessfulMsnTerminal(msnSummary(), diagnostic), /incomplete-or-unclean-terminal/);
-  assert.strictEqual(JSON.parse(fs.readFileSync(context.cleanupLedgerPath)).verified, false);
+  const finalized = write(phases);
+  assert.strictEqual(finalized.lifecycleBodySucceeded, true);
+  assert.strictEqual(finalized.complete, true);
+  assert.strictEqual(finalized.cleanupVerified, true);
+  assert.strictEqual(finalized.originalProcessClosureVerified, true);
+  assertSuccessfulMsnTerminal(msnSummary(), finalized);
+  assert.strictEqual(JSON.parse(fs.readFileSync(context.cleanupLedgerPath)).verified, true);
   for (const badPhases of [
     phases.slice(1),
+    [...phases].reverse(),
     [...phases, phases[0]],
     [...phases, msnPhase('unexpected')],
     phases.map((phase, index) => (index === 1 ? { ...phase, exitCode: 1 } : phase)),
@@ -2582,24 +2635,10 @@ function testAggregateCompletenessAndDiagnosticRerun() {
 
   const fullLinux = buildBatchAggregate({
     batchRoot: tempRoot,
-    suites: [
-      SUITE_REGISTRY.unitTests,
-      SUITE_REGISTRY.createWorkspaceBehavior,
-      SUITE_REGISTRY.createWorkspaceCoreMatrix,
-      SUITE_REGISTRY.createWorkspacePreviewMatrix,
-      SUITE_REGISTRY.createWorkspaceCodeful,
-      SUITE_REGISTRY.msnWeatherLifecycle,
-      SUITE_REGISTRY.runAfterPersistenceLifecycle,
-    ],
-    observed: [
-      'unitTests',
-      'createWorkspaceBehavior',
-      'createWorkspaceCoreMatrix',
-      'createWorkspacePreviewMatrix',
-      'createWorkspaceCodeful',
-      'msnWeatherLifecycle',
-      'runAfterPersistenceLifecycle',
-    ].map((id) => ({ id, finalOutcome: 'success', classification: 'success' })),
+    suites: Object.values(SUITE_REGISTRY).filter((suite) => suite.platforms.includes('linux')),
+    observed: Object.values(SUITE_REGISTRY)
+      .filter((suite) => suite.platforms.includes('linux'))
+      .map(({ id }) => ({ id, finalOutcome: 'success', classification: 'success' })),
     trustedFullExecution: true,
     platform: 'linux',
     admissionContext: {
@@ -2844,6 +2883,11 @@ function createWrapperFixtureScript(mode) {
       '  let phaseIds = JSON.parse(process.env.LA_E2E_CLI_BATCH_EXPECTED_PHASES || \'["unitTests"]\');',
       "  if (mode === 'missing-run-after-author-reopen') { phaseIds = phaseIds.filter((phaseId) => !phaseId.endsWith(':author') && !phaseId.endsWith(':reopen')); }",
       "  for (const phaseId of phaseIds) { fs.appendFileSync(target, `${JSON.stringify({ schemaVersion: 1, phaseId, exitCode, signal: null, cleanupVerified: true, diagnosticsError: '', complete: true })}\\n`); }",
+      '}',
+      "if (role === 'parent') {",
+      '  for (const root of [process.env.LA_E2E_CLI_WORKSPACE_ROOT, process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT].filter(Boolean)) {',
+      "    fs.mkdirSync(root, { recursive: true }); fs.writeFileSync(path.join(root, 'wrapper-owned-control.txt'), 'retained until outer cleanup');",
+      '  }',
       '}',
       "if (mode === 'sleep') { setInterval(() => undefined, 1000); }",
       "else if (mode === 'descendant') {",

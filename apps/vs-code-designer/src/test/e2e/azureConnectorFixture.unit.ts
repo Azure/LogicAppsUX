@@ -106,6 +106,79 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
         })) as unknown as typeof fetch),
       /another existing resource group/
     );
+    let transientCalls = 0;
+    const transient = Object.assign(new Error('socket reset'), { code: 'ECONNRESET' });
+    const recovered = await readApprovedExistingResourceGroup(
+      target,
+      Date.now() + 1000,
+      'unit-owned-token',
+      (async () => {
+        transientCalls++;
+        if (transientCalls === 1) {
+          throw transient;
+        }
+        return { ok: true, status: 200, json: async () => group };
+      }) as unknown as typeof fetch,
+      undefined,
+      { sleep: async () => {} }
+    );
+    assert.strictEqual(recovered.resourceGroupLocationVerified, true);
+    assert.strictEqual(transientCalls, 2);
+    let timeoutCalls = 0;
+    const timeoutRecovered = await readApprovedExistingResourceGroup(
+      target,
+      Date.now() + 1000,
+      'unit-owned-token',
+      ((_url: unknown, options: { signal: AbortSignal }) => {
+        timeoutCalls++;
+        if (timeoutCalls > 1) {
+          return Promise.resolve({ ok: true, status: 200, json: async () => group });
+        }
+        return new Promise((_resolve, reject) => {
+          options.signal.addEventListener('abort', () => reject(options.signal.reason), { once: true });
+        });
+      }) as unknown as typeof fetch,
+      undefined,
+      { attemptTimeoutMs: 5, sleep: async () => {} }
+    );
+    assert.strictEqual(timeoutRecovered.resourceGroupLocationVerified, true);
+    assert.strictEqual(timeoutCalls, 2);
+    let aggregateCalls = 0;
+    const aggregateRecovered = await readApprovedExistingResourceGroup(
+      target,
+      Date.now() + 1000,
+      'unit-owned-token',
+      (async () => {
+        aggregateCalls++;
+        if (aggregateCalls === 1) {
+          throw new Error('request wrapper', {
+            cause: new AggregateError([Object.assign(new Error('socket reset'), { code: 'ECONNRESET' })]),
+          });
+        }
+        return { ok: true, status: 200, json: async () => group };
+      }) as unknown as typeof fetch,
+      undefined,
+      { sleep: async () => {} }
+    );
+    assert.strictEqual(aggregateRecovered.resourceGroupLocationVerified, true);
+    assert.strictEqual(aggregateCalls, 2);
+    let forbiddenCalls = 0;
+    await assert.rejects(
+      () =>
+        readApprovedExistingResourceGroup(
+          target,
+          Date.now() + 1000,
+          'unit-owned-token',
+          (async () => {
+            forbiddenCalls++;
+            return { ok: false, status: 403 };
+          }) as unknown as typeof fetch,
+          undefined,
+          { sleep: async () => {} }
+        ),
+      /HTTP 403/
+    );
+    assert.strictEqual(forbiddenCalls, 1);
     const parent = new AbortController();
     let requestAborted = false;
     const pending = readApprovedExistingResourceGroup(
@@ -194,6 +267,54 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
         })) as unknown as typeof fetch),
       /another subscription/
     );
+    let retryableCalls = 0;
+    assert.strictEqual(
+      await readApprovedAzureSubscriptionName(
+        fixture,
+        Date.now() + 1000,
+        'unit-owned-token',
+        (async () => {
+          retryableCalls++;
+          if (retryableCalls === 1) {
+            return { ok: false, status: 503 };
+          }
+          return {
+            ok: true,
+            status: 200,
+            json: async () => ({
+              subscriptionId: fixture.subscriptionId,
+              tenantId: fixture.tenantId,
+              displayName: 'Unit Approved Subscription',
+            }),
+          };
+        }) as unknown as typeof fetch,
+        undefined,
+        { sleep: async () => {} }
+      ),
+      'Unit Approved Subscription'
+    );
+    assert.strictEqual(retryableCalls, 2);
+    let malformedCalls = 0;
+    await assert.rejects(() =>
+      readApprovedAzureSubscriptionName(
+        fixture,
+        Date.now() + 1000,
+        'unit-owned-token',
+        (async () => {
+          malformedCalls++;
+          return {
+            ok: true,
+            status: 200,
+            json: async () => {
+              throw new SyntaxError('invalid JSON');
+            },
+          };
+        }) as unknown as typeof fetch,
+        undefined,
+        { sleep: async () => {} }
+      )
+    );
+    assert.strictEqual(malformedCalls, 1);
     const abort = new AbortController();
     const pending = readApprovedAzureSubscriptionName(
       fixture,

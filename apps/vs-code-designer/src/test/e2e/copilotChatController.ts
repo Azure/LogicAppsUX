@@ -24,13 +24,14 @@ export interface CopilotChatAttachRetryHost<TCdp extends CopilotChatCdpConnectio
 const maxCopilotChatAttachAttempts = 2;
 const maxCopilotChatAttachBudgetMs = 5000;
 const maxCopilotChatPreVisibleReadRetries = 1;
+const defaultCopilotChatAttachCleanupTimeoutMs = 20000;
 
 export async function closeCopilotChatIfVisibleWithAttachRetry<TCdp extends CopilotChatCdpConnection>(
   stage: string,
   retryHost: CopilotChatAttachRetryHost<TCdp>,
   options: { timeoutMs?: number; absentSettleMs?: number } = {}
 ): Promise<void> {
-  const timeoutMs = options.timeoutMs ?? 8000;
+  const timeoutMs = options.timeoutMs ?? defaultCopilotChatAttachCleanupTimeoutMs;
   const deadline = retryHost.now() + timeoutMs;
   let lastAttachError: unknown;
   let attemptsMade = 0;

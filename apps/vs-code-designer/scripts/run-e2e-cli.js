@@ -12,6 +12,7 @@ const os = require('os');
 const path = require('path');
 const { URL } = require('url');
 const { formatErrorForDiagnostics } = require('./e2e-cli-diagnostics');
+const { removePathWithRetry } = require('./e2e-cli-path-cleanup');
 const {
   createBatchRoot,
   createSuiteContext,
@@ -158,20 +159,24 @@ function main() {
       );
       return;
     }
-    beginDirectRegenerationEvidence();
-    runVscodeTest(['--label', 'createWorkspaceCoreMatrix'], {
-      extraEnv: {
-        LA_E2E_CLI_ORDERED_EVIDENCE_ENABLED: '0',
-        LA_E2E_CLI_REQUIRE_WORKSPACE_REGENERATION: '1',
-        LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL: '0',
-        LA_E2E_CLI_CREATE_WORKSPACE_CASE: 'standard-stateful',
-        LA_E2E_CLI_VALIDATE_DEPENDENCIES: '1',
-        LA_E2E_STRICT_DEPENDENCY_VALIDATION: '1',
-        LA_E2E_CLI_AUTO_START_DESIGN_TIME: '0',
-        LA_E2E_CLI_MINIMAL_ACTIVATION: '0',
-        LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '0',
-      },
-    })
+    const run = requiresDirectFamilyWrapper(process.env)
+      ? runDirectFamily('workspaceArtifactRegeneration')
+      : (beginDirectRegenerationEvidence(),
+        runVscodeTest(['--label', 'createWorkspaceCoreMatrix'], {
+          retainWorkspaceForSupplement: process.env.LA_E2E_CLI_SUITE_WRAPPER_CHILD === '1',
+          extraEnv: {
+            LA_E2E_CLI_ORDERED_EVIDENCE_ENABLED: '0',
+            LA_E2E_CLI_REQUIRE_WORKSPACE_REGENERATION: '1',
+            LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL: '0',
+            LA_E2E_CLI_CREATE_WORKSPACE_CASE: 'standard-stateful',
+            LA_E2E_CLI_VALIDATE_DEPENDENCIES: '1',
+            LA_E2E_STRICT_DEPENDENCY_VALIDATION: '1',
+            LA_E2E_CLI_AUTO_START_DESIGN_TIME: '0',
+            LA_E2E_CLI_MINIMAL_ACTIVATION: '0',
+            LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '0',
+          },
+        }));
+    Promise.resolve(run)
       .then((code) => process.exit(code))
       .catch(exitWithError);
     return;
@@ -181,8 +186,8 @@ function main() {
       exitWithError(new Error('--workspace-multi-root is a focused official-wizard + real-reload family; do not combine flags.'));
       return;
     }
-    if (process.env.LA_E2E_CLI_BATCH_MODE !== '1' && process.env.LA_E2E_CLI_DIRECT_WRAPPED_SUITE !== 'workspaceMultiRoot') {
-      runDirectRegisteredSuite(SUITE_REGISTRY.workspaceMultiRoot)
+    if (requiresDirectFamilyWrapper(process.env)) {
+      runDirectFamily('workspaceMultiRoot')
         .then((code) => process.exit(code))
         .catch(exitWithError);
       return;
@@ -265,7 +270,12 @@ function main() {
   } else if (codefulDebugTasks) {
     runCodefulDebugTasks(visibleDelayMs).catch(exitWithError);
   } else if (msnWeatherLifecycle) {
-    runMsnWeatherLifecycle(visibleDelayMs).catch(exitWithError);
+    const run = requiresDirectFamilyWrapper(process.env)
+      ? runDirectFamily('msnWeatherLifecycle', visibleDelayMs)
+      : runMsnWeatherLifecycle(visibleDelayMs);
+    Promise.resolve(run)
+      .then((code) => process.exit(code))
+      .catch(exitWithError);
   } else if (variablesPickerLifecycle) {
     runVariablesPickerLifecycle(visibleDelayMs).catch(exitWithError);
   } else if (statelessVariablesLifecycle) {
@@ -531,7 +541,10 @@ async function runDirectFamily(suiteId, visibleDelayMs, options = {}) {
   let error = result.error;
   if (result.processCleanup?.verified === true && result.exitCode === 0 && !result.signal && !error) {
     try {
-      cleanupSuiteTransientRoots(context);
+      await cleanupSuiteTransientRoots(context);
+      if (suite.id === 'workspaceArtifactRegeneration') {
+        publishRegenerationDiagnostics(context, process.env);
+      }
       context.transientCleanupVerified = true;
     } catch (cleanupError) {
       error = cleanupError;
@@ -550,6 +563,31 @@ function resolvePreparedExtensionsSeed(explicitSeedDir) {
       process.env.LA_E2E_CLI_EXTENSIONS_DIR ||
       path.join(__dirname, '..', '.vscode-test', 'extensions')
   );
+}
+
+function publishRegenerationDiagnostics(context, env) {
+  const destination = env.LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR;
+  if (!destination) {
+    throw new Error('Workspace regeneration diagnostics publication requires LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR');
+  }
+  const source = path.join(context.reportsRoot, 'workspace-regeneration');
+  if (!fs.existsSync(source)) {
+    throw new Error(`Workspace regeneration diagnostics were not produced at the wrapper-owned path: ${source}`);
+  }
+  const resolvedSource = path.resolve(source);
+  const resolvedDestination = path.resolve(destination);
+  if (resolvedSource === resolvedDestination) {
+    return resolvedDestination;
+  }
+  if (fs.existsSync(resolvedDestination)) {
+    throw new Error(`Refusing to overwrite an existing workspace regeneration diagnostics destination: ${resolvedDestination}`);
+  }
+  fs.mkdirSync(path.dirname(resolvedDestination), { recursive: true });
+  fs.cpSync(resolvedSource, resolvedDestination, { recursive: true, errorOnExist: true, force: false });
+  if (!fs.existsSync(resolvedDestination)) {
+    throw new Error(`Workspace regeneration diagnostics publication did not create the destination: ${resolvedDestination}`);
+  }
+  return resolvedDestination;
 }
 
 function sanitizeInheritedGitCommandConfigEnv(env) {
@@ -977,14 +1015,7 @@ function readJsonIfExists(filePath) {
 }
 
 function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, processCleanup, phaseResults: suppliedPhases }) {
-  const retainedCaseCleanupBlocked = ['workspaceMultiRoot', 'msnWeatherLifecycle'].includes(suite.id);
-  const retainedCaseCleanupError =
-    suite.id === 'workspaceMultiRoot'
-      ? require('./workspace-multi-root').nativeCleanupBlocker
-      : suite.id === 'msnWeatherLifecycle'
-        ? 'MSN cleanup blocked: original process identity closure is unverified; exact workspace and dependency roots retained'
-        : '';
-  const originalProcessClosureVerified = !retainedCaseCleanupBlocked && processCleanup.retainedOriginalIdentitiesVerified === true;
+  const originalProcessClosureVerified = processCleanup.retainedOriginalIdentitiesVerified === true;
   const processClosureProof = originalProcessClosureVerified ? 'retained-original-identities' : 'original-identities-unverified';
   const readJournal = () => {
     if (suppliedPhases) {
@@ -1011,8 +1042,9 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     .map((phase) => phase.diagnosticsError)
     .filter((diagnosticsError) => typeof diagnosticsError === 'string' && diagnosticsError.trim());
   const phaseCleanupVerified = phaseResults.every((phase) => phase.cleanupVerified === true);
+  const phaseOrderVerified = observedPhaseIds.every((phaseId, index) => phaseId === expectedPhaseIds[index]);
   const phaseCompleteness =
-    (suite.id !== 'workspaceArtifactRegeneration' || expectedPhaseIds.every((phaseId, index) => observedPhaseIds[index] === phaseId)) &&
+    phaseOrderVerified &&
     unexpectedPhaseIds.length === 0 &&
     duplicatePhaseIds.length === 0 &&
     (missingPhaseIds.length === 0 || blockedPhaseIds.length > 0) &&
@@ -1030,7 +1062,7 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
       (signal === null || signal === undefined) &&
       missingPhaseIds.length === 0 &&
       phaseResults.length === expectedPhaseIds.length &&
-      (suite.id !== 'httpTimeoutLifecycle' || expectedPhaseIds.every((phaseId, index) => observedPhaseIds[index] === phaseId)) &&
+      phaseOrderVerified &&
       phaseResults.every(
         (phase) => phase.complete === true && phase.exitCode === 0 && (phase.signal === null || phase.signal === undefined)
       ));
@@ -1047,7 +1079,6 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
   const terminalComplete =
     phaseCompleteness &&
     phaseCleanupVerified &&
-    !retainedCaseCleanupBlocked &&
     processCleanup.verified === true &&
     !error &&
     !journal.error &&
@@ -1071,19 +1102,15 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     duplicatePhaseIds,
     blockedPhaseIds,
     phaseCleanupVerified,
-    processTreeVerified: processCleanup.verified === true && !retainedCaseCleanupBlocked,
-    processCleanup: retainedCaseCleanupBlocked
-      ? { verified: false, error: retainedCaseCleanupError, postExitAncestryObservation: processCleanup }
-      : processCleanup,
+    processTreeVerified: processCleanup.verified === true,
+    processCleanup,
     verified:
       phaseCompleteness &&
       phaseCleanupVerified &&
       processCleanup.verified === true &&
-      !retainedCaseCleanupBlocked &&
       (!context.invocation || (context.provenanceVerified === true && context.ownedRootCleanup?.verified === true)) &&
       (!context.directFamily || directSucceeded),
     ...(context.directFamily ? { transientCleanupVerified: context.transientCleanupVerified === true } : {}),
-    ...(retainedCaseCleanupBlocked ? { retainedCaseCleanupVerified: false, retainedCaseCleanupError } : {}),
     phases: finalizedPhaseResults,
     ...(context.invocation ? { invocation: context.invocation, ownedRootCleanup: context.ownedRootCleanup } : {}),
   };
@@ -1105,12 +1132,10 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
                 ? phase.bodyAssertionsPassed === true
                 : phase.complete === true && phase.exitCode === 0 && !phase.signal
             ),
-          filesystemCleanupVerified: false,
+          filesystemCleanupVerified: phaseCleanupVerified && (!context.directFamily || context.transientCleanupVerified === true),
         }
       : {}),
-    diagnosticsError: [error ? formatErrorForDiagnostics(error) : '', journal.error, ...phaseDiagnosticsErrors, retainedCaseCleanupError]
-      .filter(Boolean)
-      .join('\n'),
+    diagnosticsError: [error ? formatErrorForDiagnostics(error) : '', journal.error, ...phaseDiagnosticsErrors].filter(Boolean).join('\n'),
     expectedPhaseIds,
     observedPhaseIds,
     missingPhaseIds,
@@ -1790,7 +1815,10 @@ async function runMsnWeatherLifecycle(
   const azureEnv = azureEnvironment();
   const lifecycleDir = getLifecycleArtifactDir('msn-weather-lifecycle');
   const lifecycleRunId = Date.now();
-  const runtimeDependenciesRoot = createIsolatedRuntimeDependenciesRoot('msnWeatherLifecycle');
+  const outerContainmentOwnsRoots =
+    process.env.LA_E2E_CLI_SUITE_WRAPPER_CHILD === '1' && Boolean(process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT);
+  const runtimeDependenciesRoot =
+    process.env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT || createIsolatedRuntimeDependenciesRoot('msnWeatherLifecycle');
   const workspaceParent = createOwnedWorkspaceParent('msn-weather-lifecycle');
   let lifecycleSucceeded = false;
   let preparationSucceeded = false;
@@ -1888,17 +1916,20 @@ async function runMsnWeatherLifecycle(
         });
       },
       async () => {
-        if (processCleanup.verified) {
+        if (processCleanup.verified && !outerContainmentOwnsRoots) {
           await cleanupWorkspace(workspaceParent, 'successful MSN Weather lifecycle', true);
         }
       },
       async () => {
-        if (processCleanup.verified) {
+        if (processCleanup.verified && !outerContainmentOwnsRoots) {
           await cleanupRuntime(runtimeDependenciesRoot);
         }
       },
     ],
-    observeCleanup: () => getOwnedRootCleanupVerified([workspaceParent, runtimeDependenciesRoot]),
+    observeCleanup: () =>
+      outerContainmentOwnsRoots
+        ? [workspaceParent, runtimeDependenciesRoot].every((ownedRoot) => fs.existsSync(ownedRoot))
+        : getOwnedRootCleanupVerified([workspaceParent, runtimeDependenciesRoot]),
     finalizeEvidence: (outcome) =>
       finalizeDirectMsnEvidence(evidenceEnv, {
         ...outcome,
@@ -2486,9 +2517,13 @@ function writeRuntimeDependencyProbe(lifecycleDir, lifecycleRunId, runtimeDepend
 }
 
 async function cleanupRuntimeDependenciesRoot(runtimeDependenciesRoot) {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
   try {
-    fs.rmSync(runtimeDependenciesRoot, { recursive: true, force: true, maxRetries: 10, retryDelay: 500 });
+    await removePathWithRetry(runtimeDependenciesRoot, {
+      onRetry: ({ attempts, code, elapsedMs }) =>
+        console.warn(
+          `[runtime-deps] Retrying isolated dependency cleanup attempt=${attempts} code=${code} elapsedMs=${elapsedMs}: ${runtimeDependenciesRoot}`
+        ),
+    });
     console.log(`[runtime-deps] Removed isolated dependency root after successful MSN Weather lifecycle: ${runtimeDependenciesRoot}`);
   } catch (error) {
     console.warn(`[runtime-deps] Unable to remove isolated dependency root ${runtimeDependenciesRoot}: ${String(error)}`);
@@ -2775,14 +2810,16 @@ function runVscodeTest(args, options = {}) {
           markOwnedWorkspaceParentsWithDiagnosticFailure(childEnv, [deferredWorkspaceParent].filter(Boolean));
         }
       }
-      cleanupLedger =
-        options.retainWorkspaceForSupplement && childEnv.LA_E2E_CLI_MULTI_ROOT_HANDOFF
-          ? {
-              verified: fs.existsSync(deferredWorkspaceParent),
-              action: 'retained-for-multi-root',
-              reason: 'Final cleanup belongs to the supplementary family after its original regular window closes.',
-            }
-          : await cleanupDeferredWorkspaceAfterCancel(deferredWorkspaceParent, childEnv, cancelResult || regenerationResult);
+      const retainWorkspaceForOuterContainment = shouldRetainDeferredWorkspaceForOuterContainment(options, childEnv, regenerationContext);
+      cleanupLedger = retainWorkspaceForOuterContainment
+        ? {
+            verified: fs.existsSync(deferredWorkspaceParent),
+            action: childEnv.LA_E2E_CLI_MULTI_ROOT_HANDOFF ? 'retained-for-multi-root' : 'retained-for-outer-containment',
+            reason: childEnv.LA_E2E_CLI_MULTI_ROOT_HANDOFF
+              ? 'Final cleanup belongs to the supplementary family after its original regular window closes.'
+              : 'Final cleanup belongs to the outer native containment owner after retained process closure is verified.',
+          }
+        : await cleanupDeferredWorkspaceAfterCancel(deferredWorkspaceParent, childEnv, cancelResult || regenerationResult);
       const phaseId =
         options.multiRootCreatePhase && childEnv.LA_E2E_CLI_MULTI_ROOT_HANDOFF
           ? 'workspaceMultiRoot:create'
@@ -2923,6 +2960,13 @@ function getVscodeTestCommand(args) {
   }
 
   return { command: 'vscode-test', commandArgs: args };
+}
+
+function shouldRetainDeferredWorkspaceForOuterContainment(options, env, regenerationContext) {
+  return (
+    options.retainWorkspaceForSupplement === true &&
+    (Boolean(env.LA_E2E_CLI_MULTI_ROOT_HANDOFF) || (Boolean(regenerationContext) && env.LA_E2E_CLI_SUITE_WRAPPER_CHILD === '1'))
+  );
 }
 
 function captureGeneratedWorkspaceDiagnostics({ env, label, outcome, ownedRoots = [] }) {
@@ -3874,6 +3918,8 @@ module.exports = {
     redactGeneratedWorkspacePlainText,
     runSuiteWrapperProcess,
     runDirectRegisteredSuite,
+    publishRegenerationDiagnostics,
+    shouldRetainDeferredWorkspaceForOuterContainment,
     createLinePrefixer,
     readContainmentReceipt,
     requiresDirectFamilyWrapper,
@@ -4057,9 +4103,13 @@ async function cleanupOwnedWorkspaceParent(workspaceParent, context, strict = fa
     return;
   }
 
-  await delay(1000);
   try {
-    fs.rmSync(workspaceParent, { recursive: true, force: true, maxRetries: 10, retryDelay: 500 });
+    await removePathWithRetry(workspaceParent, {
+      onRetry: ({ attempts, code, elapsedMs }) =>
+        console.warn(
+          `[generated-workspace-diagnostics] Retrying owned workspace cleanup attempt=${attempts} code=${code} elapsedMs=${elapsedMs}: ${workspaceParent}`
+        ),
+    });
     console.log(`[generated-workspace-diagnostics] Removed owned workspace parent after ${context}: ${workspaceParent}`);
   } catch (error) {
     console.warn(`[generated-workspace-diagnostics] Unable to remove owned workspace parent ${workspaceParent}: ${String(error)}`);
@@ -4098,9 +4148,13 @@ async function cleanupDeferredWorkspaceParent(workspaceParent) {
     return { ...ledger, verified: false, action: 'preserved', reason: 'diagnostics capture failed' };
   }
 
-  await delay(1000);
   try {
-    fs.rmSync(workspaceParent, { recursive: true, force: true, maxRetries: 10, retryDelay: 500 });
+    await removePathWithRetry(workspaceParent, {
+      onRetry: ({ attempts, code, elapsedMs }) =>
+        console.warn(
+          `[create-workspace-smoke] Retrying temp workspace cleanup attempt=${attempts} code=${code} elapsedMs=${elapsedMs}: ${workspaceParent}`
+        ),
+    });
     ledger.action = 'removed';
     ledger.verified = !fs.existsSync(workspaceParent);
   } catch (error) {
@@ -4123,10 +4177,6 @@ function markOwnedWorkspaceParentsWithDiagnosticFailure(env, ownedRoots = []) {
 
 function hasOwnedWorkspaceParentDiagnosticFailure(workspaceParent) {
   return workspaceParentsWithDiagnosticFailures.has(path.resolve(workspaceParent));
-}
-
-function delay(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 function writeSuiteCleanupLedger(env, ledger) {

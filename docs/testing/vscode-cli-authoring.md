@@ -431,14 +431,16 @@ child exit zero cannot manufacture missing later GUI/runtime phases.
 Shared direct orchestration is in `scripts/run-e2e-cli.js`; supplementary
 publication is checked by `scripts/family-lifecycle-terminal.js`.
 
-For the registered direct selector currently used by Multi-root,
-`runDirectRegisteredSuite` is the ownership boundary. It must provide
-`reportsRoot`, invocation identity in the child context, exact expected phases,
-and stable phase/result/cleanup/terminal paths. Terminal and cleanup receipts
-must carry the same invocation recorded by provenance. It must also create the configured
-workspace-root parent before child launch. Other direct families retain their
-existing owning orchestrators and must provide equivalent complete context
-there. Do not assume that setting an environment path creates its directory.
+The protected direct selectors for MSN Weather, workspace artifact regeneration,
+and Multi-root enter `runDirectFamily` before their wrapper child executes. The
+outer native containment host retains the original owned process identities,
+waits for the worker to close, verifies those exact identities are absent, then
+owns transient-root cleanup and final terminal publication. The inner family
+can prove its ordered body phases, but it must not claim final process closure.
+Terminal and cleanup receipts must carry the same invocation recorded by
+provenance. The outer owner must also create configured workspace/runtime
+parents before child launch. Do not assume that setting an environment path
+creates its directory.
 
 Invalidate any stable terminal and cleanup receipts before workspace-root
 creation, dependency setup, native preflight, or child launch. If setup fails,
@@ -453,10 +455,11 @@ actual error; only successful pre-cleanup checks admit destructive cleanup.
 The regeneration ordering correction remains an open implementation gate.
 
 Reconstructing ancestry only after a parent exits can miss reparented
-descendants. When original process identities have not been verified after
-closure, report `originalProcessClosureVerified: false` and keep execution
-diagnostic-only. Directory removal and an empty post-exit tree are not stronger
-proof. Do not revive abandoned process-owner frameworks to disguise this gap.
+descendants. When original process identities have not been retained and
+verified after closure, report `originalProcessClosureVerified: false`; never
+promote directory removal or an empty post-exit tree to stronger proof. Protected
+family acceptance requires the outer containment owner's
+`processClosureProof: "retained-original-identities"`.
 
 ### Canonical MSN cleanup: fail-closed exact-root boundary
 
@@ -468,21 +471,20 @@ finalizer publishes the finalized verdict, after required shutdown observations,
 workspace/profile diagnostics and exact-root owned-identity absence observation.
 Original body and cleanup/instrumentation errors remain separate and are retained.
 
-Accepted direct results require `complete: true`,
+Accepted protected results require `complete: true`,
 `cleanupVerified: true`, `originalProcessClosureVerified: true` and
-`processClosureProof: "exact-root-owned-identities-absent"`. If any original
+`processClosureProof: "retained-original-identities"`. If any original
 identity or required observation remains unproven, the path still fails closed,
 retains diagnostics, and reports the independent `lifecycleBodySucceeded`
-verdict without promoting it to native acceptance. The current batch finalizer
-still keeps MSN diagnostic/fail-closed rather than propagating the direct
-selector's exact-root proof.
+verdict without promoting it to native acceptance.
 The current-invocation `body-assertions.json` is written only after the actual
 MSN body and required response screenshot assertions, before runtime teardown.
 It keeps passing assertions visible even when later inner shutdown fails;
 `bodyAssertionsPassed` is not process/root cleanup or native acceptance.
 Do not remove this blocker using exit zero, disappearing VS Code task handles,
 empty post-exit ancestry, directory absence or a synthetic control observation.
-The protected canonical rollup is unchanged.
+MSN Weather is accepted by the protected rollup only through the strict family
+terminal validator, including `bodyAssertionsPassed: true`.
 
 `scripts/msn-cleanup-diagnostics.js` adds **read-only** Windows Restart Manager
 file-lock observations for the mapped Functions dependency DLL, together with
@@ -569,6 +571,26 @@ workbench/CDP target after known prompts are handled. Preserve early transition
 diagnostics, but capture required post-prompt evidence only after
 `waitForDebugStartup` or an equivalent stable-target condition.
 
+Classify Copilot Chat cleanup by command boundary. If the shared workbench CDP
+cleanup cannot attach or determine Chat state before the Create Workspace
+command is invoked, the product interaction did not run; this is pre-command
+infrastructure failure, not a wizard regression. Keep the two attach attempts
+inside one absolute cleanup deadline and never turn an unknown Chat state into
+success.
+
+Retry ownership must be narrow and explicit. Exact read-only ARM fixture GETs
+and Workflows JSON index/dependency feeds may retry transport errors, HTTP 408,
+429 and 5xx under one absolute deadline. Authentication/authorization,
+subscription/resource identity mismatches, malformed JSON, caller cancellation,
+and non-opted-in feeds remain single-attempt failures. Bundle ZIP download and
+integrity verification retain their separate existing retry owner.
+
+Windows path cleanup is also a bounded evidence gate, not best effort. Retry
+only `EACCES`, `EBUSY`, `ENOTEMPTY`, and `EPERM` under one 30-second budget,
+then verify the owned path is absent. Preserve the workspace when required
+diagnostics or ordinary Code closure is unconfirmed. Never add broad
+process-name termination to make deletion pass.
+
 Keep actionable diagnostics private and complete. Serialize `Error.stack` when
 available. When wrapper logs prefix lines with `[suite]`, strip prefixes only
 for detecting an error header and its contiguous stack frames; retain the
@@ -587,20 +609,21 @@ Use this proof ladder for shared runner, evidence or lifecycle changes:
 2. the complete registered `test:e2e-cli:unit` chain;
 3. exact-full-SHA targeted Linux and Windows diagnostic selectors;
 4. downloaded artifact inspection at every gate above;
-5. the complete canonical non-diagnostic Linux/Windows inventory.
+5. the complete registered non-diagnostic inventory: 11 Linux lanes and 12
+   Windows lanes.
 
 A targeted green accelerates iteration but never certifies unrelated suites or
 satisfies the protected full rollup. Preserve stricter family gates such as
 Multi-root phase order and retained-identity cleanup even when body assertions
 and ordered evidence are complete.
 
-`runAfterPersistenceLifecycle` is part of the canonical Linux and Windows
-inventory after exact-SHA targeted run 15827501 / 20261027.7 passed both
-operating systems at `1d89db5c3dfc33468b8144087afa2c274b4a8467` with all 35
-ordered checkpoints, all four phases, terminal completion, and cleanup verified.
-HTTP timeout, Stateless variables, workspace artifact regeneration, and
-Multi-root remain targeted-only until they receive separate evidence-backed
-baseline promotion.
+The platform aliases derive from `SUITE_REGISTRY.platforms`; pipeline jobs,
+protected dependencies, result variables, artifact downloads, and validation
+records must equal that registry-derived inventory in the same change. The
+current protected inventory contains 11 Linux lanes and 12 Windows lanes. Every
+lifecycle family—MSN Weather, HTTP timeout, Stateless variables, Run After,
+workspace artifact regeneration, and Multi-root—requires strict terminal
+receipt validation rather than aggregate Mocha-count credit.
 
 ## Validation and maintenance
 
@@ -614,7 +637,7 @@ baseline promotion.
    Parallel worktrees do not isolate localhost ports, Code profiles or runtime
    processes on a shared machine.
 6. After shared runner/evidence/lifecycle changes, inspect targeted artifacts
-   and run the complete canonical Linux/Windows inventory.
+   and run the complete registered 11-Linux/12-Windows inventory.
 7. For each lesson, record symptom, root cause, reusable helper/control paths,
    verification level and any remaining limitation. Update this guide after
    meaningful investigation, not only after a green run.

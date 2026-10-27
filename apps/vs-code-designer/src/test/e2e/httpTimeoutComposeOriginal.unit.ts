@@ -1001,8 +1001,11 @@ async function main(): Promise<void> {
       for (const platform of ['linux', 'win32']) {
         assert.strictEqual(batch.normalizeSuiteSelection('httpTimeoutLifecycle', { platform })[0], suite);
       }
-      for (const alias of ['linux', 'windows']) {
-        assert.ok(!batch.normalizeSuiteSelection(alias).some((entry: { id: string }) => entry.id === suite.id));
+      for (const [alias, platform] of [
+        ['linux', 'linux'],
+        ['windows', 'win32'],
+      ]) {
+        assert.ok(batch.normalizeSuiteSelection(alias, { platform }).some((entry: { id: string }) => entry.id === suite.id));
       }
       const vscodeTestSource = fs.readFileSync(path.resolve(__dirname, '../../../.vscode-test.mjs'), 'utf8');
       assert.ok(vscodeTestSource.includes('const httpTimeoutRequestMode = process.env.LA_E2E_CLI_HTTP_TIMEOUT_REQUEST_MODE;'));

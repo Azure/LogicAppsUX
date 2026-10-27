@@ -611,6 +611,76 @@ test('MSN native lifecycle resolves environment values instead of treating varia
   }
 });
 
+test('wrapper-child MSN lifecycle retains wrapper-owned roots for outer cleanup after inner process closure', async (t) => {
+  const f = fixture(t);
+  const runtimeRoot = path.join(f.root, 'wrapper-runtime');
+  const workspaceRoot = path.join(f.root, 'wrapper-workspaces');
+  const phaseResultsPath = path.join(f.root, 'wrapper-phases.jsonl');
+  fs.mkdirSync(runtimeRoot);
+  fs.mkdirSync(workspaceRoot);
+  const changes = {
+    LA_E2E_CLI_SUITE_WRAPPER_CHILD: '1',
+    LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH: phaseResultsPath,
+    LA_E2E_CLI_LIFECYCLE_ARTIFACT_ROOT: path.join(f.root, 'lifecycle'),
+    LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: runtimeRoot,
+    LA_E2E_CLI_WORKSPACE_ROOT: workspaceRoot,
+  };
+  const previous = Object.fromEntries(Object.keys(changes).map((key) => [key, process.env[key]]));
+  let ownedWorkspace;
+  let workspaceCleanupCalled = false;
+  let runtimeCleanupCalled = false;
+  try {
+    Object.assign(process.env, changes);
+    await runMsnWeatherLifecycle(undefined, {
+      ensureProfile: () => undefined,
+      azureEnvironment: () => ({}),
+      probe: async () => 'non-native probe control only',
+      runPhase: async (args, { extraEnv: env }) => {
+        ownedWorkspace ||= env.LA_E2E_CLI_WORKSPACE_PARENT;
+        if (env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE === 'create') {
+          const appDir = path.join(ownedWorkspace, 'workspace', 'app');
+          fs.mkdirSync(appDir, { recursive: true });
+          fs.writeFileSync(
+            env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_MANIFEST,
+            JSON.stringify([{ label: 'standard', appDir, workspaceFilePath: path.join(ownedWorkspace, 'control.code-workspace') }])
+          );
+        }
+        if (args[1] === 'msnWeatherLifecycle' && env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE === 'run') {
+          recordMsnBodyAssertions({
+            outputDir: env.LA_E2E_CLI_MSN_DIAGNOSTICS_DIR,
+            invocation: env.LA_E2E_CLI_MSN_LIFECYCLE_INVOCATION,
+          });
+        }
+      },
+      observe: async () => undefined,
+      closeOwnedProcesses: async () => ({
+        verified: true,
+        originalProcessClosureVerified: true,
+        processClosureProof: 'inner-owned-processes-closed',
+      }),
+      cleanupWorkspace: async () => {
+        workspaceCleanupCalled = true;
+      },
+      cleanupRuntime: async () => {
+        runtimeCleanupCalled = true;
+      },
+    });
+    assert.equal(workspaceCleanupCalled, false);
+    assert.equal(runtimeCleanupCalled, false);
+    assert.equal(path.dirname(ownedWorkspace), workspaceRoot);
+    assert.equal(fs.existsSync(ownedWorkspace), true);
+    assert.equal(fs.existsSync(runtimeRoot), true);
+  } finally {
+    for (const [key, value] of Object.entries(previous)) {
+      if (value === undefined) {
+        delete process.env[key];
+      } else {
+        process.env[key] = value;
+      }
+    }
+  }
+});
+
 for (const [failedBody, recordedBody] of [
   [false, false],
   [true, false],

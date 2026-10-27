@@ -2,11 +2,12 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-/* global module, process, require */
+/* global console, module, process, require */
 const crypto = require('crypto');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const { removePathWithRetry } = require('./e2e-cli-path-cleanup');
 
 const BATCH_SCHEMA_VERSION = 1;
 const DEFAULT_SUITE_TIMEOUT_MS = 45 * 60 * 1000;
@@ -156,25 +157,14 @@ const SUITE_SCOPED_AZURE_ENV_KEYS = [
   'AzCode_ServiceConnectionClientID',
 ];
 
+const suiteIdsForPlatform = (platform) =>
+  Object.values(SUITE_REGISTRY)
+    .filter((suite) => suite.platforms.includes(platform))
+    .map((suite) => suite.id);
+
 const SUITE_ALIASES = Object.freeze({
-  linux: Object.freeze([
-    'unitTests',
-    'createWorkspaceBehavior',
-    'createWorkspaceCoreMatrix',
-    'createWorkspacePreviewMatrix',
-    'createWorkspaceCodeful',
-    'msnWeatherLifecycle',
-    'runAfterPersistenceLifecycle',
-  ]),
-  windows: Object.freeze([
-    'unitTests',
-    'createWorkspaceBehavior',
-    'createWorkspaceCoreMatrix',
-    'createWorkspacePreviewMatrix',
-    'createWorkspaceCodeful',
-    'msnWeatherLifecycle',
-    'runAfterPersistenceLifecycle',
-  ]),
+  linux: Object.freeze(suiteIdsForPlatform('linux')),
+  windows: Object.freeze(suiteIdsForPlatform('win32')),
 });
 
 const SUITE_CONTROL_ENV_PATTERNS = [
@@ -786,7 +776,7 @@ function verifySuiteRootContainment(context) {
   }
 }
 
-function cleanupSuiteTransientRoots(context) {
+async function cleanupSuiteTransientRoots(context) {
   const transientRoots = [
     context.tempRoot,
     context.runtimeRoot,
@@ -796,10 +786,10 @@ function cleanupSuiteTransientRoots(context) {
     context.lifecycleRoot,
   ];
   for (const root of transientRoots) {
-    fs.rmSync(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
-    if (fs.existsSync(root)) {
-      throw new Error(`[batch] cleanup/isolation breach: suite transient root still exists after cleanup: ${root}`);
-    }
+    await removePathWithRetry(root, {
+      onRetry: ({ attempts, code, elapsedMs }) =>
+        console.warn(`[batch] Retrying suite transient root cleanup attempt=${attempts} code=${code} elapsedMs=${elapsedMs}: ${root}`),
+    });
   }
 }
 

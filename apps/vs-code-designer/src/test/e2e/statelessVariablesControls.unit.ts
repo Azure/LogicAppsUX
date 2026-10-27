@@ -1048,8 +1048,8 @@ async function testRegisteredRunner(): Promise<void> {
     for (const [key, value] of Object.entries(external)) {
       assert.strictEqual(artifactEnv[key], value, `${key} must survive batch isolation so ADO can stage diagnostics`);
     }
-    assert.ok(!batch.SUITE_ALIASES.linux.includes('statelessVariablesLifecycle'));
-    assert.ok(!batch.SUITE_ALIASES.windows.includes('statelessVariablesLifecycle'), 'Canonical inventory must remain unchanged');
+    assert.ok(batch.SUITE_ALIASES.linux.includes('statelessVariablesLifecycle'));
+    assert.ok(batch.SUITE_ALIASES.windows.includes('statelessVariablesLifecycle'), 'Full inventory must include every supported suite');
   });
   check(() => {
     const context = batch.createSuiteContext({

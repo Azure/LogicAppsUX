@@ -333,11 +333,12 @@ jobs:
               LA_E2E_CLI_DIRECT_ARGS: ${{ parameters.cliArguments }}
               ${{ if eq(parameters.suiteId, 'workspaceMultiRoot') }}:
                 LA_E2E_CLI_MULTI_ROOT_ISOLATED: '1'
-                LA_E2E_CLI_MULTI_ROOT_DIAGNOSTIC_ONLY: '1'
                 LA_E2E_CLI_MULTI_ROOT_DIAGNOSTICS_PARENT: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/lifecycle/workspaceMultiRoot
               LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL: ${{ eq(parameters.suiteId, 'createWorkspaceCoreMatrix') }}
               LA_E2E_CLI_EXTENSIONS_DIR: $(Agent.TempDirectory)/test-resources/test-extensions
               LA_E2E_CLI_GENERATED_WORKSPACE_ARTIFACT_DIR: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/generated-workspaces/${{ parameters.suiteId }}
+              ${{ if eq(parameters.suiteId, 'workspaceArtifactRegeneration') }}:
+                LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/workspace-regeneration-${{ parameters.shortName }}
               LA_E2E_CLI_LIFECYCLE_ARTIFACT_ROOT: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/lifecycle/${{ parameters.suiteId }}
               LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: $(Agent.TempDirectory)/runtime-dependencies/${{ parameters.suiteId }}
               LA_E2E_CLI_SCREENSHOT_DIR: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/screenshots/cli/${{ parameters.suiteId }}
@@ -430,11 +431,12 @@ jobs:
               LA_E2E_CLI_DIRECT_ARGS: ${{ parameters.cliArguments }}
               ${{ if eq(parameters.suiteId, 'workspaceMultiRoot') }}:
                 LA_E2E_CLI_MULTI_ROOT_ISOLATED: '1'
-                LA_E2E_CLI_MULTI_ROOT_DIAGNOSTIC_ONLY: '1'
                 LA_E2E_CLI_MULTI_ROOT_DIAGNOSTICS_PARENT: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/lifecycle/workspaceMultiRoot
               LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL: ${{ eq(parameters.suiteId, 'createWorkspaceCoreMatrix') }}
               LA_E2E_CLI_EXTENSIONS_DIR: $(Agent.TempDirectory)/test-resources/test-extensions
               LA_E2E_CLI_GENERATED_WORKSPACE_ARTIFACT_DIR: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/generated-workspaces/${{ parameters.suiteId }}
+              ${{ if eq(parameters.suiteId, 'workspaceArtifactRegeneration') }}:
+                LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/workspace-regeneration-${{ parameters.shortName }}
               LA_E2E_CLI_LIFECYCLE_ARTIFACT_ROOT: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/lifecycle/${{ parameters.suiteId }}
               LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: $(Agent.TempDirectory)/runtime-dependencies/${{ parameters.suiteId }}
               LA_E2E_CLI_SCREENSHOT_DIR: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/screenshots/cli/${{ parameters.suiteId }}
@@ -481,11 +483,12 @@ jobs:
               LA_E2E_CLI_DIRECT_ARGS: ${{ parameters.cliArguments }}
               ${{ if eq(parameters.suiteId, 'workspaceMultiRoot') }}:
                 LA_E2E_CLI_MULTI_ROOT_ISOLATED: '1'
-                LA_E2E_CLI_MULTI_ROOT_DIAGNOSTIC_ONLY: '1'
                 LA_E2E_CLI_MULTI_ROOT_DIAGNOSTICS_PARENT: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\lifecycle\workspaceMultiRoot
               LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL: ${{ eq(parameters.suiteId, 'createWorkspaceCoreMatrix') }}
               LA_E2E_CLI_EXTENSIONS_DIR: $(Agent.TempDirectory)\test-resources\test-extensions
               LA_E2E_CLI_GENERATED_WORKSPACE_ARTIFACT_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\generated-workspaces\${{ parameters.suiteId }}
+              ${{ if eq(parameters.suiteId, 'workspaceArtifactRegeneration') }}:
+                LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\workspace-regeneration-${{ parameters.shortName }}
               LA_E2E_CLI_LIFECYCLE_ARTIFACT_ROOT: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\lifecycle\${{ parameters.suiteId }}
               LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: $(Agent.TempDirectory)\runtime-dependencies\${{ parameters.suiteId }}
               LA_E2E_CLI_SCREENSHOT_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\screenshots\cli\${{ parameters.suiteId }}
@@ -571,11 +574,12 @@ jobs:
               LA_E2E_CLI_DIRECT_ARGS: ${{ parameters.cliArguments }}
               ${{ if eq(parameters.suiteId, 'workspaceMultiRoot') }}:
                 LA_E2E_CLI_MULTI_ROOT_ISOLATED: '1'
-                LA_E2E_CLI_MULTI_ROOT_DIAGNOSTIC_ONLY: '1'
                 LA_E2E_CLI_MULTI_ROOT_DIAGNOSTICS_PARENT: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\lifecycle\workspaceMultiRoot
               LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL: ${{ eq(parameters.suiteId, 'createWorkspaceCoreMatrix') }}
               LA_E2E_CLI_EXTENSIONS_DIR: $(Agent.TempDirectory)\test-resources\test-extensions
               LA_E2E_CLI_GENERATED_WORKSPACE_ARTIFACT_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\generated-workspaces\${{ parameters.suiteId }}
+              ${{ if eq(parameters.suiteId, 'workspaceArtifactRegeneration') }}:
+                LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\workspace-regeneration-${{ parameters.shortName }}
               LA_E2E_CLI_LIFECYCLE_ARTIFACT_ROOT: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\lifecycle\${{ parameters.suiteId }}
               LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: $(Agent.TempDirectory)\runtime-dependencies\${{ parameters.suiteId }}
               LA_E2E_CLI_SCREENSHOT_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\screenshots\cli\${{ parameters.suiteId }}
@@ -833,7 +837,7 @@ jobs:
           if ($missingRequiredFiles.Count -gt 0) {
             throw "Required suite diagnostics were missing after staging available evidence: $($missingRequiredFiles -join ', ')"
           }
-          if ('${{ parameters.suiteId }}' -in @('httpTimeoutLifecycle', 'statelessVariablesLifecycle', 'runAfterPersistenceLifecycle', 'workspaceArtifactRegeneration', 'workspaceMultiRoot')) {
+          if ('${{ parameters.suiteId }}' -in @('msnWeatherLifecycle', 'httpTimeoutLifecycle', 'statelessVariablesLifecycle', 'runAfterPersistenceLifecycle', 'workspaceArtifactRegeneration', 'workspaceMultiRoot')) {
             $nativeResultPath = Join-Path $resultDestination '${{ parameters.suiteId }}.json'
             $nativeResult = Get-Content $nativeResultPath -Raw | ConvertFrom-Json
             if ($nativeResult.outcome -eq 'success') {
@@ -843,17 +847,6 @@ jobs:
                 "$resultDestination/${{ parameters.suiteId }}.terminal-result.json"
               if ($LASTEXITCODE -ne 0) {
                 throw 'Supplementary family native lifecycle or final cleanup evidence is incomplete.'
-              }
-            }
-          }
-          if ('${{ parameters.suiteId }}' -eq 'msnWeatherLifecycle') {
-            $nativeResultPath = Join-Path $resultDestination '${{ parameters.suiteId }}.json'
-            $nativeResult = Get-Content $nativeResultPath -Raw | ConvertFrom-Json
-            if ($nativeResult.outcome -eq 'success') {
-              node "$(Build.SourcesDirectory)/apps/vs-code-designer/scripts/e2e-cli-terminal.js" `
-                "$nativeResultPath" "$resultDestination/${{ parameters.suiteId }}.terminal-result.json"
-              if ($LASTEXITCODE -ne 0) {
-                throw 'Published MSN lifecycle evidence failed required terminal validation.'
               }
             }
           }
