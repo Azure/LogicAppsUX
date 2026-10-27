@@ -253,12 +253,10 @@ async function authorAndPersist(entry: CreatedWorkspace, azureFixture: ApprovedA
     });
     assertApprovedTargetBinding(entry, azureFixture);
     await captureRunAfterEvidence(session, 'run-after-persistence-author-saved', {
-      kind: 'designerPanel',
+      kind: 'designerCanvas',
       label: 'runAfterPersistenceAuthorSaved',
-      actionTitle: secondCompose.title,
-      nodeId: secondCompose.nodeId,
-      requiredText: ['Run after', firstCompose.title],
-      runAfter: { predecessorNodeId: firstCompose.nodeId, statuses: ['Failed'] },
+      requiredNodes: [[request.title], [firstCompose.title], [secondCompose.title]],
+      requiredNodeIds: nodeIds,
     });
   } finally {
     session.cdp.dispose();

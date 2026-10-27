@@ -231,6 +231,10 @@ observe the transient disabled/`Saving` state. The external-oracle path owns
 only the trusted semantic Save dispatch; it is successful only when the caller's
 disk/hash oracle passes. Keep `save()` for consumers that require and can
 observe the UI acknowledgement transition.
+Save can also close or replace the operation Settings panel. After the persisted
+oracle succeeds, bind the required post-save screenshot to the semantic surface
+that is actually visible (normally the exact Designer canvas and node IDs);
+never reuse a stale pre-save panel expectation.
 
 Bind every evidence screenshot to the already-owned semantic CDP target and
 frame. A tab title, workbench shell, blank webview or unrelated visible text is

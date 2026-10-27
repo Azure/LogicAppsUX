@@ -197,6 +197,11 @@ function testLifecycleUsesProductWizardAndFreshHostContract(): void {
   assert.match(source, /readRunAfterPersistenceWorkflow/);
   assert.match(source, /session\.actions\.saveWithExternalOracle\(\)/);
   assert.doesNotMatch(source, /session\.actions\.save\(\)/);
+  assert.match(
+    source,
+    /captureRunAfterEvidence\(session, 'run-after-persistence-author-saved', \{\s*kind: 'designerCanvas',[\s\S]*?requiredNodeIds: nodeIds/,
+    'Post-save evidence must rebind to the visible Designer canvas rather than the Settings panel closed by Save'
+  );
   assert.match(source, /readApprovedAzureConnectorFixture/);
   assert.match(source, /readApprovedExistingResourceGroup/);
   assert.match(source, /installApprovedAzureFixture/);
