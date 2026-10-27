@@ -116,7 +116,7 @@ async function authorAndPersist(entry: CreatedWorkspace, azureFixture: ApprovedA
         });
       },
     });
-    await normalizeRunAfterCanvas(session, 'Request insertion');
+    await normalizeRunAfterCanvas(session, 'Request insertion', [request.nodeId]);
     await captureRunAfterEvidence(session, 'run-after-persistence-author-request-inserted', {
       kind: 'designerCanvas',
       label: 'runAfterPersistenceAuthorRequestInserted',
@@ -182,7 +182,7 @@ async function authorAndPersist(entry: CreatedWorkspace, azureFixture: ApprovedA
     await session.actions.closePanel();
 
     const nodeIds = [request.nodeId, firstCompose.nodeId, secondCompose.nodeId];
-    await normalizeRunAfterCanvas(session, 'complete authoring canvas');
+    await normalizeRunAfterCanvas(session, 'complete authoring canvas', nodeIds);
     await captureRunAfterEvidence(session, 'run-after-persistence-author-canvas', {
       kind: 'designerCanvas',
       label: 'runAfterPersistenceAuthorCanvas',
@@ -281,7 +281,11 @@ async function reopenAndVerify(entry: CreatedWorkspace, azureFixture: ApprovedAz
 
   const session = await openExactDesignerV2(entry, deadline, 'Run After reopen Designer V2', azureFixture, ['Compose', 'Compose 2']);
   try {
-    await normalizeRunAfterCanvas(session, 'fresh reopen canvas');
+    await normalizeRunAfterCanvas(session, 'fresh reopen canvas', [
+      handoff.identity.requestTriggerId,
+      handoff.identity.firstComposeId,
+      handoff.identity.secondComposeId,
+    ]);
     await captureRunAfterEvidence(session, 'run-after-persistence-reopen-canvas', {
       kind: 'designerCanvas',
       label: 'runAfterPersistenceReopenCanvas',
@@ -371,8 +375,12 @@ function insertionEvidence(
   };
 }
 
-async function normalizeRunAfterCanvas(session: RunAfterDesignerSession, description: string): Promise<void> {
-  await helpers.normalizeDesignerCanvasViewport(session.cdp, session.contextId, `Run After persistence ${description}`);
+async function normalizeRunAfterCanvas(
+  session: RunAfterDesignerSession,
+  description: string,
+  requiredNodeIds: string[] = []
+): Promise<void> {
+  await helpers.normalizeDesignerCanvasViewport(session.cdp, session.contextId, `Run After persistence ${description}`, requiredNodeIds);
 }
 
 async function captureRunAfterEvidence(

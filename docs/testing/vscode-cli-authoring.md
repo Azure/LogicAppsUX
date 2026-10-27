@@ -216,7 +216,10 @@ the section open, the exact predecessor expansion, each required checkbox
 transition, and the final state. A final aggregate canvas screenshot supplements
 these intermediate checkpoints; it never replaces them. Before a canvas
 capture, call the shared `normalizeDesignerCanvasViewport` seam so Output,
-Terminal, or responsive details panels cannot clip required nodes.
+Terminal, or responsive details panels cannot clip required nodes. That seam
+uses trusted CDP input for Fit view and waits for stable in-canvas node geometry;
+do not replace it with `HTMLElement.click()`, which can leave the React Flow
+transform unchanged while logging a false click success.
 
 Bind every evidence screenshot to the already-owned semantic CDP target and
 frame. A tab title, workbench shell, blank webview or unrelated visible text is

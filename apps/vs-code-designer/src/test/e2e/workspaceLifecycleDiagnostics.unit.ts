@@ -119,6 +119,14 @@ function loadNormalizeViewportHarness() {
   vm.runInNewContext(implementation, {
     exports: exported,
     console: { log: (line: string) => logs.push(line) },
+    boundedCdp: (cdp: unknown) => cdp,
+    clickPoint: async (
+      cdp: { send: (method: string, params: Record<string, unknown>) => Promise<void> },
+      point: { x: number; y: number }
+    ) => {
+      await cdp.send('Input.dispatchMouseEvent', { type: 'mousePressed', ...point });
+      await cdp.send('Input.dispatchMouseEvent', { type: 'mouseReleased', ...point });
+    },
     setTimeout: (callback: () => void) => {
       callback();
       return 0;
@@ -419,6 +427,16 @@ async function testCopilotChatCleanupDoesNotRunDuringPickerEvidenceCapture(): Pr
 
 async function testCanvasViewportNormalizationUsesStructuralDiagnosticsAndOwnedControls(): Promise<void> {
   const { exported, logs } = loadNormalizeViewportHarness();
+  const normalizeSource = source.statements
+    .find((node): node is ts.FunctionDeclaration => ts.isFunctionDeclaration(node) && node.name?.text === 'normalizeDesignerCanvasViewport')
+    ?.getText(source);
+  assert.ok(normalizeSource);
+  assert.match(normalizeSource, /await clickPoint\(bounded, state\.fitButtonPoint\)/, 'Fit must use trusted CDP input');
+  assert.match(normalizeSource, /const bounded = boundedCdp\(cdp, normalizationDeadline\)/, 'Fit must retain one bounded CDP budget');
+  assert.match(normalizeSource, /missingExpectedNodeIds/, 'Fit must wait for every caller-required node identity');
+  assert.match(normalizeSource, /geometry === previousGeometry/, 'Fit must require consecutive stable geometry observations');
+  assert.doesNotMatch(normalizeSource, /fitButton\.click\(\)/, 'Fit must not use a synthetic DOM click');
+  assert.match(normalizeSource, /settledObservations >= 3/, 'Fit must wait for stable in-canvas node geometry');
   const dom = new JSDOM(
     `
     <html><body>
@@ -458,6 +476,11 @@ async function testCanvasViewportNormalizationUsesStructuralDiagnosticsAndOwnedC
 
   const cdp = {
     evaluate: async (_contextId: number | undefined, expression: string) => dom.window.eval(expression) as Record<string, unknown>,
+    send: async (_method: string, params: Record<string, unknown>) => {
+      if (params.type === 'mouseReleased') {
+        fit.click();
+      }
+    },
   };
   await exported.normalizeDesignerCanvasViewport(cdp, 1, 'unit normalization');
 
@@ -490,6 +513,7 @@ async function testCanvasViewportNormalizationUsesStructuralDiagnosticsAndOwnedC
   await exported.normalizeDesignerCanvasViewport(
     {
       evaluate: async (_contextId: number | undefined, expression: string) => unownedDom.window.eval(expression) as Record<string, unknown>,
+      send: async () => undefined,
     },
     1,
     'unit unowned fit'
@@ -522,6 +546,7 @@ async function testCanvasViewportNormalizationUsesStructuralDiagnosticsAndOwnedC
     {
       evaluate: async (_contextId: number | undefined, expression: string) =>
         offscreenDom.window.eval(expression) as Record<string, unknown>,
+      send: async () => undefined,
     },
     1,
     'unit offscreen fit'

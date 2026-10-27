@@ -167,6 +167,12 @@ function testLifecycleUsesProductWizardAndFreshHostContract(): void {
     'Run After ordered semantic evidence'
   );
   assert.match(source, /workspaceLifecycleEvidenceHelpers as helpers/);
+  assert.match(source, /normalizeRunAfterCanvas\(session, 'Request insertion', \[request\.nodeId\]\)/);
+  assert.match(source, /normalizeRunAfterCanvas\(session, 'complete authoring canvas', nodeIds\)/);
+  assert.match(
+    source,
+    /normalizeRunAfterCanvas\(session, 'fresh reopen canvas', \[\s*handoff\.identity\.requestTriggerId,\s*handoff\.identity\.firstComposeId,\s*handoff\.identity\.secondComposeId/
+  );
   assert.strictEqual(
     (source.match(/normalizeRunAfterCanvas\(/g) ?? []).length,
     5,
