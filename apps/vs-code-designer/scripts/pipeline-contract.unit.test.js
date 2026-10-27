@@ -56,8 +56,9 @@ const CANONICAL_FULL_GATE_SUITES = [
     'linuxRunAfterPersistenceResult',
     'linux-run-after-persistence',
     'runAfterPersistenceLifecycle',
-    4,
+    0,
     false,
+    true,
   ],
   ['windows_unit_tests', 'windowsUnitTestsResult', 'windows-unit-tests', 'unitTests', 1, false],
   [
@@ -98,16 +99,18 @@ const CANONICAL_FULL_GATE_SUITES = [
     'windowsRunAfterPersistenceResult',
     'windows-run-after-persistence',
     'runAfterPersistenceLifecycle',
-    4,
+    0,
     false,
+    true,
   ],
-].map(([job, variable, artifactSuffix, suite, expectedMochaCompletions, subtractMatrixFooter]) => ({
+].map(([job, variable, artifactSuffix, suite, expectedMochaCompletions, subtractMatrixFooter, terminalReceipt = false]) => ({
   job,
   variable,
   artifact: `vscode-e2e-cli-diagnostics-${artifactSuffix}`,
   suite,
   expectedMochaCompletions,
   subtractMatrixFooter,
+  terminalReceipt,
 }));
 
 testAzureToolsWrapperContract();
@@ -298,23 +301,64 @@ function testFullRollupGateScriptRejectsNonExecutedResults() {
   assert.notStrictEqual(failedRunAfterJob.status, 0);
   assert.match(failedRunAfterJob.output, /Canonical suite job did not succeed: windows_run_after_persistence result=Failed/);
 
-  for (const job of ['linux_run_after_persistence', 'windows_run_after_persistence']) {
-    const insufficientRunAfterPhases = runFullRollupGateFixture(script, {
-      scenario: `${job}-three-mocha-completions`,
-      baseContext: admittedContext,
-      logOverride: {
-        job,
-        text: `${Array.from({ length: 3 }, (_, index) => `phase ${index + 1} runAfterPersistenceLifecycle\n  12 passing (1s)`).join(
-          '\n'
-        )}\n`,
+  const missingRunAfterTerminal = runFullRollupGateFixture(script, {
+    scenario: 'windows-run-after-missing-terminal',
+    baseContext: admittedContext,
+    omit: {
+      job: 'windows_run_after_persistence',
+      file: 'runAfterPersistenceLifecycle.terminal-result.json',
+    },
+  });
+  assert.notStrictEqual(missingRunAfterTerminal.status, 0);
+  assert.match(missingRunAfterTerminal.output, /Missing required full-rollup artifact for windows_run_after_persistence/);
+
+  const missingRunAfterPhase = runFullRollupGateFixture(script, {
+    scenario: 'linux-run-after-missing-phase',
+    baseContext: admittedContext,
+    terminalMutation: {
+      job: 'linux_run_after_persistence',
+      mutate: (terminal) => {
+        const missing = terminal.expectedPhaseIds.at(-1);
+        terminal.observedPhaseIds.pop();
+        terminal.phaseResults.pop();
+        terminal.missingPhaseIds = [missing];
+        terminal.phaseCompleteness = false;
+        terminal.complete = false;
       },
-    });
-    assert.notStrictEqual(insufficientRunAfterPhases.status, 0);
-    assert.match(
-      insufficientRunAfterPhases.output,
-      new RegExp(`Suite log does not contain enough positive real Mocha execution evidence: ${job} expected=4 actual=3`)
-    );
-  }
+    },
+  });
+  assert.notStrictEqual(missingRunAfterPhase.status, 0);
+  assert.match(missingRunAfterPhase.output, /Suite terminal receipt does not prove complete ordered phases and cleanup/);
+
+  const incompleteRunAfterPhase = runFullRollupGateFixture(script, {
+    scenario: 'windows-run-after-incomplete-phase',
+    baseContext: admittedContext,
+    terminalMutation: {
+      job: 'windows_run_after_persistence',
+      mutate: (terminal) => {
+        terminal.phaseResults[2].complete = false;
+        terminal.phaseResults[2].cleanupVerified = false;
+      },
+    },
+  });
+  assert.notStrictEqual(incompleteRunAfterPhase.status, 0);
+  assert.match(incompleteRunAfterPhase.output, /Suite terminal receipt does not prove complete ordered phases and cleanup/);
+
+  const duplicateRunAfterPhase = runFullRollupGateFixture(script, {
+    scenario: 'linux-run-after-duplicate-phase',
+    baseContext: admittedContext,
+    terminalMutation: {
+      job: 'linux_run_after_persistence',
+      mutate: (terminal) => {
+        const duplicate = terminal.expectedPhaseIds[1];
+        terminal.observedPhaseIds.splice(2, 0, duplicate);
+        terminal.phaseResults.splice(2, 0, structuredClone(terminal.phaseResults[1]));
+        terminal.duplicatePhaseIds = [duplicate];
+      },
+    },
+  });
+  assert.notStrictEqual(duplicateRunAfterPhase.status, 0);
+  assert.match(duplicateRunAfterPhase.output, /Suite terminal receipt does not prove complete ordered phases and cleanup/);
 
   const identityMismatch = runFullRollupGateFixture(script, {
     scenario: 'identity-mismatch',
@@ -351,14 +395,15 @@ function runFullRollupGateFixture(script, options = {}) {
       const logRoot = path.join(root, 'log');
       fs.mkdirSync(resultRoot, { recursive: true });
       fs.mkdirSync(logRoot, { recursive: true });
-      const result = { outcome: 'success', total: 12, passing: 12, failing: 0, pending: 0, ...(options.resultOverride ?? {}) };
+      const passing = suite.terminalReceipt ? 1 : 12;
+      const result = { outcome: 'success', total: passing, passing, failing: 0, pending: 0, ...(options.resultOverride ?? {}) };
       const context = { ...baseContext };
       if (options.contextOverride?.job === suite.job) {
         context[options.contextOverride.field] = options.contextOverride.value;
       }
       const files = new Map([
         [`${suite.suite}.json`, `${JSON.stringify(result)}\n`],
-        [`${suite.suite}.junit.xml`, '<testsuite tests="12" failures="0" skipped="0" />\n'],
+        [`${suite.suite}.junit.xml`, `<testsuite tests="${passing}" failures="0" skipped="0" />\n`],
         [`${suite.suite}.summary.md`, '# summary\n'],
         [`admission-context-${suite.suite}.json`, `${JSON.stringify(context)}\n`],
       ]);
@@ -367,6 +412,42 @@ function runFullRollupGateFixture(script, options = {}) {
           continue;
         }
         fs.writeFileSync(path.join(resultRoot, file), content);
+      }
+      if (suite.terminalReceipt) {
+        const phases = [...SUITE_REGISTRY[suite.suite].expectedPhases];
+        const terminal = {
+          suiteId: suite.suite,
+          complete: true,
+          lifecycleFinalized: true,
+          exitCode: 0,
+          signal: null,
+          cleanupVerified: true,
+          originalProcessClosureVerified: true,
+          processClosureProof: 'retained-original-identities',
+          diagnosticsError: '',
+          phaseCompleteness: true,
+          expectedPhaseIds: phases,
+          observedPhaseIds: [...phases],
+          missingPhaseIds: [],
+          unexpectedPhaseIds: [],
+          duplicatePhaseIds: [],
+          blockedPhaseIds: [],
+          phaseResults: phases.map((phaseId) => ({
+            phaseId,
+            complete: true,
+            exitCode: 0,
+            signal: null,
+            cleanupVerified: true,
+            diagnosticsError: '',
+          })),
+        };
+        if (options.terminalMutation?.job === suite.job) {
+          options.terminalMutation.mutate(terminal);
+        }
+        const terminalFile = `${suite.suite}.terminal-result.json`;
+        if (options.omit?.job !== suite.job || options.omit.file !== terminalFile) {
+          fs.writeFileSync(path.join(resultRoot, terminalFile), `${JSON.stringify(terminal)}\n`);
+        }
       }
       const logText =
         options.logOverride?.job === suite.job
@@ -378,13 +459,16 @@ function runFullRollupGateFixture(script, options = {}) {
       fs.writeFileSync(path.join(logRoot, `${suite.suite}.log`), options.logTransform ? options.logTransform(logText) : logText);
     }
 
-    let preparedScript = script.replaceAll('$(Pipeline.Workspace)', pipelineWorkspace);
+    let preparedScript = script.replaceAll('$(Pipeline.Workspace)', pipelineWorkspace).replaceAll('$(Build.SourcesDirectory)', repoRoot);
     for (const suite of suites) {
       const result = options.jobResultOverride?.job === suite.job ? options.jobResultOverride.result : 'Succeeded';
       preparedScript = preparedScript.replaceAll(`$(${suite.variable})`, result);
     }
 
     function buildRealMochaEvidenceLog({ suiteId, phaseCount }) {
+      if (suiteId === 'runAfterPersistenceLifecycle') {
+        return '[runAfterPersistenceLifecycle] aggregate lifecycle completed; authoritative phase evidence is in the terminal receipt\n';
+      }
       const lines = [];
       for (let index = 0; index < phaseCount; index += 1) {
         lines.push(`phase ${index + 1} ${suiteId}`);
@@ -1331,7 +1415,7 @@ function testFullRollupGateCanonicalInventoryContract() {
 
   const validationRecords = Array.from(
     script.matchAll(
-      /@\{ job = '([^']+)'; result = '\$\(([^)]+)\)'; artifact = '([^']+)'; suite = '([^']+)'; expectedMochaCompletions = (\d+); subtractMatrixFooter = \$(true|false) \}/g
+      /@\{ job = '([^']+)'; result = '\$\(([^)]+)\)'; artifact = '([^']+)'; suite = '([^']+)'; expectedMochaCompletions = (\d+); subtractMatrixFooter = \$(true|false)(?:; terminalReceipt = \$(true|false))? \}/g
     ),
     (match) => ({
       job: match[1],
@@ -1340,6 +1424,7 @@ function testFullRollupGateCanonicalInventoryContract() {
       suite: match[4],
       expectedMochaCompletions: Number(match[5]),
       subtractMatrixFooter: match[6] === 'true',
+      terminalReceipt: match[7] === 'true',
     })
   );
   assert.deepStrictEqual(

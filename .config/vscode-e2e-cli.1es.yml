@@ -801,14 +801,14 @@ extends:
                         @{ job = 'linux_create_workspace_preview_matrix'; result = '$(linuxCreateWorkspacePreviewMatrixResult)'; artifact = 'vscode-e2e-cli-diagnostics-linux-create-workspace-preview-matrix'; suite = 'createWorkspacePreviewMatrix'; expectedMochaCompletions = 6; subtractMatrixFooter = $true },
                         @{ job = 'linux_create_workspace_codeful'; result = '$(linuxCreateWorkspaceCodefulResult)'; artifact = 'vscode-e2e-cli-diagnostics-linux-create-workspace-codeful'; suite = 'createWorkspaceCodeful'; expectedMochaCompletions = 2; subtractMatrixFooter = $true },
                         @{ job = 'linux_msn_weather_lifecycle'; result = '$(linuxMsnWeatherLifecycleResult)'; artifact = 'vscode-e2e-cli-diagnostics-linux-msn-weather-lifecycle'; suite = 'msnWeatherLifecycle'; expectedMochaCompletions = 3; subtractMatrixFooter = $false },
-                        @{ job = 'linux_run_after_persistence'; result = '$(linuxRunAfterPersistenceResult)'; artifact = 'vscode-e2e-cli-diagnostics-linux-run-after-persistence'; suite = 'runAfterPersistenceLifecycle'; expectedMochaCompletions = 4; subtractMatrixFooter = $false },
+                        @{ job = 'linux_run_after_persistence'; result = '$(linuxRunAfterPersistenceResult)'; artifact = 'vscode-e2e-cli-diagnostics-linux-run-after-persistence'; suite = 'runAfterPersistenceLifecycle'; expectedMochaCompletions = 0; subtractMatrixFooter = $false; terminalReceipt = $true },
                         @{ job = 'windows_unit_tests'; result = '$(windowsUnitTestsResult)'; artifact = 'vscode-e2e-cli-diagnostics-windows-unit-tests'; suite = 'unitTests'; expectedMochaCompletions = 1; subtractMatrixFooter = $false },
                         @{ job = 'windows_create_workspace_behavior'; result = '$(windowsCreateWorkspaceBehaviorResult)'; artifact = 'vscode-e2e-cli-diagnostics-windows-create-workspace-behavior'; suite = 'createWorkspaceBehavior'; expectedMochaCompletions = 1; subtractMatrixFooter = $false },
                         @{ job = 'windows_create_workspace_core_matrix'; result = '$(windowsCreateWorkspaceCoreMatrixResult)'; artifact = 'vscode-e2e-cli-diagnostics-windows-create-workspace-core-matrix'; suite = 'createWorkspaceCoreMatrix'; expectedMochaCompletions = 6; subtractMatrixFooter = $true },
                         @{ job = 'windows_create_workspace_preview_matrix'; result = '$(windowsCreateWorkspacePreviewMatrixResult)'; artifact = 'vscode-e2e-cli-diagnostics-windows-create-workspace-preview-matrix'; suite = 'createWorkspacePreviewMatrix'; expectedMochaCompletions = 6; subtractMatrixFooter = $true },
                         @{ job = 'windows_create_workspace_codeful'; result = '$(windowsCreateWorkspaceCodefulResult)'; artifact = 'vscode-e2e-cli-diagnostics-windows-create-workspace-codeful'; suite = 'createWorkspaceCodeful'; expectedMochaCompletions = 2; subtractMatrixFooter = $true },
                         @{ job = 'windows_msn_weather_lifecycle'; result = '$(windowsMsnWeatherLifecycleResult)'; artifact = 'vscode-e2e-cli-diagnostics-windows-msn-weather-lifecycle'; suite = 'msnWeatherLifecycle'; expectedMochaCompletions = 3; subtractMatrixFooter = $false },
-                        @{ job = 'windows_run_after_persistence'; result = '$(windowsRunAfterPersistenceResult)'; artifact = 'vscode-e2e-cli-diagnostics-windows-run-after-persistence'; suite = 'runAfterPersistenceLifecycle'; expectedMochaCompletions = 4; subtractMatrixFooter = $false }
+                        @{ job = 'windows_run_after_persistence'; result = '$(windowsRunAfterPersistenceResult)'; artifact = 'vscode-e2e-cli-diagnostics-windows-run-after-persistence'; suite = 'runAfterPersistenceLifecycle'; expectedMochaCompletions = 0; subtractMatrixFooter = $false; terminalReceipt = $true }
                       )
                       $identityFields = @(
                         'producerDefinitionId',
@@ -835,7 +835,12 @@ extends:
                         $summaryPath = Join-Path $resultRoot "$($suite.suite).summary.md"
                         $contextPath = Join-Path $resultRoot "admission-context-$($suite.suite).json"
                         $logPath = Join-Path $logRoot "$($suite.suite).log"
-                        foreach ($required in @($resultPath, $junitPath, $summaryPath, $contextPath, $logPath)) {
+                        $terminalPath = Join-Path $resultRoot "$($suite.suite).terminal-result.json"
+                        $requiredFiles = @($resultPath, $junitPath, $summaryPath, $contextPath, $logPath)
+                        if ($suite.terminalReceipt) {
+                          $requiredFiles += $terminalPath
+                        }
+                        foreach ($required in $requiredFiles) {
                           if (-not (Test-Path $required)) {
                             throw "Missing required full-rollup artifact for $($suite.job): $required"
                           }
@@ -848,19 +853,27 @@ extends:
                         if ($result.outcome -ne 'success' -or $passing -le 0 -or $failing -ne 0 -or $pending -ne 0 -or $total -ne $passing) {
                           throw "Suite result is not a successful executed test run: $($suite.job) outcome=$($result.outcome) total=$total passing=$passing failing=$failing pending=$pending"
                         }
-                        $logText = Get-Content $logPath -Raw
-                        $ansiEscape = "$([char]27)\[[0-?]*[ -/]*[@-~]"
-                        $normalizedLogText = ($logText -replace "`r`n?", "`n") -replace $ansiEscape, ''
-                        $mochaCompletions = [regex]::Matches($normalizedLogText, '(?m)^[ \t]*(\d+) passing(?: \([^)]+\))?[ \t]*$')
-                        $realMochaCompletionCounts = @($mochaCompletions | ForEach-Object { [int]$_.Groups[1].Value })
-                        if ($suite.subtractMatrixFooter -and $realMochaCompletionCounts.Count -gt 0) {
-                          $lastCompletion = $mochaCompletions[$mochaCompletions.Count - 1].Value.Trim()
-                          if ($normalizedLogText.TrimEnd().EndsWith($lastCompletion)) {
-                            $realMochaCompletionCounts = @($realMochaCompletionCounts | Select-Object -First ($realMochaCompletionCounts.Count - 1))
+                        if ($suite.terminalReceipt) {
+                          node "$(Build.SourcesDirectory)/apps/vs-code-designer/scripts/family-lifecycle-terminal.js" `
+                            "$($suite.suite)" "$resultPath" "$terminalPath"
+                          if ($LASTEXITCODE -ne 0) {
+                            throw "Suite terminal receipt does not prove complete ordered phases and cleanup: $($suite.job)"
                           }
-                        }
-                        if ($realMochaCompletionCounts.Count -lt [int]$suite.expectedMochaCompletions -or @($realMochaCompletionCounts | Where-Object { $_ -le 0 }).Count -gt 0) {
-                          throw "Suite log does not contain enough positive real Mocha execution evidence: $($suite.job) expected=$($suite.expectedMochaCompletions) actual=$($realMochaCompletionCounts.Count) counts=$($realMochaCompletionCounts -join ',')"
+                        } else {
+                          $logText = Get-Content $logPath -Raw
+                          $ansiEscape = "$([char]27)\[[0-?]*[ -/]*[@-~]"
+                          $normalizedLogText = ($logText -replace "`r`n?", "`n") -replace $ansiEscape, ''
+                          $mochaCompletions = [regex]::Matches($normalizedLogText, '(?m)^[ \t]*(\d+) passing(?: \([^)]+\))?[ \t]*$')
+                          $realMochaCompletionCounts = @($mochaCompletions | ForEach-Object { [int]$_.Groups[1].Value })
+                          if ($suite.subtractMatrixFooter -and $realMochaCompletionCounts.Count -gt 0) {
+                            $lastCompletion = $mochaCompletions[$mochaCompletions.Count - 1].Value.Trim()
+                            if ($normalizedLogText.TrimEnd().EndsWith($lastCompletion)) {
+                              $realMochaCompletionCounts = @($realMochaCompletionCounts | Select-Object -First ($realMochaCompletionCounts.Count - 1))
+                            }
+                          }
+                          if ($realMochaCompletionCounts.Count -lt [int]$suite.expectedMochaCompletions -or @($realMochaCompletionCounts | Where-Object { $_ -le 0 }).Count -gt 0) {
+                            throw "Suite log does not contain enough positive real Mocha execution evidence: $($suite.job) expected=$($suite.expectedMochaCompletions) actual=$($realMochaCompletionCounts.Count) counts=$($realMochaCompletionCounts -join ',')"
+                          }
                         }
                         $context = Get-Content $contextPath -Raw | ConvertFrom-Json
                         foreach ($field in $identityFields) {
