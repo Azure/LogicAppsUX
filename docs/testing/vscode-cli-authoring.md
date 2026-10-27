@@ -226,7 +226,12 @@ transform unchanged while logging a false click success.
 For fresh-host evidence, persisted workflow action IDs are authoritative.
 Generated display titles can differ from insertion-time assumptions (for
 example, `Compose_1` renders as **Compose 1**, not **Compose 2**), so do not
-guess titles when exact node IDs are available.
+guess titles when exact node IDs are available. Reopened workflows should use
+`ProvenDesignerCdpActions.waitForPersistedDesignerReady()` to establish a
+stable, non-busy canvas before viewport normalization. Do not require every
+persisted ID before normalization because React Flow can virtualize offscreen
+nodes; normalization must prove those exact IDs afterward. The MSN text
+readiness path remains appropriate for a new empty workflow.
 
 When a lifecycle has a strict persisted-file semantic oracle, use
 `ProvenDesignerCdpActions.saveWithExternalOracle()` and immediately run that

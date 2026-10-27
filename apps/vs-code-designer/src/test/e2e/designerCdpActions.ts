@@ -1570,6 +1570,51 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
     );
   }
 
+  async waitForPersistedDesignerReady(): Promise<void> {
+    const readinessDeadline = Math.min(this.deadline, Date.now() + 180000);
+    let stableObservations = 0;
+    let lastState: Record<string, unknown> | undefined;
+    let lastError: unknown;
+    while (Date.now() < readinessDeadline) {
+      this.assertActive();
+      try {
+        lastState = await this.cdp.evaluate<Record<string, unknown>>(
+          this.contextId,
+          `(() => {
+            ${visibleDom}
+            ${provenSaveButtonDom}
+            const save = provenSaveButtonState();
+            const canvases = Array.from(document.querySelectorAll('.react-flow')).filter(visible);
+            const panes = canvases.length === 1 ? Array.from(canvases[0].querySelectorAll('.react-flow__pane')).filter(visible) : [];
+            const nodes = canvases.length === 1 ? Array.from(canvases[0].querySelectorAll('.react-flow__node, [id^="msla-node-"]')).filter(visible) : [];
+            return {
+              ready: !!save && !save.busy && canvases.length === 1 && panes.length === 1 && nodes.length > 0,
+              saveBusy: save?.busy ?? null,
+              saveDisabled: save?.disabled ?? null,
+              canvasCount: canvases.length,
+              paneCount: panes.length,
+              visibleNodeCount: nodes.length,
+            };
+          })()`,
+          { timeoutMs: Math.min(5000, Math.max(1, readinessDeadline - Date.now())) }
+        );
+        stableObservations = lastState.ready === true ? stableObservations + 1 : 0;
+        if (stableObservations >= 3) {
+          return;
+        }
+      } catch (error) {
+        lastError = error;
+        stableObservations = 0;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    assert.fail(
+      `Timed out waiting for stable persisted Designer canvas readiness. Last state: ${JSON.stringify(lastState)}${
+        lastError ? `. Last error: ${String(lastError)}` : ''
+      }`
+    );
+  }
+
   override async addRequestTrigger(hooks: DesignerInsertionEvidenceHooks = {}): Promise<void> {
     const selectors = [
       '[data-testid="card-Add a trigger"]',

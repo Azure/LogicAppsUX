@@ -50,6 +50,7 @@ async function main(): Promise<void> {
   await testExactNodeIdentity();
   await testDeleteWaitsForExactClickedNode();
   await testProvenAdapterCancellation();
+  await testPersistedDesignerReadiness();
   await testStableActionInsertionAcknowledgement();
   await testSettingsTabPaths();
   await testRunAfterToggleOrderingAndRerenderReacquisition();
@@ -81,6 +82,70 @@ async function testProvenAdapterCancellation(): Promise<void> {
   );
   await assert.rejects(() => actions.waitForDesignerReady(), /scenario cancelled/);
   assert.strictEqual(evaluateCalls, 0, 'Cancelled scenarios must not issue delegated MSN CDP requests');
+}
+
+async function testPersistedDesignerReadiness(): Promise<void> {
+  const dom = new JSDOM(
+    `<html><body>
+      <div role="toolbar"><button id="save" aria-label="Saving" aria-busy="true" disabled>Saving</button></div>
+      <div class="react-flow" data-visible="true">
+        <div class="react-flow__pane" data-visible="true"></div>
+        <div id="msla-node-Compose" class="react-flow__node" data-visible="true">Compose</div>
+        <div id="msla-node-Request" class="react-flow__node" data-offscreen="true">Request</div>
+      </div>
+    </body></html>`,
+    { runScripts: 'outside-only' }
+  );
+  const { document, HTMLElement } = dom.window;
+  Object.defineProperty(HTMLElement.prototype, 'getBoundingClientRect', {
+    configurable: true,
+    value(this: { getAttribute: (name: string) => string | null }) {
+      return this.getAttribute('data-offscreen') === 'true'
+        ? { left: 0, top: 2000, right: 100, bottom: 2100, width: 100, height: 100 }
+        : { left: 0, top: 0, right: 100, bottom: 100, width: 100, height: 100 };
+    },
+  });
+  Object.defineProperty(HTMLElement.prototype, 'getClientRects', {
+    configurable: true,
+    value() {
+      return [this.getBoundingClientRect()];
+    },
+  });
+  let evaluations = 0;
+  const actions = new ProvenDesignerCdpActions(
+    {
+      evaluate: async <T>(_contextId: number | undefined, expression: string) => {
+        evaluations++;
+        if (evaluations === 1) {
+          throw new Error('transient execution context replacement');
+        }
+        if (evaluations === 3) {
+          const save = document.getElementById('save') as {
+            setAttribute: (name: string, value: string) => void;
+            removeAttribute: (name: string) => void;
+            textContent: string;
+          } | null;
+          save?.setAttribute('aria-label', 'Save');
+          save?.setAttribute('aria-busy', 'false');
+          save?.removeAttribute('disabled');
+          if (save) {
+            save.textContent = 'Save';
+          }
+        }
+        return dom.window.eval(expression) as T;
+      },
+      send: async () => undefined,
+    },
+    1,
+    Date.now() + 5000
+  );
+
+  await actions.waitForPersistedDesignerReady();
+  assert.ok(
+    evaluations >= 5,
+    'Persisted readiness must retry transient evaluation errors, reject busy Save, and require three stable ready observations'
+  );
+  dom.window.close();
 }
 
 async function testStableActionInsertionAcknowledgement(): Promise<void> {
@@ -921,6 +986,15 @@ function testParameterAndSaveParity(): void {
   assert.doesNotMatch(externalOracleSave, /this\.save\(\)/);
   assert.doesNotMatch(externalOracleSave, /this\.waitForCondition\(/);
   assert.doesNotMatch(externalOracleSave, /Designer Save acknowledgement|Designer Save completion/);
+
+  const persistedReady = getMethod('ProvenDesignerCdpActions', 'waitForPersistedDesignerReady');
+  assert.match(persistedReady, /provenSaveButtonState\(\)/);
+  assert.match(persistedReady, /!save\.busy/);
+  assert.match(persistedReady, /stableObservations >= 3/);
+  assert.match(persistedReady, /catch \(error\)/);
+  assert.match(persistedReady, /stableObservations = 0/);
+  assert.doesNotMatch(persistedReady, /exactVisibleElementById/);
+  assert.doesNotMatch(persistedReady, /waitForText/);
 }
 
 function testProvenSaveButtonDom(): void {

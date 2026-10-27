@@ -277,7 +277,11 @@ async function reopenAndVerify(entry: CreatedWorkspace, azureFixture: ApprovedAz
   const before = await readRunAfterPersistenceWorkflow(entry.workflowJsonPath, handoff.identity);
   assert.strictEqual(before.sha256, handoff.savedSha256, 'Fresh host must start from the exact post-save workflow hash');
 
-  const session = await openExactDesignerV2(entry, deadline, 'Run After reopen Designer V2', azureFixture);
+  const session = await openExactDesignerV2(entry, deadline, 'Run After reopen Designer V2', azureFixture, [
+    handoff.identity.requestTriggerId,
+    handoff.identity.firstComposeId,
+    handoff.identity.secondComposeId,
+  ]);
   try {
     await normalizeRunAfterCanvas(session, 'fresh reopen canvas', [
       handoff.identity.requestTriggerId,
@@ -397,7 +401,7 @@ async function openExactDesignerV2(
   deadline: number,
   targetName: string,
   azureFixture: ApprovedAzureConnectorFixture,
-  existingNodeTitles: string[] = []
+  existingNodeIds: string[] = []
 ): Promise<{
   cdp: Awaited<ReturnType<typeof connectToVsCodeCdp>>;
   contextId: number;
@@ -486,7 +490,11 @@ async function openExactDesignerV2(
     }
   };
   const actions = new ProvenDesignerCdpActions(designerCdp, contextId, deadline, assertActive);
-  await actions.waitForDesignerReady(existingNodeTitles);
+  if (existingNodeIds.length > 0) {
+    await actions.waitForPersistedDesignerReady();
+  } else {
+    await actions.waitForDesignerReady();
+  }
   return { cdp: designerCdp, contextId, actions };
 }
 

@@ -240,7 +240,9 @@ function testLifecycleUsesProductWizardAndFreshHostContract(): void {
   );
   assert.doesNotMatch(openDesignerBody, /connectToVsCodeCdpByText|acceptCandidate/);
   assert.match(openDesignerBody, /openingTabs\[0\]\.isActive && openingTabs\[0\]\.label\.includes\(entry\.wfName\)/);
-  assert.match(openDesignerBody, /actions\.waitForDesignerReady\(existingNodeTitles\)/);
+  assert.match(openDesignerBody, /existingNodeIds\.length > 0/);
+  assert.match(openDesignerBody, /actions\.waitForPersistedDesignerReady\(\)/);
+  assert.match(openDesignerBody, /actions\.waitForDesignerReady\(\)/);
   assert.match(source, /Fresh-host UI verification must not save or mutate workflow\.json/);
   assert.doesNotMatch(source, /Skip for now|optionText: 'No'|optionText: 'Cancel'/);
   const reopenBody = source.slice(source.indexOf('async function reopenAndVerify'), source.indexOf('async function openExactDesignerV2'));
