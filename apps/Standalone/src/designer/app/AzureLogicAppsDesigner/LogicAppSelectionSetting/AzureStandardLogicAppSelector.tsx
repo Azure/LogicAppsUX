@@ -83,10 +83,14 @@ export const AzureStandardLogicAppSelector = ({
       }
 
       const uri = `https://management.azure.com${appId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/runs?api-version=2018-11-01`;
-      return standardManagement.listRuns<RunList>({ uri }, async () => {
+      const legacyRequest = async () => {
         const results = await axios.get<RunList>(uri, { headers: authToken });
         return results.data;
-      });
+      };
+      if (await standardManagement.isEnabled()) {
+        return standardManagement.listRuns<RunList>({ uri }, legacyRequest);
+      }
+      return legacyRequest();
     },
     { enabled: !!workflowName && !!isMonitoringView }
   );

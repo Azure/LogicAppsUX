@@ -88,7 +88,11 @@ export class BaseResourceService implements IResourceService {
     const uri = `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${logicAppName}/hostruntime/runtime/webhooks/workflow/api/management/workflows`;
     const queryParameters = { 'api-version': '2018-11-01' };
     const request = { uri, queryParameters };
-    const response: any = await (this.options.standardManagement?.listWorkflows(request) ?? httpClient.get(request));
+    const standardManagement = this.options.standardManagement;
+    const legacyRequest = () => httpClient.get(request);
+    const response: any = await (standardManagement && (await standardManagement.isEnabled())
+      ? standardManagement.listWorkflows(request, legacyRequest)
+      : legacyRequest());
     const mapper = (item: any) => ({
       id: `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${logicAppName}/workflows/${item.name}`,
       name: getResourceNameFromId(item.name),
@@ -119,7 +123,7 @@ export class BaseResourceService implements IResourceService {
     const uri = `${baseUrl}${resourceId}`;
     switch (action) {
       case HTTP_METHODS.POST:
-        return (this.options.standardManagement ?? httpClient).post({ uri, queryParameters, content });
+        return httpClient.post({ uri, queryParameters, content });
       case HTTP_METHODS.PUT:
         return httpClient.put({ uri, queryParameters, content });
       case HTTP_METHODS.DELETE:
@@ -133,9 +137,9 @@ export class BaseResourceService implements IResourceService {
     const { httpClient } = this.options;
     switch (action) {
       case HTTP_METHODS.POST:
-        return (this.options.standardManagement ?? httpClient).post({ uri, content });
+        return httpClient.post({ uri, content });
       case HTTP_METHODS.GET:
-        return (this.options.standardManagement ?? httpClient).get({ uri });
+        return httpClient.get({ uri });
       case HTTP_METHODS.PUT:
         return httpClient.put({ uri, content });
       case HTTP_METHODS.DELETE:

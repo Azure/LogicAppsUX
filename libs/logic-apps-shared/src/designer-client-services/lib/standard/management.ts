@@ -6,29 +6,26 @@ export const standardDirectManagementFeatureGate = 'enableStandardDirectManageme
 export const standardManagementApiVersion = '2018-11-01';
 
 const managementPath = '/runtime/webhooks/workflow/api/management';
-const directPath = `${managementPath}/v1`;
+const directPath = '/api/v1';
 type SessionClass = 'reader' | 'contributor';
-type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+type Method = 'GET' | 'POST';
 type FailurePhase = 'issuance' | 'business';
 
-const operationMethods = {
-  'callback.get': 'getCallbackUrl',
-  'workflow.validate': 'validateWorkflow',
-  'connector.invoke': 'invokeConnector',
-  'run.cancel': 'cancelRun',
-  'mcp.list': 'listMcpServers',
-  'run.get': 'getRun',
-  'trigger.resubmit': 'resubmitTrigger',
-  'agent.draftKeys.get': 'getDraftAgentKeys',
-  'run.list': 'listRuns',
-  'trigger.run': 'runTrigger',
-  'connector.operation.get': 'getConnectorOperation',
-  'connector.group.list': 'listConnectorGroups',
-  'operation.list': 'listOperations',
-  'workflow.runtimeList': 'listWorkflows',
-} as const;
-
-type OperationId = keyof typeof operationMethods;
+type OperationId =
+  | 'callback.get'
+  | 'workflow.validate'
+  | 'connector.invoke'
+  | 'run.cancel'
+  | 'mcp.list'
+  | 'run.get'
+  | 'trigger.resubmit'
+  | 'agent.draftKeys.get'
+  | 'run.list'
+  | 'trigger.run'
+  | 'connector.operation.get'
+  | 'connector.group.list'
+  | 'operation.list'
+  | 'workflow.runtimeList';
 
 /** Trusted host discovery and signed-in identity, never values from an issuer response. */
 export interface StandardManagementContext {
@@ -117,8 +114,7 @@ const operations: readonly Operation[] = [
 interface Session {
   sessionClass: SessionClass;
   endpoint: string;
-  extensionCode: string;
-  accessToken: string;
+  apiKey: string;
   expiresOn: number;
 }
 
@@ -172,7 +168,7 @@ export class StandardManagementError extends Error {
  * One instance per portal tab/authentication lifecycle, shared by Standard services.
  * The host owns the transports and must call setContext(undefined) on sign-out/discard.
  */
-export class StandardManagementHttpClient implements IHttpClient {
+export class StandardManagementHttpClient {
   private state?: ContextState;
   private disposed = false;
   private readonly experimentationService: IExperimentationService;
@@ -237,7 +233,7 @@ export class StandardManagementHttpClient implements IHttpClient {
     this.clearContext();
     this.setContext(context);
     const state = this.state!;
-    await this.isEnabled(state);
+    await this.getEnablement(state);
     this.assertCurrent(state);
   }
 
@@ -302,25 +298,18 @@ export class StandardManagementHttpClient implements IHttpClient {
     return this.request('GET', options, 'workflow.runtimeList', legacyRequest);
   }
 
-  // Generic resource services retain IHttpClient compatibility, but share the named entry points.
-  get<T>(options: HttpRequestOptions<unknown>): Promise<T> {
-    return this.routeRequest('GET', options);
-  }
-
-  post<T, B>(options: HttpRequestOptions<B>): Promise<T> {
-    return this.routeRequest('POST', options);
-  }
-
-  put<T, B>(options: HttpRequestOptions<B>): Promise<T> {
-    return this.request('PUT', options);
-  }
-
-  patch<T, B>(options: HttpRequestOptions<B>): Promise<T> {
-    return this.request('PATCH', options);
-  }
-
-  delete<T>(options: HttpRequestOptions<unknown>): Promise<T> {
-    return this.request('DELETE', options);
+  /** Callers must select their unchanged legacy implementation when this returns false. */
+  async isEnabled(): Promise<boolean> {
+    if (this.disposed) {
+      throw contextError();
+    }
+    const state = this.state;
+    if (this.options.armOnly === true || !state?.supported) {
+      return false;
+    }
+    const enabled = await this.getEnablement(state);
+    this.assertCurrent(state);
+    return enabled;
   }
 
   private clearContext(): void {
@@ -337,7 +326,7 @@ export class StandardManagementHttpClient implements IHttpClient {
     }
   }
 
-  private isEnabled(state: ContextState): Promise<boolean> {
+  private getEnablement(state: ContextState): Promise<boolean> {
     state.enabled ??= this.experimentationService
       .isFeatureEnabled(standardDirectManagementFeatureGate)
       .then((enabled) => enabled === true)
@@ -345,25 +334,10 @@ export class StandardManagementHttpClient implements IHttpClient {
     return state.enabled;
   }
 
-  private routeRequest<T>(method: 'GET' | 'POST', options: HttpRequestOptions<unknown>): Promise<T> {
-    let path: string | undefined;
-    try {
-      const pathname = new URL(options.uri, 'https://management.invalid').pathname;
-      const prefix = pathname.indexOf(`${managementPath}/`);
-      if (prefix !== -1) {
-        path = pathname.slice(prefix + managementPath.length).replace(/^\/v1\//, '/');
-      }
-    } catch {
-      // The original transport owns malformed legacy URL errors.
-    }
-    const operation = operations.find((item) => item.method === method && item.path.test(path ?? ''));
-    return operation ? this[operationMethods[operation.id]]<T>(options) : this.request(method, options);
-  }
-
   private async request<T>(
     method: Method,
     options: HttpRequestOptions<unknown>,
-    operationId?: OperationId,
+    operationId: OperationId,
     legacyRequest?: () => Promise<T>
   ): Promise<T> {
     if (this.disposed) {
@@ -377,7 +351,7 @@ export class StandardManagementHttpClient implements IHttpClient {
       }
       return legacyRequest ? legacyRequest() : send(this.options.armClient, method, options);
     }
-    const enabled = await this.isEnabled(state);
+    const enabled = await this.getEnablement(state);
     this.assertCurrent(state);
     // Do not interpret or change legacy ARM requests while the feature is off.
     if (!enabled && !directUrl) {
@@ -558,8 +532,7 @@ export class StandardManagementHttpClient implements IHttpClient {
         queryParameters: { ...target.query, 'api-version': standardManagementApiVersion },
         headers: {
           ...businessHeaders(options.headers),
-          'x-functions-key': session.extensionCode,
-          Authorization: `Bearer ${session.accessToken}`,
+          'X-API-Key': session.apiKey,
         },
         noAuth: true,
         includeAuth: false,
@@ -605,12 +578,6 @@ function send<T>(client: IHttpClient, method: Method, options: HttpRequestOption
       return client.get<T>(options);
     case 'POST':
       return client.post<T, unknown>(options);
-    case 'PUT':
-      return client.put<T, unknown>(options);
-    case 'PATCH':
-      return client.patch<T, unknown>(options);
-    case 'DELETE':
-      return client.delete<T>(options);
   }
 }
 
@@ -699,7 +666,7 @@ function isHttpsOrigin(value: string): boolean {
 function businessHeaders(headers: HttpRequestOptions<unknown>['headers']): Record<string, string | string[]> {
   return Object.fromEntries(
     Object.entries(headers ?? {}).filter(
-      ([name]) => !['authorization', 'x-functions-key', 'cookie', 'host', 'proxy-authorization'].includes(name.toLowerCase())
+      ([name]) => !['authorization', 'x-functions-key', 'x-api-key', 'cookie', 'host', 'proxy-authorization'].includes(name.toLowerCase())
     )
   );
 }
@@ -715,25 +682,17 @@ function validateEnvelope(value: unknown, context: StandardManagementContext, se
   }
   const envelope = value as Record<string, unknown>;
   if (
-    Object.keys(envelope).length !== 4 ||
+    Object.keys(envelope).length !== 3 ||
     envelope['endpoint'] !== `${context.runtimeOrigin}${directPath}` ||
-    typeof envelope['extensionCode'] !== 'string' ||
-    !envelope['extensionCode'] ||
-    hasControlCharacter(envelope['extensionCode'], true) ||
-    typeof envelope['accessToken'] !== 'string' ||
-    envelope['accessToken'].length !== 52 ||
-    !/^[0-9a-f]{8}\.[A-Za-z0-9_-]{42}[AEIMQUYcgkosw048]$/.test(envelope['accessToken']) ||
+    typeof envelope['apiKey'] !== 'string' ||
+    !/^[A-Za-z0-9_-]{1,16384}$/.test(envelope['apiKey']) ||
     typeof envelope['expiresOn'] !== 'string' ||
     !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(envelope['expiresOn'])
   ) {
     throw invalid();
   }
   const expiresOn = Date.parse(envelope['expiresOn']);
-  if (
-    !Number.isFinite(expiresOn) ||
-    new Date(expiresOn).toISOString().replace('.000Z', 'Z') !== envelope['expiresOn'] ||
-    Number.parseInt(envelope['accessToken'].slice(0, 8), 16) * 1000 !== expiresOn
-  ) {
+  if (!Number.isFinite(expiresOn) || new Date(expiresOn).toISOString().replace('.000Z', 'Z') !== envelope['expiresOn']) {
     throw invalid();
   }
   if (expiresOn <= Date.now()) {
@@ -745,8 +704,7 @@ function validateEnvelope(value: unknown, context: StandardManagementContext, se
   return {
     sessionClass,
     endpoint: envelope['endpoint'],
-    extensionCode: envelope['extensionCode'],
-    accessToken: envelope['accessToken'],
+    apiKey: envelope['apiKey'],
     expiresOn,
   };
 }

@@ -223,7 +223,11 @@ export class StandardConnectorService extends BaseConnectorService {
         queryParameters: { 'api-version': apiVersion },
         content: { parameters: invokeParameters, configuration },
       };
-      response = await (this.options.standardManagement?.invokeConnector(request) ?? httpClient.post(request));
+      const standardManagement = this.options.standardManagement;
+      const legacyRequest = () => httpClient.post(request);
+      response = await (standardManagement && (await standardManagement.isEnabled())
+        ? standardManagement.invokeConnector(request, legacyRequest)
+        : legacyRequest());
     }
 
     return this._getResponseFromDynamicApi(response, uri);
@@ -287,7 +291,11 @@ export class StandardConnectorService extends BaseConnectorService {
         queryParameters: { 'api-version': apiVersion },
         content: { parameters: invokeParameters, configuration },
       };
-      response = await (this.options.standardManagement?.invokeConnector(request) ?? httpClient.post(request));
+      const standardManagement = this.options.standardManagement;
+      const legacyRequest = () => httpClient.post(request);
+      response = await (standardManagement && (await standardManagement.isEnabled())
+        ? standardManagement.invokeConnector(request, legacyRequest)
+        : legacyRequest());
     }
 
     return this._getResponseFromDynamicApi(response, uri);

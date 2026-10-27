@@ -71,8 +71,11 @@ export class StandardSearchService extends BaseSearchService {
       });
     } else {
       const request = { uri, queryParameters, headers };
-      response = await (this.options.standardManagement?.listOperations<AzureOperationsFetchResponse>(request) ??
-        httpClient.get<AzureOperationsFetchResponse>(request));
+      const standardManagement = this.options.standardManagement;
+      const legacyRequest = () => httpClient.get<AzureOperationsFetchResponse>(request);
+      response = await (standardManagement && (await standardManagement.isEnabled())
+        ? standardManagement.listOperations<AzureOperationsFetchResponse>(request, legacyRequest)
+        : legacyRequest());
     }
 
     const isAzureConnectorsEnabled = this.options.apiHubServiceDetails.subscriptionId !== undefined;
@@ -166,8 +169,11 @@ export class StandardSearchService extends BaseSearchService {
       });
     } else {
       const request = { uri, queryParameters, headers };
-      response = await (this.options.standardManagement?.listConnectorGroups<{ value: Connector[] }>(request) ??
-        httpClient.get<{ value: Connector[] }>(request));
+      const standardManagement = this.options.standardManagement;
+      const legacyRequest = () => httpClient.get<{ value: Connector[] }>(request);
+      response = await (standardManagement && (await standardManagement.isEnabled())
+        ? standardManagement.listConnectorGroups<{ value: Connector[] }>(request, legacyRequest)
+        : legacyRequest());
     }
 
     const isAzureConnectorsEnabled = this.options.apiHubServiceDetails.subscriptionId !== undefined;

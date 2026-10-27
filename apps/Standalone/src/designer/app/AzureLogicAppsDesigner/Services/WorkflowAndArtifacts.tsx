@@ -256,24 +256,29 @@ export const useRunInstanceStandard = (
   );
 };
 
-export const getRunInstanceStandard = (
+export const getRunInstanceStandard = async (
   workflowName: string,
   appId: string,
   runId?: string,
   standardManagement = armOnlyStandardManagement
-): Promise<LogicAppsV2.RunInstanceDefinition> =>
-  standardManagement.getRun<LogicAppsV2.RunInstanceDefinition>(
-    {
-      uri: `${baseUrl}${appId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/runs/${runId}?api-version=2018-11-01&$expand=properties/actions,workflow/properties`,
-    },
-    async () => {
-      const results = await axios.get<LogicAppsV2.RunInstanceDefinition>(
-        `${baseUrl}${appId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/runs/${runId}?api-version=2018-11-01&$expand=properties/actions,workflow/properties`,
-        { headers: { Authorization: `Bearer ${environment.armToken}` } }
-      );
-      return results.data;
-    }
-  );
+): Promise<LogicAppsV2.RunInstanceDefinition> => {
+  const legacyRequest = async () => {
+    const results = await axios.get<LogicAppsV2.RunInstanceDefinition>(
+      `${baseUrl}${appId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/runs/${runId}?api-version=2018-11-01&$expand=properties/actions,workflow/properties`,
+      { headers: { Authorization: `Bearer ${environment.armToken}` } }
+    );
+    return results.data;
+  };
+  if (await standardManagement.isEnabled()) {
+    return standardManagement.getRun<LogicAppsV2.RunInstanceDefinition>(
+      {
+        uri: `${baseUrl}${appId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/runs/${runId}?api-version=2018-11-01&$expand=properties/actions,workflow/properties`,
+      },
+      legacyRequest
+    );
+  }
+  return legacyRequest();
+};
 
 export const useRunInstanceConsumption = (workflowname: string, appId?: string, runId?: string) => {
   return useQuery(
@@ -332,21 +337,26 @@ export const listCallbackUrl = async (
           );
           callbackInfo = result.data;
         } else {
-          callbackInfo = await standardManagement.getCallbackUrl(
-            {
-              uri: `${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl?api-version=${standardApiVersion}`,
-              content: null,
-              headers: authToken,
-            },
-            async () => {
-              const result = await axios.post(
-                `${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl?api-version=${standardApiVersion}`,
-                null,
-                { headers: authToken }
-              );
-              return result.data;
-            }
-          );
+          const legacyRequest = async () => {
+            const result = await axios.post(
+              `${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl?api-version=${standardApiVersion}`,
+              null,
+              { headers: authToken }
+            );
+            return result.data;
+          };
+          if (await standardManagement.isEnabled()) {
+            callbackInfo = await standardManagement.getCallbackUrl(
+              {
+                uri: `${baseUrl}${workflowId}/triggers/${triggerName}/listCallbackUrl?api-version=${standardApiVersion}`,
+                content: null,
+                headers: authToken,
+              },
+              legacyRequest
+            );
+          } else {
+            callbackInfo = await legacyRequest();
+          }
         }
       } else {
         callbackInfo = {
@@ -387,10 +397,14 @@ export const fetchA2AAuthKey = async (
       expiry: new Date(currentDate.getTime() + 86400000).toISOString(),
       keyType: 'Primary',
     };
-    return standardManagement.getDraftAgentKeys({ uri, content }, async () => {
+    const legacyRequest = async () => {
       const response = await axios.post(uri, content, { headers: { Authorization: `Bearer ${environment.armToken}` } });
       return response.data;
-    });
+    };
+    if (await standardManagement.isEnabled()) {
+      return standardManagement.getDraftAgentKeys({ uri, content }, legacyRequest);
+    }
+    return legacyRequest();
   }
 
   const response = await axios.post(
@@ -1281,24 +1295,29 @@ export const validateWorkflowStandard = async (
     );
   } else {
     const uri = `${baseUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/validate?api-version=${standardApiVersion}`;
-    await standardManagement.validateWorkflow(
-      {
-        uri,
-        content: requestPayload,
-        headers: { 'Content-Type': 'application/json' },
-      },
-      async () => {
-        const result = await axios.post(uri, requestPayload, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${environment.armToken}`,
-          },
-        });
-        if (result.status !== 200) {
-          return Promise.reject(result);
-        }
+    const legacyRequest = async () => {
+      const result = await axios.post(uri, requestPayload, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${environment.armToken}`,
+        },
+      });
+      if (result.status !== 200) {
+        return Promise.reject(result);
       }
-    );
+    };
+    if (await standardManagement.isEnabled()) {
+      await standardManagement.validateWorkflow(
+        {
+          uri,
+          content: requestPayload,
+          headers: { 'Content-Type': 'application/json' },
+        },
+        legacyRequest
+      );
+    } else {
+      await legacyRequest();
+    }
     return;
   }
 
@@ -1481,10 +1500,13 @@ export const listMcpServers = async (siteResourceId: string, standardManagement 
   let mcpServers: any[] = [];
   try {
     const uri = `${baseUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/listMcpServers?api-version=2024-11-01`;
-    const response = await standardManagement.listMcpServers<{ value?: any[] }>({ uri }, async () => {
+    const legacyRequest = async () => {
       const result = await axios.post(uri, undefined, { headers: { Authorization: `Bearer ${environment.armToken}` } });
       return result.data;
-    });
+    };
+    const response = (await standardManagement.isEnabled())
+      ? await standardManagement.listMcpServers<{ value?: any[] }>({ uri }, legacyRequest)
+      : await legacyRequest();
     mcpServers = [...(response?.value ?? [])];
   } catch (error: any) {
     if (isStandardManagementError(error)) {
