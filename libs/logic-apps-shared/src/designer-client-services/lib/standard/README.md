@@ -1,5 +1,12 @@
 # Standard direct management
 
+The ARM-protected Reader and Contributor issuers return exactly
+`{ endpoint, apiKey, expiresOn }`. The endpoint is the trusted app origin plus
+`/api/v1`. Direct requests send only `X-API-Key: <apiKey>`, not an ARM bearer
+credential or `x-functions-key`. The runtime verifies all management claims
+and the app-specific signature; clients treat the credential as opaque.
+The former `{ extensionCode, accessToken }` response is not supported.
+
 `StandardManagementHttpClient` is the shared, tab-local API entry layer for
 Standard workflow management. It exposes one named method per in-scope API and
 uses the existing experimentation-service gate
@@ -11,20 +18,26 @@ host admission, browser CORS/reachability and capacity have been verified.
 ## Central API methods
 
 Portal helpers and UX services call these methods with their existing
-`HttpRequestOptions`; callers do not check the gate, acquire tokens, select a
-profile or construct direct URLs. Each method returns the unchanged transport
-response. With the feature off, the original ARM request object is passed to
-the original host transport unchanged, retaining its retries, headers and error
-contract. Named methods also accept an optional second `legacyRequest` callback
+`HttpRequestOptions`. Every caller checks `await standardManagement.isEnabled()`
+before invoking a named method. If false (or no management client is supplied),
+it executes its original implementation directly, retaining its transport,
+retries, headers, response validation and error contract. Callers do not acquire
+tokens, select a profile or construct direct URLs.
+Named methods also accept an optional second `legacyRequest` callback
 for callers that previously used a different transport or response validation:
 
 ```typescript
-await standardManagement.validateWorkflow(request, async () => {
+const legacyRequest = async () => {
   const response = await existingAxios.post(request.uri, request.content, existingOptions);
   if (response.status !== 200) {
     throw response;
   }
-});
+};
+if (standardManagement && await standardManagement.isEnabled()) {
+  await standardManagement.validateWorkflow(request, legacyRequest);
+} else {
+  await legacyRequest();
+}
 ```
 
 The callback is used whenever the original request is selected: disabled,
@@ -53,28 +66,37 @@ All fourteen methods share the same cache, acquisition, renewal and failure
 policy. They do not create fourteen sessions. A named entry cannot select a
 different catalog operation for direct dispatch.
 
-`IHttpClient` compatibility is retained for generic `BaseResourceService`
-actions: its GET/POST adapter selects the same named method from the fixed
-catalog. It is not a second token implementation or a general runtime proxy.
-Standard run, connector, manifest, search and workflow-inventory methods call the
-named entry points explicitly. Unrelated service calls keep their original
-transport, including hybrid requests and content links.
+The management facade does **not** implement `IHttpClient` and has no generic
+GET/POST/PUT/PATCH/DELETE methods or URL-to-operation adapter.
+Generic `BaseResourceService.executeHttpCall` and `executeResourceAction`
+always retain their original HTTP transport, even for URLs in the management
+catalog. Workflow-specific callers must explicitly select a named operation.
+Standard run, connector, manifest, search and workflow-inventory methods perform
+their own feature selection. Hybrid requests and content links retain their
+original transport.
+
+The designer's existing MCP resource action remains a generic ARM request.
+`IResourceService` has no MCP-specific extension. Standalone's separate MCP helper
+explicitly selects the named management operation when enabled.
 
 ```typescript
-const run = await standardManagement.getRun<Run>({
+const request = {
   uri: `${existingArmManagementBase}/workflows/${workflowName}/runs/${runId}`,
   queryParameters: { 'api-version': existingApiVersion },
-});
+};
+const run = standardManagement && await standardManagement.isEnabled()
+  ? await standardManagement.getRun<Run>(request)
+  : await existingArmHttpClient.get<Run>(request);
 ```
 
 Hosts that do not yet supply the direct-management lifecycle/configuration can
-still migrate callers to these named methods without inventing a circuit duration:
+retain a permanently disabled owner without inventing a circuit duration:
 
 ```typescript
 const standardManagement = StandardManagementHttpClient.createArmOnly(existingArmHttpClient);
 ```
 
-This explicit mode is permanently ARM-only, requires no direct transport or
+This explicit mode always returns false from `isEnabled()`, requires no direct transport or
 backoff, and cannot be enabled by `refreshEnablement()`. Enabling direct access
 requires replacing it with a normally configured instance owned by a supported
 host lifecycle. Disposal still rejects subsequent work and does not dispose the
@@ -146,7 +168,7 @@ Both transports use the existing `IHttpClient` interface:
 - ARM issuance must retain normal ARM authentication and authorization, honor
   `skipBatch`, and send `undefined` content as **no body**, never `{}` or `null`.
 - Direct transport must honor `noAuth: true`, `includeAuth: false`, `skipBatch`,
-  and the explicit `Authorization` and `x-functions-key` headers. It must not
+  and the explicit `X-API-Key` header. It must not
   inject an ARM bearer, persist/cache credentials, follow redirects, log request
   credentials or automatically retry mutations. Select an existing host transport
   satisfying these requirements; the client does not introduce a new HTTP stack.
@@ -168,14 +190,15 @@ versions/options when selected. Issuance is bodyless GET
 `{appId}/hostruntime/runtime/webhooks/workflow/api/management/tokens/reader` or
 bodyless POST `.../getContributorToken`. Neither call executes business work.
 
-The response is exactly `{endpoint, extensionCode, accessToken, expiresOn}`.
+The response is exactly `{endpoint, apiKey, expiresOn}`.
 The endpoint must equal the trusted runtime origin plus
-`/runtime/webhooks/workflow/api/management/v1`, without query, fragment or userinfo.
-The 52-character opaque token uses an eight-character lowercase hexadecimal
-expiry prefix and a canonical 43-character Base64URL encoding of 32 secret bytes,
-separated by a dot. Its final character must be one of `AEIMQUYcgkosw048`.
-The expiry prefix must match whole-second UTC
-`expiresOn`, which must be in the future. The runtime configures the lifetime;
+`/api/v1`, without query, fragment or userinfo.
+The signed credential uses Base64URL transport encoding (1 to 16,384 characters,
+matching the runtime's size limit). The client does not decode its claims or
+infer role or expiry from it. Caller-supplied `X-API-Key`, bearer and extension-key
+headers are removed case-insensitively before the issued API key is attached.
+Whole-second UTC `expiresOn`
+must be in the future. The runtime configures the lifetime;
 the client does not impose a second five-minute limit. Invalid or
 already-expired issuance selects the original ARM request and suppresses another
 issuer attempt for the configured backoff; no guessed lifetime or acquisition
@@ -261,8 +284,9 @@ dependencies. It covers all 14 catalog routes, profile acquisition/reuse,
 context isolation, renewal and consequential failover/replay failures. Named-entry
 tests cover each API's required profile, unchanged request-object forwarding with
 the gate off, permanently ARM-only hosts, cross-method session reuse and
-wrong-catalog-method rejection. Service/adapter spies verify that real callers
-reach the named methods rather than a parallel token path. Existing
+wrong-catalog-method rejection. Service spies verify that enabled callers
+reach the named methods and disabled callers bypass them entirely. Generic
+resource-service tests verify that matching catalog URLs are never intercepted. Existing
 service tests cover unchanged legacy request/response behavior. These are client
 tests, not deployed ARM/runtime, payload-authorization, CORS or capacity evidence.
 The gate remains off by default; the consuming Portal host must supply the above
@@ -346,7 +370,7 @@ authentication-context changes.
    The initial 10-second retry delay is local configuration, not a production
    operational recommendation. With the flag off, traffic follows the original ARM route.
 4. Start with read-only run history or run details. Verify one ARM Reader issuer
-   request, then runtime `/api/management/v1/...` traffic and cached-session reuse.
+   request, then runtime `/api/v1/...` traffic and cached-credential reuse.
    A Contributor operation may acquire a Contributor session that also serves reads.
    Set the flag to `false` and verify the same designer uses ARM again.
 5. To reset a latched issuer failure or disabled state after correcting backend
@@ -376,7 +400,7 @@ Paths in this inventory are relative to this repository.
 | `workflow.validate` | Standalone `validateWorkflowStandard`, including save and code-view validation, delegates to `validateWorkflow`. |
 | `connector.invoke` | Shared `standard\connector.ts` dynamic values/schema calls delegate to `invokeConnector`. |
 | `run.cancel` | Shared `standard\run.ts:cancelRun` delegates to `cancelRun`. |
-| `mcp.list` | Generic `BaseResourceService` actions select `listMcpServers`; Standalone MCP helpers use it directly. |
+| `mcp.list` | Standalone MCP helpers explicitly select `listMcpServers`. Generic resource actions remain on their original transport. |
 | `run.get` | Shared run service and Standalone `getRunInstanceStandard` delegate to `getRun`. |
 | `trigger.resubmit` | Shared trigger-history resubmit delegates to `resubmitTrigger`. The separate `/runs/{runId}/resubmit` API remains on ARM. |
 | `agent.draftKeys.get` | Standalone draft-mode `fetchA2AAuthKey` delegates to `getDraftAgentKeys`. Published `listApiKeys` is unchanged. |

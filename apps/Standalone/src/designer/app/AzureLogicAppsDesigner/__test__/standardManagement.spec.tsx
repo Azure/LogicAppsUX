@@ -107,17 +107,38 @@ describe('Azure-connected Standard management helper entrypoints', () => {
   });
   afterEach(cleanup);
 
-  it('uses the centralized callback entry and retains legacy callback shape', async () => {
+  it('selects named helper operations when management is enabled', async () => {
+    const { client } = configuredManagement();
+    const callback = vi.spyOn(client, 'getCallbackUrl').mockResolvedValue({ value: 'https://callback.example.invalid', method: 'POST' });
+    const validate = vi.spyOn(client, 'validateWorkflow').mockResolvedValue(undefined);
+    const run = vi.spyOn(client, 'getRun').mockResolvedValue({ name: 'run' });
+    const mcp = vi.spyOn(client, 'listMcpServers').mockResolvedValue({ value: [{ name: 'server' }] });
+    const keys = vi.spyOn(client, 'getDraftAgentKeys').mockResolvedValue({ key: 'synthetic-key' });
+    try {
+      await listCallbackUrl(workflowId, 'manual', false, client);
+      await validateWorkflowStandard(resourceId, 'Order', { definition: {} }, undefined, undefined, undefined, client);
+      await getRunInstanceStandard('Order', resourceId, 'run', client);
+      await listMcpServers(resourceId, client);
+      await fetchA2AAuthKey(resourceId, 'Order', true, client);
+      for (const entry of [callback, validate, run, mcp, keys]) {
+        expect(entry).toHaveBeenCalledOnce();
+        expect(entry).toHaveBeenCalledWith(expect.objectContaining({ uri: expect.stringContaining('/management/') }), expect.any(Function));
+      }
+      expect(mocks.legacyGet).not.toHaveBeenCalled();
+      expect(mocks.legacyPost).not.toHaveBeenCalled();
+    } finally {
+      client.dispose();
+    }
+  });
+
+  it('bypasses management when disabled and retains legacy callback shape', async () => {
     const entry = vi.spyOn(armOnlyStandardManagement, 'getCallbackUrl');
     mocks.legacyPost.mockResolvedValueOnce({ data: { value: 'https://callback.example.invalid/signed', method: 'POST' } });
     await expect(listCallbackUrl(workflowId, 'manual')).resolves.toEqual({
       value: 'https://callback.example.invalid/signed',
       method: 'POST',
     });
-    expect(entry).toHaveBeenCalledWith(
-      expect.objectContaining({ uri: `${armWorkflow}/triggers/manual/listCallbackUrl?api-version=2020-06-01`, content: null }),
-      expect.any(Function)
-    );
+    expect(entry).not.toHaveBeenCalled();
     expect(mocks.legacyPost).toHaveBeenCalledExactlyOnceWith(
       `${armWorkflow}/triggers/manual/listCallbackUrl?api-version=2020-06-01`,
       null,
@@ -126,18 +147,11 @@ describe('Azure-connected Standard management helper entrypoints', () => {
     expect(mocks.post).not.toHaveBeenCalled();
   });
 
-  it('uses centralized validation with all existing payload fields', async () => {
+  it('bypasses management when disabled and retains validation with all existing payload fields', async () => {
     const entry = vi.spyOn(armOnlyStandardManagement, 'validateWorkflow');
     const connections = { managedApiConnections: {} };
     await validateWorkflowStandard(resourceId, 'Order', { definition: {} }, connections, {}, { setting: 'value' });
-    expect(entry).toHaveBeenCalledWith(
-      {
-        uri: `${armWorkflow}/validate?api-version=2020-06-01`,
-        content: { properties: { definition: {}, connections, parameters: {}, appsettings: { Values: { setting: 'value' } } } },
-        headers: { 'Content-Type': 'application/json' },
-      },
-      expect.any(Function)
-    );
+    expect(entry).not.toHaveBeenCalled();
     expect(mocks.legacyPost).toHaveBeenCalledExactlyOnceWith(
       `${armWorkflow}/validate?api-version=2020-06-01`,
       { properties: { definition: {}, connections, parameters: {}, appsettings: { Values: { setting: 'value' } } } },
@@ -145,13 +159,10 @@ describe('Azure-connected Standard management helper entrypoints', () => {
     );
   });
 
-  it('uses centralized run GET and preserves expansion/version options', async () => {
+  it('bypasses management when disabled and preserves run expansion/version options', async () => {
     const entry = vi.spyOn(armOnlyStandardManagement, 'getRun');
     await expect(getRunInstanceStandard('Order', resourceId, 'run')).resolves.toEqual({ name: 'run' });
-    expect(entry).toHaveBeenCalledWith(
-      { uri: `${armWorkflow}/runs/run?api-version=2018-11-01&$expand=properties/actions,workflow/properties` },
-      expect.any(Function)
-    );
+    expect(entry).not.toHaveBeenCalled();
     expect(mocks.legacyGet).toHaveBeenCalledExactlyOnceWith(
       `${armWorkflow}/runs/run?api-version=2018-11-01&$expand=properties/actions,workflow/properties`,
       { headers: { Authorization: 'Bearer undefined' } }
@@ -159,16 +170,11 @@ describe('Azure-connected Standard management helper entrypoints', () => {
     expect(mocks.get).not.toHaveBeenCalled();
   });
 
-  it('uses centralized MCP enumeration and retains response projection', async () => {
+  it('bypasses management when disabled and retains MCP response projection', async () => {
     const entry = vi.spyOn(armOnlyStandardManagement, 'listMcpServers');
     mocks.legacyPost.mockResolvedValueOnce({ data: { value: [{ name: 'server' }] } });
     await expect(listMcpServers(resourceId)).resolves.toEqual([{ name: 'server' }]);
-    expect(entry).toHaveBeenCalledWith(
-      {
-        uri: `https://management.azure.com${resourceId}/hostruntime/runtime/webhooks/workflow/api/management/listMcpServers?api-version=2024-11-01`,
-      },
-      expect.any(Function)
-    );
+    expect(entry).not.toHaveBeenCalled();
     expect(mocks.legacyPost).toHaveBeenCalledExactlyOnceWith(
       `https://management.azure.com${resourceId}/hostruntime/runtime/webhooks/workflow/api/management/listMcpServers?api-version=2024-11-01`,
       undefined,
@@ -176,16 +182,10 @@ describe('Azure-connected Standard management helper entrypoints', () => {
     );
   });
 
-  it('uses centralized draft keys but leaves published keys on their original path', async () => {
+  it('bypasses management when disabled for draft keys and leaves published keys on their original path', async () => {
     const entry = vi.spyOn(armOnlyStandardManagement, 'getDraftAgentKeys');
     await fetchA2AAuthKey(resourceId, 'Order', true);
-    expect(entry).toHaveBeenCalledWith(
-      {
-        uri: `${armWorkflow}/listDraftApiKeys?api-version=2018-11-01`,
-        content: { expiry: expect.any(String), keyType: 'Primary' },
-      },
-      expect.any(Function)
-    );
+    expect(entry).not.toHaveBeenCalled();
     expect(mocks.legacyPost).toHaveBeenCalledExactlyOnceWith(
       `${armWorkflow}/listDraftApiKeys?api-version=2018-11-01`,
       { expiry: expect.any(String), keyType: 'Primary' },
@@ -193,7 +193,7 @@ describe('Azure-connected Standard management helper entrypoints', () => {
     );
     mocks.legacyPost.mockResolvedValueOnce({ data: { key: 'published' } });
     await expect(fetchA2AAuthKey(resourceId, 'Order', false)).resolves.toEqual({ key: 'published' });
-    expect(entry).toHaveBeenCalledOnce();
+    expect(entry).not.toHaveBeenCalled();
     expect(mocks.legacyPost).toHaveBeenCalledTimes(2);
   });
 
@@ -224,7 +224,7 @@ describe('Azure-connected Standard management helper entrypoints', () => {
     'rejects session validation failure %s, throwError=%s, without deploying or clearing dirty state',
     async (status, throwError) => {
       const error = new StandardManagementError('ManagementRequestFailed', 'Synthetic session failure', status);
-      const client = StandardManagementHttpClient.createArmOnly(new AzureManagementArmClient());
+      const { client } = configuredManagement();
       vi.spyOn(client, 'validateWorkflow').mockRejectedValueOnce(error);
       const clearDirtyState = vi.fn();
       await expect(
@@ -300,9 +300,8 @@ describe('Azure-connected Standard management helper entrypoints', () => {
         const seconds = Math.floor(Date.now() / 1000) + 300;
         mocks.post.mockResolvedValueOnce({
           data: {
-            endpoint: 'https://test.azurewebsites.net/runtime/webhooks/workflow/api/management/v1',
-            extensionCode: 'synthetic-extension',
-            accessToken: `${seconds.toString(16)}.${'A'.repeat(43)}`,
+            endpoint: 'https://test.azurewebsites.net/api/v1',
+            apiKey: 'synthetic-signed-management',
             expiresOn: new Date(seconds * 1000).toISOString().replace('.000Z', 'Z'),
           },
         });
@@ -346,9 +345,8 @@ describe('Azure-connected Standard management helper entrypoints', () => {
     const seconds = Math.floor(Date.now() / 1000) + 300;
     mocks.post.mockResolvedValueOnce({
       data: {
-        endpoint: 'https://test.azurewebsites.net/runtime/webhooks/workflow/api/management/v1',
-        extensionCode: 'synthetic-extension',
-        accessToken: `${seconds.toString(16)}.${'A'.repeat(43)}`,
+        endpoint: 'https://test.azurewebsites.net/api/v1',
+        apiKey: 'synthetic-signed-management',
         expiresOn: new Date(seconds * 1000).toISOString().replace('.000Z', 'Z'),
       },
     });
@@ -374,9 +372,8 @@ describe('Azure-connected Standard management helper entrypoints', () => {
     const seconds = Math.floor(Date.now() / 1000) + 300;
     mocks.post.mockResolvedValueOnce({
       data: {
-        endpoint: 'https://test.azurewebsites.net/runtime/webhooks/workflow/api/management/v1',
-        extensionCode: 'synthetic-extension',
-        accessToken: `${seconds.toString(16)}.${'A'.repeat(43)}`,
+        endpoint: 'https://test.azurewebsites.net/api/v1',
+        apiKey: 'synthetic-signed-management',
         expiresOn: new Date(seconds * 1000).toISOString().replace('.000Z', 'Z'),
       },
     });
@@ -474,9 +471,8 @@ describe('Azure-connected Standard management helper entrypoints', () => {
     const expirySeconds = Math.floor(Date.now() / 1000) + 300;
     mocks.post.mockResolvedValueOnce({
       data: {
-        endpoint: 'https://test.azurewebsites.net/runtime/webhooks/workflow/api/management/v1',
-        extensionCode: 'fixture-extension',
-        accessToken: `${expirySeconds.toString(16).padStart(8, '0')}.${'A'.repeat(43)}`,
+        endpoint: 'https://test.azurewebsites.net/api/v1',
+        apiKey: 'synthetic-signed-management',
         expiresOn: new Date(expirySeconds * 1000).toISOString().replace('.000Z', 'Z'),
       },
     });

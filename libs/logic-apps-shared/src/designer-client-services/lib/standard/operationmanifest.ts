@@ -140,7 +140,11 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
         uri: `${baseUrl}/operationGroups/${connectorName}/operations/${operationName}`,
         queryParameters,
       };
-      response = await (this._options.standardManagement?.getConnectorOperation<any>(request) ?? httpClient.get<any>(request));
+      const standardManagement = this._options.standardManagement;
+      const legacyRequest = () => httpClient.get<any>(request);
+      response = await (standardManagement && (await standardManagement.isEnabled())
+        ? standardManagement.getConnectorOperation<any>(request, legacyRequest)
+        : legacyRequest());
     }
 
     const {
@@ -190,7 +194,11 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
           uri: `${baseUrl}/operationGroups/${connectorName}/operations/${operationName}`,
           queryParameters,
         };
-        response = await (this._options.standardManagement?.getConnectorOperation<any>(request) ?? httpClient.get<any>(request));
+        const standardManagement = this._options.standardManagement;
+        const legacyRequest = () => httpClient.get<any>(request);
+        response = await (standardManagement && (await standardManagement.isEnabled())
+          ? standardManagement.getConnectorOperation<any>(request, legacyRequest)
+          : legacyRequest());
       }
 
       const {

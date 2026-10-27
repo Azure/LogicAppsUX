@@ -7,6 +7,7 @@ const mocks = vi.hoisted(() => ({
   hostingPlan: 'standard',
   runError: false,
   listRuns: vi.fn(),
+  isEnabled: vi.fn(),
   get: vi.fn(),
   hybridGet: vi.fn(),
   queries: [] as { key: unknown[]; run: () => Promise<unknown>; options?: { enabled: boolean } }[],
@@ -29,10 +30,10 @@ vi.mock('../Utilities/HybridAppUtilities', () => ({
   hybridApiVersion: '2023-11-02-preview',
 }));
 vi.mock('../../DesignerShell/standaloneManagementContext', () => ({
-  useStandaloneManagementClient: () => ({ client: { listRuns: mocks.listRuns } }),
+  useStandaloneManagementClient: () => ({ client: { listRuns: mocks.listRuns, isEnabled: mocks.isEnabled } }),
 }));
 vi.mock('../Services/StandardManagement', () => ({
-  armOnlyStandardManagement: { listRuns: mocks.listRuns },
+  armOnlyStandardManagement: { listRuns: mocks.listRuns, isEnabled: mocks.isEnabled },
   getStandardManagementCacheKey: () => 7,
 }));
 vi.mock('@tanstack/react-query', () => ({
@@ -54,6 +55,7 @@ describe('existing Azure designer run selector', () => {
     mocks.runError = false;
     mocks.queries = [];
     mocks.listRuns.mockReset().mockResolvedValue({ value: [] });
+    mocks.isEnabled.mockReset().mockResolvedValue(true);
     mocks.get.mockReset().mockResolvedValue({ data: { value: [] } });
     mocks.hybridGet.mockReset().mockResolvedValue({ value: [] });
   });
@@ -75,12 +77,13 @@ describe('existing Azure designer run selector', () => {
   });
 
   it('retains the original Axios request and raw error when direct management is disabled', async () => {
-    mocks.listRuns.mockImplementation((_request, legacyRequest) => legacyRequest());
+    mocks.isEnabled.mockResolvedValue(false);
     const failure = { response: { status: 503, data: { error: { code: 'Unavailable' } } } };
     mocks.get.mockRejectedValueOnce(failure);
     render(<AzureStandardLogicAppSelector />);
     const query = mocks.queries.find(({ key }) => key[0] === 'getListOfRunInstances');
     await expect(query?.run()).rejects.toBe(failure);
+    expect(mocks.listRuns).not.toHaveBeenCalled();
     expect(mocks.get).toHaveBeenCalledExactlyOnceWith(
       expect.stringContaining('/hostruntime/runtime/webhooks/workflow/api/management/workflows/Order/runs?api-version=2018-11-01'),
       { headers: { Authorization: 'Bearer undefined' } }

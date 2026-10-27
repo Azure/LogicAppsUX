@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import type { HttpRequestOptions } from '@microsoft/logic-apps-shared';
 import {
+  assertSyntheticDirectManagementHeaders,
   standardManagementOperations,
   SyntheticStandardManagementHost,
   type SyntheticManagementEvent,
@@ -44,6 +46,33 @@ describe('headless synthetic Standard management host', () => {
     expect(fetch).not.toHaveBeenCalled();
     expect(JSON.stringify(events)).not.toContain('Bearer');
     expect(JSON.stringify(events)).not.toContain('extensionCode');
+  });
+
+  it.each(standardManagementOperations)('bypasses every named management method when disabled for %s', async (operation) => {
+    const methods = [
+      'getCallbackUrl',
+      'validateWorkflow',
+      'invokeConnector',
+      'cancelRun',
+      'listMcpServers',
+      'getRun',
+      'resubmitTrigger',
+      'getDraftAgentKeys',
+      'listRuns',
+      'runTrigger',
+      'getConnectorOperation',
+      'listConnectorGroups',
+      'listOperations',
+      'listWorkflows',
+    ] as const;
+    const spies = methods.map((method) => vi.spyOn(host.client, method));
+
+    await host.execute(operation);
+
+    for (const spy of spies) {
+      expect(spy).not.toHaveBeenCalled();
+    }
+    expect(channels()).toEqual(['ARM']);
   });
 
   it('shares one Contributor session across invocation, metadata, run history and inventory', async () => {
@@ -184,4 +213,54 @@ describe('headless synthetic Standard management host', () => {
     await rejection;
     expect(channels()).toEqual(['issuer']);
   });
+});
+
+describe('synthetic direct management header validation', () => {
+  function request(headers?: HttpRequestOptions<unknown>['headers']): HttpRequestOptions<unknown> {
+    return {
+      uri: 'https://one.example.invalid/api/v1/workflows',
+      noAuth: true,
+      includeAuth: false,
+      headers,
+    };
+  }
+
+  it.each(['X-API-Key', 'x-api-key', 'X-aPi-KeY'])('accepts a single %s header and business headers', (name) => {
+    expect(() =>
+      assertSyntheticDirectManagementHeaders(request({ [name]: 'synthetic-key', 'x-ms-client-request-id': 'business-request' }))
+    ).not.toThrow();
+  });
+
+  it.each(['Authorization', 'authorization', 'AUTHORIZATION', 'x-functions-key', 'X-Functions-Key', 'X-FUNCTIONS-KEY'])(
+    'rejects the forbidden %s credential header',
+    (name) => {
+      expect(() => assertSyntheticDirectManagementHeaders(request({ 'X-API-Key': 'synthetic-key', [name]: 'stale-credential' }))).toThrow(
+        'The synthetic transport requires only the signed management X-API-Key header.'
+      );
+    }
+  );
+
+  it.each(['x-api-key', 'X-API-KEY', 'X-aPi-KeY'])('rejects a duplicate API-key header spelled %s', (name) => {
+    expect(() => assertSyntheticDirectManagementHeaders(request({ 'X-API-Key': 'synthetic-key', [name]: 'another-key' }))).toThrow(
+      'The synthetic transport requires only the signed management X-API-Key header.'
+    );
+  });
+
+  it.each([undefined, {}, { Accept: 'application/json' }, { 'X-API-Key': ['first-key', 'second-key'] }])(
+    'rejects missing or non-string API-key headers: %j',
+    (headers) => {
+      expect(() => assertSyntheticDirectManagementHeaders(request(headers))).toThrow(
+        'The synthetic transport requires only the signed management X-API-Key header.'
+      );
+    }
+  );
+
+  it.each([{ noAuth: false }, { noAuth: undefined }, { includeAuth: true }, { includeAuth: undefined }])(
+    'rejects ambient-auth options: %j',
+    (options) => {
+      expect(() => assertSyntheticDirectManagementHeaders({ ...request({ 'X-API-Key': 'synthetic-key' }), ...options })).toThrow(
+        'The synthetic transport requires only the signed management X-API-Key header.'
+      );
+    }
+  );
 });

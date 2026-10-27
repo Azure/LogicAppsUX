@@ -190,12 +190,26 @@ export class SyntheticStandardManagementHost {
     const { run, connector, manifest, search, resource } = this.services;
     const base = `${discovery[this.identity.app].resourceId}/hostruntime${managementPath}`;
     const workflow = `${base}/workflows/${workflowName}`;
+    const enabled = await this.client.isEnabled();
     switch (operation) {
       case 'callback.get':
+        if (enabled) {
+          return this.client.getCallbackUrl({
+            uri: `${armOrigin}${workflow}/triggers/manual/listCallbackUrl`,
+            queryParameters: { 'api-version': apiVersion },
+          });
+        }
         return resource.executeResourceAction(`${workflow}/triggers/manual/listCallbackUrl`, HTTP_METHODS.POST, {
           'api-version': apiVersion,
         });
       case 'workflow.validate':
+        if (enabled) {
+          return this.client.validateWorkflow({
+            uri: `${armOrigin}${workflow}/validate`,
+            queryParameters: { 'api-version': apiVersion },
+            content: { definition: { triggers: {}, actions: {}, contentVersion: '1.0.0.0' } },
+          });
+        }
         return resource.executeResourceAction(
           `${workflow}/validate`,
           HTTP_METHODS.POST,
@@ -215,12 +229,25 @@ export class SyntheticStandardManagementHost {
       case 'run.cancel':
         return run.cancelRun(`/workflows/${workflowName}/runs/run-one`);
       case 'mcp.list':
+        if (enabled) {
+          return this.client.listMcpServers({
+            uri: `${armOrigin}${base}/listMcpServers`,
+            queryParameters: { 'api-version': apiVersion },
+          });
+        }
         return resource.executeResourceAction(`${base}/listMcpServers`, HTTP_METHODS.POST, { 'api-version': apiVersion });
       case 'run.get':
         return run.getRun('run-one');
       case 'trigger.resubmit':
         return run.resubmitRun('history-one', 'manual');
       case 'agent.draftKeys.get':
+        if (enabled) {
+          return this.client.getDraftAgentKeys({
+            uri: `${armOrigin}${workflow}/listDraftApiKeys`,
+            queryParameters: { 'api-version': apiVersion },
+            content: { expiry: new Date(Date.now() + 86_400_000).toISOString(), keyType: 'Primary' },
+          });
+        }
         return resource.executeResourceAction(
           `${workflow}/listDraftApiKeys`,
           HTTP_METHODS.POST,
@@ -273,11 +300,10 @@ export class SyntheticStandardManagementHost {
       throw httpFailure(503, 'ServiceTemporarilyUnavailable');
     }
     const expires = Math.floor((Date.now() + 300_000) / 1000);
-    const token = `${expires.toString(16)}.${`fixture_session_${++this.serial}`.padEnd(43, 'A')}`;
+    const token = `fixture_signed_management_${++this.serial}`;
     const response = {
-      endpoint: `${this.scenario === 'unsafe-endpoint' ? 'https://untrusted.example.invalid' : target.runtimeOrigin}${managementPath}/v1`,
-      extensionCode: 'synthetic-extension-not-a-real-key',
-      accessToken: token,
+      endpoint: `${this.scenario === 'unsafe-endpoint' ? 'https://untrusted.example.invalid' : target.runtimeOrigin}/api/v1`,
+      apiKey: token,
       expiresOn: new Date(expires * 1000).toISOString().replace('.000Z', 'Z'),
     };
     if (this.holdIssuance) {
@@ -288,19 +314,11 @@ export class SyntheticStandardManagementHost {
 
   private async handleDirect(method: 'GET' | 'POST', options: HttpRequestOptions<unknown>): Promise<unknown> {
     const url = new URL(options.uri);
-    if (!Object.values(discovery).some((item) => item.runtimeOrigin === url.origin) || !url.pathname.startsWith(`${managementPath}/v1/`)) {
+    if (!Object.values(discovery).some((item) => item.runtimeOrigin === url.origin) || !url.pathname.startsWith('/api/v1/')) {
       throw new Error('Only offline discovered synthetic runtime URLs are permitted.');
     }
-    if (
-      options.noAuth !== true ||
-      options.includeAuth !== false ||
-      options.headers?.['x-functions-key'] !== 'synthetic-extension-not-a-real-key' ||
-      typeof options.headers?.['Authorization'] !== 'string' ||
-      !options.headers['Authorization'].startsWith('Bearer ')
-    ) {
-      throw new Error('The synthetic transport requires the separate session and host-admission headers.');
-    }
-    const path = url.pathname.slice(`${managementPath}/v1`.length);
+    assertSyntheticDirectManagementHeaders(options);
+    const path = url.pathname.slice('/api/v1'.length);
     this.record('direct', method, path);
     switch (this.scenario) {
       case 'storage503':
@@ -316,6 +334,20 @@ export class SyntheticStandardManagementHost {
       default:
         return businessResponse(path, url.origin);
     }
+  }
+}
+
+export function assertSyntheticDirectManagementHeaders(options: HttpRequestOptions<unknown>): void {
+  const headers = Object.entries(options.headers ?? {});
+  const apiKeyHeaders = headers.filter(([name]) => name.toLowerCase() === 'x-api-key');
+  if (
+    options.noAuth !== true ||
+    options.includeAuth !== false ||
+    headers.some(([name]) => ['authorization', 'x-functions-key'].includes(name.toLowerCase())) ||
+    apiKeyHeaders.length !== 1 ||
+    typeof apiKeyHeaders[0]?.[1] !== 'string'
+  ) {
+    throw new Error('The synthetic transport requires only the signed management X-API-Key header.');
   }
 }
 

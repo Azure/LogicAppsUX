@@ -79,9 +79,8 @@ function credential(account = 'principal'): string {
 function envelope() {
   const seconds = Math.floor(Date.now() / 1000) + 300;
   return {
-    endpoint: 'https://test.azurewebsites.net/runtime/webhooks/workflow/api/management/v1',
-    extensionCode: 'synthetic-extension',
-    accessToken: `${seconds.toString(16)}.${'A'.repeat(43)}`,
+    endpoint: 'https://test.azurewebsites.net/api/v1',
+    apiKey: 'synthetic-signed-management',
     expiresOn: new Date(seconds * 1000).toISOString().replace('.000Z', 'Z'),
   };
 }
@@ -116,7 +115,15 @@ describe('existing designer direct-management integration', () => {
 
   it('switches actual requests from ARM to issuance/direct/cache reuse and back to ARM', async () => {
     const { result, rerender } = renderHook(useConfiguredClient);
-    const request = { uri: `${armBase}/workflows/Order/runs/run?api-version=2020-06-01` };
+    const request = {
+      uri: `${armBase}/workflows/Order/runs/run?api-version=2020-06-01`,
+      headers: {
+        Authorization: 'Bearer stale-arm-token',
+        'x-functions-key': 'stale-extension-code',
+        'x-api-key': 'stale-api-key',
+        'x-ms-client-request-id': 'business-request',
+      },
+    };
     await expect(result.current.client.getRun(request)).resolves.toEqual({ name: 'ARM-run' });
     expect(mocks.fetch).not.toHaveBeenCalled();
     mocks.options = { ...mocks.options, enableStandardDirectManagement: true };
@@ -127,9 +134,14 @@ describe('existing designer direct-management integration', () => {
     expect(mocks.get).toHaveBeenCalledTimes(2);
     expect(mocks.get.mock.calls[1][0]).toContain('/tokens/reader');
     expect(mocks.fetch).toHaveBeenCalledTimes(2);
-    expect(String(mocks.fetch.mock.calls[0][0])).toContain(
-      'https://test.azurewebsites.net/runtime/webhooks/workflow/api/management/v1/workflows/Order/runs/run'
-    );
+    expect(String(mocks.fetch.mock.calls[0][0])).toContain('https://test.azurewebsites.net/api/v1/workflows/Order/runs/run');
+    for (const [, init] of mocks.fetch.mock.calls) {
+      expect(Object.fromEntries(new Headers(init.headers).entries())).toEqual({
+        'x-api-key': envelope().apiKey,
+        'x-ms-client-request-id': 'business-request',
+      });
+      expect(init).toMatchObject({ credentials: 'omit', redirect: 'error', cache: 'no-store' });
+    }
     mocks.options = { ...mocks.options, enableStandardDirectManagement: false };
     rerender();
     await expect(result.current.client.getRun(request)).resolves.toEqual({ name: 'ARM-run' });

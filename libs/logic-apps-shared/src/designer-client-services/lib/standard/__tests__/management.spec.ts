@@ -13,7 +13,7 @@ const resourceId = '/subscriptions/sub/resourceGroups/rg/providers/Microsoft.Web
 const armOrigin = 'https://management.azure.com';
 const runtimeOrigin = 'https://app.azurewebsites.net';
 const armBase = `${armOrigin}${resourceId}/hostruntime/runtime/webhooks/workflow/api/management`;
-const endpoint = `${runtimeOrigin}/runtime/webhooks/workflow/api/management/v1`;
+const endpoint = `${runtimeOrigin}/api/v1`;
 const context = { resourceId, armOrigin, runtimeOrigin, tenantId: 'tenant', principalId: 'user', authContextKey: 'sign-in-1' };
 const paths = [
   ['POST', '/workflows/Order/triggers/manual/listCallbackUrl', 'contributor', 'getCallbackUrl'],
@@ -40,8 +40,7 @@ function envelope(expires = Date.now() + 300_000): Record<string, string> {
   const seconds = Math.floor(expires / 1000);
   return {
     endpoint,
-    extensionCode: 'extension-secret',
-    accessToken: `${seconds.toString(16).padStart(8, '0')}.${'A'.repeat(43)}`,
+    apiKey: 'synthetic-signed-management-credential',
     expiresOn: new Date(seconds * 1000).toISOString().replace('.000Z', 'Z'),
   };
 }
@@ -123,12 +122,85 @@ describe('Standard direct management through existing services', () => {
     vi.useRealTimers();
   });
 
+  it('exposes named management APIs instead of a generic HTTP adapter', () => {
+    for (const method of ['get', 'post', 'put', 'patch', 'delete', 'routeRequest']) {
+      expect(method in client).toBe(false);
+    }
+  });
+
+  it('lets callers check enablement without acquiring credentials or dispatching work', async () => {
+    await expect(client.isEnabled()).resolves.toBe(true);
+    await expect(client.isEnabled()).resolves.toBe(true);
+    expect(isFeatureEnabled).toHaveBeenCalledOnce();
+    expect(arm.get).not.toHaveBeenCalled();
+    expect(arm.post).not.toHaveBeenCalled();
+    expect(direct.get).not.toHaveBeenCalled();
+    expect(direct.post).not.toHaveBeenCalled();
+  });
+
+  it('does not offer an enabled management facade without a supported context', async () => {
+    client.setContext(undefined);
+    await expect(client.isEnabled()).resolves.toBe(false);
+    client.setContext({ ...context, resourceId: `${resourceId}/slots/staging` });
+    await expect(client.isEnabled()).resolves.toBe(false);
+    const armOnly = StandardManagementHttpClient.createArmOnly(arm);
+    armOnly.setContext(context);
+    await expect(armOnly.isEnabled()).resolves.toBe(false);
+    armOnly.dispose();
+    expect(isFeatureEnabled).not.toHaveBeenCalled();
+  });
+
+  it.each(paths)('never intercepts generic resource %s %s requests (%s)', async (method, path, _profile, entry) => {
+    const named = vi.spyOn(client, entry);
+    const enabled = vi.spyOn(client, 'isEnabled');
+    const uri = `${armBase}${path}?api-version=2022-05-01`;
+    const content = method === 'POST' ? { original: 'body' } : undefined;
+    const response = { original: 'response' };
+    const transport = vi.mocked(method === 'POST' ? arm.post : arm.get);
+    transport.mockResolvedValueOnce(response);
+    await expect(resources.executeHttpCall(uri, method as HTTP_METHODS, content)).resolves.toBe(response);
+    expect(transport).toHaveBeenCalledExactlyOnceWith(method === 'POST' ? { uri, content } : { uri });
+    expect(named).not.toHaveBeenCalled();
+    expect(enabled).not.toHaveBeenCalled();
+    expect(direct.get).not.toHaveBeenCalled();
+    expect(direct.post).not.toHaveBeenCalled();
+  });
+
+  it('does not send a direct continuation URL to the legacy transport after disablement', async () => {
+    isFeatureEnabled.mockResolvedValue(false);
+    const named = vi.spyOn(client, 'listRuns');
+    await expect(runService.getMoreRuns(`${endpoint}/workflows/Order/runs?api-version=2018-11-01&$skiptoken=next`)).rejects.toThrow(
+      'Refresh run history'
+    );
+    expect(named).not.toHaveBeenCalled();
+    expect(arm.get).not.toHaveBeenCalled();
+    expect(direct.get).not.toHaveBeenCalled();
+  });
+
+  it('maps a direct continuation back to ARM after confirmed runtime disablement', async () => {
+    vi.mocked(direct.get).mockRejectedValueOnce(failure(503, 'DirectAccessDisabled'));
+    vi.mocked(arm.get).mockResolvedValueOnce(envelope()).mockResolvedValueOnce({ value: [] });
+    await expect(runService.getMoreRuns(`${endpoint}/workflows/Order/runs?api-version=2018-11-01&$skiptoken=next`)).resolves.toEqual({
+      runs: [],
+      nextLink: undefined,
+    });
+    expect(arm.get).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        uri: `${armBase}/workflows/Order/runs`,
+        queryParameters: { 'api-version': '2018-11-01', $skiptoken: 'next' },
+      })
+    );
+  });
+
   it.each(paths)('dispatches catalog %s %s using the fixed %s profile', async (method, path, profile, entry) => {
     const body = method === 'POST' ? { existing: 'business payload' } : undefined;
     const options: HttpRequestOptions<unknown> = { uri: `${armBase}${path}?api-version=2022-05-01`, content: body };
     const namedMethod = vi.spyOn(client, entry);
-    // BaseResourceService is the existing portal action/HTTP service, not a test-only dispatch entry point.
-    await resources.executeHttpCall(options.uri, method as any, body);
+    if (await client.isEnabled()) {
+      await client[entry](options);
+    } else {
+      await resources.executeHttpCall(options.uri, method as HTTP_METHODS, body);
+    }
     expect(namedMethod).toHaveBeenCalledOnce();
     const issuer = profile === 'reader' ? vi.mocked(arm.get) : vi.mocked(arm.post);
     expect(issuer).toHaveBeenCalledOnce();
@@ -148,8 +220,7 @@ describe('Standard direct management through existing services', () => {
         includeAuth: false,
         skipBatch: true,
         headers: expect.objectContaining({
-          'x-functions-key': 'extension-secret',
-          Authorization: `Bearer ${envelope()['accessToken']}`,
+          'X-API-Key': envelope()['apiKey'],
         }),
       })
     );
@@ -256,7 +327,7 @@ describe('Standard direct management through existing services', () => {
     isFeatureEnabled.mockResolvedValue(true);
     await managed.refreshEnablement();
     const unrelated = { uri: `${armOrigin}${resourceId}/hostruntime/admin/vfs/connections.json` };
-    await managed.get(unrelated);
+    await resources.executeHttpCall(unrelated.uri, HTTP_METHODS.GET);
     expect(arm.get).toHaveBeenLastCalledWith(unrelated);
     vi.mocked(isolated.get).mockResolvedValueOnce(envelope());
     vi.mocked(direct.get).mockRejectedValueOnce(failure(503, 'DirectAccessDisabled'));
@@ -375,8 +446,7 @@ describe('Standard direct management through existing services', () => {
       code: 'InvalidManagementSessionResponse',
     });
     const diagnostics = JSON.stringify(vi.mocked(console.warn).mock.calls);
-    expect(diagnostics).not.toContain(session.extensionCode);
-    expect(diagnostics).not.toContain(session.accessToken);
+    expect(diagnostics).not.toContain(session.apiKey);
     expect(diagnostics).not.toContain(session.endpoint);
   });
 
@@ -419,7 +489,8 @@ describe('Standard direct management through existing services', () => {
   it('defaults to the existing disabled experimentation implementation', async () => {
     const disabled = new StandardManagementHttpClient({ armClient: arm, directClient: direct, issuerFailureBackoffMs: 10_000 });
     disabled.setContext(context);
-    await disabled.get({ uri: `${armBase}/workflows/Order/runs` });
+    await expect(disabled.isEnabled()).resolves.toBe(false);
+    await arm.get({ uri: `${armBase}/workflows/Order/runs` });
     expect(arm.get).toHaveBeenCalledExactlyOnceWith({ uri: `${armBase}/workflows/Order/runs` });
     expect(direct.get).not.toHaveBeenCalled();
     disabled.dispose();
@@ -476,14 +547,14 @@ describe('Standard direct management through existing services', () => {
     expect(invokeConnector).toHaveBeenCalledOnce();
   });
 
-  it('preserves runtime inventory and resource-action response shapes', async () => {
+  it('preserves runtime inventory while generic resource actions retain the legacy transport', async () => {
     const listWorkflows = vi.spyOn(client, 'listWorkflows');
     const listMcpServers = vi.spyOn(client, 'listMcpServers');
     vi.mocked(direct.get).mockResolvedValueOnce([{ name: 'Order', triggers: { manual: { type: 'Request' } } }]);
     expect(await resources.listWorkflowsInApp('sub', 'rg', 'app')).toEqual([
       { id: `${resourceId}/workflows/Order`, name: 'Order', triggerType: 'Request' },
     ]);
-    vi.mocked(direct.post).mockResolvedValueOnce({ value: [{ name: 'server' }] });
+    vi.mocked(arm.post).mockResolvedValueOnce({ value: [{ name: 'server' }] });
     expect(
       await resources.executeResourceAction(
         `${resourceId}/hostruntime/runtime/webhooks/workflow/api/management/listMcpServers`,
@@ -492,13 +563,12 @@ describe('Standard direct management through existing services', () => {
       )
     ).toEqual({ value: [{ name: 'server' }] });
     expect(listWorkflows).toHaveBeenCalledOnce();
-    expect(listMcpServers).toHaveBeenCalledOnce();
+    expect(listMcpServers).not.toHaveBeenCalled();
+    expect(direct.post).not.toHaveBeenCalled();
   });
 
   it('keeps unrelated resource requests on their original transport', async () => {
-    const get = vi.spyOn(client, 'get');
-    const put = vi.spyOn(client, 'put');
-    const remove = vi.spyOn(client, 'delete');
+    const enabled = vi.spyOn(client, 'isEnabled');
     const response = { original: true };
     vi.mocked(arm.get).mockResolvedValueOnce(response);
     vi.mocked(arm.put).mockResolvedValue(response);
@@ -506,9 +576,7 @@ describe('Standard direct management through existing services', () => {
     await expect(resources.getResource(resourceId, { 'api-version': '2020-06-01' })).resolves.toBe(response);
     await expect(resources.executeResourceAction(resourceId, HTTP_METHODS.PUT, {}, response)).resolves.toBe(response);
     await expect(resources.executeHttpCall(`${armOrigin}${resourceId}`, HTTP_METHODS.DELETE)).resolves.toBe(response);
-    expect(get).not.toHaveBeenCalled();
-    expect(put).not.toHaveBeenCalled();
-    expect(remove).not.toHaveBeenCalled();
+    expect(enabled).not.toHaveBeenCalled();
     expect(isFeatureEnabled).not.toHaveBeenCalled();
     expect(direct.get).not.toHaveBeenCalled();
     expect(direct.post).not.toHaveBeenCalled();
@@ -561,7 +629,7 @@ describe('Standard direct management through existing services', () => {
 
   it('keeps Reader for reads and acquires Contributor independently for an action', async () => {
     await runService.getRuns();
-    await resources.executeHttpCall(`${armBase}/workflows/Order/validate`, 'POST' as any, { definition: {} });
+    await client.validateWorkflow({ uri: `${armBase}/workflows/Order/validate`, content: { definition: {} } });
     await runService.getRuns();
     expect(arm.get).toHaveBeenCalledOnce();
     expect(arm.post).toHaveBeenCalledOnce();
@@ -584,7 +652,7 @@ describe('Standard direct management through existing services', () => {
       issuerFailureBackoffMs: 10_000,
     });
     other.setContext(context);
-    await other.get({ uri: `${armBase}/workflows/Order/runs` });
+    await other.listRuns({ uri: `${armBase}/workflows/Order/runs` });
     expect(arm.get).toHaveBeenCalledTimes(2);
     other.dispose();
   });
@@ -605,8 +673,8 @@ describe('Standard direct management through existing services', () => {
   it('coalesces across services and workflow changes, reusing Contributor for reads', async () => {
     const pending = deferred<any>();
     vi.mocked(arm.post).mockReturnValue(pending.promise);
-    const one = client.post({ uri: `${armBase}/workflows/Order/validate` });
-    const two = resources.executeHttpCall(`${armBase}/workflows/Other/validate`, 'POST' as any, { definition: {} });
+    const one = client.validateWorkflow({ uri: `${armBase}/workflows/Order/validate` });
+    const two = client.validateWorkflow({ uri: `${armBase}/workflows/Other/validate`, content: { definition: {} } });
     await vi.waitFor(() => expect(arm.post).toHaveBeenCalledOnce());
     pending.resolve(envelope());
     await Promise.all([one, two]);
@@ -763,9 +831,7 @@ describe('Standard direct management through existing services', () => {
   ])('does not bypass or replay direct failure %s %s', async (status, code) => {
     const original = failure(status, code);
     vi.mocked(direct.post).mockRejectedValue(original);
-    const error = await resources
-      .executeHttpCall(`${armBase}/workflows/Order/runs/run/cancel`, 'POST' as any)
-      .catch((error: unknown) => error);
+    const error = await client.cancelRun({ uri: `${armBase}/workflows/Order/runs/run/cancel` }).catch((error: unknown) => error);
     expect(error).toBe(original);
     expect(isStandardManagementError(error)).toBe(true);
     expect(error).toMatchObject({ response: { status, data: { error: { code, message: 'Server diagnostic', target: 'app' } } } });
@@ -776,7 +842,7 @@ describe('Standard direct management through existing services', () => {
   it.each(['RequestUnauthorized', 'AuthorizationFailed'])('preserves original denial details for %s without replay', async (code) => {
     const error = failure(403, code);
     vi.mocked(direct.post).mockRejectedValue(error);
-    const request = resources.executeHttpCall(`${armBase}/workflows/Order/runs/run/cancel`, 'POST' as any);
+    const request = client.cancelRun({ uri: `${armBase}/workflows/Order/runs/run/cancel` });
     await expect(request).rejects.toBe(error);
     expect(arm.post).toHaveBeenCalledOnce();
     expect(direct.post).toHaveBeenCalledOnce();
@@ -785,7 +851,7 @@ describe('Standard direct management through existing services', () => {
   it('preserves the original ARM authorization error after an issuer authorization denial', async () => {
     const armError = failure(403, 'AuthorizationFailed');
     vi.mocked(arm.post).mockRejectedValueOnce(failure(403, 'RequestUnauthorized')).mockRejectedValueOnce(armError);
-    const request = resources.executeHttpCall(`${armBase}/workflows/Order/runs/run/cancel`, HTTP_METHODS.POST);
+    const request = client.cancelRun({ uri: `${armBase}/workflows/Order/runs/run/cancel` });
     await expect(request).rejects.toBe(armError);
     expect(arm.post).toHaveBeenCalledTimes(2);
     expect(direct.post).not.toHaveBeenCalled();
@@ -794,20 +860,20 @@ describe('Standard direct management through existing services', () => {
   it('falls back once for exact disabled admission and waits for explicit positive enablement refresh', async () => {
     vi.mocked(direct.post).mockRejectedValueOnce(failure(503, 'DirectAccessDisabled'));
     const uri = `${armBase}/workflows/Order/runs/run/cancel`;
-    await resources.executeHttpCall(uri, 'POST' as any);
+    await client.cancelRun({ uri });
     client.setContext({ ...context });
-    await resources.executeHttpCall(uri, 'POST' as any);
+    await client.cancelRun({ uri });
     expect(direct.post).toHaveBeenCalledOnce();
     expect(arm.post).toHaveBeenCalledTimes(3);
     await client.refreshEnablement();
-    await resources.executeHttpCall(uri, 'POST' as any);
+    await client.cancelRun({ uri });
     expect(direct.post).toHaveBeenCalledTimes(2);
   });
 
   it('preserves an ambiguous transport failure without logging it or replaying the mutation', async () => {
     const error = new TypeError('The connection was lost.');
     vi.mocked(direct.post).mockRejectedValue(error);
-    const result = resources.executeHttpCall(`${armBase}/workflows/Order/runs/run/cancel`, 'POST' as any);
+    const result = client.cancelRun({ uri: `${armBase}/workflows/Order/runs/run/cancel` });
     await expect(result).rejects.toBe(error);
     expect(console.warn).not.toHaveBeenCalled();
     expect(arm.post).toHaveBeenCalledOnce();
@@ -827,7 +893,7 @@ describe('Standard direct management through existing services', () => {
   it('renews and retries only once for exact pre-dispatch expiry', async () => {
     const error = failure(401, 'SessionTokenExpired');
     vi.mocked(direct.post).mockRejectedValue(error);
-    await expect(resources.executeHttpCall(`${armBase}/workflows/Order/runs/run/cancel`, 'POST' as any)).rejects.toBe(error);
+    await expect(client.cancelRun({ uri: `${armBase}/workflows/Order/runs/run/cancel` })).rejects.toBe(error);
     expect(direct.post).toHaveBeenCalledTimes(2);
     expect(arm.post).toHaveBeenCalledTimes(2);
   });
@@ -842,39 +908,86 @@ describe('Standard direct management through existing services', () => {
     expect(direct.get).toHaveBeenCalledTimes(2);
     expect(direct.get).toHaveBeenLastCalledWith(
       expect.objectContaining({
-        headers: expect.objectContaining({ Authorization: `Bearer ${session['accessToken']}` }),
+        headers: expect.objectContaining({ 'X-API-Key': session['apiKey'] }),
       })
     );
   });
 
-  it.each(Array.from('AEIMQUYcgkosw048'))('accepts canonical token padding bits ending in %s', async (lastCharacter) => {
+  it.each([1, 52, 1024, 16384])('passes an opaque API key of length %i without decoding it', async (length) => {
     const session = envelope();
-    session['accessToken'] = session['accessToken'].slice(0, -1) + lastCharacter;
+    session['apiKey'] = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-'.repeat(Math.ceil(length / 64)).slice(0, length);
     vi.mocked(arm.get).mockResolvedValue(session);
     await runService.getRuns();
-    expect(direct.get).toHaveBeenCalledOnce();
+    expect(direct.get).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ headers: { 'X-API-Key': session['apiKey'] } }));
   });
+
+  it('replaces caller credentials case-insensitively while retaining business headers', async () => {
+    const request = {
+      uri: `${armBase}/workflows/Order/runs`,
+      headers: {
+        aUtHoRiZaTiOn: 'Bearer stale-arm-token',
+        'X-Functions-Key': 'stale-extension-code',
+        'x-api-key': 'stale-api-key',
+        'x-API-KEY': 'another-stale-api-key',
+        'x-ms-client-request-id': 'business-request',
+      },
+    };
+    const originalHeaders = { ...request.headers };
+    await client.listRuns(request);
+    expect(direct.get).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        uri: `${endpoint}/workflows/Order/runs`,
+        headers: { 'X-API-Key': envelope()['apiKey'], 'x-ms-client-request-id': 'business-request' },
+        noAuth: true,
+        includeAuth: false,
+      })
+    );
+    expect(request.headers).toEqual(originalHeaders);
+  });
+
+  it.each(['legacy', 'mixed', 'missing-api-key'] as const)(
+    'rejects the %s issuer contract and uses the original ARM request',
+    async (shape) => {
+      const { apiKey, ...fields } = envelope();
+      const legacy = { extensionCode: 'old-extension-code', accessToken: 'old-session-token' };
+      const response = shape === 'legacy' ? { ...fields, ...legacy } : shape === 'mixed' ? { ...fields, apiKey, ...legacy } : fields;
+      const request = { uri: `${armBase}/workflows/Order/runs` };
+      vi.mocked(arm.get).mockResolvedValueOnce(response).mockResolvedValueOnce({ value: [] });
+      await expect(client.listRuns(request)).resolves.toEqual({ value: [] });
+      expect(arm.get).toHaveBeenCalledTimes(2);
+      expect(arm.get).toHaveBeenLastCalledWith(request);
+      expect(direct.get).not.toHaveBeenCalled();
+    }
+  );
 
   it.each(['\n', '\r', '\r\n'])('falls back instead of using a token with trailing line breaks %j', async (suffix) => {
     const session = envelope();
-    session['accessToken'] += suffix;
+    session['apiKey'] += suffix;
     vi.mocked(arm.get).mockResolvedValueOnce(session).mockResolvedValue({ value: [] });
     await expect(runService.getRuns()).resolves.toEqual({ nextLink: undefined, runs: [] });
     expect(direct.get).not.toHaveBeenCalled();
   });
 
-  it.each(
-    Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-').filter((value) => !'AEIMQUYcgkosw048'.includes(value))
-  )('falls back instead of using noncanonical token padding bits ending in %s', async (lastCharacter) => {
+  it.each(['=', '.', '/', '+', ' ', '\t'])('falls back instead of using invalid API-key characters %s', async (lastCharacter) => {
     const session = envelope();
-    session['accessToken'] = session['accessToken'].slice(0, -1) + lastCharacter;
+    session['apiKey'] = session['apiKey'].slice(0, -1) + lastCharacter;
     vi.mocked(arm.get).mockResolvedValueOnce(session).mockResolvedValue({ value: [] });
     await expect(runService.getRuns()).resolves.toEqual({ nextLink: undefined, runs: [] });
     expect(arm.get).toHaveBeenCalledTimes(2);
     expect(direct.get).not.toHaveBeenCalled();
   });
 
+  it('rejects API keys exceeding the runtime limit of 16,384 characters', async () => {
+    vi.mocked(arm.get)
+      .mockResolvedValueOnce({ ...envelope(), apiKey: 'A'.repeat(16385) })
+      .mockResolvedValueOnce({ value: [] });
+    await expect(runService.getRuns()).resolves.toEqual({ nextLink: undefined, runs: [] });
+    expect(arm.get).toHaveBeenCalledTimes(2);
+    expect(direct.get).not.toHaveBeenCalled();
+  });
+
   it.each([
+    { endpoint: `${runtimeOrigin}/runtime/webhooks/workflow/api/management/v1` },
     { endpoint: 'https://attacker.example/runtime/webhooks/workflow/api/management/v1' },
     { endpoint: `${endpoint}?code=secret` },
     { endpoint: `${endpoint}#fragment` },
@@ -882,10 +995,10 @@ describe('Standard direct management through existing services', () => {
     { endpoint: endpoint.replace('https://', 'https://user:password@') },
     { expiresOn: 'not-a-date' },
     { expiresOn: '2026-10-21T18:05:00.000Z' },
-    { expiresOn: '2026-10-21T18:04:59Z' },
+    { expiresOn: '2026-10-21T17:59:59Z' },
     { accessToken: 'not-a-session' },
-    { extensionCode: '' },
-    { extensionCode: 'bad\r\nheader' },
+    { apiKey: '' },
+    { apiKey: 'bad\r\nheader' },
     { unexpected: 'field' },
   ])('falls back instead of using an invalid or unsafe envelope: %j', async (fields) => {
     vi.mocked(arm.get)
@@ -992,9 +1105,9 @@ describe('Standard direct management through existing services', () => {
   });
 
   it('does not attach session credentials to routes outside the catalog or another app', async () => {
-    await client.get({ uri: `${armBase}/workflows/Order/runs/run/actions` });
-    await client.get({ uri: `${armBase.replace('/sites/app/', '/sites/other/')}/workflows/Order/runs` });
-    await client.get({ uri: `${armBase}/workflows/Order/runs?unexpected=parameter` });
+    await resources.executeHttpCall(`${armBase}/workflows/Order/runs/run/actions`, HTTP_METHODS.GET);
+    await resources.executeHttpCall(`${armBase.replace('/sites/app/', '/sites/other/')}/workflows/Order/runs`, HTTP_METHODS.GET);
+    await resources.executeHttpCall(`${armBase}/workflows/Order/runs?unexpected=parameter`, HTTP_METHODS.GET);
     expect(arm.get).toHaveBeenCalledTimes(3);
     expect(direct.get).not.toHaveBeenCalled();
   });
@@ -1009,9 +1122,9 @@ describe('Standard direct management through existing services', () => {
   it('rejects old direct paging URLs after context discard or app/environment change', async () => {
     const uri = `${endpoint}/workflows/Order/runs?api-version=2018-11-01`;
     client.setContext(undefined);
-    await expect(client.get({ uri })).rejects.toThrow(/context/i);
+    await expect(client.listRuns({ uri })).rejects.toThrow(/context/i);
     client.setContext({ ...context, resourceId: resourceId.replace('/app', '/other'), runtimeOrigin: 'https://other.azurewebsites.net' });
-    await expect(client.get({ uri })).rejects.toThrow(/context/i);
+    await expect(client.listRuns({ uri })).rejects.toThrow(/context/i);
     expect(arm.get).not.toHaveBeenCalled();
     expect(direct.get).not.toHaveBeenCalled();
   });
@@ -1019,7 +1132,7 @@ describe('Standard direct management through existing services', () => {
   it('rejects late enablement results after the context changes', async () => {
     const enabled = deferred<boolean>();
     isFeatureEnabled.mockReturnValue(enabled.promise);
-    const work = client.get({ uri: `${armBase}/workflows/Order/runs` });
+    const work = client.listRuns({ uri: `${armBase}/workflows/Order/runs` });
     const rejection = expect(work).rejects.toThrow(/context/i);
     client.setContext(undefined);
     enabled.resolve(true);
@@ -1030,8 +1143,8 @@ describe('Standard direct management through existing services', () => {
 
   it.each(throttleFailures)('honors issuer $shape $header until another acquisition is allowed', async ({ error }) => {
     vi.mocked(arm.get).mockRejectedValueOnce(error).mockResolvedValueOnce({ value: [] }).mockResolvedValueOnce({ value: [] });
-    await expect(client.get({ uri: `${armBase}/workflows/Order/runs` })).resolves.toEqual({ value: [] });
-    await expect(client.get({ uri: `${armBase}/workflows/Order/runs` })).resolves.toEqual({ value: [] });
+    await expect(client.listRuns({ uri: `${armBase}/workflows/Order/runs` })).resolves.toEqual({ value: [] });
+    await expect(client.listRuns({ uri: `${armBase}/workflows/Order/runs` })).resolves.toEqual({ value: [] });
     expect(arm.get).toHaveBeenCalledTimes(3);
     vi.setSystemTime(Date.now() + 10_000);
     await runService.getRuns();
@@ -1041,7 +1154,7 @@ describe('Standard direct management through existing services', () => {
 
   it.each(throttleFailures)('honors direct $shape $header without a new issuer request or ARM fallback', async ({ error }) => {
     vi.mocked(direct.get).mockRejectedValueOnce(error);
-    await expect(client.get({ uri: `${armBase}/workflows/Order/runs` })).rejects.toBe(error);
+    await expect(client.listRuns({ uri: `${armBase}/workflows/Order/runs` })).rejects.toBe(error);
     await expect(runService.getRuns()).rejects.toBe(error);
     expect(direct.get).toHaveBeenCalledOnce();
     expect(arm.get).toHaveBeenCalledOnce();
@@ -1057,7 +1170,7 @@ describe('Standard direct management through existing services', () => {
       .mockResolvedValueOnce(envelope())
       .mockRejectedValueOnce(failure(503, 'ServiceTemporarilyUnavailable'))
       .mockResolvedValueOnce({ status: 'legacySucceeded' });
-    await expect(resources.executeHttpCall(`${armBase}/workflows/Order/runs/run/cancel`, 'POST' as any)).resolves.toEqual({
+    await expect(client.cancelRun({ uri: `${armBase}/workflows/Order/runs/run/cancel` })).resolves.toEqual({
       status: 'legacySucceeded',
     });
     expect(direct.post).toHaveBeenCalledOnce();
