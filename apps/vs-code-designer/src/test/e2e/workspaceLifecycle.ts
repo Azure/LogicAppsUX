@@ -3128,7 +3128,6 @@ async function normalizeDesignerCanvasViewport(
     Record<string, unknown> & {
       fitButtonPoint?: { x: number; y: number };
       renderedNodeIds?: string[];
-      zoomOutButtonPoint?: { x: number; y: number };
     }
   >(
     contextId,
@@ -3191,13 +3190,6 @@ async function normalizeDesignerCanvasViewport(
       const fitButtonPoint = fitButtonRect
         ? { x: fitButtonRect.left + fitButtonRect.width / 2, y: fitButtonRect.top + fitButtonRect.height / 2 }
         : undefined;
-      const zoomOutButton = Array.from(
-        canvasControlOwner?.querySelectorAll?.('#control-zoom-out-button, [data-testid="control-zoom-out-button"]') || []
-      ).find((element) => element instanceof HTMLElement && isVisible(element) && pointHitsElement(element));
-      const zoomOutButtonRect = zoomOutButton instanceof HTMLElement ? zoomOutButton.getBoundingClientRect() : undefined;
-      const zoomOutButtonPoint = zoomOutButtonRect
-        ? { x: zoomOutButtonRect.left + zoomOutButtonRect.width / 2, y: zoomOutButtonRect.top + zoomOutButtonRect.height / 2 }
-        : undefined;
 
       const cards = Array.from(
         designerCanvas?.querySelectorAll?.('[data-automation-id^="msla-node"], [id^="msla-node"], [data-testid*="node"], .msla-card, .react-flow__node') || []
@@ -3216,7 +3208,6 @@ async function normalizeDesignerCanvasViewport(
         fitButtonFound: !!fitButton,
         fitButtonPoint,
         renderedNodeIds,
-        zoomOutButtonPoint,
         scrollStateBefore,
         canvasRect: summarizeRect(designerCanvas),
         cards,
@@ -3310,8 +3301,36 @@ async function normalizeDesignerCanvasViewport(
   };
 
   let settled = await waitForStableGeometry(Math.min(normalizationDeadline, Date.now() + 1200));
-  for (let attempt = 1; attempt <= 4 && !settled && state.zoomOutButtonPoint; attempt += 1) {
-    await clickPoint(bounded, state.zoomOutButtonPoint);
+  for (let attempt = 1; attempt <= 4 && !settled; attempt += 1) {
+    const zoomOutButtonPoint = await bounded.evaluate<{ x: number; y: number } | undefined>(
+      contextId,
+      `(() => {
+        const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
+        const pointHitsElement = (element) => {
+          const rect = element.getBoundingClientRect();
+          const hit = document.elementFromPoint?.(rect.left + rect.width / 2, rect.top + rect.height / 2);
+          return !!hit && (hit === element || element.contains(hit));
+        };
+        const designerCanvas = Array.from(document.querySelectorAll('.react-flow, .msla-designer-canvas, [data-automation-id="msla-designer-canvas"]'))
+          .filter(isVisible)
+          .at(-1);
+        const canvasControlOwner =
+          designerCanvas instanceof HTMLElement
+            ? designerCanvas.closest('.msla-designer-canvas, [data-automation-id="msla-designer-canvas"]') || designerCanvas
+            : undefined;
+        const button = Array.from(
+          canvasControlOwner?.querySelectorAll?.('#control-zoom-out-button, [data-testid="control-zoom-out-button"]') || []
+        ).find((element) => element instanceof HTMLElement && isVisible(element) && pointHitsElement(element));
+        if (!(button instanceof HTMLElement)) return undefined;
+        const rect = button.getBoundingClientRect();
+        return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+      })()`
+    );
+    if (!zoomOutButtonPoint) {
+      break;
+    }
+    console.log(`[workspace-lifecycle][canvas-viewport] ${description} Zoom Out attempt ${attempt}: ${JSON.stringify(zoomOutButtonPoint)}`);
+    await clickPoint(bounded, zoomOutButtonPoint);
     await new Promise((resolve) => setTimeout(resolve, 150));
     settled = await waitForStableGeometry(Math.min(normalizationDeadline, Date.now() + 900));
   }

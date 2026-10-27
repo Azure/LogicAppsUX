@@ -435,7 +435,12 @@ async function testCanvasViewportNormalizationUsesStructuralDiagnosticsAndOwnedC
   assert.match(normalizeSource, /const bounded = boundedCdp\(cdp, normalizationDeadline\)/, 'Fit must retain one bounded CDP budget');
   assert.match(normalizeSource, /missingExpectedNodeIds/, 'Fit must wait for every caller-required node identity');
   assert.match(normalizeSource, /geometry === previousGeometry/, 'Fit must require consecutive stable geometry observations');
-  assert.match(normalizeSource, /attempt <= 4 && !settled && state\.zoomOutButtonPoint/, 'Fit must use bounded Zoom Out recovery');
+  assert.match(normalizeSource, /attempt <= 4 && !settled/, 'Fit must use bounded Zoom Out recovery');
+  assert.match(
+    normalizeSource,
+    /for \(let attempt = 1; attempt <= 4 && !settled; attempt \+= 1\) \{\s*const zoomOutButtonPoint = await bounded\.evaluate/,
+    'Zoom Out must be reacquired inside every recovery attempt'
+  );
   assert.doesNotMatch(normalizeSource, /fitButton\.click\(\)/, 'Fit must not use a synthetic DOM click');
   assert.match(normalizeSource, /settledObservations >= 3/, 'Fit must wait for stable in-canvas node geometry');
   const dom = new JSDOM(
@@ -569,11 +574,11 @@ async function testCanvasViewportNormalizationUsesStructuralDiagnosticsAndOwnedC
   const zoomRecoveryGeometry = {
     'control-zoom-fit-button': { left: 20, top: 80, width: 40, height: 30 },
     'control-zoom-out-button': { left: 20, top: 120, width: 40, height: 30 },
-    'msla-node-Request': { left: 100, top: -100, width: 200, height: 80 },
+    'msla-node-Request': { left: 100, top: -200, width: 200, height: 80 },
     canvas: { left: 0, top: 50, width: 458, height: 593 },
   };
   configureElementGeometry(zoomRecoveryDom.window, zoomRecoveryGeometry);
-  let zoomOutDispatches = 0;
+  const zoomOutDispatches: Array<{ x: number; y: number }> = [];
   await exported.normalizeDesignerCanvasViewport(
     {
       evaluate: async (_contextId: number | undefined, expression: string) =>
@@ -582,9 +587,14 @@ async function testCanvasViewportNormalizationUsesStructuralDiagnosticsAndOwnedC
         if (params.type !== 'mouseReleased') {
           return;
         }
-        if (params.y === 135) {
-          zoomOutDispatches++;
-          zoomRecoveryGeometry['msla-node-Request'].top = 100;
+        if (params.y === 135 && (params.x === 40 || params.x === 140)) {
+          zoomOutDispatches.push({ x: params.x as number, y: params.y as number });
+          if (zoomOutDispatches.length === 1) {
+            zoomRecoveryGeometry['msla-node-Request'].top = -50;
+            zoomRecoveryGeometry['control-zoom-out-button'].left = 120;
+          } else {
+            zoomRecoveryGeometry['msla-node-Request'].top = 100;
+          }
         }
       },
     },
@@ -592,7 +602,14 @@ async function testCanvasViewportNormalizationUsesStructuralDiagnosticsAndOwnedC
     'unit zoom recovery',
     ['Request']
   );
-  assert.strictEqual(zoomOutDispatches, 1, 'Normalization should use one trusted Zoom Out recovery when Fit excludes a required node');
+  assert.deepStrictEqual(
+    zoomOutDispatches,
+    [
+      { x: 40, y: 135 },
+      { x: 140, y: 135 },
+    ],
+    'Normalization must reacquire moved Zoom Out coordinates before the second trusted recovery click'
+  );
   assert.match(logs.join('\n'), /unit zoom recovery settled: \{"settled":true/);
 }
 

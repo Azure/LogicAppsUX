@@ -186,6 +186,8 @@ function testLifecycleUsesProductWizardAndFreshHostContract(): void {
   assert.match(source, /LA_E2E_CLI_RUN_AFTER_PERSISTENCE_HANDOFF/);
   assert.match(source, /requiredNodeIds/);
   assert.match(source, /readRunAfterPersistenceWorkflow/);
+  assert.match(source, /session\.actions\.saveWithExternalOracle\(\)/);
+  assert.doesNotMatch(source, /session\.actions\.save\(\)/);
   assert.match(source, /readApprovedAzureConnectorFixture/);
   assert.match(source, /readApprovedExistingResourceGroup/);
   assert.match(source, /installApprovedAzureFixture/);

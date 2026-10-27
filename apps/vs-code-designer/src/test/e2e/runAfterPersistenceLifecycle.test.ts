@@ -234,7 +234,7 @@ async function authorAndPersist(entry: CreatedWorkspace, azureFixture: ApprovedA
       runAfter: { predecessorNodeId: firstCompose.nodeId, statuses: ['Failed'] },
     });
 
-    await session.actions.save();
+    await session.actions.saveWithExternalOracle();
     const identity: RunAfterPersistenceIdentity = {
       requestTriggerId: request.nodeId,
       firstComposeId: firstCompose.nodeId,

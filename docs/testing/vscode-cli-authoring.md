@@ -219,9 +219,18 @@ capture, call the shared `normalizeDesignerCanvasViewport` seam so Output,
 Terminal, or responsive details panels cannot clip required nodes. That seam
 uses trusted CDP input for Fit view and waits for stable in-canvas node geometry;
 when React Flow Fit excludes an unmounted virtualized node, it uses bounded
-trusted Zoom Out recovery until every required node ID is mounted and stable.
+trusted Zoom Out recovery, reacquiring the control after every transform, until
+every required node ID is mounted and stable.
 Do not replace it with `HTMLElement.click()`, which can leave the React Flow
 transform unchanged while logging a false click success.
+
+When a lifecycle has a strict persisted-file semantic oracle, use
+`ProvenDesignerCdpActions.saveWithExternalOracle()` and immediately run that
+oracle. V2 Save can persist and return to its idle label faster than polling can
+observe the transient disabled/`Saving` state. The external-oracle path owns
+only the trusted semantic Save dispatch; it is successful only when the caller's
+disk/hash oracle passes. Keep `save()` for consumers that require and can
+observe the UI acknowledgement transition.
 
 Bind every evidence screenshot to the already-owned semantic CDP target and
 frame. A tab title, workbench shell, blank webview or unrelated visible text is

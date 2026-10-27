@@ -1521,16 +1521,7 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
 
   override async save(): Promise<void> {
     console.log('[designer-actions] saving workflow through shared semantic Save control');
-    const point = await this.waitForPoint(
-      `(() => {
-        ${visibleDom}
-        ${provenSaveButtonDom}
-        return provenSaveButtonPoint();
-      })()`,
-      'one visible enabled Designer Save toolbar button',
-      Math.min(this.deadline, Date.now() + 30000)
-    );
-    await this.dispatchTrustedPoint(point);
+    await this.dispatchSemanticSave();
     await this.waitForCondition(
       `(() => {
         ${visibleDom}
@@ -1551,6 +1542,24 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
       'Designer Save completion',
       Math.min(this.deadline, Date.now() + 60000)
     );
+  }
+
+  async saveWithExternalOracle(): Promise<void> {
+    console.log('[designer-actions] dispatching workflow Save for caller-owned persistence oracle');
+    await this.dispatchSemanticSave();
+  }
+
+  private async dispatchSemanticSave(): Promise<void> {
+    const point = await this.waitForPoint(
+      `(() => {
+        ${visibleDom}
+        ${provenSaveButtonDom}
+        return provenSaveButtonPoint();
+      })()`,
+      'one visible enabled Designer Save toolbar button',
+      Math.min(this.deadline, Date.now() + 30000)
+    );
+    await this.dispatchTrustedPoint(point);
   }
 
   override async waitForDesignerReady(existingNodeTitles: string[] = []): Promise<void> {

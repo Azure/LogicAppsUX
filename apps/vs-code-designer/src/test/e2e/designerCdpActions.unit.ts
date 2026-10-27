@@ -906,12 +906,21 @@ function testParameterAndSaveParity(): void {
   assert.match(save, /designer save did not complete/);
 
   const provenSave = getMethod('ProvenDesignerCdpActions', 'save');
-  assert.match(provenSave, /\$\{provenSaveButtonDom\}/);
-  assert.match(provenSave, /provenSaveButtonPoint\(\)/);
-  assert.match(provenSave, /this\.dispatchTrustedPoint\(point\)/);
+  assert.match(provenSave, /this\.dispatchSemanticSave\(\)/);
   assert.match(provenSave, /state\.busy \|\| state\.disabled/);
   assert.match(provenSave, /!state\.busy/);
   assert.doesNotMatch(provenSave, /this\.proven\.save/);
+
+  const dispatchSave = getMethod('ProvenDesignerCdpActions', 'dispatchSemanticSave');
+  assert.match(dispatchSave, /\$\{provenSaveButtonDom\}/);
+  assert.match(dispatchSave, /provenSaveButtonPoint\(\)/);
+  assert.match(dispatchSave, /this\.dispatchTrustedPoint\(point\)/);
+
+  const externalOracleSave = getMethod('ProvenDesignerCdpActions', 'saveWithExternalOracle');
+  assert.match(externalOracleSave, /this\.dispatchSemanticSave\(\)/);
+  assert.doesNotMatch(externalOracleSave, /this\.save\(\)/);
+  assert.doesNotMatch(externalOracleSave, /this\.waitForCondition\(/);
+  assert.doesNotMatch(externalOracleSave, /Designer Save acknowledgement|Designer Save completion/);
 }
 
 function testProvenSaveButtonDom(): void {
