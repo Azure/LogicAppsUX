@@ -195,7 +195,10 @@ const DesignerEditor = ({ managementHost }: { managementHost?: AzureStandardMana
   const prodWorkflow = useMemo(() => artifactData?.properties.files[Artifact.WorkflowFile], [artifactData?.properties.files]);
   const draftWorkflow = useMemo(() => customCodeData?.[Artifact.DraftFile], [customCodeData]);
   const prodParameters = useMemo(() => artifactData?.properties.files[Artifact.ParametersFile] ?? {}, [artifactData?.properties.files]);
-  const draftParameters = useMemo(() => artifactData?.properties.files[Artifact.DraftParametersFile], [artifactData?.properties.files]);
+  const draftParameters = useMemo<ParametersData | undefined>(
+    () => artifactData?.properties.files[Artifact.DraftParametersFile],
+    [artifactData?.properties.files]
+  );
   const parameters = useMemo(() => {
     if (useSavedDraft && draftParameters) {
       return draftParameters;
@@ -251,8 +254,20 @@ const DesignerEditor = ({ managementHost }: { managementHost?: AzureStandardMana
     addOrUpdateAppSettings(connectionAndSetting.settings, settingsData?.properties ?? {});
   };
 
-  const persistKnowledgeHubConnection = async (): Promise<void> =>
-    createOrUpdateConnection(siteResourceId, connectionsData, settingsData?.properties, /* isDraft */ true);
+  const getReconciledDraftConnections = useCallback(
+    () =>
+      mergeConnectionsData(
+        draftConnectionsData ?? {},
+        mergeConnectionsData(originalConnectionsData, connectionsData, previousServerConnectionsRef.current),
+        undefined
+      ),
+    [draftConnectionsData, originalConnectionsData, connectionsData]
+  );
+  const persistKnowledgeHubConnection = useCallback(
+    async (): Promise<void> =>
+      createOrUpdateConnection(siteResourceId, getReconciledDraftConnections(), settingsData?.properties, /* isDraft */ true),
+    [siteResourceId, getReconciledDraftConnections, settingsData?.properties]
+  );
 
   const switchWorkflowMode = useCallback((draftMode: boolean) => {
     setIsDraftMode(draftMode);
@@ -320,30 +335,48 @@ const DesignerEditor = ({ managementHost }: { managementHost?: AzureStandardMana
     [siteResourceId, workflowName, prodWorkflow, prodNotes, customCodeRefetch, artifactsRefetch]
   );
 
-  const resetDraftWorkflow = useCallback(
-    () =>
-      saveDraftWorkflow(mergeConnectionsData(draftConnectionsData ?? {}, prodConnectionsData, undefined), {
-        ...draftParameters,
-        ...prodParameters,
-      }),
-    [saveDraftWorkflow, draftConnectionsData, prodConnectionsData, draftParameters, prodParameters]
-  );
-  const initializeMissingDraftWorkflow = useCallback(
-    () =>
-      saveDraftWorkflow(
-        draftConnectionsData === undefined ? prodConnectionsData : undefined,
-        draftParameters === undefined ? prodParameters : undefined
-      ),
-    [saveDraftWorkflow, draftConnectionsData, prodConnectionsData, draftParameters, prodParameters]
-  );
-
-  const discardAllChanges = useCallback(() => {
-    setDesignerID(guid());
-
-    if (isDraftMode) {
-      // Need to reset draft workflow to Production workflow
-      resetDraftWorkflow();
+  const resetDraftWorkflow = useCallback(async () => {
+    const resetConnections = mergeConnectionsData(draftConnectionsData ?? {}, prodConnectionsData, undefined);
+    const resetParameters = {
+      ...draftParameters,
+      ...prodParameters,
+    };
+    await saveDraftWorkflow(resetConnections, resetParameters);
+    const resolvedConnections = resolveConnectionsReferences(
+      JSON.stringify(resetConnections),
+      resetParameters,
+      settingsData?.properties ?? {}
+    );
+    previousServerConnectionsRef.current = clone(resolvedConnections);
+    setConnectionsData(resolvedConnections);
+  }, [saveDraftWorkflow, draftConnectionsData, prodConnectionsData, draftParameters, prodParameters, settingsData?.properties]);
+  const draftInitializationRef = useRef<{ workflowId: string; promise: Promise<void> }>();
+  const initializeMissingDraftWorkflow = useCallback(() => {
+    if (draftInitializationRef.current?.workflowId === workflowId) {
+      return draftInitializationRef.current.promise;
     }
+    const initialization = saveDraftWorkflow(
+      draftConnectionsData === undefined ? prodConnectionsData : undefined,
+      draftParameters === undefined ? prodParameters : undefined
+    ).finally(() => {
+      if (draftInitializationRef.current?.promise === initialization) {
+        draftInitializationRef.current = undefined;
+      }
+    });
+    draftInitializationRef.current = { workflowId, promise: initialization };
+    return initialization;
+  }, [workflowId, saveDraftWorkflow, draftConnectionsData, prodConnectionsData, draftParameters, prodParameters]);
+
+  const discardAllChanges = useCallback(async () => {
+    if (isDraftMode) {
+      try {
+        await resetDraftWorkflow();
+      } catch (error) {
+        alert(`Unable to reset the draft workflow: ${error}`);
+        return;
+      }
+    }
+    setDesignerID(guid());
   }, [isDraftMode, resetDraftWorkflow]);
 
   const onRunSelected = useCallback(
@@ -454,6 +487,7 @@ const DesignerEditor = ({ managementHost }: { managementHost?: AzureStandardMana
       language,
       areCustomEditorsEnabled,
       standardManagement,
+      persistKnowledgeHubConnection,
     ]
   );
 
@@ -568,15 +602,16 @@ const DesignerEditor = ({ managementHost }: { managementHost?: AzureStandardMana
 
       const replaceStaleDraftArtifacts = isDraftSave && isProductionNewerThanDraft;
       const connectionsToUpdate = replaceStaleDraftArtifacts
-        ? mergeConnectionsData(
-            draftConnectionsData ?? {},
-            mergeConnectionsData(originalConnectionsData, connectionsData, previousServerConnectionsRef.current),
-            undefined
-          )
+        ? getReconciledDraftConnections()
         : getConnectionsToUpdate(originalConnectionsData, connectionsData ?? {});
       const customCodeToUpdate = await getCustomCodeToUpdate(originalCustomCodeData, customCode ?? {}, appId);
       const parametersToUpdate = replaceStaleDraftArtifacts
-        ? { ...draftParameters, ...((parameters ?? currentParameters) as ParametersData) }
+        ? {
+            ...Object.fromEntries(
+              Object.entries(draftParameters ?? {}).filter(([name]) => !Object.prototype.hasOwnProperty.call(originalParametersData, name))
+            ),
+            ...((parameters ?? currentParameters) as ParametersData),
+          }
         : isEqual(originalParametersData, parameters)
           ? undefined
           : (parameters as ParametersData);
@@ -607,7 +642,7 @@ const DesignerEditor = ({ managementHost }: { managementHost?: AzureStandardMana
     [
       appId,
       isProductionNewerThanDraft,
-      draftConnectionsData,
+      getReconciledDraftConnections,
       draftParameters,
       connectionsData,
       currentNotes,
@@ -747,23 +782,25 @@ const DesignerEditor = ({ managementHost }: { managementHost?: AzureStandardMana
       return;
     }
 
+    let active = true;
     if (isDraftMode) {
       if (draftWorkflow) {
         setWorkflow(isProductionNewerThanDraft ? prodWorkflow : (draftWorkflow as any));
       } else {
-        initializeMissingDraftWorkflow()
-          .then(() => {
-            // Draft created successfully
-          })
-          .catch((error) => {
+        initializeMissingDraftWorkflow().catch((error) => {
+          if (active) {
             alert(`Unable to initialize the draft workflow: ${error}`);
             setIsDraftMode(false);
             setWorkflow(prodWorkflow as any);
-          });
+          }
+        });
       }
     } else {
       setWorkflow(prodWorkflow as any);
     }
+    return () => {
+      active = false;
+    };
   }, [
     artifactsLoading,
     customCodeLoading,
@@ -902,6 +939,7 @@ const DesignerEditor = ({ managementHost }: { managementHost?: AzureStandardMana
                     onRun={onRun}
                     isDarkMode={isDarkMode}
                     isDraftMode={isDraftMode}
+                    forceSave={isDraftMode && isProductionNewerThanDraft}
                     workflowReadOnly={derivedIsReadOnly}
                   />
                 </div>

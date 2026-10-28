@@ -31,6 +31,10 @@ parameters, or notes. Connections and parameters are app-wide: reconciliation
 retains draft-only entries for other workflows while production and local edits
 take precedence for matching names. Initializing a missing workflow draft does
 not replace existing shared draft files, including intentionally empty files.
+Initialization remains single-flight through both artifact refetches. Discard
+also clears unsaved local connection edits, and shared parameter reconciliation
+does not undo intentional deletions. Both hosts save superseded server-side
+drafts before running, even if the designer has no local edits.
 Returning from monitoring reloads production and draft
 artifacts before restoring the editable workflow.
 

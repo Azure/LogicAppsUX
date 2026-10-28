@@ -558,6 +558,9 @@ const DesignerEditorConsumption = () => {
                       onRun={onRun}
                       isDarkMode={isDarkMode}
                       isDraftMode={isDraftMode}
+                      forceSave={
+                        isDraftMode && !!savedDraftWorkflowAndArtifactsData && draftWorkflowAndArtifactsData === workflowAndArtifactsData
+                      }
                       isConsumption={true}
                       workflowReadOnly={derivedIsReadOnly}
                     />

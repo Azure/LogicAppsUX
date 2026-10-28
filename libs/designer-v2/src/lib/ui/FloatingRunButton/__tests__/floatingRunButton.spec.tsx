@@ -4,7 +4,7 @@
 import '@testing-library/jest-dom/vitest';
 import type { ComponentProps } from 'react';
 import { describe, it, expect, beforeEach, afterEach, vi, type Mock } from 'vitest';
-import { render, screen, cleanup } from '@testing-library/react';
+import { render, screen, cleanup, fireEvent, waitFor } from '@testing-library/react';
 import { IntlProvider } from 'react-intl';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Provider } from 'react-redux';
@@ -53,7 +53,7 @@ vi.mock('../../../core', async (importOriginal) => {
   };
 });
 
-vi.mock('../..', () => ({
+vi.mock('../../..', () => ({
   serializeBJSWorkflow: vi.fn().mockResolvedValue({
     definition: {
       triggers: { manual: {} },
@@ -176,6 +176,27 @@ describe('FloatingRunButton', () => {
   });
 
   describe('Draft Mode', () => {
+    it.each([false, true])('saves a clean superseded draft before invoking its run endpoint (Consumption: %s)', async (isConsumption) => {
+      let finishSave!: (workflow: { definition: { triggers: { manual: object } } }) => void;
+      mockSaveDraftWorkflow.mockReturnValueOnce(
+        new Promise((resolve) => {
+          finishSave = resolve;
+        })
+      );
+      renderWithProviders({ ...defaultProps, isDraftMode: true, isConsumption, forceSave: true });
+
+      fireEvent.click(screen.getByText('Run draft'));
+      await waitFor(() => expect(mockSaveDraftWorkflow).toHaveBeenCalledOnce());
+      expect(mockSaveDraftWorkflow.mock.calls[0][3]).toBe(true);
+      expect(mockRunTrigger).not.toHaveBeenCalled();
+
+      finishSave({ definition: { triggers: { manual: {} } } });
+      await waitFor(() => expect(mockRunTrigger).toHaveBeenCalledOnce());
+      expect(mockRunTrigger.mock.calls[0][0].value).toContain(
+        isConsumption ? '/drafts/default/run' : '/workflows/testWorkflow/triggers/manual/runDraft'
+      );
+    });
+
     it('should render in draft mode', () => {
       renderWithProviders({ ...defaultProps, isDraftMode: true });
       expect(screen.getByText('Run draft')).toBeInTheDocument();

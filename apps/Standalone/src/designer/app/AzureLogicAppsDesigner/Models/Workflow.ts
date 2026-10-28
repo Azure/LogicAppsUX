@@ -121,7 +121,10 @@ export interface AgentMcpConnectionModel {
 
 export interface ConnectionAndAppSetting {
   connectionKey: string;
-  connectionData: ServiceProviderConnectionModel | FunctionConnectionModel;
+  connectionData:
+    | ServiceProviderConnectionModel
+    | FunctionConnectionModel
+    | NonNullable<StandardConnectionsData['knowledgeHubConnections']>[string];
   settings: Record<string, string>;
   pathLocation: string[];
   isUpdate?: boolean;

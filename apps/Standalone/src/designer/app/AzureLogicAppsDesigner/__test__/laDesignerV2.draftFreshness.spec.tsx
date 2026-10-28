@@ -9,6 +9,7 @@ import { Component } from 'react';
 import type { ComponentProps, PropsWithChildren, ReactNode } from 'react';
 import type { Workflow as DesignerWorkflow } from '@microsoft/logic-apps-designer-v2';
 import type { VFSObject } from '@microsoft/logic-apps-shared';
+import type { FloatingRunButtonProps } from '../../../../../../../libs/designer-v2/src/lib/ui/FloatingRunButton';
 import type { DesignerCommandBar } from '../DesignerCommandBarV2';
 import type {
   ConnectionAndAppSetting,
@@ -45,6 +46,7 @@ type CommandBarProps = Pick<
 type ConnectionServiceOptions = {
   readConnections: () => ConnectionsData;
   writeConnection: (connection: ConnectionAndAppSetting) => Promise<void>;
+  persistKnowledgeHubConnection: () => Promise<void>;
 };
 type DesignerOptions = {
   readOnly: boolean;
@@ -60,6 +62,8 @@ const mocks = vi.hoisted(() => ({
   artifactsRefetch: vi.fn<(options?: RefetchOptions) => void>(),
   save: vi.fn<typeof saveWorkflowStandard>(),
   deploy: vi.fn(),
+  persistConnections: vi.fn(),
+  runButton: undefined as FloatingRunButtonProps | undefined,
   queryClient: undefined as QueryClient | undefined,
   options: undefined as DesignerOptions | undefined,
   commandBar: undefined as CommandBarProps | undefined,
@@ -105,7 +109,7 @@ vi.mock('../Services/WorkflowAndArtifacts', async () => {
     deployArtifacts: mocks.deploy,
     getCustomCodeAppFiles: vi.fn(),
     getConnectionStandard: vi.fn(),
-    createOrUpdateConnection: vi.fn(),
+    createOrUpdateConnection: mocks.persistConnections,
     listCallbackUrl: vi.fn(),
     fetchAgentUrl: vi.fn(),
     validateWorkflowStandard: vi.fn(),
@@ -173,7 +177,12 @@ vi.mock('../DesignerCommandBarV2', () => ({
 vi.mock('@microsoft/logic-apps-chatbot', () => ({ CoPilotChatbot: () => null }));
 vi.mock('@microsoft/logic-apps-designer', () => ({}));
 vi.mock('../CodeViewV2', () => ({ default: () => null }));
-vi.mock('../../../../../../../libs/designer-v2/src/lib/ui/FloatingRunButton', () => ({ FloatingRunButton: () => null }));
+vi.mock('../../../../../../../libs/designer-v2/src/lib/ui/FloatingRunButton', () => ({
+  FloatingRunButton: (props: FloatingRunButtonProps) => {
+    mocks.runButton = props;
+    return null;
+  },
+}));
 vi.mock('../../../../environments/environment', () => ({ environment: {} }));
 
 // Keep the real connection resolver, cloning and conversion/merge/freshness helpers.
@@ -431,6 +440,7 @@ describe('Standard designer draft artifact freshness', () => {
     mocks.options = undefined;
     mocks.commandBar = undefined;
     mocks.workflow = undefined;
+    mocks.runButton = undefined;
     mocks.snapshots = [];
     mocks.settings = { properties: {} };
     mocks.runDefinition = artifactSet('historical-run').workflow.definition;
@@ -470,6 +480,7 @@ describe('Standard designer draft artifact freshness', () => {
       pendingCustomCode.resolve(customCode(production, draft, productionTime, draftTime));
     });
     await waitFor(() => expectSelectedArtifacts(selected === 'production' ? production : draft));
+    expect(mocks.runButton?.forceSave).toBe(selected === 'production');
     expect(screen.getByTestId('command-bar').getAttribute('data-readonly')).toBe('false');
     expect(mocks.deploy).not.toHaveBeenCalled();
   });
@@ -613,9 +624,33 @@ describe('Standard designer draft artifact freshness', () => {
     draft.parameters.otherParameter = otherWorkflow.parameters.source;
     mountDesigner();
     await waitFor(() => expectSelectedArtifacts(production));
+    await connectionService().writeConnection({
+      connectionKey: 'sql',
+      connectionData: {
+        ...production.connections.serviceProviderConnections!.sql,
+        parameterValues: { server: 'discard-this-local-edit' },
+      },
+      settings: {},
+      pathLocation: ['serviceProviderConnections'],
+      isUpdate: true,
+    });
+    expect(connectionService().readConnections().serviceProviderConnections?.sql.parameterValues.server).toBe('discard-this-local-edit');
+    const resetArtifacts: ArtifactSet = {
+      ...production,
+      connections: {
+        ...production.connections,
+        serviceProviderConnections: {
+          ...production.connections.serviceProviderConnections,
+          otherSql: otherWorkflow.connections.serviceProviderConnections!.sql,
+        },
+      },
+      parameters: { ...production.parameters, otherParameter: otherWorkflow.parameters.source },
+    };
+    mocks.loadArtifacts.mockResolvedValue(artifacts(production, resetArtifacts));
+    mocks.loadCustomCode.mockResolvedValue(customCode(production, resetArtifacts, productionTime, newestTime));
 
     await act(async () => {
-      commandBar().discard();
+      await commandBar().discard();
     });
     await waitFor(() => expect(mocks.deploy).toHaveBeenCalledOnce());
     const reset = mocks.deploy.mock.calls[0];
@@ -625,6 +660,74 @@ describe('Standard designer draft artifact freshness', () => {
     });
     expect(reset[4]).toEqual({ ...production.parameters, otherParameter: otherWorkflow.parameters.source });
     expect(reset[7]).toEqual(production.notes);
+    await waitFor(() => expectSelectedArtifacts(resetArtifacts));
+  });
+
+  it('does not resurrect deleted production parameters while retaining unrelated shared draft parameters', async () => {
+    draft.parameters.otherWorkflow = { type: 'String', value: 'keep-this' };
+    mountDesigner();
+    await waitFor(() => expectSelectedArtifacts(production));
+    await act(async () => {
+      await commandBar().saveWorkflow(
+        { ...selectedWorkflow(), parameters: { renamed: production.parameters.source } },
+        undefined,
+        vi.fn(),
+        true
+      );
+    });
+    expect(mocks.save.mock.calls[0][3]).toEqual({
+      otherWorkflow: draft.parameters.otherWorkflow,
+      renamed: production.parameters.source,
+    });
+  });
+
+  it('reconciles immediate knowledge-hub persistence with raw production and unrelated shared draft connections', async () => {
+    const otherWorkflow = artifactSet('other-workflow');
+    draft.connections.serviceProviderConnections!.otherSql = otherWorkflow.connections.serviceProviderConnections!.sql;
+    const settingReference = "@appsetting('SQL_SERVER')";
+    production.connections.serviceProviderConnections!.sql.parameterValues.server = settingReference;
+    mocks.settings = { properties: { SQL_SERVER: 'resolved.sql.example.invalid' } };
+    mountDesigner();
+    await waitFor(() => expect(mocks.workflow).toBeDefined());
+    await connectionService().writeConnection({
+      connectionKey: 'addedHub',
+      connectionData: otherWorkflow.connections.knowledgeHubConnections!.hub,
+      settings: {},
+      pathLocation: ['knowledgeHubConnections'],
+    });
+    await connectionService().persistKnowledgeHubConnection();
+
+    expect(mocks.persistConnections).toHaveBeenCalledOnce();
+    const [, connections, , isDraft] = mocks.persistConnections.mock.calls[0];
+    expect(connections.serviceProviderConnections.sql.parameterValues.server).toBe(settingReference);
+    expect(connections.serviceProviderConnections.otherSql).toEqual(otherWorkflow.connections.serviceProviderConnections!.sql);
+    expect(connections.knowledgeHubConnections.addedHub).toEqual(otherWorkflow.connections.knowledgeHubConnections!.hub);
+    expect(isDraft).toBe(true);
+  });
+
+  it('shares initialization through both refetches when shared companions finish before workflow metadata', async () => {
+    const initialResource = artifacts(production, draft);
+    delete initialResource.properties.files[Artifact.DraftConnectionsFile];
+    delete initialResource.properties.files[Artifact.DraftParametersFile];
+    const initialCustomCode = customCode(production, draft);
+    delete initialCustomCode.files[Artifact.DraftFile];
+    delete initialCustomCode.metadata[Artifact.DraftFile];
+    const pendingWorkflowMetadata = deferred<CustomCodeData>();
+    mocks.loadArtifacts.mockResolvedValueOnce(initialResource).mockResolvedValue(artifacts(production, production));
+    mocks.loadCustomCode.mockResolvedValueOnce(initialCustomCode).mockImplementation(() => pendingWorkflowMetadata.promise);
+    mountDesigner();
+    await waitFor(() => expect(mocks.loadArtifacts).toHaveBeenCalledTimes(2));
+    await waitFor(() =>
+      expect(
+        mocks.queryClient?.getQueryData<ArtifactResource>(['artifacts', workflowId])?.properties.files[Artifact.DraftParametersFile]
+      ).toEqual(production.parameters)
+    );
+    expect(mocks.deploy).toHaveBeenCalledOnce();
+    await act(async () => {
+      pendingWorkflowMetadata.resolve(customCode(production, production, productionTime, newestTime));
+    });
+    await waitFor(() => expectSelectedArtifacts(production));
+    expect(mocks.deploy).toHaveBeenCalledOnce();
   });
 
   it('preserves app-setting references when persisting production connections over a stale draft', async () => {
