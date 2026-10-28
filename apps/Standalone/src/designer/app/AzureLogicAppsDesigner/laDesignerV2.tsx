@@ -301,22 +301,41 @@ const DesignerEditor = ({ managementHost }: { managementHost?: AzureStandardMana
   };
 
   const saveDraftWorkflow = useCallback(
-    (workflow: Workflow) => {
-      return deployArtifacts(siteResourceId, workflowName, workflow, prodConnectionsData, prodParameters, undefined, true, prodNotes);
+    async (connections: ConnectionsData | undefined, parameters: ParametersData | undefined) => {
+      const response = await deployArtifacts(
+        siteResourceId,
+        workflowName,
+        prodWorkflow,
+        connections,
+        parameters,
+        undefined,
+        true,
+        prodNotes
+      );
+      if (response.status < 200 || response.status >= 300) {
+        throw new Error(`Error saving draft workflow: ${response.status} - ${response.statusText}`);
+      }
+      await Promise.all([customCodeRefetch({ throwOnError: true }), artifactsRefetch({ throwOnError: true })]);
     },
-    [siteResourceId, workflowName, prodConnectionsData, prodParameters, prodNotes]
+    [siteResourceId, workflowName, prodWorkflow, prodNotes, customCodeRefetch, artifactsRefetch]
   );
 
-  const resetDraftWorkflow = useCallback(async () => {
-    const response = await saveDraftWorkflow(prodWorkflow);
-
-    if (response.status >= 200 && response.status < 300) {
-      // Draft created successfully
-      await Promise.all([customCodeRefetch({ throwOnError: true }), artifactsRefetch({ throwOnError: true })]);
-      return Promise.resolve();
-    }
-    return Promise.reject(`Error resetting draft workflow: ${response.status} - ${response.statusText}`);
-  }, [customCodeRefetch, artifactsRefetch, prodWorkflow, saveDraftWorkflow]);
+  const resetDraftWorkflow = useCallback(
+    () =>
+      saveDraftWorkflow(mergeConnectionsData(draftConnectionsData ?? {}, prodConnectionsData, undefined), {
+        ...draftParameters,
+        ...prodParameters,
+      }),
+    [saveDraftWorkflow, draftConnectionsData, prodConnectionsData, draftParameters, prodParameters]
+  );
+  const initializeMissingDraftWorkflow = useCallback(
+    () =>
+      saveDraftWorkflow(
+        draftConnectionsData === undefined ? prodConnectionsData : undefined,
+        draftParameters === undefined ? prodParameters : undefined
+      ),
+    [saveDraftWorkflow, draftConnectionsData, prodConnectionsData, draftParameters, prodParameters]
+  );
 
   const discardAllChanges = useCallback(() => {
     setDesignerID(guid());
@@ -549,11 +568,15 @@ const DesignerEditor = ({ managementHost }: { managementHost?: AzureStandardMana
 
       const replaceStaleDraftArtifacts = isDraftSave && isProductionNewerThanDraft;
       const connectionsToUpdate = replaceStaleDraftArtifacts
-        ? mergeConnectionsData(originalConnectionsData, connectionsData, previousServerConnectionsRef.current)
+        ? mergeConnectionsData(
+            draftConnectionsData ?? {},
+            mergeConnectionsData(originalConnectionsData, connectionsData, previousServerConnectionsRef.current),
+            undefined
+          )
         : getConnectionsToUpdate(originalConnectionsData, connectionsData ?? {});
       const customCodeToUpdate = await getCustomCodeToUpdate(originalCustomCodeData, customCode ?? {}, appId);
       const parametersToUpdate = replaceStaleDraftArtifacts
-        ? ((parameters ?? currentParameters) as ParametersData)
+        ? { ...draftParameters, ...((parameters ?? currentParameters) as ParametersData) }
         : isEqual(originalParametersData, parameters)
           ? undefined
           : (parameters as ParametersData);
@@ -584,6 +607,8 @@ const DesignerEditor = ({ managementHost }: { managementHost?: AzureStandardMana
     [
       appId,
       isProductionNewerThanDraft,
+      draftConnectionsData,
+      draftParameters,
       connectionsData,
       currentNotes,
       currentParameters,
@@ -726,11 +751,12 @@ const DesignerEditor = ({ managementHost }: { managementHost?: AzureStandardMana
       if (draftWorkflow) {
         setWorkflow(isProductionNewerThanDraft ? prodWorkflow : (draftWorkflow as any));
       } else {
-        resetDraftWorkflow()
+        initializeMissingDraftWorkflow()
           .then(() => {
             // Draft created successfully
           })
-          .catch((_error) => {
+          .catch((error) => {
+            alert(`Unable to initialize the draft workflow: ${error}`);
             setIsDraftMode(false);
             setWorkflow(prodWorkflow as any);
           });
@@ -746,7 +772,7 @@ const DesignerEditor = ({ managementHost }: { managementHost?: AzureStandardMana
     isMonitoringView,
     isProductionNewerThanDraft,
     prodWorkflow,
-    resetDraftWorkflow,
+    initializeMissingDraftWorkflow,
   ]);
 
   const derivedIsReadOnly = useMemo(() => {

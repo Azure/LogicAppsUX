@@ -30,7 +30,17 @@ type CustomCodeData = {
 };
 type CommandBarProps = Pick<
   ComponentProps<typeof DesignerCommandBar>,
-  'saveWorkflow' | 'showMonitoringView' | 'showDesignerView' | 'showCodeView' | 'isCodeView' | 'isReadOnly' | 'isMonitoringView'
+  | 'saveWorkflow'
+  | 'showMonitoringView'
+  | 'showDesignerView'
+  | 'showCodeView'
+  | 'isCodeView'
+  | 'isReadOnly'
+  | 'isMonitoringView'
+  | 'discard'
+  | 'isCodeView'
+  | 'isReadOnly'
+  | 'isMonitoringView'
 >;
 type ConnectionServiceOptions = {
   readConnections: () => ConnectionsData;
@@ -239,6 +249,20 @@ const artifactSet = (source: string): ArtifactSet => ({
     } satisfies DesignerWorkflow['definition'],
   },
   connections: {
+    knowledgeHubConnections: {
+      hub: {
+        displayName: `Knowledge hub ${source}`,
+        completionsOpenAI: {
+          completionsModel: 'completions',
+          openAI: { endpoint: `https://${source}.example/openai`, authentication: { type: 'ManagedServiceIdentity' } },
+        },
+        embeddingsOpenAI: {
+          embeddingsModel: 'embeddings',
+          openAI: { endpoint: `https://${source}.example/openai`, authentication: { type: 'ManagedServiceIdentity' } },
+        },
+        cosmosDB: { endpoint: `https://${source}.example/cosmos`, authentication: { type: 'ManagedServiceIdentity' } },
+      },
+    },
     serviceProviderConnections: {
       sql: {
         serviceProvider: { id: '/serviceProviders/sql' },
@@ -391,6 +415,7 @@ const expectSelectedArtifacts = (selected: ArtifactSet) => {
     api: { id: '/serviceProviders/sql' },
   });
   expect(connectionService().readConnections().serviceProviderConnections).toEqual(selected.connections.serviceProviderConnections);
+  expect(connectionService().readConnections().knowledgeHubConnections).toEqual(selected.connections.knowledgeHubConnections ?? {});
 };
 
 describe('Standard designer draft artifact freshness', () => {
@@ -472,6 +497,7 @@ describe('Standard designer draft artifact freshness', () => {
         apiManagementConnections: {},
         agentConnections: {},
         agentMcpConnections: {},
+        knowledgeHubConnections: {},
       });
     });
     expect(screen.getByTestId('command-bar').getAttribute('data-readonly')).toBe('false');
@@ -479,7 +505,10 @@ describe('Standard designer draft artifact freshness', () => {
     expect(mocks.save).not.toHaveBeenCalled();
   });
 
-  it('autosaves unchanged production companions with a workflow-only edit and reopens the persisted draft coherently', async () => {
+  it("autosaves current companions without deleting another workflow's shared draft entries and reopens coherently", async () => {
+    const otherWorkflow = artifactSet('other-workflow');
+    draft.connections.serviceProviderConnections!.otherSql = otherWorkflow.connections.serviceProviderConnections!.sql;
+    draft.parameters.otherParameter = otherWorkflow.parameters.source;
     const mounted = mountDesigner();
     await waitFor(() => expectSelectedArtifacts(production));
     const editedWorkflow = artifactSet('workflow-only-edit').workflow;
@@ -507,8 +536,17 @@ describe('Standard designer draft artifact freshness', () => {
     const saved = mocks.save.mock.calls[0];
     expect(saved[0]).toBe(siteId);
     expect(saved[1]).toEqual([{ name: 'workflow', workflow: editedWorkflow }]);
-    expect(saved[2]?.serviceProviderConnections).toEqual(production.connections.serviceProviderConnections);
-    expect(saved[3]).toEqual(production.parameters);
+    const sharedConnections = {
+      ...production.connections,
+      serviceProviderConnections: {
+        ...production.connections.serviceProviderConnections,
+        otherSql: otherWorkflow.connections.serviceProviderConnections!.sql,
+      },
+    };
+    const sharedParameters = { ...production.parameters, otherParameter: otherWorkflow.parameters.source };
+    expect(saved[2]?.serviceProviderConnections).toEqual(sharedConnections.serviceProviderConnections);
+    expect(saved[2]?.knowledgeHubConnections).toEqual(production.connections.knowledgeHubConnections);
+    expect(saved[3]).toEqual(sharedParameters);
     expect(saved[4]).toBeUndefined();
     expect(saved[7]).toEqual(production.notes);
     expect(saved[9]).toBe(clearDirtyState);
@@ -519,8 +557,74 @@ describe('Standard designer draft artifact freshness', () => {
     mocks.loadArtifacts.mockResolvedValue(artifacts(production, persisted));
     mocks.loadCustomCode.mockResolvedValue(customCode(production, persisted, productionTime, newestTime));
     mountDesigner();
-    await waitFor(() => expectSelectedArtifacts({ ...production, workflow: editedWorkflow }));
+    await waitFor(() =>
+      expectSelectedArtifacts({ ...production, workflow: editedWorkflow, connections: sharedConnections, parameters: sharedParameters })
+    );
     expect(mocks.save).toHaveBeenCalledOnce();
+  });
+
+  it.each(['populated', 'empty', 'missing'] as const)(
+    'initializes a missing workflow draft without replacing %s shared drafts',
+    async (sharedDrafts) => {
+      const resource = artifacts(production, draft);
+      if (sharedDrafts === 'empty') {
+        resource.properties.files[Artifact.DraftConnectionsFile] = {};
+        resource.properties.files[Artifact.DraftParametersFile] = {};
+      } else if (sharedDrafts === 'missing') {
+        delete resource.properties.files[Artifact.DraftConnectionsFile];
+        delete resource.properties.files[Artifact.DraftParametersFile];
+      }
+      const initialCustomCode = customCode(production, draft);
+      delete initialCustomCode.files[Artifact.DraftFile];
+      delete initialCustomCode.metadata[Artifact.DraftFile];
+      mocks.loadArtifacts.mockResolvedValue(resource);
+      mocks.loadCustomCode.mockResolvedValue(initialCustomCode);
+      mocks.deploy.mockImplementation(async (_site, _name, workflow, _connections, _parameters, _settings, _isDraft, notes) => {
+        mocks.loadCustomCode.mockResolvedValue({
+          files: {
+            ...initialCustomCode.files,
+            [Artifact.DraftFile]: workflow,
+            [Artifact.DraftNotesFile]: notes,
+          },
+          metadata: {
+            ...initialCustomCode.metadata,
+            [Artifact.DraftFile]: vfsFile(Artifact.DraftFile, newestTime),
+          },
+        });
+        return { status: 200 };
+      });
+      mountDesigner();
+
+      await waitFor(() => expect(mocks.deploy).toHaveBeenCalledOnce());
+      await waitFor(() => expect(selectedWorkflow().definition).toEqual(production.workflow.definition));
+      const initialized = mocks.deploy.mock.calls[0];
+      expect(initialized[2]).toEqual(production.workflow);
+      expect(initialized[3]).toEqual(sharedDrafts === 'missing' ? production.connections : undefined);
+      expect(initialized[4]).toEqual(sharedDrafts === 'missing' ? production.parameters : undefined);
+      expect(initialized[6]).toBe(true);
+      expect(initialized[7]).toEqual(production.notes);
+      expect(mocks.save).not.toHaveBeenCalled();
+    }
+  );
+
+  it("keeps unrelated shared draft entries when explicitly discarding this workflow's changes", async () => {
+    const otherWorkflow = artifactSet('other-workflow');
+    draft.connections.serviceProviderConnections!.otherSql = otherWorkflow.connections.serviceProviderConnections!.sql;
+    draft.parameters.otherParameter = otherWorkflow.parameters.source;
+    mountDesigner();
+    await waitFor(() => expectSelectedArtifacts(production));
+
+    await act(async () => {
+      commandBar().discard();
+    });
+    await waitFor(() => expect(mocks.deploy).toHaveBeenCalledOnce());
+    const reset = mocks.deploy.mock.calls[0];
+    expect(reset[3].serviceProviderConnections).toEqual({
+      ...production.connections.serviceProviderConnections,
+      otherSql: otherWorkflow.connections.serviceProviderConnections!.sql,
+    });
+    expect(reset[4]).toEqual({ ...production.parameters, otherParameter: otherWorkflow.parameters.source });
+    expect(reset[7]).toEqual(production.notes);
   });
 
   it('preserves app-setting references when persisting production connections over a stale draft', async () => {

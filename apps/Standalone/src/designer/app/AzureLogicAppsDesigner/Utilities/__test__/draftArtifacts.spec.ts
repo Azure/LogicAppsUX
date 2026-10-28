@@ -47,6 +47,31 @@ describe('draft artifact freshness', () => {
       const previous = connections('removed-server');
       expect(mergeConnectionsData({}, previous, previous).serviceProviderConnections).toEqual({});
     });
+
+    it('merges knowledge-hub connections on load, refresh and local edits', () => {
+      const knowledgeHub = (displayName: string): NonNullable<ConnectionsData['knowledgeHubConnections']>[string] => ({
+        displayName,
+        completionsOpenAI: {
+          completionsModel: 'completions',
+          openAI: { endpoint: 'https://example.invalid/openai', authentication: { type: 'ManagedServiceIdentity' } },
+        },
+        embeddingsOpenAI: {
+          embeddingsModel: 'embeddings',
+          openAI: { endpoint: 'https://example.invalid/openai', authentication: { type: 'ManagedServiceIdentity' } },
+        },
+        cosmosDB: { endpoint: 'https://example.invalid/cosmos', authentication: { type: 'ManagedServiceIdentity' } },
+      });
+      const previous: ConnectionsData = { knowledgeHubConnections: { hub: knowledgeHub('previous') } };
+      const production: ConnectionsData = { knowledgeHubConnections: { hub: knowledgeHub('production') } };
+      const initiallyLoaded = mergeConnectionsData(previous, {}, undefined);
+
+      expect(initiallyLoaded.knowledgeHubConnections).toEqual(previous.knowledgeHubConnections);
+      expect(mergeConnectionsData(production, initiallyLoaded, previous).knowledgeHubConnections).toEqual(
+        production.knowledgeHubConnections
+      );
+      const local: ConnectionsData = { knowledgeHubConnections: { hub: knowledgeHub('local'), added: knowledgeHub('added') } };
+      expect(mergeConnectionsData(production, local, previous).knowledgeHubConnections).toEqual(local.knowledgeHubConnections);
+    });
   });
 
   it.each(['2026-10-20T12:00:00Z', productionTime])('uses production when the draft was modified at %s', (draftTime) => {

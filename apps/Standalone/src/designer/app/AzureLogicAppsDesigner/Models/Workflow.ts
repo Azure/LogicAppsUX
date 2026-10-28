@@ -1,4 +1,5 @@
 import type { ArmResource } from './Arm';
+import type { ConnectionsData as StandardConnectionsData } from '@microsoft/logic-apps-shared';
 
 export const WorkflowState = {
   Disabled: 'Disabled',
@@ -133,6 +134,7 @@ export interface ConnectionsData {
   agentConnections?: Record<string, AgentConnectionModel>;
   apiManagementConnections?: Record<string, APIManagementConnectionModel>;
   agentMcpConnections?: Record<string, AgentMcpConnectionModel>;
+  knowledgeHubConnections?: StandardConnectionsData['knowledgeHubConnections'];
 }
 
 export type ParametersData = Record<string, Parameter>;

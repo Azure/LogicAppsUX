@@ -27,7 +27,11 @@ Newer drafts are preserved. Missing or invalid timestamps preserve the existing
 draft and emit a diagnostic. Loading does not overwrite the persisted draft.
 When production supersedes a stale Standard draft, the next draft save includes
 all companion artifacts so a workflow-only edit cannot revive stale connections,
-parameters, or notes. Returning from monitoring reloads production and draft
+parameters, or notes. Connections and parameters are app-wide: reconciliation
+retains draft-only entries for other workflows while production and local edits
+take precedence for matching names. Initializing a missing workflow draft does
+not replace existing shared draft files, including intentionally empty files.
+Returning from monitoring reloads production and draft
 artifacts before restoring the editable workflow.
 
 ## Commands

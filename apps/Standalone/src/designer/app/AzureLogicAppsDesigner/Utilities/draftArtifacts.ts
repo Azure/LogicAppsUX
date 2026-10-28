@@ -49,5 +49,10 @@ export const mergeConnectionsData = (
     ),
     agentConnections: mergeCategory(fromServer.agentConnections, local.agentConnections, previousServer?.agentConnections),
     agentMcpConnections: mergeCategory(fromServer.agentMcpConnections, local.agentMcpConnections, previousServer?.agentMcpConnections),
+    knowledgeHubConnections: mergeCategory(
+      fromServer.knowledgeHubConnections,
+      local.knowledgeHubConnections,
+      previousServer?.knowledgeHubConnections
+    ),
   };
 };
