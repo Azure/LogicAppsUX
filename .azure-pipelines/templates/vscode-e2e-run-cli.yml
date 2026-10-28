@@ -168,15 +168,26 @@ jobs:
                   Write-Host "##vso[task.setvariable variable=LA_E2E_CLI_AZURE_SUBSCRIPTION_ID;issecret=true]$accountSubscriptionId"
                 }
 
+      - pwsh: |
+          $ErrorActionPreference = 'Stop'
+          $versions = @(Invoke-RestMethod -Uri 'https://update.code.visualstudio.com/api/releases/stable')
+          $version = [string]$versions[0]
+          if ($version -notmatch '^\d+\.\d+\.\d+$') {
+            throw "Unable to resolve an exact stable VS Code version. Received '$version'."
+          }
+          Write-Host "Resolved stable VS Code to exact version $version for preparation and execution."
+          Write-Host "##vso[task.setvariable variable=LA_E2E_CLI_VSCODE_VERSION]$version"
+        displayName: Resolve exact VS Code version
+
       - ${{ if eq(parameters.platform, 'linux') }}:
           - bash: |
               set -euo pipefail
               export PATH="$(dirname "$(which node)"):/usr/local/bin:/usr/bin:/bin:$PATH"
-              xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
-                node apps/vs-code-designer/out/test/run-e2e.js
+              node apps/vs-code-designer/scripts/prepare-e2e-extension-dependencies.js prepare \
+                --platform linux \
+                --vscode-version "$LA_E2E_CLI_VSCODE_VERSION"
             displayName: Prepare vscode-test CLI extension dependencies
             env:
-              LA_E2E_PREPARE_EXTENSION_DEPENDENCIES_ONLY: '1'
               NODE_OPTIONS: --dns-result-order=ipv4first --no-network-family-autoselection --max-old-space-size=4096
               TEMP: $(Agent.TempDirectory)
               TMPDIR: $(Agent.TempDirectory)
@@ -184,10 +195,11 @@ jobs:
       - ${{ if eq(parameters.platform, 'windows') }}:
           - pwsh: |
               $env:PATH = "$(Build.SourcesDirectory)\apps\vs-code-designer\node_modules\.bin;$(Build.SourcesDirectory)\node_modules\.bin;$env:PATH"
-              node apps/vs-code-designer/out/test/run-e2e.js
+              node apps/vs-code-designer/scripts/prepare-e2e-extension-dependencies.js prepare `
+                --platform win32 `
+                --vscode-version "$env:LA_E2E_CLI_VSCODE_VERSION"
             displayName: Prepare vscode-test CLI extension dependencies
             env:
-              LA_E2E_PREPARE_EXTENSION_DEPENDENCIES_ONLY: '1'
               NODE_OPTIONS: --max-old-space-size=4096
               TEMP: $(Agent.TempDirectory)
               TMP: $(Agent.TempDirectory)

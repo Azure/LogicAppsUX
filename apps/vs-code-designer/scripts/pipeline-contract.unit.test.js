@@ -194,6 +194,7 @@ testConsumerAdmissionContract();
 testVSStablePoolContract();
 testFullRollupNodeProvisioningContract();
 testDownloadedVSCodeRuntimeCleanupContract();
+testLegacyDependencyProducerContract();
 testSelectorResolutionScriptBehavior();
 testCanonicalSuiteParityContract();
 testFullRollupGateCanonicalInventoryContract();
@@ -1186,11 +1187,11 @@ function testConsumerAdmissionContract() {
   assertConsumerHasNoNetworkIsolationPolicyOverride(consumer, runSuites);
   assertNetworkIsolationGuardRejectsMutations(consumer, runSuites);
   assert.match(cliBuildArtifactsTemplate, /displayName: Build extension and compile @vscode\/test-cli E2E/);
-  assertCliBuildCompilesPrepHarnessBeforeArchive(parseYaml('.azure-pipelines/templates/vscode-e2e-cli-build-artifacts.yml'));
+  assertCliBuildExcludesPrepHarness(parseYaml('.azure-pipelines/templates/vscode-e2e-cli-build-artifacts.yml'));
   assert.match(cliBuildArtifactsTemplate, /NODE_OPTIONS: --max-old-space-size=6144/);
   assert.match(cliBuildArtifactsTemplate, /Missing required E2E artifact payload path before archive staging/);
   assert.match(cliBuildArtifactsTemplate, /apps\/vs-code-designer\/out\/test\/e2e\/createWorkspace\.test\.js/);
-  assert.match(cliBuildArtifactsTemplate, /apps\/vs-code-designer\/out\/test\/run-e2e\.js/);
+  assert.doesNotMatch(cliBuildArtifactsTemplate, /apps\/vs-code-designer\/out\/test\/run-e2e\.js/);
   assert.match(cliBuildArtifactsTemplate, /apps\/vs-code-designer\/dist/);
   assert.match(runSuitesTemplate, /--privileged-admission/);
   assert.doesNotMatch(runSuitesTemplate, /download:[\s\S]*\n\s+path:/);
@@ -1209,7 +1210,7 @@ function testConsumerAdmissionContract() {
   assert.doesNotMatch(runSuitesTemplate, /_apis\/build\/builds/);
   assertRunSuitesBindsDynamicExpectedValuesToVariables(runSuites);
   assert.match(runSuitesTemplate, /Verify exact admitted source checkout/);
-  assert.match(runSuitesTemplate, /Extracted artifact is missing the compiled ExTester dependency-prep harness/);
+  assert.doesNotMatch(runSuitesTemplate, /compiled ExTester dependency-prep harness/);
   assert.match(runSuitesTemplate, /Write admitted E2E artifact identity context/);
   assert.match(runSuitesTemplate, /admission-context-\$\{\{ parameters\.suiteId \}\}\.json/);
   assert.match(runSuitesTemplate, /producerBuildNumber = \[string\]\$manifest\.producer\.buildNumber/);
@@ -1713,9 +1714,35 @@ function assertConsumerCurrentRunArtifactContract(consumer) {
   );
   const linuxPreparation = buildJob.steps.find((step) => step.displayName === 'Prepare Linux VS Code extension dependencies once');
   const linuxPackaging = buildJob.steps.find((step) => step.displayName === 'Package exact-run Linux extension dependencies');
+  const windowsDependencyPreparation = windowsPreparation?.steps?.find(
+    (step) => step.displayName === 'Prepare Windows VS Code extension dependencies once'
+  );
+  const windowsPackaging = windowsPreparation?.steps?.find(
+    (step) => step.displayName === 'Package exact-run Windows extension dependencies'
+  );
+  const suiteTemplateSource = fs.readFileSync(path.join(repoRoot, '.config', 'templates', 'vscode-e2e-cli-run-suite.yml'), 'utf8');
+  const preparationScript = 'node apps/vs-code-designer/scripts/prepare-e2e-extension-dependencies.js prepare';
+  const forbiddenProducerCommands = ['exec tsx', 'exec tsup', 'out/test/run-e2e.js', 'run-e2e.ts', 'ChromeDriver'];
+  assert.ok(
+    linuxPreparation?.bash?.includes(preparationScript) &&
+      windowsDependencyPreparation?.pwsh?.includes(preparationScript) &&
+      forbiddenProducerCommands.every(
+        (command) => !linuxPreparation?.bash?.includes(command) && !windowsDependencyPreparation?.pwsh?.includes(command)
+      ),
+    'Dependency producers must use the dedicated VS Code CLI installer without ExTester, tsx, tsup, or ChromeDriver'
+  );
+  assert.ok(
+    [linuxPackaging, windowsPackaging].every(
+      (step) => step?.pwsh?.includes('schemaVersion = 2') && step?.pwsh?.includes('contentManifestSHA256')
+    ) &&
+      suiteTemplateSource.includes('Prepared extension dependency content manifest hash mismatch') &&
+      suiteTemplateSource.includes('prepare-e2e-extension-dependencies.js verify') &&
+      suiteTemplateSource.indexOf('prepared-extensions-content-manifest.json') <
+        suiteTemplateSource.indexOf('prepare-e2e-extension-dependencies.js verify'),
+    'Prepared dependency artifacts must bind and revalidate their semantic content manifest after relocation'
+  );
   assert.ok(String(linuxPreparation?.condition).includes('parameters.runLinux'));
   assert.ok(String(linuxPackaging?.condition).includes('parameters.runLinux'));
-  const suiteTemplateSource = fs.readFileSync(path.join(repoRoot, '.config', 'templates', 'vscode-e2e-cli-run-suite.yml'), 'utf8');
   assert.ok(
     suiteTemplateSource.includes("if eq(parameters.platform, 'windows')") &&
       suiteTemplateSource.includes('prepare_windows_extension_dependencies'),
@@ -1797,6 +1824,7 @@ function assertConsumerCurrentRunArtifactContract(consumer) {
       assert.strictEqual(invocation.parameters.azureResourceGroupName, undefined);
       assert.strictEqual(invocation.parameters.azureLocationName, undefined);
     }
+
     assert.strictEqual(invocation.parameters.azureTenantId, undefined);
     assert.strictEqual(invocation.parameters.azureSubscriptionId, undefined);
   }
@@ -1828,6 +1856,32 @@ function assertConsumerCurrentRunArtifactContract(consumer) {
     'linux_workspace_multi_root',
     'windows_workspace_multi_root',
   ]);
+}
+
+function testLegacyDependencyProducerContract() {
+  const source = read('.azure-pipelines/templates/vscode-e2e-run-cli.yml');
+  const extensionPackage = JSON.parse(read('apps/vs-code-designer/package.json'));
+  const unitGate = extensionPackage.scripts['test:e2e-cli:unit'];
+  assert.ok(
+    unitGate.startsWith(
+      'node --test scripts/ado-consumer-contract.unit.test.js && node --test scripts/prepare-e2e-extension-dependencies.unit.test.js'
+    ),
+    'The mandatory ADO consumer contract must remain first and the dependency producer contract must run second'
+  );
+  assert.ok(
+    source.includes("Invoke-RestMethod -Uri 'https://update.code.visualstudio.com/api/releases/stable'") &&
+      source.includes('##vso[task.setvariable variable=LA_E2E_CLI_VSCODE_VERSION]$version') &&
+      (source.match(/--vscode-version/g) ?? []).length === 2,
+    'Legacy Linux and Windows preparation must share one resolved exact stable version with native execution'
+  );
+  assert.ok(
+    (source.match(/prepare-e2e-extension-dependencies\.js prepare/g) ?? []).length === 2 &&
+      !source.includes('exec tsx') &&
+      !source.includes('exec tsup') &&
+      !source.includes('out/test/run-e2e.js') &&
+      !source.includes('ChromeDriver'),
+    'Legacy preparation must use only the dedicated dependency producer'
+  );
 }
 
 function runPowerShellScript(script) {
@@ -2043,17 +2097,18 @@ function assertRunSuitesProvisionsTrustedNodeBeforeVerifier(runSuites) {
   );
 }
 
-function assertCliBuildCompilesPrepHarnessBeforeArchive(cliBuildArtifacts) {
+function assertCliBuildExcludesPrepHarness(cliBuildArtifacts) {
   const steps = cliBuildArtifacts.steps;
   const cliBuildIndex = steps.findIndex((step) => step.displayName === 'Build extension and compile @vscode/test-cli E2E');
-  const prepCompileIndex = steps.findIndex(
-    (step) => step.displayName === 'Compile ExTester dependency-prep bundle' && step.script === 'npx tsup --config tsup.e2e.test.config.ts'
-  );
   const archiveIndex = steps.findIndex((step) => step.displayName === 'Stage reusable @vscode/test-cli build artifact');
 
   assert.ok(cliBuildIndex >= 0, 'artifact builder must compile the @vscode/test-cli payload');
-  assert.ok(prepCompileIndex > cliBuildIndex, 'ExTester dependency-prep bundle must compile after @vscode/test-cli build');
-  assert.ok(archiveIndex > prepCompileIndex, 'archive staging must happen after the dependency-prep harness is built');
+  assert.strictEqual(
+    steps.some((step) => String(step.displayName).includes('ExTester dependency-prep')),
+    false,
+    'The reusable CLI artifact must not compile the ExTester dependency-preparation harness'
+  );
+  assert.ok(archiveIndex > cliBuildIndex, 'archive staging must happen after the @vscode/test-cli payload is built');
 }
 
 function assertConsumerJobRoutingGuardRejectsMutations(consumer, runSuites) {
@@ -2560,6 +2615,7 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
       'vscode-e2e-evidence-plans.js',
       'stage-vscode-e2e-evidence.js',
       'e2e-cli-batch.js',
+      'prepare-e2e-extension-dependencies.js',
       'e2e-cli-path-cleanup.js',
       'family-lifecycle-terminal.js',
       ...(options.privatePlatform || options.msn
@@ -3024,6 +3080,7 @@ function testAllPlatformLaneEvidenceStagingFixtures() {
         'vscode-e2e-evidence-plans.js',
         'stage-vscode-e2e-evidence.js',
         'e2e-cli-batch.js',
+        'prepare-e2e-extension-dependencies.js',
         'e2e-cli-path-cleanup.js',
       ]) {
         fs.copyFileSync(path.join(__dirname, file), path.join(scriptsRoot, file));
@@ -3188,6 +3245,7 @@ function testDiagnosticsStagingScriptPreservesEvidenceBeforeFailing() {
       'vscode-e2e-evidence-plans.js',
       'stage-vscode-e2e-evidence.js',
       'e2e-cli-batch.js',
+      'prepare-e2e-extension-dependencies.js',
       'e2e-cli-path-cleanup.js',
     ]) {
       fs.copyFileSync(path.join(__dirname, file), path.join(scriptsRoot, file));

@@ -218,9 +218,6 @@ jobs:
           if (-not (Test-Path '$(Build.SourcesDirectory)/apps/vs-code-designer/out/test/e2e/createWorkspace.test.js')) {
             throw 'Extracted artifact is missing compiled @vscode/test-cli E2E tests.'
           }
-          if (-not (Test-Path '$(Build.SourcesDirectory)/apps/vs-code-designer/out/test/run-e2e.js')) {
-            throw 'Extracted artifact is missing the compiled ExTester dependency-prep harness.'
-          }
           if (-not (Test-Path '$(Build.SourcesDirectory)/apps/vs-code-designer/dist')) {
             throw 'Extracted artifact is missing VS Code extension dist payload.'
           }
@@ -239,7 +236,8 @@ jobs:
           }
           $manifest = Get-Content $manifestPath -Raw | ConvertFrom-Json
           $expectedPlatform = '${{ parameters.platform }}'
-          if ($manifest.schemaVersion -ne 1 -or $manifest.platform -ne $expectedPlatform) {
+          $expectedArchitecture = (node -p "process.arch").Trim()
+          if ($manifest.schemaVersion -ne 2 -or $manifest.platform -ne $expectedPlatform -or $manifest.architecture -ne $expectedArchitecture) {
             throw "Prepared extension dependency platform mismatch. expected=$expectedPlatform actual=$($manifest.platform)"
           }
           if ($manifest.sourceSHA -ne '$(ExpectedSourceSha)') {
@@ -264,6 +262,23 @@ jobs:
           }
           if (-not (Test-Path (Join-Path $target 'extensions.json'))) {
             throw "Restored extension dependency set is incomplete: $target"
+          }
+          $contentManifest = Join-Path $target 'prepared-extensions-content-manifest.json'
+          if (-not (Test-Path $contentManifest)) {
+            throw "Restored extension dependency content manifest is missing: $contentManifest"
+          }
+          $contentManifestHash = (Get-FileHash $contentManifest -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($manifest.contentManifestSHA256 -ne $contentManifestHash) {
+            throw "Prepared extension dependency content manifest hash mismatch. expected=$($manifest.contentManifestSHA256) actual=$contentManifestHash"
+          }
+          node apps/vs-code-designer/scripts/prepare-e2e-extension-dependencies.js verify `
+            --extensions-dir $target `
+            --content-manifest $contentManifest `
+            --platform $expectedPlatform `
+            --arch $expectedArchitecture `
+            --vscode-version '$(ResolvedVSCodeVersion)'
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
           }
         displayName: Verify and restore exact-run extension dependencies
 

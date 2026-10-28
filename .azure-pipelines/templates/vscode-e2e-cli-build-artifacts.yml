@@ -11,10 +11,6 @@ steps:
       NPM_CONFIG_USERCONFIG: $(npmrcFile)
       NODE_OPTIONS: --max-old-space-size=6144
 
-  - script: npx tsup --config tsup.e2e.test.config.ts
-    displayName: Compile ExTester dependency-prep bundle
-    workingDirectory: $(Build.SourcesDirectory)/apps/vs-code-designer
-
   - bash: |
       set -euo pipefail
       staging='${{ parameters.artifactStagingPath }}'
@@ -28,7 +24,6 @@ steps:
       required_paths=(
         apps/vs-code-designer/out/test/e2e/createWorkspace.test.js
         apps/vs-code-designer/out/test/e2e/workspacePromptCancel.js
-        apps/vs-code-designer/out/test/run-e2e.js
         apps/vs-code-designer/dist
       )
       for required_path in "${required_paths[@]}"; do

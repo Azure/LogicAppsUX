@@ -12,6 +12,19 @@ helpers and regression controls before introducing another local workaround.
 
 These tests follow the pattern from [helloworld-test-cli-sample](https://github.com/microsoft/vscode-extension-samples/tree/main/helloworld-test-cli-sample) and run directly inside VS Code's extension host environment on latest stable VS Code. They intentionally start from an empty VS Code window with no folder or `.code-workspace` loaded, then cover activation, command registration, Create Workspace, focused generated-workspace designer/runtime lifecycle, bundle-to-NuGet debug/run lifecycle, and codeful modern-vs-legacy debug task behavior. Keep ExTester webview DOM scenarios in `src/test/ui/` for deeper designer and wizard UI coverage.
 
+## Prepared extension dependencies
+
+ADO prepares Marketplace dependencies once per selected OS with
+`scripts/prepare-e2e-extension-dependencies.js`. The producer uses the exact
+resolved VS Code build's supported CLI installer and never runs the ExTester
+launcher or downloads ChromeDriver. Consumers verify the source/platform/version
+binding and semantic content manifest after relocation, then rebuild
+`extensions.json` with consumer-local paths. The shared runner verifies the
+restored seed again, validates every isolated suite copy, compares immutable
+payload content while excluding only the relocatable registry, and rebuilds
+that suite's registry before launch. A failure at this boundary is setup
+failure; no native scenario result exists yet.
+
 ## Canonical MSN finalization boundary
 
 The MSN direct and batch selectors keep body assertions separate from

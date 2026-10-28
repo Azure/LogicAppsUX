@@ -18,6 +18,28 @@ const runner = require(runnerPath) as {
     }
   ): Promise<number>;
 };
+const dependencyProducer = require(path.resolve(__dirname, '..', '..', '..', 'scripts', 'prepare-e2e-extension-dependencies.js')) as {
+  CONTENT_MANIFEST_NAME: string;
+  CS_DEV_KIT_E2E_VERSION: string;
+  DOTNET_RUNTIME_EXTENSION: string;
+  createContentManifest(
+    extensionsDir: string,
+    sourceContract: { requiredDependencies: string[] },
+    options: { vscodeVersion: string; platform: NodeJS.Platform; arch: string }
+  ): {
+    extensions: Array<{ relativeLocation: string; version: string }>;
+  };
+  getTargetPlatform(platform?: NodeJS.Platform, arch?: string): string;
+  readSourceContract(): { requiredDependencies: string[] };
+  rebuildExtensionsJson(
+    extensionsDir: string,
+    installed: Array<{
+      relativeLocation: string;
+      version: string;
+      packageJson: Record<string, unknown>;
+    }>
+  ): void;
+};
 const suiteId = 'statelessVariablesLifecycle';
 const expected = ['runtimeDependencyBootstrap:bootstrap', `${suiteId}:create`, `${suiteId}:prepare`, `${suiteId}:reopen`];
 const unitAzureEnv = {
@@ -193,13 +215,64 @@ interface Trace {
   orchestratorError?: string;
 }
 
+function createPreparedExtensionsSeed(seedDir: string): void {
+  const sourceContract = dependencyProducer.readSourceContract();
+  const targetPlatform = dependencyProducer.getTargetPlatform();
+  fs.mkdirSync(seedDir, { recursive: true });
+  for (const extensionId of sourceContract.requiredDependencies) {
+    const [publisher, name] = extensionId.split('.');
+    const version = extensionId === 'ms-dotnettools.csdevkit' ? dependencyProducer.CS_DEV_KIT_E2E_VERSION : '1.0.0';
+    const extensionDir = path.join(seedDir, `${extensionId}-${version}`);
+    fs.mkdirSync(extensionDir, { recursive: true });
+    const extensionDependencies =
+      extensionId === 'ms-dotnettools.csharp'
+        ? [dependencyProducer.DOTNET_RUNTIME_EXTENSION]
+        : extensionId === 'ms-dotnettools.csdevkit'
+          ? ['ms-dotnettools.csharp']
+          : [];
+    fs.writeFileSync(
+      path.join(extensionDir, 'package.json'),
+      JSON.stringify({
+        publisher,
+        name,
+        version,
+        extensionDependencies,
+        __metadata: {
+          targetPlatform: extensionId === 'ms-dotnettools.csdevkit' ? targetPlatform : 'universal',
+        },
+      })
+    );
+    fs.writeFileSync(path.join(extensionDir, 'payload.txt'), extensionId);
+    if (extensionId === 'ms-dotnettools.csdevkit') {
+      const payloadDir =
+        process.platform === 'win32'
+          ? path.join(extensionDir, 'dist', 'native', targetPlatform)
+          : path.join(extensionDir, 'components', 'CPS', 'platforms', targetPlatform);
+      fs.mkdirSync(payloadDir, { recursive: true });
+      fs.writeFileSync(path.join(payloadDir, process.platform === 'win32' ? 'NodeAddon.node' : 'payload'), 'native');
+    }
+  }
+  const manifest = dependencyProducer.createContentManifest(seedDir, sourceContract, {
+    vscodeVersion: 'stable',
+    platform: process.platform,
+    arch: process.arch,
+  });
+  fs.writeFileSync(path.join(seedDir, dependencyProducer.CONTENT_MANIFEST_NAME), JSON.stringify(manifest));
+  dependencyProducer.rebuildExtensionsJson(
+    seedDir,
+    manifest.extensions.map((entry) => ({
+      ...entry,
+      packageJson: JSON.parse(fs.readFileSync(path.join(seedDir, entry.relativeLocation, 'package.json'), 'utf8')),
+    }))
+  );
+}
+
 async function main(): Promise<void> {
   Object.assign(process.env, unitAzureEnv); // Synthetic unit credential avoids all Azure token-provider/network calls.
   const scriptPath = path.join(root, 'node-only-phase-fixture.js');
   fs.writeFileSync(scriptPath, fixture);
   const seedDir = path.join(root, 'extensions-seed');
-  fs.mkdirSync(seedDir);
-  fs.writeFileSync(path.join(seedDir, 'extensions.json'), '[]');
+  createPreparedExtensionsSeed(seedDir);
   const modes = [
     'success',
     'missing-artifacts',

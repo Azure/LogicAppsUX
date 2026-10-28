@@ -80,8 +80,80 @@ const {
   _test: { buildAggregate: buildSummaryAggregate, buildSingleSummary, parseMochaLog, writeSingleResult },
 } = require('./summarize-e2e-cli-results.js');
 const { assertSuccessfulMsnTerminal } = require('./e2e-cli-terminal');
+const {
+  CONTENT_MANIFEST_NAME,
+  CS_DEV_KIT_E2E_VERSION,
+  DOTNET_RUNTIME_EXTENSION,
+  createContentManifest,
+  getTargetPlatform,
+  readSourceContract,
+  rebuildExtensionsJson,
+} = require('./prepare-e2e-extension-dependencies');
 
 const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
+
+function createPreparedExtensionsSeed(seedDir, { vscodeVersion = 'stable' } = {}) {
+  const sourceContract = readSourceContract();
+  const requiredIds = new Set(sourceContract.requiredDependencies);
+  const expectedTargetPlatform = getTargetPlatform();
+  fs.mkdirSync(seedDir, { recursive: true });
+
+  for (const extensionId of requiredIds) {
+    const [publisher, name] = extensionId.split('.');
+    const version =
+      extensionId === 'ms-dotnettools.csdevkit' ? CS_DEV_KIT_E2E_VERSION : extensionId === 'ms-dotnettools.csharp' ? '1.0.0' : '1.0.0';
+    const extensionDir = path.join(seedDir, `${extensionId}-${version}`);
+    const extensionDependencies =
+      extensionId === 'ms-dotnettools.csharp'
+        ? [DOTNET_RUNTIME_EXTENSION]
+        : extensionId === 'ms-dotnettools.csdevkit'
+          ? ['ms-dotnettools.csharp']
+          : [];
+    fs.mkdirSync(extensionDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(extensionDir, 'package.json'),
+      `${JSON.stringify(
+        {
+          name,
+          publisher,
+          version,
+          extensionDependencies,
+          __metadata: {
+            id: extensionId,
+            publisherId: publisher,
+            publisherDisplayName: publisher,
+            targetPlatform: extensionId === 'ms-dotnettools.csdevkit' ? expectedTargetPlatform : 'universal',
+          },
+        },
+        null,
+        2
+      )}\n`
+    );
+    fs.writeFileSync(path.join(extensionDir, 'payload.txt'), `${extensionId}\n`);
+    if (extensionId === 'ms-dotnettools.csdevkit') {
+      const platformPayloadDir =
+        process.platform === 'win32'
+          ? path.join(extensionDir, 'dist', 'native', expectedTargetPlatform)
+          : path.join(extensionDir, 'components', 'CPS', 'platforms', expectedTargetPlatform);
+      fs.mkdirSync(platformPayloadDir, { recursive: true });
+      fs.writeFileSync(path.join(platformPayloadDir, process.platform === 'win32' ? 'NodeAddon.node' : 'payload'), 'platform payload');
+    }
+  }
+
+  const contentManifest = createContentManifest(seedDir, sourceContract, {
+    vscodeVersion,
+    platform: process.platform,
+    arch: process.arch,
+  });
+  fs.writeFileSync(path.join(seedDir, CONTENT_MANIFEST_NAME), `${JSON.stringify(contentManifest, null, 2)}\n`);
+  rebuildExtensionsJson(
+    seedDir,
+    contentManifest.extensions.map((entry) => ({
+      ...entry,
+      packageJson: JSON.parse(fs.readFileSync(path.join(seedDir, entry.relativeLocation, 'package.json'), 'utf8')),
+    }))
+  );
+}
 
 (async () => {
   try {
@@ -124,6 +196,7 @@ const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
     testSanitizesInheritedGitCommandConfigEnv();
     testBatchSuiteRegistryValidation();
     testBatchSuiteEnvironmentIsolation();
+    await testBatchRejectsInvalidExtensionSeedBeforeLaunch();
     testBatchShortProfileParentOwnership();
     await testExternalProfileParentSurvivesSuiteCleanup();
     testSummarizerRetainsErrorStackFrames();
@@ -326,7 +399,7 @@ function testPreparedExtensionDependencyCohort() {
   const repositoryRoot = path.resolve(__dirname, '..', '..', '..');
   const pipeline = fs.readFileSync(path.join(repositoryRoot, '.config', 'vscode-e2e-cli.1es.yml'), 'utf8');
   const suiteTemplate = fs.readFileSync(path.join(repositoryRoot, '.config', 'templates', 'vscode-e2e-cli-run-suite.yml'), 'utf8');
-  const uiRunner = fs.readFileSync(path.join(__dirname, '..', 'src', 'test', 'ui', 'run-e2e.ts'), 'utf8');
+  const dependencyProducer = fs.readFileSync(path.join(__dirname, 'prepare-e2e-extension-dependencies.js'), 'utf8');
 
   const windowsPrepare = pipeline.indexOf('Prepare Windows VS Code extension dependencies once');
   const buildJob = pipeline.indexOf('job: build_current_run_e2e_artifact');
@@ -336,9 +409,9 @@ function testPreparedExtensionDependencyCohort() {
     'Marketplace preparation must be one Windows producer followed by one Linux producer, never one cohort per suite job'
   );
   assert.strictEqual(
-    (pipeline.match(/LA_E2E_PREPARE_EXTENSION_DEPENDENCIES_ONLY: '1'/g) ?? []).length,
+    (pipeline.match(/prepare-e2e-extension-dependencies\.js prepare/g) ?? []).length,
     2,
-    'The exact run may prepare Marketplace dependencies only once per consumer OS'
+    'The exact run must use one dedicated Marketplace dependency producer per consumer OS'
   );
   assert.ok(
     suiteTemplate.includes('artifact: vscode-e2e-prepared-extensions-${{ parameters.platform }}') &&
@@ -347,9 +420,11 @@ function testPreparedExtensionDependencyCohort() {
     'Suite jobs must verify and restore the exact-run prepared artifact instead of creating concurrent Marketplace cohorts'
   );
   assert.ok(
-    uiRunner.includes("const prepareDependenciesOnly = process.env.LA_E2E_PREPARE_EXTENSION_DEPENDENCIES_ONLY === '1'") &&
-      uiRunner.includes('prepareDependenciesOnly && !fs.existsSync(distPackageJson) ? path.join(projectDir,'),
-    'Only dependency-only setup may read exact-source extension metadata before dist exists'
+    dependencyProducer.includes("const SOURCE_MANIFEST_PATH = path.resolve(__dirname, '..', 'src', 'package.json')") &&
+      dependencyProducer.includes("require('@vscode/test-electron').runVSCodeCommand") &&
+      !pipeline.includes('LA_E2E_PREPARE_EXTENSION_DEPENDENCIES_ONLY') &&
+      !pipeline.includes('out/test/run-e2e.js'),
+    'Dependency producers must read exact-source extension metadata and use the supported VS Code CLI without ExTester'
   );
   assert.ok(
     suiteTemplate.includes('New-Item -ItemType Directory -Force -Path "$(Agent.TempDirectory)\\la\\${{ parameters.shortName }}"') &&
@@ -1185,7 +1260,7 @@ async function testRunAfterLifecycleFinalizationRejectsFailedOrMissingPhases() {
   };
   const seedDir = path.join(tempRoot, 'run-after-finalization-seed');
   fs.mkdirSync(seedDir, { recursive: true });
-  fs.writeFileSync(path.join(seedDir, 'extensions.json'), '[]');
+  createPreparedExtensionsSeed(seedDir);
   const phase = (phaseId, exitCode = 0) => ({
     phaseId,
     complete: exitCode === 0,
@@ -1579,10 +1654,40 @@ function testBatchSuiteEnvironmentIsolation() {
   assert.strictEqual(env.LA_E2E_CLI_DISABLE_UNOWNED_PORT_KILL, '1');
 
   const seedDir = path.join(tempRoot, 'extensions-seed');
-  fs.mkdirSync(path.join(seedDir, 'publisher.extension-1.0.0'), { recursive: true });
-  fs.writeFileSync(path.join(seedDir, 'extensions.json'), '[]');
+  createPreparedExtensionsSeed(seedDir);
   prepareSuiteExtensionsDirectory({ seedDir, targetDir: context.extensionsDir });
   assert.ok(fs.existsSync(path.join(context.extensionsDir, 'extensions.json')), 'suite extensions dir should be copied from seed');
+  const copiedRegistry = JSON.parse(fs.readFileSync(path.join(context.extensionsDir, 'extensions.json'), 'utf8'));
+  assert.ok(copiedRegistry.length > 0, 'suite-local extension registry should contain the prepared dependencies');
+  assert.ok(
+    copiedRegistry.every((entry) => {
+      const locationPath =
+        process.platform === 'win32' ? entry.location.path.replace(/^\/([A-Za-z]:)/, '$1').replaceAll('/', path.sep) : entry.location.path;
+      return path.resolve(locationPath).toLowerCase().startsWith(path.resolve(context.extensionsDir).toLowerCase());
+    }),
+    'suite-local extension registry should be rebuilt with target-local absolute paths'
+  );
+}
+
+async function testBatchRejectsInvalidExtensionSeedBeforeLaunch() {
+  const seedDir = path.join(tempRoot, 'invalid-extensions-seed');
+  fs.mkdirSync(seedDir, { recursive: true });
+  fs.writeFileSync(path.join(seedDir, 'extensions.json'), '[]');
+  let launchCount = 0;
+
+  await assert.rejects(
+    runBatchSuites({
+      suites: [SUITE_REGISTRY.unitTests],
+      batchRoot: path.join(tempRoot, 'invalid-seed-batch'),
+      seedDir,
+      runSuite: async () => {
+        launchCount += 1;
+        return { exitCode: 0, signal: null, processCleanup: { verified: true } };
+      },
+    }),
+    /prepared-extensions-content-manifest\.json/
+  );
+  assert.strictEqual(launchCount, 0, 'invalid prepared dependency seeds must fail before any suite wrapper launches');
 }
 
 function testBatchShortProfileParentOwnership() {
@@ -1726,7 +1831,7 @@ async function testBatchContinuesAfterOrdinaryFailure() {
   const batchRoot = path.join(tempRoot, 'batch-ordinary-failure');
   const seedDir = path.join(tempRoot, 'batch-ordinary-seed');
   fs.mkdirSync(seedDir, { recursive: true });
-  fs.writeFileSync(path.join(seedDir, 'extensions.json'), '[]');
+  createPreparedExtensionsSeed(seedDir);
   const launched = [];
   const aggregate = await runBatchSuites({
     suites,
@@ -1755,7 +1860,7 @@ async function testBatchStopsAfterContainmentBreach() {
   const batchRoot = path.join(tempRoot, 'batch-breach');
   const seedDir = path.join(tempRoot, 'batch-breach-seed');
   fs.mkdirSync(seedDir, { recursive: true });
-  fs.writeFileSync(path.join(seedDir, 'extensions.json'), '[]');
+  createPreparedExtensionsSeed(seedDir);
   const launched = [];
   const aggregate = await runBatchSuites({
     suites,
@@ -1875,7 +1980,7 @@ async function testDirectHttpFamilyRetainsWrapperPhaseJournal() {
   const seedDir = path.join(tempRoot, 'direct-http-extensions');
   fs.mkdirSync(batchRoot, { recursive: true });
   fs.mkdirSync(seedDir, { recursive: true });
-  fs.writeFileSync(path.join(seedDir, 'extensions.json'), '[]');
+  createPreparedExtensionsSeed(seedDir);
   const credentialKeys = [
     'LA_E2E_CLI_AZURE_ACCESS_TOKEN',
     'LA_E2E_CLI_AZURE_ACCESS_TOKEN_EXPIRES_ON',

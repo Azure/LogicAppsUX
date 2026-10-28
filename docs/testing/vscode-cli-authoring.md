@@ -265,6 +265,29 @@ or create family-specific report logic. Every mutation is fenced by
 `LA_E2E_CLI_EVIDENCE_INVOCATION` under the manifest lock so a surviving host
 from an earlier invocation cannot write into a newer run.
 
+## Prepared Marketplace dependencies are a separate producer contract
+
+The exact-SHA ADO pipeline prepares Marketplace dependencies once per selected
+operating system with
+`apps/vs-code-designer/scripts/prepare-e2e-extension-dependencies.js`.
+Dependency production must not compile or run the ExTester launcher, invoke
+`tsx`, or download ChromeDriver. The dedicated producer reads the extension
+manifest from `apps/vs-code-designer/src/package.json` and uses the exact
+resolved VS Code build through `@vscode/test-electron`'s supported
+`bin/code` / `bin/code.cmd` installer.
+
+The prepared archive is not accepted because `extensions.json` exists.
+Its outer manifest binds the source SHA, operating system, architecture,
+resolved VS Code version, archive hash, and semantic content-manifest hash.
+After relocation, each consumer revalidates the extension IDs, versions,
+platform payloads, package/content hashes, and dependency closure, then rebuilds
+`extensions.json` with consumer-local absolute paths. The shared runner repeats
+that validation when copying the restored seed into each isolated suite
+directory, compares immutable payload content while excluding only the
+relocatable registry, and rebuilds the suite-local registry. A producer/bootstrap
+failure means no native scenario ran; classify it before inspecting scenario,
+cleanup, or ordered-evidence results.
+
 Pipeline bootstrap and inherited active ownership are different contracts. The
 pipeline may supply only `LA_E2E_CLI_EVIDENCE_SUITE_ID` and
 `LA_E2E_CLI_EVIDENCE_DIR`; the owning runner then creates the invocation token

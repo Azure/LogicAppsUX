@@ -8,6 +8,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { removePathWithRetry } = require('./e2e-cli-path-cleanup');
+const { CONTENT_MANIFEST_NAME, verify: verifyPreparedExtensionDependencies } = require('./prepare-e2e-extension-dependencies');
 
 const BATCH_SCHEMA_VERSION = 1;
 const DEFAULT_SUITE_TIMEOUT_MS = 45 * 60 * 1000;
@@ -382,7 +383,14 @@ function buildSuiteEnvironment(baseEnv, context, extraEnv = {}) {
   };
 }
 
-function prepareSuiteExtensionsDirectory({ seedDir, targetDir, expectedManifest }) {
+function prepareSuiteExtensionsDirectory({
+  seedDir,
+  targetDir,
+  expectedManifest,
+  vscodeVersion = process.env.LA_E2E_CLI_VSCODE_VERSION || 'stable',
+  platform = process.platform,
+  arch = process.arch,
+}) {
   if (!seedDir || !fs.existsSync(seedDir)) {
     throw new Error(
       [
@@ -399,12 +407,32 @@ function prepareSuiteExtensionsDirectory({ seedDir, targetDir, expectedManifest 
   if (!manifest.files.some((file) => file.relativePath === 'extensions.json')) {
     throw new Error(`[batch] Prepared extensions seed is missing extensions.json: ${seedDir}`);
   }
+  if (!manifest.files.some((file) => file.relativePath === CONTENT_MANIFEST_NAME)) {
+    throw new Error(`[batch] Prepared extensions seed is missing ${CONTENT_MANIFEST_NAME}: ${seedDir}`);
+  }
+
+  verifyPreparedExtensionDependencies({
+    extensionsDir: seedDir,
+    contentManifestPath: path.join(seedDir, CONTENT_MANIFEST_NAME),
+    platform,
+    arch,
+    vscodeVersion,
+    rebuildRegistry: false,
+  });
 
   fs.rmSync(targetDir, { recursive: true, force: true });
   fs.mkdirSync(path.dirname(targetDir), { recursive: true });
   fs.cpSync(seedDir, targetDir, { recursive: true, force: true, dereference: false, verbatimSymlinks: true });
+  verifyPreparedExtensionDependencies({
+    extensionsDir: targetDir,
+    contentManifestPath: path.join(targetDir, CONTENT_MANIFEST_NAME),
+    platform,
+    arch,
+    vscodeVersion,
+  });
   const copiedManifest = buildDirectoryIntegrityManifest(targetDir);
-  if (JSON.stringify(copiedManifest.files) !== JSON.stringify(manifest.files)) {
+  const immutableFiles = (value) => value.files.filter((file) => file.relativePath !== 'extensions.json');
+  if (JSON.stringify(immutableFiles(copiedManifest)) !== JSON.stringify(immutableFiles(manifest))) {
     throw new Error('[batch] Prepared extensions seed changed while copying; refusing to run isolated suites.');
   }
   return targetDir;

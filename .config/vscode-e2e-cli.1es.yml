@@ -152,13 +152,12 @@ extends:
 
               - pwsh: |
                   $env:PATH = "$(Build.SourcesDirectory)\apps\vs-code-designer\node_modules\.bin;$(Build.SourcesDirectory)\node_modules\.bin;$env:PATH"
-                  pnpm --dir apps/vs-code-designer exec tsx src/test/ui/run-e2e.ts
+                  node apps/vs-code-designer/scripts/prepare-e2e-extension-dependencies.js prepare --platform windows --vscode-version "$(resolvedVSCodeBuild)"
                   if ($LASTEXITCODE -ne 0) {
                     exit $LASTEXITCODE
                   }
                 displayName: Prepare Windows VS Code extension dependencies once
                 env:
-                  LA_E2E_PREPARE_EXTENSION_DEPENDENCIES_ONLY: '1'
                   E2E_VSCODE_VERSION: $(resolvedVSCodeBuild)
                   NODE_OPTIONS: --max-old-space-size=4096
                   TEMP: $(Agent.TempDirectory)
@@ -166,7 +165,8 @@ extends:
 
               - pwsh: |
                   $source = Join-Path '$(Agent.TempDirectory)' 'test-resources/test-extensions'
-                  if (-not (Test-Path (Join-Path $source 'extensions.json'))) {
+                  $contentManifest = Join-Path $source 'prepared-extensions-content-manifest.json'
+                  if (-not (Test-Path (Join-Path $source 'extensions.json')) -or -not (Test-Path $contentManifest)) {
                     throw "Prepared Windows extension dependencies are incomplete: $source"
                   }
                   $output = '$(Build.ArtifactStagingDirectory)/vscode-e2e-prepared-extensions-windows'
@@ -177,11 +177,13 @@ extends:
                     exit $LASTEXITCODE
                   }
                   [ordered]@{
-                    schemaVersion = 1
+                    schemaVersion = 2
                     platform = 'windows'
+                    architecture = (node -p "process.arch").Trim()
                     sourceSHA = '$(pinnedSourceSha)'
                     vscodeVersion = '$(resolvedVSCodeBuild)'
                     archiveSHA256 = (Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant()
+                    contentManifestSHA256 = (Get-FileHash $contentManifest -Algorithm SHA256).Hash.ToLowerInvariant()
                   } | ConvertTo-Json -Compress | Set-Content (Join-Path $output 'prepared-extensions-manifest.json') -NoNewline
                 displayName: Package exact-run Windows extension dependencies
 
@@ -236,11 +238,12 @@ extends:
               - bash: |
                   set -euo pipefail
                   export PATH="$(Build.SourcesDirectory)/apps/vs-code-designer/node_modules/.bin:$(Build.SourcesDirectory)/node_modules/.bin:$PATH"
-                  pnpm --dir apps/vs-code-designer exec tsx src/test/ui/run-e2e.ts
+                  node apps/vs-code-designer/scripts/prepare-e2e-extension-dependencies.js prepare \
+                    --platform linux \
+                    --vscode-version "$(resolvedVSCodeBuild)"
                 displayName: Prepare Linux VS Code extension dependencies once
                 condition: and(succeeded(), ${{ eq(parameters.runLinux, true) }})
                 env:
-                  LA_E2E_PREPARE_EXTENSION_DEPENDENCIES_ONLY: '1'
                   E2E_VSCODE_VERSION: $(resolvedVSCodeBuild)
                   NODE_OPTIONS: --dns-result-order=ipv4first --no-network-family-autoselection --max-old-space-size=4096
                   TEMP: $(Agent.TempDirectory)
@@ -248,7 +251,8 @@ extends:
 
               - pwsh: |
                   $source = Join-Path '$(Agent.TempDirectory)' 'test-resources/test-extensions'
-                  if (-not (Test-Path (Join-Path $source 'extensions.json'))) {
+                  $contentManifest = Join-Path $source 'prepared-extensions-content-manifest.json'
+                  if (-not (Test-Path (Join-Path $source 'extensions.json')) -or -not (Test-Path $contentManifest)) {
                     throw "Prepared Linux extension dependencies are incomplete: $source"
                   }
                   $output = '$(Build.ArtifactStagingDirectory)/vscode-e2e-prepared-extensions-linux'
@@ -259,11 +263,13 @@ extends:
                     exit $LASTEXITCODE
                   }
                   [ordered]@{
-                    schemaVersion = 1
+                    schemaVersion = 2
                     platform = 'linux'
+                    architecture = (node -p "process.arch").Trim()
                     sourceSHA = '$(pinnedSourceSha)'
                     vscodeVersion = '$(resolvedVSCodeBuild)'
                     archiveSHA256 = (Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant()
+                    contentManifestSHA256 = (Get-FileHash $contentManifest -Algorithm SHA256).Hash.ToLowerInvariant()
                   } | ConvertTo-Json -Compress | Set-Content (Join-Path $output 'prepared-extensions-manifest.json') -NoNewline
                 displayName: Package exact-run Linux extension dependencies
                 condition: and(succeeded(), ${{ eq(parameters.runLinux, true) }})
