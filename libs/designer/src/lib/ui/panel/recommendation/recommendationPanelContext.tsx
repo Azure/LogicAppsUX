@@ -233,9 +233,11 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 
   const onOperationClick = useCallback(
     (id: string, apiId?: string) => {
-      const searchResultPromise = Promise.resolve(
-        (allOperations ?? []).find((o) => (apiId ? o.id === id && o.properties?.api?.id === apiId : o.id === id))
-      );
+      // The connector detail view renders before the full operations preload finishes on large tenants,
+      // so also look in the connector's own operations.
+      const isMatch = (o: DiscoveryOperation<DiscoveryResultTypes>) =>
+        apiId ? o.id === id && o.properties?.api?.id === apiId : o.id === id;
+      const searchResultPromise = Promise.resolve((allOperations ?? []).find(isMatch) ?? allOperationsForGroup.find(isMatch));
 
       searchResultPromise.then((operation) => {
         if (!operation) {
@@ -266,6 +268,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     },
     [
       allOperations,
+      allOperationsForGroup,
       dispatch,
       hasAzureResourceSelection,
       hasSwaggerSelection,
