@@ -1,7 +1,7 @@
 import { createIntl } from 'react-intl';
 import { describe, expect, it } from 'vitest';
 import { convertTimezoneManifest } from '../../../../../designer-client-services/lib/base/manifests/datetime';
-import { getTimezoneValues } from '../recurrence';
+import { getFrequencyValues, getScheduleDayValues, getScheduleHourValues, getTimezoneValues } from '../recurrence';
 
 const alberta = { value: 'Alberta Standard Time', displayName: '(UTC-06:00) Mountain Time (Alberta)' };
 
@@ -25,5 +25,29 @@ describe('time zone options', () => {
     expect(input['x-ms-editor']).toBe('combobox');
     expect(input.enum).toBeUndefined();
     expect(input.default).toBe('UTC');
+  });
+});
+
+describe('recurrence schedule options', () => {
+  const intl = createIntl({ locale: 'en' });
+
+  it('preserves the supported recurrence frequencies', () => {
+    expect(getFrequencyValues(intl).map(({ value }) => value)).toEqual(['Month', 'Week', 'Day', 'Hour', 'Minute', 'Second']);
+  });
+
+  it('offers every hour of the day in order', () => {
+    expect(getScheduleHourValues(intl).map(({ value }) => value)).toEqual(Array.from({ length: 24 }, (_, hour) => String(hour)));
+  });
+
+  it('offers the days of the week in order', () => {
+    expect(getScheduleDayValues(intl).map(({ value }) => value)).toEqual([
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+    ]);
   });
 });
