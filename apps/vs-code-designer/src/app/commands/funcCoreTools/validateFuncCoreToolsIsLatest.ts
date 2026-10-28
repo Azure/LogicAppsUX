@@ -4,8 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { PackageManager, funcDependencyName } from '../../../constants';
 import { localize } from '../../../localize';
-import { executeOnFunctions } from '../../functionsExtension/executeOnFunctionsExt';
-import { binariesExist, getLatestFunctionCoreToolsVersion, useBinariesDependencies, verifyDependencyIntegrity } from '../../utils/binaries';
+import { binariesExist, getLatestFunctionCoreToolsVersion, useBinariesDependencies } from '../../utils/binaries';
 import { shouldCheckForDependencyUpdates } from '../../state/dependencies';
 import { startAllDesignTimeApis, stopAllDesignTimeApis } from '../../utils/codeless/startDesignTimeApi';
 import { getFunctionsCommand, getLocalFuncCoreToolsVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
@@ -38,24 +37,17 @@ async function validateFuncCoreToolsIsLatestBinaries(context: IActionContext, ma
 
   const binaries = await binariesExist(funcDependencyName);
   context.telemetry.properties.binariesExist = `${binaries}`;
-  // Deep-verify the installed files against the on-disk integrity manifest so a corrupt/incomplete
-  // install (e.g. a removed Function Host DLL) forces a wipe + reinstall instead of failing at startup.
-  const integrityValid = binaries ? await verifyDependencyIntegrity(context, funcDependencyName) : false;
-  context.telemetry.properties.integrityValid = `${integrityValid}`;
-
-  const hasValidBinaries = binaries && integrityValid;
-  const localVersion: string | null = hasValidBinaries ? await getLocalFuncCoreToolsVersion() : null;
+  const localVersion: string | null = binaries ? await getLocalFuncCoreToolsVersion() : null;
   context.telemetry.properties.localVersion = localVersion ?? 'null';
 
-  // Throttle: only re-check the newest published version once per window (see
-  // shouldCheckForDependencyUpdates). Missing/corrupt binaries are still reinstalled below.
-  const shouldCheckForUpdate = hasValidBinaries && shouldCheckForDependencyUpdates();
+  // Throttle: only re-check the newest published version once per window.
+  const shouldCheckForUpdate = binaries && shouldCheckForDependencyUpdates();
   const newestVersion: string | undefined = shouldCheckForUpdate
     ? await getLatestFunctionCoreToolsVersion(context, majorVersion)
     : undefined;
-  const isOutdated = hasValidBinaries && localVersion && newestVersion && semver.gt(newestVersion, localVersion);
+  const isOutdated = binaries && localVersion && newestVersion && semver.gt(newestVersion, localVersion);
 
-  const shouldInstall = !binaries || !integrityValid || localVersion === null || isOutdated;
+  const shouldInstall = !binaries || localVersion === null || isOutdated;
 
   if (shouldInstall) {
     if (isOutdated) {
@@ -95,7 +87,7 @@ async function validateFuncCoreToolsIsLatestSystem(context: IActionContext): Pro
         const result: MessageItem = await context.ui.showWarningMessage(message, selectUninstall, DialogResponses.dontWarnAgain);
 
         if (result === selectUninstall) {
-          await executeOnFunctions(uninstallFuncCoreTools, context, packageManagers);
+          await uninstallFuncCoreTools(context, packageManagers);
         } else if (result === DialogResponses.dontWarnAgain) {
           await suppressMultiCoreToolsWarning();
         }

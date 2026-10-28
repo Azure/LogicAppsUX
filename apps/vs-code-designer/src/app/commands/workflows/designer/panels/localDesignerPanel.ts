@@ -352,7 +352,7 @@ export default class LocalDesignerPanel extends DesignerPanel {
   ): Promise<void> {
     const options: ProgressOptions = {
       location: ProgressLocation.Notification,
-      title: localize('azureFunctions.savingWorkflow', 'Saving Workflow...'),
+      title: localize('savingWorkflow', 'Saving Workflow...'),
     };
 
     await window.withProgress(options, async () => {

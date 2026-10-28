@@ -1,17 +1,88 @@
 import { default as CONSTANTS } from '../../common/constants';
+import { isExpressionConnectionMapping } from '../../common/models/workflow';
 import { saveStateToHistory } from '../state/undoRedo/undoRedoSlice';
 import { undoableActionTypes } from '../state/undoRedo/undoRedoTypes';
+import { renameConnectionExpressionParameter } from '../state/connection/connectionSlice';
 import { setIsWorkflowDirty } from '../state/workflow/workflowSlice';
 import { setIsWorkflowParametersDirty } from '../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../store';
 import { getCompressedSlicesFromRootState, getEditedPanelNode, getEditedPanelTab, shouldSkipSavingStateToHistory } from './undoredo';
 import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import type { Middleware } from '@reduxjs/toolkit';
+import { setWorkflowExtractionBusy } from '../state/designerView/designerViewSlice';
+
+type DesignerThunk = (dispatch: (action: unknown) => unknown, getState: () => unknown, extraArgument: unknown) => unknown;
+const workflowGenerationMeta = 'workflowGeneration';
+
+// Only the extraction transaction may modify the editor during persistence. Thunks
+// retain the graph generation in which they started, so callbacks from the previous
+// graph remain blocked even if they resume after the extraction lock is released.
+export const extractionMutationGuardMiddleware: Middleware = ({ dispatch, getState }) => {
+  let workflowGeneration = 0;
+  const thunkGenerations = new WeakMap<Function, number>();
+
+  const bindThunkToGeneration = (thunk: DesignerThunk, generation: number): DesignerThunk => {
+    const boundThunk: DesignerThunk = (thunkDispatch, thunkGetState, extraArgument) => thunk(thunkDispatch, thunkGetState, extraArgument);
+    thunkGenerations.set(boundThunk, generation);
+    return boundThunk;
+  };
+
+  const bindActionToGeneration = (action: any, generation: number): any => {
+    if (typeof action === 'function') {
+      return bindThunkToGeneration(action, generation);
+    }
+    if (!action || typeof action !== 'object') {
+      return action;
+    }
+    return {
+      ...action,
+      meta: {
+        ...action.meta,
+        [workflowGenerationMeta]: generation,
+      },
+    };
+  };
+
+  return (next) => (action: any) => {
+    const actionGeneration = typeof action === 'function' ? thunkGenerations.get(action) : action?.meta?.[workflowGenerationMeta];
+    if (actionGeneration !== undefined && actionGeneration !== workflowGeneration) {
+      return action;
+    }
+    if (
+      getState().designerView.workflowExtractionBusy &&
+      action?.type !== setWorkflowExtractionBusy.type &&
+      !action?.meta?.workflowExtraction
+    ) {
+      return action;
+    }
+    if (setWorkflowExtractionBusy.match(action) && action.payload) {
+      workflowGeneration += 1;
+    }
+    if (typeof action === 'function') {
+      const generation = actionGeneration ?? workflowGeneration;
+      return action((nestedAction: unknown) => dispatch(bindActionToGeneration(nestedAction, generation)), getState, undefined);
+    }
+    return next(action);
+  };
+};
 
 export const storeStateHistoryMiddleware: Middleware =
   ({ dispatch, getState }) =>
   (next) =>
   (action: any) => {
+    if (
+      action.type === 'updateNodeConnection/pending' &&
+      !isExpressionConnectionMapping((getState() as RootState).connections.connectionsMapping[action.meta.arg.nodeId])
+    ) {
+      return next(action);
+    }
+    if (action.type === 'workflowParameters/updateParameter') {
+      const oldName = (getState() as RootState).workflowParameters.definitions[action.payload.id]?.name;
+      const newName = action.payload.newDefinition.name;
+      if (oldName && newName && oldName !== newName) {
+        dispatch(renameConnectionExpressionParameter({ oldName, newName }));
+      }
+    }
     if (!undoableActionTypes.includes(action.type)) {
       return next(action);
     }

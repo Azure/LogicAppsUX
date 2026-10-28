@@ -15,6 +15,8 @@ Open [http://localhost:4200](http://localhost:4200). Running `pnpm run start` fr
 
 To develop against Azure Resource Manager, run `pnpm run start:arm` from the repository root. The command generates an ARM token before starting the development tasks.
 
+For local-only PR deployments triggered by the `ephemeral` label, see [PR preview setup and lifecycle](EPHEMERAL.md).
+
 ## Commands
 
 | Command | Run from | Description |
@@ -44,6 +46,50 @@ To develop against Azure Resource Manager, run `pnpm run start:arm` from the rep
 | `/vscode/*` | VS Code webview previews |
 
 Unknown routes fall back to the production designer development shell.
+
+## Extract selected actions (local only)
+
+Open `/v2?extraction=true&local=ExtractSelection.json` on the running development server. The **Extract Selection** fixture uses a Standard workflow. Ctrl-click (Cmd-click on macOS) **Build message** and **Build result**, then right-click either selected action and choose **Extract to new workflow**. Two selected actions retain their side-by-side details. Selecting **Read customer** as well opens the larger multi-select panel, where **Extract** sits alongside Cut, Copy, Group, and Delete.
+
+The compact, single-column dialog places the workflow name above a 320px-high, pan/zoom-only child workflow preview. The preview has a 1px border, 4px corners, and a muted floating label. Input/output bindings appear in a collapsed section below the preview, omitted when there are no bindings. The preview uses the reusable `WorkflowPreview` component from `@microsoft/designer-ui` and shares the V2 designer's card styling, with its own React Flow viewport and no action/edge editing or shared designer state. Confirmation saves the child and rewritten source together in browser storage, replacing the selected actions with a workflow invocation. The child uses Request/Response actions, and the completion link opens its editable workflow. Both saved documents and their dynamic-content schemas survive reload.
+
+Binding names identify their source action or trigger, such as `input_Read_customer`, `output_Build_result`, or `input_Request`. Spaces and punctuation become underscores, and numeric suffixes distinguish colliding names. Repeated references to the same data root share a binding. This naming applies to new extractions; existing saved workflows keep their original bindings.
+
+The initial workflow name is the first available choice among `Extracted_workflow`, `Extracted_workflow_1`, `Extracted_workflow_2`, and so on, checking existing names case-insensitively. Manually entered names and names at save time still undergo collision validation. Empty input/output sections are hidden independently; nonempty sections show only the original expression and its replacement, where the binding name is already visible.
+
+Extraction is action-type independent: data operations, HTTP, connector actions, and other ordinary action definitions keep their settings and metadata. Entire selected control-flow containers move with their nested actions. The preview uses the selected actions' existing connector icons and colors; containers appear as single cards. Referenced workflow parameters, connection references, and static results are carried into the child without resolving app-setting expressions or creating new connections. Connector metadata must be available to the local designer before saving.
+
+Open `/v2?extraction=true&local=ExtractActions.json` for a mixed-action example: Initialize variable, Parse JSON, Filter array, HTTP, and a downstream consumer. Extract **Filter array** and **HTTP** to see incoming variable and Parse JSON bindings, distinct `body()`/`outputs()` return values, and preserved chunking/retry settings. Selecting the first four actions instead keeps the variable declaration inside the child.
+
+Eligibility is based on dependencies, not a built-in action allowlist. Selections must still form a connected top-level linear region with success-only boundaries. Shared variable writes, escaping variable declarations, partial nested selections, ambiguous loop/conditional output values, secure/binary data transport, and opaque execution-context references are rejected with specific explanations. Existing Response and Terminate actions cannot move because that would change the caller they respond to or the workflow they stop. A child always gets its own generated Request and Response. Schemas are inferred where known; unknown output shapes remain untyped rather than being guessed.
+
+This opt-in is unavailable for Consumption workflows. Storage is local to the browser origin: nothing is deployed, published, or run in Azure, and cloud invocation semantics are not established by this prototype. Use synthetic data only; literal credentials and secure parameter values cannot be persisted. Managed identity and unresolved credential references are preserved. Undo/Redo changes the current source editor without deleting the saved child or rolling back browser storage.
+
+Browser regression coverage is in `e2e/designer/extractSelection.spec.ts`.
+
+## Designer v2 keyboard navigation
+
+In designer v2 (`/v2`), click a card on the canvas and use
+**Ctrl/Cmd + Down** to select the next action or trigger, or **Ctrl/Cmd + Up**
+to select the previous one. Selection follows the existing tab order, including
+scope cards and nested actions, rather than recalculating graph connections.
+Edges, add buttons, notes, and collapsed content are skipped.
+
+Navigation stops at the first and last nodes. With no current selection, Down
+starts at the first node and Up at the last. The selected card receives focus
+and is brought into view, including off-screen cards. Selection uses the usual
+operation-panel behavior and remains available in read-only and monitoring views.
+The shortcuts also work while a non-editing control in the selected node's
+details panel has focus, including the Close button focused after clicking a card.
+They do not override typing in form fields or content-editable controls, or handle
+keys from pinned panels, other designers, dialogs, or menus.
+
+The operation details panel retains your selected tab when you click or navigate
+to another node. If that node does not offer the tab, its first available tab is
+shown instead; your preferred tab is restored on the next node that supports it.
+
+The legacy designer (`/`) does not enable these shortcuts or retain the selected
+details tab across node selections. Its existing keyboard and panel behavior is unchanged.
 
 ## Development model
 

@@ -42,7 +42,7 @@ import { extractPathFromUri, getOperationIdFromDefinition } from '../swagger/ope
 import { convertWorkflowParameterTypeToSwaggerType } from '../tokens';
 import { validateJSONParameter, validateStaticParameterInfo } from '../validation';
 import { addCastToExpression, addFoldingCastToExpression } from './casting';
-import { getDynamicInputsFromSchema, getDynamicSchema, getDynamicValues, getFolderItems } from './dynamicdata';
+import { canInvokeDynamicConnection, getDynamicInputsFromSchema, getDynamicSchema, getDynamicValues, getFolderItems } from './dynamicdata';
 import { getRecurrenceParameters } from './recurrence';
 import {
   createLiteralValueSegment,
@@ -169,6 +169,7 @@ import type {
 import { createAsyncThunk, type Dispatch } from '@reduxjs/toolkit';
 import { getAllVariables } from '../variables';
 import { UncastingUtility } from './uncast';
+import { KnowledgeHubEditor } from '../../../ui/knowledge/editor';
 
 export const ParameterBrandColor = '#916F6F';
 export const ParameterIcon =
@@ -219,7 +220,7 @@ export interface UpdateParameterAndDependenciesPayload {
   properties: Partial<ParameterInfo>;
   isTrigger: boolean;
   operationInfo: NodeOperation;
-  connectionReference: ConnectionReference;
+  connectionReference: ConnectionReference | undefined;
   nodeInputs: NodeInputs;
   dependencies: NodeDependencies;
   updateTokenMetadata?: boolean;
@@ -332,9 +333,10 @@ export function toParameterInfoMap(
   shouldEncodeBasedOnMetadata = true
 ): ParameterInfo[] {
   const metadata = stepDefinition && stepDefinition.metadata;
+  const isKnowledgeHubEnabled = WorkflowService()?.isKnowledgeHubEnabled ? WorkflowService()?.isKnowledgeHubEnabled?.() : true;
   const result: ParameterInfo[] = [];
   for (const inputParameter of inputParameters) {
-    if (!inputParameter.dynamicSchema && !equals(inputParameter.editor, 'knowledgebase')) {
+    if (!inputParameter.dynamicSchema && !(!isKnowledgeHubEnabled && equals(inputParameter.editor, constants.EDITOR.KNOWLEDGE_BASE))) {
       const parameter = createParameterInfo(inputParameter, metadata, shouldEncodeBasedOnMetadata);
       result.push(parameter);
     }
@@ -521,6 +523,14 @@ export function getParameterEditorProps(
     }
   } else if (editor === constants.EDITOR.INITIALIZE_VARIABLE) {
     editorViewModel = { hideParameterErrors: true };
+  } else if (editor === constants.EDITOR.KNOWLEDGE_BASE) {
+    editorOptions = {
+      ...editorOptions,
+      hideLabel: true,
+      hubName: parameterValue.length === 1 && isLiteralValueSegment(parameterValue[0]) ? parameterValue[0].value : undefined,
+      logicAppId: WorkflowService().getLogicAppId?.() ?? '',
+      EditorComponent: KnowledgeHubEditor,
+    };
   } else if (!editor) {
     if (format === constants.EDITOR.HTML) {
       editor = constants.EDITOR.HTML;
@@ -1875,7 +1885,7 @@ export const updateParameterAndDependencies = createAsyncThunk(
             LoggerService().log({
               level: LogEntryLevel.Verbose,
               area: 'UpdateParameterAndDependencies',
-              message: `Dependent parameter was not set. Connection name: ${connectionReference.connectionName} - Parameter key: ${key}`,
+              message: `Dependent parameter was not set. Connection name: ${connectionReference?.connectionName} - Parameter key: ${key}`,
             });
             continue;
           }
@@ -2027,6 +2037,9 @@ export const updateDynamicDataInNode = async (
   loadDynamicOutputs = true,
   loadDefaultValues = true
 ): Promise<void> => {
+  if (!canInvokeDynamicConnection(operationInfo, connectionReference)) {
+    return;
+  }
   await loadDynamicData(
     nodeId,
     isTrigger,
@@ -2098,6 +2111,9 @@ async function loadDynamicData(
   loadDynamicOutputs = true,
   loadDefaultValues = true
 ): Promise<void> {
+  if (!canInvokeDynamicConnection(operationInfo, connectionReference)) {
+    return;
+  }
   if (loadDynamicOutputs && Object.keys(dependencies?.outputs ?? {}).length) {
     const rootState = getState();
     await loadDynamicOutputsInNode(
@@ -2147,6 +2163,9 @@ export const loadDynamicContentForInputsInNode = async (
   loadDynamicOutputs = true,
   loadDefaultValues = true
 ): Promise<void> => {
+  if (!canInvokeDynamicConnection(operationInfo, connectionReference)) {
+    return;
+  }
   for (const [inputKey, info] of Object.entries(inputDependencies)) {
     if (info.dependencyType !== 'ApiSchema') {
       continue;

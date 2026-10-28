@@ -210,6 +210,20 @@ describe('SelectConnectionWrapper from connector', () => {
     expect(onConnectionSuccessful).toHaveBeenCalledWith(newConnection);
   });
 
+  it('does not auto create when connector loading fails with retained data', async () => {
+    await setConnectionsQuery({ data: [] });
+    (ConnectionSelectors.useConnector as Mock).mockReturnValue({
+      data: mockConnector,
+      error: new Error('connector load failed'),
+      isError: true,
+      isLoading: false,
+    });
+
+    render(<SelectConnectionWrapper {...wrapperProps} />);
+
+    expect(autoCreateConnectionIfPossible).not.toHaveBeenCalled();
+  });
+
   it('starts manual connection creation from the add-new button', () => {
     (autoCreateConnectionIfPossible as Mock).mockImplementation(({ onManualConnectionCreation }) => onManualConnectionCreation());
 

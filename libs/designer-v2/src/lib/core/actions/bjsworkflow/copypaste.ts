@@ -1,6 +1,16 @@
-import type { ConnectionReference, ReferenceKey } from '../../../common/models/workflow';
+import { isExpressionConnectionMapping, type ConnectionMapping } from '../../../common/models/workflow';
+import {
+  getServiceProviderConnectionMapping,
+  remapConnectionExpression,
+  remapConnectionExpressionValue,
+} from '../../utils/connectors/connectionExpression';
 import { getTriggerNodeId, setFocusNode, type RootState } from '../..';
-import { initCopiedConnectionMap, initScopeCopiedConnections } from '../../state/connection/connectionSlice';
+import {
+  initCopiedConnectionMap,
+  initScopeCopiedConnections,
+  setNodeConnectionMapping,
+  type CopiedConnectionData,
+} from '../../state/connection/connectionSlice';
 import type { NodeData, NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelTypes';
@@ -16,7 +26,6 @@ import {
   type LogicAppsV2,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { batch } from 'react-redux';
 import { getNodeOperationData } from '../../state/operation/operationSelector';
 import { serializeOperation } from './serializer';
 import { buildGraphFromActions, getAllActionNames } from '../../parsers/BJSWorkflow/BJSDeserializer';
@@ -38,82 +47,21 @@ type CopyOperationPayload = {
 };
 
 export const copyOperation = createAsyncThunk('copyOperation', async (payload: CopyOperationPayload, { getState }) => {
-  batch(() => {
-    const { nodeId } = payload;
-    if (!nodeId) {
-      throw new Error('Node does not exist'); // Just an optional catch, should never happen
-    }
-    const state = getState() as RootState;
-    const newNodeId = createIdCopy(nodeId);
-
-    const nodeData = getNodeOperationData(state.operations, nodeId);
-    const nodeOperationInfo = getRecordEntry(state.operations.operationInfo, nodeId);
-    const nodeComment = getRecordEntry(state.workflow.operations, nodeId)?.description;
-    const nodeConnectionData = getRecordEntry(state.connections.connectionsMapping, nodeId);
-    const nodeTokenData = getRecordEntry(state.tokens.outputTokens, nodeId);
-
-    const clipboardItem = JSON.stringify({
-      nodeId: newNodeId,
-      nodeData,
-      nodeTokenData,
-      nodeOperationInfo,
-      nodeConnectionData,
-      nodeComment,
-      isScopeNode: false,
-      mslaNode: true,
-    });
-    if (navigator.clipboard && typeof navigator.clipboard.readText === 'function') {
-      navigator.clipboard.writeText(clipboardItem);
-    } else {
-      localStorage.setItem(LOCAL_STORAGE_KEYS.CLIPBOARD, clipboardItem);
-    }
-  });
+  const { nodeId } = payload;
+  if (!nodeId) {
+    throw new Error('Node does not exist');
+  }
+  const entry = buildActionClipboardEntry(getState() as RootState, nodeId);
+  writeClipboardItem(JSON.stringify({ ...entry, mslaNode: true }));
 });
 
 export const copyScopeOperation = createAsyncThunk('copyScopeOperation', async (payload: CopyOperationPayload, { getState }) => {
-  batch(async () => {
-    let { nodeId: scopeNodeId } = payload;
-    if (!scopeNodeId) {
-      throw new Error('Scope Node does not exist');
-    }
-    const state = getState() as RootState;
-    scopeNodeId = removeIdTag(scopeNodeId);
-    const newNodeId = createIdCopy(scopeNodeId);
-
-    const serializedOperation = await serializeOperation(state, scopeNodeId, {
-      skipValidation: true,
-      ignoreNonCriticalErrors: true,
-    });
-
-    const allActionNames = getAllActionNames({ [scopeNodeId]: serializedOperation as ActionDefinition });
-    const allConnectionData: Record<string, { connectionReference: ConnectionReference; referenceKey: string }> = {};
-    const staticResults: Record<string, any> = {};
-
-    allActionNames.forEach((actionName) => {
-      const connectionReference = getConnectionReferenceForNodeId(state.connections, actionName);
-      if (connectionReference) {
-        allConnectionData[actionName] = connectionReference;
-      }
-
-      const staticResult = getStaticResultForNodeId(state.staticResults, actionName);
-      if (staticResult) {
-        staticResults[actionName] = staticResult;
-      }
-    });
-    const clipboardItem = JSON.stringify({
-      nodeId: newNodeId,
-      serializedOperation,
-      allConnectionData,
-      staticResults,
-      isScopeNode: true,
-      mslaNode: true,
-    });
-    if (navigator.clipboard && typeof navigator.clipboard.readText === 'function') {
-      navigator.clipboard.writeText(clipboardItem);
-    } else {
-      localStorage.setItem(LOCAL_STORAGE_KEYS.CLIPBOARD, clipboardItem);
-    }
-  });
+  const { nodeId } = payload;
+  if (!nodeId) {
+    throw new Error('Scope Node does not exist');
+  }
+  const entry = await buildScopeClipboardEntry(getState() as RootState, nodeId);
+  writeClipboardItem(JSON.stringify({ ...entry, mslaNode: true }));
 });
 
 type CopyOperationsPayload = {
@@ -125,7 +73,18 @@ const buildActionClipboardEntry = (state: RootState, nodeId: string) => {
   const nodeData = getNodeOperationData(state.operations, nodeId);
   const nodeOperationInfo = getRecordEntry(state.operations.operationInfo, nodeId);
   const nodeComment = getRecordEntry(state.workflow.operations, nodeId)?.description;
-  const nodeConnectionData = getRecordEntry(state.connections.connectionsMapping, nodeId);
+  const mapping = getRecordEntry(state.connections.connectionsMapping, nodeId);
+  const nodeConnectionData = isExpressionConnectionMapping(mapping)
+    ? { ...mapping, expression: remapConnectionExpression(mapping.expression, state.workflow.idReplacements) }
+    : mapping;
+  if (isExpressionConnectionMapping(mapping) && nodeData.nodeInputs) {
+    nodeData.nodeInputs = {
+      ...nodeData.nodeInputs,
+      preservedConnectionInputs:
+        nodeData.nodeInputs.preservedConnectionInputs ??
+        (getRecordEntry(state.workflow.operations, nodeId) as LogicAppsV2.ServiceProvider)?.inputs,
+    };
+  }
   const nodeTokenData = getRecordEntry(state.tokens.outputTokens, nodeId);
 
   return {
@@ -149,13 +108,23 @@ const buildScopeClipboardEntry = async (state: RootState, scopeNodeId: string) =
   });
 
   const allActionNames = getAllActionNames({ [normalizedScopeId]: serializedOperation as ActionDefinition });
-  const allConnectionData: Record<string, { connectionReference: ConnectionReference; referenceKey: string }> = {};
+  const allConnectionData: Record<string, CopiedConnectionData> = {};
   const staticResults: Record<string, any> = {};
 
   allActionNames.forEach((actionName) => {
-    const connectionReference = getConnectionReferenceForNodeId(state.connections, actionName);
+    const originalId =
+      Object.keys(state.workflow.idReplacements).find((id) => state.workflow.idReplacements[id] === actionName) ?? actionName;
+    const connectionReference = getConnectionReferenceForNodeId(state.connections, originalId);
     if (connectionReference) {
-      allConnectionData[actionName] = connectionReference;
+      allConnectionData[actionName] = connectionReference.mapping
+        ? {
+            ...connectionReference,
+            mapping: {
+              ...connectionReference.mapping,
+              expression: remapConnectionExpression(connectionReference.mapping.expression, state.workflow.idReplacements),
+            },
+          }
+        : connectionReference;
     }
 
     const staticResult = getStaticResultForNodeId(state.staticResults, actionName);
@@ -260,7 +229,7 @@ interface PasteOperationPayload {
   nodeData: NodeData;
   nodeTokenData: NodeTokens;
   operationInfo: NodeOperation;
-  connectionData?: ReferenceKey;
+  connectionData?: ConnectionMapping[string];
   comment?: string;
   isParallelBranch?: boolean;
 }
@@ -287,12 +256,14 @@ export const pasteOperation = createAsyncThunk('pasteOperation', async (payload:
 
   dispatch(setFocusNode(nodeId));
   dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo }));
-  await initializeOperationDetails(nodeId, operationInfo, getState as () => RootState, dispatch);
+  if (!isExpressionConnectionMapping(connectionData)) {
+    await initializeOperationDetails(nodeId, operationInfo, getState as () => RootState, dispatch);
+  }
 
   // replace new nodeId if there exists a copy of the copied node
   dispatch(initializeNodes({ nodes: [{ ...nodeData, id: nodeId }] }));
 
-  const updatedTokens = nodeTokenData.tokens.map((token) => {
+  const updatedTokens = (nodeTokenData?.tokens ?? []).map((token) => {
     // Modify the actionName to a unique value
     return {
       ...token,
@@ -327,7 +298,7 @@ interface PasteScopeOperationPayload {
   relationshipIds: RelationshipIds;
   nodeId: string;
   serializedValue: LogicAppsV2.OperationDefinition | null;
-  allConnectionData: Record<string, { connectionReference: ConnectionReference; referenceKey: string }>;
+  allConnectionData: Record<string, CopiedConnectionData>;
   staticResults: Record<string, any>;
   upstreamNodeIds: string[];
   isParallelBranch?: boolean;
@@ -374,7 +345,43 @@ export const pasteScopeOperation = createAsyncThunk(
     const scopeParentNodeId = graphId && graphId !== 'root' ? graphId : undefined;
     actionNodesMetadata[nodeId] = { ...actionNodesMetadata[actionId], isRoot: false, parentNodeId: scopeParentNodeId, graphId };
     if (Object.keys(allConnectionData).length > 0) {
-      dispatch(initScopeCopiedConnections(replaceIdsOfExistingNodes(allConnectionData, pasteParams.renamedNodes)));
+      const copiedConnections = replaceIdsOfExistingNodes(allConnectionData, pasteParams.renamedNodes);
+      for (const [id, data] of Object.entries(copiedConnections)) {
+        if (data.mapping) {
+          const action = actions[id];
+          const inputs = (action as LogicAppsV2.ServiceProvider)?.inputs;
+          if (inputs) {
+            actions[id] = { ...action, inputs: remapConnectionExpressionValue(inputs, pasteParams.renamedNodes) };
+          }
+          copiedConnections[id] = {
+            ...data,
+            mapping: { ...data.mapping, expression: remapConnectionExpression(data.mapping.expression, pasteParams.renamedNodes) },
+          };
+        }
+      }
+      dispatch(initScopeCopiedConnections(copiedConnections));
+    }
+    for (const [id, action] of Object.entries(actions)) {
+      const connectionName = (action as LogicAppsV2.ServiceProvider).inputs?.serviceProviderConfiguration?.connectionName;
+      if (
+        action.type.toLowerCase() === 'serviceprovider' &&
+        typeof connectionName === 'string' &&
+        !(getState() as RootState).connections.connectionsMapping[id]
+      ) {
+        const mapping = getServiceProviderConnectionMapping(connectionName);
+        if (isExpressionConnectionMapping(mapping)) {
+          dispatch(
+            setNodeConnectionMapping({
+              nodeId: id,
+              mapping: { ...mapping, expression: remapConnectionExpression(mapping.expression, pasteParams.renamedNodes) },
+            })
+          );
+          actions[id] = {
+            ...action,
+            inputs: remapConnectionExpressionValue((action as LogicAppsV2.ServiceProvider).inputs, pasteParams.renamedNodes),
+          };
+        }
+      }
     }
     if (Object.keys(staticResults).length > 0) {
       dispatch(initScopeCopiedStaticResultProperties(replaceIdsOfExistingNodes(staticResults, pasteParams.renamedNodes)));

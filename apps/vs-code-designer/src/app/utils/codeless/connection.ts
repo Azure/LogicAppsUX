@@ -112,7 +112,7 @@ export async function addConnection(
   ext.outputChannel.appendLog(localize('connectionAdded', 'Connection added.'));
 }
 
-async function addConnectionDataInJson(
+export async function addConnectionDataInJson(
   context: IActionContext,
   projectPath: string,
   connectionAndAppSetting: ConnectionAndAppSetting<any>,
@@ -124,7 +124,7 @@ async function addConnectionDataInJson(
   const connectionsJsonString = await getConnectionsJson(projectPath);
   const connectionsJson = connectionsJsonString === '' ? {} : JSON.parse(connectionsJsonString);
 
-  const { connectionData, connectionKey, pathLocation, settings } = connectionAndAppSetting;
+  const { connectionData, connectionKey, pathLocation, settings, isUpdate } = connectionAndAppSetting;
 
   let pathToSetConnectionsData = connectionsJson;
 
@@ -136,7 +136,7 @@ async function addConnectionDataInJson(
     pathToSetConnectionsData = pathToSetConnectionsData[path];
   }
 
-  if (pathToSetConnectionsData && pathToSetConnectionsData[connectionKey]) {
+  if (pathToSetConnectionsData && pathToSetConnectionsData[connectionKey] && !isUpdate) {
     const message: string = localize('ConnectionKeyAlreadyExist', "Connection key '{0}' already exists.", connectionKey);
     await vscode.window.showErrorMessage(message, localize('OK', 'OK'));
     return;

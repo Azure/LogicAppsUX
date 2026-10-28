@@ -17,9 +17,13 @@
 // Wall time target: a short fixture-only run (vs ~12 minutes for the 12-shape behavior file).
 // This is the critical-path test that Step 3's per-scenario shards depend on; the
 // full behavior coverage runs independently in createWorkspace.behavior.test.ts.
+//
+// The CustomCode fixture is created through the public .NET 10 wizard option,
+// then run-e2e.ts converts only the shared downstream fixture to the existing
+// .NET 8 project shape. This preserves existing-project lifecycle coverage
+// while Workflows SDK 1.4.0 is pending release.
 
 import * as fs from 'fs';
-import * as crypto from 'crypto';
 import * as os from 'os';
 import * as path from 'path';
 import { By, EditorView, type InputBox, type QuickOpenBox, type WebDriver, Workbench } from 'vscode-extension-tester';
@@ -60,7 +64,7 @@ const EXTENSION_BUNDLE_DIR = path.join(
   'ExtensionBundles',
   'Microsoft.Azure.Functions.ExtensionBundle.Workflows'
 );
-const BUNDLE_SIDECAR_FILE = '.bundle-source-md5';
+const BUNDLE_INSTALL_MARKER_FILE = '.install-complete';
 const VALIDATE_DEPENDENCIES_COMMAND = 'Azure Logic Apps: Validate and install dependency binaries';
 const VS_CODE_LOGS_DIR = path.join(os.tmpdir(), 'test-resources', 'settings', 'logs');
 
@@ -76,7 +80,7 @@ function compareSemverDesc(a: string, b: string): number {
   return 0;
 }
 
-function findLatestWorkflowsBundle(): { version: string; bundleDir: string; sidecarPath: string } | undefined {
+function findLatestWorkflowsBundle(): { version: string; bundleDir: string; markerPath: string } | undefined {
   if (!fs.existsSync(EXTENSION_BUNDLE_DIR)) {
     return undefined;
   }
@@ -94,81 +98,18 @@ function findLatestWorkflowsBundle(): { version: string; bundleDir: string; side
   }
 
   const bundleDir = path.join(EXTENSION_BUNDLE_DIR, version);
-  return { version, bundleDir, sidecarPath: path.join(bundleDir, BUNDLE_SIDECAR_FILE) };
+  return { version, bundleDir, markerPath: path.join(bundleDir, BUNDLE_INSTALL_MARKER_FILE) };
 }
 
-function listBundleFiles(bundleDir: string): { relPath: string; fullPath: string }[] {
-  const files: { relPath: string; fullPath: string }[] = [];
-  const stack = [bundleDir];
-  while (stack.length > 0) {
-    const current = stack.pop();
-    if (!current) {
-      continue;
-    }
-
-    for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
-      const fullPath = path.join(current, entry.name);
-      const relPath = path.relative(bundleDir, fullPath).split(path.sep).join('/');
-      if (relPath === BUNDLE_SIDECAR_FILE) {
-        continue;
-      }
-
-      if (entry.isFile()) {
-        files.push({ relPath, fullPath });
-      }
-      if (entry.isDirectory()) {
-        stack.push(fullPath);
-      }
-    }
-  }
-
-  files.sort((a, b) => (a.relPath < b.relPath ? -1 : a.relPath > b.relPath ? 1 : 0));
-  return files;
-}
-
-function computeBundleContentHash(files: { relPath: string; fullPath: string }[]): string {
-  const hash = crypto.createHash('sha256');
-  const nul = Buffer.from([0]);
-  for (const file of files) {
-    const stat = fs.statSync(file.fullPath);
-    hash.update(Buffer.from(file.relPath, 'utf8'));
-    hash.update(nul);
-    hash.update(Buffer.from(String(stat.size), 'utf8'));
-    hash.update(nul);
-    hash.update(fs.readFileSync(file.fullPath));
-    hash.update(nul);
-  }
-
-  return hash.digest('base64');
-}
-
-function assertWorkflowsBundleSidecarReady(): void {
+function assertWorkflowsBundleReady(): void {
   const bundle = findLatestWorkflowsBundle();
   if (!bundle) {
     throw new Error(`[fixtures:setup] Logic Apps extension bundle is missing at ${EXTENSION_BUNDLE_DIR}`);
   }
-  if (!fs.existsSync(bundle.sidecarPath)) {
-    throw new Error(`[fixtures:setup] Logic Apps extension bundle sidecar is missing: ${bundle.sidecarPath}`);
-  }
-
-  const sidecar = JSON.parse(fs.readFileSync(bundle.sidecarPath, 'utf8'));
-  if (!sidecar || typeof sidecar.sourceMd5 !== 'string' || typeof sidecar.contentHash !== 'string') {
-    throw new Error(`[fixtures:setup] Logic Apps extension bundle sidecar has invalid shape: ${bundle.sidecarPath}`);
-  }
-
-  const files = listBundleFiles(bundle.bundleDir);
-  if (files.length === 0) {
-    throw new Error(`[fixtures:setup] Logic Apps extension bundle has no extracted content: ${bundle.bundleDir}`);
-  }
-
-  const contentHash = computeBundleContentHash(files);
-  if (sidecar.contentHash !== contentHash) {
-    throw new Error(
-      `[fixtures:setup] Logic Apps extension bundle content hash mismatch: ${bundle.bundleDir} sidecar=${sidecar.contentHash} actual=${contentHash}`
-    );
+  if (!fs.existsSync(bundle.markerPath)) {
+    throw new Error(`[fixtures:setup] Logic Apps extension bundle completion marker is missing: ${bundle.markerPath}`);
   }
 }
-
 function dumpBundleDirectoryState(label: string): void {
   console.log(`[fixtures:setup] ${label}: bundle root=${EXTENSION_BUNDLE_DIR}`);
   if (!fs.existsSync(EXTENSION_BUNDLE_DIR)) {
@@ -187,9 +128,9 @@ function dumpBundleDirectoryState(label: string): void {
 
   for (const version of versions.slice(0, 5)) {
     const bundleDir = path.join(EXTENSION_BUNDLE_DIR, version);
-    const sidecarPath = path.join(bundleDir, BUNDLE_SIDECAR_FILE);
+    const markerPath = path.join(bundleDir, BUNDLE_INSTALL_MARKER_FILE);
     const entries = fs.readdirSync(bundleDir).slice(0, 30);
-    console.log(`[fixtures:setup] ${label}: version=${version}, sidecar=${fs.existsSync(sidecarPath)}, entries=[${entries.join(', ')}]`);
+    console.log(`[fixtures:setup] ${label}: version=${version}, marker=${fs.existsSync(markerPath)}, entries=[${entries.join(', ')}]`);
   }
 }
 
@@ -265,7 +206,7 @@ async function waitForWorkflowsBundleSidecarReady(timeoutMs = 300_000): Promise<
 
   while (Date.now() - startedAt < timeoutMs) {
     try {
-      assertWorkflowsBundleSidecarReady();
+      assertWorkflowsBundleReady();
       return;
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error));
@@ -273,7 +214,7 @@ async function waitForWorkflowsBundleSidecarReady(timeoutMs = 300_000): Promise<
     }
   }
 
-  throw lastError ?? new Error('[fixtures:setup] Timed out waiting for Logic Apps extension bundle sidecar');
+  throw lastError ?? new Error('[fixtures:setup] Timed out waiting for Logic Apps extension bundle completion marker');
 }
 
 async function waitForDependencyValidationCommand(workbench: Workbench, timeoutMs = 60_000): Promise<void> {
@@ -440,7 +381,7 @@ describe('Create Workspace Fixtures', function () {
         await validateDependenciesThroughProductCommand(workbench, driver);
         dumpBundleDirectoryState('after-product-validation-command-returned');
         await waitForWorkflowsBundleSidecarReady();
-        console.log('[fixtures:setup] Dependency/bundle validation produced a bundle sidecar before fixture creation');
+        console.log('[fixtures:setup] Dependency/bundle validation produced a bundle completion marker before fixture creation');
       } catch (error: unknown) {
         await captureSetupDiagnostics('strict-validation-failed', driver);
         throw error;
@@ -624,7 +565,7 @@ describe('Create Workspace Fixtures', function () {
     await sleep(2000);
 
     await fillCustomCodeFields(driver, {
-      dotNetVersion: '.NET 8',
+      dotNetVersion: '.NET 10',
       folderName: ccFolderName,
       namespace: fnNamespace,
       functionName: fnName,

@@ -36,29 +36,93 @@ import { getFramework, executeDotnetTemplateCommand } from '../../utils/dotnet/e
 import { wrapArgInQuotes } from '../../utils/funcCoreTools/cpUtils';
 import { tryGetMajorVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
-import { getParentWorkspaceFolder, isLogicApp, selectLogicAppRoot } from '../../utils/workspace';
+import { getLogicAppRoots, getParentWorkspaceFolder, getWorkspaceFolderLogicAppRoots } from '../../utils/workspace';
 import { InitDotnetProjectStep } from '../initProjectForVSCode/initDotnetProjectStep';
 import { stopFuncTaskForWorkspace } from '../../utils/funcCoreTools/funcHostTask';
 import { DialogResponses, nonNullOrEmptyValue } from '@microsoft/vscode-azext-utils';
-import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
+import {
+  callWithTelemetryAndErrorHandling,
+  type IActionContext,
+  type IAzureQuickPickItem,
+  UserCancelledError,
+} from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext, ITemplates } from '@microsoft/vscode-extension-logic-apps';
-import { FuncVersion, ProjectLanguage, ProjectPackageType } from '@microsoft/vscode-extension-logic-apps';
+import { FuncVersion, ProjectLanguage, ProjectPackageType, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import type * as vscode from 'vscode';
+import * as vscode from 'vscode';
 import { validateDotNetIsInstalled } from '../dotnet/validateDotNetInstalled';
 import { ext } from '../../../extensionVariables';
+import { detectProjectPackageType, detectProjectType } from '../../utils/project';
 
 export async function switchToDotnetProjectCommand(context: IActionContext, node?: vscode.Uri) {
-  const projectPath = node && (await isLogicApp(node.fsPath)) ? node.fsPath : await selectLogicAppRoot(context);
-  if (!projectPath) {
-    throw new Error(localize('LogicAppRootError', 'Unable to determine logic app project root.'));
+  const projectPaths = await getProjectPathsForNugetConversion(node);
+  if (projectPaths.length === 0) {
+    vscode.window.showInformationMessage(
+      localize('noLogicAppProjectsFound', 'No Logic App projects were found in the selected workspace.'),
+      'OK'
+    );
+    return;
   }
 
-  await switchToDotnetProject(context, projectPath);
+  const projects = await Promise.all(
+    projectPaths.map(async (projectPath) => ({
+      path: projectPath,
+      projectType: await detectProjectType(projectPath),
+      packageType: await detectProjectPackageType(projectPath),
+    }))
+  );
+  const eligibleProjects = projects.filter(
+    ({ projectType, packageType }) => projectType !== ProjectType.codeful && packageType !== ProjectPackageType.Nuget
+  );
+
+  if (eligibleProjects.length === 0) {
+    const message =
+      projects.length === 1 && projects[0].projectType === ProjectType.codeful
+        ? localize('convertCodefulToNugetUnavailable', 'Converting to a NuGet-based project is not available for codeful projects.')
+        : projects.length === 1 && projects[0].packageType === ProjectPackageType.Nuget
+          ? localize('projectAlreadyDotnet', 'The Logic App project is already a NuGet-based project.')
+          : localize(
+              'noProjectsAvailableForNugetConversion',
+              'No Logic App projects are available to convert. Only non-codeful projects that are not already NuGet-based can be converted.'
+            );
+    vscode.window.showInformationMessage(message, 'OK');
+    return;
+  }
+
+  let targetPath = eligibleProjects[0].path;
+  if (eligibleProjects.length > 1) {
+    const projectPicks: IAzureQuickPickItem<string>[] = eligibleProjects.map(({ path: projectPath }) => ({
+      label: path.basename(projectPath),
+      description: projectPath,
+      data: projectPath,
+    }));
+    const selectedProject = await context.ui.showQuickPick(projectPicks, {
+      placeHolder: localize('selectProjectToConvertToNuget', 'Select a Logic App project to convert to NuGet-based'),
+    });
+    if (!selectedProject?.data) {
+      throw new UserCancelledError();
+    }
+    targetPath = selectedProject.data;
+  }
+
+  await switchToDotnetProject(context, targetPath);
 }
 
-export async function switchToDotnetProject(context: IActionContext, projectPath: string, localDotNetMajorVersion = '10', isCodeful = false) {
+async function getProjectPathsForNugetConversion(node?: vscode.Uri): Promise<string[]> {
+  if (node?.fsPath) {
+    return getWorkspaceFolderLogicAppRoots(node.fsPath);
+  }
+
+  return getLogicAppRoots();
+}
+
+export async function switchToDotnetProject(
+  context: IActionContext,
+  projectPath: string,
+  localDotNetMajorVersion = '10',
+  isCodeful = false
+) {
   const isDotNetInstalled = await validateDotNetIsInstalled(context, projectPath);
   if (!isDotNetInstalled) {
     return;
@@ -271,10 +335,7 @@ async function renameFile(fileName: string, newFileName: string): Promise<void> 
 async function copyBundleProjectFiles(projectPath: string): Promise<void> {
   const filesToBeCopied: string[] = [hostFileName, localSettingsFileName];
   for (const fileName of filesToBeCopied) {
-    if (
-      (await fse.pathExists(path.join(projectPath, fileName))) &&
-      (await fse.pathExists(path.join(projectPath, `${fileName}-copy`)))
-    ) {
+    if ((await fse.pathExists(path.join(projectPath, fileName))) && (await fse.pathExists(path.join(projectPath, `${fileName}-copy`)))) {
       await deleteFile(path.join(projectPath, fileName));
       await renameFile(path.join(projectPath, `${fileName}-copy`), path.join(projectPath, fileName));
     }

@@ -8,7 +8,6 @@ import {
   autoRuntimeDependenciesPathSettingKey,
   dependencyTimeoutSettingKey,
   dependencyMetadataRequestTimeoutMs,
-  dependencyIntegrityManifestFileName,
   dotnetDependencyName,
   funcPackageName,
   defaultLogicAppsFolder,
@@ -180,11 +179,6 @@ export async function downloadAndExtractDependency(
         await extractDependency(dependencyFilePath, targetFolder, dependencyName);
       }
       ext.outputChannel.appendLog(localize('successInstall', 'Successfully installed {0}', dependencyName));
-      // Record an on-disk integrity manifest so a later validation pass can detect missing/corrupt
-      // files (e.g. a deleted DLL under the Function Host) and force a wipe + reinstall.
-      if (dependencyName === funcDependencyName || dependencyName === nodeJsDependencyName) {
-        writeDependencyIntegrityManifest(context, targetFolder, dependencyName);
-      }
       if (dependencyName === funcDependencyName) {
         // Add execute permissions for func and gozip binaries
         if (process.platform !== Platform.windows) {
@@ -199,8 +193,8 @@ export async function downloadAndExtractDependency(
       }
       // NB: when dependencyName === extensionBundleId we intentionally do NOT
       // restart design-time here. The bundle download flow defers the restart
-      // until after the full install is verified (sidecar written + install
-      // marked 'ok' + in-flight promise cleared) so the design-time host
+      // until after initial download/extraction verification, required-content
+      // validation, completion-marker creation, and in-flight cleanup so the design-time host
       // doesn't spawn against a bundle that's still mid-install. See the
       // restart hook in `downloadExtensionBundle`'s finally block in
       // `bundleFeed.ts`.
@@ -211,9 +205,9 @@ export async function downloadAndExtractDependency(
     // (typically an orphan func.exe from a previous session) holding bundle
     // DLLs open. Deleting the folder is impossible while it's locked, and
     // leaving the user with NO bundle is strictly worse than leaving them
-    // with the partial one they already had. The Phase 8 sidecar/content-hash
-    // check will detect the bad state on the next activation and trigger
-    // another re-download, which can succeed once the lock holder exits.
+    // with the partial one they already had. Missing required content or the
+    // completion marker will trigger another download on the next activation,
+    // which can succeed once the lock holder exits.
     const lockHint =
       isTransientLockError(error) || error instanceof BundleExtractionError
         ? ` Another process (often an orphan func.exe from a prior session) may be holding files in ${targetFolder}. Close all VS Code windows running Logic Apps, kill any leftover func.exe processes, and reload to retry.`
@@ -545,205 +539,6 @@ export async function resolveExpectedDependencySha256(
     return getFuncCoreToolsSha256(context, downloadUrl);
   }
   return undefined;
-}
-
-interface IntegrityManifestEntry {
-  path: string;
-  size: number;
-}
-
-interface IntegrityManifest {
-  dependencyName: string;
-  createdAt: string;
-  fileCount: number;
-  files: IntegrityManifestEntry[];
-}
-
-/**
- * Recursively lists every file under rootFolder (relative path + byte size), excluding the integrity
- * manifest itself. Used to snapshot an install and later verify it is intact.
- * @param {string} rootFolder - The dependency folder to walk.
- * @returns {IntegrityManifestEntry[]} Relative file paths (posix separators) and their sizes.
- */
-function listFilesWithSizes(rootFolder: string): IntegrityManifestEntry[] {
-  const entries: IntegrityManifestEntry[] = [];
-  const walk = (currentFolder: string): void => {
-    for (const entry of fs.readdirSync(currentFolder, { withFileTypes: true })) {
-      const absolutePath = path.join(currentFolder, entry.name);
-      if (entry.isDirectory()) {
-        walk(absolutePath);
-      } else if (entry.isFile()) {
-        if (path.relative(rootFolder, absolutePath) === dependencyIntegrityManifestFileName) {
-          continue;
-        }
-        const relativePath = path.relative(rootFolder, absolutePath).split(path.sep).join('/');
-        entries.push({ path: relativePath, size: fs.statSync(absolutePath).size });
-      }
-    }
-  };
-  walk(rootFolder);
-  return entries;
-}
-
-/**
- * Writes an on-disk integrity manifest into a freshly installed dependency folder, recording every
- * file's relative path and byte size. Best-effort: a failure to write the manifest is logged but
- * never fails the install.
- * @param {IActionContext} context - Command context, used for telemetry.
- * @param {string} targetFolder - The dependency folder that was just extracted.
- * @param {string} dependencyName - The dependency name (e.g. NodeJs, FuncCoreTools).
- * @returns {void}
- */
-export function writeDependencyIntegrityManifest(context: IActionContext, targetFolder: string, dependencyName: string): void {
-  try {
-    const files = listFilesWithSizes(targetFolder);
-    const manifest: IntegrityManifest = {
-      dependencyName,
-      createdAt: new Date().toISOString(),
-      fileCount: files.length,
-      files,
-    };
-    const manifestPath = path.join(targetFolder, dependencyIntegrityManifestFileName);
-    fs.writeFileSync(manifestPath, JSON.stringify(manifest));
-    context.telemetry.properties[`${dependencyName}IntegrityManifestWritten`] = 'true';
-    ext.outputChannel.appendLog(
-      localize('recordedIntegrityManifest', 'Recorded {0} on-disk integrity manifest ({1} files).', dependencyName, files.length)
-    );
-  } catch (error) {
-    context.telemetry.properties[`${dependencyName}IntegrityManifestWritten`] = 'false';
-    context.telemetry.properties[`${dependencyName}IntegrityManifestError`] = error instanceof Error ? error.message : String(error);
-    ext.outputChannel.appendLog(
-      localize(
-        'recordedIntegrityManifestError',
-        'Failed to record {0} on-disk integrity manifest: {1}',
-        dependencyName,
-        error instanceof Error ? error.message : String(error)
-      )
-    );
-  }
-}
-
-/**
- * Verifies an installed dependency against its on-disk integrity manifest. Returns false (which should
- * trigger a wipe + reinstall) when the manifest is missing/unreadable, or any recorded file is missing,
- * no longer a regular file, or its size no longer matches. A missing manifest is treated as a failure so
- * that installs predating this check are re-established from a trusted, freshly-downloaded baseline.
- * @param {IActionContext} context - Command context, used for telemetry.
- * @param {string} dependencyName - The dependency name (e.g. NodeJs, FuncCoreTools).
- * @returns {Promise<boolean>} true when the install matches its manifest; false when it should be reinstalled.
- */
-export async function verifyDependencyIntegrity(context: IActionContext, dependencyName: string): Promise<boolean> {
-  ext.outputChannel.appendLog(localize('validatingIntegrity', 'Validating {0} on-disk integrity...', dependencyName));
-  try {
-    const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
-    if (!binariesLocation) {
-      return false;
-    }
-    const targetFolder = path.join(binariesLocation, dependencyName);
-    const manifestPath = path.join(targetFolder, dependencyIntegrityManifestFileName);
-    if (!fs.existsSync(manifestPath)) {
-      context.telemetry.properties[`${dependencyName}IntegrityResult`] = 'manifest-missing';
-      ext.outputChannel.appendLog(
-        localize(
-          'integrityManifestMissing',
-          '{0} on-disk integrity manifest not found; scheduling reinstall to establish a trusted baseline.',
-          dependencyName
-        )
-      );
-      return false;
-    }
-
-    const manifest: IntegrityManifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-    if (!manifest || !Array.isArray(manifest.files)) {
-      context.telemetry.properties[`${dependencyName}IntegrityResult`] = 'manifest-invalid';
-      ext.outputChannel.appendLog(
-        localize('integrityManifestInvalid', '{0} on-disk integrity manifest is invalid; scheduling reinstall.', dependencyName)
-      );
-      return false;
-    }
-
-    // Deep-verify each recorded file with async, bounded-concurrency stat batches. A dependency
-    // manifest can list many thousands of files (Func Core Tools alone is ~8.8k), and a synchronous
-    // fs.statSync loop would block the extension-host event loop long enough for VS Code to flag the
-    // extension as "Unresponsive". Batching fs.promises.stat and awaiting between chunks keeps the
-    // main thread responsive while overlapping the per-file I/O (faster than serial statSync).
-    const integrityBatchSize = 64;
-    for (let batchStart = 0; batchStart < manifest.files.length; batchStart += integrityBatchSize) {
-      const batch = manifest.files.slice(batchStart, batchStart + integrityBatchSize);
-      const stats = await Promise.all(
-        batch.map(async (file) => {
-          try {
-            return { file, stat: await fs.promises.stat(path.join(targetFolder, file.path)) };
-          } catch {
-            return { file, stat: undefined };
-          }
-        })
-      );
-
-      // Evaluate results in manifest order so the first reported failure stays deterministic.
-      for (const { file, stat } of stats) {
-        if (!stat) {
-          context.telemetry.properties[`${dependencyName}IntegrityResult`] = 'file-missing';
-          context.telemetry.properties[`${dependencyName}IntegrityMissingFile`] = file.path;
-          ext.outputChannel.appendLog(
-            localize(
-              'integrityFileMissing',
-              '{0} on-disk integrity check FAILED: missing file "{1}". Scheduling reinstall.',
-              dependencyName,
-              file.path
-            )
-          );
-          return false;
-        }
-        if (!stat.isFile()) {
-          context.telemetry.properties[`${dependencyName}IntegrityResult`] = 'not-a-file';
-          context.telemetry.properties[`${dependencyName}IntegrityMismatchFile`] = file.path;
-          ext.outputChannel.appendLog(
-            localize(
-              'integrityFileNotAFile',
-              '{0} on-disk integrity check FAILED: "{1}" is no longer a regular file. Scheduling reinstall.',
-              dependencyName,
-              file.path
-            )
-          );
-          return false;
-        }
-        if (stat.size !== file.size) {
-          context.telemetry.properties[`${dependencyName}IntegrityResult`] = 'size-mismatch';
-          context.telemetry.properties[`${dependencyName}IntegrityMismatchFile`] = file.path;
-          ext.outputChannel.appendLog(
-            localize(
-              'integrityFileSizeMismatch',
-              '{0} on-disk integrity check FAILED: "{1}" changed size (expected {2}, found {3}). Scheduling reinstall.',
-              dependencyName,
-              file.path,
-              file.size,
-              stat.size
-            )
-          );
-          return false;
-        }
-      }
-    }
-
-    context.telemetry.properties[`${dependencyName}IntegrityResult`] = 'passed';
-    ext.outputChannel.appendLog(
-      localize('integrityPassed', '{0} on-disk integrity check passed ({1} files verified).', dependencyName, manifest.files.length)
-    );
-    return true;
-  } catch (error) {
-    context.telemetry.properties[`${dependencyName}IntegrityResult`] = 'error';
-    context.telemetry.properties[`${dependencyName}IntegrityError`] = error instanceof Error ? error.message : String(error);
-    ext.outputChannel.appendLog(
-      localize(
-        'integrityErrored',
-        '{0} on-disk integrity check errored ({1}); scheduling reinstall.',
-        dependencyName,
-        error instanceof Error ? error.message : String(error)
-      )
-    );
-    return false;
-  }
 }
 
 export function getDotNetBinariesReleaseUrl(): string {

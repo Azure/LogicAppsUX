@@ -1493,7 +1493,7 @@ describe('Create Workspace Tests', function () {
       await selectRadioOption(driver, 'Logic app with custom code');
       await sleep(1000);
       const dotNetDropdown = await findDropdownByLabel(driver, '.NET Version');
-      await selectDropdownOption(driver, dotNetDropdown, '.NET 8');
+      await selectDropdownOption(driver, dotNetDropdown, '.NET 10');
       await sleep(TYPE_SETTLE);
 
       const folderInput = await findCcFolderInput();
@@ -2296,7 +2296,7 @@ describe('Create Workspace Tests', function () {
       }
       console.log('[ccFields] Custom code configuration fields visible');
 
-      // --- .NET Version dropdown: verify options and select .NET 8 ---
+      // --- .NET Version dropdown: verify options and select .NET 10 ---
       let dotNetDropdown: WebElement | null = null;
       try {
         dotNetDropdown = await findDropdownByLabel(driver, '.NET Version');
@@ -2331,13 +2331,13 @@ describe('Create Workspace Tests', function () {
       await driver.actions().sendKeys(Key.ESCAPE).perform();
       await sleep(300);
 
-      if (!optionTexts.some((o) => o.includes('.NET 8'))) {
-        throw new Error(`.NET 8 not found in dropdown. Available: ${JSON.stringify(optionTexts)}`);
+      if (!optionTexts.some((o) => o.includes('.NET 10'))) {
+        throw new Error(`.NET 10 not found in dropdown. Available: ${JSON.stringify(optionTexts)}`);
       }
 
-      await selectDropdownOption(driver, dotNetDropdown, '.NET 8');
+      await selectDropdownOption(driver, dotNetDropdown, '.NET 10');
       await sleep(500);
-      console.log('[ccFields] Selected .NET 8');
+      console.log('[ccFields] Selected .NET 10');
 
       // --- Fill valid custom code field values (validation already tested above) ---
       const folderInput = await findFolderNameInput(driver, 'customCode');
@@ -2365,8 +2365,8 @@ describe('Create Workspace Tests', function () {
       if (reviewText.toLowerCase().includes('custom code')) {
         console.log('[ccFields] "Custom Code Configuration" section found in review ✓');
       }
-      if (reviewText.toLowerCase().includes('.net 8') || reviewText.toLowerCase().includes('net8')) {
-        console.log('[ccFields] .NET 8 framework shown in review ✓');
+      if (reviewText.toLowerCase().includes('.net 10') || reviewText.toLowerCase().includes('net10')) {
+        console.log('[ccFields] .NET 10 framework shown in review ✓');
       }
 
       await captureScreenshot(driver, 'ccFields-passed');
@@ -2846,7 +2846,7 @@ describe('Create Workspace Tests', function () {
       // Step 7: Fill all custom code fields
       console.log('[createCustomCode] Filling custom code configuration fields...');
       await fillCustomCodeFields(driver, {
-        dotNetVersion: '.NET 8',
+        dotNetVersion: '.NET 10',
         folderName: ccFolderName,
         namespace: fnNamespace,
         functionName: fnName,
@@ -2882,7 +2882,7 @@ describe('Create Workspace Tests', function () {
       const hasCcFolder = reviewText.includes(ccFolderName);
       const hasNs = reviewText.includes(fnNamespace);
       const hasFn = reviewText.includes(fnName);
-      const hasNet8 = reviewText.toLowerCase().includes('.net 8') || reviewText.toLowerCase().includes('net8');
+      const hasNet10 = reviewText.toLowerCase().includes('.net 10') || reviewText.toLowerCase().includes('net10');
 
       console.log(`[createCustomCode] Review has workspace name: ${hasWsName}`);
       console.log(`[createCustomCode] Review has app name: ${hasApp}`);
@@ -2890,7 +2890,7 @@ describe('Create Workspace Tests', function () {
       console.log(`[createCustomCode] Review has custom code folder: ${hasCcFolder}`);
       console.log(`[createCustomCode] Review has function namespace: ${hasNs}`);
       console.log(`[createCustomCode] Review has function name: ${hasFn}`);
-      console.log(`[createCustomCode] Review has .NET 8: ${hasNet8}`);
+      console.log(`[createCustomCode] Review has .NET 10: ${hasNet10}`);
 
       if (!hasWsName) {
         await webview.switchBack();
@@ -3362,7 +3362,7 @@ describe('Create Workspace Tests', function () {
       await selectRadioOption(driver, 'Logic app with custom code');
       await sleep(2000);
       await fillCustomCodeFields(driver, {
-        dotNetVersion: '.NET 8',
+        dotNetVersion: '.NET 10',
         folderName: ccFolderName,
         namespace: fnNamespace,
         functionName: fnName,
@@ -3442,7 +3442,7 @@ describe('Create Workspace Tests', function () {
       await selectRadioOption(driver, 'Logic app with custom code');
       await sleep(2000);
       await fillCustomCodeFields(driver, {
-        dotNetVersion: '.NET 8',
+        dotNetVersion: '.NET 10',
         folderName: ccFolderName,
         namespace: fnNamespace,
         functionName: fnName,
@@ -3517,7 +3517,7 @@ describe('Create Workspace Tests', function () {
       await selectRadioOption(driver, 'Logic app with custom code');
       await sleep(2000);
       await fillCustomCodeFields(driver, {
-        dotNetVersion: '.NET 8',
+        dotNetVersion: '.NET 10',
         folderName: ccFolderName,
         namespace: fnNamespace,
         functionName: fnName,

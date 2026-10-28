@@ -1,4 +1,4 @@
-import { InitOperationManifestService } from '@microsoft/logic-apps-shared';
+import { InitOperationManifestService, InitWorkflowService } from '@microsoft/logic-apps-shared';
 import * as initialize from '../initialize';
 import {
   mockGetMyOffice365ProfileOpenApiManifest,
@@ -22,7 +22,11 @@ describe('bjsworkflow initialize', () => {
         isBuiltInConnector: () => false,
         getBuiltInConnector: () => ({}) as any,
       };
+      const workflowService = {
+        isKnowledgeHubEnabled: () => false,
+      } as any;
       InitOperationManifestService(operationManifestService);
+      InitWorkflowService(workflowService);
     });
 
     test('works for an OpenAPI operation with input parameters and values', () => {
@@ -312,6 +316,114 @@ describe('bjsworkflow initialize', () => {
 
       expect(mockDispatch).toHaveBeenCalled();
       expect(mockGetState).toHaveBeenCalled();
+    });
+  });
+
+  describe('updateAgentUrlInInputs', () => {
+    const agentOperation = { type: 'Request', kind: 'Agent' } as any;
+
+    const makeNodeInputs = (overrides: Record<string, any> = {}): any => ({
+      dynamicLoadStatus: 'succeeded',
+      parameterGroups: {
+        default: {
+          id: 'default',
+          parameters: [
+            {
+              id: 'agentUrlId',
+              info: {},
+              parameterKey: 'inputs.$.agentUrl',
+              parameterName: 'agentUrl',
+              required: false,
+              type: 'string',
+              value: [{ id: 'v1', type: 'literal', value: 'https://stale.example.invalid/agent' }],
+              editorOptions: { showAgentViewer: true },
+              ...overrides,
+            },
+          ],
+        },
+      },
+    });
+
+    beforeEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it('does nothing for operations that are not Request/Agent', async () => {
+      const nodeInputs = makeNodeInputs();
+      InitWorkflowService({ getAgentUrl: vi.fn().mockResolvedValue({ agentUrl: 'x', chatUrl: 'y' }) } as any);
+
+      const result = await initialize.updateAgentUrlInInputs({ type: 'Request', kind: 'Http' } as any, nodeInputs);
+
+      expect(result).toBeUndefined();
+    });
+
+    it('populates agentUrlMetadata from the trusted runtime response on success', async () => {
+      const nodeInputs = makeNodeInputs();
+      InitWorkflowService({
+        getAgentUrl: vi.fn().mockResolvedValue({
+          agentUrl: 'https://trusted.example.invalid/agent',
+          chatUrl: 'https://trusted.example.invalid/chat',
+          queryParams: { apiKey: 'trusted-key' },
+        }),
+      } as any);
+
+      const result = await initialize.updateAgentUrlInInputs(agentOperation, nodeInputs);
+
+      expect(result).toBeDefined();
+      expect(result!.value[0].value).toBe('https://trusted.example.invalid/agent');
+      expect(result!.agentUrlMetadata).toEqual({
+        chatUrl: 'https://trusted.example.invalid/chat',
+        queryParams: { apiKey: 'trusted-key' },
+      });
+      // editorOptions is never used to carry agent-preview trust data.
+      expect((result!.editorOptions as any)?.chatUrl).toBeUndefined();
+      expect((result!.editorOptions as any)?.queryParams).toBeUndefined();
+      expect(result!.editorOptions?.showAgentViewer).toBe(true);
+    });
+
+    it('clears any previously trusted agentUrlMetadata and still returns the parameter when the runtime call throws', async () => {
+      const nodeInputs = makeNodeInputs({
+        agentUrlMetadata: { chatUrl: 'https://stale-trusted.example.invalid/chat', queryParams: { apiKey: 'stale-key' } },
+      });
+      InitWorkflowService({ getAgentUrl: vi.fn().mockRejectedValue(new Error('network error')) } as any);
+
+      const result = await initialize.updateAgentUrlInInputs(agentOperation, nodeInputs);
+
+      // Must still return the parameter so the caller commits the cleared trust state via dispatch,
+      // instead of silently leaving stale/forged navigation data active after a failed refresh.
+      expect(result).toBeDefined();
+      expect(result!.agentUrlMetadata).toBeUndefined();
+    });
+
+    it('clears any previously trusted agentUrlMetadata and still returns the parameter when the runtime call resolves falsy', async () => {
+      const nodeInputs = makeNodeInputs({
+        agentUrlMetadata: { chatUrl: 'https://stale-trusted.example.invalid/chat', queryParams: { apiKey: 'stale-key' } },
+      });
+      InitWorkflowService({ getAgentUrl: vi.fn().mockResolvedValue(undefined) } as any);
+
+      const result = await initialize.updateAgentUrlInInputs(agentOperation, nodeInputs);
+
+      expect(result).toBeDefined();
+      expect(result!.agentUrlMetadata).toBeUndefined();
+    });
+
+    it('does not carry forward a previously-forged queryParams when a successful response omits queryParams', async () => {
+      const nodeInputs = makeNodeInputs({
+        agentUrlMetadata: { chatUrl: 'https://stale-trusted.example.invalid/chat', queryParams: { apiKey: 'stale-forged-key' } },
+      });
+      InitWorkflowService({
+        getAgentUrl: vi.fn().mockResolvedValue({
+          agentUrl: 'https://trusted.example.invalid/agent',
+          chatUrl: 'https://trusted.example.invalid/chat',
+          // queryParams intentionally absent from the trusted response.
+        }),
+      } as any);
+
+      const result = await initialize.updateAgentUrlInInputs(agentOperation, nodeInputs);
+
+      expect(result).toBeDefined();
+      expect(result!.agentUrlMetadata).toEqual({ chatUrl: 'https://trusted.example.invalid/chat' });
+      expect(result!.agentUrlMetadata?.queryParams).toBeUndefined();
     });
   });
 });

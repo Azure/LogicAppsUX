@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { beforeEach, describe, it, expect, vi } from 'vitest';
 import { SelectConnection } from '../selectConnection';
 import type { Connection } from '@microsoft/logic-apps-shared';
 import React from 'react';
@@ -79,6 +79,8 @@ const defaultProps = {
 };
 
 describe('SelectConnection', () => {
+  beforeEach(() => vi.clearAllMocks());
+
   it('should render the connection description', () => {
     render(<SelectConnection {...defaultProps} />, { wrapper: Wrapper });
     expect(screen.getByText('Select an existing connection or create a new one')).toBeTruthy();
@@ -87,6 +89,18 @@ describe('SelectConnection', () => {
   it('should render XRM description when in XRM mode', () => {
     render(<SelectConnection {...defaultProps} isXrmConnectionReferenceMode={true} />, { wrapper: Wrapper });
     expect(screen.getByText('Select an existing connection reference or create a new one')).toBeTruthy();
+  });
+
+  it.each([
+    [false, 'Select an existing connection'],
+    [true, 'Select an existing connection reference'],
+  ] as const)('uses the selection-only subtitle without addButton when XRM mode is %s', (isXrmConnectionReferenceMode, subtitle) => {
+    const { addButton: _addButton, ...props } = defaultProps;
+    render(<SelectConnection {...props} isXrmConnectionReferenceMode={isXrmConnectionReferenceMode} />, { wrapper: Wrapper });
+
+    expect(screen.getByText(subtitle, { exact: true })).toBeVisible();
+    expect(screen.queryByText(`${subtitle} or create a new one`)).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Add a new connection' })).not.toBeInTheDocument();
   });
 
   it('should render the connection table with connections', () => {
@@ -102,5 +116,35 @@ describe('SelectConnection', () => {
   it('should render action bar when provided', () => {
     render(<SelectConnection {...defaultProps} actionBar={<div data-testid="action-bar">Actions</div>} />, { wrapper: Wrapper });
     expect(screen.getByTestId('action-bar')).toBeTruthy();
+  });
+
+  it('omits the footer add button when no addButton is supplied, retaining Cancel and the connection list', () => {
+    const { addButton: _addButton, ...props } = defaultProps;
+    render(<SelectConnection {...props} />, { wrapper: Wrapper });
+
+    expect(screen.queryByRole('button', { name: 'Add a new connection' })).not.toBeInTheDocument();
+    expect(screen.getByTestId('connection-table')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel the selection' }));
+    expect(defaultProps.cancelButton.onCancel).toHaveBeenCalledTimes(1);
+  });
+
+  it('retains the footer add action and callback for consumers that explicitly supply addButton', () => {
+    render(<SelectConnection {...defaultProps} />, { wrapper: Wrapper });
+
+    const add = screen.getByRole('button', { name: 'Add a new connection' });
+    expect(add).toHaveTextContent('Add new');
+    expect(add).toBeEnabled();
+    fireEvent.click(add);
+    expect(defaultProps.addButton.onAdd).toHaveBeenCalledTimes(1);
+    expect(defaultProps.cancelButton.onCancel).not.toHaveBeenCalled();
+  });
+
+  it('preserves the explicitly supplied addButton disabled state', () => {
+    render(<SelectConnection {...defaultProps} addButton={{ ...defaultProps.addButton, disabled: true }} />, { wrapper: Wrapper });
+
+    const add = screen.getByRole('button', { name: 'Add a new connection' });
+    expect(add).toBeDisabled();
+    fireEvent.click(add);
+    expect(defaultProps.addButton.onAdd).not.toHaveBeenCalled();
   });
 });

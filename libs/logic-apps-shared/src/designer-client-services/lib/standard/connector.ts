@@ -18,6 +18,7 @@ import { pathCombine, unwrapPaginatedResponse } from '../helpers';
 import { LoggerService } from '../logger';
 import { LogEntryLevel } from '../logging/logEntry';
 import { getHybridAppBaseRelativeUrl, hybridApiVersion, isHybridLogicApp } from './hybrid';
+import type { StandardManagementHttpClient } from './management';
 
 const getConnectionProperties = (connector: Connector, userAssignedIdentity: string | undefined): Record<string, any> => {
   let audience: string | undefined;
@@ -52,6 +53,7 @@ type GetConfigurationFunction = (
 ) => Promise<Record<string, any>>;
 
 export interface StandardConnectorServiceOptions extends BaseConnectorServiceOptions {
+  standardManagement?: StandardManagementHttpClient;
   getConfiguration: GetConfigurationFunction;
   workflowName?: string;
 }
@@ -216,11 +218,16 @@ export class StandardConnectorService extends BaseConnectorService {
         content: { parameters: invokeParameters, configuration },
       });
     } else {
-      response = await httpClient.post({
+      const request = {
         uri,
         queryParameters: { 'api-version': apiVersion },
         content: { parameters: invokeParameters, configuration },
-      });
+      };
+      const standardManagement = this.options.standardManagement;
+      const legacyRequest = () => httpClient.post(request);
+      response = await (standardManagement && (await standardManagement.isEnabled())
+        ? standardManagement.invokeConnector(request, legacyRequest)
+        : legacyRequest());
     }
 
     return this._getResponseFromDynamicApi(response, uri);
@@ -279,11 +286,16 @@ export class StandardConnectorService extends BaseConnectorService {
         content: { parameters: invokeParameters, configuration },
       });
     } else {
-      response = await httpClient.post({
+      const request = {
         uri,
         queryParameters: { 'api-version': apiVersion },
         content: { parameters: invokeParameters, configuration },
-      });
+      };
+      const standardManagement = this.options.standardManagement;
+      const legacyRequest = () => httpClient.post(request);
+      response = await (standardManagement && (await standardManagement.isEnabled())
+        ? standardManagement.invokeConnector(request, legacyRequest)
+        : legacyRequest());
     }
 
     return this._getResponseFromDynamicApi(response, uri);

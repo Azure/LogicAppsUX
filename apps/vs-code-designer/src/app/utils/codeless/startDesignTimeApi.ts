@@ -25,11 +25,7 @@ import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
 import { getLogicAppRoots } from '../workspace';
 import { ensureProjectFiles } from '../../projectConsistency/projectFilesConsistency';
 import { delay } from '../delay';
-import {
-  type IActionContext,
-  type IAzExtOutputChannel,
-  callWithTelemetryAndErrorHandling,
-} from '@microsoft/vscode-azext-utils';
+import { type IActionContext, type IAzExtOutputChannel, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import { Platform } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
@@ -215,7 +211,12 @@ export async function startDesignTimeApi(context: IActionContext, projectPath: s
   await designTimeInst.startupPromise;
 }
 
-async function startDesignTimeApiInternal(context: IActionContext, designTimeInst: FuncInstance, projectPath: string, currRetry: number): Promise<void> {
+async function startDesignTimeApiInternal(
+  context: IActionContext,
+  designTimeInst: FuncInstance,
+  projectPath: string,
+  currRetry: number
+): Promise<void> {
   try {
     context.telemetry.properties.didStartDesignTime = 'false';
 
@@ -253,11 +254,10 @@ async function startDesignTimeApiInternal(context: IActionContext, designTimeIns
         )
       );
 
-      // If activation triggered a bundle (re)download (newer version, corruption
-      // detected, sidecar missing/drifted), wait for it to finish before spawning
-      // func.exe. Launching while the extension bundle is being re-extracted can
-      // lock the bundle folder on Windows and leave the design-time host pointing
-      // at a half-extracted bundle.
+      // If activation triggered a bundle (re)download (newer version or incomplete
+      // installation), wait for it to finish before spawning func.exe. Launching
+      // while the extension bundle is being re-extracted can lock the bundle folder
+      // on Windows and leave the design-time host pointing at a half-extracted bundle.
       //
       // When this call originates from inside `downloadExtensionBundle` itself
       // (the post-install restart hook), `isInsideBundleDownloadScope()` is true
@@ -554,9 +554,12 @@ export function startDesignTimeProcess(
           ext.outputChannel.appendLog(`Failed to stop design-time process before restart. Error: ${error}`);
         })
         .finally(() => {
-          callWithTelemetryAndErrorHandling('designTimeError.languageWorkerFailed.startDesignTimeApi', async (actionContext: IActionContext) => {
-            await startDesignTimeApi(actionContext, projectPath);
-          });
+          callWithTelemetryAndErrorHandling(
+            'designTimeError.languageWorkerFailed.startDesignTimeApi',
+            async (actionContext: IActionContext) => {
+              await startDesignTimeApi(actionContext, projectPath);
+            }
+          );
         });
     }
   });
@@ -646,7 +649,11 @@ export function scheduleStartAllDesignTimeApis(): void {
   );
   startAllDesignTimeApis().catch((error) => {
     ext.outputChannel.appendLog(
-      localize('scheduleAllDesignTimeApisFailed', 'Background design-time startup encountered an error. Error: {0}', error instanceof Error ? error.message : String(error))
+      localize(
+        'scheduleAllDesignTimeApisFailed',
+        'Background design-time startup encountered an error. Error: {0}',
+        error instanceof Error ? error.message : String(error)
+      )
     );
   });
 }
@@ -658,7 +665,9 @@ export function scheduleStartAllDesignTimeApis(): void {
 export async function startAllDesignTimeApis(): Promise<void> {
   const projectPaths = await getLogicAppRoots();
   if (projectPaths.length === 0) {
-    ext.outputChannel.appendLog(localize('noLogicAppsFound', 'No Logic App projects found in the current workspace, skipping design-time startup.'));
+    ext.outputChannel.appendLog(
+      localize('noLogicAppsFound', 'No Logic App projects found in the current workspace, skipping design-time startup.')
+    );
     return;
   }
 
@@ -670,11 +679,13 @@ export async function startAllDesignTimeApis(): Promise<void> {
     )
   );
 
-  await Promise.all(projectPaths.map(async (projectPath) => {
-    await callWithTelemetryAndErrorHandling('startAllDesignTimeApis.startDesignTimeApi', async (actionContext: IActionContext) => {
-      await startDesignTimeApi(actionContext, projectPath);
-    });
-  }));
+  await Promise.all(
+    projectPaths.map(async (projectPath) => {
+      await callWithTelemetryAndErrorHandling('startAllDesignTimeApis.startDesignTimeApi', async (actionContext: IActionContext) => {
+        await startDesignTimeApi(actionContext, projectPath);
+      });
+    })
+  );
 }
 
 /**

@@ -119,7 +119,7 @@ export const ListConnectors = ({ addConnectors, addDisabled }: { addConnectors: 
       seen.add(connectorId);
 
       const referenceKey = connectionsMapping[info.operationId];
-      const reference = referenceKey ? connectionReferences[referenceKey] : null;
+      const reference = typeof referenceKey === 'string' ? connectionReferences[referenceKey] : null;
 
       const isConnected = !!reference;
 

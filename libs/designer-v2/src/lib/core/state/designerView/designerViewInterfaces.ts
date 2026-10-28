@@ -3,6 +3,8 @@ export interface DesignerViewState {
   clampPan?: boolean;
   showDeleteModalNodeId?: string;
   showMultiSelectDeleteModal?: boolean;
+  workflowExtractionDialogOpen?: boolean;
+  workflowExtractionBusy?: boolean;
   nodeContextMenuData?: NodeContextMenuObject;
   edgeContextMenuData?: EdgeContextMenuObject;
 }

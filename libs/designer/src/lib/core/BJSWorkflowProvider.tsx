@@ -8,7 +8,8 @@ import { initWorkflowKind, initRunInstance, initWorkflowSpec } from './state/wor
 import type { AppDispatch } from './store';
 import { parseWorkflowKind } from './utils/workflow';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { useDeepCompareEffect } from '@react-hookz/web';
+import { useCustomCompareEffect } from '@react-hookz/web';
+import isEqual from 'lodash.isequal';
 import type React from 'react';
 import { useContext, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -38,14 +39,19 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
 }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  useDeepCompareEffect(() => {
-    dispatch(initWorkflowSpec('BJS'));
-    dispatch(initWorkflowKind(parseWorkflowKind(workflow?.kind)));
-    dispatch(initRunInstance(runInstance ?? null));
-    dispatch(initRunInPanel(runInstance ?? null));
-    dispatch(initCustomCode(customCode));
-    dispatch(initializeGraphState({ workflowDefinition: workflow, runInstance, isMultiVariableEnabled }));
-  }, [workflowId, runInstance, workflow, customCode]);
+  // Workflow schemas may define a non-callable property named toString, which breaks the default deep comparator.
+  useCustomCompareEffect(
+    () => {
+      dispatch(initWorkflowSpec('BJS'));
+      dispatch(initWorkflowKind(parseWorkflowKind(workflow?.kind)));
+      dispatch(initRunInstance(runInstance ?? null));
+      dispatch(initRunInPanel(runInstance ?? null));
+      dispatch(initCustomCode(customCode));
+      dispatch(initializeGraphState({ workflowDefinition: workflow, runInstance, isMultiVariableEnabled }));
+    },
+    [workflowId, runInstance, workflow, customCode],
+    isEqual
+  );
 
   // Store app settings in query to access outside of functional components
   useQuery({

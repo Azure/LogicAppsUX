@@ -15,6 +15,11 @@
       "dependsOn": ["^build:lib"],
       "outputs": ["build/**"]
     },
+    "standalone#build:ephemeral": {
+      "dependsOn": ["^build:lib"],
+      "outputs": ["dist/**"],
+      "cache": false
+    },
     "build:lib": {
       "outputs": ["build/**", "dist/**"]
     },

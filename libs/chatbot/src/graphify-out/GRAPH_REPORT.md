@@ -1,39 +1,49 @@
-# Graph Report - src  (2026-06-22)
+# Graph Report - src  (2026-08-26)
 
 ## Corpus Check
 - 17 files · ~6,787 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 48 nodes · 65 edges · 7 communities
+- 94 nodes · 133 edges · 11 communities (10 shown, 1 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `d59cb30b`
+- Built from commit: `5c7453c9`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- [[_COMMUNITY_Community 0|Community 0]]
-- [[_COMMUNITY_Community 1|Community 1]]
-- [[_COMMUNITY_Community 2|Community 2]]
-- [[_COMMUNITY_Community 3|Community 3]]
-- [[_COMMUNITY_Community 4|Community 4]]
+- lib/ui/CopilotChatbot.tsx
+- lib/ui/__test__/CopilotChatbot.spec.tsx
+- lib/common/models/workflow.ts
+- lib/ui/ChatbotUi.tsx
+- src/lib/ui/ChatbotUi.tsx
+- Svg.d.ts
+- src/lib/ui/__test__/CopilotChatbot.spec.tsx
+- src/lib/ui/CopilotChatbot.tsx
+- src/lib/common/models/workflow.ts
 
 ## God Nodes (most connected - your core abstractions)
 1. `useChatbotStyles` - 5 edges
-2. `mockUseIntl()` - 4 edges
-3. `CopilotPanelHeader()` - 4 edges
-4. `ChatbotUI()` - 3 edges
-5. `AssistantChat()` - 3 edges
-6. `RequestData` - 2 edges
-7. `isSuccessResponse()` - 2 edges
-8. `CoPilotChatbot()` - 2 edges
-9. `cache` - 1 edges
-10. `intl` - 1 edges
+2. `useChatbotStyles` - 5 edges
+3. `mockUseIntl()` - 4 edges
+4. `CopilotPanelHeader()` - 4 edges
+5. `mockUseIntl()` - 4 edges
+6. `CopilotPanelHeader()` - 4 edges
+7. `isSuccessResponse()` - 3 edges
+8. `defaultChatbotPanelWidth` - 3 edges
+9. `ChatbotUI()` - 3 edges
+10. `AssistantChat()` - 3 edges
 
 ## Surprising Connections (you probably didn't know these)
+- `CoPilotChatbot()` --calls--> `isSuccessResponse()`  [EXTRACTED]
+  src/lib/ui/CopilotChatbot.tsx → src/lib/core/util/index.ts
+- `ChatbotUI()` --calls--> `useChatbotStyles`  [EXTRACTED]
+  src/lib/ui/ChatbotUi.tsx → src/lib/ui/styles.ts
+- `CopilotPanelHeader()` --calls--> `useChatbotStyles`  [EXTRACTED]
+  src/lib/ui/panelheader.tsx → src/lib/ui/styles.ts
 - `ChatbotUI()` --calls--> `useChatbotStyles`  [EXTRACTED]
   lib/ui/ChatbotUi.tsx → lib/ui/styles.ts
 - `CopilotPanelHeader()` --calls--> `useChatbotStyles`  [EXTRACTED]
@@ -42,40 +52,53 @@
 ## Import Cycles
 - None detected.
 
-## Communities (7 total, 0 thin omitted)
+## Communities (11 total, 1 thin omitted)
 
-### Community 0 - "Community 0"
+### Community 0 - "lib/ui/CopilotChatbot.tsx"
 Cohesion: 0.21
 Nodes (5): RequestData, ResponseData, CoPilotChatbot(), CoPilotChatbotProps, isSuccessResponse()
 
-### Community 1 - "Community 1"
-Cohesion: 0.18
+### Community 1 - "lib/ui/__test__/CopilotChatbot.spec.tsx"
+Cohesion: 0.16
 Nodes (8): capturedAssistantChatProps, defaultProps, mockGetCopilotResponse, mockGetWorkflowEdit, mockWorkflow, cache, intl, mockUseIntl()
 
-### Community 2 - "Community 2"
+### Community 2 - "lib/common/models/workflow.ts"
 Cohesion: 0.25
 Nodes (7): ApiHubAuthentication, ConnectionReference, ConnectionReferences, Impersonation, ImpersonationSource, ReferenceKey, WorkflowParameter
 
-### Community 3 - "Community 3"
-Cohesion: 0.38
-Nodes (3): AssistantChat(), ChatbotUI(), ChatbotUIProps
+### Community 3 - "lib/ui/ChatbotUi.tsx"
+Cohesion: 0.26
+Nodes (6): AssistantChat(), ChatbotUI(), ChatbotUIProps, CopilotPanelHeader(), useChatbotDarkStyles, useChatbotStyles
 
-### Community 4 - "Community 4"
-Cohesion: 0.43
-Nodes (3): CopilotPanelHeader(), useChatbotDarkStyles, useChatbotStyles
+### Community 4 - "src/lib/ui/ChatbotUi.tsx"
+Cohesion: 0.21
+Nodes (7): AssistantChat(), ChatbotUI(), ChatbotUIProps, defaultChatbotPanelWidth, CopilotPanelHeader(), useChatbotDarkStyles, useChatbotStyles
+
+### Community 7 - "src/lib/ui/__test__/CopilotChatbot.spec.tsx"
+Cohesion: 0.18
+Nodes (8): cache, intl, mockUseIntl(), capturedAssistantChatProps, defaultProps, mockGetCopilotResponse, mockGetWorkflowEdit, mockWorkflow
+
+### Community 8 - "src/lib/ui/CopilotChatbot.tsx"
+Cohesion: 0.31
+Nodes (5): RequestData, ResponseData, isSuccessResponse(), CoPilotChatbot(), CoPilotChatbotProps
+
+### Community 9 - "src/lib/common/models/workflow.ts"
+Cohesion: 0.25
+Nodes (7): ApiHubAuthentication, ConnectionReference, ConnectionReferences, Impersonation, ImpersonationSource, ReferenceKey, WorkflowParameter
 
 ## Knowledge Gaps
-- **18 isolated node(s):** `cache`, `intl`, `ResponseData`, `ConnectionReference`, `ApiHubAuthentication` (+13 more)
+- **37 isolated node(s):** `cache`, `intl`, `ResponseData`, `ConnectionReference`, `ApiHubAuthentication` (+32 more)
   These have ≤1 connection - possible missing edges or undocumented components.
+- **1 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `mockUseIntl()` connect `Community 1` to `Community 3`, `Community 4`?**
-  _High betweenness centrality (0.025) - this node is a cross-community bridge._
-- **Why does `CopilotPanelHeader()` connect `Community 4` to `Community 0`?**
-  _High betweenness centrality (0.018) - this node is a cross-community bridge._
-- **Why does `AssistantChat()` connect `Community 3` to `Community 0`?**
+- **Why does `CopilotPanelHeader()` connect `lib/ui/ChatbotUi.tsx` to `lib/ui/CopilotChatbot.tsx`, `lib/ui/__test__/CopilotChatbot.spec.tsx`?**
   _High betweenness centrality (0.012) - this node is a cross-community bridge._
+- **Why does `CopilotPanelHeader()` connect `src/lib/ui/ChatbotUi.tsx` to `src/lib/ui/CopilotChatbot.tsx`?**
+  _High betweenness centrality (0.012) - this node is a cross-community bridge._
+- **Why does `mockUseIntl()` connect `src/lib/ui/__test__/CopilotChatbot.spec.tsx` to `src/lib/ui/ChatbotUi.tsx`?**
+  _High betweenness centrality (0.006) - this node is a cross-community bridge._
 - **What connects `cache`, `intl`, `ResponseData` to the rest of the system?**
-  _18 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _37 weakly-connected nodes found - possible documentation gaps or missing edges._

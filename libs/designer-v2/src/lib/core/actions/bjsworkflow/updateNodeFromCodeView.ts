@@ -1,9 +1,9 @@
 import { getTriggerNodeId, type RootState } from '../..';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { OperationManifestService, getRecordEntry } from '@microsoft/logic-apps-shared';
+import { OperationManifestService, equals, getRecordEntry } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { setIsPanelLoading } from '../../state/panel/panelSlice';
-import { initializeNodes } from '../../state/operation/operationMetadataSlice';
+import { initializeNodes, updateErrorDetails } from '../../state/operation/operationMetadataSlice';
 import { deinitializeTokensAndVariables, initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
 import { replaceOperationDefinition } from '../../state/workflow/workflowSlice';
 import { isManagedMcpOperation } from '../../state/workflow/helper';
@@ -22,6 +22,9 @@ import {
   type NodeDataWithOperationMetadata,
 } from './operationdeserializer';
 import { initializeOperationDetailsForSwagger } from '../../utils/swagger/operation';
+import { getConnectionMappingForNode } from './connections';
+import { setNodeConnectionMapping } from '../../state/connection/connectionSlice';
+import { isExpressionConnectionMapping } from '../../../common/models/workflow';
 
 export interface UpdateNodeFromCodeViewPayload {
   nodeId: string;
@@ -61,6 +64,23 @@ export const updateNodeFromCodeView = createAsyncThunk(
       const triggerNodeId = getTriggerNodeId(updatedState.workflow);
 
       const operationManifestService = OperationManifestService();
+      const importedMapping = await getConnectionMappingForNode(serializedOperation, nodeId, isTrigger, operationManifestService);
+      const previousMapping = state.connections.connectionsMapping[nodeId];
+      let mapping = importedMapping?.[nodeId] ?? null;
+      if (isExpressionConnectionMapping(mapping) && isExpressionConnectionMapping(previousMapping)) {
+        const key = previousMapping.designTimeReferenceKey;
+        const reference = key && Object.hasOwn(references, key) ? references[key] : undefined;
+        const configuration = (serializedOperation as LogicAppsV2.ServiceProvider).inputs?.serviceProviderConfiguration;
+        const serviceProviderId =
+          configuration && 'serviceProviderId' in configuration && typeof configuration.serviceProviderId === 'string'
+            ? configuration.serviceProviderId
+            : undefined;
+        if (reference && equals(reference.api.id, serviceProviderId, true)) {
+          mapping = { ...mapping, designTimeReferenceKey: key || undefined };
+        }
+      }
+      dispatch(setNodeConnectionMapping({ nodeId, mapping }));
+      dispatch(updateErrorDetails({ id: nodeId, clear: true }));
       let nodeData: NodeDataWithOperationMetadata[] | undefined;
       if (isManagedMcpOperation(serializedOperation)) {
         nodeData = await initializeOperationDetailsForManagedMcpServer(nodeId, serializedOperation, references, workflowKind, dispatch);

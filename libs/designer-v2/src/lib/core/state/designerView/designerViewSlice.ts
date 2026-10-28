@@ -16,6 +16,12 @@ export const designerViewSlice = createSlice({
   name: 'designerView',
   initialState,
   reducers: {
+    setWorkflowExtractionDialogOpen: (state, action: PayloadAction<boolean>) => {
+      state.workflowExtractionDialogOpen = action.payload;
+    },
+    setWorkflowExtractionBusy: (state, action: PayloadAction<boolean>) => {
+      state.workflowExtractionBusy = action.payload;
+    },
     toggleMinimap: (state) => {
       state.showMinimap = !state.showMinimap;
     },
@@ -42,6 +48,8 @@ export const designerViewSlice = createSlice({
 });
 
 export const {
+  setWorkflowExtractionDialogOpen,
+  setWorkflowExtractionBusy,
   toggleMinimap,
   toggleClampPan,
   setShowDeleteModalNodeId,

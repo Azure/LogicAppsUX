@@ -324,7 +324,7 @@ export const useNewAdditiveSubgraphId = (baseId: string) =>
       let caseId = baseId;
       let caseCount = 1;
       const idList = Object.keys(state.nodesMetadata);
-      // eslint-disable-next-line no-loop-func
+
       while (idList.some((id) => id === caseId)) {
         caseCount++;
         caseId = `${baseId}_${caseCount}`;

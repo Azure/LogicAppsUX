@@ -19,7 +19,12 @@ export interface PublishCodefulProjectOptions {
    * `publish` task if the modern template hooks `CopyToCodefulFolder` /
    * `ReplaceLanguageNetCore` to `AfterTargets="Build;Publish"`. In that case
    * the Debug `Build` step that `func: host start` chains via `dependsOn` is
-   * sufficient to populate `lib/codeful/`
+   * sufficient to populate `lib/codeful/`, and running `publish` first only
+   * results in a duplicated clean+build cycle whose output is overwritten by
+   * the subsequent Debug build.
+   *
+   * Used by the debug (F5) pipeline. Deploy paths must leave this `false` so
+   * `bin/Release/<tfm>/publish/` is always produced for the configured deployment subpath.
    */
   skipIfBuildPopulatesCodeful?: boolean;
 }

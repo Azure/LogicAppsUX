@@ -2067,7 +2067,20 @@ async function readRunDetailsActionStatuses(driver: WebDriver): Promise<ActionSt
   `);
 }
 
-async function verifyLatestRunActionRunsSucceeded(workflowName: string): Promise<{ allSucceeded: boolean; details: string } | undefined> {
+/**
+ * Query the runtime management API directly for the latest run's per-action
+ * statuses (name + status), bypassing the run-details UI entirely.
+ *
+ * Exported so callers that need an explicit, action-NAME-specific assertion
+ * (e.g. "the generated InvokeFunction action named X succeeded", not just
+ * "N actions succeeded") can call it directly instead of depending on which
+ * internal path `verifyAllNodesSucceeded()` happened to take — its `details`
+ * string only includes action names when it falls back to this function
+ * after the UI-scrape poll times out.
+ */
+export async function verifyLatestRunActionRunsSucceeded(
+  workflowName: string
+): Promise<{ allSucceeded: boolean; details: string } | undefined> {
   const managementBase = 'http://localhost:7071/runtime/webhooks/workflow/api/management';
   const apiVersion = '2019-10-01-edge-preview';
   const encodedWorkflowName = encodeURIComponent(workflowName);

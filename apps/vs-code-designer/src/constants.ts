@@ -241,14 +241,6 @@ export const extensionContext = {
 } as const;
 export type extensionContext = (typeof extensionContext)[keyof typeof extensionContext];
 
-export const functionsCommand = {
-  azureFunctionsOpenFile: 'azureFunctions.openFile',
-  azureFunctionsUninstallFuncCoreTools: 'azureFunctions.uninstallFuncCoreTools',
-  azureFunctionsAppSettingsEncrypt: 'azureFunctions.appSettings.encrypt',
-  azureFunctionsAppSettingsDecrypt: 'azureFunctions.appSettings.decrypt',
-} as const;
-export type functionsCommand = (typeof functionsCommand)[keyof typeof functionsCommand];
-
 export const azuriteCommand = {
   start: 'azurite.start',
 } as const;
@@ -317,27 +309,20 @@ export const experimentalExtensionBundleSourceUriSettingKey = 'experimentalExten
 export const experimentalExtensionBundleVersionSettingKey = 'experimentalExtensionBundleVersion';
 export const enableManagedIdentityAuthSetting = 'enableManagedIdentityAuth';
 export const dependencyMetadataRequestTimeoutMs = 30 * 1000;
-export const dependencyIntegrityManifestFileName = '.logicapps-integrity.json';
 export const useSmbDeployment = 'useSmbDeploymentForHybrid';
 
 // host.json
 export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
 export const targetBundleKey = 'FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI';
-export const bundleSourceMd5SidecarFile = '.bundle-source-md5';
-
-// globalState key + interval throttling the expensive full-byte extension-bundle
-// integrity hash. On most launches a fast lstat tree fingerprint is compared
-// instead; the deep byte-hash only runs when this throttle says a verification is
-// due (defense-in-depth against an in-place edit that keeps identical size+mtime).
-// Mirrors the dependency update-check throttle pattern.
-export const lastBundleDeepVerificationKey = 'azureLogicAppsStandard.lastBundleDeepVerification';
-export const bundleDeepVerificationIntervalMs = 24 * 60 * 60 * 1000; // 24 hours
+export const bundleInstallCompleteFile = '.install-complete';
+export const legacyBundleInstallMarkerFile = '.bundle-source-md5';
 
 // local.settings.json
 export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
 export const appKindSetting = 'APP_KIND';
 export const sqlStorageConnectionStringKey = 'Workflows.Sql.ConnectionString';
 export const workflowAuthenticationMethodMIValue = 'managedServiceIdentity';
+export const customCodeDotNetVersionSettingKey = 'LOGIC_APPS_CUSTOMCODE_DOTNETVERSION';
 
 export const workerRuntimeKey = 'FUNCTIONS_WORKER_RUNTIME';
 export const ProjectDirectoryPathKey = 'ProjectDirectoryPath';

@@ -1,4 +1,10 @@
-import { ConsumptionOperationManifestService, InitConnectionService, InitOperationManifestService } from '@microsoft/logic-apps-shared';
+import {
+  ConsumptionOperationManifestService,
+  InitConnectionService,
+  InitLoggerService,
+  InitOperationManifestService,
+  InitWorkflowService,
+} from '@microsoft/logic-apps-shared';
 import { afterEach, describe, expect, test, vitest } from 'vitest';
 import { getReactQueryClient } from '../../../ReactQueryProvider';
 import { testSwagger } from '../../../utils/parameters/__test__/mocks';
@@ -30,6 +36,8 @@ describe('Templates Parameters Helper', () => {
     test('should initialize operations and template metadata correctly in store when template parameters have dynamic data', async () => {
       InitOperationManifestService(manifestService);
       InitConnectionService(connectionService);
+      InitLoggerService([]);
+      InitWorkflowService({} as any);
 
       const templateParameters = testTemplateManifest.parameters.reduce((result, current) => {
         result[current.name] = current;

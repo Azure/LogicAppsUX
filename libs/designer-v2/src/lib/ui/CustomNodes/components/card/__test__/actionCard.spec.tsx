@@ -244,8 +244,42 @@ describe('ActionCard', () => {
     expect(onCopyClick).toHaveBeenCalledOnce();
   });
 
-  it('should focus element when setFocus is true', () => {
-    render(<ActionCard {...defaultProps} setFocus={true} nodeIndex={0} />);
-    expect(screen.getByTestId('card-Test Action')).toHaveFocus();
+  it.each([false, true])('focuses with preventScroll when setFocus is true (scope=%s)', (isScope) => {
+    const focus = vi.spyOn(HTMLElement.prototype, 'focus');
+    try {
+      render(<ActionCard {...defaultProps} setFocus={true} nodeIndex={0} isScope={isScope} handleCollapse={vi.fn()} />);
+      expect(focus).toHaveBeenCalledExactlyOnceWith({ preventScroll: true });
+      expect(screen.getByTestId('card-Test Action')).toHaveFocus();
+    } finally {
+      focus.mockRestore();
+    }
+  });
+
+  it.each([false, true])('only refocuses for a new explicit request without native scrolling (scope=%s)', (isScope) => {
+    const cardProps = { ...defaultProps, nodeIndex: 1, isScope, handleCollapse: vi.fn() };
+    const { rerender } = render(<ActionCard {...cardProps} />);
+    const target = screen.getByTestId('card-Test Action');
+    expect(target).not.toHaveFocus();
+    const focus = vi.spyOn(target, 'focus');
+    try {
+      rerender(<ActionCard {...cardProps} setFocus={true} />);
+      expect(focus).toHaveBeenCalledExactlyOnceWith({ preventScroll: true });
+      expect(target).toHaveFocus();
+
+      rerender(<ActionCard {...cardProps} setFocus={true} title="Updated action" />);
+      expect(screen.getByTestId('card-Updated action')).toBe(target);
+      expect(focus).toHaveBeenCalledOnce();
+      rerender(<ActionCard {...cardProps} setFocus={false} />);
+      expect(focus).toHaveBeenCalledOnce();
+      target.blur();
+      expect(target).not.toHaveFocus();
+
+      rerender(<ActionCard {...cardProps} setFocus={true} />);
+      expect(focus).toHaveBeenCalledTimes(2);
+      expect(focus).toHaveBeenLastCalledWith({ preventScroll: true });
+      expect(target).toHaveFocus();
+    } finally {
+      focus.mockRestore();
+    }
   });
 });
