@@ -204,6 +204,10 @@ vi.mock('@microsoft/logic-apps-shared', async () => {
   };
 });
 vi.mock('../Services/HttpClient', () => ({ HttpClient: class {} }));
+vi.mock('../Services/StandardManagement', () => {
+  const management = {};
+  return { useAzureStandardManagement: () => management };
+});
 vi.mock('../Services/Artifact', () => ({ ArtifactService: class {} }));
 vi.mock('../Services/ChildWorkflow', () => ({ ChildWorkflowService: class {} }));
 vi.mock('../Services/FileSystemConnectionCreationClient', () => ({ FileSystemConnectionCreationClient: class {} }));

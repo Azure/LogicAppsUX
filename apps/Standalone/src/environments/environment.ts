@@ -1,5 +1,6 @@
 // This file can be replaced during build by using the `fileReplacements` array.
 // When building for production, this file is replaced with `environment.prod.ts`.
+import { setArmAuthenticationToken } from './armAuthentication';
 
 const getAccessToken = async (fileName: string): Promise<string | undefined> => {
   try {
@@ -70,13 +71,13 @@ export const loadToken = async () => {
   const devTokens = await getDevServerTokens();
 
   if (devTokens?.arm?.accessToken) {
-    environment.armToken = devTokens.arm.accessToken;
+    setArmToken(devTokens.arm.accessToken);
     environment.foundryToken = devTokens.foundry?.accessToken;
     scheduleTokenRefresh(devTokens.arm.expiresOn);
     return environment.armToken;
   }
 
-  environment.armToken = await getAccessToken('armToken');
+  setArmToken(await getAccessToken('armToken'));
   environment.foundryToken = await getAccessToken('foundryToken');
 
   if (import.meta.env.DEV) {
@@ -86,6 +87,11 @@ export const loadToken = async () => {
 
   return environment.armToken ?? null;
 };
+
+function setArmToken(token: string | undefined): void {
+  environment.armToken = token;
+  setArmAuthenticationToken(token);
+}
 
 // place a subscriptionIds.json file in /public
 // with the following format:

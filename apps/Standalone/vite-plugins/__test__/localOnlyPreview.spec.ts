@@ -28,6 +28,10 @@ const createFixture = async () => {
   );
   await copyFile(resolve(testDirectory, '../../src/environments/environment.ts'), resolve(root, 'src/environments/environment.ts'));
   await copyFile(
+    resolve(testDirectory, '../../src/environments/armAuthentication.ts'),
+    resolve(root, 'src/environments/armAuthentication.ts')
+  );
+  await copyFile(
     resolve(testDirectory, '../../src/environments/environment.ephemeral.ts'),
     resolve(root, 'src/environments/environment.ephemeral.ts')
   );
@@ -97,6 +101,7 @@ describe('local-only preview', () => {
     expect(modules).toContain(normalizePath(resolve(root, 'src/App.ephemeral.tsx')));
     expect(modules).not.toContain(normalizePath(resolve(root, 'src/App.tsx')));
     expect(modules).not.toContain(normalizePath(resolve(root, 'src/environments/environment.ts')));
+    expect(modules).not.toContain(normalizePath(resolve(root, 'src/environments/armAuthentication.ts')));
     expect(modules.some((id) => id.includes('/jsonImport/'))).toBe(false);
     expect(output).not.toMatch(/PRIVATE_(?:ARM|FOUNDRY|SUBSCRIPTION|AUTH_REDIRECT)_SENTINEL/);
     expect(output).not.toContain('/__dev/armToken');

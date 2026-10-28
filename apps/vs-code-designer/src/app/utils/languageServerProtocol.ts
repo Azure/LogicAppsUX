@@ -2,12 +2,17 @@ import path from 'path';
 import * as fse from 'fs-extra';
 import { assetsFolderName, lspDirectory } from '../../constants';
 import { ext } from '../../extensionVariables';
-import { lspSdkHashMarkerName, lspServerDirectoryName, lspServerHashMarkerName } from './languageServerProtocolConstants';
+import {
+  lspSdkAssetRevision,
+  lspSdkRevisionMarkerName,
+  lspServerAssetRevision,
+  lspServerDirectoryName,
+  lspServerRevisionMarkerName,
+} from './languageServerProtocolConstants';
 import AdmZip from 'adm-zip';
-import { createHash } from 'crypto';
 import { ensureRuntimeDependenciesDir } from './binaries';
 
-export { lspSdkHashMarkerName, lspServerDirectoryName, lspServerHashMarkerName };
+export { lspSdkAssetRevision, lspSdkRevisionMarkerName, lspServerAssetRevision, lspServerDirectoryName, lspServerRevisionMarkerName };
 const lockedFileErrorCodes = new Set(['EBUSY', 'EPERM']);
 const lockedFileRetryDelayMs = 2000;
 const lockedFileRetryAttempts = 3;
@@ -17,20 +22,17 @@ export async function installLSPSDK(): Promise<void> {
 
   // Check if LSPServer needs to be extracted or updated
   const serverZipFile = path.join(__dirname, assetsFolderName, 'LSPServer', 'LSPServer.zip');
-  const serverHashMarkerFile = path.join(targetDirectory, lspServerHashMarkerName);
+  const serverRevisionMarkerFile = path.join(targetDirectory, lspServerRevisionMarkerName);
   const lspServerPath = path.join(targetDirectory, lspServerDirectoryName);
   const lspServerDllPath = path.join(lspServerPath, 'SdkLspServer.dll');
-  const serverZipHash = await getFileHash(serverZipFile);
-  const shouldExtract = await shouldUpdateFromHash(serverZipHash, serverHashMarkerFile, lspServerDllPath);
+  const shouldExtract = await shouldUpdateFromRevision(lspServerAssetRevision, serverRevisionMarkerFile, lspServerDllPath);
 
   // Check if SDK needs to be copied or updated
   const lspDirectoryPath = path.join(targetDirectory, lspDirectory);
   const sdkNupkgFile = path.join(__dirname, assetsFolderName, 'LSPServer', 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg');
-  const sdkHashMarkerFile = path.join(targetDirectory, lspSdkHashMarkerName);
+  const sdkRevisionMarkerFile = path.join(targetDirectory, lspSdkRevisionMarkerName);
   const destinationFile = path.join(lspDirectoryPath, path.basename(sdkNupkgFile));
-  const sdkHash = await getFileHash(sdkNupkgFile);
-
-  const shouldCopy = await shouldCopySdkFromHash(sdkHash, sdkHashMarkerFile, destinationFile);
+  const shouldCopy = await shouldUpdateFromRevision(lspSdkAssetRevision, sdkRevisionMarkerFile, destinationFile);
 
   if (shouldExtract || shouldCopy) {
     await stopLanguageClientForUpdate();
@@ -49,7 +51,7 @@ export async function installLSPSDK(): Promise<void> {
         throw new Error(`Extracted LSP server is missing ${lspServerDllPath}`);
       }
 
-      await fse.writeFile(serverHashMarkerFile, serverZipHash);
+      await fse.writeFile(serverRevisionMarkerFile, lspServerAssetRevision);
       await removeLegacyLspMarkers(targetDirectory);
       await cleanupStaleLspServerFolders(targetDirectory);
     } catch (error) {
@@ -63,8 +65,8 @@ export async function installLSPSDK(): Promise<void> {
 
       await fse.copyFile(sdkNupkgFile, destinationFile);
 
-      await fse.writeFile(sdkHashMarkerFile, sdkHash);
-      await fse.remove(path.join(targetDirectory, '.lspsdk-version'));
+      await fse.writeFile(sdkRevisionMarkerFile, lspSdkAssetRevision);
+      await removeLegacySdkMarkers(targetDirectory);
     } catch (error) {
       throw new Error(`Error copying sdk: ${formatLockedFileError(error)}`);
     }
@@ -72,49 +74,38 @@ export async function installLSPSDK(): Promise<void> {
 }
 
 /**
- * Determines if an asset should be installed by comparing content hashes.
- * @param sourceHash - The source file hash to compare
- * @param hashMarkerFile - The hash marker file that stores the last installed source hash
+ * Determines if an asset should be installed by comparing publisher-controlled revisions.
+ * @param sourceRevision - The revision of the packaged asset
+ * @param revisionMarkerFile - The marker file that stores the installed revision
  * @param targetPath - The required installed target path
  * @returns true if installation is needed, false otherwise
  */
-async function shouldUpdateFromHash(sourceHash: string, hashMarkerFile: string, targetPath: string): Promise<boolean> {
+async function shouldUpdateFromRevision(sourceRevision: string, revisionMarkerFile: string, targetPath: string): Promise<boolean> {
   if (!(await fse.pathExists(targetPath))) {
     return true;
   }
 
-  if (!(await fse.pathExists(hashMarkerFile))) {
+  if (!(await fse.pathExists(revisionMarkerFile))) {
     return true;
   }
 
   try {
-    const storedHash = (await fse.readFile(hashMarkerFile, 'utf-8')).trim();
-    return storedHash !== sourceHash;
+    const installedRevision = (await fse.readFile(revisionMarkerFile, 'utf-8')).trim();
+    return installedRevision !== sourceRevision;
   } catch {
     return true;
   }
-}
-
-async function shouldCopySdkFromHash(sourceHash: string, hashMarkerFile: string, destinationFile: string): Promise<boolean> {
-  if (await shouldUpdateFromHash(sourceHash, hashMarkerFile, destinationFile)) {
-    return true;
-  }
-
-  try {
-    return (await getFileHash(destinationFile)) !== sourceHash;
-  } catch {
-    return true;
-  }
-}
-
-async function getFileHash(filePath: string): Promise<string> {
-  const fileContent = await fse.readFile(filePath);
-  return createHash('sha256').update(fileContent).digest('hex');
 }
 
 async function removeLegacyLspMarkers(targetDirectory: string): Promise<void> {
   await fse.remove(path.join(targetDirectory, '.lspserver-version'));
   await fse.remove(path.join(targetDirectory, '.lspserver-path'));
+  await fse.remove(path.join(targetDirectory, '.lspserver-hash'));
+}
+
+async function removeLegacySdkMarkers(targetDirectory: string): Promise<void> {
+  await fse.remove(path.join(targetDirectory, '.lspsdk-version'));
+  await fse.remove(path.join(targetDirectory, '.lspsdk-hash'));
 }
 
 async function cleanupStaleLspServerFolders(targetDirectory: string): Promise<void> {

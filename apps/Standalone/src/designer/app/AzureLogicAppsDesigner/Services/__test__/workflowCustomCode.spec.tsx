@@ -17,6 +17,10 @@ vi.mock('../HttpClient', () => ({}));
 vi.mock('../ConsumptionSerializationHelpers', () => ({}));
 vi.mock('../../Utilities/HybridAppUtilities', () => ({ hybridApiVersion: 'test' }));
 vi.mock('../../Utilities/ArmParser', () => ({}));
+vi.mock('../StandardManagement', () => ({
+  armOnlyStandardManagement: {},
+  getStandardManagementCacheKey: () => 'arm',
+}));
 
 describe('custom code metadata for draft freshness', () => {
   let queryClient: QueryClient;

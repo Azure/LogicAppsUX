@@ -2,11 +2,13 @@ import { getResourceNameFromId, getTriggerFromDefinition, HTTP_METHODS, type Arm
 import { fetchAppsByQuery, getAzureResourceRecursive } from '../common/azure';
 import type { IHttpClient } from '../httpClient';
 import type { Resource, IResourceService, LogicAppResource, WorkflowResource } from '../resource';
+import type { StandardManagementHttpClient } from '../standard/management';
 
 export interface BaseResourceServiceOptions {
   httpClient: IHttpClient;
   baseUrl: string;
   apiVersion: string;
+  standardManagement?: StandardManagementHttpClient;
 }
 
 export class BaseResourceService implements IResourceService {
@@ -85,7 +87,12 @@ export class BaseResourceService implements IResourceService {
     const { baseUrl, httpClient } = this.options;
     const uri = `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${logicAppName}/hostruntime/runtime/webhooks/workflow/api/management/workflows`;
     const queryParameters = { 'api-version': '2018-11-01' };
-    const response: any = await httpClient.get({ uri, queryParameters });
+    const request = { uri, queryParameters };
+    const standardManagement = this.options.standardManagement;
+    const legacyRequest = () => httpClient.get(request);
+    const response: any = await (standardManagement && (await standardManagement.isEnabled())
+      ? standardManagement.listWorkflows(request, legacyRequest)
+      : legacyRequest());
     const mapper = (item: any) => ({
       id: `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${logicAppName}/workflows/${item.name}`,
       name: getResourceNameFromId(item.name),
