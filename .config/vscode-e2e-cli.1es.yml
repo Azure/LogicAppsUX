@@ -109,6 +109,82 @@ extends:
                   LA_E2E_CLI_LINUX_SUITES: ${{ parameters.linuxSuites }}
                   LA_E2E_CLI_WINDOWS_SUITES: ${{ parameters.windowsSuites }}
 
+          - job: prepare_windows_extension_dependencies
+            displayName: Prepare Windows VS Code extension dependencies
+            dependsOn:
+              - resolve_consumer_context
+            condition: and(succeeded(), ${{ eq(parameters.runWindows, true) }})
+            pool:
+              name: VSEng-MicroBuildVSStable
+              os: windows
+            variables:
+              - name: pinnedSourceSha
+                value: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+              - name: resolvedVSCodeBuild
+                value: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.resolvedVSCodeBuild'] ]
+            templateContext:
+              outputs:
+                - output: pipelineArtifact
+                  targetPath: $(Build.ArtifactStagingDirectory)/vscode-e2e-prepared-extensions-windows
+                  artifactName: vscode-e2e-prepared-extensions-windows
+            steps:
+              - checkout: self
+                fetchDepth: 0
+
+              - pwsh: |
+                  git checkout "$(pinnedSourceSha)"
+                  if ($LASTEXITCODE -ne 0) {
+                    exit $LASTEXITCODE
+                  }
+                  $head = ([string](git rev-parse HEAD)).Trim()
+                  if ($LASTEXITCODE -ne 0 -or $head -ne '$(pinnedSourceSha)') {
+                    throw "Windows extension dependency checkout does not match pinned source SHA. expected=$(pinnedSourceSha) actual=$head"
+                  }
+                displayName: Checkout pinned source SHA for Windows dependency preparation
+
+              - template: /.azure-pipelines/templates/vscode-e2e-cli-setup.yml@self
+                parameters:
+                  feedBaseUrl: ${{ variables.feedBaseUrl }}
+                  nodeVersion: '22.x'
+                  dotnetVersion: '8.0.x'
+                  includeDotNet: false
+                  includeLinuxDisplayDependencies: false
+
+              - pwsh: |
+                  $env:PATH = "$(Build.SourcesDirectory)\apps\vs-code-designer\node_modules\.bin;$(Build.SourcesDirectory)\node_modules\.bin;$env:PATH"
+                  pnpm --dir apps/vs-code-designer exec tsx src/test/ui/run-e2e.ts
+                  if ($LASTEXITCODE -ne 0) {
+                    exit $LASTEXITCODE
+                  }
+                displayName: Prepare Windows VS Code extension dependencies once
+                env:
+                  LA_E2E_PREPARE_EXTENSION_DEPENDENCIES_ONLY: '1'
+                  E2E_VSCODE_VERSION: $(resolvedVSCodeBuild)
+                  NODE_OPTIONS: --max-old-space-size=4096
+                  TEMP: $(Agent.TempDirectory)
+                  TMP: $(Agent.TempDirectory)
+
+              - pwsh: |
+                  $source = Join-Path '$(Agent.TempDirectory)' 'test-resources/test-extensions'
+                  if (-not (Test-Path (Join-Path $source 'extensions.json'))) {
+                    throw "Prepared Windows extension dependencies are incomplete: $source"
+                  }
+                  $output = '$(Build.ArtifactStagingDirectory)/vscode-e2e-prepared-extensions-windows'
+                  New-Item -ItemType Directory -Force -Path $output | Out-Null
+                  $archive = Join-Path $output 'prepared-extensions.tar.gz'
+                  tar -czf $archive -C (Split-Path $source -Parent) (Split-Path $source -Leaf)
+                  if ($LASTEXITCODE -ne 0) {
+                    exit $LASTEXITCODE
+                  }
+                  [ordered]@{
+                    schemaVersion = 1
+                    platform = 'windows'
+                    sourceSHA = '$(pinnedSourceSha)'
+                    vscodeVersion = '$(resolvedVSCodeBuild)'
+                    archiveSHA256 = (Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant()
+                  } | ConvertTo-Json -Compress | Set-Content (Join-Path $output 'prepared-extensions-manifest.json') -NoNewline
+                displayName: Package exact-run Windows extension dependencies
+
           - job: build_current_run_e2e_artifact
             displayName: Build current-run VS Code E2E artifact
             dependsOn:
@@ -120,11 +196,16 @@ extends:
             variables:
               - name: pinnedSourceSha
                 value: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.pinnedSourceSha'] ]
+              - name: resolvedVSCodeBuild
+                value: $[ dependencies.resolve_consumer_context.outputs['resolveStableVSCode.resolvedVSCodeBuild'] ]
             templateContext:
               outputs:
                 - output: pipelineArtifact
                   targetPath: $(Build.ArtifactStagingDirectory)/vscode-e2e
                   artifactName: vscode-e2e-build
+                - output: pipelineArtifact
+                  targetPath: $(Build.ArtifactStagingDirectory)/vscode-e2e-prepared-extensions-linux
+                  artifactName: vscode-e2e-prepared-extensions-linux
             steps:
               - checkout: self
                 fetchDepth: 0
@@ -151,6 +232,45 @@ extends:
                   dotnetVersion: '8.0.x'
                   includeDotNet: true
                   includeLinuxDisplayDependencies: false
+
+              - bash: |
+                  set -euo pipefail
+                  export PATH="$(Build.SourcesDirectory)/apps/vs-code-designer/node_modules/.bin:$(Build.SourcesDirectory)/node_modules/.bin:$PATH"
+                  pnpm --dir apps/vs-code-designer exec tsx src/test/ui/run-e2e.ts
+                displayName: Prepare Linux VS Code extension dependencies once
+                condition: and(succeeded(), ${{ eq(parameters.runLinux, true) }})
+                env:
+                  LA_E2E_PREPARE_EXTENSION_DEPENDENCIES_ONLY: '1'
+                  E2E_VSCODE_VERSION: $(resolvedVSCodeBuild)
+                  NODE_OPTIONS: --dns-result-order=ipv4first --no-network-family-autoselection --max-old-space-size=4096
+                  TEMP: $(Agent.TempDirectory)
+                  TMPDIR: $(Agent.TempDirectory)
+
+              - pwsh: |
+                  $source = Join-Path '$(Agent.TempDirectory)' 'test-resources/test-extensions'
+                  if (-not (Test-Path (Join-Path $source 'extensions.json'))) {
+                    throw "Prepared Linux extension dependencies are incomplete: $source"
+                  }
+                  $output = '$(Build.ArtifactStagingDirectory)/vscode-e2e-prepared-extensions-linux'
+                  New-Item -ItemType Directory -Force -Path $output | Out-Null
+                  $archive = Join-Path $output 'prepared-extensions.tar.gz'
+                  tar -czf $archive -C (Split-Path $source -Parent) (Split-Path $source -Leaf)
+                  if ($LASTEXITCODE -ne 0) {
+                    exit $LASTEXITCODE
+                  }
+                  [ordered]@{
+                    schemaVersion = 1
+                    platform = 'linux'
+                    sourceSHA = '$(pinnedSourceSha)'
+                    vscodeVersion = '$(resolvedVSCodeBuild)'
+                    archiveSHA256 = (Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant()
+                  } | ConvertTo-Json -Compress | Set-Content (Join-Path $output 'prepared-extensions-manifest.json') -NoNewline
+                displayName: Package exact-run Linux extension dependencies
+                condition: and(succeeded(), ${{ eq(parameters.runLinux, true) }})
+
+              - pwsh: New-Item -ItemType Directory -Force -Path '$(Build.ArtifactStagingDirectory)/vscode-e2e-prepared-extensions-linux' | Out-Null
+                displayName: Preserve Linux dependency artifact output when Linux is disabled
+                condition: and(succeeded(), ${{ eq(parameters.runLinux, false) }})
 
               - template: /.azure-pipelines/templates/vscode-e2e-cli-build-artifacts.yml@self
                 parameters:

@@ -67,7 +67,9 @@ const {
   buildBatchAggregate,
   buildSuiteEnvironment,
   classifySuiteRunResult,
+  cleanupSuiteTransientRoots,
   createSuiteContext,
+  getBatchExecutionUserDataParent,
   getSuiteScopedCredentialEnv,
   normalizeSuiteSelection,
   prepareSuiteExtensionsDirectory,
@@ -87,6 +89,7 @@ const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
     testDeferredWorkspaceCleanupOwnership();
     testRegenerationDiagnosticsPublication();
     testDirectFamilyShortLinuxProfileParent();
+    testPreparedExtensionDependencyCohort();
     testCreatesEmptyIsolatedDependencyRoot();
     testAppliesControlledFuncAfterFinalEnvironmentMerge();
     testFailFastMissingFuncDiagnostics();
@@ -121,6 +124,8 @@ const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
     testSanitizesInheritedGitCommandConfigEnv();
     testBatchSuiteRegistryValidation();
     testBatchSuiteEnvironmentIsolation();
+    testBatchShortProfileParentOwnership();
+    await testExternalProfileParentSurvivesSuiteCleanup();
     testSummarizerRetainsErrorStackFrames();
     testHttpDirectSelectorUsesRegisteredContainment();
     testDirectFamilyInheritsCanonicalOrderedEvidenceContext();
@@ -285,8 +290,11 @@ function testDirectFamilyShortLinuxProfileParent() {
     '/tmp/lawr.A1b2c3'
   );
   assert.strictEqual(
-    getDirectFamilyUserDataParent({ LA_E2E_CLI_USER_DATA_PARENT: '/tmp/lawr.A1b2c3' }, fallback, { platform: 'win32' }),
-    fallback
+    getDirectFamilyUserDataParent({ LA_E2E_CLI_USER_DATA_PARENT: 'D:\\a\\_temp\\la\\wr' }, fallback, {
+      platform: 'win32',
+      lstat: () => directoryStat,
+    }),
+    'D:\\a\\_temp\\la\\wr'
   );
   assert.throws(
     () =>
@@ -302,7 +310,51 @@ function testDirectFamilyShortLinuxProfileParent() {
         platform: 'linux',
         lstat: () => ({ isDirectory: () => true, isSymbolicLink: () => true }),
       }),
-    /must be an owned directory/
+    /must be an externally owned directory/
+  );
+  assert.throws(
+    () =>
+      getDirectFamilyUserDataParent({ LA_E2E_CLI_USER_DATA_PARENT: `D:\\${'long\\'.repeat(30)}profiles` }, fallback, {
+        platform: 'win32',
+        lstat: () => directoryStat,
+      }),
+    /too long for nested VS Code logs/
+  );
+}
+
+function testPreparedExtensionDependencyCohort() {
+  const repositoryRoot = path.resolve(__dirname, '..', '..', '..');
+  const pipeline = fs.readFileSync(path.join(repositoryRoot, '.config', 'vscode-e2e-cli.1es.yml'), 'utf8');
+  const suiteTemplate = fs.readFileSync(path.join(repositoryRoot, '.config', 'templates', 'vscode-e2e-cli-run-suite.yml'), 'utf8');
+  const uiRunner = fs.readFileSync(path.join(__dirname, '..', 'src', 'test', 'ui', 'run-e2e.ts'), 'utf8');
+
+  const windowsPrepare = pipeline.indexOf('Prepare Windows VS Code extension dependencies once');
+  const buildJob = pipeline.indexOf('job: build_current_run_e2e_artifact');
+  const linuxPrepare = pipeline.indexOf('Prepare Linux VS Code extension dependencies once');
+  assert.ok(
+    windowsPrepare >= 0 && windowsPrepare < buildJob && buildJob < linuxPrepare,
+    'Marketplace preparation must be one Windows producer followed by one Linux producer, never one cohort per suite job'
+  );
+  assert.strictEqual(
+    (pipeline.match(/LA_E2E_PREPARE_EXTENSION_DEPENDENCIES_ONLY: '1'/g) ?? []).length,
+    2,
+    'The exact run may prepare Marketplace dependencies only once per consumer OS'
+  );
+  assert.ok(
+    suiteTemplate.includes('artifact: vscode-e2e-prepared-extensions-${{ parameters.platform }}') &&
+      suiteTemplate.includes('Prepared extension dependency archive hash mismatch') &&
+      !suiteTemplate.includes('displayName: Prepare VS Code extension dependencies once'),
+    'Suite jobs must verify and restore the exact-run prepared artifact instead of creating concurrent Marketplace cohorts'
+  );
+  assert.ok(
+    uiRunner.includes("const prepareDependenciesOnly = process.env.LA_E2E_PREPARE_EXTENSION_DEPENDENCIES_ONLY === '1'") &&
+      uiRunner.includes('prepareDependenciesOnly && !fs.existsSync(distPackageJson) ? path.join(projectDir,'),
+    'Only dependency-only setup may read exact-source extension metadata before dist exists'
+  );
+  assert.ok(
+    suiteTemplate.includes('New-Item -ItemType Directory -Force -Path "$(Agent.TempDirectory)\\la\\${{ parameters.shortName }}"') &&
+      suiteTemplate.includes('LA_E2E_CLI_USER_DATA_PARENT: $(Agent.TempDirectory)\\la\\${{ parameters.shortName }}'),
+    'Windows suite execution must use an existing short externally owned profile parent'
   );
 }
 
@@ -1531,6 +1583,88 @@ function testBatchSuiteEnvironmentIsolation() {
   fs.writeFileSync(path.join(seedDir, 'extensions.json'), '[]');
   prepareSuiteExtensionsDirectory({ seedDir, targetDir: context.extensionsDir });
   assert.ok(fs.existsSync(path.join(context.extensionsDir, 'extensions.json')), 'suite extensions dir should be copied from seed');
+}
+
+function testBatchShortProfileParentOwnership() {
+  const directoryStat = { isDirectory: () => true, isSymbolicLink: () => false };
+  const fallback = path.join(tempRoot, 'batch-owned-profile-parent');
+  fs.mkdirSync(fallback, { recursive: true });
+
+  assert.strictEqual(
+    getBatchExecutionUserDataParent({ LA_E2E_CLI_USER_DATA_PARENT: '/tmp/lalv.A1b2c3' }, fallback, {
+      platform: 'linux',
+      lstat: () => directoryStat,
+    }),
+    '/tmp/lalv.A1b2c3'
+  );
+  assert.throws(
+    () =>
+      getBatchExecutionUserDataParent({ LA_E2E_CLI_USER_DATA_PARENT: '/mnt/vss/_work/_temp/profiles' }, fallback, {
+        platform: 'linux',
+        lstat: () => directoryStat,
+      }),
+    /unsafe short profile parent/
+  );
+  assert.throws(
+    () =>
+      getBatchExecutionUserDataParent({ LA_E2E_CLI_USER_DATA_PARENT: '/tmp/lalv.A1b2c3' }, fallback, {
+        platform: 'linux',
+        lstat: () => ({ isDirectory: () => true, isSymbolicLink: () => true }),
+      }),
+    /externally owned directory/
+  );
+
+  const windowsParent = 'D:\\a\\_temp\\profiles\\wm';
+  assert.strictEqual(
+    getBatchExecutionUserDataParent({ LA_E2E_CLI_USER_DATA_PARENT: windowsParent }, fallback, {
+      platform: 'win32',
+      lstat: () => directoryStat,
+    }),
+    path.win32.resolve(windowsParent)
+  );
+  assert.throws(
+    () =>
+      getBatchExecutionUserDataParent({ LA_E2E_CLI_USER_DATA_PARENT: `D:\\${'long\\'.repeat(30)}profiles` }, fallback, {
+        platform: 'win32',
+        lstat: () => directoryStat,
+      }),
+    /too long for nested VS Code logs/
+  );
+
+  const batchSource = fs.readFileSync(path.join(__dirname, 'e2e-cli-batch.js'), 'utf8');
+  assert.ok(
+    batchSource.includes('LA_E2E_CLI_USER_DATA_PARENT: executionUserDataParent') &&
+      !batchSource.includes('context.userDataParent = getBatchExecutionUserDataParent('),
+    'An inherited short profile parent may be used for execution but must not become a recursively deleted suite-owned root'
+  );
+}
+
+async function testExternalProfileParentSurvivesSuiteCleanup() {
+  const batchRoot = fs.mkdtempSync(path.join(tempRoot, 'external-profile-cleanup-'));
+  const externalParent = fs.mkdtempSync(path.join(os.tmpdir(), 'laexternal.'));
+  const sentinel = path.join(externalParent, 'pipeline-owned.sentinel');
+  try {
+    fs.writeFileSync(sentinel, 'preserve');
+    const context = createSuiteContext({
+      batchRoot,
+      suite: SUITE_REGISTRY.workspaceArtifactRegeneration,
+      index: 0,
+      total: 1,
+    });
+    const executionParent = getBatchExecutionUserDataParent({ LA_E2E_CLI_USER_DATA_PARENT: externalParent }, context.userDataParent, {
+      platform: process.platform,
+      maxWindowsParentLength: 260,
+    });
+    assert.strictEqual(executionParent, externalParent);
+
+    await cleanupSuiteTransientRoots(context);
+
+    assert.strictEqual(fs.readFileSync(sentinel, 'utf8'), 'preserve');
+    assert.strictEqual(fs.existsSync(context.userDataParent), false);
+    assert.strictEqual(fs.existsSync(externalParent), true);
+  } finally {
+    fs.rmSync(externalParent, { recursive: true, force: true });
+  }
 }
 
 async function testBatchSuiteScopedCredentials() {

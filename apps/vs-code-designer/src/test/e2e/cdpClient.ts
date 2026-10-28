@@ -1,6 +1,8 @@
 import * as assert from 'assert';
 import { randomBytes } from 'crypto';
+import * as fs from 'fs';
 import * as net from 'net';
+import * as path from 'path';
 
 export interface CdpTarget {
   id?: string;
@@ -31,6 +33,25 @@ type CdpSocketFactory = (port: number, host: string) => net.Socket;
 
 const defaultCdpSocketFactory: CdpSocketFactory = (port, host) => net.connect(port, host);
 let cdpSocketFactory = defaultCdpSocketFactory;
+
+export async function waitForDevToolsActivePort(userDataDir: string, deadline: number): Promise<number> {
+  const activePortPath = path.join(userDataDir, 'DevToolsActivePort');
+  let lastError = 'file not created';
+  while (Date.now() < deadline) {
+    try {
+      const [portLine, browserPath] = fs.readFileSync(activePortPath, 'utf8').trim().split(/\r?\n/);
+      const port = Number.parseInt(portLine, 10);
+      if (Number.isInteger(port) && port > 0 && port <= 65535 && browserPath?.startsWith('/devtools/browser/')) {
+        return port;
+      }
+      lastError = `invalid content ${JSON.stringify({ portLine, browserPath })}`;
+    } catch (error) {
+      lastError = String(error);
+    }
+    await delay(Math.min(100, remaining(deadline)));
+  }
+  assert.fail(`VS Code did not publish an invocation-owned DevToolsActivePort at ${activePortPath}: ${lastError}`);
+}
 
 export function setCdpSocketFactoryForTests(factory?: CdpSocketFactory): () => void {
   const previous = cdpSocketFactory;

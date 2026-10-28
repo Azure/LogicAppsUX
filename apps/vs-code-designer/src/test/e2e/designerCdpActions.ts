@@ -1615,6 +1615,75 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
     );
   }
 
+  async waitForExactNodeIds(expectedNodeIds: string[]): Promise<DesignerNodeIdentity[]> {
+    assert.ok(expectedNodeIds.length > 0, 'Persisted Designer readiness requires at least one exact node ID');
+    assert.strictEqual(new Set(expectedNodeIds).size, expectedNodeIds.length, 'Persisted Designer node IDs must be unique');
+    const readinessDeadline = Math.min(this.deadline, Date.now() + 180000);
+    let stableObservations = 0;
+    let previous = '';
+    let lastState:
+      | {
+          canvasCount: number;
+          identities: DesignerNodeIdentity[];
+          missing: string[];
+          ambiguous: string[];
+        }
+      | undefined;
+    while (Date.now() < readinessDeadline) {
+      this.assertActive();
+      lastState = await this.evaluate<{
+        canvasCount: number;
+        identities: DesignerNodeIdentity[];
+        missing: string[];
+        ambiguous: string[];
+      }>(`(() => {
+        ${visibleDom}
+        const expectedNodeIds = ${JSON.stringify(expectedNodeIds)};
+        const canvases = Array.from(document.querySelectorAll('.react-flow')).filter(visible);
+        const allNodes = Array.from(document.querySelectorAll('[id^="msla-node-"]'))
+          .filter(visible)
+          .filter((element) => !element.id.startsWith('msla-node-details-panel-'));
+        const identities = expectedNodeIds.flatMap((nodeId) => {
+          const matches = allNodes.filter((element) => element.id === 'msla-node-' + nodeId);
+          if (matches.length !== 1) return [];
+          const element = matches[0];
+          return [{
+            nodeId,
+            title: normalize(
+              element.querySelector('[data-automation-id="msla-card-title"]')?.textContent ||
+              element.querySelector('.msla-card-title')?.textContent ||
+              (element.getAttribute('data-testid') || '').replace(/^card-/, '') ||
+              element.getAttribute('aria-label') ||
+              element.textContent
+            ),
+          }];
+        });
+        return {
+          canvasCount: canvases.length,
+          identities,
+          missing: expectedNodeIds.filter((nodeId) => !allNodes.some((element) => element.id === 'msla-node-' + nodeId)),
+          ambiguous: expectedNodeIds.filter(
+            (nodeId) => allNodes.filter((element) => element.id === 'msla-node-' + nodeId).length > 1
+          ),
+        };
+      })()`);
+      const current = JSON.stringify(lastState.identities);
+      const ready =
+        lastState.canvasCount === 1 &&
+        lastState.missing.length === 0 &&
+        lastState.ambiguous.length === 0 &&
+        lastState.identities.length === expectedNodeIds.length &&
+        lastState.identities.every((identity) => identity.title.length > 0);
+      stableObservations = ready && current === previous ? stableObservations + 1 : 0;
+      previous = current;
+      if (stableObservations >= 3) {
+        return lastState.identities;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    assert.fail(`Timed out waiting for exact persisted Designer node IDs. Last state: ${JSON.stringify(lastState)}`);
+  }
+
   override async addRequestTrigger(hooks: DesignerInsertionEvidenceHooks = {}): Promise<void> {
     const selectors = [
       '[data-testid="card-Add a trigger"]',
@@ -1730,6 +1799,52 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
       `details panel owned by Designer node ${nodeId}`
     );
     return identity;
+  }
+
+  async ensureNodePanelOpen(identity: DesignerNodeIdentity): Promise<DesignerNodeIdentity> {
+    const visiblePanels = await this.evaluate<DesignerNodeIdentity[]>(`(() => {
+      ${visibleDom}
+      return Array.from(document.querySelectorAll('[id^="msla-node-details-panel-"]'))
+        .filter(visible)
+        .map((element) => {
+          const panelLayout = element.closest('.msla-panel-layout') || element.parentElement;
+          const titleInput = panelLayout?.querySelector(
+            '[aria-label="Card title"], .msla-card-title input, input[id$="-title"]'
+          );
+          return {
+            nodeId: element.id.slice('msla-node-details-panel-'.length),
+            title: normalize(
+              (titleInput instanceof HTMLInputElement ? titleInput.value : titleInput?.textContent) ||
+              panelLayout?.querySelector('[data-automation-id="msla-panel-header-title"], .msla-panel-header')?.textContent ||
+              element.getAttribute('aria-label')
+            ),
+          };
+        });
+    })()`);
+
+    if (visiblePanels.length > 0) {
+      assert.deepStrictEqual(
+        visiblePanels.map((panel) => panel.nodeId),
+        [identity.nodeId],
+        `Expected one visible details panel owned by ${identity.nodeId}`
+      );
+      const panelTitle = visiblePanels[0].title.toLowerCase();
+      const expectedTitle = identity.title.toLowerCase();
+      assert.ok(
+        panelTitle === expectedTitle || panelTitle.startsWith(`${expectedTitle} `),
+        `Details panel ${identity.nodeId} title did not match the exact inserted node: expected ${identity.title}, actual ${visiblePanels[0].title}`
+      );
+      return identity;
+    }
+
+    const clicked = await this.clickNodeById(identity.nodeId);
+    const actualTitle = clicked.title.toLowerCase();
+    const expectedTitle = identity.title.toLowerCase();
+    assert.ok(
+      actualTitle === expectedTitle || actualTitle.startsWith(`${expectedTitle} `),
+      `Designer node ${identity.nodeId} title changed before its exact panel opened`
+    );
+    return clicked;
   }
 
   async openSettingsTab(nodeId: string): Promise<void> {

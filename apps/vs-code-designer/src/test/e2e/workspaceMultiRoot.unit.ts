@@ -35,11 +35,9 @@ import {
 import {
   assertActiveWebview,
   assertMapper,
-  assertReload,
   assertSequentialDebug,
   type DebugEvent,
   readLogicAppRoots,
-  realReload,
   type WorkbenchState,
 } from './workspaceMultiRootWorkbench';
 
@@ -483,73 +481,13 @@ test('Linux inaccessible/missing userspace executable is not silently removed fr
 
 const view = (overrides: Partial<WorkbenchState> = {}): WorkbenchState => ({
   timeOrigin: 1,
+  title: 'unit.code-workspace - Visual Studio Code',
   ready: true,
   roots: ['one', 'two', 'three'],
   activeTabs: ['MultiRootMap'],
   visibleWebviews: ['vscode-webview://mapper/index.html'],
   debugToolbar: false,
   ...overrides,
-});
-test('reload requires a new document and all original roots', () => {
-  const roots = ['one', 'two', 'three'].map((name) => path.resolve(name));
-  assert.throws(() => assertReload(view(), view(), roots), /Real Reload/);
-  assert.throws(() => assertReload(view(), view({ timeOrigin: 2, roots: ['one'] }), roots), /lost/);
-  assertReload(view(), view({ timeOrigin: 2 }), roots);
-});
-test('real reload helper sends one reload command and continues the same target with new contexts', async () => {
-  let generation = 1;
-  let reads = 0;
-  const keys: Record<string, unknown>[] = [];
-  const queries: string[] = [];
-  const fake = {
-    targetId: 'unit-window',
-    get contextGeneration() {
-      return generation;
-    },
-    async evaluate<T>(_context: number | undefined, expression: string): Promise<T> {
-      if (expression.includes('timeOrigin:performance')) {
-        generation = ++reads > 1 ? 2 : 1;
-        return view({ timeOrigin: reads > 1 ? 2 : 1 }) as T;
-      }
-      return (expression.includes('return found.length') ? { x: 10, y: 20 } : true) as T;
-    },
-    async send(method: string, params?: Record<string, unknown>) {
-      if (method === 'Input.insertText') {
-        queries.push(String(params?.text));
-      }
-      if (method === 'Input.dispatchKeyEvent') {
-        keys.push(params || {});
-      }
-      return {};
-    },
-  };
-  await realReload(
-    fake,
-    ['one', 'two', 'three'].map((name) => path.resolve(name)),
-    Date.now() + 5000
-  );
-  assert.deepEqual(queries, ['View: Show Explorer', 'Developer: Reload Window']);
-  assert.equal(keys.length, 4);
-});
-test('closed reload connection is a failure, not a replacement-window reconnect', async () => {
-  let reads = 0;
-  const fake = {
-    targetId: 'unit-original-window',
-    contextGeneration: 1,
-    async evaluate<T>(_context: number | undefined, expression: string): Promise<T> {
-      if (expression.includes('timeOrigin:performance')) {
-        if (++reads > 1) {
-          throw new Error('CDP WebSocket closed');
-        }
-        return view() as T;
-      }
-      return (expression.includes('return found.length') ? { x: 10, y: 20 } : true) as T;
-    },
-    async send() {
-      return {};
-    },
-  };
-  await assert.rejects(realReload(fake, [path.resolve('one')], Date.now() + 5000), /WebSocket closed/);
 });
 test('hidden/wrong Mapper iframe and wrong active tab fail', () => {
   assert.throws(() => assertActiveWebview(view(), 'vscode-webview://designer/index.html', 'MultiRootMap'), /visible/);

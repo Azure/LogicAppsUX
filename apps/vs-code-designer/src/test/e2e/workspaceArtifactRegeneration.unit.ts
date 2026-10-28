@@ -1002,6 +1002,40 @@ async function main(): Promise<void> {
     fs.unlinkSync(path.join(stageRoot, 'screenshots', 'workspace-regeneration-vscode-single-before-overwrite-yes.png'));
     assert.throws(() => reporting._test.assertRegenerationStageEvidence(stageRoot, binding.identity), /ENOENT/);
     checks++;
+
+    const nativeHostSource = fs.readFileSync(
+      path.resolve(__dirname, '..', '..', '..', 'src', 'test', 'e2e', 'workspaceArtifactRegeneration.test.ts'),
+      'utf8'
+    );
+    const sharedPromptSource = fs.readFileSync(
+      path.resolve(__dirname, '..', '..', '..', 'src', 'test', 'e2e', 'workbenchPrompts.ts'),
+      'utf8'
+    );
+    const sharedWorkbenchSource = fs.readFileSync(
+      path.resolve(__dirname, '..', '..', '..', 'src', 'test', 'e2e', 'workbenchCdpActions.ts'),
+      'utf8'
+    );
+    const spawnIndex = nativeHostSource.indexOf('const child = spawn(');
+    const discoverPortIndex = nativeHostSource.indexOf('const cdpPort = await waitForDevToolsActivePort(profile, phase.deadline)');
+    assert.ok(
+      spawnIndex >= 0 &&
+        discoverPortIndex > spawnIndex &&
+        nativeHostSource.includes("'--remote-debugging-port=0'") &&
+        nativeHostSource.includes('process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT = String(cdpPort)'),
+      'Every regeneration host must discover the exact launched profile CDP port without a released-port collision window'
+    );
+    assert.ok(
+      nativeHostSource.indexOf('await revealRetainedWorkbenchNotifications(') <
+        nativeHostSource.indexOf('prompts = await confirmRegenerationPromptSequence({') &&
+        nativeHostSource.includes('readWorkbenchPrompts(cdp)') &&
+        nativeHostSource.includes('readRegularWorkbenchOwnership(cdp, expectation)') &&
+        nativeHostSource.includes('connectToOwnedRegularWorkbench({') &&
+        sharedPromptSource.includes("workbenchCommand(cdp, 'Notifications: Show Notifications', deadline)") &&
+        sharedPromptSource.includes('.notifications-center, .notifications-list-container') &&
+        sharedWorkbenchSource.includes('waitForRegularWorkbenchOwnership('),
+      'The exact owned workspace must use shared prompt observation and retained-notification reveal before the strict two-prompt sequence begins'
+    );
+    checks++;
     console.log(`[workspace-regeneration-unit] ${checks} focused contract groups passed; no VS Code/runtime/native coverage claimed.`);
   } finally {
     fs.rmSync(root, { recursive: true, force: true });

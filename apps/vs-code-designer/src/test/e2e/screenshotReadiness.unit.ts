@@ -36,6 +36,7 @@ async function main(): Promise<void> {
   testDesignerCanvasRejectsNonCanvasSubstituteNode();
   testDesignerCanvasRequiresExactNodeIds();
   testDesignerCanvasRejectsCoveredExactNodeId();
+  testDesignerCanvasRequiresExactPanelOwner();
   testDesignerCanvasRejectsOffCenterLoaderOverRequiredNode();
   testDesignerCanvasPrefersCanvasOverSelectedPanel();
   testDesignerCanvasBlocksScopedLoadersOnly();
@@ -601,7 +602,20 @@ function testDesignerCanvasRejectsCoveredExactNodeId(): void {
   assert.ok(ids?.covered?.includes('Compose_2'));
 }
 
-function runJsdomExactNodeProbe(requiredNodeIds: string[], coverCompose2: boolean): ScreenshotReadinessSnapshot {
+function testDesignerCanvasRequiresExactPanelOwner(): void {
+  const accepted = runJsdomExactNodeProbe(['Request', 'Compose', 'Compose_2'], false, 'Initialize_variables', 'Initialize_variables');
+  assert.strictEqual(accepted.ready, true);
+  const rejected = runJsdomExactNodeProbe(['Request', 'Compose', 'Compose_2'], false, 'Initialize_variables', 'Response');
+  assert.strictEqual(rejected.ready, false);
+  assert.ok(rejected.reasonCodes.includes('designer-canvas-required-panel-missing'));
+}
+
+function runJsdomExactNodeProbe(
+  requiredNodeIds: string[],
+  coverCompose2: boolean,
+  requiredPanelNodeId?: string,
+  visiblePanelNodeId?: string
+): ScreenshotReadinessSnapshot {
   const dom = new JSDOM(
     `<html><body>
       <div class="react-flow" id="canvas">
@@ -610,6 +624,7 @@ function runJsdomExactNodeProbe(requiredNodeIds: string[], coverCompose2: boolea
         <div id="msla-node-Compose_2" data-testid="card-Compose 2">Compose 2</div>
         ${coverCompose2 ? '<div id="cover"></div>' : ''}
       </div>
+      ${visiblePanelNodeId ? `<div id="msla-node-details-panel-${visiblePanelNodeId}">Panel</div>` : ''}
     </body></html>`,
     { runScripts: 'outside-only' }
   );
@@ -619,10 +634,11 @@ function runJsdomExactNodeProbe(requiredNodeIds: string[], coverCompose2: boolea
     'msla-node-Request': { left: 100, top: 80, width: 220, height: 80 },
     'msla-node-Compose': { left: 100, top: 240, width: 220, height: 80 },
     'msla-node-Compose_2': { left: 100, top: 400, width: 220, height: 80 },
+    ...(visiblePanelNodeId ? { [`msla-node-details-panel-${visiblePanelNodeId}`]: { left: 400, top: 80, width: 320, height: 500 } } : {}),
     ...(coverCompose2 ? { cover: { left: 100, top: 400, width: 220, height: 80 } } : {}),
   });
   return vm.runInNewContext(
-    buildScreenshotReadinessExpression({ kind: 'designerCanvas', label: 'exact-node-ids', requiredNodeIds }, 1, 1),
+    buildScreenshotReadinessExpression({ kind: 'designerCanvas', label: 'exact-node-ids', requiredNodeIds, requiredPanelNodeId }, 1, 1),
     {
       document: windowAny.document,
       window: windowAny,

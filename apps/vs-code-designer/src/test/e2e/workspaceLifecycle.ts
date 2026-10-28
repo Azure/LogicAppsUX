@@ -12,6 +12,7 @@ import {
   connectToVsCodeCdp,
   connectToVsCodeCdpByText,
   connectToVsCodeWorkbenchCdp,
+  hasExactVisibleWorkbenchIframeForTarget,
   waitForCreateWorkspaceFrameContext,
   waitForWebviewFrameContext,
 } from './cdpClient';
@@ -21,6 +22,7 @@ import {
   DesignerCdpActions,
   type DesignerActionProfile,
   MsnDesignerCdpActions,
+  ProvenDesignerCdpActions,
   requestTriggerTitles as sharedRequestTriggerTitles,
   resolveDesignerActionProfile,
 } from './designerCdpActions';
@@ -1016,22 +1018,66 @@ async function waitForGeneratedLogicAppFolder(createdWorkspace: CreatedWorkspace
   );
 }
 
-async function openDesignerAndCreateWorkflow(
+interface OpenDesignerOptions {
+  includeMsnWeather?: boolean;
+  useAzureConnectors?: boolean;
+  warmOnly?: boolean;
+  azureFixture?: ApprovedAzureFixture;
+  actionProfile?: DesignerActionProfile;
+  persistedDesigner?: {
+    requiredNodeIds: string[];
+    panelNodeId?: string;
+    evidenceName: string;
+    description: string;
+    deadlineMs: number;
+  };
+}
+
+async function connectToActiveDesignerWebview(
   createdWorkspace: CreatedWorkspace,
-  options: {
-    includeMsnWeather?: boolean;
-    useAzureConnectors?: boolean;
-    warmOnly?: boolean;
-    azureFixture?: ApprovedAzureFixture;
-    actionProfile?: DesignerActionProfile;
-  } = {}
-): Promise<void> {
+  deadlineMs: number
+): Promise<{ cdp: CdpConnection; contextId: number }> {
+  assert.ok(Date.now() < deadlineMs, `${createdWorkspace.label} active Designer binding deadline expired`);
+  const workbench = await connectToVsCodeWorkbenchCdp({
+    activate: false,
+    timeoutMs: Math.min(15000, Math.max(1, deadlineMs - Date.now())),
+  });
+  try {
+    return await connectToVsCodeCdpByText({
+      targetName: `${createdWorkspace.label} active Designer webview`,
+      allTextIncludes: ['Save'],
+      timeoutMs: Math.max(1, deadlineMs - Date.now()),
+      acceptCandidate: async (candidate) => {
+        assert.ok(
+          await hasExactVisibleWorkbenchIframeForTarget(
+            workbench,
+            candidate.targetUrl,
+            Math.min(3000, Math.max(1, deadlineMs - Date.now()))
+          ),
+          `${createdWorkspace.label} Designer target is not the unique visible active workbench iframe`
+        );
+      },
+    });
+  } finally {
+    workbench.dispose();
+  }
+}
+
+async function openDesignerAndCreateWorkflow(createdWorkspace: CreatedWorkspace, options: OpenDesignerOptions = {}): Promise<void> {
   console.log(
     `[workspace-lifecycle] ${createdWorkspace.label}: openDesignerAndCreateWorkflow start ${JSON.stringify({
       includeMsnWeather: options.includeMsnWeather === true,
       useAzureConnectors: options.useAzureConnectors === true,
       warmOnly: options.warmOnly === true,
       actionProfile: options.actionProfile,
+      persistedDesigner: options.persistedDesigner
+        ? {
+            requiredNodeIds: options.persistedDesigner.requiredNodeIds,
+            panelNodeId: options.persistedDesigner.panelNodeId,
+            evidenceName: options.persistedDesigner.evidenceName,
+            description: options.persistedDesigner.description,
+          }
+        : undefined,
       workflowJsonPath: createdWorkspace.workflowJsonPath,
       appDir: createdWorkspace.appDir,
     })}`
@@ -1103,19 +1149,68 @@ async function openDesignerAndCreateWorkflow(
 
     console.log(`[workspace-lifecycle] ${createdWorkspace.label}: handling designer quick-pick prompts after tab open`);
     await handleDesignerQuickPickPrompts(15000, { useAzureConnectors, azureFixture: options.azureFixture });
+    const workflowTabs = getWebviewTabs(designerViewType).filter((candidate) => candidate.label.includes(createdWorkspace.wfName));
+    assert.strictEqual(
+      workflowTabs.length,
+      1,
+      `Expected exactly one Designer tab for workflow "${createdWorkspace.wfName}". Open tabs: ${describeOpenTabs()}`
+    );
+    assert.strictEqual(
+      vscode.window.tabGroups.activeTabGroup.activeTab,
+      workflowTabs[0],
+      `Expected workflow "${createdWorkspace.wfName}" to own the active Designer tab before CDP binding`
+    );
 
     console.log(`[workspace-lifecycle] ${createdWorkspace.label}: connecting to designer webview CDP target`);
-    cdp = await connectToVsCodeCdp({ targetName: `${createdWorkspace.label} designer webview` });
+    let contextId: number;
+    if (options.persistedDesigner) {
+      const activeDesigner = await connectToActiveDesignerWebview(createdWorkspace, options.persistedDesigner.deadlineMs);
+      cdp = activeDesigner.cdp;
+      contextId = activeDesigner.contextId;
+    } else {
+      cdp = await connectToVsCodeCdp({ targetName: `${createdWorkspace.label} designer webview` });
+      console.log(`[workspace-lifecycle] ${createdWorkspace.label}: waiting for designer webview DOM context`);
+      contextId = await waitForWebviewFrameContext(cdp, {
+        allTextIncludes: ['Save'],
+        description: `${createdWorkspace.label} designer webview DOM context`,
+        timeoutMs: 180000,
+      });
+    }
     const designerCdp = cdp;
-    console.log(`[workspace-lifecycle] ${createdWorkspace.label}: waiting for designer webview DOM context`);
-    const contextId = await waitForWebviewFrameContext(designerCdp, {
-      allTextIncludes: ['Save'],
-      description: `${createdWorkspace.label} designer webview DOM context`,
-      timeoutMs: 180000,
-    });
     console.log(`[workspace-lifecycle] ${createdWorkspace.label}: designer webview DOM context=${contextId}; waiting for canvas content`);
     const designerActionProfile = resolveDesignerActionProfile(options.actionProfile, options.includeMsnWeather === true);
-    if (designerActionProfile === 'msn') {
+    if (options.persistedDesigner) {
+      assert.ok(options.warmOnly, 'Persisted Designer binding is a warm-only lifecycle operation');
+      assert.ok(Date.now() < options.persistedDesigner.deadlineMs, `${options.persistedDesigner.description} deadline expired`);
+      const persisted = new ProvenDesignerCdpActions(designerCdp, contextId, options.persistedDesigner.deadlineMs, () =>
+        assert.ok(Date.now() < options.persistedDesigner!.deadlineMs, `${options.persistedDesigner!.description} deadline expired`)
+      );
+      await persisted.waitForPersistedDesignerReady();
+      await normalizeDesignerCanvasViewport(
+        designerCdp,
+        contextId,
+        options.persistedDesigner.description,
+        options.persistedDesigner.requiredNodeIds,
+        options.persistedDesigner.deadlineMs
+      );
+      const persistedNodes = await persisted.waitForExactNodeIds(options.persistedDesigner.requiredNodeIds);
+      if (options.persistedDesigner.panelNodeId) {
+        const panelNode = persistedNodes.find((node) => node.nodeId === options.persistedDesigner!.panelNodeId);
+        assert.ok(panelNode, `Persisted panel node ${options.persistedDesigner.panelNodeId} was not resolved exactly`);
+        await persisted.ensureNodePanelOpen(panelNode);
+      }
+      await captureLifecycleScreenshot(options.persistedDesigner.evidenceName, {
+        expectation: {
+          kind: 'designerCanvas',
+          label: createdWorkspace.label,
+          requiredNodeIds: options.persistedDesigner.requiredNodeIds,
+          requiredPanelNodeId: options.persistedDesigner.panelNodeId,
+        },
+        semanticCdp: cdp,
+        semanticContextId: contextId,
+        deadlineMs: options.persistedDesigner.deadlineMs,
+      });
+    } else if (designerActionProfile === 'msn') {
       await getMsnDesignerActions(designerCdp, contextId).waitForText(
         ['Add a trigger', ...requestTriggerTitleVariants, responseActionTitle],
         180000,
@@ -1124,14 +1219,16 @@ async function openDesignerAndCreateWorkflow(
     } else {
       await getDesignerActions(designerCdp, contextId, 180_000).waitForDesignerReady([...requestTriggerTitleVariants, responseActionTitle]);
     }
-    await captureLifecycleScreenshot(
-      `workspace-lifecycle-${createdWorkspace.label}-${options.warmOnly ? 'warmup' : 'authoring'}-designer-ready`,
-      {
-        expectation: { kind: 'designerCanvas', label: createdWorkspace.label, allowLoading: false },
-        semanticCdp: cdp,
-        semanticContextId: contextId,
-      }
-    );
+    if (!options.persistedDesigner) {
+      await captureLifecycleScreenshot(
+        `workspace-lifecycle-${createdWorkspace.label}-${options.warmOnly ? 'warmup' : 'authoring'}-designer-ready`,
+        {
+          expectation: { kind: 'designerCanvas', label: createdWorkspace.label, allowLoading: false },
+          semanticCdp: cdp,
+          semanticContextId: contextId,
+        }
+      );
+    }
     if (options.warmOnly) {
       console.log(`[workspace-lifecycle] ${createdWorkspace.label}: designer warm-only pass completed`);
       return;

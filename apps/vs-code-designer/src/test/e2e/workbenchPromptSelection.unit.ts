@@ -1,10 +1,13 @@
 import * as assert from 'assert';
+import * as path from 'path';
 import {
   affirmativeAzureConnectorPrompt,
   selectWorkbenchPromptOption,
   type WorkbenchPrompt,
   type WorkbenchPromptContainer,
 } from './workbenchPromptSelection';
+import type { CdpEvaluator } from './cdpFormHelpers';
+import { revealRetainedWorkbenchNotifications } from './workbenchPrompts';
 
 const dotnetPrompts: WorkbenchPrompt[] = [
   { matchText: 'Failed to run .NET runtime', optionText: 'Install', postClickDelayMs: 15000 },
@@ -13,16 +16,69 @@ const dotnetPrompts: WorkbenchPrompt[] = [
 
 const azurePrompts: WorkbenchPrompt[] = [affirmativeAzureConnectorPrompt];
 
-run();
+run().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
 
-function run(): void {
+async function run(): Promise<void> {
   selectsExactInstallButton();
   ignoresInstallTextWithoutNotificationButton();
   ignoresExistingDotnetPathWarningWithoutButton();
   preservesAzureQuickPickRows();
   selectsOnlyAffirmativeAzureOptions();
   selectsRealCancelWithoutNoOrEscapeFallback();
+  await revealsRetainedNotificationsOnlyAfterExactWorkbenchOwnership();
   console.log('[workbenchPromptSelection.unit] all tests passed');
+}
+
+async function revealsRetainedNotificationsOnlyAfterExactWorkbenchOwnership(): Promise<void> {
+  const sent: Array<{ method: string; params?: Record<string, unknown> }> = [];
+  const cdp: CdpEvaluator = {
+    async evaluate<T>(_contextId: number | undefined, expression: string): Promise<T> {
+      if (expression.includes('timeOrigin: performance.timeOrigin')) {
+        return {
+          timeOrigin: 1,
+          title: 'unit.code-workspace - Visual Studio Code',
+          ready: true,
+          roots: ['unit-app'],
+        } as T;
+      }
+      if (expression.includes('.quick-input-widget input')) {
+        return true as T;
+      }
+      if (expression.includes('.quick-input-list .monaco-list-row .label-name')) {
+        assert.ok(expression.includes('Notifications: Show Notifications'));
+        return { x: 10, y: 20 } as T;
+      }
+      if (expression.includes('.notifications-center, .notifications-list-container')) {
+        return true as T;
+      }
+      throw new Error(`Unexpected prompt helper expression: ${expression.slice(0, 120)}`);
+    },
+    async send(method, params) {
+      sent.push({ method, params });
+      return {};
+    },
+  };
+
+  await revealRetainedWorkbenchNotifications(
+    cdp,
+    {
+      workspaceFilePath: path.resolve('unit', 'unit.code-workspace'),
+      rootPaths: [path.resolve('unit', 'unit-app')],
+    },
+    Date.now() + 1000
+  );
+  assert.ok(
+    sent.some((event) => event.method === 'Input.insertText' && event.params?.text === 'Notifications: Show Notifications'),
+    'Retained notification reveal must use the real Command Palette command'
+  );
+  assert.deepStrictEqual(
+    sent.filter((event) => event.method === 'Input.dispatchMouseEvent').map((event) => event.params?.type),
+    ['mouseMoved', 'mousePressed', 'mouseReleased'],
+    'Notification reveal must select the exact command through trusted mouse input'
+  );
 }
 
 function selectsOnlyAffirmativeAzureOptions(): void {

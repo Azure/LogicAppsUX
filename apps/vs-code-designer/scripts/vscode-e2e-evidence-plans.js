@@ -848,6 +848,12 @@ function statelessVariablesCatalog() {
         'Wait for Functions Running and exact workflow registration.',
         'The owned debug surface remains visible after the exact Stateless workflow is registered.'
       ),
+      simpleStep(
+        'stateless-variables-runtime-designer-rebound',
+        'Run phase',
+        'Reopen the persisted workflow and bind the exact Initialize variables node.',
+        'The exact persisted Designer, all authored node identities, and the Initialize variables details panel are visible.'
+      ),
     ]),
     group(
       'history',

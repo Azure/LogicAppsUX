@@ -1,15 +1,20 @@
 import * as assert from 'assert';
+import * as fs from 'fs';
 import { EventEmitter } from 'events';
+import * as os from 'os';
+import * as path from 'path';
 import {
   CdpConnection,
   chooseVsCodeWorkbenchTargetForCapture,
   connectToVsCodeWorkbenchCdp,
   setCdpSocketFactoryForTests,
   type CdpTarget,
+  waitForDevToolsActivePort,
   waitForCreateWorkspaceFrameContext,
 } from './cdpClient';
 
 async function main(): Promise<void> {
+  await testInvocationOwnedDevToolsActivePort();
   testUniqueWorkbenchTarget();
   testAmbiguousWorkbenchTargets();
   testNonWorkbenchTargetsRejected();
@@ -21,6 +26,16 @@ async function main(): Promise<void> {
   await testHandshakeFailureDestroysSocket();
   await testEvaluateTimeoutKeepsConnectionUsableAndIgnoresLateResponse();
   console.log('[cdpClient.unit] all tests passed');
+}
+
+async function testInvocationOwnedDevToolsActivePort(): Promise<void> {
+  const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'cdp-active-port-'));
+  try {
+    fs.writeFileSync(path.join(profile, 'DevToolsActivePort'), '43123\n/devtools/browser/invocation-token\n');
+    assert.strictEqual(await waitForDevToolsActivePort(profile, Date.now() + 1000), 43123);
+  } finally {
+    fs.rmSync(profile, { recursive: true, force: true });
+  }
 }
 
 async function testCreateWorkspaceContextRequiresOwnDocumentControls(): Promise<void> {

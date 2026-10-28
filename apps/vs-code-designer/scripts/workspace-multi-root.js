@@ -16,6 +16,7 @@ function createMultiRootDiagnosticRoot(parent) {
   fs.mkdirSync(parent, { recursive: true });
   return fs.mkdtempSync(path.join(parent, 'multi-root-'));
 }
+
 const nativeCleanupBlocker =
   'workspaceMultiRoot native finalization blocked: missing live retained Code/Func/task/Azurite identities; post-exit ancestry is not exit proof';
 function caseExecutionMode(env) {
@@ -165,8 +166,16 @@ function readFamilyPhases(file) {
     : [];
 }
 
-function assertEvidence(observation, funcExecutable, funcSha256) {
+function assertEvidence(observation, funcExecutable, funcSha256, workspace) {
   assert.ok(observation && observation.mapperOpened === true, 'Actual Mapper observation is required');
+  assert.ok(
+    observation.initialWindow?.targetId &&
+      observation.initialWindow?.state?.ready === true &&
+      observation.initialWindow.state.title.toLowerCase().includes(path.basename(workspace.wsFilePath, '.code-workspace').toLowerCase()) &&
+      observation.initialWindow.state.roots.includes(path.basename(workspace.appDir)) &&
+      observation.initialWindow.boot === observation.originalBoot,
+    'Initial CDP evidence must belong to the exact complete visible original workspace/window and extension-host session'
+  );
   assert.ok(
     Array.isArray(observation.roots) && observation.roots.length >= 2 && new Set(observation.roots).size === observation.roots.length
   );
@@ -185,6 +194,8 @@ function assertEvidence(observation, funcExecutable, funcSha256) {
   );
   assert.ok(
     observation.reload?.targetId &&
+      observation.reload.targetId === observation.initialWindow.targetId &&
+      observation.reload.before.timeOrigin === observation.initialWindow.state.timeOrigin &&
       observation.reload.before.timeOrigin !== observation.reload.after.timeOrigin &&
       observation.reload.afterGeneration > observation.reload.beforeGeneration,
     'Same-target real document/context reload evidence is required'
@@ -231,6 +242,7 @@ async function runWorkspaceMultiRoot(
     '1',
     'Full func population requires an isolated native consumer, not a shared workstation'
   );
+  const { waitForDevToolsActivePort } = require('../out/test/e2e/cdpClient');
   // Fail before launching another native phase. Existing artifacts are kept;
   // a valid guard and exit-zero ancestry scan cannot certify this unknown gate.
   const mode = caseExecutionMode(env);
@@ -354,7 +366,6 @@ async function runWorkspaceMultiRoot(
     fs.mkdirSync(path.join(profile, 'User'));
     const regularLaunch = multiRootRegularLaunch(bootstrap, env, profile);
     fs.writeFileSync(path.join(profile, 'User/settings.json'), JSON.stringify(regularLaunch.settings));
-    process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT = env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT || '9527';
     process.env.LA_E2E_CLI_SCREENSHOT_DIR = path.join(diagnosticRoot, 'screenshots');
     const args = [
       ...(process.platform === 'linux' ? ['--password-store=gnome-libsecret'] : []),
@@ -371,7 +382,7 @@ async function runWorkspaceMultiRoot(
       '--locale=en-US',
       '--new-window',
       '--window-size=1920,1080',
-      `--remote-debugging-port=${process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT}`,
+      '--remote-debugging-port=0',
       '--remote-debugging-address=127.0.0.1',
       entry.wsFilePath,
     ];
@@ -403,13 +414,15 @@ async function runWorkspaceMultiRoot(
         }
       });
     }
+    const cdpPort = await waitForDevToolsActivePort(profile, Date.now() + 60000);
+    process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT = String(cdpPort);
     result.observation = await Promise.race([
       ui.runWorkspaceMultiRootUi({ workspace: entry, eventsFile, bootstrap, funcExecutable, funcSha256, deadline: Date.now() + 1200000 }),
       completion.then(() => {
         throw new Error('Original Code closed before multi-root observation completed');
       }),
     ]);
-    assertEvidence(result.observation, funcExecutable, funcSha256);
+    assertEvidence(result.observation, funcExecutable, funcSha256, entry);
     result.evidenceVerified = true;
     result.observationPassed = true;
   } catch (error) {

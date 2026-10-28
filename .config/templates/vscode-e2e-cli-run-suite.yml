@@ -80,7 +80,11 @@ parameters:
 jobs:
   - job: ${{ parameters.jobName }}
     displayName: ${{ parameters.displayName }}
-    dependsOn: ${{ parameters.dependsOn }}
+    dependsOn:
+      - ${{ each dependency in parameters.dependsOn }}:
+          - ${{ dependency }}
+      - ${{ if eq(parameters.platform, 'windows') }}:
+          - prepare_windows_extension_dependencies
     condition: and(succeeded(), eq(variables['SelectedSuite'], 'true'))
     timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
     pool: ${{ parameters.pool }}
@@ -222,6 +226,47 @@ jobs:
           }
         displayName: Extract verified E2E artifact
 
+      - download: current
+        artifact: vscode-e2e-prepared-extensions-${{ parameters.platform }}
+        displayName: Download prepared ${{ parameters.platform }} extension dependencies
+
+      - pwsh: |
+          $artifactRoot = Join-Path '$(Pipeline.Workspace)' 'vscode-e2e-prepared-extensions-${{ parameters.platform }}'
+          $archive = Join-Path $artifactRoot 'prepared-extensions.tar.gz'
+          $manifestPath = Join-Path $artifactRoot 'prepared-extensions-manifest.json'
+          if (-not (Test-Path $archive) -or -not (Test-Path $manifestPath)) {
+            throw "Prepared extension dependency artifact is incomplete: $artifactRoot"
+          }
+          $manifest = Get-Content $manifestPath -Raw | ConvertFrom-Json
+          $expectedPlatform = '${{ parameters.platform }}'
+          if ($manifest.schemaVersion -ne 1 -or $manifest.platform -ne $expectedPlatform) {
+            throw "Prepared extension dependency platform mismatch. expected=$expectedPlatform actual=$($manifest.platform)"
+          }
+          if ($manifest.sourceSHA -ne '$(ExpectedSourceSha)') {
+            throw "Prepared extension dependency source mismatch. expected=$(ExpectedSourceSha) actual=$($manifest.sourceSHA)"
+          }
+          if ($manifest.vscodeVersion -ne '$(ResolvedVSCodeVersion)') {
+            throw "Prepared extension dependency VS Code mismatch. expected=$(ResolvedVSCodeVersion) actual=$($manifest.vscodeVersion)"
+          }
+          $actualHash = (Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($manifest.archiveSHA256 -ne $actualHash) {
+            throw "Prepared extension dependency archive hash mismatch. expected=$($manifest.archiveSHA256) actual=$actualHash"
+          }
+          $targetParent = Join-Path '$(Agent.TempDirectory)' 'test-resources'
+          $target = Join-Path $targetParent 'test-extensions'
+          if (Test-Path $target) {
+            Remove-Item -Recurse -Force $target
+          }
+          New-Item -ItemType Directory -Force -Path $targetParent | Out-Null
+          tar -xzf $archive -C $targetParent
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+          if (-not (Test-Path (Join-Path $target 'extensions.json'))) {
+            throw "Restored extension dependency set is incomplete: $target"
+          }
+        displayName: Verify and restore exact-run extension dependencies
+
       - ${{ if eq(parameters.suiteId, 'unitTests') }}:
           - pwsh: |
               $diagnosticsRoot = Join-Path '$(Build.ArtifactStagingDirectory)' 'vscode-e2e-cli/${{ parameters.artifactName }}'
@@ -271,30 +316,6 @@ jobs:
         env:
           E2E_TRACEABILITY_CROSSWALK_JSON: $(E2E_TRACEABILITY_CROSSWALK_JSON)
 
-      - ${{ if eq(parameters.platform, 'linux') }}:
-          - bash: |
-              set -euo pipefail
-              export PATH="$(dirname "$(command -v node)"):/usr/local/bin:/usr/bin:/bin:$PATH"
-              xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" \
-                node apps/vs-code-designer/out/test/run-e2e.js
-            displayName: Prepare VS Code extension dependencies once
-            env:
-              LA_E2E_PREPARE_EXTENSION_DEPENDENCIES_ONLY: '1'
-              NODE_OPTIONS: --dns-result-order=ipv4first --no-network-family-autoselection --max-old-space-size=4096
-              TEMP: $(Agent.TempDirectory)
-              TMPDIR: $(Agent.TempDirectory)
-
-      - ${{ if eq(parameters.platform, 'windows') }}:
-          - pwsh: |
-              $env:PATH = "$(Build.SourcesDirectory)\apps\vs-code-designer\node_modules\.bin;$(Build.SourcesDirectory)\node_modules\.bin;$env:PATH"
-              node apps/vs-code-designer/out/test/run-e2e.js
-            displayName: Prepare VS Code extension dependencies once
-            env:
-              LA_E2E_PREPARE_EXTENSION_DEPENDENCIES_ONLY: '1'
-              NODE_OPTIONS: --max-old-space-size=4096
-              TEMP: $(Agent.TempDirectory)
-              TMP: $(Agent.TempDirectory)
-
       - ${{ if and(eq(parameters.platform, 'linux'), eq(parameters.requiresAzureAccessToken, false)) }}:
           - bash: |
               set -euo pipefail
@@ -302,6 +323,7 @@ jobs:
               cd "$(Build.SourcesDirectory)/apps/vs-code-designer"
               mkdir -p .vscode-test/results
               short_profile_parent="$(mktemp -d "/tmp/la${{ parameters.shortName }}.XXXXXX")"
+              echo "##vso[task.setvariable variable=ShortProfileParent]$short_profile_parent"
               socket_probe="$short_profile_parent/user-data-${{ parameters.shortName }}/main.sock"
               socket_bytes="$(printf '%s' "$socket_probe" | wc -c)"
               if [ "$socket_bytes" -ge 100 ]; then
@@ -401,6 +423,7 @@ jobs:
                 cd "$(Build.SourcesDirectory)/apps/vs-code-designer"
                 mkdir -p .vscode-test/results
                 short_profile_parent="$(mktemp -d "/tmp/la${{ parameters.shortName }}.XXXXXX")"
+                echo "##vso[task.setvariable variable=ShortProfileParent]$short_profile_parent"
                 socket_probe="$short_profile_parent/user-data-${{ parameters.shortName }}/main.sock"
                 socket_bytes="$(printf '%s' "$socket_probe" | wc -c)"
                 if [ "$socket_bytes" -ge 100 ]; then
@@ -464,6 +487,7 @@ jobs:
               Set-Location "$(Build.SourcesDirectory)\apps\vs-code-designer"
               New-Item -ItemType Directory -Force -Path ".vscode-test\results" | Out-Null
               New-Item -ItemType Directory -Force -Path "$(Agent.TempDirectory)\runtime-dependencies" | Out-Null
+              New-Item -ItemType Directory -Force -Path "$(Agent.TempDirectory)\la\${{ parameters.shortName }}" | Out-Null
               $cliArgs = $env:LA_E2E_CLI_DIRECT_ARGS -split ' '
               & node scripts/run-e2e-cli.js @cliArgs 2>&1 | Tee-Object -FilePath ".vscode-test\results\${{ parameters.suiteId }}.log"
               $status = $LASTEXITCODE
@@ -494,7 +518,7 @@ jobs:
               LA_E2E_CLI_SCREENSHOT_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\screenshots\cli\${{ parameters.suiteId }}
               LA_E2E_CLI_EVIDENCE_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\evidence\${{ parameters.suiteId }}
               LA_E2E_CLI_EVIDENCE_SUITE_ID: ${{ parameters.suiteId }}
-              LA_E2E_CLI_USER_DATA_PARENT: $(Agent.TempDirectory)\profiles\${{ parameters.shortName }}
+              LA_E2E_CLI_USER_DATA_PARENT: $(Agent.TempDirectory)\la\${{ parameters.shortName }}
               LA_E2E_CLI_USER_DATA_SUFFIX: ${{ parameters.shortName }}
               LA_E2E_CLI_VSCODE_LOG_ARTIFACT_LABEL: ${{ parameters.suiteId }}
               LA_E2E_CLI_VSCODE_LOG_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\vscode-logs\cli
@@ -556,6 +580,7 @@ jobs:
                 Set-Location "$(Build.SourcesDirectory)\apps\vs-code-designer"
                 New-Item -ItemType Directory -Force -Path ".vscode-test\results" | Out-Null
                 New-Item -ItemType Directory -Force -Path "$(Agent.TempDirectory)\runtime-dependencies" | Out-Null
+                New-Item -ItemType Directory -Force -Path "$(Agent.TempDirectory)\la\${{ parameters.shortName }}" | Out-Null
                 $cliArgs = $env:LA_E2E_CLI_DIRECT_ARGS -split ' '
                 & node scripts/run-e2e-cli.js @cliArgs 2>&1 | Tee-Object -FilePath ".vscode-test\results\${{ parameters.suiteId }}.log"
                 $status = $LASTEXITCODE
@@ -585,7 +610,7 @@ jobs:
               LA_E2E_CLI_SCREENSHOT_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\screenshots\cli\${{ parameters.suiteId }}
               LA_E2E_CLI_EVIDENCE_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\evidence\${{ parameters.suiteId }}
               LA_E2E_CLI_EVIDENCE_SUITE_ID: ${{ parameters.suiteId }}
-              LA_E2E_CLI_USER_DATA_PARENT: $(Agent.TempDirectory)\profiles\${{ parameters.shortName }}
+              LA_E2E_CLI_USER_DATA_PARENT: $(Agent.TempDirectory)\la\${{ parameters.shortName }}
               LA_E2E_CLI_USER_DATA_SUFFIX: ${{ parameters.shortName }}
               LA_E2E_CLI_VSCODE_LOG_ARTIFACT_LABEL: ${{ parameters.suiteId }}
               LA_E2E_CLI_VSCODE_LOG_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\vscode-logs\cli
@@ -882,4 +907,41 @@ jobs:
       - ${{ if eq(parameters.platform, 'windows') }}:
           - script: node "$(Build.SourcesDirectory)\apps\vs-code-designer\scripts\remove-downloaded-vscode-runtime.js" "$(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test"
             displayName: Remove downloaded VS Code runtime before Component Governance
+            condition: always()
+
+      - ${{ if eq(parameters.platform, 'linux') }}:
+          - bash: |
+              set -euo pipefail
+              profile_parent='$(ShortProfileParent)'
+              if [[ -z "$profile_parent" || "$profile_parent" == '$('* ]]; then
+                echo 'No pipeline-owned short Linux profile parent was created.'
+                exit 0
+              fi
+              expected_prefix='/tmp/la${{ parameters.shortName }}.'
+              if [[ "$profile_parent" != "$expected_prefix"* || "$(dirname "$profile_parent")" != '/tmp' ]]; then
+                echo "Refusing to remove unexpected Linux profile parent: $profile_parent" >&2
+                exit 1
+              fi
+              rm -rf -- "$profile_parent"
+              if [[ -e "$profile_parent" ]]; then
+                echo "Pipeline-owned Linux profile parent survived cleanup: $profile_parent" >&2
+                exit 1
+              fi
+            displayName: Verify pipeline-owned short Linux profile cleanup
+            condition: always()
+
+      - ${{ if eq(parameters.platform, 'windows') }}:
+          - pwsh: |
+              $allowedRoot = [IO.Path]::GetFullPath('$(Agent.TempDirectory)\la')
+              $profileParent = [IO.Path]::GetFullPath('$(Agent.TempDirectory)\la\${{ parameters.shortName }}')
+              if ([IO.Path]::GetDirectoryName($profileParent) -ne $allowedRoot) {
+                throw "Refusing to remove unexpected Windows profile parent: $profileParent"
+              }
+              if (Test-Path -LiteralPath $profileParent) {
+                Remove-Item -LiteralPath $profileParent -Recurse -Force -ErrorAction Stop
+              }
+              if (Test-Path -LiteralPath $profileParent) {
+                throw "Pipeline-owned Windows profile parent survived cleanup: $profileParent"
+              }
+            displayName: Verify pipeline-owned short Windows profile cleanup
             condition: always()

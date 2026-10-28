@@ -1,12 +1,12 @@
 import * as assert from 'node:assert/strict';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { connectToVsCodeWorkbenchCdp } from './cdpClient';
 import { assertNextButtonEnabled, enterFieldValue, getPageText, selectDropdownOption, selectRadioOption } from './cdpFormHelpers';
 import { captureCdpScreenshot } from './screenshot';
 import { nativePopulationProvider, remainingBudget, waitForFuncPopulation } from './workspaceMultiRootCollector';
 import type { MultiRootBootstrapAttestation } from './workspaceMultiRootBootstrap';
 import { assertFuncRuntimeResolution } from './workspaceMultiRootLaunch';
+import { connectToOwnedRegularWorkbench, reloadOwnedRegularWorkbench } from './workbenchCdpActions';
 import {
   activeWebview,
   assertMapper,
@@ -20,7 +20,6 @@ import {
   poll,
   readLogicAppRoots,
   readWorkbench,
-  realReload,
 } from './workspaceMultiRootWorkbench';
 
 export interface MultiRootWorkspace {
@@ -43,7 +42,16 @@ export interface MultiRootOptions {
 export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
   assert.equal(process.env.LA_E2E_CLI_MULTI_ROOT_ISOLATED, '1', 'Native multi-root UI requires an isolated consumer');
   const { workspace, deadline } = options;
-  const cdp = await connectToVsCodeWorkbenchCdp({ waitForServer: true, timeoutMs: Math.min(15000, remainingBudget(deadline)) });
+  const ownership = {
+    workspaceFilePath: workspace.wsFilePath,
+    rootPaths: [workspace.appDir],
+  };
+  const ownedWorkbench = await connectToOwnedRegularWorkbench({
+    expectation: ownership,
+    deadline,
+    connectionTimeoutMs: Math.min(15000, remainingBudget(deadline)),
+  });
+  const { cdp } = ownedWorkbench;
   const workbench = boundedCdp(cdp, deadline);
   const phaseDeadline = (budgetMs: number) => Math.min(deadline, Date.now() + budgetMs);
   const capture = async (name: string) => {
@@ -57,14 +65,21 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
     return file;
   };
   try {
-    await cdp.send('Runtime.enable', {}, { timeoutMs: remainingBudget(deadline) });
-    await cdp.send('Page.enable', {}, { timeoutMs: remainingBudget(deadline) });
-    await command(workbench, 'View: Show Explorer', phaseDeadline(30000));
-    await poll(
-      () => readWorkbench(workbench),
-      (state) => state.ready && state.roots.includes(path.basename(workspace.appDir)),
+    const initialWindow = ownedWorkbench.state;
+    const originalActivation = await poll(
+      async () => {
+        if (!fs.existsSync(options.eventsFile)) {
+          return undefined;
+        }
+        return debugEvents(options.eventsFile)
+          .filter((event) => event.kind === 'activation')
+          .find((event) => event.roots?.length === 1 && fs.realpathSync(event.roots[0]) === fs.realpathSync(workspace.appDir));
+      },
+      Boolean,
       phaseDeadline(30000)
     );
+    assert.ok(originalActivation?.boot, 'The exact original workspace extension-host activation is required before Explorer actions');
+    const originalBoot = originalActivation.boot;
 
     // Three example roots, matching the source fixture shape. No extra app-type
     // matrix and no maximum of three in the collector, root loader or debug contract.
@@ -110,12 +125,14 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
       phaseDeadline(30000)
     );
     const screenshots = [await capture('workspace-multi-root-created')];
-    const originalBoot = debugEvents(options.eventsFile)
-      .filter((event) => event.kind === 'activation')
-      .at(-1)?.boot;
-    assert.ok(originalBoot, 'Native observer did not activate in the original workspace window');
-
-    const reload = await realReload(cdp, roots, phaseDeadline(60000));
+    const reload = await reloadOwnedRegularWorkbench(
+      cdp,
+      {
+        workspaceFilePath: workspace.wsFilePath,
+        rootPaths: roots,
+      },
+      phaseDeadline(60000)
+    );
     const activation = await poll(
       async () =>
         debugEvents(options.eventsFile)
@@ -249,6 +266,13 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
     remainingBudget(deadline);
     return {
       roots,
+      initialWindow: {
+        targetId: cdp.targetId,
+        targetTitle: cdp.targetTitle,
+        targetUrl: cdp.targetUrl,
+        state: initialWindow,
+        boot: originalBoot,
+      },
       reload,
       originalBoot,
       reloadedBoot: activation.boot,

@@ -48,9 +48,11 @@ async function main(): Promise<void> {
   testProvenSaveButtonDom();
   await testReplacementKeySequence();
   await testExactNodeIdentity();
+  await testExactPanelRebinding();
   await testDeleteWaitsForExactClickedNode();
   await testProvenAdapterCancellation();
   await testPersistedDesignerReadiness();
+  await testExactPersistedNodeReadiness();
   await testStableActionInsertionAcknowledgement();
   await testSettingsTabPaths();
   await testRunAfterToggleOrderingAndRerenderReacquisition();
@@ -146,6 +148,51 @@ async function testPersistedDesignerReadiness(): Promise<void> {
     'Persisted readiness must retry transient evaluation errors, reject busy Save, and require three stable ready observations'
   );
   dom.window.close();
+}
+
+async function testExactPersistedNodeReadiness(): Promise<void> {
+  let observations = 0;
+  const expected = [
+    { nodeId: 'Request', title: 'When an HTTP request is received' },
+    { nodeId: 'Initialize_variables', title: 'Initialize variables' },
+  ];
+  const actions = new ProvenDesignerCdpActions(
+    {
+      evaluate: async <T>() => {
+        observations++;
+        return {
+          canvasCount: 1,
+          identities: observations === 1 ? expected.slice(0, 1) : expected,
+          missing: observations === 1 ? ['Initialize_variables'] : [],
+          ambiguous: [],
+        } as T;
+      },
+      send: async () => undefined,
+    },
+    1,
+    Date.now() + 5000
+  );
+  assert.deepStrictEqual(await actions.waitForExactNodeIds(expected.map((identity) => identity.nodeId)), expected);
+  assert.ok(observations >= 5, 'Exact persisted node readiness must reject missing nodes and require stable observations');
+
+  const ambiguous = new ProvenDesignerCdpActions(
+    {
+      evaluate: async <T>() =>
+        ({
+          canvasCount: 1,
+          identities: expected,
+          missing: [],
+          ambiguous: ['Initialize_variables'],
+        }) as T,
+      send: async () => undefined,
+    },
+    1,
+    Date.now() + 5
+  );
+  await assert.rejects(
+    () => ambiguous.waitForExactNodeIds(expected.map((identity) => identity.nodeId)),
+    /exact persisted Designer node IDs/
+  );
 }
 
 async function testStableActionInsertionAcknowledgement(): Promise<void> {
@@ -889,6 +936,69 @@ async function testExactNodeIdentity(): Promise<void> {
   );
 
   assert.strictEqual(await actions.clickNode('HTTP'), httpAction.id);
+}
+
+async function testExactPanelRebinding(): Promise<void> {
+  const identity = { nodeId: 'Initialize_variables', title: 'Initialize variables' };
+  let trustedClicks = 0;
+  const existingPanel = new ProvenDesignerCdpActions(
+    {
+      evaluate: async <T>(_contextId: number | undefined, expression: string) => {
+        assert.ok(expression.includes('[id^="msla-node-details-panel-"]'));
+        return [identity] as T;
+      },
+      send: async () => {
+        trustedClicks++;
+      },
+    },
+    7,
+    Date.now() + 5000
+  );
+  assert.deepStrictEqual(await existingPanel.ensureNodePanelOpen(identity), identity);
+  assert.strictEqual(trustedClicks, 0, 'An already-open exact owned panel must not replay the card click');
+
+  const wrongPanel = new ProvenDesignerCdpActions(
+    {
+      evaluate: async <T>() => [{ nodeId: 'Response', title: 'Response' }] as T,
+      send: async () => undefined,
+    },
+    7,
+    Date.now() + 5000
+  );
+  await assert.rejects(() => wrongPanel.ensureNodePanelOpen(identity), /Expected one visible details panel owned by Initialize_variables/);
+
+  let panelRead = false;
+  let cardClicks = 0;
+  const cardFallback = new ProvenDesignerCdpActions(
+    {
+      evaluate: async <T>(_contextId: number | undefined, expression: string) => {
+        if (expression.includes('return Array.from(document.querySelectorAll(\'[id^="msla-node-details-panel-"]\'))')) {
+          panelRead = true;
+          return [] as T;
+        }
+        if (expression.includes("const element = exactVisibleElementById('msla-node-' + nodeId)")) {
+          if (expression.includes('return {')) {
+            return identity as T;
+          }
+          return { x: 25, y: 30 } as T;
+        }
+        if (expression.includes('const expectedId = "msla-node-details-panel-Initialize_variables"')) {
+          return true as T;
+        }
+        throw new Error(`Unexpected CDP expression: ${expression.slice(0, 200)}`);
+      },
+      send: async (method) => {
+        if (method === 'Input.dispatchMouseEvent') {
+          cardClicks++;
+        }
+      },
+    },
+    7,
+    Date.now() + 5000
+  );
+  assert.deepStrictEqual(await cardFallback.ensureNodePanelOpen(identity), identity);
+  assert.strictEqual(panelRead, true);
+  assert.strictEqual(cardClicks, 3, 'No visible panel must fall back to one trusted moved/pressed/released card click');
 }
 
 async function testDeleteWaitsForExactClickedNode(): Promise<void> {

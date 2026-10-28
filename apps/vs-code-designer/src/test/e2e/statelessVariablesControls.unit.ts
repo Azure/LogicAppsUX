@@ -768,18 +768,20 @@ function testNativeWiring(): void {
     assert.ok(native.includes('selectExactWorkbenchPromptOption('), 'Azurite/debug prompts must use the same owned workbench connection');
     assert.ok(native.includes("prompt.kind === 'notification'"), 'Debug prompt allowlisting must not auto-select dialogs or quick picks');
     assert.ok(
-      native.includes('addActionAndGetIdentity({') && native.includes('clickNodeById(initialize.nodeId)'),
-      'Stateless authoring must bind the inserted node identity and wait for its exact owned details panel'
+      native.includes('addActionAndGetIdentity({') && native.includes('ensureNodePanelOpen(initialize)'),
+      'Stateless authoring must accept only the inserted node identity and its exact owned details panel'
     );
     assert.ok(
-      native.includes('clickNodeById(appendArray.nodeId)') || native.includes('configureAppend(designer, appendArray.nodeId'),
+      native.includes('configureAppend(designer, appendArray'),
       'Append configuration must not fall back to a title-only node click'
     );
     assert.ok(
       native.includes("captureLifecycleScreenshot('stateless-variables-initialize-panel-open'") &&
         native.includes("captureLifecycleScreenshot('stateless-variables-workflow-saved'") &&
-        native.includes("captureLifecycleScreenshot('stateless-variables-runtime-registered'"),
-      'The hanging boundary, saved workflow and runtime registration need semantic stage screenshots'
+        native.includes("captureLifecycleScreenshot('stateless-variables-runtime-registered'") &&
+        native.includes("evidenceName: 'stateless-variables-runtime-designer-rebound'") &&
+        shared.includes('await captureLifecycleScreenshot(options.persistedDesigner.evidenceName'),
+      'The hanging boundary, saved workflow, runtime registration and rebound Designer need semantic stage screenshots'
     );
     assert.ok(
       (native.match(/deadlineMs: deadline/g) ?? []).length >= 4,
@@ -790,6 +792,22 @@ function testNativeWiring(): void {
         "normalizeDesignerCanvasViewport(cdp, context, 'Stateless complete persisted workflow evidence', savedNodeIds, deadline)"
       ),
       'The exact saved-workflow evidence must normalize all inserted nodes inside the existing positive deadline'
+    );
+    assert.ok(
+      native.indexOf('await start(entry, getOwnedDebug(), positiveDeadline, signal, azureFixture, true)') <
+        native.indexOf('persistedDesigner: {') &&
+        native.includes("evidenceName: 'stateless-variables-runtime-designer-rebound'") &&
+        native.includes("description: 'Stateless persisted workflow after runtime registration'") &&
+        native.includes('panelNodeId: operations.initialize') &&
+        shared.includes('await persisted.waitForPersistedDesignerReady()') &&
+        (shared.match(/await persisted\.waitForExactNodeIds\(options\.persistedDesigner\.requiredNodeIds\)/g) ?? []).length === 1 &&
+        shared.indexOf('await normalizeDesignerCanvasViewport(') <
+          shared.indexOf('await persisted.waitForExactNodeIds(options.persistedDesigner.requiredNodeIds)') &&
+        shared.includes('await persisted.ensureNodePanelOpen(panelNode)') &&
+        shared.includes('await normalizeDesignerCanvasViewport(') &&
+        shared.includes('connectToActiveDesignerWebview(') &&
+        shared.includes('hasExactVisibleWorkbenchIframeForTarget('),
+      'Runtime registration must delegate exact Designer reopen, active-frame binding, viewport normalization and persisted node readiness to the shared lifecycle'
     );
     assert.ok(native.includes('[stateless-variables][stage:${stage}]'), 'Semantic stage logs must expose the exact active boundary');
     assert.ok(

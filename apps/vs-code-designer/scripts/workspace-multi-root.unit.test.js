@@ -165,10 +165,27 @@ test('finalization retains both original and teardown errors and cannot promote 
   assert.deepEqual(result.errors, errors);
 });
 test('missing observations, wrong Mapper, absent reload and partial population cannot credit evidence', () => {
+  const workspace = { wsFilePath: path.resolve('unit.code-workspace'), appDir: path.resolve('a') };
   assert.throws(() => assertEvidence(undefined, '', ''));
   assert.throws(() => assertEvidence({ mapperOpened: false }, '', ''));
   assert.throws(
-    () => assertEvidence({ mapperOpened: true, roots: ['a', 'b'], originalBoot: 'same', reloadedBoot: 'same' }, '', ''),
+    () =>
+      assertEvidence(
+        {
+          mapperOpened: true,
+          initialWindow: {
+            targetId: 'unit-target',
+            boot: 'same',
+            state: { ready: true, title: 'unit - Visual Studio Code', roots: ['a'], timeOrigin: 1 },
+          },
+          roots: ['a', 'b'],
+          originalBoot: 'same',
+          reloadedBoot: 'same',
+        },
+        '',
+        '',
+        workspace
+      ),
     /reload/
   );
   assert.throws(() =>
@@ -199,6 +216,26 @@ test('registration is additive and leaves baseline CLI labels untouched', () => 
   assert.ok(runner.includes('Boolean(env.LA_E2E_CLI_MULTI_ROOT_HANDOFF)'));
   const family = fs.readFileSync(path.join(__dirname, 'workspace-multi-root.js'), 'utf8');
   assert.ok(family.includes('retainWorkspaceForSupplement: true'));
+  assert.ok(
+    family.includes("'--remote-debugging-port=0'") &&
+      family.includes("require('../out/test/e2e/cdpClient')") &&
+      family.indexOf('const child = spawn(') < family.indexOf('const cdpPort = await waitForDevToolsActivePort(') &&
+      family.includes('process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT = String(cdpPort)') &&
+      !family.includes('async function waitForDevToolsActivePort(') &&
+      !family.includes("env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT || '9527'"),
+    'The regular-window observer must use the shared profile-scoped CDP discovery rather than race, duplicate it or attach to a stale window'
+  );
+  const nativeUi = fs.readFileSync(path.join(root, 'src/test/e2e/workspaceMultiRoot.test.ts'), 'utf8');
+  const sharedWorkbench = fs.readFileSync(path.join(root, 'src/test/e2e/workbenchCdpActions.ts'), 'utf8');
+  assert.ok(
+    nativeUi.includes('connectToOwnedRegularWorkbench({') &&
+      nativeUi.includes('reloadOwnedRegularWorkbench(') &&
+      nativeUi.includes("event.kind === 'activation'") &&
+      nativeUi.includes('fs.realpathSync(event.roots[0]) === fs.realpathSync(workspace.appDir)') &&
+      sharedWorkbench.includes('titlePrefix === workspaceTitle || titlePrefix === workspaceFileName') &&
+      sharedWorkbench.includes("assert.equal(cdp.targetId, targetId, 'Reload continuation must retain the original window target')"),
+    'Multi-root must delegate exact workspace/window ownership and same-target reload to the shared regular-workbench lifecycle'
+  );
   const packageJson = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
   assert.ok(packageJson.scripts['test:e2e-cli:unit'].includes('workspaceMultiRoot.unit.js'));
 });

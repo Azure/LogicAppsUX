@@ -33,6 +33,7 @@ export type ScreenshotExpectation =
       label: string;
       requiredNodes?: Array<string | string[]>;
       requiredNodeIds?: string[];
+      requiredPanelNodeId?: string;
       allowLoading?: boolean;
     }
   | { kind: 'designerValidationError'; label: string; message: string }
@@ -1818,11 +1819,18 @@ export const screenshotReadinessDomScript = `
     case 'designerCanvas':
       const concreteNodeState = concreteRequiredNodeMatches(expectation.requiredNodes || []);
       const concreteNodeIdState = concreteRequiredNodeIdMatches(expectation.requiredNodeIds || []);
+      const requiredPanelId = expectation.requiredPanelNodeId
+        ? 'msla-node-details-panel-' + expectation.requiredPanelNodeId
+        : undefined;
+      const visibleNodePanels = Array.from(document.querySelectorAll('[id^="msla-node-details-panel-"]')).filter(isVisible);
+      const requiredPanelReady =
+        !requiredPanelId || (visibleNodePanels.length === 1 && visibleNodePanels[0].id === requiredPanelId);
       ready =
         !!designerCanvas &&
         hasRequiredText(visibleText(designerCanvas), expectation.requiredNodes || []) &&
         concreteNodeState.ok &&
-        concreteNodeIdState.ok;
+        concreteNodeIdState.ok &&
+        requiredPanelReady;
       if ((expectation.requiredNodes || []).length > 0) {
         ready = ready && canvasNodes.length >= 1;
       }
@@ -1833,7 +1841,18 @@ export const screenshotReadinessDomScript = `
       if (!concreteNodeIdState.ok) {
         reasonCodes.push('designer-canvas-required-node-id-missing');
       }
-      details.designerCanvas = { ...concreteNodeState, ids: concreteNodeIdState };
+      if (!requiredPanelReady) {
+        reasonCodes.push('designer-canvas-required-panel-missing');
+      }
+      details.designerCanvas = {
+        ...concreteNodeState,
+        ids: concreteNodeIdState,
+        requiredPanel: {
+          expectedId: requiredPanelId,
+          visibleIds: visibleNodePanels.map((panel) => panel.id),
+          ready: requiredPanelReady,
+        },
+      };
       break;
     case 'designerPanel':
       const panelFieldStates = (expectation.fields || []).map((field) => fieldMatches(field, selectedPanel?.layout));

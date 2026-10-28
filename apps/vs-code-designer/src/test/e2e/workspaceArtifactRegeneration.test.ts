@@ -9,8 +9,10 @@ import { spawn } from 'child_process';
 import { createHash } from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
-import { type CdpConnection, connectToVsCodeWorkbenchCdp } from './cdpClient';
+import { type CdpConnection, waitForDevToolsActivePort } from './cdpClient';
 import { clickPoint, type CdpEvaluator } from './cdpFormHelpers';
+import { connectToOwnedRegularWorkbench, readRegularWorkbenchOwnership } from './workbenchCdpActions';
+import { readWorkbenchPrompts, revealRetainedWorkbenchNotifications } from './workbenchPrompts';
 import {
   assertRegenerationComplete,
   assertRegenerationPromptObservation,
@@ -102,40 +104,17 @@ function boundedConnection(cdp: CdpConnection, phase: RegenerationDeadline) {
 }
 
 async function readRegenerationWorkbench(cdp: CdpEvaluator, workspaceFile: string, appDir: string): Promise<RegenerationPromptObservation> {
-  return cdp.evaluate(
-    undefined,
-    `(() => {
-      const visible = (element) => {
-        if (!(element instanceof HTMLElement)) { return false; }
-        const style = getComputedStyle(element);
-        const rect = element.getBoundingClientRect();
-        return style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 0 && rect.height > 0;
-      };
-      const text = (element) => (element.innerText || element.textContent || '').replace(/\\s+/g, ' ').trim();
-      const containers = Array.from(document.querySelectorAll('.monaco-dialog-box, .notification-toast, .notification-list-item'))
-        .filter(visible).map((container) => ({
-          kind: container.matches('.monaco-dialog-box') ? 'dialog' : 'notification',
-          text: text(container), rows: [],
-          buttons: Array.from(container.querySelectorAll('button, a.monaco-button, .monaco-text-button')).filter(visible).map((button) => {
-            const rect = button.getBoundingClientRect();
-            const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-            const hit = document.elementFromPoint(point.x, point.y);
-            const enabled = !button.hasAttribute('disabled') && button.getAttribute('aria-disabled') !== 'true';
-            return { text: text(button), ...(enabled && hit && (hit === button || button.contains(hit)) ? { point } : {}) };
-          })
-        }));
-      const failure = containers.some((container) => /DialogService:.*refused to show dialog/i.test(container.text))
-        ? 'Stock Code refused a required regeneration dialog'
-        : undefined;
-      const folders = Array.from(document.querySelectorAll(
-        '.explorer-folders-view .monaco-list-row[aria-level="1"] .label-name, .explorer-viewlet .pane-header .title'
-      )).filter(visible).map(text);
-      const ready = document.readyState === 'complete' && Array.from(document.querySelectorAll('.monaco-workbench')).some(visible) &&
-        document.title.toLowerCase().includes(${JSON.stringify(path.basename(workspaceFile, '.code-workspace').toLowerCase())}) &&
-        folders.some((name) => name.toLowerCase() === ${JSON.stringify(path.basename(appDir).toLowerCase())});
-      return { containers, ready, timeOrigin: performance.timeOrigin, ...(failure ? { failure } : {}) };
-    })()`
-  );
+  const expectation = { workspaceFilePath: workspaceFile, rootPaths: [appDir] };
+  const [containers, ownership] = await Promise.all([readWorkbenchPrompts(cdp), readRegularWorkbenchOwnership(cdp, expectation)]);
+  const failure = containers.some((container) => /DialogService:.*refused to show dialog/i.test(container.text))
+    ? 'Stock Code refused a required regeneration dialog'
+    : undefined;
+  return {
+    containers,
+    ready: ownership.owned,
+    timeOrigin: ownership.timeOrigin,
+    ...(failure ? { failure } : {}),
+  };
 }
 
 async function poll(phase: RegenerationDeadline): Promise<void> {
@@ -219,6 +198,7 @@ async function runFreshRegenerationHost(
   }
   const profileSettingsPath = writeRegenerationRuntimeProfile(profile, handoff.runtimeSettings, context);
   remainingRegenerationBudget(phase);
+  const previousPort = process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT;
   const log = fs.createWriteStream(path.join(context.root, `${phaseName}-code.log`), { flags: 'wx' });
   const errors: unknown[] = [];
   log.on('error', (error) => errors.push(error));
@@ -239,7 +219,7 @@ async function runFreshRegenerationHost(
       '--locale=en-US',
       '--new-window',
       '--window-size=1920,1080',
-      `--remote-debugging-port=${env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT || '9514'}`,
+      '--remote-debugging-port=0',
       '--remote-debugging-address=127.0.0.1',
       handoff.workspace.workspaceFilePath,
     ],
@@ -270,11 +250,18 @@ async function runFreshRegenerationHost(
   let cdp: CdpConnection | undefined;
   let observed = false;
   try {
-    cdp = await connectToVsCodeWorkbenchCdp({
+    const cdpPort = await waitForDevToolsActivePort(profile, phase.deadline);
+    process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT = String(cdpPort);
+    const ownedWorkbench = await connectToOwnedRegularWorkbench({
+      expectation: {
+        workspaceFilePath: handoff.workspace.workspaceFilePath,
+        rootPaths: [handoff.workspace.appDir],
+      },
+      deadline: phase.deadline,
+      connectionTimeoutMs: Math.min(15000, remainingRegenerationBudget(phase)),
       activate: false,
-      waitForServer: true,
-      timeoutMs: Math.min(15000, remainingRegenerationBudget(phase)),
     });
+    cdp = ownedWorkbench.cdp;
     assertRegenerationRuntimeProfile(profileSettingsPath, handoff.runtimeSettings);
     await Promise.race([
       observe(cdp, phase),
@@ -330,6 +317,11 @@ async function runFreshRegenerationHost(
     errors.push(error);
   }
   host.errors = errors.map(String);
+  if (previousPort === undefined) {
+    delete process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT;
+  } else {
+    process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT = previousPort;
+  }
   if (errors.length > 0) {
     throw new AggregateError(errors, `Regeneration ${phaseName} failed: ${errors.map(String).join('; ')}`);
   }
@@ -393,6 +385,7 @@ export async function runWorkspaceArtifactRegeneration(
       let prompts: { initializationYesCount: number; overwriteYesCount: number } | undefined;
       await runFreshRegenerationHost(context, handoff, env, result, entry.name, async (cdp, phase) => {
         const bounded = boundedConnection(cdp, phase);
+        await revealRetainedWorkbenchNotifications(bounded, { workspaceFilePath, rootPaths: [appDir] }, phase.deadline);
         const observationsPath = path.join(context.root, `${entry.name}-prompt-observations.jsonl`);
         const read = async () => {
           const observation = await readRegenerationWorkbench(bounded, workspaceFilePath, appDir);

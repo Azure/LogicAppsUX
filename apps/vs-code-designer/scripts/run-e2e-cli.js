@@ -625,17 +625,39 @@ async function runDirectFamily(suiteId, visibleDelayMs, options = {}) {
   return terminal?.complete === true && context.transientCleanupVerified && !error ? 0 : 1;
 }
 
-function getDirectFamilyUserDataParent(env, fallback, { platform = process.platform, lstat = fs.lstatSync } = {}) {
-  if (platform !== 'linux' || !env.LA_E2E_CLI_USER_DATA_PARENT) {
+function getDirectFamilyUserDataParent(
+  env,
+  fallback,
+  { platform = process.platform, lstat = fs.lstatSync, maxWindowsParentLength = 96 } = {}
+) {
+  if (!env.LA_E2E_CLI_USER_DATA_PARENT) {
     return fallback;
   }
-  const candidate = path.posix.resolve(env.LA_E2E_CLI_USER_DATA_PARENT.replaceAll('\\', '/'));
-  if (path.posix.dirname(candidate) !== '/tmp' || !/^la[a-z0-9_-]*\.[a-z0-9]+$/i.test(path.posix.basename(candidate))) {
-    throw new Error(`Direct Linux family received an unsafe short profile parent: ${candidate}`);
+
+  const candidate =
+    platform === 'linux'
+      ? path.posix.resolve(env.LA_E2E_CLI_USER_DATA_PARENT.replaceAll('\\', '/'))
+      : path.win32.resolve(env.LA_E2E_CLI_USER_DATA_PARENT.replaceAll('/', '\\'));
+  if (platform === 'linux') {
+    if (path.posix.dirname(candidate) !== '/tmp' || !/^la[a-z0-9_-]*\.[a-z0-9]+$/i.test(path.posix.basename(candidate))) {
+      throw new Error(`Direct Linux family received an unsafe short profile parent: ${candidate}`);
+    }
+  } else if (platform === 'win32') {
+    if (!path.win32.isAbsolute(candidate) || path.win32.parse(candidate).root === candidate) {
+      throw new Error(`Direct Windows family received an unsafe short profile parent: ${candidate}`);
+    }
+    if (candidate.length > maxWindowsParentLength) {
+      throw new Error(
+        `Direct Windows short profile parent is too long for nested VS Code logs (${candidate.length} > ${maxWindowsParentLength}): ${candidate}`
+      );
+    }
+  } else {
+    return fallback;
   }
+
   const stat = lstat(candidate);
   if (!stat.isDirectory() || stat.isSymbolicLink()) {
-    throw new Error(`Direct Linux family short profile parent must be an owned directory: ${candidate}`);
+    throw new Error(`Direct family short profile parent must be an externally owned directory: ${candidate}`);
   }
   return candidate;
 }

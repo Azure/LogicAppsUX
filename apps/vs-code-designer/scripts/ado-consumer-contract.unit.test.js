@@ -53,10 +53,24 @@ function assertMandatoryConsumerContract(template, entry, packageManifest) {
   const prior = steps.slice(0, extractionIndex);
   assert.ok(prior.some((item) => item.displayName === 'Verify current-run E2E artifact admission'));
   assert.ok(prior.some((item) => item.displayName === 'Verify exact admitted source checkout'));
-  const before = collect(steps.slice(0, clauseIndex), (item) => item.displayName === 'Prepare VS Code extension dependencies once');
-  assert.equal(before.length, 0, 'Contracts must precede native dependency preparation');
-  const after = collect(steps.slice(clauseIndex + 1), (item) => item.displayName === 'Prepare VS Code extension dependencies once');
-  assert.equal(after.length, 2, 'Both OS native preparation routes remain after the contract gate');
+  const perSuitePreparation = collect(steps, (item) => item.displayName === 'Prepare VS Code extension dependencies once');
+  assert.equal(perSuitePreparation.length, 0, 'Suite consumers must not create concurrent Marketplace setup cohorts');
+  const restored = collect(
+    steps.slice(0, clauseIndex),
+    (item) => item.displayName === 'Verify and restore exact-run extension dependencies'
+  );
+  assert.equal(restored.length, 1, 'Contracts must consume the exact-run prepared dependency artifact');
+  const pipelinePreparation = collect(
+    entry,
+    (item) =>
+      item.displayName === 'Prepare Windows VS Code extension dependencies once' ||
+      item.displayName === 'Prepare Linux VS Code extension dependencies once'
+  );
+  assert.deepEqual(
+    pipelinePreparation.map((item) => item.displayName),
+    ['Prepare Windows VS Code extension dependencies once', 'Prepare Linux VS Code extension dependencies once'],
+    'Marketplace preparation must run once per OS in the existing sequential prerequisite jobs'
+  );
   const unitJobs = collect(entry, (item) => item.template === '/.config/templates/vscode-e2e-cli-run-suite.yml@self').filter(
     (item) => item.parameters.suiteId === 'unitTests'
   );
@@ -72,7 +86,7 @@ function assertMandatoryConsumerContract(template, entry, packageManifest) {
   assert.ok(packageManifest.scripts['test:e2e-cli:build'].endsWith('pnpm run test:e2e-cli:unit'));
 }
 
-test('same registered contracts gate both existing OS consumers after admission/extraction, before native prep, without changing native labels', () => {
+test('same registered contracts gate both existing OS consumers after exact-run dependency restore without changing native labels', () => {
   assertMandatoryConsumerContract(consumer, pipeline, manifest);
 });
 

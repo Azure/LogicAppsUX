@@ -1034,8 +1034,14 @@ async function main(): Promise<void> {
   }
   console.log('✓ D-001 lint guard passed (no fs.writeFile/outputJson in *.fixtures.test.ts).');
 
-  // Read extension metadata from dist/package.json
-  const pkgJson = JSON.parse(fs.readFileSync(path.join(distDir, 'package.json'), 'utf8'));
+  // Dependency preparation is a pipeline setup concern and may run before the
+  // exact-SHA dist artifact is built. Only that mode may read source metadata;
+  // every executable UI phase still requires dist/package.json.
+  const prepareDependenciesOnly = process.env.LA_E2E_PREPARE_EXTENSION_DEPENDENCIES_ONLY === '1';
+  const distPackageJson = path.join(distDir, 'package.json');
+  const extensionMetadataPath =
+    prepareDependenciesOnly && !fs.existsSync(distPackageJson) ? path.join(projectDir, 'package.json') : distPackageJson;
+  const pkgJson = JSON.parse(fs.readFileSync(extensionMetadataPath, 'utf8'));
   const extDeps: string[] = pkgJson.extensionDependencies || [];
   const devContainersDependency = 'ms-vscode-remote.remote-containers';
   if (extDeps.some((dep) => dep.toLowerCase() === devContainersDependency)) {
@@ -1204,7 +1210,7 @@ async function main(): Promise<void> {
     console.log('\n=== Step 2: No extension dependencies to install ===');
   }
 
-  if (process.env.LA_E2E_PREPARE_EXTENSION_DEPENDENCIES_ONLY === '1') {
+  if (prepareDependenciesOnly) {
     console.log('\n=== Prepared extension dependencies only; skipping extension copy and tests ===');
     return;
   }

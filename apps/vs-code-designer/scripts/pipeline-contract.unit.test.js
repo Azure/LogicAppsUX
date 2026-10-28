@@ -656,7 +656,7 @@ function testVSStablePoolContract() {
   const windowsPools = explicitPools.filter(({ pool }) => pool.os === 'windows');
   const linuxPools = explicitPools.filter(({ pool }) => pool.os === 'linux');
 
-  assert.strictEqual(windowsPools.length, 18, 'all 18 explicit Windows pool blocks must remain present');
+  assert.strictEqual(windowsPools.length, 19, 'all 19 explicit Windows pool blocks must remain present');
   for (const { pipelinePath, objectPath, pool } of windowsPools) {
     assert.strictEqual(pool.name, 'VSEng-MicroBuildVSStable', `${pipelinePath}:${objectPath} must use VSStable`);
     assert.strictEqual(pool.image, undefined, `${pipelinePath}:${objectPath} must not pin a Windows image`);
@@ -1683,10 +1683,51 @@ function assertConsumerCurrentRunArtifactContract(consumer) {
   const jobs = flattenAzureList(consumer.extends.parameters.stages[0].jobs);
   const buildJob = jobs.find((entry) => entry.job === 'build_current_run_e2e_artifact');
   assert.ok(buildJob, 'consumer must build the test-only E2E artifact in the same run');
-  assert.deepStrictEqual(buildJob.dependsOn, ['resolve_consumer_context']);
+  assert.deepStrictEqual(
+    buildJob.dependsOn,
+    ['resolve_consumer_context'],
+    'The shared build and Linux lanes must not wait on Windows-only dependency preparation'
+  );
   assert.strictEqual(buildJob.templateContext?.type, undefined, 'current-run artifact build job must be an ordinary output-producing job');
-  assert.strictEqual(buildJob.templateContext.outputs[0].artifactName, 'vscode-e2e-build');
-  assert.strictEqual(buildJob.templateContext.outputs[0].targetPath, '$(Build.ArtifactStagingDirectory)/vscode-e2e');
+  const buildOutput = buildJob.templateContext.outputs.find((output) => output.artifactName === 'vscode-e2e-build');
+  assert.strictEqual(buildOutput?.targetPath, '$(Build.ArtifactStagingDirectory)/vscode-e2e');
+  const linuxDependencies = buildJob.templateContext.outputs.find(
+    (output) => output.artifactName === 'vscode-e2e-prepared-extensions-linux'
+  );
+  assert.strictEqual(
+    linuxDependencies?.targetPath,
+    '$(Build.ArtifactStagingDirectory)/vscode-e2e-prepared-extensions-linux',
+    'Linux Marketplace dependencies must be prepared once in the exact-run build prerequisite'
+  );
+  const windowsPreparation = jobs.find((entry) => entry.job === 'prepare_windows_extension_dependencies');
+  assert.deepStrictEqual(windowsPreparation?.dependsOn, ['resolve_consumer_context']);
+  assert.ok(
+    String(windowsPreparation?.condition).includes('parameters.runWindows'),
+    'Windows dependency preparation must be skipped when Windows lanes are disabled'
+  );
+  assert.strictEqual(windowsPreparation?.templateContext?.type, undefined);
+  assert.strictEqual(windowsPreparation?.templateContext?.outputs?.[0]?.artifactName, 'vscode-e2e-prepared-extensions-windows');
+  assert.ok(
+    windowsPreparation?.steps?.some((step) => step.displayName === 'Prepare Windows VS Code extension dependencies once'),
+    'Windows Marketplace dependencies must be prepared once before the exact-run build prerequisite'
+  );
+  const linuxPreparation = buildJob.steps.find((step) => step.displayName === 'Prepare Linux VS Code extension dependencies once');
+  const linuxPackaging = buildJob.steps.find((step) => step.displayName === 'Package exact-run Linux extension dependencies');
+  assert.ok(String(linuxPreparation?.condition).includes('parameters.runLinux'));
+  assert.ok(String(linuxPackaging?.condition).includes('parameters.runLinux'));
+  const suiteTemplateSource = fs.readFileSync(path.join(repoRoot, '.config', 'templates', 'vscode-e2e-cli-run-suite.yml'), 'utf8');
+  assert.ok(
+    suiteTemplateSource.includes("if eq(parameters.platform, 'windows')") &&
+      suiteTemplateSource.includes('prepare_windows_extension_dependencies'),
+    'Only Windows suite jobs may depend on the Windows dependency producer'
+  );
+  assert.ok(
+    suiteTemplateSource.includes('Verify pipeline-owned short Linux profile cleanup') &&
+      suiteTemplateSource.includes("expected_prefix='/tmp/la${{ parameters.shortName }}.'") &&
+      suiteTemplateSource.includes('Verify pipeline-owned short Windows profile cleanup') &&
+      suiteTemplateSource.includes('Remove-Item -LiteralPath $profileParent -Recurse -Force -ErrorAction Stop'),
+    'Pipeline-owned short profile parents must be removed and verified only after diagnostic staging'
+  );
   const checkoutStep = buildJob.steps.find((step) => step.displayName === 'Checkout pinned source SHA for E2E artifact');
   assert.ok(checkoutStep?.pwsh?.includes('git checkout "$(pinnedSourceSha)"'));
   assert.match(checkoutStep?.pwsh ?? '', /git checkout "\$\(pinnedSourceSha\)"[\s\S]*if \(\$LASTEXITCODE -ne 0\)/);
@@ -1921,21 +1962,29 @@ function assertConsumerJobRoutingContract(consumer, runSuites) {
 
   assert.deepStrictEqual(
     directJobs.map((entry) => entry.job).sort(),
-    ['build_current_run_e2e_artifact', 'report_diagnostic_selected_rerun', 'resolve_consumer_context', 'verify_both_os_full_rollup'].sort()
+    [
+      'build_current_run_e2e_artifact',
+      'prepare_windows_extension_dependencies',
+      'report_diagnostic_selected_rerun',
+      'resolve_consumer_context',
+      'verify_both_os_full_rollup',
+    ].sort()
   );
   for (const job of directJobs) {
     if (job.job === 'build_current_run_e2e_artifact') {
       assert.strictEqual(job.templateContext?.type, undefined, `${job.job} must be an ordinary output-producing job`);
-      assert.strictEqual(job.templateContext.outputs.length, 1, `${job.job} must preserve its current-run artifact output`);
-      assert.strictEqual(job.templateContext.outputs[0].output, 'pipelineArtifact');
-      assert.strictEqual(job.templateContext.outputs[0].artifactName, 'vscode-e2e-build');
-      assert.strictEqual(job.templateContext.outputs[0].targetPath, '$(Build.ArtifactStagingDirectory)/vscode-e2e');
-      assert.strictEqual(
-        job.templateContext.outputs[0].isProduction,
-        undefined,
-        `${job.job} must preserve default artifact classification`
-      );
-      assert.strictEqual(job.templateContext.outputs[0].sbomEnabled, undefined, `${job.job} must preserve default SBOM handling`);
+      assert.strictEqual(job.templateContext.outputs.length, 2, `${job.job} must publish the build and Linux dependency artifacts`);
+      const buildOutput = job.templateContext.outputs.find((output) => output.artifactName === 'vscode-e2e-build');
+      assert.strictEqual(buildOutput.output, 'pipelineArtifact');
+      assert.strictEqual(buildOutput.targetPath, '$(Build.ArtifactStagingDirectory)/vscode-e2e');
+      assert.strictEqual(buildOutput.isProduction, undefined, `${job.job} must preserve default artifact classification`);
+      assert.strictEqual(buildOutput.sbomEnabled, undefined, `${job.job} must preserve default SBOM handling`);
+      continue;
+    }
+    if (job.job === 'prepare_windows_extension_dependencies') {
+      assert.strictEqual(job.templateContext?.type, undefined, `${job.job} must be an ordinary output-producing job`);
+      assert.strictEqual(job.templateContext.outputs.length, 1);
+      assert.strictEqual(job.templateContext.outputs[0].artifactName, 'vscode-e2e-prepared-extensions-windows');
       continue;
     }
     assert.strictEqual(job.templateContext?.type, 'validationJob', `${job.job} must be a no-output validationJob`);
@@ -2048,7 +2097,7 @@ function assertConsumerJobRoutingGuardRejectsMutations(consumer, runSuites) {
       getConsumerDirectJob(copy, 'build_current_run_e2e_artifact').templateContext.outputs = [];
     }),
     null,
-    /build_current_run_e2e_artifact must preserve its current-run artifact output/
+    /build_current_run_e2e_artifact must publish the build and Linux dependency artifacts/
   );
   expectRejection(
     'current-run artifact output kind must remain pipelineArtifact',
@@ -2891,8 +2940,9 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
 function testPrivateTraceabilityConfigurationContract() {
   const template = read('.config/templates/vscode-e2e-cli-run-suite.yml');
   const validation = template.indexOf('displayName: Validate required private traceability configuration');
-  const execution = template.indexOf('displayName: Prepare VS Code extension dependencies once');
-  assert.ok(validation > 0 && validation < execution, 'required private input must be validated before GUI startup');
+  const dependencyRestore = template.indexOf('displayName: Verify and restore exact-run extension dependencies');
+  assert.ok(validation > dependencyRestore, 'required private input must be validated before suite GUI startup');
+  assert.doesNotMatch(template, /displayName: Prepare VS Code extension dependencies once/);
   assert.strictEqual(
     (template.match(/E2E_TRACEABILITY_CROSSWALK_JSON: \$\(E2E_TRACEABILITY_CROSSWALK_JSON\)/g) || []).length,
     1,

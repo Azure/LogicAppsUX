@@ -7,6 +7,11 @@ import {
   type WorkbenchPrompt,
   type WorkbenchPromptContainer,
 } from './workbenchPromptSelection';
+import {
+  command as workbenchCommand,
+  waitForRegularWorkbenchOwnership,
+  type RegularWorkbenchOwnershipExpectation,
+} from './workbenchCdpActions';
 
 export interface DetectedWorkbenchPrompt extends WorkbenchPromptContainer {
   title: string;
@@ -59,6 +64,36 @@ export const workbenchPromptDomScript = `(() => {
 
 export function readWorkbenchPrompts(cdp: CdpEvaluator, timeoutMs = 3000): Promise<DetectedWorkbenchPrompt[]> {
   return cdp.evaluate(undefined, workbenchPromptDomScript, { timeoutMs });
+}
+
+export async function revealRetainedWorkbenchNotifications(
+  cdp: CdpEvaluator,
+  expectation: RegularWorkbenchOwnershipExpectation,
+  deadline: number
+): Promise<void> {
+  await waitForRegularWorkbenchOwnership(cdp, expectation, deadline);
+  await workbenchCommand(cdp, 'Notifications: Show Notifications', deadline);
+  while (Date.now() < deadline) {
+    const revealed = await cdp.evaluate<boolean>(
+      undefined,
+      `(() => {
+        const visible = element => {
+          if (!(element instanceof HTMLElement)) return false;
+          const rect = element.getBoundingClientRect(), style = getComputedStyle(element);
+          return rect.width > 0 && rect.height > 0 && style.display !== 'none' && style.visibility !== 'hidden';
+        };
+        return Array.from(document.querySelectorAll(
+          '.notifications-center, .notifications-list-container, [aria-label="Notifications"]'
+        )).some(visible);
+      })()`,
+      { timeoutMs: Math.min(3000, remaining(deadline)) }
+    );
+    if (revealed) {
+      return;
+    }
+    await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining(deadline))));
+  }
+  assert.fail('Notifications: Show Notifications completed without revealing the visible Notification Center');
 }
 
 function isLoadingPrompt(prompt: DetectedWorkbenchPrompt): boolean {

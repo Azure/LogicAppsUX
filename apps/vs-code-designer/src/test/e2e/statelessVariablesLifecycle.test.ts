@@ -147,6 +147,31 @@ suite('Stateless variables lifecycle', () => {
         await establishDesignTime(entry, positiveDeadline, signal, azureFixture);
         operations = await authorVariablesThroughDesigner(entry, positiveDeadline, signal);
         await start(entry, getOwnedDebug(), positiveDeadline, signal, azureFixture, true);
+        const persistedNodeIds = [
+          operations.trigger,
+          operations.initialize,
+          operations.appendArray,
+          operations.appendString,
+          operations.response,
+        ];
+        await helpers.openDesignerAndCreateWorkflow(entry, {
+          warmOnly: true,
+          useAzureConnectors: true,
+          azureFixture,
+          persistedDesigner: {
+            requiredNodeIds: persistedNodeIds,
+            panelNodeId: operations.initialize,
+            evidenceName: 'stateless-variables-runtime-designer-rebound',
+            description: 'Stateless persisted workflow after runtime registration',
+            deadlineMs: positiveDeadline,
+          },
+        });
+        logStatelessStage(
+          'runtime-designer-rebound',
+          'Shared Designer lifecycle rebound the exact active frame and observed all persisted node IDs',
+          positiveDeadline,
+          signal
+        );
         const initialOverview = await openHistory(entry, positiveDeadline, signal);
         try {
           await invoke(entry, operations, positiveDeadline, signal);
@@ -349,7 +374,7 @@ async function authorVariablesThroughDesigner(
       variants: ['initialize variable'],
     });
     logStatelessStage('initialize-added', `Initialize variables inserted as ${initialize.nodeId}`, deadline, signal);
-    await designer.clickNodeById(initialize.nodeId);
+    await designer.ensureNodePanelOpen(initialize);
     logStatelessStage('initialize-panel-open', `Exact Initialize variables panel opened for ${initialize.nodeId}`, deadline, signal);
     await helpers.captureLifecycleScreenshot('stateless-variables-initialize-panel-open', {
       expectation: {
@@ -379,20 +404,20 @@ async function authorVariablesThroughDesigner(
       operationName: 'Append to array variable',
       variants: ['append to array variable'],
     });
-    await configureAppend(designer, appendArray.nodeId, 'Append to array variable', 'v1', '3', deadline, signal);
+    await configureAppend(designer, appendArray, 'v1', '3', deadline, signal);
     const appendString = await designer.addActionAndGetIdentity({
       search: 'Append to string variable',
       operationName: 'Append to string variable',
       variants: ['append to string variable'],
     });
-    await configureAppend(designer, appendString.nodeId, 'Append to string variable', 'v2', 'bar', deadline, signal);
+    await configureAppend(designer, appendString, 'v2', 'bar', deadline, signal);
     const response = await designer.addActionAndGetIdentity({
       search: 'Response',
       operationName: 'Response',
       variants: ['response'],
     });
     logStatelessStage('response-added', `Response inserted as ${response.nodeId}`, deadline, signal);
-    await designer.clickNodeById(response.nodeId);
+    await designer.ensureNodePanelOpen(response);
     logStatelessStage('response-panel-open', `Exact Response panel opened for ${response.nodeId}`, deadline, signal);
     await designer.fillParameter(['Status code'], '200');
     await pressKey(cdp, 'Tab', 'Tab', 9);
@@ -525,15 +550,15 @@ async function variableField(
 
 async function configureAppend(
   designer: ProvenDesignerCdpActions,
-  nodeId: string,
-  title: string,
+  identity: { nodeId: string; title: string },
   name: string,
   value: string,
   deadline: number,
   signal: AbortSignal
 ): Promise<void> {
+  const { nodeId, title } = identity;
   logStatelessStage(`${nodeId}-panel-open-start`, `Opening exact ${title} panel`, deadline, signal);
-  await designer.clickNodeById(nodeId);
+  await designer.ensureNodePanelOpen(identity);
   logStatelessStage(`${nodeId}-panel-open`, `Exact ${title} panel opened`, deadline, signal);
   await designer.clickElement(['[role="combobox"]'], 'Name', { requireTextMatch: false });
   await designer.clickElement(['[role="option"]'], name);

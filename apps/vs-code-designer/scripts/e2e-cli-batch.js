@@ -296,6 +296,45 @@ function createSuiteContext({ batchRoot, suite, index, total, now = Date.now() }
   };
 }
 
+function getBatchExecutionUserDataParent(
+  env,
+  fallback,
+  { platform = process.platform, lstat = fs.lstatSync, maxWindowsParentLength = 96 } = {}
+) {
+  const inherited = env.LA_E2E_CLI_USER_DATA_PARENT;
+  if (!inherited) {
+    return fallback;
+  }
+
+  const candidate =
+    platform === 'linux'
+      ? path.posix.resolve(String(inherited).replaceAll('\\', '/'))
+      : path.win32.resolve(String(inherited).replaceAll('/', '\\'));
+  const stat = lstat(candidate);
+  if (!stat.isDirectory() || stat.isSymbolicLink()) {
+    throw new Error(`Batch short profile parent must be an externally owned directory: ${candidate}`);
+  }
+
+  if (platform === 'linux') {
+    if (path.posix.dirname(candidate) !== '/tmp' || !/^la[a-z0-9_-]*\.[a-z0-9]+$/i.test(path.posix.basename(candidate))) {
+      throw new Error(`Batch Linux family received an unsafe short profile parent: ${candidate}`);
+    }
+  } else if (platform === 'win32') {
+    if (!path.win32.isAbsolute(candidate) || path.win32.parse(candidate).root === candidate) {
+      throw new Error(`Batch Windows family received an unsafe short profile parent: ${candidate}`);
+    }
+    if (candidate.length > maxWindowsParentLength) {
+      throw new Error(
+        `Batch Windows short profile parent is too long for nested VS Code logs (${candidate.length} > ${maxWindowsParentLength}): ${candidate}`
+      );
+    }
+  } else {
+    return fallback;
+  }
+
+  return candidate;
+}
+
 function shouldRemoveEnvKey(key) {
   return SUITE_CONTROL_ENV_PATTERNS.some((pattern) => pattern.test(key));
 }
@@ -539,7 +578,14 @@ async function runBatchSuites({
     const suite = suites[index];
     const context = createSuiteContext({ batchRoot, suite, index, total: suites.length });
     const timeoutMs = Number(process.env.LA_E2E_CLI_SUITE_TIMEOUT_MS) || DEFAULT_SUITE_TIMEOUT_MS;
-    const env = buildSuiteEnvironment(baseEnv, context, await getSuiteScopedCredentialEnv(baseEnv, suite, timeoutMs));
+    const executionUserDataParent = getBatchExecutionUserDataParent(baseEnv, context.userDataParent, { platform });
+    const env = {
+      ...buildSuiteEnvironment(baseEnv, context, await getSuiteScopedCredentialEnv(baseEnv, suite, timeoutMs)),
+      // The pipeline owns this short parent and is responsible for its final
+      // removal. The suite continues to delete only roots represented by its
+      // cleanup ledger; it must never recursively delete the external parent.
+      LA_E2E_CLI_USER_DATA_PARENT: executionUserDataParent,
+    };
     prepareSuiteExtensionsDirectory({ seedDir, targetDir: context.extensionsDir, expectedManifest: preparedExtensionsManifest });
 
     const startedAt = new Date().toISOString();
@@ -815,6 +861,7 @@ module.exports = {
   classifySuiteRunResult,
   createBatchRoot,
   createSuiteContext,
+  getBatchExecutionUserDataParent,
   normalizeSuiteSelection,
   prepareSuiteExtensionsDirectory,
   runBatchSuites,
