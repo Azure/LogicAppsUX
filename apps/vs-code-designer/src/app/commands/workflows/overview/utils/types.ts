@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import type { ICallbackUrlResponse } from '@microsoft/vscode-extension-logic-apps';
+import type { WorkflowKind } from '../../../../../constants';
 
 export interface OverviewWorkflowProperties {
   name: string;
@@ -23,7 +24,7 @@ export interface CallbackInfoUpdate {
 
 export interface CodefulWorkflowData {
   workflowName: string;
-  workflowKind: string;
+  workflowKind: WorkflowKind;
   triggerName?: string;
   triggerType?: string;
   triggerKind?: string;

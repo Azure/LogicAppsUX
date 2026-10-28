@@ -4,11 +4,46 @@
  *--------------------------------------------------------------------------------------------*/
 import { workflowFileName } from '../../../../../constants';
 import { localize } from '../../../../../localize';
+import { detectStatelessCodefulWorkflows } from '../../../../utils/codeful';
 import type { IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IDebugModeContext } from '@microsoft/vscode-extension-logic-apps';
 import { lstat, pathExists, readdir, readFileSync } from 'fs-extra';
 import * as path from 'path';
+
+export async function getStatelessWorkflowNames(projectPath: string): Promise<string[]> {
+  if (!(await pathExists(projectPath))) {
+    return [];
+  }
+
+  const statelessWorkflows = new Set<string>();
+  const subPaths: string[] = await readdir(projectPath);
+  for (const subPath of subPaths) {
+    const fullPath: string = path.join(projectPath, subPath);
+
+    try {
+      const fileStats = await lstat(fullPath);
+      if (fileStats.isDirectory()) {
+        const workflowFilePath = path.join(fullPath, workflowFileName);
+        if (await pathExists(workflowFilePath)) {
+          const workflowContent = JSON.parse(readFileSync(workflowFilePath, 'utf8'));
+          if (workflowContent?.kind?.toLowerCase() === 'stateless') {
+            statelessWorkflows.add(subPath);
+          }
+        }
+      } else if (fileStats.isFile() && path.extname(subPath).toLowerCase() === '.cs') {
+        const workflowNames = detectStatelessCodefulWorkflows(readFileSync(fullPath, 'utf8'));
+        for (const workflowName of workflowNames) {
+          statelessWorkflows.add(workflowName);
+        }
+      }
+    } catch {
+      // If a workflow file cannot be read or parsed, skip it and continue discovering the project.
+    }
+  }
+
+  return [...statelessWorkflows];
+}
 
 export class StatelessWorkflowsListStep extends AzureWizardPromptStep<IDebugModeContext> {
   public shouldPrompt(): boolean {
@@ -32,33 +67,7 @@ export class StatelessWorkflowsListStep extends AzureWizardPromptStep<IDebugMode
   }
 
   private async getStatelessWorkflows(projectPath: string): Promise<IAzureQuickPickItem<string>[]> {
-    if (!(await pathExists(projectPath))) {
-      return [];
-    }
-
-    const statelessWorkflows: string[] = [];
-    const subPaths: string[] = await readdir(projectPath);
-    for (const subPath of subPaths) {
-      const fullPath: string = path.join(projectPath, subPath);
-      const fileStats = await lstat(fullPath);
-
-      if (fileStats.isDirectory()) {
-        try {
-          const workflowFilePath = path.join(fullPath, workflowFileName);
-
-          if (await pathExists(workflowFilePath)) {
-            const workflowContent = JSON.parse(readFileSync(workflowFilePath, 'utf8'));
-
-            if (workflowContent?.kind?.toLowerCase() === 'stateless') {
-              statelessWorkflows.push(subPath);
-            }
-          }
-        } catch {
-          // NOTE(psamband): If unable to read the workflow.json we skip the workflow
-        }
-      }
-    }
-
+    const statelessWorkflows = await getStatelessWorkflowNames(projectPath);
     return statelessWorkflows.map((workflow) => ({
       label: workflow,
       data: workflow,

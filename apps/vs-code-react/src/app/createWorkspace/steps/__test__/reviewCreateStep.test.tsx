@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { createWorkspaceSlice, type CreateWorkspaceState } from '../../../../state/createWorkspaceSlice';
-import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectType, WorkflowType } from '@microsoft/vscode-extension-logic-apps';
 
 vi.mock('../../createWorkspaceStyles', () => ({
   useCreateWorkspaceStyles: () =>
@@ -110,6 +110,19 @@ describe('ReviewCreateStep', () => {
       expect(screen.getByText('Logic app (codeful)')).toBeInTheDocument();
       expect(screen.getByText('agentic-workflow')).toBeInTheDocument();
       expect(screen.getByText('Autonomous agents (Preview)')).toBeInTheDocument();
+    });
+
+    it('should display stateless codeful workflow details', () => {
+      renderWithStore({
+        flowType: 'createWorkspace',
+        logicAppType: ProjectType.codeful,
+        workflowName: 'stateless-workflow',
+        workflowType: WorkflowType.statelessCodeful,
+      });
+
+      expect(screen.getByText('Logic app (codeful)')).toBeInTheDocument();
+      expect(screen.getByText('stateless-workflow')).toBeInTheDocument();
+      expect(screen.getByText('Stateless')).toBeInTheDocument();
     });
 
     it('should render workspace file and folder paths', () => {

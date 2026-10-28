@@ -17,6 +17,7 @@ import {
   getCodefulWorkflowDataList,
   getCodefulWorkflowHasHttpTrigger,
   getRuntimeCodefulWorkflows,
+  normalizeWorkflowKind,
 } from '../utils/codefulHelpers';
 import { getWorkflowPropertiesListSignature } from '../utils/overviewHelpers';
 import LocalOverviewPanel from './localOverviewPanel';
@@ -57,9 +58,7 @@ export default class LocalCodefulOverviewPanel extends LocalOverviewPanel {
       );
     }
 
-    this.localSettings = this.projectPath
-      ? (await getLocalSettingsJson(this.context, this.projectPath)).Values || {}
-      : {};
+    this.localSettings = this.projectPath ? (await getLocalSettingsJson(this.context, this.projectPath)).Values || {} : {};
 
     const fileContent = readFileSync(this.workflowFilePath, 'utf8');
     this.codefulWorkflowFileContent = fileContent;
@@ -96,7 +95,7 @@ export default class LocalCodefulOverviewPanel extends LocalOverviewPanel {
     this.workflowContent = getCodefulWorkflowContent(
       {
         workflowName: this.workflowProps.name,
-        workflowKind: this.workflowProps.kind ?? 'Stateful',
+        workflowKind: normalizeWorkflowKind(this.workflowProps.kind),
         triggerName: this.workflowProps.triggerName,
       },
       this.workflowProps.triggerName,
@@ -180,7 +179,7 @@ export default class LocalCodefulOverviewPanel extends LocalOverviewPanel {
         this.workflowContent = getCodefulWorkflowContent(
           {
             workflowName: this.workflowProps.name,
-            workflowKind: this.workflowProps.kind ?? 'Stateful',
+            workflowKind: normalizeWorkflowKind(this.workflowProps.kind),
             triggerName: this.workflowProps.triggerName,
           },
           this.workflowProps.triggerName,
