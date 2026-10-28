@@ -608,7 +608,7 @@ const DesignerEditor = ({ managementHost }: { managementHost?: AzureStandardMana
       const parametersToUpdate = replaceStaleDraftArtifacts
         ? {
             ...Object.fromEntries(
-              Object.entries(draftParameters ?? {}).filter(([name]) => !Object.prototype.hasOwnProperty.call(originalParametersData, name))
+              Object.entries(draftParameters ?? {}).filter(([name]) => !Object.prototype.hasOwnProperty.call(prodParameters, name))
             ),
             ...((parameters ?? currentParameters) as ParametersData),
           }
@@ -651,6 +651,7 @@ const DesignerEditor = ({ managementHost }: { managementHost?: AzureStandardMana
       originalCustomCodeData,
       originalNotesData,
       originalParametersData,
+      prodParameters,
       originalSettings,
       settingsData?.properties,
       siteResourceId,
@@ -763,19 +764,18 @@ const DesignerEditor = ({ managementHost }: { managementHost?: AzureStandardMana
   }, []);
 
   useEffect(() => {
-    if (isMonitoringView && runInstanceData) {
+    if (isMonitoringView && prodWorkflow) {
       setWorkflow((previousWorkflow?: WorkflowJson) => {
-        if (!previousWorkflow) {
-          // Do not update the workflow if previousWorkflow is undefined; return previous value unchanged
-          return previousWorkflow;
+        if (!runInstanceData) {
+          return previousWorkflow ?? prodWorkflow;
         }
         return {
-          ...previousWorkflow,
+          ...(previousWorkflow ?? prodWorkflow),
           definition: (runInstanceData.properties.workflow as any).properties.definition,
         };
       });
     }
-  }, [isMonitoringView, runInstanceData]);
+  }, [isMonitoringView, runInstanceData, prodWorkflow]);
 
   useEffect(() => {
     if (isMonitoringView || customCodeLoading || artifactsLoading || !prodWorkflow) {

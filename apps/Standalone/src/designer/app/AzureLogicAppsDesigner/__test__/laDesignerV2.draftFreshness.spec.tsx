@@ -8,6 +8,7 @@ import { Provider } from 'react-redux';
 import { Component } from 'react';
 import type { ComponentProps, PropsWithChildren, ReactNode } from 'react';
 import type { Workflow as DesignerWorkflow } from '@microsoft/logic-apps-designer-v2';
+import type { CoPilotChatbot } from '@microsoft/logic-apps-chatbot';
 import type { VFSObject } from '@microsoft/logic-apps-shared';
 import type { FloatingRunButtonProps } from '../../../../../../../libs/designer-v2/src/lib/ui/FloatingRunButton';
 import type { DesignerCommandBar } from '../DesignerCommandBarV2';
@@ -68,6 +69,7 @@ const mocks = vi.hoisted(() => ({
   options: undefined as DesignerOptions | undefined,
   commandBar: undefined as CommandBarProps | undefined,
   workflow: undefined as DesignerWorkflow | undefined,
+  copilot: undefined as Pick<ComponentProps<typeof CoPilotChatbot>, 'onWorkflowProposed'> | undefined,
   snapshots: [] as DesignerSnapshot[],
   settings: { properties: {} as Record<string, string> },
   workflowApp: { location: 'West US', properties: {}, identity: { principalId: 'app-identity' } },
@@ -151,6 +153,9 @@ vi.mock('@microsoft/logic-apps-designer-v2', async () => {
     getReactQueryClient: () => mocks.queryClient,
     getSKUDefaultHostOptions: () => ({}),
     Constants: { SKU: { STANDARD: 'standard' } },
+    store: { dispatch: vi.fn() },
+    setIsWorkflowDirty: vi.fn(),
+    clearCopilotModifiedNodeIds: vi.fn(),
     useRun: (runId?: string) => ({
       // Real query data is referentially stable between unchanged renders.
       data: useMemo(
@@ -174,7 +179,12 @@ vi.mock('../DesignerCommandBarV2', () => ({
     );
   },
 }));
-vi.mock('@microsoft/logic-apps-chatbot', () => ({ CoPilotChatbot: () => null }));
+vi.mock('@microsoft/logic-apps-chatbot', () => ({
+  CoPilotChatbot: (props: Pick<ComponentProps<typeof CoPilotChatbot>, 'onWorkflowProposed'>) => {
+    mocks.copilot = props;
+    return null;
+  },
+}));
 vi.mock('@microsoft/logic-apps-designer', () => ({}));
 vi.mock('../CodeViewV2', () => ({ default: () => null }));
 vi.mock('../../../../../../../libs/designer-v2/src/lib/ui/FloatingRunButton', () => ({
@@ -383,8 +393,11 @@ const createHostStore = () =>
     // The component's exposed service callbacks intentionally mutate its local connections, not Redux state.
   });
 
-const mountDesigner = () => {
+const mountDesigner = (initialMonitoring = false, initialRunId?: string) => {
   const store = createHostStore();
+  store.dispatch(setMonitoringView(initialMonitoring));
+  store.dispatch(setReadOnly(initialMonitoring));
+  store.dispatch(changeRunId(initialRunId));
   const rendered = render(
     <Provider store={store}>
       <QueryClientProvider client={mocks.queryClient!}>
@@ -440,6 +453,7 @@ describe('Standard designer draft artifact freshness', () => {
     mocks.options = undefined;
     mocks.commandBar = undefined;
     mocks.workflow = undefined;
+    mocks.copilot = undefined;
     mocks.runButton = undefined;
     mocks.snapshots = [];
     mocks.settings = { properties: {} };
@@ -675,11 +689,59 @@ describe('Standard designer draft artifact freshness', () => {
         true
       );
     });
+
     expect(mocks.save.mock.calls[0][3]).toEqual({
       otherWorkflow: draft.parameters.otherWorkflow,
       renamed: production.parameters.source,
     });
   });
+
+  it('does not resurrect production parameters renamed by a Copilot proposal before saving', async () => {
+    draft.parameters.otherWorkflow = { type: 'String', value: 'keep-this' };
+    mountDesigner();
+    await waitFor(() => expectSelectedArtifacts(production));
+    act(() => {
+      mocks.copilot?.onWorkflowProposed?.({ ...selectedWorkflow(), parameters: { renamed: production.parameters.source } });
+    });
+    await waitFor(() => expect(selectedWorkflow().parameters).toEqual({ renamed: production.parameters.source }));
+    await act(async () => {
+      await commandBar().saveWorkflow(selectedWorkflow(), undefined, vi.fn(), true);
+    });
+    expect(mocks.save.mock.calls[0][3]).toEqual({
+      otherWorkflow: draft.parameters.otherWorkflow,
+      renamed: production.parameters.source,
+    });
+  });
+
+  it.each([undefined, 'historical-run'])(
+    'initializes direct monitoring without replacing the selected run during artifact refresh (run: %s)',
+    async (initialRunId) => {
+      const { store } = mountDesigner(true, initialRunId);
+      await waitFor(() => {
+        expect(selectedWorkflow().definition).toEqual(initialRunId ? mocks.runDefinition : production.workflow.definition);
+        expect(screen.getByTestId('command-bar').getAttribute('data-readonly')).toBe('true');
+      });
+      if (!initialRunId) {
+        act(() => {
+          store.dispatch(changeRunId('historical-run'));
+        });
+        await waitFor(() => expect(selectedWorkflow().definition).toEqual(mocks.runDefinition));
+      }
+      const freshProduction = artifactSet('fresh-production');
+      mocks.loadArtifacts.mockResolvedValue(artifacts(freshProduction, draft));
+      mocks.loadCustomCode.mockResolvedValue(customCode(freshProduction, draft, newestTime));
+      const snapshotStart = mocks.snapshots.length;
+      await act(async () => {
+        await mocks.queryClient?.refetchQueries();
+      });
+      expect(selectedWorkflow().definition).toEqual(mocks.runDefinition);
+      for (const snapshot of mocks.snapshots.slice(snapshotStart)) {
+        expect(snapshot.workflow.definition).toEqual(mocks.runDefinition);
+      }
+      expect(mocks.deploy).not.toHaveBeenCalled();
+      expect(mocks.save).not.toHaveBeenCalled();
+    }
+  );
 
   it('reconciles immediate knowledge-hub persistence with raw production and unrelated shared draft connections', async () => {
     const otherWorkflow = artifactSet('other-workflow');

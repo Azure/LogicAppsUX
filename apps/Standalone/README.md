@@ -34,7 +34,9 @@ not replace existing shared draft files, including intentionally empty files.
 Initialization remains single-flight through both artifact refetches. Discard
 also clears unsaved local connection edits, and shared parameter reconciliation
 does not undo intentional deletions. Both hosts save superseded server-side
-drafts before running, even if the designer has no local edits.
+drafts before running, even if the designer has no local edits; a failed save
+aborts the run. Opening directly in monitoring initializes the selected run's
+historical definition without letting artifact refreshes replace it.
 Returning from monitoring reloads production and draft
 artifacts before restoring the editable workflow.
 

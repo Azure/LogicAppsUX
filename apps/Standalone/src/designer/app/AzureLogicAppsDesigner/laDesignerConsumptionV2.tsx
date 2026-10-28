@@ -293,7 +293,7 @@ const DesignerEditorConsumption = () => {
       }
       workflowToSave.connections = newConnectionsObj;
 
-      await saveWorkflowConsumption(workflowAndArtifactsData, workflowToSave, clearDirtyState, undefined, isDraftSave);
+      await saveWorkflowConsumption(workflowAndArtifactsData, workflowToSave, clearDirtyState, { throwError: isDraftSave }, isDraftSave);
 
       return workflowToSave;
     } catch (e: any) {

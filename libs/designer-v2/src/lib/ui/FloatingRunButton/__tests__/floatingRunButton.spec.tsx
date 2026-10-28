@@ -12,6 +12,8 @@ import { configureStore, type EnhancedStore } from '@reduxjs/toolkit';
 import { FloatingRunButton, getPublishedRunUrl } from '../index';
 import * as LogicAppsShared from '@microsoft/logic-apps-shared';
 import * as DesignerViewSelectors from '../../../core/state/designerView/designerViewSelectors';
+import * as DesignerCore from '../../../core';
+import { serializeBJSWorkflow } from '../../..';
 
 // Mock dependencies
 vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => {
@@ -96,6 +98,11 @@ describe('FloatingRunButton', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(DesignerCore.getTriggerNodeId).mockReturnValue('manual');
+    vi.mocked(DesignerCore.getCustomCodeFilesWithData).mockReturnValue({});
+    vi.mocked(DesignerCore.useIsDesignerDirty).mockReturnValue(false);
+    (DesignerCore.store.getState as Mock).mockReturnValue({ operations: { inputParameters: {} }, customCode: {} });
+    (serializeBJSWorkflow as Mock).mockResolvedValue({ definition: { triggers: { manual: {} } } });
 
     mockSaveDraftWorkflow.mockResolvedValue({
       definition: {
@@ -185,7 +192,9 @@ describe('FloatingRunButton', () => {
       );
       renderWithProviders({ ...defaultProps, isDraftMode: true, isConsumption, forceSave: true });
 
-      fireEvent.click(screen.getByText('Run draft'));
+      const runButton = screen.getByText('Run draft').closest('button');
+      expect(runButton).toBeEnabled();
+      fireEvent.click(runButton!);
       await waitFor(() => expect(mockSaveDraftWorkflow).toHaveBeenCalledOnce());
       expect(mockSaveDraftWorkflow.mock.calls[0][3]).toBe(true);
       expect(mockRunTrigger).not.toHaveBeenCalled();
@@ -195,6 +204,18 @@ describe('FloatingRunButton', () => {
       expect(mockRunTrigger.mock.calls[0][0].value).toContain(
         isConsumption ? '/drafts/default/run' : '/workflows/testWorkflow/triggers/manual/runDraft'
       );
+    });
+
+    it.each([false, true])('aborts a forced draft run when the host reports no saved workflow (Consumption: %s)', async (isConsumption) => {
+      mockSaveDraftWorkflow.mockResolvedValueOnce(undefined);
+      renderWithProviders({ ...defaultProps, isDraftMode: true, isConsumption, forceSave: true });
+      const runButton = screen.getByText('Run draft').closest('button');
+      expect(runButton).toBeEnabled();
+      fireEvent.click(runButton!);
+      await waitFor(() => expect(mockSaveDraftWorkflow).toHaveBeenCalledOnce());
+      await waitFor(() => expect(runButton).toBeEnabled());
+      expect(mockRunTrigger).not.toHaveBeenCalled();
+      expect(mockOnRun).not.toHaveBeenCalled();
     });
 
     it('should render in draft mode', () => {
