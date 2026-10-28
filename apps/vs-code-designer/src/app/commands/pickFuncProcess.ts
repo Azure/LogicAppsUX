@@ -29,7 +29,6 @@ import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microso
 import { Platform, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import unixPsTree from 'ps-tree';
 import * as vscode from 'vscode';
-import parser from 'yargs-parser';
 import { tryBuildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProject';
 import { publishCodefulProject } from './publishCodefulProject';
 
@@ -154,7 +153,9 @@ export async function pickFuncProcessInternal(
     throw new Error(localize('noFuncTask', 'Failed to find "{0}" task.', preLaunchTaskName || hostStartTaskName));
   }
 
-  ext.workflowRuntimePort = getFunctionRuntimePort(funcTask);
+  // Resolve the runtime port once from tasks/local.settings so status polling and overview callback URLs stay in sync.
+  const resolvedFuncPort = resolveValidPortOrDefault(await getFuncPortFromTaskOrProject(context, funcTask, workspaceFolder));
+  ext.workflowRuntimePort = resolvedFuncPort;
 
   getPickProcessTimeout(context);
 
@@ -163,7 +164,7 @@ export async function pickFuncProcessInternal(
     await startDebugTask(debugTask, workspaceFolder);
   }
 
-  const taskInfo = await startFuncTask(context, workspaceFolder, funcTask);
+  const taskInfo = await startFuncTask(context, workspaceFolder, funcTask, String(resolvedFuncPort));
   const preferHostChildProcess = process.platform === Platform.windows && !debugConfig.customCodeRuntime;
   ext.outputChannel.appendLog(
     localize(
@@ -178,23 +179,6 @@ export async function pickFuncProcessInternal(
     )
   );
   return await pickWorkflowDebugProcess(taskInfo, preferHostChildProcess);
-}
-
-/**
- * Gets functions runtime port.
- * @param {vscode.Task} funcTask - Function task.
- * @returns {number} Returns specified port in tasks.json or the default function port.
- */
-function getFunctionRuntimePort(funcTask: vscode.Task): number {
-  const { command } = funcTask.definition;
-  try {
-    const args = parser(command);
-    const port = args['port'] || args['p'] || undefined;
-    return port ?? Number(defaultFuncPort);
-  } catch {
-    // Returning the default port in case of error in parsing.
-    return Number(defaultFuncPort);
-  }
 }
 
 /**
@@ -252,7 +236,8 @@ async function startDebugTask(debugTask: vscode.Task, workspaceFolder: vscode.Wo
 async function startFuncTask(
   context: IActionContext,
   workspaceFolder: vscode.WorkspaceFolder,
-  funcTask: vscode.Task
+  funcTask: vscode.Task,
+  funcPort: string
 ): Promise<IRunningFuncTask> {
   const funcTaskReadyEmitter = new vscode.EventEmitter<vscode.WorkspaceFolder>();
   const pickProcessTimeout = getPickProcessTimeout(context);
@@ -280,7 +265,6 @@ async function startFuncTask(
     await executeIfNotActive(funcTask);
 
     const intervalMs = 500;
-    const funcPort: string = await getFuncPortFromTaskOrProject(context, funcTask, workspaceFolder);
     let statusRequestTimeout: number = intervalMs;
     const taskStartMaxTime: number = Date.now() + Math.max(pickProcessTimeout, funcTaskStartupTimeoutSeconds) * 1000;
     let taskInfo: IRunningFuncTask | undefined = getRunningFuncTaskForWorkspace(workspaceFolder);
@@ -365,30 +349,44 @@ async function getWorkflowDebugProcessCandidates(taskInfo: IRunningFuncTask): Pr
   return [firstChildProcessId, hostChildProcessId];
 }
 
+/**
+ * Determines whether `hostChildProcessId` is just an outer launcher `func.exe` with another,
+ * deeper func/dotnet workflow process nested below it. This only matters on Windows, where custom
+ * code projects can spawn such a nested launcher; in that case the workflow debugger should attach
+ * to the nested host instead of the outer launcher.
+ */
+async function shouldPreferNestedHost(firstChildProcessId: string | undefined, hostChildProcessId: string | undefined): Promise<boolean> {
+  if (process.platform !== Platform.windows || !firstChildProcessId || !hostChildProcessId) {
+    return false;
+  }
+  if (hostChildProcessId === firstChildProcessId) {
+    return false;
+  }
+  return Boolean(await getMatchingWorkflowChildProcess(Number(hostChildProcessId)));
+}
+
 export async function pickWorkflowDebugProcess(taskInfo: IRunningFuncTask, preferHostChildProcess = false): Promise<string> {
   const [firstChildProcessId, hostChildProcessId] = await getWorkflowDebugProcessCandidates(taskInfo);
   taskInfo.childProcessId = [firstChildProcessId, hostChildProcessId];
-  const selectedProcessId =
-    process.platform === Platform.windows && preferHostChildProcess
-      ? (hostChildProcessId ?? firstChildProcessId ?? String(taskInfo.processId))
-      : (firstChildProcessId ?? hostChildProcessId ?? String(taskInfo.processId));
+  const preferNestedWorkflowHost = preferHostChildProcess ? false : await shouldPreferNestedHost(firstChildProcessId, hostChildProcessId);
+  const shouldPreferHostChild = process.platform === Platform.windows && (preferHostChildProcess || preferNestedWorkflowHost);
+  const selectedProcessId = shouldPreferHostChild
+    ? (hostChildProcessId ?? firstChildProcessId ?? String(taskInfo.processId))
+    : (firstChildProcessId ?? hostChildProcessId ?? String(taskInfo.processId));
 
   ext.outputChannel.appendLog(
     localize(
       'workflowDebugProcessSelection',
-      'Workflow debug process selection: rootPid={0}, firstChildPid={1}, hostChildPid={2}, preferHostChildProcess={3}, selectedPid={4}, platform={5}.',
+      'Workflow debug process selection: rootPid={0}, firstChildPid={1}, hostChildPid={2}, preferHostChildProcess={3}, preferNestedWorkflowHost={4}, selectedPid={5}, platform={6}.',
       String(taskInfo.processId),
       firstChildProcessId ?? 'undefined',
       hostChildProcessId ?? 'undefined',
       String(preferHostChildProcess),
+      String(preferNestedWorkflowHost),
       selectedProcessId,
       process.platform
     )
   );
-
-  if (process.platform === Platform.windows && preferHostChildProcess) {
-    return selectedProcessId;
-  }
 
   return selectedProcessId;
 }
@@ -400,6 +398,17 @@ export async function findChildProcess(processId: number): Promise<string | unde
   return child ? child.pid.toString() : String(processId);
 }
 
+const MAX_PORT_NUMBER = 65535;
+
+function resolveValidPortOrDefault(port: string): number {
+  const parsedPort = Number(port);
+  const isNonEmpty = Boolean(port);
+  const isValidPort = isNonEmpty && Number.isInteger(parsedPort) && parsedPort > 0 && parsedPort <= MAX_PORT_NUMBER;
+  return isValidPort ? parsedPort : Number(defaultFuncPort);
+}
+
+// Used both to select the immediate workflow child for attach and to detect whether a candidate
+// func.exe is just an outer launcher with another workflow process nested below it.
 async function getMatchingWorkflowChildProcess(processId: number): Promise<OSAgnosticProcess | undefined> {
   const children: OSAgnosticProcess[] =
     process.platform === Platform.windows ? await getWindowsChildren(processId) : await getUnixChildren(processId);

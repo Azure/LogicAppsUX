@@ -287,6 +287,58 @@ describe('pickFuncProcessInternal', () => {
     );
   });
 
+  it('tracks the workflow runtime port from local settings when the func task command omits --port', async () => {
+    (vscode.tasks.fetchTasks as any).mockResolvedValue([
+      {
+        ...funcTask,
+        definition: { command: 'func host start' },
+      },
+    ]);
+    (getFuncPortFromTaskOrProject as any).mockResolvedValue('9090');
+
+    const result = await pickFuncProcessModule.pickFuncProcessInternal(
+      context,
+      { type: 'logicapp', isCodeless: false, preLaunchTask: 'func: host start' },
+      workspaceFolder,
+      projectPath
+    );
+
+    expect(result).toBe('1234');
+    expect((ext as any).workflowRuntimePort).toBe(9090);
+    expect(sendRequestWithTimeout).toHaveBeenCalledWith(
+      context,
+      expect.objectContaining({ url: 'http://localhost:9090/admin/host/status' }),
+      500,
+      undefined
+    );
+  });
+
+  it('falls back to the default workflow runtime port when the resolved port is invalid', async () => {
+    (vscode.tasks.fetchTasks as any).mockResolvedValue([
+      {
+        ...funcTask,
+        definition: { command: 'func host start' },
+      },
+    ]);
+    (getFuncPortFromTaskOrProject as any).mockResolvedValue('not-a-port');
+
+    const result = await pickFuncProcessModule.pickFuncProcessInternal(
+      context,
+      { type: 'logicapp', isCodeless: false, preLaunchTask: 'func: host start' },
+      workspaceFolder,
+      projectPath
+    );
+
+    expect(result).toBe('1234');
+    expect((ext as any).workflowRuntimePort).toBe(7071);
+    expect(sendRequestWithTimeout).toHaveBeenCalledWith(
+      context,
+      expect.objectContaining({ url: 'http://localhost:7071/admin/host/status' }),
+      500,
+      undefined
+    );
+  });
+
   it('waits for the func host task process to start before applying the host status timeout', async () => {
     (executeIfNotActive as any).mockResolvedValue(undefined);
     let delayCount = 0;
@@ -743,6 +795,37 @@ describe('custom code dual-attach', () => {
     // They must be different PIDs — attaching both to the same process means
     // one debugger is missing
     expect(workflowPid).not.toBe(customCodePid);
+  });
+
+  it('workflow picker should prefer the nested func host over the outer launcher for custom code trees', async () => {
+    const innerFuncPid = 333;
+    const nestedDotnetPid = 444;
+    vi.spyOn(findChildProcessModule, 'getChildProcesses').mockImplementation(async (pid: number) => {
+      if (pid === rootPid) {
+        return [{ processId: funcPid, name: 'func.exe', parentProcessId: rootPid }];
+      }
+      if (pid === funcPid) {
+        return [{ processId: innerFuncPid, name: 'func.exe', parentProcessId: funcPid }];
+      }
+      if (pid === innerFuncPid) {
+        return [{ processId: nestedDotnetPid, name: 'dotnet.exe', parentProcessId: innerFuncPid }];
+      }
+      return [];
+    });
+
+    const taskInfo: IRunningFuncTask = {
+      startTime: Date.now(),
+      processId: rootPid,
+    };
+
+    const workflowPid = await pickFuncProcessModule.pickWorkflowDebugProcess(taskInfo, false);
+    const { pickCustomCodeWorkerChildProcess } = await import('../pickCustomCodeWorkerProcess');
+    const customCodePid = await pickCustomCodeWorkerChildProcess(taskInfo, false /* isNetFxWorker */, true /* isCodeless */);
+
+    expect(workflowPid).toBe(String(innerFuncPid));
+    expect(customCodePid).toBe(String(nestedDotnetPid));
+    expect(workflowPid).not.toBe(customCodePid);
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(expect.stringContaining('preferNestedWorkflowHost=true'));
   });
 });
 
