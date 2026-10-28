@@ -3,12 +3,16 @@ import * as azureStorage from 'azure-storage';
 import { autoStartAzuriteSetting, localEmulatorConnectionString } from '../../../constants';
 import { validateFuncCoreToolsInstalled } from '../../commands/funcCoreTools/validateFuncCoreToolsInstalled';
 import { getAzureWebJobsStorage } from '../../utils/appSettings/localSettings';
+import { createAzuriteDevelopmentConnectionString } from '../../utils/azurite/azuriteConnectionString';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { preDebugValidate, validateEmulatorIsRunning, azuriteProbeTimeoutMs } from '../validatePreDebug';
 
 vi.mock('azure-storage', () => ({
   createBlobService: vi.fn(() => ({
     doesContainerExist: (_container: string, callback: (err?: Error) => void) => callback(new Error('connection refused')),
+  })),
+  createQueueService: vi.fn(() => ({
+    doesQueueExist: (_queue: string, callback: (err?: Error) => void) => callback(new Error('connection refused')),
   })),
 }));
 
@@ -69,6 +73,9 @@ describe('validatePreDebug', () => {
           /* never invokes the callback */
         },
       } as any);
+      vi.mocked(azureStorage.createQueueService).mockReturnValueOnce({
+        doesQueueExist: (_queue: string, callback: (err?: Error) => void) => callback(),
+      } as any);
 
       const pending = validateEmulatorIsRunning(context, projectPath, { promptWarningMessage: false });
       await vi.advanceTimersByTimeAsync(azuriteProbeTimeoutMs + 1);
@@ -127,6 +134,51 @@ describe('validatePreDebug', () => {
     await validateEmulatorIsRunning(context, projectPath, false);
 
     expect(azureStorage.createBlobService).toHaveBeenCalledWith(localEmulatorConnectionString);
+    expect(azureStorage.createQueueService).toHaveBeenCalledWith(localEmulatorConnectionString);
+  });
+
+  it('probes blob and queue services for an explicit Azurite connection string with a custom queue port', async () => {
+    const explicitConnectionString = createAzuriteDevelopmentConnectionString({
+      blobHost: '127.0.0.1',
+      blobPort: 10000,
+      queueHost: '127.0.0.1',
+      queuePort: 10003,
+      tableHost: '127.0.0.1',
+      tablePort: 10002,
+      useHttps: false,
+    });
+    vi.mocked(azureStorage.createBlobService).mockReturnValueOnce({
+      doesContainerExist: (_container: string, callback: (err?: Error) => void) => callback(),
+    } as any);
+    vi.mocked(azureStorage.createQueueService).mockReturnValueOnce({
+      doesQueueExist: (_queue: string, callback: (err?: Error) => void) => callback(),
+    } as any);
+
+    await expect(
+      validateEmulatorIsRunning(context, projectPath, {
+        promptWarningMessage: false,
+        azureWebJobsStorage: explicitConnectionString,
+      })
+    ).resolves.toBe(true);
+
+    expect(azureStorage.createBlobService).toHaveBeenCalledWith(explicitConnectionString);
+    expect(azureStorage.createQueueService).toHaveBeenCalledWith(explicitConnectionString);
+  });
+
+  it('reports the emulator as unavailable when blob is ready but queue is not', async () => {
+    vi.mocked(azureStorage.createBlobService).mockReturnValueOnce({
+      doesContainerExist: (_container: string, callback: (err?: Error) => void) => callback(),
+    } as any);
+    vi.mocked(azureStorage.createQueueService).mockReturnValueOnce({
+      doesQueueExist: (_queue: string, callback: (err?: Error) => void) => callback(new Error('queue returned 404')),
+    } as any);
+
+    await expect(
+      validateEmulatorIsRunning(context, projectPath, {
+        promptWarningMessage: false,
+        azureWebJobsStorage: localEmulatorConnectionString,
+      })
+    ).resolves.toBe(false);
   });
 
   it('uses a provided AzureWebJobsStorage value without rereading settings and still probes each call', async () => {
@@ -141,5 +193,6 @@ describe('validatePreDebug', () => {
 
     expect(getAzureWebJobsStorage).not.toHaveBeenCalled();
     expect(azureStorage.createBlobService).toHaveBeenCalledTimes(2);
+    expect(azureStorage.createQueueService).toHaveBeenCalledTimes(2);
   });
 });
