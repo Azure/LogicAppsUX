@@ -136,6 +136,14 @@ export const getTimezoneValues = (intl: IntlShape) => {
       value: 'Central Standard Time (Mexico)',
     },
     {
+      displayName: intl.formatMessage({
+        defaultMessage: '(UTC-06:00) Mountain Time (Alberta)',
+        id: 'cMaICn',
+        description: 'Time zone value ',
+      }),
+      value: 'Alberta Standard Time',
+    },
+    {
       displayName: intl.formatMessage({ defaultMessage: '(UTC-06:00) Saskatchewan', id: '/RS9F7', description: 'Time zone value ' }),
       value: 'Canada Central Standard Time',
     },

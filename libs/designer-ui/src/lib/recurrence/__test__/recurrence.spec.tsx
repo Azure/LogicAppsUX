@@ -57,6 +57,23 @@ describe('lib/recurrence', () => {
     expect(textInput.props.onChange).toBeDefined();
   });
 
+  it.each(['Alberta Standard Time', 'Mountain Standard Time'])('should select and reopen the %s time zone', (timeZone) => {
+    const initialValue = [{ id: '1', type: 'literal', value: '{"frequency":"Day","interval":1}' }];
+
+    renderer.render(<ScheduleEditor initialValue={initialValue} onChange={mockOnChange} />);
+    const timezoneDropdown = renderer.getRenderOutput().props.children[1];
+    expect(timezoneDropdown.props.options).toContainEqual(expect.objectContaining({ key: timeZone }));
+
+    timezoneDropdown.props.onChange(timeZone);
+    const savedValue = mockOnChange.mock.calls[0][0].value;
+    expect(JSON.parse(savedValue[0].value)).toEqual({ frequency: 'Day', interval: 1, timeZone });
+
+    renderer.unmount();
+    renderer = ReactShallowRenderer.createRenderer();
+    renderer.render(<ScheduleEditor initialValue={savedValue} onChange={mockOnChange} />);
+    expect(renderer.getRenderOutput().props.children[1].props.selectedKey).toBe(timeZone);
+  });
+
   it('should render with preview when showPreview is true', () => {
     const initialValue = [{ id: '1', type: 'literal', value: '{"frequency": "Day", "interval": 1}' }];
 
