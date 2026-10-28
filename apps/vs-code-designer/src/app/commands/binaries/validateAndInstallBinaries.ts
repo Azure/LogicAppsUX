@@ -20,6 +20,11 @@ import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microso
 import type { IRuntimeDependencyVersions } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
 
+// ERROR_INVALID_CONFIGURATION from VS Code's internal ConfigurationEditingErrorCode enum.
+// Verify this version-dependent value on VS Code upgrades; telemetry distinguishes recognized
+// from unrecognized errors so compatibility regressions can be identified.
+const invalidConfigurationErrorCode = 11;
+
 export async function validateAndInstallBinaries(context: IActionContext) {
   const helpLink = 'https://aka.ms/lastandard/onboarding/troubleshoot';
   const requireStrictDependencyValidation = shouldRequireStrictDependencyValidation();
@@ -39,7 +44,48 @@ export async function validateAndInstallBinaries(context: IActionContext) {
       context.telemetry.properties.lastStep = 'getGlobalSetting';
       progress.report({ increment: 10, message: 'Get Settings' });
 
-      const dependencyPath = await ensureRuntimeDependenciesDir();
+      let dependencyPath: string;
+      try {
+        dependencyPath = await ensureRuntimeDependenciesDir();
+      } catch (error) {
+        const recordUnrecognizedSettingsError = (errorMessage: string) => {
+          context.telemetry.properties.result = 'Failed';
+          context.telemetry.properties.errorMessage = errorMessage;
+          context.telemetry.properties.dependencySettingsInitializationError = 'unrecognized';
+        };
+
+        if (!(error instanceof Error)) {
+          // Rethrow non-Error values through the normal validation failure path.
+          recordUnrecognizedSettingsError(String(error));
+          throw error;
+        }
+
+        const errorMessage = error.message;
+        const errorCode = (error as Error & { code?: unknown }).code;
+        // Errors that identify User Settings receive a recovery action.
+        if (errorCode !== invalidConfigurationErrorCode) {
+          // Rethrow Errors that do not identify User Settings.
+          recordUnrecognizedSettingsError(errorMessage);
+          throw error;
+        }
+
+        context.telemetry.properties.result = 'Failed';
+        context.telemetry.properties.errorMessage = errorMessage;
+        context.telemetry.properties.dependencySettingsInitializationError = 'userSettings';
+        const openUserSettings = localize('openUserSettings', 'Open User Settings (JSON)');
+        const selection = await vscode.window.showErrorMessage(
+          localize(
+            'invalidUserSettings',
+            'Unable to validate runtime dependencies because User Settings contains errors. Correct the errors and try again.'
+          ),
+          openUserSettings
+        );
+        if (selection === openUserSettings) {
+          await vscode.commands.executeCommand('workbench.action.openSettingsJson');
+        }
+        context.errorHandling.suppressDisplay = true;
+        throw error;
+      }
       const dependencyTimeoutMs = getDependencyTimeout() * 1000;
       context.telemetry.properties.dependencyPath = dependencyPath;
       context.telemetry.properties.dependencyTimeoutMs = String(dependencyTimeoutMs);
