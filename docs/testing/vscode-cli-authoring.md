@@ -288,6 +288,14 @@ relocatable registry, and rebuilds the suite-local registry. A producer/bootstra
 failure means no native scenario ran; classify it before inspecting scenario,
 cleanup, or ordered-evidence results.
 
+The semantic content manifest is archive-stable by platform. POSIX consumers
+sign and verify each regular file's full `0777` permission mode. Windows
+consumers omit POSIX mode bits because Windows tar can restore byte-identical
+read-only files as writable; relative path, byte size and SHA-256 remain signed,
+and symbolic links remain rejected. The manifest retains sorted relative file
+records so verification failures identify the exact extension, path and field
+without exposing absolute agent paths or file contents.
+
 Pipeline bootstrap and inherited active ownership are different contracts. The
 pipeline may supply only `LA_E2E_CLI_EVIDENCE_SUITE_ID` and
 `LA_E2E_CLI_EVIDENCE_DIR`; the owning runner then creates the invocation token

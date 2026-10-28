@@ -247,6 +247,7 @@ async function testResolvingSideEffectQuiescence(): Promise<void> {
 function debugHarness(gate: Promise<void>, secondImmediate: boolean) {
   const order: string[] = [];
   const live = new Set<string>();
+  const activeTasks = new Set<string>();
   let launches = 0;
   let foreignStops = 0;
   const tags = new Map<number, string>();
@@ -269,17 +270,21 @@ function debugHarness(gate: Promise<void>, secondImmediate: boolean) {
       id: `foreign-task-${number}`,
       workspacePath: '/unit/foreign-app',
       name: 'func: host start',
+      isActive: () => true,
       terminate: () => {
         foreignStops++;
       },
     });
     live.add(`session-${number}`);
+    activeTasks.add(`task-${number}`);
     manager.taskStarted({
       id: `task-${number}`,
       workspacePath: '/unit/owned-app',
       name: 'func: host start',
+      isActive: () => activeTasks.has(`task-${number}`),
       terminate: () => {
         order.push(`task-stop-${number}`);
+        activeTasks.delete(`task-${number}`);
         manager.taskEnded(`task-${number}`);
       },
     });
@@ -307,6 +312,7 @@ function debugHarness(gate: Promise<void>, secondImmediate: boolean) {
     id: 'preexisting-task',
     workspacePath: '/unit/owned-app',
     name: 'func: host start',
+    isActive: () => true,
     terminate: () => {
       foreignStops++;
     },
@@ -329,6 +335,94 @@ function debugHarness(gate: Promise<void>, secondImmediate: boolean) {
     return stopped.promise;
   };
   return { manager, order, live, injectLateFromFirst, launches: () => launches, foreignStops: () => foreignStops };
+}
+
+async function testAlreadyExitedTaskIsReconciled(): Promise<void> {
+  let taskActive = true;
+  let terminateCalls = 0;
+  const manager = new StatelessOwnedDebug('/unit/owned-app', 'func: host start', async (tag) => {
+    manager.taskStarted({
+      id: 'task',
+      workspacePath: '/unit/owned-app',
+      name: 'func: host start',
+      isActive: () => taskActive,
+      terminate: () => {
+        terminateCalls++;
+      },
+    });
+    manager.sessionStarted({
+      id: 'session',
+      workspacePath: '/unit/owned-app',
+      ownerTag: tag,
+      stop: async () => {
+        taskActive = false;
+        manager.sessionEnded('session');
+      },
+    });
+    return true;
+  });
+
+  await manager.start(new AbortController().signal);
+  await manager.quiesce(Date.now() + 1000);
+  assert.strictEqual(terminateCalls, 0, 'An already absent task must not be terminated again');
+  checks++;
+}
+
+async function testTaskTerminationRaceIsReconciled(): Promise<void> {
+  let taskActive = true;
+  const manager = new StatelessOwnedDebug('/unit/owned-app', 'func: host start', async (tag) => {
+    manager.taskStarted({
+      id: 'task',
+      workspacePath: '/unit/owned-app',
+      name: 'func: host start',
+      isActive: () => taskActive,
+      terminate: () => {
+        taskActive = false;
+        throw new Error('Task to terminate not found');
+      },
+    });
+    manager.sessionStarted({
+      id: 'session',
+      workspacePath: '/unit/owned-app',
+      ownerTag: tag,
+      stop: async () => manager.sessionEnded('session'),
+    });
+    return true;
+  });
+
+  await manager.start(new AbortController().signal);
+  await manager.quiesce(Date.now() + 1000);
+  checks++;
+}
+
+async function testActiveTaskTerminationFailureRemainsFatal(): Promise<void> {
+  const manager = new StatelessOwnedDebug('/unit/owned-app', 'func: host start', async (tag) => {
+    manager.taskStarted({
+      id: 'task',
+      workspacePath: '/unit/owned-app',
+      name: 'func: host start',
+      isActive: () => true,
+      terminate: () => {
+        throw new Error('real termination failure');
+      },
+    });
+    manager.sessionStarted({
+      id: 'session',
+      workspacePath: '/unit/owned-app',
+      ownerTag: tag,
+      stop: async () => manager.sessionEnded('session'),
+    });
+    return true;
+  });
+
+  await manager.start(new AbortController().signal);
+  await assert.rejects(
+    () => manager.quiesce(Date.now() + 1000),
+    (error: AggregateError) =>
+      error.message === 'Matching owned debug cleanup failed' &&
+      error.errors.some((cause: Error) => cause.message === 'real termination failure')
+  );
+  checks++;
 }
 
 async function testLatePositiveLaunchBeforeRestore(): Promise<void> {
@@ -476,6 +570,9 @@ async function main(): Promise<void> {
   await testResolvingSideEffectQuiescence();
   await testLatePositiveLaunchBeforeRestore();
   await testSettledLaunchStopsDebuggerBeforeTask();
+  await testAlreadyExitedTaskIsReconciled();
+  await testTaskTerminationRaceIsReconciled();
+  await testActiveTaskTerminationFailureRemainsFatal();
   await testLateRecoveryLaunchAfterRejectedDeadline();
   await testFailedOrUnobservedNativeStart();
   testDirectFourPhaseEvidence();

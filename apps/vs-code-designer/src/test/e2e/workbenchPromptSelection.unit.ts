@@ -39,7 +39,7 @@ async function revealsRetainedNotificationsOnlyAfterExactWorkbenchOwnership(): P
       if (expression.includes('timeOrigin: performance.timeOrigin')) {
         return {
           timeOrigin: 1,
-          title: 'unit.code-workspace - Visual Studio Code',
+          title: 'workflow.json - unit (Workspace) - Visual Studio Code',
           ready: true,
           roots: ['unit-app'],
         } as T;

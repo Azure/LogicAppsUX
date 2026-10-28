@@ -1,7 +1,9 @@
 import * as assert from 'node:assert/strict';
 import * as path from 'node:path';
 import { test } from 'node:test';
+import type { CdpConnection } from './cdpClient';
 import {
+  connectToOwnedRegularWorkbench,
   matchesRegularWorkbenchOwnership,
   reloadOwnedRegularWorkbench,
   type RegularWorkbenchOwnershipExpectation,
@@ -24,11 +26,86 @@ const state = (overrides: Partial<RegularWorkbenchOwnershipState> = {}): Regular
 
 test('regular workbench ownership requires a complete visible exact workspace', () => {
   assert.equal(matchesRegularWorkbenchOwnership(state(), expectation), true);
+  assert.equal(
+    matchesRegularWorkbenchOwnership(state({ title: 'unit (Workspace) - Visual Studio Code [Extension Development Host]' }), expectation),
+    true
+  );
+  assert.equal(
+    matchesRegularWorkbenchOwnership(
+      state({ title: 'workflow.json - unit (Workspace) - Visual Studio Code [Extension Development Host]' }),
+      expectation
+    ),
+    true
+  );
+  assert.equal(
+    matchesRegularWorkbenchOwnership(
+      state({ title: '● workflow.json - unit.code-workspace (Workspace) - Visual Studio Code [Extension Development Host]' }),
+      expectation
+    ),
+    true
+  );
   assert.equal(matchesRegularWorkbenchOwnership(state({ ready: false }), expectation), false);
   assert.equal(matchesRegularWorkbenchOwnership(state({ title: 'other.code-workspace - Visual Studio Code' }), expectation), false);
   assert.equal(matchesRegularWorkbenchOwnership(state({ title: 'unit-copy - Visual Studio Code' }), expectation), false);
+  assert.equal(matchesRegularWorkbenchOwnership(state({ title: 'unit-copy (Workspace) - Visual Studio Code' }), expectation), false);
   assert.equal(matchesRegularWorkbenchOwnership(state({ roots: ['one', 'two'] }), expectation), false);
   assert.equal(matchesRegularWorkbenchOwnership(state({ roots: ['one', 'two', 'three', 'stale-root'] }), expectation), false);
+});
+
+test('owned connection uses the phase deadline after the bounded CDP connection succeeds', async () => {
+  const connectionTimeoutMs = 80;
+  const postConnectionTimeouts: number[] = [];
+  let disposed = false;
+  const fake = {
+    targetId: 'unit-window',
+    contextGeneration: 1,
+    async evaluate<T>(_context: number | undefined, expression: string, options?: { timeoutMs?: number }): Promise<T> {
+      postConnectionTimeouts.push(options?.timeoutMs ?? 0);
+      if (expression.includes('timeOrigin: performance.timeOrigin')) {
+        const current = state();
+        return {
+          timeOrigin: current.timeOrigin,
+          title: current.title,
+          ready: current.ready,
+          roots: current.roots,
+        } as T;
+      }
+      if (expression.includes('.quick-input-widget input')) {
+        return true as T;
+      }
+      if (expression.includes('return found.length===1')) {
+        return { x: 10, y: 20 } as T;
+      }
+      return true as T;
+    },
+    async send(_method: string, _params?: Record<string, unknown>, options?: { timeoutMs?: number }) {
+      postConnectionTimeouts.push(options?.timeoutMs ?? 0);
+      return {};
+    },
+    dispose() {
+      disposed = true;
+    },
+  };
+
+  const owned = await connectToOwnedRegularWorkbench({
+    expectation,
+    deadline: Date.now() + 1500,
+    connectionTimeoutMs,
+    connect: async (options) => {
+      assert.ok(options?.timeoutMs && options.timeoutMs <= connectionTimeoutMs);
+      await new Promise((resolve) => setTimeout(resolve, 60));
+      return fake as unknown as CdpConnection;
+    },
+  });
+
+  assert.equal(owned.state.owned, true);
+  assert.ok(postConnectionTimeouts.length > 0);
+  assert.ok(
+    postConnectionTimeouts[0] > connectionTimeoutMs,
+    'Post-connection CDP commands must use the phase deadline, not the nearly exhausted connection deadline'
+  );
+  assert.equal(disposed, false);
+  owned.cdp.dispose();
 });
 
 test('owned reload sends one command and continues the same target with a changed document and contexts', async () => {

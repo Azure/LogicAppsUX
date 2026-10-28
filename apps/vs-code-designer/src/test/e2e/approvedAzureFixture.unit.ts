@@ -345,8 +345,19 @@ async function testCallbackIndependentFixtureRestore(): Promise<void> {
     const failure = new Error('original callback verification failed');
     let quiescent = false;
     let quiescenceReports = 0;
+    let taskActive = true;
     const manager: StatelessOwnedDebug = new StatelessOwnedDebug(app, 'func: host start', async (tag) => {
-      manager.taskStarted({ id: 'task', workspacePath: app, name: 'func: host start', terminate: () => manager.taskEnded('task') });
+      taskActive = true;
+      manager.taskStarted({
+        id: 'task',
+        workspacePath: app,
+        name: 'func: host start',
+        isActive: () => taskActive,
+        terminate: () => {
+          taskActive = false;
+          manager.taskEnded('task');
+        },
+      });
       manager.sessionStarted({
         id: 'session',
         workspacePath: app,

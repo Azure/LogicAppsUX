@@ -62,12 +62,22 @@ function matchesRegularWorkbenchTitle(
 ): boolean {
   const workspaceTitle = path.basename(expectation.workspaceFilePath, path.extname(expectation.workspaceFilePath)).toLowerCase();
   const workspaceFileName = path.basename(expectation.workspaceFilePath).toLowerCase();
-  const titlePrefix = state.title
-    .split(' - ')[0]
-    .replace(/^[●*]\s*/, '')
-    .trim()
-    .toLowerCase();
-  return state.ready && (titlePrefix === workspaceTitle || titlePrefix === workspaceFileName);
+  const expectedSegments = new Set([
+    workspaceTitle,
+    workspaceFileName,
+    `${workspaceTitle} (workspace)`,
+    `${workspaceFileName} (workspace)`,
+  ]);
+  const titleSegments = state.title
+    .split(' - ')
+    .map((segment) =>
+      segment
+        .replace(/^[●*]\s*/, '')
+        .trim()
+        .toLowerCase()
+    )
+    .filter(Boolean);
+  return state.ready && titleSegments.some((segment) => expectedSegments.has(segment));
 }
 
 export function matchesRegularWorkbenchOwnership(
@@ -125,15 +135,16 @@ export async function connectToOwnedRegularWorkbench(options: {
   deadline: number;
   connectionTimeoutMs?: number;
   activate?: boolean;
+  connect?: typeof connectToVsCodeWorkbenchCdp;
 }): Promise<OwnedRegularWorkbench> {
   const connectionDeadline = Math.min(options.deadline, Date.now() + (options.connectionTimeoutMs ?? 15000));
-  const cdp = await connectToVsCodeWorkbenchCdp({
+  const cdp = await (options.connect ?? connectToVsCodeWorkbenchCdp)({
     activate: options.activate,
     waitForServer: true,
     timeoutMs: remainingWorkbenchBudget(connectionDeadline),
   });
   try {
-    const client = boundedCdp(cdp, connectionDeadline);
+    const client = boundedCdp(cdp, options.deadline);
     await client.send('Runtime.enable');
     await client.send('Page.enable');
     await poll(
@@ -142,10 +153,10 @@ export async function connectToOwnedRegularWorkbench(options: {
         return { ...state, owned: matchesRegularWorkbenchTitle(state, options.expectation) };
       },
       (state) => state.owned,
-      connectionDeadline
+      options.deadline
     );
-    await command(client, 'View: Show Explorer', connectionDeadline);
-    const state = await waitForRegularWorkbenchOwnership(client, options.expectation, connectionDeadline);
+    await command(client, 'View: Show Explorer', options.deadline);
+    const state = await waitForRegularWorkbenchOwnership(client, options.expectation, options.deadline);
     assert.ok(cdp.targetId, 'The invocation-owned regular Code window must expose one exact CDP target identity');
     return { cdp, state };
   } catch (error) {

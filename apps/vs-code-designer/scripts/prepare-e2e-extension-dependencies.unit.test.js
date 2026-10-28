@@ -1,8 +1,10 @@
 /* global process, require */
 const assert = require('assert');
+const { Buffer } = require('node:buffer');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const { spawnSync } = require('child_process');
 const test = require('node:test');
 const {
   CONTENT_MANIFEST_NAME,
@@ -97,6 +99,11 @@ function createOptions(root, sourceManifestPath, extensionsDir) {
   };
 }
 
+function runTar(args) {
+  const result = spawnSync('tar', args, { encoding: 'utf8' });
+  assert.strictEqual(result.status, 0, `tar ${args.join(' ')} failed:\n${result.stderr || result.stdout}`);
+}
+
 test('reads extension dependencies only from the extension source manifest', () => {
   const root = createTempRoot();
   try {
@@ -187,6 +194,86 @@ test('content manifest survives relocation and rebuilds consumer-local registry 
   }
 });
 
+test('Windows content manifests ignore archive-unstable read and write mode bits', () => {
+  const root = createTempRoot();
+  try {
+    const sourceManifestPath = writeSourceManifest(root);
+    const extensionsDir = path.join(root, 'test-extensions');
+    createInstalledFixture(extensionsDir, 'win32', 'x64');
+    const options = {
+      ...createOptions(root, sourceManifestPath, extensionsDir),
+      platform: 'windows',
+      arch: 'x64',
+    };
+    const payloadPath = path.join(extensionsDir, 'ms-dotnettools.vscode-dotnet-runtime-2.3.8', 'payload.txt');
+    fs.chmodSync(payloadPath, 0o444);
+    const readonlyManifest = createContentManifest(extensionsDir, readSourceContract(sourceManifestPath), options);
+    fs.chmodSync(payloadPath, 0o666);
+    const writableManifest = createContentManifest(extensionsDir, readSourceContract(sourceManifestPath), options);
+
+    assert.strictEqual(readonlyManifest.schemaVersion, 2);
+    assert.strictEqual(readonlyManifest.fileModePolicy, 'none');
+    assert.strictEqual(readonlyManifest.contentDigestSHA256, writableManifest.contentDigestSHA256);
+    assert.ok(readonlyManifest.extensions.every((extension) => extension.files.every((file) => file.mode === undefined)));
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('content manifest survives the pipeline tar round trip', () => {
+  const root = createTempRoot();
+  try {
+    const sourceManifestPath = writeSourceManifest(root);
+    const producerExtensions = path.join(root, 'producer', 'test-extensions');
+    createInstalledFixture(producerExtensions);
+    const options = createOptions(root, sourceManifestPath, producerExtensions);
+    const sourceContract = readSourceContract(sourceManifestPath);
+    const readonlyPath = path.join(
+      producerExtensions,
+      'ms-dotnettools.vscode-dotnet-runtime-2.3.8',
+      'dist',
+      'distro-data',
+      'distro-support.json'
+    );
+    fs.mkdirSync(path.dirname(readonlyPath), { recursive: true });
+    fs.writeFileSync(readonlyPath, '{"supported":true}');
+    fs.chmodSync(readonlyPath, 0o444);
+    const manifest = createContentManifest(producerExtensions, sourceContract, options);
+    fs.writeFileSync(path.join(producerExtensions, CONTENT_MANIFEST_NAME), JSON.stringify(manifest));
+    rebuildExtensionsJson(
+      producerExtensions,
+      manifest.extensions.map((entry) => ({
+        ...entry,
+        packageJson: JSON.parse(fs.readFileSync(path.join(producerExtensions, entry.relativeLocation, 'package.json'), 'utf8')),
+      }))
+    );
+
+    const archivePath = path.join(root, 'prepared-extensions.tar.gz');
+    runTar(['-czf', archivePath, '-C', path.dirname(producerExtensions), path.basename(producerExtensions)]);
+    const consumerParent = path.join(root, 'consumer');
+    fs.mkdirSync(consumerParent, { recursive: true });
+    runTar(['-xzf', archivePath, '-C', consumerParent]);
+    const consumerExtensions = path.join(consumerParent, 'test-extensions');
+    const restoredPath = path.join(
+      consumerExtensions,
+      'ms-dotnettools.vscode-dotnet-runtime-2.3.8',
+      'dist',
+      'distro-data',
+      'distro-support.json'
+    );
+
+    assert.deepStrictEqual(fs.readFileSync(restoredPath), fs.readFileSync(readonlyPath));
+    assert.strictEqual(fs.statSync(restoredPath).size, fs.statSync(readonlyPath).size);
+    const verified = verify({ ...options, extensionsDir: consumerExtensions });
+    assert.strictEqual(verified.contentDigestSHA256, manifest.contentDigestSHA256);
+    const registry = JSON.parse(fs.readFileSync(path.join(consumerExtensions, 'extensions.json'), 'utf8'));
+    assert.ok(registry.every((entry) => entry.location.path.includes('/consumer/test-extensions/')));
+    assert.ok(registry.every((entry) => !entry.location.path.includes('/producer/')));
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
 test('verification rejects tampered extension content', () => {
   const root = createTempRoot();
   try {
@@ -196,8 +283,53 @@ test('verification rejects tampered extension content', () => {
     const options = createOptions(root, sourceManifestPath, extensionsDir);
     const manifest = createContentManifest(extensionsDir, readSourceContract(sourceManifestPath), options);
     fs.writeFileSync(path.join(extensionsDir, CONTENT_MANIFEST_NAME), JSON.stringify(manifest));
-    fs.writeFileSync(path.join(extensionsDir, 'azurite.azurite-3.35.0', 'payload.txt'), 'tampered');
-    assert.throws(() => verify(options), /does not match its signed content manifest/);
+    const payloadPath = path.join(extensionsDir, 'azurite.azurite-3.35.0', 'payload.txt');
+    const original = fs.readFileSync(payloadPath);
+    const tampered = Buffer.from(original);
+    tampered[0] ^= 0xff;
+    fs.writeFileSync(payloadPath, tampered);
+    assert.strictEqual(fs.statSync(payloadPath).size, original.length);
+    assert.throws(() => verify(options), /extension azurite\.azurite file payload\.txt sha256: expected="[a-f0-9]+" actual="[a-f0-9]+"/);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('POSIX content manifests preserve executable permission changes', { skip: process.platform === 'win32' }, () => {
+  const root = createTempRoot();
+  try {
+    const sourceManifestPath = writeSourceManifest(root);
+    const extensionsDir = path.join(root, 'test-extensions');
+    createInstalledFixture(extensionsDir, 'linux', process.arch);
+    const options = {
+      ...createOptions(root, sourceManifestPath, extensionsDir),
+      platform: 'linux',
+    };
+    const payloadPath = path.join(extensionsDir, 'azurite.azurite-3.35.0', 'payload.txt');
+    fs.chmodSync(payloadPath, 0o644);
+    const manifest = createContentManifest(extensionsDir, readSourceContract(sourceManifestPath), options);
+    fs.writeFileSync(path.join(extensionsDir, CONTENT_MANIFEST_NAME), JSON.stringify(manifest));
+    fs.chmodSync(payloadPath, 0o755);
+
+    assert.strictEqual(manifest.fileModePolicy, 'posix-0777');
+    assert.throws(() => verify(options), /file payload\.txt mode: expected=420 actual=493/);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('verification rejects an older semantic manifest schema', () => {
+  const root = createTempRoot();
+  try {
+    const sourceManifestPath = writeSourceManifest(root);
+    const extensionsDir = path.join(root, 'test-extensions');
+    createInstalledFixture(extensionsDir);
+    const options = createOptions(root, sourceManifestPath, extensionsDir);
+    const manifest = createContentManifest(extensionsDir, readSourceContract(sourceManifestPath), options);
+    manifest.schemaVersion = 1;
+    fs.writeFileSync(path.join(extensionsDir, CONTENT_MANIFEST_NAME), JSON.stringify(manifest));
+
+    assert.throws(() => verify(options), /content manifest schema mismatch: 1/);
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
   }

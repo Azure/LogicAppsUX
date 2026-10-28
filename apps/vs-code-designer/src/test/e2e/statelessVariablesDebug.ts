@@ -13,6 +13,7 @@ export interface StatelessDebugTask {
   id: string;
   workspacePath: string;
   name: string;
+  isActive(): boolean;
   terminate(): void;
 }
 
@@ -157,6 +158,7 @@ export class StatelessOwnedDebug {
 
   taskEnded(id: string): void {
     this.tasks.delete(id);
+    this.terminating.delete(id);
   }
 
   cancel(): void {
@@ -178,6 +180,7 @@ export class StatelessOwnedDebug {
   }
 
   private isQuiescent(): boolean {
+    this.reconcileInactiveTasks();
     return (
       [...this.attempts.values()].every(
         (attempt) => attempt.settled && (attempt.result !== true || (attempt.started && attempt.taskStarted))
@@ -189,6 +192,7 @@ export class StatelessOwnedDebug {
   }
 
   private stopOwnedHandles(ownerTag?: string): void {
+    this.reconcileInactiveTasks(ownerTag);
     const sessions = [...this.sessions.values()].filter(
       (session) => (!ownerTag || session.ownerTag === ownerTag) && !this.stopping.has(session.id)
     );
@@ -213,10 +217,21 @@ export class StatelessOwnedDebug {
         if (!this.tasks.has(task.id)) {
           continue;
         }
+        if (!task.isActive()) {
+          this.taskEnded(task.id);
+          continue;
+        }
         try {
           task.terminate();
         } catch (error) {
-          this.cleanupErrors.push(error);
+          if (task.isActive()) {
+            this.cleanupErrors.push(error);
+          } else {
+            this.taskEnded(task.id);
+          }
+        }
+        if (!task.isActive()) {
+          this.taskEnded(task.id);
         }
       }
     });
@@ -227,6 +242,14 @@ export class StatelessOwnedDebug {
   private throwCleanupErrors(): void {
     if (this.cleanupErrors.length > 0) {
       throw new AggregateError(this.cleanupErrors, 'Matching owned debug cleanup failed');
+    }
+  }
+
+  private reconcileInactiveTasks(ownerTag?: string): void {
+    for (const [taskId, { task, ownerTag: taskOwner }] of this.tasks) {
+      if ((!ownerTag || taskOwner === ownerTag) && !task.isActive()) {
+        this.taskEnded(taskId);
+      }
     }
   }
 }

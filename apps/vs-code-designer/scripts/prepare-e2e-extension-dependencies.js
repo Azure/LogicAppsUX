@@ -6,7 +6,7 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 
 const CONTENT_MANIFEST_NAME = 'prepared-extensions-content-manifest.json';
-const CONTENT_MANIFEST_SCHEMA_VERSION = 1;
+const CONTENT_MANIFEST_SCHEMA_VERSION = 2;
 const CS_DEV_KIT_E2E_VERSION = '3.40.210';
 const DOTNET_RUNTIME_EXTENSION = 'ms-dotnettools.vscode-dotnet-runtime';
 const FORBIDDEN_EXTENSION = 'ms-vscode-remote.remote-containers';
@@ -217,7 +217,12 @@ function removeMatchingExtensions(extensionsDir, extensionId) {
   }
 }
 
-function walkFiles(root, current = root, files = []) {
+function getFileModePolicy(platform) {
+  return platform === 'windows' || platform === 'win32' ? 'none' : 'posix-0777';
+}
+
+function walkFiles(root, platform, current = root, files = []) {
+  const fileModePolicy = getFileModePolicy(platform);
   for (const entry of fs.readdirSync(current, { withFileTypes: true }).sort((left, right) => left.name.localeCompare(right.name))) {
     const absolutePath = path.join(current, entry.name);
     const stat = fs.lstatSync(absolutePath);
@@ -226,14 +231,17 @@ function walkFiles(root, current = root, files = []) {
       throw new Error(`Prepared extension content must not contain symbolic links: ${relativePath}`);
     }
     if (stat.isDirectory()) {
-      walkFiles(root, absolutePath, files);
+      walkFiles(root, platform, absolutePath, files);
     } else if (stat.isFile()) {
-      files.push({
+      const file = {
         path: relativePath,
-        mode: stat.mode & 0o777,
         size: stat.size,
         sha256: sha256File(absolutePath),
-      });
+      };
+      if (fileModePolicy === 'posix-0777') {
+        file.mode = stat.mode & 0o777;
+      }
+      files.push(file);
     } else {
       throw new Error(`Prepared extension content contains an unsupported entry: ${relativePath}`);
     }
@@ -241,12 +249,13 @@ function walkFiles(root, current = root, files = []) {
   return files;
 }
 
-function createContentHash(extensionRoot) {
-  const files = walkFiles(extensionRoot);
+function createContentHash(extensionRoot, platform) {
+  const files = walkFiles(extensionRoot, platform);
   return {
     contentSHA256: sha256Buffer(Buffer.from(JSON.stringify(files))),
     fileCount: files.length,
     totalBytes: files.reduce((total, file) => total + file.size, 0),
+    files,
   };
 }
 
@@ -389,7 +398,7 @@ function createContentManifest(extensionsDir, sourceContract, options) {
   const { installed } = validateInstalledSet(extensionsDir, sourceContract, options);
   const extensions = installed
     .map((entry) => {
-      const content = createContentHash(path.join(extensionsDir, entry.relativeLocation));
+      const content = createContentHash(path.join(extensionsDir, entry.relativeLocation), options.platform);
       return {
         id: entry.id,
         version: entry.version,
@@ -414,12 +423,105 @@ function createContentManifest(extensionsDir, sourceContract, options) {
     platform: options.platform === 'windows' ? 'win32' : options.platform,
     architecture: options.arch,
     targetPlatform: getTargetPlatform(options.platform, options.arch),
+    fileModePolicy: getFileModePolicy(options.platform),
     sourceManifestSHA256: sourceContract.sourceManifestSHA256,
     requiredExtensionIds: [...sourceContract.requiredDependencies].sort(),
     extensions,
   };
   manifest.contentDigestSHA256 = sha256Buffer(Buffer.from(JSON.stringify(extensions)));
   return manifest;
+}
+
+function formatManifestDifferences(expected, actual, limit = 20) {
+  const differences = [];
+  const addDifference = (message) => {
+    if (differences.length < limit) {
+      differences.push(message);
+    }
+  };
+  const identityFields = [
+    'schemaVersion',
+    'tool',
+    'vscodeVersion',
+    'platform',
+    'architecture',
+    'targetPlatform',
+    'fileModePolicy',
+    'sourceManifestSHA256',
+  ];
+  for (const field of identityFields) {
+    if (expected[field] !== actual[field]) {
+      addDifference(`${field}: expected=${JSON.stringify(expected[field])} actual=${JSON.stringify(actual[field])}`);
+    }
+  }
+  if (JSON.stringify(expected.requiredExtensionIds) !== JSON.stringify(actual.requiredExtensionIds)) {
+    addDifference(
+      `requiredExtensionIds: expected=${JSON.stringify(expected.requiredExtensionIds)} actual=${JSON.stringify(actual.requiredExtensionIds)}`
+    );
+  }
+
+  const expectedExtensions = new Map((expected.extensions ?? []).map((entry) => [entry.id, entry]));
+  const actualExtensions = new Map((actual.extensions ?? []).map((entry) => [entry.id, entry]));
+  for (const extensionId of new Set([...expectedExtensions.keys(), ...actualExtensions.keys()])) {
+    const expectedExtension = expectedExtensions.get(extensionId);
+    const actualExtension = actualExtensions.get(extensionId);
+    if (!expectedExtension) {
+      addDifference(`extension ${extensionId}: unexpected`);
+      continue;
+    }
+    if (!actualExtension) {
+      addDifference(`extension ${extensionId}: missing`);
+      continue;
+    }
+
+    const extensionFields = [
+      'version',
+      'relativeLocation',
+      'targetPlatform',
+      'packageJsonSHA256',
+      'extensionDependencies',
+      'extensionPack',
+      'contentSHA256',
+      'fileCount',
+      'totalBytes',
+    ];
+    for (const field of extensionFields) {
+      if (JSON.stringify(expectedExtension[field]) !== JSON.stringify(actualExtension[field])) {
+        addDifference(
+          `extension ${extensionId} ${field}: expected=${JSON.stringify(expectedExtension[field])} actual=${JSON.stringify(actualExtension[field])}`
+        );
+      }
+    }
+
+    const expectedFiles = new Map((expectedExtension.files ?? []).map((file) => [file.path, file]));
+    const actualFiles = new Map((actualExtension.files ?? []).map((file) => [file.path, file]));
+    for (const filePath of new Set([...expectedFiles.keys(), ...actualFiles.keys()])) {
+      const expectedFile = expectedFiles.get(filePath);
+      const actualFile = actualFiles.get(filePath);
+      if (!expectedFile) {
+        addDifference(`extension ${extensionId} file ${filePath}: unexpected`);
+        continue;
+      }
+      if (!actualFile) {
+        addDifference(`extension ${extensionId} file ${filePath}: missing`);
+        continue;
+      }
+      for (const field of ['mode', 'size', 'sha256']) {
+        if (expectedFile[field] !== actualFile[field]) {
+          addDifference(
+            `extension ${extensionId} file ${filePath} ${field}: expected=${JSON.stringify(expectedFile[field])} actual=${JSON.stringify(actualFile[field])}`
+          );
+        }
+      }
+    }
+  }
+
+  if (expected.contentDigestSHA256 !== actual.contentDigestSHA256) {
+    addDifference(
+      `contentDigestSHA256: expected=${JSON.stringify(expected.contentDigestSHA256)} actual=${JSON.stringify(actual.contentDigestSHA256)}`
+    );
+  }
+  return differences;
 }
 
 function assertNoUnexpectedTopLevelEntries(extensionsDir) {
@@ -505,6 +607,7 @@ function verify(options) {
     manifest.platform !== normalizedPlatform ||
     manifest.architecture !== options.arch ||
     manifest.targetPlatform !== getTargetPlatform(options.platform, options.arch) ||
+    manifest.fileModePolicy !== getFileModePolicy(options.platform) ||
     manifest.sourceManifestSHA256 !== sourceContract.sourceManifestSHA256
   ) {
     throw new Error('Prepared extension content manifest identity does not match the current consumer.');
@@ -512,7 +615,12 @@ function verify(options) {
 
   const actualManifest = createContentManifest(options.extensionsDir, sourceContract, options);
   if (JSON.stringify(actualManifest) !== JSON.stringify(manifest)) {
-    throw new Error('Prepared extension dependency content does not match its signed content manifest.');
+    const differences = formatManifestDifferences(manifest, actualManifest);
+    throw new Error(
+      `Prepared extension dependency content does not match its signed content manifest.${
+        differences.length > 0 ? `\n${differences.map((difference) => `- ${difference}`).join('\n')}` : ''
+      }`
+    );
   }
   assertNoUnexpectedTopLevelEntries(options.extensionsDir);
   if (options.rebuildRegistry !== false) {

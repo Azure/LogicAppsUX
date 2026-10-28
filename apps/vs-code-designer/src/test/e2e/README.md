@@ -25,6 +25,12 @@ payload content while excluding only the relocatable registry, and rebuilds
 that suite's registry before launch. A failure at this boundary is setup
 failure; no native scenario result exists yet.
 
+The semantic manifest keeps full POSIX file permissions on Linux/macOS, but
+omits non-portable POSIX mode bits on Windows because tar can restore
+byte-identical read-only files as writable. Relative paths, sizes, byte hashes,
+extension/package identity, platform payloads and dependency closure remain
+fail-closed, and verification reports bounded relative-path differences.
+
 ## Canonical MSN finalization boundary
 
 The MSN direct and batch selectors keep body assertions separate from

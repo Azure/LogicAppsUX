@@ -1032,7 +1032,9 @@ async function main(): Promise<void> {
         nativeHostSource.includes('connectToOwnedRegularWorkbench({') &&
         sharedPromptSource.includes("workbenchCommand(cdp, 'Notifications: Show Notifications', deadline)") &&
         sharedPromptSource.includes('.notifications-center, .notifications-list-container') &&
-        sharedWorkbenchSource.includes('waitForRegularWorkbenchOwnership('),
+        sharedWorkbenchSource.includes('waitForRegularWorkbenchOwnership(') &&
+        sharedWorkbenchSource.includes('const client = boundedCdp(cdp, options.deadline)') &&
+        !sharedWorkbenchSource.includes('const client = boundedCdp(cdp, connectionDeadline)'),
       'The exact owned workspace must use shared prompt observation and retained-notification reveal before the strict two-prompt sequence begins'
     );
     checks++;

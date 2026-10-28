@@ -609,6 +609,7 @@ function createOwnedDebug(entry: CreatedWorkspace): StatelessOwnedDebug {
       id: randomUUID(),
       workspacePath: normalizeFsPath(scope && typeof scope === 'object' ? scope.uri.fsPath : ''),
       name: execution.task.name,
+      isActive: () => vscode.tasks.taskExecutions.includes(execution),
       terminate: () => execution.terminate(),
     };
     taskHandles.set(execution, handle);

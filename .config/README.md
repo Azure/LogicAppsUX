@@ -39,6 +39,13 @@ The VS Code E2E harness remains independent from ExTester webview DOM coverage a
 - `build_current_run_e2e_artifact` checks out that pinned SHA and compiles the extension and `@vscode/test-cli` tests through `pnpm --dir apps/vs-code-designer run test:e2e-cli:build` before publishing a test-only pipeline artifact named `vscode-e2e-build`.
 - Marketplace extension dependencies are prepared once per selected OS by `apps/vs-code-designer/scripts/prepare-e2e-extension-dependencies.js`. The dedicated producer reads `apps/vs-code-designer/src/package.json`, uses the exact resolved VS Code build through `@vscode/test-electron`'s supported `bin/code` / `bin/code.cmd` installer, preserves the pinned C# Dev Kit prerequisite, and does not compile or run the ExTester launcher or download ChromeDriver.
 - Each prepared dependency archive contains a semantic content manifest. The outer artifact manifest binds its SHA-256 together with the source SHA, OS, architecture, resolved VS Code version, and archive hash. Consumers verify that binding, validate every restored extension's identity, dependency closure, platform, and content, then rebuild `extensions.json` with consumer-local paths. The shared runner repeats semantic verification for the restored seed and every suite-local copy; only the relocatable registry may differ, and it is rebuilt before VS Code launches.
+
+The semantic manifest uses a platform-bound file-mode policy: POSIX archives
+retain full `0777` permission integrity, while Windows omits POSIX mode bits
+that tar cannot round-trip reliably. Every regular file still binds its relative
+path, size and byte SHA-256, and symbolic links remain invalid. Sorted file
+records are retained for bounded relative-path diagnostics when verification
+fails.
 - The artifact root contains `extension-build.tar.gz`, `vscode-e2e-build-manifest.json`, and `extension-build.tar.gz.sha256`; it is not the shipping `Build Root` artifact and is not signed or released.
 - Each suite job depends only on the shared context and build jobs, downloads the current run's `vscode-e2e-build` artifact, then verifies logical manifest artifact name `vscode-e2e-build`, archive hash, source SHA, current run ID, current definition ID, repository identity, and checkout ref before extracting or executing restored code. The configured Node 22 runtime is provisioned before the verifier runs.
 
