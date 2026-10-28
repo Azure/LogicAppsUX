@@ -63,8 +63,15 @@ const elkLayout = async (graph: ElkNode, readOnly?: boolean) => {
   return layout;
 };
 
+interface LayoutNodeData extends Record<string, unknown> {
+  label: string;
+  nodeIndex: number;
+  nodeLeafIndex?: number;
+  size?: { width: number; height: number };
+}
+
 const convertElkGraphToReactFlow = (graph: ElkNode): LayoutContextType => {
-  const nodes: Node[] = [];
+  const nodes: Node<LayoutNodeData>[] = [];
   const edges: Edge[] = [];
 
   let flowWidth: number = graph?.width ?? 0;
@@ -73,7 +80,7 @@ const convertElkGraphToReactFlow = (graph: ElkNode): LayoutContextType => {
   let nodeIndex = 1;
 
   const processChildren = (node: ElkNode) => {
-    const edgesBySource: Record<string, Edge[]> = {};
+    const edgesBySource: Record<string, Edge[]> = Object.create(null);
     if (node.edges) {
       // Put edge objects into a record by sourceId
       for (const edge of node.edges as ElkExtendedEdge[]) {
@@ -98,7 +105,7 @@ const convertElkGraphToReactFlow = (graph: ElkNode): LayoutContextType => {
       node.children.sort((a, b) => (a.y === b.y ? (a?.x ?? 0) - (b?.x ?? 0) : (a?.y ?? 0) - (b?.y ?? 0)));
 
       for (const n of node.children as ElkNode[]) {
-        const nodeObject: Node = {
+        const nodeObject: Node<LayoutNodeData> = {
           id: n.id,
           position: { x: n.x ?? 0, y: n.y ?? 0 },
           data: {
@@ -227,11 +234,16 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
   };
 };
 
-type LayoutContextType = [Node[], Edge[], number[]];
+type LayoutContextType = [Node<LayoutNodeData>[], Edge[], number[]];
+
+/** Layout an owned graph without reading or updating the designer's Redux state. */
+export const layoutWorkflowGraph = async (graph: WorkflowNode, readOnly = false): Promise<LayoutContextType> =>
+  convertElkGraphToReactFlow(await elkLayout(convertWorkflowGraphToElkGraph(graph), readOnly));
+
 const LayoutContext = createContext<LayoutContextType | undefined>(undefined);
 
 export const LayoutProvider = ({ children }: any) => {
-  const [nodes, setNodes] = useState<Node[]>([]);
+  const [nodes, setNodes] = useState<Node<LayoutNodeData>[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
   const [size, setSize] = useState<number[]>([0, 0]);
 

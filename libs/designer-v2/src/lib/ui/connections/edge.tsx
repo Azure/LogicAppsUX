@@ -1,17 +1,15 @@
 import type React from 'react';
 import { memo, useMemo } from 'react';
 import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
-import { EdgeLabelRenderer, getSmoothStepPath, useReactFlow, type EdgeProps } from '@xyflow/react';
-import { css } from '@fluentui/utilities';
+import { EdgeLabelRenderer, useReactFlow, type EdgeProps } from '@xyflow/react';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { containsIdTag, removeIdTag, getEdgeCenter, RUN_AFTER_STATUS, useEdgeIndex, useGuid } from '@microsoft/logic-apps-shared';
+import { containsIdTag, removeIdTag, getEdgeCenter, useEdgeIndex } from '@microsoft/logic-apps-shared';
 
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelectedInOperationPanel, useIsNodeInMultiSelection } from '../../core/state/panel/panelSelectors';
 import { useActionMetadata, useNodeEdgeTargets, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from './dropzone';
-import { ArrowCap } from './dynamicsvgs/arrowCap';
-import { CollapsedRunAfterIndicator, RunAfterIndicator } from './runAfterIndicator';
+import { filterRunAfters, WorkflowEdgeView } from './workflowEdgeView';
 interface EdgeContentProps {
   x: number;
   y: number;
@@ -51,9 +49,6 @@ export interface LogicAppsEdgeProps {
 const edgeContentHeight = 24;
 const edgeContentWidth = 92;
 
-const runAfterWidth = 36;
-const runAfterHeight = 12;
-
 const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   id,
   sourceX,
@@ -82,17 +77,7 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
     targetY,
   });
 
-  const filteredRunAfters: Record<string, string[]> = useMemo(
-    () =>
-      Object.entries(operationData?.runAfter ?? {}).reduce((pv: Record<string, string[]>, [id, cv]) => {
-        if ((cv ?? []).some((status) => status.toUpperCase() !== RUN_AFTER_STATUS.SUCCEEDED)) {
-          pv[id] = cv;
-        }
-
-        return pv;
-      }, {}),
-    [operationData?.runAfter]
-  );
+  const filteredRunAfters: Record<string, string[]> = useMemo(() => filterRunAfters(operationData?.runAfter), [operationData?.runAfter]);
   const numRunAfters = Object.keys(filteredRunAfters).length;
   const raIndex: number = useMemo(() => {
     const sortedRunAfters = Object.keys(filteredRunAfters)
@@ -102,11 +87,6 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
     return sortedRunAfters?.findIndex((key) => key === source);
   }, [filteredRunAfters, reactFlow, source]);
 
-  const runAfterStatuses = useMemo(() => filteredRunAfters?.[source] ?? [], [filteredRunAfters, source]);
-  const runAfterCount = Object.keys(filteredRunAfters).length;
-  const showRunAfter = runAfterStatuses.length && runAfterCount < 6;
-  const showCollapsedRunAfter = runAfterStatuses.length && runAfterCount > 5 && Object.keys(filteredRunAfters)[0] === source;
-
   const showSourceButton = edgeTargets[edgeTargets.length - 1] === target;
   const showTargetButton = edgeSources?.[edgeSources.length - 1] === source;
 
@@ -114,22 +94,6 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   const multipleTargets = edgeTargets.length > 1;
   const onlyEdge = !multipleSources && !multipleTargets;
   const isLeaf = edgeTargets.length === 0;
-
-  const runAfterX = targetX - runAfterWidth / 2 + (numRunAfters - 1 - raIndex * 2) * (runAfterWidth / 2 + 4);
-  const runAfterY = targetY - runAfterHeight;
-
-  const [d] = useMemo(() => {
-    return getSmoothStepPath({
-      sourceX,
-      sourceY,
-      sourcePosition,
-      targetX,
-      targetY: (numRunAfters !== 0 ? targetY - runAfterHeight : targetY) - 2, // move up to allow space for run after indicator
-      targetPosition,
-      borderRadius: 8,
-      centerY,
-    });
-  }, [numRunAfters, sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY, centerY]);
 
   const tabIndex = useEdgeIndex(id);
 
@@ -142,35 +106,21 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
     [isSourceSelected, isTargetSelected, isSourceMultiSelected, isTargetMultiSelected]
   );
 
-  const capGuid = useGuid();
-
   return (
-    <>
-      <defs>
-        <marker
-          id={capGuid}
-          className={css(highlighted ? 'highlighted' : '')}
-          viewBox="0 0 20 20"
-          refX="6"
-          refY="8"
-          markerWidth="12"
-          markerHeight="10"
-        >
-          <ArrowCap />
-        </marker>
-      </defs>
-
-      <path
-        id={id}
-        style={style}
-        className={css('react-flow__edge-path', highlighted ? 'highlighted' : '')}
-        d={d}
-        strokeDasharray={showRunAfter ? '4 6' : '0'}
-        strokeWidth={2}
-        strokeLinecap={'round'}
-        markerEnd={`url(#${capGuid})`}
-      />
-
+    <WorkflowEdgeView
+      id={id}
+      source={source}
+      sourceX={sourceX}
+      sourceY={sourceY}
+      targetX={targetX}
+      targetY={targetY}
+      sourcePosition={sourcePosition}
+      targetPosition={targetPosition}
+      style={style}
+      filteredRunAfters={filteredRunAfters}
+      runAfterIndex={raIndex}
+      highlighted={highlighted}
+    >
       {/* ADD ACTION / BRANCH BUTTONS */}
       {readOnly ? null : (
         <>
@@ -212,26 +162,7 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
           )}
         </>
       )}
-
-      {/* RUN AFTER INDICATOR */}
-      {showRunAfter ? (
-        <foreignObject id="msla-run-after-traffic-light" width={runAfterWidth} height={runAfterHeight} x={runAfterX} y={runAfterY}>
-          <RunAfterIndicator statuses={runAfterStatuses} sourceNodeId={source} />
-        </foreignObject>
-      ) : null}
-      {/* RUN AFTER INDICATOR WHEN COLLAPSED */}
-      {showCollapsedRunAfter ? (
-        <foreignObject
-          id="msla-run-after-traffic-light"
-          width={runAfterWidth}
-          height={runAfterHeight}
-          x={targetX - runAfterWidth / 2}
-          y={targetY - runAfterHeight}
-        >
-          <CollapsedRunAfterIndicator filteredRunAfters={filteredRunAfters} runAfterCount={runAfterCount} />
-        </foreignObject>
-      ) : null}
-    </>
+    </WorkflowEdgeView>
   );
 };
 

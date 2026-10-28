@@ -1,0 +1,37 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "triggers": {
+      "Request": {
+        "type": "Request",
+        "kind": "Http",
+        "inputs": { "schema": { "type": "object" } }
+      }
+    },
+    "actions": {
+      "Read_customer": { "type": "Compose", "inputs": "before", "runAfter": {} },
+      "Condition": {
+        "type": "If",
+        "expression": { "equals": [1, 1] },
+        "actions": {
+          "True_action": { "type": "Compose", "inputs": "true branch", "runAfter": {} }
+        },
+        "else": {
+          "actions": {
+            "False_action": { "type": "Compose", "inputs": "false branch", "runAfter": {} }
+          }
+        },
+        "runAfter": { "Read_customer": ["Succeeded"] }
+      },
+      "Consume_result": {
+        "type": "Compose",
+        "inputs": "after",
+        "runAfter": { "Condition": ["Succeeded"] }
+      }
+    },
+    "outputs": {}
+  },
+  "kind": "Stateful",
+  "connections": {}
+}

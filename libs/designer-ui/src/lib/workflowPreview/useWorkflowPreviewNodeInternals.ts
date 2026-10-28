@@ -2,7 +2,6 @@ import { useStore, useUpdateNodeInternals } from '@xyflow/react';
 import type { ReactFlowState } from '@xyflow/react';
 import { useEffect } from 'react';
 import type { RefObject } from 'react';
-import type { WorkflowPreviewNode } from './types';
 
 const arePreviewNodesMeasured = ({ nodeLookup }: ReactFlowState) => {
   if (!nodeLookup.size) {
@@ -16,7 +15,7 @@ const arePreviewNodesMeasured = ({ nodeLookup }: ReactFlowState) => {
   return true;
 };
 
-export const useWorkflowPreviewNodeInternals = (containerRef: RefObject<HTMLDivElement>, nodes: WorkflowPreviewNode[]) => {
+export const useWorkflowPreviewNodeInternals = (containerRef: RefObject<HTMLDivElement>, nodes: readonly { id: string }[]) => {
   const updateNodeInternals = useUpdateNodeInternals();
   // useNodesInitialized checks caller-owned dimensions, which intentionally omit natural card heights.
   const nodesMeasured = useStore(arePreviewNodesMeasured);

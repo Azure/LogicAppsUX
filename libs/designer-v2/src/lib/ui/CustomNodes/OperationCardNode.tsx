@@ -244,9 +244,12 @@ const DefaultNode = ({ id }: NodeProps) => {
   }, [dispatch, id]);
 
   const [showCopyCallout, setShowCopyCallout] = useState(false);
-  const copyClick = useCallback(() => {
+  const copyClick = useCallback(async () => {
+    const result = await dispatch(copyOperation({ nodeId: id }));
+    if (result?.meta?.requestStatus !== 'fulfilled') {
+      return;
+    }
     setShowCopyCallout(true);
-    dispatch(copyOperation({ nodeId: id }));
     setCopyCalloutTimeout(setTimeout(() => setShowCopyCallout(false), 3000));
   }, [dispatch, id]);
 

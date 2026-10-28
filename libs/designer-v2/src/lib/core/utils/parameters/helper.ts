@@ -3467,6 +3467,9 @@ export const updateScopePasteTokenMetadata = (
 ): { updatedTokenSegment: ValueSegment; tokenError: string } => {
   let error = '';
   let token = valueSegment?.token;
+  if (token?.tokenType === TokenType.FX || token?.tokenType === TokenType.PARAMETER) {
+    return { updatedTokenSegment: valueSegment, tokenError: error };
+  }
   if (token) {
     token.actionName = token?.actionName ?? pasteParams.rootTriggerId;
   }

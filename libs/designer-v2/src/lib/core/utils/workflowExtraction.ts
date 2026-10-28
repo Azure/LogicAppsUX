@@ -16,16 +16,9 @@ import {
 } from '@microsoft/logic-apps-shared';
 import type { Workflow } from '../../common/models/workflow';
 import type { WorkflowExtractionBinding, WorkflowExtractionPlan, WorkflowExtractionService } from '../../common/models/workflowExtraction';
+import { isExtractionContainer, normalizeWorkflowExtractionRoots, WorkflowExtractionError } from './workflowExtractionSelection';
 
-export class WorkflowExtractionError extends Error {
-  constructor(
-    public readonly code: string,
-    message: string
-  ) {
-    super(message);
-    this.name = 'WorkflowExtractionError';
-  }
-}
+export { WorkflowExtractionError } from './workflowExtractionSelection';
 
 function fail(code: string, message: string): never {
   throw new WorkflowExtractionError(code, message);
@@ -380,17 +373,14 @@ export function buildWorkflowExtractionPlan(
   if (workflow.kind && !['stateful', 'stateless'].includes(workflow.kind.toLowerCase())) {
     fail('unsupported-kind', 'Only Stateful and Stateless Standard workflows can be extracted.');
   }
-  const selected = new Set(selectedIds);
-  if (selected.size < 2 || selected.size !== selectedIds.length) {
-    fail('invalid-selection', 'Select at least two distinct actions to extract.');
-  }
   const actions = workflow.definition.actions ?? {};
   const locations = indexActions(actions);
-  for (const id of selected) {
-    if (!Object.prototype.hasOwnProperty.call(actions, id)) {
-      fail('selection-not-top-level', `Selected action "${id}" is missing or is not in the top-level action collection.`);
-    }
-  }
+  const selected = new Set(
+    normalizeWorkflowExtractionRoots(
+      new Map([...locations].map(([id, { parentId, action }]) => [id, { parentId, isContainer: isExtractionContainer(action.type) }])),
+      selectedIds
+    )
+  );
   const moved = new Set([...locations].filter(([, location]) => selected.has(location.topId)).map(([id]) => id));
   checkNotes(workflow.notes, moved);
   const triggers = Object.entries(workflow.definition.triggers ?? {});
