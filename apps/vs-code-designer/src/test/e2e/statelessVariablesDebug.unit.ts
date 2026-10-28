@@ -395,6 +395,67 @@ async function testTaskTerminationRaceIsReconciled(): Promise<void> {
   checks++;
 }
 
+async function testTaskTerminationWaitsForRegistryConvergence(): Promise<void> {
+  let taskActive = true;
+  let terminateCalls = 0;
+  const manager = new StatelessOwnedDebug('/unit/owned-app', 'func: host start', async (tag) => {
+    manager.taskStarted({
+      id: 'task',
+      workspacePath: '/unit/owned-app',
+      name: 'func: host start',
+      isActive: () => taskActive,
+      terminate: () => {
+        terminateCalls++;
+        setTimeout(() => {
+          taskActive = false;
+        }, 10);
+        throw new Error('Task to terminate not found');
+      },
+    });
+    manager.sessionStarted({
+      id: 'session',
+      workspacePath: '/unit/owned-app',
+      ownerTag: tag,
+      stop: async () => manager.sessionEnded('session'),
+    });
+    return true;
+  });
+
+  await manager.start(new AbortController().signal);
+  await manager.quiesce(Date.now() + 1000);
+  assert.strictEqual(terminateCalls, 1, 'Termination must be dispatched once while registry convergence is pending');
+  checks++;
+}
+
+async function testTaskTerminationAcceptsExactEndEvent(): Promise<void> {
+  let terminateCalls = 0;
+  const manager = new StatelessOwnedDebug('/unit/owned-app', 'func: host start', async (tag) => {
+    manager.taskStarted({
+      id: 'task',
+      workspacePath: '/unit/owned-app',
+      name: 'func: host start',
+      isActive: () => true,
+      terminate: () => {
+        terminateCalls++;
+        setTimeout(() => manager.taskEnded('task'), 10);
+        throw new Error('Task to terminate not found');
+      },
+    });
+    manager.sessionStarted({
+      id: 'session',
+      workspacePath: '/unit/owned-app',
+      ownerTag: tag,
+      stop: async () => manager.sessionEnded('session'),
+    });
+    return true;
+  });
+
+  await manager.start(new AbortController().signal);
+  await manager.quiesce(Date.now() + 1000);
+  assert.strictEqual(terminateCalls, 1);
+  checks++;
+}
+
 async function testActiveTaskTerminationFailureRemainsFatal(): Promise<void> {
   const manager = new StatelessOwnedDebug('/unit/owned-app', 'func: host start', async (tag) => {
     manager.taskStarted({
@@ -419,9 +480,51 @@ async function testActiveTaskTerminationFailureRemainsFatal(): Promise<void> {
   await assert.rejects(
     () => manager.quiesce(Date.now() + 1000),
     (error: AggregateError) =>
-      error.message === 'Matching owned debug cleanup failed' &&
+      error.message === 'Matching owned debug task remained active after termination failed' &&
       error.errors.some((cause: Error) => cause.message === 'real termination failure')
   );
+  checks++;
+}
+
+async function testCleanupErrorWaitsForTaskConvergence(): Promise<void> {
+  let taskActive = true;
+  const manager = new StatelessOwnedDebug('/unit/owned-app', 'func: host start', async (tag) => {
+    manager.taskStarted({
+      id: 'task',
+      workspacePath: '/unit/owned-app',
+      name: 'func: host start',
+      isActive: () => taskActive,
+      terminate: () => {
+        setTimeout(() => {
+          taskActive = false;
+        }, 10);
+        throw new Error('provisional task error');
+      },
+    });
+    manager.sessionStarted({
+      id: 'session',
+      workspacePath: '/unit/owned-app',
+      ownerTag: tag,
+      stop: async () => {
+        manager.sessionEnded('session');
+        throw new Error('session stop failed');
+      },
+    });
+    return true;
+  });
+
+  await manager.start(new AbortController().signal);
+  const startedAt = Date.now();
+  await assert.rejects(
+    () => manager.quiesce(startedAt + 80),
+    (error: AggregateError) =>
+      error.message === 'Matching owned debug cleanup failed before quiescence' &&
+      error.errors.some((cause: Error) => cause.message === 'session stop failed') &&
+      !error.errors.some((cause: Error) => cause.message === 'provisional task error')
+  );
+  const elapsedMs = Date.now() - startedAt;
+  assert.ok(elapsedMs >= 10, 'Cleanup failure must not bypass exact task-liveness convergence');
+  assert.ok(elapsedMs < 70, 'Cleanup rejection should occur after task convergence rather than at the outer deadline');
   checks++;
 }
 
@@ -572,7 +675,10 @@ async function main(): Promise<void> {
   await testSettledLaunchStopsDebuggerBeforeTask();
   await testAlreadyExitedTaskIsReconciled();
   await testTaskTerminationRaceIsReconciled();
+  await testTaskTerminationWaitsForRegistryConvergence();
+  await testTaskTerminationAcceptsExactEndEvent();
   await testActiveTaskTerminationFailureRemainsFatal();
+  await testCleanupErrorWaitsForTaskConvergence();
   await testLateRecoveryLaunchAfterRejectedDeadline();
   await testFailedOrUnobservedNativeStart();
   testDirectFourPhaseEvidence();

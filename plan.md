@@ -1,5 +1,78 @@
 # VS Code Azure Auth and 1ES ADO E2E Migration Plan
 
+## Current corrective iteration: ADO 15849192
+
+**Exact source:** `b25b68f0b6a7e6f80a614251a582dacf4b7b5f00`
+
+The dependency producer/archive boundary is fixed: all 12 selected Linux and
+Windows lanes reached native execution. MSN Weather, HTTP timeout and Run After
+passed on both operating systems. The remaining six failures are native
+observation/control defects:
+
+- Stateless on both operating systems stalls at the required
+  `stateless-variables-workflow-saved` screenshot after viewport normalization
+  proves all five exact node IDs. The later runtime registration and HTTP 200
+  belong to independent recovery, not the original positive lifecycle.
+- Regeneration fails in the shared regular-workbench ownership helper before
+  prompt/file assertions because shell ownership is coupled to opening Explorer.
+- Multi-root has the same Explorer coupling on Linux. Windows additionally
+  compares canonical paths case-sensitively and rejects equivalent drive-letter
+  casing before any Explorer mutation.
+- Linux recovery logs `Task to terminate not found` while VS Code's task registry
+  is transiently stale. This is secondary cleanup hardening, not the first
+  Stateless failure.
+
+### Consulted review inputs
+
+- `ci-sentinel`: classified the earliest gate in every failed lane and confirmed
+  ordered-evidence staging remained valid.
+- `vscode-test-specialist`: required shell ownership, recorder activation and
+  Explorer projection to become separate contracts; required active-canvas node
+  identity and exact task-liveness convergence.
+- `session-knowledge-curator`: retained direct recorder activation, normalized
+  semantic screenshots and exact retained-identity cleanup as non-negotiable.
+- Senior SWE planner: approved the direction after requiring platform-specific
+  canonical path comparison, independently bounded screenshot evidence and
+  deterministic delayed-task convergence controls.
+
+### Implementation plan
+
+- [x] Split regular-workbench shell ownership from optional Explorer projection.
+  Regeneration uses shell ownership only. Multi-root observes exact recorder
+  activation before explicitly establishing Explorer roots.
+- [x] Normalize every Multi-root physical path comparison with
+  `normalizeFsPath(fs.realpathSync.native(...))`; preserve Linux case sensitivity
+  and raw canonical paths for filesystem operations.
+- [x] Resolve required Designer node IDs uniquely inside the selected visible
+  Designer canvas instead of global `document.getElementById`; reject visible
+  duplicates inside that canvas.
+- [x] Cap shared lifecycle evidence capture with
+  `defaultEvidenceScreenshotTimeoutMs`, bounded by any earlier caller deadline,
+  so evidence failure cannot consume a complete scenario lifecycle.
+- [x] Treat task termination exceptions as provisional while the exact owned
+  execution remains registered. Accept only an exact end event or registry
+  disappearance; retain the original cause if liveness persists to cleanup
+  expiry.
+- [x] Add deterministic controls for hidden Explorer, Windows drive-case
+  equivalence, active-canvas stale duplicates, evidence deadline capping, exact
+  task-end convergence and persistent live-task failure.
+- [x] Run Biome, CLI TypeScript compilation, focused controls, complete
+  `test:e2e-cli:unit`, and `git diff --check`.
+- [ ] Push with the personal `lambrianmsft` GitHub identity, queue an exact-SHA
+  six-suite Linux/Windows diagnostic run, inspect native/terminal/evidence
+  artifacts, then queue the complete 23-lane canonical rollup only after the
+  targeted matrix is green.
+
+### Completed local proof
+
+- CLI E2E TypeScript compilation passed.
+- Focused Workbench, screenshot, lifecycle, Stateless, regeneration and
+  Multi-root controls passed.
+- The complete `test:e2e-cli:unit` chain passed after all review corrections.
+- `git diff --check` passed.
+- Independent code review reported no significant issues after the final
+  Explorer fallback and screenshot deadline corrections.
+
 ## Goal
 
 Enable authenticated Azure scenarios in LogicAppsUX VS Code extension E2E tests while moving selected E2E coverage from GitHub Actions to 1ES/MountainPass-compliant Azure DevOps pipelines. The migrated tests should use the AzureTools `@vscode/test-cli` approach where appropriate so they can run on latest/stable VS Code instead of being pinned to ExTester and VS Code 1.108.0.

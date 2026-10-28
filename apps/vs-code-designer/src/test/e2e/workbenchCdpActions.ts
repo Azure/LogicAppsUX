@@ -48,6 +48,7 @@ export interface RegularWorkbenchOwnershipState {
   title: string;
   ready: boolean;
   roots: string[];
+  shellOwned: boolean;
   owned: boolean;
 }
 
@@ -73,11 +74,19 @@ function matchesRegularWorkbenchTitle(
     .map((segment) =>
       segment
         .replace(/^[●*]\s*/, '')
+        .replace(/^\[extension development host\]\s*/i, '')
         .trim()
         .toLowerCase()
     )
     .filter(Boolean);
   return state.ready && titleSegments.some((segment) => expectedSegments.has(segment));
+}
+
+export function matchesRegularWorkbenchShell(
+  state: Pick<RegularWorkbenchOwnershipState, 'ready' | 'title'>,
+  expectation: RegularWorkbenchOwnershipExpectation
+): boolean {
+  return matchesRegularWorkbenchTitle(state, expectation);
 }
 
 export function matchesRegularWorkbenchOwnership(
@@ -97,7 +106,7 @@ export async function readRegularWorkbenchOwnership(
   cdp: CdpEvaluator,
   expectation: RegularWorkbenchOwnershipExpectation
 ): Promise<RegularWorkbenchOwnershipState> {
-  const state = await cdp.evaluate<Omit<RegularWorkbenchOwnershipState, 'owned'>>(
+  const state = await cdp.evaluate<Omit<RegularWorkbenchOwnershipState, 'shellOwned' | 'owned'>>(
     undefined,
     `(() => { ${workbenchVisibleScript}
       return {
@@ -115,7 +124,23 @@ export async function readRegularWorkbenchOwnership(
       };
     })()`
   );
-  return { ...state, owned: matchesRegularWorkbenchOwnership(state, expectation) };
+  return {
+    ...state,
+    shellOwned: matchesRegularWorkbenchShell(state, expectation),
+    owned: matchesRegularWorkbenchOwnership(state, expectation),
+  };
+}
+
+export async function waitForRegularWorkbenchShell(
+  cdp: CdpEvaluator,
+  expectation: RegularWorkbenchOwnershipExpectation,
+  deadline: number
+): Promise<RegularWorkbenchOwnershipState> {
+  return poll(
+    () => readRegularWorkbenchOwnership(cdp, expectation),
+    (state) => state.shellOwned,
+    deadline
+  );
 }
 
 export async function waitForRegularWorkbenchOwnership(
@@ -147,21 +172,62 @@ export async function connectToOwnedRegularWorkbench(options: {
     const client = boundedCdp(cdp, options.deadline);
     await client.send('Runtime.enable');
     await client.send('Page.enable');
-    await poll(
-      async () => {
-        const state = await readRegularWorkbenchOwnership(client, options.expectation);
-        return { ...state, owned: matchesRegularWorkbenchTitle(state, options.expectation) };
-      },
-      (state) => state.owned,
-      options.deadline
-    );
-    await command(client, 'View: Show Explorer', options.deadline);
-    const state = await waitForRegularWorkbenchOwnership(client, options.expectation, options.deadline);
+    const state = await waitForRegularWorkbenchShell(client, options.expectation, options.deadline);
     assert.ok(cdp.targetId, 'The invocation-owned regular Code window must expose one exact CDP target identity');
     return { cdp, state };
   } catch (error) {
     cdp.dispose();
     throw error;
+  }
+}
+
+export async function ensureRegularWorkbenchExplorer(
+  cdp: CdpEvaluator,
+  expectation: RegularWorkbenchOwnershipExpectation,
+  deadline: number
+): Promise<RegularWorkbenchOwnershipState> {
+  const initial = await readRegularWorkbenchOwnership(cdp, expectation);
+  if (initial.owned) {
+    return initial;
+  }
+  const explorerActivity = await cdp.evaluate<{ point: Point | null; active: boolean } | null>(
+    undefined,
+    `(() => { ${workbenchVisibleScript}
+      const found = Array.from(document.querySelectorAll('.activitybar .action-label'))
+        .filter(visible)
+        .filter(e => normalized(text(e)).startsWith('explorer'))
+        .filter(e => e.getAttribute('aria-disabled') !== 'true');
+      if (found.length !== 1) return null;
+      const item = found[0].closest('.action-item');
+      return {
+        point: point(found[0]),
+        active: !!item && (
+          item.classList.contains('checked') ||
+          item.getAttribute('aria-checked') === 'true' ||
+          item.getAttribute('aria-selected') === 'true'
+        ),
+      };
+    })()`
+  );
+  if (explorerActivity?.active) {
+    console.log('[workbench] Explorer activity is already active; waiting for its exact workspace roots');
+  } else if (explorerActivity?.point) {
+    await clickPoint(cdp, explorerActivity.point);
+  } else {
+    await command(cdp, 'View: Show Explorer', Math.min(deadline, Date.now() + 10_000));
+  }
+  try {
+    const state = await waitForRegularWorkbenchOwnership(cdp, expectation, deadline);
+    console.log(
+      `[workbench] Explorer projection ready for ${path.basename(expectation.workspaceFilePath)} with roots=${JSON.stringify(state.roots)}`
+    );
+    return state;
+  } catch (error) {
+    throw new Error(
+      `Explorer projection did not reach the exact workspace roots before its deadline: ${
+        error instanceof Error ? error.message : String(error)
+      }`
+    );
   }
 }
 
@@ -177,14 +243,13 @@ export async function reloadOwnedRegularWorkbench(
   afterGeneration: number;
 }> {
   const client = boundedCdp(cdp, deadline);
-  await command(client, 'View: Show Explorer', deadline);
-  const before = await readRegularWorkbenchOwnership(client, expectation);
+  const before = await ensureRegularWorkbenchExplorer(client, expectation, deadline);
   assert.ok(before.owned, 'Reload must begin in the exact complete visible workspace');
   const targetId = cdp.targetId;
   assert.ok(targetId, 'Original Code window target identity is required');
   const beforeGeneration = cdp.contextGeneration;
   await command(client, 'Developer: Reload Window', deadline);
-  const after = await poll(
+  const afterShell = await poll(
     async () => {
       try {
         return await readRegularWorkbenchOwnership(client, expectation);
@@ -200,10 +265,12 @@ export async function reloadOwnedRegularWorkbench(
         throw error;
       }
     },
-    (state) => !!state?.owned && state.timeOrigin !== before.timeOrigin,
+    (state) => !!state?.shellOwned && state.timeOrigin !== before.timeOrigin,
     deadline
   );
-  assert.ok(after);
+  assert.ok(afterShell);
+  const after = await ensureRegularWorkbenchExplorer(client, expectation, deadline);
+  assert.equal(after.timeOrigin, afterShell.timeOrigin, 'Explorer projection must remain in the reloaded workbench document');
   assert.equal(cdp.targetId, targetId, 'Reload continuation must retain the original window target');
   assert.ok(cdp.contextGeneration > beforeGeneration, 'Reload requires a fresh CDP execution-context generation');
   return { before, after, targetId, beforeGeneration, afterGeneration: cdp.contextGeneration };

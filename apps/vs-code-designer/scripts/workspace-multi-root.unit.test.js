@@ -230,10 +230,13 @@ test('registration is additive and leaves baseline CLI labels untouched', () => 
   assert.ok(
     nativeUi.includes('connectToOwnedRegularWorkbench({') &&
       nativeUi.includes('reloadOwnedRegularWorkbench(') &&
+      nativeUi.includes('ensureRegularWorkbenchExplorer(') &&
       nativeUi.includes("event.kind === 'activation'") &&
-      nativeUi.includes('fs.realpathSync(event.roots[0]) === fs.realpathSync(workspace.appDir)') &&
+      nativeUi.includes('normalizePhysicalPath(event.roots[0]) === normalizePhysicalPath(workspace.appDir)') &&
+      nativeUi.indexOf("event.kind === 'activation'") < nativeUi.indexOf('await ensureRegularWorkbenchExplorer(workbench, ownership') &&
       sharedWorkbench.includes('titleSegments.some((segment) => expectedSegments.has(segment))') &&
       sharedWorkbench.includes('`${workspaceTitle} (workspace)`') &&
+      sharedWorkbench.includes('waitForRegularWorkbenchShell(') &&
       sharedWorkbench.includes("assert.equal(cdp.targetId, targetId, 'Reload continuation must retain the original window target')"),
     'Multi-root must delegate exact workspace/window ownership and same-target reload to the shared regular-workbench lifecycle'
   );

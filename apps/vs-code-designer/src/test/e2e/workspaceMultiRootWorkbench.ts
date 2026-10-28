@@ -5,6 +5,7 @@ import { connectToVsCodeCdpByText } from './cdpClient';
 import { type CdpEvaluator, type Point, pressKey } from './cdpFormHelpers';
 import { remainingBudget } from './workspaceMultiRootCollector';
 import type { FuncRuntimeResolution } from './workspaceMultiRootLaunch';
+import { normalizeFsPath } from './testUtils';
 import { clickText, command, poll, workbenchVisibleScript as visibleScript } from './workbenchCdpActions';
 
 export { boundedCdp, clickText, command, poll } from './workbenchCdpActions';
@@ -91,20 +92,23 @@ export async function activeWebview(
   return result;
 }
 
+const normalizePhysicalPath = (value: string): string => normalizeFsPath(fs.realpathSync.native(value));
+
 export function readLogicAppRoots(workspaceFile: string, expected: string[]): string[] {
   const workspace: { folders: { path: string }[] } = JSON.parse(fs.readFileSync(workspaceFile, 'utf8'));
   assert.ok(Array.isArray(workspace.folders) && workspace.folders.length >= 2, 'Generated multi-root workspace is incomplete');
   const folders = workspace.folders.map((folder) => {
     assert.ok(typeof folder.path === 'string', 'Non-filesystem workspace folder is not admitted');
-    return fs.realpathSync(path.resolve(path.dirname(workspaceFile), folder.path));
+    return fs.realpathSync.native(path.resolve(path.dirname(workspaceFile), folder.path));
   });
-  assert.equal(new Set(folders).size, folders.length, 'Duplicate generated workspace root');
+  assert.equal(new Set(folders.map(normalizePhysicalPath)).size, folders.length, 'Duplicate generated workspace root');
+  const expectedPhysical = expected.map(normalizePhysicalPath);
   const roots = folders.filter((folder) => {
     const host = fs.existsSync(path.join(folder, 'host.json'));
     const settings = fs.existsSync(path.join(folder, 'local.settings.json'));
     assert.equal(host, settings, 'Incomplete Logic App root; population denominator cannot be trusted');
     if (!host) {
-      assert.ok(!expected.includes(folder), 'Required Logic App root has no generated host/settings');
+      assert.ok(!expectedPhysical.includes(normalizePhysicalPath(folder)), 'Required Logic App root has no generated host/settings');
       return false; // e.g. wizard-created Artifacts, not a Logic App.
     }
     JSON.parse(fs.readFileSync(path.join(folder, 'host.json'), 'utf8'));
@@ -116,7 +120,7 @@ export function readLogicAppRoots(workspaceFile: string, expected: string[]): st
     return true;
   });
   assert.ok(
-    expected.every((folder) => roots.includes(fs.realpathSync(folder))),
+    expectedPhysical.every((folder) => roots.map(normalizePhysicalPath).includes(folder)),
     'Workspace is missing a created Logic App root'
   );
   assert.ok(roots.length >= 2, 'Multiple Logic Apps are required');
@@ -144,7 +148,9 @@ export function debugEvents(file: string): DebugEvent[] {
     .map((line) => JSON.parse(line) as DebugEvent);
 }
 
-export function assertSequentialDebug(events: DebugEvent[], expectedRoots: string[]): void {
+export function assertSequentialDebug(events: DebugEvent[], expectedRoots: string[], platform: NodeJS.Platform = process.platform): void {
+  const normalizeDebugPath = (value: string): string => normalizeFsPath(value, platform);
+  const normalizedExpectedRoots = expectedRoots.map(normalizeDebugPath);
   const active = new Set<string>();
   const startedFolders = new Map<string, string>();
   const startedSessions = new Map<string, DebugEvent>();
@@ -163,28 +169,29 @@ export function assertSequentialDebug(events: DebugEvent[], expectedRoots: strin
       continue;
     }
     assert.ok(event.id && event.folder && event.name && event.type, 'Missing folder-qualified native debug evidence');
+    const eventFolder = normalizeDebugPath(event.folder);
     if (event.kind === 'started') {
       assert.equal(active.size, 0, 'Logic App debuggers must run one at a time');
-      assert.ok(expectedRoots.includes(event.folder), 'Wrong-folder debugger launched');
-      assert.ok(!completed.includes(event.folder), 'Duplicate folder debug launch');
+      assert.ok(normalizedExpectedRoots.includes(eventFolder), 'Wrong-folder debugger launched');
+      assert.ok(!completed.includes(eventFolder), 'Duplicate folder debug launch');
       assert.ok(!startedSessions.has(event.id), 'Reused native debug session ID');
       debugBoot ??= event.boot;
       assert.equal(event.boot, debugBoot, 'Sequential debug must remain in the real reloaded extension host');
       active.add(event.id);
-      startedFolders.set(event.id, event.folder);
+      startedFolders.set(event.id, eventFolder);
       startedSessions.set(event.id, event);
     } else {
       assert.equal(event.kind, 'terminated', 'Unknown debug evidence event');
       assert.ok(active.delete(event.id), 'Unmatched native debug termination');
-      assert.equal(startedFolders.get(event.id), event.folder, 'Terminated debugger belongs to a different folder');
+      assert.equal(startedFolders.get(event.id), eventFolder, 'Terminated debugger belongs to a different folder');
       assert.equal(startedSessions.get(event.id)?.boot, event.boot, 'Termination came from a different extension host');
       assert.equal(startedSessions.get(event.id)?.name, event.name, 'Termination changed native debug configuration');
       assert.equal(startedSessions.get(event.id)?.type, event.type, 'Termination changed native debug type');
-      completed.push(event.folder);
+      completed.push(eventFolder);
     }
   }
   assert.equal(active.size, 0, 'Debugger remained active at finalization');
-  assert.deepEqual(completed, expectedRoots, 'Every folder must launch and terminate sequentially');
+  assert.deepEqual(completed, normalizedExpectedRoots, 'Every folder must launch and terminate sequentially');
 }
 
 export function assertMapper(text: string, loaded: boolean): void {

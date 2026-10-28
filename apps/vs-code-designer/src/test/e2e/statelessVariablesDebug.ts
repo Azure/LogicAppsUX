@@ -79,6 +79,7 @@ export class StatelessOwnedDebug {
   private readonly tasks = new Map<string, { task: StatelessDebugTask; ownerTag: string }>();
   private readonly stopping = new Set<string>();
   private readonly terminating = new Set<string>();
+  private readonly terminationErrors = new Map<string, unknown>();
   private readonly stopJobs = new Set<Promise<void>>();
   private readonly cleanupErrors: unknown[] = [];
 
@@ -159,6 +160,7 @@ export class StatelessOwnedDebug {
   taskEnded(id: string): void {
     this.tasks.delete(id);
     this.terminating.delete(id);
+    this.terminationErrors.delete(id);
   }
 
   cancel(): void {
@@ -170,13 +172,27 @@ export class StatelessOwnedDebug {
 
   async quiesce(deadline: number): Promise<void> {
     this.cancel();
-    await withinDeadline(deadline, 'owned debug quiescence', async () => {
-      while (!this.isQuiescent()) {
+    try {
+      await withinDeadline(deadline, 'owned debug quiescence', async () => {
+        while (!this.isQuiescent()) {
+          await new Promise((resolve) => setTimeout(resolve, remainingMs(deadline, 20)));
+        }
         this.throwCleanupErrors();
-        await new Promise((resolve) => setTimeout(resolve, remainingMs(deadline, 20)));
+      });
+    } catch (error) {
+      this.reconcileInactiveTasks();
+      const retainedCleanupErrors = [...this.cleanupErrors];
+      const retainedTerminationErrors = [...this.terminationErrors.values()];
+      if (retainedCleanupErrors.length > 0 || retainedTerminationErrors.length > 0) {
+        throw new AggregateError(
+          [error, ...retainedCleanupErrors, ...retainedTerminationErrors],
+          retainedTerminationErrors.length > 0
+            ? 'Matching owned debug task remained active after termination failed'
+            : 'Matching owned debug cleanup failed before quiescence'
+        );
       }
-      this.throwCleanupErrors();
-    });
+      throw error;
+    }
   }
 
   private isQuiescent(): boolean {
@@ -224,8 +240,8 @@ export class StatelessOwnedDebug {
         try {
           task.terminate();
         } catch (error) {
-          if (task.isActive()) {
-            this.cleanupErrors.push(error);
+          if (this.tasks.has(task.id) && task.isActive()) {
+            this.terminationErrors.set(task.id, error);
           } else {
             this.taskEnded(task.id);
           }

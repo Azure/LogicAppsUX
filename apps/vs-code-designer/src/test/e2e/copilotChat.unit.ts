@@ -23,6 +23,7 @@ async function main(): Promise<void> {
   await testCloseCopilotChatClosesVisibleEditorTab();
   await testCloseCopilotChatFailsWithoutMutatingMixedContainer();
   await testCloseCopilotChatFailsWhenCloseCommandRejects();
+  await testCloseCopilotChatBoundsStalledActions();
   await testCloseCopilotChatFailsWhenVisibleSurfaceCannotClose();
   await testCopilotChatAttachRetryRecoversTransientFailure();
   await testCopilotChatAttachRetryUsesRemainingBudgetForCoreCleanup();
@@ -290,6 +291,31 @@ async function testCloseCopilotChatFailsWhenCloseCommandRejects(): Promise<void>
     () => closeCopilotChatIfVisibleCore('rejected-command-test', host, { timeoutMs: 1000 }),
     /failed to execute workbench\.action\.closePanel/
   );
+}
+
+async function testCloseCopilotChatBoundsStalledActions(): Promise<void> {
+  for (const editor of [false, true]) {
+    const host = new FakeCopilotChatHost(
+      [
+        {
+          visible: true,
+          matchCount: 1,
+          owners: [{ kind: editor ? 'editor' : 'panel', label: 'copilot-chat', unrelatedVisibleCount: 0 }],
+        },
+      ],
+      {
+        stallCommands: !editor,
+        stallEditorTabs: editor,
+      }
+    );
+
+    const startedAt = Date.now();
+    await assert.rejects(
+      () => closeCopilotChatIfVisibleCore(`stalled-${editor ? 'editor' : 'command'}-test`, host, { timeoutMs: 25 }),
+      /cleanup deadline expired/
+    );
+    assert.ok(Date.now() - startedAt < 250, 'A stalled Copilot Chat action must remain inside the shared cleanup deadline');
+  }
 }
 
 async function testCloseCopilotChatFailsWhenVisibleSurfaceCannotClose(): Promise<void> {
@@ -960,6 +986,8 @@ class FakeCopilotChatHost {
       readDurationsMs?: number[];
       readTimeouts?: number[];
       clock?: { now(): number; advance(ms: number): void };
+      stallCommands?: boolean;
+      stallEditorTabs?: boolean;
     } = {}
   ) {}
 
@@ -968,6 +996,9 @@ class FakeCopilotChatHost {
     if (this.options.rejectEditorTabs) {
       return Promise.reject(new Error('synthetic editor tab close failure'));
     }
+    if (this.options.stallEditorTabs) {
+      return new Promise(() => undefined);
+    }
     return Promise.resolve();
   }
 
@@ -975,6 +1006,9 @@ class FakeCopilotChatHost {
     this.commands.push(command);
     if (this.options.rejectCommands) {
       return Promise.reject(new Error(`synthetic ${command} failure`));
+    }
+    if (this.options.stallCommands) {
+      return new Promise(() => undefined);
     }
     return Promise.resolve();
   }

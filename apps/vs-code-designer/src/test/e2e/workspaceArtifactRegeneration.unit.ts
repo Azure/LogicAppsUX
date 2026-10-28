@@ -1029,10 +1029,11 @@ async function main(): Promise<void> {
         nativeHostSource.indexOf('prompts = await confirmRegenerationPromptSequence({') &&
         nativeHostSource.includes('readWorkbenchPrompts(cdp)') &&
         nativeHostSource.includes('readRegularWorkbenchOwnership(cdp, expectation)') &&
+        nativeHostSource.includes('ready: ownership.shellOwned') &&
         nativeHostSource.includes('connectToOwnedRegularWorkbench({') &&
         sharedPromptSource.includes("workbenchCommand(cdp, 'Notifications: Show Notifications', deadline)") &&
         sharedPromptSource.includes('.notifications-center, .notifications-list-container') &&
-        sharedWorkbenchSource.includes('waitForRegularWorkbenchOwnership(') &&
+        sharedWorkbenchSource.includes('waitForRegularWorkbenchShell(') &&
         sharedWorkbenchSource.includes('const client = boundedCdp(cdp, options.deadline)') &&
         !sharedWorkbenchSource.includes('const client = boundedCdp(cdp, connectionDeadline)'),
       'The exact owned workspace must use shared prompt observation and retained-notification reveal before the strict two-prompt sequence begins'

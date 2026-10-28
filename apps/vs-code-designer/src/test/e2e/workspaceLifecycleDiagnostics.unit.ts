@@ -82,7 +82,7 @@ function testDebugPromptEvidenceWaitsForStableRuntime(): void {
   assert.ok(runtimeReady < promptsHandled, 'Post-prompt evidence must wait for the workbench target to stabilize');
 }
 
-function loadCaptureHarness(sourceOverride = sourceText) {
+function loadCaptureHarness(sourceOverride = sourceText, delays: { chatMs?: number; notificationMs?: number; connectMs?: number } = {}) {
   const captureSource = ts.createSourceFile(`${sourcePath}.capture.ts`, sourceOverride, ts.ScriptTarget.Latest, true);
   const selected = captureSource.statements.filter(
     (node): node is ts.FunctionDeclaration =>
@@ -101,29 +101,41 @@ function loadCaptureHarness(sourceOverride = sourceText) {
     notificationCleanup: 0,
     notificationDeadlineMs: undefined as number | undefined,
     capture: 0,
+    captureDeadlineMs: undefined as number | undefined,
+    captureTimeoutMs: undefined as number | undefined,
     ownerConnect: 0,
+    ownerConnectTimeoutMs: undefined as number | undefined,
   };
+  let now = 1000;
   const exported: Record<string, any> = {};
   vm.runInNewContext(implementation, {
     exports: exported,
     console,
+    Date: { now: () => now },
     closeCopilotChatIfVisible: async (_stage: string, options?: { timeoutMs?: number }) => {
       calls.chatCleanup++;
       calls.chatTimeoutMs = options?.timeoutMs;
+      now += delays.chatMs ?? 0;
     },
     dismissWorkbenchNotifications: async (deadlineMs?: number) => {
       calls.notificationCleanup++;
       calls.notificationDeadlineMs = deadlineMs;
+      now += delays.notificationMs ?? 0;
     },
     assertLifecycleWorkspaceBinding: () => undefined,
-    captureCdpScreenshot: async () => {
+    captureCdpScreenshot: async (_cdp: unknown, _name: string, options?: { deadlineMs?: number; timeoutMs?: number }) => {
       calls.capture++;
+      calls.captureDeadlineMs = options?.deadlineMs;
+      calls.captureTimeoutMs = options?.timeoutMs;
     },
-    connectToVsCodeWorkbenchCdp: async () => {
+    connectToVsCodeWorkbenchCdp: async (options?: { timeoutMs?: number }) => {
       calls.ownerConnect++;
+      calls.ownerConnectTimeoutMs = options?.timeoutMs;
+      now += delays.connectMs ?? 0;
       return { dispose: () => undefined };
     },
     captureDiagnosticScreenshot: async () => undefined,
+    defaultEvidenceScreenshotTimeoutMs: 15_000,
     getExpectedActiveTabText: () => [],
   });
 
@@ -451,7 +463,7 @@ async function testCopilotChatCleanupDoesNotRunDuringPickerEvidenceCapture(): Pr
   assert.notStrictEqual(mutated.calls.chatCleanup, 0, 'Unconditional cleanup mutation must be observable');
 
   const bounded = loadCaptureHarness();
-  const deadlineMs = Date.now() + 5000;
+  const deadlineMs = 6000;
   await bounded.exported.captureLifecycleScreenshot('bounded-housekeeping', {
     expectation: { kind: 'designerCanvas', label: 'bounded-housekeeping', requiredNodes: ['Response'] },
     semanticCdp: {},
@@ -467,6 +479,29 @@ async function testCopilotChatCleanupDoesNotRunDuringPickerEvidenceCapture(): Pr
     deadlineMs,
     'Notification housekeeping must use the same caller lifecycle deadline'
   );
+  assert.strictEqual(bounded.calls.captureDeadlineMs, deadlineMs, 'An earlier caller deadline must remain authoritative');
+  assert.strictEqual(bounded.calls.captureTimeoutMs, 15_000);
+
+  const longDeadline = loadCaptureHarness();
+  await longDeadline.exported.captureLifecycleScreenshot('bounded-evidence', {
+    expectation: { kind: 'designerCanvas', label: 'bounded-evidence', requiredNodes: ['Response'] },
+    semanticCdp: {},
+    semanticContextId: 1,
+    skipNotificationHousekeeping: true,
+    deadlineMs: 901_000,
+  });
+  assert.strictEqual(longDeadline.calls.captureDeadlineMs, 16_000);
+
+  const delayed = loadCaptureHarness(sourceText, { chatMs: 10_000, notificationMs: 3000, connectMs: 1000 });
+  await delayed.exported.captureLifecycleScreenshot('end-to-end-bounded-evidence', {
+    expectation: { kind: 'designerCanvas', label: 'end-to-end-bounded-evidence', requiredNodes: ['Response'] },
+    semanticCdp: {},
+    semanticContextId: 1,
+    deadlineMs: 901_000,
+  });
+  assert.strictEqual(delayed.calls.notificationDeadlineMs, 16_000);
+  assert.strictEqual(delayed.calls.ownerConnectTimeoutMs, 2000, 'Connection must receive only the remaining evidence budget');
+  assert.strictEqual(delayed.calls.captureDeadlineMs, 16_000, 'Housekeeping and connection must not reset the evidence deadline');
 }
 
 async function testCanvasViewportNormalizationUsesStructuralDiagnosticsAndOwnedControls(): Promise<void> {

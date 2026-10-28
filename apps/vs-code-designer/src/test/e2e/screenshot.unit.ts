@@ -325,6 +325,7 @@ async function testAbsoluteDeadlineRejectsDelayedStability(
     }),
     /Screenshot readiness failed|deadline/
   );
+  assert.strictEqual(cdp.latchDisposeAttempts, 0, 'Expired evidence deadlines must skip best-effort semantic-latch disposal');
 }
 
 async function testReadinessUnavailableRecordsLastSampleDiagnostics(
@@ -1271,6 +1272,7 @@ class FakeCaptureCdp {
   resolveNodeAttempts = 0;
   semanticBindingControlMetadataUsed = false;
   latchInstallAttempts = 0;
+  latchDisposeAttempts = 0;
   private readinessIndex = 0;
   private ownerFrameRevisionReadIndex = 0;
   private exactIframeRevisionReadIndex = 0;
@@ -1411,7 +1413,7 @@ class FakeCaptureCdp {
     return { result: {} };
   }
 
-  async evaluate<T>(_contextId: number | undefined, expression: string): Promise<T> {
+  async evaluate<T>(_contextId: number | undefined, expression: string, _options?: { timeoutMs?: number }): Promise<T> {
     this.evaluatedContextIds.push(_contextId);
     if (this.options.evaluateDelayMs) {
       await new Promise((resolve) => setTimeout(resolve, this.options.evaluateDelayMs));
@@ -1423,6 +1425,9 @@ class FakeCaptureCdp {
       if (expression.includes("const key = '__logicAppsScreenshotInvalidation'")) {
         this.latchInstallAttempts++;
         this.latchInstallContextIds.push(_contextId);
+      }
+      if (expression.includes('delete globalThis.__logicAppsScreenshotInvalidation')) {
+        this.latchDisposeAttempts++;
       }
       if (this.options.failLatchEvaluation) {
         throw new Error('synthetic latch failure');

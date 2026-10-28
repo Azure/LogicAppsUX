@@ -6,7 +6,7 @@ import { captureCdpScreenshot } from './screenshot';
 import { nativePopulationProvider, remainingBudget, waitForFuncPopulation } from './workspaceMultiRootCollector';
 import type { MultiRootBootstrapAttestation } from './workspaceMultiRootBootstrap';
 import { assertFuncRuntimeResolution } from './workspaceMultiRootLaunch';
-import { connectToOwnedRegularWorkbench, reloadOwnedRegularWorkbench } from './workbenchCdpActions';
+import { connectToOwnedRegularWorkbench, ensureRegularWorkbenchExplorer, reloadOwnedRegularWorkbench } from './workbenchCdpActions';
 import {
   activeWebview,
   assertMapper,
@@ -21,6 +21,7 @@ import {
   readLogicAppRoots,
   readWorkbench,
 } from './workspaceMultiRootWorkbench';
+import { normalizeFsPath } from './testUtils';
 
 export interface MultiRootWorkspace {
   wsFilePath: string;
@@ -35,6 +36,8 @@ export interface MultiRootOptions {
   bootstrap: MultiRootBootstrapAttestation;
   deadline: number;
 }
+
+const normalizePhysicalPath = (value: string): string => normalizeFsPath(fs.realpathSync.native(value));
 
 // Executed by the official CLI runner's supplementary regular-window route.
 // The observer lives outside the extension host: real Reload Window cannot
@@ -73,13 +76,14 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
         }
         return debugEvents(options.eventsFile)
           .filter((event) => event.kind === 'activation')
-          .find((event) => event.roots?.length === 1 && fs.realpathSync(event.roots[0]) === fs.realpathSync(workspace.appDir));
+          .find((event) => event.roots?.length === 1 && normalizePhysicalPath(event.roots[0]) === normalizePhysicalPath(workspace.appDir));
       },
       Boolean,
       phaseDeadline(30000)
     );
     assert.ok(originalActivation?.boot, 'The exact original workspace extension-host activation is required before Explorer actions');
     const originalBoot = originalActivation.boot;
+    await ensureRegularWorkbenchExplorer(workbench, ownership, phaseDeadline(30000));
 
     // Three example roots, matching the source fixture shape. No extra app-type
     // matrix and no maximum of three in the collector, root loader or debug contract.
@@ -118,10 +122,12 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
     }
     const roots = readLogicAppRoots(workspace.wsFilePath, createdRoots);
     declareOrderedRootEvidence(roots.map((root) => path.basename(root)));
-    await command(workbench, 'View: Show Explorer', phaseDeadline(30000));
-    await poll(
-      () => readWorkbench(workbench),
-      (state) => roots.every((root) => state.roots.includes(path.basename(root))),
+    await ensureRegularWorkbenchExplorer(
+      workbench,
+      {
+        workspaceFilePath: workspace.wsFilePath,
+        rootPaths: roots,
+      },
       phaseDeadline(30000)
     );
     const screenshots = [await capture('workspace-multi-root-created')];
@@ -155,9 +161,9 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
     assert.deepEqual(
       activation.roots
         .filter((root) => fs.existsSync(path.join(root, 'host.json')))
-        .map((root) => fs.realpathSync(root))
+        .map(normalizePhysicalPath)
         .sort(),
-      [...roots].sort(),
+      roots.map(normalizePhysicalPath).sort(),
       'Fresh extension-host workspace roots differ from the complete generated Logic App population'
     );
     assert.deepEqual(readLogicAppRoots(workspace.wsFilePath, createdRoots), roots, 'Reload changed the count denominator');
@@ -184,13 +190,24 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
       const config = configs[0];
       const qualified = `${config.name} (${path.basename(folder)})`;
       assert.ok(
-        !debugEvents(options.eventsFile).some((event) => event.kind === 'started' && event.folder === folder),
+        !debugEvents(options.eventsFile).some(
+          (event) =>
+            event.kind === 'started' &&
+            typeof event.folder === 'string' &&
+            normalizePhysicalPath(event.folder) === normalizePhysicalPath(folder)
+        ),
         'Duplicate debug request'
       );
       await command(workbench, 'Debug: Select and Start Debugging', phase);
       await clickText(workbench, '.quick-input-list .monaco-list-row', qualified, phase);
       const started = await poll(
-        async () => debugEvents(options.eventsFile).filter((event) => event.kind === 'started' && event.folder === folder),
+        async () =>
+          debugEvents(options.eventsFile).filter(
+            (event) =>
+              event.kind === 'started' &&
+              typeof event.folder === 'string' &&
+              normalizePhysicalPath(event.folder) === normalizePhysicalPath(folder)
+          ),
         (events) => events.length > 0,
         phase
       );

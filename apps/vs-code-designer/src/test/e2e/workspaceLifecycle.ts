@@ -51,7 +51,12 @@ import {
   type MsnWeatherAzureSettings,
   normalizeManagementBaseUrl,
 } from './msnWeatherSettings';
-import { captureCdpScreenshot, captureDiagnosticScreenshot, installFailureScreenshotHook } from './screenshot';
+import {
+  captureCdpScreenshot,
+  captureDiagnosticScreenshot,
+  defaultEvidenceScreenshotTimeoutMs,
+  installFailureScreenshotHook,
+} from './screenshot';
 import { buildScreenshotReadinessExpression, type ScreenshotExpectation, type ScreenshotReadinessSnapshot } from './screenshotReadiness';
 import { containsIgnoreCase, normalizeFsPath, uniqueName } from './testUtils';
 import { waitForVisibleDelay } from './visibleDelay';
@@ -6488,9 +6493,10 @@ async function captureLifecycleScreenshot(
     });
     return;
   }
+  const evidenceDeadline = Math.min(options.deadlineMs ?? Number.POSITIVE_INFINITY, Date.now() + defaultEvidenceScreenshotTimeoutMs);
   const remainingHousekeepingBudget = () => {
-    const remaining = options.deadlineMs === undefined ? undefined : options.deadlineMs - Date.now();
-    if (remaining !== undefined && remaining <= 0) {
+    const remaining = evidenceDeadline - Date.now();
+    if (remaining <= 0) {
       throw new Error(`${name} screenshot deadline expired`);
     }
     return remaining;
@@ -6498,13 +6504,13 @@ async function captureLifecycleScreenshot(
   if (shouldCloseCopilotChatBeforeScreenshot(options.expectation)) {
     const remaining = remainingHousekeepingBudget();
     await closeCopilotChatIfVisible(`before screenshot ${name}`, {
-      ...(remaining === undefined ? {} : { timeoutMs: Math.min(20_000, remaining) }),
+      timeoutMs: Math.min(20_000, remaining),
     });
   }
   if (!options.skipNotificationHousekeeping && (options.semanticCdp || options.expectation?.kind === 'createWorkspace')) {
     remainingHousekeepingBudget();
-    await dismissWorkbenchNotifications(options.deadlineMs).catch((error) => {
-      if (options.deadlineMs !== undefined && Date.now() >= options.deadlineMs) {
+    await dismissWorkbenchNotifications(evidenceDeadline).catch((error) => {
+      if (Date.now() >= evidenceDeadline) {
         throw error;
       }
       console.warn(`[workspace-lifecycle] Unable to dismiss workbench notifications before ${name}: ${String(error)}`);
@@ -6514,7 +6520,7 @@ async function captureLifecycleScreenshot(
   const connectionTimeoutMs = remainingHousekeepingBudget();
   const cdp = await connectToVsCodeWorkbenchCdp({
     activate: false,
-    ...(connectionTimeoutMs === undefined ? {} : { timeoutMs: Math.min(15_000, connectionTimeoutMs) }),
+    timeoutMs: Math.min(15_000, connectionTimeoutMs),
   });
   try {
     await captureCdpScreenshot(cdp, name, {
@@ -6523,7 +6529,8 @@ async function captureLifecycleScreenshot(
       semanticContextId: options.semanticContextId,
       binding: { activeTabText: options.activeTabText ?? getExpectedActiveTabText(options.expectation) },
       classification: 'evidence',
-      deadlineMs: options.deadlineMs,
+      timeoutMs: defaultEvidenceScreenshotTimeoutMs,
+      deadlineMs: evidenceDeadline,
     });
   } finally {
     cdp.dispose();

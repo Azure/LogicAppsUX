@@ -745,14 +745,28 @@ export const screenshotReadinessDomScript = `
   const concreteRequiredNodeIdMatches = (requiredNodeIds) => {
     const matched = [];
     const missing = [];
+    const ambiguous = [];
     const clipped = [];
     const covered = [];
     for (const nodeId of requiredNodeIds || []) {
-      const element = document.getElementById('msla-node-' + nodeId);
-      if (!(element instanceof HTMLElement) || !isVisible(element)) {
+      const expectedId = 'msla-node-' + nodeId;
+      const candidates = designerCanvas
+        ? Array.from(
+            new Set([
+              ...(designerCanvas.id === expectedId ? [designerCanvas] : []),
+              ...Array.from(designerCanvas.querySelectorAll('[id]')).filter(element => element.id === expectedId),
+            ])
+          ).filter(element => element instanceof HTMLElement && isVisible(element))
+        : [];
+      if (candidates.length === 0) {
         missing.push(nodeId);
         continue;
       }
+      if (candidates.length !== 1) {
+        ambiguous.push(nodeId);
+        continue;
+      }
+      const element = candidates[0];
       matched.push(nodeId);
       const rect = element.getBoundingClientRect();
       const visibleRect = getClippedRect(element);
@@ -768,9 +782,15 @@ export const screenshotReadinessDomScript = `
       }
     }
     return {
-      ok: missing.length === 0 && clipped.length === 0 && covered.length === 0 && matched.length === (requiredNodeIds || []).length,
+      ok:
+        missing.length === 0 &&
+        ambiguous.length === 0 &&
+        clipped.length === 0 &&
+        covered.length === 0 &&
+        matched.length === (requiredNodeIds || []).length,
       matched,
       missing,
+      ambiguous,
       clipped,
       covered,
     };

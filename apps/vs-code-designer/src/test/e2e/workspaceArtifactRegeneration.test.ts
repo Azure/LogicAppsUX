@@ -111,7 +111,7 @@ async function readRegenerationWorkbench(cdp: CdpEvaluator, workspaceFile: strin
     : undefined;
   return {
     containers,
-    ready: ownership.owned,
+    ready: ownership.shellOwned,
     timeOrigin: ownership.timeOrigin,
     ...(failure ? { failure } : {}),
   };

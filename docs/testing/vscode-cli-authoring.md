@@ -253,6 +253,13 @@ failure screenshots separate from required evidence, and add source/readiness
 controls that prevent required checkpoints from being removed, reordered or
 weakened.
 
+Required node IDs are resolved uniquely inside the selected visible Designer
+canvas. A hidden stale canvas elsewhere in the webview cannot satisfy or block
+the checkpoint, while duplicate visible IDs inside the active canvas remain
+ambiguous and fail closed. Shared lifecycle evidence is capped by
+`defaultEvidenceScreenshotTimeoutMs` and any earlier caller deadline; never pass
+the remaining family lifecycle as an unbounded screenshot wait.
+
 Every registered CLI suite must publish one versioned ordered-evidence manifest
 for its complete logical invocation. Define the canonical sequence in
 `apps/vs-code-designer/scripts/vscode-e2e-evidence-plans.js` using stable
@@ -374,6 +381,13 @@ document. Retain the original CDP session and wait for a changed
 `performance.timeOrigin`, a loaded visible shell and the expected Explorer view
 within the original deadline.
 
+Regular-workbench shell ownership and Explorer projection are separate
+postconditions. Establish the exact invocation-owned target, title and loaded
+shell without opening the command palette or Explorer. Observe recorder
+activation when that is the scenario boundary, then establish Explorer only for
+flows that need visible root interactions. Prefer the visible Explorer activity
+item; use the command palette only as a bounded fallback.
+
 Do not replay the user action or silently attach to a different window. Reject
 closed sessions, ambiguous targets, wrong workspaces and non-navigation errors.
 
@@ -394,8 +408,10 @@ Prefer the established platform-aware/canonical path helper. Preserve
 wrong-workspace, escaped-root, missing-file and link-boundary checks. Do not
 apply blanket case folding on Linux or use substring containment.
 
-**Current boundary:** Native diagnostics exposed this issue; the HTTP path
-correction and its next native validation remain separate from the diagnosis.
+Canonicalize physical paths with `fs.realpathSync.native` before applying
+platform normalization. Use the same comparison for initial activation,
+post-reload root sets and debug-event folder identity; retain raw canonical
+paths for filesystem operations.
 
 ## 5. Preserve normal-runtime settings across fresh hosts
 
@@ -422,6 +438,13 @@ do not repeatedly click the first prompt while waiting for files.
 Racing a side-effecting operation against a timer does not stop that operation.
 Retain the underlying promise and propagate cancellation. Require quiescence
 before restoring settings or beginning a recovery restart.
+
+VS Code can reject `TaskExecution.terminate()` before `taskExecutions` and
+`onDidEndTask` converge. Dispatch termination once, retain any error, and wait
+under the existing cleanup deadline for the exact task-end event or exact
+registry disappearance. Discard the provisional error only after that
+authoritative convergence; a task that remains live at expiry fails with the
+retained cause.
 
 Batch-native families must use the suite containment host's retained process
 identities as their closure proof. Do not reconstruct ancestry after a phase

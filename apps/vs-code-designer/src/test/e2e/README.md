@@ -777,6 +777,11 @@ folder Create New Project, a real same-window Reload Window, the complete
 native `func`-population count, sequential folder-qualified debug, and an
 actual Azure Data Mapper open. This is an isolated-native-consumer-only
 supplementary route, not a new baseline label or canonical-count change.
+The regular-window handshake first proves the invocation-owned loaded shell and
+exact recorder activation. Explorer projection is established afterward and
+only for the interactions that need it. Physical root identity uses native
+realpath plus platform normalization, so Windows drive-letter case is
+equivalent while Linux remains case-sensitive.
 See [workspaceMultiRoot.md](./workspaceMultiRoot.md) for its exact clause
 boundary, fail-closed prerequisites, local controls and parent-owned Azure
 DevOps requirements. It must not be launched on a shared development host.

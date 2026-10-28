@@ -35,6 +35,8 @@ async function main(): Promise<void> {
   testDesignerCanvasRejectsObservedNarrowViewportRequiredCardClipping();
   testDesignerCanvasRejectsNonCanvasSubstituteNode();
   testDesignerCanvasRequiresExactNodeIds();
+  testDesignerCanvasScopesExactNodeIdsToActiveCanvas();
+  testDesignerCanvasRejectsDuplicateExactNodeIdsInsideActiveCanvas();
   testDesignerCanvasRejectsCoveredExactNodeId();
   testDesignerCanvasRequiresExactPanelOwner();
   testDesignerCanvasRejectsOffCenterLoaderOverRequiredNode();
@@ -595,6 +597,18 @@ function testDesignerCanvasRequiresExactNodeIds(): void {
   assert.ok(rejected.reasonCodes.includes('designer-canvas-required-node-id-missing'));
 }
 
+function testDesignerCanvasScopesExactNodeIdsToActiveCanvas(): void {
+  const snapshot = runJsdomExactNodeOwnershipProbe({ outsideDuplicate: true });
+  assert.strictEqual(snapshot.ready, true, JSON.stringify(snapshot));
+}
+
+function testDesignerCanvasRejectsDuplicateExactNodeIdsInsideActiveCanvas(): void {
+  const snapshot = runJsdomExactNodeOwnershipProbe({ insideDuplicate: true });
+  assert.strictEqual(snapshot.ready, false, JSON.stringify(snapshot));
+  const ids = (snapshot.details?.designerCanvas as { ids?: { ambiguous?: string[] } } | undefined)?.ids;
+  assert.strictEqual(JSON.stringify(ids?.ambiguous), JSON.stringify(['Request']));
+}
+
 function testDesignerCanvasRejectsCoveredExactNodeId(): void {
   const snapshot = runJsdomExactNodeProbe(['Request', 'Compose', 'Compose_2'], true);
   assert.strictEqual(snapshot.ready, false);
@@ -639,6 +653,40 @@ function runJsdomExactNodeProbe(
   });
   return vm.runInNewContext(
     buildScreenshotReadinessExpression({ kind: 'designerCanvas', label: 'exact-node-ids', requiredNodeIds, requiredPanelNodeId }, 1, 1),
+    {
+      document: windowAny.document,
+      window: windowAny,
+      HTMLElement: windowAny.HTMLElement,
+      HTMLInputElement: windowAny.HTMLInputElement,
+      HTMLButtonElement: windowAny.HTMLButtonElement,
+      Node: windowAny.Node,
+      getComputedStyle: windowAny.getComputedStyle.bind(windowAny),
+    }
+  ) as ScreenshotReadinessSnapshot;
+}
+
+function runJsdomExactNodeOwnershipProbe(options: {
+  outsideDuplicate?: boolean;
+  insideDuplicate?: boolean;
+}): ScreenshotReadinessSnapshot {
+  const dom = new JSDOM(
+    `<html><body>
+      ${options.outsideDuplicate ? '<div id="msla-node-Request" style="display:none">Stale request</div>' : ''}
+      <div class="react-flow" id="canvas">
+        <div id="msla-node-Request">Request</div>
+        ${options.insideDuplicate ? '<div id="msla-node-Request">Duplicate request</div>' : ''}
+      </div>
+    </body></html>`,
+    { runScripts: 'outside-only' }
+  );
+  const windowAny = dom.window as any;
+  configureJsdomElementGeometry(windowAny, {
+    canvas: { left: 0, top: 0, width: 800, height: 700 },
+    'msla-node-Request': { left: 100, top: 80, width: 220, height: 80 },
+  });
+  windowAny.document.elementFromPoint = () => windowAny.document.querySelector('#canvas #msla-node-Request');
+  return vm.runInNewContext(
+    buildScreenshotReadinessExpression({ kind: 'designerCanvas', label: 'owned-exact-node', requiredNodeIds: ['Request'] }, 1, 1),
     {
       document: windowAny.document,
       window: windowAny,

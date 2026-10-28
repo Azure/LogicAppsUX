@@ -508,6 +508,8 @@ const debugPair = (folder: string, id: string): DebugEvent[] => [
 ];
 test('every folder actually starts and terminates sequentially', () => {
   assertSequentialDebug([...debugPair('one', '1'), ...debugPair('two', '2')], ['one', 'two']);
+  assertSequentialDebug(debugPair('d:\\unit\\app', 'windows'), ['D:\\Unit\\App'], 'win32');
+  assert.throws(() => assertSequentialDebug(debugPair('/unit/app', 'linux'), ['/Unit/App'], 'linux'), /Wrong-folder/);
 });
 test('overlap, wrong root, incomplete lifecycle, and wrong termination folder fail', () => {
   const a = debugPair('one', '1');

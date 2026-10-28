@@ -118,7 +118,7 @@ export async function closeCopilotChatIfVisibleCore(
   while (host.now() < deadline) {
     host.log(`[copilot-chat] ${stage}: closing visible Copilot Chat ${JSON.stringify(state).slice(0, 1000)}`);
     if (state.owners.some((owner) => owner.kind === 'editor')) {
-      await host.closeEditorTabs();
+      await runCopilotChatActionBeforeDeadline(stage, 'close Copilot Chat editor tabs', host, deadline, () => host.closeEditorTabs());
     }
     const commands = getCopilotChatCloseCommands(state);
     if (commands.length === 0 && !state.owners.some((owner) => owner.kind === 'editor')) {
@@ -127,7 +127,7 @@ export async function closeCopilotChatIfVisibleCore(
 
     for (const command of commands) {
       try {
-        await host.executeCommand(command);
+        await runCopilotChatActionBeforeDeadline(stage, `execute ${command}`, host, deadline, () => host.executeCommand(command));
       } catch (error) {
         throw new Error(
           `[copilot-chat] ${stage}: failed to execute ${command} while closing visible Copilot Chat. State: ${JSON.stringify(state).slice(
@@ -153,6 +153,35 @@ export async function closeCopilotChatIfVisibleCore(
   throw new Error(
     `[copilot-chat] ${stage}: visible Copilot Chat could not be closed. Last state: ${JSON.stringify(lastState).slice(0, 1200)}`
   );
+}
+
+async function runCopilotChatActionBeforeDeadline(
+  stage: string,
+  description: string,
+  host: CopilotChatCloseHost,
+  deadline: number,
+  action: () => Promise<void>
+): Promise<void> {
+  const timeoutMs = deadline - host.now();
+  if (timeoutMs <= 0) {
+    throw new Error(`[copilot-chat] ${stage}: cleanup deadline expired before attempting to ${description}`);
+  }
+  let timeout: NodeJS.Timeout | undefined;
+  try {
+    await Promise.race([
+      action(),
+      new Promise<never>((_, reject) => {
+        timeout = setTimeout(
+          () => reject(new Error(`[copilot-chat] ${stage}: cleanup deadline expired while attempting to ${description}`)),
+          timeoutMs
+        );
+      }),
+    ]);
+  } finally {
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+  }
 }
 
 async function readPreVisibleCopilotChatState(

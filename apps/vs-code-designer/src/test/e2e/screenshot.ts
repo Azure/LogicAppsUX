@@ -433,9 +433,14 @@ async function captureCdpScreenshotCore(
   } finally {
     if (classification !== 'diagnostic' && expectation.kind !== 'diagnostic') {
       if (latchedContextId !== undefined) {
-        await sampleCdp
-          .evaluate(latchedContextId, disposeScreenshotInvalidationLatchExpression, { timeoutMs: 1000 })
-          .catch(() => undefined);
+        const disposeBudgetMs = deadline - Date.now();
+        if (disposeBudgetMs > 0) {
+          await sampleCdp
+            .evaluate(latchedContextId, disposeScreenshotInvalidationLatchExpression, {
+              timeoutMs: Math.min(1000, disposeBudgetMs),
+            })
+            .catch(() => undefined);
+        }
       }
       await ownerBindingLatch?.dispose().catch(() => undefined);
     }
