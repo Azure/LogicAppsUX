@@ -101,17 +101,24 @@ export const useWorkflowAndArtifactsStandard = (workflowId: string) => {
 };
 
 export const useAllCustomCodeFiles = (appId?: string, workflowName?: string, isHybridLogicApp?: boolean) => {
-  return useQuery(
-    ['workflowCustomCode', appId, workflowName],
-    async () => await getAllCustomCodeFiles(appId, workflowName, isHybridLogicApp),
-    {
-      enabled: !!appId && !!workflowName,
-      refetchOnMount: false,
-      refetchOnReconnect: false,
-      refetchOnWindowFocus: false,
-    }
-  );
+  return useQuery({
+    ...customCodeQueryOptions(appId, workflowName, isHybridLogicApp),
+    select: (data) => data.files,
+  });
 };
+
+export const useAllCustomCodeFilesWithMetadata = (appId?: string, workflowName?: string, isHybridLogicApp?: boolean) => {
+  return useQuery(customCodeQueryOptions(appId, workflowName, isHybridLogicApp));
+};
+
+const customCodeQueryOptions = (appId?: string, workflowName?: string, isHybridLogicApp?: boolean) => ({
+  queryKey: ['workflowCustomCodeWithMetadata', appId, workflowName],
+  queryFn: () => getAllCustomCodeFiles(appId, workflowName, isHybridLogicApp),
+  enabled: !!appId && !!workflowName,
+  refetchOnMount: false,
+  refetchOnReconnect: false,
+  refetchOnWindowFocus: false,
+});
 
 interface HostJSON {
   managedDependency?: {
@@ -166,26 +173,28 @@ const getAllCustomCodeFiles = async (
   appId?: string,
   workflowName?: string,
   isHybridLogicApp?: boolean
-): Promise<Record<string, string>> => {
+): Promise<{ files: Record<string, string>; metadata: Record<string, VFSObject> }> => {
   if (isHybridLogicApp) {
-    return {};
+    return { files: {}, metadata: {} };
   }
   const customCodeFiles: Record<string, string> = {};
   const uri = `${baseUrl}${appId}/hostruntime/admin/vfs/${workflowName}`;
-  const vfsObjects: VFSObject[] = (await fetchFilesFromFolder(uri)).filter((file) => file.name !== Artifact.WorkflowFile);
+  const vfsObjects = await fetchFilesFromFolder(uri);
 
   const filesData = await Promise.all(
-    vfsObjects.map(async (file) => {
-      const response = await fetchFileData<string>(`${uri}/${file.name}`);
-      return { name: file.name, data: response };
-    })
+    vfsObjects
+      .filter((file) => file.name !== Artifact.WorkflowFile)
+      .map(async (file) => {
+        const response = await fetchFileData<string>(`${uri}/${file.name}`);
+        return { name: file.name, data: response };
+      })
   );
 
   filesData.forEach((file) => {
     customCodeFiles[file.name] = file.data;
   });
 
-  return customCodeFiles;
+  return { files: customCodeFiles, metadata: Object.fromEntries(vfsObjects.map((file) => [file.name, file])) };
 };
 
 export const useWorkflowAndArtifactsConsumption = (workflowId: string, isDraft = false) => {

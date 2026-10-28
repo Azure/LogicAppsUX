@@ -48,6 +48,7 @@ export interface ArtifactProperties {
 
 export interface WorkflowProperties extends ArtifactProperties {
   flowState: WorkflowState;
+  changedTime?: string;
 }
 
 export type Workflow = ArmResource<WorkflowProperties>;

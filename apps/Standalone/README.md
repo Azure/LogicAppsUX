@@ -17,6 +17,19 @@ To develop against Azure Resource Manager, run `pnpm run start:arm` from the rep
 
 For local-only PR deployments triggered by the `ephemeral` label, see [PR preview setup and lifecycle](EPHEMERAL.md).
 
+### Azure-connected drafts
+
+The V2 Azure-connected hosts use production artifacts as the in-memory draft when
+production is at least as recent as the saved draft. Consumption compares
+`properties.changedTime`; Standard compares the workflow files' VFS `mtime`
+metadata and selects workflow, connections, parameters, and notes consistently.
+Newer drafts are preserved. Missing or invalid timestamps preserve the existing
+draft and emit a diagnostic. Loading does not overwrite the persisted draft.
+When production supersedes a stale Standard draft, the next draft save includes
+all companion artifacts so a workflow-only edit cannot revive stale connections,
+parameters, or notes. Returning from monitoring reloads production and draft
+artifacts before restoring the editable workflow.
+
 ## Commands
 
 | Command | Run from | Description |

@@ -24,7 +24,7 @@ import {
   listCallbackUrl,
   saveWorkflowStandard,
   fetchAgentUrl,
-  useAllCustomCodeFiles,
+  useAllCustomCodeFilesWithMetadata,
   useAppSettings,
   useCurrentObjectId,
   useCurrentTenantId,
@@ -36,6 +36,7 @@ import {
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility, addConnectionInJson, addOrUpdateAppSettings } from './Utilities/Workflow';
+import { mergeConnectionsData, shouldUseProductionArtifacts } from './Utilities/draftArtifacts';
 import { CoPilotChatbot } from '@microsoft/logic-apps-chatbot';
 import {
   BaseApiManagementService,
@@ -91,6 +92,7 @@ import {
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import type { QueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import CodeViewEditor from './CodeViewV2';
@@ -100,24 +102,6 @@ import { FloatingRunButton } from '../../../../../../libs/designer-v2/src/lib/ui
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
-
-// Merge server data with local mutations; local wins per category so in-flight new connections
-// survive re-sync when the workflow-artifacts fetch resolves.
-const mergeConnectionsData = (fromServer: ConnectionsData, local: ConnectionsData | undefined): ConnectionsData => {
-  if (!local) {
-    return fromServer;
-  }
-  return {
-    ...fromServer,
-    ...local,
-    managedApiConnections: { ...(fromServer?.managedApiConnections ?? {}), ...(local?.managedApiConnections ?? {}) },
-    serviceProviderConnections: { ...(fromServer?.serviceProviderConnections ?? {}), ...(local?.serviceProviderConnections ?? {}) },
-    functionConnections: { ...(fromServer?.functionConnections ?? {}), ...(local?.functionConnections ?? {}) },
-    apiManagementConnections: { ...(fromServer?.apiManagementConnections ?? {}), ...(local?.apiManagementConnections ?? {}) },
-    agentConnections: { ...(fromServer?.agentConnections ?? {}), ...(local?.agentConnections ?? {}) },
-    agentMcpConnections: { ...(fromServer?.agentMcpConnections ?? {}), ...(local?.agentMcpConnections ?? {}) },
-  };
-};
 
 const DesignerEditor = () => {
   const { id: workflowId } = useSelector((state: RootState) => ({
@@ -144,11 +128,29 @@ const DesignerEditor = () => {
   const workflowName = workflowId.split('/').splice(-1)[0];
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
   const {
-    data: customCodeData,
+    data: customCodeFiles,
     isLoading: customCodeLoading,
+    isError: customCodeIsError,
+    error: customCodeError,
     refetch: customCodeRefetch,
-  } = useAllCustomCodeFiles(appId, workflowName, isHybridLogicApp);
-  const { data: artifactData, isLoading: artifactsLoading, isError, error } = useWorkflowAndArtifactsStandard(workflowId);
+  } = useAllCustomCodeFilesWithMetadata(appId, workflowName, isHybridLogicApp);
+  const customCodeData = customCodeFiles?.files;
+  const isProductionNewerThanDraft = useMemo(
+    () =>
+      !!customCodeData?.[Artifact.DraftFile] &&
+      shouldUseProductionArtifacts(
+        customCodeFiles?.metadata[Artifact.WorkflowFile]?.mtime,
+        customCodeFiles?.metadata[Artifact.DraftFile]?.mtime
+      ),
+    [customCodeData, customCodeFiles]
+  );
+  const {
+    data: artifactData,
+    isLoading: artifactsLoading,
+    isError,
+    error,
+    refetch: artifactsRefetch,
+  } = useWorkflowAndArtifactsStandard(workflowId);
   const { data: settingsData, isLoading: settingsLoading, isError: settingsIsError, error: settingsError } = useAppSettings(siteResourceId);
   const { data: workflowAppData, isLoading: appLoading } = useWorkflowApp(siteResourceId, hostingPlan);
   const { data: tenantId } = useCurrentTenantId();
@@ -160,6 +162,7 @@ const DesignerEditor = () => {
   const [isDesignerView, setIsDesignerView] = useState(true);
   const [isCodeView, setIsCodeView] = useState(false);
   const [isDraftMode, setIsDraftMode] = useState(true);
+  const useSavedDraft = isDraftMode && !!customCodeData?.[Artifact.DraftFile] && !isProductionNewerThanDraft;
 
   const codeEditorRef = useRef<{ getValue: () => string | undefined; hasChanges: () => boolean }>(null);
   const prodConnectionsData = useMemo(
@@ -171,55 +174,63 @@ const DesignerEditor = () => {
     [artifactData?.properties.files]
   );
   const originalConnectionsData = useMemo(() => {
-    if (isDraftMode && draftConnectionsData && Object.keys(draftConnectionsData).length > 0) {
+    if (useSavedDraft && draftConnectionsData) {
       return draftConnectionsData;
     }
     return prodConnectionsData;
-  }, [isDraftMode, draftConnectionsData, prodConnectionsData]);
+  }, [useSavedDraft, draftConnectionsData, prodConnectionsData]);
   const originalCustomCodeData = useMemo(() => Object.keys(customCodeData ?? {}), [customCodeData]);
   const prodWorkflow = useMemo(() => artifactData?.properties.files[Artifact.WorkflowFile], [artifactData?.properties.files]);
   const draftWorkflow = useMemo(() => customCodeData?.[Artifact.DraftFile], [customCodeData]);
   const prodParameters = useMemo(() => artifactData?.properties.files[Artifact.ParametersFile] ?? {}, [artifactData?.properties.files]);
   const draftParameters = useMemo(() => artifactData?.properties.files[Artifact.DraftParametersFile], [artifactData?.properties.files]);
   const parameters = useMemo(() => {
-    if (isDraftMode && draftParameters && Object.keys(draftParameters).length > 0) {
+    if (useSavedDraft && draftParameters) {
       return draftParameters;
     }
     return prodParameters;
-  }, [isDraftMode, draftParameters, prodParameters]);
+  }, [useSavedDraft, draftParameters, prodParameters]);
   const prodNotes = useMemo(() => customCodeData?.[VfsArtifact.NotesFile] ?? {}, [customCodeData]);
   const draftNotes = useMemo(() => customCodeData?.[VfsArtifact.DraftNotesFile], [customCodeData]);
   const initialNotes = useMemo(() => {
-    if (isDraftMode && draftNotes && Object.keys(draftNotes).length > 0) {
+    if (useSavedDraft && draftNotes) {
       return draftNotes;
     }
     return prodNotes;
-  }, [isDraftMode, draftNotes, prodNotes]);
+  }, [useSavedDraft, draftNotes, prodNotes]);
   const [currentNotes, setCurrentNotes] = useState<NotesData>(initialNotes);
   const [currentParameters, setCurrentParameters] = useState<ParametersData>(parameters ?? {});
 
   useEffect(() => {
+    if (customCodeLoading || artifactsLoading) {
+      return;
+    }
     setCurrentNotes(initialNotes);
-  }, [initialNotes]);
+  }, [initialNotes, customCodeLoading, artifactsLoading]);
   useEffect(() => {
+    if (customCodeLoading || artifactsLoading) {
+      return;
+    }
     setCurrentParameters(parameters ?? {});
-  }, [parameters]);
+  }, [parameters, customCodeLoading, artifactsLoading]);
   const queryClient = getReactQueryClient();
-  // State + merge (not useMemo) so in-place mutations from addConnectionDataInternal survive the
-  // initial workflow-artifacts fetch. Pure useMemo would clone fresh server data on fetch complete.
-  const [connectionsData, setConnectionsData] = useState<ConnectionsData>(() =>
-    resolveConnectionsReferences(JSON.stringify(clone(originalConnectionsData ?? {})), currentParameters, settingsData?.properties ?? {})
-  );
+  const [connectionsData, setConnectionsData] = useState<ConnectionsData>({});
+  const previousServerConnectionsRef = useRef<ConnectionsData>();
   useEffect(() => {
+    if (customCodeLoading || artifactsLoading || settingsLoading) {
+      return;
+    }
+    const fromServer = resolveConnectionsReferences(
+      JSON.stringify(clone(originalConnectionsData ?? {})),
+      currentParameters,
+      settingsData?.properties ?? {}
+    );
+    const previousServer = previousServerConnectionsRef.current;
+    previousServerConnectionsRef.current = clone(fromServer);
     setConnectionsData((prev) => {
-      const fromServer = resolveConnectionsReferences(
-        JSON.stringify(clone(originalConnectionsData ?? {})),
-        currentParameters,
-        settingsData?.properties ?? {}
-      );
-      return mergeConnectionsData(fromServer, prev);
+      return mergeConnectionsData(fromServer, prev, previousServer);
     });
-  }, [originalConnectionsData, currentParameters, settingsData?.properties]);
+  }, [originalConnectionsData, currentParameters, settingsData?.properties, customCodeLoading, artifactsLoading, settingsLoading]);
   const connectionReferences = WorkflowUtility.convertConnectionsDataToReferences(connectionsData);
   const { data: runInstanceData } = useRun(runId);
 
@@ -279,9 +290,9 @@ const DesignerEditor = () => {
 
   const saveDraftWorkflow = useCallback(
     (workflow: Workflow) => {
-      return deployArtifacts(siteResourceId, workflowName, workflow, undefined, undefined, undefined, true);
+      return deployArtifacts(siteResourceId, workflowName, workflow, prodConnectionsData, prodParameters, undefined, true, prodNotes);
     },
-    [siteResourceId, workflowName]
+    [siteResourceId, workflowName, prodConnectionsData, prodParameters, prodNotes]
   );
 
   const resetDraftWorkflow = useCallback(async () => {
@@ -289,11 +300,11 @@ const DesignerEditor = () => {
 
     if (response.status >= 200 && response.status < 300) {
       // Draft created successfully
-      customCodeRefetch();
+      await Promise.all([customCodeRefetch({ throwOnError: true }), artifactsRefetch({ throwOnError: true })]);
       return Promise.resolve();
     }
     return Promise.reject(`Error resetting draft workflow: ${response.status} - ${response.statusText}`);
-  }, [customCodeRefetch, prodWorkflow, saveDraftWorkflow]);
+  }, [customCodeRefetch, artifactsRefetch, prodWorkflow, saveDraftWorkflow]);
 
   const discardAllChanges = useCallback(() => {
     setDesignerID(guid());
@@ -338,28 +349,33 @@ const DesignerEditor = () => {
       // selected run's definition. Editing in that window reintroduces the data-loss scenario.
       // Setting the workflow first guarantees the first render outside monitoring view already
       // has the correct draft/published definition.
-      if (isDraftMode) {
-        // Restore the draft, not workflow.json (the published version) — the monitoring view
-        // replaced the canvas with the run's definition. The draft autosaves before every run,
-        // so the server copy is current, but the cached query data may be stale; refetch first.
-        let freshCustomCodeData: typeof customCodeData;
-        try {
-          freshCustomCodeData = (await customCodeRefetch()).data;
-        } catch {
-          freshCustomCodeData = undefined;
+      try {
+        const [freshCustomCodeFiles, freshArtifacts] = await Promise.all([
+          customCodeRefetch({ throwOnError: true }),
+          artifactsRefetch({ throwOnError: true }),
+        ]);
+        const files = freshCustomCodeFiles.data;
+        const wf = freshArtifacts.data?.properties.files[Artifact.WorkflowFile];
+        if (!wf) {
+          throw new Error('Unable to reload the production workflow after monitoring.');
         }
-        const draft = (freshCustomCodeData ?? customCodeData)?.[Artifact.DraftFile];
-        if (draft) {
-          setWorkflow(draft as any);
-          toggleMonitoringView();
-          return;
+        const draft = isDraftMode && files?.files[Artifact.DraftFile];
+        if (
+          draft &&
+          !shouldUseProductionArtifacts(files?.metadata[Artifact.WorkflowFile]?.mtime, files?.metadata[Artifact.DraftFile]?.mtime)
+        ) {
+          flushSync(() => setWorkflow(draft as any));
+        } else {
+          flushSync(() => setWorkflow(wf));
         }
+        toggleMonitoringView();
+      } catch (error) {
+        alert(`Unable to restore the workflow after monitoring: ${error}`);
+        return false;
       }
-      const wf = artifactData?.properties.files[Artifact.WorkflowFile];
-      setWorkflow({ definition: wf?.definition, kind: wf?.kind, metadata: wf?.metadata });
-      toggleMonitoringView();
     }
-  }, [artifactData?.properties.files, isMonitoringView, toggleMonitoringView, isDraftMode, customCodeRefetch, customCodeData]);
+    return true;
+  }, [isMonitoringView, toggleMonitoringView, isDraftMode, customCodeRefetch, artifactsRefetch]);
 
   const onRun = useCallback(
     (runId: string | undefined) => {
@@ -506,11 +522,22 @@ const DesignerEditor = () => {
         }
       }
 
-      const connectionsToUpdate = getConnectionsToUpdate(originalConnectionsData, connectionsData ?? {});
+      const replaceStaleDraftArtifacts = isDraftSave && isProductionNewerThanDraft;
+      const connectionsToUpdate = replaceStaleDraftArtifacts
+        ? mergeConnectionsData(originalConnectionsData, connectionsData, previousServerConnectionsRef.current)
+        : getConnectionsToUpdate(originalConnectionsData, connectionsData ?? {});
       const customCodeToUpdate = await getCustomCodeToUpdate(originalCustomCodeData, customCode ?? {}, appId);
-      const parametersToUpdate = isEqual(originalParametersData, parameters) ? undefined : (parameters as ParametersData);
+      const parametersToUpdate = replaceStaleDraftArtifacts
+        ? ((parameters ?? currentParameters) as ParametersData)
+        : isEqual(originalParametersData, parameters)
+          ? undefined
+          : (parameters as ParametersData);
       const settingsToUpdate = isEqual(settingsData?.properties, originalSettings) ? undefined : settingsData?.properties;
-      const notesToUpdate = isEqual(originalNotesData, notes) ? undefined : (notes as NotesData);
+      const notesToUpdate = replaceStaleDraftArtifacts
+        ? (notes ?? currentNotes)
+        : isEqual(originalNotesData, notes)
+          ? undefined
+          : (notes as NotesData);
 
       await saveWorkflowStandard(
         siteResourceId,
@@ -531,7 +558,10 @@ const DesignerEditor = () => {
     },
     [
       appId,
+      isProductionNewerThanDraft,
       connectionsData,
+      currentNotes,
+      currentParameters,
       originalConnectionsData,
       originalCustomCodeData,
       originalNotesData,
@@ -591,7 +621,9 @@ const DesignerEditor = () => {
     }
 
     if (isMonitoringView) {
-      hideMonitoringView();
+      if (!(await hideMonitoringView())) {
+        return;
+      }
       setIsCodeView(true);
     }
 
@@ -607,7 +639,9 @@ const DesignerEditor = () => {
     }
 
     if (isMonitoringView) {
-      hideMonitoringView();
+      if (!(await hideMonitoringView())) {
+        return;
+      }
       setIsDesignerView(true);
     }
 
@@ -657,13 +691,13 @@ const DesignerEditor = () => {
   }, [isMonitoringView, runInstanceData]);
 
   useEffect(() => {
-    if (customCodeLoading || artifactsLoading || !prodWorkflow) {
+    if (isMonitoringView || customCodeLoading || artifactsLoading || !prodWorkflow) {
       return;
     }
 
     if (isDraftMode) {
       if (draftWorkflow) {
-        setWorkflow(draftWorkflow as any);
+        setWorkflow(isProductionNewerThanDraft ? prodWorkflow : (draftWorkflow as any));
       } else {
         resetDraftWorkflow()
           .then(() => {
@@ -677,14 +711,23 @@ const DesignerEditor = () => {
     } else {
       setWorkflow(prodWorkflow as any);
     }
-  }, [artifactsLoading, customCodeLoading, draftWorkflow, isDraftMode, prodWorkflow, resetDraftWorkflow]);
+  }, [
+    artifactsLoading,
+    customCodeLoading,
+    draftWorkflow,
+    isDraftMode,
+    isMonitoringView,
+    isProductionNewerThanDraft,
+    prodWorkflow,
+    resetDraftWorkflow,
+  ]);
 
   const derivedIsReadOnly = useMemo(() => {
     return isReadOnly || isMonitoringView || !isDraftMode;
   }, [isReadOnly, isMonitoringView, isDraftMode]);
 
-  if (isError || settingsIsError) {
-    throw error ?? settingsError;
+  if ((isError && !artifactData) || (customCodeIsError && !customCodeFiles) || settingsIsError) {
+    throw error ?? customCodeError ?? settingsError;
   }
 
   if (artifactsLoading || appLoading || settingsLoading || customCodeLoading) {

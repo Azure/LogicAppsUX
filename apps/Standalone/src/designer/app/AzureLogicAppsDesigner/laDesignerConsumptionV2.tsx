@@ -17,6 +17,7 @@ import {
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { getDataForConsumption, WorkflowUtility } from './Utilities/Workflow';
+import { shouldUseProductionArtifacts } from './Utilities/draftArtifacts';
 import { CoPilotChatbot } from '@microsoft/logic-apps-chatbot';
 import type { ContentType } from '@microsoft/logic-apps-shared';
 import {
@@ -106,10 +107,24 @@ const DesignerEditorConsumption = () => {
     notes: prodNotes,
   } = useMemo(() => getDataForConsumption(workflowAndArtifactsData), [workflowAndArtifactsData]);
 
-  const { data: draftWorkflowAndArtifactsData, isFetching: isDraftWorkflowAndArtifactsLoading } = useWorkflowAndArtifactsConsumption(
+  const { data: savedDraftWorkflowAndArtifactsData, isFetching: isDraftWorkflowAndArtifactsLoading } = useWorkflowAndArtifactsConsumption(
     workflowId,
     true
   );
+
+  const draftWorkflowAndArtifactsData = useMemo(() => {
+    if (
+      savedDraftWorkflowAndArtifactsData &&
+      workflowAndArtifactsData &&
+      shouldUseProductionArtifacts(
+        workflowAndArtifactsData.properties.changedTime,
+        savedDraftWorkflowAndArtifactsData.properties.changedTime
+      )
+    ) {
+      return workflowAndArtifactsData;
+    }
+    return savedDraftWorkflowAndArtifactsData;
+  }, [savedDraftWorkflowAndArtifactsData, workflowAndArtifactsData]);
 
   const {
     workflow: draftWorkflow,
