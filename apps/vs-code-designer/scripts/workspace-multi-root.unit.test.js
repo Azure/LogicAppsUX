@@ -15,6 +15,7 @@ const {
   suiteId,
   expectedPhases,
   exactPhasesComplete,
+  assertFreshPhaseJournal,
   assertNoCallerFuncAdmission,
   retainedIdentityExitFacts,
   caseExecutionMode,
@@ -234,6 +235,19 @@ test('phase reporting fails closed for missing, duplicate, unexpected, out-of-or
     assert.equal(exactPhasesComplete(phases), false);
     assert.equal(finalizeResult({ ...passing(), phaseResults: phases }).complete, false);
   }
+});
+
+test('wrapper-created empty phase journal is fresh while prior phase content is rejected', (t) => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'la-multi-root-phase-control-'));
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const phaseFile = path.join(root, 'phases.jsonl');
+  assert.doesNotThrow(() => assertFreshPhaseJournal(phaseFile));
+  fs.writeFileSync(phaseFile, '');
+  assert.doesNotThrow(() => assertFreshPhaseJournal(phaseFile));
+  fs.writeFileSync(phaseFile, ' \t\n');
+  assert.throws(() => assertFreshPhaseJournal(phaseFile), /must be fresh/);
+  fs.writeFileSync(phaseFile, `${JSON.stringify({ phaseId: expectedPhases[0] })}\n`);
+  assert.throws(() => assertFreshPhaseJournal(phaseFile), /must be fresh/);
 });
 
 test('full-suite aliases include the supported family without inventing an OGF mapping', () => {

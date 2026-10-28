@@ -149,6 +149,7 @@ async function run(): Promise<void> {
     const alreadyStoppedBefore = JSON.parse(fs.readFileSync(`${alreadyStopped.evidenceBase}.runtime-1.before-teardown.json`, 'utf8'));
     assert.deepStrictEqual(alreadyStoppedBefore.observedProcesses, []);
     assert.strictEqual(alreadyStoppedBefore.failureReason, 'missing-live-owned-process-observation');
+    assert.strictEqual(alreadyStoppedBefore.observations, 3, 'HTTP capture must use its bounded repeat-observation policy');
     await assert.rejects(alreadyStoppedCleanup.finalize(), reason('missing-live-owned-process-observation'));
 
     const repeated = fixture();

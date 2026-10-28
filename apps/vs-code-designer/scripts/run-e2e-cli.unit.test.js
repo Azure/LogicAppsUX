@@ -29,6 +29,7 @@ const {
     getFuncCoreToolsBinaryPath,
     getMochaPassingCount,
     getDirectExpectedPhaseIds,
+    getDirectFamilyUserDataParent,
     finalizeMsnLifecycleCleanup,
     getDirectSuiteComplete,
     getOwnedRootCleanupVerified,
@@ -44,6 +45,7 @@ const {
     getVscodeUserDataDir,
     getWorkspaceSourcesFromManifestPath,
     initializeOrderedEvidenceForProcess,
+    invalidateSelectedDirectFamilyStableReceipts,
     redactGeneratedWorkspaceJsonValue,
     redactGeneratedWorkspacePlainText,
     readContainmentReceipt,
@@ -84,6 +86,7 @@ const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'run-e2e-cli-unit-'));
     await testUnconfirmedCancelClosePreservesExistingApp();
     testDeferredWorkspaceCleanupOwnership();
     testRegenerationDiagnosticsPublication();
+    testDirectFamilyShortLinuxProfileParent();
     testCreatesEmptyIsolatedDependencyRoot();
     testAppliesControlledFuncAfterFinalEnvironmentMerge();
     testFailFastMissingFuncDiagnostics();
@@ -228,6 +231,79 @@ function testRegenerationDiagnosticsPublication() {
   const cleanupIndex = runE2eCliSource.indexOf('await cleanupSuiteTransientRoots(context);');
   const publicationIndex = runE2eCliSource.indexOf('publishRegenerationDiagnostics(context, process.env);');
   assert.ok(cleanupIndex >= 0 && publicationIndex > cleanupIndex, 'Stable evidence publication must follow verified outer cleanup');
+}
+
+function testDirectFamilyShortLinuxProfileParent() {
+  const fallback = path.join(tempRoot, 'fallback-profile-parent');
+  const directoryStat = { isDirectory: () => true, isSymbolicLink: () => false };
+  const mainStart = runE2eCliSource.indexOf('function main()');
+  const earlyInvalidationIndex = runE2eCliSource.indexOf('invalidateSelectedDirectFamilyStableReceipts();', mainStart);
+  const evidenceInitializationIndex = runE2eCliSource.indexOf('initializeOrderedEvidenceForProcess();', mainStart);
+  assert.ok(
+    earlyInvalidationIndex >= 0 && evidenceInitializationIndex > earlyInvalidationIndex,
+    'Direct-family stable evidence must be invalidated before ordered-evidence initialization can fail'
+  );
+  const directFamilyStart = runE2eCliSource.indexOf('async function runDirectFamily');
+  const invalidationIndex = runE2eCliSource.indexOf('invalidateDirectFamilyStableReceipts(suite, resultsDir);', directFamilyStart);
+  const profileValidationIndex = runE2eCliSource.indexOf('const executionUserDataParent = getDirectFamilyUserDataParent(');
+  assert.ok(
+    invalidationIndex >= 0 && profileValidationIndex > invalidationIndex,
+    'Direct-family stable evidence must be invalidated before inherited profile validation can fail'
+  );
+  assert.ok(
+    runE2eCliSource.includes('LA_E2E_CLI_USER_DATA_PARENT: executionUserDataParent') &&
+      !runE2eCliSource.includes('context.userDataParent = getDirectFamilyUserDataParent('),
+    'An inherited short profile parent may be used for execution but must not become a recursively deleted suite-owned root'
+  );
+  const preflightResults = path.join(tempRoot, 'direct-preflight-invalidation');
+  invalidateSelectedDirectFamilyStableReceipts(
+    ['--workspace-artifact-regeneration'],
+    { LA_E2E_CLI_SUITE_WRAPPER_CHILD: '0' },
+    preflightResults
+  );
+  assert.strictEqual(
+    JSON.parse(fs.readFileSync(path.join(preflightResults, 'workspaceArtifactRegeneration.terminal-result.json'), 'utf8')).complete,
+    false
+  );
+  invalidateSelectedDirectFamilyStableReceipts(
+    ['--run-after-persistence-lifecycle', '--workspace-artifact-regeneration', '--http-timeout-lifecycle'],
+    { LA_E2E_CLI_SUITE_WRAPPER_CHILD: '0' },
+    preflightResults
+  );
+  for (const suiteId of ['runAfterPersistenceLifecycle', 'workspaceArtifactRegeneration', 'httpTimeoutLifecycle']) {
+    assert.strictEqual(
+      JSON.parse(fs.readFileSync(path.join(preflightResults, `${suiteId}.terminal-result.json`), 'utf8')).complete,
+      false,
+      `Every ambiguous direct-family selector must invalidate ${suiteId}`
+    );
+  }
+  assert.strictEqual(
+    getDirectFamilyUserDataParent({ LA_E2E_CLI_USER_DATA_PARENT: '/tmp/lawr.A1b2c3' }, fallback, {
+      platform: 'linux',
+      lstat: () => directoryStat,
+    }),
+    '/tmp/lawr.A1b2c3'
+  );
+  assert.strictEqual(
+    getDirectFamilyUserDataParent({ LA_E2E_CLI_USER_DATA_PARENT: '/tmp/lawr.A1b2c3' }, fallback, { platform: 'win32' }),
+    fallback
+  );
+  assert.throws(
+    () =>
+      getDirectFamilyUserDataParent({ LA_E2E_CLI_USER_DATA_PARENT: '/home/vsts/unsafe' }, fallback, {
+        platform: 'linux',
+        lstat: () => directoryStat,
+      }),
+    /unsafe short profile parent/
+  );
+  assert.throws(
+    () =>
+      getDirectFamilyUserDataParent({ LA_E2E_CLI_USER_DATA_PARENT: '/tmp/lawr.A1b2c3' }, fallback, {
+        platform: 'linux',
+        lstat: () => ({ isDirectory: () => true, isSymbolicLink: () => true }),
+      }),
+    /must be an owned directory/
+  );
 }
 
 function testCreatesEmptyIsolatedDependencyRoot() {

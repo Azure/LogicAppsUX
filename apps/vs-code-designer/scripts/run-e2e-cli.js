@@ -93,12 +93,33 @@ const generatedWorkspaceSnapshotDangerousExtensions = new Set([
 ]);
 const generatedWorkspaceSnapshotDangerousFileNames = new Set(['.env', '.env.local', '.npmrc']);
 const workspaceParentsWithDiagnosticFailures = new Set();
+const directFamilySuiteIds = new Set([
+  'httpTimeoutLifecycle',
+  'workspaceArtifactRegeneration',
+  'workspaceMultiRoot',
+  'statelessVariablesLifecycle',
+  'runAfterPersistenceLifecycle',
+  'msnWeatherLifecycle',
+]);
+const orderedEvidenceFlagEntries = [
+  ['--http-timeout-lifecycle', 'httpTimeoutLifecycle'],
+  ['--http-timeout-request-execution', 'httpTimeoutLifecycle'],
+  ['--http-timeout-request-validation', 'httpTimeoutLifecycle'],
+  ['--http-timeout-compose-original', 'httpTimeoutLifecycle'],
+  ['--workspace-artifact-regeneration', 'workspaceArtifactRegeneration'],
+  ['--workspace-multi-root', 'workspaceMultiRoot'],
+  ['--stateless-variables-lifecycle', 'statelessVariablesLifecycle'],
+  ['--run-after-persistence-lifecycle', 'runAfterPersistenceLifecycle'],
+  ['--msn-weather-lifecycle', 'msnWeatherLifecycle'],
+  ['--workspace-prompt-cancel', 'createWorkspaceCoreMatrix'],
+];
 
 if (require.main === module) {
   main();
 }
 
 function main() {
+  invalidateSelectedDirectFamilyStableReceipts();
   initializeOrderedEvidenceForProcess();
   if (process.argv.includes('--run-after-persistence-lifecycle')) {
     if (process.argv.length !== 3) {
@@ -325,20 +346,63 @@ function initializeOrderedEvidenceForProcess(argv = process.argv.slice(2), env =
   return manifestPath;
 }
 
+function invalidateSelectedDirectFamilyStableReceipts(
+  argv = process.argv.slice(2),
+  env = process.env,
+  resultsDir = path.resolve(__dirname, '..', '.vscode-test', 'results')
+) {
+  if (!requiresDirectFamilyWrapper(env)) {
+    return [];
+  }
+  return getSelectedDirectFamilySuiteIds(argv).map((suiteId) => invalidateDirectFamilyStableReceipts(SUITE_REGISTRY[suiteId], resultsDir));
+}
+
+function getSelectedDirectFamilySuiteIds(argv) {
+  const selected = new Set();
+  for (const [flag, suiteId] of orderedEvidenceFlagEntries) {
+    if (argv.includes(flag) && directFamilySuiteIds.has(suiteId)) {
+      selected.add(suiteId);
+    }
+  }
+  const labelIndex = argv.indexOf('--label');
+  const label = labelIndex >= 0 ? argv[labelIndex + 1] : undefined;
+  if (label && directFamilySuiteIds.has(label)) {
+    selected.add(label);
+  }
+  return [...selected];
+}
+
+function invalidateDirectFamilyStableReceipts(suite, resultsDir) {
+  fs.mkdirSync(resultsDir, { recursive: true });
+  const terminalResultPath = path.join(resultsDir, `${suite.id}.terminal-result.json`);
+  const cleanupLedgerPath = path.join(resultsDir, `${suite.id}.cleanup-ledger.json`);
+  writeSuiteTerminalResult(
+    { LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH: terminalResultPath },
+    {
+      suiteId: suite.id,
+      label: suite.id,
+      complete: false,
+      lifecycleFinalized: false,
+      cleanupVerified: false,
+      exitCode: null,
+      phaseResults: [],
+      expectedPhaseIds: suite.expectedPhases,
+    }
+  );
+  writeSuiteCleanupLedger(
+    { LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH: cleanupLedgerPath },
+    {
+      suiteId: suite.id,
+      verified: false,
+      processTreeVerified: false,
+      phases: [],
+    }
+  );
+  return { terminalResultPath, cleanupLedgerPath };
+}
+
 function inferOrderedEvidenceSuiteId(argv) {
-  const flagMap = new Map([
-    ['--http-timeout-lifecycle', 'httpTimeoutLifecycle'],
-    ['--http-timeout-request-execution', 'httpTimeoutLifecycle'],
-    ['--http-timeout-request-validation', 'httpTimeoutLifecycle'],
-    ['--http-timeout-compose-original', 'httpTimeoutLifecycle'],
-    ['--workspace-artifact-regeneration', 'workspaceArtifactRegeneration'],
-    ['--workspace-multi-root', 'workspaceMultiRoot'],
-    ['--stateless-variables-lifecycle', 'statelessVariablesLifecycle'],
-    ['--run-after-persistence-lifecycle', 'runAfterPersistenceLifecycle'],
-    ['--msn-weather-lifecycle', 'msnWeatherLifecycle'],
-    ['--workspace-prompt-cancel', 'createWorkspaceCoreMatrix'],
-  ]);
-  for (const [flag, suiteId] of flagMap) {
+  for (const [flag, suiteId] of orderedEvidenceFlagEntries) {
     if (argv.includes(flag)) {
       return suiteId;
     }
@@ -468,11 +532,13 @@ async function runDirectFamily(suiteId, visibleDelayMs, options = {}) {
     throw new Error('Direct family wrapper requires a registered suite');
   }
   const resultsDir = path.resolve(options.resultsDir || path.join(__dirname, '..', '.vscode-test', 'results'));
-  fs.mkdirSync(resultsDir, { recursive: true });
+  invalidateDirectFamilyStableReceipts(suite, resultsDir);
   const batchRoot = createBatchRoot({ batchRoot: options.batchRoot || process.env.LA_E2E_CLI_BATCH_ROOT });
+  const createdContext = createSuiteContext({ batchRoot, suite, index: 0, total: 1 });
+  const executionUserDataParent = getDirectFamilyUserDataParent(process.env, createdContext.userDataParent);
   const context = applyInheritedOrderedEvidenceContext(
     {
-      ...createSuiteContext({ batchRoot, suite, index: 0, total: 1 }),
+      ...createdContext,
       directFamily: true,
       transientCleanupVerified: false,
       terminalResultPath: path.join(resultsDir, `${suiteId}.terminal-result.json`),
@@ -513,7 +579,10 @@ async function runDirectFamily(suiteId, visibleDelayMs, options = {}) {
       // Same approved WIF/token scope as the canonical MSN/batch lane. No
       // ambient Azure CLI fallback, new grants, or resource creation.
       const credentials = await getSuiteScopedCredentialEnv(process.env, suite, options.timeoutMs || 45 * 60 * 1000);
-      const env = buildSuiteEnvironment(process.env, context, credentials);
+      const env = {
+        ...buildSuiteEnvironment(process.env, context, credentials),
+        LA_E2E_CLI_USER_DATA_PARENT: executionUserDataParent,
+      };
       return await runSuiteWrapperProcess({
         suite,
         context,
@@ -554,6 +623,21 @@ async function runDirectFamily(suiteId, visibleDelayMs, options = {}) {
   writeSuiteFinalEvidence({ ...result, context, suite, error });
   const terminal = readJsonIfExists(context.terminalResultPath);
   return terminal?.complete === true && context.transientCleanupVerified && !error ? 0 : 1;
+}
+
+function getDirectFamilyUserDataParent(env, fallback, { platform = process.platform, lstat = fs.lstatSync } = {}) {
+  if (platform !== 'linux' || !env.LA_E2E_CLI_USER_DATA_PARENT) {
+    return fallback;
+  }
+  const candidate = path.posix.resolve(env.LA_E2E_CLI_USER_DATA_PARENT.replaceAll('\\', '/'));
+  if (path.posix.dirname(candidate) !== '/tmp' || !/^la[a-z0-9_-]*\.[a-z0-9]+$/i.test(path.posix.basename(candidate))) {
+    throw new Error(`Direct Linux family received an unsafe short profile parent: ${candidate}`);
+  }
+  const stat = lstat(candidate);
+  if (!stat.isDirectory() || stat.isSymbolicLink()) {
+    throw new Error(`Direct Linux family short profile parent must be an owned directory: ${candidate}`);
+  }
+  return candidate;
 }
 
 function resolvePreparedExtensionsSeed(explicitSeedDir) {
@@ -3861,6 +3945,7 @@ module.exports = {
   runDirectFamily,
   _test: {
     getDirectRegenerationEvidencePaths,
+    getDirectFamilyUserDataParent,
     beginDirectRegenerationEvidence,
     writeDirectRegenerationEvidence,
     publishRegenerationStageEvidence,
@@ -3895,6 +3980,7 @@ module.exports = {
     getMochaPassingCount,
     applyInheritedOrderedEvidenceContext,
     initializeOrderedEvidenceForProcess,
+    invalidateSelectedDirectFamilyStableReceipts,
     runHttpTimeoutLifecycle,
     runRunAfterPersistenceLifecycle,
     beginDirectMsnEvidence,

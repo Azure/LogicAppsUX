@@ -802,6 +802,12 @@ function statelessVariablesCatalog() {
           'The generated design-time workspace is ready.'
         ),
         simpleStep(
+          'stateless-variables-initialize-panel-open',
+          'Run phase',
+          'Open the exact newly inserted Initialize variables action.',
+          'The one visible details panel is owned by the inserted Initialize variables node.'
+        ),
+        simpleStep(
           'stateless-variables-initialize-two-variables',
           'Run phase',
           'Configure the two Initialize variables rows.',
@@ -827,8 +833,22 @@ function statelessVariablesCatalog() {
             'The requested variable token is inserted into Response.'
           ),
         ]),
+        simpleStep(
+          'stateless-variables-workflow-saved',
+          'Run phase',
+          'Save the complete authored workflow.',
+          'The Designer canvas shows the exact Request, Initialize, append and Response node identities.'
+        ),
       ]
     ),
+    group('runtime-startup', 'Runtime startup', 'Starts the owned Functions debug session and proves the exact workflow registration.', [
+      simpleStep(
+        'stateless-variables-runtime-registered',
+        'Run phase',
+        'Wait for Functions Running and exact workflow registration.',
+        'The owned debug surface remains visible after the exact Stateless workflow is registered.'
+      ),
+    ]),
     group(
       'history',
       'Enabled Stateless history',

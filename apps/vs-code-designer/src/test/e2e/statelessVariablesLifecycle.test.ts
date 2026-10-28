@@ -146,7 +146,7 @@ suite('Stateless variables lifecycle', () => {
         await waitForActivationDesignTime(positiveDeadline, signal);
         await establishDesignTime(entry, positiveDeadline, signal, azureFixture);
         operations = await authorVariablesThroughDesigner(entry, positiveDeadline, signal);
-        await start(entry, getOwnedDebug(), positiveDeadline, signal, azureFixture);
+        await start(entry, getOwnedDebug(), positiveDeadline, signal, azureFixture, true);
         const initialOverview = await openHistory(entry, positiveDeadline, signal);
         try {
           await invoke(entry, operations, positiveDeadline, signal);
@@ -340,24 +340,60 @@ async function authorVariablesThroughDesigner(
     });
     const designer = new ProvenDesignerCdpActions(cdp, context, deadline, () => assertPhaseActive(deadline, signal));
     await designer.waitForDesignerReady();
-    await designer.addRequestTrigger();
-    await addAction(designer, 'Initialize variables', ['initialize variable']);
-    await designer.clickNode(['Initialize variables']);
+    logStatelessStage('designer-ready', 'Visible stateless Designer is ready for authoring', deadline, signal);
+    const request = await designer.addRequestTriggerAndGetIdentity();
+    logStatelessStage('request-added', `Request trigger inserted as ${request.nodeId}`, deadline, signal);
+    const initialize = await designer.addActionAndGetIdentity({
+      search: 'Initialize variables',
+      operationName: 'Initialize variables',
+      variants: ['initialize variable'],
+    });
+    logStatelessStage('initialize-added', `Initialize variables inserted as ${initialize.nodeId}`, deadline, signal);
+    await designer.clickNodeById(initialize.nodeId);
+    logStatelessStage('initialize-panel-open', `Exact Initialize variables panel opened for ${initialize.nodeId}`, deadline, signal);
+    await helpers.captureLifecycleScreenshot('stateless-variables-initialize-panel-open', {
+      expectation: {
+        kind: 'designerPanel',
+        label: entry.label,
+        actionTitle: 'Initialize variables',
+        nodeId: initialize.nodeId,
+        requiredText: ['Name', 'Type', 'Value'],
+      },
+      semanticCdp: cdp,
+      semanticContextId: context,
+      deadlineMs: deadline,
+    });
     await configureVariable(designer, cdp, context, 0, 'v1', 'Array', '[1,2]', deadline);
     await designer.clickElement(['button[aria-label="Add a Variable"]'], 'Add a Variable');
     await configureVariable(designer, cdp, context, 1, 'v2', 'String', 'foo', deadline);
+    logStatelessStage('initialize-configured', 'Both variable rows reached their exact semantic values', deadline, signal);
     await designer.closePanel();
     await helpers.captureLifecycleScreenshot('stateless-variables-initialize-two-variables', {
-      expectation: { kind: 'designerCanvas', label: entry.label, requiredNodes: [['Initialize variables']] },
+      expectation: { kind: 'designerCanvas', label: entry.label, requiredNodeIds: [initialize.nodeId] },
       semanticCdp: cdp,
       semanticContextId: context,
+      deadlineMs: deadline,
     });
-    await addAction(designer, 'Append to array variable', ['append to array variable']);
-    await configureAppend(designer, 'Append to array variable', 'v1', '3');
-    await addAction(designer, 'Append to string variable', ['append to string variable']);
-    await configureAppend(designer, 'Append to string variable', 'v2', 'bar');
-    await designer.addAction('Response', 'Response', ['response']);
-    await designer.clickNode(['Response']);
+    const appendArray = await designer.addActionAndGetIdentity({
+      search: 'Append to array variable',
+      operationName: 'Append to array variable',
+      variants: ['append to array variable'],
+    });
+    await configureAppend(designer, appendArray.nodeId, 'Append to array variable', 'v1', '3', deadline, signal);
+    const appendString = await designer.addActionAndGetIdentity({
+      search: 'Append to string variable',
+      operationName: 'Append to string variable',
+      variants: ['append to string variable'],
+    });
+    await configureAppend(designer, appendString.nodeId, 'Append to string variable', 'v2', 'bar', deadline, signal);
+    const response = await designer.addActionAndGetIdentity({
+      search: 'Response',
+      operationName: 'Response',
+      variants: ['response'],
+    });
+    logStatelessStage('response-added', `Response inserted as ${response.nodeId}`, deadline, signal);
+    await designer.clickNodeById(response.nodeId);
+    logStatelessStage('response-panel-open', `Exact Response panel opened for ${response.nodeId}`, deadline, signal);
     await designer.fillParameter(['Status code'], '200');
     await pressKey(cdp, 'Tab', 'Tab', 9);
     for (const variable of ['v1', 'v2']) {
@@ -379,8 +415,10 @@ async function authorVariablesThroughDesigner(
       );
       await pressKey(cdp, 'End', 'End', 35);
     }
+    logStatelessStage('response-configured', 'Response contains both variable tokens in declared order', deadline, signal);
     assertPhaseActive(deadline, signal);
     await designer.save();
+    logStatelessStage('save-dispatched', 'Designer Save completed; waiting for the persisted semantic oracle', deadline, signal);
     let saved: StatelessOperations | undefined;
     await poll(deadline, 'saved stateless actions', async () => {
       const actions = objectValue(objectValue(readJson(entry.workflowJsonPath), 'workflow').definition, 'definition').actions;
@@ -391,6 +429,20 @@ async function authorVariablesThroughDesigner(
       return true;
     });
     assert.ok(saved, 'Saved workflow evidence is required');
+    logStatelessStage('workflow-saved', 'Persisted workflow contains the exact trigger and four action identities', deadline, signal);
+    await designer.closePanel();
+    const savedNodeIds = [request.nodeId, initialize.nodeId, appendArray.nodeId, appendString.nodeId, response.nodeId];
+    await helpers.normalizeDesignerCanvasViewport(cdp, context, 'Stateless complete persisted workflow evidence', savedNodeIds, deadline);
+    await helpers.captureLifecycleScreenshot('stateless-variables-workflow-saved', {
+      expectation: {
+        kind: 'designerCanvas',
+        label: entry.label,
+        requiredNodeIds: savedNodeIds,
+      },
+      semanticCdp: cdp,
+      semanticContextId: context,
+      deadlineMs: deadline,
+    });
     return saved;
   } finally {
     signal.removeEventListener('abort', cancel);
@@ -398,8 +450,9 @@ async function authorVariablesThroughDesigner(
   }
 }
 
-async function addAction(designer: DesignerCdpActions, title: string, variants: string[]): Promise<void> {
-  await designer.addAction(title, title, variants);
+function logStatelessStage(stage: string, message: string, deadline: number, signal: AbortSignal): void {
+  assertPhaseActive(deadline, signal);
+  console.log(`[stateless-variables][stage:${stage}] ${message}; remainingMs=${remainingMs(deadline)}`);
 }
 
 async function configureVariable(
@@ -470,12 +523,23 @@ async function variableField(
   await pressKey(cdp, 'Tab', 'Tab', 9); // Commit the real editor blur, not a React state injection.
 }
 
-async function configureAppend(designer: DesignerCdpActions, title: string, name: string, value: string): Promise<void> {
-  await designer.clickNode([title]);
+async function configureAppend(
+  designer: ProvenDesignerCdpActions,
+  nodeId: string,
+  title: string,
+  name: string,
+  value: string,
+  deadline: number,
+  signal: AbortSignal
+): Promise<void> {
+  logStatelessStage(`${nodeId}-panel-open-start`, `Opening exact ${title} panel`, deadline, signal);
+  await designer.clickNodeById(nodeId);
+  logStatelessStage(`${nodeId}-panel-open`, `Exact ${title} panel opened`, deadline, signal);
   await designer.clickElement(['[role="combobox"]'], 'Name', { requireTextMatch: false });
   await designer.clickElement(['[role="option"]'], name);
   await designer.fillParameter(['Value'], value);
   await designer.key('Tab', 'Tab', 9);
+  logStatelessStage(`${nodeId}-configured`, `${title} targets ${name} with value ${value}`, deadline, signal);
 }
 
 function createOwnedDebug(entry: CreatedWorkspace): StatelessOwnedDebug {
@@ -539,7 +603,8 @@ async function start(
   owned: StatelessOwnedDebug,
   deadline: number,
   signal: AbortSignal,
-  fixture: ApprovedAzureConnectorFixture
+  fixture: ApprovedAzureConnectorFixture,
+  captureRegistrationEvidence = false
 ): Promise<void> {
   assertPhaseActive(deadline, signal);
   assert.strictEqual(fixture.resourceGroupLocationVerified, true, 'Debug startup requires the verified existing Azure fixture');
@@ -621,6 +686,13 @@ async function start(
     workbench.dispose();
   }
   console.log('[stateless-variables] Owned debug startup and prompt journey reached workflow registration');
+  if (captureRegistrationEvidence) {
+    await helpers.captureLifecycleScreenshot('stateless-variables-runtime-registered', {
+      expectation: { kind: 'debug', label: entry.label },
+      deadlineMs: deadline,
+    });
+  }
+  logStatelessStage('runtime-registered', `Functions Running and exact workflow ${entry.wfName} registered`, deadline, signal);
 }
 
 async function selectStatelessDebugStartupPrompt(

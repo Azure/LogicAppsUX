@@ -197,7 +197,7 @@ evidence recording disabled and cannot contaminate the parent manifest.
 
 The current ordered contracts are: unit tests 1, behavior 74, behavior smoke
 42, core matrix 38, preview matrix 34, codeful 10, MSN Weather 36, HTTP timeout
-38, Stateless variables 19, regeneration 25, and multi-root
+38, Stateless variables 22, regeneration 25, and multi-root
 `3 + ordered root count`. Multi-root declares its authoritative root order
 before root captures and uses stable ordinal checkpoint IDs; filesystem
 basenames are display labels only. Stateless history similarly uses stable

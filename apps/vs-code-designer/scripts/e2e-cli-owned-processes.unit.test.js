@@ -265,6 +265,107 @@ test('an explicitly optional capture can prove that no scoped process was live w
   );
 });
 
+test('capture polling admits the exact scoped identity after a transient incomplete descendant observation', async (t) => {
+  const context = fixture(t, undefined, { captureObservationAttempts: 2 });
+  const snapshot = context.contract.snapshot;
+  let attempts = 0;
+  context.contract.snapshot = async (budget) => {
+    attempts++;
+    if (attempts === 1) {
+      context.setTable([
+        context.owner,
+        context.ancestor,
+        context.child,
+        {
+          pid: 104,
+          parentPid: context.owner.pid,
+          creationIdentity: '',
+          executable: '',
+        },
+      ]);
+    } else if (attempts === 2) {
+      context.setTable([context.owner, context.ancestor, context.child]);
+    }
+    return snapshot(budget);
+  };
+
+  const guard = context.guard();
+  const captured = await guard.capture();
+  assert.equal(captured.observations, 2);
+  assert.deepEqual(
+    captured.observedProcesses.map(({ pid, creationIdentity, executable }) => ({ pid, creationIdentity, executable })),
+    [{ pid: context.child.pid, creationIdentity: context.child.creationIdentity, executable: fs.realpathSync(context.executable) }]
+  );
+  assert.equal((await guard.finalize()).processExitVerified, true);
+});
+
+test('capture polling retries an incomplete scoped identity outside a transiently missing ancestry', async (t) => {
+  const context = fixture(t, undefined, { captureObservationAttempts: 2 });
+  const snapshot = context.contract.snapshot;
+  let attempts = 0;
+  context.contract.snapshot = async (budget) => {
+    attempts++;
+    if (attempts === 1) {
+      context.setTable([context.owner, { ...context.child, parentPid: 999, creationIdentity: '' }]);
+    } else if (attempts === 2) {
+      context.setTable([context.owner, context.ancestor, context.child]);
+    }
+    return snapshot(budget);
+  };
+
+  const guard = context.guard();
+  const captured = await guard.capture();
+  assert.equal(captured.observations, 2);
+  assert.deepEqual(
+    captured.observedProcesses[0].ancestry.map((record) => record.pid),
+    [context.ancestor.pid]
+  );
+  assert.equal((await guard.finalize()).processExitVerified, true);
+});
+
+test('capture polling waits for the scoped runtime to become observable without accepting an empty capture', async (t) => {
+  const context = fixture(t, undefined, { captureObservationAttempts: 2 });
+  const snapshot = context.contract.snapshot;
+  let attempts = 0;
+  context.contract.snapshot = async (budget) => {
+    attempts++;
+    if (attempts === 1) {
+      context.setTable([context.owner, context.ancestor]);
+    } else if (attempts === 2) {
+      context.setTable([context.owner, context.ancestor, context.child]);
+    }
+    return snapshot(budget);
+  };
+
+  const guard = context.guard();
+  const captured = await guard.capture();
+  assert.equal(captured.observations, 2);
+  assert.equal(captured.observedProcesses.length, 1);
+  assert.equal((await guard.finalize()).processExitVerified, true);
+});
+
+test('capture polling stays fail-closed when an incomplete descendant persists for the bounded attempts', async (t) => {
+  const context = fixture(t, undefined, { captureObservationAttempts: 3 });
+  context.setTable([
+    context.owner,
+    context.ancestor,
+    context.child,
+    {
+      pid: 104,
+      parentPid: context.owner.pid,
+      creationIdentity: '',
+      executable: '',
+    },
+  ]);
+  const guard = context.guard();
+  await assert.rejects(guard.capture(), (error) => error.reason === 'missing-process-identity');
+  assert.equal(guard.evidence().observations, 3);
+  assert.equal(
+    context.calls.some((call) => call.kind === 'terminate'),
+    false
+  );
+});
+
 test('termination failure is fatal and sanitized', async (t) => {
   const context = fixture(t, undefined, {
     terminateExact: async () => {
@@ -337,6 +438,18 @@ for (const finalizationBudgetMs of [0, -1, 10_001, 1.5, Number.NaN]) {
     assert.throws(context.guard, (error) => error.reason === 'invalid-ownership-contract');
   });
 }
+
+for (const captureObservationAttempts of [0, -1, 21, 1.5, Number.NaN]) {
+  test(`invalid capture observation attempts ${String(captureObservationAttempts)} is rejected`, (t) => {
+    const context = fixture(t, undefined, { captureObservationAttempts });
+    assert.throws(context.guard, (error) => error.reason === 'invalid-ownership-contract');
+  });
+}
+
+test('capture observation attempts cannot exceed the shared observation allowance', (t) => {
+  const context = fixture(t, undefined, { maxObservations: 2, captureObservationAttempts: 3 });
+  assert.throws(context.guard, (error) => error.reason === 'invalid-ownership-contract');
+});
 
 test('no observation or action starts at an expired deadline', async (t) => {
   const context = fixture(t);

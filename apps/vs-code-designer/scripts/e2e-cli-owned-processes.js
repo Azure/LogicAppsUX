@@ -89,6 +89,7 @@ function createOwnedProcessCleanup({
   now,
   deadline,
   maxObservations = 20,
+  captureObservationAttempts = 1,
   allowEmptyCapture = false,
   previouslyCapturedProcesses = [],
   finalizationBudgetMs,
@@ -108,6 +109,9 @@ function createOwnedProcessCleanup({
     !Number.isInteger(maxObservations) ||
     maxObservations < 1 ||
     maxObservations > 20 ||
+    !Number.isInteger(captureObservationAttempts) ||
+    captureObservationAttempts < 1 ||
+    captureObservationAttempts > maxObservations ||
     typeof allowEmptyCapture !== 'boolean' ||
     !Array.isArray(previouslyCapturedProcesses) ||
     (finalizationBudgetMs !== undefined &&
@@ -298,16 +302,35 @@ function createOwnedProcessCleanup({
     }
     captureStarted = true;
     assertRoots();
-    const table = await read();
-    const candidates = [];
-    for (const record of scopedProcesses(table)) {
-      candidates.push({ ...record, ancestry: ancestry(record, table) });
+    // Windows CIM can transiently expose a descendant before its exact identity is readable,
+    // or before the dependency-scoped runtime appears. Repeat only within the original budget;
+    // no incomplete or empty observation is accepted as ownership proof.
+    for (let attemptNumber = 1; attemptNumber <= captureObservationAttempts; attemptNumber++) {
+      try {
+        const table = await read();
+        const candidates = [];
+        for (const record of scopedProcesses(table)) {
+          candidates.push({ ...record, ancestry: ancestry(record, table) });
+        }
+        if (candidates.length || allowEmptyCapture) {
+          captured = candidates;
+          return evidence(false);
+        }
+        if (attemptNumber === captureObservationAttempts) {
+          fail('missing-live-owned-process-observation');
+        }
+      } catch (error) {
+        if (
+          error instanceof OwnedProcessEvidenceError &&
+          error.reason === 'missing-process-identity' &&
+          attemptNumber < captureObservationAttempts
+        ) {
+          continue;
+        }
+        throw error;
+      }
     }
-    if (!allowEmptyCapture && !candidates.length) {
-      fail('missing-live-owned-process-observation');
-    }
-    captured = candidates;
-    return evidence(false);
+    fail('missing-live-owned-process-observation');
   }
 
   function evidence(verified) {

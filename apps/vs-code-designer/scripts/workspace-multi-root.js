@@ -218,6 +218,10 @@ function assertEvidence(observation, funcExecutable, funcSha256) {
   }
 }
 
+function assertFreshPhaseJournal(phaseFile) {
+  assert.ok(!fs.existsSync(phaseFile) || fs.statSync(phaseFile).size === 0, 'Multi-root phases must be fresh for this invocation');
+}
+
 async function runWorkspaceMultiRoot(
   { runVscodeTest, collectVscodeProfileLogs, writeSuitePhaseResult, createWorkspaceParent },
   env = process.env
@@ -271,7 +275,7 @@ async function runWorkspaceMultiRoot(
   const eventsFile = path.join(diagnosticRoot, 'debug-events.jsonl');
   const bootstrapAttestationPath = path.join(diagnosticRoot, 'func-bootstrap.json');
   const phaseFile = env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH || path.join(diagnosticRoot, 'phases.jsonl');
-  assert.ok(!fs.existsSync(phaseFile), 'Multi-root phases must be fresh for this invocation');
+  assertFreshPhaseJournal(phaseFile);
   const phaseEnv = { ...env, LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH: phaseFile };
   const result = {
     diagnosticOnly: mode.diagnosticOnly,
@@ -520,6 +524,7 @@ module.exports = {
   suiteId,
   expectedPhases,
   exactPhasesComplete,
+  assertFreshPhaseJournal,
   createMultiRootDiagnosticRoot,
   assertAssets,
   validateHandoff,

@@ -51,7 +51,7 @@ test('producer plans preserve the expected finite checkpoint counts', () => {
     createWorkspaceBehaviorSmoke: 42,
     msnWeatherLifecycle: 36,
     httpTimeoutLifecycle: 38,
-    statelessVariablesLifecycle: 19,
+    statelessVariablesLifecycle: 22,
     runAfterPersistenceLifecycle: 35,
     workspaceArtifactRegeneration: 25,
     workspaceMultiRoot: 3,

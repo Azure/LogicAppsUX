@@ -50,6 +50,7 @@ interface OwnedExtensionProcessCleanupInput {
   dependencies: string | undefined;
   evidenceBase: string | undefined;
   ownerJson: string | undefined;
+  captureObservationAttempts?: number;
   allowEmptyCapture?: boolean;
 }
 
@@ -92,6 +93,7 @@ function initializeOwnedExtensionProcessCleanup(
     now: dependenciesInput.now,
     deadline: dependenciesInput.now() + 10_000,
     finalizationBudgetMs: 10_000,
+    captureObservationAttempts: input.captureObservationAttempts,
     allowEmptyCapture: input.allowEmptyCapture,
     previouslyCapturedProcesses: [...(options.excludedProcesses ?? [])],
   });
@@ -217,6 +219,7 @@ export function createHttpTimeoutProcessCleanup(
     dependencies: env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT,
     evidenceBase: env.LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_EVIDENCE_BASE,
     ownerJson: env.LA_E2E_CLI_HTTP_TIMEOUT_PROCESS_OWNER_JSON,
+    captureObservationAttempts: 3,
   };
   const captures: InitializedOwnedExtensionProcessCleanup[] = [];
   const observedProcesses: OwnedProcessIdentity[] = [];

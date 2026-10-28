@@ -451,6 +451,17 @@ async function main(): Promise<void> {
 
     assert.deepStrictEqual(selectRegenerationYes([prompt], appDir).point, { x: 10, y: 20 });
     assert.strictEqual(selectRegenerationYes([initializationPrompt(`${appDir}-other`)], appDir).visible, false);
+    const windowsAppDir = 'D:\\a\\_work\\1\\s\\LogicApp';
+    assert.deepStrictEqual(
+      selectRegenerationYes([initializationPrompt('d:/a/_work/1/s/logicapp')], windowsAppDir).point,
+      { x: 10, y: 20 },
+      'Windows prompt ownership must tolerate URI/fsPath casing and separator normalization'
+    );
+    assert.strictEqual(
+      selectRegenerationYes([initializationPrompt('d:/a/_work/1/s/logicapp-other')], windowsAppDir).visible,
+      false,
+      'Windows normalization must not credit a different project path'
+    );
     // The text contains the actual complete path; an unrelated app without that
     // path, outdated-files prompt, or unrelated Yes must never be selected.
     assert.strictEqual(selectRegenerationYes([initializationPrompt(path.join(root, 'other'))], appDir).visible, false);

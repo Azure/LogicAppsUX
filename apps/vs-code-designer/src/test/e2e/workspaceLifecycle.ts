@@ -3120,9 +3120,13 @@ async function normalizeDesignerCanvasViewport(
   cdp: CdpEvaluator,
   contextId: number,
   description: string,
-  requiredNodeIds: string[] = []
+  requiredNodeIds: string[] = [],
+  deadlineMs?: number
 ): Promise<void> {
-  const normalizationDeadline = Date.now() + 7000;
+  const normalizationDeadline = Math.min(Date.now() + 7000, deadlineMs ?? Number.POSITIVE_INFINITY);
+  if (normalizationDeadline <= Date.now()) {
+    throw new Error(`${description} viewport normalization deadline expired`);
+  }
   const bounded = boundedCdp(cdp, normalizationDeadline);
   const state = await bounded.evaluate<
     Record<string, unknown> & {
@@ -6265,14 +6269,42 @@ async function handleWorkbenchPrompts(prompts: WorkbenchPrompt[], timeoutMs = 20
   }
 }
 
-async function dismissWorkbenchNotifications(): Promise<void> {
-  const cdp = await connectToVsCodeWorkbenchCdp({ activate: false });
+async function dismissWorkbenchNotifications(deadlineMs?: number): Promise<void> {
+  const connectionBudget = deadlineMs === undefined ? 2000 : deadlineMs - Date.now();
+  if (connectionBudget <= 0) {
+    throw new Error('Workbench notification dismissal deadline expired');
+  }
+  const cdp = await connectToVsCodeWorkbenchCdp({ activate: false, timeoutMs: Math.min(2000, connectionBudget) });
   try {
-    const deadline = Date.now() + 2500;
+    const deadline = Math.min(Date.now() + 2500, deadlineMs ?? Number.POSITIVE_INFINITY);
+    const remaining = () => {
+      const budget = deadline - Date.now();
+      if (budget <= 0) {
+        throw new Error('Workbench notification dismissal deadline expired');
+      }
+      return budget;
+    };
+    const withinDeadline = async <T>(label: string, action: () => PromiseLike<T>): Promise<T> => {
+      const timeoutMs = remaining();
+      let timer: NodeJS.Timeout | undefined;
+      try {
+        return await Promise.race([
+          Promise.resolve().then(action),
+          new Promise<never>((_, reject) => {
+            timer = setTimeout(() => reject(new Error(`${label} deadline expired`)), timeoutMs);
+          }),
+        ]);
+      } finally {
+        if (timer) {
+          clearTimeout(timer);
+        }
+      }
+    };
+    const bounded = boundedCdp(cdp, deadline);
     let quietSince: number | undefined;
     while (Date.now() < deadline) {
-      await vscode.commands.executeCommand('notifications.hideToasts');
-      const point = await cdp.evaluate<{ x: number; y: number } | undefined>(
+      await withinDeadline('Hide workbench notifications command', () => vscode.commands.executeCommand('notifications.hideToasts'));
+      const point = await bounded.evaluate<{ x: number; y: number } | undefined>(
         undefined,
         `(() => {
           const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
@@ -6302,13 +6334,13 @@ async function dismissWorkbenchNotifications(): Promise<void> {
         if (Date.now() - quietSince >= 750) {
           return;
         }
-        await new Promise((resolve) => setTimeout(resolve, 150));
+        await new Promise((resolve) => setTimeout(resolve, Math.min(150, remaining())));
         continue;
       }
 
       quietSince = undefined;
-      await clickPoint(cdp, point);
-      await new Promise((resolve) => setTimeout(resolve, 250));
+      await clickPoint(bounded, point);
+      await new Promise((resolve) => setTimeout(resolve, Math.min(250, remaining())));
     }
   } finally {
     cdp.dispose();
@@ -6348,6 +6380,7 @@ async function captureLifecycleScreenshot(
     diagnosticTimeoutMs?: number;
     activeTabText?: string[];
     skipNotificationHousekeeping?: boolean;
+    deadlineMs?: number;
   } = {}
 ): Promise<void> {
   if (options.diagnostic) {
@@ -6358,16 +6391,34 @@ async function captureLifecycleScreenshot(
     });
     return;
   }
+  const remainingHousekeepingBudget = () => {
+    const remaining = options.deadlineMs === undefined ? undefined : options.deadlineMs - Date.now();
+    if (remaining !== undefined && remaining <= 0) {
+      throw new Error(`${name} screenshot deadline expired`);
+    }
+    return remaining;
+  };
   if (shouldCloseCopilotChatBeforeScreenshot(options.expectation)) {
-    await closeCopilotChatIfVisible(`before screenshot ${name}`);
+    const remaining = remainingHousekeepingBudget();
+    await closeCopilotChatIfVisible(`before screenshot ${name}`, {
+      ...(remaining === undefined ? {} : { timeoutMs: Math.min(20_000, remaining) }),
+    });
   }
   if (!options.skipNotificationHousekeeping && (options.semanticCdp || options.expectation?.kind === 'createWorkspace')) {
-    await dismissWorkbenchNotifications().catch((error) =>
-      console.warn(`[workspace-lifecycle] Unable to dismiss workbench notifications before ${name}: ${String(error)}`)
-    );
+    remainingHousekeepingBudget();
+    await dismissWorkbenchNotifications(options.deadlineMs).catch((error) => {
+      if (options.deadlineMs !== undefined && Date.now() >= options.deadlineMs) {
+        throw error;
+      }
+      console.warn(`[workspace-lifecycle] Unable to dismiss workbench notifications before ${name}: ${String(error)}`);
+    });
   }
   assertLifecycleWorkspaceBinding(options.expectation);
-  const cdp = await connectToVsCodeWorkbenchCdp({ activate: false });
+  const connectionTimeoutMs = remainingHousekeepingBudget();
+  const cdp = await connectToVsCodeWorkbenchCdp({
+    activate: false,
+    ...(connectionTimeoutMs === undefined ? {} : { timeoutMs: Math.min(15_000, connectionTimeoutMs) }),
+  });
   try {
     await captureCdpScreenshot(cdp, name, {
       expectation: options.expectation,
@@ -6375,6 +6426,7 @@ async function captureLifecycleScreenshot(
       semanticContextId: options.semanticContextId,
       binding: { activeTabText: options.activeTabText ?? getExpectedActiveTabText(options.expectation) },
       classification: 'evidence',
+      deadlineMs: options.deadlineMs,
     });
   } finally {
     cdp.dispose();

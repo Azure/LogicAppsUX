@@ -39,6 +39,7 @@ export function createOwnedProcessCleanup(contract: {
   now(): number;
   deadline: number;
   maxObservations?: number;
+  captureObservationAttempts?: number;
   allowEmptyCapture?: boolean;
   previouslyCapturedProcesses?: OwnedProcessIdentity[];
   finalizationBudgetMs?: number;

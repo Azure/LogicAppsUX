@@ -768,6 +768,31 @@ function testNativeWiring(): void {
     assert.ok(native.includes('selectExactWorkbenchPromptOption('), 'Azurite/debug prompts must use the same owned workbench connection');
     assert.ok(native.includes("prompt.kind === 'notification'"), 'Debug prompt allowlisting must not auto-select dialogs or quick picks');
     assert.ok(
+      native.includes('addActionAndGetIdentity({') && native.includes('clickNodeById(initialize.nodeId)'),
+      'Stateless authoring must bind the inserted node identity and wait for its exact owned details panel'
+    );
+    assert.ok(
+      native.includes('clickNodeById(appendArray.nodeId)') || native.includes('configureAppend(designer, appendArray.nodeId'),
+      'Append configuration must not fall back to a title-only node click'
+    );
+    assert.ok(
+      native.includes("captureLifecycleScreenshot('stateless-variables-initialize-panel-open'") &&
+        native.includes("captureLifecycleScreenshot('stateless-variables-workflow-saved'") &&
+        native.includes("captureLifecycleScreenshot('stateless-variables-runtime-registered'"),
+      'The hanging boundary, saved workflow and runtime registration need semantic stage screenshots'
+    );
+    assert.ok(
+      (native.match(/deadlineMs: deadline/g) ?? []).length >= 4,
+      'Stateless stage screenshots must stay inside the existing positive lifecycle deadline'
+    );
+    assert.ok(
+      native.includes(
+        "normalizeDesignerCanvasViewport(cdp, context, 'Stateless complete persisted workflow evidence', savedNodeIds, deadline)"
+      ),
+      'The exact saved-workflow evidence must normalize all inserted nodes inside the existing positive deadline'
+    );
+    assert.ok(native.includes('[stateless-variables][stage:${stage}]'), 'Semantic stage logs must expose the exact active boundary');
+    assert.ok(
       native.includes('azureFixture = await readApprovedExistingResourceGroup(azureFixture, deadline, undefined, fetch, signal)') &&
         native.includes('azureFixture = await readApprovedExistingResourceGroup(azureFixture, positiveDeadline, undefined, fetch, signal)'),
       'Preparation and run hosts must bind the actual existing resource-group location with cancellation'
@@ -946,6 +971,7 @@ async function testRegisteredRunner(): Promise<void> {
       exit: (code: number) => reportExit(code),
     },
     console: { error: () => undefined },
+    invalidateSelectedDirectFamilyStableReceipts: () => undefined,
     initializeOrderedEvidenceForProcess: () => undefined,
     getOwnedRootCleanupVerified: () => cleanupRoots.length === 2,
     getDirectSuiteComplete: () => admissionComplete,

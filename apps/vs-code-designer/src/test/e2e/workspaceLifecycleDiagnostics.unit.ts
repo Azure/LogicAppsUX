@@ -41,10 +41,27 @@ async function main(): Promise<void> {
   await testDynamicContentPickerOpenUsesBoundedEvaluation();
   await testMonitoringActionCardUsesStableNodeIdentity();
   await testCopilotChatCleanupDoesNotRunDuringPickerEvidenceCapture();
+  testNotificationHousekeepingUsesBoundedOperations();
   await testCanvasViewportNormalizationUsesStructuralDiagnosticsAndOwnedControls();
   testMsnWeatherSkipsOnlyRedundantFinalCanvasCheckpoint();
   testDesignerConnectionActionExpressionScopesCreateActions();
   console.log('[workspaceLifecycleDiagnostics.unit] all tests passed');
+}
+
+function testNotificationHousekeepingUsesBoundedOperations(): void {
+  const start = sourceText.indexOf('async function dismissWorkbenchNotifications(');
+  const end = sourceText.indexOf('\nasync function waitForWorkbenchPromptOptionToDismiss(', start);
+  assert.ok(start >= 0 && end > start, 'Expected dismissWorkbenchNotifications source');
+  const implementation = sourceText.slice(start, end);
+  assert.match(
+    implementation,
+    /const bounded = boundedCdp\(cdp, deadline\)/,
+    'Notification CDP operations must share the absolute deadline'
+  );
+  assert.match(implementation, /await bounded\.evaluate/, 'Notification discovery must use bounded CDP evaluation');
+  assert.match(implementation, /await clickPoint\(bounded, point\)/, 'Notification dismissal clicks must use bounded CDP sends');
+  assert.match(implementation, /Promise\.race/, 'VS Code notification commands must be raced against the same deadline');
+  assert.match(implementation, /Math\.min\(150, remaining\(\)\)/, 'Notification polling sleeps must not exceed the remaining deadline');
 }
 
 function testDebugPromptEvidenceWaitsForStableRuntime(): void {
@@ -78,16 +95,25 @@ function loadCaptureHarness(sourceOverride = sourceText) {
     compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS },
   }).outputText;
 
-  const calls = { chatCleanup: 0, notificationCleanup: 0, capture: 0, ownerConnect: 0 };
+  const calls = {
+    chatCleanup: 0,
+    chatTimeoutMs: undefined as number | undefined,
+    notificationCleanup: 0,
+    notificationDeadlineMs: undefined as number | undefined,
+    capture: 0,
+    ownerConnect: 0,
+  };
   const exported: Record<string, any> = {};
   vm.runInNewContext(implementation, {
     exports: exported,
     console,
-    closeCopilotChatIfVisible: async () => {
+    closeCopilotChatIfVisible: async (_stage: string, options?: { timeoutMs?: number }) => {
       calls.chatCleanup++;
+      calls.chatTimeoutMs = options?.timeoutMs;
     },
-    dismissWorkbenchNotifications: async () => {
+    dismissWorkbenchNotifications: async (deadlineMs?: number) => {
       calls.notificationCleanup++;
+      calls.notificationDeadlineMs = deadlineMs;
     },
     assertLifecycleWorkspaceBinding: () => undefined,
     captureCdpScreenshot: async () => {
@@ -423,6 +449,24 @@ async function testCopilotChatCleanupDoesNotRunDuringPickerEvidenceCapture(): Pr
     skipNotificationHousekeeping: true,
   });
   assert.notStrictEqual(mutated.calls.chatCleanup, 0, 'Unconditional cleanup mutation must be observable');
+
+  const bounded = loadCaptureHarness();
+  const deadlineMs = Date.now() + 5000;
+  await bounded.exported.captureLifecycleScreenshot('bounded-housekeeping', {
+    expectation: { kind: 'designerCanvas', label: 'bounded-housekeeping', requiredNodes: ['Response'] },
+    semanticCdp: {},
+    semanticContextId: 1,
+    deadlineMs,
+  });
+  assert.ok(
+    typeof bounded.calls.chatTimeoutMs === 'number' && bounded.calls.chatTimeoutMs > 0 && bounded.calls.chatTimeoutMs <= 5000,
+    'Copilot Chat housekeeping must use the caller lifecycle deadline'
+  );
+  assert.strictEqual(
+    bounded.calls.notificationDeadlineMs,
+    deadlineMs,
+    'Notification housekeeping must use the same caller lifecycle deadline'
+  );
 }
 
 async function testCanvasViewportNormalizationUsesStructuralDiagnosticsAndOwnedControls(): Promise<void> {

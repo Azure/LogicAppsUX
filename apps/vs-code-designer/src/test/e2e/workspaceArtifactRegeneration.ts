@@ -198,12 +198,10 @@ export function assertRegenerationNonTargets(
 }
 
 export function selectRegenerationYes(containers: WorkbenchPromptContainer[], appDir: string): WorkbenchPromptSelection {
-  const matches = containers.filter(
-    (container) =>
-      container.text.includes(`"${appDir}"`) &&
-      /Detected an Azure Logic App project/i.test(container.text) &&
-      /Initialize for optimal use with VS Code\?/i.test(container.text)
-  );
+  const matches = containers.filter((container) => {
+    const promptProjectPath = initializationPromptProjectPath(container.text);
+    return promptProjectPath !== undefined && isSamePromptProjectPath(promptProjectPath, appDir);
+  });
   assert.ok(matches.length <= 1, 'Ambiguous initialization prompts cannot be credited');
   return selectWorkbenchPromptOption([{ matchText: 'Initialize for optimal use with VS Code?', optionText: 'Yes' }], matches);
 }
@@ -222,6 +220,28 @@ export interface RegenerationPromptObservation {
   ready: boolean;
   timeOrigin: number;
   failure?: string;
+}
+
+function initializationPromptProjectPath(text: string): string | undefined {
+  return /Detected an Azure Logic App project "([^"]+)"[\s\S]*Initialize for optimal use with VS Code\?/i.exec(text)?.[1];
+}
+
+function isWindowsAbsolutePath(value: string): boolean {
+  return /^[a-z]:[\\/]/i.test(value) || /^\\\\/.test(value);
+}
+
+function isSamePromptProjectPath(actual: string, expected: string): boolean {
+  const actualIsWindows = isWindowsAbsolutePath(actual);
+  const expectedIsWindows = isWindowsAbsolutePath(expected);
+  if (actualIsWindows !== expectedIsWindows) {
+    return false;
+  }
+
+  if (actualIsWindows) {
+    return path.win32.normalize(actual).toLowerCase() === path.win32.normalize(expected).toLowerCase();
+  }
+
+  return path.posix.normalize(actual) === path.posix.normalize(expected);
 }
 
 export function assertRegenerationPromptObservation(observation: RegenerationPromptObservation): void {
