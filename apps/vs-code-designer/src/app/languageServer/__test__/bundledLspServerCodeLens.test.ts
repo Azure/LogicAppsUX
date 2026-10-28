@@ -1,5 +1,6 @@
 import AdmZip from 'adm-zip';
 import type { ChildProcessWithoutNullStreams } from 'child_process';
+import { existsSync } from 'fs';
 import { mkdtemp, rm } from 'fs/promises';
 import path from 'path';
 import { pathToFileURL } from 'url';
@@ -20,6 +21,18 @@ interface CodeLensResult {
     arguments?: unknown[];
   };
 }
+
+const sdkPackageVersion = '1.0.0-preview.1';
+const homeDirectory = process.env.USERPROFILE || process.env.HOME;
+const nuGetCacheRoot = process.env.NUGET_PACKAGES || (homeDirectory ? path.join(homeDirectory, '.nuget', 'packages') : undefined);
+const sdkPackagePath = nuGetCacheRoot
+  ? path.join(
+      nuGetCacheRoot,
+      'microsoft.azure.workflows.sdk',
+      sdkPackageVersion,
+      `microsoft.azure.workflows.sdk.${sdkPackageVersion}.nupkg`
+    )
+  : undefined;
 
 class LspProcess {
   private nextId = 1;
@@ -138,7 +151,7 @@ class LspProcess {
   }
 }
 
-describe('bundled LSP server CodeLens', () => {
+describe.skipIf(!sdkPackagePath || !existsSync(sdkPackagePath))('bundled LSP server CodeLens', () => {
   let tempDirectories: string[] = [];
   let lspProcess: LspProcess | undefined;
 
@@ -208,9 +221,8 @@ describe('bundled LSP server CodeLens', () => {
     new AdmZip(zipPath).extractAllTo(extractDirectory, true, true);
 
     const serverDllPath = path.join(extractDirectory, 'LSPServer', 'SdkLspServer.dll');
-    const sdkPackagePath = path.join(process.cwd(), 'src', 'assets', 'LSPServer', 'Microsoft.Azure.Workflows.Sdk.1.0.0-preview.1.nupkg');
     const { spawn: realSpawn } = await vi.importActual<typeof import('child_process')>('child_process');
-    const child = realSpawn('dotnet', [serverDllPath, '--sdk', sdkPackagePath], {
+    const child = realSpawn('dotnet', [serverDllPath, '--sdk', sdkPackagePath!], {
       stdio: ['pipe', 'pipe', 'pipe'],
       windowsHide: true,
     });

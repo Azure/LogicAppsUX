@@ -1,7 +1,6 @@
 import {
   artifactsDirectory,
   assetsFolderName,
-  autoRuntimeDependenciesPathSettingKey,
   devContainerFolderName,
   builtinOperationSdksFolderName,
   funcIgnoreFileName,
@@ -10,7 +9,6 @@ import {
   jarFolderName,
   libDirectory,
   localSettingsFileName,
-  lspDirectory,
   rulesDirectory,
   schemasDirectory,
   testsDirectoryName,
@@ -37,7 +35,6 @@ import type { IFunctionWizardContext, IWebviewProjectContext, StandardApp } from
 import { ProjectType, WorkflowType } from '@microsoft/vscode-extension-logic-apps';
 import { createDevContainerContents, createLogicAppVsCodeContents } from './CreateLogicAppVSCodeContents';
 import { logicAppPackageProcessing, unzipLogicAppPackageIntoWorkspace } from '../../../utils/cloudToLocalUtils';
-import { getGlobalSetting } from '../../../utils/vsCodeConfig/settings';
 import { addCustomCodeDotNetVersionSetting } from '../../../utils/appSettings/localSettings';
 
 export async function createRulesFiles(context: IFunctionWizardContext): Promise<void> {
@@ -120,8 +117,6 @@ export const createCodefulWorkflowFile = async (
   workflowType: WorkflowType
 ) => {
   const workflowTemplateFileName = getCodefulWorkflowTemplateFileName(workflowType);
-  const targetDirectory = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
-  const lspDirectoryPath = path.join(targetDirectory, lspDirectory);
 
   // Create the workflow-specific .cs file
   const capitalizedWorkflowName = (workflowName.charAt(0).toUpperCase() + workflowName.slice(1)).replace(/-/g, '_');
@@ -143,8 +138,7 @@ export const createCodefulWorkflowFile = async (
     // Create new Program.cs
     const templateProgramPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', 'ProgramFile');
     const templateProgramContent = await fse.readFile(templateProgramPath, 'utf-8');
-    const programContent = templateProgramContent
-      .replace(/<%= logicAppNamespace %>/g, `${logicAppName}`);
+    const programContent = templateProgramContent.replace(/<%= logicAppNamespace %>/g, `${logicAppName}`);
     await fse.writeFile(programFilePath, programContent);
 
     // Create the .csproj file (only for first workflow)
@@ -152,12 +146,6 @@ export const createCodefulWorkflowFile = async (
     const templateProjContent = await fse.readFile(templateProjPath, 'utf-8');
     const csprojFilePath = path.join(logicAppFolderPath, `${logicAppName}.csproj`);
     await fse.writeFile(csprojFilePath, templateProjContent);
-
-    // Create nuget.config file (only for first workflow)
-    const templateNugetPath = path.join(__dirname, assetsFolderName, 'CodefulProjectTemplate', 'nuget');
-    const templateNugetContent = (await fse.readFile(templateNugetPath, 'utf-8')).replace(/<%= lspDirectory %>/g, `"${lspDirectoryPath}"`);
-    const nugetFilePath = path.join(logicAppFolderPath, 'nuget.config');
-    await fse.writeFile(nugetFilePath, templateNugetContent);
   }
 };
 

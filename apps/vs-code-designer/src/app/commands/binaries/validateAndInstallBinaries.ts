@@ -9,7 +9,7 @@ import { ensureExtensionBundleHealthy, getBundleDependencyFeed } from '../../uti
 import { recordDependencyUpdateCheck, shouldCheckForDependencyUpdates } from '../../state/dependencies';
 import { setDotNetCommand } from '../../utils/dotnet/dotnet';
 import { setFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
-import { installLSPSDK } from '../../utils/languageServerProtocol';
+import { installLSPServer } from '../../utils/languageServerProtocol';
 import { setNodeJsCommand } from '../../utils/nodeJs/nodeJsVersion';
 import { shouldRequireStrictDependencyValidation } from '../../utils/strictDependencyValidation';
 import { runWithTimeout } from '../../utils/timeout';
@@ -103,17 +103,14 @@ export async function validateAndInstallBinaries(context: IActionContext) {
             );
             await setDotNetCommand();
           }),
-          callWithTelemetryAndErrorHandling(
-            'validateAndInstallBinaries.ensureSdkLanguageServer',
-            async (_actionContext: IActionContext) => {
-              _actionContext.errorHandling.rethrow = true;
-              _actionContext.errorHandling.suppressDisplay = true;
-              progress.report({ increment: 10, message: 'SDK LSP Server' });
-              await runWithTimeout(() => installLSPSDK(), 'SDK LSP Server', dependencyTimeoutMs);
-              // TODO(aeldridge): Why is setDotNetCommand called here?
-              await setDotNetCommand();
-            }
-          ),
+          callWithTelemetryAndErrorHandling('validateAndInstallBinaries.ensureLanguageServer', async (_actionContext: IActionContext) => {
+            _actionContext.errorHandling.rethrow = true;
+            _actionContext.errorHandling.suppressDisplay = true;
+            progress.report({ increment: 10, message: 'LSP Server' });
+            await runWithTimeout(() => installLSPServer(), 'LSP Server', dependencyTimeoutMs);
+            // TODO(aeldridge): Why is setDotNetCommand called here?
+            await setDotNetCommand();
+          }),
         ];
 
         const results = await Promise.allSettled(ensureDependencyTasks);

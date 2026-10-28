@@ -79,7 +79,6 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
   const testProjectPath = '/test/project';
   const testProjectName = 'TestProject';
   const testWorkflowName = 'TestWorkflow';
-  const testLspDirectory = '/test/lsp';
 
   describe('StatefulCodefulWorkflow template content', () => {
     it('should avoid unsupported member-expression startup patterns while keeping MSN Weather', () => {
@@ -141,18 +140,6 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
     });
   });
 
-  describe('nuget template content', () => {
-    it('should use a project-local package cache for the codeful SDK package', () => {
-      const templateContent = actualFs.readFileSync(
-        new URL('../../../../../assets/CodefulProjectTemplate/nuget', import.meta.url),
-        'utf-8'
-      );
-
-      expect(templateContent).toContain('<add key="globalPackagesFolder" value=".nuget\\packages" />');
-      expect(templateContent).toContain('<add key="current" value=<%= lspDirectory %> />');
-    });
-  });
-
   beforeEach(() => {
     // Reset all mocks
     vi.clearAllMocks();
@@ -160,9 +147,6 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
     // Restore path.join to use actual implementation
     vi.mocked(path.join).mockImplementation((...args: string[]) => actualPath.join(...args));
     vi.mocked(path.resolve).mockImplementation((...args: string[]) => actualPath.resolve(...args));
-
-    // Default getGlobalSetting behavior
-    vi.mocked(vscodeConfigModule.getGlobalSetting).mockReturnValue(testLspDirectory);
   });
 
   afterEach(() => {
@@ -355,8 +339,8 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       if (createAgentCodefulWorkflowFile) {
         await createAgentCodefulWorkflowFile(testProjectPath, testProjectName, testWorkflowName, WorkflowType.agentCodeful);
 
-        // Verify all 4 files were created for first workflow
-        expect(vi.mocked(fse.writeFile)).toHaveBeenCalledTimes(4);
+        // Verify workflow, Program.cs, and .csproj were created for the first workflow
+        expect(vi.mocked(fse.writeFile)).toHaveBeenCalledTimes(3);
 
         const writtenFiles = vi.mocked(fse.writeFile).mock.calls.map((call: any) => call[0]);
 
@@ -369,8 +353,8 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
         // Verify .csproj was created
         expect(writtenFiles).toEqual(expect.arrayContaining([expect.stringContaining(`${testProjectName}.csproj`)]));
 
-        // Verify nuget.config was created
-        expect(writtenFiles).toEqual(expect.arrayContaining([expect.stringContaining('nuget.config')]));
+        // SDK packages are restored from configured NuGet sources; no project nuget.config is generated.
+        expect(writtenFiles).not.toEqual(expect.arrayContaining([expect.stringContaining('nuget.config')]));
 
         // Verify workflow file has correct namespace
         const workflowWriteCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes(`${testWorkflowName}.cs`));
@@ -510,11 +494,10 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
       }
     });
 
-    it('should create .csproj and nuget.config files', async () => {
+    it('should create .csproj file', async () => {
       const agentCodefulTemplate = 'public static class <%= flowName %> { }';
       const programTemplate = 'class Program { }';
       const projTemplate = '<Project>test proj</Project>';
-      const nugetTemplate = '<configuration><%= lspDirectory %></configuration>';
 
       vi.mocked(fse.readFile).mockImplementation((filePath: string) => {
         if (filePath.includes('AgentCodefulWorkflow')) {
@@ -525,9 +508,6 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
         }
         if (filePath.includes('CodefulProj')) {
           return Promise.resolve(projTemplate);
-        }
-        if (filePath.includes('nuget')) {
-          return Promise.resolve(nugetTemplate);
         }
         return Promise.reject(new Error('Unexpected file read'));
       });
@@ -546,10 +526,9 @@ describe('CreateLogicAppWorkspace - Codeful Workflows', () => {
           expect.stringContaining('test proj')
         );
 
-        // Verify nuget.config was created
+        // Verify nuget.config was NOT created (SDK is on nuget.org by default)
         const nugetCall = vi.mocked(fse.writeFile).mock.calls.find((call: any) => call[0].includes('nuget.config'));
-        expect(nugetCall).toBeDefined();
-        expect(nugetCall[0]).toContain('nuget.config');
+        expect(nugetCall).toBeUndefined();
       }
     });
   });
