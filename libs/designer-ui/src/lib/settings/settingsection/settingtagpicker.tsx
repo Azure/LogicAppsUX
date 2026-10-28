@@ -83,7 +83,6 @@ export const SettingTagPicker = ({
         onInput={(e) => setInputValue((e.target as HTMLInputElement).value)}
         onOptionSelect={handleOptionSelect}
         positioning="below"
-        freeform
       >
         {filteredOptions.map((option) => (
           <Option key={option.value} value={option.value}>
