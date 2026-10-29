@@ -32,7 +32,7 @@ const mocks = vi.hoisted(() => {
     }),
     getConnectionsJson: vi.fn().mockResolvedValue('{}'),
     getLocalSettingsJson: vi.fn().mockResolvedValue({ Values: {} }),
-    getLogicAppProjectRoot: vi.fn().mockResolvedValue('D:\\project'),
+    getParentLogicAppRoot: vi.fn().mockResolvedValue('D:\\project'),
     getRequestTriggerName: vi.fn().mockReturnValue('manual'),
     getTriggerName: vi.fn().mockReturnValue('manual'),
     getStandardAppData: vi.fn((workflowName: string, workflowContent: any) => ({
@@ -107,7 +107,10 @@ vi.mock('../../../../azureConnectors/azureConnectorDetails', () => ({
 
 vi.mock('../../../../../utils/codeless/connection', () => ({
   getConnectionsJson: mocks.getConnectionsJson,
-  getLogicAppProjectRoot: mocks.getLogicAppProjectRoot,
+}));
+
+vi.mock('../../../../../utils/workspace', () => ({
+  getParentLogicAppRoot: mocks.getParentLogicAppRoot,
 }));
 
 vi.mock('../../../../../utils/codeless/getAuthorizationToken', () => ({
@@ -181,7 +184,7 @@ describe('LocalOverviewPanel', () => {
     mocks.createWebviewPanel.mockReturnValue(panel);
     mocks.tryGetWebviewPanel.mockReturnValue(undefined);
     mocks.isRuntimeUp.mockResolvedValue(true);
-    mocks.getLogicAppProjectRoot.mockResolvedValue('D:\\project');
+    mocks.getParentLogicAppRoot.mockResolvedValue('D:\\project');
     mocks.getLocalSettingsJson.mockResolvedValue({ Values: {} });
     mocks.getConnectionsJson.mockResolvedValue('{}');
     mocks.getAzureConnectorDetailsForLocalProject.mockResolvedValue({

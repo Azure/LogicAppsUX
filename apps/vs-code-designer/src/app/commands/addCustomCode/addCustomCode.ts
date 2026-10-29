@@ -9,11 +9,11 @@ import { localize } from '../../../localize';
 import { ext } from '../../../extensionVariables';
 import { createWorkspaceWebviewCommandHandler } from '../shared/workspaceWebviewCommandHandler';
 import { createLogicAppProject } from '../createNewCodeProject/CodeProjectBase/CreateLogicAppProjects';
-import { isLogicAppProject } from '../../utils/verifyIsProject';
 import { hasCodefulSdkReference } from '../../utils/codeful';
 import { tryGetLogicAppCustomCodeFunctionsProjects } from '../../utils/customCodeUtils';
 import * as vscode from 'vscode';
 import * as path from 'path';
+import { isLogicApp } from '../../utils/workspace';
 
 /**
  * Command handler for the "Add .NET custom code" Explorer context-menu action.
@@ -30,7 +30,7 @@ export async function addCustomCode(context: IActionContext, node?: vscode.Uri):
 
   const projectPath = node.fsPath;
   context.telemetry.properties.lastStep = 'validateFolder';
-  if (!(await isLogicAppProject(projectPath))) {
+  if (!(await isLogicApp(projectPath))) {
     context.telemetry.properties.result = 'Failed';
     vscode.window.showErrorMessage(localize('addCustomCodeNotLogicApp', 'The selected folder is not a Logic App project.'));
     return;

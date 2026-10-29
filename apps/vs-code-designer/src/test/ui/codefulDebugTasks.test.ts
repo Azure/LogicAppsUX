@@ -568,7 +568,7 @@ describe('Phase 4.10: Codeful debug F5 task pattern', function () {
 
     // Note: `vscode.debug.startDebugging` for the `logicapp` type goes
     // through `pickFuncProcessInternal`, which runs
-    // `tryBuildCustomCodeFunctionsProject`, `publishCodefulProject`, and
+    // `buildCustomCodeFunctionsProjectInternal`, `publishCodefulProject`, and
     // `tasks.fetchTasks()` BEFORE executing any task. Plus the recorder
     // must wait for `azureLogicAppsStandard.debugLogicApp` to be
     // registered — that requires the LA extension's full async

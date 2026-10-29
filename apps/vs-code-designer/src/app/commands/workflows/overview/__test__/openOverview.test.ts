@@ -20,7 +20,7 @@ const mocks = vi.hoisted(() => {
   return {
     MockUri,
     MockRemoteWorkflowTreeItem,
-    getWorkflowNode: vi.fn((node: any) => node),
+    getActiveWorkflowNode: vi.fn(),
     localCreate: vi.fn().mockResolvedValue(undefined),
     codefulCreate: vi.fn().mockResolvedValue(undefined),
     remoteCreate: vi.fn().mockResolvedValue(undefined),
@@ -46,7 +46,7 @@ vi.mock('../../../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem', () => ({
 }));
 
 vi.mock('../../../../utils/workspace', () => ({
-  getWorkflowNode: mocks.getWorkflowNode,
+  getActiveWorkflowNode: mocks.getActiveWorkflowNode,
 }));
 
 vi.mock('../panels/localOverviewPanel', () => ({
@@ -74,13 +74,14 @@ const context = { telemetry: { properties: {}, measurements: {} } } as any;
 describe('openOverview routing', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mocks.getWorkflowNode.mockImplementation((node: any) => node);
+    mocks.getActiveWorkflowNode.mockReturnValue(undefined);
   });
 
   it('routes to LocalOverviewPanel for codeless workflow.json files', async () => {
     const node = vscode.Uri.file('D:\\project\\my-workflow\\workflow.json');
     await openOverview(context, node as any);
 
+    expect(mocks.getActiveWorkflowNode).not.toHaveBeenCalled();
     expect(mocks.localCreate).toHaveBeenCalled();
     expect(mocks.codefulCreate).not.toHaveBeenCalled();
     expect(mocks.remoteCreate).not.toHaveBeenCalled();
@@ -105,10 +106,22 @@ describe('openOverview routing', () => {
   });
 
   it('logs and returns early when workflow node is not found', async () => {
-    mocks.getWorkflowNode.mockReturnValue(undefined);
     await openOverview(context, undefined);
 
+    expect(mocks.getActiveWorkflowNode).toHaveBeenCalledOnce();
     expect(mocks.localCreate).not.toHaveBeenCalled();
+    expect(mocks.codefulCreate).not.toHaveBeenCalled();
+    expect(mocks.remoteCreate).not.toHaveBeenCalled();
+  });
+
+  it('falls back to the active workflow when no node is supplied', async () => {
+    const activeWorkflow = vscode.Uri.file('D:\\project\\active-workflow\\workflow.json');
+    mocks.getActiveWorkflowNode.mockReturnValue(activeWorkflow);
+
+    await openOverview(context, undefined);
+
+    expect(mocks.getActiveWorkflowNode).toHaveBeenCalledOnce();
+    expect(mocks.localCreate).toHaveBeenCalled();
     expect(mocks.codefulCreate).not.toHaveBeenCalled();
     expect(mocks.remoteCreate).not.toHaveBeenCalled();
   });

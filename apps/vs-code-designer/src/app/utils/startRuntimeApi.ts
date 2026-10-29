@@ -6,7 +6,7 @@ import { callWithTelemetryAndErrorHandling, type IActionContext, UserCancelledEr
 import { activateAzurite } from './azurite/activateAzurite';
 import { refreshConnectionKeys } from './appSettings/connectionKeys';
 import { designerApiLoadTimeout, designerStartApi } from '../../constants';
-import { getContainingWorkspaceFolder } from './workspace';
+import { getParentWorkspaceFolder } from './workspace';
 import { preDebugValidate } from '../debug/validatePreDebug';
 import { ext } from '../../extensionVariables';
 import * as vscode from 'vscode';
@@ -25,12 +25,15 @@ import { Platform } from '@microsoft/vscode-extension-logic-apps';
 
 // TODO(aeldridge): Unused
 export async function startRuntimeApi(context: IActionContext, projectPath: string): Promise<void> {
-  const isAzuriteStarted = await callWithTelemetryAndErrorHandling('startRuntimeApi.startAzurite', async (actionContext: IActionContext) => {
-    actionContext.errorHandling.rethrow = true;
-    actionContext.errorHandling.suppressDisplay = true;
-    await activateAzurite(actionContext, projectPath);
-    return true;
-  });
+  const isAzuriteStarted = await callWithTelemetryAndErrorHandling(
+    'startRuntimeApi.startAzurite',
+    async (actionContext: IActionContext) => {
+      actionContext.errorHandling.rethrow = true;
+      actionContext.errorHandling.suppressDisplay = true;
+      await activateAzurite(actionContext, projectPath);
+      return true;
+    }
+  );
 
   if (!isAzuriteStarted) {
     throw new Error(localize('azuriteStartFailed', 'Failed to start Azurite.'));
@@ -47,7 +50,7 @@ export async function startRuntimeApi(context: IActionContext, projectPath: stri
     throw new UserCancelledError('preDebugValidate');
   }
 
-  const workspaceFolder = getContainingWorkspaceFolder(projectPath);
+  const workspaceFolder = getParentWorkspaceFolder(projectPath);
   if (!workspaceFolder) {
     throw new Error(localize('noWorkspace', 'Unable to find the workspace containing the project path "{0}".', projectPath));
   }

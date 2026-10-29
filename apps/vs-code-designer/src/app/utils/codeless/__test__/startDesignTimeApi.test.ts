@@ -8,12 +8,7 @@ import * as os from 'os';
 import { ext } from '../../../../extensionVariables';
 import * as workspaceUtils from '../../workspace';
 import { releaseReservedPort, reserveFreePort } from '../../portReservation';
-import {
-  startAllDesignTimeApis,
-  startDesignTimeApi,
-  startDesignTimeProcess,
-  stopDesignTimeApi,
-} from '../startDesignTimeApi';
+import { startAllDesignTimeApis, startDesignTimeApi, startDesignTimeProcess, stopDesignTimeApi } from '../startDesignTimeApi';
 
 vi.mock('../../appSettings/localSettings', () => ({
   addOrUpdateLocalAppSettings: vi.fn(),
@@ -72,7 +67,7 @@ vi.mock('find-process', () => ({
 }));
 
 vi.mock('../../workspace', () => ({
-  getWorkspaceLogicAppRoots: vi.fn(),
+  getLogicAppRoots: vi.fn(),
 }));
 
 vi.mock('../../portReservation', () => ({
@@ -103,7 +98,7 @@ describe('startAllDesignTimeApis', () => {
 
   it('logs zero-project startup when the workspace contains no Logic App folders', async () => {
     (workspace as any).workspaceFolders = [{ uri: { fsPath: 'D:/workspace' } }];
-    vi.mocked(workspaceUtils.getWorkspaceLogicAppRoots).mockResolvedValue([]);
+    vi.mocked(workspaceUtils.getLogicAppRoots).mockResolvedValue([]);
 
     await startAllDesignTimeApis();
 
@@ -115,7 +110,7 @@ describe('startAllDesignTimeApis', () => {
 
   it('starts each Logic App project discovered in the workspace', async () => {
     (workspace as any).workspaceFolders = [{ uri: { fsPath: 'D:/workspace' } }];
-    vi.mocked(workspaceUtils.getWorkspaceLogicAppRoots).mockResolvedValue(['D:/workspace/app-one', 'D:/workspace/app-two']);
+    vi.mocked(workspaceUtils.getLogicAppRoots).mockResolvedValue(['D:/workspace/app-one', 'D:/workspace/app-two']);
 
     // startDesignTimeApi will throw due to the beforeEach createDirectory mock rejecting,
     // but startAllDesignTimeApis wraps each call in callWithTelemetryAndErrorHandling which
@@ -136,7 +131,7 @@ describe('startAllDesignTimeApis', () => {
 
   it('rejects when Logic App folder discovery fails', async () => {
     (workspace as any).workspaceFolders = [{ uri: { fsPath: 'D:/workspace' } }];
-    vi.mocked(workspaceUtils.getWorkspaceLogicAppRoots).mockRejectedValue(new Error('folder discovery failed'));
+    vi.mocked(workspaceUtils.getLogicAppRoots).mockRejectedValue(new Error('folder discovery failed'));
 
     await expect(startAllDesignTimeApis()).rejects.toThrow('folder discovery failed');
   });
@@ -161,8 +156,8 @@ describe('startAllDesignTimeApis', () => {
     // to the default createDirectory rejection mock). This verifies the restart logic works without
     // entering an infinite loop.
     vi.mocked(axios.get)
-      .mockResolvedValueOnce({} as any)  // first port: orphan responds
-      .mockRejectedValue(new Error('API not ready'));  // new port: nothing responding
+      .mockResolvedValueOnce({} as any) // first port: orphan responds
+      .mockRejectedValue(new Error('API not ready')); // new port: nothing responding
 
     await expect(startDesignTimeApi(createMockContext(), 'D:/workspace/app-one')).rejects.toThrow();
 
@@ -180,9 +175,7 @@ describe('startAllDesignTimeApis', () => {
 
     await startDesignTimeApi(createMockContext(), 'D:/workspace/app-one');
 
-    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(
-      expect.stringContaining('Unable to validate the func child process PID')
-    );
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(expect.stringContaining('Unable to validate the func child process PID'));
   });
 
   it('reuses the in-flight startup promise for concurrent calls on the same project', async () => {

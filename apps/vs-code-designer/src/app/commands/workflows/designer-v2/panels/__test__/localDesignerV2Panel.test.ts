@@ -46,13 +46,16 @@ vi.mock('@microsoft/logic-apps-shared', () => ({
 vi.mock('../../../../../utils/codeless/connection', () => ({
   getConnectionsFromFile: vi.fn().mockResolvedValue('{}'),
   getCustomCodeFromFiles: vi.fn().mockResolvedValue({}),
-  getLogicAppProjectRoot: vi.fn().mockResolvedValue('/test/project'),
   getParametersFromFile: vi.fn().mockResolvedValue({}),
   addConnection: vi.fn(),
   getConnectionsAndSettingsToUpdate: vi.fn(),
   saveConnectionReferences: vi.fn(),
   getCustomCodeToUpdate: vi.fn(),
   saveCustomCodeStandard: vi.fn(),
+}));
+
+vi.mock('../../../../../utils/workspace', () => ({
+  getParentLogicAppRoot: vi.fn().mockResolvedValue('/test/project'),
 }));
 
 vi.mock('../../../../../utils/codeless/startDesignTimeApi', () => ({
@@ -106,7 +109,7 @@ import { openReadOnlyJson } from '@microsoft/vscode-azext-utils';
 import { createUnitTestFromRun } from '../../../unitTest/createUnitTestFromRun';
 import { sendRequest } from '../../../../../utils/requestUtils';
 import { startDesignTimeApi } from '../../../../../utils/codeless/startDesignTimeApi';
-import { getLogicAppProjectRoot } from '../../../../../utils/codeless/connection';
+import { getParentLogicAppRoot } from '../../../../../utils/workspace';
 import { getWebViewHTML } from '../../../../../utils/codeless/getWebViewHTML';
 import { getBundleVersionNumber } from '../../../../../utils/bundleFeed';
 import { getLocalSettingsJson } from '../../../../../utils/appSettings/localSettings';
@@ -129,7 +132,7 @@ describe('LocalDesignerV2Panel', () => {
     (ext as any).telemetryReporter = { sendTelemetryEvent: vi.fn() };
     (ext as any).extensionVersion = '1.0.0';
     (ext as any).workflowRuntimePort = 8080;
-    vi.mocked(getLogicAppProjectRoot).mockResolvedValue('/test/project');
+    vi.mocked(getParentLogicAppRoot).mockResolvedValue('/test/project');
     vi.mocked(getLocalSettingsJson).mockResolvedValue({ Values: {} } as any);
     vi.mocked(getAzureConnectorDetailsForLocalProject).mockResolvedValue({ accessToken: 'token', enabled: false } as any);
     vi.mocked(getManualWorkflowsInLocalProject).mockResolvedValue({} as any);

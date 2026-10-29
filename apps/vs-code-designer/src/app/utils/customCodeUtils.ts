@@ -3,12 +3,12 @@ import * as path from 'path';
 import { parseString } from 'xml2js';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
 import type { WorkspaceFolder } from 'vscode';
-import { isLogicAppProject } from './verifyIsProject';
-import { hasCodefulSdkReference } from './codeful';
+import { isCodefulLogicApp } from './codeful';
 import { ext } from '../../extensionVariables';
-import { getWorkspaceLogicAppRoots } from './workspace';
+import { getLogicAppRoots, isLogicApp } from './workspace';
 import { TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 import { customDirectory, libDirectory } from '../../constants';
+import { localize } from '../../localize';
 
 export interface CustomCodeFunctionsProjectMetadata {
   projectPath: string;
@@ -46,10 +46,10 @@ export async function customCodeArtifactsExist(projectPath: string): Promise<boo
  * Gets the paths of codeless Logic App workspace roots that do NOT already have an associated custom-code functions project.
  */
 export async function getEligibleLogicAppFoldersForCustomCode(): Promise<string[]> {
-  const projectPaths = await getWorkspaceLogicAppRoots();
+  const projectPaths = await getLogicAppRoots();
 
   const eligiblePathTasks = projectPaths.map(async (projectPath) => {
-    if (await hasCodefulSdkReference(projectPath)) {
+    if (await isCodefulLogicApp(projectPath)) {
       return undefined;
     }
     const existingCustomCode = await tryGetLogicAppCustomCodeFunctionsProjects(projectPath);
@@ -69,17 +69,22 @@ export async function getEligibleLogicAppFoldersForCustomCode(): Promise<string[
  * @returns {Promise<boolean>} Returns true if the folder is a custom code functions project, otherwise false.
  */
 export async function isCustomCodeFunctionsProject(folderPath: string): Promise<boolean> {
-  if (!fse.statSync(folderPath).isDirectory()) {
-    return false;
-  }
-  const files = await fse.readdir(folderPath);
-  const csprojFile = files.find((file) => file.endsWith('.csproj'));
-  if (!csprojFile) {
-    return false;
-  }
+  try {
+    if (!fse.statSync(folderPath).isDirectory()) {
+      return false;
+    }
+    const files = await fse.readdir(folderPath);
+    const csprojFile = files.find((file) => file.endsWith('.csproj'));
+    if (!csprojFile) {
+      return false;
+    }
 
-  const csprojContent = await fse.readFile(path.join(folderPath, csprojFile), 'utf-8');
-  return !isNullOrUndefined(getCustomCodeTargetFramework(csprojContent));
+    const csprojContent = await fse.readFile(path.join(folderPath, csprojFile), 'utf-8');
+    return !isNullOrUndefined(getCustomCodeTargetFramework(csprojContent));
+  } catch (error) {
+    ext.outputChannel.appendLog(localize('customCodeUtils.isCustomCodeFunctionsProjectError', 'An error occurred while checking if folder "{0}" is a custom code functions project: "{1}".', folderPath, error instanceof Error ? error.message : String(error)));
+    return false;
+  }
 }
 
 /**
@@ -243,38 +248,6 @@ export async function isCustomCodeFunctionsProjectInRoot(
 }
 
 /**
- * Checks workspace root folder for custom code functions project.
- * TODO - this assumes that all custom code functions projects are in the workspace root folder.
- * @param {IActionContext} context - The action context.
- * @param {WorkspaceFolder | string | undefined} workspaceFolder - The workspace folder.
- * @returns {Promise<string | undefined>} Returns the path to the custom code functions project if found, otherwise returns undefined.
- */
-export async function tryGetCustomCodeFunctionsProjects(
-  workspaceFolder: WorkspaceFolder | string | undefined
-): Promise<string[] | undefined> {
-  if (isNullOrUndefined(workspaceFolder)) {
-    return undefined;
-  }
-  const workspaceFolderPath: string | undefined = isString(workspaceFolder) ? workspaceFolder : workspaceFolder.uri.fsPath;
-  if (!(await fse.pathExists(workspaceFolderPath))) {
-    return undefined;
-  }
-
-  const subpaths: string[] = await fse.readdir(workspaceFolderPath);
-  const customCodeProjectPaths: string[] = [];
-  await Promise.all(
-    subpaths.map(async (s) => {
-      const currPath = path.join(workspaceFolderPath, s);
-      if (await isCustomCodeFunctionsProject(currPath)) {
-        customCodeProjectPaths.push(currPath);
-      }
-    })
-  );
-
-  return customCodeProjectPaths;
-}
-
-/**
  * Searches for custom code functions projects corresponding to the target logic app.
  * @param {string} targetFolder - The folder of the logic app project to search for custom code functions projects.
  * @returns {Promise<string[] | undefined>} - The path to the custom code functions projects if found, otherwise returns undefined.
@@ -284,27 +257,33 @@ export async function tryGetLogicAppCustomCodeFunctionsProjects(targetFolder: st
     return undefined;
   }
 
-  if (!(await isLogicAppProject(targetFolder))) {
+  if (!(await isLogicApp(targetFolder))) {
     return undefined;
   }
 
   const logicAppName = path.basename(path.normalize(targetFolder));
   const parentFolder = path.dirname(targetFolder);
-  const subpaths: string[] = await fse.readdir(parentFolder);
-  const customCodeProjectPaths: string[] = [];
-  await Promise.all(
-    subpaths.map(async (s) => {
-      if (s === logicAppName) {
-        return;
-      }
-      const currPath = path.join(parentFolder, s);
-      if (await isCustomCodeFunctionsProjectForLogicApp(currPath, logicAppName)) {
-        customCodeProjectPaths.push(currPath);
-      }
-    })
-  );
+  
+  try {
+    const subpaths: string[] = await fse.readdir(parentFolder);
+    const customCodeProjectPaths: string[] = [];
+    await Promise.all(
+      subpaths.map(async (s) => {
+        if (s === logicAppName) {
+          return;
+        }
+        const currPath = path.join(parentFolder, s);
+        if (await isCustomCodeFunctionsProjectForLogicApp(currPath, logicAppName)) {
+          customCodeProjectPaths.push(currPath);
+        }
+      })
+    );
 
-  return customCodeProjectPaths;
+    return customCodeProjectPaths;
+  } catch (error) {
+    ext.outputChannel.appendLog(localize('customCodeUtils.tryGetLogicAppCustomCodeFunctionsProjectsError', 'An error occurred while trying to get custom code functions projects for the logic app "{0}": "{1}".', logicAppName, error instanceof Error ? error.message : String(error)));
+    return undefined;
+  }
 }
 
 async function isCustomCodeFunctionsProjectForLogicApp(folderPath: string, logicAppName: string): Promise<boolean> {

@@ -311,8 +311,6 @@ suite('Logic App Project to Workspace Conversion', () => {
   // ──────────────────────────────────────────────────────────────
   suite('Workspace State (Conversion Decision Tree)', () => {
     test('Workspace has folders (prerequisite for setupWorkspaceTestData)', () => {
-      // setupWorkspaceTestData() starts with getWorkspaceFolderWithoutPrompting()
-      // which requires at least one workspace folder
       assert.ok(vscode.workspace.workspaceFolders, 'workspaceFolders should exist');
       assert.ok(vscode.workspace.workspaceFolders.length > 0, 'Should have ≥1 folder');
     });

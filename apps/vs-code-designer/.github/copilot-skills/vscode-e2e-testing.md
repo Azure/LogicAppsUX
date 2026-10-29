@@ -160,20 +160,19 @@ suite('Feature Name', () => {
 });
 ```
 
-## Existing Test Files (204 tests total, all passing)
+## Existing Test Files (188 tests total)
 | File | Tests | Coverage |
 |------|-------|----------|
 | `extension.test.ts` | 3 | Activation basics |
 | `commands.test.ts` | 4 | Command registration |
 | `workflow.test.ts` | 5 | Workflow detection |
 | `designer.test.ts` | 4 | Designer panel basics |
-| `createWorkspace.test.ts` | 10+ | Workspace creation |
-| `projectOutsideWorkspace.test.ts` | 22 | Projects outside workspace |
+| `createWorkspace.test.ts` | 11 | Workspace creation |
 | `workspaceConfigurations.test.ts` | 34 | Workspace config |
 | `debugging.test.ts` | 33 | Debugging functionality |
-| `designerOpens.test.ts` | 30 | Designer opening |
+| `designerOpens.test.ts` | 29 | Designer opening |
 | `nodeLoading.test.ts` | 37 | Action/trigger node loading |
-| `workspaceConversion.test.ts` | 27 | Workspace conversion |
+| `workspaceConversion.test.ts` | 28 | Workspace conversion |
 
 ## Philosophy
 - Tests must exercise the **real extension** — execute actual commands, detect real webview panels
