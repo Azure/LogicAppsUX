@@ -1,4 +1,5 @@
 import type { ArmResource } from './Arm';
+import type { ConnectionsData as StandardConnectionsData } from '@microsoft/logic-apps-shared';
 
 export const WorkflowState = {
   Disabled: 'Disabled',
@@ -48,6 +49,7 @@ export interface ArtifactProperties {
 
 export interface WorkflowProperties extends ArtifactProperties {
   flowState: WorkflowState;
+  changedTime?: string;
 }
 
 export type Workflow = ArmResource<WorkflowProperties>;
@@ -119,7 +121,10 @@ export interface AgentMcpConnectionModel {
 
 export interface ConnectionAndAppSetting {
   connectionKey: string;
-  connectionData: ServiceProviderConnectionModel | FunctionConnectionModel;
+  connectionData:
+    | ServiceProviderConnectionModel
+    | FunctionConnectionModel
+    | NonNullable<StandardConnectionsData['knowledgeHubConnections']>[string];
   settings: Record<string, string>;
   pathLocation: string[];
   isUpdate?: boolean;
@@ -132,6 +137,7 @@ export interface ConnectionsData {
   agentConnections?: Record<string, AgentConnectionModel>;
   apiManagementConnections?: Record<string, APIManagementConnectionModel>;
   agentMcpConnections?: Record<string, AgentMcpConnectionModel>;
+  knowledgeHubConnections?: StandardConnectionsData['knowledgeHubConnections'];
 }
 
 export type ParametersData = Record<string, Parameter>;
