@@ -51,7 +51,7 @@ test('producer plans preserve the expected finite checkpoint counts', () => {
     createWorkspaceBehaviorSmoke: 42,
     msnWeatherLifecycle: 36,
     httpTimeoutLifecycle: 38,
-    statelessVariablesLifecycle: 23,
+    statelessVariablesLifecycle: 24,
     runAfterPersistenceLifecycle: 35,
     workspaceArtifactRegeneration: 19,
     workspaceMultiRoot: 3,
@@ -315,6 +315,58 @@ test('HTTP compatibility aliases derive from the canonical producer manifest', (
       httpCatalogGroups.flatMap((group) => group.steps.map((step) => step.checkpoint))
     );
   });
+});
+
+test('Stateless click-time diagnostics are staged as producer attachments without requiring a retry', () => {
+  for (const attempts of [1, 2]) {
+    withFixture(({ root, evidenceDir, manifestPath, artifactRoot }) => {
+      initializeSuiteEvidenceManifest({
+        suiteId: 'statelessVariablesLifecycle',
+        invocation: 'stateless-click-boundary',
+        platform: 'win32',
+        evidenceDir,
+        expectedPhaseIds: SUITE_REGISTRY.statelessVariablesLifecycle.expectedPhases,
+      });
+      for (const checkpoint of readEvidenceManifest(manifestPath).groups.flatMap((group) => group.checkpoints)) {
+        writeCapture({
+          root,
+          manifestPath,
+          checkpoint: checkpoint.id,
+          classification: checkpoint.classification,
+          verdict: checkpoint.classification === 'diagnostic' ? 'diagnostic' : 'accepted',
+        });
+        if (checkpoint.id === 'stateless-variables-request-trigger-added') {
+          break;
+        }
+      }
+      for (let attempt = 1; attempt <= attempts; attempt++) {
+        for (const stage of ['before', 'after']) {
+          writeCapture({
+            root,
+            manifestPath,
+            checkpoint: `stateless-variables-initialize-click-${attempt}-${stage}`,
+            classification: 'diagnostic',
+            verdict: 'diagnostic',
+          });
+        }
+      }
+      const outcomeFile = writeStructuredInputs(artifactRoot, 'statelessVariablesLifecycle', 'failure');
+      const staged = stageVscodeE2eEvidence({ manifestPath, artifactRoot, outcomeFile });
+      assert.equal(staged.validation.valid, true);
+      const manifest = readEvidenceManifest(path.join(artifactRoot, manifestFileName));
+      assert.equal(manifest.attachments.length, attempts * 2);
+      for (const attachment of manifest.attachments) {
+        assert.ok(fs.existsSync(path.join(artifactRoot, 'diagnostics', `${attachment.id}.png`)));
+        assert.ok(fs.existsSync(path.join(artifactRoot, 'diagnostics', `${attachment.id}.json`)));
+      }
+      assert.equal(
+        manifest.groups
+          .flatMap((group) => group.checkpoints)
+          .find((checkpoint) => checkpoint.id === 'stateless-variables-initialize-panel-open').status,
+        'not-reached'
+      );
+    });
+  }
 });
 
 test('staging rejects tampered content and retains a bounded validation result', () => {

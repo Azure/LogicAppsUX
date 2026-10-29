@@ -796,6 +796,12 @@ function statelessVariablesCatalog() {
           'The generated design-time workspace is ready.'
         ),
         simpleStep(
+          'stateless-variables-request-trigger-added',
+          'Run phase',
+          'Insert the Request trigger before action discovery.',
+          'The canvas contains the exact inserted Request trigger identity.'
+        ),
+        simpleStep(
           'stateless-variables-initialize-panel-open',
           'Run phase',
           'Open the exact newly inserted Initialize variables action.',

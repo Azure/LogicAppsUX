@@ -54,6 +54,10 @@ async function main(): Promise<void> {
   await testPersistedDesignerReadiness();
   await testExactPersistedNodeReadiness();
   await testStableActionInsertionAcknowledgement();
+  testOperationClickRouting();
+  await testOperationClickRetryControls();
+  testOperationCardVisibility();
+  await testDiscoveryVisibleOperationCard();
   await testSettingsTabPaths();
   await testRunAfterToggleOrderingAndRerenderReacquisition();
   await testRunAfterRejectsDisabledAndWrongFinalState();
@@ -82,7 +86,9 @@ async function testProvenAdapterCancellation(): Promise<void> {
       throw new Error('scenario cancelled');
     }
   );
-  await assert.rejects(() => actions.waitForDesignerReady(), /scenario cancelled/);
+  // Exercise the guard directly through operation selection. The historical
+  // Designer-ready poll catches evaluation failures until its long native budget.
+  await assert.rejects(() => actions.selectOperation('Compose', ['compose']), /scenario cancelled/);
   assert.strictEqual(evaluateCalls, 0, 'Cancelled scenarios must not issue delegated MSN CDP requests');
 }
 
@@ -293,7 +299,432 @@ async function testStableActionInsertionAcknowledgement(): Promise<void> {
     /insertion-not-acknowledged/
   );
   assert.strictEqual(closeCalls, 1, 'Insertion baseline must close the responsive panel before reading existing nodes');
-  assert.strictEqual(selectCalls, 1, 'Missing insertion acknowledgement must not redispatch an operation click');
+  assert.strictEqual(selectCalls, 1, 'Missing insertion acknowledgement must not restart discovery or operation matching');
+}
+
+function testOperationClickRouting(): void {
+  class TestElement {
+    id = 'exact-card';
+    tagName = 'DIV';
+    className = '';
+    parentElement = null;
+    disabled = false;
+    isConnected = true;
+    clientLeft = 2;
+    clientTop = 3;
+    offsetWidth = 100;
+    offsetHeight = 60;
+    rect = { left: 10, top: 20, right: 110, bottom: 80, width: 100, height: 60 };
+    getBoundingClientRect() {
+      return this.rect;
+    }
+    getClientRects() {
+      return [this.rect];
+    }
+    getAttribute() {
+      return null;
+    }
+    contains(element: unknown) {
+      return element === this;
+    }
+    querySelector() {
+      return { textContent: 'Initialize variables' };
+    }
+  }
+  const card = new TestElement();
+  const style = { display: 'block', visibility: 'visible', opacity: '1', transform: 'none', zoom: '1' };
+  const state = {
+    card,
+    title: 'initialize variables',
+    activity: false,
+    events: [],
+    routeSignature: undefined as string | undefined,
+    bounds: { left: 10, top: 20, width: 100, height: 60 },
+  };
+  const root: any = {
+    frameElement: { tagName: 'IFRAME' },
+    innerWidth: 1200,
+    innerHeight: 900,
+    devicePixelRatio: 2.5,
+    document: { elementFromPoint: () => card },
+    getComputedStyle: () => style,
+  };
+  root.parent = root;
+  const context = root;
+  root.__laOperationClick = state;
+  const probe = () =>
+    runInNewContext(
+      `(() => {
+      ${getStringConstant('visibleDom')}
+      ${getStringConstant('operationCardVisibilityDom')}
+      ${getStringConstant('operationClickProbeDom')}
+    })()`,
+      {
+        window: context,
+        document: context.document,
+        innerWidth: context.innerWidth,
+        innerHeight: context.innerHeight,
+        getComputedStyle: () => style,
+        HTMLElement: TestElement,
+        Element: TestElement,
+      }
+    ) as any;
+  assert.strictEqual(JSON.stringify(probe().point), JSON.stringify({ x: 60, y: 50 }), 'DPR must not scale local CSS coordinates');
+  assert.strictEqual(probe().actionable, true, 'Local checks must not traverse masked window.parent or assume its frame identity');
+  style.transform = 'scale(1.25)';
+  assert.strictEqual(probe().actionable, true, 'Browser protocol geometry, not local CSS math, handles transforms');
+  style.transform = 'none';
+  root.document.elementFromPoint = () => null;
+  assert.match(probe().reason, /obscured/);
+  root.document.elementFromPoint = () => card;
+  root.innerWidth++;
+  assert.match(probe().reason, /geometry changed/);
+  root.innerWidth--;
+  (state as any).routeChanged = false;
+  card.rect.left++;
+  assert.match(probe().reason, /card moved/);
+}
+
+async function testOperationClickRetryControls(): Promise<void> {
+  // These are deterministic protocol/DOM controls. Mocked trusted receipts below
+  // exercise retry policy only; they are not native trusted-event proof.
+  const run = async (control: {
+    name: string;
+    insertOn?: number;
+    mismatch?: boolean;
+    missingEvents?: boolean;
+    untrusted?: boolean;
+    activity?: 'loader' | 'node' | 'transient-node' | 'transient-busy' | 'discovery';
+    replaceAfterClick?: boolean;
+    replaceBeforeProbe?: boolean;
+    dispatchFailure?: boolean;
+    moveAfterClick?: boolean;
+    obscureAfterClick?: boolean;
+    beforeCapture?: 'move' | 'obscure' | 'expire';
+    expireOnRetry?: boolean;
+    hiddenAncestor?: boolean;
+    loadingBeforeClick?: boolean;
+    browserPoint?: Point;
+    browserHitMismatch?: boolean;
+    malformedQuad?: boolean;
+    expectedClicks: number;
+    expectedSuccess?: boolean;
+  }): Promise<void> => {
+    const dom = new JSDOM(
+      `<html><body>
+      <div id="msla-node-Request">Request</div>
+      <button class="msla-op-search-card-container" data-automation-id="msla-op-search-result-initialize">
+        <span class="msla-op-search-card-title">Initialize variables</span>
+      </button></body></html>`,
+      { runScripts: 'outside-only' }
+    );
+    const window = dom.window as any;
+    const card = window.document.querySelector('button');
+    if (control.hiddenAncestor) {
+      card.parentElement.style.visibility = 'hidden';
+      card.style.visibility = 'visible';
+    }
+    let left = 20;
+    let obscured = false;
+    const rect = () => ({ left, top: 20, right: left + 100, bottom: 60, width: 100, height: 40 });
+    Object.defineProperty(window.HTMLElement.prototype, 'getBoundingClientRect', { configurable: true, value: rect });
+    Object.defineProperty(window.HTMLElement.prototype, 'getClientRects', { configurable: true, value: () => [rect()] });
+    window.HTMLElement.prototype.scrollIntoView = () => undefined;
+    window.document.elementFromPoint = () => (obscured ? window.document.body : card);
+    let now = 100_000;
+    const originalNow = Date.now;
+    Date.now = () => now;
+    let clicks = 0;
+    let observations = 0;
+    const captures: string[] = [];
+    const before = [{ nodeId: 'Request', title: 'Request' }];
+    const added = { nodeId: 'Initialize', title: 'Initialize variables' };
+    const deadline = now + 8000;
+    const actions = new ProvenDesignerCdpActions(
+      {
+        evaluate: async <T>(_contextId: number | undefined, expression: string) => window.eval(expression) as T,
+        send: async (method, params) => {
+          if (method === 'Page.getFrameTree') {
+            return { result: { frameTree: { frame: { id: 'test-input-root' } } } };
+          }
+          const browserPoint = control.browserPoint ?? { x: 70, y: 40 };
+          if (method === 'Runtime.evaluate') {
+            assert.strictEqual(params?.contextId, 1, 'Resolve the exact selected Designer context');
+            return { result: { result: { objectId: 'original-card' } } };
+          }
+          if (method === 'DOM.getContentQuads') {
+            assert.strictEqual(params?.objectId, 'original-card');
+            return {
+              result: {
+                quads: control.malformedQuad
+                  ? [[0, 0]]
+                  : [
+                      [
+                        browserPoint.x - 50,
+                        browserPoint.y - 20,
+                        browserPoint.x + 50,
+                        browserPoint.y - 20,
+                        browserPoint.x + 50,
+                        browserPoint.y + 20,
+                        browserPoint.x - 50,
+                        browserPoint.y + 20,
+                      ],
+                    ],
+              },
+            };
+          }
+          if (method === 'DOM.getNodeForLocation') {
+            assert.deepStrictEqual({ x: params?.x, y: params?.y }, { x: Math.floor(browserPoint.x), y: Math.floor(browserPoint.y) });
+            return { result: { backendNodeId: 99, frameId: 'designer-frame' } };
+          }
+          if (method === 'DOM.resolveNode') {
+            assert.strictEqual(params?.backendNodeId, 99);
+            assert.strictEqual(params?.executionContextId, 1);
+            return { result: { object: { objectId: 'hit-target' } } };
+          }
+          if (method === 'Runtime.callFunctionOn') {
+            assert.strictEqual(params?.objectId, 'hit-target');
+            assert.strictEqual(
+              window.eval(`(${params?.functionDeclaration}).call(document.querySelector('button'))`),
+              true,
+              'Hit verification must compare with the retained original card'
+            );
+            return { result: { result: { value: !control.browserHitMismatch } } };
+          }
+          if (method === 'Runtime.releaseObjectGroup') {
+            return {};
+          }
+          assert.strictEqual(method, 'Input.dispatchMouseEvent');
+          assert.deepStrictEqual({ x: params?.x, y: params?.y }, browserPoint, 'Dispatch browser CSS coordinates without DPR scaling');
+          if (control.dispatchFailure) {
+            throw new Error('test dispatch transport failure');
+          }
+          if (params?.type !== 'mouseReleased') {
+            return;
+          }
+          clicks++;
+          if (control.untrusted) {
+            for (const type of ['pointerdown', 'pointerup', 'click']) {
+              // Negative control only: real DOM listeners must label these
+              // synthetic unit-fixture events untrusted and retain their path.
+              card.dispatchEvent(new window.MouseEvent(type, { bubbles: true, clientX: 70, clientY: 40 }));
+            }
+            assert.ok(window.__laOperationClick.events.every((event: any) => !event.trusted && event.path.length > 0));
+          } else if (!control.missingEvents) {
+            window.__laOperationClick.events = ['pointerdown', 'pointerup', 'click'].map((type) => ({
+              type,
+              trusted: !control.untrusted,
+              matchesCard: !control.mismatch,
+              recipient: control.mismatch ? 'DIV#overlay' : 'BUTTON',
+              x: 70,
+              y: 40,
+            }));
+          }
+          if (control.moveAfterClick) {
+            left++;
+          }
+          if (control.obscureAfterClick) {
+            obscured = true;
+          }
+          if (control.activity === 'transient-node') {
+            const node = window.document.createElement('div');
+            node.id = 'msla-node-transient';
+            window.document.body.append(node);
+            node.remove();
+          }
+          if (control.activity === 'transient-busy') {
+            window.document.body.setAttribute('aria-busy', 'true');
+            window.document.body.setAttribute('aria-busy', 'false');
+          }
+          if (control.replaceAfterClick) {
+            card.replaceWith(card.cloneNode(true));
+          }
+        },
+      },
+      1,
+      deadline
+    ) as any;
+    actions.readActionInsertionSnapshot = async () => {
+      if (clicks > 0) {
+        now += 500;
+        observations++;
+      }
+      const inserted = control.insertOn !== undefined && clicks >= control.insertOn;
+      const oneShot = observations === 1;
+      return {
+        nodes: inserted ? [...before, added] : control.activity === 'node' && oneShot ? [...before, added] : before,
+        panelNodeIds: inserted ? ['Initialize'] : [],
+        discoveryVisible: !inserted && !(control.activity === 'discovery' && oneShot),
+        loaderCount: (control.loadingBeforeClick && clicks === 0) || (control.activity === 'loader' && oneShot) ? 1 : 0,
+      };
+    };
+    try {
+      let identity: unknown;
+      let error: unknown;
+      try {
+        await actions.proven.selectOperation('Initialize variables', ['initialize variable'], async (point: Point) => {
+          if (control.replaceBeforeProbe) {
+            card.replaceWith(card.cloneNode(true));
+          }
+          identity = await actions.selectActionWithAcknowledgement(point, before, 'Initialize variables', deadline, {
+            onOperationClick: async (stage: string, attempt: number) => {
+              captures.push(`${attempt}-${stage}`);
+              if (stage === 'before' && attempt === 1) {
+                if (control.beforeCapture === 'move') {
+                  left++;
+                }
+                if (control.beforeCapture === 'obscure') {
+                  obscured = true;
+                }
+                if (control.beforeCapture === 'expire') {
+                  now = deadline;
+                }
+              }
+              if (stage === 'before' && attempt === 2 && control.expireOnRetry) {
+                now = deadline;
+              }
+            },
+          });
+        });
+      } catch (caught) {
+        error = caught;
+      }
+      assert.strictEqual(clicks, control.expectedClicks, control.name);
+      assert.strictEqual(!!identity, !!control.expectedSuccess, control.name);
+      if (control.expectedSuccess) {
+        assert.ifError(error);
+      }
+      if (control.beforeCapture || control.expireOnRetry) {
+        assert.ok(error, `${control.name}: unsafe input must fail closed`);
+      }
+      assert.ok(now <= deadline + 500, `${control.name}: original deadline must not restart`);
+      if (clicks) {
+        assert.deepStrictEqual(captures.slice(0, 2), ['1-before', '1-after'], 'Capture immediately around dispatch');
+      }
+      if (control.dispatchFailure) {
+        assert.deepStrictEqual(captures, ['1-before', '1-after'], 'Failed trusted dispatch still needs an immediate after diagnostic');
+        assert.match(String(error), /test dispatch transport failure/);
+      }
+      if (control.replaceBeforeProbe) {
+        assert.match(String(error), /Cannot bind original exact operation card/);
+      }
+      assert.strictEqual(window.__laOperationClick, undefined, 'Probe must always be disposed');
+      assert.strictEqual(window.__laOperationInputRoot, undefined, 'Input-root sentinel must always be disposed');
+      assert.strictEqual(window.__laSelectedOperationCard, undefined, 'Original selection reference must always be disposed');
+    } finally {
+      Date.now = originalNow;
+      dom.window.close();
+    }
+  };
+  await run({ name: 'first insertion: no duplicate', insertOn: 1, expectedClicks: 1, expectedSuccess: true });
+  await run({
+    name: 'browser frame-offset CSS point is authoritative',
+    browserPoint: { x: 172.5, y: 133.25 },
+    insertOn: 1,
+    expectedClicks: 1,
+    expectedSuccess: true,
+  });
+  await run({ name: 'browser hit mismatch refuses input', browserHitMismatch: true, expectedClicks: 0 });
+  await run({ name: 'invalid browser geometry refuses input', malformedQuad: true, expectedClicks: 0 });
+  await run({
+    name: 'visible card overrides hidden ancestor',
+    hiddenAncestor: true,
+    insertOn: 1,
+    expectedClicks: 1,
+    expectedSuccess: true,
+  });
+  await run({
+    name: 'first click does not wait for unrelated search loading',
+    loadingBeforeClick: true,
+    insertOn: 1,
+    expectedClicks: 1,
+    expectedSuccess: true,
+  });
+  await run({ name: 'one idle retry inserts exactly once', insertOn: 2, expectedClicks: 2, expectedSuccess: true });
+  await run({ name: 'retry budget exhausted', expectedClicks: 2 });
+  for (const activity of ['loader', 'node', 'transient-node', 'transient-busy', 'discovery'] as const) {
+    await run({ name: `sticky ${activity}: no retry`, activity, expectedClicks: 1 });
+  }
+  await run({ name: 'recipient mismatch: no retry', mismatch: true, expectedClicks: 1 });
+  await run({ name: 'missing events: no retry', missingEvents: true, expectedClicks: 1 });
+  await run({ name: 'synthetic events: no retry', untrusted: true, expectedClicks: 1 });
+  await run({ name: 'card moved after click: no retry', moveAfterClick: true, expectedClicks: 1 });
+  await run({ name: 'card obscured after click: no retry', obscureAfterClick: true, expectedClicks: 1 });
+  await run({ name: 'same-title rerender cannot substitute original card', replaceAfterClick: true, expectedClicks: 1 });
+  await run({ name: 'same-title rerender between matching and dispatch is refused', replaceBeforeProbe: true, expectedClicks: 0 });
+  await run({ name: 'dispatch failure retains after diagnostic', dispatchFailure: true, expectedClicks: 0 });
+  for (const beforeCapture of ['move', 'obscure', 'expire'] as const) {
+    await run({ name: `capture race ${beforeCapture}: no dispatch`, beforeCapture, expectedClicks: 0 });
+  }
+  await run({ name: 'retry capture consumes original budget', expireOnRetry: true, expectedClicks: 1 });
+}
+
+async function testDiscoveryVisibleOperationCard(): Promise<void> {
+  const dom = new JSDOM(
+    `<html><body><div class="msla-panel-root-Discovery">
+    <button class="msla-op-search-card-container">Initialize variables</button>
+    </div></body></html>`,
+    { runScripts: 'outside-only' }
+  );
+  const window = dom.window as any;
+  const card = window.document.querySelector('button');
+  window.document.elementFromPoint = () => card;
+  Object.defineProperty(window.HTMLElement.prototype, 'getBoundingClientRect', {
+    configurable: true,
+    value(this: { tagName: string }) {
+      return this === card
+        ? { left: 20, top: 20, right: 120, bottom: 60, width: 100, height: 40 }
+        : { left: 0, top: 0, right: 0, bottom: 0, width: 0, height: 0 };
+    },
+  });
+  Object.defineProperty(window.HTMLElement.prototype, 'getClientRects', { configurable: true, value: () => [{}] });
+  const actions = new ProvenDesignerCdpActions(
+    {
+      evaluate: async <T>(_id: number | undefined, expression: string) => window.eval(expression) as T,
+      send: async () => undefined,
+    },
+    1,
+    Date.now() + 1000
+  ) as any;
+  try {
+    assert.strictEqual(
+      (await actions.readActionInsertionSnapshot()).discoveryVisible,
+      true,
+      'A visible product operation card proves discovery even when wrappers have no box'
+    );
+    card.style.display = 'none';
+    assert.strictEqual(
+      (await actions.readActionInsertionSnapshot()).discoveryVisible,
+      false,
+      'Hidden result cards must not keep discovery visible'
+    );
+  } finally {
+    dom.window.close();
+  }
+}
+
+function testOperationCardVisibility(): void {
+  const dom = new JSDOM(
+    '<html><body><div style="visibility:hidden"><button style="visibility:visible">Initialize variables</button></div></body></html>',
+    { runScripts: 'outside-only' }
+  );
+  const window = dom.window as any;
+  const card = window.document.querySelector('button');
+  card.getBoundingClientRect = () => ({ left: 20, top: 20, width: 100, height: 40 });
+  card.getClientRects = () => [{}];
+  const isVisible = () =>
+    window.eval(`(() => { ${getStringConstant('operationCardVisibilityDom')}
+    return operationCardVisible(document.querySelector('button')); })()`);
+  try {
+    assert.strictEqual(isVisible(), true, 'An explicitly visible card can override inherited ancestor visibility');
+    card.parentElement.style.opacity = '0';
+    assert.strictEqual(isVisible(), false, 'Ancestor transparency cannot be overridden by the card');
+    card.parentElement.style.opacity = '1';
+    card.style.visibility = 'hidden';
+    assert.strictEqual(isVisible(), false, 'A hidden card must not be selected');
+  } finally {
+    dom.window.close();
+  }
 }
 
 async function testSettingsTabPaths(): Promise<void> {
@@ -463,14 +894,14 @@ function testRunAfterIdentityAndStatusContracts(): void {
       'hooks.onSearchEntered',
       'this.proven.waitForSearchResults',
       'this.proven.selectOperation',
-      'waitForStableSingleNewNodeIdentity',
+      'selectActionWithAcknowledgement',
     ],
     'Stable action insertion'
   );
   assert.strictEqual(
     (insertion.match(/this\.proven\.selectOperation/g) ?? []).length,
     1,
-    'Insertion acknowledgement failure must never redispatch the operation click'
+    'Insertion must select once; any retry must retain the exact original DOM card through the guarded dispatcher'
   );
 
   const setStatus = getMethod('ProvenDesignerCdpActions', 'setRunAfterStatus');

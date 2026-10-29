@@ -931,7 +931,7 @@ export class MsnDesignerCdpActions {
     );
   }
 
-  async selectOperation(operationName: string, variants: string[]): Promise<void> {
+  async selectOperation(operationName: string, variants: string[], dispatch?: (point: Point) => Promise<void>): Promise<void> {
     let result:
       | {
           ok: boolean;
@@ -946,6 +946,7 @@ export class MsnDesignerCdpActions {
       result = await this.cdp.evaluate(
         this.contextId,
         `(() => {
+        ${dispatch ? operationCardVisibilityDom : ''}
         const variants = ${JSON.stringify([operationName, ...variants].map((variant) => variant.toLowerCase()))};
         const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim();
         const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
@@ -978,9 +979,15 @@ export class MsnDesignerCdpActions {
         const getHitTestedPoint = (card) => {
           if (card.disabled || card.getAttribute('aria-disabled') === 'true') return undefined;
           card.scrollIntoView({ block: 'center', inline: 'center' });
+          ${dispatch ? 'if (!operationCardVisible(card)) return undefined;' : ''}
           const rect = card.getBoundingClientRect();
           const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
           const hit = document.elementFromPoint(point.x, point.y);
+          if (${!!dispatch} && hit && (hit === card || card.contains(hit))) {
+            window.__laSelectedOperationCard = {
+              card, bounds: { left: rect.left, top: rect.top, width: rect.width, height: rect.height },
+            };
+          }
           return hit && (hit === card || card.contains(hit)) ? point : undefined;
         };
         const exactCard = cards.find((card) => getCardDetails(card).text === exactOperationName);
@@ -1031,7 +1038,11 @@ export class MsnDesignerCdpActions {
 
       if (result?.ok && result.point) {
         console.log(`[workspace-lifecycle] Selecting operation "${operationName}" (${result.text ?? ''})`);
-        await clickPoint(this.cdp, result.point);
+        if (dispatch) {
+          await dispatch(result.point);
+        } else {
+          await clickPoint(this.cdp, result.point);
+        }
         return;
       }
 
@@ -1470,14 +1481,87 @@ const provenSaveButtonDom = `
 export interface DesignerInsertionEvidenceHooks {
   onDiscoveryOpen?: () => Promise<void>;
   onSearchEntered?: (search: string) => Promise<void>;
+  /** Diagnostic capture only: must not dismiss UI or wait for a settled insertion. */
+  onOperationClick?: (stage: 'before' | 'after', attempt: number, evidence: OperationClickEvidence) => Promise<void>;
 }
+
+export interface OperationClickEvidence {
+  actionable: boolean;
+  reason?: string;
+  point?: Point;
+  targetPoint?: Point;
+  bounds?: Record<string, number>;
+  frames?: unknown[];
+  events?: Array<{ type: string; trusted: boolean; matchesCard: boolean; recipient: string; path?: string[]; x: number; y: number }>;
+  activity?: boolean;
+}
+
+// A descendant may restore visibility:hidden inherited from an ancestor.
+// Browser hit tests below, rather than ancestor-box approximations, prove clipping.
+const operationCardVisibilityDom = `
+  const operationCardVisible = (element) => {
+    if (!(element instanceof HTMLElement)) return false;
+    const rect = element.getBoundingClientRect();
+    const style = getComputedStyle(element);
+    if (!rect.width || !rect.height || !element.getClientRects().length ||
+        style.visibility === 'hidden' || style.visibility === 'collapse') return false;
+    for (let parent = element; parent; parent = parent.parentElement) {
+      const parentStyle = getComputedStyle(parent);
+      if (parentStyle.display === 'none' || parentStyle.opacity === '0') return false;
+    }
+    return true;
+  };
+`;
+
+// Local card checks only. VS Code masks window.parent, so CDP DOM geometry,
+// not JavaScript parent traversal, resolves the target-viewport CSS point.
+const operationClickProbeDom = `
+  const state = window.__laOperationClick;
+  if (!state) return { actionable: false, reason: 'Missing operation click probe' };
+  const describe = (element) => element instanceof Element
+    ? element.tagName + '#' + element.id + '.' + String(element.className).slice(0, 160)
+    : String(element);
+  const card = state.card;
+  const rect = card.getBoundingClientRect();
+  const cardBounds = { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
+  const point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+  const viewport = window.visualViewport;
+  const frames = [{
+    width: innerWidth, height: innerHeight, dpr: window.devicePixelRatio,
+    viewport: viewport ? { scale: viewport.scale, x: viewport.offsetLeft, y: viewport.offsetTop,
+      width: viewport.width, height: viewport.height } : null,
+    parentIsSelf: window.parent === window,
+  }];
+  const result = (actionable, reason, targetPoint) => ({
+    actionable, reason, point, targetPoint, bounds: cardBounds, frames, events: state.events, activity: state.activity,
+  });
+  if (state.routeChanged) return result(false, 'Original operation card or route changed');
+  if (!card.isConnected || normalize(card.querySelector('.msla-op-search-card-title')?.textContent || card.textContent).toLowerCase() !== state.title ||
+      !operationCardVisible(card) || card.disabled || card.getAttribute('aria-disabled') === 'true') {
+    return result(false, 'Original exact card is no longer actionable');
+  }
+  if (Object.keys(cardBounds).some((key) => cardBounds[key] !== state.bounds[key])) {
+    return result(false, 'Original operation card moved');
+  }
+  const hit = document.elementFromPoint(point.x, point.y);
+  if (!hit || !(hit === card || card.contains(hit))) {
+    return result(false, 'Operation card is obscured: ' + describe(hit));
+  }
+  const signature = JSON.stringify(frames);
+  if (state.routeSignature && state.routeSignature !== signature) {
+    state.routeChanged = true;
+    return result(false, 'Frame or viewport geometry changed');
+  }
+  state.routeSignature = signature;
+  return result(true);
+`;
 
 /**
  * Compatibility surface for scenarios that need the proven MSN Designer
  * interactions plus the generalized helper's scenario-specific CDP utilities.
  *
- * Keep MsnDesignerCdpActions unchanged; this adapter only orchestrates its
- * historical primitives behind the existing high-level API.
+ * The MSN primitive retains matching/search behavior; this adapter guards
+ * action selection and owns insertion acknowledgement.
  */
 export class ProvenDesignerCdpActions extends DesignerCdpActions {
   private readonly proven: MsnDesignerCdpActions;
@@ -1752,10 +1836,11 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
     await this.proven.search(options.search);
     await hooks.onSearchEntered?.(options.search);
     await this.proven.waitForSearchResults(60000, `${options.search} search results`);
-    await this.proven.selectOperation(options.operationName, options.variants ?? [options.operationName.toLowerCase()]);
-
     const insertionDeadline = Math.min(this.deadline, Date.now() + 90000);
-    const identity = await this.waitForStableSingleNewNodeIdentity(before, options.operationName, insertionDeadline, options.operationName);
+    let identity: DesignerNodeIdentity | undefined;
+    await this.proven.selectOperation(options.operationName, options.variants ?? [options.operationName.toLowerCase()], async (point) => {
+      identity = await this.selectActionWithAcknowledgement(point, before, options.operationName, insertionDeadline, hooks);
+    });
     if (identity) {
       return identity;
     }
@@ -1769,6 +1854,264 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
         nodes: snapshot.nodes.slice(0, 20),
       })}`
     );
+  }
+
+  private async selectActionWithAcknowledgement(
+    point: Point,
+    before: DesignerNodeIdentity[],
+    operationName: string,
+    deadline: number,
+    hooks: DesignerInsertionEvidenceHooks
+  ): Promise<DesignerNodeIdentity | undefined> {
+    const baselineIds = before.map((node) => node.nodeId).sort();
+    let activity = false;
+    let attempts = 0;
+    let retryConsidered = false;
+    let dispatchedAt = 0;
+    let recipientConfirmed = false;
+    let protocolGeometry: string | undefined;
+    const snapshotActive = (snapshot: ActionInsertionSnapshot): boolean =>
+      snapshot.loaderCount > 0 ||
+      !snapshot.discoveryVisible ||
+      JSON.stringify(snapshot.nodes.map((node) => node.nodeId).sort()) !== JSON.stringify(baselineIds) ||
+      snapshot.panelNodeIds.length > 0;
+    const probe = async (): Promise<OperationClickEvidence> => {
+      const evidence = await this.readOperationClickEvidence();
+      if (evidence.actionable) {
+        const geometry = JSON.stringify(evidence.targetPoint);
+        if (protocolGeometry && protocolGeometry !== geometry) {
+          return { ...evidence, actionable: false, reason: 'Browser-reported click route moved' };
+        }
+        protocolGeometry = geometry;
+      }
+      return evidence;
+    };
+    try {
+      const owner = this.cdp as CdpEvaluator & {
+        targetId?: string;
+        getExecutionContextIds?: () => number[];
+        getExecutionContextFrameId?: (id: number) => string | undefined;
+      };
+      const frameTree = (await this.send('Page.getFrameTree', {})) as {
+        result?: { frameTree?: { frame: { id: string; parentId?: string }; childFrames?: unknown[] } };
+      };
+      console.log(
+        `[designer-operation-click] ${operationName} binding ${JSON.stringify({
+          targetId: owner.targetId,
+          contextId: this.contextId,
+          contextFrameId: owner.getExecutionContextFrameId?.(this.contextId),
+          inputRootFrameId: frameTree.result?.frameTree?.frame.id,
+        })}`
+      );
+      await this.evaluate(`(() => {
+          ${visibleDom}
+          ${operationCardVisibilityDom}
+          const point = ${JSON.stringify(point)};
+          const hit = document.elementFromPoint(point.x, point.y);
+          const title = ${JSON.stringify(operationName.toLowerCase())};
+          const selection = window.__laSelectedOperationCard;
+          delete window.__laSelectedOperationCard;
+          const card = selection?.card;
+          if (!card?.isConnected || !operationCardVisible(card) || !(card === hit || card.contains(hit)) ||
+              normalize(card.querySelector('.msla-op-search-card-title')?.textContent || card.textContent).toLowerCase() !== title) {
+            throw new Error('Cannot bind original exact operation card: ' + JSON.stringify({
+              selected: !!selection, connected: card?.isConnected, visible: card ? visible(card) : false,
+              hitMatches: !!card && (card === hit || card.contains(hit)),
+              title: card ? normalize(card.querySelector('.msla-op-search-card-title')?.textContent || card.textContent).toLowerCase() : null,
+              expectedTitle: title, point, bounds: selection?.bounds,
+              currentBounds: card ? { left: card.getBoundingClientRect().left, top: card.getBoundingClientRect().top,
+                width: card.getBoundingClientRect().width, height: card.getBoundingClientRect().height } : null,
+              clip: card ? bounds(card) : null,
+            }));
+          }
+          const state = window.__laOperationClick = {
+            card, title, activity: false, routeChanged: false, dispatched: false, events: [], listeners: [],
+            bounds: selection.bounds,
+          };
+          const record = (event) => {
+            state.events.push({ type: event.type, trusted: event.isTrusted,
+              matchesCard: event.composedPath().includes(card),
+              recipient: event.target instanceof Element ? event.target.tagName + '#' + event.target.id + '.' + String(event.target.className).slice(0, 160) : String(event.target),
+              path: event.composedPath().slice(0, 12).map((element) => element instanceof Element
+                ? element.tagName + '#' + element.id + '.' + String(element.className).slice(0, 100) : String(element)),
+              x: event.clientX, y: event.clientY });
+          };
+          for (const type of ['pointerdown', 'pointerup', 'click']) {
+            document.addEventListener(type, record, true);
+            state.listeners.push([document, type, record]);
+          }
+          const routeChanged = () => { if (state.dispatched) state.routeChanged = true; };
+          for (const type of ['scroll', 'resize']) {
+            window.addEventListener(type, routeChanged, true);
+            state.listeners.push([window, type, routeChanged]);
+          }
+          const beforeIds = new Set(${JSON.stringify(baselineIds)});
+          const insertionSelector = '[id^="msla-node-"], [aria-busy="true"], [role="progressbar"], .monaco-progress-container, .codicon-loading, .ms-Spinner, .fui-Spinner, .ms-Shimmer-container, [class*="spinner"], [class*="loading"]';
+          const isActivity = (element) => element instanceof Element &&
+            (element.matches(insertionSelector) && (!element.id.startsWith('msla-node-') ||
+              element.id.startsWith('msla-node-details-panel-') || !beforeIds.has(element.id.slice('msla-node-'.length))) ||
+             Array.from(element.querySelectorAll(insertionSelector)).some(isActivity));
+          state.observer = new MutationObserver((records) => {
+            if (records.some((record) =>
+                record.type === 'attributes' && (record.target === card || record.target.contains(card)) ||
+                [...record.removedNodes].some((node) => node === card || node instanceof Element && node.contains(card)))) {
+              state.routeChanged = true;
+            }
+            if (records.some((record) => record.type === 'attributes' ? isActivity(record.target) :
+                [...record.addedNodes, ...record.removedNodes].some(isActivity)) ||
+                records.some((record) => record.attributeName === 'aria-busy' && record.oldValue === 'true' ||
+                  record.attributeName === 'class' && /loading|spinner|Spinner|Shimmer|progress/.test(record.oldValue || ''))) state.activity = true;
+          });
+          state.observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeOldValue: true,
+            attributeFilter: ['id', 'class', 'style', 'aria-busy', 'aria-disabled', 'disabled'] });
+        })()`);
+      const dispatch = async (): Promise<boolean> => {
+        const attempt = attempts + 1;
+        await this.evaluate('window.__laOperationClick.events = []');
+        const beforeClick = await probe();
+        console.log(`[designer-operation-click] ${operationName} before attempt=${attempt} ${JSON.stringify(beforeClick)}`);
+        await hooks.onOperationClick?.('before', attempt, beforeClick);
+        // Screenshots take time: revalidate the original DOM object, geometry,
+        // ancestor hit tests AND insertion activity immediately before input.
+        activity ||= snapshotActive(await this.readActionInsertionSnapshot());
+        const ready = await probe();
+        activity ||= !!ready.activity;
+        if (!ready.actionable || (attempt > 1 && activity)) {
+          console.log(`[designer-operation-click] ${operationName} refused attempt=${attempt} ${JSON.stringify({ ...ready, activity })}`);
+          if (attempt === 1) {
+            assert.fail(`Unsafe operation click route: ${JSON.stringify(ready)}`);
+          }
+          return false;
+        }
+        assert.ok(Date.now() < deadline, 'Operation insertion deadline expired before input');
+        this.assertActive();
+        attempts++;
+        dispatchedAt = Date.now();
+        await this.evaluate('window.__laOperationClick.dispatched = true; window.__laOperationClick.events = []');
+        let dispatchError: unknown;
+        try {
+          await this.dispatchTrustedPoint(ready.targetPoint!, deadline);
+        } catch (error) {
+          dispatchError = error;
+        }
+        const afterClick = await probe().catch(
+          (error): OperationClickEvidence => ({
+            actionable: false,
+            reason: `Post-dispatch probe unavailable: ${String(error)}`,
+          })
+        );
+        activity ||= !afterClick.actionable;
+        recipientConfirmed =
+          ['pointerdown', 'pointerup', 'click'].every((type) =>
+            afterClick.events?.some((event) => event.type === type && event.trusted && event.matchesCard)
+          ) && !afterClick.events?.some((event) => !event.matchesCard || !event.trusted);
+        activity ||= !!afterClick.activity;
+        console.log(
+          `[designer-operation-click] ${operationName} after attempt=${attempt} ${JSON.stringify({ ...afterClick, recipientConfirmed })}`
+        );
+        await hooks.onOperationClick?.('after', attempt, afterClick);
+        if (dispatchError) {
+          throw dispatchError;
+        }
+        return true;
+      };
+      await dispatch();
+      return await this.waitForStableSingleNewNodeIdentity(before, operationName, deadline, operationName, async (snapshot) => {
+        activity ||= snapshotActive(snapshot);
+        if (attempts !== 1 || retryConsidered || activity || !recipientConfirmed || Date.now() - dispatchedAt < 1500) {
+          return;
+        }
+        retryConsidered = true;
+        // Only one retry; all negative evidence is sticky across observations.
+        // The original insertion deadline is never restarted.
+        await dispatch();
+      });
+    } finally {
+      console.log(
+        `[designer-operation-click] ${operationName} outcome ${JSON.stringify({
+          attempts,
+          activity,
+          recipientConfirmed,
+          retryConsidered,
+          remainingMs: deadline - Date.now(),
+        })}`
+      );
+      // Disposal is allowed after the action deadline; it cannot send input or
+      // prolong the insertion budget.
+      await this.cdp
+        .evaluate(
+          this.contextId,
+          `(() => {
+          const state = window.__laOperationClick;
+          state?.observer?.disconnect();
+          for (const [document, type, listener] of state?.listeners || []) document.removeEventListener(type, listener, true);
+          delete window.__laOperationClick;
+          delete window.__laSelectedOperationCard;
+        })()`,
+          { timeoutMs: 1000 }
+        )
+        .catch((error) => console.warn(`[designer-operation-click] Probe cleanup failed: ${String(error)}`));
+    }
+  }
+
+  private async readOperationClickEvidence(): Promise<OperationClickEvidence> {
+    const evidence = await this.evaluate<OperationClickEvidence>(
+      `(() => { ${visibleDom} ${operationCardVisibilityDom} ${operationClickProbeDom} })()`
+    );
+    if (!evidence.actionable) {
+      return evidence;
+    }
+    const objectGroup = `operation-geometry-${this.contextId}-${Date.now()}-${Math.random()}`;
+    try {
+      const card = (await this.send('Runtime.evaluate', {
+        contextId: this.contextId,
+        expression: 'window.__laOperationClick.card',
+        objectGroup,
+        returnByValue: false,
+      })) as { result?: { result?: { objectId?: string } } };
+      assert.ok(card.result?.result?.objectId, 'Cannot resolve original operation card for browser geometry');
+      const quads = (await this.send('DOM.getContentQuads', { objectId: card.result.result.objectId })) as {
+        result?: { quads?: number[][] };
+      };
+      const quad = quads.result?.quads;
+      assert.ok(
+        quad?.length === 1 && quad[0].length === 8 && quad[0].every(Number.isFinite),
+        'Operation card must have one finite browser-reported content quad'
+      );
+      // CDP returns main-frame viewport CSS coordinates, including frame offsets
+      // and transforms. Never multiply these by devicePixelRatio.
+      const targetPoint = {
+        x: (quad[0][0] + quad[0][2] + quad[0][4] + quad[0][6]) / 4,
+        y: (quad[0][1] + quad[0][3] + quad[0][5] + quad[0][7]) / 4,
+      };
+      const hit = (await this.send('DOM.getNodeForLocation', {
+        x: Math.floor(targetPoint.x),
+        y: Math.floor(targetPoint.y),
+      })) as { result?: { backendNodeId?: number; frameId?: string } };
+      assert.ok(hit.result?.backendNodeId, 'Browser could not hit-test the operation click point');
+      const resolved = (await this.send('DOM.resolveNode', {
+        backendNodeId: hit.result.backendNodeId,
+        executionContextId: this.contextId,
+        objectGroup,
+      })) as { result?: { object?: { objectId?: string } } };
+      assert.ok(resolved.result?.object?.objectId, 'Cannot resolve browser operation hit target');
+      const matches = (await this.send('Runtime.callFunctionOn', {
+        objectId: resolved.result.object.objectId,
+        functionDeclaration: 'function() { const card = window.__laOperationClick.card; return card === this || card.contains(this); }',
+        returnByValue: true,
+      })) as { result?: { result?: { value?: boolean } } };
+      return {
+        ...evidence,
+        targetPoint,
+        frames: [...(evidence.frames ?? []), { quad: quad[0], hitFrameId: hit.result.frameId }],
+        actionable: matches.result?.result?.value === true,
+        reason: matches.result?.result?.value === true ? undefined : 'Browser click point does not hit the original operation card',
+      };
+    } finally {
+      await this.cdp
+        .send('Runtime.releaseObjectGroup', { objectGroup }, { timeoutMs: 1000 })
+        .catch((error) => console.warn(`[designer-operation-click] Geometry object cleanup failed: ${String(error)}`));
+    }
   }
 
   async clickNodeById(nodeId: string): Promise<DesignerNodeIdentity> {
@@ -2510,6 +2853,7 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
   private async readActionInsertionSnapshot(): Promise<ActionInsertionSnapshot> {
     return this.evaluate<ActionInsertionSnapshot>(`(() => {
       ${visibleDom}
+      ${operationCardVisibilityDom}
       const panelNodes = Array.from(document.querySelectorAll('[id^="msla-node-details-panel-"]'))
         .filter(visible)
         .map((element) => {
@@ -2545,7 +2889,16 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
         '.msla-panel-root-Discovery',
         '[data-automation-id="msla-search-box"]',
         '.msla-search-box',
-      ].some((selector) => Array.from(document.querySelectorAll(selector)).some(visible));
+      ].some((selector) => Array.from(document.querySelectorAll(selector)).some(visible)) || [
+        '[data-automation-id^="msla-op-search-result-"]',
+        '[data-testid^="msla-op-search-result-"]',
+        '.msla-op-search-card-container',
+      ].some((selector) => Array.from(document.querySelectorAll(selector)).some((card) => {
+        if (!operationCardVisible(card)) return false;
+        const rect = card.getBoundingClientRect();
+        const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        return hit && (hit === card || card.contains(hit));
+      }));
       const loaderCount = [
         '.monaco-progress-container',
         '.codicon-loading',
@@ -2565,13 +2918,15 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
     before: DesignerNodeIdentity[],
     description: string,
     deadline: number,
-    expectedTitle?: string
+    expectedTitle?: string,
+    onObservation?: (snapshot: ActionInsertionSnapshot) => Promise<void>
   ): Promise<DesignerNodeIdentity | undefined> {
     const beforeIds = new Set(before.map((identity) => identity.nodeId));
     let stableNodeId = '';
     let stableObservations = 0;
     while (Date.now() < deadline) {
       const snapshot = await this.readActionInsertionSnapshot();
+      await onObservation?.(snapshot);
       const added = snapshot.nodes.filter((identity) => !beforeIds.has(identity.nodeId));
       const expected = expectedTitle?.toLowerCase();
       const titleMatches = expected
@@ -2669,13 +3024,16 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
     assert.fail(`Timed out waiting for ${description}${lastError ? `. Last error: ${String(lastError)}` : ''}`);
   }
 
-  private async dispatchTrustedPoint(point: Point): Promise<void> {
+  private async dispatchTrustedPoint(point: Point, deadline: number = this.deadline): Promise<void> {
     this.assertActive();
     assert.ok(Date.now() < this.deadline, 'Designer action scenario deadline expired');
     await clickPoint(
       {
         evaluate: <T>(_contextId: number | undefined, expression: string) => this.evaluate<T>(expression),
-        send: (method, params) => this.send(method, params ?? {}),
+        send: (method, params) => {
+          assert.ok(Date.now() < deadline, 'Operation insertion deadline expired before input');
+          return this.send(method, params ?? {});
+        },
       },
       point
     );

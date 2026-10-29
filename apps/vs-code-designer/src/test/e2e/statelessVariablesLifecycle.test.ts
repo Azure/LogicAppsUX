@@ -9,7 +9,7 @@ import { connectToVsCodeCdp, connectToVsCodeWorkbenchCdp, waitForWebviewFrameCon
 import { clickPoint, pressKey, type CdpEvaluator, type Point } from './cdpFormHelpers';
 import { type DesignerCdpActions, ProvenDesignerCdpActions } from './designerCdpActions';
 import { assertNoDialogAttempts, installDialogGuard } from './dialogGuard';
-import { installFailureScreenshotHook } from './screenshot';
+import { captureDiagnosticScreenshot, installFailureScreenshotHook } from './screenshot';
 import { assertApprovedAzureFixture, installApprovedAzureFixture } from './approvedAzureFixture';
 import {
   assertAzureConnectorAccountTreePrerequisite,
@@ -379,11 +379,30 @@ async function authorVariablesThroughDesigner(
     logStatelessStage('designer-ready', 'Visible stateless Designer is ready for authoring', deadline, signal);
     const request = await designer.addRequestTriggerAndGetIdentity();
     logStatelessStage('request-added', `Request trigger inserted as ${request.nodeId}`, deadline, signal);
-    const initialize = await designer.addActionAndGetIdentity({
-      search: 'Initialize variables',
-      operationName: 'Initialize variables',
-      variants: ['initialize variable'],
+    await helpers.captureLifecycleScreenshot('stateless-variables-request-trigger-added', {
+      expectation: { kind: 'designerCanvas', label: entry.label, requiredNodeIds: [request.nodeId] },
+      semanticCdp: cdp,
+      semanticContextId: context,
+      deadlineMs: deadline,
     });
+    const initialize = await designer.addActionAndGetIdentity(
+      {
+        search: 'Initialize variables',
+        operationName: 'Initialize variables',
+        variants: ['initialize variable'],
+      },
+      {
+        onOperationClick: async (stage, attempt) => {
+          assertPhaseActive(deadline, signal);
+          // Click-time diagnostics intentionally bypass settled-state polling and
+          // notification housekeeping; neither may move/close the discovery UI.
+          await captureDiagnosticScreenshot(`stateless-variables-initialize-click-${attempt}-${stage}`, {
+            reason: `Initialize variables trusted operation click ${stage}, attempt ${attempt}`,
+            timeoutMs: remainingMs(deadline, 3000),
+          });
+        },
+      }
+    );
     logStatelessStage('initialize-added', `Initialize variables inserted as ${initialize.nodeId}`, deadline, signal);
     await designer.ensureNodePanelOpen(initialize);
     logStatelessStage('initialize-panel-open', `Exact Initialize variables panel opened for ${initialize.nodeId}`, deadline, signal);

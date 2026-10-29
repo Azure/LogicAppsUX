@@ -1328,6 +1328,60 @@ For a detailed traceability view from the ExTester Create Workspace behavior and
 
 ## Test Development
 
+### Focused operation-selection diagnostics
+
+`ProvenDesignerCdpActions.addActionAndGetIdentity` retains the exact original
+operation-card DOM object and the original insertion deadline. Its shared
+Linux/Windows dispatcher logs `[designer-operation-click]` records containing
+CDP target/context/frame identity, local card bounds/point, target CSS point,
+frame/visual-viewport geometry and captured `pointerdown`/`pointerup`/`click`
+recipients, composed paths and `isTrusted`. Listeners are armed before input;
+post-click hit tests are not evidence of the event recipient.
+
+CDP `Input.dispatchMouseEvent` takes viewport **CSS pixels**, not device pixels
+([protocol](https://github.com/ChromeDevTools/devtools-protocol/blob/master/pdl/domains/Input.pdl)).
+The original DOM object is resolved in its exact execution context and
+`DOM.getContentQuads` supplies its main-frame viewport CSS coordinates, including
+frame offsets and transforms. `DOM.getNodeForLocation` and `DOM.resolveNode`
+verify that the browser's actual hit target belongs to that original card
+before dispatch. This does not walk `window.parent`: VS Code can mask that
+property to point back to the webview itself. Invalid geometry and obscured
+routes fail closed. There is no DPR multiplication, forced DPR setting, or
+DOM `.click()` fallback. Chromium's
+`content/browser/devtools/protocol/input_handler.cc`, `HandleMouseEvent`, routes
+input from the attached host's widget; native proof is still required for the
+VS Code/Chromium build under test.
+
+One retry is permitted after at least 1.5 seconds of observed inactivity only
+when the same exact card and route remain actionable, trusted recipients match,
+and no node/panel, loader, discovery transition, movement or route change has
+been observed. Activity is sticky (including transient insertion DOM mutations).
+The helper does not reopen discovery, reselect a replacement card, extend the
+deadline, or retry a mismatched/missing/untrusted receipt. Insertion success
+still requires three settled observations of the exact newly owned node/panel.
+Unobservable asynchronous product activity remains a native-validation risk;
+these negative UI observations are not proof that no hidden request exists.
+
+Stateless captures `stateless-variables-request-trigger-added` as required
+semantic evidence. `stateless-variables-initialize-click-{1,2}-{before,after}`
+are immediate best-effort diagnostics: no settled-state wait or notification
+housekeeping. The producer records them as **manifest attachments**, whose PNGs
+and public JSON sidecars are allowlisted for ADO staging. They are deliberately
+not required ordered checkpoints: attempt 2 must not be required on a
+first-click success. The evidence-report unit control verifies staging both
+one- and two-attempt failures. A late screenshot cannot establish click-time
+state or a native root cause.
+
+Snapshot discovery detection also accepts visible product operation-result
+cards when discovery/search wrappers have no rendered box; hidden cards do not
+count. Card visibility respects explicit descendant overrides of inherited
+`visibility: hidden`; ancestor transparency still hides descendants. Browser
+hit tests prove the click point rather than approximating clipping from every
+ancestor's box. A visible, hit-testable card can receive its first click while
+other search results are still loading; observed loading prevents retries,
+not the initial selection. This is DOM-regression-tested, not a diagnosis of
+a particular native timeout.
+
 ### Using VS Code Extension Test Runner
 
 1. Install the [VS Code Extension Test Runner](https://marketplace.visualstudio.com/items?itemName=ms-vscode.extension-test-runner) extension
