@@ -1,3 +1,5 @@
+// @vitest-environment jsdom
+import '../../../../../../../libs/shared-test-utils/fluentui-react-icons-mock';
 import { readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
