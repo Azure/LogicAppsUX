@@ -369,12 +369,7 @@ const DesignerEditor = ({ managementHost }: { managementHost?: AzureStandardMana
 
   const discardAllChanges = useCallback(async () => {
     if (isDraftMode) {
-      try {
-        await resetDraftWorkflow();
-      } catch (error) {
-        alert(`Unable to reset the draft workflow: ${error}`);
-        return;
-      }
+      await resetDraftWorkflow();
     }
     setDesignerID(guid());
   }, [isDraftMode, resetDraftWorkflow]);

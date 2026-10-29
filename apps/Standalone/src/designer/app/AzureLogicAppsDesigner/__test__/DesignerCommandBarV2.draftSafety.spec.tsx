@@ -65,10 +65,12 @@ vi.mock('@fluentui/react-icons', async () => {
 
 const deferred = () => {
   let resolve!: () => void;
-  const promise = new Promise<void>((complete) => {
+  let reject!: (reason: Error) => void;
+  const promise = new Promise<void>((complete, fail) => {
     resolve = complete;
+    reject = fail;
   });
-  return { promise, resolve };
+  return { promise, resolve, reject };
 };
 const mountCommandBar = (overrides: Partial<ComponentProps<typeof DesignerCommandBar>> = {}) => {
   const queryClient = new QueryClient();
@@ -110,10 +112,13 @@ describe('Draft discard and autosave ordering', () => {
     vi.useFakeTimers();
     mocks.serialize.mockReset().mockResolvedValue({ definition: { triggers: {} } });
     mocks.flush.mockReset().mockResolvedValue(undefined);
+    vi.spyOn(window, 'alert').mockImplementation(() => undefined);
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
   });
   afterEach(() => {
     cleanup();
     vi.useRealTimers();
+    vi.restoreAllMocks();
   });
 
   it('cancels the queued autosave while an asynchronous reset is pending and after remount', async () => {
@@ -153,5 +158,26 @@ describe('Draft discard and autosave ordering', () => {
     expect(screen.getByRole('button', { name: 'Discard changes' })).toBeEnabled();
     fireEvent.click(screen.getByRole('button', { name: 'Discard changes' }));
     expect(mounted.discard).toHaveBeenCalledOnce();
+  });
+
+  it('resumes pending autosave without another edit after a failed reset retains the dirty editor', async () => {
+    const reset = deferred();
+    const failure = new Error('Reset failed');
+    const mounted = mountCommandBar({ discard: () => reset.promise });
+    await advance(1000);
+    fireEvent.click(screen.getByRole('button', { name: 'Discard changes' }));
+    await advance(10000);
+    expect(mounted.save).not.toHaveBeenCalled();
+    await act(async () => {
+      reset.reject(failure);
+      await reset.promise.catch(() => undefined);
+    });
+    expect(window.alert).toHaveBeenCalledWith('Error discarding workflow, check console for error object');
+    expect(console.error).toHaveBeenCalledWith('Error discarding workflow:', failure);
+    await advance(5000);
+    expect(mounted.save).toHaveBeenCalledOnce();
+    expect(mounted.save.mock.calls[0][3]).toBe(true);
+    await advance(5000);
+    expect(mounted.save).toHaveBeenCalledOnce();
   });
 });

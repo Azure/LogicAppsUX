@@ -701,6 +701,34 @@ describe('Standard designer draft artifact freshness', () => {
     await waitFor(() => expectSelectedArtifacts(resetArtifacts));
   });
 
+  it('propagates a failed discard reset while preserving the mounted editor and local edits', async () => {
+    mountDesigner();
+    await waitFor(() => expectSelectedArtifacts(production));
+    const mountedCommandBar = screen.getByTestId('command-bar');
+    await act(async () => {
+      await connectionService().writeConnection({
+        connectionKey: 'sql',
+        connectionData: {
+          ...production.connections.serviceProviderConnections!.sql,
+          parameterValues: { server: 'keep-this-local-edit' },
+        },
+        pathLocation: ['serviceProviderConnections'],
+        settings: {},
+        isUpdate: true,
+      });
+    });
+    const failure = new Error('Reset deployment failed');
+    mocks.deploy.mockRejectedValueOnce(failure);
+    await act(async () => {
+      await expect(commandBar().discard()).rejects.toBe(failure);
+    });
+    expect(screen.getByTestId('command-bar')).toBe(mountedCommandBar);
+    expect(connectionService().readConnections().serviceProviderConnections?.sql.parameterValues.server).toBe('keep-this-local-edit');
+    expect(selectedWorkflow().definition).toEqual(production.workflow.definition);
+    expect(mocks.customCodeRefetch).not.toHaveBeenCalled();
+    expect(mocks.artifactsRefetch).not.toHaveBeenCalled();
+  });
+
   it('does not resurrect deleted production parameters while retaining unrelated shared draft parameters', async () => {
     draft.parameters.otherWorkflow = { type: 'String', value: 'keep-this' };
     mountDesigner();

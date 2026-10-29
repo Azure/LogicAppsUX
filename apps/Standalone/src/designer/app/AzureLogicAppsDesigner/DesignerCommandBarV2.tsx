@@ -388,6 +388,7 @@ export const DesignerCommandBar = ({
         try {
           await discard();
         } catch (error) {
+          setNeedsSaved(needsSaved || designerIsDirty);
           console.error('Error discarding workflow:', error);
           alert('Error discarding workflow, check console for error object');
         } finally {

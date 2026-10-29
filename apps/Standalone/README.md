@@ -38,7 +38,9 @@ drafts before running, even if the designer has no local edits; a failed save
 aborts the run. Read-only users cannot run a superseded saved draft and can
 switch to the published version to run current production instead. Autosave is
 suspended while discard resets the draft, so a queued save cannot restore
-discarded edits. Opening directly in monitoring initializes the selected run's
+discarded edits. A failed reset keeps the editor mounted and resumes pending
+autosave for retained edits without requiring another edit.
+Opening directly in monitoring initializes the selected run's
 historical definition without letting artifact refreshes replace it.
 Returning from monitoring reloads production and draft
 artifacts before restoring the editable workflow.
