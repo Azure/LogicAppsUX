@@ -16,9 +16,25 @@ interface LayoutFrame {
   hiddenAncestors: string[];
   cardVisibility: string | null;
   nodeVisibility: string | null;
+  cardOwnVisibility: string | null;
+  nodeOwnVisibility: string | null;
+  hiddenVisibilityAncestors: string[];
+  nativeMeasurementId: number | null;
   nodeStyle: string | null;
 }
-type LayoutAuditWindow = Window & { sharedLayoutAudit?: { frame: number; samples: LayoutFrame[] } };
+interface NativeMeasurement {
+  id: number;
+  requestedAt: number;
+  settledAt: number | null;
+}
+type LayoutAuditWindow = Window & {
+  sharedLayoutAudit?: {
+    frame: number;
+    samples: LayoutFrame[];
+    nativeMeasurements: NativeMeasurement[];
+    activeNativeMeasurementId: number | null;
+  };
+};
 
 for (const flag of ['true', 'false', 'omitted'] as const) {
   test.describe(`Local viewport and structural boundaries, flag ${flag}`, { tag: ['@mock', '@shared-node-ui'] }, () => {
@@ -29,7 +45,12 @@ for (const flag of ['true', 'false', 'omitted'] as const) {
         expect(JSON.stringify(before)).not.toContain('dimensionsObserved');
         await page.evaluate(() => {
           const samples: LayoutFrame[] = [];
-          const state = { frame: 0, samples };
+          const state = {
+            frame: 0,
+            samples,
+            nativeMeasurements: [] as NativeMeasurement[],
+            activeNativeMeasurementId: null as number | null,
+          };
           const sample = () => {
             const card = document.getElementById('msla-node-Action-1-Compose');
             const node = card?.closest<HTMLElement>('.react-flow__node');
@@ -41,6 +62,7 @@ for (const flag of ['true', 'false', 'omitted'] as const) {
               return { x, y, width, height };
             };
             const hiddenAncestors = [];
+            const hiddenVisibilityAncestors = [];
             for (let ancestor = card; ancestor; ancestor = ancestor.parentElement) {
               const style = getComputedStyle(ancestor);
               if (style.display === 'none' || style.contentVisibility === 'hidden' || Number.parseFloat(style.opacity) <= 0) {
@@ -48,19 +70,34 @@ for (const flag of ['true', 'false', 'omitted'] as const) {
                   `${ancestor.tagName}:${ancestor.getAttribute('data-id') ?? ancestor.id}:display=${style.display};contentVisibility=${style.contentVisibility};opacity=${style.opacity}`
                 );
               }
+              if (node && !node.contains(ancestor) && style.visibility !== 'visible') {
+                hiddenVisibilityAncestors.push(`${ancestor.tagName}:${ancestor.id}:visibility=${style.visibility}`);
+              }
+            }
+            const timestamp = performance.now();
+            const shared = card ? card.hasAttribute('data-node-card') : null;
+            const visible = card?.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true, contentVisibilityAuto: true }) ?? false;
+            const nativeMeasurementId = state.activeNativeMeasurementId;
+            if (nativeMeasurementId !== null && shared === false && visible) {
+              state.nativeMeasurements[nativeMeasurementId].settledAt = timestamp;
+              state.activeNativeMeasurementId = null;
             }
             samples.push({
-              timestamp: performance.now(),
+              timestamp,
               present: !!card && !!node,
-              shared: card ? card.hasAttribute('data-node-card') : null,
+              shared,
               cardWidth: card?.offsetWidth ?? null,
               layoutWidth: node?.clientWidth ?? null,
               cardBounds: bounds(card),
               nodeBounds: bounds(node),
-              visible: card?.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true, contentVisibilityAuto: true }) ?? false,
+              visible,
               hiddenAncestors,
               cardVisibility: card ? getComputedStyle(card).visibility : null,
               nodeVisibility: node ? getComputedStyle(node).visibility : null,
+              cardOwnVisibility: card?.style.visibility ?? null,
+              nodeOwnVisibility: node?.style.visibility ?? null,
+              hiddenVisibilityAncestors,
+              nativeMeasurementId,
               nodeStyle: node?.getAttribute('style') ?? null,
             });
             state.frame = requestAnimationFrame(sample);
@@ -69,10 +106,19 @@ for (const flag of ['true', 'false', 'omitted'] as const) {
           sample();
         });
         let samples: LayoutFrame[] = [];
+        let nativeMeasurements: NativeMeasurement[] = [];
         try {
           const modes = transition === 'renderer' ? [true, false, true, false] : Array<boolean>(4).fill(flag === 'true');
           for (const [index, enabled] of modes.entries()) {
             if (transition === 'renderer') {
+              if (!enabled) {
+                await page.evaluate(() => {
+                  const audit = (window as LayoutAuditWindow).sharedLayoutAudit!;
+                  const measurement = { id: audit.nativeMeasurements.length, requestedAt: performance.now(), settledAt: null };
+                  audit.nativeMeasurements.push(measurement);
+                  audit.activeNativeMeasurementId = measurement.id;
+                });
+              }
               await setSharedNodeUi(page, enabled);
             }
             if (transition === 'host-layout') {
@@ -83,13 +129,21 @@ for (const flag of ['true', 'false', 'omitted'] as const) {
               await expect(card).toHaveAttribute('data-node-card', 'action');
             } else {
               await expect(card).not.toHaveAttribute('data-node-card', 'action');
+              await expect(card).toBeVisible();
+              if (transition === 'renderer') {
+                await expect
+                  .poll(() =>
+                    page.evaluate(() => (window as LayoutAuditWindow).sharedLayoutAudit!.nativeMeasurements.at(-1)?.settledAt ?? null)
+                  )
+                  .not.toBeNull();
+              }
             }
             await page.setViewportSize({ width: index % 2 === 0 ? 1000 : 1280, height: 720 });
             await page.getByRole('button', { name: 'Zoom view to fit', exact: true }).click();
             await waitForViewport(page);
           }
         } finally {
-          samples = await page.evaluate(() => {
+          const audit = await page.evaluate(() => {
             const owner = window as LayoutAuditWindow;
             const state = owner.sharedLayoutAudit;
             if (!state) {
@@ -97,20 +151,48 @@ for (const flag of ['true', 'false', 'omitted'] as const) {
             }
             cancelAnimationFrame(state.frame);
             delete owner.sharedLayoutAudit;
-            return state.samples;
+            return { samples: state.samples, nativeMeasurements: state.nativeMeasurements };
           });
+          samples = audit.samples;
+          nativeMeasurements = audit.nativeMeasurements;
           await testInfo.attach('transient-layout-frame-samples', {
             body: JSON.stringify({
               samples,
               transition,
               initialFlag: flag,
-              limit: 'Every frame for one real leaf, including missing/hidden/zero-size frames; not every family or path frame',
+              nativeMeasurements,
+              limit:
+                'Every RAF sample for one real leaf is retained. Cold native renderer returns include bounded intrinsic measurement; no painted/no-flash continuity claim or all-family/path audit.',
             }),
             contentType: 'application/json',
           });
         }
         expect(samples.length).toBeGreaterThan(4);
-        expect.soft(samples.every((sample) => sample.present && sample.visible && sample.hiddenAncestors.length === 0)).toBe(true);
+        expect(
+          samples.every((sample) => sample.present && sample.hiddenAncestors.length === 0 && sample.hiddenVisibilityAncestors.length === 0)
+        ).toBe(true);
+        expect
+          .soft(
+            samples.every((sample) => {
+              if (sample.visible) {
+                return true;
+              }
+              const measurement = nativeMeasurements.find(({ id }) => id === sample.nativeMeasurementId);
+              return (
+                transition === 'renderer' &&
+                sample.shared === false &&
+                sample.nodeOwnVisibility === 'hidden' &&
+                sample.nodeVisibility === 'hidden' &&
+                sample.cardOwnVisibility !== 'hidden' &&
+                sample.cardVisibility === 'hidden' &&
+                measurement !== undefined &&
+                measurement.settledAt !== null &&
+                sample.timestamp >= measurement.requestedAt &&
+                sample.timestamp <= measurement.settledAt
+              );
+            })
+          )
+          .toBe(true);
         expect(
           samples.every((sample) =>
             [sample.cardBounds, sample.nodeBounds].every(
@@ -121,6 +203,8 @@ for (const flag of ['true', 'false', 'omitted'] as const) {
         expect(samples.every((sample) => Number.isFinite(sample.cardWidth) && Number.isFinite(sample.layoutWidth))).toBe(true);
         expect(samples.every((sample) => sample.cardWidth! > 0 && sample.layoutWidth! > 0)).toBe(true);
         if (transition === 'renderer') {
+          expect(nativeMeasurements).toHaveLength(2);
+          expect(nativeMeasurements.every(({ requestedAt, settledAt }) => settledAt !== null && settledAt >= requestedAt)).toBe(true);
           expect(samples.some((sample) => sample.shared)).toBe(true);
           expect(samples.some((sample) => sample.shared === false)).toBe(true);
         } else {
