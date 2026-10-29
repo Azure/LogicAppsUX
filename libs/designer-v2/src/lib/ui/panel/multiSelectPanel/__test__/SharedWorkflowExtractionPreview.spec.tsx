@@ -1,9 +1,12 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { IntlProvider } from 'react-intl';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type { Workflow } from '../../../../common/models/workflow';
 import { buildWorkflowExtractionPlan } from '../../../../core/utils/workflowExtraction';
-import { PreviewOperationCard } from '../SharedExtractionPreviewNode';
+import { PreviewOperationCard, SharedExtractionPreviewCard, type SharedPreviewFlowNode } from '../SharedExtractionPreviewNode';
+import type { NodeProps } from '@xyflow/react';
+import { useConnectorName } from '../../../../core/state/selectors/actionMetadataSelector';
+import { initialWorkflowState } from '../../../../core/state/workflow/workflowSlice';
 import {
   getSharedWorkflowExtractionPreview,
   getWorkflowExtractionPreview,
@@ -11,7 +14,15 @@ import {
 } from '../workflowExtractionPreview';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 
-const invocation = (name: string, body: Record<string, unknown>, runAfter: LogicAppsV2.RunAfter) => ({
+vi.mock('../../../../core/state/selectors/actionMetadataSelector', () => ({ useConnectorName: vi.fn() }));
+vi.mock('@xyflow/react', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@xyflow/react')>()),
+  Handle: ({ type, isConnectable }: { type: string; isConnectable: boolean }) => (
+    <span data-preview-handle={type} data-connectable={isConnectable} />
+  ),
+}));
+
+const invocation = (name: string, body: Record<string, unknown>, runAfter?: LogicAppsV2.RunAfter) => ({
   type: 'Workflow',
   inputs: { host: { workflow: { id: name } }, body },
   runAfter,
@@ -20,6 +31,7 @@ const workflowFor = (operation: LogicAppsV2.ActionDefinition): Workflow => ({
   kind: 'Stateful',
   connectionReferences: {},
   definition: {
+    ...initialWorkflowState.originalDefinition,
     triggers: { Original_request: { type: 'Request', kind: 'Http', inputs: {} } },
     actions: {
       Request: { ...operation, runAfter: {} },
@@ -32,10 +44,10 @@ const cases: { operation: LogicAppsV2.ActionDefinition; card: string }[] = [
   { operation: { type: 'Compose', inputs: 'value' }, card: 'action' },
   { operation: { type: 'ApiConnection', inputs: {} }, card: 'action' },
   { operation: { type: 'Scope', actions: { Nested: { type: 'Compose', inputs: 'inside' } } }, card: 'action' },
-  { operation: { type: 'If', expression: true, actions: {}, else: { actions: {} } }, card: 'if' },
+  { operation: { type: 'If', expression: '@equals(1,1)', actions: {}, else: { actions: {} } }, card: 'if' },
   { operation: { type: 'Switch', expression: 'value', cases: {}, default: { actions: {} } }, card: 'switch' },
   { operation: { type: 'Foreach', foreach: '@createArray(1)', actions: {} }, card: 'foreach' },
-  { operation: { type: 'Until', expression: true, actions: {}, limit: { count: 1 } }, card: 'foreach' },
+  { operation: { type: 'Until', expression: '@equals(1,1)', actions: {}, limit: { count: 1 } }, card: 'foreach' },
   { operation: { type: 'Agent', inputs: { parameters: { deploymentId: 'actual-deployment' } }, tools: {} }, card: 'agent' },
 ];
 
@@ -105,6 +117,50 @@ const renderCard = (data: SharedExtractionPreviewNode) =>
   );
 
 describe('preview presentation reuses the main metadata policy', () => {
+  const renderConnectedCard = (data: SharedExtractionPreviewNode) => {
+    const props: NodeProps<SharedPreviewFlowNode> = {
+      id: data.id,
+      data: { node: data, domId: 'preview-card' },
+      type: 'sharedWorkflowPreview',
+      selected: false,
+      dragging: false,
+      draggable: false,
+      selectable: false,
+      deletable: false,
+      isConnectable: false,
+      zIndex: 0,
+      positionAbsoluteX: 0,
+      positionAbsoluteY: 0,
+    };
+    return render(
+      <IntlProvider locale="en">
+        <SharedExtractionPreviewCard {...props} />
+      </IntlProvider>
+    );
+  };
+
+  it('keeps a generated trigger independent of connector metadata with noninteractive preview ports', () => {
+    vi.mocked(useConnectorName).mockClear();
+    const { container } = renderConnectedCard({ ...node('Request', 'Http'), isTrigger: true });
+    expect(container.querySelector('[data-node-card="trigger"]')).toBeInTheDocument();
+    expect(container.querySelectorAll('[data-preview-handle]')).toHaveLength(2);
+    expect(container.querySelector('[data-preview-handle="target"]')).toHaveAttribute('data-connectable', 'false');
+    expect(container.querySelector('[data-preview-handle="source"]')).toHaveAttribute('data-connectable', 'false');
+    expect(useConnectorName).not.toHaveBeenCalled();
+  });
+
+  it.each(['Actual connector', undefined])('uses resolved connector metadata only when it is a string: %s', (connectorName) => {
+    vi.mocked(useConnectorName).mockReturnValue({ result: connectorName, isLoading: false });
+    const operationInfo = { type: 'ApiConnection', connectorId: '/managedApis/example', operationId: 'Send' };
+    const { container } = renderConnectedCard({ ...node('ApiConnection'), operationInfo });
+    expect(useConnectorName).toHaveBeenCalledWith(operationInfo);
+    expect(container.querySelector('[data-preview-operation-id="Actual_operation"]')).toBeInTheDocument();
+    expect(container.querySelector('[data-node-card="action"]')).toBeInTheDocument();
+    if (connectorName) {
+      expect(screen.getByText(`Azure · ${connectorName}`)).toBeInTheDocument();
+    }
+    expect(container.querySelector('button, [role="button"], [tabindex]')).toBeNull();
+  });
   it('keeps canonical builtin glyphs after rename and ignores manifest branding', () => {
     const { container, rerender } = renderCard(node('Compose', undefined, 'brand.svg'));
     expect(container.querySelector('[data-icon-name="BracesRegular"]')).not.toBeNull();

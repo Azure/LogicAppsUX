@@ -148,7 +148,7 @@ The scope stays structurally mounted while disabled, without shared theme variab
 
 Build follows siblings: source workspace exports, `publishConfig` redirects to `build/lib`, `tsup && tsc --emitDeclarationOnly`, ESM splitting/source maps, `sideEffects: false`. Test the actual packed manifest and isolated metrics closure before any publication.
 
-`test:lib` builds first because its metrics regression checks the emitted JavaScript and declaration closure, not just source exports.
+Turbo schedules one shared `build:lib` prerequisite for both libraries' tests. Direct `test:lib` invocation requires building first because its metrics regression checks the emitted JavaScript and declaration closure, not just source exports.
 
 ```sh
 pnpm --filter @microsoft/designer-ui-v2 build:lib

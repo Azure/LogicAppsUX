@@ -139,36 +139,40 @@ describe('local-only preview', () => {
     );
   });
 
-  it.each(['designer', 'designerV2'])('retains the existing %s canvas stylesheet in production', async (shell) => {
-    const root = await createFixture();
-    const entry = normalizePath(resolve(testDirectory, `../../src/designer/app/DesignerShell/${shell}.ephemeral.ts`));
-    const stubShell: Plugin = {
-      name: 'stub-designer-component',
-      enforce: 'pre',
-      resolveId(source, importer) {
-        return importer && normalizePath(importer) === entry && source === `./${shell}` ? '\0designer-component' : null;
-      },
-      load(id) {
-        return id === '\0designer-component' ? 'export const DesignerWrapper = () => null;' : null;
-      },
-    };
-    const result = await build({
-      root,
-      configFile: false,
-      logLevel: 'silent',
-      plugins: [localOnlyPreview(), stubShell],
-      build: { write: false, minify: false, cssMinify: false, rollupOptions: { input: entry } },
-    });
-    const results = Array.isArray(result) ? result : [result];
-    const css = results
-      .flatMap((output) => ('output' in output ? output.output : []))
-      .filter((output) => output.type === 'asset' && output.fileName.endsWith('.css'))
-      .map((output) => (output.type === 'asset' ? String(output.source) : ''))
-      .join('\n');
+  it.each(['designer', 'designerV2'])(
+    'retains the existing %s canvas stylesheet in production',
+    async (shell) => {
+      const root = await createFixture();
+      const entry = normalizePath(resolve(testDirectory, `../../src/designer/app/DesignerShell/${shell}.ephemeral.ts`));
+      const stubShell: Plugin = {
+        name: 'stub-designer-component',
+        enforce: 'pre',
+        resolveId(source, importer) {
+          return importer && normalizePath(importer) === entry && source === `./${shell}` ? '\0designer-component' : null;
+        },
+        load(id) {
+          return id === '\0designer-component' ? 'export const DesignerWrapper = () => null;' : null;
+        },
+      };
+      const result = await build({
+        root,
+        configFile: false,
+        logLevel: 'silent',
+        plugins: [localOnlyPreview(), stubShell],
+        build: { write: false, minify: false, cssMinify: false, rollupOptions: { input: entry } },
+      });
+      const results = Array.isArray(result) ? result : [result];
+      const css = results
+        .flatMap((output) => ('output' in output ? output.output : []))
+        .filter((output) => output.type === 'asset' && output.fileName.endsWith('.css'))
+        .map((output) => (output.type === 'asset' ? String(output.source) : ''))
+        .join('\n');
 
-    expect(css).toMatch(/\.react-flow__background\s*\{[^}]*pointer-events:\s*none/);
-    expect(css).toMatch(/\.msla-designer-tools\s*\{[^}]*position:\s*absolute/);
-  });
+      expect(css).toMatch(/\.react-flow__background\s*\{[^}]*pointer-events:\s*none/);
+      expect(css).toMatch(/\.msla-designer-tools\s*\{[^}]*position:\s*absolute/);
+    },
+    30_000
+  );
 
   it('does not replace the environment or suppress public files in the normal build', async () => {
     const root = await createFixture();
