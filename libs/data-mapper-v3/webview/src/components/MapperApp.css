@@ -773,6 +773,16 @@
 	background: var(--vscode-list-activeSelectionBackground, #094771);
 	color: var(--vscode-list-activeSelectionForeground, #fff);
 }
+.tree-node {
+	scroll-margin-top: 140px;
+}
+
+.tree-node.selected {
+	background: var(--vscode-list-inactiveSelectionBackground, #37373d);
+	outline: 1px solid var(--vscode-focusBorder, #007fd4);
+	outline-offset: -1px;
+}
+
 .tree-node.link-traced {
 	background: var(--vscode-editor-findMatchHighlightBackground, #5a4c16);
 	box-shadow: inset 3px 0 var(--vscode-charts-yellow, #cca700);

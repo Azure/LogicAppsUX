@@ -21,6 +21,7 @@ const useStyles = makeStyles({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
+    flexWrap: 'wrap',
     padding: '4px 8px',
     backgroundColor: 'var(--vscode-sideBar-background, #252526)',
     borderBottom: '1px solid var(--vscode-panel-border, #444)',

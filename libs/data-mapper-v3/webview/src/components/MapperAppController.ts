@@ -7,13 +7,14 @@ import type { MappingCanvas } from './MappingCanvas';
 import type { FunctoidPalette } from './FunctoidPalette';
 import type { FunctoidConfigDialog, FunctoidConfigInput, FunctoidConfigResult } from './FunctoidConfigDialog';
 import type { ScriptingConfigDialog, ScriptingConfigResult, ScriptingConfigType, ScriptingFunctoidSummary } from './ScriptingConfigDialog';
-import type { SchemaNodePropertiesDialog, SchemaNodePropertyRow } from './SchemaNodePropertiesDialog';
+import type { SchemaNodePropertiesDialog, SchemaNodePropertiesViewModel, SchemaNodePropertyRow } from './SchemaNodePropertiesDialog';
+import { SchemaPathResolver } from '../../../src/schema/schemaPathResolver';
 import type { LinkPropertiesDialog } from './LinkPropertiesDialog';
 import type { EmptySchemaPlaceholder } from './EmptySchemaPlaceholder';
 import type { MapperStatusBar } from './MapperStatusBar';
 import type { MapperPageBar } from './MapperPageBar';
 import type { CopilotPanel } from './CopilotPanel';
-import type { MapperBottomPanel } from './MapperBottomPanel';
+import type { BottomPanelTab, MapperBottomPanel } from './MapperBottomPanel';
 import type { MapperContextMenu, ContextMenuItem } from './MapperContextMenu';
 import type { MapperNotification, NotificationType } from './MapperNotification';
 import type { MapperToolbar } from './MapperToolbar';
@@ -36,6 +37,7 @@ import {
 import {
   copyMappingSelection,
   findLinkingNode,
+  getSchemaMatchSuggestions,
   linkSchemaSubtrees,
   moveMappingSelection,
   pasteMappingSelection,
@@ -376,11 +378,15 @@ export class MapperAppController {
   }
 
   private setSelection(links: string[], functoids: string[]): void {
+    this.state.selectedSchemaNode = undefined;
+    this.sourceTree?.setSelectedPath?.(undefined);
+    this.targetTree?.setSelectedPath?.(undefined);
     this.state.selectedLinks = links;
     this.state.selectedFunctoids = functoids;
     this.state.selectedLink = links.at(-1) ?? null;
     this.state.selectedFunctoid = functoids.at(-1) ?? null;
     this.updateLinkTrace();
+    this.syncBottom();
   }
 
   private updateLinkTrace(): void {
@@ -388,7 +394,21 @@ export class MapperAppController {
     const selection = this.getSelection();
     const links = new Set(selection.links);
     const functoids = new Set(selection.functoids);
-    if (page && this.state.linkView?.trace) {
+    const nodeSelection = this.state.selectedSchemaNode;
+    if (page && nodeSelection) {
+      const schema = nodeSelection.side === 'source' ? this.state.sourceSchema : this.state.targetSchema;
+      const resolver = new SchemaPathResolver(schema ?? undefined, this.state.map?.options.ignoreNamespacesForLinks);
+      for (const link of page.links) {
+        const path =
+          link[`${nodeSelection.side}Type`] === 'schemaNode'
+            ? resolver.resolve(link[`${nodeSelection.side}Path`] || link[`${nodeSelection.side}Id`])?.path
+            : undefined;
+        if (path && (path === nodeSelection.path || path.startsWith(`${nodeSelection.path}/`))) {
+          links.add(link.id);
+        }
+      }
+    }
+    if (page && (this.state.linkView?.trace || this.state.linkView?.selectionOnly)) {
       for (const direction of ['source', 'target'] as const) {
         const pending = [...selection.functoids];
         for (const link of page.links) {
@@ -421,6 +441,12 @@ export class MapperAppController {
     }
     this.state.highlightedLinks = this.state.linkView?.trace ? [...links] : [];
     this.state.highlightedFunctoids = this.state.linkView?.trace ? [...functoids] : [];
+    const filtering =
+      this.state.linkView?.selectionOnly && (!!nodeSelection || selection.links.length > 0 || selection.functoids.length > 0);
+    this.state.filteredLinkIds = filtering ? [...links] : undefined;
+    this.state.filteredFunctoidIds = filtering ? [...functoids] : undefined;
+    this.sourceTree?.updateConnectedPaths?.(this.getConnectedPaths('source'));
+    this.targetTree?.updateConnectedPaths?.(this.getConnectedPaths('target'));
     const sourcePaths = new Set<string>();
     const targetPaths = new Set<string>();
     for (const link of page?.links ?? []) {
@@ -588,8 +614,90 @@ export class MapperAppController {
   }
 
   private showSchemaLinkMenu(side: 'source' | 'target', path: string, x: number, y: number): void {
+    const schema = side === 'source' ? this.state.sourceSchema : this.state.targetSchema;
+    const node = schema && findLinkingNode(schema.rootElement, path);
+    const tree = side === 'source' ? this.sourceTree : this.targetTree;
+    const commonItems: ContextMenuItem[] = [
+      {
+        label: 'Properties',
+        disabled: !node,
+        action: () => {
+          if (node) {
+            this.openSchemaNodeProperties(node, side);
+          }
+        },
+      },
+      { label: 'Copy XPath', action: () => this.vscode.postMessage({ type: 'copyText', data: { text: path } }) },
+      {
+        label: 'Expand Subtree',
+        disabled: !node || (node.children.length === 0 && node.attributes.length === 0),
+        action: () => tree?.expandSubtree(path, true),
+      },
+      {
+        label: 'Collapse Subtree',
+        disabled: !node || (node.children.length === 0 && node.attributes.length === 0),
+        action: () => tree?.expandSubtree(path, false),
+      },
+      {
+        label: 'Trace Related Mappings',
+        disabled: !node,
+        action: () => {
+          if (node) {
+            this.selectSchemaNode(node, side);
+            this.setNodeMappingView(false);
+          }
+        },
+      },
+      {
+        label: 'Show Related Mappings Only',
+        disabled: !node,
+        action: () => {
+          if (node) {
+            this.selectSchemaNode(node, side);
+            this.setNodeMappingView(true);
+          }
+        },
+      },
+      { label: 'Show All Mappings', action: () => this.setNodeMappingView(false) },
+      {
+        label: 'Suggest Matches',
+        disabled: !node,
+        action: () => {
+          const page = this.state.map?.pages[this.state.activePage];
+          const oppositeSchema = side === 'source' ? this.state.targetSchema : this.state.sourceSchema;
+          const oppositeTree = side === 'source' ? this.targetTree : this.sourceTree;
+          if (!page || !node || !oppositeSchema) {
+            return;
+          }
+          const matches = getSchemaMatchSuggestions(page, node, oppositeSchema.rootElement, side, this.getLinkValidationContext());
+          oppositeTree?.setSuggestedMatches(new Set(matches.map((match) => match.node.path)));
+          this.showContextMenu(
+            x,
+            y,
+            matches.length
+              ? matches.map((match) => ({
+                  label: `${match.node.path} (${match.score}%)`,
+                  action: () => {
+                    this.selectSchemaNode(match.node, side === 'source' ? 'target' : 'source');
+                    oppositeTree?.revealNode(match.node.path);
+                  },
+                }))
+              : [{ label: 'No matching nodes', disabled: true, action: () => {} }]
+          );
+        },
+      },
+      {
+        label: 'Clear Match Suggestions',
+        action: () => {
+          this.sourceTree?.setSuggestedMatches(new Set());
+          this.targetTree?.setSuggestedMatches(new Set());
+        },
+      },
+      { label: '', divider: true, action: () => {} },
+    ];
     if (side === 'source') {
       this.showContextMenu(x, y, [
+        ...commonItems,
         {
           label: 'Link from Here',
           action: () => {
@@ -675,6 +783,7 @@ export class MapperAppController {
       this.renderView();
     };
     this.showContextMenu(x, y, [
+      ...commonItems,
       { label: 'Direct Link', disabled: !source || !target, action: () => connect('direct') },
       { label: 'Link by Name', disabled: !source || !target, action: () => connect('name') },
       { label: 'Link by Structure', disabled: !source || !target, action: () => connect('structure') },
@@ -739,6 +848,7 @@ export class MapperAppController {
         break;
       case 'init': {
         this.initialized = true;
+        this.clearSchemaNodeSelection();
         this.state.compilerLinks = undefined;
         this.state.map = message.data.map;
         this.state.sourceSchema = message.data.sourceSchema;
@@ -754,10 +864,14 @@ export class MapperAppController {
         this.state.compilerLinks = undefined;
         this.state.map = message.data;
         this.updateLinkTrace();
-        this.redrawLinks();
+        if (this.schemaNodeProperties) {
+          this.lastModalKey = '';
+        }
+        this.renderView();
         break;
       }
       case 'schemaStateChanged': {
+        this.clearSchemaNodeSelection();
         this.state.compilerLinks = undefined;
         this.state.map = message.data.map;
         this.state.sourceSchema = message.data.sourceSchema;
@@ -771,6 +885,7 @@ export class MapperAppController {
         break;
       }
       case 'schemaLoaded': {
+        this.clearSchemaNodeSelection();
         if (this.state.map) {
           for (const page of this.state.map.pages) {
             page.links = page.links.filter((link) =>
@@ -934,7 +1049,8 @@ export class MapperAppController {
         this.state.availableSchemas,
         (path) => this.vscode.postMessage({ type: 'loadSchema', side: 'source', path, browse: path === undefined }),
         this.getConnectedPaths('source'),
-        (rootName) => this.vscode.postMessage({ type: 'selectSchemaRoot', side: 'source', rootName })
+        (rootName) => this.vscode.postMessage({ type: 'selectSchemaRoot', side: 'source', rootName }),
+        (node) => this.selectSchemaNode(node, 'source')
       );
       this.sourceTree = tree;
       this.lastSourceSchema = this.state.sourceSchema;
@@ -976,7 +1092,8 @@ export class MapperAppController {
         this.state.availableSchemas,
         (path) => this.vscode.postMessage({ type: 'loadSchema', side: 'target', path, browse: path === undefined }),
         this.getConnectedPaths('target'),
-        (rootName) => this.vscode.postMessage({ type: 'selectSchemaRoot', side: 'target', rootName })
+        (rootName) => this.vscode.postMessage({ type: 'selectSchemaRoot', side: 'target', rootName }),
+        (node) => this.selectSchemaNode(node, 'target')
       );
       this.targetTree = tree;
       this.lastTargetSchema = this.state.targetSchema;
@@ -1097,11 +1214,11 @@ export class MapperAppController {
       this.state.activePage,
       {
         onSelect: (index) => {
+          this.state.activePage = index;
           this.setSelection([], []);
           this.pendingLink = null;
           this.replacingLink = null;
           this.canvas.clearLinkPreview();
-          this.state.activePage = index;
           this.renderView();
         },
         onRename: (index, name) => {
@@ -1330,6 +1447,7 @@ export class MapperAppController {
   }
 
   private openSchemaNodeProperties(node: SchemaNodeView, side: 'source' | 'target'): void {
+    this.selectSchemaNode(node, side);
     const schema = side === 'source' ? this.state.sourceSchema : this.state.targetSchema;
     this.schemaNodeProperties = {
       node,
@@ -1348,6 +1466,48 @@ export class MapperAppController {
 
   private configureSchemaNodePropertiesModal(dialog: SchemaNodePropertiesDialog): void {
     const properties = this.schemaNodeProperties!;
+    dialog.configure(this.getSchemaNodePropertiesModel(properties), {
+      onClose: () => this.closeSchemaNodeProperties(),
+      onSave: (value) => this.saveSchemaNodeValue(properties, value),
+    });
+  }
+
+  private selectSchemaNode(node: SchemaNodeView, side: 'source' | 'target'): void {
+    this.state.selectedSchemaNode = { side, path: node.path };
+    this.state.selectedLinks = [];
+    this.state.selectedFunctoids = [];
+    this.state.selectedLink = null;
+    this.state.selectedFunctoid = null;
+    this.sourceTree?.setSelectedPath?.(side === 'source' ? node.path : undefined);
+    this.targetTree?.setSelectedPath?.(side === 'target' ? node.path : undefined);
+    this.updateLinkTrace();
+    this.redrawLinks();
+  }
+
+  private setNodeMappingView(selectionOnly: boolean): void {
+    this.state.linkView = {
+      scope: 'all',
+      colorPartial: true,
+      autoReveal: true,
+      compiler: false,
+      ...this.state.linkView,
+      trace: true,
+      selectionOnly,
+    };
+    this.updateLinkTrace();
+    this.renderView();
+  }
+
+  private clearSchemaNodeSelection(): void {
+    this.state.selectedSchemaNode = undefined;
+    this.state.filteredLinkIds = undefined;
+    this.state.filteredFunctoidIds = undefined;
+    this.schemaNodeProperties = null;
+    this.sourceTree?.setSelectedPath?.(undefined);
+    this.targetTree?.setSelectedPath?.(undefined);
+  }
+
+  private getSchemaNodePropertiesModel(properties: SchemaNodeProperties): SchemaNodePropertiesViewModel {
     const node = properties.node;
     const occurrence = `${node.minOccurs ?? (node.isOptional ? 0 : 1)}..${node.maxOccurs ?? 1}`;
     const rawRows: [string, string | number | boolean | undefined][] = [
@@ -1374,15 +1534,71 @@ export class MapperAppController {
       }
     }
 
-    dialog.configure(
-      {
-        title: `${properties.side === 'source' ? 'Source' : 'Target'} Schema Node Properties`,
-        nodeName: node.name,
-        rows,
-        description: node.annotation,
-      },
-      { onClose: () => this.closeSchemaNodeProperties() }
-    );
+    const schema = properties.side === 'source' ? this.state.sourceSchema : this.state.targetSchema;
+    const resolver = new SchemaPathResolver(schema ?? undefined, this.state.map?.options.ignoreNamespacesForLinks);
+    const resolved = resolver.resolve(node.path);
+    const values = properties.side === 'source' ? this.state.map?.testValues : this.state.map?.targetValues;
+    const storedValue =
+      values?.[node.path] ?? Object.entries(values ?? {}).find(([path]) => resolver.resolve(path)?.path === node.path)?.[1];
+    let disabledReason: string | undefined;
+    if (!resolved) {
+      disabledReason = 'This node is no longer available in the schema.';
+    } else if (
+      !resolved.attribute &&
+      (resolved.node.type !== 'element' || resolved.node.wildcard || resolved.node.children.some((child) => child.type !== 'any'))
+    ) {
+      disabledReason = 'Values can only be assigned to leaf elements and attributes.';
+    } else if (resolved.ancestors.some((ancestor) => ancestor.maxOccurs === 0)) {
+      disabledReason = 'This node cannot occur in an instance.';
+    } else if (
+      properties.side === 'target' &&
+      this.state.map?.pages.some((page) =>
+        page.links.some(
+          (link) => link.targetType === 'schemaNode' && resolver.resolve(link.targetPath || link.targetId)?.path === node.path
+        )
+      )
+    ) {
+      disabledReason = 'This target already has an incoming link. Remove it before assigning a constant.';
+    }
+    return {
+      title: `${properties.side === 'source' ? 'Source' : 'Target'} Schema Node Properties`,
+      nodeName: node.name,
+      rows,
+      description: node.annotation,
+      value: { label: properties.side === 'source' ? 'Test value' : 'Constant value', storedValue, disabledReason },
+    };
+  }
+
+  private saveSchemaNodeValue(properties: SchemaNodeProperties, value: string | undefined): void {
+    const map = this.state.map;
+    if (!map) {
+      return;
+    }
+    const model = this.getSchemaNodePropertiesModel(properties);
+    if (value !== undefined && model.value?.disabledReason) {
+      this.showNotification(model.value.disabledReason, 'warning');
+      return;
+    }
+    const field = properties.side === 'source' ? 'testValues' : 'targetValues';
+    const schema = properties.side === 'source' ? this.state.sourceSchema : this.state.targetSchema;
+    const resolver = new SchemaPathResolver(schema ?? undefined, map.options.ignoreNamespacesForLinks);
+    const values = { ...map[field] };
+    for (const path of Object.keys(values)) {
+      if (path === properties.node.path || resolver.resolve(path)?.path === properties.node.path) {
+        delete values[path];
+      }
+    }
+    if (value !== undefined) {
+      values[properties.node.path] = value;
+    }
+    if (Object.keys(values).length) {
+      map[field] = values;
+    } else {
+      delete map[field];
+    }
+    this.updateMap(map);
+    this.lastModalKey = '';
+    this.renderView();
   }
 
   /**
@@ -2310,7 +2526,7 @@ export class MapperAppController {
     return functoid.parameters?.find((param: any) => param.type === type)?.value || '';
   }
 
-  private bottomPanelActiveTab: 'instance' | 'output' = 'instance';
+  private bottomPanelActiveTab: BottomPanelTab = 'instance';
   private bottomPanelCollapsed = true;
 
   private showInstanceResult(data: any): void {

@@ -9,6 +9,64 @@ export interface LinkValidationContext {
   targetValues?: Record<string, string>;
 }
 
+export function getSchemaMatchSuggestions(
+  page: MapPage,
+  selected: SchemaNode,
+  oppositeRoot: SchemaNode,
+  side: 'source' | 'target',
+  context: LinkValidationContext
+): { node: SchemaNode; score: number }[] {
+  const tokens = (name: string): Set<string> =>
+    new Set(
+      name
+        .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+        .toLowerCase()
+        .split(/[^a-z0-9]+/)
+        .filter(Boolean)
+    );
+  const selectedTokens = tokens(selected.name);
+  const suggestions: { node: SchemaNode; score: number }[] = [];
+  const visit = (candidate: SchemaNode): void => {
+    if (
+      (candidate.type === 'attribute') === (selected.type === 'attribute') &&
+      (candidate.children.length === 0) === (selected.children.length === 0)
+    ) {
+      const source = side === 'source' ? selected : candidate;
+      const target = side === 'source' ? candidate : selected;
+      const error = validateMappingLink(
+        page,
+        {
+          id: 'suggested-link',
+          sourceId: source.path,
+          sourcePath: source.path,
+          sourceType: 'schemaNode',
+          targetId: target.path,
+          targetPath: target.path,
+          targetType: 'schemaNode',
+        },
+        context
+      );
+      if (!error) {
+        const candidateTokens = tokens(candidate.name);
+        const overlap = Array.from(selectedTokens).filter((token) => candidateTokens.has(token)).length;
+        const union = new Set([...selectedTokens, ...candidateTokens]).size;
+        const sameName = selected.name.toLowerCase() === candidate.name.toLowerCase();
+        const sameType =
+          !!selected.dataType && selected.dataType.replace(/^(xs|xsd):/, '') === candidate.dataType?.replace(/^(xs|xsd):/, '');
+        const score = Math.round((sameName ? 85 : union ? (75 * overlap) / union : 0) + (sameType ? 15 : 0));
+        if (score >= 40) {
+          suggestions.push({ node: candidate, score });
+        }
+      }
+    }
+    for (const child of schemaChildren(candidate)) {
+      visit(child);
+    }
+  };
+  visit(oppositeRoot);
+  return suggestions.sort((left, right) => right.score - left.score || left.node.path.localeCompare(right.node.path)).slice(0, 8);
+}
+
 export interface MappingClipboard {
   functoids: MapFunctoid[];
   links: MapLink[];

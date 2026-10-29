@@ -392,6 +392,10 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
             await postCopilotContext();
             break;
           }
+          case 'copyText': {
+            await vscode.env.clipboard.writeText(message.data.text);
+            break;
+          }
           case 'update': {
             const updatedMap = message.data as MapDocument;
             const content = this.btmSerializer.serialize(updatedMap);

@@ -46,12 +46,16 @@ export interface MapperViewState {
   selectedFunctoid: string | null;
   selectedLinks?: string[];
   selectedFunctoids?: string[];
+  selectedSchemaNode?: { side: SchemaSide; path: string };
+  filteredLinkIds?: string[];
+  filteredFunctoidIds?: string[];
   linkView?: {
     scope: 'all' | 'partial' | 'complete';
     colorPartial: boolean;
     trace: boolean;
     autoReveal: boolean;
     compiler: boolean;
+    selectionOnly?: boolean;
   };
   highlightedLinks?: string[];
   highlightedFunctoids?: string[];
@@ -80,6 +84,7 @@ export function createInitialMapperViewState(): MapperViewState {
 
 export const WEBVIEW_TO_HOST_MESSAGE_TYPES = [
   'ready',
+  'copyText',
   'update',
   'compile',
   'loadSchema',
@@ -113,6 +118,7 @@ export const HOST_TO_WEBVIEW_MESSAGE_TYPES = [
 
 export type WebviewToHostMessage =
   | { type: 'ready' }
+  | { type: 'copyText'; data: { text: string } }
   | { type: 'update'; data: MapDocument }
   | { type: 'compile'; data: MapDocument }
   | { type: 'loadSchema'; side: SchemaSide; path?: string; browse?: boolean }
@@ -220,6 +226,8 @@ export function isWebviewToHostMessage(value: unknown): value is WebviewToHostMe
       const data = value.data;
       return isObject(data) && typeof data.prompt === 'string' && typeof data.activePage === 'number';
     }
+    case 'copyText':
+      return isObject(value.data) && typeof value.data.text === 'string';
     case 'removeCopilotContext': {
       const data = value.data;
       return isObject(data) && typeof data.id === 'string';

@@ -9,7 +9,14 @@ import {
   ToggleButton,
   makeStyles,
 } from '@fluentui/react-components';
-import { ArrowRouting20Regular, Code20Regular, Color20Regular, Eye20Regular, Target20Regular } from '@fluentui/react-icons';
+import {
+  ArrowRouting20Regular,
+  Code20Regular,
+  Color20Regular,
+  Eye20Regular,
+  Filter20Regular,
+  Target20Regular,
+} from '@fluentui/react-icons';
 import React, { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { getFunctoidBrand, getFunctoidIcon } from './functoidCategoryIcons';
@@ -474,6 +481,9 @@ const MappingLinksOverlay = forwardRef<
       </defs>
       <LinkPreview ref={previewRef} />
       {page?.links.map((link) => {
+        if (state.filteredLinkIds && !state.filteredLinkIds.includes(link.id)) {
+          return null;
+        }
         const points = getLinkPoints(link, positions, functoidsById, offsetX, offsetY, host.scrollLeft, host.scrollTop, zoom);
         if (!points) {
           return null;
@@ -505,6 +515,17 @@ const MappingLinksOverlay = forwardRef<
       })}
       {view.compiler &&
         state.compilerLinks?.map((link) => {
+          if (
+            state.filteredLinkIds &&
+            !page?.links.some(
+              (mapping) =>
+                state.filteredLinkIds?.includes(mapping.id) &&
+                ((mapping.sourceType === 'schemaNode' && (mapping.sourcePath || mapping.sourceId) === link.sourcePath) ||
+                  (mapping.targetType === 'schemaNode' && (mapping.targetPath || mapping.targetId) === link.targetPath))
+            )
+          ) {
+            return null;
+          }
           const source = positions.get(`src:${link.sourcePath}`);
           const target = positions.get(`tgt:${link.targetPath}`);
           if (!source || !target) {
@@ -1063,6 +1084,9 @@ function MappingCanvasView({
               const { positions, functoidsById, offsetX, offsetY } = host.getLinkRenderData();
               const linkIds = (page?.links ?? [])
                 .filter((link) => {
+                  if (state.filteredLinkIds && !state.filteredLinkIds.includes(link.id)) {
+                    return false;
+                  }
                   const points = getLinkPoints(link, positions, functoidsById, offsetX, offsetY, host.scrollLeft, host.scrollTop, zoom);
                   return (
                     points &&
@@ -1073,6 +1097,9 @@ function MappingCanvasView({
                 .map((link) => link.id);
               const functoidIds = (page?.functoids ?? [])
                 .filter((functoid) => {
+                  if (state.filteredFunctoidIds && !state.filteredFunctoidIds.includes(functoid.id)) {
+                    return false;
+                  }
                   const centerX = offsetX + functoid.x * zoom - host.scrollLeft;
                   const centerY = offsetY + functoid.y * zoom - host.scrollTop;
                   return (
@@ -1137,25 +1164,27 @@ function MappingCanvasView({
           }
         }}
       >
-        {page?.functoids.map((functoid) => (
-          <FunctoidNode
-            key={functoid.id}
-            functoid={functoid}
-            selected={state.selectedFunctoids ? state.selectedFunctoids.includes(functoid.id) : state.selectedFunctoid === functoid.id}
-            highlighted={state.highlightedFunctoids?.includes(functoid.id) ?? false}
-            zoom={zoom}
-            svgRef={svgRef}
-            callbacks={callbacks}
-            dragging={currentDrag?.id === functoid.id}
-            inputConnected={connectedFunctoidInputs.has(functoid.id)}
-            outputConnected={connectedFunctoidOutputs.has(functoid.id)}
-            dragTarget={dragTarget}
-            setDragTarget={(target) => {
-              lastPointer.current = { x: target.clientX, y: target.clientY };
-              setCurrentDrag(target);
-            }}
-          />
-        ))}
+        {page?.functoids
+          .filter((functoid) => !state.filteredFunctoidIds || state.filteredFunctoidIds.includes(functoid.id))
+          .map((functoid) => (
+            <FunctoidNode
+              key={functoid.id}
+              functoid={functoid}
+              selected={state.selectedFunctoids ? state.selectedFunctoids.includes(functoid.id) : state.selectedFunctoid === functoid.id}
+              highlighted={state.highlightedFunctoids?.includes(functoid.id) ?? false}
+              zoom={zoom}
+              svgRef={svgRef}
+              callbacks={callbacks}
+              dragging={currentDrag?.id === functoid.id}
+              inputConnected={connectedFunctoidInputs.has(functoid.id)}
+              outputConnected={connectedFunctoidOutputs.has(functoid.id)}
+              dragTarget={dragTarget}
+              setDragTarget={(target) => {
+                lastPointer.current = { x: target.clientX, y: target.clientY };
+                setCurrentDrag(target);
+              }}
+            />
+          ))}
         {selectionRect && (
           <rect
             x={selectionRect.x - host.getLinkRenderData().offsetX + host.scrollLeft}
@@ -1265,6 +1294,16 @@ function MappingCanvasView({
               aria-label="Compiler links"
               title="Show compiler diagnostic links"
               onClick={() => changeLinkView({ compiler: !linkView.compiler })}
+            />
+            <ToggleButton
+              size="small"
+              appearance="subtle"
+              icon={<Filter20Regular />}
+              checked={linkView.selectionOnly ?? false}
+              aria-label="Related mappings only"
+              title="Show mappings related to the selected schema node, link or functoid"
+              disabled={!state.selectedSchemaNode && !state.selectedLink && !state.selectedFunctoid && !linkView.selectionOnly}
+              onClick={() => changeLinkView({ selectionOnly: !linkView.selectionOnly })}
             />
           </FluentProvider>,
           mappingArea

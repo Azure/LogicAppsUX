@@ -121,7 +121,7 @@ export class BtmSerializer {
       attributeNamePrefix: '@_',
       allowBooleanAttributes: true,
       parseAttributeValue: false,
-      trimValues: true,
+      trimValues: false,
       processEntities: {
         enabled: true,
         maxEntitySize: 10000,

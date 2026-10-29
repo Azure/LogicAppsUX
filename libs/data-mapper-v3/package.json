@@ -2,7 +2,7 @@
   "name": "btm-data-mapper",
   "displayName": "Logic App Data Mapper",
   "description": "Logic App Data Mapper for VS Code - visual BizTalk-compatible schema mapping with functoids and XSLT generation",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "publisher": "microsoft",
   "icon": "media/icons/biztalk-icon.jpg",
   "engines": {

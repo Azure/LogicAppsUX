@@ -11,6 +11,7 @@ describe('Map Editor protocol', () => {
   test('freezes the webview-to-host command names', () => {
     expect(WEBVIEW_TO_HOST_MESSAGE_TYPES).toEqual([
       'ready',
+      'copyText',
       'update',
       'compile',
       'loadSchema',
