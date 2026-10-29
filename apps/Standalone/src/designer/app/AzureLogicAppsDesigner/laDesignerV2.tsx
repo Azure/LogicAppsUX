@@ -940,6 +940,12 @@ const DesignerEditor = ({ managementHost }: { managementHost?: AzureStandardMana
                     isDarkMode={isDarkMode}
                     isDraftMode={isDraftMode}
                     forceSave={isDraftMode && isProductionNewerThanDraft}
+                    isDisabled={derivedIsReadOnly && isDraftMode && isProductionNewerThanDraft}
+                    tooltipOverride={
+                      derivedIsReadOnly && isDraftMode && isProductionNewerThanDraft
+                        ? 'Switch to the published version to run the current workflow without saving a draft.'
+                        : undefined
+                    }
                     workflowReadOnly={derivedIsReadOnly}
                   />
                 </div>

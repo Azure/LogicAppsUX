@@ -39,6 +39,7 @@ type CommandBarProps = Pick<
   | 'isCodeView'
   | 'isReadOnly'
   | 'isMonitoringView'
+  | 'switchWorkflowMode'
   | 'discard'
   | 'isCodeView'
   | 'isReadOnly'
@@ -393,10 +394,10 @@ const createHostStore = () =>
     // The component's exposed service callbacks intentionally mutate its local connections, not Redux state.
   });
 
-const mountDesigner = (initialMonitoring = false, initialRunId?: string) => {
+const mountDesigner = (initialMonitoring = false, initialRunId?: string, readOnly = false) => {
   const store = createHostStore();
   store.dispatch(setMonitoringView(initialMonitoring));
-  store.dispatch(setReadOnly(initialMonitoring));
+  store.dispatch(setReadOnly(initialMonitoring || readOnly));
   store.dispatch(changeRunId(initialRunId));
   const rendered = render(
     <Provider store={store}>
@@ -526,6 +527,29 @@ describe('Standard designer draft artifact freshness', () => {
       });
     });
     expect(screen.getByTestId('command-bar').getAttribute('data-readonly')).toBe('false');
+    expect(mocks.deploy).not.toHaveBeenCalled();
+    expect(mocks.save).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    { draftTime: olderTime, isSuperseded: true },
+    { draftTime: newestTime, isSuperseded: false },
+  ])('blocks a read-only draft run only when its saved content is superseded ($isSuperseded)', async ({ draftTime, isSuperseded }) => {
+    mocks.loadCustomCode.mockResolvedValue(customCode(production, draft, productionTime, draftTime));
+    mountDesigner(false, undefined, true);
+    await waitFor(() => {
+      expectSelectedArtifacts(isSuperseded ? production : draft);
+      expect(mocks.runButton?.workflowReadOnly).toBe(true);
+      expect(mocks.runButton?.isDisabled).toBe(isSuperseded);
+    });
+    if (isSuperseded) {
+      expect(mocks.runButton?.tooltipOverride).toContain('published version');
+    }
+    act(() => commandBar().switchWorkflowMode(false));
+    await waitFor(() => {
+      expect(mocks.runButton?.isDraftMode).toBe(false);
+      expect(mocks.runButton?.isDisabled).toBe(false);
+    });
     expect(mocks.deploy).not.toHaveBeenCalled();
     expect(mocks.save).not.toHaveBeenCalled();
   });

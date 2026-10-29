@@ -125,6 +125,7 @@ const DesignerEditorConsumption = () => {
     }
     return savedDraftWorkflowAndArtifactsData;
   }, [savedDraftWorkflowAndArtifactsData, workflowAndArtifactsData]);
+  const isProductionNewerThanDraft = !!savedDraftWorkflowAndArtifactsData && draftWorkflowAndArtifactsData === workflowAndArtifactsData;
 
   const {
     workflow: draftWorkflow,
@@ -558,8 +559,12 @@ const DesignerEditorConsumption = () => {
                       onRun={onRun}
                       isDarkMode={isDarkMode}
                       isDraftMode={isDraftMode}
-                      forceSave={
-                        isDraftMode && !!savedDraftWorkflowAndArtifactsData && draftWorkflowAndArtifactsData === workflowAndArtifactsData
+                      forceSave={isDraftMode && isProductionNewerThanDraft}
+                      isDisabled={derivedIsReadOnly && isDraftMode && isProductionNewerThanDraft}
+                      tooltipOverride={
+                        derivedIsReadOnly && isDraftMode && isProductionNewerThanDraft
+                          ? 'Switch to the published version to run the current workflow without saving a draft.'
+                          : undefined
                       }
                       isConsumption={true}
                       workflowReadOnly={derivedIsReadOnly}

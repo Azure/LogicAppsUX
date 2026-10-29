@@ -48,7 +48,7 @@ import {
   useChangeCount,
   flushPendingFoundryUpdates,
 } from '@microsoft/logic-apps-designer-v2';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { environment } from '../../../environments/environment';
@@ -154,6 +154,8 @@ export const DesignerCommandBar = ({
   const [lastSavedTime, setLastSavedTime] = useState<Date>();
   const [autoSaving, setAutoSaving] = useState<boolean>(false);
   const [autosaveError, setAutosaveError] = useState<string>();
+  const [isDiscarding, setIsDiscarding] = useState(false);
+  const discardingRef = useRef(false);
 
   const designerIsDirty = useIsDesignerDirty();
   const isWorkflowEmpty = useIsWorkflowEmpty();
@@ -163,6 +165,9 @@ export const DesignerCommandBar = ({
   const isCopilotReady = useNodesInitialized();
   const queryClient = useQueryClient();
   const { isLoading: isSaving, mutate: saveWorkflowMutate } = useMutation(async (autoSave?: boolean) => {
+    if (discardingRef.current) {
+      return;
+    }
     try {
       setAutoSaving(autoSave ?? false);
       const designerState = DesignerStore.getState();
@@ -202,6 +207,9 @@ export const DesignerCommandBar = ({
         await flushPendingFoundryUpdates(() => {
           queryClient.invalidateQueries({ queryKey: ['foundryAgentVersions'] });
         }).catch(console.error);
+        if (discardingRef.current) {
+          return;
+        }
         await saveWorkflow(serializedWorkflow, customCodeFilesWithData, () => dispatch(resetDesignerDirtyState(undefined)), autoSave);
         // Only refresh callback URL on explicit saves, not auto-saves.
         // The callback URL doesn't change on draft saves, so calling it on every
@@ -241,13 +249,13 @@ export const DesignerCommandBar = ({
   // Auto-save every 5 seconds if needed
   useThrottledEffect(
     () => {
-      if (!needsSaved || !isDraftMode || isSaving || isSaving || isMonitoringView) {
+      if (discardingRef.current || !needsSaved || !isDraftMode || isSaving || isMonitoringView) {
         return;
       }
       setNeedsSaved(false);
       saveWorkflowMutate(true);
     },
-    [isDraftMode, isSaving, isMonitoringView, isSaving, needsSaved, saveWorkflowMutate, isCodeView],
+    [isDraftMode, isSaving, isMonitoringView, needsSaved, saveWorkflowMutate, isCodeView, isDiscarding],
     5000
   );
 
@@ -296,6 +304,7 @@ export const DesignerCommandBar = ({
   );
 
   const saveIsDisabled =
+    isDiscarding ||
     isSaving ||
     allInputErrors.length > 0 ||
     haveWorkflowParameterErrors ||
@@ -372,8 +381,21 @@ export const DesignerCommandBar = ({
     <ToolbarButton
       aria-label="Discard changes"
       icon={<UndoIcon />}
-      onClick={discard}
-      disabled={isSaving || isMonitoringView || !designerIsDirty}
+      onClick={async () => {
+        discardingRef.current = true;
+        setIsDiscarding(true);
+        setNeedsSaved(false);
+        try {
+          await discard();
+        } catch (error) {
+          console.error('Error discarding workflow:', error);
+          alert('Error discarding workflow, check console for error object');
+        } finally {
+          discardingRef.current = false;
+          setIsDiscarding(false);
+        }
+      }}
+      disabled={isDiscarding || isSaving || isMonitoringView || !designerIsDirty}
     />
   );
 
