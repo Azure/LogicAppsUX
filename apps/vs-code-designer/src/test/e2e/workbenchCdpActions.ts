@@ -353,6 +353,57 @@ export async function clickText(
   await clickPoint(cdp, position);
 }
 
+export async function dispatchContextMenu(cdp: CdpEvaluator, position: Point): Promise<void> {
+  await cdp.send('Input.dispatchMouseEvent', { type: 'mouseMoved', ...position });
+  for (const type of ['mousePressed', 'mouseReleased']) {
+    await cdp.send('Input.dispatchMouseEvent', {
+      type,
+      ...position,
+      button: 'right',
+      buttons: type === 'mousePressed' ? 2 : 0,
+      clickCount: 1,
+    });
+  }
+}
+
+export async function clickContextMenuText(cdp: CdpEvaluator, label: string, deadline: number): Promise<void> {
+  let lastState: { candidates: Array<{ text: string; enabled: boolean; hitTestable: boolean }>; point: Point | null } = {
+    candidates: [],
+    point: null,
+  };
+  while (Date.now() < deadline) {
+    lastState = await cdp.evaluate(
+      undefined,
+      `(() => { ${workbenchVisibleScript}
+        const candidates=Array.from(document.querySelectorAll('.monaco-menu .action-label')).filter(visible)
+          .map(e => ({
+            element: e,
+            text: text(e),
+            enabled: !e.disabled && e.getAttribute('aria-disabled')!=='true',
+            point: point(e),
+          }));
+        const matches=candidates.filter(entry => normalized(entry.text)===normalized(${JSON.stringify(label)}) && entry.enabled && entry.point);
+        return {
+          candidates: candidates.map(entry => ({text:entry.text,enabled:entry.enabled,hitTestable:!!entry.point})),
+          point: matches.length===1 ? matches[0].point : null,
+        };
+      })()`
+    );
+    if (lastState.point) {
+      await clickPoint(cdp, lastState.point);
+      return;
+    }
+    const remaining = deadline - Date.now();
+    if (remaining <= 0) {
+      break;
+    }
+    await new Promise((resolve) => setTimeout(resolve, Math.min(200, remaining)));
+  }
+  assert.fail(
+    `Context menu action ${JSON.stringify(label)} was not uniquely visible, enabled, and hit-testable. State=${JSON.stringify(lastState)}`
+  );
+}
+
 export async function command(cdp: CdpEvaluator, title: string, deadline: number): Promise<void> {
   for (const type of ['keyDown', 'keyUp']) {
     await cdp.send('Input.dispatchKeyEvent', { type, key: 'P', code: 'KeyP', modifiers: 10, windowsVirtualKeyCode: 80 });

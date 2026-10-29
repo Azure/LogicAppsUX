@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { ext } from '../../../extensionVariables';
 import { dependencyUpdateCheckIntervalMs, lastDependencyUpdateCheckKey } from '../../../constants';
 import { recordDependencyUpdateCheck, shouldCheckForDependencyUpdates } from '../dependencies';
@@ -10,8 +10,11 @@ import { recordDependencyUpdateCheck, shouldCheckForDependencyUpdates } from '..
 describe('dependencies', () => {
   let globalStateGet: Mock;
   let globalStateUpdate: Mock;
+  let originalStrictValidation: string | undefined;
 
   beforeEach(() => {
+    originalStrictValidation = process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION;
+    delete process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION;
     globalStateGet = vi.fn();
     globalStateUpdate = vi.fn().mockResolvedValue(undefined);
     (ext as any).context = {
@@ -22,7 +25,21 @@ describe('dependencies', () => {
     };
   });
 
+  afterEach(() => {
+    if (originalStrictValidation === undefined) {
+      delete process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION;
+    } else {
+      process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION = originalStrictValidation;
+    }
+  });
+
   describe('shouldCheckForDependencyUpdates', () => {
+    it('returns false during strict E2E validation to preserve admitted dependency bytes', () => {
+      process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION = '1';
+      globalStateGet.mockReturnValue(undefined);
+      expect(shouldCheckForDependencyUpdates()).toBe(false);
+    });
+
     it('returns true when no timestamp has been recorded', () => {
       globalStateGet.mockReturnValue(undefined);
       expect(shouldCheckForDependencyUpdates()).toBe(true);

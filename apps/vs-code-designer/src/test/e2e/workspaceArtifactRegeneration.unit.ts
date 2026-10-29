@@ -8,13 +8,16 @@ import {
   assertRegenerationComplete,
   assertRegenerationPromptObservation,
   assertRegenerationNonTargets,
+  assertSilentRegenerationObservation,
   assertTemplateContracts,
   buildRegenerationPhaseResults,
   captureRegenerationSnapshot,
   captureTemplateContracts,
   confirmRegenerationPromptSequence,
   deleteRegenerationTargets,
+  getMissingRegenerationInitializationFiles,
   regenerationArtifacts,
+  regenerationInitializationArtifacts,
   regenerationCases,
   regenerationDeadline,
   regenerationPhaseIds,
@@ -50,16 +53,72 @@ async function main(): Promise<void> {
     const prompt = initializationPrompt(appDir);
     fs.mkdirSync(path.join(appDir, '.vscode'), { recursive: true });
     for (const artifact of regenerationArtifacts) {
-      fs.writeFileSync(path.join(appDir, artifact), JSON.stringify({ artifact, version: 1 }));
+      fs.writeFileSync(
+        path.join(appDir, artifact),
+        JSON.stringify(
+          artifact === 'local.settings.json'
+            ? {
+                IsEncrypted: false,
+                Values: {
+                  AzureWebJobsStorage: 'UseDevelopmentStorage=true',
+                  FUNCTIONS_WORKER_RUNTIME: 'dotnet',
+                  ProjectDirectoryPath: appDir,
+                },
+              }
+            : { artifact, version: 1 }
+        )
+      );
     }
     const workflowDir = path.join(appDir, 'workflow');
     fs.mkdirSync(workflowDir);
     fs.writeFileSync(path.join(workflowDir, 'workflow.json'), '{"kind":"Stateful"}');
     fs.writeFileSync(path.join(workspaceDir, 'workspace.code-workspace'), '{"folders":[{"path":"app"}]}');
+    fs.mkdirSync(path.join(workspaceDir, '.git', 'objects', 'info'), { recursive: true });
     const template = captureTemplateContracts(appDir);
     const baseline = captureRegenerationSnapshot(root, workspaceDir);
+    assert.ok(
+      baseline.entries.every((entry) => !entry.includes('.git')),
+      'Source-control internals are not product regeneration artifacts'
+    );
+    fs.rmSync(path.join(workspaceDir, '.git', 'objects'), { recursive: true });
+    assert.deepStrictEqual(
+      captureRegenerationSnapshot(root, workspaceDir),
+      baseline,
+      'Volatile source-control metadata must not invalidate product artifact regeneration'
+    );
     assertTemplateContracts(appDir, template);
+    const originalLocalSettings = JSON.parse(fs.readFileSync(path.join(appDir, 'local.settings.json'), 'utf8')) as {
+      Values: Record<string, string>;
+    };
+    fs.writeFileSync(
+      path.join(appDir, 'local.settings.json'),
+      JSON.stringify({
+        ...originalLocalSettings,
+        Values: {
+          ...originalLocalSettings.Values,
+          AzureWebJobsStorage: 'runtime-derived-secret',
+          ProjectDirectoryPath:
+            process.platform === 'win32'
+              ? originalLocalSettings.Values.ProjectDirectoryPath.replace(/^([a-z]):/, (_match, drive: string) => `${drive.toUpperCase()}:`)
+              : originalLocalSettings.Values.ProjectDirectoryPath,
+        },
+      })
+    );
+    assert.doesNotThrow(() => assertTemplateContracts(appDir, template));
+    fs.writeFileSync(
+      path.join(appDir, 'local.settings.json'),
+      JSON.stringify({
+        ...originalLocalSettings,
+        Values: { ...originalLocalSettings.Values, FUNCTIONS_WORKER_RUNTIME: 'node' },
+      })
+    );
+    assert.throws(() => assertTemplateContracts(appDir, template), /semantically consistent/);
+    fs.writeFileSync(path.join(appDir, 'local.settings.json'), JSON.stringify(originalLocalSettings));
     assert.strictEqual(regenerationCases.length, 6);
+    assert.deepStrictEqual(
+      regenerationCases.map(({ interaction }) => interaction),
+      ['prompted', 'prompted', 'prompted', 'silent', 'silent', 'silent']
+    );
     assert.ok(regenerationCases.some((entry) => entry.targets.length > 1 && entry.targets.every((name) => name.startsWith('.vscode/'))));
     assert.ok(regenerationCases.some((entry) => entry.targets.includes('host.json') && entry.targets.includes('local.settings.json')));
     assert.strictEqual(regenerationCases.filter((entry) => entry.targets.includes('.vscode/tasks.json')).length, 2);
@@ -75,6 +134,11 @@ async function main(): Promise<void> {
     assert.strictEqual(selectRegenerationOverwriteYes([{ ...overwrite, kind: 'notification' }]).visible, false);
     assert.strictEqual(selectRegenerationOverwriteYes([{ ...overwrite, text: 'Overwrite unrelated files?' }]).visible, false);
     assert.throws(() => selectRegenerationOverwriteYes([overwrite, overwrite]), /Ambiguous/);
+    assert.doesNotThrow(() => assertSilentRegenerationObservation({ ready: true, timeOrigin: 1, containers: [] }, appDir));
+    assert.throws(
+      () => assertSilentRegenerationObservation({ ready: true, timeOrigin: 1, containers: [prompt] }, appDir),
+      /must not use the .vscode initialization prompt/
+    );
     const sequenceClock = fakeClock();
     const clicks: Array<{ x: number; y: number }> = [];
     const captures: string[] = [];
@@ -108,6 +172,48 @@ async function main(): Promise<void> {
       'Two distinct real controls, never replaying the first Yes'
     );
     assert.deepStrictEqual(captures, ['initialize', 'overwrite']);
+    checks++;
+
+    const rerenderClock = fakeClock();
+    let rerenderReads = 0;
+    let rerenderReveals = 0;
+    const rerenderClicks: Array<{ x: number; y: number }> = [];
+    assert.deepStrictEqual(
+      await confirmRegenerationPromptSequence({
+        ...sequenceOptions,
+        clock: rerenderClock,
+        phase: regenerationDeadline('initialize-capture-rerender', 0),
+        read: async () => {
+          rerenderReads++;
+          return {
+            ready: true,
+            timeOrigin: 1,
+            containers:
+              rerenderClicks.length > 0
+                ? [overwrite]
+                : rerenderReads >= 2 && rerenderReveals === 0
+                  ? [{ ...prompt, buttons: prompt.buttons.map((button) => ({ ...button, point: undefined })) }]
+                  : [prompt],
+          };
+        },
+        revealBlocked: async () => {
+          rerenderReveals++;
+        },
+        click: async (point) => {
+          rerenderClicks.push(point);
+        },
+        assertBeforeOverwrite: () => {
+          assert.ok(rerenderClicks.length < 2, 'No writes may precede overwrite Yes');
+        },
+      }),
+      { initializationYesCount: 1, overwriteYesCount: 1 }
+    );
+    assert.ok(rerenderReads > 3, 'Initialization prompt must be reacquired with stable geometry after capture-triggered rerendering');
+    assert.strictEqual(rerenderReveals, 1, 'A covered prompt must be revealed without replaying input');
+    assert.deepStrictEqual(rerenderClicks, [
+      { x: 10, y: 20 },
+      { x: 30, y: 40 },
+    ]);
     checks++;
 
     for (const failure of [
@@ -179,6 +285,39 @@ async function main(): Promise<void> {
     fs.writeFileSync(targetPath, original);
     assert.deepStrictEqual(captureRegenerationSnapshot(root, workspaceDir), baseline);
     assertRegenerationNonTargets(baseline, baseline, workspaceDir, appDir, [target], true);
+    checks++;
+
+    deleteRegenerationTargets(root, workspaceDir, appDir, [target], baseline);
+    const initializationDir = path.join(appDir, 'workflow-designtime');
+    fs.mkdirSync(initializationDir);
+    for (const artifact of regenerationInitializationArtifacts) {
+      fs.writeFileSync(path.join(appDir, artifact), JSON.stringify({ generated: artifact }));
+    }
+    const initializationFiles = getMissingRegenerationInitializationFiles(baseline, workspaceDir, appDir);
+    assert.deepStrictEqual(initializationFiles, ['app/workflow-designtime/host.json', 'app/workflow-designtime/local.settings.json']);
+    const initialized = captureRegenerationSnapshot(root, workspaceDir);
+    assert.throws(
+      () => assertRegenerationNonTargets(baseline, initialized, workspaceDir, appDir, [target], false),
+      /Every non-target file/
+    );
+    assertRegenerationNonTargets(baseline, initialized, workspaceDir, appDir, [target], false, initializationFiles);
+    fs.writeFileSync(path.join(initializationDir, 'unexpected.json'), '{}');
+    assert.throws(
+      () =>
+        assertRegenerationNonTargets(
+          baseline,
+          captureRegenerationSnapshot(root, workspaceDir),
+          workspaceDir,
+          appDir,
+          [target],
+          false,
+          initializationFiles
+        ),
+      /Every non-target file/
+    );
+    fs.rmSync(initializationDir, { recursive: true });
+    fs.writeFileSync(targetPath, original);
+    assert.deepStrictEqual(captureRegenerationSnapshot(root, workspaceDir), baseline);
     checks++;
 
     // Unit-owned runtime/profile files exercise provenance and configuration
@@ -534,16 +673,18 @@ async function main(): Promise<void> {
     );
     assert.deepStrictEqual(readySelection.point, { x: 10, y: 20 });
     assert.strictEqual(readinessReads, 2, 'A visible Yes without the correct ready workspace is not sufficient');
+    const disabledClock = fakeClock();
     await assert.rejects(
       requireRegenerationYes(
         async () => ({ ...observed, containers: [{ ...prompt, buttons: [{ text: 'Yes' }] }] }),
         appDir,
         regenerationDeadline('disabled', 0),
         () => false,
-        clock
+        disabledClock
       ),
       /enabled, unobstructed Yes/
     );
+    assert.strictEqual(disabledClock.now(), 120000, 'A temporarily covered prompt must retain the original deadline');
     await assert.rejects(
       requireRegenerationYes(
         async () => {
@@ -552,7 +693,7 @@ async function main(): Promise<void> {
         appDir,
         regenerationDeadline('transport', 0),
         () => false,
-        clock
+        fakeClock()
       ),
       /CDP disconnected/
     );
@@ -711,6 +852,7 @@ async function main(): Promise<void> {
     const reportRoot = path.join(root, 'phase-reporting');
     fs.mkdirSync(reportRoot);
     const context = {
+      regenerationStageEvidenceVerified: true,
       expectedPhaseIds: regenerationPhaseIds,
       phaseResultsPath: path.join(reportRoot, 'phase-results.jsonl'),
       cleanupLedgerPath: path.join(reportRoot, 'cleanup.json'),
@@ -741,6 +883,17 @@ async function main(): Promise<void> {
         phases.map((phase) => phase.phaseId)
       );
     }
+    reporting._test.writeSuiteFinalEvidence({
+      context: { ...context, regenerationStageEvidenceVerified: false },
+      suite: registration,
+      exitCode: 0,
+      signal: null,
+      phaseResults: protocolPhases,
+      processCleanup: { verified: true },
+    });
+    const unstaged = JSON.parse(fs.readFileSync(context.terminalResultPath, 'utf8'));
+    assert.strictEqual(unstaged.complete, false, 'Complete phases require verified outer regeneration staging');
+    assert.strictEqual(unstaged.cleanupVerified, false);
     const directEnv = {
       LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH: path.join(reportRoot, 'direct-terminal.json'),
       LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH: path.join(reportRoot, 'direct-cleanup.json'),
@@ -795,13 +948,14 @@ async function main(): Promise<void> {
       errors: [],
       plannedCases: regenerationCases.map(({ name }) => name),
       hosts: protocolInput.hosts,
-      observations: regenerationCases.map(({ name, targets }) => ({
+      observations: regenerationCases.map(({ name, targets, interaction }) => ({
         name,
         targets,
-        realYesMouseInput: true,
-        realOverwriteYesMouseInput: true,
-        initializationYesCount: 1,
-        overwriteYesCount: 1,
+        interaction,
+        realYesMouseInput: interaction === 'prompted',
+        realOverwriteYesMouseInput: interaction === 'prompted',
+        initializationYesCount: interaction === 'prompted' ? 1 : 0,
+        overwriteYesCount: interaction === 'prompted' ? 1 : 0,
         before: { entries: [], files: {} },
         after: { entries: [], files: {} },
         freshReopen: true,
@@ -824,9 +978,12 @@ async function main(): Promise<void> {
     }
     const checkpoints = [
       'workspace-regeneration-baseline',
-      ...modelNames.flatMap((name) =>
-        ['before-yes', 'before-overwrite-yes', 'after-yes', 'reopened'].map((suffix) => `workspace-regeneration-${name}-${suffix}`)
-      ),
+      ...modelNames
+        .slice(0, 3)
+        .flatMap((name) =>
+          ['before-yes', 'before-overwrite-yes', 'after-yes', 'reopened'].map((suffix) => `workspace-regeneration-${name}-${suffix}`)
+        ),
+      ...modelNames.slice(3).flatMap((name) => ['after-repair', 'reopened'].map((suffix) => `workspace-regeneration-${name}-${suffix}`)),
     ];
     for (const checkpoint of checkpoints) {
       fs.writeFileSync(path.join(stageRoot, 'screenshots', `${checkpoint}.png`), Buffer.from([137, 80, 78, 71, 13, 10, 26, 10, 0]));
@@ -1032,11 +1189,17 @@ async function main(): Promise<void> {
         nativeHostSource.includes('ready: ownership.shellOwned') &&
         nativeHostSource.includes('connectToOwnedRegularWorkbench({') &&
         sharedPromptSource.includes("workbenchCommand(cdp, 'Notifications: Show Notifications', deadline)") &&
+        sharedPromptSource.includes('Array.from(new Set(containers.flatMap(container =>') &&
+        sharedPromptSource.includes("options[0].scrollIntoView({ block: 'center', inline: 'center' })") &&
         sharedPromptSource.includes('.notifications-center, .notifications-list-container') &&
+        nativeHostSource.includes('revealBlocked: () =>') &&
+        nativeHostSource.includes('promptObservation !== previousPromptObservation') &&
         sharedWorkbenchSource.includes('waitForRegularWorkbenchShell(') &&
         sharedWorkbenchSource.includes('const client = boundedCdp(cdp, options.deadline)') &&
+        nativeHostSource.indexOf("JSON.parse(fs.readFileSync(path.join(workspaceDir, name), 'utf8'))") >
+          nativeHostSource.indexOf('after = await waitForStableFiles(') &&
         !sharedWorkbenchSource.includes('const client = boundedCdp(cdp, connectionDeadline)'),
-      'The exact owned workspace must use shared prompt observation and retained-notification reveal before the strict two-prompt sequence begins'
+      'The exact owned workspace must use shared prompt observation, settle initialization writes, and reveal retained notifications before the strict two-prompt sequence begins'
     );
     checks++;
     console.log(`[workspace-regeneration-unit] ${checks} focused contract groups passed; no VS Code/runtime/native coverage claimed.`);

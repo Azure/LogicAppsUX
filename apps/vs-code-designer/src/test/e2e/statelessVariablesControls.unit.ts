@@ -822,7 +822,10 @@ function testNativeWiring(): void {
         shared.includes('await persisted.ensureNodePanelOpen(panelNode)') &&
         shared.includes('await normalizeDesignerCanvasViewport(') &&
         shared.includes('connectToActiveDesignerWebview(') &&
-        shared.includes('hasExactVisibleWorkbenchIframeForTarget('),
+        shared.includes('hasExactVisibleWorkbenchIframeForTarget(') &&
+        shared.indexOf('await dismissWorkbenchNotifications(options.persistedDesigner.deadlineMs)') <
+          shared.indexOf('const activeDesigner = await connectToActiveDesignerWebview(') &&
+        shared.includes('skipNotificationHousekeeping: true'),
       'Runtime registration must delegate exact Designer reopen, active-frame binding, viewport normalization and persisted node readiness to the shared lifecycle'
     );
     assert.ok(native.includes('[stateless-variables][stage:${stage}]'), 'Semantic stage logs must expose the exact active boundary');

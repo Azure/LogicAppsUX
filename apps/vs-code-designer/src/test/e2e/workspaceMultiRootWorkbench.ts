@@ -6,7 +6,7 @@ import { type CdpEvaluator, type Point, pressKey } from './cdpFormHelpers';
 import { remainingBudget } from './workspaceMultiRootCollector';
 import type { FuncRuntimeResolution } from './workspaceMultiRootLaunch';
 import { normalizeFsPath } from './testUtils';
-import { clickText, command, poll, workbenchVisibleScript as visibleScript } from './workbenchCdpActions';
+import { clickContextMenuText, command, dispatchContextMenu, poll, workbenchVisibleScript as visibleScript } from './workbenchCdpActions';
 
 export { boundedCdp, clickText, command, poll } from './workbenchCdpActions';
 
@@ -50,16 +50,8 @@ export async function folderCreateNewProject(cdp: CdpEvaluator, folder: string, 
     deadline
   );
   assert.ok(position);
-  for (const type of ['mousePressed', 'mouseReleased']) {
-    await cdp.send('Input.dispatchMouseEvent', {
-      type,
-      ...position,
-      button: 'right',
-      buttons: type === 'mousePressed' ? 2 : 0,
-      clickCount: 1,
-    });
-  }
-  await clickText(cdp, '.monaco-menu .action-label', 'Create new project...', deadline);
+  await dispatchContextMenu(cdp, position);
+  await clickContextMenuText(cdp, 'Create new project...', deadline);
 }
 
 export function assertActiveWebview(state: WorkbenchState, targetUrl: string | undefined, tab: string): void {

@@ -1169,6 +1169,7 @@ async function openDesignerAndCreateWorkflow(createdWorkspace: CreatedWorkspace,
     console.log(`[workspace-lifecycle] ${createdWorkspace.label}: connecting to designer webview CDP target`);
     let contextId: number;
     if (options.persistedDesigner) {
+      await dismissWorkbenchNotifications(options.persistedDesigner.deadlineMs);
       const activeDesigner = await connectToActiveDesignerWebview(createdWorkspace, options.persistedDesigner.deadlineMs);
       cdp = activeDesigner.cdp;
       contextId = activeDesigner.contextId;
@@ -1214,6 +1215,7 @@ async function openDesignerAndCreateWorkflow(createdWorkspace: CreatedWorkspace,
         semanticCdp: cdp,
         semanticContextId: contextId,
         deadlineMs: options.persistedDesigner.deadlineMs,
+        skipNotificationHousekeeping: true,
       });
     } else if (designerActionProfile === 'msn') {
       await getMsnDesignerActions(designerCdp, contextId).waitForText(

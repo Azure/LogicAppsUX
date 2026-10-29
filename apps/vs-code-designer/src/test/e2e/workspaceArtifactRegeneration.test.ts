@@ -12,17 +12,19 @@ import * as path from 'path';
 import { type CdpConnection, waitForDevToolsActivePort } from './cdpClient';
 import { clickPoint, type CdpEvaluator } from './cdpFormHelpers';
 import { connectToOwnedRegularWorkbench, readRegularWorkbenchOwnership } from './workbenchCdpActions';
-import { readWorkbenchPrompts, revealRetainedWorkbenchNotifications } from './workbenchPrompts';
+import { readWorkbenchPrompts, revealRetainedWorkbenchNotifications, revealWorkbenchPromptOption } from './workbenchPrompts';
 import {
   assertRegenerationComplete,
   assertRegenerationPromptObservation,
   assertRegenerationNonTargets,
+  assertSilentRegenerationObservation,
   assertTemplateContracts,
   buildRegenerationPhaseResults,
   captureRegenerationSnapshot,
   captureTemplateContracts,
   confirmRegenerationPromptSequence,
   deleteRegenerationTargets,
+  getMissingRegenerationInitializationFiles,
   regenerationCases,
   regenerationDeadline,
   regenerationPhaseIds,
@@ -31,6 +33,7 @@ import {
   selectRegenerationYes,
   type RegenerationDeadline,
   type RegenerationHostPhase,
+  type RegenerationInteraction,
   type RegenerationPromptObservation,
   type RegenerationSnapshot,
 } from './workspaceArtifactRegeneration';
@@ -70,8 +73,9 @@ export interface RegenerationResult {
   observations: Array<{
     name: string;
     targets: readonly string[];
-    realYesMouseInput: true;
-    realOverwriteYesMouseInput: true;
+    interaction: RegenerationInteraction;
+    realYesMouseInput: boolean;
+    realOverwriteYesMouseInput: boolean;
     initializationYesCount: number;
     overwriteYesCount: number;
     before: RegenerationSnapshot;
@@ -380,6 +384,7 @@ export async function runWorkspaceArtifactRegeneration(
     );
     for (const entry of regenerationCases) {
       const before = baseline;
+      const initializationFiles = getMissingRegenerationInitializationFiles(before, workspaceDir, appDir);
       deleteRegenerationTargets(context.workspaceParent, workspaceDir, appDir, entry.targets, before);
       let after: RegenerationSnapshot | undefined;
       let prompts: { initializationYesCount: number; overwriteYesCount: number } | undefined;
@@ -387,55 +392,74 @@ export async function runWorkspaceArtifactRegeneration(
         const bounded = boundedConnection(cdp, phase);
         await revealRetainedWorkbenchNotifications(bounded, { workspaceFilePath, rootPaths: [appDir] }, phase.deadline);
         const observationsPath = path.join(context.root, `${entry.name}-prompt-observations.jsonl`);
+        let previousPromptObservation: string | undefined;
         const read = async () => {
           const observation = await readRegenerationWorkbench(bounded, workspaceFilePath, appDir);
-          fs.appendFileSync(
-            observationsPath,
-            `${JSON.stringify({
-              observedAt: new Date().toISOString(),
-              ready: observation.ready,
-              timeOrigin: observation.timeOrigin,
-              missingTargets: entry.targets.filter((target) => !fs.existsSync(path.join(appDir, target))),
-              containers: observation.containers.map((container) => ({
-                kind: container.kind,
-                text: container.text,
-                buttons: container.buttons.map((button) => ({
-                  text: button.text,
-                  hitTestable: Boolean(button.point),
-                })),
+          const promptObservation = JSON.stringify({
+            ready: observation.ready,
+            timeOrigin: observation.timeOrigin,
+            missingTargets: entry.targets.filter((target) => !fs.existsSync(path.join(appDir, target))),
+            containers: observation.containers.map((container) => ({
+              kind: container.kind,
+              text: container.text,
+              buttons: container.buttons.map((button) => ({
+                text: button.text,
+                hitTestable: Boolean(button.point),
+                point: button.point,
               })),
-            })}\n`
-          );
+            })),
+          });
+          if (promptObservation !== previousPromptObservation) {
+            fs.appendFileSync(
+              observationsPath,
+              `${JSON.stringify({ observedAt: new Date().toISOString(), ...JSON.parse(promptObservation) })}\n`
+            );
+            previousPromptObservation = promptObservation;
+          }
           return observation;
         };
         const healed = () => entry.targets.every((target) => fs.existsSync(path.join(appDir, target)));
-        prompts = await confirmRegenerationPromptSequence({
-          read,
-          appDir,
-          phase,
-          filesHealed: healed,
-          assertBeforeOverwrite: () =>
-            assertRegenerationNonTargets(
-              before,
-              captureRegenerationSnapshot(context.workspaceParent, workspaceDir),
-              workspaceDir,
-              appDir,
-              entry.targets,
-              false
-            ),
-          capture: (kind) =>
-            captureRegenerationEvidence(
-              cdp,
-              context,
-              phase,
-              `workspace-regeneration-${entry.name}-${kind === 'initialize' ? 'before-yes' : 'before-overwrite-yes'}`
-            ),
-          click: (point) => clickPoint(bounded, point),
-        });
-        // Neither Yes is replayed or substituted with an API response. File writes
-        // must follow the distinct real overwrite modal, within this same deadline.
-        while (Date.now() < phase.deadline && !healed()) {
-          await poll(phase);
+        if (entry.interaction === 'prompted') {
+          prompts = await confirmRegenerationPromptSequence({
+            read,
+            appDir,
+            phase,
+            filesHealed: healed,
+            assertBeforeOverwrite: () =>
+              assertRegenerationNonTargets(
+                before,
+                captureRegenerationSnapshot(context.workspaceParent, workspaceDir),
+                workspaceDir,
+                appDir,
+                entry.targets,
+                false,
+                initializationFiles
+              ),
+            capture: (kind) =>
+              captureRegenerationEvidence(
+                cdp,
+                context,
+                phase,
+                `workspace-regeneration-${entry.name}-${kind === 'initialize' ? 'before-yes' : 'before-overwrite-yes'}`
+              ),
+            revealBlocked: () =>
+              revealWorkbenchPromptOption(bounded, `Detected an Azure Logic App project "${appDir}"`, ['Yes'], phase.deadline).then(
+                () => undefined
+              ),
+            click: (point) => clickPoint(bounded, point),
+          });
+          // Neither Yes is replayed or substituted with an API response. File writes
+          // must follow the distinct real overwrite modal, within this same deadline.
+          while (Date.now() < phase.deadline && !healed()) {
+            await poll(phase);
+          }
+        } else {
+          prompts = { initializationYesCount: 0, overwriteYesCount: 0 };
+          while (Date.now() < phase.deadline && !healed()) {
+            assertSilentRegenerationObservation(await read(), appDir);
+            await poll(phase);
+          }
+          assertSilentRegenerationObservation(await read(), appDir);
         }
         remainingRegenerationBudget(phase);
         after = await waitForStableFiles(
@@ -445,16 +469,31 @@ export async function runWorkspaceArtifactRegeneration(
           phase,
           (snapshot) => {
             assertTemplateContracts(appDir, template);
-            assertRegenerationNonTargets(before, snapshot, workspaceDir, appDir, entry.targets, true);
+            assertRegenerationNonTargets(before, snapshot, workspaceDir, appDir, entry.targets, true, initializationFiles);
+            for (const name of initializationFiles) {
+              assert.ok(snapshot.files[name], `${name} must be created by the real project-initialization path`);
+            }
           },
           1500
         );
-        await captureRegenerationEvidence(cdp, context, phase, `workspace-regeneration-${entry.name}-after-yes`);
+        for (const name of initializationFiles) {
+          JSON.parse(fs.readFileSync(path.join(workspaceDir, name), 'utf8'));
+        }
+        await captureRegenerationEvidence(
+          cdp,
+          context,
+          phase,
+          `workspace-regeneration-${entry.name}-${entry.interaction === 'prompted' ? 'after-yes' : 'after-repair'}`
+        );
       });
-      assert.ok(after, 'Real Yes must produce validated, durably written artifacts');
-      assert.ok(
-        prompts && prompts.initializationYesCount === 1 && prompts.overwriteYesCount === 1,
-        'Exactly one real Yes for each distinct production prompt is required'
+      assert.ok(after, 'The product repair path must produce validated, durably written artifacts');
+      const expectedYesCount = entry.interaction === 'prompted' ? 1 : 0;
+      assert.deepStrictEqual(
+        prompts,
+        { initializationYesCount: expectedYesCount, overwriteYesCount: expectedYesCount },
+        entry.interaction === 'prompted'
+          ? 'Exactly one real Yes for each distinct production prompt is required'
+          : 'Root artifact repair must remain silent'
       );
       const regenerated = captureRegenerationSnapshot(context.workspaceParent, workspaceDir);
       assert.deepStrictEqual(regenerated, after, 'Ordinary Code closure must not alter the regenerated files');
@@ -480,8 +519,9 @@ export async function runWorkspaceArtifactRegeneration(
       result.observations.push({
         name: entry.name,
         targets: entry.targets,
-        realYesMouseInput: true,
-        realOverwriteYesMouseInput: true,
+        interaction: entry.interaction,
+        realYesMouseInput: entry.interaction === 'prompted',
+        realOverwriteYesMouseInput: entry.interaction === 'prompted',
         ...prompts,
         before,
         after: regenerated,
@@ -540,15 +580,21 @@ export function assertWorkspaceArtifactRegenerationEvidence(
     assert.deepStrictEqual(host.close, { code: 0, signal: null }, 'No failed/unclosed earlier host may be hidden by a later host');
   }
   for (const entry of regenerationCases) {
-    assertAcceptedScreenshot(context.root, `workspace-regeneration-${entry.name}-before-yes`);
-    assertAcceptedScreenshot(context.root, `workspace-regeneration-${entry.name}-before-overwrite-yes`);
-    assertAcceptedScreenshot(context.root, `workspace-regeneration-${entry.name}-after-yes`);
+    if (entry.interaction === 'prompted') {
+      assertAcceptedScreenshot(context.root, `workspace-regeneration-${entry.name}-before-yes`);
+      assertAcceptedScreenshot(context.root, `workspace-regeneration-${entry.name}-before-overwrite-yes`);
+      assertAcceptedScreenshot(context.root, `workspace-regeneration-${entry.name}-after-yes`);
+    } else {
+      assertAcceptedScreenshot(context.root, `workspace-regeneration-${entry.name}-after-repair`);
+    }
     assertAcceptedScreenshot(context.root, `workspace-regeneration-${entry.name}-reopened`);
   }
   for (const observation of result.observations) {
-    assert.strictEqual(observation.realOverwriteYesMouseInput, true);
-    assert.strictEqual(observation.initializationYesCount, 1);
-    assert.strictEqual(observation.overwriteYesCount, 1);
+    const prompted = observation.interaction === 'prompted';
+    assert.strictEqual(observation.realYesMouseInput, prompted);
+    assert.strictEqual(observation.realOverwriteYesMouseInput, prompted);
+    assert.strictEqual(observation.initializationYesCount, prompted ? 1 : 0);
+    assert.strictEqual(observation.overwriteYesCount, prompted ? 1 : 0);
   }
   assertAcceptedScreenshot(context.root, 'workspace-regeneration-baseline');
   const profileLogIndices = walkFiles(path.join(context.root, 'vscode-logs')).filter(

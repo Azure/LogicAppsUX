@@ -53,7 +53,7 @@ test('producer plans preserve the expected finite checkpoint counts', () => {
     httpTimeoutLifecycle: 38,
     statelessVariablesLifecycle: 23,
     runAfterPersistenceLifecycle: 35,
-    workspaceArtifactRegeneration: 25,
+    workspaceArtifactRegeneration: 19,
     workspaceMultiRoot: 3,
   });
   assert.equal(httpCatalogGroups.flatMap((group) => group.steps).length, 38);

@@ -12,12 +12,16 @@ import { dependencyUpdateCheckIntervalMs, lastDependencyUpdateCheckKey } from '.
  * against the newest published version (npm/GitHub). Local presence and integrity checks
  * (existence, the on-disk integrity manifest, and the local `--version` spawn) always run
  * regardless of this throttle, so a missing or corrupted binary is still reinstalled on every
- * activation. Performing the network lookups on every activation is the main contributor to
- * slow startup, so we only do it at most once per {@link dependencyUpdateCheckIntervalMs}.
+ * activation. Strict E2E validation also suppresses update replacement so repeated isolated
+ * profiles validate the same admitted bytes instead of racing to mutate their shared dependency
+ * root. Otherwise, network lookups run at most once per {@link dependencyUpdateCheckIntervalMs}.
  * @param {number} now - Current time in epoch ms. Defaults to Date.now(). Injectable for tests.
  * @returns {boolean} True if the network update checks should run.
  */
 export function shouldCheckForDependencyUpdates(now: number = Date.now()): boolean {
+  if (process.env.LA_E2E_STRICT_DEPENDENCY_VALIDATION === '1') {
+    return false;
+  }
   const lastCheck = ext.context?.globalState.get<number>(lastDependencyUpdateCheckKey);
   if (typeof lastCheck !== 'number' || Number.isNaN(lastCheck)) {
     return true;

@@ -3,7 +3,9 @@ import * as path from 'node:path';
 import { test } from 'node:test';
 import type { CdpConnection } from './cdpClient';
 import {
+  clickContextMenuText,
   connectToOwnedRegularWorkbench,
+  dispatchContextMenu,
   ensureWorkbenchPanelClosed,
   ensureRegularWorkbenchExplorer,
   matchesRegularWorkbenchShell,
@@ -179,6 +181,72 @@ test('workbench panel closure fails when the panel remains visible', async () =>
       connect: async () => fake as unknown as CdpConnection,
     }),
     /Workbench action deadline exhausted|Workbench observation did not satisfy its postcondition/
+  );
+});
+
+test('context menu dispatch moves before the exact right-click sequence', async () => {
+  const events: Record<string, unknown>[] = [];
+  await dispatchContextMenu(
+    {
+      async evaluate<T>(): Promise<T> {
+        return undefined as T;
+      },
+      async send(_method: string, params?: Record<string, unknown>) {
+        events.push(params ?? {});
+        return {};
+      },
+    },
+    { x: 10, y: 20 }
+  );
+  assert.deepEqual(
+    events.map((event) => ({ type: event.type, button: event.button, buttons: event.buttons })),
+    [
+      { type: 'mouseMoved', button: undefined, buttons: undefined },
+      { type: 'mousePressed', button: 'right', buttons: 2 },
+      { type: 'mouseReleased', button: 'right', buttons: 0 },
+    ]
+  );
+});
+
+test('context menu action waits for one exact hit-testable item and reports candidates on failure', async () => {
+  let reads = 0;
+  const clicked: string[] = [];
+  const fake = {
+    async evaluate<T>(): Promise<T> {
+      reads++;
+      return {
+        candidates: [{ text: 'Create new project...', enabled: true, hitTestable: reads > 1 }],
+        point: reads > 1 ? { x: 10, y: 20 } : null,
+      } as T;
+    },
+    async send(method: string) {
+      if (method === 'Input.dispatchMouseEvent') {
+        clicked.push(method);
+      }
+      return {};
+    },
+  };
+  await clickContextMenuText(fake, 'Create new project...', Date.now() + 1000);
+  assert.ok(reads > 1);
+  assert.deepEqual(clicked, ['Input.dispatchMouseEvent', 'Input.dispatchMouseEvent', 'Input.dispatchMouseEvent']);
+
+  await assert.rejects(
+    clickContextMenuText(
+      {
+        async evaluate<T>(): Promise<T> {
+          return {
+            candidates: [{ text: 'Create workflow...', enabled: true, hitTestable: true }],
+            point: null,
+          } as T;
+        },
+        async send() {
+          return {};
+        },
+      },
+      'Create new project...',
+      Date.now() + 20
+    ),
+    /Create workflow/
   );
 });
 

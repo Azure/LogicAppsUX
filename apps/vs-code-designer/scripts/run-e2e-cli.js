@@ -547,6 +547,7 @@ async function runDirectFamily(suiteId, visibleDelayMs, options = {}) {
     suite,
     process.env
   );
+  const regenerationDiagnosticsDestination = getDirectRegenerationDiagnosticsDestination(suite, context, resultsDir, process.env);
   // Fresh unique phase journal and label-specific receipts, even when callers
   // inherited an old JSONL or a previously successful terminal artifact.
   fs.writeFileSync(context.phaseResultsPath, '');
@@ -612,7 +613,11 @@ async function runDirectFamily(suiteId, visibleDelayMs, options = {}) {
     try {
       await cleanupSuiteTransientRoots(context);
       if (suite.id === 'workspaceArtifactRegeneration') {
-        publishRegenerationDiagnostics(context, process.env);
+        assert.equal(context.regenerationStageEvidenceVerified, true, 'Outer regeneration staging was not verified');
+        publishRegenerationDiagnostics(context, {
+          ...process.env,
+          LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR: regenerationDiagnosticsDestination,
+        });
       }
       context.transientCleanupVerified = true;
     } catch (cleanupError) {
@@ -671,6 +676,15 @@ function resolvePreparedExtensionsSeed(explicitSeedDir) {
   );
 }
 
+function getDirectRegenerationDiagnosticsDestination(suite, context, resultsDir, env = process.env) {
+  if (suite.id !== 'workspaceArtifactRegeneration') {
+    return undefined;
+  }
+  const invocation = context.invocation || context.evidenceInvocation;
+  assert.ok(invocation, 'Direct regeneration diagnostics require an invocation identity');
+  return path.resolve(env.LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR || path.join(resultsDir, `${suite.id}.diagnostics-${invocation}`));
+}
+
 function publishRegenerationDiagnostics(context, env) {
   const destination = env.LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR;
   if (!destination) {
@@ -680,6 +694,7 @@ function publishRegenerationDiagnostics(context, env) {
   if (!fs.existsSync(source)) {
     throw new Error(`Workspace regeneration diagnostics were not produced at the wrapper-owned path: ${source}`);
   }
+  assertRequiredRegenerationDiagnosticsFiles(source);
   const resolvedSource = path.resolve(source);
   const resolvedDestination = path.resolve(destination);
   if (resolvedSource === resolvedDestination) {
@@ -694,6 +709,66 @@ function publishRegenerationDiagnostics(context, env) {
     throw new Error(`Workspace regeneration diagnostics publication did not create the destination: ${resolvedDestination}`);
   }
   return resolvedDestination;
+}
+
+const requiredRegenerationDiagnosticsFiles = [
+  'invocation.json',
+  'final-result.json',
+  'terminal-result.json',
+  'cleanup-ledger.json',
+  'phase-results.jsonl',
+  'code.log',
+  'prompt-observations.jsonl',
+];
+
+function assertRequiredRegenerationDiagnosticsFiles(root) {
+  for (const name of requiredRegenerationDiagnosticsFiles) {
+    const file = path.join(root, name);
+    if (!fs.existsSync(file)) {
+      throw new Error(`Workspace regeneration diagnostics are missing required staged evidence: ${file}`);
+    }
+    const stat = fs.lstatSync(file);
+    if (!stat.isFile() || stat.isSymbolicLink()) {
+      throw new Error(`Workspace regeneration staged evidence must be an original regular file: ${file}`);
+    }
+  }
+}
+
+async function finalizeOuterRegenerationStageEvidence(
+  context,
+  { publishStageEvidence = publishRegenerationStageEvidence, assertStageEvidence = assertRegenerationStageEvidence } = {}
+) {
+  const root = path.join(context.reportsRoot, 'workspace-regeneration');
+  const regenerationContext = readJsonIfExists(path.join(root, 'invocation.json'));
+  const result = readJsonIfExists(path.join(root, 'final-result.json'));
+  if (!regenerationContext || !result) {
+    throw new Error(`Workspace regeneration diagnostics are incomplete before outer staging: ${root}`);
+  }
+  const workspaceParent = path.resolve(regenerationContext.workspaceParent);
+  const workspaceRoot = fs.realpathSync.native(context.workspaceRoot);
+  const relative = path.relative(workspaceRoot, workspaceParent);
+  assert.ok(relative && !relative.startsWith('..') && !path.isAbsolute(relative), 'Regeneration workspace escaped its owned root');
+  if (fs.existsSync(workspaceParent)) {
+    assert.equal(fs.realpathSync.native(workspaceParent), workspaceParent, 'Regeneration workspace must not be a symlink');
+    const cleanup = await cleanupDeferredWorkspaceParent(workspaceParent);
+    assert.equal(cleanup.verified, true, `Workspace regeneration outer cleanup failed: ${cleanup.reason}`);
+  }
+  const cleanup = {
+    schemaVersion: 1,
+    generatedAt: new Date().toISOString(),
+    workspaceParent,
+    verified: !fs.existsSync(workspaceParent),
+    action: fs.existsSync(workspaceParent) ? 'preserved' : 'removed',
+    reason: fs.existsSync(workspaceParent) ? 'Outer containment cleanup did not remove the owned workspace' : '',
+  };
+  if (!cleanup.verified) {
+    throw new Error(`Workspace regeneration outer cleanup was not verified: ${workspaceParent}`);
+  }
+  const phases = readJsonLinesIfExists(context.phaseResultsPath);
+  const terminal = publishStageEvidence(regenerationContext, result, phases, cleanup);
+  assertStageEvidence(root, regenerationContext.identity);
+  assertRequiredRegenerationDiagnosticsFiles(root);
+  return { cleanup, root, terminal };
 }
 
 function sanitizeInheritedGitCommandConfigEnv(env) {
@@ -954,11 +1029,20 @@ function runSuiteWrapperProcess({ suite, context, env, visibleDelayMs, timeoutMs
       fs.rmSync(containmentReceiptPath, { force: true });
       const reportedExitCode = processCleanup.verified ? processCleanup.rootExitCode : exitCode;
       const reportedSignal = processCleanup.verified ? processCleanup.rootSignal : signal;
-      const error = timedOut
+      let error = timedOut
         ? new Error(`suite timed out after ${timeoutMs}ms`)
         : processCleanup.error
           ? new Error(processCleanup.error)
           : undefined;
+      if (suite.id === 'workspaceArtifactRegeneration' && processCleanup.verified && reportedExitCode === 0 && !reportedSignal && !error) {
+        try {
+          await finalizeOuterRegenerationStageEvidence(context);
+          context.regenerationStageEvidenceVerified = true;
+        } catch (stagingError) {
+          error = stagingError;
+          console.error(`[workspace-regeneration] Outer family staging failed: ${formatErrorForDiagnostics(stagingError)}`);
+        }
+      }
       writeSuiteFinalEvidence({
         context,
         suite,
@@ -1281,6 +1365,7 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
       observedPhaseIds.length === expectedPhaseIds.length &&
       observedPhaseIds.every((phaseId, index) => phaseId === expectedPhaseIds[index]) &&
       phaseResults.every((phase) => phase.complete === true && phase.exitCode === 0 && !phase.signal));
+  const regenerationStagingVerified = suite.id !== 'workspaceArtifactRegeneration' || context.regenerationStageEvidenceVerified === true;
   const terminalComplete =
     phaseCompleteness &&
     phaseCleanupVerified &&
@@ -1291,6 +1376,7 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     lifecycleSucceeded &&
     statelessSucceeded &&
     directSucceeded &&
+    regenerationStagingVerified &&
     (!context.invocation || (context.provenanceVerified === true && context.ownedRootCleanup?.verified === true));
   const finalizedPhaseResults = terminalComplete ? phaseResults : phaseResults.map(clearOgfScenarios);
   const ogfScenarios = terminalComplete ? collectOgfScenarios(finalizedPhaseResults) : [];
@@ -1313,6 +1399,7 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
       phaseCompleteness &&
       phaseCleanupVerified &&
       processCleanup.verified === true &&
+      regenerationStagingVerified &&
       (!context.invocation || (context.provenanceVerified === true && context.ownedRootCleanup?.verified === true)) &&
       (!context.directFamily || directSucceeded),
     ...(context.directFamily ? { transientCleanupVerified: context.transientCleanupVerified === true } : {}),
@@ -3095,21 +3182,28 @@ function runVscodeTest(args, options = {}) {
         for (const phase of regenerationPhases) {
           writeSuitePhaseResult(childEnv, { ...phase, cleanupLedger });
         }
-        try {
-          const terminal = publishRegenerationStageEvidence(regenerationContext, regenerationResult, regenerationPhases, cleanupLedger);
-          assertRegenerationStageEvidence(regenerationContext.root, regenerationContext.identity);
-          writeDirectRegenerationEvidence(regenerationContext, terminal, cleanupLedger);
-        } catch (error) {
-          regenerationError = error;
-          console.error(`[workspace-regeneration] Strict family staging evidence failed: ${String(error)}`);
-          if (regenerationResult) {
-            regenerationResult.complete = false;
-            regenerationResult.errors.push(String(error));
-            try {
-              const terminal = publishRegenerationStageEvidence(regenerationContext, regenerationResult, regenerationPhases, cleanupLedger);
-              writeDirectRegenerationEvidence(regenerationContext, terminal, cleanupLedger);
-            } catch (publishError) {
-              console.error(`[workspace-regeneration] Failed to retain unsuccessful staging result: ${String(publishError)}`);
+        if (shouldFinalizeRegenerationStageEvidence(childEnv)) {
+          try {
+            const terminal = publishRegenerationStageEvidence(regenerationContext, regenerationResult, regenerationPhases, cleanupLedger);
+            assertRegenerationStageEvidence(regenerationContext.root, regenerationContext.identity);
+            writeDirectRegenerationEvidence(regenerationContext, terminal, cleanupLedger);
+          } catch (error) {
+            regenerationError = error;
+            console.error(`[workspace-regeneration] Strict family staging evidence failed: ${String(error)}`);
+            if (regenerationResult) {
+              regenerationResult.complete = false;
+              regenerationResult.errors.push(String(error));
+              try {
+                const terminal = publishRegenerationStageEvidence(
+                  regenerationContext,
+                  regenerationResult,
+                  regenerationPhases,
+                  cleanupLedger
+                );
+                writeDirectRegenerationEvidence(regenerationContext, terminal, cleanupLedger);
+              } catch (publishError) {
+                console.error(`[workspace-regeneration] Failed to retain unsuccessful staging result: ${String(publishError)}`);
+              }
             }
           }
         }
@@ -3172,6 +3266,10 @@ function shouldRetainDeferredWorkspaceForOuterContainment(options, env, regenera
     options.retainWorkspaceForSupplement === true &&
     (Boolean(env.LA_E2E_CLI_MULTI_ROOT_HANDOFF) || (Boolean(regenerationContext) && env.LA_E2E_CLI_SUITE_WRAPPER_CHILD === '1'))
   );
+}
+
+function shouldFinalizeRegenerationStageEvidence(env) {
+  return !(env.LA_E2E_CLI_SUITE_WRAPPER_CHILD === '1' && Boolean(env.LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH));
 }
 
 function captureGeneratedWorkspaceDiagnostics({ env, label, outcome, ownedRoots = [] }) {
@@ -4067,10 +4165,12 @@ module.exports = {
   _test: {
     getDirectRegenerationEvidencePaths,
     getDirectFamilyUserDataParent,
+    getDirectRegenerationDiagnosticsDestination,
     beginDirectRegenerationEvidence,
     writeDirectRegenerationEvidence,
     publishRegenerationStageEvidence,
     assertRegenerationStageEvidence,
+    shouldFinalizeRegenerationStageEvidence,
     assertSafeRuntimeDependenciesRoot,
     canUseInteractiveMsnWeatherAzureTargetEnv,
     captureGeneratedWorkspaceDiagnostics,
@@ -4126,6 +4226,7 @@ module.exports = {
     runSuiteWrapperProcess,
     runDirectRegisteredSuite,
     publishRegenerationDiagnostics,
+    finalizeOuterRegenerationStageEvidence,
     shouldRetainDeferredWorkspaceForOuterContainment,
     createLinePrefixer,
     readContainmentReceipt,
@@ -4987,17 +5088,22 @@ function assertRegenerationStageEvidence(root, expectedIdentity) {
     names
   );
   for (const observation of primary.observations) {
-    assert.equal(observation.realYesMouseInput, true);
-    assert.equal(observation.realOverwriteYesMouseInput, true);
-    assert.equal(observation.initializationYesCount, 1);
-    assert.equal(observation.overwriteYesCount, 1);
+    const prompted = observation.interaction === 'prompted';
+    assert.ok(prompted || observation.interaction === 'silent');
+    assert.equal(observation.realYesMouseInput, prompted);
+    assert.equal(observation.realOverwriteYesMouseInput, prompted);
+    assert.equal(observation.initializationYesCount, prompted ? 1 : 0);
+    assert.equal(observation.overwriteYesCount, prompted ? 1 : 0);
     assert.equal(observation.freshReopen, true);
   }
+  const promptedNames = names.slice(0, 3);
+  const silentNames = names.slice(3);
   const checkpoints = [
     'workspace-regeneration-baseline',
-    ...names.flatMap((name) =>
+    ...promptedNames.flatMap((name) =>
       ['before-yes', 'before-overwrite-yes', 'after-yes', 'reopened'].map((suffix) => `workspace-regeneration-${name}-${suffix}`)
     ),
+    ...silentNames.flatMap((name) => ['after-repair', 'reopened'].map((suffix) => `workspace-regeneration-${name}-${suffix}`)),
   ];
   for (const checkpoint of checkpoints) {
     const bytes = fs.readFileSync(path.join(root, 'screenshots', `${checkpoint}.png`));

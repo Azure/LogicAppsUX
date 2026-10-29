@@ -336,14 +336,8 @@ const createWorkspaceValidationCheckpoints = Object.freeze([
   ['create-workspace-validation-rules-engine-function-name-is-empty-empty', 'Reject an empty rules-engine function name.'],
   ['create-workspace-rules-engine-fields-valid', 'Complete a valid rules-engine form.'],
 ]);
-const regenerationCases = Object.freeze([
-  'vscode-single',
-  'vscode-multiple',
-  'vscode-repeat',
-  'root-single',
-  'root-multiple',
-  'root-repeat',
-]);
+const promptedRegenerationCases = Object.freeze(['vscode-single', 'vscode-multiple', 'vscode-repeat']);
+const silentRegenerationCases = Object.freeze(['root-single', 'root-multiple', 'root-repeat']);
 
 function group(id, title, description, steps) {
   return Object.freeze({ id, title, description, steps: Object.freeze(steps) });
@@ -1066,17 +1060,31 @@ function regenerationCatalog() {
     group(
       'variants',
       'Regeneration variants',
-      'Uses the six ordered production regeneration cases, with four distinct prompt/result checkpoints per case.',
-      regenerationCases.flatMap((caseLabel) =>
-        [
-          ['before-yes', 'Observe initialization prompt.', 'The real initialization prompt offers an enabled Yes.'],
-          ['before-overwrite-yes', 'Observe overwrite confirmation.', 'The distinct overwrite confirmation offers an enabled Yes.'],
-          ['after-yes', 'Observe regenerated files after confirmation.', 'The required targets are restored without changing non-targets.'],
-          ['reopened', 'Reopen the regenerated workspace.', 'A fresh workbench verifies the regenerated contract.'],
-        ].map(([suffix, action, expectedProof]) =>
-          simpleStep(`workspace-regeneration-${caseLabel}-${suffix}`, caseLabel, action, expectedProof)
-        )
-      )
+      'Uses three prompted .vscode repairs and three silent root-artifact repairs, each followed by a fresh reopen.',
+      [
+        ...promptedRegenerationCases.flatMap((caseLabel) =>
+          [
+            ['before-yes', 'Observe initialization prompt.', 'The real initialization prompt offers an enabled Yes.'],
+            ['before-overwrite-yes', 'Observe overwrite confirmation.', 'The distinct overwrite confirmation offers an enabled Yes.'],
+            [
+              'after-yes',
+              'Observe regenerated files after confirmation.',
+              'The required targets are restored without changing non-targets.',
+            ],
+            ['reopened', 'Reopen the regenerated workspace.', 'A fresh workbench verifies the regenerated contract.'],
+          ].map(([suffix, action, expectedProof]) =>
+            simpleStep(`workspace-regeneration-${caseLabel}-${suffix}`, caseLabel, action, expectedProof)
+          )
+        ),
+        ...silentRegenerationCases.flatMap((caseLabel) =>
+          [
+            ['after-repair', 'Observe automatic root-artifact repair.', 'The required root targets are restored without a .vscode prompt.'],
+            ['reopened', 'Reopen the regenerated workspace.', 'A fresh workbench verifies the regenerated contract.'],
+          ].map(([suffix, action, expectedProof]) =>
+            simpleStep(`workspace-regeneration-${caseLabel}-${suffix}`, caseLabel, action, expectedProof)
+          )
+        ),
+      ]
     ),
   ];
 }

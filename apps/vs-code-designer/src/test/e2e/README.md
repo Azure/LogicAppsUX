@@ -500,7 +500,9 @@ durable writes and dismissal of both prompts. Missing/disabled/unrelated/
 ambiguous/disappearing overwrite dialogs, navigation, early writes, capture
 expiry, or uncertain input RPCs fail without input replay or a fresh clock.
 `before-overwrite-yes` PNG/readiness pairs and both actual Yes counts are required
-in addition to the existing branch evidence.
+for the three `.vscode` variants. The three root-artifact variants follow the
+product's silent `ensureProjectFiles` repair path and require `after-repair`
+evidence with zero prompt clicks.
 
 The shared suite ID is **`workspaceArtifactRegeneration`**, available explicitly
 through `--suites workspaceArtifactRegeneration` or the package script
@@ -665,6 +667,10 @@ root, including when a consumer sets `LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH` (whic
 otherwise selects JSONL-only batch reporting). Consumer baseline result destinations
 can remain separate; the family root is authoritative for this supplement:
 
+Both direct and batch selectors finalize this evidence in the shared outer process
+wrapper, after retained-process closure and owned-workspace cleanup. A successful
+body without verified family staging cannot produce a successful terminal receipt.
+
 | File/path relative to the family root | Safe archive use |
 |---|---|
 | `invocation.json` | Current invocation/job/source/platform and owned-root admission |
@@ -679,9 +685,10 @@ can remain separate; the family root is authoritative for this supplement:
 | `vscode-logs/**` | **Only this producer-sanitized subtree**, including `profile-log-index.md`, `copy-summary.json`, copied logs and channel diagnostics |
 
 `<branch>` is exactly `vscode-single`, `vscode-multiple`, `vscode-repeat`,
-`root-single`, `root-multiple`, `root-repeat`; `<checkpoint>` is exactly
-`before-yes`, `before-overwrite-yes`, `after-yes`, `reopened`.
-Success requires all **25 PNG/accepted-sidecar pairs**. Archive only these exact
+`root-single`, `root-multiple`, `root-repeat`. The `.vscode` checkpoints are
+`before-yes`, `before-overwrite-yes`, `after-yes`, and `reopened`; root-artifact
+checkpoints are `after-repair` and `reopened`.
+Success requires all **19 PNG/accepted-sidecar pairs**. Archive only these exact
 paths, not `*.json` or the whole diagnostic directory. **Exclude**
 `*-profile.json` locator markers and raw `*-code.log` files (the safe aggregate
 is `code.log`), all raw profiles/`User`/`globalStorage`/`workspaceStorage`,

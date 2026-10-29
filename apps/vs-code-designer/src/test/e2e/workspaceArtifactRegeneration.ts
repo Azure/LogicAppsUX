@@ -12,15 +12,25 @@ export const regenerationArtifacts = [
   'host.json',
   'local.settings.json',
 ] as const;
+export const regenerationInitializationArtifacts = ['workflow-designtime/host.json', 'workflow-designtime/local.settings.json'] as const;
 
 export type RegenerationArtifact = (typeof regenerationArtifacts)[number];
-export const regenerationCases: ReadonlyArray<{ name: string; targets: readonly RegenerationArtifact[] }> = [
-  { name: 'vscode-single', targets: ['.vscode/tasks.json'] },
-  { name: 'vscode-multiple', targets: ['.vscode/launch.json', '.vscode/settings.json', '.vscode/extensions.json'] },
-  { name: 'vscode-repeat', targets: ['.vscode/tasks.json'] },
-  { name: 'root-single', targets: ['host.json'] },
-  { name: 'root-multiple', targets: ['host.json', 'local.settings.json'] },
-  { name: 'root-repeat', targets: ['local.settings.json'] },
+export type RegenerationInteraction = 'prompted' | 'silent';
+export const regenerationCases: ReadonlyArray<{
+  name: string;
+  targets: readonly RegenerationArtifact[];
+  interaction: RegenerationInteraction;
+}> = [
+  { name: 'vscode-single', targets: ['.vscode/tasks.json'], interaction: 'prompted' },
+  {
+    name: 'vscode-multiple',
+    targets: ['.vscode/launch.json', '.vscode/settings.json', '.vscode/extensions.json'],
+    interaction: 'prompted',
+  },
+  { name: 'vscode-repeat', targets: ['.vscode/tasks.json'], interaction: 'prompted' },
+  { name: 'root-single', targets: ['host.json'], interaction: 'silent' },
+  { name: 'root-multiple', targets: ['host.json', 'local.settings.json'], interaction: 'silent' },
+  { name: 'root-repeat', targets: ['local.settings.json'], interaction: 'silent' },
 ];
 
 export const regenerationPhaseIds = [
@@ -118,6 +128,9 @@ export function captureRegenerationSnapshot(workspaceParent: string, workspaceDi
     for (const entry of fs.readdirSync(directory, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name))) {
       const absolute = path.join(directory, entry.name);
       assertOwnedRegenerationPath(workspaceParent, absolute);
+      if (entry.isDirectory() && entry.name === '.git') {
+        continue;
+      }
       const relative = path.relative(workspaceDir, absolute).split(path.sep).join('/');
       assert.ok(entry.isDirectory() || entry.isFile(), 'Only regular wizard files/directories are admitted');
       entries.push(`${entry.isDirectory() ? 'directory' : 'file'}:${relative}`);
@@ -138,10 +151,42 @@ export function captureTemplateContracts(appDir: string): Record<RegenerationArt
   ) as Record<RegenerationArtifact, unknown>;
 }
 
+function normalizeLocalSettingsContract(value: unknown): unknown {
+  const normalized = structuredClone(value) as {
+    Values?: Record<string, unknown>;
+  };
+  assert.ok(
+    normalized && typeof normalized === 'object' && normalized.Values,
+    'local.settings.json must contain Values from its original wizard-generated JSON contract'
+  );
+  const storage = normalized.Values.AzureWebJobsStorage;
+  assert.ok(
+    typeof storage === 'string' && storage.length > 0,
+    'local.settings.json must retain a nonempty AzureWebJobsStorage value from its original wizard-generated JSON contract'
+  );
+  normalized.Values.AzureWebJobsStorage = '<runtime-derived-storage>';
+  const projectDirectory = normalized.Values.ProjectDirectoryPath;
+  assert.ok(
+    typeof projectDirectory === 'string' && projectDirectory.length > 0,
+    'local.settings.json must retain ProjectDirectoryPath from its original wizard-generated JSON contract'
+  );
+  const normalizedPath = path.normalize(projectDirectory);
+  normalized.Values.ProjectDirectoryPath = process.platform === 'win32' ? normalizedPath.toLowerCase() : normalizedPath;
+  return normalized;
+}
+
 export function assertTemplateContracts(appDir: string, expected: Record<RegenerationArtifact, unknown>): void {
   for (const artifact of regenerationArtifacts) {
     const actual: unknown = JSON.parse(fs.readFileSync(path.join(appDir, artifact), 'utf8'));
-    assert.deepStrictEqual(actual, expected[artifact], `${artifact} must equal its original wizard-generated JSON contract`);
+    if (artifact === 'local.settings.json') {
+      assert.deepStrictEqual(
+        normalizeLocalSettingsContract(actual),
+        normalizeLocalSettingsContract(expected[artifact]),
+        `${artifact} must remain semantically consistent with its original wizard-generated JSON contract`
+      );
+    } else {
+      assert.deepStrictEqual(actual, expected[artifact], `${artifact} must equal its original wizard-generated JSON contract`);
+    }
   }
 }
 
@@ -182,19 +227,42 @@ export function assertRegenerationNonTargets(
   workspaceDir: string,
   appDir: string,
   targets: readonly RegenerationArtifact[],
-  regenerated: boolean
+  regenerated: boolean,
+  allowedInitializationFiles: readonly string[] = []
 ): void {
   const names = new Set(targetNames(workspaceDir, appDir, targets));
+  const allowedNames = new Set(allowedInitializationFiles);
+  for (const name of allowedNames) {
+    assert.ok(!before.files[name], `${name} may be admitted only when project initialization creates it`);
+  }
   for (const name of names) {
     assert.ok(before.files[name], `${name} must belong to the original wizard snapshot`);
     assert.strictEqual(Boolean(after.files[name]), regenerated, `${name} must be ${regenerated ? 'regenerated' : 'deleted'}`);
   }
   const withoutTargets = (snapshot: RegenerationSnapshot) =>
-    Object.fromEntries(Object.entries(snapshot.files).filter(([name]) => !names.has(name)));
+    Object.fromEntries(Object.entries(snapshot.files).filter(([name]) => !names.has(name) && !allowedNames.has(name)));
   assert.deepStrictEqual(withoutTargets(after), withoutTargets(before), 'Every non-target file must remain byte-for-byte unchanged');
+  const allowedEntries = new Set(
+    allowedInitializationFiles.flatMap((name) => {
+      const entries = [`file:${name}`];
+      let directory = path.posix.dirname(name);
+      while (directory !== '.') {
+        entries.push(`directory:${directory}`);
+        directory = path.posix.dirname(directory);
+      }
+      return entries;
+    })
+  );
   const entriesWithoutTargets = (snapshot: RegenerationSnapshot) =>
-    snapshot.entries.filter((entry) => !names.has(entry.replace(/^file:/, '')));
+    snapshot.entries.filter((entry) => !names.has(entry.replace(/^file:/, '')) && !allowedEntries.has(entry));
   assert.deepStrictEqual(entriesWithoutTargets(after), entriesWithoutTargets(before), 'Non-target directory entries must remain unchanged');
+}
+
+export function getMissingRegenerationInitializationFiles(before: RegenerationSnapshot, workspaceDir: string, appDir: string): string[] {
+  const appRelative = path.relative(workspaceDir, appDir).split(path.sep).join('/');
+  return regenerationInitializationArtifacts
+    .map((artifact) => path.posix.join(appRelative, artifact))
+    .filter((name) => !before.files[name]);
 }
 
 export function selectRegenerationYes(containers: WorkbenchPromptContainer[], appDir: string): WorkbenchPromptSelection {
@@ -248,17 +316,34 @@ export function assertRegenerationPromptObservation(observation: RegenerationPro
   assert.ok(!observation.failure, observation.failure);
 }
 
-export async function requireRegenerationYes(
+export function assertSilentRegenerationObservation(observation: RegenerationPromptObservation, appDir: string): void {
+  assertRegenerationPromptObservation(observation);
+  assert.strictEqual(
+    selectRegenerationYes(observation.containers, appDir).visible,
+    false,
+    'Root artifact repair must not use the .vscode initialization prompt'
+  );
+  assert.strictEqual(
+    selectRegenerationOverwriteYes(observation.containers).visible,
+    false,
+    'Root artifact repair must not use the .vscode overwrite confirmation'
+  );
+}
+
+async function requireRegenerationYesObservation(
   read: () => Promise<RegenerationPromptObservation>,
   appDir: string,
   phase: RegenerationDeadline,
   filesHealed: () => boolean,
-  clock: { now: () => number; poll: (remainingMs: number) => Promise<void> } = {
-    now: Date.now,
-    poll: async (remainingMs) => new Promise((resolve) => setTimeout(resolve, Math.min(100, remainingMs))),
-  }
-): Promise<WorkbenchPromptSelection> {
+  clock: { now: () => number; poll: (remainingMs: number) => Promise<void> },
+  expectedTimeOrigin?: number,
+  revealBlocked?: () => Promise<void>,
+  stablePointReads = 1
+): Promise<{ observation: RegenerationPromptObservation; selection: WorkbenchPromptSelection }> {
   let silentHealingObserved = false;
+  let blockedPromptObserved = false;
+  let previousPoint: { x: number; y: number } | undefined;
+  let stableReads = 0;
   while (clock.now() < phase.deadline) {
     remainingRegenerationBudget(phase, clock.now());
     const observation = await read();
@@ -267,16 +352,57 @@ export async function requireRegenerationYes(
     silentHealingObserved ||= filesHealed();
     const selection = selectRegenerationYes(observation.containers, appDir);
     if (observation.ready && selection.visible) {
-      assert.ok(selection.point, 'The real initialization prompt must offer an enabled, unobstructed Yes');
-      return selection;
+      if (selection.point) {
+        if (expectedTimeOrigin !== undefined) {
+          assert.strictEqual(
+            observation.timeOrigin,
+            expectedTimeOrigin,
+            'Initialization prompt must retain the original app/workbench binding'
+          );
+        }
+        if (previousPoint?.x === selection.point.x && previousPoint.y === selection.point.y) {
+          stableReads++;
+        } else {
+          previousPoint = selection.point;
+          stableReads = 1;
+        }
+        if (stableReads >= stablePointReads) {
+          return { observation, selection };
+        }
+      } else {
+        previousPoint = undefined;
+        stableReads = 0;
+        blockedPromptObserved = true;
+        await revealBlocked?.();
+        remainingRegenerationBudget(phase, clock.now());
+      }
+    } else {
+      previousPoint = undefined;
+      stableReads = 0;
     }
     await clock.poll(remainingRegenerationBudget(phase, clock.now()));
   }
   throw new Error(
     silentHealingObserved
       ? `Regeneration ${phase.phase}: files healed silently, but the required initialization prompt/real Yes was absent`
-      : `Regeneration ${phase.phase}: required initialization prompt/real Yes was absent before the original deadline`
+      : blockedPromptObserved
+        ? `Regeneration ${phase.phase}: initialization prompt appeared, but its real control never offered an enabled, unobstructed Yes`
+        : `Regeneration ${phase.phase}: required initialization prompt/real Yes was absent before the original deadline`
   );
+}
+
+export async function requireRegenerationYes(
+  read: () => Promise<RegenerationPromptObservation>,
+  appDir: string,
+  phase: RegenerationDeadline,
+  filesHealed: () => boolean,
+  clock: { now: () => number; poll: (remainingMs: number) => Promise<void> } = {
+    now: Date.now,
+    poll: async (remainingMs) => new Promise((resolve) => setTimeout(resolve, Math.min(100, remainingMs))),
+  },
+  revealBlocked?: () => Promise<void>
+): Promise<WorkbenchPromptSelection> {
+  return (await requireRegenerationYesObservation(read, appDir, phase, filesHealed, clock, undefined, revealBlocked)).selection;
 }
 
 export async function confirmRegenerationPromptSequence(options: {
@@ -287,6 +413,7 @@ export async function confirmRegenerationPromptSequence(options: {
   assertBeforeOverwrite: () => void;
   capture: (kind: 'initialize' | 'overwrite') => Promise<void>;
   click: (point: { x: number; y: number }) => Promise<void>;
+  revealBlocked?: () => Promise<void>;
   clock?: { now: () => number; poll: (remainingMs: number) => Promise<void> };
 }): Promise<{ initializationYesCount: number; overwriteYesCount: number }> {
   const clock = options.clock ?? {
@@ -294,25 +421,52 @@ export async function confirmRegenerationPromptSequence(options: {
     poll: async (remainingMs: number) => new Promise<void>((resolve) => setTimeout(resolve, Math.min(100, remainingMs))),
   };
   const budget = () => remainingRegenerationBudget(options.phase, clock.now());
-  await requireRegenerationYes(options.read, options.appDir, options.phase, options.filesHealed, clock);
+  const beforeCapture = await requireRegenerationYesObservation(
+    options.read,
+    options.appDir,
+    options.phase,
+    options.filesHealed,
+    clock,
+    undefined,
+    options.revealBlocked
+  );
+  assert.strictEqual(
+    selectRegenerationOverwriteYes(beforeCapture.observation.containers).visible,
+    false,
+    'Overwrite must be a second distinct prompt'
+  );
   await options.capture('initialize');
   budget();
-  const initial = await options.read();
-  budget();
-  assertRegenerationPromptObservation(initial);
-  const initialize = selectRegenerationYes(initial.containers, options.appDir);
-  assert.ok(initial.ready && initialize.point, 'The same real initialization prompt must remain enabled immediately before Yes');
-  assert.strictEqual(selectRegenerationOverwriteYes(initial.containers).visible, false, 'Overwrite must be a second distinct prompt');
+  const initial = await requireRegenerationYesObservation(
+    options.read,
+    options.appDir,
+    options.phase,
+    options.filesHealed,
+    clock,
+    beforeCapture.observation.timeOrigin,
+    options.revealBlocked,
+    2
+  );
+  assert.strictEqual(
+    selectRegenerationOverwriteYes(initial.observation.containers).visible,
+    false,
+    'Overwrite must be a second distinct prompt'
+  );
   options.assertBeforeOverwrite();
   // An uncertain input RPC is fatal. Neither click is retried or replayed.
-  await options.click(initialize.point);
+  assert.ok(initial.selection.point);
+  await options.click(initial.selection.point);
   budget();
   const initializationYesCount = 1;
   while (clock.now() < options.phase.deadline) {
     const view = await options.read();
     budget();
     assertRegenerationPromptObservation(view);
-    assert.strictEqual(view.timeOrigin, initial.timeOrigin, 'The overwrite confirmation must belong to the same workbench document');
+    assert.strictEqual(
+      view.timeOrigin,
+      initial.observation.timeOrigin,
+      'The overwrite confirmation must belong to the same workbench document'
+    );
     options.assertBeforeOverwrite();
     const overwrite = selectRegenerationOverwriteYes(view.containers);
     if (view.ready && overwrite.visible) {
@@ -322,7 +476,10 @@ export async function confirmRegenerationPromptSequence(options: {
       const current = await options.read();
       budget();
       assertRegenerationPromptObservation(current);
-      assert.ok(current.ready && current.timeOrigin === initial.timeOrigin, 'Overwrite must retain the original app/workbench binding');
+      assert.ok(
+        current.ready && current.timeOrigin === initial.observation.timeOrigin,
+        'Overwrite must retain the original app/workbench binding'
+      );
       const actual = selectRegenerationOverwriteYes(current.containers);
       assert.ok(actual.point, 'The same real overwrite modal must remain enabled immediately before Yes');
       options.assertBeforeOverwrite();

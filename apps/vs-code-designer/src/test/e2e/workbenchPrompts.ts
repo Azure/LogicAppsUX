@@ -66,6 +66,32 @@ export function readWorkbenchPrompts(cdp: CdpEvaluator, timeoutMs = 3000): Promi
   return cdp.evaluate(undefined, workbenchPromptDomScript, { timeoutMs });
 }
 
+export async function revealWorkbenchPromptOption(
+  cdp: CdpEvaluator,
+  matchText: string,
+  optionTexts: readonly string[],
+  deadline: number
+): Promise<boolean> {
+  return cdp.evaluate<boolean>(
+    undefined,
+    `(() => {
+      const normalize = value => (value || '').replace(/\\s+/g, ' ').trim().toLowerCase();
+      const expectedPrompt = normalize(${JSON.stringify(matchText)});
+      const expectedOptions = ${JSON.stringify(optionTexts)}.map(normalize);
+      const containers = Array.from(document.querySelectorAll(
+        '.quick-input-widget, .monaco-dialog-box, [role="dialog"], .notification-toast, .notification-list-item'
+      )).filter(container => normalize(container.innerText || container.textContent || '').includes(expectedPrompt));
+      const options = Array.from(new Set(containers.flatMap(container =>
+        Array.from(container.querySelectorAll('a.monaco-button, button, .monaco-text-button'))
+      ))).filter(option => expectedOptions.includes(normalize(option.querySelector('.label-name')?.textContent || option.textContent)));
+      if (options.length !== 1 || !(options[0] instanceof HTMLElement)) return false;
+      options[0].scrollIntoView({ block: 'center', inline: 'center' });
+      return true;
+    })()`,
+    { timeoutMs: Math.min(3000, remaining(deadline)) }
+  );
+}
+
 export async function revealRetainedWorkbenchNotifications(
   cdp: CdpEvaluator,
   expectation: RegularWorkbenchOwnershipExpectation,

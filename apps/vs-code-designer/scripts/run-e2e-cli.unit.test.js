@@ -27,6 +27,7 @@ const {
     getCodefulDebugTasksRunExtraEnv,
     getFuncCoreToolsCandidatePaths,
     getFuncCoreToolsBinaryPath,
+    getDirectRegenerationDiagnosticsDestination,
     getMochaPassingCount,
     getDirectExpectedPhaseIds,
     getDirectFamilyUserDataParent,
@@ -50,10 +51,12 @@ const {
     redactGeneratedWorkspacePlainText,
     readContainmentReceipt,
     requiresDirectFamilyWrapper,
+    finalizeOuterRegenerationStageEvidence,
     publishRegenerationDiagnostics,
     runHttpTimeoutLifecycle,
     runRunAfterPersistenceLifecycle,
     runSuiteWrapperProcess,
+    shouldFinalizeRegenerationStageEvidence,
     shouldRetainDeferredWorkspaceForOuterContainment,
     createLinePrefixer,
     sanitizeInheritedGitCommandConfigEnv,
@@ -159,7 +162,7 @@ function createPreparedExtensionsSeed(seedDir, { vscodeVersion = 'stable' } = {}
   try {
     await testUnconfirmedCancelClosePreservesExistingApp();
     testDeferredWorkspaceCleanupOwnership();
-    testRegenerationDiagnosticsPublication();
+    await testRegenerationDiagnosticsPublication();
     testDirectFamilyShortLinuxProfileParent();
     testPreparedExtensionDependencyCohort();
     testCreatesEmptyIsolatedDependencyRoot();
@@ -207,6 +210,7 @@ function createPreparedExtensionsSeed(seedDir, { vscodeVersion = 'stable' } = {}
     await testBatchContinuesAfterOrdinaryFailure();
     await testBatchStopsAfterContainmentBreach();
     await testRunSuiteWrapperProcessWritesStructuredResults();
+    await testBatchRegenerationRejectsMissingStagingEvidence();
     await testDirectHttpFamilyRetainsWrapperPhaseJournal();
     await testRunSuiteWrapperProcessTimeoutCancelsDisposableChild();
     await testRunSuiteWrapperProcessTimeoutCancelsGrandchildListener();
@@ -278,23 +282,89 @@ function testDeferredWorkspaceCleanupOwnership() {
     'Ordinary wrapper children do not retain deferred workspaces without regeneration ownership'
   );
   assert.strictEqual(
+    shouldFinalizeRegenerationStageEvidence({
+      LA_E2E_CLI_SUITE_WRAPPER_CHILD: '1',
+      LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH: path.join(tempRoot, 'wrapper-phases.jsonl'),
+    }),
+    false,
+    'Regeneration wrapper children defer terminal and cleanup acceptance to the outer containment owner'
+  );
+  assert.strictEqual(
+    shouldFinalizeRegenerationStageEvidence({ LA_E2E_CLI_SUITE_WRAPPER_CHILD: '1' }),
+    true,
+    'A child without an outer phase journal must retain strict local staging acceptance'
+  );
+  assert.strictEqual(shouldFinalizeRegenerationStageEvidence({}), true, 'Standalone regeneration staging remains strict');
+  assert.strictEqual(
     shouldRetainDeferredWorkspaceForOuterContainment({ retainWorkspaceForSupplement: false }, { LA_E2E_CLI_SUITE_WRAPPER_CHILD: '1' }, {}),
     false,
     'Explicit retention ownership is required'
   );
 }
 
-function testRegenerationDiagnosticsPublication() {
+async function testRegenerationDiagnosticsPublication() {
   const reportsRoot = path.join(tempRoot, 'regeneration-publication-reports');
   const source = path.join(reportsRoot, 'workspace-regeneration');
   const destination = path.join(tempRoot, 'regeneration-publication-stable');
+  const workspaceRoot = path.join(tempRoot, 'regeneration-publication-workspaces');
+  const workspaceParent = path.join(workspaceRoot, 'regeneration-workspace');
+  const phaseResultsPath = path.join(reportsRoot, 'suite-phase-results.jsonl');
+  const identity = { source: 'unit', run: 'unit', job: 'unit', platform: process.platform };
+  const regenerationContext = {
+    root: source,
+    identity,
+    invocation: 'regeneration-publication-unit',
+    workspaceParent,
+    resultPath: path.join(source, 'final-result.json'),
+  };
   fs.mkdirSync(source, { recursive: true });
+  fs.mkdirSync(workspaceParent, { recursive: true });
+  fs.writeFileSync(path.join(source, 'invocation.json'), JSON.stringify(regenerationContext));
   fs.writeFileSync(path.join(source, 'final-result.json'), '{"complete":true}');
+  fs.writeFileSync(phaseResultsPath, '{"phaseId":"workspaceArtifactRegeneration:create","complete":true}\n');
+  const requiredNames = [
+    'invocation.json',
+    'final-result.json',
+    'terminal-result.json',
+    'cleanup-ledger.json',
+    'phase-results.jsonl',
+    'code.log',
+    'prompt-observations.jsonl',
+  ];
+  const finalized = await finalizeOuterRegenerationStageEvidence(
+    { reportsRoot, phaseResultsPath, workspaceRoot },
+    {
+      publishStageEvidence: (actualContext, result, phases, cleanup) => {
+        assert.deepStrictEqual(actualContext, regenerationContext);
+        assert.strictEqual(result.complete, true);
+        assert.deepStrictEqual(phases, [{ phaseId: 'workspaceArtifactRegeneration:create', complete: true }]);
+        assert.strictEqual(cleanup.verified, true);
+        assert.strictEqual(cleanup.action, 'removed');
+        assert.strictEqual(cleanup.workspaceParent, workspaceParent);
+        for (const name of requiredNames) {
+          if (!fs.existsSync(path.join(source, name))) {
+            fs.writeFileSync(path.join(source, name), '{}');
+          }
+        }
+        return { complete: true };
+      },
+      assertStageEvidence: (root, actualIdentity) => {
+        assert.strictEqual(root, source);
+        assert.deepStrictEqual(actualIdentity, identity);
+      },
+    }
+  );
+  assert.strictEqual(finalized.root, source);
+  assert.strictEqual(finalized.terminal.complete, true);
+  assert.strictEqual(fs.existsSync(workspaceParent), false);
+  assert.strictEqual(fs.existsSync(workspaceRoot), true, 'Batch containment roots must remain available for the containment check');
   assert.strictEqual(
     publishRegenerationDiagnostics({ reportsRoot }, { LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR: destination }),
     destination
   );
-  assert.strictEqual(fs.readFileSync(path.join(destination, 'final-result.json'), 'utf8'), '{"complete":true}');
+  for (const name of requiredNames) {
+    assert.ok(fs.statSync(path.join(destination, name)).isFile(), `Published regeneration diagnostics are missing ${name}`);
+  }
   assert.throws(
     () => publishRegenerationDiagnostics({ reportsRoot }, { LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR: destination }),
     /Refusing to overwrite/
@@ -307,9 +377,55 @@ function testRegenerationDiagnosticsPublication() {
       ),
     /were not produced/
   );
-  const cleanupIndex = runE2eCliSource.indexOf('await cleanupSuiteTransientRoots(context);');
-  const publicationIndex = runE2eCliSource.indexOf('publishRegenerationDiagnostics(context, process.env);');
-  assert.ok(cleanupIndex >= 0 && publicationIndex > cleanupIndex, 'Stable evidence publication must follow verified outer cleanup');
+  const incompleteReportsRoot = path.join(tempRoot, 'incomplete-regeneration-publication');
+  const incompleteSource = path.join(incompleteReportsRoot, 'workspace-regeneration');
+  fs.mkdirSync(incompleteSource, { recursive: true });
+  fs.writeFileSync(path.join(incompleteSource, 'final-result.json'), '{"complete":true}');
+  assert.throws(
+    () =>
+      publishRegenerationDiagnostics(
+        { reportsRoot: incompleteReportsRoot },
+        { LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR: path.join(tempRoot, 'incomplete-regeneration-destination') }
+      ),
+    /missing required staged evidence/
+  );
+  const defaultDestination = getDirectRegenerationDiagnosticsDestination(
+    SUITE_REGISTRY.workspaceArtifactRegeneration,
+    { evidenceInvocation: 'unit-invocation' },
+    path.join(tempRoot, 'direct-results'),
+    {}
+  );
+  assert.strictEqual(
+    defaultDestination,
+    path.join(tempRoot, 'direct-results', 'workspaceArtifactRegeneration.diagnostics-unit-invocation')
+  );
+  const explicitDestination = path.join(tempRoot, 'explicit-regeneration-diagnostics');
+  assert.strictEqual(
+    getDirectRegenerationDiagnosticsDestination(
+      SUITE_REGISTRY.workspaceArtifactRegeneration,
+      { evidenceInvocation: 'unit-invocation' },
+      path.join(tempRoot, 'direct-results'),
+      { LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR: explicitDestination }
+    ),
+    explicitDestination
+  );
+  assert.strictEqual(
+    getDirectRegenerationDiagnosticsDestination(
+      SUITE_REGISTRY.workspaceMultiRoot,
+      { evidenceInvocation: 'unit-invocation' },
+      path.join(tempRoot, 'direct-results'),
+      {}
+    ),
+    undefined
+  );
+  const wrapperStart = runE2eCliSource.indexOf('function runSuiteWrapperProcess');
+  const closureIndex = runE2eCliSource.indexOf('readContainmentReceipt(containmentReceiptPath, exitCode, signal)', wrapperStart);
+  const stagingIndex = runE2eCliSource.indexOf('await finalizeOuterRegenerationStageEvidence(context);', closureIndex);
+  const terminalIndex = runE2eCliSource.indexOf('writeSuiteFinalEvidence({', stagingIndex);
+  assert.ok(
+    closureIndex >= 0 && stagingIndex > closureIndex && terminalIndex > stagingIndex,
+    'Direct and batch regeneration must stage evidence after retained process closure and before terminal publication'
+  );
 }
 
 function testDirectFamilyShortLinuxProfileParent() {
@@ -1973,6 +2089,42 @@ async function testRunSuiteWrapperProcessWritesStructuredResults() {
   assert.match(cleanup.processCleanup.mechanism, /^(windows-job-object|linux-subreaper)$/);
   assert.strictEqual(fs.existsSync(path.join(context.workspaceRoot, 'wrapper-owned-control.txt')), true);
   assert.strictEqual(fs.existsSync(path.join(context.runtimeRoot, 'wrapper-owned-control.txt')), true);
+}
+
+async function testBatchRegenerationRejectsMissingStagingEvidence() {
+  const batchRoot = path.join(tempRoot, 'batch-regeneration-missing-staging');
+  fs.mkdirSync(batchRoot, { recursive: true });
+  const suite = SUITE_REGISTRY.workspaceArtifactRegeneration;
+  const context = createSuiteContext({ batchRoot, suite, index: 0, total: 1 });
+  const result = await runSuiteWrapperProcess({
+    suite,
+    context,
+    env: buildSuiteEnvironment(process.env, context),
+    timeoutMs: 10_000,
+    scriptPath: createWrapperFixtureScript('success'),
+  });
+  assert.strictEqual(result.exitCode, 0, 'The fixture body and retained-process closure succeed');
+  assert.match(result.error?.message, /diagnostics are incomplete before outer staging/);
+  const terminal = JSON.parse(fs.readFileSync(context.terminalResultPath, 'utf8'));
+  const cleanup = JSON.parse(fs.readFileSync(context.cleanupLedgerPath, 'utf8'));
+  assert.strictEqual(terminal.complete, false, 'A successful batch body cannot replace required family staging');
+  assert.strictEqual(terminal.cleanupVerified, false);
+  assert.strictEqual(cleanup.verified, false);
+  assert.match(terminal.diagnosticsError, /diagnostics are incomplete before outer staging/);
+  const seedDir = path.join(batchRoot, 'prepared-extensions');
+  createPreparedExtensionsSeed(seedDir);
+  const resultsDir = path.join(batchRoot, 'direct-results');
+  const directCode = await runDirectFamily(suite.id, undefined, {
+    batchRoot,
+    resultsDir,
+    seedDir,
+    timeoutMs: 10_000,
+    scriptPath: createWrapperFixtureScript('success'),
+  });
+  assert.strictEqual(directCode, 1, 'Direct regeneration must also reject successful bodies without staged evidence');
+  const directTerminal = JSON.parse(fs.readFileSync(path.join(resultsDir, `${suite.id}.terminal-result.json`), 'utf8'));
+  assert.strictEqual(directTerminal.complete, false);
+  assert.strictEqual(directTerminal.cleanupVerified, false);
 }
 
 async function testDirectHttpFamilyRetainsWrapperPhaseJournal() {
