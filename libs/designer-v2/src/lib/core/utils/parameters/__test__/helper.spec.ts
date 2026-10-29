@@ -26,6 +26,7 @@ import {
   TokenType,
   ValueSegmentType,
 } from '@microsoft/designer-ui';
+import { ValueSegmentConvertor } from '../segment';
 import type { DynamicListExtension, LegacyDynamicValuesExtension, InputParameter } from '@microsoft/logic-apps-shared';
 import { DynamicValuesType, ExpressionType, InitConnectorService, InitOperationManifestService } from '@microsoft/logic-apps-shared';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
@@ -1169,15 +1170,16 @@ describe('core/utils/parameters/helper', () => {
       expect(expressionString).toEqual('A STRING');
     });
 
-    // TODO - Need to check if this scenario makes sense after token picker is integrated
-    test.skip('should be correct for a parameter with user entered template functions', () => {
-      parameter.value = [
-        {
-          id: '1',
-          type: ValueSegmentType.TOKEN,
-          value: '@guid()',
-        },
-      ];
+    test('should be correct for a parameter with user entered template functions', () => {
+      const convertor = new ValueSegmentConvertor({
+        shouldUncast: false,
+        rawModeEnabled: true,
+      });
+      const expressionSegments = convertor.convertToValueSegments('@guid()');
+      expect(expressionSegments).toHaveLength(1);
+      expect(expressionSegments[0].token?.tokenType).toBe(TokenType.FX);
+
+      parameter.value = expressionSegments;
       parameter.info.format = 'binary';
 
       const expressionString = parameterValueToString(parameter, /* isDefinitionValue */ true);

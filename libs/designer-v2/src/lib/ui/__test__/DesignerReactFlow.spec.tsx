@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { act, render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
+import { tokens } from '@fluentui/react-components';
 
 // ── Mock state toggles ──────────────────────────────────────────────────────
 let mockIsInitialized = true;
@@ -9,6 +10,8 @@ let mockIsEmpty = false;
 let mockClampPan = false;
 let mockIsA2AWorkflow = false;
 let mockIsDarkMode = false;
+let mockSharedNodeUi = false;
+let mockNode1Shared = false;
 let mockDisconnectedNodes: string[] = [];
 let mockAllAgentIds: string[] = [];
 let mockPanelSelectedNodeIds: string[] = [];
@@ -40,6 +43,7 @@ vi.mock('@xyflow/react', () => ({
   },
   BezierEdge: () => <div />,
   SelectionMode: { Full: 'full' },
+  useUpdateNodeInternals: () => vi.fn(),
 }));
 
 // ── @react-hookz/web ─────────────────────────────────────────────────────────
@@ -87,21 +91,18 @@ vi.mock('../../core/state/designerView/designerViewSlice', () => ({
 vi.mock('../../core/state/designerOptions/designerOptionsSelectors', () => ({
   useReadOnly: () => mockIsReadOnly,
   useIsDarkMode: () => mockIsDarkMode,
+  useSharedNodeUi: () => mockSharedNodeUi,
 }));
 
 vi.mock('../../core/graphlayout', () => ({
   useLayout: () => [
     [
-      { id: 'node1', position: { x: 100, y: 50 }, type: 'OPERATION_NODE', width: 200 },
-      { id: 'node2', position: { x: 100, y: 200 }, type: 'OPERATION_NODE', width: 200 },
+      { id: 'node1', position: { x: 100, y: 50 }, type: 'OPERATION_NODE', width: 200, data: { presentation: { shared: mockNode1Shared } } },
+      { id: 'node2', position: { x: 100, y: 200 }, type: 'OPERATION_NODE', width: 200, data: { presentation: { shared: false } } },
     ],
     [{ id: 'edge1', source: 'node1', target: 'node2' }],
     [400, 600],
   ],
-}));
-
-vi.mock('../../core/utils/graph', () => ({
-  DEFAULT_NODE_SIZE: { width: 200, height: 40 },
 }));
 
 vi.mock('../../core/utils/designerLayoutHelpers', () => ({
@@ -175,6 +176,8 @@ describe('DesignerReactFlow (designer-v2)', () => {
     mockClampPan = false;
     mockIsA2AWorkflow = false;
     mockIsDarkMode = false;
+    mockSharedNodeUi = false;
+    mockNode1Shared = false;
     mockDisconnectedNodes = [];
     mockAllAgentIds = [];
     mockPanelSelectedNodeIds = [];
@@ -185,11 +188,43 @@ describe('DesignerReactFlow (designer-v2)', () => {
     capturedReactFlowProps = {};
   });
 
+  it.each([false, true])('does not persist accepted shared sizes during a live shared=%s transition', (sharedOption) => {
+    mockSharedNodeUi = sharedOption;
+    mockNode1Shared = true;
+    render(<DesignerReactFlow canvasRef={createCanvasRef()} />);
+    mockDispatch.mockClear();
+    act(() => {
+      capturedReactFlowProps.onNodesChange([
+        { id: 'node1', type: 'dimensions', dimensions: { width: 232, height: 74 } },
+        { id: 'node2', type: 'dimensions', dimensions: { width: 200, height: 64 } },
+      ]);
+    });
+    expect(mockDispatch).toHaveBeenCalledWith({
+      type: 'workflow/updateNodeSizes',
+      payload: [{ id: 'node2', type: 'dimensions', dimensions: { width: 200, height: 64 } }],
+    });
+    expect(mockDispatch.mock.calls.filter(([action]) => action.type === 'workflow/updateNodeSizes')).toHaveLength(1);
+  });
+
   // ──────────────────────────────────────────────────────────
   // MARK: Rendering
   // ──────────────────────────────────────────────────────────
 
   describe('Rendering', () => {
+    it.each([false, true])('preserves the shared flow background without changing dark=%s or the legacy branch', (dark) => {
+      mockIsDarkMode = dark;
+      mockSharedNodeUi = true;
+      const view = render(<DesignerReactFlow canvasRef={createCanvasRef()} />);
+      expect(capturedReactFlowProps.style).toEqual({
+        backgroundColor: tokens.colorNeutralBackground1,
+      });
+      expect(capturedReactFlowProps.colorMode).toBe(dark ? 'dark' : 'light');
+      mockSharedNodeUi = false;
+      view.rerender(<DesignerReactFlow canvasRef={createCanvasRef()} />);
+      expect(capturedReactFlowProps.style).toBeUndefined();
+      expect(capturedReactFlowProps.colorMode).toBe(dark ? 'dark' : 'light');
+    });
+
     it('mounts offscreen DOM before the navigation callback returns, including the first command', () => {
       render(<DesignerReactFlow canvasRef={createCanvasRef()} />);
       expect(screen.getByTestId('react-flow')).toContainElement(screen.getByTestId('node-navigation'));

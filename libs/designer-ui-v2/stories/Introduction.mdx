@@ -1,0 +1,149 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Start here/Introduction" />
+
+# Designer UI v2
+
+Host-neutral node presentation, built with React 18 and public Fluent UI v9.
+Use this library-local reference to inspect anatomy, supported props, and small
+controlled interactions **without running a designer host**.
+
+> **Private · default-off · presentation only**
+>
+> This is a private integration PoC, not a published release or completed
+> design, legal, accessibility, or two-host acceptance. Storybook does not
+> enable designer-v2 adoption or change any production defaults.
+
+## Find the right building block
+
+<table aria-label="Building block guide">
+  <thead>
+    <tr>
+      <th scope="col">Section</th>
+      <th scope="col">Start with</th>
+      <th scope="col">Use it for</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">Foundations</th>
+      <td><a href="?path=/docs/foundations-designeruiscope--overview">DesignerUiScope</a></td>
+      <td>Local palette, Fluent theme pairing, same-document popover outlet</td>
+    </tr>
+    <tr>
+      <th scope="row">Node Cards</th>
+      <td><a href="?path=/docs/node-cards-actionnodecard--overview">ActionNodeCard</a>, Trigger, Condition, Loop, Placeholder</td>
+      <td>Canonical card compositions, selection, supplied run states</td>
+    </tr>
+    <tr>
+      <th scope="row">Agents</th>
+      <td><a href="?path=/docs/agents-agentnodecard--overview">AgentNodeCard</a>, AgentToolsPanel, ToolItemCard</td>
+      <td>Model labels and controlled tool lists</td>
+    </tr>
+    <tr>
+      <th scope="row">Information</th>
+      <td><a href="?path=/docs/information-nodehovercard--overview">NodeHoverCard</a>, NodeInfoCard</td>
+      <td>Focus/hover descriptions, safe documentation links, dismissal</td>
+    </tr>
+    <tr>
+      <th scope="row">Connections</th>
+      <td><a href="?path=/docs/connections-nodehandle--overview">NodeHandle</a>, input/output handles, lines, merge points</td>
+      <td>Decorative connection anatomy and child slots</td>
+    </tr>
+    <tr>
+      <th scope="row">Presentation</th>
+      <td><a href="?path=/docs/presentation-nodecard--overview">NodeCard</a>, body/footer, text, tiles, status, frame</td>
+      <td>Lower-level composition</td>
+    </tr>
+    <tr>
+      <th scope="row">Actions</th>
+      <td><a href="?path=/docs/actions-collapsechip--overview">CollapseChip</a>, add and edge controls</td>
+      <td>Real keyboard controls with visible local state</td>
+    </tr>
+    <tr>
+      <th scope="row">Icons</th>
+      <td><a href="?path=/docs/icons-ificonregular--overview">IfIconRegular</a>, IfIconFilled</td>
+      <td>Paired glyphs and the finite visual-kind vocabulary</td>
+    </tr>
+  </tbody>
+</table>
+
+Each of the **32 public visual exports** has its own typed CSF metadata, Overview,
+and directly browsable examples. Open a component's Overview for its description,
+source and prop controls; switch to a story for isolated interaction and the
+Accessibility panel. Optional React slots use concrete examples rather than
+misleading object controls. The paired condition icons declare no props.
+
+## First composition
+
+```tsx
+import { FluentProvider, webLightTheme } from '@fluentui/react-components';
+import { ActionNodeCard, DesignerUiScope } from '@microsoft/designer-ui-v2';
+
+<FluentProvider theme={webLightTheme} dir="ltr">
+  <DesignerUiScope mode="light" dir="ltr">
+    <ActionNodeCard
+      title="Send request"
+      subtitle="Built-in · HTTP"
+      handles={false}
+    />
+  </DesignerUiScope>
+</FluentProvider>;
+```
+
+In a dark host, pair `webDarkTheme` with `mode="dark"`. The preview toolbar's
+**theme** values are `light` / `dark`; **direction** values are `ltr` / `rtl`.
+Direction sets **both the actual FluentProvider.dir and DOM dir**, not merely
+CSS direction on a wrapper. The provider inherits the host's font; no font
+assets, cloud setup, or brand shell are needed.
+
+## Interaction, not a simulated product
+
+- Add, collapse, selection, inspection and dismissal examples use local React
+  state with visible results. An action log is supplementary, not the result.
+- Keyboard play examples cover Enter/Space activation, add/toggle controls,
+  hover focus/Escape/dismissal, and exact single edge activation.
+- Card `role`, `tabIndex` and keyboard handling are consumer-owned; the
+  KeyboardSelection example implements them locally rather than claiming that
+  every presentation card is inherently a button.
+- Slots are simple illustrative DOM. They do not create ports, connections,
+  workflow topology or execution.
+- Status values are supplied presentation states. There is no fake backend,
+  metadata-loading lifecycle, graph, auth, DnD, Redux or XYFlow provider.
+- External documentation links are optional ordinary HTTP(S) links. No example
+  needs to follow one or fetch external assets to render.
+
+## Check real browser preferences
+
+The scope and running-status examples report `matchMedia` results for
+`prefers-reduced-motion: reduce` and `forced-colors: active`, updating when the
+browser preference changes. Use OS settings or browser media emulation to test
+them. There is **no motion/forced-colors toolbar and no fake CSS simulation**.
+Inspect actual computed animation/transition styles, borders, labels, focus
+and contrast under each preference.
+
+An Accessibility panel, successful static build or passing play function is
+**not** a complete browser/keyboard/a11y audit. Review light/dark and LTR/RTL,
+focus/Escape behavior, disabled controls, popover placement, real reduced motion
+and forced colors in a browser. Real-host clipping, iframe/webview, CSP, brand
+and matched two-host acceptance remain separate gates.
+
+## Run from the repository root
+
+```sh
+pnpm --filter @microsoft/designer-ui-v2 storybook
+pnpm --filter @microsoft/designer-ui-v2 typecheck:storybook
+pnpm --filter @microsoft/designer-ui-v2 build:storybook
+```
+
+The first command is **user-run only**: port 6006 with `--no-open`.
+The other commands create no listener. Build output is the ignored
+`libs/designer-ui-v2/storybook-static/` directory.
+
+Storybook and its TypeScript config resolve only the exact root and `/metrics`
+public specifiers directly to live package source. No library build is required
+first; no new public package subpath is added. Stories stay outside `src/`,
+production bundle entries, declarations, package files and coverage.
+
+Continue with [API and boundaries](?path=/docs/start-here-api-and-boundaries--overview)
+for all 18 nonvisual exports and the type contracts.
