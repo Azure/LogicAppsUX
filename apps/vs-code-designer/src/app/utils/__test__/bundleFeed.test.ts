@@ -595,7 +595,7 @@ describe('getBundleDependencyFeed', () => {
       context,
       `https://bundles.example.com/ExtensionBundles/${extensionBundleId}/dependency.json`
     );
-    expect(workspaceModule.selectLogicAppRoot).toHaveBeenCalledWith(context, true);
+    expect(workspaceModule.selectLogicAppRoot).toHaveBeenCalledWith(context, { suppressPrompt: true });
   });
 });
 

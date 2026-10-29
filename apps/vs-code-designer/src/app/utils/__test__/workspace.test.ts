@@ -4,9 +4,11 @@ import * as vscode from 'vscode';
 import type { WorkspaceFolder } from 'vscode';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as workspaceUtils from '../workspace';
+import { ProjectPackageType } from '@microsoft/vscode-extension-logic-apps';
 
 const mocks = vi.hoisted(() => ({
   appendLog: vi.fn(),
+  detectProjectPackageType: vi.fn(),
   globby: vi.fn(),
   isCodelessLogicApp: vi.fn(),
   isCodefulLogicApp: vi.fn(),
@@ -24,6 +26,10 @@ vi.mock('../codeful', () => ({
   isCodefulLogicApp: mocks.isCodefulLogicApp,
 }));
 
+vi.mock('../project', () => ({
+  detectProjectPackageType: mocks.detectProjectPackageType,
+}));
+
 vi.mock('../../../extensionVariables', () => ({
   ext: {
     outputChannel: {
@@ -37,6 +43,7 @@ function mockDirectoryPaths(): void {
   vi.spyOn(fse, 'statSync').mockReturnValue({ isDirectory: () => true } as fse.Stats);
   mocks.isCodelessLogicApp.mockResolvedValue(false);
   mocks.isCodefulLogicApp.mockResolvedValue(false);
+  mocks.detectProjectPackageType.mockResolvedValue(ProjectPackageType.Bundle);
 }
 
 describe('selectLogicAppRoot', () => {
@@ -107,9 +114,57 @@ describe('selectLogicAppRoot', () => {
     vi.mocked(fse.readdir).mockResolvedValue(['LogicApp1', 'LogicApp2']);
     mocks.isCodelessLogicApp.mockImplementation(async (candidatePath) => candidatePath === projectPath1 || candidatePath === projectPath2);
 
-    await expect(workspaceUtils.selectLogicAppRoot(mockContext, true)).resolves.toBe(projectPath1);
+    await expect(workspaceUtils.selectLogicAppRoot(mockContext, { suppressPrompt: true })).resolves.toBe(projectPath1);
 
     expect(mockContext.ui.showQuickPick).not.toHaveBeenCalled();
+  });
+
+  it('filters projects by codeful and package type options before selecting', async () => {
+    const bundleProjectPath = path.join(workspacePath, 'BundleProject');
+    const nugetProjectPath = path.join(workspacePath, 'NugetProject');
+    const codefulProjectPath = path.join(workspacePath, 'CodefulProject');
+    vi.mocked(fse.readdir).mockResolvedValue(['BundleProject', 'NugetProject', 'CodefulProject']);
+    mocks.isCodelessLogicApp.mockImplementation(
+      async (candidatePath) => candidatePath === bundleProjectPath || candidatePath === nugetProjectPath
+    );
+    mocks.detectProjectPackageType.mockImplementation(async (candidatePath) =>
+      candidatePath === nugetProjectPath ? ProjectPackageType.Nuget : ProjectPackageType.Bundle
+    );
+
+    await expect(
+      workspaceUtils.selectLogicAppRoot(mockContext, {
+        isCodeful: false,
+        packageType: ProjectPackageType.Bundle,
+      })
+    ).resolves.toBe(bundleProjectPath);
+
+    expect(mockContext.ui.showQuickPick).not.toHaveBeenCalled();
+    expect(mocks.detectProjectPackageType).toHaveBeenCalledWith(bundleProjectPath);
+    expect(mocks.detectProjectPackageType).toHaveBeenCalledWith(nugetProjectPath);
+    expect(mocks.detectProjectPackageType).not.toHaveBeenCalledWith(codefulProjectPath);
+  });
+
+  it('distinguishes projects with duplicate folder names by their full paths', async () => {
+    const firstProjectPath = path.join('repoA', 'SharedProject');
+    const secondProjectPath = path.join('repoB', 'SharedProject');
+    (vscode.workspace as any).workspaceFolders = [
+      { uri: { fsPath: firstProjectPath }, name: 'SharedProject', index: 0 },
+      { uri: { fsPath: secondProjectPath }, name: 'SharedProject', index: 1 },
+    ];
+    mocks.isCodelessLogicApp.mockImplementation(
+      async (candidatePath) => candidatePath === firstProjectPath || candidatePath === secondProjectPath
+    );
+    mockContext.ui.showQuickPick.mockResolvedValue({ data: secondProjectPath });
+
+    await expect(workspaceUtils.selectLogicAppRoot(mockContext)).resolves.toBe(secondProjectPath);
+
+    expect(mockContext.ui.showQuickPick).toHaveBeenCalledWith(
+      [
+        { label: 'SharedProject', description: firstProjectPath, data: firstProjectPath },
+        { label: 'SharedProject', description: secondProjectPath, data: secondProjectPath },
+      ],
+      { placeHolder: 'Select a logic app project' }
+    );
   });
 });
 
@@ -245,6 +300,17 @@ describe('getLogicAppRoots', () => {
     await expect(workspaceUtils.getLogicAppRoots()).resolves.toEqual([testLogicAppProjectPath1, testLogicAppProjectPath2]);
   });
 
+  it('applies package type filtering across workspace folders', async () => {
+    mocks.isCodelessLogicApp.mockImplementation(
+      async (projectPath) => projectPath === testLogicAppProjectPath1 || projectPath === testLogicAppProjectPath2
+    );
+    mocks.detectProjectPackageType.mockImplementation(async (projectPath) =>
+      projectPath === testLogicAppProjectPath1 ? ProjectPackageType.Bundle : ProjectPackageType.Nuget
+    );
+
+    await expect(workspaceUtils.getLogicAppRoots({ packageType: ProjectPackageType.Bundle })).resolves.toEqual([testLogicAppProjectPath1]);
+  });
+
   it('returns an empty array if none of the workspace folders contain a logic app project', async () => {
     await expect(workspaceUtils.getLogicAppRoots()).resolves.toEqual([]);
   });
@@ -296,6 +362,28 @@ describe('getWorkspaceFolderLogicAppRoots', () => {
       testLogicAppProjectPath1,
       testLogicAppProjectPath2,
     ]);
+  });
+
+  it('filters matching subpaths by codeful and package type options', async () => {
+    const bundleProjectPath = path.join(testWorkspaceFolderPath, 'BundleProject');
+    const nugetProjectPath = path.join(testWorkspaceFolderPath, 'NugetProject');
+    const codefulProjectPath = path.join(testWorkspaceFolderPath, 'CodefulProject');
+    vi.mocked(fse.readdir).mockResolvedValue(['BundleProject', 'NugetProject', 'CodefulProject']);
+    mocks.isCodelessLogicApp.mockImplementation(
+      async (candidatePath) => candidatePath === bundleProjectPath || candidatePath === nugetProjectPath
+    );
+    mocks.detectProjectPackageType.mockImplementation(async (candidatePath) =>
+      candidatePath === nugetProjectPath ? ProjectPackageType.Nuget : ProjectPackageType.Bundle
+    );
+
+    await expect(
+      workspaceUtils.getWorkspaceFolderLogicAppRoots(testWorkspaceFolder, {
+        isCodeful: false,
+        packageType: ProjectPackageType.Bundle,
+      })
+    ).resolves.toEqual([bundleProjectPath]);
+
+    expect(mocks.detectProjectPackageType).not.toHaveBeenCalledWith(codefulProjectPath);
   });
 
   it('returns an empty array if no Logic App project is found in the root or subfolders', async () => {

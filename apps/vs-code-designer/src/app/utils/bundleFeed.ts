@@ -68,7 +68,7 @@ interface ExtensionBundleBaseUrlResult {
  *   4. Default public CDN.
  */
 export async function getExtensionBundleBaseUrl(context: IActionContext): Promise<ExtensionBundleBaseUrlResult> {
-  const projectPath = await selectLogicAppRoot(context, true);
+  const projectPath = await selectLogicAppRoot(context, { suppressPrompt: true });
 
   let localSettingsUri: string | undefined;
   if (projectPath) {
@@ -876,7 +876,7 @@ async function downloadExtensionBundleCore(context: IActionContext): Promise<boo
   try {
     let envVarVer: string | undefined = process.env.AzureFunctionsJobHost_extensionBundle_version;
     // TODO(aeldridge): Should check all projects for pinned bundles, not just the first
-    const projectPath = await selectLogicAppRoot(context, true);
+    const projectPath = await selectLogicAppRoot(context, { suppressPrompt: true });
 
     if (projectPath) {
       try {

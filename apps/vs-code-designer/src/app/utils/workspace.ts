@@ -16,6 +16,8 @@ import { isCustomCodeFunctionsProject } from './customCodeUtils';
 import { isCodefulLogicApp } from './codeful';
 import { isCodelessLogicApp } from './codeless';
 import { ext } from '../../extensionVariables';
+import type { ProjectPackageType } from '@microsoft/vscode-extension-logic-apps';
+import { detectProjectPackageType } from './project';
 
 /**
  * Gets the resource URI from the given path.
@@ -173,16 +175,19 @@ export function getParentWorkspaceFolder(childPath: string): vscode.WorkspaceFol
 /**
  * Gets a Logic App project root from the workspace. If multiple projects exist, prompts the user to select one.
  * @param {IActionContext} context - The action context.
- * @param {boolean} suppressPrompt - If true, returns the first project found without prompting.
+ * @param {Object} [options] - Optional filtering and selection behavior.
  * @returns {Promise<string | undefined>} The selected Logic App project root path, or undefined if none found.
  */
-export async function selectLogicAppRoot(context: IActionContext, suppressPrompt = false): Promise<string | undefined> {
-  const projectPaths = await getLogicAppRoots();
+export async function selectLogicAppRoot(
+  context: IActionContext,
+  options?: { isCodeful?: boolean; packageType?: ProjectPackageType; suppressPrompt?: boolean }
+): Promise<string | undefined> {
+  const projectPaths = await getLogicAppRoots(options);
   if (projectPaths.length === 0) {
     return undefined;
   }
 
-  if (projectPaths.length === 1 || suppressPrompt) {
+  if (projectPaths.length === 1 || options?.suppressPrompt) {
     return projectPaths[0];
   }
 
@@ -200,13 +205,14 @@ export async function selectLogicAppRoot(context: IActionContext, suppressPrompt
 /**
  * Gets a Logic App project root from the workspace folder. If multiple projects exist, prompts the user to select one.
  * @param {IActionContext} context - The action context.
- * @param {boolean} suppressPrompt - If true, returns the first project found without prompting.
+ * @param {vscode.WorkspaceFolder | string} workspaceFolder - The workspace folder to search.
+ * @param {Object} [options] - Optional filtering and selection behavior.
  * @returns {Promise<string | undefined>} The selected Logic App project root path, or undefined if none found.
  */
 export async function selectWorkspaceFolderLogicAppRoot(
   context: IActionContext,
   workspaceFolder: vscode.WorkspaceFolder | string,
-  suppressPrompt = false
+  options?: { isCodeful?: boolean; packageType?: ProjectPackageType; suppressPrompt?: boolean }
 ): Promise<string | undefined> {
   if (!workspaceFolder) {
     return undefined;
@@ -217,12 +223,12 @@ export async function selectWorkspaceFolderLogicAppRoot(
     return undefined;
   }
 
-  const projectPaths = await getWorkspaceFolderLogicAppRoots(workspaceFolderPath);
+  const projectPaths = await getWorkspaceFolderLogicAppRoots(workspaceFolderPath, options);
   if (!projectPaths || projectPaths.length === 0) {
     return undefined;
   }
 
-  if (projectPaths.length === 1 || suppressPrompt) {
+  if (projectPaths.length === 1 || options?.suppressPrompt) {
     return projectPaths[0];
   }
 
@@ -242,7 +248,10 @@ export async function selectWorkspaceFolderLogicAppRoot(
  * @param {Object} [options] - Optional parameters.
  * @returns {Promise<string[]>} A promise that resolves to an array of logic app roots.
  */
-export async function getLogicAppRoots(options?: { isCodeful?: boolean }): Promise<string[]> {
+export async function getLogicAppRoots(options?: {
+  isCodeful?: boolean;
+  packageType?: ProjectPackageType;
+}): Promise<string[]> {
   if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
     return [];
   }
@@ -258,7 +267,10 @@ export async function getLogicAppRoots(options?: { isCodeful?: boolean }): Promi
  * @param {Object} [options] - Optional parameters.
  * @returns {Promise<string[]>} A promise that resolves to an array of logic app project roots.
  */
-export async function getWorkspaceFolderLogicAppRoots(workspaceFolder: vscode.WorkspaceFolder | string | undefined, options?: { isCodeful?: boolean }): Promise<string[]> {
+export async function getWorkspaceFolderLogicAppRoots(
+  workspaceFolder: vscode.WorkspaceFolder | string | undefined,
+  options?: { isCodeful?: boolean; packageType?: ProjectPackageType }
+): Promise<string[]> {
   if (isNullOrUndefined(workspaceFolder)) {
     return [];
   }
@@ -268,13 +280,22 @@ export async function getWorkspaceFolderLogicAppRoots(workspaceFolder: vscode.Wo
     return [];
   }
 
-  const isLogicAppPredicate = options && options.isCodeful !== undefined
-    ? options.isCodeful
-      ? isCodefulLogicApp
-      : isCodelessLogicApp
-    : isLogicApp;
+  const isMatchingLogicApp = async (candidatePath: string): Promise<boolean> => {
+    const matchesLogicAppType =
+      options?.isCodeful === undefined
+        ? await isLogicApp(candidatePath)
+        : options.isCodeful
+          ? await isCodefulLogicApp(candidatePath)
+          : await isCodelessLogicApp(candidatePath);
 
-  if (await isLogicAppPredicate(workspaceFolderPath)) {
+    if (!matchesLogicAppType) {
+      return false;
+    }
+
+    return options?.packageType === undefined || (await detectProjectPackageType(candidatePath)) === options.packageType;
+  };
+
+  if (await isMatchingLogicApp(workspaceFolderPath)) {
     return [workspaceFolderPath];
   }
 
@@ -282,7 +303,7 @@ export async function getWorkspaceFolderLogicAppRoots(workspaceFolder: vscode.Wo
     const subpaths: string[] = await fse.readdir(workspaceFolderPath);
     const logicAppProjectRootTasks = subpaths.map(async (s) => {
       const subpath = path.join(workspaceFolderPath, s);
-      if (await isLogicAppPredicate(subpath)) {
+      if (await isMatchingLogicApp(subpath)) {
         return subpath;
       }
     });
