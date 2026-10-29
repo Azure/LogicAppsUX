@@ -44,7 +44,7 @@ import {
 } from './cdpFormHelpers';
 import type { CodefulControlVariant, FieldLabels } from './createWorkspaceTypes';
 import { assertNoDialogAttempts, installDialogGuard, withAllowedDialogResponses } from './dialogGuard';
-import { boundedCdp } from './workbenchCdpActions';
+import { boundedCdp, ensureWorkbenchPanelClosed } from './workbenchCdpActions';
 import {
   assertMsnWeatherLocalSettings,
   canUseInteractiveMsnWeatherAzureSettings,
@@ -2310,110 +2310,132 @@ async function selectDynamicContentTokenForParameter(
     semanticContextId: contextId,
   });
 
-  const entryPoint = await cdp.evaluate<{
-    ok: boolean;
-    reason?: string;
-    point?: { x: number; y: number };
-    text?: string;
-    rect?: unknown;
-    viewport?: unknown;
-    visibleIntersection?: unknown;
-    hitTest?: unknown;
-    owner?: unknown;
-  }>(
-    contextId,
-    `(() => {
-      const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
-      const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim();
-      const summarize = (element) => ({ tagName: element?.tagName || '', ownedByButton: element === button || button?.contains?.(element) || false });
-      const intersectRects = (a, b) => {
-        const left = Math.max(a.left, b.left);
-        const top = Math.max(a.top, b.top);
-        const right = Math.min(a.right, b.right);
-        const bottom = Math.min(a.bottom, b.bottom);
-        return { left, top, right, bottom, width: Math.max(0, right - left), height: Math.max(0, bottom - top) };
-      };
-      const getClippedRect = (element) => {
-        let clipped = intersectRects(element.getBoundingClientRect(), { left: 0, top: 0, right: window.innerWidth, bottom: window.innerHeight });
-        let current = element.parentElement;
-        while (current instanceof HTMLElement && current !== document.body && current !== document.documentElement) {
-          const style = getComputedStyle(current);
-          const clips =
-            current.scrollHeight > current.clientHeight + 1 ||
-            current.scrollWidth > current.clientWidth + 1 ||
-            [style.overflow, style.overflowX, style.overflowY].some((value) => /auto|scroll|hidden|clip/i.test(value || ''));
-          if (clips) {
-            clipped = intersectRects(clipped, current.getBoundingClientRect());
+  let entryPoint:
+    | {
+        ok: boolean;
+        reason?: string;
+        point?: { x: number; y: number };
+        text?: string;
+        rect?: unknown;
+        viewport?: unknown;
+        visibleIntersection?: unknown;
+        hitTest?: unknown;
+        owner?: unknown;
+      }
+    | undefined;
+  await waitUntil(
+    async () => {
+      const currentEditorPoint = await getDesignerParameterEditorPoint(cdp, contextId, parameterLabels, description);
+      await clickPoint(cdp, currentEditorPoint);
+      entryPoint = await cdp.evaluate<{
+        ok: boolean;
+        reason?: string;
+        point?: { x: number; y: number };
+        text?: string;
+        rect?: unknown;
+        viewport?: unknown;
+        visibleIntersection?: unknown;
+        hitTest?: unknown;
+        owner?: unknown;
+      }>(
+        contextId,
+        `(() => {
+          const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
+          const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim();
+          const summarize = (element) => ({ tagName: element?.tagName || '', ownedByButton: element === button || button?.contains?.(element) || false });
+          const intersectRects = (a, b) => {
+            const left = Math.max(a.left, b.left);
+            const top = Math.max(a.top, b.top);
+            const right = Math.min(a.right, b.right);
+            const bottom = Math.min(a.bottom, b.bottom);
+            return { left, top, right, bottom, width: Math.max(0, right - left), height: Math.max(0, bottom - top) };
+          };
+          const getClippedRect = (element) => {
+            let clipped = intersectRects(element.getBoundingClientRect(), { left: 0, top: 0, right: window.innerWidth, bottom: window.innerHeight });
+            let current = element.parentElement;
+            while (current instanceof HTMLElement && current !== document.body && current !== document.documentElement) {
+              const style = getComputedStyle(current);
+              const clips =
+                current.scrollHeight > current.clientHeight + 1 ||
+                current.scrollWidth > current.clientWidth + 1 ||
+                [style.overflow, style.overflowX, style.overflowY].some((value) => /auto|scroll|hidden|clip/i.test(value || ''));
+              if (clips) {
+                clipped = intersectRects(clipped, current.getBoundingClientRect());
+              }
+              current = current.parentElement;
+            }
+            return clipped.width > 0 && clipped.height > 0 ? clipped : undefined;
+          };
+          const candidates = Array.from(document.querySelectorAll('[data-automation-id="msla-token-picker-entrypoint-button-dynamic-content"]'))
+            .filter(isVisible);
+          const button = candidates.at(-1);
+          if (!(button instanceof HTMLElement)) {
+            return { ok: false, reason: 'dynamic-content-entrypoint-not-found', candidateCount: candidates.length };
           }
-          current = current.parentElement;
-        }
-        return clipped.width > 0 && clipped.height > 0 ? clipped : undefined;
-      };
-      const candidates = Array.from(document.querySelectorAll('[data-automation-id="msla-token-picker-entrypoint-button-dynamic-content"]'))
-        .filter(isVisible);
-      const button = candidates.at(-1);
-      if (!(button instanceof HTMLElement)) {
-        return { ok: false, reason: 'dynamic-content-entrypoint-not-found', candidateCount: candidates.length };
-      }
 
-      button.scrollIntoView({ block: 'center', inline: 'center' });
-      const rect = button.getBoundingClientRect();
-      const clippedRect = getClippedRect(button);
-      if (!clippedRect) {
-        return { ok: false, reason: 'dynamic-content-entrypoint-not-visible', candidateCount: candidates.length };
+          button.scrollIntoView({ block: 'center', inline: 'center' });
+          const rect = button.getBoundingClientRect();
+          const clippedRect = getClippedRect(button);
+          if (!clippedRect) {
+            return { ok: false, reason: 'dynamic-content-entrypoint-not-visible', candidateCount: candidates.length };
+          }
+          const visibleIntersection = {
+            left: Math.round(clippedRect.left),
+            top: Math.round(clippedRect.top),
+            width: Math.round(clippedRect.width),
+            height: Math.round(clippedRect.height),
+          };
+          const point = {
+            x: clippedRect.left + clippedRect.width / 2,
+            y: clippedRect.top + clippedRect.height / 2,
+          };
+          const hit = document.elementFromPoint(point.x, point.y);
+          const containsButton = hit === button || button.contains(hit);
+          if (!containsButton) {
+            return {
+              ok: false,
+              reason: 'dynamic-content-entrypoint-hit-test-failed',
+              rect: {
+                left: Math.round(rect.left),
+                top: Math.round(rect.top),
+                width: Math.round(rect.width),
+                height: Math.round(rect.height),
+                right: Math.round(rect.right),
+                bottom: Math.round(rect.bottom),
+              },
+              viewport: { width: window.innerWidth, height: window.innerHeight },
+              visibleIntersection,
+              hitTest: { containsButton, element: summarize(hit) },
+            };
+          }
+          const ownerPanel = button.closest('.msla-panel-layout, [id^="msla-node-details-panel-"], [role="tabpanel"], [class*="panel"]');
+          return {
+            ok: true,
+            point,
+            rect: {
+              left: Math.round(rect.left),
+              top: Math.round(rect.top),
+              width: Math.round(rect.width),
+              height: Math.round(rect.height),
+              right: Math.round(rect.right),
+              bottom: Math.round(rect.bottom),
+            },
+            viewport: { width: window.innerWidth, height: window.innerHeight },
+            visibleIntersection,
+            hitTest: { containsButton, element: summarize(hit) },
+            owner: summarize(ownerPanel),
+          };
+        })()`
+      );
+      if (!entryPoint.ok || !entryPoint.point) {
+        throw new Error(`State=${JSON.stringify(sanitizeRunDiagnostic(entryPoint)).slice(0, 1000)}`);
       }
-      const visibleIntersection = {
-        left: Math.round(clippedRect.left),
-        top: Math.round(clippedRect.top),
-        width: Math.round(clippedRect.width),
-        height: Math.round(clippedRect.height),
-      };
-      const point = {
-        x: clippedRect.left + clippedRect.width / 2,
-        y: clippedRect.top + clippedRect.height / 2,
-      };
-      const hit = document.elementFromPoint(point.x, point.y);
-      const containsButton = hit === button || button.contains(hit);
-      if (!containsButton) {
-        return {
-          ok: false,
-          reason: 'dynamic-content-entrypoint-hit-test-failed',
-          rect: {
-            left: Math.round(rect.left),
-            top: Math.round(rect.top),
-            width: Math.round(rect.width),
-            height: Math.round(rect.height),
-            right: Math.round(rect.right),
-            bottom: Math.round(rect.bottom),
-          },
-          viewport: { width: window.innerWidth, height: window.innerHeight },
-          visibleIntersection,
-          hitTest: { containsButton, element: summarize(hit) },
-        };
-      }
-      const ownerPanel = button.closest('.msla-panel-layout, [id^="msla-node-details-panel-"], [role="tabpanel"], [class*="panel"]');
-      return {
-        ok: true,
-        point,
-        rect: {
-          left: Math.round(rect.left),
-          top: Math.round(rect.top),
-          width: Math.round(rect.width),
-          height: Math.round(rect.height),
-          right: Math.round(rect.right),
-          bottom: Math.round(rect.bottom),
-        },
-        viewport: { width: window.innerWidth, height: window.innerHeight },
-        visibleIntersection,
-        hitTest: { containsButton, element: summarize(hit) },
-        owner: summarize(ownerPanel),
-      };
-    })()`
+      return true;
+    },
+    10_000,
+    `${description} dynamic-content entrypoint to stabilize after editor focus`
   );
-  assert.ok(
-    entryPoint.ok && entryPoint.point,
-    `Expected dynamic-content picker button for ${description}. State=${JSON.stringify(sanitizeRunDiagnostic(entryPoint)).slice(0, 1000)}`
-  );
+  assert.ok(entryPoint?.ok && entryPoint.point, `Expected dynamic-content picker button for ${description}`);
 
   console.log(
     `[workspace-lifecycle][dynamic-content] ${description} entrypoint dispatch: ${JSON.stringify(sanitizeRunDiagnostic(entryPoint)).slice(0, 2000)}`
@@ -3229,6 +3251,10 @@ async function normalizeDesignerCanvasViewport(
   if (normalizationDeadline <= Date.now()) {
     throw new Error(`${description} viewport normalization deadline expired`);
   }
+  await ensureWorkbenchPanelClosed({
+    deadline: normalizationDeadline,
+    executeCommand: (commandId) => vscode.commands.executeCommand(commandId),
+  });
   const bounded = boundedCdp(cdp, normalizationDeadline);
   const state = await bounded.evaluate<
     Record<string, unknown> & {
@@ -3339,6 +3365,35 @@ async function normalizeDesignerCanvasViewport(
         `(() => {
           const expectedNodeIds = ${JSON.stringify(expectedNodeIds)};
           const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
+          const intersectRects = (a, b) => {
+            const left = Math.max(a.left, b.left);
+            const top = Math.max(a.top, b.top);
+            const right = Math.min(a.right, b.right);
+            const bottom = Math.min(a.bottom, b.bottom);
+            return { left, top, right, bottom, width: Math.max(0, right - left), height: Math.max(0, bottom - top) };
+          };
+          const getClippedRect = (element) => {
+            const rawRect = element.getBoundingClientRect();
+            let clipped = intersectRects(rawRect, {
+              left: 0,
+              top: 0,
+              right: window.innerWidth,
+              bottom: window.innerHeight,
+            });
+            let current = element.parentElement;
+            while (current instanceof HTMLElement && current !== document.body && current !== document.documentElement) {
+              const style = getComputedStyle(current);
+              const clips =
+                current.scrollHeight > current.clientHeight + 1 ||
+                current.scrollWidth > current.clientWidth + 1 ||
+                [style.overflow, style.overflowX, style.overflowY].some((value) => /auto|scroll|hidden|clip/i.test(value || ''));
+              if (clips) {
+                clipped = intersectRects(clipped, current.getBoundingClientRect());
+              }
+              current = current.parentElement;
+            }
+            return clipped.width > 0 && clipped.height > 0 ? clipped : undefined;
+          };
           const designerCanvas = Array.from(document.querySelectorAll('.react-flow, .msla-designer-canvas, [data-automation-id="msla-designer-canvas"]'))
             .filter(isVisible)
             .at(-1);
@@ -3351,6 +3406,7 @@ async function normalizeDesignerCanvasViewport(
             )
             .map((element) => {
               const rect = element.getBoundingClientRect();
+              const clipped = getClippedRect(element);
               return {
                 id: element.id,
                 rect: {
@@ -3361,14 +3417,22 @@ async function normalizeDesignerCanvasViewport(
                   right: Math.round(rect.right),
                   bottom: Math.round(rect.bottom),
                 },
+                substantiallyVisible:
+                  !!clipped &&
+                  clipped.width >= rect.width * 0.98 &&
+                  clipped.height >= rect.height * 0.98,
               };
             });
           const renderedNodeIds = new Set(nodes.map(({ id }) => id.slice('msla-node-'.length)));
           const missingExpectedNodeIds = expectedNodeIds.filter((nodeId) => !renderedNodeIds.has(nodeId));
+          const clippedExpectedNodeIds = nodes
+            .filter(({ id, substantiallyVisible }) => expectedNodeIds.includes(id.slice('msla-node-'.length)) && !substantiallyVisible)
+            .map(({ id }) => id.slice('msla-node-'.length));
           const settled =
             !!canvasRect &&
             missingExpectedNodeIds.length === 0 &&
-            nodes.every(({ rect }) =>
+            nodes.every(({ rect, substantiallyVisible }) =>
+              substantiallyVisible &&
               rect.left >= canvasRect.left &&
               rect.top >= canvasRect.top &&
               rect.right <= canvasRect.right &&
@@ -3377,6 +3441,7 @@ async function normalizeDesignerCanvasViewport(
           return {
             settled,
             missingExpectedNodeIds,
+            clippedExpectedNodeIds,
             canvasRect: canvasRect
               ? {
                   left: Math.round(canvasRect.left),

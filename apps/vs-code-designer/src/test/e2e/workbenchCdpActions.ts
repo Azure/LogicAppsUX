@@ -181,6 +181,57 @@ export async function connectToOwnedRegularWorkbench(options: {
   }
 }
 
+export async function ensureWorkbenchPanelClosed(options: {
+  deadline: number;
+  executeCommand: (commandId: string) => PromiseLike<unknown>;
+  connect?: typeof connectToVsCodeWorkbenchCdp;
+}): Promise<void> {
+  const connectionDeadline = Math.min(options.deadline, Date.now() + 2000);
+  const cdp = await (options.connect ?? connectToVsCodeWorkbenchCdp)({
+    activate: false,
+    waitForServer: true,
+    timeoutMs: remainingWorkbenchBudget(connectionDeadline),
+  });
+  try {
+    const client = boundedCdp(cdp, options.deadline);
+    const panelVisible = () =>
+      client.evaluate<boolean>(
+        undefined,
+        `(() => { ${workbenchVisibleScript}
+          return Array.from(document.querySelectorAll('#workbench\\\\.parts\\\\.panel, .part.panel'))
+            .some(e => {
+              if (!visible(e) || e.getAttribute('aria-hidden') === 'true') return false;
+              const rect = e.getBoundingClientRect();
+              return rect.width > 0 && rect.height > 0 &&
+                rect.right > 0 && rect.bottom > 0 &&
+                rect.left < window.innerWidth && rect.top < window.innerHeight;
+            });
+        })()`
+      );
+    if (!(await panelVisible())) {
+      return;
+    }
+
+    const timeoutMs = remainingWorkbenchBudget(options.deadline);
+    let timer: NodeJS.Timeout | undefined;
+    try {
+      await Promise.race([
+        Promise.resolve(options.executeCommand('workbench.action.closePanel')),
+        new Promise<never>((_, reject) => {
+          timer = setTimeout(() => reject(new Error('Close workbench panel command deadline expired')), timeoutMs);
+        }),
+      ]);
+    } finally {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    }
+    await poll(panelVisible, (visible) => !visible, options.deadline);
+  } finally {
+    cdp.dispose();
+  }
+}
+
 export async function ensureRegularWorkbenchExplorer(
   cdp: CdpEvaluator,
   expectation: RegularWorkbenchOwnershipExpectation,

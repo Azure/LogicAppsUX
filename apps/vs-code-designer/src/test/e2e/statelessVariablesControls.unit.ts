@@ -1,5 +1,6 @@
 import * as assert from 'assert';
 import * as fs from 'fs';
+import * as net from 'net';
 import * as os from 'os';
 import * as path from 'path';
 import * as ts from 'typescript';
@@ -39,6 +40,7 @@ async function main(): Promise<void> {
   await testRecovery();
   testNativeWiring();
   await testNativeRowScopingAndTransport();
+  await testNativePortOwnershipProbe();
   await testOutputChannelSelection();
   await testRegisteredRunner();
   console.log(`[statelessVariablesControls.unit] ${checks} local controls passed; no native GUI/runtime credit`);
@@ -757,6 +759,20 @@ function testNativeWiring(): void {
     assert.ok(native.includes('assertStatelessRun(runName, previous, run, JSON.parse(actions.body), operations)'));
     assert.ok(native.includes('await recoverStateless('));
     assert.ok(
+      native.includes("commands.includes('azurite.close')") && native.includes("vscode.commands.executeCommand('azurite.close')"),
+      'Stateless finalization must close owned Azurite services and prove all default service ports are released'
+    );
+    assert.ok(
+      native.indexOf('await recoverStateless(') < native.indexOf("phase: 'close owned Azurite services'"),
+      'Owned Azurite finalization must run after the independent recovered callback'
+    );
+    assert.ok(
+      native.includes("phase: 'close owned Azurite services'") &&
+        native.includes("phase: 'verify owned Azurite port release'") &&
+        native.includes('busyPorts = await findBusyPorts(ports)'),
+      'Ordered cleanup must attempt physical Azurite port verification even when command dispatch fails'
+    );
+    assert.ok(
       native.includes('handleAffirmativeConnectorWorkbenchPrompt('),
       'Debug startup must reuse the proven affirmative connector prompt journey'
     );
@@ -832,10 +848,14 @@ function testNativeWiring(): void {
     assert.ok(native.includes('preparationLease.bindGeneratedDesignTime()'));
     assert.ok(native.includes('await waitForActivationDesignTime(positiveDeadline, signal)'));
     assert.ok(
-      native.match(/await waitForRuntimePortReleased\((positiveDeadline|deadline), signal\)/g)?.length === 3,
-      'Positive-lifecycle and recovery restarts must prove exclusive availability of port 7071 before continuing'
+      native.match(/await waitForRuntimePortReleased\((positiveDeadline|deadline)(?:, signal)?\)/g)?.length === 4,
+      'Positive-lifecycle restarts plus recovery stop and restart must prove exclusive availability of port 7071'
     );
-    assert.ok(native.includes('server.listen({ port: 7071, host, ipv6Only, exclusive: true }'));
+    assert.ok(
+      native.includes("waitForOwnedServicePortsReleased(deadline, 'owned Functions runtime', [7071], signal)") &&
+        native.includes('server.listen({ port, host, ipv6Only, exclusive: true }'),
+      'Functions restart boundaries must use the shared exclusive service-port ownership probe'
+    );
     assert.ok(native.includes('showLogicAppsStandardOutput('));
     assert.ok(native.includes('lease?.restore();'), 'Stateless history settings restoration must remain in bounded recovery');
     assert.ok(shared.includes("creationCase.wfType ?? 'Stateful'"), 'Canonical old fixtures remain Stateful');
@@ -849,7 +869,82 @@ function testNativeWiring(): void {
 
 interface NativeUnitSeam {
   variableFieldPoint(cdp: CdpEvaluator, context: number, index: number, label: string, deadline: number): Promise<Point>;
+  canExclusivelyBindPort(port: number): Promise<boolean>;
+  closeOwnedAzurite(): Promise<void>;
+  findBusyPorts(ports: readonly number[], probe: (port: number) => Promise<boolean>): Promise<number[]>;
   request(url: string, method: string, deadline: number): Promise<{ status: number; body: string }>;
+}
+
+async function testNativePortOwnershipProbe(): Promise<void> {
+  const file = sourcePath('statelessVariablesLifecycle.test.ts');
+  const source = ts.createSourceFile(file, fs.readFileSync(file, 'utf8'), ts.ScriptTarget.Latest, true);
+  const nodes = source.statements.filter(
+    (statement): statement is ts.FunctionDeclaration =>
+      ts.isFunctionDeclaration(statement) &&
+      ['canExclusivelyBindPort', 'closeOwnedAzurite', 'findBusyPorts', 'tryBindPort'].includes(statement.name?.text ?? '')
+  );
+  assert.strictEqual(nodes.length, 4);
+  const implementation = ts.transpileModule(nodes.map((node) => `export ${node.getText(source)}`).join('\n'), {
+    compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS },
+  }).outputText;
+  const executed: string[] = [];
+  let commands = ['azurite.close'];
+  const commandState: { failure?: Error } = {};
+  const exported = {} as NativeUnitSeam;
+  vm.runInNewContext(implementation, {
+    exports: exported,
+    assert,
+    net,
+    Error,
+    Promise,
+    Date,
+    console,
+    withinDeadline,
+    vscode: {
+      commands: {
+        getCommands: async () => commands,
+        executeCommand: async (command: string) => {
+          executed.push(command);
+          if (commandState.failure) {
+            throw commandState.failure;
+          }
+        },
+      },
+    },
+  });
+
+  await exported.closeOwnedAzurite();
+  assert.deepStrictEqual(executed, ['azurite.close']);
+  commands = [];
+  await assert.rejects(() => exported.closeOwnedAzurite(), /must register azurite\.close/);
+  commands = ['azurite.close'];
+  commandState.failure = new Error('close rejected');
+  await assert.rejects(() => exported.closeOwnedAzurite(), /close rejected/);
+  assert.deepStrictEqual(
+    await exported.findBusyPorts([10000, 10001, 10002], async (port) => port !== 10002),
+    [10002],
+    'Partial Azurite release must retain the exact busy port'
+  );
+
+  const listener = net.createServer();
+  await new Promise<void>((resolve, reject) => {
+    listener.once('error', reject);
+    listener.listen({ host: '127.0.0.1', port: 0, exclusive: true }, resolve);
+  });
+  const address = listener.address();
+  assert.ok(address && typeof address === 'object');
+  const port = address.port;
+  try {
+    assert.strictEqual(
+      await exported.canExclusivelyBindPort(port),
+      false,
+      'An owned port must remain unavailable while its service listens'
+    );
+  } finally {
+    await new Promise<void>((resolve, reject) => listener.close((error) => (error ? reject(error) : resolve())));
+  }
+  assert.strictEqual(await exported.canExclusivelyBindPort(port), true, 'A stopped owned service must release its port');
+  checks += 6;
 }
 
 async function testNativeRowScopingAndTransport(): Promise<void> {

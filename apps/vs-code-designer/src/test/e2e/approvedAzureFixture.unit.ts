@@ -367,6 +367,8 @@ async function testCallbackIndependentFixtureRestore(): Promise<void> {
             throw new Error('actual owned stop failed');
           }
           manager.sessionEnded('session');
+          taskActive = false;
+          manager.taskEnded('task');
         },
       });
       return true;

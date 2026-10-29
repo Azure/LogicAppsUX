@@ -295,6 +295,8 @@ function debugHarness(gate: Promise<void>, secondImmediate: boolean) {
       stop: async () => {
         order.push(`session-stop-${number}`);
         live.delete(`session-${number}`);
+        activeTasks.delete(`task-${number}`);
+        manager.taskEnded(`task-${number}`);
         manager.sessionEnded(`session-${number}`);
       },
     });
@@ -370,7 +372,7 @@ async function testAlreadyExitedTaskIsReconciled(): Promise<void> {
 
 async function testTaskTerminationRaceIsReconciled(): Promise<void> {
   let taskActive = true;
-  const manager = new StatelessOwnedDebug('/unit/owned-app', 'func: host start', async (tag) => {
+  const manager = new StatelessOwnedDebug('/unit/owned-app', 'func: host start', async () => {
     manager.taskStarted({
       id: 'task',
       workspacePath: '/unit/owned-app',
@@ -381,16 +383,10 @@ async function testTaskTerminationRaceIsReconciled(): Promise<void> {
         throw new Error('Task to terminate not found');
       },
     });
-    manager.sessionStarted({
-      id: 'session',
-      workspacePath: '/unit/owned-app',
-      ownerTag: tag,
-      stop: async () => manager.sessionEnded('session'),
-    });
-    return true;
+    throw new Error('debug launch failed before a session was observed');
   });
 
-  await manager.start(new AbortController().signal);
+  await assert.rejects(() => manager.start(new AbortController().signal), /debug launch failed/);
   await manager.quiesce(Date.now() + 1000);
   checks++;
 }
@@ -398,7 +394,7 @@ async function testTaskTerminationRaceIsReconciled(): Promise<void> {
 async function testTaskTerminationWaitsForRegistryConvergence(): Promise<void> {
   let taskActive = true;
   let terminateCalls = 0;
-  const manager = new StatelessOwnedDebug('/unit/owned-app', 'func: host start', async (tag) => {
+  const manager = new StatelessOwnedDebug('/unit/owned-app', 'func: host start', async () => {
     manager.taskStarted({
       id: 'task',
       workspacePath: '/unit/owned-app',
@@ -412,16 +408,10 @@ async function testTaskTerminationWaitsForRegistryConvergence(): Promise<void> {
         throw new Error('Task to terminate not found');
       },
     });
-    manager.sessionStarted({
-      id: 'session',
-      workspacePath: '/unit/owned-app',
-      ownerTag: tag,
-      stop: async () => manager.sessionEnded('session'),
-    });
-    return true;
+    throw new Error('debug launch failed before a session was observed');
   });
 
-  await manager.start(new AbortController().signal);
+  await assert.rejects(() => manager.start(new AbortController().signal), /debug launch failed/);
   await manager.quiesce(Date.now() + 1000);
   assert.strictEqual(terminateCalls, 1, 'Termination must be dispatched once while registry convergence is pending');
   checks++;
@@ -429,7 +419,7 @@ async function testTaskTerminationWaitsForRegistryConvergence(): Promise<void> {
 
 async function testTaskTerminationAcceptsExactEndEvent(): Promise<void> {
   let terminateCalls = 0;
-  const manager = new StatelessOwnedDebug('/unit/owned-app', 'func: host start', async (tag) => {
+  const manager = new StatelessOwnedDebug('/unit/owned-app', 'func: host start', async () => {
     manager.taskStarted({
       id: 'task',
       workspacePath: '/unit/owned-app',
@@ -441,23 +431,17 @@ async function testTaskTerminationAcceptsExactEndEvent(): Promise<void> {
         throw new Error('Task to terminate not found');
       },
     });
-    manager.sessionStarted({
-      id: 'session',
-      workspacePath: '/unit/owned-app',
-      ownerTag: tag,
-      stop: async () => manager.sessionEnded('session'),
-    });
-    return true;
+    throw new Error('debug launch failed before a session was observed');
   });
 
-  await manager.start(new AbortController().signal);
+  await assert.rejects(() => manager.start(new AbortController().signal), /debug launch failed/);
   await manager.quiesce(Date.now() + 1000);
   assert.strictEqual(terminateCalls, 1);
   checks++;
 }
 
 async function testActiveTaskTerminationFailureRemainsFatal(): Promise<void> {
-  const manager = new StatelessOwnedDebug('/unit/owned-app', 'func: host start', async (tag) => {
+  const manager = new StatelessOwnedDebug('/unit/owned-app', 'func: host start', async () => {
     manager.taskStarted({
       id: 'task',
       workspacePath: '/unit/owned-app',
@@ -467,16 +451,10 @@ async function testActiveTaskTerminationFailureRemainsFatal(): Promise<void> {
         throw new Error('real termination failure');
       },
     });
-    manager.sessionStarted({
-      id: 'session',
-      workspacePath: '/unit/owned-app',
-      ownerTag: tag,
-      stop: async () => manager.sessionEnded('session'),
-    });
-    return true;
+    throw new Error('debug launch failed before a session was observed');
   });
 
-  await manager.start(new AbortController().signal);
+  await assert.rejects(() => manager.start(new AbortController().signal), /debug launch failed/);
   await assert.rejects(
     () => manager.quiesce(Date.now() + 1000),
     (error: AggregateError) =>
@@ -506,6 +484,9 @@ async function testCleanupErrorWaitsForTaskConvergence(): Promise<void> {
       workspacePath: '/unit/owned-app',
       ownerTag: tag,
       stop: async () => {
+        setTimeout(() => {
+          taskActive = false;
+        }, 10);
         manager.sessionEnded('session');
         throw new Error('session stop failed');
       },
@@ -568,13 +549,89 @@ async function testLatePositiveLaunchBeforeRestore(): Promise<void> {
   checks++;
 }
 
-async function testSettledLaunchStopsDebuggerBeforeTask(): Promise<void> {
+async function testSettledLaunchLeavesTaskCleanupToProduct(): Promise<void> {
   const h = debugHarness(Promise.resolve(), true);
   await h.manager.start(new AbortController().signal);
   await h.manager.quiesce(Date.now() + 1000);
-  assert.ok(h.order.indexOf('session-stop-1') < h.order.indexOf('task-stop-1'), 'Debugger must stop before its host task is terminated');
+  assert.ok(h.order.includes('session-stop-1'), 'The exact owned debugger must be stopped');
+  assert.ok(!h.order.includes('task-stop-1'), 'The harness must not race the product-owned Functions process-tree cleanup');
   assert.strictEqual(h.live.size, 0);
   assert.strictEqual(h.foreignStops(), 0, 'Neither a foreign session nor preexisting same-folder task may be stopped');
+  checks++;
+}
+
+async function testSessionOwnedTaskRemainsProductOwnedDuringDebuggerStop(): Promise<void> {
+  const debuggerStopped = deferred<void>();
+  const order: string[] = [];
+  let taskActive = true;
+  const manager = new StatelessOwnedDebug('/unit/owned-app', 'func: host start', async (tag) => {
+    manager.taskStarted({
+      id: 'task',
+      workspacePath: '/unit/owned-app',
+      name: 'func: host start',
+      isActive: () => taskActive,
+      terminate: () => {
+        order.push('task-stop');
+        taskActive = false;
+        manager.taskEnded('task');
+      },
+    });
+    manager.sessionStarted({
+      id: 'session',
+      workspacePath: '/unit/owned-app',
+      ownerTag: tag,
+      stop: () => {
+        order.push('session-stop');
+        return debuggerStopped.promise.then(() => {
+          taskActive = false;
+          manager.taskEnded('task');
+          manager.sessionEnded('session');
+        });
+      },
+    });
+    return true;
+  });
+
+  await manager.start(new AbortController().signal);
+  const quiescence = manager.quiesce(Date.now() + 1000);
+  await new Promise<void>((resolve) => setImmediate(resolve));
+  assert.deepStrictEqual(order, ['session-stop'], 'Task termination must remain exclusively product-owned while debugger stop settles');
+  debuggerStopped.resolve();
+  await quiescence;
+  assert.ok(!order.includes('task-stop'));
+  checks++;
+}
+
+async function testEndedSessionStillLeavesTaskCleanupToProduct(): Promise<void> {
+  let taskActive = true;
+  let terminateCalls = 0;
+  const manager = new StatelessOwnedDebug('/unit/owned-app', 'func: host start', async (tag) => {
+    manager.taskStarted({
+      id: 'task',
+      workspacePath: '/unit/owned-app',
+      name: 'func: host start',
+      isActive: () => taskActive,
+      terminate: () => {
+        terminateCalls++;
+      },
+    });
+    manager.sessionStarted({
+      id: 'session',
+      workspacePath: '/unit/owned-app',
+      ownerTag: tag,
+      stop: async () => assert.fail('An already ended session must not be stopped again'),
+    });
+    return true;
+  });
+
+  await manager.start(new AbortController().signal);
+  manager.sessionEnded('session');
+  setTimeout(() => {
+    taskActive = false;
+    manager.taskEnded('task');
+  }, 10);
+  await manager.quiesce(Date.now() + 1000);
+  assert.strictEqual(terminateCalls, 0, 'Persistent session ownership must prevent a later task-termination race');
   checks++;
 }
 
@@ -672,7 +729,9 @@ async function main(): Promise<void> {
   await testColdProducer();
   await testResolvingSideEffectQuiescence();
   await testLatePositiveLaunchBeforeRestore();
-  await testSettledLaunchStopsDebuggerBeforeTask();
+  await testSettledLaunchLeavesTaskCleanupToProduct();
+  await testSessionOwnedTaskRemainsProductOwnedDuringDebuggerStop();
+  await testEndedSessionStillLeavesTaskCleanupToProduct();
   await testAlreadyExitedTaskIsReconciled();
   await testTaskTerminationRaceIsReconciled();
   await testTaskTerminationWaitsForRegistryConvergence();

@@ -337,6 +337,7 @@ function prepareUserSettings(userDataPath) {
         'azureLogicAppsStandard.nodeJsBinaryPath': findExecutable('node') ?? 'node',
         'azureLogicAppsStandard.autoStartDesignTime': process.env.LA_E2E_CLI_AUTO_START_DESIGN_TIME === '1',
         'azureLogicAppsStandard.autoStartAzurite': true,
+        'azureLogicAppsStandard.stopFuncTaskPostDebug': true,
         'azureLogicAppsStandard.azuriteLocationSetting': path.join(userDataPath, 'azurite'),
         'azureLogicAppsStandard.silentAuth': true,
         'azurite.location': path.join(userDataPath, 'azurite'),

@@ -2,7 +2,7 @@
 
 > **Status**: IN PROGRESS — Phase 4.1 (createWorkspace): 63 passing, 1 failing (pre-existing product bug). Phase 4.2 (designer actions): **2 passing, 0 failing** — full lifecycle tests covering designer authoring → save → debug → overview → run trigger → verify succeeded. ~5 min runtime.
 >
-> **Last updated**: 2026-03-03
+> **Last updated**: 2026-10-29
 
 ---
 
@@ -11,6 +11,46 @@
 TRUE end-to-end tests using `vscode-extension-tester` (ExTester v8.21.0) that launch a real standalone VS Code instance, load the locally-built Logic Apps extension, open webviews, interact with form fields via Selenium WebDriver, and verify the wizard flow + designer functionality.
 
 **Not** filesystem-only tests. **Not** `@vscode/test-cli` tests (those exist separately in `src/test/e2e/`).
+
+## 1.4. Local-first workflow for CLI-native tests
+
+When work touches `src/test/e2e/` or `scripts/run-e2e-cli.js`, develop the
+affected logical family locally before queueing ADO. The complete commands,
+Azure setup, evidence gates and ADO handoff are maintained in
+`docs/testing/vscode-cli-authoring.md` under **Local-first development before
+ADO**.
+
+Required order:
+
+1. Run `pnpm run test:e2e-cli:compile`.
+2. Run the focused family unit controls.
+3. Run `pnpm --dir apps/vs-code-designer run test:e2e-cli:unit`.
+4. Verify or prepare
+   `apps/vs-code-designer/.vscode-test/prepared-extensions-local` with
+   `prepare-e2e-extension-dependencies.js`.
+5. For Azure-backed families, acquire a fresh token for only the approved local
+   **Logic Apps PM** / **`lambrian_iactest`** target. Never use the ADO
+   service-connection fixture locally or print/persist the token.
+6. Run one affected family through its real `run-e2e-cli.js` lifecycle. Multiple
+   VS Code windows opening and closing is expected phase isolation.
+7. Inspect the terminal receipt, cleanup ledger, phase journal, screenshots,
+   diagnostics and containment receipt. A passing Mocha body alone is not
+   acceptance.
+8. Queue targeted exact-SHA Linux/Windows ADO lanes only after local proof is
+   green. The complete 23-lane rollup remains the final coverage gate.
+
+Useful focused entry points:
+
+```powershell
+pnpm --dir apps/vs-code-designer run test:e2e-cli:stateless-variables-lifecycle
+pnpm --dir apps/vs-code-designer run test:e2e-cli:workspace-artifact-regeneration
+pnpm --dir apps/vs-code-designer run test:e2e-cli:workspace-multi-root
+pnpm --dir apps/vs-code-designer run test:e2e-cli:http-timeout-lifecycle
+```
+
+Do not copy the long Azure environment setup into family-specific notes. Keep
+the canonical snippet in `docs/testing/vscode-cli-authoring.md` so token
+freshness, approved-target policy and prepared-seed identity cannot drift.
 
 ## 1.5. Critical Rules — Read Before Writing Any New Test
 

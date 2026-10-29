@@ -31,6 +31,7 @@ import {
   objectValue,
   recoverStateless,
   remainingMs,
+  runWithOrderedCleanup,
   withinDeadline,
   assertPhaseActive,
   StatelessOperationScope,
@@ -209,6 +210,7 @@ suite('Stateless variables lifecycle', () => {
           if (ownedDebug) {
             await ownedDebug.quiesce(deadline);
           }
+          await waitForRuntimePortReleased(deadline);
         },
         restore: () => {
           lease?.restore();
@@ -225,13 +227,22 @@ suite('Stateless variables lifecycle', () => {
     } catch (error) {
       recoveryFailures.push(error);
     }
-    if (originalFailure !== undefined || recoveryFailures.length > 0) {
-      logStatelessLifecycleFailures(originalFailure, recoveryFailures);
-      throw new AggregateError(
-        [...(originalFailure === undefined ? [] : [originalFailure]), ...recoveryFailures],
-        'Stateless lifecycle failed; original and independent recovery failures are retained'
-      );
-    }
+    await runWithOrderedCleanup(
+      async () => {
+        if (originalFailure !== undefined || recoveryFailures.length > 0) {
+          logStatelessLifecycleFailures(originalFailure, recoveryFailures);
+          throw new AggregateError(
+            [...(originalFailure === undefined ? [] : [originalFailure]), ...recoveryFailures],
+            'Stateless lifecycle failed; original and independent recovery failures are retained'
+          );
+        }
+      },
+      [
+        { phase: 'close owned Azurite services', action: closeOwnedAzurite },
+        { phase: 'verify owned Azurite port release', action: waitForOwnedAzuritePortsReleased },
+      ],
+      'Stateless lifecycle or owned Azurite finalization failed'
+    );
   });
 });
 
@@ -893,25 +904,67 @@ async function proveExactHistoryRun(
   }
 }
 
-async function waitForRuntimePortReleased(deadline: number, signal: AbortSignal): Promise<void> {
-  const releaseDeadline = Math.min(deadline, Date.now() + 30_000);
-  await poll(releaseDeadline, 'owned Functions runtime port release', canExclusivelyBindRuntimePort, signal);
+async function waitForRuntimePortReleased(deadline: number, signal?: AbortSignal): Promise<void> {
+  await waitForOwnedServicePortsReleased(deadline, 'owned Functions runtime', [7071], signal);
   console.log('[stateless-variables] Owned Functions runtime released port 7071');
 }
 
-async function canExclusivelyBindRuntimePort(): Promise<boolean> {
-  const dualStack = await tryBindRuntimePort('::', false);
-  if (dualStack !== undefined) {
-    return dualStack;
-  }
-  const ipv4 = await tryBindRuntimePort('0.0.0.0');
-  if (ipv4 !== undefined) {
-    return ipv4;
-  }
-  throw new Error('The test host cannot prove exclusive ownership availability for local runtime port 7071');
+async function closeOwnedAzurite(): Promise<void> {
+  const deadline = Date.now() + 10_000;
+  console.log('[stateless-variables] Closing owned Azurite services');
+  const commands = await withinDeadline(deadline, 'Azurite close command registration', () => vscode.commands.getCommands(true));
+  assert.ok(commands.includes('azurite.close'), 'The installed Azurite extension must register azurite.close');
+  await withinDeadline(deadline, 'Azurite close command', () => vscode.commands.executeCommand('azurite.close'));
 }
 
-function tryBindRuntimePort(host: string, ipv6Only?: boolean): Promise<boolean | undefined> {
+async function waitForOwnedAzuritePortsReleased(): Promise<void> {
+  const deadline = Date.now() + 30_000;
+  const ports = [10000, 10001, 10002] as const;
+  let busyPorts: number[] = [...ports];
+  try {
+    await poll(deadline, 'owned Azurite service port release', async () => {
+      busyPorts = await findBusyPorts(ports);
+      return busyPorts.length === 0;
+    });
+  } catch (error) {
+    throw new Error(`Owned Azurite services did not release ports: ${busyPorts.join(', ')}`, { cause: error });
+  }
+  console.log('[stateless-variables] Owned Azurite services released ports 10000-10002');
+}
+
+async function findBusyPorts(
+  ports: readonly number[],
+  probe: (port: number) => Promise<boolean> = canExclusivelyBindPort
+): Promise<number[]> {
+  const availability = await Promise.all(ports.map(async (port) => ({ port, available: await probe(port) })));
+  return availability.filter(({ available }) => !available).map(({ port }) => port);
+}
+
+async function waitForOwnedServicePortsReleased(
+  deadline: number,
+  description: string,
+  ports: readonly number[],
+  signal?: AbortSignal
+): Promise<void> {
+  const releaseDeadline = Math.min(deadline, Date.now() + 30_000);
+  await poll(
+    releaseDeadline,
+    `${description} port release`,
+    async () => (await Promise.all(ports.map(canExclusivelyBindPort))).every(Boolean),
+    signal
+  );
+}
+
+async function canExclusivelyBindPort(port: number): Promise<boolean> {
+  const results = await Promise.all([tryBindPort(port, '::1', true), tryBindPort(port, '127.0.0.1')]);
+  const supported = results.filter((result): result is boolean => result !== undefined);
+  if (supported.length > 0) {
+    return supported.every(Boolean);
+  }
+  throw new Error(`The test host cannot prove exclusive ownership availability for local service port ${port}`);
+}
+
+function tryBindPort(port: number, host: string, ipv6Only?: boolean): Promise<boolean | undefined> {
   return new Promise((resolve, reject) => {
     const server = net.createServer();
     server.once('error', (error: NodeJS.ErrnoException) => {
@@ -920,13 +973,13 @@ function tryBindRuntimePort(host: string, ipv6Only?: boolean): Promise<boolean |
       } else if (error.code === 'EAFNOSUPPORT' || error.code === 'EADDRNOTAVAIL') {
         resolve(undefined);
       } else {
-        reject(new Error(`Exclusive local runtime port probe failed with ${error.code ?? 'an unknown socket error'}`));
+        reject(new Error(`Exclusive local service port ${port} probe failed with ${error.code ?? 'an unknown socket error'}`));
       }
     });
-    server.listen({ port: 7071, host, ipv6Only, exclusive: true }, () => {
+    server.listen({ port, host, ipv6Only, exclusive: true }, () => {
       server.close((error) => {
         if (error) {
-          reject(new Error('Exclusive local runtime port probe could not release its temporary listener'));
+          reject(new Error(`Exclusive local service port ${port} probe could not release its temporary listener`));
         } else {
           resolve(true);
         }

@@ -212,45 +212,49 @@ export class StatelessOwnedDebug {
     const sessions = [...this.sessions.values()].filter(
       (session) => (!ownerTag || session.ownerTag === ownerTag) && !this.stopping.has(session.id)
     );
-    const tasks = [...this.tasks.values()]
-      .filter(({ task, ownerTag: taskOwner }) => (!ownerTag || taskOwner === ownerTag) && !this.terminating.has(task.id))
-      .map(({ task }) => task);
+    // Once a debug session exists, the extension owns its Functions task/process-tree shutdown.
+    // Concurrent TaskExecution termination removes the PID record before that exact-tree cleanup runs.
+    const tasks = [...this.tasks.values()].filter(
+      ({ task, ownerTag: taskOwner }) =>
+        (!ownerTag || taskOwner === ownerTag) && !this.attempts.get(taskOwner)?.started && !this.terminating.has(task.id)
+    );
     if (sessions.length === 0 && tasks.length === 0) {
       return;
     }
     sessions.forEach((session) => this.stopping.add(session.id));
-    tasks.forEach((task) => this.terminating.add(task.id));
-    const job = Promise.all(
-      sessions.map((session) =>
-        Promise.resolve()
-          .then(() => session.stop())
-          .catch((error) => {
-            this.cleanupErrors.push(error);
-          })
-      )
-    ).then(() => {
-      for (const task of tasks) {
-        if (!this.tasks.has(task.id)) {
-          continue;
-        }
-        if (!task.isActive()) {
-          this.taskEnded(task.id);
-          continue;
-        }
-        try {
-          task.terminate();
-        } catch (error) {
-          if (this.tasks.has(task.id) && task.isActive()) {
-            this.terminationErrors.set(task.id, error);
-          } else {
-            this.taskEnded(task.id);
-          }
-        }
-        if (!task.isActive()) {
+    tasks.forEach(({ task }) => this.terminating.add(task.id));
+    const sessionStops = sessions.map((session) => {
+      try {
+        return Promise.resolve(session.stop()).catch((error) => {
+          this.cleanupErrors.push(error);
+        });
+      } catch (error) {
+        this.cleanupErrors.push(error);
+        return Promise.resolve();
+      }
+    });
+    for (const { task } of tasks) {
+      if (!this.tasks.has(task.id)) {
+        continue;
+      }
+      if (!task.isActive()) {
+        this.taskEnded(task.id);
+        continue;
+      }
+      try {
+        task.terminate();
+      } catch (error) {
+        if (this.tasks.has(task.id) && task.isActive()) {
+          this.terminationErrors.set(task.id, error);
+        } else {
           this.taskEnded(task.id);
         }
       }
-    });
+      if (!task.isActive()) {
+        this.taskEnded(task.id);
+      }
+    }
+    const job = Promise.all(sessionStops).then(() => undefined);
     this.stopJobs.add(job);
     job.then(() => this.stopJobs.delete(job));
   }

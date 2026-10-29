@@ -572,6 +572,7 @@ export interface DesignerNodeIdentity {
 
 interface ActionInsertionSnapshot {
   nodes: DesignerNodeIdentity[];
+  panelNodeIds: string[];
   discoveryVisible: boolean;
   loaderCount: number;
 }
@@ -2556,7 +2557,7 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
         '[class*="spinner"]',
         '[class*="loading"]',
       ].flatMap((selector) => Array.from(document.querySelectorAll(selector))).filter(visible).length;
-      return { nodes, discoveryVisible, loaderCount };
+      return { nodes, panelNodeIds: panelNodes.map((identity) => identity.nodeId), discoveryVisible, loaderCount };
     })()`);
   }
 
@@ -2572,26 +2573,35 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
     while (Date.now() < deadline) {
       const snapshot = await this.readActionInsertionSnapshot();
       const added = snapshot.nodes.filter((identity) => !beforeIds.has(identity.nodeId));
-      assert.ok(added.length <= 1, `${description} added ambiguous Designer nodes: ${added.map((identity) => identity.nodeId).join(', ')}`);
-      if (added.length === 1) {
-        if (added[0].title) {
-          if (expectedTitle) {
-            const actual = added[0].title.toLowerCase();
-            const expected = expectedTitle.toLowerCase();
-            assert.ok(
-              actual === expected || actual.startsWith(`${expected} `),
-              `${description} inserted unexpected Designer node ${added[0].nodeId} (${added[0].title})`
-            );
-          }
+      const expected = expectedTitle?.toLowerCase();
+      const titleMatches = expected
+        ? added.filter((identity) => {
+            const actual = identity.title.toLowerCase();
+            return actual === expected || actual.startsWith(`${expected} `);
+          })
+        : added;
+      const candidates = expected ? titleMatches.filter((identity) => snapshot.panelNodeIds.includes(identity.nodeId)) : titleMatches;
+      assert.ok(
+        candidates.length <= 1,
+        `${description} added ambiguous Designer nodes: ${candidates.map((identity) => identity.nodeId).join(', ')}; all newly observed: ${added
+          .map((identity) => identity.nodeId)
+          .join(
+            ', '
+          )}; matching titles: ${titleMatches.map((identity) => identity.nodeId).join(', ')}; visible panels: ${snapshot.panelNodeIds.join(
+          ', '
+        )}`
+      );
+      if (candidates.length === 1) {
+        if (candidates[0].title) {
           if (!snapshot.discoveryVisible && snapshot.loaderCount === 0) {
-            if (stableNodeId === added[0].nodeId) {
+            if (stableNodeId === candidates[0].nodeId) {
               stableObservations++;
             } else {
-              stableNodeId = added[0].nodeId;
+              stableNodeId = candidates[0].nodeId;
               stableObservations = 1;
             }
             if (stableObservations >= 3) {
-              return added[0];
+              return candidates[0];
             }
           } else {
             stableNodeId = '';

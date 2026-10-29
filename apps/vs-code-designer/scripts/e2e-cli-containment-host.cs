@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 
@@ -10,8 +11,12 @@ public static class E2eCliContainmentHost
     private const uint CREATE_SUSPENDED = 0x00000004;
     private const uint STARTF_USESTDHANDLES = 0x00000100;
     private const uint JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE = 0x00002000;
+    private const uint PROCESS_QUERY_LIMITED_INFORMATION = 0x00001000;
     private const int JobObjectBasicAccountingInformation = 1;
+    private const int JobObjectBasicProcessIdList = 3;
     private const int JobObjectExtendedLimitInformation = 9;
+    private const int ProcessBasicInformation = 0;
+    private const int ProcessCommandLineInformation = 60;
     private const uint INFINITE = 0xffffffff;
 
     [StructLayout(LayoutKind.Sequential)]
@@ -103,6 +108,25 @@ public static class E2eCliContainmentHost
         public uint TotalTerminatedProcesses;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
+    private struct UNICODE_STRING
+    {
+        public ushort Length;
+        public ushort MaximumLength;
+        public IntPtr Buffer;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct PROCESS_BASIC_INFORMATION
+    {
+        public IntPtr Reserved1;
+        public IntPtr PebBaseAddress;
+        public IntPtr Reserved2_0;
+        public IntPtr Reserved2_1;
+        public IntPtr UniqueProcessId;
+        public IntPtr InheritedFromUniqueProcessId;
+    }
+
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     private static extern bool CreateProcess(
         string lpApplicationName,
@@ -142,6 +166,40 @@ public static class E2eCliContainmentHost
 
     [DllImport("kernel32.dll", SetLastError = true)]
     private static extern bool TerminateProcess(IntPtr hProcess, uint exitCode);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern IntPtr OpenProcess(uint desiredAccess, bool inheritHandle, uint processId);
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    private static extern bool QueryFullProcessImageName(IntPtr process, uint flags, StringBuilder executablePath, ref uint size);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern bool IsProcessInJob(IntPtr process, IntPtr job, out bool result);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern bool GetProcessTimes(
+        IntPtr process,
+        out long creationTime,
+        out long exitTime,
+        out long kernelTime,
+        out long userTime);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern bool ProcessIdToSessionId(uint processId, out uint sessionId);
+
+    [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    private static extern IntPtr CommandLineToArgvW(string commandLine, out int argumentCount);
+
+    [DllImport("kernel32.dll")]
+    private static extern IntPtr LocalFree(IntPtr memory);
+
+    [DllImport("ntdll.dll")]
+    private static extern int NtQueryInformationProcess(
+        IntPtr process,
+        int processInformationClass,
+        IntPtr processInformation,
+        uint processInformationLength,
+        out uint returnLength);
 
     [DllImport("kernel32.dll")]
     private static extern IntPtr GetStdHandle(int nStdHandle);
@@ -201,15 +259,325 @@ public static class E2eCliContainmentHost
         }
     }
 
-    private static void WriteReceipt(string path, uint rootPid, uint rootExitCode, uint activeProcesses)
+    private static List<uint> ActiveProcessIds(IntPtr job)
+    {
+        const int capacity = 1024;
+        var headerSize = sizeof(uint) * 2;
+        var size = headerSize + capacity * IntPtr.Size;
+        var pointer = Marshal.AllocHGlobal(size);
+        try
+        {
+            uint returned;
+            if (!QueryInformationJobObject(job, JobObjectBasicProcessIdList, pointer, (uint)size, out returned))
+            {
+                throw new InvalidOperationException("QueryInformationJobObject process list failed: " + Marshal.GetLastWin32Error());
+            }
+            var listed = Marshal.ReadInt32(pointer, sizeof(uint));
+            if (listed < 0 || listed > capacity)
+            {
+                throw new InvalidOperationException("Job process list exceeded its bounded diagnostic capacity");
+            }
+            var processes = new List<uint>(listed);
+            for (var index = 0; index < listed; index++)
+            {
+                var processId = Marshal.ReadIntPtr(pointer, headerSize + index * IntPtr.Size).ToInt64();
+                if (processId > 0 && processId <= uint.MaxValue)
+                {
+                    processes.Add((uint)processId);
+                }
+            }
+            return processes;
+        }
+        finally
+        {
+            Marshal.FreeHGlobal(pointer);
+        }
+    }
+
+    private static string JsonString(string value)
+    {
+        if (value == null)
+        {
+            return "null";
+        }
+        var result = new StringBuilder("\"");
+        foreach (var character in value)
+        {
+            switch (character)
+            {
+                case '"': result.Append("\\\""); break;
+                case '\\': result.Append("\\\\"); break;
+                case '\b': result.Append("\\b"); break;
+                case '\f': result.Append("\\f"); break;
+                case '\n': result.Append("\\n"); break;
+                case '\r': result.Append("\\r"); break;
+                case '\t': result.Append("\\t"); break;
+                default:
+                    if (character < 0x20)
+                    {
+                        result.Append("\\u").Append(((int)character).ToString("x4"));
+                    }
+                    else
+                    {
+                        result.Append(character);
+                    }
+                    break;
+            }
+        }
+        return result.Append('"').ToString();
+    }
+
+    private static string QueryProcessCommandLine(IntPtr process)
+    {
+        uint required;
+        NtQueryInformationProcess(process, ProcessCommandLineInformation, IntPtr.Zero, 0, out required);
+        if (required == 0 || required > 1024 * 1024)
+        {
+            return "";
+        }
+        var pointer = Marshal.AllocHGlobal((int)required);
+        try
+        {
+            uint returned;
+            var status = NtQueryInformationProcess(process, ProcessCommandLineInformation, pointer, required, out returned);
+            if (status < 0)
+            {
+                return "";
+            }
+            var commandLine = (UNICODE_STRING)Marshal.PtrToStructure(pointer, typeof(UNICODE_STRING));
+            return commandLine.Buffer == IntPtr.Zero ? "" : Marshal.PtrToStringUni(commandLine.Buffer, commandLine.Length / 2);
+        }
+        finally
+        {
+            Marshal.FreeHGlobal(pointer);
+        }
+    }
+
+    private static string Sha256(string value)
+    {
+        using (var hash = SHA256.Create())
+        {
+            var bytes = hash.ComputeHash(Encoding.UTF8.GetBytes(value ?? ""));
+            var result = new StringBuilder(bytes.Length * 2);
+            foreach (var valueByte in bytes)
+            {
+                result.Append(valueByte.ToString("x2"));
+            }
+            return result.ToString();
+        }
+    }
+
+    private static List<string> ParseCommandLine(string commandLine)
+    {
+        var arguments = new List<string>();
+        if (String.IsNullOrEmpty(commandLine))
+        {
+            return arguments;
+        }
+        int argumentCount;
+        var pointer = CommandLineToArgvW(commandLine, out argumentCount);
+        if (pointer == IntPtr.Zero)
+        {
+            return arguments;
+        }
+        try
+        {
+            for (var index = 0; index < argumentCount && index < 256; index++)
+            {
+                arguments.Add(Marshal.PtrToStringUni(Marshal.ReadIntPtr(pointer, index * IntPtr.Size)) ?? "");
+            }
+        }
+        finally
+        {
+            LocalFree(pointer);
+        }
+        return arguments;
+    }
+
+    private static string JsonStringArray(List<string> values)
+    {
+        var result = new StringBuilder("[");
+        for (var index = 0; index < values.Count; index++)
+        {
+            if (index > 0)
+            {
+                result.Append(',');
+            }
+            result.Append(JsonString(values[index]));
+        }
+        return result.Append(']').ToString();
+    }
+
+    private static string SafeCommandSummary(string commandLine)
+    {
+        var arguments = ParseCommandLine(commandLine);
+        var safeMarkers = new List<string>();
+        var moduleBasenames = new List<string>();
+        foreach (var argument in arguments)
+        {
+            if (safeMarkers.Count < 16 &&
+                (argument.StartsWith("--type=", StringComparison.Ordinal) ||
+                 argument.StartsWith("--utility-sub-type=", StringComparison.Ordinal) ||
+                 argument == "--ms-enable-electron-run-as-node" ||
+                 argument == "--stateless-variables-lifecycle" ||
+                 argument == "--extensionDevelopmentPath"))
+            {
+                safeMarkers.Add(argument);
+            }
+            if (moduleBasenames.Count >= 16)
+            {
+                continue;
+            }
+            var extension = Path.GetExtension(argument);
+            if (extension.Equals(".js", StringComparison.OrdinalIgnoreCase) ||
+                extension.Equals(".cjs", StringComparison.OrdinalIgnoreCase) ||
+                extension.Equals(".mjs", StringComparison.OrdinalIgnoreCase) ||
+                extension.Equals(".dll", StringComparison.OrdinalIgnoreCase) ||
+                extension.Equals(".exe", StringComparison.OrdinalIgnoreCase))
+            {
+                var basename = Path.GetFileName(argument);
+                if (!String.IsNullOrEmpty(basename) && basename.Length <= 128 && !moduleBasenames.Contains(basename))
+                {
+                    moduleBasenames.Add(basename);
+                }
+            }
+        }
+        return "{\"argumentCount\":" + arguments.Count +
+            ",\"safeMarkers\":" + JsonStringArray(safeMarkers) +
+            ",\"scriptOrModuleBasenames\":" + JsonStringArray(moduleBasenames) +
+            ",\"sha256\":" + JsonString(Sha256(commandLine)) + "}";
+    }
+
+    private static uint ParentProcessId(IntPtr process)
+    {
+        var size = Marshal.SizeOf(typeof(PROCESS_BASIC_INFORMATION));
+        var pointer = Marshal.AllocHGlobal(size);
+        try
+        {
+            uint returned;
+            if (NtQueryInformationProcess(process, ProcessBasicInformation, pointer, (uint)size, out returned) < 0)
+            {
+                return 0;
+            }
+            var information = (PROCESS_BASIC_INFORMATION)Marshal.PtrToStructure(pointer, typeof(PROCESS_BASIC_INFORMATION));
+            var parent = information.InheritedFromUniqueProcessId.ToInt64();
+            return parent > 0 && parent <= uint.MaxValue ? (uint)parent : 0;
+        }
+        finally
+        {
+            Marshal.FreeHGlobal(pointer);
+        }
+    }
+
+    private static string DescribeProcess(IntPtr job, uint processId)
+    {
+        var process = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, false, processId);
+        if (process == IntPtr.Zero)
+        {
+            return "{\"pid\":" + processId +
+                ",\"metadataStatus\":\"exited-before-inspection\",\"win32Error\":" + Marshal.GetLastWin32Error() + "}";
+        }
+        try
+        {
+            bool inJob;
+            if (!IsProcessInJob(process, job, out inJob))
+            {
+                return "{\"pid\":" + processId +
+                    ",\"metadataStatus\":\"membership-query-failed\",\"win32Error\":" + Marshal.GetLastWin32Error() + "}";
+            }
+            if (!inJob)
+            {
+                return "{\"pid\":" + processId + ",\"metadataStatus\":\"not-in-job\"}";
+            }
+            var executablePath = new StringBuilder(32768);
+            uint executablePathLength = (uint)executablePath.Capacity;
+            var path = QueryFullProcessImageName(process, 0, executablePath, ref executablePathLength)
+                ? executablePath.ToString()
+                : "";
+            var commandLine = QueryProcessCommandLine(process);
+            long creationTime;
+            long exitTime;
+            long kernelTime;
+            long userTime;
+            var createdAtUtc = GetProcessTimes(process, out creationTime, out exitTime, out kernelTime, out userTime)
+                ? DateTime.FromFileTimeUtc(creationTime).ToString("o")
+                : "";
+            uint sessionId;
+            var hasSessionId = ProcessIdToSessionId(processId, out sessionId);
+            var parentProcessId = ParentProcessId(process);
+            return "{\"pid\":" + processId +
+                ",\"parentPid\":" + (parentProcessId == 0 ? "null" : parentProcessId.ToString()) +
+                ",\"imageName\":" + JsonString(path.Length == 0 ? "" : Path.GetFileName(path)) +
+                ",\"createdAtUtc\":" + JsonString(createdAtUtc) +
+                ",\"sessionId\":" + (hasSessionId ? sessionId.ToString() : "null") +
+                ",\"metadataStatus\":\"captured\",\"commandSummary\":" + SafeCommandSummary(commandLine) + "}";
+        }
+        finally
+        {
+            CloseHandle(process);
+        }
+    }
+
+    private static List<string> DescribeProcesses(IntPtr job, List<uint> processIds)
+    {
+        processIds.Sort();
+        var descriptions = new List<string>(processIds.Count);
+        foreach (var processId in processIds)
+        {
+            try
+            {
+                descriptions.Add(DescribeProcess(job, processId));
+            }
+            catch
+            {
+                descriptions.Add("{\"pid\":" + processId + ",\"metadataStatus\":\"inspection-failed\"}");
+            }
+        }
+        return descriptions;
+    }
+
+    private static void WriteReceipt(
+        string path,
+        uint rootPid,
+        uint rootExitCode,
+        uint activeProcesses,
+        List<string> activeProcessDescriptions,
+        bool activeProcessDescriptionsTruncated,
+        bool forcedTerminationAttempted,
+        bool forcedTerminationSucceeded,
+        int forcedTerminationError,
+        uint postTerminationActiveProcesses)
     {
         var empty = activeProcesses == 0 ? "true" : "false";
-        File.WriteAllText(
-            path,
+        var processDescriptions = new StringBuilder("[");
+        for (var index = 0; index < activeProcessDescriptions.Count; index++)
+        {
+            if (index > 0)
+            {
+                processDescriptions.Append(',');
+            }
+            processDescriptions.Append(activeProcessDescriptions[index]);
+        }
+        processDescriptions.Append(']');
+        var content =
             "{\"schemaVersion\":1,\"mechanism\":\"windows-job-object\",\"containmentEstablished\":true," +
             "\"rootPid\":" + rootPid + ",\"rootExitCode\":" + rootExitCode + ",\"rootSignal\":null," +
             "\"containmentEmpty\":" + empty + ",\"retainedOriginalIdentitiesVerified\":" + empty + "," +
-            "\"escapedDescendants\":[],\"activeContainedProcessCount\":" + activeProcesses + "}\n");
+            "\"escapedDescendants\":[],\"activeContainedProcessCount\":" + activeProcesses + "," +
+            "\"activeContainedProcesses\":" + processDescriptions + "," +
+            "\"activeContainedProcessesTruncated\":" + (activeProcessDescriptionsTruncated ? "true" : "false") + "," +
+            "\"metadataCapturedAtUtc\":" + JsonString(DateTime.UtcNow.ToString("o")) + "," +
+            "\"forcedTerminationAttempted\":" + (forcedTerminationAttempted ? "true" : "false") + "," +
+            "\"forcedTerminationSucceeded\":" + (forcedTerminationSucceeded ? "true" : "false") + "," +
+            "\"forcedTerminationError\":" + forcedTerminationError + "," +
+            "\"postTerminationActiveProcessCount\":" + postTerminationActiveProcesses + "}\n";
+        var temporaryPath = path + ".tmp." + System.Diagnostics.Process.GetCurrentProcess().Id;
+        File.WriteAllText(temporaryPath, content);
+        if (File.Exists(path))
+        {
+            File.Delete(path);
+        }
+        File.Move(temporaryPath, path);
     }
 
     public static int Main(string[] args)
@@ -298,10 +666,55 @@ public static class E2eCliContainmentHost
                 Thread.Sleep(100);
                 active = ActiveProcesses(job);
             }
-            WriteReceipt(receiptPath, process.dwProcessId, rootExitCode, active);
+            var activeProcessIds = new List<uint>();
+            var activeProcessDescriptionsTruncated = false;
             if (active > 0)
             {
-                TerminateJobObject(job, 125);
+                try
+                {
+                    activeProcessIds = ActiveProcessIds(job);
+                    if (activeProcessIds.Count > 32)
+                    {
+                        activeProcessIds = activeProcessIds.GetRange(0, 32);
+                        activeProcessDescriptionsTruncated = true;
+                    }
+                }
+                catch
+                {
+                    activeProcessDescriptionsTruncated = true;
+                }
+            }
+            var activeProcessDescriptions = DescribeProcesses(job, activeProcessIds);
+            var forcedTerminationAttempted = active > 0;
+            var forcedTerminationSucceeded = false;
+            var forcedTerminationError = 0;
+            var postTerminationActiveProcesses = active;
+            if (active > 0)
+            {
+                forcedTerminationSucceeded = TerminateJobObject(job, 125);
+                if (!forcedTerminationSucceeded)
+                {
+                    forcedTerminationError = Marshal.GetLastWin32Error();
+                }
+                for (var attempt = 0; attempt < 20 && postTerminationActiveProcesses > 0; attempt++)
+                {
+                    Thread.Sleep(100);
+                    postTerminationActiveProcesses = ActiveProcesses(job);
+                }
+            }
+            WriteReceipt(
+                receiptPath,
+                process.dwProcessId,
+                rootExitCode,
+                active,
+                activeProcessDescriptions,
+                activeProcessDescriptionsTruncated,
+                forcedTerminationAttempted,
+                forcedTerminationSucceeded,
+                forcedTerminationError,
+                postTerminationActiveProcesses);
+            if (active > 0)
+            {
                 return 125;
             }
             return unchecked((int)rootExitCode);

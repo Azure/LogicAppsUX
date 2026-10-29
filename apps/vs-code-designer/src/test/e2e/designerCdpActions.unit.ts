@@ -206,11 +206,13 @@ async function testStableActionInsertionAcknowledgement(): Promise<void> {
   const snapshots = [
     {
       nodes: [...before, { nodeId: 'Compose', title: '' }],
+      panelNodeIds: ['Compose'],
       discoveryVisible: false,
       loaderCount: 0,
     },
     ...[1, 2, 3].map(() => ({
       nodes: [...before, compose],
+      panelNodeIds: ['Compose'],
       discoveryVisible: false,
       loaderCount: 0,
     })),
@@ -219,14 +221,50 @@ async function testStableActionInsertionAcknowledgement(): Promise<void> {
   const inserted = await actions.waitForStableSingleNewNodeIdentity(before, 'Compose', Date.now() + 1000, 'Compose');
   assert.deepStrictEqual(inserted, compose, 'Insertion acknowledgement must require one stable exact new node');
 
+  const virtualizedBefore = [{ nodeId: 'Append_to_string_variable', title: 'Append to string variable' }];
+  const remountedRequest = { nodeId: 'When_an_HTTP_request_is_received', title: 'When an HTTP request is received' };
+  const response = { nodeId: 'Response', title: 'Response' };
+  const remountSnapshots = [1, 2, 3].map(() => ({
+    nodes: [...virtualizedBefore, remountedRequest, response],
+    panelNodeIds: ['Response'],
+    discoveryVisible: false,
+    loaderCount: 0,
+  }));
+  actions.readActionInsertionSnapshot = async () => remountSnapshots.shift() ?? remountSnapshots.at(-1);
+  const insertedResponse = await actions.waitForStableSingleNewNodeIdentity(virtualizedBefore, 'Response', Date.now() + 1000, 'Response');
+  assert.deepStrictEqual(insertedResponse, response, 'Insertion acknowledgement must ignore unrelated virtualized-node remounts');
+
   actions.readActionInsertionSnapshot = async () => ({
     nodes: [...before, compose, { nodeId: 'Compose_1', title: 'Compose 1' }],
+    panelNodeIds: ['Compose', 'Compose_1'],
     discoveryVisible: false,
     loaderCount: 0,
   });
   await assert.rejects(
     () => actions.waitForStableSingleNewNodeIdentity(before, 'Compose', Date.now() + 1000, 'Compose'),
     /ambiguous Designer nodes/
+  );
+
+  const sameTitleRemountSnapshots = [
+    ...[1, 2, 3].map(() => ({
+      nodes: [...virtualizedBefore, compose],
+      panelNodeIds: [],
+      discoveryVisible: false,
+      loaderCount: 0,
+    })),
+    ...[1, 2, 3].map(() => ({
+      nodes: [...virtualizedBefore, compose, { nodeId: 'Compose_1', title: 'Compose 1' }],
+      panelNodeIds: ['Compose_1'],
+      discoveryVisible: false,
+      loaderCount: 0,
+    })),
+  ];
+  actions.readActionInsertionSnapshot = async () => sameTitleRemountSnapshots.shift() ?? sameTitleRemountSnapshots.at(-1);
+  const insertedCompose1 = await actions.waitForStableSingleNewNodeIdentity(virtualizedBefore, 'Compose', Date.now() + 1000, 'Compose');
+  assert.deepStrictEqual(
+    insertedCompose1,
+    { nodeId: 'Compose_1', title: 'Compose 1' },
+    'Insertion acknowledgement must not credit a same-title remounted card without the newly opened details panel'
   );
 
   let selectCalls = 0;
@@ -246,6 +284,7 @@ async function testStableActionInsertionAcknowledgement(): Promise<void> {
   actions.waitForStableSingleNewNodeIdentity = async () => undefined;
   actions.readActionInsertionSnapshot = async () => ({
     nodes: before,
+    panelNodeIds: [],
     discoveryVisible: true,
     loaderCount: 0,
   });

@@ -17,6 +17,204 @@ separate private traceability records, not this guide.
 Do not promote a policy or unit control to native success. Record the exact
 scope proved, and preserve earlier failures rather than rewriting their history.
 
+## Local-first development before ADO
+
+Develop and prove a CLI-native family locally before spending an ADO run. Local
+proof is not the final cross-platform gate, but it is the fastest place to
+iterate on native UI, process ownership, evidence and cleanup.
+
+### 1. Build only the layer that changed
+
+From the repository root:
+
+```powershell
+# Always compile changed CLI-native tests.
+pnpm run test:e2e-cli:compile
+
+# Run the focused family controls when one exists.
+pnpm --dir apps/vs-code-designer run test:e2e-cli:stateless-variables:unit
+pnpm --dir apps/vs-code-designer run test:e2e-cli:workspace-artifact-regeneration:unit
+pnpm --dir apps/vs-code-designer run test:e2e-cli:workspace-multi-root:unit
+
+# Run the complete CLI-native control chain before source-bound validation.
+pnpm --dir apps/vs-code-designer run test:e2e-cli:unit
+```
+
+When product extension code changed, rebuild the extension before the native
+run:
+
+```powershell
+pnpm --dir apps/vs-code-designer run build:e2e-cli:extension
+```
+
+When the VS Code React webview changed, also run:
+
+```powershell
+pnpm --dir apps/vs-code-react run build:extension
+```
+
+Do not rebuild the product merely because a compiled E2E test changed; the
+TypeScript E2E compile is sufficient for test-only changes.
+
+### 2. Prepare and verify Marketplace dependencies once
+
+Use the same signed prepared-extension producer contract that ADO consumers
+use. Keep the local seed outside generated suite roots:
+
+```powershell
+$seed = 'apps\vs-code-designer\.vscode-test\prepared-extensions-local'
+node apps\vs-code-designer\scripts\prepare-e2e-extension-dependencies.js prepare `
+  --extensions-dir $seed `
+  --vscode-version stable
+
+node apps\vs-code-designer\scripts\prepare-e2e-extension-dependencies.js verify `
+  --extensions-dir $seed `
+  --vscode-version stable
+```
+
+Consumers of that seed must retain its manifest identity:
+
+```powershell
+$env:LA_E2E_CLI_VSCODE_VERSION = 'stable'
+$env:E2E_VSCODE_VERSION = 'stable'
+$env:LA_E2E_CLI_PREPARED_EXTENSIONS_DIR = (Resolve-Path $seed).Path
+$env:PATH = "$(Resolve-Path 'apps\vs-code-designer\node_modules\.bin');$env:PATH"
+```
+
+Do not replace `stable` with the currently resolved numeric VS Code version.
+The prepared content manifest records the requested version identity.
+
+### 3. Acquire an approved local Azure token without printing it
+
+Local Azure-backed families must use only the maintainer-approved local target:
+the **Logic Apps PM** subscription and **`lambrian_iactest`** resource group.
+Never use the ADO service-connection fixture locally, and never commit access
+tokens, subscription IDs or tenant IDs.
+
+The runner requires at least 50 minutes of token lifetime: the 45-minute suite
+bound plus a five-minute cleanup margin. Azure PowerShell can return a stale
+resource-cache entry; Azure CLI is the preferred local source because
+`get-access-token` refreshes the selected resource independently.
+
+```powershell
+$subscriptionName = 'Logic Apps PM'
+$resourceGroupName = 'lambrian_iactest'
+$subscription = az account list `
+  --query "[?name=='$subscriptionName'] | [0].{id:id,tenantId:tenantId}" `
+  --output json | ConvertFrom-Json
+if (-not $subscription.id -or -not $subscription.tenantId) {
+  throw "Azure CLI is not signed into the approved $subscriptionName subscription."
+}
+
+$location = az group show `
+  --subscription $subscription.id `
+  --name $resourceGroupName `
+  --query location `
+  --output tsv
+if (-not $location) {
+  throw "Approved local resource group $resourceGroupName was not found."
+}
+
+$token = az account get-access-token `
+  --subscription $subscription.id `
+  --resource 'https://management.azure.com/' `
+  --output json | ConvertFrom-Json
+$expiresOn = [DateTimeOffset]::Parse([string]$token.expiresOn).ToUniversalTime()
+if (($expiresOn - [DateTimeOffset]::UtcNow).TotalMinutes -lt 50) {
+  throw 'The local ARM token does not have the required 50-minute safety window.'
+}
+
+$env:LA_E2E_CLI_AZURE_ACCESS_TOKEN = [string]$token.accessToken
+$env:LA_E2E_CLI_AZURE_ACCESS_TOKEN_EXPIRES_ON = $expiresOn.ToString('o')
+$env:LA_E2E_CLI_AZURE_ACCESS_TOKEN_MINTED_AT = [DateTimeOffset]::UtcNow.ToString('o')
+$env:LA_E2E_CLI_AZURE_TENANT_ID = [string]$subscription.tenantId
+$env:LA_E2E_CLI_AZURE_SUBSCRIPTION_ID = [string]$subscription.id
+$env:LA_E2E_CLI_AZURE_RESOURCE_GROUP_NAME = $resourceGroupName
+$env:LA_E2E_CLI_AZURE_LOCATION_NAME = [string]$location
+$env:LA_E2E_CLI_AZURE_MANAGEMENT_BASE_URL = 'https://management.azure.com'
+```
+
+The snippet deliberately keeps the token in process memory and never writes or
+prints it. Run the native family in the same PowerShell process because
+environment variables do not persist into a new shell.
+
+Azure CLI caches tokens independently by resource audience. If the selected
+approved ARM audience has less than the required 50-minute window, request the
+other approved ARM audience (`https://management.core.windows.net/`) and admit
+only the freshest token that satisfies the same subscription, tenant and
+lifetime checks. Never weaken the lifetime gate or switch Azure targets.
+
+### 4. Run one logical family exactly as ADO consumes it
+
+Examples from the repository root:
+
+```powershell
+pnpm --dir apps/vs-code-designer run test:e2e-cli:stateless-variables-lifecycle
+pnpm --dir apps/vs-code-designer run test:e2e-cli:workspace-artifact-regeneration
+pnpm --dir apps/vs-code-designer run test:e2e-cli:workspace-multi-root
+pnpm --dir apps/vs-code-designer run test:e2e-cli:http-timeout-lifecycle
+pnpm --dir apps/vs-code-designer run test:e2e-cli:run-after-persistence-lifecycle
+pnpm --dir apps/vs-code-designer run test:e2e-cli:msn-weather-lifecycle
+```
+
+For a small registered batch:
+
+```powershell
+node apps\vs-code-designer\scripts\run-e2e-cli.js `
+  --suites statelessVariablesLifecycle,workspaceArtifactRegeneration,workspaceMultiRoot
+```
+
+`apps/vs-code-designer/scripts/e2e-cli-batch.js` is the authoritative suite
+registry. Prefer one affected Azure-backed family at a time locally so a fresh
+token and a single failure boundary are obvious. Do not treat a sequential
+local batch as the 23-lane Linux/Windows rollup.
+
+Several families intentionally open and close multiple VS Code windows. For
+example, Stateless runs dependency bootstrap, create, prepare and reopen in
+fresh processes. A window closing is not failure by itself; follow the
+phase/stage console lines.
+
+### 5. Inspect acceptance evidence, not only the command exit code
+
+After every local run, inspect:
+
+- `apps/vs-code-designer/.vscode-test/results/<suite>.terminal-result.json`;
+- `apps/vs-code-designer/.vscode-test/results/<suite>.cleanup-ledger.json`;
+- the printed suite root's `reports/suite-phase-results.jsonl`;
+- ordered screenshot/evidence manifests under the printed `reports` directory;
+- generated-workspace diagnostics and VS Code profile logs for the earliest
+  failed phase;
+- Windows Job Object or Linux subreaper containment evidence.
+
+A passing test body is not enough. Required phases, evidence, cleanup and
+natural process-tree closure must all be green. Forced outer-containment
+termination prevents machine leakage but remains a failed acceptance result.
+
+Classify the earliest failure before editing:
+
+1. dependency/bootstrap;
+2. native test body;
+3. cleanup or terminal finalization;
+4. evidence staging/publication.
+
+Do not fix a later symptom while an earlier gate is red. Rerun unchanged once
+only when the evidence supports a transient failure; a repeated signature is a
+reproducible defect.
+
+### 6. ADO remains the source-bound cross-platform proof
+
+After local source-bound validation is green:
+
+1. format changed files with Biome;
+2. rerun compile, focused controls and the complete CLI-native unit chain;
+3. commit and push the exact source SHA;
+4. queue only the affected registered Linux/Windows lanes first;
+5. inspect native JSON/JUnit, phase receipts, cleanup ledgers, terminal
+   receipts, screenshots, diagnostics and ordered evidence;
+6. run the complete 23-lane rollup only after targeted lanes are green.
+
+Never infer full coverage from a green diagnostic subset.
+
 ## 1. Azure connector setup is affirmative
 
 **Policy:** When standard setup detects **Enable connectors in Azure**, choose
@@ -127,16 +325,20 @@ rerenders and persistence, use `ProvenDesignerCdpActions`:
 - `addRequestTriggerAndGetIdentity` and `addActionAndGetIdentity` return the one
   newly observed exact canvas node ID after selecting one enabled, hit-tested
   operation card through the shared title/profile selector. Action insertion is
-  acknowledged only after the same sole new node remains stable, discovery is
-  closed, and insertion loaders are absent. Do not replay the operation click
-  merely because acknowledgement is delayed. Responsive hosts may replace the
-  canvas with the newly opened details panel; insertion identity therefore
-  combines canvas-card IDs with the one visible exact details-panel ID and its
-  semantic header title. The details-panel content and title header are siblings
-  inside `.msla-panel-layout`, so resolve the title from the enclosing layout,
-  not from descendants of `msla-node-details-panel-*`. A new panel ID can still
-  precede header-title hydration; treat an empty title as pending and start
-  stability counting only after the same ID has a nonempty matching title.
+  acknowledged only after the same sole title-matching new node remains stable,
+  discovery is closed, and insertion loaders are absent. React Flow can remount
+  an unrelated pre-existing node that was absent from the DOM baseline; ignore
+  that remount when one exact requested operation identity is stable, but fail
+  closed when multiple newly observed identities match the requested title.
+  Do not replay the operation click merely because acknowledgement is delayed.
+  Responsive hosts may replace the canvas with the newly opened details panel;
+  insertion identity therefore combines canvas-card IDs with the one visible
+  exact details-panel ID and its semantic header title. The details-panel
+  content and title header are siblings inside `.msla-panel-layout`, so resolve
+  the title from the enclosing layout, not from descendants of
+  `msla-node-details-panel-*`. A new panel ID can still precede header-title
+  hydration; treat an empty title as pending and start stability counting only
+  after the same ID has a nonempty matching title.
   Before capturing the insertion baseline, close any existing responsive
   details panel and wait for the canvas to remount; otherwise a pre-existing
   node that reappears during insertion can be misclassified as another new node.
@@ -217,10 +419,12 @@ transition, and the final state. A final aggregate canvas screenshot supplements
 these intermediate checkpoints; it never replaces them. Before a canvas
 capture, call the shared `normalizeDesignerCanvasViewport` seam so Output,
 Terminal, or responsive details panels cannot clip required nodes. That seam
-uses trusted CDP input for Fit view and waits for stable in-canvas node geometry;
-when React Flow Fit excludes an unmounted virtualized node, it uses bounded
+idempotently closes a visible workbench bottom panel, uses trusted CDP input for
+Fit view, and waits for stable node geometry that is substantially visible
+through every clipping/scrolling ancestor. When React Flow Fit excludes an
+unmounted virtualized node or leaves a mounted node clipped, it uses bounded
 trusted Zoom Out recovery, reacquiring the control after every transform, until
-every required node ID is mounted and stable.
+every required node ID is mounted, visible and stable.
 Do not replace it with `HTMLElement.click()`, which can leave the React Flow
 transform unchanged while logging a false click success.
 For fresh-host evidence, persisted workflow action IDs are authoritative.
@@ -440,11 +644,24 @@ Retain the underlying promise and propagate cancellation. Require quiescence
 before restoring settings or beginning a recovery restart.
 
 VS Code can reject `TaskExecution.terminate()` before `taskExecutions` and
-`onDidEndTask` converge. Dispatch termination once, retain any error, and wait
-under the existing cleanup deadline for the exact task-end event or exact
-registry disappearance. Discard the provisional error only after that
-authoritative convergence; a task that remains live at expiry fails with the
-retained cause.
+`onDidEndTask` converge. For a failed prelaunch attempt where no owned debug
+session was ever observed, dispatch exact task termination once, retain any
+error, and wait under the existing cleanup deadline for the exact task-end
+event or exact registry disappearance. Discard the provisional error only after
+that authoritative convergence; a task that remains live at expiry fails with
+the retained cause.
+
+Once an exact owned debug session was observed, the product owns the Functions
+task and process-tree shutdown through
+`azureLogicAppsStandard.stopFuncTaskPostDebug`. The harness must stop only that
+exact session and must not concurrently call `TaskExecution.terminate()`.
+Concurrent termination fires `onDidEndTaskProcess`, deletes the product's
+recorded root/child PIDs, and can make task-registry cleanup look green while a
+detached `func.exe` remains on port 7071. Pin
+`azureLogicAppsStandard.stopFuncTaskPostDebug` to `true` in the test profile,
+retain the per-attempt “session was observed” state after the session-end event,
+and require both task convergence and physical port 7071 release. Task-end
+events alone are not process-closure proof.
 
 Batch-native families must use the suite containment host's retained process
 identities as their closure proof. Do not reconstruct ancestry after a phase
@@ -472,6 +689,14 @@ Late debug sessions may be stopped only when they match the test's exact attempt
 marker and workspace identity. Never stop a foreign session or globally clear
 tasks to conceal a delayed start. If the operation cannot quiesce, preserve the
 fixture and report incomplete restoration.
+
+The Stateless family also owns the Azurite services it enables through the
+native startup prompt. After the recovered callback, finalization must execute
+`azurite.close` and prove the default Blob, Queue and Table ports (`10000`,
+`10001` and `10002`) are exclusively bindable before returning to wrapper
+cleanup. Retain close or port-release failures alongside the original and
+recovery failures; do not hide them with containment termination or cleanup
+retries.
 
 `statelessVariablesControls.ts`, `statelessVariablesDebug.ts` and their controls
 cover delayed resolving starts, not just promises that never finish.

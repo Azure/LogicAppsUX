@@ -212,6 +212,7 @@ function createPreparedExtensionsSeed(seedDir, { vscodeVersion = 'stable' } = {}
     await testRunSuiteWrapperProcessTimeoutCancelsGrandchildListener();
     await testRunSuiteWrapperProcessTimeoutCancelsSignalResistantDescendant();
     await testContainedWrapperRejectsEscapedDescendant();
+    testWindowsContainmentHostRetainsProcessDiagnostics();
     testContainmentReceiptMustMatchHostOutcome();
     testDirectSuitePhaseResultRetainsOgfAcrossMatrixPhases();
     testDirectSuitePhaseResultClearsOgfOnLaterFailure();
@@ -2207,8 +2208,32 @@ async function testContainedWrapperRejectsEscapedDescendant() {
   const records = readJsonLines(processRecordsPath);
   const escaped = records.find((record) => record.role === 'grandchild');
   assert.ok(escaped?.pid, 'fixture must record the detached descendant');
+  if (process.platform === 'win32') {
+    assert.ok(Array.isArray(result.processCleanup.activeContainedProcesses));
+    const retained = result.processCleanup.activeContainedProcesses.find((entry) => entry.pid === escaped.pid);
+    assert.ok(retained, 'Windows containment receipt must identify the retained original process');
+    assert.ok(retained.metadataStatus, 'Windows containment receipt must retain an explicit metadata status');
+    assert.strictEqual('commandLine' in retained, false, 'Windows containment receipt must not publish raw command lines');
+    assert.strictEqual('executablePath' in retained, false, 'Windows containment receipt must not publish executable paths');
+    if (retained.metadataStatus === 'captured') {
+      assert.ok(retained.imageName && path.basename(retained.imageName) === retained.imageName);
+      assert.match(retained.commandSummary.sha256, /^[0-9a-f]{64}$/);
+      assert.ok(retained.commandSummary.safeMarkers.includes('--utility-sub-type=node.mojom.NodeService'));
+      assert.ok(retained.commandSummary.scriptOrModuleBasenames.includes('private-module.js'));
+    }
+    const serializedCleanup = JSON.stringify(result.processCleanup);
+    assert.doesNotMatch(serializedCleanup, /fake-secret-signature/);
+    assert.doesNotMatch(serializedCleanup, /private[\\/]path/);
+  }
   await delay(250);
   assert.strictEqual(isAlive(escaped.pid), false, 'containment host must terminate the rejected escaped descendant');
+}
+
+function testWindowsContainmentHostRetainsProcessDiagnostics() {
+  const source = fs.readFileSync(path.join(__dirname, 'e2e-cli-containment-host.cs'), 'utf8');
+  assert.ok(source.includes('JobObjectBasicProcessIdList'));
+  assert.ok(source.includes('QueryProcessCommandLine'));
+  assert.ok(source.includes('\\"activeContainedProcesses\\":'));
 }
 
 function testContainmentReceiptMustMatchHostOutcome() {
@@ -3222,7 +3247,8 @@ function createWrapperFixtureScript(mode) {
       '  record({ pid: process.pid, role });',
       "  if (role === 'grandchild') { setInterval(() => undefined, 1000); }",
       '  else {',
-      "    const escaped = spawn(process.execPath, [__filename, '--grandchild'], { detached: true, stdio: 'ignore', env: process.env });",
+      "    const privateModule = path.join('C:\\\\private', 'path', 'private-module.js');",
+      "    const escaped = spawn(process.execPath, [__filename, '--grandchild', '--utility-sub-type=node.mojom.NodeService', privateModule, 'https://example.test/callback?sig=fake-secret-signature'], { detached: true, stdio: 'ignore', env: process.env });",
       '    escaped.unref();',
       '    setTimeout(() => { appendPhase(0); process.exit(0); }, 250);',
       '  }',

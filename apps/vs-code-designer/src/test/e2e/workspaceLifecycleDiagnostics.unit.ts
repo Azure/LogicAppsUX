@@ -38,6 +38,7 @@ async function main(): Promise<void> {
   testDebugPromptEvidenceWaitsForStableRuntime();
   testDynamicContentPickerOpenAcceptsAlternativeLabels();
   testDynamicContentPickerEvidenceForwardsTokenTitles();
+  testDynamicContentEntrypointIsReacquiredAfterFocusedEvidence();
   await testDynamicContentPickerOpenUsesBoundedEvaluation();
   await testMonitoringActionCardUsesStableNodeIdentity();
   await testCopilotChatCleanupDoesNotRunDuringPickerEvidenceCapture();
@@ -158,6 +159,7 @@ function loadNormalizeViewportHarness() {
     exports: exported,
     console: { log: (line: string) => logs.push(line) },
     boundedCdp: (cdp: unknown) => cdp,
+    ensureWorkbenchPanelClosed: async () => logs.push('workbench-panel-closed'),
     clickPoint: async (
       cdp: { send: (method: string, params: Record<string, unknown>) => Promise<void> },
       point: { x: number; y: number }
@@ -308,6 +310,25 @@ function testDynamicContentPickerEvidenceForwardsTokenTitles(): void {
     /picker:\s*\{\s*sectionLabels,\s*tokenTitles\s*\}/,
     'Picker-open evidence must forward requested token titles so readiness proves the same field that selection will click'
   );
+}
+
+function testDynamicContentEntrypointIsReacquiredAfterFocusedEvidence(): void {
+  const start = sourceText.indexOf('async function selectDynamicContentTokenForParameter(');
+  const end = sourceText.indexOf('\nasync function waitForDynamicContentPickerOpen(', start);
+  assert.ok(start >= 0 && end > start, 'Expected selectDynamicContentTokenForParameter source');
+  const implementation = sourceText.slice(start, end);
+  const focusedEvidenceIndex = implementation.indexOf('captureLifecycleScreenshot(');
+  const reacquireIndex = implementation.indexOf('const currentEditorPoint = await getDesignerParameterEditorPoint(', focusedEvidenceIndex);
+  const refocusIndex = implementation.indexOf('await clickPoint(cdp, currentEditorPoint);', reacquireIndex);
+  const boundedWaitIndex = implementation.indexOf('10_000,', refocusIndex);
+
+  assert.ok(focusedEvidenceIndex >= 0, 'Expected focused editor evidence before opening dynamic content');
+  assert.ok(
+    reacquireIndex > focusedEvidenceIndex,
+    'Expected the active editor point to be reacquired after focused evidence can rerender the panel'
+  );
+  assert.ok(refocusIndex > reacquireIndex, 'Expected the reacquired editor to be focused before locating its dynamic-content entrypoint');
+  assert.ok(boundedWaitIndex > refocusIndex, 'Expected entrypoint reacquisition to remain deadline bounded');
 }
 
 async function testDynamicContentPickerOpenUsesBoundedEvaluation(): Promise<void> {
@@ -511,6 +532,11 @@ async function testCanvasViewportNormalizationUsesStructuralDiagnosticsAndOwnedC
     ?.getText(source);
   assert.ok(normalizeSource);
   assert.match(normalizeSource, /await clickPoint\(bounded, state\.fitButtonPoint\)/, 'Fit must use trusted CDP input');
+  assert.ok(
+    normalizeSource.indexOf('await ensureWorkbenchPanelClosed') <
+      normalizeSource.indexOf('await clickPoint(bounded, state.fitButtonPoint)'),
+    'Workbench panel closure must precede Designer Fit'
+  );
   assert.match(normalizeSource, /const bounded = boundedCdp\(cdp, normalizationDeadline\)/, 'Fit must retain one bounded CDP budget');
   assert.match(normalizeSource, /missingExpectedNodeIds/, 'Fit must wait for every caller-required node identity');
   assert.match(normalizeSource, /geometry === previousGeometry/, 'Fit must require consecutive stable geometry observations');
@@ -522,6 +548,7 @@ async function testCanvasViewportNormalizationUsesStructuralDiagnosticsAndOwnedC
   );
   assert.doesNotMatch(normalizeSource, /fitButton\.click\(\)/, 'Fit must not use a synthetic DOM click');
   assert.match(normalizeSource, /settledObservations >= 3/, 'Fit must wait for stable in-canvas node geometry');
+  assert.match(normalizeSource, /clippedExpectedNodeIds/, 'Fit must retain exact clipping diagnostics for caller-required nodes');
   const dom = new JSDOM(
     `
     <html><body>
@@ -690,6 +717,51 @@ async function testCanvasViewportNormalizationUsesStructuralDiagnosticsAndOwnedC
     'Normalization must reacquire moved Zoom Out coordinates before the second trusted recovery click'
   );
   assert.match(logs.join('\n'), /unit zoom recovery settled: \{"settled":true/);
+
+  const ancestorClippingDom = new JSDOM(
+    `
+    <html><body>
+      <div class="react-flow" id="canvas">
+        <button id="control-zoom-fit-button" aria-label="Zoom view to fit"></button>
+        <button id="control-zoom-out-button" aria-label="Zoom out"></button>
+        <div id="canvas-viewport" style="overflow: hidden">
+          <div id="msla-node-Response"></div>
+        </div>
+      </div>
+    </body></html>
+  `,
+    { runScripts: 'outside-only' }
+  );
+  const ancestorClippingGeometry = {
+    'control-zoom-fit-button': { left: 20, top: 80, width: 40, height: 30 },
+    'control-zoom-out-button': { left: 20, top: 120, width: 40, height: 30 },
+    'msla-node-Response': { left: 100, top: 500, width: 200, height: 80 },
+    'canvas-viewport': { left: 0, top: 50, width: 458, height: 500 },
+    canvas: { left: 0, top: 50, width: 458, height: 593 },
+  };
+  configureElementGeometry(ancestorClippingDom.window, ancestorClippingGeometry);
+  const ancestorClippingZoomOutDispatches: Array<{ x: number; y: number }> = [];
+  await exported.normalizeDesignerCanvasViewport(
+    {
+      evaluate: async (_contextId: number | undefined, expression: string) =>
+        ancestorClippingDom.window.eval(expression) as Record<string, unknown>,
+      send: async (_method: string, params: Record<string, unknown>) => {
+        if (params.type === 'mouseReleased' && params.x === 40 && params.y === 135) {
+          ancestorClippingZoomOutDispatches.push({ x: params.x as number, y: params.y as number });
+          ancestorClippingGeometry['msla-node-Response'].top = 400;
+        }
+      },
+    },
+    1,
+    'unit ancestor clipping recovery',
+    ['Response']
+  );
+  assert.deepEqual(
+    ancestorClippingZoomOutDispatches,
+    [{ x: 40, y: 135 }],
+    'Normalization must recover when an exact node is inside the canvas but clipped by an overflow ancestor'
+  );
+  assert.match(logs.join('\n'), /unit ancestor clipping recovery settled: \{"settled":true/);
 }
 
 function testMsnWeatherSkipsOnlyRedundantFinalCanvasCheckpoint(): void {

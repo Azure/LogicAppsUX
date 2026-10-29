@@ -4,6 +4,7 @@ import { test } from 'node:test';
 import type { CdpConnection } from './cdpClient';
 import {
   connectToOwnedRegularWorkbench,
+  ensureWorkbenchPanelClosed,
   ensureRegularWorkbenchExplorer,
   matchesRegularWorkbenchShell,
   matchesRegularWorkbenchOwnership,
@@ -119,6 +120,66 @@ test('owned connection uses the phase deadline after the bounded CDP connection 
   assert.deepEqual(insertedText, [], 'Shell ownership must not open the command palette or Explorer');
   assert.equal(disposed, false);
   owned.cdp.dispose();
+});
+
+test('workbench panel closure is idempotent and verifies the visible panel disappears', async () => {
+  let panelVisible = true;
+  let disposed = false;
+  const commands: string[] = [];
+  const fake = {
+    async evaluate<T>(_context: number | undefined, expression: string): Promise<T> {
+      assert.match(expression, /workbench\\\\\.parts\\\\\.panel/);
+      return panelVisible as T;
+    },
+    async send() {
+      return {};
+    },
+    dispose() {
+      disposed = true;
+    },
+  };
+  await ensureWorkbenchPanelClosed({
+    deadline: Date.now() + 1000,
+    executeCommand: async (commandId) => {
+      commands.push(commandId);
+      panelVisible = false;
+    },
+    connect: async () => fake as unknown as CdpConnection,
+  });
+  assert.deepEqual(commands, ['workbench.action.closePanel']);
+  assert.equal(disposed, true);
+
+  commands.length = 0;
+  disposed = false;
+  await ensureWorkbenchPanelClosed({
+    deadline: Date.now() + 1000,
+    executeCommand: async (commandId) => {
+      commands.push(commandId);
+    },
+    connect: async () => fake as unknown as CdpConnection,
+  });
+  assert.deepEqual(commands, [], 'An already-hidden panel must not be toggled open');
+  assert.equal(disposed, true);
+});
+
+test('workbench panel closure fails when the panel remains visible', async () => {
+  const fake = {
+    async evaluate<T>(): Promise<T> {
+      return true as T;
+    },
+    async send() {
+      return {};
+    },
+    dispose() {},
+  };
+  await assert.rejects(
+    ensureWorkbenchPanelClosed({
+      deadline: Date.now() + 20,
+      executeCommand: async () => undefined,
+      connect: async () => fake as unknown as CdpConnection,
+    }),
+    /Workbench action deadline exhausted|Workbench observation did not satisfy its postcondition/
+  );
 });
 
 test('Explorer projection clicks the activity item only when exact roots are not already visible', async () => {

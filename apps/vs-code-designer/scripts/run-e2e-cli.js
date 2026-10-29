@@ -1060,6 +1060,7 @@ function readContainmentReceipt(receiptPath, hostExitCode, hostSignal) {
   try {
     const receipt = JSON.parse(fs.readFileSync(receiptPath, 'utf8'));
     const escapedDescendants = Array.isArray(receipt.escapedDescendants) ? receipt.escapedDescendants : [];
+    const processDiagnostics = sanitizeContainedProcessDiagnostics(receipt.activeContainedProcesses);
     const rootSignalNumber = receipt.rootSignal === null ? null : signalNumber(receipt.rootSignal);
     const expectedHostExitCode = rootSignalNumber === null ? receipt.rootExitCode : rootSignalNumber ? 128 + rootSignalNumber : undefined;
     const hostOutcomeMatches = Number.isInteger(expectedHostExitCode) && hostSignal === null && hostExitCode === expectedHostExitCode;
@@ -1083,7 +1084,28 @@ function readContainmentReceipt(receiptPath, hostExitCode, hostSignal) {
         ? 'Suite ownership containment was not empty after the wrapper root closed'
         : `Suite containment receipt did not match host outcome: host=${hostExitCode ?? hostSignal}, receipt=${expectedHostExitCode}`;
     return {
-      ...receipt,
+      schemaVersion: receipt.schemaVersion,
+      mechanism: receipt.mechanism,
+      containmentEstablished: receipt.containmentEstablished,
+      rootPid: receipt.rootPid,
+      rootExitCode: receipt.rootExitCode,
+      rootSignal: receipt.rootSignal,
+      containmentEmpty: receipt.containmentEmpty,
+      escapedDescendants,
+      activeContainedProcessCount: receipt.activeContainedProcessCount,
+      activeContainedProcesses: processDiagnostics.processes,
+      activeContainedProcessesDiagnosticsValid: processDiagnostics.valid,
+      activeContainedProcessesTruncated: receipt.activeContainedProcessesTruncated === true,
+      metadataCapturedAtUtc:
+        typeof receipt.metadataCapturedAtUtc === 'string' && receipt.metadataCapturedAtUtc.length <= 64
+          ? receipt.metadataCapturedAtUtc
+          : undefined,
+      forcedTerminationAttempted: receipt.forcedTerminationAttempted === true,
+      forcedTerminationSucceeded: receipt.forcedTerminationSucceeded === true,
+      forcedTerminationError: Number.isInteger(receipt.forcedTerminationError) ? receipt.forcedTerminationError : undefined,
+      postTerminationActiveProcessCount: Number.isInteger(receipt.postTerminationActiveProcessCount)
+        ? receipt.postTerminationActiveProcessCount
+        : undefined,
       verified,
       retainedOriginalIdentitiesVerified: verified,
       checkedAt: new Date().toISOString(),
@@ -1099,6 +1121,83 @@ function readContainmentReceipt(receiptPath, hostExitCode, hostSignal) {
       checkedAt: new Date().toISOString(),
     };
   }
+}
+
+function sanitizeContainedProcessDiagnostics(value) {
+  if (value === undefined) {
+    return { processes: [], valid: true };
+  }
+  if (!Array.isArray(value) || value.length > 32) {
+    return { processes: [], valid: false };
+  }
+  const allowedStatuses = new Set(['captured', 'exited-before-inspection', 'membership-query-failed', 'not-in-job', 'inspection-failed']);
+  const safeMarkerPattern = /^(?:--type|--utility-sub-type)=[A-Za-z0-9._-]{1,128}$/;
+  const safeModulePattern = /^[^\\/:*?"<>|]{1,128}\.(?:c?js|mjs|dll|exe)$/i;
+  const processes = [];
+  let valid = true;
+  for (const entry of value) {
+    if (
+      !entry ||
+      typeof entry !== 'object' ||
+      !Number.isSafeInteger(entry.pid) ||
+      entry.pid <= 0 ||
+      typeof entry.metadataStatus !== 'string' ||
+      !allowedStatuses.has(entry.metadataStatus)
+    ) {
+      valid = false;
+      continue;
+    }
+    const process = { pid: entry.pid, metadataStatus: entry.metadataStatus };
+    if (Number.isSafeInteger(entry.parentPid) && entry.parentPid > 0) {
+      process.parentPid = entry.parentPid;
+    }
+    if (typeof entry.imageName === 'string' && entry.imageName.length <= 128 && path.basename(entry.imageName) === entry.imageName) {
+      process.imageName = entry.imageName;
+    }
+    if (typeof entry.createdAtUtc === 'string' && entry.createdAtUtc.length <= 64 && Number.isFinite(Date.parse(entry.createdAtUtc))) {
+      process.createdAtUtc = entry.createdAtUtc;
+    }
+    if (Number.isSafeInteger(entry.sessionId) && entry.sessionId >= 0) {
+      process.sessionId = entry.sessionId;
+    }
+    if (Number.isInteger(entry.win32Error) && entry.win32Error >= 0) {
+      process.win32Error = entry.win32Error;
+    }
+    if (entry.metadataStatus === 'captured') {
+      const summary = entry.commandSummary;
+      if (
+        !summary ||
+        typeof summary !== 'object' ||
+        !Number.isInteger(summary.argumentCount) ||
+        summary.argumentCount < 0 ||
+        !Array.isArray(summary.safeMarkers) ||
+        summary.safeMarkers.length > 16 ||
+        !summary.safeMarkers.every(
+          (marker) =>
+            marker === '--ms-enable-electron-run-as-node' ||
+            marker === '--stateless-variables-lifecycle' ||
+            marker === '--extensionDevelopmentPath' ||
+            (typeof marker === 'string' && safeMarkerPattern.test(marker))
+        ) ||
+        !Array.isArray(summary.scriptOrModuleBasenames) ||
+        summary.scriptOrModuleBasenames.length > 16 ||
+        !summary.scriptOrModuleBasenames.every((basename) => typeof basename === 'string' && safeModulePattern.test(basename)) ||
+        typeof summary.sha256 !== 'string' ||
+        !/^[0-9a-f]{64}$/.test(summary.sha256)
+      ) {
+        valid = false;
+        continue;
+      }
+      process.commandSummary = {
+        argumentCount: summary.argumentCount,
+        safeMarkers: [...summary.safeMarkers],
+        scriptOrModuleBasenames: [...summary.scriptOrModuleBasenames],
+        sha256: summary.sha256,
+      };
+    }
+    processes.push(process);
+  }
+  return { processes, valid };
 }
 
 function signalNumber(signal) {
