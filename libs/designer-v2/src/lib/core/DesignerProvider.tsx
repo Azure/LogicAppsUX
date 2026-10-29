@@ -13,6 +13,8 @@ import type React from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
 import { Provider as ReduxProvider, useDispatch } from 'react-redux';
 import { LayoutProvider } from './graphlayout';
+import { DesignerUiScope } from '@microsoft/designer-ui-v2';
+import { useIsDarkMode, useSharedNodeUi } from './state/designerOptions/designerOptionsSelectors';
 
 export interface DesignerProviderProps {
   key?: string;
@@ -31,6 +33,16 @@ const OptionsStateSet = ({ options, children }: any) => {
     dispatch(initDesignerOptions(options));
   }, [dispatch, options]);
   return <>{children}</>;
+};
+
+const SharedNodeUiScope = ({ children }: { children: React.ReactNode }) => {
+  const enabled = useSharedNodeUi();
+  const isDark = useIsDarkMode();
+  return (
+    <DesignerUiScope enabled={enabled} mode={isDark ? 'dark' : 'light'} style={{ display: 'contents', height: 'inherit' }}>
+      {children}
+    </DesignerUiScope>
+  );
 };
 
 export const DesignerProvider = ({ id, locale = 'en', options, children }: DesignerProviderProps) => {
@@ -53,21 +65,23 @@ export const DesignerProvider = ({ id, locale = 'en', options, children }: Desig
           <ThemeProvider theme={azTheme} style={{ height: 'inherit' }}>
             <FluentProvider theme={webTheme} style={{ height: 'inherit' }}>
               <LayoutProvider>
-                <div
-                  data-color-scheme={themeName}
-                  className={`msla-theme-${themeName}`}
-                  style={{ display: 'flex', flexDirection: 'column', height: 'inherit', overflow: 'clip' }}
-                >
-                  <IntlProvider
-                    locale={locale}
-                    defaultLocale={locale}
-                    stringOverrides={options.hostOptions.stringOverrides}
-                    onError={onError}
+                <SharedNodeUiScope>
+                  <div
+                    data-color-scheme={themeName}
+                    className={`msla-theme-${themeName}`}
+                    style={{ display: 'flex', flexDirection: 'column', height: 'inherit', overflow: 'clip' }}
                   >
-                    <ReduxReset id={id} />
-                    {children}
-                  </IntlProvider>
-                </div>
+                    <IntlProvider
+                      locale={locale}
+                      defaultLocale={locale}
+                      stringOverrides={options.hostOptions.stringOverrides}
+                      onError={onError}
+                    >
+                      <ReduxReset id={id} />
+                      {children}
+                    </IntlProvider>
+                  </div>
+                </SharedNodeUiScope>
               </LayoutProvider>
               <div id="fluent-compat-component-mount" />
             </FluentProvider>

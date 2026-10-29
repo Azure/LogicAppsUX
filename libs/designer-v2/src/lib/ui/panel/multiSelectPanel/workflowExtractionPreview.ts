@@ -1,8 +1,38 @@
 import { WORKFLOW_PREVIEW_NODE_HEIGHT, type WorkflowPreviewNode, type WorkflowPreviewProps } from '@microsoft/designer-ui';
-import { composeOperation, labelCase, requestOperation, responseOperation } from '@microsoft/logic-apps-shared';
+import { composeOperation, labelCase, requestOperation, responseOperation, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import type { WorkflowExtractionPlan } from '../../../common/models/workflowExtraction';
+import type { NodeOperation } from '../../../core/state/operation/operationMetadataSlice';
 
-export type WorkflowExtractionPreviewVisuals = Readonly<Record<string, Pick<WorkflowPreviewNode, 'iconUri' | 'brandColor'>>>;
+export type WorkflowExtractionPreviewVisuals = Readonly<
+  Record<string, Pick<WorkflowPreviewNode, 'iconUri' | 'brandColor'> & { operationInfo?: NodeOperation }>
+>;
+
+export interface SharedExtractionPreviewNode extends WorkflowPreviewNode {
+  operation: LogicAppsV2.OperationDefinition;
+  operationInfo?: NodeOperation;
+  isTrigger: boolean;
+}
+
+export const getSharedWorkflowExtractionPreview = (
+  plan: WorkflowExtractionPlan,
+  graph: Pick<WorkflowPreviewProps, 'nodes' | 'edges'>,
+  sourceVisuals: WorkflowExtractionPreviewVisuals = {}
+): { nodes: SharedExtractionPreviewNode[]; edges: WorkflowPreviewProps['edges'] } => ({
+  ...graph,
+  nodes: graph.nodes.map((node) => {
+    const triggers = plan.child.definition.triggers ?? {};
+    const actions = plan.child.definition.actions ?? {};
+    const isTrigger = Object.prototype.hasOwnProperty.call(triggers, node.id);
+    const operation = isTrigger ? triggers[node.id] : actions[node.id];
+    const sourceInfo = plan.selectedIds.includes(node.id) ? sourceVisuals[node.id]?.operationInfo : undefined;
+    return {
+      ...node,
+      operation,
+      isTrigger,
+      operationInfo: sourceInfo ? { ...sourceInfo, type: operation.type, kind: operation.kind } : undefined,
+    };
+  }),
+});
 
 const operationVisuals: WorkflowExtractionPreviewVisuals = {
   compose: composeOperation.properties,

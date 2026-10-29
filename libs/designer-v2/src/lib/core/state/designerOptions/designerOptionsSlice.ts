@@ -41,6 +41,7 @@ export const initialDesignerOptionsState: DesignerOptionsState = {
   servicesInitialized: false,
   designerOptionsInitialized: false,
   useLegacyWorkflowParameters: false,
+  useSharedNodeUi: false,
   isXrmConnectionReferenceMode: false,
   panelTabHideKeys: [],
   isFirstDesignerV2Load: false,
@@ -174,6 +175,7 @@ export const designerOptionsSlice = createSlice({
       state.isDraft = action.payload.isDraft;
       state.isDarkMode = action.payload.isDarkMode;
       state.useLegacyWorkflowParameters = action.payload.useLegacyWorkflowParameters;
+      state.useSharedNodeUi = action.payload.useSharedNodeUi ?? false;
       state.isXrmConnectionReferenceMode = action.payload.isXrmConnectionReferenceMode;
       state.suppressDefaultNodeSelectFunctionality = action.payload.suppressDefaultNodeSelectFunctionality;
       state.nodeSelectAdditionalCallback = action.payload.nodeSelectAdditionalCallback;

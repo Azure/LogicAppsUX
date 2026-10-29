@@ -1,6 +1,6 @@
 import constants from '../../common/constants';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
-import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { useMonitoringView, useReadOnly, useSharedNodeUi } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
 import {
   useBrandColor,
@@ -46,7 +46,7 @@ import type { AppDispatch } from '../../core/store';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { getScopeRepetitionName, useRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
-import { equals, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
+import { WORKFLOW_NODE_TYPES, equals, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDrag } from 'react-dnd';
@@ -63,8 +63,12 @@ import { EdgeDrawSourceHandle } from './components/handles/EdgeDrawSourceHandle'
 import { useIsA2AWorkflow } from '../../core/state/designerView/designerViewSelectors';
 import { ActionCard } from './components/card';
 import { ErrorLevel } from '../../core/state/operation/operationMetadataSlice';
+import { SharedAgentScopeCard, SharedScopeCard } from './components/card/SharedFamilyCards';
+import type { ComponentProps } from 'react';
+import { getNodePresentation, type NodePresentation } from '../../core/utils/graph';
+import { getScopeModel } from './components/card/scopeNodePresentation';
 
-const ScopeCardNode = ({ id }: NodeProps) => {
+const ScopeCardNode = ({ id, data }: NodeProps) => {
   const scopeId = useMemo(() => removeIdTag(id), [id]);
   const shouldFocus = useShouldNodeFocus(scopeId, id);
   const node = useActionMetadata(scopeId);
@@ -78,6 +82,11 @@ const ScopeCardNode = ({ id }: NodeProps) => {
 
   const metadata = useNodeMetadata(scopeId);
   const operationInfo = useOperationInfo(scopeId);
+  const sharedOption = useSharedNodeUi();
+  const presentation =
+    (data?.presentation as NodePresentation | undefined) ??
+    getNodePresentation(WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE, sharedOption, { operationType: node?.type });
+  const shared = presentation.shared;
   const connectorName = useConnectorName(operationInfo);
   const parentRunIndex = useParentRunIndex(scopeId);
   const runInstance = useRunInstance();
@@ -272,7 +281,7 @@ const ScopeCardNode = ({ id }: NodeProps) => {
 
   const opQuery = useOperationQuery(scopeId);
 
-  const isLoading = useMemo(
+  const legacyLoading = useMemo(
     () =>
       isRepetitionFetching ||
       isAgentRepetitionFetching ||
@@ -281,6 +290,9 @@ const ScopeCardNode = ({ id }: NodeProps) => {
       (!brandColor && !iconUri),
     [brandColor, iconUri, opQuery.isLoading, isRepetitionFetching, isAgentRepetitionFetching, isAgentActionsRepetitionFetching]
   );
+  const isLoading = shared
+    ? isRepetitionFetching || isAgentRepetitionFetching || isAgentActionsRepetitionFetching || opQuery.isLoading
+    : legacyLoading;
 
   const handoffActions = useHandoffActionsForAgent(scopeId);
   const actionCount = useMemo(() => {
@@ -425,13 +437,23 @@ const ScopeCardNode = ({ id }: NodeProps) => {
 
   const shouldShowPager = (normalizedType === constants.NODE.TYPE.FOREACH || isAgent) && isMonitoringView;
   const isCardActive = isMonitoringView ? !isNullOrUndefined(runData?.status) : true;
+  const branchPorts = (data?.branchPorts ?? []) as { id: string }[];
+  const inputSlot = <EdgeDrawTargetHandle contained />;
+  const sourceSlot = isFooter ? (
+    <EdgeDrawSourceHandle contained highlighted={selected || isMultiSelected} />
+  ) : (
+    <DefaultHandle contained type="source" />
+  );
+  const model = getScopeModel(node);
+  const Card = shared ? (presentation.family === 'agent' ? SharedAgentScopeCard : SharedScopeCard) : ActionCard;
 
   return (
     <>
-      <div className="msla-scope-card nopan" ref={ref as any}>
+      <div className="msla-scope-card nopan" ref={ref as any} style={shared ? { width: presentation.size?.width } : undefined}>
         <div ref={rootRef}>
-          <EdgeDrawTargetHandle />
-          <ActionCard
+          {!shared || presentation.family === 'scope' ? <EdgeDrawTargetHandle /> : null}
+          <Card
+            family={presentation.family}
             id={scopeId}
             active={isCardActive}
             brandColor={brandColor}
@@ -451,23 +473,43 @@ const ScopeCardNode = ({ id }: NodeProps) => {
             onContextMenu={onContextMenu}
             onClick={nodeClick}
             onDeleteClick={deleteClick}
+            onCopyClick={shared ? copyClick : undefined}
             setFocus={shouldFocus}
             nodeIndex={nodeIndex}
             isScope={true}
             collapsed={graphCollapsed}
             handleCollapse={handleGraphCollapse}
+            {...(shared && {
+              operationType: node.type,
+              inputSlot,
+              outputSlots: branchPorts.length
+                ? branchPorts.map((port) => <DefaultHandle key={port.id} id={port.id} contained type="source" />)
+                : [sourceSlot],
+              caseCount: branchPorts.length || undefined,
+              model: typeof model === 'string' && model.length > 0 ? model : undefined,
+              footerAction: shouldShowPager ? renderLoopsPager : undefined,
+              description: opQuery.data?.properties?.description,
+              isMonitoringView,
+              toolsPanel: data?.toolsPanel as ComponentProps<typeof SharedScopeCard>['toolsPanel'],
+            })}
           />
           {showCopyCallout ? <CopyTooltip id={scopeId} targetRef={rootRef} hideTooltip={clearCopyCallout} /> : null}
-          {shouldShowPager ? renderLoopsPager : null}
-          {isFooter ? <EdgeDrawSourceHandle highlighted={selected || isMultiSelected} /> : <DefaultHandle type="source" />}
+          {shouldShowPager && (!shared || !isAgent) ? renderLoopsPager : null}
+          {!shared || presentation.family === 'scope' ? (
+            isFooter ? (
+              <EdgeDrawSourceHandle highlighted={selected || isMultiSelected} />
+            ) : (
+              <DefaultHandle type="source" />
+            )
+          ) : null}
         </div>
       </div>
-      {graphCollapsed && !isFooter ? (
+      {graphCollapsed && !isFooter && !(shared && isAgent && data?.toolsPanel) ? (
         <p className="no-actions-text" data-automation-id={`scope-${id}-no-actions`}>
           {collapsedText}
         </p>
       ) : null}
-      {isAgent && actionCount < 1 && !graphCollapsed ? (
+      {isAgent && actionCount < 1 && !graphCollapsed && !shared ? (
         <p className="no-actions-text" style={{ margin: shouldShowPager ? 0 : '1em 0' }} data-automation-id={`scope-${id}-no-tools`}>
           {isMonitoringView ? intlText.emptyAgent : intlText.addTool}
         </p>
@@ -477,7 +519,13 @@ const ScopeCardNode = ({ id }: NodeProps) => {
           <p className="no-actions-text">{intlText.noActions}</p>
         ) : (
           <div className={'edge-drop-zone-container'}>
-            <DropZone graphId={scopeId} parentId={id} isLeaf={isLeaf} tabIndex={nodeIndex} />
+            <DropZone
+              graphId={scopeId}
+              parentId={id}
+              isLeaf={isLeaf}
+              tabIndex={nodeIndex}
+              {...(data?.presentation ? { sharedPresentation: shared } : {})}
+            />
           </div>
         )
       ) : null}

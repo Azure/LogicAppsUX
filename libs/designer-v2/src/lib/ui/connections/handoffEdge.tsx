@@ -5,6 +5,10 @@ import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
 import { EdgeLabelRenderer, type EdgeProps, type XYPosition } from '@xyflow/react';
 import { css } from '@fluentui/utilities';
 import { Button } from '@fluentui/react-components';
+import { EdgePillButton, nodeLineStrokes, useNodeLineStyles } from '@microsoft/designer-ui-v2';
+import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
+import { useIntl } from 'react-intl';
+import { useConnectionStyles } from './connections.styles';
 import {
   containsIdTag,
   removeIdTag,
@@ -15,7 +19,7 @@ import {
   useGuid,
 } from '@microsoft/logic-apps-shared';
 
-import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { useReadOnly, useSharedNodeUi } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { ArrowCap } from './dynamicsvgs/arrowCap';
 import { useIsNodeSelectedInOperationPanel, useIsNodeInMultiSelection } from '../../core/state/panel/panelSelectors';
@@ -31,31 +35,46 @@ interface EdgeContentProps {
   childId?: string;
   isLeaf?: boolean;
   tabIndex?: number;
+  isRevealed?: boolean;
+  sharedPresentation?: boolean;
 }
 
 const EdgeContent = (props: EdgeContentProps) => {
   const { x, y, graphId, parentId, childId, isLeaf } = props;
   const dispatch = useDispatch<AppDispatch>();
+  const enabled = useSharedNodeUi();
+  const shared = props.sharedPresentation ?? enabled;
+  const styles = useConnectionStyles();
+  const intl = useIntl();
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const label = intl.formatMessage({ defaultMessage: 'Edit handoff', id: 'O4TSC3', description: 'Text for button to edit a handoff' });
 
+  const openMenu = useCallback(() => {
+    const rect = buttonRef.current?.getBoundingClientRect();
+    dispatch(
+      setEdgeContextMenuData({
+        graphId,
+        parentId,
+        childId,
+        isLeaf,
+        location: {
+          x: (rect?.left ?? 0) + (rect?.width ?? 0),
+          y: (rect?.top ?? 0) + (rect?.height ?? 0) / 2,
+        },
+        isHandoff: true,
+      })
+    );
+  }, [dispatch, graphId, parentId, childId, isLeaf]);
   const onClick = useCallback(
-    async (e: React.MouseEvent<HTMLButtonElement>) => {
-      const rect = buttonRef.current?.getBoundingClientRect();
+    (e: React.MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
-      dispatch(
-        setEdgeContextMenuData({
-          graphId,
-          parentId,
-          childId,
-          isLeaf,
-          location: {
-            x: (rect?.left ?? 0) + (rect?.width ?? 0),
-            y: (rect?.top ?? 0) + (rect?.height ?? 0) / 2,
-          },
-          isHandoff: true,
-        })
-      );
+      if (shared) {
+        e.stopPropagation();
+      }
+      openMenu();
     },
-    [dispatch, graphId, parentId, childId, isLeaf]
+    [openMenu, shared]
   );
 
   const buttonRef = useRef<HTMLDivElement>(null);
@@ -65,8 +84,8 @@ const EdgeContent = (props: EdgeContentProps) => {
       <div
         ref={buttonRef}
         style={{
-          width: edgeContentWidth,
-          height: edgeContentHeight,
+          width: shared ? nodeMetrics.edgeControl.hitTargetSize : edgeContentWidth,
+          height: shared ? nodeMetrics.edgeControl.hitTargetSize : edgeContentHeight,
           position: 'absolute',
           left: x,
           top: y,
@@ -74,21 +93,45 @@ const EdgeContent = (props: EdgeContentProps) => {
           zIndex: 100,
         }}
       >
-        <Button
-          icon={<HandoffIcon />}
-          appearance="primary"
-          size="small"
-          shape="circular"
-          onClick={onClick}
-          onContextMenu={onClick}
-          style={
-            {
-              '--colorBrandBackground': '#3352b9',
-              '--colorBrandBackgroundHover': '#1438ae',
-              '--colorBrandBackgroundPressed': '#0f2d8b',
-            } as any
-          }
-        />
+        {shared ? (
+          <div
+            className={styles.control}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+            onFocus={() => setFocused(true)}
+            onBlur={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+                setFocused(false);
+              }
+            }}
+          >
+            <EdgePillButton
+              icon={<HandoffIcon fill="currentColor" />}
+              tooltip={label}
+              ariaLabel={label}
+              tabIndex={props.tabIndex}
+              isRevealed={!!props.isRevealed || hovered || focused}
+              onActivate={openMenu}
+              onContextMenu={onClick}
+            />
+          </div>
+        ) : (
+          <Button
+            icon={<HandoffIcon />}
+            appearance="primary"
+            size="small"
+            shape="circular"
+            onClick={onClick}
+            onContextMenu={onClick}
+            style={
+              {
+                '--colorBrandBackground': '#3352b9',
+                '--colorBrandBackgroundHover': '#1438ae',
+                '--colorBrandBackgroundPressed': '#0f2d8b',
+              } as any
+            }
+          />
+        )}
       </div>
     </EdgeLabelRenderer>
   );
@@ -100,13 +143,20 @@ export interface LogicAppsEdgeProps {
   target: string;
   elkEdge?: ElkExtendedEdge;
   style?: React.CSSProperties;
+  presentation?: { shared: boolean };
 }
 
 const edgeContentHeight = 24;
 const edgeContentWidth = 24;
 
-const HandoffEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, target, style = {} }) => {
+const HandoffEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, target, style = {}, data }) => {
   const readOnly = useReadOnly();
+  const enabled = useSharedNodeUi();
+  const accepted = data as { presentation?: { shared?: boolean } } | undefined;
+  const shared = accepted?.presentation?.shared ?? enabled;
+  const line = useNodeLineStyles();
+  const styles = useConnectionStyles();
+  const [hovered, setHovered] = useState(false);
 
   const nodeMetadata = useNodeMetadata(source);
   const sourceId = containsIdTag(source) ? removeIdTag(source) : source;
@@ -129,6 +179,8 @@ const HandoffEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, targ
 
   // Create an SVG path string
   const splinePath = useMemo(() => buildSvgSpline(splinePoints), [splinePoints]);
+  // Shared frame/tool extents can change an accepted route without remounting its edge.
+  const sharedRoute = shared ? splinePath : undefined;
 
   const tabIndex = useEdgeIndex(id);
 
@@ -177,7 +229,7 @@ const HandoffEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, targ
       return;
     }
     setMidpoint(getPointOnPath(0.5));
-  }, [getPointOnPath, pathReady, pathRef]);
+  }, [getPointOnPath, pathReady, pathRef, sharedRoute]);
 
   const [markerAngle, setMarkerAngle] = useState(0);
   useEffect(() => {
@@ -190,7 +242,7 @@ const HandoffEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, targ
     const dy = lastPoint.y - secondLastPoint.y;
     const angle = Math.atan2(dy, dx) * (180 / Math.PI);
     setMarkerAngle(angle - 90);
-  }, [getPointOnPath, pathReady, pathRef]);
+  }, [getPointOnPath, pathReady, pathRef, sharedRoute]);
 
   const capGuid = useGuid();
 
@@ -200,31 +252,46 @@ const HandoffEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, targ
 
   return (
     <>
-      <defs>
-        <marker
-          id={capGuid}
-          className={css('handoff', colorClass)}
-          viewBox="0 0 20 20"
-          refX="6"
-          refY="8"
-          markerWidth="12"
-          markerHeight="10"
-          orient={markerAngle}
-        >
-          <ArrowCap />
-        </marker>
-      </defs>
+      {!shared && (
+        <defs>
+          <marker
+            id={capGuid}
+            className={css('handoff', colorClass)}
+            viewBox="0 0 20 20"
+            refX="6"
+            refY="8"
+            markerWidth="12"
+            markerHeight="10"
+            orient={markerAngle}
+          >
+            <ArrowCap />
+          </marker>
+        </defs>
+      )}
 
       <path
         id={id}
         ref={pathRef}
-        style={style}
-        className={css('react-flow__edge-path', 'handoff', colorClass)}
+        style={shared ? { ...style, ...nodeLineStrokes.dashedNeutral } : style}
+        className={
+          shared ? css('msla-shared-edge-path', line.base, line.dashedNeutral) : css('react-flow__edge-path', 'handoff', colorClass)
+        }
+        data-line={shared ? 'dashedNeutral' : undefined}
         d={splinePath}
-        strokeDasharray={'4 6'}
+        strokeDasharray={shared ? undefined : '4 6'}
         strokeLinecap={'round'}
-        markerEnd={`url(#${capGuid})`}
+        markerEnd={shared ? undefined : `url(#${capGuid})`}
       />
+      {shared && (
+        <path
+          d={splinePath}
+          className={styles.hitPath}
+          strokeWidth={nodeMetrics.edgeControl.interactionWidth}
+          data-edge-hit-target
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+        />
+      )}
 
       {/* KEEP: This is for edge id testing */}
       {/* <text x={midpoint.x} y={midpoint.y} fontSize="10" fill="black">
@@ -252,12 +319,14 @@ const HandoffEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, targ
       {/* Handoff Indicator */}
       {readOnly ? null : (
         <EdgeContent
-          x={midpoint.x - edgeContentWidth / 2}
-          y={midpoint.y - edgeContentHeight / 2}
+          x={midpoint.x - (shared ? nodeMetrics.edgeControl.hitTargetSize : edgeContentWidth) / 2}
+          y={midpoint.y - (shared ? nodeMetrics.edgeControl.hitTargetSize : edgeContentHeight) / 2}
           graphId={graphId}
           parentId={source}
           childId={target}
           tabIndex={tabIndex}
+          isRevealed={hovered}
+          sharedPresentation={shared}
         />
       )}
     </>

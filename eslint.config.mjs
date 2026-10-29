@@ -1,162 +1,229 @@
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import js from "@eslint/js";
-import { FlatCompat } from "@eslint/eslintrc";
-import reactRefresh from "eslint-plugin-react-refresh";
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import js from '@eslint/js';
+import { FlatCompat } from '@eslint/eslintrc';
+import reactRefresh from 'eslint-plugin-react-refresh';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const compat = new FlatCompat({
-    baseDirectory: __dirname,
-    recommendedConfig: js.configs.recommended,
-    allConfig: js.configs.all,
+  baseDirectory: __dirname,
+  recommendedConfig: js.configs.recommended,
+  allConfig: js.configs.all,
 });
 
 export default [
-    // Global ignores (replaces .eslintignore + sub-project ignorePatterns)
-    {
-        ignores: [
-            "**/node_modules/**",
-            "**/build/**",
-            "**/dist/**",
-            "**/out/**",
-            "**/__test__/**",
-            "**/__tests__/**",
-            "**/compiled-lang/**",
-            "**/test-results/**",
-            "**/coverage/**",
-            "**/__mocks__/**",
-            "Localize/**",
-            "apps/vs-code-designer/src/test/**",
-            "apps/vs-code-react/**/test/**",
-        ],
-    },
+  // Global ignores (replaces .eslintignore + sub-project ignorePatterns)
+  {
+    ignores: [
+      '**/node_modules/**',
+      '**/build/**',
+      '**/dist/**',
+      '**/out/**',
+      '**/__test__/**',
+      '**/__tests__/**',
+      '!libs/designer-ui-v2/**/__test__/**',
+      '!libs/designer-ui-v2/**/__tests__/**',
+      '**/compiled-lang/**',
+      '**/test-results/**',
+      '**/coverage/**',
+      '**/__mocks__/**',
+      'Localize/**',
+      'apps/vs-code-designer/src/test/**',
+      'apps/vs-code-react/**/test/**',
+    ],
+  },
 
-    // Root .eslintrc.json converted via FlatCompat
-    ...compat.config({
-        parser: "@typescript-eslint/parser",
-        plugins: ["formatjs", "react", "react-hooks", "@typescript-eslint"],
-        settings: {
-            react: {
-                version: "detect",
-            },
-            "import/ignore": ["node_modules"],
-        },
-        extends: ["eslint:recommended"],
-        overrides: [
+  // Root .eslintrc.json converted via FlatCompat
+  ...compat.config({
+    parser: '@typescript-eslint/parser',
+    plugins: ['formatjs', 'react', 'react-hooks', '@typescript-eslint'],
+    settings: {
+      react: {
+        version: 'detect',
+      },
+      'import/ignore': ['node_modules'],
+    },
+    extends: ['eslint:recommended'],
+    overrides: [
+      {
+        files: ['*.ts', '*.tsx'],
+        extends: ['plugin:react/recommended', 'plugin:react-hooks/recommended', 'plugin:import/recommended', 'plugin:import/typescript'],
+        rules: {
+          'no-unused-vars': 'off',
+          'no-redeclare': 'off',
+          'no-undef': 'off',
+
+          'no-restricted-syntax': [
+            'error',
             {
-                files: ["*.ts", "*.tsx"],
-                extends: [
-                    "plugin:react/recommended",
-                    "plugin:react-hooks/recommended",
-                    "plugin:import/recommended",
-                    "plugin:import/typescript",
-                ],
-                rules: {
-                    "no-unused-vars": "off",
-                    "no-redeclare": "off",
-                    "no-undef": "off",
+              selector: 'TSEnumDeclaration',
+              message: "Don't use enums.",
+            },
+          ],
 
-                    "no-restricted-syntax": ["error", {
-                        selector: "TSEnumDeclaration",
-                        message: "Don't use enums.",
-                    }],
+          'react-hooks/exhaustive-deps': [
+            'warn',
+            {
+              additionalHooks: 'useDebouncedEffect',
+            },
+          ],
 
-                    "react-hooks/exhaustive-deps": ["warn", {
-                        additionalHooks: "useDebouncedEffect",
-                    }],
+          'react/jsx-no-useless-fragment': [
+            1,
+            {
+              allowExpressions: true,
+            },
+          ],
 
-                    "react/jsx-no-useless-fragment": [1, {
-                        allowExpressions: true,
-                    }],
+          'import/no-unresolved': 'off',
 
-                    "import/no-unresolved": "off",
+          '@typescript-eslint/no-unused-vars': [
+            'error',
+            {
+              argsIgnorePattern: '^_',
+              destructuredArrayIgnorePattern: '^_',
+              caughtErrorsIgnorePattern: '^_',
+            },
+          ],
 
-                    "@typescript-eslint/no-unused-vars": ["error", {
-                        argsIgnorePattern: "^_",
-                        destructuredArrayIgnorePattern: "^_",
-                        caughtErrorsIgnorePattern: "^_",
-                    }],
+          '@typescript-eslint/explicit-module-boundary-types': 'off',
+          '@typescript-eslint/no-explicit-any': 'off',
 
-                    "@typescript-eslint/explicit-module-boundary-types": "off",
-                    "@typescript-eslint/no-explicit-any": "off",
+          '@typescript-eslint/consistent-type-assertions': [
+            'error',
+            {
+              assertionStyle: 'as',
+            },
+          ],
 
-                    "@typescript-eslint/consistent-type-assertions": ["error", {
-                        assertionStyle: "as",
-                    }],
+          '@typescript-eslint/consistent-type-imports': [
+            2,
+            {
+              prefer: 'type-imports',
+              disallowTypeAnnotations: true,
+            },
+          ],
 
-                    "@typescript-eslint/consistent-type-imports": [2, {
-                        prefer: "type-imports",
-                        disallowTypeAnnotations: true,
-                    }],
+          'formatjs/enforce-id': [
+            'error',
+            {
+              idInterpolationPattern: '[sha512:contenthash:base64:6]',
+            },
+          ],
 
-                    "formatjs/enforce-id": ["error", {
-                        idInterpolationPattern: "[sha512:contenthash:base64:6]",
-                    }],
+          'formatjs/enforce-placeholders': [
+            'error',
+            {
+              ignoreList: ['foo'],
+            },
+          ],
 
-                    "formatjs/enforce-placeholders": ["error", {
-                        ignoreList: ["foo"],
-                    }],
+          'no-param-reassign': 'off',
+          'formatjs/enforce-default-message': ['error', 'literal'],
+          'formatjs/enforce-description': ['error', 'literal'],
+          'formatjs/no-multiple-whitespaces': [1],
+          'formatjs/no-multiple-plurals': ['error'],
 
-                    "no-param-reassign": "off",
-                    "formatjs/enforce-default-message": ["error", "literal"],
-                    "formatjs/enforce-description": ["error", "literal"],
-                    "formatjs/no-multiple-whitespaces": [1],
-                    "formatjs/no-multiple-plurals": ["error"],
+          'formatjs/no-complex-selectors': [
+            'error',
+            {
+              limit: 4,
+            },
+          ],
 
-                    "formatjs/no-complex-selectors": ["error", {
-                        limit: 4,
-                    }],
+          'react/react-in-jsx-scope': 0,
+          'react/prop-types': 0,
+        },
+      },
+      {
+        files: ['*.json'],
+        parser: 'jsonc-eslint-parser',
+        rules: {},
+      },
+    ],
+  }),
 
-                    "react/react-in-jsx-scope": 0,
-                    "react/prop-types": 0,
-                },
+  {
+    files: ['libs/designer-ui-v2/src/**/*.{ts,tsx}'],
+    rules: {
+      'import/no-relative-packages': 'error',
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: [
+                '@microsoft/*',
+                '@coreai/*',
+                'react-intl',
+                '@formatjs/*',
+                '@tanstack/*',
+                '@xyflow/*',
+                'reactflow',
+                'react-dnd',
+                'react-dnd-*',
+                'redux',
+                'redux-*',
+                '@reduxjs/*',
+                'react-redux',
+                'zustand',
+                'zustand/*',
+                '@/*',
+                '~/*',
+              ],
+              message: 'Keep shared UI host-neutral: use props, typed strings and host adapters.',
             },
             {
-                files: ["*.json"],
-                parser: "jsonc-eslint-parser",
-                rules: {},
+              group: [
+                '@fluentui/*',
+                '!@fluentui/react-components',
+                '!@fluentui/react-components/**',
+                '!@fluentui/react-icons',
+                '!@fluentui/react-icons/**',
+              ],
+              message: 'Shared UI uses public Fluent v9 components and icons only.',
             },
-        ],
-    }),
+          ],
+        },
+      ],
+    },
+  },
 
-    // VS Code apps: additional rule overrides (from apps/vs-code-react and apps/vs-code-designer .eslintrc.json)
-    {
-        files: [
-            "apps/vs-code-react/src/**/*.ts",
-            "apps/vs-code-react/src/**/*.tsx",
-            "apps/vs-code-designer/src/**/*.ts",
-            "apps/vs-code-designer/src/**/*.tsx",
-        ],
-        rules: {
-            "@typescript-eslint/no-explicit-any": "off",
-            "@typescript-eslint/no-namespace": "off",
-            "react-hooks/rules-of-hooks": "off",
-        },
+  // VS Code apps: additional rule overrides (from apps/vs-code-react and apps/vs-code-designer .eslintrc.json)
+  {
+    files: [
+      'apps/vs-code-react/src/**/*.ts',
+      'apps/vs-code-react/src/**/*.tsx',
+      'apps/vs-code-designer/src/**/*.ts',
+      'apps/vs-code-designer/src/**/*.tsx',
+    ],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-namespace': 'off',
+      'react-hooks/rules-of-hooks': 'off',
     },
-    {
-        files: [
-            "apps/vs-code-react/src/**/*.js",
-            "apps/vs-code-react/src/**/*.jsx",
-            "apps/vs-code-designer/src/**/*.js",
-            "apps/vs-code-designer/src/**/*.jsx",
-        ],
-        rules: {
-            "@typescript-eslint/no-require-imports": "off",
-        },
+  },
+  {
+    files: [
+      'apps/vs-code-react/src/**/*.js',
+      'apps/vs-code-react/src/**/*.jsx',
+      'apps/vs-code-designer/src/**/*.js',
+      'apps/vs-code-designer/src/**/*.jsx',
+    ],
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
     },
+  },
 
-    // Standalone app: react-refresh plugin (from apps/Standalone/.eslintrc.cjs)
-    {
-        files: [
-            "apps/Standalone/src/**/*.ts",
-            "apps/Standalone/src/**/*.tsx",
-        ],
-        plugins: {
-            "react-refresh": reactRefresh,
-        },
-        rules: {
-            "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
-        },
+  // Standalone app: react-refresh plugin (from apps/Standalone/.eslintrc.cjs)
+  {
+    files: ['apps/Standalone/src/**/*.ts', 'apps/Standalone/src/**/*.tsx'],
+    plugins: {
+      'react-refresh': reactRefresh,
     },
+    rules: {
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+    },
+  },
 ];

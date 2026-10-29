@@ -28,10 +28,12 @@ vi.mock('../../../core/queries/operation', () => ({
 
 const mockUseMonitoringView = vi.fn().mockReturnValue(false);
 const mockUseReadOnly = vi.fn().mockReturnValue(false);
+const mockUseSharedNodeUi = vi.fn().mockReturnValue(false);
 
 vi.mock('../../../core/state/designerOptions/designerOptionsSelectors', () => ({
   useMonitoringView: () => mockUseMonitoringView(),
   useReadOnly: () => mockUseReadOnly(),
+  useSharedNodeUi: () => mockUseSharedNodeUi(),
 }));
 
 vi.mock('../../../core/state/designerView/designerViewSlice', () => ({
@@ -172,6 +174,7 @@ describe('SubgraphCardNode (v2)', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockUseSharedNodeUi.mockReturnValue(false);
     mockUseNodeMetadata.mockReturnValue({ graphId: 'graph1', subgraphType: SUBGRAPH_TYPES.SWITCH_CASE, actionCount: 2 });
     mockUseActionMetadata.mockReturnValue({ type: 'Scope', runAfter: {} });
     mockUseIsLeafNode.mockReturnValue(false);
@@ -191,6 +194,34 @@ describe('SubgraphCardNode (v2)', () => {
     mockUseOperationErrorInfo.mockReturnValue(undefined);
     mockUseSettingValidationErrors.mockReturnValue([]);
     mockUseOperationQuery.mockReturnValue({ isError: false });
+  });
+
+  it.each([
+    [SUBGRAPH_TYPES.SWITCH_ADD_CASE, 'Add case'],
+    [SUBGRAPH_TYPES.AGENT_ADD_CONDITON, 'Add tool'],
+  ])('preserves actual %s add commands and suppresses them read-only', (subgraphType, label) => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'graph1', subgraphType, actionCount: 0 });
+    const view = render(<SubgraphCardNode {...defaultProps} />);
+    fireEvent.click(screen.getByRole('button', { name: label }));
+    expect(mockDispatch).toHaveBeenCalledWith(
+      subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE
+        ? { type: 'workflow/addSwitchCase', payload: { caseId: 'newCase-1', graphId: 'graph1' } }
+        : expect.objectContaining({ type: 'panel/expandDiscoveryPanel', payload: expect.objectContaining({ isAgentTool: true }) })
+    );
+    mockUseReadOnly.mockReturnValue(true);
+    view.rerender(<SubgraphCardNode {...defaultProps} data={{ presentation: { shared: true, family: 'add' } }} />);
+    expect(screen.queryByRole('button', { name: label })).toBeNull();
+  });
+
+  it('keeps the actual multi-action tool editor and canonical tool surface', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'graph1', subgraphType: SUBGRAPH_TYPES.AGENT_CONDITION, actionCount: 2 });
+    const { container } = render(<SubgraphCardNode {...defaultProps} />);
+    const tool = container.querySelector('[data-node-card="tool"]')!;
+    expect(tool).toHaveAttribute('id', 'msla-node-testNode');
+    fireEvent.click(tool);
+    expect(mockDispatch).toHaveBeenCalledWith({ type: 'panel/changePanelNode', payload: 'testNode' });
   });
 
   it('should render without crashing', () => {

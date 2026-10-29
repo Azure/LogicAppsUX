@@ -11,6 +11,7 @@ import {
   type OpenAPIV2,
 } from '@microsoft/logic-apps-shared';
 import { HttpClient } from '../httpClient';
+import { LocalOperationManifestService } from '../localOperationManifestService';
 import {
   createConsumptionWorkflowConnectorService,
   createLocalWorkflowConnectorService,
@@ -63,6 +64,26 @@ const makeSchemaPlan = (childName: string, type: 'string' | 'number'): WorkflowE
 describe('offline Standard workflow manifest', () => {
   beforeEach(() => getReactQueryClient().clear());
   afterEach(() => getReactQueryClient().clear());
+
+  it.each([
+    ['Compose', LocalOperationManifestService],
+    ['Execute_a_navigation_plan', LocalOperationManifestService],
+    ['Compose', LocalWorkflowManifestService],
+    ['Execute_a_navigation_plan', LocalWorkflowManifestService],
+  ])('resolves complete offline Compose metadata for %s', async (_name, Service) => {
+    const http = new HttpClient();
+    const get = vi.spyOn(http, 'get');
+    const service = new Service({ baseUrl: '/url', apiVersion: '2018-11-01', httpClient: http });
+    const info = await service.getOperationInfo({ type: 'Compose', inputs: 'value' }, false);
+    InitOperationManifestService(service);
+    const manifest = await getOperationManifest(info);
+    expect(manifest?.properties.summary).toBe('Compose');
+    expect(manifest?.properties.inputs).toBeDefined();
+    expect(manifest?.properties.outputs).toBeDefined();
+    expect(manifest?.properties.iconUri).toMatch(/^data:image\/svg/);
+    expect((await getOperation(info)).properties.iconUri).toBe(manifest?.properties.iconUri);
+    expect(get).not.toHaveBeenCalled();
+  });
 
   it('recognizes Standard invocations and requires only the workflow name and body', async () => {
     const http = new HttpClient();

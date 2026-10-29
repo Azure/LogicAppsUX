@@ -10,9 +10,11 @@ import {
   WORKFLOW_EDGE_TYPES,
   WORKFLOW_NODE_TYPES,
   getRecordEntry,
+  SUBGRAPH_TYPES,
 } from '@microsoft/logic-apps-shared';
-import type { WorkflowEdgeType, WorkflowNodeType } from '@microsoft/logic-apps-shared';
+import type { SubgraphType, WorkflowEdgeType, WorkflowNodeType } from '@microsoft/logic-apps-shared';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs';
+import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 
 export const isRootNode = (nodeId: string, nodesMetadata: NodesMetadata) => {
   return !!getRecordEntry(nodesMetadata, nodeId)?.isRoot;
@@ -40,6 +42,117 @@ export const isLeafNodeFromEdges = (edges: WorkflowEdge[]) => {
 export const DEFAULT_NODE_SIZE = {
   width: 200,
   height: 40,
+};
+// Canonical attached connector: half diamond + gap + label16 + spacingS8 + line + half dot.
+export const AGENT_TOOL_CONNECTOR_HEIGHT =
+  nodeMetrics.toolConnector.diamond / 2 +
+  nodeMetrics.toolConnector.gap +
+  16 +
+  8 +
+  nodeMetrics.toolConnector.line +
+  nodeMetrics.handle.size / 2;
+
+export interface NodePresentationContext {
+  operationType?: string;
+  subgraphType?: SubgraphType;
+  caseCount?: number;
+  toolKind?: 'action' | 'mcp' | 'subWorkflow';
+  hasToolStatus?: boolean;
+}
+
+export interface NodePresentation {
+  shared: boolean;
+  size?: { width: number; height: number };
+  family?: 'scope' | 'if' | 'switch' | 'loop' | 'agent' | 'branch' | 'tool' | 'add' | 'frame' | 'placeholder' | 'collapsed';
+  toolKind?: NodePresentationContext['toolKind'];
+}
+
+/** One admission decision for the renderer AND ELK. Raw identity is resolved by the host, never from a caption. */
+export const getNodePresentation = (
+  type: WorkflowNodeType | undefined,
+  useSharedNodeUi = false,
+  context: NodePresentationContext = {}
+): NodePresentation => {
+  const operation = type === undefined || type === WORKFLOW_NODE_TYPES.OPERATION_NODE;
+  if (!useSharedNodeUi) {
+    return { shared: false };
+  }
+  const toolSize = {
+    width: nodeMetrics.cards.tool.width,
+    height: nodeMetrics.cards.tool.smallHeight + (context.hasToolStatus ? nodeMetrics.badge.overhang : 0),
+  };
+  if (operation) {
+    if (context.toolKind) {
+      return {
+        shared: true,
+        family: 'tool',
+        toolKind: context.toolKind,
+        size: toolSize,
+      };
+    }
+    return { shared: true, size: nodeMetrics.cards.action };
+  }
+  const { operationType, subgraphType } = context;
+  if (type === WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE) {
+    switch (operationType?.toLowerCase()) {
+      case 'if':
+        return { shared: true, family: 'if', size: nodeMetrics.cards.condition };
+      case 'switch':
+        // The host flows DOWN. Canonical Switch uses the compact 74px body in this axis.
+        return {
+          shared: true,
+          family: 'switch',
+          size: {
+            width: Math.max(
+              nodeMetrics.cards.condition.width,
+              (context.caseCount ?? 1) * nodeMetrics.handle.size + Math.max(0, (context.caseCount ?? 1) - 1) * 8 + 32
+            ),
+            height: nodeMetrics.cards.condition.height,
+          },
+        };
+      case 'foreach':
+      case 'until':
+        return { shared: true, family: 'loop', size: nodeMetrics.cards.loop };
+      case 'agent':
+        return {
+          shared: true,
+          family: 'agent',
+          size: {
+            width: nodeMetrics.cards.agent.width,
+            height: nodeMetrics.cards.agent.headerHeight + nodeMetrics.cards.agent.modelHeight + AGENT_TOOL_CONNECTOR_HEIGHT,
+          },
+        };
+      case 'scope':
+        return { shared: true, family: 'scope', size: nodeMetrics.cards.action };
+      default:
+        return { shared: false };
+    }
+  }
+  if (type === WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE && subgraphType) {
+    if (subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION || subgraphType === SUBGRAPH_TYPES.MCP_CLIENT) {
+      return {
+        shared: true,
+        family: 'tool',
+        toolKind: context.toolKind ?? (subgraphType === SUBGRAPH_TYPES.MCP_CLIENT ? 'mcp' : 'action'),
+        size: toolSize,
+      };
+    }
+    if (subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE || subgraphType === SUBGRAPH_TYPES.AGENT_ADD_CONDITON) {
+      return { shared: true, family: 'add', size: { width: nodeMetrics.cards.action.width, height: 44 } };
+    }
+    return { shared: true, family: 'branch', size: { width: nodeMetrics.frame.minWidth, height: nodeMetrics.handle.labeledHeight + 16 } };
+  }
+  if (type === WORKFLOW_NODE_TYPES.GRAPH_NODE || type === WORKFLOW_NODE_TYPES.SUBGRAPH_NODE) {
+    return { shared: true, family: 'frame' };
+  }
+  if (type === WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE) {
+    return { shared: true, family: 'placeholder', size: nodeMetrics.cards.trigger };
+  }
+  if (type === WORKFLOW_NODE_TYPES.COLLAPSED_NODE) {
+    return { shared: true, family: 'collapsed', size: { width: nodeMetrics.cards.action.width, height: 50 } };
+  }
+  // Notes keep their editor/position contract. Hidden nodes remain layout-only, including children.
+  return { shared: false };
 };
 
 // Creating generic layout nodes and edges below

@@ -12,9 +12,9 @@ import {
   selectWorkflowConnectorService,
 } from './localWorkflowManifest';
 import { localWorkflowPrefix, localWorkflowRegistry } from './localWorkflowRegistry';
+import { LocalOperationManifestService } from './localOperationManifestService';
 import {
   StandardConnectionService,
-  StandardOperationManifestService,
   StandardSearchService,
   BaseOAuthService,
   BaseGatewayService,
@@ -41,6 +41,7 @@ import {
 } from '@microsoft/logic-apps-designer-v2';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 
 const httpClient = new HttpClient();
 const connectionServiceStandard = new StandardConnectionService({
@@ -72,7 +73,7 @@ const connectionServiceConsumption = new ConsumptionConnectionService({
   httpClient,
 });
 
-const operationManifestServiceStandard = new StandardOperationManifestService({
+const operationManifestServiceStandard = new LocalOperationManifestService({
   apiVersion: '2018-11-01',
   baseUrl: '/url',
   httpClient,
@@ -211,6 +212,7 @@ const editorService = new CustomEditorService();
 const connectionParameterEditorService = new CustomConnectionParameterEditorService();
 
 export const LocalDesigner = () => {
+  const { search } = useLocation();
   const dispatch = useDispatch<AppDispatch>();
   const {
     workflowDefinition,
@@ -286,6 +288,7 @@ export const LocalDesigner = () => {
     isMonitoringView,
     isDarkMode,
     useLegacyWorkflowParameters: isConsumption,
+    useSharedNodeUi: new URLSearchParams(search).get('useSharedNodeUi') === 'true',
     showEdgeDrawing,
     suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
     hostOptions,

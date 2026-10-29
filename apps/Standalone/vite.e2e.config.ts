@@ -7,6 +7,7 @@ import { nodePolyfills as np } from 'vite-plugin-node-polyfills';
 // https://vitejs.dev/config/
 export default defineConfig({
   resolve: {
+    dedupe: ['@fluentui/react-components', '@fluentui/react-icons'],
     alias: [
       {
         find: '~@xyflow/react',

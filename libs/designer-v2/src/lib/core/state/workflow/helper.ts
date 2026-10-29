@@ -4,6 +4,10 @@ import Constants from '../../../common/constants';
 import type { WorkflowNode } from '../../../core/parsers/models/workflowNode';
 import { WorkflowKind, type NodeMetadata, type WorkflowState } from './workflowInterfaces';
 
+// Keep graph pruning and definition-backed collapsed tool counts on the same Handoff predicate.
+export const isSingleHandoffAction = (actions: readonly ({ type?: string } | undefined)[]): boolean =>
+  actions.length === 1 && equals(actions[0]?.type, Constants.NODE.TYPE.HANDOFF);
+
 /**
  * Recursively clones a node while pruning (removing) any nodes that are in the nodesToRemove set.
  * Also, if the node’s id is in collapsedIds, its type is set to "COLLAPSED_NODE" and its children are not cloned.

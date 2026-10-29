@@ -2,7 +2,7 @@ import constants from '../../common/constants';
 import { useOperationInfo, type AppDispatch } from '../../core';
 import { initializeSubgraphFromManifest } from '../../core/actions/bjsworkflow/add';
 import { getOperationManifest } from '../../core/queries/operation';
-import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { useMonitoringView, useReadOnly, useSharedNodeUi } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
 import { useIconUri, useOperationErrorInfo, useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelectedInOperationPanel, useIsNodePinnedToOperationPanel } from '../../core/state/panel/panelSelectors';
@@ -26,7 +26,15 @@ import { fetchBuiltInToolRunData } from '../../core/actions/bjsworkflow/monitori
 import { getScopeRepetitionName } from '../common/LoopsPager/helper';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { DropZone } from '../connections/dropzone';
-import { isBuiltInAgentTool, SUBGRAPH_TYPES, guid, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
+import {
+  WORKFLOW_NODE_TYPES,
+  isBuiltInAgentTool,
+  SUBGRAPH_TYPES,
+  guid,
+  isNullOrUndefined,
+  removeIdTag,
+  useNodeIndex,
+} from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -36,8 +44,11 @@ import { SubgraphCard } from './components/card/subgraphCard';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
 import { ErrorLevel } from '../../core/state/operation/operationMetadataSlice';
 import { useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
+import { getNodePresentation, type NodePresentation } from '../../core/utils/graph';
+import { SharedBranchCard } from './components/card/SharedFamilyCards';
+import { NodeAddButton } from '@microsoft/designer-ui-v2';
 
-const SubgraphCardNode = ({ id }: NodeProps) => {
+const SubgraphCardNode = ({ id, data }: NodeProps) => {
   const subgraphId = removeIdTag(id);
   const node = useActionMetadata(subgraphId);
 
@@ -49,6 +60,16 @@ const SubgraphCardNode = ({ id }: NodeProps) => {
   const isPinned = useIsNodePinnedToOperationPanel(subgraphId);
   const isLeaf = useIsLeafNode(id);
   const metadata = useNodeMetadata(subgraphId);
+  const sharedOption = useSharedNodeUi();
+  const presentation =
+    (data?.presentation as NodePresentation | undefined) ??
+    getNodePresentation(WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE, sharedOption, {
+      operationType: node?.type,
+      subgraphType: metadata?.subgraphType,
+      hasToolStatus: !!(metadata?.toolRunData ?? metadata?.runData)?.status,
+    });
+  const shared = presentation.shared;
+  const sharedTool = shared && presentation.family === 'tool';
   const graphId = useMemo(() => metadata?.graphId ?? '', [metadata]);
   const graphNode = useWorkflowNode(graphId);
   const operationInfo = useOperationInfo(graphId);
@@ -82,6 +103,8 @@ const SubgraphCardNode = ({ id }: NodeProps) => {
         id: 'GusLAj',
         description: 'Label for the case node',
       }),
+      addTool: intl.formatMessage({ defaultMessage: 'Add tool', id: 'xX0Xvc', description: 'add a tool to agentic loop' }),
+      addCase: intl.formatMessage({ defaultMessage: 'Add case', id: 'TcU2Gf', description: 'add a case to switch statement' }),
       collapsedText: intl.formatMessage(
         {
           defaultMessage: '{actionCount, plural, one {# Action} =0 {0 Actions} other {# Actions}}',
@@ -260,31 +283,71 @@ const SubgraphCardNode = ({ id }: NodeProps) => {
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center' }}>
-        <div style={{ position: 'relative' }}>
-          <DefaultHandle type="target" />
+        <div style={{ position: 'relative', ...(shared && presentation.size) }}>
+          {sharedTool ? null : <DefaultHandle type="target" />}
           {metadata?.subgraphType ? (
             <>
-              <SubgraphCard
-                id={subgraphId}
-                active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true}
-                parentId={metadata?.graphId}
-                subgraphType={metadata.subgraphType}
-                title={title}
-                isSelected={selected}
-                isPinned={isPinned}
-                readOnly={readOnly}
-                onClick={subgraphClick}
-                onContextMenu={onContextMenu}
-                onDeleteClick={deleteClick}
-                collapsed={graphCollapsed}
-                handleCollapse={handleGraphCollapse}
-                errorMessages={errorMessages}
-                nodeIndex={nodeIndex}
-              />
+              {shared && isAddCase ? (
+                readOnly ? null : (
+                  <NodeAddButton
+                    label={isAgentAddTool ? intlText.addTool : intlText.addCase}
+                    onClick={() => subgraphClick(subgraphId)}
+                    tabIndex={nodeIndex}
+                  />
+                )
+              ) : shared ? (
+                <SharedBranchCard
+                  id={subgraphId}
+                  title={title}
+                  subgraphType={metadata.subgraphType}
+                  toolKind={presentation.toolKind}
+                  inputSlot={sharedTool ? <DefaultHandle type="target" /> : undefined}
+                  outputSlot={sharedTool ? <DefaultHandle type="source" /> : undefined}
+                  selected={selected}
+                  pinned={isPinned}
+                  active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true}
+                  onClick={() =>
+                    subgraphClick(
+                      metadata.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE ||
+                        metadata.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION ||
+                        metadata.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT
+                        ? subgraphId
+                        : metadata.graphId
+                    )
+                  }
+                  onContextMenu={onContextMenu}
+                  onDeleteClick={deleteClick}
+                  collapsed={graphCollapsed}
+                  onCollapse={handleGraphCollapse}
+                  errorMessages={errorMessages}
+                  nodeIndex={nodeIndex}
+                  runData={metadata.toolRunData ?? metadata.runData}
+                  description={opQuery.data?.properties?.description}
+                  isMonitoringView={isMonitoringView}
+                />
+              ) : (
+                <SubgraphCard
+                  id={subgraphId}
+                  active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true}
+                  parentId={metadata?.graphId}
+                  subgraphType={metadata.subgraphType}
+                  title={title}
+                  isSelected={selected}
+                  isPinned={isPinned}
+                  readOnly={readOnly}
+                  onClick={subgraphClick}
+                  onContextMenu={onContextMenu}
+                  onDeleteClick={deleteClick}
+                  collapsed={graphCollapsed}
+                  handleCollapse={handleGraphCollapse}
+                  errorMessages={errorMessages}
+                  nodeIndex={nodeIndex}
+                />
+              )}
               {shouldShowPager ? <LoopsPager metadata={metadata} scopeId={subgraphId} collapsed={graphCollapsed} /> : null}
             </>
           ) : null}
-          <DefaultHandle type="source" />
+          {sharedTool ? null : <DefaultHandle type="source" />}
         </div>
       </div>
       {graphCollapsed ? (
@@ -297,7 +360,13 @@ const SubgraphCardNode = ({ id }: NodeProps) => {
           <p className="no-actions-text">{intlText.noActions}</p>
         ) : (
           <div className={'edge-drop-zone-container'}>
-            <DropZone graphId={subgraphId} parentId={id} isLeaf={isLeaf} tabIndex={nodeIndex} />
+            <DropZone
+              graphId={subgraphId}
+              parentId={id}
+              isLeaf={isLeaf}
+              tabIndex={nodeIndex}
+              {...(data?.presentation ? { sharedPresentation: shared } : {})}
+            />
           </div>
         )
       ) : null}
