@@ -1015,6 +1015,19 @@ satisfies the protected full rollup. Preserve stricter family gates such as
 Multi-root phase order and retained-identity cleanup even when body assertions
 and ordered evidence are complete.
 
+For sequential Multi-root project creation, generated files alone do not prove
+the previous wizard has finished. Wait for its original owner iframe and editor
+tab to disappear before invoking the next project command. Bind the new wizard
+to its active, visible setup controls; a retained review page can contain the
+same labels without having any radio inputs.
+
+Linux full-population collection must distinguish inaccessible unrelated
+processes from inaccessible Func candidates. Excluding a permission-denied
+non-Func process requires readable, consistent process name and argv evidence
+plus stable process identity. Func candidates and ambiguous metadata still
+fail closed. An empty userspace command line is not evidence of a kernel
+thread. Keep these exclusions separate from owned-process shutdown observation.
+
 The platform aliases derive from `SUITE_REGISTRY.platforms`; pipeline jobs,
 protected dependencies, result variables, artifact downloads, and validation
 records must equal that registry-derived inventory in the same change. The

@@ -7,7 +7,14 @@ import { remainingBudget } from './workspaceMultiRootCollector';
 import type { MultiRootBootstrapAttestation } from './workspaceMultiRootBootstrap';
 import { assertFuncRuntimeResolution, type FuncRuntimeResolution } from './workspaceMultiRootLaunch';
 import { normalizeFsPath } from './testUtils';
-import { clickContextMenuText, command, poll, readContextMenuState, workbenchVisibleScript as visibleScript } from './workbenchCdpActions';
+import {
+  boundedCdp,
+  clickContextMenuText,
+  command,
+  poll,
+  readContextMenuState,
+  workbenchVisibleScript as visibleScript,
+} from './workbenchCdpActions';
 
 export { boundedCdp, clickText, command, poll } from './workbenchCdpActions';
 
@@ -132,16 +139,61 @@ export async function activeWebview(
   tab: string,
   texts: string[],
   deadline: number,
-  beforePoll?: () => void | Promise<void>
+  beforePoll?: () => void | Promise<void>,
+  acceptForm?: (cdp: CdpEvaluator, contextId: number) => Promise<void>
 ) {
   const result = await connectToVsCodeCdpByText({
     targetName: tab,
     allTextIncludes: texts,
     timeoutMs: remainingBudget(deadline),
     beforePoll,
-    acceptCandidate: async (cdp) => assertActiveWebview(await readWorkbench(workbench), cdp.targetUrl, tab),
+    acceptCandidate: async (cdp, contextId) => {
+      assertActiveWebview(await readWorkbench(workbench), cdp.targetUrl, tab);
+      await acceptForm?.(boundedCdp(cdp, deadline), contextId);
+    },
   });
   return result;
+}
+
+export async function assertProjectSetupForm(cdp: CdpEvaluator, contextId: number): Promise<void> {
+  const ready = await cdp.evaluate<boolean>(
+    contextId,
+    `(() => { ${visibleScript}
+      const labelText = e => text(e).replace(/\\*/g, '').trim();
+      const enabled = e => visible(e) && !e.disabled && e.getAttribute('aria-disabled') !== 'true';
+      const labelled = (selector, label) => Array.from(document.querySelectorAll(selector)).filter(e =>
+        enabled(e) && Array.from(e.labels || []).some(l => visible(l) && labelText(l) === label));
+      return labelled('input[type="radio"]', 'Logic app (Standard)').length === 1 &&
+        labelled('input:not([type="radio"])', 'Logic app name').length === 1 &&
+        labelled('input:not([type="radio"])', 'Workflow name').length === 1 &&
+        Array.from(document.querySelectorAll('button')).filter(e => visible(e) && text(e) === 'Next').length === 1;
+    })()`
+  );
+  assert.equal(ready, true, 'Create project must expose its own enabled setup controls, not summary text');
+}
+
+export async function waitForProjectWizardClosed(workbench: CdpEvaluator, targetUrl: string | undefined, deadline: number): Promise<void> {
+  assert.ok(targetUrl, 'Created project wizard owner is required');
+  const owner = new URL(targetUrl).hostname;
+  // Generated files precede createHandler completion. The cached panel is only
+  // disposed afterwards; another Create Project while it exists just reveals
+  // that same review page and does not start a new wizard.
+  await poll(
+    () =>
+      workbench.evaluate<boolean>(
+        undefined,
+        `(() => { ${visibleScript}
+          const ownerPresent = Array.from(document.querySelectorAll('iframe')).some(e => {
+            try { return new URL(e.src).hostname === ${JSON.stringify(owner)}; } catch { return false; }
+          });
+          const tabPresent = Array.from(document.querySelectorAll('[role="tab"]')).some(e =>
+            text(e) === 'Create project' || text(e).startsWith('Create project '));
+          return !ownerPresent && !tabPresent;
+        })()`
+      ),
+    Boolean,
+    deadline
+  );
 }
 
 const normalizePhysicalPath = (value: string): string => normalizeFsPath(fs.realpathSync.native(value));

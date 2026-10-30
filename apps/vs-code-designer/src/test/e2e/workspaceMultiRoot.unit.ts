@@ -34,7 +34,9 @@ import {
   waitForFuncPopulation,
 } from './workspaceMultiRootCollector';
 import {
+  activeWebview,
   assertActiveWebview,
+  assertProjectSetupForm,
   assertMapper,
   assertSequentialDebug,
   folderCreateNewProject,
@@ -42,11 +44,149 @@ import {
   type DebugEvent,
   readLogicAppRoots,
   waitForActivatedMultiRootRuntime,
+  waitForProjectWizardClosed,
   type WorkbenchState,
 } from './workspaceMultiRootWorkbench';
 import { contextMenuDom, workbenchDomFixture } from './workbenchDomFixture';
+import { selectRadioOption } from './cdpFormHelpers';
 
 const executable = path.resolve('func.exe');
+
+// Fluent Radio/Field use native input-label associations in LogicAppTypeStep
+// and WorkflowTypeStep. Review renders these same strings as plain text.
+const projectSetupDom = `
+  <div class="fui-Field"><label for="app">Logic app name *</label><input id="app"></div>
+  <div class="fui-Radio"><input type="radio" id="standard"><label for="standard">Logic app (Standard)</label></div>
+  <div class="fui-Field"><label for="workflow">Workflow name *</label><input id="workflow"></div>
+  <button>Next</button>`;
+const projectReviewDom = `
+  <h2>Review + create</h2><p>Review your configuration and create your Logic App workspace.</p>
+  <div>Logic app name: <span>multiroot-second</span></div>
+  <div>Logic app type: <span>Logic app (Standard)</span></div>
+  <div>Workflow name: <span>main</span></div><button>Create project</button>`;
+
+test('Create project readiness requires its own live setup controls, not the previous review page strings', async () => {
+  const setup = workbenchDomFixture(projectSetupDom);
+  const review = workbenchDomFixture(projectReviewDom);
+  try {
+    await assertProjectSetupForm(setup.cdp, 1);
+    await assert.rejects(assertProjectSetupForm(review.cdp, 1), /own enabled setup controls/);
+    // Reproduce the reached error with the real shared helper, without changing
+    // its selector or replaying radio clicks against a summary document.
+    await assert.rejects(selectRadioOption(review.cdp, 1, 'Logic app (Standard)'), /Radio input not found/);
+    assert.deepEqual(review.sent, []);
+  } finally {
+    setup.dispose();
+    review.dispose();
+  }
+});
+
+test('Create project readiness rejects hidden, disabled, ambiguous or incomplete setup controls', async () => {
+  for (const kind of ['hidden', 'disabled', 'duplicate', 'missing-label', 'no-next'] as const) {
+    const fixture = workbenchDomFixture(projectSetupDom);
+    try {
+      if (kind === 'hidden') {
+        fixture.document.querySelector('.fui-Radio').style.display = 'none';
+      } else if (kind === 'disabled') {
+        fixture.document.querySelector('#app').disabled = true;
+      } else if (kind === 'duplicate') {
+        fixture.document.body.insertAdjacentHTML(
+          'beforeend',
+          projectSetupDom.replaceAll('id="', 'id="copy-').replaceAll('for="', 'for="copy-')
+        );
+      } else if (kind === 'missing-label') {
+        fixture.document.querySelector('label[for="workflow"]').remove();
+      } else {
+        fixture.document.querySelector('button').remove();
+      }
+      await assert.rejects(assertProjectSetupForm(fixture.cdp, 1), /own enabled setup controls/);
+      assert.deepEqual(fixture.sent, []);
+    } finally {
+      fixture.dispose();
+    }
+  }
+});
+
+test('Create project discovery admits only the active owner and a live setup document before any input', async () => {
+  for (const kind of ['setup', 'review', 'wrong-owner', 'inactive-tab'] as const) {
+    const form = workbenchDomFixture(kind === 'review' ? projectReviewDom : projectSetupDom);
+    const shell = workbenchDomFixture(`
+      <div role="tab" aria-selected="true">${kind === 'inactive-tab' ? 'Other editor' : 'Create project'}</div>
+      <iframe src="vscode-webview://${kind === 'wrong-owner' ? 'other' : 'project'}/index.html"></iframe>`);
+    const candidate = { ...form.cdp, targetUrl: 'vscode-webview://project/index.html' };
+    const connection = mock.method(require('./cdpClient'), 'connectToVsCodeCdpByText', async (options: any) => {
+      await options.acceptCandidate(candidate, 7);
+      return { cdp: candidate, contextId: 7 };
+    });
+    try {
+      const discover = () =>
+        activeWebview(
+          shell.cdp,
+          'Create project',
+          ['Logic app name', 'Workflow name'],
+          Date.now() + 2000,
+          undefined,
+          assertProjectSetupForm
+        );
+      if (kind === 'setup') {
+        assert.equal((await discover()).contextId, 7);
+      } else {
+        await assert.rejects(discover(), /own enabled setup controls|visible active iframe|Expected active editor/);
+      }
+      assert.deepEqual([...form.sent, ...shell.sent], []);
+    } finally {
+      connection.mock.restore();
+      form.dispose();
+      shell.dispose();
+    }
+  }
+});
+
+test('Create project completion waits for both the old iframe and editor tab to be removed before the next menu', async () => {
+  const fixture = workbenchDomFixture(`
+    <iframe src="vscode-webview://previous-project/index.html"></iframe>
+    <div role="tab" aria-selected="true">Create project</div>${projectReviewDom}`);
+  const evaluate = fixture.cdp.evaluate.bind(fixture.cdp);
+  let observations = 0;
+  fixture.cdp.evaluate = async <T>(context: number | undefined, expression: string): Promise<T> => {
+    observations++;
+    // Files may already exist throughout this interval. Merely switching away
+    // or removing one UI surface must not admit another cached-panel invocation.
+    if (observations === 2) {
+      fixture.document.querySelector('iframe').remove();
+      fixture.document.querySelector('[role="tab"]').setAttribute('aria-selected', 'false');
+    }
+    if (observations === 3) {
+      fixture.document.querySelector('[role="tab"]').remove();
+    }
+    return evaluate<T>(context, expression);
+  };
+  try {
+    await waitForProjectWizardClosed(fixture.cdp, 'vscode-webview://previous-project/index.html', Date.now() + 2000);
+    assert.equal(observations, 3);
+    assert.deepEqual(fixture.sent, [], 'Wait for product disposal; never close/cancel the wizard in the harness');
+  } finally {
+    fixture.dispose();
+  }
+});
+
+test('Create project completion fails closed for a retained hidden owner or retained inactive tab', async () => {
+  for (const html of [
+    '<iframe style="display:none" src="vscode-webview://previous-project/index.html"></iframe>',
+    '<div role="tab" aria-selected="false">Create project</div>',
+  ]) {
+    const fixture = workbenchDomFixture(html);
+    try {
+      await assert.rejects(
+        waitForProjectWizardClosed(fixture.cdp, 'vscode-webview://previous-project/index.html', Date.now() + 250),
+        /Workbench action deadline exhausted/
+      );
+      assert.deepEqual(fixture.sent, []);
+    } finally {
+      fixture.dispose();
+    }
+  }
+});
 
 function folderMenuFixture(options: { loseFocus?: boolean; noMenu?: boolean } = {}) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'multi-root-menu-unit-'));
@@ -720,7 +860,11 @@ test('Windows binary permissions and binary replacement fail closed', async () =
   await assert.rejects(changed.snapshot(5000), /executable race/);
 });
 
-const fakeStat = (birth = '42') => `100 (func name) ${['S', ...Array.from({ length: 18 }, () => '0'), birth].join(' ')}`;
+const fakeStat = (birth = '42', flags = '0') => {
+  const fields = ['S', ...Array.from({ length: 18 }, () => '0'), birth];
+  fields[6] = flags;
+  return `100 (func name) ${fields.join(' ')}`;
+};
 function procFixture(overrides: Partial<ProcFiles> = {}): ProcFiles {
   return {
     readdir: () => ['100'],
@@ -734,6 +878,131 @@ test('Linux unit-owned proc files prove executable and creation identity', async
   const provider = createLinuxPopulationProvider(procFixture(), '/unit-owned-proc');
   assert.equal((await provider.snapshot(5000)).processes[0].birth, 'fixture-boot:42');
 });
+
+test('Linux protected unrelated system process does not hide any Funcs from the full native population', async () => {
+  for (const code of ['EACCES', 'EPERM']) {
+    const denied = Object.assign(new Error('protected system exe'), { code });
+    const files = procFixture({
+      readdir: () => ['1', '100', '101'],
+      read: (file) =>
+        file.endsWith('boot_id')
+          ? 'boot'
+          : file.endsWith('stat')
+            ? fakeStat()
+            : file.endsWith('cmdline')
+              ? '/sbin/init\0--system\0'
+              : path.basename(path.dirname(file)) === '1'
+                ? 'systemd\n'
+                : path.basename(path.dirname(file)) === '101'
+                  ? 'renamed-func\n'
+                  : 'func\n',
+      readlink: (file) => {
+        if (path.basename(path.dirname(file)) === '1') {
+          throw denied;
+        }
+        return executable;
+      },
+    });
+    const result = await createLinuxPopulationProvider(files, '/unit-owned-proc').snapshot(5000);
+    assert.deepEqual(result, {
+      complete: true,
+      processes: [100, 101].map((pid) => ({ pid, birth: 'boot:42', executable, sha256 })),
+    });
+  }
+});
+
+test('Linux denied Func by comm or argv[0], unreadable metadata and unknown rows remain fatal, not absence', async () => {
+  for (const kind of [
+    'func-comm',
+    'renamed-func',
+    'no-argv',
+    'malformed-argv',
+    'unreadable-argv',
+    'unreadable-comm',
+    'empty-comm',
+  ] as const) {
+    const denied = Object.assign(new Error(`EACCES ${kind}`), { code: 'EACCES' });
+    const files = procFixture({
+      read: (file) => {
+        if (file.endsWith('boot_id')) {
+          return 'boot';
+        }
+        if (file.endsWith('stat')) {
+          return fakeStat();
+        }
+        if (file.endsWith('comm')) {
+          if (kind === 'unreadable-comm') {
+            throw denied;
+          }
+          return kind === 'func-comm' ? 'func' : kind === 'empty-comm' ? '' : 'renamed';
+        }
+        if (kind === 'unreadable-argv') {
+          throw denied;
+        }
+        return kind === 'renamed-func' ? '/other/func\0--port\0' : kind === 'malformed-argv' ? 'unknown' : '';
+      },
+      readlink: () => {
+        throw denied;
+      },
+    });
+    await assert.rejects(
+      createLinuxPopulationProvider(files, '/unit-owned-proc').snapshot(5000),
+      /EACCES|no classifiable process|Missing process name/,
+      kind
+    );
+  }
+});
+
+test('Linux denied non-Func exclusion is revalidated against PID reuse, name changes and argv exec changes', async () => {
+  for (const kind of ['birth', 'comm', 'argv', 'disappearance'] as const) {
+    const reads: Record<string, number> = {};
+    const files = procFixture({
+      read: (file) => {
+        const key = path.basename(file);
+        reads[key] = (reads[key] || 0) + 1;
+        // Change only on the final pass: a one-time permission catch-and-skip
+        // would otherwise wrongly return complete:true.
+        const changed = reads[key] >= 3;
+        if (file.endsWith('boot_id')) {
+          return 'boot';
+        }
+        if (file.endsWith('stat')) {
+          if (kind === 'disappearance' && changed) {
+            throw Object.assign(new Error('gone'), { code: 'ENOENT' });
+          }
+          return fakeStat(kind === 'birth' && changed ? '99' : '42');
+        }
+        if (file.endsWith('comm')) {
+          return kind === 'comm' && changed ? 'func' : 'systemd';
+        }
+        return kind === 'argv' && changed ? '/other/func\0' : '/sbin/init\0';
+      },
+      readlink: () => {
+        throw Object.assign(new Error('protected exe'), { code: 'EACCES' });
+      },
+    });
+    await assert.rejects(createLinuxPopulationProvider(files, '/unit-owned-proc').snapshot(5000), PopulationRace, kind);
+  }
+});
+
+test('Linux non-permission executable errors and Func binary permission failures cannot be excluded', async () => {
+  for (const kind of ['io-error', 'func-binary'] as const) {
+    const error = Object.assign(new Error(kind), { code: kind === 'io-error' ? 'EIO' : 'EACCES' });
+    const files = procFixture({
+      readlink: () => {
+        if (kind === 'io-error') {
+          throw error;
+        }
+        return executable;
+      },
+      binary: () => {
+        throw error;
+      },
+    });
+    await assert.rejects(createLinuxPopulationProvider(files, '/unit-owned-proc').snapshot(5000), (actual) => actual === error);
+  }
+});
+
 test('Linux any unreadable process name blocks complete enumeration', async () => {
   const files = procFixture({
     read: () => {
@@ -763,14 +1032,31 @@ test('Linux stale PID and table population races are rejected', async () => {
 });
 
 test('Linux verified executable-free kernel thread is not a func process', async () => {
-  const missing = Object.assign(new Error('fixture has no executable'), { code: 'ENOENT' });
-  const kernel = procFixture({
-    readlink: () => {
-      throw missing;
-    },
-    read: (file) => (file.endsWith('boot_id') ? 'boot' : file.endsWith('comm') ? 'kernel' : file.endsWith('cmdline') ? '' : fakeStat()),
-  });
-  assert.equal((await createLinuxPopulationProvider(kernel, '/unit-owned-proc').snapshot(5000)).processes.length, 0);
+  for (const code of ['ENOENT', 'EACCES', 'EPERM']) {
+    const inaccessible = Object.assign(new Error('fixture kernel executable link unavailable'), { code });
+    const kernel = procFixture({
+      readlink: () => {
+        throw inaccessible;
+      },
+      read: (file) =>
+        file.endsWith('boot_id') ? 'boot' : file.endsWith('comm') ? 'kernel' : file.endsWith('cmdline') ? '' : fakeStat('42', '2097152'),
+    });
+    assert.deepEqual(await createLinuxPopulationProvider(kernel, '/unit-owned-proc').snapshot(5000), { complete: true, processes: [] });
+  }
+});
+test('Linux empty userspace argv does not prove a kernel thread when its executable is unavailable', async () => {
+  for (const code of ['ENOENT', 'EACCES']) {
+    const files = procFixture({
+      readlink: () => {
+        throw Object.assign(new Error('inaccessible userspace exe'), { code });
+      },
+      read: (file) => (file.endsWith('boot_id') ? 'boot' : file.endsWith('comm') ? 'nonfunc' : file.endsWith('cmdline') ? '' : fakeStat()),
+    });
+    await assert.rejects(
+      createLinuxPopulationProvider(files, '/unit-owned-proc').snapshot(5000),
+      /userspace process|no classifiable process/
+    );
+  }
 });
 test('Linux inaccessible/missing userspace executable is not silently removed from the population', async () => {
   const missing = Object.assign(new Error('fixture missing executable'), { code: 'ENOENT' });

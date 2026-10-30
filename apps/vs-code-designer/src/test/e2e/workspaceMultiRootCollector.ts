@@ -120,6 +120,17 @@ export function procBirth(stat: string, boot: string): string {
   return `${boot}:${fields[19]}`;
 }
 
+function procKernelThread(stat: string): boolean {
+  const fields = stat
+    .slice(stat.lastIndexOf(') ') + 2)
+    .trim()
+    .split(/\s+/);
+  assert.ok(/^\d+$/.test(fields[6] ?? ''), 'Missing proc flags');
+  // Linux PF_KTHREAD is kernel-owned; an empty argv alone also occurs during
+  // userspace exit and cannot prove an executable-free kernel thread.
+  return (BigInt(fields[6]) & 0x00200000n) !== 0n;
+}
+
 export function createLinuxPopulationProvider(files = nativeProcFiles, root = '/proc'): PopulationProvider {
   return {
     async snapshot(budgetMs) {
@@ -132,38 +143,89 @@ export function createLinuxPopulationProvider(files = nativeProcFiles, root = '/
           .sort();
       const initial = enumerate();
       const processes: FuncIdentity[] = [];
+      const exclusions: Array<() => void> = [];
       try {
         for (const pid of initial) {
           remainingBudget(deadline);
           const dir = path.join(root, pid);
+          const firstStat = files.read(path.join(dir, 'stat'));
+          const first = procBirth(firstStat, boot);
           // Reading every comm is necessary: an unreadable row might itself be func.
           const name = files.read(path.join(dir, 'comm')).trim();
+          assert.ok(name, 'Missing process name can conceal func population');
+          const verifyIdentity = () => {
+            remainingBudget(deadline);
+            if (first !== procBirth(files.read(path.join(dir, 'stat')), boot) || name !== files.read(path.join(dir, 'comm')).trim()) {
+              throw new PopulationRace('Process identity/name changed during collection');
+            }
+          };
           let executable: string;
           try {
             executable = files.readlink(path.join(dir, 'exe'));
           } catch (error) {
-            // Kernel threads have no executable. Prove a still-present, unchanged
-            // identity AND empty command line; do not confuse a lost PID with one.
-            if (!(error instanceof Error && 'code' in error && error.code === 'ENOENT') || isFunc(name)) {
+            const denied = error instanceof Error && 'code' in error && (error.code === 'EACCES' || error.code === 'EPERM');
+            const missing = error instanceof Error && 'code' in error && error.code === 'ENOENT';
+            if ((denied || missing) && !isFunc(name) && procKernelThread(firstStat)) {
+              const verifyKernelThread = () => {
+                verifyIdentity();
+                assert.equal(files.read(path.join(dir, 'cmdline')), '', 'Kernel thread unexpectedly has userspace arguments');
+                if (!procKernelThread(files.read(path.join(dir, 'stat')))) {
+                  throw new PopulationRace('Kernel-thread identity changed during collection');
+                }
+              };
+              verifyKernelThread();
+              exclusions.push(verifyKernelThread);
+              continue;
+            }
+            // proc exe links use ptrace permissions, unlike comm/cmdline. A
+            // system-owned non-Func (e.g. PID 1) must not require elevation.
+            // Never drop a denied Func candidate, an unreadable name/argv, or
+            // an unclassifiable row. Inspect argv[0] only, never retain/log a
+            // command line; this also catches Func with a renamed comm.
+            if (denied && !isFunc(name)) {
+              const readArgv0 = () => {
+                const commandLine = files.read(path.join(dir, 'cmdline'));
+                const end = commandLine.indexOf('\0');
+                assert.ok(end > 0, 'Denied executable has no classifiable process argv[0]');
+                return commandLine.slice(0, end);
+              };
+              const argv0 = readArgv0();
+              if (isFunc(path.posix.basename(argv0))) {
+                throw error;
+              }
+              const verifyExclusion = () => {
+                verifyIdentity();
+                if (readArgv0() !== argv0) {
+                  throw new PopulationRace('Denied non-Func process changed during collection');
+                }
+              };
+              verifyExclusion();
+              exclusions.push(verifyExclusion);
+              continue;
+            }
+            if (!missing || isFunc(name)) {
               throw error;
             }
-            const before = procBirth(files.read(path.join(dir, 'stat')), boot);
-            assert.equal(files.read(path.join(dir, 'cmdline')), '', 'Executable missing from a userspace process');
-            if (before !== procBirth(files.read(path.join(dir, 'stat')), boot)) {
-              throw new PopulationRace('Process disappeared/reused while checking an executable-free kernel thread');
-            }
-            continue;
+            throw new PopulationRace('Executable missing from a userspace process');
           }
           if (!isFunc(name) && !isFunc(path.basename(executable))) {
+            exclusions.push(() => {
+              verifyIdentity();
+              if (files.readlink(path.join(dir, 'exe')) !== executable) {
+                throw new PopulationRace('Non-Func executable changed during collection');
+              }
+            });
             continue;
           }
-          const first = procBirth(files.read(path.join(dir, 'stat')), boot);
           const bytes = files.binary(path.join(dir, 'exe'));
           const last = procBirth(files.read(path.join(dir, 'stat')), boot);
           if (first !== last || executable !== files.readlink(path.join(dir, 'exe'))) {
             throw new PopulationRace('PID/executable changed during collection');
           }
           processes.push({ pid: Number(pid), birth: first, executable, sha256: createHash('sha256').update(bytes).digest('hex') });
+        }
+        for (const verify of exclusions) {
+          verify();
         }
         if (JSON.stringify(initial) !== JSON.stringify(enumerate())) {
           throw new PopulationRace('Process table changed during collection');

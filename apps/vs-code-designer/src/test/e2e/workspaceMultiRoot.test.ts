@@ -8,6 +8,7 @@ import type { MultiRootBootstrapAttestation } from './workspaceMultiRootBootstra
 import { connectToOwnedRegularWorkbench, ensureRegularWorkbenchExplorer, reloadOwnedRegularWorkbench } from './workbenchCdpActions';
 import {
   activeWebview,
+  assertProjectSetupForm,
   assertMapper,
   assertSequentialDebug,
   boundedCdp,
@@ -20,6 +21,7 @@ import {
   readLogicAppRoots,
   readWorkbench,
   waitForActivatedMultiRootRuntime,
+  waitForProjectWizardClosed,
 } from './workspaceMultiRootWorkbench';
 import { normalizeFsPath } from './testUtils';
 
@@ -107,7 +109,14 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
           });
         },
       });
-      const { cdp: wizard, contextId } = await activeWebview(workbench, 'Create project', ['Logic app name', 'Workflow name'], phase);
+      const { cdp: wizard, contextId } = await activeWebview(
+        workbench,
+        'Create project',
+        ['Logic app name', 'Workflow name'],
+        phase,
+        undefined,
+        assertProjectSetupForm
+      );
       try {
         const form = boundedCdp(wizard, phase);
         await selectRadioOption(form, contextId, 'Logic app (Standard)');
@@ -122,6 +131,7 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
           phase
         );
         await clickText(form, 'button', 'Create project', phase, contextId);
+        await waitForProjectWizardClosed(workbench, wizard.targetUrl, phase);
       } finally {
         wizard.dispose();
       }
