@@ -1,6 +1,7 @@
 import * as assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import * as fs from 'node:fs';
+import { createRequire } from 'node:module';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import { runInNewContext } from 'node:vm';
@@ -48,58 +49,143 @@ import {
   type WorkbenchState,
 } from './workspaceMultiRootWorkbench';
 import { contextMenuDom, workbenchDomFixture } from './workbenchDomFixture';
-import { selectRadioOption } from './cdpFormHelpers';
+import { getFieldState, selectRadioOption } from './cdpFormHelpers';
 
 const executable = path.resolve('func.exe');
 
-// Fluent Radio/Field use native input-label associations in LogicAppTypeStep
-// and WorkflowTypeStep. Review renders these same strings as plain text.
-const projectSetupDom = `
-  <div class="fui-Field"><label for="app">Logic app name *</label><input id="app"></div>
-  <div class="fui-Radio"><input type="radio" id="standard"><label for="standard">Logic app (Standard)</label></div>
-  <div class="fui-Field"><label for="workflow">Workflow name *</label><input id="workflow"></div>
-  <button>Next</button>`;
+const webviewRequire = createRequire(path.resolve(__dirname, '../../../../vs-code-react/package.json'));
+let setupRender = 0;
+function projectSetupDom(): string {
+  // Resolve React, its server renderer and Fluent from the webview's own
+  // package, as the repository's real-component DOM controls do. Never invent
+  // a for/id relationship that the installed Field/Input cohort did not render.
+  const { createElement: h } = webviewRequire('react');
+  const { renderToStaticMarkup } = webviewRequire('react-dom/server');
+  const { Button, Field, Input, Radio, RadioGroup } = webviewRequire('@fluentui/react-components');
+  return renderToStaticMarkup(
+    h(
+      'div',
+      null,
+      h(Field, { label: 'Logic app name', required: true }, h(Input, { placeholder: 'Enter logic app name' })),
+      h(RadioGroup, null, h(Radio, { value: 'logicApp', label: 'Logic app (Standard)' })),
+      h(Field, { label: 'Workflow name', required: true }, h(Input, { placeholder: 'Enter workflow name' })),
+      h(Button, { disabled: true }, 'Next')
+    ),
+    { identifierPrefix: `multi-root-setup-${++setupRender}-` }
+  );
+}
 const projectReviewDom = `
   <h2>Review + create</h2><p>Review your configuration and create your Logic App workspace.</p>
   <div>Logic app name: <span>multiroot-second</span></div>
   <div>Logic app type: <span>Logic app (Standard)</span></div>
   <div>Workflow name: <span>main</span></div><button>Create project</button>`;
 
+test('Create project readiness accepts real Fluent setup controls without inventing native input-label associations', async () => {
+  const setup = workbenchDomFixture(projectSetupDom());
+  try {
+    const inputs = [...setup.document.querySelectorAll('input[type="text"]')];
+    assert.equal(inputs.length, 2);
+    // Both the local rendered cohort and the source lockfile use split Field
+    // contexts. This reproduces the rejected DOM contract, not the uncaptured
+    // per-control ADO DOM. Local and locked transitive cohorts can differ.
+    assert.deepEqual(
+      inputs.map((input: any) => input.labels.length),
+      [0, 0],
+      'Real Fluent rendering must exercise the no-native-label regression'
+    );
+    for (const label of ['Logic app name', 'Workflow name']) {
+      assert.equal((await getFieldState(setup.cdp, 1, label)).ok, true, 'Keep the established real field discovery semantics');
+    }
+    await assertProjectSetupForm(setup.cdp, 1);
+    assert.deepEqual(setup.sent, []);
+  } finally {
+    setup.dispose();
+  }
+});
+
 test('Create project readiness requires its own live setup controls, not the previous review page strings', async () => {
-  const setup = workbenchDomFixture(projectSetupDom);
   const review = workbenchDomFixture(projectReviewDom);
   try {
-    await assertProjectSetupForm(setup.cdp, 1);
     await assert.rejects(assertProjectSetupForm(review.cdp, 1), /own enabled setup controls/);
     // Reproduce the reached error with the real shared helper, without changing
     // its selector or replaying radio clicks against a summary document.
     await assert.rejects(selectRadioOption(review.cdp, 1, 'Logic app (Standard)'), /Radio input not found/);
     assert.deepEqual(review.sent, []);
   } finally {
-    setup.dispose();
     review.dispose();
   }
 });
 
 test('Create project readiness rejects hidden, disabled, ambiguous or incomplete setup controls', async () => {
-  for (const kind of ['hidden', 'disabled', 'duplicate', 'missing-label', 'no-next'] as const) {
-    const fixture = workbenchDomFixture(projectSetupDom);
+  for (const kind of [
+    'hidden-radio',
+    'hidden-field',
+    'aria-hidden-form',
+    'disabled-field',
+    'disabled-radio',
+    'disabled-fieldset',
+    'readonly-field',
+    'duplicate-fields',
+    'duplicate-controls',
+    'disabled-duplicate-control',
+    'duplicate-label',
+    'duplicate-radio',
+    'missing-label',
+    'missing-input',
+    'foreign-input',
+    'fake-input',
+    'no-next',
+  ] as const) {
+    const fixture = workbenchDomFixture(projectSetupDom());
     try {
-      if (kind === 'hidden') {
+      const appField = fixture.document.querySelector('.fui-Field');
+      const appInput = appField.querySelector('input');
+      const radio = fixture.document.querySelector('input[type="radio"]');
+      if (kind === 'hidden-radio') {
         fixture.document.querySelector('.fui-Radio').style.display = 'none';
-      } else if (kind === 'disabled') {
-        fixture.document.querySelector('#app').disabled = true;
-      } else if (kind === 'duplicate') {
-        fixture.document.body.insertAdjacentHTML(
-          'beforeend',
-          projectSetupDom.replaceAll('id="', 'id="copy-').replaceAll('for="', 'for="copy-')
-        );
+      } else if (kind === 'hidden-field') {
+        appField.style.display = 'none';
+      } else if (kind === 'aria-hidden-form') {
+        fixture.document.body.setAttribute('aria-hidden', 'true');
+      } else if (kind === 'disabled-field') {
+        appInput.disabled = true;
+      } else if (kind === 'disabled-radio') {
+        radio.disabled = true;
+      } else if (kind === 'disabled-fieldset') {
+        const fieldset = fixture.document.createElement('fieldset');
+        fieldset.disabled = true;
+        appField.replaceWith(fieldset);
+        fieldset.appendChild(appField);
+      } else if (kind === 'readonly-field') {
+        appInput.readOnly = true;
+      } else if (kind === 'duplicate-fields') {
+        fixture.document.body.insertAdjacentHTML('beforeend', projectSetupDom());
+      } else if (kind === 'duplicate-controls' || kind === 'disabled-duplicate-control') {
+        const duplicate = appInput.cloneNode(true);
+        duplicate.disabled = kind === 'disabled-duplicate-control';
+        appField.appendChild(duplicate);
+      } else if (kind === 'duplicate-label') {
+        appField.appendChild(appField.querySelector('label').cloneNode(true));
+      } else if (kind === 'duplicate-radio') {
+        const duplicate = fixture.document.createElement('div');
+        duplicate.innerHTML = projectSetupDom();
+        fixture.document.body.appendChild(duplicate.querySelector('.fui-Radio'));
       } else if (kind === 'missing-label') {
-        fixture.document.querySelector('label[for="workflow"]').remove();
+        appField.querySelector('label').remove();
+      } else if (kind === 'missing-input') {
+        appInput.remove();
+      } else if (kind === 'foreign-input') {
+        // A stale Field label must not borrow a real input outside its Field,
+        // even if native association points to that input.
+        appInput.id = 'foreign-input';
+        appField.querySelector('label').htmlFor = appInput.id;
+        fixture.document.body.appendChild(appInput);
+      } else if (kind === 'fake-input') {
+        appInput.replaceWith(fixture.document.createElement('span'));
       } else {
         fixture.document.querySelector('button').remove();
       }
-      await assert.rejects(assertProjectSetupForm(fixture.cdp, 1), /own enabled setup controls/);
+      await assert.rejects(assertProjectSetupForm(fixture.cdp, 1), /own enabled setup controls/, kind);
       assert.deepEqual(fixture.sent, []);
     } finally {
       fixture.dispose();
@@ -107,9 +193,57 @@ test('Create project readiness rejects hidden, disabled, ambiguous or incomplete
   }
 });
 
+test('Create project readiness ignores hidden stale setup controls but never borrows their inputs for a visible summary', async () => {
+  for (const current of ['setup', 'summary'] as const) {
+    const fixture = workbenchDomFixture(
+      `<div style="display:none">${projectSetupDom()}</div>${current === 'setup' ? projectSetupDom() : projectReviewDom}`
+    );
+    try {
+      if (current === 'setup') {
+        await assertProjectSetupForm(fixture.cdp, 1);
+      } else {
+        await assert.rejects(assertProjectSetupForm(fixture.cdp, 1), /own enabled setup controls/);
+      }
+      assert.deepEqual(fixture.sent, []);
+    } finally {
+      fixture.dispose();
+    }
+  }
+});
+
+test('Create project rejection reports only safe per-control counts, not field values, markup or paths', async () => {
+  const fixture = workbenchDomFixture(projectSetupDom());
+  const secret = 'private-field-value-and-path';
+  try {
+    const field = fixture.document.querySelector('.fui-Field');
+    const input = field.querySelector('input');
+    input.value = secret;
+    field.setAttribute('data-private', secret);
+    const duplicate = input.cloneNode(true);
+    duplicate.disabled = true;
+    field.appendChild(duplicate);
+    await assert.rejects(assertProjectSetupForm(fixture.cdp, 1), (error: unknown) => {
+      assert.ok(error instanceof Error);
+      assert.equal(error.message.includes(secret), false);
+      assert.equal(error.message.includes('<input'), false);
+      const counts = JSON.parse(error.message.split('Counts: ')[1].split('\n')[0]);
+      assert.deepEqual(counts, {
+        standardRadio: { labels: 1, controls: 1, enabled: 1 },
+        logicAppName: { fields: 1, labels: 1, controls: 2, enabled: 1 },
+        workflowName: { fields: 1, labels: 1, controls: 1, enabled: 1 },
+        nextButtons: 1,
+      });
+      return true;
+    });
+    assert.deepEqual(fixture.sent, []);
+  } finally {
+    fixture.dispose();
+  }
+});
+
 test('Create project discovery admits only the active owner and a live setup document before any input', async () => {
   for (const kind of ['setup', 'review', 'wrong-owner', 'inactive-tab'] as const) {
-    const form = workbenchDomFixture(kind === 'review' ? projectReviewDom : projectSetupDom);
+    const form = workbenchDomFixture(kind === 'review' ? projectReviewDom : projectSetupDom());
     const shell = workbenchDomFixture(`
       <div role="tab" aria-selected="true">${kind === 'inactive-tab' ? 'Other editor' : 'Create project'}</div>
       <iframe src="vscode-webview://${kind === 'wrong-owner' ? 'other' : 'project'}/index.html"></iframe>`);

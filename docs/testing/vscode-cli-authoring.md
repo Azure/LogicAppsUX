@@ -1031,6 +1031,23 @@ tab to disappear before invoking the next project command. Bind the new wizard
 to its active, visible setup controls; a retained review page can contain the
 same labels without having any radio inputs.
 
+For setup readiness, find each text control inside one uniquely labelled,
+visible Fluent `Field`, with exactly one visible real text input that is enabled
+and editable. Do not require a native `input.labels` association: installed
+Fluent `Field` and `Input` contexts can differ, and the established field helper
+also supports field-scoped discovery. Preserve real radio controls, active
+visible ownership, and rejection of duplicate fields/controls and review text.
+Positive controls must render the webview package's actual React/Fluent
+components rather than manufacture matching label `for` and input `id`
+attributes. Rejection diagnostics should expose per-control counts, not field
+values, paths, or raw DOM.
+
+A native setup-guard rejection establishes the failed boundary, not the precise
+failed subcondition unless its counts or control DOM were captured. A local
+real-component reproduction is not an exact-source ADO DOM capture, especially
+when installed and locked transitive dependency cohorts differ. Record that
+qualification rather than treating local rendering as native proof.
+
 Linux full-population collection must distinguish inaccessible unrelated
 processes from inaccessible Func candidates. Excluding a permission-denied
 non-Func process requires readable, consistent process name and argv evidence

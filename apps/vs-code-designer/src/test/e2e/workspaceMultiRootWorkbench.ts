@@ -156,20 +156,53 @@ export async function activeWebview(
 }
 
 export async function assertProjectSetupForm(cdp: CdpEvaluator, contextId: number): Promise<void> {
-  const ready = await cdp.evaluate<boolean>(
+  type ControlCounts = { labels: number; controls: number; enabled: number };
+  type FieldCounts = ControlCounts & { fields: number };
+  const counts = await cdp.evaluate<{
+    standardRadio: ControlCounts;
+    logicAppName: FieldCounts;
+    workflowName: FieldCounts;
+    nextButtons: number;
+  }>(
     contextId,
     `(() => { ${visibleScript}
       const labelText = e => text(e).replace(/\\*/g, '').trim();
-      const enabled = e => visible(e) && !e.disabled && e.getAttribute('aria-disabled') !== 'true';
-      const labelled = (selector, label) => Array.from(document.querySelectorAll(selector)).filter(e =>
-        enabled(e) && Array.from(e.labels || []).some(l => visible(l) && labelText(l) === label));
-      return labelled('input[type="radio"]', 'Logic app (Standard)').length === 1 &&
-        labelled('input:not([type="radio"])', 'Logic app name').length === 1 &&
-        labelled('input:not([type="radio"])', 'Workflow name').length === 1 &&
-        Array.from(document.querySelectorAll('button')).filter(e => visible(e) && text(e) === 'Next').length === 1;
+      const shown = e => visible(e) && !e.closest('[hidden], [aria-hidden="true"], [inert]');
+      const enabled = e => shown(e) && !e.disabled && !e.matches(':disabled') && !e.readOnly &&
+        !e.closest('[aria-disabled="true"], fieldset[disabled]');
+      const radioLabels = e => Array.from(e.labels || []).filter(l => shown(l) && labelText(l) === 'Logic app (Standard)');
+      const radios = Array.from(document.querySelectorAll('input[type="radio"]')).filter(e => shown(e) && radioLabels(e).length > 0);
+      const fieldCounts = label => {
+        const fields = Array.from(document.querySelectorAll('.fui-Field')).filter(field => shown(field) &&
+          Array.from(field.querySelectorAll('label')).some(l =>
+            l.closest('.fui-Field') === field && shown(l) && labelText(l) === label));
+        const labels = fields.flatMap(field => Array.from(field.querySelectorAll('label')).filter(l =>
+          l.closest('.fui-Field') === field && shown(l) && labelText(l) === label));
+        // Field-scoped discovery matches the existing field helper. Fluent's
+        // rendered label need not supply a native input.labels association.
+        // Count all real visible text inputs before checking enabled state:
+        // one enabled input plus a second disabled input is still ambiguous.
+        const controls = fields.flatMap(field => Array.from(field.querySelectorAll('input')).filter(e =>
+          e instanceof HTMLInputElement && e.type === 'text' && e.closest('.fui-Field') === field && shown(e)));
+        return {fields:fields.length, labels:labels.length, controls:controls.length, enabled:controls.filter(enabled).length};
+      };
+      return {
+        standardRadio:{labels:radios.reduce((count, e) => count + radioLabels(e).length, 0), controls:radios.length, enabled:radios.filter(enabled).length},
+        logicAppName:fieldCounts('Logic app name'),
+        workflowName:fieldCounts('Workflow name'),
+        nextButtons:Array.from(document.querySelectorAll('button')).filter(e => shown(e) && text(e) === 'Next').length
+      };
     })()`
   );
-  assert.equal(ready, true, 'Create project must expose its own enabled setup controls, not summary text');
+  const uniqueEnabledControl = (state: ControlCounts) => state.labels === 1 && state.controls === 1 && state.enabled === 1;
+  const uniqueField = (state: FieldCounts) => state.fields === 1 && uniqueEnabledControl(state);
+  assert.ok(
+    uniqueEnabledControl(counts.standardRadio) &&
+      uniqueField(counts.logicAppName) &&
+      uniqueField(counts.workflowName) &&
+      counts.nextButtons === 1,
+    `Create project must expose its own enabled setup controls, not summary text. Counts: ${JSON.stringify(counts)}`
+  );
 }
 
 export async function waitForProjectWizardClosed(workbench: CdpEvaluator, targetUrl: string | undefined, deadline: number): Promise<void> {
