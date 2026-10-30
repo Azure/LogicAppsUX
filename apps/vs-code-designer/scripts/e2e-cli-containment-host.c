@@ -154,7 +154,47 @@ static const char *signal_name(int signal_number) {
   }
 }
 
-static int write_receipt(const char *path, pid_t root_pid, int root_exit_code, int root_signal, const pid_t *escaped, int escaped_count) {
+typedef struct {
+  pid_t pid;
+  unsigned long parent;
+  unsigned long long started;
+  int captured;
+} process_diagnostic;
+
+static process_diagnostic read_process_diagnostic(pid_t pid) {
+  process_diagnostic result = { .pid = pid };
+  char stat_path[128];
+  char stat_text[4096];
+  snprintf(stat_path, sizeof(stat_path), "/proc/%d/stat", pid);
+  FILE *stat_stream = fopen(stat_path, "r");
+  if (!stat_stream || !fgets(stat_text, sizeof(stat_text), stat_stream)) {
+    if (stat_stream) fclose(stat_stream);
+    return result;
+  }
+  fclose(stat_stream);
+  char *fields = strrchr(stat_text, ')');
+  char *save = NULL;
+  char *token = fields ? strtok_r(fields + 1, " ", &save) : NULL;
+  for (int field = 0; token && field <= 19; field++, token = strtok_r(NULL, " ", &save)) {
+    if (field == 1) result.parent = strtoul(token, NULL, 10);
+    if (field == 19) result.started = strtoull(token, NULL, 10);
+  }
+  result.captured = result.started > 0;
+  return result;
+}
+
+static void write_process_diagnostic(FILE *stream, process_diagnostic record) {
+  if (!record.captured) {
+    fprintf(stream, "{\"pid\":%d,\"metadataStatus\":\"exited-before-inspection\"}", record.pid);
+    return;
+  }
+  fprintf(stream,
+          "{\"pid\":%d,\"metadataStatus\":\"identity-only\",\"parentPid\":%lu,\"startTimeTicks\":\"%llu\"}",
+          record.pid, record.parent, record.started);
+}
+
+static int write_receipt(const char *path, pid_t root_pid, int root_exit_code, int root_signal, const pid_t *escaped, int escaped_count,
+                         const process_diagnostic *diagnostics, int recovery_attempted, int remaining_count) {
   size_t temporary_path_size = strlen(path) + 32;
   char *temporary_path = malloc(temporary_path_size);
   if (!temporary_path) {
@@ -181,11 +221,23 @@ static int write_receipt(const char *path, pid_t root_pid, int root_exit_code, i
       stream,
       ",\"containmentEmpty\":%s,\"retainedOriginalIdentitiesVerified\":%s,\"escapedDescendants\":[",
       escaped_count == 0 ? "true" : "false",
-      escaped_count == 0 ? "true" : "false");
+      escaped_count == 0 && !recovery_attempted ? "true" : "false");
   for (int index = 0; index < escaped_count; index++) {
     fprintf(stream, "%s%d", index == 0 ? "" : ",", escaped[index]);
   }
-  fprintf(stream, "]}\n");
+  fprintf(stream, "],\"activeContainedProcesses\":[");
+  int diagnostic_count = escaped_count > 32 ? 32 : escaped_count;
+  for (int index = 0; index < diagnostic_count; index++) {
+    if (index > 0) fprintf(stream, ",");
+    process_diagnostic record = diagnostics[index].pid == escaped[index] ? diagnostics[index] : read_process_diagnostic(escaped[index]);
+    write_process_diagnostic(stream, record);
+  }
+  fprintf(stream,
+          "],\"activeContainedProcessesTruncated\":%s,\"activeContainedProcessCount\":%d,"
+          "\"forcedTerminationAttempted\":%s,\"forcedTerminationSucceeded\":%s,\"postTerminationActiveProcessCount\":%d}\n",
+          escaped_count > 32 ? "true" : "false", escaped_count,
+          recovery_attempted ? "true" : "false",
+          recovery_attempted && remaining_count == 0 ? "true" : "false", remaining_count);
   int failed = fflush(stream) != 0;
   if (fsync(fileno(stream)) != 0) {
     failed = 1;
@@ -236,26 +288,41 @@ int main(int argc, char **argv) {
   int root_signal = WIFSIGNALED(root_status) ? WTERMSIG(root_status) : 0;
   pid_t escaped[4096];
   int escaped_count = 0;
+  int recovery_attempted = 0;
+  int remaining_count = 0;
+  process_diagnostic diagnostics[32] = {{0}};
 
   if (requested_signal != 0) {
-    escaped_count = terminate_all_descendants(getpid(), escaped, 4096);
+    recovery_attempted = 1;
+    reap_exited_children();
+    escaped_count = read_children(getpid(), escaped, 4096);
   } else {
     escaped_count = wait_for_natural_descendant_exit(getpid(), escaped, 4096);
     if (requested_signal != 0) {
-      escaped_count = terminate_all_descendants(getpid(), escaped, 4096);
-    } else if (escaped_count > 0) {
-      pid_t remaining[4096];
-      terminate_all_descendants(getpid(), remaining, 4096);
+      recovery_attempted = 1;
     }
   }
   if (escaped_count < 0) {
     return 126;
   }
 
-  if (write_receipt(receipt_path, root_pid, root_exit_code, root_signal, escaped, escaped_count) != 0) {
+  if (escaped_count > 0 || recovery_attempted) {
+    recovery_attempted = 1;
+    for (int index = 0; index < escaped_count && index < 32; index++) {
+      diagnostics[index] = read_process_diagnostic(escaped[index]);
+    }
+    pid_t remaining[4096];
+    remaining_count = terminate_all_descendants(getpid(), remaining, 4096);
+    if (remaining_count < 0) {
+      return 126;
+    }
+  }
+
+  if (write_receipt(receipt_path, root_pid, root_exit_code, root_signal, escaped, escaped_count, diagnostics,
+                    recovery_attempted, remaining_count) != 0) {
     return 126;
   }
-  if (escaped_count > 0) {
+  if (recovery_attempted) {
     return 125;
   }
   if (root_signal != 0) {

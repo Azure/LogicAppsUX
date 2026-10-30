@@ -12,6 +12,7 @@ import {
   waitForWebviewFrameContext,
 } from './cdpClient';
 import { closeCopilotChatIfVisible } from './copilotChat';
+import type { DesignerInsertionEvidenceHooks } from './designerCdpActions';
 import { assertNoDialogAttempts, installDialogGuard } from './dialogGuard';
 import { HttpTimeoutComposeDriver } from './httpTimeoutComposeDriver';
 import { assertHttpTimeoutWorkspaceIdentity } from './httpTimeoutComposeEnvironment';
@@ -553,7 +554,7 @@ async function authorHttpRequest(
     label: 'httpTimeoutRequestPt1sDesignerReady',
     allowLoading: false,
   });
-  await driver.addRequestTrigger();
+  await driver.addRequestTrigger(httpRequestTriggerClickEvidence(deadline));
   await captureHttpDesignerEvidence(session, entry, deadline, 'http-timeout-request-pt1s-request-inserted', {
     kind: 'designerCanvas',
     label: 'httpTimeoutRequestPt1sRequestInserted',
@@ -756,6 +757,18 @@ async function captureHttpDesignerEvidence(
   }
 }
 
+function httpRequestTriggerClickEvidence(deadline: number): DesignerInsertionEvidenceHooks {
+  return {
+    onOperationClick: async (stage, attempt) => {
+      const screenshotPath = await captureDiagnosticScreenshot(`http-timeout-request-trigger-click-${attempt}-${stage}-${Date.now()}`, {
+        reason: `Request trigger browser input ${stage} attempt ${attempt}; insertion still requires exact node acknowledgement`,
+        timeoutMs: Math.min(5000, Math.max(1, deadline - Date.now())),
+      });
+      assert.ok(screenshotPath, `Request trigger ${stage} input attempt ${attempt} requires its diagnostic screenshot`);
+    },
+  };
+}
+
 async function captureHttpDesignerFailure(stage: string, error: unknown): Promise<void> {
   console.warn(`[http-timeout][checkpoint] ${stage} failed before Designer cleanup: ${String(error)}`);
   await captureDiagnosticScreenshot(`http-timeout-request-${stage}-before-cleanup-${Date.now()}`, {
@@ -791,7 +804,7 @@ async function proveComposeUnsupportedTimeoutOnSameWorkflow(entry: CreatedWorksp
       allowLoading: false,
     });
 
-    await activeSession.driver.addRequestTrigger();
+    await activeSession.driver.addRequestTrigger(httpRequestTriggerClickEvidence(deadline));
     await activeSession.driver.addAction('Compose', 'Compose');
     await activeSession.driver.fillParameter(['Inputs'], 'test');
     await activeSession.driver.closePanel();

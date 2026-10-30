@@ -744,12 +744,8 @@ async function finalizeOuterRegenerationStageEvidence(
   if (!regenerationContext || !result) {
     throw new Error(`Workspace regeneration diagnostics are incomplete before outer staging: ${root}`);
   }
-  const workspaceParent = path.resolve(regenerationContext.workspaceParent);
-  const workspaceRoot = fs.realpathSync.native(context.workspaceRoot);
-  const relative = path.relative(workspaceRoot, workspaceParent);
-  assert.ok(relative && !relative.startsWith('..') && !path.isAbsolute(relative), 'Regeneration workspace escaped its owned root');
+  const workspaceParent = resolveOwnedWorkspacePath(context.workspaceRoot, regenerationContext.workspaceParent);
   if (fs.existsSync(workspaceParent)) {
-    assert.equal(fs.realpathSync.native(workspaceParent), workspaceParent, 'Regeneration workspace must not be a symlink');
     const cleanup = await cleanupDeferredWorkspaceParent(workspaceParent);
     assert.equal(cleanup.verified, true, `Workspace regeneration outer cleanup failed: ${cleanup.reason}`);
   }
@@ -769,6 +765,39 @@ async function finalizeOuterRegenerationStageEvidence(
   assertStageEvidence(root, regenerationContext.identity);
   assertRequiredRegenerationDiagnosticsFiles(root);
   return { cleanup, root, terminal };
+}
+
+function resolveOwnedWorkspacePath(root, candidate) {
+  const workspaceRoot = fs.realpathSync.native(root);
+  const requested = path.resolve(candidate);
+  // Resolve aliases (including Windows 8.3 names) on both sides. Inspect the
+  // original spelling first: realpath alone would hide a junction/symlink.
+  let current = path.parse(requested).root;
+  for (const part of requested.slice(current.length).split(path.sep).filter(Boolean)) {
+    current = path.join(current, part);
+    try {
+      assert.equal(fs.lstatSync(current).isSymbolicLink(), false, 'Regeneration workspace must not traverse a symlink');
+    } catch (error) {
+      if (error.code !== 'ENOENT') {
+        throw error;
+      }
+    }
+  }
+  let existing = requested;
+  const missing = [];
+  while (!fs.existsSync(existing)) {
+    const parent = path.dirname(existing);
+    assert.notEqual(parent, existing, 'Regeneration workspace has no existing ancestor');
+    missing.unshift(path.basename(existing));
+    existing = parent;
+  }
+  const workspaceParent = path.join(fs.realpathSync.native(existing), ...missing);
+  const relative = path.relative(workspaceRoot, workspaceParent);
+  assert.ok(
+    relative && relative !== '..' && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative),
+    'Regeneration workspace escaped its owned root'
+  );
+  return workspaceParent;
 }
 
 function sanitizeInheritedGitCommandConfigEnv(env) {
@@ -1026,6 +1055,7 @@ function runSuiteWrapperProcess({ suite, context, env, visibleDelayMs, timeoutMs
       process.off('SIGINT', forwardSignal);
       process.off('SIGTERM', forwardSignal);
       const processCleanup = readContainmentReceipt(containmentReceiptPath, exitCode, signal);
+      reportOwnedProcessClosure(processCleanup);
       fs.rmSync(containmentReceiptPath, { force: true });
       const reportedExitCode = processCleanup.verified ? processCleanup.rootExitCode : exitCode;
       const reportedSignal = processCleanup.verified ? processCleanup.rootSignal : signal;
@@ -1090,7 +1120,7 @@ function getContainmentHost() {
   const sourcePath = path.join(__dirname, `e2e-cli-containment-host.${extension}`);
   const source = fs.readFileSync(sourcePath);
   const sourceHash = createHash('sha256').update(source).digest('hex');
-  const buildRoot = path.join(os.tmpdir(), 'logicappsux-e2e-containment', sourceHash);
+  const buildRoot = path.join(__dirname, '..', '.vscode-test', 'containment-hosts', sourceHash);
   const hostPath = path.join(buildRoot, process.platform === 'win32' ? 'e2e-cli-containment-host.exe' : 'e2e-cli-containment-host');
   if (fs.existsSync(hostPath)) {
     return hostPath;
@@ -1124,19 +1154,55 @@ function getContainmentHost() {
   return hostPath;
 }
 
-function spawnContainedSuiteProcess({ childArgs, cwd, env, reportsRoot }) {
+function spawnContainedSuiteProcess({ childArgs, cwd, env, reportsRoot, executable = process.execPath }) {
   const hostPath = getContainmentHost();
-  const containmentReceiptPath = path.join(
-    os.tmpdir(),
-    'logicappsux-e2e-containment-receipts',
-    `${path.basename(reportsRoot)}-${process.pid}-${randomUUID()}.json`
-  );
+  const containmentReceiptPath = path.join(reportsRoot, `.containment-${process.pid}-${randomUUID()}.json`);
   fs.mkdirSync(path.dirname(containmentReceiptPath), { recursive: true });
-  const child = spawn(hostPath, [containmentReceiptPath, process.execPath, ...childArgs], {
+  const child = spawn(hostPath, [containmentReceiptPath, executable, ...childArgs], {
     env,
     cwd,
   });
   return { child, containmentReceiptPath };
+}
+
+function spawnContainedProcess(executable, args, options) {
+  const evidenceRoot = path.join(getLifecycleArtifactDir('process-closure'), 'launches');
+  fs.mkdirSync(evidenceRoot, { recursive: true });
+  const { child, containmentReceiptPath } = spawnContainedSuiteProcess({
+    executable,
+    childArgs: args,
+    env: options.env,
+    cwd: options.cwd,
+    reportsRoot: evidenceRoot,
+  });
+  return {
+    child,
+    readClosure(code, signal) {
+      const closure = readContainmentReceipt(containmentReceiptPath, code, signal);
+      reportOwnedProcessClosure(closure);
+      fs.writeFileSync(path.join(evidenceRoot, `${randomUUID()}.json`), `${JSON.stringify(closure, null, 2)}\n`);
+      fs.rmSync(containmentReceiptPath, { force: true });
+      return closure;
+    },
+  };
+}
+
+function reportOwnedProcessClosure(closure) {
+  if (!closure.verified) {
+    console.error(
+      `[owned-process-closure] ${JSON.stringify({
+        mechanism: closure.mechanism,
+        rootExitCode: closure.rootExitCode,
+        verified: false,
+        forcedTerminationAttempted: closure.forcedTerminationAttempted,
+        forcedTerminationSucceeded: closure.forcedTerminationSucceeded,
+        postTerminationActiveProcessCount: closure.postTerminationActiveProcessCount,
+        activeContainedProcesses: closure.activeContainedProcesses,
+        activeContainedProcessesTruncated: closure.activeContainedProcessesTruncated,
+        error: closure.error,
+      })}`
+    );
+  }
 }
 
 function readContainmentReceipt(receiptPath, hostExitCode, hostSignal) {
@@ -1159,6 +1225,7 @@ function readContainmentReceipt(receiptPath, hostExitCode, hostSignal) {
     const containmentEmpty =
       receipt.containmentEmpty === true &&
       receipt.retainedOriginalIdentitiesVerified === true &&
+      receipt.forcedTerminationAttempted !== true &&
       escapedDescendants.length === 0 &&
       (!Number.isInteger(receipt.activeContainedProcessCount) || receipt.activeContainedProcessCount === 0);
     const verified = receiptShapeValid && containmentEmpty && hostOutcomeMatches;
@@ -1214,7 +1281,14 @@ function sanitizeContainedProcessDiagnostics(value) {
   if (!Array.isArray(value) || value.length > 32) {
     return { processes: [], valid: false };
   }
-  const allowedStatuses = new Set(['captured', 'exited-before-inspection', 'membership-query-failed', 'not-in-job', 'inspection-failed']);
+  const allowedStatuses = new Set([
+    'captured',
+    'identity-only',
+    'exited-before-inspection',
+    'membership-query-failed',
+    'not-in-job',
+    'inspection-failed',
+  ]);
   const safeMarkerPattern = /^(?:--type|--utility-sub-type)=[A-Za-z0-9._-]{1,128}$/;
   const safeModulePattern = /^[^\\/:*?"<>|]{1,128}\.(?:c?js|mjs|dll|exe)$/i;
   const processes = [];
@@ -1240,6 +1314,9 @@ function sanitizeContainedProcessDiagnostics(value) {
     }
     if (typeof entry.createdAtUtc === 'string' && entry.createdAtUtc.length <= 64 && Number.isFinite(Date.parse(entry.createdAtUtc))) {
       process.createdAtUtc = entry.createdAtUtc;
+    }
+    if (typeof entry.startTimeTicks === 'string' && /^[0-9]{1,24}$/.test(entry.startTimeTicks)) {
+      process.startTimeTicks = entry.startTimeTicks;
     }
     if (Number.isSafeInteger(entry.sessionId) && entry.sessionId >= 0) {
       process.sessionId = entry.sessionId;
@@ -2863,13 +2940,13 @@ function applyControlledFuncEnvironment(env, controlledFuncDirectory) {
   return controlledFuncEnvironment(controlledFuncDirectory, env, process.platform);
 }
 
-function runVscodeTest(args, options = {}) {
+function runVscodeTest(args, options = {}, { commandForArgs = getVscodeTestCommand } = {}) {
   const label = getLabelArg(args);
   const userDataSuffix =
     options.extraEnv?.LA_E2E_CLI_USER_DATA_SUFFIX ?? process.env.LA_E2E_CLI_USER_DATA_SUFFIX ?? `run-${Date.now()}-${process.pid}`;
   const deferredWorkspaceParent = options.workspaceParent ?? getDeferredCreateWorkspaceParent(label);
   const outputFilter = createOutputFilter();
-  const { command, commandArgs } = getVscodeTestCommand(args);
+  const { command, commandArgs } = commandForArgs(args);
   let childEnv = sanitizeInheritedGitCommandConfigEnv({
     ...process.env,
     LA_E2E_CLI_LABEL: label ?? '',
@@ -2939,9 +3016,10 @@ function runVscodeTest(args, options = {}) {
       phaseResults: [],
     });
   }
-  const child = spawn(command, commandArgs, {
+  const launch = spawnContainedProcess(command, commandArgs, {
     env: childEnv,
   });
+  const { child } = launch;
 
   let output = '';
 
@@ -2959,13 +3037,28 @@ function runVscodeTest(args, options = {}) {
 
   return new Promise((resolve, reject) => {
     child.on('error', reject);
-    child.on('close', async (code, signal) => {
+    child.on('close', async (hostCode, hostSignal) => {
+      let processCleanup;
+      try {
+        processCleanup = launch.readClosure(hostCode, hostSignal);
+      } catch (error) {
+        markOwnedWorkspaceParentsWithDiagnosticFailure(childEnv, [deferredWorkspaceParent].filter(Boolean));
+        reject(error);
+        return;
+      }
+      const code = processCleanup.verified ? processCleanup.rootExitCode : hostCode;
+      const signal = processCleanup.verified ? processCleanup.rootSignal : hostSignal;
       const remainingOutput = outputFilter.flush();
       if (remainingOutput) {
         process.stdout.write(remainingOutput);
       }
       let diagnosticsError;
       const diagnosticsErrors = [];
+      if (!processCleanup.verified) {
+        diagnosticsError = new Error(processCleanup.error);
+        diagnosticsErrors.push(diagnosticsError);
+        markOwnedWorkspaceParentsWithDiagnosticFailure(childEnv, [deferredWorkspaceParent].filter(Boolean));
+      }
       let cleanupLedger;
       let cancelResult;
       let cancelError;
@@ -3029,7 +3122,7 @@ function runVscodeTest(args, options = {}) {
           if (code !== 0 || signal) {
             throw new Error('Original wizard host failed; supplementary Cancel cannot be credited');
           }
-          cancelResult = await cancelCheck.runCancelSupplement(cancelContext, childEnv, collectVscodeProfileLogs);
+          cancelResult = await cancelCheck.runCancelSupplement(cancelContext, childEnv, collectVscodeProfileLogs, spawnContainedProcess);
         } catch (error) {
           cancelError = error;
           cancelResult = {
@@ -3217,6 +3310,7 @@ function runVscodeTest(args, options = {}) {
           diagnosticsError: diagnosticsErrorMessage,
           complete: phasePassed,
           cleanupLedger,
+          processCleanup,
           mochaPassingCount: getMochaPassingCount(output),
           ogfScenarios: buildOgfScenariosForPhase(phaseId, childEnv, { passed: phasePassed }),
           ...(msnBodyAssertionsPassed !== undefined ? { bodyAssertionsPassed: msnBodyAssertionsPassed } : {}),
@@ -4163,6 +4257,9 @@ module.exports = {
   redactDiagnosticText: redactGeneratedWorkspacePlainText,
   runDirectFamily,
   _test: {
+    resolveOwnedWorkspacePath,
+    spawnContainedProcess,
+    runVscodeTest,
     getDirectRegenerationEvidencePaths,
     getDirectFamilyUserDataParent,
     getDirectRegenerationDiagnosticsDestination,
@@ -4428,7 +4525,12 @@ async function cleanupOwnedWorkspaceParent(workspaceParent, context, strict = fa
 }
 
 async function cleanupDeferredWorkspaceAfterCancel(workspaceParent, env, cancelResult) {
-  if (cancelResult && !cancelResult.originalCodeClose) {
+  if (
+    cancelResult &&
+    (cancelResult.originalCodeClose?.code !== 0 ||
+      cancelResult.originalCodeClose?.signal !== null ||
+      (cancelResult.scenario === 'workspace-prompt-cancel' && cancelResult.processCleanup?.verified !== true))
+  ) {
     const error = 'Original regular Code closure was not confirmed; preserving the app through the existing diagnostic retention path.';
     cancelResult.errors.push(error);
     markOwnedWorkspaceParentsWithDiagnosticFailure(env, [workspaceParent].filter(Boolean));

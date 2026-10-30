@@ -2814,6 +2814,7 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
             after: unitBaseline,
           },
           originalCodeClose: { code: 0, signal: null },
+          processCleanup: { verified: true },
           cleanup: { verified: true },
           screenshots,
         })

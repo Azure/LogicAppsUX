@@ -931,7 +931,11 @@ export class MsnDesignerCdpActions {
     );
   }
 
-  async selectOperation(operationName: string, variants: string[], dispatch?: (point: Point) => Promise<void>): Promise<void> {
+  async selectOperation(
+    operationName: string,
+    variants: string[],
+    dispatch?: (point: Point, selectedTitle: string) => Promise<void>
+  ): Promise<void> {
     let result:
       | {
           ok: boolean;
@@ -1040,7 +1044,8 @@ export class MsnDesignerCdpActions {
       if (result?.ok && result.point) {
         console.log(`[workspace-lifecycle] Selecting operation "${operationName}" (${result.text ?? ''})`);
         if (dispatch) {
-          await dispatch(result.point);
+          assert.ok(result.text, 'Selected operation card must expose its semantic title before dispatch');
+          await dispatch(result.point, result.text);
         } else {
           await clickPoint(this.cdp, result.point);
         }
@@ -1806,6 +1811,7 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
   }
 
   override async addRequestTrigger(hooks: DesignerInsertionEvidenceHooks = {}): Promise<void> {
+    const before = (await this.readActionInsertionSnapshot()).nodes;
     const selectors = [
       '[data-testid="card-Add a trigger"]',
       '[data-testid="card-Add trigger"]',
@@ -1827,8 +1833,20 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
     await this.proven.search('Request');
     await hooks.onSearchEntered?.('Request');
     await this.proven.waitForSearchResults(60000, 'Request search results');
-    await this.proven.selectOperation('Request', ['when a http request is received', 'when an http request is received', 'http request']);
-    await this.proven.waitForText(requestTriggerTitles, 90000, 'Request trigger on canvas');
+    const insertionDeadline = Math.min(this.deadline, Date.now() + 90000);
+    let identity: DesignerNodeIdentity | undefined;
+    await this.proven.selectOperation(
+      requestTriggerTitles[0],
+      requestTriggerTitles.map((title) => title.toLowerCase()),
+      async (point, selectedTitle) => {
+        assert.ok(
+          requestTriggerTitles.some((title) => title.toLowerCase() === selectedTitle.toLowerCase()),
+          `Expected exact Request trigger card, received ${selectedTitle}`
+        );
+        identity = await this.selectActionWithAcknowledgement(point, before, selectedTitle, insertionDeadline, hooks);
+      }
+    );
+    assert.ok(identity, 'Request trigger insertion was not acknowledged by a stable new canvas node and its exact details panel');
     await this.proven.closePanel('Request trigger panel');
   }
 

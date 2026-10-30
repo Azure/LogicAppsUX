@@ -90,7 +90,22 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
     const createdRoots = [fs.realpathSync(workspace.appDir)];
     for (const name of ['multiroot-second', 'multiroot-third']) {
       const phase = phaseDeadline(120000);
-      await folderCreateNewProject(workbench, createdRoots[0], phase);
+      await folderCreateNewProject(workbench, createdRoots[0], phase, {
+        workspaceFilePath: workspace.wsFilePath,
+        checkpoint: async (stage) => {
+          const label = `workspace-multi-root-${name}-${stage}`;
+          // Add diagnostic attachments, not undeclared ordered evidence or
+          // entries in the family's strict roots.length + 3 acceptance array.
+          // Use the original connection and a fresh bounded diagnostic budget:
+          // the action's deadline may already be exhausted.
+          await captureCdpScreenshot(cdp, label, {
+            classification: 'diagnostic',
+            expectation: { kind: 'diagnostic', label, reason: `Explorer folder context-menu ${stage}` },
+            timeoutMs: 5000,
+            deadlineMs: Math.min(deadline, Date.now() + 5000),
+          });
+        },
+      });
       const { cdp: wizard, contextId } = await activeWebview(workbench, 'Create project', ['Logic app name', 'Workflow name'], phase);
       try {
         const form = boundedCdp(wizard, phase);

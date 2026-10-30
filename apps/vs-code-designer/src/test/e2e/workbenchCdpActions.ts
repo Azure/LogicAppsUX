@@ -366,31 +366,58 @@ export async function dispatchContextMenu(cdp: CdpEvaluator, position: Point): P
   }
 }
 
-export async function clickContextMenuText(cdp: CdpEvaluator, label: string, deadline: number): Promise<void> {
-  let lastState: { candidates: Array<{ text: string; enabled: boolean; hitTestable: boolean }>; point: Point | null } = {
-    candidates: [],
-    point: null,
-  };
-  while (Date.now() < deadline) {
-    lastState = await cdp.evaluate(
-      undefined,
-      `(() => { ${workbenchVisibleScript}
-        const candidates=Array.from(document.querySelectorAll('.monaco-menu .action-label')).filter(visible)
+export interface ContextMenuState {
+  menuCount: number;
+  candidates: Array<{ text: string; enabled: boolean; hitTestable: boolean }>;
+  point: Point | null;
+  activeElement: { tag: string; role: string | null; className: string } | null;
+  quickInputVisible: boolean;
+}
+
+export function readContextMenuState(cdp: CdpEvaluator, label: string): Promise<ContextMenuState> {
+  return cdp.evaluate(
+    undefined,
+    `(() => { ${workbenchVisibleScript}
+        const menus=Array.from(document.querySelectorAll('.context-view .monaco-menu')).filter(visible);
+        const candidates=menus.flatMap(menu => Array.from(menu.querySelectorAll('.action-menu-item')))
+          .filter(visible)
           .map(e => ({
             element: e,
-            text: text(e),
-            enabled: !e.disabled && e.getAttribute('aria-disabled')!=='true',
+            text: text(e.querySelector('.action-label') || e),
+            // Monaco puts disabled state on the item/container, NOT its label span.
+            enabled: !e.disabled && !e.closest('[aria-disabled="true"], .disabled'),
             point: point(e),
           }));
-        const matches=candidates.filter(entry => normalized(entry.text)===normalized(${JSON.stringify(label)}) && entry.enabled && entry.point);
+        const matches=candidates.filter(entry => normalized(entry.text)===normalized(${JSON.stringify(label.replace(/…/g, '...'))}) && entry.enabled && entry.point);
+        const active=document.activeElement;
         return {
+          menuCount: menus.length,
           candidates: candidates.map(entry => ({text:entry.text,enabled:entry.enabled,hitTestable:!!entry.point})),
           point: matches.length===1 ? matches[0].point : null,
+          activeElement: active ? {tag:active.tagName,role:active.getAttribute('role'),className:active.className} : null,
+          quickInputVisible: Array.from(document.querySelectorAll('.quick-input-widget input')).some(visible),
         };
       })()`
-    );
+  );
+}
+
+export async function clickContextMenuText(cdp: CdpEvaluator, label: string, deadline: number): Promise<void> {
+  let lastState: ContextMenuState | undefined;
+  while (Date.now() < deadline) {
+    lastState = await readContextMenuState(cdp, label);
     if (lastState.point) {
       await clickPoint(cdp, lastState.point);
+      // A moved highlight is not activation. Do not replay the click or replace
+      // it with a command invocation when the menu remains open.
+      try {
+        await poll(
+          () => readContextMenuState(cdp, label),
+          (state) => state.menuCount === 0,
+          deadline
+        );
+      } catch (error) {
+        throw new Error(`Context menu action ${JSON.stringify(label)} did not close its menu after the UI click`, { cause: error });
+      }
       return;
     }
     const remaining = deadline - Date.now();

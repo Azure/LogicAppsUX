@@ -30,6 +30,14 @@ Curated durable learnings for VS Code ExTester UI E2E and `@vscode/test-cli` nat
 
 ## Current Learnings
 
+### Explorer context-menu opening is distinct from action selection
+
+- Learning: Bind the current persisted physical workspace root to its unique Explorer label (including a workspace `name` override), observe selected tree focus, and use Monaco List's native ContextMenu keyup route to anchor the folder menu. Require an observed menu before clicking its exact enabled item, then observe closure. Monaco's disabled state is on the menu item/container, not the label span.
+- Why it matters: An empty candidate list alone cannot distinguish an unopened menu, focus loss, native presentation, or selector failure. Do not invent a submenu or weaken action assertions from that receipt. Capture menu-state diagnostics early.
+- Source: `workspaceMultiRootWorkbench.ts`, `workbenchCdpActions.ts`, their unit controls, and `workspaceMultiRoot.md`. Menu/List shape and keyboard routing were checked against installed Code 1.144.
+- Applies to: `vscode-test-specialist`, `test`, `ci-sentinel`.
+- Status: source-reviewed and production-shaped DOM-control verified, **not native validated**. The original empty-menu failure mechanism remains unproven without isolated native evidence. Extra menu screenshots are diagnostic attachments, not new ordered acceptance checkpoints.
+
 ### CLI monitoring uses stable product identity, not presentation text
 
 - Learning: Monitoring-card text can include duration, status, or other changing presentation. Resolve the exact product node ID derived from the action identity first, and retain the existing exact-title matching only as a fallback.

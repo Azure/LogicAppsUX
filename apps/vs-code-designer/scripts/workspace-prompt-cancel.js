@@ -1,6 +1,5 @@
-/* global __dirname, console, module, process, require, setTimeout, clearTimeout */
+/* global __dirname, Buffer, console, module, process, require, setTimeout, clearTimeout */
 const assert = require('node:assert/strict');
-const { spawn } = require('node:child_process');
 const { createHash, randomUUID } = require('node:crypto');
 const fs = require('node:fs');
 const os = require('node:os');
@@ -163,6 +162,7 @@ function assertCancelResult(result, root, identity) {
   }
   assert.deepEqual(result.observation.before, result.observation.after);
   assert.deepEqual(result.originalCodeClose, { code: 0, signal: null }, 'Original Code must close normally');
+  assert.equal(result.processCleanup?.verified, true, 'Original regular Code descendants must close normally before cleanup');
   assert.equal(result.errors.length, 0);
   assert.equal(result.cleanup?.verified, true, 'Existing final wizard cleanup must complete');
   if (identity) {
@@ -181,6 +181,7 @@ function finalizeCancelResult(context, result, cleanup, errors = []) {
     result.errors.length === 0 &&
     result.originalCodeClose?.code === 0 &&
     result.originalCodeClose?.signal === null &&
+    result.processCleanup?.verified === true &&
     cleanup?.verified === true;
   result.finalizedUtc = new Date().toISOString();
   fs.appendFileSync(
@@ -209,7 +210,8 @@ function finalizeCancelResult(context, result, cleanup, errors = []) {
   return result;
 }
 
-async function runCancelSupplement(context, env, collectProfileLogs) {
+async function runCancelSupplement(context, env, collectProfileLogs, launchContainedProcess) {
+  assert.equal(typeof launchContainedProcess, 'function', 'Cancel requires the native owned-process launcher');
   const result = {
     schemaVersion: 1,
     scenario: 'workspace-prompt-cancel',
@@ -274,7 +276,7 @@ async function runCancelSupplement(context, env, collectProfileLogs) {
       '--remote-debugging-address=127.0.0.1',
     ];
     assert.ok(fs.existsSync(path.join(extensionRoot, 'dist', 'main.js')), 'Admitted compiled extension is required');
-    const child = spawn(handoff.launch.executable, args, {
+    const launch = launchContainedProcess(handoff.launch.executable, args, {
       env: {
         ...env,
         LA_E2E_CLI_MINIMAL_ACTIVATION: '0',
@@ -282,13 +284,24 @@ async function runCancelSupplement(context, env, collectProfileLogs) {
         VSCODE_RUNNING_TESTS: '1',
         DEBUGTELEMETRY: '1',
       },
-      stdio: ['ignore', 'pipe', 'pipe'],
     });
+    const { child } = launch;
     completion = new Promise((resolve, reject) => {
       child.once('error', reject);
       child.once('close', (code, signal) => {
-        result.originalCodeClose = { code, signal };
-        resolve({ code, signal });
+        try {
+          result.processCleanup = launch.readClosure(code, signal);
+          result.originalCodeClose = {
+            code: result.processCleanup.rootExitCode,
+            signal: result.processCleanup.rootSignal,
+          };
+          if (!result.processCleanup.verified) {
+            result.errors.push(result.processCleanup.error);
+          }
+          resolve(result.originalCodeClose);
+        } catch (error) {
+          reject(error);
+        }
       });
     });
     completion.catch((error) => console.error(`[workspace-cancel] Original Code launch failed: ${String(error)}`));

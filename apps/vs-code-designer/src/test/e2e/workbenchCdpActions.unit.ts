@@ -11,10 +11,12 @@ import {
   matchesRegularWorkbenchShell,
   matchesRegularWorkbenchOwnership,
   reloadOwnedRegularWorkbench,
+  readContextMenuState,
   type RegularWorkbenchOwnershipExpectation,
   type RegularWorkbenchOwnershipState,
 } from './workbenchCdpActions';
 import { normalizeFsPath } from './testUtils';
+import { contextMenuDom, workbenchDomFixture } from './workbenchDomFixture';
 
 const expectation: RegularWorkbenchOwnershipExpectation = {
   workspaceFilePath: path.resolve('unit.code-workspace'),
@@ -215,6 +217,7 @@ test('context menu action waits for one exact hit-testable item and reports cand
     async evaluate<T>(): Promise<T> {
       reads++;
       return {
+        menuCount: clicked.length ? 0 : 1,
         candidates: [{ text: 'Create new project...', enabled: true, hitTestable: reads > 1 }],
         point: reads > 1 ? { x: 10, y: 20 } : null,
       } as T;
@@ -248,6 +251,75 @@ test('context menu action waits for one exact hit-testable item and reports cand
     ),
     /Create workflow/
   );
+});
+
+test('production-shaped menu uses the label without keybindings, ancestor disabled state, and native pointer activation', async () => {
+  const fixture = workbenchDomFixture(contextMenuDom([{ label: 'Create new project…' }, { label: 'Create workflow…', disabled: true }]));
+  try {
+    const state = await readContextMenuState(fixture.cdp, 'Create new project...');
+    assert.equal(state.menuCount, 1);
+    assert.deepEqual(state.candidates, [
+      { text: 'Create new project...', enabled: true, hitTestable: true },
+      { text: 'Create workflow...', enabled: false, hitTestable: true },
+    ]);
+    assert.ok(state.point);
+    fixture.document.querySelector('.action-menu-item').addEventListener('click', () => {
+      fixture.document.querySelector('.context-view').remove();
+    });
+    await clickContextMenuText(fixture.cdp, 'Create new project...', Date.now() + 1000);
+    assert.deepEqual(
+      fixture.sent.map((entry) => entry.params.type),
+      ['mouseMoved', 'mousePressed', 'mouseReleased']
+    );
+    assert.equal((await readContextMenuState(fixture.cdp, 'Create new project...')).menuCount, 0);
+  } finally {
+    fixture.dispose();
+  }
+});
+
+test('production-shaped menu rejects disabled, duplicate, hidden, occluded, unopened and missing actions without a click', async () => {
+  for (const kind of ['disabled', 'duplicate', 'hidden', 'occluded', 'unopened', 'missing'] as const) {
+    const fixture = workbenchDomFixture(
+      contextMenuDom(
+        kind === 'missing'
+          ? [{ label: 'Create workflow...' }]
+          : Array.from({ length: kind === 'duplicate' ? 2 : 1 }, () => ({
+              label: 'Create new project...',
+              disabled: kind === 'disabled',
+            }))
+      )
+    );
+    try {
+      if (kind === 'hidden') {
+        fixture.document.querySelector('.context-view').style.display = 'none';
+      }
+      if (kind === 'unopened') {
+        fixture.document.querySelector('.context-view').remove();
+      }
+      if (kind === 'occluded') {
+        fixture.document.body.insertAdjacentHTML('beforeend', '<div data-box="400,40,250,25">Blocking overlay</div>');
+      }
+      const state = await readContextMenuState(fixture.cdp, 'Create new project...');
+      assert.equal(state.point, null, kind);
+      await assert.rejects(clickContextMenuText(fixture.cdp, 'Create new project...', Date.now() + 20), /Context menu action/);
+      assert.deepEqual(fixture.sent, [], kind);
+    } finally {
+      fixture.dispose();
+    }
+  }
+});
+
+test('a pointer highlight without menu closure is not successful menu activation', async () => {
+  const fixture = workbenchDomFixture(contextMenuDom([{ label: 'Create new project...' }]));
+  try {
+    await assert.rejects(
+      clickContextMenuText(fixture.cdp, 'Create new project...', Date.now() + 200),
+      /did not close its menu after the UI click/
+    );
+    assert.equal(fixture.sent.filter((entry) => entry.params.type === 'mousePressed').length, 1, 'Never replay an ambiguous click');
+  } finally {
+    fixture.dispose();
+  }
 });
 
 test('Explorer projection clicks the activity item only when exact roots are not already visible', async () => {

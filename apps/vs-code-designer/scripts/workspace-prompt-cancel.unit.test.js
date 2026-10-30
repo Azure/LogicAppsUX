@@ -1,4 +1,4 @@
-/* global __dirname, console, process, require */
+/* global __dirname, Buffer, console, process, require, structuredClone */
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
@@ -132,6 +132,7 @@ try {
     complete: false,
     observationPassed: true,
     originalCodeClose: { code: 0, signal: null },
+    processCleanup: { verified: true },
     errors: [],
     observation: {
       realCancelMouseInput: true,
@@ -161,6 +162,13 @@ try {
   assert.throws(() => assertCancelResult(teardownFailure, context.root));
   const failedCleanup = finalizeCancelResult(context, structuredClone(base), { verified: false });
   assert.equal(failedCleanup.complete, false);
+  const recovered = structuredClone(base);
+  recovered.processCleanup = { verified: false, forcedTerminationSucceeded: true, postTerminationActiveProcessCount: 0 };
+  assert.equal(
+    finalizeCancelResult(context, recovered, { verified: true }).complete,
+    false,
+    'Forced recovery must never satisfy ordinary original Code closure'
+  );
   fs.unlinkSync(path.join(context.root, 'screenshots', 'workspace-prompt-cancel-ui-after.png'));
   assert.throws(() => finalizeCancelResult(context, structuredClone(base), { verified: true }));
   assert.equal(

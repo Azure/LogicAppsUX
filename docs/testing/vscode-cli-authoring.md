@@ -374,6 +374,12 @@ rerenders and persistence, use `ProvenDesignerCdpActions`:
   Before capturing the insertion baseline, close any existing responsive
   details panel and wait for the canvas to remount; otherwise a pre-existing
   node that reappears during insertion can be misclassified as another new node.
+- Request trigger selection uses the same browser-routed geometry, hit-test and
+  trusted-event proof as action insertion, including pre-input refresh. Retain
+  the exact selected semantic trigger title, excluding its Trigger badge and
+  Request caption, and require a stable new node with its matching details panel
+  before closing that panel. Discovery-card text is not canvas acknowledgement:
+  a whole-document text wait can succeed while the empty canvas is unchanged.
 - Opening Request discovery is non-mutating. If the Add trigger click receives
   focus but no discovery panel appears, the shared flow may retry only after a
   bounded explicit no-panel acknowledgement.
@@ -649,6 +655,13 @@ platform normalization. Use the same comparison for initial activation,
 post-reload root sets and debug-event folder identity; retain raw canonical
 paths for filesystem operations.
 
+Outer regeneration cleanup must canonicalize both the owned root and workspace
+parent. Windows 8.3 ancestor aliases are not links and must compare as the same
+physical directory. Inspect the requested path components for symlinks/junctions
+before resolving aliases; canonicalization must not hide an escaped or linked
+workspace. For an already-removed workspace, resolve its nearest existing
+ancestor and retain the same strict descendant check.
+
 ## 5. Preserve normal-runtime settings across fresh hosts
 
 Fresh profiles must retain the creating host's admitted dependency-root and
@@ -901,6 +914,27 @@ only `EACCES`, `EBUSY`, `ENOTEMPTY`, and `EPERM` under one 30-second budget,
 then verify the owned path is absent. Preserve the workspace when required
 diagnostics or ordinary Code closure is unconfirmed. Never add broad
 process-name termination to make deletion pass.
+
+The runner contains each CLI launch and the supplementary regular Cancel
+window independently. A launcher closing is not proof that its original
+descendants have exited. Finish native Job Object/subreaper observation before
+copying final profile diagnostics or deleting the owned workspace. Ordinary
+closure admits cleanup; forced recovery still fails the phase and retains its
+workspace diagnostics, even if recovery empties the containment. The outer
+family containment remains an additional acceptance gate.
+
+Linux signal-driven recovery is sticky across both root shutdown and descendant
+grace. A zero root exit and zero post-recovery survivors cannot establish natural
+closure. Retain the pre-recovery identities/count separately from the final
+survivor count, and always emit `forcedTerminationAttempted` when recovery ran.
+
+Failed containment prints bounded `[owned-process-closure]` diagnostics in the
+existing runner log: original process identities and allowlisted metadata, not
+raw command lines or executable paths. Linux captures PID/parent/start ticks
+before recovery. Per-launch private receipts remain under the lifecycle
+artifact root. Run the registered `test:e2e-cli:unit` controls, including
+`scripts/e2e-cli-launch-cleanup.unit.test.js`, to exercise actual descendant
+lifetime, cleanup ordering, forced-recovery rejection, and Windows aliases.
 
 Keep actionable diagnostics private and complete. Serialize `Error.stack` when
 available. When wrapper logs prefix lines with `[suite]`, strip prefixes only

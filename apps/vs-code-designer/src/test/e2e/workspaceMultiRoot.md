@@ -89,6 +89,47 @@ all public/private OGF mappings remain parent-owned and unchanged here.
 All source identifiers, titles, images and private mappings remain outside
 tracked files. The public names above describe only observable behavior.
 
+## Explorer folder-menu interaction
+
+The folder helper binds the requested physical root to the current persisted
+`.code-workspace` folder, honoring its optional display-name override. Duplicate
+root labels, a missing physical root, a stale visible root set, or lost tree
+focus fail closed. It clicks the root label, observes selection and the tree's
+`aria-activedescendant`, then sends the native **ContextMenu** key down/up
+gesture. Monaco List handles this on keyup using the focused root as its
+anchor; this is UI input, not a programmatic Create Project command.
+
+Opening and activation are separate postconditions. A visible Monaco menu must
+exist before its exact **Create new project...** item is clicked using native
+CDP pointer input. Item enablement comes from the menu item/container, not its
+label span; keyboard-shortcut text is excluded from label matching. Require
+one visible, enabled, hit-tested match and menu closure after the click. There
+is no command-service fallback, click replay, extra fixed wait, or suppressed
+assertion.
+
+The product contributes this command directly to `explorer/context` under
+`azureLogicAppsStandard.hasProject && explorerResourceIsRoot == true`, not an
+Azure submenu. The controls verify that contribution as well as the actual
+helper expressions against production-shaped Code 1.144 Menu / Monaco List
+DOM. The DOM fixture supplies layout and CDP input translation; it is **not**
+a running Code renderer or native proof.
+
+Root selection, menu opening and menu invocation receive diagnostic screenshot
+attachments. Failure also records the exact root selection/focus, menu items,
+active element and QuickInput visibility, then attempts a diagnostic capture
+without masking the original failure. These attachments do not enter the
+strict `roots.length + 3` evidence array or become undeclared ordered evidence.
+Existing phase, reload, population, original-process and terminal gates remain
+unchanged.
+
+**Validation boundary:** Empty menu candidates without a DOM snapshot or
+screenshot establish only that the expected DOM action was not observed.
+They do not prove a missing product contribution, native-menu mode, or a
+specific pointer-event failure. The focused-tree interaction and controls are
+source-reviewed/control-verified; the exact earlier native failure mechanism
+and success of the revised interaction still require isolated Windows/Linux
+consumers. Never label those controls as native approval.
+
 ## Native consumer requirements — parent-owned
 
 No native run is authorized on a shared development host. The parent must
@@ -244,6 +285,7 @@ source/admission support and any summarizer/OGF wiring remain parent-owned.
 ```powershell
 # Repository root; these commands never start Code, func, CDP or cloud resources.
 node node_modules/typescript/bin/tsc -p apps/vs-code-designer/tsconfig.e2e.json
+node --test apps/vs-code-designer/out/test/e2e/workbenchCdpActions.unit.js
 pnpm --dir apps/vs-code-designer run test:e2e-cli:workspace-multi-root:unit
 ```
 

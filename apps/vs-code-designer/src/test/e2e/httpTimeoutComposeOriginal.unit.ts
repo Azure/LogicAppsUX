@@ -254,7 +254,10 @@ async function main(): Promise<void> {
     const deleteHttp = source.indexOf("await activeSession.driver.deleteNode(['HTTP'])", scenario2Complete);
     const deleteRequest = source.indexOf('await activeSession.driver.deleteNode(requestTitles)', deleteHttp);
     const transitionCleared = source.indexOf('http-timeout-transition-cleared', deleteRequest);
-    const addRequest = source.indexOf('await activeSession.driver.addRequestTrigger()', transitionCleared);
+    const addRequest = source.indexOf(
+      'await activeSession.driver.addRequestTrigger(httpRequestTriggerClickEvidence(deadline))',
+      transitionCleared
+    );
     const addCompose = source.indexOf("await activeSession.driver.addAction('Compose', 'Compose')", addRequest);
     assert.ok(
       scenario2Complete >= 0 &&
@@ -640,6 +643,18 @@ async function main(): Promise<void> {
     assert.ok(scenario2.indexOf('const activeSession = await openDesigner') > scenario2.indexOf('try {'));
     assert.ok(source.includes('let session: DesignerSession | undefined;'));
     assert.ok(source.includes('captureDiagnosticScreenshot(`http-timeout-request-${stage}-before-cleanup-${Date.now()}`'));
+  });
+  await control('both HTTP Request insertions retain before and after browser-input screenshots', () => {
+    const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/httpTimeoutComposeOriginal.test.ts'), 'utf8');
+    assert.strictEqual((source.match(/addRequestTrigger\(httpRequestTriggerClickEvidence\(deadline\)\)/g) ?? []).length, 2);
+    const hook = source.slice(
+      source.indexOf('function httpRequestTriggerClickEvidence'),
+      source.indexOf('async function captureHttpDesignerFailure')
+    );
+    assert.ok(hook.includes('onOperationClick: async (stage, attempt)'));
+    assert.ok(hook.includes('captureDiagnosticScreenshot(`http-timeout-request-trigger-click-${attempt}-${stage}-${Date.now()}`'));
+    assert.ok(hook.includes('deadline - Date.now()'), 'Click screenshots must retain the original family deadline');
+    assert.ok(hook.includes('assert.ok(screenshotPath,'), 'Missing click screenshots must remain an explicit evidence failure');
   });
   await control('original replacement is exact and leaves authored source unchanged', () => {
     assertHttpTimeoutComposeAuthored(authored);

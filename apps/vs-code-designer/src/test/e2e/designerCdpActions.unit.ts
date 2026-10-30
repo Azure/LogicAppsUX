@@ -54,6 +54,7 @@ async function main(): Promise<void> {
   await testPersistedDesignerReadiness();
   await testExactPersistedNodeReadiness();
   await testStableActionInsertionAcknowledgement();
+  await testRequestTriggerRequiresInsertionAcknowledgement();
   testProductionOperationCardContracts();
   testOperationClickRouting();
   await testOperationClickRetryControls();
@@ -303,6 +304,61 @@ async function testStableActionInsertionAcknowledgement(): Promise<void> {
   assert.strictEqual(selectCalls, 1, 'Missing insertion acknowledgement must not restart discovery or operation matching');
 }
 
+async function testRequestTriggerRequiresInsertionAcknowledgement(): Promise<void> {
+  for (const title of ['When an HTTP request is received', 'When a HTTP request is received']) {
+    for (const inserted of [true, false]) {
+      const deadline = Date.now() + 60000;
+      const actions = new ProvenDesignerCdpActions({ evaluate: async () => undefined as never, send: async () => undefined }, 1, deadline);
+      let acknowledgements = 0;
+      let panelCloses = 0;
+      const hooks = { onDiscoveryOpen: async () => undefined };
+      Object.assign(actions, {
+        readActionInsertionSnapshot: async () => ({ nodes: [], panelNodeIds: [], discoveryVisible: true, loaderCount: 0 }),
+        proven: {
+          hasDiscoveryPanel: async () => true,
+          search: async (search: string) => assert.strictEqual(search, 'Request'),
+          waitForSearchResults: async () => undefined,
+          waitForText: async () => assert.fail('Discovery card text must never acknowledge trigger insertion'),
+          selectOperation: async (
+            operationName: string,
+            variants: string[],
+            dispatch: (point: Point, selectedTitle: string) => Promise<void>
+          ) => {
+            assert.strictEqual(operationName, 'When an HTTP request is received');
+            assert.ok(variants.includes(title.toLowerCase()));
+            await dispatch({ x: 70, y: 40 }, title);
+          },
+          closePanel: async () => {
+            panelCloses++;
+          },
+        },
+        selectActionWithAcknowledgement: async (
+          point: Point,
+          before: unknown[],
+          selectedTitle: string,
+          insertionDeadline: number,
+          actualHooks: object
+        ) => {
+          acknowledgements++;
+          assert.deepStrictEqual(point, { x: 70, y: 40 });
+          assert.deepStrictEqual(before, []);
+          assert.strictEqual(selectedTitle, title);
+          assert.ok(insertionDeadline <= deadline, 'Trigger insertion must retain the original scenario deadline');
+          assert.strictEqual(actualHooks, hooks);
+          return inserted ? { nodeId: 'When_an_HTTP_request_is_received', title } : undefined;
+        },
+      });
+      if (inserted) {
+        await actions.addRequestTrigger(hooks);
+      } else {
+        await assert.rejects(() => actions.addRequestTrigger(hooks), /Request trigger insertion was not acknowledged/);
+      }
+      assert.strictEqual(acknowledgements, 1, 'Request must use the shared browser-routed insertion acknowledgement');
+      assert.strictEqual(panelCloses, inserted ? 1 : 0, 'Unacknowledged discovery must not be closed as if insertion succeeded');
+    }
+  }
+}
+
 function testOperationClickRouting(): void {
   class TestElement {
     id = 'exact-card';
@@ -390,19 +446,23 @@ function testOperationClickRouting(): void {
 // Mirrors RecommendationPanelCard/OperationSearchCard, not an invented button:
 // V2 search uses the recommendation family, an API-id automation attribute, and
 // a distinct title node alongside optional badges, connector caption and tools.
-function operationCardFixture(kind: 'search' | 'recommendation' | 'search-testid' = 'search', decorated = false): string {
+function operationCardFixture(
+  kind: 'search' | 'recommendation' | 'search-testid' = 'search',
+  decorated = false,
+  operationTitle = 'Initialize variables'
+): string {
   const recommendation = kind === 'recommendation';
   const prefix = recommendation ? 'msla-recommendation-panel-card' : 'msla-op-search-card';
   const identity = recommendation
-    ? 'class="fui-Card msla-recommendation-panel-card" role="button" data-automation-id="/connectionProviders/variables" tabindex="0" title="Initialize variables"'
+    ? `class="fui-Card msla-recommendation-panel-card" role="button" data-automation-id="/connectionProviders/${operationTitle.startsWith('When ') ? 'request' : 'variables'}" tabindex="0" title="${operationTitle}"`
     : kind === 'search-testid'
       ? 'data-testid="msla-op-search-result-InitializeVariable"'
       : 'id="msla-op-search-result-InitializeVariable" class="fui-Card msla-op-search-card-container" data-automation-id="msla-op-search-result-InitializeVariable"';
-  return `<div ${identity} aria-label="Initialize variables" style="flex-direction:row">
+  return `<div ${identity} aria-label="${operationTitle}" style="flex-direction:row">
     <div class="${prefix}-image"><span role="presentation"></span></div>
     <div class="${prefix}-text"><div class="${prefix}-horizontal-flex-items">
-      <span class="${prefix}-title">Initialize variables</span>${decorated ? '<span class="fui-Badge">Preview</span>' : ''}
-    </div>${decorated ? `<span class="${prefix}-subtitle">Variables</span>` : ''}</div>
+      <span class="${prefix}-title">${operationTitle}</span>${decorated ? `<span class="fui-Badge">${operationTitle.startsWith('When ') ? 'Trigger' : 'Preview'}</span>` : ''}
+    </div>${decorated ? `<span class="${prefix}-subtitle">${operationTitle.startsWith('When ') ? 'Request' : 'Variables'}</span>` : ''}</div>
     <div class="${prefix}-horizontal-flex-items">
       <button class="info-dot-visible-on-hover" aria-label="More information"><span aria-hidden="true"></span></button>
     </div>
@@ -481,6 +541,7 @@ async function testOperationClickRetryControls(): Promise<void> {
     scenarioExtraBudget?: boolean;
     cardKind?: 'search' | 'recommendation' | 'search-testid';
     decoratedCard?: boolean;
+    operationTitle?: string;
     mixedFamilyDuplicate?: boolean;
     expireOnRetry?: boolean;
     hiddenAncestor?: boolean;
@@ -491,14 +552,15 @@ async function testOperationClickRetryControls(): Promise<void> {
     expectedClicks: number;
     expectedSuccess?: boolean;
   }): Promise<void> => {
+    const operationTitle = control.operationTitle ?? 'Initialize variables';
     const dom = new JSDOM(
       `<html><body>
       <div id="msla-node-Request">Request</div>
-      ${operationCardFixture(control.cardKind, control.decoratedCard)}</body></html>`,
+      ${operationCardFixture(control.cardKind, control.decoratedCard, operationTitle)}</body></html>`,
       { runScripts: 'outside-only' }
     );
     const window = dom.window as any;
-    const card = window.document.querySelector('[aria-label="Initialize variables"]');
+    const card = window.document.querySelector(`[aria-label="${operationTitle}"]`);
     let activeCard = card;
     if (control.hiddenAncestor) {
       card.parentElement.style.visibility = 'hidden';
@@ -550,8 +612,8 @@ async function testOperationClickRetryControls(): Promise<void> {
       activeCard.replaceWith(replacement);
       activeCard = replacement;
     };
-    const before = [{ nodeId: 'Request', title: 'Request' }];
-    const added = { nodeId: 'Initialize', title: 'Initialize variables' };
+    const before = control.operationTitle ? [] : [{ nodeId: 'Request', title: 'Request' }];
+    const added = { nodeId: 'Initialize', title: operationTitle };
     const deadline = now + 8000;
     const actions = new ProvenDesignerCdpActions(
       {
@@ -731,56 +793,65 @@ async function testOperationClickRetryControls(): Promise<void> {
       let identity: unknown;
       let error: unknown;
       try {
-        await actions.proven.selectOperation('Initialize variables', ['initialize variable'], async (point: Point) => {
-          assert.strictEqual(window.__laSelectedOperationCard.card, activeCard, 'Production selection must retain the actual fixture card');
-          if (control.replaceBeforeProbe) {
-            replace();
-          }
-          identity = await actions.selectActionWithAcknowledgement(point, before, 'Initialize variables', deadline, {
-            onOperationClick: async (stage: string, attempt: number, evidence: any) => {
-              captures.push(`${attempt}-${stage}`);
-              if (stage === 'after') {
-                afterEvidence.push(evidence);
-              }
-              if (stage === 'before' && (captures.length === 1 || control.beforeCapture === 'perpetual-move')) {
-                assert.strictEqual(inputEvents, 0, 'Before screenshot precedes all input');
-                if (control.beforeCapture === 'move' || control.beforeCapture === 'perpetual-move') {
-                  left++;
+        await actions.proven.selectOperation(
+          control.operationTitle ? 'When an HTTP request is received' : operationTitle,
+          [operationTitle.toLowerCase()],
+          async (point: Point, selectedTitle: string) => {
+            assert.strictEqual(selectedTitle, operationTitle, 'Dispatch must retain only the selected semantic operation title');
+            assert.strictEqual(
+              window.__laSelectedOperationCard.card,
+              activeCard,
+              'Production selection must retain the actual fixture card'
+            );
+            if (control.replaceBeforeProbe) {
+              replace();
+            }
+            identity = await actions.selectActionWithAcknowledgement(point, before, selectedTitle, deadline, {
+              onOperationClick: async (stage: string, attempt: number, evidence: any) => {
+                captures.push(`${attempt}-${stage}`);
+                if (stage === 'after') {
+                  afterEvidence.push(evidence);
                 }
-                if (control.beforeCapture === 'replace') {
-                  replace();
-                }
-                if (control.beforeCapture === 'ambiguous') {
-                  if (control.mixedFamilyDuplicate) {
-                    const wrapper = window.document.createElement('div');
-                    wrapper.innerHTML = operationCardFixture('search', true);
-                    window.document.body.append(wrapper.firstElementChild);
-                  } else {
-                    window.document.body.append(activeCard.cloneNode(true));
+                if (stage === 'before' && (captures.length === 1 || control.beforeCapture === 'perpetual-move')) {
+                  assert.strictEqual(inputEvents, 0, 'Before screenshot precedes all input');
+                  if (control.beforeCapture === 'move' || control.beforeCapture === 'perpetual-move') {
+                    left++;
+                  }
+                  if (control.beforeCapture === 'replace') {
+                    replace();
+                  }
+                  if (control.beforeCapture === 'ambiguous') {
+                    if (control.mixedFamilyDuplicate) {
+                      const wrapper = window.document.createElement('div');
+                      wrapper.innerHTML = operationCardFixture('search', true, operationTitle);
+                      window.document.body.append(wrapper.firstElementChild);
+                    } else {
+                      window.document.body.append(activeCard.cloneNode(true));
+                    }
+                  }
+                  if (control.beforeCapture === 'wrong-title') {
+                    activeCard.querySelector('[class$="-title"]').textContent = 'Initialize something else';
+                  }
+                  if (control.beforeCapture === 'hide') {
+                    activeCard.style.display = 'none';
+                  }
+                  if (control.beforeCapture === 'disable') {
+                    activeCard.setAttribute('aria-disabled', 'true');
+                  }
+                  if (control.beforeCapture === 'obscure') {
+                    obscured = true;
+                  }
+                  if (control.beforeCapture === 'expire') {
+                    now = deadline;
                   }
                 }
-                if (control.beforeCapture === 'wrong-title') {
-                  activeCard.querySelector('[class$="-title"]').textContent = 'Initialize something else';
-                }
-                if (control.beforeCapture === 'hide') {
-                  activeCard.style.display = 'none';
-                }
-                if (control.beforeCapture === 'disable') {
-                  activeCard.setAttribute('aria-disabled', 'true');
-                }
-                if (control.beforeCapture === 'obscure') {
-                  obscured = true;
-                }
-                if (control.beforeCapture === 'expire') {
+                if (stage === 'before' && attempt === 2 && control.expireOnRetry) {
                   now = deadline;
                 }
-              }
-              if (stage === 'before' && attempt === 2 && control.expireOnRetry) {
-                now = deadline;
-              }
-            },
-          });
-        });
+              },
+            });
+          }
+        );
       } catch (caught) {
         error = caught;
       }
@@ -849,6 +920,36 @@ async function testOperationClickRetryControls(): Promise<void> {
     }
   };
   await run({ name: 'first insertion: no duplicate', insertOn: 1, expectedClicks: 1, expectedSuccess: true });
+  for (const operationTitle of ['When an HTTP request is received', 'When a HTTP request is received']) {
+    await run({
+      name: 'visible V2 Request trigger remains actionable while other results load',
+      operationTitle,
+      cardKind: 'recommendation',
+      decoratedCard: true,
+      loadingBeforeClick: true,
+      insertOn: 1,
+      expectedClicks: 1,
+      expectedSuccess: true,
+    });
+    await run({
+      name: 'Request trigger geometry refreshes before browser input',
+      operationTitle,
+      cardKind: 'recommendation',
+      decoratedCard: true,
+      beforeCapture: 'move',
+      insertOn: 1,
+      expectedClicks: 1,
+      expectedSuccess: true,
+    });
+    await run({
+      name: 'Request discovery card alone cannot acknowledge insertion',
+      operationTitle,
+      cardKind: 'recommendation',
+      decoratedCard: true,
+      expectedClicks: 2,
+      expectedSuccess: false,
+    });
+  }
   await run({
     name: 'native V2 recommendation card is acquired after production selection',
     cardKind: 'recommendation',

@@ -36,12 +36,195 @@ import {
   assertActiveWebview,
   assertMapper,
   assertSequentialDebug,
+  folderCreateNewProject,
+  type FolderMenuCheckpoint,
   type DebugEvent,
   readLogicAppRoots,
   type WorkbenchState,
 } from './workspaceMultiRootWorkbench';
+import { contextMenuDom, workbenchDomFixture } from './workbenchDomFixture';
 
 const executable = path.resolve('func.exe');
+
+function folderMenuFixture(options: { loseFocus?: boolean; noMenu?: boolean } = {}) {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'multi-root-menu-unit-'));
+  const folder = path.join(root, 'physical-first');
+  fs.mkdirSync(folder);
+  const workspaceFilePath = path.join(root, 'fixture.code-workspace');
+  const writeWorkspace = (folders = [{ path: './physical-first', name: 'Root alias' }]) =>
+    fs.writeFileSync(workspaceFilePath, JSON.stringify({ folders }));
+  writeWorkspace();
+  const fixture = workbenchDomFixture(`
+    <div class="quick-input-widget" style="display:none"><input>
+      <div class="quick-input-list"><div class="monaco-list-row">
+        <span class="label-name" data-box="10,10,200,20">View: Show Explorer</span>
+      </div></div>
+    </div>
+    <div class="explorer-folders-view"><div class="monaco-list" role="tree" tabindex="0">
+      <div class="monaco-list-row" id="root-first" role="treeitem" aria-level="1" aria-selected="false">
+        <div class="monaco-icon-label"><span class="label-name" data-box="20,100,180,20">Root alias</span></div>
+      </div>
+    </div></div>`);
+  const { document, window } = fixture;
+  const widget = document.querySelector('.quick-input-widget');
+  document.addEventListener('keydown', (event: any) => {
+    if (event.code === 'KeyP') {
+      widget.style.display = 'block';
+      widget.querySelector('input').focus();
+    }
+  });
+  widget.querySelector('.label-name').addEventListener('click', () => {
+    widget.style.display = 'none';
+  });
+  const list = document.querySelector('.monaco-list');
+  const row = list.querySelector('.monaco-list-row');
+  row.addEventListener('mousedown', () => {
+    row.setAttribute('aria-selected', 'true');
+    list.setAttribute('aria-activedescendant', row.id);
+    if (!options.loseFocus) {
+      list.focus();
+    }
+  });
+  // Monaco List's production keyboard context-menu route uses keyup and the
+  // focused element as its anchor (not the last pointer position).
+  list.addEventListener('keyup', (event: any) => {
+    if (event.key !== 'ContextMenu' || list.getAttribute('aria-activedescendant') !== row.id || options.noMenu) {
+      return;
+    }
+    document.body.insertAdjacentHTML('beforeend', contextMenuDom([{ label: 'Create new project…' }]));
+    const item = document.querySelector('.action-menu-item');
+    item.focus();
+    item.addEventListener('click', () => document.querySelector('.context-view').remove());
+  });
+  return {
+    ...fixture,
+    root,
+    folder,
+    workspaceFilePath,
+    writeWorkspace,
+    dispose: () => {
+      window.close();
+      fs.rmSync(root, { recursive: true, force: true });
+    },
+  };
+}
+
+test('root menu uses exact persisted root alias, focused-tree context gesture, observed menu and a real item click', async () => {
+  const fixture = folderMenuFixture();
+  const checkpoints: FolderMenuCheckpoint[] = [];
+  try {
+    await folderCreateNewProject(fixture.cdp, fixture.folder, Date.now() + 2000, {
+      workspaceFilePath: fixture.workspaceFilePath,
+      checkpoint: async (stage) => {
+        checkpoints.push(stage);
+        if (stage === 'root-selected') {
+          assert.equal(fixture.document.activeElement, fixture.document.querySelector('.monaco-list'));
+        }
+        if (stage === 'menu-open') {
+          assert.ok(fixture.document.querySelector('[role="menuitem"]'));
+        }
+        if (stage === 'menu-invoked') {
+          assert.equal(fixture.document.querySelector('[role="menuitem"]'), null);
+        }
+      },
+    });
+    assert.deepEqual(checkpoints, ['root-selected', 'menu-open', 'menu-invoked']);
+    const keys = fixture.sent.filter((entry) => entry.method === 'Input.dispatchKeyEvent').map((entry) => entry.params);
+    assert.deepEqual(
+      keys.filter((entry) => entry.code === 'ContextMenu').map((entry) => entry.type),
+      ['keyDown', 'keyUp']
+    );
+    assert.equal(
+      fixture.sent.some((entry) => entry.params.button === 'right'),
+      false,
+      'No unverified row-centre pointer context trigger'
+    );
+    assert.equal(
+      fixture.sent
+        .filter((entry) => entry.method === 'Input.insertText')
+        .map((entry) => entry.params.text)
+        .join(),
+      'View: Show Explorer',
+      'Create Project is never invoked through the command palette/service'
+    );
+    assert.equal(
+      fixture.sent.filter((entry) => entry.params.type === 'mousePressed').length,
+      3,
+      'Palette, root, and actual menu item clicks'
+    );
+  } finally {
+    fixture.dispose();
+  }
+});
+
+test('root menu rejects duplicate presentation or wrong physical root before any UI input', async () => {
+  for (const kind of ['duplicate-label', 'wrong-root'] as const) {
+    const fixture = folderMenuFixture();
+    try {
+      const other = path.join(fixture.root, 'physical-second');
+      fs.mkdirSync(other);
+      if (kind === 'duplicate-label') {
+        fixture.writeWorkspace([
+          { path: fixture.folder, name: 'Root alias' },
+          { path: other, name: 'Root alias' },
+        ]);
+      }
+      await assert.rejects(
+        folderCreateNewProject(fixture.cdp, kind === 'wrong-root' ? other : fixture.folder, Date.now() + 1000, {
+          workspaceFilePath: fixture.workspaceFilePath,
+          checkpoint: async () => undefined,
+        }),
+        kind === 'wrong-root' ? /exact persisted physical workspace root/ : /Ambiguous Explorer root labels/
+      );
+      assert.deepEqual(fixture.sent, []);
+    } finally {
+      fixture.dispose();
+    }
+  }
+});
+
+test('root menu fails closed on lost tree focus, missing menu or stale roots and retains the original error if diagnostics fail', async () => {
+  for (const kind of ['lost-focus', 'no-menu', 'stale-roots'] as const) {
+    const fixture = folderMenuFixture({ loseFocus: kind === 'lost-focus', noMenu: kind === 'no-menu' });
+    const checkpoints: FolderMenuCheckpoint[] = [];
+    try {
+      if (kind === 'stale-roots') {
+        fixture.document.querySelector('.explorer-folders-view .label-name').textContent = 'Old workspace';
+      }
+      await assert.rejects(
+        folderCreateNewProject(fixture.cdp, fixture.folder, Date.now() + 300, {
+          workspaceFilePath: fixture.workspaceFilePath,
+          checkpoint: async (stage) => {
+            checkpoints.push(stage);
+            if (stage === 'menu-failure') {
+              throw new Error('unit screenshot unavailable');
+            }
+          },
+        }),
+        /Workbench action deadline exhausted/
+      );
+      assert.equal(checkpoints.at(-1), 'menu-failure');
+      assert.equal(checkpoints.includes('menu-invoked'), false);
+      const contextKey = fixture.sent.some((entry) => entry.params.code === 'ContextMenu');
+      assert.equal(contextKey, kind === 'no-menu', 'Menu input requires exact selected/focused current roots');
+    } finally {
+      fixture.dispose();
+    }
+  }
+});
+
+test('product contributes Create Project directly to the root Explorer menu, not a submenu', () => {
+  const manifest = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../../../src/package.json'), 'utf8'));
+  const command = manifest.contributes.commands.find(
+    (entry: { command: string }) => entry.command === 'azureLogicAppsStandard.createProject'
+  );
+  const entries = manifest.contributes.menus['explorer/context'].filter((entry: { command?: string }) => entry.command === command.command);
+  assert.equal(command.title, 'Create new project...');
+  assert.equal(entries.length, 1);
+  assert.equal(entries[0].when, 'azureLogicAppsStandard.hasProject && explorerResourceIsRoot == true');
+  assert.equal(entries[0].submenu, undefined);
+});
+
 const bytes = Buffer.from('unit-owned-func-fixture-not-an-executable');
 const sha256 = createHash('sha256').update(bytes).digest('hex');
 const population = (count = 3, birth = '100'): Population => ({

@@ -2,11 +2,11 @@ import * as assert from 'node:assert/strict';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { connectToVsCodeCdpByText } from './cdpClient';
-import { type CdpEvaluator, type Point, pressKey } from './cdpFormHelpers';
+import { type CdpEvaluator, type Point, clickPoint, pressKey } from './cdpFormHelpers';
 import { remainingBudget } from './workspaceMultiRootCollector';
 import type { FuncRuntimeResolution } from './workspaceMultiRootLaunch';
 import { normalizeFsPath } from './testUtils';
-import { clickContextMenuText, command, dispatchContextMenu, poll, workbenchVisibleScript as visibleScript } from './workbenchCdpActions';
+import { clickContextMenuText, command, poll, readContextMenuState, workbenchVisibleScript as visibleScript } from './workbenchCdpActions';
 
 export { boundedCdp, clickText, command, poll } from './workbenchCdpActions';
 
@@ -35,23 +35,82 @@ export function readWorkbench(cdp: CdpEvaluator): Promise<WorkbenchState> {
   );
 }
 
-export async function folderCreateNewProject(cdp: CdpEvaluator, folder: string, deadline: number): Promise<void> {
-  await command(cdp, 'View: Show Explorer', deadline);
-  const position = await poll(
-    () =>
-      cdp.evaluate<Point | null>(
-        undefined,
-        `(() => { ${visibleScript}
-          const rows=Array.from(document.querySelectorAll('.explorer-folders-view .monaco-list-row[aria-level="1"]'))
-            .filter(visible).filter(e=>text(e.querySelector('.label-name') || e)===${JSON.stringify(path.basename(folder))});
-          return rows.length===1 ? point(rows[0]) : null; })()`
-      ),
-    (value) => value !== null,
-    deadline
+export type FolderMenuCheckpoint = 'root-selected' | 'menu-open' | 'menu-invoked' | 'menu-failure';
+
+export async function folderCreateNewProject(
+  cdp: CdpEvaluator,
+  folder: string,
+  deadline: number,
+  options: { workspaceFilePath: string; checkpoint: (stage: FolderMenuCheckpoint) => Promise<void> }
+): Promise<void> {
+  // Bind presentation to the persisted physical root, including workspace name
+  // overrides. A basename match alone must not select a different root.
+  const workspace: { folders: Array<{ path: string; name?: string }> } = JSON.parse(fs.readFileSync(options.workspaceFilePath, 'utf8'));
+  const roots = workspace.folders.map((root) => ({
+    physical: normalizePhysicalPath(path.resolve(path.dirname(options.workspaceFilePath), root.path)),
+    label: root.name ?? path.basename(path.resolve(path.dirname(options.workspaceFilePath), root.path)),
+  }));
+  const matches = roots.filter((root) => root.physical === normalizePhysicalPath(folder));
+  assert.equal(matches.length, 1, 'Create Project requires one exact persisted physical workspace root');
+  assert.equal(
+    new Set(roots.map((root) => root.label)).size,
+    roots.length,
+    'Ambiguous Explorer root labels cannot identify the exact folder'
   );
-  assert.ok(position);
-  await dispatchContextMenu(cdp, position);
-  await clickContextMenuText(cdp, 'Create new project...', deadline);
+  const label = matches[0].label;
+  const expectedLabels = roots.map((root) => root.label).sort();
+  const rootState = () =>
+    cdp.evaluate<{ point: Point | null; selected: boolean; focused: boolean; roots: string[] }>(
+      undefined,
+      `(() => { ${visibleScript}
+        const rows=Array.from(document.querySelectorAll('.explorer-folders-view .monaco-list-row[aria-level="1"]')).filter(visible);
+        const roots=rows.map(e=>text(e.querySelector('.label-name') || e));
+        const matches=rows.filter(e=>text(e.querySelector('.label-name') || e)===${JSON.stringify(label)});
+        const row=matches.length===1 ? matches[0] : null;
+        const list=row?.closest('.monaco-list');
+        const focused=!!row && (row.contains(document.activeElement) ||
+          (!!list && list.contains(document.activeElement) && list.getAttribute('aria-activedescendant')===row.id));
+        return {roots, point:row ? point(row.querySelector('.label-name') || row) : null,
+          selected:!!row && row.getAttribute('aria-selected')==='true', focused};
+      })()`
+    );
+  const exactRoots = (actual: string[]) =>
+    actual.length === expectedLabels.length && [...actual].sort().every((value, index) => value === expectedLabels[index]);
+  try {
+    await command(cdp, 'View: Show Explorer', deadline);
+    const state = await poll(rootState, (value) => !!value.point && exactRoots(value.roots), deadline);
+    assert.ok(state.point);
+    await clickPoint(cdp, state.point);
+    await poll(rootState, (value) => value.selected && value.focused && exactRoots(value.roots), deadline);
+    await options.checkpoint('root-selected');
+    await poll(rootState, (value) => value.selected && value.focused && exactRoots(value.roots), deadline);
+    // Monaco List handles ContextMenu on keyup using its focused element as
+    // the anchor. This is native UI input, not a command-service substitute.
+    await pressKey(cdp, 'ContextMenu', 'ContextMenu', 93);
+    await poll(
+      () => readContextMenuState(cdp, 'Create new project...'),
+      (value) => value.menuCount > 0,
+      Math.min(deadline, Date.now() + 10000)
+    );
+    await options.checkpoint('menu-open');
+    await clickContextMenuText(cdp, 'Create new project...', deadline);
+    await options.checkpoint('menu-invoked');
+  } catch (error) {
+    // Keep diagnostics best-effort and never replace the original body failure.
+    try {
+      console.error(
+        `[multi-root-folder-menu] ${JSON.stringify({ folder, label, root: await rootState(), menu: await readContextMenuState(cdp, 'Create new project...') })}`
+      );
+    } catch (diagnosticError) {
+      console.error(`[multi-root-folder-menu] DOM diagnostic failed: ${String(diagnosticError)}`);
+    }
+    try {
+      await options.checkpoint('menu-failure');
+    } catch (diagnosticError) {
+      console.error(`[multi-root-folder-menu] Screenshot diagnostic failed: ${String(diagnosticError)}`);
+    }
+    throw error;
+  }
 }
 
 export function assertActiveWebview(state: WorkbenchState, targetUrl: string | undefined, tab: string): void {
