@@ -2,6 +2,7 @@ import * as assert from 'assert';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
+import { mock } from 'node:test';
 import type { ScreenshotReadinessSnapshot } from './screenshotReadiness';
 
 const { JSDOM } = require('jsdom') as { JSDOM: new (html: string, options?: Record<string, unknown>) => { window: SerializedDomWindow } };
@@ -19,6 +20,8 @@ async function main(): Promise<void> {
 
   testFailureScreenshotHookInstallsOnce(installFailureScreenshotHook);
   testDiagnosticCheckpointNormalization(sanitizeDiagnosticCheckpointId);
+  await testOwnerBindingDeadlineRetainsContext(captureCdpScreenshot, screenshotDir);
+  await testOwnerBindingProtocolErrorAtDeadlineRemainsOriginal(captureCdpScreenshot);
   await testStableCaptureAccepted(captureCdpScreenshot, screenshotDir);
   await testAcceptedCaptureUpdatesOrderedEvidenceManifest(captureCdpScreenshot);
   await testTransientInvalidationRetries(captureCdpScreenshot, screenshotDir);
@@ -875,6 +878,90 @@ async function testResolveNodeNonTimeoutFailsFast(captureCdpScreenshot: typeof i
   assert.strictEqual(ownerCdp.resolveNodeAttempts, 1, 'Non-timeout DOM.resolveNode errors must not retry');
 }
 
+async function testOwnerBindingDeadlineRetainsContext(
+  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot,
+  screenshotDir: string
+): Promise<void> {
+  let now = 100_000;
+  const deadline = now + 1000;
+  const clock = mock.method(Date, 'now', () => now);
+  const ownerCdp = new FakeCaptureCdp([snapshot({ revision: 0 })], { ownerFrameVisibilityResponses: [false] });
+  const semanticCdp = new FakeCaptureCdp([snapshot({ revision: 0 })], {
+    targetUrl: 'vscode-webview://logic-apps-owner-deadline',
+    contexts: [{ id: 7, text: 'Response Succeeded', visible: true }],
+    onSend: (method) => {
+      if (method === 'Page.getFrameTree' && ownerCdp.ownerFrameVisibilityReadIndex > 0) {
+        // Expire between RPCs in the second owner lookup, after an actual
+        // negative visibility observation. No wall-clock load/sleep is needed
+        // to reproduce remaining() throwing inside owner resolution.
+        now = deadline;
+      }
+    },
+  });
+  const name = 'owner-binding-mid-resolution-deadline';
+  try {
+    await assert.rejects(
+      captureCdpScreenshot(ownerCdp, name, {
+        expectation: { kind: 'monitoringAction', label: name, actionTitle: 'Response', expectedStatus: 'Succeeded' },
+        semanticCdp,
+        semanticContextId: 7,
+        timeoutMs: 1000,
+      }),
+      (error: unknown) => {
+        assert.ok(error instanceof Error);
+        assert.strictEqual(error.message, 'Screenshot binding failed: semantic frame is not owned by the workbench frame tree');
+        const cause = (error as Error & { cause?: unknown }).cause;
+        assert.ok(cause instanceof Error);
+        assert.strictEqual(cause.message, 'Screenshot deadline exceeded');
+        return true;
+      }
+    );
+    assert.ok(ownerCdp.ownerFrameVisibilityReadIndex > 0, 'Ownership was observed and rejected before expiry');
+    assert.strictEqual(ownerCdp.captureAttempts, 0, 'An owner rejection must never reach Page.captureScreenshot');
+    assert.strictEqual(fs.existsSync(path.join(screenshotDir, `${name}.png`)), false);
+  } finally {
+    clock.mock.restore();
+  }
+}
+
+async function testOwnerBindingProtocolErrorAtDeadlineRemainsOriginal(
+  captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot
+): Promise<void> {
+  for (const message of ['synthetic owner authorization failure', 'Screenshot deadline exceeded']) {
+    let now = 100_000;
+    const deadline = now + 1000;
+    const clock = mock.method(Date, 'now', () => now);
+    const original = new Error(message);
+    const ownerCdp = new FakeCaptureCdp([snapshot({ revision: 0 })], {
+      resolveNodeError: original,
+      onSend: (method) => {
+        if (method === 'DOM.resolveNode') {
+          now = deadline;
+        }
+      },
+    });
+    const semanticCdp = new FakeCaptureCdp([snapshot({ revision: 0 })], {
+      targetUrl: 'vscode-webview://logic-apps-owner-protocol-error',
+      contexts: [{ id: 7, text: 'Response Succeeded', visible: true }],
+    });
+    try {
+      await assert.rejects(
+        captureCdpScreenshot(ownerCdp, 'owner-protocol-error-at-deadline', {
+          expectation: { kind: 'monitoringAction', label: 'owner-protocol-error', actionTitle: 'Response', expectedStatus: 'Succeeded' },
+          semanticCdp,
+          semanticContextId: 7,
+          timeoutMs: 1000,
+        }),
+        (error: unknown) => error === original
+      );
+      assert.strictEqual(ownerCdp.resolveNodeAttempts, 1, 'Protocol failures must remain fail-fast even at the deadline');
+      assert.strictEqual(ownerCdp.captureAttempts, 0);
+    } finally {
+      clock.mock.restore();
+    }
+  }
+}
+
 async function testSemanticOwnerFrameMismatchRejects(
   captureCdpScreenshot: typeof import('./screenshot').captureCdpScreenshot
 ): Promise<void> {
@@ -1321,6 +1408,7 @@ class FakeCaptureCdp {
       resolveNodeTimeoutFailures?: number;
       resolveNodeError?: Error;
       ownerWorkbenchVisible?: boolean;
+      onSend?: (method: string) => void;
     } = {}
   ) {
     this.targetUrl = options.targetUrl;
@@ -1328,6 +1416,7 @@ class FakeCaptureCdp {
   }
 
   async send(method: string, params?: Record<string, unknown>): Promise<unknown> {
+    this.options.onSend?.(method);
     if (method === 'Page.getFrameTree') {
       if (this.options.failFrameTree) {
         throw new Error('synthetic Page.getFrameTree timeout');

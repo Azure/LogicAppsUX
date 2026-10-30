@@ -677,31 +677,45 @@ async function assertSemanticTargetOwnedByVisibleWorkbenchFrame(
   semanticCdp: CdpClient,
   deadline: number
 ): Promise<void> {
-  while (Date.now() < deadline) {
-    let ownerObjectId: string | undefined;
-    try {
-      ownerObjectId = await resolveSemanticFrameOwnerObjectId(ownerCdp, semanticCdp, deadline);
-      if (ownerObjectId && (await isResolvedOwnerFrameVisible(ownerCdp, ownerObjectId, deadline))) {
+  let deadlineError: ScreenshotDeadlineError | undefined;
+  try {
+    while (Date.now() < deadline) {
+      let ownerObjectId: string | undefined;
+      try {
+        ownerObjectId = await resolveSemanticFrameOwnerObjectId(ownerCdp, semanticCdp, deadline);
+        if (ownerObjectId && (await isResolvedOwnerFrameVisible(ownerCdp, ownerObjectId, deadline))) {
+          return;
+        }
+      } catch (error) {
+        if (!isTransientOwnerFrameError(error)) {
+          throw error;
+        }
+      }
+      if (Date.now() >= deadline) {
+        break;
+      }
+      if (await hasExactVisibleWorkbenchIframeForTarget(ownerCdp, semanticCdp.targetUrl, remaining(deadline, 2000))) {
         return;
       }
-    } catch (error) {
-      if (!isTransientOwnerFrameError(error)) {
-        throw error;
+      if (Date.now() >= deadline) {
+        break;
       }
+      await delay(Math.min(100, Math.max(deadline - Date.now(), 0)));
     }
-    if (Date.now() >= deadline) {
-      break;
+  } catch (error) {
+    // Expiry between owner-resolution RPCs must not erase the ownership
+    // failure. Only our internal budget error is contextualized; protocol,
+    // authorization and other non-transient errors still propagate unchanged.
+    if (!(error instanceof ScreenshotDeadlineError)) {
+      throw error;
     }
-    if (await hasExactVisibleWorkbenchIframeForTarget(ownerCdp, semanticCdp.targetUrl, remaining(deadline, 2000))) {
-      return;
-    }
-    if (Date.now() >= deadline) {
-      break;
-    }
-    await delay(Math.min(100, Math.max(deadline - Date.now(), 0)));
+    deadlineError = error;
   }
 
-  throw new Error('Screenshot binding failed: semantic frame is not owned by the workbench frame tree');
+  throw new Error(
+    'Screenshot binding failed: semantic frame is not owned by the workbench frame tree',
+    deadlineError ? { cause: deadlineError } : undefined
+  );
 }
 
 function isTransientOwnerFrameError(error: unknown): boolean {
@@ -1427,10 +1441,12 @@ function removeStaleArtifacts(screenshotPath: string, metadataPath: string): voi
   screenshotFileSystem.rmSync(metadataPath, { force: true });
 }
 
+class ScreenshotDeadlineError extends Error {}
+
 function remaining(deadline: number, fallbackMs: number): number {
   const remainingMs = deadline - Date.now();
   if (remainingMs <= 0) {
-    throw new Error('Screenshot deadline exceeded');
+    throw new ScreenshotDeadlineError('Screenshot deadline exceeded');
   }
   return Math.min(fallbackMs, remainingMs);
 }

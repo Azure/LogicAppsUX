@@ -950,6 +950,21 @@ terminal, cleanup ledger and phase journal as `outer-terminal-result.json`,
 missing family receipts. This diagnostic-only publication does not grant family
 acceptance, and a publication error must not replace the original failure.
 
+Product shutdown and test-host cleanup are separate verdicts. Logic Apps shutdown
+requires completed deactivation and release of its own design-time APIs, language
+client, debug/task handles and owned service resources. It does not require the
+termination of an independently owned C#/Dev Kit language server. Conversely,
+the mere absence of a process or a zero launcher exit does not prove that Logic
+Apps released those resources. Use the family's actual deactivation and resource
+observations; do not infer product shutdown from containment alone.
+
+A retained dependency-owned process is a test-host cleanup failure, not by itself
+a Logic Apps shutdown regression. Preserve the native body and any established
+product-shutdown verdict when reporting that failure. The harness must still
+contain its launched processes and avoid contaminating subsequent tests; product
+shutdown success does not manufacture natural host closure or filesystem cleanup
+success, nor does it bypass the full-suite infrastructure gate.
+
 An extension host exiting zero can still leave a language server that started
 during shutdown. Correlate retained PIDs with original extension activation logs:
 a server startup banner without client-exit monitoring/initialization is not
