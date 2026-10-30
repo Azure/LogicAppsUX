@@ -21,7 +21,7 @@ exports with explicit visual/nonvisual classifications; new unclassified values
 fail until classified. It also checks exact visual metadata coverage and
 supported public imports, while excluding type-only exports from runtime counts.
 
-Start with **Start here / Introduction** and **API and boundaries**. All **32**
+Start with **Start here / Introduction** and **API and boundaries**. All **33**
 public visual exports (including `DesignerUiScope` and both condition icons)
 have individual typed metadata, native Overview docs, and supported examples.
 The API page documents all **18** nonvisual exports and all public types without
@@ -57,7 +57,7 @@ Read-only reference: Otto `portal/src/components/Nodes` and actual `WorkflowDesi
 | `cards/{ActionNodeCard,TriggerNodeCard,ConditionNodeCard,AgentNodeCard,ToolItemCard}.tsx`, `cards/shared.ts` | Same named compositions and typed props; action/trigger can suppress visual dots for host handles |
 | `cards/{AgentToolsPanel,NodeHoverCard,NodeInfoCard}.tsx` | Controlled tools, delayed hover/focus descriptions, scoped popovers, safe documentation links and existing action slots |
 | `primitives/{NodeCard,NodeCardBody,NodeHandle,NodeIconTile,NodeText,NodeStatusBadge,NodeTestDataIndicator}.tsx` | Shell/body/footer, orientation, slots, selection, live run state and test-data indicators |
-| `primitives/{NodeToolConnector,NodeLabeledHandle,NodeLine,NodeActionAdd,IfIcon}.tsx` | Stable connector, branch-caption, line, add and glyph dependency closure |
+| `primitives/{NodeToolConnector,NodeLabeledHandle,NodeBranchOutputs,NodeLine,NodeActionAdd,IfIcon}.tsx` | Stable connector, branch-caption outputs, line, add and glyph dependency closure |
 | `proposed/{LoopNodeCard,NodeFrame,NodeMergePoint,PlaceholderTriggerCard}.tsx` | Existing loop, frame, merge and empty-trigger source, explicitly admitted privately because actual Otto adapters consume it |
 | `WorkflowDesigner/{edges/EdgePillButton,nodes/CollapseChip}.tsx`, terminal add control | Existing reveal, terminal insertion and collapsed-role presentation, extracted without graph/store dependencies |
 | `glyphs.ts`, `types.ts`, `nodeMetrics.ts` | Finite canonical visual-kind glyph pairs, presentation vocabulary and React-free structural metrics |
@@ -98,7 +98,7 @@ import { nodeMetrics } from '@microsoft/designer-ui-v2/metrics';
 // host layout uses nodeMetrics.cards.action: { width: 232, height: 74 }
 ```
 
-Cards forward DOM refs, HTML/ARIA attributes and events; hosts own keyboard navigation, DnD, graph roles, real handles, layout and dynamic measurements. `after` preserves host badges/controls. `AgentNodeCard` takes keyed `tools`, controlled `toolsExpanded`/`onToggleTools`, add callbacks and handle/footer slots; it already composes its own tools panel, so do not nest another `AgentToolsPanel` inside it. `ConditionNodeCard` takes If/Switch kind, ordered output slots, finite case count and taken-output index. `LoopNodeCard`, `NodeFrame` and `NodeMergePoint` provide existing structural presentation. Widths are structural canvas geometry, not responsive page widths. Hosts must account for real Agent/model/tool/frame extents and actual ports together, rather than assigning a fixed whole-Agent height.
+Cards forward DOM refs, HTML/ARIA attributes and events; hosts own keyboard navigation, DnD, graph roles, real handles, layout and dynamic measurements. `after` preserves host badges/controls. `AgentNodeCard` takes keyed `tools`, controlled `toolsExpanded`/`onToggleTools`, add callbacks and handle/footer slots; it already composes its own tools panel, so do not nest another `AgentToolsPanel` inside it. `ConditionNodeCard` takes If/Switch kind, ordered output slots, finite case count and taken-output index; its default outputs stay on `NodeOutputHandles`. `NodeBranchOutputs` is an opt-in primitive for tick/caption/slot branch labels when hosts supply real branch handles. `LoopNodeCard`, `NodeFrame` and `NodeMergePoint` provide existing structural presentation, with `NodeFrame` now exposing additive branch kind/tone/collapsed/subtitle placement states. Widths are structural canvas geometry, not responsive page widths. Hosts must account for real Agent/model/tool/frame extents and actual ports together, rather than assigning a fixed whole-Agent height.
 
 Action, Trigger, Condition, Loop and Agent accept `handles={false}` to suppress decorative ports for a navigation-only projection. The default remains `true`. For Agent this also omits its attached tool connector, but never removes actual supplied tools, the model footer or `after` content. This does not disable host-owned XYFlow handles automatically.
 

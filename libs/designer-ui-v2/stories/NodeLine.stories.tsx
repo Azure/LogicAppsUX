@@ -7,7 +7,7 @@ const meta = {
   component: NodeLine,
   args: { variant: 'solid', orientation: 'horizontal', length: 85 },
   argTypes: {
-    variant: { control: 'select', options: ['solid', 'dashedNeutral', 'dashedSuccess', 'dashedDanger'] },
+    variant: { control: 'select', options: ['solid', 'solidSuccess', 'solidDanger', 'dashedNeutral', 'dashedSuccess', 'dashedDanger'] },
     orientation: { control: 'inline-radio', options: ['horizontal', 'vertical'] },
     length: { control: { type: 'range', min: 4, max: 240, step: 4 } },
   },
@@ -26,7 +26,7 @@ export const Playground: Story = {};
 export const Variants: Story = {
   render: (args) => (
     <div className="sb-grid">
-      {(['solid', 'dashedNeutral', 'dashedSuccess', 'dashedDanger'] as const).map((variant) => (
+      {(['solid', 'solidSuccess', 'solidDanger', 'dashedNeutral', 'dashedSuccess', 'dashedDanger'] as const).map((variant) => (
         <Example key={variant} label={variant}>
           <NodeLine {...args} variant={variant} />
         </Example>

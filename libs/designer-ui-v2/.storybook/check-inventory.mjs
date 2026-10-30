@@ -30,6 +30,7 @@ const visualExports = [
   'NodeTestDataIndicator',
   'NodeToolConnector',
   'NodeLabeledHandle',
+  'NodeBranchOutputs',
   'NodeLine',
   'NodeActionAdd',
   'IfIconRegular',

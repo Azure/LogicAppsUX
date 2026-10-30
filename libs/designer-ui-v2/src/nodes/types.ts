@@ -6,7 +6,7 @@ export type NodeHandleVariant = 'neutral' | 'success' | 'danger';
 export type NodeLabeledHandleBranch = 'true' | 'false';
 export type NodeToolItemSize = 'medium' | 'small';
 export type NodeToolKind = 'action' | 'mcp' | 'subWorkflow';
-export type NodeLineVariant = 'solid' | 'dashedNeutral' | 'dashedSuccess' | 'dashedDanger';
+export type NodeLineVariant = 'solid' | 'solidSuccess' | 'solidDanger' | 'dashedNeutral' | 'dashedSuccess' | 'dashedDanger';
 export type ConditionNodeKind = 'if' | 'switch';
 
 /** Visual groups only. Hosts normalize their own operation vocabulary before selecting a glyph. */
