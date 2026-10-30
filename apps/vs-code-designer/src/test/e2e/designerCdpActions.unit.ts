@@ -54,6 +54,7 @@ async function main(): Promise<void> {
   await testPersistedDesignerReadiness();
   await testExactPersistedNodeReadiness();
   await testStableActionInsertionAcknowledgement();
+  testProductionOperationCardContracts();
   testOperationClickRouting();
   await testOperationClickRetryControls();
   testOperationCardVisibility();
@@ -346,7 +347,7 @@ function testOperationClickRouting(): void {
     innerWidth: 1200,
     innerHeight: 900,
     devicePixelRatio: 2.5,
-    document: { elementFromPoint: () => card },
+    document: { elementFromPoint: () => card, querySelectorAll: () => [card] },
     getComputedStyle: () => style,
   };
   root.parent = root;
@@ -357,6 +358,7 @@ function testOperationClickRouting(): void {
       `(() => {
       ${getStringConstant('visibleDom')}
       ${getStringConstant('operationCardVisibilityDom')}
+      ${getStringConstant('operationCardIdentityDom')}
       ${getStringConstant('operationClickProbeDom')}
     })()`,
       {
@@ -385,6 +387,79 @@ function testOperationClickRouting(): void {
   assert.match(probe().reason, /card moved/);
 }
 
+// Mirrors RecommendationPanelCard/OperationSearchCard, not an invented button:
+// V2 search uses the recommendation family, an API-id automation attribute, and
+// a distinct title node alongside optional badges, connector caption and tools.
+function operationCardFixture(kind: 'search' | 'recommendation' | 'search-testid' = 'search', decorated = false): string {
+  const recommendation = kind === 'recommendation';
+  const prefix = recommendation ? 'msla-recommendation-panel-card' : 'msla-op-search-card';
+  const identity = recommendation
+    ? 'class="fui-Card msla-recommendation-panel-card" role="button" data-automation-id="/connectionProviders/variables" tabindex="0" title="Initialize variables"'
+    : kind === 'search-testid'
+      ? 'data-testid="msla-op-search-result-InitializeVariable"'
+      : 'id="msla-op-search-result-InitializeVariable" class="fui-Card msla-op-search-card-container" data-automation-id="msla-op-search-result-InitializeVariable"';
+  return `<div ${identity} aria-label="Initialize variables" style="flex-direction:row">
+    <div class="${prefix}-image"><span role="presentation"></span></div>
+    <div class="${prefix}-text"><div class="${prefix}-horizontal-flex-items">
+      <span class="${prefix}-title">Initialize variables</span>${decorated ? '<span class="fui-Badge">Preview</span>' : ''}
+    </div>${decorated ? `<span class="${prefix}-subtitle">Variables</span>` : ''}</div>
+    <div class="${prefix}-horizontal-flex-items">
+      <button class="info-dot-visible-on-hover" aria-label="More information"><span aria-hidden="true"></span></button>
+    </div>
+  </div>`;
+}
+
+function testProductionOperationCardContracts(): void {
+  const componentRoot = path.resolve(
+    __dirname,
+    '..',
+    '..',
+    '..',
+    '..',
+    '..',
+    'libs',
+    'designer-ui',
+    'src',
+    'lib',
+    'panel',
+    'recommendationpanel'
+  );
+  const recommendation = fs.readFileSync(path.join(componentRoot, 'recommendationPanelCard', 'index.tsx'), 'utf-8');
+  const search = fs.readFileSync(path.join(componentRoot, 'operationSearchCard', 'index.tsx'), 'utf-8');
+  const grid = fs.readFileSync(path.join(componentRoot, 'browseResultsV2.tsx'), 'utf-8');
+  assert.match(
+    grid,
+    /<RecommendationPanelCard[\s\S]*onOperationClick=\{onOperationSelected\}/,
+    'V2 production operation results must be represented by the regression fixture'
+  );
+  assert.match(recommendation, /className="msla-recommendation-panel-card"/);
+  assert.match(recommendation, /className="msla-recommendation-panel-card-title"/);
+  assert.match(recommendation, /role="button"/);
+  assert.match(recommendation, /aria-label=\{operationTitle\}/);
+  assert.match(recommendation, /data-automation-id=\{apiId\}/);
+  assert.match(search, /className="msla-op-search-card-container"/);
+  assert.match(search, /className="msla-op-search-card-title"/);
+  assert.match(search, /data-automation-id=\{buttonId\}/);
+  const dom = new JSDOM(operationCardFixture('recommendation', true));
+  try {
+    assert.strictEqual(
+      Array.from(dom.window.document.querySelectorAll('.msla-op-search-card-container, [data-automation-id^="msla-op-search-result-"]'))
+        .length,
+      0,
+      'Recommendation regression cannot accidentally match invented legacy selector aliases'
+    );
+    const root = dom.window.document.querySelectorAll('.msla-recommendation-panel-card') as any;
+    assert.strictEqual(root.length, 1);
+    assert.notStrictEqual(
+      root[0].textContent.trim(),
+      'Initialize variables',
+      'Decorations must exercise semantic title extraction, not coincidental whole-card text equality'
+    );
+  } finally {
+    dom.window.close();
+  }
+}
+
 async function testOperationClickRetryControls(): Promise<void> {
   // These are deterministic protocol/DOM controls. Mocked trusted receipts below
   // exercise retry policy only; they are not native trusted-event proof.
@@ -400,7 +475,13 @@ async function testOperationClickRetryControls(): Promise<void> {
     dispatchFailure?: boolean;
     moveAfterClick?: boolean;
     obscureAfterClick?: boolean;
-    beforeCapture?: 'move' | 'obscure' | 'expire';
+    beforeCapture?: 'move' | 'perpetual-move' | 'replace' | 'ambiguous' | 'wrong-title' | 'hide' | 'disable' | 'obscure' | 'expire';
+    geometryRace?: 'move' | 'replace' | 'detach' | 'missing' | 'zero-area' | 'expire';
+    postGeometryDetach?: boolean;
+    scenarioExtraBudget?: boolean;
+    cardKind?: 'search' | 'recommendation' | 'search-testid';
+    decoratedCard?: boolean;
+    mixedFamilyDuplicate?: boolean;
     expireOnRetry?: boolean;
     hiddenAncestor?: boolean;
     loadingBeforeClick?: boolean;
@@ -413,13 +494,12 @@ async function testOperationClickRetryControls(): Promise<void> {
     const dom = new JSDOM(
       `<html><body>
       <div id="msla-node-Request">Request</div>
-      <button class="msla-op-search-card-container" data-automation-id="msla-op-search-result-initialize">
-        <span class="msla-op-search-card-title">Initialize variables</span>
-      </button></body></html>`,
+      ${operationCardFixture(control.cardKind, control.decoratedCard)}</body></html>`,
       { runScripts: 'outside-only' }
     );
     const window = dom.window as any;
-    const card = window.document.querySelector('button');
+    const card = window.document.querySelector('[aria-label="Initialize variables"]');
+    let activeCard = card;
     if (control.hiddenAncestor) {
       card.parentElement.style.visibility = 'hidden';
       card.style.visibility = 'visible';
@@ -430,29 +510,115 @@ async function testOperationClickRetryControls(): Promise<void> {
     Object.defineProperty(window.HTMLElement.prototype, 'getBoundingClientRect', { configurable: true, value: rect });
     Object.defineProperty(window.HTMLElement.prototype, 'getClientRects', { configurable: true, value: () => [rect()] });
     window.HTMLElement.prototype.scrollIntoView = () => undefined;
-    window.document.elementFromPoint = () => (obscured ? window.document.body : card);
+    window.document.elementFromPoint = () => (obscured ? window.document.body : activeCard);
     let now = 100_000;
     const originalNow = Date.now;
+    const originalTimeout = global.setTimeout;
     Date.now = () => now;
+    global.setTimeout = ((callback: () => void, delay = 0) =>
+      originalTimeout(() => {
+        now += delay;
+        callback();
+      }, 0)) as typeof setTimeout;
     let clicks = 0;
     let observations = 0;
+    let geometryReads = 0;
+    let geometryObjects = 0;
+    let geometryReleases = 0;
+    let inputEvents = 0;
+    let disconnected = false;
+    let probeListeners: any[] = [];
+    const removedListeners: any[] = [];
+    for (const target of [window.document, window]) {
+      const remove = target.removeEventListener;
+      target.removeEventListener = function (type: string, listener: unknown, options: unknown) {
+        removedListeners.push([target, type, listener]);
+        return remove.call(this, type, listener, options);
+      };
+    }
+    const NativeObserver = window.MutationObserver;
+    window.MutationObserver = class extends NativeObserver {
+      disconnect() {
+        disconnected = true;
+        super.disconnect();
+      }
+    };
     const captures: string[] = [];
+    const afterEvidence: any[] = [];
+    const replace = () => {
+      const replacement = activeCard.cloneNode(true);
+      activeCard.replaceWith(replacement);
+      activeCard = replacement;
+    };
     const before = [{ nodeId: 'Request', title: 'Request' }];
     const added = { nodeId: 'Initialize', title: 'Initialize variables' };
     const deadline = now + 8000;
     const actions = new ProvenDesignerCdpActions(
       {
-        evaluate: async <T>(_contextId: number | undefined, expression: string) => window.eval(expression) as T,
-        send: async (method, params) => {
+        evaluate: async <T>(_contextId: number | undefined, expression: string, options?: { timeoutMs?: number }) => {
+          if (expression.includes('const result = (actionable, reason, targetPoint)')) {
+            assert.ok(
+              (options?.timeoutMs ?? Number.POSITIVE_INFINITY) <= Math.max(1, deadline - now),
+              'DOM proof must use the remaining insertion budget'
+            );
+          }
+          // A virtual clock makes never-ready deadline controls deterministic.
+          if (!clicks) {
+            now += 25;
+          }
+          const result = window.eval(expression) as T;
+          if (window.__laOperationClick) {
+            probeListeners = window.__laOperationClick.listeners;
+          }
+          return result;
+        },
+        send: async (method, params, options) => {
+          if (
+            ['Runtime.evaluate', 'DOM.getContentQuads', 'DOM.getNodeForLocation', 'DOM.resolveNode', 'Runtime.callFunctionOn'].includes(
+              method
+            )
+          ) {
+            assert.ok(
+              (options?.timeoutMs ?? Number.POSITIVE_INFINITY) <= Math.max(1, deadline - now),
+              'Protocol proof must use the remaining insertion budget'
+            );
+          }
           if (method === 'Page.getFrameTree') {
             return { result: { frameTree: { frame: { id: 'test-input-root' } } } };
           }
           const browserPoint = control.browserPoint ?? { x: 70, y: 40 };
           if (method === 'Runtime.evaluate') {
+            geometryObjects++;
             assert.strictEqual(params?.contextId, 1, 'Resolve the exact selected Designer context');
             return { result: { result: { objectId: 'original-card' } } };
           }
           if (method === 'DOM.getContentQuads') {
+            geometryReads++;
+            if (control.postGeometryDetach && clicks) {
+              activeCard.remove();
+              return { result: { quads: [] } };
+            }
+            if (geometryReads === 2 && control.geometryRace) {
+              assert.strictEqual(inputEvents, 0, 'No input may precede the screenshot/geometry race proof');
+              if (control.geometryRace === 'move') {
+                left++;
+              }
+              if (control.geometryRace === 'replace') {
+                replace();
+              }
+              if (control.geometryRace === 'detach') {
+                activeCard.remove();
+              }
+              if (control.geometryRace === 'expire') {
+                now = deadline;
+              }
+              if (['missing', 'replace', 'detach', 'expire'].includes(control.geometryRace)) {
+                return { result: { quads: [] } };
+              }
+              if (control.geometryRace === 'zero-area') {
+                return { result: { quads: [[0, 0, 0, 0, 0, 0, 0, 0]] } };
+              }
+            }
             assert.strictEqual(params?.objectId, 'original-card');
             return {
               result: {
@@ -475,6 +641,7 @@ async function testOperationClickRetryControls(): Promise<void> {
           }
           if (method === 'DOM.getNodeForLocation') {
             assert.deepStrictEqual({ x: params?.x, y: params?.y }, { x: Math.floor(browserPoint.x), y: Math.floor(browserPoint.y) });
+            window.__testOperationHit = activeCard.querySelector('[class$="-title"]') ?? activeCard;
             return { result: { backendNodeId: 99, frameId: 'designer-frame' } };
           }
           if (method === 'DOM.resolveNode') {
@@ -484,17 +651,19 @@ async function testOperationClickRetryControls(): Promise<void> {
           }
           if (method === 'Runtime.callFunctionOn') {
             assert.strictEqual(params?.objectId, 'hit-target');
-            assert.strictEqual(
-              window.eval(`(${params?.functionDeclaration}).call(document.querySelector('button'))`),
-              true,
-              'Hit verification must compare with the retained original card'
-            );
-            return { result: { result: { value: !control.browserHitMismatch } } };
+            const matches = window.eval(`(${params?.functionDeclaration}).call(window.__testOperationHit)`);
+            return { result: { result: { value: matches && !control.browserHitMismatch } } };
           }
           if (method === 'Runtime.releaseObjectGroup') {
+            geometryReleases++;
             return {};
           }
           assert.strictEqual(method, 'Input.dispatchMouseEvent');
+          inputEvents++;
+          assert.ok(now < deadline, 'Every input must remain inside the original insertion budget');
+          assert.strictEqual(window.__laOperationClick.card, activeCard, 'Input must use the currently proven retained identity');
+          assert.ok(activeCard.isConnected, 'Never dispatch to a detached card');
+          assert.ok(geometryReads >= 2, 'No input until two browser geometry proofs');
           assert.deepStrictEqual({ x: params?.x, y: params?.y }, browserPoint, 'Dispatch browser CSS coordinates without DPR scaling');
           if (control.dispatchFailure) {
             throw new Error('test dispatch transport failure');
@@ -537,16 +706,16 @@ async function testOperationClickRetryControls(): Promise<void> {
             window.document.body.setAttribute('aria-busy', 'false');
           }
           if (control.replaceAfterClick) {
-            card.replaceWith(card.cloneNode(true));
+            replace();
           }
         },
       },
       1,
-      deadline
+      deadline + (control.scenarioExtraBudget ? 30000 : 0)
     ) as any;
     actions.readActionInsertionSnapshot = async () => {
       if (clicks > 0) {
-        now += 500;
+        now += Math.min(500, Math.max(0, deadline - now));
         observations++;
       }
       const inserted = control.insertOn !== undefined && clicks >= control.insertOn;
@@ -563,15 +732,41 @@ async function testOperationClickRetryControls(): Promise<void> {
       let error: unknown;
       try {
         await actions.proven.selectOperation('Initialize variables', ['initialize variable'], async (point: Point) => {
+          assert.strictEqual(window.__laSelectedOperationCard.card, activeCard, 'Production selection must retain the actual fixture card');
           if (control.replaceBeforeProbe) {
-            card.replaceWith(card.cloneNode(true));
+            replace();
           }
           identity = await actions.selectActionWithAcknowledgement(point, before, 'Initialize variables', deadline, {
-            onOperationClick: async (stage: string, attempt: number) => {
+            onOperationClick: async (stage: string, attempt: number, evidence: any) => {
               captures.push(`${attempt}-${stage}`);
-              if (stage === 'before' && attempt === 1) {
-                if (control.beforeCapture === 'move') {
+              if (stage === 'after') {
+                afterEvidence.push(evidence);
+              }
+              if (stage === 'before' && (captures.length === 1 || control.beforeCapture === 'perpetual-move')) {
+                assert.strictEqual(inputEvents, 0, 'Before screenshot precedes all input');
+                if (control.beforeCapture === 'move' || control.beforeCapture === 'perpetual-move') {
                   left++;
+                }
+                if (control.beforeCapture === 'replace') {
+                  replace();
+                }
+                if (control.beforeCapture === 'ambiguous') {
+                  if (control.mixedFamilyDuplicate) {
+                    const wrapper = window.document.createElement('div');
+                    wrapper.innerHTML = operationCardFixture('search', true);
+                    window.document.body.append(wrapper.firstElementChild);
+                  } else {
+                    window.document.body.append(activeCard.cloneNode(true));
+                  }
+                }
+                if (control.beforeCapture === 'wrong-title') {
+                  activeCard.querySelector('[class$="-title"]').textContent = 'Initialize something else';
+                }
+                if (control.beforeCapture === 'hide') {
+                  activeCard.style.display = 'none';
+                }
+                if (control.beforeCapture === 'disable') {
+                  activeCard.setAttribute('aria-disabled', 'true');
                 }
                 if (control.beforeCapture === 'obscure') {
                   obscured = true;
@@ -594,29 +789,153 @@ async function testOperationClickRetryControls(): Promise<void> {
       if (control.expectedSuccess) {
         assert.ifError(error);
       }
-      if (control.beforeCapture || control.expireOnRetry) {
+      if ((!control.expectedSuccess && control.beforeCapture) || control.expireOnRetry) {
         assert.ok(error, `${control.name}: unsafe input must fail closed`);
       }
       assert.ok(now <= deadline + 500, `${control.name}: original deadline must not restart`);
       if (clicks) {
-        assert.deepStrictEqual(captures.slice(0, 2), ['1-before', '1-after'], 'Capture immediately around dispatch');
+        const afterIndex = captures.indexOf('1-after');
+        assert.ok(
+          afterIndex > 0 && captures.slice(0, afterIndex).every((stage) => stage === '1-before'),
+          'Every pre-input refresh must capture a fresh before screenshot without counting an insertion attempt'
+        );
       }
       if (control.dispatchFailure) {
         assert.deepStrictEqual(captures, ['1-before', '1-after'], 'Failed trusted dispatch still needs an immediate after diagnostic');
         assert.match(String(error), /test dispatch transport failure/);
       }
-      if (control.replaceBeforeProbe) {
-        assert.match(String(error), /Cannot bind original exact operation card/);
+      if (!control.expectedClicks && !control.dispatchFailure) {
+        assert.strictEqual(inputEvents, 0, 'Refusal means no input, not just no release');
       }
+      if (control.malformedQuad) {
+        assert.match(String(error), /single finite browser content quad/);
+      }
+      if (control.beforeCapture === 'ambiguous') {
+        assert.match(String(error), /found 2/);
+      }
+      if (control.beforeCapture === 'wrong-title') {
+        assert.match(String(error), /Initialize something else/, 'Acquisition timeout must diagnose the actual candidate title');
+      }
+      if (control.postGeometryDetach) {
+        assert.ok(afterEvidence[0]?.events?.length === 3, 'Detachment during post-click protocol reads must preserve all receipts');
+        assert.strictEqual(afterEvidence[0]?.geometry?.connected, false, 'Report current DOM connectivity with absent quads');
+      }
+      if (
+        control.beforeCapture === 'replace' ||
+        control.beforeCapture === 'move' ||
+        ['move', 'replace', 'missing', 'zero-area'].includes(control.geometryRace ?? '')
+      ) {
+        assert.ok(captures.filter((stage) => stage === '1-before').length >= 2, 'Changed proof requires a fresh screenshot');
+      }
+      assert.strictEqual(geometryReleases, geometryObjects, 'Every geometry object group must be released, including missing quads');
+      assert.strictEqual(disconnected, true, 'Always disconnect mutation observation');
+      assert.strictEqual(probeListeners.length, 5, 'Exercise all pointer/route listeners');
+      assert.ok(
+        probeListeners.every(([target, type, listener]) =>
+          removedListeners.some(
+            ([removedTarget, removedType, removedListener]) =>
+              removedTarget === target && removedType === type && removedListener === listener
+          )
+        ),
+        'Remove every retained pointer/route listener on all exit paths'
+      );
       assert.strictEqual(window.__laOperationClick, undefined, 'Probe must always be disposed');
       assert.strictEqual(window.__laOperationInputRoot, undefined, 'Input-root sentinel must always be disposed');
       assert.strictEqual(window.__laSelectedOperationCard, undefined, 'Original selection reference must always be disposed');
     } finally {
       Date.now = originalNow;
+      global.setTimeout = originalTimeout;
       dom.window.close();
     }
   };
   await run({ name: 'first insertion: no duplicate', insertOn: 1, expectedClicks: 1, expectedSuccess: true });
+  await run({
+    name: 'native V2 recommendation card is acquired after production selection',
+    cardKind: 'recommendation',
+    insertOn: 1,
+    expectedClicks: 1,
+    expectedSuccess: true,
+  });
+  await run({
+    name: 'recommendation semantic title excludes badges and connector caption',
+    cardKind: 'recommendation',
+    decoratedCard: true,
+    insertOn: 1,
+    expectedClicks: 1,
+    expectedSuccess: true,
+  });
+  await run({
+    name: 'legacy test-id-only selected card remains supported',
+    cardKind: 'search-testid',
+    insertOn: 1,
+    expectedClicks: 1,
+    expectedSuccess: true,
+  });
+  for (const beforeCapture of ['move', 'replace'] as const) {
+    await run({
+      name: `native-shaped recommendation screenshot ${beforeCapture} refreshes before input`,
+      cardKind: 'recommendation',
+      decoratedCard: true,
+      beforeCapture,
+      insertOn: 1,
+      expectedClicks: 1,
+      expectedSuccess: true,
+    });
+  }
+  for (const geometryRace of ['move', 'replace', 'missing'] as const) {
+    await run({
+      name: `native-shaped recommendation protocol ${geometryRace} refreshes before input`,
+      cardKind: 'recommendation',
+      decoratedCard: true,
+      geometryRace,
+      insertOn: 1,
+      expectedClicks: 1,
+      expectedSuccess: true,
+    });
+  }
+  await run({
+    name: 'native-shaped recommendation still selectable during unrelated loading',
+    cardKind: 'recommendation',
+    decoratedCard: true,
+    loadingBeforeClick: true,
+    insertOn: 1,
+    expectedClicks: 1,
+    expectedSuccess: true,
+  });
+  await run({
+    name: 'mixed operation card families with equal exact titles refuse input',
+    cardKind: 'recommendation',
+    decoratedCard: true,
+    beforeCapture: 'ambiguous',
+    mixedFamilyDuplicate: true,
+    expectedClicks: 0,
+  });
+  await run({
+    name: 'native-shaped recommendation replacement after input stays frozen',
+    cardKind: 'recommendation',
+    decoratedCard: true,
+    replaceAfterClick: true,
+    expectedClicks: 1,
+  });
+  await run({
+    name: 'successful insertion detaches during post-click geometry, receipts survive',
+    postGeometryDetach: true,
+    insertOn: 1,
+    expectedClicks: 1,
+    expectedSuccess: true,
+  });
+  for (const geometryRace of ['move', 'replace', 'missing', 'zero-area'] as const) {
+    await run({
+      name: `protocol race ${geometryRace} recovers only before input`,
+      geometryRace,
+      insertOn: 1,
+      expectedClicks: 1,
+      expectedSuccess: true,
+    });
+  }
+  for (const geometryRace of ['detach', 'expire'] as const) {
+    await run({ name: `protocol race ${geometryRace} has no unsafe input`, geometryRace, expectedClicks: 0 });
+  }
   await run({
     name: 'browser frame-offset CSS point is authoritative',
     browserPoint: { x: 172.5, y: 133.25 },
@@ -651,55 +970,78 @@ async function testOperationClickRetryControls(): Promise<void> {
   await run({ name: 'card moved after click: no retry', moveAfterClick: true, expectedClicks: 1 });
   await run({ name: 'card obscured after click: no retry', obscureAfterClick: true, expectedClicks: 1 });
   await run({ name: 'same-title rerender cannot substitute original card', replaceAfterClick: true, expectedClicks: 1 });
-  await run({ name: 'same-title rerender between matching and dispatch is refused', replaceBeforeProbe: true, expectedClicks: 0 });
+  await run({
+    name: 'same-title rerender before any input is freshly proven',
+    replaceBeforeProbe: true,
+    insertOn: 1,
+    expectedClicks: 1,
+    expectedSuccess: true,
+  });
   await run({ name: 'dispatch failure retains after diagnostic', dispatchFailure: true, expectedClicks: 0 });
-  for (const beforeCapture of ['move', 'obscure', 'expire'] as const) {
+  for (const beforeCapture of ['move', 'replace'] as const) {
+    await run({
+      name: `capture race ${beforeCapture} refreshes before input`,
+      beforeCapture,
+      insertOn: 1,
+      expectedClicks: 1,
+      expectedSuccess: true,
+    });
+  }
+  for (const beforeCapture of ['perpetual-move', 'ambiguous', 'wrong-title', 'hide', 'disable', 'obscure', 'expire'] as const) {
     await run({ name: `capture race ${beforeCapture}: no dispatch`, beforeCapture, expectedClicks: 0 });
   }
   await run({ name: 'retry capture consumes original budget', expireOnRetry: true, expectedClicks: 1 });
+  await run({
+    name: 'screenshot cannot renew insertion budget within a longer scenario',
+    scenarioExtraBudget: true,
+    beforeCapture: 'expire',
+    expectedClicks: 0,
+  });
 }
 
 async function testDiscoveryVisibleOperationCard(): Promise<void> {
-  const dom = new JSDOM(
-    `<html><body><div class="msla-panel-root-Discovery">
-    <button class="msla-op-search-card-container">Initialize variables</button>
+  for (const kind of ['search', 'recommendation', 'search-testid'] as const) {
+    const dom = new JSDOM(
+      `<html><body><div class="msla-panel-root-Discovery">
+    ${operationCardFixture(kind, true)}
     </div></body></html>`,
-    { runScripts: 'outside-only' }
-  );
-  const window = dom.window as any;
-  const card = window.document.querySelector('button');
-  window.document.elementFromPoint = () => card;
-  Object.defineProperty(window.HTMLElement.prototype, 'getBoundingClientRect', {
-    configurable: true,
-    value(this: { tagName: string }) {
-      return this === card
-        ? { left: 20, top: 20, right: 120, bottom: 60, width: 100, height: 40 }
-        : { left: 0, top: 0, right: 0, bottom: 0, width: 0, height: 0 };
-    },
-  });
-  Object.defineProperty(window.HTMLElement.prototype, 'getClientRects', { configurable: true, value: () => [{}] });
-  const actions = new ProvenDesignerCdpActions(
-    {
-      evaluate: async <T>(_id: number | undefined, expression: string) => window.eval(expression) as T,
-      send: async () => undefined,
-    },
-    1,
-    Date.now() + 1000
-  ) as any;
-  try {
-    assert.strictEqual(
-      (await actions.readActionInsertionSnapshot()).discoveryVisible,
-      true,
-      'A visible product operation card proves discovery even when wrappers have no box'
+      { runScripts: 'outside-only' }
     );
-    card.style.display = 'none';
-    assert.strictEqual(
-      (await actions.readActionInsertionSnapshot()).discoveryVisible,
-      false,
-      'Hidden result cards must not keep discovery visible'
-    );
-  } finally {
-    dom.window.close();
+    const window = dom.window as any;
+    const card = window.document.querySelector('[aria-label="Initialize variables"]');
+    window.document.elementFromPoint = () => card;
+    Object.defineProperty(window.HTMLElement.prototype, 'getBoundingClientRect', {
+      configurable: true,
+      value(this: { tagName: string }) {
+        return this === card
+          ? { left: 20, top: 20, right: 120, bottom: 60, width: 100, height: 40 }
+          : { left: 0, top: 0, right: 0, bottom: 0, width: 0, height: 0 };
+      },
+    });
+    Object.defineProperty(window.HTMLElement.prototype, 'getClientRects', { configurable: true, value: () => [{}] });
+    const actions = new ProvenDesignerCdpActions(
+      {
+        evaluate: async <T>(_id: number | undefined, expression: string) => window.eval(expression) as T,
+        send: async () => undefined,
+      },
+      1,
+      Date.now() + 1000
+    ) as any;
+    try {
+      assert.strictEqual(
+        (await actions.readActionInsertionSnapshot()).discoveryVisible,
+        true,
+        'A visible product operation card proves discovery even when wrappers have no box'
+      );
+      card.style.display = 'none';
+      assert.strictEqual(
+        (await actions.readActionInsertionSnapshot()).discoveryVisible,
+        false,
+        'Hidden result cards must not keep discovery visible'
+      );
+    } finally {
+      dom.window.close();
+    }
   }
 }
 
@@ -1291,6 +1633,13 @@ function testSearchResultsAndOperationParity(): void {
     [...expectedResultSelectors, '[class*="connector"] [role="button"]', '[class*="connector"] button'],
     'Operation selector order'
   );
+  assertOrdered(
+    getStringConstant('operationCardIdentityDom'),
+    [...expectedResultSelectors, '[class*="connector"] [role="button"]', '[class*="connector"] button'],
+    'Readiness must accept every selector family that can retain an operation card'
+  );
+  assert.match(operation, /dispatch \? operationCardIdentityDom/);
+  assert.match(operation, /operationCardTitle\(card\)/);
   assertOrdered(
     operation,
     [

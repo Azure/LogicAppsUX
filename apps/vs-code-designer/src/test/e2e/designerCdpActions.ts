@@ -950,6 +950,7 @@ export class MsnDesignerCdpActions {
         const variants = ${JSON.stringify([operationName, ...variants].map((variant) => variant.toLowerCase()))};
         const normalize = (value) => (value || '').replace(/\\s+/g, ' ').trim();
         const isVisible = (element) => !!(element && (element.offsetWidth || element.offsetHeight || element.getClientRects().length));
+        ${dispatch ? operationCardIdentityDom : ''}
         const selectors = [
           '[data-automation-id^="msla-op-search-result-"]',
           '[data-testid^="msla-op-search-result-"]',
@@ -970,7 +971,7 @@ export class MsnDesignerCdpActions {
 
         const exactOperationName = variants[0];
         const getCardDetails = (card) => {
-          const title = normalize(card.querySelector('.msla-op-search-card-title')?.textContent);
+          const title = ${dispatch ? 'operationCardTitle(card)' : "normalize(card.querySelector('.msla-op-search-card-title')?.textContent)"};
           const text = normalize(title || card.textContent).toLowerCase();
           const aria = normalize(card.getAttribute('aria-label')).toLowerCase();
           const aid = normalize(card.getAttribute('data-automation-id')).toLowerCase();
@@ -1494,6 +1495,7 @@ export interface OperationClickEvidence {
   frames?: unknown[];
   events?: Array<{ type: string; trusted: boolean; matchesCard: boolean; recipient: string; path?: string[]; x: number; y: number }>;
   activity?: boolean;
+  geometry?: Record<string, unknown>;
 }
 
 // A descendant may restore visibility:hidden inherited from an ancestor.
@@ -1511,6 +1513,34 @@ const operationCardVisibilityDom = `
     }
     return true;
   };
+`;
+
+// Keep every card family accepted by selectOperation. V2 search renders
+// RecommendationPanelCard (API-id automation attribute), not OperationSearchCard.
+// Read the semantic title, excluding connector captions, badges and icon tools.
+const operationCardIdentityDom = `
+  const operationCardSelectors = [
+    '[data-automation-id^="msla-op-search-result-"]',
+    '[data-testid^="msla-op-search-result-"]',
+    '.msla-op-search-card-container',
+    '.msla-op-search-card',
+    '.msla-recommendation-panel-card',
+    '[role="option"]',
+    '[class*="connector"] [role="button"]',
+    '[class*="connector"] button',
+  ];
+  const operationCardTitle = (card) => normalize(card.querySelector(
+    '.msla-op-search-card-title, .msla-recommendation-panel-card-title'
+  )?.textContent || card.textContent);
+  const operationCards = () => Array.from(document.querySelectorAll(operationCardSelectors.join(',')));
+  const exactOperationCards = (title) => operationCards().filter((card) =>
+    operationCardVisible(card) && operationCardTitle(card).toLowerCase() === title);
+  const describeOperationCard = (card) => card ? ({
+    title: operationCardTitle(card), className: String(card.className),
+    automationId: card.getAttribute('data-automation-id'), testId: card.getAttribute('data-testid'),
+    role: card.getAttribute('role'), ariaLabel: card.getAttribute('aria-label'),
+    connected: card.isConnected, visible: operationCardVisible(card),
+  }) : null;
 `;
 
 // Local card checks only. VS Code masks window.parent, so CDP DOM geometry,
@@ -1534,9 +1564,15 @@ const operationClickProbeDom = `
   }];
   const result = (actionable, reason, targetPoint) => ({
     actionable, reason, point, targetPoint, bounds: cardBounds, frames, events: state.events, activity: state.activity,
+    geometry: { connected: card.isConnected, dispatched: state.dispatched, binding: state.binding,
+      routeChanged: state.routeChanged },
   });
   if (state.routeChanged) return result(false, 'Original operation card or route changed');
-  if (!card.isConnected || normalize(card.querySelector('.msla-op-search-card-title')?.textContent || card.textContent).toLowerCase() !== state.title ||
+  const exactCards = exactOperationCards(state.title);
+  if (exactCards.length !== 1 || exactCards[0] !== card) {
+    return result(false, 'Expected one retained visible exact operation card; found ' + exactCards.length);
+  }
+  if (!card.isConnected || operationCardTitle(card).toLowerCase() !== state.title ||
       !operationCardVisible(card) || card.disabled || card.getAttribute('aria-disabled') === 'true') {
     return result(false, 'Original exact card is no longer actionable');
   }
@@ -1876,9 +1912,9 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
       JSON.stringify(snapshot.nodes.map((node) => node.nodeId).sort()) !== JSON.stringify(baselineIds) ||
       snapshot.panelNodeIds.length > 0;
     const probe = async (): Promise<OperationClickEvidence> => {
-      const evidence = await this.readOperationClickEvidence();
+      const evidence = await this.readOperationClickEvidence(deadline);
       if (evidence.actionable) {
-        const geometry = JSON.stringify(evidence.targetPoint);
+        const geometry = JSON.stringify([evidence.targetPoint, evidence.bounds, evidence.frames, evidence.geometry?.binding]);
         if (protocolGeometry && protocolGeometry !== geometry) {
           return { ...evidence, actionable: false, reason: 'Browser-reported click route moved' };
         }
@@ -1907,30 +1943,17 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
           ${visibleDom}
           ${operationCardVisibilityDom}
           const point = ${JSON.stringify(point)};
-          const hit = document.elementFromPoint(point.x, point.y);
           const title = ${JSON.stringify(operationName.toLowerCase())};
           const selection = window.__laSelectedOperationCard;
           delete window.__laSelectedOperationCard;
           const card = selection?.card;
-          if (!card?.isConnected || !operationCardVisible(card) || !(card === hit || card.contains(hit)) ||
-              normalize(card.querySelector('.msla-op-search-card-title')?.textContent || card.textContent).toLowerCase() !== title) {
-            throw new Error('Cannot bind original exact operation card: ' + JSON.stringify({
-              selected: !!selection, connected: card?.isConnected, visible: card ? visible(card) : false,
-              hitMatches: !!card && (card === hit || card.contains(hit)),
-              title: card ? normalize(card.querySelector('.msla-op-search-card-title')?.textContent || card.textContent).toLowerCase() : null,
-              expectedTitle: title, point, bounds: selection?.bounds,
-              currentBounds: card ? { left: card.getBoundingClientRect().left, top: card.getBoundingClientRect().top,
-                width: card.getBoundingClientRect().width, height: card.getBoundingClientRect().height } : null,
-              clip: card ? bounds(card) : null,
-            }));
-          }
           const state = window.__laOperationClick = {
             card, title, activity: false, routeChanged: false, dispatched: false, events: [], listeners: [],
-            bounds: selection.bounds,
+            bounds: selection?.bounds, binding: 0, selectedPoint: point,
           };
           const record = (event) => {
             state.events.push({ type: event.type, trusted: event.isTrusted,
-              matchesCard: event.composedPath().includes(card),
+              matchesCard: event.composedPath().includes(state.card),
               recipient: event.target instanceof Element ? event.target.tagName + '#' + event.target.id + '.' + String(event.target.className).slice(0, 160) : String(event.target),
               path: event.composedPath().slice(0, 12).map((element) => element instanceof Element
                 ? element.tagName + '#' + element.id + '.' + String(element.className).slice(0, 100) : String(element)),
@@ -1953,8 +1976,8 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
              Array.from(element.querySelectorAll(insertionSelector)).some(isActivity));
           state.observer = new MutationObserver((records) => {
             if (records.some((record) =>
-                record.type === 'attributes' && (record.target === card || record.target.contains(card)) ||
-                [...record.removedNodes].some((node) => node === card || node instanceof Element && node.contains(card)))) {
+                record.type === 'attributes' && (record.target === state.card || record.target.contains(state.card)) ||
+                [...record.removedNodes].some((node) => node === state.card || node instanceof Element && node.contains(state.card)))) {
               state.routeChanged = true;
             }
             if (records.some((record) => record.type === 'attributes' ? isActivity(record.target) :
@@ -1965,25 +1988,83 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
           state.observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeOldValue: true,
             attributeFilter: ['id', 'class', 'style', 'aria-busy', 'aria-disabled', 'disabled'] });
         })()`);
+      const prepare = async (): Promise<{ ready: boolean; reason?: string; change?: string; diagnostics?: Record<string, unknown> }> =>
+        this.cdp.evaluate(
+          this.contextId,
+          `(() => {
+          ${visibleDom}
+          ${operationCardVisibilityDom}
+          ${operationCardIdentityDom}
+          const state = window.__laOperationClick;
+          if (state.dispatched) throw new Error('Cannot rebind operation card after input');
+          const candidates = exactOperationCards(state.title);
+          const diagnostics = { retained: describeOperationCard(state.card),
+            candidates: operationCards().slice(0, 12).map(describeOperationCard) };
+          if (candidates.length !== 1) return { ready: false, reason: 'Expected one visible exact operation card; found ' + candidates.length, diagnostics };
+          const card = candidates[0];
+          if (card.disabled || card.getAttribute('aria-disabled') === 'true') return { ready: false, reason: 'Exact operation card disabled', diagnostics };
+          const rect = card.getBoundingClientRect();
+          const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+          if (!(hit === card || card.contains(hit))) return { ready: false, reason: 'Exact operation card obscured before binding', diagnostics };
+          const currentBounds = { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
+          const change = state.card !== card ? 'replaced-card' :
+            JSON.stringify(state.bounds) !== JSON.stringify(currentBounds) ? 'same-card-layout' : 'retained-card';
+          if (change !== 'retained-card') state.binding++;
+          state.card = card;
+          state.bounds = currentBounds;
+          state.routeChanged = false;
+          state.routeSignature = undefined;
+          return { ready: true, change, diagnostics };
+        })()`,
+          { timeoutMs: Math.min(5000, Math.max(1, deadline - Date.now())) }
+        );
       const dispatch = async (): Promise<boolean> => {
         const attempt = attempts + 1;
-        await this.evaluate('window.__laOperationClick.events = []');
-        const beforeClick = await probe();
-        console.log(`[designer-operation-click] ${operationName} before attempt=${attempt} ${JSON.stringify(beforeClick)}`);
-        await hooks.onOperationClick?.('before', attempt, beforeClick);
-        // Screenshots take time: revalidate the original DOM object, geometry,
-        // ancestor hit tests AND insertion activity immediately before input.
-        activity ||= snapshotActive(await this.readActionInsertionSnapshot());
-        const ready = await probe();
-        activity ||= !!ready.activity;
-        if (!ready.actionable || (attempt > 1 && activity)) {
-          console.log(`[designer-operation-click] ${operationName} refused attempt=${attempt} ${JSON.stringify({ ...ready, activity })}`);
-          if (attempt === 1) {
-            assert.fail(`Unsafe operation click route: ${JSON.stringify(ready)}`);
+        let ready: OperationClickEvidence = { actionable: false, reason: 'No pre-dispatch observation' };
+        while (Date.now() < deadline) {
+          this.assertActive();
+          // Only the never-dispatched path may refresh identity/layout. Each
+          // refresh needs a new screenshot and two matching protocol proofs.
+          if (attempts === 0) {
+            protocolGeometry = undefined;
+            const prepared = await prepare();
+            console.log(`[designer-operation-click] ${operationName} readiness ${JSON.stringify(prepared)}`);
+            if (prepared.ready) {
+              ready = await probe();
+            } else {
+              ready = { actionable: false, reason: prepared.reason, geometry: { acquisition: prepared.diagnostics } };
+            }
+          } else {
+            ready = await probe();
           }
-          return false;
+          if (ready.actionable) {
+            await this.evaluate('window.__laOperationClick.events = []');
+            console.log(`[designer-operation-click] ${operationName} before attempt=${attempt} ${JSON.stringify(ready)}`);
+            await hooks.onOperationClick?.('before', attempt, ready);
+            if (Date.now() >= deadline) {
+              break;
+            }
+            activity ||= snapshotActive(await this.readActionInsertionSnapshot());
+            ready = await probe();
+            activity ||= !!ready.activity;
+            if (ready.actionable && !(attempt > 1 && activity)) {
+              break;
+            }
+          }
+          console.log(`[designer-operation-click] ${operationName} refused attempt=${attempt} ${JSON.stringify({ ...ready, activity })}`);
+          if (attempts > 0) {
+            return false;
+          }
+          // Detection polling, not an insertion retry. Never renew the budget.
+          const remaining = deadline - Date.now();
+          if (remaining > 0) {
+            await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining)));
+          }
         }
-        assert.ok(Date.now() < deadline, 'Operation insertion deadline expired before input');
+        assert.ok(
+          ready.actionable && Date.now() < deadline,
+          `Operation insertion deadline expired before input. Last readiness: ${JSON.stringify(ready)}`
+        );
         this.assertActive();
         attempts++;
         dispatchedAt = Date.now();
@@ -2054,54 +2135,103 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
     }
   }
 
-  private async readOperationClickEvidence(): Promise<OperationClickEvidence> {
-    const evidence = await this.evaluate<OperationClickEvidence>(
-      `(() => { ${visibleDom} ${operationCardVisibilityDom} ${operationClickProbeDom} })()`
+  private async readOperationClickEvidence(deadline: number = this.deadline): Promise<OperationClickEvidence> {
+    const options = () => ({ timeoutMs: Math.min(5000, Math.max(1, Math.min(this.deadline, deadline) - Date.now())) });
+    const evaluate = <T>(expression: string): Promise<T> => {
+      this.assertActive();
+      return this.cdp.evaluate<T>(this.contextId, expression, options());
+    };
+    const send = (method: string, params: Record<string, unknown>): Promise<unknown> => {
+      this.assertActive();
+      return this.cdp.send(method, params, options());
+    };
+    const evidence = await evaluate<OperationClickEvidence>(
+      `(() => { ${visibleDom} ${operationCardVisibilityDom} ${operationCardIdentityDom} ${operationClickProbeDom} })()`
     );
     if (!evidence.actionable) {
       return evidence;
     }
     const objectGroup = `operation-geometry-${this.contextId}-${Date.now()}-${Math.random()}`;
     try {
-      const card = (await this.send('Runtime.evaluate', {
+      const card = (await send('Runtime.evaluate', {
         contextId: this.contextId,
         expression: 'window.__laOperationClick.card',
         objectGroup,
         returnByValue: false,
       })) as { result?: { result?: { objectId?: string } } };
-      assert.ok(card.result?.result?.objectId, 'Cannot resolve original operation card for browser geometry');
-      const quads = (await this.send('DOM.getContentQuads', { objectId: card.result.result.objectId })) as {
+      if (!card.result?.result?.objectId) {
+        return { ...evidence, actionable: false, reason: 'Cannot resolve retained operation card for browser geometry' };
+      }
+      const quads = (await send('DOM.getContentQuads', { objectId: card.result.result.objectId })) as {
         result?: { quads?: number[][] };
+        error?: unknown;
       };
       const quad = quads.result?.quads;
-      assert.ok(
-        quad?.length === 1 && quad[0].length === 8 && quad[0].every(Number.isFinite),
-        'Operation card must have one finite browser-reported content quad'
-      );
+      if (!(quad?.length === 1 && quad[0].length === 8 && quad[0].every(Number.isFinite))) {
+        // A detached/replaced card and a connected card in transient layout can
+        // both have no quad. Preserve receipts and report the *current* DOM state.
+        const current = await evaluate<OperationClickEvidence>(
+          `(() => { ${visibleDom} ${operationCardVisibilityDom} ${operationCardIdentityDom} ${operationClickProbeDom} })()`
+        );
+        return {
+          ...current,
+          actionable: false,
+          reason: `Operation card has no single finite browser content quad; DOM: ${current.reason ?? 'still actionable'}`,
+          geometry: { ...current.geometry, quads: quad ?? null, protocolError: quads.error },
+        };
+      }
+      const area =
+        Math.abs(
+          quad[0].reduce(
+            (sum, value, index, values) =>
+              index % 2 ? sum : sum + value * values[(index + 3) % 8] - values[(index + 2) % 8] * values[index + 1],
+            0
+          )
+        ) / 2;
+      if (area <= 0) {
+        return {
+          ...evidence,
+          actionable: false,
+          reason: 'Operation card browser content quad has zero area',
+          geometry: { ...evidence.geometry, quads: quad },
+        };
+      }
       // CDP returns main-frame viewport CSS coordinates, including frame offsets
       // and transforms. Never multiply these by devicePixelRatio.
       const targetPoint = {
         x: (quad[0][0] + quad[0][2] + quad[0][4] + quad[0][6]) / 4,
         y: (quad[0][1] + quad[0][3] + quad[0][5] + quad[0][7]) / 4,
       };
-      const hit = (await this.send('DOM.getNodeForLocation', {
+      const hit = (await send('DOM.getNodeForLocation', {
         x: Math.floor(targetPoint.x),
         y: Math.floor(targetPoint.y),
       })) as { result?: { backendNodeId?: number; frameId?: string } };
-      assert.ok(hit.result?.backendNodeId, 'Browser could not hit-test the operation click point');
-      const resolved = (await this.send('DOM.resolveNode', {
+      if (!hit.result?.backendNodeId) {
+        return { ...evidence, actionable: false, reason: 'Browser could not hit-test the operation click point', targetPoint };
+      }
+      const resolved = (await send('DOM.resolveNode', {
         backendNodeId: hit.result.backendNodeId,
         executionContextId: this.contextId,
         objectGroup,
       })) as { result?: { object?: { objectId?: string } } };
-      assert.ok(resolved.result?.object?.objectId, 'Cannot resolve browser operation hit target');
-      const matches = (await this.send('Runtime.callFunctionOn', {
+      if (!resolved.result?.object?.objectId) {
+        return { ...evidence, actionable: false, reason: 'Cannot resolve browser operation hit target', targetPoint };
+      }
+      const matches = (await send('Runtime.callFunctionOn', {
         objectId: resolved.result.object.objectId,
         functionDeclaration: 'function() { const card = window.__laOperationClick.card; return card === this || card.contains(this); }',
         returnByValue: true,
       })) as { result?: { result?: { value?: boolean } } };
+      // Protocol calls yield to React/layout. Do not dispatch using a DOM proof
+      // taken before them; also preserve late receipts if insertion removed it.
+      const current = await evaluate<OperationClickEvidence>(
+        `(() => { ${visibleDom} ${operationCardVisibilityDom} ${operationCardIdentityDom} ${operationClickProbeDom} })()`
+      );
+      if (!current.actionable || JSON.stringify([current.bounds, current.frames]) !== JSON.stringify([evidence.bounds, evidence.frames])) {
+        return { ...current, actionable: false, reason: current.reason ?? 'Operation card changed during browser geometry read' };
+      }
       return {
-        ...evidence,
+        ...current,
         targetPoint,
         frames: [...(evidence.frames ?? []), { quad: quad[0], hitFrameId: hit.result.frameId }],
         actionable: matches.result?.result?.value === true,
@@ -2854,6 +2984,7 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
     return this.evaluate<ActionInsertionSnapshot>(`(() => {
       ${visibleDom}
       ${operationCardVisibilityDom}
+      ${operationCardIdentityDom}
       const panelNodes = Array.from(document.querySelectorAll('[id^="msla-node-details-panel-"]'))
         .filter(visible)
         .map((element) => {
@@ -2889,16 +3020,13 @@ export class ProvenDesignerCdpActions extends DesignerCdpActions {
         '.msla-panel-root-Discovery',
         '[data-automation-id="msla-search-box"]',
         '.msla-search-box',
-      ].some((selector) => Array.from(document.querySelectorAll(selector)).some(visible)) || [
-        '[data-automation-id^="msla-op-search-result-"]',
-        '[data-testid^="msla-op-search-result-"]',
-        '.msla-op-search-card-container',
-      ].some((selector) => Array.from(document.querySelectorAll(selector)).some((card) => {
+      ].some((selector) => Array.from(document.querySelectorAll(selector)).some(visible)) ||
+        operationCards().some((card) => {
         if (!operationCardVisible(card)) return false;
         const rect = card.getBoundingClientRect();
         const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
         return hit && (hit === card || card.contains(hit));
-      }));
+      });
       const loaderCount = [
         '.monaco-progress-container',
         '.codicon-loading',

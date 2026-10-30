@@ -331,6 +331,38 @@ rerenders and persistence, use `ProvenDesignerCdpActions`:
   that remount when one exact requested operation identity is stable, but fail
   closed when multiple newly observed identities match the requested title.
   Do not replay the operation click merely because acknowledgement is delayed.
+  The shared action helper may poll pre-dispatch readiness within the original
+  insertion deadline: unrelated search loading does not block a visible exact
+  card. Screenshot capture and CDP geometry reads yield to React, so a connected
+  card with transient/moved layout is distinguished from a detached/replaced
+  card in readiness diagnostics. Only before **any** input has been dispatched
+  may the helper bind a fresh, sole visible exact-title product card or refresh
+  its layout baseline. Each refresh requires a fresh before screenshot and two
+  matching DOM/viewport/browser-quad/hit proofs. Missing, malformed or zero-area
+  quads are not permission to click: report current connectivity, binding,
+  route state and returned quads, then poll only while the original budget
+  remains. Ambiguous titles, wrong hits, disabled or hidden cards remain
+  non-actionable. Protocol viewport CSS coordinates must never be DPR-scaled.
+  After dispatch, card identity and geometry are frozen. At most one idle
+  misclick retry is allowed on that original card, with all trusted
+  pointerdown/up/click receipts and sticky no-insertion-activity guards.
+  Successful insertion may detach discovery during a post-click geometry read;
+  preserve event receipts even when no quad remains, and acknowledge insertion
+  from the stable new node rather than treating missing geometry as a click
+  failure or retargeting another card. Geometry object groups, event listeners
+  and mutation observation must be disposed on success, refusal and timeout.
+  Acquisition, readiness probes and discovery visibility must retain the full
+  operation-selector family supported by initial selection. In particular V2
+  search uses `RecommendationPanelCard`: `.msla-recommendation-panel-card`,
+  `role="button"`, an API-id automation attribute, and a
+  `.msla-recommendation-panel-card-title` semantic title. It need not have an
+  `msla-op-search-result-*` attribute or legacy search-card class. Shared title
+  extraction must exclude preview/trigger badges, connector captions and icon
+  tools. Zero-match diagnostics must include the retained card and candidate
+  titles/classes/identity attributes; do not infer hiddenness from an empty
+  narrowed selector. Source-backed production-shaped fixtures cover both card
+  families through initial selection and pre-dispatch geometry, not only a
+  fabricated search-button DOM.
   Responsive hosts may replace the canvas with the newly opened details panel;
   insertion identity therefore combines canvas-card IDs with the one visible
   exact details-panel ID and its semantic header title. The details-panel
