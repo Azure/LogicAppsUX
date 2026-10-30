@@ -334,7 +334,10 @@ export function assertRegenerationRuntimeProfile(settingsPath: string, handoff: 
   const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8')) as Record<string, unknown>;
   const actual = selectedSettings(settings);
   assert.deepStrictEqual(actual, handoff.settings, 'Regular Code changed admitted runtime configuration or substituted system binaries');
-  for (const key of ['extensions.autoUpdate', 'extensions.autoCheckUpdates']) {
-    assert.strictEqual(settings[key], false, 'Regular Code must retain the prepared extension cohort');
-  }
+  const autoUpdate = settings['extensions.autoUpdate'];
+  assert.ok(
+    autoUpdate === false || autoUpdate === 'off',
+    'Regular Code must retain the prepared extension cohort: extensions.autoUpdate must be disabled'
+  );
+  assert.strictEqual(settings['extensions.autoCheckUpdates'], false, 'Regular Code must retain the prepared extension cohort');
 }

@@ -454,6 +454,12 @@ async function main(): Promise<void> {
     assert.strictEqual(freshSettings['extensions.autoUpdate'], false);
     assert.strictEqual(freshSettings['extensions.autoCheckUpdates'], false);
     assert.strictEqual(freshSettings['extensions.allowed'], undefined, 'Required C# activation dependencies must not be disabled');
+    fs.writeFileSync(freshSettingsPath, JSON.stringify({ ...freshSettings, 'extensions.autoUpdate': 'off' }));
+    assertRegenerationRuntimeProfile(freshSettingsPath, runtimeHandoff);
+    for (const value of [true, 'on', 'onlyEnabledExtensions', 'false', null, undefined]) {
+      fs.writeFileSync(freshSettingsPath, JSON.stringify({ ...freshSettings, 'extensions.autoUpdate': value }));
+      assert.throws(() => assertRegenerationRuntimeProfile(freshSettingsPath, runtimeHandoff), /prepared extension cohort/);
+    }
     for (const key of ['extensions.autoUpdate', 'extensions.autoCheckUpdates']) {
       fs.writeFileSync(freshSettingsPath, JSON.stringify({ ...freshSettings, [key]: true }));
       assert.throws(() => assertRegenerationRuntimeProfile(freshSettingsPath, runtimeHandoff), /prepared extension cohort/);

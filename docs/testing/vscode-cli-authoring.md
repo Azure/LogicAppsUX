@@ -96,6 +96,11 @@ debug adapter. Disabling them requires a separate product
 contract change, not a cleanup workaround. Preserving the cohort prevents
 version drift but is not itself proof that an upstream server shutdown race is
 resolved; exact native natural-closure receipts remain required.
+When validating the profile after Code has run, accept both the legacy boolean
+`false` and the migrated string `'off'` for `extensions.autoUpdate`. Current Code
+migrates that setting to its string enum; requiring the original JSON type
+rejects an unchanged disabled-update policy. Continue to require boolean `false`
+for `extensions.autoCheckUpdates` and reject enabled or missing update settings.
 
 ### 3. Acquire an approved local Azure token without printing it
 
