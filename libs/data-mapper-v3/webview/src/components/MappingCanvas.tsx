@@ -15,6 +15,7 @@ import {
   Color20Regular,
   Eye20Regular,
   Filter20Regular,
+  ReOrderDotsVertical20Regular,
   Target20Regular,
 } from '@fluentui/react-icons';
 import React, { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react';
@@ -126,8 +127,7 @@ const functoidHalfHeight = functoidHeight / 2;
 const canvasEdgePadding = 24;
 const dotRadius = 8;
 const panThreshold = 3;
-const dragHoldMs = 250;
-const dragHoldTolerance = 4;
+const dragThreshold = 4;
 const edgeScrollMargin = 40;
 const edgeScrollStep = 24;
 const minZoom = 0.1;
@@ -152,6 +152,12 @@ const useCanvasStyles = makeStyles({
     zIndex: 12,
     backgroundColor: 'var(--vscode-editor-background)',
     borderRadius: '4px',
+  },
+  toolsHandle: {
+    cursor: 'grab',
+    touchAction: 'none',
+    minWidth: '24px',
+    ':active': { cursor: 'grabbing' },
   },
 });
 
@@ -428,21 +434,6 @@ function LinkPath({
           </circle>
         );
       })}
-      {link.label && (
-        <text
-          x={(from.x + to.x) / 2}
-          y={(from.y + to.y) / 2 - 6}
-          textAnchor="middle"
-          fontSize="12"
-          fill="var(--vscode-foreground, #ccc)"
-          stroke="var(--vscode-editor-background, #1e1e1e)"
-          strokeWidth="4"
-          paintOrder="stroke"
-          pointerEvents="none"
-        >
-          {link.label}
-        </text>
-      )}
     </g>
   );
 }
@@ -592,8 +583,17 @@ function FunctoidNode({
   setDragTarget(target: DragTarget): void;
 }): React.ReactElement {
   const clickTimer = useRef<number | null>(null);
-  const cancelHold = useRef<(() => void) | null>(null);
-  useEffect(() => () => cancelHold.current?.(), []);
+  const cancelPendingDrag = useRef<(() => void) | null>(null);
+  const didDrag = useRef(false);
+  useEffect(
+    () => () => {
+      cancelPendingDrag.current?.();
+      if (clickTimer.current) {
+        clearTimeout(clickTimer.current);
+      }
+    },
+    []
+  );
   const connectorPointerStarted = useRef<'input' | 'output' | null>(null);
   const FunctoidIcon = getFunctoidIcon(functoid.name, functoid.category);
   const brand = getFunctoidBrand(functoid.category);
@@ -605,6 +605,10 @@ function FunctoidNode({
       transform={`translate(${functoid.x * zoom}, ${functoid.y * zoom}) scale(${zoom})`}
       onClick={(event) => {
         event.stopPropagation();
+        if (didDrag.current) {
+          didDrag.current = false;
+          return;
+        }
         const additive = event.ctrlKey || event.metaKey || event.shiftKey;
         clickTimer.current = window.setTimeout(() => callbacks.onFunctoidSelect?.(functoid.id, additive), 250);
       }}
@@ -617,7 +621,7 @@ function FunctoidNode({
         callbacks.onFunctoidDoubleClick?.(functoid.id);
       }}
       onMouseDown={(event) => {
-        if ((event.target as Element).classList.contains('functoid-connector')) {
+        if (event.button !== 0 || (event.target as Element).classList.contains('functoid-connector')) {
           return;
         }
         event.preventDefault();
@@ -632,27 +636,28 @@ function FunctoidNode({
           clientX: event.clientX,
           clientY: event.clientY,
         };
-        // Like a button: a plain click selects, and only a press held for a moment starts a drag.
-        cancelHold.current?.();
+        cancelPendingDrag.current?.();
+        didDrag.current = false;
         const onMove = (moveEvent: MouseEvent): void => {
-          if (Math.hypot(moveEvent.clientX - target.clientX, moveEvent.clientY - target.clientY) > dragHoldTolerance) {
-            stopHold();
+          if (Math.hypot(moveEvent.clientX - target.clientX, moveEvent.clientY - target.clientY) > dragThreshold) {
+            stopPendingDrag();
+            if (clickTimer.current) {
+              clearTimeout(clickTimer.current);
+              clickTimer.current = null;
+            }
+            didDrag.current = true;
+            dragTarget.current = target;
+            setDragTarget({ ...target, clientX: moveEvent.clientX, clientY: moveEvent.clientY });
           }
         };
-        const holdTimer = window.setTimeout(() => {
-          stopHold();
-          dragTarget.current = target;
-          setDragTarget(target);
-        }, dragHoldMs);
-        function stopHold(): void {
-          window.clearTimeout(holdTimer);
+        function stopPendingDrag(): void {
           window.removeEventListener('mousemove', onMove);
-          window.removeEventListener('mouseup', stopHold);
-          cancelHold.current = null;
+          window.removeEventListener('mouseup', stopPendingDrag);
+          cancelPendingDrag.current = null;
         }
         window.addEventListener('mousemove', onMove);
-        window.addEventListener('mouseup', stopHold);
-        cancelHold.current = stopHold;
+        window.addEventListener('mouseup', stopPendingDrag);
+        cancelPendingDrag.current = stopPendingDrag;
       }}
     >
       <title>{functoid.name}</title>
@@ -771,6 +776,9 @@ function MappingCanvasView({
   const changeLinkView = (change: Partial<NonNullable<MapperViewState['linkView']>>): void =>
     callbacks.onLinkViewChange?.({ ...linkView, ...change });
   const svgRef = useRef<SVGSVGElement>(null);
+  const toolsRef = useRef<HTMLDivElement>(null);
+  const [toolsPosition, setToolsPosition] = useState<Point>({ x: 4, y: 40 });
+  const toolsDrag = useRef<{ pointerId: number; pointer: Point; position: Point } | null>(null);
   const dragTarget = useRef<DragTarget | null>(null);
   const [currentDrag, setCurrentDrag] = useState<DragTarget | null>(null);
   const lastPointer = useRef<Point | null>(null);
@@ -806,6 +814,27 @@ function MappingCanvasView({
     host.scrollTop = pending.top;
   });
   const mappingArea = host.closest('.mapping-area');
+  const clampToolsPosition = (position: Point): Point => ({
+    x: Math.max(4, Math.min(position.x, host.clientWidth - (toolsRef.current?.offsetWidth ?? 0) - 4)),
+    y: Math.max(4, Math.min(position.y, host.clientHeight - (toolsRef.current?.offsetHeight ?? 0) - 4)),
+  });
+  useLayoutEffect(() => {
+    const toolbar = toolsRef.current;
+    if (!toolbar) {
+      return;
+    }
+    const clampPosition = (): void => {
+      setToolsPosition((position) => {
+        const next = clampToolsPosition(position);
+        return next.x === position.x && next.y === position.y ? position : next;
+      });
+    };
+    const observer = new ResizeObserver(clampPosition);
+    observer.observe(host);
+    observer.observe(toolbar);
+    clampPosition();
+    return () => observer.disconnect();
+  }, [host, mappingArea]);
   useEffect(() => {
     const onKey = (event: KeyboardEvent): void => {
       const target = event.target as HTMLElement | null;
@@ -1163,6 +1192,12 @@ function MappingCanvasView({
             return;
           }
         }}
+      />
+      <svg
+        className="mapping-nodes"
+        width={`${Math.max(100, zoomPercent)}%`}
+        height={`${Math.max(100, zoomPercent)}%`}
+        style={{ minWidth: contentWidth, minHeight: contentHeight }}
       >
         {page?.functoids
           .filter((functoid) => !state.filteredFunctoidIds || state.filteredFunctoidIds.includes(functoid.id))
@@ -1182,6 +1217,7 @@ function MappingCanvasView({
               setDragTarget={(target) => {
                 lastPointer.current = { x: target.clientX, y: target.clientY };
                 setCurrentDrag(target);
+                moveDrag();
               }}
             />
           ))}
@@ -1198,9 +1234,6 @@ function MappingCanvasView({
             pointerEvents="none"
           />
         )}
-        <text x="8" y="16" fill="#888" fontSize="10">
-          {page ? `${page.links.length} link${page.links.length === 1 ? '' : 's'}` : '0 links'}
-        </text>
       </svg>
       <div className="canvas-zoom-controls">
         <button type="button" title="Zoom Out" disabled={zoom <= minZoom} onClick={() => onZoomChange(Math.max(minZoom, zoom - 0.1))}>
@@ -1220,14 +1253,77 @@ function MappingCanvasView({
       {mappingArea &&
         createPortal(
           <FluentProvider
+            ref={toolsRef}
             theme={getVsCodeFluentTheme()}
             className={styles.tools}
+            role="group"
+            aria-label="Links toolbar"
             style={{
-              left: host.getLinkRenderData().offsetX + 4,
-              top: host.getLinkRenderData().offsetY + 40,
+              left: host.getLinkRenderData().offsetX + toolsPosition.x,
+              top: host.getLinkRenderData().offsetY + toolsPosition.y,
               maxWidth: Math.max(0, host.clientWidth - 8),
             }}
           >
+            <Button
+              className={styles.toolsHandle}
+              size="small"
+              appearance="subtle"
+              icon={<ReOrderDotsVertical20Regular />}
+              aria-label="Move Links toolbar"
+              title="Move Links toolbar"
+              onPointerDown={(event) => {
+                if (event.button !== 0) {
+                  return;
+                }
+                event.preventDefault();
+                event.stopPropagation();
+                toolsDrag.current = {
+                  pointerId: event.pointerId,
+                  pointer: { x: event.clientX, y: event.clientY },
+                  position: toolsPosition,
+                };
+                event.currentTarget.setPointerCapture(event.pointerId);
+              }}
+              onPointerMove={(event) => {
+                const drag = toolsDrag.current;
+                if (drag?.pointerId !== event.pointerId) {
+                  return;
+                }
+                setToolsPosition(
+                  clampToolsPosition({
+                    x: drag.position.x + event.clientX - drag.pointer.x,
+                    y: drag.position.y + event.clientY - drag.pointer.y,
+                  })
+                );
+              }}
+              onPointerUp={(event) => {
+                toolsDrag.current = null;
+                if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+                  event.currentTarget.releasePointerCapture(event.pointerId);
+                }
+              }}
+              onPointerCancel={() => {
+                toolsDrag.current = null;
+              }}
+              onLostPointerCapture={() => {
+                toolsDrag.current = null;
+              }}
+              onKeyDown={(event) => {
+                const direction = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[event.key];
+                if (!direction) {
+                  return;
+                }
+                event.preventDefault();
+                event.stopPropagation();
+                const step = event.shiftKey ? 1 : 10;
+                setToolsPosition((position) =>
+                  clampToolsPosition({
+                    x: position.x + direction[0] * step,
+                    y: position.y + direction[1] * step,
+                  })
+                );
+              }}
+            />
             <Menu
               checkedValues={{ scope: [linkView.scope] }}
               onCheckedValueChange={(_event, data) => {

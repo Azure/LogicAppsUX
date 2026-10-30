@@ -49,6 +49,8 @@ import {
 
 interface ScriptingConfigDraft {
   functoidId: string;
+  label: string;
+  comments: string;
   scriptType: ScriptingConfigType;
   scriptBody: string;
   assemblyReferences: string;
@@ -2203,6 +2205,8 @@ export class MapperAppController {
 
     this.scriptingConfigDraft = {
       functoidId,
+      label: functoid.label || '',
+      comments: functoid.comments || '',
       scriptType: resolvedScriptType as ScriptingConfigType,
       scriptBody: scriptBodyFromParams || functoid.scriptContent || '',
       assemblyReferences: inlineImplementation?.assemblyReferences?.join('\n') || '',
@@ -2250,6 +2254,8 @@ export class MapperAppController {
       .filter((parameter: any) => parameter.type === ParameterType.Link || parameter.type === ParameterType.Constant)
       .map((parameter: any, index: number) => ({ ...parameter, index }));
     functoid.scriptType = this.scriptingConfigDraft.scriptType;
+    functoid.label = this.scriptingConfigDraft.label.trim() || undefined;
+    functoid.comments = this.scriptingConfigDraft.comments.trim() || undefined;
     functoid.scriptContent =
       this.scriptingConfigDraft.scriptType === 'externalAssembly' ? undefined : this.scriptingConfigDraft.scriptBody || '';
 
@@ -2290,6 +2296,8 @@ export class MapperAppController {
     dialog.configure(
       {
         summary: this.buildScriptingFunctoidSummary(functoid),
+        label: draft.label,
+        comments: draft.comments,
         scriptType: draft.scriptType,
         scriptBody: draft.scriptBody,
         assemblyReferences: draft.assemblyReferences,
@@ -2311,6 +2319,8 @@ export class MapperAppController {
       return;
     }
     this.scriptingConfigDraft.scriptType = result.scriptType;
+    this.scriptingConfigDraft.label = result.label;
+    this.scriptingConfigDraft.comments = result.comments;
     this.scriptingConfigDraft.scriptBody = result.scriptBody;
     this.scriptingConfigDraft.assemblyReferences = result.assemblyReferences;
     this.scriptingConfigDraft.assemblyPath = result.assemblyPath;
@@ -2504,6 +2514,9 @@ export class MapperAppController {
   }
 
   private describeLinkSource(link: any): string {
+    if (link.label) {
+      return link.label;
+    }
     if (link.sourceType === 'functoid') {
       return `Functoid: ${this.getFunctoidName(link.sourceId)}`;
     }
@@ -2511,6 +2524,9 @@ export class MapperAppController {
   }
 
   private describeLinkTarget(link: any): string {
+    if (link.label) {
+      return link.label;
+    }
     if (link.targetType === 'functoid') {
       return `Functoid: ${this.getFunctoidName(link.targetId)}`;
     }

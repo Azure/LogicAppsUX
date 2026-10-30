@@ -14,6 +14,8 @@ import {
   Option,
   Radio,
   RadioGroup,
+  Tab,
+  TabList,
   Textarea,
   makeStyles,
   tokens,
@@ -51,6 +53,8 @@ export interface ScriptingConfigViewModel {
   className: string;
   methodName: string;
   assemblyClasses: AssemblyClassInfo[];
+  label: string;
+  comments: string;
 }
 
 export interface ScriptingConfigResult {
@@ -60,6 +64,8 @@ export interface ScriptingConfigResult {
   assemblyPath: string;
   className: string;
   methodName: string;
+  label: string;
+  comments: string;
 }
 
 export interface ScriptingAssemblyUpdate {
@@ -89,7 +95,8 @@ function supportsAssemblyReferences(scriptType: ScriptingConfigType): boolean {
 }
 
 const useStyles = makeStyles({
-  surface: { width: '640px', maxWidth: '92vw' },
+  surface: { width: '640px', maxWidth: '92vw', maxHeight: '90vh' },
+  content: { overflowY: 'auto', minHeight: 0 },
   meta: {
     marginTop: '2px',
     color: tokens.colorNeutralForeground3,
@@ -132,6 +139,9 @@ function ScriptingConfigDialogView({
   const [assemblyClasses, setAssemblyClasses] = useState<AssemblyClassInfo[]>(model.assemblyClasses);
   const [className, setClassName] = useState(model.className);
   const [methodName, setMethodName] = useState(model.methodName);
+  const [activeTab, setActiveTab] = useState<string>('script');
+  const [label, setLabel] = useState(model.label);
+  const [comments, setComments] = useState(model.comments);
 
   // Apply the result of an async "Browse assembly" round-trip pushed from the host.
   useEffect(() => {
@@ -156,7 +166,7 @@ function ScriptingConfigDialogView({
   };
 
   const handleSave = (): void => {
-    onSave({ scriptType, scriptBody, assemblyReferences, assemblyPath, className, methodName });
+    onSave({ scriptType, scriptBody, assemblyReferences, assemblyPath, className, methodName, label, comments });
   };
 
   return (
@@ -176,7 +186,7 @@ function ScriptingConfigDialogView({
               Scripting Functoid Properties
               <div className={styles.meta}>{summary.meta}</div>
             </DialogTitle>
-            <DialogContent>
+            <DialogContent className={styles.content}>
               <div className={styles.summary}>
                 <div className={styles.heading}>Functionality</div>
                 <div className={styles.description}>{summary.description}</div>
@@ -216,7 +226,15 @@ function ScriptingConfigDialogView({
                 </div>
               </div>
               <Divider />
-              <div className={styles.sections}>
+              <TabList selectedValue={activeTab} onTabSelect={(_event, data) => setActiveTab(data.value as string)}>
+                <Tab value="script">Script</Tab>
+                <Tab value="label">Label and Comments</Tab>
+              </TabList>
+              <div
+                className={styles.sections}
+                hidden={activeTab !== 'script'}
+                style={activeTab !== 'script' ? { display: 'none' } : undefined}
+              >
                 <Field label="Script Type">
                   <RadioGroup
                     layout="horizontal-stacked"
@@ -303,6 +321,16 @@ function ScriptingConfigDialogView({
                   </>
                 )}
               </div>
+              {activeTab === 'label' && (
+                <div className={styles.sections}>
+                  <Field label="Label">
+                    <Input value={label} onChange={(_event, data) => setLabel(data.value)} />
+                  </Field>
+                  <Field label="Comments">
+                    <Textarea value={comments} rows={5} resize="vertical" onChange={(_event, data) => setComments(data.value)} />
+                  </Field>
+                </div>
+              )}
             </DialogContent>
             <DialogActions>
               <Button appearance="secondary" onClick={onCancel}>

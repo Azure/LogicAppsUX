@@ -31,6 +31,109 @@ async function dragLink(page: Page, source: Locator, target: Locator): Promise<v
 }
 
 test.describe('real pointer interactions', () => {
+  test('Links toolbar moves independently, stays in the canvas, and keeps its controls usable', async ({ mapper }) => {
+    await mapper.open({ map: linkedMap() });
+    const { ui, host } = mapper;
+    const toolbar = ui.page.getByRole('group', { name: 'Links toolbar', exact: true });
+    const handle = toolbar.getByRole('button', { name: 'Move Links toolbar', exact: true });
+    const viewport = ui.page.locator('biztalk-mapping-canvas');
+    await expect(ui.page.locator('svg.mapping-nodes > text')).toHaveCount(0);
+    await expect(ui.statusBar).toContainText('Links: 2');
+    const original = (await toolbar.boundingBox())!;
+    const start = await center(handle);
+    await ui.page.mouse.move(start.x, start.y);
+    await ui.page.mouse.down();
+    await ui.page.mouse.move(start.x + 120, start.y + 140, { steps: 8 });
+    await ui.page.mouse.up();
+    await expect.poll(async () => Math.round((await toolbar.boundingBox())!.x)).toBe(Math.round(original.x + 120));
+    await expect.poll(async () => Math.round((await toolbar.boundingBox())!.y)).toBe(Math.round(original.y + 140));
+
+    await toolbar.getByRole('button', { name: 'Dim partial links', exact: true }).click();
+    await expect(toolbar.getByRole('button', { name: 'Dim partial links', exact: true })).toHaveAttribute('aria-pressed', 'false');
+    await expect.poll(async () => Math.round((await toolbar.boundingBox())!.x)).toBe(Math.round(original.x + 120));
+    await handle.focus();
+    await handle.press('ArrowRight');
+    await expect.poll(async () => Math.round((await toolbar.boundingBox())!.x)).toBe(Math.round(original.x + 130));
+
+    const movedHandle = await center(handle);
+    const bounds = (await viewport.boundingBox())!;
+    await ui.page.mouse.move(movedHandle.x, movedHandle.y);
+    await ui.page.mouse.down();
+    await ui.page.mouse.move(bounds.x + bounds.width - 1, bounds.y + bounds.height - 1, { steps: 8 });
+    await ui.page.mouse.up();
+    const isInsideCanvas = () =>
+      toolbar.evaluate((element) => {
+        const canvas = document.querySelector('biztalk-mapping-canvas')!.getBoundingClientRect();
+        const tools = element.getBoundingClientRect();
+        return tools.left >= canvas.left && tools.top >= canvas.top && tools.right <= canvas.right && tools.bottom <= canvas.bottom;
+      });
+    await expect.poll(isInsideCanvas).toBe(true);
+    await ui.page.setViewportSize({ width: 1100, height: 650 });
+    await expect.poll(isInsideCanvas).toBe(true);
+    await expect(ui.links).toHaveCount(2);
+    expect(host.messages('update')).toHaveLength(0);
+  });
+
+  test('functoid nodes stay above crossing links even when the link is selected', async ({ mapper }) => {
+    const map = createMap();
+    map.pages[0].functoids.push(
+      createMapFunctoid('left', { x: 100, y: 180 }),
+      createMapFunctoid('middle', { x: 300, y: 180 }),
+      createMapFunctoid('right', { x: 500, y: 180 })
+    );
+    map.pages[0].links.push({
+      id: 'crossing',
+      sourceId: 'left',
+      sourceType: 'functoid',
+      targetId: 'right',
+      targetType: 'functoid',
+    });
+    await mapper.open({ map });
+    const { ui } = mapper;
+    const node = ui.functoidNode(1);
+    let crossing = await center(node.locator('.functoid-body'));
+    const stackAtCrossing = () =>
+      ui.page.evaluate(({ x, y }) => {
+        const elements = document.elementsFromPoint(x, y);
+        return {
+          topNode: elements[0]?.closest('.functoid-node')?.getAttribute('data-id'),
+          hasLink: elements.some((element) => element.closest('[data-link-id="crossing"]')),
+        };
+      }, crossing);
+
+    await expect.poll(stackAtCrossing).toEqual({ topNode: 'middle', hasLink: true });
+    await ui.link('crossing').focus();
+    await ui.link('crossing').press('s');
+    await expect(ui.link('crossing')).toHaveAttribute('aria-pressed', 'true');
+    await expect(ui.link('crossing').locator('.mapping-link')).toHaveAttribute('stroke-width', '3');
+    crossing = await center(node.locator('.functoid-body'));
+    await ui.page.mouse.move(crossing.x, crossing.y);
+    await expect.poll(stackAtCrossing).toEqual({ topNode: 'middle', hasLink: true });
+    await ui.page.mouse.dblclick(crossing.x, crossing.y);
+    await expect(ui.page.getByRole('dialog')).toBeVisible();
+    await expect(ui.page.getByRole('dialog')).toContainText('String Concatenate');
+  });
+
+  test('the foreground node layer leaves blank canvas available for middle-button panning', async ({ mapper }) => {
+    const map = linkedMap();
+    map.pages[0].functoids.push(createMapFunctoid('offscreen', { x: 1600, y: 1200 }));
+    await mapper.open({ map });
+    const { ui, host } = mapper;
+    const viewport = ui.page.locator('biztalk-mapping-canvas');
+    const box = (await viewport.boundingBox())!;
+    const start = { x: box.x + box.width * 0.7, y: box.y + box.height * 0.7 };
+    await ui.page.mouse.move(start.x, start.y);
+    await ui.page.mouse.down({ button: 'middle' });
+    await ui.page.mouse.move(start.x - 90, start.y - 60, { steps: 10 });
+    await expect(viewport).toHaveClass(/panning/);
+    await expect.poll(() => viewport.evaluate((element) => element.scrollLeft)).toBeGreaterThan(0);
+    await expect.poll(() => viewport.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
+    await ui.page.mouse.up({ button: 'middle' });
+    await expect(viewport).not.toHaveClass(/panning/);
+    await expect(ui.links).toHaveCount(2);
+    expect(host.messages('update')).toHaveLength(0);
+  });
+
   test('dragging source to target saves exactly one link and rejects a duplicate drag', async ({ mapper }) => {
     await mapper.open();
     const { ui, host } = mapper;
@@ -123,7 +226,7 @@ test.describe('real pointer interactions', () => {
     expect(rendered.y).toBeCloseTo(before!.y + destination.y, 0);
   });
 
-  test('holding then dragging a functoid persists snapped coordinates once on release and preserves links', async ({ mapper }) => {
+  test('moving a pressed functoid starts dragging without a hold and saves once on release', async ({ mapper }) => {
     const map = linkedMap();
     await mapper.open({ map });
     const { ui, host } = mapper;
@@ -132,8 +235,11 @@ test.describe('real pointer interactions', () => {
     const originalPath = await ui.link('output').locator('.mapping-link').getAttribute('d');
     await ui.page.mouse.move(start.x, start.y);
     await ui.page.mouse.down();
+    await expect(node).not.toHaveClass(/dragging/);
+    await ui.page.mouse.move(start.x + 2, start.y + 1);
+    await expect(node).not.toHaveClass(/dragging/);
+    await ui.page.mouse.move(start.x + 103, start.y + 57);
     await expect(node).toHaveClass(/dragging/);
-    await ui.page.mouse.move(start.x + 103, start.y + 57, { steps: 10 });
     await expect(node).toHaveAttribute('transform', 'translate(340, 180) scale(1)');
     expect(host.messages('update')).toHaveLength(0);
 
@@ -147,6 +253,21 @@ test.describe('real pointer interactions', () => {
       pages: [{ ...map.pages[0], functoids: [{ ...map.pages[0].functoids[0], x: 340, y: 180 }] }],
     });
     await expect(ui.links).toHaveCount(2);
+  });
+
+  test('a plain functoid click selects without dragging or saving a move', async ({ mapper }) => {
+    await mapper.open({ map: linkedMap() });
+    const { ui, host } = mapper;
+    const node = ui.functoidNode();
+    const originalTransform = await node.getAttribute('transform');
+
+    await node.click();
+
+    await expect(node.locator('.functoid-body')).toHaveAttribute('stroke', '#007fd4');
+    await expect(node).not.toHaveClass(/dragging/);
+    await expect(node).toHaveAttribute('transform', originalTransform!);
+    await expect(ui.page.getByRole('dialog')).toHaveCount(0);
+    expect(host.messages('update')).toHaveLength(0);
   });
 
   test('dragging blank canvas pans the viewport without changing functoid coordinates or links', async ({ mapper }) => {

@@ -59,6 +59,9 @@ test.describe('scripting configuration', () => {
       } else {
         await expect(references).toHaveCount(0);
       }
+      await dialog.getByRole('tab', { name: 'Label and Comments', exact: true }).click();
+      await dialog.getByRole('textbox', { name: 'Label', exact: true }).fill('Customer script');
+      await dialog.getByRole('textbox', { name: 'Comments', exact: true }).fill('Formats customer values\nPreserves inputs');
       const update = host.waitForNext('update');
       await dialog.getByRole('button', { name: 'Save', exact: true }).click();
       const saved = (await update).data.pages[0].functoids[0];
@@ -66,6 +69,8 @@ test.describe('scripting configuration', () => {
       expect(saved).toMatchObject({
         scriptType: script.type,
         scriptContent: script.body,
+        label: 'Customer script',
+        comments: 'Formats customer values\nPreserves inputs',
         parameters: map.pages[0].functoids[0].parameters,
       });
       expect(saved.scriptImplementations).toEqual([
@@ -79,6 +84,9 @@ test.describe('scripting configuration', () => {
       if (script.references) {
         await expect(references).toHaveValue('System.Xml\nSystem.Core');
       }
+      await dialog.getByRole('tab', { name: 'Label and Comments', exact: true }).click();
+      await expect(dialog.getByRole('textbox', { name: 'Label', exact: true })).toHaveValue('Customer script');
+      await expect(dialog.getByRole('textbox', { name: 'Comments', exact: true })).toHaveValue('Formats customer values\nPreserves inputs');
       await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
       expect(host.messages('update')).toHaveLength(1);
     });
@@ -185,6 +193,9 @@ test.describe('scripting configuration', () => {
     await browse;
     await host.send({ type: 'assemblySelected', data: { path: 'C:\\Discard.dll', classes: [] } });
     await expect(dialog.getByPlaceholder('Browse to a .NET assembly (DLL)')).toHaveValue('C:\\Discard.dll');
+    await dialog.getByRole('tab', { name: 'Label and Comments', exact: true }).click();
+    await dialog.getByRole('textbox', { name: 'Label', exact: true }).fill('Discarded label');
+    await dialog.getByRole('textbox', { name: 'Comments', exact: true }).fill('Discarded comments');
     await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
     await expect(dialog).toHaveCount(0);
     expect(host.messages('update')).toHaveLength(0);
@@ -193,6 +204,9 @@ test.describe('scripting configuration', () => {
     await expect(dialog.getByRole('radio', { name: 'Inline C#', exact: true })).toBeChecked();
     await expect(dialog.getByRole('textbox', { name: 'Script', exact: true })).toHaveValue(map.pages[0].functoids[0].scriptContent!);
     await expect(dialog.getByRole('textbox', { name: 'Assembly References', exact: true })).toHaveValue('System.Xml');
+    await dialog.getByRole('tab', { name: 'Label and Comments', exact: true }).click();
+    await expect(dialog.getByRole('textbox', { name: 'Label', exact: true })).toHaveValue('');
+    await expect(dialog.getByRole('textbox', { name: 'Comments', exact: true })).toHaveValue('');
     await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
     expect(host.messages('update')).toHaveLength(0);
     const deploy = host.waitForNext('deployToLogicApps');

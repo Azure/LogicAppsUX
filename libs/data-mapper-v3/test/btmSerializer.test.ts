@@ -38,6 +38,51 @@ describe('BtmSerializer', () => {
     serializer = new BtmSerializer();
   });
 
+  test.each(['', ' ', '   ', '\t', '\r\n', ' leading and trailing '])(
+    'preserves constant and fallback whitespace %j across BTM saves',
+    (value) => {
+      const map = serializer.deserialize(`
+      <mapsource Name="Whitespace" Version="1">
+        <SrcTree/><TrgTree/>
+        <Pages><Page Name="Page 1"><Functoids>
+          <Functoid FunctoidID="1" Functoid-FID="107">
+            <Input-Parameters><Parameter Type="Constant" Value=""/></Input-Parameters>
+          </Functoid>
+        </Functoids></Page></Pages>
+      </mapsource>`);
+      const parameter = map.pages[0].functoids[0].parameters[0];
+      parameter.value = value;
+      parameter.defaultValue = value;
+
+      const reopened = serializer.deserialize(serializer.serialize(map));
+
+      expect(reopened.pages[0].functoids[0].parameters[0]).toMatchObject({ value, defaultValue: value });
+    }
+  );
+
+  test.each([
+    ['&#32;', ' '],
+    ['&#x20;&#x20;', '  '],
+    ['&#9;&#13;&#10;', '\t\r\n'],
+  ])('decodes legacy constant whitespace %s', (encoded, value) => {
+    const map = serializer.deserialize(`
+      <mapsource Name="Whitespace" Version="1">
+        <SrcTree/><TrgTree/>
+        <Pages><Page Name="Page 1"><Functoids>
+          <Functoid FunctoidID="1" Functoid-FID="107">
+            <Input-Parameters><Parameter Type="Constant" Value="${encoded}" DefaultValue="${encoded}"/></Input-Parameters>
+          </Functoid>
+        </Functoids></Page></Pages>
+      </mapsource>`);
+
+    expect(map.pages[0].functoids[0].parameters[0]).toMatchObject({ value, defaultValue: value });
+    const script = 'public string Value() {\n\treturn "a > b";\n}';
+    map.pages[0].functoids[0].scriptImplementations = [{ type: ScriptType.InlineCSharp, content: script }];
+    const serialized = serializer.serialize(map);
+    expect(serialized).toContain(`<![CDATA[${script}]]>`);
+    expect(serializer.deserialize(serialized).pages[0].functoids[0].parameters[0].value).toBe(value);
+  });
+
   test('parses large valid maps with more than 1,000 ordinary entity references', () => {
     const encodedLabel = '&quot;value&quot;'.repeat(600);
     const btm = `

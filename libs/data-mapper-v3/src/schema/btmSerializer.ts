@@ -122,6 +122,7 @@ export class BtmSerializer {
       allowBooleanAttributes: true,
       parseAttributeValue: false,
       trimValues: false,
+      htmlEntities: true,
       processEntities: {
         enabled: true,
         maxEntitySize: 10000,
@@ -364,7 +365,12 @@ export class BtmSerializer {
       }
     }
 
-    return doc.end({ prettyPrint: true });
+    return doc.end({ prettyPrint: true }).replace(/<!\[CDATA\[[\s\S]*?\]\]>|<!--[\s\S]*?-->|<[^>]*>/g, (markup) => {
+      if (markup.startsWith('<!')) {
+        return markup;
+      }
+      return markup.replace(/"[^"]*"/g, (attribute) => attribute.replace(/\r/g, '&#13;').replace(/\n/g, '&#10;').replace(/\t/g, '&#9;'));
+    });
   }
 
   public createNew(sourceSchemaPath: string, targetSchemaPath: string, name?: string): MapDocument {

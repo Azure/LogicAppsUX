@@ -704,12 +704,18 @@
 	outline-offset: -2px;
 }
 
-.mapping-svg {
+.mapping-svg,
+.mapping-nodes {
 	position: absolute;
 	top: 0;
 	left: 0;
 	overflow: visible;
 	cursor: grab;
+}
+
+.mapping-nodes {
+	z-index: 6;
+	pointer-events: none;
 }
 
 .canvas-container.panning,
@@ -799,6 +805,7 @@
 }
 .functoid-node {
 	cursor: pointer;
+	pointer-events: all;
 }
 .functoid-node.dragging {
 	cursor: grabbing;

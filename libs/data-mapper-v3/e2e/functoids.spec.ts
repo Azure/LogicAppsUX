@@ -1,4 +1,5 @@
 import { FunctoidRegistry } from '../src/functoids/functoidRegistry';
+import { BtmSerializer } from '../src/schema/btmSerializer';
 import { expect, test } from './fixtures/mapperHost';
 import { createMap, createMapFunctoid, createSchemaLink, paths } from './fixtures/testData';
 
@@ -208,6 +209,75 @@ test.describe('functoids @p0', () => {
     await dialog.getByRole('tab', { name: 'Label and Comments', exact: true }).click();
     await expect(dialog.getByRole('textbox', { name: 'Label', exact: true })).toHaveValue('Customer label');
     await expect(dialog.getByRole('textbox', { name: 'Comments', exact: true })).toHaveValue('Concatenates customer values');
+    await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
+  });
+
+  test('link labels name functoid inputs and outputs without drawing text on links', async ({ mapper }) => {
+    const map = createMap();
+    map.pages[0].functoids.push(createMapFunctoid('f1'));
+    map.pages[0].links.push(
+      {
+        ...createSchemaLink('in', paths.source.customerName, 'f1'),
+        targetPath: undefined,
+        targetType: 'functoid' as never,
+        label: 'Country Code',
+      },
+      {
+        ...createSchemaLink('out', 'f1', paths.target.billToName),
+        sourcePath: undefined,
+        sourceType: 'functoid' as never,
+        label: 'Customer result',
+      }
+    );
+    await mapper.open({ map });
+    const { ui } = mapper;
+    await expect(ui.links).toHaveCount(2);
+    await expect(ui.links.locator('text')).toHaveCount(0);
+    await ui.functoidNode().dblclick();
+    const dialog = ui.page.getByRole('dialog');
+    await expect(dialog.getByText('Country Code', { exact: true })).toBeVisible();
+    await expect(dialog.getByText(`Source: ${paths.source.customerName}`, { exact: true })).toHaveCount(0);
+    await dialog.getByRole('tab', { name: 'Outputs', exact: true }).click();
+    await expect(dialog.getByText('Customer result', { exact: true })).toBeVisible();
+    await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
+  });
+
+  test('constant and fallback input boxes preserve whitespace after saving and reopening', async ({ mapper }) => {
+    const map = createMap();
+    map.pages[0].functoids.push(createMapFunctoid('f1'));
+    map.pages[0].links.push({
+      ...createSchemaLink('in', paths.source.customerName, 'f1'),
+      targetPath: undefined,
+      targetType: 'functoid' as never,
+    });
+    await mapper.open({ map });
+    const { ui, host } = mapper;
+    const dialog = ui.page.getByRole('dialog');
+    await ui.functoidNode().dblclick();
+    await dialog.getByRole('button', { name: 'Add input', exact: true }).click();
+    const constant = dialog.getByRole('textbox', { name: 'Value for input 2', exact: true });
+    const fallback = dialog.getByRole('textbox', { name: 'Fallback value for input 1', exact: true });
+    for (const value of [' ', '   ', '\t', '', ' padded ']) {
+      await constant.fill(value);
+      await fallback.fill(value);
+      if (value === ' ') {
+        await constant.fill('');
+        await constant.press('Space');
+      }
+      await expect(constant).toHaveValue(value);
+      const update = host.waitForNext('update');
+      await dialog.getByRole('button', { name: 'OK', exact: true }).click();
+      const saved = (await update).data;
+      const serializer = new BtmSerializer();
+      const reopened = serializer.deserialize(serializer.serialize(saved));
+      expect(reopened.pages[0].functoids[0].parameters).toMatchObject([
+        { type: 'link', defaultValue: value },
+        { type: 'constant', value },
+      ]);
+      await ui.functoidNode().dblclick();
+      await expect(constant).toHaveValue(value);
+      await expect(fallback).toHaveValue(value);
+    }
     await dialog.getByRole('button', { name: 'Cancel', exact: true }).click();
   });
 
