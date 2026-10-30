@@ -84,6 +84,19 @@ $env:PATH = "$(Resolve-Path 'apps\vs-code-designer\node_modules\.bin');$env:PATH
 Do not replace `stable` with the currently resolved numeric VS Code version.
 The prepared content manifest records the requested version identity.
 
+Every isolated CLI, Cancel, and regeneration profile must set
+`extensions.autoUpdate: false` and `extensions.autoCheckUpdates: false` before
+launch. `--disable-updates` and `update.mode: none` govern Code updates, not
+Marketplace extension updates. Otherwise a consumer can replace the verified,
+pinned Dev Kit cohort during execution. This matches the established UI runner
+policy; it does not disable C# or change the prepared extension inventory.
+C# and C# Dev Kit are declared Logic Apps activation dependencies even in
+codeless workspace families, and the stateless lifecycle uses the C# `coreclr`
+debug adapter. Disabling them requires a separate product
+contract change, not a cleanup workaround. Preserving the cohort prevents
+version drift but is not itself proof that an upstream server shutdown race is
+resolved; exact native natural-closure receipts remain required.
+
 ### 3. Acquire an approved local Azure token without printing it
 
 Local Azure-backed families must use only the maintainer-approved local target:
@@ -560,8 +573,14 @@ The evidence directory is a self-contained producer bundle:
 - allowlisted public PNG/JSON pairs under `screenshots/`;
 - diagnostic PNG/JSON pairs under `diagnostics/`.
 
-Public sidecars contain only checkpoint, phase, classification, verdict, and
-reason codes. Rich readiness metadata remains private runtime evidence. Failed
+Public sidecars contain checkpoint, phase, classification, verdict, reason
+codes, and an allowlisted capture summary: finite timing/revision/generation
+numbers, fixed viewport/anchor/count fields, known capture-event names, and
+explicit revision-comparison booleans. Stability waits retain sampled comparisons,
+including on failure. Arbitrary event details, target identities, DOM text and
+unknown keys remain private; do not copy rich readiness metadata wholesale.
+This distinguishes never-stable readiness from post-capture rejection without
+changing screenshot acceptance. Failed
 and aborted finalization preserves recorded outcomes and marks pending required
 checkpoints `not-reached`, including the known static portion of a dynamic plan
 that failed before expansion. Successful finalization requires the dynamic plan
@@ -922,6 +941,20 @@ copying final profile diagnostics or deleting the owned workspace. Ordinary
 closure admits cleanup; forced recovery still fails the phase and retains its
 workspace diagnostics, even if recovery empties the containment. The outer
 family containment remains an additional acceptance gate.
+
+Direct regeneration must also publish available family diagnostics when outer
+closure or staging is rejected. Copy the original partial evidence without
+calling the success finalizer or deleting retained roots. Keep the actual outer
+terminal, cleanup ledger and phase journal as `outer-terminal-result.json`,
+`outer-cleanup-ledger.json` and `outer-phase-results.jsonl`; do not manufacture
+missing family receipts. This diagnostic-only publication does not grant family
+acceptance, and a publication error must not replace the original failure.
+
+An extension host exiting zero can still leave a language server that started
+during shutdown. Correlate retained PIDs with original extension activation logs:
+a server startup banner without client-exit monitoring/initialization is not
+natural-closure proof. Do not repair that failure by accepting forced recovery,
+disabling required dependencies, or lengthening the containment grace period.
 
 Linux signal-driven recovery is sticky across both root shutdown and descendant
 grace. A zero root exit and zero post-recovery survivors cannot establish natural

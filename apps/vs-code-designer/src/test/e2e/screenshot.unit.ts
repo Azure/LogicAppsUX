@@ -376,6 +376,10 @@ async function testReadinessUnavailableRecordsLastSampleDiagnostics(
   const readinessUnavailable = metadata.events.find((event: { name: string }) => event.name === 'readiness-unavailable');
   assert.ok(readinessUnavailable, JSON.stringify(metadata.events));
   assert.deepStrictEqual(readinessUnavailable.details.designerCanvas.missing, ['required-0']);
+  const readinessSample = metadata.events.find((event: { name: string }) => event.name === 'readiness-sample');
+  assert.ok(readinessSample, 'Failed stability waits must preserve sampled revisions, geometry and counts');
+  assert.strictEqual(readinessSample.revision, 0);
+  assert.deepStrictEqual(readinessSample.counts, { canvasNodes: 4 });
   assert.strictEqual(cdp.captureAttempts, 0, 'Timeout diagnostics must not accept or capture evidence');
 }
 

@@ -8,6 +8,7 @@ const {
   prepareCancelContext,
   adaptCancelHandoff,
   resolveCancelProfile,
+  prepareCancelProfileSettings,
   assertRequiredScreenshots,
   assertCancelResult,
   finalizeCancelResult,
@@ -80,6 +81,14 @@ try {
   assert.throws(() => resolveCancelProfile({ LA_E2E_CLI_USER_DATA_PARENT: path.join(root, 'unicode-'.repeat(40)) }, 'linux'));
   const profile = resolveCancelProfile({ LA_E2E_CLI_USER_DATA_PARENT: root }, 'linux', 'abcdefgh');
   assert.equal(profile, path.join(root, 'uc-abcdefgh'));
+  const profileSettings = prepareCancelProfileSettings(profile);
+  const settings = JSON.parse(fs.readFileSync(profileSettings, 'utf8'));
+  assert.equal(settings['extensions.autoUpdate'], false, 'Regular Cancel windows must retain the prepared extension cohort');
+  assert.equal(settings['extensions.autoCheckUpdates'], false);
+  assert.equal(settings['extensions.allowed'], undefined, 'Do not disable required C# activation dependencies');
+  assert.equal(settings['files.simpleDialog.enable'], true);
+  assert.equal(settings['azureLogicAppsStandard.autoStartDesignTime'], false);
+  assert.throws(() => prepareCancelProfileSettings(profile), /EEXIST/, 'Never replace an existing profile');
   assert.throws(() => assertRequiredScreenshots(context.root));
   const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jL1kAAAAASUVORK5CYII=', 'base64');
   fs.mkdirSync(path.join(context.root, 'screenshots'));

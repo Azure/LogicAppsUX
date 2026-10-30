@@ -4,7 +4,8 @@ import * as path from 'node:path';
 import { connectToVsCodeCdpByText } from './cdpClient';
 import { type CdpEvaluator, type Point, clickPoint, pressKey } from './cdpFormHelpers';
 import { remainingBudget } from './workspaceMultiRootCollector';
-import type { FuncRuntimeResolution } from './workspaceMultiRootLaunch';
+import type { MultiRootBootstrapAttestation } from './workspaceMultiRootBootstrap';
+import { assertFuncRuntimeResolution, type FuncRuntimeResolution } from './workspaceMultiRootLaunch';
 import { normalizeFsPath } from './testUtils';
 import { clickContextMenuText, command, poll, readContextMenuState, workbenchVisibleScript as visibleScript } from './workbenchCdpActions';
 
@@ -188,6 +189,25 @@ export interface DebugEvent {
   type?: string;
   resolution?: FuncRuntimeResolution;
   error?: string;
+}
+
+export async function waitForActivatedMultiRootRuntime(
+  readEvents: () => DebugEvent[],
+  boot: string,
+  bootstrap: MultiRootBootstrapAttestation,
+  deadline: number
+): Promise<DebugEvent> {
+  // The recorder's activation event only proves that the recorder started.
+  // Its runtimeResolution event is emitted AFTER awaiting product activation,
+  // including updateLogicAppsContext which enables Explorer contributions.
+  const runtime = await poll(
+    async () => readEvents().find((event) => event.kind === 'runtimeResolution' && event.boot === boot),
+    Boolean,
+    deadline
+  );
+  assert.ok(runtime && !runtime.error, `Actual activation/runtime resolution failed: ${runtime?.error || 'missing observation'}`);
+  assertFuncRuntimeResolution(runtime.resolution, bootstrap);
+  return runtime;
 }
 
 export function debugEvents(file: string): DebugEvent[] {

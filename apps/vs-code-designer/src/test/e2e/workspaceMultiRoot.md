@@ -99,6 +99,15 @@ focus fail closed. It clicks the root label, observes selection and the tree's
 gesture. Monaco List handles this on keyup using the focused root as its
 anchor; this is UI input, not a programmatic Create Project command.
 
+Before initial Explorer input, the family now waits for the recorder's
+**same-boot `runtimeResolution` event**, validates its admitted Func identity,
+and propagates activation errors. The recorder emits `activation` before
+awaiting the Logic Apps extension; only `runtimeResolution` follows completed
+product activation (including `updateLogicAppsContext`). A started recorder
+and visible root do not establish that the product's context-menu
+contributions are ready. The same gate also applies after Reload Window.
+It does not set context keys or substitute a programmatic Create Project call.
+
 Opening and activation are separate postconditions. A visible Monaco menu must
 exist before its exact **Create new project...** item is clicked using native
 CDP pointer input. Item enablement comes from the menu item/container, not its
@@ -122,12 +131,13 @@ strict `roots.length + 3` evidence array or become undeclared ordered evidence.
 Existing phase, reload, population, original-process and terminal gates remain
 unchanged.
 
-**Validation boundary:** Empty menu candidates without a DOM snapshot or
-screenshot establish only that the expected DOM action was not observed.
-They do not prove a missing product contribution, native-menu mode, or a
-specific pointer-event failure. The focused-tree interaction and controls are
-source-reviewed/control-verified; the exact earlier native failure mechanism
-and success of the revised interaction still require isolated Windows/Linux
+**Validation boundary:** The latest isolated Linux/Windows diagnostic images
+show the selected root's real Explorer menu with generic actions but no Logic
+Apps contributions. That rules out a missing root gesture at that checkpoint;
+it does not expose the product context key's value or activation completion.
+The source previously allowed menu opening before product activation had
+completed. The new activation gate and production-shaped interaction controls
+are control-verified only; success still requires isolated Windows/Linux
 consumers. Never label those controls as native approval.
 
 ## Native consumer requirements — parent-owned

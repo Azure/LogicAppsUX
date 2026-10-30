@@ -110,6 +110,26 @@ function resolveCancelProfile(env, platform = process.platform, runKey = randomU
   return profile;
 }
 
+function prepareCancelProfileSettings(profile) {
+  const settingsPath = path.join(profile, 'User', 'settings.json');
+  fs.mkdirSync(path.dirname(settingsPath), { recursive: true });
+  fs.writeFileSync(
+    settingsPath,
+    JSON.stringify({
+      'files.simpleDialog.enable': true,
+      'telemetry.telemetryLevel': 'off',
+      'update.mode': 'none',
+      'extensions.autoUpdate': false,
+      'extensions.autoCheckUpdates': false,
+      'azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation': false,
+      'azureLogicAppsStandard.autoStartDesignTime': false,
+      'azureLogicAppsStandard.parameterizeConnectionsInProjectLoad': false,
+    }),
+    { flag: 'wx' }
+  );
+  return settingsPath;
+}
+
 function assertRequiredScreenshots(root) {
   return requiredScreenshots.map((name) => {
     const file = path.join(root, 'screenshots', name);
@@ -245,18 +265,7 @@ async function runCancelSupplement(context, env, collectProfileLogs, launchConta
     process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT = env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT || '9513';
     ui = require('../out/test/e2e/workspacePromptCancel');
     const baseline = ui.captureWorkspacePromptCancelBaseline(context.workspaceParent, handoff.workspace);
-    fs.mkdirSync(path.join(profile, 'User'), { recursive: true });
-    fs.writeFileSync(
-      path.join(profile, 'User', 'settings.json'),
-      JSON.stringify({
-        'files.simpleDialog.enable': true,
-        'telemetry.telemetryLevel': 'off',
-        'update.mode': 'none',
-        'azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation': false,
-        'azureLogicAppsStandard.autoStartDesignTime': false,
-        'azureLogicAppsStandard.parameterizeConnectionsInProjectLoad': false,
-      })
-    );
+    prepareCancelProfileSettings(profile);
     const args = [
       ...cancelPlatformLaunchArgs(process.platform),
       `--user-data-dir=${profile}`,
@@ -394,6 +403,7 @@ module.exports = {
   prepareCancelContext,
   adaptCancelHandoff,
   resolveCancelProfile,
+  prepareCancelProfileSettings,
   assertRequiredScreenshots,
   assertCancelResult,
   finalizeCancelResult,

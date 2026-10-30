@@ -141,6 +141,7 @@ function recordScreenshotMetadata({ manifestPath, metadataPath, metadata, expect
         classification,
         verdict,
         reasonCodes: metadata.reasonCodes,
+        metadata,
         screenshotPath,
         bundleDirectory: path.dirname(manifestPath),
       });
@@ -172,6 +173,7 @@ function recordScreenshotMetadata({ manifestPath, metadataPath, metadata, expect
       classification,
       verdict,
       reasonCodes: sanitizeStringArray(metadata.reasonCodes, 20),
+      ...publicCaptureSummary(metadata),
     };
     const sidecarReference = writeBundleJson({
       bundleDirectory,
@@ -356,7 +358,89 @@ function mutateManifest(manifestPath, expectedInvocation, mutate) {
   });
 }
 
-function recordAttachment(manifest, { id, phase, classification, verdict, reasonCodes, screenshotPath, bundleDirectory }) {
+function publicCaptureSummary(metadata) {
+  const numericFields = (value, names) =>
+    Object.fromEntries(
+      names.filter((name) => typeof value?.[name] === 'number' && Number.isFinite(value[name])).map((name) => [name, value[name]])
+    );
+  const counts = (value) =>
+    numericFields(value, [
+      'loaders',
+      'documentLoaders',
+      'frames',
+      'canvasNodes',
+      'panels',
+      'selectedLayouts',
+      'workbenchShellParts',
+      'buttons',
+      'rows',
+      'discoveryRoots',
+      'discoveryControls',
+    ]);
+  const anchors = (value) =>
+    (Array.isArray(value) ? value : [])
+      .filter((anchor) => ['body', 'activeTab', 'workbenchShell', 'designerCanvas', 'selectedPanelLayout'].includes(anchor?.name))
+      .slice(0, 8)
+      .map((anchor) => ({ name: anchor.name, bounds: numericFields(anchor.bounds, ['left', 'top', 'width', 'height']) }));
+  const summary = {};
+  if (metadata?.timing) {
+    summary.timing = numericFields(metadata.timing, ['timeoutMs', 'elapsedMs', 'samples', 'captureAttempts']);
+  }
+  if (metadata?.geometry) {
+    summary.geometry = {
+      viewport: numericFields(metadata.geometry.viewport, ['width', 'height', 'deviceScaleFactor']),
+      anchors: anchors(metadata.geometry.anchors),
+    };
+  }
+  if (metadata?.counts) {
+    summary.counts = counts(metadata.counts);
+  }
+  if (Array.isArray(metadata?.events)) {
+    const allowedNames = [
+      'diagnostic-sample',
+      'readiness-wait-start',
+      'readiness-sample',
+      'stable-readiness',
+      'readiness-unavailable',
+      'capture-start',
+      'capture-rpc-failed',
+      'capture-end',
+      'post-sample',
+      'postcheck-failed',
+      'accepted',
+      'rejected',
+    ];
+    summary.events = metadata.events
+      .filter((event) => allowedNames.includes(event?.name))
+      .slice(-80)
+      .map((event) => ({
+        name: event.name,
+        ...numericFields(event, ['elapsedMs', 'attempt', 'generation', 'revision', 'structuralRevision', 'ownerRevision']),
+        counts: counts(event.counts),
+        anchors: anchors(event.anchors),
+        details: {
+          ...numericFields(event.details, [
+            'preCaptureGeneration',
+            'postCaptureGeneration',
+            'preCaptureRevision',
+            'postCaptureRevision',
+            'preCaptureStructuralRevision',
+            'postCaptureStructuralRevision',
+            'preOwnerRevision',
+            'postOwnerRevision',
+          ]),
+          ...Object.fromEntries(
+            ['ownerRevisionAccepted', 'revisionAccepted']
+              .filter((name) => typeof event.details?.[name] === 'boolean')
+              .map((name) => [name, event.details[name]])
+          ),
+        },
+      }));
+  }
+  return summary;
+}
+
+function recordAttachment(manifest, { id, phase, classification, verdict, reasonCodes, metadata, screenshotPath, bundleDirectory }) {
   const relativeDirectory = 'diagnostics';
   const screenshotReference =
     fs.existsSync(screenshotPath) && verdict === 'diagnostic'
@@ -374,6 +458,7 @@ function recordAttachment(manifest, { id, phase, classification, verdict, reason
     classification,
     verdict,
     reasonCodes: sanitizeStringArray(reasonCodes, 20),
+    ...publicCaptureSummary(metadata),
   };
   const sidecarReference = writeBundleJson({
     bundleDirectory,

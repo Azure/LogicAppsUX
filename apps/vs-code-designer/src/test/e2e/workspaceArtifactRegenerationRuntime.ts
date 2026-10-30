@@ -314,6 +314,8 @@ export function writeRegenerationRuntimeProfile(
         ...handoff.settings,
         'telemetry.telemetryLevel': 'off',
         'update.mode': 'none',
+        'extensions.autoUpdate': false,
+        'extensions.autoCheckUpdates': false,
         'azureLogicAppsStandard.autoStartDesignTime': false,
         'azureLogicAppsStandard.parameterizeConnectionsInProjectLoad': false,
         'azureLogicAppsStandard.enableManagedIdentityAuth': false,
@@ -329,6 +331,10 @@ export function writeRegenerationRuntimeProfile(
 }
 
 export function assertRegenerationRuntimeProfile(settingsPath: string, handoff: RegenerationRuntimeHandoff): void {
-  const actual = selectedSettings(JSON.parse(fs.readFileSync(settingsPath, 'utf8')) as Record<string, unknown>);
+  const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8')) as Record<string, unknown>;
+  const actual = selectedSettings(settings);
   assert.deepStrictEqual(actual, handoff.settings, 'Regular Code changed admitted runtime configuration or substituted system binaries');
+  for (const key of ['extensions.autoUpdate', 'extensions.autoCheckUpdates']) {
+    assert.strictEqual(settings[key], false, 'Regular Code must retain the prepared extension cohort');
+  }
 }

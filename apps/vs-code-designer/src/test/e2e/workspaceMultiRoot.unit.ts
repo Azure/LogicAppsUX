@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
+import { runInNewContext } from 'node:vm';
 import { test, mock } from 'node:test';
 import nativeFs from 'node:fs';
 import {
@@ -40,6 +41,7 @@ import {
   type FolderMenuCheckpoint,
   type DebugEvent,
   readLogicAppRoots,
+  waitForActivatedMultiRootRuntime,
   type WorkbenchState,
 } from './workspaceMultiRootWorkbench';
 import { contextMenuDom, workbenchDomFixture } from './workbenchDomFixture';
@@ -310,6 +312,126 @@ test('regular launch accepts actual plain-func activation only when PATH resolve
     fs.rmSync(f.root, { recursive: true, force: true });
   }
 });
+test('initial Explorer actions wait for same-boot product activation, not just recorder startup', async () => {
+  const f = bootstrapFixture();
+  const menu = folderMenuFixture();
+  try {
+    writeBootstrapAttestation(f.request, snapshotBootstrapBinary(f.context, f.executable), f.probes, 'unit-Code');
+    const admitted = readBootstrapAttestation(f.request.file, f.context, f.phase);
+    const env = controlledFuncEnvironment(path.dirname(f.executable), {});
+    const events: DebugEvent[] = [];
+    let finishActivation!: () => void;
+    const activation = new Promise<void>((resolve) => {
+      finishActivation = resolve;
+    });
+    const recorder = { activate: (_context: unknown) => {} };
+    const settings: Record<string, unknown> = {
+      funcCoreToolsBinaryPath: 'func',
+      autoRuntimeDependenciesValidationAndInstallation: false,
+      autoRuntimeDependenciesPath: f.root,
+    };
+    // Execute the actual recorder producer with delayed product activation.
+    // Only VS Code APIs and append-only event transport are supplied; no native
+    // Code, Func executable or machine population is started.
+    const modules: Record<string, unknown> = {
+      vscode: {
+        workspace: {
+          workspaceFolders: [{ uri: { fsPath: menu.folder } }],
+          getConfiguration: () => ({ inspect: (key: string) => ({ globalValue: settings[key] }) }),
+        },
+        extensions: { getExtension: () => ({ activate: () => activation }) },
+        debug: { onDidStartDebugSession: () => ({}), onDidTerminateDebugSession: () => ({}) },
+      },
+      'node:fs': { appendFileSync: (_file: string, line: string) => events.push(JSON.parse(line)) },
+      'node:crypto': { randomUUID: () => 'current-boot' },
+      '../../../out/test/e2e/workspaceMultiRootLaunch': { observeFuncRuntime },
+    };
+    runInNewContext(
+      fs.readFileSync(path.resolve(__dirname, '../../../scripts/fixtures/workspace-multi-root-recorder/extension.js'), 'utf8'),
+      {
+        exports: recorder,
+        require: (id: string) => {
+          assert.ok(id in modules, `Unexpected recorder dependency ${id}`);
+          return modules[id];
+        },
+        process: { env: { ...env, LA_E2E_CLI_MULTI_ROOT_EVENTS: 'unit-event-transport' } },
+      }
+    );
+    recorder.activate({ subscriptions: [] });
+    assert.deepEqual(
+      events.map((event) => event.kind),
+      ['activation']
+    );
+    let reads = 0;
+    await waitForActivatedMultiRootRuntime(
+      () => {
+        assert.deepEqual(menu.sent, [], 'No UI input while product activation is pending');
+        reads++;
+        if (reads === 1) {
+          assert.deepEqual(
+            events.map((event) => event.kind),
+            ['activation']
+          );
+          finishActivation();
+        }
+        return events;
+      },
+      'current-boot',
+      admitted,
+      Date.now() + 2000
+    );
+    assert.ok(reads > 1, 'Recorder activation alone cannot satisfy product readiness');
+    await folderCreateNewProject(menu.cdp, menu.folder, Date.now() + 2000, {
+      workspaceFilePath: menu.workspaceFilePath,
+      checkpoint: async () => undefined,
+    });
+    assert.equal(
+      menu.sent.some((entry) => entry.params.code === 'ContextMenu'),
+      true
+    );
+
+    const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/workspaceMultiRoot.test.ts'), 'utf8');
+    const initialGate = source.indexOf('await waitForActivatedMultiRootRuntime');
+    assert.ok(initialGate >= 0 && initialGate < source.indexOf('await folderCreateNewProject'));
+  } finally {
+    menu.dispose();
+    fs.rmSync(f.root, { recursive: true, force: true });
+  }
+});
+
+test('product activation gate rejects same-boot errors and wrong runtime bytes without any Explorer input', async () => {
+  const f = bootstrapFixture();
+  try {
+    writeBootstrapAttestation(f.request, snapshotBootstrapBinary(f.context, f.executable), f.probes, 'unit-Code');
+    const admitted = readBootstrapAttestation(f.request.file, f.context, f.phase);
+    const env = controlledFuncEnvironment(path.dirname(f.executable), {});
+    const resolution = observeFuncRuntime('func', false, f.root, env);
+    for (const event of [
+      { kind: 'runtimeResolution' as const, boot: 'current', error: 'product activation failed' },
+      { kind: 'runtimeResolution' as const, boot: 'current', resolution: { ...resolution, sha256: 'b'.repeat(64) } },
+    ]) {
+      await assert.rejects(
+        waitForActivatedMultiRootRuntime(() => [event], 'current', admitted, Date.now() + 1000),
+        /product activation failed|different Func bytes/
+      );
+    }
+    await assert.rejects(
+      waitForActivatedMultiRootRuntime(
+        () => [
+          { kind: 'activation', boot: 'current' },
+          { kind: 'runtimeResolution', boot: 'stale', resolution },
+        ],
+        'current',
+        admitted,
+        Date.now() + 30
+      ),
+      /Workbench action deadline exhausted/
+    );
+  } finally {
+    fs.rmSync(f.root, { recursive: true, force: true });
+  }
+});
+
 test('same-name shell wrapper in admitted Func directory fails rather than masking shell resolution', () => {
   const f = bootstrapFixture();
   try {

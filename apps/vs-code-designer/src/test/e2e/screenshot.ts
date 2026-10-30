@@ -292,7 +292,9 @@ async function captureCdpScreenshotCore(
         recordEvent('readiness-wait-start', undefined, { generation });
         sampleContextId = await assertBoundSemanticContext(cdp, sampleCdp, sampleContextId, expectation, options.binding, deadline);
         await ensureSemanticLatchInstalled();
-        stableSample = await waitForStableReadiness(sampleCdp, sampleContextId, expectation, generation, deadline, samples);
+        stableSample = await waitForStableReadiness(sampleCdp, sampleContextId, expectation, generation, deadline, samples, (sample) =>
+          recordEvent('readiness-sample', sample)
+        );
         generation = stableSample?.generation ?? generation;
         recordEvent(stableSample?.ready ? 'stable-readiness' : 'readiness-unavailable', stableSample ?? samples.at(-1));
       }
@@ -1333,12 +1335,14 @@ async function waitForStableReadiness(
   expectation: ScreenshotExpectation,
   generation: number,
   deadline: number,
-  samples: ScreenshotReadinessSnapshot[]
+  samples: ScreenshotReadinessSnapshot[],
+  onSample: (sample: ScreenshotReadinessSnapshot) => void
 ): Promise<ScreenshotReadinessSnapshot | undefined> {
   while (Date.now() < deadline) {
     const snapshot = await sampleReadiness(cdp, contextId, expectation, cdp.contextGeneration ?? generation, 0, deadline);
     const previous = samples.at(-1);
     samples.push(snapshot);
+    onSample(snapshot);
     if (previous && isStableScreenshotSample(previous, snapshot)) {
       return snapshot;
     }

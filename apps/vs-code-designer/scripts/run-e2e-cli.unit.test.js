@@ -6,6 +6,7 @@ const fs = require('fs');
 const net = require('net');
 const os = require('os');
 const path = require('path');
+const { pathToFileURL } = require('url');
 const runE2eCliSource = fs.readFileSync(path.join(__dirname, 'run-e2e-cli.js'), 'utf8');
 
 const {
@@ -164,6 +165,7 @@ function createPreparedExtensionsSeed(seedDir, { vscodeVersion = 'stable' } = {}
     testDeferredWorkspaceCleanupOwnership();
     await testRegenerationDiagnosticsPublication();
     testDirectFamilyShortLinuxProfileParent();
+    testCliProfilePreservesPreparedExtensionCohort();
     testPreparedExtensionDependencyCohort();
     testCreatesEmptyIsolatedDependencyRoot();
     testAppliesControlledFuncAfterFinalEnvironmentMerge();
@@ -211,6 +213,7 @@ function createPreparedExtensionsSeed(seedDir, { vscodeVersion = 'stable' } = {}
     await testBatchStopsAfterContainmentBreach();
     await testRunSuiteWrapperProcessWritesStructuredResults();
     await testBatchRegenerationRejectsMissingStagingEvidence();
+    await testDirectRegenerationRetainsRejectedClosureDiagnostics();
     await testDirectHttpFamilyRetainsWrapperPhaseJournal();
     await testRunSuiteWrapperProcessTimeoutCancelsDisposableChild();
     await testRunSuiteWrapperProcessTimeoutCancelsGrandchildListener();
@@ -319,6 +322,7 @@ async function testRegenerationDiagnosticsPublication() {
   };
   fs.mkdirSync(source, { recursive: true });
   fs.mkdirSync(workspaceParent, { recursive: true });
+  const canonicalWorkspaceParent = fs.realpathSync.native(workspaceParent);
   fs.writeFileSync(path.join(source, 'invocation.json'), JSON.stringify(regenerationContext));
   fs.writeFileSync(path.join(source, 'final-result.json'), '{"complete":true}');
   fs.writeFileSync(phaseResultsPath, '{"phaseId":"workspaceArtifactRegeneration:create","complete":true}\n');
@@ -340,7 +344,7 @@ async function testRegenerationDiagnosticsPublication() {
         assert.deepStrictEqual(phases, [{ phaseId: 'workspaceArtifactRegeneration:create', complete: true }]);
         assert.strictEqual(cleanup.verified, true);
         assert.strictEqual(cleanup.action, 'removed');
-        assert.strictEqual(cleanup.workspaceParent, workspaceParent);
+        assert.strictEqual(cleanup.workspaceParent, canonicalWorkspaceParent);
         for (const name of requiredNames) {
           if (!fs.existsSync(path.join(source, name))) {
             fs.writeFileSync(path.join(source, name), '{}');
@@ -426,6 +430,41 @@ async function testRegenerationDiagnosticsPublication() {
     closureIndex >= 0 && stagingIndex > closureIndex && terminalIndex > stagingIndex,
     'Direct and batch regeneration must stage evidence after retained process closure and before terminal publication'
   );
+}
+
+function testCliProfilePreservesPreparedExtensionCohort() {
+  const profile = path.join(tempRoot, 'immutable-cli-profile');
+  const configUrl = pathToFileURL(path.resolve(__dirname, '..', '.vscode-test.mjs')).href;
+  // Load the actual config/profile writer, not a copied settings object. This
+  // imports defineConfig only; it does not start VS Code or a native test body.
+  execFileSync(
+    process.execPath,
+    [
+      '--input-type=module',
+      '-e',
+      `import assert from 'node:assert/strict';
+       const {default: profiles} = await import(${JSON.stringify(configUrl)});
+       for (const profile of profiles) {
+         assert.equal(profile.launchArgs.some(arg => arg.startsWith('--disable-extension')), false);
+       }`,
+    ],
+    {
+      env: {
+        ...process.env,
+        LA_E2E_CLI_USER_DATA_DIR: profile,
+        LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: path.join(tempRoot, 'cli-profile-runtime'),
+      },
+      encoding: 'utf8',
+      timeout: 10_000,
+    }
+  );
+  const settings = JSON.parse(fs.readFileSync(path.join(profile, 'User', 'settings.json'), 'utf8'));
+  assert.strictEqual(settings['extensions.autoUpdate'], false, 'The prepared extension cohort must not update during a native test');
+  assert.strictEqual(settings['extensions.autoCheckUpdates'], false);
+  assert.strictEqual(settings['extensions.allowed'], undefined, 'Required product activation dependencies stay enabled');
+  const product = JSON.parse(fs.readFileSync(path.resolve(__dirname, '..', 'src', 'package.json'), 'utf8'));
+  assert.ok(product.extensionDependencies.includes('ms-dotnettools.csharp'));
+  assert.ok(product.extensionDependencies.includes('ms-dotnettools.csdevkit'));
 }
 
 function testDirectFamilyShortLinuxProfileParent() {
@@ -2125,6 +2164,93 @@ async function testBatchRegenerationRejectsMissingStagingEvidence() {
   const directTerminal = JSON.parse(fs.readFileSync(path.join(resultsDir, `${suite.id}.terminal-result.json`), 'utf8'));
   assert.strictEqual(directTerminal.complete, false);
   assert.strictEqual(directTerminal.cleanupVerified, false);
+}
+
+async function testDirectRegenerationRetainsRejectedClosureDiagnostics() {
+  const root = path.join(tempRoot, 'regeneration-rejected-closure');
+  const seedDir = path.join(root, 'seed');
+  const resultsDir = path.join(root, 'results');
+  const destination = path.join(root, 'published-diagnostics');
+  const scriptPath = path.join(root, 'original-wrapper.js');
+  const previousDestination = process.env.LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR;
+  const rawResult = '{"scenario":"workspace-artifact-regeneration","observationPassed":true,"complete":false}\n';
+  fs.mkdirSync(root, { recursive: true });
+  createPreparedExtensionsSeed(seedDir);
+  fs.writeFileSync(
+    scriptPath,
+    [
+      "const fs=require('node:fs'),path=require('node:path'),{spawn}=require('node:child_process');",
+      'const diagnosticRoot=process.env.LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR;',
+      "const workspace=path.join(process.env.LA_E2E_CLI_WORKSPACE_ROOT,'original-workspace');",
+      "const pidFile=path.join(diagnosticRoot,'original-descendant.pid');",
+      "if(process.argv[2]==='descendant'){",
+      'fs.writeFileSync(pidFile,String(process.pid));',
+      'setTimeout(()=>{},60000);',
+      '}else{',
+      'fs.mkdirSync(workspace,{recursive:true});',
+      "fs.writeFileSync(path.join(workspace,'original.txt'),'retain original workspace');",
+      "fs.mkdirSync(path.join(diagnosticRoot,'vscode-logs'),{recursive:true});",
+      `fs.writeFileSync(path.join(diagnosticRoot,'final-result.json'),${JSON.stringify(rawResult)});`,
+      "fs.writeFileSync(path.join(diagnosticRoot,'code.log'),'original regular Code diagnostics\\n');",
+      "fs.writeFileSync(path.join(diagnosticRoot,'vscode-logs','original.log'),'original extension activation diagnostics\\n');",
+      "const child=spawn(process.execPath,[__filename,'descendant'],{detached:true,stdio:'ignore',cwd:workspace});",
+      'child.unref();',
+      'const timer=setInterval(()=>{if(fs.existsSync(pidFile)){clearInterval(timer);process.exit(0);}},20);',
+      '}',
+    ].join('\n')
+  );
+  process.env.LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR = destination;
+  try {
+    const code = await runDirectFamily('workspaceArtifactRegeneration', undefined, {
+      batchRoot: path.join(root, 'batch'),
+      resultsDir,
+      seedDir,
+      scriptPath,
+      timeoutMs: 20_000,
+    });
+    assert.strictEqual(code, 1, 'Recovered descendants must still fail the direct family');
+    const terminalPath = path.join(resultsDir, 'workspaceArtifactRegeneration.terminal-result.json');
+    const cleanupPath = path.join(resultsDir, 'workspaceArtifactRegeneration.cleanup-ledger.json');
+    const terminal = JSON.parse(fs.readFileSync(terminalPath, 'utf8'));
+    const cleanup = JSON.parse(fs.readFileSync(cleanupPath, 'utf8'));
+    assert.strictEqual(terminal.complete, false);
+    assert.strictEqual(terminal.originalProcessClosureVerified, false);
+    assert.strictEqual(cleanup.verified, false);
+    assert.strictEqual(cleanup.processCleanup.rootExitCode, 0);
+    assert.strictEqual(cleanup.processCleanup.forcedTerminationAttempted, true);
+    assert.match(terminal.diagnosticsError, /ownership containment was not empty/);
+    const batch = path.join(root, 'batch', fs.readdirSync(path.join(root, 'batch'))[0]);
+    const suiteRoot = path.join(
+      batch,
+      fs.readdirSync(batch).find((name) => name.startsWith('01-'))
+    );
+    assert.strictEqual(fs.existsSync(path.join(suiteRoot, 'workspaces', 'original-workspace', 'original.txt')), true);
+    assert.strictEqual(fs.existsSync(path.join(suiteRoot, 'runtime-dependencies')), true);
+    assert.strictEqual(fs.readFileSync(path.join(destination, 'final-result.json'), 'utf8'), rawResult);
+    assert.strictEqual(
+      fs.readFileSync(path.join(destination, 'vscode-logs', 'original.log'), 'utf8'),
+      'original extension activation diagnostics\n'
+    );
+    assert.strictEqual(
+      fs.readFileSync(path.join(destination, 'outer-terminal-result.json'), 'utf8'),
+      fs.readFileSync(terminalPath, 'utf8')
+    );
+    assert.strictEqual(fs.readFileSync(path.join(destination, 'outer-cleanup-ledger.json'), 'utf8'), fs.readFileSync(cleanupPath, 'utf8'));
+    assert.strictEqual(
+      fs.existsSync(path.join(destination, 'terminal-result.json')),
+      false,
+      'Do not manufacture missing family staging receipts'
+    );
+    assert.strictEqual(fs.existsSync(path.join(destination, 'cleanup-ledger.json')), false);
+    const pid = Number(fs.readFileSync(path.join(destination, 'original-descendant.pid'), 'utf8'));
+    assert.throws(() => process.kill(pid, 0), 'The retained original must really have been contained and recovered');
+  } finally {
+    if (previousDestination === undefined) {
+      delete process.env.LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR;
+    } else {
+      process.env.LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR = previousDestination;
+    }
+  }
 }
 
 async function testDirectHttpFamilyRetainsWrapperPhaseJournal() {

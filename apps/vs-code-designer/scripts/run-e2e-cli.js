@@ -627,7 +627,44 @@ async function runDirectFamily(suiteId, visibleDelayMs, options = {}) {
   context.directFinalizationComplete = true;
   writeSuiteFinalEvidence({ ...result, context, suite, error });
   const terminal = readJsonIfExists(context.terminalResultPath);
+  if (suite.id === 'workspaceArtifactRegeneration' && terminal?.complete === false) {
+    try {
+      retainFailedRegenerationDiagnostics(context, regenerationDiagnosticsDestination);
+    } catch (publicationError) {
+      // Publication is secondary: never replace the original body/closure error
+      // or call the success finalizer (which deletes the workspace) on failure.
+      console.error(
+        `[workspace-regeneration] Failed to retain rejected-family diagnostics: ${formatErrorForDiagnostics(publicationError)}`
+      );
+    }
+  }
   return terminal?.complete === true && context.transientCleanupVerified && !error ? 0 : 1;
+}
+
+function retainFailedRegenerationDiagnostics(context, destination) {
+  const source = path.join(context.reportsRoot, 'workspace-regeneration');
+  if (!fs.existsSync(source)) {
+    return;
+  }
+  assert.equal(
+    readJsonIfExists(context.terminalResultPath)?.complete,
+    false,
+    'Failure retention requires the actual rejected outer terminal'
+  );
+  assert.equal(fs.existsSync(destination), false, `Refusing to overwrite workspace regeneration failure diagnostics: ${destination}`);
+  fs.mkdirSync(path.dirname(destination), { recursive: true });
+  // Keep the original partial evidence byte-for-byte, including missing family
+  // receipts. Do not manufacture finalized cleanup/closure proof to make it
+  // publishable through the strict success path.
+  fs.cpSync(source, destination, { recursive: true, errorOnExist: true, force: false });
+  for (const [sourcePath, name] of [
+    [context.terminalResultPath, 'outer-terminal-result.json'],
+    [context.cleanupLedgerPath, 'outer-cleanup-ledger.json'],
+    [context.phaseResultsPath, 'outer-phase-results.jsonl'],
+  ]) {
+    fs.copyFileSync(sourcePath, path.join(destination, name), fs.constants.COPYFILE_EXCL);
+  }
+  console.error(`[workspace-regeneration] Retained diagnostic-only rejected-family evidence: ${destination}`);
 }
 
 function getDirectFamilyUserDataParent(

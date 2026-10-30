@@ -5,7 +5,6 @@ import { assertNextButtonEnabled, enterFieldValue, getPageText, selectDropdownOp
 import { captureCdpScreenshot } from './screenshot';
 import { nativePopulationProvider, remainingBudget, waitForFuncPopulation } from './workspaceMultiRootCollector';
 import type { MultiRootBootstrapAttestation } from './workspaceMultiRootBootstrap';
-import { assertFuncRuntimeResolution } from './workspaceMultiRootLaunch';
 import { connectToOwnedRegularWorkbench, ensureRegularWorkbenchExplorer, reloadOwnedRegularWorkbench } from './workbenchCdpActions';
 import {
   activeWebview,
@@ -20,6 +19,7 @@ import {
   poll,
   readLogicAppRoots,
   readWorkbench,
+  waitForActivatedMultiRootRuntime,
 } from './workspaceMultiRootWorkbench';
 import { normalizeFsPath } from './testUtils';
 
@@ -83,6 +83,7 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
     );
     assert.ok(originalActivation?.boot, 'The exact original workspace extension-host activation is required before Explorer actions');
     const originalBoot = originalActivation.boot;
+    await waitForActivatedMultiRootRuntime(() => debugEvents(options.eventsFile), originalBoot, options.bootstrap, phaseDeadline(30000));
     await ensureRegularWorkbenchExplorer(workbench, ownership, phaseDeadline(30000));
 
     // Three example roots, matching the source fixture shape. No extra app-type
@@ -163,16 +164,12 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
       phaseDeadline(30000)
     );
     assert.ok(activation?.roots);
-    const runtime = await poll(
-      async () =>
-        debugEvents(options.eventsFile)
-          .reverse()
-          .find((event) => event.kind === 'runtimeResolution' && event.boot === activation.boot),
-      (event) => !!event,
+    const runtime = await waitForActivatedMultiRootRuntime(
+      () => debugEvents(options.eventsFile),
+      activation.boot,
+      options.bootstrap,
       phaseDeadline(30000)
     );
-    assert.ok(runtime && !runtime.error, `Actual post-reload runtime resolution failed: ${runtime?.error || 'missing observation'}`);
-    assertFuncRuntimeResolution(runtime.resolution, options.bootstrap);
     assert.deepEqual(
       activation.roots
         .filter((root) => fs.existsSync(path.join(root, 'host.json')))

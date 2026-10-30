@@ -352,6 +352,10 @@ function prepareUserSettings(userDataPath) {
         ],
         'telemetry.telemetryLevel': 'off',
         'update.mode': 'none',
+        // --disable-updates affects Code itself, not Marketplace extensions.
+        // Preserve the verified prepared C#/Dev Kit cohort throughout the run.
+        'extensions.autoUpdate': false,
+        'extensions.autoCheckUpdates': false,
       },
       null,
       2

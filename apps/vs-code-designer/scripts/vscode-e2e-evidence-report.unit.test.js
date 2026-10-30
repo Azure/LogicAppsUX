@@ -177,8 +177,71 @@ test('shared writer enforces declared order and records only public sidecars', (
     assert.equal(checkpoint.status, 'accepted');
     assert.equal(checkpoint.evidence.screenshot.path, 'screenshots/empty-window-startup.png');
     const sidecar = JSON.parse(fs.readFileSync(path.join(evidenceDir, checkpoint.evidence.sidecar.path), 'utf8'));
-    assert.deepEqual(Object.keys(sidecar), ['schemaVersion', 'checkpoint', 'phase', 'classification', 'verdict', 'reasonCodes']);
+    assert.deepEqual(Object.keys(sidecar), ['schemaVersion', 'checkpoint', 'phase', 'classification', 'verdict', 'reasonCodes', 'events']);
+    assert.deepEqual(sidecar.events, []);
     assert.doesNotMatch(JSON.stringify(sidecar), /private-target|private-event/);
+  });
+});
+
+test('evidence and diagnostic sidecars preserve only allowlisted capture comparison fields', () => {
+  withFixture(({ root, evidenceDir, manifestPath }) => {
+    initializeSuiteEvidenceManifest({
+      suiteId: 'unitTests',
+      invocation: 'unit-capture-summary',
+      platform: 'win32',
+      evidenceDir,
+      expectedPhaseIds: ['unitTests'],
+    });
+    const privateFields = {
+      timing: { timeoutMs: 15000, elapsedMs: 14999, samples: 60, captureAttempts: 2, secret: 'private-value' },
+      target: { opaqueTargetId: 'private-target' },
+      geometry: {
+        viewport: { width: 1024, height: 768, deviceScaleFactor: 1.25, secret: 'private-value' },
+        anchors: [{ name: 'designerCanvas', bounds: { left: 0, top: 32, width: 710, height: 736 } }, { name: 'private-anchor' }],
+      },
+      counts: { loaders: 0, canvasNodes: 2, secret: 123 },
+      events: [
+        { name: 'private-event' },
+        {
+          name: 'rejected',
+          elapsedMs: 100,
+          generation: 2,
+          revision: 5,
+          structuralRevision: 4,
+          ownerRevision: 3,
+          counts: { loaders: 0, canvasNodes: 2, secret: 123 },
+          details: {
+            preCaptureRevision: 4,
+            postCaptureRevision: 5,
+            revisionAccepted: false,
+            ownerRevisionAccepted: true,
+            preOwnerRevision: 'private-value',
+            secret: 'private-value',
+          },
+        },
+      ],
+    };
+    for (const [checkpoint, classification, verdict] of [
+      ['empty-window-startup', 'evidence', 'failed'],
+      ['capture-failure-diagnostic', 'diagnostic', 'diagnostic'],
+    ]) {
+      writeCapture({ root, manifestPath, checkpoint, classification, verdict, privateFields });
+      const sidecar = JSON.parse(
+        fs.readFileSync(path.join(evidenceDir, classification === 'evidence' ? 'screenshots' : 'diagnostics', `${checkpoint}.json`), 'utf8')
+      );
+      assert.equal(sidecar.timing.captureAttempts, 2);
+      assert.deepEqual(sidecar.geometry.viewport, { width: 1024, height: 768, deviceScaleFactor: 1.25 });
+      assert.deepEqual(sidecar.counts, { loaders: 0, canvasNodes: 2 });
+      assert.equal(sidecar.events.length, 1);
+      assert.equal(sidecar.events[0].revision, 5);
+      assert.deepEqual(sidecar.events[0].details, {
+        preCaptureRevision: 4,
+        postCaptureRevision: 5,
+        ownerRevisionAccepted: true,
+        revisionAccepted: false,
+      });
+      assert.doesNotMatch(JSON.stringify(sidecar), /private-|secret/);
+    }
   });
 });
 

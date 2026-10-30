@@ -451,6 +451,14 @@ async function main(): Promise<void> {
     const freshSettingsPath = writeRegenerationRuntimeProfile(freshProfile, runtimeHandoff, binding);
     assertRegenerationRuntimeProfile(freshSettingsPath, runtimeHandoff);
     const freshSettings: Record<string, unknown> = JSON.parse(fs.readFileSync(freshSettingsPath, 'utf8'));
+    assert.strictEqual(freshSettings['extensions.autoUpdate'], false);
+    assert.strictEqual(freshSettings['extensions.autoCheckUpdates'], false);
+    assert.strictEqual(freshSettings['extensions.allowed'], undefined, 'Required C# activation dependencies must not be disabled');
+    for (const key of ['extensions.autoUpdate', 'extensions.autoCheckUpdates']) {
+      fs.writeFileSync(freshSettingsPath, JSON.stringify({ ...freshSettings, [key]: true }));
+      assert.throws(() => assertRegenerationRuntimeProfile(freshSettingsPath, runtimeHandoff), /prepared extension cohort/);
+    }
+    fs.writeFileSync(freshSettingsPath, JSON.stringify(freshSettings));
     for (const key of regenerationRuntimeSettingKeys) {
       assert.deepStrictEqual(freshSettings[key], runtimeSettings[key], 'Fresh profile must derive from actual creating-host configuration');
     }
