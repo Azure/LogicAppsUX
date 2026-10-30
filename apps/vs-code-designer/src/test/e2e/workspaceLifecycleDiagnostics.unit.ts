@@ -36,6 +36,7 @@ async function main(): Promise<void> {
   testRuntimeDiagnosticsRedactSensitiveStrings();
   testEarlyMsnWeatherPhaseWiring();
   testDebugPromptEvidenceWaitsForStableRuntime();
+  await testPersistedDesignerEvidenceSeparatesCanvasAndPanel();
   testDynamicContentPickerOpenAcceptsAlternativeLabels();
   testDynamicContentPickerEvidenceForwardsTokenTitles();
   testDynamicContentEntrypointIsReacquiredAfterFocusedEvidence();
@@ -47,6 +48,103 @@ async function main(): Promise<void> {
   testMsnWeatherSkipsOnlyRedundantFinalCanvasCheckpoint();
   testDesignerConnectionActionExpressionScopesCreateActions();
   console.log('[workspaceLifecycleDiagnostics.unit] all tests passed');
+}
+
+async function testPersistedDesignerEvidenceSeparatesCanvasAndPanel(): Promise<void> {
+  let branch: ts.Statement | undefined;
+  const visit = (node: ts.Node): void => {
+    if (
+      ts.isIfStatement(node) &&
+      node.expression.getText(source) === 'options.persistedDesigner' &&
+      node.thenStatement.getText(source).includes('await persisted.waitForPersistedDesignerReady()')
+    ) {
+      assert.strictEqual(branch, undefined, 'Expected one persisted Designer evidence branch');
+      branch = node.thenStatement;
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(source);
+  assert.ok(branch, 'Expected persisted Designer lifecycle implementation');
+  const implementation = ts.transpileModule(`export async function run() ${branch.getText(source)}`, {
+    compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS },
+  }).outputText;
+  const nodeIds = ['Request', 'Initialize', 'AppendArray', 'AppendString', 'Response'];
+  for (const includePanel of [true, false]) {
+    const calls: string[] = [];
+    let panelOpen = false;
+    const deadlineMs = Date.now() + 30_000;
+    const exported: { run?: () => Promise<void> } = {};
+    const cdp = {};
+    vm.runInNewContext(implementation, {
+      exports: exported,
+      assert,
+      options: {
+        warmOnly: true,
+        persistedDesigner: {
+          requiredNodeIds: nodeIds,
+          panelNodeId: includePanel ? 'Initialize' : undefined,
+          evidenceName: 'unit-rebound',
+          description: 'Persisted Designer',
+          deadlineMs,
+        },
+      },
+      createdWorkspace: { label: 'unit' },
+      designerCdp: cdp,
+      cdp,
+      contextId: 4,
+      ProvenDesignerCdpActions: class {
+        async waitForPersistedDesignerReady() {
+          calls.push('ready');
+        }
+        async waitForExactNodeIds(ids: string[]) {
+          assert.deepStrictEqual(ids, nodeIds);
+          calls.push('exact-nodes');
+          return ids.map((nodeId) => ({ nodeId, title: nodeId === 'Initialize' ? 'Initialize variables' : nodeId }));
+        }
+        async ensureNodePanelOpen() {
+          panelOpen = true;
+          calls.push('open-panel');
+        }
+      },
+      normalizeDesignerCanvasViewport: async () => calls.push('fit-canvas'),
+      captureLifecycleScreenshot: async (
+        name: string,
+        options: {
+          expectation: { kind: string; requiredNodeIds?: string[]; nodeId?: string; actionTitle?: string };
+          deadlineMs: number;
+          semanticContextId: number;
+          semanticCdp: unknown;
+          skipNotificationHousekeeping: boolean;
+        }
+      ) => {
+        assert.strictEqual(options.deadlineMs, deadlineMs, 'Both captures retain the original absolute deadline');
+        assert.strictEqual(options.semanticCdp, cdp);
+        assert.strictEqual(options.semanticContextId, 4);
+        assert.strictEqual(options.skipNotificationHousekeeping, true);
+        if (options.expectation.kind === 'designerCanvas') {
+          assert.strictEqual(panelOpen, false, 'An open panel clips nodes in the 710px Windows viewport');
+          assert.deepStrictEqual(options.expectation.requiredNodeIds, nodeIds, 'Canvas proof must retain every exact node');
+          assert.strictEqual(name, 'unit-rebound');
+          calls.push('canvas-evidence');
+        } else {
+          assert.strictEqual(options.expectation.kind, 'designerPanel');
+          assert.strictEqual(panelOpen, true);
+          assert.strictEqual(options.expectation.nodeId, 'Initialize');
+          assert.strictEqual(options.expectation.actionTitle, 'Initialize variables');
+          assert.strictEqual(name, 'unit-rebound-panel-open');
+          calls.push('panel-evidence');
+        }
+      },
+    });
+    await exported.run!();
+    assert.deepStrictEqual(calls, [
+      'ready',
+      'fit-canvas',
+      'exact-nodes',
+      'canvas-evidence',
+      ...(includePanel ? ['open-panel', 'panel-evidence'] : []),
+    ]);
+  }
 }
 
 function testNotificationHousekeepingUsesBoundedOperations(): void {

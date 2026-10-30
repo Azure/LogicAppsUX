@@ -1340,6 +1340,12 @@ post-click hit tests are not evidence of the event recipient.
 
 CDP `Input.dispatchMouseEvent` takes viewport **CSS pixels**, not device pixels
 ([protocol](https://github.com/ChromeDevTools/devtools-protocol/blob/master/pdl/domains/Input.pdl)).
+After runtime registration, persisted-workflow evidence captures the fitted
+canvas with every exact authored node ID **before** opening Initialize variables.
+The exact node's details panel has its own required `-panel-open` checkpoint.
+These checks remain separate because the panel can clip canvas nodes on a
+710px Windows webview; neither proof is relaxed to fit the smaller viewport.
+
 The original DOM object is resolved in its exact execution context and
 `DOM.getContentQuads` supplies its main-frame viewport CSS coordinates, including
 frame offsets and transforms. `DOM.getNodeForLocation` and `DOM.resolveNode`

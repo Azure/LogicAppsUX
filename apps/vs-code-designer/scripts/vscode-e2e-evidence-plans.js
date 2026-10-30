@@ -851,8 +851,14 @@ function statelessVariablesCatalog() {
       simpleStep(
         'stateless-variables-runtime-designer-rebound',
         'Run phase',
-        'Reopen the persisted workflow and bind the exact Initialize variables node.',
-        'The exact persisted Designer, all authored node identities, and the Initialize variables details panel are visible.'
+        'Reopen and fit the persisted workflow before opening a details panel.',
+        'The exact persisted Designer and all authored node identities are fully visible.'
+      ),
+      simpleStep(
+        'stateless-variables-runtime-designer-rebound-panel-open',
+        'Run phase',
+        'Open the exact persisted Initialize variables node.',
+        'The Initialize variables details panel belongs to that exact persisted node.'
       ),
     ]),
     group(

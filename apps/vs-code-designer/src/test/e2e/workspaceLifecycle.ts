@@ -1200,23 +1200,34 @@ async function openDesignerAndCreateWorkflow(createdWorkspace: CreatedWorkspace,
         options.persistedDesigner.deadlineMs
       );
       const persistedNodes = await persisted.waitForExactNodeIds(options.persistedDesigner.requiredNodeIds);
-      if (options.persistedDesigner.panelNodeId) {
-        const panelNode = persistedNodes.find((node) => node.nodeId === options.persistedDesigner!.panelNodeId);
-        assert.ok(panelNode, `Persisted panel node ${options.persistedDesigner.panelNodeId} was not resolved exactly`);
-        await persisted.ensureNodePanelOpen(panelNode);
-      }
       await captureLifecycleScreenshot(options.persistedDesigner.evidenceName, {
         expectation: {
           kind: 'designerCanvas',
           label: createdWorkspace.label,
           requiredNodeIds: options.persistedDesigner.requiredNodeIds,
-          requiredPanelNodeId: options.persistedDesigner.panelNodeId,
         },
         semanticCdp: cdp,
         semanticContextId: contextId,
         deadlineMs: options.persistedDesigner.deadlineMs,
         skipNotificationHousekeeping: true,
       });
+      if (options.persistedDesigner.panelNodeId) {
+        const panelNode = persistedNodes.find((node) => node.nodeId === options.persistedDesigner!.panelNodeId);
+        assert.ok(panelNode, `Persisted panel node ${options.persistedDesigner.panelNodeId} was not resolved exactly`);
+        await persisted.ensureNodePanelOpen(panelNode);
+        await captureLifecycleScreenshot(`${options.persistedDesigner.evidenceName}-panel-open`, {
+          expectation: {
+            kind: 'designerPanel',
+            label: createdWorkspace.label,
+            actionTitle: panelNode.title,
+            nodeId: panelNode.nodeId,
+          },
+          semanticCdp: cdp,
+          semanticContextId: contextId,
+          deadlineMs: options.persistedDesigner.deadlineMs,
+          skipNotificationHousekeeping: true,
+        });
+      }
     } else if (designerActionProfile === 'msn') {
       await getMsnDesignerActions(designerCdp, contextId).waitForText(
         ['Add a trigger', ...requestTriggerTitleVariants, responseActionTitle],
