@@ -4,6 +4,18 @@ import { makeStyles, mergeClasses, tokens } from '@fluentui/react-components';
 import type { NodeLineVariant } from '../types';
 export const nodeLineStrokes = {
   solid: { stroke: tokens.colorNeutralStroke1, strokeWidth: tokens.strokeWidthThin },
+  solidSuccess: {
+    stroke: tokens.colorStatusSuccessBorder2,
+    strokeWidth: tokens.strokeWidthThin,
+    strokeLinecap: 'round',
+    strokeLinejoin: 'round',
+  },
+  solidDanger: {
+    stroke: tokens.colorStatusDangerBorder2,
+    strokeWidth: tokens.strokeWidthThin,
+    strokeLinecap: 'round',
+    strokeLinejoin: 'round',
+  },
   dashedNeutral: { stroke: tokens.colorNeutralStroke1, strokeWidth: tokens.strokeWidthThin, strokeDasharray: '5 5' },
   dashedSuccess: { stroke: tokens.colorStatusSuccessBorder2, strokeWidth: tokens.strokeWidthThin, strokeDasharray: '5 5' },
   dashedDanger: { stroke: tokens.colorStatusDangerBorder2, strokeWidth: tokens.strokeWidthThin, strokeDasharray: '5 5' },
@@ -11,6 +23,16 @@ export const nodeLineStrokes = {
 export const useNodeLineStyles = makeStyles({
   base: { fill: 'none', strokeWidth: tokens.strokeWidthThin, '@media (forced-colors: active)': { stroke: 'CanvasText' } },
   solid: { stroke: nodeLineStrokes.solid.stroke },
+  solidSuccess: {
+    stroke: nodeLineStrokes.solidSuccess.stroke,
+    strokeLinecap: nodeLineStrokes.solidSuccess.strokeLinecap,
+    strokeLinejoin: nodeLineStrokes.solidSuccess.strokeLinejoin,
+  },
+  solidDanger: {
+    stroke: nodeLineStrokes.solidDanger.stroke,
+    strokeLinecap: nodeLineStrokes.solidDanger.strokeLinecap,
+    strokeLinejoin: nodeLineStrokes.solidDanger.strokeLinejoin,
+  },
   dashedNeutral: { stroke: nodeLineStrokes.dashedNeutral.stroke, strokeDasharray: '5 5' },
   dashedSuccess: { stroke: nodeLineStrokes.dashedSuccess.stroke, strokeDasharray: '5 5' },
   dashedDanger: { stroke: nodeLineStrokes.dashedDanger.stroke, strokeDasharray: '5 5' },

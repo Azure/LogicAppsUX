@@ -11,6 +11,7 @@ export * from './primitives/NodeStatusBadge';
 export * from './primitives/NodeTestDataIndicator';
 export * from './primitives/NodeToolConnector';
 export * from './primitives/NodeLabeledHandle';
+export * from './primitives/NodeBranchOutputs';
 export * from './primitives/NodeLine';
 export * from './primitives/NodeActionAdd';
 export * from './primitives/IfIcon';

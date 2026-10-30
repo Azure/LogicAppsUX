@@ -110,12 +110,12 @@ source aliases do not change the package export map.
     </tr>
     <tr>
       <th scope="row"><code>nodeLineStrokes</code></th>
-      <td>Map of all four <code>NodeLineVariant</code> keys to CSS stroke properties</td>
-      <td>Solid and dashed neutral/success/danger values referencing Fluent tokens.</td>
+      <td>Map of all six <code>NodeLineVariant</code> keys to CSS stroke properties</td>
+      <td>Solid neutral/success/danger and dashed neutral/success/danger values referencing Fluent tokens.</td>
     </tr>
     <tr>
       <th scope="row"><code>useNodeLineStyles</code></th>
-      <td>Griffel hook → class names <code>base</code>, <code>solid</code>, <code>dashedNeutral</code>, <code>dashedSuccess</code>, <code>dashedDanger</code></td>
+      <td>Griffel hook → class names <code>base</code>, <code>solid</code>, <code>solidSuccess</code>, <code>solidDanger</code>, <code>dashedNeutral</code>, <code>dashedSuccess</code>, <code>dashedDanger</code></td>
       <td>Call during rendering. Base includes actual forced-colors CanvasText behavior.</td>
     </tr>
     <tr>
@@ -301,7 +301,7 @@ runtime UI, registration or service dependency.
     </tr>
     <tr>
       <th scope="row"><code>NodeLineVariant</code></th>
-      <td><code>solid</code>, <code>dashedNeutral</code>, <code>dashedSuccess</code>, <code>dashedDanger</code></td>
+      <td><code>solid</code>, <code>solidSuccess</code>, <code>solidDanger</code>, <code>dashedNeutral</code>, <code>dashedSuccess</code>, <code>dashedDanger</code></td>
     </tr>
     <tr>
       <th scope="row"><code>ConditionNodeKind</code></th>
@@ -415,7 +415,7 @@ shared contracts used by aliases:
     </tr>
     <tr>
       <th scope="row">Connections</th>
-      <td><code>NodeHandleProps</code> (also NodeInputHandle), <code>NodeOutputHandlesProps</code>, <code>NodeToolConnectorProps</code>, <code>NodeLabeledHandleProps</code>, <code>NodeLineProps</code>, <code>NodeMergePointProps</code></td>
+      <td><code>NodeHandleProps</code> (also NodeInputHandle), <code>NodeOutputHandlesProps</code>, <code>NodeBranchOutputsProps</code>, <code>NodeToolConnectorProps</code>, <code>NodeLabeledHandleProps</code>, <code>NodeLineProps</code>, <code>NodeMergePointProps</code></td>
     </tr>
     <tr>
       <th scope="row">Structure</th>

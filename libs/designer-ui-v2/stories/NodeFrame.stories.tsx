@@ -22,7 +22,10 @@ const meta = {
     ),
   },
   argTypes: {
-    kind: { control: 'select', options: ['scope', 'loop', 'condition', 'switch'] },
+    kind: { control: 'select', options: ['scope', 'loop', 'condition', 'switch', 'branch'] },
+    tone: { control: 'inline-radio', options: ['neutral', 'success', 'danger'] },
+    collapsed: { control: 'boolean' },
+    subtitlePlacement: { control: 'inline-radio', options: ['inline', 'below'] },
     handleAxis: axisControl,
     status: statusControl,
     children: { control: false },
@@ -34,7 +37,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Translucent group frame, not a layout engine. A nonempty title enables the header. Slots imply handles even with handles=false. handleTop positions horizontal ports; handleLeft positions vertical ports.',
+          'Translucent group frame, not a layout engine. A nonempty title enables the header. Slots imply handles even with handles=false. handleTop positions horizontal ports; handleLeft positions vertical ports. Branch kind is glyphless and supports neutral/success/danger tones plus header-only collapsed rendering.',
       },
     },
   },
@@ -87,3 +90,37 @@ function LocalFrame(args: NodeFrameProps) {
   );
 }
 export const HeaderAction: Story = { render: (args) => <LocalFrame {...args} /> };
+export const BranchTones: Story = {
+  args: { kind: 'branch', title: 'True', subtitle: '3 actions' },
+  render: (args) => (
+    <div className="sb-grid">
+      {(['neutral', 'success', 'danger'] as const).map((tone) => (
+        <Example key={tone} label={tone}>
+          <NodeFrame {...args} tone={tone} />
+        </Example>
+      ))}
+    </div>
+  ),
+};
+export const BranchCollapsed: Story = {
+  args: {
+    kind: 'branch',
+    title: 'False',
+    subtitle: 'Did not run',
+    action: <Button size="small">Expand</Button>,
+    collapsed: true,
+  },
+};
+export const BranchSubtitlePlacement: Story = {
+  args: { kind: 'branch', title: 'True', subtitle: '3 actions', action: <Button size="small">Inspect</Button> },
+  render: (args) => (
+    <div className="sb-grid">
+      <Example label="inline">
+        <NodeFrame {...args} subtitlePlacement="inline" />
+      </Example>
+      <Example label="below">
+        <NodeFrame {...args} subtitlePlacement="below" />
+      </Example>
+    </div>
+  ),
+};
