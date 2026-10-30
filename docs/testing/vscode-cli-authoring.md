@@ -970,6 +970,16 @@ contain its launched processes and avoid contaminating subsequent tests; product
 shutdown success does not manufacture natural host closure or filesystem cleanup
 success, nor does it bypass the full-suite infrastructure gate.
 
+The activation smoke suite observes the already-active C# extension's supported
+`captureActivityLogs()` startup barrier before its host exits, then disposes the
+capture. Activation itself returns before the asynchronous language-server
+startup finishes. This bounded fixture-ordering observation does not stop the
+server, prove dependency quiescence, or change process-closure acceptance.
+Missing APIs, rejected startup, and deadline expiry remain failures; late
+captures are disposed without turning a timeout into success. Keep this
+observation scoped to the smoke suite until source-bound native evidence
+justifies applying it elsewhere.
+
 An extension host exiting zero can still leave a language server that started
 during shutdown. Correlate retained PIDs with original extension activation logs:
 a server startup banner without client-exit monitoring/initialization is not

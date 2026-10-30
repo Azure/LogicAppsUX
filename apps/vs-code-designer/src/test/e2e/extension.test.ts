@@ -2,6 +2,7 @@ import * as assert from 'assert';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { closeCopilotChatIfVisible } from './copilotChat';
+import { observeCSharpReadiness } from './dependencyReadiness';
 import { assertNoDialogAttempts, installDialogGuard } from './dialogGuard';
 import { captureCliScreenshot, installFailureScreenshotHook } from './screenshot';
 import { normalizeFsPath } from './testUtils';
@@ -24,9 +25,20 @@ suite('Extension Activation Tests', () => {
     await closeCopilotChatIfVisible('activation suite setup', { absentSettleMs: 1500 });
   });
 
-  suiteTeardown(() => {
-    activationChannel?.dispose();
-    activationChannel = undefined;
+  suiteTeardown(async () => {
+    try {
+      // DIAGNOSTIC unitTests-only experiment: finish already-started C# startup
+      // before host finalization. This does not prove dependency quiescence.
+      logActivationEvidence('DIAGNOSTIC C# capture/disposal readiness barrier starting (90000ms absolute budget)');
+      await observeCSharpReadiness(vscode.extensions.getExtension('ms-dotnettools.csharp'), 90_000);
+      logActivationEvidence('DIAGNOSTIC C# capture disposed before host finalization; quiescence not established');
+    } catch (error) {
+      console.error('[dependency-readiness] DIAGNOSTIC unitTests finalization barrier failed', error);
+      throw error;
+    } finally {
+      activationChannel?.dispose();
+      activationChannel = undefined;
+    }
   });
 
   test('VS Code is running', () => {
