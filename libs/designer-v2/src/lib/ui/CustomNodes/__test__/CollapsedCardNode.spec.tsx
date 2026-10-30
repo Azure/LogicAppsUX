@@ -8,6 +8,9 @@ import { useOperationsVisuals } from '../../../core/state/operation/operationSel
 import { render, screen, fireEvent } from '@testing-library/react';
 
 const mockDispatch = vi.fn();
+vi.mock('../../../core/state/designerOptions/designerOptionsSelectors', () => ({
+  useSharedNodeUi: () => false,
+}));
 
 vi.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
@@ -41,6 +44,8 @@ vi.mock(import('@xyflow/react'), async (importOriginal) => {
   const actual = await importOriginal();
   return {
     ...actual,
+    useNodeId: () => null,
+    useNodesData: () => undefined,
     Handle: (({ children, ...props }) => <div {...props}>{'Handle reactflow'}</div>) as any,
   };
 });
@@ -76,6 +81,23 @@ describe('CollapsedNode', () => {
   it('should render without crashing', () => {
     const collapsedCardNode = renderer.create(<CollapsedNode {...defaultProps} />).toJSON();
     expect(collapsedCardNode).toMatchSnapshot();
+  });
+
+  it('uses the real collapsed identity count and preserves focus, context and expand commands', () => {
+    (useShouldNodeFocus as Mock).mockReturnValue(true);
+    mockDispatch.mockClear();
+    render(<CollapsedNode {...defaultProps} data={{ presentation: { shared: true, family: 'collapsed' } }} />);
+    const chip = screen.getByLabelText('Show 4 actions');
+    expect(chip.getAttribute('data-automation-id')).toBe('msla-collapsed-card-node_1');
+    expect(chip.id).toBe('msla-collapsed-card-node_1');
+    expect(document.activeElement).toBe(chip);
+    fireEvent.click(chip);
+    expect(mockDispatch).toHaveBeenCalledWith({ type: 'workflow/toggleCollapsedActionId', payload: 'node-1' });
+    fireEvent.contextMenu(chip, { clientX: 12, clientY: 34 });
+    expect(mockDispatch).toHaveBeenCalledWith({
+      type: 'designerView/setNodeContextMenuData',
+      payload: { nodeId: 'node-1', location: { x: 12, y: 34 } },
+    });
   });
 
   it('should call dispatch on context menu event', () => {

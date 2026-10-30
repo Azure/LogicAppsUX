@@ -1,7 +1,8 @@
 #!/usr/bin/env node
-/* eslint-env node */
+import console from 'node:console';
 import fs from 'node:fs';
 import path from 'node:path';
+import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -19,6 +20,7 @@ const packagesToUpdate = [
   'libs/designer/package.json',
   'libs/designer-v2/package.json',
   'libs/designer-ui/package.json',
+  'libs/designer-ui-v2/package.json',
   'apps/vs-code-designer/src/package.json',
   'libs/data-mapper/package.json',
   'libs/data-mapper-v2/package.json',

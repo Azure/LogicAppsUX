@@ -185,6 +185,15 @@ vi.mock('../../../../core/utils/workflowExtraction', () => ({
   buildWorkflowExtractionPlan: vi.fn(),
 }));
 
+vi.mock('../../../../core/state/designerOptions/designerOptionsSelectors', () => ({
+  useSharedNodeUi: () => false,
+  useIsDarkMode: () => false,
+}));
+
+vi.mock('../SharedWorkflowExtractionPreview', () => ({
+  SharedWorkflowExtractionPreview: () => <div />,
+}));
+
 vi.mock('../workflowExtractionPreview', () => ({
   getWorkflowExtractionPreview: vi.fn(),
 }));
@@ -280,6 +289,7 @@ const createState = ({
     workflowExtractionDialogOpen: open,
   },
   operations: {
+    operationInfo: {},
     operationMetadata: {
       ActionA: {
         brandColor: '#111111',
@@ -868,6 +878,123 @@ describe('WorkflowExtractionDialog', () => {
     await screen.findByDisplayValue('Suggested_workflow');
     expect(within(screen.getByRole('list', { name: 'Extraction progress' })).queryByText('Completed')).not.toBeInTheDocument();
     expect(screen.queryByRole('link', { name: 'Open child workflow' })).not.toBeInTheDocument();
+  });
+
+  it('restarts preparation when service instance changes with the same source id and ignores stale completion', async () => {
+    const firstSuggestion = createDeferred<string>();
+    const secondSuggestion = createDeferred<string>();
+    const firstService = createService({
+      sourceId: 'source-id',
+      getSuggestedName: vi.fn(() => firstSuggestion.promise),
+    });
+    const secondService = createService({
+      sourceId: 'source-id',
+      getSuggestedName: vi.fn(() => secondSuggestion.promise),
+    });
+    const store = createTestStore({ open: true });
+    const view = renderWithProviders(<WorkflowExtractionDialog />, store, firstService);
+
+    await waitFor(() => expect(firstService.getSuggestedName).toHaveBeenCalledWith('Extracted_workflow'));
+
+    view.rerender(
+      <Provider store={store}>
+        <IntlProvider locale="en">
+          <ProviderWrappedContext.Provider value={{ workflowExtractionService: secondService } as any}>
+            <WorkflowExtractionDialog />
+          </ProviderWrappedContext.Provider>
+        </IntlProvider>
+      </Provider>
+    );
+
+    await waitFor(() => expect(secondService.getSuggestedName).toHaveBeenCalledWith('Extracted_workflow'));
+    await act(async () => {
+      firstSuggestion.resolve('Stale_workflow');
+      await firstSuggestion.promise;
+    });
+    expect(screen.queryByDisplayValue('Stale_workflow')).not.toBeInTheDocument();
+    await act(async () => {
+      secondSuggestion.resolve('Fresh_workflow');
+      await secondSuggestion.promise;
+    });
+
+    await waitFor(() => expect(screen.getByRole('textbox', { name: 'Workflow name' })).toHaveValue('Fresh_workflow'));
+    expect(mockSerializeWorkflow).toHaveBeenCalledTimes(2);
+  });
+
+  it('keeps edited draft values during a stable-service rerender', async () => {
+    const user = userEvent.setup();
+    const service = createService();
+    const store = createTestStore({ open: true });
+    const view = renderWithProviders(<WorkflowExtractionDialog />, store, service);
+    await screen.findByDisplayValue('Suggested_workflow');
+
+    const nameInput = screen.getByRole('textbox', { name: 'Workflow name' });
+    await user.clear(nameInput);
+    await user.type(nameInput, 'Custom_workflow');
+
+    view.rerender(
+      <Provider store={store}>
+        <IntlProvider locale="en">
+          <ProviderWrappedContext.Provider value={{ workflowExtractionService: service } as any}>
+            <WorkflowExtractionDialog />
+          </ProviderWrappedContext.Provider>
+        </IntlProvider>
+      </Provider>
+    );
+
+    expect(screen.getByRole('textbox', { name: 'Workflow name' })).toHaveValue('Custom_workflow');
+    expect(mockSerializeWorkflow).toHaveBeenCalledTimes(1);
+    expect(service.getSuggestedName).toHaveBeenCalledTimes(1);
+  });
+
+  it('invalidates preparation when the extraction source id changes', async () => {
+    const user = userEvent.setup();
+    const sourceAService = createService({
+      sourceId: 'source-a',
+      getSuggestedName: vi.fn(() => Promise.resolve('SourceA_workflow')),
+    });
+    const sourceBService = createService({
+      sourceId: 'source-b',
+      getSuggestedName: vi.fn(() => Promise.resolve('SourceB_workflow')),
+    });
+    const store = createTestStore({ open: true });
+    const view = renderWithProviders(<WorkflowExtractionDialog />, store, sourceAService);
+    await screen.findByDisplayValue('SourceA_workflow');
+
+    const nameInput = screen.getByRole('textbox', { name: 'Workflow name' });
+    await user.clear(nameInput);
+    await user.type(nameInput, 'Edited_workflow');
+
+    view.rerender(
+      <Provider store={store}>
+        <IntlProvider locale="en">
+          <ProviderWrappedContext.Provider value={{ workflowExtractionService: sourceBService } as any}>
+            <WorkflowExtractionDialog />
+          </ProviderWrappedContext.Provider>
+        </IntlProvider>
+      </Provider>
+    );
+
+    await waitFor(() => expect(screen.getByRole('textbox', { name: 'Workflow name' })).toHaveValue('SourceB_workflow'));
+    expect(mockSerializeWorkflow).toHaveBeenCalledTimes(2);
+  });
+
+  it('cancels pending preparation updates when the dialog unmounts', async () => {
+    const suggestion = createDeferred<string>();
+    const service = createService({
+      getSuggestedName: vi.fn(() => suggestion.promise),
+    });
+    const store = createTestStore({ open: true });
+    const view = renderWithProviders(<WorkflowExtractionDialog />, store, service);
+    await waitFor(() => expect(service.getSuggestedName).toHaveBeenCalledWith('Extracted_workflow'));
+
+    view.unmount();
+    await act(async () => {
+      suggestion.resolve('Late_workflow');
+      await suggestion.promise;
+    });
+
+    expect(mockBuildWorkflowExtractionPlan.mock.calls.some(([, , name]) => name === 'Late_workflow')).toBe(false);
   });
 
   it('clears the open state when the extraction service is lost so the designer is not left read-only', async () => {

@@ -1,0 +1,445 @@
+import { Meta } from '@storybook/blocks';
+import { nodeMetrics, nodeHoverCardTiming } from '@microsoft/designer-ui-v2/metrics';
+
+<Meta title="Start here/API and boundaries" />
+
+# API and boundaries
+
+This page documents data, helpers, contexts, hooks and types. They are **not UI
+components** and do not receive invented component stories.
+
+## Supported imports
+
+```ts
+import {
+  ActionNodeCard,
+  DesignerUiScope,
+  defaultNodeStrings,
+  getNodeGlyph,
+} from '@microsoft/designer-ui-v2';
+import type { NodeRunStatus, ActionNodeCardProps } from '@microsoft/designer-ui-v2';
+import { nodeMetrics, nodeHoverCardTiming } from '@microsoft/designer-ui-v2/metrics';
+```
+
+The root exports the visual components, nonvisual APIs and types below.
+`/metrics` is the React-free numeric data/timing entry; it does not re-export
+components or hooks. `/package.json` exposes manifest metadata. Source/build
+deep imports and a package `/nodes` subpath are unsupported. Storybook's exact
+source aliases do not change the package export map.
+
+## All 18 nonvisual runtime exports
+
+<table aria-label="Nonvisual runtime exports">
+  <thead>
+    <tr>
+      <th scope="col">Export</th>
+      <th scope="col">Inputs and result</th>
+      <th scope="col">Contract / boundary</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row"><code>defaultNodeStrings</code></th>
+      <td><code>NodeStrings</code> English dictionary with parameterized label functions</td>
+      <td>Supply the relevant <strong>complete</strong> dictionary to each component. Hosts localize; intentional empty strings are preserved. No Intl provider is required.</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>NODE_GLYPHS</code></th>
+      <td>Map of 14 <code>NodeVisualKind</code> keys to regular/filled component constructors</td>
+      <td>Finite presentation vocabulary, not a connector registry or asset-loading service.</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>getNodeGlyph</code></th>
+      <td><code>kind: NodeVisualKind</code> → <code>NodeGlyph</code></td>
+      <td>Returns the canonical pair. Hosts normalize raw operation identity before calling; display names do not choose a glyph.</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>nodeMetrics</code></th>
+      <td>Readonly numeric presentation geometry; root and <code>/metrics</code></td>
+      <td>Fixed card anatomy, not graph spacing, routing or dynamic agent extents. See every group below.</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>nodeHoverCardTiming</code></th>
+      <td>Readonly <code>&#123; openDelay, closeDelay &#125;</code> milliseconds; root and <code>/metrics</code></td>
+      <td>Default pointer/focus timing. Components accept explicit overrides.</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>designerUiTokens</code></th>
+      <td>Named CSS variable references with Fluent fallbacks</td>
+      <td>Node surfaces, tiles, handles, test-data colors and native agent badge colors. Set typed overrides on a scope, not <code>:root</code>.</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>nodeCardVars</code></th>
+      <td><code>background</code>, <code>footerBackground</code>, <code>textEndReserve</code> custom-property names</td>
+      <td>Internal composition variables exposed for presentation composition; not a theme provider.</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>useDesignerUiOutlet</code></th>
+      <td>No arguments → same-document <code>HTMLElement</code> or <code>null</code></td>
+      <td>Read under an enabled <code>DesignerUiScope</code>; null before mounting/outside/when disabled. NodeHoverCard uses it for portals, not native modal dialogs.</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>resolveNodeIcons</code></th>
+      <td><code>&#123; icon?, selectedIcon? &#125;</code>, required default pair → <code>&#123; icon, selectedIcon &#125;</code> React nodes</td>
+      <td>A truthy custom icon supplies both forms unless selectedIcon is supplied; otherwise use defaults with optional selected override.</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>NodeHandleAxisContext</code></th>
+      <td>React context of <code>NodeHandleAxis</code>, default <code>horizontal</code></td>
+      <td>NodeCard provides this to body and after slots. Context is presentation, not topology.</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>useNodeHandleAxis</code></th>
+      <td>No arguments → current <code>horizontal</code> or <code>vertical</code></td>
+      <td>Read during React rendering under the context/provider. Does not measure or change ports.</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>NodeHoverCardActiveContext</code></th>
+      <td>React boolean context, default <code>false</code></td>
+      <td>NodeHoverCard supplies active state so NodeText suppresses competing native title tooltips.</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>joinNodeSubtitle</code></th>
+      <td>Rest array of <code>string</code> or <code>undefined</code> → <code>string</code></td>
+      <td>Filters falsy parts and joins with <code> · </code>. No localization or operation-name resolution.</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>getNodeStatusLabel</code></th>
+      <td>Required <code>NodeRunStatus</code>, optional complete <code>NodeStatusStrings</code> → <code>string</code></td>
+      <td>Defaults to English status text. No status inference or execution.</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>nodeLineStrokes</code></th>
+      <td>Map of all six <code>NodeLineVariant</code> keys to CSS stroke properties</td>
+      <td>Solid neutral/success/danger and dashed neutral/success/danger values referencing Fluent tokens.</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>useNodeLineStyles</code></th>
+      <td>Griffel hook → class names <code>base</code>, <code>solid</code>, <code>solidSuccess</code>, <code>solidDanger</code>, <code>dashedNeutral</code>, <code>dashedSuccess</code>, <code>dashedDanger</code></td>
+      <td>Call during rendering. Base includes actual forced-colors CanvasText behavior.</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>toSafeExternalHref</code></th>
+      <td><code>string</code> or <code>undefined</code> → normalized URL string or <code>undefined</code></td>
+      <td>Only absolute <code>http:</code> / <code>https:</code> URLs survive. Empty, malformed, relative and non-HTTP values are suppressed; malformed input is caught rather than thrown.</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>PLACEHOLDER_TRIGGER_TITLE</code></th>
+      <td>Default placeholder English title string</td>
+      <td><code>"Add a trigger to start your workflow"</code>; use the placeholder strings prop for localization. Not a loading message.</td>
+    </tr>
+  </tbody>
+</table>
+
+### Glyph vocabulary
+
+`NodeVisualKind` has exactly these keys: `http`, `response`, `schedule`, `delay`,
+`compose`, `parseJson`, `variables`, `table`, `filterArray`, `join`, `dateTime`,
+`inlineCode`, `terminate`, `invokeWorkflow`. Both constructors take public Fluent
+icon props. See the [rendered pairs](?path=/story/icons-ificonregular--visual-kind-vocabulary).
+
+```tsx
+const glyph = getNodeGlyph('http');
+<ActionNodeCard
+  title="Send request"
+  icon={<glyph.regular />}
+  selectedIcon={<glyph.filled />}
+  selected
+/>;
+```
+
+### Metrics: source-live values
+
+These are imported from the real `/metrics` entry, not copied fixture values.
+
+<table aria-label="Metrics groups">
+  <thead>
+    <tr>
+      <th scope="col">Group</th>
+      <th scope="col">Purpose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row"><code>cards</code></th>
+      <td>action, trigger, condition, switch, loop, agent and tool dimensions</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>tile</code></th>
+      <td>medium/small tile and glyph sizes</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>handle</code></th>
+      <td>dot size, stroke, edge offset and labeled height</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>badge</code></th>
+      <td>height, icon size and overhang</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>testData</code></th>
+      <td>indicator size, icon size and end-text reserve</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>toolConnector</code></th>
+      <td>diamond, gap, line and add affordance dimensions</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>toolsHeader</code></th>
+      <td>Tools panel header height</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>hoverCard</code></th>
+      <td>Info width, dismiss size, popover offset</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>actionAdd</code></th>
+      <td>Standalone add-button dimensions</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>frame</code></th>
+      <td>Minimum width and body height</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>mergePoint</code></th>
+      <td>Outer size and inner dot</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>edgeControl</code></th>
+      <td>Pill, hit targets and interaction width (host owns placement)</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>collapseChip</code></th>
+      <td>Height and maximum visible count</td>
+    </tr>
+  </tbody>
+</table>
+
+<pre>{JSON.stringify({ nodeMetrics, nodeHoverCardTiming }, null, 2)}</pre>
+
+Dynamic agent/tool/frame extents still require host measurement. Do not assign
+the entire agent a fixed header height or use these metrics as layout policy.
+
+### Helper composition
+
+```ts
+joinNodeSubtitle('Built-in', undefined, 'HTTP'); // "Built-in · HTTP"
+getNodeStatusLabel('succeeded'); // "Succeeded"
+toSafeExternalHref('/relative'); // undefined
+toSafeExternalHref('https://example.com/docs'); // "https://example.com/docs"
+```
+
+### Localization example
+
+```tsx
+import { NodeInfoCard } from '@microsoft/designer-ui-v2';
+
+<NodeInfoCard
+  category="action"
+  icon={null}
+  title="Enviar solicitud"
+  configured
+  strings={{
+    configured: 'Configurado',
+    close: 'Cerrar',
+    learnMore: 'Más información',
+    opensInNewTab: '(se abre en una pestaña nueva)',
+  }}
+/>;
+```
+
+Function labels such as `tools.heading(count)`, `merge.label(name)` and
+`collapse.show(count, noun)` / `hide(count, noun)` belong to the supplied
+dictionary. Do not concatenate translated nouns into fixed English grammar.
+
+## Type-only exports
+
+All types below are available from the root with `import type`. Types have no
+runtime UI, registration or service dependency.
+
+### Vocabulary
+
+<table aria-label="Type vocabulary">
+  <thead>
+    <tr>
+      <th scope="col">Type</th>
+      <th scope="col">Values</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row"><code>NodeCategory</code></th>
+      <td><code>trigger</code>, <code>action</code>, <code>control</code>, <code>agent</code></td>
+    </tr>
+    <tr>
+      <th scope="row"><code>NodeRunStatus</code></th>
+      <td><code>pending</code>, <code>running</code>, <code>succeeded</code>, <code>skipped</code>, <code>failed</code>, <code>error</code>, <code>warning</code>, <code>cancelled</code>, <code>mock</code></td>
+    </tr>
+    <tr>
+      <th scope="row"><code>NodeCardWidth</code></th>
+      <td><code>compact</code>, <code>standard</code>, <code>wide</code>, <code>fill</code></td>
+    </tr>
+    <tr>
+      <th scope="row"><code>NodeCardShape</code></th>
+      <td><code>rounded</code>, <code>pill</code></td>
+    </tr>
+    <tr>
+      <th scope="row"><code>NodeHandleVariant</code></th>
+      <td><code>neutral</code>, <code>success</code>, <code>danger</code></td>
+    </tr>
+    <tr>
+      <th scope="row"><code>NodeLabeledHandleBranch</code></th>
+      <td><code>true</code>, <code>false</code> (strings)</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>NodeToolItemSize</code></th>
+      <td><code>medium</code>, <code>small</code></td>
+    </tr>
+    <tr>
+      <th scope="row"><code>NodeToolKind</code></th>
+      <td><code>action</code>, <code>mcp</code>, <code>subWorkflow</code></td>
+    </tr>
+    <tr>
+      <th scope="row"><code>NodeLineVariant</code></th>
+      <td><code>solid</code>, <code>solidSuccess</code>, <code>solidDanger</code>, <code>dashedNeutral</code>, <code>dashedSuccess</code>, <code>dashedDanger</code></td>
+    </tr>
+    <tr>
+      <th scope="row"><code>ConditionNodeKind</code></th>
+      <td><code>if</code>, <code>switch</code></td>
+    </tr>
+    <tr>
+      <th scope="row"><code>NodeVisualKind</code></th>
+      <td>The 14 finite glyph keys above</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>NodeHandleAxis</code></th>
+      <td><code>horizontal</code>, <code>vertical</code></td>
+    </tr>
+    <tr>
+      <th scope="row"><code>LoopBodyPlacement</code></th>
+      <td><code>end</code>, <code>bottom</code>, <code>none</code></td>
+    </tr>
+  </tbody>
+</table>
+
+### Strings and theme
+
+<table aria-label="Strings and theme contracts">
+  <thead>
+    <tr>
+      <th scope="col">Types</th>
+      <th scope="col">Responsibility</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row"><code>NodeStatusStrings</code>, <code>ActionNodeCardStrings</code></th>
+      <td>Complete status dictionary / status-bearing cards</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>AgentToolsStrings</code></th>
+      <td>Parameterized heading, add, expand and collapse labels</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>NodeInfoCardStrings</code></th>
+      <td>Configured, dismiss and external-link labels</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>LoopNodeCardStrings</code></th>
+      <td>Status plus loop label</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>NodeMergePointStrings</code></th>
+      <td>Parameterized merge name</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>PlaceholderTriggerStrings</code></th>
+      <td>Placeholder title</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>CollapseChipStrings</code></th>
+      <td>Nouns and parameterized show/hide labels</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>NodeStrings</code></th>
+      <td>Complete aggregate dictionary used by defaults</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>DesignerUiThemeOverrides</code></th>
+      <td>Partial record of the 13 admitted node palette keys; not arbitrary global CSS</td>
+    </tr>
+    <tr>
+      <th scope="row"><code>DesignerUiScopeProps</code></th>
+      <td>Enabled, light/dark mode, typed token overrides and forwarded div attributes</td>
+    </tr>
+  </tbody>
+</table>
+
+### Component and glyph contracts
+
+Overview pages expose actual prop tables and executable examples for each
+visual export. These are the complete exported prop/type names, including
+shared contracts used by aliases:
+
+<table aria-label="Component and glyph contracts">
+  <thead>
+    <tr>
+      <th scope="col">Family</th>
+      <th scope="col">Types</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">Glyphs and common cards</th>
+      <td><code>NodeGlyph</code>, <code>BaseNodeCardProps</code></td>
+    </tr>
+    <tr>
+      <th scope="row">Node cards</th>
+      <td><code>ActionNodeCardProps</code>, <code>TriggerNodeCardProps</code>, <code>ConditionNodeCardProps</code>, <code>LoopNodeCardProps</code>, <code>PlaceholderTriggerCardProps</code></td>
+    </tr>
+    <tr>
+      <th scope="row">Agents</th>
+      <td><code>AgentNodeCardProps</code>, <code>AgentToolsPanelProps</code>, <code>ToolItemCardProps</code></td>
+    </tr>
+    <tr>
+      <th scope="row">Information</th>
+      <td><code>NodeInfoCardProps</code>, <code>NodeHoverCardProps</code></td>
+    </tr>
+    <tr>
+      <th scope="row">Anatomy</th>
+      <td><code>NodeCardProps</code>, <code>NodeCardBodyProps</code>, <code>NodeCardFooterProps</code>, <code>NodeIconTileProps</code>, <code>NodeTextProps</code></td>
+    </tr>
+    <tr>
+      <th scope="row">Status</th>
+      <td><code>NodeStatusBadgeProps</code>, <code>NodeTestDataIndicatorProps</code></td>
+    </tr>
+    <tr>
+      <th scope="row">Connections</th>
+      <td><code>NodeHandleProps</code> (also NodeInputHandle), <code>NodeOutputHandlesProps</code>, <code>NodeBranchOutputsProps</code>, <code>NodeToolConnectorProps</code>, <code>NodeLabeledHandleProps</code>, <code>NodeLineProps</code>, <code>NodeMergePointProps</code></td>
+    </tr>
+    <tr>
+      <th scope="row">Structure</th>
+      <td><code>NodeFrameProps</code></td>
+    </tr>
+    <tr>
+      <th scope="row">Actions</th>
+      <td><code>NodeActionAddProps</code>, <code>NodeAddButtonProps</code>, <code>EdgePillButtonProps</code>, <code>CollapseChipProps</code></td>
+    </tr>
+  </tbody>
+</table>
+
+`IfIconRegular` and `IfIconFilled` declare no props interface. Forwarded DOM
+attributes do not add host selection/keyboard/graph behavior automatically.
+
+## Deliberate host boundary
+
+No XYFlow, Redux, React DnD, Query, routing, auth, backend, localization provider,
+cloud or host services are required here. Decorative handles and DOM slot
+markers are not connectable ports. A host owns operation normalization,
+connector imagery/loading/failure, topology, mutations, execution, focus
+navigation, dynamic measurements and clipping/portal placement.
+
+Keep native modal `DialogSurface` on its normal modal portal; put scoped shared
+presentation inside the dialog surface rather than mounting the modal into the
+popover outlet. Cold native measurement/handle refresh, production adoption,
+legal/publication and real-host validation gates remain unchanged.

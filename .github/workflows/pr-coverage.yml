@@ -217,7 +217,7 @@ jobs:
           SKIPPED_FILES=""
 
           # Define packages that require coverage (libs with vitest configs)
-          COVERED_PACKAGES="libs/designer libs/designer-ui libs/designer-v2 libs/logic-apps-shared libs/data-mapper libs/data-mapper-v2 libs/chatbot libs/a2a-core libs/vscode-extension apps/vs-code-designer apps/vs-code-react apps/iframe-app"
+          COVERED_PACKAGES="libs/designer libs/designer-ui libs/designer-ui-v2 libs/designer-v2 libs/logic-apps-shared libs/data-mapper libs/data-mapper-v2 libs/chatbot libs/a2a-core libs/vscode-extension apps/vs-code-designer apps/vs-code-react apps/iframe-app"
 
           for file in $CHANGED_FILES; do
             # Skip if file doesn't exist (might have been deleted)

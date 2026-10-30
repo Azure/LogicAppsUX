@@ -17,6 +17,8 @@ export default defineConfig({
     'react-dom',
     '@microsoft/logic-apps-shared',
     '@microsoft/designer-ui',
+    '@microsoft/designer-ui-v2',
+    '@microsoft/designer-ui-v2/metrics',
     '@microsoft/logic-apps-chatbot',
     '@fluentui/azure-themes',
     '@fluentui/react',

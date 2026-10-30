@@ -38,10 +38,12 @@ vi.mock('../../../core/queries/runs', () => ({
 
 const mockUseMonitoringView = vi.fn().mockReturnValue(false);
 const mockUseReadOnly = vi.fn().mockReturnValue(false);
+const mockUseSharedNodeUi = vi.fn().mockReturnValue(false);
 
 vi.mock('../../../core/state/designerOptions/designerOptionsSelectors', () => ({
   useMonitoringView: () => mockUseMonitoringView(),
   useReadOnly: () => mockUseReadOnly(),
+  useSharedNodeUi: () => mockUseSharedNodeUi(),
 }));
 
 vi.mock('../../../core/state/designerView/designerViewSlice', () => ({
@@ -71,6 +73,7 @@ vi.mock('../../../core/state/operation/operationSelector', () => ({
   useOperationErrorInfo: (...args: any[]) => mockUseOperationErrorInfo(...args),
   useParameterValidationErrors: (...args: any[]) => mockUseParameterValidationErrors(...args),
   useTokenDependencies: (...args: any[]) => mockUseTokenDependencies(...args),
+  useOperationParameterByName: () => undefined,
 }));
 
 const mockUseIsNodeSelectedInOperationPanel = vi.fn().mockReturnValue(false);
@@ -189,10 +192,22 @@ vi.mock('../components/handles/EdgeDrawTargetHandle', () => ({
 }));
 
 vi.mock('../components/card', () => ({
-  ActionCard: ({ id, title, isSelected, onClick, onContextMenu, onDeleteClick, errorMessages, collapsed, handleCollapse }: any) => (
+  ActionCard: ({
+    id,
+    title,
+    isSelected,
+    onClick,
+    onContextMenu,
+    onDeleteClick,
+    onCopyClick,
+    errorMessages,
+    collapsed,
+    handleCollapse,
+  }: any) => (
     <div
       data-testid={`action-card-${id}`}
       data-selected={isSelected}
+      data-has-copy-callback={typeof onCopyClick === 'function'}
       onClick={(e) => onClick?.(e)}
       onContextMenu={(e) => onContextMenu?.(e)}
     >
@@ -228,6 +243,7 @@ describe('ScopeCardNode (v2)', () => {
   const defaultProps = { id: 'testScope-#scope' } as NodeProps;
 
   beforeEach(() => {
+    mockUseSharedNodeUi.mockReturnValue(false);
     vi.clearAllMocks();
     cleanup();
     mockUseReadOnly.mockReturnValue(false);
@@ -263,6 +279,46 @@ describe('ScopeCardNode (v2)', () => {
   it('should render without crashing', () => {
     const { container } = render(<ScopeCardNode {...defaultProps} />);
     expect(container).toBeTruthy();
+  });
+
+  it.each([
+    ['Scope', 'action'],
+    ['If', 'if'],
+    ['Switch', 'switch'],
+    ['Foreach', 'foreach'],
+    ['Until', 'foreach'],
+    ['Agent', 'agent'],
+  ])('adopts the real %s host without changing its editor identity', (type, surface) => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseActionMetadata.mockReturnValue({
+      type,
+      runAfter: {},
+      inputs: { parameters: { deploymentId: 'actual-model' } },
+    });
+    const { container } = render(<ScopeCardNode {...defaultProps} />);
+    const card = container.querySelector(`[data-node-card="${surface}"]`)!;
+    expect(card).toHaveAttribute('id', 'msla-node-testScope');
+    expect(card.querySelector('img')).toBeNull();
+    fireEvent.click(card);
+    expect(mockDispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'panel/changePanelNode',
+        payload: 'testScope',
+      })
+    );
+    if (type === 'Agent') expect(screen.getByText('actual-model')).toBeInTheDocument();
+  });
+
+  it('keeps the accepted legacy scope renderer during a pending shared toggle', () => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    render(<ScopeCardNode {...defaultProps} data={{ presentation: { shared: false } }} />);
+    expect(screen.getByTestId('action-card-testScope')).toBeInTheDocument();
+  });
+
+  it.each([false, true])('does not add a duplicate legacy copy callback when the live shared option is %s', (sharedOption) => {
+    mockUseSharedNodeUi.mockReturnValue(sharedOption);
+    render(<ScopeCardNode {...defaultProps} data={{ presentation: { shared: false } }} />);
+    expect(screen.getByTestId('action-card-testScope')).toHaveAttribute('data-has-copy-callback', 'false');
   });
 
   it('should return null when node metadata is not found', () => {

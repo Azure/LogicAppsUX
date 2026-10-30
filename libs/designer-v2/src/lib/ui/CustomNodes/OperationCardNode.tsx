@@ -57,14 +57,17 @@ import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
-import type { NodeProps } from '@xyflow/react';
+import type { Node, NodeProps } from '@xyflow/react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
 import { EdgeDrawSourceHandle } from './components/handles/EdgeDrawSourceHandle';
 import { EdgeDrawTargetHandle } from './components/handles/EdgeDrawTargetHandle';
-import { ActionCard } from './components/card';
+import { OperationNodeCard } from './components/card/OperationNodeCard';
+import type { NodePresentation } from '../../core/utils/graph';
 
-const DefaultNode = ({ id }: NodeProps) => {
+type OperationGraphNode = Node<{ presentation?: NodePresentation }>;
+
+const DefaultNode = ({ id, data }: NodeProps<OperationGraphNode>) => {
   const readOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
 
@@ -116,6 +119,7 @@ const DefaultNode = ({ id }: NodeProps) => {
   }, [dispatch, repetitionRunData, id, selfRunData?.correlation?.actionTrackingId]);
 
   const parentActionMetadata = useActionMetadata(parentNodeId);
+  const isAgentTool = parentActionMetadata?.type?.toLowerCase() === Constants.NODE.TYPE.AGENT;
 
   const actualToolRunIndex = useMemo(
     () => (metadata?.subgraphType === SUBGRAPH_TYPES.MCP_CLIENT ? mcpToolRunIndex : toolRunIndex),
@@ -258,7 +262,10 @@ const DefaultNode = ({ id }: NodeProps) => {
 
   const ref = useHotkeys(['meta+c', 'ctrl+c'], copyClick, { preventDefault: true });
 
-  const { isFetching: isOperationQueryLoading, isError: isOperationQueryError } = useOperationQuery(id);
+  const operationQuery = useOperationQuery(id);
+  const { isFetching: isOperationQueryLoading, isError: isOperationQueryError } = operationQuery;
+  const metadataUnavailable =
+    operationQuery.isSuccess && (!operationQuery.data?.properties || Object.keys(operationQuery.data.properties).length === 0);
 
   const isLoading = useMemo(() => isRepetitionFetching || isOperationQueryLoading, [isRepetitionFetching, isOperationQueryLoading]);
 
@@ -333,17 +340,34 @@ const DefaultNode = ({ id }: NodeProps) => {
 
   const nodeIndex = useNodeIndex(id);
   const isCardActive = isMonitoringView ? !isNullOrUndefined(selfRunData?.status) : true;
+  const toolKind = data?.presentation
+    ? data.presentation.toolKind
+    : isMcpClient
+      ? 'mcp'
+      : isAgentTool && graphId === parentNodeId
+        ? operationInfo.type.toLowerCase() === 'workflow'
+          ? 'subWorkflow'
+          : 'action'
+        : undefined;
 
   return (
     <>
       <div className="nopan" ref={ref as any}>
         <EdgeDrawTargetHandle />
-        <ActionCard
+        <OperationNodeCard
           id={id}
+          sharedPresentation={data?.presentation?.shared}
           active={isCardActive}
           title={label}
           icon={iconUri}
           connectorName={connectorName?.result}
+          isTrigger={isTrigger}
+          operationType={operationInfo.type}
+          operationKind={operationInfo.kind}
+          metadataUnavailable={metadataUnavailable}
+          description={operationQuery.data?.properties?.description}
+          isMonitoringView={isMonitoringView}
+          toolKind={toolKind}
           drag={drag}
           dragPreview={dragPreview}
           errorMessages={errorMessages}

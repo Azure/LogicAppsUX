@@ -4,6 +4,8 @@ import { initialState as initialCustomCodeState } from '../core/state/customcode
 import { initialDesignerOptionsState } from '../core/state/designerOptions/designerOptionsSlice';
 import { initialState as initialDesignerViewState } from '../core/state/designerView/designerViewSlice';
 import { initialState as initialNotesState } from '../core/state/notes/notesSlice';
+import modalReducer from '../core/state/modal/modalSlice';
+import knowledgeHubOptionsReducer from '../core/state/knowledge/optionsSlice';
 import { initialState as initialOperationsState } from '../core/state/operation/operationMetadataSlice';
 import { initialState as initialPanelState } from '../core/state/panel/panelSlice';
 import { initialState as initialSettingsState } from '../core/state/setting/settingSlice';
@@ -29,6 +31,8 @@ export const getMockedInitialRootState = (): RootState => {
     designerOptions: initialDesignerOptionsState,
     designerView: initialDesignerViewState,
     undoRedo: initialUndoRedoState,
+    modal: modalReducer(undefined, { type: '@@INIT' }),
+    knowledgeHubOptions: knowledgeHubOptionsReducer(undefined, { type: '@@INIT' }),
   };
 };
 
