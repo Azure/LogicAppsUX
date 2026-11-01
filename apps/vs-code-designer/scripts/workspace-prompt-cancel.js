@@ -231,6 +231,59 @@ function finalizeCancelResult(context, result, cleanup, errors = []) {
   return result;
 }
 
+function trackCancelClosure(launch, result) {
+  const nativeClose = new Promise((resolve, reject) => {
+    launch.child.once('error', reject);
+    launch.child.once('close', (code, signal) => {
+      try {
+        result.processCleanup = launch.readClosure(code, signal);
+        result.originalCodeClose = {
+          code: result.processCleanup.rootExitCode,
+          signal: result.processCleanup.rootSignal,
+        };
+        resolve(result.originalCodeClose);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  });
+  const completion = nativeClose.then(async () => {
+    await launch.verifyStartup?.(result.processCleanup);
+    if (!canContinueAfterProcessCleanup(result.processCleanup)) {
+      result.errors.push(result.processCleanup.error);
+    }
+    return result.originalCodeClose;
+  });
+  completion.catch((error) => console.error(`[workspace-cancel] Original Code launch failed: ${String(error)}`));
+  return { nativeClose, completion };
+}
+
+async function awaitCancelClosure(closure, result, closeWindow, clock = { setTimeout, clearTimeout }) {
+  try {
+    if (!result.originalCodeClose) {
+      await closeWindow();
+      let timer;
+      try {
+        await Promise.race([
+          closure.nativeClose,
+          new Promise((_resolve, reject) => {
+            timer = clock.setTimeout(() => reject(new Error('Code did not finish after ordinary Close Window; no forced cleanup')), 10000);
+          }),
+        ]);
+      } finally {
+        clock.clearTimeout(timer);
+      }
+    }
+  } finally {
+    // Original native closure and subsequent startup are separate outcomes.
+    // Never charge startup verification to the native close deadline, or return
+    // early just because the original exit was already recorded.
+    if (result.originalCodeClose) {
+      await closure.completion;
+    }
+  }
+}
+
 async function runCancelSupplement(context, env, collectProfileLogs, launchContainedProcess) {
   assert.equal(typeof launchContainedProcess, 'function', 'Cancel requires the native owned-process launcher');
   const result = {
@@ -244,7 +297,7 @@ async function runCancelSupplement(context, env, collectProfileLogs, launchConta
     originalCodeClose: null,
     errors: [],
   };
-  let completion;
+  let closure;
   let profile;
   let ui;
   const originalScreenshotDir = process.env.LA_E2E_CLI_SCREENSHOT_DIR;
@@ -298,32 +351,13 @@ async function runCancelSupplement(context, env, collectProfileLogs, launchConta
       },
     });
     const { child } = launch;
-    completion = new Promise((resolve, reject) => {
-      child.once('error', reject);
-      child.once('close', async (code, signal) => {
-        try {
-          result.processCleanup = launch.readClosure(code, signal);
-          await launch.verifyStartup?.(result.processCleanup);
-          result.originalCodeClose = {
-            code: result.processCleanup.rootExitCode,
-            signal: result.processCleanup.rootSignal,
-          };
-          if (!canContinueAfterProcessCleanup(result.processCleanup)) {
-            result.errors.push(result.processCleanup.error);
-          }
-          resolve(result.originalCodeClose);
-        } catch (error) {
-          reject(error);
-        }
-      });
-    });
-    completion.catch((error) => console.error(`[workspace-cancel] Original Code launch failed: ${String(error)}`));
+    closure = trackCancelClosure(launch, result);
     for (const stream of [child.stdout, child.stderr]) {
       stream.on('data', (data) => log.write(data));
     }
     result.observation = await Promise.race([
       ui.runWorkspacePromptCancelUi(context.workspaceParent, handoff.workspace, baseline),
-      completion.then(() => {
+      closure.nativeClose.then(() => {
         throw new Error('Original Code closed before the supplementary UI observation finished');
       }),
     ]);
@@ -333,20 +367,9 @@ async function runCancelSupplement(context, env, collectProfileLogs, launchConta
     result.errors.push(String(error));
     console.error(`[workspace-cancel] Original observation/preflight failure: ${String(error)}`);
   } finally {
-    if (completion && !result.originalCodeClose) {
+    if (closure) {
       try {
-        await ui.closeWorkspacePromptCancelWindow(!result.observationPassed);
-        let timer;
-        try {
-          await Promise.race([
-            completion,
-            new Promise((_resolve, reject) => {
-              timer = setTimeout(() => reject(new Error('Code did not finish after ordinary Close Window; no forced cleanup')), 10000);
-            }),
-          ]);
-        } finally {
-          clearTimeout(timer);
-        }
+        await awaitCancelClosure(closure, result, () => ui.closeWorkspacePromptCancelWindow(!result.observationPassed));
       } catch (error) {
         result.errors.push(String(error));
         console.error(`[workspace-cancel] Original teardown failure: ${String(error)}`);
@@ -412,5 +435,7 @@ module.exports = {
   assertCancelResult,
   finalizeCancelResult,
   runCancelSupplement,
+  trackCancelClosure,
+  awaitCancelClosure,
   cancelPlatformLaunchArgs,
 };

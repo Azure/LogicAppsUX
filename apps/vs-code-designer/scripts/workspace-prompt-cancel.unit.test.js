@@ -4,6 +4,9 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { createHash } = require('node:crypto');
+const { EventEmitter } = require('node:events');
+const { test } = require('node:test');
+const { setImmediate } = require('node:timers/promises');
 const {
   prepareCancelContext,
   adaptCancelHandoff,
@@ -13,6 +16,8 @@ const {
   assertCancelResult,
   finalizeCancelResult,
   cancelPlatformLaunchArgs,
+  trackCancelClosure,
+  awaitCancelClosure,
 } = require('./workspace-prompt-cancel');
 const root = fs.mkdtempSync(path.join(os.tmpdir(), 'cancel-contract-'));
 try {
@@ -198,3 +203,202 @@ try {
 } finally {
   fs.rmSync(root, { recursive: true, force: true });
 }
+
+function deferred() {
+  let resolve;
+  let reject;
+  const promise = new Promise((yes, no) => {
+    resolve = yes;
+    reject = no;
+  });
+  return { promise, resolve, reject };
+}
+
+function cancelClosureFixture(processCleanup = { rootExitCode: 0, rootSignal: null, verified: true }) {
+  const child = new EventEmitter();
+  const verification = deferred();
+  const verificationStarted = deferred();
+  const result = { originalCodeClose: null, errors: [], observationPassed: true };
+  const closure = trackCancelClosure(
+    {
+      child,
+      readClosure: () => processCleanup,
+      verifyStartup: (actual) => {
+        assert.equal(actual, processCleanup, 'Verification must receive the original closure object');
+        verificationStarted.resolve();
+        return verification.promise;
+      },
+    },
+    result
+  );
+  let now = 0;
+  const timers = new Map();
+  const deadlines = [];
+  const clock = {
+    setTimeout(callback, delay) {
+      const token = {};
+      deadlines.push(delay);
+      timers.set(token, { callback, at: now + delay });
+      return token;
+    },
+    clearTimeout(token) {
+      timers.delete(token);
+    },
+    advance(milliseconds) {
+      now += milliseconds;
+      for (const [token, timer] of timers) {
+        if (timer.at <= now) {
+          timers.delete(token);
+          timer.callback();
+        }
+      }
+    },
+  };
+  return { child, verification, verificationStarted, result, closure, clock, timers, deadlines };
+}
+
+for (const alreadyClosed of [false, true]) {
+  test(`startup verification outlives the original close deadline (already closed: ${alreadyClosed})`, async () => {
+    const fixture = cancelClosureFixture();
+    const { child, verification, verificationStarted, result, closure, clock, timers, deadlines } = fixture;
+    let closeRequests = 0;
+    if (alreadyClosed) {
+      child.emit('close', 0, null);
+      await verificationStarted.promise;
+    }
+    let returned = false;
+    const teardown = awaitCancelClosure(
+      closure,
+      result,
+      async () => {
+        closeRequests++;
+      },
+      clock
+    ).then(() => {
+      returned = true;
+    });
+    await setImmediate();
+    if (!alreadyClosed) {
+      assert.deepEqual(deadlines, [10000], 'Keep the ordinary native close deadline unchanged');
+      child.emit('close', 0, null);
+      await verificationStarted.promise;
+    }
+    assert.deepEqual(result.originalCodeClose, { code: 0, signal: null }, 'Record original exit before verification completes');
+    clock.advance(10001);
+    await setImmediate();
+    assert.equal(timers.size, 0, 'Native-close timer is cleared independently of startup verification');
+    assert.equal(returned, false, 'No return/finalization while startup verification is pending');
+    assert.equal(closeRequests, alreadyClosed ? 0 : 1);
+    verification.resolve();
+    await teardown;
+    assert.equal(returned, true);
+    assert.deepEqual(result.errors, []);
+  });
+}
+
+test('original native nonexit still rejects at ten seconds without forced cleanup', async () => {
+  const { result, closure, clock, deadlines, timers } = cancelClosureFixture();
+  let closeRequests = 0;
+  const teardown = awaitCancelClosure(
+    closure,
+    result,
+    async () => {
+      closeRequests++;
+    },
+    clock
+  );
+  const rejected = assert.rejects(teardown, /Code did not finish after ordinary Close Window; no forced cleanup/);
+  await setImmediate();
+  assert.deepEqual(deadlines, [10000]);
+  clock.advance(9999);
+  assert.equal(timers.size, 1);
+  clock.advance(1);
+  await rejected;
+  assert.equal(result.originalCodeClose, null);
+  assert.equal(result.processCleanup, undefined);
+  assert.equal(closeRequests, 1, 'Only ordinary Close Window is requested');
+  assert.equal(timers.size, 0);
+});
+
+test('original native launch errors still reject without starting verification', async () => {
+  const { child, result, closure, clock, timers } = cancelClosureFixture();
+  const teardown = awaitCancelClosure(closure, result, async () => {}, clock);
+  const rejected = assert.rejects(teardown, /native launch failed/);
+  await setImmediate();
+  child.emit('error', new Error('native launch failed'));
+  await rejected;
+  assert.equal(result.originalCodeClose, null);
+  assert.equal(result.processCleanup, undefined);
+  assert.equal(timers.size, 0);
+});
+
+test('startup failure after recorded native close rejects and cannot become naturally verified', async () => {
+  const { child, result, closure, verification, verificationStarted, clock } = cancelClosureFixture({
+    rootExitCode: 0,
+    rootSignal: null,
+    verified: false,
+    error: 'startup proof unavailable',
+  });
+  child.emit('close', 0, null);
+  await verificationStarted.promise;
+  const teardown = awaitCancelClosure(closure, result, () => assert.fail('Already closed'), clock);
+  const rejected = assert.rejects(teardown, /startup verification failed/);
+  verification.reject(new Error('startup verification failed'));
+  await rejected;
+  assert.deepEqual(result.originalCodeClose, { code: 0, signal: null });
+  assert.equal(result.processCleanup.verified, false);
+  const diagnosticRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'cancel-startup-failure-'));
+  try {
+    const context = { root: diagnosticRoot, resultPath: path.join(diagnosticRoot, 'final-result.json') };
+    assert.equal(finalizeCancelResult(context, result, { verified: true }, [new Error('startup verification failed')]).complete, false);
+  } finally {
+    fs.rmSync(diagnosticRoot, { recursive: true, force: true });
+  }
+});
+
+test('missing startup proof and nonzero original exit remain rejected evidence', async () => {
+  for (const rootExitCode of [0, 1]) {
+    const { child, result, closure, verification, verificationStarted, clock } = cancelClosureFixture({
+      rootExitCode,
+      rootSignal: null,
+      verified: false,
+      error: 'original lifecycle proof missing',
+    });
+    child.emit('close', rootExitCode, null);
+    await verificationStarted.promise;
+    const teardown = awaitCancelClosure(closure, result, () => assert.fail('Already closed'), clock);
+    verification.resolve(); // A resolved verifier alone is not lifecycle proof.
+    await teardown;
+    assert.equal(result.processCleanup.verified, false, 'Never relabel recovered/unverified closure as natural');
+    assert.deepEqual(result.errors, ['original lifecycle proof missing']);
+    const diagnosticRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'cancel-missing-proof-'));
+    try {
+      const context = { root: diagnosticRoot, resultPath: path.join(diagnosticRoot, 'final-result.json') };
+      assert.equal(finalizeCancelResult(context, result, { verified: true }).complete, false);
+    } finally {
+      fs.rmSync(diagnosticRoot, { recursive: true, force: true });
+    }
+  }
+});
+
+test('a Close Window error cannot abandon verification that started during the close request', async () => {
+  const { child, result, closure, verification, verificationStarted, clock } = cancelClosureFixture();
+  let returned = false;
+  const teardown = awaitCancelClosure(
+    closure,
+    result,
+    async () => {
+      child.emit('close', 0, null);
+      throw new Error('Close Window command failed');
+    },
+    clock
+  );
+  const rejected = assert.rejects(teardown, /Close Window command failed/).then(() => {
+    returned = true;
+  });
+  await verificationStarted.promise;
+  await setImmediate();
+  assert.equal(returned, false);
+  verification.resolve();
+  await rejected;
+});
