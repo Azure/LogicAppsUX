@@ -252,6 +252,10 @@ jobs:
           }
           $targetParent = Join-Path '$(Agent.TempDirectory)' 'test-resources'
           $target = Join-Path $targetParent 'test-extensions'
+          $seed = Join-Path $targetParent 'prepared-extensions'
+          if (Test-Path $seed) {
+            Remove-Item -Recurse -Force $seed
+          }
           if (Test-Path $target) {
             Remove-Item -Recurse -Force $target
           }
@@ -277,6 +281,15 @@ jobs:
             --platform $expectedPlatform `
             --arch $expectedArchitecture `
             --vscode-version '$(ResolvedVSCodeVersion)'
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+          # Preserve the verified ORIGINAL archive cohort before Code can add
+          # runtime files. Use the normal dependency consumer copier/verification,
+          # not an inventory rebaseline or cache provisioning launch.
+          Move-Item -LiteralPath $target -Destination $seed
+          node -e "require('./apps/vs-code-designer/scripts/e2e-cli-batch').prepareSuiteExtensionsDirectory({ seedDir: process.argv[1], targetDir: process.argv[2], platform: process.argv[3], arch: process.argv[4], vscodeVersion: process.argv[5] })" `
+            $seed $target $expectedPlatform $expectedArchitecture '$(ResolvedVSCodeVersion)'
           if ($LASTEXITCODE -ne 0) {
             exit $LASTEXITCODE
           }
@@ -373,6 +386,7 @@ jobs:
                 LA_E2E_CLI_MULTI_ROOT_DIAGNOSTICS_PARENT: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/lifecycle/workspaceMultiRoot
               LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL: ${{ eq(parameters.suiteId, 'createWorkspaceCoreMatrix') }}
               LA_E2E_CLI_EXTENSIONS_DIR: $(Agent.TempDirectory)/test-resources/test-extensions
+              LA_E2E_CLI_PREPARED_EXTENSIONS_DIR: $(Agent.TempDirectory)/test-resources/prepared-extensions
               LA_E2E_CLI_GENERATED_WORKSPACE_ARTIFACT_DIR: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/generated-workspaces/${{ parameters.suiteId }}
               ${{ if eq(parameters.suiteId, 'workspaceArtifactRegeneration') }}:
                 LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/workspace-regeneration-${{ parameters.shortName }}
@@ -472,6 +486,7 @@ jobs:
                 LA_E2E_CLI_MULTI_ROOT_DIAGNOSTICS_PARENT: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/lifecycle/workspaceMultiRoot
               LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL: ${{ eq(parameters.suiteId, 'createWorkspaceCoreMatrix') }}
               LA_E2E_CLI_EXTENSIONS_DIR: $(Agent.TempDirectory)/test-resources/test-extensions
+              LA_E2E_CLI_PREPARED_EXTENSIONS_DIR: $(Agent.TempDirectory)/test-resources/prepared-extensions
               LA_E2E_CLI_GENERATED_WORKSPACE_ARTIFACT_DIR: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/generated-workspaces/${{ parameters.suiteId }}
               ${{ if eq(parameters.suiteId, 'workspaceArtifactRegeneration') }}:
                 LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR: $(Build.SourcesDirectory)/apps/vs-code-designer/.vscode-test/workspace-regeneration-${{ parameters.shortName }}
@@ -525,6 +540,7 @@ jobs:
                 LA_E2E_CLI_MULTI_ROOT_DIAGNOSTICS_PARENT: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\lifecycle\workspaceMultiRoot
               LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL: ${{ eq(parameters.suiteId, 'createWorkspaceCoreMatrix') }}
               LA_E2E_CLI_EXTENSIONS_DIR: $(Agent.TempDirectory)\test-resources\test-extensions
+              LA_E2E_CLI_PREPARED_EXTENSIONS_DIR: $(Agent.TempDirectory)\test-resources\prepared-extensions
               LA_E2E_CLI_GENERATED_WORKSPACE_ARTIFACT_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\generated-workspaces\${{ parameters.suiteId }}
               ${{ if eq(parameters.suiteId, 'workspaceArtifactRegeneration') }}:
                 LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\workspace-regeneration-${{ parameters.shortName }}
@@ -617,6 +633,7 @@ jobs:
                 LA_E2E_CLI_MULTI_ROOT_DIAGNOSTICS_PARENT: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\lifecycle\workspaceMultiRoot
               LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL: ${{ eq(parameters.suiteId, 'createWorkspaceCoreMatrix') }}
               LA_E2E_CLI_EXTENSIONS_DIR: $(Agent.TempDirectory)\test-resources\test-extensions
+              LA_E2E_CLI_PREPARED_EXTENSIONS_DIR: $(Agent.TempDirectory)\test-resources\prepared-extensions
               LA_E2E_CLI_GENERATED_WORKSPACE_ARTIFACT_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\generated-workspaces\${{ parameters.suiteId }}
               ${{ if eq(parameters.suiteId, 'workspaceArtifactRegeneration') }}:
                 LA_E2E_CLI_REGENERATION_DIAGNOSTICS_DIR: $(Build.SourcesDirectory)\apps\vs-code-designer\.vscode-test\workspace-regeneration-${{ parameters.shortName }}

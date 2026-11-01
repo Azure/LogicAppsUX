@@ -25,6 +25,7 @@ const { validOriginalIdentity, sameOriginalIdentity, originalProcessReleased } =
 const {
   _test: { spawnContainedProcess, sanitizeContainedProcessDiagnostics },
 } = require('./run-e2e-cli');
+const { prepareSuiteExtensionsDirectory } = require('./e2e-cli-batch');
 
 const bootId = 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee';
 const identityFields = (startTimeTicks, platform = process.platform) => ({
@@ -158,6 +159,46 @@ test('unknown/Func identity, command mismatch, changed seed and symlink cannot b
     assert.throws(() => installedPayloadOwners(fixture.closure, fixture.launch), /manifest/);
   } finally {
     fs.rmSync(fixture.root, { recursive: true, force: true });
+  }
+});
+
+test('normal dependency consumer preserves original seed while installed runtime additions retain only exact Roslyn ownership', () => {
+  for (const platform of ['win32', 'linux']) {
+    const fixture = payloadFixture(platform);
+    try {
+      const originalManifest = fs.readFileSync(path.join(fixture.seed, CONTENT_MANIFEST_NAME));
+      verify({ extensionsDir: fixture.seed, vscodeVersion: 'stable', platform, arch: process.arch });
+      prepareSuiteExtensionsDirectory({
+        seedDir: fixture.seed,
+        targetDir: fixture.installed,
+        vscodeVersion: 'stable',
+        platform,
+      });
+      for (const file of [
+        `ms-dotnettools.csdevkit-${CS_DEV_KIT_E2E_VERSION}/cache/discovery.json`,
+        'ms-dotnettools.csharp-1.0.0/.roslyn/cache/composition.cache',
+        'ms-dotnettools.csharp-1.0.0/.debugger/install.complete',
+      ]) {
+        const installedFile = path.join(fixture.installed, file);
+        fs.mkdirSync(path.dirname(installedFile), { recursive: true });
+        fs.writeFileSync(installedFile, 'synthetic runtime addition');
+      }
+      assert.deepEqual(fs.readFileSync(path.join(fixture.seed, CONTENT_MANIFEST_NAME)), originalManifest);
+      verify({ extensionsDir: fixture.seed, vscodeVersion: 'stable', platform, arch: process.arch, rebuildRegistry: false });
+      assert.equal(installedPayloadOwners(fixture.closure, fixture.launch, platform)[0].executable, fixture.executable);
+      const before = fs.readFileSync(fixture.executable);
+      for (const targetDir of [fixture.seed, path.join(fixture.seed, 'nested'), fixture.root]) {
+        assert.throws(() => prepareSuiteExtensionsDirectory({ seedDir: fixture.seed, targetDir, platform }), /must be disjoint/);
+        assert.deepEqual(fs.readFileSync(fixture.executable), before, 'Rejected bindings must not delete or rewrite installations');
+        assert.deepEqual(fs.readFileSync(path.join(fixture.seed, CONTENT_MANIFEST_NAME)), originalManifest);
+      }
+      fs.appendFileSync(fixture.executable, 'modified executable');
+      assert.throws(() => installedPayloadOwners(fixture.closure, fixture.launch, platform), /executable hash differs/);
+      fs.writeFileSync(path.join(fixture.seed, 'unexpected-runtime-cache'), 'seed mutated');
+      assert.throws(() => installedPayloadOwners(fixture.closure, fixture.launch, platform), /unexpected top-level entry/);
+    } finally {
+      fs.rmSync(fixture.root, { recursive: true, force: true });
+    }
   }
 });
 
@@ -386,6 +427,16 @@ test('product producer correlates capture/release before recovery and does not a
     write();
     const closure = { ...fixture.closure, rootPid: 900, metadataCapturedAtUtc: new Date(50).toISOString() };
     assert.equal(produceLifecycleEvidence(closure, fixture.launch).requiredStartupDomain, 'design-time');
+    fs.appendFileSync(
+      file,
+      `${JSON.stringify({
+        ...startup,
+        extensionHostPid: 903,
+        nativeIdentity: { processes: [{ pid: 903, ...identityFields('555') }] },
+      })}\n`
+    );
+    assert.equal(produceLifecycleEvidence(closure, fixture.launch), undefined);
+    assert.match(closure.lifecycleProducerError, /host lacks shutdown proof/, 'A successful final host cannot hide a missing reload host');
     startup.nativeIdentity = { processes: [{ pid: 902, startTimeTicks: 'reused-host' }] };
     write();
     assert.equal(produceLifecycleEvidence(closure, fixture.launch), undefined);

@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 /* global console, module, process, require */
+const assert = require('node:assert/strict');
 const crypto = require('crypto');
 const fs = require('fs');
 const os = require('os');
@@ -400,6 +401,20 @@ function prepareSuiteExtensionsDirectory({
       ].join(' ')
     );
   }
+
+  // Reject overlapping roots before any destructive installation work.
+  // The original prepared seed must never be the directory Code mutates.
+  assert.ok(targetDir, 'Installed extension root is required');
+  const seedRoot = path.resolve(seedDir);
+  const installedRoot = path.resolve(targetDir);
+  const contains = (root, candidate) => {
+    const relative = path.relative(root, candidate);
+    return !relative || (!relative.startsWith(`..${path.sep}`) && relative !== '..' && !path.isAbsolute(relative));
+  };
+  assert.ok(
+    !contains(seedRoot, installedRoot) && !contains(installedRoot, seedRoot),
+    'Prepared seed and installed extension roots must be disjoint'
+  );
 
   const manifest = expectedManifest ?? buildDirectoryIntegrityManifest(seedDir);
   if (manifest.files.length === 0) {

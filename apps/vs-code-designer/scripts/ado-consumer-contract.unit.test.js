@@ -90,6 +90,23 @@ test('same registered contracts gate both existing OS consumers after exact-run 
   assertMandatoryConsumerContract(consumer, pipeline, manifest);
 });
 
+test('all native consumer branches bind immutable original restored seed separately from actual installed dependencies', () => {
+  const restore = collect(consumer, (item) => item.displayName === 'Verify and restore exact-run extension dependencies')[0].pwsh;
+  const manifestHash = restore.indexOf('$manifest.contentManifestSHA256 -ne $contentManifestHash');
+  const verify = restore.indexOf('prepare-e2e-extension-dependencies.js verify');
+  const preserve = restore.indexOf('Move-Item -LiteralPath $target -Destination $seed');
+  const copy = restore.indexOf('prepareSuiteExtensionsDirectory({ seedDir: process.argv[1], targetDir: process.argv[2]');
+  assert.ok(manifestHash >= 0 && manifestHash < verify && verify < preserve && preserve < copy);
+  assert.match(restore, /\$seed = Join-Path \$targetParent 'prepared-extensions'/);
+  assert.match(restore, /\$seed \$target \$expectedPlatform \$expectedArchitecture '\$\(ResolvedVSCodeVersion\)'/);
+  assert.ok(!restore.includes('createContentManifest'), 'Consumer cannot rebaseline runtime additions');
+  const native = collect(consumer, (item) => item.env?.LA_E2E_CLI_EXTENSIONS_DIR);
+  assert.equal(native.length, 4, 'Both credential-free and credentialed OS branches must preserve this binding');
+  for (const { env } of native) {
+    assert.equal(env.LA_E2E_CLI_PREPARED_EXTENSIONS_DIR, env.LA_E2E_CLI_EXTENSIONS_DIR.replace('test-extensions', 'prepared-extensions'));
+  }
+});
+
 const controls = [
   [
     'missing-contract-clause',

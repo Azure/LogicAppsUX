@@ -524,6 +524,121 @@ function observerHarness(f, deactivate) {
   return { install: () => module.exports.installLifecycleObserver(api, f.launch.environment, f.context), intervals };
 }
 
+function cliRecorderHarness(f, install) {
+  const exports = {};
+  vm.runInNewContext(
+    fs.readFileSync(path.join(__dirname, 'fixtures/lifecycle-recorder/extension.js'), 'utf8'),
+    {
+      exports,
+      require: (id) =>
+        id === 'vscode' ? {} : id === '../../vscode-lifecycle-observer' ? { installLifecycleObserver: install } : require(id),
+      process: { env: f.launch.environment },
+      console: { error() {} },
+    },
+    { filename: 'actual-cli-lifecycle-recorder.js' }
+  );
+  return exports;
+}
+
+test('CLI recorder real reload hook awaits pending observer installation and original shutdown under its original profile', async () => {
+  const f = fixture();
+  const stop = scopedNativeReply(f.launch.directory, () => ({}));
+  let installFinished;
+  let releaseProduct;
+  let productStarted;
+  const started = new Promise((resolve) => {
+    productStarted = resolve;
+  });
+  let calls = 0;
+  let observer;
+  let disposals = 0;
+  const harness = observerHarness(f, () => {
+    calls++;
+    productStarted();
+    return new Promise((resolve) => {
+      releaseProduct = resolve;
+    });
+  });
+  const recorder = cliRecorderHarness(f, (api, env, context) => {
+    assert.equal(env.LA_E2E_CLI_USER_DATA_DIR, f.profile);
+    assert.equal(context, f.context);
+    return new Promise((resolve) => {
+      installFinished = async () => {
+        observer = await harness.install();
+        resolve({
+          shutdown: observer.shutdown,
+          dispose: () => {
+            disposals++;
+            observer.dispose();
+          },
+        });
+      };
+    });
+  });
+  try {
+    const activated = recorder.activate(f.context);
+    assert.equal(activated.then, undefined, 'VS Code must register deactivate before the asynchronous observation completes');
+    const reload = recorder.deactivate();
+    const teardown = activated.shutdown();
+    assert.equal(reload, teardown, 'Reload and last teardown share the same awaited hook');
+    assert.equal(calls, 0);
+    await installFinished();
+    await started;
+    assert.equal(calls, 1);
+    assert.equal(disposals, 0);
+    let records = fs.readFileSync(observer.receipt, 'utf8').trim().split('\n').map(JSON.parse);
+    assert.equal(records.filter((record) => record.kind === 'startup').length, 1);
+    assert.equal(records.filter((record) => record.kind === 'shutdown').length, 0, 'Pending product export is not shutdown proof');
+    releaseProduct();
+    await Promise.all([reload, teardown]);
+    await recorder.deactivate();
+    assert.equal(calls, 1);
+    assert.equal(disposals, 1);
+    records = fs.readFileSync(observer.receipt, 'utf8').trim().split('\n').map(JSON.parse);
+    const startup = records.find((record) => record.kind === 'startup');
+    const shutdown = records.find((record) => record.kind === 'shutdown');
+    assert.equal(records.filter((record) => record.kind === 'shutdown').length, 1);
+    assert.equal(shutdown.extensionHostPid, startup.extensionHostPid);
+    assert.deepEqual(shutdown.nativeIdentity, startup.nativeIdentity);
+    assert.ok(shutdown.shutdown.observedAt >= startup.observedAt);
+  } finally {
+    observer?.dispose();
+    stop();
+    f.cleanup();
+  }
+});
+
+test('CLI recorder installation and original product failures reject real teardown without retrying or manufacturing proof', async () => {
+  for (const failure of ['installation', 'product']) {
+    const f = fixture();
+    let calls = 0;
+    let disposals = 0;
+    const recorder = cliRecorderHarness(f, async () => {
+      if (failure === 'installation') throw new Error('observer unavailable');
+      return {
+        shutdown: async () => {
+          calls++;
+          throw new Error('original product failed');
+        },
+        dispose: () => {
+          disposals++;
+        },
+      };
+    });
+    try {
+      recorder.activate(f.context);
+      const shutdown = recorder.deactivate();
+      assert.equal(shutdown, recorder.deactivate());
+      await assert.rejects(shutdown, failure === 'installation' ? /observer unavailable/ : /original product failed/);
+      await assert.rejects(recorder.deactivate());
+      assert.equal(calls, failure === 'installation' ? 0 : 1);
+      assert.equal(disposals, failure === 'installation' ? 0 : 1);
+    } finally {
+      f.cleanup();
+    }
+  }
+});
+
 test('actual observer with admitted current host never verifies historical/foreign HTTP 200 startup', async () => {
   const f = fixture();
   const endpoint = await server200();
