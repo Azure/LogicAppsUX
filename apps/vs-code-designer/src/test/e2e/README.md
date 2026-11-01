@@ -1429,3 +1429,16 @@ These CLI-based tests:
 - Easier to debug
 - Provide focused Chrome DevTools Protocol coverage for Create Workspace, designer, and Overview smoke paths
 - Do not replace ExTester; keep ExTester for full designer and wizard DOM flows
+# Repository-wide lifecycle criterion
+
+All VS Code tests follow the user-directed
+[product shutdown/resource/subsequent-startup policy](../../../../../docs/testing/vscode-lifecycle-acceptance.md).
+Independent dependency survival is not alone a functional failure; ownership
+and resource effects must be proven, not guessed from executable names.
+Recovery remains sticky and distinct from ordinary closure. Both canonical
+Windows/Linux producers and ExTester phase integration are wired. Linux uses
+retained subreaper/pidfd ownership and boot-relative process identities, not
+Windows Job/FILETIME fields. The policy document separates implemented code
+and registered synthetic controls from outstanding Linux-native CI proof;
+Windows-only local validation does not certify actual Linux exceptional
+recovery/restart or the full 23-lane rollup. macOS is out of scope.

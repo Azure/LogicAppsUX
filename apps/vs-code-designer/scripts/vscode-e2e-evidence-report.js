@@ -8,6 +8,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { SUITE_REGISTRY } = require('./e2e-cli-batch');
 const { readEvidenceManifest } = require('./vscode-e2e-evidence-manifest');
+const { evaluateLifecycleAcceptance } = require('./vscode-lifecycle-acceptance');
 
 const markdownFileName = 'VS_CODE_CLI_EVIDENCE.md';
 const manifestFileName = 'VS_CODE_CLI_EVIDENCE.json';
@@ -163,6 +164,7 @@ function buildHttpCompatibilitySummary(inputs) {
         exitCode: safeInteger(phase?.exitCode),
         signal: safeNullableScalar(phase?.signal),
         cleanupVerified: safeBoolean(phase?.cleanupVerified),
+        processAcceptance: evaluateLifecycleAcceptance(phase?.processCleanup || {}, phase?.processCleanup?.lifecycleEvidence),
         diagnosticsError: Boolean(safeScalar(phase?.diagnosticsError)),
       }))
     : [];
@@ -195,6 +197,7 @@ function buildHttpCompatibilitySummary(inputs) {
       exitCode: safeInteger(terminal.exitCode),
       signal: safeNullableScalar(terminal.signal),
       cleanupVerified: safeBoolean(terminal.cleanupVerified),
+      processAcceptance: evaluateLifecycleAcceptance(terminal.processCleanup || {}, terminal.processCleanup?.lifecycleEvidence),
       originalProcessClosureVerified: safeBoolean(terminal.originalProcessClosureVerified),
       processClosureProof: safeScalar(terminal.processClosureProof),
       phaseCompleteness: safeBoolean(terminal.phaseCompleteness),
@@ -397,6 +400,7 @@ function buildSummary(inputs, suiteId) {
         exitCode: safeInteger(phase?.exitCode),
         signal: safeNullableScalar(phase?.signal),
         cleanupVerified: safeBoolean(phase?.cleanupVerified),
+        processAcceptance: evaluateLifecycleAcceptance(phase?.processCleanup || {}, phase?.processCleanup?.lifecycleEvidence),
         diagnosticsError: Boolean(safeScalar(phase?.diagnosticsError)),
       }))
     : [];
@@ -445,6 +449,7 @@ function buildSummary(inputs, suiteId) {
       exitCode: safeInteger(terminal.exitCode),
       signal: safeNullableScalar(terminal.signal),
       cleanupVerified: safeBoolean(terminal.cleanupVerified),
+      processAcceptance: evaluateLifecycleAcceptance(terminal.processCleanup || {}, terminal.processCleanup?.lifecycleEvidence),
       originalProcessClosureVerified: safeBoolean(terminal.originalProcessClosureVerified),
       processClosureProof: safeScalar(terminal.processClosureProof),
       phaseCompleteness: safeBoolean(terminal.phaseCompleteness),
@@ -759,6 +764,10 @@ function buildLifecycleSummary(lifecycle) {
     summaryRow('Exit code', lifecycle.exitCode),
     summaryRow('Signal', lifecycle.signal === null ? 'null' : lifecycle.signal),
     summaryRow('Cleanup verified', lifecycle.cleanupVerified),
+    summaryRow('Product shutdown/resources/subsequent startup', lifecycle.processAcceptance?.product),
+    summaryRow('Infrastructure containment', lifecycle.processAcceptance?.infrastructure),
+    summaryRow('Recovery attempted (sticky)', lifecycle.processAcceptance?.recovered),
+    summaryRow('Process policy reason', lifecycle.processAcceptance?.reason),
     summaryRow('Original process closure verified', lifecycle.originalProcessClosureVerified),
     summaryRow('Process closure proof', lifecycle.processClosureProof),
     summaryRow('Phase completeness', lifecycle.phaseCompleteness),

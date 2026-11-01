@@ -4,6 +4,7 @@ const { createHash, randomUUID } = require('node:crypto');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
+const { isProcessCleanupAccepted, canContinueAfterProcessCleanup } = require('./vscode-lifecycle-acceptance');
 
 const extensionRoot = path.resolve(__dirname, '..');
 const requiredScreenshots = [
@@ -182,7 +183,7 @@ function assertCancelResult(result, root, identity) {
   }
   assert.deepEqual(result.observation.before, result.observation.after);
   assert.deepEqual(result.originalCodeClose, { code: 0, signal: null }, 'Original Code must close normally');
-  assert.equal(result.processCleanup?.verified, true, 'Original regular Code descendants must close normally before cleanup');
+  assert.equal(isProcessCleanupAccepted(result.processCleanup), true, 'Original regular Code lifecycle acceptance must be established');
   assert.equal(result.errors.length, 0);
   assert.equal(result.cleanup?.verified, true, 'Existing final wizard cleanup must complete');
   if (identity) {
@@ -201,7 +202,7 @@ function finalizeCancelResult(context, result, cleanup, errors = []) {
     result.errors.length === 0 &&
     result.originalCodeClose?.code === 0 &&
     result.originalCodeClose?.signal === null &&
-    result.processCleanup?.verified === true &&
+    isProcessCleanupAccepted(result.processCleanup) &&
     cleanup?.verified === true;
   result.finalizedUtc = new Date().toISOString();
   fs.appendFileSync(
@@ -271,6 +272,7 @@ async function runCancelSupplement(context, env, collectProfileLogs, launchConta
       `--user-data-dir=${profile}`,
       `--extensions-dir=${handoff.launch.extensionsDir}`,
       `--extensionDevelopmentPath=${path.join(extensionRoot, 'dist')}`,
+      `--extensionDevelopmentPath=${path.join(__dirname, 'fixtures/lifecycle-recorder')}`,
       '--disable-workspace-trust',
       '--disable-updates',
       '--disable-restore-windows',
@@ -288,6 +290,7 @@ async function runCancelSupplement(context, env, collectProfileLogs, launchConta
     const launch = launchContainedProcess(handoff.launch.executable, args, {
       env: {
         ...env,
+        LA_E2E_CLI_USER_DATA_DIR: profile,
         LA_E2E_CLI_MINIMAL_ACTIVATION: '0',
         LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '0',
         VSCODE_RUNNING_TESTS: '1',
@@ -297,14 +300,15 @@ async function runCancelSupplement(context, env, collectProfileLogs, launchConta
     const { child } = launch;
     completion = new Promise((resolve, reject) => {
       child.once('error', reject);
-      child.once('close', (code, signal) => {
+      child.once('close', async (code, signal) => {
         try {
           result.processCleanup = launch.readClosure(code, signal);
+          await launch.verifyStartup?.(result.processCleanup);
           result.originalCodeClose = {
             code: result.processCleanup.rootExitCode,
             signal: result.processCleanup.rootSignal,
           };
-          if (!result.processCleanup.verified) {
+          if (!canContinueAfterProcessCleanup(result.processCleanup)) {
             result.errors.push(result.processCleanup.error);
           }
           resolve(result.originalCodeClose);

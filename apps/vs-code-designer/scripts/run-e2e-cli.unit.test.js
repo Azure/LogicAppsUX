@@ -423,7 +423,7 @@ async function testRegenerationDiagnosticsPublication() {
     undefined
   );
   const wrapperStart = runE2eCliSource.indexOf('function runSuiteWrapperProcess');
-  const closureIndex = runE2eCliSource.indexOf('readContainmentReceipt(containmentReceiptPath, exitCode, signal)', wrapperStart);
+  const closureIndex = runE2eCliSource.indexOf('readContainmentReceipt(containmentReceiptPath, exitCode, signal,', wrapperStart);
   const stagingIndex = runE2eCliSource.indexOf('await finalizeOuterRegenerationStageEvidence(context);', closureIndex);
   const terminalIndex = runE2eCliSource.indexOf('writeSuiteFinalEvidence({', stagingIndex);
   assert.ok(
@@ -465,6 +465,33 @@ function testCliProfilePreservesPreparedExtensionCohort() {
   const product = JSON.parse(fs.readFileSync(path.resolve(__dirname, '..', 'src', 'package.json'), 'utf8'));
   assert.ok(product.extensionDependencies.includes('ms-dotnettools.csharp'));
   assert.ok(product.extensionDependencies.includes('ms-dotnettools.csdevkit'));
+  for (const args of [[], ['--coverage'], ['--label', 'lifecycleStartupProof'], ['--label=lifecycleStartupProof']]) {
+    execFileSync(
+      process.execPath,
+      [
+        '--input-type=module',
+        '-e',
+        `import assert from 'node:assert/strict';
+         const {default: profiles} = await import(${JSON.stringify(configUrl)});
+         for (const label of ['lifecycleStartupProof']) {
+           const selected = process.argv.includes(label) || process.argv.includes('--label=' + label);
+           assert.equal(profiles.some(profile => profile.label === label), selected);
+         }
+         assert.ok(profiles.some(profile => profile.label === 'unitTests'));`,
+        '--',
+        ...args,
+      ],
+      {
+        env: {
+          ...process.env,
+          LA_E2E_CLI_USER_DATA_DIR: profile,
+          LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: path.join(tempRoot, 'cli-profile-runtime'),
+        },
+        encoding: 'utf8',
+        timeout: 10_000,
+      }
+    );
+  }
 }
 
 function testDirectFamilyShortLinuxProfileParent() {
@@ -1993,7 +2020,10 @@ async function testBatchContinuesAfterOrdinaryFailure() {
     suites,
     batchRoot,
     seedDir,
-    runSuite: async ({ suite, context }) => {
+    runSuite: async ({ suite, context, env }) => {
+      assert.strictEqual(fs.existsSync(path.join(context.extensionsDir, CONTENT_MANIFEST_NAME)), true);
+      assert.strictEqual(env.LA_E2E_CLI_PREPARED_EXTENSIONS_DIR, seedDir);
+      assert.strictEqual(env.LA_E2E_CLI_EXTENSIONS_DIR, context.extensionsDir);
       launched.push(suite.id);
       writeSuiteTerminalAndCleanup(context, { exitCode: suite.id === 'unitTests' ? 1 : 0 });
       return suite.id === 'unitTests'

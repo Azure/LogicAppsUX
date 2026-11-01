@@ -5,6 +5,7 @@
 /* global module, process, require */
 const fs = require('fs');
 const { SUITE_REGISTRY } = require('./e2e-cli-batch');
+const { isProcessCleanupAccepted } = require('./vscode-lifecycle-acceptance');
 
 function readMsnTerminal(terminalPath) {
   if (!fs.existsSync(terminalPath)) {
@@ -52,7 +53,8 @@ function assertSuccessfulMsnTerminal(summary, terminal) {
     terminal.cleanupVerified !== true ||
     terminal.exitCode !== 0 ||
     (terminal.signal !== null && terminal.signal !== undefined) ||
-    terminal.diagnosticsError
+    terminal.diagnosticsError ||
+    (terminal.processCleanup && !isProcessCleanupAccepted(terminal.processCleanup))
   ) {
     throw new Error('MSN lifecycle evidence failed: incomplete-or-unclean-terminal');
   }
@@ -73,7 +75,8 @@ function assertSuccessfulMsnTerminal(summary, terminal) {
         phase.cleanupVerified !== true ||
         phase.exitCode !== 0 ||
         (phase.signal !== null && phase.signal !== undefined) ||
-        phase.diagnosticsError
+        phase.diagnosticsError ||
+        (phase.processCleanup && !isProcessCleanupAccepted(phase.processCleanup))
     )
   ) {
     throw new Error('MSN lifecycle evidence failed: unsuccessful-phase');

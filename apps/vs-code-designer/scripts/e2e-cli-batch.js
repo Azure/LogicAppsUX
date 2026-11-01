@@ -9,6 +9,7 @@ const os = require('os');
 const path = require('path');
 const { removePathWithRetry } = require('./e2e-cli-path-cleanup');
 const { CONTENT_MANIFEST_NAME, verify: verifyPreparedExtensionDependencies } = require('./prepare-e2e-extension-dependencies');
+const { isProcessCleanupAccepted } = require('./vscode-lifecycle-acceptance');
 
 const BATCH_SCHEMA_VERSION = 1;
 const DEFAULT_SUITE_TIMEOUT_MS = 45 * 60 * 1000;
@@ -498,7 +499,7 @@ function classifySuiteRunResult({ exitCode, signal, error, output = '', terminal
   if (
     terminalResult.phaseCompleteness !== true ||
     cleanupLedger.phaseCleanupVerified !== true ||
-    cleanupLedger.processTreeVerified !== true
+    (cleanupLedger.processTreeVerified !== true && !isProcessCleanupAccepted(cleanupLedger.processCleanup))
   ) {
     return {
       category: 'containmentBreach',
@@ -556,6 +557,7 @@ function buildBatchAggregate({
     complete &&
     hasAdmissionContext &&
     !containmentBreach &&
+    failedSuites.length === 0 &&
     blockedSuites.length === 0;
   const selectedRunSuccess = complete && !containmentBreach && failedSuites.length === 0 && blockedSuites.length === 0;
   const aggregateOutcome = selectedRunSuccess ? 'success' : 'failed';
@@ -615,6 +617,7 @@ async function runBatchSuites({
       LA_E2E_CLI_USER_DATA_PARENT: executionUserDataParent,
     };
     prepareSuiteExtensionsDirectory({ seedDir, targetDir: context.extensionsDir, expectedManifest: preparedExtensionsManifest });
+    env.LA_E2E_CLI_PREPARED_EXTENSIONS_DIR = seedDir;
 
     const startedAt = new Date().toISOString();
     let runResult = { exitCode: null, signal: null, output: '', error: undefined };

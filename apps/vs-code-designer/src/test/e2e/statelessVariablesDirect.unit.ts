@@ -315,7 +315,7 @@ async function main(): Promise<void> {
     const terminal = JSON.parse(fs.readFileSync(terminalPath, 'utf8')) as Receipt;
     const ledger = JSON.parse(fs.readFileSync(ledgerPath, 'utf8')) as Ledger;
     const trace = JSON.parse(fs.readFileSync(process.env.UNIT_STATELESS_DIRECT_TRACE, 'utf8')) as Trace;
-    const diagnosticSucceeded = mode === 'success' || mode === 'missing-artifacts' || mode === 'model-hint';
+    const diagnosticSucceeded = mode === 'success' || mode === 'missing-artifacts';
     assert.strictEqual(
       code,
       diagnosticSucceeded ? 0 : 1,
@@ -329,6 +329,14 @@ async function main(): Promise<void> {
     assert.deepStrictEqual(terminal.expectedPhaseIds, expected);
     assert.ok(!fs.readFileSync(terminalPath, 'utf8').includes('oldSuccessfulReceipt'));
     assert.ok(!fs.readFileSync(ledgerPath, 'utf8').includes('oldSuccessfulReceipt'));
+    if (mode === 'model-hint') {
+      assert.strictEqual(terminal.complete, false, 'Verified outer closure cannot waive an unproven leaf process receipt');
+      assert.strictEqual(terminal.cleanupVerified, false);
+      assert.ok(
+        terminal.phaseResults.every((phase) => Object.prototype.hasOwnProperty.call(phase, 'processCleanup')),
+        'Terminal projection must retain the rejected leaf claims for audit rather than hiding them'
+      );
+    }
     assert.strictEqual(fs.readFileSync(staleJournal, 'utf8'), '{"phaseId":"wrong-old-family"}');
     if (ledger.processCleanup.retainedOriginalIdentitiesVerified) {
       assert.strictEqual(

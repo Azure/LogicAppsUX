@@ -305,3 +305,44 @@ processes. They cover permissions, races, stale PIDs, wrong binary, wrong/extra/
 partial counts, deadline overrun, incomplete roots, real-reload document
 contract, hidden/wrong Mapper, sequential folder debug and finalization.
 They are **not** native clause approval or full-source-case certification.
+# Local Windows UI-only diagnostic (not acceptance)
+
+`node scripts/workspace-multi-root-ui-only.js --artifacts <fresh-directory>`
+is an explicit local supplementary diagnostic, not a registered suite/lane.
+Set `LA_E2E_CLI_EXTENSIONS_DIR` to the verified prepared local seed and put
+`node_modules/.bin` on PATH. It requires Windows Code 1.144.0 and an existing
+FuncCoreTools binary cache; it does not install dependencies or provision Azure.
+It refuses inherited ADO/Azure, isolation and full-suite evidence context.
+The verified producer seed is copied into the owned short root before launch:
+C# can write derived runtime caches even when Marketplace updates are disabled.
+
+The supported Create Workspace helper creates the initial Standard Stateful
+workspace. A fresh owned regular Code window awaits the existing recorder's
+same-workspace product-activation completion before using
+`ensureRegularWorkbenchExplorer` and `addWorkspaceMultiRootProjects`: the
+**same** folder right-click/Create New Project, webview form, review/create and
+wizard-disposal sequence used by the protected full family, twice sequentially.
+Screenshots, input dispatch, focus and hit-testing observations preserve the first
+failed boundary before Close Window; there is no automatic retry.
+
+The explicit `--activation-capture-only` follow-up mode awaits that same activation
+and captures `View: Show Explorer`, then closes without calling the project-add
+stage. It never reports `uiPassed: true` and cannot retry a failed project add.
+
+Design-time and Azurite auto-start are disabled for this UI-stage diagnostic.
+Normal product activation/ensure remains enabled, but no reload, runtime
+population, debug or Mapper acceptance is attempted. Thus it can diagnose the
+Explorer/wizard boundary but cannot prove the full runtime lifecycle or establish
+that a C# preview caused a cloud timeout.
+
+Short `D:\la9f5298-ui-*` roots have an invocation ownership marker. The shared
+Windows Job Object host owns setup, regular Code, and the bounded outer worker;
+only retained-window native Close Window and Job-owned recovery are used. No
+machine-wide process/port scan or name-based termination is allowed.
+Missing/forced original closure is reported separately, never accepted as natural
+closure, and prevents root deletion. Only sanitized logs, screenshots and receipts
+are artifacts; raw profiles are not copied. Results explicitly say `uiOnly: true`
+and `fullSuiteAccepted: false`, even when both UI adds succeed.
+
+The full runner guard, full UI guard, population acceptance, phase inventory and
+23-lane rollup are unchanged. This diagnostic does not substitute for them.

@@ -4,6 +4,10 @@ const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const { test } = require('node:test');
+// Registered in test:e2e-cli:unit through this existing native runner-control file.
+require('./vscode-lifecycle-acceptance.unit.test');
+require('./vscode-lifecycle-producer.unit.test');
+require('./vscode-lifecycle-review-regressions.unit.test');
 const {
   _test: { resolveOwnedWorkspacePath, runVscodeTest, readContainmentReceipt, cleanupDeferredWorkspaceAfterCancel, spawnContainedProcess },
 } = require('./run-e2e-cli');
@@ -103,7 +107,7 @@ test(
             removalAttempts += 1;
             const pid = Number(fs.readFileSync(path.join(root, `${mode}.pid`), 'utf8'));
             assert.throws(() => process.kill(pid, 0), 'No removal attempt is permitted while an original descendant is alive');
-            const receipts = fs.readdirSync(path.join(root, 'process-closure', 'launches'));
+            const receipts = fs.readdirSync(path.join(root, 'process-closure', 'launches')).filter((file) => file.endsWith('.json'));
             assert.equal(receipts.length, 1, 'The actual native closure receipt must precede the first removal attempt');
           }
           return remove(candidate, options);
@@ -143,10 +147,18 @@ test(
         if (mode === 'lingering' && process.platform === 'win32') {
           assert.equal(phase.processCleanup.forcedTerminationAttempted, true);
           assert.equal(phase.processCleanup.postTerminationActiveProcessCount, 0);
+          assert.equal(phase.processCleanup.infrastructureCleanupVerified, true);
+          assert.equal(phase.processCleanup.lifecycleAcceptance.infrastructure, 'recovered');
+          assert.equal(phase.processCleanup.lifecycleAcceptance.product, 'unverified');
+          assert.equal(phase.processCleanup.lifecycleAcceptance.accepted, false);
           assert.ok(phase.processCleanup.activeContainedProcesses.some((entry) => entry.pid === pid));
         }
       }
-      assert.equal(fs.readdirSync(path.join(root, 'process-closure', 'launches')).length, 2, 'Sanitized closure diagnostics persist');
+      assert.equal(
+        fs.readdirSync(path.join(root, 'process-closure', 'launches')).filter((file) => file.endsWith('.json')).length,
+        2,
+        'Sanitized closure diagnostics persist'
+      );
       const receipt = path.join(root, 'contradictory-recovery.json');
       fs.writeFileSync(
         receipt,
@@ -273,7 +285,11 @@ for (const timing of ['during-root', 'during-grace']) {
           assert.equal(closure.forcedTerminationSucceeded, true);
           assert.equal(closure.postTerminationActiveProcessCount, 0);
           assert.ok(closure.activeContainedProcessCount > 0);
-          assert.ok(closure.escapedDescendants.includes(childPid), 'Pre-recovery identities must survive successful force');
+          assert.deepEqual(closure.escapedDescendants, [], 'Successful recovery has no post-recovery escapes');
+          assert.ok(
+            closure.activeContainedProcesses.some((entry) => entry.pid === childPid),
+            'Pre-recovery identities must survive successful force in the original capture'
+          );
           assert.ok(closure.activeContainedProcesses.some((entry) => entry.pid === childPid && entry.startTimeTicks));
           assert.equal(closure.verified, false);
           assert.equal(closure.retainedOriginalIdentitiesVerified, false);

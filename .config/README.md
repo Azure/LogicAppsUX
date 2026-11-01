@@ -97,16 +97,21 @@ staging. A direct selector that exits zero without that terminal report fails
 publication; a wizard pass alone cannot certify later regular-Code phases.
 Original process closure is a separate acceptance gate. A tree reconstructed
 only after its parent exits can miss reparented descendants, so supplementary
-publication also requires verified retained-original-identity closure evidence.
-Until that evidence is available, native execution is diagnostic only and result
-staging rejects acceptance even if the GUI bodies and ordinary exits succeeded.
+publication requires retained-original-identity evidence. Ordinary verified
+closure is accepted without additional startup proof. An independently proven
+dependency survivor may instead qualify through the shared
+[lifecycle acceptance policy](../docs/testing/vscode-lifecycle-acceptance.md):
+original Logic Apps shutdown/resource release must precede recovery, and an
+actual subsequent startup must succeed. Preserve the original native exit and
+report recovery separately; unknown ownership, shared Func survivors or missing
+product proof still reject acceptance even if GUI bodies succeeded.
 
 The registered Multi-root direct orchestration owns the complete wrapper
 context, including `reportsRoot`, invocation and result paths, expected phases
 and the configured workspace-root parent. Stable terminal and cleanup receipts
 are invalidated before any setup operation that can fail, so an old success
 cannot survive a workspace/dependency/preflight error. Multi-root body or
-evidence success never bypasses its retained-original-identity closure gate.
+evidence success never bypasses its retained-original-identity lifecycle gate.
 
 Multi-root jobs explicitly opt into complete native process observation only on
 their dedicated ADO worker. The real dependency bootstrap attests the configured

@@ -30,6 +30,14 @@ Curated durable learnings for VS Code ExTester UI E2E and `@vscode/test-cli` nat
 
 ## Current Learnings
 
+### Exact executable ownership does not require a frozen runtime cache
+
+- Learning: Fully verify the immutable prepared dependency seed, then hash the exact physical installed C# Roslyn executable against its known manifest entry. Retain native PID/creation/full-command/path binding and reject links, foreign/modified executables, unavailable metadata and observed hash-read races. Added `.roslyn/cache/*.mef-composition` files are not executable identity changes. The former whole-installed-inventory prerequisite and added warmup/freeze/provisioning subsystem are superseded and removed.
+- Setup: Keep the normal dependency flow and ExTester's public Code **and ChromeDriver** asset setup. A supplied seed skips Marketplace dependency installation, not ChromeDriver setup. Keep the type-safe owned cache resolver instead of private `ExTester.code` access.
+- Evidence: Fresh original-seed Windows `lifecycleStartupProof` in `native-lifecycle-normal-1101g` naturally retained Roslyn, recovered only its native owner, and automatically recorded separate actual extension-host startup. Final product passed/infrastructure recovered while native host exit 125 and ordinary closure false remained sticky.
+- Limits: No product runtime PIDs, tasks, ports or workspace resources were exercised in that empty window. This is not Func/design-time restart, Linux native proof, native ExTester acceptance or the 23-lane full rollup. Missing original product shutdown/release or actual subsequent startup still blocks an exception; unknown/shared Func ownership is not independent.
+- Source: `docs/testing/vscode-lifecycle-acceptance.md`, registered producer controls and `E2E_MODE=extesterruntimeonly`.
+
 ### Explorer context-menu opening is distinct from action selection
 
 - Learning: Bind the current persisted physical workspace root to its unique Explorer label (including a workspace `name` override), observe selected tree focus, and use Monaco List's native ContextMenu keyup route to anchor the folder menu. Require an observed menu before clicking its exact enabled item, then observe closure. Monaco's disabled state is on the menu item/container, not the label span.

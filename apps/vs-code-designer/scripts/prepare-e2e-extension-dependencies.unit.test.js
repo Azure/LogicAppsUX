@@ -1,4 +1,4 @@
-/* global process, require */
+/* global __dirname, process, require */
 const assert = require('assert');
 const { Buffer } = require('node:buffer');
 const fs = require('fs');
@@ -453,5 +453,54 @@ test('manifest creation rejects symbolic links inside installed dependencies', {
     );
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('actual CLI config import exposes private labels only for explicit process argv selectors', () => {
+  const root = createTempRoot();
+  try {
+    for (const label of ['lifecycleStartupProof']) {
+      for (const args of [[], ['--coverage'], [label], ['--label', label], [`--label=${label}`]]) {
+        const profile = path.join(root, `profile-${Math.random()}`);
+        const script = `process.argv = [process.execPath, 'config-control', ...${JSON.stringify(args)}];
+          const config = (await import('./.vscode-test.mjs')).default;
+          const assert = (await import('node:assert/strict')).default;
+          for (const entry of config) {
+            assert.equal(entry.env.LA_E2E_CLI_USER_DATA_DIR, process.env.LA_E2E_CLI_USER_DATA_DIR);
+            const index = entry.launchArgs.indexOf('--user-data-dir');
+            assert.equal(entry.launchArgs[index + 1], process.env.LA_E2E_CLI_USER_DATA_DIR);
+          }
+          console.log(JSON.stringify(config.map(entry => entry.label)));`;
+        const result = spawnSync(process.execPath, ['--input-type=module', '-e', script], {
+          cwd: path.resolve(__dirname, '..'),
+          env: {
+            ...process.env,
+            LA_E2E_CLI_USER_DATA_DIR: profile,
+            LA_E2E_CLI_BATCH_MODE: '0',
+            LA_E2E_LIFECYCLE_DIR: '',
+            LA_E2E_LIFECYCLE_INVOCATION: '',
+          },
+          encoding: 'utf8',
+          timeout: 30000,
+        });
+
+        assert.strictEqual(result.status, 0, result.stderr);
+        const labels = JSON.parse(result.stdout.trim());
+        assert.strictEqual(labels.includes(label), args[0] === '--label' || args[0] === `--label=${label}`);
+        assert.ok(labels.includes('unitTests'));
+      }
+    }
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('normal dependency setup has no cache preparation mode or overlay-rejecting consumer wiring', () => {
+  const { parseArguments } = require('./prepare-e2e-extension-dependencies');
+  assert.throws(() => parseArguments(['warm-existing']), /prepare\|verify/);
+  for (const file of ['run-e2e-cli.js', 'e2e-cli-batch.js', 'workspace-prompt-cancel.js', 'workspace-multi-root.js']) {
+    const source = fs.readFileSync(path.join(__dirname, file), 'utf8');
+    assert.ok(!source.includes('vscode-dependency-preparation'), `${file} must retain normal dependency setup`);
+    assert.ok(!source.includes('verifyConsumer'), `${file} must not reject product/recorder overlays`);
   }
 });

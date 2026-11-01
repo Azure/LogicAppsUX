@@ -5,21 +5,13 @@ import * as fs from 'fs';
 import { tmpdir } from 'os';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
+import lifecycleProducer from './scripts/vscode-lifecycle-producer.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const checkoutHash = createHash('sha1').update(__dirname).digest('hex').slice(0, 8);
 const remoteDebuggingPort =
   process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT ?? String(9200 + (Number.parseInt(checkoutHash.slice(0, 4), 16) % 500));
-const userDataSuffix = process.env.LA_E2E_CLI_USER_DATA_SUFFIX;
-const nonWindowsUserDataSuffix = userDataSuffix ?? String(process.pid);
-const userDataDirOverride = process.env.LA_E2E_CLI_USER_DATA_DIR;
-const userDataParent = process.env.LA_E2E_CLI_USER_DATA_PARENT;
-const userDataDir =
-  userDataDirOverride ??
-  (userDataParent ? path.join(userDataParent, userDataSuffix ? `user-data-${userDataSuffix}` : `user-data-${process.pid}`) : undefined) ??
-  (process.platform === 'win32'
-    ? path.join(__dirname, '.vscode-test', userDataSuffix ? `user-data-${userDataSuffix}` : 'user-data')
-    : path.join(tmpdir(), `la-vscode-test-${checkoutHash}-${nonWindowsUserDataSuffix}`));
+const userDataDir = lifecycleProducer.resolveTestUserDataDir(__dirname, process.env);
 const extensionDevelopmentPath = path.join(__dirname, 'dist');
 const startupResource = process.env.LA_E2E_CLI_STARTUP_RESOURCE;
 const extensionsDir = process.env.LA_E2E_CLI_EXTENSIONS_DIR;
@@ -41,6 +33,8 @@ const includeStatelessVariables =
 const includeRunAfterPersistenceLifecycle =
   process.env.LA_E2E_CLI_INCLUDE_RUN_AFTER_PERSISTENCE_LIFECYCLE === '1' || process.argv.includes('runAfterPersistenceLifecycle');
 const includeNativeEditorClick = process.env.LA_E2E_CLI_INCLUDE_NATIVE_EDITOR_CLICK === '1' || process.argv.includes('nativeEditorClick');
+const explicitlySelected = (label) =>
+  process.argv.some((arg, index) => arg === `--label=${label}` || (arg === '--label' && process.argv[index + 1] === label));
 const nativeEditorClickWorkspace = path.join(__dirname, 'scripts', 'fixtures', 'native-editor-click');
 const vscodeVersion = process.env.LA_E2E_CLI_VSCODE_VERSION || 'stable';
 const dependencyRoot =
@@ -54,7 +48,7 @@ prepareUserSettings(userDataDir);
 
 const baseConfig = {
   version: vscodeVersion,
-  extensionDevelopmentPath,
+  extensionDevelopmentPath: [extensionDevelopmentPath, path.join(__dirname, 'scripts', 'fixtures', 'lifecycle-recorder')],
   ...(startupResource ? { workspaceFolder: startupResource } : {}),
   env: {
     VSCODE_RUNNING_TESTS: '1',
@@ -81,8 +75,22 @@ const baseConfig = {
   ],
   ...(extensionsDir ? { skipExtensionDependencies: true } : {}),
 };
+const lifecycleEnv = lifecycleProducer.bindLifecycleProfile({ ...process.env, ...baseConfig.env }, baseConfig.launchArgs);
+if (lifecycleEnv.LA_E2E_LIFECYCLE_PRODUCER_BINDING) {
+  baseConfig.env.LA_E2E_LIFECYCLE_PRODUCER_BINDING = lifecycleEnv.LA_E2E_LIFECYCLE_PRODUCER_BINDING;
+}
 
 const configs = [
+  ...(explicitlySelected('lifecycleStartupProof')
+    ? [
+        {
+          label: 'lifecycleStartupProof',
+          ...baseConfig,
+          files: ['out/test/e2e/lifecycleStartupProof.test.js'],
+          mocha: { ui: 'tdd', timeout: 120000 },
+        },
+      ]
+    : []),
   {
     label: 'unitTests',
     ...baseConfig,
@@ -243,6 +251,9 @@ if (includeAzureAuthWarmup) {
   });
 }
 
+// Every native label records its own actual extension-host startup/shutdown.
+// Unit-only Node controls do not load this fixture.
+for (const config of configs) config.files = ['out/test/e2e/lifecycleBoundary.js', ...config.files];
 export default defineConfig(configs);
 
 function createWorkspaceConfig(group, timeout, extraEnv = {}) {
@@ -263,6 +274,15 @@ function createWorkspaceConfig(group, timeout, extraEnv = {}) {
 
 function getForwardedTestEnvironment() {
   const names = [
+    'LA_E2E_CLI_PREPARED_EXTENSIONS_DIR',
+    'LA_E2E_CLI_EXTENSIONS_DIR',
+    'LA_E2E_LIFECYCLE_DIR',
+    'LA_E2E_LIFECYCLE_INVOCATION',
+    'LA_E2E_LIFECYCLE_PARENT_DIR',
+    'LA_E2E_LIFECYCLE_PARENT_INVOCATION',
+    'LA_E2E_LIFECYCLE_STARTUP_DOMAIN',
+    'LA_E2E_LIFECYCLE_STARTUP_WORKSPACE',
+    'LA_E2E_LIFECYCLE_PRODUCER_BINDING',
     'LA_E2E_CLI_STATELESS_VARIABLES_MODE',
     'LA_E2E_CLI_RUN_AFTER_PERSISTENCE_MODE',
     'LA_E2E_CLI_RUN_AFTER_PERSISTENCE_HANDOFF',

@@ -2,6 +2,7 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const { SUITE_REGISTRY } = require('./e2e-cli-batch');
+const { isTerminalProcessClosureAccepted, isProcessCleanupAccepted } = require('./vscode-lifecycle-acceptance');
 
 const FAMILY_LIFECYCLE_SUITES = new Set([
   'msnWeatherLifecycle',
@@ -26,12 +27,7 @@ function assertFamilyLifecycleTerminal(nativeResult, terminal, suiteId) {
   assert.equal(terminal.exitCode, 0, 'Supplementary wrapper did not exit normally');
   assert.equal(terminal.signal, null, 'Supplementary wrapper was terminated by a signal');
   assert.equal(terminal.cleanupVerified, true, 'Supplementary final cleanup is not verified');
-  assert.equal(terminal.originalProcessClosureVerified, true, 'Original owned process identities have not been verified after closure');
-  assert.equal(
-    terminal.processClosureProof,
-    'retained-original-identities',
-    'Post-exit ancestry alone is not original owned-process closure proof'
-  );
+  assert.equal(isTerminalProcessClosureAccepted(terminal), true, 'Original owned process identities have not been verified after closure');
   assert.equal(terminal.diagnosticsError, '', 'Supplementary required diagnostics failed');
   assert.equal(terminal.phaseCompleteness, true, 'Supplementary phase completeness failed');
   assert.deepEqual(terminal.expectedPhaseIds, suite.expectedPhases, 'Supplementary phase contract differs from the registry');
@@ -47,6 +43,9 @@ function assertFamilyLifecycleTerminal(nativeResult, terminal, suiteId) {
     assert.equal(phase.exitCode, 0, `Supplementary phase did not exit normally: ${phase.phaseId}`);
     assert.equal(phase.signal, null, `Supplementary phase was terminated: ${phase.phaseId}`);
     assert.equal(phase.cleanupVerified, true, `Supplementary phase cleanup failed: ${phase.phaseId}`);
+    if (phase.processCleanup) {
+      assert.equal(isProcessCleanupAccepted(phase.processCleanup), true, `Supplementary phase process acceptance failed: ${phase.phaseId}`);
+    }
     assert.equal(phase.diagnosticsError, '', `Supplementary phase diagnostics failed: ${phase.phaseId}`);
     if (suiteId === 'msnWeatherLifecycle' && phase.phaseId === 'msnWeatherLifecycle:run') {
       assert.equal(phase.bodyAssertionsPassed, true, 'MSN Weather run body assertions did not pass');

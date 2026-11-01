@@ -14,6 +14,13 @@ const { URL } = require('url');
 const { formatErrorForDiagnostics } = require('./e2e-cli-diagnostics');
 const { removePathWithRetry } = require('./e2e-cli-path-cleanup');
 const {
+  evaluateLifecycleAcceptance,
+  isProcessCleanupAccepted,
+  isTerminalProcessClosureAccepted,
+  canContinueAfterProcessCleanup,
+} = require('./vscode-lifecycle-acceptance');
+const { prepareLifecycleLaunch, produceLifecycleEvidence } = require('./vscode-lifecycle-producer');
+const {
   createBatchRoot,
   createSuiteContext,
   buildSuiteEnvironment,
@@ -113,10 +120,6 @@ const orderedEvidenceFlagEntries = [
   ['--msn-weather-lifecycle', 'msnWeatherLifecycle'],
   ['--workspace-prompt-cancel', 'createWorkspaceCoreMatrix'],
 ];
-
-if (require.main === module) {
-  main();
-}
 
 function main() {
   invalidateSelectedDirectFamilyStableReceipts();
@@ -583,6 +586,7 @@ async function runDirectFamily(suiteId, visibleDelayMs, options = {}) {
       const env = {
         ...buildSuiteEnvironment(process.env, context, credentials),
         LA_E2E_CLI_USER_DATA_PARENT: executionUserDataParent,
+        LA_E2E_CLI_PREPARED_EXTENSIONS_DIR: seedDir,
       };
       return await runSuiteWrapperProcess({
         suite,
@@ -609,7 +613,7 @@ async function runDirectFamily(suiteId, visibleDelayMs, options = {}) {
   };
   const result = await execute();
   let error = result.error;
-  if (result.processCleanup?.verified === true && result.exitCode === 0 && !result.signal && !error) {
+  if (isProcessCleanupAccepted(result.processCleanup) && result.exitCode === 0 && !result.signal && !error) {
     try {
       await cleanupSuiteTransientRoots(context);
       if (suite.id === 'workspaceArtifactRegeneration') {
@@ -942,8 +946,7 @@ async function runDirectRegisteredSuite(
     terminal.complete === true &&
     terminal.lifecycleFinalized === true &&
     terminal.exitCode === 0 &&
-    terminal.originalProcessClosureVerified === true &&
-    terminal.processClosureProof === 'retained-original-identities' &&
+    isTerminalProcessClosureAccepted(terminal) &&
     terminal.signal === null &&
     terminal.cleanupVerified === true &&
     terminal.diagnosticsError === '' &&
@@ -965,8 +968,7 @@ async function runDirectRegisteredSuite(
     ) &&
     cleanup?.schemaVersion === 1 &&
     cleanup.verified === true &&
-    cleanup.processTreeVerified === true &&
-    cleanup.processCleanup?.verified === true;
+    isProcessCleanupAccepted(cleanup.processCleanup);
   provenance.finalizedAt = new Date().toISOString();
   provenance.accepted = accepted;
   fs.writeFileSync(provenancePath, JSON.stringify(provenance, null, 2));
@@ -1091,17 +1093,31 @@ function runSuiteWrapperProcess({ suite, context, env, visibleDelayMs, timeoutMs
       stderrPrefixer.flush();
       process.off('SIGINT', forwardSignal);
       process.off('SIGTERM', forwardSignal);
-      const processCleanup = readContainmentReceipt(containmentReceiptPath, exitCode, signal);
+      const processCleanup = readContainmentReceipt(containmentReceiptPath, exitCode, signal, undefined, launch.lifecycleLaunch.env);
+      launch.lifecycleLaunch.closed = true;
+      if (!processCleanup.verified) {
+        const evidence = produceLifecycleEvidence(processCleanup, launch.lifecycleLaunch);
+        if (evidence) processCleanup.lifecycleEvidence = evidence;
+        processCleanup.lifecycleAcceptance = evaluateLifecycleAcceptance(processCleanup, evidence);
+        launch.lifecycleLaunch.requiresStartup = processCleanup.lifecycleAcceptance.product === 'pending-startup';
+      }
+      await verifySubsequentLifecycleStartup(processCleanup, { env: childEnv });
       reportOwnedProcessClosure(processCleanup);
       fs.rmSync(containmentReceiptPath, { force: true });
-      const reportedExitCode = processCleanup.verified ? processCleanup.rootExitCode : exitCode;
-      const reportedSignal = processCleanup.verified ? processCleanup.rootSignal : signal;
+      const reportedExitCode = isProcessCleanupAccepted(processCleanup) ? processCleanup.rootExitCode : exitCode;
+      const reportedSignal = isProcessCleanupAccepted(processCleanup) ? processCleanup.rootSignal : signal;
       let error = timedOut
         ? new Error(`suite timed out after ${timeoutMs}ms`)
-        : processCleanup.error
+        : !isProcessCleanupAccepted(processCleanup) && processCleanup.error
           ? new Error(processCleanup.error)
           : undefined;
-      if (suite.id === 'workspaceArtifactRegeneration' && processCleanup.verified && reportedExitCode === 0 && !reportedSignal && !error) {
+      if (
+        suite.id === 'workspaceArtifactRegeneration' &&
+        isProcessCleanupAccepted(processCleanup) &&
+        reportedExitCode === 0 &&
+        !reportedSignal &&
+        !error
+      ) {
         try {
           await finalizeOuterRegenerationStageEvidence(context);
           context.regenerationStageEvidenceVerified = true;
@@ -1192,20 +1208,22 @@ function getContainmentHost() {
 }
 
 function spawnContainedSuiteProcess({ childArgs, cwd, env, reportsRoot, executable = process.execPath }) {
+  require('./vscode-lifecycle-producer').assertLaunchProfile(env, childArgs);
   const hostPath = getContainmentHost();
   const containmentReceiptPath = path.join(reportsRoot, `.containment-${process.pid}-${randomUUID()}.json`);
   fs.mkdirSync(path.dirname(containmentReceiptPath), { recursive: true });
+  const lifecycleLaunch = prepareLifecycleLaunch(reportsRoot, env);
   const child = spawn(hostPath, [containmentReceiptPath, executable, ...childArgs], {
-    env,
+    env: lifecycleLaunch.environment,
     cwd,
   });
-  return { child, containmentReceiptPath };
+  return { child, containmentReceiptPath, lifecycleLaunch };
 }
 
 function spawnContainedProcess(executable, args, options) {
   const evidenceRoot = path.join(getLifecycleArtifactDir('process-closure'), 'launches');
   fs.mkdirSync(evidenceRoot, { recursive: true });
-  const { child, containmentReceiptPath } = spawnContainedSuiteProcess({
+  const { child, containmentReceiptPath, lifecycleLaunch } = spawnContainedSuiteProcess({
     executable,
     childArgs: args,
     env: options.env,
@@ -1214,8 +1232,18 @@ function spawnContainedProcess(executable, args, options) {
   });
   return {
     child,
+    verifyStartup(closure) {
+      return verifySubsequentLifecycleStartup(closure, { env: options.env });
+    },
     readClosure(code, signal) {
-      const closure = readContainmentReceipt(containmentReceiptPath, code, signal);
+      const closure = readContainmentReceipt(containmentReceiptPath, code, signal, undefined, lifecycleLaunch.env);
+      lifecycleLaunch.closed = true;
+      if (!closure.verified) {
+        const evidence = produceLifecycleEvidence(closure, lifecycleLaunch);
+        if (evidence) closure.lifecycleEvidence = evidence;
+        closure.lifecycleAcceptance = evaluateLifecycleAcceptance(closure, evidence);
+        lifecycleLaunch.requiresStartup = closure.lifecycleAcceptance.product === 'pending-startup';
+      }
       reportOwnedProcessClosure(closure);
       fs.writeFileSync(path.join(evidenceRoot, `${randomUUID()}.json`), `${JSON.stringify(closure, null, 2)}\n`);
       fs.rmSync(containmentReceiptPath, { force: true });
@@ -1231,6 +1259,8 @@ function reportOwnedProcessClosure(closure) {
         mechanism: closure.mechanism,
         rootExitCode: closure.rootExitCode,
         verified: false,
+        infrastructureCleanupVerified: closure.infrastructureCleanupVerified,
+        lifecycleAcceptance: closure.lifecycleAcceptance,
         forcedTerminationAttempted: closure.forcedTerminationAttempted,
         forcedTerminationSucceeded: closure.forcedTerminationSucceeded,
         postTerminationActiveProcessCount: closure.postTerminationActiveProcessCount,
@@ -1242,19 +1272,28 @@ function reportOwnedProcessClosure(closure) {
   }
 }
 
-function readContainmentReceipt(receiptPath, hostExitCode, hostSignal) {
+function readContainmentReceipt(receiptPath, hostExitCode, hostSignal, lifecycleEvidence, metadataScope) {
   const expectedMechanism = process.platform === 'win32' ? 'windows-job-object' : process.platform === 'linux' ? 'linux-subreaper' : '';
   try {
     const receipt = JSON.parse(fs.readFileSync(receiptPath, 'utf8'));
     const escapedDescendants = Array.isArray(receipt.escapedDescendants) ? receipt.escapedDescendants : [];
-    const processDiagnostics = sanitizeContainedProcessDiagnostics(receipt.activeContainedProcesses);
+    const processDiagnostics = sanitizeContainedProcessDiagnostics(receipt.activeContainedProcesses, metadataScope);
+    if (receipt.ownershipComplete === false) processDiagnostics.valid = false;
     const rootSignalNumber = receipt.rootSignal === null ? null : signalNumber(receipt.rootSignal);
-    const expectedHostExitCode = rootSignalNumber === null ? receipt.rootExitCode : rootSignalNumber ? 128 + rootSignalNumber : undefined;
+    const expectedHostExitCode =
+      receipt.forcedTerminationAttempted === true
+        ? 125
+        : rootSignalNumber === null
+          ? receipt.rootExitCode
+          : rootSignalNumber
+            ? 128 + rootSignalNumber
+            : undefined;
     const hostOutcomeMatches = Number.isInteger(expectedHostExitCode) && hostSignal === null && hostExitCode === expectedHostExitCode;
     const receiptShapeValid =
       receipt.schemaVersion === 1 &&
       receipt.mechanism === expectedMechanism &&
       receipt.containmentEstablished === true &&
+      receipt.ownershipComplete !== false &&
       Number.isSafeInteger(receipt.rootPid) &&
       receipt.rootPid > 0 &&
       Number.isInteger(receipt.rootExitCode) &&
@@ -1271,10 +1310,11 @@ function readContainmentReceipt(receiptPath, hostExitCode, hostSignal) {
       : !containmentEmpty
         ? 'Suite ownership containment was not empty after the wrapper root closed'
         : `Suite containment receipt did not match host outcome: host=${hostExitCode ?? hostSignal}, receipt=${expectedHostExitCode}`;
-    return {
+    const closure = {
       schemaVersion: receipt.schemaVersion,
       mechanism: receipt.mechanism,
       containmentEstablished: receipt.containmentEstablished,
+      ...(receipt.ownershipComplete !== undefined ? { ownershipComplete: receipt.ownershipComplete } : {}),
       rootPid: receipt.rootPid,
       rootExitCode: receipt.rootExitCode,
       rootSignal: receipt.rootSignal,
@@ -1296,22 +1336,61 @@ function readContainmentReceipt(receiptPath, hostExitCode, hostSignal) {
         : undefined,
       verified,
       retainedOriginalIdentitiesVerified: verified,
+      // Ordinary original closure and recovery are deliberately different facts.
+      // A host's sticky pre-recovery failure MUST NOT be rewritten to "clean".
+      receiptValidated: receiptShapeValid,
+      hostOutcomeMatches,
+      infrastructureCleanupVerified:
+        receiptShapeValid &&
+        hostOutcomeMatches &&
+        (escapedDescendants.length === 0 || expectedMechanism === 'linux-subreaper') &&
+        (containmentEmpty ||
+          (receipt.forcedTerminationAttempted === true &&
+            receipt.forcedTerminationSucceeded === true &&
+            receipt.postTerminationActiveProcessCount === 0)),
       checkedAt: new Date().toISOString(),
+      nativeHostExitCode: hostExitCode,
+      nativeHostSignal: hostSignal,
       ...(verified ? {} : { error: verificationError }),
     };
+    if (lifecycleEvidence !== undefined) {
+      closure.lifecycleEvidence = lifecycleEvidence;
+    }
+    closure.lifecycleAcceptance = evaluateLifecycleAcceptance(closure, lifecycleEvidence);
+    return closure;
   } catch (error) {
     return {
       schemaVersion: 1,
       verified: false,
       retainedOriginalIdentitiesVerified: false,
       containmentEstablished: false,
+      infrastructureCleanupVerified: false,
+      lifecycleAcceptance: {
+        schemaVersion: 1,
+        product: 'blocked',
+        infrastructure: 'failed',
+        recovered: false,
+        accepted: false,
+        reason: 'containment-receipt-unavailable',
+      },
       error: `Suite ownership containment receipt unavailable: ${error instanceof Error ? error.message : String(error)}`,
       checkedAt: new Date().toISOString(),
     };
   }
 }
 
-function sanitizeContainedProcessDiagnostics(value) {
+function sanitizeContainedProcessDiagnostics(value, metadataScope = {}, nativePlatform = process.platform) {
+  const safeOwnershipPath = (file) => {
+    if (typeof file !== 'string' || file.length > 32768 || !path.isAbsolute(file) || !metadataScope.LA_E2E_CLI_EXTENSIONS_DIR) return false;
+    const relative = path.relative(metadataScope.LA_E2E_CLI_EXTENSIONS_DIR, file).replace(/\\/g, '/');
+    if (nativePlatform === 'win32')
+      return /^ms-dotnettools\.csharp-[^/]+\/\.roslyn\/Microsoft\.CodeAnalysis\.LanguageServer\.exe$/i.test(relative);
+    const prefix = /^ms-dotnettools\.csharp-[^/]+\/\.roslyn\//;
+    return (
+      prefix.test(relative) &&
+      relative.replace(prefix, '') === `Microsoft.CodeAnalysis.LanguageServer${nativePlatform === 'win32' ? '.exe' : ''}`
+    );
+  };
   if (value === undefined) {
     return { processes: [], valid: true };
   }
@@ -1322,8 +1401,10 @@ function sanitizeContainedProcessDiagnostics(value) {
     'captured',
     'identity-only',
     'exited-before-inspection',
+    'exited',
     'membership-query-failed',
     'not-in-job',
+    'not-in-containment',
     'inspection-failed',
   ]);
   const safeMarkerPattern = /^(?:--type|--utility-sub-type)=[A-Za-z0-9._-]{1,128}$/;
@@ -1343,6 +1424,19 @@ function sanitizeContainedProcessDiagnostics(value) {
       continue;
     }
     const process = { pid: entry.pid, metadataStatus: entry.metadataStatus };
+    if (entry.metadataStatus === 'exited') {
+      if (
+        nativePlatform !== 'win32' ||
+        !require('./vscode-lifecycle-identity').validOriginalIdentity(entry, nativePlatform) ||
+        entry.exitProof?.source !== 'GetProcessTimes' ||
+        !/^[0-9]{1,24}$/.test(entry.exitProof.exitTimeTicks) ||
+        BigInt(entry.exitProof.exitTimeTicks) <= BigInt(entry.startTimeTicks)
+      ) {
+        valid = false;
+        continue;
+      }
+      process.exitProof = { ...entry.exitProof };
+    }
     if (Number.isSafeInteger(entry.parentPid) && entry.parentPid > 0) {
       process.parentPid = entry.parentPid;
     }
@@ -1354,6 +1448,29 @@ function sanitizeContainedProcessDiagnostics(value) {
     }
     if (typeof entry.startTimeTicks === 'string' && /^[0-9]{1,24}$/.test(entry.startTimeTicks)) {
       process.startTimeTicks = entry.startTimeTicks;
+    }
+    if (entry.identity !== undefined) {
+      const { validOriginalIdentity } = require('./vscode-lifecycle-identity');
+      if (!validOriginalIdentity(entry, nativePlatform)) {
+        valid = false;
+        continue;
+      }
+      process.identity =
+        nativePlatform === 'linux'
+          ? {
+              platform: 'linux',
+              kind: 'linux-proc-start',
+              startTimeTicks: entry.identity.startTimeTicks,
+              bootId: entry.identity.bootId,
+              clockTicksPerSecond: entry.identity.clockTicksPerSecond,
+            }
+          : { platform: 'win32', kind: 'windows-filetime', startTimeTicks: entry.identity.startTimeTicks };
+    } else if (nativePlatform === 'linux' && entry.metadataStatus === 'captured') {
+      valid = false;
+      continue;
+    }
+    if (safeOwnershipPath(entry.executablePath)) {
+      process.executablePath = entry.executablePath;
     }
     if (Number.isSafeInteger(entry.sessionId) && entry.sessionId >= 0) {
       process.sessionId = entry.sessionId;
@@ -1381,7 +1498,8 @@ function sanitizeContainedProcessDiagnostics(value) {
         summary.scriptOrModuleBasenames.length > 16 ||
         !summary.scriptOrModuleBasenames.every((basename) => typeof basename === 'string' && safeModulePattern.test(basename)) ||
         typeof summary.sha256 !== 'string' ||
-        !/^[0-9a-f]{64}$/.test(summary.sha256)
+        !/^[0-9a-f]{64}$/.test(summary.sha256) ||
+        (nativePlatform === 'linux' && summary.hashEncoding !== 'linux-proc-cmdline-nul-bytes')
       ) {
         valid = false;
         continue;
@@ -1391,6 +1509,12 @@ function sanitizeContainedProcessDiagnostics(value) {
         safeMarkers: [...summary.safeMarkers],
         scriptOrModuleBasenames: [...summary.scriptOrModuleBasenames],
         sha256: summary.sha256,
+        ...(nativePlatform === 'linux' && summary.hashEncoding === 'linux-proc-cmdline-nul-bytes'
+          ? { hashEncoding: summary.hashEncoding }
+          : {}),
+        ...(Array.isArray(summary.payloadPaths) && summary.payloadPaths.length <= 16
+          ? { payloadPaths: summary.payloadPaths.filter(safeOwnershipPath) }
+          : {}),
       };
     }
     processes.push(process);
@@ -1444,7 +1568,9 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
   const phaseDiagnosticsErrors = phaseResults
     .map((phase) => phase.diagnosticsError)
     .filter((diagnosticsError) => typeof diagnosticsError === 'string' && diagnosticsError.trim());
-  const phaseCleanupVerified = phaseResults.every((phase) => phase.cleanupVerified === true);
+  const phaseCleanupVerified = phaseResults.every(
+    (phase) => phase.cleanupVerified === true && (!phase.processCleanup || isProcessCleanupAccepted(phase.processCleanup))
+  );
   const phaseOrderVerified = observedPhaseIds.every((phaseId, index) => phaseId === expectedPhaseIds[index]);
   const phaseCompleteness =
     phaseOrderVerified &&
@@ -1483,7 +1609,7 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
   const terminalComplete =
     phaseCompleteness &&
     phaseCleanupVerified &&
-    processCleanup.verified === true &&
+    isProcessCleanupAccepted(processCleanup) &&
     !error &&
     !journal.error &&
     phaseDiagnosticsErrors.length === 0 &&
@@ -1508,11 +1634,14 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     blockedPhaseIds,
     phaseCleanupVerified,
     processTreeVerified: processCleanup.verified === true,
+    processAcceptanceVerified: isProcessCleanupAccepted(processCleanup),
+    infrastructureCleanupVerified: processCleanup.infrastructureCleanupVerified === true,
+    lifecycleAcceptance: evaluateLifecycleAcceptance(processCleanup, processCleanup.lifecycleEvidence),
     processCleanup,
     verified:
       phaseCompleteness &&
       phaseCleanupVerified &&
-      processCleanup.verified === true &&
+      isProcessCleanupAccepted(processCleanup) &&
       regenerationStagingVerified &&
       (!context.invocation || (context.provenanceVerified === true && context.ownedRootCleanup?.verified === true)) &&
       (!context.directFamily || directSucceeded),
@@ -1521,6 +1650,9 @@ function writeSuiteFinalEvidence({ context, suite, exitCode, signal, error, proc
     ...(context.invocation ? { invocation: context.invocation, ownedRootCleanup: context.ownedRootCleanup } : {}),
   };
   const terminalResult = {
+    lifecycleAcceptance: evaluateLifecycleAcceptance(processCleanup, processCleanup.lifecycleEvidence),
+    infrastructureCleanupVerified: processCleanup.infrastructureCleanupVerified === true,
+    processCleanup,
     originalProcessClosureVerified,
     processClosureProof,
     suiteId: suite.id,
@@ -2977,7 +3109,58 @@ function applyControlledFuncEnvironment(env, controlledFuncDirectory) {
   return controlledFuncEnvironment(controlledFuncDirectory, env, process.platform);
 }
 
-function runVscodeTest(args, options = {}, { commandForArgs = getVscodeTestCommand } = {}) {
+async function verifySubsequentLifecycleStartup(processCleanup, { env = process.env, controlledFuncDirectory } = {}) {
+  if (
+    !processCleanup.lifecycleEvidence ||
+    evaluateLifecycleAcceptance(processCleanup, processCleanup.lifecycleEvidence).product !== 'pending-startup'
+  )
+    return processCleanup;
+  try {
+    const domain = processCleanup.lifecycleEvidence.requiredStartupDomain;
+    const resource = domain === 'design-time' ? processCleanup.lifecycleEvidence.resources.workspaceResources?.[0] : undefined;
+    if (domain === 'design-time') {
+      assert.ok(
+        resource && fs.statSync(resource).isDirectory(),
+        'Actual runtime restart requires the observer-retained existing workspace'
+      );
+    }
+    const verificationCode = await runVscodeTest(['--label', 'lifecycleStartupProof'], {
+      lifecycleVerificationOnly: true,
+      controlledFuncDirectory,
+      extraEnv: {
+        ...env,
+        LA_E2E_CLI_USER_DATA_SUFFIX: `lifecycle-startup-${randomUUID().slice(0, 8)}`,
+        LA_E2E_LIFECYCLE_DIR: '',
+        LA_E2E_LIFECYCLE_INVOCATION: '',
+        LA_E2E_LIFECYCLE_PARENT_DIR: '',
+        LA_E2E_LIFECYCLE_PARENT_INVOCATION: '',
+        LA_E2E_CLI_STARTUP_RESOURCE: resource || '',
+        LA_E2E_CLI_AUTO_START_DESIGN_TIME: domain === 'design-time' ? '1' : '0',
+        LA_E2E_CLI_VALIDATE_DEPENDENCIES: '0',
+        LA_E2E_LIFECYCLE_STARTUP_DOMAIN: domain,
+        LA_E2E_LIFECYCLE_STARTUP_WORKSPACE: resource || '',
+        LA_E2E_CLI_CREATE_WORKSPACE_CASE: '',
+        LA_E2E_CLI_CANCEL_CONTEXT: '',
+        LA_E2E_CLI_CANCEL_HANDOFF_PATH: '',
+        LA_E2E_CLI_REQUIRE_WORKSPACE_CANCEL: '',
+        LA_E2E_CLI_REQUIRE_WORKSPACE_REGENERATION: '',
+        LA_E2E_CLI_SUITE_PHASE_RESULTS_PATH: '',
+        LA_E2E_CLI_SUITE_TERMINAL_RESULT_PATH: '',
+        LA_E2E_CLI_SUITE_CLEANUP_LEDGER_PATH: '',
+        LA_E2E_CLI_ORDERED_EVIDENCE_ENABLED: '0',
+      },
+    });
+    assert.equal(verificationCode, 0, 'Actual subsequent native startup verification failed');
+    processCleanup.lifecycleAcceptance = evaluateLifecycleAcceptance(processCleanup, processCleanup.lifecycleEvidence);
+    assert.equal(isProcessCleanupAccepted(processCleanup), true, 'Actual next startup did not satisfy the original lifecycle evidence');
+  } catch (error) {
+    processCleanup.lifecycleEvidence.startupResolutionError = error instanceof Error ? error.message : String(error);
+    processCleanup.lifecycleAcceptance = evaluateLifecycleAcceptance(processCleanup, processCleanup.lifecycleEvidence);
+  }
+  return processCleanup;
+}
+
+async function runVscodeTest(args, options = {}, { commandForArgs = getVscodeTestCommand } = {}) {
   const label = getLabelArg(args);
   const userDataSuffix =
     options.extraEnv?.LA_E2E_CLI_USER_DATA_SUFFIX ?? process.env.LA_E2E_CLI_USER_DATA_SUFFIX ?? `run-${Date.now()}-${process.pid}`;
@@ -3083,15 +3266,24 @@ function runVscodeTest(args, options = {}, { commandForArgs = getVscodeTestComma
         reject(error);
         return;
       }
-      const code = processCleanup.verified ? processCleanup.rootExitCode : hostCode;
-      const signal = processCleanup.verified ? processCleanup.rootSignal : hostSignal;
+      if (
+        processCleanup.lifecycleAcceptance?.product === 'pending-startup' &&
+        options.lifecycleVerificationOnly !== true &&
+        options.deferLifecycleStartup !== true
+      ) {
+        await verifySubsequentLifecycleStartup(processCleanup, { env: childEnv, controlledFuncDirectory: options.controlledFuncDirectory });
+      }
+      // Pending startup permits the real next phase to execute, never terminal
+      // acceptance. Keep native host outcomes on the closure, including 125.
+      const code = canContinueAfterProcessCleanup(processCleanup) ? processCleanup.rootExitCode : hostCode;
+      const signal = canContinueAfterProcessCleanup(processCleanup) ? processCleanup.rootSignal : hostSignal;
       const remainingOutput = outputFilter.flush();
       if (remainingOutput) {
         process.stdout.write(remainingOutput);
       }
       let diagnosticsError;
       const diagnosticsErrors = [];
-      if (!processCleanup.verified) {
+      if (!canContinueAfterProcessCleanup(processCleanup)) {
         diagnosticsError = new Error(processCleanup.error);
         diagnosticsErrors.push(diagnosticsError);
         markOwnedWorkspaceParentsWithDiagnosticFailure(childEnv, [deferredWorkspaceParent].filter(Boolean));
@@ -3337,7 +3529,7 @@ function runVscodeTest(args, options = {}, { commandForArgs = getVscodeTestComma
             }
           }
         }
-      } else {
+      } else if (options.lifecycleVerificationOnly !== true) {
         writeSuitePhaseResult(childEnv, {
           phaseId,
           label,
@@ -4228,21 +4420,7 @@ function walkFiles(root) {
 }
 
 function getVscodeUserDataDir(env) {
-  if (env.LA_E2E_CLI_USER_DATA_DIR?.trim()) {
-    return path.resolve(env.LA_E2E_CLI_USER_DATA_DIR);
-  }
-
-  const checkoutHash = createHash('sha1').update(path.resolve(__dirname, '..')).digest('hex').slice(0, 8);
-  const userDataSuffix = env.LA_E2E_CLI_USER_DATA_SUFFIX?.trim();
-  if (env.LA_E2E_CLI_USER_DATA_PARENT?.trim()) {
-    return path.resolve(env.LA_E2E_CLI_USER_DATA_PARENT, userDataSuffix ? `user-data-${userDataSuffix}` : `user-data-${process.pid}`);
-  }
-
-  if (process.platform === 'win32') {
-    return path.resolve(__dirname, '..', '.vscode-test', userDataSuffix ? `user-data-${userDataSuffix}` : 'user-data');
-  }
-
-  return path.join(os.tmpdir(), `la-vscode-test-${checkoutHash}-${userDataSuffix || process.pid}`);
+  return require('./vscode-lifecycle-producer').resolveTestUserDataDir(path.resolve(__dirname, '..'), env);
 }
 
 function createOutputFilter() {
@@ -4291,12 +4469,15 @@ function shouldSuppressKnownVscodeNoise(line) {
 }
 
 module.exports = {
+  spawnContainedSuiteProcess,
   redactDiagnosticText: redactGeneratedWorkspacePlainText,
   runDirectFamily,
   _test: {
+    sanitizeContainedProcessDiagnostics,
     resolveOwnedWorkspacePath,
     spawnContainedProcess,
     runVscodeTest,
+    verifySubsequentLifecycleStartup,
     getDirectRegenerationEvidencePaths,
     getDirectFamilyUserDataParent,
     getDirectRegenerationDiagnosticsDestination,
@@ -4566,7 +4747,7 @@ async function cleanupDeferredWorkspaceAfterCancel(workspaceParent, env, cancelR
     cancelResult &&
     (cancelResult.originalCodeClose?.code !== 0 ||
       cancelResult.originalCodeClose?.signal !== null ||
-      (cancelResult.scenario === 'workspace-prompt-cancel' && cancelResult.processCleanup?.verified !== true))
+      (cancelResult.scenario === 'workspace-prompt-cancel' && !canContinueAfterProcessCleanup(cancelResult.processCleanup)))
   ) {
     const error = 'Original regular Code closure was not confirmed; preserving the app through the existing diagnostic retention path.';
     cancelResult.errors.push(error);
@@ -4701,6 +4882,7 @@ function writeSuitePhaseResult(env, result) {
       cleanupVerified: phase.cleanupVerified,
       diagnosticsError: phase.diagnosticsError,
       complete: phase.complete,
+      ...(phase.processCleanup ? { processCleanup: phase.processCleanup } : {}),
       ...(result.label === 'workspaceArtifactRegeneration' ? { mochaPassingCount: phase.mochaPassingCount || 0 } : {}),
       ...(Array.isArray(phase.ogfScenarios) && phase.ogfScenarios.length > 0 ? { ogfScenarios: phase.ogfScenarios } : {}),
     })),
@@ -4716,6 +4898,7 @@ function projectTerminalPhase(phase) {
     cleanupVerified: phase.cleanupVerified,
     diagnosticsError: phase.diagnosticsError,
     complete: phase.complete,
+    ...(phase.processCleanup ? { processCleanup: phase.processCleanup } : {}),
     ...(typeof phase.bodyAssertionsPassed === 'boolean' ? { bodyAssertionsPassed: phase.bodyAssertionsPassed } : {}),
     ...(Array.isArray(phase.ogfScenarios) && phase.ogfScenarios.length > 0 ? { ogfScenarios: phase.ogfScenarios } : {}),
   };
@@ -5429,4 +5612,10 @@ function formatDuration(durationMs) {
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
   return remainingSeconds === 0 ? `${minutes}m` : `${minutes}m ${remainingSeconds}s`;
+}
+
+// Setup can call back into the contained launcher through the dependency
+// preparer. Publish exports before the canonical executable entrypoint starts.
+if (require.main === module) {
+  main();
 }

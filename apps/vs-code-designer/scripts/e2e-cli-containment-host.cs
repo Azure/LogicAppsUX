@@ -18,6 +18,7 @@ public static class E2eCliContainmentHost
     private const int ProcessBasicInformation = 0;
     private const int ProcessCommandLineInformation = 60;
     private const uint INFINITE = 0xffffffff;
+    private const uint WAIT_TIMEOUT = 258;
 
     [StructLayout(LayoutKind.Sequential)]
     private struct SECURITY_ATTRIBUTES
@@ -183,6 +184,9 @@ public static class E2eCliContainmentHost
         out long exitTime,
         out long kernelTime,
         out long userTime);
+
+    [DllImport("iphlpapi.dll", SetLastError = true)]
+    private static extern uint GetExtendedTcpTable(IntPtr table, ref uint size, bool order, uint family, uint tableClass, uint reserved);
 
     [DllImport("kernel32.dll", SetLastError = true)]
     private static extern bool ProcessIdToSessionId(uint processId, out uint sessionId);
@@ -413,6 +417,7 @@ public static class E2eCliContainmentHost
         var arguments = ParseCommandLine(commandLine);
         var safeMarkers = new List<string>();
         var moduleBasenames = new List<string>();
+        var payloadPaths = new List<string>();
         foreach (var argument in arguments)
         {
             if (safeMarkers.Count < 16 &&
@@ -425,6 +430,13 @@ public static class E2eCliContainmentHost
                 safeMarkers.Add(argument);
             }
             if (moduleBasenames.Count >= 16)
+            {
+                continue;
+            }
+            // Non-path arguments (for example Node -e source text) may contain
+            // characters Path rejects. They still belong to the full command
+            // hash; they are not script/module path evidence.
+            if (argument.IndexOfAny(Path.GetInvalidPathChars()) >= 0)
             {
                 continue;
             }
@@ -442,9 +454,16 @@ public static class E2eCliContainmentHost
                 }
             }
         }
+        // Retain only argv[0], not arbitrary script paths or secret-bearing
+        // command arguments. Consumers publish it only inside the known seed.
+        if (arguments.Count > 0 && Path.IsPathRooted(arguments[0]))
+        {
+            payloadPaths.Add(arguments[0]);
+        }
         return "{\"argumentCount\":" + arguments.Count +
             ",\"safeMarkers\":" + JsonStringArray(safeMarkers) +
             ",\"scriptOrModuleBasenames\":" + JsonStringArray(moduleBasenames) +
+            ",\"payloadPaths\":" + JsonStringArray(payloadPaths) +
             ",\"sha256\":" + JsonString(Sha256(commandLine)) + "}";
     }
 
@@ -474,8 +493,10 @@ public static class E2eCliContainmentHost
         var process = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, false, processId);
         if (process == IntPtr.Zero)
         {
+            var error = Marshal.GetLastWin32Error();
             return "{\"pid\":" + processId +
-                ",\"metadataStatus\":\"exited-before-inspection\",\"win32Error\":" + Marshal.GetLastWin32Error() + "}";
+                ",\"metadataStatus\":" + JsonString(error == 87 ? "exited-before-inspection" : "inspection-failed") +
+                ",\"win32Error\":" + error + "}";
         }
         try
         {
@@ -489,17 +510,29 @@ public static class E2eCliContainmentHost
             {
                 return "{\"pid\":" + processId + ",\"metadataStatus\":\"not-in-job\"}";
             }
+            // Exit is a kernel fact independent of image/command accessibility.
+            // A caller may retain a handle after exit, so OpenProcess can still
+            // succeed while NtQueryInformationProcess no longer has a command.
+            long creationTime;
+            long exitTime;
+            long kernelTime;
+            long userTime;
+            var hasCreationTime = GetProcessTimes(process, out creationTime, out exitTime, out kernelTime, out userTime);
+            if (hasCreationTime && exitTime > 0)
+            {
+                return "{\"pid\":" + processId +
+                    ",\"metadataStatus\":\"exited\",\"startTimeTicks\":" + JsonString(creationTime.ToString()) +
+                    ",\"identity\":{\"platform\":\"win32\",\"kind\":\"windows-filetime\",\"startTimeTicks\":" +
+                    JsonString(creationTime.ToString()) + "}" +
+                    ",\"exitProof\":{\"source\":\"GetProcessTimes\",\"exitTimeTicks\":" + JsonString(exitTime.ToString()) + "}}";
+            }
             var executablePath = new StringBuilder(32768);
             uint executablePathLength = (uint)executablePath.Capacity;
             var path = QueryFullProcessImageName(process, 0, executablePath, ref executablePathLength)
                 ? executablePath.ToString()
                 : "";
             var commandLine = QueryProcessCommandLine(process);
-            long creationTime;
-            long exitTime;
-            long kernelTime;
-            long userTime;
-            var createdAtUtc = GetProcessTimes(process, out creationTime, out exitTime, out kernelTime, out userTime)
+            var createdAtUtc = hasCreationTime
                 ? DateTime.FromFileTimeUtc(creationTime).ToString("o")
                 : "";
             uint sessionId;
@@ -508,9 +541,14 @@ public static class E2eCliContainmentHost
             return "{\"pid\":" + processId +
                 ",\"parentPid\":" + (parentProcessId == 0 ? "null" : parentProcessId.ToString()) +
                 ",\"imageName\":" + JsonString(path.Length == 0 ? "" : Path.GetFileName(path)) +
+                ",\"executablePath\":" + JsonString(path) +
+                ",\"startTimeTicks\":" + JsonString(hasCreationTime ? creationTime.ToString() : "") +
+                ",\"identity\":{\"platform\":\"win32\",\"kind\":\"windows-filetime\",\"startTimeTicks\":" +
+                    JsonString(hasCreationTime ? creationTime.ToString() : "") + "}" +
                 ",\"createdAtUtc\":" + JsonString(createdAtUtc) +
                 ",\"sessionId\":" + (hasSessionId ? sessionId.ToString() : "null") +
-                ",\"metadataStatus\":\"captured\",\"commandSummary\":" + SafeCommandSummary(commandLine) + "}";
+                ",\"metadataStatus\":" + JsonString(hasCreationTime && path.Length > 0 && commandLine.Length > 0 ? "captured" : "inspection-failed") +
+                ",\"commandSummary\":" + SafeCommandSummary(commandLine) + "}";
         }
         finally
         {
@@ -536,6 +574,98 @@ public static class E2eCliContainmentHost
         return descriptions;
     }
 
+    // Read only explicitly requested loopback IPv4 listeners. Never inspect an
+    // outside process's command. Each ancestry hop must belong to this Job.
+    private static string DescribeListeners(IntPtr job, List<uint> ports, List<uint> roots)
+    {
+        uint size = 0;
+        GetExtendedTcpTable(IntPtr.Zero, ref size, false, 2, 3, 0); // AF_INET, OWNER_PID_LISTENER
+        var table = Marshal.AllocHGlobal((int)size);
+        try
+        {
+            if (GetExtendedTcpTable(table, ref size, false, 2, 3, 0) != 0)
+                throw new InvalidOperationException("Native listener ownership unavailable");
+            var descriptions = new List<string>();
+            var count = Marshal.ReadInt32(table);
+            for (var index = 0; index < count; index++)
+            {
+                var row = IntPtr.Add(table, 4 + index * 24);
+                var state = Marshal.ReadInt32(row);
+                var address = unchecked((uint)Marshal.ReadInt32(row, 4));
+                var port = (uint)((Marshal.ReadByte(row, 8) << 8) | Marshal.ReadByte(row, 9));
+                if (state != 2 || !ports.Contains(port) || (address != 0 && address != 0x0100007f)) continue;
+                var pid = unchecked((uint)Marshal.ReadInt32(row, 20));
+                var ancestry = new List<string>();
+                var visited = new HashSet<uint>();
+                var current = pid;
+                bool matched = false;
+                while (current > 0 && visited.Add(current) && visited.Count <= 64)
+                {
+                    var handle = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, false, current);
+                    if (handle == IntPtr.Zero) break;
+                    try
+                    {
+                        bool member;
+                        if (!IsProcessInJob(handle, job, out member) || !member) break;
+                        ancestry.Add(DescribeProcess(job, current));
+                        if (roots.Contains(current)) { matched = true; break; }
+                        current = ParentProcessId(handle);
+                    }
+                    finally { CloseHandle(handle); }
+                }
+                // Even an outside listener is reported as a refusal, not omitted
+                // and not accepted just because another owned listener exists.
+                descriptions.Add("{\"port\":" + port + ",\"pid\":" + pid +
+                    ",\"matchedRoot\":" + (matched ? current.ToString() : "null") +
+                    ",\"ancestry\":[" + String.Join(",", ancestry.ToArray()) + "]}");
+            }
+            return "[" + String.Join(",", descriptions.ToArray()) + "]";
+        }
+        finally { Marshal.FreeHGlobal(table); }
+    }
+
+    // Test-only read-only observer. Admission remains the actual retained Job,
+    // never a machine-wide process query or a name-based process operation.
+    private static void ObserveLifecycleRequests(IntPtr job, string directory)
+    {
+        if (String.IsNullOrEmpty(directory))
+        {
+            return;
+        }
+        foreach (var request in Directory.GetFiles(directory, "*.request"))
+        {
+            var ids = new List<uint>();
+            var ports = new List<uint>();
+            foreach (var line in File.ReadAllLines(request))
+            {
+                if (line.StartsWith("port:", StringComparison.Ordinal))
+                {
+                    uint port;
+                    if (!uint.TryParse(line.Substring(5), out port) || port == 0 || port > 65535 || ports.Count >= 64)
+                        throw new InvalidOperationException("Invalid scoped listener observation request");
+                    ports.Add(port);
+                    continue;
+                }
+                uint pid;
+                if (!uint.TryParse(line, out pid) || pid == 0 || ids.Count >= 64)
+                {
+                    throw new InvalidOperationException("Invalid scoped lifecycle observation request");
+                }
+                ids.Add(pid);
+            }
+            var descriptions = DescribeProcesses(job, ids);
+            var listeners = ports.Count == 0 ? "" :
+                ",\"requestedPorts\":[" + String.Join(",", ports.ConvertAll(p => p.ToString()).ToArray()) +
+                "],\"listeners\":" + DescribeListeners(job, ports, ids);
+            var response = request + ".response";
+            File.WriteAllText(response + ".tmp",
+                "{\"observedAtUtc\":" + JsonString(DateTime.UtcNow.ToString("o")) +
+                ",\"processes\":[" + String.Join(",", descriptions.ToArray()) + "]" + listeners + "}");
+            File.Move(response + ".tmp", response);
+            File.Delete(request);
+        }
+    }
+
     private static void WriteReceipt(
         string path,
         uint rootPid,
@@ -543,6 +673,7 @@ public static class E2eCliContainmentHost
         uint activeProcesses,
         List<string> activeProcessDescriptions,
         bool activeProcessDescriptionsTruncated,
+        string metadataCapturedAtUtc,
         bool forcedTerminationAttempted,
         bool forcedTerminationSucceeded,
         int forcedTerminationError,
@@ -566,7 +697,7 @@ public static class E2eCliContainmentHost
             "\"escapedDescendants\":[],\"activeContainedProcessCount\":" + activeProcesses + "," +
             "\"activeContainedProcesses\":" + processDescriptions + "," +
             "\"activeContainedProcessesTruncated\":" + (activeProcessDescriptionsTruncated ? "true" : "false") + "," +
-            "\"metadataCapturedAtUtc\":" + JsonString(DateTime.UtcNow.ToString("o")) + "," +
+            "\"metadataCapturedAtUtc\":" + JsonString(metadataCapturedAtUtc) + "," +
             "\"forcedTerminationAttempted\":" + (forcedTerminationAttempted ? "true" : "false") + "," +
             "\"forcedTerminationSucceeded\":" + (forcedTerminationSucceeded ? "true" : "false") + "," +
             "\"forcedTerminationError\":" + forcedTerminationError + "," +
@@ -649,11 +780,21 @@ public static class E2eCliContainmentHost
                 WaitForSingleObject(process.hProcess, INFINITE);
                 return 126;
             }
+            var lifecycleDirectory = Environment.GetEnvironmentVariable("LA_E2E_LIFECYCLE_DIR");
+            if (!String.IsNullOrEmpty(lifecycleDirectory))
+            {
+                File.WriteAllText(Path.Combine(lifecycleDirectory, "binding.json"),
+                    "{\"rootPid\":" + process.dwProcessId + ",\"invocation\":" +
+                    JsonString(Environment.GetEnvironmentVariable("LA_E2E_LIFECYCLE_INVOCATION")) + "}");
+            }
             if (ResumeThread(process.hThread) == 0xffffffff)
             {
                 return 126;
             }
-            WaitForSingleObject(process.hProcess, INFINITE);
+            while (WaitForSingleObject(process.hProcess, 100) == WAIT_TIMEOUT)
+            {
+                ObserveLifecycleRequests(job, lifecycleDirectory);
+            }
             uint rootExitCode;
             if (!GetExitCodeProcess(process.hProcess, out rootExitCode))
             {
@@ -685,6 +826,9 @@ public static class E2eCliContainmentHost
                 }
             }
             var activeProcessDescriptions = DescribeProcesses(job, activeProcessIds);
+            // Retain the observation boundary before TerminateJobObject can hide
+            // a product survivor. WriteReceipt runs after recovery.
+            var metadataCapturedAtUtc = DateTime.UtcNow.ToString("o");
             var forcedTerminationAttempted = active > 0;
             var forcedTerminationSucceeded = false;
             var forcedTerminationError = 0;
@@ -709,6 +853,7 @@ public static class E2eCliContainmentHost
                 active,
                 activeProcessDescriptions,
                 activeProcessDescriptionsTruncated,
+                metadataCapturedAtUtc,
                 forcedTerminationAttempted,
                 forcedTerminationSucceeded,
                 forcedTerminationError,

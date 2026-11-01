@@ -1,5 +1,31 @@
 # VS Code CLI E2E authoring: established contracts
 
+## Normal dependency setup and exact executable ownership
+
+The existing dependency producer's `prepare` and `verify` commands retain the
+full immutable seed inventory and source/version/platform/architecture contract.
+Batch and direct-family wrappers normally copy the validated seed into isolated
+installations. Unwrapped CLI labels retain their supported dependency setup.
+ExTester uses its normal public VS Code **and ChromeDriver** asset setup; a
+supplied seed skips Marketplace dependency installation, not asset setup.
+The type-safe owned cache-path resolver replaces private `ExTester.code` access.
+Product/recorder overlays are not a reason to reject normal CLI execution.
+
+Exceptional survivor ownership requires the exact physical installed
+`ms-dotnettools.csharp` Roslyn executable to match its known prepared-manifest
+size/hash (and POSIX mode), with retained native PID/creation/full-command/path
+binding. Reject linked paths, foreign or modified executables, metadata gaps and
+observed file-replacement/mutation races. Added runtime cache files do not change
+that executable's identity. Do not require the installed directory's newly
+generated inventory to equal the original seed, and do not rebaseline the seed.
+No warmup, freeze, automatic cache preparation or new provisioning mode is needed.
+
+The additive `lifecycleStartupProof` diagnostic is available only through explicit
+`--label NAME` or `--label=NAME` argv, never default/coverage config. It is not
+canonical full-suite coverage. Missing original Logic Apps shutdown/resource
+release or actual separate startup still blocks exceptional acceptance; unknown
+or shared Func ownership is never waived.
+
 Read this guide before adding or changing VS Code native tests. It is the
 canonical, repository-tracked source of reusable authoring lessons. Private case
 catalogues, original-item text, run receipts and screenshots belong in the
@@ -204,9 +230,13 @@ After every local run, inspect:
   failed phase;
 - Windows Job Object or Linux subreaper containment evidence.
 
-A passing test body is not enough. Required phases, evidence, cleanup and
-natural process-tree closure must all be green. Forced outer-containment
-termination prevents machine leakage but remains a failed acceptance result.
+A passing test body is not enough. Required phases, evidence and cleanup must
+all be green. Apply the [repo-wide lifecycle acceptance policy](vscode-lifecycle-acceptance.md):
+ordinary closure and recovered containment are different facts. Recovery alone
+neither proves a Logic Apps defect nor permits acceptance. An independent
+dependency exception requires product shutdown, resource release, exact ownership
+and actual subsequent startup proof. Missing producer proof remains blocked;
+the linked implementation-status section records paths not yet migrated.
 
 Classify the earliest failure before editing:
 
@@ -943,8 +973,9 @@ The runner contains each CLI launch and the supplementary regular Cancel
 window independently. A launcher closing is not proof that its original
 descendants have exited. Finish native Job Object/subreaper observation before
 copying final profile diagnostics or deleting the owned workspace. Ordinary
-closure admits cleanup; forced recovery still fails the phase and retains its
-workspace diagnostics, even if recovery empties the containment. The outer
+closure admits cleanup; forced recovery without the complete shared-policy
+evidence still fails the phase and retains its workspace diagnostics, even if
+recovery empties the containment. The outer
 family containment remains an additional acceptance gate.
 
 Direct regeneration must also publish available family diagnostics when outer
@@ -968,7 +999,9 @@ a Logic Apps shutdown regression. Preserve the native body and any established
 product-shutdown verdict when reporting that failure. The harness must still
 contain its launched processes and avoid contaminating subsequent tests; product
 shutdown success does not manufacture natural host closure or filesystem cleanup
-success, nor does it bypass the full-suite infrastructure gate.
+success, nor does it bypass the full-suite infrastructure gate. Verified recovered
+containment may satisfy that gate only with the shared acceptance evidence; see
+the canonical policy's explicit remaining producer/ExTester work.
 
 The activation smoke suite observes the already-active C# extension's supported
 `captureActivityLogs()` startup barrier before its host exits, then disposes the
@@ -983,7 +1016,7 @@ justifies applying it elsewhere.
 An extension host exiting zero can still leave a language server that started
 during shutdown. Correlate retained PIDs with original extension activation logs:
 a server startup banner without client-exit monitoring/initialization is not
-natural-closure proof. Do not repair that failure by accepting forced recovery,
+natural-closure proof. Do not repair that failure by accepting forced recovery alone,
 disabling required dependencies, or lengthening the containment grace period.
 
 Linux signal-driven recovery is sticky across both root shutdown and descendant
@@ -993,11 +1026,24 @@ survivor count, and always emit `forcedTerminationAttempted` when recovery ran.
 
 Failed containment prints bounded `[owned-process-closure]` diagnostics in the
 existing runner log: original process identities and allowlisted metadata, not
-raw command lines or executable paths. Linux captures PID/parent/start ticks
-before recovery. Per-launch private receipts remain under the lifecycle
+raw command lines or arbitrary executable paths. Linux retains native-owned
+pidfds, original PID/parent/start ticks, boot identity, clock frequency and
+the kernel SHA-256 of complete NUL-separated cmdline bytes before recovery.
+Only the exact validated installed C# Roslyn executable path is admitted to
+published ownership diagnostics (Linux has no `.exe` suffix). Explicit PID
+requests use retained subreaper ancestry/owned task child links, never a
+machine-wide `/proc` enumeration. Per-launch private receipts remain under the lifecycle
 artifact root. Run the registered `test:e2e-cli:unit` controls, including
 `scripts/e2e-cli-launch-cleanup.unit.test.js`, to exercise actual descendant
 lifetime, cleanup ordering, forced-recovery rejection, and Windows aliases.
+
+The [repository-wide lifecycle policy](vscode-lifecycle-acceptance.md) applies
+to every registered Linux/Windows lane, including inner/outer wrappers, regular
+Cancel and ExTester phases. Product shutdown and original resource release
+must precede independent recovery; the next actual startup may follow recovery.
+Unknown/inaccessible identities and shared Func remain blocked. Ordinary
+clean closure does not require the exceptional startup verifier. Code wiring,
+synthetic controls and actual source-bound Linux native proof are separate.
 
 Keep actionable diagnostics private and complete. Serialize `Error.stack` when
 available. When wrapper logs prefix lines with `[suite]`, strip prefixes only
@@ -1079,6 +1125,21 @@ receipt validation rather than aggregate Mocha-count credit.
 7. For each lesson, record symptom, root cause, reusable helper/control paths,
    verification level and any remaining limitation. Update this guide after
    meaningful investigation, not only after a green run.
+
+Current lifecycle review controls are registered through
+`scripts/e2e-cli-launch-cleanup.unit.test.js` and include all four regressions
+in `scripts/vscode-lifecycle-review-regressions.unit.test.js`. Current-host
+startup must bind the supported recorder log URI, actual argv/profile,
+required workspace, product launcher and native listener identity before and
+after the response; HTTP 200 and native extension-host identity alone are
+insufficient. Windows retained-handle exit requires matching creation plus
+explicit kernel exit FILETIME, not missing command metadata. File-trigger and
+reload teardown share the same once-only shutdown promise.
+
+The exact current validation results and outstanding native proof limits are
+in [VS Code lifecycle acceptance](vscode-lifecycle-acceptance.md#four-review-regressions--2026-10-31).
+In particular, a passing startup Mocha body with native exit 125 and unavailable
+product logger/shutdown proof is **not** an accepted native lifecycle result.
 
 Generated package instructions must be updated from
 `docs/ai-setup/packages/vs-code-designer.md` through `pnpm run ai:generate`;

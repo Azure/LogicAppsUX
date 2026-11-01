@@ -1,14 +1,13 @@
 import * as assert from 'node:assert/strict';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { assertNextButtonEnabled, enterFieldValue, getPageText, selectDropdownOption, selectRadioOption } from './cdpFormHelpers';
+import { addWorkspaceMultiRootProjects } from './workspaceMultiRootProjectUi';
 import { captureCdpScreenshot } from './screenshot';
 import { nativePopulationProvider, remainingBudget, waitForFuncPopulation } from './workspaceMultiRootCollector';
 import type { MultiRootBootstrapAttestation } from './workspaceMultiRootBootstrap';
 import { connectToOwnedRegularWorkbench, ensureRegularWorkbenchExplorer, reloadOwnedRegularWorkbench } from './workbenchCdpActions';
 import {
   activeWebview,
-  assertProjectSetupForm,
   assertMapper,
   assertSequentialDebug,
   boundedCdp,
@@ -16,12 +15,10 @@ import {
   command,
   debugEvents,
   enterQuickInput,
-  folderCreateNewProject,
   poll,
   readLogicAppRoots,
   readWorkbench,
   waitForActivatedMultiRootRuntime,
-  waitForProjectWizardClosed,
 } from './workspaceMultiRootWorkbench';
 import { normalizeFsPath } from './testUtils';
 
@@ -90,62 +87,21 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
 
     // Three example roots, matching the source fixture shape. No extra app-type
     // matrix and no maximum of three in the collector, root loader or debug contract.
-    const createdRoots = [fs.realpathSync(workspace.appDir)];
-    for (const name of ['multiroot-second', 'multiroot-third']) {
-      const phase = phaseDeadline(120000);
-      await folderCreateNewProject(workbench, createdRoots[0], phase, {
-        workspaceFilePath: workspace.wsFilePath,
-        checkpoint: async (stage) => {
-          const label = `workspace-multi-root-${name}-${stage}`;
-          // Add diagnostic attachments, not undeclared ordered evidence or
-          // entries in the family's strict roots.length + 3 acceptance array.
-          // Use the original connection and a fresh bounded diagnostic budget:
-          // the action's deadline may already be exhausted.
-          await captureCdpScreenshot(cdp, label, {
-            classification: 'diagnostic',
-            expectation: { kind: 'diagnostic', label, reason: `Explorer folder context-menu ${stage}` },
-            timeoutMs: 5000,
-            deadlineMs: Math.min(deadline, Date.now() + 5000),
-          });
-        },
-      });
-      const { cdp: wizard, contextId } = await activeWebview(
-        workbench,
-        'Create project',
-        ['Logic app name', 'Workflow name'],
-        phase,
-        undefined,
-        assertProjectSetupForm
-      );
-      try {
-        const form = boundedCdp(wizard, phase);
-        await selectRadioOption(form, contextId, 'Logic app (Standard)');
-        await enterFieldValue(form, contextId, 'Logic app name', name);
-        await selectDropdownOption(form, contextId, 'Workflow type', 'Stateful');
-        await enterFieldValue(form, contextId, 'Workflow name', 'main');
-        await assertNextButtonEnabled(form, contextId, 'multi-root folder Create New Project');
-        await clickText(form, 'button', 'Next', phase, contextId);
-        await poll(
-          () => getPageText(form, contextId),
-          (text) => /Review your configuration/i.test(text) && text.includes(name) && text.includes('main') && text.includes('Stateful'),
-          phase
-        );
-        await clickText(form, 'button', 'Create project', phase, contextId);
-        await waitForProjectWizardClosed(workbench, wizard.targetUrl, phase);
-      } finally {
-        wizard.dispose();
+    const createdRoots = await addWorkspaceMultiRootProjects(workbench, workspace, deadline, async (name, stage) => {
+      if (stage !== 'wizard-closed') {
+        const label = `workspace-multi-root-${name}-${stage}`;
+        // Add diagnostic attachments, not undeclared ordered evidence or
+        // entries in the family's strict roots.length + 3 acceptance array.
+        // Use the original connection and a fresh bounded diagnostic budget:
+        // the action's deadline may already be exhausted.
+        await captureCdpScreenshot(cdp, label, {
+          classification: 'diagnostic',
+          expectation: { kind: 'diagnostic', label, reason: `Explorer folder context-menu ${stage}` },
+          timeoutMs: 5000,
+          deadlineMs: Math.min(deadline, Date.now() + 5000),
+        });
       }
-      const folder = path.join(path.dirname(workspace.wsFilePath), name);
-      await poll(
-        async () =>
-          ['host.json', 'local.settings.json', '.vscode/launch.json', 'main/workflow.json'].every((file) =>
-            fs.existsSync(path.join(folder, file))
-          ),
-        Boolean,
-        phase
-      );
-      createdRoots.push(fs.realpathSync(folder));
-    }
+    });
     const roots = readLogicAppRoots(workspace.wsFilePath, createdRoots);
     declareOrderedRootEvidence(roots.map((root) => path.basename(root)));
     await ensureRegularWorkbenchExplorer(

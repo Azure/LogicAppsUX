@@ -2618,6 +2618,10 @@ function testDiagnosticsStagingScriptHandlesDirectSuiteLayout(options = {}) {
       'prepare-e2e-extension-dependencies.js',
       'e2e-cli-path-cleanup.js',
       'family-lifecycle-terminal.js',
+      'vscode-lifecycle-acceptance.js',
+      'vscode-lifecycle-producer.js',
+      'vscode-lifecycle-observer.js',
+      'vscode-lifecycle-identity.js',
       ...(options.privatePlatform || options.msn
         ? ['enrich-e2e-traceability.js', 'ogf-e2e-registry.js', 'e2e-cli-terminal.js', 'workspace-prompt-cancel.js']
         : []),
@@ -3077,6 +3081,10 @@ function testAllPlatformLaneEvidenceStagingFixtures() {
       }
       for (const file of [
         'vscode-e2e-evidence-report.js',
+        'vscode-lifecycle-acceptance.js',
+        'vscode-lifecycle-producer.js',
+        'vscode-lifecycle-observer.js',
+        'vscode-lifecycle-identity.js',
         'vscode-e2e-evidence-manifest.js',
         'vscode-e2e-evidence-plans.js',
         'stage-vscode-e2e-evidence.js',
@@ -3242,6 +3250,10 @@ function testDiagnosticsStagingScriptPreservesEvidenceBeforeFailing() {
     fs.mkdirSync(scriptsRoot, { recursive: true });
     for (const file of [
       'vscode-e2e-evidence-report.js',
+      'vscode-lifecycle-acceptance.js',
+      'vscode-lifecycle-producer.js',
+      'vscode-lifecycle-observer.js',
+      'vscode-lifecycle-identity.js',
       'vscode-e2e-evidence-manifest.js',
       'vscode-e2e-evidence-plans.js',
       'stage-vscode-e2e-evidence.js',

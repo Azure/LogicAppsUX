@@ -3,8 +3,12 @@ const vscode = require('vscode');
 const fs = require('node:fs');
 const { randomUUID } = require('node:crypto');
 const { observeFuncRuntime } = require('../../../out/test/e2e/workspaceMultiRootLaunch');
+let lifecycle;
 
 exports.activate = (context) => {
+  if (process.env.LA_E2E_LIFECYCLE_DIR) {
+    lifecycle = require('../../vscode-lifecycle-observer').installLifecycleObserver(vscode, process.env, context);
+  }
   const file = process.env.LA_E2E_CLI_MULTI_ROOT_EVENTS;
   if (!file) {
     throw new Error('Current multi-root invocation event path is required');
@@ -31,6 +35,15 @@ exports.activate = (context) => {
       global('autoRuntimeDependenciesPath'),
       process.env
     );
+  };
+
+  exports.deactivate = async () => {
+    const observer = await lifecycle;
+    try {
+      await observer?.shutdown();
+    } finally {
+      observer?.dispose();
+    }
   };
   recordRuntime().then(
     (resolution) => append({ kind: 'runtimeResolution', resolution }),

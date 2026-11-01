@@ -39,6 +39,22 @@ const vscode = require('vscode');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+let lifecycle;
+let lifecycleShutdown;
+let lifecycleInterval;
+
+function shutdownLifecycle() {
+  if (lifecycleShutdown) return lifecycleShutdown;
+  clearInterval(lifecycleInterval);
+  lifecycleShutdown = Promise.resolve(lifecycle).then(async (observer) => {
+    try {
+      await observer?.shutdown();
+    } finally {
+      observer?.dispose();
+    }
+  });
+  return lifecycleShutdown;
+}
 
 function resolveEventsFile() {
   try {
@@ -320,6 +336,21 @@ function resolveTriggerDir() {
 }
 
 function activate(context) {
+  if (process.env.LA_E2E_LIFECYCLE_DIR) {
+    lifecycle = require('./vscode-lifecycle-observer').installLifecycleObserver(vscode, process.env, context);
+    // Register a rejection handler immediately; exported deactivate still
+    // awaits/propagates the same installation promise.
+    lifecycle.catch((error) => console.error('[lifecycle-recorder] observer installation failed', error));
+    const shutdownTrigger = path.join(process.env.LA_E2E_LIFECYCLE_DIR, 'shutdown.trigger');
+    lifecycleInterval = setInterval(() => {
+      if (!fs.existsSync(shutdownTrigger)) return;
+      fs.unlinkSync(shutdownTrigger);
+      shutdownLifecycle().catch((error) => {
+        console.error('[lifecycle-recorder] actual shutdown failed', error);
+      });
+    }, 100);
+    context.subscriptions.push({ dispose: () => clearInterval(lifecycleInterval) });
+  }
   const eventsFile = resolveEventsFile();
   const triggerDir = resolveTriggerDir();
   console.log(`[la-e2e-recorder] activate; events=${eventsFile} triggerDir=${triggerDir}`);
@@ -549,7 +580,7 @@ function activate(context) {
 }
 
 function deactivate() {
-  // no-op
+  return shutdownLifecycle();
 }
 
 module.exports = { activate, deactivate };

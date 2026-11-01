@@ -388,12 +388,15 @@ async function runWorkspaceMultiRoot(
     ];
     fs.writeFileSync(path.join(diagnosticRoot, 'code.log'), '', { flag: 'wx' });
     child = spawn(launch.executable, args, {
-      env: {
-        ...regularLaunch.env,
-        LA_E2E_CLI_MULTI_ROOT_EVENTS: eventsFile,
-        LA_E2E_CLI_MINIMAL_ACTIVATION: '0',
-        LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '0',
-      },
+      env: require('./vscode-lifecycle-producer').bindLifecycleProfile(
+        {
+          ...regularLaunch.env,
+          LA_E2E_CLI_MULTI_ROOT_EVENTS: eventsFile,
+          LA_E2E_CLI_MINIMAL_ACTIVATION: '0',
+          LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '0',
+        },
+        args
+      ),
       stdio: ['ignore', 'pipe', 'pipe'],
     });
     reopenStarted = true;

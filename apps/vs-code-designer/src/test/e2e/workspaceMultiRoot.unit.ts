@@ -50,6 +50,40 @@ import {
 } from './workspaceMultiRootWorkbench';
 import { contextMenuDom, workbenchDomFixture } from './workbenchDomFixture';
 import { getFieldState, selectRadioOption } from './cdpFormHelpers';
+import { closeOwnedUiDiagnosticWindow, matchesUiDiagnosticActivationRoot } from './workspaceMultiRootUiDiagnostic';
+import type { CdpConnection } from './cdpClient';
+
+test('UI-only Close Window refuses wrong ownership before sending a keyboard event', async () => {
+  let sends = 0;
+  const cdp = {
+    targetId: 'unit-owned-target',
+    evaluate: async () => ({ title: 'unrelated - Visual Studio Code', ready: true, roots: [] }),
+    send: async () => {
+      sends++;
+    },
+  } as unknown as CdpConnection;
+  await assert.rejects(
+    closeOwnedUiDiagnosticWindow(cdp, { workspaceFilePath: path.resolve('owned.code-workspace'), rootPaths: [] }),
+    /unowned diagnostic/
+  );
+  assert.equal(sends, 0);
+});
+
+test('UI-only activation root uses the full route physical Windows path normalization', () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'multi-root-activation-unit-'));
+  try {
+    const other = path.join(root, 'other');
+    fs.mkdirSync(other);
+    assert.equal(matchesUiDiagnosticActivationRoot(root, other), false);
+    assert.equal(matchesUiDiagnosticActivationRoot(root, root), true);
+    if (process.platform === 'win32') {
+      const driveCase = root.replace(/^([a-z]):/i, (_, drive: string) => `${drive.toLowerCase()}:`);
+      assert.equal(matchesUiDiagnosticActivationRoot(driveCase, root), true, 'd: and D: are the same owned native root');
+    }
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
 
 const executable = path.resolve('func.exe');
 
@@ -572,7 +606,16 @@ test('regular launch accepts actual plain-func activation only when PATH resolve
   try {
     writeBootstrapAttestation(f.request, snapshotBootstrapBinary(f.context, f.executable), f.probes, 'unit-Code');
     const admitted = readBootstrapAttestation(f.request.file, f.context, f.phase);
-    const launch = multiRootRegularLaunch(admitted, {}, path.join(f.root, 'profile'));
+    const profile = path.join(f.root, 'profile');
+    const launch = multiRootRegularLaunch(admitted, { LA_E2E_CLI_USER_DATA_DIR: path.join(f.root, 'stale-profile') }, profile);
+    assert.equal(
+      launch.env.LA_E2E_CLI_USER_DATA_DIR,
+      profile,
+      'Actual regular profile must replace absent/stale inherited observer profile'
+    );
+    const { assertLaunchProfile } = require('../../../scripts/vscode-lifecycle-producer');
+    assert.doesNotThrow(() => assertLaunchProfile(launch.env, [`--user-data-dir=${profile}`]));
+    assert.throws(() => assertLaunchProfile(launch.env, [`--user-data-dir=${path.join(f.root, 'foreign')}`]), /profiles differ/);
     assert.equal(launch.settings['azureLogicAppsStandard.funcCoreToolsBinaryPath'], 'func');
     assert.equal(launch.settings['azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation'], false);
     const resolution = observeFuncRuntime('func', false, f.root, launch.env);
@@ -666,7 +709,7 @@ test('initial Explorer actions wait for same-boot product activation, not just r
 
     const source = fs.readFileSync(path.resolve(__dirname, '../../../src/test/e2e/workspaceMultiRoot.test.ts'), 'utf8');
     const initialGate = source.indexOf('await waitForActivatedMultiRootRuntime');
-    assert.ok(initialGate >= 0 && initialGate < source.indexOf('await folderCreateNewProject'));
+    assert.ok(initialGate >= 0 && initialGate < source.indexOf('await addWorkspaceMultiRootProjects'));
   } finally {
     menu.dispose();
     fs.rmSync(f.root, { recursive: true, force: true });

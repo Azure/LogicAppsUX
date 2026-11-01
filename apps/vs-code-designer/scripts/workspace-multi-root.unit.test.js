@@ -5,6 +5,7 @@ const os = require('node:os');
 const path = require('node:path');
 const { createHash } = require('node:crypto');
 const { test } = require('node:test');
+const { assertUiOnlyEnvironment, uiOnlyVerdict, removeOwnedRoot } = require('./workspace-multi-root-ui-only');
 const { formatErrorForDiagnostics } = require('./e2e-cli-diagnostics');
 const {
   assertAssets,
@@ -35,6 +36,63 @@ const phaseFixtures = () =>
     cleanupVerified: true,
     diagnosticsError: '',
   }));
+
+test('UI-only diagnostic cannot inherit ADO, Azure, isolation or full-suite evidence authorization', () => {
+  const env = { LA_E2E_CLI_EXTENSIONS_DIR: 'unit-seed' };
+  assert.doesNotThrow(() => assertUiOnlyEnvironment(env, 'win32'));
+  for (const name of [
+    'BUILD_BUILDID',
+    'SYSTEM_JOBID',
+    'TF_BUILD',
+    'LA_E2E_CLI_AZURE_ACCESS_TOKEN',
+    'LA_E2E_CLI_MULTI_ROOT_ISOLATED',
+    'LA_E2E_CLI_SUITE_WRAPPER_CHILD',
+    'LA_E2E_CLI_EVIDENCE_INVOCATION',
+  ]) {
+    assert.throws(() => assertUiOnlyEnvironment({ ...env, [name]: '1' }, 'win32'), /refuses inherited/);
+  }
+  assert.throws(() => assertUiOnlyEnvironment(env, 'linux'), /native Windows/);
+});
+test('UI-only success is never population/debug/full-suite acceptance; missing or forced closure fails closed', () => {
+  const verdict = uiOnlyVerdict({ uiPassed: true, complete: true, population: { complete: true } }, [
+    { verified: true },
+    { verified: true },
+  ]);
+  assert.equal(verdict.uiPassed, true);
+  assert.equal(verdict.fullSuiteAccepted, false);
+  assert.equal(verdict.populationObserved, false);
+  assert.equal(verdict.debugObserved, false);
+  assert.equal(uiOnlyVerdict({ uiPassed: true }, []).originalProcessClosureVerified, false);
+  assert.equal(
+    uiOnlyVerdict({ uiPassed: true }, [{ verified: true }, { verified: false, forcedTerminationAttempted: true }])
+      .originalProcessClosureVerified,
+    false
+  );
+  assert.throws(() => removeOwnedRoot('D:\\unrelated', 'unit', { verified: false }), /Natural original closure/);
+  assert.throws(() => removeOwnedRoot('D:\\unrelated', 'unit', { verified: true }), /match/);
+});
+test('diagnostic uses the shared UI stage and owned launch; never dispatches the protected family/population/debug route', () => {
+  const diagnostic = fs.readFileSync(path.join(__dirname, 'workspace-multi-root-ui-only.js'), 'utf8');
+  const ui = fs.readFileSync(path.join(__dirname, '../src/test/e2e/workspaceMultiRootUiDiagnostic.ts'), 'utf8');
+  const stage = fs.readFileSync(path.join(__dirname, '../src/test/e2e/workspaceMultiRootProjectUi.ts'), 'utf8');
+  const full = fs.readFileSync(path.join(__dirname, '../src/test/e2e/workspaceMultiRoot.test.ts'), 'utf8');
+  assert.match(diagnostic, /spawnContainedProcess/);
+  assert.match(diagnostic, /LA_E2E_CLI_EXTENSIONS_DIR: path.join\(ownedRoot, 'e'\)/);
+  assert.match(diagnostic, /fs.cpSync\(process.env.LA_E2E_CLI_EXTENSIONS_DIR, env.LA_E2E_CLI_EXTENSIONS_DIR/);
+  assert.match(diagnostic, /runVscodeTest\(\['--label', 'createWorkspaceCoreMatrix'\]/);
+  assert.match(ui, /addWorkspaceMultiRootProjects\(workbench, workspace, deadline/);
+  assert.match(full, /addWorkspaceMultiRootProjects\(workbench, workspace, deadline/);
+  for (const source of [diagnostic, ui, stage]) {
+    assert.doesNotMatch(
+      source,
+      /nativePopulationProvider\(|waitForFuncPopulation\(|runWorkspaceMultiRootUi\(|runWorkspaceMultiRoot\(|Debug: Select|Win32_Process|Stop-Process|taskkill/
+    );
+  }
+  assert.ok(ui.indexOf("await capture('original-failure')") < ui.indexOf('await closeOwnedUiDiagnosticWindow(cdp'));
+  assert.ok(ui.indexOf("event.kind === 'runtimeResolution'") < ui.indexOf('await addWorkspaceMultiRootProjects'));
+  assert.ok(ui.indexOf('if (captureOnly)') < ui.indexOf('await addWorkspaceMultiRootProjects'));
+  assert.match(ui, /activation-followup-captured-no-project-adds/);
+});
 
 test('native family cannot run on a shared host; rejection precedes any native operation', async () => {
   await assert.rejects(runWorkspaceMultiRoot({}, {}), /isolated native consumer/);

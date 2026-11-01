@@ -17,9 +17,12 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as crypto from 'crypto';
-import { exec, execFileSync, execSync } from 'child_process';
+import { exec, execFileSync, execSync, type ChildProcessByStdio } from 'child_process';
+import type { Readable } from 'stream';
+import type { LifecycleEvidence } from '../../../scripts/vscode-lifecycle-acceptance';
 import AdmZip from 'adm-zip';
-import { ExTester } from 'vscode-extension-tester';
+import { DEFAULT_STORAGE_FOLDER, ExTester } from 'vscode-extension-tester';
+import { getExTesterCliEnvironment, resolveCachedExTesterRuntime } from './extesterRuntime';
 import { isExecutableFile } from './runtimeBinaryCheck';
 import {
   type CustomCodeDotNetTarget,
@@ -127,6 +130,36 @@ type ExtensionJsonEntry = {
   metadata: { installedTimestamp: number; source: 'gallery' };
 };
 type EnvOverride = { key: string; prev: string | undefined };
+type ProcessClosure = Record<string, unknown> & { lifecycleEvidence?: LifecycleEvidence };
+type ExTesterPhaseRunner = {
+  _test: {
+    spawnContainedProcess(
+      executable: string,
+      args: string[],
+      options: { env: NodeJS.ProcessEnv; cwd: string }
+    ): {
+      child: ChildProcessByStdio<null, Readable, Readable>;
+      readClosure(code: number | null, signal: string | null): ProcessClosure;
+      verifyStartup(closure: ProcessClosure): Promise<unknown>;
+    };
+  };
+};
+type DependencySeedPreparation = {
+  CONTENT_MANIFEST_NAME: string;
+  readSourceContract(): unknown;
+  createContentManifest(
+    root: string,
+    source: unknown,
+    options: { extensionsDir: string; vscodeVersion: string; platform: NodeJS.Platform; arch: string; rebuildRegistry: boolean }
+  ): unknown;
+  verify(options: {
+    extensionsDir: string;
+    vscodeVersion: string;
+    platform: NodeJS.Platform;
+    arch: string;
+    rebuildRegistry: boolean;
+  }): unknown;
+};
 
 const getErrorMessage = (error: unknown): string => (error instanceof Error ? error.message : String(error));
 
@@ -178,8 +211,50 @@ const LSP_STALE_ARTIFACT_NAMES = [
 // Store test-extensions in test-resources/ (alongside VS Code download) rather
 // than dist/ — tsup's `clean: true` wipes dist/ on every build:extension, which
 // would destroy cached marketplace extension installs.
-const extDir = path.join(os.tmpdir(), 'test-resources', 'test-extensions');
+const sharedExtensionsDir = path.join(os.tmpdir(), 'test-resources', 'test-extensions');
+const suppliedExtensionsDir = process.env.LA_E2E_CLI_EXTENSIONS_DIR || sharedExtensionsDir;
+// The canonical OS preparation artifact also supplies its verified manifest
+// at the existing dependency-install boundary, without a private env alias.
+const explicitPreparedSeed =
+  process.env.LA_E2E_CLI_PREPARED_EXTENSIONS_DIR ||
+  (fs.existsSync(path.join(suppliedExtensionsDir, 'prepared-extensions-content-manifest.json')) ? suppliedExtensionsDir : undefined);
+// A supplied immutable seed is copied normally before product/recorder overlays.
+const extDir = explicitPreparedSeed
+  ? process.env.LA_E2E_CLI_EXTENSIONS_DIR && path.resolve(process.env.LA_E2E_CLI_EXTENSIONS_DIR) !== path.resolve(explicitPreparedSeed)
+    ? path.resolve(process.env.LA_E2E_CLI_EXTENSIONS_DIR)
+    : path.join(os.tmpdir(), `la-extester-deps-${crypto.randomUUID()}`)
+  : sharedExtensionsDir;
 const testGlob = path.resolve(projectDir, 'out', 'test', '*.js').replace(/\\/g, '/');
+const lifecyclePhaseResults: Array<{ file: string; closure: ProcessClosure; functionalExitCode: number | null }> = [];
+process.on('exit', () => {
+  if (lifecyclePhaseResults.length === 0) {
+    return;
+  }
+  const policy: typeof import('../../../scripts/vscode-lifecycle-acceptance') = require(
+    path.join(projectDir, 'scripts', 'vscode-lifecycle-acceptance')
+  );
+  const results = lifecyclePhaseResults.map((phase) => {
+    const acceptance = policy.evaluateLifecycleAcceptance(phase.closure, phase.closure.lifecycleEvidence);
+    const accepted = policy.isProcessCleanupAccepted(phase.closure);
+    const result = {
+      functionalExitCode: phase.functionalExitCode,
+      nativeHostExitCode: phase.closure.nativeHostExitCode,
+      processCleanup: phase.closure,
+      lifecycleAcceptance: acceptance,
+      acceptanceVerified: accepted,
+    };
+    fs.writeFileSync(phase.file, JSON.stringify(result, null, 2));
+    return result;
+  });
+  const accepted = results.every((result) => result.functionalExitCode === 0 && result.acceptanceVerified);
+  fs.writeFileSync(path.join(projectDir, '.vscode-test', 'extester-lifecycle-rollup.json'), JSON.stringify({ accepted, results }, null, 2));
+  if (!accepted) {
+    console.error(
+      '[lifecycle-policy] ExTester rollup failed/blocked; functional scenario success does not waive unresolved lifecycle acceptance'
+    );
+    process.exitCode = 1;
+  }
+});
 
 function compareSemverDesc(a: string, b: string): number {
   const pa = a.split('.').map((part) => Number.parseInt(part, 10));
@@ -421,7 +496,7 @@ function pruneUnhealthyLogicAppsExtensionBundles(label: string): void {
 
 function createExTester(): ExTester {
   return new ExTester(
-    undefined, // storageFolder — use default (os.tmpdir()/test-resources)
+    DEFAULT_STORAGE_FOLDER, // public cache location, also passed to the owned worker
     undefined, // releaseType — Stable
     extDir // extensionsDir — isolated dir, passed as --extensions-dir
   );
@@ -506,7 +581,7 @@ function hasExpectedCsDevKitPlatformPayload(entry: string): boolean {
   return true;
 }
 
-async function withDownloadRetry(label: string, action: () => Promise<void>): Promise<void> {
+async function withDownloadRetry(label: string, action: () => Promise<unknown>): Promise<void> {
   let lastError: unknown;
   for (let attempt = 1; attempt <= DOWNLOAD_RETRY_ATTEMPTS; attempt++) {
     try {
@@ -532,17 +607,21 @@ function installExtensionWithCli(cliBase: string, dep: string, label: string = d
     const { args: proxyArgs, env: proxyEnv } = getVsCodeCliProxyOptions();
     const command = `${cliBase}${proxyArgs} --force --install-extension "${getMarketplaceExtensionReference(dep)}" --extensions-dir="${extDir}"`;
     const startTime = Date.now();
-    exec(command, { timeout: 300000, env: { ...process.env, ...proxyEnv } }, (error: Error | null, stdout: string, stderr: string) => {
-      const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-      if (error) {
-        const output = `${stdout || ''}\n${stderr || ''}`.trim().slice(-1000);
-        console.warn(`  ⚠ ${label} failed (${elapsed}s): ${getErrorMessage(error)}${output ? `\n${output}` : ''}`);
-        resolve(installExtensionFromVsixFallback(cliBase, dep, label));
-      } else {
-        console.log(`  ✓ ${label} installed (${elapsed}s)`);
-        resolve({ dep, success: true });
+    exec(
+      command,
+      { timeout: 300000, env: { ...getExTesterCliEnvironment(), ...proxyEnv } },
+      (error: Error | null, stdout: string, stderr: string) => {
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+        if (error) {
+          const output = `${stdout || ''}\n${stderr || ''}`.trim().slice(-1000);
+          console.warn(`  ⚠ ${label} failed (${elapsed}s): ${getErrorMessage(error)}${output ? `\n${output}` : ''}`);
+          resolve(installExtensionFromVsixFallback(cliBase, dep, label));
+        } else {
+          console.log(`  ✓ ${label} installed (${elapsed}s)`);
+          resolve({ dep, success: true });
+        }
       }
-    });
+    );
   });
 }
 
@@ -583,7 +662,7 @@ function installExtensionFromVsixFallback(cliBase: string, dep: string, label: s
   try {
     const vsixPath = downloadExtensionVsix(dep);
     const command = `${cliBase} --force --install-extension ${quoteShellArgument(vsixPath)} --extensions-dir="${extDir}"`;
-    execSync(command, { timeout: 300000, env: process.env, stdio: 'pipe' });
+    execSync(command, { timeout: 300000, env: getExTesterCliEnvironment(), stdio: 'pipe' });
     console.log(`  ✓ ${label} installed from downloaded VSIX`);
     return { dep, success: true };
   } catch (error) {
@@ -730,57 +809,18 @@ function quoteShellArgument(value: string): string {
   return `"${value.replace(/(["\\$`])/g, '\\$1')}"`;
 }
 
-function findNestedWindowsCliPath(codeFolder: string): string | undefined {
-  if (process.platform !== 'win32') {
-    return undefined;
-  }
-
-  try {
-    for (const entry of fs.readdirSync(codeFolder, { withFileTypes: true })) {
-      if (!entry.isDirectory()) {
-        continue;
-      }
-
-      const candidate = path.join(codeFolder, entry.name, 'resources', 'app', 'out', 'cli.js');
-      if (fs.existsSync(candidate)) {
-        return candidate;
-      }
-    }
-  } catch {
-    /* diagnostic only */
-  }
-
-  return undefined;
-}
-
-function preflightVSCodeCli(extest: ExTester): void {
-  const codeFolder = extest.code.getCodeFolder();
-  const cliPath = extest.code.getCliPath();
-  const executablePath = extest.code.executablePath;
-  const nestedCliPath = findNestedWindowsCliPath(codeFolder);
-
-  if (!fs.existsSync(executablePath)) {
-    throw new Error(`VS Code executable not found at ${executablePath}. Clear ${codeFolder} and rerun the E2E launcher.`);
-  }
-
-  if (!fs.existsSync(cliPath)) {
-    const nestedHint = nestedCliPath ? ` Found nested Windows CLI at ${nestedCliPath}, but ExTester resolved ${cliPath}.` : '';
-    throw new Error(
-      `VS Code CLI not found at ${cliPath}.${nestedHint} Clear ${codeFolder} and rerun, or update vscode-extension-tester if the VS Code archive layout changed.`
-    );
-  }
-
+function preflightVSCodeCli(): void {
+  const { codeFolder, cliPath, cliBase } = resolveCachedExTesterRuntime(DEFAULT_STORAGE_FOLDER);
   let output: string;
   try {
-    output = execSync(`${extest.code.getCliInitCommand()} -v`, {
+    output = execSync(`${cliBase} -v`, {
       encoding: 'utf8',
-      env: extest.code.env,
+      env: getExTesterCliEnvironment(),
       stdio: ['ignore', 'pipe', 'pipe'],
     });
-  } catch (error: any) {
-    const nestedHint = nestedCliPath ? ` Nested Windows CLI candidate: ${nestedCliPath}.` : '';
+  } catch (error: unknown) {
     throw new Error(
-      `VS Code CLI preflight failed for ${cliPath}.${nestedHint} Clear ${codeFolder} and rerun, or update vscode-extension-tester if the VS Code archive layout changed.\n${getErrorMessage(error)}`
+      `VS Code CLI preflight failed for ${cliPath}. Clear ${codeFolder} and rerun, or update vscode-extension-tester if the VS Code archive layout changed.\n${getErrorMessage(error)}`
     );
   }
 
@@ -795,14 +835,14 @@ function preflightVSCodeCli(extest: ExTester): void {
 }
 
 async function downloadExTesterAssets(): Promise<void> {
-  const storageFolder = path.join(os.tmpdir(), 'test-resources');
+  const storageFolder = DEFAULT_STORAGE_FOLDER;
   const lockPath = path.join(storageFolder, 'download-assets.lock');
   await withFileLock(lockPath, async () => {
     await withDownloadRetry(`download VS Code ${VSCODE_VERSION}`, async () => {
       const downloadTester = createExTester();
       try {
         await downloadTester.downloadCode(VSCODE_VERSION);
-        preflightVSCodeCli(createExTester());
+        preflightVSCodeCli();
       } catch (error) {
         fs.rmSync(path.join(storageFolder, `${VSCODE_VERSION}-stable.tar.gz`), { force: true });
         throw error;
@@ -892,7 +932,9 @@ function installCodefulTaskRecorderExtension(extDir: string): string {
     } else {
       fs.copyFileSync(src, dst);
     }
+    fs.copyFileSync(path.join(projectDir, 'scripts', 'vscode-lifecycle-observer.js'), path.join(target, 'vscode-lifecycle-observer.js'));
   }
+  fs.copyFileSync(path.join(projectDir, 'scripts', 'vscode-lifecycle-identity.js'), path.join(target, 'vscode-lifecycle-identity.js'));
 
   console.log(`  ✓ Installed codeful task recorder at ${target}`);
   return target;
@@ -985,9 +1027,11 @@ async function main(): Promise<void> {
   // Short-circuit before any of those checks so the phase can run on a
   // fresh checkout (or any shard) without first running the extension build.
   const earlyMode = (process.env.E2E_MODE || 'full').toLowerCase();
-  if (earlyMode === 'bundleintegrityonly') {
+  if (earlyMode === 'bundleintegrityonly' || earlyMode === 'extesterruntimeonly') {
     const outTestDir = path.join(projectDir, 'out', 'test');
-    const file = path.join(outTestDir, 'bundleCdnHealth.test.js').replace(/\\/g, '/');
+    const file = path
+      .join(outTestDir, earlyMode === 'extesterruntimeonly' ? 'extesterRuntime.test.js' : 'bundleCdnHealth.test.js')
+      .replace(/\\/g, '/');
     if (!fs.existsSync(file)) {
       console.error(`\n✖ Compiled test not found: ${file}\n  Run: npx tsup --config tsup.e2e.test.config.ts`);
       process.exit(2);
@@ -1001,9 +1045,9 @@ async function main(): Promise<void> {
     const mocha = new Mocha({ color: true, timeout: 60_000, reporter: 'spec' });
     mocha.addFile(file);
     const exit = await new Promise<number>((resolve) => {
-      mocha.run((failures) => resolve(failures > 0 ? 1 : 0));
+      mocha.run((failures: number) => resolve(failures > 0 ? 1 : 0));
     });
-    console.log(`\n=== bundleintegrityonly exit code: ${exit} ===`);
+    console.log(`\n=== ${earlyMode} exit code: ${exit} ===`);
     process.exit(exit);
   }
 
@@ -1080,12 +1124,8 @@ async function main(): Promise<void> {
   console.log('\n=== Step 1: Download VS Code + ChromeDriver ===');
   await downloadExTesterAssets();
 
-  // Create ExTester WITHOUT coverage — we don't need --extensionDevelopmentPath
-  // because we're copying our extension directly into --extensions-dir.
-  // This must happen after download/preflight so it cannot retain stale CLI
-  // state from a VS Code archive layout that changed during download.
-  const extest = createExTester();
-
+  // Resolve cached CLI paths only after download/preflight. Real phases create
+  // ExTester without coverage in the owned worker after normal setup completes.
   // Step 2: Install extension dependencies from the marketplace.
   // Skip deps already present in test-extensions/. For uncached deps,
   // run VS Code CLI --install-extension sequentially. Parallel CLI installs
@@ -1137,7 +1177,21 @@ async function main(): Promise<void> {
     }
   };
 
-  if (allE2eDependencies.length > 0) {
+  if (explicitPreparedSeed) {
+    const preparation: DependencySeedPreparation = require(path.join(projectDir, 'scripts', 'prepare-e2e-extension-dependencies.js'));
+    preparation.verify({
+      extensionsDir: path.resolve(explicitPreparedSeed),
+      vscodeVersion: VSCODE_VERSION,
+      platform: process.platform,
+      arch: process.arch,
+      rebuildRegistry: false,
+    });
+    fs.cpSync(path.resolve(explicitPreparedSeed), extDir, { recursive: true, dereference: false, verbatimSymlinks: true });
+    rebuildExtensionsJson(extDir);
+    process.env.LA_E2E_CLI_PREPARED_EXTENSIONS_DIR = path.resolve(explicitPreparedSeed);
+    process.env.LA_E2E_CLI_EXTENSIONS_DIR = extDir;
+    process.env.LA_E2E_CLI_VSCODE_VERSION = VSCODE_VERSION;
+  } else if (allE2eDependencies.length > 0) {
     console.log(`\n=== Step 2: Install ${allE2eDependencies.length} extension dependencies ===`);
 
     const depsToInstall: string[] = [];
@@ -1153,10 +1207,8 @@ async function main(): Promise<void> {
     }
 
     if (depsToInstall.length > 0) {
-      // Get the VS Code CLI base command from ExTester's internal CodeUtil.
-      // This gives us the same command that installFromMarketplace() uses,
-      // but we can run it with async exec instead of execSync.
-      const cliBase = extest.code.getCliInitCommand();
+      // Use our verified cached runtime, never ExTester's private CodeUtil.
+      const { cliBase } = resolveCachedExTesterRuntime(DEFAULT_STORAGE_FOLDER);
 
       const CONCURRENCY = 1;
       console.log(`  Installing ${depsToInstall.length} deps (concurrency=${CONCURRENCY})...`);
@@ -1210,7 +1262,53 @@ async function main(): Promise<void> {
     console.log('\n=== Step 2: No extension dependencies to install ===');
   }
 
+  // Snapshot the actual CLI-installed dependency cohort once, before any test
+  // or product/recorder overlay. The existing preparer validates the complete
+  // manifest, source contract, native platform payloads and every byte. Never
+  // rebaseline this immutable seed after recovery or infer ownership by name.
+  const capturePreparedDependencySeed = () => {
+    if (explicitPreparedSeed) {
+      // Already verified at the pre-overlay setup boundary. Never recapture.
+      return;
+    }
+    const preparation: DependencySeedPreparation = require(path.join(projectDir, 'scripts', 'prepare-e2e-extension-dependencies.js'));
+    const seedRoot = path.join(projectDir, '.vscode-test');
+    fs.mkdirSync(seedRoot, { recursive: true });
+    const preparedSeed = fs.mkdtempSync(path.join(seedRoot, 'prepared-ui-lifecycle-'));
+    const pendingDependencies = [...allE2eDependencies];
+    const copiedIds = new Set<string>();
+    while (pendingDependencies.length > 0) {
+      const id = pendingDependencies.shift()!.toLowerCase();
+      if (copiedIds.has(id)) {
+        continue;
+      }
+      const entries = getExtensionEntries(id).filter((entry) => readExtensionId(entry) === id);
+      if (entries.length !== 1) {
+        throw new Error(`Lifecycle seed requires one unambiguous installed dependency: ${id}`);
+      }
+      const source = path.join(extDir, entries[0]);
+      fs.cpSync(source, path.join(preparedSeed, entries[0]), { recursive: true });
+      copiedIds.add(id);
+      const dependency: { extensionDependencies?: string[]; extensionPack?: string[] } = JSON.parse(
+        fs.readFileSync(path.join(source, 'package.json'), 'utf8')
+      );
+      pendingDependencies.push(...(dependency.extensionDependencies ?? []), ...(dependency.extensionPack ?? []));
+    }
+    const seedOptions = {
+      extensionsDir: preparedSeed,
+      vscodeVersion: VSCODE_VERSION,
+      platform: process.platform,
+      arch: process.arch,
+      rebuildRegistry: false,
+    };
+    const dependencyManifest = preparation.createContentManifest(preparedSeed, preparation.readSourceContract(), seedOptions);
+    fs.writeFileSync(path.join(preparedSeed, preparation.CONTENT_MANIFEST_NAME), JSON.stringify(dependencyManifest));
+    preparation.verify(seedOptions);
+    process.env.LA_E2E_CLI_PREPARED_EXTENSIONS_DIR = preparedSeed;
+  };
+
   if (prepareDependenciesOnly) {
+    capturePreparedDependencySeed();
     console.log('\n=== Prepared extension dependencies only; skipping extension copy and tests ===');
     return;
   }
@@ -1384,70 +1482,19 @@ async function main(): Promise<void> {
   // Parallel CLI --install-extension calls may race on writing extensions.json,
   // leaving only a subset of entries. Rebuild from actual directories on disk.
   rebuildExtensionsJson(extDir);
+  capturePreparedDependencySeed();
 
   // Step 4: Run the tests
   console.log('\n=== Step 4: Run tests ===');
   console.log(`Test glob: ${testGlob}`);
 
-  // Kill leftover VS Code test processes from previous runs.
-  // These hold locks on files in test-resources/settings/ and cause EBUSY errors.
-  // We kill ALL language server processes since we can't distinguish test ones
-  // from user ones. VS Code will auto-restart the user's language servers.
-  try {
-    const { execSync } = require('child_process');
-
-    // Kill processes that commonly hold locks on test-resources/settings log files
-    const processesToKill = [
-      'Microsoft.CodeAnalysis.LanguageServer.exe',
-      'Microsoft.Azure.Deployment.Express.LanguageServer.exe',
-      'Microsoft.VisualStudio.Code.Server.exe',
-      'Microsoft.VisualStudio.Code.ServiceHost.exe',
-      'Microsoft.VisualStudio.Code.ServiceController.exe',
-      'escape-node-job.exe',
-    ];
-
-    let killed = 0;
-    for (const procName of processesToKill) {
-      try {
-        execSync(`taskkill /F /IM "${procName}"`, { timeout: 5000, stdio: 'pipe' });
-        killed++;
-      } catch {
-        // Process not running, that's fine
-      }
-    }
-
-    // Also try WMIC to find ANY process with test-resources in command line
-    try {
-      const wmicOut = execSync('wmic process get ProcessId,Name,CommandLine /format:csv', { encoding: 'utf8', timeout: 15000 }).trim();
-      const lines = wmicOut.split('\n').filter((l) => l.includes('test-resources'));
-      for (const line of lines) {
-        const match = line.match(/,(\d+)\s*$/);
-        if (match) {
-          const pid = Number.parseInt(match[1], 10);
-          if (pid === process.pid) {
-            continue;
-          }
-          console.log(`  Killing leftover test process PID ${pid}`);
-          try {
-            execSync(`taskkill /F /T /PID ${pid}`, { timeout: 5000, stdio: 'pipe' });
-            killed++;
-          } catch {}
-        }
-      }
-    } catch {}
-
-    if (killed > 0) {
-      console.log(`  Killed ${killed} processes, waiting for handles to release...`);
-      await new Promise((r) => setTimeout(r, 5000));
-    }
-  } catch (e: any) {
-    console.warn(`  Warning: Could not check for leftover processes: ${getErrorMessage(e)}`);
-  }
+  // Prior owners, not shared-host process names, are the only recovery scope.
+  // A locked profile from an unrelated run is an explicit setup failure.
 
   // Clean stale settings/cache from previous test runs to avoid EPERM/EBUSY errors.
   // ExTester's browser.start() calls fs.removeSync on the settings dir, which
   // fails on Windows if VS Code cache files are still locked from a prior run.
-  const settingsDir = path.join(require('os').tmpdir(), 'test-resources', 'settings');
+  const settingsDir = path.join(DEFAULT_STORAGE_FOLDER, 'settings');
   if (fs.existsSync(settingsDir)) {
     console.log(`  Cleaning stale settings dir: ${settingsDir}`);
 
@@ -1812,7 +1859,7 @@ async function main(): Promise<void> {
   console.log(`  Locale lock: LANG=${process.env.LANG} LC_ALL=${process.env.LC_ALL}`);
 
   const outTestDir = path.resolve(projectDir, 'out', 'test');
-  const testFile = (name) => path.join(outTestDir, name).replace(/\\/g, '/');
+  const testFile = (name: string) => path.join(outTestDir, name).replace(/\\/g, '/');
 
   const phase0Files = [testFile('nonLogicAppStartup.test.js')];
   const lspEpermFiles = [testFile('lspSdkExtractionEperm.test.js')];
@@ -2159,165 +2206,11 @@ async function main(): Promise<void> {
     resources: [],
   };
 
-  /**
-   * Windows-only: confirms the `func` processes killed by prepareFreshSession() have actually
-   * exited before the next scenario starts.
-   *
-   * Detection-based rather than another fixed sleep, because on Windows this is a correctness
-   * gate, not a tidiness one: a running .exe holds its own image file open, so a surviving func
-   * host makes any in-place write to `func.exe` fail with EPERM/EBUSY. `funcRepair.test.ts`
-   * (p414-funcrepair) overwrites the managed func binaries in place, and it can run directly
-   * after a scenario that leaves a design-time host alive (`p41a-fixtures` runs with
-   * autoStartDesignTime: true). Linux cannot reproduce this at all — there, overwriting a
-   * running executable simply succeeds.
-   *
-   * Log-only by design: a stray func on a developer box must not fail a run that would
-   * otherwise pass, and the corrupting test already fails loudly with its own diagnostic. What
-   * this buys is that the CI log says WHY, instead of leaving an EPERM to be guessed at.
-   */
-  const waitForWindowsFuncProcessesToExit = async (label: string, timeoutMs = 15000): Promise<void> => {
-    if (process.platform !== 'win32') {
-      return;
-    }
-    const { execFileSync } = require('child_process');
-    // execFileSync (not execSync) so the PowerShell argument never round-trips through cmd.exe
-    // quoting. Returns -1 when the probe itself failed, so "could not tell" is never reported
-    // as "all clear".
-    const countFuncProcesses = (): number => {
-      try {
-        const out = execFileSync(
-          'powershell',
-          ['-NoProfile', '-Command', '@(Get-Process -Name func -ErrorAction SilentlyContinue).Count'],
-          {
-            timeout: 10000,
-            encoding: 'utf8',
-          }
-        );
-        const parsed = Number.parseInt(String(out).trim(), 10);
-        return Number.isNaN(parsed) ? -1 : parsed;
-      } catch {
-        return -1;
-      }
-    };
-
-    const deadline = Date.now() + timeoutMs;
-    let remaining = countFuncProcesses();
-    while (remaining > 0 && Date.now() < deadline) {
-      await new Promise((r) => setTimeout(r, 1000));
-      remaining = countFuncProcesses();
-    }
-    if (remaining > 0) {
-      console.log(
-        `  [${label}] ⚠ ${remaining} func process(es) still running after ${timeoutMs}ms — an in-place overwrite of func.exe will fail with EPERM/EBUSY`
-      );
-    } else if (remaining < 0) {
-      console.log(`  [${label}] Could not probe for leftover func processes (PowerShell probe failed)`);
-    } else {
-      console.log(`  [${label}] ✓ No func processes remain`);
-    }
-  };
-
   const prepareFreshSession = async (label: string): Promise<void> => {
-    const settingsDir = path.join(require('os').tmpdir(), 'test-resources', 'settings');
+    const settingsDir = path.join(DEFAULT_STORAGE_FOLDER, 'settings');
     const userDir = path.join(settingsDir, 'User');
 
-    // Kill any lingering VS Code processes from previous phases.
-    // Without this, the old VS Code window stays open and `code -r` from
-    // ExTester's openResources sends the workspace-open command to the OLD
-    // window instead of the new one. The new window stays bare (no folder),
-    // which is why screenshots show empty VS Code on CI.
-    try {
-      const { execSync } = require('child_process');
-      const isLinux = process.platform === 'linux';
-      const isMac = process.platform === 'darwin';
-
-      if (isLinux || isMac) {
-        // Kill all VS Code processes from test-resources directory
-        // Use pkill with full process matching, or fall back to killall
-        try {
-          execSync('pkill -f "test-resources.*[Cc]ode"', { stdio: 'ignore', timeout: 10000 });
-        } catch {
-          // pkill returns exit code 1 if no processes matched — that's OK
-        }
-        // Also kill any chromedriver processes from previous sessions
-        try {
-          execSync('pkill -f chromedriver', { stdio: 'ignore', timeout: 5000 });
-        } catch {
-          /* no chromedriver running — fine */
-        }
-        // Kill orphan Functions runtime / dotnet / vsdbg processes left behind
-        // by failed debug sessions (Phase 4.3 retries can leave these alive,
-        // which then bind :7071 in a zombie state and break Phase 4.4's host
-        // detection — toolbarSeen=702ms but hostRunningSeen=never).
-        try {
-          execSync('pkill -f "func.*host.*start"', { stdio: 'ignore', timeout: 5000 });
-        } catch {
-          /* pkill returns 1 if no processes matched — OK */
-        }
-        try {
-          execSync('pkill -f "[Ff]unc.*Microsoft.Azure.WebJobs.Script"', { stdio: 'ignore', timeout: 5000 });
-        } catch {
-          /* OK */
-        }
-        try {
-          execSync('pkill -f vsdbg-ui', { stdio: 'ignore', timeout: 5000 });
-        } catch {
-          /* OK */
-        }
-        // Don't pkill dotnet broadly — it may kill the runner's other dotnet
-        // processes. Only kill dotnet processes that are children of func (covered
-        // by the "func.*host.*start" pkill above which terminates the process group).
-      } else {
-        // Windows: use PowerShell. Every kill is guarded INDIVIDUALLY, matching the pkill
-        // chain above. The VS Code kill used to run unguarded, so a PowerShell start-up
-        // hiccup or the 10s timeout threw straight past the func kill into the outer catch,
-        // which only logs "kill failed — continuing". That asymmetry is invisible on Linux
-        // (a running executable is freely overwritable there) but load-bearing on Windows:
-        // a surviving func.exe holds its own image open, and p414-funcrepair overwrites the
-        // managed func binaries in place right after p41a-fixtures has run a design-time host.
-        try {
-          execSync(
-            'powershell -NoProfile -Command "Get-Process -Name Code -ErrorAction SilentlyContinue | Where-Object { $_.Path -like \'*test-resources*\' } | Stop-Process -Force -ErrorAction SilentlyContinue"',
-            { stdio: 'ignore', timeout: 10000 }
-          );
-        } catch {
-          /* no matching VS Code process, or the probe timed out — fall through to the func kill */
-        }
-        // Kill orphan Functions runtime / vsdbg processes on Windows
-        try {
-          execSync(
-            'powershell -NoProfile -Command "Get-Process -Name func,vsdbg-ui -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue"',
-            { stdio: 'ignore', timeout: 10000 }
-          );
-        } catch {
-          /* OK */
-        }
-        // Stop-Process only SIGNALS termination; confirm the handles are actually gone.
-        await waitForWindowsFuncProcessesToExit(label);
-      }
-      console.log(`  [${label}] ✓ Killed lingering VS Code/chromedriver/func/vsdbg processes`);
-      // Wait for processes to fully exit and release IPC sockets.
-      // On Linux, VS Code writes an IPC socket to the user-data-dir for
-      // the CLI `code -r` command to connect. If the old socket persists,
-      // the new VS Code can't bind, and `code -r` either connects to a
-      // dead socket (silent failure) or opens in the wrong window.
-      await new Promise((r) => setTimeout(r, 5000));
-
-      // Clean up stale IPC socket files so new VS Code gets a fresh socket
-      if (isLinux || isMac) {
-        try {
-          const sockFiles = fs.readdirSync(settingsDir).filter((f) => f.endsWith('.sock'));
-          for (const sock of sockFiles) {
-            fs.unlinkSync(path.join(settingsDir, sock));
-            console.log(`  [${label}] ✓ Removed stale socket: ${sock}`);
-          }
-        } catch {
-          /* settingsDir may not exist yet */
-        }
-      }
-    } catch {
-      console.log(`  [${label}] No lingering processes to kill (or kill failed — continuing)`);
-    }
+    console.log(`  [${label}] Prior phase recovery is restricted to its retained native containment owner`);
 
     // Only delete settings/User/ — NOT the entire settings/ dir.
     // Locked log/cache files live in settings/logs/ and settings/Cache/
@@ -2362,7 +2255,7 @@ async function main(): Promise<void> {
     }
     // Diagnostic: list files in settings dir to check for IPC sockets
     try {
-      const settingsDir = path.join(require('os').tmpdir(), 'test-resources', 'settings');
+      const settingsDir = path.join(DEFAULT_STORAGE_FOLDER, 'settings');
       if (fs.existsSync(settingsDir)) {
         const contents = fs.readdirSync(settingsDir);
         console.log(`  Settings dir (${contents.length} items): ${contents.slice(0, 15).join(', ')}`);
@@ -2381,8 +2274,71 @@ async function main(): Promise<void> {
         /* ignore */
       }
     }
-    const phaseTester = createExTester();
-    const code = await phaseTester.runTests(files, phaseRunOptions);
+    // Each real ExTester phase now has a retained native containment owner.
+    // Do not sweep the shared machine to compensate for a prior phase.
+    installCodefulTaskRecorderExtension(extDir);
+    rebuildExtensionsJson(extDir);
+    const runner: ExTesterPhaseRunner = require(path.join(projectDir, 'scripts', 'run-e2e-cli'));
+    const policy: typeof import('../../../scripts/vscode-lifecycle-acceptance') = require(
+      path.join(projectDir, 'scripts', 'vscode-lifecycle-acceptance')
+    );
+    const phaseRoot = fs.mkdtempSync(path.join(projectDir, '.vscode-test', 'extester-phase-'));
+    const inputPath = path.join(phaseRoot, 'input.json');
+    const resultPath = path.join(phaseRoot, 'functional-result.json');
+    fs.writeFileSync(
+      inputPath,
+      JSON.stringify({
+        files: [...files, testFile('lifecycleBoundary.test.js')],
+        options: phaseRunOptions,
+        extensionsDir: extDir,
+        storageFolder: DEFAULT_STORAGE_FOLDER,
+        resultPath,
+      })
+    );
+    const launch = runner._test.spawnContainedProcess(
+      process.execPath,
+      [path.join(projectDir, 'scripts', 'vscode-extester-phase.js'), inputPath],
+      {
+        env: {
+          ...process.env,
+          LA_E2E_CLI_EXTENSIONS_DIR: extDir,
+          LA_E2E_CLI_VSCODE_VERSION: VSCODE_VERSION,
+          LA_E2E_CLI_USER_DATA_DIR: path.join(DEFAULT_STORAGE_FOLDER, 'settings'),
+        },
+        cwd: projectDir,
+      }
+    );
+    launch.child.stdout.pipe(process.stdout);
+    launch.child.stderr.pipe(process.stderr);
+    const closure = await new Promise<ProcessClosure>((resolve, reject) => {
+      launch.child.once('error', reject);
+      launch.child.once('close', (code: number | null, signal: string | null) => resolve(launch.readClosure(code, signal)));
+    });
+    const functional: { functionalExitCode?: number | null } = fs.existsSync(resultPath)
+      ? JSON.parse(fs.readFileSync(resultPath, 'utf8'))
+      : {};
+    await launch.verifyStartup(closure);
+    const code = policy.canContinueAfterProcessCleanup(closure) && functional.functionalExitCode === 0 ? 0 : 1;
+    fs.writeFileSync(
+      path.join(phaseRoot, 'phase-result.json'),
+      JSON.stringify(
+        {
+          phaseName,
+          functionalExitCode: functional.functionalExitCode ?? null,
+          nativeHostExitCode: closure.nativeHostExitCode,
+          processCleanup: closure,
+          lifecycleAcceptance: policy.evaluateLifecycleAcceptance(closure, closure.lifecycleEvidence),
+          acceptancePending: !policy.isProcessCleanupAccepted(closure),
+        },
+        null,
+        2
+      )
+    );
+    lifecyclePhaseResults.push({
+      file: path.join(phaseRoot, 'phase-result.json'),
+      closure,
+      functionalExitCode: functional.functionalExitCode ?? null,
+    });
     console.log(`  ${phaseName} exit code: ${code}`);
     return code;
   };
@@ -2443,7 +2399,7 @@ async function main(): Promise<void> {
       mocha.addFile(file);
     }
     return await new Promise<number>((resolve) => {
-      mocha.run((failures) => {
+      mocha.run((failures: number) => {
         const code = failures > 0 ? 1 : 0;
         console.log(`  ${phaseName} exit code: ${code}`);
         resolve(code);

@@ -97,6 +97,7 @@ export function assertFuncRuntimeResolution(resolution: FuncRuntimeResolution | 
 }
 
 export function multiRootRegularLaunch(bootstrap: MultiRootBootstrapAttestation, env: NodeJS.ProcessEnv, profile: string) {
+  assert.ok(path.isAbsolute(profile), 'Regular launch profile must be absolute');
   const context: MultiRootBootstrapContext = {
     suiteId: 'workspaceMultiRoot',
     invocation: bootstrap.invocation,
@@ -110,6 +111,7 @@ export function multiRootRegularLaunch(bootstrap: MultiRootBootstrapAttestation,
     'Attested Func changed before regular launch'
   );
   const controlledEnv = controlledFuncEnvironment(path.dirname(bootstrap.binary.executable), env);
+  controlledEnv.LA_E2E_CLI_USER_DATA_DIR = profile;
   const settings = {
     'azureLogicAppsStandard.autoStartDesignTime': true,
     'azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation': false,
