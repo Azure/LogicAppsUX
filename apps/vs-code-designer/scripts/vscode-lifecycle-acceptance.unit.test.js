@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { test } = require('node:test');
+const vm = require('node:vm');
 const { SUITE_REGISTRY } = require('./e2e-cli-batch');
 const {
   evaluateLifecycleAcceptance,
@@ -91,21 +92,22 @@ function fixture(platform = 'win32') {
     ],
     lifecycleEvidence,
   };
+  // Synthetic evidence must name its own domain, not inherit the test host's
+  // platform through the resolver's legacy Windows receipt compatibility.
+  for (const record of [
+    ...lifecycleEvidence.shutdown.ownedProcesses,
+    ...lifecycleEvidence.survivorOwners,
+    ...lifecycleEvidence.startup.nativeIdentity.processes,
+    ...closure.activeContainedProcesses,
+  ]) {
+    record.identity = {
+      platform,
+      kind: platform === 'linux' ? 'linux-proc-start' : 'windows-filetime',
+      startTimeTicks: record.startTimeTicks,
+      ...(platform === 'linux' ? { bootId: 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee', clockTicksPerSecond: 100 } : {}),
+    };
+  }
   if (platform === 'linux') {
-    for (const record of [
-      ...lifecycleEvidence.shutdown.ownedProcesses,
-      ...lifecycleEvidence.survivorOwners,
-      ...lifecycleEvidence.startup.nativeIdentity.processes,
-      ...closure.activeContainedProcesses,
-    ]) {
-      record.identity = {
-        platform: 'linux',
-        kind: 'linux-proc-start',
-        startTimeTicks: record.startTimeTicks,
-        bootId: 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee',
-        clockTicksPerSecond: 100,
-      };
-    }
     closure.activeContainedProcesses[0].executablePath = closure.activeContainedProcesses[0].executablePath.replace(/\.exe$/, '');
     closure.activeContainedProcesses[0].commandSummary.hashEncoding = 'linux-proc-cmdline-nul-bytes';
     lifecycleEvidence.startup.nativeIdentity.processes[0].commandSummary.hashEncoding = 'linux-proc-cmdline-nul-bytes';
@@ -114,6 +116,53 @@ function fixture(platform = 'win32') {
   }
   return closure;
 }
+
+test('synthetic embedded startup resolves in its evidence domain on either host without weakening Linux checks', () => {
+  const filename = require.resolve('./vscode-lifecycle-producer');
+  for (const hostPlatform of ['win32', 'linux']) {
+    const producerModule = { exports: {} };
+    // Execute the actual resolver with a synthetic host default. No native
+    // process, Linux filesystem/path behavior or lifecycle acceptance is proven.
+    vm.runInNewContext(
+      fs.readFileSync(filename, 'utf8'),
+      { module: producerModule, require, process: { platform: hostPlatform } },
+      { filename }
+    );
+    const { resolveSubsequentStartup } = producerModule.exports;
+    for (const platform of ['win32', 'linux']) {
+      const closure = fixture(platform);
+      assert.equal(resolveSubsequentStartup(closure.lifecycleEvidence), closure.lifecycleEvidence);
+      assert.equal(isProcessCleanupAccepted(closure), true);
+    }
+    for (const mutate of [
+      (startup) => {
+        delete startup.nativeIdentity.ownershipComplete;
+      },
+      (startup) => {
+        delete startup.nativeIdentity.processes[0].commandSummary.hashEncoding;
+      },
+      (startup) => {
+        delete startup.nativeIdentity.processes[0].identity.bootId;
+      },
+      (startup) => {
+        startup.nativeIdentity.processes[0].identity.kind = 'windows-filetime';
+      },
+    ]) {
+      const closure = fixture('linux');
+      mutate(closure.lifecycleEvidence.startup);
+      assert.match(resolveSubsequentStartup(closure.lifecycleEvidence).startupResolutionError, /Startup/);
+      assert.equal(isProcessCleanupAccepted(closure), false);
+    }
+    const legacyWindows = fixture('win32').lifecycleEvidence;
+    delete legacyWindows.startup.nativeIdentity.processes[0].identity;
+    const resolved = resolveSubsequentStartup(legacyWindows);
+    if (hostPlatform === 'linux') {
+      assert.match(resolved.startupResolutionError, /Startup extension host/);
+    } else {
+      assert.equal(resolved, legacyWindows, 'Retained legacy Windows compatibility is unchanged');
+    }
+  }
+});
 
 test('every canonical Linux and Windows lane applies the same exception policy with its own native identity domain', () => {
   for (const suite of Object.values(SUITE_REGISTRY)) {
@@ -354,13 +403,13 @@ test('every registered lane uses the same process verdict; ordered family and MS
 test('registered direct runner and outer terminal producer consume the same retained-evidence verdict', async () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'vscode-policy-runner-'));
   try {
-    const model = fixture();
+    const model = fixture(process.platform);
     const receiptPath = path.join(root, 'original-receipt.json');
     fs.writeFileSync(
       receiptPath,
       JSON.stringify({
         schemaVersion: 1,
-        mechanism: process.platform === 'win32' ? 'windows-job-object' : 'linux-subreaper',
+        mechanism: model.mechanism,
         containmentEstablished: true,
         rootPid: model.rootPid,
         rootExitCode: 0,
@@ -373,7 +422,12 @@ test('registered direct runner and outer terminal producer consume the same reta
         activeContainedProcesses: [
           {
             ...model.activeContainedProcesses[0],
-            commandSummary: { argumentCount: 1, safeMarkers: [], scriptOrModuleBasenames: ['Roslyn.dll'], sha256: 'a'.repeat(64) },
+            commandSummary: {
+              ...model.activeContainedProcesses[0].commandSummary,
+              argumentCount: 1,
+              safeMarkers: [],
+              scriptOrModuleBasenames: ['Roslyn.dll'],
+            },
           },
         ],
         metadataCapturedAtUtc: model.metadataCapturedAtUtc,

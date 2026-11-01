@@ -258,6 +258,7 @@ test('next startup is a separate owner-bound observation, never a fabricated suc
     fs.writeFileSync(file, `${JSON.stringify(record)}\n`);
     assert.match(resolveSubsequentStartup(evidence).startupResolutionError, /native extension-host identity/);
     const native = {
+      ownershipComplete: true,
       observedAtUtc: new Date(90).toISOString(),
       processes: [
         {
@@ -278,6 +279,16 @@ test('next startup is a separate owner-bound observation, never a fabricated suc
     const resolved = resolveSubsequentStartup(evidence);
     assert.equal(resolved.startup.actualInvocation, next.invocation);
     assert.notEqual(resolved.startup.actualInvocation, evidence.invocation);
+    if (process.platform === 'linux') {
+      delete native.ownershipComplete;
+      record.nativeIdentity = { ...native, receipt };
+      fs.writeFileSync(receipt, JSON.stringify(native));
+      fs.writeFileSync(file, `${JSON.stringify(record)}\n`);
+      assert.match(resolveSubsequentStartup(evidence).startupResolutionError, /ancestry capture incomplete/);
+      native.ownershipComplete = true;
+      record.nativeIdentity = { ...native, receipt };
+      fs.writeFileSync(file, `${JSON.stringify(record)}\n`);
+    }
     native.processes[0].metadataStatus = 'not-in-job';
     fs.writeFileSync(receipt, JSON.stringify(native));
     assert.match(resolveSubsequentStartup(evidence).startupResolutionError, /differs/);
