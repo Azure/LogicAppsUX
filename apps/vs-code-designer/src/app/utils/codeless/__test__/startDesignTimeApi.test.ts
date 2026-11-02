@@ -240,8 +240,8 @@ describe('startAllDesignTimeApis', () => {
     );
   });
 
-  it('kills both the tracked child and wrapper shell on linux when stopping design time', async () => {
-    vi.mocked(os.platform).mockReturnValue('linux' as any);
+  it('preserves tracked child and wrapper shell cleanup on macOS', async () => {
+    vi.mocked(os.platform).mockReturnValue('darwin');
     vi.mocked(cp.spawn).mockReturnValue({} as any);
     ext.designTimeInstances.set('D:/workspace/app-one', { process: { pid: 111 } as any, childFuncPid: '222' });
 
@@ -317,6 +317,302 @@ describe('startAllDesignTimeApis', () => {
   });
 });
 
+describe('Linux design-time process-group ownership', () => {
+  const project = path.resolve('owned-design-time-project');
+  const workdir = path.join(project, 'workflow-designtime');
+  const context = () => ({ telemetry: { properties: {}, measurements: {} }, errorHandling: {} }) as any;
+  const nativeKill = process.kill.bind(process);
+  let child: cp.ChildProcess;
+
+  const launch = () => {
+    ext.designTimeInstances.set(project, {});
+    startDesignTimeProcess(undefined, workdir, 'private-func', 'host', 'start', '--port 7071');
+    return ext.designTimeInstances.get(project)!;
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    ext.designTimeInstances.clear();
+    vi.mocked(os.platform).mockReturnValue('linux');
+    child = Object.assign(new EventEmitter(), { pid: 20457, exitCode: null, signalCode: null }) as cp.ChildProcess;
+    vi.mocked(cp.spawn).mockReturnValue(child);
+    vi.spyOn(process, 'kill').mockImplementation(() => {
+      child.emit('exit', null, 'SIGKILL');
+      return true;
+    });
+    vi.mocked(reserveFreePort).mockResolvedValue(7071);
+    vi.mocked(warnIfJdbcJavaRuntimeMissing).mockResolvedValue(undefined);
+    vi.mocked(ensureExtensionBundleHealthy).mockResolvedValue(undefined);
+    workspace.fs.createDirectory = vi.fn().mockResolvedValue(undefined);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    ext.designTimeInstances.clear();
+  });
+
+  it('stops the owned group while startup is pending and childFuncPid is absent, excluding foreign groups', async () => {
+    let resolveStartup!: () => void;
+    const startupPromise = new Promise<void>((resolve) => {
+      resolveStartup = resolve;
+    });
+    const instance = launch();
+    instance.startupPromise = startupPromise;
+    const liveGroups = new Map([
+      [20457, 20457], // shell
+      [20460, 20457], // launcher
+      [20503, 20457], // worker
+      [30001, 30001], // unrelated process
+      [process.pid, process.pid], // extension host
+    ]);
+    vi.mocked(process.kill).mockImplementation((pid, signal) => {
+      expect(signal).toBe('SIGKILL');
+      for (const [member, group] of liveGroups) {
+        if (group === -Number(pid)) liveGroups.delete(member);
+      }
+      child.emit('exit', null, 'SIGKILL');
+      return true;
+    });
+
+    await stopAllDesignTimeApis();
+
+    expect(instance.childFuncPid).toBeUndefined();
+    expect(instance.startupPromise).toBe(startupPromise);
+    expect(process.kill).toHaveBeenCalledExactlyOnceWith(-20457, 'SIGKILL');
+    expect([...liveGroups.keys()]).toEqual([30001, process.pid]);
+    expect(ext.designTimeInstances.size).toBe(0);
+    expect(cp.spawn).toHaveBeenCalledExactlyOnceWith('private-func', ['host', 'start', '--port 7071'], {
+      cwd: workdir,
+      shell: true,
+      detached: true,
+    });
+    expect(findProcess).not.toHaveBeenCalled();
+    expect(findChildProcess).not.toHaveBeenCalled();
+    resolveStartup();
+  });
+
+  it('ignores a foreign discovered child PID and waits for the owned child exit, not pipe close', async () => {
+    launch().childFuncPid = '30001';
+    vi.mocked(process.kill).mockReturnValue(true);
+    let settled = false;
+    const stopping = stopDesignTimeApi(project).then(() => {
+      settled = true;
+    });
+    await Promise.resolve();
+    expect(settled).toBe(false);
+    expect(process.kill).toHaveBeenCalledExactlyOnceWith(-20457, 'SIGKILL');
+    child.emit('exit', null, 'SIGKILL');
+    await stopping;
+    expect(settled).toBe(true);
+    expect(child.listenerCount('exit')).toBe(0);
+  });
+
+  it('stops an actual in-flight startup before child discovery without waiting for readiness', async () => {
+    let ready!: (value: unknown) => void;
+    vi.mocked(axios.get)
+      .mockRejectedValueOnce(new Error('not ready'))
+      .mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            ready = resolve;
+          })
+      );
+    const startup = startDesignTimeApi(context(), project);
+    const outcome = startup.catch((error) => error);
+    await vi.waitFor(() => expect(ready).toBeTypeOf('function'));
+    const instance = ext.designTimeInstances.get(project)!;
+    expect(instance.process).toBe(child);
+    expect(instance.startupPromise).toBeDefined();
+    expect(instance.childFuncPid).toBeUndefined();
+    expect(findChildProcess).not.toHaveBeenCalled();
+
+    await stopAllDesignTimeApis();
+
+    expect(process.kill).toHaveBeenCalledExactlyOnceWith(-20457, 'SIGKILL');
+    expect(ext.designTimeInstances.size).toBe(0);
+    // Let the pre-existing startup continuation settle; this is not a new
+    // cancellation policy or a late-spawn correction.
+    ready({});
+    expect((await outcome).message).toContain('Design-time startup state was lost');
+    expect(cp.spawn).toHaveBeenCalledTimes(1);
+    expect(findChildProcess).not.toHaveBeenCalled();
+  });
+
+  it('rejects an exited leader rather than signaling a potentially reused process-group number', async () => {
+    launch();
+    Object.assign(child, { exitCode: 0 });
+    vi.mocked(process.kill).mockReturnValue(true);
+    await expect(stopDesignTimeApi(project)).rejects.toThrow('Cannot verify a live Linux design-time process-group leader');
+    expect(process.kill).not.toHaveBeenCalled();
+  });
+
+  it.each([undefined, 0, -1, 1, NaN, process.pid])('does not authorize an unsafe or absent spawn PID: %s', async (pid) => {
+    Object.assign(child, { pid });
+    launch().childFuncPid = '30001';
+    await stopDesignTimeApi(project);
+    expect(process.kill).not.toHaveBeenCalled();
+    expect(cp.spawn).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not trust an unmarked ChildProcess with a copied PID or stale FuncInstance child PID', async () => {
+    launch();
+    ext.designTimeInstances.set(project, { process: { pid: child.pid } as cp.ChildProcess, childFuncPid: '30001' });
+    await stopDesignTimeApi(project);
+    expect(process.kill).not.toHaveBeenCalled();
+    expect(cp.spawn).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not trust a changed PID on the marked child', async () => {
+    launch();
+    Object.assign(child, { pid: 30001 });
+    await stopDesignTimeApi(project);
+    expect(process.kill).not.toHaveBeenCalled();
+  });
+
+  it('consumes ownership so reinserting the same old child cannot replay a group kill', async () => {
+    launch();
+    await stopDesignTimeApi(project);
+    ext.designTimeInstances.set(project, { process: child, childFuncPid: '30001' });
+    await stopDesignTimeApi(project);
+    expect(process.kill).toHaveBeenCalledExactlyOnceWith(-20457, 'SIGKILL');
+  });
+
+  it('treats ESRCH as already absent without any fallback kill or exit wait', async () => {
+    launch();
+    vi.mocked(process.kill).mockImplementation(() => {
+      throw Object.assign(new Error('gone'), { code: 'ESRCH' });
+    });
+    await expect(stopDesignTimeApi(project)).resolves.toBeUndefined();
+    expect(process.kill).toHaveBeenCalledExactlyOnceWith(-20457, 'SIGKILL');
+    expect(cp.spawn).toHaveBeenCalledTimes(1);
+    expect(child.listenerCount('exit')).toBe(0);
+  });
+
+  it.each(['EPERM', 'ENOSYS'])('propagates unavailable group cleanup (%s) without falling back to foreign PIDs', async (code) => {
+    launch().childFuncPid = '30001';
+    const failure = Object.assign(new Error('group kill failed'), { code });
+    vi.mocked(process.kill).mockImplementation(() => {
+      throw failure;
+    });
+    await expect(stopDesignTimeApi(project)).rejects.toBe(failure);
+    expect(cp.spawn).toHaveBeenCalledTimes(1);
+    expect(child.listenerCount('exit')).toBe(0);
+  });
+
+  it('bounds the exit wait after a successful signal and removes its listener', async () => {
+    vi.useFakeTimers();
+    launch();
+    vi.mocked(process.kill).mockReturnValue(true);
+    const stopping = expect(stopDesignTimeApi(project)).rejects.toThrow('Timed out waiting for the Linux design-time process');
+    await vi.advanceTimersByTimeAsync(5000);
+    await stopping;
+    expect(child.listenerCount('exit')).toBe(0);
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it.each([false, true])('preserves the original post-spawn startup failure when cleanup fails: %s', async (cleanupFails) => {
+    const primary = new Error('original startup failure');
+    vi.mocked(axios.get).mockRejectedValueOnce(new Error('not ready')).mockResolvedValue({});
+    vi.mocked(findChildProcess).mockResolvedValue('30001');
+    vi.mocked(productFs.readFileSync).mockImplementation(() => {
+      throw primary;
+    });
+    if (cleanupFails) {
+      vi.mocked(process.kill).mockImplementation(() => {
+        throw Object.assign(new Error('secondary'), { code: 'EPERM' });
+      });
+    }
+    await expect(startDesignTimeApi(context(), project)).rejects.toBe(primary);
+    expect(process.kill).toHaveBeenCalledExactlyOnceWith(-20457, 'SIGKILL');
+    expect(ext.designTimeInstances.get(project)).toMatchObject({ startupError: primary.message, isStarting: false });
+    expect(ext.designTimeInstances.get(project)?.process).toBeUndefined();
+    expect(ext.designTimeInstances.get(project)?.startupPromise).toBeUndefined();
+  });
+
+  it('awaits child exit on startup failure before rethrowing the original failure', async () => {
+    const primary = new Error('original startup failure');
+    vi.mocked(axios.get).mockRejectedValueOnce(new Error('not ready')).mockResolvedValue({});
+    vi.mocked(findChildProcess).mockResolvedValue('30001');
+    vi.mocked(productFs.readFileSync).mockImplementation(() => {
+      throw primary;
+    });
+    vi.mocked(process.kill).mockReturnValue(true);
+    const startup = startDesignTimeApi(context(), project);
+    const rejection = expect(startup).rejects.toBe(primary);
+    await vi.waitFor(() => expect(process.kill).toHaveBeenCalled());
+    expect(ext.designTimeInstances.get(project)?.startupPromise).toBeDefined();
+    child.emit('exit', null, 'SIGKILL');
+    await rejection;
+    expect(ext.designTimeInstances.get(project)?.startupPromise).toBeUndefined();
+  });
+
+  it.each(['win32', 'darwin'] as const)('does not detach or change launch args on %s', (platform) => {
+    vi.mocked(os.platform).mockReturnValue(platform);
+    launch();
+    expect(cp.spawn).toHaveBeenCalledExactlyOnceWith('private-func', ['host', 'start', '--port 7071'], { cwd: workdir, shell: true });
+    expect(process.kill).not.toHaveBeenCalled();
+  });
+
+  it.skipIf(diagnosticOs.platform() !== 'linux')('kills real Linux owned descendants but leaves a foreign process alive', async () => {
+    const nativeCp = await vi.importActual<typeof import('node:child_process')>('node:child_process');
+    vi.mocked(process.kill).mockImplementation(nativeKill);
+    vi.mocked(cp.spawn).mockImplementation(nativeCp.spawn);
+    const foreign = nativeCp.spawn(process.execPath, ['-e', 'setInterval(() => {}, 1000)'], { detached: true, stdio: 'ignore' });
+    let owned: cp.ChildProcess | undefined;
+    try {
+      // The launcher and worker inherit the detached shell's group. All observed
+      // PIDs come directly from this control, not name/global process scans.
+      const workerCode = 'setInterval(() => {}, 1000)';
+      const launcherCode = `const c=require("child_process").spawn(process.execPath,["-e",${JSON.stringify(workerCode)}],{stdio:"ignore"});console.log(JSON.stringify([process.pid,c.pid]));setInterval(()=>{},1000)`;
+      const actualProject = path.dirname(diagnosticOs.tmpdir());
+      ext.designTimeInstances.set(actualProject, { startupPromise: new Promise(() => {}) });
+      startDesignTimeProcess(undefined, diagnosticOs.tmpdir(), process.execPath, '-e', `'${launcherCode}'`);
+      owned = vi.mocked(cp.spawn).mock.results.at(-1)!.value;
+      expect(ext.designTimeInstances.get(actualProject)?.process).toBe(owned);
+      let output = '';
+      owned!.stdout!.on('data', (data) => {
+        output += data.toString();
+      });
+      await vi.waitFor(() => expect(output).toContain('\n'), { timeout: 2000, interval: 20 });
+      const descendants = JSON.parse(output.trim()) as number[];
+      expect(descendants).toHaveLength(2);
+      for (const pid of descendants) {
+        const stat = diagnosticFs.readFileSync(`/proc/${pid}/stat`, 'utf8');
+        const fields = stat
+          .slice(stat.lastIndexOf(')') + 1)
+          .trim()
+          .split(/\s+/);
+        expect(Number(fields[2])).toBe(owned!.pid); // process group
+        expect(Number(fields[3])).toBe(owned!.pid); // session
+      }
+      const isLive = (pid: number) => {
+        try {
+          const stat = diagnosticFs.readFileSync(`/proc/${pid}/stat`, 'utf8');
+          return !/^\s*[ZX]\b/.test(stat.slice(stat.lastIndexOf(')') + 1));
+        } catch (error) {
+          if ((error as NodeJS.ErrnoException).code === 'ENOENT') return false;
+          throw error;
+        }
+      };
+      expect(descendants.every(isLive)).toBe(true);
+      await stopDesignTimeApi(actualProject);
+      await vi.waitFor(() => expect(descendants.some(isLive)).toBe(false), { timeout: 2000, interval: 20 });
+      expect(nativeKill(foreign.pid!, 0)).toBe(true);
+      expect(vi.mocked(process.kill).mock.calls).toEqual([[-owned!.pid!, 'SIGKILL']]);
+    } finally {
+      for (const proc of [owned, foreign]) {
+        if (!proc?.pid) continue;
+        try {
+          nativeKill(-proc.pid, 'SIGKILL');
+        } catch (error) {
+          if ((error as NodeJS.ErrnoException).code !== 'ESRCH') throw error;
+        }
+        await vi.waitFor(() => expect(proc.exitCode !== null || proc.signalCode !== null).toBe(true), { timeout: 1000, interval: 20 });
+      }
+    }
+  });
+});
+
 describe('isolated MultiRoot design-time owning receipts', () => {
   let directory: string;
   let file: string;
@@ -347,7 +643,12 @@ describe('isolated MultiRoot design-time owning receipts', () => {
     vi.stubEnv('LA_E2E_LIFECYCLE_INVOCATION', invocation);
     vi.stubEnv('LA_E2E_CLI_MULTI_ROOT_EVENTS', path.join(directory, 'debug-events.jsonl'));
     vi.mocked(os.platform).mockReturnValue('linux');
-    vi.mocked(cp.spawn).mockReturnValue({ pid: 23035 } as any);
+    const spawned = Object.assign(new EventEmitter(), { pid: 23035, exitCode: null, signalCode: null });
+    vi.mocked(cp.spawn).mockReturnValue(spawned as any);
+    vi.spyOn(process, 'kill').mockImplementation(() => {
+      spawned.emit('exit', null, 'SIGKILL');
+      return true;
+    });
     vi.mocked(reserveFreePort).mockResolvedValue(7071);
     vi.mocked(axios.get).mockRejectedValue(new Error('not ready'));
     vi.mocked(findChildProcess).mockResolvedValue('23080');
@@ -380,7 +681,11 @@ describe('isolated MultiRoot design-time owning receipts', () => {
     const workdir = path.join(project, 'workflow-designtime');
     const command = path.join(directory, 'private-func');
     expect(startDesignTimeProcess(undefined, workdir, command, 'host', 'start', '--token=secret')).toBeUndefined();
-    expect(cp.spawn).toHaveBeenCalledExactlyOnceWith(command, ['host', 'start', '--token=secret'], { cwd: workdir, shell: true });
+    expect(cp.spawn).toHaveBeenCalledExactlyOnceWith(command, ['host', 'start', '--token=secret'], {
+      cwd: workdir,
+      shell: true,
+      detached: true,
+    });
     expect(findProcess).not.toHaveBeenCalled();
     expect(findChildProcess).not.toHaveBeenCalled();
     expect(ext.designTimeInstances.get(project)?.process?.pid).toBe(23035);
@@ -473,7 +778,8 @@ describe('isolated MultiRoot design-time owning receipts', () => {
     expect(JSON.stringify(records)).not.toContain(primary.message);
   });
 
-  it('retains Unix child/wrapper deduplication, deletion and stopAll settled results', async () => {
+  it('retains macOS child/wrapper deduplication, deletion and stopAll settled results', async () => {
+    vi.mocked(os.platform).mockReturnValue('darwin');
     ext.designTimeInstances.set(project, { process: { pid: 111 } as any, childFuncPid: '111' });
     ext.designTimeInstances.set(`${project}-second`, { process: { pid: 222 } as any, childFuncPid: '333' });
     ext.designTimeInstances.set(`${project}-empty`, {});
@@ -548,7 +854,7 @@ describe('isolated MultiRoot design-time owning receipts', () => {
     ]);
   });
 
-  it.each(['linux', 'win32'] as const)('does not await startup-failure cleanup on %s', async (platform) => {
+  it.each(['linux', 'win32'] as const)('cleans up startup failure with platform-specific semantics on %s', async (platform) => {
     vi.mocked(os.platform).mockReturnValue(platform);
     vi.mocked(axios.get).mockRejectedValueOnce(new Error('not ready')).mockResolvedValue({});
     const primary = new Error('original post-spawn startup failure');
@@ -564,19 +870,21 @@ describe('isolated MultiRoot design-time owning receipts', () => {
     if (platform === 'win32') {
       expect(vi.mocked(cp.exec).mock.calls).toEqual([['taskkill /pid 23080 /t /f'], ['taskkill /pid 23035 /t /f']]);
     } else {
-      expect(vi.mocked(cp.spawn).mock.calls.slice(1)).toEqual([
-        ['kill', ['-9', '23080']],
-        ['kill', ['-9', '23035']],
-      ]);
+      expect(cp.spawn).toHaveBeenCalledTimes(1);
+      expect(process.kill).toHaveBeenCalledExactlyOnceWith(-23035, 'SIGKILL');
     }
     const records = receipts();
     const cleanup = records.filter((r) => r.operation === (platform === 'win32' ? 'design-time-taskkill' : 'design-time-kill'));
-    expect(cleanup.filter((r) => r.status === 'end').map((r) => r.state.settled)).toEqual([false, false]);
+    expect(cleanup.filter((r) => r.status === 'end').map((r) => r.state.settled)).toEqual(platform === 'win32' ? [false, false] : [true]);
+    if (platform === 'linux') {
+      expect(cleanup.filter((r) => r.status === 'end').map((r) => r.state.targetPid)).toEqual([-23035]);
+    }
     expect(records.find((r) => r.operation === 'design-time-tracked-stop').state).toMatchObject({ pid: 23035, childFuncPid: 23080 });
     expect(records.find((r) => r.operation === 'design-time-startup' && r.status === 'failure')).toBeDefined();
   });
 
   it('preserves exact thrown spawn/kill values and stopAll rejection accounting', async () => {
+    vi.mocked(os.platform).mockReturnValue('darwin');
     const primary = { token: 'private-original-error' };
     vi.mocked(cp.spawn).mockImplementation(() => {
       throw primary;
@@ -611,6 +919,8 @@ describe('isolated MultiRoot design-time owning receipts', () => {
     ext.designTimeInstances.set(project, {});
     expect(startDesignTimeProcess(undefined, path.join(project, 'workflow-designtime'), 'func')).toBeUndefined();
     expect(ext.designTimeInstances.get(project)?.process?.pid).toBe(23035);
+    await expect(stopDesignTimeApi(project)).resolves.toBeUndefined();
+    expect(process.kill).toHaveBeenCalledExactlyOnceWith(-23035, 'SIGKILL');
     const primary = new Error('original spawn failure');
     vi.mocked(cp.spawn).mockImplementation(() => {
       throw primary;

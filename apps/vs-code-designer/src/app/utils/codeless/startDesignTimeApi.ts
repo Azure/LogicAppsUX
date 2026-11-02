@@ -49,6 +49,11 @@ import { emitDesignTimeDiagnostic, startDesignTimeDiagnostic, finishDesignTimeDi
 
 const maxValidationRestarts = 3;
 
+// Only the exact ChildProcess returned by our detached Linux spawn can authorize
+// a group kill. A PID copied into FuncInstance (including childFuncPid) cannot.
+const ownedLinuxProcessGroups = new WeakMap<cp.ChildProcess, number>();
+const linuxProcessExitWaitMs = 5000;
+
 // Called only inside admitted diagnostic callbacks. Strings are hashed by the
 // real serializer; no command arguments, environment or output enter receipts.
 function designTimeState(projectPath: string, instance = ext.designTimeInstances.get(projectPath)): Record<string, unknown> {
@@ -184,6 +189,67 @@ function killTrackedUnixProcesses(process: cp.ChildProcess, childFuncPid?: strin
   }
 }
 
+async function killOwnedLinuxProcessGroup(child: cp.ChildProcess, projectPath: string): Promise<void> {
+  const groupId = ownedLinuxProcessGroups.get(child);
+  if (groupId === undefined || child.pid !== groupId) {
+    return;
+  }
+
+  const receipt = startDesignTimeDiagnostic('design-time-kill', () => ({
+    ...designTimeState(projectPath),
+    targetPid: -groupId,
+  }));
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  let onExit: (() => void) | undefined;
+  try {
+    // Once the leader has exited, its numeric PID can eventually be reused.
+    // A remembered group number alone must never authorize killing that new
+    // group. Leave any unproven survivor to the retained native owner.
+    if (child.exitCode !== null || child.signalCode !== null) {
+      ownedLinuxProcessGroups.delete(child);
+      throw new Error('Cannot verify a live Linux design-time process-group leader.');
+    }
+    // Subscribe before signaling: exit may arrive immediately after SIGKILL.
+    // Wait for exit, not close (descendants may have inherited the stdio pipes).
+    const exited = new Promise<void>((resolve) => {
+      onExit = resolve;
+      child.once('exit', onExit);
+    });
+    try {
+      process.kill(-groupId, 'SIGKILL');
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException)?.code !== 'ESRCH') {
+        throw error;
+      }
+      // The owned group is already absent; do not fall back to a discovered PID.
+      ownedLinuxProcessGroups.delete(child);
+      finishDesignTimeDiagnostic(receipt, () => ({ targetPid: -groupId, settled: true }));
+      return;
+    }
+    ownedLinuxProcessGroups.delete(child);
+    await Promise.race([
+      exited,
+      new Promise<never>((_resolve, reject) => {
+        timer = setTimeout(
+          () => reject(new Error('Timed out waiting for the Linux design-time process to exit after SIGKILL.')),
+          linuxProcessExitWaitMs
+        );
+      }),
+    ]);
+    finishDesignTimeDiagnostic(receipt, () => ({ targetPid: -groupId, settled: true }));
+  } catch (error) {
+    finishDesignTimeDiagnostic(receipt, () => ({ targetPid: -groupId, settled: false }), { error });
+    throw error;
+  } finally {
+    if (timer !== undefined) {
+      clearTimeout(timer);
+    }
+    if (onExit) {
+      child.removeListener('exit', onExit);
+    }
+  }
+}
+
 function getDesignTimeInstance(projectPath: string): FuncInstance {
   let designTimeInst = ext.designTimeInstances.get(projectPath);
   if (!designTimeInst) {
@@ -195,7 +261,7 @@ function getDesignTimeInstance(projectPath: string): FuncInstance {
   return designTimeInst;
 }
 
-function stopTrackedDesignTimeProcess(projectPath: string): void {
+function stopTrackedDesignTimeProcess(projectPath: string): Promise<void> | undefined {
   const designTimeInst = ext.designTimeInstances.get(projectPath);
   if (!designTimeInst?.process) {
     emitDesignTimeDiagnostic('design-time-tracked-stop', () => ({ ...designTimeState(projectPath), skipped: true }));
@@ -212,6 +278,8 @@ function stopTrackedDesignTimeProcess(projectPath: string): void {
       execUnawaitedTaskkill(childFuncPid, projectPath);
     }
     execUnawaitedTaskkill(process.pid, projectPath);
+  } else if (os.platform() === 'linux') {
+    return killOwnedLinuxProcessGroup(process, projectPath);
   } else {
     killTrackedUnixProcesses(process, childFuncPid, projectPath);
   }
@@ -335,7 +403,13 @@ async function startDesignTimeApiInternal(
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       designTimeInst.startupError = errorMessage;
-      stopTrackedDesignTimeProcess(projectPath);
+      if (os.platform() === 'linux') {
+        // Cleanup failure is secondary to the original startup failure. The
+        // cleanup operation records its own failure receipt.
+        await stopTrackedDesignTimeProcess(projectPath)?.catch(() => undefined);
+      } else {
+        stopTrackedDesignTimeProcess(projectPath);
+      }
       throw error;
     } finally {
       designTimeInst.isStarting = false;
@@ -570,6 +644,10 @@ export function startDesignTimeProcess(
     cwd: workingDirectory || os.tmpdir(),
     shell: true,
   };
+  if (os.platform() === 'linux') {
+    // setsid gives this launch its own session/process group, never VS Code's.
+    options.detached = true;
+  }
 
   const receipt = startDesignTimeDiagnostic('design-time-spawn', () => ({
     ...designTimeState(workingDirectory ? path.dirname(workingDirectory) : ''),
@@ -581,6 +659,10 @@ export function startDesignTimeProcess(
   let designChildProcess: cp.ChildProcess;
   try {
     designChildProcess = cp.spawn(command, args, options);
+    const pid = designChildProcess.pid;
+    if (options.detached && pid !== undefined && Number.isSafeInteger(pid) && pid > 1 && pid !== process.pid) {
+      ownedLinuxProcessGroups.set(designChildProcess, pid);
+    }
     finishDesignTimeDiagnostic(receipt, () => ({
       ...designTimeState(workingDirectory ? path.dirname(workingDirectory) : ''),
       pid: designChildProcess.pid,
@@ -700,6 +782,8 @@ export async function stopDesignTimeApi(projectPath: string): Promise<void> {
     }
     killPromises.push(execTaskkill(proc.pid, projectPath));
     await Promise.allSettled(killPromises);
+  } else if (os.platform() === 'linux') {
+    await killOwnedLinuxProcessGroup(proc, projectPath);
   } else {
     killTrackedUnixProcesses(proc, childFuncPid, projectPath);
   }
