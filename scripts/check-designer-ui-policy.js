@@ -11,8 +11,8 @@ const requiredPeers = ['@fluentui/react-components', 'react', 'react-dom'];
 
 export function checkManifest(manifest) {
   const errors = [];
-  if (manifest.private !== true) {
-    errors.push('designer-ui-v2 must remain private until its publication gates are approved.');
+  if (manifest.private) {
+    errors.push('designer-ui-v2 must be publishable with designer-v2 in the coordinated release.');
   }
   const peers = Object.keys(manifest.peerDependencies ?? {}).sort();
   const dependencies = Object.keys(manifest.dependencies ?? {});

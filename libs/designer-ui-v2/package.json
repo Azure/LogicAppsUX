@@ -1,8 +1,7 @@
 {
   "name": "@microsoft/designer-ui-v2",
   "version": "5.110.0",
-  "private": true,
-  "description": "Private local PoC for host-neutral Fluent v9 designer presentation",
+  "description": "Host-neutral Fluent v9 designer presentation",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,

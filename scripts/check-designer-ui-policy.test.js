@@ -4,17 +4,17 @@ import { checkManifest, newLegacyFolders, resolveBaseRef } from './check-designe
 
 function manifest() {
   return {
-    private: true,
     peerDependencies: { react: '^18.3.1', 'react-dom': '^18.3.1', '@fluentui/react-components': '^9.74.5' },
     dependencies: { '@fluentui/react-icons': '^2.0.315' },
   };
 }
 
-test('keeps the local PoC private until publication approval', () => {
-  assert.equal(checkManifest({ ...manifest(), private: false }).length, 1);
-  const missingPrivate = manifest();
-  delete missingPrivate.private;
-  assert.equal(checkManifest(missingPrivate).length, 1);
+test('keeps the designer-v2 runtime dependency eligible for coordinated publication', () => {
+  assert.deepEqual(checkManifest(manifest()), []);
+  assert.deepEqual(checkManifest({ ...manifest(), private: false }), []);
+  assert.deepEqual(checkManifest({ ...manifest(), private: true }), [
+    'designer-ui-v2 must be publishable with designer-v2 in the coordinated release.',
+  ]);
 });
 
 test('normalizes only absent or zero event bases, preserving valid or unexpected refs', () => {

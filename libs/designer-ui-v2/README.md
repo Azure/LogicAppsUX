@@ -1,6 +1,6 @@
-# Designer UI v2 — private shared presentation
+# Designer UI v2 — shared presentation
 
-`@microsoft/designer-ui-v2` is a host-neutral Fluent v9 presentation library organized by component family. Its `nodes` family consolidates existing Otto presentation for **private, default-off integration** in designer-v2. The manifest is `private: true`, version `5.110.0`, matching sibling source manifests. This is not a published release or a claim of complete runtime, visual, legal, OSS, accessibility, or public design sign-off.
+`@microsoft/designer-ui-v2` is a host-neutral Fluent v9 presentation library organized by component family. Its `nodes` family consolidates existing Otto presentation for **default-off integration** in designer-v2. The manifest version `5.110.0` matches sibling source manifests, and the package is eligible for the repository's existing coordinated release. Release eligibility is not evidence of publication or complete runtime, visual, legal, OSS, accessibility, or public design sign-off.
 
 ## Library-local Storybook
 
@@ -45,12 +45,12 @@ or runtime dependencies. No host, XYFlow, Redux, DnD, auth or backend is require
 The Accessibility panel and keyboard play stories aid review, but a successful
 build/typecheck is **not browser or accessibility verification**. Actual
 light/dark, RTL, focus/hover/Escape, disabled controls, reduced motion and forced
-colors need browser validation. All existing private/default-off, legal,
-publication, host measurement and two-host acceptance boundaries below remain.
+colors need browser validation. Default-off integration, legal, host measurement
+and two-host acceptance boundaries below remain separate from release eligibility.
 
-## Source inventory and private admission
+## Source inventory and provenance
 
-Read-only reference: Otto `portal/src/components/Nodes` and actual `WorkflowDesigner/nodes/next` and edge consumers, revision `3393993399a18cbb8d42f9efa0c7d2cca2ec2eb9`. The following source is admitted for private, flag-only integration; **file-level public OSS/legal and design approval remains separate**.
+Read-only reference: Otto `portal/src/components/Nodes` and actual `WorkflowDesigner/nodes/next` and edge consumers, revision `3393993399a18cbb8d42f9efa0c7d2cca2ec2eb9`. The following source supports flag-only integration; **file-level public OSS/legal and design approval remains separate**.
 
 | Candidate source | Local presentation |
 |---|---|
@@ -58,7 +58,7 @@ Read-only reference: Otto `portal/src/components/Nodes` and actual `WorkflowDesi
 | `cards/{AgentToolsPanel,NodeHoverCard,NodeInfoCard}.tsx` | Controlled tools, delayed hover/focus descriptions, scoped popovers, safe documentation links and existing action slots |
 | `primitives/{NodeCard,NodeCardBody,NodeHandle,NodeIconTile,NodeText,NodeStatusBadge,NodeTestDataIndicator}.tsx` | Shell/body/footer, orientation, slots, selection, live run state and test-data indicators |
 | `primitives/{NodeToolConnector,NodeLabeledHandle,NodeBranchOutputs,NodeLine,NodeActionAdd,IfIcon}.tsx` | Stable connector, branch-caption outputs, line, add and glyph dependency closure |
-| `proposed/{LoopNodeCard,NodeFrame,NodeMergePoint,PlaceholderTriggerCard}.tsx` | Existing loop, frame, merge and empty-trigger source, explicitly admitted privately because actual Otto adapters consume it |
+| `proposed/{LoopNodeCard,NodeFrame,NodeMergePoint,PlaceholderTriggerCard}.tsx` | Existing loop, frame, merge and empty-trigger source, included because actual Otto adapters consume it |
 | `WorkflowDesigner/{edges/EdgePillButton,nodes/CollapseChip}.tsx`, terminal add control | Existing reveal, terminal insertion and collapsed-role presentation, extracted without graph/store dependencies |
 | `glyphs.ts`, `types.ts`, `nodeMetrics.ts` | Finite canonical visual-kind glyph pairs, presentation vocabulary and React-free structural metrics |
 | Node surface values in Otto `theme/ottoTokenValues.ts` | Only node palette values, renamed to scoped `--designer-ui-v2-*`; no app/global theme or font implementation |
@@ -73,7 +73,9 @@ contrast verification.
 
 Excluded: `NodeBodyToggle` (no verified runtime dependency), CoreAI code/assets/default hooks, Aptos, MCP SVG, Otto models/stores/aliases/services/real graph handles, layout engines, and application mutation/adapters. MCP preserves its canonical public Fluent Regular/Regular fallback and brand suppression. No Otto files were modified. Otto still consumes its local source; cross-repository migration is not complete until that host imports the shared package.
 
-**Unresolved gates:** written file-level OSS/legal clearance (MIT declaration is not clearance); public design acceptance; complete rendered interaction and matched two-host visual acceptance, including light/dark, RTL, forced colors and reduced motion; iframe/webview/CSP/clipping checks; feed/name/provenance and ownership/ruleset confirmation. Designer-v2 externalizes this private dependency, so releasing it before coordinated package publication would leave an unavailable dependency. Keep private, default-off and off releasing branches; do not bundle around the publication gate or copy source to a public branch before approval.
+**Unverified acceptance:** written file-level OSS/legal clearance (MIT declaration is not clearance); public design acceptance; complete rendered interaction and matched two-host visual acceptance, including light/dark, RTL, forced colors and reduced motion; iframe/webview/CSP/clipping checks; feed/name/provenance and ownership/ruleset confirmation. Release eligibility does not establish that these checks passed.
+
+**Coordinated release:** Designer-v2 externalizes this runtime dependency, so UI-v2 must publish alongside it through the existing release workflow. `scripts/update-versions.js` includes both packages, and the root publish script builds libraries before `pnpm publish -r`. The UI-v2 manifest omits `private`, matching sibling libraries, so recursive publication does not skip it. Keep integration default-off; do not bundle or copy shared source to work around package distribution.
 
 ## Boundaries and APIs
 
@@ -158,4 +160,4 @@ pnpm --filter @microsoft/logic-apps-designer-v2 build:lib
 
 Independent review and real-host visual acceptance are separate gates, not developer self-certification. New contributions require approved inventory, string contracts, scoped theme, accessible interaction and metrics/tests. Legacy `designer-ui` remains untouched.
 
-License metadata follows the repository's MIT convention; provenance/attribution and redistribution approval remain unresolved for these local candidates.
+License metadata follows the repository's MIT convention; release eligibility does not establish provenance/attribution or redistribution approval.
