@@ -11,5 +11,6 @@
     "skipLibCheck": true,
     "jsx": "react"
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["src/lml/**/*"]
 }

@@ -146,6 +146,17 @@ responses are omitted. Errors log their stage and safe error category; full
 compilation and transformation diagnostics remain in the editor's result/error
 UI. Input/output parsing logs do not imply XSD validation.
 
+## Testing
+
+```bash
+pnpm --dir libs/data-mapper-v3 test
+pnpm --dir libs/data-mapper-v3 run test:lml
+```
+
+The default test command runs all extension unit tests and the original data-mapper-v2 suite. `test:lml` runs the extension's LML host/import/runtime tests plus that same original suite, using the sibling workspace package's existing React/jsdom configuration and fixtures.
+
+For the full v2 test inventory, inherited skipped tests and integration limitations, see [LML test parity](docs/lml-integration-plan.md#test-parity). These commands do not run native-worker or browser E2E tests.
+
 ## Building from Source
 
 For browser UI scenarios, known regressions, coverage measurement, and native-host

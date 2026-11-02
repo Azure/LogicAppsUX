@@ -1,6 +1,63 @@
 # LML Integration Plan
 
-Status: proposed; source investigation completed, implementation and standalone LML runtime validation not started.
+Status: original v2 visual editor and file/API bridges integrated. Standalone live-runtime and packaged VS Code end-to-end validation remain pending.
+
+## Current Increment
+
+- Import Map accepts `.btm` and `.lml`. LML imports preserve the mapping body, relocate only schema-header scalars, and copy supported local XSD/JSON schema dependencies into `Schemas`.
+- Mixed projects discover both formats. New maps remain BTM. LML opens in a dedicated webview using the original v2 designer, providers, reducers, functions, checker, code view and test panel; it never enters the BTM serializer/compiler/test pipeline. Text editing remains available through the context menu.
+- Conflicting LML schemas are rejected rather than overwriting schemas used by existing maps. Metadata and custom function/XSLT asset import are not yet implemented.
+- The initial importer rejects remote/absolute schema dependencies, XSD redefine or dependencies without schemaLocation, and JSON `$id` base identities. These cases need explicit asset-resolution support before they can be imported portably.
+- Opening LML lazily starts an LML-only runtime in a trusted workspace. The explicit `Logic App: Start LML Design-Time Runtime` command is also available. Settings and staged artifacts stay under `workflow-designtime`; BTM does not require this runtime.
+- Runtime schema refresh copies only the active LML document's source/target schemas and their local dependencies, preserving schema-relative paths and removing stale derived schema copies. LML content is sent directly to generation; runtime `Artifacts/MapDefinitions` is not created and legacy copies are removed. Canonical project maps and schemas are never removed.
+- The host bridge calls the original schema-tree, function-manifest, XSLT-generation and test endpoints, refreshing supported local artifacts before schema/generation/test requests. Existing project custom XSLT/XML assets are mirrored without copying executable extensions. Generated LML XSLT uses `__generated/<name>.lml.xslt`, separate from BTM output. LML Test retains the original Windows-only restriction.
+- Draft edits participate in VS Code dirty/undo handling. Explicit saves wait for host acknowledgement; native Save/Auto Save requests a bounded visual snapshot and matching metadata. Text and metadata are not transactional; if a native snapshot fails, VS Code may still save existing document text, while unacknowledged visual changes remain dirty.
+- LML layout metadata is saved in `.vscode/<map-name>DataMapMetadata-v2.json`, matching the original mapper convention. Existing adjacent `<map-name>.lml.metadata.json` files remain readable as a fallback; subsequent saves use `.vscode` and leave legacy files intact.
+- Focused host/runtime tests and mocked browser interaction checks cover loading, mapping, save failure, and service routing. Actual schema-tree, function-manifest, generation and test responses from a live standalone runtime have not been proven.
+
+## Test Parity
+
+The extension reuses the original v2 implementation and runs all of its existing test files directly from the sibling workspace package. Tests and fixtures are not copied into v3; the original React/jsdom setup remains intact.
+
+Run from the repository root:
+
+```bash
+pnpm --dir libs/data-mapper-v3 test                  # All extension unit tests plus the original v2 suite
+pnpm --dir libs/data-mapper-v3 run test:lml          # LML host/import/runtime tests plus the original v2 suite
+pnpm --dir libs/data-mapper-v3 run test:lml:host     # Extension-specific LML tests only
+pnpm --dir libs/data-mapper-v3 run test:lml:shared   # All original v2 tests only
+pnpm --dir libs/data-mapper-v3 run test:extension-unit # All extension unit tests only
+```
+
+Original v2 inventory (paths relative to `libs/data-mapper-v2/src`):
+
+| Test File | Cases | Existing Skips |
+| --- | ---: | ---: |
+| `__test__/schema.spec.ts` | 2 | 0 |
+| `models/__test__/schema.spec.ts` | 2 | 0 |
+| `components/common/fileDropdownTree/__test__/FileDropdownTree.spec.tsx` | 3 | 0 |
+| `components/common/selector/__test__/FileSelector.spec.tsx` | 1 | 0 |
+| `components/mapChecker/__test__/MapCheckerPanel.spec.tsx` | 1 | 0 |
+| `core/services/__test__/dataMapperApiService.spec.ts` | 2 | 0 |
+| `core/state/__test__/DataMapSlice.spec.ts` | 12 | 2 |
+| `mapHandling/__test__/MapDefinitionDeserializer.spec.ts` | 75 | 8 |
+| `mapHandling/__test__/MapDefinitionDeserializerHelpers.spec.ts` | 2 | 0 |
+| `mapHandling/__test__/MapDefinitionSerializer.spec.ts` | 53 | 20 |
+| `utils/__test__/ConnectionUtils.spec.ts` | 25 | 0 |
+| `utils/__test__/CustomValueUtils.spec.tsx` | 15 | 0 |
+| `utils/__test__/DataMapUtils.spec.ts` | 28 | 0 |
+| `utils/__test__/FunctionUtils.spec.ts` | 11 | 0 |
+| `utils/__test__/IconUtils.spec.ts` | 2 | 0 |
+| `utils/__test__/MapCheckerUtils.spec.ts` | 5 | 0 |
+| `utils/__test__/SchemaUtils.spec.ts` | 7 | 0 |
+| `utils/__test__/TypeCheckUtils.spec.ts` | 4 | 0 |
+| **Total** | **250** | **30** |
+
+The 30 skips are inherited from v2, not new exclusions; discovery includes all 18 files. Future v2 tests are picked up automatically by the original package's configuration.
+
+Extension-specific tests additionally cover the host/file/runtime contracts, schema imports and dependency staging, explicit/native saves, revision handling, metadata persistence, trust and path safety, Test Map identifiers, and command routing. Adapter regressions exercise the actual webview RPC/services: save-before-Generate/Test ordering, failed-save blocking, stale queued-write cancellation, v2 nested-schema selection roundtrips and undo/redo saved baselines.
+
+The original VS Code extension's `DataMapperPanel` and panel-manager tests are tied to its host and are not copied; v3 tests exercise the corresponding v3 host contracts. Existing original ExTester scenarios only check discovery and do not prove LML editing or transformation. Shared unit tests and mocked extension tests do not establish packaged-webview or live Functions-runtime end-to-end parity.
 
 ## Goals and Invariants
 
@@ -8,7 +65,7 @@ Status: proposed; source investigation completed, implementation and standalone 
 2. Existing `.btm` imports keep their current behavior.
 3. Import Map additionally accepts `.lml`, resolves its schema references, and copies required assets into the mapper project.
 4. Imported LML remains LML. The existing v2 model, functions, validation, serialization, compilation service, and test behavior remain authoritative.
-5. The LML experience adopts v3's visual layout and styling through presentation-only work, not by converting LML into the BTM editor model.
+5. The LML experience uses the original v2 visual layout. Any later shared styling is presentation-only work, not conversion into the BTM editor model.
 6. A project may contain both formats. Editor behavior is selected per document, not by a project-wide mode.
 7. BTM creation, opening, and execution must not require starting or installing the LML runtime.
 8. The runtime belongs to the same mapper project in a dedicated `workflow-designtime` subfolder. Do not create a second mapper project or move canonical schemas/maps into an Artifacts tree.
@@ -60,7 +117,7 @@ Keep the existing `__generated` spelling; do not rename it to `_generated` and c
 - Use one runtime manager per mapper project, shared by that project's LML editors. Isolate ports, requests, process environment, logs, readiness and cancellation from BTM compilation and from other projects.
 - Do not route BTM compile/test through this process. A missing, crashed or restarting LML runtime must not block BTM operations.
 - Keep `Schemas`, root `.lml` documents and `__generated` as the authoritative user-facing files. Runtime-local mirrors/caches are derived only.
-- Exclude the design-time folder from map/schema discovery and import candidates so staged LML files never appear as duplicate maps. Treat generated settings, caches and any secrets as local-only files with narrowly scoped ignore rules.
+- Exclude the design-time folder from map/schema discovery and import candidates so runtime assets never appear as user maps or schemas. Treat generated settings, caches and any secrets as local-only files with narrowly scoped ignore rules.
 - Dispose only owned processes and derived artifacts. Do not remove canonical schemas, map documents, user inputs or generated outputs when stopping the runtime.
 
 ## Verified Source Boundaries

@@ -1,4 +1,6 @@
 import { IMPORT_MAP_BROWSE_DIRECTORY_KEY, getSelectedFileDirectory } from './browseLocation';
+import { planLmlImport } from './lml/lmlImportPlanner';
+import { lmlEditorViewType } from './lml/editorProtocol';
 import { planMapImport } from './schema/mapImportPlanner';
 import type { MapImportPlan } from './schema/mapImportPlanner';
 import {
@@ -28,7 +30,11 @@ function resourceUri(value: CommandTarget): vscode.Uri | undefined {
 }
 
 async function openDataMap(uri: vscode.Uri): Promise<void> {
-  await vscode.commands.executeCommand('vscode.openWith', uri, 'biztalkDataMapper.mapEditor');
+  await vscode.commands.executeCommand(
+    'vscode.openWith',
+    uri,
+    uri.path.toLowerCase().endsWith('.lml') ? lmlEditorViewType : 'biztalkDataMapper.mapEditor'
+  );
 }
 
 async function browseForFolder(openLabel: string, title: string): Promise<vscode.Uri | undefined> {
@@ -173,7 +179,7 @@ async function pathExists(uri: vscode.Uri): Promise<boolean> {
   }
 }
 
-// Imports a .btm from outside the project: copies the map and the schemas it references (with their imports) into the project.
+// Copies an imported map and its referenced schemas into the project.
 export async function importExistingMap(value: CommandTarget, onChanged: () => void, context: vscode.ExtensionContext): Promise<void> {
   const rememberedDirectory = context.globalState.get<string>(IMPORT_MAP_BROWSE_DIRECTORY_KEY);
   const selected = await vscode.window.showOpenDialog({
@@ -181,18 +187,20 @@ export async function importExistingMap(value: CommandTarget, onChanged: () => v
     canSelectFiles: true,
     canSelectFolders: false,
     canSelectMany: false,
-    filters: { 'BizTalk Map': ['btm'] },
+    filters: { 'Data Maps': ['btm', 'lml'] },
     openLabel: 'Import Map',
-    title: 'Select the map (.btm) to import',
+    title: 'Select the map (.btm or .lml) to import',
   });
   if (!selected?.[0]) {
     return;
   }
   await context.globalState.update(IMPORT_MAP_BROWSE_DIRECTORY_KEY, getSelectedFileDirectory(selected[0].fsPath));
 
+  const isLml = selected[0].path.toLowerCase().endsWith('.lml');
+  const extension = isLml ? '.lml' : '.btm';
   let plan: MapImportPlan;
   try {
-    plan = planMapImport(selected[0].fsPath);
+    plan = isLml ? planLmlImport(selected[0].fsPath) : planMapImport(selected[0].fsPath);
   } catch (error) {
     vscode.window.showErrorMessage(`Could not import "${selected[0].fsPath}": ${error instanceof Error ? error.message : String(error)}`);
     return;
@@ -234,6 +242,12 @@ export async function importExistingMap(value: CommandTarget, onChanged: () => v
     }
   }
   if (conflicts.length > 0) {
+    if (isLml) {
+      vscode.window.showErrorMessage(
+        `LML import would replace existing schemas: ${conflicts.map((conflict) => conflict.relativePath).join(', ')}. Import into a separate mapper project to keep existing maps unchanged.`
+      );
+      return;
+    }
     const overwrite = 'Overwrite';
     const keep = 'Keep Existing';
     const choice = await vscode.window.showWarningMessage(
@@ -253,14 +267,15 @@ export async function importExistingMap(value: CommandTarget, onChanged: () => v
   }
 
   for (const file of filesToWrite) {
+    await vscode.workspace.fs.createDirectory(vscode.Uri.joinPath(file.uri, '..'));
     await vscode.workspace.fs.writeFile(file.uri, file.data);
   }
   const existingNames = await readDirectoryNames(projectUri);
-  const mapUri = vscode.Uri.joinPath(projectUri, getDuplicateSafeName(plan.mapName, '.btm', existingNames));
+  const mapUri = vscode.Uri.joinPath(projectUri, getDuplicateSafeName(plan.mapName, extension, existingNames));
   await vscode.workspace.fs.writeFile(mapUri, Buffer.from(plan.mapContent, 'utf8'));
   onChanged();
 
-  const summary = `Imported "${plan.mapName}.btm" with ${plan.schemaFiles.length} schema file(s).`;
+  const summary = `Imported "${plan.mapName}${extension}" with ${plan.schemaFiles.length} schema file(s).`;
   if (plan.warnings.length > 0) {
     vscode.window.showWarningMessage(`${summary} ${plan.warnings.join(' ')}`);
   } else {

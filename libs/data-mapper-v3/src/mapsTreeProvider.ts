@@ -23,16 +23,15 @@ export class MapsTreeProvider implements vscode.TreeDataProvider<MapTreeItem> {
       return [];
     }
 
-    // Find all .btm files in workspace
-    const btmFiles = await vscode.workspace.findFiles('**/*.btm', '**/node_modules/**', 100);
+    const mapFiles = await vscode.workspace.findFiles('**/*.{btm,lml}', '**/{node_modules,workflow-designtime}/**', 100);
 
-    if (btmFiles.length === 0) {
+    if (mapFiles.length === 0) {
       return [];
     }
 
-    return btmFiles
+    return mapFiles
       .map((uri) => {
-        const fileName = path.basename(uri.fsPath, '.btm');
+        const fileName = path.basename(uri.fsPath, path.extname(uri.fsPath));
         const item = new MapTreeItem(fileName, uri, vscode.TreeItemCollapsibleState.None);
         return item;
       })
@@ -47,12 +46,14 @@ class MapTreeItem extends vscode.TreeItem {
     public readonly collapsibleState: vscode.TreeItemCollapsibleState
   ) {
     super(label, collapsibleState);
+    const isLml = resourceUri.path.toLowerCase().endsWith('.lml');
     this.iconPath = new vscode.ThemeIcon('file');
+    this.description = isLml ? 'LML' : undefined;
     this.command = {
       command: 'vscode.openWith',
       title: 'Open Map',
-      arguments: [resourceUri, 'biztalkDataMapper.mapEditor'],
+      arguments: [resourceUri, isLml ? 'biztalkDataMapper.lmlEditor' : 'biztalkDataMapper.mapEditor'],
     };
-    this.contextValue = 'btmFile';
+    this.contextValue = isLml ? 'lmlFile' : 'btmFile';
   }
 }

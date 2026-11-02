@@ -380,8 +380,11 @@ describe('BtmSerializer', () => {
     expect(serialized).toContain('Label="Multiply values"');
     expect(serialized).toContain('Comments="Used by order totals"');
     // Cell coords (53, 213) are converted to pixel space
-    expect(func.x).toBe((53 - 48) * 14 + 150); // 220
-    expect(func.y).toBe((213 - 205) * 12 + 40); // 136
+    expect(func.x).toBe(200);
+    expect(func.y).toBe(104);
+    const reloaded = serializer.deserialize(serialized).pages[0].functoids[0];
+    expect(reloaded.x).toBe(200);
+    expect(reloaded.y).toBe(104);
     expect(func.category).toBe(FunctoidCategory.Math);
 
     // Parameters from Input-Parameters

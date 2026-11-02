@@ -1,4 +1,7 @@
-import { describe, test, expect, beforeEach, vi } from 'vitest';
+import * as fs from 'node:fs/promises';
+import * as os from 'node:os';
+import * as path from 'node:path';
+import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import * as vscode from 'vscode';
 import { MapEditorProvider } from '../src/mapEditorProvider';
 import { BtmSerializer } from '../src/schema/btmSerializer';
@@ -6,7 +9,7 @@ import type { MapDocument } from '../src/model/mapModel';
 import { outputChannel, window as mockWindow } from './__mocks__/vscode';
 
 vi.mock('vscode', async () => {
-  const base = await vi.importActual<typeof import('vscode')>('vscode');
+  const base = await vi.importActual<typeof vscode>('./__mocks__/vscode');
   return {
     ...base,
     Range: class {},
@@ -23,6 +26,7 @@ vi.mock('vscode', async () => {
 vi.mock('../src/worker/compilerWorkerClient', () => ({ CompilerWorkerClient: class {} }));
 
 const serializer = new BtmSerializer();
+let root: string;
 const xsd = (field: string) =>
   `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:element name="Root"><xs:complexType><xs:sequence><xs:element name="${field}" type="xs:string"/></xs:sequence></xs:complexType></xs:element></xs:schema>`;
 const confirm = vi.mocked<(message: string, options: vscode.MessageOptions, ...items: string[]) => Thenable<string | undefined>>(
@@ -39,9 +43,16 @@ async function setup(inlineSource = false, existingSide?: 'source' | 'target') {
     dispose: vi.fn(),
   } as unknown as vscode.FileSystemWatcher);
   vi.mocked(vscode.workspace.fs.readDirectory).mockResolvedValue([]);
-  vi.mocked(vscode.workspace.fs.createDirectory).mockResolvedValue(undefined);
+  vi.mocked(vscode.workspace.fs.createDirectory).mockImplementation(async (uri) => {
+    await fs.mkdir(uri.fsPath, { recursive: true });
+  });
+  vi.mocked(vscode.workspace.fs.writeFile).mockImplementation(async (uri, contents) => {
+    await fs.writeFile(uri.fsPath, contents);
+  });
   vi.mocked(vscode.workspace.fs.copy).mockResolvedValue(undefined);
-  vi.mocked(vscode.workspace.fs.delete).mockResolvedValue(undefined);
+  vi.mocked(vscode.workspace.fs.delete).mockImplementation(async (uri) => {
+    await fs.rm(uri.fsPath, { force: true });
+  });
   const initial = serializer.createNew('', '', 'Replacement');
   if (inlineSource) {
     initial.sourceSchema.inlineSchemaXml = xsd('Drop');
@@ -59,7 +70,7 @@ async function setup(inlineSource = false, existingSide?: 'source' | 'target') {
     ],
   })) as MapDocument['pages'];
   let text = serializer.serialize(initial);
-  const document = { uri: vscode.Uri.file('replacement-test.btm'), version: 1, lineCount: 1, getText: () => text };
+  const document = { uri: vscode.Uri.file(path.join(root, 'replacement-test.btm')), version: 1, lineCount: 1, getText: () => text };
   const onDidReceiveMessage = vi.fn();
   const postMessage = vi.fn().mockResolvedValue(true);
   const onDidDispose = vi.fn();
@@ -67,8 +78,9 @@ async function setup(inlineSource = false, existingSide?: 'source' | 'target') {
     webview: { options: {}, html: '', cspSource: '', onDidReceiveMessage, postMessage, asWebviewUri: () => vscode.Uri.file('script') },
     onDidDispose,
   } as unknown as vscode.WebviewPanel;
-  vi.mocked(vscode.workspace.fs.readFile).mockResolvedValue(Buffer.from(xsd('Keep')));
-  vi.mocked(vscode.window.showOpenDialog).mockResolvedValue([vscode.Uri.file('new.xsd')]);
+  await fs.writeFile(path.join(root, 'new.xsd'), xsd('Keep'));
+  vi.mocked(vscode.workspace.fs.readFile).mockImplementation((uri) => fs.readFile(uri.fsPath));
+  vi.mocked(vscode.window.showOpenDialog).mockResolvedValue([vscode.Uri.file(path.join(root, 'new.xsd'))]);
   const workspaceState = {
     get: vi.fn(),
     update: vi.fn().mockResolvedValue(undefined),
@@ -102,9 +114,14 @@ async function setup(inlineSource = false, existingSide?: 'source' | 'target') {
 }
 
 describe('schema replacement host transaction', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.resetAllMocks();
     mockWindow.createOutputChannel.mockReturnValue(outputChannel);
+    root = await fs.realpath(await fs.mkdtemp(path.join(os.tmpdir(), 'btm-schema-replacement-')));
+  });
+
+  afterEach(async () => {
+    await fs.rm(root, { recursive: true, force: true });
   });
 
   test.each(['source', 'target'] as const)('confirms removal across all pages and applies %s as one undoable edit', async (side) => {
@@ -144,7 +161,8 @@ describe('schema replacement host transaction', () => {
         data: expect.objectContaining({ [side === 'source' ? 'sourceSchema' : 'targetSchema']: expect.any(Object) }),
       })
     );
-    expect(vscode.workspace.fs.readFile).toHaveBeenCalledTimes(1);
+    expect(vscode.workspace.fs.readFile).toHaveBeenCalledTimes(2);
+    expect(await fs.readFile(path.join(root, 'Schemas/new.xsd'), 'utf8')).toBe(xsd('Keep'));
   });
 
   test('removes a copied schema when replacement is cancelled', async () => {
@@ -196,13 +214,10 @@ describe('schema replacement host transaction', () => {
         vi.mocked(vscode.workspace.fs.readFile).mockResolvedValue(Buffer.from('<bad/>'));
       }
       if (failure === 'dependency') {
-        vi.mocked(vscode.workspace.fs.readFile)
-          .mockResolvedValueOnce(
-            Buffer.from(
-              '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:include schemaLocation="missing.xsd"/><xs:element name="Root"/></xs:schema>'
-            )
-          )
-          .mockRejectedValue(new Error('Missing dependency'));
+        await fs.writeFile(
+          path.join(root, 'new.xsd'),
+          '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:include schemaLocation="missing.xsd"/><xs:element name="Root"/></xs:schema>'
+        );
       }
       if (failure === 'edit') {
         vi.mocked(vscode.workspace.applyEdit).mockResolvedValue(false);
@@ -234,9 +249,10 @@ describe('schema replacement host transaction', () => {
         return [vscode.Uri.file('new.xsd')];
       });
     } else if (phase === 'parse') {
-      vi.mocked(vscode.workspace.fs.readFile).mockImplementation(async () => {
+      vi.mocked(vscode.workspace.fs.readFile).mockImplementation(async (uri) => {
+        const content = await fs.readFile(uri.fsPath);
         stale();
-        return Buffer.from(xsd('Keep'));
+        return content;
       });
     } else {
       confirm.mockImplementation(async () => {
@@ -245,6 +261,9 @@ describe('schema replacement host transaction', () => {
       });
     }
     await host.submit();
+    if (phase === 'parse') {
+      expect(vscode.workspace.fs.readFile).toHaveBeenCalledTimes(2);
+    }
     expect(vscode.workspace.applyEdit).not.toHaveBeenCalled();
     expect(host.postMessage).not.toHaveBeenCalled();
   });
@@ -275,28 +294,26 @@ describe('schema replacement host transaction', () => {
 
   test('adding the first schema loads includes and skips confirmation when all paths survive', async () => {
     const host = await setup();
-    vi.mocked(vscode.workspace.fs.readFile)
-      .mockResolvedValueOnce(
-        Buffer.from(
-          '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:include schemaLocation="types.xsd"/><xs:element name="Root" type="Fields"/></xs:schema>'
-        )
-      )
-      .mockResolvedValueOnce(
-        Buffer.from(
-          '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:complexType name="Fields"><xs:sequence><xs:element name="Keep" type="xs:string"/><xs:element name="Drop" type="xs:string"/></xs:sequence></xs:complexType></xs:schema>'
-        )
-      );
+    await fs.writeFile(
+      path.join(root, 'new.xsd'),
+      '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:include schemaLocation="types.xsd"/><xs:element name="Root" type="Fields"/></xs:schema>'
+    );
+    await fs.writeFile(
+      path.join(root, 'types.xsd'),
+      '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:complexType name="Fields"><xs:sequence><xs:element name="Keep" type="xs:string"/><xs:element name="Drop" type="xs:string"/></xs:sequence></xs:complexType></xs:schema>'
+    );
     await host.submit();
     expect(confirm).not.toHaveBeenCalled();
     expect(vscode.workspace.applyEdit).toHaveBeenCalledTimes(1);
     expect(serializer.deserialize(host.document.getText()).pages.every((page) => page.links.length === 2)).toBe(true);
+    expect(await fs.readFile(path.join(root, 'Schemas/types.xsd'), 'utf8')).toContain('name="Fields"');
   });
 
   test.each(['source', 'target'] as const)('requires acceptance before replacing %s even when all links match', async (side) => {
     const host = await setup(false, side);
     const before = host.document.getText();
     const compatibleSchema = xsd('Keep').replace('</xs:sequence>', '<xs:element name="Drop" type="xs:string"/></xs:sequence>');
-    vi.mocked(vscode.workspace.fs.readFile).mockResolvedValue(Buffer.from(compatibleSchema));
+    await fs.writeFile(path.join(root, 'new.xsd'), compatibleSchema);
     let accept!: (choice: string | undefined) => void;
     let warningShown!: () => void;
     const shown = new Promise<void>((resolve) => {
@@ -355,7 +372,7 @@ describe('schema replacement host transaction', () => {
     expect(sourceField()).toBe('Drop');
     await host.changeDocument(replacement);
     expect(sourceField()).toBe('Keep');
-    expect(vscode.workspace.fs.readFile).toHaveBeenCalledTimes(1);
+    expect(vscode.workspace.fs.readFile).toHaveBeenCalledTimes(2);
   });
 
   test('replacing target preserves the unrelated inline source schema', async () => {

@@ -48,12 +48,26 @@
           }
         ],
         "priority": "default"
+      },
+      {
+        "viewType": "biztalkDataMapper.lmlEditor",
+        "displayName": "LML Data Mapper",
+        "selector": [
+          {
+            "filenamePattern": "*.lml"
+          }
+        ],
+        "priority": "default"
       }
     ],
     "commands": [
       {
         "command": "biztalkDataMapper.showLogs",
         "title": "Logic App: Show Data Mapper Logs"
+      },
+      {
+        "command": "biztalkDataMapper.startLmlRuntime",
+        "title": "Logic App: Start LML Design-Time Runtime"
       },
       {
         "command": "biztalkDataMapper.newMap",
@@ -124,12 +138,12 @@
       "view/item/context": [
         {
           "command": "biztalkDataMapper.openDataMap",
-          "when": "view == biztalkDataMapper.mapsView && viewItem == btmFile",
+          "when": "view == biztalkDataMapper.mapsView && (viewItem == btmFile || viewItem == lmlFile)",
           "group": "inline"
         },
         {
           "command": "biztalkDataMapper.editDataMap",
-          "when": "view == biztalkDataMapper.mapsView && viewItem == btmFile",
+          "when": "view == biztalkDataMapper.mapsView && (viewItem == btmFile || viewItem == lmlFile)",
           "group": "navigation"
         }
       ],
@@ -151,12 +165,12 @@
         },
         {
           "command": "biztalkDataMapper.openDataMap",
-          "when": "resourceExtname == .btm",
+          "when": "resourceExtname == .btm || resourceExtname == .lml",
           "group": "navigation@10"
         },
         {
           "command": "biztalkDataMapper.editDataMap",
-          "when": "resourceExtname == .btm",
+          "when": "resourceExtname == .btm || resourceExtname == .lml",
           "group": "navigation@11"
         }
       ],
@@ -205,18 +219,22 @@
     "publish:framework-transform": "dotnet build \".\\tools\\compiler-worker\\BizTalk.DataMapper.FrameworkTransform\\BizTalk.DataMapper.FrameworkTransform.csproj\" --configuration Release --output \".\\tools\\compiler-worker\\runtime\\win-x64\\framework-transform\"",
     "publish:worker": "dotnet publish \".\\tools\\compiler-worker\\BizTalk.DataMapper.Worker\\BizTalk.DataMapper.Worker.csproj\" --configuration Release --runtime win-x64 --self-contained true -p:PublishSingleFile=false --output \".\\tools\\compiler-worker\\runtime\\win-x64\"",
     "publish:worker:debug": "dotnet publish \".\\tools\\compiler-worker\\BizTalk.DataMapper.Worker\\BizTalk.DataMapper.Worker.csproj\" --configuration Debug --runtime win-x64 --self-contained true -p:PublishSingleFile=false --output \".\\tools\\compiler-worker\\runtime\\win-x64\"",
-    "bundle": "webpack --mode production --config webpack.extension.config.js && webpack --mode production --config webpack.webview.config.js",
-    "bundle:dev": "webpack --mode development --config webpack.extension.config.js && webpack --mode development --config webpack.webview.config.js",
+    "bundle": "webpack --mode production --config webpack.extension.config.js && webpack --mode production --config webpack.webview.config.js && webpack --mode production --config webpack.lml.config.js",
+    "bundle:dev": "webpack --mode development --config webpack.extension.config.js && webpack --mode development --config webpack.webview.config.js && webpack --mode development --config webpack.lml.config.js",
     "build:extension": "pnpm run bundle",
     "debug:prepare": "pnpm run publish:framework-transform && pnpm run publish:worker:debug && pnpm run bundle:dev",
     "compile": "tsc --noEmit -p tsconfig.json && pnpm run compile:webview",
-    "compile:webview": "tsc --noEmit -p webview/tsconfig.json",
+    "compile:webview": "tsc --noEmit -p webview/tsconfig.json && tsc --noEmit -p webview/tsconfig.lml.json",
+    "bundle:lml:dev": "webpack --mode development --config webpack.lml.config.js",
     "watch": "tsc -watch -p ./tsconfig.json",
     "watch:webview": "webpack --watch --mode development --config webpack.webview.config.js",
     "lint": "eslint src",
     "generate:profile-map": "node scripts/generate-profile-map.js",
-    "test": "vitest run",
-    "test:extension-unit": "pnpm run test",
+    "test": "pnpm run test:extension-unit && pnpm run test:lml:shared",
+    "test:extension-unit": "vitest run --config vitest.config.ts",
+    "test:lml": "pnpm run test:lml:host && pnpm run test:lml:shared",
+    "test:lml:host": "vitest run --config vitest.config.ts test/lmlEditorHost.test.ts test/lmlRuntime.test.ts test/lmlImport.test.ts",
+    "test:lml:shared": "pnpm --dir ../data-mapper-v2 exec vitest run --config vitest.config.ts",
     "test:native": "node test/native/run.cjs",
     "test:webview": "pnpm run compile:webview && webpack --mode development --config webpack.webview.config.js && node test/webview-smoke/run.js",
     "bundle:webview:dev": "webpack --mode development --config webpack.webview.config.js",
@@ -234,6 +252,9 @@
     "cross-env": "^7.0.3",
     "css-loader": "^6.8.1",
     "jsdom": "^24.1.3",
+    "less": "4.2.0",
+    "less-loader": "12.2.0",
+    "mini-css-extract-plugin": "2.9.2",
     "monocart-coverage-reports": "^2.13.2",
     "style-loader": "^3.3.3",
     "ts-loader": "^9.5.1",
@@ -243,11 +264,19 @@
   "dependencies": {
     "@fluentui/react-components": "^9.70.0",
     "@fluentui/react-icons": "^2.0.306",
+    "@microsoft/logic-apps-data-mapper-v2": "workspace:^",
+    "@microsoft/logic-apps-shared": "workspace:^",
+    "@reduxjs/toolkit": "1.8.5",
+    "@xyflow/react": "^12.3.5",
     "fast-xml-parser": "^4.5.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-redux": "^8.0.2",
+    "react-universal-interface": "^0.6.2",
+    "redux-undo": "1.1.0",
     "tslib": "^2.8.1",
     "xmlbuilder2": "^3.1.1",
-    "xslt-processor": "^5.0.11"
+    "xslt-processor": "^5.0.11",
+    "yaml": "2.8.1"
   }
 }

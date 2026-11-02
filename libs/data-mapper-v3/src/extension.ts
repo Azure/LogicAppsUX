@@ -4,24 +4,36 @@
 
 import * as vscode from 'vscode';
 import { MapEditorProvider } from './mapEditorProvider';
+import { LmlDesignTimeRuntimeManager } from './lml/designTimeRuntime';
+import { LmlEditorProvider } from './lml/lmlEditorProvider';
+import { lmlEditorViewType } from './lml/editorProtocol';
 import { MapsTreeProvider } from './mapsTreeProvider';
 import { disposeDataMapperLogger, getDataMapperLogger } from './logger';
 import { SCHEMA_BROWSE_DIRECTORY_KEY, getSelectedFileDirectory } from './browseLocation';
 import { addDataMap, addMapperProject, importExistingMap, openExistingMapper } from './projectCommands';
 import { copySchemaWithDependencies, getWorkspaceRoot, schemasFolderName } from './workspaceStructure';
 
+let lmlRuntimeManager: LmlDesignTimeRuntimeManager | undefined;
+
 function resourceUri(value: vscode.Uri | { resourceUri?: vscode.Uri } | undefined): vscode.Uri | undefined {
   return value instanceof vscode.Uri ? value : value?.resourceUri;
 }
 
 async function openDataMap(uri: vscode.Uri): Promise<void> {
-  await vscode.commands.executeCommand('vscode.openWith', uri, MapEditorProvider.viewType);
+  await vscode.commands.executeCommand(
+    'vscode.openWith',
+    uri,
+    uri.path.toLowerCase().endsWith('.lml') ? lmlEditorViewType : MapEditorProvider.viewType
+  );
 }
 
 export function activate(context: vscode.ExtensionContext) {
   const logger = getDataMapperLogger();
+  const runtimeManager = new LmlDesignTimeRuntimeManager((message) => logger.info(message));
+  lmlRuntimeManager = runtimeManager;
   logger.info('Data Mapper extension activating.');
   const provider = MapEditorProvider.register(context);
+  context.subscriptions.push(LmlEditorProvider.register(context, runtimeManager));
 
   // Register the workspace maps view in the sidebar.
   const mapsTreeProvider = new MapsTreeProvider();
@@ -32,6 +44,23 @@ export function activate(context: vscode.ExtensionContext) {
   // Register commands
   context.subscriptions.push(
     vscode.commands.registerCommand('biztalkDataMapper.showLogs', () => logger.show(true)),
+    vscode.commands.registerCommand('biztalkDataMapper.startLmlRuntime', async (value?: vscode.Uri | { resourceUri?: vscode.Uri }) => {
+      const uri = resourceUri(value) ?? vscode.window.activeTextEditor?.document.uri;
+      if (!uri || uri.scheme !== 'file' || !uri.path.toLowerCase().endsWith('.lml')) {
+        vscode.window.showWarningMessage('Select a local LML map before starting its design-time runtime.');
+        return;
+      }
+      if (!vscode.workspace.isTrusted) {
+        vscode.window.showWarningMessage('Trust this workspace before starting the LML design-time runtime.');
+        return;
+      }
+      try {
+        const runtime = await runtimeManager.ensureStarted(getWorkspaceRoot(uri).fsPath);
+        vscode.window.showInformationMessage(`LML design-time runtime ready at ${runtime.baseUrl}.`);
+      } catch (error) {
+        vscode.window.showErrorMessage(`Could not start LML runtime: ${error instanceof Error ? error.message : String(error)}`);
+      }
+    }),
     vscode.commands.registerCommand('biztalkDataMapper.newMap', () => addMapperProject(refreshMaps)),
 
     vscode.commands.registerCommand('biztalkDataMapper.addDataMap', (value?: vscode.Uri | { resourceUri?: vscode.Uri }) =>
@@ -102,6 +131,13 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand('biztalkDataMapper.openMap', () => openExistingMapper(refreshMaps)),
 
     vscode.commands.registerCommand('biztalkDataMapper.compileMap', async () => {
+      if (await LmlEditorProvider.executeActiveEditorCommand('compile')) {
+        return;
+      }
+      if (vscode.window.activeTextEditor?.document.uri.path.toLowerCase().endsWith('.lml')) {
+        vscode.window.showWarningMessage('Open the LML file with the LML Data Mapper editor before compiling.');
+        return;
+      }
       logger.show(true);
       logger.info('Compile command selected.');
       if (!(await MapEditorProvider.executeActiveEditorCommand('executeCompile'))) {
@@ -110,6 +146,13 @@ export function activate(context: vscode.ExtensionContext) {
     }),
 
     vscode.commands.registerCommand('biztalkDataMapper.testMap', async () => {
+      if (await LmlEditorProvider.executeActiveEditorCommand('test')) {
+        return;
+      }
+      if (vscode.window.activeTextEditor?.document.uri.path.toLowerCase().endsWith('.lml')) {
+        vscode.window.showWarningMessage('Open the LML file with the LML Data Mapper editor before testing.');
+        return;
+      }
       logger.show(true);
       logger.info('Test Map command selected.');
       if (!(await MapEditorProvider.executeActiveEditorCommand('executeTestMap'))) {
@@ -128,13 +171,16 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(provider);
 
-  // Watch for .btm file changes to refresh the tree
-  const watcher = vscode.workspace.createFileSystemWatcher('**/*.btm');
+  const watcher = vscode.workspace.createFileSystemWatcher('**/*.{btm,lml}');
   watcher.onDidCreate(() => mapsTreeProvider.refresh());
   watcher.onDidDelete(() => mapsTreeProvider.refresh());
   context.subscriptions.push(watcher);
+  context.subscriptions.push({ dispose: () => runtimeManager.dispose().catch(() => logger.warn('LML runtime cleanup failed.')) });
   context.subscriptions.push({ dispose: disposeDataMapperLogger });
   logger.info('Data Mapper extension ready.');
 }
 
-export function deactivate() {}
+export async function deactivate() {
+  await lmlRuntimeManager?.dispose();
+  lmlRuntimeManager = undefined;
+}

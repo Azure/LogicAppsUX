@@ -39,7 +39,12 @@ function escapeXmlAttribute(value: string): string {
 }
 
 // Collects a schema and everything it imports/includes, following references with the same resolution the editor uses.
-function collectSchemaClosure(rootPath: string, closure: Map<string, SchemaClosureFile>, warnings: string[]): void {
+function collectSchemaClosure(
+  rootPath: string,
+  closure: Map<string, SchemaClosureFile>,
+  warnings: string[],
+  getDependencies?: (filePath: string, content: string) => string[]
+): void {
   const key = pathKey(rootPath);
   if (closure.has(key)) {
     return;
@@ -55,8 +60,11 @@ function collectSchemaClosure(rootPath: string, closure: Map<string, SchemaClosu
 
   let locations: string[];
   try {
-    locations = getSchemaDependencyLocations(xml);
-  } catch {
+    locations = getDependencies ? getDependencies(rootPath, xml) : getSchemaDependencyLocations(xml);
+  } catch (error) {
+    if (getDependencies) {
+      throw error;
+    }
     warnings.push(`Could not parse schema "${path.basename(rootPath)}" to find its references.`);
     return;
   }
@@ -65,13 +73,15 @@ function collectSchemaClosure(rootPath: string, closure: Map<string, SchemaClosu
     if (isRemoteLocation(location)) {
       continue;
     }
-    const resolvedPath = resolveSchemaFilePath(path.dirname(rootPath), location);
+    const resolvedPath = getDependencies
+      ? path.resolve(path.dirname(rootPath), location.replace(/\\/g, path.sep))
+      : resolveSchemaFilePath(path.dirname(rootPath), location);
     if (!fs.existsSync(resolvedPath)) {
       warnings.push(`Schema "${path.basename(rootPath)}" references "${location}", which could not be found.`);
       continue;
     }
     file.edges.push({ location, resolvedPath: path.resolve(resolvedPath) });
-    collectSchemaClosure(resolvedPath, closure, warnings);
+    collectSchemaClosure(resolvedPath, closure, warnings, getDependencies);
   }
 }
 
@@ -166,6 +176,27 @@ export interface SchemaImportPlan {
   rootRelativePath: string;
   schemaFiles: PlannedSchemaFile[];
   warnings: string[];
+}
+
+export function planSchemaCollectionImport(
+  schemaPaths: string[],
+  getDependencies?: (filePath: string, content: string) => string[]
+): {
+  schemaFiles: PlannedSchemaFile[];
+  rootRelativePaths: string[];
+  warnings: string[];
+} {
+  const warnings: string[] = [];
+  const closure = new Map<string, SchemaClosureFile>();
+  for (const schemaPath of schemaPaths) {
+    collectSchemaClosure(schemaPath, closure, warnings, getDependencies);
+  }
+  const { schemaFiles, relativePaths } = buildSchemaFiles(closure);
+  return {
+    schemaFiles,
+    rootRelativePaths: schemaPaths.map((schemaPath) => relativePaths.get(pathKey(schemaPath)) as string),
+    warnings,
+  };
 }
 
 // Builds the set of files needed to bring a single schema into a mapper project: the schema and everything it imports/includes.

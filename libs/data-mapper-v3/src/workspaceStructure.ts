@@ -47,7 +47,7 @@ export function getWorkspaceRoot(resource: vscode.Uri): vscode.Uri {
     return vscode.Uri.joinPath(resource, '..');
   }
   const extension = path.posix.extname(baseName).toLocaleLowerCase();
-  if (extension === '.btm' || extension === '.xsd') {
+  if (extension === '.btm' || extension === '.lml' || extension === '.xsd') {
     return vscode.Uri.joinPath(resource, '..');
   }
   return resource;
@@ -88,7 +88,8 @@ function isMapperProjectEntries(entries: [string, vscode.FileType][]): boolean {
   return entries.some(
     ([name, type]) =>
       (type & vscode.FileType.Directory && name.toLocaleLowerCase() === schemasFolderName.toLocaleLowerCase()) ||
-      name.toLocaleLowerCase().endsWith('.btm')
+      name.toLocaleLowerCase().endsWith('.btm') ||
+      name.toLocaleLowerCase().endsWith('.lml')
   );
 }
 
@@ -96,7 +97,7 @@ export async function isMapperProject(folderUri: vscode.Uri): Promise<boolean> {
   return isMapperProjectEntries(await readDirectoryEntries(folderUri));
 }
 
-// A mapper project is a workspace folder (or one of its direct child folders) holding a Schemas folder or a .btm file.
+// A mapper project holds a Schemas folder or a map document.
 export async function findMapperProjects(): Promise<MapperProject[]> {
   const projects: MapperProject[] = [];
   for (const workspaceFolder of vscode.workspace.workspaceFolders ?? []) {
@@ -104,7 +105,7 @@ export async function findMapperProjects(): Promise<MapperProject[]> {
     if (isMapperProjectEntries(entries)) {
       projects.push({ name: workspaceFolder.name, uri: workspaceFolder.uri });
     }
-    const ignoredFolders = new Set([schemasFolderName.toLocaleLowerCase(), generatedFolderName, 'node_modules']);
+    const ignoredFolders = new Set([schemasFolderName.toLocaleLowerCase(), generatedFolderName, 'node_modules', 'workflow-designtime']);
     for (const [name, type] of entries) {
       if (!(type & vscode.FileType.Directory) || name.startsWith('.') || ignoredFolders.has(name.toLocaleLowerCase())) {
         continue;

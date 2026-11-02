@@ -40,6 +40,9 @@ export const workspace = {
         dispose: vi.fn()
     })),
     findFiles: vi.fn(),
+    onDidChangeTextDocument: vi.fn(() => ({ dispose: vi.fn() })),
+    onWillSaveTextDocument: vi.fn(() => ({ dispose: vi.fn() })),
+    onDidSaveTextDocument: vi.fn(() => ({ dispose: vi.fn() })),
     asRelativePath: vi.fn()
 };
 

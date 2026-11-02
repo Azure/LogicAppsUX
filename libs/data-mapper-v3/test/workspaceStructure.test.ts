@@ -7,6 +7,8 @@ describe('data map workspace structure', () => {
     expect(getDuplicateSafeName('map', '.btm', [])).toBe('map.btm');
     expect(getDuplicateSafeName('map', '.btm', ['map.btm'])).toBe('map(1).btm');
     expect(getDuplicateSafeName('map', '.btm', ['MAP.BTM', 'map(1).btm', 'map(2).btm'])).toBe('map(3).btm');
+    expect(getDuplicateSafeName('map', '.lml', ['map.btm'])).toBe('map.lml');
+    expect(getDuplicateSafeName('map', '.lml', ['MAP.LML', 'map.btm'])).toBe('map(1).lml');
   });
 
   test.each(['', '   ', '.', '..', 'bad/name', 'bad\\name', 'bad:name', 'trailing.', 'trailing ', 'CON', 'nul.txt', 'COM1'])(
@@ -27,8 +29,8 @@ describe('data map workspace structure', () => {
     expect(getWorkspaceRoot(workspaceUri).toString()).toBe(workspaceUri.toString());
   });
 
-  test('preserves the URI scheme when finding a map workspace root', () => {
-    const mapUri = vscode.Uri.parse('vscode-remote://ssh-remote+host/workspaces/Customer.Maps/map.btm');
+  test.each(['btm', 'lml'])('preserves the URI scheme when finding a %s workspace root', (extension) => {
+    const mapUri = vscode.Uri.parse(`vscode-remote://ssh-remote+host/workspaces/Customer.Maps/map.${extension}`);
 
     expect(getWorkspaceRoot(mapUri).toString()).toBe('vscode-remote://ssh-remote+host/workspaces/Customer.Maps');
     expect(getWorkspaceRootForMap(mapUri).toString()).toBe('vscode-remote://ssh-remote+host/workspaces/Customer.Maps');
