@@ -11,6 +11,7 @@ import * as os from 'node:os';
 import * as path from 'node:path';
 import { validateAndInstallBinaries } from '../app/commands/binaries/validateAndInstallBinaries';
 import { ensureWorkspace } from '../app/commands/ensureWorkspace';
+import { registerFuncHostTaskEvents } from '../app/utils/funcCoreTools/funcHostTask';
 import { getGlobalSetting } from '../app/utils/vsCodeConfig/settings';
 import {
   bootstrapRequest,
@@ -297,6 +298,17 @@ describe('activate design-time startup', () => {
     vi.mocked(updateGlobalSetting).mockResolvedValue(undefined);
 
     ext.designTimeInstances.clear();
+  });
+
+  it.each(['0', '1'])('registers owning task events only for normal activation (minimal=%s)', async (minimal) => {
+    vi.stubEnv('LA_E2E_CLI_MINIMAL_ACTIVATION', minimal);
+    try {
+      await activate(createExtensionContext());
+      await Promise.all(backgroundOperations);
+      expect(registerFuncHostTaskEvents).toHaveBeenCalledTimes(minimal === '0' ? 1 : 0);
+    } finally {
+      vi.unstubAllEnvs();
+    }
   });
 
   it('does not block activation while the auto-start prompt is unanswered', async () => {

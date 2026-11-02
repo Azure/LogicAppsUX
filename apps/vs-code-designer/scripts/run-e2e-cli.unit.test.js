@@ -1165,6 +1165,8 @@ function testMsnWeatherLifecycleRunEnvCarriesOwnedRoot() {
   assert.strictEqual(env.LA_E2E_CLI_WORKSPACE_PARENT, workspaceParent);
   assert.strictEqual(env.LA_E2E_CLI_PROFILE_PHASE, 'msn-weather-run');
   assert.strictEqual(env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE, 'msn-weather-run');
+  assert.strictEqual(env.LA_E2E_CLI_MINIMAL_ACTIVATION, '0', 'Real MSN debug must register owning Functions task-process listeners');
+  assert.strictEqual(env.LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE, '1', 'Keep the separately owned workspace preparation unchanged');
   assert.deepStrictEqual(JSON.parse(env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_CASE), entry);
   assert.strictEqual(env.LA_E2E_CLI_STARTUP_RESOURCE, entry.workspaceFilePath);
   assert.strictEqual(env.LA_E2E_CLI_AZURE_SUBSCRIPTION_ID, 'sub');
