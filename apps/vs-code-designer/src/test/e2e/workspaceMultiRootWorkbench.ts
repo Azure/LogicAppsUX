@@ -12,13 +12,111 @@ import { diagnosticState } from '../../../scripts/e2e-cli-diagnostics';
 import {
   boundedCdp,
   clickContextMenuText,
-  command,
+  command as workbenchCommand,
   poll,
   readContextMenuState,
   workbenchVisibleScript as visibleScript,
 } from './workbenchCdpActions';
 
-export { boundedCdp, clickText, command, poll } from './workbenchCdpActions';
+export { boundedCdp, clickText, poll } from './workbenchCdpActions';
+
+// The debug quick-access producer uses a configuration label and a separate
+// workspace description. The parenthesized label belongs to the debug toolbar
+// dropdown, not to Debug: Select and Start Debugging.
+export function readQuickInputState(cdp: CdpEvaluator, expected?: { name: string; workspace: string }) {
+  return cdp.evaluate<{
+    quickInputVisible: boolean;
+    text: string;
+    active: boolean;
+    activeElement: { tag: string; role: string | null; className: string };
+    count: number;
+    capped: boolean;
+    candidates: Array<{ text: string; workspace: string; enabled: boolean; hitTestable: boolean }>;
+    matches: number;
+    point: Point | null;
+  }>(
+    undefined,
+    `(() => { ${visibleScript}
+      const widgets=Array.from(document.querySelectorAll('.quick-input-widget')).filter(visible);
+      const widget=widgets.length===1 ? widgets[0] : null;
+      const input=widget?.querySelector('input');
+      const rows=widget ? Array.from(widget.querySelectorAll('.quick-input-list .monaco-list-row')).filter(visible) : [];
+      const read=row => {
+        const label=row.querySelector('.label-name'), description=row.querySelector('.label-description');
+        return {text:label ? text(label) : '', workspace:description ? text(description) : '',
+          enabled:!row.disabled && row.getAttribute('aria-disabled')!=='true',
+          hitTestable:!!point(row)};
+      };
+      const candidates=rows.map(read);
+      const expected=${JSON.stringify(expected)};
+      const matches=expected ? rows.filter((row,index) =>
+        candidates[index].text===expected.name && candidates[index].workspace===expected.workspace &&
+        candidates[index].enabled) : [];
+      const active=document.activeElement;
+      return {quickInputVisible:!!widget, text:input?.value || '', active:!!input && active===input,
+        activeElement:{tag:active?.tagName || '', role:active?.getAttribute('role') || null, className:active?.className || ''},
+        count:rows.length, capped:rows.length>12, candidates:candidates.slice(0,12),
+        matches:matches.length, point:matches.length===1 ? point(matches[0]) : null};
+    })()`,
+    { timeoutMs: 500 }
+  );
+}
+
+// Diagnostics only: retain actual input/focus/candidate boundaries for this
+// family without changing shared command selection, input or acceptance.
+export async function command(cdp: CdpEvaluator, title: string, deadline: number): Promise<void> {
+  const capture = async (operationCode: number, error?: unknown) => {
+    try {
+      const state = await readQuickInputState(cdp);
+      trace.emit('multi-root-text-input', error ? 'failure' : 'sample', { state: { operationCode, text: title, lastState: state }, error });
+    } catch {
+      // Secondary state capture must not replace the original command error.
+    }
+  };
+  const observed: CdpEvaluator = {
+    evaluate: cdp.evaluate.bind(cdp),
+    send: async (method, params, options) => {
+      if (method === 'Input.insertText') {
+        await capture(1);
+      }
+      const result = await cdp.send(method, params, options);
+      if (method === 'Input.insertText') {
+        await capture(2);
+      }
+      return result;
+    },
+  };
+  try {
+    await workbenchCommand(observed, title, deadline);
+  } catch (error) {
+    await capture(3, error);
+    throw error;
+  }
+}
+
+export async function selectFolderDebugConfiguration(
+  cdp: CdpEvaluator,
+  expected: { workspaceFilePath: string; folder: string; name: string },
+  deadline: number
+): Promise<void> {
+  const file = expected.workspaceFilePath;
+  const workspace: { folders: Array<{ path: string; name?: string }> } = JSON.parse(fs.readFileSync(file, 'utf8'));
+  const roots = workspace.folders.map((root) => {
+    const physical = path.resolve(path.dirname(file), root.path);
+    return { physical: normalizePhysicalPath(physical), label: root.name ?? path.basename(physical) };
+  });
+  const matches = roots.filter((root) => root.physical === normalizePhysicalPath(expected.folder));
+  assert.equal(matches.length, 1, 'Debug selection requires the exact persisted physical root');
+  assert.equal(new Set(roots.map((root) => root.label)).size, roots.length, 'Ambiguous debug workspace descriptions');
+  const state = await poll(
+    () => readQuickInputState(cdp, { name: expected.name, workspace: matches[0].label }),
+    (state) => state.matches === 1 && state.point !== null,
+    deadline,
+    { operation: 'multi-root-debug-pick' }
+  );
+  assert.ok(state.point);
+  await clickPoint(cdp, state.point);
+}
 
 export interface WorkbenchState {
   timeOrigin: number;

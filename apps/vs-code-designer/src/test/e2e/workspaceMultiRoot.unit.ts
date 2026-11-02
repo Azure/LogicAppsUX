@@ -41,6 +41,9 @@ import {
   assertMapper,
   assertSequentialDebug,
   folderCreateNewProject,
+  readQuickInputState,
+  selectFolderDebugConfiguration,
+  command as multiRootCommand,
   type FolderMenuCheckpoint,
   type DebugEvent,
   readLogicAppRoots,
@@ -420,6 +423,159 @@ function folderMenuFixture(options: { loseFocus?: boolean; noMenu?: boolean } = 
     },
   };
 }
+
+function debugPickerFixture() {
+  const fixture = folderMenuFixture();
+  const widget = fixture.document.querySelector('.quick-input-widget');
+  widget.style.display = 'block';
+  widget.innerHTML = `<input value="debug ">
+    <div class="quick-input-list">
+      <div class="monaco-list-row" data-box="10,30,300,25">
+        <span class="label-name">Attach to Logic App</span><span class="label-description">Other root</span>
+      </div>
+      <div id="target-debug-config" class="monaco-list-row" data-box="10,60,300,25">
+        <span class="label-name">Attach to Logic App</span><span class="label-description">Root alias</span>
+      </div>
+    </div>`;
+  widget.querySelector('input').focus();
+  return fixture;
+}
+
+test('real debug quick-access DOM binds separate exact configuration label and persisted physical-root description', async () => {
+  const f = debugPickerFixture();
+  let clicked = false;
+  f.document.querySelector('#target-debug-config').addEventListener('click', () => {
+    clicked = true;
+  });
+  try {
+    const state = await readQuickInputState(f.cdp, { name: 'Attach to Logic App', workspace: 'Root alias' });
+    assert.equal(state.matches, 1);
+    assert.equal(state.active, true);
+    assert.notEqual(f.document.querySelector('#target-debug-config').textContent.trim(), 'Attach to Logic App (Root alias)');
+    await selectFolderDebugConfiguration(
+      f.cdp,
+      { workspaceFilePath: f.workspaceFilePath, folder: f.folder, name: 'Attach to Logic App' },
+      Date.now() + 2000
+    );
+    assert.equal(clicked, true);
+    assert.deepEqual(
+      f.sent.map((s) => s.method),
+      ['Input.dispatchMouseEvent', 'Input.dispatchMouseEvent', 'Input.dispatchMouseEvent']
+    );
+  } finally {
+    f.dispose();
+  }
+});
+
+for (const kind of ['wrong-name', 'wrong-root', 'duplicate', 'hidden', 'disabled', 'occluded']) {
+  test(`debug quick-access refuses ${kind} configuration instead of selecting by name alone`, async () => {
+    const f = debugPickerFixture();
+    const row = f.document.querySelector('#target-debug-config');
+    if (kind === 'wrong-name') {
+      row.querySelector('.label-name').textContent = 'Other configuration';
+    } else if (kind === 'wrong-root') {
+      row.querySelector('.label-description').textContent = 'Wrong root';
+    } else if (kind === 'duplicate') {
+      const duplicate = row.cloneNode(true);
+      duplicate.setAttribute('data-box', '10,90,300,25');
+      row.parentElement.append(duplicate);
+    } else if (kind === 'hidden') {
+      row.style.display = 'none';
+    } else if (kind === 'disabled') {
+      row.setAttribute('aria-disabled', 'true');
+    } else {
+      f.document.body.insertAdjacentHTML('beforeend', '<div data-box="10,60,300,25">Overlay</div>');
+    }
+    try {
+      await assert.rejects(
+        selectFolderDebugConfiguration(
+          f.cdp,
+          { workspaceFilePath: f.workspaceFilePath, folder: f.folder, name: 'Attach to Logic App' },
+          Date.now() + 80
+        ),
+        /Workbench action deadline exhausted/
+      );
+      assert.deepEqual(f.sent, [], 'No UI input may target an unowned/ambiguous row');
+    } finally {
+      f.dispose();
+    }
+  });
+}
+
+test('debug picker rejects absent physical roots and duplicate persisted aliases before UI input', async () => {
+  const f = debugPickerFixture();
+  try {
+    fs.mkdirSync(path.join(f.root, 'foreign-root'));
+    fs.mkdirSync(path.join(f.root, 'other'));
+    await assert.rejects(
+      selectFolderDebugConfiguration(
+        f.cdp,
+        { workspaceFilePath: f.workspaceFilePath, folder: path.join(f.root, 'foreign-root'), name: 'Attach to Logic App' },
+        Date.now() + 1000
+      ),
+      /exact persisted physical root/
+    );
+    f.writeWorkspace([
+      { path: './physical-first', name: 'Root alias' },
+      { path: './other', name: 'Root alias' },
+    ]);
+    await assert.rejects(
+      selectFolderDebugConfiguration(
+        f.cdp,
+        { workspaceFilePath: f.workspaceFilePath, folder: f.folder, name: 'Attach to Logic App' },
+        Date.now() + 1000
+      ),
+      /Ambiguous debug workspace/
+    );
+    assert.deepEqual(f.sent, []);
+  } finally {
+    f.dispose();
+  }
+});
+
+test('real picker state preserves hashed label/description/input/focus through the bounded diagnostic serializer', async () => {
+  const f = debugPickerFixture();
+  try {
+    const state = await readQuickInputState(f.cdp);
+    const records: string[] = [];
+    createDiagnosticProducer({ sink: (line) => records.push(line) }).emit('multi-root-debug-pick', 'failure', {
+      state: { lastState: state },
+    });
+    const actual = JSON.parse(records[0]);
+    assert.equal(actual.operation, 'multi-root-debug-pick');
+    assert.equal(actual.state.lastState.count, 2);
+    assert.equal(actual.state.lastState.active, true);
+    assert.equal(actual.state.lastState.text.sha256, createHash('sha256').update('debug ').digest('hex'));
+    assert.equal(actual.state.lastState.candidates.items[1].workspace.sha256, createHash('sha256').update('Root alias').digest('hex'));
+    assert.ok(!records[0].includes('Root alias') && !records[0].includes('Attach to Logic App') && !records[0].includes('debug '));
+  } finally {
+    f.dispose();
+  }
+});
+
+test('family command keeps its exact original input error when supplemental picker capture fails', async () => {
+  const f = folderMenuFixture();
+  const originalEvaluate = f.cdp.evaluate.bind(f.cdp);
+  const originalSend = f.cdp.send.bind(f.cdp);
+  const primary = new Error('original owning command input failure');
+  f.cdp.evaluate = <T>(context: number | undefined, expression: string) => {
+    if (expression.includes('const widgets=')) {
+      throw new Error('secondary diagnostic unavailable');
+    }
+    return originalEvaluate<T>(context, expression);
+  };
+  f.cdp.send = (method, params, options) => {
+    if (method === 'Input.insertText') {
+      throw primary;
+    }
+    return originalSend(method, params, options);
+  };
+  try {
+    await assert.rejects(multiRootCommand(f.cdp, 'View: Show Explorer', Date.now() + 2000), (error) => error === primary);
+  } finally {
+    f.dispose();
+  }
+});
 
 test('root menu uses exact persisted root alias, focused-tree context gesture, observed menu and a real item click', async () => {
   const fixture = folderMenuFixture();

@@ -62,6 +62,7 @@ const diagnosticOperations = new Set([
   'workbench-command',
   'command-palette-visible',
   'multi-root-folder-create',
+  'multi-root-debug-pick',
   'explorer-root-match',
   'explorer-root-focus',
   'explorer-context-menu-dispatch',

@@ -87,6 +87,13 @@ all public/private OGF mappings remain parent-owned and unchanged here.
    Require the correct session plus the visible debug toolbar; stop it and
    observe actual termination before selecting another folder. This clause
    proves launch/stop, not workflow execution, trigger callbacks or run history.
+   The actual **Debug: Select and Start Debugging** quick-access list renders
+   the configuration name and workspace description separately. Match both
+   exact fields against the generated configuration and persisted physical
+   root/display alias, not the toolbar dropdown's parenthesized label. Reject
+   duplicate, disabled, hidden or occluded matches. The family retains bounded
+   hash-only input/focus/candidate receipts; these cannot substitute for real
+   session start, ownership, toolbar and termination evidence.
 4. Open the actual Azure view, expand Data Mapper if necessary and click its
    **Create data map** action. Select a real workspace folder, enter a map name,
    and require an active, visible, correctly owned webview with loaded

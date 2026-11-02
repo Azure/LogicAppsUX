@@ -19,6 +19,7 @@ import {
   poll,
   readLogicAppRoots,
   readWorkbench,
+  selectFolderDebugConfiguration,
   waitForActivatedMultiRootRuntime,
 } from './workspaceMultiRootWorkbench';
 import { normalizeFsPath } from './testUtils';
@@ -195,7 +196,6 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
       const configs = launch.configurations.filter((config) => config.request === 'attach' || config.request === 'launch');
       assert.equal(configs.length, 1, 'A unique generated Logic App debug configuration is required');
       const config = configs[0];
-      const qualified = `${config.name} (${path.basename(folder)})`;
       assert.ok(
         !debugEvents(options.eventsFile).some(
           (event) =>
@@ -206,7 +206,7 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
         'Duplicate debug request'
       );
       await command(workbench, 'Debug: Select and Start Debugging', phase);
-      await clickText(workbench, '.quick-input-list .monaco-list-row', qualified, phase);
+      await selectFolderDebugConfiguration(workbench, { workspaceFilePath: workspace.wsFilePath, folder, name: config.name }, phase);
       const started = await poll(
         async () =>
           debugEvents(options.eventsFile).filter(
