@@ -3,7 +3,8 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { addWorkspaceMultiRootProjects } from './workspaceMultiRootProjectUi';
 import { captureCdpScreenshot } from './screenshot';
-import { nativePopulationProvider, remainingBudget, waitForFuncPopulation } from './workspaceMultiRootCollector';
+import { remainingBudget } from './workspaceMultiRootCollector';
+import { observeFuncPopulation } from './workspaceMultiRootPopulationDiagnostics';
 import type { MultiRootBootstrapAttestation } from './workspaceMultiRootBootstrap';
 import { connectToOwnedRegularWorkbench, ensureRegularWorkbenchExplorer, reloadOwnedRegularWorkbench } from './workbenchCdpActions';
 import {
@@ -147,12 +148,20 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
       'Fresh extension-host workspace roots differ from the complete generated Logic App population'
     );
     assert.deepEqual(readLogicAppRoots(workspace.wsFilePath, createdRoots), roots, 'Reload changed the count denominator');
-    const population = await waitForFuncPopulation(nativePopulationProvider(), {
-      logicAppCount: roots.length,
-      executable: options.funcExecutable,
-      sha256: options.funcSha256,
-      deadline: phaseDeadline(90000),
-    });
+    const population = await observeFuncPopulation(
+      {
+        logicAppCount: roots.length,
+        executable: options.funcExecutable,
+        sha256: options.funcSha256,
+        deadline: phaseDeadline(90000),
+      },
+      {
+        file: path.join(path.dirname(options.eventsFile), 'population-observations.jsonl'),
+        bootstrap: options.bootstrap,
+        workspaceFile: workspace.wsFilePath,
+        roots,
+      }
+    );
     assert.deepEqual(
       readLogicAppRoots(workspace.wsFilePath, createdRoots),
       roots,

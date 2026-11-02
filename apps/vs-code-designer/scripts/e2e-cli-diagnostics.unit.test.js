@@ -9,10 +9,45 @@ const {
   diagnosticBinding,
   diagnosticState,
   diagnosticError,
+  diagnosticOperationId,
   observeFileOperation,
   writeFileWithDiagnostics,
   relayObserverDiagnostics,
 } = require('./e2e-cli-diagnostics');
+
+test('actual CDP operation names survive summaries while arbitrary expressions remain hash-redacted', () => {
+  const source = fs.readFileSync(path.join(__dirname, '../src/test/e2e/cdpDiagnostics.ts'), 'utf8');
+  const methods = [...source.match(/const methods = new Set\(\[([\s\S]*?)\]\);/)[1].matchAll(/'([^']+)'/g)].map((match) => match[1]);
+  const events = [...source.match(/type Event =([\s\S]*?);/)[1].matchAll(/'([^']+)'/g)].map((match) => match[1]);
+  for (const event of events) {
+    for (const method of [...methods, 'other', 'none']) {
+      const operation = `cdp-${event}.${method}.1.42`;
+      assert.equal(diagnosticOperationId(operation), operation);
+    }
+  }
+  const records = [];
+  const trace = createDiagnosticProducer({ sink: (line) => records.push(JSON.parse(line)) });
+  trace.emit('cdp-response.Runtime.evaluate.1.42', 'end');
+  trace.emit('cdp-timeout.Runtime.evaluate.1.43', 'failure');
+  trace.summary('failed', 'unknown');
+  assert.equal(diagnosticOperationId(records.at(-1).lastGood), 'cdp-response.Runtime.evaluate.1.42');
+  assert.equal(diagnosticOperationId(records.at(-1).firstFailedGate), 'cdp-timeout.Runtime.evaluate.1.43');
+  const expression = 'document.querySelector("private-customer-value").textContent';
+  for (const operation of [
+    expression,
+    `cdp-response.${expression}.1.42`,
+    'cdp-response.Runtime.privateMethod.1.42',
+    'cdp-private-event.Runtime.evaluate.1.42',
+    'cdp-response.Runtime.evaluate.1.expression',
+    'multi-root-population.1.42',
+  ]) {
+    assert.equal(diagnosticOperationId(operation), null);
+  }
+  trace.emit(expression, 'failure', { state: { text: expression } });
+  assert.match(records.at(-1).operation, /^[a-f0-9]{64}$/);
+  assert.match(records.at(-1).state.text.sha256, /^[a-f0-9]{64}$/);
+  assert.ok(!JSON.stringify(records).includes(expression));
+});
 
 test('correlated producer sequence and monotonic spans preserve parent ordering', async () => {
   const records = [];
@@ -437,14 +472,42 @@ test('scoped native relay exports only supplemental receipts and preserves nativ
           state: { text: 'private-root' },
           error: { name: 'TypeError' },
         }),
+        ...['observer-installed', 'session-started', 'session-terminated'].map((status, index) =>
+          JSON.stringify({
+            kind: 'diagnostic-operation',
+            operation: 'msn-debug-stop',
+            status,
+            sequence: 8 + index,
+            monotonicMs: 43 + index,
+            wallTime: new Date(101 + index).toISOString(),
+            state: { selected: 'private-root', owned: true, matches: true },
+          })
+        ),
+        JSON.stringify({
+          kind: 'diagnostic-operation',
+          operation: 'msn-task-stop',
+          status: 'sample',
+          sequence: 11,
+          monotonicMs: 46,
+          wallTime: new Date(104).toISOString(),
+          state: { pid: 123, selected: 'private-root' },
+        }),
       ].join('\n')
     );
     const trace = createDiagnosticProducer({ sink: (line) => records.push(JSON.parse(line)) });
     relayObserverDiagnostics(root, trace);
-    assert.equal(records.length, 1);
+    assert.equal(records.length, 5);
     assert.equal(records[0].state.nativeSequence, 7);
     assert.equal(records[0].state.nativeMonotonicMs, 42);
     assert.equal(records[0].state.nativeWallTimeMs, 100);
+    assert.deepEqual(
+      records.slice(1).map((record) => record.status),
+      ['observer-installed', 'session-started', 'session-terminated', 'sample']
+    );
+    assert.deepEqual(
+      records.map((record) => record.state.nativeSequence),
+      [7, 8, 9, 10, 11]
+    );
     assert.ok(!JSON.stringify(records).includes('private-root'));
     assert.doesNotThrow(() => relayObserverDiagnostics(path.join(root, 'absent'), trace));
   } finally {

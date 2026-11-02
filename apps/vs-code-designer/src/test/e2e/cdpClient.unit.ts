@@ -1,8 +1,12 @@
 import * as assert from 'assert';
+import { createHash } from 'crypto';
 import * as fs from 'fs';
 import { EventEmitter } from 'events';
 import * as os from 'os';
 import * as path from 'path';
+import { mock } from 'node:test';
+import { createDiagnosticProducer } from '../../../scripts/e2e-cli-diagnostics';
+import { setCdpDiagnosticEmitterForTests } from './cdpDiagnostics';
 import {
   CdpConnection,
   chooseVsCodeWorkbenchTargetForCapture,
@@ -25,7 +29,203 @@ async function main(): Promise<void> {
   await testConnectAndHandshakeShareDeadline();
   await testHandshakeFailureDestroysSocket();
   await testEvaluateTimeoutKeepsConnectionUsableAndIgnoresLateResponse();
+  await testDiagnosticTimeoutResponseAndDifferentId();
+  await testDiagnosticProtocolErrorAndDisconnect();
+  await testDiagnosticFailurePreservesPrimaryOutcomes();
+  await testDiagnosticBoundsAndLateHistory();
   console.log('[cdpClient.unit] all tests passed');
+}
+
+function diagnosticHarness(maxEvents = 256) {
+  const records: any[] = [];
+  const trace = createDiagnosticProducer({
+    producer: 'native-cdp-transport',
+    binding: { sourceSha: 'a'.repeat(40), run: '15890740', suite: 'createWorkspaceBehavior', nativeInvocation: 'control-invocation' },
+    maxEvents,
+    sink: (line) => records.push(JSON.parse(line)),
+  });
+  const restore = setCdpDiagnosticEmitterForTests(trace.emit.bind(trace));
+  const socket = new FakeSocket();
+  const connection: CdpConnection = Reflect.construct(CdpConnection, [socket, 'private-target', 'private-workspace-path']);
+  const event = (name: string, id: number) =>
+    records.find((record) => record.operation.startsWith(`cdp-${name}.`) && record.state.selected === id);
+  return { records, restore, socket, connection, event };
+}
+
+function respond(socket: FakeSocket, message: unknown): void {
+  const payload = Buffer.from(JSON.stringify(message));
+  assert.ok(payload.length < 126);
+  socket.emit('data', Buffer.concat([Buffer.from([0x81, payload.length]), payload]));
+}
+
+async function testDiagnosticTimeoutResponseAndDifferentId(): Promise<void> {
+  const h = diagnosticHarness();
+  mock.timers.enable({ apis: ['setTimeout'] });
+  try {
+    const expression = 'private-code-and-customer-content';
+    const timedOut = assert.rejects(
+      h.connection.evaluate(undefined, expression, { timeoutMs: 2000 }),
+      /^Error: Timed out waiting for CDP Runtime\.evaluate response after 2000ms$/
+    );
+    const second = h.connection.evaluate(undefined, 'second-private-expression', { timeoutMs: 10000 });
+    mock.timers.tick(1999);
+    assert.strictEqual(h.event('timeout', 1), undefined, 'Diagnostics must not shorten the original request budget');
+    mock.timers.tick(1);
+    await timedOut;
+    assert.strictEqual(h.event('start', 1).state.active, 1);
+    assert.strictEqual(h.event('start', 2).state.active, 2);
+    const timeout = h.event('timeout', 1);
+    assert.strictEqual(timeout.state.active, 1);
+    assert.strictEqual(timeout.state.options.durationMs, 2000);
+    assert.strictEqual(timeout.error.name, 'Error');
+    assert.strictEqual(timeout.state.sha256, createHash('sha256').update(expression).digest('hex'));
+    assert.strictEqual(timeout.state.argvCount, JSON.stringify({ expression, awaitPromise: true, returnByValue: true }).length);
+    assert.ok(timeout.state.durationMs >= 0);
+    assert.ok(timeout.state.lastState.durationMs >= 0 && timeout.state.lastState.durationMs <= 2000);
+    respond(h.socket, { id: 1, result: { result: { value: 'private-late-result' } } });
+    respond(h.socket, { id: 99, result: { value: 'private-unmatched-result' } });
+    assert.strictEqual(h.event('late-response', 1).state.active, 1);
+    assert.strictEqual(h.event('late-response', 1).state.sha256, timeout.state.sha256);
+    assert.strictEqual(h.event('unmatched-response', 99).state.active, 1);
+    respond(h.socket, { id: 2, result: { result: { value: 'ok' } } });
+    assert.strictEqual(await second, 'ok', 'A late or different response cannot settle the active request');
+    assert.strictEqual(h.event('response', 2).state.active, 0);
+    assert.strictEqual(h.socket.writes.length, 2, 'Telemetry must not retry a request');
+    const serialized = JSON.stringify(h.records);
+    for (const forbidden of [
+      expression,
+      'second-private-expression',
+      'private-late-result',
+      'private-unmatched-result',
+      'private-target',
+      'private-workspace-path',
+    ]) {
+      assert.ok(!serialized.includes(forbidden), `Diagnostic leaked ${forbidden}`);
+    }
+    assert.strictEqual(timeout.sourceSha, 'a'.repeat(40));
+    assert.strictEqual(timeout.run, '15890740');
+    assert.strictEqual(timeout.suite, 'createWorkspaceBehavior');
+    assert.strictEqual(timeout.nativeInvocation, 'control-invocation');
+    assert.ok(h.records.every((record, index) => record.sequence === index + 1));
+  } finally {
+    mock.timers.reset();
+    h.restore();
+    h.connection.dispose();
+  }
+}
+
+async function testDiagnosticProtocolErrorAndDisconnect(): Promise<void> {
+  const h = diagnosticHarness();
+  try {
+    const protocol = assert.rejects(
+      h.connection.send('Runtime.evaluate', { expression: 'secret-code' }),
+      /^Error: private-protocol-error$/
+    );
+    respond(h.socket, { id: 1, error: { message: 'private-protocol-error' } });
+    await protocol;
+    assert.strictEqual(h.event('protocol-error', 1).error.name, 'Error');
+
+    const exception = assert.rejects(h.connection.evaluate(undefined, 'secret-code'), /CDP evaluation failed/);
+    respond(h.socket, { id: 2, result: { exceptionDetails: { text: 'private-exception' } } });
+    await exception;
+    assert.ok(h.event('evaluation-exception', 2));
+
+    const original = new TypeError('private-socket-error');
+    const disconnected = assert.rejects(h.connection.send('private-method-with-content'), (error) => error === original);
+    h.socket.emit('error', original);
+    await disconnected;
+    assert.strictEqual(h.event('disconnect', 3).error.name, 'TypeError');
+    assert.ok(h.event('start', 3).operation.includes('.other.'));
+    h.socket.emit('close');
+    assert.strictEqual(h.event('connection-close', 0).state.active, 0);
+    assert.strictEqual(h.event('connection-close', 0).status, 'observed', 'An idle close must not be reported as a failed request');
+
+    const closeSocket = new FakeSocket();
+    const closeConnection: CdpConnection = Reflect.construct(CdpConnection, [closeSocket]);
+    const closed = assert.rejects(closeConnection.send('Page.captureScreenshot'), /^Error: CDP WebSocket closed$/);
+    closeSocket.emit('close');
+    await closed;
+    assert.strictEqual(h.event('connection-close', 0).state.selected, 0);
+    assert.ok(h.records.some((record) => record.operation.startsWith('cdp-connection-close.') && record.state.active === 1));
+    assert.ok(!JSON.stringify(h.records).includes('private-'));
+    assert.ok(!JSON.stringify(h.records).includes('secret-code'));
+  } finally {
+    h.restore();
+    h.connection.dispose();
+  }
+}
+
+async function testDiagnosticFailurePreservesPrimaryOutcomes(): Promise<void> {
+  const restore = setCdpDiagnosticEmitterForTests(() => {
+    throw new Error('secondary diagnostic failure');
+  });
+  const socket = new FakeSocket();
+  const connection: CdpConnection = Reflect.construct(CdpConnection, [socket]);
+  mock.timers.enable({ apis: ['setTimeout'] });
+  try {
+    const timeout = assert.rejects(
+      connection.evaluate(undefined, 'private-expression', { timeoutMs: 2000 }),
+      /^Error: Timed out waiting for CDP Runtime\.evaluate response after 2000ms$/
+    );
+    mock.timers.tick(2000);
+    await timeout;
+    const success = connection.evaluate(undefined, 'private-expression');
+    respond(socket, { id: 2, result: { result: { value: 'success' } } });
+    assert.strictEqual(await success, 'success');
+    const original = new Error('primary disconnect');
+    const disconnect = assert.rejects(connection.send('Page.enable'), (error) => error === original);
+    socket.emit('error', original);
+    await disconnect;
+    socket.emit('close');
+    assert.strictEqual(socket.writes.length, 3);
+    assert.strictEqual(socket.destroyCalls, 0);
+  } finally {
+    mock.timers.reset();
+    restore();
+    connection.dispose();
+  }
+}
+
+async function testDiagnosticBoundsAndLateHistory(): Promise<void> {
+  const h = diagnosticHarness();
+  mock.timers.enable({ apis: ['setTimeout'] });
+  try {
+    const timeouts = Array.from({ length: 65 }, () =>
+      assert.rejects(h.connection.send('Runtime.evaluate', undefined, { timeoutMs: 2000 }), /after 2000ms/)
+    );
+    mock.timers.tick(2000);
+    await Promise.all(timeouts);
+    respond(h.socket, { id: 1, result: {} });
+    respond(h.socket, { id: 2, error: { message: 'private-late-error' } });
+    assert.ok(h.event('unmatched-response', 1), 'Old tombstones must be bounded, not retained indefinitely');
+    assert.ok(h.event('late-error', 2), 'Retained tombstones must classify late protocol errors');
+    assert.ok(!JSON.stringify(h.records).includes('private-late-error'));
+  } finally {
+    mock.timers.reset();
+    h.restore();
+    h.connection.dispose();
+  }
+
+  const bounded = diagnosticHarness(8);
+  mock.timers.enable({ apis: ['setTimeout'] });
+  try {
+    for (let id = 1; id <= 10; id++) {
+      const request = bounded.connection.send('Page.enable');
+      respond(bounded.socket, { id, result: {} });
+      await request;
+    }
+    const timeout = assert.rejects(bounded.connection.send('Runtime.evaluate', undefined, { timeoutMs: 2000 }), /after 2000ms/);
+    mock.timers.tick(2000);
+    await timeout;
+    assert.ok(bounded.event('timeout', 11), 'Routine polling must leave the existing producer failure reserve available');
+    respond(bounded.socket, { id: 11, result: {} });
+    assert.ok(bounded.event('late-response', 11), 'The same failure reserve must retain a belated reply after polling is capped');
+    assert.ok(bounded.records.length <= 8);
+  } finally {
+    mock.timers.reset();
+    bounded.restore();
+    bounded.connection.dispose();
+  }
 }
 
 async function testInvocationOwnedDevToolsActivePort(): Promise<void> {

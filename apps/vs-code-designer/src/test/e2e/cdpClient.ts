@@ -3,6 +3,7 @@ import { randomBytes } from 'crypto';
 import * as fs from 'fs';
 import * as net from 'net';
 import * as path from 'path';
+import { cdpRequestDiagnostic, nextCdpDiagnosticConnection, recordCdpDiagnostic, type CdpRequestDiagnostic } from './cdpDiagnostics';
 
 export interface CdpTarget {
   id?: string;
@@ -64,7 +65,13 @@ export function setCdpSocketFactoryForTests(factory?: CdpSocketFactory): () => v
 export class CdpConnection {
   private nextId = 1;
   private buffer = Buffer.alloc(0);
-  private readonly pending = new Map<number, { resolve: (value: CdpResponse) => void; reject: (error: Error) => void }>();
+  private readonly pending = new Map<
+    number,
+    { resolve: (value: CdpResponse) => void; reject: (error: Error) => void; diagnostic?: CdpRequestDiagnostic }
+  >();
+  private readonly diagnosticConnection = nextCdpDiagnosticConnection();
+  // Bounded tombstones distinguish late timed-out responses from different IDs.
+  private readonly timedOut = new Map<number, CdpRequestDiagnostic | undefined>();
   private readonly contextListeners: Array<(context: CdpExecutionContext) => void> = [];
   private readonly lifecycleListeners: Array<(event: CdpResponse) => void> = [];
   private readonly contexts = new Map<number, CdpExecutionContext>();
@@ -77,10 +84,15 @@ export class CdpConnection {
     readonly targetTitle?: string
   ) {
     socket.on('data', (chunk) => this.onData(chunk));
-    socket.on('error', (error) => this.rejectAll(error));
+    socket.on('error', (error) => {
+      recordCdpDiagnostic(this.diagnosticConnection, 0, 'socket-error', this.pending.size, undefined, error);
+      this.rejectAll(error);
+    });
     socket.on('close', () => {
+      recordCdpDiagnostic(this.diagnosticConnection, 0, 'connection-close', this.pending.size);
       this.generation++;
       this.rejectAll(new Error('CDP WebSocket closed'));
+      this.timedOut.clear();
     });
   }
 
@@ -140,12 +152,19 @@ export class CdpConnection {
   async send(method: string, params?: Record<string, unknown>, options: { timeoutMs?: number } = {}): Promise<CdpResponse> {
     const id = this.nextId++;
     const message = JSON.stringify({ id, method, params });
+    const diagnostic = cdpRequestDiagnostic(message, method, options.timeoutMs);
 
     const promise = new Promise<CdpResponse>((resolve, reject) => {
-      this.pending.set(id, { resolve, reject });
+      this.pending.set(id, { resolve, reject, diagnostic });
     });
 
-    this.socket.write(encodeClientFrame(message));
+    recordCdpDiagnostic(this.diagnosticConnection, id, 'start', this.pending.size, diagnostic);
+    try {
+      this.socket.write(encodeClientFrame(message));
+    } catch (error) {
+      recordCdpDiagnostic(this.diagnosticConnection, id, 'write-error', this.pending.size, diagnostic, error);
+      throw error;
+    }
     if (!options.timeoutMs) {
       return promise;
     }
@@ -157,6 +176,11 @@ export class CdpConnection {
         new Promise<CdpResponse>((_resolve, reject) => {
           timeout = setTimeout(() => {
             if (this.pending.delete(id)) {
+              this.timedOut.set(id, diagnostic);
+              if (this.timedOut.size > 64) {
+                this.timedOut.delete(this.timedOut.keys().next().value!);
+              }
+              recordCdpDiagnostic(this.diagnosticConnection, id, 'timeout', this.pending.size, diagnostic, new Error());
               reject(new Error(`Timed out waiting for CDP ${method} response after ${options.timeoutMs}ms`));
             }
           }, options.timeoutMs);
@@ -233,11 +257,30 @@ export class CdpConnection {
         const pending = this.pending.get(message.id);
         if (pending) {
           this.pending.delete(message.id);
+          recordCdpDiagnostic(
+            this.diagnosticConnection,
+            message.id,
+            message.error ? 'protocol-error' : message.result?.exceptionDetails ? 'evaluation-exception' : 'response',
+            this.pending.size,
+            pending.diagnostic,
+            message.error || message.result?.exceptionDetails ? new Error() : undefined
+          );
           if (message.error) {
             pending.reject(new Error(message.error.message ?? JSON.stringify(message.error)));
           } else {
             pending.resolve(message);
           }
+        } else {
+          const late = this.timedOut.has(message.id);
+          recordCdpDiagnostic(
+            this.diagnosticConnection,
+            message.id,
+            late ? (message.error ? 'late-error' : 'late-response') : 'unmatched-response',
+            this.pending.size,
+            this.timedOut.get(message.id),
+            message.error ? new Error() : undefined
+          );
+          this.timedOut.delete(message.id);
         }
       } else {
         if (
@@ -277,7 +320,8 @@ export class CdpConnection {
   }
 
   private rejectAll(error: Error): void {
-    for (const pending of this.pending.values()) {
+    for (const [id, pending] of this.pending) {
+      recordCdpDiagnostic(this.diagnosticConnection, id, 'disconnect', this.pending.size, pending.diagnostic, error);
       pending.reject(error);
     }
     this.pending.clear();

@@ -292,6 +292,32 @@ source/admission support and any summarizer/OGF wiring remain parent-owned.
 
 ## Non-native controls
 
+### Population diagnostics (not admission)
+
+The population gate additionally writes `population-observations.jsonl` using
+the existing diagnostic envelope, bound to the bootstrap source, run and
+invocation and the population phase. Its independent producer is capped at
+64 events / 128 KiB and reserves terminal capacity separately from routine UI
+polling. The first four and every sixteenth collection supply sample counts,
+collection intervals, native pass/row counts, race/error counts and at most
+12 PID/birth/path/binary-hash receipts. Counts include the entire collected
+population even when detailed receipts are capped; incomplete scans are marked
+incomplete. Parent PIDs are observations from the existing native queries, not
+birth-bound ancestry proof. No additional process scans are performed.
+
+Launcher and `in-proc8` path counts are observational only. All ownership remains
+unproven (`ownedCount: 0`); worker hash admission, command identity, ancestry and
+durable workspace ownership must not be inferred from those counts. The
+original complete global count, exact launcher path/hash, stability, metadata
+and deadline assertions are unchanged. Paths, births and workspace identifiers
+in this stream are hashed; no full commands or environment are collected.
+
+The ADO staging allowlist preserves this stream and the original generated
+`func-bootstrap.json` / `debug-events.jsonl` byte-for-byte, including rejected
+families. It does not recursively copy `code.log`, profiles, arbitrary files or
+environment. The final-result projection and all existing acceptance gates
+remain authoritative and unchanged.
+
 ```powershell
 # Repository root; these commands never start Code, func, CDP or cloud resources.
 node node_modules/typescript/bin/tsc -p apps/vs-code-designer/tsconfig.e2e.json

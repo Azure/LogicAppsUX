@@ -52,6 +52,8 @@ import { contextMenuDom, workbenchDomFixture } from './workbenchDomFixture';
 import { getFieldState, selectRadioOption } from './cdpFormHelpers';
 import { closeOwnedUiDiagnosticWindow, matchesUiDiagnosticActivationRoot } from './workspaceMultiRootUiDiagnostic';
 import type { CdpConnection } from './cdpClient';
+import { createDiagnosticProducer } from '../../../scripts/e2e-cli-diagnostics';
+import { createPopulationDiagnostics } from './workspaceMultiRootPopulationDiagnostics';
 
 test('UI-only Close Window refuses wrong ownership before sending a keyboard event', async () => {
   let sends = 0;
@@ -886,6 +888,212 @@ test('bootstrap hash read permission errors and file-read races fail closed usin
 test('full executable count settles without attributing one process to each root', async () => {
   const result = await waitForFuncPopulation({ snapshot: async () => population() }, options(), virtualClock());
   assert.equal(result.processes.length, 3);
+});
+
+function populationDiagnosticFixture(clock = virtualClock()) {
+  const lines: string[] = [];
+  const trace = createDiagnosticProducer({
+    producer: 'multi-root-population',
+    maxEvents: 64,
+    maxBytes: 131072,
+    binding: { sourceSha: 'a'.repeat(40), run: '15890740', suite: 'workspaceMultiRoot', nativeInvocation: 'unit-invocation' },
+    sink: (line) => lines.push(line),
+  });
+  const diagnostics = createPopulationDiagnostics(
+    trace,
+    { executable, workspaceFile: '/private/generated.code-workspace', roots: ['/private/root-a', '/private/root-b', '/private/root-c'] },
+    clock.now
+  );
+  return { lines, trace, diagnostics, clock, records: () => lines.map((line) => JSON.parse(line)) };
+}
+
+test('observed in-proc8 Func shape still rejects; diagnostic path recognition never admits a worker', async () => {
+  const f = populationDiagnosticFixture();
+  const worker = path.join(path.dirname(executable), 'in-proc8', path.basename(executable));
+  let queries = 0;
+  const provider = createWindowsPopulationProvider(
+    () => {
+      queries++;
+      return JSON.stringify([
+        { pid: 10, parentPid: 5, name: 'func.exe', birth: '123', executable },
+        { pid: 20, parentPid: 10, name: 'func.exe', birth: '124', executable: worker },
+      ]);
+    },
+    () => bytes,
+    (file) => file,
+    f.diagnostics.collection
+  );
+  await assert.rejects(
+    f.diagnostics.run(() => waitForFuncPopulation(provider, options(), f.clock)),
+    /Unrelated\/wrong/
+  );
+  assert.equal(queries, 2, 'Diagnostics must reuse the two existing native queries, not rescan');
+  const terminal = f.records().at(-1);
+  assert.equal(terminal.status, 'summary');
+  assert.equal(terminal.state.ok, false);
+  assert.equal(terminal.state.complete, true, 'This is a full scan, not an accepted population');
+  assert.equal(terminal.state.count, 2);
+  assert.equal(terminal.state.workerPathCount, 1);
+  assert.equal(terminal.state.launcherPathCount, 1);
+  assert.equal(terminal.state.ownedCount, 0);
+  assert.equal(terminal.state.unknownOwnershipCount, 2);
+  assert.equal(terminal.state.ancestryProven, false, 'A bare parent PID is not birth-bound ancestry');
+  assert.equal(terminal.state.commandProven, false);
+  assert.equal(terminal.state.workspaceProven, false);
+  assert.equal(terminal.state.processes.items[1].parentPid, 10);
+  assert.equal(terminal.state.processes.items[1].sha256, sha256);
+  assert.doesNotMatch(f.lines.join(''), /private|in-proc8|func\.exe|root-a|generated\.code-workspace/);
+  assert.equal(terminal.sourceSha, 'a'.repeat(40));
+  assert.equal(terminal.nativeInvocation, 'unit-invocation');
+});
+
+test('diagnostic wrapper preserves wrong same-root executable/worker/hash, missing metadata and extra global Func rejections', async () => {
+  const fixtures = [
+    () => {
+      const value = population();
+      value.processes[0].executable = path.join(path.dirname(executable), 'foreign', path.basename(executable));
+      return value;
+    },
+    () => {
+      const value = population();
+      value.processes[0].executable = path.join(path.dirname(executable), 'in-proc6', path.basename(executable));
+      return value;
+    },
+    () => {
+      const value = population();
+      value.processes[0].sha256 = 'b'.repeat(64);
+      return value;
+    },
+    () => {
+      const value = population();
+      value.processes[0].birth = '';
+      return value;
+    },
+    () => population(4),
+  ];
+  for (const fixture of fixtures) {
+    const f = populationDiagnosticFixture();
+    const provider = {
+      snapshot: async () => {
+        const value = fixture();
+        f.diagnostics.collection({ ...value, nativePasses: 2, totalRows: 10, inspectedRows: 10, parents: [] });
+        return value;
+      },
+    };
+    await assert.rejects(f.diagnostics.run(() => waitForFuncPopulation(provider, options(), f.clock)));
+    assert.equal(f.records().at(-1).state.ok, false);
+    assert.equal(f.records().at(-1).state.ownedCount, 0);
+  }
+});
+
+test('Linux partial scan and original collection error survive a throwing diagnostic sink without new reads', async () => {
+  const failure = Object.assign(new Error('fixture binary denied'), { code: 'EACCES' });
+  const calls: string[] = [];
+  const run = async (sink?: Parameters<typeof createLinuxPopulationProvider>[2]) => {
+    calls.length = 0;
+    const provider = createLinuxPopulationProvider(
+      procFixture({
+        read: (file) => {
+          calls.push(file);
+          return file.endsWith('boot_id') ? 'boot' : file.endsWith('comm') ? 'func' : fakeStat();
+        },
+        binary: () => {
+          throw failure;
+        },
+      }),
+      '/unit-owned-proc',
+      sink
+    );
+    await assert.rejects(provider.snapshot(5000), (error) => error === failure);
+    return [...calls];
+  };
+  const originalCalls = await run();
+  let partial = false;
+  const diagnosticCalls = await run((receipt) => {
+    partial = !receipt.complete && receipt.inspectedRows === 1 && receipt.error === failure;
+    throw new Error('secondary sink failure');
+  });
+  assert.ok(partial);
+  assert.deepEqual(diagnosticCalls, originalCalls);
+});
+
+test('races, PID reuse and terminal receipts remain bounded past exhausted routine capacity', async () => {
+  const f = populationDiagnosticFixture();
+  // Simulate the routine budget already exhausted. The real UI has its own
+  // producer, so cannot spend even this producer's routine capacity.
+  for (let i = 0; i < 300; i++) {
+    f.trace.emit('multi-root-population-sample', 'sample');
+  }
+  const provider = {
+    snapshot: async () => {
+      const error = new PopulationRace('unit population churn');
+      f.diagnostics.collection({ complete: false, nativePasses: 1, totalRows: 10, inspectedRows: 5, processes: [], parents: [], error });
+      throw error;
+    },
+  };
+  await assert.rejects(
+    f.diagnostics.run(() => waitForFuncPopulation(provider, options(), f.clock)),
+    /deadline/
+  );
+  const terminal = f.records().at(-1);
+  assert.equal(terminal.operation, 'multi-root-population-terminal');
+  assert.ok(terminal.state.races > 0);
+  assert.ok(terminal.dropped > 0);
+  assert.ok(f.lines.length <= 64 && Buffer.byteLength(f.lines.join('')) <= 131072);
+
+  const reuse = populationDiagnosticFixture();
+  let samples = 0;
+  const accepted = await reuse.diagnostics.run(() =>
+    waitForFuncPopulation(
+      {
+        snapshot: async () => {
+          const value = population(3, ++samples < 3 ? 'old' : 'new');
+          reuse.diagnostics.collection({ ...value, nativePasses: 2, totalRows: 10, inspectedRows: 10, parents: [] });
+          return value;
+        },
+      },
+      options(),
+      reuse.clock
+    )
+  );
+  assert.ok(samples >= 5 && accepted.stability.durationMs >= options().stableMs);
+  assert.equal(reuse.records().at(-1).state.ownedCount, 0, 'Count success alone never becomes workspace ownership');
+});
+
+test('unproven command/workspace claims and raw metadata cannot enter population telemetry', () => {
+  const f = populationDiagnosticFixture();
+  const value = population();
+  Object.assign(value.processes[0], { command: 'secret-command --token=secret', workspace: 'foreign-customer-name', owned: true });
+  f.diagnostics.collection({ ...value, nativePasses: 2, totalRows: 10, inspectedRows: 10, parents: [] });
+  const state = f.records().at(-1).state;
+  assert.equal(state.commandProven, false);
+  assert.equal(state.workspaceProven, false);
+  assert.equal(state.ownedCount, 0);
+  assert.doesNotMatch(f.lines.join(''), /secret|foreign-customer-name/);
+});
+
+test('capped process details never truncate the global count or lose the terminal receipt', async () => {
+  const f = populationDiagnosticFixture();
+  const provider = {
+    snapshot: async () => {
+      const value = population(30);
+      f.diagnostics.collection({ ...value, nativePasses: 2, totalRows: 100, inspectedRows: 100, parents: [] });
+      return value;
+    },
+  };
+  await assert.rejects(
+    f.diagnostics.run(() => waitForFuncPopulation(provider, options(), f.clock)),
+    /deadline/
+  );
+  const terminal = f.records().at(-1);
+  assert.equal(terminal.operation, 'multi-root-population-terminal');
+  assert.equal(terminal.state.count, 30);
+  assert.equal(terminal.state.unknownOwnershipCount, 30);
+  assert.equal(terminal.state.launcherPathCount, 30);
+  assert.equal(terminal.state.processes.items.length, 12);
+  assert.equal(terminal.state.capped, true);
+  assert.equal(terminal.state.ok, false);
+  assert.ok(f.lines.every((line) => Buffer.byteLength(line) <= 8192));
 });
 test('collector has no three-root ceiling', async () => {
   assert.equal((await waitForFuncPopulation({ snapshot: async () => population(5) }, options(5), virtualClock())).processes.length, 5);

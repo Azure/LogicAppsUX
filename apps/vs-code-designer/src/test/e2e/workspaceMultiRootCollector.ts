@@ -26,6 +26,51 @@ export interface PopulationProvider {
   snapshot(budgetMs: number): Promise<Population>;
 }
 
+// Observations only. Partial rows, path matches and parent PIDs never establish
+// ownership or admission. The observer must not change collection or errors.
+export interface PopulationCollectionReceipt {
+  complete: boolean;
+  nativePasses: number;
+  totalRows: number;
+  inspectedRows: number;
+  processes: FuncIdentity[];
+  parents: Array<{ pid: number; parentPid: number }>;
+  error?: unknown;
+}
+export type PopulationReceiptSink = (receipt: PopulationCollectionReceipt) => void;
+
+function observedCollection(
+  collect: (receipt: PopulationCollectionReceipt, budgetMs: number) => Promise<Population>,
+  sink?: PopulationReceiptSink
+): PopulationProvider {
+  return {
+    async snapshot(budgetMs) {
+      const receipt: PopulationCollectionReceipt = {
+        complete: false,
+        nativePasses: 0,
+        totalRows: 0,
+        inspectedRows: 0,
+        processes: [],
+        parents: [],
+      };
+      try {
+        const population = await collect(receipt, budgetMs);
+        receipt.complete = true;
+        return population;
+      } catch (error) {
+        receipt.error = error;
+        throw error;
+      } finally {
+        try {
+          sink?.(receipt);
+        } catch {
+          // Secondary diagnostics must preserve the original verdict/error.
+        }
+      }
+    },
+  };
+}
+
 export function remainingBudget(deadline: number, now = Date.now()): number {
   const remaining = Math.floor(deadline - now);
   assert.ok(remaining > 0, 'Multi-root observation deadline exhausted');
@@ -131,115 +176,128 @@ function procKernelThread(stat: string): boolean {
   return (BigInt(fields[6]) & 0x00200000n) !== 0n;
 }
 
-export function createLinuxPopulationProvider(files = nativeProcFiles, root = '/proc'): PopulationProvider {
-  return {
-    async snapshot(budgetMs) {
-      const deadline = Date.now() + budgetMs;
-      const boot = files.read(path.join(root, 'sys/kernel/random/boot_id')).trim();
-      const enumerate = () =>
-        files
-          .readdir(root)
-          .filter((name) => /^[1-9]\d*$/.test(name))
-          .sort();
-      const initial = enumerate();
-      const processes: FuncIdentity[] = [];
-      const exclusions: Array<() => void> = [];
-      try {
-        for (const pid of initial) {
+export function createLinuxPopulationProvider(files = nativeProcFiles, root = '/proc', sink?: PopulationReceiptSink): PopulationProvider {
+  return observedCollection(async (receipt, budgetMs) => {
+    const deadline = Date.now() + budgetMs;
+    const boot = files.read(path.join(root, 'sys/kernel/random/boot_id')).trim();
+    const enumerate = () =>
+      files
+        .readdir(root)
+        .filter((name) => /^[1-9]\d*$/.test(name))
+        .sort();
+    const initial = enumerate();
+    receipt.nativePasses++;
+    receipt.totalRows = initial.length;
+    const processes: FuncIdentity[] = [];
+    receipt.processes = processes;
+    const exclusions: Array<() => void> = [];
+    try {
+      for (const pid of initial) {
+        receipt.inspectedRows++;
+        remainingBudget(deadline);
+        const dir = path.join(root, pid);
+        const firstStat = files.read(path.join(dir, 'stat'));
+        const first = procBirth(firstStat, boot);
+        // Reading every comm is necessary: an unreadable row might itself be func.
+        const name = files.read(path.join(dir, 'comm')).trim();
+        assert.ok(name, 'Missing process name can conceal func population');
+        const verifyIdentity = () => {
           remainingBudget(deadline);
-          const dir = path.join(root, pid);
-          const firstStat = files.read(path.join(dir, 'stat'));
-          const first = procBirth(firstStat, boot);
-          // Reading every comm is necessary: an unreadable row might itself be func.
-          const name = files.read(path.join(dir, 'comm')).trim();
-          assert.ok(name, 'Missing process name can conceal func population');
-          const verifyIdentity = () => {
-            remainingBudget(deadline);
-            if (first !== procBirth(files.read(path.join(dir, 'stat')), boot) || name !== files.read(path.join(dir, 'comm')).trim()) {
-              throw new PopulationRace('Process identity/name changed during collection');
-            }
-          };
-          let executable: string;
-          try {
-            executable = files.readlink(path.join(dir, 'exe'));
-          } catch (error) {
-            const denied = error instanceof Error && 'code' in error && (error.code === 'EACCES' || error.code === 'EPERM');
-            const missing = error instanceof Error && 'code' in error && error.code === 'ENOENT';
-            if ((denied || missing) && !isFunc(name) && procKernelThread(firstStat)) {
-              const verifyKernelThread = () => {
-                verifyIdentity();
-                assert.equal(files.read(path.join(dir, 'cmdline')), '', 'Kernel thread unexpectedly has userspace arguments');
-                if (!procKernelThread(files.read(path.join(dir, 'stat')))) {
-                  throw new PopulationRace('Kernel-thread identity changed during collection');
-                }
-              };
-              verifyKernelThread();
-              exclusions.push(verifyKernelThread);
-              continue;
-            }
-            // proc exe links use ptrace permissions, unlike comm/cmdline. A
-            // system-owned non-Func (e.g. PID 1) must not require elevation.
-            // Never drop a denied Func candidate, an unreadable name/argv, or
-            // an unclassifiable row. Inspect argv[0] only, never retain/log a
-            // command line; this also catches Func with a renamed comm.
-            if (denied && !isFunc(name)) {
-              const readArgv0 = () => {
-                const commandLine = files.read(path.join(dir, 'cmdline'));
-                const end = commandLine.indexOf('\0');
-                assert.ok(end > 0, 'Denied executable has no classifiable process argv[0]');
-                return commandLine.slice(0, end);
-              };
-              const argv0 = readArgv0();
-              if (isFunc(path.posix.basename(argv0))) {
-                throw error;
-              }
-              const verifyExclusion = () => {
-                verifyIdentity();
-                if (readArgv0() !== argv0) {
-                  throw new PopulationRace('Denied non-Func process changed during collection');
-                }
-              };
-              verifyExclusion();
-              exclusions.push(verifyExclusion);
-              continue;
-            }
-            if (!missing || isFunc(name)) {
-              throw error;
-            }
-            throw new PopulationRace('Executable missing from a userspace process');
+          if (first !== procBirth(files.read(path.join(dir, 'stat')), boot) || name !== files.read(path.join(dir, 'comm')).trim()) {
+            throw new PopulationRace('Process identity/name changed during collection');
           }
-          if (!isFunc(name) && !isFunc(path.basename(executable))) {
-            exclusions.push(() => {
+        };
+        let executable: string;
+        try {
+          executable = files.readlink(path.join(dir, 'exe'));
+        } catch (error) {
+          const denied = error instanceof Error && 'code' in error && (error.code === 'EACCES' || error.code === 'EPERM');
+          const missing = error instanceof Error && 'code' in error && error.code === 'ENOENT';
+          if ((denied || missing) && !isFunc(name) && procKernelThread(firstStat)) {
+            const verifyKernelThread = () => {
               verifyIdentity();
-              if (files.readlink(path.join(dir, 'exe')) !== executable) {
-                throw new PopulationRace('Non-Func executable changed during collection');
+              assert.equal(files.read(path.join(dir, 'cmdline')), '', 'Kernel thread unexpectedly has userspace arguments');
+              if (!procKernelThread(files.read(path.join(dir, 'stat')))) {
+                throw new PopulationRace('Kernel-thread identity changed during collection');
               }
-            });
+            };
+            verifyKernelThread();
+            exclusions.push(verifyKernelThread);
             continue;
           }
-          const bytes = files.binary(path.join(dir, 'exe'));
-          const last = procBirth(files.read(path.join(dir, 'stat')), boot);
-          if (first !== last || executable !== files.readlink(path.join(dir, 'exe'))) {
-            throw new PopulationRace('PID/executable changed during collection');
+          // proc exe links use ptrace permissions, unlike comm/cmdline. A
+          // system-owned non-Func (e.g. PID 1) must not require elevation.
+          // Never drop a denied Func candidate, an unreadable name/argv, or
+          // an unclassifiable row. Inspect argv[0] only, never retain/log a
+          // command line; this also catches Func with a renamed comm.
+          if (denied && !isFunc(name)) {
+            const readArgv0 = () => {
+              const commandLine = files.read(path.join(dir, 'cmdline'));
+              const end = commandLine.indexOf('\0');
+              assert.ok(end > 0, 'Denied executable has no classifiable process argv[0]');
+              return commandLine.slice(0, end);
+            };
+            const argv0 = readArgv0();
+            if (isFunc(path.posix.basename(argv0))) {
+              throw error;
+            }
+            const verifyExclusion = () => {
+              verifyIdentity();
+              if (readArgv0() !== argv0) {
+                throw new PopulationRace('Denied non-Func process changed during collection');
+              }
+            };
+            verifyExclusion();
+            exclusions.push(verifyExclusion);
+            continue;
           }
-          processes.push({ pid: Number(pid), birth: first, executable, sha256: createHash('sha256').update(bytes).digest('hex') });
+          if (!missing || isFunc(name)) {
+            throw error;
+          }
+          throw new PopulationRace('Executable missing from a userspace process');
         }
-        for (const verify of exclusions) {
-          verify();
+        if (!isFunc(name) && !isFunc(path.basename(executable))) {
+          exclusions.push(() => {
+            verifyIdentity();
+            if (files.readlink(path.join(dir, 'exe')) !== executable) {
+              throw new PopulationRace('Non-Func executable changed during collection');
+            }
+          });
+          continue;
         }
-        if (JSON.stringify(initial) !== JSON.stringify(enumerate())) {
-          throw new PopulationRace('Process table changed during collection');
+        const bytes = files.binary(path.join(dir, 'exe'));
+        const parentPid = Number(
+          firstStat
+            .slice(firstStat.lastIndexOf(') ') + 2)
+            .trim()
+            .split(/\s+/)[1]
+        );
+        if (Number.isSafeInteger(parentPid) && parentPid >= 0) {
+          receipt.parents.push({ pid: Number(pid), parentPid });
         }
-      } catch (error) {
-        if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
-          throw new PopulationRace('Process disappeared during full enumeration');
+        const last = procBirth(files.read(path.join(dir, 'stat')), boot);
+        if (first !== last || executable !== files.readlink(path.join(dir, 'exe'))) {
+          throw new PopulationRace('PID/executable changed during collection');
         }
-        throw error;
+        processes.push({ pid: Number(pid), birth: first, executable, sha256: createHash('sha256').update(bytes).digest('hex') });
       }
-      remainingBudget(deadline);
-      return { complete: true, processes };
-    },
-  };
+      for (const verify of exclusions) {
+        verify();
+      }
+      const final = enumerate();
+      receipt.nativePasses++;
+      if (JSON.stringify(initial) !== JSON.stringify(final)) {
+        throw new PopulationRace('Process table changed during collection');
+      }
+    } catch (error) {
+      if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
+        throw new PopulationRace('Process disappeared during full enumeration');
+      }
+      throw error;
+    }
+    remainingBudget(deadline);
+    return { complete: true, processes };
+  }, sink);
 }
 
 export interface WindowsProcessRow {
@@ -247,10 +305,11 @@ export interface WindowsProcessRow {
   name: string;
   birth: string;
   executable: string;
+  parentPid?: number;
 }
 
 export const windowsPopulationScript =
-  "$ErrorActionPreference='Stop'; $rows=@(Get-CimInstance Win32_Process -ErrorAction Stop | ForEach-Object { [ordered]@{pid=[long]$_.ProcessId; name=[string]$_.Name; birth=$(if($_.CreationDate){$_.CreationDate.ToUniversalTime().Ticks.ToString()}else{''}); executable=[string]$_.ExecutablePath} }); ConvertTo-Json -InputObject $rows -Compress";
+  "$ErrorActionPreference='Stop'; $rows=@(Get-CimInstance Win32_Process -ErrorAction Stop | ForEach-Object { [ordered]@{pid=[long]$_.ProcessId; parentPid=[long]$_.ParentProcessId; name=[string]$_.Name; birth=$(if($_.CreationDate){$_.CreationDate.ToUniversalTime().Ticks.ToString()}else{''}); executable=[string]$_.ExecutablePath} }); ConvertTo-Json -InputObject $rows -Compress";
 
 export function parseWindowsPopulation(output: string): WindowsProcessRow[] {
   const rows: unknown = JSON.parse(output.replace(/^\uFEFF/, ''));
@@ -281,36 +340,50 @@ export function createWindowsPopulationProvider(
       maxBuffer: 8 * 1024 * 1024,
     }),
   binary = (file: string) => fs.readFileSync(file),
-  canonical = (file: string) => fs.realpathSync(file)
+  canonical = (file: string) => fs.realpathSync(file),
+  sink?: PopulationReceiptSink
 ): PopulationProvider {
-  return {
-    async snapshot(budgetMs) {
-      const deadline = Date.now() + budgetMs;
-      const before = parseWindowsPopulation(execute(remainingBudget(deadline))).sort((a, b) => a.pid - b.pid);
-      const processes = before.map((row) => {
-        remainingBudget(deadline);
-        return {
-          pid: row.pid,
-          birth: row.birth,
-          executable: canonical(row.executable),
-          sha256: createHash('sha256').update(binary(row.executable)).digest('hex'),
-        };
-      });
-      const after = parseWindowsPopulation(execute(remainingBudget(deadline))).sort((a, b) => a.pid - b.pid);
-      if (JSON.stringify(before) !== JSON.stringify(after)) {
-        throw new PopulationRace('Native func population/PID identity changed while hashing');
-      }
-      for (const record of processes) {
-        remainingBudget(deadline);
-        assert.equal(createHash('sha256').update(binary(record.executable)).digest('hex'), record.sha256, 'Func executable race');
-      }
+  return observedCollection(async (receipt, budgetMs) => {
+    const deadline = Date.now() + budgetMs;
+    const first = execute(remainingBudget(deadline));
+    receipt.nativePasses++;
+    const table: unknown = JSON.parse(first.replace(/^\uFEFF/, ''));
+    receipt.totalRows = Array.isArray(table) ? table.length : 0;
+    const before = parseWindowsPopulation(first).sort((a, b) => a.pid - b.pid);
+    const processes = receipt.processes;
+    for (const row of before) {
+      receipt.inspectedRows++;
       remainingBudget(deadline);
-      return { complete: true, processes };
-    },
-  };
+      if (typeof row.parentPid === 'number' && Number.isSafeInteger(row.parentPid) && row.parentPid >= 0) {
+        receipt.parents.push({ pid: row.pid, parentPid: row.parentPid });
+      }
+      processes.push({
+        pid: row.pid,
+        birth: row.birth,
+        executable: canonical(row.executable),
+        sha256: createHash('sha256').update(binary(row.executable)).digest('hex'),
+      });
+    }
+    const after = parseWindowsPopulation(execute(remainingBudget(deadline))).sort((a, b) => a.pid - b.pid);
+    receipt.nativePasses++;
+    // Parent PID is a diagnostic hint only, not a birth-bound ancestry proof
+    // or a new stability/acceptance criterion.
+    const identities = (rows: WindowsProcessRow[]) => rows.map(({ pid, name, birth, executable }) => ({ pid, name, birth, executable }));
+    if (JSON.stringify(identities(before)) !== JSON.stringify(identities(after))) {
+      throw new PopulationRace('Native func population/PID identity changed while hashing');
+    }
+    for (const record of processes) {
+      remainingBudget(deadline);
+      assert.equal(createHash('sha256').update(binary(record.executable)).digest('hex'), record.sha256, 'Func executable race');
+    }
+    remainingBudget(deadline);
+    return { complete: true, processes };
+  }, sink);
 }
 
-export function nativePopulationProvider(platform = process.platform): PopulationProvider {
+export function nativePopulationProvider(platform = process.platform, sink?: PopulationReceiptSink): PopulationProvider {
   assert.ok(platform === 'win32' || platform === 'linux', 'Multi-root native population requires Windows or Linux');
-  return platform === 'win32' ? createWindowsPopulationProvider() : createLinuxPopulationProvider();
+  return platform === 'win32'
+    ? createWindowsPopulationProvider(undefined, undefined, undefined, sink)
+    : createLinuxPopulationProvider(undefined, undefined, sink);
 }

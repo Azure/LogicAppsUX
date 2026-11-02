@@ -3167,7 +3167,12 @@ function testAllPlatformLaneEvidenceStagingFixtures() {
         for (const name of ['invocation.json', 'func-bootstrap.json', 'wizard-handoff.json']) {
           fs.writeFileSync(path.join(invocationRoot, name), '{}\n');
         }
-        fs.writeFileSync(path.join(invocationRoot, 'debug-events.jsonl'), '{"targetId":"must-not-stage"}\n');
+        fs.writeFileSync(
+          path.join(invocationRoot, 'debug-events.jsonl'),
+          '{"kind":"activation","boot":"original-generated-boot","roots":[]}\n'
+        );
+        fs.writeFileSync(path.join(invocationRoot, 'population-observations.jsonl'), '{"kind":"diagnostic-operation","count":6}\n');
+        fs.writeFileSync(path.join(invocationRoot, 'not-allowlisted.json'), '{"credential":"must-not-stage"}\n');
         fs.writeFileSync(
           path.join(invocationRoot, 'code.log'),
           'D:\\agent\\_work\\1\\s\\private-workspace\\app /home/agent/private-workspace/app token=must-redact\n'
@@ -3220,14 +3225,15 @@ function testAllPlatformLaneEvidenceStagingFixtures() {
         const projection = JSON.parse(fs.readFileSync(path.join(multiRootDestination, 'final-result.json'), 'utf8'));
         assert.deepStrictEqual(projection.observation.roots, ['alpha', 'beta']);
         assert.doesNotMatch(JSON.stringify(projection), /private|runtimeRoot|targetId/);
-        for (const omitted of [
-          'invocation.json',
-          'func-bootstrap.json',
-          'wizard-handoff.json',
-          'debug-events.jsonl',
-          'code.log',
-          'vscode-logs',
-        ]) {
+        const invocationRoot = path.join(extensionRoot, '.vscode-test', 'lifecycle', 'workspaceMultiRoot', 'multi-root-fixture');
+        for (const preserved of ['func-bootstrap.json', 'debug-events.jsonl', 'population-observations.jsonl']) {
+          assert.deepStrictEqual(
+            fs.readFileSync(path.join(multiRootDestination, preserved)),
+            fs.readFileSync(path.join(invocationRoot, preserved)),
+            `Original ${preserved} must survive a rejected family's projection byte-for-byte`
+          );
+        }
+        for (const omitted of ['invocation.json', 'wizard-handoff.json', 'code.log', 'vscode-logs', 'not-allowlisted.json']) {
           assert.ok(!fs.existsSync(path.join(multiRootDestination, omitted)), `Raw multi-root ${omitted} must not be staged`);
         }
       }

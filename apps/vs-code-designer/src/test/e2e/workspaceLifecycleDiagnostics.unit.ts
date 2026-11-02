@@ -47,7 +47,111 @@ async function main(): Promise<void> {
   await testCanvasViewportNormalizationUsesStructuralDiagnosticsAndOwnedControls();
   testMsnWeatherSkipsOnlyRedundantFinalCanvasCheckpoint();
   testDesignerConnectionActionExpressionScopesCreateActions();
+  await testMsnHandleShutdownDiagnosticReceipts();
   console.log('[workspaceLifecycleDiagnostics.unit] all tests passed');
+}
+
+async function testMsnHandleShutdownDiagnosticReceipts(): Promise<void> {
+  const declaration = source.statements.find(
+    (node): node is ts.FunctionDeclaration => ts.isFunctionDeclaration(node) && node.name?.text === 'stopDebuggingAndTasks'
+  );
+  assert.ok(declaration);
+  const implementation = ts.transpileModule(`export ${declaration.getText(source)}`, {
+    compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS },
+  }).outputText;
+  for (const mode of ['absent', 'active', 'foreign', 'stop-failure']) {
+    const records: { operation: string; status: string; state?: Record<string, unknown> }[] = [];
+    const primary = new Error('original-stop-error');
+    const session = {
+      id: 'exact-owned-session',
+      workspaceFolder: { uri: { fsPath: 'owned-root' } },
+      configuration: { __logicAppsMsnInvocation: 'invocation' },
+    };
+    const task = {
+      task: { name: 'func: host start', scope: { uri: { fsPath: 'owned-root' } } },
+      terminate: () => {
+        api.tasks.taskExecutions = [];
+      },
+    };
+    let stopRequests = 0;
+    const api = {
+      extensions: { getExtension: () => ({ id: 'extension', isActive: true, extensionPath: 'extension', packageJSON: { main: 'main' } }) },
+      workspace: { workspaceFolders: [{ uri: { fsPath: 'owned-root' } }] },
+      debug: {
+        activeDebugSession: mode === 'absent' ? undefined : (session as typeof session | undefined),
+        stopDebugging: async (target: typeof session) => {
+          assert.strictEqual(target, session);
+          stopRequests++;
+          if (mode === 'stop-failure') {
+            throw primary;
+          }
+          api.debug.activeDebugSession = undefined;
+        },
+      },
+      tasks: { taskExecutions: [task] },
+    };
+    const exported: { stopDebuggingAndTasks?: () => Promise<void> } = {};
+    const emit = (operation: string, status: string, details?: { state?: Record<string, unknown> }) =>
+      records.push({ operation, status, state: details?.state });
+    vm.runInNewContext(implementation, {
+      exports: exported,
+      vscode: api,
+      assert,
+      require,
+      logicAppsExtensionId: 'extension',
+      process: {
+        env: {
+          LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'msn-weather-run',
+          LA_E2E_CLI_MSN_LIFECYCLE_INVOCATION: 'invocation',
+          LA_E2E_CLI_WORKSPACE_PARENT: 'owned-root',
+        },
+      },
+      requiredValue: (value: string) => value,
+      assertOwnedMsnHandleScopes: () => {
+        if (mode === 'foreign') {
+          throw primary;
+        }
+      },
+      waitUntil: async (predicate: () => boolean, budget: number) => {
+        assert.equal(budget, 10000);
+        assert.ok(predicate());
+      },
+      operationDiagnostics: {
+        emit,
+        run: async (operation: string, action: () => Promise<unknown>, state?: Record<string, unknown>) => {
+          emit(operation, 'start', { state });
+          try {
+            const result = await action();
+            emit(operation, 'end');
+            return result;
+          } catch (error) {
+            emit(operation, 'failure');
+            throw error;
+          }
+        },
+        start: (operation: string, state: Record<string, unknown>) => {
+          emit(operation, 'start', { state });
+          return { end: () => emit(operation, 'end'), fail: () => emit(operation, 'failure') };
+        },
+      },
+    });
+    if (mode === 'foreign' || mode === 'stop-failure') {
+      await assert.rejects(exported.stopDebuggingAndTasks!, (error: unknown) => error === primary);
+    } else {
+      await exported.stopDebuggingAndTasks!();
+    }
+    assert.equal(stopRequests, mode === 'active' || mode === 'stop-failure' ? 1 : 0);
+    if (mode === 'absent' || mode === 'foreign') {
+      assert.ok(records.some((record) => record.status === (mode === 'absent' ? 'skipped-no-active-session' : 'skipped-scope-rejected')));
+      assert.ok(!records.some((record) => record.operation === 'msn-debug-stop' && record.status === 'start'));
+    }
+    if (mode === 'active') {
+      assert.equal(
+        records.find((record) => record.operation === 'msn-debug-stop' && record.status === 'start')?.state?.selected,
+        session.id
+      );
+    }
+  }
 }
 
 async function testPersistedDesignerEvidenceSeparatesCanvasAndPanel(): Promise<void> {

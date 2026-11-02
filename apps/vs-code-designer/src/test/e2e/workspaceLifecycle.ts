@@ -4535,6 +4535,7 @@ async function runMsnWeatherLifecycle(createdWorkspace: CreatedWorkspace): Promi
       outputDir: requiredValue(process.env.LA_E2E_CLI_MSN_DIAGNOSTICS_DIR),
       stage,
     });
+  const bodyErrorCount = errors.length;
   // Sample live identities before terminating the original runtime handles, not
   // in suiteTeardown after this finally has already removed the task registry.
   for (const step of [() => observe('before-task-teardown'), () => stopDebuggingAndTasks(), () => observe('after-task-teardown')]) {
@@ -4544,6 +4545,7 @@ async function runMsnWeatherLifecycle(createdWorkspace: CreatedWorkspace): Promi
       errors.push(error);
     }
   }
+  operationDiagnostics.summary(bodyErrorCount === 0 ? 'passed' : 'failed', errors.length === bodyErrorCount ? 'passed' : 'failed');
   if (errors.length > 0) {
     throw new AggregateError(
       errors,
@@ -5953,39 +5955,64 @@ async function stopDebuggingAndTasks(): Promise<void> {
     assert.ok(extension, 'MSN cleanup requires the original active extension');
     const session = vscode.debug.activeDebugSession;
     const executions = [...vscode.tasks.taskExecutions];
-    assertOwnedMsnHandleScopes(
-      {
-        dedicatedMsnRunHost: true,
-        extension: {
-          id: extension.id,
-          isActive: extension.isActive,
-          extensionPath: extension.extensionPath,
-          main: extension.packageJSON.main,
+    // Supplemental only: an absent active session is not a stop request, and
+    // removal from the task registry is not descendant-process closure.
+    const handleState = {
+      active: Boolean(session),
+      selected: session?.id,
+      workspace: session?.workspaceFolder?.uri.fsPath,
+      matches: session?.configuration.__logicAppsMsnInvocation === process.env.LA_E2E_CLI_MSN_LIFECYCLE_INVOCATION,
+      count: executions.length,
+      durationMs: 10000,
+    };
+    operationDiagnostics.emit('msn-debug-stop', 'sample', { state: handleState });
+    try {
+      assertOwnedMsnHandleScopes(
+        {
+          dedicatedMsnRunHost: true,
+          extension: {
+            id: extension.id,
+            isActive: extension.isActive,
+            extensionPath: extension.extensionPath,
+            main: extension.packageJSON.main,
+          },
+          workspaceParent: requiredValue(process.env.LA_E2E_CLI_WORKSPACE_PARENT),
+          workspaceRoots: (vscode.workspace.workspaceFolders || []).map((folder) => folder.uri.fsPath),
+          resolveEntry: require.resolve,
+          cachedEntry: () => undefined, // Scope check only; no lifecycle loading/invocation.
         },
-        workspaceParent: requiredValue(process.env.LA_E2E_CLI_WORKSPACE_PARENT),
-        workspaceRoots: (vscode.workspace.workspaceFolders || []).map((folder) => folder.uri.fsPath),
-        resolveEntry: require.resolve,
-        cachedEntry: () => undefined, // Scope check only; no lifecycle loading/invocation.
-      },
-      requiredValue(process.env.LA_E2E_CLI_MSN_LIFECYCLE_INVOCATION),
-      {
-        tasks: executions.map(({ task }) => ({
-          name: task.name,
-          workspacePath: typeof task.scope === 'object' ? task.scope.uri.fsPath : undefined,
-        })),
-        ...(session
-          ? { session: { workspacePath: session.workspaceFolder?.uri.fsPath, invocation: session.configuration.__logicAppsMsnInvocation } }
-          : {}),
-      }
-    );
+        requiredValue(process.env.LA_E2E_CLI_MSN_LIFECYCLE_INVOCATION),
+        {
+          tasks: executions.map(({ task }) => ({
+            name: task.name,
+            workspacePath: typeof task.scope === 'object' ? task.scope.uri.fsPath : undefined,
+          })),
+          ...(session
+            ? {
+                session: { workspacePath: session.workspaceFolder?.uri.fsPath, invocation: session.configuration.__logicAppsMsnInvocation },
+              }
+            : {}),
+        }
+      );
+    } catch (error) {
+      operationDiagnostics.emit('msn-debug-stop', 'skipped-scope-rejected', { state: handleState, error });
+      throw error;
+    }
     if (session) {
-      await operationDiagnostics.run('msn-debug-stop', () => vscode.debug.stopDebugging(session));
+      await operationDiagnostics.run('msn-debug-stop', () => vscode.debug.stopDebugging(session), handleState);
       await operationDiagnostics.run('msn-debug-stopped-predicate', () =>
         waitUntil(() => vscode.debug.activeDebugSession !== session, 10000, 'original MSN debug handle to stop')
       );
+    } else {
+      operationDiagnostics.emit('msn-debug-stop', 'skipped-no-active-session', { state: handleState });
     }
-    for (const execution of executions) {
-      const span = operationDiagnostics.start('msn-task-stop');
+    for (const [index, execution] of executions.entries()) {
+      const span = operationDiagnostics.start('msn-task-stop', {
+        optionIndex: index,
+        count: executions.length,
+        workspace: typeof execution.task.scope === 'object' ? execution.task.scope.uri.fsPath : undefined,
+        text: 'task-handle-terminate-not-descendant-exit',
+      });
       try {
         execution.terminate();
         span.end();
@@ -6001,6 +6028,15 @@ async function stopDebuggingAndTasks(): Promise<void> {
         'original MSN task handles to terminate'
       )
     );
+    operationDiagnostics.emit('msn-task-stopped-predicate', 'sample', {
+      state: {
+        active: vscode.debug.activeDebugSession === session && Boolean(session),
+        selected: vscode.debug.activeDebugSession?.id,
+        count: vscode.tasks.taskExecutions.filter((execution) => executions.includes(execution)).length,
+        durationMs: 10000,
+        text: 'handle-registry-only-not-native-release',
+      },
+    });
     return;
   }
   if (vscode.debug.activeDebugSession) {

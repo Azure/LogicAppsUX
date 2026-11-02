@@ -490,21 +490,38 @@ function recorderHarness(f, install) {
   return { exports: module.exports, trigger, intervals };
 }
 
-function observerHarness(f, deactivate, appendFileSync) {
+function observerHarness(f, deactivate, appendFileSync, controls = {}) {
   const intervals = new Map();
   let timerId = 0;
+  let taskStarted;
   const module = { exports: {} };
   const main = path.join(f.root, 'product-main.js');
   const loaded = { loaded: true, exports: { deactivate } };
+  const debugEvents = new Map();
   const api = {
-    tasks: { onDidStartTaskProcess: () => ({ dispose() {} }), taskExecutions: [] },
-    debug: {},
+    tasks: {
+      onDidStartTaskProcess: (callback) => {
+        taskStarted = callback;
+        return { dispose() {} };
+      },
+      taskExecutions: [],
+    },
+    debug: {
+      onDidStartDebugSession: (callback) => {
+        debugEvents.set('start', callback);
+        return { dispose: () => debugEvents.delete('start') };
+      },
+      onDidTerminateDebugSession: (callback) => {
+        debugEvents.set('terminate', callback);
+        return { dispose: () => debugEvents.delete('terminate') };
+      },
+    },
     extensions: { getExtension: () => ({ activate: async () => {}, extensionPath: f.root, packageJSON: { main: 'product-main.js' } }) },
     workspace: { workspaceFolders: [{ uri: { fsPath: f.workspace } }] },
     version: 'synthetic-vscode-api',
   };
   // Local VM dependency only; never patch the process-global fs module.
-  const loadedRequire = (id) => (id === 'node:fs' && appendFileSync ? { ...fs, appendFileSync } : require(id));
+  const loadedRequire = (id) => (id === 'node:fs' ? { ...fs, ...controls.fs, ...(appendFileSync ? { appendFileSync } : {}) } : require(id));
   loadedRequire.resolve = () => main;
   loadedRequire.cache = { [main]: loaded };
   vm.runInNewContext(
@@ -519,12 +536,276 @@ function observerHarness(f, deactivate, appendFileSync) {
         return id;
       },
       clearInterval: (id) => intervals.delete(id),
-      setTimeout,
+      setTimeout: controls.setTimeout ?? setTimeout,
+      ...(controls.Date ? { Date: controls.Date } : {}),
     },
     { filename: 'actual-lifecycle-observer.js' }
   );
-  return { install: () => module.exports.installLifecycleObserver(api, f.launch.environment, f.context), intervals };
+  return {
+    install: () => module.exports.installLifecycleObserver(api, f.launch.environment, f.context),
+    intervals,
+    debugEvents,
+    startTask: (pid) =>
+      taskStarted({ processId: pid, execution: { task: { name: 'func: host start', scope: { uri: { fsPath: f.workspace } } } } }),
+  };
 }
+
+function shutdownBudgetControl(f, { msn, releaseAt, telemetryFailure = false, primary }) {
+  let now = 0;
+  let productCalls = 0;
+  let supplementalReads = 0;
+  let telemetryFailures = 0;
+  const releases = [];
+  const order = [];
+  const dependencyRoot = path.join(f.root, 'dependencies');
+  const diagnostics = path.join(f.root, 'msn-diagnostics');
+  fs.mkdirSync(dependencyRoot);
+  fs.mkdirSync(diagnostics);
+  if (msn) {
+    Object.assign(f.launch.environment, {
+      LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'msn-weather-run',
+      LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: dependencyRoot,
+      LA_E2E_CLI_MSN_DIAGNOSTICS_DIR: diagnostics,
+    });
+    for (const stage of ['before-task-teardown', 'after-task-teardown']) {
+      fs.writeFileSync(
+        path.join(diagnostics, `${stage}.json`),
+        JSON.stringify({
+          schemaVersion: 1,
+          stage,
+          processObservationAvailable: true,
+          observerPid: process.pid,
+          observerIdentities: [{ pid: process.pid }],
+          dependencyRoot,
+          observedAt: new Date(0).toISOString(),
+          dependencyCandidateAncestry: [
+            { pid: 901, parentPid: 902, creationIdentity: 'synthetic-msn-birth', executable: path.join(dependencyRoot, 'func') },
+          ],
+        })
+      );
+    }
+  }
+  const harness = observerHarness(
+    f,
+    async () => {
+      productCalls++;
+      order.push({ event: 'product', at: now });
+      if (primary) throw primary;
+    },
+    (file, line, ...args) => {
+      const record = JSON.parse(line);
+      if (record.kind === 'error' || record.kind === 'shutdown') order.push({ event: record.kind, at: now });
+      if (telemetryFailure && record.operation && (supplementalReads === 2 || (primary && productCalls))) {
+        telemetryFailures++;
+        throw new Error('secondary diagnostic sink unavailable');
+      }
+      return fs.appendFileSync(file, line, ...args);
+    },
+    {
+      // Only this VM's clock/timers/fs are replaced. Execute the complete
+      // original observer and identity checks, not an extracted/rewritten loop.
+      Date: class extends Date {
+        static now() {
+          return now;
+        }
+      },
+      setTimeout: (callback, ms) => {
+        assert.equal(ms, 50, 'Only the existing polling interval may advance the virtual clock');
+        now += ms;
+        callback();
+      },
+      fs: {
+        renameSync: (from, to) => {
+          fs.renameSync(from, to);
+          if (!to.endsWith('.request')) return;
+          const lines = fs.readFileSync(to, 'utf8').split('\n').filter(Boolean);
+          const pids = lines.filter((line) => !line.startsWith('port:')).map(Number);
+          const ports = lines.filter((line) => line.startsWith('port:')).map((line) => Number(line.slice(5)));
+          if (ports.length) {
+            assert.deepEqual(ports, [7071]);
+            assert.deepEqual(pids, [901, 902], 'Supplemental population must not change the authoritative owned set');
+            supplementalReads++;
+            order.push({ event: `stage-${supplementalReads}`, at: now });
+            if (supplementalReads === 2) now += 4_000;
+          } else if (productCalls && pids.includes(801)) {
+            assert.deepEqual(pids, [801]);
+            releases.push(now);
+          }
+          fs.writeFileSync(
+            `${to}.response`,
+            JSON.stringify({
+              observedAtUtc: new Date(now).toISOString(),
+              ownershipComplete: true,
+              processes: pids.map((pid) => ({
+                ...nativeRecord(pid),
+                ...(pid === 801 && productCalls && now >= releaseAt
+                  ? { metadataStatus: 'exited', exitProof: { source: 'GetProcessTimes', exitTimeTicks: '123456790' } }
+                  : {}),
+              })),
+              ...(ports.length ? { requestedPorts: ports, listeners: [] } : {}),
+            })
+          );
+          fs.unlinkSync(to);
+        },
+      },
+    }
+  );
+  return {
+    harness,
+    releases,
+    order,
+    snapshot: () => ({ now, productCalls, supplementalReads, telemetryFailures }),
+  };
+}
+
+test('stage-2 MSN probe cannot extend the original release budget or rescue a late original identity', async () => {
+  for (const msn of [false, true]) {
+    const f = fixture();
+    const control = shutdownBudgetControl(f, { msn, releaseAt: 12_000 });
+    let observer;
+    try {
+      observer = await control.harness.install();
+      control.harness.startTask(801);
+      // Observation-only failure keeps ordinary closure non-gating; its error
+      // receipt, not a new rejected promise, is the authoritative failed verdict.
+      await observer.shutdown();
+      await observer.shutdown();
+      assert.equal(control.releases[0], 0);
+      assert.equal(control.releases.at(-1), 10_000);
+      assert.equal(control.releases.length, 201);
+      assert.deepEqual(control.snapshot(), {
+        now: msn ? 14_000 : 10_000,
+        productCalls: 1,
+        supplementalReads: msn ? 2 : 0,
+        telemetryFailures: 0,
+      });
+      const rows = fs.readFileSync(observer.receipt, 'utf8').trim().split('\n').map(JSON.parse);
+      assert.ok(rows.some((row) => row.operation === 'scoped-original-process-release' && row.status === 'failure'));
+      assert.ok(rows.some((row) => row.kind === 'error' && row.reason === 'deactivation-or-original-resource-release-failed'));
+      assert.ok(!rows.some((row) => row.kind === 'shutdown'), 'A process exiting at 12s must not be rescued by the 4s stage-2 read');
+      if (msn) {
+        assert.deepEqual(control.order, [
+          { event: 'stage-1', at: 0 },
+          { event: 'product', at: 0 },
+          { event: 'error', at: 10_000 },
+          { event: 'stage-2', at: 10_000 },
+        ]);
+      }
+    } finally {
+      observer?.dispose();
+      f.cleanup();
+    }
+  }
+});
+
+test('stage-2 telemetry failure preserves the fixed success or original identity-release failure', async () => {
+  for (const releaseAt of [5_000, 12_000]) {
+    const f = fixture();
+    const control = shutdownBudgetControl(f, { msn: true, releaseAt, telemetryFailure: true });
+    let observer;
+    try {
+      observer = await control.harness.install();
+      control.harness.startTask(801);
+      await observer.shutdown();
+      const verdictAt = Math.min(releaseAt, 10_000);
+      assert.equal(control.releases.at(-1), verdictAt);
+      assert.equal(control.snapshot().now, verdictAt + 4_000);
+      assert.equal(control.snapshot().productCalls, 1);
+      assert.equal(control.snapshot().supplementalReads, 2);
+      assert.ok(control.snapshot().telemetryFailures > 0, 'Secondary sink failure must actually execute');
+      assert.deepEqual(control.order.slice(-2), [
+        { event: releaseAt === 5_000 ? 'shutdown' : 'error', at: verdictAt },
+        { event: 'stage-2', at: verdictAt },
+      ]);
+      const rows = fs.readFileSync(observer.receipt, 'utf8').trim().split('\n').map(JSON.parse);
+      assert.equal(rows.filter((row) => row.kind === 'shutdown').length, releaseAt === 5_000 ? 1 : 0);
+      assert.equal(rows.filter((row) => row.kind === 'error').length, releaseAt === 5_000 ? 0 : 1);
+      if (releaseAt === 5_000) {
+        assert.deepEqual(
+          rows.find((row) => row.kind === 'shutdown').shutdown.ownedProcesses.map(({ pid }) => pid),
+          [801]
+        );
+      }
+    } finally {
+      observer?.dispose();
+      f.cleanup();
+    }
+  }
+});
+
+test('MSN telemetry failure cannot replace the original product rejection or start stage-2 observation', async () => {
+  const f = fixture();
+  const primary = new assert.AssertionError({ message: 'original product shutdown assertion' });
+  const control = shutdownBudgetControl(f, { msn: true, releaseAt: 12_000, telemetryFailure: true, primary });
+  let observer;
+  try {
+    observer = await control.harness.install();
+    control.harness.startTask(801);
+    await assert.rejects(observer.shutdown(), (error) => error === primary);
+    await assert.rejects(observer.shutdown(), (error) => error === primary);
+    assert.equal(control.snapshot().now, 0);
+    assert.equal(control.snapshot().productCalls, 1);
+    assert.equal(control.snapshot().supplementalReads, 1);
+    assert.ok(control.snapshot().telemetryFailures > 0);
+    assert.deepEqual(control.releases, []);
+    const rows = fs.readFileSync(observer.receipt, 'utf8').trim().split('\n').map(JSON.parse);
+    assert.ok(rows.some((row) => row.kind === 'error' && row.productDeactivationFailed === true));
+    assert.ok(!rows.some((row) => row.kind === 'shutdown'));
+  } finally {
+    observer?.dispose();
+    f.cleanup();
+  }
+});
+
+test('MSN actual observer records hashed exact debug identity and preserves product failure when populations are missing', async () => {
+  const f = fixture();
+  f.launch.environment.LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE = 'msn-weather-run';
+  f.launch.environment.LA_E2E_CLI_MSN_LIFECYCLE_INVOCATION = 'synthetic-msn-invocation';
+  const stop = scopedNativeReply(f.launch.directory, () => ({}));
+  const primary = new Error('original MSN deactivation failure');
+  const harness = observerHarness(f, async () => {
+    throw primary;
+  });
+  let observer;
+  try {
+    observer = await harness.install();
+    const session = {
+      id: 'exact-msn-session-control',
+      type: 'coreclr',
+      workspaceFolder: { uri: { fsPath: f.workspace } },
+      configuration: { __logicAppsMsnInvocation: 'synthetic-msn-invocation', secret: 'must-not-copy-configuration' },
+    };
+    harness.debugEvents.get('start')(session);
+    harness.debugEvents.get('terminate')(session);
+    await assert.rejects(observer.shutdown(), (error) => error === primary);
+    const rows = fs
+      .readFileSync(observer.receipt, 'utf8')
+      .trim()
+      .split('\n')
+      .map((line) => JSON.parse(line));
+    const events = rows.filter((row) => row.operation === 'msn-debug-stop');
+    assert.deepEqual(
+      events.map((row) => row.status),
+      ['observer-installed', 'session-started', 'session-terminated']
+    );
+    assert.equal(events[1].state.selected.sha256, events[2].state.selected.sha256);
+    assert.equal(events[1].state.matches, true);
+    assert.equal(events[1].state.owned, true);
+    assert.ok(!JSON.stringify(rows).includes(session.id));
+    assert.ok(!JSON.stringify(rows).includes('must-not-copy-configuration'));
+    assert.ok(
+      rows.some((row) => row.status === 'sample-unavailable'),
+      'Missing population is explicit, never a successful empty sample'
+    );
+    assert.ok(rows.some((row) => row.operation === 'original-product-deactivate' && row.status === 'failure'));
+    assert.ok(!rows.some((row) => row.kind === 'shutdown'));
+  } finally {
+    observer?.dispose();
+    assert.equal(harness.debugEvents.size, 0);
+    stop();
+    f.cleanup();
+  }
+});
 
 function cliRecorderHarness(f, install) {
   const exports = {};

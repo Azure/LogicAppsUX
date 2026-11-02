@@ -14,6 +14,8 @@ const {
   _test: { writeSingleResult },
 } = require('./summarize-e2e-cli-results');
 const { createMsnFinalizationReport } = require('./msn-finalization-reporting');
+const { readMsnRuntimeCandidates, observeMsnRuntimeCandidates } = require('./vscode-lifecycle-observer');
+const { createDiagnosticProducer } = require('./e2e-cli-diagnostics');
 const {
   closeOwnedMsnProcesses,
   observeMsnCleanupDiagnostics,
@@ -32,6 +34,99 @@ const {
     writeSuitePhaseResult,
   },
 } = require('./run-e2e-cli');
+
+test('MSN worker diagnostics reuse exact host/root populations without admitting candidates or scanning', async (t) => {
+  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'la-msn-diagnostic-control-')));
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const env = {
+    LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'msn-weather-run',
+    LA_E2E_CLI_MSN_DIAGNOSTICS_DIR: root,
+    LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT: root,
+  };
+  const candidate = { pid: 6228, parentPid: 1996, creationIdentity: '639291901244689370', executable: path.join(root, 'func.exe') };
+  const write = (change = {}) => {
+    for (const stage of ['before-task-teardown', 'after-task-teardown']) {
+      fs.writeFileSync(
+        path.join(root, `${stage}.json`),
+        JSON.stringify({
+          schemaVersion: 1,
+          stage,
+          processObservationAvailable: true,
+          observerPid: process.pid,
+          observerIdentities: [{ pid: process.pid }],
+          dependencyRoot: root,
+          observedAt: new Date().toISOString(),
+          dependencyCandidateAncestry: [candidate],
+          ...change,
+        })
+      );
+    }
+  };
+  write();
+  const candidates = readMsnRuntimeCandidates(env);
+  assert.equal(candidates.length, 1);
+  assert.equal(candidates[0].selected, 3, 'Membership in both samples is not an exit proof');
+  const lines = [];
+  const trace = createDiagnosticProducer({ sink: (line) => lines.push(JSON.parse(line)), producer: 'msn-control' });
+  const requests = [];
+  const capturedPids = [1392]; // Actual product capture excludes the runtime.
+  const observe = async (ids, ports) => {
+    requests.push({ ids, ports });
+    return {
+      processes: ids.map((pid) => ({
+        pid,
+        parentPid: pid === 6228 ? 1996 : 2296,
+        metadataStatus: 'captured',
+        identity: { platform: 'win32', kind: 'windows-filetime', startTimeTicks: '134380669244689376' },
+      })),
+      requestedPorts: ports,
+      listeners: [{ port: 7071, pid: 6228, matchedRoot: 6228 }],
+    };
+  };
+  assert.deepEqual(await observeMsnRuntimeCandidates({ env, trace, observe, stage: 1, capturedPids }), candidates);
+  assert.deepEqual(requests, [{ ids: [6228, 1996], ports: [7071] }]);
+  assert.deepEqual(capturedPids, [1392], 'Diagnostic candidates must not expand the accepted product capture');
+  const receipt = lines.find((line) => line.state?.pid === 6228 && line.operation === 'scoped-process-capture');
+  assert.equal(receipt.state.matches, false);
+  assert.equal(receipt.state.parentPid, 1996);
+  assert.equal(typeof receipt.state.birth.sha256, 'string');
+  const serialized = JSON.stringify(lines);
+  assert.ok(!serialized.includes(root) && !serialized.includes(candidate.creationIdentity));
+  assert.ok(!serialized.includes('134380669244689376'), 'Exact native birth must be hashed independently');
+  assert.ok(!lines.some((line) => line.kind === 'shutdown' || line.resources || line.shutdown));
+  const requestCount = requests.length;
+  await observeMsnRuntimeCandidates({ env: {}, trace, observe, stage: 1 });
+  assert.equal(requests.length, requestCount, 'Other families must not acquire MSN diagnostics');
+  for (const change of [
+    { observerPid: process.pid + 1 },
+    { dependencyRoot: path.dirname(root) },
+    { processObservationAvailable: false },
+    { dependencyCandidateAncestry: Array(13).fill(candidate) },
+    { dependencyCandidateAncestry: [{ ...candidate, executable: path.join(path.dirname(root), 'foreign-func.exe') }] },
+  ]) {
+    write(change);
+    assert.throws(() => readMsnRuntimeCandidates(env));
+    await observeMsnRuntimeCandidates({ env, trace, observe, stage: 1 });
+    assert.equal(requests.length, requestCount, 'Invalid populations must not request candidate PIDs');
+    assert.equal(lines.at(-1).status, 'sample-unavailable');
+  }
+  write();
+  const primary = new Error('native observation unavailable');
+  await assert.doesNotReject(() =>
+    observeMsnRuntimeCandidates({
+      env,
+      trace: {
+        emit: () => {
+          throw new Error('secondary sink failure');
+        },
+      },
+      observe: async () => {
+        throw primary;
+      },
+      stage: 2,
+    })
+  );
+});
 
 function fixture(t) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'la-msn-finalization-control-'));

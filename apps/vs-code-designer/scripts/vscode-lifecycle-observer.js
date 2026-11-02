@@ -11,6 +11,132 @@ const { createDiagnosticProducer, diagnosticBinding } = require('./e2e-cli-diagn
 const extensionId = 'ms-azuretools.vscode-azurelogicapps';
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+// Supplemental MSN correlation only. Read the two existing complete population
+// receipts; never scan again, admit candidates into ownedProcesses, or terminate.
+function readMsnRuntimeCandidates(env, observerPid = process.pid) {
+  const directory = env.LA_E2E_CLI_MSN_DIAGNOSTICS_DIR;
+  assert.ok(path.isAbsolute(directory || ''), 'MSN diagnostic directory unavailable');
+  const root = fs.realpathSync(env.LA_E2E_CLI_RUNTIME_DEPENDENCIES_ROOT);
+  assert.equal(fs.realpathSync(directory), path.resolve(directory), 'MSN diagnostic directory traverses a link');
+  const candidates = new Map();
+  for (const stage of ['before-task-teardown', 'after-task-teardown']) {
+    const file = path.join(directory, `${stage}.json`);
+    const stat = fs.lstatSync(file);
+    assert.ok(stat.isFile() && !stat.isSymbolicLink() && stat.size <= 262144, 'MSN population receipt unavailable or oversized');
+    const receipt = JSON.parse(fs.readFileSync(file, 'utf8'));
+    assert.ok(
+      receipt.schemaVersion === 1 &&
+        receipt.stage === stage &&
+        receipt.processObservationAvailable === true &&
+        receipt.observerPid === observerPid &&
+        receipt.observerIdentities?.length === 1 &&
+        receipt.observerIdentities[0].pid === observerPid &&
+        receipt.dependencyRoot === root &&
+        Number.isFinite(Date.parse(receipt.observedAt)) &&
+        Array.isArray(receipt.dependencyCandidateAncestry) &&
+        receipt.dependencyCandidateAncestry.length <= 12,
+      'MSN population receipt differs from the current host/root'
+    );
+    for (const record of receipt.dependencyCandidateAncestry) {
+      assert.ok(
+        Number.isSafeInteger(record.pid) &&
+          record.pid > 0 &&
+          Number.isSafeInteger(record.parentPid) &&
+          record.parentPid > 0 &&
+          typeof record.creationIdentity === 'string' &&
+          record.creationIdentity.length <= 128 &&
+          path.isAbsolute(record.executable || ''),
+        'MSN candidate identity unavailable'
+      );
+      const relative = path.relative(root, record.executable);
+      assert.ok(relative && !relative.startsWith('..') && !path.isAbsolute(relative), 'MSN candidate outside current dependency root');
+      const key = `${record.pid}:${record.creationIdentity}`;
+      const existing = candidates.get(key);
+      candidates.set(key, {
+        pid: record.pid,
+        parentPid: record.parentPid,
+        birth: record.creationIdentity,
+        executable: record.executable,
+        selected: stage === 'before-task-teardown' ? 1 : existing ? 3 : 2,
+      });
+    }
+  }
+  assert.ok(candidates.size <= 12, 'MSN candidate union exceeds diagnostic bound');
+  return [...candidates.values()];
+}
+
+async function observeMsnRuntimeCandidates({ env, trace, observe, candidates, stage, capturedPids = [] }) {
+  if (env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE !== 'msn-weather-run') return undefined;
+  const emit = (operation, status, details) => {
+    try {
+      trace.emit(operation, status, details);
+    } catch {
+      // Even a broken secondary sink must not mask original product failure.
+    }
+  };
+  try {
+    candidates ??= readMsnRuntimeCandidates(env);
+    const ids = [...new Set(candidates.flatMap(({ pid, parentPid }) => [pid, parentPid]))];
+    // The existing Request host/status endpoint is 7071: scoped listener query
+    // only, never HTTP success or port-release acceptance.
+    const native = await observe(ids, [7071]);
+    emit('scoped-process-capture', 'sample', {
+      state: { optionIndex: stage, count: candidates.length, expectedCount: capturedPids.length, durationMs: 10000 },
+    });
+    for (const candidate of candidates) {
+      const record = native.processes.find(({ pid }) => pid === candidate.pid);
+      assert.ok(record, 'Native MSN candidate response incomplete');
+      emit('scoped-process-capture', 'sample', {
+        state: {
+          optionIndex: stage,
+          pid: candidate.pid,
+          parentPid: candidate.parentPid,
+          selected: candidate.selected,
+          text: candidate.birth,
+          birth: JSON.stringify(record.identity),
+          executable: candidate.executable,
+          matches: capturedPids.includes(candidate.pid),
+          observed: record.metadataStatus,
+          // Exact native birth is independently hashed, not rounded into a
+          // claimed match with the population provider's different clock form.
+          lastState: {
+            pid: record.pid,
+            parentPid: record.parentPid,
+            observed: record.metadataStatus,
+          },
+        },
+      });
+    }
+    for (const record of native.processes.filter((record) => !candidates.some(({ pid }) => pid === record.pid))) {
+      emit('scoped-process-capture', 'sample', {
+        state: {
+          optionIndex: stage,
+          pid: record.pid,
+          parentPid: record.parentPid,
+          birth: JSON.stringify(record.identity),
+          observed: record.metadataStatus,
+          matches: capturedPids.includes(record.pid),
+        },
+      });
+    }
+    emit('scoped-socket-bind-release', 'sample', {
+      state: { optionIndex: stage, selected: 7071, count: native.listeners?.length ?? 0, complete: Array.isArray(native.listeners) },
+    });
+    for (const listener of native.listeners || []) {
+      emit('scoped-socket-bind-release', 'sample', {
+        state: { optionIndex: stage, selected: listener.port, pid: listener.pid, matches: listener.matchedRoot, observed: true },
+      });
+    }
+    return candidates;
+  } catch (error) {
+    emit('scoped-process-capture', 'sample-unavailable', {
+      state: { optionIndex: stage, text: 'msn-current-population-or-native-correlation-unavailable' },
+      error,
+    });
+    return undefined;
+  }
+}
+
 function readRealJson(file) {
   assert.ok(fs.lstatSync(file).isFile() && !fs.lstatSync(file).isSymbolicLink(), 'Lifecycle receipt must be a real file');
   return JSON.parse(fs.readFileSync(file, 'utf8'));
@@ -234,6 +360,11 @@ async function installLifecycleObserver(vscode, env = process.env, context) {
     if (task.name === 'func: host start' && task.scope?.uri) {
       taskPids.add(event.processId);
       taskRecords.push({ pid: event.processId, workspace: task.scope.uri.fsPath, observedAt: Date.now() });
+      if (env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE === 'msn-weather-run') {
+        trace.emit('msn-task-stop', 'sample', {
+          state: { optionIndex: 0, pid: event.processId, workspace: task.scope.uri.fsPath, text: 'task-process-start-not-stop' },
+        });
+      }
     }
   });
   const extension = vscode.extensions.getExtension(extensionId);
@@ -310,7 +441,28 @@ async function installLifecycleObserver(vscode, env = process.env, context) {
   let stopped = false;
   let logScope;
   let lastStartupError;
+  let supplementalShutdownObservation;
   const workspaces = (vscode.workspace.workspaceFolders ?? []).map((folder) => folder.uri.fsPath);
+  const debugSubscriptions = [];
+  if (env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE === 'msn-weather-run') {
+    const debugState = (session) => ({
+      selected: session.id,
+      workspace: session.workspaceFolder?.uri.fsPath,
+      owned: workspaces.some((workspace) => normalize(workspace) === normalize(session.workspaceFolder?.uri.fsPath || '')),
+      matches: session.configuration.__logicAppsMsnInvocation === env.LA_E2E_CLI_MSN_LIFECYCLE_INVOCATION,
+      text: session.type,
+    });
+    // No configuration, arguments or customer names enter these hashed states.
+    for (const [subscribe, status] of [
+      [vscode.debug.onDidStartDebugSession, 'session-started'],
+      [vscode.debug.onDidTerminateDebugSession, 'session-terminated'],
+    ]) {
+      debugSubscriptions.push(subscribe((session) => trace.emit('msn-debug-stop', status, { state: debugState(session) })));
+    }
+    trace.emit('msn-debug-stop', 'observer-installed', {
+      state: { active: Boolean(vscode.debug.activeDebugSession), selected: vscode.debug.activeDebugSession?.id },
+    });
+  }
   const startupPoll = setInterval(async () => {
     if (polling || stopped) return;
     polling = true;
@@ -391,6 +543,15 @@ async function installLifecycleObserver(vscode, env = process.env, context) {
     } catch (error) {
       captureError = error;
     }
+    // Read-only MSN correlation, independent of the product capture/release
+    // acceptance set. Never promote a population candidate into `owned`.
+    const msnCandidates = await observeMsnRuntimeCandidates({
+      env,
+      trace,
+      observe: (pids, ports) => observeProcesses(directory, pids, ports),
+      stage: 1, // post-stop / immediately before original product deactivation
+      capturedPids: owned.map(({ pid }) => pid),
+    });
     // Explicitly invoke and await the original exported deactivation, exactly as
     // the existing owned-host test fixture does. Never replace it with a flag.
     try {
@@ -400,6 +561,15 @@ async function installLifecycleObserver(vscode, env = process.env, context) {
       throw error;
     }
     const shutdownAt = Date.now();
+    supplementalShutdownObservation = () =>
+      observeMsnRuntimeCandidates({
+        env,
+        trace,
+        observe: (pids, ports) => observeProcesses(directory, pids, ports),
+        candidates: msnCandidates,
+        stage: 2, // collected only after the authoritative release verdict
+        capturedPids: owned.map(({ pid }) => pid),
+      });
     if (captureError) {
       append({ kind: 'error', observedAt: shutdownAt, reason: captureError.message });
       return;
@@ -481,22 +651,32 @@ async function installLifecycleObserver(vscode, env = process.env, context) {
   const observedDeactivate = async () => {
     // One actual product call per host, even after an observation failure.
     if (finishing) return finishing;
-    finishing = shutdown().catch((error) => {
-      trace.summary('unknown', 'failed');
-      try {
-        append({
-          kind: 'error',
-          observedAt: Date.now(),
-          reason: 'deactivation-or-original-resource-release-failed',
-          productDeactivationFailed: productFailure,
-        });
-      } catch {
-        /* Do not replace the original product error with a logging failure. */
-      }
-      // Preserve actual product export failures. Observation-only failures remain
-      // explicit evidence failures, but must not add a gate to ordinary closure.
-      if (productFailure) throw error;
-    });
+    finishing = shutdown()
+      .catch((error) => {
+        trace.summary('unknown', 'failed');
+        try {
+          append({
+            kind: 'error',
+            observedAt: Date.now(),
+            reason: 'deactivation-or-original-resource-release-failed',
+            productDeactivationFailed: productFailure,
+          });
+        } catch {
+          /* Do not replace the original product error with a logging failure. */
+        }
+        // Preserve actual product export failures. Observation-only failures remain
+        // explicit evidence failures, but must not add a gate to ordinary closure.
+        if (productFailure) throw error;
+      })
+      .finally(async () => {
+        // Supplemental native reads must not extend or precede the authoritative
+        // release window. Its original success/failure has already been fixed.
+        try {
+          await supplementalShutdownObservation?.();
+        } catch {
+          /* Diagnostic collection cannot replace the original verdict. */
+        }
+      });
     return finishing;
   };
   return {
@@ -506,6 +686,7 @@ async function installLifecycleObserver(vscode, env = process.env, context) {
       stopped = true;
       clearInterval(startupPoll);
       taskSubscription.dispose();
+      for (const subscription of debugSubscriptions) subscription.dispose();
     },
   };
 }
@@ -518,4 +699,6 @@ module.exports = {
   observeCurrentRuntime,
   observeProcesses,
   probeReleasedPort,
+  readMsnRuntimeCandidates,
+  observeMsnRuntimeCandidates,
 };

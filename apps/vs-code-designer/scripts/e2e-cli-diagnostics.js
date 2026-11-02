@@ -57,8 +57,59 @@ const diagnosticOperations = new Set([
   'multi-root-cdp-send',
   'multi-root-workflow-type-select',
   'multi-root-next-enabled',
+  'multi-root-population',
+  'multi-root-population-sample',
+  'multi-root-population-terminal',
+  ...[
+    'start',
+    'response',
+    'protocol-error',
+    'evaluation-exception',
+    'timeout',
+    'late-response',
+    'late-error',
+    'unmatched-response',
+    'disconnect',
+    'socket-error',
+    'connection-close',
+    'write-error',
+  ].flatMap((event) =>
+    [
+      'Runtime.evaluate',
+      'Runtime.enable',
+      'Runtime.callFunctionOn',
+      'Page.enable',
+      'Page.getFrameTree',
+      'Page.captureScreenshot',
+      'Page.getLayoutMetrics',
+      'Page.bringToFront',
+      'DOM.enable',
+      'DOM.getDocument',
+      'DOM.getFrameOwner',
+      'DOM.getBoxModel',
+      'DOM.getContentQuads',
+      'DOM.getNodeForLocation',
+      'DOM.resolveNode',
+      'DOM.describeNode',
+      'DOM.scrollIntoViewIfNeeded',
+      'Input.dispatchMouseEvent',
+      'Input.dispatchKeyEvent',
+      'Input.insertText',
+      'Target.getTargetInfo',
+      'Target.activateTarget',
+      'other',
+      'none',
+    ].map((method) => `cdp-${event}.${method}`)
+  ),
 ]);
-const diagnosticOperationId = (value) => (diagnosticOperations.has(value) ? value : null);
+const diagnosticOperationId = (value) => {
+  if (diagnosticOperations.has(value)) return value;
+  // CDP appends only connection sequence and request ID to its static operation.
+  // Do not admit arbitrary methods, expressions or suffixes into summaries.
+  if (typeof value !== 'string' || !value.startsWith('cdp-')) return null;
+  const operation = value.replace(/\.\d+\.\d+$/, '');
+  return operation !== value && diagnosticOperations.has(operation) ? value : null;
+};
 
 const hash = (value) => crypto.createHash('sha256').update(value).digest('hex');
 const identifier = (value) =>
@@ -125,6 +176,30 @@ function diagnosticState(value, depth = 0) {
       'disabled',
       'options',
       'optionIndex',
+      'workspace',
+      'expectedCount',
+      'admittedExecutable',
+      'samples',
+      'races',
+      'failures',
+      'complete',
+      'nativePasses',
+      'totalRows',
+      'inspectedRows',
+      'launcherPathCount',
+      'workerPathCount',
+      'unknownPathCount',
+      'ownedCount',
+      'unknownOwnershipCount',
+      'ancestryProven',
+      'commandProven',
+      'workspaceProven',
+      'durationMs',
+      'collectionIntervalMs',
+      'processes',
+      'birth',
+      'executable',
+      'parentPid',
     ];
     return Object.fromEntries(
       keys
@@ -281,6 +356,8 @@ function relayObserverDiagnostics(directory, trace) {
       'original-product-deactivate',
       'scoped-original-process-release',
       'scoped-socket-bind-release',
+      'msn-debug-stop',
+      'msn-task-stop',
       'failure-summary',
     ]);
     for (const name of fs
@@ -294,18 +371,26 @@ function relayObserverDiagnostics(directory, trace) {
         if (line.length > 8192) continue;
         const record = JSON.parse(line);
         if (record.kind !== 'diagnostic-operation' || !operations.has(record.operation)) continue;
-        trace.emit(record.operation, ['start', 'end', 'failure', 'summary'].includes(record.status) ? record.status : 'unknown', {
-          state: {
-            nativeSequence: record.sequence,
-            nativeWallTimeMs: Date.parse(record.wallTime),
-            nativeMonotonicMs: record.monotonicMs,
-            lastState: record.state,
-            originProducer: record.producerId,
-            originOperation: record.operationId,
-            originParentOperation: record.parentOperation,
-          },
-          ...(record.error ? { error: { name: record.error.name, code: record.error.code } } : {}),
-        });
+        trace.emit(
+          record.operation,
+          ['start', 'end', 'failure', 'summary', 'sample', 'observer-installed', 'session-started', 'session-terminated'].includes(
+            record.status
+          )
+            ? record.status
+            : 'unknown',
+          {
+            state: {
+              nativeSequence: record.sequence,
+              nativeWallTimeMs: Date.parse(record.wallTime),
+              nativeMonotonicMs: record.monotonicMs,
+              lastState: record.state,
+              originProducer: record.producerId,
+              originOperation: record.operationId,
+              originParentOperation: record.parentOperation,
+            },
+            ...(record.error ? { error: { name: record.error.name, code: record.error.code } } : {}),
+          }
+        );
       }
     }
   } catch (error) {
