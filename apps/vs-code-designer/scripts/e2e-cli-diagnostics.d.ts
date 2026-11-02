@@ -1,3 +1,5 @@
+import type { ChildProcess } from 'node:child_process';
+
 export function formatErrorForDiagnostics(error: unknown): string;
 export function diagnosticBinding(env?: NodeJS.ProcessEnv): Record<string, string | null>;
 export function diagnosticState(value: unknown): unknown;
@@ -5,6 +7,20 @@ export function diagnosticError(error: unknown): unknown;
 export function diagnosticOperationId(value: unknown): string | null;
 export function getFuncDiagnosticProducer(channel: 'events' | 'startup', env?: NodeJS.ProcessEnv): DiagnosticProducer | undefined;
 export function getDesignTimeDiagnosticProducer(env?: NodeJS.ProcessEnv): DiagnosticProducer | undefined;
+export function readDesignTimeHostBinding(env?: NodeJS.ProcessEnv): {hostPid: number; hostBirthSha256: string} | undefined;
+export function bindDesignTimeSpawnIdentity(
+  child: Pick<ChildProcess, 'pid' | 'exitCode' | 'signalCode'>,
+  project: string,
+  workingDirectory: string,
+  env?: NodeJS.ProcessEnv,
+  readNative?: (hostPid: number, pid: number) => unknown
+): void;
+// Supplemental scoped observation, never atomic spawn or population admission.
+export function observeDesignTimeSpawnIdentity(
+  child: Pick<ChildProcess, 'pid' | 'exitCode' | 'signalCode'>,
+  project: string,
+  env?: NodeJS.ProcessEnv
+): Promise<void>;
 export interface DiagnosticSpan {
   id: string;
   end(state?: unknown): void;

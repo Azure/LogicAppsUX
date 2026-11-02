@@ -15,6 +15,7 @@ export interface BootstrapBinary {
   executable: string;
   sha256: string;
   stamp: { dev: number; ino: number; size: number; mtimeMs: number };
+  worker?: BootstrapBinary;
 }
 
 export interface MultiRootBootstrapAttestation {
@@ -63,12 +64,17 @@ export function bootstrapRequest(env: NodeJS.ProcessEnv) {
   return { file, context: parseBootstrapContext(JSON.parse(serialized)) };
 }
 
-export function snapshotBootstrapBinary(context: MultiRootBootstrapContext, configuredPath: string): BootstrapBinary {
+export function snapshotBootstrapBinary(
+  context: MultiRootBootstrapContext,
+  configuredPath: string,
+  role: 'launcher' | 'worker' = 'launcher'
+): BootstrapBinary {
   const root = fs.realpathSync(context.runtimeRoot);
   assert.equal(root, context.runtimeRoot, 'Job-owned dependency root changed identity');
-  const expected = path.join(root, 'FuncCoreTools', process.platform === 'win32' ? 'func.exe' : 'func');
+  const directory = path.join(root, 'FuncCoreTools');
+  const expected = path.join(directory, ...(role === 'worker' ? ['in-proc8'] : []), process.platform === 'win32' ? 'func.exe' : 'func');
   assert.equal(path.resolve(configuredPath), expected, 'Native bootstrap resolved func outside its configured job root');
-  for (const candidate of [path.join(root, 'FuncCoreTools'), expected]) {
+  for (const candidate of [directory, ...(role === 'worker' ? [path.join(directory, 'in-proc8')] : []), expected]) {
     assert.ok(!fs.lstatSync(candidate).isSymbolicLink(), 'Native bootstrap func must not escape through a link');
   }
   const executable = fs.realpathSync(configuredPath);
@@ -79,7 +85,14 @@ export function snapshotBootstrapBinary(context: MultiRootBootstrapContext, conf
   const after = fs.statSync(executable);
   const stamp = (stat: fs.Stats) => ({ dev: stat.dev, ino: stat.ino, size: stat.size, mtimeMs: stat.mtimeMs });
   assert.deepEqual(stamp(after), stamp(before), 'Native func changed during bootstrap hashing');
-  return { executable, sha256, stamp: stamp(after) };
+  return {
+    executable,
+    sha256,
+    stamp: stamp(after),
+    ...(role === 'launcher'
+      ? { worker: snapshotBootstrapBinary(context, path.join(directory, 'in-proc8', path.basename(expected)), 'worker') }
+      : {}),
+  };
 }
 
 // Called only after the existing real --version probes AND no-dialog assertion.
@@ -91,7 +104,10 @@ export function writeBootstrapAttestation(
   vscodeVersion: string
 ): void {
   assert.ok(
-    probes.length >= 2 && probes.every((probe) => /=\d+\.\d+\.\d+/.test(probe)),
+    before.worker &&
+      probes.length >= 2 &&
+      probes.every((probe) => /=\d+\.\d+\.\d+/.test(probe)) &&
+      [before.executable, before.worker.executable].every((file) => probes.some((probe) => probe.includes(`${file}=`))),
     'Successful existing native Func probes are required'
   );
   assert.ok(vscodeVersion, 'Actual bootstrapping Code version is required');
@@ -150,6 +166,13 @@ export function readBootstrapAttestation(
       result.probes.length >= 2 &&
       result.probes.every((probe) => typeof probe === 'string' && /=\d+\.\d+\.\d+/.test(probe)),
     'Native bootstrap probes/version are missing'
+  );
+  assert.ok(
+    result.binary.worker &&
+      [result.binary.executable, result.binary.worker.executable].every((file) =>
+        result.probes.some((probe) => probe.includes(`${file}=`))
+      ),
+    'Both native role probes are required'
   );
   assert.deepEqual(
     snapshotBootstrapBinary(context, result.binary.executable),

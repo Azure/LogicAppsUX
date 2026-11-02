@@ -45,7 +45,12 @@ import {
 } from '../bundleFeed';
 import { releaseReservedPort, reserveFreePort } from '../portReservation';
 import { warnIfJdbcJavaRuntimeMissing } from '../java/jdbcConnector';
-import { emitDesignTimeDiagnostic, startDesignTimeDiagnostic, finishDesignTimeDiagnostic } from './designTimeDiagnostics';
+import {
+  emitDesignTimeDiagnostic,
+  startDesignTimeDiagnostic,
+  finishDesignTimeDiagnostic,
+  observeSpawnIdentity,
+} from './designTimeDiagnostics';
 
 const maxValidationRestarts = 3;
 
@@ -659,6 +664,7 @@ export function startDesignTimeProcess(
   let designChildProcess: cp.ChildProcess;
   try {
     designChildProcess = cp.spawn(command, args, options);
+    observeSpawnIdentity(designChildProcess, workingDirectory ? path.dirname(workingDirectory) : '', workingDirectory || os.tmpdir());
     const pid = designChildProcess.pid;
     if (options.detached && pid !== undefined && Number.isSafeInteger(pid) && pid > 1 && pid !== process.pid) {
       ownedLinuxProcessGroups.set(designChildProcess, pid);

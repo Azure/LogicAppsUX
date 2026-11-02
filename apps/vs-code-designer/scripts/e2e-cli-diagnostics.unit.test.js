@@ -4,6 +4,8 @@ const { test } = require('node:test');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
+const { runInNewContext } = require('node:vm');
+const { createRequire } = require('node:module');
 const {
   createDiagnosticProducer,
   diagnosticBinding,
@@ -16,6 +18,362 @@ const {
   getFuncDiagnosticProducer,
   getDesignTimeDiagnosticProducer,
 } = require('./e2e-cli-diagnostics');
+
+function originalSpawnControl(t, admitted = true) {
+  const nodeProcess = require('node:process');
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'la-original-spawn-'));
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const project = fs.realpathSync.native(root);
+  const cwd = path.join(project, 'workflow-designtime');
+  fs.mkdirSync(cwd);
+  const invocation = require('node:crypto').randomUUID();
+  const env = {
+    LA_E2E_CLI_MULTI_ROOT_ISOLATED: admitted ? '1' : '0',
+    LA_E2E_LIFECYCLE_DIR: project,
+    LA_E2E_LIFECYCLE_INVOCATION: invocation,
+    LA_E2E_CLI_MULTI_ROOT_EVENTS: path.join(project, 'debug-events.jsonl'),
+    BUILD_SOURCEVERSION: 'a'.repeat(40),
+    BUILD_BUILDID: '42',
+  };
+  const filename = require.resolve('./e2e-cli-diagnostics');
+  const module = { exports: {} };
+  runInNewContext(fs.readFileSync(filename, 'utf8'), { module, require: createRequire(filename), process: nodeProcess, Buffer });
+  const child = { pid: nodeProcess.pid + 100000, exitCode: null, signalCode: null };
+  const birth = (n) => (nodeProcess.platform === 'linux' ? `11111111-1111-1111-1111-111111111111:${n}` : String(n));
+  const rows = [
+    {
+      pid: nodeProcess.pid,
+      parentPid: 1,
+      birth: birth(10),
+      nativeBirth: birth(10),
+      identityKind: nodeProcess.platform === 'linux' ? 1 : 3,
+    },
+    {
+      pid: child.pid,
+      parentPid: nodeProcess.pid,
+      birth: birth(20),
+      nativeBirth: birth(20),
+      identityKind: nodeProcess.platform === 'linux' ? 1 : 3,
+    },
+  ];
+  return {
+    api: module.exports,
+    env,
+    project,
+    cwd,
+    child,
+    rows,
+    records: () => {
+      const file = path.join(project, `${invocation}.design-time.jsonl`);
+      return fs.existsSync(file)
+        ? fs
+            .readFileSync(file, 'utf8')
+            .trim()
+            .split('\n')
+            .map((line) => JSON.parse(line))
+        : [];
+    },
+  };
+}
+
+test('original synchronous spawn binding serializes native births, source and physical-root ownership without raw metadata', (t) => {
+  const f = originalSpawnControl(t);
+  f.api.bindDesignTimeSpawnIdentity(f.child, f.project, f.cwd, f.env, () => f.rows);
+  const last = f.records().at(-1);
+  assert.equal(last.operation, 'design-time-spawn-native-binding');
+  assert.equal(last.status, 'end');
+  assert.equal(last.sourceSha, 'a'.repeat(40));
+  assert.equal(last.state.spawnIdentityProven, true);
+  assert.equal(last.state.processes.count, 2);
+  assert.equal(
+    last.state.processes.items[1].birth.sha256,
+    require('node:crypto').createHash('sha256').update(f.rows[1].birth).digest('hex')
+  );
+  assert.ok(!JSON.stringify(last).includes(f.project));
+  assert.ok(!JSON.stringify(last).includes(`"birth":${JSON.stringify(f.rows[1].birth)}`));
+});
+test('no original spawn query or project inspection occurs outside exact diagnostic admission', (t) => {
+  const f = originalSpawnControl(t, false);
+  f.api.bindDesignTimeSpawnIdentity(f.child, 'not-a-physical-project', 'not-a-cwd', f.env, () => {
+    throw new Error('must not query');
+  });
+  assert.deepEqual(f.records(), []);
+});
+for (const name of [
+  'missing',
+  'duplicate',
+  'foreign-parent',
+  'wrong-domain',
+  'reused-parent',
+  'exited',
+  'changed-pid',
+  'denied',
+  'changed-cwd',
+]) {
+  test(`original spawn birth binding fails closed: ${name}`, (t) => {
+    const f = originalSpawnControl(t);
+    f.api.bindDesignTimeSpawnIdentity(f.child, f.project, f.cwd, f.env, () => {
+      if (name === 'missing') return [];
+      if (name === 'duplicate') return [f.rows[0], f.rows[0]];
+      if (name === 'foreign-parent') f.rows[1].parentPid++;
+      if (name === 'wrong-domain') f.rows[1].identityKind = 999;
+      if (name === 'reused-parent') f.rows[0].birth = f.rows[1].birth + '0';
+      if (name === 'exited') f.child.exitCode = 0;
+      if (name === 'changed-pid') f.child.pid++;
+      if (name === 'denied') throw Object.assign(new Error('private-error'), { code: 'EACCES' });
+      if (name === 'changed-cwd') fs.rmSync(f.cwd, { recursive: true });
+      return f.rows;
+    });
+    const last = f.records().at(-1);
+    assert.equal(last.status, 'failure');
+    assert.equal(last.state.spawnIdentityProven, false);
+    assert.ok(!JSON.stringify(last).includes('private-error'));
+  });
+}
+test('real synchronous native birth binds this actual child and current host on the executing OS', async (t) => {
+  const f = originalSpawnControl(t);
+  const nodeProcess = require('node:process');
+  const child = require('node:child_process').spawn(nodeProcess.execPath, ['-e', 'setInterval(() => {}, 1000)'], {
+    cwd: f.cwd,
+    stdio: 'ignore',
+  });
+  const closed = new Promise((resolve) => child.once('exit', resolve));
+  try {
+    f.api.bindDesignTimeSpawnIdentity(child, f.project, f.cwd, f.env);
+    const binding = f.records().at(-1);
+    assert.equal(binding.status, 'end', JSON.stringify(binding.error));
+    const host = f.api.readDesignTimeHostBinding(f.env);
+    assert.equal(host.hostPid, nodeProcess.pid);
+    assert.equal(host.hostBirthSha256, binding.state.processes.items[0].birth.sha256);
+  } finally {
+    child.kill();
+    await closed;
+  }
+});
+
+// Exercise the real admission, producer, file sink and serializer for BOTH
+// native identity domains. Only the scoped native RPC is controlled. These
+// controls are not native Windows/Linux execution or atomic spawn proof.
+async function scopedSpawnControl(t, platform, change = () => {}, admitted = true) {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'la-design-spawn-'));
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const project = fs.realpathSync.native(root);
+  const invocation = require('node:crypto').randomUUID();
+  const env = {
+    LA_E2E_CLI_MULTI_ROOT_ISOLATED: admitted ? '1' : '0',
+    LA_E2E_LIFECYCLE_DIR: root,
+    LA_E2E_LIFECYCLE_INVOCATION: invocation,
+    LA_E2E_CLI_MULTI_ROOT_EVENTS: path.join(root, 'debug-events.jsonl'),
+    BUILD_SOURCEVERSION: 'a'.repeat(40),
+    BUILD_BUILDID: '424242',
+    LA_E2E_CLI_SUITE_ID: 'workspaceMultiRoot',
+    LA_E2E_CLI_DIAGNOSTIC_PHASE: 'regular-workbench-reopen',
+  };
+  const hostPid = 313;
+  const child = { pid: 414, exitCode: null, signalCode: null };
+  const bootId = '12345678-1234-1234-1234-123456789abc';
+  const record = (pid, parentPid, startTimeTicks) => ({
+    pid,
+    parentPid,
+    startTimeTicks,
+    metadataStatus: 'captured',
+    executablePath: path.join(project, pid === hostPid ? 'host-private.exe' : 'spawn-private.exe'),
+    identity:
+      platform === 'linux'
+        ? { platform, kind: 'linux-proc-start', bootId, clockTicksPerSecond: 100, startTimeTicks }
+        : { platform, kind: 'windows-filetime', startTimeTicks },
+    // The existing native RPC can contain additional metadata. It must NOT be
+    // copied into the new bounded receipt, even as hashed arbitrary objects.
+    commandSummary: { payloadPaths: ['unretained-payload-secret'], sha256: 'unretained-command-secret' },
+  });
+  let queries = 0;
+  let lazyLoads = 0;
+  const native = {
+    observeProcesses: async (directory, ids, ports) => {
+      queries++;
+      assert.equal(directory, root);
+      assert.deepEqual(Array.from(ids), [hostPid, 414], 'Only exact owning host and spawned PID; no worker discovery');
+      assert.equal(ports, undefined, 'No socket/runtime inventory');
+      const observation = {
+        observedAtUtc: new Date().toISOString(),
+        ownershipComplete: true,
+        processes: [record(hostPid, 212, '100'), record(414, hostPid, '200')],
+      };
+      await change({ observation, child, queries, project, env });
+      return observation;
+    },
+  };
+  const modulePath = path.join(__dirname, 'e2e-cli-diagnostics.js');
+  const actualRequire = createRequire(modulePath);
+  const module = { exports: {} };
+  runInNewContext(
+    fs.readFileSync(modulePath, 'utf8'),
+    {
+      module,
+      Buffer,
+      process: { ...require('node:process'), pid: hostPid, platform },
+      require: (id) => {
+        if (id === './vscode-lifecycle-observer') {
+          lazyLoads++;
+          return native;
+        }
+        return actualRequire(id);
+      },
+    },
+    { filename: modulePath }
+  );
+  await module.exports.observeDesignTimeSpawnIdentity(child, project, env);
+  const file = path.join(root, `${invocation}.design-time.jsonl`);
+  const text = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '';
+  const receipts = text
+    .trim()
+    .split('\n')
+    .filter(Boolean)
+    .map((line) => JSON.parse(line));
+  assert.ok(!text.includes(project) && !text.includes('spawn-private') && !text.includes(bootId), 'Native strings must be redacted');
+  assert.ok(!text.includes('unretained-'), 'No command summary or arbitrary native metadata');
+  if (admitted) {
+    assert.equal(receipts.length, 2);
+    for (const receipt of receipts) {
+      assert.equal(receipt.operation, 'design-time-spawn-native-identity');
+      assert.equal(receipt.nativeInvocation, invocation);
+      assert.equal(receipt.sourceSha, env.BUILD_SOURCEVERSION);
+      assert.equal(receipt.run, env.BUILD_BUILDID);
+      assert.equal(receipt.suite, 'workspaceMultiRoot');
+      assert.equal(receipt.phase, 'regular-workbench-reopen');
+      assert.equal(receipt.producer, 'native-design-time');
+      assert.equal(receipt.state.hostPid, hostPid);
+      assert.equal(receipt.state.pid, 414);
+      assert.equal(receipt.state.spawnIdentityProven, false, 'A scoped RPC must never masquerade as an atomic spawn receipt');
+    }
+  }
+  return { queries, lazyLoads, receipts, text, project };
+}
+
+for (const platform of ['linux', 'win32']) {
+  test(`scoped spawn ${platform}: coherent native observation is redacted, bounded, and explicitly NOT ownership/startup proof`, async (t) => {
+    const result = await scopedSpawnControl(t, platform);
+    assert.equal(result.queries, 2);
+    assert.equal(result.lazyLoads, 1);
+    assert.equal(result.receipts[0].status, 'start');
+    const terminal = result.receipts[1];
+    assert.equal(terminal.status, 'end');
+    assert.equal(terminal.state.nativeIdentityObserved, true);
+    assert.equal(terminal.state.ancestryProven, false);
+    assert.equal(terminal.state.workspaceProven, false);
+    assert.equal(terminal.state.ready, false);
+    assert.equal(terminal.state.processes.count, 2);
+    assert.deepEqual(
+      terminal.state.processes.items.map((row) => row.pid),
+      [313, 414]
+    );
+    assert.ok(terminal.state.processes.items.every((row) => row.birth.sha256 && row.executable.sha256));
+    assert.ok(terminal.state.processes.items.every((row) => row.identityKind === (platform === 'linux' ? 1 : 2)));
+    assert.equal(
+      terminal.state.project.sha256,
+      require('node:crypto').createHash('sha256').update(result.project).digest('hex'),
+      'Physical project digest comes from the owning operation, never observation-only worker path guesses'
+    );
+    assert.ok(Buffer.byteLength(result.text) < 4096);
+  });
+
+  test(`scoped spawn ${platform}: rejected admission performs no native RPC, lazy load, or receipt IO`, async (t) => {
+    const result = await scopedSpawnControl(t, platform, () => assert.fail('No admitted observation'), false);
+    assert.equal(result.queries, 0);
+    assert.equal(result.lazyLoads, 0);
+    assert.deepEqual(result.receipts, []);
+  });
+
+  for (const mutation of [
+    'missing-row',
+    'duplicate-row',
+    'extra-row',
+    'denied',
+    'missing-birth',
+    'zero-birth',
+    'mismatched-birth',
+    'missing-host-birth',
+    'wrong-kind',
+    'wrong-platform',
+    'missing-executable',
+    'wrong-parent',
+    'parent-reuse',
+    'changed-birth',
+    'changed-parent',
+    'changed-executable',
+    'changed-host',
+    'exited-child',
+    'signalled-child',
+    'changed-child-pid',
+    'incomplete',
+    'missing-time',
+    'stale-time',
+    'future-time',
+    'native-error',
+    ...(platform === 'linux' ? ['missing-boot', 'wrong-boot', 'wrong-clock'] : []),
+  ]) {
+    test(`scoped spawn ${platform}: ${mutation} remains unavailable, never silently retries`, async (t) => {
+      const result = await scopedSpawnControl(t, platform, ({ observation, child, queries }) => {
+        const [host, spawned] = observation.processes;
+        if (mutation === 'missing-row') observation.processes.pop();
+        if (mutation === 'duplicate-row') observation.processes[1] = { ...host };
+        if (mutation === 'extra-row') observation.processes.push({ ...spawned, pid: 999 });
+        if (mutation === 'denied') spawned.metadataStatus = 'inspection-failed';
+        if (mutation === 'missing-birth') delete spawned.startTimeTicks;
+        if (mutation === 'zero-birth') spawned.startTimeTicks = spawned.identity.startTimeTicks = '0';
+        if (mutation === 'mismatched-birth') spawned.identity.startTimeTicks = '201';
+        if (mutation === 'missing-host-birth') delete host.startTimeTicks;
+        if (mutation === 'wrong-kind') spawned.identity.kind = 'caller-pid';
+        if (mutation === 'wrong-platform') spawned.identity.platform = platform === 'linux' ? 'win32' : 'linux';
+        if (mutation === 'missing-executable') spawned.executablePath = '';
+        if (mutation === 'wrong-parent') spawned.parentPid = 999;
+        if (mutation === 'parent-reuse') {
+          host.startTimeTicks = host.identity.startTimeTicks = '300';
+        }
+        if (queries === 2) {
+          if (mutation === 'changed-birth') spawned.startTimeTicks = spawned.identity.startTimeTicks = '201';
+          if (mutation === 'changed-parent') spawned.parentPid = 999;
+          if (mutation === 'changed-executable') spawned.executablePath = path.join(path.dirname(spawned.executablePath), 'swapped.exe');
+          if (mutation === 'changed-host') host.startTimeTicks = host.identity.startTimeTicks = '101';
+        }
+        if (mutation === 'exited-child') child.exitCode = 0;
+        if (mutation === 'signalled-child') child.signalCode = 'SIGKILL';
+        if (mutation === 'changed-child-pid') child.pid = 415;
+        if (mutation === 'incomplete') observation.ownershipComplete = false;
+        if (mutation === 'missing-time') observation.observedAtUtc = '';
+        if (mutation === 'stale-time') observation.observedAtUtc = '2000-01-01T00:00:00.000Z';
+        if (mutation === 'future-time') observation.observedAtUtc = '2100-01-01T00:00:00.000Z';
+        if (mutation === 'missing-boot') delete spawned.identity.bootId;
+        if (mutation === 'wrong-boot') spawned.identity.bootId = '22345678-1234-1234-1234-123456789abc';
+        if (mutation === 'wrong-clock') spawned.identity.clockTicksPerSecond = 1000;
+        if (mutation === 'native-error') throw Object.assign(new Error('private-native-denial'), { code: 'EACCES' });
+      });
+      assert.ok(result.queries === 1 || result.queries === 2);
+      assert.equal(result.receipts[1].status, 'failure');
+      assert.equal(result.receipts[1].state.nativeIdentityObserved, false);
+      assert.equal(result.receipts[1].state.processes, undefined, 'No partial scoped identities enter the successful observation shape');
+      assert.ok(!result.text.includes('private-native-denial'));
+    });
+  }
+}
+
+test('scoped spawn project replacement stays unavailable and cannot repair the owning project', async (t) => {
+  const result = await scopedSpawnControl(t, 'linux', ({ project, queries }) => {
+    if (queries !== 2) return;
+    // Keep the producer directory intact while replacing only the physical
+    // project lookup result during the final verification.
+    t.mock.method(fs.realpathSync, 'native', () => path.join(project, 'other'));
+  });
+  assert.equal(result.receipts[1].status, 'failure');
+  assert.equal(result.receipts[1].state.nativeIdentityObserved, false);
+});
+
+test('owning spawn wires the lazy diagnostic once, without awaiting it or changing kill/startup/UI behavior', () => {
+  const owner = fs.readFileSync(path.join(__dirname, '../src/app/utils/codeless/startDesignTimeApi.ts'), 'utf8');
+  assert.equal((owner.match(/observeSpawnIdentity\(designChildProcess,/g) || []).length, 1);
+  assert.match(owner, /designChildProcess = cp\.spawn\(command, args, options\);\s+observeSpawnIdentity\(designChildProcess,/);
+  assert.doesNotMatch(owner, /await observeSpawnIdentity/);
+});
 
 test('design-time admission fails closed without diagnostic IO for every incomplete native tuple', (t) => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'la-design-admission-'));

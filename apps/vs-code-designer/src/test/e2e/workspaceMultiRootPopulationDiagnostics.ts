@@ -6,10 +6,10 @@ import type { MultiRootBootstrapAttestation } from './workspaceMultiRootBootstra
 import {
   nativePopulationProvider,
   PopulationRace,
-  waitForFuncPopulation,
   type PopulationCollectionReceipt,
   type PopulationReceiptSink,
 } from './workspaceMultiRootCollector';
+import { waitForOwnedFuncPopulation } from './workspaceMultiRootOwnership';
 
 const digest = (value: string) => ({ sha256: createHash('sha256').update(value).digest('hex') });
 
@@ -89,6 +89,24 @@ export function createPopulationDiagnostics(
       try {
         const result = await body();
         passed = true;
+        try {
+          const owned = result as { complete?: boolean; ownership?: unknown[]; processes?: unknown[] };
+          if (
+            owned?.complete === true &&
+            owned.ownership?.length === context.roots.length &&
+            owned.processes?.length === context.roots.length * 2
+          ) {
+            lastState = {
+              ...lastState,
+              ownedCount: owned.processes.length,
+              unknownOwnershipCount: 0,
+              ancestryProven: true,
+              workspaceProven: true,
+            };
+          }
+        } catch {
+          // A diagnostic result inspection must never change the body result.
+        }
         return result;
       } catch (error) {
         trace.emit('multi-root-population', 'failure', { error, state: lastState });
@@ -103,7 +121,7 @@ export function createPopulationDiagnostics(
 }
 
 export async function observeFuncPopulation(
-  options: Parameters<typeof waitForFuncPopulation>[1],
+  options: Parameters<typeof waitForOwnedFuncPopulation>[1],
   context: { file: string; bootstrap: MultiRootBootstrapAttestation; workspaceFile: string; roots: string[] }
 ) {
   const trace = createDiagnosticProducer({
@@ -120,6 +138,6 @@ export async function observeFuncPopulation(
     },
     sink: (line) => fs.appendFileSync(context.file, line),
   });
-  const diagnostics = createPopulationDiagnostics(trace, { ...context, executable: options.executable });
-  return diagnostics.run(() => waitForFuncPopulation(nativePopulationProvider(process.platform, diagnostics.collection), options));
+  const diagnostics = createPopulationDiagnostics(trace, { ...context, executable: options.binary.executable });
+  return diagnostics.run(() => waitForOwnedFuncPopulation(nativePopulationProvider(process.platform, diagnostics.collection), options));
 }

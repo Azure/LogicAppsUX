@@ -280,6 +280,8 @@ export function readLogicAppRoots(workspaceFile: string, expected: string[]): st
 }
 
 export interface DebugEvent {
+  hostPid?: number;
+  hostBirthSha256?: string;
   kind: 'activation' | 'runtimeResolution' | 'started' | 'terminated';
   boot: string;
   roots?: string[];

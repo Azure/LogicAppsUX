@@ -562,6 +562,8 @@ function bootstrapFixture() {
   fs.mkdirSync(path.join(root, 'FuncCoreTools'));
   const executable = path.join(root, 'FuncCoreTools', process.platform === 'win32' ? 'func.exe' : 'func');
   fs.writeFileSync(executable, 'unit-owned-binary-bytes-never-executed');
+  fs.mkdirSync(path.join(root, 'FuncCoreTools', 'in-proc8'));
+  fs.writeFileSync(path.join(root, 'FuncCoreTools', 'in-proc8', path.basename(executable)), 'unit-owned-worker-bytes-never-executed');
   const context: MultiRootBootstrapContext = {
     suiteId: 'workspaceMultiRoot',
     invocation: 'unit-bootstrap-invocation',
@@ -578,7 +580,10 @@ function bootstrapFixture() {
     cleanupVerified: true,
     diagnosticsError: '',
   };
-  const probes = [`configured launcher ${executable}=4.1.2`, 'in-proc8 fixture=4.1.2'];
+  const probes = [
+    `configured launcher ${executable}=4.1.2`,
+    `in-proc8 worker host ${path.join(root, 'FuncCoreTools', 'in-proc8', path.basename(executable))}=4.1.2`,
+  ];
   return { root, executable, context, request, phase, probes };
 }
 
@@ -834,6 +839,43 @@ test('binary replacement during native probes or after bootstrap cannot be attes
     fs.rmSync(f.root, { recursive: true, force: true });
   }
 });
+
+for (const boundary of [
+  'missing-worker',
+  'linked-worker-directory',
+  'worker-probe-missing',
+  'worker-during-probes',
+  'worker-after-bootstrap',
+]) {
+  test(`both exact native role bytes and actual probes are required: ${boundary}`, () => {
+    const f = bootstrapFixture();
+    try {
+      const before = snapshotBootstrapBinary(f.context, f.executable);
+      assert.ok(before.worker);
+      if (boundary === 'missing-worker') {
+        fs.unlinkSync(before.worker.executable);
+        assert.throws(() => snapshotBootstrapBinary(f.context, f.executable), /ENOENT/);
+      } else if (boundary === 'linked-worker-directory') {
+        const directory = path.dirname(before.worker.executable);
+        const target = path.join(f.root, 'foreign-worker');
+        fs.renameSync(directory, target);
+        fs.symlinkSync(target, directory, 'junction');
+        assert.throws(() => snapshotBootstrapBinary(f.context, f.executable), /link/);
+      } else if (boundary === 'worker-probe-missing') {
+        assert.throws(() => writeBootstrapAttestation(f.request, before, [f.probes[0], f.probes[0]], 'unit-Code'), /probes/);
+      } else if (boundary === 'worker-during-probes') {
+        fs.writeFileSync(before.worker.executable, 'changed-worker-bytes-never-executed');
+        assert.throws(() => writeBootstrapAttestation(f.request, before, f.probes, 'unit-Code'), /changed during/);
+      } else {
+        writeBootstrapAttestation(f.request, before, f.probes, 'unit-Code');
+        fs.writeFileSync(before.worker.executable, 'changed-worker-after-bootstrap-never-executed');
+        assert.throws(() => readBootstrapAttestation(f.request.file, f.context, f.phase), /changed after/);
+      }
+    } finally {
+      fs.rmSync(f.root, { recursive: true, force: true });
+    }
+  });
+}
 
 test('outside-root executable and user-home cache are not bootstrap admission', () => {
   const f = bootstrapFixture();
@@ -1395,7 +1437,7 @@ test('Linux birth-bound zombie cannot starve the complete live executable popula
   for (const zombieName of ['unit-exited', 'func']) {
     const f = zombieProcFixture({ zombieName });
     const result = await createLinuxPopulationProvider(f.files, '/unit-owned-proc').snapshot(5000);
-    assert.deepEqual(result.processes, [{ pid: 100, birth: 'boot:42', executable, sha256 }]);
+    assert.deepEqual(result.processes, [{ pid: 100, birth: 'boot:42', executable, sha256, parentPid: 0 }]);
     assert.ok((f.calls.get('stat') ?? 0) >= 3, 'Zombie state/birth must be rechecked across collection');
     assert.ok((f.calls.get('cmdline') ?? 0) >= 2, 'Empty argv must be rechecked across collection');
     assert.ok((f.calls.get('exe') ?? 0) >= 3, 'Executable absence must be rechecked across collection');
@@ -1455,7 +1497,8 @@ test('Linux protected unrelated system process does not hide any Funcs from the 
     const result = await createLinuxPopulationProvider(files, '/unit-owned-proc').snapshot(5000);
     assert.deepEqual(result, {
       complete: true,
-      processes: [100, 101].map((pid) => ({ pid, birth: 'boot:42', executable, sha256 })),
+      processes: [100, 101].map((pid) => ({ pid, birth: 'boot:42', executable, sha256, parentPid: 0 })),
+      lineage: [1, 100, 101].map((pid) => ({ pid, birth: 'boot:42', parentPid: 0 })),
     });
   }
 });
@@ -1590,7 +1633,11 @@ test('Linux verified executable-free kernel thread is not a func process', async
       read: (file) =>
         file.endsWith('boot_id') ? 'boot' : file.endsWith('comm') ? 'kernel' : file.endsWith('cmdline') ? '' : fakeStat('42', '2097152'),
     });
-    assert.deepEqual(await createLinuxPopulationProvider(kernel, '/unit-owned-proc').snapshot(5000), { complete: true, processes: [] });
+    assert.deepEqual(await createLinuxPopulationProvider(kernel, '/unit-owned-proc').snapshot(5000), {
+      complete: true,
+      processes: [],
+      lineage: [{ pid: 100, birth: 'boot:42', parentPid: 0 }],
+    });
   }
 });
 test('Linux empty userspace argv does not prove a kernel thread when its executable is unavailable', async () => {
@@ -1687,3 +1734,4 @@ test('complete persisted root denominator rejects absent/partial/duplicate roots
     fs.rmSync(temp, { recursive: true, force: true });
   }
 });
+import './workspaceMultiRootOwnership.unit';

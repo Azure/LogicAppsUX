@@ -166,7 +166,7 @@ function readFamilyPhases(file) {
     : [];
 }
 
-function assertEvidence(observation, funcExecutable, funcSha256, workspace) {
+function assertEvidence(observation, funcExecutable, funcSha256, workspace, worker) {
   assert.ok(observation && observation.mapperOpened === true, 'Actual Mapper observation is required');
   assert.ok(
     observation.initialWindow?.targetId &&
@@ -202,12 +202,16 @@ function assertEvidence(observation, funcExecutable, funcSha256, workspace) {
   );
   assert.equal(
     observation.population.processes.length,
-    observation.roots.length,
-    'Full func executable population must equal actual Logic App roots'
+    observation.roots.length * 2,
+    'Complete native population requires one launcher and worker per Logic App root'
   );
+  assert.ok(worker?.executable && worker.sha256, 'Bootstrap worker identity required');
+  assert.equal(observation.population.ownership?.length, observation.roots.length, 'Native physical-root ownership is required');
   for (const record of observation.population.processes) {
-    assert.equal(record.executable, funcExecutable);
-    assert.equal(record.sha256, funcSha256);
+    const role =
+      record.executable === funcExecutable ? { sha256: funcSha256 } : record.executable === worker.executable ? worker : undefined;
+    assert.ok(role, 'Unknown Func role cannot be omitted');
+    assert.equal(record.sha256, role.sha256);
   }
   assert.ok(
     Array.isArray(observation.screenshots) && observation.screenshots.length === observation.roots.length + 3,
@@ -420,12 +424,21 @@ async function runWorkspaceMultiRoot(
     const cdpPort = await waitForDevToolsActivePort(profile, Date.now() + 60000);
     process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT = String(cdpPort);
     result.observation = await Promise.race([
-      ui.runWorkspaceMultiRootUi({ workspace: entry, eventsFile, bootstrap, funcExecutable, funcSha256, deadline: Date.now() + 1200000 }),
+      ui.runWorkspaceMultiRootUi({
+        workspace: entry,
+        eventsFile,
+        bootstrap,
+        funcExecutable,
+        funcSha256,
+        deadline: Date.now() + 1200000,
+        designTimeFile: path.join(env.LA_E2E_LIFECYCLE_DIR, `${env.LA_E2E_LIFECYCLE_INVOCATION}.design-time.jsonl`),
+        nativeInvocation: env.LA_E2E_LIFECYCLE_INVOCATION,
+      }),
       completion.then(() => {
         throw new Error('Original Code closed before multi-root observation completed');
       }),
     ]);
-    assertEvidence(result.observation, funcExecutable, funcSha256, entry);
+    assertEvidence(result.observation, funcExecutable, funcSha256, entry, bootstrap.binary.worker);
     result.evidenceVerified = true;
     result.observationPassed = true;
   } catch (error) {

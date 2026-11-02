@@ -9,11 +9,19 @@ export interface FuncIdentity {
   birth: string;
   executable: string;
   sha256: string;
+  parentPid?: number;
+}
+
+export interface ProcessLineage {
+  pid: number;
+  birth: string;
+  parentPid: number;
 }
 
 export interface Population {
   complete: true;
   processes: FuncIdentity[];
+  lineage?: ProcessLineage[];
 }
 
 export interface StablePopulation extends Population {
@@ -255,6 +263,7 @@ export function createLinuxPopulationProvider(files = nativeProcFiles, root = '/
     receipt.nativePasses++;
     receipt.totalRows = initial.length;
     const processes: FuncIdentity[] = [];
+    const lineage: ProcessLineage[] = [];
     receipt.processes = processes;
     const exclusions: Array<() => void> = [];
     try {
@@ -264,13 +273,27 @@ export function createLinuxPopulationProvider(files = nativeProcFiles, root = '/
         const dir = path.join(root, pid);
         const firstStat = procFiles.read(path.join(dir, 'stat'));
         const first = procBirth(firstStat, boot);
+        const parentPid = Number(
+          firstStat
+            .slice(firstStat.lastIndexOf(') ') + 2)
+            .trim()
+            .split(/\s+/)[1]
+        );
+        assert.ok(Number.isSafeInteger(parentPid) && parentPid >= 0, 'Unverifiable native parent');
+        lineage.push({ pid: Number(pid), birth: first, parentPid });
         // Reading every comm is necessary: an unreadable row might itself be func.
         const name = procFiles.read(path.join(dir, 'comm')).trim();
         assert.ok(name, 'Missing process name can conceal func population');
         const verifyIdentity = () => {
           remainingBudget(deadline);
           const stat = procFiles.read(path.join(dir, 'stat'));
-          if (first !== procBirth(stat, boot) || name !== procFiles.read(path.join(dir, 'comm')).trim()) {
+          const currentParent = Number(
+            stat
+              .slice(stat.lastIndexOf(') ') + 2)
+              .trim()
+              .split(/\s+/)[1]
+          );
+          if (first !== procBirth(stat, boot) || parentPid !== currentParent || name !== procFiles.read(path.join(dir, 'comm')).trim()) {
             throw new PopulationRace('Process identity/name changed during collection');
           }
           return stat;
@@ -359,12 +382,6 @@ export function createLinuxPopulationProvider(files = nativeProcFiles, root = '/
           continue;
         }
         const bytes = procFiles.binary(path.join(dir, 'exe'));
-        const parentPid = Number(
-          firstStat
-            .slice(firstStat.lastIndexOf(') ') + 2)
-            .trim()
-            .split(/\s+/)[1]
-        );
         if (Number.isSafeInteger(parentPid) && parentPid >= 0) {
           receipt.parents.push({ pid: Number(pid), parentPid });
         }
@@ -372,7 +389,13 @@ export function createLinuxPopulationProvider(files = nativeProcFiles, root = '/
         if (first !== last || executable !== procFiles.readlink(path.join(dir, 'exe'))) {
           throw new PopulationRace('PID/executable changed during collection');
         }
-        processes.push({ pid: Number(pid), birth: first, executable, sha256: createHash('sha256').update(bytes).digest('hex') });
+        processes.push({ pid: Number(pid), birth: first, executable, sha256: createHash('sha256').update(bytes).digest('hex'), parentPid });
+        exclusions.push(() => {
+          verifyIdentity();
+          if (procFiles.readlink(path.join(dir, 'exe')) !== executable) {
+            throw new PopulationRace('Func executable changed at final native pass');
+          }
+        });
       }
       for (const verify of exclusions) {
         verify();
@@ -389,7 +412,7 @@ export function createLinuxPopulationProvider(files = nativeProcFiles, root = '/
       throw error;
     }
     remainingBudget(deadline);
-    return { complete: true, processes };
+    return { complete: true, processes, lineage };
   }, sink);
 }
 
@@ -455,13 +478,14 @@ export function createWindowsPopulationProvider(
         birth: row.birth,
         executable: canonical(row.executable),
         sha256: createHash('sha256').update(binary(row.executable)).digest('hex'),
+        parentPid: row.parentPid,
       });
     }
-    const after = parseWindowsPopulation(execute(remainingBudget(deadline))).sort((a, b) => a.pid - b.pid);
+    const final = execute(remainingBudget(deadline));
+    const after = parseWindowsPopulation(final).sort((a, b) => a.pid - b.pid);
     receipt.nativePasses++;
-    // Parent PID is a diagnostic hint only, not a birth-bound ancestry proof
-    // or a new stability/acceptance criterion.
-    const identities = (rows: WindowsProcessRow[]) => rows.map(({ pid, name, birth, executable }) => ({ pid, name, birth, executable }));
+    const identities = (rows: WindowsProcessRow[]) =>
+      rows.map(({ pid, name, birth, executable, parentPid }) => ({ pid, name, birth, executable, parentPid }));
     if (JSON.stringify(identities(before)) !== JSON.stringify(identities(after))) {
       throw new PopulationRace('Native func population/PID identity changed while hashing');
     }
@@ -470,7 +494,25 @@ export function createWindowsPopulationProvider(
       assert.equal(createHash('sha256').update(binary(record.executable)).digest('hex'), record.sha256, 'Func executable race');
     }
     remainingBudget(deadline);
-    return { complete: true, processes };
+    // Only native rows identical at both passes can form an ancestry bridge.
+    // Missing/inaccessible non-Func rows are not absence or ownership credit.
+    const finalTable = JSON.parse(final.replace(/^\uFEFF/, '')) as WindowsProcessRow[];
+    const lineage: ProcessLineage[] = (table as WindowsProcessRow[]).flatMap((row) => {
+      if (
+        !Number.isSafeInteger(row.pid) ||
+        row.pid <= 0 ||
+        !/^\d+$/.test(row.birth || '') ||
+        !Number.isSafeInteger(row.parentPid) ||
+        row.parentPid! < 0
+      ) {
+        return [];
+      }
+      const match = finalTable.filter((last) => last.pid === row.pid);
+      return match.length === 1 && match[0].birth === row.birth && match[0].parentPid === row.parentPid
+        ? [{ pid: row.pid, birth: row.birth, parentPid: row.parentPid! }]
+        : [];
+    });
+    return { complete: true, processes, lineage };
   }, sink);
 }
 

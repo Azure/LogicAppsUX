@@ -23,6 +23,7 @@ import {
 } from './workspaceMultiRootWorkbench';
 import { normalizeFsPath } from './testUtils';
 import { setOperationDiagnosticScope } from './operationDiagnostics';
+import { readDesignTimeOwners } from './workspaceMultiRootOwnership';
 
 export interface MultiRootWorkspace {
   wsFilePath: string;
@@ -30,6 +31,8 @@ export interface MultiRootWorkspace {
 }
 
 export interface MultiRootOptions {
+  designTimeFile: string;
+  nativeInvocation: string;
   workspace: MultiRootWorkspace;
   eventsFile: string;
   funcExecutable: string;
@@ -148,11 +151,26 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
       'Fresh extension-host workspace roots differ from the complete generated Logic App population'
     );
     assert.deepEqual(readLogicAppRoots(workspace.wsFilePath, createdRoots), roots, 'Reload changed the count denominator');
+    assert.ok(
+      Number.isSafeInteger(activation.hostPid) && activation.hostPid! > 0 && /^[a-f0-9]{64}$/.test(activation.hostBirthSha256 || ''),
+      'Current activation native birth is required'
+    );
+    const worker = options.bootstrap.binary.worker;
+    assert.ok(worker, 'Actual bootstrap must attest the in-proc worker role');
     const population = await observeFuncPopulation(
       {
         logicAppCount: roots.length,
-        executable: options.funcExecutable,
-        sha256: options.funcSha256,
+        binary: options.bootstrap.binary,
+        worker,
+        owners: () =>
+          readDesignTimeOwners(options.designTimeFile, {
+            hostPid: activation.hostPid!,
+            hostBirthSha256: activation.hostBirthSha256!,
+            source: options.bootstrap.identity.source,
+            run: options.bootstrap.identity.run,
+            invocation: options.nativeInvocation,
+            roots,
+          }),
         deadline: phaseDeadline(90000),
       },
       {

@@ -15,7 +15,13 @@ exports.activate = (context) => {
   }
   const boot = randomUUID();
   const append = (event) => fs.appendFileSync(file, `${JSON.stringify({ ...event, boot })}\n`);
-  append({ kind: 'activation', roots: (vscode.workspace.workspaceFolders || []).map((folder) => folder.uri.fsPath) });
+  let hostBinding;
+  try {
+    hostBinding = require('../../e2e-cli-diagnostics').readDesignTimeHostBinding();
+  } catch {
+    // Missing native identity must not stop recorder/product activation.
+  }
+  append({ kind: 'activation', ...hostBinding, roots: (vscode.workspace.workspaceFolders || []).map((folder) => folder.uri.fsPath) });
   // Read actual global settings after the product has executed ensureBinaries.
   // This is observation only: no settings rewrite, version probe or install.
   const recordRuntime = async () => {

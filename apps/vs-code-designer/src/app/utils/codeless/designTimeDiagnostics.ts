@@ -1,4 +1,21 @@
-import { getDesignTimeDiagnosticProducer, type DiagnosticSpan } from '../../../../scripts/e2e-cli-diagnostics';
+import {
+  getDesignTimeDiagnosticProducer,
+  observeDesignTimeSpawnIdentity,
+  bindDesignTimeSpawnIdentity,
+  type DiagnosticSpan,
+} from '../../../../scripts/e2e-cli-diagnostics';
+import type { ChildProcess } from 'node:child_process';
+
+// Bounded test-only original birth capture plus a supplemental asynchronous
+// observer; neither capture may change the owning product verdict.
+export function observeSpawnIdentity(child: ChildProcess, project: string, workingDirectory: string): void {
+  try {
+    bindDesignTimeSpawnIdentity(child, project, workingDirectory);
+    observeDesignTimeSpawnIdentity(child, project).catch(() => undefined);
+  } catch {
+    // Supplemental capture must never mask spawn or prevent group ownership.
+  }
+}
 
 // Evaluate snapshots only after admission. Neither state nor diagnostic IO
 // failures may affect the owner's result, thrown value or lifecycle.

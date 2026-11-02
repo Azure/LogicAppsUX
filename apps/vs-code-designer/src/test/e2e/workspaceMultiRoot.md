@@ -60,13 +60,22 @@ all public/private OGF mappings remain parent-owned and unchanged here.
    extension host so a real reload cannot replace/restart its test. There is
    no terminate/relaunch substitute.
 
-   The exact oracle is **total running `func` executables equals the number of
-   Logic Apps in this workspace**. The denominator comes from every persisted
+   The supported Core Tools runtime launches a `func` launcher and a distinct
+   `in-proc8/func` worker for each Logic App. The oracle is **one complete native
+   launcher/worker pair per current physical root**, with **all** `func`
+   executables accounted for (two executables per root). The former scalar
+   executable-count oracle incorrectly rejected this real two-process runtime.
+   The denominator comes from every persisted
    workspace folder with generated host/settings/workflow artifacts and must
    agree with the fresh native workspace view. Artifact folders are not apps.
    The numerator is the complete native machine population of `func` /
-   `func.exe`, not selected task PIDs, dotnet/NetFx workers or a fabricated
-   one-host-per-root mapping. Every candidate's PID, creation identity,
+   `func.exe`, not selected task PIDs or a filtered list that drops workers.
+   Both exact role paths/bytes are attested before and after the existing real
+   bootstrap version probes. Current recorder host birth, the actual owning
+   spawn's native birth and physical cwd, successful per-root startup, and
+   birth-bound native ancestry establish the root bijection. A stale fourth
+   pair, shared/foreign root, reused PID or unknown binary cannot receive credit.
+   Every candidate's PID, creation identity,
    executable and admitted SHA-256 must be readable. Double native scans,
    binary revalidation and at least three identical samples over 1.5 seconds
    reject incomplete enumeration, PID reuse, races and unstable cardinality.
@@ -175,6 +184,51 @@ is a meaningful blocked/failing prerequisite. The official bootstrap may
 populate its genuinely empty isolated batch runtime root; a prepared direct
 root is never falsely reported as starting empty. There is no extension/
 webview build or asset-discovery fallback in the supplementary route.
+
+### Original spawn binding and supplemental observer receipts
+
+The asynchronous `design-time-spawn-native-identity` receipt alone is not
+population admission. The owning `cp.spawn` initiates
+a lazy, test-only observation of exactly its returned shell PID and the actual
+extension-host PID through the existing retained native observer. No worker
+discovery, global scan, port query, runtime inventory, hash warmup, startup wait,
+or product lifecycle change is added. Ordinary runs without the existing
+isolated MultiRoot diagnostic tuple perform no project/native reads.
+
+The bounded original design-time stream records the physical project digest,
+native birth domain, host/shell identities and native parent metadata only
+after two coherent scoped responses. Missing, denied, exited, duplicate,
+reused/changed, wrong-parent/boot/clock, stale-response or changed-project
+observations remain explicitly unavailable. Paths and birth strings pass
+through the existing real hash-only serializer; command metadata from the
+native response is not copied. Existing event/byte caps and secondary-error
+semantics are unchanged.
+
+That supplemental RPC is **not an at-spawn identity receipt**: it is
+asynchronous, and Linux returns retained metadata plus a live pidfd probe, not
+a fresh parent/executable scan. A coherent response cannot establish the exact
+creation identity at `cp.spawn`, current activation boot, a current-root
+launcher/worker bijection, worker byte admission, or startup readiness.
+`spawnIdentityProven`, `ancestryProven`, `workspaceProven` and `ready` therefore
+stay false even when `nativeIdentityObserved` is true. Nothing consumes this
+diagnostic as admission. `runtimeResolution` remains configuration evidence,
+not startup health.
+
+The separate `design-time-spawn-native-binding` captures the original host and
+shell births synchronously immediately after `cp.spawn`, while Node still owns
+the original child handle and cannot reap/release it on another event-loop turn.
+It reads only those specific PIDs, verifies the original child is live before
+and after capture, and binds the actual physical project/cwd passed to spawn.
+Linux uses boot/start ticks; Windows holds process handles and records CIM
+creation ticks separately from native FILETIME. Commands and environment are
+never copied. The recorder independently captures its current host birth.
+
+The population gate joins that binding to actual successful owning startup,
+the exact current activation host, and native ancestry from the existing full
+collector. Both role paths/bytes remain bootstrap-admitted. Three pairs for
+three roots can pass only that complete join; six arbitrary executables cannot.
+Real UI Reload/debug/Mapper, original native closure, the 90-second population
+budget and three stable samples over 1.5 seconds are unchanged.
 
 Require `final-result.json.complete === true` **after** ordinary Code
 completion, profile diagnostics and final fixture cleanup. Preserve the

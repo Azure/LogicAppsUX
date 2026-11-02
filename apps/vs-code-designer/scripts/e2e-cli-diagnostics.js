@@ -9,6 +9,8 @@ const designTimeOperations = [
   'design-time-map-set',
   'design-time-startup',
   'design-time-spawn',
+  'design-time-spawn-native-identity',
+  'design-time-spawn-native-binding',
   'design-time-process-map-set',
   'design-time-child-pid-set',
   'design-time-map-delete',
@@ -271,6 +273,10 @@ function diagnosticState(value, depth = 0) {
       'attempt',
       'mutationApplied',
       'hostPid',
+      'nativeIdentityObserved',
+      'spawnIdentityProven',
+      'identityKind',
+      'nativeBirth',
       'project',
       'workingDirectory',
       'command',
@@ -569,6 +575,254 @@ function getDesignTimeDiagnosticProducer(env = process.env) {
   }
 }
 
+// Synchronous, scoped birth capture while Node still owns the original spawn
+// handle and cannot reap/release it on another event-loop turn. Unlike the
+// asynchronous retained-observer receipt below, this binds the owning spawn.
+// Never enumerate processes or copy commands/environment into this channel.
+function bindDesignTimeSpawnIdentity(child, project, workingDirectory, env = process.env, readNative = readSpawnNativeIdentities) {
+  const trace = getDesignTimeDiagnosticProducer(env);
+  if (!trace) return;
+  const hostPid = process.pid;
+  const pid = child?.pid;
+  const span = trace.start('design-time-spawn-native-binding', { hostPid, pid, spawnIdentityProven: false });
+  try {
+    const assert = require('node:assert/strict');
+    const path = require('node:path');
+    const live = () =>
+      assert.ok(
+        Number.isSafeInteger(pid) &&
+          pid > 1 &&
+          pid !== hostPid &&
+          child.pid === pid &&
+          child.exitCode === null &&
+          child.signalCode === null,
+        'Original spawn handle is not live'
+      );
+    live();
+    assert.ok(path.isAbsolute(project || '') && path.isAbsolute(workingDirectory || ''), 'Physical spawn cwd required');
+    const physical = fs.realpathSync.native(project);
+    const cwd = fs.realpathSync.native(workingDirectory);
+    const equalPath = (a, b) => (process.platform === 'win32' ? a.toLowerCase() === b.toLowerCase() : a === b);
+    assert.ok(equalPath(physical, path.resolve(project)) && equalPath(cwd, path.resolve(workingDirectory)), 'Linked spawn root');
+    assert.ok(equalPath(path.dirname(cwd), physical), 'Spawn cwd is not beneath its physical project');
+    const before = fs.statSync(physical);
+    const records = readNative(hostPid, pid);
+    live();
+    assert.ok(Array.isArray(records) && records.length === 2, 'Missing native spawn identities');
+    const [host, spawned] = [hostPid, pid].map((id) => {
+      const matches = records.filter((r) => r.pid === id);
+      assert.equal(matches.length, 1, 'Duplicate/missing native spawn identity');
+      const r = matches[0];
+      assert.ok(
+        typeof r.birth === 'string' &&
+          r.birth &&
+          typeof r.nativeBirth === 'string' &&
+          r.nativeBirth &&
+          Number.isSafeInteger(r.parentPid) &&
+          r.parentPid > 0 &&
+          r.identityKind === (process.platform === 'linux' ? 1 : process.platform === 'win32' ? 3 : 0),
+        'Unverifiable native spawn birth'
+      );
+      return r;
+    });
+    assert.equal(spawned.parentPid, hostPid, 'Original shell does not belong to this extension host');
+    assert.equal(spawned.identityKind, host.identityKind, 'Mixed native birth domains');
+    if (host.identityKind === 1) {
+      const h = host.birth.split(':');
+      const s = spawned.birth.split(':');
+      assert.ok(h.length === 2 && s.length === 2 && h[0] === s[0] && BigInt(h[1]) <= BigInt(s[1]), 'Wrong Linux boot/parent birth');
+    } else {
+      assert.ok(BigInt(host.birth) <= BigInt(spawned.birth), 'Reused Windows parent');
+    }
+    const after = fs.statSync(physical);
+    assert.ok(
+      before.isDirectory() &&
+        after.isDirectory() &&
+        before.dev === after.dev &&
+        before.ino === after.ino &&
+        equalPath(fs.realpathSync.native(project), physical) &&
+        equalPath(fs.realpathSync.native(workingDirectory), cwd),
+      'Physical spawn project changed'
+    );
+    span.end({
+      hostPid,
+      pid,
+      project: physical,
+      workingDirectory: cwd,
+      processes: records,
+      nativeIdentityObserved: true,
+      spawnIdentityProven: true,
+      ancestryProven: true,
+      workspaceProven: true,
+    });
+  } catch (error) {
+    span.fail(error, { hostPid, pid, spawnIdentityProven: false });
+  }
+}
+
+function readSpawnNativeIdentities(hostPid, pid) {
+  const assert = require('node:assert/strict');
+  if (process.platform === 'linux') {
+    const boot = fs.readFileSync('/proc/sys/kernel/random/boot_id', 'utf8').trim();
+    assert.match(boot, /^[a-f0-9-]{36}$/i);
+    return [hostPid, pid].map((id) => {
+      const read = () => {
+        const text = fs.readFileSync(`/proc/${id}/stat`, 'utf8');
+        assert.equal(Number(text.slice(0, text.indexOf(' '))), id);
+        const fields = text
+          .slice(text.lastIndexOf(') ') + 2)
+          .trim()
+          .split(/\s+/);
+        assert.ok(!['Z', 'X'].includes(fields[0]) && /^\d+$/.test(fields[19]), 'Exited/invalid native spawn');
+        return { parentPid: Number(fields[1]), ticks: fields[19] };
+      };
+      const a = read();
+      const b = read();
+      assert.deepEqual(b, a, 'Native spawn changed during birth capture');
+      return { pid: id, parentPid: a.parentPid, birth: `${boot}:${a.ticks}`, nativeBirth: `${boot}:${a.ticks}`, identityKind: 1 };
+    });
+  }
+  assert.equal(process.platform, 'win32', 'Unsupported native spawn platform');
+  const { execFileSync } = require('node:child_process');
+  // Hold each process handle while querying only the two owning PIDs. Keep
+  // CIM creation ticks distinct from native FILETIME; the former joins the
+  // existing full collector, the latter binds this original process object.
+  const script = `$ErrorActionPreference='Stop'
+$ids=[Console]::In.ReadToEnd()|ConvertFrom-Json
+$rows=@(foreach($id in $ids){
+  $p=[Diagnostics.Process]::GetProcessById([int]$id)
+  try {
+    $handle=$p.Handle
+    $r=Get-CimInstance Win32_Process -Filter ('ProcessId = '+[int]$id) -ErrorAction Stop
+    if(!$r -or $p.HasExited){throw 'Original spawn unavailable'}
+    [ordered]@{pid=[int]$id;parentPid=[int]$r.ParentProcessId;birth=$r.CreationDate.ToUniversalTime().Ticks.ToString();nativeBirth=$p.StartTime.ToUniversalTime().ToFileTimeUtc().ToString();identityKind=3}
+  } finally {$p.Dispose()}
+})
+ConvertTo-Json -InputObject $rows -Compress`;
+  return JSON.parse(
+    execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command', script], {
+      input: JSON.stringify([hostPid, pid]),
+      encoding: 'utf8',
+      timeout: 5000,
+      maxBuffer: 8192,
+      windowsHide: true,
+      stdio: ['pipe', 'pipe', 'pipe'],
+    }).replace(/^\uFEFF/, '')
+  );
+}
+
+function readDesignTimeHostBinding(env = process.env) {
+  if (!getDesignTimeDiagnosticProducer(env)) return undefined;
+  const record = readSpawnNativeIdentities(process.pid, process.pid)[0];
+  return { hostPid: process.pid, hostBirthSha256: hash(record.birth) };
+}
+
+// Supplemental MultiRoot receipt initiated by the exact owning cp.spawn call.
+// The existing retained native observer reads ONLY the requested host/shell PIDs
+// (no ports, discovery, command reads here, or runtime inventory). In particular,
+// this asynchronous observation is NOT an atomic OS spawn/handle receipt. Even
+// two coherent samples cannot prove the identity at the instant of cp.spawn.
+// Keep that limitation explicit; never use this receipt as population admission.
+async function observeDesignTimeSpawnIdentity(child, project, env = process.env) {
+  const trace = getDesignTimeDiagnosticProducer(env);
+  if (!trace) return; // No project/native IO or lazy observer load before admission.
+  const hostPid = process.pid;
+  const pid = child?.pid;
+  const unproven = { hostPid, pid, nativeIdentityObserved: false, spawnIdentityProven: false };
+  const span = trace.start('design-time-spawn-native-identity', unproven);
+  try {
+    const assert = require('node:assert/strict');
+    const path = require('node:path');
+    const { validOriginalIdentity } = require('./vscode-lifecycle-identity');
+    const { observeProcesses } = require('./vscode-lifecycle-observer');
+    const liveChild = () => {
+      assert.ok(
+        Number.isSafeInteger(pid) &&
+          pid > 0 &&
+          pid !== hostPid &&
+          child.pid === pid &&
+          child.exitCode === null &&
+          child.signalCode === null,
+        'Owning spawned child is unavailable'
+      );
+    };
+    liveChild();
+    assert.ok(path.isAbsolute(project || ''), 'Owning physical project unavailable');
+    const physical = fs.realpathSync.native(project);
+    const comparison = (value) => (process.platform === 'win32' ? value.toLowerCase() : value);
+    assert.equal(comparison(physical), comparison(path.resolve(project)), 'Owning project traverses a link');
+    const beforeProject = fs.lstatSync(physical);
+    assert.ok(beforeProject.isDirectory() && !beforeProject.isSymbolicLink(), 'Owning project is not a physical directory');
+    const ids = [hostPid, pid];
+    const sample = async () => {
+      liveChild();
+      const requestedAt = Date.now();
+      const native = await observeProcesses(env.LA_E2E_LIFECYCLE_DIR, ids);
+      liveChild();
+      const observedAt = Date.parse(native.observedAtUtc);
+      assert.ok(observedAt >= requestedAt && observedAt <= Date.now(), 'Native observation timestamp unavailable/stale');
+      assert.ok(native.ownershipComplete !== false, 'Native ownership observation incomplete');
+      assert.ok(process.platform !== 'linux' || native.ownershipComplete === true, 'Linux native ownership unavailable');
+      assert.equal(native.processes?.length, 2, 'Incomplete scoped native identities');
+      const records = ids.map((requestedPid) => {
+        const matches = native.processes.filter((record) => record.pid === requestedPid);
+        assert.equal(matches.length, 1, 'Missing/duplicate scoped native PID');
+        const record = matches[0];
+        assert.ok(
+          record.metadataStatus === 'captured' &&
+            validOriginalIdentity(record, process.platform) &&
+            BigInt(record.startTimeTicks) > 0n &&
+            record.identity?.platform === process.platform &&
+            record.identity.kind === (process.platform === 'linux' ? 'linux-proc-start' : 'windows-filetime') &&
+            Number.isSafeInteger(record.parentPid) &&
+            record.parentPid > 0 &&
+            path.isAbsolute(record.executablePath || ''),
+          'Scoped native identity unavailable'
+        );
+        return {
+          pid: record.pid,
+          parentPid: record.parentPid,
+          birth:
+            process.platform === 'linux'
+              ? `${record.identity.bootId}:${record.startTimeTicks}:${record.identity.clockTicksPerSecond}`
+              : record.startTimeTicks,
+          executable: record.executablePath,
+          identityKind: process.platform === 'linux' ? 1 : 2,
+        };
+      });
+      assert.equal(records[1].parentPid, hostPid, 'Spawn observation belongs to another parent');
+      const [host, spawned] = ids.map((id) => native.processes.find((record) => record.pid === id));
+      if (process.platform === 'linux') {
+        assert.equal(host.identity.bootId, spawned.identity.bootId, 'Scoped identities belong to different boots');
+        assert.equal(host.identity.clockTicksPerSecond, spawned.identity.clockTicksPerSecond, 'Native clock identity changed');
+      }
+      assert.ok(BigInt(host.startTimeTicks) <= BigInt(spawned.startTimeTicks), 'Reused native parent identity');
+      return records;
+    };
+    const before = await sample();
+    const after = await sample();
+    assert.deepEqual(after, before, 'Scoped PID birth/parent/executable changed during observation');
+    const afterProject = fs.lstatSync(physical);
+    assert.ok(afterProject.isDirectory() && !afterProject.isSymbolicLink(), 'Owning project changed');
+    assert.equal(fs.realpathSync.native(project), physical, 'Owning physical project changed');
+    assert.equal(afterProject.dev, beforeProject.dev, 'Owning project device changed');
+    assert.equal(afterProject.ino, beforeProject.ino, 'Owning project identity changed');
+    liveChild();
+    span.end({
+      ...unproven,
+      nativeIdentityObserved: true,
+      project: physical,
+      processes: after,
+      // No Func role/hash/ancestry, activation boot, or startup-health assertion.
+      ancestryProven: false,
+      workspaceProven: false,
+      ready: false,
+    });
+  } catch (error) {
+    span.fail(error, unproven); // Missing/denied/changed identity stays explicitly unavailable.
+  }
+}
+
 // Supplemental owner receipts, admitted only in the existing native MSN
 // diagnostic environment. No producer, file access or output in ordinary use.
 // Task event noise has a separate hard budget from the pending startup trace.
@@ -716,4 +970,7 @@ module.exports = {
   diagnosticOperationId,
   getFuncDiagnosticProducer,
   getDesignTimeDiagnosticProducer,
+  observeDesignTimeSpawnIdentity,
+  bindDesignTimeSpawnIdentity,
+  readDesignTimeHostBinding,
 };
