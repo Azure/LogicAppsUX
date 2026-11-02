@@ -1,5 +1,6 @@
 import * as assert from 'assert';
 import { execFileSync, execSync } from 'child_process';
+import { randomUUID } from 'crypto';
 import * as fs from 'fs';
 import * as http from 'http';
 import * as os from 'os';
@@ -3996,6 +3997,8 @@ async function startDebuggingGeneratedWorkspace(
   if (process.env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE === 'msn-weather-run') {
     generatedConfig.__logicAppsMsnInvocation = requiredValue(process.env.LA_E2E_CLI_MSN_LIFECYCLE_INVOCATION);
   }
+  const debugLaunchId = randomUUID();
+  generatedConfig.__logicAppsDebugLaunch = debugLaunchId;
 
   if (cleanupBeforeDebug) {
     await stopDebuggingAndTasks();
@@ -4008,14 +4011,41 @@ async function startDebuggingGeneratedWorkspace(
   console.log(`[workspace-lifecycle] Starting debug for ${createdWorkspace.workflowJsonPath} with ${String(generatedConfig.name)}`);
   await closeCopilotChatIfVisible(`before debug start (${createdWorkspace.label})`, { absentSettleMs: 1500 });
   await logAzuriteDiagnostics('before debug autostart', createdWorkspace.appDir);
+  // Subscribe before F5: a task/Running host is not proof that this launch created a debug session.
+  // Retain API session IDs until termination, even if another session becomes active in the workbench.
+  const liveDebugSessions = new Map<string, vscode.DebugSession>();
+  const startupSpan = operationDiagnostics.start('debug-startup', { launchId: debugLaunchId, requireHostRunning });
+  let startDebuggingOutcome: { started?: boolean; error?: unknown } | undefined;
+  const subscriptions = [
+    vscode.debug.onDidStartDebugSession((session) => {
+      const matches = {
+        apiId: !!session.id,
+        workspace: !!session.workspaceFolder && normalizeFsPath(session.workspaceFolder.uri.fsPath) === normalizeFsPath(folder.uri.fsPath),
+        launch: session.configuration.__logicAppsDebugLaunch === debugLaunchId,
+        invocation: session.configuration.__logicAppsMsnInvocation === generatedConfig.__logicAppsMsnInvocation,
+        name: session.configuration.name === generatedConfig.name,
+        type: session.configuration.type === generatedConfig.type,
+        request: session.configuration.request === generatedConfig.request,
+      };
+      operationDiagnostics.emit('debug-startup-session', 'observed', { state: { launchId: debugLaunchId, matches } });
+      if (Object.values(matches).every(Boolean)) {
+        liveDebugSessions.set(session.id, session);
+      }
+    }),
+    vscode.debug.onDidTerminateDebugSession((session) => {
+      const owned = liveDebugSessions.delete(session.id);
+      operationDiagnostics.emit('debug-startup-session', 'terminated', { state: { launchId: debugLaunchId, owned } });
+    }),
+  ];
   try {
-    let startDebuggingOutcome: { started?: boolean; error?: unknown } | undefined;
     const monitorStartDebugging = async () => {
       try {
         const started = await vscode.debug.startDebugging(folder, generatedConfig as vscode.DebugConfiguration);
         startDebuggingOutcome = { started };
+        operationDiagnostics.emit('debug-startup-launch', 'settled', { state: { launchId: debugLaunchId, started } });
       } catch (error) {
         startDebuggingOutcome = { error };
+        operationDiagnostics.emit('debug-startup-launch', 'rejected', { state: { launchId: debugLaunchId }, error });
       }
     };
     const startDebuggingMonitor = monitorStartDebugging();
@@ -4031,14 +4061,24 @@ async function startDebuggingGeneratedWorkspace(
         { matchText: 'Failed to verify "AzureWebJobsStorage" connection', optionText: 'Debug anyway' },
       ]),
     ]);
-    await waitForDebugStartup(createdWorkspace, () => startDebuggingOutcome, 300000, { requireHostRunning });
-    await Promise.race([startDebuggingMonitor, Promise.resolve(undefined)]);
+    await waitForDebugStartup(createdWorkspace, () => startDebuggingOutcome, 300000, {
+      requireHostRunning,
+      hasLiveDebugSession: () => liveDebugSessions.size > 0,
+    });
+    await startDebuggingMonitor;
+    startupSpan.end({ settled: true, liveOwnedSessions: liveDebugSessions.size });
     await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-debug-prompts-handled`, {
       expectation: { kind: 'diagnostic', label: createdWorkspace.label, reason: 'debug-prompts-transition' },
       diagnostic: true,
       diagnosticTimeoutMs: 5000,
     });
   } catch (error) {
+    startupSpan.fail(error, {
+      launchPending: !startDebuggingOutcome,
+      launchStarted: startDebuggingOutcome?.started === true,
+      launchRejected: !!startDebuggingOutcome && 'error' in startDebuggingOutcome,
+      liveOwnedSessions: liveDebugSessions.size,
+    });
     await logAzuriteDiagnostics('debug autostart failure', createdWorkspace.appDir);
     try {
       await captureLifecycleScreenshot(`workspace-lifecycle-${createdWorkspace.label}-debug-failure`, { diagnostic: true });
@@ -4050,6 +4090,8 @@ async function startDebuggingGeneratedWorkspace(
       );
     }
     throw error;
+  } finally {
+    subscriptions.forEach((subscription) => subscription.dispose());
   }
   await logAzuriteDiagnostics('after debug autostart', createdWorkspace.appDir);
 }
@@ -4058,29 +4100,33 @@ async function waitForDebugStartup(
   createdWorkspace: CreatedWorkspace,
   getStartDebuggingOutcome: () => { started?: boolean; error?: unknown } | undefined,
   timeoutMs: number,
-  options: { requireHostRunning?: boolean } = {}
+  options: { requireHostRunning?: boolean; hasLiveDebugSession: () => boolean }
 ): Promise<void> {
   const requireHostRunning = options.requireHostRunning !== false;
   await waitUntil(
     async () => {
       const outcome = getStartDebuggingOutcome();
-      if (outcome?.error) {
-        throw outcome.error;
+      // Exit polling on a terminal launch failure, then propagate it outside waitUntil's retry catch.
+      if (outcome && ('error' in outcome || outcome.started === false)) {
+        return true;
       }
-      if (outcome?.started === false) {
-        throw new Error(`VS Code reported startDebugging=false for ${createdWorkspace.appDir}`);
+      if (outcome?.started !== true || !options.hasLiveDebugSession()) {
+        return false;
       }
-
-      const debugOrTaskStarted =
-        outcome?.started === true ||
-        !!vscode.debug.activeDebugSession ||
-        vscode.tasks.taskExecutions.some((execution) => execution.task.name.toLowerCase().includes('func: host start'));
-
-      return debugOrTaskStarted && (!requireHostRunning || (await isHostRunning()));
+      const hostReady = !requireHostRunning || (await isHostRunning());
+      // The exact session may terminate while the host request is in flight.
+      return hostReady && options.hasLiveDebugSession();
     },
     timeoutMs,
     `debug launch${requireHostRunning ? ' plus Functions host Running state' : ''} for ${createdWorkspace.appDir}`
   );
+  const outcome = getStartDebuggingOutcome();
+  if (outcome && 'error' in outcome) {
+    throw outcome.error;
+  }
+  if (outcome?.started === false) {
+    throw new Error(`VS Code reported startDebugging=false for ${createdWorkspace.appDir}`);
+  }
 }
 
 async function runWorkflowThroughOverviewAndAssertSucceeded(

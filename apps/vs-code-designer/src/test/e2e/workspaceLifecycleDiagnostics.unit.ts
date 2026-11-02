@@ -36,6 +36,7 @@ async function main(): Promise<void> {
   testRuntimeDiagnosticsRedactSensitiveStrings();
   testEarlyMsnWeatherPhaseWiring();
   testDebugPromptEvidenceWaitsForStableRuntime();
+  await testDebugStartupRequiresSettledOwnedLiveSession();
   await testPersistedDesignerEvidenceSeparatesCanvasAndPanel();
   testDynamicContentPickerOpenAcceptsAlternativeLabels();
   testDynamicContentPickerEvidenceForwardsTokenTitles();
@@ -49,6 +50,237 @@ async function main(): Promise<void> {
   testDesignerConnectionActionExpressionScopesCreateActions();
   await testMsnHandleShutdownDiagnosticReceipts();
   console.log('[workspaceLifecycleDiagnostics.unit] all tests passed');
+}
+
+async function testDebugStartupRequiresSettledOwnedLiveSession(): Promise<void> {
+  const declarations = ['startDebuggingGeneratedWorkspace', 'waitForDebugStartup'].map((name) => {
+    const declaration = source.statements.find(
+      (node): node is ts.FunctionDeclaration => ts.isFunctionDeclaration(node) && node.name?.text === name
+    );
+    assert.ok(declaration, `Expected real ${name} implementation`);
+    return `export ${declaration.getText(source)}`;
+  });
+  const implementation = ts.transpileModule(declarations.join('\n'), {
+    compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS },
+  }).outputText;
+  const scenarios = [
+    'task-only-pending',
+    'exact-session-pending',
+    'settled-without-session',
+    'exact-session',
+    'delayed-settlement',
+    'false',
+    'rejected',
+    'rejected-undefined',
+    'foreign-id',
+    'foreign-workspace',
+    'foreign-launch',
+    'foreign-invocation',
+    'foreign-name',
+    'foreign-type',
+    'foreign-request',
+    'terminated',
+    'terminated-during-host-probe',
+    'host-not-running',
+    'exact-session-without-host-probe',
+    'pending-without-host-probe',
+  ];
+  for (const scenario of scenarios) {
+    type Session = {
+      id: string;
+      workspaceFolder: { uri: { fsPath: string } };
+      configuration: Record<string, unknown>;
+    };
+    const listeners = { start: new Set<(session: Session) => void>(), terminate: new Set<(session: Session) => void>() };
+    const folder = { uri: { fsPath: 'owned-root/app' } };
+    const timeout = new Error('original-startup-deadline');
+    const primary = new Error('original-launch-rejection');
+    const screenshots: string[] = [];
+    const startupVerdicts: { passed?: unknown; failed?: unknown } = {};
+    const startupEvents: { operation: string; status: string; details: unknown }[] = [];
+    let hostProbes = 0;
+    let launchedSession: Session;
+    let settleLaunch: (started: boolean) => void = () => assert.fail('Expected deferred launch');
+    const skipHostProbe = scenario.endsWith('without-host-probe');
+    const subscribe = (kind: keyof typeof listeners, listener: (session: Session) => void) => {
+      listeners[kind].add(listener);
+      return { dispose: () => listeners[kind].delete(listener) };
+    };
+    const api = {
+      Uri: { file: (value: string) => value },
+      workspace: { getWorkspaceFolder: () => folder },
+      tasks: { taskExecutions: [{ task: { name: 'func: host start', scope: folder } }] },
+      debug: {
+        // Neither the active foreign session nor the owned task can satisfy the gate.
+        activeDebugSession: { id: 'foreign-active-session' },
+        onDidStartDebugSession: (listener: (session: Session) => void) => subscribe('start', listener),
+        onDidTerminateDebugSession: (listener: (session: Session) => void) => subscribe('terminate', listener),
+        startDebugging: (actualFolder: typeof folder, config: Record<string, unknown>) => {
+          assert.strictEqual(actualFolder, folder);
+          assert.equal(listeners.start.size, 1, 'Must subscribe to starts before launching');
+          assert.equal(listeners.terminate.size, 1, 'Must subscribe to termination before launching');
+          launchedSession = {
+            id: 'exact-api-session-id',
+            workspaceFolder: folder,
+            configuration: { ...config },
+          };
+          if (scenario === 'foreign-id') {
+            launchedSession.id = '';
+          } else if (scenario === 'foreign-workspace') {
+            launchedSession.workspaceFolder = { uri: { fsPath: 'foreign-root/app' } };
+          } else {
+            const field = {
+              'foreign-launch': '__logicAppsDebugLaunch',
+              'foreign-invocation': '__logicAppsMsnInvocation',
+              'foreign-name': 'name',
+              'foreign-type': 'type',
+              'foreign-request': 'request',
+            }[scenario];
+            if (field) {
+              launchedSession.configuration[field] = 'foreign';
+            }
+          }
+          if (!['task-only-pending', 'settled-without-session', 'pending-without-host-probe'].includes(scenario)) {
+            listeners.start.forEach((listener) => listener(launchedSession));
+          }
+          if (scenario === 'terminated') {
+            listeners.terminate.forEach((listener) => listener({ ...launchedSession }));
+          }
+          if (scenario === 'false') {
+            return Promise.resolve(false);
+          }
+          if (scenario === 'rejected' || scenario === 'rejected-undefined') {
+            return Promise.reject(scenario === 'rejected' ? primary : undefined);
+          }
+          if (scenario.includes('pending') || scenario === 'delayed-settlement') {
+            return new Promise<boolean>((resolve) => {
+              settleLaunch = resolve;
+            });
+          }
+          return Promise.resolve(true);
+        },
+      },
+    };
+    const exported: {
+      startDebuggingGeneratedWorkspace?: (
+        workspace: { appDir: string; workflowJsonPath: string; label: string },
+        options: { cleanupBeforeDebug: boolean; requireHostRunning: boolean }
+      ) => Promise<void>;
+    } = {};
+    vm.runInNewContext(implementation, {
+      exports: exported,
+      vscode: api,
+      assert,
+      path,
+      fs: { readFileSync: () => JSON.stringify({ configurations: [{ name: 'owned-launch', type: 'coreclr', request: 'attach' }] }) },
+      randomUUID: () => 'exact-launch-id',
+      operationDiagnostics: {
+        start: (operation: string) => {
+          assert.equal(operation, 'debug-startup');
+          return {
+            end: (state: unknown) => {
+              startupVerdicts.passed = state;
+            },
+            fail: (_error: unknown, state: unknown) => {
+              startupVerdicts.failed = state;
+            },
+          };
+        },
+        emit: (operation: string, status: string, details: unknown) => startupEvents.push({ operation, status, details }),
+      },
+      normalizeFsPath: (value: string) => path.win32.normalize(value).toLowerCase(),
+      process: {
+        env: {
+          LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'msn-weather-run',
+          LA_E2E_CLI_MSN_LIFECYCLE_INVOCATION: 'exact-invocation',
+        },
+      },
+      requiredValue: (value: string) => value,
+      console: { log: () => undefined },
+      closeCopilotChatIfVisible: async () => undefined,
+      logAzuriteDiagnostics: async () => undefined,
+      captureLifecycleScreenshot: async (name: string) => {
+        screenshots.push(name);
+        if (scenario === 'rejected' && name.endsWith('-debug-failure')) {
+          throw new Error('secondary-diagnostic-failure');
+        }
+      },
+      affirmativeAzureConnectorPrompt: {},
+      handleWorkbenchPrompts: async () => undefined,
+      isHostRunning: async () => {
+        hostProbes++;
+        if (scenario === 'terminated-during-host-probe') {
+          listeners.terminate.forEach((listener) => listener({ ...launchedSession }));
+        } else {
+          // A foreign termination must not remove the exact live session.
+          listeners.terminate.forEach((listener) => listener({ ...launchedSession, id: 'foreign-id' }));
+        }
+        return scenario !== 'host-not-running';
+      },
+      waitUntil: async (predicate: () => Promise<boolean>, budget: number) => {
+        assert.equal(budget, 300000, 'Keep the existing startup deadline');
+        if (scenario === 'delayed-settlement') {
+          assert.equal(await predicate(), false, 'An exact session cannot replace actual launch-promise settlement');
+          assert.equal(hostProbes, 0);
+          settleLaunch(true);
+          await Promise.resolve();
+        }
+        // Exercise repeated detection (and the deferred promise's microtasks) without real-time sleeps.
+        for (let poll = 0; poll < 3; poll++) {
+          if (await predicate()) {
+            return;
+          }
+        }
+        throw timeout;
+      },
+    });
+    const launch = () =>
+      exported.startDebuggingGeneratedWorkspace!(
+        { appDir: folder.uri.fsPath, workflowJsonPath: 'workflow.json', label: 'unit' },
+        { cleanupBeforeDebug: false, requireHostRunning: !skipHostProbe }
+      );
+    const succeeds = ['exact-session', 'delayed-settlement', 'exact-session-without-host-probe'].includes(scenario);
+    if (succeeds) {
+      await launch();
+    } else if (scenario === 'false') {
+      await assert.rejects(launch, /startDebugging=false/);
+    } else if (scenario === 'rejected' || scenario === 'rejected-undefined') {
+      let rejected = false;
+      try {
+        await launch();
+      } catch (error) {
+        rejected = true;
+        assert.strictEqual(error, scenario === 'rejected' ? primary : undefined, 'Preserve the actual launch rejection');
+      }
+      assert.ok(rejected, 'A rejected launch must not pass');
+    } else {
+      await assert.rejects(launch, (error: unknown) => error === timeout, scenario);
+    }
+    assert.equal(
+      screenshots.some((name) => name.endsWith('-debug-prompts-handled')),
+      succeeds,
+      scenario
+    );
+    assert.equal(listeners.start.size, 0, `Dispose start subscription: ${scenario}`);
+    assert.equal(listeners.terminate.size, 0, `Dispose termination subscription: ${scenario}`);
+    assert.equal(!!startupVerdicts.passed, succeeds, `Startup accepted receipt: ${scenario}`);
+    assert.equal(!!startupVerdicts.failed, !succeeds, `Startup failed receipt: ${scenario}`);
+    if (scenario.includes('pending')) {
+      assert.deepEqual(
+        startupVerdicts.failed,
+        {
+          launchPending: true,
+          launchStarted: false,
+          launchRejected: false,
+          liveOwnedSessions: scenario === 'exact-session-pending' ? 1 : 0,
+        },
+        `Pending launch attribution: ${scenario}`
+      );
+    }
+    assert.ok(startupEvents.length < 10, 'Receipts must follow transitions, not every readiness poll');
+    const probesExpected = ['exact-session', 'delayed-settlement', 'terminated-during-host-probe', 'host-not-running'].includes(scenario);
+    assert.equal(hostProbes > 0, probesExpected, scenario);
+  }
 }
 
 async function testMsnHandleShutdownDiagnosticReceipts(): Promise<void> {
