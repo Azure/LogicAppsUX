@@ -25,11 +25,7 @@ import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
 import { getWorkspaceLogicAppRoots } from '../workspace';
 import { ensureProjectFiles } from '../../projectConsistency/projectFilesConsistency';
 import { delay } from '../delay';
-import {
-  type IActionContext,
-  type IAzExtOutputChannel,
-  callWithTelemetryAndErrorHandling,
-} from '@microsoft/vscode-azext-utils';
+import { type IActionContext, type IAzExtOutputChannel, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import { Platform } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
@@ -49,8 +45,22 @@ import {
 } from '../bundleFeed';
 import { releaseReservedPort, reserveFreePort } from '../portReservation';
 import { warnIfJdbcJavaRuntimeMissing } from '../java/jdbcConnector';
+import { emitDesignTimeDiagnostic, startDesignTimeDiagnostic, finishDesignTimeDiagnostic } from './designTimeDiagnostics';
 
 const maxValidationRestarts = 3;
+
+// Called only inside admitted diagnostic callbacks. Strings are hashed by the
+// real serializer; no command arguments, environment or output enter receipts.
+function designTimeState(projectPath: string, instance = ext.designTimeInstances.get(projectPath)): Record<string, unknown> {
+  return {
+    project: projectPath,
+    mapCount: ext.designTimeInstances.size,
+    startupPromisePresent: Boolean(instance?.startupPromise),
+    processPresent: Boolean(instance?.process),
+    pid: instance?.process?.pid,
+    childFuncPid: instance?.childFuncPid === undefined ? undefined : Number(instance.childFuncPid),
+  };
+}
 
 function isFailingHealthCheckLogLine(line: string): boolean {
   const normalizedLine = line.toLowerCase();
@@ -150,7 +160,7 @@ async function isTrackedUnixFuncProcessRunning(...trackedProcessIds: Array<numbe
   return false;
 }
 
-function killTrackedUnixProcesses(process: cp.ChildProcess, childFuncPid?: string): void {
+function killTrackedUnixProcesses(process: cp.ChildProcess, childFuncPid?: string, projectPath = ''): void {
   const trackedProcessIds = new Set<string>();
   if (childFuncPid) {
     trackedProcessIds.add(childFuncPid);
@@ -160,7 +170,17 @@ function killTrackedUnixProcesses(process: cp.ChildProcess, childFuncPid?: strin
   }
 
   for (const trackedProcessId of trackedProcessIds) {
-    cp.spawn('kill', ['-9', trackedProcessId]);
+    const receipt = startDesignTimeDiagnostic('design-time-kill', () => ({
+      ...designTimeState(projectPath),
+      targetPid: Number(trackedProcessId),
+    }));
+    try {
+      const kill = cp.spawn('kill', ['-9', trackedProcessId]);
+      finishDesignTimeDiagnostic(receipt, () => ({ targetPid: Number(trackedProcessId), pid: kill.pid, settled: false }));
+    } catch (error) {
+      finishDesignTimeDiagnostic(receipt, () => ({ targetPid: Number(trackedProcessId) }), { error });
+      throw error;
+    }
   }
 }
 
@@ -169,6 +189,7 @@ function getDesignTimeInstance(projectPath: string): FuncInstance {
   if (!designTimeInst) {
     designTimeInst = {};
     ext.designTimeInstances.set(projectPath, designTimeInst);
+    emitDesignTimeDiagnostic('design-time-map-set', () => designTimeState(projectPath));
   }
 
   return designTimeInst;
@@ -177,20 +198,22 @@ function getDesignTimeInstance(projectPath: string): FuncInstance {
 function stopTrackedDesignTimeProcess(projectPath: string): void {
   const designTimeInst = ext.designTimeInstances.get(projectPath);
   if (!designTimeInst?.process) {
+    emitDesignTimeDiagnostic('design-time-tracked-stop', () => ({ ...designTimeState(projectPath), skipped: true }));
     return;
   }
 
   const { process, childFuncPid } = designTimeInst;
+  emitDesignTimeDiagnostic('design-time-tracked-stop', () => ({ ...designTimeState(projectPath), skipped: false }));
   designTimeInst.process = undefined;
   designTimeInst.childFuncPid = undefined;
 
   if (os.platform() === Platform.windows) {
     if (childFuncPid) {
-      cp.exec(`taskkill /pid ${childFuncPid} /t /f`);
+      execUnawaitedTaskkill(childFuncPid, projectPath);
     }
-    cp.exec(`taskkill /pid ${process.pid} /t /f`);
+    execUnawaitedTaskkill(process.pid, projectPath);
   } else {
-    killTrackedUnixProcesses(process, childFuncPid);
+    killTrackedUnixProcesses(process, childFuncPid, projectPath);
   }
 }
 
@@ -201,10 +224,12 @@ function stopTrackedDesignTimeProcess(projectPath: string): void {
  * @param currRetry - Current retry depth from process-validation restarts. Defaults to 0.
  */
 export async function startDesignTimeApi(context: IActionContext, projectPath: string, currRetry = 0): Promise<void> {
+  emitDesignTimeDiagnostic('design-time-start-request', () => ({ ...designTimeState(projectPath), retry: currRetry }));
   context.telemetry.properties.projectPath = projectPath;
   const designTimeInst = getDesignTimeInstance(projectPath);
 
   if (designTimeInst.startupPromise) {
+    emitDesignTimeDiagnostic('design-time-start-request', () => ({ ...designTimeState(projectPath), reused: true }));
     context.telemetry.properties.skippingAlreadyInProgress = 'true';
     context.errorHandling.suppressDisplay = true;
     await designTimeInst.startupPromise;
@@ -212,10 +237,18 @@ export async function startDesignTimeApi(context: IActionContext, projectPath: s
   }
 
   designTimeInst.startupPromise = startDesignTimeApiInternal(context, designTimeInst, projectPath, currRetry);
+  emitDesignTimeDiagnostic('design-time-start-request', () => ({ ...designTimeState(projectPath), reused: false }));
   await designTimeInst.startupPromise;
 }
 
-async function startDesignTimeApiInternal(context: IActionContext, designTimeInst: FuncInstance, projectPath: string, currRetry: number): Promise<void> {
+async function startDesignTimeApiInternal(
+  context: IActionContext,
+  designTimeInst: FuncInstance,
+  projectPath: string,
+  currRetry: number
+): Promise<void> {
+  const receipt = startDesignTimeDiagnostic('design-time-startup', () => ({ ...designTimeState(projectPath), retry: currRetry }));
+  let diagnosticFailure: { error: unknown } | undefined;
   try {
     context.telemetry.properties.didStartDesignTime = 'false';
 
@@ -307,11 +340,15 @@ async function startDesignTimeApiInternal(context: IActionContext, designTimeIns
     } finally {
       designTimeInst.isStarting = false;
     }
+  } catch (error) {
+    diagnosticFailure = { error };
+    throw error;
   } finally {
     const currentInst = ext.designTimeInstances.get(projectPath);
     if (currentInst) {
       currentInst.startupPromise = undefined;
     }
+    finishDesignTimeDiagnostic(receipt, () => ({ ...designTimeState(projectPath), settled: true }), diagnosticFailure);
   }
 }
 
@@ -397,6 +434,7 @@ async function checkFuncProcessId(projectPath: string): Promise<boolean> {
       const funcChildProcess = [...children].reverse().find((p) => /func(\.exe)?$/i.test(p.name || ''));
       if (funcChildProcess) {
         designTimeInst.childFuncPid = funcChildProcess.processId.toString();
+        emitDesignTimeDiagnostic('design-time-child-pid-set', () => designTimeState(projectPath));
         return true;
       }
       return false;
@@ -407,6 +445,7 @@ async function checkFuncProcessId(projectPath: string): Promise<boolean> {
   }
 
   designTimeInst.childFuncPid = normalizeTrackedChildProcessId(processId, designTimeInst.childFuncPid);
+  emitDesignTimeDiagnostic('design-time-child-pid-set', () => designTimeState(projectPath));
   if (await isTrackedUnixFuncProcessRunning(designTimeInst.childFuncPid, processId)) {
     return true;
   }
@@ -421,9 +460,14 @@ async function checkFuncProcessId(projectPath: string): Promise<boolean> {
     }
 
     refreshedDesignTimeInst.childFuncPid = normalizeTrackedChildProcessId(refreshedProcessId, refreshedDesignTimeInst.childFuncPid);
+    emitDesignTimeDiagnostic('design-time-child-pid-set', () => designTimeState(projectPath));
     if (!refreshedDesignTimeInst.childFuncPid) {
       const foundChildProcessId = await findChildProcess(refreshedProcessId);
       refreshedDesignTimeInst.childFuncPid = normalizeTrackedChildProcessId(refreshedProcessId, foundChildProcessId);
+      emitDesignTimeDiagnostic('design-time-child-pid-set', () => ({
+        ...designTimeState(projectPath),
+        targetPid: Number(foundChildProcessId),
+      }));
     }
 
     if (await isTrackedUnixFuncProcessRunning(refreshedDesignTimeInst.childFuncPid, refreshedProcessId)) {
@@ -480,6 +524,10 @@ export async function waitForDesignTimeStartUp(
       }
       const foundChildProcessId = await findChildProcess(processId);
       designTimeInst.childFuncPid = normalizeTrackedChildProcessId(processId, foundChildProcessId);
+      emitDesignTimeDiagnostic('design-time-child-pid-set', () => ({
+        ...designTimeState(projectPath),
+        targetPid: Number(foundChildProcessId),
+      }));
       designTimeInst.isStarting = false;
     }
     context.telemetry.measurements.waitForDesignTimeStartupDuration = (Date.now() - initialTime) / 1000;
@@ -523,7 +571,24 @@ export function startDesignTimeProcess(
     shell: true,
   };
 
-  const designChildProcess = cp.spawn(command, args, options);
+  const receipt = startDesignTimeDiagnostic('design-time-spawn', () => ({
+    ...designTimeState(workingDirectory ? path.dirname(workingDirectory) : ''),
+    workingDirectory: options.cwd,
+    command,
+    argvCount: args.length,
+    shell: true,
+  }));
+  let designChildProcess: cp.ChildProcess;
+  try {
+    designChildProcess = cp.spawn(command, args, options);
+    finishDesignTimeDiagnostic(receipt, () => ({
+      ...designTimeState(workingDirectory ? path.dirname(workingDirectory) : ''),
+      pid: designChildProcess.pid,
+    }));
+  } catch (error) {
+    finishDesignTimeDiagnostic(receipt, () => ({}), { error });
+    throw error;
+  }
 
   if (outputChannel) {
     outputChannel.appendLog(
@@ -554,9 +619,12 @@ export function startDesignTimeProcess(
           ext.outputChannel.appendLog(`Failed to stop design-time process before restart. Error: ${error}`);
         })
         .finally(() => {
-          callWithTelemetryAndErrorHandling('designTimeError.languageWorkerFailed.startDesignTimeApi', async (actionContext: IActionContext) => {
-            await startDesignTimeApi(actionContext, projectPath);
-          });
+          callWithTelemetryAndErrorHandling(
+            'designTimeError.languageWorkerFailed.startDesignTimeApi',
+            async (actionContext: IActionContext) => {
+              await startDesignTimeApi(actionContext, projectPath);
+            }
+          );
         });
     }
   });
@@ -592,21 +660,34 @@ export function startDesignTimeProcess(
   if (designTimeInst) {
     designTimeInst.process = designChildProcess;
   }
+  emitDesignTimeDiagnostic('design-time-process-map-set', () => ({ ...designTimeState(projectPath), skipped: !designTimeInst }));
 }
 
 export async function stopAllDesignTimeApis(): Promise<void> {
-  await Promise.allSettled([...ext.designTimeInstances.keys()].map((projectPath) => stopDesignTimeApi(projectPath)));
+  const receipt = startDesignTimeDiagnostic('design-time-stop-all', () => ({
+    mapCount: ext.designTimeInstances.size,
+    roots: [...ext.designTimeInstances.keys()].slice(0, 12).map((projectPath) => designTimeState(projectPath)),
+  }));
+  const results = await Promise.allSettled([...ext.designTimeInstances.keys()].map((projectPath) => stopDesignTimeApi(projectPath)));
+  finishDesignTimeDiagnostic(receipt, () => ({
+    mapCount: ext.designTimeInstances.size,
+    fulfilledCount: results.filter((result) => result.status === 'fulfilled').length,
+    rejectedCount: results.filter((result) => result.status === 'rejected').length,
+  }));
 }
 
 export async function stopDesignTimeApi(projectPath: string): Promise<void> {
   ext.outputChannel.appendLog(`Stopping Design Time Api for project: ${projectPath}`);
   const designTimeInst = ext.designTimeInstances.get(projectPath);
   if (!designTimeInst) {
+    emitDesignTimeDiagnostic('design-time-stop', () => ({ ...designTimeState(projectPath), skipped: true }));
     return;
   }
 
   const { process: proc, childFuncPid } = designTimeInst;
+  emitDesignTimeDiagnostic('design-time-stop', () => ({ ...designTimeState(projectPath), skipped: !proc }));
   ext.designTimeInstances.delete(projectPath);
+  emitDesignTimeDiagnostic('design-time-map-delete', () => designTimeState(projectPath, designTimeInst));
   releaseReservedPort(designTimeInst.port);
   if (proc === null || proc === undefined) {
     return;
@@ -615,12 +696,12 @@ export async function stopDesignTimeApi(projectPath: string): Promise<void> {
   if (os.platform() === Platform.windows) {
     const killPromises: Promise<void>[] = [];
     if (childFuncPid) {
-      killPromises.push(execTaskkill(childFuncPid));
+      killPromises.push(execTaskkill(childFuncPid, projectPath));
     }
-    killPromises.push(execTaskkill(proc.pid));
+    killPromises.push(execTaskkill(proc.pid, projectPath));
     await Promise.allSettled(killPromises);
   } else {
-    killTrackedUnixProcesses(proc, childFuncPid);
+    killTrackedUnixProcesses(proc, childFuncPid, projectPath);
   }
 }
 
@@ -628,16 +709,46 @@ export async function stopDesignTimeApi(projectPath: string): Promise<void> {
  * Runs taskkill and waits for it to complete so file locks are released
  * before subsequent build steps.
  */
-function execTaskkill(pid: number | string | undefined): Promise<void> {
+function execTaskkill(pid: number | string | undefined, projectPath: string): Promise<void> {
+  const receipt = startDesignTimeDiagnostic('design-time-taskkill', () => ({
+    ...designTimeState(projectPath),
+    targetPid: pid === undefined ? undefined : Number(pid),
+    skipped: pid === undefined,
+  }));
   if (pid === undefined) {
+    finishDesignTimeDiagnostic(receipt, () => ({ skipped: true }));
     return Promise.resolve();
   }
 
   return new Promise((resolve) => {
-    cp.exec(`taskkill /pid ${pid} /t /f`, () => {
-      resolve();
-    });
+    try {
+      const kill = cp.exec(`taskkill /pid ${pid} /t /f`, (error) => {
+        finishDesignTimeDiagnostic(receipt, () => ({ targetPid: Number(pid), settled: true }), error ? { error } : undefined);
+        resolve();
+      });
+      emitDesignTimeDiagnostic('design-time-taskkill', () => ({ targetPid: Number(pid), pid: kill.pid, settled: false }));
+    } catch (error) {
+      finishDesignTimeDiagnostic(receipt, () => ({ targetPid: Number(pid) }), { error });
+      throw error;
+    }
   });
+}
+
+// Startup-failure cleanup is deliberately fire-and-forget, just as before.
+// The end receipt means exec returned, not that taskkill completed.
+function execUnawaitedTaskkill(pid: number | string | undefined, projectPath: string): void {
+  const receipt = startDesignTimeDiagnostic('design-time-taskkill', () => ({
+    ...designTimeState(projectPath),
+    targetPid: pid === undefined ? undefined : Number(pid),
+    settled: false,
+  }));
+  try {
+    const kill = cp.exec(`taskkill /pid ${pid} /t /f`);
+    finishDesignTimeDiagnostic(receipt, () => ({ targetPid: pid === undefined ? undefined : Number(pid), pid: kill.pid, settled: false }));
+  } catch (error) {
+    finishDesignTimeDiagnostic(receipt, () => ({ targetPid: pid === undefined ? undefined : Number(pid) }), { error });
+    throw error;
+  }
 }
 
 export function scheduleStartAllDesignTimeApis(): void {
@@ -646,7 +757,11 @@ export function scheduleStartAllDesignTimeApis(): void {
   );
   startAllDesignTimeApis().catch((error) => {
     ext.outputChannel.appendLog(
-      localize('scheduleAllDesignTimeApisFailed', 'Background design-time startup encountered an error. Error: {0}', error instanceof Error ? error.message : String(error))
+      localize(
+        'scheduleAllDesignTimeApisFailed',
+        'Background design-time startup encountered an error. Error: {0}',
+        error instanceof Error ? error.message : String(error)
+      )
     );
   });
 }
@@ -658,7 +773,9 @@ export function scheduleStartAllDesignTimeApis(): void {
 export async function startAllDesignTimeApis(): Promise<void> {
   const projectPaths = await getWorkspaceLogicAppRoots();
   if (projectPaths.length === 0) {
-    ext.outputChannel.appendLog(localize('noLogicAppsFound', 'No Logic App projects found in the current workspace, skipping design-time startup.'));
+    ext.outputChannel.appendLog(
+      localize('noLogicAppsFound', 'No Logic App projects found in the current workspace, skipping design-time startup.')
+    );
     return;
   }
 
@@ -670,11 +787,13 @@ export async function startAllDesignTimeApis(): Promise<void> {
     )
   );
 
-  await Promise.all(projectPaths.map(async (projectPath) => {
-    await callWithTelemetryAndErrorHandling('startAllDesignTimeApis.startDesignTimeApi', async (actionContext: IActionContext) => {
-      await startDesignTimeApi(actionContext, projectPath);
-    });
-  }));
+  await Promise.all(
+    projectPaths.map(async (projectPath) => {
+      await callWithTelemetryAndErrorHandling('startAllDesignTimeApis.startDesignTimeApi', async (actionContext: IActionContext) => {
+        await startDesignTimeApi(actionContext, projectPath);
+      });
+    })
+  );
 }
 
 /**

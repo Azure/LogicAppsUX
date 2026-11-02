@@ -3172,6 +3172,10 @@ function testAllPlatformLaneEvidenceStagingFixtures() {
           '{"kind":"activation","boot":"original-generated-boot","roots":[]}\n'
         );
         fs.writeFileSync(path.join(invocationRoot, 'population-observations.jsonl'), '{"kind":"diagnostic-operation","count":6}\n');
+        fs.writeFileSync(
+          path.join(invocationRoot, 'design-time-observations.jsonl'),
+          '{"kind":"diagnostic-operation","operation":"design-time-spawn","state":{"hostPid":42,"pid":43}}\n'
+        );
         fs.writeFileSync(path.join(invocationRoot, 'not-allowlisted.json'), '{"credential":"must-not-stage"}\n');
         fs.writeFileSync(
           path.join(invocationRoot, 'code.log'),
@@ -3226,7 +3230,12 @@ function testAllPlatformLaneEvidenceStagingFixtures() {
         assert.deepStrictEqual(projection.observation.roots, ['alpha', 'beta']);
         assert.doesNotMatch(JSON.stringify(projection), /private|runtimeRoot|targetId/);
         const invocationRoot = path.join(extensionRoot, '.vscode-test', 'lifecycle', 'workspaceMultiRoot', 'multi-root-fixture');
-        for (const preserved of ['func-bootstrap.json', 'debug-events.jsonl', 'population-observations.jsonl']) {
+        for (const preserved of [
+          'func-bootstrap.json',
+          'debug-events.jsonl',
+          'population-observations.jsonl',
+          'design-time-observations.jsonl',
+        ]) {
           assert.deepStrictEqual(
             fs.readFileSync(path.join(multiRootDestination, preserved)),
             fs.readFileSync(path.join(invocationRoot, preserved)),

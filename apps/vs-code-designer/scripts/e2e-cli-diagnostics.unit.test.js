@@ -14,7 +14,199 @@ const {
   writeFileWithDiagnostics,
   relayObserverDiagnostics,
   getFuncDiagnosticProducer,
+  getDesignTimeDiagnosticProducer,
 } = require('./e2e-cli-diagnostics');
+
+test('design-time admission fails closed without diagnostic IO for every incomplete native tuple', (t) => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'la-design-admission-'));
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const env = {
+    LA_E2E_CLI_MULTI_ROOT_ISOLATED: '1',
+    LA_E2E_LIFECYCLE_DIR: root,
+    LA_E2E_LIFECYCLE_INVOCATION: require('node:crypto').randomUUID(),
+    LA_E2E_CLI_MULTI_ROOT_EVENTS: path.join(root, 'debug-events.jsonl'),
+  };
+  const lstat = fs.lstatSync;
+  const append = fs.appendFileSync;
+  let io = 0;
+  fs.lstatSync = fs.appendFileSync = () => {
+    io++;
+    throw new Error('must not inspect');
+  };
+  try {
+    for (const key of Object.keys(env)) {
+      const partial = { ...env };
+      delete partial[key];
+      assert.equal(getDesignTimeDiagnosticProducer(partial), undefined, key);
+    }
+    for (const overrides of [
+      { LA_E2E_CLI_MULTI_ROOT_ISOLATED: '0' },
+      { LA_E2E_LIFECYCLE_DIR: 'relative' },
+      { LA_E2E_LIFECYCLE_INVOCATION: '../escape' },
+      { LA_E2E_CLI_MULTI_ROOT_EVENTS: 'debug-events.jsonl' },
+      { LA_E2E_CLI_MULTI_ROOT_EVENTS: path.join(root, 'other.jsonl') },
+    ])
+      assert.equal(getDesignTimeDiagnosticProducer({ ...env, ...overrides }), undefined);
+    assert.equal(io, 0);
+  } finally {
+    fs.lstatSync = lstat;
+    fs.appendFileSync = append;
+  }
+  assert.equal(getDesignTimeDiagnosticProducer({ ...env, LA_E2E_LIFECYCLE_DIR: path.join(root, 'absent') }), undefined);
+  assert.deepEqual(fs.readdirSync(root), []);
+});
+
+test('real design-time serializer and separate relay retain owner identity and static operations, never raw values', (t) => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'la-design-owner-'));
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const invocation = require('node:crypto').randomUUID();
+  const env = {
+    LA_E2E_CLI_MULTI_ROOT_ISOLATED: '1',
+    LA_E2E_LIFECYCLE_DIR: root,
+    LA_E2E_LIFECYCLE_INVOCATION: invocation,
+    LA_E2E_CLI_MULTI_ROOT_EVENTS: path.join(root, 'debug-events.jsonl'),
+  };
+  // Regular windows need no VSCODE_RUNNING_TESTS flag.
+  const trace = getDesignTimeDiagnosticProducer(env);
+  assert.ok(trace);
+  assert.equal(getDesignTimeDiagnosticProducer(env), trace);
+  const state = {
+    hostPid: 20274,
+    pid: 23035,
+    targetPid: 23080,
+    childFuncPid: 23080,
+    project: 'D:\\private\\project-secret',
+    workingDirectory: 'D:\\private\\workdir-secret',
+    command: 'private-executable --token=command-secret',
+    argvCount: 3,
+    shell: true,
+    mapCount: 3,
+    startupPromisePresent: true,
+    processPresent: true,
+    retry: 0,
+    reused: false,
+    skipped: false,
+    settled: false,
+    fulfilledCount: 2,
+    rejectedCount: 1,
+    env: { TOKEN: 'env-secret' },
+    args: ['args-secret'],
+    arbitraryState: 'unadmitted-secret',
+  };
+  const operations = [
+    'design-time-start-request',
+    'design-time-map-set',
+    'design-time-startup',
+    'design-time-spawn',
+    'design-time-process-map-set',
+    'design-time-child-pid-set',
+    'design-time-map-delete',
+    'design-time-stop-all',
+    'design-time-stop',
+    'design-time-tracked-stop',
+    'design-time-kill',
+    'design-time-taskkill',
+  ];
+  for (const operation of operations) {
+    assert.equal(diagnosticOperationId(operation), operation);
+    assert.equal(diagnosticOperationId(`${operation}.secret`), null);
+    trace.start(operation, state).end(state);
+  }
+  // A reloaded owner module has a different producer identity, including when
+  // the containing process is reused. Real hosts additionally supply hostPid.
+  const modulePath = require.resolve('./e2e-cli-diagnostics');
+  const cached = require.cache[modulePath];
+  delete require.cache[modulePath];
+  try {
+    const reload = require('./e2e-cli-diagnostics').getDesignTimeDiagnosticProducer(env);
+    reload.start('design-time-spawn', { ...state, hostPid: 23500, pid: 23538, targetPid: 23581 }).end({ hostPid: 23500 });
+  } finally {
+    require.cache[modulePath] = cached;
+  }
+  const file = path.join(root, `${invocation}.design-time.jsonl`);
+  const native = fs
+    .readFileSync(file, 'utf8')
+    .trim()
+    .split('\n')
+    .map((line) => JSON.parse(line));
+  assert.equal(native.length, 26);
+  assert.equal(new Set(native.slice(0, 24).map((record) => record.producerId)).size, 1);
+  assert.notEqual(native[0].producerId, native[24].producerId);
+  assert.equal(native[24].state.hostPid, 23500);
+  const expected = { ...state };
+  for (const key of ['project', 'workingDirectory', 'command']) {
+    expected[key] = {
+      sha256: require('node:crypto').createHash('sha256').update(state[key]).digest('hex'),
+      length: state[key].length,
+      capped: false,
+    };
+  }
+  for (const key of ['env', 'args', 'arbitraryState']) delete expected[key];
+  assert.deepEqual(native[0].state, expected);
+  fs.appendFileSync(file, `${JSON.stringify({ ...native[0], operation: 'func-map-set' })}\n`);
+  fs.appendFileSync(file, `${JSON.stringify({ ...native[0], operation: 'design-time-spawn.private-command' })}\n`);
+  fs.writeFileSync(path.join(root, `${invocation}.observer.jsonl`), `${JSON.stringify(native[0])}\n`);
+  const relayed = [];
+  const parent = createDiagnosticProducer({ maxEvents: 4, sink: (line) => relayed.push(JSON.parse(line)) });
+  for (let count = 0; count < 10; count++) parent.emit('native-launch', 'sample');
+  relayObserverDiagnostics(root, parent);
+  const receipts = relayed.filter((r) => r.producer === 'native-design-time-relay');
+  assert.equal(receipts.length, 26, 'design-time fork is independent of the exhausted parent budget');
+  for (let index = 0; index < 24; index++) {
+    assert.equal(receipts[index].operation, native[index].operation);
+    assert.equal(receipts[index].state.lastState.hostPid, state.hostPid);
+    assert.equal(receipts[index].state.lastState.targetPid, state.targetPid);
+    assert.equal(receipts[index].state.lastState.startupPromisePresent, true);
+    assert.equal(receipts[index].state.lastState.mapCount, 3);
+    assert.equal(receipts[index].state.lastState.project.sha256, expected.project.sha256);
+    assert.equal(
+      receipts[index].state.originProducer.sha256,
+      require('node:crypto').createHash('sha256').update(native[index].producerId).digest('hex')
+    );
+  }
+  assert.equal(receipts[24].state.lastState.hostPid, 23500);
+  assert.equal(receipts[24].state.lastState.pid, 23538);
+  assert.notEqual(receipts[0].state.originProducer.sha256, receipts[24].state.originProducer.sha256);
+  const all = JSON.stringify({ native, relayed });
+  for (const value of ['project-secret', 'workdir-secret', 'command-secret', 'env-secret', 'args-secret', 'unadmitted-secret']) {
+    assert.ok(!all.includes(value), value);
+  }
+});
+
+test('design-time producer caps and append failures remain secondary, including a full invocation file', (t) => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'la-design-cap-'));
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const env = {
+    LA_E2E_CLI_MULTI_ROOT_ISOLATED: '1',
+    LA_E2E_LIFECYCLE_DIR: root,
+    LA_E2E_LIFECYCLE_INVOCATION: require('node:crypto').randomUUID(),
+    LA_E2E_CLI_MULTI_ROOT_EVENTS: path.join(root, 'debug-events.jsonl'),
+  };
+  const trace = getDesignTimeDiagnosticProducer(env);
+  for (let count = 0; count < 1000; count++) {
+    trace.emit('design-time-spawn', 'failure', { state: { hostPid: 123, count }, error: new Error('token-secret') });
+  }
+  const file = path.join(root, `${env.LA_E2E_LIFECYCLE_INVOCATION}.design-time.jsonl`);
+  assert.ok(fs.statSync(file).size <= 98304);
+  const records = fs.readFileSync(file, 'utf8').trim().split('\n');
+  assert.ok(records.length <= 128);
+  assert.ok(records.length > 0);
+  // A new module/host producer cannot grow an already full invocation stream.
+  fs.writeFileSync(file, Buffer.alloc(98304, 32));
+  const modulePath = require.resolve('./e2e-cli-diagnostics');
+  const cached = require.cache[modulePath];
+  delete require.cache[modulePath];
+  try {
+    const reload = require('./e2e-cli-diagnostics').getDesignTimeDiagnosticProducer(env);
+    assert.doesNotThrow(() => reload.start('design-time-spawn', { hostPid: 456 }).fail(undefined));
+    assert.equal(fs.statSync(file).size, 98304);
+    fs.rmSync(file);
+    fs.mkdirSync(file);
+    assert.doesNotThrow(() => reload.start('design-time-kill').fail(new Error('secondary')));
+  } finally {
+    require.cache[modulePath] = cached;
+  }
+});
 
 test('startup serialization admits only explicit fields, preserving boolean meaning and hashing strings', () => {
   const records = [];

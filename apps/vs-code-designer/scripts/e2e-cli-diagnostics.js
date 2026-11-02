@@ -3,7 +3,23 @@ const crypto = require('node:crypto');
 const fs = require('node:fs');
 const writerProducers = new Map();
 const funcProducers = new Map();
+const designTimeProducers = new Map();
+const designTimeOperations = [
+  'design-time-start-request',
+  'design-time-map-set',
+  'design-time-startup',
+  'design-time-spawn',
+  'design-time-process-map-set',
+  'design-time-child-pid-set',
+  'design-time-map-delete',
+  'design-time-stop-all',
+  'design-time-stop',
+  'design-time-tracked-stop',
+  'design-time-kill',
+  'design-time-taskkill',
+];
 const diagnosticOperations = new Set([
+  ...designTimeOperations,
   'debug-startup',
   'debug-startup-launch',
   'debug-startup-session',
@@ -254,6 +270,19 @@ function diagnosticState(value, depth = 0) {
       'timeout',
       'attempt',
       'mutationApplied',
+      'hostPid',
+      'project',
+      'workingDirectory',
+      'command',
+      'startupPromisePresent',
+      'processPresent',
+      'childFuncPid',
+      'targetPid',
+      'retry',
+      'reused',
+      'skipped',
+      'fulfilledCount',
+      'rejectedCount',
     ];
     return Object.fromEntries(
       keys
@@ -372,8 +401,14 @@ function createDiagnosticProducer({ sink, binding = {}, producer = 'diagnostic',
   return {
     emit,
     start,
-    fork(producer) {
-      return createDiagnosticProducer({ sink, binding, producer, maxEvents, maxBytes });
+    fork(producer, limits = {}) {
+      return createDiagnosticProducer({
+        sink,
+        binding,
+        producer,
+        maxEvents: limits.maxEvents ?? maxEvents,
+        maxBytes: limits.maxBytes ?? maxBytes,
+      });
     },
     async run(operation, body, state, parentOperation) {
       const span = start(operation, state, parentOperation);
@@ -408,6 +443,7 @@ function relayObserverDiagnostics(directory, trace) {
   try {
     const funcRelays = new Map();
     const operations = new Set([
+      ...designTimeOperations,
       'product-activate',
       'subsequent-runtime-startup',
       'scoped-process-capture',
@@ -430,7 +466,7 @@ function relayObserverDiagnostics(directory, trace) {
     ]);
     for (const name of fs
       .readdirSync(directory)
-      .filter((name) => /^[a-f0-9-]{36}\.(?:observer|func-events|func-startup)\.jsonl$/.test(name))
+      .filter((name) => /^[a-f0-9-]{36}\.(?:observer|func-events|func-startup|design-time)\.jsonl$/.test(name))
       .slice(0, 16)) {
       const file = require('node:path').join(directory, name);
       const stat = fs.lstatSync(file);
@@ -440,8 +476,22 @@ function relayObserverDiagnostics(directory, trace) {
         const record = JSON.parse(line);
         if (record.kind !== 'diagnostic-operation' || !operations.has(record.operation)) continue;
         // Keep task noise out of the startup budget at the relay boundary too.
-        const channel = name.endsWith('.func-events.jsonl') ? 'events' : name.endsWith('.func-startup.jsonl') ? 'startup' : null;
-        if (channel && !funcRelays.has(channel)) funcRelays.set(channel, trace.fork(`native-func-${channel}-relay`));
+        const channel = name.endsWith('.design-time.jsonl')
+          ? 'design-time'
+          : name.endsWith('.func-events.jsonl')
+            ? 'events'
+            : name.endsWith('.func-startup.jsonl')
+              ? 'startup'
+              : null;
+        if (designTimeOperations.includes(record.operation) !== (channel === 'design-time')) continue;
+        if (channel && !funcRelays.has(channel)) {
+          funcRelays.set(
+            channel,
+            channel === 'design-time'
+              ? trace.fork('native-design-time-relay', { maxEvents: 128, maxBytes: 98304 })
+              : trace.fork(`native-func-${channel}-relay`)
+          );
+        }
         const relay = channel ? funcRelays.get(channel) : trace;
         relay.emit(
           record.operation,
@@ -468,6 +518,54 @@ function relayObserverDiagnostics(directory, trace) {
     }
   } catch (error) {
     trace.emit('observer-diagnostic-relay-unavailable', 'failure', { error });
+  }
+}
+
+// Supplemental owning-process receipts for the isolated MultiRoot regular
+// window (which does not necessarily set VSCODE_RUNNING_TESTS). Fail closed
+// before any filesystem access; never create a diagnostic directory.
+function getDesignTimeDiagnosticProducer(env = process.env) {
+  try {
+    const path = require('node:path');
+    if (
+      env.LA_E2E_CLI_MULTI_ROOT_ISOLATED !== '1' ||
+      !env.LA_E2E_LIFECYCLE_DIR ||
+      !path.isAbsolute(env.LA_E2E_LIFECYCLE_DIR) ||
+      !/^[a-f0-9-]{36}$/.test(env.LA_E2E_LIFECYCLE_INVOCATION || '') ||
+      !env.LA_E2E_CLI_MULTI_ROOT_EVENTS ||
+      !path.isAbsolute(env.LA_E2E_CLI_MULTI_ROOT_EVENTS) ||
+      path.basename(env.LA_E2E_CLI_MULTI_ROOT_EVENTS) !== 'debug-events.jsonl'
+    )
+      return undefined;
+    const destination = path.join(env.LA_E2E_LIFECYCLE_DIR, `${env.LA_E2E_LIFECYCLE_INVOCATION}.design-time.jsonl`);
+    let trace = designTimeProducers.get(destination);
+    if (!trace && designTimeProducers.size < 32) {
+      const directory = fs.lstatSync(env.LA_E2E_LIFECYCLE_DIR);
+      if (!directory.isDirectory() || directory.isSymbolicLink()) return undefined;
+      trace = createDiagnosticProducer({
+        binding: diagnosticBinding(env),
+        producer: 'native-design-time',
+        maxEvents: 128,
+        maxBytes: 98304,
+        sink: (line) => {
+          // Original/reload hosts share the invocation file. Bound its total
+          // size too, without reading content or scanning processes.
+          let size = 0;
+          try {
+            const stat = fs.lstatSync(destination);
+            if (!stat.isFile() || stat.isSymbolicLink()) return;
+            size = stat.size;
+          } catch (error) {
+            if (error.code !== 'ENOENT') return;
+          }
+          if (size + Buffer.byteLength(line) <= 98304) fs.appendFileSync(destination, line);
+        },
+      });
+      designTimeProducers.set(destination, trace);
+    }
+    return trace;
+  } catch {
+    return undefined;
   }
 }
 
@@ -617,4 +715,5 @@ module.exports = {
   relayObserverDiagnostics,
   diagnosticOperationId,
   getFuncDiagnosticProducer,
+  getDesignTimeDiagnosticProducer,
 };

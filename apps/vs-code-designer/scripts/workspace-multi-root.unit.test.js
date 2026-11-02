@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { createHash } = require('node:crypto');
+const { Buffer } = require('node:buffer');
 const { test } = require('node:test');
 const { assertUiOnlyEnvironment, uiOnlyVerdict, removeOwnedRoot } = require('./workspace-multi-root-ui-only');
 const { formatErrorForDiagnostics } = require('./e2e-cli-diagnostics');
@@ -21,6 +22,7 @@ const {
   retainedIdentityExitFacts,
   caseExecutionMode,
   createMultiRootDiagnosticRoot,
+  preserveDesignTimeDiagnostics,
 } = require('./workspace-multi-root');
 const { SUITE_REGISTRY, normalizeSuiteSelection } = require('./e2e-cli-batch');
 const {
@@ -36,6 +38,33 @@ const phaseFixtures = () =>
     cleanupVerified: true,
     diagnosticsError: '',
   }));
+
+test('owning design-time receipt retention preserves bounded original bytes and cannot replace a primary verdict', () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'multi-root-receipt-unit-'));
+  const destination = path.join(root, 'staged');
+  fs.mkdirSync(destination);
+  const invocation = '11111111-2222-4333-8444-555555555555';
+  const env = { LA_E2E_LIFECYCLE_DIR: root, LA_E2E_LIFECYCLE_INVOCATION: invocation };
+  const source = path.join(root, `${invocation}.design-time.jsonl`);
+  const output = path.join(destination, 'design-time-observations.jsonl');
+  try {
+    assert.equal(preserveDesignTimeDiagnostics(destination, env), false, 'Missing producer is secondary');
+    const original = Buffer.from('{"kind":"diagnostic-operation","operation":"design-time-spawn","state":{"pid":43}}\n');
+    fs.writeFileSync(source, original);
+    assert.equal(preserveDesignTimeDiagnostics(destination, env), true);
+    assert.deepEqual(fs.readFileSync(output), original);
+    assert.equal(preserveDesignTimeDiagnostics(destination, env), false, 'Never overwrite a different retained write');
+    assert.deepEqual(fs.readFileSync(output), original);
+    fs.rmSync(output);
+    fs.writeFileSync(source, Buffer.alloc(98305));
+    assert.equal(preserveDesignTimeDiagnostics(destination, env), false, 'Oversized input cannot enter the artifact');
+    assert.equal(fs.existsSync(output), false);
+    assert.equal(preserveDesignTimeDiagnostics(destination, { ...env, LA_E2E_LIFECYCLE_INVOCATION: '../foreign' }), false);
+    assert.equal(preserveDesignTimeDiagnostics(destination, { ...env, LA_E2E_LIFECYCLE_DIR: 'relative' }), false);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
 
 test('UI-only diagnostic cannot inherit ADO, Azure, isolation or full-suite evidence authorization', () => {
   const env = { LA_E2E_CLI_EXTENSIONS_DIR: 'unit-seed' };

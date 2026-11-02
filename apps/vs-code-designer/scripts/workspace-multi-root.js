@@ -465,6 +465,9 @@ async function runWorkspaceMultiRoot(
         result.errors.push(formatErrorForDiagnostics(error));
       }
     }
+    // Preserve this explicitly redacted producer's original bytes before the
+    // outer ownership root is removed. Never copy raw profile logs or commands.
+    console.log(`[workspaceMultiRoot] design-time-receipts-preserved=${preserveDesignTimeDiagnostics(diagnosticRoot, env)}`);
     // The isolated outer containment owner verifies retained identities and
     // removes the suite-owned roots after this worker exits.
     result.fixturePreservedForDiagnostic = fs.existsSync(root);
@@ -532,7 +535,29 @@ async function runWorkspaceMultiRoot(
   return result.complete ? 0 : 1;
 }
 
+function preserveDesignTimeDiagnostics(diagnosticRoot, env) {
+  try {
+    if (
+      !env.LA_E2E_LIFECYCLE_DIR ||
+      !path.isAbsolute(env.LA_E2E_LIFECYCLE_DIR) ||
+      !/^[a-f0-9-]{36}$/.test(env.LA_E2E_LIFECYCLE_INVOCATION || '')
+    ) {
+      return false;
+    }
+    const source = path.join(env.LA_E2E_LIFECYCLE_DIR, `${env.LA_E2E_LIFECYCLE_INVOCATION}.design-time.jsonl`);
+    const stat = fs.lstatSync(source);
+    if (!stat.isFile() || stat.isSymbolicLink() || stat.size > 98304) {
+      return false;
+    }
+    fs.copyFileSync(source, path.join(diagnosticRoot, 'design-time-observations.jsonl'), fs.constants.COPYFILE_EXCL);
+    return true;
+  } catch {
+    return false; // Secondary retention cannot replace any native/body verdict.
+  }
+}
+
 module.exports = {
+  preserveDesignTimeDiagnostics,
   caseExecutionMode,
   nativeCleanupBlocker,
   retainedIdentityExitFacts,

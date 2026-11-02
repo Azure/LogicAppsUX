@@ -839,7 +839,7 @@ jobs:
               # Preserve original generated bootstrap/debug receipts, not an
               # aggregate success projection. Never recursively copy raw logs,
               # environment, arbitrary files or commands from this family root.
-              foreach ($name in @('func-bootstrap.json', 'debug-events.jsonl', 'population-observations.jsonl')) {
+              foreach ($name in @('func-bootstrap.json', 'debug-events.jsonl', 'population-observations.jsonl', 'design-time-observations.jsonl')) {
                 $source = Join-Path $familyRoots[0].FullName $name
                 if (Test-Path -LiteralPath $source -PathType Leaf) {
                   Copy-Item -LiteralPath $source -Destination (Join-Path $familyDestination $name) -Force

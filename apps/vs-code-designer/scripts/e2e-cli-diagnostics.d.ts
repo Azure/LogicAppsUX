@@ -4,13 +4,14 @@ export function diagnosticState(value: unknown): unknown;
 export function diagnosticError(error: unknown): unknown;
 export function diagnosticOperationId(value: unknown): string | null;
 export function getFuncDiagnosticProducer(channel: 'events' | 'startup', env?: NodeJS.ProcessEnv): DiagnosticProducer | undefined;
+export function getDesignTimeDiagnosticProducer(env?: NodeJS.ProcessEnv): DiagnosticProducer | undefined;
 export interface DiagnosticSpan {
   id: string;
   end(state?: unknown): void;
   fail(error: unknown, state?: unknown): void;
 }
 export interface DiagnosticProducer {
-  fork(producer: string): DiagnosticProducer;
+  fork(producer: string, limits?: { maxEvents?: number; maxBytes?: number }): DiagnosticProducer;
   start(operation: string, state?: unknown, parentOperation?: string | null): DiagnosticSpan;
   emit(operation: string, status: string, details?: { state?: unknown; error?: unknown }): void;
   run<T>(operation: string, body: () => PromiseLike<T> | T, state?: unknown, parentOperation?: string | null): Promise<T>;
