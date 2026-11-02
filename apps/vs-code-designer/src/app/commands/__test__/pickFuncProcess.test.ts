@@ -1,4 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import * as path from 'node:path';
+import { randomUUID } from 'node:crypto';
+const fs = await vi.importActual<typeof import('node:fs')>('node:fs');
+const os = await vi.importActual<typeof import('node:os')>('node:os');
 import * as vscode from 'vscode';
 import { ext } from '../../../extensionVariables';
 import type { IRunningFuncTask } from '../../utils/funcCoreTools/funcHostTask';
@@ -60,6 +64,7 @@ vi.mock('@microsoft/vscode-azext-utils', () => ({
     };
     return await callback(context);
   }),
+  parseError: (error: any) => ({ errorType: error?.errorType }),
 }));
 
 vi.mock('../../utils/delay', () => ({
@@ -123,6 +128,24 @@ function restoreProcessPlatform(): void {
 }
 
 describe('pickFuncProcessInternal', () => {
+  let diagnosticRoot: string | undefined;
+  let diagnosticFile: string;
+  function admitDiagnostics(): void {
+    diagnosticRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'la-task-startup-'));
+    const invocation = randomUUID();
+    vi.stubEnv('VSCODE_RUNNING_TESTS', '1');
+    vi.stubEnv('LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE', 'msn-weather-run');
+    vi.stubEnv('LA_E2E_CLI_MSN_DIAGNOSTICS_DIR', diagnosticRoot);
+    vi.stubEnv('LA_E2E_LIFECYCLE_DIR', diagnosticRoot);
+    vi.stubEnv('LA_E2E_LIFECYCLE_INVOCATION', invocation);
+    diagnosticFile = path.join(diagnosticRoot, `${invocation}.func-startup.jsonl`);
+  }
+  const receipts = () =>
+    fs
+      .readFileSync(diagnosticFile, 'utf8')
+      .trim()
+      .split('\n')
+      .map((line) => JSON.parse(line));
   const projectPath = 'D:\\workspace\\CodefulLogicApp';
   const workspaceFolder = { uri: { fsPath: projectPath }, name: 'CodefulLogicApp', index: 0 } as vscode.WorkspaceFolder;
   const funcTask = {
@@ -172,9 +195,153 @@ describe('pickFuncProcessInternal', () => {
   });
 
   afterEach(() => {
+    vi.unstubAllEnvs();
+    if (diagnosticRoot) fs.rmSync(diagnosticRoot, { recursive: true, force: true });
+    diagnosticRoot = undefined;
     runningFuncTaskMap.clear();
     vi.restoreAllMocks();
     restoreProcessPlatform();
+  });
+
+  const launch = () =>
+    pickFuncProcessModule.pickFuncProcessInternal(
+      context,
+      { type: 'logicapp', isCodeless: false, preLaunchTask: 'func: host start' },
+      workspaceFolder,
+      projectPath
+    );
+
+  it('records execute-before while execute is pending, then settlement and actual map discovery', async () => {
+    admitDiagnostics();
+    let release!: () => void;
+    let entered!: () => void;
+    const pending = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const executing = new Promise<void>((resolve) => {
+      entered = resolve;
+    });
+    vi.mocked(executeIfNotActive).mockImplementation(async () => {
+      entered();
+      await pending;
+      runningFuncTaskMap.set(workspaceFolder, { startTime: 0, processId: 1234 });
+    });
+    const result = launch();
+    await executing;
+    expect(receipts().map((r) => [r.operation, r.status])).toEqual([['func-task-execute', 'start']]);
+    expect(sendRequestWithTimeout).not.toHaveBeenCalled();
+    release();
+    expect(await result).toBe('1234');
+    const records = receipts();
+    expect(records.find((r) => r.operation === 'func-task-execute' && r.status === 'end').state.trackedPid).toBe(1234);
+    expect(records.find((r) => r.operation === 'func-map-found').state).toMatchObject({ trackedPid: 1234, mapCount: 1 });
+    expect(records.filter((r) => r.operation === 'func-candidate-discovery').map((r) => r.status)).toEqual([
+      'start',
+      'end',
+      'start',
+      'end',
+    ]);
+    expect(JSON.stringify(records)).not.toContain(projectPath);
+  });
+
+  it('records only the first pending map wait and its terminal receipt, not each 500ms poll', async () => {
+    admitDiagnostics();
+    vi.mocked(executeIfNotActive).mockResolvedValue(undefined);
+    let release!: () => void;
+    let entered!: () => void;
+    const pending = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const waiting = new Promise<void>((resolve) => {
+      entered = resolve;
+    });
+    let count = 0;
+    vi.mocked(delay).mockImplementation(async () => {
+      if (++count === 50) {
+        entered();
+        await pending;
+        runningFuncTaskMap.set(workspaceFolder, { startTime: 0, processId: 5678 });
+      }
+    });
+    const result = launch();
+    await waiting;
+    expect(
+      receipts()
+        .filter((r) => r.operation === 'func-wait-map')
+        .map((r) => [r.status, r.state.found])
+    ).toEqual([['start', false]]);
+    expect(sendRequestWithTimeout).not.toHaveBeenCalled();
+    release();
+    expect(await result).toBe('5678');
+    expect(
+      receipts()
+        .filter((r) => r.operation === 'func-wait-map')
+        .map((r) => [r.status, r.state.found])
+    ).toEqual([
+      ['start', false],
+      ['end', true],
+    ]);
+  });
+
+  it('retains the original map-wait deadline and records terminal failure with no invented host/discovery', async () => {
+    admitDiagnostics();
+    vi.mocked(executeIfNotActive).mockResolvedValue(undefined);
+    vi.spyOn(Date, 'now').mockReturnValueOnce(0).mockReturnValue(600001);
+    await expect(launch()).rejects.toThrow('Failed to start the Functions host task within "600" seconds.');
+    const records = receipts();
+    expect(records.filter((r) => r.operation === 'func-wait-map').map((r) => r.status)).toEqual(['start', 'failure']);
+    expect(records.at(-1).state).toMatchObject({ mapCount: 0, childCount: 0 });
+    expect(sendRequestWithTimeout).not.toHaveBeenCalled();
+    expect(records.some((r) => r.operation === 'func-candidate-discovery')).toBe(false);
+  });
+
+  it('records map-wait failure on the existing owned task-error path and disposes its listener', async () => {
+    admitDiagnostics();
+    vi.mocked(executeIfNotActive).mockResolvedValue(undefined);
+    let taskEnd!: (event: vscode.TaskProcessEndEvent) => void;
+    const dispose = vi.fn();
+    vi.mocked(vscode.tasks.onDidEndTaskProcess).mockImplementation((listener) => {
+      taskEnd = listener;
+      return { dispose };
+    });
+    vi.mocked(delay).mockImplementation(async () => {
+      taskEnd({ execution: { task: funcTask }, exitCode: 1 } as vscode.TaskProcessEndEvent);
+    });
+    await expect(launch()).rejects.toThrow('Error exists after running preLaunchTask');
+    expect(context.errorHandling.suppressReportIssue).toBe(true);
+    expect(dispose).toHaveBeenCalled();
+    expect(sendRequestWithTimeout).not.toHaveBeenCalled();
+    expect(
+      receipts()
+        .filter((r) => r.operation === 'func-wait-map')
+        .map((r) => r.status)
+    ).toEqual(['start', 'failure']);
+  });
+
+  it('preserves execute rejection identity even when the real diagnostic append fails', async () => {
+    admitDiagnostics();
+    fs.rmSync(diagnosticRoot!, { recursive: true, force: true });
+    const primary = new Error('private-execute-failure');
+    vi.mocked(executeIfNotActive).mockRejectedValue(primary);
+    await expect(launch()).rejects.toBe(primary);
+    expect(sendRequestWithTimeout).not.toHaveBeenCalled();
+  });
+
+  it('records bounded host response/timeout samples without changing backoff or candidate results', async () => {
+    admitDiagnostics();
+    let attempts = 0;
+    vi.mocked(sendRequestWithTimeout).mockImplementation(async () => {
+      if (++attempts <= 8) throw { errorType: 'REQUEST_ABORTED_ERROR' };
+      return { parsedBody: { state: 'Running' } } as any;
+    });
+    expect(await launch()).toBe('1234');
+    const records = receipts().filter((r) => r.operation === 'func-host-status');
+    expect(records.map((r) => r.status)).toEqual(['start', 'sample', 'sample', 'sample', 'sample', 'end']);
+    expect(records[1].state).toMatchObject({ timeout: true, requestTimeoutMs: 500, attempt: 1 });
+    expect(records.at(-1).state).toMatchObject({ timeout: false, requestTimeoutMs: 128000, attempt: 9 });
+    expect(records.at(-1).state.responseState.sha256).toMatch(/^[a-f0-9]{64}$/);
+    expect(context.telemetry.measurements.maxStatusTimeout).toBe(128000);
+    expect(sendRequestWithTimeout).toHaveBeenCalledTimes(9);
   });
 
   it('codeful project skips custom code build', async () => {

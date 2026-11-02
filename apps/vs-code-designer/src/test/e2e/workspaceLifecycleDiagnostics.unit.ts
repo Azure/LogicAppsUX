@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as ts from 'typescript';
 import * as vm from 'vm';
+import { createDiagnosticProducer, diagnosticOperationId } from '../../../scripts/e2e-cli-diagnostics';
 
 const { JSDOM } = require('jsdom') as {
   JSDOM: new (html: string, options?: Record<string, unknown>) => { window: Window & typeof globalThis };
@@ -98,6 +99,8 @@ async function testDebugStartupRequiresSettledOwnedLiveSession(): Promise<void> 
     const screenshots: string[] = [];
     const startupVerdicts: { passed?: unknown; failed?: unknown } = {};
     const startupEvents: { operation: string; status: string; details: unknown }[] = [];
+    const serializedReceipts: { operation: string; status: string; state?: Record<string, unknown> }[] = [];
+    const realTrace = createDiagnosticProducer({ sink: (line) => serializedReceipts.push(JSON.parse(line)) });
     let hostProbes = 0;
     let launchedSession: Session;
     let settleLaunch: (started: boolean) => void = () => assert.fail('Expected deferred launch');
@@ -175,18 +178,24 @@ async function testDebugStartupRequiresSettledOwnedLiveSession(): Promise<void> 
       fs: { readFileSync: () => JSON.stringify({ configurations: [{ name: 'owned-launch', type: 'coreclr', request: 'attach' }] }) },
       randomUUID: () => 'exact-launch-id',
       operationDiagnostics: {
-        start: (operation: string) => {
+        start: (operation: string, state: unknown) => {
           assert.equal(operation, 'debug-startup');
+          const span = realTrace.start(operation, state);
           return {
             end: (state: unknown) => {
               startupVerdicts.passed = state;
+              span.end(state);
             },
-            fail: (_error: unknown, state: unknown) => {
+            fail: (error: unknown, state: unknown) => {
               startupVerdicts.failed = state;
+              span.fail(error, state);
             },
           };
         },
-        emit: (operation: string, status: string, details: unknown) => startupEvents.push({ operation, status, details }),
+        emit: (operation: string, status: string, details: { state?: unknown; error?: unknown }) => {
+          startupEvents.push({ operation, status, details });
+          realTrace.emit(operation, status, details);
+        },
       },
       normalizeFsPath: (value: string) => path.win32.normalize(value).toLowerCase(),
       process: {
@@ -278,6 +287,21 @@ async function testDebugStartupRequiresSettledOwnedLiveSession(): Promise<void> 
       );
     }
     assert.ok(startupEvents.length < 10, 'Receipts must follow transitions, not every readiness poll');
+    assert.ok(serializedReceipts.every((record) => diagnosticOperationId(record.operation) === record.operation));
+    assert.equal(serializedReceipts[0].state?.requireHostRunning, !skipHostProbe);
+    assert.deepEqual(serializedReceipts.at(-1)?.state, succeeds ? startupVerdicts.passed : startupVerdicts.failed);
+    for (const event of startupEvents) {
+      const state = (event.details as { state: Record<string, unknown> }).state;
+      const receipt = serializedReceipts.find((record) => record.operation === event.operation && record.status === event.status);
+      assert.ok(receipt?.state?.launchId, 'Actual producer must retain the hash-redacted launch correlation');
+      if (state.matches) {
+        assert.deepEqual(receipt.state.matches, state.matches, 'Retain every boolean session ownership predicate');
+      }
+      if ('started' in state) {
+        assert.equal(receipt.state.started, state.started);
+      }
+    }
+    assert.ok(!JSON.stringify(serializedReceipts).includes('exact-launch-id'));
     const probesExpected = ['exact-session', 'delayed-settlement', 'terminated-during-host-probe', 'host-not-running'].includes(scenario);
     assert.equal(hostProbes > 0, probesExpected, scenario);
   }

@@ -13,7 +13,100 @@ const {
   observeFileOperation,
   writeFileWithDiagnostics,
   relayObserverDiagnostics,
+  getFuncDiagnosticProducer,
 } = require('./e2e-cli-diagnostics');
+
+test('startup serialization admits only explicit fields, preserving boolean meaning and hashing strings', () => {
+  const records = [];
+  const trace = createDiagnosticProducer({ sink: (line) => records.push(JSON.parse(line)) });
+  const matches = { apiId: true, workspace: true, launch: false, invocation: true, name: true, type: true, request: true };
+  trace.emit('debug-startup-session', 'observed', {
+    state: {
+      launchId: 'private-launch',
+      requireHostRunning: true,
+      launchPending: true,
+      launchStarted: false,
+      launchRejected: false,
+      liveOwnedSessions: 0,
+      settled: false,
+      started: false,
+      matches,
+      arbitraryState: 'must-not-survive',
+    },
+  });
+  const state = records[0].state;
+  assert.deepEqual(state.matches, matches);
+  for (const key of ['requireHostRunning', 'launchPending', 'launchStarted', 'launchRejected', 'liveOwnedSessions', 'settled', 'started']) {
+    assert.ok(Object.hasOwn(state, key), key);
+  }
+  assert.match(state.launchId.sha256, /^[a-f0-9]{64}$/);
+  assert.ok(!JSON.stringify(records).includes('private-launch'));
+  assert.ok(!Object.hasOwn(state, 'arbitraryState'));
+  for (const operation of ['debug-startup', 'debug-startup-launch', 'debug-startup-session']) {
+    assert.equal(diagnosticOperationId(operation), operation);
+    assert.equal(diagnosticOperationId(`${operation}.private-value`), null);
+  }
+});
+
+test('func owner admission has no output outside test diagnostic mode, and separate caps survive relay', (t) => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'la-func-owner-'));
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const invocation = require('node:crypto').randomUUID();
+  const env = {
+    VSCODE_RUNNING_TESTS: '1',
+    LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'msn-weather-run',
+    LA_E2E_CLI_MSN_DIAGNOSTICS_DIR: root,
+    LA_E2E_LIFECYCLE_DIR: root,
+    LA_E2E_LIFECYCLE_INVOCATION: invocation,
+  };
+  for (const key of Object.keys(env)) {
+    const partial = { ...env };
+    delete partial[key];
+    assert.equal(getFuncDiagnosticProducer('events', partial), undefined);
+  }
+  assert.deepEqual(fs.readdirSync(root), []);
+  const events = getFuncDiagnosticProducer('events', env);
+  const startup = getFuncDiagnosticProducer('startup', env);
+  assert.notEqual(events, startup);
+  for (let count = 0; count < 1000; count++) events.emit('func-task-start-event', 'sample', { state: { count } });
+  startup.start('func-task-execute', { workspace: 'private-workspace' }).end({ trackedPid: 123, childCount: 0 });
+  const waiting = startup.start('func-wait-map', { found: false, mapCount: 0 });
+  waiting.fail(undefined, { found: false, timeout: true });
+  const eventFile = path.join(root, `${invocation}.func-events.jsonl`);
+  assert.ok(fs.statSync(eventFile).size <= 65536);
+  assert.ok(fs.readFileSync(eventFile, 'utf8').trim().split('\n').length <= 96);
+  const relayed = [];
+  const trace = createDiagnosticProducer({ sink: (line) => relayed.push(JSON.parse(line)), maxEvents: 8 });
+  for (let count = 0; count < 100; count++) trace.emit('wait-predicate', 'sample');
+  relayObserverDiagnostics(root, trace);
+  const startupReceipts = relayed.filter((r) => r.producer === 'native-func-startup-relay');
+  assert.deepEqual(
+    startupReceipts.map((r) => [r.operation, r.status]),
+    [
+      ['func-task-execute', 'start'],
+      ['func-task-execute', 'end'],
+      ['func-wait-map', 'start'],
+      ['func-wait-map', 'failure'],
+    ]
+  );
+  assert.equal(startupReceipts.at(-1).state.lastState.timeout, true);
+  assert.deepEqual(startupReceipts[0].state.originOperation, startupReceipts[1].state.originOperation);
+  assert.ok(!JSON.stringify(relayed).includes('private-workspace'));
+});
+
+test('func diagnostic append failure stays secondary and never creates missing directories', (t) => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'la-func-sink-'));
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const trace = getFuncDiagnosticProducer('startup', {
+    VSCODE_RUNNING_TESTS: '1',
+    LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE: 'msn-weather-run',
+    LA_E2E_CLI_MSN_DIAGNOSTICS_DIR: root,
+    LA_E2E_LIFECYCLE_DIR: path.join(root, 'absent'),
+    LA_E2E_LIFECYCLE_INVOCATION: require('node:crypto').randomUUID(),
+  });
+  assert.doesNotThrow(() => trace.start('func-task-execute').fail(undefined));
+  assert.deepEqual(fs.readdirSync(root), []);
+});
 
 test('actual CDP operation names survive summaries while arbitrary expressions remain hash-redacted', () => {
   const source = fs.readFileSync(path.join(__dirname, '../src/test/e2e/cdpDiagnostics.ts'), 'utf8');

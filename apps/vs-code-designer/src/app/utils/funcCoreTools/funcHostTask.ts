@@ -17,6 +17,7 @@ import * as cp from 'child_process';
 import * as os from 'os';
 import * as path from 'path';
 import { Platform } from '@microsoft/vscode-extension-logic-apps';
+import { emitFuncDiagnostic, funcTaskState } from './funcTaskDiagnostics';
 export interface IRunningFuncTask {
   startTime: number;
   processId: number;
@@ -54,10 +55,24 @@ export function getRunningFuncTaskForWorkspace(workspaceFolder: vscode.Workspace
 }
 
 function deleteRunningFuncTask(workspaceFolder: vscode.WorkspaceFolder): void {
+  const recordDelete = (scope: vscode.WorkspaceFolder | vscode.TaskScope, mutationApplied: boolean) =>
+    emitFuncDiagnostic('events', 'func-map-delete', () => ({
+      workspace: workspaceFolder.uri.fsPath,
+      scopeExact: scope === workspaceFolder,
+      scopeMatches: scopeMatchesWorkspace(scope, workspaceFolder),
+      mapCount: runningFuncTaskMap.size,
+      trackedPid: runningFuncTaskMap.get(scope)?.processId,
+      childCount: runningFuncTaskMap.get(scope)?.childProcessId?.length ?? 0,
+      mutationApplied,
+    }));
+  recordDelete(workspaceFolder, false);
   runningFuncTaskMap.delete(workspaceFolder);
+  recordDelete(workspaceFolder, true);
   for (const scope of runningFuncTaskMap.keys()) {
     if (scopeMatchesWorkspace(scope, workspaceFolder)) {
+      recordDelete(scope, false);
       runningFuncTaskMap.delete(scope);
+      recordDelete(scope, true);
     }
   }
 }
@@ -156,14 +171,29 @@ export function isFuncHostTask(task: vscode.Task): boolean {
 }
 
 export function registerFuncHostTaskEvents(): void {
+  emitFuncDiagnostic('events', 'func-events-register', () => ({ mapCount: runningFuncTaskMap.size, settled: false }));
   registerEvent(
     extensionEvent.onDidStartTask,
     vscode.tasks.onDidStartTaskProcess,
     async (context: IActionContext, e: vscode.TaskProcessStartEvent) => {
       context.errorHandling.suppressDisplay = true;
       context.telemetry.suppressIfSuccessful = true;
-      if (e.execution.task.scope !== undefined && isFuncHostTask(e.execution.task)) {
+      const classified = e.execution.task.scope !== undefined && isFuncHostTask(e.execution.task);
+      const snapshot = () => ({
+        ...funcTaskState(e.execution.task, e.execution),
+        classified,
+        scopeExact: vscode.workspace.workspaceFolders?.some((folder) => e.execution.task.scope === folder) ?? false,
+        scopeMatches: vscode.workspace.workspaceFolders?.some((folder) => scopeMatchesWorkspace(e.execution.task.scope, folder)) ?? false,
+        mapCount: runningFuncTaskMap.size,
+        pid: e.processId,
+        trackedPid: e.execution.task.scope !== undefined ? runningFuncTaskMap.get(e.execution.task.scope)?.processId : undefined,
+        childCount:
+          e.execution.task.scope !== undefined ? (runningFuncTaskMap.get(e.execution.task.scope)?.childProcessId?.length ?? 0) : 0,
+      });
+      emitFuncDiagnostic('events', 'func-task-start-event', snapshot);
+      if (e.execution.task.scope !== undefined && classified) {
         runningFuncTaskMap.set(e.execution.task.scope, { startTime: Date.now(), processId: e.processId });
+        emitFuncDiagnostic('events', 'func-map-set', snapshot);
       }
     }
   );
@@ -174,14 +204,29 @@ export function registerFuncHostTaskEvents(): void {
     async (context: IActionContext, e: vscode.TaskProcessEndEvent) => {
       context.errorHandling.suppressDisplay = true;
       context.telemetry.suppressIfSuccessful = true;
-      if (e.execution.task.scope !== undefined && isFuncHostTask(e.execution.task)) {
+      const classified = e.execution.task.scope !== undefined && isFuncHostTask(e.execution.task);
+      const snapshot = () => ({
+        ...funcTaskState(e.execution.task, e.execution),
+        classified,
+        scopeExact: vscode.workspace.workspaceFolders?.some((folder) => e.execution.task.scope === folder) ?? false,
+        scopeMatches: vscode.workspace.workspaceFolders?.some((folder) => scopeMatchesWorkspace(e.execution.task.scope, folder)) ?? false,
+        mapCount: runningFuncTaskMap.size,
+        exitCode: e.exitCode,
+        trackedPid: e.execution.task.scope !== undefined ? runningFuncTaskMap.get(e.execution.task.scope)?.processId : undefined,
+        childCount:
+          e.execution.task.scope !== undefined ? (runningFuncTaskMap.get(e.execution.task.scope)?.childProcessId?.length ?? 0) : 0,
+      });
+      emitFuncDiagnostic('events', 'func-task-end-event', snapshot);
+      if (e.execution.task.scope !== undefined && classified) {
         runningFuncTaskMap.delete(e.execution.task.scope);
+        emitFuncDiagnostic('events', 'func-map-delete', snapshot);
         ext.workflowRuntimePort = undefined;
       }
     }
   );
 
   registerEvent(extensionEvent.onDidTerminateDebugSession, vscode.debug.onDidTerminateDebugSession, stopFuncTaskIfRunning);
+  emitFuncDiagnostic('events', 'func-events-register', () => ({ mapCount: runningFuncTaskMap.size, settled: true }));
 }
 
 async function stopFuncTaskIfRunning(context: IActionContext, debugSession: vscode.DebugSession): Promise<void> {

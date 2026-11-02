@@ -2,7 +2,21 @@
 const crypto = require('node:crypto');
 const fs = require('node:fs');
 const writerProducers = new Map();
+const funcProducers = new Map();
 const diagnosticOperations = new Set([
+  'debug-startup',
+  'debug-startup-launch',
+  'debug-startup-session',
+  'func-events-register',
+  'func-task-start-event',
+  'func-task-end-event',
+  'func-map-set',
+  'func-map-delete',
+  'func-task-execute',
+  'func-wait-map',
+  'func-map-found',
+  'func-host-status',
+  'func-candidate-discovery',
   'native-invocation',
   'native-launch',
   'native-original-closure-receipt',
@@ -200,6 +214,41 @@ function diagnosticState(value, depth = 0) {
       'birth',
       'executable',
       'parentPid',
+      'launchId',
+      'requireHostRunning',
+      'launchPending',
+      'launchStarted',
+      'launchRejected',
+      'liveOwnedSessions',
+      'settled',
+      'started',
+      'apiId',
+      'launch',
+      'invocation',
+      'name',
+      'type',
+      'request',
+      'taskId',
+      'executionId',
+      'scopePresent',
+      'scopeMatches',
+      'scopeExact',
+      'classified',
+      'shell',
+      'commandPresent',
+      'commandPlaceholder',
+      'commandPhysical',
+      'commandLinePlaceholder',
+      'definitionCommandPlaceholder',
+      'commandStructured',
+      'mapCount',
+      'trackedPid',
+      'childCount',
+      'responseState',
+      'requestTimeoutMs',
+      'timeout',
+      'attempt',
+      'mutationApplied',
     ];
     return Object.fromEntries(
       keys
@@ -318,6 +367,9 @@ function createDiagnosticProducer({ sink, binding = {}, producer = 'diagnostic',
   return {
     emit,
     start,
+    fork(producer) {
+      return createDiagnosticProducer({ sink, binding, producer, maxEvents, maxBytes });
+    },
     async run(operation, body, state, parentOperation) {
       const span = start(operation, state, parentOperation);
       try {
@@ -349,6 +401,7 @@ function fileDiagnosticSnapshot(file) {
 
 function relayObserverDiagnostics(directory, trace) {
   try {
+    const funcRelays = new Map();
     const operations = new Set([
       'product-activate',
       'subsequent-runtime-startup',
@@ -359,10 +412,20 @@ function relayObserverDiagnostics(directory, trace) {
       'msn-debug-stop',
       'msn-task-stop',
       'failure-summary',
+      'func-events-register',
+      'func-task-start-event',
+      'func-task-end-event',
+      'func-map-set',
+      'func-map-delete',
+      'func-task-execute',
+      'func-wait-map',
+      'func-map-found',
+      'func-host-status',
+      'func-candidate-discovery',
     ]);
     for (const name of fs
       .readdirSync(directory)
-      .filter((name) => /^[a-f0-9-]{36}\.observer\.jsonl$/.test(name))
+      .filter((name) => /^[a-f0-9-]{36}\.(?:observer|func-events|func-startup)\.jsonl$/.test(name))
       .slice(0, 16)) {
       const file = require('node:path').join(directory, name);
       const stat = fs.lstatSync(file);
@@ -371,7 +434,11 @@ function relayObserverDiagnostics(directory, trace) {
         if (line.length > 8192) continue;
         const record = JSON.parse(line);
         if (record.kind !== 'diagnostic-operation' || !operations.has(record.operation)) continue;
-        trace.emit(
+        // Keep task noise out of the startup budget at the relay boundary too.
+        const channel = name.endsWith('.func-events.jsonl') ? 'events' : name.endsWith('.func-startup.jsonl') ? 'startup' : null;
+        if (channel && !funcRelays.has(channel)) funcRelays.set(channel, trace.fork(`native-func-${channel}-relay`));
+        const relay = channel ? funcRelays.get(channel) : trace;
+        relay.emit(
           record.operation,
           ['start', 'end', 'failure', 'summary', 'sample', 'observer-installed', 'session-started', 'session-terminated'].includes(
             record.status
@@ -387,6 +454,7 @@ function relayObserverDiagnostics(directory, trace) {
               originProducer: record.producerId,
               originOperation: record.operationId,
               originParentOperation: record.parentOperation,
+              invocation: record.nativeInvocation,
             },
             ...(record.error ? { error: { name: record.error.name, code: record.error.code } } : {}),
           }
@@ -395,6 +463,39 @@ function relayObserverDiagnostics(directory, trace) {
     }
   } catch (error) {
     trace.emit('observer-diagnostic-relay-unavailable', 'failure', { error });
+  }
+}
+
+// Supplemental owner receipts, admitted only in the existing native MSN
+// diagnostic environment. No producer, file access or output in ordinary use.
+// Task event noise has a separate hard budget from the pending startup trace.
+function getFuncDiagnosticProducer(channel, env = process.env) {
+  try {
+    if (
+      env.VSCODE_RUNNING_TESTS !== '1' ||
+      env.LA_E2E_CLI_WORKSPACE_LIFECYCLE_MODE !== 'msn-weather-run' ||
+      !env.LA_E2E_CLI_MSN_DIAGNOSTICS_DIR ||
+      !env.LA_E2E_LIFECYCLE_DIR ||
+      !/^[a-f0-9-]{36}$/.test(env.LA_E2E_LIFECYCLE_INVOCATION || '') ||
+      !['events', 'startup'].includes(channel)
+    )
+      return undefined;
+    const destination = require('node:path').join(env.LA_E2E_LIFECYCLE_DIR, `${env.LA_E2E_LIFECYCLE_INVOCATION}.func-${channel}.jsonl`);
+    if (!require('node:path').isAbsolute(destination)) return undefined;
+    let trace = funcProducers.get(destination);
+    if (!trace && funcProducers.size < 32) {
+      trace = createDiagnosticProducer({
+        binding: diagnosticBinding(env),
+        producer: `native-func-${channel}`,
+        maxEvents: channel === 'events' ? 96 : 128,
+        maxBytes: channel === 'events' ? 65536 : 98304,
+        sink: (line) => fs.appendFileSync(destination, line),
+      });
+      funcProducers.set(destination, trace);
+    }
+    return trace;
+  } catch {
+    return undefined;
   }
 }
 
@@ -510,4 +611,5 @@ module.exports = {
   writeFileWithDiagnostics,
   relayObserverDiagnostics,
   diagnosticOperationId,
+  getFuncDiagnosticProducer,
 };
