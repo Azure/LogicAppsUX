@@ -2613,6 +2613,9 @@ function getMsnWeatherLifecycleRunExtraEnv({ commonEnv, workspaceParent, lifecyc
     LA_E2E_CLI_WORKSPACE_PARENT: workspaceParent,
     // Real F5 needs the product's task-process listeners and owning task map.
     LA_E2E_CLI_MINIMAL_ACTIVATION: '0',
+    // Normal activation must retain the isolated installed binaries, not ambient defaults.
+    LA_E2E_CLI_VALIDATE_DEPENDENCIES: '1',
+    LA_E2E_STRICT_DEPENDENCY_VALIDATION: '1',
     LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '1',
     LA_E2E_CLI_PROFILE_PHASE: 'msn-weather-run',
     LA_E2E_CLI_USER_DATA_SUFFIX: `msn-weather-run-${lifecycleRunId}`,

@@ -311,6 +311,22 @@ describe('activate design-time startup', () => {
     }
   });
 
+  it('keeps installed dependency paths during normal activation when runtime validation is enabled', async () => {
+    vi.stubEnv('LA_E2E_CLI_MINIMAL_ACTIVATION', '0');
+    vi.mocked(shouldValidateAndInstallRuntimeDependencies).mockReturnValue(true);
+    try {
+      await activate(createExtensionContext());
+      await Promise.all(backgroundOperations);
+      expect(validateAndInstallBinaries).toHaveBeenCalledTimes(1);
+      expect(registerFuncHostTaskEvents).toHaveBeenCalledTimes(1);
+      for (const [setting] of vi.mocked(updateGlobalSetting).mock.calls) {
+        expect(['funcCoreToolsBinaryPath', 'dotnetBinaryPath', 'nodeJsBinaryPath']).not.toContain(setting);
+      }
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
   it('does not block activation while the auto-start prompt is unanswered', async () => {
     let resolvePrompt!: (value: vscode.MessageItem | undefined) => void;
     const promptPromise = new Promise<vscode.MessageItem | undefined>((resolve) => {
