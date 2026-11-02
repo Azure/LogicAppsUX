@@ -1017,6 +1017,88 @@ test('Linux partial scan and original collection error survive a throwing diagno
   assert.deepEqual(diagnosticCalls, originalCalls);
 });
 
+test('real serialized Linux IO receipts identify missing exe row/state without changing the race or probing again', async () => {
+  const f = populationDiagnosticFixture();
+  const calls: string[] = [];
+  const missing = Object.assign(new Error('private proc path'), { code: 'ENOENT' });
+  const files = procFixture({
+    readdir: () => {
+      calls.push('enumerate');
+      return ['100'];
+    },
+    read: (file) => {
+      const operation = path.basename(file);
+      calls.push(operation);
+      if (operation === 'boot_id') {
+        return 'private-boot-id';
+      }
+      if (operation === 'comm') {
+        return 'private-unrelated-process\n';
+      }
+      assert.equal(operation, 'stat', 'Diagnostics must not add argv/other probes');
+      return fakeStat().replace(') S ', ') Z ');
+    },
+    readlink: () => {
+      calls.push('exe-link');
+      throw missing;
+    },
+  });
+  await assert.rejects(
+    f.diagnostics.run(() => createLinuxPopulationProvider(files, '/private/proc', f.diagnostics.collection).snapshot(5000)),
+    PopulationRace
+  );
+  assert.deepEqual(calls, ['boot_id', 'enumerate', 'stat', 'comm', 'exe-link']);
+  const terminal = f.records().at(-1);
+  assert.equal(terminal.state.ok, false, 'A diagnostic zombie observation must not admit an incomplete population');
+  assert.equal(terminal.state.complete, false);
+  assert.equal(terminal.state.races, 1);
+  assert.equal(terminal.state.procFault.pid, 100);
+  assert.equal(terminal.state.procFault.operationCode, 5);
+  assert.equal(terminal.state.procFault.stateCode, 'Z'.charCodeAt(0));
+  assert.equal(terminal.state.procFault.errorCode, 1);
+  assert.equal(terminal.state.procFault.birth.sha256, createHash('sha256').update('42').digest('hex'));
+  assert.doesNotMatch(f.lines.join(''), /private|unrelated-process|private-boot-id/);
+});
+
+test('Linux IO fault receipts preserve denied primary errors and distinguish stat, comm, exe and hashing boundaries', async () => {
+  for (const [operationCode, errorCode] of [
+    [3, 2],
+    [4, 2],
+    [5, 3],
+    [7, 2],
+  ]) {
+    const f = populationDiagnosticFixture();
+    const error = Object.assign(new Error('private metadata failure'), { code: errorCode === 3 ? 'EPERM' : 'EACCES' });
+    const files = procFixture({
+      read: (file) => {
+        if ((operationCode === 3 && file.endsWith('stat')) || (operationCode === 4 && file.endsWith('comm'))) {
+          throw error;
+        }
+        return file.endsWith('boot_id') ? 'boot' : file.endsWith('comm') ? 'func' : fakeStat();
+      },
+      readlink: () => {
+        if (operationCode === 5) {
+          throw error;
+        }
+        return executable;
+      },
+      binary: () => {
+        throw error;
+      },
+    });
+    await assert.rejects(
+      f.diagnostics.run(() => createLinuxPopulationProvider(files, '/unit-owned-proc', f.diagnostics.collection).snapshot(5000)),
+      (actual) => actual === error
+    );
+    const fault = f.records().at(-1).state.procFault;
+    assert.equal(fault.operationCode, operationCode);
+    assert.equal(fault.errorCode, errorCode);
+    assert.equal(fault.pid, 100);
+    assert.equal(fault.stateCode, operationCode === 3 ? null : 'S'.charCodeAt(0));
+    assert.doesNotMatch(f.lines.join(''), /private metadata failure/);
+  }
+});
+
 test('races, PID reuse and terminal receipts remain bounded past exhausted routine capacity', async () => {
   const f = populationDiagnosticFixture();
   // Simulate the routine budget already exhausted. The real UI has its own

@@ -35,9 +35,73 @@ export interface PopulationCollectionReceipt {
   inspectedRows: number;
   processes: FuncIdentity[];
   parents: Array<{ pid: number; parentPid: number }>;
+  procProbe?: ProcProbeReceipt;
+  procFault?: ProcProbeReceipt;
   error?: unknown;
 }
 export type PopulationReceiptSink = (receipt: PopulationCollectionReceipt) => void;
+
+// Existing owning reads only; no extra enumeration, stat, argv or executable
+// probes. Codes: boot=1, enumerate=2, stat=3, comm=4, exe-link=5,
+// cmdline=6, executable-bytes=7. State is the Linux stat state character code.
+// Errors: ENOENT=1, EACCES=2, EPERM=3, other=4. Zero means no IO error.
+export interface ProcProbeReceipt {
+  pid: number;
+  operationCode: number;
+  stateCode: number | null;
+  birth?: string;
+  errorCode: number;
+}
+
+function observedProcFiles(files: ProcFiles, root: string, receipt: PopulationCollectionReceipt): ProcFiles {
+  const errorCodes: Record<string, number> = { ENOENT: 1, EACCES: 2, EPERM: 3 };
+  const readCodes: Record<string, number> = { stat: 3, comm: 4, cmdline: 6 };
+  let current: ProcProbeReceipt | undefined;
+  function record(file: string, operationCode: number, value?: unknown, error?: unknown) {
+    try {
+      const component = path.relative(root, file).split(path.sep)[0];
+      const pid = /^[1-9]\d*$/.test(component) ? Number(component) : 0;
+      const probe: ProcProbeReceipt = {
+        ...(current?.pid === pid ? current : { pid, stateCode: null }),
+        operationCode,
+        errorCode: error ? (errorCodes[String((error as NodeJS.ErrnoException).code)] ?? 4) : 0,
+      };
+      if (!error && operationCode === 3 && typeof value === 'string') {
+        const fields = value
+          .slice(value.lastIndexOf(') ') + 2)
+          .trim()
+          .split(/\s+/);
+        probe.stateCode = fields[0]?.length === 1 ? fields[0].charCodeAt(0) : null;
+        // Only the already-read start tick; never retain stat text or comm.
+        probe.birth = /^\d+$/.test(fields[19] ?? '') ? fields[19] : undefined;
+      }
+      current = probe;
+      receipt.procProbe = probe;
+      if (error) {
+        receipt.procFault = probe;
+      }
+    } catch {
+      // Observation must never replace a primary filesystem result/error.
+    }
+  }
+  function probe<T>(file: string, operationCode: number, body: () => T): T {
+    let value: T;
+    try {
+      value = body();
+    } catch (error) {
+      record(file, operationCode, undefined, error);
+      throw error;
+    }
+    record(file, operationCode, value);
+    return value;
+  }
+  return {
+    readdir: (file) => probe(file, 2, () => files.readdir(file)),
+    read: (file) => probe(file, readCodes[path.basename(file)] ?? 1, () => files.read(file)),
+    readlink: (file) => probe(file, 5, () => files.readlink(file)),
+    binary: (file) => probe(file, 7, () => files.binary(file)),
+  };
+}
 
 function observedCollection(
   collect: (receipt: PopulationCollectionReceipt, budgetMs: number) => Promise<Population>,
@@ -178,10 +242,12 @@ function procKernelThread(stat: string): boolean {
 
 export function createLinuxPopulationProvider(files = nativeProcFiles, root = '/proc', sink?: PopulationReceiptSink): PopulationProvider {
   return observedCollection(async (receipt, budgetMs) => {
+    // This adapter is local to this collector/invocation, never a global fs hook.
+    const procFiles = observedProcFiles(files, root, receipt);
     const deadline = Date.now() + budgetMs;
-    const boot = files.read(path.join(root, 'sys/kernel/random/boot_id')).trim();
+    const boot = procFiles.read(path.join(root, 'sys/kernel/random/boot_id')).trim();
     const enumerate = () =>
-      files
+      procFiles
         .readdir(root)
         .filter((name) => /^[1-9]\d*$/.test(name))
         .sort();
@@ -196,28 +262,28 @@ export function createLinuxPopulationProvider(files = nativeProcFiles, root = '/
         receipt.inspectedRows++;
         remainingBudget(deadline);
         const dir = path.join(root, pid);
-        const firstStat = files.read(path.join(dir, 'stat'));
+        const firstStat = procFiles.read(path.join(dir, 'stat'));
         const first = procBirth(firstStat, boot);
         // Reading every comm is necessary: an unreadable row might itself be func.
-        const name = files.read(path.join(dir, 'comm')).trim();
+        const name = procFiles.read(path.join(dir, 'comm')).trim();
         assert.ok(name, 'Missing process name can conceal func population');
         const verifyIdentity = () => {
           remainingBudget(deadline);
-          if (first !== procBirth(files.read(path.join(dir, 'stat')), boot) || name !== files.read(path.join(dir, 'comm')).trim()) {
+          if (first !== procBirth(procFiles.read(path.join(dir, 'stat')), boot) || name !== procFiles.read(path.join(dir, 'comm')).trim()) {
             throw new PopulationRace('Process identity/name changed during collection');
           }
         };
         let executable: string;
         try {
-          executable = files.readlink(path.join(dir, 'exe'));
+          executable = procFiles.readlink(path.join(dir, 'exe'));
         } catch (error) {
           const denied = error instanceof Error && 'code' in error && (error.code === 'EACCES' || error.code === 'EPERM');
           const missing = error instanceof Error && 'code' in error && error.code === 'ENOENT';
           if ((denied || missing) && !isFunc(name) && procKernelThread(firstStat)) {
             const verifyKernelThread = () => {
               verifyIdentity();
-              assert.equal(files.read(path.join(dir, 'cmdline')), '', 'Kernel thread unexpectedly has userspace arguments');
-              if (!procKernelThread(files.read(path.join(dir, 'stat')))) {
+              assert.equal(procFiles.read(path.join(dir, 'cmdline')), '', 'Kernel thread unexpectedly has userspace arguments');
+              if (!procKernelThread(procFiles.read(path.join(dir, 'stat')))) {
                 throw new PopulationRace('Kernel-thread identity changed during collection');
               }
             };
@@ -232,7 +298,7 @@ export function createLinuxPopulationProvider(files = nativeProcFiles, root = '/
           // command line; this also catches Func with a renamed comm.
           if (denied && !isFunc(name)) {
             const readArgv0 = () => {
-              const commandLine = files.read(path.join(dir, 'cmdline'));
+              const commandLine = procFiles.read(path.join(dir, 'cmdline'));
               const end = commandLine.indexOf('\0');
               assert.ok(end > 0, 'Denied executable has no classifiable process argv[0]');
               return commandLine.slice(0, end);
@@ -259,13 +325,13 @@ export function createLinuxPopulationProvider(files = nativeProcFiles, root = '/
         if (!isFunc(name) && !isFunc(path.basename(executable))) {
           exclusions.push(() => {
             verifyIdentity();
-            if (files.readlink(path.join(dir, 'exe')) !== executable) {
+            if (procFiles.readlink(path.join(dir, 'exe')) !== executable) {
               throw new PopulationRace('Non-Func executable changed during collection');
             }
           });
           continue;
         }
-        const bytes = files.binary(path.join(dir, 'exe'));
+        const bytes = procFiles.binary(path.join(dir, 'exe'));
         const parentPid = Number(
           firstStat
             .slice(firstStat.lastIndexOf(') ') + 2)
@@ -275,8 +341,8 @@ export function createLinuxPopulationProvider(files = nativeProcFiles, root = '/
         if (Number.isSafeInteger(parentPid) && parentPid >= 0) {
           receipt.parents.push({ pid: Number(pid), parentPid });
         }
-        const last = procBirth(files.read(path.join(dir, 'stat')), boot);
-        if (first !== last || executable !== files.readlink(path.join(dir, 'exe'))) {
+        const last = procBirth(procFiles.read(path.join(dir, 'stat')), boot);
+        if (first !== last || executable !== procFiles.readlink(path.join(dir, 'exe'))) {
           throw new PopulationRace('PID/executable changed during collection');
         }
         processes.push({ pid: Number(pid), birth: first, executable, sha256: createHash('sha256').update(bytes).digest('hex') });
