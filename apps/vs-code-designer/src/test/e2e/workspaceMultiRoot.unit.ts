@@ -1017,7 +1017,7 @@ test('Linux partial scan and original collection error survive a throwing diagno
   assert.deepEqual(diagnosticCalls, originalCalls);
 });
 
-test('real serialized Linux IO receipts identify missing exe row/state without changing the race or probing again', async () => {
+test('real serialized Linux IO receipts identify missing live exe row/state without changing the race or probing again', async () => {
   const f = populationDiagnosticFixture();
   const calls: string[] = [];
   const missing = Object.assign(new Error('private proc path'), { code: 'ENOENT' });
@@ -1036,7 +1036,7 @@ test('real serialized Linux IO receipts identify missing exe row/state without c
         return 'private-unrelated-process\n';
       }
       assert.equal(operation, 'stat', 'Diagnostics must not add argv/other probes');
-      return fakeStat().replace(') S ', ') Z ');
+      return fakeStat();
     },
     readlink: () => {
       calls.push('exe-link');
@@ -1049,12 +1049,12 @@ test('real serialized Linux IO receipts identify missing exe row/state without c
   );
   assert.deepEqual(calls, ['boot_id', 'enumerate', 'stat', 'comm', 'exe-link']);
   const terminal = f.records().at(-1);
-  assert.equal(terminal.state.ok, false, 'A diagnostic zombie observation must not admit an incomplete population');
+  assert.equal(terminal.state.ok, false, 'A diagnostic observation must not admit an incomplete population');
   assert.equal(terminal.state.complete, false);
   assert.equal(terminal.state.races, 1);
   assert.equal(terminal.state.procFault.pid, 100);
   assert.equal(terminal.state.procFault.operationCode, 5);
-  assert.equal(terminal.state.procFault.stateCode, 'Z'.charCodeAt(0));
+  assert.equal(terminal.state.procFault.stateCode, 'S'.charCodeAt(0));
   assert.equal(terminal.state.procFault.errorCode, 1);
   assert.equal(terminal.state.procFault.birth.sha256, createHash('sha256').update('42').digest('hex'));
   assert.doesNotMatch(f.lines.join(''), /private|unrelated-process|private-boot-id/);
@@ -1344,6 +1344,88 @@ function procFixture(overrides: Partial<ProcFiles> = {}): ProcFiles {
 test('Linux unit-owned proc files prove executable and creation identity', async () => {
   const provider = createLinuxPopulationProvider(procFixture(), '/unit-owned-proc');
   assert.equal((await provider.snapshot(5000)).processes[0].birth, 'fixture-boot:42');
+});
+
+function zombieProcFixture(options: { zombieName?: string; mutate?: (operation: string, count: number) => string | undefined } = {}) {
+  const calls = new Map<string, number>();
+  const tick = (operation: string) => {
+    const count = (calls.get(operation) ?? 0) + 1;
+    calls.set(operation, count);
+    return options.mutate?.(operation, count);
+  };
+  const missing = () => Object.assign(new Error('unit zombie has no executable'), { code: 'ENOENT' });
+  const files = procFixture({
+    readdir: () => ['100', '101'],
+    read: (file) => {
+      if (file.endsWith('boot_id')) {
+        return 'boot';
+      }
+      const pid = path.basename(path.dirname(file));
+      const operation = path.basename(file);
+      if (pid === '100') {
+        return operation === 'comm' ? 'func' : fakeStat();
+      }
+      const changed = tick(operation);
+      if (changed !== undefined) {
+        return changed;
+      }
+      if (operation === 'comm') {
+        return options.zombieName ?? 'unit-exited';
+      }
+      if (operation === 'cmdline') {
+        return '';
+      }
+      return fakeStat('43').replace(') S ', ') Z ');
+    },
+    readlink: (file) => {
+      if (path.basename(path.dirname(file)) === '100') {
+        return executable;
+      }
+      const changed = tick('exe');
+      if (changed !== undefined) {
+        return changed;
+      }
+      throw missing();
+    },
+  });
+  return { files, calls };
+}
+
+test('Linux birth-bound zombie cannot starve the complete live executable population, including a Func-named zombie', async () => {
+  for (const zombieName of ['unit-exited', 'func']) {
+    const f = zombieProcFixture({ zombieName });
+    const result = await createLinuxPopulationProvider(f.files, '/unit-owned-proc').snapshot(5000);
+    assert.deepEqual(result.processes, [{ pid: 100, birth: 'boot:42', executable, sha256 }]);
+    assert.ok((f.calls.get('stat') ?? 0) >= 3, 'Zombie state/birth must be rechecked across collection');
+    assert.ok((f.calls.get('cmdline') ?? 0) >= 2, 'Empty argv must be rechecked across collection');
+    assert.ok((f.calls.get('exe') ?? 0) >= 3, 'Executable absence must be rechecked across collection');
+  }
+});
+
+test('Linux zombie exclusion rejects live-state transition, PID reuse, nonempty argv, inaccessible metadata and reappearing exe', async () => {
+  for (const [operation, count, value] of [
+    ['stat', 2, fakeStat('43')],
+    ['stat', 3, fakeStat('44').replace(') S ', ') Z ')],
+    ['cmdline', 1, 'func\0host\0start\0'],
+    ['cmdline', 2, 'func\0host\0start\0'],
+    ['exe', 2, executable],
+    ['exe', 3, executable],
+  ] as const) {
+    const f = zombieProcFixture({ mutate: (actual, seen) => (actual === operation && seen === count ? value : undefined) });
+    await assert.rejects(createLinuxPopulationProvider(f.files, '/unit-owned-proc').snapshot(5000));
+  }
+  for (const operation of ['stat', 'comm', 'cmdline', 'exe']) {
+    const denied = Object.assign(new Error('unit metadata denied'), { code: 'EACCES' });
+    const f = zombieProcFixture({
+      mutate: (actual, count) => {
+        if (actual === operation && (operation !== 'exe' || count > 1)) {
+          throw denied;
+        }
+        return undefined;
+      },
+    });
+    await assert.rejects(createLinuxPopulationProvider(f.files, '/unit-owned-proc').snapshot(5000), (actual) => actual === denied);
+  }
 });
 
 test('Linux protected unrelated system process does not hide any Funcs from the full native population', async () => {

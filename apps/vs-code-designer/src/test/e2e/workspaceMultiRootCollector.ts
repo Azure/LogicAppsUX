@@ -269,9 +269,11 @@ export function createLinuxPopulationProvider(files = nativeProcFiles, root = '/
         assert.ok(name, 'Missing process name can conceal func population');
         const verifyIdentity = () => {
           remainingBudget(deadline);
-          if (first !== procBirth(procFiles.read(path.join(dir, 'stat')), boot) || name !== procFiles.read(path.join(dir, 'comm')).trim()) {
+          const stat = procFiles.read(path.join(dir, 'stat'));
+          if (first !== procBirth(stat, boot) || name !== procFiles.read(path.join(dir, 'comm')).trim()) {
             throw new PopulationRace('Process identity/name changed during collection');
           }
+          return stat;
         };
         let executable: string;
         try {
@@ -279,6 +281,31 @@ export function createLinuxPopulationProvider(files = nativeProcFiles, root = '/
         } catch (error) {
           const denied = error instanceof Error && 'code' in error && (error.code === 'EACCES' || error.code === 'EPERM');
           const missing = error instanceof Error && 'code' in error && error.code === 'ENOENT';
+          // A zombie has already exited and has no executable/argv. It may
+          // remain in /proc until its parent reaps it; retrying that stable row
+          // forever prevents any complete live executable population.
+          const zombie = (stat: string) => stat.slice(stat.lastIndexOf(') ') + 2).split(/\s+/)[0] === 'Z';
+          if (missing && zombie(firstStat)) {
+            const verifyZombie = () => {
+              const stat = verifyIdentity();
+              if (!zombie(stat)) {
+                throw new PopulationRace('Zombie state changed during collection');
+              }
+              assert.equal(procFiles.read(path.join(dir, 'cmdline')), '', 'Zombie unexpectedly has userspace arguments');
+              try {
+                procFiles.readlink(path.join(dir, 'exe'));
+              } catch (absent) {
+                if (absent instanceof Error && 'code' in absent && absent.code === 'ENOENT') {
+                  return;
+                }
+                throw absent; // Access denial is not executable absence.
+              }
+              throw new PopulationRace('Zombie executable reappeared during collection');
+            };
+            verifyZombie();
+            exclusions.push(verifyZombie); // Recheck identity/state/absence at the final pass.
+            continue;
+          }
           if ((denied || missing) && !isFunc(name) && procKernelThread(firstStat)) {
             const verifyKernelThread = () => {
               verifyIdentity();
