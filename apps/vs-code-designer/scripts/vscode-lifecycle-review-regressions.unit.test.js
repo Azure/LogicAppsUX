@@ -1192,7 +1192,54 @@ function readLines(stream) {
   };
 }
 
-function retainedHandlePowerShellScript(nodeArguments = `-e "process.stdin.once('data',()=>process.exit(0));process.stdin.resume();"`) {
+const previousRetainedHandleNodeScript = "process.stdin.once('data',()=>process.exit(0));process.stdin.resume();";
+// The invocation's marker, not the lifetime of an input pipe, owns this child.
+// The referenced timer survives stdin EOF and is closed only on explicit release.
+const retainedHandleNodeScript = [
+  "const fs=require('node:fs');const path=require('node:path');",
+  "const release=path.join(process.env.LA_E2E_LIFECYCLE_DIR,'release-owned-node');",
+  'const timer=setInterval(()=>{if(fs.existsSync(release)){clearInterval(timer);process.exit(0);}},20);',
+  "process.stdin.once('end',()=>console.log(JSON.stringify({inputEnded:true})));process.stdin.resume();",
+].join('');
+
+test('retained-handle exact scripts distinguish natural EOF exit from explicit owned-marker release', { timeout: 15_000 }, async () => {
+  const { spawn } = require('node:child_process');
+  for (const [script, markerControlled] of [
+    [previousRetainedHandleNodeScript, false],
+    [retainedHandleNodeScript, true],
+  ]) {
+    const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'la-retained-eof-'));
+    const release = path.join(directory, 'release-owned-node');
+    const child = spawn(process.execPath, ['-e', script], {
+      env: { ...process.env, LA_E2E_LIFECYCLE_DIR: directory },
+      stdio: ['pipe', 'pipe', 'pipe'],
+    });
+    const closed = new Promise((resolve) => child.once('close', (code, signal) => resolve({ code, signal })));
+    let stderrBytes = 0;
+    child.stderr.on('data', (chunk) => {
+      stderrBytes += chunk.length;
+    });
+    const next = readLines(child.stdout);
+    child.stdin.end();
+    try {
+      if (markerControlled) {
+        assert.deepEqual(await next(), { inputEnded: true });
+        assert.equal(child.exitCode, null, 'EOF must not release the marker-controlled child');
+        assert.equal(fs.existsSync(release), false);
+        fs.writeFileSync(release, '');
+      }
+      assert.deepEqual(await closed, { code: 0, signal: null });
+      assert.equal(stderrBytes, 0);
+      assert.equal(fs.existsSync(release), markerControlled, 'The previous script exits naturally before explicit release');
+    } finally {
+      fs.writeFileSync(release, '');
+      await closed;
+      fs.rmSync(directory, { recursive: true, force: true });
+    }
+  }
+});
+
+function retainedHandlePowerShellScript(nodeArguments = `-e "${retainedHandleNodeScript}"`) {
   return [
     '$diagnostic = Join-Path $env:LA_E2E_LIFECYCLE_DIR "retained-handle.diagnostic.jsonl";',
     '$receiptSequence = 0; $receiptDropped = 0;',
@@ -1200,7 +1247,7 @@ function retainedHandlePowerShellScript(nodeArguments = `-e "process.stdin.once(
     '$info = New-Object System.Diagnostics.ProcessStartInfo;',
     `$info.FileName = '${process.execPath.replace(/'/g, "''")}';`,
     `$info.Arguments = '${nodeArguments.replace(/'/g, "''")}';`,
-    '$info.UseShellExecute = $false; $info.RedirectStandardInput = $true; $info.RedirectStandardError = $true;',
+    '$info.UseShellExecute = $false; $info.RedirectStandardInput = $true; $info.RedirectStandardError = $true; $info.RedirectStandardOutput = $true;',
     '$node = New-Object System.Diagnostics.Process; $node.StartInfo = $info;',
     'Receipt "node-start" @{argvCount=2};',
     'try { [void]$node.Start() } catch { Receipt "node-start-error" @{errorClass="NativeStartError";hresult=$_.Exception.HResult}; throw };',
@@ -1215,12 +1262,15 @@ function retainedHandlePowerShellScript(nodeArguments = `-e "process.stdin.once(
     'Receipt "node-exit" @{pid=$node.Id;exitCode=$node.ExitCode;errorClass=$class;errorCode=$code;sha256=$digest;bytes=$bytes.Length;capped=($count -eq 4096)};',
     '} catch { Receipt "node-exit-diagnostic-unavailable" @{pid=$node.Id} } } };',
     '$held = $node.Handle;',
-    '@{pid=$node.Id;directory=$env:LA_E2E_LIFECYCLE_DIR;held=$held.ToInt64()} | ConvertTo-Json -Compress;',
+    '$node.StandardInput.Close();',
+    `$inputEnded = $node.StandardOutput.ReadLine() -ceq '{"inputEnded":true}';`,
+    'Receipt "node-input-ended" @{pid=$node.Id;observed=$inputEnded;exited=$node.HasExited};',
+    '@{pid=$node.Id;directory=$env:LA_E2E_LIFECYCLE_DIR;held=$held.ToInt64();inputEnded=$inputEnded} | ConvertTo-Json -Compress;',
     '$releaseNode = Join-Path $env:LA_E2E_LIFECYCLE_DIR "release-owned-node";',
     'Receipt "release-node-wait" @{pid=$node.Id};',
     'while (-not (Test-Path -LiteralPath $releaseNode)) { RecordNodeExit; Start-Sleep -Milliseconds 20; }',
     'Receipt "release-node-marker-observed" @{pid=$node.Id;exited=$node.HasExited};',
-    '$node.StandardInput.WriteLine("exit"); $node.StandardInput.Flush(); $node.WaitForExit();',
+    '$node.WaitForExit();',
     'RecordNodeExit;',
     '@{pid=$node.Id;exited=$node.HasExited;held=$node.Handle.ToInt64()} | ConvertTo-Json -Compress;',
     '$releaseOwner = Join-Path $env:LA_E2E_LIFECYCLE_DIR "release-handle-owner";',
@@ -1238,7 +1288,7 @@ test(
     timeout: 35_000,
   },
   async () => {
-    const nodeScript = "process.stdin.once('data',()=>process.exit(0));process.stdin.resume();";
+    const nodeScript = retainedHandleNodeScript;
     const script = retainedHandlePowerShellScript();
     const powershell = path.join(process.env.SystemRoot, 'System32', 'WindowsPowerShell', 'v1.0', 'powershell.exe');
     const launch = spawnContainedProcess(powershell, ['-NoProfile', '-NonInteractive', '-Command', script], { env: { ...process.env } });
@@ -1265,12 +1315,12 @@ test(
       const ready = await next();
       directory = ready.directory;
       assert.ok(ready.held);
+      assert.equal(ready.inputEnded, true, 'Native child must acknowledge explicit stdin EOF before observation');
       const before = await observeProcesses(ready.directory, [ready.pid, process.pid]);
       const original = before.processes.find((record) => record.pid === ready.pid);
       assert.equal(original.metadataStatus, 'captured');
       assert.equal(before.processes.find((record) => record.pid === process.pid).metadataStatus, 'not-in-job');
-      // Markers control release, but do not prove why Node might exit before
-      // release. Keep the captured assertion strict; use native error receipts.
+      assert.equal(fs.existsSync(path.join(directory, 'release-owned-node')), false);
       fs.writeFileSync(path.join(directory, 'release-owned-node'), '');
       trace.emit('release-owned-node-marker-written', 'end');
       const exited = await next();
@@ -1280,6 +1330,7 @@ test(
       assert.equal(after.processes[0].metadataStatus, 'exited');
       assert.equal(after.processes[0].exitProof.source, 'GetProcessTimes');
       assert.equal(originalProcessReleased(original, after.processes[0]), true);
+      assert.equal(fs.existsSync(path.join(directory, 'release-handle-owner')), false);
       bodyPassed = true;
       fixtureSpan.end();
     } catch (error) {
@@ -1303,6 +1354,7 @@ test(
               'node-start',
               'node-start-error',
               'node-started',
+              'node-input-ended',
               'node-exit',
               'node-exit-diagnostic-unavailable',
               'release-node-wait',
