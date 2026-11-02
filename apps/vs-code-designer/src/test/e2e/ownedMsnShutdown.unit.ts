@@ -360,6 +360,39 @@ async function run(): Promise<void> {
       }
     );
     assert.deepStrictEqual(sequence, ['failed-deactivate'], 'A failed deactivation is not retried or accepted');
+    const originalLog = console.log;
+    const originalError = console.error;
+    const telemetryFailureEntry: CachedExtensionEntry = {
+      ...entry,
+      exports: {
+        ...exports,
+        deactivate: async () => {
+          throw deactivationError;
+        },
+      },
+    };
+    try {
+      console.log = () => {
+        throw new Error('secondary telemetry sink failure');
+      };
+      console.error = () => {
+        throw new Error('secondary retained log failure');
+      };
+      await assert.rejects(
+        teardownOwnedMsnHost({ ...host, cachedEntry: () => selectEntry(telemetryFailureEntry) }, [
+          async () => {
+            throw teardownError;
+          },
+        ]),
+        (error: AggregateError) => {
+          assert.deepStrictEqual(error.errors, [teardownError, deactivationError]);
+          return true;
+        }
+      );
+    } finally {
+      console.log = originalLog;
+      console.error = originalError;
+    }
 
     let changedEntry = entry;
     await assert.rejects(

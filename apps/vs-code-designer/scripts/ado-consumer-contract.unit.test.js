@@ -83,6 +83,13 @@ function assertMandatoryConsumerContract(template, entry, packageManifest) {
     assert.ok(parameters.dependsOn.includes('build_current_run_e2e_artifact'));
   }
   assert.ok(packageManifest.scripts['test:e2e-cli:unit'].startsWith('node --test scripts/ado-consumer-contract.unit.test.js && '));
+  assert.equal(
+    packageManifest.scripts['test:e2e-cli:unit']
+      .split(' && ')
+      .filter((part) => part === 'node --test scripts/e2e-cli-diagnostics.unit.test.js').length,
+    1,
+    'Diagnostic owning-writer controls must run exactly once in the bootstrap/consumer chain'
+  );
   assert.ok(packageManifest.scripts['test:e2e-cli:build'].endsWith('pnpm run test:e2e-cli:unit'));
 }
 
@@ -164,6 +171,21 @@ const controls = [
     'missing-Windows-unit-consumer',
     (_template, entry) => {
       collect(entry, (item) => item.parameters?.jobName === 'windows_unit_tests')[0].parameters.suiteId = 'other';
+    },
+  ],
+  [
+    'unregistered-owning-writer-controls',
+    (_template, _entry, packageManifest) => {
+      packageManifest.scripts['test:e2e-cli:unit'] = packageManifest.scripts['test:e2e-cli:unit'].replace(
+        'node --test scripts/e2e-cli-diagnostics.unit.test.js && ',
+        ''
+      );
+    },
+  ],
+  [
+    'duplicate-owning-writer-controls',
+    (_template, _entry, packageManifest) => {
+      packageManifest.scripts['test:e2e-cli:unit'] += ' && node --test scripts/e2e-cli-diagnostics.unit.test.js';
     },
   ],
   [

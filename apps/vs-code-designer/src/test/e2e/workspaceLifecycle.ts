@@ -6,6 +6,7 @@ import * as os from 'os';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { observeMsnCleanupDiagnostics, recordMsnBodyAssertions } from '../../../scripts/msn-cleanup-diagnostics';
+import { operationDiagnostics } from './operationDiagnostics';
 import { assertOwnedMsnHandleScopes } from './ownedMsnShutdown';
 import {
   type CdpConnection,
@@ -5978,16 +5979,27 @@ async function stopDebuggingAndTasks(): Promise<void> {
       }
     );
     if (session) {
-      await vscode.debug.stopDebugging(session);
-      await waitUntil(() => vscode.debug.activeDebugSession !== session, 10000, 'original MSN debug handle to stop');
+      await operationDiagnostics.run('msn-debug-stop', () => vscode.debug.stopDebugging(session));
+      await operationDiagnostics.run('msn-debug-stopped-predicate', () =>
+        waitUntil(() => vscode.debug.activeDebugSession !== session, 10000, 'original MSN debug handle to stop')
+      );
     }
     for (const execution of executions) {
-      execution.terminate();
+      const span = operationDiagnostics.start('msn-task-stop');
+      try {
+        execution.terminate();
+        span.end();
+      } catch (error) {
+        span.fail(error);
+        throw error;
+      }
     }
-    await waitUntil(
-      () => !vscode.tasks.taskExecutions.some((execution) => executions.includes(execution)),
-      10000,
-      'original MSN task handles to terminate'
+    await operationDiagnostics.run('msn-task-stopped-predicate', () =>
+      waitUntil(
+        () => !vscode.tasks.taskExecutions.some((execution) => executions.includes(execution)),
+        10000,
+        'original MSN task handles to terminate'
+      )
     );
     return;
   }

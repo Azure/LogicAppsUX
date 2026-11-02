@@ -1,5 +1,6 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { operationDiagnostics as trace } from './operationDiagnostics';
 import {
   assertNextButtonEnabled,
   enterFieldValue,
@@ -44,12 +45,46 @@ export async function addWorkspaceMultiRootProjects(
       assertProjectSetupForm
     );
     try {
-      const form = boundedCdp(wizard, phase);
+      const bounded = boundedCdp(wizard, phase);
+      let lastFormState: unknown;
+      const form: CdpEvaluator = {
+        async evaluate<T>(context: number | undefined, expression: string, options?: Parameters<CdpEvaluator['evaluate']>[2]) {
+          const result = await bounded.evaluate<T>(context, expression, options);
+          lastFormState = result;
+          trace.emit('multi-root-form-state', 'end', { state: result });
+          return result; // No new DOM read, retry or expression mutation.
+        },
+        send(method, params, options) {
+          const operation =
+            method === 'Input.dispatchKeyEvent'
+              ? 'multi-root-key-input'
+              : method === 'Input.dispatchMouseEvent'
+                ? 'multi-root-pointer-input'
+                : method === 'Input.insertText'
+                  ? 'multi-root-text-input'
+                  : 'multi-root-cdp-send';
+          return trace.run(operation, () => bounded.send(method, params, options));
+        },
+      };
+      const observeFormOperation = async (operation: string, body: () => Promise<void>) => {
+        const span = trace.start(operation);
+        try {
+          await body();
+          span.end({ lastState: lastFormState });
+        } catch (error) {
+          span.fail(error, { lastState: lastFormState });
+          throw error;
+        }
+      };
       await selectRadioOption(form, contextId, 'Logic app (Standard)');
       await enterFieldValue(form, contextId, 'Logic app name', name);
-      await selectDropdownOption(form, contextId, 'Workflow type', 'Stateful');
+      await observeFormOperation('multi-root-workflow-type-select', () =>
+        selectDropdownOption(form, contextId, 'Workflow type', 'Stateful')
+      );
       await enterFieldValue(form, contextId, 'Workflow name', 'main');
-      await assertNextButtonEnabled(form, contextId, 'multi-root folder Create New Project');
+      await observeFormOperation('multi-root-next-enabled', () =>
+        assertNextButtonEnabled(form, contextId, 'multi-root folder Create New Project')
+      );
       await clickText(form, 'button', 'Next', phase, contextId);
       await poll(
         () => getPageText(form, contextId),

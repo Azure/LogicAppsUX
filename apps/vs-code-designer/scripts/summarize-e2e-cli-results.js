@@ -9,6 +9,7 @@ const path = require('path');
 const { assertSuccessfulMsnTerminal, readMsnTerminal } = require('./e2e-cli-terminal');
 const { projectPublicScenarioEvidence } = require('./ogf-e2e-registry');
 const { createMsnFinalizationReport, formatReference, artifactReferences, redactReportingText } = require('./msn-finalization-reporting');
+const { diagnosticOperationId } = require('./e2e-cli-diagnostics');
 
 if (require.main === module) {
   const options = parseArgs(process.argv.slice(2));
@@ -59,6 +60,33 @@ function writeSingleResult({ label, log, outDir, outcome, diagnosticsArtifactNam
     }
   }
   mergeTerminalResultMetadata(result, outDir, label, label === 'msnWeatherLifecycle' ? { terminalResult: terminal } : {});
+  // Supplemental only: preserve existing result calculation and primary errors.
+  try {
+    const receipts = [];
+    for (const line of logText.split(/\r?\n/)) {
+      const start = line.indexOf('[e2e-operation] ');
+      if (start < 0 || line.length > 9000 || receipts.length >= 512) continue;
+      try {
+        const receipt = JSON.parse(line.slice(start + '[e2e-operation] '.length));
+        if (receipt.kind === 'diagnostic-operation') receipts.push(receipt);
+      } catch {
+        /* A malformed diagnostic line is not a new acceptance gate. */
+      }
+    }
+    const failure = receipts.find((record) => record.status === 'failure');
+    const lastGood = receipts.filter((record) => record.status === 'end').at(-1);
+    result.operationDiagnostics = {
+      firstFailedGate: diagnosticOperationId(failure?.operation),
+      lastGood: diagnosticOperationId(lastGood?.operation),
+      order: 'log-ingestion-only-not-cross-producer-causation',
+      body: result.executedTestCounts?.failing > 0 ? 'failed' : result.executedTestCounts?.passing > 0 ? 'passed' : 'unknown',
+      harness: result.outcome === 'success' ? 'passed' : 'failed',
+      receiptCount: receipts.length,
+      checkedArtifacts: ['terminal-result.json', 'junit.xml'].filter((name) => fs.existsSync(path.join(outDir, `${label}.${name}`))),
+    };
+  } catch {
+    /* Reporting must not replace the execution error. */
+  }
   result.diagnosticsArtifactName = diagnosticsArtifactName || undefined;
   result.failureAttachments = result.failing > 0 ? loadFailureScreenshotAttachments(outDir, label) : [];
   if (label === 'msnWeatherLifecycle') {

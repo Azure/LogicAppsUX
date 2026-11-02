@@ -2,6 +2,7 @@ import * as assert from 'node:assert/strict';
 import * as path from 'node:path';
 import { connectToVsCodeWorkbenchCdp, type CdpConnection } from './cdpClient';
 import { clickPoint, type CdpEvaluator, type Point } from './cdpFormHelpers';
+import { operationDiagnostics as trace } from './operationDiagnostics';
 
 const remainingWorkbenchBudget = (deadline: number): number => {
   const remaining = deadline - Date.now();
@@ -16,16 +17,32 @@ export function boundedCdp(cdp: CdpEvaluator, deadline: number): CdpEvaluator {
   };
 }
 
-export async function poll<T>(read: () => Promise<T>, accept: (value: T) => boolean, deadline: number): Promise<T> {
-  while (remainingWorkbenchBudget(deadline)) {
-    const value = await read();
-    remainingWorkbenchBudget(deadline);
-    if (accept(value)) {
-      return value;
+export async function poll<T>(
+  read: () => Promise<T>,
+  accept: (value: T) => boolean,
+  deadline: number,
+  diagnostic: { operation: string; parentOperation?: string } = { operation: 'wait-predicate' }
+): Promise<T> {
+  const span = trace.start(diagnostic.operation, undefined, diagnostic.parentOperation);
+  let lastState: T | undefined;
+  let attempts = 0;
+  try {
+    while (remainingWorkbenchBudget(deadline)) {
+      const value = await read();
+      lastState = value;
+      attempts++;
+      remainingWorkbenchBudget(deadline);
+      if (accept(value)) {
+        span.end({ attempts, lastState });
+        return value;
+      }
+      await new Promise((resolve) => setTimeout(resolve, Math.min(200, remainingWorkbenchBudget(deadline))));
     }
-    await new Promise((resolve) => setTimeout(resolve, Math.min(200, remainingWorkbenchBudget(deadline))));
+    throw new Error('Workbench observation did not satisfy its postcondition');
+  } catch (error) {
+    span.fail(error, { attempts, lastState });
+    throw error;
   }
-  throw new Error('Workbench observation did not satisfy its postcondition');
 }
 
 export const workbenchVisibleScript = `
@@ -402,48 +419,64 @@ export function readContextMenuState(cdp: CdpEvaluator, label: string): Promise<
 }
 
 export async function clickContextMenuText(cdp: CdpEvaluator, label: string, deadline: number): Promise<void> {
+  const span = trace.start('context-menu-match-dispatch', { text: label });
   let lastState: ContextMenuState | undefined;
-  while (Date.now() < deadline) {
-    lastState = await readContextMenuState(cdp, label);
-    if (lastState.point) {
-      await clickPoint(cdp, lastState.point);
-      // A moved highlight is not activation. Do not replay the click or replace
-      // it with a command invocation when the menu remains open.
-      try {
-        await poll(
-          () => readContextMenuState(cdp, label),
-          (state) => state.menuCount === 0,
-          deadline
-        );
-      } catch (error) {
-        throw new Error(`Context menu action ${JSON.stringify(label)} did not close its menu after the UI click`, { cause: error });
+  try {
+    while (Date.now() < deadline) {
+      lastState = await readContextMenuState(cdp, label);
+      if (lastState.point) {
+        await clickPoint(cdp, lastState.point);
+        // A moved highlight is not activation. Do not replay the click or replace
+        // it with a command invocation when the menu remains open.
+        try {
+          await poll(
+            () => readContextMenuState(cdp, label),
+            (state) => state.menuCount === 0,
+            deadline,
+            { operation: 'context-menu-closed', parentOperation: span.id }
+          );
+        } catch (error) {
+          throw new Error(`Context menu action ${JSON.stringify(label)} did not close its menu after the UI click`, { cause: error });
+        }
+        span.end(lastState);
+        return;
       }
-      return;
+      const remaining = deadline - Date.now();
+      if (remaining <= 0) {
+        break;
+      }
+      await new Promise((resolve) => setTimeout(resolve, Math.min(200, remaining)));
     }
-    const remaining = deadline - Date.now();
-    if (remaining <= 0) {
-      break;
-    }
-    await new Promise((resolve) => setTimeout(resolve, Math.min(200, remaining)));
+    assert.fail(
+      `Context menu action ${JSON.stringify(label)} was not uniquely visible, enabled, and hit-testable. State=${JSON.stringify(lastState)}`
+    );
+  } catch (error) {
+    span.fail(error, lastState);
+    throw error;
   }
-  assert.fail(
-    `Context menu action ${JSON.stringify(label)} was not uniquely visible, enabled, and hit-testable. State=${JSON.stringify(lastState)}`
-  );
 }
 
 export async function command(cdp: CdpEvaluator, title: string, deadline: number): Promise<void> {
-  for (const type of ['keyDown', 'keyUp']) {
-    await cdp.send('Input.dispatchKeyEvent', { type, key: 'P', code: 'KeyP', modifiers: 10, windowsVirtualKeyCode: 80 });
+  const span = trace.start(title === 'View: Show Explorer' ? 'workbench.view.explorer' : 'workbench-command', { text: title });
+  try {
+    for (const type of ['keyDown', 'keyUp']) {
+      await cdp.send('Input.dispatchKeyEvent', { type, key: 'P', code: 'KeyP', modifiers: 10, windowsVirtualKeyCode: 80 });
+    }
+    await poll(
+      () =>
+        cdp.evaluate<boolean>(
+          undefined,
+          `(() => { ${workbenchVisibleScript} return Array.from(document.querySelectorAll('.quick-input-widget input')).some(visible); })()`
+        ),
+      Boolean,
+      deadline,
+      { operation: 'command-palette-visible', parentOperation: span.id }
+    );
+    await cdp.send('Input.insertText', { text: title });
+    await clickText(cdp, '.quick-input-list .monaco-list-row .label-name', title, deadline);
+    span.end();
+  } catch (error) {
+    span.fail(error);
+    throw error;
   }
-  await poll(
-    () =>
-      cdp.evaluate<boolean>(
-        undefined,
-        `(() => { ${workbenchVisibleScript} return Array.from(document.querySelectorAll('.quick-input-widget input')).some(visible); })()`
-      ),
-    Boolean,
-    deadline
-  );
-  await cdp.send('Input.insertText', { text: title });
-  await clickText(cdp, '.quick-input-list .monaco-list-row .label-name', title, deadline);
 }

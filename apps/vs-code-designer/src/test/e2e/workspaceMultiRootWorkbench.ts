@@ -7,6 +7,8 @@ import { remainingBudget } from './workspaceMultiRootCollector';
 import type { MultiRootBootstrapAttestation } from './workspaceMultiRootBootstrap';
 import { assertFuncRuntimeResolution, type FuncRuntimeResolution } from './workspaceMultiRootLaunch';
 import { normalizeFsPath } from './testUtils';
+import { operationDiagnostics as trace } from './operationDiagnostics';
+import { diagnosticState } from '../../../scripts/e2e-cli-diagnostics';
 import {
   boundedCdp,
   clickContextMenuText,
@@ -66,6 +68,7 @@ export async function folderCreateNewProject(
     'Ambiguous Explorer root labels cannot identify the exact folder'
   );
   const label = matches[0].label;
+  const menuSpan = trace.start('multi-root-folder-create', { text: label, matches: matches.length });
   const expectedLabels = roots.map((root) => root.label).sort();
   const rootState = () =>
     cdp.evaluate<{ point: Point | null; selected: boolean; focused: boolean; roots: string[] }>(
@@ -86,15 +89,21 @@ export async function folderCreateNewProject(
     actual.length === expectedLabels.length && [...actual].sort().every((value, index) => value === expectedLabels[index]);
   try {
     await command(cdp, 'View: Show Explorer', deadline);
-    const state = await poll(rootState, (value) => !!value.point && exactRoots(value.roots), deadline);
+    const state = await poll(rootState, (value) => !!value.point && exactRoots(value.roots), deadline, {
+      operation: 'explorer-root-match',
+      parentOperation: menuSpan.id,
+    });
     assert.ok(state.point);
     await clickPoint(cdp, state.point);
-    await poll(rootState, (value) => value.selected && value.focused && exactRoots(value.roots), deadline);
+    await poll(rootState, (value) => value.selected && value.focused && exactRoots(value.roots), deadline, {
+      operation: 'explorer-root-focus',
+      parentOperation: menuSpan.id,
+    });
     await options.checkpoint('root-selected');
     await poll(rootState, (value) => value.selected && value.focused && exactRoots(value.roots), deadline);
     // Monaco List handles ContextMenu on keyup using its focused element as
     // the anchor. This is native UI input, not a command-service substitute.
-    await pressKey(cdp, 'ContextMenu', 'ContextMenu', 93);
+    await trace.run('explorer-context-menu-dispatch', () => pressKey(cdp, 'ContextMenu', 'ContextMenu', 93), undefined, menuSpan.id);
     await poll(
       () => readContextMenuState(cdp, 'Create new project...'),
       (value) => value.menuCount > 0,
@@ -103,19 +112,25 @@ export async function folderCreateNewProject(
     await options.checkpoint('menu-open');
     await clickContextMenuText(cdp, 'Create new project...', deadline);
     await options.checkpoint('menu-invoked');
+    menuSpan.end();
   } catch (error) {
+    menuSpan.fail(error);
+    trace.summary('failed', 'unknown');
     // Keep diagnostics best-effort and never replace the original body failure.
     try {
       console.error(
-        `[multi-root-folder-menu] ${JSON.stringify({ folder, label, root: await rootState(), menu: await readContextMenuState(cdp, 'Create new project...') })}`
+        `[multi-root-folder-menu] ${JSON.stringify({
+          root: diagnosticState(await rootState()),
+          menu: diagnosticState(await readContextMenuState(cdp, 'Create new project...')),
+        })}`
       );
     } catch (diagnosticError) {
-      console.error(`[multi-root-folder-menu] DOM diagnostic failed: ${String(diagnosticError)}`);
+      trace.emit('folder-menu-diagnostic', 'failure', { error: diagnosticError });
     }
     try {
       await options.checkpoint('menu-failure');
     } catch (diagnosticError) {
-      console.error(`[multi-root-folder-menu] Screenshot diagnostic failed: ${String(diagnosticError)}`);
+      trace.emit('folder-menu-screenshot', 'failure', { error: diagnosticError });
     }
     throw error;
   }

@@ -39,6 +39,7 @@ import { createDevContainerContents, createLogicAppVsCodeContents } from './Crea
 import { logicAppPackageProcessing, unzipLogicAppPackageIntoWorkspace } from '../../../utils/cloudToLocalUtils';
 import { getGlobalSetting } from '../../../utils/vsCodeConfig/settings';
 import { addCustomCodeDotNetVersionSetting } from '../../../utils/appSettings/localSettings';
+import { observeFileOperation } from '../../../../../scripts/e2e-cli-diagnostics';
 
 export async function createRulesFiles(context: IFunctionWizardContext): Promise<void> {
   if (context.projectType === ProjectType.rulesEngine) {
@@ -194,7 +195,9 @@ export async function createLocalConfigurationFiles(
   const gitignorePath = path.join(logicAppFolderPath, gitignoreFileName);
   const gitIgnoreFile = 'GitIgnoreFile';
   const templatePath = getWorkspaceTemplatePath(gitIgnoreFile);
-  await fse.copyFile(templatePath, gitignorePath);
+  await observeFileOperation(gitignorePath, 'CreateLogicAppWorkspace', 'gitignore-copyFile', () =>
+    fse.copyFile(templatePath, gitignorePath)
+  );
 
   const funcIgnorePath: string = path.join(logicAppFolderPath, funcIgnoreFileName);
   await fse.writeFile(funcIgnorePath, funcignore.sort().join(os.EOL));

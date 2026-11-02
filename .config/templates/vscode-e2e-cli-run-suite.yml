@@ -757,7 +757,7 @@ jobs:
                   $missingRequiredFiles += (Join-Path $regenerationEvidenceRoot $requiredName)
                 }
               }
-              foreach ($name in @($requiredRegenerationFiles + 'wizard-handoff.json')) {
+              foreach ($name in @($requiredRegenerationFiles + 'wizard-handoff.json' + 'writer-events.jsonl')) {
                 $source = Join-Path $regenerationEvidenceRoot $name
                 if (Test-Path -LiteralPath $source) {
                   Set-Content -LiteralPath (Join-Path $regenerationDestination $name) `

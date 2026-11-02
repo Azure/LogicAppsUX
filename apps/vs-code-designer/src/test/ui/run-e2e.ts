@@ -935,6 +935,7 @@ function installCodefulTaskRecorderExtension(extDir: string): string {
     fs.copyFileSync(path.join(projectDir, 'scripts', 'vscode-lifecycle-observer.js'), path.join(target, 'vscode-lifecycle-observer.js'));
   }
   fs.copyFileSync(path.join(projectDir, 'scripts', 'vscode-lifecycle-identity.js'), path.join(target, 'vscode-lifecycle-identity.js'));
+  fs.copyFileSync(path.join(projectDir, 'scripts', 'e2e-cli-diagnostics.js'), path.join(target, 'e2e-cli-diagnostics.js'));
 
   console.log(`  ✓ Installed codeful task recorder at ${target}`);
   return target;

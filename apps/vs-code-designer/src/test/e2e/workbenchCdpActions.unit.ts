@@ -12,6 +12,7 @@ import {
   matchesRegularWorkbenchOwnership,
   reloadOwnedRegularWorkbench,
   readContextMenuState,
+  poll,
   type RegularWorkbenchOwnershipExpectation,
   type RegularWorkbenchOwnershipState,
 } from './workbenchCdpActions';
@@ -31,6 +32,59 @@ const state = (overrides: Partial<RegularWorkbenchOwnershipState> = {}): Regular
   shellOwned: true,
   owned: true,
   ...overrides,
+});
+
+test('workbench predicate preserves its primary assertion when operation telemetry fails', async () => {
+  const original = console.log;
+  const primary = new assert.AssertionError({ message: 'primary workbench read assertion' });
+  try {
+    console.log = () => {
+      throw new Error('secondary telemetry unavailable');
+    };
+    await assert.rejects(
+      poll(
+        async () => {
+          throw primary;
+        },
+        Boolean,
+        Date.now() + 1000
+      ),
+      (error) => error === primary
+    );
+  } finally {
+    console.log = original;
+  }
+});
+
+test('workbench failed predicate receipt retains the last observed hashed state without another read', async () => {
+  const original = console.log;
+  const lines: string[] = [];
+  const primary = new assert.AssertionError({ message: 'primary predicate assertion' });
+  let reads = 0;
+  try {
+    console.log = (line: string) => lines.push(line);
+    await assert.rejects(
+      poll(
+        async () => {
+          reads++;
+          return { focused: false, roots: ['private-root'] };
+        },
+        () => {
+          throw primary;
+        },
+        Date.now() + 1000
+      ),
+      (error) => error === primary
+    );
+  } finally {
+    console.log = original;
+  }
+  assert.equal(reads, 1, 'Telemetry must not re-read the UI or add a retry');
+  const receipt = JSON.parse(lines.at(-1)!.slice('[e2e-operation] '.length));
+  assert.equal(receipt.status, 'failure');
+  assert.equal(receipt.state.lastState.focused, false);
+  assert.equal(receipt.state.attempts, 1);
+  assert.ok(!JSON.stringify(receipt).includes('private-root'));
 });
 
 test('regular workbench ownership requires a complete visible exact workspace', () => {

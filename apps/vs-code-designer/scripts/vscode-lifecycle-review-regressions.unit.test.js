@@ -1,4 +1,4 @@
-/* global __dirname, process, require, setInterval, clearInterval, setTimeout, clearTimeout */
+/* global __dirname, process, require, console, setInterval, clearInterval, setTimeout, clearTimeout */
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const http = require('node:http');
@@ -7,6 +7,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 const { test } = require('node:test');
 const { once } = require('node:events');
+const { createDiagnosticProducer, diagnosticBinding } = require('./e2e-cli-diagnostics');
 const {
   currentLogScope,
   loggedResources,
@@ -489,7 +490,7 @@ function recorderHarness(f, install) {
   return { exports: module.exports, trigger, intervals };
 }
 
-function observerHarness(f, deactivate) {
+function observerHarness(f, deactivate, appendFileSync) {
   const intervals = new Map();
   let timerId = 0;
   const module = { exports: {} };
@@ -502,7 +503,8 @@ function observerHarness(f, deactivate) {
     workspace: { workspaceFolders: [{ uri: { fsPath: f.workspace } }] },
     version: 'synthetic-vscode-api',
   };
-  const loadedRequire = (id) => require(id);
+  // Local VM dependency only; never patch the process-global fs module.
+  const loadedRequire = (id) => (id === 'node:fs' && appendFileSync ? { ...fs, appendFileSync } : require(id));
   loadedRequire.resolve = () => main;
   loadedRequire.cache = { [main]: loaded };
   vm.runInNewContext(
@@ -539,6 +541,33 @@ function cliRecorderHarness(f, install) {
   );
   return exports;
 }
+
+test('original product assertion survives both observer telemetry and legacy error append failure', async () => {
+  const f = fixture();
+  const stop = scopedNativeReply(f.launch.directory, () => ({}));
+  const primary = new assert.AssertionError({ message: 'actual product primary assertion' });
+  let failLogs = false;
+  const harness = observerHarness(
+    f,
+    async () => {
+      throw primary;
+    },
+    (...args) => {
+      if (failLogs) throw new Error('secondary append unavailable');
+      return fs.appendFileSync(...args);
+    }
+  );
+  let observer;
+  try {
+    observer = await harness.install();
+    failLogs = true;
+    await assert.rejects(observer.shutdown(), (error) => error === primary);
+  } finally {
+    observer?.dispose();
+    await stop();
+    f.cleanup();
+  }
+});
 
 test('CLI recorder real reload hook awaits pending observer installation and original shutdown under its original profile', async () => {
   const f = fixture();
@@ -882,6 +911,45 @@ function readLines(stream) {
   };
 }
 
+function retainedHandlePowerShellScript(nodeArguments = `-e "process.stdin.once('data',()=>process.exit(0));process.stdin.resume();"`) {
+  return [
+    '$diagnostic = Join-Path $env:LA_E2E_LIFECYCLE_DIR "retained-handle.diagnostic.jsonl";',
+    '$receiptSequence = 0; $receiptDropped = 0;',
+    'function Receipt($operation,$state) { try { $script:receiptSequence++; @{operation=$operation;state=$state;sequence=$script:receiptSequence;dropped=$script:receiptDropped;wallTime=[DateTime]::UtcNow.ToString("o");monotonicMs=([Diagnostics.Stopwatch]::GetTimestamp()*1000.0/[Diagnostics.Stopwatch]::Frequency)} | ConvertTo-Json -Compress | Add-Content -LiteralPath $diagnostic } catch { $script:receiptDropped++ } };',
+    '$info = New-Object System.Diagnostics.ProcessStartInfo;',
+    `$info.FileName = '${process.execPath.replace(/'/g, "''")}';`,
+    `$info.Arguments = '${nodeArguments.replace(/'/g, "''")}';`,
+    '$info.UseShellExecute = $false; $info.RedirectStandardInput = $true; $info.RedirectStandardError = $true;',
+    '$node = New-Object System.Diagnostics.Process; $node.StartInfo = $info;',
+    'Receipt "node-start" @{argvCount=2};',
+    'try { [void]$node.Start() } catch { Receipt "node-start-error" @{errorClass="NativeStartError";hresult=$_.Exception.HResult}; throw };',
+    'Receipt "node-started" @{pid=$node.Id;exited=$node.HasExited};',
+    '$exitRecorded = $false;',
+    'function RecordNodeExit { if (-not $script:exitRecorded -and $node.HasExited) { $script:exitRecorded=$true; try {',
+    '$buffer = New-Object char[] 4096; $count=$node.StandardError.Read($buffer,0,4096); $text=[string]::new($buffer,0,$count);',
+    '$bytes=[Text.Encoding]::UTF8.GetBytes($text); $sha=[Security.Cryptography.SHA256]::Create();',
+    '$digest=([BitConverter]::ToString($sha.ComputeHash($bytes))).Replace("-","").ToLowerInvariant(); $sha.Dispose();',
+    '$class="UnknownError"; foreach ($known in @("SyntaxError","TypeError","RangeError","Error")) { if ($text -match ("\\b"+$known+"\\b")) { $class=$known; break } };',
+    '$code=$null; if ($text -cmatch "\\b(ERR_[A-Z0-9_]{1,40}|E[A-Z0-9_]{1,40})\\b") { $code=$Matches[1] };',
+    'Receipt "node-exit" @{pid=$node.Id;exitCode=$node.ExitCode;errorClass=$class;errorCode=$code;sha256=$digest;bytes=$bytes.Length;capped=($count -eq 4096)};',
+    '} catch { Receipt "node-exit-diagnostic-unavailable" @{pid=$node.Id} } } };',
+    '$held = $node.Handle;',
+    '@{pid=$node.Id;directory=$env:LA_E2E_LIFECYCLE_DIR;held=$held.ToInt64()} | ConvertTo-Json -Compress;',
+    '$releaseNode = Join-Path $env:LA_E2E_LIFECYCLE_DIR "release-owned-node";',
+    'Receipt "release-node-wait" @{pid=$node.Id};',
+    'while (-not (Test-Path -LiteralPath $releaseNode)) { RecordNodeExit; Start-Sleep -Milliseconds 20; }',
+    'Receipt "release-node-marker-observed" @{pid=$node.Id;exited=$node.HasExited};',
+    '$node.StandardInput.WriteLine("exit"); $node.StandardInput.Flush(); $node.WaitForExit();',
+    'RecordNodeExit;',
+    '@{pid=$node.Id;exited=$node.HasExited;held=$node.Handle.ToInt64()} | ConvertTo-Json -Compress;',
+    '$releaseOwner = Join-Path $env:LA_E2E_LIFECYCLE_DIR "release-handle-owner";',
+    'while (-not (Test-Path -LiteralPath $releaseOwner)) { Start-Sleep -Milliseconds 20; }',
+    'Receipt "release-handle-marker-observed" @{pid=$node.Id};',
+    '$node.Dispose();',
+    'Receipt "retained-handle-disposed" @{released=$true};',
+  ].join(' ');
+}
+
 test(
   'Windows Job proves owned Node exit with retained .NET handle, not missing command metadata; outside parent is refused',
   {
@@ -889,28 +957,29 @@ test(
     timeout: 35_000,
   },
   async () => {
-    const script = [
-      '$info = New-Object System.Diagnostics.ProcessStartInfo;',
-      `$info.FileName = '${process.execPath.replace(/'/g, "''")}';`,
-      "$info.Arguments = '-e \"process.stdin.once(''data'',()=>process.exit(0));process.stdin.resume();\"';",
-      '$info.UseShellExecute = $false; $info.RedirectStandardInput = $true;',
-      '$node = New-Object System.Diagnostics.Process; $node.StartInfo = $info; [void]$node.Start();',
-      '$held = $node.Handle;',
-      '@{pid=$node.Id;directory=$env:LA_E2E_LIFECYCLE_DIR;held=$held.ToInt64()} | ConvertTo-Json -Compress;',
-      '$releaseNode = Join-Path $env:LA_E2E_LIFECYCLE_DIR "release-owned-node";',
-      'while (-not (Test-Path -LiteralPath $releaseNode)) { Start-Sleep -Milliseconds 20; }',
-      '$node.StandardInput.WriteLine("exit"); $node.StandardInput.Flush(); $node.WaitForExit();',
-      '@{pid=$node.Id;exited=$node.HasExited;held=$node.Handle.ToInt64()} | ConvertTo-Json -Compress;',
-      '$releaseOwner = Join-Path $env:LA_E2E_LIFECYCLE_DIR "release-handle-owner";',
-      'while (-not (Test-Path -LiteralPath $releaseOwner)) { Start-Sleep -Milliseconds 20; }',
-      '$node.Dispose();',
-    ].join(' ');
+    const nodeScript = "process.stdin.once('data',()=>process.exit(0));process.stdin.resume();";
+    const script = retainedHandlePowerShellScript();
     const powershell = path.join(process.env.SystemRoot, 'System32', 'WindowsPowerShell', 'v1.0', 'powershell.exe');
     const launch = spawnContainedProcess(powershell, ['-NoProfile', '-NonInteractive', '-Command', script], { env: { ...process.env } });
+    const trace = createDiagnosticProducer({
+      producer: 'retained-handle-fixture',
+      binding: {
+        ...diagnosticBinding(),
+        suite: 'unitTests',
+        phase: 'retained-handle-control',
+        nativeInvocation: launch.diagnosticInvocation,
+      },
+      sink: (line) => console.log(`[e2e-operation] ${line.trim()}`),
+    });
+    const fixtureSpan = trace.start('retained-handle-control', {
+      argvCount: 4,
+      lastState: { sha256: require('node:crypto').createHash('sha256').update(nodeScript).digest('hex') },
+    });
     const next = readLines(launch.child.stdout);
     const closed = new Promise((resolve) => launch.child.once('close', (code, signal) => resolve({ code, signal })));
     launch.child.stdin.end();
-    let directory;
+    let directory = launch.diagnosticDirectory;
+    let bodyPassed = false;
     try {
       const ready = await next();
       directory = ready.directory;
@@ -919,9 +988,10 @@ test(
       const original = before.processes.find((record) => record.pid === ready.pid);
       assert.equal(original.metadataStatus, 'captured');
       assert.equal(before.processes.find((record) => record.pid === process.pid).metadataStatus, 'not-in-job');
-      // Console stdin can be EOF on a CI worker. Explicit owned markers keep
-      // both the live-process and retained-handle boundaries under test control.
+      // Markers control release, but do not prove why Node might exit before
+      // release. Keep the captured assertion strict; use native error receipts.
       fs.writeFileSync(path.join(directory, 'release-owned-node'), '');
+      trace.emit('release-owned-node-marker-written', 'end');
       const exited = await next();
       assert.equal(exited.exited, true);
       assert.equal(exited.held, ready.held);
@@ -929,11 +999,104 @@ test(
       assert.equal(after.processes[0].metadataStatus, 'exited');
       assert.equal(after.processes[0].exitProof.source, 'GetProcessTimes');
       assert.equal(originalProcessReleased(original, after.processes[0]), true);
+      bodyPassed = true;
+      fixtureSpan.end();
+    } catch (error) {
+      fixtureSpan.fail(error);
+      throw error;
     } finally {
       if (directory) {
         fs.writeFileSync(path.join(directory, 'release-owned-node'), '');
         fs.writeFileSync(path.join(directory, 'release-handle-owner'), '');
+        trace.emit('release-handle-owner-marker-written', 'end');
       }
+      const { code, signal } = await closed;
+      // No raw stderr or command enters artifacts. Native records retain their
+      // original clock/sequence and are not ordered by ingestion time.
+      try {
+        const file = path.join(directory, 'retained-handle.diagnostic.jsonl');
+        if (fs.statSync(file).size <= 16384) {
+          for (const line of fs.readFileSync(file, 'utf8').split(/\r?\n/).filter(Boolean).slice(0, 12)) {
+            const native = JSON.parse(line);
+            const operations = [
+              'node-start',
+              'node-start-error',
+              'node-started',
+              'node-exit',
+              'node-exit-diagnostic-unavailable',
+              'release-node-wait',
+              'release-node-marker-observed',
+              'release-handle-marker-observed',
+              'retained-handle-disposed',
+            ];
+            trace.emit(operations.includes(native.operation) ? native.operation : 'unknown-native-fixture-operation', 'end', {
+              state: {
+                ...native.state,
+                nativeSequence: native.sequence,
+                nativeWallTimeMs: Date.parse(native.wallTime),
+                nativeMonotonicMs: native.monotonicMs,
+                dropped: native.dropped,
+              },
+              ...(native.state?.errorClass ? { error: { name: native.state.errorClass, code: native.state.errorCode } } : {}),
+            });
+          }
+        }
+      } catch (error) {
+        trace.emit('retained-handle-receipt-unavailable', 'failure', { error });
+      }
+      trace.summary(bodyPassed ? 'passed' : 'failed', code === 0 && signal === null ? 'passed' : 'failed');
+      assert.equal(launch.readClosure(code, signal).verified, true);
+    }
+  }
+);
+
+test(
+  'retained-handle native error control captures early Node failure before any release marker without raw stderr',
+  {
+    skip: process.platform !== 'win32',
+    timeout: 35000,
+  },
+  async () => {
+    const script = retainedHandlePowerShellScript(`-e "throw new TypeError('private-customer-token-control')"`);
+    const powershell = path.join(process.env.SystemRoot, 'System32', 'WindowsPowerShell', 'v1.0', 'powershell.exe');
+    const launch = spawnContainedProcess(powershell, ['-NoProfile', '-NonInteractive', '-Command', script], { env: { ...process.env } });
+    const closed = new Promise((resolve) => launch.child.once('close', (code, signal) => resolve({ code, signal })));
+    const directory = launch.diagnosticDirectory;
+    const diagnosticFile = path.join(directory, 'retained-handle.diagnostic.jsonl');
+    launch.child.stdin.end();
+    try {
+      // Consume only the fixture's readiness signal; never retain stderr.
+      await readLines(launch.child.stdout)();
+      let receipts;
+      const deadline = Date.now() + 10000;
+      for (;;) {
+        if (fs.existsSync(diagnosticFile) && fs.statSync(diagnosticFile).size <= 16384) {
+          try {
+            receipts = fs.readFileSync(diagnosticFile, 'utf8').trim().split(/\r?\n/).map(JSON.parse);
+          } catch {
+            /* A partial diagnostic append is an observation, not a retry of the fixture. */
+          }
+        }
+        if (receipts?.some((record) => record.operation === 'node-exit')) break;
+        assert.ok(Date.now() < deadline, 'Native early-exit diagnostic was not observed');
+        await new Promise((resolve) => setTimeout(resolve, 20));
+      }
+      const exited = receipts.find((record) => record.operation === 'node-exit');
+      assert.equal(exited.state.exitCode, 1);
+      assert.equal(exited.state.errorClass, 'TypeError');
+      assert.match(exited.state.sha256, /^[a-f0-9]{64}$/);
+      assert.ok(exited.state.bytes > 0 && exited.state.bytes <= 16384);
+      assert.equal(fs.existsSync(path.join(directory, 'release-owned-node')), false);
+      assert.equal(
+        receipts.some((record) => record.operation === 'release-node-marker-observed'),
+        false
+      );
+      assert.ok(!JSON.stringify(receipts).includes('private-customer-token-control'));
+      assert.ok(receipts.every((record, index) => index === 0 || record.sequence > receipts[index - 1].sequence));
+      assert.equal(exited.state.errorCode, null, 'Case-insensitive matching must not mistake a dynamic word for a known Node code');
+    } finally {
+      fs.writeFileSync(path.join(directory, 'release-owned-node'), '');
+      fs.writeFileSync(path.join(directory, 'release-handle-owner'), '');
       const { code, signal } = await closed;
       assert.equal(launch.readClosure(code, signal).verified, true);
     }

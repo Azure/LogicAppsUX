@@ -6,6 +6,7 @@ const http = require('node:http');
 const net = require('node:net');
 const path = require('node:path');
 const { validOriginalIdentity, sameOriginalIdentity, originalProcessReleased } = require('./vscode-lifecycle-identity');
+const { createDiagnosticProducer, diagnosticBinding } = require('./e2e-cli-diagnostics');
 
 const extensionId = 'ms-azuretools.vscode-azurelogicapps';
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -219,6 +220,13 @@ async function installLifecycleObserver(vscode, env = process.env, context) {
     assert.equal(fs.realpathSync(directory), directory, 'Lifecycle directory identity changed');
     fs.appendFileSync(output, `${JSON.stringify({ schemaVersion: 1, ...binding, ...record })}\n`);
   };
+  // Supplemental records are not kind=error/startup/shutdown acceptance proof.
+  const trace = createDiagnosticProducer({
+    binding: { ...diagnosticBinding(env), nativeInvocation: binding.invocation },
+    producer: 'native-product-observer',
+    sink: (line) =>
+      fs.appendFileSync(output, `${JSON.stringify({ ...JSON.parse(line), invocation: binding.invocation, rootPid: binding.rootPid })}\n`),
+  });
   const taskPids = new Set();
   const taskRecords = [];
   const taskSubscription = vscode.tasks.onDidStartTaskProcess((event) => {
@@ -230,7 +238,7 @@ async function installLifecycleObserver(vscode, env = process.env, context) {
   });
   const extension = vscode.extensions.getExtension(extensionId);
   assert.ok(extension, 'Lifecycle recorder requires the real Logic Apps extension');
-  await extension.activate();
+  await trace.run('product-activate', () => extension.activate());
   let startupIdentity;
   let parentIdentity;
   try {
@@ -322,7 +330,7 @@ async function installLifecycleObserver(vscode, env = process.env, context) {
       }
       for (const launch of resources.launches.filter((candidate) => !observedPorts.has(candidate.port))) {
         if (producerBinding.requiredWorkspace) assert.equal(normalize(launch.project), normalize(producerBinding.requiredWorkspace));
-        const runtime = await observeCurrentRuntime(directory, resources, launch);
+        const runtime = await trace.run('subsequent-runtime-startup', () => observeCurrentRuntime(directory, resources, launch));
         if (!stopped) {
           observedPorts.add(launch.port);
           append({
@@ -367,7 +375,7 @@ async function installLifecycleObserver(vscode, env = process.env, context) {
     try {
       logScope = currentLogScope(context, env);
       resources = loggedResources(logScope.directory, workspaces);
-      before = await observeProcesses(directory, [...resources.pids, ...taskPids]);
+      before = await trace.run('scoped-process-capture', () => observeProcesses(directory, [...resources.pids, ...taskPids]));
       owned = before.processes.filter((record) => record.metadataStatus === 'captured');
       assert.ok(
         before.processes.every(
@@ -386,7 +394,7 @@ async function installLifecycleObserver(vscode, env = process.env, context) {
     // Explicitly invoke and await the original exported deactivation, exactly as
     // the existing owned-host test fixture does. Never replace it with a flag.
     try {
-      await original.call(exports);
+      await trace.run('original-product-deactivate', () => original.call(exports));
     } catch (error) {
       productFailure = true;
       throw error;
@@ -397,23 +405,30 @@ async function installLifecycleObserver(vscode, env = process.env, context) {
       return;
     }
     let after;
+    const releaseSpan = trace.start('scoped-original-process-release', { count: owned.length });
     const deadline = Date.now() + 10_000;
-    for (;;) {
-      after = await observeProcesses(
-        directory,
-        owned.map((record) => record.pid)
-      );
-      if (
-        after.processes.every((record) =>
-          originalProcessReleased(
-            owned.find((candidate) => candidate.pid === record.pid),
-            record
+    try {
+      for (;;) {
+        after = await observeProcesses(
+          directory,
+          owned.map((record) => record.pid)
+        );
+        if (
+          after.processes.every((record) =>
+            originalProcessReleased(
+              owned.find((candidate) => candidate.pid === record.pid),
+              record
+            )
           )
         )
-      )
-        break;
-      assert.ok(Date.now() < deadline, 'Original Logic Apps process identities did not exit after awaited deactivation');
-      await delay(50);
+          break;
+        assert.ok(Date.now() < deadline, 'Original Logic Apps process identities did not exit after awaited deactivation');
+        await delay(50);
+      }
+      releaseSpan.end({ count: after.processes.length, released: true });
+    } catch (error) {
+      releaseSpan.fail(error, { count: after?.processes.length, released: false });
+      throw error;
     }
     assert.ok(
       !vscode.tasks.taskExecutions.some((execution) => execution.task.name === 'func: host start'),
@@ -422,7 +437,7 @@ async function installLifecycleObserver(vscode, env = process.env, context) {
     assert.ok(vscode.debug.activeDebugSession?.type !== 'logicapp', 'Logic Apps debug session remains active after deactivation');
     const portProbes = [];
     for (const port of resources.ports) {
-      await probeReleasedPort(port);
+      await trace.run('scoped-socket-bind-release', () => probeReleasedPort(port));
       portProbes.push({ port, observedAt: Date.now(), operation: 'exclusive-loopback-bind-and-release' });
     }
     append({
@@ -461,17 +476,23 @@ async function installLifecycleObserver(vscode, env = process.env, context) {
         workspaceResources: (vscode.workspace.workspaceFolders ?? []).map((folder) => folder.uri.fsPath),
       },
     });
+    trace.summary('unknown', 'passed');
   };
   const observedDeactivate = async () => {
     // One actual product call per host, even after an observation failure.
     if (finishing) return finishing;
     finishing = shutdown().catch((error) => {
-      append({
-        kind: 'error',
-        observedAt: Date.now(),
-        reason: 'deactivation-or-original-resource-release-failed',
-        productDeactivationFailed: productFailure,
-      });
+      trace.summary('unknown', 'failed');
+      try {
+        append({
+          kind: 'error',
+          observedAt: Date.now(),
+          reason: 'deactivation-or-original-resource-release-failed',
+          productDeactivationFailed: productFailure,
+        });
+      } catch {
+        /* Do not replace the original product error with a logging failure. */
+      }
       // Preserve actual product export failures. Observation-only failures remain
       // explicit evidence failures, but must not add a gate to ordinary closure.
       if (productFailure) throw error;

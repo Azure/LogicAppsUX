@@ -11,7 +11,12 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { URL } = require('url');
-const { formatErrorForDiagnostics } = require('./e2e-cli-diagnostics');
+const {
+  formatErrorForDiagnostics,
+  createDiagnosticProducer,
+  diagnosticBinding,
+  relayObserverDiagnostics,
+} = require('./e2e-cli-diagnostics');
 const { removePathWithRetry } = require('./e2e-cli-path-cleanup');
 const {
   evaluateLifecycleAcceptance,
@@ -1217,7 +1222,37 @@ function spawnContainedSuiteProcess({ childArgs, cwd, env, reportsRoot, executab
     env: lifecycleLaunch.environment,
     cwd,
   });
-  return { child, containmentReceiptPath, lifecycleLaunch };
+  const trace = createDiagnosticProducer({
+    producer: 'native-containment-launch',
+    binding: { ...diagnosticBinding(env), nativeInvocation: lifecycleLaunch.invocation },
+    sink: (line) => console.log(`[e2e-operation] ${line.trim()}`),
+  });
+  const span = trace.start('native-invocation', { argvCount: childArgs.length, pid: child.pid });
+  child.once('spawn', () => trace.emit('native-launch', 'end', { state: { pid: child.pid } }));
+  child.once('error', (error) => span.fail(error));
+  child.once('exit', (exitCode, signal) => span.end({ exitCode, signal }));
+  child.once('close', (exitCode, signal) => {
+    relayObserverDiagnostics(lifecycleLaunch.directory, trace);
+    try {
+      if (fs.statSync(containmentReceiptPath).size > 1048576) return;
+      const receipt = JSON.parse(fs.readFileSync(containmentReceiptPath, 'utf8'));
+      trace.emit('native-original-closure-receipt', 'end', {
+        state: {
+          observed: receipt.retainedOriginalIdentitiesVerified === true,
+          released: receipt.containmentEmpty === true,
+          exitCode,
+          signal,
+        },
+      });
+      trace.emit('native-owner-recovery-receipt', 'end', {
+        state: { observed: receipt.forcedTerminationAttempted === true, released: receipt.forcedTerminationSucceeded === true },
+      });
+      trace.summary('unknown', exitCode === 0 && signal === null ? 'unknown' : 'failed');
+    } catch (error) {
+      trace.emit('native-closure-diagnostic-unavailable', 'failure', { error });
+    }
+  });
+  return { child, containmentReceiptPath, lifecycleLaunch, diagnosticTrace: trace };
 }
 
 function spawnContainedProcess(executable, args, options) {
@@ -1232,6 +1267,8 @@ function spawnContainedProcess(executable, args, options) {
   });
   return {
     child,
+    diagnosticDirectory: lifecycleLaunch.directory,
+    diagnosticInvocation: lifecycleLaunch.invocation,
     verifyStartup(closure) {
       return verifySubsequentLifecycleStartup(closure, { env: options.env });
     },

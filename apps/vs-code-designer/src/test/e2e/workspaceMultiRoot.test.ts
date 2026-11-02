@@ -21,6 +21,7 @@ import {
   waitForActivatedMultiRootRuntime,
 } from './workspaceMultiRootWorkbench';
 import { normalizeFsPath } from './testUtils';
+import { setOperationDiagnosticScope } from './operationDiagnostics';
 
 export interface MultiRootWorkspace {
   wsFilePath: string;
@@ -42,6 +43,7 @@ const normalizePhysicalPath = (value: string): string => normalizeFsPath(fs.real
 // The observer lives outside the extension host: real Reload Window cannot
 // silently end/restart the test and manufacture a fresh-window substitute.
 export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
+  setOperationDiagnosticScope({ suite: 'workspaceMultiRoot', phase: 'regular-workbench-reopen' });
   assert.equal(process.env.LA_E2E_CLI_MULTI_ROOT_ISOLATED, '1', 'Native multi-root UI requires an isolated consumer');
   const { workspace, deadline } = options;
   const ownership = {

@@ -7,6 +7,8 @@
 import * as assert from 'assert';
 import { spawn } from 'child_process';
 import { createHash } from 'crypto';
+import { setOperationDiagnosticScope } from './operationDiagnostics';
+import { createDiagnosticProducer, diagnosticBinding, fileDiagnosticSnapshot } from '../../../scripts/e2e-cli-diagnostics';
 import * as fs from 'fs';
 import * as path from 'path';
 import { type CdpConnection, waitForDevToolsActivePort } from './cdpClient';
@@ -186,6 +188,7 @@ async function runFreshRegenerationHost(
   observe: (cdp: CdpConnection, phase: RegenerationDeadline) => Promise<void>
 ): Promise<void> {
   const phase = regenerationDeadline(phaseName);
+  setOperationDiagnosticScope({ suite: 'workspaceArtifactRegeneration', phase: phaseName });
   const host: RegenerationHostPhase = { phase: phaseName, close: null, observationPassed: false, errors: [] };
   result.hosts.push(host);
   result.originalCodeClose = null;
@@ -203,6 +206,26 @@ async function runFreshRegenerationHost(
   const profileSettingsPath = writeRegenerationRuntimeProfile(profile, handoff.runtimeSettings, context);
   remainingRegenerationBudget(phase);
   const previousPort = process.env.LA_E2E_CLI_REMOTE_DEBUGGING_PORT;
+  const trace = createDiagnosticProducer({
+    producer: 'regeneration-owned-observer',
+    binding: { ...diagnosticBinding(env), suite: 'workspaceArtifactRegeneration', phase: phaseName },
+    sink: (line) => fs.appendFileSync(path.join(context.root, 'writer-events.jsonl'), line),
+  });
+  // Watch only the exact owned .gitignore. Watcher changes are unattributed;
+  // they never authorize changing a strict non-target assertion.
+  let watcher: fs.FSWatcher | undefined;
+  const gitignore = path.join(handoff.workspace.appDir, '.gitignore');
+  try {
+    trace.emit('gitignore-watcher-baseline-unknown-writer', 'end', { state: fileDiagnosticSnapshot(gitignore) });
+    watcher = fs.watch(gitignore, (event) =>
+      trace.emit(event === 'rename' ? 'gitignore-watch-rename-unknown-writer' : 'gitignore-watch-change-unknown-writer', 'end', {
+        state: fileDiagnosticSnapshot(gitignore),
+      })
+    );
+    watcher.on('error', (error) => trace.emit('gitignore-watch-error', 'failure', { error }));
+  } catch (error) {
+    trace.emit('gitignore-watch-unavailable', 'failure', { error });
+  }
   const log = fs.createWriteStream(path.join(context.root, `${phaseName}-code.log`), { flags: 'wx' });
   const errors: unknown[] = [];
   log.on('error', (error) => errors.push(error));
@@ -233,6 +256,9 @@ async function runFreshRegenerationHost(
         LA_E2E_CLI_MINIMAL_ACTIVATION: '0',
         LA_E2E_CLI_SKIP_ACTIVATION_WORKSPACE_ENSURE: '0',
         VSCODE_RUNNING_TESTS: '1',
+        LA_E2E_CLI_REGENERATION_WRITER_EVENTS: path.join(context.root, 'writer-events.jsonl'),
+        LA_E2E_CLI_DIAGNOSTIC_PHASE: phaseName,
+        LA_E2E_CLI_SUITE_ID: 'workspaceArtifactRegeneration',
         DEBUGTELEMETRY: '1',
       },
       stdio: ['ignore', 'pipe', 'pipe'],
@@ -280,6 +306,7 @@ async function runFreshRegenerationHost(
   } catch (error) {
     errors.push(error);
   } finally {
+    watcher?.close();
     cdp?.dispose();
     if (!host.close) {
       let timer: NodeJS.Timeout | undefined;

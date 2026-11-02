@@ -1,6 +1,7 @@
 import * as assert from 'assert';
 import * as fs from 'fs';
 import * as path from 'path';
+import { operationDiagnostics as trace } from './operationDiagnostics';
 
 export interface CachedExtensionEntry {
   id: string;
@@ -84,7 +85,7 @@ export async function teardownOwnedExtensionHost(
   let capturedProcesses = processCleanup?.captureAtTeardown === false;
   if (processCleanup && processCleanup.captureAtTeardown !== false) {
     try {
-      await processCleanup.capture();
+      await trace.run('owned-host-process-capture', () => processCleanup.capture());
       capturedProcesses = true;
     } catch (error) {
       errors.push(error);
@@ -92,25 +93,29 @@ export async function teardownOwnedExtensionHost(
   }
   for (const step of teardownSteps) {
     try {
-      await step();
+      await trace.run('owned-host-teardown-step', step);
     } catch (error) {
       errors.push(error);
     }
   }
   try {
-    await shutdown();
+    await trace.run('owned-host-original-deactivate', shutdown);
   } catch (error) {
     errors.push(error);
   }
   if (processCleanup && capturedProcesses) {
     try {
-      await processCleanup.finalize();
+      await trace.run('owned-host-process-finalize', () => processCleanup.finalize());
     } catch (error) {
       errors.push(error);
     }
   }
   if (errors.length > 0) {
-    logRetainedTeardownErrors(host.familyLabel, errors);
+    try {
+      logRetainedTeardownErrors(host.familyLabel, errors);
+    } catch {
+      // A failed secondary log sink must not mask the collected primary errors.
+    }
     throw new AggregateError(errors, `${host.familyLabel} host teardown failed; teardown and deactivation errors were retained`);
   }
 }
@@ -256,10 +261,10 @@ function bindOwnedCachedShutdown(host: OwnedExtensionShutdownHost): () => Promis
   };
   return async () => {
     assertOriginalEntry();
-    await originalDeactivate.call(originalExports);
+    await trace.run('owned-host-product-deactivate-first', () => originalDeactivate.call(originalExports));
     assertOriginalEntry();
     // The runner may invoke deactivation again when it exits the extension host.
-    await originalDeactivate.call(originalExports);
+    await trace.run('owned-host-product-deactivate-second', () => originalDeactivate.call(originalExports));
     assertOriginalEntry();
   };
 }

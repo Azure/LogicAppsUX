@@ -5,6 +5,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { test } = require('node:test');
 // Registered in test:e2e-cli:unit through this existing native runner-control file.
+require('./e2e-cli-diagnostics.unit.test');
 require('./vscode-lifecycle-acceptance.unit.test');
 require('./vscode-lifecycle-producer.unit.test');
 require('./vscode-lifecycle-review-regressions.unit.test');
