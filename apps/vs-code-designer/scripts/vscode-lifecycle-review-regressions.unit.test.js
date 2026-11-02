@@ -897,22 +897,31 @@ test(
       '$node = New-Object System.Diagnostics.Process; $node.StartInfo = $info; [void]$node.Start();',
       '$held = $node.Handle;',
       '@{pid=$node.Id;directory=$env:LA_E2E_LIFECYCLE_DIR;held=$held.ToInt64()} | ConvertTo-Json -Compress;',
-      '[void][Console]::ReadLine(); $node.StandardInput.WriteLine("exit"); $node.StandardInput.Flush(); $node.WaitForExit();',
+      '$releaseNode = Join-Path $env:LA_E2E_LIFECYCLE_DIR "release-owned-node";',
+      'while (-not (Test-Path -LiteralPath $releaseNode)) { Start-Sleep -Milliseconds 20; }',
+      '$node.StandardInput.WriteLine("exit"); $node.StandardInput.Flush(); $node.WaitForExit();',
       '@{pid=$node.Id;exited=$node.HasExited;held=$node.Handle.ToInt64()} | ConvertTo-Json -Compress;',
-      '[void][Console]::ReadLine(); $node.Dispose();',
+      '$releaseOwner = Join-Path $env:LA_E2E_LIFECYCLE_DIR "release-handle-owner";',
+      'while (-not (Test-Path -LiteralPath $releaseOwner)) { Start-Sleep -Milliseconds 20; }',
+      '$node.Dispose();',
     ].join(' ');
     const powershell = path.join(process.env.SystemRoot, 'System32', 'WindowsPowerShell', 'v1.0', 'powershell.exe');
     const launch = spawnContainedProcess(powershell, ['-NoProfile', '-NonInteractive', '-Command', script], { env: { ...process.env } });
     const next = readLines(launch.child.stdout);
     const closed = new Promise((resolve) => launch.child.once('close', (code, signal) => resolve({ code, signal })));
+    launch.child.stdin.end();
+    let directory;
     try {
       const ready = await next();
+      directory = ready.directory;
       assert.ok(ready.held);
       const before = await observeProcesses(ready.directory, [ready.pid, process.pid]);
       const original = before.processes.find((record) => record.pid === ready.pid);
       assert.equal(original.metadataStatus, 'captured');
       assert.equal(before.processes.find((record) => record.pid === process.pid).metadataStatus, 'not-in-job');
-      launch.child.stdin.write('exit-node\n');
+      // Console stdin can be EOF on a CI worker. Explicit owned markers keep
+      // both the live-process and retained-handle boundaries under test control.
+      fs.writeFileSync(path.join(directory, 'release-owned-node'), '');
       const exited = await next();
       assert.equal(exited.exited, true);
       assert.equal(exited.held, ready.held);
@@ -921,7 +930,10 @@ test(
       assert.equal(after.processes[0].exitProof.source, 'GetProcessTimes');
       assert.equal(originalProcessReleased(original, after.processes[0]), true);
     } finally {
-      launch.child.stdin.end('close-owner\n');
+      if (directory) {
+        fs.writeFileSync(path.join(directory, 'release-owned-node'), '');
+        fs.writeFileSync(path.join(directory, 'release-handle-owner'), '');
+      }
       const { code, signal } = await closed;
       assert.equal(launch.readClosure(code, signal).verified, true);
     }
