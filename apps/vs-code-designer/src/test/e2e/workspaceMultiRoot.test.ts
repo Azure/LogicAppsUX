@@ -25,6 +25,7 @@ import {
 } from './workspaceMultiRootWorkbench';
 import { normalizeFsPath } from './testUtils';
 import { setOperationDiagnosticScope } from './operationDiagnostics';
+import { createMultiRootAzureSetup } from './workspaceMultiRootAzure';
 import { readDesignTimeOwners } from './workspaceMultiRootOwnership';
 
 export interface MultiRootWorkspace {
@@ -189,6 +190,7 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
     );
     screenshots.push(await capture('workspace-multi-root-reloaded'));
 
+    const azureSetup = await createMultiRootAzureSetup(options.deadline);
     for (const [rootIndex, folder] of roots.entries()) {
       // Creation has its own bounded stream. Keep the later real debug input
       // and final pending prompt observable without increasing either cap.
@@ -213,6 +215,7 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
       await selectFolderDebugConfiguration(workbench, { workspaceFilePath: workspace.wsFilePath, folder, name: config.name }, phase);
       const debugState = await poll(
         async () => {
+          await azureSetup.handle(workbench, folder, phase);
           const events = debugEvents(options.eventsFile).filter(
             (event) =>
               event.kind === 'started' &&
@@ -233,6 +236,7 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
       assert.equal(started[0].boot, activation.boot, 'Debug evidence came from a replaced extension host');
       assert.equal(started[0].name, config.name);
       assert.equal(started[0].type, config.type);
+      azureSetup.assertSaved(folder);
       await poll(
         () => readWorkbench(workbench),
         (state) => state.debugToolbar,

@@ -57,6 +57,83 @@ import { closeOwnedUiDiagnosticWindow, matchesUiDiagnosticActivationRoot } from 
 import type { CdpConnection } from './cdpClient';
 import { createDiagnosticProducer } from '../../../scripts/e2e-cli-diagnostics';
 import { createPopulationDiagnostics } from './workspaceMultiRootPopulationDiagnostics';
+import { createMultiRootAzureSetup } from './workspaceMultiRootAzure';
+
+test('multi-root debug setup reuses the approved existing group and exact per-root affirmative UI policy', async () => {
+  const fixture = folderMenuFixture();
+  const azure = require('./azureConnectorFixture');
+  const prompts = require('./workbenchPrompts');
+  const approved = { resourceGroupName: 'unit-existing-group', resourceGroupLocationVerified: true };
+  const calls: string[] = [];
+  const deadline = Date.now() + 2000;
+  const phaseDeadline = deadline - 100;
+  const mocks = [
+    mock.method(azure, 'readApprovedAzureConnectorFixture', () => approved),
+    mock.method(azure, 'readApprovedExistingResourceGroup', async (value: unknown, budget: number) => {
+      assert.equal(value, approved);
+      assert.equal(budget, deadline);
+      calls.push('read-existing-group');
+      return approved;
+    }),
+    mock.method(
+      prompts,
+      'handleAffirmativeConnectorWorkbenchPrompt',
+      async (cdp: unknown, appName: string, budget: number, selectExisting: (prompt: unknown) => Promise<boolean>) => {
+        assert.equal(cdp, fixture.cdp);
+        assert.equal(appName, path.basename(fixture.folder));
+        assert.equal(budget, phaseDeadline);
+        calls.push('shared-affirmative-ui');
+        return selectExisting({ kind: 'quickInput', title: 'Select a subscription' });
+      }
+    ),
+    mock.method(
+      azure,
+      'selectApprovedAzureConnectorFixturePrompt',
+      async (cdp: unknown, prompt: { title: string }, value: unknown, budget: number, subscriptionName: () => Promise<string>) => {
+        assert.equal(cdp, fixture.cdp);
+        assert.equal(prompt.title, 'Select a subscription');
+        assert.equal(value, approved);
+        assert.equal(budget, phaseDeadline);
+        assert.equal(await subscriptionName(), 'unit-approved-subscription');
+        calls.push('shared-existing-target');
+        return true;
+      }
+    ),
+    mock.method(azure, 'readApprovedAzureSubscriptionName', async (value: unknown, budget: number) => {
+      assert.equal(value, approved);
+      assert.equal(budget, phaseDeadline);
+      return 'unit-approved-subscription';
+    }),
+    mock.method(azure, 'assertApprovedAzureConnectorFixtureSaved', (folder: string, value: unknown) => {
+      assert.equal(folder, fixture.folder);
+      assert.equal(value, approved);
+      calls.push('verify-product-saved-context');
+    }),
+  ];
+  try {
+    const setup = await createMultiRootAzureSetup(deadline);
+    assert.equal(await setup.handle(fixture.cdp, fixture.folder, phaseDeadline), true);
+    setup.assertSaved(fixture.folder);
+    assert.deepEqual(calls, ['read-existing-group', 'shared-affirmative-ui', 'shared-existing-target', 'verify-product-saved-context']);
+    assert.deepEqual(fixture.sent, [], 'Wiring must not synthesize UI input or settings instead of the shared owners');
+  } finally {
+    mocks.forEach((entry) => entry.mock.restore());
+    fixture.dispose();
+  }
+});
+
+test('multi-root debug setup preserves approved fixture admission failure without starting UI or substituting a fixture', async () => {
+  const azure = require('./azureConnectorFixture');
+  const primary = new Error('unit approved WIF context unavailable');
+  const read = mock.method(azure, 'readApprovedAzureConnectorFixture', () => {
+    throw primary;
+  });
+  try {
+    await assert.rejects(createMultiRootAzureSetup(Date.now() + 1000), (error) => error === primary);
+  } finally {
+    read.mock.restore();
+  }
+});
 
 test('UI-only Close Window refuses wrong ownership before sending a keyboard event', async () => {
   let sends = 0;

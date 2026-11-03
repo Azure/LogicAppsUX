@@ -1614,7 +1614,13 @@ function testLifecycleFamilyRoutingContract() {
       assert.strictEqual(job.suiteId, suiteId);
       assert.strictEqual(job.cliArguments, SUITE_REGISTRY[suiteId].args.join(' '));
       if (
-        ['msnWeatherLifecycle', 'httpTimeoutLifecycle', 'statelessVariablesLifecycle', 'runAfterPersistenceLifecycle'].includes(suiteId)
+        [
+          'msnWeatherLifecycle',
+          'httpTimeoutLifecycle',
+          'statelessVariablesLifecycle',
+          'runAfterPersistenceLifecycle',
+          'workspaceMultiRoot',
+        ].includes(suiteId)
       ) {
         assert.strictEqual(job.requiresAzureAccessToken, true, 'Affirmative connector setup requires the approved Azure fixture context');
         assert.strictEqual(job.testARMServiceConnection, 'LogicAppsVSCode-E2E-SignIn');

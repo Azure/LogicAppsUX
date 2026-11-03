@@ -82,6 +82,12 @@ all public/private OGF mappings remain parent-owned and unchanged here.
    Permissions and wrong/unrelated binaries fail immediately; races restart
    stability only within the original deadline.
 3. Choose each generated, **folder-qualified** debug configuration sequentially.
+   The registered family receives the existing approved WIF fixture context:
+   local debug may request Azure connector setup even for a request workflow.
+   Drive only the shared affirmative policy and exact existing subscription/
+   resource-group choices, verify the group's real ARM location with a read-only
+   lookup, and verify the product saved that context. Never choose Skip/No or
+   synthesize local settings; this path creates no Azure resources.
    An additive test observer records actual VS Code start/termination events,
    including the native workspace folder, session ID, name and debug type.
    Require the correct session plus the visible debug toolbar; stop it and

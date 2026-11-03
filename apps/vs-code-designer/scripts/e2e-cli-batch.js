@@ -130,6 +130,7 @@ const SUITE_REGISTRY = Object.freeze({
     id: 'workspaceMultiRoot',
     args: Object.freeze(['--workspace-multi-root']),
     platforms: Object.freeze(['linux', 'win32']),
+    requiresAzure: true,
     expectedPhases: Object.freeze(['runtimeDependencyBootstrap:bootstrap', 'workspaceMultiRoot:create', 'workspaceMultiRoot:reopen']),
   }),
 });
