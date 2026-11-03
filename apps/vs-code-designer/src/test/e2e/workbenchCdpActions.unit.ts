@@ -4,6 +4,7 @@ import { test } from 'node:test';
 import type { CdpConnection } from './cdpClient';
 import {
   clickContextMenuText,
+  clickText,
   connectToOwnedRegularWorkbench,
   dispatchContextMenu,
   ensureWorkbenchPanelClosed,
@@ -32,6 +33,43 @@ const state = (overrides: Partial<RegularWorkbenchOwnershipState> = {}): Regular
   shellOwned: true,
   owned: true,
   ...overrides,
+});
+
+test('text click retains hashed candidate rejection evidence without accepting a mismatched accessible label', async () => {
+  const fixture = workbenchDomFixture(
+    '<div class="activitybar"><a class="action-label" aria-label="Azure (Shift+Alt+A)" data-box="0,0,40,40"></a></div>'
+  );
+  const original = console.log;
+  const lines: string[] = [];
+  try {
+    console.log = (line: string) => lines.push(line);
+    await assert.rejects(
+      clickText(fixture.cdp, '.activitybar .action-label', 'Azure', Date.now() + 150, undefined, true, true),
+      /deadline exhausted/
+    );
+    const record = lines.map((line) => JSON.parse(line.replace('[e2e-operation] ', ''))).find((entry) => entry.status === 'failure');
+    assert.equal(record.state.lastState.rejectionCode, 1);
+    assert.equal(record.state.lastState.matches, 0);
+    const candidate = record.state.lastState.candidates.items[0];
+    assert.equal(candidate.hitTestable, true);
+    assert.equal(candidate.visible, true);
+    assert.match(candidate.ariaLabel.sha256, /^[a-f0-9]{64}$/);
+    assert.ok(!lines.join('').includes('Shift+Alt+A'));
+    assert.equal(fixture.sent.length, 0);
+  } finally {
+    console.log = original;
+    fixture.dispose();
+  }
+});
+
+test('text click diagnostics preserve exact unique hit-tested click acceptance', async () => {
+  const fixture = workbenchDomFixture('<a aria-label="Azure" data-box="0,0,40,40"></a>');
+  try {
+    await clickText(fixture.cdp, 'a', 'Azure', Date.now() + 1000, undefined, true, true);
+    assert.ok(fixture.sent.some((entry) => entry.method === 'Input.dispatchMouseEvent' && entry.params.type === 'mouseReleased'));
+  } finally {
+    fixture.dispose();
+  }
 });
 
 test('workbench predicate preserves its primary assertion when operation telemetry fails', async () => {

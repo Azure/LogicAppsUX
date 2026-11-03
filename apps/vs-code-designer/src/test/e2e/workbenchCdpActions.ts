@@ -351,22 +351,54 @@ export async function clickText(
   label: string,
   deadline: number,
   context?: number,
-  exact = true
+  exact = true,
+  diagnose = false
 ): Promise<void> {
-  const position = await poll(
+  if (!diagnose) {
+    const position = await poll(
+      () =>
+        cdp.evaluate<Point | null>(
+          context,
+          `(() => { ${workbenchVisibleScript}
+            const found=Array.from(document.querySelectorAll(${JSON.stringify(selector)})).filter(visible)
+              .filter(e => ${exact ? 'normalized(text(e))===' : 'normalized(text(e)).includes('}normalized(${JSON.stringify(label)})${exact ? '' : ')'} &&
+                !e.disabled && e.getAttribute('aria-disabled')!=='true');
+            return found.length===1 ? point(found[0]) : null;
+          })()`
+        ),
+      (value) => value !== null,
+      deadline
+    );
+    assert.ok(position, 'Exactly one visible enabled control is required');
+    await clickPoint(cdp, position);
+    return;
+  }
+  const observation = await poll(
     () =>
-      cdp.evaluate<Point | null>(
+      cdp.evaluate<{ point: Point | null }>(
         context,
         `(() => { ${workbenchVisibleScript}
-          const found=Array.from(document.querySelectorAll(${JSON.stringify(selector)})).filter(visible)
-            .filter(e => ${exact ? 'normalized(text(e))===' : 'normalized(text(e)).includes('}normalized(${JSON.stringify(label)})${exact ? '' : ')'} &&
-              !e.disabled && e.getAttribute('aria-disabled')!=='true');
-          return found.length===1 ? point(found[0]) : null;
+          const all=Array.from(document.querySelectorAll(${JSON.stringify(selector)}));
+          const candidates=all.map(e => {
+            const r=e.getBoundingClientRect();
+            const p={x:r.left+r.width/2,y:r.top+r.height/2};
+            const hit=document.elementFromPoint(p.x,p.y);
+            return {text:text(e),ariaLabel:e.getAttribute('aria-label'),title:e.getAttribute('title'),
+              visible:visible(e),enabled:!e.disabled && e.getAttribute('aria-disabled')!=='true',
+              matches:${exact ? 'normalized(text(e))===' : 'normalized(text(e)).includes('}normalized(${JSON.stringify(label)})${exact ? '' : ')'},
+              point:point(e),bounds:{x:r.left,y:r.top,width:r.width,height:r.height},
+              hitTestable:!!point(e),hitTag:hit?.tagName || null,hitClassName:hit?.className || null};
+          });
+          const found=candidates.filter(e => e.visible && e.matches && e.enabled);
+          return {point:found.length===1 ? found[0].point : null,count:all.length,matches:found.length,
+            rejectionCode:found.length===0 ? 1 : found.length>1 ? 2 : found[0].point ? 0 : 3,
+            candidates:candidates.slice(0,12)};
         })()`
       ),
-    (value) => value !== null,
+    (value) => value.point !== null,
     deadline
   );
+  const position = observation.point;
   assert.ok(position, 'Exactly one visible enabled control is required');
   await clickPoint(cdp, position);
 }

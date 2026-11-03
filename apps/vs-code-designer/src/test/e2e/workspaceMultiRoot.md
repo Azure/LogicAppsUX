@@ -177,6 +177,13 @@ consumers. Never label those controls as native approval.
 
 ## Native consumer requirements — parent-owned
 
+Text-click predicate receipts retain the last candidate observation: normalized
+text and accessible labels (hashed), visible/enabled flags, bounds and center
+hit-test. Rejection codes are 1 (no eligible exact match), 2 (ambiguous matches),
+and 3 (unique match obstructed). Code 0 means the existing click predicate
+accepted the target. Failure capture does not substitute a later DOM read for
+this last observation or relax exact matching.
+
 The Windows retained native owner defers only lifecycle request reads rejected
 with Win32 sharing/lock errors (32/33), flags the deferral, and retries on its
 existing poll. The original request deadline remains in force. Other IO errors

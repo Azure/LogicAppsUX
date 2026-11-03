@@ -277,7 +277,7 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
     try {
       // Navigate through the real Azure view and its real Create data map action.
       await command(workbench, 'View: Close All Editors', mapperPhase);
-      await clickText(workbench, '.activitybar .action-label', 'Azure', mapperPhase);
+      await clickText(workbench, '.activitybar .action-label', 'Azure', mapperPhase, undefined, true, true);
       const mapperExpanded = await workbench.evaluate<boolean>(
         undefined,
         `Array.from(document.querySelectorAll('.sidebar .pane-header')).some(e =>
