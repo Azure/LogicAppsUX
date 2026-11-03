@@ -3,6 +3,11 @@ import type { FieldLabels } from './createWorkspaceTypes';
 import { containsIgnoreCase } from './testUtils';
 
 export type CdpEvaluator = {
+  readonly targetId?: string;
+  readonly contextGeneration?: number;
+  // An existing deadline wrapper can retain its exact connection for fresh,
+  // bounded diagnostic capture. Never reconnect/select a different window.
+  readonly diagnosticCdp?: CdpEvaluator;
   evaluate<T>(contextId: number | undefined, expression: string, options?: { timeoutMs?: number }): Promise<T>;
   send(method: string, params?: Record<string, unknown>, options?: { timeoutMs?: number }): Promise<unknown>;
 };

@@ -50,7 +50,11 @@ const normalizePhysicalPath = (value: string): string => normalizeFsPath(fs.real
 // The observer lives outside the extension host: real Reload Window cannot
 // silently end/restart the test and manufacture a fresh-window substitute.
 export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
-  setOperationDiagnosticScope({ suite: 'workspaceMultiRoot', phase: 'regular-workbench-reopen' });
+  setOperationDiagnosticScope({
+    suite: 'workspaceMultiRoot',
+    phase: 'regular-workbench-reopen',
+    nativeInvocation: options.nativeInvocation,
+  });
   assert.equal(process.env.LA_E2E_CLI_MULTI_ROOT_ISOLATED, '1', 'Native multi-root UI requires an isolated consumer');
   const { workspace, deadline } = options;
   const ownership = {
@@ -194,7 +198,11 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
     for (const [rootIndex, folder] of roots.entries()) {
       // Creation has its own bounded stream. Keep the later real debug input
       // and final pending prompt observable without increasing either cap.
-      setOperationDiagnosticScope({ suite: 'workspaceMultiRoot', phase: `regular-workbench-debug-root-${rootIndex + 1}` });
+      setOperationDiagnosticScope({
+        suite: 'workspaceMultiRoot',
+        phase: `regular-workbench-debug-root-${rootIndex + 1}`,
+        nativeInvocation: options.nativeInvocation,
+      });
       const phase = phaseDeadline(180000);
       const launch: { configurations: { name: string; type: string; request: string }[] } = JSON.parse(
         fs.readFileSync(path.join(folder, '.vscode/launch.json'), 'utf8')

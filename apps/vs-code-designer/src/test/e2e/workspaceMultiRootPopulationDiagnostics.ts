@@ -51,6 +51,12 @@ export function createPopulationDiagnostics(
       // that a handled fault caused the collection verdict.
       procProbe: receipt.procProbe,
       procFault: receipt.procFault,
+      windowsProbe: receipt.windowsProbe,
+      windowsFirstProbe: receipt.windowsFirstProbe,
+      budgetMs: receipt.budgetMs,
+      remainingMs: receipt.remainingMs,
+      collectionDurationMs: receipt.durationMs,
+      collectionStageCode: receipt.collectionStageCode,
       count: receipt.processes.length,
       launcherPathCount: receipt.processes.filter((record) => record.executable === context.executable).length,
       workerPathCount: receipt.processes.filter((record) => record.executable === workerPath).length,

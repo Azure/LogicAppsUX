@@ -64,6 +64,8 @@ interface CdpClient {
 }
 
 interface ScreenshotCaptureOptions {
+  diagnosticContext?: ScreenshotReadinessMetadata['diagnosticContext'];
+  onDiagnosticFailure?: (error: unknown) => void;
   expectation?: ScreenshotExpectation;
   classification?: ScreenshotClassification;
   semanticCdp?: CdpClient;
@@ -194,6 +196,7 @@ export async function captureCdpScreenshot(
     return await captureCdpScreenshotCore(cdp, name, options, classification);
   } catch (error) {
     if (classification === 'diagnostic') {
+      reportDiagnosticFailure(options, error);
       console.warn(`[screenshot] Diagnostic CDP screenshot failed: ${error instanceof Error ? error.message : String(error)}`);
       return undefined;
     }
@@ -326,6 +329,9 @@ async function captureCdpScreenshotCore(
           result?: { data?: string };
         };
       } catch (error) {
+        if (classification === 'diagnostic') {
+          reportDiagnosticFailure(options, error);
+        }
         recordEvent('capture-rpc-failed', stableSample, {
           ownerRevision: preOwnerRevision,
           reasonCodes: ['capture-rpc-failed'],
@@ -457,6 +463,7 @@ async function captureCdpScreenshotCore(
       metadataPath,
       buildScreenshotMetadata({
         checkpoint: safeName,
+        diagnosticContext: options.diagnosticContext,
         phase: expectation.kind,
         classification,
         verdict: 'failed',
@@ -483,6 +490,7 @@ async function captureCdpScreenshotCore(
     metadataPath,
     buildScreenshotMetadata({
       checkpoint: safeName,
+      diagnosticContext: options.diagnosticContext,
       phase: expectation.kind,
       classification,
       verdict: classification === 'diagnostic' ? 'diagnostic' : 'accepted',
@@ -499,6 +507,14 @@ async function captureCdpScreenshotCore(
   );
   console.log(`[screenshot] Saved: ${screenshotPath}`);
   return screenshotPath;
+}
+
+function reportDiagnosticFailure(options: ScreenshotCaptureOptions, error: unknown): void {
+  try {
+    options.onDiagnosticFailure?.(error);
+  } catch {
+    // A secondary observer must never replace a screenshot or owning failure.
+  }
 }
 
 async function captureWorkbenchScreenshot(name: string, options: ScreenshotCaptureOptions): Promise<string | undefined> {

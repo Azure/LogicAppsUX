@@ -43,6 +43,17 @@ separate private traceability records, not this guide.
 Do not promote a policy or unit control to native success. Record the exact
 scope proved, and preserve earlier failures rather than rewriting their history.
 
+Unexpected workbench prompts, dialogs and blocking UI must be flagged and
+captured before dismissal, navigation or rejection. Reuse the shared prompt
+boundary's one-attempt diagnostic screenshot on the current CDP connection,
+including unresolved visible prompts at the original action deadline. Bind the
+image to native invocation, operation, phase and opaque workbench identity.
+Use only bounded diagnostic time after action expiry; never extend selection
+deadlines or approve unknown UI. Capture failure must explicitly report
+`screenshotMissing` and retain the original failure. Confirm the diagnostic PNG
+and sanitized correlation sidecar survive manifest-based ADO staging; a local
+sidecar or earlier checkpoint screenshot is not native failure evidence.
+
 ## Local-first development before ADO
 
 Develop and prove a CLI-native family locally before spending an ADO run. Local

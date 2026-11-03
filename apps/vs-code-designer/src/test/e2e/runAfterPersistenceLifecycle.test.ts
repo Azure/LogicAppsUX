@@ -416,6 +416,7 @@ async function openExactDesignerV2(
 
   const workbench = await connectToVsCodeWorkbenchCdp({ activate: false, timeoutMs: Math.min(15_000, Math.max(1, deadline - Date.now())) });
   const nativeWorkbench = {
+    diagnosticCdp: workbench,
     evaluate: workbench.evaluate.bind(workbench),
     send: (method: string, params?: Record<string, unknown>) =>
       workbench.send(method, params, { timeoutMs: Math.min(3000, Math.max(1, deadline - Date.now())) }),

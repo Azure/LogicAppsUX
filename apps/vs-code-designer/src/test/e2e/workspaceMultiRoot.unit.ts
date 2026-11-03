@@ -1,5 +1,6 @@
 import * as assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import * as fs from 'node:fs';
 import { createRequire } from 'node:module';
 import * as os from 'node:os';
@@ -24,6 +25,10 @@ import {
 import {
   createLinuxPopulationProvider,
   createWindowsPopulationProvider,
+  executeWindowsPopulation,
+  windowsPopulationScript,
+  type WindowsPopulationProbe,
+  type WindowsPopulationExecute,
   fingerprint,
   type FuncIdentity,
   isFunc,
@@ -58,6 +63,9 @@ import type { CdpConnection } from './cdpClient';
 import { createDiagnosticProducer } from '../../../scripts/e2e-cli-diagnostics';
 import { createPopulationDiagnostics } from './workspaceMultiRootPopulationDiagnostics';
 import { createMultiRootAzureSetup } from './workspaceMultiRootAzure';
+import { workbenchPromptDomScript } from './workbenchPrompts';
+import { setScreenshotFileSystemForTests } from './screenshot';
+import { boundedCdp } from './workbenchCdpActions';
 
 test('multi-root debug setup reuses the approved existing group and exact per-root affirmative UI policy', async () => {
   const fixture = folderMenuFixture();
@@ -132,6 +140,67 @@ test('multi-root debug setup preserves approved fixture admission failure withou
     await assert.rejects(createMultiRootAzureSetup(Date.now() + 1000), (error) => error === primary);
   } finally {
     read.mock.restore();
+  }
+});
+
+test('multi-root unknown Azure picker captures on the same current CDP exactly once before its original rejection', async () => {
+  const azure = require('./azureConnectorFixture');
+  const approved = { resourceGroupName: 'unit-existing-group', resourceGroupLocationVerified: true };
+  const read = mock.method(azure, 'readApprovedAzureConnectorFixture', () => approved);
+  const verify = mock.method(azure, 'readApprovedExistingResourceGroup', async () => approved);
+  const events: string[] = [];
+  const writes: string[] = [];
+  const restore = setScreenshotFileSystemForTests({
+    mkdirSync: () => undefined,
+    rmSync: () => {},
+    writeFileSync(file) {
+      writes.push(file);
+    },
+  });
+  const cdp = {
+    targetId: 'unit-current-multi-root-workbench',
+    contextGeneration: 3,
+    async evaluate(_context: unknown, expression: string) {
+      if (expression !== workbenchPromptDomScript) {
+        throw new Error('Unit diagnostic readiness unavailable');
+      }
+      return [
+        {
+          kind: 'quickInput',
+          title: 'private unknown picker',
+          text: 'private unknown picker',
+          interactive: true,
+          rows: Array.from({ length: 9 }, () => ({ text: 'private row' })),
+          buttons: [],
+        },
+      ];
+    },
+    async send(method: string, _params: unknown, options?: { timeoutMs?: number }) {
+      assert.ok(!method.startsWith('Input.') && !method.startsWith('Target.'), 'Unknown UI must receive no input or owner substitution');
+      if (method === 'Page.captureScreenshot') {
+        assert.ok(options?.timeoutMs && options.timeoutMs <= 5000);
+        assert.equal(this, cdp);
+        events.push('capture');
+        return { result: { data: Buffer.from('unit-png').toString('base64') } };
+      }
+      return {};
+    },
+  };
+  try {
+    const deadline = Date.now() + 2000;
+    const setup = await createMultiRootAzureSetup(deadline);
+    await assert.rejects(
+      setup.handle(boundedCdp(cdp as unknown as CdpConnection, deadline), path.resolve('unit-app'), deadline),
+      /unsupported prompt/
+    );
+    events.push('rejected');
+    assert.deepEqual(events, ['capture', 'rejected']);
+    assert.equal(writes.filter((file) => file.endsWith('.png')).length, 1);
+    assert.equal(writes.filter((file) => file.endsWith('.json')).length, 1);
+  } finally {
+    read.mock.restore();
+    verify.mock.restore();
+    restore();
   }
 });
 
@@ -1599,6 +1668,180 @@ const rows = [
 test('Windows full table includes only real func executable candidates, not workers', () => {
   assert.equal(parseWindowsPopulation(JSON.stringify(rows)).length, 1);
 });
+
+const windowsMarkers = (started: number, stages = 5) =>
+  [0, 20, 30, 40, 50]
+    .slice(0, stages)
+    .map((elapsed, index) => `LA_MR_POP:${index + 1}:${started + 10 + elapsed}:${elapsed}\n`)
+    .join('');
+
+test('Windows owning RPC separates startup, CIM, projection, serialization and response without extra queries', async () => {
+  const f = populationDiagnosticFixture();
+  let queries = 0;
+  const budgets: number[] = [];
+  const execute: WindowsPopulationExecute = (_file, _args, options) => {
+    queries++;
+    budgets.push(options.timeout!);
+    const output = windowsMarkers(f.clock.now()) + JSON.stringify(rows);
+    f.clock.advance(200);
+    return output;
+  };
+  const provider = createWindowsPopulationProvider(
+    (budget, probe) => executeWindowsPopulation(budget, probe, execute, f.clock.now),
+    () => {
+      f.clock.advance(25);
+      return bytes;
+    },
+    () => executable,
+    f.diagnostics.collection,
+    f.clock.now
+  );
+  const result = await f.diagnostics.run(() => provider.snapshot(1000));
+  assert.equal(result.complete, true);
+  assert.equal(queries, 2);
+  assert.deepEqual(budgets, [1000, 775], 'The second RPC must use the original collector budget, not restart it');
+  const state = f.records().at(-1).state;
+  assert.equal(state.budgetMs, 1000);
+  assert.equal(state.remainingMs, 550);
+  assert.equal(state.collectionDurationMs, 450);
+  assert.equal(state.collectionStageCode, 8);
+  assert.equal(state.windowsFirstProbe.pass, 1);
+  assert.equal(state.windowsFirstProbe.budgetMs, 1000);
+  assert.equal(state.windowsProbe.pass, 2);
+  assert.equal(state.windowsProbe.budgetMs, 775);
+  assert.equal(state.windowsProbe.durationMs, 200);
+  assert.equal(state.windowsProbe.startupMs, 10);
+  assert.equal(state.windowsProbe.cimMs, 20);
+  assert.equal(state.windowsProbe.projectionMs, 10);
+  assert.equal(state.windowsProbe.serializationMs, 10);
+  assert.equal(state.windowsProbe.respondMs, 10);
+  assert.equal(state.windowsProbe.stageCode, 5);
+  assert.doesNotMatch(f.lines.join(''), /fixture|powershell|Win32_Process|LA_MR_POP/);
+});
+
+for (const stage of [0, 1, 2, 3, 4]) {
+  test(`Windows original second-pass ETIMEDOUT retains stage ${stage}, budget and exact failure without retry`, async () => {
+    const f = populationDiagnosticFixture();
+    let queries = 0;
+    const failure = Object.assign(new Error('spawnSync powershell.exe ETIMEDOUT private-data'), {
+      code: 'ETIMEDOUT',
+      stdout: '',
+    });
+    const execute: WindowsPopulationExecute = () => {
+      queries++;
+      const output = windowsMarkers(f.clock.now(), queries === 1 ? 5 : stage);
+      if (queries === 1) {
+        f.clock.advance(200);
+        return output + JSON.stringify(rows);
+      }
+      failure.stdout = `${output}private account and executable stdout must not be relayed`;
+      f.clock.advance(800);
+      throw failure;
+    };
+    const provider = createWindowsPopulationProvider(
+      (budget, probe) => executeWindowsPopulation(budget, probe, execute, f.clock.now),
+      () => bytes,
+      () => executable,
+      f.diagnostics.collection,
+      f.clock.now
+    );
+    await assert.rejects(
+      f.diagnostics.run(() => provider.snapshot(1000)),
+      (error) => error === failure
+    );
+    assert.equal(queries, 2);
+    const state = f.records().at(-1).state;
+    assert.equal(state.complete, false);
+    assert.equal(state.nativePasses, 1);
+    assert.equal(state.collectionStageCode, 4);
+    assert.equal(state.remainingMs, 0);
+    assert.equal(state.windowsProbe.pass, 2);
+    assert.equal(state.windowsProbe.budgetMs, 800);
+    assert.equal(state.windowsProbe.durationMs, 800);
+    assert.equal(state.windowsProbe.remainingMs, 0);
+    assert.equal(state.windowsProbe.stageCode, stage);
+    assert.equal(f.records().at(-1).firstFailedGate, 'multi-root-population');
+    assert.doesNotMatch(f.lines.join(''), /private|account|powershell|LA_MR_POP/);
+  });
+}
+
+test('Windows diagnostic markers do not turn late success or malformed table into acceptance', async () => {
+  for (const late of [false, true]) {
+    const f = populationDiagnosticFixture();
+    const provider = createWindowsPopulationProvider(
+      (budget, probe) =>
+        executeWindowsPopulation(
+          budget,
+          probe,
+          () => {
+            const output = windowsMarkers(f.clock.now()) + (late ? JSON.stringify(rows) : '{"not":"a complete table"}');
+            if (late) {
+              f.clock.advance(budget + 1);
+            }
+            return output;
+          },
+          f.clock.now
+        ),
+      () => bytes,
+      () => executable,
+      f.diagnostics.collection,
+      f.clock.now
+    );
+    await assert.rejects(
+      f.diagnostics.run(() => provider.snapshot(1000)),
+      late ? /deadline/ : /Malformed/
+    );
+    assert.equal(f.records().at(-1).state.ok, false);
+  }
+});
+
+test(
+  'Windows staged script protocol runs with synthetic CIM only, never a shared-host process scan',
+  { skip: process.platform !== 'win32' },
+  () => {
+    const probe: WindowsPopulationProbe = { pass: 1, budgetMs: 5000, durationMs: 0, remainingMs: 5000, stageCode: 0 };
+    const syntheticQuery = `function Get-CimInstance {
+    [pscustomobject]@{ ProcessId=10; ParentProcessId=5; Name='func.exe'; CreationDate=[DateTime]'2026-01-01'; ExecutablePath='C:\\fixture\\func.exe' }
+  }; `;
+    const execute: WindowsPopulationExecute = (file, args, options) => {
+      assert.equal(args.at(-1), windowsPopulationScript);
+      assert.equal((windowsPopulationScript.match(/Get-CimInstance/g) ?? []).length, 1);
+      assert.doesNotMatch(windowsPopulationScript, /-Filter|-Query|Where-Object/);
+      return execFileSync(file, [...args.slice(0, -1), syntheticQuery + windowsPopulationScript], options);
+    };
+    const output = executeWindowsPopulation(5000, probe, execute);
+    assert.equal(parseWindowsPopulation(output).length, 1);
+    assert.equal(probe.stageCode, 5);
+    for (const value of [probe.startupMs, probe.cimMs, probe.projectionMs, probe.serializationMs, probe.respondMs]) {
+      assert.ok(typeof value === 'number' && value >= 0);
+    }
+    assert.doesNotMatch(output, /LA_MR_POP/);
+  }
+);
+
+test(
+  'Windows owning RPC retains its script-entry marker on an actual synthetic CIM timeout',
+  { skip: process.platform !== 'win32' },
+  () => {
+    const probe: WindowsPopulationProbe = { pass: 1, budgetMs: 5000, durationMs: 0, remainingMs: 5000, stageCode: 0 };
+    const execute: WindowsPopulationExecute = (file, args, options) =>
+      execFileSync(
+        file,
+        // Fault injection, not a readiness sleep: block only the synthetic
+        // query until the owning execFileSync budget terminates this child.
+        [...args.slice(0, -1), `function Get-CimInstance { Start-Sleep -Seconds 30 }; ${windowsPopulationScript}`],
+        options
+      );
+    assert.throws(
+      () => executeWindowsPopulation(5000, probe, execute),
+      (error: unknown) => (error as NodeJS.ErrnoException).code === 'ETIMEDOUT'
+    );
+    assert.equal(probe.stageCode, 1, 'Partial stdout must distinguish script entry from PowerShell startup');
+    assert.equal(probe.cimMs, undefined, 'A blocked query has no completion timing');
+    assert.ok(probe.durationMs >= 5000);
+    assert.ok(probe.remainingMs <= 0);
+  }
+);
 test('Windows malformed/permission-hidden func rows are rejected', () => {
   for (const value of [{}, [null], [{ ...rows[0], executable: '' }], [{ ...rows[0], birth: '' }], [rows[0], rows[0]]]) {
     assert.throws(() => parseWindowsPopulation(JSON.stringify(value)));

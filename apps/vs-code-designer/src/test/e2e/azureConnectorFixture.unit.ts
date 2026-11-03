@@ -13,6 +13,16 @@ import {
 } from './azureConnectorFixture';
 import type { CdpEvaluator } from './cdpFormHelpers';
 import { handleAffirmativeConnectorWorkbenchPrompt, selectExactWorkbenchPromptOption } from './workbenchPrompts';
+import {
+  readWorkbenchPrompts,
+  workbenchPromptDomScript,
+  flagUnexpectedWorkbenchPrompt,
+  type DetectedWorkbenchPrompt,
+} from './workbenchPrompts';
+import { createDiagnosticProducer, diagnosticOperationId } from '../../../scripts/e2e-cli-diagnostics';
+import { setScreenshotFileSystemForTests } from './screenshot';
+import { boundedCdp } from './workbenchCdpActions';
+import { setOperationDiagnosticScope, operationDiagnosticBinding } from './operationDiagnostics';
 
 type Control = (name: string, run: () => void | Promise<void>) => Promise<void>;
 const env = {
@@ -25,6 +35,17 @@ const env = {
 };
 
 export async function runApprovedAzureConnectorFixtureControls(control: Control): Promise<void> {
+  const owningControl = control;
+  control = (name, body) =>
+    owningControl(name, async () => {
+      // Prompt failure controls never write to a developer's real screenshot root.
+      const restore = setScreenshotFileSystemForTests({ mkdirSync: () => undefined, rmSync: () => {}, writeFileSync: () => {} });
+      try {
+        await body();
+      } finally {
+        restore();
+      }
+    });
   await control('approved fixture environment fails missing context and verifies product-persisted settings without injection', () => {
     const target = readApprovedAzureConnectorFixture(env);
     const fixture = { ...target, location: 'eastus', resourceGroupLocationVerified: true };
@@ -354,6 +375,8 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
       const window = dom.window;
       const fixture = { ...readApprovedAzureConnectorFixture(env), location: 'eastus', resourceGroupLocationVerified: true };
       const clicked: string[] = [];
+      const observations: string[] = [];
+      const trace = createDiagnosticProducer({ sink: (line) => observations.push(line) });
       let stage = 0;
       let loadingReads = 0;
       let resourceGroupGapReads = 0;
@@ -478,7 +501,15 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
         const deadline = Date.now() + 2000;
         const journey = () =>
           handleAffirmativeConnectorWorkbenchPrompt(cdp, 'unitApp', deadline, (prompt) =>
-            selectApprovedAzureConnectorFixturePrompt(cdp, prompt, fixture, deadline, async () => 'Unit Approved Subscription')
+            selectApprovedAzureConnectorFixturePrompt(
+              cdp,
+              prompt,
+              fixture,
+              deadline,
+              async () => 'Unit Approved Subscription',
+              undefined,
+              trace
+            )
           );
         if (
           fault === 'none' ||
@@ -495,6 +526,12 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
         ) {
           assert.strictEqual(await journey(), true);
           assert.deepStrictEqual(clicked, ['Use connectors from Azure', 'Unit Approved Subscription', 'unit-existing-group']);
+          const records = observations.map((line) => JSON.parse(line));
+          assert.ok(records.some((record) => record.state?.candidates?.items?.some((item: any) => item.subscriptionNameMatch)));
+          assert.ok(records.some((record) => record.state?.candidates?.items?.some((item: any) => item.resourceGroupMatch)));
+          assert.ok(records.some((record) => record.state?.title?.knownTitleCode === 1));
+          assert.ok(records.some((record) => record.state?.title?.knownTitleCode === 7));
+          assert.doesNotMatch(observations.join(''), /Unit Approved Subscription|unit-existing-group/);
         } else {
           await assert.rejects(journey);
           assert.ok(!clicked.includes(fixture.resourceGroupName), 'Blocked setup cannot be credited as selected fixture');
@@ -634,6 +671,304 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
       assert.match(error.message, /"kind":"(dialog|quickInput)"/);
     }
   });
+  for (const transition of [false, true]) {
+    await control(`original unknown nine-row non-hit-testable prompt remains blocked; transition=${transition}`, async () => {
+      const { JSDOM } = require('jsdom');
+      const fixture = { ...readApprovedAzureConnectorFixture(env), resourceGroupLocationVerified: true };
+      const secretTitle = 'private fixture prompt for unit@example.test';
+      const labels = [
+        fixture.resourceGroupName,
+        fixture.subscriptionId,
+        fixture.location,
+        ...Array.from({ length: 6 }, (_, index) => `private-target-${index}`),
+      ];
+      const dom = new JSDOM(
+        `<div class="quick-input-widget" aria-busy="true">
+          <div class="quick-input-title">Select a resource group for new resources.</div>
+          <input placeholder="${secretTitle}" aria-label="private-account@example.test">
+          ${labels.map((label) => `<div class="monaco-list-row"><span class="label-name">${label}</span></div>`).join('')}
+        </div>`,
+        { pretendToBeVisual: true, runScripts: 'outside-only' }
+      );
+      const window = dom.window;
+      window.HTMLElement.prototype.getBoundingClientRect = () => ({
+        x: 0,
+        y: 0,
+        left: 0,
+        top: 0,
+        right: 200,
+        bottom: 30,
+        width: 200,
+        height: 30,
+      });
+      window.document.elementFromPoint = () => window.document.body; // Overlay: every row fails the real hit test.
+      let reads = 0;
+      let sends = 0;
+      const cdp: CdpEvaluator = {
+        async evaluate<T>(_context: number | undefined, expression: string) {
+          if (expression !== workbenchPromptDomScript) {
+            throw new Error('Unit diagnostic readiness unavailable');
+          }
+          reads++;
+          return window.eval(expression) as T;
+        },
+        async send(method) {
+          if (method.startsWith('Input.')) {
+            sends++;
+            throw new Error('Unsupported or covered prompt must receive no input');
+          }
+          return method === 'Page.captureScreenshot' ? { result: { data: Buffer.from('unit-png').toString('base64') } } : {};
+        },
+      };
+      const lines: string[] = [];
+      const trace = createDiagnosticProducer({ sink: (line) => lines.push(line), maxEvents: 64 });
+      try {
+        const [unknown] = await readWorkbenchPrompts(cdp);
+        assert.strictEqual(unknown.rows.length, 9);
+        assert.ok(unknown.rows.every((row) => !row.point));
+        const initial = transition
+          ? { ...unknown, title: 'Select a resource group for new resources.', promptSources: undefined }
+          : unknown;
+        const error = await selectApprovedAzureConnectorFixturePrompt(
+          cdp,
+          initial,
+          fixture,
+          Date.now() + 2000,
+          async () => {
+            throw new Error('Unknown prompt must not trigger ARM lookup');
+          },
+          undefined,
+          trace
+        ).then(
+          () => undefined,
+          (reason) => reason as Error
+        );
+        assert.ok(error);
+        assert.match(error.message, transition ? /changed to an unsupported prompt/ : /reached an unsupported prompt/);
+        assert.strictEqual(sends, 0);
+        assert.strictEqual(reads, transition ? 2 : 1, 'Diagnostics must reuse owning reads, not poll unknown prompts');
+        const records = lines.map((line) => JSON.parse(line));
+        const summary = records.at(-1);
+        assert.strictEqual(summary.firstFailedGate, 'azure-fixture-prompt');
+        assert.strictEqual(summary.state.supported, false);
+        assert.strictEqual(summary.state.title.knownTitleCode, 0);
+        assert.strictEqual(summary.state.promptSources.widgetTitle.knownTitleCode, 7);
+        assert.strictEqual(summary.state.promptSources.placeholder.sha256, summary.state.title.sha256);
+        assert.strictEqual(summary.state.promptSources.titleSourcesAgree, false);
+        assert.strictEqual(summary.state.promptSources.titleSourceCode, 1);
+        assert.strictEqual(summary.state.promptSources.busy, true);
+        assert.strictEqual(summary.state.count, 9);
+        assert.strictEqual(summary.state.hitTestableCount, 0);
+        assert.strictEqual(summary.state.candidates.items[0].resourceGroupMatch, true);
+        assert.strictEqual(summary.state.candidates.items[1].subscriptionIdMatch, true);
+        assert.strictEqual(summary.state.candidates.items[2].locationMatch, true);
+        assert.strictEqual(summary.state.subscriptionNameKnown, false);
+        for (const record of records) {
+          assert.ok(diagnosticOperationId(record.operation), 'Prompt observations survive existing operation allowlist');
+        }
+        assert.doesNotMatch(lines.join('') + error.message, /unit@example|private-account|private-target|unit-existing-group|westus/);
+        assert.ok(lines.every((line) => Buffer.byteLength(line) <= 8192));
+      } finally {
+        window.close();
+      }
+    });
+  }
+  for (const kind of ['quickInput', 'dialog'] as const) {
+    for (const consumer of ['azure', 'shared'] as const) {
+      await control(`unexpected ${kind} ${consumer} captures once on its current owner before rejection with no input`, async () => {
+        const fixture = unexpectedPromptScreenshotFixture(kind);
+        const previousScope = operationDiagnosticBinding();
+        const binding = {
+          suite: 'workspaceMultiRoot',
+          phase: 'regular-workbench-debug-root-1',
+          nativeInvocation: 'unit-native-invocation',
+        };
+        setOperationDiagnosticScope(binding);
+        const lines: string[] = [];
+        const trace = createDiagnosticProducer({ sink: (line) => lines.push(line), binding });
+        try {
+          // Expired action wrapper must not consume the fresh diagnostic budget
+          // or lose the exact connection's target/generation.
+          const cdp = boundedCdp(fixture.cdp, Date.now() - 1);
+          const pending =
+            consumer === 'azure'
+              ? selectApprovedAzureConnectorFixturePrompt(
+                  cdp,
+                  fixture.prompt,
+                  readApprovedAzureConnectorFixture(env),
+                  Date.now() - 1,
+                  async () => {
+                    throw new Error('Unexpected UI must not trigger ARM lookup');
+                  },
+                  undefined,
+                  trace
+                )
+              : handleAffirmativeConnectorWorkbenchPrompt(fixture.cdp, 'unitApp', Date.now() + 2000);
+          const error = await pending.then(
+            () => undefined,
+            (reason) => reason as Error
+          );
+          fixture.events.push('rejected');
+          assert.ok(error);
+          assert.match(error.message, consumer === 'azure' ? /unsupported prompt/ : /Unrecognized auth/);
+          assert.doesNotMatch(error.message, /private-account@example/);
+          assert.deepStrictEqual(fixture.events, ['capture', 'png-written', 'metadata-written', 'rejected']);
+          assert.strictEqual(fixture.captures, 1);
+          const metadata = fixture.metadata();
+          assert.strictEqual(metadata.classification, 'diagnostic');
+          assert.strictEqual(metadata.verdict, 'diagnostic', 'Never an ordered acceptance checkpoint');
+          assert.strictEqual(metadata.target.generation, 7);
+          assert.strictEqual(metadata.diagnosticContext.phase, binding.phase);
+          assert.strictEqual(metadata.diagnosticContext.nativeInvocation, binding.nativeInvocation);
+          assert.match(metadata.checkpoint, /^unexpected-ui-/);
+          assert.ok(metadata.checkpoint.endsWith(metadata.diagnosticContext.operationId.replace(/:/g, '-')));
+          assert.strictEqual(fixture.files.size, 2, 'Exactly the diagnostic PNG and its bound sidecar');
+          if (consumer === 'azure') {
+            const records = lines.map((line) => JSON.parse(line));
+            const flag = records.find((record) => record.operation === 'unexpected-ui-terminal');
+            assert.strictEqual(flag.state.screenshotPresent, true);
+            assert.strictEqual(flag.state.screenshotMissing, false);
+            assert.strictEqual(flag.firstFailedGate, 'unexpected-ui');
+            assert.strictEqual(flag.nativeInvocation, binding.nativeInvocation);
+          }
+          assert.doesNotMatch(lines.join('') + JSON.stringify(metadata), /private-account@example|private title/);
+        } finally {
+          setOperationDiagnosticScope(previousScope);
+          fixture.restore();
+        }
+      });
+    }
+  }
+  for (const consumer of ['azure', 'affirmative', 'exact'] as const) {
+    await control(`nonactionable ${consumer} picker captures once before original deadline rejection`, async () => {
+      const fixture = unexpectedPromptScreenshotFixture('quickInput');
+      fixture.prompt.title =
+        consumer === 'affirmative' ? 'Enable connectors in Azure for Logic App unitApp' : 'Select a resource group for new resources.';
+      fixture.prompt.text = fixture.prompt.title;
+      fixture.prompt.interactive = false;
+      fixture.prompt.rows = [{ text: consumer === 'affirmative' ? 'Use connectors from Azure' : 'unit-existing-group' }];
+      try {
+        const deadline = Date.now() - 1;
+        const pending =
+          consumer === 'azure'
+            ? selectApprovedAzureConnectorFixturePrompt(
+                fixture.cdp,
+                fixture.prompt,
+                { ...readApprovedAzureConnectorFixture(env), resourceGroupLocationVerified: true },
+                deadline,
+                async () => {
+                  throw new Error('Resource group prompt must not query a subscription');
+                }
+              )
+            : consumer === 'affirmative'
+              ? handleAffirmativeConnectorWorkbenchPrompt(fixture.cdp, 'unitApp', Date.now() + 100)
+              : selectExactWorkbenchPromptOption(
+                  fixture.cdp,
+                  fixture.prompt,
+                  { matchText: fixture.prompt.title, optionText: 'unit-existing-group' },
+                  deadline
+                );
+        const error = await pending.then(
+          () => undefined,
+          (reason) => reason as Error
+        );
+        fixture.events.push('rejected');
+        assert.ok(error);
+        assert.match(error.message, /deadline/);
+        assert.strictEqual(fixture.captures, 1);
+        assert.deepStrictEqual(fixture.events, ['capture', 'png-written', 'metadata-written', 'rejected']);
+      } finally {
+        fixture.restore();
+      }
+    });
+  }
+  for (const fault of ['timeout', 'capture-error', 'storage-error', 'missing-data'] as const) {
+    await control(`unexpected prompt screenshot ${fault} flags missing and cannot replace the original rejection`, async () => {
+      const fixture = unexpectedPromptScreenshotFixture('quickInput', fault);
+      const lines: string[] = [];
+      const trace = createDiagnosticProducer({ sink: (line) => lines.push(line) });
+      const primary = new Error('unit original unexpected prompt');
+      try {
+        await assert.rejects(
+          (async () => {
+            await flagUnexpectedWorkbenchPrompt(fixture.cdp, fixture.prompt, primary, trace);
+            throw primary;
+          })(),
+          (error) => error === primary
+        );
+        assert.strictEqual(fixture.captures, 1, 'No retry, desktop fallback or different-window capture');
+        const records = lines.map((line) => JSON.parse(line));
+        const terminal = records.at(-1);
+        assert.strictEqual(terminal.firstFailedGate, 'unexpected-ui');
+        assert.strictEqual(terminal.state.screenshotMissing, true);
+        assert.strictEqual(terminal.state.screenshotPresent, false);
+        assert.ok(records.some((record) => record.operation === 'unexpected-ui-capture' && record.status === 'failure'));
+        if (fault === 'timeout') {
+          assert.ok(
+            records.some((record) => record.error?.code === 'ETIMEDOUT'),
+            'Retain the secondary timeout code separately'
+          );
+        }
+        // Also exercise the actual selector's throw site, not only the capture helper.
+        await assert.rejects(
+          selectApprovedAzureConnectorFixturePrompt(
+            fixture.cdp,
+            fixture.prompt,
+            readApprovedAzureConnectorFixture(env),
+            Date.now() + 1000,
+            async () => 'unused',
+            undefined,
+            trace
+          ),
+          /Azure setup reached an unsupported prompt/
+        );
+        assert.strictEqual(fixture.captures, 2, 'Exactly one attempt per independent detection');
+        assert.ok(!records.some((record) => record.operation === 'unexpected-ui-capture' && record.status === 'end'));
+      } finally {
+        fixture.restore();
+      }
+    });
+  }
+  await control('Azure prompt diagnostics are bounded and a throwing sink cannot replace the original ARM error', async () => {
+    const fixture = { ...readApprovedAzureConnectorFixture(env), resourceGroupLocationVerified: true };
+    const failure = new Error('unit-owned ARM failure');
+    const trace = createDiagnosticProducer({
+      sink: () => {
+        throw new Error('secondary diagnostic failure');
+      },
+    });
+    await assert.rejects(
+      selectApprovedAzureConnectorFixturePrompt(
+        {} as CdpEvaluator,
+        { kind: 'quickInput', title: 'Select subscription', text: '', interactive: true, rows: [], buttons: [] },
+        fixture,
+        Date.now() + 2000,
+        async () => {
+          throw failure;
+        },
+        undefined,
+        trace
+      ),
+      (error) => error === failure
+    );
+    const description = JSON.parse(
+      describeUnsupportedAzurePrompt(
+        {
+          kind: 'quickInput',
+          title: 'unknown',
+          text: '',
+          interactive: true,
+          buttons: [],
+          rows: Array.from({ length: 100 }, (_, index) => ({ text: `private-label-${index}` })),
+        },
+        fixture
+      )
+    );
+    assert.strictEqual(description.rows.length, 12);
+    assert.strictEqual(description.observation.count, 100);
+    assert.strictEqual(description.observation.capped, true);
+    assert.doesNotMatch(JSON.stringify(description), /private-label/);
+  });
   await control('expired approved-target deadline sends no native input', async () => {
     const fixture = { ...readApprovedAzureConnectorFixture(env), location: 'eastus', resourceGroupLocationVerified: true };
     let inputSent = false;
@@ -645,6 +980,7 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
         if (method.startsWith('Input.')) {
           inputSent = true;
         }
+
         return {};
       },
     } as CdpEvaluator;
@@ -667,4 +1003,76 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
     );
     assert.strictEqual(inputSent, false);
   });
+}
+
+function unexpectedPromptScreenshotFixture(
+  kind: 'quickInput' | 'dialog',
+  fault?: 'timeout' | 'capture-error' | 'storage-error' | 'missing-data'
+) {
+  const events: string[] = [];
+  const files = new Map<string, string | Buffer>();
+  const prompt: DetectedWorkbenchPrompt = {
+    kind,
+    title: 'private title private-account@example.test',
+    text: 'private title private-account@example.test',
+    rows: Array.from({ length: 9 }, () => ({ text: 'private target' })),
+    buttons: [],
+    interactive: true,
+  };
+  let captures = 0;
+  const cdp: CdpEvaluator = {
+    targetId: 'unit-exact-current-workbench',
+    contextGeneration: 7,
+    async evaluate<T>(_context: number | undefined, expression: string) {
+      if (expression === workbenchPromptDomScript) {
+        return [prompt] as T;
+      }
+      throw new Error('Diagnostic capture must not need settled prompt readiness');
+    },
+    async send(method, _params, options) {
+      assert.ok(
+        !method.startsWith('Input.') && method !== 'Page.bringToFront' && !method.startsWith('Target.'),
+        'Never dismiss, focus, navigate or discover another window'
+      );
+      assert.ok(
+        options?.timeoutMs && options.timeoutMs > 0 && options.timeoutMs <= 5000,
+        'Fresh bounded capture budget reaches the same CDP'
+      );
+      if (method === 'Page.getFrameTree') {
+        return { result: { frameTree: { frame: { id: 'unit-owner-frame' } } } };
+      }
+      if (method === 'Page.captureScreenshot') {
+        assert.strictEqual(this, cdp, 'Capture must use the existing connection, not a detached send method');
+        events.push('capture');
+        captures++;
+        if (fault === 'timeout' || fault === 'capture-error') {
+          throw Object.assign(new Error('unit secondary capture failure'), { code: fault === 'timeout' ? 'ETIMEDOUT' : 'EIO' });
+        }
+        return { result: { data: fault === 'missing-data' ? undefined : Buffer.from('unit-png').toString('base64') } };
+      }
+      return {};
+    },
+  };
+  const restore = setScreenshotFileSystemForTests({
+    mkdirSync: () => undefined,
+    rmSync: () => {},
+    writeFileSync(file, data) {
+      if (fault === 'storage-error') {
+        throw new Error('unit secondary screenshot storage failure');
+      }
+      files.set(file, typeof data === 'string' ? data : Buffer.from(data as Uint8Array));
+      events.push(file.endsWith('.png') ? 'png-written' : 'metadata-written');
+    },
+  });
+  return {
+    cdp,
+    prompt,
+    events,
+    files,
+    restore,
+    get captures() {
+      return captures;
+    },
+    metadata: () => JSON.parse(String([...files.entries()].find(([file]) => file.endsWith('.json'))?.[1])),
+  };
 }

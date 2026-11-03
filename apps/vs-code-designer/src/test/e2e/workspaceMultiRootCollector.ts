@@ -1,5 +1,5 @@
 import * as assert from 'node:assert/strict';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, type ExecFileSyncOptionsWithStringEncoding } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
@@ -45,9 +45,30 @@ export interface PopulationCollectionReceipt {
   parents: Array<{ pid: number; parentPid: number }>;
   procProbe?: ProcProbeReceipt;
   procFault?: ProcProbeReceipt;
+  windowsProbe?: WindowsPopulationProbe;
+  windowsFirstProbe?: WindowsPopulationProbe;
+  budgetMs?: number;
+  remainingMs?: number;
+  durationMs?: number;
+  collectionStageCode?: number;
   error?: unknown;
 }
 export type PopulationReceiptSink = (receipt: PopulationCollectionReceipt) => void;
+
+export interface WindowsPopulationProbe {
+  pass: number;
+  budgetMs: number;
+  durationMs: number;
+  remainingMs: number;
+  // 0=no script marker, 1=script entry, 2=CIM returned, 3=projection
+  // finished, 4=JSON serialized, 5=stdout write finished.
+  stageCode: number;
+  startupMs?: number;
+  cimMs?: number;
+  projectionMs?: number;
+  serializationMs?: number;
+  respondMs?: number;
+}
 
 // Existing owning reads only; no extra enumeration, stat, argv or executable
 // probes. Codes: boot=1, enumerate=2, stat=3, comm=4, exe-link=5,
@@ -113,10 +134,12 @@ function observedProcFiles(files: ProcFiles, root: string, receipt: PopulationCo
 
 function observedCollection(
   collect: (receipt: PopulationCollectionReceipt, budgetMs: number) => Promise<Population>,
-  sink?: PopulationReceiptSink
+  sink?: PopulationReceiptSink,
+  now = Date.now
 ): PopulationProvider {
   return {
     async snapshot(budgetMs) {
+      const started = now();
       const receipt: PopulationCollectionReceipt = {
         complete: false,
         nativePasses: 0,
@@ -134,6 +157,9 @@ function observedCollection(
         throw error;
       } finally {
         try {
+          receipt.budgetMs = budgetMs;
+          receipt.durationMs = now() - started;
+          receipt.remainingMs = budgetMs - receipt.durationMs;
           sink?.(receipt);
         } catch {
           // Secondary diagnostics must preserve the original verdict/error.
@@ -424,8 +450,83 @@ export interface WindowsProcessRow {
   parentPid?: number;
 }
 
-export const windowsPopulationScript =
-  "$ErrorActionPreference='Stop'; $rows=@(Get-CimInstance Win32_Process -ErrorAction Stop | ForEach-Object { [ordered]@{pid=[long]$_.ProcessId; parentPid=[long]$_.ParentProcessId; name=[string]$_.Name; birth=$(if($_.CreationDate){$_.CreationDate.ToUniversalTime().Ticks.ToString()}else{''}); executable=[string]$_.ExecutablePath} }); ConvertTo-Json -InputObject $rows -Compress";
+// Numeric-only markers share the owning RPC's pipe so partial stdout survives
+// execFileSync ETIMEDOUT. No second query, sidecar or diagnostic process scan.
+// The CIM query remains unfiltered; projection/JSON/output get separate timings.
+export const windowsPopulationScript = [
+  "$ErrorActionPreference='Stop'",
+  '$watch=[Diagnostics.Stopwatch]::StartNew()',
+  "function Mark([int]$stage) { [Console]::Out.WriteLine(('LA_MR_POP:{0}:{1}:{2}' -f $stage,[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds(),$watch.ElapsedMilliseconds)) }",
+  'Mark 1',
+  '$native=@(Get-CimInstance Win32_Process -ErrorAction Stop)',
+  'Mark 2',
+  "$rows=@($native | ForEach-Object { [ordered]@{pid=[long]$_.ProcessId; parentPid=[long]$_.ParentProcessId; name=[string]$_.Name; birth=$(if($_.CreationDate){$_.CreationDate.ToUniversalTime().Ticks.ToString()}else{''}); executable=[string]$_.ExecutablePath} })",
+  'Mark 3',
+  '$json=ConvertTo-Json -InputObject $rows -Compress',
+  'Mark 4',
+  '[Console]::Out.WriteLine($json)',
+  'Mark 5',
+].join('; ');
+
+function observeWindowsOutput(output: string, probe: WindowsPopulationProbe, started: number): string {
+  let previousMs = 0;
+  return output
+    .split(/\r?\n/)
+    .filter((line) => {
+      const match = /^LA_MR_POP:([1-5]):(\d{1,16}):(\d{1,12})$/.exec(line);
+      if (!match) {
+        return true;
+      }
+      const stage = Number(match[1]);
+      const elapsed = Number(match[3]);
+      if (stage === probe.stageCode + 1 && elapsed >= previousMs) {
+        probe.stageCode = stage;
+        if (stage === 1) {
+          // Includes PowerShell startup and command parse, not a CIM duration.
+          probe.startupMs = Number(match[2]) - started - elapsed;
+        } else {
+          const field = (['cimMs', 'projectionMs', 'serializationMs', 'respondMs'] as const)[stage - 2];
+          probe[field] = elapsed - previousMs;
+        }
+        previousMs = elapsed;
+      }
+      return false;
+    })
+    .join('\n');
+}
+
+export type WindowsPopulationExecute = (file: string, args: readonly string[], options: ExecFileSyncOptionsWithStringEncoding) => string;
+
+export function executeWindowsPopulation(
+  budgetMs: number,
+  probe?: WindowsPopulationProbe,
+  execute: WindowsPopulationExecute = execFileSync,
+  now = Date.now
+): string {
+  const started = now();
+  const observation = probe ?? { pass: 0, budgetMs, durationMs: 0, remainingMs: budgetMs, stageCode: 0 };
+  try {
+    const output = execute('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command', windowsPopulationScript], {
+      encoding: 'utf8',
+      timeout: budgetMs,
+      maxBuffer: 8 * 1024 * 1024,
+    });
+    return observeWindowsOutput(String(output), observation, started);
+  } catch (error) {
+    try {
+      const partial = (error as { stdout?: unknown }).stdout;
+      if (typeof partial === 'string' || Buffer.isBuffer(partial)) {
+        observeWindowsOutput(String(partial), observation, started);
+      }
+    } catch {
+      // Partial-output observation must preserve the exact native error.
+    }
+    throw error;
+  } finally {
+    observation.durationMs = now() - started;
+    observation.remainingMs = budgetMs - observation.durationMs;
+  }
+}
 
 export function parseWindowsPopulation(output: string): WindowsProcessRow[] {
   const rows: unknown = JSON.parse(output.replace(/^\uFEFF/, ''));
@@ -449,71 +550,97 @@ export function parseWindowsPopulation(output: string): WindowsProcessRow[] {
 }
 
 export function createWindowsPopulationProvider(
-  execute = (budgetMs: number) =>
-    execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command', windowsPopulationScript], {
-      encoding: 'utf8',
-      timeout: budgetMs,
-      maxBuffer: 8 * 1024 * 1024,
-    }),
+  execute: (budgetMs: number, probe?: WindowsPopulationProbe) => string = executeWindowsPopulation,
   binary = (file: string) => fs.readFileSync(file),
   canonical = (file: string) => fs.realpathSync(file),
-  sink?: PopulationReceiptSink
+  sink?: PopulationReceiptSink,
+  now = Date.now
 ): PopulationProvider {
-  return observedCollection(async (receipt, budgetMs) => {
-    const deadline = Date.now() + budgetMs;
-    const first = execute(remainingBudget(deadline));
-    receipt.nativePasses++;
-    const table: unknown = JSON.parse(first.replace(/^\uFEFF/, ''));
-    receipt.totalRows = Array.isArray(table) ? table.length : 0;
-    const before = parseWindowsPopulation(first).sort((a, b) => a.pid - b.pid);
-    const processes = receipt.processes;
-    for (const row of before) {
-      receipt.inspectedRows++;
-      remainingBudget(deadline);
-      if (typeof row.parentPid === 'number' && Number.isSafeInteger(row.parentPid) && row.parentPid >= 0) {
-        receipt.parents.push({ pid: row.pid, parentPid: row.parentPid });
+  return observedCollection(
+    async (receipt, budgetMs) => {
+      const deadline = now() + budgetMs;
+      const remaining = () => remainingBudget(deadline, now());
+      const query = (pass: number) => {
+        const budget = remaining();
+        const started = now();
+        const probe: WindowsPopulationProbe = { pass, budgetMs: budget, durationMs: 0, remainingMs: budget, stageCode: 0 };
+        receipt.windowsProbe = probe;
+        if (pass === 1) {
+          receipt.windowsFirstProbe = probe;
+        }
+        try {
+          return execute(budget, probe);
+        } finally {
+          probe.durationMs = now() - started;
+          probe.remainingMs = deadline - now();
+        }
+      };
+      // Collection stage: first native=1, parse=2, hash=3, second native=4,
+      // parse=5, rehash=6, lineage=7, complete=8.
+      receipt.collectionStageCode = 1;
+      const first = query(1);
+      receipt.nativePasses++;
+      receipt.collectionStageCode = 2;
+      const table: unknown = JSON.parse(first.replace(/^\uFEFF/, ''));
+      receipt.totalRows = Array.isArray(table) ? table.length : 0;
+      const before = parseWindowsPopulation(first).sort((a, b) => a.pid - b.pid);
+      const processes = receipt.processes;
+      receipt.collectionStageCode = 3;
+      for (const row of before) {
+        receipt.inspectedRows++;
+        remaining();
+        if (typeof row.parentPid === 'number' && Number.isSafeInteger(row.parentPid) && row.parentPid >= 0) {
+          receipt.parents.push({ pid: row.pid, parentPid: row.parentPid });
+        }
+        processes.push({
+          pid: row.pid,
+          birth: row.birth,
+          executable: canonical(row.executable),
+          sha256: createHash('sha256').update(binary(row.executable)).digest('hex'),
+          parentPid: row.parentPid,
+        });
       }
-      processes.push({
-        pid: row.pid,
-        birth: row.birth,
-        executable: canonical(row.executable),
-        sha256: createHash('sha256').update(binary(row.executable)).digest('hex'),
-        parentPid: row.parentPid,
+      receipt.collectionStageCode = 4;
+      const final = query(2);
+      receipt.collectionStageCode = 5;
+      const after = parseWindowsPopulation(final).sort((a, b) => a.pid - b.pid);
+      receipt.nativePasses++;
+      const identities = (rows: WindowsProcessRow[]) =>
+        rows.map(({ pid, name, birth, executable, parentPid }) => ({ pid, name, birth, executable, parentPid }));
+      if (JSON.stringify(identities(before)) !== JSON.stringify(identities(after))) {
+        throw new PopulationRace('Native func population/PID identity changed while hashing');
+      }
+      receipt.collectionStageCode = 6;
+      for (const record of processes) {
+        remaining();
+        assert.equal(createHash('sha256').update(binary(record.executable)).digest('hex'), record.sha256, 'Func executable race');
+      }
+      remaining();
+      // Only native rows identical at both passes can form an ancestry bridge.
+      // Missing/inaccessible non-Func rows are not absence or ownership credit.
+      receipt.collectionStageCode = 7;
+      const finalTable = JSON.parse(final.replace(/^\uFEFF/, '')) as WindowsProcessRow[];
+      const lineage: ProcessLineage[] = (table as WindowsProcessRow[]).flatMap((row) => {
+        if (
+          !Number.isSafeInteger(row.pid) ||
+          row.pid <= 0 ||
+          !/^\d+$/.test(row.birth || '') ||
+          !Number.isSafeInteger(row.parentPid) ||
+          row.parentPid! < 0
+        ) {
+          return [];
+        }
+        const match = finalTable.filter((last) => last.pid === row.pid);
+        return match.length === 1 && match[0].birth === row.birth && match[0].parentPid === row.parentPid
+          ? [{ pid: row.pid, birth: row.birth, parentPid: row.parentPid! }]
+          : [];
       });
-    }
-    const final = execute(remainingBudget(deadline));
-    const after = parseWindowsPopulation(final).sort((a, b) => a.pid - b.pid);
-    receipt.nativePasses++;
-    const identities = (rows: WindowsProcessRow[]) =>
-      rows.map(({ pid, name, birth, executable, parentPid }) => ({ pid, name, birth, executable, parentPid }));
-    if (JSON.stringify(identities(before)) !== JSON.stringify(identities(after))) {
-      throw new PopulationRace('Native func population/PID identity changed while hashing');
-    }
-    for (const record of processes) {
-      remainingBudget(deadline);
-      assert.equal(createHash('sha256').update(binary(record.executable)).digest('hex'), record.sha256, 'Func executable race');
-    }
-    remainingBudget(deadline);
-    // Only native rows identical at both passes can form an ancestry bridge.
-    // Missing/inaccessible non-Func rows are not absence or ownership credit.
-    const finalTable = JSON.parse(final.replace(/^\uFEFF/, '')) as WindowsProcessRow[];
-    const lineage: ProcessLineage[] = (table as WindowsProcessRow[]).flatMap((row) => {
-      if (
-        !Number.isSafeInteger(row.pid) ||
-        row.pid <= 0 ||
-        !/^\d+$/.test(row.birth || '') ||
-        !Number.isSafeInteger(row.parentPid) ||
-        row.parentPid! < 0
-      ) {
-        return [];
-      }
-      const match = finalTable.filter((last) => last.pid === row.pid);
-      return match.length === 1 && match[0].birth === row.birth && match[0].parentPid === row.parentPid
-        ? [{ pid: row.pid, birth: row.birth, parentPid: row.parentPid! }]
-        : [];
-    });
-    return { complete: true, processes, lineage };
-  }, sink);
+      receipt.collectionStageCode = 8;
+      return { complete: true, processes, lineage };
+    },
+    sink,
+    now
+  );
 }
 
 export function nativePopulationProvider(platform = process.platform, sink?: PopulationReceiptSink): PopulationProvider {

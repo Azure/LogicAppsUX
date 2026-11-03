@@ -398,6 +398,46 @@ families. It does not recursively copy `code.log`, profiles, arbitrary files or
 environment. The final-result projection and all existing acceptance gates
 remain authoritative and unchanged.
 
+Prompt failures also use the existing bounded operation stream:
+`azure-fixture-prompt`, `azure-fixture-prompt-observation` and
+`azure-fixture-prompt-terminal`. The terminal preserves the first failed gate.
+Title/placeholder/widget-title/input-label and candidate identities are hashed;
+`knownTitleCode` is the one-based diagnostic-only list in
+`workbenchPrompts.ts` (zero means unknown). Exact approved-fixture matches,
+busy/focus/visibility, input hit testing and row hit-test counts distinguish a
+source mismatch or covered UI from an actionable approved picker. An unknown
+prompt is still rejected at detection: diagnostics do not poll or approve it,
+perform an extra ARM lookup or substitute the widget title for the placeholder.
+
+Unexpected or ambiguous Azure/affirmative-workbench prompts now trigger one
+same-current-connection diagnostic screenshot **before** the original throw or
+any dismissal/navigation. The existing diagnostic screenshot helper uses a fresh
+5-second budget, never desktop fallback or a newly discovered window. Deadline
+wrappers retain their actual owning CDP for this purpose. The PNG and sidecar
+are diagnostic attachments, not additional ordered acceptance checkpoints.
+The sidecar binds the capture operation ID, native invocation, phase and opaque
+target identity; `[unexpected-ui]` flags the safe kind/category, known-title code,
+hashed title and exact screenshot basename, or explicitly `screenshotMissing`.
+Capture/storage/timeout failure is secondary and cannot replace the original
+failure or permit a success fallback. The original failed run's created/reloaded
+images do not establish the unknown prompt's contents; only a newly captured
+detection-time image can answer that question.
+
+Windows population receipts retain both native passes' timing and the original
+collector budget/remaining time. `windowsFirstProbe` and `windowsProbe` report
+numeric native stages: 0=no script marker, 1=PowerShell script entered,
+2=unfiltered CIM query returned, 3=row projection complete, 4=JSON serialized,
+5=stdout write complete. Startup includes command parsing; total RPC duration
+also includes response/exit overhead. An incomplete stage gives a last observed
+boundary, not proof of a stalled subsystem. `collectionStageCode` is 1=first RPC,
+2=parse, 3=hash, 4=second RPC, 5=parse, 6=rehash, 7=lineage, 8=complete.
+Only numeric markers from the existing RPC are retained on timeout; no new
+process scan, filtered population, timeout extension or ownership credit exists.
+Local controls cover synthetic PowerShell rows without scanning the shared
+machine. These observations require source-bound native proof before attribution;
+targeted complete proof must be followed by all 23 lanes on the same SHA before
+another independent behavior fix.
+
 ```powershell
 # Repository root; these commands never start Code, func, CDP or cloud resources.
 node node_modules/typescript/bin/tsc -p apps/vs-code-designer/tsconfig.e2e.json

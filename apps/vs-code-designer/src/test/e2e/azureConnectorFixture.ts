@@ -10,7 +10,15 @@ import {
   type ApprovedAzureFixture,
 } from './approvedAzureFixture';
 import { selectWorkbenchPromptOption } from './workbenchPromptSelection';
-import { readWorkbenchPrompts, type DetectedWorkbenchPrompt } from './workbenchPrompts';
+import {
+  flagUnexpectedWorkbenchPrompt,
+  knownPromptTitles,
+  subscriptionTitles,
+  readWorkbenchPrompts,
+  type DetectedWorkbenchPrompt,
+} from './workbenchPrompts';
+import { operationDiagnostics } from './operationDiagnostics';
+import type { DiagnosticProducer } from '../../../scripts/e2e-cli-diagnostics';
 
 export interface ApprovedAzureConnectorFixture extends ApprovedAzureFixture {
   // Template location is only a setup hint until the approved existing RG's
@@ -181,7 +189,51 @@ export function assertAzureConnectorAccountTreePrerequisite(api: unknown, minima
   );
 }
 
-export function describeUnsupportedAzurePrompt(prompt: DetectedWorkbenchPrompt): string {
+export function azurePromptObservation(
+  prompt: DetectedWorkbenchPrompt,
+  fixture?: ApprovedAzureConnectorFixture,
+  subscriptionName?: string
+) {
+  const normalize = (value: string) => value.replace(/\s+/g, ' ').trim();
+  const identity = (value: string) => ({
+    sha256: createHash('sha256').update(normalize(value)).digest('hex'),
+    // One-based index into knownPromptTitles above; zero is unknown.
+    knownTitleCode: knownPromptTitles.indexOf(normalize(value)) + 1,
+  });
+  const labels = prompt.rows.map((row) => row.label ?? row.text);
+  const sources = prompt.promptSources;
+  return {
+    title: identity(prompt.title),
+    supported: prompt.kind === 'quickInput' && (subscriptionTitles.includes(prompt.title) || prompt.title === knownPromptTitles[6]),
+    interactive: prompt.interactive,
+    count: labels.length,
+    hitTestableCount: prompt.rows.filter((row) => row.point).length,
+    subscriptionNameKnown: subscriptionName !== undefined,
+    candidates: labels.slice(0, 12).map((label, index) => ({
+      ...identity(label),
+      hitTestable: Boolean(prompt.rows[index].point),
+      // These comparisons are observations, never a selection rule.
+      resourceGroupMatch: fixture !== undefined && label === fixture.resourceGroupName,
+      subscriptionIdMatch: fixture !== undefined && label === fixture.subscriptionId,
+      subscriptionNameMatch: subscriptionName !== undefined && label === subscriptionName,
+      locationMatch: fixture !== undefined && label === fixture.location,
+    })),
+    capped: labels.length > 12,
+    ...(sources
+      ? {
+          promptSources: {
+            ...sources,
+            placeholder: identity(sources.placeholder),
+            widgetTitle: identity(sources.widgetTitle),
+            inputLabel: identity(sources.inputLabel),
+            titleSourcesAgree: normalize(sources.placeholder) === normalize(sources.widgetTitle),
+          },
+        }
+      : {}),
+  };
+}
+
+export function describeUnsupportedAzurePrompt(prompt: DetectedWorkbenchPrompt, fixture?: ApprovedAzureConnectorFixture): string {
   const knownActions = new Set([
     'Cancel',
     'Create new resource group',
@@ -214,10 +266,11 @@ export function describeUnsupportedAzurePrompt(prompt: DetectedWorkbenchPrompt):
             ? 'subscription'
             : 'unknown',
     interactive: prompt.interactive,
-    rows: prompt.rows.map((row) => ({
+    rows: prompt.rows.slice(0, 12).map((row) => ({
       label: safeLabel(row.label ?? row.text),
       hitTestable: Boolean(row.point),
     })),
+    observation: azurePromptObservation(prompt, fixture),
   });
 }
 
@@ -227,21 +280,63 @@ export async function selectApprovedAzureConnectorFixturePrompt(
   fixture: ApprovedAzureConnectorFixture,
   deadline: number,
   getSubscriptionName: () => Promise<string>,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  trace: DiagnosticProducer = operationDiagnostics.fork('azure-fixture-prompts', { maxEvents: 64, maxBytes: 65536 })
 ): Promise<boolean> {
-  const subscriptionTitles = [
-    'Select subscription',
-    'Select subscription.',
-    'Select a subscription',
-    'Select a subscription.',
-    'Select an Azure subscription',
-    'Select an Azure subscription.',
-  ];
+  let lastPrompt = prompt;
+  let captureAttempted = false;
+  let state = azurePromptObservation(prompt, fixture);
+  const operation = trace.start('azure-fixture-prompt', state);
+  const observe = (current: DetectedWorkbenchPrompt, subscriptionName?: string) => {
+    lastPrompt = current;
+    state = azurePromptObservation(current, fixture, subscriptionName);
+    trace.emit('azure-fixture-prompt-observation', 'sample', { state });
+  };
+  const captureUnexpected = async (current: DetectedWorkbenchPrompt | undefined, error: unknown) => {
+    captureAttempted = true;
+    await flagUnexpectedWorkbenchPrompt(cdp, current, error, trace.fork('unexpected-ui', { maxEvents: 16, maxBytes: 32768 }));
+  };
+  try {
+    const result = await selectApprovedAzureConnectorFixturePromptCore(
+      cdp,
+      prompt,
+      fixture,
+      deadline,
+      getSubscriptionName,
+      signal,
+      observe,
+      captureUnexpected
+    );
+    operation.end(state);
+    return result;
+  } catch (error) {
+    if (!captureAttempted) {
+      await captureUnexpected(lastPrompt, error);
+    }
+    operation.fail(error, state);
+    // Reserved summary capacity keeps the first gate even after noisy UI polls.
+    trace.emit('azure-fixture-prompt-terminal', 'summary', { state });
+    throw error;
+  }
+}
+
+async function selectApprovedAzureConnectorFixturePromptCore(
+  cdp: CdpEvaluator,
+  prompt: DetectedWorkbenchPrompt,
+  fixture: ApprovedAzureConnectorFixture,
+  deadline: number,
+  getSubscriptionName: () => Promise<string>,
+  signal: AbortSignal | undefined,
+  observe: (prompt: DetectedWorkbenchPrompt, subscriptionName?: string) => void,
+  captureUnexpected: (prompt: DetectedWorkbenchPrompt | undefined, error: unknown) => Promise<void>
+): Promise<boolean> {
   const supportedTitle = subscriptionTitles.includes(prompt.title) || prompt.title === 'Select a resource group for new resources.';
   if (prompt.kind !== 'quickInput' || !supportedTitle) {
-    throw new Error(
-      `Azure setup reached an unsupported prompt; existing approved WIF sign-in and target fixture are required: ${describeUnsupportedAzurePrompt(prompt)}`
+    const error = new Error(
+      `Azure setup reached an unsupported prompt; existing approved WIF sign-in and target fixture are required: ${describeUnsupportedAzurePrompt(prompt, fixture)}`
     );
+    await captureUnexpected(prompt, error);
+    throw error;
   }
   let expectedName: string;
   if (subscriptionTitles.includes(prompt.title)) {
@@ -272,8 +367,14 @@ export async function selectApprovedAzureConnectorFixturePrompt(
   let filtered = false;
   let selection: ReturnType<typeof selectWorkbenchPromptOption>;
   while (true) {
+    observe(current, subscriptionTitles.includes(prompt.title) ? expectedName : undefined);
     const matches = current.rows.filter((row) => (row.label ?? row.text) === expectedName);
-    assert.ok(matches.length <= 1, 'Approved existing Azure target is ambiguous; do not select another target or create a resource');
+    try {
+      assert.ok(matches.length <= 1, 'Approved existing Azure target is ambiguous; do not select another target or create a resource');
+    } catch (error) {
+      await captureUnexpected(current, error);
+      throw error;
+    }
     selection = selectWorkbenchPromptOption(
       [{ ...sharedRule, matchText: prompt.title, optionText: expectedName, exactRowLabel: true }],
       [current]
@@ -290,12 +391,20 @@ export async function selectApprovedAzureConnectorFixturePrompt(
     await new Promise((resolve) => setTimeout(resolve, Math.min(100, remaining())));
     const prompts = (await readWorkbenchPrompts(cdp, Math.min(3000, remaining()))).filter((value) => value.kind !== 'notification');
     signal?.throwIfAborted();
-    assert.strictEqual(prompts.length, 1, 'Approved Azure target prompt disappeared or became ambiguous before selection');
+    try {
+      assert.strictEqual(prompts.length, 1, 'Approved Azure target prompt disappeared or became ambiguous before selection');
+    } catch (error) {
+      await captureUnexpected(prompts[0], error);
+      throw error;
+    }
     current = prompts[0];
+    observe(current, subscriptionTitles.includes(prompt.title) ? expectedName : undefined);
     if (current.kind !== 'quickInput' || current.title !== prompt.title) {
-      throw new Error(
-        `Azure setup changed to an unsupported prompt before the approved target was actionable: ${describeUnsupportedAzurePrompt(current)}`
+      const error = new Error(
+        `Azure setup changed to an unsupported prompt before the approved target was actionable: ${describeUnsupportedAzurePrompt(current, fixture)}`
       );
+      await captureUnexpected(current, error);
+      throw error;
     }
   }
 
@@ -338,6 +447,9 @@ export async function selectApprovedAzureConnectorFixturePrompt(
   while (true) {
     const next = (await readWorkbenchPrompts(cdp, Math.min(3000, remaining()))).filter((value) => value.kind !== 'notification');
     signal?.throwIfAborted();
+    if (next.length) {
+      observe(next[0], subscriptionTitles.includes(prompt.title) ? expectedName : undefined);
+    }
     if (!next.length || next.every((value) => value.title !== prompt.title)) {
       return true;
     }

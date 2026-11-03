@@ -12,6 +12,7 @@ const remainingWorkbenchBudget = (deadline: number): number => {
 
 export function boundedCdp(cdp: CdpEvaluator, deadline: number): CdpEvaluator {
   return {
+    diagnosticCdp: cdp.diagnosticCdp ?? cdp,
     evaluate: (context, expression) => cdp.evaluate(context, expression, { timeoutMs: Math.min(5000, remainingWorkbenchBudget(deadline)) }),
     send: (method, params) => cdp.send(method, params, { timeoutMs: Math.min(5000, remainingWorkbenchBudget(deadline)) }),
   };

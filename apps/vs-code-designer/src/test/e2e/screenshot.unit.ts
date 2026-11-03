@@ -130,6 +130,29 @@ async function testAcceptedCaptureUpdatesOrderedEvidenceManifest(
     assert.ok(fs.existsSync(path.join(evidenceDir, checkpoint?.evidence?.screenshot?.path ?? '')));
     assert.ok(fs.existsSync(path.join(evidenceDir, checkpoint?.evidence?.sidecar?.path ?? '')));
 
+    const unexpected = new FakeCaptureCdp([snapshot({ revision: 0 }), snapshot({ revision: 0 })]);
+    const diagnosticContext = {
+      operationId: 'unit-unexpected-ui:1',
+      nativeInvocation: 'unit-native-invocation',
+      phase: 'regular-workbench-debug-root-1',
+    };
+    const diagnosticFile = await captureCdpScreenshot(unexpected, 'unexpected-ui-unit-owned', {
+      classification: 'diagnostic',
+      expectation: { kind: 'diagnostic', label: 'unexpected-ui-unit-owned', reason: 'unexpected-workbench-prompt' },
+      diagnosticContext,
+      timeoutMs: 5000,
+    });
+    assert.ok(diagnosticFile);
+    const diagnosticMetadata = JSON.parse(fs.readFileSync(diagnosticFile.replace(/\.png$/, '.json'), 'utf8'));
+    assert.deepStrictEqual(diagnosticMetadata.diagnosticContext, diagnosticContext);
+    const withDiagnostic = readEvidenceManifest(path.join(evidenceDir, manifestFileName));
+    assert.ok(withDiagnostic.attachments.some((attachment) => attachment.id === 'unexpected-ui-unit-owned'));
+    assert.deepStrictEqual(
+      withDiagnostic.groups,
+      manifest.groups,
+      'Unexpected UI image must never add/change ordered acceptance checkpoints'
+    );
+
     process.env.LA_E2E_CLI_ORDERED_EVIDENCE_ENABLED = '0';
     const helperCdp = new FakeCaptureCdp([snapshot({ revision: 0 }), snapshot({ revision: 0 }), snapshot({ revision: 0 })]);
     await captureCdpScreenshot(helperCdp, 'helper-host-setup', {

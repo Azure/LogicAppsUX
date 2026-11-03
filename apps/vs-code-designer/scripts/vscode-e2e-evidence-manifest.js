@@ -383,6 +383,28 @@ function publicCaptureSummary(metadata) {
       .slice(0, 8)
       .map((anchor) => ({ name: anchor.name, bounds: numericFields(anchor.bounds, ['left', 'top', 'width', 'height']) }));
   const summary = {};
+  if (metadata?.classification === 'diagnostic' && metadata.diagnosticContext) {
+    const identity = (value) => (typeof value === 'string' && /^[a-zA-Z0-9_.:-]{1,128}$/.test(value) ? value : null);
+    summary.diagnosticContext = {
+      operationId: identity(metadata.diagnosticContext.operationId),
+      nativeInvocation: identity(metadata.diagnosticContext.nativeInvocation),
+      phase: identity(metadata.diagnosticContext.phase),
+    };
+    if (
+      metadata.target?.owner === 'workbench' &&
+      /^id-[0-9a-f]{8}$/.test(metadata.target.opaqueTargetId) &&
+      /^id-[0-9a-f]{8}$/.test(metadata.target.opaqueFrameId) &&
+      Number.isSafeInteger(metadata.target.generation) &&
+      metadata.target.generation >= 0
+    ) {
+      summary.target = {
+        owner: 'workbench',
+        opaqueTargetId: metadata.target.opaqueTargetId,
+        opaqueFrameId: metadata.target.opaqueFrameId,
+        generation: metadata.target.generation,
+      };
+    }
+  }
   if (metadata?.timing) {
     summary.timing = numericFields(metadata.timing, ['timeoutMs', 'elapsedMs', 'samples', 'captureAttempts']);
   }

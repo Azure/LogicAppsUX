@@ -432,6 +432,46 @@ test('Stateless click-time diagnostics are staged as producer attachments withou
   }
 });
 
+test('unexpected UI diagnostic capture preserves safe correlation through actual artifact staging', () => {
+  withFixture(({ root, evidenceDir, manifestPath, artifactRoot }) => {
+    initializeSuiteEvidenceManifest({
+      suiteId: 'workspaceMultiRoot',
+      invocation: 'unexpected-ui-staging',
+      platform: 'linux',
+      evidenceDir,
+      expectedPhaseIds: SUITE_REGISTRY.workspaceMultiRoot.expectedPhases,
+    });
+    const before = readEvidenceManifest(manifestPath).groups;
+    const diagnosticContext = {
+      operationId: 'unexpected-ui:1',
+      nativeInvocation: 'unit-native-invocation',
+      phase: 'regular-workbench-debug-root-1',
+    };
+    const target = { owner: 'workbench', opaqueTargetId: 'id-12345678', opaqueFrameId: 'id-87654321', generation: 7 };
+    writeCapture({
+      root,
+      manifestPath,
+      checkpoint: 'unexpected-ui-staging',
+      classification: 'diagnostic',
+      verdict: 'diagnostic',
+      privateFields: { diagnosticContext, target, promptText: 'private-account@example.test' },
+    });
+    assert.deepEqual(readEvidenceManifest(manifestPath).groups, before);
+    const outcomeFile = writeStructuredInputs(artifactRoot, 'workspaceMultiRoot', 'failure');
+    const staged = stageVscodeE2eEvidence({ manifestPath, artifactRoot, outcomeFile });
+    assert.equal(staged.validation.valid, true);
+    const manifest = readEvidenceManifest(path.join(artifactRoot, manifestFileName));
+    const attachment = manifest.attachments.find((item) => item.id === 'unexpected-ui-staging');
+    assert.ok(attachment.evidence.screenshot);
+    assert.deepEqual(fs.readFileSync(path.join(artifactRoot, attachment.evidence.screenshot.path)), pngBytes);
+    const sidecarText = fs.readFileSync(path.join(artifactRoot, attachment.evidence.sidecar.path), 'utf8');
+    const sidecar = JSON.parse(sidecarText);
+    assert.deepEqual(sidecar.diagnosticContext, diagnosticContext);
+    assert.deepEqual(sidecar.target, target);
+    assert.doesNotMatch(sidecarText, /private-account/);
+  });
+});
+
 test('staging rejects tampered content and retains a bounded validation result', () => {
   withFixture(({ root, evidenceDir, manifestPath, artifactRoot }) => {
     initializeSuiteEvidenceManifest({

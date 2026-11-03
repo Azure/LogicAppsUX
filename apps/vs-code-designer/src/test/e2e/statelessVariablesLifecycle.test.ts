@@ -672,6 +672,7 @@ async function start(
   });
   let subscriptionName: Promise<string> | undefined;
   const nativeWorkbench = {
+    diagnosticCdp: workbench,
     evaluate: workbench.evaluate.bind(workbench),
     send: (method: string, params?: Record<string, unknown>) => workbench.send(method, params, { timeoutMs: remainingMs(deadline, 3000) }),
   };

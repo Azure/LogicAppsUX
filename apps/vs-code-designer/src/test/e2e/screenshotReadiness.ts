@@ -107,6 +107,7 @@ export interface ScreenshotReadinessMetadata {
   checkpoint: string;
   phase: string;
   classification: ScreenshotClassification;
+  diagnosticContext?: { operationId: string; nativeInvocation: string | null; phase: string | null };
   verdict: 'accepted' | 'diagnostic' | 'disabled' | 'failed';
   target: {
     owner: 'workbench';
@@ -2207,13 +2208,24 @@ export function buildScreenshotMetadata(input: {
   captureAttempts: number;
   reasonCodes?: string[];
   events?: ScreenshotCaptureEvent[];
+  diagnosticContext?: ScreenshotReadinessMetadata['diagnosticContext'];
 }): ScreenshotReadinessMetadata {
   const lastSample = input.samples.at(-1);
+  const diagnosticIdentity = (value: string | null) => (value !== null && /^[a-zA-Z0-9_.:-]{1,128}$/.test(value) ? value : null);
   return {
     schemaVersion: 1,
     checkpoint: sanitizeMetadataValue(input.checkpoint),
     phase: sanitizeMetadataValue(input.phase),
     classification: input.classification,
+    ...(input.classification === 'diagnostic' && input.diagnosticContext
+      ? {
+          diagnosticContext: {
+            operationId: diagnosticIdentity(input.diagnosticContext.operationId) ?? 'redacted',
+            nativeInvocation: diagnosticIdentity(input.diagnosticContext.nativeInvocation),
+            phase: diagnosticIdentity(input.diagnosticContext.phase),
+          },
+        }
+      : {}),
     verdict: input.verdict,
     target: {
       owner: 'workbench',
