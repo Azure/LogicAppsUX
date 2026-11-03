@@ -177,6 +177,12 @@ consumers. Never label those controls as native approval.
 
 ## Native consumer requirements — parent-owned
 
+The Windows retained native owner defers only lifecycle request reads rejected
+with Win32 sharing/lock errors (32/33), flags the deferral, and retries on its
+existing poll. The original request deadline remains in force. Other IO errors
+and invalid request contents still fail; a pending request never counts as
+ownership or cleanup proof.
+
 Design-time startup and original-spawn receipts must hash the same canonical
 physical project path. On Windows, a URI-derived lowercase drive letter and a
 native filesystem path can identify the same directory but produce different

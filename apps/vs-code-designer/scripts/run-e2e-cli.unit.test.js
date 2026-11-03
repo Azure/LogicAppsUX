@@ -2550,6 +2550,40 @@ function testWindowsContainmentHostRetainsProcessDiagnostics() {
   assert.ok(source.includes('JobObjectBasicProcessIdList'));
   assert.ok(source.includes('QueryProcessCommandLine'));
   assert.ok(source.includes('\\"activeContainedProcesses\\":'));
+  assert.ok(source.includes('if (code != 32 && code != 33) { throw; }'));
+  if (process.platform !== 'win32') {
+    return;
+  }
+  const request = path.join(tempRoot, 'locked-lifecycle.request');
+  fs.writeFileSync(request, '123\nport:7071');
+  const quote = (value) => `'${value.replaceAll("'", "''")}'`;
+  const script = `
+$ErrorActionPreference = 'Stop'
+Add-Type -Path ${quote(path.join(__dirname, 'e2e-cli-containment-host.cs'))}
+$method = [E2eCliContainmentHost].GetMethod('TryReadLifecycleRequest', [Reflection.BindingFlags]'NonPublic,Static')
+$request = ${quote(request)}
+$lock = [IO.File]::Open($request, [IO.FileMode]::Open, [IO.FileAccess]::ReadWrite, [IO.FileShare]::None)
+try {
+  $arguments = [object[]]@($request, $null)
+  if ($method.Invoke($null, $arguments) -ne $false -or $null -ne $arguments[1]) { throw 'Locked request must remain pending' }
+} finally { $lock.Dispose() }
+$arguments = [object[]]@($request, $null)
+if ($method.Invoke($null, $arguments) -ne $true) { throw 'Released request was not readable' }
+if (($arguments[1] -join ',') -ne '123,port:7071') { throw 'Request contents changed' }
+$arguments = [object[]]@($request + '.missing', $null)
+$missingFailed = $false
+try { $null = $method.Invoke($null, $arguments) }
+catch { $missingFailed = $true }
+if (!$missingFailed) { throw 'Non-sharing IO failure must not be deferred' }
+Write-Output 'native-sharing-controls-passed'
+`;
+  const result = spawnSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command', script], {
+    encoding: 'utf8',
+    timeout: 30000,
+  });
+  assert.strictEqual(result.status, 0, result.stderr || result.error?.message);
+  assert.match(result.stdout, /native-sharing-controls-passed/);
+  assert.match(result.stderr, /native read deferred; Win32 sharing error 32/);
 }
 
 function testContainmentReceiptMustMatchHostOutcome() {

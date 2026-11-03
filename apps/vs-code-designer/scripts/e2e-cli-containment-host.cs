@@ -624,6 +624,23 @@ public static class E2eCliContainmentHost
         finally { Marshal.FreeHGlobal(table); }
     }
 
+    private static bool TryReadLifecycleRequest(string request, out string[] lines)
+    {
+        try
+        {
+            lines = File.ReadAllLines(request);
+            return true;
+        }
+        catch (IOException error)
+        {
+            var code = Marshal.GetHRForException(error) & 0xffff;
+            if (code != 32 && code != 33) { throw; }
+            Console.Error.WriteLine("[lifecycle-request] native read deferred; Win32 sharing error " + code);
+            lines = null;
+            return false;
+        }
+    }
+
     // Test-only read-only observer. Admission remains the actual retained Job,
     // never a machine-wide process query or a name-based process operation.
     private static void ObserveLifecycleRequests(IntPtr job, string directory)
@@ -634,9 +651,13 @@ public static class E2eCliContainmentHost
         }
         foreach (var request in Directory.GetFiles(directory, "*.request"))
         {
+            string[] lines;
+            // Retry only a locked request on the next existing poll; the caller's
+            // original deadline and all ownership validation remain unchanged.
+            if (!TryReadLifecycleRequest(request, out lines)) { continue; }
             var ids = new List<uint>();
             var ports = new List<uint>();
-            foreach (var line in File.ReadAllLines(request))
+            foreach (var line in lines)
             {
                 if (line.StartsWith("port:", StringComparison.Ordinal))
                 {
