@@ -1,4 +1,4 @@
-import { Deserialize } from '../BJSDeserializer';
+import { Deserialize, getAllActionNames } from '../BJSDeserializer';
 import { scopedWorkflowDefinitionInput, expectedScopedWorkflowDefinitionOutput } from './scopedWorkflowDefinition';
 import { simpleWorkflowDefinitionInput, expectedSimpleWorkflowDefinitionOutput } from './simpleWorkflowDefinition';
 import { agentMcpWorkflowDefinitionInput, expectedAgentMcpWorkflowDefinitionOutput } from './agentMcpWorkflowDefinition';
@@ -10,6 +10,44 @@ import {
 } from './switchWorkflowDefinition';
 
 describe('core/parsers/BJSWorkflow/BJSDeserializer', () => {
+  it('can enumerate real MCP actions without virtual cases while preserving legacy enumeration', () => {
+    const actions = {
+      Container: {
+        type: 'Scope',
+        actions: {
+          Switch: {
+            type: 'Switch',
+            expression: 'one',
+            cases: { virtual_case: { case: 'one', actions: agentMcpWorkflowDefinitionInput.actions } },
+            default: { actions: { Default_child: { type: 'Compose', inputs: 1, runAfter: {} } } },
+            runAfter: {},
+          },
+        },
+        runAfter: {},
+      },
+    };
+    const before = JSON.stringify(actions);
+    expect(getAllActionNames(actions)).toEqual(['Container', 'Switch', 'Default_child', 'WorkflowAgent', 'ResponseAction']);
+    expect(getAllActionNames(actions, [], false, true)).toEqual([
+      'Container',
+      'Switch',
+      'Default_child',
+      'WorkflowAgent',
+      'McpFileServer',
+      'ResponseAction',
+    ]);
+    expect(getAllActionNames(actions, [], true)).toEqual([
+      'Container',
+      'Switch',
+      'Default_child',
+      'virtual_case',
+      'WorkflowAgent',
+      'McpFileServer',
+      'ResponseAction',
+    ]);
+    expect(JSON.stringify(actions)).toBe(before);
+  });
+
   it('should deserialize a basic workflow with no scoped nodes', () => {
     const test = Deserialize(simpleWorkflowDefinitionInput, null);
     expect(test).toEqual(expectedSimpleWorkflowDefinitionOutput);

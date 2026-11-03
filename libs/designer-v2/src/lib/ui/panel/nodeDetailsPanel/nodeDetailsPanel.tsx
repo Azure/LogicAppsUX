@@ -18,6 +18,7 @@ import { isOperationNameValid, isTriggerNode } from '../../../core/utils/graph';
 import { CommentMenuItem } from '../../menuItems/commentMenuItem';
 import { DeleteMenuItem } from '../../menuItems/deleteMenuItem';
 import { PinMenuItem } from '../../menuItems/pinMenuItem';
+import { WorkflowExtractionAction } from '../multiSelectPanel/workflowExtraction';
 import { getChildRunNameFromOutputs, getChildWorkflowIdFromInputs } from './childWorkflowHelpers';
 import { useRawInputsOutputs } from './useRawInputsOutputs';
 import { usePanelNodeData } from './usePanelNodeData';
@@ -131,6 +132,9 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
           operationType={operationInfo?.type}
         />
       );
+      if (nodeId === selectedNode) {
+        headerMenuItems.push(<WorkflowExtractionAction key="extract" variant="menuItem" />);
+      }
       return headerMenuItems;
     },
     [

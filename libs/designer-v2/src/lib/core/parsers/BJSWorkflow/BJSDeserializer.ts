@@ -221,7 +221,7 @@ export const buildGraphFromActions = (
             }
           }
 
-          const outputChannelKeys = Object.keys(action.channels.out);
+          const outputChannelKeys = Object.keys(action.channels.out ?? {});
           for (const key of outputChannelKeys) {
             const channelAction = action.channels.out?.[key];
             if (channelAction && channelAction?.action) {
@@ -546,7 +546,7 @@ export const processScopeActions = (
           }
         }
 
-        const outputChannelKeys = Object.keys(action.channels.out);
+        const outputChannelKeys = Object.keys(action.channels.out ?? {});
         for (const key of outputChannelKeys) {
           const channelAction: any = action.channels.out?.[key];
           if (channelAction && channelAction?.action) {
@@ -688,7 +688,12 @@ const addActionsInstanceMetaData = (
   return updatedNodesData;
 };
 
-export const getAllActionNames = (actions: LogicAppsV2.Actions | undefined, names: string[] = [], includeCase?: boolean): string[] => {
+export const getAllActionNames = (
+  actions: LogicAppsV2.Actions | undefined,
+  names: string[] = [],
+  includeCase?: boolean,
+  includeMcpTools = false
+): string[] => {
   if (isNullOrUndefined(actions)) {
     return [];
   }
@@ -697,16 +702,16 @@ export const getAllActionNames = (actions: LogicAppsV2.Actions | undefined, name
     names.push(actionName);
     if (isScopeAction(action)) {
       if (action.actions) {
-        names.push(...getAllActionNames(action.actions, [], includeCase));
+        names.push(...getAllActionNames(action.actions, [], includeCase, includeMcpTools));
       }
       if (isIfAction(action)) {
         if (action.else?.actions) {
-          names.push(...getAllActionNames(action.else.actions, [], includeCase));
+          names.push(...getAllActionNames(action.else.actions, [], includeCase, includeMcpTools));
         }
       }
       if (isSwitchAction(action)) {
         if (action.default?.actions) {
-          names.push(...getAllActionNames(action.default.actions, [], includeCase));
+          names.push(...getAllActionNames(action.default.actions, [], includeCase, includeMcpTools));
         }
         if (action.cases) {
           for (const [caseName, caseAction] of Object.entries(action.cases)) {
@@ -714,7 +719,7 @@ export const getAllActionNames = (actions: LogicAppsV2.Actions | undefined, name
               names.push(caseName);
             }
             if (caseAction.actions) {
-              names.push(...getAllActionNames(caseAction.actions, [], includeCase));
+              names.push(...getAllActionNames(caseAction.actions, [], includeCase, includeMcpTools));
             }
           }
         }
@@ -722,12 +727,12 @@ export const getAllActionNames = (actions: LogicAppsV2.Actions | undefined, name
       if (isAgentAction(action)) {
         if (action.tools) {
           for (const [toolName, toolAction] of Object.entries(action.tools)) {
-            if (includeCase) {
+            if (includeCase || (includeMcpTools && isMcpClient(toolAction))) {
               names.push(toolName);
             }
             if (isAgentCondition(toolAction)) {
               if (toolAction.actions) {
-                names.push(...getAllActionNames(toolAction.actions, [], includeCase));
+                names.push(...getAllActionNames(toolAction.actions, [], includeCase, includeMcpTools));
               }
             }
           }

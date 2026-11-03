@@ -35,6 +35,12 @@ export const useWorkflowPreviewStyles = makeStyles({
     ...workflowCardStyles.root,
     pointerEvents: 'auto',
   },
+  keyboardNavigation: {
+    '&:focus-visible': {
+      outline: `2px solid ${tokens.colorStrokeFocus2}`,
+      outlineOffset: '-2px',
+    },
+  },
   iconTile: {
     ...workflowCardStyles.icon,
     display: 'flex',

@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { InitLoggerService } from '@microsoft/logic-apps-shared';
+import { InitLoggerService, InitWorkflowService } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import type { Workflow } from '../../../../common/models/workflow';
 import type {
@@ -29,6 +29,7 @@ import { UNDO_REDO_SLICE_NAMES } from '../../../state/undoRedo/undoRedoTypes';
 import { initWorkflowSpec, setIsWorkflowDirty, setWorkflowKind } from '../../../state/workflow/workflowSlice';
 import { createDesignerStore, type RootState } from '../../../store';
 import { getRootStateFromCompressedSlices } from '../../../utils/undoredo';
+import { buildWorkflowExtractionPlan } from '../../../utils/workflowExtraction';
 import { getConnectionsApiAndMapping } from '../connections';
 import * as connectionActions from '../connections';
 import { updateWorkflowParameters } from '../initialize';
@@ -46,6 +47,28 @@ import {
 
 // Keep deserialization, Redux reducers/middleware and history compression real.
 // Only manifest/network work and the final serialization boundary are substituted.
+const serializeGraph = serializeWorkflow;
+
+async function serializeRetainedDefinitions(state: RootState) {
+  InitWorkflowService({} as Parameters<typeof InitWorkflowService>[0]);
+  // Use the serializer's retained-definition path so this graph round-trip needs
+  // no remote operation manifests or parameter-control initialization.
+  return serializeGraph(
+    {
+      ...state,
+      operations: {
+        ...state.operations,
+        errors: Object.fromEntries(
+          Object.keys(state.workflow.operations).map((id) => [
+            id,
+            { [ErrorLevel.Critical]: { level: ErrorLevel.Critical, message: 'Retain the original operation definition' } },
+          ])
+        ),
+      },
+    },
+    { skipValidation: true }
+  );
+}
 
 const original: Workflow = {
   kind: 'Stateful',
@@ -116,22 +139,22 @@ function initializeMetadata(workflow: ReturnType<typeof Deserialize>, dispatch: 
   );
 }
 
-function createLiveStore() {
+function createLiveStore(workflow = original, selectedIds = ['A', 'B']) {
   const store = createDesignerStore();
-  const deserializedWorkflow = Deserialize(original.definition, null, true, original.kind);
+  const deserializedWorkflow = Deserialize(workflow.definition, null, true, workflow.kind);
   store.dispatch(initWorkflowSpec('BJS'));
   store.dispatch(setWorkflowKind('stateful'));
   store.dispatch(
-    initializeGraphState.fulfilled({ deserializedWorkflow, originalDefinition: original.definition }, 'initial', {
-      workflowDefinition: original,
+    initializeGraphState.fulfilled({ deserializedWorkflow, originalDefinition: workflow.definition }, 'initial', {
+      workflowDefinition: workflow,
       runInstance: null,
     })
   );
   initializeMetadata(deserializedWorkflow, store.dispatch);
   store.dispatch(updateDynamicDataLoadStatus(true));
-  store.dispatch(initializeConnectionReferences(original.connectionReferences));
-  updateWorkflowParameters(original.parameters ?? {}, store.dispatch);
-  store.dispatch(setNodeSelection(['A', 'B']));
+  store.dispatch(initializeConnectionReferences(workflow.connectionReferences));
+  updateWorkflowParameters(workflow.parameters ?? {}, store.dispatch);
+  store.dispatch(setNodeSelection(selectedIds));
   store.dispatch(setIsWorkflowDirty(true));
   return store;
 }
@@ -348,7 +371,9 @@ describe('workflow extraction transaction', () => {
       workflow.parameters,
       {},
       'stateful',
-      expect.any(Function)
+      expect.any(Function),
+      undefined,
+      true
     );
     expect(service.commit).not.toHaveBeenCalled();
   });
@@ -774,25 +799,119 @@ describe('workflow extraction transaction', () => {
   });
 
   it('moves selected containers once, excluding their selected descendants before resolving renames', () => {
-    const state = live.getState();
     const selection = ['Container', 'Nested_action', 'Nested_loop', 'Loop_action', 'B'];
+    live = createLiveStore(
+      {
+        ...original,
+        definition: {
+          ...original.definition,
+          actions: {
+            Container: {
+              type: 'Scope',
+              actions: {
+                Nested_action: { type: 'Compose', inputs: 'nested', runAfter: {} },
+                Nested_loop: {
+                  type: 'Foreach',
+                  foreach: '@createArray(1)',
+                  actions: { Loop_action: { type: 'Compose', inputs: '@item()', runAfter: {} } },
+                  runAfter: { Nested_action: ['Succeeded'] },
+                },
+              },
+              runAfter: {},
+            },
+            B: { type: 'Compose', inputs: 'after', runAfter: { Container: ['Succeeded'] } },
+          },
+        },
+      },
+      selection
+    );
+    const state = live.getState();
     const snapshot: RootState = {
       ...state,
-      panel: { ...state.panel, operationContent: { ...state.panel.operationContent, selectedNodeIds: selection } },
       workflow: {
         ...state.workflow,
-        nodesMetadata: {
-          ...state.workflow.nodesMetadata,
-          Container: { graphId: 'root' },
-          Nested_action: { graphId: 'Container' },
-          Nested_loop: { graphId: 'Container' },
-          Loop_action: { graphId: 'Nested_loop' },
-        },
         idReplacements: { Container: 'Renamed_container', Nested_action: 'Renamed_nested' },
       },
     };
 
     expect(getExtractionSelectedIds(snapshot)).toEqual(['Renamed_container', 'B']);
     expect(snapshot.panel.operationContent.selectedNodeIds).toEqual(selection);
+    expect(
+      getExtractionSelectedIds({
+        ...snapshot,
+        panel: {
+          ...snapshot.panel,
+          operationContent: { ...snapshot.panel.operationContent, selectedNodeIds: selection.map((id) => id.toUpperCase()) },
+        },
+      })
+    ).toEqual(['Renamed_container', 'B']);
   });
+
+  it.each([false, true])(
+    'commits a complete Condition once and restores all branch descendants on Undo/Redo (with sibling: %s)',
+    async (sibling) => {
+      const workflow: Workflow = {
+        ...original,
+        definition: {
+          ...original.definition,
+          actions: {
+            Condition: {
+              type: 'If',
+              expression: '@true',
+              actions: {
+                Nested: { type: 'Scope', actions: { Then: { type: 'Compose', inputs: 'then', runAfter: {} } }, runAfter: {} },
+              },
+              else: { actions: { Otherwise: { type: 'Compose', inputs: 'else', runAfter: {} } } },
+              runAfter: {},
+            },
+            Following: { type: 'Compose', inputs: 'following', runAfter: { Condition: ['Succeeded'] } },
+          },
+        },
+      };
+      const selectedIds = ['Condition', 'Nested', 'Then', 'Otherwise', ...(sibling ? ['Following'] : [])];
+      live = createLiveStore(workflow, selectedIds);
+      const before = live.getState();
+      expect(getExtractionSelectedIds(before)).toEqual(['Condition', ...(sibling ? ['Following'] : [])]);
+      const plan = buildWorkflowExtractionPlan(workflow, getExtractionSelectedIds(before), 'child', (_name, body, runAfter) => ({
+        type: 'Workflow',
+        inputs: { host: { workflow: { id: 'child' } }, body },
+        runAfter,
+      }));
+      request = { ...request, plan, sourceFingerprint: workflowExtractionFingerprint(await serializeWorkflow(before)) };
+      const persist = deferred<WorkflowExtractionResult>();
+      vi.mocked(service.commit).mockReturnValue(persist.promise);
+      const pending = commitWorkflowExtraction(live, service, request, stages);
+      await vi.waitFor(() => expect(service.commit).toHaveBeenCalledOnce());
+      expectAuthoringUnchanged(live.getState(), before);
+      persist.resolve(completed);
+      await pending;
+      const after = live.getState();
+      expect(after.workflow.operations.Condition).toBeUndefined();
+      for (const id of ['Nested', 'Then', 'Otherwise']) {
+        expect(after.workflow.operations[id]).toBeUndefined();
+      }
+      expect(after.workflow.operations[plan.invocationId]).toBeDefined();
+      expect(Object.keys(after.workflow.operations).filter((id) => id === plan.invocationId)).toHaveLength(1);
+      expect(after.panel.operationContent.selectedNodeIds).toEqual([plan.invocationId]);
+      expect((await serializeWorkflow(after)).definition).toEqual(plan.source.definition);
+      expect((await serializeRetainedDefinitions(after)).definition.actions).toEqual(plan.source.definition.actions);
+      expect(plan.child.definition.actions.Condition).toEqual(workflow.definition.actions.Condition);
+      const preparedChild = await prepareExtractedWorkflow(before, plan.child);
+      expect(Object.keys(preparedChild.workflow.operations).filter((id) => id === 'Then')).toHaveLength(1);
+      expect(preparedChild.workflow.operations.Otherwise).toBeDefined();
+      expect((await serializeWorkflow(preparedChild)).definition).toEqual(plan.child.definition);
+      expect((await serializeRetainedDefinitions(preparedChild)).definition.actions).toEqual(plan.child.definition.actions);
+      await live.dispatch(onUndoClick()).unwrap();
+      expect(live.getState().workflow.operations).toEqual(before.workflow.operations);
+      expect(live.getState().panel.operationContent.selectedNodeIds).toEqual(selectedIds);
+      expect((await serializeWorkflow(live.getState())).definition).toEqual(workflow.definition);
+      expect((await serializeRetainedDefinitions(live.getState())).definition.actions).toEqual(workflow.definition.actions);
+      expect(getExtractionSelectedIds(live.getState())).toEqual(plan.selectedIds);
+      await live.dispatch(onRedoClick()).unwrap();
+      expect((await serializeWorkflow(live.getState())).definition).toEqual(plan.source.definition);
+      expect((await serializeRetainedDefinitions(live.getState())).definition.actions).toEqual(plan.source.definition.actions);
+      expect(live.getState().workflow.operations.Condition).toBeUndefined();
+      expect(service.commit).toHaveBeenCalledOnce();
+    }
+  );
 });

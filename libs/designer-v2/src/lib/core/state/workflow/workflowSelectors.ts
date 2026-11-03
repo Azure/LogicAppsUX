@@ -16,6 +16,7 @@ import { collapseFlowTree } from './helper';
 import { useEdges } from '@xyflow/react';
 import type { OperationMetadataState } from '../operation/operationMetadataSlice';
 import { getOperationsState } from '../selectors/actionMetadataSelector';
+import { adjustHandoffGraph } from '../../graphlayout/handoffGraph';
 
 export const getWorkflowState = (state: RootState): WorkflowState => state.workflow;
 
@@ -234,53 +235,10 @@ const handoffToolAdjustment = (
   graph: WorkflowNode,
   rootState: { workflow: WorkflowState; operations: OperationMetadataState }
 ): WorkflowNode => {
-  const operations = rootState.workflow.operations;
-
-  // Iterate over graph, if any agent action tools only have a single handoff action, log it
-  const handoffToolIds: string[] = [];
-  for (const child of graph.children ?? []) {
-    if (equals(operations[child.id]?.type, commonConstants.NODE.TYPE.AGENT)) {
-      // Check if the agent action has tools with only a handoff action
-      const tools = child?.children?.filter((_child) => _child.subGraphLocation === 'tools');
-      for (const tool of tools ?? []) {
-        const toolActions = tool.children?.filter((child) => child.type === WORKFLOW_NODE_TYPES.OPERATION_NODE) ?? [];
-        // If the tool only has a single handoff action, add it to the list to be removed
-        if (toolActions?.length === 1 && equals(operations[toolActions[0].id]?.type, commonConstants.NODE.TYPE.HANDOFF)) {
-          handoffToolIds.push(tool.id);
-        }
-        // If the tool has a handoff action at all, add a handoff edge to the graph
-        const firstHandoffAction = toolActions.find((action) => equals(operations[action.id]?.type, commonConstants.NODE.TYPE.HANDOFF));
-        if (firstHandoffAction) {
-          const inputParameters = rootState.operations?.inputParameters?.[firstHandoffAction.id]?.parameterGroups?.default?.parameters;
-          const handoffTarget = inputParameters?.find((param) => equals(param.parameterName, 'name'))?.value?.[0]?.value ?? '';
-          graph = {
-            ...graph,
-            edges: [...(graph?.edges ?? []), createWorkflowEdge(child.id, handoffTarget, WORKFLOW_EDGE_TYPES.HANDOFF_EDGE)],
-          };
-        }
-      }
-    }
-  }
-
-  // Remove handoff tools from graph
-  if (handoffToolIds.length > 0) {
-    return filterOutNodeIdsRecursive(graph, handoffToolIds);
-  }
-
-  return graph;
-};
-
-const filterOutNodeIdsRecursive = (node: WorkflowNode, idsToFilter: string[]): WorkflowNode => {
-  const filteredEdges = node.edges?.filter((edge) => !idsToFilter.includes(edge.source) && !idsToFilter.includes(edge.target)) ?? [];
-  const filteredChildren = (node.children?.filter((child) => !idsToFilter.includes(child.id)) ?? []).map((child) =>
-    filterOutNodeIdsRecursive(child, idsToFilter)
-  );
-
-  return {
-    ...node,
-    children: filteredChildren,
-    edges: filteredEdges,
-  };
+  return adjustHandoffGraph(graph, rootState.workflow.operations, (actionId) => {
+    const parameters = rootState.operations?.inputParameters?.[actionId]?.parameterGroups?.default?.parameters;
+    return parameters?.find((param) => equals(param.parameterName, 'name'))?.value?.[0]?.value ?? '';
+  });
 };
 
 export const useIsGraphCollapsed = (graphId: string): boolean =>

@@ -11,6 +11,7 @@ import { CardRunStatusBadge } from './cardRunStatusBadge';
 import { CardErrorBadge } from './cardErrorBadge';
 import { CardIndicatorBadges } from './cardIndicatorBadges';
 import { CollapseToggle } from './collapseToggle';
+import { Flow20Regular } from '@fluentui/react-icons';
 
 export interface ActionCardProps {
   active?: boolean;
@@ -18,8 +19,10 @@ export interface ActionCardProps {
   cloned?: boolean;
   comment?: string;
   connectorName?: string;
-  drag: ConnectDragSource;
-  dragPreview: ConnectDragPreview;
+  drag?: ConnectDragSource;
+  dragPreview?: ConnectDragPreview;
+  /** Presentation only: no focus, editing, drag registration, or collapse interaction. */
+  inert?: boolean;
   errorMessages?: string[];
   icon?: string;
   id: string;
@@ -74,6 +77,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   collapsed = false,
   handleCollapse,
   staticResultsEnabled,
+  inert = false,
 }) => {
   const styles = useCardStyles();
 
@@ -86,11 +90,11 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   const restoreFocusTargetAttribute = useRestoreFocusTarget();
 
   useEffect(() => {
-    if (setFocus) {
+    if (setFocus && !inert) {
       // Canvas panning owns visibility; native scrolling would offset the viewport.
       focusRef.current?.focus({ preventScroll: true });
     }
-  }, [setFocus]);
+  }, [setFocus, inert]);
 
   const intl = useIntl();
 
@@ -135,18 +139,29 @@ export const ActionCard: React.FC<ActionCardProps> = ({
     : cardAltTexts.withOperationOnly;
 
   const cardIcon = useMemo(
-    () => (isLoading ? <Spinner size={'tiny'} /> : icon ? <img src={icon} alt="" /> : <Spinner size={'tiny'} />),
-    [isLoading, icon]
+    () =>
+      isLoading ? (
+        <Spinner size={'tiny'} />
+      ) : icon ? (
+        <img src={icon} alt="" draggable={inert ? false : undefined} />
+      ) : inert ? (
+        <Flow20Regular />
+      ) : (
+        <Spinner size={'tiny'} />
+      ),
+    [isLoading, icon, inert]
   );
 
   return (
     <div
-      {...restoreFocusTargetAttribute}
+      {...(!inert && restoreFocusTargetAttribute)}
       ref={(node) => {
         focusRef.current = node;
-        drag(node);
+        if (!inert) {
+          drag?.(node);
+        }
       }}
-      role="button"
+      role={inert ? 'img' : 'button'}
       id={`msla-node-${id}`}
       aria-label={cardAltText}
       className={mergeClasses(
@@ -161,11 +176,11 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       )}
       data-testid={`card-${title}`}
       data-automation-id={`card-${replaceWhiteSpaceWithUnderscore(title)}`}
-      onClick={handleClick}
-      onContextMenu={onContextMenu}
-      onKeyDown={keyboardInteraction.keyDown}
-      onKeyUp={keyboardInteraction.keyUp}
-      tabIndex={nodeIndex}
+      onClick={inert ? undefined : handleClick}
+      onContextMenu={inert ? undefined : onContextMenu}
+      onKeyDown={inert ? undefined : keyboardInteraction.keyDown}
+      onKeyUp={inert ? undefined : keyboardInteraction.keyUp}
+      tabIndex={inert ? undefined : nodeIndex}
       style={
         {
           '--action-brand-color': isUndefinedOrEmptyString(brandColor) ? '#808080' : brandColor,
@@ -187,7 +202,13 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         staticResultsEnabled={staticResultsEnabled}
       />
       {isScope ? (
-        <CollapseToggle id={`${id}-collapse-toggle`} tabIndex={nodeIndex} collapsed={collapsed} handleCollapse={handleCollapse!} />
+        <CollapseToggle
+          id={`${id}-collapse-toggle`}
+          tabIndex={nodeIndex}
+          collapsed={collapsed}
+          handleCollapse={handleCollapse}
+          disabled={inert}
+        />
       ) : null}
     </div>
   );

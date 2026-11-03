@@ -1,5 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, beforeAll, afterAll } from 'vitest';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { configureStore } from '@reduxjs/toolkit';
+import { Provider } from 'react-redux';
+import { buildSvgSpline } from '@microsoft/logic-apps-shared';
 import type { EdgeProps } from '@xyflow/react';
 import { Position } from '@xyflow/react';
 import type { LogicAppsEdgeProps } from '../edge';
@@ -11,15 +14,18 @@ vi.mock('../../../core/state/designerOptions/designerOptionsSelectors', () => ({
 }));
 
 const mockUseIsNodeSelectedInOperationPanel = vi.fn().mockReturnValue(false);
+const mockUseIsNodeInMultiSelection = vi.fn().mockReturnValue(false);
 
 vi.mock('../../../core/state/panel/panelSelectors', () => ({
   useIsNodeSelectedInOperationPanel: (...args: any[]) => mockUseIsNodeSelectedInOperationPanel(...args),
-  useIsNodeInMultiSelection: vi.fn().mockReturnValue(false),
+  useIsNodeInMultiSelection: (...args: unknown[]) => mockUseIsNodeInMultiSelection(...args),
 }));
 
 const mockUseActionMetadata = vi.fn().mockReturnValue({ runAfter: {} });
 const mockUseNodeEdgeTargets = vi.fn().mockReturnValue([]);
 const mockUseNodeMetadata = vi.fn().mockReturnValue({ graphId: 'root' });
+const mockUseEdgesData = vi.fn();
+const mockUseNodeGlobalPosition = vi.fn();
 
 vi.mock('../../../core/state/workflow/workflowSelectors', () => ({
   useActionMetadata: (...args: any[]) => mockUseActionMetadata(...args),
@@ -31,6 +37,8 @@ vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => ({
   ...((await importOriginal()) as object),
   useEdgeIndex: () => 0,
   useGuid: () => 'test-guid',
+  useEdgesData: (...args: unknown[]) => mockUseEdgesData(...args),
+  useNodeGlobalPosition: (...args: unknown[]) => mockUseNodeGlobalPosition(...args),
 }));
 
 vi.mock('@xyflow/react', async (importOriginal) => {
@@ -40,7 +48,11 @@ vi.mock('@xyflow/react', async (importOriginal) => {
     useReactFlow: () => ({
       getNode: vi.fn().mockReturnValue({ position: { x: 0, y: 0 } }),
     }),
-    EdgeLabelRenderer: ({ children }: any) => <div data-testid="edge-label-renderer">{children}</div>,
+    EdgeLabelRenderer: ({ children }: any) => (
+      <foreignObject>
+        <div data-testid="edge-label-renderer">{children}</div>
+      </foreignObject>
+    ),
   };
 });
 
@@ -54,6 +66,9 @@ vi.mock('../runAfterIndicator', () => ({
 }));
 
 import ButtonEdge from '../edge';
+import HandoffEdge from '../handoffEdge';
+import designerViewReducer from '../../../core/state/designerView/designerViewSlice';
+import { filterRunAfters, WorkflowEdgeView } from '../workflowEdgeView';
 
 describe('ButtonEdge', () => {
   const defaultProps: EdgeProps<LogicAppsEdgeProps> = {
@@ -95,6 +110,7 @@ describe('ButtonEdge', () => {
     vi.clearAllMocks();
     mockUseReadOnly.mockReturnValue(false);
     mockUseIsNodeSelectedInOperationPanel.mockReturnValue(false);
+    mockUseIsNodeInMultiSelection.mockReturnValue(false);
     mockUseActionMetadata.mockReturnValue({ runAfter: {} });
     mockUseNodeEdgeTargets.mockReturnValue(['targetNode']);
     mockUseNodeMetadata.mockReturnValue({ graphId: 'root' });
@@ -107,6 +123,22 @@ describe('ButtonEdge', () => {
       </svg>
     );
     expect(container).toBeTruthy();
+  });
+
+  it.each(['constructor', 'toString'])('does not render inherited run-after statuses for a succeeded-only %s source', (source) => {
+    const { container } = render(
+      <svg>
+        <WorkflowEdgeView
+          {...defaultProps}
+          source={source}
+          filteredRunAfters={filterRunAfters({ [source]: ['Succeeded'] })}
+          runAfterIndex={0}
+        />
+      </svg>
+    );
+    expect(container.querySelector('.react-flow__edge-path')).toBeTruthy();
+    expect(screen.queryByTestId('run-after-indicator')).toBeNull();
+    expect(screen.queryByTestId('collapsed-run-after-indicator')).toBeNull();
   });
 
   it('should render edge path', () => {
@@ -252,5 +284,121 @@ describe('ButtonEdge', () => {
     );
     const path = container.querySelector(`#${defaultProps.id}`);
     expect(path?.getAttribute('stroke-dasharray')).toBe('0');
+  });
+
+  describe('HandoffEdge live controller', () => {
+    const originalLength = Object.getOwnPropertyDescriptor(SVGElement.prototype, 'getTotalLength');
+    const originalPoint = Object.getOwnPropertyDescriptor(SVGElement.prototype, 'getPointAtLength');
+    const points = [
+      { x: 10, y: 20 },
+      { x: 40, y: 60 },
+      { x: 70, y: 100 },
+    ];
+
+    beforeAll(() => {
+      Object.defineProperties(SVGElement.prototype, {
+        getTotalLength: { configurable: true, value: () => 100 },
+        getPointAtLength: { configurable: true, value: (length: number) => ({ x: length, y: length / 2 }) },
+      });
+    });
+
+    afterAll(() => {
+      for (const [name, descriptor] of [
+        ['getTotalLength', originalLength],
+        ['getPointAtLength', originalPoint],
+      ] as const) {
+        if (descriptor) {
+          Object.defineProperty(SVGElement.prototype, name, descriptor);
+        } else {
+          Reflect.deleteProperty(SVGElement.prototype, name);
+        }
+      }
+    });
+
+    beforeEach(() => {
+      mockUseEdgesData.mockReturnValue({
+        data: {
+          elkEdge: {
+            container: 'container',
+            sections: [{ startPoint: points[0], bendPoints: [points[1]], endPoint: points[2] }],
+          },
+        },
+      });
+      mockUseNodeGlobalPosition.mockReturnValue({ x: 100, y: 200 });
+    });
+
+    const mount = (props = defaultProps) => {
+      const store = configureStore({ reducer: { designerView: designerViewReducer } });
+      const view = render(
+        <Provider store={store}>
+          <svg>
+            <HandoffEdge {...props} />
+          </svg>
+        </Provider>
+      );
+      return { ...view, store };
+    };
+
+    it('renders the real offset spline/cap and positions the live edit indicator at its measured midpoint', () => {
+      const { container, store } = mount({ ...defaultProps, style: { strokeWidth: 3 } });
+      const path = container.querySelector('#edge-1');
+      expect(mockUseEdgesData).toHaveBeenCalledWith('edge-1');
+      expect(mockUseNodeGlobalPosition).toHaveBeenCalledWith('container');
+      expect(path?.getAttribute('d')).toBe(buildSvgSpline(points.map(({ x, y }) => ({ x: x + 100, y: y + 200 }))));
+      expect(path?.getAttribute('stroke-dasharray')).toBe('4 6');
+      expect(path?.getAttribute('marker-end')).toBe('url(#test-guid)');
+      expect(path).toHaveStyle({ strokeWidth: 3 });
+      expect(screen.getByRole('button').parentElement).toHaveStyle({ left: '38px', top: '13px' });
+      expect(store.getState().designerView.edgeContextMenuData).toBeUndefined();
+    });
+
+    it.each(['sourceNode', 'targetNode'])('highlights panel and multi-selected %s through the shared native view', (selectedId) => {
+      mockUseIsNodeSelectedInOperationPanel.mockImplementation((id: string) => id === selectedId);
+      const view = mount();
+      expect(view.container.querySelector('#edge-1')).toHaveClass('highlighted');
+      expect(view.container.querySelector('marker')).toHaveClass('highlighted');
+      mockUseIsNodeSelectedInOperationPanel.mockReturnValue(false);
+      mockUseIsNodeInMultiSelection.mockImplementation((id: string) => id === selectedId);
+      view.rerender(
+        <Provider store={view.store}>
+          <svg>
+            <HandoffEdge {...defaultProps} source={`${defaultProps.source}-#scope`} target={`${defaultProps.target}-#scope`} />
+          </svg>
+        </Provider>
+      );
+      expect(view.container.querySelector('#edge-1')).toHaveClass('highlighted');
+      expect(mockUseIsNodeInMultiSelection).toHaveBeenCalledWith(selectedId);
+    });
+
+    it.each(['click', 'contextMenu'] as const)('opens the live handoff menu on %s without losing tagged relationship IDs', (event) => {
+      const props = { ...defaultProps, source: 'Container-#scope', target: 'Target-#scope' };
+      const { store } = mount(props);
+      vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue(new DOMRect(10, 20, 24, 24));
+      fireEvent[event](screen.getByRole('button'));
+      expect(store.getState().designerView.edgeContextMenuData).toEqual({
+        graphId: 'Container',
+        parentId: props.source,
+        childId: props.target,
+        isLeaf: undefined,
+        location: { x: 34, y: 32 },
+        isHandoff: true,
+      });
+    });
+
+    it('retains the native path but removes edit affordances in read-only mode', () => {
+      mockUseReadOnly.mockReturnValue(true);
+      const { container, store } = mount();
+      expect(container.querySelector('#edge-1')).toHaveClass('handoff');
+      expect(screen.queryByRole('button')).toBeNull();
+      expect(store.getState().designerView.edgeContextMenuData).toBeUndefined();
+    });
+
+    it.each([{ graphId: 'root' }, undefined])('uses the containing graph or empty fallback for an untagged edge: %s', (metadata) => {
+      mockUseNodeMetadata.mockReturnValue(metadata);
+      const { store, container } = mount();
+      expect(container.querySelector('#edge-1')).not.toHaveClass('highlighted');
+      fireEvent.click(screen.getByRole('button'));
+      expect(store.getState().designerView.edgeContextMenuData?.graphId).toBe(metadata?.graphId ?? '');
+    });
   });
 });

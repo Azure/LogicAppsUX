@@ -240,9 +240,12 @@ const ScopeCardNode = ({ id }: NodeProps) => {
   }, [dispatch, scopeId]);
 
   const [showCopyCallout, setShowCopyCallout] = useState(false);
-  const copyClick = useCallback(() => {
+  const copyClick = useCallback(async () => {
+    const result = await dispatch(copyScopeOperation({ nodeId: id }));
+    if (result?.meta?.requestStatus !== 'fulfilled') {
+      return;
+    }
     setShowCopyCallout(true);
-    dispatch(copyScopeOperation({ nodeId: id }));
     setCopyCalloutTimeout(setTimeout(() => setShowCopyCallout(false), 3000));
   }, [dispatch, id]);
 

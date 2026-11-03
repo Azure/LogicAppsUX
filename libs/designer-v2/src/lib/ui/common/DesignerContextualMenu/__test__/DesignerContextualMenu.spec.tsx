@@ -231,6 +231,7 @@ describe('DesignerContextualMenu', () => {
   beforeEach(() => {
     vi.useFakeTimers();
     vi.clearAllMocks();
+    mocks.dispatch.mockResolvedValue({ meta: { requestStatus: 'fulfilled' } });
     mocks.rawInputsOutputs = { data: { inputs: {}, outputs: {} } };
 
     vi.spyOn(designerViewSelectors, 'useNodeContextMenuData').mockReturnValue({
@@ -256,7 +257,7 @@ describe('DesignerContextualMenu', () => {
     vi.useRealTimers();
   });
 
-  it('renders the standard action commands and handles delete, copy, pin, collapse, and tooltip dismissal', () => {
+  it('renders the standard action commands and handles delete, copy, pin, collapse, and tooltip dismissal', async () => {
     const tree = renderMenu();
 
     expect(tree.root.findByProps({ 'data-testid': 'card-context-menu' }).props).toMatchObject({
@@ -269,7 +270,9 @@ describe('DesignerContextualMenu', () => {
     click(tree.root.findByProps({ 'data-testid': 'delete-menu-item' }));
     expect(dispatchedAction('setShowDeleteModalNodeId')?.payload).toBe('test-node');
 
-    click(tree.root.findByProps({ 'data-testid': 'copy-menu-item' }));
+    await act(async () => {
+      await tree.root.findByProps({ 'data-testid': 'copy-menu-item' }).props.onClick();
+    });
     expect(mocks.copyOperation).toHaveBeenCalledWith({ nodeId: 'test-node' });
     expect(mocks.dispatch).toHaveBeenCalledWith({ type: 'test/copyOperation', payload: { nodeId: 'test-node' } });
     expect(tree.root.findByProps({ 'data-testid': 'copy-tooltip' }).props['data-node-id']).toBe('test-node');
@@ -289,6 +292,15 @@ describe('DesignerContextualMenu', () => {
 
     click(tree.root.findByProps({ 'data-testid': 'close-context-menu' }));
     expect(tree.root.findByProps({ 'data-testid': 'card-context-menu' }).props['data-open']).toBe(false);
+  });
+
+  it('does not announce a rejected copy as successful', async () => {
+    mocks.dispatch.mockResolvedValue({ meta: { requestStatus: 'rejected' } });
+    const tree = renderMenu();
+    await act(async () => {
+      await tree.root.findByProps({ 'data-testid': 'copy-menu-item' }).props.onClick();
+    });
+    expect(tree.root.findAllByProps({ 'data-testid': 'copy-tooltip' })).toHaveLength(0);
   });
 
   it('copies a scope with the scope-specific action and unpins the alternate node', () => {

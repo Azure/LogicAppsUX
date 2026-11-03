@@ -476,6 +476,102 @@ describe('buildWorkflowExtractionPlan', () => {
     expectCode(() => plan(fixture(), ids), 'invalid-selection');
   });
 
+  it.each(['Scope', 'If', 'Switch', 'Foreach', 'Until'])('extracts one fully selected %s as one atomic root', (type) => {
+    const workflow = fixture();
+    const nested = { Nested: { type: 'Scope', actions: { Inner: compose('nested') }, runAfter: {} } };
+    const container = {
+      type,
+      ...(type === 'If'
+        ? { expression: '@true', actions: nested, else: { actions: {} } }
+        : type === 'Switch'
+          ? {
+              expression: '@true',
+              cases: { Yes: { case: true, actions: nested }, Empty: { case: false, actions: {} } },
+              default: { actions: {} },
+            }
+          : {
+              actions: nested,
+              ...(type === 'Foreach' ? { foreach: '@createArray(1)' } : {}),
+              ...(type === 'Until' ? { expression: '@true', limit: { count: 2, timeout: 'PT1M' } } : {}),
+            }),
+      runAfter: { Before: ['Succeeded'] },
+    } as LogicAppsV2.ActionDefinition;
+    workflow.definition.actions = {
+      Before: compose('before'),
+      Container: container,
+      After: compose('after', 'Container'),
+    };
+    const before = structuredClone(workflow);
+    const result = plan(workflow, ['inner', 'Container', 'Nested']);
+    expect(result.selectedIds).toEqual(['Container']);
+    expect(actionsOf(result.child).Container).toEqual({ ...container, runAfter: {} });
+    expect(Object.keys(actionsOf(result.child))).toEqual(['Container', 'Response']);
+    expect(actionsOf(result.child).Response.runAfter).toEqual({ Container: ['Succeeded'] });
+    expect(Object.keys(actionsOf(result.source))).toEqual(['Before', result.invocationId, 'After']);
+    expect(actionsOf(result.source)[result.invocationId].runAfter).toEqual({ Before: ['Succeeded'] });
+    expect(actionsOf(result.source).After.runAfter).toEqual({ [result.invocationId]: ['Succeeded'] });
+    expect(workflow).toEqual(before);
+  });
+
+  it('normalizes a complete container and sibling, without accepting partial branches, holes, duplicates, or a wrong scope', () => {
+    const workflow = fixture();
+    actionsOf(workflow).A = {
+      type: 'If',
+      expression: '@true',
+      actions: { Then: compose('then') },
+      else: { actions: { Otherwise: compose('else') } },
+      runAfter: { Before: ['Succeeded'] },
+    };
+    expect(plan(workflow, ['B', 'Otherwise', 'A', 'Then']).selectedIds).toEqual(['A', 'B']);
+    expectCode(() => plan(workflow, ['A', 'Then', 'B']), 'incomplete-container-selection');
+    expectCode(() => plan(workflow, ['A', 'Then', 'Otherwise', 'After']), 'selection-not-linear');
+    expectCode(() => plan(workflow, ['A', 'Then', 'Otherwise', 'then']), 'invalid-selection');
+    expectCode(() => plan(workflow, ['Then', 'Otherwise']), 'selection-not-top-level');
+  });
+
+  it('reports the actual safety failure after a complete container becomes a single root', () => {
+    const workflow = fixture();
+    actionsOf(workflow).A = {
+      type: 'Scope',
+      actions: { Stop: { type: 'Terminate', inputs: { runStatus: 'Succeeded' }, runAfter: {} } },
+      runAfter: { Before: ['Succeeded'] },
+    };
+    expectCode(() => plan(workflow, ['A', 'Stop']), 'workflow-lifecycle');
+    actionsOf(workflow).A = {
+      type: 'If',
+      expression: '@true',
+      actions: { Then: compose('then') },
+      else: { actions: { Otherwise: compose('else') } },
+      runAfter: { Before: ['Failed'] },
+    };
+    expectCode(() => plan(workflow, ['A', 'Then', 'Otherwise']), 'status-sensitive-path');
+    actionsOf(workflow).A.runAfter = { Before: ['Succeeded'] };
+    actionsOf(workflow).After = compose("@outputs('Then')", 'B');
+    expectCode(() => plan(workflow, ['A', 'Then', 'Otherwise']), 'conditional-output');
+  });
+
+  it('retains entry/exit, variable-write and loop-context restrictions for a normalized single container', () => {
+    const workflow = fixture();
+    actionsOf(workflow).A = {
+      type: 'Scope',
+      actions: { Nested: compose('nested') },
+      runAfter: { Before: ['Succeeded'] },
+    };
+    actionsOf(workflow).B = compose('after scope', 'A');
+    actionsOf(workflow).Other = compose('other entry');
+    actionsOf(workflow).A.runAfter = { Before: ['Succeeded'], Other: ['Succeeded'] };
+    expectCode(() => plan(workflow, ['A', 'Nested']), 'multiple-entry-parents');
+    actionsOf(workflow).A.runAfter = { Before: ['Succeeded'] };
+    actionsOf(workflow).B.runAfter = { A: ['Succeeded'], Other: ['Succeeded'] };
+    expectCode(() => plan(workflow, ['A', 'Nested']), 'multiple-exit-parents');
+    actionsOf(workflow).B.runAfter = { A: ['Succeeded'] };
+    (actionsOf(workflow).A as LogicAppsV2.ScopeAction).actions!.Nested = compose('@item()');
+    expectCode(() => plan(workflow, ['A', 'Nested']), 'unsupported-context');
+    actionsOf(workflow).Before = operation('InitializeVariable', { variables: [{ name: 'Shared', type: 'string', value: 'before' }] });
+    (actionsOf(workflow).A as LogicAppsV2.ScopeAction).actions!.Nested = operation('SetVariable', { name: 'Shared', value: 'changed' });
+    expectCode(() => plan(workflow, ['A', 'Nested']), 'shared-variable-write');
+  });
+
   it('rejects a selection with a gap', () => {
     expectCode(() => plan(fixture(), ['A', 'After']), 'selection-not-linear');
   });
@@ -1089,6 +1185,7 @@ describe('buildWorkflowExtractionPlan', () => {
       runAfter: {},
     });
     expect(result.inputs.map(({ expression }) => expression)).toEqual(["@outputs('Before')"]);
+    expect(plan(workflow, ['A', 'ReadItem', 'Filter', 'Map']).selectedIds).toEqual(['A']);
     actionsOf(workflow).After = compose("@body('Filter')", 'B');
     expectCode(() => plan(workflow), 'conditional-output');
   });
@@ -1109,6 +1206,7 @@ describe('buildWorkflowExtractionPlan', () => {
       actions: { Probe: compose("@concat(string(iterationIndexes('A')), triggerBody()?['input_manual']?['name'])") },
       runAfter: {},
     });
+    expect(plan(workflow, ['A', 'Probe']).selectedIds).toEqual(['A']);
   });
 
   it.each([
@@ -1739,6 +1837,7 @@ describe('buildWorkflowExtractionPlan', () => {
     const result = plan(workflow);
     expect(actionsOf(result.child).A).toEqual({ ...actionsOf(workflow).A, runAfter: {} });
     expect(result.inputs).toEqual([]);
+    expect(actionsOf(plan(workflow, ['A', 'Request', 'Recover']).child).A).toEqual(actionsOf(result.child).A);
   });
 
   it('blocks notes anchored to descendants of selected containers', () => {

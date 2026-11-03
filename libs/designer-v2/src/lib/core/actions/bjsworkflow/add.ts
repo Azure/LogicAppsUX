@@ -1,4 +1,5 @@
 import { isCustomCodeParameter } from '@microsoft/designer-ui';
+import { isExpressionConnectionMapping } from '../../../common/models/workflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectionsForConnector, getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
@@ -25,7 +26,11 @@ import { getParameterFromName, updateDynamicDataInNode } from '../../utils/param
 import { getInputParametersFromSwagger, getOutputParametersFromSwagger } from '../../utils/swagger/operation';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import { getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
-import { isConnectionMultiAuthManagedIdentityType, isConnectionSingleAuthManagedIdentityType } from '../../utils/connectors/connections';
+import {
+  getConnectionReference,
+  isConnectionMultiAuthManagedIdentityType,
+  isConnectionSingleAuthManagedIdentityType,
+} from '../../utils/connectors/connections';
 import { getApiHubAuthentication, getConnectionProperties, isConnectionRequiredForOperation, updateNodeConnection } from './connections';
 import {
   getInputParametersFromManifest,
@@ -35,6 +40,7 @@ import {
   updateInvokerSettings,
 } from './initialize';
 import type { NodeDataWithOperationMetadata } from './operationdeserializer';
+import { serializeOperation } from './serializer';
 import type { Settings } from './settings';
 import { getOperationSettings, getSplitOnValue } from './settings';
 import {
@@ -70,6 +76,7 @@ import { openKindChangeDialog } from '../../state/modal/modalSlice';
 import constants from '../../../common/constants';
 import { addOperationRunAfter, removeOperationRunAfter } from './runafter';
 import { AgentUtils } from '../../../common/utilities/Utils';
+import { copiedConnectionError } from '../../utils/clipboardData';
 
 type AddOperationPayload = {
   operation: DiscoveryOperation<DiscoveryResultTypes> | undefined;
@@ -274,6 +281,7 @@ export const addDefaultSecureSettings = (settings: Settings, isSecureByDefault: 
  * @param openPanel - Whether to open the node details panel while initialization runs.
  * @param connectionId - Optional connection to prefer even when the operation does not require one.
  * @param connectionIdentity - Optional identity associated with the preferred connection.
+ * @param copiedNodeData - Complete copied configuration for isolated preparation; await all metadata work before returning.
  */
 export const initializeOperationDetails = async (
   nodeId: string,
@@ -284,7 +292,8 @@ export const initializeOperationDetails = async (
   actionMetadata?: Record<string, any>,
   openPanel = true,
   connectionId?: string,
-  connectionIdentity?: string
+  connectionIdentity?: string,
+  copiedNodeData?: Omit<NodeData, 'id'>
 ): Promise<void> => {
   const state = getState();
   const isTrigger = isTriggerNode(nodeId, state.workflow.nodesMetadata);
@@ -304,6 +313,12 @@ export const initializeOperationDetails = async (
   let swagger: SwaggerParser | undefined = undefined;
   let parsedManifest: ManifestParser | undefined = undefined;
   const isManagedMcpClient = isManagedMcpOperation({ type, kind });
+  const initializeNode = (data: NodeData, nodeManifest?: OperationManifest): NodeData => {
+    const initialized = copiedNodeData ? { ...copiedNodeData, id: nodeId } : data;
+    dispatch(initializeNodes({ nodes: [initialized] }));
+    addTokensAndVariables(nodeId, type, { ...initialized, manifest: nodeManifest }, state, dispatch);
+    return initialized;
+  };
 
   if (isManagedMcpClient) {
     // Swagger supplies connector identity and branding, but managed MCP parameters follow the fixed native MCP manifest.
@@ -362,8 +377,7 @@ export const initializeOperationDetails = async (
       operationMetadata: { iconUri, brandColor },
       actionMetadata,
     };
-    dispatch(initializeNodes({ nodes: [initData] }));
-    addTokensAndVariables(nodeId, type, { ...initData, manifest: nativeMcpManifest }, state, dispatch);
+    initData = initializeNode(initData, nativeMcpManifest);
   } else if (operationManifestService.isSupported(type, kind)) {
     // Manifest-backed operations use manifest dependencies and aliasing rules instead of Swagger parsing.
     manifest = await getOperationManifest(operationInfo);
@@ -431,8 +445,7 @@ export const initializeOperationDetails = async (
       operationMetadata: { iconUri, brandColor },
       actionMetadata,
     };
-    dispatch(initializeNodes({ nodes: [initData] }));
-    addTokensAndVariables(nodeId, type, { ...initData, manifest }, state, dispatch);
+    initData = initializeNode(initData, manifest);
   } else {
     // Swagger remains the metadata fallback for operations without manifest support.
     const { connector: swaggerConnector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
@@ -489,11 +502,46 @@ export const initializeOperationDetails = async (
       operationMetadata: { iconUri, brandColor },
       actionMetadata,
     };
-    dispatch(initializeNodes({ nodes: [initData] }));
-    addTokensAndVariables(nodeId, type, initData, state, dispatch);
+    initData = initializeNode(initData);
   }
 
-  if (isConnectionRequired || connectionId) {
+  if (copiedNodeData) {
+    // Dynamic deserialization consumes internal IDs, not pending serialized action names.
+    const prepared = getState();
+    const mapping = getRecordEntry(prepared.connections.connectionsMapping, nodeId);
+    if (
+      isConnectionRequired &&
+      !isExpressionConnectionMapping(mapping) &&
+      (!mapping ||
+        !Object.hasOwn(prepared.connections.connectionReferences, mapping) ||
+        !prepared.connections.connectionReferences[mapping] ||
+        !equals(prepared.connections.connectionReferences[mapping].api?.id, connector?.id ?? operationInfo.connectorId))
+    ) {
+      throw copiedConnectionError();
+    }
+    const operation = await serializeOperation({ ...prepared, workflow: { ...prepared.workflow, idReplacements: {} } }, nodeId);
+    await updateDynamicDataInNode(
+      nodeId,
+      isTrigger,
+      operationInfo,
+      getConnectionReference(prepared.connections, nodeId),
+      initData.nodeDependencies,
+      dispatch,
+      getState,
+      prepared.tokens.variables,
+      prepared.workflowParameters.definitions,
+      true /* updateTokenMetadata */,
+      operation,
+      true /* loadDynamicOutputs */,
+      false /* loadDefaultValues */
+    );
+    const errors = getState().operations.errors[nodeId];
+    for (const level of [ErrorLevel.DynamicInputs, ErrorLevel.DynamicOutputs]) {
+      if (errors?.[level]) {
+        throw new Error(errors[level].message);
+      }
+    }
+  } else if (isConnectionRequired || connectionId) {
     try {
       await trySetDefaultConnectionForNode(
         nodeId,
@@ -535,17 +583,22 @@ export const initializeOperationDetails = async (
 
   dispatch(setIsPanelLoading(false));
 
-  // Result schemas enhance static-results editing but should not delay making the new node interactive.
-  staticResultService.getOperationResultSchema(connectorId, operationId, swagger || parsedManifest).then((schema) => {
-    if (schema) {
-      dispatch(
-        addResultSchema({
-          id: `${connectorId}-${operationId}`,
-          schema: schema,
-        })
-      );
-    }
-  });
+  // Interactive adds may load this later; isolated paste must include it in the committed snapshot.
+  const resultSchemaInitialization = staticResultService
+    .getOperationResultSchema(connectorId, operationId, swagger || parsedManifest)
+    .then((schema) => {
+      if (schema) {
+        dispatch(
+          addResultSchema({
+            id: `${connectorId}-${operationId}`,
+            schema: schema,
+          })
+        );
+      }
+    });
+  if (copiedNodeData) {
+    await resultSchemaInitialization;
+  }
 
   const triggerNodeManifest = await getTriggerNodeManifest(state.workflow, state.operations);
 

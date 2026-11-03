@@ -569,6 +569,12 @@
       "value": "Add children (recursive)"
     }
   ],
+  "21wfZu": [
+    {
+      "type": 0,
+      "value": "The actions could not be written to the clipboard. Allow clipboard access and try again. No actions were cut."
+    }
+  ],
   "23fENy": [
     {
       "type": 0,
@@ -2727,6 +2733,12 @@
     {
       "type": 0,
       "value": "Default"
+    }
+  ],
+  "FWra8X": [
+    {
+      "type": 0,
+      "value": "The workflow changed while the actions were being prepared. Paste again to use the current workflow."
     }
   ],
   "FXLR5M": [
@@ -8869,6 +8881,12 @@
       "value": "To save this workflow, finish setting up these actions:"
     }
   ],
+  "sCWFvn": [
+    {
+      "type": 0,
+      "value": "The selected actions are not ready to copy. Wait for their details to load, then try again."
+    }
+  ],
   "sDkAVZ": [
     {
       "type": 0,
@@ -9375,6 +9393,12 @@
     {
       "type": 0,
       "value": "Default Value"
+    }
+  ],
+  "uv0ghT": [
+    {
+      "type": 0,
+      "value": "The clipboard does not contain complete action data. Copy the actions again after their details have loaded."
     }
   ],
   "uwuGU0": [
@@ -10145,6 +10169,28 @@
     {
       "type": 0,
       "value": "Required. The number of minutes to add. Can be negative to subtract minutes."
+    }
+  ],
+  "FgEWPi": [
+    {
+      "type": 0,
+      "value": "The child workflow preview could not be rendered: "
+    },
+    {
+      "type": 1,
+      "value": "reason"
+    }
+  ],
+  "xik+HE": [
+    {
+      "type": 0,
+      "value": "Workflow preview navigation. Use arrow keys to pan."
+    }
+  ],
+  "ySiISY": [
+    {
+      "type": 0,
+      "value": "The copied action requires a connection that is not available in this workflow. No actions were pasted."
     }
   ]
 }

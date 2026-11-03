@@ -4,6 +4,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { CommonPanelProps, PanelContainerProps } from '@microsoft/designer-ui';
 import { PanelContainer, PanelLocation, PanelScope } from '@microsoft/designer-ui';
 import { SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
+import type { WorkflowExtractionService } from '../../../../common/models/workflowExtraction';
+import { ProviderWrappedContext } from '../../../../core/ProviderWrappedContext';
+import { Deserialize } from '../../../../core/parsers/BJSWorkflow/BJSDeserializer';
+import type { ServiceOptions } from '../../../../core/state/designerOptions/designerOptionsInterfaces';
+import type { WorkflowState } from '../../../../core/state/workflow/workflowInterfaces';
 import { NodeDetailsPanel } from '../nodeDetailsPanel';
 import { usePanelNodeData } from '../usePanelNodeData';
 import { useRawInputsOutputs } from '../useRawInputsOutputs';
@@ -30,11 +35,20 @@ const mocks = vi.hoisted(() => ({
   validate: vi.fn<(...args: unknown[]) => string[]>(() => ['validation error']),
   encode: vi.fn<(...args: unknown[]) => boolean>(() => true),
   state: {
+    designerOptions: {
+      readOnly: false,
+      isMonitoringView: false,
+    },
+    panel: {
+      operationContent: {
+        selectedNodeIds: ['Action'],
+      },
+    },
     workflow: {
       operations: { Action: { type: 'Http' } },
       nodesMetadata: {},
       idReplacements: {},
-    },
+    } as Pick<WorkflowState, 'operations' | 'nodesMetadata' | 'idReplacements' | 'graph'>,
     operations: {
       operationInfo: { Action: { type: 'Http' } },
       inputParameters: {} as Record<string, { parameterGroups: Record<string, { parameters: { id: string; value: string }[] }> }>,
@@ -64,6 +78,7 @@ vi.mock('../../../../core/state/designerView/designerViewSelectors', () => ({
 }));
 vi.mock('../../../../core/state/designerView/designerViewSlice', () => ({
   setShowDeleteModalNodeId: (payload: string) => ({ type: 'setShowDeleteModalNodeId', payload }),
+  setWorkflowExtractionDialogOpen: (payload: boolean) => ({ type: 'setWorkflowExtractionDialogOpen', payload }),
 }));
 vi.mock('../../../../core/state/panel/panelSelectors', () => ({
   useIsPanelCollapsed: () => mocks.collapsed,
@@ -87,9 +102,18 @@ vi.mock('../../../../core/state/workflow/workflowSlice', () => ({
   replaceId: (payload: unknown) => ({ type: 'replaceId', payload }),
   setNodeDescription: (payload: unknown) => ({ type: 'setNodeDescription', payload }),
 }));
-vi.mock('../../../../core/utils/graph', () => ({
+vi.mock('../../../../core/utils/graph', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../../../../core/utils/graph')>()),
   isTriggerNode: () => mocks.isTrigger,
   isOperationNameValid: vi.fn(),
+}));
+vi.mock('../../../../core/actions/bjsworkflow/serializer', () => ({
+  serializeWorkflow: vi.fn(),
+}));
+vi.mock('../../../../core/actions/bjsworkflow/workflowExtraction', () => ({
+  commitWorkflowExtraction: vi.fn(),
+  getExtractionSelectedIds: vi.fn(),
+  workflowExtractionFingerprint: vi.fn(),
 }));
 vi.mock('../usePanelNodeData', () => ({ usePanelNodeData: vi.fn() }));
 vi.mock('../useRawInputsOutputs', () => ({ useRawInputsOutputs: vi.fn() }));
@@ -98,7 +122,8 @@ vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => ({
   WorkflowService: () => ({ resubmitWorkflow: mocks.resubmit }),
   HostService: () => (mocks.hostAvailable ? { openMonitorView: mocks.monitorAvailable ? mocks.monitor : undefined } : undefined),
 }));
-vi.mock('@microsoft/designer-ui', () => ({
+vi.mock('@microsoft/designer-ui', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@microsoft/designer-ui')>()),
   PanelScope: { CardLevel: 'CARD_LEVEL' },
   PanelLocation: { Left: 'LEFT', Right: 'RIGHT' },
   PanelContainer: vi.fn((props: PanelContainerProps) => (
@@ -150,12 +175,96 @@ const panelProps = (): PanelContainerProps => {
   return latest;
 };
 
-const mountPanel = (overrides: Partial<CommonPanelProps> = {}) =>
+const unusedServiceMethod = (): never => {
+  throw new Error('Unrelated designer services must not be called by the extraction menu.');
+};
+
+const defaultServices: ServiceOptions = {
+  connectionService: {
+    getConnector: unusedServiceMethod,
+    getSwaggerFromConnector: unusedServiceMethod,
+    getSwaggerFromUri: unusedServiceMethod,
+    getConnection: unusedServiceMethod,
+    getConnections: unusedServiceMethod,
+    createConnection: unusedServiceMethod,
+    createAndAuthorizeOAuthConnection: unusedServiceMethod,
+    setupConnectionIfNeeded: unusedServiceMethod,
+    getUniqueConnectionName: unusedServiceMethod,
+  },
+  operationManifestService: {
+    isSupported: unusedServiceMethod,
+    isAliasingSupported: unusedServiceMethod,
+    getOperationInfo: unusedServiceMethod,
+    getOperationManifest: unusedServiceMethod,
+    getOperation: unusedServiceMethod,
+    isBuiltInConnector: unusedServiceMethod,
+    getBuiltInConnector: unusedServiceMethod,
+  },
+  searchService: {
+    getAllConnectors: unusedServiceMethod,
+    getAzureConnectorsByPage: unusedServiceMethod,
+    getCustomConnectorsByNextlink: unusedServiceMethod,
+    getBuiltInConnectors: unusedServiceMethod,
+    getAllOperations: unusedServiceMethod,
+    getAzureOperationsByPage: unusedServiceMethod,
+    getCustomOperationsByPage: unusedServiceMethod,
+    getBuiltInOperations: unusedServiceMethod,
+  },
+  oAuthService: {
+    openLoginPopup: unusedServiceMethod,
+    fetchConsentUrlForConnection: unusedServiceMethod,
+    confirmConsentCodeForConnection: unusedServiceMethod,
+  },
+  workflowService: { getCallbackUrl: unusedServiceMethod },
+};
+
+const mountPanel = (overrides: Partial<CommonPanelProps> = {}, service?: WorkflowExtractionService) =>
   render(
     <IntlProvider locale="en">
-      <NodeDetailsPanel {...props} {...overrides} />
+      <ProviderWrappedContext.Provider value={{ ...defaultServices, workflowExtractionService: service }}>
+        <NodeDetailsPanel {...props} {...overrides} />
+      </ProviderWrappedContext.Provider>
     </IntlProvider>
   );
+
+const extractionService = (): WorkflowExtractionService => ({
+  hostingPlan: 'standard',
+  persistenceDescription: 'The host saves both workflows.',
+  sourceId: 'source-id',
+  sourceName: 'Source workflow',
+  createInvocation: vi.fn(),
+  validateName: vi.fn(),
+  commit: vi.fn(),
+});
+
+const selectContainer = (type: 'Scope' | 'If' = 'Scope', selectedIds = ['Action']) => {
+  const deserialized = Deserialize(
+    {
+      triggers: {},
+      actions: {
+        Action:
+          type === 'Scope'
+            ? { type, actions: {}, runAfter: {} }
+            : {
+                type,
+                expression: '@true',
+                actions: { Then: { type: 'Compose', inputs: 'then', runAfter: {} } },
+                else: { actions: { Otherwise: { type: 'Compose', inputs: 'else', runAfter: {} } } },
+                runAfter: {},
+              },
+      },
+    },
+    null
+  );
+  mocks.state.workflow = {
+    graph: deserialized.graph,
+    operations: deserialized.actionData,
+    nodesMetadata: deserialized.nodesMetadata,
+    idReplacements: {},
+  };
+  mocks.state.operations.operationInfo.Action.type = type;
+  mocks.state.panel.operationContent.selectedNodeIds = selectedIds;
+};
 
 describe('NodeDetailsPanel', () => {
   beforeEach(() => {
@@ -174,9 +283,13 @@ describe('NodeDetailsPanel', () => {
     mocks.undoRedo = false;
     mocks.hostAvailable = true;
     mocks.monitorAvailable = true;
-    mocks.state.workflow.operations.Action.type = 'Http';
+    mocks.state.workflow.operations = { Action: { type: 'Http' } };
+    mocks.state.workflow.nodesMetadata = {};
+    mocks.state.workflow.graph = undefined;
     mocks.state.operations.operationInfo.Action.type = 'Http';
     mocks.state.operations.inputParameters = {};
+    mocks.state.designerOptions = { readOnly: false, isMonitoringView: false };
+    mocks.state.panel.operationContent.selectedNodeIds = ['Action'];
     vi.mocked(useRawInputsOutputs, { partial: true }).mockReturnValue({ data: undefined });
     vi.mocked(usePanelNodeData).mockImplementation((nodeId) => (nodeId ? nodeData(nodeId) : undefined));
     vi.mocked(isOperationNameValid).mockReturnValue({ isValid: true, message: '' });
@@ -243,6 +356,73 @@ describe('NodeDetailsPanel', () => {
     });
     mountPanel();
     expect(screen.queryByText('Add comment')).toBeNull();
+  });
+
+  it.each(['Scope', 'If'] as const)('retains atomic root-only %s extraction through the production panel menu', (type) => {
+    selectContainer(type);
+    mountPanel({}, extractionService());
+
+    const command = within(screen.getByTestId('selected-menu')).getByRole('menuitem', { name: 'Extract to new workflow' });
+    expect(command).toBeEnabled();
+    fireEvent.click(command);
+
+    expect(mocks.dispatch).toHaveBeenCalledWith({ type: 'setWorkflowExtractionDialogOpen', payload: true });
+    expect(mocks.state.panel.operationContent.selectedNodeIds).toEqual(['Action']);
+  });
+
+  it('preserves complete expanded container selection through the panel menu', () => {
+    selectContainer('If', ['Action', 'Then', 'Otherwise']);
+    mountPanel({}, extractionService());
+
+    const command = within(screen.getByTestId('selected-menu')).getByRole('menuitem', { name: 'Extract to new workflow' });
+    expect(command).toBeEnabled();
+    fireEvent.click(command);
+
+    expect(mocks.dispatch).toHaveBeenCalledWith({ type: 'setWorkflowExtractionDialogOpen', payload: true });
+    expect(mocks.state.panel.operationContent.selectedNodeIds).toEqual(['Action', 'Then', 'Otherwise']);
+  });
+
+  it('does not turn a partially expanded container selection into an atomic singleton', () => {
+    selectContainer('If', ['Action', 'Then']);
+    mountPanel({}, extractionService());
+
+    const command = within(screen.getByTestId('selected-menu')).getByRole('menuitem', { name: 'Extract to new workflow' });
+    expect(command).toHaveAttribute('aria-disabled', 'true');
+    fireEvent.click(command);
+
+    expect(mocks.dispatch).not.toHaveBeenCalledWith({ type: 'setWorkflowExtractionDialogOpen', payload: true });
+    expect(mocks.state.panel.operationContent.selectedNodeIds).toEqual(['Action', 'Then']);
+  });
+
+  it.each(['missing-service', 'unsupported-host', 'read-only', 'monitoring'] as const)(
+    'does not expose singleton extraction for %s',
+    (restriction) => {
+      selectContainer();
+      const service = extractionService();
+      if (restriction === 'unsupported-host') {
+        service.hostingPlan = 'consumption' as 'standard';
+      }
+      mocks.state.designerOptions.readOnly = restriction === 'read-only';
+      mocks.state.designerOptions.isMonitoringView = restriction === 'monitoring';
+      mountPanel({}, restriction === 'missing-service' ? undefined : service);
+
+      expect(screen.queryByRole('menuitem', { name: 'Extract to new workflow' })).toBeNull();
+    }
+  );
+
+  it('does not expose extraction for a singleton non-container action', () => {
+    mountPanel({}, extractionService());
+
+    expect(screen.queryByRole('menuitem', { name: 'Extract to new workflow' })).toBeNull();
+  });
+
+  it('does not attach the current selection extraction command to a different pinned node', () => {
+    selectContainer();
+    mocks.alternate = { nodeId: 'Pinned', persistence: 'pinned' };
+    mountPanel({}, extractionService());
+
+    expect(within(screen.getByTestId('selected-menu')).getByRole('menuitem', { name: 'Extract to new workflow' })).toBeEnabled();
+    expect(within(screen.getByTestId('alternate-menu')).queryByRole('menuitem', { name: 'Extract to new workflow' })).toBeNull();
   });
 
   it.each([

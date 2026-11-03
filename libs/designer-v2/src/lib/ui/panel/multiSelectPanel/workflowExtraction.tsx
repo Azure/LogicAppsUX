@@ -1,6 +1,6 @@
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector, useStore } from 'react-redux';
-import { useIntl } from 'react-intl';
+import { useIntl, type IntlShape } from 'react-intl';
 import {
   Accordion,
   AccordionHeader,
@@ -25,11 +25,13 @@ import {
   tokens,
 } from '@fluentui/react-components';
 import { ArrowExport24Regular } from '@fluentui/react-icons';
-import { ProgressStepper, WorkflowPreview } from '@microsoft/designer-ui';
-import { guid } from '@microsoft/logic-apps-shared';
+import { ProgressStepper } from '@microsoft/designer-ui';
+import { ReadOnlyWorkflowGraph, type ReadOnlyWorkflowGraphData } from '../../ReadOnlyWorkflowGraph';
+import { getRecordEntry, guid } from '@microsoft/logic-apps-shared';
 import type { Workflow } from '../../../common/models/workflow';
 import type {
   WorkflowExtractionBinding,
+  WorkflowExtractionPlan,
   WorkflowExtractionRequest,
   WorkflowExtractionResult,
 } from '../../../common/models/workflowExtraction';
@@ -43,8 +45,9 @@ import {
 } from '../../../core/actions/bjsworkflow/workflowExtraction';
 import { setWorkflowExtractionDialogOpen } from '../../../core/state/designerView/designerViewSlice';
 import { setFocusNode } from '../../../core/state/workflow/workflowSlice';
-import { getOrderedSelectedChain, getTopLevelSelectedNodes } from '../../../core/utils/multiselect';
+import { getOrderedSelectedChain } from '../../../core/utils/multiselect';
 import { buildWorkflowExtractionPlan } from '../../../core/utils/workflowExtraction';
+import { getWorkflowExtractionSelection } from '../../../core/utils/workflowExtractionSelection';
 import { getWorkflowExtractionPreview, type WorkflowExtractionPreviewVisuals } from './workflowExtractionPreview';
 import {
   extractionSteps,
@@ -158,6 +161,16 @@ const getExtractionErrorMessage = (cause: unknown, fallback: string): string => 
   return message.trim() ? message : fallback;
 };
 
+const formatPreviewLayoutError = (intl: IntlShape, cause: unknown): string =>
+  intl.formatMessage(
+    {
+      defaultMessage: 'The child workflow preview could not be rendered: {reason}',
+      id: 'FgEWPi',
+      description: 'Workflow extraction preview graph layout failure',
+    },
+    { reason: cause instanceof Error ? cause.message : String(cause) }
+  );
+
 const ExtractionStepper = ({ progress }: { progress: ExtractionProgress }) => {
   const intl = useIntl();
   const labels = {
@@ -199,11 +212,20 @@ export const WorkflowExtractionAction = ({ variant = 'button', onClick }: { vari
     readOnly: state.designerOptions.readOnly,
     monitoring: state.designerOptions.isMonitoringView,
   }));
-  if (!service || service.hostingPlan !== 'standard' || readOnly || monitoring || selectedIds.length < 2) {
+  if (!service || service.hostingPlan !== 'standard' || readOnly || monitoring || !selectedIds.length) {
     return null;
   }
-  const topLevelIds = getTopLevelSelectedNodes(workflow, selectedIds);
-  const valid = topLevelIds.length >= 2 && !!getOrderedSelectedChain(workflow, topLevelIds);
+  let selectionError: string | undefined;
+  let valid = false;
+  try {
+    const topLevelIds = getWorkflowExtractionSelection(workflow, selectedIds);
+    valid = !!getOrderedSelectedChain(workflow, topLevelIds);
+  } catch (cause) {
+    selectionError = cause instanceof Error ? cause.message : String(cause);
+  }
+  if (selectedIds.length === 1 && selectionError) {
+    return null;
+  }
   const label = intl.formatMessage({
     id: 'PHpOlN',
     defaultMessage: 'Extract to new workflow',
@@ -219,7 +241,7 @@ export const WorkflowExtractionAction = ({ variant = 'button', onClick }: { vari
     dispatch(setWorkflowExtractionDialogOpen(true));
   };
   return (
-    <Tooltip content={valid ? label : reason} relationship="description">
+    <Tooltip content={valid ? label : (selectionError ?? reason)} relationship="description">
       {variant === 'menuItem' ? (
         <MenuItem icon={<ArrowExport24Regular />} disabled={!valid} onClick={onExtract}>
           {label}
@@ -301,6 +323,12 @@ export const WorkflowExtractionDialog = () => {
   const [stage, setStage] = useState<'preparing' | 'saving' | 'refreshing'>();
   const [result, setResult] = useState<WorkflowExtractionResult>();
   const [progress, setProgress] = useState<ExtractionProgress>();
+  const [previewLayout, setPreviewLayout] = useState<{
+    plan: WorkflowExtractionPlan;
+    graph?: ReadOnlyWorkflowGraphData;
+    error?: string;
+    settling?: boolean;
+  }>();
   const submitting = useRef(false);
   const request = useRef<WorkflowExtractionRequest>();
 
@@ -335,7 +363,7 @@ export const WorkflowExtractionDialog = () => {
             fingerprint: workflowExtractionFingerprint(workflow),
             visuals: Object.fromEntries(
               Object.entries(state.operations.operationMetadata).map(([id, { iconUri, brandColor }]) => [
-                state.workflow.idReplacements[id] ?? id,
+                getRecordEntry(state.workflow.idReplacements, id) ?? id,
                 { iconUri, brandColor },
               ])
             ),
@@ -367,10 +395,32 @@ export const WorkflowExtractionDialog = () => {
       return { error: cause instanceof Error ? cause.message : String(cause) };
     }
   }, [source, service, name]);
-  const previewGraph = useMemo(
-    () => (preview.plan ? getWorkflowExtractionPreview(preview.plan, source?.visuals) : undefined),
-    [preview.plan, source?.visuals]
-  );
+  useEffect(() => {
+    const plan = preview.plan;
+    if (!open || !plan) {
+      return;
+    }
+    let current = true;
+    getWorkflowExtractionPreview(plan, source?.visuals)
+      .then((graph) => {
+        if (current) {
+          setPreviewLayout({ plan, graph });
+        }
+      })
+      .catch((cause: unknown) => {
+        if (current) {
+          setPreviewLayout({
+            plan,
+            error: formatPreviewLayoutError(intl, cause),
+          });
+        }
+      });
+    return () => {
+      current = false;
+    };
+  }, [intl, open, preview.plan, source?.visuals]);
+  const previewGraph = previewLayout?.plan === preview.plan ? previewLayout?.graph : undefined;
+  const previewError = previewLayout?.plan === preview.plan ? previewLayout?.error : undefined;
   const nameError = loading || !source ? undefined : service?.validateName(name);
   const busy = !!stage;
   useEffect(() => {
@@ -393,7 +443,15 @@ export const WorkflowExtractionDialog = () => {
     }
   };
   const confirm = async () => {
-    if (submitting.current || !service || !preview.plan || !source || (nameError && !request.current)) {
+    if (
+      submitting.current ||
+      !service ||
+      !preview.plan ||
+      !previewGraph ||
+      previewLayout?.settling ||
+      !source ||
+      (nameError && !request.current)
+    ) {
       return;
     }
     submitting.current = true;
@@ -487,8 +545,21 @@ export const WorkflowExtractionDialog = () => {
                   })}
                 </Text>
                 {previewGraph ? (
-                  <WorkflowPreview
-                    {...previewGraph}
+                  <ReadOnlyWorkflowGraph
+                    graph={previewGraph}
+                    onLayoutStateChange={({ loading, error }) =>
+                      setPreviewLayout((current) => {
+                        if (current?.graph !== previewGraph || current.plan !== preview.plan) {
+                          return current;
+                        }
+                        return error
+                          ? {
+                              plan: current.plan,
+                              error: formatPreviewLayoutError(intl, error),
+                            }
+                          : { ...current, settling: loading };
+                      })
+                    }
                     className={styles.canvas}
                     ariaLabel={intl.formatMessage({
                       defaultMessage: 'Child workflow preview',
@@ -498,7 +569,7 @@ export const WorkflowExtractionDialog = () => {
                   />
                 ) : (
                   <div className={styles.previewUnavailable}>
-                    {loading ? (
+                    {loading || (preview.plan && !previewError) ? (
                       <Spinner />
                     ) : (
                       <Text>
@@ -546,9 +617,9 @@ export const WorkflowExtractionDialog = () => {
                 </AccordionItem>
               </Accordion>
             ) : null}
-            {!progress && (error || preview.error) ? (
+            {!progress && (error || preview.error || previewError) ? (
               <MessageBar intent="error" layout="multiline">
-                <MessageBarBody>{error ?? preview.error}</MessageBarBody>
+                <MessageBarBody>{error ?? preview.error ?? previewError}</MessageBarBody>
               </MessageBar>
             ) : null}
           </DialogContent>
@@ -606,7 +677,9 @@ export const WorkflowExtractionDialog = () => {
                   <Button
                     appearance="primary"
                     onClick={confirm}
-                    disabled={busy || loading || !preview.plan || (!!nameError && !request.current)}
+                    disabled={
+                      busy || loading || previewLayout?.settling || !preview.plan || !previewGraph || (!!nameError && !request.current)
+                    }
                   >
                     {result
                       ? intl.formatMessage({
