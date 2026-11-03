@@ -78,7 +78,7 @@
     "marked-highlight": "^2.0.0",
     "p-retry": "^6.2.1",
     "prismjs": "^1.29.0",
-    "zod": "^4.0.2",
+    "zod": "^4.6.6",
     "zustand": "^4.4.0"
   },
   "sideEffects": ["*.css", "**/*.css"]
