@@ -177,6 +177,16 @@ consumers. Never label those controls as native approval.
 
 ## Native consumer requirements — parent-owned
 
+After accepting a stock debug configuration, Code can retain the picker and
+its rows during its `quick-input-widget-closing` animation while making the
+widget `inert` and returning focus to the editor. The shared prompt detector
+excludes these explicitly dismissed provider states, not arbitrary unknown or
+covered pickers. This avoids routing a closing debug picker into Azure setup.
+Active unknown prompts still fail with a detection-time diagnostic screenshot.
+No additional sleep, unknown-option approval or changed debug-start oracle is
+introduced. Controls distinguish retained closing/inert rows from active
+non-hit-testable rows; isolated native proof is still required.
+
 No native run is authorized on a shared development host. The parent must
 merge the bounded family into an **isolated Windows/Linux Azure DevOps
 consumer**. Protected credit comes from the registered phases and strict

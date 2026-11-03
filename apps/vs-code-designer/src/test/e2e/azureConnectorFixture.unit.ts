@@ -671,6 +671,59 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
       assert.match(error.message, /"kind":"(dialog|quickInput)"/);
     }
   });
+  for (const state of ['active', 'closing', 'inert'] as const) {
+    await control(`stock debug picker ${state} retains rows without becoming an Azure setup prompt after acceptance`, async () => {
+      const { JSDOM } = require('jsdom');
+      const dom = new JSDOM(
+        `<div class="quick-input-widget${state === 'closing' ? ' quick-input-widget-closing' : ''}"${state === 'inert' ? ' inert' : ''}>
+          <input placeholder="Select a debug configuration">
+          ${Array.from({ length: 9 }, (_, index) => `<div class="monaco-list-row">configuration-${index}</div>`).join('')}
+        </div>`,
+        { pretendToBeVisual: true, runScripts: 'outside-only' }
+      );
+      const window = dom.window;
+      window.HTMLElement.prototype.getBoundingClientRect = () => ({
+        left: 0,
+        top: 0,
+        right: 200,
+        bottom: 300,
+        width: 200,
+        height: 300,
+      });
+      const widget = window.document.querySelector('.quick-input-widget');
+      Object.defineProperty(widget, 'inert', { value: state === 'inert' });
+      window.document.elementFromPoint = () => window.document.body;
+      let captures = 0;
+      const cdp: CdpEvaluator = {
+        async evaluate<T>(_context: number | undefined, expression: string) {
+          assert.strictEqual(expression, workbenchPromptDomScript);
+          return window.eval(expression) as T;
+        },
+        async send(method) {
+          assert.ok(!method.startsWith('Input.'), 'A retained debug picker must never receive Azure input');
+          if (method === 'Page.captureScreenshot') {
+            captures++;
+            return { result: { data: Buffer.from('unit-png').toString('base64') } };
+          }
+          return {};
+        },
+      };
+      try {
+        const prompts = await readWorkbenchPrompts(cdp);
+        if (state === 'active') {
+          assert.strictEqual(prompts.length, 1, 'Active unknown or covered prompts must remain observable and rejected');
+          await assert.rejects(handleAffirmativeConnectorWorkbenchPrompt(cdp, 'unitApp', Date.now() + 1000), /Unrecognized auth/);
+          assert.strictEqual(captures, 1);
+        } else {
+          assert.strictEqual(prompts.length, 0);
+          assert.strictEqual(await handleAffirmativeConnectorWorkbenchPrompt(cdp, 'unitApp', Date.now() + 1000), false);
+          assert.strictEqual(captures, 0, 'A stock dismissed/inert picker is not unexpected blocking UI');
+        }
+      } finally {
+        window.close();
+      }
+    });
+  }
   for (const transition of [false, true]) {
     await control(`original unknown nine-row non-hit-testable prompt remains blocked; transition=${transition}`, async () => {
       const { JSDOM } = require('jsdom');

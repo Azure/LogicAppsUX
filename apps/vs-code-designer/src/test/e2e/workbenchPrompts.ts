@@ -160,7 +160,9 @@ export const workbenchPromptDomScript = `(() => {
   };
   const containers = Array.from(document.querySelectorAll(
     '.quick-input-widget, .monaco-dialog-box, [role="dialog"], .notification-toast, .notification-list-item'
-  )).filter(visible);
+  )).filter(container => visible(container) &&
+    (!container.classList.contains('quick-input-widget') ||
+      (!container.inert && !container.classList.contains('quick-input-widget-closing'))));
   return containers.filter(container => !containers.some(other => other !== container && other.contains(container)))
     .map(container => {
       const quickInput = container.classList.contains('quick-input-widget');
