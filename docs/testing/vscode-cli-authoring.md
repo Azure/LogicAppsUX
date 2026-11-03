@@ -53,6 +53,10 @@ deadlines or approve unknown UI. Capture failure must explicitly report
 `screenshotMissing` and retain the original failure. Confirm the diagnostic PNG
 and sanitized correlation sidecar survive manifest-based ADO staging; a local
 sidecar or earlier checkpoint screenshot is not native failure evidence.
+Unexpected-UI capture sends `Page.captureScreenshot` before readiness, frame
+tree or other diagnostic observations. Subsequent metadata cannot guarantee
+that transient UI still exists; do not describe the image as proof of a picker
+unless that picker is actually visible in it.
 
 ## Local-first development before ADO
 

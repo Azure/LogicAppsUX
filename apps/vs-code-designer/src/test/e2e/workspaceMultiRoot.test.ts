@@ -27,6 +27,7 @@ import { normalizeFsPath } from './testUtils';
 import { setOperationDiagnosticScope } from './operationDiagnostics';
 import { createMultiRootAzureSetup } from './workspaceMultiRootAzure';
 import { readDesignTimeOwners } from './workspaceMultiRootOwnership';
+import { flagUnexpectedWorkbenchPrompt } from './workbenchPrompts';
 
 export interface MultiRootWorkspace {
   wsFilePath: string;
@@ -268,47 +269,57 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
     assertSequentialDebug(events, roots);
 
     const mapperPhase = phaseDeadline(120000);
-    // Navigate through the real Azure view and its real Create data map action.
-    await command(workbench, 'View: Close All Editors', mapperPhase);
-    await clickText(workbench, '.activitybar .action-label', 'Azure', mapperPhase);
-    const mapperExpanded = await workbench.evaluate<boolean>(
-      undefined,
-      `Array.from(document.querySelectorAll('.sidebar .pane-header')).some(e =>
+    setOperationDiagnosticScope({
+      suite: 'workspaceMultiRoot',
+      phase: 'regular-workbench-mapper',
+      nativeInvocation: options.nativeInvocation,
+    });
+    try {
+      // Navigate through the real Azure view and its real Create data map action.
+      await command(workbench, 'View: Close All Editors', mapperPhase);
+      await clickText(workbench, '.activitybar .action-label', 'Azure', mapperPhase);
+      const mapperExpanded = await workbench.evaluate<boolean>(
+        undefined,
+        `Array.from(document.querySelectorAll('.sidebar .pane-header')).some(e =>
         /Data Mapper/i.test(e.textContent || '') && e.getAttribute('aria-expanded')==='true') ||
        Array.from(document.querySelectorAll('.sidebar button, .sidebar .monaco-button')).some(e =>
         /create data map/i.test(e.textContent || '') && !!e.getClientRects().length)`
-    );
-    if (!mapperExpanded) {
-      await clickText(workbench, '.sidebar .pane-header .title', 'Data Mapper', mapperPhase);
-    }
-    await clickText(workbench, '.sidebar button, .sidebar .monaco-button', 'Create data map', mapperPhase);
-    await clickText(workbench, '.quick-input-list .monaco-list-row .label-name', path.basename(roots[0]), mapperPhase);
-    await poll(
-      () =>
-        workbench.evaluate<boolean>(
-          undefined,
-          `(() => {
+      );
+      if (!mapperExpanded) {
+        await clickText(workbench, '.sidebar .pane-header .title', 'Data Mapper', mapperPhase);
+      }
+      await clickText(workbench, '.sidebar button, .sidebar .monaco-button', 'Create data map', mapperPhase);
+      await clickText(workbench, '.quick-input-list .monaco-list-row .label-name', path.basename(roots[0]), mapperPhase);
+      await poll(
+        () =>
+          workbench.evaluate<boolean>(
+            undefined,
+            `(() => {
         const widget=document.querySelector('.quick-input-widget');
         return !!widget && /Data Map/i.test((widget.textContent||'')+' '+(widget.querySelector('input')?.placeholder||''));
       })()`
-        ),
-      Boolean,
-      mapperPhase
-    );
-    const mapName = 'MultiRootMap';
-    await enterQuickInput(workbench, mapName, mapperPhase);
-    const { cdp: mapper, contextId } = await activeWebview(workbench, mapName, ['Source schema', 'Target schema'], mapperPhase);
-    try {
-      const view = boundedCdp(mapper, mapperPhase);
-      const state = await view.evaluate<{ text: string; loaded: boolean }>(
-        contextId,
-        `({text:document.body.innerText,loaded:document.readyState==='complete' &&
-          !!document.querySelector('.react-flow, .ms-Stack, [class*="schema"], [class*="Schema"]')})`
+          ),
+        Boolean,
+        mapperPhase
       );
-      assertMapper(state.text, state.loaded);
-      screenshots.push(await capture('workspace-multi-root-mapper'));
-    } finally {
-      mapper.dispose();
+      const mapName = 'MultiRootMap';
+      await enterQuickInput(workbench, mapName, mapperPhase);
+      const { cdp: mapper, contextId } = await activeWebview(workbench, mapName, ['Source schema', 'Target schema'], mapperPhase);
+      try {
+        const view = boundedCdp(mapper, mapperPhase);
+        const state = await view.evaluate<{ text: string; loaded: boolean }>(
+          contextId,
+          `({text:document.body.innerText,loaded:document.readyState==='complete' &&
+          !!document.querySelector('.react-flow, .ms-Stack, [class*="schema"], [class*="Schema"]')})`
+        );
+        assertMapper(state.text, state.loaded);
+        screenshots.push(await capture('workspace-multi-root-mapper'));
+      } finally {
+        mapper.dispose();
+      }
+    } catch (error) {
+      await flagUnexpectedWorkbenchPrompt(workbench, undefined, error);
+      throw error;
     }
     remainingBudget(deadline);
     return {

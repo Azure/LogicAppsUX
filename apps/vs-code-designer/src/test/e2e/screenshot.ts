@@ -64,6 +64,7 @@ interface CdpClient {
 }
 
 interface ScreenshotCaptureOptions {
+  captureBeforeObservation?: boolean;
   diagnosticContext?: ScreenshotReadinessMetadata['diagnosticContext'];
   onDiagnosticFailure?: (error: unknown) => void;
   expectation?: ScreenshotExpectation;
@@ -233,6 +234,30 @@ async function captureCdpScreenshotCore(
   const targetId = cdp.targetId ?? 'unknown-workbench-target';
   let frameId = 'main-frame';
   let generation = cdp.contextGeneration ?? 0;
+  const immediateDiagnostic = classification === 'diagnostic' && options.captureBeforeObservation === true;
+  let data: string | undefined;
+  if (immediateDiagnostic) {
+    captureAttempts++;
+    events.push({ name: 'capture-start', elapsedMs: Date.now() - startedAt, attempt: captureAttempts, generation });
+    try {
+      const response = (await cdp.send(
+        'Page.captureScreenshot',
+        { format: 'png', captureBeyondViewport: options.captureBeyondViewport ?? false },
+        { timeoutMs: remaining(deadline, 5000) }
+      )) as { result?: { data?: string } };
+      data = response.result?.data;
+      events.push({ name: 'capture-end', elapsedMs: Date.now() - startedAt, attempt: captureAttempts, generation });
+    } catch (error) {
+      reportDiagnosticFailure(options, error);
+      events.push({
+        name: 'capture-rpc-failed',
+        elapsedMs: Date.now() - startedAt,
+        attempt: captureAttempts,
+        generation,
+        reasonCodes: ['capture-rpc-failed'],
+      });
+    }
+  }
 
   await cdp.send('Page.enable', undefined, { timeoutMs: remaining(deadline, 2000) }).catch(() => undefined);
   await cdp.send('Runtime.enable', undefined, { timeoutMs: remaining(deadline, 2000) }).catch(() => undefined);
@@ -264,7 +289,6 @@ async function captureCdpScreenshotCore(
     ownerBindingLatch = await installOwnerBindingInvalidationLatch(cdp, sampleCdp, deadline);
   }
   const metadataFrameId = getSemanticMetadataFrameId(sampleCdp, sampleContextId) ?? frameId;
-  let data: string | undefined;
   const recordEvent = (name: string, sample?: ScreenshotReadinessSnapshot, values: Partial<ScreenshotCaptureEvent> = {}): void => {
     events.push({
       name,
@@ -282,7 +306,14 @@ async function captureCdpScreenshotCore(
     });
   };
   try {
-    while (Date.now() < deadline && !data) {
+    if (immediateDiagnostic && Date.now() < deadline) {
+      const sample = await sampleReadiness(sampleCdp, sampleContextId, expectation, generation, 0, deadline).catch(() => undefined);
+      if (sample) {
+        samples.push(sample);
+        recordEvent('diagnostic-sample', sample);
+      }
+    }
+    while (!immediateDiagnostic && Date.now() < deadline && !data) {
       let stableSample: ScreenshotReadinessSnapshot | undefined;
       if (classification === 'diagnostic' || expectation.kind === 'diagnostic') {
         stableSample = await sampleReadiness(sampleCdp, sampleContextId, expectation, generation, 0, deadline).catch(() => undefined);

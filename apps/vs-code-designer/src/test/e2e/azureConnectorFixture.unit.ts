@@ -867,6 +867,11 @@ export async function runApprovedAzureConnectorFixtureControls(control: Control)
           assert.doesNotMatch(error.message, /private-account@example/);
           assert.deepStrictEqual(fixture.events, ['capture', 'png-written', 'metadata-written', 'rejected']);
           assert.strictEqual(fixture.captures, 1);
+          assert.strictEqual(
+            fixture.requests[consumer === 'shared' ? 1 : 0],
+            'Page.captureScreenshot',
+            'The first RPC after detection must capture pixels, not readiness or frame observations'
+          );
           const metadata = fixture.metadata();
           assert.strictEqual(metadata.classification, 'diagnostic');
           assert.strictEqual(metadata.verdict, 'diagnostic', 'Never an ordered acceptance checkpoint');
@@ -1063,6 +1068,7 @@ function unexpectedPromptScreenshotFixture(
   fault?: 'timeout' | 'capture-error' | 'storage-error' | 'missing-data'
 ) {
   const events: string[] = [];
+  const requests: string[] = [];
   const files = new Map<string, string | Buffer>();
   const prompt: DetectedWorkbenchPrompt = {
     kind,
@@ -1077,12 +1083,14 @@ function unexpectedPromptScreenshotFixture(
     targetId: 'unit-exact-current-workbench',
     contextGeneration: 7,
     async evaluate<T>(_context: number | undefined, expression: string) {
+      requests.push('Runtime.evaluate');
       if (expression === workbenchPromptDomScript) {
         return [prompt] as T;
       }
       throw new Error('Diagnostic capture must not need settled prompt readiness');
     },
     async send(method, _params, options) {
+      requests.push(method);
       assert.ok(
         !method.startsWith('Input.') && method !== 'Page.bringToFront' && !method.startsWith('Target.'),
         'Never dismiss, focus, navigate or discover another window'
@@ -1121,6 +1129,7 @@ function unexpectedPromptScreenshotFixture(
     cdp,
     prompt,
     events,
+    requests,
     files,
     restore,
     get captures() {

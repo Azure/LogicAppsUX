@@ -85,6 +85,7 @@ export async function flagUnexpectedWorkbenchPrompt(
   try {
     const file = await captureCdpScreenshot(cdp.diagnosticCdp ?? cdp, checkpoint, {
       classification: 'diagnostic',
+      captureBeforeObservation: true,
       expectation: { kind: 'diagnostic', label: checkpoint, reason: 'unexpected-workbench-prompt' },
       timeoutMs: 5000,
       deadlineMs: Date.now() + 5000,
