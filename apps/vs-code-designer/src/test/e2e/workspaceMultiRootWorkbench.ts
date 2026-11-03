@@ -186,7 +186,13 @@ export async function folderCreateNewProject(
   const exactRoots = (actual: string[]) =>
     actual.length === expectedLabels.length && [...actual].sort().every((value, index) => value === expectedLabels[index]);
   try {
-    await command(cdp, 'View: Show Explorer', deadline);
+    // Do not open an unnecessary palette over an already projected Explorer.
+    // Extension announcement webviews can steal its focus before text input.
+    // The existing exact-root/hit-test oracle still owns every actual gesture.
+    const initial = await rootState();
+    if (!initial.point || !exactRoots(initial.roots)) {
+      await command(cdp, 'View: Show Explorer', deadline);
+    }
     const state = await poll(rootState, (value) => !!value.point && exactRoots(value.roots), deadline, {
       operation: 'explorer-root-match',
       parentOperation: menuSpan.id,

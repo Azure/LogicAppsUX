@@ -19,6 +19,7 @@ import {
   poll,
   readLogicAppRoots,
   readWorkbench,
+  readQuickInputState,
   selectFolderDebugConfiguration,
   waitForActivatedMultiRootRuntime,
 } from './workspaceMultiRootWorkbench';
@@ -189,6 +190,9 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
     screenshots.push(await capture('workspace-multi-root-reloaded'));
 
     for (const [rootIndex, folder] of roots.entries()) {
+      // Creation has its own bounded stream. Keep the later real debug input
+      // and final pending prompt observable without increasing either cap.
+      setOperationDiagnosticScope({ suite: 'workspaceMultiRoot', phase: `regular-workbench-debug-root-${rootIndex + 1}` });
       const phase = phaseDeadline(180000);
       const launch: { configurations: { name: string; type: string; request: string }[] } = JSON.parse(
         fs.readFileSync(path.join(folder, '.vscode/launch.json'), 'utf8')
@@ -207,17 +211,24 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
       );
       await command(workbench, 'Debug: Select and Start Debugging', phase);
       await selectFolderDebugConfiguration(workbench, { workspaceFilePath: workspace.wsFilePath, folder, name: config.name }, phase);
-      const started = await poll(
-        async () =>
-          debugEvents(options.eventsFile).filter(
+      const debugState = await poll(
+        async () => {
+          const events = debugEvents(options.eventsFile).filter(
             (event) =>
               event.kind === 'started' &&
               typeof event.folder === 'string' &&
               normalizePhysicalPath(event.folder) === normalizePhysicalPath(folder)
-          ),
-        (events) => events.length > 0,
-        phase
+          );
+          // A secondary UI observation never substitutes for the recorder's
+          // real start event or masks a recorder/read failure.
+          const quickInput = await readQuickInputState(workbench).catch(() => undefined);
+          return { ...quickInput, events, count: events.length };
+        },
+        (state) => state.events.length > 0,
+        phase,
+        { operation: 'subsequent-runtime-startup' }
       );
+      const started = debugState.events;
       assert.equal(started.length, 1);
       assert.equal(started[0].boot, activation.boot, 'Debug evidence came from a replaced extension host');
       assert.equal(started[0].name, config.name);

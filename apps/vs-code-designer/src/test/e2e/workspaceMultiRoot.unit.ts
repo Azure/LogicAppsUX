@@ -612,14 +612,53 @@ test('root menu uses exact persisted root alias, focused-tree context gesture, o
         .filter((entry) => entry.method === 'Input.insertText')
         .map((entry) => entry.params.text)
         .join(),
-      'View: Show Explorer',
-      'Create Project is never invoked through the command palette/service'
+      '',
+      'An already exact Explorer needs no palette input; Create Project still uses its real context menu'
     );
+    assert.equal(fixture.sent.filter((entry) => entry.params.type === 'mousePressed').length, 2, 'Exact root and actual menu item clicks');
+  } finally {
+    fixture.dispose();
+  }
+});
+
+test('root menu does not send palette text into a focused announcement webview when exact Explorer roots are already visible', async () => {
+  const fixture = folderMenuFixture();
+  try {
+    fixture.document.body.insertAdjacentHTML('beforeend', '<iframe class="webview ready" tabindex="0"></iframe>');
+    fixture.document.querySelector('iframe').focus();
+    assert.equal(fixture.document.activeElement.tagName, 'IFRAME');
+    await folderCreateNewProject(fixture.cdp, fixture.folder, Date.now() + 2000, {
+      workspaceFilePath: fixture.workspaceFilePath,
+      checkpoint: async () => undefined,
+    });
     assert.equal(
-      fixture.sent.filter((entry) => entry.params.type === 'mousePressed').length,
-      3,
-      'Palette, root, and actual menu item clicks'
+      fixture.sent.some((entry) => entry.method === 'Input.insertText' || entry.params.code === 'KeyP'),
+      false
     );
+    assert.equal(fixture.sent.filter((entry) => entry.params.code === 'ContextMenu').length, 2);
+    assert.equal(fixture.document.querySelector('.context-view'), null, 'Real menu item was clicked');
+  } finally {
+    fixture.dispose();
+  }
+});
+
+test('root menu still opens Explorer through real palette input when its roots are not projected', async () => {
+  const fixture = folderMenuFixture();
+  try {
+    const explorer = fixture.document.querySelector('.explorer-folders-view');
+    explorer.style.display = 'none';
+    fixture.document.querySelector('.quick-input-widget .label-name').addEventListener('click', () => {
+      explorer.style.display = 'block';
+    });
+    await folderCreateNewProject(fixture.cdp, fixture.folder, Date.now() + 2000, {
+      workspaceFilePath: fixture.workspaceFilePath,
+      checkpoint: async () => undefined,
+    });
+    assert.deepEqual(
+      fixture.sent.filter((entry) => entry.method === 'Input.insertText').map((entry) => entry.params.text),
+      ['View: Show Explorer']
+    );
+    assert.equal(fixture.sent.filter((entry) => entry.params.type === 'mousePressed').length, 3);
   } finally {
     fixture.dispose();
   }

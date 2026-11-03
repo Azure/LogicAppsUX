@@ -115,6 +115,13 @@ focus fail closed. It clicks the root label, observes selection and the tree's
 gesture. Monaco List handles this on keyup using the focused root as its
 anchor; this is UI input, not a programmatic Create Project command.
 
+If that exact root set is already visible and the requested root is
+hit-testable, the helper goes directly to its real root gesture. It does not
+open a redundant command palette, whose focus can be displaced by a newly
+opened dependency announcement webview. A missing projection still uses the
+real **View: Show Explorer** command, then requires the same exact-root oracle.
+The menu's selection, focus, enablement and invocation requirements are unchanged.
+
 Before initial Explorer input, the family now waits for the recorder's
 **same-boot `runtimeResolution` event**, validates its admitted Func identity,
 and propagates activation errors. The recorder emits `activation` before
@@ -123,6 +130,12 @@ product activation (including `updateLogicAppsContext`). A started recorder
 and visible root do not establish that the product's context-menu
 contributions are ready. The same gate also applies after Reload Window.
 It does not set context keys or substitute a programmatic Create Project call.
+
+Each later debug-root stage has a separate bounded diagnostic scope, rather
+than sharing the stream already consumed by project creation. While waiting
+for an actual root-owned debug start, a secondary hashed QuickInput snapshot
+retains a pending prompt on failure. It cannot satisfy the real start event,
+change the deadline or replace a primary recorder failure.
 
 Opening and activation are separate postconditions. A visible Monaco menu must
 exist before its exact **Create new project...** item is clicked using native
