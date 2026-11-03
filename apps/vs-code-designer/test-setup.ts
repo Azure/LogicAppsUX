@@ -79,6 +79,10 @@ vi.mock('fs', () => ({
   createReadStream: vi.fn(),
   readdirSync: vi.fn(() => []),
   readFileSync: vi.fn(),
+  realpathSync: Object.assign(
+    vi.fn((value: string) => value),
+    { native: vi.fn((value: string) => value) }
+  ),
   writeFileSync: vi.fn(),
   renameSync: vi.fn(),
   rmSync: vi.fn(),

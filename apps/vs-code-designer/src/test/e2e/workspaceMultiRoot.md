@@ -177,6 +177,14 @@ consumers. Never label those controls as native approval.
 
 ## Native consumer requirements — parent-owned
 
+Design-time startup and original-spawn receipts must hash the same canonical
+physical project path. On Windows, a URI-derived lowercase drive letter and a
+native filesystem path can identify the same directory but produce different
+raw-string hashes. Canonicalize diagnostic project identity with
+`fs.realpathSync.native`; retain the original map keys and product behavior.
+Do not fix the ownership join by ignoring hashes, accepting a missing startup,
+or crediting recognized executable paths as ownership.
+
 After accepting a stock debug configuration, Code can retain the picker and
 its rows during its `quick-input-widget-closing` animation while making the
 widget `inert` and returning focus to the editor. The shared prompt detector

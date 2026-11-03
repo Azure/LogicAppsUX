@@ -63,7 +63,7 @@ const linuxProcessExitWaitMs = 5000;
 // real serializer; no command arguments, environment or output enter receipts.
 function designTimeState(projectPath: string, instance = ext.designTimeInstances.get(projectPath)): Record<string, unknown> {
   return {
-    project: projectPath,
+    project: fs.realpathSync.native(projectPath),
     mapCount: ext.designTimeInstances.size,
     startupPromisePresent: Boolean(instance?.startupPromise),
     processPresent: Boolean(instance?.process),

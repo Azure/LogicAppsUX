@@ -671,8 +671,11 @@ describe('isolated MultiRoot design-time owning receipts', () => {
     emitDesignTimeDiagnostic('design-time-stop', inspect);
     const span = startDesignTimeDiagnostic('design-time-spawn', inspect);
     finishDesignTimeDiagnostic(span, inspect, { error: undefined });
+    ext.designTimeInstances.set(project, {});
+    startDesignTimeProcess(undefined, path.join(project, 'workflow-designtime'), 'func');
     expect(span).toBeUndefined();
     expect(inspect).not.toHaveBeenCalled();
+    expect(productFs.realpathSync.native).not.toHaveBeenCalled();
     expect(diagnosticFs.readdirSync(directory)).toEqual([]);
   });
 
@@ -748,6 +751,21 @@ describe('isolated MultiRoot design-time owning receipts', () => {
       processPresent: false,
       project: { sha256: digest(project) },
     });
+  });
+
+  it('joins startup receipt identity to the canonical physical project without changing raw map keys', async () => {
+    const physicalProject = 'D:\\owned-fixture\\project';
+    project = 'd:\\owned-fixture\\project';
+    vi.mocked(productFs.realpathSync.native).mockImplementation((value) => (String(value) === project ? physicalProject : String(value)));
+    vi.mocked(axios.get).mockRejectedValueOnce(new Error('not ready')).mockResolvedValue({});
+    vi.mocked(productFs.readFileSync).mockReturnValue('{}');
+    await expect(startDesignTimeApi(context(), project)).resolves.toBeUndefined();
+    expect(ext.designTimeInstances.has(project)).toBe(true);
+    expect(ext.designTimeInstances.has(physicalProject)).toBe(false);
+    const startup = receipts().find((record) => record.operation === 'design-time-startup' && record.status === 'end');
+    expect(startup.state.project).toMatchObject({ sha256: digest(physicalProject) });
+    expect(startup.state.project.sha256).not.toBe(digest(project));
+    expect(startup.state).toMatchObject({ settled: true, processPresent: true, startupPromisePresent: false, pid: 23035 });
   });
 
   it('preserves concurrent startup rejection identity and records reuse and failed settlement', async () => {
