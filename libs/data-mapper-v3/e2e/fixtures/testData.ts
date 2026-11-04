@@ -169,6 +169,9 @@ export async function loadSampleMap(relativePath: string, serializedContent?: st
   }
   const map = new BtmSerializer().deserialize(content);
   const loadSchema = async (reference: MapDocument['sourceSchema']): Promise<SchemaTree | null> => {
+    if (!reference.location && !reference.inlineSchemaXml) {
+      return null;
+    }
     const schemaPath = reference.location ? resolveSchemaFilePath(path.dirname(mapPath), reference.location, reference.rootName) : mapPath;
     const schemaXml = reference.location ? readTextFileSync(schemaPath) : reference.inlineSchemaXml;
     if (!schemaXml) {

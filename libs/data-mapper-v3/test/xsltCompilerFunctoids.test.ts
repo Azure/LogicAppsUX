@@ -1078,6 +1078,75 @@ describe('XsltCompiler functoid coverage', () => {
     expect(result.xslt).toContain('xsl:copy-of select="$var:');
   });
 
+  describe.each([false, true])('inline XSLT script helpers (preserve sequence: %s)', (preserveSequenceOrder) => {
+    test.each([ScriptType.InlineXslt, ScriptType.InlineXsltCallTemplate])(
+      'includes an unlinked C# function called by %s without changing the map',
+      (scriptType) => {
+        const definition = FunctoidRegistry.getInstance().getFunctoid(260)!;
+        const expression = '<xsl:value-of select="userCSharp:GetValue()" />';
+        const scriptContent =
+          scriptType === ScriptType.InlineXslt ? expression : `<xsl:template name="emit-value">${expression}</xsl:template>`;
+        const map = createMap({
+          id: 'xslt',
+          functoidId: definition.id,
+          category: definition.category,
+          name: definition.name,
+          x: 0,
+          y: 0,
+          inputLinks: [],
+          outputLinks: [],
+          parameters: [],
+          scriptType,
+          scriptContent,
+        });
+        map.options.preserveSequenceOrder = preserveSequenceOrder;
+        map.pages[0].functoids[0].parameters = [];
+        map.pages[0].links[0].targetId = map.pages[0].links[0].targetPath = '/Root/Total';
+        const helper: MapFunctoid = {
+          ...map.pages[0].functoids[0],
+          id: 'helper',
+          scriptType: ScriptType.InlineCSharp,
+          scriptContent: 'public string GetValue() { return "helper-value"; }',
+          scriptImplementations: [
+            {
+              type: ScriptType.InlineCSharp,
+              content: 'public string GetValue() { return "helper-value"; }',
+              assemblyReferences: ['System.Xml'],
+            },
+            { type: ScriptType.InlineVbNet, content: 'inactive implementation' },
+          ],
+        };
+        // BizTalk allows the helper to live on a different page with no output link.
+        map.pages.push({ id: 'helpers', name: 'Helpers', functoids: [helper], links: [] });
+        const original = JSON.stringify(map);
+
+        const result = new XsltCompiler().compile(map, sourceSchema, targetSchema);
+
+        expect(result.success).toBe(true);
+        expect(result.errors).toEqual([]);
+        expect(XMLValidator.validate(result.xslt!)).toBe(true);
+        expect(result.xslt).toContain('xmlns:userCSharp="http://schemas.microsoft.com/BizTalk/2003/userCSharp"');
+        expect(result.xslt).toMatch(/exclude-result-prefixes="[^"]*\buserCSharp\b/);
+        expect(result.xslt).toContain('<msxsl:script language="C#" implements-prefix="userCSharp">');
+        expect(result.xslt).toContain(helper.scriptContent);
+        expect(result.xslt).toContain('<msxsl:assembly name="System.Xml" />');
+        expect(result.xslt).toContain(expression);
+        expect(result.xslt).not.toContain('inactive implementation');
+        expect(result.xslt).not.toMatch(/<xsl:variable[^>]*select="userCSharp:GetValue/);
+        expect(result.warnings.some((warning) => warning.elementId === 'helpers:helper')).toBe(false);
+        expect(JSON.stringify(map)).toBe(original);
+
+        // An unrelated unused helper must remain omitted, even alongside inline XSLT.
+        helper.scriptContent = 'public string Unused() { return "unused"; }';
+        helper.scriptImplementations![0].content = helper.scriptContent;
+        const unusedResult = new XsltCompiler().compile(map, sourceSchema, targetSchema);
+        expect(unusedResult.xslt).not.toContain('xmlns:userCSharp=');
+        expect(unusedResult.xslt).not.toContain('<msxsl:script');
+        expect(unusedResult.warnings.some((warning) => warning.elementId === 'helpers:helper')).toBe(true);
+      }
+    );
+  });
+
   test('evaluates cumulative functoids once at their common parent context', () => {
     const cumulative = FunctoidRegistry.getInstance().getFunctoid(324)!;
     const map = createMap({

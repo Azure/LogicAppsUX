@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="GetPIArchiveDataResult">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" name="TimeSeries">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="TimedValues">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="TimedValue">
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="xs:decimal">
+                            <xs:attribute name="Path" type="xs:unsignedByte" use="required" />
+                            <xs:attribute name="Flags" type="xs:string" use="required" />
+                            <xs:attribute name="Time" type="xs:dateTime" use="required" />
+                            <xs:attribute name="UOM" type="xs:string" use="required" />
+                            <xs:attribute name="Status" type="xs:string" use="required" />
+                            <xs:attribute name="PctGood" type="xs:unsignedByte" use="required" />
+                            <xs:attribute name="DataType" type="xs:string" use="required" />
+                          </xs:extension>
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="Updates" />
+            </xs:sequence>
+            <xs:attribute name="type" type="xs:string" use="required" />
+            <xs:attribute name="Path" type="xs:unsignedByte" use="required" />
+            <xs:attribute name="ErrDesc" type="xs:string" use="required" />
+            <xs:attribute name="Error" type="xs:int" use="required" />
+            <xs:attribute name="SeriesID" type="xs:string" use="required" />
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

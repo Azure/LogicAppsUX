@@ -6,6 +6,7 @@ const path = require('node:path');
 
 const extensionPath = path.resolve(__dirname, '../..');
 const repoPath = path.resolve(extensionPath, '../..');
+const learningPath = process.env.MAPPER_NATIVE_SUITE === 'learning-path';
 
 function resolveExisting(name, locations) {
   try {
@@ -22,7 +23,7 @@ async function host() {
     await runTests({
       vscodeExecutablePath: process.env.MAPPER_NATIVE_CODE,
       extensionDevelopmentPath: extensionPath,
-      extensionTestsPath: path.join(__dirname, 'suite.cjs'),
+      extensionTestsPath: path.join(__dirname, learningPath ? 'learningPath.cjs' : 'suite.cjs'),
       launchArgs: [
         process.env.MAPPER_NATIVE_WORKSPACE,
         `--user-data-dir=${process.env.MAPPER_NATIVE_USER_DATA}`,
@@ -148,6 +149,15 @@ async function main() {
       MAPPER_NATIVE_EXTENSIONS: extensions,
       MAPPER_NATIVE_ROOT: root,
     });
+    if (learningPath) {
+      env.MAPPER_NATIVE_REPORT = path.join(
+        extensionPath,
+        'test-results',
+        `native-learning-path-${new Date().toISOString().replace(/[:.]/g, '-')}`
+      );
+      await fs.mkdir(env.MAPPER_NATIVE_REPORT, { recursive: true });
+      console.log(`Test Map report: ${env.MAPPER_NATIVE_REPORT}`);
+    }
     console.log(`Native executable: ${executable}\nIsolated artifacts: ${root}`);
     child = fork(__filename, ['--host'], { env, stdio: ['ignore', 'pipe', 'pipe', 'ipc'], detached: process.platform !== 'win32' });
     const output = [];
@@ -159,7 +169,8 @@ async function main() {
     }
     await new Promise((resolve, reject) => {
       interrupted = reject;
-      deadline = setTimeout(() => reject(new Error('Native test exceeded 120 seconds')), 120_000);
+      const timeout = learningPath ? 45 * 60_000 : 120_000;
+      deadline = setTimeout(() => reject(new Error(`Native test exceeded ${timeout / 1000} seconds`)), timeout);
       child.once('error', reject);
       child.once('exit', (code) => reject(new Error(`Native runner exited before reporting: ${code}`)));
       child.once('message', (result) => (result.ok ? resolve() : reject(new Error(result.error))));
@@ -168,7 +179,7 @@ async function main() {
       throw error;
     });
     const report = JSON.parse(await fs.readFile(path.join(root, 'result.json'), 'utf8'));
-    assert.equal(report.status, 'passed');
+    assert.equal(report.status, 'passed', `Native test failures; inspect ${env.MAPPER_NATIVE_REPORT || root}`);
     console.log(`Native assertions: ${JSON.stringify(report)}\nRuntime: ${((Date.now() - started) / 1000).toFixed(1)}s`);
   } finally {
     clearTimeout(deadline);

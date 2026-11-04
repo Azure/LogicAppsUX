@@ -30,6 +30,7 @@ import {
 import { errorCategory, getDataMapperLogger } from './logger';
 import { SCHEMA_BROWSE_DIRECTORY_KEY, getSelectedFileDirectory, resolveBrowseDirectory } from './browseLocation';
 import { copySchemaWithDependencies, getXsltOutputUri, listWorkspaceSchemas, schemasFolderName } from './workspaceStructure';
+import { validateTestMapOutput } from './testMapOutput';
 
 export class MapEditorProvider implements vscode.CustomTextEditorProvider {
   public static readonly viewType = 'biztalkDataMapper.mapEditor';
@@ -757,11 +758,11 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
                 outputXml = await xslt.xsltProcess(xmlParser.xmlParse(inputXml), xmlParser.xmlParse(processedXslt));
               }
 
-              if (!outputXml || outputXml.trim().length === 0) {
-                this.logger.error(`${operation}: transformation produced empty output.`);
+              if (typeof outputXml !== 'string') {
+                this.logger.error(`${operation}: transformation did not return serialized output.`);
                 webviewPanel.webview.postMessage({
                   type: 'testMapResult',
-                  data: { output: '', error: `${testMessages.join('\n')}\n\n✗ Transform produced empty output. Check your map links.` },
+                  data: { output: '', error: `${testMessages.join('\n')}\n\n✗ Transform did not return serialized output.` },
                 });
                 break;
               }
@@ -769,29 +770,40 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
                 testMessages.push('✓ Transform completed');
               }
 
-              // Step 4: Validate output is well-formed XML
-              const formattedOutput = this.formatXml(outputXml);
+              // Step 4: Validate XML output without modifying serialized text or HTML.
               try {
-                const { XMLParser } = require('fast-xml-parser');
-                const outParser = new XMLParser({ ignoreAttributes: false });
-                outParser.parse(formattedOutput);
-                this.logger.info(`${operation}: output XML parsing completed.`);
-                testMessages.push('✓ Output XML is well-formed');
-              } catch (outParseErr: any) {
-                this.logger.warn(`${operation}: output XML parsing warning (${errorCategory(outParseErr)}).`);
-                testMessages.push(`⚠ Output XML validation warning: ${outParseErr.message}`);
+                const outputMethod = validateTestMapOutput(compileResult.xslt, outputXml);
+                if (outputMethod === 'xml') {
+                  // Saved files use UTF-8 regardless of the transform's requested encoding.
+                  outputXml = outputXml.replace(
+                    /^(\uFEFF?<\?xml\s[^?]*\bencoding\s*=\s*)(["'])([^"']+)\2/,
+                    (declaration, prefix, quote, encoding) =>
+                      encoding.toLowerCase() === 'utf-8' ? declaration : `${prefix}${quote}utf-8${quote}`
+                  );
+                }
+                this.logger.info(`${operation}: ${outputMethod} output validation completed.`);
+                testMessages.push(
+                  outputMethod === 'xml' ? '✓ Output XML is well-formed' : `✓ ${outputMethod.toUpperCase()} output preserved`
+                );
+              } catch (validationError: any) {
+                this.logger.error(`${operation}: output validation failed (${errorCategory(validationError)}).`);
+                webviewPanel.webview.postMessage({
+                  type: 'testMapResult',
+                  data: { output: '', error: `${testMessages.join('\n')}\n\n✗ Output validation failed:\n${validationError.message}` },
+                });
+                break;
               }
 
               // Step 5: Save output.xml
-              fs.writeFileSync(outputPath, formattedOutput, 'utf-8');
-              this.logger.info(`${operation}: output XML saved (${Buffer.byteLength(formattedOutput)} bytes); Test Map succeeded.`);
+              fs.writeFileSync(outputPath, outputXml, 'utf-8');
+              this.logger.info(`${operation}: output saved (${Buffer.byteLength(outputXml)} bytes); Test Map succeeded.`);
               testMessages.push(`✓ Output saved: ${btmName}_output.xml`);
 
               // Open the output file in VS Code
               const outputUri = vscode.Uri.file(outputPath);
               await vscode.window.showTextDocument(outputUri, { viewColumn: vscode.ViewColumn.Beside });
 
-              const resultSummary = `${testMessages.join('\n')}\n\n${'─'.repeat(50)}\n${formattedOutput}`;
+              const resultSummary = `${testMessages.join('\n')}\n\n${'─'.repeat(50)}\n${outputXml}`;
               webviewPanel.webview.postMessage({
                 type: 'testMapResult',
                 data: { output: resultSummary },
@@ -1341,33 +1353,6 @@ export class MapEditorProvider implements vscode.CustomTextEditorProvider {
 
     result += xslt.substring(lastIndex);
     return result;
-  }
-
-  private formatXml(xml: string): string {
-    // Simple XML pretty-printer
-    let formatted = '';
-    let indent = 0;
-    const lines = xml.replace(/>\s*</g, '>\n<').split('\n');
-    for (const line of lines) {
-      const trimmed = line.trim();
-      if (!trimmed) {
-        continue;
-      }
-      if (trimmed.startsWith('</')) {
-        indent = Math.max(0, indent - 1);
-      }
-      formatted += `${'  '.repeat(indent)}${trimmed}\n`;
-      if (
-        trimmed.startsWith('<') &&
-        !trimmed.startsWith('</') &&
-        !trimmed.startsWith('<?') &&
-        !trimmed.endsWith('/>') &&
-        !trimmed.includes('</')
-      ) {
-        indent++;
-      }
-    }
-    return `<?xml version="1.0" encoding="utf-8"?>\n${formatted.replace(/^<\?xml[^?]*\?>\s*/i, '')}`;
   }
 
   private async resolveSchemaDependencies(schemaXml: string, schemaPath: string): Promise<Map<string, any>> {
