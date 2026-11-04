@@ -1,6 +1,5 @@
 import path from 'path';
 import * as fse from 'fs-extra';
-import * as vscode from 'vscode';
 import {
   autoRuntimeDependenciesPathSettingKey,
   defaultDependencyPathValue,
@@ -10,6 +9,7 @@ import {
 } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { getGlobalSetting } from './vsCodeConfig/settings';
+import { getLogicAppRoots } from './workspace';
 import { lspSdkRevisionMarkerName } from './languageServerProtocolConstants';
 
 const codefulSdkPackageId = 'Microsoft.Azure.Workflows.Sdk';
@@ -19,14 +19,10 @@ const codefulSdkProjectRevisionMarkerName = '.logicapps-lspsdk-revision';
 /**
  * Checks whether any workspace folder contains a codeful Logic Apps project.
  */
-export async function codefulProjectsExist(): Promise<boolean> {
-  const workspaceFolders = vscode.workspace.workspaceFolders;
-  if (!workspaceFolders || workspaceFolders.length === 0) {
-    return false;
-  }
-
-  for (const folder of workspaceFolders) {
-    if (await hasCodefulWorkflowSetting(folder.uri.fsPath)) {
+export async function codefulProjectExists(): Promise<boolean> {
+  const projectPaths = await getLogicAppRoots();
+  for (const projectPath of projectPaths) {
+    if (await isCodefulLogicApp(projectPath)) {
       return true;
     }
   }
@@ -34,11 +30,20 @@ export async function codefulProjectsExist(): Promise<boolean> {
 }
 
 /**
- * Checks if the codeful agent is enabled for a given folder by examining the local settings file.
+ * Determines whether the given path is a codeful Logic App root.
+ * @param fsPath - The file system path to check.
+ * @returns A promise that resolves to true if the given path is a codeful Logic App root, false otherwise.
+ */
+export async function isCodefulLogicApp(fsPath: string): Promise<boolean> {
+  return (await hasCodefulWorkflowSetting(fsPath)) || (await hasCodefulSdkReference(fsPath));
+}
+
+/**
+ * Checks if codeful is enabled for a given project by examining the local settings file.
  * @param folderPath - The path to the folder containing the local settings file
  * @returns A promise that resolves to true if the codeful agent is enabled, false otherwise
  */
-export const hasCodefulWorkflowSetting = async (folderPath: string): Promise<boolean> => {
+export async function hasCodefulWorkflowSetting(folderPath: string): Promise<boolean> {
   const localSettingsFilePath = path.join(folderPath, localSettingsFileName);
   if (!(await fse.pathExists(localSettingsFilePath))) {
     return false;
@@ -51,36 +56,37 @@ export const hasCodefulWorkflowSetting = async (folderPath: string): Promise<boo
   } catch {
     return false;
   }
-};
+}
 
 /**
  * Checks if the folder contains a .NET 8 project with a reference to the codeful SDK.
  * @param {string} folderPath - The folder path.
  * @returns {Promise<boolean>} Returns true if the folder contains a .NET 8 project with a reference to the codeful SDK, otherwise false.
  */
-export const hasCodefulSdkReference = async (folderPath: string): Promise<boolean> => {
+export async function hasCodefulSdkReference(folderPath: string): Promise<boolean> {
   try {
     if (!fse.statSync(folderPath).isDirectory()) {
       return false;
     }
+
+    const files = await fse.readdir(folderPath);
+    const csprojFile = files.find((file) => file.endsWith('.csproj'));
+    if (!csprojFile) {
+      return false;
+    }
+
+    const csprojContent = await fse.readFile(path.join(folderPath, csprojFile), 'utf-8');
+    return isCodefulNet8Csproj(csprojContent);
   } catch {
     return false;
   }
-  const files = await fse.readdir(folderPath);
-  const csprojFile = files.find((file) => file.endsWith('.csproj'));
-  if (!csprojFile) {
-    return false;
-  }
-
-  const csprojContent = await fse.readFile(path.join(folderPath, csprojFile), 'utf-8');
-  return isCodefulNet8Csproj(csprojContent);
-};
+}
 
 /**
  * Invalidates only the project-local cache entry for the extension-shipped codeful SDK
  * when the VSIX ships changed nupkg bits with the same package ID/version.
  */
-export const invalidateCodefulSdkCacheIfNeeded = async (projectPath: string): Promise<boolean> => {
+export async function invalidateCodefulSdkCacheIfNeeded(projectPath: string): Promise<boolean> {
   if (!(await hasCodefulWorkflowSetting(projectPath))) {
     return false;
   }
@@ -127,7 +133,7 @@ export const invalidateCodefulSdkCacheIfNeeded = async (projectPath: string): Pr
   await fse.writeFile(projectSdkRevisionMarkerPath, installedSdkRevision);
   await fse.remove(path.join(projectNugetFolder, '.logicapps-lspsdk-hash'));
   return true;
-};
+}
 
 async function removeIfExists(filePath: string): Promise<void> {
   if (await fse.pathExists(filePath)) {
@@ -210,7 +216,11 @@ function escapeRegExp(value: string): string {
  * @returns `true` if the project targets .NET 8 and includes the Microsoft.Azure.Workflows.Sdk package, `false` otherwise
  */
 const isCodefulNet8Csproj = (csprojContent: string): boolean => {
-  return csprojContent.includes('<TargetFramework>net8</TargetFramework>') && csprojContent.includes('Microsoft.Azure.Workflows.Sdk');
+  return (
+    (csprojContent.includes('<TargetFramework>net8</TargetFramework>') ||
+      csprojContent.includes('<TargetFramework>net8.0</TargetFramework>')) &&
+    csprojContent.includes('Microsoft.Azure.Workflows.Sdk')
+  );
 };
 
 /**
@@ -237,7 +247,7 @@ export interface CodefulCsprojBuildHookInfo {
   runsOnBuild: boolean;
 }
 
-const findTargetAfterTargets = (csprojContent: string, targetName: string): string | null => {
+function findTargetAfterTargets(csprojContent: string, targetName: string): string | null {
   const stripped = stripXmlComments(csprojContent);
   const targetTagRegex = /<Target\b([^>]*?)\/?>/g;
   let match: RegExpExecArray | null;
@@ -251,9 +261,9 @@ const findTargetAfterTargets = (csprojContent: string, targetName: string): stri
     return afterTargetsMatch?.[1] ?? '';
   }
   return null;
-};
+}
 
-const afterTargetsIncludesBuild = (afterTargets: string | null): boolean => {
+function afterTargetsIncludesBuild(afterTargets: string | null): boolean {
   if (!afterTargets) {
     return false;
   }
@@ -261,7 +271,7 @@ const afterTargetsIncludesBuild = (afterTargets: string | null): boolean => {
     .split(';')
     .map((token) => token.trim())
     .includes('Build');
-};
+}
 
 /**
  * Parses the codeful project's `.csproj` contents to determine whether the
@@ -275,18 +285,18 @@ const afterTargetsIncludesBuild = (afterTargets: string | null): boolean => {
  * @param csprojContent - Raw contents of the `.csproj` file.
  * @returns Hook info; `runsOnBuild` is true only when both targets hook `Build`.
  */
-export const parseCsprojCopyToCodefulInfo = (csprojContent: string): CodefulCsprojBuildHookInfo => {
+export function parseCsprojCopyToCodefulInfo(csprojContent: string): CodefulCsprojBuildHookInfo {
   const copyAfterTargets = findTargetAfterTargets(csprojContent, 'CopyToCodefulFolder');
   const replaceLangAfterTargets = findTargetAfterTargets(csprojContent, 'ReplaceLanguageNetCore');
   const runsOnBuild = afterTargetsIncludesBuild(copyAfterTargets) && afterTargetsIncludesBuild(replaceLangAfterTargets);
   return { copyAfterTargets, replaceLangAfterTargets, runsOnBuild };
-};
+}
 
 /**
  * Reads the codeful project's `.csproj` from `folderPath` and parses its
  * build-hook info. Returns `null` when no `.csproj` file is present.
  */
-export const inspectCodefulCsprojBuildHooks = async (folderPath: string): Promise<CodefulCsprojBuildHookInfo | null> => {
+export async function inspectCodefulCsprojBuildHooks(folderPath: string): Promise<CodefulCsprojBuildHookInfo | null> {
   try {
     if (!fse.statSync(folderPath).isDirectory()) {
       return null;
@@ -301,14 +311,14 @@ export const inspectCodefulCsprojBuildHooks = async (folderPath: string): Promis
   }
   const content = await fse.readFile(path.join(folderPath, csprojFile), 'utf-8');
   return parseCsprojCopyToCodefulInfo(content);
-};
+}
 
 /**
  * Detects if a C# file contains a CreateStatefulWorkflow call and extracts the workflow name.
  * @param fileContent - The content of the C# file
  * @returns The workflow name if detected, undefined otherwise
  */
-export const detectStatefulCodefulWorkflow = (fileContent: string): string | undefined => {
+export function detectStatefulCodefulWorkflow(fileContent: string): string | undefined {
   // Pattern to match: WorkflowBuilderFactory.CreateStatefulWorkflow(<workflowName>, ...)
   // or WorkflowFactory.CreateStatefulWorkflow(<workflowName>, ...)
   // This handles: variables, string literals, template placeholders like <%= flowName %>
@@ -333,14 +343,14 @@ export const detectStatefulCodefulWorkflow = (fileContent: string): string | und
   }
 
   return undefined;
-};
+}
 
 /**
  * Detects if a C# file contains a CreateConversationalAgent call and extracts the workflow name.
  * @param fileContent - The content of the C# file
  * @returns The workflow name if detected, undefined otherwise
  */
-export const detectAgentCodefulWorkflow = (fileContent: string): string | undefined => {
+export function detectAgentCodefulWorkflow(fileContent: string): string | undefined {
   // Pattern to match: WorkflowBuilderFactory.CreateConversationalAgent(<workflowName>)
   // or WorkflowFactory.CreateAgentWorkflow(<workflowName>, ...)
   // This handles: variables, string literals, template placeholders like <%= flowName %>
@@ -366,7 +376,7 @@ export const detectAgentCodefulWorkflow = (fileContent: string): string | undefi
   }
 
   return undefined;
-};
+}
 
 /**
  * Detects if a C# file is a codeful workflow file and extracts the workflow name.
@@ -374,7 +384,7 @@ export const detectAgentCodefulWorkflow = (fileContent: string): string | undefi
  * @param fileContent - The content of the C# file
  * @returns An object with the workflow name and type if detected, undefined otherwise
  */
-export const detectCodefulWorkflow = (fileContent: string): { workflowName: string; workflowType: 'stateful' | 'agent' } | undefined => {
+export function detectCodefulWorkflow(fileContent: string): { workflowName: string; workflowType: 'stateful' | 'agent' } | undefined {
   const statefulWorkflowName = detectStatefulCodefulWorkflow(fileContent);
   if (statefulWorkflowName) {
     return { workflowName: statefulWorkflowName, workflowType: 'stateful' };
@@ -386,7 +396,7 @@ export const detectCodefulWorkflow = (fileContent: string): { workflowName: stri
   }
 
   return undefined;
-};
+}
 
 /**
  * Extracts the trigger name from a codeful C# file.
@@ -394,7 +404,7 @@ export const detectCodefulWorkflow = (fileContent: string): { workflowName: stri
  * @param fileContent - The content of the C# file
  * @returns The trigger name if found, undefined otherwise
  */
-export const extractTriggerNameFromCodeful = (fileContent: string): string | undefined => {
+export function extractTriggerNameFromCodeful(fileContent: string): string | undefined {
   // Remove single-line comments (//) and multi-line comments (/* */) to avoid matching commented code
   const uncommentedContent = fileContent
     .replace(/\/\*[\s\S]*?\*\//g, '') // Remove /* */ comments
@@ -417,28 +427,28 @@ export const extractTriggerNameFromCodeful = (fileContent: string): string | und
   }
 
   return undefined;
-};
+}
 
 /**
  * Detects if the codeful workflow has an HTTP request trigger.
  * @param fileContent - The content of the C# file
  * @returns true if the workflow has an HTTP request trigger, false otherwise
  */
-export const hasHttpRequestTrigger = (fileContent: string): boolean => {
+export function hasHttpRequestTrigger(fileContent: string): boolean {
   // Remove single-line comments (//) and multi-line comments (/* */) to avoid matching commented code
   const uncommentedContent = fileContent
     .replace(/\/\*[\s\S]*?\*\//g, '') // Remove /* */ comments
     .replace(/\/\/.*/g, ''); // Remove // comments
 
   return uncommentedContent.includes('WorkflowTriggers.BuiltIn.CreateHttpTrigger');
-};
+}
 
 /**
  * Extracts the HTTP trigger name from WorkflowTriggers.BuiltIn.CreateHttpTrigger() call.
  * @param fileContent - The content of the C# file
  * @returns The HTTP trigger name if found, undefined otherwise
  */
-export const extractHttpTriggerName = (fileContent: string): string | undefined => {
+export function extractHttpTriggerName(fileContent: string): string | undefined {
   // Remove single-line comments (//) and multi-line comments (/* */) to avoid matching commented code
   const uncommentedContent = fileContent
     .replace(/\/\*[\s\S]*?\*\//g, '') // Remove /* */ comments
@@ -456,4 +466,4 @@ export const extractHttpTriggerName = (fileContent: string): string | undefined 
   // If CreateHttpTrigger() is called without a name parameter, return undefined
   // The caller should query the LSP server to get the SDK-generated default name
   return undefined;
-};
+}

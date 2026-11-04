@@ -201,7 +201,6 @@ export const extensionCommand = {
   enableAzureConnectors: 'azureLogicAppsStandard.enableAzureConnectors',
   syncCloudSettings: 'azureLogicAppsStandard.syncCloudSettings',
   configureWebhookRedirectEndpoint: 'azureLogicAppsStandard.configureWebhookRedirectEndpoint',
-  initProjectForVSCode: 'azureLogicAppsStandard.initProjectForVSCode',
   configureDeploymentSource: 'azureLogicAppsStandard.configureDeploymentSource',
   startRemoteDebug: 'azureLogicAppsStandard.startRemoteDebug',
   reportIssue: 'azureLogicAppsStandard.reportIssue',
@@ -231,7 +230,8 @@ export type extensionEvent = (typeof extensionEvent)[keyof typeof extensionEvent
 
 export const extensionContext = {
   hasProject: 'azureLogicAppsStandard.hasProject',
-  isCodeful: 'azureLogicAppsStandard.isCodeful',
+  logicAppProjectPaths: 'azureLogicAppsStandard.logicAppProjectPaths',
+  codefulProjectPaths: 'azureLogicAppsStandard.codefulProjectPaths',
   customCodeFunctionsFolders: 'azureLogicAppsStandard.customCode.functionsFolders',
   customCodeEligibleLogicAppFolders: 'azureLogicAppsStandard.customCode.eligibleLogicAppFolders',
   dataMapSupportedDataMapDefinitionFileExts: 'azureLogicAppsStandard.dataMap.supportedDataMapDefinitionFileExts',
@@ -278,7 +278,6 @@ export const projectLanguageSetting = 'projectLanguage';
 export const dataMapperVersionSetting = 'dataMapperVersion';
 export const designerVersionSetting = 'designerVersion';
 export const funcVersionSetting = 'projectRuntime';
-export const projectSubpathSetting = 'projectSubpath';
 export const projectTemplateKeySetting = 'projectTemplateKey';
 export const projectOpenBehaviorSetting = 'projectOpenBehavior';
 export const stopFuncTaskPostDebugSetting = 'stopFuncTaskPostDebug';
@@ -311,7 +310,6 @@ export const experimentalExtensionBundleVersionSettingKey = 'experimentalExtensi
 export const enableManagedIdentityAuthSetting = 'enableManagedIdentityAuth';
 export const dependencyMetadataRequestTimeoutMs = 30 * 1000;
 export const useSmbDeployment = 'useSmbDeploymentForHybrid';
-export const onStartLanguageServer = 'onStartLanguageServer';
 
 // host.json
 export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';

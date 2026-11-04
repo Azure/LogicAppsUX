@@ -6,7 +6,6 @@ import { defaultFuncPort, extensionEvent, stopFuncTaskPostDebugSetting } from '.
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getLocalSettingsJson } from '../appSettings/localSettings';
-import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getWorkspaceSetting } from '../vsCodeConfig/settings';
 import { isString } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -205,18 +204,17 @@ async function stopFuncTaskIfRunning(context: IActionContext, debugSession: vsco
 
 /**
  * Gets functions port from the task, local.settings.json or the defaultPort.
- * @param {string} context - Command context.
- * @param {string} fsPath - Workflow file path.
- * @param {string} fsPath - Workflow file path.\
+ * @param {IActionContext} context - Command context.
+ * @param {vscode.Task | undefined} funcTask - Function task.
+ * @param {string} projectPath - The path to the Logic App project.
  * @returns {vscode.WorkspaceFolder | undefined} Workflow folder.
  */
 export async function getFuncPortFromTaskOrProject(
   context: IActionContext,
   funcTask: vscode.Task | undefined,
-  projectPathOrTaskScope: string | vscode.WorkspaceFolder | vscode.TaskScope
+  projectPath: string
 ): Promise<string> {
   try {
-    // First, check the task itself
     if (funcTask && isString(funcTask.definition.command)) {
       const match = funcTask.definition.command.match(/\s+(?:"|'|)(?:-p|--port)(?:"|'|)\s+(?:"|'|)([0-9]+)/i);
       if (match) {
@@ -224,27 +222,16 @@ export async function getFuncPortFromTaskOrProject(
       }
     }
 
-    // Second, check local.settings.json
-    let projectPath: string | undefined;
-    if (isString(projectPathOrTaskScope)) {
-      projectPath = projectPathOrTaskScope;
-    } else if (typeof projectPathOrTaskScope === 'object') {
-      projectPath = await tryGetLogicAppProjectRoot(context, projectPathOrTaskScope, true);
-    }
-
-    if (projectPath) {
-      const localSettings = await getLocalSettingsJson(context, projectPath);
-      if (localSettings.Host) {
-        const key = Object.keys(localSettings.Host).find((k) => k.toLowerCase() === 'localhttpport');
-        if (key && localSettings.Host[key]) {
-          return localSettings.Host[key];
-        }
+    const localSettings = await getLocalSettingsJson(context, projectPath);
+    if (localSettings.Host) {
+      const key = Object.keys(localSettings.Host).find((k) => k.toLowerCase() === 'localhttpport');
+      if (key && localSettings.Host[key]) {
+        return localSettings.Host[key];
       }
     }
   } catch {
     // ignore and use default
   }
 
-  // Finally, fall back to the default port
   return defaultFuncPort;
 }

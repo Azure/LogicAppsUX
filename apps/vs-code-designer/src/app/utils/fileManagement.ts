@@ -2,11 +2,26 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { ext } from '../../../extensionVariables';
-import { localize } from '../../../localize';
+import { ext } from '../../extensionVariables';
+import { localize } from '../../localize';
 import * as vscode from 'vscode';
+import { isPathEqual } from './fs';
 
 export class FileManagement {
+  /**
+   * Ensures the given path is added as a workspace folder if it is not already included.
+   * @param {string} fsPath - The path to the workspace folder.
+   */
+  public static ensureWorkspaceFolder(fsPath: string) {
+    const workspaceFolders = vscode.workspace.workspaceFolders || [];
+    const isAlreadyInWorkspace = workspaceFolders.some((folder) => isPathEqual(folder.uri.fsPath, fsPath));
+  
+    if (!isAlreadyInWorkspace) {
+      ext.outputChannel.appendLog(localize('addingWorkspaceFolder', 'Adding workspace folder: {0}', fsPath));
+      FileManagement.addFolderToWorkspace(fsPath);
+    }
+  }
+
   /**
    * Adds a folder to the workspace.
    * @param folderPath - The path of the folder to be added.

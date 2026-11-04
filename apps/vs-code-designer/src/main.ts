@@ -14,7 +14,6 @@ import { getExtensionVersion, initializeCustomExtensionContext, updateLogicAppsC
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
 import { shouldRequireStrictDependencyValidation } from './app/utils/strictDependencyValidation';
 import { ensureVSCodeFiles } from './app/projectConsistency/vscodeConsistency';
-import { tryGetLogicAppProjectRoot } from './app/utils/verifyIsProject';
 import {
   autoStartDesignTimeSetting,
   DependencyDefaultPath,
@@ -43,9 +42,9 @@ import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCo
 import { logExtensionSettings, logSubscriptions } from './app/utils/telemetry';
 import { registerAzureUtilsExtensionVariables } from '@microsoft/vscode-azext-azureutils';
 import { getAzExtResourceType, getAzureResourcesExtensionApi } from '@microsoft/vscode-azureresources-api';
-import { startLanguageServer } from './app/languageServer/languageServer';
+import { startLanguageServers } from './app/languageServer/languageServer';
 import { runPostExtractStepsFromCache } from './app/utils/cloudToLocalUtils';
-import { codefulProjectsExist } from './app/utils/codeful';
+import { codefulProjectExists } from './app/utils/codeful';
 import { logicAppDebugConfigProvider } from './app/utils/debug';
 import { enableLocalManagedIdentityAuth } from './app/utils/managedIdentity';
 import { localize } from './localize';
@@ -64,13 +63,12 @@ import { useBinariesDependencies } from './app/utils/binaries';
 import { validateAndInstallBinaries } from './app/commands/binaries/validateAndInstallBinaries';
 import { ensureProjectFiles } from './app/projectConsistency/projectFilesConsistency';
 import { runProjectConsistencyCheck } from './app/commands/runProjectConsistencyCheck';
-import { getWorkspaceLogicAppRoots } from './app/utils/workspace';
+import { getLogicAppRoots } from './app/utils/workspace';
 
 const telemetryString = 'setInGitHubBuild';
 
 export async function activate(context: vscode.ExtensionContext) {
   initializeCustomExtensionContext();
-  await updateLogicAppsContext();
 
   vscode.debug.registerDebugConfigurationProvider('logicapp', logicAppDebugConfigProvider);
 
@@ -99,41 +97,43 @@ export async function activate(context: vscode.ExtensionContext) {
     activateContext.telemetry.properties.lastStep = 'registerCommands';
     registerCommands();
 
-    if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-      activateContext.telemetry.properties.lastStep = 'ensureWorkspace';
-      await callWithTelemetryAndErrorHandling('activate.ensureWorkspace', async (actionContext: IActionContext) => {
+    activateContext.telemetry.properties.lastStep = 'ensureWorkspace';
+    await callWithTelemetryAndErrorHandling('activate.ensureWorkspace', async (actionContext: IActionContext) => {
+      actionContext.telemetry.properties.isActivationEvent = 'true';
+      actionContext.errorHandling.rethrow = true;
+      actionContext.errorHandling.suppressDisplay = true;
+      await ensureWorkspace(actionContext);
+    });
+
+    const projectPaths = await getLogicAppRoots();
+    await updateLogicAppsContext(projectPaths);
+
+    activateContext.telemetry.properties.lastStep = 'parameterizeConnections';
+    callWithTelemetryAndErrorHandling('activate.parameterizeAllConnections', async (actionContext: IActionContext) => {
+      actionContext.telemetry.properties.isActivationEvent = 'true';
+      if (
+        projectPaths.length > 0 &&
+        (shouldParameterizeConnections() || (await promptShouldParameterizeConnections(actionContext)))
+      ) {
+        actionContext.telemetry.properties.actionTaken = 'true';
+        await parameterizeAllConnections(actionContext);
+      }
+    });
+
+    activateContext.telemetry.properties.lastStep = 'ensureProjectFiles';
+    const ensureProjectFilesTasks = projectPaths.map(async (projectPath) => {
+      await callWithTelemetryAndErrorHandling('activate.ensureProjectFiles', async (actionContext: IActionContext) => {
         actionContext.telemetry.properties.isActivationEvent = 'true';
-        actionContext.errorHandling.rethrow = true;
-        actionContext.errorHandling.suppressDisplay = true;
-        await ensureWorkspace(actionContext);
+        await ensureProjectFiles(actionContext, projectPath);
       });
+    });
+    await Promise.all(ensureProjectFilesTasks);
 
-      activateContext.telemetry.properties.lastStep = 'parameterizeConnections';
-      callWithTelemetryAndErrorHandling('activate.parameterizeAllConnections', async (actionContext: IActionContext) => {
-        actionContext.telemetry.properties.isActivationEvent = 'true';
-        if (shouldParameterizeConnections() || (await promptShouldParameterizeConnections(actionContext))) {
-          actionContext.telemetry.properties.actionTaken = 'true';
-          await parameterizeAllConnections(actionContext);
-        }
-      });
-
-      const projectPaths = await getWorkspaceLogicAppRoots();
-
-      activateContext.telemetry.properties.lastStep = 'ensureProjectFiles';
-      const ensureProjectFilesTasks = projectPaths.map(async (projectPath) => {
-        await callWithTelemetryAndErrorHandling('activate.ensureProjectFiles', async (actionContext: IActionContext) => {
-          actionContext.telemetry.properties.isActivationEvent = 'true';
-          await ensureProjectFiles(actionContext, projectPath);
-        });
-      });
-      await Promise.all(ensureProjectFilesTasks);
-
-      activateContext.telemetry.properties.lastStep = 'ensureVSCodeFiles';
-      callWithTelemetryAndErrorHandling('activate.ensureVSCodeFiles', async (actionContext: IActionContext) => {
-        actionContext.telemetry.properties.isActivationEvent = 'true';
-        await ensureVSCodeFiles(actionContext, projectPaths);
-      });
-    }
+    activateContext.telemetry.properties.lastStep = 'ensureVSCodeFiles';
+    callWithTelemetryAndErrorHandling('activate.ensureVSCodeFiles', async (actionContext: IActionContext) => {
+      actionContext.telemetry.properties.isActivationEvent = 'true';
+      await ensureVSCodeFiles(actionContext, projectPaths);
+    });
 
     activateContext.telemetry.properties.lastStep = 'registerWorkspaceFolderChangeEvent';
     registerEvent(
@@ -174,7 +174,6 @@ export async function activate(context: vscode.ExtensionContext) {
         actionContext.telemetry.properties.designTimeStartupState = 'scheduled';
         scheduleStartAllDesignTimeApis();
       } else {
-        const projectPaths = await getWorkspaceLogicAppRoots();
         if (await promptShouldAutoStartDesignTime(projectPaths)) {
           const startDesignTimePromises = projectPaths.map(async (projectPath) => 
             callWithTelemetryAndErrorHandling('activate.startDesignTimeApi', async (innerActionContext: IActionContext) => {
@@ -188,9 +187,11 @@ export async function activate(context: vscode.ExtensionContext) {
     });
 
     activateContext.telemetry.properties.lastStep = 'startLanguageServer';
-    const hasCodefulProjects = await codefulProjectsExist();
+    const hasCodefulProjects = await codefulProjectExists();
     if (hasCodefulProjects) {
-      startLanguageServer();
+      callWithTelemetryAndErrorHandling('activate.startLanguageServers', async (actionContext: IActionContext) => {
+        await startLanguageServers(actionContext);
+      });
     }
 
     ext.rgApi = await getResourceGroupsApi();

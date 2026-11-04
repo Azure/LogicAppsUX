@@ -148,8 +148,8 @@ vi.mock('../appSettings/localSettings', () => ({
   getLocalSettingsJson: vi.fn().mockResolvedValue({}),
 }));
 
-vi.mock('../verifyIsProject', () => ({
-  tryGetLogicAppProjectRoot: vi.fn().mockResolvedValue('/mock/project/path'),
+vi.mock('../workspace', () => ({
+  selectLogicAppRoot: vi.fn().mockResolvedValue('/mock/project/path'),
 }));
 
 // Mock the design-time launcher so we can observe the deferred post-install
@@ -578,8 +578,8 @@ describe('getLatestVersionRange', () => {
 
 describe('getBundleDependencyFeed', () => {
   it('loads dependency feed using a local settings source URI override', async () => {
-    const verifyIsProjectMod = await import('../verifyIsProject');
-    vi.mocked(verifyIsProjectMod.tryGetLogicAppProjectRoot).mockResolvedValue('/mock/project/path');
+    const workspaceModule = await import('../workspace');
+    vi.mocked(workspaceModule.selectLogicAppRoot).mockResolvedValue('/mock/project/path');
     const mockedGetLocalSettingsJson = await import('../appSettings/localSettings');
     vi.mocked(mockedGetLocalSettingsJson.getLocalSettingsJson).mockResolvedValue({
       Values: {
@@ -595,6 +595,7 @@ describe('getBundleDependencyFeed', () => {
       context,
       `https://bundles.example.com/ExtensionBundles/${extensionBundleId}/dependency.json`
     );
+    expect(workspaceModule.selectLogicAppRoot).toHaveBeenCalledWith(context, { suppressPrompt: true });
   });
 });
 
@@ -712,8 +713,8 @@ describe('downloadExtensionBundle readiness model', () => {
     vi.mocked(settingsModule.getGlobalSetting).mockReturnValue(undefined);
     const depUpdateCheckModule = await import('../../state/dependencies');
     vi.mocked(depUpdateCheckModule.shouldCheckForDependencyUpdates).mockReturnValue(true);
-    const verifyIsProjectModule = await import('../verifyIsProject');
-    vi.mocked(verifyIsProjectModule.tryGetLogicAppProjectRoot).mockResolvedValue('/mock/project/path');
+    const workspaceModule = await import('../workspace');
+    vi.mocked(workspaceModule.selectLogicAppRoot).mockResolvedValue('/mock/project/path');
     const localSettingsModule = await import('../appSettings/localSettings');
     vi.mocked(localSettingsModule.getLocalSettingsJson).mockResolvedValue({} as any);
     configureDisk();

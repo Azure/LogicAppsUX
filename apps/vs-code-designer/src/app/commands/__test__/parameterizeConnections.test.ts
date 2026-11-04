@@ -35,7 +35,7 @@ describe('parameterizeConnections', () => {
     (vscode.workspace as any).workspaceFolders = testWorkspaceFolders;
     testContext.telemetry.properties = {};
 
-    vi.spyOn(workspaceUtil, 'getWorkspaceLogicAppRoots').mockResolvedValue(testWorkspaceFolders.map((folder) => folder.uri.fsPath));
+    vi.spyOn(workspaceUtil, 'getLogicAppRoots').mockResolvedValue(testWorkspaceFolders.map((folder) => folder.uri.fsPath));
     vi.spyOn(connectionUtil, 'getConnectionsJson').mockResolvedValue(testConnectionsJson);
     vi.spyOn(parameterUtil, 'getParametersJson').mockResolvedValue(testParametersJson);
     vi.spyOn(localSettingsUtil, 'getLocalSettingsJson').mockResolvedValue(testLocalSettings as any);
@@ -57,9 +57,9 @@ describe('parameterizeConnections', () => {
 
   it('should do nothing if no workspace folders are available', async () => {
     (vscode.workspace as any).workspaceFolders = undefined;
-    const getWorkspaceLogicAppRootsSpy = vi.spyOn(workspaceUtil, 'getWorkspaceLogicAppRoots');
+    const getLogicAppRootsSpy = vi.spyOn(workspaceUtil, 'getLogicAppRoots');
     await parameterizeProjectConnections(testContext, testLogicAppProjectPath1);
-    expect(getWorkspaceLogicAppRootsSpy).not.toHaveBeenCalled();
+    expect(getLogicAppRootsSpy).not.toHaveBeenCalled();
   });
 
   it('should return early if connectionsJson is empty', async () => {
@@ -103,7 +103,7 @@ describe('parameterizeConnections', () => {
   it('should parameterize connections for all logic apps in the workspace when no project path is provided', async () => {
     const paramSpy = vi.spyOn(parameterizerUtil, 'areAllConnectionsParameterized').mockReturnValue(false);
     await parameterizeProjectConnections(testContext);
-    expect(workspaceUtil.getWorkspaceLogicAppRoots).toHaveBeenCalled();
+    expect(workspaceUtil.getLogicAppRoots).toHaveBeenCalled();
     expect(connectionUtil.getConnectionsJson).toHaveBeenCalledTimes(2);
     expect(connectionUtil.getConnectionsJson).toHaveBeenCalledWith(testLogicAppProjectPath1);
     expect(connectionUtil.getConnectionsJson).toHaveBeenCalledWith(testLogicAppProjectPath2);
