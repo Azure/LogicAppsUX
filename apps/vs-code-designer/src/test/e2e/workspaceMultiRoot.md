@@ -177,6 +177,12 @@ consumers. Never label those controls as native approval.
 
 ## Native consumer requirements — parent-owned
 
+The stock Azure activity icon's accessible label includes its shortcut:
+`Azure (Shift+Alt+A)`. Match that exact label, not the absent standalone `Azure`
+text. Run 15915836's Linux last-candidate receipt proved that this icon was
+visible, enabled and hit-testable, but rejected solely by the former exact
+label. Do not replace the click with a command or partial-text acceptance.
+
 Text-click predicate receipts retain the last candidate observation: normalized
 text and accessible labels (hashed), visible/enabled flags, bounds and center
 hit-test. Rejection codes are 1 (no eligible exact match), 2 (ambiguous matches),

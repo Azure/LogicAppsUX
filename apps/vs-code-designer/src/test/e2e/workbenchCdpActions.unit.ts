@@ -63,9 +63,9 @@ test('text click retains hashed candidate rejection evidence without accepting a
 });
 
 test('text click diagnostics preserve exact unique hit-tested click acceptance', async () => {
-  const fixture = workbenchDomFixture('<a aria-label="Azure" data-box="0,0,40,40"></a>');
+  const fixture = workbenchDomFixture('<a aria-label="Azure (Shift+Alt+A)" data-box="0,0,40,40"></a>');
   try {
-    await clickText(fixture.cdp, 'a', 'Azure', Date.now() + 1000, undefined, true, true);
+    await clickText(fixture.cdp, 'a', 'Azure (Shift+Alt+A)', Date.now() + 1000, undefined, true, true);
     assert.ok(fixture.sent.some((entry) => entry.method === 'Input.dispatchMouseEvent' && entry.params.type === 'mouseReleased'));
   } finally {
     fixture.dispose();
