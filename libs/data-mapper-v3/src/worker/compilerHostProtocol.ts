@@ -3,6 +3,7 @@ import type { MapDocument } from '../model';
 import type { SchemaTree } from '../model/schemaModel';
 import { SchemaParser } from '../schema/schemaParser';
 import { resolveSchemaDependencies } from '../schema/schemaDependencyResolver';
+import { resolveSchemaFilePath } from '../schema/schemaFileResolver';
 import type { WorkerSchemaReference } from './compilerWorkerClient';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -40,7 +41,7 @@ async function loadSchema(reference?: WorkerSchemaReference): Promise<SchemaTree
     schemaXml,
     filePath,
     async (dependencyPath) => (fs.existsSync(dependencyPath) ? readSchemaFile(dependencyPath) : undefined),
-    (currentFile, location) => path.resolve(path.dirname(currentFile), location)
+    (currentFile, location) => resolveSchemaFilePath(path.dirname(currentFile), location)
   );
   return new SchemaParser().parseWithImports(schemaXml, filePath, dependencies, reference.rootName);
 }

@@ -161,6 +161,26 @@ describe('SchemaParser', () => {
     expect(result.rootElement.attributes[1].defaultValue).toBe('true');
   });
 
+  test.each(['00123', 'true', '1e3', '1.00'])('preserves the lexical string value %s in XSD attributes', (value) => {
+    const xsd = `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="Root"><xs:complexType><xs:sequence>
+        <xs:element name="Default" type="xs:string" default="${value}" minOccurs="0" maxOccurs="2"/>
+        <xs:element name="Fixed" type="xs:string" fixed="${value}"/>
+        <xs:element name="Choice"><xs:simpleType><xs:restriction base="xs:string">
+          <xs:enumeration value="${value}"/>
+        </xs:restriction></xs:simpleType></xs:element>
+      </xs:sequence><xs:attribute name="code" type="xs:string" fixed="${value}"/>
+      </xs:complexType></xs:element>
+    </xs:schema>`;
+
+    const result = parser.parse(xsd, 'lexical-values.xsd');
+
+    expect(result.rootElement.children[0]).toMatchObject({ defaultValue: value, minOccurs: 0, maxOccurs: 2 });
+    expect(result.rootElement.children[1].fixedValue).toBe(value);
+    expect(result.rootElement.children[2].restrictions?.enumeration).toEqual([value]);
+    expect(result.rootElement.attributes[0].fixedValue).toBe(value);
+  });
+
   test('preserves numeric defaults, fixed values, and enumerations as strings', () => {
     const xsd = `<?xml version="1.0"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">

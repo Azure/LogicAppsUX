@@ -48,6 +48,26 @@ function createPage(): MapPage {
 }
 
 describe('functoid graph reconciliation', () => {
+  test.each([1, 2])('fills missing input slots around an explicit constant (%i incoming links)', (linkCount) => {
+    const page = createPage();
+    page.functoids[0].parameters = [{ index: 1, type: ParameterType.Constant, value: '2' }];
+    if (linkCount === 1) {
+      page.links = page.links.filter((link) => link.id !== 'input-2');
+      page.functoids[0].inputLinks = [];
+    }
+
+    reconcilePageFunctoidLinks(page);
+
+    const expected = [
+      { index: 0, type: ParameterType.Link, value: linkCount === 1 ? 'input-1' : 'input-2' },
+      { index: 1, type: ParameterType.Constant, value: '2' },
+      ...(linkCount === 2 ? [{ index: 2, type: ParameterType.Link, value: 'input-1' }] : []),
+    ];
+    expect(page.functoids[0].parameters).toEqual(expected);
+    reconcilePageFunctoidLinks(page);
+    expect(page.functoids[0].parameters).toEqual(expected);
+  });
+
   test('synchronizes ordered input parameters and bidirectional link metadata', () => {
     const page = createPage();
 

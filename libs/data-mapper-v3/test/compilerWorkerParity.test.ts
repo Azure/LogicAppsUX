@@ -138,6 +138,72 @@ describe('compiler worker parity', () => {
     expect(parseSpy).toHaveBeenCalledTimes(1);
   });
 
+  test('compiles file references with recursive BizTalk dotted-name schema dependencies', async () => {
+    const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'btm-dotted-import-'));
+    const schemaPath = path.join(directory, 'Root.xsd');
+    const map: MapDocument = {
+      name: 'Dotted schema imports',
+      version: '1',
+      sourceSchema: { location: schemaPath },
+      targetSchema: { location: schemaPath },
+      options: { ...DEFAULT_MAP_OPTIONS },
+      pages: [
+        {
+          id: 'page1',
+          name: 'Page 1',
+          functoids: [],
+          links: [
+            {
+              id: 'link1',
+              sourceId: '/Root/Leaf',
+              sourcePath: '/Root/Leaf',
+              targetId: '/Root/Leaf',
+              targetPath: '/Root/Leaf',
+              sourceType: LinkEndpointType.SchemaNode,
+              targetType: LinkEndpointType.SchemaNode,
+            },
+          ],
+        },
+      ],
+    };
+    try {
+      fs.writeFileSync(
+        schemaPath,
+        `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:c="urn:common">
+        <xs:import namespace="urn:common" schemaLocation="Samples.Schemas.Common"/>
+        <xs:element name="Root"><xs:complexType><xs:sequence><xs:element ref="c:Leaf"/>
+        </xs:sequence></xs:complexType></xs:element></xs:schema>`
+      );
+      fs.writeFileSync(
+        path.join(directory, 'Common.xsd'),
+        `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:common">
+        <xs:include schemaLocation="Samples.Schemas.Leaf"/></xs:schema>`
+      );
+      fs.writeFileSync(
+        path.join(directory, 'Leaf.xsd'),
+        `<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:common">
+        <xs:element name="Leaf" type="xs:string"/></xs:schema>`
+      );
+
+      const result = await compileHostRequest(
+        {
+          id: 1,
+          map,
+          sourceSchemaReference: { filePath: schemaPath },
+          targetSchemaReference: { filePath: schemaPath },
+        },
+        new XsltCompiler()
+      );
+
+      expect(result.errors).toEqual([]);
+      expect(result.success).toBe(true);
+      expect(result.xslt).toContain('Leaf');
+      expect(result.xslt).toContain('urn:common');
+    } finally {
+      fs.rmSync(directory, { recursive: true, force: true });
+    }
+  });
+
   test('loads UTF-16 file-backed schemas through lightweight references', async () => {
     const schemaXml = `<?xml version="1.0" encoding="utf-16"?>
             <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">

@@ -42,6 +42,30 @@ describe('LML import planning', () => {
     expect(fs.readFileSync(file, 'utf8')).toContain('$sourceSchema: Source.xsd # source');
   });
 
+  test('uniquifies only directive keys without altering constants or expression arguments', () => {
+    const loaded = loadMap(`Root:
+  $if: /First
+  $if: /Second
+  nested:
+    $for(/Root/Item):
+      literal: $if
+      loop: $for
+      format: $format
+      expression: $concat("$if", "$for", "$format")
+    $for(/Root/Item):
+      literal: '$if'
+  $format: unchanged
+`);
+    const root = loaded.Root as Record<string, unknown>;
+    expect(Object.keys(root).filter((key) => key.endsWith('-$if'))).toHaveLength(2);
+    expect(root.$format).toBe('unchanged');
+    const nested = root.nested as Record<string, unknown>;
+    const loops = Object.entries(nested).filter(([key]) => key.endsWith('-$for(/Root/Item)'));
+    expect(loops).toHaveLength(2);
+    expect(loops[0][1]).toEqual({ literal: '$if', loop: '$for', format: '$format', expression: '$concat("$if", "$for", "$format")' });
+    expect(loops[1][1]).toEqual({ literal: '$if' });
+  });
+
   test('finds Logic Apps Artifacts schemas and copies transitive includes once', () => {
     write('LogicApp/Artifacts/Schemas/Shared.xsd', schema);
     const including = '<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:include schemaLocation="Shared.xsd"/></xs:schema>';

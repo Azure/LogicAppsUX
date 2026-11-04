@@ -10,7 +10,7 @@ const parser = new XMLParser({
   ignoreAttributes: false,
   attributeNamePrefix: '@_',
   allowBooleanAttributes: true,
-  parseAttributeValue: true,
+  parseAttributeValue: false,
   trimValues: true,
   preserveOrder: true,
 });
