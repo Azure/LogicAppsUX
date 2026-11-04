@@ -63,6 +63,39 @@ process targeting if launcher ownership is lost. Incomplete cleanup fails the
 run and retains the isolated artifacts instead of claiming successful teardown.
 Native execution does not automatically contribute to browser coverage.
 
+### Native Test Map Corpus
+
+The [learning-path native suite](../test/native/learningPath.cjs) opens every
+one of the 151 sample maps in the real custom editor and clicks **Test Map**.
+It uses the production instance generator, compiler worker and .NET transform,
+not mock host replies. Build current extension, worker and webview artifacts
+before running:
+
+```powershell
+pnpm --dir libs\data-mapper-v3 run vscode:prepublish
+$env:MAPPER_NATIVE_VSCODE = 'C:\Program Files\Microsoft VS Code\Code.exe'
+$env:MAPPER_NATIVE_SUITE = 'learning-path'
+pnpm --dir libs\data-mapper-v3 run test:native
+```
+
+Set `MAPPER_NATIVE_MAP_FILTER` to a relative-path substring for a focused run;
+leave it unset to attempt all 151 maps. The suite copies the fixtures into its
+isolated workspace and retains timestamped reports under
+`libs\data-mapper-v3\test-results\native-learning-path-*`. Each attempted map
+has a `result.json` entry plus its generated input and native result text;
+successful compilations retain `compiled.xslt` even when transformation fails.
+completed transforms also retain `output.xml`, `output.html` or `output.txt`
+according to the map's declared output method. Harness failures include a
+screenshot when the editor remains available. Temporary VS Code profiles and
+the copied workspace are cleaned up independently of these reports.
+
+The suite deliberately fails if any map cannot complete Test Map, including
+empty/invalid teaching maps and unavailable external dependencies. It does
+not whitelist known failures as passes. Success requires a real saved output
+and well-formed XML for maps declaring XML output; it does not establish
+target-XSD validity, expected business values, or parity with BizTalk. Use the focused browser transform
+cases for their additional value and cardinality assertions.
+
 ## Scenario Matrix
 
 | Area | Browser assertions | Tests |
@@ -80,8 +113,53 @@ Native execution does not automatically contribute to browser coverage.
 | Assistant | Empty prompts, button/keyboard submit, active page and trimmed payload, busy protection, context files, success/error replies, retry, unapplied proposals and applied map rendering | [copilot.spec.ts](copilot.spec.ts) |
 
 Sample maps and schemas live under [samples](samples), grouped into
-`LoopingFunctoids`, `PerformanceLargeMap`, and `SchemaReferences`. These test
-fixtures are excluded from the packaged extension.
+`LoopingFunctoids`, `PerformanceLargeMap`, `SchemaReferences`, and `LearningPath`.
+These test fixtures are excluded from the packaged extension.
+
+## BizTalk Learning Path Maps
+
+The `LearningPath` fixtures are copied from the `Working-with-Maps` directory of
+Sandro Pereira's **BizTalk-Server-Learning-Path** samples. Their MIT copyright and
+permission notice is retained in `samples/LearningPath/LICENSE`. Original BTM
+and XSD bytes, directory names, schema references, scripts, and intentionally
+incorrect teaching examples are preserved. No BizTalk installation, assemblies,
+signing keys, or machine-local source checkout is required to load the fixtures.
+
+Run the sample-backed cases from the repository root:
+
+```powershell
+pnpm --dir libs\data-mapper-v3 run test:e2e --grep @learning-path --workers=2
+```
+
+`learningPathMaps.spec.ts` inventories all 151 maps (239 declared pages, 1,612
+links, 635 functoids), checks imported link endpoints and functoid identities
+against the raw source XML, visits map pages in the browser, and edits and
+reopens the maps. The empty teaching map is checked as an empty editor rather
+than supplied with invented schemas or mappings.
+
+`learningPathTransforms.spec.ts` drives Compile and Test Map through the real
+webview, uses the TypeScript compiler and packaged .NET Framework transform
+helper instead of canned replies, and checks XML values, cardinality,
+conditional omission, target ordering, defaults, attributes, and sorting.
+Windows and .NET Framework are required. If the transform helper is missing,
+the suite builds its existing project using the .NET SDK; it does not install
+BizTalk. Compiled XSLT and actual output XML are attached to the test results.
+These cases do not exercise VS Code's native host, worker RPC, XSD validation,
+or establish BizTalk execution parity for the entire corpus. Database lookups,
+custom functoids, external assemblies and historical absolute XSLT paths remain
+import/preservation scenarios, not expected-success transforms.
+
+Two orchestration-variable teaching maps (`OrderToSAPOrderAccessOrcVarFunctoids`
+and `OrderToSAPOrderAccOrcVarHC`) select the `/Order` source schema but retain
+seven stale `/Root/InputMessagePart_0/Order/...` source paths. Their tests
+explicitly verify that mismatch, the two renderable functoid output links,
+and preservation of all nine original links rather than inventing an aggregate
+schema or calling the stale endpoints a mapper rendering regression.
+
+The learning-path suite has 161 cases: 158 successful scenarios and three
+documented expected failures. Expected failures still execute the browser
+flow and fail if the defect unexpectedly disappears; remove their annotation
+when the corresponding product fix lands.
 
 Schema tests use the real TypeScript parser/dependency resolver before sending
 the resulting state through the mock host. Missing-file errors are constructed
@@ -153,8 +231,13 @@ evidence in the JSON report before calling them successful regression coverage.
 - Delete in a focused XML editor deletes the selected functoid and its links.
 - Closing the Assistant sets `hidden` but leaves its controls visible.
 - An applied Assistant map updates links but does not render the added functoid.
+- Learning-path external-assembly BTM round trips append duplicate metadata
+  parameters.
+- Learning-path Looping functoid output compiles as a scalar value instead of
+  repeated records with mapped attributes.
+- Learning-path inline XSLT output gets an extra target-element wrapper.
 
-These are eight failing test cases across seven defect categories. Production
+These are eleven failing test cases across ten defect categories. Production
 fixes are separate from this test expansion.
 
 ## Remaining Gaps
@@ -163,8 +246,9 @@ This is not exhaustive UI or integration coverage. Remaining priorities include:
 
 - Actual VS Code schema/root/file dialogs, replacement confirmation, physical
   save/reopen and document undo/redo.
-- Real compiler/worker execution, XSD-valid transform output, DLL discovery,
-  deployment and live Assistant operations.
+- XSD-valid transform output, DLL discovery, deployment and live Assistant
+  operations. The native learning-path suite exercises worker RPC and Test Map;
+  its success criteria do not include output-schema or golden-output parity.
 - Delayed/out-of-order host replies, stale replies after cancellation, and
   disposal/reinitialization.
 - Pointer linking under combined zoom/scroll and very large maps/schemas.

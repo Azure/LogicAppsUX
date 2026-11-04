@@ -250,7 +250,8 @@ export class XsltCompiler {
     }
     const linkGraph = this.buildLinkGraph(page);
     this.currentPage = page;
-    this.validateP0Map(page, targetSchema);
+    const scriptHelpers = this.registerInlineXsltScriptHelpers(page);
+    this.validateP0Map(page, targetSchema, scriptHelpers);
 
     // Determine source root element
     const sourceRoot = sourceSchema?.rootElement?.name || this.inferSourceRootName(page) || 'Root';
@@ -437,12 +438,45 @@ export class XsltCompiler {
     }
   }
 
-  private validateP0Map(page: MapPage, targetSchema?: SchemaTree): void {
+  private registerInlineXsltScriptHelpers(page: MapPage): Set<string> {
+    const helpers = new Set<string>();
+    const hasOutput = (functoid: MapFunctoid): boolean =>
+      page.links.some((link) => link.sourceType === LinkEndpointType.Functoid && link.sourceId === functoid.id);
+    const scriptType = (functoid: MapFunctoid): string | undefined =>
+      functoid.parameters.find((parameter) => parameter.type === 'scriptType')?.value || functoid.scriptType;
+    const scriptBody = (functoid: MapFunctoid): string =>
+      functoid.parameters.find((parameter) => parameter.type === 'scriptBody')?.value || functoid.scriptContent || '';
+    const inlineXslt = page.functoids
+      .filter(
+        (functoid) =>
+          functoid.functoidId === 260 &&
+          hasOutput(functoid) &&
+          (scriptType(functoid) === 'inlineXslt' || scriptType(functoid) === 'inlineXsltCallTemplate')
+      )
+      .map(scriptBody)
+      .join('\n');
+
+    // Inline XSLT can call a C# scripting functoid without a graphical link.
+    // Register the referenced declaration, not a result variable or an eager call.
+    for (const functoid of page.functoids) {
+      if (functoid.functoidId !== 260 || hasOutput(functoid) || scriptType(functoid) !== 'inlineCSharp') {
+        continue;
+      }
+      const functionName = this.extractScriptFunctionName(scriptBody(functoid), 'inlineCSharp');
+      if (functionName && new RegExp(`\\buserCSharp:${functionName}\\s*\\(`).test(inlineXslt)) {
+        this.generateFunctoidXsltExpr(this.registry.getFunctoid(260)!, [], functoid);
+        helpers.add(functoid.id);
+      }
+    }
+    return helpers;
+  }
+
+  private validateP0Map(page: MapPage, targetSchema?: SchemaTree, scriptHelpers = new Set<string>()): void {
     const functoidsWithOutputs = new Set(
       page.links.filter((link) => link.sourceType === LinkEndpointType.Functoid).map((link) => link.sourceId)
     );
     for (const functoid of page.functoids) {
-      if (!functoidsWithOutputs.has(functoid.id)) {
+      if (!functoidsWithOutputs.has(functoid.id) && !scriptHelpers.has(functoid.id)) {
         this.warnings.push({
           message: `${functoid.name} has no output links and is not compiled`,
           elementId: functoid.id,

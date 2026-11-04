@@ -52,6 +52,8 @@ function findMapperFrame(browser) {
   });
 }
 
+exports.findMapperFrame = findMapperFrame;
+
 function pageNames(xml) {
   const { XMLParser } = require(process.env.MAPPER_NATIVE_XML_PARSER);
   const parsed = new XMLParser({ ignoreAttributes: false }).parse(xml);
@@ -74,7 +76,7 @@ async function clickAndObserveDocument(frame, document) {
     await new Promise((resolve, reject) => {
       timer = setTimeout(() => reject(new Error('Real add-page click did not update the native document within 30 seconds')), timeout);
       subscription = vscode.workspace.onDidChangeTextDocument((event) => {
-        if (event.document === document && pageNames(document.getText()).length === 2) {
+        if (event.document === document && document.isDirty && pageNames(document.getText()).length === 2) {
           resolve();
         }
       });
