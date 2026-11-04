@@ -8,13 +8,22 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 // overriding the lightweight fs-extra mock installed by the global test-setup.ts.
 vi.unmock('fs-extra');
 
-const encryptionMockState = vi.hoisted(() => ({ callCount: 0 }));
-vi.mock('../../../functionsExtension/executeOnFunctionsExt', () => ({
-  executeOnFunctions: vi.fn(async (_callback, _context, uri) => {
+const encryptionMockState = vi.hoisted(() => ({ decryptCallCount: 0, encryptCallCount: 0 }));
+vi.mock('../../../commands/appSettings/decryptLocalSettings', () => ({
+  decryptLocalSettings: vi.fn(async (uri) => {
     const fse = await import('fs-extra');
     const settings = await fse.readJson(uri.fsPath);
-    encryptionMockState.callCount += 1;
-    settings.IsEncrypted = encryptionMockState.callCount === 1 ? false : true;
+    encryptionMockState.decryptCallCount += 1;
+    settings.IsEncrypted = false;
+    await fse.writeJson(uri.fsPath, settings);
+  }),
+}));
+vi.mock('../../../commands/appSettings/encryptLocalSettings', () => ({
+  encryptLocalSettings: vi.fn(async (uri) => {
+    const fse = await import('fs-extra');
+    const settings = await fse.readJson(uri.fsPath);
+    encryptionMockState.encryptCallCount += 1;
+    settings.IsEncrypted = true;
     await fse.writeJson(uri.fsPath, settings);
   }),
 }));
@@ -30,7 +39,8 @@ describe('localSettings - addCustomCodeDotNetVersionSetting', () => {
   let mockContext: any;
 
   beforeEach(async () => {
-    encryptionMockState.callCount = 0;
+    encryptionMockState.decryptCallCount = 0;
+    encryptionMockState.encryptCallCount = 0;
     const tmpBase = process.env.TEMP || process.env.TMP || process.cwd();
     tempDir = await fse.mkdtemp(path.join(tmpBase, 'logic-apps-localsettings-test-'));
     projectPath = path.join(tempDir, 'TestLogicApp');
@@ -116,7 +126,8 @@ describe('localSettings - addCustomCodeDotNetVersionSetting', () => {
       expect(localSettings.IsEncrypted).toBe(true);
       expect(localSettings.Values.ExistingSecret).toBe('encrypted-value');
       expect(localSettings.Values.LOGIC_APPS_CUSTOMCODE_DOTNETVERSION).toBe('net10.0');
-      expect(encryptionMockState.callCount).toBe(3);
+      expect(encryptionMockState.decryptCallCount).toBe(1);
+      expect(encryptionMockState.encryptCallCount).toBe(2);
     });
   });
 

@@ -11,8 +11,10 @@ import builtinMcpClientManifest from './manifest/builtinmcpclient';
 import { LoggerService } from '../logger';
 import { LogEntryLevel } from '../logging/logEntry';
 import { usesSettingDefaultsTypeRoute } from '../operationmanifest';
+import type { StandardManagementHttpClient } from './management';
 
 export interface StandardOperationManifestServiceOptions extends BaseOperationManifestServiceOptions {
+  standardManagement?: StandardManagementHttpClient;
   getCachedOperation?: (connectorName: string, operationName: string) => Promise<any>;
 }
 
@@ -134,10 +136,15 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
         },
       });
     } else {
-      response = await httpClient.get<any>({
+      const request = {
         uri: `${baseUrl}/operationGroups/${connectorName}/operations/${operationName}`,
         queryParameters,
-      });
+      };
+      const standardManagement = this._options.standardManagement;
+      const legacyRequest = () => httpClient.get<any>(request);
+      response = await (standardManagement && (await standardManagement.isEnabled())
+        ? standardManagement.getConnectorOperation<any>(request, legacyRequest)
+        : legacyRequest());
     }
 
     const {
@@ -183,10 +190,15 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
           },
         });
       } else {
-        response = await httpClient.get<any>({
+        const request = {
           uri: `${baseUrl}/operationGroups/${connectorName}/operations/${operationName}`,
           queryParameters,
-        });
+        };
+        const standardManagement = this._options.standardManagement;
+        const legacyRequest = () => httpClient.get<any>(request);
+        response = await (standardManagement && (await standardManagement.isEnabled())
+          ? standardManagement.getConnectorOperation<any>(request, legacyRequest)
+          : legacyRequest());
       }
 
       const {

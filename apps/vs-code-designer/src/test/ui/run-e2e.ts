@@ -9,14 +9,13 @@
  * Uses an isolated extensions directory so no other user extensions
  * (Claude Code, etc.) interfere.
  *
- * Installs extensionDependencies from the marketplace into the same
- * isolated directory.
+ * Installs extensionDependencies and extensionPack members from the
+ * marketplace into the same isolated directory.
  */
 
 import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
-import * as crypto from 'crypto';
 import { exec, execFileSync, execSync } from 'child_process';
 import { ExTester } from 'vscode-extension-tester';
 import { isExecutableFile } from './runtimeBinaryCheck';
@@ -27,11 +26,13 @@ import {
   parseCustomCodeDotNetTargets,
 } from './customCodeDotNetVersionShared';
 import { lspDirectory } from '../../constants';
-import { lspServerDirectoryName, lspServerHashMarkerName, lspSdkHashMarkerName } from '../../app/utils/languageServerProtocolConstants';
+import {
+  lspSdkRevisionMarkerName,
+  lspServerDirectoryName,
+  lspServerRevisionMarkerName,
+} from '../../app/utils/languageServerProtocolConstants';
 
-type BundleFileEntry = { relPath: string; fullPath: string };
-type ExtensionBundleState = { version: string; bundleDir: string; sidecarPath: string };
-type BundleSidecar = { sourceMd5: string; contentHash: string };
+type ExtensionBundleState = { version: string; bundleDir: string; markerPath: string };
 type InstallResult = { dep: string; success: boolean };
 type RuntimeDependencyPaths = {
   depsRoot: string;
@@ -70,6 +71,9 @@ type ManifestEntry = {
   label?: string;
   appType?: string;
   wfType?: string;
+  appName?: string;
+  ccFolderName?: string;
+  fnName?: string;
   wsFilePath?: string;
   wsDir?: string;
   appDir?: string;
@@ -92,6 +96,11 @@ type Scenario = {
   settings?: ScenarioSettings;
   monolithic?: boolean;
   env?: Record<string, string>;
+  /**
+   * Whether the generic fresh-session retry can safely rerun this scenario.
+   * Disable for tests that deliberately mutate shared persistent state.
+   */
+  retryable?: boolean;
   /**
    * Install the codeful task recorder extension and point it at a freshly truncated
    * events/trigger pair for this scenario.
@@ -145,7 +154,7 @@ process.env.CODE_VERSION = VSCODE_VERSION;
 const DOWNLOAD_RETRY_ATTEMPTS = 3;
 const EXTENSION_BUNDLE_ID = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
 const EXTENSION_BUNDLE_ROOT = path.join(os.homedir(), '.azure-functions-core-tools', 'Functions', 'ExtensionBundles', EXTENSION_BUNDLE_ID);
-const BUNDLE_SIDECAR_FILE = '.bundle-source-md5';
+const BUNDLE_INSTALL_MARKER_FILE = '.install-complete';
 
 /**
  * LSP-related artifact names that must be removed when preparing an isolated
@@ -156,9 +165,11 @@ const BUNDLE_SIDECAR_FILE = '.bundle-source-md5';
  */
 const LSP_STALE_ARTIFACT_NAMES = [
   lspServerDirectoryName,
-  lspServerHashMarkerName,
+  lspServerRevisionMarkerName,
   lspDirectory,
-  lspSdkHashMarkerName,
+  lspSdkRevisionMarkerName,
+  '.lspserver-hash',
+  '.lspsdk-hash',
   '.lspserver-version',
   '.lspserver-path',
   '.lspsdk-version',
@@ -201,48 +212,8 @@ function findLatestExtensionBundle(): ExtensionBundleState | undefined {
   return {
     version,
     bundleDir,
-    sidecarPath: path.join(bundleDir, BUNDLE_SIDECAR_FILE),
+    markerPath: path.join(bundleDir, BUNDLE_INSTALL_MARKER_FILE),
   };
-}
-
-function listBundleFiles(bundleDir: string): BundleFileEntry[] {
-  const files: BundleFileEntry[] = [];
-  const stack = [bundleDir];
-  while (stack.length > 0) {
-    const current = stack.pop();
-    if (!current) {
-      continue;
-    }
-    for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
-      const fullPath = path.join(current, entry.name);
-      const relPath = path.relative(bundleDir, fullPath).split(path.sep).join('/');
-      if (relPath === BUNDLE_SIDECAR_FILE) {
-        continue;
-      }
-      if (entry.isDirectory()) {
-        stack.push(fullPath);
-      } else if (entry.isFile()) {
-        files.push({ relPath, fullPath });
-      }
-    }
-  }
-  files.sort((a, b) => (a.relPath < b.relPath ? -1 : a.relPath > b.relPath ? 1 : 0));
-  return files;
-}
-
-function computeBundleContentHash(bundleDir: string, files: BundleFileEntry[]): string {
-  const hash = crypto.createHash('sha256');
-  const nul = Buffer.from([0]);
-  for (const file of files) {
-    const stat = fs.statSync(file.fullPath);
-    hash.update(Buffer.from(file.relPath, 'utf8'));
-    hash.update(nul);
-    hash.update(Buffer.from(String(stat.size), 'utf8'));
-    hash.update(nul);
-    hash.update(fs.readFileSync(file.fullPath));
-    hash.update(nul);
-  }
-  return hash.digest('base64');
 }
 
 function verifyLogicAppsExtensionBundle(label: string): ExtensionBundleState {
@@ -250,33 +221,10 @@ function verifyLogicAppsExtensionBundle(label: string): ExtensionBundleState {
   if (!state) {
     throw new Error(`[${label}] Logic Apps extension bundle root is missing or has no version folders: ${EXTENSION_BUNDLE_ROOT}`);
   }
-  if (!fs.existsSync(state.sidecarPath)) {
-    throw new Error(`[${label}] Logic Apps extension bundle sidecar is missing: ${state.sidecarPath}`);
+  if (!fs.existsSync(state.markerPath)) {
+    throw new Error(`[${label}] Logic Apps extension bundle completion marker is missing: ${state.markerPath}`);
   }
-
-  let sidecar: BundleSidecar;
-  try {
-    sidecar = JSON.parse(fs.readFileSync(state.sidecarPath, 'utf8'));
-  } catch (error: any) {
-    throw new Error(`[${label}] Logic Apps extension bundle sidecar is not valid JSON: ${getErrorMessage(error)}`);
-  }
-  if (!sidecar || typeof sidecar.sourceMd5 !== 'string' || typeof sidecar.contentHash !== 'string') {
-    throw new Error(`[${label}] Logic Apps extension bundle sidecar is missing sourceMd5/contentHash: ${state.sidecarPath}`);
-  }
-
-  const files = listBundleFiles(state.bundleDir);
-  if (files.length === 0) {
-    throw new Error(`[${label}] Logic Apps extension bundle directory is empty: ${state.bundleDir}`);
-  }
-  const contentHash = computeBundleContentHash(state.bundleDir, files);
-  if (contentHash !== sidecar.contentHash) {
-    throw new Error(
-      `[${label}] Logic Apps extension bundle content hash mismatch for ${state.bundleDir}: expected ${sidecar.contentHash}, got ${contentHash}`
-    );
-  }
-  console.log(
-    `[${label}] Logic Apps extension bundle healthy: version=${state.version}, files=${files.length}, sidecar=${state.sidecarPath}`
-  );
+  console.log(`[${label}] Logic Apps extension bundle ready: version=${state.version}, marker=${state.markerPath}`);
   return state;
 }
 
@@ -295,28 +243,18 @@ function pruneUnhealthyLogicAppsExtensionBundles(label: string): void {
 
   for (const version of versions) {
     const bundleDir = path.join(EXTENSION_BUNDLE_ROOT, version);
+    const markerPath = path.join(bundleDir, BUNDLE_INSTALL_MARKER_FILE);
     try {
-      const sidecarPath = path.join(bundleDir, BUNDLE_SIDECAR_FILE);
-      if (!fs.existsSync(sidecarPath)) {
-        console.log(`[${label}] Removing bundle ${version}: missing sidecar ${sidecarPath}`);
-        fs.rmSync(bundleDir, { recursive: true, force: true });
-        continue;
-      }
-
-      const sidecar = JSON.parse(fs.readFileSync(sidecarPath, 'utf8'));
-      const files = listBundleFiles(bundleDir);
-      const contentHash = files.length > 0 ? computeBundleContentHash(bundleDir, files) : undefined;
-      if (!sidecar || typeof sidecar.contentHash !== 'string' || files.length === 0 || contentHash !== sidecar.contentHash) {
-        console.log(`[${label}] Removing bundle ${version}: invalid sidecar/content hash`);
+      if (!fs.existsSync(markerPath)) {
+        console.log(`[${label}] Removing incomplete bundle ${version}`);
         fs.rmSync(bundleDir, { recursive: true, force: true });
       }
-    } catch (error: any) {
-      console.log(`[${label}] Removing bundle ${version}: health check failed (${getErrorMessage(error)})`);
+    } catch (error) {
+      console.log(`[${label}] Removing incomplete bundle ${version}: ${getErrorMessage(error)}`);
       fs.rmSync(bundleDir, { recursive: true, force: true });
     }
   }
 }
-
 function createExTester(): ExTester {
   return new ExTester(
     undefined, // storageFolder — use default (os.tmpdir()/test-resources)
@@ -682,32 +620,29 @@ async function main(): Promise<void> {
   // Read extension metadata from dist/package.json
   const pkgJson = JSON.parse(fs.readFileSync(path.join(distDir, 'package.json'), 'utf8'));
   const extDeps: string[] = pkgJson.extensionDependencies || [];
+  const extPack: string[] = pkgJson.extensionPack || [];
   const devContainersDependency = 'ms-vscode-remote.remote-containers';
   if (extDeps.some((dep) => dep.toLowerCase() === devContainersDependency)) {
     throw new Error(
       `${devContainersDependency} must not be listed in extensionDependencies. It causes VS Code to install/start Dev Containers for users who only installed Azure Logic Apps.`
     );
   }
-  const requiredE2ePrereqs = ['ms-dotnettools.csdevkit'];
-  for (const prereq of requiredE2ePrereqs) {
-    if (!extDeps.some((dep) => dep.toLowerCase() === prereq)) {
-      throw new Error(`${prereq} must be listed in extensionDependencies because the E2E extension activation requires it.`);
+  const requiredE2ePackMembers = ['azurite.azurite', 'ms-dotnettools.csharp', 'ms-dotnettools.csdevkit'];
+  for (const packMember of requiredE2ePackMembers) {
+    if (!extPack.some((extensionId) => extensionId.toLowerCase() === packMember)) {
+      throw new Error(`${packMember} must be listed in extensionPack because Logic Apps authoring or debug scenarios require it.`);
     }
   }
   // Transitive dependencies that the VS Code CLI's --install-extension does NOT
   // reliably auto-resolve. Installing ms-dotnettools.csdevkit pulls in
   // ms-dotnettools.csharp, but csharp's own dependency
   // ms-dotnettools.vscode-dotnet-runtime is not always installed (observed on
-  // Windows). Without it, the C#/C# Dev Kit extensions fail to activate
-  // ("depends on an unknown 'ms-dotnettools.vscode-dotnet-runtime' extension"),
-  // which cascades into the Azure Logic Apps extension never finishing
-  // activation — so azureLogicAppsStandard.createWorkspace / Open Designer are
-  // never registered. Install these explicitly to guarantee activation.
+  // Windows). Without it, the C#/C# Dev Kit extensions fail when VS Code
+  // activates them for C# project or debug scenarios ("depends on an unknown
+  // 'ms-dotnettools.vscode-dotnet-runtime' extension"). Install it explicitly
+  // so those scenarios do not depend on transitive marketplace resolution.
   const transitiveE2eDependencies = ['ms-dotnettools.vscode-dotnet-runtime'];
-  const allE2eDependencies = [
-    ...extDeps,
-    ...transitiveE2eDependencies.filter((dep) => !extDeps.some((d) => d.toLowerCase() === dep.toLowerCase())),
-  ];
+  const allE2eDependencies = [...new Set([...extDeps, ...extPack, ...transitiveE2eDependencies].map((dep) => dep.toLowerCase()))];
   const extDirName = `${pkgJson.publisher}.${pkgJson.name}-${pkgJson.version}`;
   const ourExtTarget = path.join(extDir, extDirName);
 
@@ -725,7 +660,7 @@ async function main(): Promise<void> {
   // state from a VS Code archive layout that changed during download.
   const extest = createExTester();
 
-  // Step 2: Install extension dependencies from the marketplace.
+  // Step 2: Install extension dependencies and extension-pack members from the marketplace.
   // Skip deps already present in test-extensions/. For uncached deps,
   // run VS Code CLI --install-extension sequentially. Parallel CLI installs
   // race on shared extension/cache directories and can leave VS Code with
@@ -1294,6 +1229,10 @@ async function main(): Promise<void> {
     experimentalBundleSourceUri = '',
     experimentalBundleVersion = '',
   }: TestSettingsOptions = {}): void => {
+    const configuredDotnetBinaryPath = process.env.CUSTOMCODE_DOTNET_BINARY_PATH?.trim();
+    const resolvedDotnetBinaryPathOverride =
+      dotnetBinaryPathOverride ??
+      (configuredDotnetBinaryPath ? canonicalizeDotNetBinary(configuredDotnetBinaryPath, 'CUSTOMCODE_DOTNET_BINARY_PATH') : undefined);
     const settings = {
       'extensions.autoUpdate': false,
       'extensions.autoCheckUpdates': false,
@@ -1352,7 +1291,7 @@ async function main(): Promise<void> {
         // the design-time API process (func host start) without relying on PATH.
         'azureLogicAppsStandard.autoRuntimeDependenciesPath': depsRoot,
         'azureLogicAppsStandard.funcCoreToolsBinaryPath': funcBinary,
-        'azureLogicAppsStandard.dotnetBinaryPath': dotnetBinaryPathOverride || dotnetBinary,
+        'azureLogicAppsStandard.dotnetBinaryPath': resolvedDotnetBinaryPathOverride || dotnetBinary,
         'azureLogicAppsStandard.nodeJsBinaryPath': nodeBinary,
       });
     }
@@ -1363,8 +1302,8 @@ async function main(): Promise<void> {
     if (runtimeDependenciesPathOverride) {
       console.log(`  Settings dependency path override: ${runtimeDependenciesPathOverride}`);
     }
-    if (dotnetBinaryPathOverride) {
-      console.log(`  Settings dotnet binary override: ${dotnetBinaryPathOverride}`);
+    if (resolvedDotnetBinaryPathOverride) {
+      console.log(`  Settings dotnet binary override: ${resolvedDotnetBinaryPathOverride}`);
     }
   };
 
@@ -1401,12 +1340,19 @@ async function main(): Promise<void> {
   // where only the extension-managed copy exists.
   // Also include the system dotnet if actions/setup-dotnet installed one.
   const pathSep = process.platform === 'win32' ? ';' : ':';
-  const extraPaths = [funcToolsDir, dotnetSdkDir, nodeJsDir].filter((d) => fs.existsSync(d));
+  const useConfiguredSystemDotnet = Boolean(process.env.CUSTOMCODE_DOTNET_BINARY_PATH?.trim() && systemDotnetBinary);
+  const systemDotnetRoot = useConfiguredSystemDotnet && systemDotnetBinary ? path.dirname(systemDotnetBinary) : undefined;
+  const extraPaths = [funcToolsDir, systemDotnetRoot, dotnetSdkDir, nodeJsDir].filter((directory): directory is string =>
+    Boolean(directory && fs.existsSync(directory))
+  );
   if (extraPaths.length > 0) {
     process.env.PATH = extraPaths.join(pathSep) + pathSep + (process.env.PATH || '');
     console.log(`  Prepended to PATH: ${extraPaths.join(', ')}`);
   }
-  if (fs.existsSync(dotnetSdkDir)) {
+  if (systemDotnetRoot) {
+    process.env.DOTNET_ROOT = systemDotnetRoot;
+    console.log(`  DOTNET_ROOT: ${systemDotnetRoot}`);
+  } else if (fs.existsSync(dotnetSdkDir)) {
     process.env.DOTNET_ROOT = dotnetSdkDir;
     console.log(`  DOTNET_ROOT: ${dotnetSdkDir}`);
   }
@@ -1480,13 +1426,6 @@ async function main(): Promise<void> {
   // does a small live download through the verifier helper.
   const phaseBundleIntegrityFiles = [testFile('bundleCdnHealth.test.js')];
 
-  // Phase 4.12 — Bundle on-disk repair E2E. Real ExTester / VS Code session.
-  // Reproduces the user-reported regression (deleting files from inside an
-  // installed bundle is detected on next validate-and-install, repaired
-  // synchronously, and the sidecar is rewritten so the cached hash matches
-  // disk). See bundleRepair.test.ts for the full scenario.
-  const phaseBundleRepairFiles = [testFile('bundleRepair.test.js')];
-
   // Phase 4.14 — Func Core Tools pre-debug self-heal E2E. Real ExTester / VS
   // Code session. Corrupts the extension-managed func executable in place so it
   // still EXISTS but no longer RUNS, then presses F5 and proves the pre-debug
@@ -1498,9 +1437,9 @@ async function main(): Promise<void> {
   // free number and is named phaseFuncRepair* rather than phase414*.
   const phaseFuncRepairFiles = [testFile('funcRepair.test.js')];
 
-  // Phase 4.15 — Custom-code .NET picker and net8 runtime coverage.
-  // 4.15A creates a net8 workspace or asserts net10 is hidden. For net8 only,
-  // 4.15B reopens the generated .code-workspace and proves the full lifecycle.
+  // Phase 4.15 — Custom-code .NET picker and net10 generation coverage.
+  // 4.15A creates a net10 workspace or asserts net8 is hidden. For net10 only,
+  // 4.15B validates the generated settings, project template, and workflow.
   const phaseCustomCodeDotNetCreateFiles = [testFile('customCodeDotNetVersionCreate.test.js')];
   const phaseCustomCodeDotNetAssertFiles = [testFile('customCodeDotNetVersionAssert.test.js')];
 
@@ -1689,20 +1628,6 @@ async function main(): Promise<void> {
       workspaceSpec: { appType: 'standard', wfType: 'Stateful', use: 'none' },
       settings: { validateDependencies: 'auto', autoStartDesignTime: false },
       env: { LA_E2E_SKIP_VALIDATION_WAIT: '1' },
-    },
-
-    // Phase 4.12 — On-disk bundle repair / integrity gate (Phase 14 code path).
-    // Reuses a Standard/Stateful workspace from the fixtures manifest, lets the
-    // initial bundle install, deletes a couple .dll files from inside the
-    // installed bundle, invokes the validate-and-install-binaries command, and
-    // asserts the bundle is repaired on disk (sidecar back, .dlls back,
-    // recomputed content hash matches sidecar). autoStartDesignTime is OFF so
-    // func.exe does not lock the .dlls we tamper with.
-    {
-      id: 'p412-bundlerepair',
-      testFile: phaseBundleRepairFiles[0],
-      workspaceSpec: { appType: 'standard', wfType: 'Stateful' },
-      settings: { validateDependencies: true, autoStartDesignTime: false },
     },
 
     // Phase 4.14 — Func Core Tools pre-debug self-heal.
@@ -2463,11 +2388,11 @@ namespace ${namespaceName}
     return worstExit;
   };
 
-  // Phase 4.15 — Custom-code .NET picker and net8 runtime coverage.
+  // Phase 4.15 — Custom-code .NET picker and net10 generation coverage.
   //
-  //   4.15A net8 — creates a CustomCode workspace through the real wizard.
-  //   4.15B net8 — reopens it and proves settings plus the full debug/run lifecycle.
-  //   4.15A net10 — asserts .NET 10 is absent from the real wizard picker.
+  //   4.15A net10 — creates a CustomCode workspace through the real wizard.
+  //   4.15B net10 — validates settings, the project template, and workflow shape.
+  //   4.15A net8 — asserts .NET 8 is absent from the real wizard picker.
   //
   // The target consumers read CUSTOMCODE_DOTNET_E2E_VERSION when their modules
   // load. Target parsing and fixed, disjoint layout derivation are shared and
@@ -2478,17 +2403,17 @@ namespace ${namespaceName}
     const workspaceFile = layout.workspaceFilePath;
     process.env.CUSTOMCODE_DOTNET_E2E_VERSION = target;
 
-    if (target === 'net10') {
+    if (target === 'net8') {
       try {
         writeTestSettings({ validateDependencies: true, autoStartDesignTime: true });
-        await prepareFreshSession(`${labelPrefix}-phase415a-net10-hidden`);
-        return await runPhase('Phase 4.15A: assert CustomCode net10 option is hidden', phaseCustomCodeDotNetCreateFiles);
+        await prepareFreshSession(`${labelPrefix}-phase415a-net8-hidden`);
+        return await runPhase('Phase 4.15A: assert CustomCode net8 option is hidden', phaseCustomCodeDotNetCreateFiles);
       } finally {
         delete process.env.CUSTOMCODE_DOTNET_E2E_VERSION;
       }
     }
 
-    const requiredSdkMajor = '8';
+    const requiredSdkMajor = '10';
     if (!systemDotnetBinary || !fs.existsSync(systemDotnetBinary)) {
       throw new Error(
         `Custom-code ${target} E2E requires a system dotnet binary with SDK ${requiredSdkMajor}.x. Set CUSTOMCODE_DOTNET_BINARY_PATH to the dotnet installed by actions/setup-dotnet.`
@@ -2531,22 +2456,15 @@ namespace ${namespaceName}
         return 1;
       }
 
-      // 4.15B needs autoStartDesignTime ON so `workflow-designtime/` evidence exists
-      // before F5, and validateDependencies 'auto' since func/node were already
-      // hydrated by 4.15A on the same runner.
+      // The required Workflows SDK 1.4.0 package is pending release, so 4.15B
+      // verifies generated artifacts without dependency validation or runtime
+      // startup.
       writeTestSettings({
-        validateDependencies: shouldValidateRuntimeDependencies(),
-        autoStartDesignTime: true,
-        dotnetBinaryPathOverride: systemDotnetBinary,
+        validateDependencies: false,
+        autoStartDesignTime: false,
       });
       await prepareFreshSession(`${labelPrefix}-phase415b-assert`);
-      const assertExit = await runPhase(
-        `Phase 4.15B: assert CustomCode ${target} dotnet version + run lifecycle`,
-        phaseCustomCodeDotNetAssertFiles,
-        {
-          resources: [workspaceFile],
-        }
-      );
+      const assertExit = await runPhase(`Phase 4.15B: assert CustomCode ${target} generated workspace`, phaseCustomCodeDotNetAssertFiles);
 
       return Math.max(createExit, assertExit);
     } finally {
@@ -2561,10 +2479,10 @@ namespace ${namespaceName}
   };
 
   /**
-   * Runs the target-specific Phase 4.15 group: 4.15A+4.15B for net8 and only
-   * the 4.15A picker-negative check for net10. `withPhaseGroupRetries` wraps
-   * EACH target rather than the whole sweep, so a net10 flake does not rerun
-   * an already-green net8 create/runtime pair.
+   * Runs the target-specific Phase 4.15 group: 4.15A+4.15B for net10 and only
+   * the 4.15A picker-negative check for net8. `withPhaseGroupRetries` wraps
+   * EACH target rather than the whole sweep, so a net8 flake does not rerun
+   * an already-green net10 create/assert pair.
    */
   const runCustomCodeDotNetPhases = async (labelPrefix: string): Promise<number> => {
     const targets = parseCustomCodeDotNetTargets(process.env.CUSTOMCODE_DOTNET_E2E_VERSIONS);
@@ -2639,6 +2557,56 @@ namespace ${namespaceName}
       }
     };
 
+    /**
+     * New custom-code workspaces intentionally target .NET 10, but the shared
+     * Phase 4.1 fixture feeds existing-project lifecycle coverage that must stay
+     * runnable while Workflows SDK 1.4.0 is pending release. After the wizard
+     * proves .NET 10 creation, convert only that shared fixture to the existing
+     * .NET 8 project shape consumed by p42-customcode and p43-customcode.
+     */
+    const normalizeCustomCodeFixtureForNet8Compatibility = (): void => {
+      const { manifest, error } = readFixtureManifest();
+      if (!manifest) {
+        throw new Error(`Cannot normalize the custom-code fixture: ${error}`);
+      }
+
+      const entry = manifest.find((candidate) => candidate.appType === 'customCode' && candidate.wfType === 'Stateful');
+      const { appDir, appName, ccFolderName, fnName, wsDir } = entry ?? {};
+      if (!appDir || !appName || !ccFolderName || !fnName || !wsDir) {
+        throw new Error(`Custom-code fixture manifest entry is incomplete: ${JSON.stringify(entry)}`);
+      }
+
+      const functionDirectory = path.join(wsDir, ccFolderName);
+      const csprojPath = path.join(functionDirectory, `${fnName}.csproj`);
+      const net8TemplatePath = path.join(projectDir, 'src', 'assets', 'FunctionProjectTemplate', 'FunctionsProjNet8');
+      const net8Template = fs
+        .readFileSync(net8TemplatePath, 'utf8')
+        .replace(
+          /<LogicAppFolderToPublish>\$\(MSBuildProjectDirectory\)\\\.\.\\LogicApp<\/LogicAppFolderToPublish>/g,
+          `<LogicAppFolderToPublish>$(MSBuildProjectDirectory)\\..\\${appName}</LogicAppFolderToPublish>`
+        );
+      fs.writeFileSync(csprojPath, net8Template);
+      fs.rmSync(path.join(functionDirectory, 'Program.cs'), { force: true });
+
+      const functionSettingsPath = path.join(functionDirectory, '.vscode', 'settings.json');
+      const functionSettings = JSON.parse(fs.readFileSync(functionSettingsPath, 'utf8')) as Record<string, unknown>;
+      functionSettings['azureFunctions.deploySubpath'] = 'bin/Release/net8/publish';
+      fs.writeFileSync(functionSettingsPath, `${JSON.stringify(functionSettings, null, 2)}\n`);
+
+      const localSettingsPath = path.join(appDir, 'local.settings.json');
+      const localSettings = JSON.parse(fs.readFileSync(localSettingsPath, 'utf8')) as {
+        Values?: Record<string, string>;
+        [key: string]: unknown;
+      };
+      localSettings.Values = {
+        ...(localSettings.Values ?? {}),
+        LOGIC_APPS_CUSTOMCODE_DOTNETVERSION: 'net8',
+      };
+      fs.writeFileSync(localSettingsPath, `${JSON.stringify(localSettings, null, 2)}\n`);
+
+      console.log(`  Normalized shared custom-code fixture to .NET 8 compatibility shape: ${csprojPath}`);
+    };
+
     const isManifestBackedWorkspaceSpec = (spec: WorkspaceSpec): boolean =>
       spec === 'manifest-multi' || (typeof spec === 'object' && spec !== null);
 
@@ -2711,6 +2679,7 @@ namespace ${namespaceName}
         console.error(`\n⚠ Phase 4.1a fixture setup failed with exit code ${fixtureExit}; focused scenario cannot proceed.`);
         return fixtureExit;
       }
+      normalizeCustomCodeFixtureForNet8Compatibility();
       verifyLogicAppsExtensionBundle('p41a-fixtures');
 
       const remainingIssues = getFixtureManifestIssues(scenarioList);
@@ -2841,14 +2810,15 @@ namespace ${namespaceName}
       // Opt-in via LA_E2E_SCENARIO_RETRIES (default 0 = fail fast locally; CI
       // sets it). Each retry is a full prepareFreshSession(), so it also clears
       // the stale-window / leftover-process flakes.
-      const scenarioRetries = Math.max(0, Number.parseInt(process.env.LA_E2E_SCENARIO_RETRIES ?? '', 10) || 0);
-      const maxAttempts = scenarioRetries + 1;
-      if (scenarioRetries > 0) {
-        console.log(`Scenario retry enabled: up to ${scenarioRetries} retry(ies) per failing scenario (LA_E2E_SCENARIO_RETRIES).`);
+      const configuredScenarioRetries = Math.max(0, Number.parseInt(process.env.LA_E2E_SCENARIO_RETRIES ?? '', 10) || 0);
+      if (configuredScenarioRetries > 0) {
+        console.log(
+          `Scenario retry enabled: up to ${configuredScenarioRetries} retry(ies) per failing scenario (LA_E2E_SCENARIO_RETRIES).`
+        );
       }
       const exits: number[] = [];
       for (const scenario of scenarioList) {
-        const { id, testFile: files, workspaceSpec, settings = {}, monolithic, env: scenarioEnv, recorder } = scenario;
+        const { id, testFile: files, workspaceSpec, settings = {}, monolithic, env: scenarioEnv, recorder, retryable } = scenario;
         const resolvedSettings: ScenarioSettings = { ...settings };
         if (resolvedSettings.validateDependencies === 'auto') {
           resolvedSettings.validateDependencies = shouldValidateRuntimeDependencies();
@@ -2890,10 +2860,16 @@ namespace ${namespaceName}
           console.warn(`  [${id}] Non-monolithic scenario received ${fileList.length} files; running all of them`);
         }
 
+        const scenarioRetryCount = retryable === false ? 0 : configuredScenarioRetries;
+        const scenarioMaxAttempts = scenarioRetryCount + 1;
+        if (retryable === false && configuredScenarioRetries > 0) {
+          console.log(`  [${id}] Generic scenario retry disabled because this test mutates persistent shared state.`);
+        }
+
         let exit = 1;
-        for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        for (let attempt = 1; attempt <= scenarioMaxAttempts; attempt++) {
           if (attempt > 1) {
-            console.log(`\n  ↻ [${id}] retry ${attempt - 1}/${scenarioRetries} in a fresh session after a failed attempt...`);
+            console.log(`\n  ↻ [${id}] retry ${attempt - 1}/${scenarioRetryCount} in a fresh session after a failed attempt...`);
             // Give VS Code/chromedriver/func extra time to release ports and
             // sockets before relaunching, on top of prepareFreshSession()'s kill.
             await new Promise((r) => setTimeout(r, 8000));
@@ -2919,13 +2895,14 @@ namespace ${namespaceName}
               verifyLogicAppsExtensionBundle(`preflight:${id}`);
             }
 
-            const attemptLabel = maxAttempts > 1 ? `Scenario ${id} (attempt ${attempt}/${maxAttempts})` : `Scenario ${id}`;
+            const attemptLabel = scenarioMaxAttempts > 1 ? `Scenario ${id} (attempt ${attempt}/${scenarioMaxAttempts})` : `Scenario ${id}`;
             exit = await runPhase(attemptLabel, fileList, { resources });
 
             // p41a-fixtures must also pass its post-run bundle verification to
             // count as a successful attempt; a failure here is retryable and
             // must not emit a "passed" flake annotation below.
             if (exit === 0 && id === 'p41a-fixtures') {
+              normalizeCustomCodeFixtureForNet8Compatibility();
               verifyLogicAppsExtensionBundle('p41a-fixtures');
             }
           } catch (e) {
@@ -2934,14 +2911,14 @@ namespace ${namespaceName}
             // A deterministic failure (e.g. a genuinely corrupt bundle) simply
             // throws again on every attempt and still fails the shard.
             exit = 1;
-            console.warn(`  [${id}] attempt ${attempt}/${maxAttempts} threw: ${getErrorMessage(e)}`);
+            console.warn(`  [${id}] attempt ${attempt}/${scenarioMaxAttempts} threw: ${getErrorMessage(e)}`);
           }
 
           if (exit === 0) {
             if (attempt > 1) {
               // Surface the flake loudly (but non-fatally). A scenario that
               // needed a retry to pass is a signal to fix the underlying race.
-              const flakeMsg = `${id} passed on attempt ${attempt}/${maxAttempts} (failed ${attempt - 1}x)`;
+              const flakeMsg = `${id} passed on attempt ${attempt}/${scenarioMaxAttempts} (failed ${attempt - 1}x)`;
               console.warn(`  ⚠ FLAKE: ${flakeMsg}`);
               console.log(`::warning title=E2E scenario flake::${flakeMsg}`);
             }
@@ -3073,20 +3050,6 @@ namespace ${namespaceName}
 
     // bundleintegrityonly is handled by the early short-circuit at the top
     // of main() (search for `earlyMode === 'bundleintegrityonly'`).
-
-    if (e2eMode === 'bundlerepaironly') {
-      const bundleRepairScenario = scenarios.find((s) => s.id === 'p412-bundlerepair');
-      if (!bundleRepairScenario) {
-        throw new Error('bundlerepaironly: p412-bundlerepair scenario not found in scenarios[] table');
-      }
-      await downloadExTesterAssets();
-      const prerequisiteExit = await ensureFixtureManifestForScenarios([bundleRepairScenario], 'bundlerepaironly');
-      if (prerequisiteExit !== 0) {
-        process.exit(prerequisiteExit);
-      }
-      const phase12Exit = await runScenarioPhases([bundleRepairScenario]);
-      process.exit(phase12Exit);
-    }
 
     if (e2eMode === 'funcrepaironly') {
       const funcRepairScenario = scenarios.find((s) => s.id === 'p414-funcrepair');

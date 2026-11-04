@@ -11,6 +11,8 @@ export const useReadOnly = () => {
   return useSelector((state: RootState) => state.designerOptions.readOnly);
 };
 
+export const useSharedNodeUi = () => useSelector((state: RootState) => state.designerOptions.useSharedNodeUi ?? false);
+
 export const useMonitoringView = () => {
   return useSelector((state: RootState) => state.designerOptions.isMonitoringView);
 };

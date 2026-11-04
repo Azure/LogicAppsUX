@@ -75,7 +75,6 @@ vi.mock('../../../localize', () => ({
 }));
 
 // Mock all command handler modules with auto-generated vi.fn() exports
-vi.mock('../../functionsExtension/executeOnFunctionsExt', () => ({ executeOnFunctions: vi.fn() }));
 vi.mock('../../tree/LogicAppResourceTree', () => ({ LogicAppResourceTree: { pickSlotContextValue: 'slot' } }));
 vi.mock('../appSettings/downloadAppSettings', () => ({ downloadAppSettings: vi.fn() }));
 vi.mock('../appSettings/editAppSetting', () => ({ editAppSetting: vi.fn() }));

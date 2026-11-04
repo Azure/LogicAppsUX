@@ -9,6 +9,7 @@ import { armTokenDevServer } from './vite-plugins/armTokenDevServer';
 // https://vitejs.dev/config/
 export default defineConfig({
   resolve: {
+    dedupe: ['@fluentui/react-components', '@fluentui/react-icons'],
     alias: [
       {
         find: '~@xyflow/react',

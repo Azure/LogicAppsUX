@@ -1,10 +1,12 @@
 // @vitest-environment jsdom
 import React from 'react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { cleanup, render } from '@testing-library/react';
+import type { Workflow } from '../../common/models/workflow';
 
 const mockDispatch = vi.fn();
 let mockHasMultipleTriggers = false;
+let mockReadOnly = false;
 
 vi.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
@@ -21,8 +23,8 @@ vi.mock('../state/customcode/customcodeSlice', () => ({
 vi.mock('../state/designerOptions/designerOptionsSelectors', () => ({
   useAreDesignerOptionsInitialized: () => true,
   useAreServicesInitialized: () => true,
-  useMonitoringView: () => false,
-  useReadOnly: () => false,
+  useMonitoringView: () => mockIsMonitoringView,
+  useReadOnly: () => mockReadOnly,
 }));
 
 vi.mock('../state/designerOptions/designerOptionsSlice', () => ({
@@ -53,17 +55,25 @@ vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => {
 });
 
 let mockRunDeepCompareEffect = true;
+let mockUseRealCompareEffect = false;
+let mockIsMonitoringView = false;
 
-vi.mock('@react-hookz/web', () => ({
-  useDeepCompareEffect: (effect: () => void, _deps: unknown[]) => {
-    // Run synchronously so the effect body executes during render for most tests. One test below
-    // disables this (mockRunDeepCompareEffect = false) to prove the multi-trigger context value is
-    // derived purely from render (useMemo), not from this effect having run.
+vi.mock('@react-hookz/web', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@react-hookz/web')>();
+  const runMockEffect = (effect: () => void) => {
     if (mockRunDeepCompareEffect) {
       effect();
     }
-  },
-}));
+  };
+
+  return {
+    ...actual,
+    useDeepCompareEffect: (effect: () => void, deps: unknown[]) =>
+      mockUseRealCompareEffect ? actual.useDeepCompareEffect(effect, deps) : runMockEffect(effect),
+    useCustomCompareEffect: (effect: () => void, deps: unknown[], comparator: (a: unknown[], b: unknown[]) => boolean) =>
+      mockUseRealCompareEffect ? actual.useCustomCompareEffect(effect, deps, comparator) : runMockEffect(effect),
+  };
+});
 
 vi.mock('@tanstack/react-query', () => ({
   useQuery: vi.fn(() => ({ data: null })),
@@ -90,17 +100,73 @@ describe('BJSWorkflowProvider', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockHasMultipleTriggers = false;
+    mockReadOnly = false;
     mockRunDeepCompareEffect = true;
+    mockUseRealCompareEffect = false;
+    mockIsMonitoringView = false;
   });
 
-  const renderProvider = (workflow: unknown) =>
+  afterEach(cleanup);
+
+  const renderProvider = (workflow: unknown, externallyAppliedWorkflow?: Workflow) =>
     render(
+      <BJSWorkflowProvider workflow={workflow as any} externallyAppliedWorkflow={externallyAppliedWorkflow}>
+        <div data-testid="shell-child" />
+      </BJSWorkflowProvider>,
+      { wrapper: ({ children }) => <ProviderWrappedContext.Provider value={{} as any}>{children}</ProviderWrappedContext.Provider> }
+    );
+
+  it('compares monitoring workflows with a schema field named toString without crashing or losing change detection', () => {
+    mockUseRealCompareEffect = true;
+    mockIsMonitoringView = true;
+    const createWorkflow = (type = 'string') => ({
+      definition: {
+        triggers: {
+          trigger1: {
+            inputs: {
+              schema: {
+                properties: {
+                  changelog: {
+                    properties: {
+                      items: {
+                        items: {
+                          properties: { toString: { type } },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+    const runInstance = { id: 'run-1' };
+    const renderWorkflow = (workflow: ReturnType<typeof createWorkflow>, run?: typeof runInstance) => (
       <ProviderWrappedContext.Provider value={{} as any}>
-        <BJSWorkflowProvider workflow={workflow as any}>
+        <BJSWorkflowProvider
+          workflow={workflow as React.ComponentProps<typeof BJSWorkflowProvider>['workflow']}
+          runInstance={run as React.ComponentProps<typeof BJSWorkflowProvider>['runInstance']}
+        >
           <div data-testid="shell-child" />
         </BJSWorkflowProvider>
       </ProviderWrappedContext.Provider>
     );
+
+    const { rerender, getByTestId } = render(renderWorkflow(createWorkflow()));
+    expect(getByTestId('shell-child')).toBeDefined();
+    expect(initializeGraphState).toHaveBeenCalledTimes(1);
+
+    rerender(renderWorkflow(createWorkflow(), runInstance));
+    expect(initializeGraphState).toHaveBeenCalledTimes(2);
+
+    rerender(renderWorkflow(createWorkflow(), runInstance));
+    expect(initializeGraphState).toHaveBeenCalledTimes(2);
+
+    rerender(renderWorkflow(createWorkflow('integer'), runInstance));
+    expect(initializeGraphState).toHaveBeenCalledTimes(3);
+  });
 
   it('dispatches initializeGraphState and does not flag multiple triggers for a normal (single-trigger) workflow', () => {
     mockHasMultipleTriggers = false;
@@ -116,6 +182,30 @@ describe('BJSWorkflowProvider', () => {
 
     const dispatchedActionTypes = mockDispatch.mock.calls.map(([action]) => action.type);
     expect(dispatchedActionTypes).not.toContain('resetWorkflowState');
+  });
+
+  it('acknowledges an applied workflow without reinitializing, then uses the new source on read-only changes', () => {
+    const original: Workflow = { definition: { actions: {} }, connectionReferences: {} };
+    const updated: Workflow = {
+      definition: {
+        actions: { Invocation: { type: 'Workflow', inputs: { host: { workflow: { id: 'Child' } }, body: {} }, runAfter: {} } },
+      },
+      connectionReferences: {},
+    };
+    const { rerender } = renderProvider(original);
+    vi.clearAllMocks();
+    rerender(<BJSWorkflowProvider workflow={updated} externallyAppliedWorkflow={updated} />);
+    expect(initializeGraphState).not.toHaveBeenCalled();
+    expect(mockDispatch.mock.calls.map(([action]) => action.type)).not.toContain('clearAllErrors');
+    mockReadOnly = true;
+    rerender(<BJSWorkflowProvider workflow={updated} externallyAppliedWorkflow={updated} />);
+    expect(initializeGraphState).toHaveBeenCalledWith(expect.objectContaining({ workflowDefinition: updated }));
+  });
+
+  it('does not skip initialization after a provider remount carrying a previous acknowledgement', () => {
+    const workflow: Workflow = { definition: { actions: {} }, connectionReferences: {} };
+    renderProvider(workflow, workflow);
+    expect(initializeGraphState).toHaveBeenCalled();
   });
 
   it('does not dispatch initializeGraphState for a multiple-trigger workflow, but still flags it and dispatches other shell state', () => {
@@ -169,7 +259,7 @@ describe('BJSWorkflowProvider', () => {
   });
 
   it('exposes the multi-trigger flag via context synchronously during render, even if the deep-compare effect never runs', () => {
-    // Simulates the real React timing: passive effects (useDeepCompareEffect/useEffect) run after
+    // Simulates the real React timing: passive effects (useCustomCompareEffect/useEffect) run after
     // commit, so a child rendered in the same pass as BJSWorkflowProvider must see the correct
     // fallback decision without waiting on that effect. Disabling the effect here isolates the
     // context value from any effect-driven (Redux) state entirely.

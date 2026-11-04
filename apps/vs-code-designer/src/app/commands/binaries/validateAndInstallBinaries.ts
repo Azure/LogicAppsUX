@@ -122,15 +122,15 @@ export async function validateAndInstallBinaries(context: IActionContext) {
           throw failure.reason;
         }
 
-        // Block validation success on a healthy extension bundle. The bundle
+        // Block validation success on a ready extension bundle. The bundle
         // download is fired-and-forgotten from activation so the UI stays
         // responsive, but validation is the right place to surface a failed
         // install: without a healthy bundle, the design-time host and any
         // workflow runtime will be broken, and we'd rather fail loudly here
-        // than let func.exe spawn against a missing/corrupt bundle.
+        // than let func.exe spawn against an incomplete installation.
         context.telemetry.properties.lastStep = 'ensureExtensionBundleHealthy';
         progress.report({ increment: 5, message: 'Extension Bundle' });
-        await ensureExtensionBundleHealthy(context, { requireInstalled: requireStrictDependencyValidation, forceRecheck: true });
+        await ensureExtensionBundleHealthy(context, { requireInstalled: requireStrictDependencyValidation });
 
         // Only advance the throttle window when we actually performed the update checks and the
         // whole pass succeeded, so a failed or skipped run still retries on the next activation.
