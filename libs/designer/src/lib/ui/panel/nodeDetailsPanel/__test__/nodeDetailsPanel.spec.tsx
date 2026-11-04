@@ -110,6 +110,11 @@ describe('NodeDetailsPanel', () => {
             isLoading: false,
             tabs: [],
             onSelectTab: vi.fn(),
+            comment: undefined,
+            errorMessage: undefined,
+            runData: undefined,
+            selectedTab: undefined,
+            subgraphType: undefined,
           }
         : undefined
     );
