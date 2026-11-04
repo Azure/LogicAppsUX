@@ -23,6 +23,18 @@
     "build:lib": {
       "outputs": ["build/**", "dist/**"]
     },
+    "@microsoft/logic-apps-designer-v2#build:lib": {
+      "dependsOn": ["@microsoft/designer-ui-v2#build:lib"],
+      "outputs": ["build/**", "dist/**"]
+    },
+    "@microsoft/logic-apps-designer-v2#test:lib": {
+      "dependsOn": ["@microsoft/designer-ui-v2#build:lib"],
+      "outputs": ["coverage/**"]
+    },
+    "@microsoft/designer-ui-v2#test:lib": {
+      "dependsOn": ["build:lib"],
+      "outputs": ["coverage/**"]
+    },
     "vscode-designer#build:extension": {
       "cache": false,
       "env": ["NPM_CONFIG_USERCONFIG"],

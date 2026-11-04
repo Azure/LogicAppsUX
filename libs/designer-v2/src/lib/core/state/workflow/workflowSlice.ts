@@ -689,6 +689,16 @@ export const workflowSlice = createSlice({
           if ((c.dimensions?.height ?? 0) === 0 || (c.dimensions?.width ?? 0) === 0) {
             continue; // Skip if the dimensions are 0
           }
+          if (
+            !node.dimensionsObserved &&
+            c.dimensions &&
+            Number.isFinite(c.dimensions.height) &&
+            Number.isFinite(c.dimensions.width) &&
+            c.dimensions.height > 0 &&
+            c.dimensions.width > 0
+          ) {
+            node.dimensionsObserved = true;
+          }
           if (node.height === c.dimensions?.height && node.width === c.dimensions?.width) {
             continue; // Skip if the dimensions have not changed
           }

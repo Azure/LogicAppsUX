@@ -1,13 +1,13 @@
 import {
   ConsumptionConnectorService,
   StandardConnectorService,
-  StandardOperationManifestService,
   type IConnectorService,
   type IHttpClient,
   type LogicAppsV2,
   type OpenAPIV2,
   type OperationManifest,
 } from '@microsoft/logic-apps-shared';
+import { LocalOperationManifestService } from './localOperationManifestService';
 import {
   hasLocalWorkflowInvocationMarker,
   type LocalWorkflowRegistry,
@@ -109,9 +109,9 @@ export const localWorkflowManifest: OperationManifest = {
   },
 };
 
-export class LocalWorkflowManifestService extends StandardOperationManifestService {
+export class LocalWorkflowManifestService extends LocalOperationManifestService {
   constructor(
-    options: ConstructorParameters<typeof StandardOperationManifestService>[0],
+    options: ConstructorParameters<typeof LocalOperationManifestService>[0],
     private readonly registry: LocalWorkflowRegistry = localWorkflowRegistry
   ) {
     super(options);

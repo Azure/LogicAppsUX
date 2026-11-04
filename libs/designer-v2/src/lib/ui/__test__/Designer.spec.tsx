@@ -2,6 +2,7 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { cleanup, render, screen } from '@testing-library/react';
+import { tokens } from '@fluentui/react-components';
 
 const mockDispatch = vi.fn();
 let mockCanUndo = false;
@@ -17,6 +18,7 @@ let mockSelectedNodeId: string | undefined;
 let mockSelectedNodeIds: string[] = [];
 let mockAllSelectableNodeIds: string[] = [];
 let mockNodesInitialized = true;
+let mockSharedNodeUi = false;
 
 const mockOpenRun = vi.fn();
 const mockOpenRunDetails = vi.fn();
@@ -41,6 +43,7 @@ vi.mock('../../core/state/designerOptions/designerOptionsSelectors', () => ({
   useHostOptions: () => ({}),
   useIsVSCode: () => mockIsVSCode,
   useIsDarkMode: () => false,
+  useSharedNodeUi: () => mockSharedNodeUi,
 }));
 
 vi.mock('react-redux', () => ({
@@ -217,6 +220,7 @@ describe('Designer', () => {
     mockSelectedNodeIds = [];
     mockAllSelectableNodeIds = [];
     mockNodesInitialized = true;
+    mockSharedNodeUi = false;
   });
 
   it('should render the designer canvas', () => {
@@ -382,6 +386,20 @@ describe('Designer', () => {
     render(<Designer backgroundProps={{ color: '#123456', size: 4 }} />);
 
     expect(screen.getByTestId('background').getAttribute('data-color')).toBe('#123456');
+    expect(screen.getByTestId('background').getAttribute('data-size')).toBe('4');
+  });
+
+  it('maps only the default shared Background to the host Background1 role', () => {
+    mockSharedNodeUi = true;
+    render(<Designer />);
+    expect(screen.getByTestId('background').getAttribute('data-bg-color')).toBe(tokens.colorNeutralBackground1);
+  });
+
+  it('preserves an explicit host background color while shared presentation is enabled', () => {
+    mockSharedNodeUi = true;
+    render(<Designer backgroundProps={{ bgColor: '#123456', color: '#654321', size: 4 }} />);
+    expect(screen.getByTestId('background').getAttribute('data-bg-color')).toBe('#123456');
+    expect(screen.getByTestId('background').getAttribute('data-color')).toBe('#654321');
     expect(screen.getByTestId('background').getAttribute('data-size')).toBe('4');
   });
 

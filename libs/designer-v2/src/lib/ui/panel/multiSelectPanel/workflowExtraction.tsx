@@ -27,6 +27,9 @@ import {
 import { ArrowExport24Regular } from '@fluentui/react-icons';
 import { ProgressStepper, WorkflowPreview } from '@microsoft/designer-ui';
 import { guid } from '@microsoft/logic-apps-shared';
+import { DesignerUiScope } from '@microsoft/designer-ui-v2';
+import { useIsDarkMode, useSharedNodeUi } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { SharedWorkflowExtractionPreview } from './SharedWorkflowExtractionPreview';
 import type { Workflow } from '../../../common/models/workflow';
 import type {
   WorkflowExtractionBinding,
@@ -45,7 +48,11 @@ import { setWorkflowExtractionDialogOpen } from '../../../core/state/designerVie
 import { setFocusNode } from '../../../core/state/workflow/workflowSlice';
 import { getOrderedSelectedChain, getTopLevelSelectedNodes } from '../../../core/utils/multiselect';
 import { buildWorkflowExtractionPlan } from '../../../core/utils/workflowExtraction';
-import { getWorkflowExtractionPreview, type WorkflowExtractionPreviewVisuals } from './workflowExtractionPreview';
+import {
+  getWorkflowExtractionPreview,
+  getSharedWorkflowExtractionPreview,
+  type WorkflowExtractionPreviewVisuals,
+} from './workflowExtractionPreview';
 import {
   extractionSteps,
   getExtractionStep,
@@ -97,6 +104,7 @@ const useStyles = makeStyles({
     borderRadius: tokens.borderRadiusMedium,
   },
   canvas: { flexGrow: 1, minHeight: 0 },
+  sharedCanvas: { display: 'flex', flexDirection: 'column', flexGrow: 1, minHeight: 0 },
   previewTitle: {
     position: 'absolute',
     top: tokens.spacingVerticalL,
@@ -283,6 +291,8 @@ const BindingTable = ({ bindings, title }: { bindings: WorkflowExtractionBinding
 };
 
 export const WorkflowExtractionDialog = () => {
+  const shared = useSharedNodeUi();
+  const isDarkMode = useIsDarkMode();
   const service = useContext(ProviderWrappedContext)?.workflowExtractionService;
   const dispatch = useDispatch<AppDispatch>();
   const store = useStore() as AppStore;
@@ -336,7 +346,7 @@ export const WorkflowExtractionDialog = () => {
             visuals: Object.fromEntries(
               Object.entries(state.operations.operationMetadata).map(([id, { iconUri, brandColor }]) => [
                 state.workflow.idReplacements[id] ?? id,
-                { iconUri, brandColor },
+                { iconUri, brandColor, operationInfo: state.operations.operationInfo[id] },
               ])
             ),
           });
@@ -355,7 +365,7 @@ export const WorkflowExtractionDialog = () => {
     return () => {
       current = false;
     };
-  }, [open, store, service?.sourceId]);
+  }, [open, store, service, service?.sourceId]);
 
   const preview = useMemo(() => {
     if (!source || !service) {
@@ -370,6 +380,11 @@ export const WorkflowExtractionDialog = () => {
   const previewGraph = useMemo(
     () => (preview.plan ? getWorkflowExtractionPreview(preview.plan, source?.visuals) : undefined),
     [preview.plan, source?.visuals]
+  );
+  const sharedPreviewGraph = useMemo(
+    () =>
+      shared && preview.plan && previewGraph ? getSharedWorkflowExtractionPreview(preview.plan, previewGraph, source?.visuals) : undefined,
+    [shared, preview.plan, previewGraph, source?.visuals]
   );
   const nameError = loading || !source ? undefined : service?.validateName(name);
   const busy = !!stage;
@@ -432,6 +447,11 @@ export const WorkflowExtractionDialog = () => {
   }
   const complete = result?.status === 'completed';
   const terminal = complete || result?.status === 'source-saved';
+  const previewLabel = intl.formatMessage({
+    defaultMessage: 'Child workflow preview',
+    id: 'jjPEgA',
+    description: 'Extraction read-only diagram label',
+  });
   return (
     <Dialog
       open={open}
@@ -487,15 +507,13 @@ export const WorkflowExtractionDialog = () => {
                   })}
                 </Text>
                 {previewGraph ? (
-                  <WorkflowPreview
-                    {...previewGraph}
-                    className={styles.canvas}
-                    ariaLabel={intl.formatMessage({
-                      defaultMessage: 'Child workflow preview',
-                      id: 'jjPEgA',
-                      description: 'Extraction read-only diagram label',
-                    })}
-                  />
+                  sharedPreviewGraph ? (
+                    <DesignerUiScope mode={isDarkMode ? 'dark' : 'light'} className={styles.sharedCanvas}>
+                      <SharedWorkflowExtractionPreview {...sharedPreviewGraph} className={styles.canvas} ariaLabel={previewLabel} />
+                    </DesignerUiScope>
+                  ) : (
+                    <WorkflowPreview {...previewGraph} className={styles.canvas} ariaLabel={previewLabel} />
+                  )
                 ) : (
                   <div className={styles.previewUnavailable}>
                     {loading ? (

@@ -10,7 +10,7 @@ import type {
   XYPosition,
   OnSelectionChangeParams,
 } from '@xyflow/react';
-import { BezierEdge, ReactFlow, SelectionMode } from '@xyflow/react';
+import { ReactFlow, SelectionMode, useUpdateNodeInternals } from '@xyflow/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import {
@@ -35,9 +35,9 @@ import { clearPanel, expandDiscoveryPanel, setNodeSelection } from '../core/stat
 import { useOperationPanelSelectedNodeIds } from '../core/state/panel/panelSelectors';
 import { addOperationRunAfter, removeOperationRunAfter } from '../core/actions/bjsworkflow/runafter';
 import { useClampPan, useIsA2AWorkflow } from '../core/state/designerView/designerViewSelectors';
-import { DEFAULT_NODE_SIZE } from '../core/utils/graph';
+import { DEFAULT_NODE_SIZE, getNodePresentation } from '../core/utils/graph';
 import { DraftEdge } from './connections/draftEdge';
-import { useIsDarkMode, useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
+import { useIsDarkMode, useReadOnly, useSharedNodeUi } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useLayout } from '../core/graphlayout';
 import { DesignerFlowViewPadding } from '../core/utils/designerLayoutHelpers';
 import { addAgentHandoff } from '../core/actions/bjsworkflow/handoff';
@@ -56,7 +56,10 @@ import NoteNode from './CustomNodes/NoteNode';
 import ButtonEdge from './connections/edge';
 import HandoffEdge from './connections/handoffEdge';
 import HiddenEdge from './connections/hiddenEdge';
+import { OnlyEdge } from './connections/onlyEdge';
 import { NodeNavigation } from './NodeNavigation';
+import { tokens } from '@fluentui/react-components';
+import { DESIGNER_MIN_ZOOM, fitSharedDesignerViewport } from './designerViewport';
 
 const DesignerReactFlow = (props: any) => {
   const { canvasRef } = props;
@@ -65,6 +68,7 @@ const DesignerReactFlow = (props: any) => {
   const isInitialized = useNodesInitialized();
 
   const isReadOnly = useReadOnly();
+  const sharedOption = useSharedNodeUi();
   const isEmpty = useIsGraphEmpty();
 
   type NodeTypesObj = Record<WorkflowNodeType, React.ComponentType<any>>;
@@ -84,11 +88,16 @@ const DesignerReactFlow = (props: any) => {
     BUTTON_EDGE: ButtonEdge,
     HEADING_EDGE: ButtonEdge,
     HANDOFF_EDGE: HandoffEdge,
-    ONLY_EDGE: BezierEdge, // Setting it as default React Flow Edge, can be changed as needed
+    ONLY_EDGE: OnlyEdge,
     HIDDEN_EDGE: HiddenEdge,
   } as EdgeTypes;
 
   const [actionNodes, edges, flowSize] = useLayout();
+  const updateNodeInternals = useUpdateNodeInternals();
+  useEffect(() => {
+    // XYFlow caches real port rectangles; accepted family extents and lane order can move them.
+    updateNodeInternals(actionNodes.map((node) => node.id));
+  }, [actionNodes, updateNodeInternals]);
 
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
   const [containerDimensions, setContainerDimensions] = useState(canvasRef.current?.getBoundingClientRect() ?? { width: 0, height: 0 });
@@ -111,6 +120,11 @@ const DesignerReactFlow = (props: any) => {
     }
     if (!hasFitViewRun.current && actionNodes.length > 0 && reactFlowInstance && isInitialized) {
       requestAnimationFrame(() => {
+        if (canvasRef.current && actionNodes.some((node) => (node.data.presentation as { shared?: boolean } | undefined)?.shared)) {
+          fitSharedDesignerViewport(reactFlowInstance, canvasRef.current, flowSize);
+          hasFitViewRun.current = true;
+          return;
+        }
         const defaultZoom = 1.0;
         const topNode = actionNodes.reduce((top, node) => ((node.position?.y ?? 0) < (top.position?.y ?? 0) ? node : top));
 
@@ -126,7 +140,7 @@ const DesignerReactFlow = (props: any) => {
         hasFitViewRun.current = true;
       });
     }
-  }, [actionNodes, reactFlowInstance, isInitialized, containerDimensions]);
+  }, [actionNodes, reactFlowInstance, isInitialized, containerDimensions, canvasRef, flowSize]);
 
   const emptyWorkflowPlaceholderNodes = useMemo(
     () => [
@@ -136,10 +150,10 @@ const DesignerReactFlow = (props: any) => {
         data: { label: 'newWorkflowTrigger' },
         parentId: undefined,
         type: WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE,
-        style: DEFAULT_NODE_SIZE,
+        style: getNodePresentation(WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE, sharedOption).size ?? DEFAULT_NODE_SIZE,
       } as Node,
     ],
-    []
+    [sharedOption]
   );
 
   /// Position dispatch debounce (Only applicable for notes currently)
@@ -611,7 +625,8 @@ const DesignerReactFlow = (props: any) => {
               },
             })
           );
-        } else {
+        } else if (!(actionNodes.find((node) => node.id === change.id)?.data.presentation as { shared?: boolean } | undefined)?.shared) {
+          // Shared geometry is derived, not workflow state. Persisting it would leak into rollback.
           actionChanges.push(change);
         }
       }
@@ -619,7 +634,7 @@ const DesignerReactFlow = (props: any) => {
         dispatch(updateNodeSizes(actionChanges));
       }
     },
-    [dispatch, notes]
+    [dispatch, notes, actionNodes]
   );
 
   const handlePositionChanges = useCallback(
@@ -663,6 +678,7 @@ const DesignerReactFlow = (props: any) => {
   return (
     <ReactFlow
       colorMode={isDarkMode ? 'dark' : 'light'}
+      style={sharedOption ? { backgroundColor: tokens.colorNeutralBackground1 } : undefined}
       ref={canvasRef}
       onInit={onInit}
       nodeTypes={nodeTypes}
@@ -693,7 +709,7 @@ const DesignerReactFlow = (props: any) => {
       onConnectEnd={onConnectEnd}
       isValidConnection={isValidConnection}
       connectionRadius={0}
-      minZoom={0.05}
+      minZoom={DESIGNER_MIN_ZOOM}
       snapGrid={[20, 20]}
       snapToGrid={true}
       onPaneClick={onPaneClick}
