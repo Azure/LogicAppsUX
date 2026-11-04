@@ -267,7 +267,7 @@ export async function activeWebview(
     timeoutMs: remainingBudget(deadline),
     beforePoll,
     acceptCandidate: async (cdp, contextId) => {
-      assertActiveWebview(await readWorkbench(workbench), cdp.targetUrl, tab);
+      assertActiveWebview(await readWorkbench(boundedCdp(workbench, deadline)), cdp.targetUrl, tab);
       await acceptForm?.(boundedCdp(cdp, deadline), contextId);
     },
   });

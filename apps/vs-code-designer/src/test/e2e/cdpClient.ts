@@ -589,9 +589,8 @@ export async function waitForWebviewFrameContext(
   const lastDiagnostics = new Map<number, unknown>();
   cdp.onExecutionContextCreated((context) => contexts.set(context.id, context));
 
-  await cdp.send('Runtime.enable');
-
   const deadline = Date.now() + (options.timeoutMs ?? 15000);
+  await cdp.send('Runtime.enable', undefined, { timeoutMs: remaining(deadline) });
   while (Date.now() < deadline) {
     await options.beforePoll?.(deadline);
     for (const context of contexts.values()) {
@@ -660,7 +659,8 @@ export async function waitForWebviewFrameContext(
               frames,
               requiredSelectorFound: requiredSelector ? !!document.querySelector(requiredSelector) : true,
             };
-          })()`
+          })()`,
+          { timeoutMs: remaining(deadline) }
         )
         .catch((error) => ({
           text: '',

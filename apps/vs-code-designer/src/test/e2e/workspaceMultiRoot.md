@@ -177,6 +177,13 @@ consumers. Never label those controls as native approval.
 
 ## Native consumer requirements — parent-owned
 
+Webview discovery's Runtime enable and context-read RPCs must share the caller's
+existing discovery deadline, including its initial enable call. An unresponsive
+frame must produce a bounded failure and permit the same-window failure capture;
+it must not stall until the outer 45-minute suite timeout. Native run 15916543
+proved the Linux Azure click was accepted, then stalled after Mapper-name input;
+it did not establish which unbounded webview RPC was responsible.
+
 The stock Azure activity icon's accessible label includes its shortcut:
 `Azure (Shift+Alt+A)` on Linux and `Azure (Ctrl+Shift+A)` on Windows. Match
 the platform's exact label, not the absent standalone `Azure` text. Run

@@ -15,6 +15,7 @@ import {
   type CdpTarget,
   waitForDevToolsActivePort,
   waitForCreateWorkspaceFrameContext,
+  waitForWebviewFrameContext,
 } from './cdpClient';
 
 async function main(): Promise<void> {
@@ -30,6 +31,7 @@ async function main(): Promise<void> {
   await testHandshakeFailureDestroysSocket();
   await testEvaluateTimeoutKeepsConnectionUsableAndIgnoresLateResponse();
   await testDiagnosticTimeoutResponseAndDifferentId();
+  await testWebviewDiscoveryEnableHonorsOriginalDeadline();
   await testDiagnosticProtocolErrorAndDisconnect();
   await testDiagnosticFailurePreservesPrimaryOutcomes();
   await testDiagnosticBoundsAndLateHistory();
@@ -56,6 +58,24 @@ function respond(socket: FakeSocket, message: unknown): void {
   const payload = Buffer.from(JSON.stringify(message));
   assert.ok(payload.length < 126);
   socket.emit('data', Buffer.concat([Buffer.from([0x81, payload.length]), payload]));
+}
+
+async function testWebviewDiscoveryEnableHonorsOriginalDeadline(): Promise<void> {
+  const h = diagnosticHarness();
+  mock.timers.enable({ apis: ['setTimeout'] });
+  try {
+    const result = assert.rejects(
+      waitForWebviewFrameContext(h.connection, { allTextIncludes: ['Source schema'], description: 'Mapper', timeoutMs: 1000 }),
+      /Timed out waiting for CDP Runtime.enable response after 1000ms/
+    );
+    mock.timers.tick(1000);
+    await result;
+    assert.strictEqual(h.event('timeout', 1).state.options.durationMs, 1000);
+  } finally {
+    mock.timers.reset();
+    h.restore();
+    h.connection.dispose();
+  }
 }
 
 async function testDiagnosticTimeoutResponseAndDifferentId(): Promise<void> {
