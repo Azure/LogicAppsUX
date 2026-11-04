@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mapsource Name="Functoid Scientific Test" Version="2" OmitXmlDeclaration="Yes">
+  <SrcTree>
+    <Reference Location=".\FunctoidSource.xsd"/>
+  </SrcTree>
+  <TrgTree>
+    <Reference Location=".\FunctoidDest.xsd"/>
+  </TrgTree>
+  <Pages>
+    <Page Name="Page 1">
+      <!-- 1: Sine(Angle) -> SineVal -->
+      <Link LinkID="10" SourceID="/Root/Angle" TargetID="1" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/Angle"/>
+      <Link LinkID="20" SourceID="1" TargetID="/Root/SineVal" SourceType="functoid" TargetType="schemaNode" TargetPath="/Root/SineVal"/>
+      <!-- 2: X^Y(Num1, Num2) -> PowXY -->
+      <Link LinkID="11" SourceID="/Root/Num1" TargetID="2" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/Num1"/>
+      <Link LinkID="12" SourceID="/Root/Num2" TargetID="2" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/Num2"/>
+      <Link LinkID="21" SourceID="2" TargetID="/Root/PowXY" SourceType="functoid" TargetType="schemaNode" TargetPath="/Root/PowXY"/>
+      <!-- 3: Base-Specified Logarithm(Num1, base const 2) -> LogN -->
+      <Link LinkID="13" SourceID="/Root/Num1" TargetID="3" SourceType="schemaNode" TargetType="functoid" SourcePath="/Root/Num1"/>
+      <Link LinkID="22" SourceID="3" TargetID="/Root/LogN" SourceType="functoid" TargetType="schemaNode" TargetPath="/Root/LogN"/>
+      <Functoid FunctoidID="1" TypeID="132" Name="Sine" X="240" Y="240"/>
+      <Functoid FunctoidID="2" TypeID="138" Name="X^Y" X="240" Y="260"/>
+      <Functoid FunctoidID="3" TypeID="139" Name="Base-Specified Logarithm" X="240" Y="280">
+        <Input-Parameters>
+          <Parameter Index="1" Type="constant" Value="2"/>
+        </Input-Parameters>
+      </Functoid>
+    </Page>
+  </Pages>
+</mapsource>
