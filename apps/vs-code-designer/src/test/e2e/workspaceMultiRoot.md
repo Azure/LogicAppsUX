@@ -177,6 +177,12 @@ consumers. Never label those controls as native approval.
 
 ## Native consumer requirements — parent-owned
 
+Current Data Mapper v2 opens with Functions, Source and Destination panes,
+two schema selection radio groups and two Select schema controls. Verify these
+actual controls, not the obsolete Source schema / Target schema labels.
+Run 15917113 captured the fully opened Mapper while the test rejected those
+current labels; `SchemaPanel` and `FileSelector` confirm the displayed contract.
+
 Webview discovery's Runtime enable and context-read RPCs must share the caller's
 existing discovery deadline, including its initial enable call. An unresponsive
 frame must produce a bounded failure and permit the same-window failure capture;

@@ -2200,9 +2200,12 @@ test('hidden/wrong Mapper iframe and wrong active tab fail', () => {
 });
 test('Mapper command discovery/title is not Mapper-open evidence', () => {
   assert.throws(() => assertMapper('Create data map', true), /Actual Data Mapper/);
-  assert.throws(() => assertMapper('Source schema Target schema ENOENT', true), /failed/);
-  assert.throws(() => assertMapper('Source schema Target schema', false), /did not load/);
-  assertMapper('Source schema Target schema', true);
+  const mapper = 'Functions Source Select schema Destination Select schema';
+  assert.throws(() => assertMapper(`${mapper} ENOENT`, true), /failed/);
+  assert.throws(() => assertMapper(mapper, false), /did not load/);
+  assert.throws(() => assertMapper('Functions Source Select schema Destination', true), /did not load/);
+  assert.throws(() => assertMapper('Source schema Target schema', true), /did not load/);
+  assertMapper(mapper, true);
 });
 const debugPair = (folder: string, id: string): DebugEvent[] => [
   { kind: 'started', boot: 'reloaded', folder, id, name: 'Run logic app', type: 'coreclr' },

@@ -473,7 +473,11 @@ export function assertSequentialDebug(events: DebugEvent[], expectedRoots: strin
 
 export function assertMapper(text: string, loaded: boolean): void {
   assert.ok(
-    loaded && /\bSource schema\b/i.test(text) && /\bTarget schema\b/i.test(text),
+    loaded &&
+      /\bSource\b/.test(text) &&
+      /\bDestination\b/.test(text) &&
+      /\bFunctions\b/.test(text) &&
+      (text.match(/\bSelect schema\b/g) ?? []).length === 2,
     'Actual Data Mapper source/target UI did not load'
   );
   assert.ok(!/failed to|unable to|error loading|ENOENT/i.test(text), 'Data Mapper failed to load required assets/runtime');

@@ -312,13 +312,13 @@ export async function runWorkspaceMultiRootUi(options: MultiRootOptions) {
       );
       const mapName = 'MultiRootMap';
       await enterQuickInput(workbench, mapName, mapperPhase);
-      const { cdp: mapper, contextId } = await activeWebview(workbench, mapName, ['Source schema', 'Target schema'], mapperPhase);
+      const { cdp: mapper, contextId } = await activeWebview(workbench, mapName, ['Source', 'Destination', 'Functions'], mapperPhase);
       try {
         const view = boundedCdp(mapper, mapperPhase);
         const state = await view.evaluate<{ text: string; loaded: boolean }>(
           contextId,
           `({text:document.body.innerText,loaded:document.readyState==='complete' &&
-          !!document.querySelector('.react-flow, .ms-Stack, [class*="schema"], [class*="Schema"]')})`
+          document.querySelectorAll('[role="radiogroup"]').length===2})`
         );
         assertMapper(state.text, state.loaded);
         screenshots.push(await capture('workspace-multi-root-mapper'));
