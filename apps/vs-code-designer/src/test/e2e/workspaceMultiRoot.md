@@ -178,8 +178,9 @@ consumers. Never label those controls as native approval.
 ## Native consumer requirements — parent-owned
 
 The stock Azure activity icon's accessible label includes its shortcut:
-`Azure (Shift+Alt+A)`. Match that exact label, not the absent standalone `Azure`
-text. Run 15915836's Linux last-candidate receipt proved that this icon was
+`Azure (Shift+Alt+A)` on Linux and `Azure (Ctrl+Shift+A)` on Windows. Match
+the platform's exact label, not the absent standalone `Azure` text. Run
+15915836's last-candidate receipts on both OSes proved that this icon was
 visible, enabled and hit-testable, but rejected solely by the former exact
 label. Do not replace the click with a command or partial-text acceptance.
 

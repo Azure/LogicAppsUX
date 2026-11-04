@@ -62,15 +62,17 @@ test('text click retains hashed candidate rejection evidence without accepting a
   }
 });
 
-test('text click diagnostics preserve exact unique hit-tested click acceptance', async () => {
-  const fixture = workbenchDomFixture('<a aria-label="Azure (Shift+Alt+A)" data-box="0,0,40,40"></a>');
-  try {
-    await clickText(fixture.cdp, 'a', 'Azure (Shift+Alt+A)', Date.now() + 1000, undefined, true, true);
-    assert.ok(fixture.sent.some((entry) => entry.method === 'Input.dispatchMouseEvent' && entry.params.type === 'mouseReleased'));
-  } finally {
-    fixture.dispose();
-  }
-});
+for (const label of ['Azure (Shift+Alt+A)', 'Azure (Ctrl+Shift+A)']) {
+  test(`text click diagnostics preserve exact unique hit-tested acceptance for ${label}`, async () => {
+    const fixture = workbenchDomFixture(`<a aria-label="${label}" data-box="0,0,40,40"></a>`);
+    try {
+      await clickText(fixture.cdp, 'a', label, Date.now() + 1000, undefined, true, true);
+      assert.ok(fixture.sent.some((entry) => entry.method === 'Input.dispatchMouseEvent' && entry.params.type === 'mouseReleased'));
+    } finally {
+      fixture.dispose();
+    }
+  });
+}
 
 test('workbench predicate preserves its primary assertion when operation telemetry fails', async () => {
   const original = console.log;
