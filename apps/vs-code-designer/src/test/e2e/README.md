@@ -554,6 +554,11 @@ unchanged, with exact directory-entry checks and no exclusion list. The initial
 valid-project reopen may create the product's normal design-time directory, but
 must preserve every original wizard file; that directory is then included in
 the full unchanged-state baseline. No later healing file is exempted.
+Project initialization does not rewrite `.gitignore` when removing the requested
+ignore pattern leaves its content unchanged. This avoids an unnecessary
+truncate/write interval during repeated initialization; the strict non-target
+snapshot assertion still rejects any observed mutation. Matching entries retain
+the existing removal/write behavior and writer diagnostics.
 Every real Yes branch must dismiss the prompt, write the expected files durably,
 close Code normally, and persist all file bytes/entries without another initialization
 prompt on a separate fresh reopen. A failed branch stops the sequence; planned but

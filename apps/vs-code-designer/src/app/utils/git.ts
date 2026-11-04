@@ -48,8 +48,11 @@ export async function isInsideRepo(workingDirectory: string): Promise<boolean> {
 export const removeFromGitIgnore = async (workspacePath: string, pattern: RegExp) => {
   const gitignorePath: string = path.join(workspacePath, gitignoreFileName);
   if (await fse.pathExists(gitignorePath)) {
-    let gitignoreContents: string = (await fse.readFile(gitignorePath)).toString();
-    gitignoreContents = gitignoreContents.replace(pattern, '');
+    const originalContents: string = (await fse.readFile(gitignorePath)).toString();
+    const gitignoreContents = originalContents.replace(pattern, '');
+    if (gitignoreContents === originalContents) {
+      return;
+    }
     await observeFileOperation(
       gitignorePath,
       'removeFromGitIgnore',
