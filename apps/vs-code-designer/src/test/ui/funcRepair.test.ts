@@ -39,8 +39,7 @@
  *      product failed to repair". Every polling wait from that point on also answers the Azure
  *      connectors QuickPick, which `refreshConnectionKeys` raises two statements before the gate
  *      and which otherwise parks the whole flow (see `dismissConnectorsPromptIfVisible`).
- *   5. Asserts `func --version` runs again (PRIMARY, disk-level — modeled on
- *      `waitForBundleRepaired` in bundleRepair.test.ts) and that the blocking modal never
+ *   5. Asserts `func --version` runs again (PRIMARY, disk-level) and that the blocking modal never
  *      appeared. The "no suppressed error toast" check is a documented SOFT check.
  *   6. Restores the original bytes in `afterEach` if the repair did not already replace them,
  *      so a mid-test failure cannot poison the shared runtime-dependency cache for the rest
@@ -112,7 +111,7 @@ const BASELINE_TIMEOUT_MS = 240_000;
 /**
  * How long we wait for the pre-debug gate to reinstall the managed binaries. The repair
  * re-downloads and re-extracts the whole Func Core Tools package, so this is sized for a cold
- * CI runner rather than a warm dev box (same 5 minutes bundleRepair.test.ts allows its repair).
+ * CI runner rather than a warm dev box.
  */
 const REPAIR_TIMEOUT_MS = 300_000;
 
@@ -1198,8 +1197,7 @@ describe('Func self-heal E2E', function () {
     // Restore only what the repair did not already replace. A mid-test failure must not leave
     // a poisoned FuncCoreTools folder behind for the sibling scenarios on this shard — and the
     // scenario-level retry would otherwise start from a func that can never satisfy its
-    // baseline gate. (The activation-time integrity manifest check would eventually notice the
-    // size drift and reinstall, but relying on that would make the next run's timing random.)
+    // baseline gate.
     for (const entry of corruptedBinaries) {
       try {
         if (!fs.existsSync(entry.filePath) || stillHoldsCorruption(entry.filePath)) {
@@ -1429,7 +1427,7 @@ describe('Func self-heal E2E', function () {
     console.log(`${LOG_PREFIX} ✓ Managed func repaired in ${Math.round(watch.elapsedMs / 1000)}s — ${describeBinary(primaryFuncPath)}`);
 
     // SOFT: the silent repair should keep download/checksum/extract toasts off screen.
-    // Non-blocking on purpose, exactly like `waitForRepairNotification` in bundleRepair.test.ts:
+    // Non-blocking on purpose:
     // toast timing is racy (they auto-dismiss, and an unrelated toast can match a fragment),
     // and the disk-level repair above is the authoritative pass/fail signal.
     if (watch.suppressedErrorText === '') {

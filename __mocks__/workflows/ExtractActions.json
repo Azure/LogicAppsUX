@@ -1,0 +1,96 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "triggers": {
+      "Request": {
+        "type": "Request",
+        "kind": "Http",
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "correlation": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "actions": {
+      "Initialize_ArrayVariable": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "ArrayVariable",
+              "type": "array",
+              "value": [
+                { "document": "alpha", "min": 1, "policy": "keep" },
+                { "document": "beta", "min": 0, "policy": "skip" }
+              ]
+            }
+          ]
+        },
+        "runAfter": {}
+      },
+      "Parse_JSON": {
+        "type": "ParseJson",
+        "inputs": {
+          "content": "@variables('ArrayVariable')",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "document": { "type": "string" },
+                "min": { "type": "integer" },
+                "policy": { "type": "string" }
+              },
+              "required": ["document", "min", "policy"]
+            }
+          }
+        },
+        "runAfter": { "Initialize_ArrayVariable": ["SUCCEEDED"] }
+      },
+      "Filter_array": {
+        "type": "Query",
+        "inputs": {
+          "from": "@body('Parse_JSON')",
+          "where": "@greaterOrEquals(item()?['min'], parameters('Minimum'))"
+        },
+        "runAfter": { "Parse_JSON": ["SUCCEEDED"] }
+      },
+      "HTTP": {
+        "type": "Http",
+        "inputs": {
+          "uri": "https://example.test/items",
+          "method": "POST",
+          "headers": { "Content-Type": "application/json" },
+          "body": {
+            "filtered": "@body('Filter_array')",
+            "original": "@variables('ArrayVariable')",
+            "correlation": "@triggerBody()?['correlation']"
+          },
+          "retryPolicy": { "type": "fixed", "count": 2, "interval": "PT5S" }
+        },
+        "runtimeConfiguration": { "contentTransfer": { "transferMode": "Chunked" } },
+        "runAfter": { "Filter_array": ["SUCCEEDED"] }
+      },
+      "Consume_result": {
+        "type": "Compose",
+        "inputs": {
+          "body": "@body('HTTP')",
+          "statusCode": "@outputs('HTTP')?['statusCode']",
+          "filtered": "@body('Filter_array')"
+        },
+        "runAfter": { "HTTP": ["SUCCEEDED"] }
+      }
+    },
+    "outputs": {}
+  },
+  "kind": "Stateful",
+  "connections": {},
+  "parameters": {
+    "Minimum": { "type": "Int", "value": 1 }
+  }
+}

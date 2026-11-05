@@ -40,16 +40,23 @@ export function reconcilePageFunctoidLinks(page: MapPage): void {
         return !previouslyConnectedLinkIds.has(linkId);
       });
 
+    const occupiedIndices = new Set(inputParameters.map((parameter) => parameter.index));
+    let nextInputIndex = 0;
     for (const linkId of orderedIncomingLinkIds) {
       if (!usedLinkIds.has(linkId)) {
+        while (occupiedIndices.has(nextInputIndex)) {
+          nextInputIndex++;
+        }
         inputParameters.push({
-          index: inputParameters.length,
+          index: nextInputIndex,
           type: ParameterType.Link,
           value: linkId,
         });
+        occupiedIndices.add(nextInputIndex);
         usedLinkIds.add(linkId);
       }
     }
+    inputParameters.sort((left, right) => left.index - right.index);
 
     const nonInputParameters = (functoid.parameters || []).filter(
       (parameter) => parameter.type !== ParameterType.Link && parameter.type !== ParameterType.Constant

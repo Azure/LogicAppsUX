@@ -12,10 +12,28 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { autoCreateConnectionIfPossible } from '../../../../core/actions/bjsworkflow/connections';
-import { ConnectionService, parseErrorMessage, type Connection, type Connector } from '@microsoft/logic-apps-shared';
+import {
+  ConnectionService,
+  isServiceProviderOperation,
+  parseErrorMessage,
+  type Connection,
+  type Connector,
+} from '@microsoft/logic-apps-shared';
 import { useConnectionViewStyles } from './styles';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
+
+const getConnectorId = (connectorName: string, connectorType: string): string => {
+  if (connectorName === 'agent') {
+    return '/connectionProviders/agent';
+  }
+
+  if (isServiceProviderOperation(connectorType)) {
+    return `/serviceProviders/${connectorName}`;
+  }
+
+  return `${ConnectionService()?.getSubscriptionLocationWebUrl?.() ?? ''}/${connectorName}`;
+};
 
 interface ConnectionsViewProps {
   closeView: () => void;
@@ -30,11 +48,7 @@ export const ConnectionsView = (props: ConnectionsViewProps) => {
   const { connectorName, connectorType, currentConnectionId } = props;
   const styles = useConnectionViewStyles();
 
-  // ccastrotrejo - need to check whether its manifest based before this
-  const connectorId =
-    connectorName === 'agent'
-      ? '/connectionProviders/agent'
-      : `${ConnectionService()?.getSubscriptionLocationWebUrl?.() ?? ''}/${connectorName}`;
+  const connectorId = getConnectorId(connectorName, connectorType);
   const connectorQuery = useConnector(connectorId);
   const connector = connectorQuery.data;
   const references = useConnectionRefs();

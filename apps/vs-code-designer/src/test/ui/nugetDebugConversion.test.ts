@@ -548,12 +548,7 @@ function getExpectedConvertedNugetSettingsJson(): SettingsJson {
 
 function getExpectedConvertedNugetExtensionsJson(): { recommendations: string[] } {
   return {
-    recommendations: [
-      'ms-azuretools.vscode-azurelogicapps',
-      'ms-dotnettools.csharp',
-      'ms-azuretools.vscode-azurefunctions',
-      'ms-dotnettools.csdevkit',
-    ],
+    recommendations: ['ms-azuretools.vscode-azurelogicapps', 'ms-dotnettools.csharp', 'ms-dotnettools.csdevkit'],
   };
 }
 

@@ -17,11 +17,24 @@ export const expressionMapping = {
   expression: "@parameters('connectionName')",
   designTimeReferenceKey: 'Sql',
 };
+export const mcpConnectionMappingCaseNames = ['concrete', 'expression', 'null', 'missing', 'dangling reference'] as const;
 
-export const createMcpState = (): Pick<RootState, 'connection' | 'operations' | 'mcpPanel' | 'mcpSelection'> => ({
+export const createMcpState = (
+  kind: (typeof mcpConnectionMappingCaseNames)[number] = 'concrete'
+): Pick<RootState, 'connection' | 'operations' | 'mcpPanel' | 'mcpSelection'> => ({
   connection: {
     ...initialConnectionsState,
-    connectionsMapping: { [operationId]: 'Sql' },
+    connectionsMapping:
+      kind === 'missing'
+        ? {}
+        : {
+            [operationId]: {
+              concrete: 'Sql',
+              expression: { ...expressionMapping },
+              null: null,
+              'dangling reference': 'Unknown',
+            }[kind],
+          },
     connectionReferences: { Sql: reference },
     loading: { ...initialConnectionsState.loading },
   },

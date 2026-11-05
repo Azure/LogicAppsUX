@@ -43,7 +43,7 @@ export function canonicalizeDotNetBinary(candidate: string, source: string): str
 }
 
 export function parseCustomCodeDotNetTarget(rawValue: string | undefined): CustomCodeDotNetTarget {
-  const normalized = (rawValue || 'net8').trim().toLowerCase();
+  const normalized = (rawValue || 'net10').trim().toLowerCase();
   if (!isCustomCodeDotNetTarget(normalized)) {
     throw new Error(`CUSTOMCODE_DOTNET_E2E_VERSION must be one of ${CUSTOM_CODE_DOTNET_TARGETS.join(' | ')}; got "${rawValue}"`);
   }

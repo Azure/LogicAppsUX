@@ -1,15 +1,22 @@
 import type { MapDefinitionEntry } from '@microsoft/logic-apps-shared';
-import { parse, parseDocument } from 'yaml';
+import { isScalar, parseDocument, visit } from 'yaml';
 
 export function loadMap(mapText: string): MapDefinitionEntry {
   if (!mapText.trim()) {
     return {};
   }
-  const escaped = mapText
-    .replaceAll('"', '\\"')
-    .replaceAll('$for', () => `${crypto.randomUUID()}-$for`)
-    .replaceAll('$if', () => `${crypto.randomUUID()}-$if`);
-  const map: unknown = parse(escaped, { strict: false, uniqueKeys: false });
+  const document = parseDocument(mapText.replaceAll('"', '\\"'), { strict: false, uniqueKeys: false });
+  visit(document, {
+    Pair(_key, pair) {
+      if (isScalar(pair.key) && typeof pair.key.value === 'string' && /^\$(?:for|if)(?:\s|\(|$)/.test(pair.key.value)) {
+        pair.key.value = `${crypto.randomUUID()}-${pair.key.value}`;
+      }
+    },
+  });
+  if (document.errors.length) {
+    throw document.errors[0];
+  }
+  const map: unknown = document.toJS();
   if (!map || typeof map !== 'object' || Array.isArray(map)) {
     throw new Error('The LML document must contain a mapping.');
   }

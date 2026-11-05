@@ -27,13 +27,19 @@ function readText(filePath: string): string {
 const schemaPaths = filesUnder(fixtures, '.xsd');
 
 function resolveSchemaPath(containingPath: string, location: string): string {
-  const localPath = path.resolve(path.dirname(containingPath), location);
+  const normalizedLocation = location.replace(/\\/g, '/');
+  const localPath = path.resolve(path.dirname(containingPath), normalizedLocation);
   if (fs.existsSync(localPath)) {
     return localPath;
   }
+  const localMatch = schemaPaths.find((candidate) => candidate.toLowerCase() === localPath.toLowerCase());
+  if (localMatch) {
+    return localMatch;
+  }
 
-  const parts = location.split('.');
-  const schemaName = `${parts.pop()}.xsd`;
+  const parts = normalizedLocation.split('.');
+  const shortName = parts.pop();
+  const schemaName = path.extname(normalizedLocation).toLowerCase() === '.xsd' ? path.basename(normalizedLocation) : `${shortName}.xsd`;
   const projectName = parts.join('.').toLowerCase();
   const candidates = schemaPaths.filter((candidate) => path.basename(candidate).toLowerCase() === schemaName.toLowerCase());
   return candidates.find((candidate) => path.basename(path.dirname(candidate)).toLowerCase() === projectName) || candidates[0] || localPath;

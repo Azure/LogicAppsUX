@@ -1570,7 +1570,7 @@ export async function fillCustomCodeFields(
     functionName: string;
   }
 ): Promise<void> {
-  const { dotNetVersion = '.NET 8', folderName, namespace, functionName } = opts;
+  const { dotNetVersion = '.NET 10', folderName, namespace, functionName } = opts;
 
   // Log the page text to help debug field visibility
   const bodyText = await driver.findElement(By.css('body')).getText();

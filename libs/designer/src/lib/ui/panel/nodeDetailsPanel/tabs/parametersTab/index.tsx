@@ -1422,6 +1422,7 @@ export const ParameterSection = ({
         conditionalVisibility,
         validationErrors,
         parameterKey,
+        agentUrlMetadata,
       } = param;
 
       const remappedEditorViewModel = isRecordNotEmpty(idReplacements)
@@ -1437,6 +1438,7 @@ export const ParameterSection = ({
         editorViewModel: remappedEditorViewModel,
         conditionalVisibility,
         parameterKey,
+        agentUrlMetadata,
       };
 
       const { editor, editorOptions } = getEditorAndOptions(

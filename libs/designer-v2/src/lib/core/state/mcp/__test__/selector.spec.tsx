@@ -30,9 +30,7 @@ describe('MCP connection selectors', () => {
   it.each(['expression', 'null', 'missing', 'dangling reference'] as const)(
     'does not treat %s mappings as usable concrete connections',
     (kind) => {
-      const state = createMcpState();
-      state.connection.connectionsMapping =
-        kind === 'missing' ? {} : { Query: kind === 'expression' ? expressionMapping : kind === 'null' ? null : 'Unknown' };
+      const state = createMcpState(kind);
       const { result } = renderHook(
         () => ({ reference: useConnectionReference(), nodes: useOperationNodeIds(connectorId) }),
         createMcpHarness(state)

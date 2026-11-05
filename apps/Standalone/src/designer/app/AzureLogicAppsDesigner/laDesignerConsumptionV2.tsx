@@ -17,6 +17,7 @@ import {
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { getDataForConsumption, WorkflowUtility } from './Utilities/Workflow';
+import { shouldUseProductionArtifacts } from './Utilities/draftArtifacts';
 import { CoPilotChatbot } from '@microsoft/logic-apps-chatbot';
 import type { ContentType } from '@microsoft/logic-apps-shared';
 import {
@@ -106,10 +107,25 @@ const DesignerEditorConsumption = () => {
     notes: prodNotes,
   } = useMemo(() => getDataForConsumption(workflowAndArtifactsData), [workflowAndArtifactsData]);
 
-  const { data: draftWorkflowAndArtifactsData, isFetching: isDraftWorkflowAndArtifactsLoading } = useWorkflowAndArtifactsConsumption(
+  const { data: savedDraftWorkflowAndArtifactsData, isFetching: isDraftWorkflowAndArtifactsLoading } = useWorkflowAndArtifactsConsumption(
     workflowId,
     true
   );
+
+  const draftWorkflowAndArtifactsData = useMemo(() => {
+    if (
+      savedDraftWorkflowAndArtifactsData &&
+      workflowAndArtifactsData &&
+      shouldUseProductionArtifacts(
+        workflowAndArtifactsData.properties.changedTime,
+        savedDraftWorkflowAndArtifactsData.properties.changedTime
+      )
+    ) {
+      return workflowAndArtifactsData;
+    }
+    return savedDraftWorkflowAndArtifactsData;
+  }, [savedDraftWorkflowAndArtifactsData, workflowAndArtifactsData]);
+  const isProductionNewerThanDraft = !!savedDraftWorkflowAndArtifactsData && draftWorkflowAndArtifactsData === workflowAndArtifactsData;
 
   const {
     workflow: draftWorkflow,
@@ -278,7 +294,7 @@ const DesignerEditorConsumption = () => {
       }
       workflowToSave.connections = newConnectionsObj;
 
-      await saveWorkflowConsumption(workflowAndArtifactsData, workflowToSave, clearDirtyState, undefined, isDraftSave);
+      await saveWorkflowConsumption(workflowAndArtifactsData, workflowToSave, clearDirtyState, { throwError: isDraftSave }, isDraftSave);
 
       return workflowToSave;
     } catch (e: any) {
@@ -543,6 +559,13 @@ const DesignerEditorConsumption = () => {
                       onRun={onRun}
                       isDarkMode={isDarkMode}
                       isDraftMode={isDraftMode}
+                      forceSave={isDraftMode && isProductionNewerThanDraft}
+                      isDisabled={derivedIsReadOnly && isDraftMode && isProductionNewerThanDraft}
+                      tooltipOverride={
+                        derivedIsReadOnly && isDraftMode && isProductionNewerThanDraft
+                          ? 'Switch to the published version to run the current workflow without saving a draft.'
+                          : undefined
+                      }
                       isConsumption={true}
                       workflowReadOnly={derivedIsReadOnly}
                     />

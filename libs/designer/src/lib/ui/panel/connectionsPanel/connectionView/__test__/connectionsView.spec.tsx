@@ -174,6 +174,13 @@ describe('ConnectionsView', () => {
     expect(mocks.selectConnectionProps[0].connectorId).toBe('/connectionProviders/agent');
   });
 
+  it('uses the service provider id for service provider connectors', () => {
+    render(<ConnectionsView {...defaultProps} connectorType="ServiceProvider" />);
+
+    expect(ConnectionSelectors.useConnector).toHaveBeenCalledWith('/serviceProviders/sql');
+    expect(mocks.selectConnectionProps[0].connectorId).toBe('/serviceProviders/sql');
+  });
+
   it('auto creates a connection when no existing connections are returned', async () => {
     const connectionsQueries = await import('../../../../../core/queries/connections');
     (connectionsQueries.useConnectionsForConnector as Mock).mockReturnValue({

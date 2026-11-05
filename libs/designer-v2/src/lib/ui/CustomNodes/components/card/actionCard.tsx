@@ -87,7 +87,8 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 
   useEffect(() => {
     if (setFocus) {
-      focusRef.current?.focus();
+      // Canvas panning owns visibility; native scrolling would offset the viewport.
+      focusRef.current?.focus({ preventScroll: true });
     }
   }, [setFocus]);
 
