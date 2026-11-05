@@ -30,8 +30,53 @@ import { getFunctionsCommand } from './funcCoreTools/funcVersion';
 import * as fse from 'fs-extra';
 import { executeCommand } from './funcCoreTools/cpUtils';
 import { tryGetLogicAppProjectRoot } from './verifyIsProject';
+import { ExperimentalBundleSource, type ExperimentalBundleRuntime, isBundleVersion } from './experimentalBundleRuntime';
 
 const PUBLIC_BUNDLE_BASE_URL = 'https://cdn.functions.azure.com/public';
+let experimentalBundleSource: ExperimentalBundleSource | undefined;
+
+export async function getExperimentalBundleRuntime(
+  context: IActionContext,
+  projectPath: string
+): Promise<ExperimentalBundleRuntime | undefined> {
+  if (getGlobalSetting<boolean>(useExperimentalExtensionBundleSettingKey) !== true) {
+    return undefined;
+  }
+  await waitForExtensionBundleReady();
+  if (lastBundleInstallResult === 'failed') {
+    throw new Error(
+      'The experimental bundle install or verification failed. Correct the selected version/source and reload before starting a host. No public bundle will be substituted.'
+    );
+  }
+  const localSettings = await getLocalSettingsJson(context, projectPath);
+  const pin = (
+    localSettings?.Values?.AzureFunctionsJobHost_extensionBundle_version ??
+    process.env.AzureFunctionsJobHost_extensionBundle_version ??
+    getGlobalSetting<string>(experimentalExtensionBundleVersionSettingKey) ??
+    ''
+  ).trim();
+  const version = pin || pickLatestVersion(await getExtensionBundleVersionFolders(defaultExtensionBundlePathValue));
+  if (!parseBundleVersion(version) || version === '0.0.0') {
+    throw new Error(
+      'No experimental Logic Apps bundle is selected. Install a complete local bundle or configure an experimental source and reload.'
+    );
+  }
+  if (!experimentalBundleSource) {
+    experimentalBundleSource = new ExperimentalBundleSource();
+    const source = experimentalBundleSource;
+    ext.context.subscriptions.push({
+      dispose: () => {
+        source.dispose();
+        experimentalBundleSource = undefined;
+      },
+    });
+  }
+  const runtime = await experimentalBundleSource.resolve(path.join(defaultExtensionBundlePathValue, version));
+  ext.outputChannel?.appendLog(
+    `Selected experimental Logic Apps bundle folder ${runtime.folderVersion} (manifest ${runtime.manifestVersion}) for host resolution.`
+  );
+  return runtime;
+}
 
 export type BundleBaseUrlSource = 'localSettings' | 'envVar' | 'experimentalSetting' | 'default';
 export type BundleVersionSource =
@@ -43,8 +88,7 @@ export type BundleVersionSource =
   | 'localLatest';
 
 /**
- * Why the extension fell back from the configured experimental source URI to
- * the public CDN. Recorded only when a fallback actually fired.
+ * Why the configured experimental source could not supply the requested bundle.
  */
 export type ExperimentalSourceFallbackReason = 'pinNotInIndex' | 'zip404' | 'index404' | 'networkError';
 
@@ -227,16 +271,36 @@ async function getExtensionBundleVersionFolders(directoryPath: string): Promise<
   // Filter only the folders with valid version names.
   const folders = directoryContents.filter((item) => {
     const itemPath = path.join(directoryPath, item);
-    return fse.statSync(itemPath).isDirectory() && semver.valid(item);
+    return fse.statSync(itemPath).isDirectory() && parseBundleVersion(item) !== undefined;
   });
 
   return folders;
 }
 
+// Workflow bundles also use System.Version's fourth numeric (revision) component.
+function parseBundleVersion(version: string): { version: semver.SemVer; revision: number } | undefined {
+  if (!isBundleVersion(version)) {
+    return undefined;
+  }
+  const fourPart = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.exec(version);
+  const parsed = semver.parse(fourPart ? `${fourPart[1]}.${fourPart[2]}.${fourPart[3]}` : version);
+  const revision = fourPart ? Number(fourPart[4]) : 0;
+  return parsed && Number.isSafeInteger(revision) ? { version: parsed, revision } : undefined;
+}
+
+function compareBundleVersions(left: string, right: string): number {
+  const a = parseBundleVersion(left);
+  const b = parseBundleVersion(right);
+  if (!a || !b) {
+    throw new Error(`Invalid extension bundle version: ${a ? right : left}`);
+  }
+  return semver.compare(a.version, b.version) || a.revision - b.revision;
+}
+
 function pickLatestVersion(versions: string[]): string {
   let latest = '0.0.0';
   for (const v of versions) {
-    if (semver.valid(v) && semver.gt(v, latest)) {
+    if (parseBundleVersion(v) && compareBundleVersions(v, latest) > 0) {
       latest = v;
     }
   }
@@ -249,12 +313,53 @@ function pickLatestVersion(versions: string[]): string {
  * before this function returns.
  */
 async function downloadBundleAndWriteMarker(context: IActionContext, baseUrl: string, version: string): Promise<void> {
-  const markerPath = getBundleInstallMarkerPath(version);
-  await fse.remove(markerPath);
   const zipUrl = buildExtensionBundleZipUrl(baseUrl, version);
-  await downloadAndExtractDependency(context, zipUrl, defaultExtensionBundlePathValue, extensionBundleId, version);
+  await downloadAndExtractDependency(
+    context,
+    zipUrl,
+    defaultExtensionBundlePathValue,
+    extensionBundleId,
+    version,
+    undefined,
+    async (directory) => {
+      if (!(await hasRequiredBundleContent(directory))) {
+        throw new Error(`Bundle ${version} archive is missing required runtime content. Existing install has not been replaced.`);
+      }
+    }
+  );
   await writeBundleInstallMarker(version);
 }
+
+async function hasRequiredBundleContent(directory: string): Promise<boolean> {
+  try {
+    const manifest = await fse.readJson(path.join(directory, 'bundle.json'));
+    if (manifest.id !== extensionBundleId || typeof manifest.version !== 'string' || !isBundleVersion(manifest.version)) {
+      return false;
+    }
+
+    for (const file of ['extensions.json', 'Microsoft.Azure.Workflows.Data.Edge.dll']) {
+      const info = await fse.stat(path.join(directory, 'bin', file));
+      if (!info.isFile() || info.size === 0) {
+        return false;
+      }
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function prepareExperimentalLocalBundle(version: string): Promise<boolean> {
+  if (!(await hasRequiredBundleContent(path.join(defaultExtensionBundlePathValue, version)))) {
+    return false;
+  }
+  // Manually installed custom bundles have no extension-owned completion marker.
+  if (!(await hasBundleInstallMarker(version))) {
+    await writeBundleInstallMarker(version);
+  }
+  return true;
+}
+
 /**
  * Same as `downloadBundleAndWriteMarker` but returns `undefined` when the
  * configured CDN doesn't have the package (HTTP 404 / network failure) so
@@ -303,17 +408,21 @@ async function tryFetchSourceIndex(
   }
 }
 
-function logExperimentalFallback(context: IActionContext, reason: ExperimentalSourceFallbackReason, detail: string, error?: unknown): void {
+function logExperimentalFallback(
+  context: IActionContext,
+  reason: ExperimentalSourceFallbackReason,
+  detail: string,
+  _error?: unknown
+): void {
   context.telemetry.properties.experimentalSourceFallback = reason;
-  context.telemetry.properties.experimentalSourceFallbackTarget = 'public';
+  context.telemetry.properties.experimentalSourceFallbackTarget = 'none';
   if (ext.outputChannel) {
-    const message = error instanceof Error ? `${detail} (${error.message})` : detail;
     ext.outputChannel.appendLog(
       localize(
         'experimentalSourceFallback',
-        'Experimental extension-bundle source could not deliver ({0}); falling back to public CDN. {1}',
+        'Experimental extension-bundle source could not deliver ({0}); no public bundle will be substituted. {1}',
         reason,
-        message
+        detail
       )
     );
   }
@@ -643,7 +752,7 @@ function scheduleBackgroundBundleFeedRefresh(context: IActionContext, options: B
         feedVersions = await getWorkflowBundleFeed(context);
       }
       const latestFeedBundleVersion = pickLatestVersion(feedVersions);
-      if (semver.gt(latestFeedBundleVersion, options.localVersion)) {
+      if (compareBundleVersions(latestFeedBundleVersion, options.localVersion) > 0) {
         ext.outputChannel?.appendLog(
           `Logic Apps extension bundle ${latestFeedBundleVersion} is available (local ${options.localVersion}); downloading in the background for the next launch.`
         );
@@ -881,15 +990,20 @@ async function downloadExtensionBundleCore(context: IActionContext): Promise<boo
 
     if (projectPath) {
       try {
-        envVarVer = (await getLocalSettingsJson(context, projectPath))?.Values?.AzureFunctionsJobHost_extensionBundle_version;
+        const localPin = (await getLocalSettingsJson(context, projectPath))?.Values?.AzureFunctionsJobHost_extensionBundle_version;
+        envVarVer = getGlobalSetting<boolean>(useExperimentalExtensionBundleSettingKey) === true ? (localPin ?? envVarVer) : localPin;
       } catch {
         // ignore
       }
     }
 
     const localVersions = await getExtensionBundleVersionFolders(defaultExtensionBundlePathValue);
+    envVarVer = envVarVer?.trim();
     const latestLocalBundleVersion = pickLatestVersion(localVersions);
     const baseUrlInfo = await getExtensionBundleBaseUrl(context);
+    if (baseUrlInfo.isExperimental && envVarVer && !parseBundleVersion(envVarVer)) {
+      throw new Error('Invalid experimental extension bundle version. Use a valid three- or four-part version.');
+    }
 
     context.telemetry.properties.envVariableExtensionBundleVersion = envVarVer;
 
@@ -901,25 +1015,42 @@ async function downloadExtensionBundleCore(context: IActionContext): Promise<boo
     //    "later version present locally wouldn't be used" complaint.
     if (envVarVer) {
       context.telemetry.properties.extensionBundleVersionSource = 'envVar';
-      if (semver.valid(envVarVer) && localVersions.some((v) => v === envVarVer)) {
+      if (parseBundleVersion(envVarVer) && localVersions.some((v) => v === envVarVer)) {
         // Fast path first: a pinned local bundle with a valid completion marker
         // and required runtime entry points is trusted for this session.
         // A pin must never auto-upgrade, so no feed refresh.
         if (
-          await tryHealthyLocalBundleFastPath(context, {
+          (!baseUrlInfo.isExperimental || (await prepareExperimentalLocalBundle(envVarVer))) &&
+          (await tryHealthyLocalBundleFastPath(context, {
             version: envVarVer,
             versionSource: 'envVar',
             feedRefreshBaseUrl: baseUrlInfo.baseUrl,
             allowFeedRefresh: false,
-          })
+          }))
         ) {
           context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
           return false;
+        }
+        if (baseUrlInfo.isExperimental && baseUrlInfo.source === 'default') {
+          throw new Error('The pinned experimental bundle needs repair but no source is configured. No public bundle will be substituted.');
         }
         await downloadBundleWithProgress(context, baseUrlInfo.baseUrl, envVarVer, 'envVarRepair');
         context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
         context.telemetry.properties.didUpdateExtensionBundle = 'true';
         return true;
+      }
+      if (baseUrlInfo.isExperimental && baseUrlInfo.source === 'default') {
+        throw new Error(
+          'The pinned experimental bundle is not installed and no source is configured. No public bundle will be substituted.'
+        );
+      }
+      if (baseUrlInfo.isExperimental) {
+        const indexProbe = await tryFetchSourceIndex(context, baseUrlInfo.baseUrl);
+        if (!indexProbe.ok || !indexProbe.versions.includes(envVarVer)) {
+          throw new Error(
+            'The requested experimental bundle is not available from its configured source. No public bundle will be substituted.'
+          );
+        }
       }
       await downloadBundleWithProgress(context, baseUrlInfo.baseUrl, envVarVer, 'envVarPin');
       context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
@@ -927,35 +1058,33 @@ async function downloadExtensionBundleCore(context: IActionContext): Promise<boo
       return true;
     }
 
-    // 2. Experimental toggle on. Never consults the public CDN's *latest*
-    //    feed for version selection — but if the configured private source
-    //    cannot deliver the package AND we have no usable local copy, we
-    //    fall back to downloading from the public CDN as a last resort so
-    //    the dev isn't left with a non-running environment.
+    // Experimental bundles are local-first and must never silently become public latest.
     if (baseUrlInfo.isExperimental) {
       const pin = baseUrlInfo.experimentalPinnedVersion;
+      const sourceUri = baseUrlInfo.source === 'default' ? '' : baseUrlInfo.baseUrl;
+      if (pin && !parseBundleVersion(pin)) {
+        throw new Error('Invalid experimental extension bundle version. Use a valid three- or four-part version.');
+      }
 
       if (pin && pin.length > 0) {
         const pinIsLocal = localVersions.some((v) => v === pin);
         if (pinIsLocal) {
-          // The experimental URI remains the source for any required reinstall.
-          const configuredBaseUrl =
-            baseUrlInfo.experimentalSourceUri.length > 0 ? baseUrlInfo.experimentalSourceUri : PUBLIC_BUNDLE_BASE_URL;
           // Fast path first: a ready local pin is trusted for this session.
           // Pins never auto-upgrade.
           if (
-            await tryHealthyLocalBundleFastPath(context, {
+            (await prepareExperimentalLocalBundle(pin)) &&
+            (await tryHealthyLocalBundleFastPath(context, {
               version: pin,
               versionSource: 'experimentalLocalPin',
-              feedRefreshBaseUrl: configuredBaseUrl,
+              feedRefreshBaseUrl: sourceUri,
               allowFeedRefresh: false,
-            })
+            }))
           ) {
             context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
             return false;
           }
-          if (baseUrlInfo.experimentalSourceUri.length > 0) {
-            const repair = await tryDownloadBundleWithProgress(context, baseUrlInfo.experimentalSourceUri, pin, 'experimentalPinRepair');
+          if (sourceUri.length > 0) {
+            const repair = await tryDownloadBundleWithProgress(context, sourceUri, pin, 'experimentalPinRepair');
             if (repair.ok === true) {
               ext.defaultBundleVersion = pin;
               ext.latestBundleVersion = pin;
@@ -966,25 +1095,20 @@ async function downloadExtensionBundleCore(context: IActionContext): Promise<boo
             }
             logExperimentalFallback(context, repair.reason, `Reinstall of pin ${pin} from experimental source failed.`, repair.error);
           }
-          await downloadBundleWithProgress(context, PUBLIC_BUNDLE_BASE_URL, pin, 'experimentalPinRepair');
-          ext.defaultBundleVersion = pin;
-          ext.latestBundleVersion = pin;
-          context.telemetry.properties.extensionBundleVersionSource = 'experimentalPinRepair';
-          context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
-          context.telemetry.properties.didUpdateExtensionBundle = 'true';
-          return true;
+          throw new Error(
+            'The selected experimental bundle could not be repaired from its configured source. The existing cache was preserved; no public bundle will be substituted.'
+          );
         }
 
-        // Pin not on disk: try the configured experimental source URI first
-        // (if any), then fall back to the public CDN for the same pin.
-        if (baseUrlInfo.experimentalSourceUri.length > 0) {
+        // A missing pin may only come from the explicitly configured source.
+        if (sourceUri.length > 0) {
           // Optionally probe the source's index first — this lets us
           // distinguish "private CDN doesn't have this pin" from "private
           // CDN is fine but the zip URL was momentarily unreachable" so the
           // telemetry reason is accurate.
-          const indexProbe = await tryFetchSourceIndex(context, baseUrlInfo.experimentalSourceUri);
+          const indexProbe = await tryFetchSourceIndex(context, sourceUri);
           if (indexProbe.ok === true && indexProbe.versions.includes(pin)) {
-            const result = await tryDownloadBundleWithProgress(context, baseUrlInfo.experimentalSourceUri, pin, 'experimentalPin');
+            const result = await tryDownloadBundleWithProgress(context, sourceUri, pin, 'experimentalPin');
             if (result.ok === true) {
               ext.defaultBundleVersion = pin;
               ext.latestBundleVersion = pin;
@@ -1006,79 +1130,56 @@ async function downloadExtensionBundleCore(context: IActionContext): Promise<boo
           }
         }
 
-        // Fallback: download the pin from the public CDN.
-        await downloadBundleWithProgress(context, PUBLIC_BUNDLE_BASE_URL, pin, 'fallbackPublic');
-        ext.defaultBundleVersion = pin;
-        ext.latestBundleVersion = pin;
-        context.telemetry.properties.extensionBundleVersionSource = 'experimentalFirstDownload';
-        context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
-        context.telemetry.properties.didUpdateExtensionBundle = 'true';
-        return true;
+        throw new Error(
+          'The requested experimental bundle is not installed and could not be downloaded from its configured source. Check the experimental version/source or install the bundle locally. No public bundle will be substituted.'
+        );
       }
 
-      // Only handle experimental local-latest specially when a real experimental
-      // source URI is configured. With no pin AND no source URI there is nothing
-      // genuinely experimental to honor, so fall through to the normal section-3
-      // resolution below (fast readiness gate + background feed refresh, i.e.
-      // public-latest auto-upgrade) — identical to a normal install.
-      if (baseUrlInfo.experimentalSourceUri.length > 0 && latestLocalBundleVersion !== '0.0.0') {
+      if (latestLocalBundleVersion !== '0.0.0') {
         // Check readiness before trusting the cached experimental local latest.
         // Fast path first: a ready local latest is trusted for this session.
         // Experimental never consults the public *latest* feed, so no feed refresh.
         if (
-          await tryHealthyLocalBundleFastPath(context, {
+          (await prepareExperimentalLocalBundle(latestLocalBundleVersion)) &&
+          (await tryHealthyLocalBundleFastPath(context, {
             version: latestLocalBundleVersion,
             versionSource: 'experimentalLocalLatest',
-            feedRefreshBaseUrl: baseUrlInfo.experimentalSourceUri,
+            feedRefreshBaseUrl: sourceUri,
             allowFeedRefresh: false,
-          })
+          }))
         ) {
           context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
           return false;
         }
-        const repair = await tryDownloadBundleWithProgress(
-          context,
-          baseUrlInfo.experimentalSourceUri,
-          latestLocalBundleVersion,
-          'experimentalLocalLatestRepair'
-        );
-        if (repair.ok === true) {
-          ext.defaultBundleVersion = latestLocalBundleVersion;
-          ext.latestBundleVersion = latestLocalBundleVersion;
-          context.telemetry.properties.extensionBundleVersionSource = 'experimentalLocalLatestRepair';
-          context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
-          context.telemetry.properties.didUpdateExtensionBundle = 'true';
-          return true;
+        if (sourceUri.length > 0) {
+          const repair = await tryDownloadBundleWithProgress(context, sourceUri, latestLocalBundleVersion, 'experimentalLocalLatestRepair');
+          if (repair.ok === true) {
+            ext.defaultBundleVersion = latestLocalBundleVersion;
+            ext.latestBundleVersion = latestLocalBundleVersion;
+            context.telemetry.properties.extensionBundleVersionSource = 'experimentalLocalLatestRepair';
+            context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
+            context.telemetry.properties.didUpdateExtensionBundle = 'true';
+            return true;
+          }
+          logExperimentalFallback(
+            context,
+            repair.reason,
+            `Reinstall of local latest ${latestLocalBundleVersion} from experimental source failed.`,
+            repair.error
+          );
         }
-        logExperimentalFallback(
-          context,
-          repair.reason,
-          `Reinstall of local latest ${latestLocalBundleVersion} from experimental source failed.`,
-          repair.error
+        throw new Error(
+          'The selected experimental bundle could not be repaired from its configured source. The existing cache was preserved; no public bundle will be substituted.'
         );
-        await downloadBundleWithProgress(context, PUBLIC_BUNDLE_BASE_URL, latestLocalBundleVersion, 'experimentalLocalLatestRepair');
-        ext.defaultBundleVersion = latestLocalBundleVersion;
-        ext.latestBundleVersion = latestLocalBundleVersion;
-        context.telemetry.properties.extensionBundleVersionSource = 'experimentalLocalLatestRepair';
-        context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
-        context.telemetry.properties.didUpdateExtensionBundle = 'true';
-        return true;
       }
 
-      // No pin, no local copy — try the experimental source URI for its
-      // latest. If that fails (404 / network error / empty index), fall
-      // through to the public-CDN default flow below.
-      if (baseUrlInfo.experimentalSourceUri.length > 0) {
-        const indexProbe = await tryFetchSourceIndex(context, baseUrlInfo.experimentalSourceUri);
+      // No local copy: resolve only from the configured source.
+      if (sourceUri.length > 0) {
+        const indexProbe = await tryFetchSourceIndex(context, sourceUri);
         if (indexProbe.ok === true) {
           const experimentalLatest = pickLatestVersion(indexProbe.versions);
           if (experimentalLatest !== '0.0.0') {
-            const result = await tryDownloadBundleWithProgress(
-              context,
-              baseUrlInfo.experimentalSourceUri,
-              experimentalLatest,
-              'experimentalLatest'
-            );
+            const result = await tryDownloadBundleWithProgress(context, sourceUri, experimentalLatest, 'experimentalLatest');
             if (result.ok === true) {
               ext.defaultBundleVersion = experimentalLatest;
               ext.latestBundleVersion = experimentalLatest;
@@ -1100,18 +1201,13 @@ async function downloadExtensionBundleCore(context: IActionContext): Promise<boo
           logExperimentalFallback(context, indexProbe.reason, 'Could not read the experimental source index.', indexProbe.error);
         }
       }
-      // Toggle is on but no pin, no local, and the experimental URI either
-      // wasn't set or couldn't deliver — fall through to public-feed flow
-      // so the dev isn't dead-in-the-water.
-      context.telemetry.properties.experimentalFellThroughToPublic = 'true';
+      throw new Error(
+        'No usable experimental bundle is installed or available from the configured source. Install a complete local bundle, correct the experimental source, or disable experimental bundles. No public bundle will be substituted.'
+      );
     }
 
-    // 3. Default flow: use latest local if intact; otherwise re-download from CDN.
-    //    If we got here via the experimental fall-through, force the public CDN —
-    //    using the (broken) experimental baseUrl would defeat the whole point of
-    //    the fallback.
-    const fellThroughFromExperimental = baseUrlInfo.isExperimental;
-    const effectiveBaseUrl = fellThroughFromExperimental ? PUBLIC_BUNDLE_BASE_URL : baseUrlInfo.baseUrl;
+    // Default, nonexperimental behavior is unchanged.
+    const effectiveBaseUrl = baseUrlInfo.baseUrl;
 
     // Ready local bundles are trusted without post-install hashing or CDN checks.
     // Newer-version discovery remains a throttled background operation.
@@ -1122,7 +1218,7 @@ async function downloadExtensionBundleCore(context: IActionContext): Promise<boo
           versionSource: 'localLatest',
           allowFeedRefresh: true,
           feedRefreshBaseUrl: effectiveBaseUrl,
-          useExperimentalPublicFallback: fellThroughFromExperimental,
+          useExperimentalPublicFallback: false,
         })
       ) {
         context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
@@ -1132,23 +1228,16 @@ async function downloadExtensionBundleCore(context: IActionContext): Promise<boo
     }
 
     let latestFeedBundleVersion = '0.0.0';
-    let feedVersions: string[];
-    if (fellThroughFromExperimental) {
-      const publicIndexUrl = `${PUBLIC_BUNDLE_BASE_URL}/ExtensionBundles/${extensionBundleId}/index.json`;
-      feedVersions = await getJsonFeed(context, publicIndexUrl);
-    } else {
-      feedVersions = await getWorkflowBundleFeed(context);
-    }
+    const feedVersions = await getWorkflowBundleFeed(context);
     latestFeedBundleVersion = pickLatestVersion(feedVersions);
 
-    context.telemetry.properties.latestBundleVersion = semver.gt(latestFeedBundleVersion, latestLocalBundleVersion)
-      ? latestFeedBundleVersion
-      : latestLocalBundleVersion;
+    context.telemetry.properties.latestBundleVersion =
+      compareBundleVersions(latestFeedBundleVersion, latestLocalBundleVersion) > 0 ? latestFeedBundleVersion : latestLocalBundleVersion;
 
     ext.defaultBundleVersion = context.telemetry.properties.latestBundleVersion;
     ext.latestBundleVersion = context.telemetry.properties.latestBundleVersion;
 
-    if (semver.gt(latestFeedBundleVersion, latestLocalBundleVersion)) {
+    if (compareBundleVersions(latestFeedBundleVersion, latestLocalBundleVersion) > 0) {
       await downloadBundleWithProgress(context, effectiveBaseUrl, latestFeedBundleVersion, 'newerVersion');
       context.telemetry.properties.extensionBundleVersionSource = 'publicFeedLatest';
       context.telemetry.measurements.downloadExtensionBundleDuration = (Date.now() - downloadExtensionBundleStartTime) / 1000;
@@ -1213,38 +1302,8 @@ export const getLatestBundleVersion = async (bundleFolder: string) => {
  * @param version2 - Extension bundle version.
  * @returns {string} Biggest extension bundle version.
  */
-function getMaxVersion(version1, version2): string {
-  let maxVersion = '';
-  let arr1 = version1.split('.');
-  let arr2 = version2.split('.');
-
-  arr1 = arr1.map(Number);
-  arr2 = arr2.map(Number);
-
-  const arr1Size = arr1.length;
-  const arr2Size = arr2.length;
-
-  if (arr1Size > arr2Size) {
-    for (let i = arr2Size; i < arr1Size; i++) {
-      arr2.push(0);
-    }
-  } else {
-    for (let i = arr1Size; i < arr2Size; i++) {
-      arr1.push(0);
-    }
-  }
-
-  for (let i = 0; i < arr1.length; i++) {
-    if (arr1[i] > arr2[i]) {
-      maxVersion = version1;
-      break;
-    }
-    if (arr2[i] > arr1[i]) {
-      maxVersion = version2;
-      break;
-    }
-  }
-  return maxVersion;
+function getMaxVersion(version1: string, version2: string): string {
+  return pickLatestVersion([version1, version2]);
 }
 
 let cachedBundleVersion: string | null = null;
@@ -1295,7 +1354,7 @@ export async function getBundleVersionNumber(workingDirectory?: string): Promise
 
   // Cache the result
   cachedBundleVersion = bundleVersionNumber;
-  ext.outputChannel?.appendLog(`Current Logic Apps extension bundle version: ${bundleVersionNumber}`);
+  ext.outputChannel?.appendLog(`Highest cached Logic Apps extension bundle folder: ${bundleVersionNumber} (not loaded-host verification).`);
   return bundleVersionNumber;
 }
 
