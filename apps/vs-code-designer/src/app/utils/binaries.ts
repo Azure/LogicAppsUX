@@ -138,7 +138,7 @@ export async function downloadAndExtractDependency(
   try {
     // Extract to targetFolder
     if (dependencyName === dotnetDependencyName) {
-      const version = dotNetVersion ?? semver.major(DependencyVersion.dotnet8);
+      const version = dotNetVersion ?? semver.major(DependencyVersion.dotnet10);
       if (process.platform === Platform.windows) {
         await executeCommand(
           ext.outputChannel,
@@ -385,17 +385,17 @@ export async function getLatestDotNetVersion(context: IActionContext, majorVersi
             latestVersion = releaseVersion;
           }
         }
-        return latestVersion ?? DependencyVersion.dotnet8;
+        return latestVersion ?? DependencyVersion.dotnet10;
       })
       .catch((error) => {
         context.telemetry.properties.latestVersionSource = 'fallback';
         context.telemetry.properties.errorNewestDotNetVersion = `Error getting latest .NET SDK version: ${error}`;
-        return DependencyVersion.dotnet8;
+        return DependencyVersion.dotnet10;
       });
   }
 
   context.telemetry.properties.latestVersionSource = 'fallback';
-  return DependencyVersion.dotnet8;
+  return DependencyVersion.dotnet10;
 }
 
 export async function getLatestNodeJsVersion(context: IActionContext, majorVersion?: string): Promise<string> {
