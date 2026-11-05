@@ -68,6 +68,18 @@ Process output is discarded, and failures return a fixed message. Raw process er
 
 Passwords remain in the `net.exe` process arguments and may be visible to local process inspection or process-creation auditing. This protects the extension's error-reporting path, not command-line credential exposure. Standard `net use` password parsing still applies, including the special `*` password-prompt syntax; the extension does not provide interactive input.
 
+## Experimental local bundles
+
+Enable `azureLogicAppsStandard.useExperimentalExtensionBundle` to bind extension-launched design-time hosts (including Data Mapper) and F5 to a selected cached bundle. A shared, ephemeral loopback metadata-only source advertises only that folder, preventing Core Tools' forced latest lookup from selecting a public bundle. It serves no archives or project files and is disposed when the extension unloads. No project configuration, process-wide environment, installed Core Tools, or other cached versions are modified.
+
+A blank `experimentalExtensionBundleVersion` selects the highest local version; an explicit value selects that exact three- or four-part cache folder version. A project's `AzureFunctionsJobHost_extensionBundle_version` setting takes precedence over the inherited environment pin and experimental version setting. Folder and manifest versions are validated independently: folder `1.197.13` can contain manifest version `1.197.0.13`. Selection logs are not proof of another process's loaded assembly.
+
+Healthy local experimental bundles work offline. Missing bundles require an explicitly configured source, respecting project/environment source precedence. Downloads are staged and validated before replacement; failures preserve the previous cache and stop launch without public substitution. Correct a failed installation and reload before retrying. Changing selection does not migrate an already-running host: stop that project's host through its normal controls before reopening the designer. Unknown or different tracked selections are rejected, not silently reused or terminated.
+
+The override does not apply to a separately launched `func host start` or a manually executed shell task. F5 binds the generated debug-symbol process task to the same selected bundle; custom symbol commands remain caller-owned. NuGet projects and nonexperimental launches retain existing behavior. A local bundle does not update cloud services.
+
+Experimental F5 supports explicit workspace shell/process host tasks and the extension-generated `type: "func", command: "host start"` task when its provider resolves to a shell/process execution. The host and generated symbol tasks are executed as new, workspace-scoped tasks so VS Code applies the overrides without mutating saved tasks. Because the public Task API cannot retain a saved task's `dependsOn` graph on such a replacement, experimental F5 rejects those configurations rather than silently dropping prerequisites. Disable experimental bundles to run a customized dependency graph. Existing Azurite, pre-debug validation, and custom-code build/publish steps still run; nonexperimental and NuGet tasks retain their saved dependency graphs.
+
 ## Providing feedback
 
 - To open product bugs, go to [GitHub issues for Azure Logic Apps](https://github.com/Azure/LogicAppsUX/issues).

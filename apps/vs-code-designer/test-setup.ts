@@ -122,6 +122,19 @@ vi.mock('vscode-languageclient/node', () => ({
 }));
 
 vi.mock('vscode', () => ({
+  ShellExecution: class {
+    constructor(
+      public commandLine: string,
+      public options?: { env?: Record<string, string> }
+    ) {}
+  },
+  ProcessExecution: class {
+    constructor(
+      public process: string,
+      public args: string[] = [],
+      public options?: { env?: Record<string, string> }
+    ) {}
+  },
   window: {
     showInformationMessage: vi.fn(),
     showErrorMessage: vi.fn(),
