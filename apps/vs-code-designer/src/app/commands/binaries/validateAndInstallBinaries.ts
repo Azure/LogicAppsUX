@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../extensionVariables';
+import { defaultDotnetMajorVersion } from '../../../constants';
 import { localize } from '../../../localize';
 import { ensureRuntimeDependenciesDir, getDependencyTimeout } from '../../utils/binaries';
 import { ensureExtensionBundleHealthy, getBundleDependencyFeed } from '../../utils/bundleFeed';
@@ -95,8 +96,12 @@ export async function validateAndInstallBinaries(context: IActionContext) {
             actionContext.errorHandling.suppressDisplay = true;
             progress.report({ increment: 10, message: '.NET SDK' });
             const dotnetDependencies = dependenciesVersions?.dotnetVersions ?? dependenciesVersions?.dotnet;
+            // Older bundle feeds still list only .NET 6/8; new custom-code projects require .NET 10 too.
+            const dotnetVersions = dotnetDependencies
+              ? [...new Set([...dotnetDependencies.split(','), defaultDotnetMajorVersion])].join(',')
+              : undefined;
             await runWithTimeout(
-              () => validateDotNetIsLatest(actionContext, dotnetDependencies),
+              () => validateDotNetIsLatest(actionContext, dotnetVersions),
               '.NET SDK',
               dependencyTimeoutMs,
               'https://dotnet.microsoft.com/en-us/download/dotnet'

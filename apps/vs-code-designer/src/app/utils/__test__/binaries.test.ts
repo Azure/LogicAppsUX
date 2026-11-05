@@ -64,6 +64,10 @@ describe('binaries', () => {
   describe('downloadAndExtractDependency', () => {
     let context: IActionContext;
 
+    afterEach(() => {
+      vi.unstubAllGlobals();
+    });
+
     beforeEach(() => {
       context = {
         telemetry: {
@@ -83,6 +87,45 @@ describe('binaries', () => {
       await expect(
         downloadAndExtractDependency(context, downloadUrl, targetFolder, dependencyName, folderName, dotNetVersion)
       ).rejects.toThrowError();
+    });
+
+    it.each([
+      [Platform.windows, undefined, '10.0'],
+      [Platform.linux, undefined, '10.0'],
+      [Platform.windows, '10', '10.0'],
+      [Platform.linux, '10', '10.0'],
+      [Platform.windows, '8', '8.0'],
+      [Platform.linux, '8', '8.0'],
+    ])('downloads and installs the requested SDK channel on %s (major %s)', async (platform, majorVersion, channel) => {
+      vi.stubGlobal('process', { ...process, platform });
+      const writer = new EventEmitter();
+      const data = new EventEmitter() as EventEmitter & { pipe: (destination: EventEmitter) => EventEmitter };
+      data.pipe = (destination) => {
+        setImmediate(() => {
+          data.emit('data', Buffer.from('installer'));
+          destination.emit('finish');
+        });
+        return destination;
+      };
+      vi.mocked(fs.createWriteStream).mockReturnValueOnce(writer as fs.WriteStream);
+      vi.mocked(axios.get).mockResolvedValueOnce({ headers: {}, data });
+      const scriptUrl = getDotNetBinariesReleaseUrl();
+      const targetRoot = path.join('dependencies', dotnetDependencyName);
+      const scriptPath = path.join('/tmp', '.azurelogicapps', dotnetDependencyName, `${dotnetDependencyName}${path.extname(scriptUrl)}`);
+
+      await downloadAndExtractDependency(context, scriptUrl, 'dependencies', dotnetDependencyName, undefined, majorVersion);
+
+      expect(axios.get).toHaveBeenCalledWith(scriptUrl, expect.objectContaining({ responseType: 'stream' }));
+      const scriptCommand = platform === Platform.windows ? ['powershell -ExecutionPolicy Bypass -File', scriptPath] : [scriptPath];
+      expect(executeCommand).toHaveBeenCalledWith(
+        ext.outputChannel,
+        undefined,
+        ...scriptCommand,
+        '-InstallDir',
+        targetRoot,
+        '-Channel',
+        channel
+      );
     });
 
     describe('download failure reporting', () => {
@@ -660,17 +703,17 @@ describe('binaries', () => {
           properties: {},
         },
       } as IActionContext;
-      majorVersion = '6';
+      majorVersion = '10';
     });
 
     it('should return the latest .NET version', async () => {
-      const response = [{ tag_name: 'v6.0.0' }];
+      const response = [{ tag_name: 'v8.0.318' }, { tag_name: 'v10.0.402' }, { tag_name: 'v10.0.403' }];
 
       (axios.get as Mock).mockResolvedValue({ data: response, status: 200 });
 
       const result = await getLatestDotNetVersion(context, majorVersion);
 
-      expect(result).toBe('6.0.0');
+      expect(result).toBe('10.0.403');
     });
 
     it('should return fallback .NET version without showing an error when GitHub latest-version lookup fails', async () => {
@@ -680,7 +723,7 @@ describe('binaries', () => {
       vscode.window.showErrorMessage = showErrorMessage;
 
       const result = await getLatestDotNetVersion(context, majorVersion);
-      expect(result).toBe(DependencyVersion.dotnet8);
+      expect(result).toBe(DependencyVersion.dotnet10);
       expect(showErrorMessage).not.toHaveBeenCalled();
       expect(context.telemetry.properties.latestVersionSource).toBe('fallback');
       expect(context.telemetry.properties.errorNewestDotNetVersion).toContain('Request failed with status code 403');
@@ -689,7 +732,14 @@ describe('binaries', () => {
     it('should return fallback dotnet version when no major version is sent', async () => {
       const result = await getLatestDotNetVersion(context);
 
-      expect(result).toBe(DependencyVersion.dotnet8);
+      expect(result).toBe(DependencyVersion.dotnet10);
+      expect(result).toBe('10.0.403');
+    });
+
+    it('returns the .NET 10 fallback when the feed has no matching release', async () => {
+      (axios.get as Mock).mockResolvedValue({ data: [{ tag_name: 'v8.0.318' }], status: 200 });
+
+      expect(await getLatestDotNetVersion(context, majorVersion)).toBe(DependencyVersion.dotnet10);
     });
   });
 
