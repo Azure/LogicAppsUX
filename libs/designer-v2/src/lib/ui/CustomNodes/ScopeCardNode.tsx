@@ -46,6 +46,7 @@ import type { AppDispatch } from '../../core/store';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { getScopeRepetitionName, useRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
+import { horizontalTerminalStyle } from '../connections/connections.styles';
 import { WORKFLOW_NODE_TYPES, equals, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -520,12 +521,13 @@ const ScopeCardNode = ({ id, data }: NodeProps) => {
         readOnly ? (
           <p className="no-actions-text">{intlText.noActions}</p>
         ) : (
-          <div className={'edge-drop-zone-container'}>
+          <div className={'edge-drop-zone-container'} style={shared && handleAxis === 'horizontal' ? horizontalTerminalStyle : undefined}>
             <DropZone
               graphId={scopeId}
               parentId={id}
               isLeaf={isLeaf}
               tabIndex={nodeIndex}
+              axis={handleAxis}
               {...(data?.presentation ? { sharedPresentation: shared } : {})}
             />
           </div>

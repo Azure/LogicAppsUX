@@ -7,6 +7,7 @@ import {
   useMonitoringView,
   useNodeSelectAdditionalCallback,
   useReadOnly,
+  useSharedNodeUi,
   useSuppressDefaultNodeSelectFunctionality,
 } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
@@ -51,6 +52,7 @@ import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { useRepetitionName } from '../common/LoopsPager/helper';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { DropZone } from '../connections/dropzone';
+import { horizontalTerminalStyle } from '../connections/connections.styles';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { isNullOrUndefined, SUBGRAPH_TYPES, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
@@ -69,6 +71,8 @@ type OperationGraphNode = Node<{ presentation?: NodePresentation; handleAxis?: '
 
 const DefaultNode = ({ id, data }: NodeProps<OperationGraphNode>) => {
   const readOnly = useReadOnly();
+  const sharedOption = useSharedNodeUi();
+  const shared = data?.presentation?.shared ?? sharedOption;
   const isMonitoringView = useMonitoringView();
 
   const intl = useIntl();
@@ -396,8 +400,15 @@ const DefaultNode = ({ id, data }: NodeProps<OperationGraphNode>) => {
         {!isMcpClient && <EdgeDrawSourceHandle axis={handleAxis} highlighted={isSelected || isMultiSelected} />}
       </div>
       {showLeafComponents ? (
-        <div className={'edge-drop-zone-container'}>
-          <DropZone graphId={metadata?.graphId ?? ''} parentId={id} isLeaf={isLeaf} tabIndex={nodeIndex} />
+        <div className={'edge-drop-zone-container'} style={shared && handleAxis === 'horizontal' ? horizontalTerminalStyle : undefined}>
+          <DropZone
+            graphId={metadata?.graphId ?? ''}
+            parentId={id}
+            isLeaf={isLeaf}
+            tabIndex={nodeIndex}
+            axis={handleAxis}
+            sharedPresentation={shared}
+          />
         </div>
       ) : null}
       {shouldShowPager ? <LoopsPager metadata={metadata} scopeId={id} collapsed={false} useToolRun={true} /> : null}

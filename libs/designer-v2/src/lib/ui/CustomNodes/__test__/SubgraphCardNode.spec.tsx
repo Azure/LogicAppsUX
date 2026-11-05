@@ -121,7 +121,11 @@ vi.mock('../../common/LoopsPager/LoopsPager', () => ({
 }));
 
 vi.mock('../../connections/dropzone', () => ({
-  DropZone: ({ graphId }: any) => <div data-testid={`dropzone-${graphId}`}>DropZone</div>,
+  DropZone: ({ graphId, axis, sharedPresentation }: any) => (
+    <div data-testid={`dropzone-${graphId}`} data-axis={axis} data-shared={sharedPresentation}>
+      DropZone
+    </div>
+  ),
 }));
 
 vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => ({
@@ -293,6 +297,45 @@ describe('SubgraphCardNode (v2)', () => {
 
     render(<SubgraphCardNode {...defaultProps} />);
     expect(screen.getByTestId('dropzone-testNode')).toBeInTheDocument();
+  });
+
+  it('places an empty Tool accepted RIGHT terminal after its header while the live shared option is off', () => {
+    mockUseIsLeafNode.mockReturnValue(true);
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'graph1', subgraphType: SUBGRAPH_TYPES.AGENT_CONDITION, actionCount: 0 });
+    render(<SubgraphCardNode {...defaultProps} data={{ presentation: { shared: true }, handleAxis: 'horizontal' }} />);
+    const terminal = screen.getByTestId('dropzone-testNode');
+    expect(terminal).toHaveAttribute('data-axis', 'horizontal');
+    expect(terminal).toHaveAttribute('data-shared', 'true');
+    expect(terminal.parentElement).toHaveStyle({
+      position: 'absolute',
+      left: '100%',
+      top: '50%',
+      marginLeft: '8px',
+      width: '32px',
+      height: '32px',
+      transform: 'translateY(-50%)',
+    });
+  });
+
+  it.each([true, false])('keeps accepted DOWN branch terminal placement while the live option differs (shared=%s)', (shared) => {
+    mockUseIsLeafNode.mockReturnValue(true);
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'graph1', subgraphType: SUBGRAPH_TYPES.SWITCH_CASE, actionCount: 0 });
+    mockUseSharedNodeUi.mockReturnValue(!shared);
+    render(<SubgraphCardNode {...defaultProps} data={{ presentation: { shared }, handleAxis: 'vertical' }} />);
+    const terminal = screen.getByTestId('dropzone-testNode');
+    expect(terminal).toHaveAttribute('data-axis', 'vertical');
+    expect(terminal).toHaveAttribute('data-shared', String(shared));
+    expect(terminal.parentElement?.style.transform).toBe('');
+    expect(terminal.parentElement?.style.left).toBe('');
+  });
+
+  it('keeps an accepted RIGHT empty Tool read-only without an insertion control', () => {
+    mockUseIsLeafNode.mockReturnValue(true);
+    mockUseReadOnly.mockReturnValue(true);
+    mockUseNodeMetadata.mockReturnValue({ graphId: 'graph1', subgraphType: SUBGRAPH_TYPES.AGENT_CONDITION, actionCount: 0 });
+    render(<SubgraphCardNode {...defaultProps} data={{ presentation: { shared: true }, handleAxis: 'horizontal' }} />);
+    expect(screen.queryByTestId('dropzone-testNode')).not.toBeInTheDocument();
+    expect(screen.getByText('No actions')).toBeInTheDocument();
   });
 
   it('should not show DropZone when not a leaf node', () => {

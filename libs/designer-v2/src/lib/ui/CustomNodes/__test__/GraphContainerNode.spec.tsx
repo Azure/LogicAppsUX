@@ -11,6 +11,7 @@ import { NodeProps } from '@xyflow/react';
 import { NodeFrame, NodeMergePoint } from '@microsoft/designer-ui-v2';
 import { GraphContainer } from '@microsoft/designer-ui';
 import { DefaultHandle } from '../components/handles/DefaultHandle';
+import { DropZone } from '../../connections/dropzone';
 
 vi.mock('../../../core/state/designerOptions/designerOptionsSelectors', () => ({
   useReadOnly: vi.fn(),
@@ -185,6 +186,46 @@ describe('GraphContainerNode', () => {
     expect(tree.length).toBe(2);
     expect(tree[1].props.className).toBe('edge-drop-zone-container');
     expect(tree).toMatchSnapshot();
+  });
+
+  it('places an accepted RIGHT graph terminal after the compound while the live shared option is off', () => {
+    (useIsLeafNode as Mock).mockReturnValue(true);
+    (useActionMetadata as Mock).mockReturnValue({ type: 'Scope' });
+    const tree = renderer.create(
+      <GraphContainerNode {...defaultProps} data={{ presentation: { shared: true }, handleAxis: 'horizontal' }} />
+    );
+    expect(tree.root.findByType(DropZone).props).toMatchObject({ axis: 'horizontal', sharedPresentation: true, isLeaf: true });
+    expect(tree.root.findByProps({ className: 'edge-drop-zone-container' }).props.style).toMatchObject({
+      position: 'absolute',
+      left: '100%',
+      top: '50%',
+      marginLeft: 8,
+      width: 32,
+      height: 32,
+      transform: 'translateY(-50%)',
+    });
+    tree.unmount();
+  });
+
+  it.each([true, false])('keeps accepted DOWN graph terminal placement while the live option differs (shared=%s)', (shared) => {
+    (useIsLeafNode as Mock).mockReturnValue(true);
+    (useActionMetadata as Mock).mockReturnValue({ type: 'Scope' });
+    (useSharedNodeUi as Mock).mockReturnValue(!shared);
+    const tree = renderer.create(<GraphContainerNode {...defaultProps} data={{ presentation: { shared }, handleAxis: 'vertical' }} />);
+    expect(tree.root.findByType(DropZone).props).toMatchObject({ axis: 'vertical', sharedPresentation: shared, isLeaf: true });
+    expect(tree.root.findByProps({ className: 'edge-drop-zone-container' }).props.style).toBeUndefined();
+    tree.unmount();
+  });
+
+  it('does not render a terminal on an accepted RIGHT graph in read-only mode', () => {
+    (useIsLeafNode as Mock).mockReturnValue(true);
+    (useReadOnly as Mock).mockReturnValue(true);
+    (useActionMetadata as Mock).mockReturnValue({ type: 'Scope' });
+    const tree = renderer.create(
+      <GraphContainerNode {...defaultProps} data={{ presentation: { shared: true }, handleAxis: 'horizontal' }} />
+    );
+    expect(tree.root.findAllByType(DropZone)).toHaveLength(0);
+    tree.unmount();
   });
 
   it('should not render DropZone when showLeafComponents is false', () => {

@@ -171,7 +171,11 @@ vi.mock('../../common/LoopsPager/LoopsPager', () => ({
 }));
 
 vi.mock('../../connections/dropzone', () => ({
-  DropZone: ({ graphId }: any) => <div data-testid={`dropzone-${graphId}`}>DropZone</div>,
+  DropZone: ({ graphId, axis, sharedPresentation }: any) => (
+    <div data-testid={`dropzone-${graphId}`} data-axis={axis} data-shared={sharedPresentation}>
+      DropZone
+    </div>
+  ),
 }));
 
 vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => ({
@@ -513,6 +517,41 @@ describe('OperationCardNode (v2)', () => {
 
     render(<DefaultNode {...defaultProps} />);
     expect(screen.getByTestId('dropzone-root')).toBeInTheDocument();
+  });
+
+  it('places the accepted RIGHT terminal after the operation even while the live shared option is off', () => {
+    mockUseIsLeafNode.mockReturnValue(true);
+    render(<DefaultNode {...defaultProps} data={{ presentation: { shared: true }, handleAxis: 'horizontal' }} />);
+    const terminal = screen.getByTestId('dropzone-root');
+    expect(terminal).toHaveAttribute('data-axis', 'horizontal');
+    expect(terminal).toHaveAttribute('data-shared', 'true');
+    expect(terminal.parentElement).toHaveStyle({
+      position: 'absolute',
+      left: '100%',
+      top: '50%',
+      marginLeft: '8px',
+      width: '32px',
+      height: '32px',
+      transform: 'translateY(-50%)',
+    });
+  });
+
+  it.each([true, false])('keeps accepted DOWN terminal placement and presentation while the live option differs (shared=%s)', (shared) => {
+    mockUseIsLeafNode.mockReturnValue(true);
+    mockUseSharedNodeUi.mockReturnValue(!shared);
+    render(<DefaultNode {...defaultProps} data={{ presentation: { shared }, handleAxis: 'vertical' }} />);
+    const terminal = screen.getByTestId('dropzone-root');
+    expect(terminal).toHaveAttribute('data-axis', 'vertical');
+    expect(terminal).toHaveAttribute('data-shared', String(shared));
+    expect(terminal.parentElement?.style.transform).toBe('');
+    expect(terminal.parentElement?.style.left).toBe('');
+  });
+
+  it('does not render a terminal for an accepted RIGHT operation in read-only mode', () => {
+    mockUseIsLeafNode.mockReturnValue(true);
+    mockUseReadOnly.mockReturnValue(true);
+    render(<DefaultNode {...defaultProps} data={{ presentation: { shared: true }, handleAxis: 'horizontal' }} />);
+    expect(screen.queryByTestId('dropzone-root')).not.toBeInTheDocument();
   });
 
   it('should not show DropZone when not a leaf node', () => {

@@ -1,7 +1,7 @@
 import type React from 'react';
 import { memo, useMemo, useState } from 'react';
 import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
-import { EdgeLabelRenderer, getBezierPath, getSmoothStepPath, useReactFlow, type EdgeProps } from '@xyflow/react';
+import { EdgeLabelRenderer, getBezierPath, getSmoothStepPath, Position, useReactFlow, type EdgeProps } from '@xyflow/react';
 import { css } from '@fluentui/utilities';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import {
@@ -76,6 +76,11 @@ const edgeContentWidth = 92;
 const runAfterWidth = 36;
 const runAfterHeight = 12;
 
+const offsetFromPort = (x: number, y: number, position: Position, distance: number) => ({
+  x: x + (position === Position.Left ? -distance : position === Position.Right ? distance : 0),
+  y: y + (position === Position.Top ? -distance : position === Position.Bottom ? distance : 0),
+});
+
 const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   id,
   sourceX,
@@ -125,13 +130,15 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
     [operationData?.runAfter]
   );
   const numRunAfters = Object.keys(filteredRunAfters).length;
+  const horizontalTarget = targetPosition === Position.Left || targetPosition === Position.Right;
   const raIndex: number = useMemo(() => {
+    const crossAxis = horizontalTarget ? 'y' : 'x';
     const sortedRunAfters = Object.keys(filteredRunAfters)
       .slice(0)
-      .sort((id1, id2) => (reactFlow.getNode(id2)?.position?.x ?? 0) - (reactFlow.getNode(id1)?.position?.x ?? 0));
+      .sort((id1, id2) => (reactFlow.getNode(id2)?.position?.[crossAxis] ?? 0) - (reactFlow.getNode(id1)?.position?.[crossAxis] ?? 0));
 
     return sortedRunAfters?.findIndex((key) => key === source);
-  }, [filteredRunAfters, reactFlow, source]);
+  }, [filteredRunAfters, horizontalTarget, reactFlow, source]);
 
   const runAfterStatuses = useMemo(() => filteredRunAfters?.[source] ?? [], [filteredRunAfters, source]);
   const runAfterCount = Object.keys(filteredRunAfters).length;
@@ -146,20 +153,27 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   const onlyEdge = !multipleSources && !multipleTargets;
   const isLeaf = edgeTargets.length === 0;
 
-  const runAfterX = targetX - runAfterWidth / 2 + (numRunAfters - 1 - raIndex * 2) * (runAfterWidth / 2 + 4);
-  const runAfterY = targetY - runAfterHeight;
+  // Keep the indicator upright, reserving its width or height along the target port's normal.
+  const indicatorExtent = horizontalTarget ? runAfterWidth : runAfterHeight;
+  const indicatorCenter = offsetFromPort(targetX, targetY, targetPosition, indicatorExtent / 2);
+  const indicatorSpread = (numRunAfters - 1 - raIndex * 2) * ((horizontalTarget ? runAfterHeight : runAfterWidth) / 2 + 4);
+  const runAfterX = indicatorCenter.x - runAfterWidth / 2 + (horizontalTarget ? 0 : indicatorSpread);
+  const runAfterY = indicatorCenter.y - runAfterHeight / 2 + (horizontalTarget ? indicatorSpread : 0);
+  const sourceButton = offsetFromPort(sourceX, sourceY, sourcePosition, 28);
+  const targetButton = offsetFromPort(targetX, targetY, targetPosition, 32 + (numRunAfters !== 0 ? 4 : 0));
 
   const [d] = useMemo(() => {
+    const endpoint = offsetFromPort(targetX, targetY, targetPosition, (numRunAfters !== 0 ? indicatorExtent : 0) + (shared ? 0 : 2));
     const endpoints = {
       sourceX,
       sourceY,
       sourcePosition,
-      targetX,
-      targetY: (numRunAfters !== 0 ? targetY - runAfterHeight : targetY) - (shared ? 0 : 2),
+      targetX: endpoint.x,
+      targetY: endpoint.y,
       targetPosition,
     };
     return shared ? getBezierPath(endpoints) : getSmoothStepPath({ ...endpoints, borderRadius: 8, centerY });
-  }, [numRunAfters, sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY, centerY, shared]);
+  }, [numRunAfters, indicatorExtent, sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY, centerY, shared]);
 
   const tabIndex = useEdgeIndex(id);
 
@@ -232,8 +246,8 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
           {/* TOP BUTTON */}
           {((multipleTargets && showSourceButton) || multipleSources) && (
             <EdgeContent
-              x={sourceX - edgeContentWidth / 2}
-              y={sourceY + 28 - edgeContentHeight / 2}
+              x={sourceButton.x - edgeContentWidth / 2}
+              y={sourceButton.y - edgeContentHeight / 2}
               graphId={graphId}
               parentId={source}
               childId={multipleTargets ? undefined : target}
@@ -260,8 +274,8 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
           {/* BOTTOM BUTTOM */}
           {((multipleSources && showTargetButton) || multipleTargets) && (
             <EdgeContent
-              x={targetX - edgeContentWidth / 2}
-              y={targetY - 32 - edgeContentHeight / 2 - (numRunAfters !== 0 ? 4 : 0)} // Make a little more room for run after
+              x={targetButton.x - edgeContentWidth / 2}
+              y={targetButton.y - edgeContentHeight / 2}
               graphId={graphId}
               parentId={multipleSources ? undefined : source}
               childId={target}
@@ -286,8 +300,8 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
           id="msla-run-after-traffic-light"
           width={runAfterWidth}
           height={runAfterHeight}
-          x={targetX - runAfterWidth / 2}
-          y={targetY - runAfterHeight}
+          x={indicatorCenter.x - runAfterWidth / 2}
+          y={indicatorCenter.y - runAfterHeight / 2}
         >
           <CollapsedRunAfterIndicator filteredRunAfters={filteredRunAfters} runAfterCount={runAfterCount} />
         </foreignObject>

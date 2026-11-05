@@ -27,17 +27,15 @@ export const DefaultHandle = (props: {
         styles.nodeHandle,
         contained
           ? styles.sharedPort
-          : shared && props.type === 'source'
-            ? horizontal
-              ? styles.sharedSourceHorizontal
-              : styles.sharedSource
-            : horizontal
-              ? props.type === 'source'
-                ? styles.right
-                : styles.left
-              : props.type === 'source'
-                ? styles.bottom
-                : styles.top
+          : horizontal
+            ? props.type === 'source'
+              ? styles.right
+              : styles.left
+            : props.type === 'source'
+              ? styles.bottom
+              : styles.top,
+        // Structural sources stay hidden; the shared offset must not replace their perimeter styling.
+        shared && !contained && props.type === 'source' && (horizontal ? styles.sharedSourceHorizontal : styles.sharedSource)
       )}
       type={props.type}
       id={props.id}

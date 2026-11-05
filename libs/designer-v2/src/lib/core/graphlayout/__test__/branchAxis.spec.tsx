@@ -54,14 +54,14 @@ const graphEdges = (node: WorkflowNode): NonNullable<WorkflowNode['edges']> => [
   ...(node.edges ?? []),
   ...(node.children?.flatMap(graphEdges) ?? []),
 ];
-const accept = async (source: Parameters<typeof Deserialize>[0], shared = true) => {
+const accept = async (source: Parameters<typeof Deserialize>[0], shared = true, readOnly = false) => {
   const parsed = Deserialize(source, null);
   const before = structuredClone(parsed);
   const converted = exportForTesting.convertWorkflowGraphToElkGraph(parsed.graph!, shared, {
     operations: parsed.actionData,
     nodesMetadata: parsed.nodesMetadata,
   });
-  const layout = await exportForTesting.elkLayout(converted);
+  const layout = await exportForTesting.elkLayout(converted, readOnly);
   const [nodes, edges] = exportForTesting.convertElkGraphToReactFlow(layout, shared);
   expect(parsed).toEqual(before);
   return { parsed, converted, layout, nodes, edges };
@@ -181,6 +181,85 @@ describe('actual deserialized tool-branch axis contracts', () => {
     const delay = findElkNode(tool, 'Delay')!;
     expect(delay.y).toBeGreaterThanOrEqual(first.y! + first.height! + 12);
     expect(nodes.find(({ id }) => id === firstId)!.data.handleAxis).toBe('vertical');
+  });
+
+  it.each([
+    { shared: true, empty: false, readOnly: false, right: 40, bottom: 20 },
+    { shared: true, empty: true, readOnly: false, right: 60, bottom: 20 },
+    { shared: false, empty: false, readOnly: false, right: 20, bottom: 40 },
+    { shared: false, empty: true, readOnly: false, right: 20, bottom: 60 },
+    { shared: true, empty: false, readOnly: true, right: 40, bottom: 20 },
+    { shared: true, empty: true, readOnly: true, right: 60, bottom: 20 },
+  ])(
+    'reserves real Tool terminal space: shared=$shared empty=$empty readOnly=$readOnly',
+    async ({ shared, empty, readOnly, right, bottom }) => {
+      const source = definition();
+      const tool = source.actions[agentId].tools[toolId];
+      const { converted, layout } = await accept(
+        {
+          ...source,
+          actions: {
+            [agentId]: {
+              ...source.actions[agentId],
+              tools: { [toolId]: { ...tool, actions: empty ? {} : tool.actions } },
+            },
+          },
+        },
+        shared,
+        readOnly
+      );
+      expect(findElkNode(converted, toolId)!.layoutOptions?.['elk.padding']).toBe(`[top=0,left=20,bottom=${bottom},right=${right}]`);
+      const acceptedTool = findElkNode(layout, toolId)!;
+      const children = acceptedTool.children!;
+      // Legacy ReactFlow dimensions are measured later; ELK already has the actual compound/header bounds.
+      const rightmost = Math.max(...children.map((child) => child.x! + child.width!));
+      const lowest = Math.max(...children.map((child) => child.y! + child.height!));
+      expect(acceptedTool.width! - rightmost).toBeGreaterThanOrEqual(right);
+      expect(acceptedTool.height! - lowest).toBeGreaterThanOrEqual(bottom);
+      expect(findElkNode(layout, toolId)!.layoutOptions?.['elk.direction']).toBe(shared ? 'RIGHT' : 'DOWN');
+      expect(children).toHaveLength(empty ? 1 : 4);
+    }
+  );
+
+  it.each([true, false])('lays out actual collapsedActionIds without losing the incoming Tool edge (shared=%s)', async (shared) => {
+    const source = definition();
+    const parsed = Deserialize(source, null);
+    const store = createDesignerStore();
+    store.dispatch(
+      setStateAfterUndoRedo({
+        ...store.getState(),
+        workflow: {
+          ...store.getState().workflow,
+          graph: parsed.graph,
+          operations: parsed.actionData,
+          nodesMetadata: parsed.nodesMetadata,
+          collapsedActionIds: { [firstId]: true },
+        },
+      })
+    );
+    const view = renderHook(useRootWorkflowGraphForLayout, {
+      wrapper: ({ children }: { children: ReactNode }) => <Provider store={store}>{children}</Provider>,
+    });
+    const [nodes, edges] = exportForTesting.convertElkGraphToReactFlow(
+      await exportForTesting.elkLayout(
+        exportForTesting.convertWorkflowGraphToElkGraph(view.result.current!, shared, {
+          operations: parsed.actionData,
+          nodesMetadata: parsed.nodesMetadata,
+        })
+      ),
+      shared
+    );
+    const collapsed = nodes.find(({ id }) => id === firstId)!;
+    expect(collapsed.type).toBe('COLLAPSED_NODE');
+    expect(collapsed.data.handleAxis).toBe(shared ? 'horizontal' : 'vertical');
+    expect(nodes.some(({ id }) => id === 'Delay' || id === lastId)).toBe(false);
+    expect(edges.find(({ source: from, target }) => from === `${toolId}-#subgraph` && target === firstId)).toMatchObject({
+      id: `${toolId}-#subgraph-${firstId}`,
+      type: 'HEADING_EDGE',
+    });
+    expect(store.getState().workflow.graph).toEqual(parsed.graph);
+    expect(store.getState().workflow.operations).toEqual(parsed.actionData);
+    view.unmount();
   });
 
   it('collapses and re-expands the real multi-action tool without altering IDs, associations or serializer inputs', async () => {
@@ -322,7 +401,7 @@ describe('actual deserialized tool-branch axis contracts', () => {
 
   it('keeps a nested Agent tool inventory vertical independently of its enclosing rightward action continuation', async () => {
     const source = definition();
-    const { nodes } = await accept({
+    const { nodes, edges, parsed, converted } = await accept({
       ...source,
       actions: {
         [agentId]: {
@@ -333,6 +412,7 @@ describe('actual deserialized tool-branch axis contracts', () => {
               actions: {
                 Nested_agent: {
                   ...agentMcpWorkflowDefinitionInput.actions.WorkflowAgent,
+                  runAfter: {},
                   tools: {
                     Inner_tool: {
                       type: 'AgentCondition',
@@ -360,5 +440,21 @@ describe('actual deserialized tool-branch axis contracts', () => {
     expect(get('Inner_mcp').data.handleAxis).toBe('vertical');
     expect(get('Inner_second').position.x).toBeGreaterThanOrEqual(get('Inner_first').position.x + get('Inner_first').width! + 12);
     expect(get('Inner_second').data.handleAxis).toBe('horizontal');
+    expect(findElkNode(converted, 'Nested_agent')!.layoutOptions?.['elk.direction']).toBe('DOWN');
+    expect(get('Nested_agent-#scope').data.handleAxis).toBe('vertical');
+    const compound = get('Nested_agent');
+    const following = get('After_agent');
+    const edge = edges.find(({ source: from, target }) => from === compound.id && target === following.id)!;
+    expect(edge.id).toBe('Nested_agent-After_agent');
+    const section = (edge.data!.elkEdge as ElkExtendedEdge).sections![0];
+    expect(section.startPoint.x).toBeCloseTo(compound.position.x + compound.width!);
+    expect(section.startPoint.y).toBeCloseTo(compound.position.y + compound.height! / 2);
+    expect(section.endPoint.x).toBeCloseTo(following.position.x);
+    expect(section.endPoint.y).toBeCloseTo(following.position.y + following.height! / 2);
+    expect(edges.map(({ id }) => id).sort()).toEqual(
+      graphEdges(parsed.graph!)
+        .map(({ id }) => id)
+        .sort()
+    );
   });
 });

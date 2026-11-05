@@ -9,6 +9,7 @@ import {
   useRunData,
 } from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from '../connections/dropzone';
+import { horizontalTerminalStyle } from '../connections/connections.styles';
 import { css } from '@fluentui/react';
 import { GraphContainer } from '@microsoft/designer-ui';
 import {
@@ -90,17 +91,18 @@ const GraphContainerNode = ({ id, data }: NodeProps) => {
           <EdgeDrawSourceHandle
             axis={handleAxis}
             highlighted={selected || isMultiSelected}
-            {...(shared && type === 'agent' && { contained: true })}
+            {...(shared && type === 'agent' && handleAxis === 'vertical' && { contained: true })}
           />
         )}
       </div>
       {showLeafComponents && (
-        <div className="edge-drop-zone-container">
+        <div className="edge-drop-zone-container" style={shared && handleAxis === 'horizontal' ? horizontalTerminalStyle : undefined}>
           <DropZone
             graphId={nodeMetadata?.graphId ?? ''}
             parentId={id}
             isLeaf={isLeaf}
             tabIndex={nodeLeafIndex}
+            axis={handleAxis}
             {...(data?.presentation ? { sharedPresentation: shared } : {})}
           />
         </div>

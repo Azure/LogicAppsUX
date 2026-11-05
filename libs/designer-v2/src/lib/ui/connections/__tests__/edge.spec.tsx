@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { fireEvent, render } from '@testing-library/react';
 import type { EdgeProps } from '@xyflow/react';
-import { getBezierPath, Position } from '@xyflow/react';
+import { getBezierPath, getSmoothStepPath, Position } from '@xyflow/react';
 import type { LogicAppsEdgeProps } from '../edge';
 import { nodeLineStrokes } from '@microsoft/designer-ui-v2';
 
@@ -338,6 +338,101 @@ describe('ButtonEdge', () => {
     );
     expect(container.querySelector('#edge-1')).toHaveAttribute('data-line', 'dashedNeutral');
     expect(container.querySelector('[data-testid="collapsed-run-after-indicator"]')).toBeInTheDocument();
+  });
+
+  it.each(
+    [
+      { side: Position.Left, sourceSide: Position.Right, endpointX: 264, endpointY: 200, boxX: 264, boxY: 194 },
+      { side: Position.Right, sourceSide: Position.Left, endpointX: 336, endpointY: 200, boxX: 300, boxY: 194 },
+      { side: Position.Top, sourceSide: Position.Bottom, endpointX: 300, endpointY: 188, boxX: 282, boxY: 188 },
+      { side: Position.Bottom, sourceSide: Position.Top, endpointX: 300, endpointY: 212, boxX: 282, boxY: 200 },
+    ].flatMap((geometry) => [1, 6].map((count) => ({ ...geometry, count })))
+  )(
+    'ends the real shared path outside the upright $side indicator ($count failed dependencies)',
+    ({ side, sourceSide, endpointX, endpointY, boxX, boxY, count }) => {
+      mockUseSharedNodeUi.mockReturnValue(true);
+      mockUseActionMetadata.mockReturnValue({
+        runAfter: Object.fromEntries(
+          Array.from({ length: count }, (_, index) => [index === 0 ? 'sourceNode' : `dependency-${index}`, ['Failed']])
+        ),
+      });
+      const { container } = render(
+        <svg>
+          <ButtonEdge {...defaultProps} sourcePosition={sourceSide} targetPosition={side} targetX={300} />
+        </svg>
+      );
+      const [expectedPath] = getBezierPath({
+        sourceX: 100,
+        sourceY: 50,
+        sourcePosition: sourceSide,
+        targetX: endpointX,
+        targetY: endpointY,
+        targetPosition: side,
+      });
+      expect(container.querySelector('#edge-1')).toHaveAttribute('d', expectedPath);
+      const indicator = container.querySelector('foreignObject')!;
+      expect(indicator).toHaveAttribute('x', String(boxX));
+      expect(indicator).toHaveAttribute('y', String(boxY));
+      expect(indicator).toHaveAttribute('width', '36');
+      expect(indicator).toHaveAttribute('height', '12');
+      expect(indicator).not.toHaveAttribute('transform');
+      expect(indicator.querySelector('[data-testid="collapsed-run-after-indicator"]') !== null).toBe(count === 6);
+    }
+  );
+
+  it.each([Position.Left, Position.Top])('distributes multiple upright indicators across the %s target face without overlap', (side) => {
+    mockUseSharedNodeUi.mockReturnValue(true);
+    mockUseActionMetadata.mockReturnValue({ runAfter: { sourceNode: ['Failed'], otherSource: ['Failed'] } });
+    const { container } = render(
+      <svg>
+        <ButtonEdge {...defaultProps} targetPosition={side} targetX={300} />
+        <ButtonEdge {...defaultProps} id="edge-2" source="otherSource" targetPosition={side} targetX={300} />
+      </svg>
+    );
+    const boxes = Array.from(container.querySelectorAll('foreignObject'), (element) => ({
+      x: Number(element.getAttribute('x')),
+      y: Number(element.getAttribute('y')),
+      width: Number(element.getAttribute('width')),
+      height: Number(element.getAttribute('height')),
+    }));
+    expect(boxes).toHaveLength(2);
+    expect(boxes.map(({ width, height }) => [width, height])).toEqual([
+      [36, 12],
+      [36, 12],
+    ]);
+    if (side === Position.Left) {
+      expect(boxes.map(({ x }) => x)).toEqual([264, 264]);
+      expect(Math.abs(boxes[0].y - boxes[1].y)).toBeGreaterThanOrEqual(12);
+      expect((boxes[0].y + boxes[1].y) / 2 + 6).toBe(200);
+    } else {
+      expect(boxes.map(({ y }) => y)).toEqual([188, 188]);
+      expect(Math.abs(boxes[0].x - boxes[1].x)).toBeGreaterThanOrEqual(36);
+      expect((boxes[0].x + boxes[1].x) / 2 + 18).toBe(300);
+    }
+  });
+
+  it.each([
+    { status: 'Succeeded', endpointY: 198 },
+    { status: 'Failed', endpointY: 186 },
+  ])('preserves the legacy Top border offset with $status run-after', ({ status, endpointY }) => {
+    mockUseActionMetadata.mockReturnValue({ runAfter: { sourceNode: [status] } });
+    const { container } = render(
+      <svg>
+        <ButtonEdge {...defaultProps} />
+      </svg>
+    );
+    const [path] = getSmoothStepPath({
+      sourceX: 100,
+      sourceY: 50,
+      sourcePosition: Position.Bottom,
+      targetX: 100,
+      targetY: endpointY,
+      targetPosition: Position.Top,
+      borderRadius: 8,
+      centerY: 125,
+    });
+    expect(container.querySelector('#edge-1')).toHaveAttribute('d', path);
+    expect(container.querySelector('#edge-1')).toHaveClass('react-flow__edge-path');
   });
 
   it('uses the canonical Bezier presentation on the real host endpoints only when enabled', () => {

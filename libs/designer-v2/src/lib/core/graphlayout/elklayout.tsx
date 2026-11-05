@@ -376,7 +376,8 @@ const convertWorkflowGraphToElkGraph = (
         },
       })) ?? [],
     layoutOptions: {
-      'elk.padding': '[top=0,left=20,bottom=40,right=20]', // allow space for add buttons
+      // Terminal add controls consume the output side of the accepted local axis.
+      'elk.padding': rightwardToolBranch ? '[top=0,left=20,bottom=20,right=40]' : '[top=0,left=20,bottom=40,right=20]',
       'elk.position': '(0, 0)', // See 'crossingMinimization.semiInteractive' above
       // Set node type for layout
       nodeType: node?.type ?? WORKFLOW_NODE_TYPES.GRAPH_NODE,
@@ -400,7 +401,7 @@ const convertWorkflowGraphToElkGraph = (
       ...(node.children?.length === 1 &&
         (node.children[0].type === WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE ||
           node.children[0].type === WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE) && {
-          'elk.padding': '[top=0,left=20,bottom=60,right=20]',
+          'elk.padding': rightwardToolBranch ? '[top=0,left=20,bottom=20,right=60]' : '[top=0,left=20,bottom=60,right=20]',
         }),
       // If graph has a footer, reduce bottom padding further
       ...(node.children?.findIndex((child) => child.id.endsWith('#footer')) !== -1 && {

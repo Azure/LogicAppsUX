@@ -26,6 +26,7 @@ import { fetchBuiltInToolRunData } from '../../core/actions/bjsworkflow/monitori
 import { getScopeRepetitionName } from '../common/LoopsPager/helper';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { DropZone } from '../connections/dropzone';
+import { horizontalTerminalStyle } from '../connections/connections.styles';
 import {
   WORKFLOW_NODE_TYPES,
   isBuiltInAgentTool,
@@ -361,12 +362,13 @@ const SubgraphCardNode = ({ id, data }: NodeProps) => {
         readOnly ? (
           <p className="no-actions-text">{intlText.noActions}</p>
         ) : (
-          <div className={'edge-drop-zone-container'}>
+          <div className={'edge-drop-zone-container'} style={shared && handleAxis === 'horizontal' ? horizontalTerminalStyle : undefined}>
             <DropZone
               graphId={subgraphId}
               parentId={id}
               isLeaf={isLeaf}
               tabIndex={nodeIndex}
+              axis={handleAxis}
               {...(data?.presentation ? { sharedPresentation: shared } : {})}
             />
           </div>
